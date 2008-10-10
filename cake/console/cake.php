@@ -1,6 +1,6 @@
 #!/usr/bin/php -q
 <?php
-/* SVN FILE: $Id: cake.php 7690 2008-10-02 04:56:53Z nate $ */
+/* SVN FILE: $Id$ */
 /**
  * Command-line code generation utility to automate programmer chores.
  *
@@ -22,9 +22,9 @@
  * @package			cake
  * @subpackage		cake.cake.console
  * @since			CakePHP(tm) v 1.2.0.5012
- * @version			$Revision: 7690 $
- * @modifiedby		$LastChangedBy: nate $
- * @lastmodified	$Date: 2008-10-02 00:56:53 -0400 (Thu, 02 Oct 2008) $
+ * @version			$Revision$
+ * @modifiedby		$LastChangedBy$
+ * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 /**

@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: plugins_component.php 7690 2008-10-02 04:56:53Z nate $ */
+/* SVN FILE: $Id$ */
 /**
  * Short description for file.
  *
@@ -21,9 +21,9 @@
  * @package			cake.tests
  * @subpackage		cake.tests.test_app.plugins.test_plugin.views.helpers
  * @since			CakePHP(tm) v 1.2.0.4206
- * @version			$Rev: 7690 $
- * @modifiedby		$LastChangedBy: nate $
- * @lastmodified	$Date: 2008-10-02 00:56:53 -0400 (Thu, 02 Oct 2008) $
+ * @version			$Rev$
+ * @modifiedby		$LastChangedBy$
+ * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 class PluginsComponentComponent extends Object {

@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: models.php 7690 2008-10-02 04:56:53Z nate $ */
+/* SVN FILE: $Id$ */
 /**
  * Mock models
  *
@@ -21,9 +21,9 @@
  * @package			cake.tests
  * @subpackage		cake.tests.cases.libs.model
  * @since			CakePHP(tm) v 1.2.0.6464
- * @version			$Revision: 7690 $
- * @modifiedby		$LastChangedBy: nate $
- * @lastmodified	$Date: 2008-10-02 00:56:53 -0400 (Thu, 02 Oct 2008) $
+ * @version			$Revision$
+ * @modifiedby		$LastChangedBy$
+ * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {

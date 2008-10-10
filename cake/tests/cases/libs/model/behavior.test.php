@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: behavior.test.php 7296 2008-06-27 09:09:03Z gwoo $ */
+/* SVN FILE: $Id$ */
 /**
  * Short description for behavior.test.php
  *
@@ -18,9 +18,9 @@
  * @package              cake
  * @subpackage           cake.tests.cases.libs.model
  * @since                1.2
- * @version              $Revision: 7296 $
- * @modifiedBy           $LastChangedBy: gwoo $
- * @lastModified         $Date: 2008-06-27 05:09:03 -0400 (Fri, 27 Jun 2008) $
+ * @version              $Revision$
+ * @modifiedBy           $LastChangedBy$
+ * @lastModified         $Date$
  * @license              http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 

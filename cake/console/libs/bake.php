@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: bake.php 7125 2008-06-05 15:06:49Z gwoo $ */
+/* SVN FILE: $Id$ */
 /**
  * Command-line code generation utility to automate programmer chores.
  *
@@ -23,9 +23,9 @@
  * @package			cake
  * @subpackage		cake.cake.console.libs
  * @since			CakePHP(tm) v 1.2.0.5012
- * @version			$Revision: 7125 $
- * @modifiedby		$LastChangedBy: gwoo $
- * @lastmodified	$Date: 2008-06-05 11:06:49 -0400 (Thu, 05 Jun 2008) $
+ * @version			$Revision$
+ * @modifiedby		$LastChangedBy$
+ * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 /**

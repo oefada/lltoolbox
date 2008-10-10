@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: js.php 7690 2008-10-02 04:56:53Z nate $ */
+/* SVN FILE: $Id$ */
 
 /**
  * Javascript Generator class file.
@@ -20,9 +20,9 @@
  * @package			cake
  * @subpackage		cake.cake.libs.view.helpers
  * @since			CakePHP v 1.2
- * @version			$Revision: 7690 $
- * @modifiedby		$LastChangedBy: nate $
- * @lastmodified	$Date: 2008-10-02 00:56:53 -0400 (Thu, 02 Oct 2008) $
+ * @version			$Revision$
+ * @modifiedby		$LastChangedBy$
+ * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 

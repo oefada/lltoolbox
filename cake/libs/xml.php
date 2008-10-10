@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: xml.php 7690 2008-10-02 04:56:53Z nate $ */
+/* SVN FILE: $Id$ */
 
 /**
  * XML handling for Cake.
@@ -22,9 +22,9 @@
  * @package      cake
  * @subpackage   cake.cake.libs
  * @since        CakePHP v .0.10.3.1400
- * @version			$Revision: 7690 $
- * @modifiedby		$LastChangedBy: nate $
- * @lastmodified	$Date: 2008-10-02 00:56:53 -0400 (Thu, 02 Oct 2008) $
+ * @version			$Revision$
+ * @modifiedby		$LastChangedBy$
+ * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 App::import('Core', 'Set');

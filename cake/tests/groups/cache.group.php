@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: cache.group.php 7118 2008-06-04 20:49:29Z gwoo $ */
+/* SVN FILE: $Id$ */
 /**
  * Short description for file.
  *
@@ -21,9 +21,9 @@
  * @package			cake.tests
  * @subpackage		cake.tests.groups
  * @since			CakePHP(tm) v 1.2.0.4206
- * @version			$Revision: 7118 $
- * @modifiedby		$LastChangedBy: gwoo $
- * @lastmodified	$Date: 2008-06-04 16:49:29 -0400 (Wed, 04 Jun 2008) $
+ * @version			$Revision$
+ * @modifiedby		$LastChangedBy$
+ * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 /** AllCacheEngines

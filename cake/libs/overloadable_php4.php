@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: overloadable_php4.php 6311 2008-01-02 06:33:52Z phpnut $ */
+/* SVN FILE: $Id$ */
 /**
  * Overload abstraction interface.  Merges differences between PHP4 and 5.
  *
@@ -19,9 +19,9 @@
  * @package			cake
  * @subpackage		cake.cake.libs
  * @since			CakePHP(tm) v 1.2
- * @version			$Revision: 6311 $
- * @modifiedby		$LastChangedBy: phpnut $
- * @lastmodified	$Date: 2008-01-02 01:33:52 -0500 (Wed, 02 Jan 2008) $
+ * @version			$Revision$
+ * @modifiedby		$LastChangedBy$
+ * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 /**
