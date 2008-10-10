@@ -18,8 +18,6 @@ echo $paginator->counter(array(
 	<th><?php echo $paginator->sort('accountNumber');?></th>
 	<th><?php echo $paginator->sort('nameOnAccount');?></th>
 	<th><?php echo $paginator->sort('paymentTypeId');?></th>
-	<th><?php echo $paginator->sort('cc_year');?></th>
-	<th><?php echo $paginator->sort('cc_month');?></th>
 	<th class="actions"><?php __('Actions');?></th>
 </tr>
 <?php
@@ -59,18 +57,12 @@ foreach ($userPaymentSettings as $userPaymentSetting):
 			<?php echo $userPaymentSetting['UserPaymentSetting']['nameOnAccount']; ?>
 		</td>
 		<td>
-			<?php echo $html->link($userPaymentSetting['PaymentType']['paymentTypeName'], array('controller'=> 'payment_types', 'action'=>'view', $userPaymentSetting['PaymentType']['paymentTypeId'])); ?>
-		</td>
-		<td>
-			<?php echo $userPaymentSetting['UserPaymentSetting']['cc_year']; ?>
-		</td>
-		<td>
-			<?php echo $userPaymentSetting['UserPaymentSetting']['cc_month']; ?>
+			<?php echo $userPaymentSetting['UserPaymentSetting']['paymentTypeId']; ?>
 		</td>
 		<td class="actions">
-			<?php echo $html->link(__('View', true), array('action'=>'view', $userPaymentSetting['UserPaymentSetting']['userPaymentSettingId'])); ?>
-			<?php echo $html->link(__('Edit', true), array('action'=>'edit', $userPaymentSetting['UserPaymentSetting']['userPaymentSettingId'])); ?>
-			<?php echo $html->link(__('Delete', true), array('action'=>'delete', $userPaymentSetting['UserPaymentSetting']['userPaymentSettingId']), null, sprintf(__('Are you sure you want to delete # %s?', true), $userPaymentSetting['UserPaymentSetting']['userPaymentSettingId'])); ?>
+			<?php echo $html->link(__('View', true), array('action'=>'view', $userPaymentSetting['UserPaymentSetting']['id'])); ?>
+			<?php echo $html->link(__('Edit', true), array('action'=>'edit', $userPaymentSetting['UserPaymentSetting']['id'])); ?>
+			<?php echo $html->link(__('Delete', true), array('action'=>'delete', $userPaymentSetting['UserPaymentSetting']['id']), null, sprintf(__('Are you sure you want to delete # %s?', true), $userPaymentSetting['UserPaymentSetting']['id'])); ?>
 		</td>
 	</tr>
 <?php endforeach; ?>
@@ -84,7 +76,5 @@ foreach ($userPaymentSettings as $userPaymentSetting):
 <div class="actions">
 	<ul>
 		<li><?php echo $html->link(__('New UserPaymentSetting', true), array('action'=>'add')); ?></li>
-		<li><?php echo $html->link(__('List Payment Types', true), array('controller'=> 'payment_types', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Payment Type', true), array('controller'=> 'payment_types', 'action'=>'add')); ?> </li>
 	</ul>
 </div>

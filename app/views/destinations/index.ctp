@@ -9,13 +9,13 @@ echo $paginator->counter(array(
 <table cellpadding="0" cellspacing="0">
 <tr>
 	<th><?php echo $paginator->sort('destinationId');?></th>
-	<th><?php echo $paginator->sort('destinationName');?></th>
 	<th><?php echo $paginator->sort('parentId');?></th>
-	<th><?php echo $paginator->sort('tagId');?></th>
-	<th><?php echo $paginator->sort('leftValue');?></th>
-	<th><?php echo $paginator->sort('rightValue');?></th>
+	<th><?php echo $paginator->sort('destinationName');?></th>
 	<th><?php echo $paginator->sort('includeInNav');?></th>
 	<th><?php echo $paginator->sort('display');?></th>
+	<th><?php echo $paginator->sort('leftValue');?></th>
+	<th><?php echo $paginator->sort('rightValue');?></th>
+	<th><?php echo $paginator->sort('tagId');?></th>
 	<th class="actions"><?php __('Actions');?></th>
 </tr>
 <?php
@@ -31,13 +31,16 @@ foreach ($destinations as $destination):
 			<?php echo $destination['Destination']['destinationId']; ?>
 		</td>
 		<td>
-			<?php echo $destination['Destination']['destinationName']; ?>
-		</td>
-		<td>
 			<?php echo $destination['Destination']['parentId']; ?>
 		</td>
 		<td>
-			<?php echo $html->link($destination['Tag']['tagName'], array('controller'=> 'tags', 'action'=>'view', $destination['Tag']['tagId'])); ?>
+			<?php echo $destination['Destination']['destinationName']; ?>
+		</td>
+		<td>
+			<?php echo $destination['Destination']['includeInNav']; ?>
+		</td>
+		<td>
+			<?php echo $destination['Destination']['display']; ?>
 		</td>
 		<td>
 			<?php echo $destination['Destination']['leftValue']; ?>
@@ -46,10 +49,7 @@ foreach ($destinations as $destination):
 			<?php echo $destination['Destination']['rightValue']; ?>
 		</td>
 		<td>
-			<?php echo $destination['Destination']['includeInNav']; ?>
-		</td>
-		<td>
-			<?php echo $destination['Destination']['display']; ?>
+			<?php echo $html->link($destination['Tag']['tagId'], array('controller'=> 'tags', 'action'=>'view', $destination['Tag']['tagId'])); ?>
 		</td>
 		<td class="actions">
 			<?php echo $html->link(__('View', true), array('action'=>'view', $destination['Destination']['destinationId'])); ?>

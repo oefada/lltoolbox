@@ -19,8 +19,6 @@
 		<li><?php echo $html->link(__('Delete Tag', true), array('action'=>'delete', $tag['Tag']['tagId']), null, sprintf(__('Are you sure you want to delete # %s?', true), $tag['Tag']['tagId'])); ?> </li>
 		<li><?php echo $html->link(__('List Tags', true), array('action'=>'index')); ?> </li>
 		<li><?php echo $html->link(__('New Tag', true), array('action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Destinations', true), array('controller'=> 'destinations', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Destination', true), array('controller'=> 'destinations', 'action'=>'add')); ?> </li>
 		<li><?php echo $html->link(__('List Countries', true), array('controller'=> 'countries', 'action'=>'index')); ?> </li>
 		<li><?php echo $html->link(__('New Country', true), array('controller'=> 'countries', 'action'=>'add')); ?> </li>
 		<li><?php echo $html->link(__('List States', true), array('controller'=> 'states', 'action'=>'index')); ?> </li>
@@ -32,54 +30,6 @@
 		<li><?php echo $html->link(__('List Clients', true), array('controller'=> 'clients', 'action'=>'index')); ?> </li>
 		<li><?php echo $html->link(__('New Client', true), array('controller'=> 'clients', 'action'=>'add')); ?> </li>
 	</ul>
-</div>
-<div class="related">
-	<h3><?php __('Related Destinations');?></h3>
-	<?php if (!empty($tag['Destination'])):?>
-	<table cellpadding = "0" cellspacing = "0">
-	<tr>
-		<th><?php __('DestinationId'); ?></th>
-		<th><?php __('DestinationName'); ?></th>
-		<th><?php __('ParentId'); ?></th>
-		<th><?php __('TagId'); ?></th>
-		<th><?php __('LeftValue'); ?></th>
-		<th><?php __('RightValue'); ?></th>
-		<th><?php __('IncludeInNav'); ?></th>
-		<th><?php __('Display'); ?></th>
-		<th class="actions"><?php __('Actions');?></th>
-	</tr>
-	<?php
-		$i = 0;
-		foreach ($tag['Destination'] as $destination):
-			$class = null;
-			if ($i++ % 2 == 0) {
-				$class = ' class="altrow"';
-			}
-		?>
-		<tr<?php echo $class;?>>
-			<td><?php echo $destination['destinationId'];?></td>
-			<td><?php echo $destination['destinationName'];?></td>
-			<td><?php echo $destination['parentId'];?></td>
-			<td><?php echo $destination['tagId'];?></td>
-			<td><?php echo $destination['leftValue'];?></td>
-			<td><?php echo $destination['rightValue'];?></td>
-			<td><?php echo $destination['includeInNav'];?></td>
-			<td><?php echo $destination['display'];?></td>
-			<td class="actions">
-				<?php echo $html->link(__('View', true), array('controller'=> 'destinations', 'action'=>'view', $destination['destinationId'])); ?>
-				<?php echo $html->link(__('Edit', true), array('controller'=> 'destinations', 'action'=>'edit', $destination['destinationId'])); ?>
-				<?php echo $html->link(__('Delete', true), array('controller'=> 'destinations', 'action'=>'delete', $destination['destinationId']), null, sprintf(__('Are you sure you want to delete # %s?', true), $destination['destinationId'])); ?>
-			</td>
-		</tr>
-	<?php endforeach; ?>
-	</table>
-<?php endif; ?>
-
-	<div class="actions">
-		<ul>
-			<li><?php echo $html->link(__('New Destination', true), array('controller'=> 'destinations', 'action'=>'add'));?> </li>
-		</ul>
-	</div>
 </div>
 <div class="related">
 	<h3><?php __('Related Countries');?></h3>
@@ -266,22 +216,17 @@
 		<th><?php __('Url'); ?></th>
 		<th><?php __('Email1'); ?></th>
 		<th><?php __('Email2'); ?></th>
-		<th><?php __('Phone1'); ?></th>
-		<th><?php __('Phone2'); ?></th>
+		<th><?php __('WorkPhone'); ?></th>
+		<th><?php __('OtherPhone'); ?></th>
 		<th><?php __('ClientTypeId'); ?></th>
 		<th><?php __('ClientLevelId'); ?></th>
 		<th><?php __('RegionId'); ?></th>
 		<th><?php __('ClientStatusId'); ?></th>
-		<th><?php __('ClientAcquisitionSourceId'); ?></th>
+		<th><?php __('AquisitionSourceId'); ?></th>
 		<th><?php __('CustomMapLat'); ?></th>
 		<th><?php __('CustomMapLong'); ?></th>
 		<th><?php __('CustomMapZoomMap'); ?></th>
 		<th><?php __('CustomMapZoomSat'); ?></th>
-		<th><?php __('CompanyName'); ?></th>
-		<th><?php __('Country'); ?></th>
-		<th><?php __('CheckRateUrl'); ?></th>
-		<th><?php __('NumRooms'); ?></th>
-		<th><?php __('AirportCode'); ?></th>
 		<th class="actions"><?php __('Actions');?></th>
 	</tr>
 	<?php
@@ -299,22 +244,17 @@
 			<td><?php echo $client['url'];?></td>
 			<td><?php echo $client['email1'];?></td>
 			<td><?php echo $client['email2'];?></td>
-			<td><?php echo $client['phone1'];?></td>
-			<td><?php echo $client['phone2'];?></td>
+			<td><?php echo $client['workPhone'];?></td>
+			<td><?php echo $client['otherPhone'];?></td>
 			<td><?php echo $client['clientTypeId'];?></td>
 			<td><?php echo $client['clientLevelId'];?></td>
 			<td><?php echo $client['regionId'];?></td>
 			<td><?php echo $client['clientStatusId'];?></td>
-			<td><?php echo $client['clientAcquisitionSourceId'];?></td>
+			<td><?php echo $client['aquisitionSourceId'];?></td>
 			<td><?php echo $client['customMapLat'];?></td>
 			<td><?php echo $client['customMapLong'];?></td>
 			<td><?php echo $client['customMapZoomMap'];?></td>
 			<td><?php echo $client['customMapZoomSat'];?></td>
-			<td><?php echo $client['companyName'];?></td>
-			<td><?php echo $client['country'];?></td>
-			<td><?php echo $client['checkRateUrl'];?></td>
-			<td><?php echo $client['numRooms'];?></td>
-			<td><?php echo $client['airportCode'];?></td>
 			<td class="actions">
 				<?php echo $html->link(__('View', true), array('controller'=> 'clients', 'action'=>'view', $client['clientId'])); ?>
 				<?php echo $html->link(__('Edit', true), array('controller'=> 'clients', 'action'=>'edit', $client['clientId'])); ?>

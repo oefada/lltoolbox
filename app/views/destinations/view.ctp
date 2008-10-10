@@ -6,19 +6,24 @@
 			<?php echo $destination['Destination']['destinationId']; ?>
 			&nbsp;
 		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('DestinationName'); ?></dt>
-		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $destination['Destination']['destinationName']; ?>
-			&nbsp;
-		</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('ParentId'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
 			<?php echo $destination['Destination']['parentId']; ?>
 			&nbsp;
 		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Tag'); ?></dt>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('DestinationName'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $html->link($destination['Tag']['tagName'], array('controller'=> 'tags', 'action'=>'view', $destination['Tag']['tagId'])); ?>
+			<?php echo $destination['Destination']['destinationName']; ?>
+			&nbsp;
+		</dd>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('IncludeInNav'); ?></dt>
+		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
+			<?php echo $destination['Destination']['includeInNav']; ?>
+			&nbsp;
+		</dd>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Display'); ?></dt>
+		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
+			<?php echo $destination['Destination']['display']; ?>
 			&nbsp;
 		</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('LeftValue'); ?></dt>
@@ -31,14 +36,9 @@
 			<?php echo $destination['Destination']['rightValue']; ?>
 			&nbsp;
 		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('IncludeInNav'); ?></dt>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Tag'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $destination['Destination']['includeInNav']; ?>
-			&nbsp;
-		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Display'); ?></dt>
-		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $destination['Destination']['display']; ?>
+			<?php echo $html->link($destination['Tag']['tagId'], array('controller'=> 'tags', 'action'=>'view', $destination['Tag']['tagId'])); ?>
 			&nbsp;
 		</dd>
 	</dl>

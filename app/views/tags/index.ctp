@@ -44,8 +44,6 @@ foreach ($tags as $tag):
 <div class="actions">
 	<ul>
 		<li><?php echo $html->link(__('New Tag', true), array('action'=>'add')); ?></li>
-		<li><?php echo $html->link(__('List Destinations', true), array('controller'=> 'destinations', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Destination', true), array('controller'=> 'destinations', 'action'=>'add')); ?> </li>
 		<li><?php echo $html->link(__('List Countries', true), array('controller'=> 'countries', 'action'=>'index')); ?> </li>
 		<li><?php echo $html->link(__('New Country', true), array('controller'=> 'countries', 'action'=>'add')); ?> </li>
 		<li><?php echo $html->link(__('List States', true), array('controller'=> 'states', 'action'=>'index')); ?> </li>

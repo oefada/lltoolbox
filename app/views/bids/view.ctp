@@ -11,9 +11,9 @@
 			<?php echo $html->link($bid['Offer']['offerId'], array('controller'=> 'offers', 'action'=>'view', $bid['Offer']['offerId'])); ?>
 			&nbsp;
 		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('User'); ?></dt>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('UserId'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $html->link($bid['User']['title'], array('controller'=> 'users', 'action'=>'view', $bid['User']['userId'])); ?>
+			<?php echo $bid['Bid']['userId']; ?>
 			&nbsp;
 		</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('BidDateTime'); ?></dt>
@@ -26,11 +26,6 @@
 			<?php echo $bid['Bid']['bidAmount']; ?>
 			&nbsp;
 		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('MaxBid'); ?></dt>
-		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $bid['Bid']['maxBid']; ?>
-			&nbsp;
-		</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('AutoRebid'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
 			<?php echo $bid['Bid']['autoRebid']; ?>
@@ -39,6 +34,11 @@
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('BidInactive'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
 			<?php echo $bid['Bid']['bidInactive']; ?>
+			&nbsp;
+		</dd>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('MaxBid'); ?></dt>
+		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
+			<?php echo $bid['Bid']['maxBid']; ?>
 			&nbsp;
 		</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Note'); ?></dt>
@@ -54,8 +54,6 @@
 		<li><?php echo $html->link(__('Delete Bid', true), array('action'=>'delete', $bid['Bid']['bidId']), null, sprintf(__('Are you sure you want to delete # %s?', true), $bid['Bid']['bidId'])); ?> </li>
 		<li><?php echo $html->link(__('List Bids', true), array('action'=>'index')); ?> </li>
 		<li><?php echo $html->link(__('New Bid', true), array('action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Users', true), array('controller'=> 'users', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New User', true), array('controller'=> 'users', 'action'=>'add')); ?> </li>
 		<li><?php echo $html->link(__('List Offers', true), array('controller'=> 'offers', 'action'=>'index')); ?> </li>
 		<li><?php echo $html->link(__('New Offer', true), array('controller'=> 'offers', 'action'=>'add')); ?> </li>
 	</ul>

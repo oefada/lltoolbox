@@ -13,9 +13,9 @@ echo $paginator->counter(array(
 	<th><?php echo $paginator->sort('userId');?></th>
 	<th><?php echo $paginator->sort('bidDateTime');?></th>
 	<th><?php echo $paginator->sort('bidAmount');?></th>
-	<th><?php echo $paginator->sort('maxBid');?></th>
 	<th><?php echo $paginator->sort('autoRebid');?></th>
 	<th><?php echo $paginator->sort('bidInactive');?></th>
+	<th><?php echo $paginator->sort('maxBid');?></th>
 	<th><?php echo $paginator->sort('note');?></th>
 	<th class="actions"><?php __('Actions');?></th>
 </tr>
@@ -35,7 +35,7 @@ foreach ($bids as $bid):
 			<?php echo $html->link($bid['Offer']['offerId'], array('controller'=> 'offers', 'action'=>'view', $bid['Offer']['offerId'])); ?>
 		</td>
 		<td>
-			<?php echo $html->link($bid['User']['title'], array('controller'=> 'users', 'action'=>'view', $bid['User']['userId'])); ?>
+			<?php echo $bid['Bid']['userId']; ?>
 		</td>
 		<td>
 			<?php echo $bid['Bid']['bidDateTime']; ?>
@@ -44,13 +44,13 @@ foreach ($bids as $bid):
 			<?php echo $bid['Bid']['bidAmount']; ?>
 		</td>
 		<td>
-			<?php echo $bid['Bid']['maxBid']; ?>
-		</td>
-		<td>
 			<?php echo $bid['Bid']['autoRebid']; ?>
 		</td>
 		<td>
 			<?php echo $bid['Bid']['bidInactive']; ?>
+		</td>
+		<td>
+			<?php echo $bid['Bid']['maxBid']; ?>
 		</td>
 		<td>
 			<?php echo $bid['Bid']['note']; ?>
@@ -72,8 +72,6 @@ foreach ($bids as $bid):
 <div class="actions">
 	<ul>
 		<li><?php echo $html->link(__('New Bid', true), array('action'=>'add')); ?></li>
-		<li><?php echo $html->link(__('List Users', true), array('controller'=> 'users', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New User', true), array('controller'=> 'users', 'action'=>'add')); ?> </li>
 		<li><?php echo $html->link(__('List Offers', true), array('controller'=> 'offers', 'action'=>'index')); ?> </li>
 		<li><?php echo $html->link(__('New Offer', true), array('controller'=> 'offers', 'action'=>'add')); ?> </li>
 	</ul>

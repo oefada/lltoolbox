@@ -3,13 +3,12 @@
 	<fieldset>
  		<legend><?php __('Add Destination');?></legend>
 	<?php
-		echo $form->input('destinationName');
 		echo $form->input('parentId');
-		echo $form->input('tagId');
-		echo $form->input('leftValue');
-		echo $form->input('rightValue');
+		echo $form->input('destinationName');
 		echo $form->input('includeInNav');
 		echo $form->input('display');
+		echo $form->input('leftValue');
+		echo $form->input('rightValue');
 	?>
 	</fieldset>
 <?php echo $form->end('Submit');?>

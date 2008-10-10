@@ -46,30 +46,18 @@
 			<?php echo $userPaymentSetting['UserPaymentSetting']['nameOnAccount']; ?>
 			&nbsp;
 		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Payment Type'); ?></dt>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('PaymentTypeId'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $html->link($userPaymentSetting['PaymentType']['paymentTypeName'], array('controller'=> 'payment_types', 'action'=>'view', $userPaymentSetting['PaymentType']['paymentTypeId'])); ?>
-			&nbsp;
-		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Cc Year'); ?></dt>
-		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $userPaymentSetting['UserPaymentSetting']['cc_year']; ?>
-			&nbsp;
-		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Cc Month'); ?></dt>
-		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $userPaymentSetting['UserPaymentSetting']['cc_month']; ?>
+			<?php echo $userPaymentSetting['UserPaymentSetting']['paymentTypeId']; ?>
 			&nbsp;
 		</dd>
 	</dl>
 </div>
 <div class="actions">
 	<ul>
-		<li><?php echo $html->link(__('Edit UserPaymentSetting', true), array('action'=>'edit', $userPaymentSetting['UserPaymentSetting']['userPaymentSettingId'])); ?> </li>
-		<li><?php echo $html->link(__('Delete UserPaymentSetting', true), array('action'=>'delete', $userPaymentSetting['UserPaymentSetting']['userPaymentSettingId']), null, sprintf(__('Are you sure you want to delete # %s?', true), $userPaymentSetting['UserPaymentSetting']['userPaymentSettingId'])); ?> </li>
+		<li><?php echo $html->link(__('Edit UserPaymentSetting', true), array('action'=>'edit', $userPaymentSetting['UserPaymentSetting']['id'])); ?> </li>
+		<li><?php echo $html->link(__('Delete UserPaymentSetting', true), array('action'=>'delete', $userPaymentSetting['UserPaymentSetting']['id']), null, sprintf(__('Are you sure you want to delete # %s?', true), $userPaymentSetting['UserPaymentSetting']['id'])); ?> </li>
 		<li><?php echo $html->link(__('List UserPaymentSettings', true), array('action'=>'index')); ?> </li>
 		<li><?php echo $html->link(__('New UserPaymentSetting', true), array('action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Payment Types', true), array('controller'=> 'payment_types', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Payment Type', true), array('controller'=> 'payment_types', 'action'=>'add')); ?> </li>
 	</ul>
 </div>
