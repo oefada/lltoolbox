@@ -20,6 +20,10 @@ class DestinationsController extends AppController {
 	function add() {
 		if (!empty($this->data)) {
 			$this->Destination->create();
+			$this->Destination->Tag->create();
+			if ($this->Destination->Tag->save(array('Tag' => array('tagName' => $this->data['Destination']['destinationName'])))) {
+				$this->data['Destination']['tagId'] = $this->Destination->Tag->getLastInsertID();
+			}
 			if ($this->Destination->save($this->data)) {
 				$this->Session->setFlash(__('The Destination has been saved', true));
 				$this->redirect(array('action'=>'index'));

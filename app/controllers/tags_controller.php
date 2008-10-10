@@ -1,8 +1,7 @@
 <?php
 class TagsController extends AppController {
 
-	var $name = 'Tags';
-	var $helpers = array('Html', 'Form');
+	var $name = 'Tags'; var $helpers = array('Html', 'Form', 'Ajax', 'Javascript');
 
 	function index() {
 		$this->Tag->recursive = 0;
@@ -16,7 +15,7 @@ class TagsController extends AppController {
 		}
 		$this->set('tag', $this->Tag->read(null, $id));
 	}
-
+	
 	function add() {
 		if (!empty($this->data)) {
 			$this->Tag->create();
@@ -27,12 +26,15 @@ class TagsController extends AppController {
 				$this->Session->setFlash(__('The Tag could not be saved. Please, try again.', true));
 			}
 		}
-		$countries = $this->Tag->Country->find('list');
-		$states = $this->Tag->State->find('list');
-		$cities = $this->Tag->City->find('list');
-		$coordinates = $this->Tag->Coordinate->find('list');
+		
+		$this->Tag->recursive = 0;
+		$this->Tag->Country->recursive = 0;
+		
 		$clients = $this->Tag->Client->find('list');
-		$this->set(compact('countries', 'states', 'cities', 'coordinates', 'clients'));
+		$countries = $this->Tag->Country->find('list');
+		$coordinates = $this->Tag->Coordinate->find('list');
+
+		$this->set(compact('countries', 'clients', 'coordinates'));
 	}
 
 	function edit($id = null) {
@@ -51,12 +53,28 @@ class TagsController extends AppController {
 		if (empty($this->data)) {
 			$this->data = $this->Tag->read(null, $id);
 		}
-		$countries = $this->Tag->Country->find('list');
-		$states = $this->Tag->State->find('list');
-		$cities = $this->Tag->City->find('list');
-		$coordinates = $this->Tag->Coordinate->find('list');
+		
+		$this->Tag->recursive = 0;
+		$this->Tag->Country->recursive = 0;
+		$this->Tag->State->recursive = 0;
+		$this->Tag->City->recursive = 0;
+		$this->Tag->Coordinate->recursive = 0;
+		$this->Tag->Client->recursive = 0;
+		
 		$clients = $this->Tag->Client->find('list');
-		$this->set(compact('countries','states','cities','coordinates','clients'));
+		$countries = $this->Tag->Country->find('list');
+		$coordinates = $this->Tag->Coordinate->find('list');
+
+		$this->set(compact('countries', 'clients', 'coordinates'));
+		
+		if ($this->data['State']) {
+			$states = $this->Tag->State->find('list');		
+			$this->set(compact('states'));
+		}
+		if ($this->data['City']) {
+			$cities = $this->Tag->City->find('list');
+			$this->set(compact('cities'));
+		}
 	}
 
 	function delete($id = null) {
