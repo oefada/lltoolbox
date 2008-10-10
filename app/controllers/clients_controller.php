@@ -3,7 +3,9 @@ class ClientsController extends AppController {
 
 	var $name = 'Clients';
 	var $helpers = array('Html', 'Form');
-
+	var $components = array('RequestHandler');
+	var $scaffold;
+	/*
 	function index() {
 		$this->Client->recursive = 0;
 		$this->set('clients', $this->paginate());
@@ -75,6 +77,6 @@ class ClientsController extends AppController {
 			$this->redirect(array('action'=>'index'));
 		}
 	}
-
+	*/
 }
 ?>

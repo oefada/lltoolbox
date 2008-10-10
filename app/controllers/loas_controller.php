@@ -2,7 +2,7 @@
 class LoasController extends AppController {
 
 	var $name = 'Loas';
-	var $helpers = array('Html', 'Form');
+	var $helpers = array('Html', 'Form', 'Ajax');
 
 	function index() {
 		$this->Loa->recursive = 0;
@@ -49,8 +49,8 @@ class LoasController extends AppController {
 			$this->data = $this->Loa->read(null, $id);
 		}
 		$loaCustomerApprovalStatuses = $this->Loa->LoaCustomerApprovalStatus->find('list');
-		$clients = $this->Loa->Client->find('list');
-		$this->set(compact('loaCustomerApprovalStatuses','clients'));
+
+		$this->set(compact('loaCustomerApprovalStatuses'));
 	}
 
 	function delete($id = null) {

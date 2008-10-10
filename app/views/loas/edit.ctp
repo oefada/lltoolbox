@@ -2,9 +2,19 @@
 <?php echo $form->create('Loa');?>
 	<fieldset>
  		<legend><?php __('Edit Loa');?></legend>
+		<fieldset class="collapsible">
+			<legend>Client: <?= $this->data['Client']['name'];?></legend>
+			<?php echo $ajax->link(
+				'Show Details',
+					array( 'controller' => 'clients', 'action' => 'view', $this->data['Loa']['clientId'] ),
+					array( 'update' => 'clientDetails' )
+					);
+			?>
+			<?php echo $ajax->link('Hide Details')?>
+			<div id="clientDetails"></div>
+		</fieldset>
 	<?php
 		echo $form->input('loaId');
-		echo $form->input('clientId');
 		echo $form->input('numEmailInclusions');
 		echo $form->input('loaValue');
 		echo $form->input('remainingBalance');
