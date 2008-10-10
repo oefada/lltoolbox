@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: routes.php 7690 2008-10-02 04:56:53Z nate $ */
+/* SVN FILE: $Id: routes.php 7296 2008-06-27 09:09:03Z gwoo $ */
 /**
  * Short description for file.
  *
@@ -23,19 +23,42 @@
  * @package			cake
  * @subpackage		cake.app.config
  * @since			CakePHP(tm) v 0.2.9
- * @version			$Revision: 7690 $
- * @modifiedby		$LastChangedBy: nate $
- * @lastmodified	$Date: 2008-10-02 00:56:53 -0400 (Thu, 02 Oct 2008) $
+ * @version			$Revision: 7296 $
+ * @modifiedby		$LastChangedBy: gwoo $
+ * @lastmodified	$Date: 2008-06-27 02:09:03 -0700 (Fri, 27 Jun 2008) $
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 /**
  * Here, we are connecting '/' (base path) to controller called 'Pages',
  * its action called 'display', and we pass a param to select the view file
- * to use (in this case, /app/views/pages/home.ctp)...
+ * to use (in this case, /app/views/pages/home.thtml)...
  */
 	Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
+	
+	
 /**
  * ...and connect the rest of 'Pages' controller's urls.
  */
 	Router::connect('/pages/*', array('controller' => 'pages', 'action' => 'display'));
+/**
+ * Then we connect url '/test' to our test controller. This is helpful in
+ * developement.
+ */
+	Router::connect('/tests', array('controller' => 'tests', 'action' => 'index'));
+	
+// ROUTES ADDED 09-09-08 for adding loa item to loa
+	Router::connect('/loas/:loaId/loaItems/:action', array('controller' => 'LoaItems', 'action' => 'view'), array('loaId' => "[0-9]+"));
+	
+// ROUTES ADDED 09-16-08 for adding validity to package
+	Router::connect('/packages/:packageId/packageValidityPeriods/:action', array('controller' => 'PackageValidityPeriods', 'action' => 'view'), array('packageId' => "[0-9]+"));
+	
+// ROUTES ADDED 09-17-08 for adding loa item to package
+	Router::connect('/packages/:packageId/packageLoaItemRels/:action', array('controller' => 'PackageLoaItemRels', 'action' => 'view'), array('packageId' => "[0-9]+"));
+
+// ROUTES ADDED 09-18-08 for adding rate period to loa item	
+	Router::connect('/loaItems/:loaItemId/loaItemRatePeriods/:action', array('controller' => 'LoaItemRatePeriods', 'action' => 'view'), array('loaItemId' => "[0-9]+"));
+	
+// ROUTES ADDED 09-24-08 for adding package promo to package
+	Router::connect('/packages/:packageId/packagePromos/:action', array('controller' => 'PackagePromos', 'action' => 'view'), array('packageId' => "[0-9]+"));
+	
 ?>
