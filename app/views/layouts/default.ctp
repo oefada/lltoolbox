@@ -36,10 +36,11 @@
 		echo $html->meta('icon');
 
 		echo $html->css('cake.generic');
+		echo $html->css('main');
 		
 		if(isset($javascript)):
 			echo $javascript->link('prototype');
-			echo $javascript->link('scriptaculous/scriptaclous');
+			echo $javascript->link('scriptaculous/scriptaculous');
 		endif;
 
 		echo $scripts_for_layout;
