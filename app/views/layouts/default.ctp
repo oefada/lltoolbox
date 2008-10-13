@@ -1,30 +1,15 @@
 <?php
 /* SVN FILE: $Id: default.ctp 9 2008-10-10 05:08:45Z vgarcia $ */
 /**
- *
- * PHP versions 4 and 5
- *
- * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2008, Cake Software Foundation, Inc.
- *								1785 E. Sahara Avenue, Suite 490-204
- *								Las Vegas, Nevada 89104
- *
- * Licensed under The MIT License
- * Redistributions of files must retain the above copyright notice.
+ * Three column layout.
  *
  * @filesource
- * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
- * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
- * @package			cake
- * @subpackage		cake.cake.libs.view.templates.layouts
- * @since			CakePHP(tm) v 0.10.0.1076
  * @version			$Revision: 9 $
  * @modifiedby		$LastChangedBy: vgarcia $
  * @lastmodified	$Date: 2008-10-09 22:08:45 -0700 (Thu, 09 Oct 2008) $
- * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<?php echo $html->charset(); ?>
@@ -45,28 +30,92 @@
 
 		echo $scripts_for_layout;
 	?>
+	<script type="text/javascript"><?php /* Needed to avoid Flash of Unstyled Content in IE */ ?> </script>
 </head>
 <body>
-	<div id="container">
-		<div id="header">
-			<h1><?php echo $html->link(__('CakePHP: the rapid development php framework', true), 'http://cakephp.org'); ?></h1>
-		</div>
-		<div id="content">
 
-			<?php $session->flash(); ?>
+  <div id="page"><div id="page-inner">
 
-			<?php echo $content_for_layout; ?>
+    <a name="top" id="navigation-top"></a>
+      <div id="skip-to-nav"><a href="#navigation"><?php print __('Skip to Navigation'); ?></a></div>
+    <div id="header"><div id="header-inner" class="clear-block">
 
-		</div>
-		<div id="footer">
-			<?php echo $html->link(
-					$html->image('cake.power.gif', array('alt'=> __("CakePHP: the rapid development php framework", true), 'border'=>"0")),
-					'http://www.cakephp.org/',
-					array('target'=>'_blank'), null, false
-				);
-			?>
-		</div>
-	</div>
-	<?php echo $cakeDebug; ?>
+        <div id="logo-title">
+
+            <div id="logo"><a href="" title="" rel="home"><img src="" alt="" id="logo-image" /></a></div>
+
+            <?php if (true): ?>
+              <h1 id="site-name">
+                <a href="" title="" rel="home">
+					Site Manager
+                </a>
+              </h1>
+            <?php else: ?>
+              <div id="site-name"><strong>
+                <a href="" title="" rel="home">
+                	Site Manager
+                </a>
+              </strong></div>
+            <?php endif; ?>
+
+            <div id="site-slogan">Slogan</div>
+
+        </div> <!-- /#logo-title -->
+    </div></div> <!-- /#header-inner, /#header -->
+
+    <div id="main"><div id="main-inner" class="clear-block with-navbar sidebar-right">
+
+      <div id="content"><div id="content-inner">
+          <div id="content-header">
+
+            
+
+              <h1 class="title"><?php echo $this->pageTitle; ?></h1>
+			<?php if($html->getCrumbs()): ?>
+			<div id="breadcrumbs"><?= $html->getCrumbs("<span> &raquo; </span>", "Dashboard"); ?></div>
+			<?php endif; ?>
+            <?php $session->flash(); ?>
+          </div> <!-- /#content-header -->
+
+        <div id="content-area" style="padding: 10px">
+          <?php print $content_for_layout; ?>
+        </div>
+      </div></div> <!-- /#content-inner, /#content -->
+
+        <div id="navbar"><div id="navbar-inner" class="region region-navbar">
+
+          <a name="navigation" id="navigation"></a>
+
+            <div id="primary">
+              	<ul id="tabnav">
+					<li><a href="#" class="active">gonzo</a></li>
+					<li><a href="#">fozzie</a></li>
+					<li><a href="#">statler</a></li>
+					<li><a href="#">waldorf</a></li>
+				</ul>
+			
+            </div> <!-- /#primary -->
+
+          
+
+        </div></div> <!-- /#navbar-inner, /#navbar -->
+
+        <div id="sidebar-right"><div id="sidebar-right-inner" class="region region-right">
+          <?php echo $this->renderElement('search'); ?>
+        </div></div> <!-- /#sidebar-right-inner, /#sidebar-right -->
+
+    </div></div> <!-- /#main-inner, /#main -->
+
+      <div id="footer"><div id="footer-inner" class="region region-footer">
+
+          <div id="footer-message">Footer Msg</div>
+
+        Footer
+
+      </div></div> <!-- /#footer-inner, /#footer -->
+
+  </div></div> <!-- /#page-inner, /#page -->
+	
+<?php echo $cakeDebug; ?>
 </body>
 </html>
