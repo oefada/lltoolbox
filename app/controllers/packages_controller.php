@@ -40,7 +40,7 @@ class PackagesController extends AppController {
 		$packageDates = array();
 		$packageDates[] = $packageStartDate = substr($packageData['Package']['startDate'], 0, 10);
 		$packageDates[] = $packageEndDate = substr($packageData['Package']['endDate'], 0, 10);
-				
+								
 		// going through every loa item rate period, populate $packageDates array with overall carved dates
 		foreach ($data as $k => $v) {
 			foreach ($v['LoaItemRatePeriod'] as $a => $b) {
@@ -51,6 +51,7 @@ class PackagesController extends AppController {
 					$packageDates[] = $b['endDate'];
 				}
 				$b['packageLoaItemRelId'] = $v['PackageLoaItemRel']['packageLoaItemRelId'];
+				$b['itemBasePrice'] = $v['LoaItem']['itemBasePrice'];
 				$itemRatePeriods[] = $b;
 			}
 			$packageLoaItemRel[$v['PackageLoaItemRel']['packageLoaItemRelId']] = $v['PackageLoaItemRel'];
@@ -79,6 +80,8 @@ class PackagesController extends AppController {
 						$ratePeriodItemPrice = 0;	
 					}
 					$packageLoaItemRelId[$v['packageLoaItemRelId']] = $ratePeriodItemPrice * $packageLoaItemRel[$v['packageLoaItemRelId']]['quantity'];
+				} else {
+					$packageLoaItemRelId[$v['packageLoaItemRelId']] = $v['itemBasePrice'] * $packageLoaItemRel[$v['packageLoaItemRelId']]['quantity'];
 				}
 			}
 
