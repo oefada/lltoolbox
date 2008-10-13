@@ -14,14 +14,24 @@
 	font-size: 90%;
 }
 
-#content-header h1.title {
+#content-header div.title-header {
+	position: relative;
 	padding: 10px;
 	border-bottom: 1px solid #ccc;
-	background: #e5e5e5;
-	font-size: 125%;
-	color: red;
+	background: #f1f1f1;
 }
 
+#content-header div.title-header h1 {
+	font-size: 125%;
+	color: red;
+	background: #f1f1f1;
+}
+
+#content-header div.title-header div.buttons {
+	position: absolute;
+	top: 0;
+	right: 10px;
+}
 div#breadcrumbs {
 	overflow:hidden;
 	margin:0;
@@ -118,3 +128,159 @@ h2 {
 	{
 		background: #fff;
 	}
+
+
+	/* Buttons */
+
+		a.button {
+			display: block;
+			float: left;
+			margin: .5em 0;
+			padding: 0;
+			font: 11px "Lucida Grande", "Trebuchet MS", Verdana, sans-serif !important;
+			color: #445;
+			text-decoration: none!important;
+			text-shadow: #FFF 1px 1px 0;
+			background: url(../img/btn-l.gif) 0 0 no-repeat;
+			height: 26px;
+			overflow: hidden;
+			cursor: pointer;
+		}
+		* html a.button { display: inline; }
+		a.button:hover {
+			color: #223;
+			text-decoration: none;
+			background-position: 0 -26px;
+		}
+		a.button:active {
+			color: #000;
+			text-decoration: none;
+			background-position: 0 -52px;
+		}
+			a.button span {
+				float: left;
+				margin-left: 12px;
+				padding: 6px 12px 6px 0;
+				font-size: 100%;
+				background: url(../img/btn-r.gif) 100% 0 no-repeat;
+				height: 26px;
+			}
+			a.button:hover span {
+				background-position: 100% -26px;
+			}
+			a.button:active span {
+				background-position: 100% -52px;
+			}
+
+			a.button span b.icon {
+				position: relative;
+				float: left;
+				margin: 0 3px 0 -4px;
+				width: 16px;
+				height: 16px;
+				background-position: 0 0;
+				background-repeat: no-repeat;
+			}
+
+			/* IE6 fix */
+			* html a.button span { padding-top: 5px; }
+			* html a.button span b.icon { margin-top: 1px; }
+
+			/* Icons set */
+			.manage-team b.icon {
+				margin-left: 0!important;
+				background-image: url(../img/i-user.gif);
+			}
+			.repo-create b.icon,
+			.add b.icon {
+				background-image: url(../img/i-create.gif);
+			}
+			.del b.icon {
+				background-image: url(../img/edit_remove.png);
+			}
+			.edit b.icon {
+				background-image: url(../img/edit.png);
+			}
+			.but-go b.icon {
+				background-image: url(../img/i-arrow.gif);
+			}
+			
+			.btn-upgrade,
+			.btn-downgrade {
+				width: 100px;
+			}
+			.btn-upgrade b.icon,
+			.btn-downgrade b.icon {
+				width: 10px!important;
+				height: 12px!important;
+				margin-right: 0!important;
+			}
+			.btn-upgrade b.icon {
+				background-image: url(../img/i-uarr.gif);
+			}
+			.btn-downgrade b.icon {
+				background-image: url(../img/i-darr.gif);
+			}
+
+			.sidebar .button-alt {
+				margin-top: .7em;
+				font-size: 85%;
+			}
+
+/* Sidebar */
+#sidebar-right {
+	background: #e5e5e5;
+	padding-bottom: 20px;
+	color: #333;
+}
+
+
+/* Pagination */
+.pagination {
+    padding: 1em;
+    margin: 1em 0;
+    clear: left;
+    font-size: 85%;
+}
+
+.pagination a, .pagination span {
+    display: block;
+    float: left;
+    padding: 0.2em 0.5em;
+    margin-right: 0.1em;
+    border: 1px solid #fff;
+    background: #fff;
+}
+
+.pagination span.current {
+    border: 1px solid #2E6AB1;
+    font-weight: bold;
+    background: #2E6AB1;
+    color: #fff;
+}
+
+.pagination a {
+    border: 1px solid #9AAFE5;
+    text-decoration: none;
+}
+
+.pagination a:hover {
+    border-color: #2E6AB1;
+}
+
+.pagination a.nextprev {
+    font-weight: bold;
+}
+
+.pagination span.nextprev {
+    color: #666;
+}
+
+.pagination span.nextprev {
+    border: 1px solid #ddd;
+    color: #999;
+}
+
+.pagination .nextprev-next {
+    float: right;
+}

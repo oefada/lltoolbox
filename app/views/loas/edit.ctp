@@ -1,3 +1,15 @@
+<?php
+$this->pageTitle = 'Edit Client Loa';
+$html->addCrumb('Clients', '/clients');
+$html->addCrumb($text->truncate($this->data['Client']['name'], 15), '/clients/view/'.$this->data['Client']['clientId']);
+$html->addCrumb('LOA\'s', '/clients/'.$this->data['Client']['clientId'].'/loas');
+$html->addCrumb('LOA #'.$this->data['Loa']['loaId'], '/loas/view/'.$this->data['Loa']['loaId']);
+$html->addCrumb('Edit');
+?>
+<?=$layout->blockStart('header');?>
+<?= $html->link('<span><b class="icon"></b>Delete LOA</span>', array('action'=>'delete', $form->value('Loa.loaId')), array('class' => 'button del'), sprintf(__('Are you sure you want to delete # %s?', true), $form->value('Loa.loaId')), false); ?>
+<?=$layout->blockEnd();?>
+
 <div class="loas form">
 <?php echo $form->create('Loa');?>
 	<fieldset>
@@ -34,18 +46,4 @@
 	?>
 	</fieldset>
 <?php echo $form->end('Submit');?>
-</div>
-<div class="actions">
-	<ul>
-		<li><?php echo $html->link(__('Delete', true), array('action'=>'delete', $form->value('Loa.loaId')), null, sprintf(__('Are you sure you want to delete # %s?', true), $form->value('Loa.loaId'))); ?></li>
-		<li><?php echo $html->link(__('List Loas', true), array('action'=>'index'));?></li>
-		<li><?php echo $html->link(__('List Loa Customer Approval Statuses', true), array('controller'=> 'loa_customer_approval_statuses', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Loa Customer Approval Status', true), array('controller'=> 'loa_customer_approval_statuses', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Clients', true), array('controller'=> 'clients', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Client', true), array('controller'=> 'clients', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Loa Items', true), array('controller'=> 'loa_items', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Loa Item', true), array('controller'=> 'loa_items', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Client Loa Package Rels', true), array('controller'=> 'client_loa_package_rels', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Client Loa Package Rel', true), array('controller'=> 'client_loa_package_rels', 'action'=>'add')); ?> </li>
-	</ul>
 </div>

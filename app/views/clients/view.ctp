@@ -1,5 +1,16 @@
+<?php
+$this->pageTitle = 'Clients';
+$html->addCrumb('Clients', '/clients');
+$html->addCrumb($client['Client']['name']);
+?>
+<?=$layout->blockStart('header');?>
+	<a href="/clients/edit/<?=$client['Client']['clientId']?>" title="Edit Client" class="button edit"><span><b class="icon"></b>Edit Client</span></a>
+<?=$layout->blockEnd();?>
+<?=$layout->blockStart('sidebar');?>
+<?= $html->link('View Loas','/clients/'.$client['Client']['clientId'].'/loas'); ?>
+<?=$layout->blockEnd();?>
 <div class="clients view">
-<h2><?php  __('Client');?></h2>
+<h2><?php  echo $client['Client']['name']; ?></h2>
 	<dl><?php $i = 0; $class = ' class="altrow"';?>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('ClientId'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
@@ -24,11 +35,6 @@
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Email1'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
 			<?php echo $client['Client']['email1']; ?>
-			&nbsp;
-		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Email2'); ?></dt>
-		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $client['Client']['email2']; ?>
 			&nbsp;
 		</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Phone1'); ?></dt>
@@ -151,22 +157,13 @@
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
 		<th><?php __('LoaId'); ?></th>
-		<th><?php __('ClientId'); ?></th>
-		<th><?php __('NumEmailInclusions'); ?></th>
-		<th><?php __('LoaValue'); ?></th>
-		<th><?php __('RemainingBalance'); ?></th>
-		<th><?php __('RemitStatus'); ?></th>
-		<th><?php __('RemitPercentage'); ?></th>
-		<th><?php __('RemitAmount'); ?></th>
-		<th><?php __('CustomerApprovalStatusId'); ?></th>
-		<th><?php __('CustomerApprovalDate'); ?></th>
-		<th><?php __('NumCommissionFreePackages'); ?></th>
-		<th><?php __('UseFlatCommission'); ?></th>
-		<th><?php __('FlatCommissionPercentage'); ?></th>
-		<th><?php __('UseKeepRemitLogic'); ?></th>
+		<th><?php __('Approval Status'); ?></th>
+		<th><?php __('Loa Value'); ?></th>
+		<th><?php __('Remaining Balance'); ?></th>
+		<th><?php __('Remit Status'); ?></th>
 		<th><?php __('Upgraded'); ?></th>
-		<th><?php __('LoaNumberPackages'); ?></th>
-		<th><?php __('RemainingPackagesToSell'); ?></th>
+		<th><?php __('Number Packages'); ?></th>
+		<th><?php __('Remaining Packages'); ?></th>
 		<th><?php __('CashPaid'); ?></th>
 		<th class="actions"><?php __('Actions');?></th>
 	</tr>
@@ -180,27 +177,16 @@
 		?>
 		<tr<?php echo $class;?>>
 			<td><?php echo $loa['loaId'];?></td>
-			<td><?php echo $loa['clientId'];?></td>
-			<td><?php echo $loa['numEmailInclusions'];?></td>
+			<td><?php echo $loa['customerApprovalStatusId'];?></td>
 			<td><?php echo $loa['loaValue'];?></td>
 			<td><?php echo $loa['remainingBalance'];?></td>
 			<td><?php echo $loa['remitStatus'];?></td>
-			<td><?php echo $loa['remitPercentage'];?></td>
-			<td><?php echo $loa['remitAmount'];?></td>
-			<td><?php echo $loa['customerApprovalStatusId'];?></td>
-			<td><?php echo $loa['customerApprovalDate'];?></td>
-			<td><?php echo $loa['numCommissionFreePackages'];?></td>
-			<td><?php echo $loa['useFlatCommission'];?></td>
-			<td><?php echo $loa['flatCommissionPercentage'];?></td>
-			<td><?php echo $loa['useKeepRemitLogic'];?></td>
 			<td><?php echo $loa['upgraded'];?></td>
 			<td><?php echo $loa['loaNumberPackages'];?></td>
 			<td><?php echo $loa['remainingPackagesToSell'];?></td>
 			<td><?php echo $loa['cashPaid'];?></td>
 			<td class="actions">
-				<?php echo $html->link(__('View', true), array('controller'=> 'loas', 'action'=>'view', $loa['loaId'])); ?>
-				<?php echo $html->link(__('Edit', true), array('controller'=> 'loas', 'action'=>'edit', $loa['loaId'])); ?>
-				<?php echo $html->link(__('Delete', true), array('controller'=> 'loas', 'action'=>'delete', $loa['loaId']), null, sprintf(__('Are you sure you want to delete # %s?', true), $loa['loaId'])); ?>
+				<?php echo $html->link(__('View Details', true), array('controller'=> 'loas', 'action'=>'view', $loa['loaId'])); ?>
 			</td>
 		</tr>
 	<?php endforeach; ?>

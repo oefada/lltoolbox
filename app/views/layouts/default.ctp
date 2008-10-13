@@ -67,10 +67,10 @@
 
       <div id="content"><div id="content-inner">
           <div id="content-header">
-
-            
-
+			<div class="title-header">
               <h1 class="title"><?php echo $this->pageTitle; ?></h1>
+				<div class="buttons"><? $layout->output($header_for_layout);?> </div>
+			</div>
 			<?php if($html->getCrumbs()): ?>
 			<div id="breadcrumbs"><?= $html->getCrumbs("<span> &raquo; </span>", "Dashboard"); ?></div>
 			<?php endif; ?>
@@ -88,10 +88,10 @@
 
             <div id="primary">
               	<ul id="tabnav">
-					<li><a href="#" class="active">gonzo</a></li>
-					<li><a href="#">fozzie</a></li>
-					<li><a href="#">statler</a></li>
-					<li><a href="#">waldorf</a></li>
+					<li><a href="#" class="active">clients</a></li>
+					<li><a href="#">packages</a></li>
+					<li><a href="#">anotherone</a></li>
+					<li><a href="#">4</a></li>
 				</ul>
 			
             </div> <!-- /#primary -->
@@ -101,6 +101,7 @@
         </div></div> <!-- /#navbar-inner, /#navbar -->
 
         <div id="sidebar-right"><div id="sidebar-right-inner" class="region region-right">
+			<? $layout->output($sidebar_for_layout);?> 
           <?php echo $this->renderElement('search'); ?>
         </div></div> <!-- /#sidebar-right-inner, /#sidebar-right -->
 

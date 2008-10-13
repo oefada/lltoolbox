@@ -1,5 +1,15 @@
+<?php
+$this->pageTitle = 'Client LOAs';
+$html->addCrumb('Clients', '/clients');
+$html->addCrumb($text->truncate($loa['Client']['name'], 15), '/clients/view/'.$loa['Client']['clientId']);
+$html->addCrumb("LOA's", '/clients/'.$loa['Client']['clientId'].'/loas');
+$html->addCrumb('LOA #'.$loa['Loa']['loaId']);
+?>
+<?=$layout->blockStart('header');?>
+	<a href="/loas/edit/<?=$loa['Loa']['loaId']?>" title="Edit Loa" class="button edit"><span><b class="icon"></b>Edit Loa</span></a>
+<?=$layout->blockEnd();?>
+
 <div class="loas view">
-<h2><?php  __('Loa');?></h2>
 	<dl><?php $i = 0; $class = ' class="altrow"';?>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('LoaId'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>

@@ -1,9 +1,16 @@
+<?php
+$this->pageTitle = 'Client LOAs';
+$html->addCrumb('Clients', '/clients');
+$html->addCrumb($clientName, '/clients/view/'.$this->data['Loa']['clientId']);
+$html->addCrumb("LOA's", '/clients/'.$this->data['Loa']['clientId'].'/loas');
+$html->addCrumb('New Loa');
+?>
 <div class="loas form">
 <?php echo $form->create('Loa');?>
 	<fieldset>
- 		<legend><?php __('Add Loa');?></legend>
+ 		<legend><?php __('New Loa');?> for <?=$clientName?></legend>
 	<?php
-		echo $form->input('clientId');
+		echo $form->input('clientId', array('type' => 'hidden'));
 		echo $form->input('numEmailInclusions');
 		echo $form->input('loaValue');
 		echo $form->input('remainingBalance');
@@ -26,14 +33,7 @@
 </div>
 <div class="actions">
 	<ul>
-		<li><?php echo $html->link(__('List Loas', true), array('action'=>'index'));?></li>
-		<li><?php echo $html->link(__('List Loa Customer Approval Statuses', true), array('controller'=> 'loa_customer_approval_statuses', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Loa Customer Approval Status', true), array('controller'=> 'loa_customer_approval_statuses', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Clients', true), array('controller'=> 'clients', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Client', true), array('controller'=> 'clients', 'action'=>'add')); ?> </li>
 		<li><?php echo $html->link(__('List Loa Items', true), array('controller'=> 'loa_items', 'action'=>'index')); ?> </li>
 		<li><?php echo $html->link(__('New Loa Item', true), array('controller'=> 'loa_items', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Client Loa Package Rels', true), array('controller'=> 'client_loa_package_rels', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Client Loa Package Rel', true), array('controller'=> 'client_loa_package_rels', 'action'=>'add')); ?> </li>
 	</ul>
 </div>

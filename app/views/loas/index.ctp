@@ -1,5 +1,16 @@
+<?php
+$this->pageTitle = 'Client LOAs';
+$html->addCrumb('Clients', '/clients');
+$html->addCrumb($text->truncate($loas[0]['Client']['name'], 15), '/clients/view/'.$loas[0]['Client']['clientId']);
+$html->addCrumb("LOA's");
+?>
+
+<?=$layout->blockStart('header');?>
+    <a href="/clients/<?=$loas[0]['Client']['clientId']?>/loas/add" title="Add New Loa" class="button add"><span><b class="icon"></b>Add New Loa</span></a>
+<?=$layout->blockEnd();?>
+
 <div class="loas index">
-<h2><?php __('Loas');?></h2>
+<h2>Viewing LOAs for <?=$loas[0]['Client']['name']?></h2>
 <p>
 <?php
 echo $paginator->counter(array(
@@ -8,24 +19,14 @@ echo $paginator->counter(array(
 ?></p>
 <table cellpadding="0" cellspacing="0">
 <tr>
-	<th><?php echo $paginator->sort('loaId');?></th>
-	<th><?php echo $paginator->sort('clientId');?></th>
-	<th><?php echo $paginator->sort('numEmailInclusions');?></th>
-	<th><?php echo $paginator->sort('loaValue');?></th>
-	<th><?php echo $paginator->sort('remainingBalance');?></th>
-	<th><?php echo $paginator->sort('remitStatus');?></th>
-	<th><?php echo $paginator->sort('remitPercentage');?></th>
-	<th><?php echo $paginator->sort('remitAmount');?></th>
-	<th><?php echo $paginator->sort('customerApprovalStatusId');?></th>
-	<th><?php echo $paginator->sort('customerApprovalDate');?></th>
-	<th><?php echo $paginator->sort('numCommissionFreePackages');?></th>
-	<th><?php echo $paginator->sort('useFlatCommission');?></th>
-	<th><?php echo $paginator->sort('flatCommissionPercentage');?></th>
-	<th><?php echo $paginator->sort('useKeepRemitLogic');?></th>
+	<th><?php echo $paginator->sort('Approval Status', 'customerApprovalStatusId');?></th>
+	<th><?php echo $paginator->sort('Value', 'loaValue');?></th>
+	<th><?php echo $paginator->sort('Remaining Balance', 'remainingBalance');?></th>
+	<th><?php echo $paginator->sort('Remit Status', 'remitStatus');?></th>
 	<th><?php echo $paginator->sort('upgraded');?></th>
-	<th><?php echo $paginator->sort('loaNumberPackages');?></th>
-	<th><?php echo $paginator->sort('remainingPackagesToSell');?></th>
-	<th><?php echo $paginator->sort('cashPaid');?></th>
+	<th><?php echo $paginator->sort('# Packages', 'loaNumberPackages');?></th>
+	<th><?php echo $paginator->sort('Remaining Packages', 'remainingPackagesToSell');?></th>
+	<th><?php echo $paginator->sort('Cash Paid', 'cashPaid');?></th>
 	<th class="actions"><?php __('Actions');?></th>
 </tr>
 <?php
@@ -37,64 +38,16 @@ foreach ($loas as $loa):
 	}
 ?>
 	<tr<?php echo $class;?>>
-		<td>
-			<?php echo $loa['Loa']['loaId']; ?>
-		</td>
-		<td>
-			<?php echo $html->link($loa['Client']['name'], array('controller'=> 'clients', 'action'=>'view', $loa['Client']['clientId'])); ?>
-		</td>
-		<td>
-			<?php echo $loa['Loa']['numEmailInclusions']; ?>
-		</td>
-		<td>
-			<?php echo $loa['Loa']['loaValue']; ?>
-		</td>
-		<td>
-			<?php echo $loa['Loa']['remainingBalance']; ?>
-		</td>
-		<td>
-			<?php echo $loa['Loa']['remitStatus']; ?>
-		</td>
-		<td>
-			<?php echo $loa['Loa']['remitPercentage']; ?>
-		</td>
-		<td>
-			<?php echo $loa['Loa']['remitAmount']; ?>
-		</td>
-		<td>
-			<?php echo $html->link($loa['LoaCustomerApprovalStatus']['customerApprovalStatusName'], array('controller'=> 'loa_customer_approval_statuses', 'action'=>'view', $loa['LoaCustomerApprovalStatus']['customerApprovalStatusId'])); ?>
-		</td>
-		<td>
-			<?php echo $loa['Loa']['customerApprovalDate']; ?>
-		</td>
-		<td>
-			<?php echo $loa['Loa']['numCommissionFreePackages']; ?>
-		</td>
-		<td>
-			<?php echo $loa['Loa']['useFlatCommission']; ?>
-		</td>
-		<td>
-			<?php echo $loa['Loa']['flatCommissionPercentage']; ?>
-		</td>
-		<td>
-			<?php echo $loa['Loa']['useKeepRemitLogic']; ?>
-		</td>
-		<td>
-			<?php echo $loa['Loa']['upgraded']; ?>
-		</td>
-		<td>
-			<?php echo $loa['Loa']['loaNumberPackages']; ?>
-		</td>
-		<td>
-			<?php echo $loa['Loa']['remainingPackagesToSell']; ?>
-		</td>
-		<td>
-			<?php echo $loa['Loa']['cashPaid']; ?>
-		</td>
+		<td><?php echo $loa['Loa']['customerApprovalStatusId'];?></td>
+		<td><?php echo $loa['Loa']['loaValue'];?></td>
+		<td><?php echo $loa['Loa']['remainingBalance'];?></td>
+		<td><?php echo $loa['Loa']['remitStatus'];?></td>
+		<td><?php echo $loa['Loa']['upgraded'];?></td>
+		<td><?php echo $loa['Loa']['loaNumberPackages'];?></td>
+		<td><?php echo $loa['Loa']['remainingPackagesToSell'];?></td>
+		<td><?php echo $loa['Loa']['cashPaid'];?></td>
 		<td class="actions">
-			<?php echo $html->link(__('View', true), array('action'=>'view', $loa['Loa']['loaId'])); ?>
-			<?php echo $html->link(__('Edit', true), array('action'=>'edit', $loa['Loa']['loaId'])); ?>
-			<?php echo $html->link(__('Delete', true), array('action'=>'delete', $loa['Loa']['loaId']), null, sprintf(__('Are you sure you want to delete # %s?', true), $loa['Loa']['loaId'])); ?>
+			<?php echo $html->link(__('View Details', true), array('controller'=> 'loas', 'action'=>'view', $loa['Loa']['loaId'])); ?>
 		</td>
 	</tr>
 <?php endforeach; ?>

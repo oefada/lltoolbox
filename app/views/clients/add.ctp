@@ -1,3 +1,9 @@
+<?php
+$this->pageTitle = 'Add Client';
+$html->addCrumb('Clients', '/clients');
+$html->addCrumb('Add');
+?>
+
 <div class="clients form">
 <?php echo $form->create('Client');?>
 	<fieldset>
