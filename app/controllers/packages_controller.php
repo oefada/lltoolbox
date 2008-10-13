@@ -71,18 +71,21 @@ class PackagesController extends AppController {
 			$rangeEnd = strtotime($packageDates[($i + 1)]) - $one_day;
 			
 			foreach ($itemRatePeriods as $v) {
-				if (($rangeStart >= strtotime($v['startDate'])) && ($rangeEnd <= strtotime($v['endDate']))) {
+				$ratePeriodItemPrice = (($rangeStart >= strtotime($v['startDate'])) && ($rangeEnd <= strtotime($v['endDate']))) ? $v['approvedRetailPrice'] : $v['itemBasePrice'];
+				/*if (($rangeStart >= strtotime($v['startDate'])) && ($rangeEnd <= strtotime($v['endDate']))) {
 					$ratePeriodItemPrice = $v['approvedRetailPrice'];
-					if ($packageLoaItemRel[$v['packageLoaItemRelId']]['priceOverride']) {
-						$ratePeriodItemPrice = $packageLoaItemRel[$v['packageLoaItemRelId']]['priceOverride'];
-					}
-					if ($packageLoaItemRel[$v['packageLoaItemRelId']]['noCharge']) {
-						$ratePeriodItemPrice = 0;	
-					}
 					$packageLoaItemRelId[$v['packageLoaItemRelId']] = $ratePeriodItemPrice * $packageLoaItemRel[$v['packageLoaItemRelId']]['quantity'];
 				} else {
 					$packageLoaItemRelId[$v['packageLoaItemRelId']] = $v['itemBasePrice'] * $packageLoaItemRel[$v['packageLoaItemRelId']]['quantity'];
+				}*/
+				
+				if ($packageLoaItemRel[$v['packageLoaItemRelId']]['priceOverride']) {
+					$ratePeriodItemPrice = $packageLoaItemRel[$v['packageLoaItemRelId']]['priceOverride'];
 				}
+				if ($packageLoaItemRel[$v['packageLoaItemRelId']]['noCharge']) {
+					$ratePeriodItemPrice = 0;	
+				}
+				$packageLoaItemRelId[$v['packageLoaItemRelId']] = $ratePeriodItemPrice * $packageLoaItemRel[$v['packageLoaItemRelId']]['quantity'];
 			}
 
 			$insertSql = "INSERT INTO packageRatePeriod SET packageRatePeriodName = 'PACKAGE RATE PERIOD', ";
