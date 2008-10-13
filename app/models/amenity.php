@@ -7,14 +7,6 @@ class Amenity extends AppModel {
 	var $displayField = 'amenityName';
 
 	var $belongsTo = array('AmenityType' => array('foreignKey' => 'amenityTypeId'));
-    
-	var $hasAndBelongsToMany = array(
-								'Client' =>
-	                               array('className'    => 'Client',
-	                                     'joinTable'    => 'clientAmenityRel',
-	                                     'foreignKey'   => 'amenityId',
-	                                     'associationForeignKey'=> 'clientId'
-	                               )
-								);
+
 }
 ?>
