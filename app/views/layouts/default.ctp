@@ -69,7 +69,9 @@
           <div id="content-header">
 			<div class="title-header">
               <h1 class="title"><?php echo $this->pageTitle; ?></h1>
+			<?php if (isset($layout)): ?>
 				<div class="buttons"><? $layout->output($header_for_layout);?> </div>
+			<?php endif ?>
 			</div>
 			<?php if($html->getCrumbs()): ?>
 			<div id="breadcrumbs"><?= $html->getCrumbs("<span> &raquo; </span>", "Dashboard"); ?></div>
@@ -101,7 +103,10 @@
         </div></div> <!-- /#navbar-inner, /#navbar -->
 
         <div id="sidebar-right"><div id="sidebar-right-inner" class="region region-right">
+		<?php if (isset($layout)): ?>
 			<? $layout->output($sidebar_for_layout);?> 
+		<?php endif ?>
+		
           <?php echo $this->renderElement('search'); ?>
         </div></div> <!-- /#sidebar-right-inner, /#sidebar-right -->
 
