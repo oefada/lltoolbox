@@ -200,7 +200,7 @@
 	echo '<tr>';
 	echo '<th>Range</th>';
 	foreach ($packageRatePeriods as $k => $v) {
-		echo '<th>' . $v['PackageRatePeriod']['startDate'] . '<span style="margin-left:15px;margin-right:15px;">to</span>' . $v['PackageRatePeriod']['endDate'] . '</th>';
+		echo '<th>' . $v['PackageRatePeriod']['startDate'] . '<span style="margin-left:15px;margin-right:15px;">to</span>' . $v['PackageRatePeriod']['endDate'] . "</th>\n";
 	}
 	echo '</tr>';
 	?>	
