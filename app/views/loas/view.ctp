@@ -123,7 +123,7 @@
 		<th class="actions"><?php __('Actions');?></th>
 	</tr>
 	<?php
-		$i = 0;
+		$i = 0;		
 		foreach ($loa['LoaItem'] as $loaItem):
 			$class = null;
 			if ($i++ % 2 == 0) {
@@ -149,7 +149,7 @@
 
 	<div class="actions">
 		<ul>
-			<li><?php echo $html->link(__('New Loa Item', true), array('controller'=> 'loa_items', 'action'=>'add'));?> </li>
+			<li><a href="/loas/<?php echo $loa['Loa']['loaId'];?>/loaItems/add">Add New LOA Item</a></li>
 		</ul>
 	</div>
 </div>
