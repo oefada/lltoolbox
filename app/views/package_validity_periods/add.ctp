@@ -1,5 +1,5 @@
 <div class="packageValidityPeriods form">
-<?php echo $form->create('PackageValidityPeriod');?>
+<?php echo $form->create(null, array('url' => array('controller' => 'packages/' . $this->data['PackageValidityPeriod']['packageId'], 'action' => 'packageValidityPeriods/add'))); ?>
 	<fieldset>
  		<legend><?php __('Add PackageValidityPeriod');?></legend>
 	<?php

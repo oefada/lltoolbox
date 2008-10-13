@@ -22,21 +22,21 @@ echo $paginator->counter(array(
 	<th><?php echo $paginator->sort('paymentSettleDate');?></th>
 	<th><?php echo $paginator->sort('billingPrice');?></th>
 	<th><?php echo $paginator->sort('bookingPrice');?></th>
-	<th><?php echo $paginator->sort('customerId');?></th>
-	<th><?php echo $paginator->sort('customerFirstName');?></th>
-	<th><?php echo $paginator->sort('customerLastName');?></th>
-	<th><?php echo $paginator->sort('customerEmail1');?></th>
-	<th><?php echo $paginator->sort('customerWorkPhone');?></th>
-	<th><?php echo $paginator->sort('customerHomePhone');?></th>
-	<th><?php echo $paginator->sort('customerMobilePhone');?></th>
-	<th><?php echo $paginator->sort('customerFax');?></th>
-	<th><?php echo $paginator->sort('customerAddress1');?></th>
-	<th><?php echo $paginator->sort('customerAddress2');?></th>
-	<th><?php echo $paginator->sort('customerAddress3');?></th>
-	<th><?php echo $paginator->sort('customerCity');?></th>
-	<th><?php echo $paginator->sort('customerState');?></th>
-	<th><?php echo $paginator->sort('customerCountry');?></th>
-	<th><?php echo $paginator->sort('customerZip');?></th>
+	<th><?php echo $paginator->sort('userId');?></th>
+	<th><?php echo $paginator->sort('userFirstName');?></th>
+	<th><?php echo $paginator->sort('userLastName');?></th>
+	<th><?php echo $paginator->sort('userEmail1');?></th>
+	<th><?php echo $paginator->sort('userWorkPhone');?></th>
+	<th><?php echo $paginator->sort('userHomePhone');?></th>
+	<th><?php echo $paginator->sort('userMobilePhone');?></th>
+	<th><?php echo $paginator->sort('userFax');?></th>
+	<th><?php echo $paginator->sort('userAddress1');?></th>
+	<th><?php echo $paginator->sort('userAddress2');?></th>
+	<th><?php echo $paginator->sort('userAddress3');?></th>
+	<th><?php echo $paginator->sort('userCity');?></th>
+	<th><?php echo $paginator->sort('userState');?></th>
+	<th><?php echo $paginator->sort('userCountry');?></th>
+	<th><?php echo $paginator->sort('userZip');?></th>
 	<th><?php echo $paginator->sort('completedUserId');?></th>
 	<th><?php echo $paginator->sort('completedDate');?></th>
 	<th class="actions"><?php __('Actions');?></th>
@@ -93,49 +93,49 @@ foreach ($worksheets as $worksheet):
 			<?php echo $worksheet['Worksheet']['bookingPrice']; ?>
 		</td>
 		<td>
-			<?php echo $worksheet['Worksheet']['customerId']; ?>
+			<?php echo $worksheet['Worksheet']['userId']; ?>
 		</td>
 		<td>
-			<?php echo $worksheet['Worksheet']['customerFirstName']; ?>
+			<?php echo $worksheet['Worksheet']['userFirstName']; ?>
 		</td>
 		<td>
-			<?php echo $worksheet['Worksheet']['customerLastName']; ?>
+			<?php echo $worksheet['Worksheet']['userLastName']; ?>
 		</td>
 		<td>
-			<?php echo $worksheet['Worksheet']['customerEmail1']; ?>
+			<?php echo $worksheet['Worksheet']['userEmail1']; ?>
 		</td>
 		<td>
-			<?php echo $worksheet['Worksheet']['customerWorkPhone']; ?>
+			<?php echo $worksheet['Worksheet']['userWorkPhone']; ?>
 		</td>
 		<td>
-			<?php echo $worksheet['Worksheet']['customerHomePhone']; ?>
+			<?php echo $worksheet['Worksheet']['userHomePhone']; ?>
 		</td>
 		<td>
-			<?php echo $worksheet['Worksheet']['customerMobilePhone']; ?>
+			<?php echo $worksheet['Worksheet']['userMobilePhone']; ?>
 		</td>
 		<td>
-			<?php echo $worksheet['Worksheet']['customerFax']; ?>
+			<?php echo $worksheet['Worksheet']['userFax']; ?>
 		</td>
 		<td>
-			<?php echo $worksheet['Worksheet']['customerAddress1']; ?>
+			<?php echo $worksheet['Worksheet']['userAddress1']; ?>
 		</td>
 		<td>
-			<?php echo $worksheet['Worksheet']['customerAddress2']; ?>
+			<?php echo $worksheet['Worksheet']['userAddress2']; ?>
 		</td>
 		<td>
-			<?php echo $worksheet['Worksheet']['customerAddress3']; ?>
+			<?php echo $worksheet['Worksheet']['userAddress3']; ?>
 		</td>
 		<td>
-			<?php echo $worksheet['Worksheet']['customerCity']; ?>
+			<?php echo $worksheet['Worksheet']['userCity']; ?>
 		</td>
 		<td>
-			<?php echo $worksheet['Worksheet']['customerState']; ?>
+			<?php echo $worksheet['Worksheet']['userState']; ?>
 		</td>
 		<td>
-			<?php echo $worksheet['Worksheet']['customerCountry']; ?>
+			<?php echo $worksheet['Worksheet']['userCountry']; ?>
 		</td>
 		<td>
-			<?php echo $worksheet['Worksheet']['customerZip']; ?>
+			<?php echo $worksheet['Worksheet']['userZip']; ?>
 		</td>
 		<td>
 			<?php echo $worksheet['Worksheet']['completedUserId']; ?>

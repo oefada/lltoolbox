@@ -28,8 +28,6 @@ class WorksheetsController extends AppController {
 			}
 		}
 		
-		//$worksheetStatuses = $this->Worksheet->WorksheetStatus->find('list');
-		//$this->set(compact('worksheetStatuses'));
 		$this->set('worksheetStatusIds', $this->Worksheet->WorksheetStatus->find('list'));
 		
 	}
@@ -50,9 +48,6 @@ class WorksheetsController extends AppController {
 		if (empty($this->data)) {
 			$this->data = $this->Worksheet->read(null, $id);
 		}
-		
-		//$worksheetStatuses = $this->Worksheet->WorksheetStatus->find('list');
-		//$this->set(compact('worksheetStatuses'));
 		
 		$this->set('worksheetStatusIds', $this->Worksheet->WorksheetStatus->find('list'));
 	}

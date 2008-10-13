@@ -71,79 +71,79 @@
 			<?php echo $worksheet['Worksheet']['bookingPrice']; ?>
 			&nbsp;
 		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('CustomerId'); ?></dt>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('UserId'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $worksheet['Worksheet']['customerId']; ?>
+			<?php echo $worksheet['Worksheet']['userId']; ?>
 			&nbsp;
 		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('CustomerFirstName'); ?></dt>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('UserFirstName'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $worksheet['Worksheet']['customerFirstName']; ?>
+			<?php echo $worksheet['Worksheet']['userFirstName']; ?>
 			&nbsp;
 		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('CustomerLastName'); ?></dt>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('UserLastName'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $worksheet['Worksheet']['customerLastName']; ?>
+			<?php echo $worksheet['Worksheet']['userLastName']; ?>
 			&nbsp;
 		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('CustomerEmail1'); ?></dt>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('UserEmail1'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $worksheet['Worksheet']['customerEmail1']; ?>
+			<?php echo $worksheet['Worksheet']['userEmail1']; ?>
 			&nbsp;
 		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('CustomerWorkPhone'); ?></dt>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('UserWorkPhone'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $worksheet['Worksheet']['customerWorkPhone']; ?>
+			<?php echo $worksheet['Worksheet']['userWorkPhone']; ?>
 			&nbsp;
 		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('CustomerHomePhone'); ?></dt>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('UserHomePhone'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $worksheet['Worksheet']['customerHomePhone']; ?>
+			<?php echo $worksheet['Worksheet']['userHomePhone']; ?>
 			&nbsp;
 		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('CustomerMobilePhone'); ?></dt>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('UserMobilePhone'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $worksheet['Worksheet']['customerMobilePhone']; ?>
+			<?php echo $worksheet['Worksheet']['userMobilePhone']; ?>
 			&nbsp;
 		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('CustomerFax'); ?></dt>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('UserFax'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $worksheet['Worksheet']['customerFax']; ?>
+			<?php echo $worksheet['Worksheet']['userFax']; ?>
 			&nbsp;
 		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('CustomerAddress1'); ?></dt>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('UserAddress1'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $worksheet['Worksheet']['customerAddress1']; ?>
+			<?php echo $worksheet['Worksheet']['userAddress1']; ?>
 			&nbsp;
 		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('CustomerAddress2'); ?></dt>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('UserAddress2'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $worksheet['Worksheet']['customerAddress2']; ?>
+			<?php echo $worksheet['Worksheet']['userAddress2']; ?>
 			&nbsp;
 		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('CustomerAddress3'); ?></dt>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('UserAddress3'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $worksheet['Worksheet']['customerAddress3']; ?>
+			<?php echo $worksheet['Worksheet']['userAddress3']; ?>
 			&nbsp;
 		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('CustomerCity'); ?></dt>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('UserCity'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $worksheet['Worksheet']['customerCity']; ?>
+			<?php echo $worksheet['Worksheet']['userCity']; ?>
 			&nbsp;
 		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('CustomerState'); ?></dt>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('UserState'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $worksheet['Worksheet']['customerState']; ?>
+			<?php echo $worksheet['Worksheet']['userState']; ?>
 			&nbsp;
 		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('CustomerCountry'); ?></dt>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('UserCountry'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $worksheet['Worksheet']['customerCountry']; ?>
+			<?php echo $worksheet['Worksheet']['userCountry']; ?>
 			&nbsp;
 		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('CustomerZip'); ?></dt>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('UserZip'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $worksheet['Worksheet']['customerZip']; ?>
+			<?php echo $worksheet['Worksheet']['userZip']; ?>
 			&nbsp;
 		</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('CompletedUserId'); ?></dt>
@@ -186,9 +186,9 @@
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
 	<?php echo $worksheet['WorksheetCancellation']['worksheetCancellationId'];?>
 &nbsp;</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('CancellationReasonId');?></dt>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('CancelReasonId');?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-	<?php echo $worksheet['WorksheetCancellation']['cancellationReasonId'];?>
+	<?php echo $worksheet['WorksheetCancellation']['cancelReasonId'];?>
 &nbsp;</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('WorksheetId');?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
@@ -386,7 +386,7 @@
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
 		<th><?php __('PpvNoticeId'); ?></th>
-		<th><?php __('PpvNoticeTypeId'); ?></th>
+		<th><?php __('PpvTypeId'); ?></th>
 		<th><?php __('WorksheetId'); ?></th>
 		<th><?php __('To'); ?></th>
 		<th><?php __('From'); ?></th>
@@ -406,7 +406,7 @@
 		?>
 		<tr<?php echo $class;?>>
 			<td><?php echo $ppvNotice['ppvNoticeId'];?></td>
-			<td><?php echo $ppvNotice['ppvNoticeTypeId'];?></td>
+			<td><?php echo $ppvNotice['ppvTypeId'];?></td>
 			<td><?php echo $ppvNotice['worksheetId'];?></td>
 			<td><?php echo $ppvNotice['to'];?></td>
 			<td><?php echo $ppvNotice['from'];?></td>
