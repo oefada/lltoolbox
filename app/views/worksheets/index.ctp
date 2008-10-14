@@ -10,35 +10,9 @@ echo $paginator->counter(array(
 <tr>
 	<th><?php echo $paginator->sort('worksheetId');?></th>
 	<th><?php echo $paginator->sort('worksheetStatusId');?></th>
-	<th><?php echo $paginator->sort('parentWorksheetId');?></th>
-	<th><?php echo $paginator->sort('packageId');?></th>
-	<th><?php echo $paginator->sort('offerId');?></th>
-	<th><?php echo $paginator->sort('requestId');?></th>
-	<th><?php echo $paginator->sort('bidId');?></th>
-	<th><?php echo $paginator->sort('requestInfo');?></th>
-	<th><?php echo $paginator->sort('notes');?></th>
-	<th><?php echo $paginator->sort('isFlake');?></th>
-	<th><?php echo $paginator->sort('paymentAuthDate');?></th>
-	<th><?php echo $paginator->sort('paymentSettleDate');?></th>
-	<th><?php echo $paginator->sort('billingPrice');?></th>
-	<th><?php echo $paginator->sort('bookingPrice');?></th>
-	<th><?php echo $paginator->sort('userId');?></th>
+	<th><?php echo $paginator->sort('PackageName');?></th>
 	<th><?php echo $paginator->sort('userFirstName');?></th>
 	<th><?php echo $paginator->sort('userLastName');?></th>
-	<th><?php echo $paginator->sort('userEmail1');?></th>
-	<th><?php echo $paginator->sort('userWorkPhone');?></th>
-	<th><?php echo $paginator->sort('userHomePhone');?></th>
-	<th><?php echo $paginator->sort('userMobilePhone');?></th>
-	<th><?php echo $paginator->sort('userFax');?></th>
-	<th><?php echo $paginator->sort('userAddress1');?></th>
-	<th><?php echo $paginator->sort('userAddress2');?></th>
-	<th><?php echo $paginator->sort('userAddress3');?></th>
-	<th><?php echo $paginator->sort('userCity');?></th>
-	<th><?php echo $paginator->sort('userState');?></th>
-	<th><?php echo $paginator->sort('userCountry');?></th>
-	<th><?php echo $paginator->sort('userZip');?></th>
-	<th><?php echo $paginator->sort('completedUserId');?></th>
-	<th><?php echo $paginator->sort('completedDate');?></th>
 	<th class="actions"><?php __('Actions');?></th>
 </tr>
 <?php
@@ -57,91 +31,13 @@ foreach ($worksheets as $worksheet):
 			<?php echo $html->link($worksheet['WorksheetStatus']['worksheetStatusName'], array('controller'=> 'worksheet_statuses', 'action'=>'view', $worksheet['WorksheetStatus']['worksheetStatusId'])); ?>
 		</td>
 		<td>
-			<?php echo $worksheet['Worksheet']['parentWorksheetId']; ?>
-		</td>
-		<td>
-			<?php echo $worksheet['Worksheet']['packageId']; ?>
-		</td>
-		<td>
-			<?php echo $worksheet['Worksheet']['offerId']; ?>
-		</td>
-		<td>
-			<?php echo $worksheet['Worksheet']['requestId']; ?>
-		</td>
-		<td>
-			<?php echo $worksheet['Worksheet']['bidId']; ?>
-		</td>
-		<td>
-			<?php echo $worksheet['Worksheet']['requestInfo']; ?>
-		</td>
-		<td>
-			<?php echo $worksheet['Worksheet']['notes']; ?>
-		</td>
-		<td>
-			<?php echo $worksheet['Worksheet']['isFlake']; ?>
-		</td>
-		<td>
-			<?php echo $worksheet['Worksheet']['paymentAuthDate']; ?>
-		</td>
-		<td>
-			<?php echo $worksheet['Worksheet']['paymentSettleDate']; ?>
-		</td>
-		<td>
-			<?php echo $worksheet['Worksheet']['billingPrice']; ?>
-		</td>
-		<td>
-			<?php echo $worksheet['Worksheet']['bookingPrice']; ?>
-		</td>
-		<td>
-			<?php echo $worksheet['Worksheet']['userId']; ?>
+			<?php echo $worksheet['Package']['packageName']; ?>
 		</td>
 		<td>
 			<?php echo $worksheet['Worksheet']['userFirstName']; ?>
 		</td>
 		<td>
 			<?php echo $worksheet['Worksheet']['userLastName']; ?>
-		</td>
-		<td>
-			<?php echo $worksheet['Worksheet']['userEmail1']; ?>
-		</td>
-		<td>
-			<?php echo $worksheet['Worksheet']['userWorkPhone']; ?>
-		</td>
-		<td>
-			<?php echo $worksheet['Worksheet']['userHomePhone']; ?>
-		</td>
-		<td>
-			<?php echo $worksheet['Worksheet']['userMobilePhone']; ?>
-		</td>
-		<td>
-			<?php echo $worksheet['Worksheet']['userFax']; ?>
-		</td>
-		<td>
-			<?php echo $worksheet['Worksheet']['userAddress1']; ?>
-		</td>
-		<td>
-			<?php echo $worksheet['Worksheet']['userAddress2']; ?>
-		</td>
-		<td>
-			<?php echo $worksheet['Worksheet']['userAddress3']; ?>
-		</td>
-		<td>
-			<?php echo $worksheet['Worksheet']['userCity']; ?>
-		</td>
-		<td>
-			<?php echo $worksheet['Worksheet']['userState']; ?>
-		</td>
-		<td>
-			<?php echo $worksheet['Worksheet']['userCountry']; ?>
-		</td>
-		<td>
-			<?php echo $worksheet['Worksheet']['userZip']; ?>
-		</td>
-		<td>
-			<?php echo $worksheet['Worksheet']['completedUserId']; ?>
-		</td>
-		<td>
-			<?php echo $worksheet['Worksheet']['completedDate']; ?>
 		</td>
 		<td class="actions">
 			<?php echo $html->link(__('View', true), array('action'=>'view', $worksheet['Worksheet']['worksheetId'])); ?>

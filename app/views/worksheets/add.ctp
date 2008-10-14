@@ -33,6 +33,9 @@
 		echo $form->input('userZip');
 		echo $form->input('completedUserId');
 		echo $form->input('completedDate');
+		echo $form->input('keepAmount');
+		echo $form->input('remitAmount');
+		echo $form->input('comissionAmount');
 	?>
 	</fieldset>
 <?php echo $form->end('Submit');?>
@@ -42,6 +45,10 @@
 		<li><?php echo $html->link(__('List Worksheets', true), array('action'=>'index'));?></li>
 		<li><?php echo $html->link(__('List Worksheet Statuses', true), array('controller'=> 'worksheet_statuses', 'action'=>'index')); ?> </li>
 		<li><?php echo $html->link(__('New Worksheet Status', true), array('controller'=> 'worksheet_statuses', 'action'=>'add')); ?> </li>
+		<li><?php echo $html->link(__('List Packages', true), array('controller'=> 'packages', 'action'=>'index')); ?> </li>
+		<li><?php echo $html->link(__('New Package', true), array('controller'=> 'packages', 'action'=>'add')); ?> </li>
+		<li><?php echo $html->link(__('List Offers', true), array('controller'=> 'offers', 'action'=>'index')); ?> </li>
+		<li><?php echo $html->link(__('New Offer', true), array('controller'=> 'offers', 'action'=>'add')); ?> </li>
 		<li><?php echo $html->link(__('List Worksheet Cancellations', true), array('controller'=> 'worksheet_cancellations', 'action'=>'index')); ?> </li>
 		<li><?php echo $html->link(__('New Worksheet Cancellation', true), array('controller'=> 'worksheet_cancellations', 'action'=>'add')); ?> </li>
 		<li><?php echo $html->link(__('List Worksheet Refunds', true), array('controller'=> 'worksheet_refunds', 'action'=>'index')); ?> </li>

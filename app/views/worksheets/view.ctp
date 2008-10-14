@@ -16,14 +16,14 @@
 			<?php echo $worksheet['Worksheet']['parentWorksheetId']; ?>
 			&nbsp;
 		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('PackageId'); ?></dt>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Package'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $worksheet['Worksheet']['packageId']; ?>
+			<?php echo $html->link($worksheet['Package']['packageId'], array('controller'=> 'packages', 'action'=>'view', $worksheet['Package']['packageId'])); ?>
 			&nbsp;
 		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('OfferId'); ?></dt>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Offer'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $worksheet['Worksheet']['offerId']; ?>
+			<?php echo $html->link($worksheet['Offer']['offerId'], array('controller'=> 'offers', 'action'=>'view', $worksheet['Offer']['offerId'])); ?>
 			&nbsp;
 		</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('RequestId'); ?></dt>
@@ -156,6 +156,21 @@
 			<?php echo $worksheet['Worksheet']['completedDate']; ?>
 			&nbsp;
 		</dd>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('KeepAmount'); ?></dt>
+		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
+			<?php echo $worksheet['Worksheet']['keepAmount']; ?>
+			&nbsp;
+		</dd>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('RemitAmount'); ?></dt>
+		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
+			<?php echo $worksheet['Worksheet']['remitAmount']; ?>
+			&nbsp;
+		</dd>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('ComissionAmount'); ?></dt>
+		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
+			<?php echo $worksheet['Worksheet']['comissionAmount']; ?>
+			&nbsp;
+		</dd>
 	</dl>
 </div>
 <div class="actions">
@@ -166,6 +181,10 @@
 		<li><?php echo $html->link(__('New Worksheet', true), array('action'=>'add')); ?> </li>
 		<li><?php echo $html->link(__('List Worksheet Statuses', true), array('controller'=> 'worksheet_statuses', 'action'=>'index')); ?> </li>
 		<li><?php echo $html->link(__('New Worksheet Status', true), array('controller'=> 'worksheet_statuses', 'action'=>'add')); ?> </li>
+		<li><?php echo $html->link(__('List Packages', true), array('controller'=> 'packages', 'action'=>'index')); ?> </li>
+		<li><?php echo $html->link(__('New Package', true), array('controller'=> 'packages', 'action'=>'add')); ?> </li>
+		<li><?php echo $html->link(__('List Offers', true), array('controller'=> 'offers', 'action'=>'index')); ?> </li>
+		<li><?php echo $html->link(__('New Offer', true), array('controller'=> 'offers', 'action'=>'add')); ?> </li>
 		<li><?php echo $html->link(__('List Worksheet Cancellations', true), array('controller'=> 'worksheet_cancellations', 'action'=>'index')); ?> </li>
 		<li><?php echo $html->link(__('New Worksheet Cancellation', true), array('controller'=> 'worksheet_cancellations', 'action'=>'add')); ?> </li>
 		<li><?php echo $html->link(__('List Worksheet Refunds', true), array('controller'=> 'worksheet_refunds', 'action'=>'index')); ?> </li>
@@ -316,24 +335,8 @@
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
 		<th><?php __('PaymentDetailId'); ?></th>
-		<th><?php __('WorksheetId'); ?></th>
-		<th><?php __('WorksheetTypeId'); ?></th>
-		<th><?php __('CreditCardNum'); ?></th>
-		<th><?php __('ExpirationDate'); ?></th>
-		<th><?php __('Cvv2Value'); ?></th>
 		<th><?php __('CreditCardName'); ?></th>
-		<th><?php __('BillingAddress1'); ?></th>
-		<th><?php __('BillingCity'); ?></th>
-		<th><?php __('BillingState'); ?></th>
-		<th><?php __('BillingZip'); ?></th>
-		<th><?php __('BillingCountry'); ?></th>
-		<th><?php __('BillingAmount'); ?></th>
-		<th><?php __('ApplyToLOA'); ?></th>
-		<th><?php __('ApplyLoaAuthUserId'); ?></th>
-		<th><?php __('SettlementId'); ?></th>
-		<th><?php __('PaymentTypeId'); ?></th>
 		<th><?php __('PaymentDate'); ?></th>
-		<th><?php __('WholeRefundId'); ?></th>
 		<th class="actions"><?php __('Actions');?></th>
 	</tr>
 	<?php
@@ -346,28 +349,10 @@
 		?>
 		<tr<?php echo $class;?>>
 			<td><?php echo $paymentDetail['paymentDetailId'];?></td>
-			<td><?php echo $paymentDetail['worksheetId'];?></td>
-			<td><?php echo $paymentDetail['worksheetTypeId'];?></td>
-			<td><?php echo $paymentDetail['creditCardNum'];?></td>
-			<td><?php echo $paymentDetail['expirationDate'];?></td>
-			<td><?php echo $paymentDetail['cvv2Value'];?></td>
 			<td><?php echo $paymentDetail['creditCardName'];?></td>
-			<td><?php echo $paymentDetail['billingAddress1'];?></td>
-			<td><?php echo $paymentDetail['billingCity'];?></td>
-			<td><?php echo $paymentDetail['billingState'];?></td>
-			<td><?php echo $paymentDetail['billingZip'];?></td>
-			<td><?php echo $paymentDetail['billingCountry'];?></td>
-			<td><?php echo $paymentDetail['billingAmount'];?></td>
-			<td><?php echo $paymentDetail['applyToLOA'];?></td>
-			<td><?php echo $paymentDetail['applyLoaAuthUserId'];?></td>
-			<td><?php echo $paymentDetail['settlementId'];?></td>
-			<td><?php echo $paymentDetail['paymentTypeId'];?></td>
 			<td><?php echo $paymentDetail['paymentDate'];?></td>
-			<td><?php echo $paymentDetail['wholeRefundId'];?></td>
 			<td class="actions">
 				<?php echo $html->link(__('View', true), array('controller'=> 'payment_details', 'action'=>'view', $paymentDetail['paymentDetailId'])); ?>
-				<?php echo $html->link(__('Edit', true), array('controller'=> 'payment_details', 'action'=>'edit', $paymentDetail['paymentDetailId'])); ?>
-				<?php echo $html->link(__('Delete', true), array('controller'=> 'payment_details', 'action'=>'delete', $paymentDetail['paymentDetailId']), null, sprintf(__('Are you sure you want to delete # %s?', true), $paymentDetail['paymentDetailId'])); ?>
 			</td>
 		</tr>
 	<?php endforeach; ?>
