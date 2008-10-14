@@ -2,7 +2,8 @@
 class LoaItemsController extends AppController {
 
 	var $name = 'LoaItems';
-	var $helpers = array('Html', 'Form');
+	var $helpers = array('Html', 'Form', 'Ajax');
+	var $components = array('RequestHandler');
 
 	function index() {
 		$this->LoaItem->recursive = 0;
@@ -25,7 +26,12 @@ class LoaItemsController extends AppController {
 			$this->LoaItem->create();
 			if ($this->LoaItem->saveAll($this->data)) {
 				$this->Session->setFlash(__('The LoaItem has been saved', true));
-				$this->redirect(array('controller' => 'loas', 'action'=>'view', 'id' => $this->params['data']['LoaItem']['loaId']));
+				if ($this->RequestHandler->isAjax()) {
+					$this->set('closeModalbox', true);
+					$this->Session->setFlash(__('The LoaItem has been saved', true));
+				} else {
+					$this->redirect(array('controller' => 'loas', 'action'=>'view', 'id' => $this->params['data']['LoaItem']['loaId']));
+				}
 			} else {
 				$this->Session->setFlash(__('The LoaItem could not be saved. Please, try again.', true));
 			}
@@ -84,6 +90,12 @@ class LoaItemsController extends AppController {
 			$this->redirect(array('action'=>'index'));
 		}
 	}
-
+	
+	function beforeFilter() {
+		if($this->RequestHandler->isAjax()) {
+			$this->layout = 'ajax';
+			Configure::write('debug', '0');
+		}
+	}
 }
 ?>
