@@ -1,6 +1,7 @@
 /* $Id$ */
 
 @import url("layout-fixed.css");
+@import url("modalbox.css");
 
 .italicize {
 	font-style: italic;
