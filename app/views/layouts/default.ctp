@@ -124,9 +124,12 @@
 
         <div id="sidebar-right"><div id="sidebar-right-inner" class="region region-right">
 		<?php if (isset($layout)): ?>
-			<? $layout->output($sidebar_for_layout);?> 
+			<div class='page-toolbar'>
+			<? $layout->output($sidebar_for_layout);?>
+			</div>
 		<?php endif ?>
-		
+		<div style="clear: both;"></div>
+		<h5>Search</h5>
           <?php echo $this->renderElement('search'); ?>
         </div></div> <!-- /#sidebar-right-inner, /#sidebar-right -->
 

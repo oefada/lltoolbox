@@ -69,7 +69,7 @@ div#breadcrumbs span {
 }
 
 h2 {
-	margin: 0;
+	margin: 0 0 10px 0;
 	padding: 0;
 }
 .inlineForms {
@@ -227,10 +227,71 @@ h2 {
 				margin-top: .7em;
 				font-size: 85%;
 			}
+			/* Toolbar button modifications */
+					.page-toolbar {
+						padding: 10px 0;
+					}
+						.page-heading a,
+						.page-toolbar a {
+							margin: 5px;
+							color: #000 !important;
+							background-color: #FFF;
+						}
+						.page-heading .button,
+						.page-toolbar .button {
+							background-image: url(../img/btn-toolbar-l.gif);
+							clear: both;
+						}
+							.page-heading .button span,
+							.page-toolbar .button span {
+								background-image: url(../img/btn-toolbar-r.gif);
+								width: 120px;
+							}
+
+						.page-heading a.button:active,
+						.page-toolbar a.button:active {
+							text-shadow: #EEE 1px 1px 0;
+						}
+							.page-heading a.button:active span,
+							.page-toolbar a.button:active span {
+								padding: 7px 11px 5px 1px;
+							}
+
+						.page-heading .disabled,
+						.page-toolbar .disabled {
+							color: #999 !important;
+							text-shadow: #EEE 1px 1px 0 !important;
+							background-position: 0 -78px !important;
+							cursor: default !important;
+						}
+							.page-heading .disabled span,
+							.page-toolbar .disabled span {
+								background-position: 100% -78px !important;
+							}
+
+						.page-toolbar .label {
+							float: left;
+							padding: 9px 0 5px 7px;
+							font-size: 85%;
+						}
+						.page-toolbar select {
+							float: left;
+							margin: 8px 4px 0;
+							border-color: #99A;
+						}
+						.page-toolbar .separator {
+							float: left;
+							height: 30px;
+							margin: 3px 7px;
+							border-left: 1px solid #9C9;
+							border-right: 1px solid #FFF;
+							text-indent: -10000px;
+						}
+
 
 /* Sidebar */
 #sidebar-right {
-	background: #e5e5e5;
+	background: #fff;
 	padding-bottom: 20px;
 	color: #333;
 }
