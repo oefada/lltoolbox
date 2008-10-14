@@ -110,10 +110,10 @@
 
             <div id="primary">
               	<ul id="tabnav">
-					<li><a href="#" class="active">clients</a></li>
-					<li><a href="#">packages</a></li>
-					<li><a href="#">anotherone</a></li>
-					<li><a href="#">4</a></li>
+					<li><a href="#" class="active">Clients</a></li>
+					<li><a href="#">Products</a></li>
+					<li><a href="#">Offers</a></li>
+					<li><a href="#">Promo</a></li>
 				</ul>
 			
             </div> <!-- /#primary -->

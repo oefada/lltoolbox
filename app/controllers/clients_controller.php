@@ -4,7 +4,7 @@ uses ('sanitize');
 class ClientsController extends AppController {
 
 	var $name = 'Clients';
-	var $helpers = array('Html', 'Form', 'Text', 'Pagination', 'Layout');
+	var $helpers = array('Html', 'Form', 'Text', 'Pagination', 'Layout', 'Ajax');
 	var $components = array('RequestHandler');
 	var $Sanitize;
 	

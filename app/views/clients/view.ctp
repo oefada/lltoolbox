@@ -119,40 +119,9 @@ $html->addCrumb($client['Client']['name']);
 		</dd>
 	</dl>
 </div>
-<div class="actions">
-	<ul>
-		<li><?php echo $html->link(__('Edit Client', true), array('action'=>'edit', $client['Client']['clientId'])); ?> </li>
-		<li><?php echo $html->link(__('Delete Client', true), array('action'=>'delete', $client['Client']['clientId']), null, sprintf(__('Are you sure you want to delete # %s?', true), $client['Client']['clientId'])); ?> </li>
-		<li><?php echo $html->link(__('List Clients', true), array('action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Client', true), array('action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Client Levels', true), array('controller'=> 'client_levels', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Client Level', true), array('controller'=> 'client_levels', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Client Statuses', true), array('controller'=> 'client_statuses', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Client Status', true), array('controller'=> 'client_statuses', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Client Types', true), array('controller'=> 'client_types', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Client Type', true), array('controller'=> 'client_types', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Regions', true), array('controller'=> 'regions', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Region', true), array('controller'=> 'regions', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Client Acquisition Sources', true), array('controller'=> 'client_acquisition_sources', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Client Acquisition Source', true), array('controller'=> 'client_acquisition_sources', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Loas', true), array('controller'=> 'loas', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Loa', true), array('controller'=> 'loas', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Addresses', true), array('controller'=> 'addresses', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Address', true), array('controller'=> 'addresses', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Client Theme Rels', true), array('controller'=> 'client_theme_rels', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Client Theme Rel', true), array('controller'=> 'client_theme_rels', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Accolades', true), array('controller'=> 'accolades', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Accolade', true), array('controller'=> 'accolades', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Tags', true), array('controller'=> 'tags', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Tag', true), array('controller'=> 'tags', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Users', true), array('controller'=> 'users', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New User', true), array('controller'=> 'users', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Amenities', true), array('controller'=> 'amenities', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Amenity', true), array('controller'=> 'amenities', 'action'=>'add')); ?> </li>
-	</ul>
-</div>
+
 <div class="related">
-	<h3><?php __('Related Loas');?></h3>
+	<h3><?php __('Related LOAs');?></h3>
 	<?php if (!empty($client['Loa'])):?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
@@ -202,30 +171,6 @@ $html->addCrumb($client['Client']['name']);
 <div class="related">
 	<h3><?php __('Related Addresses');?></h3>
 	<?php if (!empty($client['Address'])):?>
-	<table cellpadding = "0" cellspacing = "0">
-	<tr>
-		<th><?php __('AddressId'); ?></th>
-		<th><?php __('ClientId'); ?></th>
-		<th><?php __('UserId'); ?></th>
-		<th><?php __('AddressTypeId'); ?></th>
-		<th><?php __('CityId'); ?></th>
-		<th><?php __('StateId'); ?></th>
-		<th><?php __('CountryId'); ?></th>
-		<th><?php __('Address1'); ?></th>
-		<th><?php __('Address2'); ?></th>
-		<th><?php __('Address3'); ?></th>
-		<th><?php __('City'); ?></th>
-		<th><?php __('StateName'); ?></th>
-		<th><?php __('CountryName'); ?></th>
-		<th><?php __('PostalCode'); ?></th>
-		<th><?php __('DefaultAddress'); ?></th>
-		<th><?php __('Latitude'); ?></th>
-		<th><?php __('Longitude'); ?></th>
-		<th><?php __('Countrytext'); ?></th>
-		<th><?php __('StateCode'); ?></th>
-		<th><?php __('CountryCode'); ?></th>
-		<th class="actions"><?php __('Actions');?></th>
-	</tr>
 	<?php
 		$i = 0;
 		foreach ($client['Address'] as $address):
@@ -234,35 +179,30 @@ $html->addCrumb($client['Client']['name']);
 				$class = ' class="altrow"';
 			}
 		?>
-		<tr<?php echo $class;?>>
-			<td><?php echo $address['addressId'];?></td>
-			<td><?php echo $address['clientId'];?></td>
-			<td><?php echo $address['userId'];?></td>
-			<td><?php echo $address['addressTypeId'];?></td>
-			<td><?php echo $address['cityId'];?></td>
-			<td><?php echo $address['stateId'];?></td>
-			<td><?php echo $address['countryId'];?></td>
-			<td><?php echo $address['address1'];?></td>
-			<td><?php echo $address['address2'];?></td>
-			<td><?php echo $address['address3'];?></td>
-			<td><?php echo $address['city'];?></td>
-			<td><?php echo $address['stateName'];?></td>
-			<td><?php echo $address['countryName'];?></td>
-			<td><?php echo $address['postalCode'];?></td>
-			<td><?php echo $address['defaultAddress'];?></td>
-			<td><?php echo $address['latitude'];?></td>
-			<td><?php echo $address['longitude'];?></td>
-			<td><?php echo $address['countrytext'];?></td>
-			<td><?php echo $address['stateCode'];?></td>
-			<td><?php echo $address['countryCode'];?></td>
-			<td class="actions">
+		<div<?php echo $class;?>>
+			User: <?php echo $address['userId'];?><br />
+			Type: <?php echo $address['addressTypeId'];?><br />
+			City: <?php echo $address['cityId'];?><br />
+			State: <?php echo $address['stateId'];?><br />
+			Country: <?php echo $address['countryId'];?><br />
+			Address 1:<?php echo $address['address1'];?><br />
+			Address 2:<?php echo $address['address2'];?><br />
+			<?php echo $address['address3'];?><br />
+			<?php echo $address['city'];?><br />
+			<?php echo $address['stateName'];?><br />
+			<?php echo $address['countryName'];?><br />
+			<?php echo $address['postalCode'];?><br />
+			<?php echo $address['defaultAddress'];?><br />
+			<?php echo $address['latitude'];?><br />
+			<?php echo $address['longitude'];?><br />
+			<?php echo $address['countrytext'];?><br />
+			<?php echo $address['stateCode'];?><br />
+			<?php echo $address['countryCode'];?><br />
 				<?php echo $html->link(__('View', true), array('controller'=> 'addresses', 'action'=>'view', $address['addressId'])); ?>
 				<?php echo $html->link(__('Edit', true), array('controller'=> 'addresses', 'action'=>'edit', $address['addressId'])); ?>
 				<?php echo $html->link(__('Delete', true), array('controller'=> 'addresses', 'action'=>'delete', $address['addressId']), null, sprintf(__('Are you sure you want to delete # %s?', true), $address['addressId'])); ?>
-			</td>
-		</tr>
-	<?php endforeach; ?>
-	</table>
+		</div>
+		<?php endforeach; ?>
 <?php endif; ?>
 
 	<div class="actions">
@@ -348,42 +288,6 @@ $html->addCrumb($client['Client']['name']);
 	<div class="actions">
 		<ul>
 			<li><?php echo $html->link(__('New Accolade', true), array('controller'=> 'accolades', 'action'=>'add'));?> </li>
-		</ul>
-	</div>
-</div>
-<div class="related">
-	<h3><?php __('Related Tags');?></h3>
-	<?php if (!empty($client['Tag'])):?>
-	<table cellpadding = "0" cellspacing = "0">
-	<tr>
-		<th><?php __('TagId'); ?></th>
-		<th><?php __('TagName'); ?></th>
-		<th class="actions"><?php __('Actions');?></th>
-	</tr>
-	<?php
-		$i = 0;
-		foreach ($client['Tag'] as $tag):
-			$class = null;
-			if ($i++ % 2 == 0) {
-				$class = ' class="altrow"';
-			}
-		?>
-		<tr<?php echo $class;?>>
-			<td><?php echo $tag['tagId'];?></td>
-			<td><?php echo $tag['tagName'];?></td>
-			<td class="actions">
-				<?php echo $html->link(__('View', true), array('controller'=> 'tags', 'action'=>'view', $tag['tagId'])); ?>
-				<?php echo $html->link(__('Edit', true), array('controller'=> 'tags', 'action'=>'edit', $tag['tagId'])); ?>
-				<?php echo $html->link(__('Delete', true), array('controller'=> 'tags', 'action'=>'delete', $tag['tagId']), null, sprintf(__('Are you sure you want to delete # %s?', true), $tag['tagId'])); ?>
-			</td>
-		</tr>
-	<?php endforeach; ?>
-	</table>
-<?php endif; ?>
-
-	<div class="actions">
-		<ul>
-			<li><?php echo $html->link(__('New Tag', true), array('controller'=> 'tags', 'action'=>'add'));?> </li>
 		</ul>
 	</div>
 </div>
