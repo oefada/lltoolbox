@@ -26,10 +26,30 @@
 		if(isset($javascript)):
 			echo $javascript->link('prototype');
 			echo $javascript->link('scriptaculous/scriptaculous');
+			echo $javascript->link('modalbox');  
 		endif;
 
 		echo $scripts_for_layout;
 	?>
+	<script type="text/javascript">
+		function closeModalbox()
+		{
+			if ($('closeModalbox')) {
+				// hide the modal box
+				Modalbox.hide();
+				// refresh the current page
+				location.reload(true);
+			} else {
+				// resize to content (in case of validation error messages)
+				Modalbox.resizeToContent()
+			}
+			return true;
+		}
+		Event.observe(window, 'load',
+			function() { new Effect.Highlight($('flashMessage')); }
+		);
+
+	</script>
 	<script type="text/javascript"><?php /* Needed to avoid Flash of Unstyled Content in IE */ ?> </script>
 </head>
 <body>
