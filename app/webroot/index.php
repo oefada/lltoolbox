@@ -23,7 +23,7 @@
  * @since			CakePHP(tm) v 0.2.9
  * @version			$Revision$
  * @modifiedby		$LastChangedBy$
- * @lastmodified	$Date$
+ * @lastmodified	$Date: 2008-06-27 05:09:03 -0400 (Fri, 27 Jun 2008) $
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 /**
@@ -57,7 +57,7 @@
  *
  */
 	if (!defined('CAKE_CORE_INCLUDE_PATH')) {
-		define('CAKE_CORE_INCLUDE_PATH', 'C:\Program Files\Apache Software Foundation\Apache2.2\site_manager');
+		define('CAKE_CORE_INCLUDE_PATH', ROOT);
 	}
 
 /**
