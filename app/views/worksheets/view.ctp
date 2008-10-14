@@ -186,9 +186,9 @@
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
 	<?php echo $worksheet['WorksheetCancellation']['worksheetCancellationId'];?>
 &nbsp;</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('CancelReasonId');?></dt>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('CancellationReasonId');?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-	<?php echo $worksheet['WorksheetCancellation']['cancelReasonId'];?>
+	<?php echo $worksheet['WorksheetCancellation']['cancellationReasonId'];?>
 &nbsp;</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('WorksheetId');?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
@@ -386,7 +386,7 @@
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
 		<th><?php __('PpvNoticeId'); ?></th>
-		<th><?php __('PpvTypeId'); ?></th>
+		<th><?php __('PpvNoticeTypeId'); ?></th>
 		<th><?php __('WorksheetId'); ?></th>
 		<th><?php __('To'); ?></th>
 		<th><?php __('From'); ?></th>
@@ -406,7 +406,7 @@
 		?>
 		<tr<?php echo $class;?>>
 			<td><?php echo $ppvNotice['ppvNoticeId'];?></td>
-			<td><?php echo $ppvNotice['ppvTypeId'];?></td>
+			<td><?php echo $ppvNotice['ppvNoticeTypeId'];?></td>
 			<td><?php echo $ppvNotice['worksheetId'];?></td>
 			<td><?php echo $ppvNotice['to'];?></td>
 			<td><?php echo $ppvNotice['from'];?></td>
