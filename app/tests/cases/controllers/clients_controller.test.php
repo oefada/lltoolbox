@@ -17,6 +17,11 @@ class ClientsControllerTest extends CakeTestCase {
 	function testClientsControllerInstance() {
 		$this->assertTrue(is_a($this->Clients, 'ClientsController'));
 	}
+	
+	function testSearchAction() {
+		$this->get('/clients/search');
+		$this->assertResponse(SUCCESS);
+	}
 
 	function tearDown() {
 		unset($this->Clients);

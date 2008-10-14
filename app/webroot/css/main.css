@@ -285,3 +285,7 @@ h2 {
 .pagination .nextprev-next {
     float: right;
 }
+
+span.highlight {
+	background-color: #ff0;
+}

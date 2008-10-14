@@ -38,15 +38,13 @@ class ClientsController extends AppController {
 				$this->Session->setFlash(__('The Client could not be saved. Please, try again.', true));
 			}
 		}
-		$tags = $this->Client->Tag->find('list');
-		$users = $this->Client->User->find('list');
 		$amenities = $this->Client->Amenity->find('list');
 		$clientLevels = $this->Client->ClientLevel->find('list');
 		$clientStatuses = $this->Client->ClientStatus->find('list');
 		$clientTypes = $this->Client->ClientType->find('list');
 		$regions = $this->Client->Region->find('list');
 		$clientAcquisitionSources = $this->Client->ClientAcquisitionSource->find('list');
-		$this->set(compact('tags', 'users', 'amenities', 'clientLevels', 'clientStatuses', 'clientTypes', 'regions', 'clientAcquisitionSources'));
+		$this->set(compact('amenities', 'clientLevels', 'clientStatuses', 'clientTypes', 'regions', 'clientAcquisitionSources'));
 	}
 
 	function edit($id = null) {
@@ -93,6 +91,7 @@ class ClientsController extends AppController {
 			$query = $this->Sanitize->escape($this->params['form']['query']);
 
 			$this->Client->recursive = -1;
+			$this->set('query', $query);
 			$this->set('results', $this->Client->find('all', array('conditions' => array('name LIKE' => "%$query%"), 'limit' => 5)));
 		endif;
 	}
@@ -101,7 +100,6 @@ class ClientsController extends AppController {
 		$this->Sanitize = new Sanitize();
 		
 		if($this->RequestHandler->isAjax()) {
-			$this->layout = 'ajax';
 			Configure::write('debug', '0');
 		}
 	}

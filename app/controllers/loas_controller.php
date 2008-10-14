@@ -2,7 +2,7 @@
 class LoasController extends AppController {
 
 	var $name = 'Loas';
-	var $helpers = array('Html', 'Form', 'Ajax', 'Text', 'Layout');
+	var $helpers = array('Html', 'Form', 'Ajax', 'Text', 'Layout', 'Number');
 	var $paginate;
 	
 	function index($clientId = null) {

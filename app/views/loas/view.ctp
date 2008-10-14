@@ -34,14 +34,14 @@ $html->addCrumb('LOA #'.$loa['Loa']['loaId']);
 		<tr<?php if ($i++ % 2 == 0) echo $class;?>>
 		<td><?php __('LoaValue'); ?></td>
 		<td>
-			<?php echo $loa['Loa']['loaValue']; ?>
+			<?php echo $number->currency($loa['Loa']['loaValue']); ?>
 			&nbsp;
 		</td>
 		</tr>
 		<tr<?php if ($i++ % 2 == 0) echo $class;?>>
 		<td><?php __('RemainingBalance'); ?></td>
 		<td>
-			<?php echo $loa['Loa']['remainingBalance']; ?>
+			<?php echo $number->currency($loa['Loa']['remainingBalance']); ?>
 			&nbsp;
 		</td>
 		</tr>
@@ -55,14 +55,14 @@ $html->addCrumb('LOA #'.$loa['Loa']['loaId']);
 		<tr<?php if ($i++ % 2 == 0) echo $class;?>>
 		<td><?php __('RemitPercentage'); ?></td>
 		<td>
-			<?php echo $loa['Loa']['remitPercentage']; ?>
+			<?php echo $number->toPercentage($loa['Loa']['remitPercentage']); ?>
 			&nbsp;
 		</td>
 		</tr>
 		<tr<?php if ($i++ % 2 == 0) echo $class;?>>
 		<td><?php __('RemitAmount'); ?></td>
 		<td>
-			<?php echo $loa['Loa']['remitAmount']; ?>
+			<?php echo $number->currency($loa['Loa']['remitAmount']); ?>
 			&nbsp;
 		</td>
 		</tr>
@@ -160,7 +160,7 @@ $html->addCrumb('LOA #'.$loa['Loa']['loaId']);
 		<tr<?php echo $class;?>>
 			<td><?php echo $loaItem['loaItemTypeId'];?></td>
 			<td><?php echo $loaItem['itemName'];?></td>
-			<td><?php echo $loaItem['itemBasePrice'];?></td>
+			<td><?php echo $number->currency($loaItem['itemBasePrice']); ?></td>
 			<td><?php echo $loaItem['perPerson'];?></td>
 			<td class="actions">
 				<?php echo $html->link(__('View', true), array('controller'=> 'loa_items', 'action'=>'view', $loaItem['loaItemId'])); ?>
