@@ -47,7 +47,7 @@
 	Router::connect('/tests', array('controller' => 'tests', 'action' => 'index'));
 	
 // ROUTES ADDED 09-09-08 for adding loa item to loa
-	Router::connect('/loas/:loaId/loaItems/:action', array('controller' => 'LoaItems', 'action' => 'view'), array('loaId' => "[0-9]+"));
+	Router::connect('/loas/:loaId/loa_items/:action', array('controller' => 'LoaItems', 'action' => 'view'), array('loaId' => "[0-9]+"));
 	
 // ROUTES ADDED 09-16-08 for adding validity to package
 	Router::connect('/packages/:packageId/packageValidityPeriods/:action', array('controller' => 'PackageValidityPeriods', 'action' => 'view'), array('packageId' => "[0-9]+"));
