@@ -5,7 +5,9 @@ class Worksheet extends AppModel {
 	var $useTable = 'worksheet';
 	var $primaryKey = 'worksheetId';
 	
-	var $belongsTo = array('WorksheetStatus' => array('foreignKey' => 'worksheetStatusId'));
+	var $belongsTo = array('WorksheetStatus' => array('foreignKey' => 'worksheetStatusId'),
+						   'Package' => array('foreignKey' => 'packageId'),
+						   'Offer' => array('foreignKey' => 'offerId'));
 	
 	var $hasMany = array('PaymentDetail' => array('foreignKey' => 'worksheetId'),
 						 'PpvNotice' => array('foreignKey' => 'worksheetId')
