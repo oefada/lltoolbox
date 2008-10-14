@@ -57,8 +57,7 @@ foreach ($clients as $client):
 			<?php echo $client['ClientStatus']['clientStatusName']; ?>
 		</td>
 		<td class="actions">
-			<?php echo $html->link(__('View Details', true), array('action'=>'view', $client['Client']['clientId'])); ?> <br />
-			<?php echo $html->link(__('View Loas', true), '/clients/'.$client['Client']['clientId'].'/loas'); ?>
+			<?php echo $html->link(__('View Details', true), array('action'=>'view', $client['Client']['clientId'])); ?>
 		</td>
 	</tr>
 <?php endforeach; ?>
