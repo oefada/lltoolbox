@@ -10,8 +10,7 @@ class LoasController extends AppController {
 			$this->Loa->recursive = 0;
 			$this->set('loas', $this->paginate('Loa', array('Client.clientId' => $clientId)));
 		} else {
-			$this->Session->setFlash(__('Incorrect client Id. Please try again.', true));
-			$this->redirect(array('controller' => 'clients', 'action' => 'index'));
+			$this->cakeError('error404');
 		}
 	}
 
