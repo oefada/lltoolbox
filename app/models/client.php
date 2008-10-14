@@ -5,6 +5,7 @@ class Client extends AppModel {
 	var $useTable = 'client';
 	var $primaryKey = 'clientId';
 	var $displayField = 'name';
+	var $order = array('Client.name');
 	
 	var $belongsTo = array('ClientLevel' => array('foreignKey' => 'clientLevelId'),
 						   'ClientStatus' => array('foreignKey' => 'clientStatusId'),
