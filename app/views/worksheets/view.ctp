@@ -8,7 +8,7 @@
 		</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Worksheet Status'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $html->link($worksheet['WorksheetStatus']['worksheetStatusName'], array('controller'=> 'worksheet_statuses', 'action'=>'view', $worksheet['WorksheetStatus']['worksheetStatusId'])); ?>
+			<?php echo $worksheet['Worksheet']['worksheetStatusId']; ?>
 			&nbsp;
 		</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('ParentWorksheetId'); ?></dt>
@@ -146,9 +146,9 @@
 			<?php echo $worksheet['Worksheet']['userZip']; ?>
 			&nbsp;
 		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('CompletedUserId'); ?></dt>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('CompletedUsername'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $worksheet['Worksheet']['completedUserId']; ?>
+			<?php echo $worksheet['Worksheet']['completedUsername']; ?>
 			&nbsp;
 		</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('CompletedDate'); ?></dt>
@@ -334,9 +334,16 @@
 	<?php if (!empty($worksheet['PaymentDetail'])):?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
-		<th><?php __('PaymentDetailId'); ?></th>
-		<th><?php __('CreditCardName'); ?></th>
-		<th><?php __('PaymentDate'); ?></th>
+		<th><?php __('Payment Detail Id'); ?></th>
+		<th><?php __('First Name'); ?></th>
+		<th><?php __('Last Name'); ?></th>
+		<th><?php __('Applied to LOA'); ?></th>
+		<th><?php __('Applied by '); ?></th>
+		<th><?php __('Payment Date'); ?></th>
+		<th><?php __('Refund Ticket'); ?></th>
+		<th><?php __('Card Processor'); ?></th>
+		<th><?php __('Auto Processed'); ?></th>
+		<th><?php __('Successful Charge'); ?></th>
 		<th class="actions"><?php __('Actions');?></th>
 	</tr>
 	<?php
@@ -349,8 +356,15 @@
 		?>
 		<tr<?php echo $class;?>>
 			<td><?php echo $paymentDetail['paymentDetailId'];?></td>
-			<td><?php echo $paymentDetail['creditCardName'];?></td>
+			<td><?php echo $paymentDetail['creditCardFirstName'];?></td>
+			<td><?php echo $paymentDetail['creditCardLastName'];?></td>
+			<td><?php echo $paymentDetail['applyToLOA'];?></td>
+			<td><?php echo $paymentDetail['applyLoaAuthUsername'];?></td>
 			<td><?php echo $paymentDetail['paymentDate'];?></td>
+			<td><?php echo $paymentDetail['refundWholeTicket'];?></td>
+			<td><?php echo $paymentDetail['cardProcessorName'];?></td>
+			<td><?php echo $paymentDetail['autoProcessed'];?></td>
+			<td><?php echo $paymentDetail['successfulCharge'];?></td>
 			<td class="actions">
 				<?php echo $html->link(__('View', true), array('controller'=> 'payment_details', 'action'=>'view', $paymentDetail['paymentDetailId'])); ?>
 			</td>

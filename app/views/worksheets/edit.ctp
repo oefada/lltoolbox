@@ -32,7 +32,7 @@
 		echo $form->input('userState');
 		echo $form->input('userCountry');
 		echo $form->input('userZip');
-		echo $form->input('completedUserId');
+		echo $form->input('completedUsername');
 		echo $form->input('completedDate');
 		echo $form->input('keepAmount');
 		echo $form->input('remitAmount');

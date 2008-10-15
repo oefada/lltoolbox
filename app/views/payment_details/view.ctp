@@ -11,11 +11,6 @@
 			<?php echo $html->link($paymentDetail['Worksheet']['worksheetId'], array('controller'=> 'worksheets', 'action'=>'view', $paymentDetail['Worksheet']['worksheetId'])); ?>
 			&nbsp;
 		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('WorksheetTypeId'); ?></dt>
-		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $paymentDetail['PaymentDetail']['worksheetTypeId']; ?>
-			&nbsp;
-		</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('CreditCardNum'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
 			<?php echo $paymentDetail['PaymentDetail']['creditCardNum']; ?>
@@ -31,9 +26,9 @@
 			<?php echo $paymentDetail['PaymentDetail']['cvv2Value']; ?>
 			&nbsp;
 		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('CreditCardName'); ?></dt>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('CreditCardFirstName'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $paymentDetail['PaymentDetail']['creditCardName']; ?>
+			<?php echo $paymentDetail['PaymentDetail']['creditCardFirstName']; ?>
 			&nbsp;
 		</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('BillingAddress1'); ?></dt>
@@ -71,17 +66,12 @@
 			<?php echo $paymentDetail['PaymentDetail']['applyToLOA']; ?>
 			&nbsp;
 		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('ApplyLoaAuthUserId'); ?></dt>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('ApplyLoaAuthUsername'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $paymentDetail['PaymentDetail']['applyLoaAuthUserId']; ?>
+			<?php echo $paymentDetail['PaymentDetail']['applyLoaAuthUsername']; ?>
 			&nbsp;
 		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('SettlementId'); ?></dt>
-		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $paymentDetail['PaymentDetail']['settlementId']; ?>
-			&nbsp;
-		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('PaymentTypeId'); ?></dt>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Payment Type'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
 			<?php echo $paymentDetail['PaymentDetail']['paymentTypeId']; ?>
 			&nbsp;
@@ -91,20 +81,75 @@
 			<?php echo $paymentDetail['PaymentDetail']['paymentDate']; ?>
 			&nbsp;
 		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('WholeRefundId'); ?></dt>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('RefundWholeTicket'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $paymentDetail['PaymentDetail']['wholeRefundId']; ?>
+			<?php echo $paymentDetail['PaymentDetail']['refundWholeTicket']; ?>
+			&nbsp;
+		</dd>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('CardProcessorName'); ?></dt>
+		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
+			<?php echo $paymentDetail['PaymentDetail']['cardProcessorName']; ?>
+			&nbsp;
+		</dd>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('PpResponseDate'); ?></dt>
+		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
+			<?php echo $paymentDetail['PaymentDetail']['ppResponseDate']; ?>
+			&nbsp;
+		</dd>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('PpTransactionId'); ?></dt>
+		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
+			<?php echo $paymentDetail['PaymentDetail']['ppTransactionId']; ?>
+			&nbsp;
+		</dd>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('PpApprovalStatus'); ?></dt>
+		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
+			<?php echo $paymentDetail['PaymentDetail']['ppApprovalStatus']; ?>
+			&nbsp;
+		</dd>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('PpApprovalCode'); ?></dt>
+		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
+			<?php echo $paymentDetail['PaymentDetail']['ppApprovalCode']; ?>
+			&nbsp;
+		</dd>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('PpAvsCode'); ?></dt>
+		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
+			<?php echo $paymentDetail['PaymentDetail']['ppAvsCode']; ?>
+			&nbsp;
+		</dd>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('PpResponseText'); ?></dt>
+		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
+			<?php echo $paymentDetail['PaymentDetail']['ppResponseText']; ?>
+			&nbsp;
+		</dd>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('PpReasonCode'); ?></dt>
+		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
+			<?php echo $paymentDetail['PaymentDetail']['ppReasonCode']; ?>
+			&nbsp;
+		</dd>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('AutoProcessed'); ?></dt>
+		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
+			<?php echo $paymentDetail['PaymentDetail']['autoProcessed']; ?>
+			&nbsp;
+		</dd>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('SuccessfulCharge'); ?></dt>
+		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
+			<?php echo $paymentDetail['PaymentDetail']['successfulCharge']; ?>
+			&nbsp;
+		</dd>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('ChargedByUsername'); ?></dt>
+		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
+			<?php echo $paymentDetail['PaymentDetail']['chargedByUsername']; ?>
+			&nbsp;
+		</dd>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('CreditCardLastName'); ?></dt>
+		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
+			<?php echo $paymentDetail['PaymentDetail']['creditCardLastName']; ?>
+			&nbsp;
+		</dd>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('PpResponseSubcode'); ?></dt>
+		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
+			<?php echo $paymentDetail['PaymentDetail']['ppResponseSubcode']; ?>
 			&nbsp;
 		</dd>
 	</dl>
-</div>
-<div class="actions">
-	<ul>
-		<li><?php echo $html->link(__('Edit PaymentDetail', true), array('action'=>'edit', $paymentDetail['PaymentDetail']['paymentDetailId'])); ?> </li>
-		<li><?php echo $html->link(__('Delete PaymentDetail', true), array('action'=>'delete', $paymentDetail['PaymentDetail']['paymentDetailId']), null, sprintf(__('Are you sure you want to delete # %s?', true), $paymentDetail['PaymentDetail']['paymentDetailId'])); ?> </li>
-		<li><?php echo $html->link(__('List PaymentDetails', true), array('action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New PaymentDetail', true), array('action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Worksheets', true), array('controller'=> 'worksheets', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Worksheet', true), array('controller'=> 'worksheets', 'action'=>'add')); ?> </li>
-	</ul>
 </div>
