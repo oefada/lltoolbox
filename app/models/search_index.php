@@ -1,7 +1,8 @@
 <?php
 class SearchIndex extends AppModel {
 	var $name = 'SearchIndex';
-	var $useTable = 'search_index';
+	var $useTable = 'searchIndex';
+	var $primaryKey = 'searchIndexId';
 	private $models = array();
 
 	private function bindTo($model) {
@@ -11,7 +12,7 @@ class SearchIndex extends AppModel {
 					$model => array (
 						'className' => $model,
 						'conditions' => 'SearchIndex.model = \''.$model.'\'',
-						'foreignKey' => 'association_key'
+						'foreignKey' => 'associationKey'
 					)
 				)
 			),false 
@@ -32,7 +33,7 @@ class SearchIndex extends AppModel {
 		if (!empty($this->models)) {
 			$models_condition = array();
 			foreach ($this->models as $model) {
-				$models_condition[] = $model . '.id IS NOT NULL'; 
+				$models_condition[] = $model . '.' . Inflector::variable($model) . 'Id IS NOT NULL'; 
 			}
 		}
 		
