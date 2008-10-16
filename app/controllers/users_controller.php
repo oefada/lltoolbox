@@ -57,6 +57,29 @@ class UsersController extends AppController {
 			$this->flash(__('User deleted', true), array('action'=>'index'));
 		}
 	}
+	
+	function search()
+	{
+		if(!empty($this->params['form']['query'])):
+			$query = $this->Sanitize->escape($this->params['form']['query']);
 
+			$this->Client->recursive = -1;
+			$results = $this->Client->find('all', array('conditions' => array('name LIKE' => "%$query%"), 'limit' => 5));
+			$this->set('query', $query);
+			$this->set('results', $results);
+			
+			if (isset($this->params['requested'])) {
+				return $results;
+			}	
+		endif;
+	}
+	
+	function beforeFilter() {
+		$this->Sanitize = new Sanitize();
+		
+		if($this->RequestHandler->isAjax()) {
+			Configure::write('debug', '0');
+		}
+	}
 }
 ?>

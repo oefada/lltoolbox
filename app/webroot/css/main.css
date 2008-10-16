@@ -350,3 +350,12 @@ h2 {
 span.highlight {
 	background-color: #ff0;
 }
+
+.collapsible {
+	background: url(../img/page_up.gif) 0 90% no-repeat;
+	padding-left: 20px;
+}
+.collapsible-closed {
+	background: url(../img/page_down.gif) 0 90% no-repeat;
+	padding-left: 20px;
+}

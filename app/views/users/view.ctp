@@ -129,7 +129,7 @@
 	</ul>
 </div>
 <div class="related">
-	<h3><?php __('Related User Mail Optins');?></h3>
+	<h3 class='collapsible'><?php __('Related User Mail Optins');?></h3>
 	<?php if (!empty($user['UserMailOptin'])):?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
@@ -173,7 +173,7 @@
 	</div>
 </div>
 <div class="related">
-	<h3><?php __('Related User Referrals');?></h3>
+	<h3 class='collapsible'><?php __('Related User Referrals');?></h3>
 	<?php if (!empty($user['UserReferral'])):?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
@@ -215,7 +215,7 @@
 	</div>
 </div>
 <div class="related">
-	<h3><?php __('Related User Site Extendeds');?></h3>
+	<h3 class='collapsible'><?php __('Related User Site Extendeds');?></h3>
 	<?php if (!empty($user['UserSiteExtended'])):?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
@@ -267,7 +267,7 @@
 	</div>
 </div>
 <div class="related">
-	<h3><?php __('Related User Payment Settings');?></h3>
+	<h3 class='collapsible'><?php __('Related User Payment Settings');?></h3>
 	<?php if (!empty($user['UserPaymentSetting'])):?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
@@ -323,7 +323,7 @@
 	</div>
 </div>
 <div class="related">
-	<h3><?php __('Related User Preferences');?></h3>
+	<h3 class='collapsible'><?php __('Related User Preferences');?></h3>
 	<?php if (!empty($user['UserPreference'])):?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
@@ -363,7 +363,7 @@
 	</div>
 </div>
 <div class="related">
-	<h3><?php __('Related Bids');?></h3>
+	<h3 class='collapsible'><?php __('Related Bids');?></h3>
 	<?php if (!empty($user['Bid'])):?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
@@ -413,7 +413,7 @@
 	</div>
 </div>
 <div class="related">
-	<h3><?php __('Related Addresses');?></h3>
+	<h3 class='collapsible'><?php __('Related Addresses');?></h3>
 	<?php if (!empty($user['Address'])):?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
@@ -485,7 +485,7 @@
 	</div>
 </div>
 <div class="related">
-	<h3><?php __('Related User Acquisition Sources');?></h3>
+	<h3 class='collapsible'><?php __('Related User Acquisition Sources');?></h3>
 	<?php if (!empty($user['UserAcquisitionSource'])):?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
@@ -521,7 +521,7 @@
 	</div>
 </div>
 <div class="related">
-	<h3><?php __('Related Contests');?></h3>
+	<h3 class='collapsible'><?php __('Related Contests');?></h3>
 	<?php if (!empty($user['Contest'])):?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
@@ -567,7 +567,7 @@
 	</div>
 </div>
 <div class="related">
-	<h3><?php __('Related Clients');?></h3>
+	<h3 class='collapsible'><?php __('Related Clients');?></h3>
 	<?php if (!empty($user['Client'])):?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
@@ -576,7 +576,6 @@
 		<th><?php __('Name'); ?></th>
 		<th><?php __('Url'); ?></th>
 		<th><?php __('Email1'); ?></th>
-		<th><?php __('Email2'); ?></th>
 		<th><?php __('Phone1'); ?></th>
 		<th><?php __('Phone2'); ?></th>
 		<th><?php __('ClientTypeId'); ?></th>
@@ -609,7 +608,6 @@
 			<td><?php echo $client['name'];?></td>
 			<td><?php echo $client['url'];?></td>
 			<td><?php echo $client['email1'];?></td>
-			<td><?php echo $client['email2'];?></td>
 			<td><?php echo $client['phone1'];?></td>
 			<td><?php echo $client['phone2'];?></td>
 			<td><?php echo $client['clientTypeId'];?></td>
