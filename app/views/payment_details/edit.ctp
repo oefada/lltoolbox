@@ -20,7 +20,7 @@
 		echo $form->input('paymentTypeId');
 		echo $form->input('paymentDate');
 		echo $form->input('refundWholeTicket');
-		echo $form->input('cardProcessorName');
+		echo $form->input('paymentProcessorId');
 		echo $form->input('ppResponseDate');
 		echo $form->input('ppTransactionId');
 		echo $form->input('ppApprovalStatus');

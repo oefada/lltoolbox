@@ -200,7 +200,7 @@
 	echo '<tr>';
 	echo '<th>Range</th>';
 	foreach ($packageRatePeriods as $k => $v) {
-		echo '<th>' . $v['PackageRatePeriod']['startDate'] . '<span style="margin-left:15px;margin-right:15px;">to</span>' . $v['PackageRatePeriod']['endDate'] . "</th>\n";
+		echo '<th>' . $v['PackageRatePeriod']['startDate'] . '<br />to<br />' . $v['PackageRatePeriod']['endDate'] . "</th>\n";
 	}
 	echo '</tr>';
 	?>	
@@ -210,7 +210,7 @@
 		echo '<tr>';
 		echo '<td>' . $b['LoaItem']['itemName'] . '</td>';
 		foreach ($b['PackageRatePeriodItemRel'] as $ratePeriodItem) {
-			echo '<td>' . $ratePeriodItem['ratePeriodPrice'] . '</td>';
+			echo '<td>$' . $ratePeriodItem['ratePeriodPrice'] . '</td>';
 		}
 		echo '</tr>';
 	}

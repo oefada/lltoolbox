@@ -6,7 +6,8 @@ class PaymentDetail extends AppModel {
 	var $primaryKey = 'paymentDetailId';
 	
 	var $belongsTo = array('Worksheet' => array('foreignKey' => 'worksheetId'),
-						   'PaymentType' => array('foreignKey' => 'paymentTypeId')
+						   'PaymentType' => array('foreignKey' => 'paymentTypeId'),
+						   'PaymentProcessor' => array('foreignKey' => 'paymentProcessorId')
 						  );
 
 }

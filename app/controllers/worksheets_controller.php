@@ -48,7 +48,6 @@ class WorksheetsController extends AppController {
 		if (empty($this->data)) {
 			$this->data = $this->Worksheet->read(null, $id);
 		}
-		
 		$this->set('worksheetStatusIds', $this->Worksheet->WorksheetStatus->find('list'));
 	}
 
@@ -60,6 +59,27 @@ class WorksheetsController extends AppController {
 		if ($this->Worksheet->del($id)) {
 			$this->Session->setFlash(__('Worksheet deleted', true));
 			$this->redirect(array('action'=>'index'));
+		}
+	}
+	
+	function updateWorksheetStatus($id = null, $worksheetStatusId = null) {
+		if (!$id) {
+			$this->Session->setFlash(__('Invalid id for Worksheet', true));
+			$this->redirect(array('action'=>'index'));				
+		}	
+		$worksheetStatusIds = $this->Worksheet->WorksheetStatus->find('list');
+		if (!$worksheetStatusId || !isset($worksheetStatusIds[$worksheetStatusId])) {
+			$this->Session->setFlash(__('Invalid attempt to update workstatus', true));
+			$this->redirect(array('action'=>'view', 'id' => $id));				
+		} else {
+			$worksheet['Worksheet']['worksheetId'] = $id;
+			$worksheet['Worksheet']['worksheetStatusId'] = $worksheetStatusId;
+			if ($this->Worksheet->save($worksheet)) {
+				$this->Session->setFlash(__("Workstatus has been updated to \"$worksheetStatusIds[$worksheetStatusId]\"", true));
+			} else {
+				$this->Session->setFlash(__('Worksheet status has NOT been updated', true));
+			}
+			$this->redirect(array('action'=>'view', 'id' => $id));						
 		}
 	}
 

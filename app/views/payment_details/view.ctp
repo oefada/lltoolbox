@@ -86,9 +86,9 @@
 			<?php echo $paymentDetail['PaymentDetail']['refundWholeTicket']; ?>
 			&nbsp;
 		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('CardProcessorName'); ?></dt>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Payment Processor'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $paymentDetail['PaymentDetail']['cardProcessorName']; ?>
+			<?php echo $paymentDetail['PaymentProcessor']['paymentProcessorName']; ?>
 			&nbsp;
 		</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('PpResponseDate'); ?></dt>

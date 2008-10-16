@@ -25,7 +25,7 @@ echo $paginator->counter(array(
 	<th><?php echo $paginator->sort('paymentTypeId');?></th>
 	<th><?php echo $paginator->sort('paymentDate');?></th>
 	<th><?php echo $paginator->sort('refundWholeTicket');?></th>
-	<th><?php echo $paginator->sort('cardProcessorName');?></th>
+	<th><?php echo $paginator->sort('paymentProcessorId');?></th>
 	<th><?php echo $paginator->sort('ppResponseDate');?></th>
 	<th><?php echo $paginator->sort('ppTransactionId');?></th>
 	<th><?php echo $paginator->sort('ppApprovalStatus');?></th>
@@ -101,7 +101,7 @@ foreach ($paymentDetails as $paymentDetail):
 			<?php echo $paymentDetail['PaymentDetail']['refundWholeTicket']; ?>
 		</td>
 		<td>
-			<?php echo $paymentDetail['PaymentDetail']['cardProcessorName']; ?>
+			<?php echo $paymentDetail['PaymentDetail']['paymentProcessorId']; ?>
 		</td>
 		<td>
 			<?php echo $paymentDetail['PaymentDetail']['ppResponseDate']; ?>

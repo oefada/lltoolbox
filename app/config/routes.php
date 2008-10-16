@@ -66,4 +66,7 @@
 	Router::connect('/clients/:clientId/:controller/:action', array(), array('clientId' => '[0-9]+', 'pass' => array('clientId')));
 	Router::connect('/clients/:clientId/:controller/:action/:id', array(), array('clientId' => '[0-9]+', 'id' => '[0-9]+', 'pass' => array('clientId','id')));
 	
+// ROUTES ADDED 10-15-08 for adding payment detail to the worksheet
+	Router::connect('/worksheets/:worksheetId/:paymentDetails/:action', array('controller' => 'PaymentDetails', 'action' => 'view'), array('worksheetId' => "[0-9]+"));
+	
 ?>

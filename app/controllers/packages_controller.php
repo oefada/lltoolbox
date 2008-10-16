@@ -30,8 +30,10 @@ class PackagesController extends AppController {
 			$this->Package->PackageLoaItemRel->PackageRatePeriodItemRel->deleteAll(array('PackageRatePeriodItemRel.packageRatePeriodId' => $rel['packageRatePeriodId']));
 			$this->Package->PackageLoaItemRel->PackageRatePeriodItemRel->PackageRatePeriod->deleteAll(array('PackageRatePeriod.packageRatePeriodId' => $rel['packageRatePeriodId']));
 		}
-		
-		$data = $this->Package->PackageLoaItemRel->LoaItem->find('all');  // find all info about loa items		
+
+		//$data = $this->Package->PackageLoaItemRel->LoaItem->find('list', array('conditions' => array('packageId' => 2)));  // find all info about loa items		
+		$data = $this->Package->PackageLoaItemRel->LoaItem->find('all', array('conditions' => array('PackageLoaItemRel.packageId' => 2)));
+
 		$itemRatePeriods = array(); // populate with loaitems and their rate periods
 		$packageLoaItemRel = array();
 		$packageData = $this->Package->read(null);

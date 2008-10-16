@@ -341,7 +341,6 @@
 		<th><?php __('Applied by '); ?></th>
 		<th><?php __('Payment Date'); ?></th>
 		<th><?php __('Refund Ticket'); ?></th>
-		<th><?php __('Card Processor'); ?></th>
 		<th><?php __('Auto Processed'); ?></th>
 		<th><?php __('Successful Charge'); ?></th>
 		<th class="actions"><?php __('Actions');?></th>
@@ -362,7 +361,6 @@
 			<td><?php echo $paymentDetail['applyLoaAuthUsername'];?></td>
 			<td><?php echo $paymentDetail['paymentDate'];?></td>
 			<td><?php echo $paymentDetail['refundWholeTicket'];?></td>
-			<td><?php echo $paymentDetail['cardProcessorName'];?></td>
 			<td><?php echo $paymentDetail['autoProcessed'];?></td>
 			<td><?php echo $paymentDetail['successfulCharge'];?></td>
 			<td class="actions">
@@ -375,7 +373,7 @@
 
 	<div class="actions">
 		<ul>
-			<li><?php echo $html->link(__('New Payment Detail', true), array('controller'=> 'payment_details', 'action'=>'add'));?> </li>
+			<li><a href="/worksheets/<?php echo $worksheet['Worksheet']['worksheetId'];?>/payment_details/add">Add New Payment Detail</a></li>
 		</ul>
 	</div>
 </div>

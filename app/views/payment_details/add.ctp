@@ -3,35 +3,25 @@
 	<fieldset>
  		<legend><?php __('Add PaymentDetail');?></legend>
 	<?php
-		echo $form->input('worksheetId');
+		echo $form->input('worksheetId', array('readonly' => 'readonly'));
 		echo $form->input('creditCardNum');
 		echo $form->input('expirationDate');
 		echo $form->input('cvv2Value');
 		echo $form->input('creditCardFirstName');
+		echo $form->input('creditCardLastName');
 		echo $form->input('billingAddress1');
 		echo $form->input('billingCity');
 		echo $form->input('billingState');
 		echo $form->input('billingZip');
 		echo $form->input('billingCountry');
 		echo $form->input('billingAmount');
-		echo $form->input('applyToLOA');
+		echo $form->input('applyToLOA', array('checked' => 'checked'));
 		echo $form->input('applyLoaAuthUsername');
 		echo $form->input('paymentTypeId');
-		echo $form->input('paymentDate');
+		echo $form->input('paymentDate', array('type' => 'hidden'));
 		echo $form->input('refundWholeTicket');
-		echo $form->input('cardProcessorName');
-		echo $form->input('ppResponseDate');
-		echo $form->input('ppTransactionId');
-		echo $form->input('ppApprovalStatus');
-		echo $form->input('ppApprovalCode');
-		echo $form->input('ppAvsCode');
-		echo $form->input('ppResponseText');
-		echo $form->input('ppReasonCode');
-		echo $form->input('autoProcessed');
-		echo $form->input('successfulCharge');
+		echo $form->input('paymentProcessorId');
 		echo $form->input('chargedByUsername');
-		echo $form->input('creditCardLastName');
-		echo $form->input('ppResponseSubcode');
 	?>
 	</fieldset>
 <?php echo $form->end('Submit');?>
