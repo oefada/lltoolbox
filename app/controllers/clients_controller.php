@@ -1,12 +1,8 @@
 <?php
-uses ('sanitize');
-
 class ClientsController extends AppController {
 
 	var $name = 'Clients';
-	var $helpers = array('Html', 'Form', 'Text', 'Pagination', 'Layout', 'Ajax');
-	var $components = array('RequestHandler');
-	var $Sanitize;
+	var $uses = array('Client', 'User');
 	
 	function index() {
 		$this->Client->recursive = 0;
@@ -63,15 +59,12 @@ class ClientsController extends AppController {
 		if (empty($this->data)) {
 			$this->data = $this->Client->read(null, $id);
 		}
-		$tags = $this->Client->Tag->find('list');
-		$users = $this->Client->User->find('list');
 		$amenities = $this->Client->Amenity->find('list');
 		$clientLevelIds = $this->Client->ClientLevel->find('list');
 		$clientStatusIds = $this->Client->ClientStatus->find('list');
 		$clientTypeIds = $this->Client->ClientType->find('list');
-		$regions = $this->Client->Region->find('list');
-		$clientAcquisitionSources = $this->Client->ClientAcquisitionSource->find('list');
-		$this->set(compact('tags','users','amenities','clientLevelIds','clientStatusIds','clientTypeIds','regions','clientAcquisitionSources'));
+		$clientAcquisitionSourceIds = $this->Client->ClientAcquisitionSource->find('list');
+		$this->set(compact('tags','users','amenities','clientLevelIds','clientStatusIds','clientTypeIds','regions','clientAcquisitionSourceIds'));
 	}
 
 	function delete($id = null) {
@@ -87,21 +80,21 @@ class ClientsController extends AppController {
 	
 	function search()
 	{
+		
+		debug($this->User->search('jim'));
+		die();
 		if(!empty($this->params['form']['query'])):
 			$query = $this->Sanitize->escape($this->params['form']['query']);
 
 			$this->Client->recursive = -1;
+			$results = $this->Client->find('all', array('conditions' => array('name LIKE' => "%$query%"), 'limit' => 5));
 			$this->set('query', $query);
-			$this->set('results', $this->Client->find('all', array('conditions' => array('name LIKE' => "%$query%"), 'limit' => 5)));
+			$this->set('results', $results);
+			
+			if (isset($this->params['requested'])) {
+				return $results;
+			}	
 		endif;
-	}
-	
-	function beforeFilter() {
-		$this->Sanitize = new Sanitize();
-		
-		if($this->RequestHandler->isAjax()) {
-			Configure::write('debug', '0');
-		}
 	}
 }
 ?>
