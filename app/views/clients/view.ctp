@@ -7,6 +7,7 @@ $html->addCrumb($client['Client']['name']);
 	<a href="/clients/edit/<?=$client['Client']['clientId']?>" title="Edit Client" class="button edit"><span><b class="icon"></b>Edit Client</span></a>
 <?=$layout->blockEnd();?>
 <?=$layout->blockStart('sidebar');?>
+Related Client Items
 <?= $html->link('<span>Accolades ('.count($client['Accolade']).')</span>','/clients/'.$client['Client']['clientId'].'/loas', array('class' => 'button'), false, false); ?>
 <?= $html->link('<span>Addresses ('.count($client['Address']).')</span>','/clients/'.$client['Client']['clientId'].'/loas', array('class' => 'button'), false, false); ?>
 <?= $html->link('<span>Amenities ('.count($client['Amenity']).')</span>','/clients/'.$client['Client']['clientId'].'/loas', array('class' => 'button'), false, false); ?>
