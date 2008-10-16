@@ -26,7 +26,8 @@
 		if(isset($javascript)):
 			echo $javascript->link('prototype');
 			echo $javascript->link('scriptaculous/scriptaculous');
-			echo $javascript->link('modalbox');  
+			echo $javascript->link('modalbox');
+			echo $javascript->link('collapsible');
 		endif;
 
 		echo $scripts_for_layout;
@@ -94,7 +95,7 @@
 			<?php endif ?>
 			</div>
 			<?php if($html->getCrumbs()): ?>
-			<div id="breadcrumbs"><?= $html->getCrumbs("<span> &raquo; </span>", "Dashboard"); ?></div>
+			<div id="breadcrumbs"><?= $html->getCrumbs("<span></span>", "Dashboard"); ?></div>
 			<?php endif; ?>
             <?php $session->flash(); ?>
           </div> <!-- /#content-header -->
