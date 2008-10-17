@@ -50,9 +50,4 @@ foreach ($clients as $client):
 </table>
 </div>
 <?php echo $this->renderElement('ajax_paginator', array('divToPaginate' => 'client-index')); ?>
-<div class="actions">
-	<ul>
-		<li><?php echo $html->link(__('New Client', true), array('action'=>'add')); ?></li>
-	</ul>
-</div>
 </div>
