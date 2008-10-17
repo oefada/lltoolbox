@@ -5,6 +5,8 @@ $html->addCrumb('Clients');
 <?=$layout->blockStart('header');?>
     <a href="/clients/add" title="Add New Loa" class="button add"><span><b class="icon"></b>Add New Client</span></a>
 <?=$layout->blockEnd();?>
+<div id="client-index">
+	<?php echo $this->renderElement('ajax_paginator', array('divToPaginate' => 'client-index')); ?>
 <div class="clients index">
 <p>
 <?php
@@ -30,23 +32,7 @@ foreach ($clients as $client):
 ?>
 	<tr<?php echo $class;?>>
 		<td>
-			<strong><?php echo $client['Client']['name']; ?></strong>
-			<?php if (!empty($client['Client']['companyName'])): ?>
-				<br />
-				<span class="italicize lightBlackTextSmall"><span class="grayTextSmall"> (</span><?=$client['Client']['companyName']?><span class="grayTextSmall">)</span></span>
-			<?php endif ?>
-			<div class="grayTextSmall">
-				<?php if ($client['Client']['email1']): ?>
-					<?php echo $client['Client']['email1']; ?><br />
-				<?php endif ?>
-				<?php if ($client['Client']['phone1']): ?>
-					<?php echo $client['Client']['phone1']; ?><br />
-				<?php endif ?>
-				<?php if ($client['Client']['phone2']): ?>
-					<?php echo $client['Client']['phone2']; ?><br />
-				<?php endif ?>
-			</div>
-		</td>
+			<strong><?php echo $client['Client']['name']; ?></strong>		</td>
 		<td>
 			<?php echo $client['ClientType']['clientTypeName']; ?>
 		</td>
@@ -63,11 +49,10 @@ foreach ($clients as $client):
 <?php endforeach; ?>
 </table>
 </div>
-<div class="paging">
-<?php echo $pagination->paginate($pag_link, $pag_page, $pag_total); ?> 
-</div>
+<?php echo $this->renderElement('ajax_paginator', array('divToPaginate' => 'client-index')); ?>
 <div class="actions">
 	<ul>
 		<li><?php echo $html->link(__('New Client', true), array('action'=>'add')); ?></li>
 	</ul>
+</div>
 </div>

@@ -22,8 +22,10 @@
   {
   }
 
-  #page
+  #page,
+  #closure-blocks
   {
+	min-width: 960px;
   }
 
   #page-inner

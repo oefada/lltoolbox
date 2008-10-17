@@ -10,10 +10,10 @@ class ClientsController extends AppController {
 		$this->set('clients', $this->paginate());
 		
 		$page = isset($this->params['named']['page']) ? $this->params['named']['page'] : 1;
-		
+
 		$this->set( 'pag_link', '/clients/index/page:' );
         $this->set( 'pag_page', $page );
-        $this->set( 'pag_total', $this->Client->findCount() );
+        $this->set( 'pag_total', $this->Client->findCount() / $this->paginate['limit'] );
 	}
 	
 	function view($id = null) {
@@ -80,9 +80,6 @@ class ClientsController extends AppController {
 	
 	function search()
 	{
-		
-		debug($this->User->search('jim'));
-		die();
 		if(!empty($this->params['form']['query'])):
 			$query = $this->Sanitize->escape($this->params['form']['query']);
 

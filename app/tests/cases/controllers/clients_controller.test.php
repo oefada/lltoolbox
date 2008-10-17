@@ -18,9 +18,10 @@ class ClientsControllerTest extends CakeTestCase {
 		$this->assertTrue(is_a($this->Clients, 'ClientsController'));
 	}
 	
-	function testSearchAction() {
-		$this->get('/clients/search');
-		$this->assertResponse(SUCCESS);
+	function testSearchActionHasProperHeading() {
+		$result = $this->testAction('/clients/search', array('return' => 'view'));
+
+		$this->assertTags($result, array(array('h2' => true),'Search Results','/h2'));
 	}
 
 	function tearDown() {

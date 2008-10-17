@@ -1,7 +1,7 @@
 var cd = {
 	codes : Array,
 	init : function() {
-		cd.codes = $$('.collapsible');
+		cd.codes = $$('.handle');
 		cd.attach();
 	},
 	attach : function() {
@@ -19,7 +19,7 @@ var cd = {
 		return e.srcElement;
 	},
 	collapse : function(e) {
-		var el = cd.getEventSrc(e).nextSibling;
+		var el = Element.up(cd.getEventSrc(e)).next('div.collapsibleContent');
 		if ( Element.hasClassName(el,'closed') ) {
 			new Effect.Parallel(
 				[
@@ -31,7 +31,7 @@ var cd = {
 					fps:40
 				}
 			);
-			Element.removeClassName(cd.getEventSrc(e), 'collapsible-closed');
+			Element.removeClassName(cd.getEventSrc(e).up(), 'collapsible-closed');
 			Element.removeClassName(el,'closed');
 		} else {
 			new Effect.Parallel(
@@ -44,7 +44,7 @@ var cd = {
 					fps:40
 				}
 			);
-			Element.addClassName(cd.getEventSrc(e), 'collapsible-closed');
+			Element.addClassName(cd.getEventSrc(e).up(), 'collapsible-closed');
 			Element.addClassName(el,'closed')
 		}
 	}

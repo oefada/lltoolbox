@@ -290,22 +290,21 @@ h2 {
 
 
 /* Sidebar */
-#sidebar-right {
+#sidebar-left {
 	background: #fff;
 	padding-bottom: 20px;
 	color: #333;
 }
 
-
 /* Pagination */
-.pagination {
-    padding: 1em;
-    margin: 1em 0;
-    clear: left;
+.paging {
+	float: right;
+	right: 0;
+    clear: both;
     font-size: 85%;
 }
 
-.pagination a, .pagination span {
+.paging a, .paging div, .paging span.current {
     display: block;
     float: left;
     padding: 0.2em 0.5em;
@@ -314,36 +313,37 @@ h2 {
     background: #fff;
 }
 
-.pagination span.current {
+.paging span.current {
     border: 1px solid #2E6AB1;
     font-weight: bold;
     background: #2E6AB1;
     color: #fff;
 }
 
-.pagination a {
+.paging a {
     border: 1px solid #9AAFE5;
     text-decoration: none;
 }
 
-.pagination a:hover {
+.paging a:hover {
     border-color: #2E6AB1;
 }
 
-.pagination a.nextprev {
+.paging a.nextprev {
     font-weight: bold;
 }
 
-.pagination span.nextprev {
+.paging div.nextprev {
+	float: left;
     color: #666;
 }
 
-.pagination span.nextprev {
+.paging div.disabled {
     border: 1px solid #ddd;
     color: #999;
 }
 
-.pagination .nextprev-next {
+.paging .nextprev-next {
     float: right;
 }
 
@@ -364,4 +364,14 @@ span.highlight {
 	background: url(../img/page_down.gif) 0 center no-repeat;
 	padding-right: 20px;
 	cursor: pointer;
+}
+#spinner {
+	position: absolute;
+	left: 45%;
+	top: 0;
+}
+#loader {
+	position: absolute;
+	left: 40%;
+	top: 15px;
 }

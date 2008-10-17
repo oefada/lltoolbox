@@ -4,10 +4,10 @@ $html->addCrumb('Clients', '/clients');
 $html->addCrumb($text->truncate($loas[0]['Client']['name'], 15), '/clients/view/'.$loas[0]['Client']['clientId']);
 $html->addCrumb("LOA's");
 ?>
-
 <?=$layout->blockStart('header');?>
     <a href="/clients/<?=$loas[0]['Client']['clientId']?>/loas/add" title="Add New Loa" class="button add"><span><b class="icon"></b>Add New Loa</span></a>
 <?=$layout->blockEnd();?>
+
 
 <div class="loas index">
 <h2>Viewing LOAs for <?=$loas[0]['Client']['name']?></h2>

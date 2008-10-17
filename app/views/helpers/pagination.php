@@ -1,9 +1,9 @@
 <?php 
 
-class PaginationHelper extends HtmlHelper
+class PaginationHelper extends AppHelper
 {
-    
-    function paginate( $link, $page, $total, $show = 9, $skip='&hellip;' )
+    var $helpers = array('Html', 'Ajax');
+    function paginate( $link, $page, $total, $options = array(), $show = 9, $skip='&hellip;' )
     {
         /*
             $link    string of what link is to be (utilizes $html->link helper)... page numbers will be appended to its end
@@ -12,7 +12,7 @@ class PaginationHelper extends HtmlHelper
             $show    int how many page numbers / "skips" to show between first and last numbers
             $skip    string text to be displayed for "skips"... inside <span>
         */
-
+		$obj = isset($options['update']) ? 'Ajax' : 'Html';
         // Get out early if there's no total pages
         if ( $total < 1 ) return false;
 
@@ -29,14 +29,14 @@ class PaginationHelper extends HtmlHelper
 
         // Previous link
         $out .= ( ($page-1) > 0 )
-                    ? $this->link( 'Prev', $link.($page-1), array('title'=>'View the previous index page', 'class'=>'nextprev') ) 
+                    ? $this->{$obj}->link( 'Prev', $link.($page-1), array_merge(array('title'=>'View the previous index page', 'class'=>'nextprev'), $options) ) 
                     : '<span class="nextprev">Prev</span>';
         $out .= "\n";
 
         // First number
         $out .= ( $page == 1 )
                     ? '<span class="current">1</span>'
-                    : $this->link( '1', $link.'1', array('title'=>'View index page 1') );
+                    : $this->{$obj}->link( '1', $link.'1', array_merge(array('title'=>'View index page 1'), $options) );
         $out .= "\n";
 
         // In-between numbers
@@ -48,7 +48,7 @@ class PaginationHelper extends HtmlHelper
                 $out .= ( $start == 2 ) 
                             ? ( $page == 2 )
                                 ? '<span class="current">2</span>'
-                                : $this->link( '2', $link.'2', array('title'=>'View index page 2') )
+                                : $this->{$obj}->link( '2', $link.'2', array_merge(array('title'=>'View index page 2'), $options) )
                             : $skip;
             }
 
@@ -58,7 +58,7 @@ class PaginationHelper extends HtmlHelper
                 $out .= ( $start >= ($total-$show) ) 
                             ? ( $page == ($total-1) )
                                 ? '<span class="current">'.($total-1).'</span>'
-                                : $this->link( ($total-1), $link.($total-1), array('title'=>'View index page '.($total-1)) )
+                                : $this->{$obj}->link( ($total-1), $link.($total-1), array_merge(array('title'=>'View index page '.($total-1)), $options) )
                             : $skip;
             }
 
@@ -67,7 +67,7 @@ class PaginationHelper extends HtmlHelper
             {
                 $out .= ( $page == ($start+$i) )
                             ? '<span class="current">'.($start+$i).'</span>'
-                            : $this->link( ($start+$i), $link.($start+$i), array('title'=>'View index page '.($start+$i)) );
+                            : $this->{$obj}->link( ($start+$i), $link.($start+$i), array_merge(array('title'=>'View index page '.($start+$i)), $options) );
             }
 
             $out .= "\n";
@@ -78,13 +78,13 @@ class PaginationHelper extends HtmlHelper
         {
             $out .= ( $page == $total )
                         ? '<span class="current">'.$total.'</span>'
-                        : $this->link( $total, $link.$total, array('title'=>'View index page '.$total) );
+                        : $this->{$obj}->link( $total, $link.$total, array_merge(array('title'=>'View index page '.$total), $options) );
             $out .= "\n";
         }
 
         // Next link
         $out .= ( ($page+1) <= $total )
-                    ? $this->link( 'Next', $link.($page+1), array('title'=>'View the next index page', 'class'=>'nextprev') )
+                    ? $this->{$obj}->link( 'Next', $link.($page+1), array_merge(array('title'=>'View the next index page', 'class'=>'nextprev'), $options) )
                     : '<span class="nextprev">Next</span>';
         $out .= "\n";
 

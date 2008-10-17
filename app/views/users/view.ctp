@@ -31,11 +31,6 @@
 			<?php echo $user['User']['email1']; ?>
 			&nbsp;
 		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Email2'); ?></dt>
-		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $user['User']['email2']; ?>
-			&nbsp;
-		</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('WorkPhone'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
 			<?php echo $user['User']['workPhone']; ?>
@@ -98,47 +93,16 @@
 		</dd>
 	</dl>
 </div>
-<div class="actions">
-	<ul>
-		<li><?php echo $html->link(__('Edit User', true), array('action'=>'edit', $user['User']['userId'])); ?> </li>
-		<li><?php echo $html->link(__('Delete User', true), array('action'=>'delete', $user['User']['userId']), null, sprintf(__('Are you sure you want to delete # %s?', true), $user['User']['userId'])); ?> </li>
-		<li><?php echo $html->link(__('List Users', true), array('action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New User', true), array('action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Salutations', true), array('controller'=> 'salutations', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Salutation', true), array('controller'=> 'salutations', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List User Mail Optins', true), array('controller'=> 'user_mail_optins', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New User Mail Optin', true), array('controller'=> 'user_mail_optins', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List User Referrals', true), array('controller'=> 'user_referrals', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New User Referral', true), array('controller'=> 'user_referrals', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List User Site Extendeds', true), array('controller'=> 'user_site_extendeds', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New User Site Extended', true), array('controller'=> 'user_site_extendeds', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List User Payment Settings', true), array('controller'=> 'user_payment_settings', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New User Payment Setting', true), array('controller'=> 'user_payment_settings', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List User Preferences', true), array('controller'=> 'user_preferences', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New User Preference', true), array('controller'=> 'user_preferences', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Bids', true), array('controller'=> 'bids', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Bid', true), array('controller'=> 'bids', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Addresses', true), array('controller'=> 'addresses', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Address', true), array('controller'=> 'addresses', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List User Acquisition Sources', true), array('controller'=> 'user_acquisition_sources', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New User Acquisition Source', true), array('controller'=> 'user_acquisition_sources', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Contests', true), array('controller'=> 'contests', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Contest', true), array('controller'=> 'contests', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Clients', true), array('controller'=> 'clients', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Client', true), array('controller'=> 'clients', 'action'=>'add')); ?> </li>
-	</ul>
-</div>
 <div class="related">
-	<h3 class='collapsible'><?php __('Related User Mail Optins');?></h3>
+	<h3 class='collapsible'><b class='handle'></b><span class='handle'><?php __('Related User Mail Optins');?></span></h3>
+	<div class='collapsibleContent'>
 	<?php if (!empty($user['UserMailOptin'])):?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
-		<th><?php __('UserMailOptinId'); ?></th>
 		<th><?php __('MailingListId'); ?></th>
 		<th><?php __('Optin'); ?></th>
-		<th><?php __('OptinDate'); ?></th>
-		<th><?php __('OptoutDate'); ?></th>
-		<th><?php __('UserId'); ?></th>
+		<th><?php __('Optin Date'); ?></th>
+		<th><?php __('Optout Date'); ?></th>
 		<th class="actions"><?php __('Actions');?></th>
 	</tr>
 	<?php
@@ -150,12 +114,10 @@
 			}
 		?>
 		<tr<?php echo $class;?>>
-			<td><?php echo $userMailOptin['userMailOptinId'];?></td>
 			<td><?php echo $userMailOptin['mailingListId'];?></td>
-			<td><?php echo $userMailOptin['optin'];?></td>
+			<td><?php echo $html->image($userMailOptin['optin'] ? 'tick.png' : 'cross.png');?></td>
 			<td><?php echo $userMailOptin['optinDate'];?></td>
 			<td><?php echo $userMailOptin['optoutDate'];?></td>
-			<td><?php echo $userMailOptin['userId'];?></td>
 			<td class="actions">
 				<?php echo $html->link(__('View', true), array('controller'=> 'user_mail_optins', 'action'=>'view', $userMailOptin['userMailOptinId'])); ?>
 				<?php echo $html->link(__('Edit', true), array('controller'=> 'user_mail_optins', 'action'=>'edit', $userMailOptin['userMailOptinId'])); ?>
@@ -170,6 +132,7 @@
 		<ul>
 			<li><?php echo $html->link(__('New User Mail Optin', true), array('controller'=> 'user_mail_optins', 'action'=>'add'));?> </li>
 		</ul>
+	</div>
 	</div>
 </div>
 <div class="related">

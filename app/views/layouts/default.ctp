@@ -54,7 +54,6 @@
 	<script type="text/javascript"><?php /* Needed to avoid Flash of Unstyled Content in IE */ ?> </script>
 </head>
 <body>
-
   <div id="page"><div id="page-inner">
 
     <a name="top" id="navigation-top"></a>
@@ -84,7 +83,7 @@
         </div> <!-- /#logo-title -->
     </div></div> <!-- /#header-inner, /#header -->
 
-    <div id="main"><div id="main-inner" class="clear-block with-navbar sidebar-right">
+    <div id="main"><div id="main-inner" class="clear-block with-navbar sidebar-left">
 
       <div id="content"><div id="content-inner">
           <div id="content-header">
@@ -93,6 +92,8 @@
 			<?php if (isset($layout)): ?>
 				<div class="buttons"><? $layout->output($header_for_layout);?> </div>
 			<?php endif ?>
+			<div id='loader' style='display: none; text-align: center;'><?=$html->image('ajax-loader.gif')?></div>
+			<div id='spinner' style='display: none; text-align: center;'><?=$html->image('spinner.gif')?></div>
 			</div>
 			<?php if($html->getCrumbs()): ?>
 			<div id="breadcrumbs"><?= $html->getCrumbs("<span></span>", "Dashboard"); ?></div>
@@ -123,7 +124,14 @@
 
         </div></div> <!-- /#navbar-inner, /#navbar -->
 
-        <div id="sidebar-right"><div id="sidebar-right-inner" class="region region-right">
+		<div id="sidebar-left"><div id="sidebar-left-inner" class="region region-left">
+			<ul>
+				<li>Link 1</li>
+				<li>Link 2</li>
+				<li>Link 3</li>
+				<li>Link 4</li>
+				<li>Link 5</li>
+			</ul>
 		<?php if (isset($layout)): ?>
 			<div class='page-toolbar'>
 			<? $layout->output($sidebar_for_layout);?>
@@ -132,7 +140,7 @@
 		<div style="clear: both;"></div>
 		<h5>Search</h5>
           <?php echo $this->renderElement('search'); ?>
-        </div></div> <!-- /#sidebar-right-inner, /#sidebar-right -->
+        </div></div> <!-- /#sidebar-left-inner, /#sidebar-left -->
 
     </div></div> <!-- /#main-inner, /#main -->
 
