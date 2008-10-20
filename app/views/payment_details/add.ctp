@@ -3,6 +3,9 @@
 	<fieldset>
  		<legend><?php __('Add PaymentDetail');?></legend>
 	<?php
+		echo '<div style="background-color:whitesmoke; border: 1px solid #a3a3a3; font-weight:bold;">';
+			echo $form->input('billingAmount');
+		echo '</div>';
 		echo $form->input('worksheetId', array('readonly' => 'readonly'));
 		echo $form->input('creditCardNum');
 		echo $form->input('expirationDate');
@@ -14,7 +17,6 @@
 		echo $form->input('billingState');
 		echo $form->input('billingZip');
 		echo $form->input('billingCountry');
-		echo $form->input('billingAmount');
 		echo $form->input('applyToLOA', array('checked' => 'checked'));
 		echo $form->input('applyLoaAuthUsername');
 		echo $form->input('paymentTypeId');
