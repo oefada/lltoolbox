@@ -4,6 +4,21 @@ class User extends AppModel {
 	var $name = 'User';
 	var $useTable = 'user';
 	var $primaryKey = 'userId';
+	
+	var $validate = array(
+				'firstName' => array(
+					'rule' => 'alphaNumeric',
+					'message' => 'First name must only contain letters.'
+				),
+				'lastName' => array(
+					'rule' => 'alphaNumeric',
+					'message' => 'Last name must only contain letters.'
+				),		
+				'email' => array(
+					'rule' => 'email',
+					'message' => 'Invalid email address.'
+				)
+			);
 
 	var $belongsTo = array('Salutation' => array('foreignKey' => 'salutationId'));
 	

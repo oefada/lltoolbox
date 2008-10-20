@@ -7,6 +7,17 @@ class Client extends AppModel {
 	var $displayField = 'name';
 	var $order = array('Client.name');
 	
+	var $validate = array(
+				'name' => array(
+					'rule' => 'alphaNumeric',
+					'message' => 'Client name must only contain letters.'
+				),
+				'email' => array(
+					'rule' => 'email',
+					'message' => 'Invalid email address.'
+				)
+			);
+	
 	var $belongsTo = array('ClientLevel' => array('foreignKey' => 'clientLevelId'),
 						   'ClientStatus' => array('foreignKey' => 'clientStatusId'),
 						   'ClientType' => array('foreignKey' => 'clientTypeId'),
