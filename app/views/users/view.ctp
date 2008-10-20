@@ -26,9 +26,9 @@
 			<?php echo $user['User']['lastName']; ?>
 			&nbsp;
 		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Email1'); ?></dt>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Email'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $user['User']['email1']; ?>
+			<?php echo $user['User']['email']; ?>
 			&nbsp;
 		</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('WorkPhone'); ?></dt>
@@ -93,16 +93,50 @@
 		</dd>
 	</dl>
 </div>
+<div class="actions">
+	<ul>
+		<li><?php echo $html->link(__('Edit User', true), array('action'=>'edit', $user['User']['userId'])); ?> </li>
+		<li><?php echo $html->link(__('Delete User', true), array('action'=>'delete', $user['User']['userId']), null, sprintf(__('Are you sure you want to delete # %s?', true), $user['User']['userId'])); ?> </li>
+		<li><?php echo $html->link(__('List Users', true), array('action'=>'index')); ?> </li>
+		<li><?php echo $html->link(__('New User', true), array('action'=>'add')); ?> </li>
+		<li><?php echo $html->link(__('List Salutations', true), array('controller'=> 'salutations', 'action'=>'index')); ?> </li>
+		<li><?php echo $html->link(__('New Salutation', true), array('controller'=> 'salutations', 'action'=>'add')); ?> </li>
+		<li><?php echo $html->link(__('List User Mail Optins', true), array('controller'=> 'user_mail_optins', 'action'=>'index')); ?> </li>
+		<li><?php echo $html->link(__('New User Mail Optin', true), array('controller'=> 'user_mail_optins', 'action'=>'add')); ?> </li>
+		<li><?php echo $html->link(__('List User Referrals', true), array('controller'=> 'user_referrals', 'action'=>'index')); ?> </li>
+		<li><?php echo $html->link(__('New User Referral', true), array('controller'=> 'user_referrals', 'action'=>'add')); ?> </li>
+		<li><?php echo $html->link(__('List User Site Extendeds', true), array('controller'=> 'user_site_extendeds', 'action'=>'index')); ?> </li>
+		<li><?php echo $html->link(__('New User Site Extended', true), array('controller'=> 'user_site_extendeds', 'action'=>'add')); ?> </li>
+		<li><?php echo $html->link(__('List User Payment Settings', true), array('controller'=> 'user_payment_settings', 'action'=>'index')); ?> </li>
+		<li><?php echo $html->link(__('New User Payment Setting', true), array('controller'=> 'user_payment_settings', 'action'=>'add')); ?> </li>
+		<li><?php echo $html->link(__('List User Preferences', true), array('controller'=> 'user_preferences', 'action'=>'index')); ?> </li>
+		<li><?php echo $html->link(__('New User Preference', true), array('controller'=> 'user_preferences', 'action'=>'add')); ?> </li>
+		<li><?php echo $html->link(__('List Bids', true), array('controller'=> 'bids', 'action'=>'index')); ?> </li>
+		<li><?php echo $html->link(__('New Bid', true), array('controller'=> 'bids', 'action'=>'add')); ?> </li>
+		<li><?php echo $html->link(__('List Addresses', true), array('controller'=> 'addresses', 'action'=>'index')); ?> </li>
+		<li><?php echo $html->link(__('New Address', true), array('controller'=> 'addresses', 'action'=>'add')); ?> </li>
+		<li><?php echo $html->link(__('List User Acquisition Sources', true), array('controller'=> 'user_acquisition_sources', 'action'=>'index')); ?> </li>
+		<li><?php echo $html->link(__('New User Acquisition Source', true), array('controller'=> 'user_acquisition_sources', 'action'=>'add')); ?> </li>
+		<li><?php echo $html->link(__('List Contests', true), array('controller'=> 'contests', 'action'=>'index')); ?> </li>
+		<li><?php echo $html->link(__('New Contest', true), array('controller'=> 'contests', 'action'=>'add')); ?> </li>
+		<li><?php echo $html->link(__('List Clients', true), array('controller'=> 'clients', 'action'=>'index')); ?> </li>
+		<li><?php echo $html->link(__('New Client', true), array('controller'=> 'clients', 'action'=>'add')); ?> </li>
+	</ul>
+</div>
 <div class="related">
-	<h3 class='collapsible'><b class='handle'></b><span class='handle'><?php __('Related User Mail Optins');?></span></h3>
-	<div class='collapsibleContent'>
+	<h3><?php __('Related User Mail Optins');?></h3>
 	<?php if (!empty($user['UserMailOptin'])):?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
+		<th><?php __('UserMailOptinId'); ?></th>
 		<th><?php __('MailingListId'); ?></th>
 		<th><?php __('Optin'); ?></th>
-		<th><?php __('Optin Date'); ?></th>
-		<th><?php __('Optout Date'); ?></th>
+		<th><?php __('OptinDate'); ?></th>
+		<th><?php __('OptoutDate'); ?></th>
+		<th><?php __('UserId'); ?></th>
+		<th><?php __('StatNumPurchases'); ?></th>
+		<th><?php __('StatLastPurchase'); ?></th>
+		<th><?php __('StatLastUpdated'); ?></th>
 		<th class="actions"><?php __('Actions');?></th>
 	</tr>
 	<?php
@@ -114,10 +148,15 @@
 			}
 		?>
 		<tr<?php echo $class;?>>
+			<td><?php echo $userMailOptin['userMailOptinId'];?></td>
 			<td><?php echo $userMailOptin['mailingListId'];?></td>
-			<td><?php echo $html->image($userMailOptin['optin'] ? 'tick.png' : 'cross.png');?></td>
+			<td><?php echo $userMailOptin['optin'];?></td>
 			<td><?php echo $userMailOptin['optinDate'];?></td>
 			<td><?php echo $userMailOptin['optoutDate'];?></td>
+			<td><?php echo $userMailOptin['userId'];?></td>
+			<td><?php echo $userMailOptin['statNumPurchases'];?></td>
+			<td><?php echo $userMailOptin['statLastPurchase'];?></td>
+			<td><?php echo $userMailOptin['statLastUpdated'];?></td>
 			<td class="actions">
 				<?php echo $html->link(__('View', true), array('controller'=> 'user_mail_optins', 'action'=>'view', $userMailOptin['userMailOptinId'])); ?>
 				<?php echo $html->link(__('Edit', true), array('controller'=> 'user_mail_optins', 'action'=>'edit', $userMailOptin['userMailOptinId'])); ?>
@@ -133,10 +172,9 @@
 			<li><?php echo $html->link(__('New User Mail Optin', true), array('controller'=> 'user_mail_optins', 'action'=>'add'));?> </li>
 		</ul>
 	</div>
-	</div>
 </div>
 <div class="related">
-	<h3 class='collapsible'><?php __('Related User Referrals');?></h3>
+	<h3><?php __('Related User Referrals');?></h3>
 	<?php if (!empty($user['UserReferral'])):?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
@@ -145,6 +183,9 @@
 		<th><?php __('ReferredLastName'); ?></th>
 		<th><?php __('ReferredEmailAddress'); ?></th>
 		<th><?php __('UserId'); ?></th>
+		<th><?php __('UserEmail'); ?></th>
+		<th><?php __('ContestId'); ?></th>
+		<th><?php __('ReferralDate'); ?></th>
 		<th class="actions"><?php __('Actions');?></th>
 	</tr>
 	<?php
@@ -161,6 +202,9 @@
 			<td><?php echo $userReferral['referredLastName'];?></td>
 			<td><?php echo $userReferral['referredEmailAddress'];?></td>
 			<td><?php echo $userReferral['userId'];?></td>
+			<td><?php echo $userReferral['userEmail'];?></td>
+			<td><?php echo $userReferral['contestId'];?></td>
+			<td><?php echo $userReferral['referralDate'];?></td>
 			<td class="actions">
 				<?php echo $html->link(__('View', true), array('controller'=> 'user_referrals', 'action'=>'view', $userReferral['userReferralId'])); ?>
 				<?php echo $html->link(__('Edit', true), array('controller'=> 'user_referrals', 'action'=>'edit', $userReferral['userReferralId'])); ?>
@@ -178,7 +222,7 @@
 	</div>
 </div>
 <div class="related">
-	<h3 class='collapsible'><?php __('Related User Site Extendeds');?></h3>
+	<h3><?php __('Related User Site Extendeds');?></h3>
 	<?php if (!empty($user['UserSiteExtended'])):?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
@@ -230,7 +274,7 @@
 	</div>
 </div>
 <div class="related">
-	<h3 class='collapsible'><?php __('Related User Payment Settings');?></h3>
+	<h3><?php __('Related User Payment Settings');?></h3>
 	<?php if (!empty($user['UserPaymentSetting'])):?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
@@ -244,8 +288,8 @@
 		<th><?php __('AccountNumber'); ?></th>
 		<th><?php __('NameOnAccount'); ?></th>
 		<th><?php __('PaymentTypeId'); ?></th>
-		<th><?php __('Cc Year'); ?></th>
-		<th><?php __('Cc Month'); ?></th>
+		<th><?php __('ExpYear'); ?></th>
+		<th><?php __('ExpMonth'); ?></th>
 		<th class="actions"><?php __('Actions');?></th>
 	</tr>
 	<?php
@@ -267,8 +311,8 @@
 			<td><?php echo $userPaymentSetting['accountNumber'];?></td>
 			<td><?php echo $userPaymentSetting['nameOnAccount'];?></td>
 			<td><?php echo $userPaymentSetting['paymentTypeId'];?></td>
-			<td><?php echo $userPaymentSetting['cc_year'];?></td>
-			<td><?php echo $userPaymentSetting['cc_month'];?></td>
+			<td><?php echo $userPaymentSetting['expYear'];?></td>
+			<td><?php echo $userPaymentSetting['expMonth'];?></td>
 			<td class="actions">
 				<?php echo $html->link(__('View', true), array('controller'=> 'user_payment_settings', 'action'=>'view', $userPaymentSetting['userPaymentSettingId'])); ?>
 				<?php echo $html->link(__('Edit', true), array('controller'=> 'user_payment_settings', 'action'=>'edit', $userPaymentSetting['userPaymentSettingId'])); ?>
@@ -286,7 +330,7 @@
 	</div>
 </div>
 <div class="related">
-	<h3 class='collapsible'><?php __('Related User Preferences');?></h3>
+	<h3><?php __('Related User Preferences');?></h3>
 	<?php if (!empty($user['UserPreference'])):?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
@@ -326,7 +370,7 @@
 	</div>
 </div>
 <div class="related">
-	<h3 class='collapsible'><?php __('Related Bids');?></h3>
+	<h3><?php __('Related Bids');?></h3>
 	<?php if (!empty($user['Bid'])):?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
@@ -376,7 +420,7 @@
 	</div>
 </div>
 <div class="related">
-	<h3 class='collapsible'><?php __('Related Addresses');?></h3>
+	<h3><?php __('Related Addresses');?></h3>
 	<?php if (!empty($user['Address'])):?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
@@ -448,7 +492,7 @@
 	</div>
 </div>
 <div class="related">
-	<h3 class='collapsible'><?php __('Related User Acquisition Sources');?></h3>
+	<h3><?php __('Related User Acquisition Sources');?></h3>
 	<?php if (!empty($user['UserAcquisitionSource'])):?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
@@ -484,7 +528,7 @@
 	</div>
 </div>
 <div class="related">
-	<h3 class='collapsible'><?php __('Related Contests');?></h3>
+	<h3><?php __('Related Contests');?></h3>
 	<?php if (!empty($user['Contest'])):?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
@@ -530,7 +574,7 @@
 	</div>
 </div>
 <div class="related">
-	<h3 class='collapsible'><?php __('Related Clients');?></h3>
+	<h3><?php __('Related Clients');?></h3>
 	<?php if (!empty($user['Client'])):?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
@@ -555,6 +599,8 @@
 		<th><?php __('CheckRateUrl'); ?></th>
 		<th><?php __('NumRooms'); ?></th>
 		<th><?php __('AirportCode'); ?></th>
+		<th><?php __('OldProductId'); ?></th>
+		<th><?php __('SeoName'); ?></th>
 		<th class="actions"><?php __('Actions');?></th>
 	</tr>
 	<?php
@@ -587,6 +633,8 @@
 			<td><?php echo $client['checkRateUrl'];?></td>
 			<td><?php echo $client['numRooms'];?></td>
 			<td><?php echo $client['airportCode'];?></td>
+			<td><?php echo $client['oldProductId'];?></td>
+			<td><?php echo $client['seoName'];?></td>
 			<td class="actions">
 				<?php echo $html->link(__('View', true), array('controller'=> 'clients', 'action'=>'view', $client['clientId'])); ?>
 				<?php echo $html->link(__('Edit', true), array('controller'=> 'clients', 'action'=>'edit', $client['clientId'])); ?>

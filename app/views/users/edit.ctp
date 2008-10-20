@@ -8,8 +8,7 @@
 		echo $form->input('salutationId');
 		echo $form->input('firstName');
 		echo $form->input('lastName');
-		echo $form->input('email1');
-		echo $form->input('email2');
+		echo $form->input('email');
 		echo $form->input('workPhone');
 		echo $form->input('mobilePhone');
 		echo $form->input('homePhone');

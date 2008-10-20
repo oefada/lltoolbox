@@ -13,8 +13,7 @@ echo $paginator->counter(array(
 	<th><?php echo $paginator->sort('salutationId');?></th>
 	<th><?php echo $paginator->sort('firstName');?></th>
 	<th><?php echo $paginator->sort('lastName');?></th>
-	<th><?php echo $paginator->sort('email1');?></th>
-	<th><?php echo $paginator->sort('email2');?></th>
+	<th><?php echo $paginator->sort('email');?></th>
 	<th><?php echo $paginator->sort('workPhone');?></th>
 	<th><?php echo $paginator->sort('mobilePhone');?></th>
 	<th><?php echo $paginator->sort('homePhone');?></th>
@@ -54,10 +53,7 @@ foreach ($users as $user):
 			<?php echo $user['User']['lastName']; ?>
 		</td>
 		<td>
-			<?php echo $user['User']['email1']; ?>
-		</td>
-		<td>
-			<?php echo $user['User']['email2']; ?>
+			<?php echo $user['User']['email']; ?>
 		</td>
 		<td>
 			<?php echo $user['User']['workPhone']; ?>
