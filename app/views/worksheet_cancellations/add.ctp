@@ -1,10 +1,11 @@
 <div class="worksheetCancellations form">
-<?php echo $form->create('WorksheetCancellation');?>
+<?php echo $form->create(null, array('url' => array('controller' => 'worksheets/' . $this->params['worksheetId'], 'action' => 'worksheetCancellations/add'))); ?>
 	<fieldset>
  		<legend><?php __('Add WorksheetCancellation');?></legend>
 	<?php
 		echo $form->input('cancellationReasonId');
-		echo $form->input('worksheetId');
+		echo $form->input('worksheetId', array('readonly' => 'readonly'));
+		echo $form->input('Worksheet.worksheetStatusId');
 		echo $form->input('dateCancelled');
 		echo $form->input('cancellationNotes');
 	?>
