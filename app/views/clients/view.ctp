@@ -27,7 +27,7 @@ Related Client Items
 			<?php echo $client['ClientType']['clientTypeName']; ?>
 		</td>
 		<td>
-			<?php echo$client['ClientLevel']['clientLevelName']; ?>
+			<?php echo $client['ClientLevel']['clientLevelName']; ?>
 		</td>
 		<td>
 			<?php echo $client['ClientStatus']['clientStatusName']; ?>
@@ -37,21 +37,23 @@ Related Client Items
 	<dl>
 <fieldset>
 	<legend>Contact Details</legend>
-	<dt><?php __('Email'); ?></dt>
-	<dd>
-		<?php echo $client['Client']['email']; ?>
-		&nbsp;
-	</dd>
-	<dt><?php __('Phone1'); ?></dt>
-	<dd>
+	<div><?php __('Email'); ?></div>
+	<div id="ClientEmail1">
+		<?php echo $client['Client']['email1']; ?>
+	</div>
+	<div><?php __('Phone1'); ?></div>
+	<div id="ClientPhone1">
 		<?php echo $client['Client']['phone1']; ?>
-		&nbsp;
-	</dd>
-	<dt><?php __('Phone2'); ?></dt>
-	<dd>
+	</div>
+	<div><?php __('Phone2'); ?></div>
+	<div id="ClientPhone2">
 		<?php echo $client['Client']['phone2']; ?>
-		&nbsp;
-	</dd>
+	</div>
+	<?php
+		echo $ajax->editor('ClientEmail1');
+		echo $ajax->editor('ClientPhone1');
+		echo $ajax->editor('ClientPhone2');
+	?>
 </fieldset>
 <fieldset>
 	<legend>Company/Hotel Details</legend>

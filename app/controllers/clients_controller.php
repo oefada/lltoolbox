@@ -8,12 +8,6 @@ class ClientsController extends AppController {
 		$this->Client->recursive = 0;
 
 		$this->set('clients', $this->paginate());
-		
-		$page = isset($this->params['named']['page']) ? $this->params['named']['page'] : 1;
-
-		$this->set( 'pag_link', '/clients/index/page:' );
-        $this->set( 'pag_page', $page );
-        $this->set( 'pag_total', $this->Client->findCount() / $this->paginate['limit'] );
 	}
 	
 	function view($id = null) {
@@ -80,6 +74,11 @@ class ClientsController extends AppController {
 	
 	function search()
 	{
+		if(!empty($_GET['query'])) {
+			$this->params['form']['query'] = $_GET['query'];
+ 		} elseif(!empty($this->params['named']['query'])) {
+			$this->params['form']['query'] = $this->params['named']['query'];
+		}
 		if(!empty($this->params['form']['query'])):
 			$query = $this->Sanitize->escape($this->params['form']['query']);
 
@@ -90,7 +89,15 @@ class ClientsController extends AppController {
 			
 			if (isset($this->params['requested'])) {
 				return $results;
-			}	
+			} elseif($_GET['query'] ||  $this->params['named']['query']) {
+				$this->autoRender = false;
+				$this->Client->recursive = 0;
+
+				$this->paginate = array('conditions' => array('name LIKE' => "%$query%"));
+				$this->set('query', $query);
+				$this->set('clients', $this->paginate());
+				$this->render('index');
+			}
 		endif;
 	}
 }

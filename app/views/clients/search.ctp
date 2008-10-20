@@ -1,5 +1,5 @@
-<h2>Search Results</h2>
 <?php if (isset($results) && count($results) > 0): ?>
+	<h2>Search Results</h2>
 <ol style="padding: 0; margin: 10px 0 0 0; list-style: none">
 <?php foreach($results as $row): ?>
 	<li style="margin-bottom: 3px;"><?=$html->link($text->highlight($text->excerpt($row['Client']['name'], $query, 10), $query), array('action' => 'view', $row['Client']['clientId']), null, false , false ); ?><br />
@@ -10,5 +10,3 @@
 <?php endforeach;?>
 </ol>
 <?php endif; ?>
-
-<input type="text" name="query" id="query" />

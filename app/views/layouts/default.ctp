@@ -28,6 +28,7 @@
 			echo $javascript->link('scriptaculous/scriptaculous');
 			echo $javascript->link('modalbox');
 			echo $javascript->link('collapsible');
+			echo $javascript->link('in_place_editor');
 		endif;
 
 		echo $scripts_for_layout;
@@ -64,22 +65,12 @@
 
             <div id="logo"><a href="" title="" rel="home"><img src="" alt="" id="logo-image" /></a></div>
 
-            <?php if (true): ?>
+
               <h1 id="site-name">
                 <a href="" title="" rel="home">
 					Site Manager
                 </a>
               </h1>
-            <?php else: ?>
-              <div id="site-name"><strong>
-                <a href="" title="" rel="home">
-                	Site Manager
-                </a>
-              </strong></div>
-            <?php endif; ?>
-
-            <div id="site-slogan">Slogan</div>
-
         </div> <!-- /#logo-title -->
     </div></div> <!-- /#header-inner, /#header -->
 
@@ -138,7 +129,6 @@
 			</div>
 		<?php endif ?>
 		<div style="clear: both;"></div>
-		<h5>Search</h5>
           <?php echo $this->renderElement('search'); ?>
         </div></div> <!-- /#sidebar-left-inner, /#sidebar-left -->
 

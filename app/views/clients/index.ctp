@@ -1,19 +1,23 @@
 <?php $this->pageTitle = 'Clients';
-$html->addCrumb('Clients');
+if (isset($query)) {
+	$html->addCrumb('Clients', '/clients');
+	$html->addCrumb('search for '.$query);
+} else {
+	$html->addCrumb('Clients');
+}
 ?>
 
 <?=$layout->blockStart('header');?>
     <a href="/clients/add" title="Add New Loa" class="button add"><span><b class="icon"></b>Add New Client</span></a>
 <?=$layout->blockEnd();?>
 <div id="client-index">
-	<?php echo $this->renderElement('ajax_paginator', array('divToPaginate' => 'client-index')); ?>
+	<?php echo $this->renderElement('ajax_paginator', array('divToPaginate' => 'client-index', 'showCount' => true)); ?>
 <div class="clients index">
-<p>
-<?php
-echo $paginator->counter(array(
-'format' => __('Page %page% of %pages%, showing %current% records out of %count% total, starting on record %start%, ending on %end%', true)
-));
-?></p>
+	<?php if (isset($query) && !empty($query)): ?>
+		<div style="clear: both">
+		<strong>Search Criteria:</strong> <?php echo $query; ?>
+		</div>
+	<?php endif ?>
 <table cellpadding="0" cellspacing="0">
 <tr>
 	<th><?php echo $paginator->sort('name');?></th>
@@ -32,7 +36,13 @@ foreach ($clients as $client):
 ?>
 	<tr<?php echo $class;?>>
 		<td>
-			<strong><?php echo $client['Client']['name']; ?></strong>		</td>
+			<strong>
+			<?php if (isset($query)): ?>
+				<?php echo $text->highlight($client['Client']['name'], $query); ?>
+			<?php else: ?>
+				<?php echo $client['Client']['name']; ?>
+			<?php endif ?>
+			</strong>		</td>
 		<td>
 			<?php echo $client['ClientType']['clientTypeName']; ?>
 		</td>
