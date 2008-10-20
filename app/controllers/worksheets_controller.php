@@ -15,6 +15,7 @@ class WorksheetsController extends AppController {
 			$this->redirect(array('action'=>'index'));
 		}
 		$this->set('worksheet', $this->Worksheet->read(null, $id));
+		$this->createNewWorksheetFromWorksheet($id);
 	}
 
 	function add() {
@@ -81,6 +82,26 @@ class WorksheetsController extends AppController {
 			}
 			$this->redirect(array('action'=>'view', 'id' => $id));						
 		}
+	}
+	
+	function createNewWorksheetFromWorksheet($id = null) {
+		if (!$id) {
+			return false;	
+		}
+		
+		//attach  containable behavior, can also be done in the model through an actsAs
+		$this->Worksheet->Behaviors->attach('Containable');
+		
+		//choose which child/sibling models we want to return besides the current one
+		$this->Worksheet->contain('Offer');
+		
+		//do a normal read
+		$worksheetData = $this->Worksheet->read(null, $id);
+		$offerId = $worksheetData['Offer']['offerId'];
+		
+		//we only get Worksheet and whatevr we contained by, in this case, Offer
+		debug($worksheetData);
+		
 	}
 
 }

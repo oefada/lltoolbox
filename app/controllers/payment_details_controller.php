@@ -73,5 +73,21 @@ class PaymentDetailsController extends AppController {
 		}
 	}
 
+	function confirmPayment($id = null) {
+		if (!$id) {
+			$this->Session->setFlash(__('Invalid PaymentDetail.', true));
+			$this->redirect(array('action'=>'index'));
+		}
+		$this->set('paymentDetail', $this->PaymentDetail->read(null, $id));
+	}
+
+	function processPayment($id = null) {
+		if (!$id) {
+			$this->Session->setFlash(__('Invalid PaymentDetail.', true));
+			$this->redirect(array('action'=>'index'));
+		}
+		$this->set('paymentDetail', $this->PaymentDetail->read(null, $id));
+		$this->set('successfulPayment', 1);
+	}
 }
 ?>

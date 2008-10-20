@@ -22,12 +22,13 @@ class UsersController extends AppController {
 			if ($this->User->save($this->data)) {
 				$this->flash(__('User saved.', true), array('action'=>'index'));
 			} else {
+				
 			}
 		}
 		$contests = $this->User->Contest->find('list');
 		$clients = $this->User->Client->find('list');
-		$salutations = $this->User->Salutation->find('list');
-		$this->set(compact('contests', 'clients', 'salutations'));
+		$salutationIds = $this->User->Salutation->find('list');
+		$this->set(compact('contests', 'clients', 'salutationIds'));
 	}
 
 	function edit($id = null) {
@@ -45,8 +46,8 @@ class UsersController extends AppController {
 		}
 		$contests = $this->User->Contest->find('list');
 		$clients = $this->User->Client->find('list');
-		$salutations = $this->User->Salutation->find('list');
-		$this->set(compact('contests','clients','salutations'));
+		$salutationIds = $this->User->Salutation->find('list');
+		$this->set(compact('contests','clients','salutationIds'));
 	}
 
 	function delete($id = null) {
