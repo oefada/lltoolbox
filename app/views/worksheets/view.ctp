@@ -1,5 +1,14 @@
 <div class="worksheets view">
 <h2><?php  __('Worksheet');?></h2>
+
+	<?php if (($worksheet['Worksheet']['isFlake'] || in_array($worksheet['Worksheet']['worksheetStatusId'], array(5,7,8))) && empty($worksheet['WorksheetCancellation']['worksheetId'])) { ?>
+	<h3>This worksheet has been cancelled / refunded / flaked.</h3>
+	<div>
+		Click on the link below to fill out the worksheet cancellation information.<br />
+		<a href="/worksheets/<?php echo $worksheet['Worksheet']['worksheetId'];?>/worksheet_cancellations/add">New Worksheet Cancellation</a><br /><br />
+	</div>
+	<?php } ?>
+	
 	<dl><?php $i = 0; $class = ' class="altrow"';?>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('WorksheetId'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
@@ -8,7 +17,7 @@
 		</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Worksheet Status'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $worksheet['Worksheet']['worksheetStatusId']; ?>
+			<?php echo $worksheet['WorksheetStatus']['worksheetStatusName']; ?>
 			&nbsp;
 		</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('ParentWorksheetId'); ?></dt>
@@ -199,7 +208,7 @@
 </div>
 	<div class="related">
 		<h3><?php  __('Related Worksheet Cancellations');?></h3>
-	<?php if (!empty($worksheet['WorksheetCancellation'])):?>
+	<?php if (!empty($worksheet['WorksheetCancellation']['worksheetId'])):?>
 		<dl>	<?php $i = 0; $class = ' class="altrow"';?>
 			<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('WorksheetCancellationId');?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
@@ -223,15 +232,15 @@
 &nbsp;</dd>
 		</dl>
 	<?php endif; ?>
-		<div class="actions">
-			<ul>
-				<li><?php echo $html->link(__('Edit Worksheet Cancellation', true), array('controller'=> 'worksheet_cancellations', 'action'=>'edit', $worksheet['WorksheetCancellation']['worksheetCancellationId'])); ?></li>
-			</ul>
+		<div>
+			<a href=""><h4>&raquo;&nbsp;Use Next Bid and Create New Worksheet</h4></a>
+			<h4>There is NO next eligible bid</h4>
 		</div>
 	</div>
+	
 		<div class="related">
 		<h3><?php  __('Related Worksheet Refunds');?></h3>
-	<?php if (!empty($worksheet['WorksheetRefund'])):?>
+	<?php if (!empty($worksheet['WorksheetRefund']['worksheetId'])):?>
 		<dl>	<?php $i = 0; $class = ' class="altrow"';?>
 			<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('WorksheetRefundId');?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
@@ -255,15 +264,11 @@
 &nbsp;</dd>
 		</dl>
 	<?php endif; ?>
-		<div class="actions">
-			<ul>
-				<li><?php echo $html->link(__('Edit Worksheet Refund', true), array('controller'=> 'worksheet_refunds', 'action'=>'edit', $worksheet['WorksheetRefund']['worksheetRefundId'])); ?></li>
-			</ul>
-		</div>
 	</div>
+	
 		<div class="related">
 		<h3><?php  __('Related Reservations');?></h3>
-	<?php if (!empty($worksheet['Reservation'])):?>
+	<?php if (!empty($worksheet['Reservation']['worksheetId'])):?>
 		<dl>	<?php $i = 0; $class = ' class="altrow"';?>
 			<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('WorksheetId');?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
@@ -323,12 +328,8 @@
 &nbsp;</dd>
 		</dl>
 	<?php endif; ?>
-		<div class="actions">
-			<ul>
-				<li><?php echo $html->link(__('Edit Reservation', true), array('controller'=> 'reservations', 'action'=>'edit', $worksheet['Reservation']['worksheetId'])); ?></li>
-			</ul>
-		</div>
 	</div>
+	
 	<div class="related">
 	<h3><?php __('Related Payment Details');?></h3>
 	<?php if (!empty($worksheet['PaymentDetail'])):?>
@@ -337,17 +338,22 @@
 		<th><?php __('Payment Detail Id'); ?></th>
 		<th><?php __('First Name'); ?></th>
 		<th><?php __('Last Name'); ?></th>
+		<th><?php __('Billing Amount'); ?></th>
 		<th><?php __('Applied to LOA'); ?></th>
-		<th><?php __('Applied by '); ?></th>
 		<th><?php __('Payment Date'); ?></th>
 		<th><?php __('Refund Ticket'); ?></th>
-		<th><?php __('Auto Processed'); ?></th>
+		<th><?php __('Processed'); ?></th>
 		<th><?php __('Successful Charge'); ?></th>
 		<th class="actions"><?php __('Actions');?></th>
 	</tr>
 	<?php
 		$i = 0;
 		foreach ($worksheet['PaymentDetail'] as $paymentDetail):
+			$successful_charge = $paymentDetail['successfulCharge'] ? 'Yes' : 'No';
+			$processed_flag = $paymentDetail['processed'] ? 'Yes' : 'No';
+			if ($paymentDetail['autoProcessed']) {
+				$processed_flag.= ' (Auto)';
+			}
 			$class = null;
 			if ($i++ % 2 == 0) {
 				$class = ' class="altrow"';
@@ -357,14 +363,19 @@
 			<td><?php echo $paymentDetail['paymentDetailId'];?></td>
 			<td><?php echo $paymentDetail['creditCardFirstName'];?></td>
 			<td><?php echo $paymentDetail['creditCardLastName'];?></td>
+			<td>$<?php echo $paymentDetail['billingAmount'];?></td>
 			<td><?php echo $paymentDetail['applyToLOA'];?></td>
-			<td><?php echo $paymentDetail['applyLoaAuthUsername'];?></td>
 			<td><?php echo $paymentDetail['paymentDate'];?></td>
 			<td><?php echo $paymentDetail['refundWholeTicket'];?></td>
-			<td><?php echo $paymentDetail['autoProcessed'];?></td>
-			<td><?php echo $paymentDetail['successfulCharge'];?></td>
+			<td><strong><?php echo $processed_flag;?></strong></td>
+			<td><?php echo $successful_charge;?></td>
 			<td class="actions">
 				<?php echo $html->link(__('View', true), array('controller'=> 'payment_details', 'action'=>'view', $paymentDetail['paymentDetailId'])); ?>
+				<?php 
+				if (!$paymentDetail['processed']) {
+					echo $html->link(__('Process Payment', true), array('controller'=> 'payment_details', 'action'=>'confirmPayment', $paymentDetail['paymentDetailId']));	
+				}
+				?>
 			</td>
 		</tr>
 	<?php endforeach; ?>
