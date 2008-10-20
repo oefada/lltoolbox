@@ -28,7 +28,7 @@ $html->addCrumb('Edit');
 	<fieldset>
 		<legend>Contact Details</legend>
 		<?php
-		echo $form->input('email1');
+		echo $form->input('email');
 		echo $form->input('phone1');
 		echo $form->input('phone2');
 		echo $form->input('country');

@@ -37,9 +37,9 @@ Related Client Items
 	<dl>
 <fieldset>
 	<legend>Contact Details</legend>
-	<dt><?php __('Email1'); ?></dt>
+	<dt><?php __('Email'); ?></dt>
 	<dd>
-		<?php echo $client['Client']['email1']; ?>
+		<?php echo $client['Client']['email']; ?>
 		&nbsp;
 	</dd>
 	<dt><?php __('Phone1'); ?></dt>
