@@ -136,9 +136,7 @@
 
       <div id="footer"><div id="footer-inner" class="region region-footer">
 
-          <div id="footer-message">Footer Msg</div>
-
-        Footer
+          <div id="footer-message"><? if (REVISION) { ?><strong>Running SVN Revision <?=REVISION?></strong><? } ?></div>
 
       </div></div> <!-- /#footer-inner, /#footer -->
 
