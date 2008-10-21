@@ -1,5 +1,5 @@
-<div class="worksheets index">
-<h2><?php __('Worksheets');?></h2>
+<div class="tickets index">
+<h2><?php __('Tickets');?></h2>
 <p>
 <?php
 echo $paginator->counter(array(
@@ -8,8 +8,8 @@ echo $paginator->counter(array(
 ?></p>
 <table cellpadding="0" cellspacing="0">
 <tr>
-	<th><?php echo $paginator->sort('worksheetId');?></th>
-	<th><?php echo $paginator->sort('worksheetStatusId');?></th>
+	<th><?php echo $paginator->sort('ticketId');?></th>
+	<th><?php echo $paginator->sort('ticketStatusId');?></th>
 	<th><?php echo $paginator->sort('PackageName');?></th>
 	<th><?php echo $paginator->sort('userFirstName');?></th>
 	<th><?php echo $paginator->sort('userLastName');?></th>
@@ -17,7 +17,7 @@ echo $paginator->counter(array(
 </tr>
 <?php
 $i = 0;
-foreach ($worksheets as $worksheet):
+foreach ($tickets as $ticket):
 	$class = null;
 	if ($i++ % 2 == 0) {
 		$class = ' class="altrow"';
@@ -25,24 +25,24 @@ foreach ($worksheets as $worksheet):
 ?>
 	<tr<?php echo $class;?>>
 		<td>
-			<?php echo $worksheet['Worksheet']['worksheetId']; ?>
+			<?php echo $ticket['Ticket']['ticketId']; ?>
 		</td>
 		<td>
-			<?php echo $html->link($worksheet['WorksheetStatus']['worksheetStatusName'], array('controller'=> 'worksheet_statuses', 'action'=>'view', $worksheet['WorksheetStatus']['worksheetStatusId'])); ?>
+			<?php echo $html->link($ticket['TicketStatus']['ticketStatusName'], array('controller'=> 'ticket_statuses', 'action'=>'view', $ticket['TicketStatus']['ticketStatusId'])); ?>
 		</td>
 		<td>
-			<?php echo $worksheet['Package']['packageName']; ?>
+			<?php echo $ticket['Package']['packageName']; ?>
 		</td>
 		<td>
-			<?php echo $worksheet['Worksheet']['userFirstName']; ?>
+			<?php echo $ticket['Ticket']['userFirstName']; ?>
 		</td>
 		<td>
-			<?php echo $worksheet['Worksheet']['userLastName']; ?>
+			<?php echo $ticket['Ticket']['userLastName']; ?>
 		</td>
 		<td class="actions">
-			<?php echo $html->link(__('View', true), array('action'=>'view', $worksheet['Worksheet']['worksheetId'])); ?>
-			<?php echo $html->link(__('Edit', true), array('action'=>'edit', $worksheet['Worksheet']['worksheetId'])); ?>
-			<?php echo $html->link(__('Delete', true), array('action'=>'delete', $worksheet['Worksheet']['worksheetId']), null, sprintf(__('Are you sure you want to delete # %s?', true), $worksheet['Worksheet']['worksheetId'])); ?>
+			<?php echo $html->link(__('View', true), array('action'=>'view', $ticket['Ticket']['ticketId'])); ?>
+			<?php echo $html->link(__('Edit', true), array('action'=>'edit', $ticket['Ticket']['ticketId'])); ?>
+			<?php echo $html->link(__('Delete', true), array('action'=>'delete', $ticket['Ticket']['ticketId']), null, sprintf(__('Are you sure you want to delete # %s?', true), $ticket['Ticket']['ticketId'])); ?>
 		</td>
 	</tr>
 <?php endforeach; ?>
@@ -55,13 +55,13 @@ foreach ($worksheets as $worksheet):
 </div>
 <div class="actions">
 	<ul>
-		<li><?php echo $html->link(__('New Worksheet', true), array('action'=>'add')); ?></li>
-		<li><?php echo $html->link(__('List Worksheet Statuses', true), array('controller'=> 'worksheet_statuses', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Worksheet Status', true), array('controller'=> 'worksheet_statuses', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Worksheet Cancellations', true), array('controller'=> 'worksheet_cancellations', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Worksheet Cancellation', true), array('controller'=> 'worksheet_cancellations', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Worksheet Refunds', true), array('controller'=> 'worksheet_refunds', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Worksheet Refund', true), array('controller'=> 'worksheet_refunds', 'action'=>'add')); ?> </li>
+		<li><?php echo $html->link(__('New Ticket', true), array('action'=>'add')); ?></li>
+		<li><?php echo $html->link(__('List Ticket Statuses', true), array('controller'=> 'ticket_statuses', 'action'=>'index')); ?> </li>
+		<li><?php echo $html->link(__('New Ticket Status', true), array('controller'=> 'ticket_statuses', 'action'=>'add')); ?> </li>
+		<li><?php echo $html->link(__('List Ticket Cancellations', true), array('controller'=> 'ticket_cancellations', 'action'=>'index')); ?> </li>
+		<li><?php echo $html->link(__('New Ticket Cancellation', true), array('controller'=> 'ticket_cancellations', 'action'=>'add')); ?> </li>
+		<li><?php echo $html->link(__('List Ticket Refunds', true), array('controller'=> 'ticket_refunds', 'action'=>'index')); ?> </li>
+		<li><?php echo $html->link(__('New Ticket Refund', true), array('controller'=> 'ticket_refunds', 'action'=>'add')); ?> </li>
 		<li><?php echo $html->link(__('List Reservations', true), array('controller'=> 'reservations', 'action'=>'index')); ?> </li>
 		<li><?php echo $html->link(__('New Reservation', true), array('controller'=> 'reservations', 'action'=>'add')); ?> </li>
 		<li><?php echo $html->link(__('List Payment Details', true), array('controller'=> 'payment_details', 'action'=>'index')); ?> </li>
