@@ -17,8 +17,9 @@ class RevenueModelLoaRelsController extends AppController {
 		$this->set('revenueModelLoaRel', $this->RevenueModelLoaRel->read(null, $id));
 	}
 
-	function add() {
+	function add($loaId) {
 		if (!empty($this->data)) {
+			$this->data['RevenueModelLoaRel']['loaId'] = $loaId;
 			$this->RevenueModelLoaRel->create();
 			if ($this->RevenueModelLoaRel->save($this->data)) {
 				$this->Session->setFlash(__('The RevenueModelLoaRel has been saved', true));
@@ -27,12 +28,13 @@ class RevenueModelLoaRelsController extends AppController {
 				$this->Session->setFlash(__('The RevenueModelLoaRel could not be saved. Please, try again.', true));
 			}
 		}
-		$expirationCriteria = $this->RevenueModelLoaRel->ExpirationCriterium->find('list');
-		$revenueModels = $this->RevenueModelLoaRel->RevenueModel->find('list');
-		$this->set('expirationCriteriaIds', $expirationCriteria);
-		$this->set('revenueModelIds', $revenueModels);
+		
+		$this->data['RevenueModelLoaRel']['loaId'] = $loaId;
+		$expirationCriteriaIds = $this->RevenueModelLoaRel->ExpirationCriterium->find('list');
+		$revenueModelIds = $this->RevenueModelLoaRel->RevenueModel->find('list');
+		$this->set(compact('expirationCriteriaIds', 'revenueModelIds'));
 	}
-
+	
 	function edit($id = null) {
 		if (!$id && empty($this->data)) {
 			$this->Session->setFlash(__('Invalid RevenueModelLoaRel', true));
@@ -64,6 +66,28 @@ class RevenueModelLoaRelsController extends AppController {
 			$this->redirect(array('action'=>'index'));
 		}
 	}
-
+	function revenue_model_criteria_form() {
+		debug($this->data['RevenueModelLoaRel']['revenueModelId']);
+		$this->autoRender = false;
+		switch($this->data['RevenueModelLoaRel']['revenueModelId']):
+			case 1:
+				$fileToRender = '_revenue_split_form';
+			break;
+			case 2:
+			case 3:
+				$fileToRender = '_xy_form';
+			break;
+			default:
+				$fileToRender = '';
+		endswitch;
+		
+		$this->render(null, false, $fileToRender);
+	}
+	
+	function expiration_criteria_form() {
+		if(is_numeric($this->data['RevenueModelLoaRel']['expirationCriteriaId'])) {
+			$this->render(null, false, '_exp_criteria_'.$this->data['RevenueModelLoaRel']['expirationCriteriaId']);
+		}
+	}
 }
 ?>
