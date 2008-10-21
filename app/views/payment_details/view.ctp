@@ -6,9 +6,9 @@
 			<?php echo $paymentDetail['PaymentDetail']['paymentDetailId']; ?>
 			&nbsp;
 		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Worksheet'); ?></dt>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Ticket'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $html->link($paymentDetail['Worksheet']['worksheetId'], array('controller'=> 'worksheets', 'action'=>'view', $paymentDetail['Worksheet']['worksheetId'])); ?>
+			<?php echo $html->link($paymentDetail['Ticket']['ticketId'], array('controller'=> 'tickets', 'action'=>'view', $paymentDetail['Ticket']['ticketId'])); ?>
 			&nbsp;
 		</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('CreditCardNum'); ?></dt>

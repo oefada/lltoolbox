@@ -9,7 +9,7 @@ echo $paginator->counter(array(
 <table cellpadding="0" cellspacing="0">
 <tr>
 	<th><?php echo $paginator->sort('paymentDetailId');?></th>
-	<th><?php echo $paginator->sort('worksheetId');?></th>
+	<th><?php echo $paginator->sort('ticketId');?></th>
 	<th><?php echo $paginator->sort('creditCardNum');?></th>
 	<th><?php echo $paginator->sort('expirationDate');?></th>
 	<th><?php echo $paginator->sort('cvv2Value');?></th>
@@ -53,7 +53,7 @@ foreach ($paymentDetails as $paymentDetail):
 			<?php echo $paymentDetail['PaymentDetail']['paymentDetailId']; ?>
 		</td>
 		<td>
-			<?php echo $html->link($paymentDetail['Worksheet']['worksheetId'], array('controller'=> 'worksheets', 'action'=>'view', $paymentDetail['Worksheet']['worksheetId'])); ?>
+			<?php echo $html->link($paymentDetail['Ticket']['ticketId'], array('controller'=> 'tickets', 'action'=>'view', $paymentDetail['Ticket']['ticketId'])); ?>
 		</td>
 		<td>
 			<?php echo $paymentDetail['PaymentDetail']['creditCardNum']; ?>
@@ -156,8 +156,8 @@ foreach ($paymentDetails as $paymentDetail):
 <div class="actions">
 	<ul>
 		<li><?php echo $html->link(__('New PaymentDetail', true), array('action'=>'add')); ?></li>
-		<li><?php echo $html->link(__('List Worksheets', true), array('controller'=> 'worksheets', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Worksheet', true), array('controller'=> 'worksheets', 'action'=>'add')); ?> </li>
+		<li><?php echo $html->link(__('List Tickets', true), array('controller'=> 'tickets', 'action'=>'index')); ?> </li>
+		<li><?php echo $html->link(__('New Ticket', true), array('controller'=> 'tickets', 'action'=>'add')); ?> </li>
 		<li><?php echo $html->link(__('List Payment Types', true), array('controller'=> 'payment_types', 'action'=>'index')); ?> </li>
 		<li><?php echo $html->link(__('New Payment Type', true), array('controller'=> 'payment_types', 'action'=>'add')); ?> </li>
 	</ul>

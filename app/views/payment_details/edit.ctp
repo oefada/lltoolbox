@@ -4,7 +4,7 @@
  		<legend><?php __('Edit PaymentDetail');?></legend>
 	<?php
 		echo $form->input('paymentDetailId');
-		echo $form->input('worksheetId');
+		echo $form->input('ticketId');
 		echo $form->input('creditCardNum');
 		echo $form->input('expirationDate');
 		echo $form->input('cvv2Value');
@@ -41,8 +41,8 @@
 	<ul>
 		<li><?php echo $html->link(__('Delete', true), array('action'=>'delete', $form->value('PaymentDetail.paymentDetailId')), null, sprintf(__('Are you sure you want to delete # %s?', true), $form->value('PaymentDetail.paymentDetailId'))); ?></li>
 		<li><?php echo $html->link(__('List PaymentDetails', true), array('action'=>'index'));?></li>
-		<li><?php echo $html->link(__('List Worksheets', true), array('controller'=> 'worksheets', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Worksheet', true), array('controller'=> 'worksheets', 'action'=>'add')); ?> </li>
+		<li><?php echo $html->link(__('List Tickets', true), array('controller'=> 'tickets', 'action'=>'index')); ?> </li>
+		<li><?php echo $html->link(__('New Ticket', true), array('controller'=> 'tickets', 'action'=>'add')); ?> </li>
 		<li><?php echo $html->link(__('List Payment Types', true), array('controller'=> 'payment_types', 'action'=>'index')); ?> </li>
 		<li><?php echo $html->link(__('New Payment Type', true), array('controller'=> 'payment_types', 'action'=>'add')); ?> </li>
 	</ul>

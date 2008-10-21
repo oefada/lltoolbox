@@ -6,7 +6,7 @@
 		echo '<div style="background-color:whitesmoke; border: 1px solid #a3a3a3; font-weight:bold;">';
 			echo $form->input('billingAmount');
 		echo '</div>';
-		echo $form->input('worksheetId', array('readonly' => 'readonly'));
+		echo $form->input('ticketId', array('readonly' => 'readonly'));
 		echo $form->input('creditCardNum');
 		echo $form->input('expirationDate');
 		echo $form->input('cvv2Value');
@@ -31,8 +31,8 @@
 <div class="actions">
 	<ul>
 		<li><?php echo $html->link(__('List PaymentDetails', true), array('action'=>'index'));?></li>
-		<li><?php echo $html->link(__('List Worksheets', true), array('controller'=> 'worksheets', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Worksheet', true), array('controller'=> 'worksheets', 'action'=>'add')); ?> </li>
+		<li><?php echo $html->link(__('List Tickets', true), array('controller'=> 'tickets', 'action'=>'index')); ?> </li>
+		<li><?php echo $html->link(__('New Ticket', true), array('controller'=> 'tickets', 'action'=>'add')); ?> </li>
 		<li><?php echo $html->link(__('List Payment Types', true), array('controller'=> 'payment_types', 'action'=>'index')); ?> </li>
 		<li><?php echo $html->link(__('New Payment Type', true), array('controller'=> 'payment_types', 'action'=>'add')); ?> </li>
 	</ul>
