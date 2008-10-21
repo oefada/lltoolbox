@@ -22,7 +22,7 @@ class PaymentDetailsController extends AppController {
 			$this->PaymentDetail->create();
 			if ($this->PaymentDetail->save($this->data)) {
 				$this->Session->setFlash(__('The PaymentDetail has been saved', true));
-				$this->redirect(array('action'=>'index'));
+				$this->redirect(array('controller' => 'worksheets', 'action'=>'view', 'id' => $this->data['PaymentDetail']['worksheetId']));
 			} else {
 				$this->Session->setFlash(__('The PaymentDetail could not be saved. Please, try again.', true));
 			}

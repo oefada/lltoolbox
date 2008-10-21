@@ -18,17 +18,28 @@ class WorksheetRefundsController extends AppController {
 	}
 
 	function add() {
-		if (!empty($this->data)) {
+		if (!empty($this->data) && $this->data['WorksheetRefund']['worksheetId']) {
+			$worksheet = array();
+			$worksheet['Worksheet']['worksheetId'] = $this->data['WorksheetRefund']['worksheetId'];
+			$worksheet['Worksheet']['worksheetStatusId'] = 8;
 			$this->WorksheetRefund->create();
-			if ($this->WorksheetRefund->save($this->data)) {
+			if ($this->WorksheetRefund->save($this->data)  && $this->WorksheetRefund->Worksheet->save($worksheet)) {
 				$this->Session->setFlash(__('The WorksheetRefund has been saved', true));
-				$this->redirect(array('action'=>'index'));
+				$this->redirect(array('controller' => 'worksheets', 'action' => 'view', 'id' => $this->data['WorksheetRefund']['worksheetId']));
 			} else {
 				$this->Session->setFlash(__('The WorksheetRefund could not be saved. Please, try again.', true));
 			}
 		}
 		
+		$worksheetId = $this->params['worksheetId'];
+		
+		if (!$worksheetId) {
+			$this->Session->setFlash(__('Invalid worksheet ID', true));
+			$this->redirect(array('controller' => 'worksheets', 'action'=>'index'));
+		} 
+		
 		$this->set('refundReasonIds', $this->WorksheetRefund->RefundReason->find('list'));
+		$this->data['WorksheetRefund']['worksheetId'] = $worksheetId;
 	}
 
 	function edit($id = null) {

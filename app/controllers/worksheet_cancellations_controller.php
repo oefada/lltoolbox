@@ -18,12 +18,12 @@ class WorksheetCancellationsController extends AppController {
 	}
 
 	function add() {
-		if (!empty($this->data)) {
-			$this->data['Worksheet']['worksheetId'] = $this->data['WorksheetCancellation']['worksheetId'];
-			$worksheet = $this->data['Worksheet'];
-			$worksheetCancellation = $this->data['WorksheetCancellation'];
+		if (!empty($this->data) && $this->data['WorksheetCancellation']['worksheetId']) {
+			$worksheet = array();
+			$worksheet['Worksheet']['worksheetId'] = $this->data['WorksheetCancellation']['worksheetId'];
+			$worksheet['Worksheet']['worksheetStatusId'] = 7;
 			$this->WorksheetCancellation->create();
-			if ($this->WorksheetCancellation->save($worksheetCancellation) && $this->WorksheetCancellation->Worksheet->save($worksheet)) {
+			if ($this->WorksheetCancellation->save($this->data) && $this->WorksheetCancellation->Worksheet->save($worksheet)) {
 				$this->Session->setFlash(__('The WorksheetCancellation has been saved', true));
 				$this->redirect(array('controller' => 'worksheets', 'action' => 'view', 'id' => $this->data['WorksheetCancellation']['worksheetId']));
 			} else {
@@ -39,7 +39,6 @@ class WorksheetCancellationsController extends AppController {
 		} 
 		
 		$this->set('cancellationReasonIds', $this->WorksheetCancellation->CancellationReason->find('list'));
-		$this->set('worksheetStatusIds' , $this->WorksheetCancellation->Worksheet->WorksheetStatus->find('list'));
 		$this->data['WorksheetCancellation']['worksheetId'] = $worksheetId;
 	}
 

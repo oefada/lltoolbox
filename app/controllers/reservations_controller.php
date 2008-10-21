@@ -22,11 +22,20 @@ class ReservationsController extends AppController {
 			$this->Reservation->create();
 			if ($this->Reservation->save($this->data)) {
 				$this->Session->setFlash(__('The Reservation has been saved', true));
-				$this->redirect(array('action'=>'index'));
+				$this->redirect(array('controller' => 'worksheets', 'action' => 'view', 'id' => $this->data['Reservation']['worksheetId']));
 			} else {
 				$this->Session->setFlash(__('The Reservation could not be saved. Please, try again.', true));
 			}
 		}
+		
+		$worksheetId = $this->params['worksheetId'];
+		
+		if (!$worksheetId) {
+			$this->Session->setFlash(__('Invalid worksheet ID', true));
+			$this->redirect(array('controller' => 'worksheets', 'action'=>'index'));
+		} 
+
+		$this->data['Reservation']['worksheetId'] = $worksheetId;
 	}
 
 	function edit($id = null) {
