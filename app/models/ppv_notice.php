@@ -5,7 +5,7 @@ class PpvNotice extends AppModel {
 	var $useTable = 'ppvNotice';
 	var $primaryKey = 'ppvNoticeId';
 	
-	var $belongsTo = array('Worksheet' => array('foreignKey' => 'worksheetId'),
+	var $belongsTo = array('Ticket' => array('foreignKey' => 'ticketId'),
 						   'PpvNoticeType' => array('foreignKey' => 'ppvNoticeTypeId')
 						  );
 

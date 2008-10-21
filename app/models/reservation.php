@@ -5,6 +5,6 @@ class Reservation extends AppModel {
 	var $useTable = 'reservation';
 	var $primaryKey = 'reservationId';
 	
-	var $hasOne = array('Worksheet' => array('foreignKey' => 'worksheetId'));
+	var $hasOne = array('Ticket' => array('foreignKey' => 'ticketId'));
 }
 ?>
