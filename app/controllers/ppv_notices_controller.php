@@ -27,8 +27,8 @@ class PpvNoticesController extends AppController {
 				$this->Session->setFlash(__('The PpvNotice could not be saved. Please, try again.', true));
 			}
 		}
-		$worksheets = $this->PpvNotice->Worksheet->find('list');
-		$this->set(compact('worksheets'));
+		$tickets = $this->PpvNotice->Ticket->find('list');
+		$this->set(compact('tickets'));
 		
 		$this->set('ppvNoticeTypeIds', $this->PpvNotice->PpvNoticeType->find('list'));
 	}
@@ -49,8 +49,8 @@ class PpvNoticesController extends AppController {
 		if (empty($this->data)) {
 			$this->data = $this->PpvNotice->read(null, $id);
 		}
-		$worksheets = $this->PpvNotice->Worksheet->find('list');
-		$this->set(compact('worksheets'));
+		$tickets = $this->PpvNotice->Ticket->find('list');
+		$this->set(compact('tickets'));
 		
 		$this->set('ppvNoticeTypeIds', $this->PpvNotice->PpvNoticeType->find('list'));
 	}

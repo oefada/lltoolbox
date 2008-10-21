@@ -22,14 +22,14 @@ class PaymentDetailsController extends AppController {
 			$this->PaymentDetail->create();
 			if ($this->PaymentDetail->save($this->data)) {
 				$this->Session->setFlash(__('The PaymentDetail has been saved', true));
-				$this->redirect(array('controller' => 'worksheets', 'action'=>'view', 'id' => $this->data['PaymentDetail']['worksheetId']));
+				$this->redirect(array('controller' => 'tickets', 'action'=>'view', 'id' => $this->data['PaymentDetail']['ticketId']));
 			} else {
 				$this->Session->setFlash(__('The PaymentDetail could not be saved. Please, try again.', true));
 			}
 		}
 		$this->set('paymentTypeIds', $this->PaymentDetail->PaymentType->find('list'));
 		$this->set('paymentProcessorIds', $this->PaymentDetail->PaymentProcessor->find('list'));
-		$this->data['PaymentDetail']['worksheetId'] = $this->params['worksheetId'];
+		$this->data['PaymentDetail']['ticketId'] = $this->params['ticketId'];
 	}
 
 	function edit($id = null) {	

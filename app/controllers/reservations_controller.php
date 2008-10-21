@@ -22,20 +22,20 @@ class ReservationsController extends AppController {
 			$this->Reservation->create();
 			if ($this->Reservation->save($this->data)) {
 				$this->Session->setFlash(__('The Reservation has been saved', true));
-				$this->redirect(array('controller' => 'worksheets', 'action' => 'view', 'id' => $this->data['Reservation']['worksheetId']));
+				$this->redirect(array('controller' => 'tickets', 'action' => 'view', 'id' => $this->data['Reservation']['ticketId']));
 			} else {
 				$this->Session->setFlash(__('The Reservation could not be saved. Please, try again.', true));
 			}
 		}
 		
-		$worksheetId = $this->params['worksheetId'];
+		$ticketId = $this->params['ticketId'];
 		
-		if (!$worksheetId) {
-			$this->Session->setFlash(__('Invalid worksheet ID', true));
-			$this->redirect(array('controller' => 'worksheets', 'action'=>'index'));
+		if (!$ticketId) {
+			$this->Session->setFlash(__('Invalid ticket ID', true));
+			$this->redirect(array('controller' => 'tickets', 'action'=>'index'));
 		} 
 
-		$this->data['Reservation']['worksheetId'] = $worksheetId;
+		$this->data['Reservation']['ticketId'] = $ticketId;
 	}
 
 	function edit($id = null) {
