@@ -4,7 +4,7 @@
  		<legend><?php __('Edit Worksheet');?></legend>
 	<?php
 		echo $form->input('worksheetId');
-		echo $form->input('worksheetStatusId');
+		echo $form->input('worksheetStatusId', array('disabled' => 'disabled'));
 		echo $form->input('parentWorksheetId');
 		echo $form->input('packageId');
 		echo $form->input('offerId');

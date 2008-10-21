@@ -1,11 +1,19 @@
 <div class="worksheets view">
 <h2><?php  __('Worksheet');?></h2>
 
-	<?php if (($worksheet['Worksheet']['isFlake'] || in_array($worksheet['Worksheet']['worksheetStatusId'], array(5,7,8))) && empty($worksheet['WorksheetCancellation']['worksheetId'])) { ?>
-	<h3>This worksheet has been cancelled / refunded / flaked.</h3>
+	<?php if ($showCancellation) { ?>
+	<h3>This worksheet has been flagged with a flake status.</h3>
 	<div>
 		Click on the link below to fill out the worksheet cancellation information.<br />
-		<a href="/worksheets/<?php echo $worksheet['Worksheet']['worksheetId'];?>/worksheet_cancellations/add">New Worksheet Cancellation</a><br /><br />
+		<a href="/worksheets/<?php echo $worksheet['Worksheet']['worksheetId'];?>/worksheet_cancellations/add">Fill out Worksheet Cancellation</a><br /><br />
+	</div>
+	<?php } ?>
+	
+	<?php if ($showRefund) { ?>
+	<h3>This worksheet has been flagged with a refund status.</h3>
+	<div>
+		Click on the link below to fill out the worksheet refund information.<br />
+		<a href="/worksheets/<?php echo $worksheet['Worksheet']['worksheetId'];?>/worksheet_refunds/add">Fill out Worksheet Refund</a><br /><br />
 	</div>
 	<?php } ?>
 	
@@ -182,7 +190,7 @@
 		</dd>
 	</dl>
 </div>
-<div class="actions">
+<!--div class="actions">
 	<ul>
 		<li><?php echo $html->link(__('Edit Worksheet', true), array('action'=>'edit', $worksheet['Worksheet']['worksheetId'])); ?> </li>
 		<li><?php echo $html->link(__('Delete Worksheet', true), array('action'=>'delete', $worksheet['Worksheet']['worksheetId']), null, sprintf(__('Are you sure you want to delete # %s?', true), $worksheet['Worksheet']['worksheetId'])); ?> </li>
@@ -205,7 +213,7 @@
 		<li><?php echo $html->link(__('List Ppv Notices', true), array('controller'=> 'ppv_notices', 'action'=>'index')); ?> </li>
 		<li><?php echo $html->link(__('New Ppv Notice', true), array('controller'=> 'ppv_notices', 'action'=>'add')); ?> </li>
 	</ul>
-</div>
+</div-->
 	<div class="related">
 		<h3><?php  __('Related Worksheet Cancellations');?></h3>
 	<?php if (!empty($worksheet['WorksheetCancellation']['worksheetId'])):?>
@@ -233,8 +241,12 @@
 		</dl>
 	<?php endif; ?>
 		<div>
-			<a href=""><h4>&raquo;&nbsp;Use Next Bid and Create New Worksheet</h4></a>
-			<h4>There is NO next eligible bid</h4>
+			<?php if ($validNextBid) { ?>
+				<a href="/worksheets/autoNewWorksheet/<?php echo $worksheet['Worksheet']['worksheetId'];?>"><h4>&raquo;&nbsp;Create New Worksheet using next bid</h4></a>
+			<?php } else { ?>
+				<h4>There is NO next eligible bid or this worksheet is still active.  If this worksheet is a flake, please edit this worksheet and check the isFlake checkbox.  After saving the worksheet, you 
+				will be prompted to fill out a worksheet cancellation form.  Finally, you can auto create the ticket with the next eligible bid (if exists).</h4>
+			<?php } ?>
 		</div>
 	</div>
 	
@@ -327,6 +339,8 @@
 	<?php echo $worksheet['Reservation']['reservationConfirmUserId'];?>
 &nbsp;</dd>
 		</dl>
+	<?php else: ?>
+		<a href="/worksheets/<?php echo $worksheet['Worksheet']['worksheetId'];?>/reservations/add"><h4>&raquo;&nbsp;Add Reservation Detail</h4></a>
 	<?php endif; ?>
 	</div>
 	
