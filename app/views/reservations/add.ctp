@@ -3,6 +3,7 @@
 	<fieldset>
  		<legend><?php __('Add Reservation');?></legend>
 	<?php
+		echo $form->input('ticketId', array('readonly' => 'readonly'));
 		echo $form->input('roomType');
 		echo $form->input('numNights');
 		echo $form->input('availabilityConfirmDate');
@@ -23,7 +24,7 @@
 <div class="actions">
 	<ul>
 		<li><?php echo $html->link(__('List Reservations', true), array('action'=>'index'));?></li>
-		<li><?php echo $html->link(__('List Worksheets', true), array('controller'=> 'worksheets', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Worksheet', true), array('controller'=> 'worksheets', 'action'=>'add')); ?> </li>
+		<li><?php echo $html->link(__('List Tickets', true), array('controller'=> 'tickets', 'action'=>'index')); ?> </li>
+		<li><?php echo $html->link(__('New Ticket', true), array('controller'=> 'tickets', 'action'=>'add')); ?> </li>
 	</ul>
 </div>

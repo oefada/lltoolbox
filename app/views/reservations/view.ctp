@@ -1,9 +1,14 @@
 <div class="reservations view">
 <h2><?php  __('Reservation');?></h2>
 	<dl><?php $i = 0; $class = ' class="altrow"';?>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('WorksheetId'); ?></dt>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('ReservationId'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $reservation['Reservation']['worksheetId']; ?>
+			<?php echo $reservation['Reservation']['reservationId']; ?>
+			&nbsp;
+		</dd>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('TicketId'); ?></dt>
+		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
+			<?php echo $reservation['Reservation']['ticketId']; ?>
 			&nbsp;
 		</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('RoomType'); ?></dt>
@@ -75,147 +80,147 @@
 </div>
 <div class="actions">
 	<ul>
-		<li><?php echo $html->link(__('Edit Reservation', true), array('action'=>'edit', $reservation['Reservation']['worksheetId'])); ?> </li>
-		<li><?php echo $html->link(__('Delete Reservation', true), array('action'=>'delete', $reservation['Reservation']['worksheetId']), null, sprintf(__('Are you sure you want to delete # %s?', true), $reservation['Reservation']['worksheetId'])); ?> </li>
+		<li><?php echo $html->link(__('Edit Reservation', true), array('action'=>'edit', $reservation['Reservation']['ticketId'])); ?> </li>
+		<li><?php echo $html->link(__('Delete Reservation', true), array('action'=>'delete', $reservation['Reservation']['ticketId']), null, sprintf(__('Are you sure you want to delete # %s?', true), $reservation['Reservation']['ticketId'])); ?> </li>
 		<li><?php echo $html->link(__('List Reservations', true), array('action'=>'index')); ?> </li>
 		<li><?php echo $html->link(__('New Reservation', true), array('action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Worksheets', true), array('controller'=> 'worksheets', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Worksheet', true), array('controller'=> 'worksheets', 'action'=>'add')); ?> </li>
+		<li><?php echo $html->link(__('List Tickets', true), array('controller'=> 'tickets', 'action'=>'index')); ?> </li>
+		<li><?php echo $html->link(__('New Ticket', true), array('controller'=> 'tickets', 'action'=>'add')); ?> </li>
 	</ul>
 </div>
 	<div class="related">
-		<h3><?php  __('Related Worksheets');?></h3>
-	<?php if (!empty($reservation['Worksheet'])):?>
+		<h3><?php  __('Related Tickets');?></h3>
+	<?php if (!empty($reservation['Ticket'])):?>
 		<dl>	<?php $i = 0; $class = ' class="altrow"';?>
-			<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('WorksheetId');?></dt>
+			<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('TicketId');?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-	<?php echo $reservation['Worksheet']['worksheetId'];?>
+	<?php echo $reservation['Ticket']['ticketId'];?>
 &nbsp;</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('WorksheetStatusId');?></dt>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('TicketStatusId');?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-	<?php echo $reservation['Worksheet']['worksheetStatusId'];?>
+	<?php echo $reservation['Ticket']['ticketStatusId'];?>
 &nbsp;</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('ParentWorksheetId');?></dt>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('ParentTicketId');?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-	<?php echo $reservation['Worksheet']['parentWorksheetId'];?>
+	<?php echo $reservation['Ticket']['parentTicketId'];?>
 &nbsp;</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('PackageId');?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-	<?php echo $reservation['Worksheet']['packageId'];?>
+	<?php echo $reservation['Ticket']['packageId'];?>
 &nbsp;</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('OfferId');?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-	<?php echo $reservation['Worksheet']['offerId'];?>
+	<?php echo $reservation['Ticket']['offerId'];?>
 &nbsp;</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('RequestId');?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-	<?php echo $reservation['Worksheet']['requestId'];?>
+	<?php echo $reservation['Ticket']['requestId'];?>
 &nbsp;</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('BidId');?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-	<?php echo $reservation['Worksheet']['bidId'];?>
+	<?php echo $reservation['Ticket']['bidId'];?>
 &nbsp;</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('RequestInfo');?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-	<?php echo $reservation['Worksheet']['requestInfo'];?>
+	<?php echo $reservation['Ticket']['requestInfo'];?>
 &nbsp;</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Notes');?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-	<?php echo $reservation['Worksheet']['notes'];?>
+	<?php echo $reservation['Ticket']['notes'];?>
 &nbsp;</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('IsFlake');?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-	<?php echo $reservation['Worksheet']['isFlake'];?>
+	<?php echo $reservation['Ticket']['isFlake'];?>
 &nbsp;</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('PaymentAuthDate');?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-	<?php echo $reservation['Worksheet']['paymentAuthDate'];?>
+	<?php echo $reservation['Ticket']['paymentAuthDate'];?>
 &nbsp;</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('PaymentSettleDate');?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-	<?php echo $reservation['Worksheet']['paymentSettleDate'];?>
+	<?php echo $reservation['Ticket']['paymentSettleDate'];?>
 &nbsp;</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('BillingPrice');?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-	<?php echo $reservation['Worksheet']['billingPrice'];?>
+	<?php echo $reservation['Ticket']['billingPrice'];?>
 &nbsp;</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('BookingPrice');?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-	<?php echo $reservation['Worksheet']['bookingPrice'];?>
+	<?php echo $reservation['Ticket']['bookingPrice'];?>
 &nbsp;</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('CustomerId');?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-	<?php echo $reservation['Worksheet']['customerId'];?>
+	<?php echo $reservation['Ticket']['customerId'];?>
 &nbsp;</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('CustomerFirstName');?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-	<?php echo $reservation['Worksheet']['customerFirstName'];?>
+	<?php echo $reservation['Ticket']['customerFirstName'];?>
 &nbsp;</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('CustomerLastName');?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-	<?php echo $reservation['Worksheet']['customerLastName'];?>
+	<?php echo $reservation['Ticket']['customerLastName'];?>
 &nbsp;</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('CustomerEmail1');?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-	<?php echo $reservation['Worksheet']['customerEmail1'];?>
+	<?php echo $reservation['Ticket']['customerEmail1'];?>
 &nbsp;</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('CustomerWorkPhone');?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-	<?php echo $reservation['Worksheet']['customerWorkPhone'];?>
+	<?php echo $reservation['Ticket']['customerWorkPhone'];?>
 &nbsp;</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('CustomerHomePhone');?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-	<?php echo $reservation['Worksheet']['customerHomePhone'];?>
+	<?php echo $reservation['Ticket']['customerHomePhone'];?>
 &nbsp;</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('CustomerMobilePhone');?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-	<?php echo $reservation['Worksheet']['customerMobilePhone'];?>
+	<?php echo $reservation['Ticket']['customerMobilePhone'];?>
 &nbsp;</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('CustomerFax');?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-	<?php echo $reservation['Worksheet']['customerFax'];?>
+	<?php echo $reservation['Ticket']['customerFax'];?>
 &nbsp;</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('CustomerAddress1');?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-	<?php echo $reservation['Worksheet']['customerAddress1'];?>
+	<?php echo $reservation['Ticket']['customerAddress1'];?>
 &nbsp;</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('CustomerAddress2');?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-	<?php echo $reservation['Worksheet']['customerAddress2'];?>
+	<?php echo $reservation['Ticket']['customerAddress2'];?>
 &nbsp;</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('CustomerAddress3');?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-	<?php echo $reservation['Worksheet']['customerAddress3'];?>
+	<?php echo $reservation['Ticket']['customerAddress3'];?>
 &nbsp;</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('CustomerCity');?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-	<?php echo $reservation['Worksheet']['customerCity'];?>
+	<?php echo $reservation['Ticket']['customerCity'];?>
 &nbsp;</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('CustomerState');?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-	<?php echo $reservation['Worksheet']['customerState'];?>
+	<?php echo $reservation['Ticket']['customerState'];?>
 &nbsp;</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('CustomerCountry');?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-	<?php echo $reservation['Worksheet']['customerCountry'];?>
+	<?php echo $reservation['Ticket']['customerCountry'];?>
 &nbsp;</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('CustomerZip');?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-	<?php echo $reservation['Worksheet']['customerZip'];?>
+	<?php echo $reservation['Ticket']['customerZip'];?>
 &nbsp;</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('CompletedUserId');?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-	<?php echo $reservation['Worksheet']['completedUserId'];?>
+	<?php echo $reservation['Ticket']['completedUserId'];?>
 &nbsp;</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('CompletedDate');?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-	<?php echo $reservation['Worksheet']['completedDate'];?>
+	<?php echo $reservation['Ticket']['completedDate'];?>
 &nbsp;</dd>
 		</dl>
 	<?php endif; ?>
 		<div class="actions">
 			<ul>
-				<li><?php echo $html->link(__('Edit Worksheet', true), array('controller'=> 'worksheets', 'action'=>'edit', $reservation['Worksheet']['worksheetId'])); ?></li>
+				<li><?php echo $html->link(__('Edit Ticket', true), array('controller'=> 'tickets', 'action'=>'edit', $reservation['Ticket']['ticketId'])); ?></li>
 			</ul>
 		</div>
 	</div>

@@ -3,7 +3,8 @@
 	<fieldset>
  		<legend><?php __('Edit Reservation');?></legend>
 	<?php
-		echo $form->input('worksheetId');
+		echo $form->input('reservationId');
+		echo $form->input('ticketId');
 		echo $form->input('roomType');
 		echo $form->input('numNights');
 		echo $form->input('availabilityConfirmDate');
@@ -23,9 +24,9 @@
 </div>
 <div class="actions">
 	<ul>
-		<li><?php echo $html->link(__('Delete', true), array('action'=>'delete', $form->value('Reservation.worksheetId')), null, sprintf(__('Are you sure you want to delete # %s?', true), $form->value('Reservation.worksheetId'))); ?></li>
+		<li><?php echo $html->link(__('Delete', true), array('action'=>'delete', $form->value('Reservation.ticketId')), null, sprintf(__('Are you sure you want to delete # %s?', true), $form->value('Reservation.ticketId'))); ?></li>
 		<li><?php echo $html->link(__('List Reservations', true), array('action'=>'index'));?></li>
-		<li><?php echo $html->link(__('List Worksheets', true), array('controller'=> 'worksheets', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Worksheet', true), array('controller'=> 'worksheets', 'action'=>'add')); ?> </li>
+		<li><?php echo $html->link(__('List Tickets', true), array('controller'=> 'tickets', 'action'=>'index')); ?> </li>
+		<li><?php echo $html->link(__('New Ticket', true), array('controller'=> 'tickets', 'action'=>'add')); ?> </li>
 	</ul>
 </div>

@@ -8,7 +8,8 @@ echo $paginator->counter(array(
 ?></p>
 <table cellpadding="0" cellspacing="0">
 <tr>
-	<th><?php echo $paginator->sort('worksheetId');?></th>
+	<th><?php echo $paginator->sort('reservationId');?></th>
+	<th><?php echo $paginator->sort('ticketId');?></th>
 	<th><?php echo $paginator->sort('roomType');?></th>
 	<th><?php echo $paginator->sort('numNights');?></th>
 	<th><?php echo $paginator->sort('availabilityConfirmDate');?></th>
@@ -34,7 +35,7 @@ foreach ($reservations as $reservation):
 ?>
 	<tr<?php echo $class;?>>
 		<td>
-			<?php echo $reservation['Reservation']['worksheetId']; ?>
+			<?php echo $reservation['Reservation']['ticketId']; ?>
 		</td>
 		<td>
 			<?php echo $reservation['Reservation']['roomType']; ?>
@@ -76,9 +77,9 @@ foreach ($reservations as $reservation):
 			<?php echo $reservation['Reservation']['reservationConfirmUserId']; ?>
 		</td>
 		<td class="actions">
-			<?php echo $html->link(__('View', true), array('action'=>'view', $reservation['Reservation']['worksheetId'])); ?>
-			<?php echo $html->link(__('Edit', true), array('action'=>'edit', $reservation['Reservation']['worksheetId'])); ?>
-			<?php echo $html->link(__('Delete', true), array('action'=>'delete', $reservation['Reservation']['worksheetId']), null, sprintf(__('Are you sure you want to delete # %s?', true), $reservation['Reservation']['worksheetId'])); ?>
+			<?php echo $html->link(__('View', true), array('action'=>'view', $reservation['Reservation']['ticketId'])); ?>
+			<?php echo $html->link(__('Edit', true), array('action'=>'edit', $reservation['Reservation']['ticketId'])); ?>
+			<?php echo $html->link(__('Delete', true), array('action'=>'delete', $reservation['Reservation']['ticketId']), null, sprintf(__('Are you sure you want to delete # %s?', true), $reservation['Reservation']['ticketId'])); ?>
 		</td>
 	</tr>
 <?php endforeach; ?>
@@ -92,7 +93,7 @@ foreach ($reservations as $reservation):
 <div class="actions">
 	<ul>
 		<li><?php echo $html->link(__('New Reservation', true), array('action'=>'add')); ?></li>
-		<li><?php echo $html->link(__('List Worksheets', true), array('controller'=> 'worksheets', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Worksheet', true), array('controller'=> 'worksheets', 'action'=>'add')); ?> </li>
+		<li><?php echo $html->link(__('List Tickets', true), array('controller'=> 'tickets', 'action'=>'index')); ?> </li>
+		<li><?php echo $html->link(__('New Ticket', true), array('controller'=> 'tickets', 'action'=>'add')); ?> </li>
 	</ul>
 </div>
