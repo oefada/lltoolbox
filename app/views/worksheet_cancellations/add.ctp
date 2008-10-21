@@ -3,9 +3,8 @@
 	<fieldset>
  		<legend><?php __('Add WorksheetCancellation');?></legend>
 	<?php
-		echo $form->input('cancellationReasonId');
+		echo $form->input('cancellationReasonId', array('selected=' => '8'));
 		echo $form->input('worksheetId', array('readonly' => 'readonly'));
-		echo $form->input('Worksheet.worksheetStatusId');
 		echo $form->input('dateCancelled');
 		echo $form->input('cancellationNotes');
 	?>
