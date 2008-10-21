@@ -4,7 +4,7 @@
  		<legend><?php __('Add WorksheetRefund');?></legend>
 	<?php
 		echo $form->input('refundReasonId');
-		echo $form->input('worksheetId');
+		echo $form->input('worksheetId', array('readonly' => 'readonly'));
 		echo $form->input('dateRefunded');
 		echo $form->input('amountRefunded');
 	?>
