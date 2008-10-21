@@ -11,9 +11,9 @@
 			<?php echo $html->link($ppvNotice['PpvNoticeType']['ppvNoticeTypeName'], array('controller'=> 'ppv_notice_types', 'action'=>'view', $ppvNotice['PpvNoticeType']['ppvNoticeTypeId'])); ?>
 			&nbsp;
 		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Worksheet'); ?></dt>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Ticket'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $html->link($ppvNotice['Worksheet']['worksheetId'], array('controller'=> 'worksheets', 'action'=>'view', $ppvNotice['Worksheet']['worksheetId'])); ?>
+			<?php echo $html->link($ppvNotice['Ticket']['ticketId'], array('controller'=> 'tickets', 'action'=>'view', $ppvNotice['Ticket']['ticketId'])); ?>
 			&nbsp;
 		</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('To'); ?></dt>
@@ -54,8 +54,8 @@
 		<li><?php echo $html->link(__('Delete PpvNotice', true), array('action'=>'delete', $ppvNotice['PpvNotice']['ppvNoticeId']), null, sprintf(__('Are you sure you want to delete # %s?', true), $ppvNotice['PpvNotice']['ppvNoticeId'])); ?> </li>
 		<li><?php echo $html->link(__('List PpvNotices', true), array('action'=>'index')); ?> </li>
 		<li><?php echo $html->link(__('New PpvNotice', true), array('action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Worksheets', true), array('controller'=> 'worksheets', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Worksheet', true), array('controller'=> 'worksheets', 'action'=>'add')); ?> </li>
+		<li><?php echo $html->link(__('List Tickets', true), array('controller'=> 'tickets', 'action'=>'index')); ?> </li>
+		<li><?php echo $html->link(__('New Ticket', true), array('controller'=> 'tickets', 'action'=>'add')); ?> </li>
 		<li><?php echo $html->link(__('List Ppv Notice Types', true), array('controller'=> 'ppv_notice_types', 'action'=>'index')); ?> </li>
 		<li><?php echo $html->link(__('New Ppv Notice Type', true), array('controller'=> 'ppv_notice_types', 'action'=>'add')); ?> </li>
 	</ul>

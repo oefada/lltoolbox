@@ -10,7 +10,7 @@ echo $paginator->counter(array(
 <tr>
 	<th><?php echo $paginator->sort('ppvNoticeId');?></th>
 	<th><?php echo $paginator->sort('ppvNoticeTypeId');?></th>
-	<th><?php echo $paginator->sort('worksheetId');?></th>
+	<th><?php echo $paginator->sort('ticketId');?></th>
 	<th><?php echo $paginator->sort('to');?></th>
 	<th><?php echo $paginator->sort('from');?></th>
 	<th><?php echo $paginator->sort('cc');?></th>
@@ -35,7 +35,7 @@ foreach ($ppvNotices as $ppvNotice):
 			<?php echo $html->link($ppvNotice['PpvNoticeType']['ppvNoticeTypeName'], array('controller'=> 'ppv_notice_types', 'action'=>'view', $ppvNotice['PpvNoticeType']['ppvNoticeTypeId'])); ?>
 		</td>
 		<td>
-			<?php echo $html->link($ppvNotice['Worksheet']['worksheetId'], array('controller'=> 'worksheets', 'action'=>'view', $ppvNotice['Worksheet']['worksheetId'])); ?>
+			<?php echo $html->link($ppvNotice['Ticket']['ticketId'], array('controller'=> 'tickets', 'action'=>'view', $ppvNotice['Ticket']['ticketId'])); ?>
 		</td>
 		<td>
 			<?php echo $ppvNotice['PpvNotice']['to']; ?>
@@ -72,8 +72,8 @@ foreach ($ppvNotices as $ppvNotice):
 <div class="actions">
 	<ul>
 		<li><?php echo $html->link(__('New PpvNotice', true), array('action'=>'add')); ?></li>
-		<li><?php echo $html->link(__('List Worksheets', true), array('controller'=> 'worksheets', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Worksheet', true), array('controller'=> 'worksheets', 'action'=>'add')); ?> </li>
+		<li><?php echo $html->link(__('List Tickets', true), array('controller'=> 'tickets', 'action'=>'index')); ?> </li>
+		<li><?php echo $html->link(__('New Ticket', true), array('controller'=> 'tickets', 'action'=>'add')); ?> </li>
 		<li><?php echo $html->link(__('List Ppv Notice Types', true), array('controller'=> 'ppv_notice_types', 'action'=>'index')); ?> </li>
 		<li><?php echo $html->link(__('New Ppv Notice Type', true), array('controller'=> 'ppv_notice_types', 'action'=>'add')); ?> </li>
 	</ul>
