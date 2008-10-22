@@ -17,7 +17,7 @@ class PackagesController extends AppController {
 		}
 		$this->set('package', $this->Package->read(null, $id));
 
-		$packageRatePeriods = $this->Package->PackageLoaItemRel->PackageRatePeriodItemRel->PackageRatePeriod->find('all');
+		$packageRatePeriods = $this->Package->query("SELECT DISTINCT(prp.packageRatePeriodId), startDate, endDate, approvedRetailPrice FROM packageLoaItemRel AS plir INNER JOIN packageRatePeriodItemRel AS prpir ON plir.packageLoaItemRelId = prpir.packageLoaItemRelId INNER JOIN packageRatePeriod AS prp ON prpir.packageRatePeriodId = prp.packageratePeriodId WHERE plir.packageId = $id;");
 		$this->set('packageRatePeriods', $packageRatePeriods);			
 	}
 	
@@ -26,13 +26,13 @@ class PackagesController extends AppController {
 		
 		$packageData = $this->Package->read(null);
 		$ratePeriodItemTemp = $packageData['PackageLoaItemRel'][0]['PackageRatePeriodItemRel'];
+
 		foreach ($ratePeriodItemTemp as $rel) {
 			$this->Package->PackageLoaItemRel->PackageRatePeriodItemRel->deleteAll(array('PackageRatePeriodItemRel.packageRatePeriodId' => $rel['packageRatePeriodId']));
 			$this->Package->PackageLoaItemRel->PackageRatePeriodItemRel->PackageRatePeriod->deleteAll(array('PackageRatePeriod.packageRatePeriodId' => $rel['packageRatePeriodId']));
 		}
-
-		//$data = $this->Package->PackageLoaItemRel->LoaItem->find('list', array('conditions' => array('packageId' => 2)));  // find all info about loa items		
-		$data = $this->Package->PackageLoaItemRel->LoaItem->find('all', array('conditions' => array('PackageLoaItemRel.packageId' => 2)));
+	
+		$data = $this->Package->PackageLoaItemRel->LoaItem->find('all', array('conditions' => array('PackageLoaItemRel.packageId' => $packageData['Package']['packageId'])));
 
 		$itemRatePeriods = array(); // populate with loaitems and their rate periods
 		$packageLoaItemRel = array();
@@ -126,7 +126,7 @@ class PackagesController extends AppController {
 		}
 		if (!empty($this->data)) {
 			if ($this->Package->save($this->data)) {
-				$this->addPackageOfferTypeDefFieldsRel();
+				$this->addPackageOfferTypeDefFieldRel();
 				$this->Session->setFlash(__('The Package has been saved', true));
 				$this->redirect(array('action'=>'index'));
 			} else {
@@ -147,24 +147,24 @@ class PackagesController extends AppController {
 		$this->set('currencyIds', ($currencyIds));
 	}
 
-	function addPackageOfferTypeDefFieldsRel() {
+	function addPackageOfferTypeDefFieldRel() {
 		$packageData = $this->Package->read(null);
 		$formatIds = $this->data['Format']['Format'];
 		$offerTypes = $this->Package->Format->OfferType->find('all');
 		
 		$relData = array();
-		$relData['PackageOfferTypeDefFieldsRel']['packageId'] = $this->data['Package']['packageId'];
+		$relData['PackageOfferTypeDefFieldRel']['packageId'] = $this->data['Package']['packageId'];
 
-		$this->Package->PackageOfferTypeDefFieldsRel->deleteAll(array('packageId' => $this->data['Package']['packageId']));
+		$this->Package->PackageOfferTypeDefFieldRel->deleteAll(array('packageId' => $this->data['Package']['packageId']));
 
 		foreach ($offerTypes as $type) {
-			$relData['PackageOfferTypeDefFieldsRel']['offerTypeId'] = $type['OfferType']['offerTypeId'];
+			$relData['PackageOfferTypeDefFieldRel']['offerTypeId'] = $type['OfferType']['offerTypeId'];
 			if (in_array($type['Format'][0]['formatId'], $formatIds)) {
 				foreach ($type['OfferTypeDefField'] as $typeDefField) {
-					$relData['PackageOfferTypeDefFieldsRel']['offerTypeDefFieldId'] = $typeDefField['offerTypeDefFieldId'];
-					$relData['PackageOfferTypeDefFieldsRel']['defValue'] = 0.00;
-					$this->Package->PackageOfferTypeDefFieldsRel->create();
-					$this->Package->PackageOfferTypeDefFieldsRel->save($relData);
+					$relData['PackageOfferTypeDefFieldRel']['offerTypeDefFieldId'] = $typeDefField['offerTypeDefFieldId'];
+					$relData['PackageOfferTypeDefFieldRel']['defValue'] = 0.00;
+					$this->Package->PackageOfferTypeDefFieldRel->create();
+					$this->Package->PackageOfferTypeDefFieldRel->save($relData);
 				}
 			} 
 		}
@@ -179,13 +179,13 @@ class PackagesController extends AppController {
 		if (!empty($this->data)) {
 			$updateArray = array();
 			$tmpData = $this->Package->read(null, $id);
-			foreach ($tmpData['PackageOfferTypeDefFieldsRel'] as $k => $defFields) {
-				$tmpData['PackageOfferTypeDefFieldsRel'][$k]['defValue'] = $this->data['PackageOfferTypeDefFieldsRel']['defValue'][$defFields['packageOfferTypeDefFieldsRelId']];
-				unset($tmpData['PackageOfferTypeDefFieldsRel'][$k]['OfferTypeDefField']);
-				$updateArray[] = $tmpData['PackageOfferTypeDefFieldsRel'][$k];
+			foreach ($tmpData['PackageOfferTypeDefFieldRel'] as $k => $defFields) {
+				$tmpData['PackageOfferTypeDefFieldRel'][$k]['defValue'] = $this->data['PackageOfferTypeDefFieldRel']['defValue'][$defFields['packageOfferTypeDefFieldRelId']];
+				unset($tmpData['PackageOfferTypeDefFieldRel'][$k]['OfferTypeDefField']);
+				$updateArray[] = $tmpData['PackageOfferTypeDefFieldRel'][$k];
 			}
 
-			if ($this->Package->PackageOfferTypeDefFieldsRel->saveAll($updateArray)) {
+			if ($this->Package->PackageOfferTypeDefFieldRel->saveAll($updateArray)) {
 				$this->Session->setFlash(__('The Package has been saved', true));
 				$this->redirect(array('action'=>'index'));
 			} else {
