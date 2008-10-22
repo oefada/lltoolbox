@@ -11,10 +11,10 @@
 				echo '	<div class="boxFloatHdrSmall">' . $offerType['offerTypeName'] . '</div>';
 				echo '  <div style="margin-left:15px;">';
 				
-				foreach ($this->data['PackageOfferTypeDefFieldsRel'] as $defFields) {
+				foreach ($this->data['PackageOfferTypeDefFieldRel'] as $defFields) {
 					if ($defFields['offerTypeId'] == $offerType['offerTypeId']) {
 						echo $defFields['OfferTypeDefField']['fieldName'] . '<br />';
-						echo $form->input('PackageOfferTypeDefFieldsRel.defValue.' . $defFields['packageOfferTypeDefFieldsRelId'], array('value' => $defFields['defValue'], 'label' => ''));
+						echo $form->input('PackageOfferTypeDefFieldRel.defValue.' . $defFields['packageOfferTypeDefFieldRelId'], array('value' => $defFields['defValue'], 'label' => ''));
 					}
 				}
 				echo '  </div>';

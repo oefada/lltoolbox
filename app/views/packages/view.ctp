@@ -128,7 +128,7 @@
 	foreach ($package['Format'] as $k => $v) {
 		echo "<tr>";
 		echo "<td>$v[formatName]</td>";
-		echo "<td>Defaults are Set</td>";
+		echo "<td>*</td>";
 		echo "<td><a href='#'>Schedule this Offer Type</a></td>";
 		echo "</tr>";
 	}
@@ -153,7 +153,7 @@
 			<td><a href="/packageValidityPeriods/edit/<?php echo $v['packageValidityPeriodId'];?>"><?php echo $v['packageValidityPeriodId'];?></a></td>
 			<td><?php echo $v['startDate'];?></td>
 			<td><?php echo $v['endDate'];?></td>
-			<td><?php echo $v['validityFlag'] ? 'VALID' : 'BLACKOUT';?></td>
+			<td><?php echo $v['isBlackout'] ? 'BLACKOUT' : 'VALIDITY';?></td>
 		</tr>
 	<?php
 	}
@@ -200,7 +200,7 @@
 	echo '<tr>';
 	echo '<th>Range</th>';
 	foreach ($packageRatePeriods as $k => $v) {
-		echo '<th>' . $v['PackageRatePeriod']['startDate'] . '<br />to<br />' . $v['PackageRatePeriod']['endDate'] . "</th>\n";
+		echo '<th>' . $v['prp']['startDate'] . '<br />to<br />' . $v['prp']['endDate'] . "</th>\n";
 	}
 	echo '</tr>';
 	?>	
@@ -220,7 +220,7 @@
 	echo '<tr>';
 	echo '<td>Overall Price</td>';
 	foreach ($packageRatePeriods as $k => $v) {
-		echo '<td><strong>$' . $v['PackageRatePeriod']['approvedRetailPrice'] . '</strong></td>';
+		echo '<td><strong>$' . $v['prp']['approvedRetailPrice'] . '</strong></td>';
 	}
 	echo '</tr>';
 	?>
