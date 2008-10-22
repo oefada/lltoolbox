@@ -23,7 +23,7 @@
 		</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('ValidityFlag'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $packageValidityPeriod['PackageValidityPeriod']['validityFlag']; ?>
+			<?php echo $packageValidityPeriod['PackageValidityPeriod']['isBlackout']; ?>
 			&nbsp;
 		</dd>
 	</dl>

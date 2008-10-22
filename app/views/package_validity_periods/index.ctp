@@ -12,7 +12,7 @@ echo $paginator->counter(array(
 	<th><?php echo $paginator->sort('packageId');?></th>
 	<th><?php echo $paginator->sort('startDate');?></th>
 	<th><?php echo $paginator->sort('endDate');?></th>
-	<th><?php echo $paginator->sort('validityFlag');?></th>
+	<th><?php echo $paginator->sort('isBlackout');?></th>
 	<th class="actions"><?php __('Actions');?></th>
 </tr>
 <?php
@@ -37,7 +37,7 @@ foreach ($packageValidityPeriods as $packageValidityPeriod):
 			<?php echo $packageValidityPeriod['PackageValidityPeriod']['endDate']; ?>
 		</td>
 		<td>
-			<?php echo $packageValidityPeriod['PackageValidityPeriod']['validityFlag']; ?>
+			<?php echo $packageValidityPeriod['PackageValidityPeriod']['isBlackout']; ?>
 		</td>
 		<td class="actions">
 			<?php echo $html->link(__('View', true), array('action'=>'view', $packageValidityPeriod['PackageValidityPeriod']['packageValidityPeriodId'])); ?>

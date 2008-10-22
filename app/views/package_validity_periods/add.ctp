@@ -6,7 +6,7 @@
 		echo $form->input('packageId');
 		echo $form->input('startDate');
 		echo $form->input('endDate');
-		echo $form->input('validityFlag');
+		echo $form->input('isBlackout');
 	?>
 	</fieldset>
 <?php echo $form->end('Submit');?>
