@@ -1,6 +1,6 @@
 <?php 
 /* SVN FILE: $Id$ */
-/* RevenueModelLoaRelsController Test cases generated on: 2008-10-14 15:10:38 : 1224024398*/
+/* RevenueModelLoaRelsController Test cases generated on: 2008-10-21 14:10:28 : 1224624568*/
 App::import('Controller', 'RevenueModelLoaRels');
 
 class TestRevenueModelLoaRels extends RevenueModelLoaRelsController {
