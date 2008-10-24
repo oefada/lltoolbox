@@ -1,130 +1,39 @@
-<div class="users view">
-<h2><?php  __('User');?></h2>
-	<dl><?php $i = 0; $class = ' class="altrow"';?>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('UserId'); ?></dt>
-		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $user['User']['userId']; ?>
-			&nbsp;
-		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Title'); ?></dt>
-		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $user['User']['title']; ?>
-			&nbsp;
-		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Salutation'); ?></dt>
-		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $html->link($user['Salutation']['salutationText'], array('controller'=> 'salutations', 'action'=>'view', $user['Salutation']['salutationId'])); ?>
-			&nbsp;
-		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('FirstName'); ?></dt>
-		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $user['User']['firstName']; ?>
-			&nbsp;
-		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('LastName'); ?></dt>
-		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $user['User']['lastName']; ?>
-			&nbsp;
-		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Email'); ?></dt>
-		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $user['User']['email']; ?>
-			&nbsp;
-		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('WorkPhone'); ?></dt>
-		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $user['User']['workPhone']; ?>
-			&nbsp;
-		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('MobilePhone'); ?></dt>
-		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $user['User']['mobilePhone']; ?>
-			&nbsp;
-		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('HomePhone'); ?></dt>
-		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $user['User']['homePhone']; ?>
-			&nbsp;
-		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('OtherPhone'); ?></dt>
-		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $user['User']['otherPhone']; ?>
-			&nbsp;
-		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Fax'); ?></dt>
-		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $user['User']['fax']; ?>
-			&nbsp;
-		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('UserAcquisitionSourceId'); ?></dt>
-		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $user['User']['userAcquisitionSourceId']; ?>
-			&nbsp;
-		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('DoNotContact'); ?></dt>
-		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $user['User']['doNotContact']; ?>
-			&nbsp;
-		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Notes'); ?></dt>
-		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $user['User']['notes']; ?>
-			&nbsp;
-		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Inactive'); ?></dt>
-		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $user['User']['inactive']; ?>
-			&nbsp;
-		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('ClientNotificationEmailsActive'); ?></dt>
-		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $user['User']['clientNotificationEmailsActive']; ?>
-			&nbsp;
-		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('RegistrationDate'); ?></dt>
-		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $user['User']['registrationDate']; ?>
-			&nbsp;
-		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('InitialSignUpDate'); ?></dt>
-		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $user['User']['initialSignUpDate']; ?>
-			&nbsp;
-		</dd>
-	</dl>
-</div>
-<div class="actions">
-	<ul>
-		<li><?php echo $html->link(__('Edit User', true), array('action'=>'edit', $user['User']['userId'])); ?> </li>
-		<li><?php echo $html->link(__('Delete User', true), array('action'=>'delete', $user['User']['userId']), null, sprintf(__('Are you sure you want to delete # %s?', true), $user['User']['userId'])); ?> </li>
-		<li><?php echo $html->link(__('List Users', true), array('action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New User', true), array('action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Salutations', true), array('controller'=> 'salutations', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Salutation', true), array('controller'=> 'salutations', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List User Mail Optins', true), array('controller'=> 'user_mail_optins', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New User Mail Optin', true), array('controller'=> 'user_mail_optins', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List User Referrals', true), array('controller'=> 'user_referrals', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New User Referral', true), array('controller'=> 'user_referrals', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List User Site Extendeds', true), array('controller'=> 'user_site_extendeds', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New User Site Extended', true), array('controller'=> 'user_site_extendeds', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List User Payment Settings', true), array('controller'=> 'user_payment_settings', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New User Payment Setting', true), array('controller'=> 'user_payment_settings', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List User Preferences', true), array('controller'=> 'user_preferences', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New User Preference', true), array('controller'=> 'user_preferences', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Bids', true), array('controller'=> 'bids', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Bid', true), array('controller'=> 'bids', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Addresses', true), array('controller'=> 'addresses', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Address', true), array('controller'=> 'addresses', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List User Acquisition Sources', true), array('controller'=> 'user_acquisition_sources', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New User Acquisition Source', true), array('controller'=> 'user_acquisition_sources', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Contests', true), array('controller'=> 'contests', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Contest', true), array('controller'=> 'contests', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Clients', true), array('controller'=> 'clients', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Client', true), array('controller'=> 'clients', 'action'=>'add')); ?> </li>
-	</ul>
+<?php  $this->pageTitle = __('User', true);?>
+<div class="users form">
+<?php echo $form->create('User');?>
+<?php if ($user['User']['inactive']): ?>
+	<div class='icon-yellow'>This user is inactive</div>
+<?php endif ?>
+	<fieldset>
+ 		<legend><?php __('Edit User');?></legend>
+	<?php
+		echo $form->input('userId');
+		echo $form->input('title');
+		echo $form->input('salutationId');
+		echo $form->input('firstName');
+		echo $form->input('lastName');
+		echo $form->input('email');
+		echo $form->input('workPhone');
+		echo $form->input('mobilePhone');
+		echo $form->input('homePhone');
+		echo $form->input('otherPhone');
+		echo $form->input('fax');
+		echo $form->input('userAcquisitionSourceId');
+		echo $form->input('doNotContact');
+		echo $form->input('notes');
+		echo $form->input('inactive');
+		echo $form->input('clientNotificationEmailsActive');
+		echo $form->input('registrationDate');
+		echo $form->input('initialSignUpDate');
+		echo $form->input('Contest');
+		echo $form->input('Client');
+	?>
+	</fieldset>
+<?php echo $form->end('Submit');?>
 </div>
 <div class="related">
-	<h3><?php __('Related User Mail Optins');?></h3>
+	<h3 class="collapsible"><b class="handle"></b><span class="handle"><?php __('Related User Mail Optins');?>  (<?=count($user['UserMailOptin'])?>)</span></h3>
+	<div class="collapsibleContent">
 	<?php if (!empty($user['UserMailOptin'])):?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
@@ -166,15 +75,16 @@
 	<?php endforeach; ?>
 	</table>
 <?php endif; ?>
-
 	<div class="actions">
 		<ul>
 			<li><?php echo $html->link(__('New User Mail Optin', true), array('controller'=> 'user_mail_optins', 'action'=>'add'));?> </li>
 		</ul>
 	</div>
+	</div>
 </div>
 <div class="related">
-	<h3><?php __('Related User Referrals');?></h3>
+	<h3 class="collapsible"><b class="handle"></b><span class="handle"><?php __('Related User Referrals');?>  (<?=count($user['UserReferral'])?>)</span></h3>
+	<div class="collapsibleContent">
 	<?php if (!empty($user['UserReferral'])):?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
@@ -220,9 +130,11 @@
 			<li><?php echo $html->link(__('New User Referral', true), array('controller'=> 'user_referrals', 'action'=>'add'));?> </li>
 		</ul>
 	</div>
+	</div>
 </div>
 <div class="related">
-	<h3><?php __('Related User Site Extendeds');?></h3>
+	<h3 class="collapsible"><b class="handle"></b><span class="handle"><?php __('Related User Site Extendeds');?>  (<?=count($user['UserSiteExtended'])?>)</span></h3>
+	<div class="collapsibleContent">
 	<?php if (!empty($user['UserSiteExtended'])):?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
@@ -272,9 +184,11 @@
 			<li><?php echo $html->link(__('New User Site Extended', true), array('controller'=> 'user_site_extendeds', 'action'=>'add'));?> </li>
 		</ul>
 	</div>
+	</div>
 </div>
 <div class="related">
-	<h3><?php __('Related User Payment Settings');?></h3>
+	<h3 class="collapsible"><b class="handle"></b><span class="handle"><?php __('Related User Payment Settings');?>  (<?=count($user['UserPaymentSetting'])?>)</span></h3>
+	<div class="collapsibleContent">
 	<?php if (!empty($user['UserPaymentSetting'])):?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
@@ -328,9 +242,11 @@
 			<li><?php echo $html->link(__('New User Payment Setting', true), array('controller'=> 'user_payment_settings', 'action'=>'add'));?> </li>
 		</ul>
 	</div>
+	</div>
 </div>
 <div class="related">
-	<h3><?php __('Related User Preferences');?></h3>
+	<h3 class="collapsible"><b class="handle"></b><span class="handle"><?php __('Related User Preferences');?>  (<?=count($user['UserPreference'])?>)</span></h3>
+	<div class="collapsibleContent">
 	<?php if (!empty($user['UserPreference'])):?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
@@ -368,9 +284,11 @@
 			<li><?php echo $html->link(__('New User Preference', true), array('controller'=> 'user_preferences', 'action'=>'add'));?> </li>
 		</ul>
 	</div>
+	</div>
 </div>
 <div class="related">
-	<h3><?php __('Related Bids');?></h3>
+	<h3 class="collapsible"><b class="handle"></b><span class="handle"><?php __('Related Bids');?>  (<?=count($user['Bid'])?>)</span></h3>
+	<div class="collapsibleContent">
 	<?php if (!empty($user['Bid'])):?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
@@ -418,9 +336,11 @@
 			<li><?php echo $html->link(__('New Bid', true), array('controller'=> 'bids', 'action'=>'add'));?> </li>
 		</ul>
 	</div>
+	</div>
 </div>
 <div class="related">
-	<h3><?php __('Related Addresses');?></h3>
+	<h3 class="collapsible"><b class="handle"></b><span class="handle"><?php __('Related Addresses');?>  (<?=count($user['Address'])?>)</span></h3>
+	<div class="collapsibleContent">
 	<?php if (!empty($user['Address'])):?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
@@ -490,9 +410,11 @@
 			<li><?php echo $html->link(__('New Address', true), array('controller'=> 'addresses', 'action'=>'add'));?> </li>
 		</ul>
 	</div>
+	</div>
 </div>
 <div class="related">
-	<h3><?php __('Related User Acquisition Sources');?></h3>
+	<h3 class="collapsible"><b class="handle"></b><span class="handle"><?php __('Related User Acquisition Sources');?>  (<?=count($user['UserAcquisitionSource'])?>)</span></h3>
+	<div class="collapsibleContent">
 	<?php if (!empty($user['UserAcquisitionSource'])):?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
@@ -526,9 +448,11 @@
 			<li><?php echo $html->link(__('New User Acquisition Source', true), array('controller'=> 'user_acquisition_sources', 'action'=>'add'));?> </li>
 		</ul>
 	</div>
+	</div>
 </div>
 <div class="related">
-	<h3><?php __('Related Contests');?></h3>
+	<h3 class="collapsible"><b class="handle"></b><span class="handle"><?php __('Related Contests');?> (<?=count($user['Contest'])?>)</span></h3>
+	<div class="collapsibleContent">
 	<?php if (!empty($user['Contest'])):?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
@@ -572,82 +496,5 @@
 			<li><?php echo $html->link(__('New Contest', true), array('controller'=> 'contests', 'action'=>'add'));?> </li>
 		</ul>
 	</div>
-</div>
-<div class="related">
-	<h3><?php __('Related Clients');?></h3>
-	<?php if (!empty($user['Client'])):?>
-	<table cellpadding = "0" cellspacing = "0">
-	<tr>
-		<th><?php __('ClientId'); ?></th>
-		<th><?php __('ParentClientId'); ?></th>
-		<th><?php __('Name'); ?></th>
-		<th><?php __('Url'); ?></th>
-		<th><?php __('Email1'); ?></th>
-		<th><?php __('Phone1'); ?></th>
-		<th><?php __('Phone2'); ?></th>
-		<th><?php __('ClientTypeId'); ?></th>
-		<th><?php __('ClientLevelId'); ?></th>
-		<th><?php __('RegionId'); ?></th>
-		<th><?php __('ClientStatusId'); ?></th>
-		<th><?php __('ClientAcquisitionSourceId'); ?></th>
-		<th><?php __('CustomMapLat'); ?></th>
-		<th><?php __('CustomMapLong'); ?></th>
-		<th><?php __('CustomMapZoomMap'); ?></th>
-		<th><?php __('CustomMapZoomSat'); ?></th>
-		<th><?php __('CompanyName'); ?></th>
-		<th><?php __('Country'); ?></th>
-		<th><?php __('CheckRateUrl'); ?></th>
-		<th><?php __('NumRooms'); ?></th>
-		<th><?php __('AirportCode'); ?></th>
-		<th><?php __('OldProductId'); ?></th>
-		<th><?php __('SeoName'); ?></th>
-		<th class="actions"><?php __('Actions');?></th>
-	</tr>
-	<?php
-		$i = 0;
-		foreach ($user['Client'] as $client):
-			$class = null;
-			if ($i++ % 2 == 0) {
-				$class = ' class="altrow"';
-			}
-		?>
-		<tr<?php echo $class;?>>
-			<td><?php echo $client['clientId'];?></td>
-			<td><?php echo $client['parentClientId'];?></td>
-			<td><?php echo $client['name'];?></td>
-			<td><?php echo $client['url'];?></td>
-			<td><?php echo $client['email1'];?></td>
-			<td><?php echo $client['phone1'];?></td>
-			<td><?php echo $client['phone2'];?></td>
-			<td><?php echo $client['clientTypeId'];?></td>
-			<td><?php echo $client['clientLevelId'];?></td>
-			<td><?php echo $client['regionId'];?></td>
-			<td><?php echo $client['clientStatusId'];?></td>
-			<td><?php echo $client['clientAcquisitionSourceId'];?></td>
-			<td><?php echo $client['customMapLat'];?></td>
-			<td><?php echo $client['customMapLong'];?></td>
-			<td><?php echo $client['customMapZoomMap'];?></td>
-			<td><?php echo $client['customMapZoomSat'];?></td>
-			<td><?php echo $client['companyName'];?></td>
-			<td><?php echo $client['country'];?></td>
-			<td><?php echo $client['checkRateUrl'];?></td>
-			<td><?php echo $client['numRooms'];?></td>
-			<td><?php echo $client['airportCode'];?></td>
-			<td><?php echo $client['oldProductId'];?></td>
-			<td><?php echo $client['seoName'];?></td>
-			<td class="actions">
-				<?php echo $html->link(__('View', true), array('controller'=> 'clients', 'action'=>'view', $client['clientId'])); ?>
-				<?php echo $html->link(__('Edit', true), array('controller'=> 'clients', 'action'=>'edit', $client['clientId'])); ?>
-				<?php echo $html->link(__('Delete', true), array('controller'=> 'clients', 'action'=>'delete', $client['clientId']), null, sprintf(__('Are you sure you want to delete # %s?', true), $client['clientId'])); ?>
-			</td>
-		</tr>
-	<?php endforeach; ?>
-	</table>
-<?php endif; ?>
-
-	<div class="actions">
-		<ul>
-			<li><?php echo $html->link(__('New Client', true), array('controller'=> 'clients', 'action'=>'add'));?> </li>
-		</ul>
 	</div>
 </div>

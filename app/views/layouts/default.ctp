@@ -57,20 +57,12 @@
 <body>
   <div id="page"><div id="page-inner">
 
-    <a name="top" id="navigation-top"></a>
-      <div id="skip-to-nav"><a href="#navigation"><?php print __('Skip to Navigation'); ?></a></div>
     <div id="header"><div id="header-inner" class="clear-block">
 
         <div id="logo-title">
 
-            <div id="logo"><a href="" title="" rel="home"><img src="" alt="" id="logo-image" /></a></div>
+            <div id="logo"><img src="/img/sm_logo.gif" alt="" id="logo-image" /></div>
 
-
-              <h1 id="site-name">
-                <a href="" title="" rel="home">
-					Site Manager
-                </a>
-              </h1>
         </div> <!-- /#logo-title -->
     </div></div> <!-- /#header-inner, /#header -->
 
@@ -86,29 +78,27 @@
 			<div id='loader' style='display: none; text-align: center;'><?=$html->image('ajax-loader.gif')?></div>
 			<div id='spinner' style='display: none; text-align: center;'><?=$html->image('spinner.gif')?></div>
 			</div>
-			<?php if($html->getCrumbs()): ?>
+			<?php if(false)://$html->getCrumbs()): ?>
 			<div id="breadcrumbs"><?= $html->getCrumbs("<span></span>", "Dashboard"); ?></div>
 			<?php endif; ?>
+			<div class="page-toolbar clearfix">
+				<?php echo $this->renderElement('search')?>
+				<?php if (isset($layout)): ?>
+					<div class="buttons"><? $layout->output($toolbar_for_layout);?></div>
+				<?php endif ?>
+			</div>
             <?php $session->flash(); ?>
           </div> <!-- /#content-header -->
 
-        <div id="content-area" style="padding: 10px">
+        <div id="content-area" style="padding-top: 10px">
           <?php print $content_for_layout; ?>
         </div>
       </div></div> <!-- /#content-inner, /#content -->
 
         <div id="navbar"><div id="navbar-inner" class="region region-navbar">
 
-          <a name="navigation" id="navigation"></a>
-
-            <div id="primary">
-              	<ul id="tabnav">
-					<li><a href="#" class="active">Clients</a></li>
-					<li><a href="#">Products</a></li>
-					<li><a href="#">Offers</a></li>
-					<li><a href="#">Promo</a></li>
-				</ul>
-			
+            <div id="recent-items-list">
+				<?php //echo $history ?>
             </div> <!-- /#primary -->
 
           
@@ -117,19 +107,16 @@
 
 		<div id="sidebar-left"><div id="sidebar-left-inner" class="region region-left">
 			<ul>
-				<li>Link 1</li>
-				<li>Link 2</li>
-				<li>Link 3</li>
-				<li>Link 4</li>
-				<li>Link 5</li>
+				<li><a href="#">Home</a></li>
+				<li><a href="/clients">Clients</a></li>
+				<li><a href="/products">Products</a></li>
+				<li><a href="/offers">Offers</a></li>
+				<li><a href="#">Promo</a></li>
 			</ul>
-		<?php if (isset($layout)): ?>
-			<div class='page-toolbar'>
+		<?php if (false)://(isset($layout)): ?>
 			<? $layout->output($sidebar_for_layout);?>
-			</div>
 		<?php endif ?>
 		<div style="clear: both;"></div>
-          <?php echo $this->renderElement('search'); ?>
         </div></div> <!-- /#sidebar-left-inner, /#sidebar-left -->
 
     </div></div> <!-- /#main-inner, /#main -->

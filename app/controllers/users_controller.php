@@ -5,15 +5,8 @@ class UsersController extends AppController {
 	var $helpers = array('Html', 'Form');
 
 	function index() {
-		$this->User->recursive = 0;
+		$this->User->recursive = -1;
 		$this->set('users', $this->paginate());
-	}
-
-	function view($id = null) {
-		if (!$id) {
-			$this->flash(__('Invalid User', true), array('action'=>'index'));
-		}
-		$this->set('user', $this->User->read(null, $id));
 	}
 
 	function add() {
@@ -25,6 +18,7 @@ class UsersController extends AppController {
 				
 			}
 		}
+		
 		$contests = $this->User->Contest->find('list');
 		$clients = $this->User->Client->find('list');
 		$salutationIds = $this->User->Salutation->find('list');
@@ -37,7 +31,7 @@ class UsersController extends AppController {
 		}
 		if (!empty($this->data)) {
 			if ($this->User->save($this->data)) {
-				$this->flash(__('The User has been saved.', true), array('action'=>'index'));
+				$this->Session->setFlash(__('The User has been saved.', true));
 			} else {
 			}
 		}
@@ -47,7 +41,10 @@ class UsersController extends AppController {
 		$contests = $this->User->Contest->find('list');
 		$clients = $this->User->Client->find('list');
 		$salutationIds = $this->User->Salutation->find('list');
-		$this->set(compact('contests','clients','salutationIds'));
+		$paymentTypes = $this->User->UserPaymentSetting->PaymentType->find('list');
+		$addressTypes = $this->User->Address->AddressType->find('list');
+		$this->set('user', $this->data);
+		$this->set(compact('user', 'contests','clients','salutationIds', 'paymentTypes', 'addressTypes'));
 	}
 
 	function delete($id = null) {
@@ -61,17 +58,30 @@ class UsersController extends AppController {
 	
 	function search()
 	{
+		if(!empty($_GET['query'])) {
+			$this->params['form']['query'] = $_GET['query'];
+ 		} elseif(!empty($this->params['named']['query'])) {
+			$this->params['form']['query'] = $this->params['named']['query'];
+		}
 		if(!empty($this->params['form']['query'])):
 			$query = $this->Sanitize->escape($this->params['form']['query']);
+			$conditions = array('OR' => array('firstName LIKE' => "$query%",'lastName LIKE' => "$query%", 'email LIKE' => "$query%"));
 
-			$this->Client->recursive = -1;
-			$results = $this->Client->find('all', array('conditions' => array('name LIKE' => "%$query%"), 'limit' => 5));
-			$this->set('query', $query);
-			$this->set('results', $results);
-			
-			if (isset($this->params['requested'])) {
+			if($_GET['query'] ||  $this->params['named']['query']) {
+				$this->autoRender = false;
+				$this->Client->recursive = 0;
+
+				$this->paginate = array('conditions' => $conditions);
+				$this->set('query', $query);
+				$this->set('users', $this->paginate());
+				$this->render('index');
+			} else {
+				$this->Client->recursive = -1;
+				$results = $this->User->find('all', array('conditions' => $conditions, 'limit' => 5));
+				$this->set('query', $query);
+				$this->set('results', $results);
 				return $results;
-			}	
+			}
 		endif;
 	}
 	

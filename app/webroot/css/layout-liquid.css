@@ -81,6 +81,9 @@
 /** header **/
   #header
   {
+	height: 70px;
+	padding: 0;
+	margin: 0;
   }
 
   #header-inner
@@ -94,6 +97,7 @@
   #logo
   {
     float: left;
+	margin: 10px;
   }
 
   #site-name

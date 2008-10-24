@@ -60,6 +60,7 @@ class LoasController extends AppController {
 				$this->Session->setFlash(__('The Loa could not be saved. Please, try again.', true));
 			}
 		}
+		$this->Loa->recursive = 2;
 		if (empty($this->data)) {
 			$this->data = $this->Loa->read(null, $id);
 		}

@@ -21,12 +21,10 @@ echo $paginator->counter(array(
 <tr>
 	<th><?php echo $paginator->sort('Approval Status', 'customerApprovalStatusId');?></th>
 	<th><?php echo $paginator->sort('Value', 'loaValue');?></th>
-	<th><?php echo $paginator->sort('Remaining Balance', 'remainingBalance');?></th>
-	<th><?php echo $paginator->sort('Remit Status', 'remitStatus');?></th>
-	<th><?php echo $paginator->sort('upgraded');?></th>
+	<th><?php echo $paginator->sort('Total Remitted', 'totalRemitted');?></th>
 	<th><?php echo $paginator->sort('# Packages', 'loaNumberPackages');?></th>
-	<th><?php echo $paginator->sort('Remaining Packages', 'remainingPackagesToSell');?></th>
 	<th><?php echo $paginator->sort('Cash Paid', 'cashPaid');?></th>
+	<th><?php echo $paginator->sort('upgraded');?></th>
 	<th class="actions"><?php __('Actions');?></th>
 </tr>
 <?php
@@ -37,17 +35,16 @@ foreach ($loas as $loa):
 		$class = ' class="altrow"';
 	}
 ?>
+
 	<tr<?php echo $class;?>>
-		<td><?php echo $loa['Loa']['customerApprovalStatusId'];?></td>
+		<td><?php echo $loa['LoaCustomerApprovalStatus']['customerApprovalStatusName'];?></td>
 		<td><?php echo $loa['Loa']['loaValue'];?></td>
-		<td><?php echo $loa['Loa']['remainingBalance'];?></td>
-		<td><?php echo $loa['Loa']['remitStatus'];?></td>
-		<td><?php echo $loa['Loa']['upgraded'];?></td>
+		<td><?php echo $loa['Loa']['totalRemitted'];?></td>
 		<td><?php echo $loa['Loa']['loaNumberPackages'];?></td>
-		<td><?php echo $loa['Loa']['remainingPackagesToSell'];?></td>
 		<td><?php echo $loa['Loa']['cashPaid'];?></td>
+		<td><?php echo $html->image($loa['Loa']['upgraded'] ? 'tick.png' : 'cross.png');?></td>
 		<td class="actions">
-			<?php echo $html->link(__('View Details', true), array('controller'=> 'loas', 'action'=>'view', $loa['Loa']['loaId'])); ?>
+			<?php echo $html->link(__('View Details', true), array('controller'=> 'loas', 'action'=>'edit', $loa['Loa']['loaId'])); ?>
 		</td>
 	</tr>
 <?php endforeach; ?>

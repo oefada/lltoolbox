@@ -39,7 +39,7 @@
  */
 uses('sanitize');
 class AppController extends Controller {
-	var $helpers = array('Html', 'Form', 'Text', 'Pagination', 'Layout', 'Ajax');
+	var $helpers = array('Html2', 'Form', 'Text', 'Pagination', 'Layout', 'Ajax');
 	var $components = array('RequestHandler');
 	var $Sanitize;
 	

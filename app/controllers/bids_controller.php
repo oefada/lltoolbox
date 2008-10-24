@@ -63,6 +63,36 @@ class BidsController extends AppController {
 			$this->redirect(array('action'=>'index'));
 		}
 	}
+	
+	function search()
+	{
+		if(!empty($_GET['query'])) {
+			$this->params['form']['query'] = $_GET['query'];
+ 		} elseif(!empty($this->params['named']['query'])) {
+			$this->params['form']['query'] = $this->params['named']['query'];
+		}
+		if(!empty($this->params['form']['query'])):
+			$query = $this->Sanitize->escape($this->params['form']['query']);
+			$conditions = array('OR' => array('Bid.bidId LIKE' => "$query%",'Bid.offerId LIKE' => "$query%", 'Bid.userId LIKE' => "$query%", 'User.firstName LIKE' => "$query%", 'User.lastName LIKE' => "$query%"));
+
+			if($_GET['query'] ||  $this->params['named']['query']) {
+				$this->autoRender = false;
+				$this->Client->recursive = 0;
+
+				$this->paginate = array('conditions' => $conditions);
+				$this->set('query', $query);
+				$this->set('bids', $this->paginate());
+				$this->render('index');
+			} else {
+				$this->Client->recursive = -1;
+				$results = $this->User->find('all', array('conditions' => $conditions, 'limit' => 5));
+				$this->set('query', $query);
+				$this->set('results', $results);
+				return $results;
+			}
+		endif;
+	}
+
 
 }
 ?>

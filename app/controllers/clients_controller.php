@@ -2,7 +2,6 @@
 class ClientsController extends AppController {
 
 	var $name = 'Clients';
-	var $uses = array('Client', 'User');
 	
 	function index() {
 		$this->Client->recursive = 0;
@@ -53,11 +52,13 @@ class ClientsController extends AppController {
 		if (empty($this->data)) {
 			$this->data = $this->Client->read(null, $id);
 		}
+		
 		$amenities = $this->Client->Amenity->find('list');
 		$clientLevelIds = $this->Client->ClientLevel->find('list');
 		$clientStatusIds = $this->Client->ClientStatus->find('list');
 		$clientTypeIds = $this->Client->ClientType->find('list');
 		$clientAcquisitionSourceIds = $this->Client->ClientAcquisitionSource->find('list');
+		$this->set('client', $this->data);
 		$this->set(compact('tags','users','amenities','clientLevelIds','clientStatusIds','clientTypeIds','regions','clientAcquisitionSourceIds'));
 	}
 

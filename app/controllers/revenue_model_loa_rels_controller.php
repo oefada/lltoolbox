@@ -23,7 +23,11 @@ class RevenueModelLoaRelsController extends AppController {
 			$this->RevenueModelLoaRel->create();
 			if ($this->RevenueModelLoaRel->save($this->data)) {
 				$this->Session->setFlash(__('The RevenueModelLoaRel has been saved', true));
-				$this->redirect(array('action'=>'index'));
+				if ($this->RequestHandler->isAjax()) {
+					$this->set('closeModalbox', true);
+				} else {
+					$this->redirect(array('action'=>'index'));
+				}
 			} else {
 				$this->Session->setFlash(__('The RevenueModelLoaRel could not be saved. Please, try again.', true));
 			}
@@ -67,7 +71,6 @@ class RevenueModelLoaRelsController extends AppController {
 		}
 	}
 	function revenue_model_criteria_form() {
-		debug($this->data['RevenueModelLoaRel']['revenueModelId']);
 		$this->autoRender = false;
 		switch($this->data['RevenueModelLoaRel']['revenueModelId']):
 			case 1:

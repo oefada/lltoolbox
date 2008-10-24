@@ -9,7 +9,7 @@ class Client extends AppModel {
 	
 	var $validate = array(
 				'name' => array(
-					'rule' => 'alphaNumeric',
+					'rule' => '/[a-zA-Z0-9]/',
 					'message' => 'Client name must only contain letters.'
 				),
 				'email' => array(

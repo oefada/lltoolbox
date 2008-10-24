@@ -7,7 +7,7 @@ if (isset($query)) {
 }
 ?>
 
-<?=$layout->blockStart('header');?>
+<?=$layout->blockStart('toolbar');?>
     <a href="/clients/add" title="Add New Loa" class="button add"><span><b class="icon"></b>Add New Client</span></a>
 <?=$layout->blockEnd();?>
 <div id="client-index">
@@ -53,7 +53,7 @@ foreach ($clients as $client):
 			<?php echo $client['ClientStatus']['clientStatusName']; ?>
 		</td>
 		<td class="actions">
-			<?php echo $html->link(__('View Details', true), array('action'=>'view', $client['Client']['clientId'])); ?>
+			<?php echo $html->link(__('View Details', true), array('action'=>'edit', $client['Client']['clientId'])); ?>
 		</td>
 	</tr>
 <?php endforeach; ?>

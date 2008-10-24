@@ -3,6 +3,22 @@
 @import url("layout-liquid.css");
 @import url("modalbox.css");
 
+#header {
+	background: #c9b865 url(../img/colored_bar.gif) bottom left repeat-x;
+}
+#page {
+	background: #fff;
+}
+#recent-items-list {
+	border-bottom: 1px solid #d99e00;
+	color: #999;
+	font-weight: bold;
+	height: 25px;
+	line-height: 25px;
+}
+#recent-items-list ul {
+	list-style: none;
+}
 .italicize {
 	font-style: italic;
 }
@@ -17,21 +33,34 @@
 
 #content-header div.title-header {
 	position: relative;
-	padding: 10px;
-	border-bottom: 1px solid #ccc;
-	background: #f1f1f1;
 }
 
 #content-header div.title-header h1 {
-	font-size: 125%;
-	color: red;
-	background: #f1f1f1;
+	font-size: 18px;
+	color: #7f0000;
+	font-family: Tahoma;
+	font-weight: bold;
 }
 
 #content-header div.title-header div.buttons {
 	position: absolute;
 	top: 0;
 	right: 10px;
+}
+#content-area h1,
+#content-area h2,
+#content-area h3 {
+	font-family: Tahoma;
+	font-weight: bold;
+}
+#content-area h2 {
+	color: #fff;
+	background: #545454;
+	font-size: 13px;
+	padding: 5px;
+}
+#content {
+	background: url(../img/content_sidebar_background.gif) 0 0 repeat-y;
 }
 div#breadcrumbs {
 	overflow:hidden;
@@ -88,48 +117,6 @@ h2 {
 	width: 698px;
 	padding: 30px;
 }
-#tabnav
-	{
-		height: 20px;
-		margin: 0;
-		padding-left: 10px;
-		background: url(../images/tab_bottom.gif) repeat-x bottom;
-	}
-
-#tabnav li
-	{
-		margin: 0; 
-		padding: 0;
-  		display: inline;
-  		list-style-type: none;
-  	}
-	
-#tabnav a:link, #tabnav a:visited
-	{
-		float: left;
-		background: #f3f3f3;
-		font-size: 10px;
-		line-height: 14px;
-		font-weight: bold;
-		padding: 2px 10px 2px 10px;
-		margin-right: 4px;
-		border: 1px solid #ccc;
-		text-decoration: none;
-		color: #666;
-	}
-
-#tabnav a:link.active, #tabnav a:visited.active
-	{
-		border-bottom: 1px solid #fff;
-		background: #fff;
-		color: #000;
-	}
-
-#tabnav a:hover
-	{
-		background: #fff;
-	}
-
 
 	/* Buttons */
 
@@ -227,9 +214,64 @@ h2 {
 				margin-top: .7em;
 				font-size: 85%;
 			}
+			.clearfix:after {
+		    content: ".";
+		    display: block;
+		    height: 0;
+		    clear: both;
+		    visibility: hidden;
+		    }
+		  
 			/* Toolbar button modifications */
 					.page-toolbar {
-						padding: 10px 0;
+						padding: 5px 10px 0 10px;
+						border-top: 1px dotted #000;
+						border-bottom: 1px dotted #000;
+						background: #f1f1f1;
+						height: 30px;
+					}
+					.page-toolbar form {
+						padding-top: 2px;
+						display: inline;
+					}
+					.page-toolbar input {
+						display: inline;
+						font-family: Verdana;
+						font-size: 13px;
+						margin: 0;
+						padding: 2px;
+						border: 1px solid #c9b865;
+						height: 15px;
+						float: left;
+						clear:none;
+						width: 210px;
+					}
+					.page-toolbar input[type=submit] {
+						background: #6d5f2e;
+						color: #fff;
+						border: none;
+						margin-left: 5px;
+						padding: 0;
+						line-height: 0;
+						font-family: Tahoma;
+						font-weight: bold;
+						font-size: 12px;
+						height: 21px;
+						width: 60px;
+					}
+					.buttons {
+						padding-right: 10px;
+						float: right;
+					}
+					.page-toolbar .buttons {
+						float: right;
+						padding: 0;
+						margin: 0;
+						height: 25px;
+					}
+					.page-toolbar .buttons a {
+						padding: 0;
+						margin: 0;
 					}
 						.page-heading a,
 						.page-toolbar a {
@@ -240,12 +282,10 @@ h2 {
 						.page-heading .button,
 						.page-toolbar .button {
 							background-image: url(../img/btn-toolbar-l.gif);
-							clear: both;
 						}
 							.page-heading .button span,
 							.page-toolbar .button span {
 								background-image: url(../img/btn-toolbar-r.gif);
-								width: 120px;
 							}
 
 						.page-heading a.button:active,
@@ -291,7 +331,6 @@ h2 {
 
 /* Sidebar */
 #sidebar-left {
-	background: #fff;
 	padding-bottom: 20px;
 	color: #333;
 }
@@ -309,19 +348,16 @@ h2 {
     float: left;
     padding: 0.2em 0.5em;
     margin-right: 0.1em;
-    border: 1px solid #fff;
     background: #fff;
 }
 
 .paging span.current {
-    border: 1px solid #2E6AB1;
     font-weight: bold;
     background: #2E6AB1;
     color: #fff;
 }
 
 .paging a {
-    border: 1px solid #9AAFE5;
     text-decoration: none;
 }
 
@@ -339,7 +375,6 @@ h2 {
 }
 
 .paging div.disabled {
-    border: 1px solid #ddd;
     color: #999;
 }
 
@@ -355,15 +390,28 @@ span.highlight {
 	margin: 0;
 	padding: 0;
 }
-.collapsible b.handle {
-	background: url(../img/page_up.gif) 0 center no-repeat;
-	padding-right: 20px;
+.related .collapsible,
+.related .collapsible-closed {
+	border-top: 1px solid #c9b865;
+	margin: 0;
+	padding: 0 0 5px 0;
+}
+.collapsible .handle,
+.collapsible-closed .handle {
+	padding-left: 15px;
 	cursor: pointer;
 }
-.collapsible-closed b.handle {
+.collapsible .handle {
+	background: url(../img/page_up.gif) 0 center no-repeat;
+}
+.collapsible-closed .handle {
 	background: url(../img/page_down.gif) 0 center no-repeat;
-	padding-right: 20px;
-	cursor: pointer;
+}
+.related .collapsible .handle,
+.related .collapsible-closed .handle {
+	color: #d99e00;
+	text-decoration: underline;
+	font-size: 14px;
 }
 #spinner {
 	position: absolute;
@@ -376,11 +424,124 @@ span.highlight {
 	top: 15px;
 }
 div.auto_complete    {
-     position         :absolute;
-     width            :250px;
-     background-color :white;
-     border           :1px solid #888;
-     margin           :0px;
-     padding          :0px;
+	position         	:absolute;
+	background-color 	:white;
+	margin          	:0px;
+	padding          	:0px;
+	width				:400px;
 } 
 li.selected    { background-color: #ffb; }
+/*MESSAGE BOX CLEAN	serie	  		 */
+	.clean-gray{
+		border:solid 1px #DEDEDE; 
+		background:#EFEFEF;
+		color:#222222;
+		padding:4px;
+		text-align:center;
+	}
+	.clean-yellow{
+		border:solid 1px #DEDEDE; 
+		background:#FFFFCC;
+		color:#222222;
+		padding:4px;
+		text-align:center;
+	}
+	.clean-ok{
+		border:solid 1px #349534; 
+		background:#C9FFCA;
+		color:#008000;
+		font-weight:bold;
+		padding:4px;
+		text-align:center;
+	}
+	.clean-error{
+		border:solid 1px #CC0000; 
+		background:#F7CBCA;
+		color:#CC0000;
+		font-weight:bold;
+		padding:4px;
+		text-align:center;
+	}
+
+/* --------------------------------- */
+/*MESSAGE BOX Iconized	  		 */
+	.icon-gray{
+		border:solid 1px #DEDEDE; 
+		background:#EFEFEF;
+		color:#222222;
+		padding:4px;
+		text-align:center;
+	}
+	.icon-yellow{
+		border:solid 1px #DEDEDE; 
+		background:#FFFFCC url(../img/error.png) 8px 6px no-repeat;
+		color:#222222;
+		padding:4px;
+		text-align:center;
+	}
+	.icon-ok{
+		border:solid 1px #90ac13; 
+		background:#eef4d3 url(../img/accept.png) 8px 6px no-repeat;
+		color:#6b800d;
+		font-weight:bold;
+		padding:4px;
+		text-align:center;
+	}
+	.icon-error{
+		border:solid 1px #CC0000; 
+		background:#F7CBCA url(../img/exclamation.png) 8px 6px no-repeat;
+		color:#CC0000;
+		font-weight:bold;
+		padding:4px;
+		text-align:center;
+	}
+.inline-counter {
+	margin-left: 2px;
+	font-size: 12px;
+}
+h2 .inline-counter {
+	color: #e5e5e5;
+}
+h2 .inline-counter .p {
+	color: #B4B4B4;
+}
+
+.related .inline-counter {
+	color: #898989;
+	font-size: 12px;
+}
+.related .inline-counter .p {
+	color: #CFCFCF;
+}
+
+input, textarea {
+	font-size: 100%;
+	font-family: "Verdana", "lucida grande", sans-serif;
+	padding: 5px;
+	border: 1px solid #898989;
+}
+input[type=submit] {
+	display: inline;
+	font-size: 110%;
+	padding: 2px 5px;
+	width: auto;
+	vertical-align: bottom;
+}
+fieldset form p { margin: 0; }
+fieldset form p.note { margin-left: 170px; font-size: 90%; color: #333; }
+fieldset form fieldset { margin: 10px 0; padding: 10px; border: #DDD 1px solid; }
+fieldset form fieldset div { padding: 0.25em 0; }
+fieldset label, 
+fieldset span.label { margin-right: 10px; padding-right: 10px; width: 150px; display: block; float: left; text-align: right; position: relative; color: #898989; font-weight: bold;}
+fieldset label.error, 
+fieldset span.error { color: #C00; }
+fieldset label em, 
+fieldset span.label em { position: absolute; right: 0; font-size: 120%; font-style: normal; color: #C00; }
+fieldset input.error { border-color: #C00; background-color: #FEF; }
+fieldset input:focus,
+fieldset input.error:focus, 
+fieldset textarea:focus {	background-color: #f5f2e2; border-color: #c9b865; }
+fieldset div.controlset label, 
+fieldset div.controlset input { display: inline; float: none; }
+fieldset div.controlset div { margin-left: 170px; }
+fieldset div.buttonrow { margin-left: 180px; }
