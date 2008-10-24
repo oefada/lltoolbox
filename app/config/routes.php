@@ -36,6 +36,7 @@
 	Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
 	
 	
+	Router::connect('/:controller/:id', array('action' => 'edit'), array('id' => "[0-9]+", 'pass' => array('id')));
 /**
  * ...and connect the rest of 'Pages' controller's urls.
  */
@@ -47,7 +48,8 @@
 	Router::connect('/tests', array('controller' => 'tests', 'action' => 'index'));
 	
 // ROUTES ADDED 09-09-08 for adding loa item to loa
-	Router::connect('/loas/:loaId/loa_items/:action', array('controller' => 'LoaItems', 'action' => 'view'), array('loaId' => "[0-9]+"));
+	Router::connect('/loas/:loaId/:controller/:action', array(), array('loaId' => '[0-9]+', 'pass' => array('loaId')));
+	Router::connect('/loas/:loaId/:controller/:action/:id', array(), array('loaId' => '[0-9]+', 'id' => '[0-9]+', 'pass' => array('loaId','id')));
 	
 // ROUTES ADDED 09-16-08 for adding validity to package
 	Router::connect('/packages/:packageId/packageValidityPeriods/:action', array('controller' => 'PackageValidityPeriods', 'action' => 'view'), array('packageId' => "[0-9]+"));
@@ -62,7 +64,6 @@
 	Router::connect('/packages/:packageId/packagePromos/:action', array('controller' => 'PackagePromos', 'action' => 'view'), array('packageId' => "[0-9]+"));
 	
 // ROUTES ADDED 10-13-08 for adding package promo to package
-	Router::connect('/clients/:id', array('controller' => 'clients', 'action' => 'view'), array('id' => '[0-9]+', 'pass' => array('id')));
 	Router::connect('/clients/:clientId/:controller/:action', array(), array('clientId' => '[0-9]+', 'pass' => array('clientId')));
 	Router::connect('/clients/:clientId/:controller/:action/:id', array(), array('clientId' => '[0-9]+', 'id' => '[0-9]+', 'pass' => array('clientId','id')));
 	
