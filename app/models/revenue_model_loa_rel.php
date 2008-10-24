@@ -33,8 +33,13 @@ class RevenueModelLoaRel extends AppModel {
 								'message' => 'This field is required for the expiration criteria you have selected.'
 								), 
 						'expDate' => array(
-								'rule' => array('checkExp'),
-								'message' => 'This field is required for the expiration criteria you have selected.'
+								'checkExp' => array(
+											'rule' => array('checkExp'),
+											'message' => 'This field is required for the expiration criteria you have selected.'),
+								'date' => array(
+											'rule' => array('date'),
+											'message' => 'Must be a valid date.',
+											'allowEmpty' => true)
 								), 
 						'expFee' => array(
 								'rule' => array('checkExp'),
@@ -48,7 +53,7 @@ class RevenueModelLoaRel extends AppModel {
 		$expCriteriaId = $this->data['RevenueModelLoaRel']['expirationCriteriaId'];
 		if (isset($data['expMaxOffers']) && $expCriteriaId == 2) {
 			$value = $data['expMaxOffers'];
-			if (!$value || !is_int($value)) {
+			if (!$value || !is_numeric($value) || floor($value) != $value) {
 				$validPresets = false;						
 			}			
 		} elseif (isset($data['expDate']) && $expCriteriaId == 3) {
@@ -75,12 +80,12 @@ class RevenueModelLoaRel extends AppModel {
 			}
 		} elseif (isset($data['x']) && ($revModelId == 2 || $revModelId == 3)) {
 			$value = $data['x'];
-			if (!$value || !is_int($value)) {
+			if (!$value || !is_numeric($value) || floor($value) != $value) {
 				$validPresets = false;						
 			}
 		} elseif (isset($data['y']) && ($revModelId == 2 || $revModelId == 3)) {
 			$value = $data['y'];
-			if (!$value || !is_int($value)) {
+			if (!$value || !is_numeric($value) || floor($value) != $value) {
 				$validPresets = false;						
 			}			
 		}
