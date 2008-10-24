@@ -17,16 +17,21 @@ class PackagesController extends AppController {
 		}
 		$this->set('package', $this->Package->read(null, $id));
 
+		// this query grabs all the package rate periods via the packageRatePeriodItemRel table.
 		$packageRatePeriods = $this->Package->query("SELECT DISTINCT(prp.packageRatePeriodId), startDate, endDate, approvedRetailPrice FROM packageLoaItemRel AS plir INNER JOIN packageRatePeriodItemRel AS prpir ON plir.packageLoaItemRelId = prpir.packageLoaItemRelId INNER JOIN packageRatePeriod AS prp ON prpir.packageRatePeriodId = prp.packageratePeriodId WHERE plir.packageId = $id;");
 		$this->set('packageRatePeriods', $packageRatePeriods);			
 	}
 	
 	function carveRatePeriods() {
+		// set recursive to 2 so we can access all the package loa item relations also
 		$this->Package->recursive = 2;
 		
 		$packageData = $this->Package->read(null);
+		
+		// the first record has the ids we need to handle all the rate periods and rate period item relations
 		$ratePeriodItemTemp = $packageData['PackageLoaItemRel'][0]['PackageRatePeriodItemRel'];
 
+		// let's delete ALL the package loa item relations and and package rate periods related to THIS package id
 		foreach ($ratePeriodItemTemp as $rel) {
 			$this->Package->PackageLoaItemRel->PackageRatePeriodItemRel->deleteAll(array('PackageRatePeriodItemRel.packageRatePeriodId' => $rel['packageRatePeriodId']));
 			$this->Package->PackageLoaItemRel->PackageRatePeriodItemRel->PackageRatePeriod->deleteAll(array('PackageRatePeriod.packageRatePeriodId' => $rel['packageRatePeriodId']));
