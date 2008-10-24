@@ -184,6 +184,8 @@ class RevenueModelLoaRelTestCase extends CakeTestCase {
 
 	
 	function testSponsorshipFeeBalanceCriteria() {
+		$data = $this->RevenueModelLoaRel->find('first');
+		
 		$data['RevenueModelLoaRel']['expirationCriteriaId'] = 1;
 		$data['RevenueModelLoaRel']['expMaxOffers']  = '';
 		$data['RevenueModelLoaRel']['expDate']  = '';
@@ -214,6 +216,7 @@ class RevenueModelLoaRelTestCase extends CakeTestCase {
 	}
 	
 	function testMaxOffersExpirationCriteria() {
+		$data = $this->RevenueModelLoaRel->find('first');
 		$data['RevenueModelLoaRel']['expirationCriteriaId'] = 2;
 		
 		$data['RevenueModelLoaRel']['expMaxOffers']  = '';
