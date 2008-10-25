@@ -85,6 +85,48 @@ class UsersController extends AppController {
 		endif;
 	}
 	
+	function resetPassword($id = null) {
+		if(!empty($this->data)) {
+			$newPassword = $this->generatePassword();
+		//	$this->User->find($this->data['userId']);
+		//	$this->User->save($this->data);
+			$this->set('newPassword', $newPassword);
+		} else {
+			$this->data = $this->User->read(null, $id);
+		}
+	}
+	
+	function generatePassword($length=9, $strength=4) {
+	    $vowels = 'aeuy';
+	    $consonants = 'bdghjmnpqrstvz';
+	    if ($strength & 1) {
+	        $consonants .= 'BDGHJLMNPQRSTVWXZ';
+	    }
+	    if ($strength & 2) {
+	        $vowels .= "AEUY";
+	    }
+	    if ($strength & 4) {
+	        $consonants .= '23456789';
+	    }
+	    if ($strength & 8) {
+	        $consonants .= '@#$%';
+	    }
+
+	    $password = '';
+	    $alt = time() % 2;
+	    for ($i = 0; $i < $length; $i++) {
+	        if ($alt == 1) {
+	            $password .= $consonants[(rand() % strlen($consonants))];
+	            $alt = 0;
+	        } else {
+	            $password .= $vowels[(rand() % strlen($vowels))];
+	            $alt = 1;
+	        }
+	    }
+	    return $password;
+	}
+	
+	
 	function beforeFilter() {
 		$this->Sanitize = new Sanitize();
 		

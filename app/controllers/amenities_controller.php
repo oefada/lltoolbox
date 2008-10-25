@@ -7,9 +7,10 @@ class AmenitiesController extends AppController {
 	function auto_complete() {
 		$amenities = $this->Amenity->find('all', array(
    		'conditions' => array(
-   			'Amenity.amenityName LIKE' => '%'.$this->data['Amenity']['Amenity'].'%'
+   			'Amenity.amenityName LIKE' => $this->data['Client']['amenity_select'].'%',
    			),
-   			'fields' => array('amenityName')
+			'limit' => 10,
+   			'fields' => array('amenityId', 'amenityName')
    			));
    		$this->set('amenities', $amenities);
    		$this->layout = 'ajax';

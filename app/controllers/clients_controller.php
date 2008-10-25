@@ -37,6 +37,7 @@ class ClientsController extends AppController {
 	}
 
 	function edit($id = null) {
+		
 		if (!$id && empty($this->data)) {
 			$this->Session->setFlash(__('Invalid Client', true));
 			$this->redirect(array('action'=>'index'));
@@ -44,7 +45,7 @@ class ClientsController extends AppController {
 		if (!empty($this->data)) {
 			if ($this->Client->save($this->data)) {
 				$this->Session->setFlash(__('The Client has been saved', true));
-				$this->redirect(array('action'=>'index'));
+				$this->redirect(array('action'=>'edit', 'id' => $id));
 			} else {
 				$this->Session->setFlash(__('The Client could not be saved. Please, try again.', true));
 			}

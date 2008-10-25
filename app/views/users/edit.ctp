@@ -12,13 +12,11 @@
 		echo $form->input('firstName');
 		echo $form->input('lastName');		
 		echo $form->input('email');
-
 	?>
 		<fieldset>
 			<legend class="collapsible"><span class="handle">Contact Details</span></legend>
 			<div class="collapsibleContent">
 			<?php
-				
 				echo $form->input('workPhone');
 				echo $form->input('mobilePhone');
 				echo $form->input('homePhone');
@@ -162,7 +160,12 @@
 			<td><?php echo $userSiteExtended['numPurchases'];?></td>
 			<td><?php echo $userSiteExtended['numBids'];?></td>
 			<td class="actions">
-				<?php echo $html->link(__('Edit', true), array('controller'=> 'user_site_extendeds', 'action'=>'edit', $userSiteExtended['userSiteExtendedId'])); ?>
+				<?php echo $html->link('Reset Password', '/users/resetPassword/'.$user['User']['userId'],
+				array(
+					'title' => 'Reset Password',
+					'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
+					'complete' => 'closeModalbox()'
+					), null, false); ?>
 			</td>
 		</tr>
 	<?php endforeach; ?>
@@ -172,6 +175,7 @@
 	<div class="actions">
 		<ul>
 			<li><?php echo $html->link(__('New User Site Extended', true), array('controller'=> 'user_site_extendeds', 'action'=>'add'));?> </li>
+
 		</ul>
 	</div>
 	</div>
@@ -182,12 +186,9 @@
 	<?php if (!empty($user['UserPaymentSetting'])):?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
-		<th><?php __('Cc Expiration'); ?></th>
-		<th><?php __('Name On Card'); ?></th>
-		<th><?php __('Routing Number'); ?></th>
-		<th><?php __('Account Number'); ?></th>
-		<th><?php __('Name On Account'); ?></th>
 		<th><?php __('Payment Type'); ?></th>
+		<th><?php __('Cc Number'); ?></th>
+		<th><?php __('Name On Card'); ?></th>
 		<th><?php __('Exp Year'); ?></th>
 		<th><?php __('Exp Month'); ?></th>
 		<th class="actions"><?php __('Actions');?></th>
@@ -201,16 +202,24 @@
 			}
 		?>
 		<tr<?php echo $class;?>>
-			<td><?php echo $userPaymentSetting['ccExpiration'];?></td>
-			<td><?php echo $userPaymentSetting['nameOnCard'];?></td>
-			<td><?php echo $userPaymentSetting['routingNumber'];?></td>
-			<td><?php echo $userPaymentSetting['accountNumber'];?></td>
-			<td><?php echo $userPaymentSetting['nameOnAccount'];?></td>
 			<td><?php echo $paymentTypes[$userPaymentSetting['paymentTypeId']];?></td>
+			<td><?php echo $userPaymentSetting['ccNumber'];?></td>
+			<td><?php echo $userPaymentSetting['nameOnCard'];?></td>
 			<td><?php echo $userPaymentSetting['expYear'];?></td>
 			<td><?php echo $userPaymentSetting['expMonth'];?></td>
 			<td class="actions">
-				<?php echo $html->link(__('View Card Number', true), array('controller'=> 'UserPaymentSettings', 'action'=>'view', $userPaymentSetting['userPaymentSettingId'])); ?>
+				<?php
+				echo $html->link('Edit Expiration Date',
+								'/users/'.$user['User']['userId'].'/userPaymentSettings/edit/'.$userPaymentSetting['userPaymentSettingId'],
+								array(
+									'title' => 'Edit Credit Card Expiration Date',
+									'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
+									'complete' => 'closeModalbox()'
+									),
+								null,
+								false
+								);
+				?>
 			</td>
 		</tr>
 	<?php endforeach; ?>
@@ -219,7 +228,12 @@
 
 	<div class="actions">
 		<ul>
-			<li><?php echo $html->link(__('New User Payment Setting', true), array('controller'=> 'user_payment_settings', 'action'=>'add'));?> </li>
+			<li><?php echo $html->link('Add User Payment Setting', '/users/'.$user['User']['userId'].'/userPaymentSettings/add',
+			array(
+				'title' => 'New User Payment Setting',
+				'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
+				'complete' => 'closeModalbox()'
+				), null, false); ?> </li>
 		</ul>
 	</div>
 	</div>

@@ -17,7 +17,7 @@ class UserPaymentSettingsController extends AppController {
 		$this->set('userPaymentSetting', $this->UserPaymentSetting->read(null, $id));
 	}
 
-	function add() {
+	function add($userId = null) {
 		if (!empty($this->data)) {
 			$this->UserPaymentSetting->create();
 			if ($this->UserPaymentSetting->save($this->data)) {
@@ -27,25 +27,33 @@ class UserPaymentSettingsController extends AppController {
 				$this->Session->setFlash(__('The UserPaymentSetting could not be saved. Please, try again.', true));
 			}
 		}
-		$paymentTypes = $this->UserPaymentSetting->PaymentType->find('list');
-		$this->set(compact('paymentTypes'));
+		$this->data['UserPaymentSetting']['userId'] = $userId;
+		$paymentTypeIds = $this->UserPaymentSetting->PaymentType->find('list');
+		$this->set(compact('paymentTypeIds'));
 	}
 
-	function edit($id = null) {
+	function edit($id = null, $userId = null) {
 		if (!$id && empty($this->data)) {
 			$this->Session->setFlash(__('Invalid UserPaymentSetting', true));
 			$this->redirect(array('action'=>'index'));
 		}
 		if (!empty($this->data)) {
 			if ($this->UserPaymentSetting->save($this->data)) {
-				$this->Session->setFlash(__('The UserPaymentSetting has been saved', true));
-				$this->redirect(array('action'=>'index'));
+				$this->Session->setFlash(__('The Credit Card has been updated.', true));
+				if ($this->RequestHandler->isAjax()) {
+					$this->set('closeModalbox', true);
+				} else {
+					$this->redirect(array('controller' => 'users', 'action'=>'edit', 'id' => $this->data['UserPaymentSetting']['userId']));
+				}
 			} else {
 				$this->Session->setFlash(__('The UserPaymentSetting could not be saved. Please, try again.', true));
 			}
 		}
 		if (empty($this->data)) {
 			$this->data = $this->UserPaymentSetting->read(null, $id);
+		} else {
+			$ccNum = $this->UserPaymentSetting->read(null, $id);
+			$this->data['UserPaymentSetting']['ccNumber'] = $ccNum['UserPaymentSetting']['ccNumber'];
 		}
 		$paymentTypes = $this->UserPaymentSetting->PaymentType->find('list');
 		$this->set(compact('paymentTypes'));

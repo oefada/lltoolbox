@@ -1,3 +1,12 @@
+<script>
+function addAmenity() {
+	if($F('AmenitySelectId') > 0 && $('amenity_'+$F('AmenitySelectId')) == null) {
+		$('amenitylist').down('ul').insert({'bottom': "<li id='amenity_"+$F('AmenitySelectId')+"'><input type='hidden' name='data[Amenity][Amenity][]' value='"+$F('AmenitySelectId')+"' />"+$F('AmenitySelect')+'<a href="javascript: return false;" onclick="$(\'amenity_'+$F('AmenitySelectId')+'\').remove();">(remove)</a>'+"</li>"});
+		new Effect.Highlight($($F('AmenitySelectId')));
+	}
+}
+</script>
+
 <?php
 $this->pageTitle = 'Edit Client';
 $html->addCrumb('Clients', '/clients');
@@ -52,22 +61,20 @@ $html->addCrumb('Edit');
 	<fieldset>
 		<legend class="collapsible"><span class="handle">Amenities</span></legend>
 		<div class="collapsibleContent">
-
-		<div style="width: 400px; float: left" >
+			<div id="amenitylist">
+				<input type='hidden' name='data[Amenity][Amenity][]' value="" />
+				<ul>
+				<?php foreach($client['Amenity'] as $amenity):?>
+					<li id="amenity_<?=$amenity['amenityId']?>"><input type='hidden' name='data[Amenity][Amenity][]' value="<?=$amenity['amenityId']?>"><?=$amenity['amenityName']?> <a href="javascript: return false;" onclick="$('amenity_<?=$amenity['amenityId']?>').remove();">(remove)</a></li>
+				<?php endforeach?>
+				</ul>
+			</div>
+		<div style="float: left; display: inline; width: 450px" >
+			<input type="button" value="Add" onclick="javascript: addAmenity(); return false;" style="float: right; margin-top: 5px" />
 			<?php
-			echo $ajax->autoComplete('Amenity', '/amenities/auto_complete');
-			?></div><div style="clear: none; float: left;"><?php
-			echo $ajax->link('Add new LOA item',
-							'/amenities/view_complete_list_compact',
-							array(
-								'title' => 'All Amenities',
-								'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
-								'complete' => 'closeModalbox()'
-								),
-							null,
-							false
-							);
-					?></div>
+			echo $strictAutocomplete->autoComplete('amenity_select', '/amenities/auto_complete');
+			?>
+		</div>
 		</div>
 		</fieldset>
 	</fieldset>
