@@ -58,7 +58,7 @@
 	Router::connect('/packages/:packageId/packageLoaItemRels/:action', array('controller' => 'PackageLoaItemRels', 'action' => 'view'), array('packageId' => "[0-9]+"));
 
 // ROUTES ADDED 09-18-08 for adding rate period to loa item	
-	Router::connect('/loaItems/:loaItemId/loaItemRatePeriods/:action', array('controller' => 'LoaItemRatePeriods', 'action' => 'view'), array('loaItemId' => "[0-9]+"));
+	Router::connect('/loa_items/:loaItemId/loa_item_rate_periods/:action', array('controller' => 'LoaItemRatePeriods', 'action' => 'view'), array('loaItemId' => "[0-9]+"));
 	
 // ROUTES ADDED 09-24-08 for adding package promo to package
 	Router::connect('/packages/:packageId/packagePromos/:action', array('controller' => 'PackagePromos', 'action' => 'view'), array('packageId' => "[0-9]+"));
