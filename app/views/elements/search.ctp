@@ -4,7 +4,7 @@ $controller = false;
 if(isset($this->searchController)) {
 	$controllerName = $this->searchController;
 } else {
-	$controllerName = $this->params['controller'];
+	$controllerName = Inflector::camelize($this->params['controller']);
 	$controller = $controllerName.'Controller';
 	$controller = new $controller;
 }
