@@ -37,18 +37,25 @@ class PackagesController extends AppController {
 			$this->Package->PackageLoaItemRel->PackageRatePeriodItemRel->PackageRatePeriod->deleteAll(array('PackageRatePeriod.packageRatePeriodId' => $rel['packageRatePeriodId']));
 		}
 	
+		// retrieve all loa items related to this package id
 		$data = $this->Package->PackageLoaItemRel->LoaItem->find('all', array('conditions' => array('PackageLoaItemRel.packageId' => $packageData['Package']['packageId'])));
 
-		$itemRatePeriods = array(); // populate with loaitems and their rate periods
+		// populate with loa items and their rate periods
+		$itemRatePeriods = array(); 
 		$packageLoaItemRel = array();
 		$packageData = $this->Package->read(null);
 		
-		// populate $packageDates array with carved dates (YYYY-MM-DD format)
+		/*  ======= CARVING ==============
+		 *  Include the package start and end dates
+		 *  Include all unique loa item rate periods
+		 *  ==============================
+		 */
+		 
 		$packageDates = array();
 		$packageDates[] = $packageStartDate = substr($packageData['Package']['startDate'], 0, 10);
 		$packageDates[] = $packageEndDate = substr($packageData['Package']['endDate'], 0, 10);
 								
-		// going through every loa item rate period, populate $packageDates array with overall carved dates
+		// go through every loa item rate period
 		foreach ($data as $k => $v) {
 			foreach ($v['LoaItemRatePeriod'] as $a => $b) {
 				if (($b['startDate'] >= $packageStartDate) && ($b['startDate'] <= $packageEndDate) && !in_array($b['startDate'], $packageDates)) {
@@ -57,10 +64,16 @@ class PackagesController extends AppController {
 				if (($b['endDate'] >= $packageStartDate) && ($b['endDate'] <= $packageEndDate) && !in_array($b['endDate'], $packageDates)) { 
 					$packageDates[] = $b['endDate'];
 				}
+				// add the package loa item relation id so we can use as lookup later below
 				$b['packageLoaItemRelId'] = $v['PackageLoaItemRel']['packageLoaItemRelId'];
+				
+				// add the item base price 
 				$b['itemBasePrice'] = $v['LoaItem']['itemBasePrice'];
+				
+				// finally add essential data we need to the overall loa item array
 				$itemRatePeriods[] = $b;
 			}
+			// load this array with overall package to item relation
 			$packageLoaItemRel[$v['PackageLoaItemRel']['packageLoaItemRelId']] = $v['PackageLoaItemRel'];
 		}
 		
@@ -78,7 +91,10 @@ class PackagesController extends AppController {
 			$rangeEnd = strtotime($packageDates[($i + 1)]) - $one_day;
 			
 			foreach ($itemRatePeriods as $v) {
+				// if the item rate period falls within the start-end pair, then this rate period has a valid item and use the approved retail price, other use base price
 				$ratePeriodItemPrice = (($rangeStart >= strtotime($v['startDate'])) && ($rangeEnd <= strtotime($v['endDate']))) ? $v['approvedRetailPrice'] : $v['itemBasePrice'];				
+				
+				// if there is an price override, use it.  if there is a no charge, then the price is zeroed out
 				if ($packageLoaItemRel[$v['packageLoaItemRelId']]['priceOverride']) {
 					$ratePeriodItemPrice = $packageLoaItemRel[$v['packageLoaItemRelId']]['priceOverride'];
 				}
@@ -88,10 +104,12 @@ class PackagesController extends AppController {
 				$packageLoaItemRelId[$v['packageLoaItemRelId']] = $ratePeriodItemPrice * $packageLoaItemRel[$v['packageLoaItemRelId']]['quantity'];
 			}
 
+			// create package rate period for this start-end pair
 			$insertSql = "INSERT INTO packageRatePeriod SET packageRatePeriodName = 'PACKAGE RATE PERIOD', ";
 			$insertSql.= "startDate = '" . date('Y-m-d', $rangeStart) . "', endDate = '" . date('Y-m-d', $rangeEnd) . "', ";
 			$insertSql.= "approvedRetailPrice = " . array_sum($packageLoaItemRelId) . ", approved = 0, approvedBy = 'AUTO'";
 			
+			// now we can populate the packageRatePeriodItemRel because we have a package rate period
 			if (mysql_query($insertSql)) {
 				$packageRatePeriodId = 	mysql_insert_id();
 				foreach ($packageLoaItemRelId as $id => $price) {
@@ -107,6 +125,7 @@ class PackagesController extends AppController {
 		if (!empty($this->data)) {
 			$this->Package->create();
 			if ($this->Package->save($this->data)) {
+				$this->addPackageOfferTypeDefFieldRel();
 				$this->Session->setFlash(__('The Package has been saved', true));
 				$this->redirect(array('action'=>'index'));
 			} else {
@@ -153,15 +172,18 @@ class PackagesController extends AppController {
 	}
 
 	function addPackageOfferTypeDefFieldRel() {
+		// this function setups up new offer type default values
 		$packageData = $this->Package->read(null);
 		$formatIds = $this->data['Format']['Format'];
 		$offerTypes = $this->Package->Format->OfferType->find('all');
 		
 		$relData = array();
 		$relData['PackageOfferTypeDefFieldRel']['packageId'] = $this->data['Package']['packageId'];
-
+		
+		// delete all existing package to offer type default fields relation
 		$this->Package->PackageOfferTypeDefFieldRel->deleteAll(array('packageId' => $this->data['Package']['packageId']));
 
+		// for all the offer types and associated package formats, create new default value rows w/ 0.00
 		foreach ($offerTypes as $type) {
 			$relData['PackageOfferTypeDefFieldRel']['offerTypeId'] = $type['OfferType']['offerTypeId'];
 			if (in_array($type['Format'][0]['formatId'], $formatIds)) {
@@ -176,6 +198,8 @@ class PackagesController extends AppController {
 	}
 	
 	function editFormats($id = null) {
+		// this is so we can edit existing package offer type default values
+		// the default offer types and values are normalized so we have to do this work around
 		$this->Package->recursive = 2;
 		if (!$id && empty($this->data)) {
 			$this->Session->setFlash(__('Invalid Package', true));
@@ -190,6 +214,7 @@ class PackagesController extends AppController {
 				$updateArray[] = $tmpData['PackageOfferTypeDefFieldRel'][$k];
 			}
 
+			// save any changes to the package offer type default values
 			if ($this->Package->PackageOfferTypeDefFieldRel->saveAll($updateArray)) {
 				$this->Session->setFlash(__('The Package has been saved', true));
 				$this->redirect(array('action'=>'index'));
