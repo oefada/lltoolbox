@@ -4,12 +4,15 @@ $controller = false;
 if(isset($this->searchController)) {
 	$controllerName = $this->searchController;
 } else {
-	$controllerName = Inflector::camelize($this->params['controller']);
-	$controller = $controllerName.'Controller';
-	$controller = new $controller;
+	$controllerName = ($this->params['controller']);
+	$controllerName = Inflector::camelize($controllerName);	//make sure the controller name is always in the right format
+	$fullControllerName = $controllerName.'Controller';			
+	if(class_exists($fullControllerName)) {					//just in case the controller doesn't exist
+		$controller = new $fullControllerName;
+	}
 }
-$controllerName = strtolower($controllerName);
-if (method_exists($controller , 'search') || isset($this->searchController)): ?>
+if (is_a($controller, $fullControllerName) && ( method_exists($controller , 'search') || isset($this->searchController) )):
+ ?>
 <div style="float: left;" class="clearfix">
 <div style="clear: both;">
 <?php $defSearchValue = "Search {$controllerName}"; ?>
