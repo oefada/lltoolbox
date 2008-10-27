@@ -6,11 +6,13 @@ if(isset($this->searchController)) {
 } else {
 	$controllerName = ($this->params['controller']);
 	$controllerName = Inflector::camelize($controllerName);	//make sure the controller name is always in the right format
-	$fullControllerName = $controllerName.'Controller';			
-	if(class_exists($fullControllerName)) {					//just in case the controller doesn't exist
-		$controller = new $fullControllerName;
-	}
 }
+
+$fullControllerName = $controllerName.'Controller';			
+if(class_exists($fullControllerName)) {					//just in case the controller doesn't exist
+	$controller = new $fullControllerName;
+}
+
 if (is_a($controller, $fullControllerName) && ( method_exists($controller , 'search') || isset($this->searchController) )):
  ?>
 <div style="float: left;" class="clearfix">
