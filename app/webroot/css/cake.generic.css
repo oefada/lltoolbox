@@ -147,6 +147,17 @@ table {
 	text-align: center;
 	padding: 7px;
 }
+.related table table {
+	border-collapse: collapse;
+	border: 1px solid #bbb;
+	padding: 0;
+}
+.related table table th {
+	color: #333;
+	background: #e5e5e5;
+	text-align: center;
+	padding: 2px;
+}
 th a {
 	background:#545454;
 	color: #fff;
@@ -228,7 +239,7 @@ form {
 }
 fieldset {
 	margin-top: 30px;
-	padding: 16px 20px;
+	padding: 10px 20px;
 	border: none;
 }
 fieldset legend {

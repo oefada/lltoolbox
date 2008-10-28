@@ -10,7 +10,8 @@
 
 #MB_window {
 	position: absolute;
-	top: 0;
+	top: 25%;
+	bottom: 25%;
 	border: 0 solid;
 	text-align: left;
 	z-index: 10000;
@@ -19,7 +20,7 @@
 
 #MB_frame {
 	position: relative;
-	background-color: #EFEFEF;
+	background-color: #fff;
 	height: 100%;
 }
 
@@ -48,16 +49,20 @@
 	padding: 2px 3px;
 	font-weight: bold;
 	text-decoration: none;
-	font-size: 13px;
+	width: 20px;
+	height: 20px;
+	text-indent: -100px;
+	overflow: hidden;
+	background: url(../img/x.png);
 }
 #MB_close:hover {
-	background: transparent;
+	background: url(../img/x_over.png);
 }
 
 #MB_loading {
 	padding: 1.5em;
 	text-indent: -10000px;
-	background: transparent url(spinner.gif) 50% 0 no-repeat;
+	background: transparent url(../img/spinner.gif) 50% 0 no-repeat;
 }
 
 /* Color scheme */
@@ -68,7 +73,7 @@
 	border-radius: 7px;
 }
 #MB_window {
-	background-color: #EFEFEF;
+	background-color: #fff;
 	color: #000;
 	-webkit-box-shadow: 0 8px 64px #000; 
 	-moz-box-shadow: 0 0 64px #000; 
@@ -80,7 +85,7 @@
 }
 #MB_content { border-top: 1px solid #F9F9F9; }
 #MB_header {
-  background-color: #DDD;
+  background: transparent;
   border-bottom: 1px solid #CCC;
 }
 #MB_caption { color: #000 }

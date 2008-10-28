@@ -4,7 +4,21 @@
 @import url("modalbox.css");
 
 #header {
-	background: #c9b865 url(../img/colored_bar.gif) bottom left repeat-x;
+	background: #a10d03 url(../img/header_bg.gif) top repeat-x;
+	height: 60px;
+}
+#header img {
+	position: absolute;
+}
+#history-bar {
+	line-height: 27px;
+	padding: 0 10px;
+	font-size: 11px;
+}
+#history-bar a {
+	background: none;
+	color: #fff;
+	font-weight: normal;
 }
 #page {
 	background: #fff;
@@ -30,19 +44,19 @@
 	color: #999;
 	font-size: 90%;
 }
-
-#content-header div.title-header {
+div.title-header {
 	position: relative;
+	margin: 20px;
 }
 
-#content-header div.title-header h1 {
+div.title-header h1 {
 	font-size: 18px;
 	color: #7f0000;
 	font-family: Tahoma;
 	font-weight: bold;
 }
 
-#content-header div.title-header div.buttons {
+div.title-header div.buttons {
 	position: absolute;
 	top: 0;
 	right: 10px;
@@ -224,11 +238,8 @@ h2 {
 		  
 			/* Toolbar button modifications */
 					.page-toolbar {
-						padding: 5px 10px 0 10px;
-						border-top: 1px dotted #000;
+						padding: 20px;
 						border-bottom: 1px dotted #000;
-						background: #f1f1f1;
-						height: 30px;
 					}
 					.page-toolbar form {
 						padding-top: 2px;
@@ -247,7 +258,7 @@ h2 {
 						width: 210px;
 					}
 					.page-toolbar input[type=submit] {
-						background: #6d5f2e;
+						background: #545454 ;
 						color: #fff;
 						border: none;
 						margin-left: 5px;
@@ -276,7 +287,7 @@ h2 {
 						.page-heading a,
 						.page-toolbar a {
 							margin: 5px;
-							color: #000 !important;
+							color: #000;
 							background-color: #FFF;
 						}
 						.page-heading .button,
@@ -348,17 +359,16 @@ h2 {
     float: left;
     padding: 0.2em 0.5em;
     margin-right: 0.1em;
-    background: #fff;
 }
 
 .paging span.current {
     font-weight: bold;
-    background: #2E6AB1;
-    color: #fff;
+    color: #de9d1a !important;
 }
 
 .paging a {
     text-decoration: none;
+	color: #6d5f2e;
 }
 
 .paging a:hover {
@@ -393,6 +403,12 @@ span.highlight {
 .related .collapsible,
 .related .collapsible-closed {
 	border-top: 1px solid #c9b865;
+	margin: 0;
+	padding: 0 0 5px 0;
+}
+.related .collapsibleContent .collapsible,
+.related .collapsibleContent .collapsible-closed{
+	border: none;
 	margin: 0;
 	padding: 0 0 5px 0;
 }
@@ -523,14 +539,18 @@ input, textarea {
 input[type=submit] {
 	display: inline;
 	font-size: 110%;
-	padding: 2px 5px;
+	font-family: "Tahoma";
+	text-transform: uppercase;
+	padding: 5px 10px;
 	width: auto;
 	vertical-align: bottom;
+	color: #fff;
+	background: #7f0000;
 }
 fieldset form p { margin: 0; }
 fieldset form p.note { margin-left: 170px; font-size: 90%; color: #333; }
 fieldset form fieldset { margin: 10px 0; padding: 10px; border: #DDD 1px solid; }
-fieldset form fieldset div { padding: 0.25em 0; }
+fieldset form fieldset div { padding: 10px 0; }
 fieldset label, 
 fieldset span.label { margin-right: 10px; padding-right: 10px; width: 150px; display: block; float: left; text-align: right; position: relative; color: #898989; font-weight: bold;}
 fieldset label.error, 
@@ -542,6 +562,58 @@ fieldset input:focus,
 fieldset input.error:focus, 
 fieldset textarea:focus {	background-color: #f5f2e2; border-color: #c9b865; }
 fieldset div.controlset label, 
-fieldset div.controlset input { display: inline; float: none; }
+fieldset div.controlset input { border: none; display: inline; float: none; }
 fieldset div.controlset div { margin-left: 170px; }
+fieldset div.controlset2 { padding: 0; margin: 0;}
+fieldset div.controlset2 label,
+fieldset div.controlset2 input { display: inline; float: none; padding-right: 3px; }
+fieldset div.controlset2 input[type=hidden] { display: none; padding: 0; margin: 0; }
+fieldset div.controlset2 div.checkbox { float:left; width: 25%; clear: none; }
 fieldset div.buttonrow { margin-left: 180px; }
+
+
+#mainNav {
+    float:left;
+    width:100%;
+    background:#9b0c03 url(../img/header_bg.gif) bottom repeat-x;
+    font-size:93%;
+    line-height:normal;
+  }
+  #mainNav ul {
+    margin:0;
+    padding:10px 10px 0;
+    list-style:none;
+    }
+  #mainNav li {
+    float:left;
+    background:url(../img/nav_button_right.png) no-repeat right bottom;
+    margin:0;
+    padding:0;
+	width: 165px;
+    }
+  #mainNav a {
+    display:block;
+	background:url(../img/nav_button_left.png) no-repeat left bottom;
+	padding:0 15px 5px 15px;
+	color: #fff;
+	font: bold 11px/25px Arial;
+	text-transform: uppercase;
+	text-decoration: none;
+	height: 20px;
+	text-align: center;
+    }
+  #mainNav li:hover {
+    background-image:url(../img/nav_button_right_over.png);
+    }
+  #mainNav a:hover {
+    background-image:url(../img/nav_button_left_over.png);
+    }
+  #mainNav li:hover.current,
+  #mainNav .current {
+    background-image:url(../img/nav_button_right_on.png);
+    }
+  #mainNav .current a:hover,
+  #mainNav .current a {
+    background-image:url(../img/nav_button_left_on.png);
+	color: #706e5f;
+    }

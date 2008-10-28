@@ -22,18 +22,18 @@ Modalbox.Methods = {
 		overlayClose: true, // Close modal box by clicking on overlay
 		width: 800, // Default width in px
 		height: 90, // Default height in px
-		overlayOpacity: .65, // Default overlay opacity
+		overlayOpacity: .45, // Default overlay opacity
 		overlayDuration: .25, // Default overlay fade in/out duration in seconds
-		slideDownDuration: .5, // Default Modalbox appear slide down effect in seconds
-		slideUpDuration: .5, // Default Modalbox hiding slide up effect in seconds
-		resizeDuration: .25, // Default resize duration seconds
+		slideDownDuration: .1, // Default Modalbox appear slide down effect in seconds
+		slideUpDuration: 0, // Default Modalbox hiding slide up effect in seconds
+		resizeDuration: .2, // Default resize duration seconds
 		inactiveFade: true, // Fades MB window on inactive state
 		transitions: true, // Toggles transition effects. Transitions are enabled by default
 		loadingString: "Please wait. Loading...", // Default loading string message
 		closeString: "Close window", // Default title attribute for close window link
 		closeValue: "&times;", // Default string for close link in the header
 		params: {},
-		method: 'get', // Default Ajax request method
+		method: 'post', // Default Ajax request method
 		autoFocusing: true, // Toggles auto-focusing for form elements. Disable for long text pages.
 		aspnet: false // Should be use then using with ASP.NET costrols. Then true Modalbox window will be injected into the first form element.
 	},

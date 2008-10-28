@@ -10,13 +10,19 @@ var cd = {
 		cd.fieldsetCollapsibleContent = $$('fieldset .collapsibleContent');
 		
 		for(var i = 0; i < cd.fieldsetCollapsibleContent.length; i++) {
-			cd.fieldsetCollapsibleContent[i].hide();
-			Element.addClassName(cd.fieldsetCollapsibleContent[i],'closed');
+			//only collapse if no error message is contained within
+			if(!$(cd.fieldsetCollapsibleContent[i]).down('.error-message')) {
+				cd.fieldsetCollapsibleContent[i].hide();
+				Element.addClassName(cd.fieldsetCollapsibleContent[i],'closed');
+			}
 		}
 		
-		for(var i = 0; i < cd.fieldsetCollapsibleContent.length; i++) {
-			Element.removeClassName(cd.fieldsetHandles[i].up(), 'collapsible');
-			Element.addClassName(cd.fieldsetHandles[i].up(), 'collapsible-closed');
+		for(var i = 0; i < cd.fieldsetHandles.length; i++) {
+			//only collapse if no error message is contained within
+			if(!$(cd.fieldsetHandles[i]).up().next('.collapsibleContent').down('.error-message')) {
+				Element.removeClassName(cd.fieldsetHandles[i].up(), 'collapsible');
+				Element.addClassName(cd.fieldsetHandles[i].up(), 'collapsible-closed');
+			}
 		}
 		
 		cd.attach();
