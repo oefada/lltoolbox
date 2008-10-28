@@ -40,6 +40,9 @@
 				Modalbox.hide();
 				// refresh the current page
 				location.reload(true);
+			} else if($('closeModalboxNoReload')) {
+				// only hide the modal box, no refreshing of the current page
+				Modalbox.hide();
 			} else {
 				// resize to content (in case of validation error messages)
 				Modalbox.resizeToContent()
@@ -47,7 +50,7 @@
 			return true;
 		}
 		Event.observe(window, 'load',
-			function() { new Effect.Highlight($('flashMessage')); }
+			function() { if($('flashMessage')) { new Effect.Highlight($('flashMessage')) }; }
 		);
 
 	</script>
@@ -55,37 +58,50 @@
 </head>
 <body>
   <div id="page"><div id="page-inner">
-
+	<div id="history-bar"><div id="history-bar-inner" class="clear-block">
+		<strong>Last Viewed:</strong> <?=$html->link('Test 1', '#');?> | <?=$html->link('Test 2', '#');?> | <?=$html->link('Test 3', '#');?>
+	</div></div>
     <div id="header"><div id="header-inner" class="clear-block">
 
         <div id="logo-title">
 
-            <div id="logo"><img src="/img/sm_logo.gif" alt="" id="logo-image" /></div>
+            <div id="logo"><img src="/img/sm_logo.png" alt="" id="logo-image" /></div>
 
         </div> <!-- /#logo-title -->
     </div></div> <!-- /#header-inner, /#header -->
 
-    <div id="main"><div id="main-inner" class="clear-block with-navbar sidebar-left">
-
-      <div id="content"><div id="content-inner">
-          <div id="content-header">
-			<div class="title-header">
-              <h1 class="title"><?php echo $this->pageTitle; ?></h1>
-			<?php if (isset($layout)): ?>
-				<div class="buttons"><? $layout->output($header_for_layout);?> </div>
-			<?php endif ?>
-			<div id='loader' style='display: none; text-align: center;'><?=$html->image('ajax-loader.gif')?></div>
-			<div id='spinner' style='display: none; text-align: center;'><?=$html->image('spinner.gif')?></div>
+    <div id="main">
+	<div id="main-inner" class="clear-block sidebar-left">
+		<div id="navbar"><div id="navbar-inner" class="region">
+		    <div id="mainNav">
+				<ul>
+		      		<li<?if(@($this->currentTab == 'home')) echo ' class="current"'?>><?=$html->link('Home', '/')?></li>
+		      		<li<?if(@($this->viewVars['currentTab'] == 'property')) echo ' class="current"'?>><?=$html->link('Property', array('controller' => 'clients'))?></li>
+		      		<li<?if(@($this->currentTab == 'siteMerchandising')) echo ' class="current"'?>><a href="#">Site Merchandising</a></li>
+		      		<li<?if(@($this->currentTab == 'reports')) echo ' class="current"'?>><a href="#">Reports</a></li>
+		      		<li<?if(@($this->currentTab == 'customers')) echo ' class="current"'?>><a href="#">Customers</a></li>
+					<li style="float: right; width: auto; background: none"><a href="#" style="background: none">Logout</a></li>
+		    	</ul>
 			</div>
-			<?php if(false)://$html->getCrumbs()): ?>
-			<div id="breadcrumbs"><?= $html->getCrumbs("<span></span>", "Dashboard"); ?></div>
-			<?php endif; ?>
-			<div class="page-toolbar clearfix">
+		</div></div> <!-- /#navbar-inner, /#navbar -->
+			<div id="page-toolbar"><div id="page-toolbar-inner" class="page-toolbar clearfix">
 				<?php echo $this->renderElement('search')?>
 				<?php if (isset($layout)): ?>
 					<div class="buttons"><? $layout->output($toolbar_for_layout);?></div>
 				<?php endif ?>
+			</div></div>
+			<div class='title-header'>
+				<h1 class="title"><?php echo $this->pageTitle; ?></h1>
 			</div>
+
+      <div id="content"><div id="content-inner">
+          <div id="content-header">
+			<div id='loader' style='display: none; text-align: center;'><?=$html->image('ajax-loader.gif')?></div>
+			<div id='spinner' style='display: none; text-align: center;'><?=$html->image('spinner.gif')?></div>
+			<?php if(false)://$html->getCrumbs()): ?>
+			<div id="breadcrumbs"><?= $html->getCrumbs("<span></span>", "Dashboard"); ?></div>
+			<?php endif; ?>
+
             <?php $session->flash(); ?>
           </div> <!-- /#content-header -->
 
@@ -93,17 +109,6 @@
           <?php print $content_for_layout; ?>
         </div>
       </div></div> <!-- /#content-inner, /#content -->
-
-        <div id="navbar"><div id="navbar-inner" class="region region-navbar">
-
-            <div id="recent-items-list">
-				<?php //echo $history ?>
-            </div> <!-- /#primary -->
-
-          
-
-        </div></div> <!-- /#navbar-inner, /#navbar -->
-
 		<div id="sidebar-left"><div id="sidebar-left-inner" class="region region-left">
 			<ul>
 				<li><a href="#">Home</a></li>
