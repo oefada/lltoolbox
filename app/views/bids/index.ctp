@@ -34,7 +34,7 @@ foreach ($bids as $bid):
 			<?php echo $text->highlight($bid['Bid']['bidId'], $query); ?>
 		</td>
 		<td>
-			<?php echo $html->link($bid['Offer']['offerId'], array('controller'=> 'offers', 'action'=>'view', $bid['Offer']['offerId'])); ?>
+			<?php echo $text->highlight($bid['Bid']['offerId'], $query); ?>
 		</td>
 		<td>
 			<?php echo $text->highlight($bid['User']['firstName'].' '.$bid['User']['lastName'], $query); ?> <?php echo $text->highlight($html2->c($bid['Bid']['userId'], 'User Id:'), $query); ?>

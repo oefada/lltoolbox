@@ -3,24 +3,22 @@
 	<fieldset>
  		<legend><?php __('Edit Bid');?></legend>
 	<?php
-		echo $form->input('bidId');
-		echo $form->input('offerId');
-		echo $form->input('userId');
-		echo $form->input('bidDateTime');
-		echo $form->input('bidAmount');
-		echo $form->input('autoRebid');
-		echo $form->input('bidInactive');
-		echo $form->input('maxBid');
-		echo $form->input('note');
+		echo $form->input('bidId', array('readonly' => 'readonly', 'type' => 'text'));
+		echo $form->input('offerId', array('readonly' => 'readonly'));
+		echo $form->input('userId', array('readonly' => 'readonly'));
+		echo $form->input('bidDateTime', array('disabled' => 'disabled'));
+		echo $form->input('bidAmount', array('readonly' => 'readonly'));
+		echo $form->input('maxBid', array('readonly' => 'readonly'));
+		echo $form->input('note', array('type' => 'textfield'));
 	?>
+	
+	<div class="controlset">
+		<label>Bid Settings</label>
+	<?php
+		echo $form->input('autoRebid', array('disabled' => 'disabled'));
+		echo $form->input('bidInactive', array('readonly' => 'readonly'));
+	?>
+	</div>
 	</fieldset>
 <?php echo $form->end('Submit');?>
-</div>
-<div class="actions">
-	<ul>
-		<li><?php echo $html->link(__('Delete', true), array('action'=>'delete', $form->value('Bid.bidId')), null, sprintf(__('Are you sure you want to delete # %s?', true), $form->value('Bid.bidId'))); ?></li>
-		<li><?php echo $html->link(__('List Bids', true), array('action'=>'index'));?></li>
-		<li><?php echo $html->link(__('List Offers', true), array('controller'=> 'offers', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Offer', true), array('controller'=> 'offers', 'action'=>'add')); ?> </li>
-	</ul>
 </div>

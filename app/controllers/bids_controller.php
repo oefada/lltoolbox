@@ -48,24 +48,13 @@ class BidsController extends AppController {
 		if (empty($this->data)) {
 			$this->data = $this->Bid->read(null, $id);
 		}
-		$users = $this->Bid->User->find('list');
 		$offers = $this->Bid->Offer->find('list');
-		$this->set(compact('users','offers'));
+		$this->set(compact('offers'));
 	}
 
-	function delete($id = null) {
-		if (!$id) {
-			$this->Session->setFlash(__('Invalid id for Bid', true));
-			$this->redirect(array('action'=>'index'));
-		}
-		if ($this->Bid->del($id)) {
-			$this->Session->setFlash(__('Bid deleted', true));
-			$this->redirect(array('action'=>'index'));
-		}
-	}
-	
 	function search()
 	{
+		$this->autoRender = false;
 		if(!empty($_GET['query'])) {
 			$this->params['form']['query'] = $_GET['query'];
  		} elseif(!empty($this->params['named']['query'])) {
@@ -73,7 +62,7 @@ class BidsController extends AppController {
 		}
 		if(!empty($this->params['form']['query'])):
 			$query = $this->Sanitize->escape($this->params['form']['query']);
-			$conditions = array('OR' => array('Bid.bidId LIKE' => "$query%",'Bid.offerId LIKE' => "$query%", 'Bid.userId LIKE' => "$query%", 'User.firstName LIKE' => "$query%", 'User.lastName LIKE' => "$query%"));
+			$conditions = array('OR' => array('CONCAT(User.firstName, " ", User.lastName) LIKE' => "%$query%", 'Bid.bidId LIKE' => "%$query%",'Bid.offerId LIKE' => "$query%", 'Bid.userId LIKE' => "$query%", 'User.firstName LIKE' => "$query%", 'User.lastName LIKE' => "$query%"));
 
 			if($_GET['query'] ||  $this->params['named']['query']) {
 				$this->autoRender = false;
