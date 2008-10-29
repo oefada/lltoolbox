@@ -63,20 +63,25 @@ class UsersController extends AppController {
  		} elseif(!empty($this->params['named']['query'])) {
 			$this->params['form']['query'] = $this->params['named']['query'];
 		}
+		if(strlen($this->params['form']['query']) <= 3) {
+			return;
+		}
 		if(!empty($this->params['form']['query'])):
 			$query = $this->Sanitize->escape($this->params['form']['query']);
-			$conditions = array('OR' => array('firstName LIKE' => "$query%",'lastName LIKE' => "$query%", 'email LIKE' => "$query%"));
+			$conditions = array('OR' => array('User.firstName LIKE' => "$query%", 'User.lastName LIKE' => "$query%", 'User.email LIKE' => "$query%"));
 
 			if($_GET['query'] ||  $this->params['named']['query']) {
-				$this->autoRender = false;
-				$this->Client->recursive = 0;
 
-				$this->paginate = array('conditions' => $conditions);
+				$this->autoRender = false;
+				$this->User->recursive = -1;
+
+				$this->paginate = array('conditions' => $conditions, 'contain' => array('User'), 'fields' => array('User.userId', 'User.firstName', 'User.lastName', 'User.email', 'User.inactive'));
 				$this->set('query', $query);
+
 				$this->set('users', $this->paginate());
 				$this->render('index');
 			} else {
-				$this->Client->recursive = -1;
+				$this->User->recursive = -1;
 				$results = $this->User->find('all', array('conditions' => $conditions, 'limit' => 5));
 				$this->set('query', $query);
 				$this->set('results', $results);
@@ -85,11 +90,16 @@ class UsersController extends AppController {
 		endif;
 	}
 	
+	/**
+	 * Method resets a user's password in the UserSiteExtended model
+	 * @params $id the id of the row in the UserSiteExtended table NOT the id of the main user account
+	 * @returns
+	 */
 	function resetPassword($id = null) {
 		if(!empty($this->data)) {
 			$newPassword = $this->generatePassword();
-		//	$this->User->find($this->data['userId']);
-		//	$this->User->save($this->data);
+			$this->User->UserSiteExtended->id = $id;
+			$this->User->UserSiteExtended->saveField('passwordHash', $newPassword);
 			$this->set('newPassword', $newPassword);
 		} else {
 			$this->data = $this->User->read(null, $id);
@@ -128,11 +138,8 @@ class UsersController extends AppController {
 	
 	
 	function beforeFilter() {
-		$this->Sanitize = new Sanitize();
-		
-		if($this->RequestHandler->isAjax()) {
-			Configure::write('debug', '0');
-		}
+		parent::beforeFilter();
+		$this->set('currentTab', 'customers');
 	}
 }
 ?>
