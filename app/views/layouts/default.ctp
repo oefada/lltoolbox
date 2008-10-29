@@ -14,8 +14,8 @@
 <head>
 	<?php echo $html->charset(); ?>
 	<title>
-		<?php __('CakePHP: the rapid development php framework:'); ?>
-		<?php echo $title_for_layout; ?>
+		<?php __('LL webtools:'); ?>
+		<?php echo strip_tags($title_for_layout) ?>
 	</title>
 	<?php
 		echo $html->meta('icon');
@@ -79,7 +79,7 @@
 		      		<li<?if(@($this->viewVars['currentTab'] == 'property')) echo ' class="current"'?>><?=$html->link('Property', array('controller' => 'clients'))?></li>
 		      		<li<?if(@($this->currentTab == 'siteMerchandising')) echo ' class="current"'?>><a href="#">Site Merchandising</a></li>
 		      		<li<?if(@($this->currentTab == 'reports')) echo ' class="current"'?>><a href="#">Reports</a></li>
-		      		<li<?if(@($this->currentTab == 'customers')) echo ' class="current"'?>><a href="#">Customers</a></li>
+		      		<li<?if(@($this->currentTab == 'customers')) echo ' class="current"'?>><?=$html->link('Customers', array('controller' => 'users'))?></li>
 					<li style="float: right; width: auto; background: none"><a href="#" style="background: none">Logout</a></li>
 		    	</ul>
 			</div>

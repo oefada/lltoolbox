@@ -1,5 +1,8 @@
 <div id='users-index' class="users index">
-<?php $this->pageTitle = __('Users', true); ?>
+<?php
+$this->pageTitle = __('Users', true);
+$this->set('hideSidebar', true);
+?>
 <?php $html->addCrumb('Users'); ?>
 <?php if(!isset($query)) $query = ''; ?>
 <?php echo $this->renderElement('ajax_paginator', array('divToPaginate' => 'users-index', 'showCount' => true))?>
