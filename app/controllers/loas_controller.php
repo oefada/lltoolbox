@@ -5,6 +5,12 @@ class LoasController extends AppController {
 	var $helpers = array('Html', 'Form', 'Ajax', 'Text', 'Layout', 'Number');
 	var $paginate;
 	
+	function beforeFilter() {
+		parent::beforeFilter();
+		$this->set('currentTab', 'property');
+		$this->set('searchController' ,'client');
+	}
+
 	function index($clientId = null) {
 		if(isset($clientId) && $this->Loa->Client->find('count', array('conditions' => array('clientId' => $clientId)))) {
 			$this->Loa->recursive = 0;
@@ -15,11 +21,7 @@ class LoasController extends AppController {
 	}
 
 	function view($id = null) {
-		if (!$id) {
-			$this->Session->setFlash(__('Invalid Loa.', true));
-			$this->redirect(array('action'=>'index'));
-		}
-		$this->set('loa', $this->Loa->read(null, $id));
+		$this->redirect(array('action' => 'edit', $id));
 	}
 
 	function add($clientId = null) {

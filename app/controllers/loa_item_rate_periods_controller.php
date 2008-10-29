@@ -17,13 +17,16 @@ class LoaItemRatePeriodsController extends AppController {
 		$this->set('loaItemRatePeriod', $this->LoaItemRatePeriod->read(null, $id));
 	}
 
-	function add() {
+	function add($loaId) {
 		if (!empty($this->data)) {
 			$this->LoaItemRatePeriod->create();
 			if ($this->LoaItemRatePeriod->save($this->data)) {
-				$this->Session->setFlash(__('The LoaItemRatePeriod has been saved', true));
-	
-				$this->redirect(array('controller' => 'loas', 'action'=>'view', 'id' => $this->params['data']['LoaItem']['loaId']));
+				$this->Session->setFlash(__('The LOA Item Rate Period has been saved', true));
+				if ($this->RequestHandler->isAjax()) {
+					$this->set('closeModalbox', true);
+				} else {
+					$this->redirect(array('controller' => 'loa_items', 'action'=>'edit', 'id' => $this->params['data']['LoaItem']['loaItemId']));
+				}
 			} else {
 				$this->Session->setFlash(__('The LoaItemRatePeriod could not be saved. Please, try again.', true));
 			}
@@ -42,7 +45,11 @@ class LoaItemRatePeriodsController extends AppController {
 		if (!empty($this->data)) {
 			if ($this->LoaItemRatePeriod->save($this->data)) {
 				$this->Session->setFlash(__('The LoaItemRatePeriod has been saved', true));
-				$this->redirect(array('action'=>'index'));
+				if ($this->RequestHandler->isAjax()) {
+					$this->set('closeModalbox', true);
+				} else {
+					$this->redirect(array('controller' => 'loa_items', 'action'=>'edit', 'id' => $this->params['data']['LoaItem']['loaItemId']));
+				}
 			} else {
 				$this->Session->setFlash(__('The LoaItemRatePeriod could not be saved. Please, try again.', true));
 			}
@@ -60,9 +67,21 @@ class LoaItemRatePeriodsController extends AppController {
 			$this->redirect(array('action'=>'index'));
 		}
 		if ($this->LoaItemRatePeriod->del($id)) {
+			if($this->RequestHandler->isAjax()) {
+				$this->autoRender = false;
+				return true;
+			}
 			$this->Session->setFlash(__('LoaItemRatePeriod deleted', true));
 			$this->redirect(array('action'=>'index'));
 		}
+	}
+	
+	function getRatePeriodsForItem($itemId) {
+		$loaItems = $this->LoaItemRatePeriod->LoaItem->findByLoaItemId($itemId);
+		$loaItem = array_merge_recursive($loaItems, $loaItems['LoaItem']);
+
+		$this->set('loaItem', $loaItem);
+		$this->render(null, 'ajax', '/elements/loa_item_rate_periods/table_for_loas_page');
 	}
 
 }

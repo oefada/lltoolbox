@@ -1,9 +1,9 @@
 <div class="loaItemRatePeriods form">
-<?php echo $form->create('LoaItemRatePeriod');?>
+<?php echo $ajax->form('add', 'post', array('url' => "/loa_items/{$this->data['LoaItemRatePeriod']['loaItemId']}/loa_item_rate_periods/add", 'update' => 'MB_content', 'model' => 'LoaItemRatePeriod', 	'complete' => 'closeModalbox()'));?>
 	<fieldset>
  		<legend><?php __('Add LoaItemRatePeriod');?></legend>
 	<?php
-		echo $form->input('loaItemId');
+		echo $form->input('loaItemId', array('type' => 'hidden'));
 		echo $form->input('loaItemRatePeriodName');
 		echo $form->input('startDate');
 		echo $form->input('endDate');
@@ -14,10 +14,11 @@
 	</fieldset>
 <?php echo $form->end('Submit');?>
 </div>
-<div class="actions">
-	<ul>
-		<li><?php echo $html->link(__('List LoaItemRatePeriods', true), array('action'=>'index'));?></li>
-		<li><?php echo $html->link(__('List Loa Items', true), array('controller'=> 'loa_items', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Loa Item', true), array('controller'=> 'loa_items', 'action'=>'add')); ?> </li>
-	</ul>
-</div>
+<?php
+$refreshLoaItemRatePeriods = $ajax->remoteFunction( 
+    array(
+    'url' => array( 'controller' => 'loa_item_rate_periods', 'action' => 'getRatePeriodsForItem', $this->data['LoaItemRatePeriod']['loaItemId'] ),
+    'update' => 'relatedLoaItemRatePeriods_'.$this->data['LoaItemRatePeriod']['loaItemId']) 
+);
+if (isset($closeModalbox) && $closeModalbox) echo "<script>".$refreshLoaItemRatePeriods."</script><div id='closeModalboxNoReload'></div>";
+?>

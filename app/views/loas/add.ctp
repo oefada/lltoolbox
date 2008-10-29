@@ -5,10 +5,11 @@ $html->addCrumb($clientName, '/clients/view/'.$this->data['Loa']['clientId']);
 $html->addCrumb("LOA's", '/clients/'.$this->data['Loa']['clientId'].'/loas');
 $html->addCrumb('New Loa');
 ?>
+<h2 class="title"><?= $clientName ?> <?=$html2->c($this->data['Loa']['clientId'], 'Client Id:')?></h2>
 <div class="loas form">
 <?php echo $form->create('Loa');?>
 	<fieldset>
- 		<legend><?php __('New Loa');?> for <?=$clientName?></legend>
+ 		<legend><?php __('New Loa');?></legend>
 	<?php
 		echo $form->input('clientId', array('type' => 'hidden'));
 		echo $form->input('numEmailInclusions');
@@ -30,10 +31,4 @@ $html->addCrumb('New Loa');
 	?>
 	</fieldset>
 <?php echo $form->end('Submit');?>
-</div>
-<div class="actions">
-	<ul>
-		<li><?php echo $html->link(__('List Loa Items', true), array('controller'=> 'loa_items', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Loa Item', true), array('controller'=> 'loa_items', 'action'=>'add')); ?> </li>
-	</ul>
 </div>

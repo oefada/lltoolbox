@@ -2,6 +2,12 @@
 class ClientsController extends AppController {
 
 	var $name = 'Clients';
+
+	function beforeFilter() {
+		parent::beforeFilter();
+		$this->set('currentTab', 'property');
+		$this->set('clientId', $this->Client->id);
+	}
 	
 	function index() {
 		$this->Client->recursive = 0;
@@ -10,11 +16,7 @@ class ClientsController extends AppController {
 	}
 	
 	function view($id = null) {
-		if (!$id) {
-			$this->Session->setFlash(__('Invalid Client.', true));
-			$this->redirect(array('action'=>'index'));
-		}
-		$this->set('client', $this->Client->read(null, $id));
+		$this->redirect(array('action'=>'edit', $id));
 	}
 
 	function add() {
@@ -27,13 +29,22 @@ class ClientsController extends AppController {
 				$this->Session->setFlash(__('The Client could not be saved. Please, try again.', true));
 			}
 		}
-		$amenities = $this->Client->Amenity->find('list');
-		$clientLevels = $this->Client->ClientLevel->find('list');
-		$clientStatuses = $this->Client->ClientStatus->find('list');
-		$clientTypes = $this->Client->ClientType->find('list');
+		
+		
+		$amenities = $this->Client->Amenity->find('all', array('conditions' => array('Amenity.amenityId' => $this->data['Amenity']['Amenity'])));
+		$this->data['Amenity'] = array();
+		foreach($amenities as $amenity):
+			$this->data['Amenity'][] = $amenity['Amenity'];
+		endforeach;
+	
+		$amenities = $this->Client->Amenity->find('list');	
+		$clientLevelIds = $this->Client->ClientLevel->find('list');
+		$clientStatusIds = $this->Client->ClientStatus->find('list');
+		$clientTypeIds = $this->Client->ClientType->find('list');
 		$regions = $this->Client->Region->find('list');
 		$clientAcquisitionSources = $this->Client->ClientAcquisitionSource->find('list');
-		$this->set(compact('amenities', 'clientLevels', 'clientStatuses', 'clientTypes', 'regions', 'clientAcquisitionSources'));
+		$themes = $this->Client->Theme->find('list');
+		$this->set(compact('amenities', 'clientLevelIds', 'clientStatusIds', 'clientTypeIds', 'regions', 'clientAcquisitionSources', 'themes'));
 	}
 
 	function edit($id = null) {
@@ -49,18 +60,31 @@ class ClientsController extends AppController {
 			} else {
 				$this->Session->setFlash(__('The Client could not be saved. Please, try again.', true));
 			}
+			$this->set('submission', true);
 		}
+		//set up our data, if it's a form post, we still need all related data
 		if (empty($this->data)) {
 			$this->data = $this->Client->read(null, $id);
+		} else {
+			if(isset($this->data['Amenity']['Amenity'])):
+				$amenities = $this->Client->Amenity->find('all', array('conditions' => array('Amenity.amenityId' => $this->data['Amenity']['Amenity'])));
+				$this->data['Amenity'] = array();
+				foreach($amenities as $amenity):
+					$this->data['Amenity'][] = $amenity['Amenity'];
+				endforeach;
+			else:
+				$this->data['Amenity'] = array();
+			endif;
 		}
-		
+
 		$amenities = $this->Client->Amenity->find('list');
 		$clientLevelIds = $this->Client->ClientLevel->find('list');
 		$clientStatusIds = $this->Client->ClientStatus->find('list');
 		$clientTypeIds = $this->Client->ClientType->find('list');
 		$clientAcquisitionSourceIds = $this->Client->ClientAcquisitionSource->find('list');
+		$themes = $this->Client->Theme->find('list');
 		$this->set('client', $this->data);
-		$this->set(compact('tags','users','amenities','clientLevelIds','clientStatusIds','clientTypeIds','regions','clientAcquisitionSourceIds'));
+		$this->set(compact('addresses', 'amenities','clientLevelIds','clientStatusIds','clientTypeIds','regions','clientAcquisitionSourceIds', 'loas', 'themes'));
 	}
 
 	function delete($id = null) {

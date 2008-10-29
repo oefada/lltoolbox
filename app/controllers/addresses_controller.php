@@ -27,13 +27,22 @@ class AddressesController extends AppController {
 				$this->Session->setFlash(__('The Address could not be saved. Please, try again.', true));
 			}
 		}
-		$addressTypes = $this->Address->AddressType->find('list');
-		$users = $this->Address->User->find('list');
-		$clients = $this->Address->Client->find('list');
-		$countries = $this->Address->Country->find('list');
-		$states = $this->Address->State->find('list');
-		$cities = $this->Address->City->find('list');
-		$this->set(compact('addressTypes', 'users', 'clients', 'countries', 'states', 'cities'));
+		$addressTypeIds = $this->Address->AddressType->find('list');
+		$countryIds = $this->Address->Country->find('list');	
+		$this->set(compact('addressTypeIds', 'countryIds', 'stateIds', 'cityIds'));
+	}
+	
+	function getStatesFromCountry() {
+		$this->autoRender = false;
+		$countryId = $this->data['Address']['countryId'];
+		$this->Address->State->recursive = -1;
+		$stateIds = $this->Address->State->find('', array('conditions' => array('countryId' => $countryId)));
+		$this->set(compact('stateIds'));
+		$this->render('state_and_city_chooser');
+	}
+	
+	function getCitiesFromState() {
+		$stateIds = $this->Address->State->findAllByCityId();
 	}
 
 	function edit($id = null) {
@@ -53,11 +62,6 @@ class AddressesController extends AppController {
 			$this->data = $this->Address->read(null, $id);
 		}
 		$addressTypes = $this->Address->AddressType->find('list');
-		$users = $this->Address->User->find('list');
-		$clients = $this->Address->Client->find('list');
-		$countries = $this->Address->Country->find('list');
-		$states = $this->Address->State->find('list');
-		$cities = $this->Address->City->find('list');
 		$this->set(compact('addressTypes','users','clients','countries','states','cities'));
 	}
 

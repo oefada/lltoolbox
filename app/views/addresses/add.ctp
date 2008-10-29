@@ -6,9 +6,7 @@
 		echo $form->input('clientId');
 		echo $form->input('userId');
 		echo $form->input('addressTypeId');
-		echo $form->input('cityId');
-		echo $form->input('stateId');
-		echo $form->input('countryId');
+		echo $this->renderElement('country_and_state_chooser', array('model' => 'Address'));
 		echo $form->input('address1');
 		echo $form->input('address2');
 		echo $form->input('address3');

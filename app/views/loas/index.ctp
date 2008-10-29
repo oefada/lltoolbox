@@ -1,16 +1,12 @@
 <?php
-$this->pageTitle = 'Client LOAs';
-$html->addCrumb('Clients', '/clients');
-$html->addCrumb($text->truncate($loas[0]['Client']['name'], 15), '/clients/view/'.$loas[0]['Client']['clientId']);
-$html->addCrumb("LOA's");
+$this->pageTitle = $loas[0]['Client']['name'].$html2->c($loas[0]['Client']['clientId'], 'Client Id:');
+$this->set('clientId', $loas[0]['Client']['clientId']);
 ?>
-<?=$layout->blockStart('header');?>
+<?=$layout->blockStart('toolbar');?>
     <a href="/clients/<?=$loas[0]['Client']['clientId']?>/loas/add" title="Add New Loa" class="button add"><span><b class="icon"></b>Add New Loa</span></a>
 <?=$layout->blockEnd();?>
-
-
 <div class="loas index">
-<h2>Viewing LOAs for <?=$loas[0]['Client']['name']?></h2>
+<h2 class="title">Viewing LOAs for <?=$loas[0]['Client']['name']?></h2>
 <p>
 <?php
 echo $paginator->counter(array(

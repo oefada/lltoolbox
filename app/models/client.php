@@ -27,7 +27,6 @@ class Client extends AppModel {
 					 
 	var $hasMany = array('Loa' => array('foreignKey' => 'clientId'),
 					     'Address' => array('foreignKey' => 'clientId'),
-						 'ClientThemeRel' => array('foreignKey' => 'clientId'),
 						 'Accolade' => array('foreignKey' => 'clientId')
 						);
 	
@@ -50,6 +49,12 @@ class Client extends AppModel {
 										  'joinTable' => 'clientAmenityRel',
 										  'foreignKey' => 'clientId',
 										  'associationForeignKey' => 'amenityId'
+								   ),
+								'Theme' => 
+									array('className' => 'Theme',
+										  'joinTable' => 'clientThemeRel',
+										  'foreignKey' => 'clientId',
+										  'associationForeignKey' => 'themeId'
 								   )
                                ); 		
 }

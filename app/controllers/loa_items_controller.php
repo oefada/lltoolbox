@@ -85,9 +85,12 @@ class LoaItemsController extends AppController {
 			$this->Session->setFlash(__('Invalid id for LoaItem', true));
 			$this->redirect(array('action'=>'index'));
 		}
+		$this->autoRender = false;
+		$this->LoaItem->recursive = -1;
+		$loaItem = $this->LoaItem->read(null, $id);
 		if ($this->LoaItem->del($id)) {
 			$this->Session->setFlash(__('LoaItem deleted', true));
-			$this->redirect(array('action'=>'index'));
+			$this->redirect(array('controller' => 'loas', 'action'=>'edit', $loaItem['LoaItem']['loaId']));
 		}
 	}
 	

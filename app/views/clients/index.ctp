@@ -1,10 +1,12 @@
-<?php $this->pageTitle = 'Clients';
+<?php
+$this->pageTitle = 'Clients';
 if (isset($query)) {
 	$html->addCrumb('Clients', '/clients');
 	$html->addCrumb('search for '.$query);
 } else {
 	$html->addCrumb('Clients');
 }
+$this->set('hideSidebar', true);
 ?>
 
 <?=$layout->blockStart('toolbar');?>

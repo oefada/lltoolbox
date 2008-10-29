@@ -1,22 +1,23 @@
 <?php
 //Check whether to render a search bar or not, depending on whether this controller has a search method
 $controller = false;
-if(isset($this->searchController)) {
-	$controllerName = $this->searchController;
+if(isset($this->viewVars['searchController'])) {
+	$controllerName = Inflector::pluralize($this->viewVars['searchController']);
 } else {
-	$controllerName = ($this->params['controller']);
-	$controllerName = Inflector::camelize($controllerName);	//make sure the controller name is always in the right format
+	$controllerName = $this->params['controller'];
 }
+$controllerName = Inflector::camelize($controllerName);	//make sure the controller name is always in the right format
 
-$fullControllerName = $controllerName.'Controller';			
-if(class_exists($fullControllerName)) {					//just in case the controller doesn't exist
+$fullControllerName = $controllerName.'Controller';
+
+if(!isset($this->viewVars['searchController']) &&class_exists($fullControllerName)) {					//just in case the controller doesn't exist
 	$controller = new $fullControllerName;
 }
 
-if (is_a($controller, $fullControllerName) && ( method_exists($controller , 'search') || isset($this->searchController) )):
+if ($this->viewVars['searchController'] || method_exists($controller , 'search') || isset($this->searchController)):
  ?>
-<div style="float: left;" class="clearfix">
-<div style="clear: both;">
+<div id='search-bar' class="clearfix">
+<div id='search-bar-inner'>
 <?php $defSearchValue = "Search {$controllerName}"; ?>
 <form accept-charset="UNKNOWN" enctype="application/x-www-form-urlencoded" method="get" action="/<?=$controllerName?>/search">
 <input id="query" maxlength="2147483647" name="query" type="text" value="<?=$defSearchValue?>" onfocus="if($F(this) == '<?=$defSearchValue?>') { $(this).value = '';}" onblur="if($F(this) == '') { $(this).value = '<?=$defSearchValue?>' }"/>
