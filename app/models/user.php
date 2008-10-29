@@ -21,10 +21,11 @@ class User extends AppModel {
 			);
 
 	var $belongsTo = array('Salutation' => array('foreignKey' => 'salutationId'));
-	
+
+	var $hasOne = array('UserSiteExtended' => array('foreignKey' => 'userId'));
+
 	var $hasMany = array('UserMailOptin' => array('foreignKey' => 'userId'),
 						 'UserReferral' => array('foreignKey' => 'userId'),
-						 'UserSiteExtended' => array('foreignKey' => 'userId'),
 						 'UserPaymentSetting' => array('foreignKey' => 'userId'),
 						 'UserPreference' => array('foreignKey' => 'userId'),
 						 'Bid' => array('foreignKey' => 'userId'),
