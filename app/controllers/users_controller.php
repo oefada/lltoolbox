@@ -24,6 +24,10 @@ class UsersController extends AppController {
 		$salutationIds = $this->User->Salutation->find('list');
 		$this->set(compact('contests', 'clients', 'salutationIds'));
 	}
+	
+	function view($id = null) {
+		$this->redirect(array("action" => 'edit', $id));
+	}
 
 	function edit($id = null) {
 		if (!$id && empty($this->data)) {
