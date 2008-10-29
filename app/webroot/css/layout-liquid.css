@@ -148,7 +148,7 @@
   .sidebar-left #content-inner
   {
     padding-left: 200px; /* The width + left margin of #sidebar-left. */
-    padding-right: 0;
+    padding-right: 10px;
   }
 
   .sidebar-right #content-inner

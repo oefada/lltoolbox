@@ -71,7 +71,7 @@
     </div></div> <!-- /#header-inner, /#header -->
 
     <div id="main">
-	<div id="main-inner" class="clear-block sidebar-left">
+	<div id="main-inner" class="clear-block<?php if(!isset($this->viewVars['hideSidebar']) || $this->viewVars['hideSidebar'] === false) { echo ' sidebar-left';}?>">
 		<div id="navbar"><div id="navbar-inner" class="region">
 		    <div id="mainNav">
 				<ul>
@@ -85,10 +85,18 @@
 			</div>
 		</div></div> <!-- /#navbar-inner, /#navbar -->
 			<div id="page-toolbar"><div id="page-toolbar-inner" class="page-toolbar clearfix">
-				<?php echo $this->renderElement('search')?>
-				<?php if (isset($layout)): ?>
-					<div class="buttons"><? $layout->output($toolbar_for_layout);?></div>
-				<?php endif ?>
+				<? if($this->renderElement('search')): ?>
+				<table>
+					<tr>
+						<td class="search-bar"><?php echo $this->renderElement('search')?></td>
+						<td class='button-bar'>
+							<?php if (isset($layout)): ?>
+								<div class="buttons"><? $layout->output($toolbar_for_layout);?></div>
+							<?php endif ?>
+						</td>
+					</tr>
+				</table>
+				<? endif; ?>
 			</div></div>
 			<div class='title-header'>
 				<h1 class="title"><?php echo $this->pageTitle; ?></h1>
@@ -109,17 +117,12 @@
           <?php print $content_for_layout; ?>
         </div>
       </div></div> <!-- /#content-inner, /#content -->
+	  <?php if(!isset($this->viewVars['hideSidebar']) || $this->viewVars['hideSidebar'] === false): ?>
 		<div id="sidebar-left"><div id="sidebar-left-inner" class="region region-left">
-			<ul>
-				<li><a href="#">Home</a></li>
-				<li><a href="/clients">Clients</a></li>
-				<li><a href="/products">Products</a></li>
-				<li><a href="/offers">Offers</a></li>
-				<li><a href="#">Promo</a></li>
-			</ul>
-		<?php if (false)://(isset($layout)): ?>
-			<? $layout->output($sidebar_for_layout);?>
-		<?php endif ?>
+			<?php if (isset($this->viewVars['currentTab']) && file_exists(ELEMENTS.'/sidebar/menu_for_'.$this->viewVars['currentTab'].'.ctp')): ?>
+				<?php echo $this->renderElement('sidebar/menu_for_'.$this->viewVars['currentTab']); ?>
+			<?php endif; ?>
+	  <?php endif;?>
 		<div style="clear: both;"></div>
         </div></div> <!-- /#sidebar-left-inner, /#sidebar-left -->
 

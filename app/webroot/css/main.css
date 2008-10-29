@@ -68,12 +68,12 @@ div.title-header div.buttons {
 	font-weight: bold;
 }
 #content-area h2 {
-	color: #fff;
-	background: #545454;
-	font-size: 13px;
+	color: #d99e00;
+	border-bottom: 1px dotted #b1b1b1;
+	font-size: 15px;
 	padding: 5px;
 }
-#content {
+.sidebar-left #content {
 	background: url(../img/content_sidebar_background.gif) 0 0 repeat-y;
 }
 div#breadcrumbs {
@@ -237,9 +237,24 @@ h2 {
 		    }
 		  
 			/* Toolbar button modifications */
-					.page-toolbar {
+					#page-toolbar {
 						padding: 20px;
-						border-bottom: 1px dotted #000;
+						border-bottom: 1px dotted #b1b1b1;
+					}
+					#page-toolbar table {
+						border: none;
+						padding: 0;
+						margin: 0;
+					}
+					#page-toolbar-inner .search-bar{
+						border: none;
+						background: #f1f1f1;
+						width: 100%;
+					}
+					#page-toolbar-inner .button-bar{
+						border: none;
+						background: #fff;
+						width: auto;
 					}
 					.page-toolbar form {
 						padding-top: 2px;
@@ -270,15 +285,13 @@ h2 {
 						height: 21px;
 						width: 60px;
 					}
-					.buttons {
-						padding-right: 10px;
-						float: right;
-					}
 					.page-toolbar .buttons {
 						float: right;
 						padding: 0;
 						margin: 0;
-						height: 25px;
+						display: block;
+						height: 40px;
+						background: #fff;
 					}
 					.page-toolbar .buttons a {
 						padding: 0;
@@ -339,7 +352,10 @@ h2 {
 							text-indent: -10000px;
 						}
 
-
+#search-bar {
+	float: left;
+	padding: 10px;
+}
 /* Sidebar */
 #sidebar-left {
 	padding-bottom: 20px;
