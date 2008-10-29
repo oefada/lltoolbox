@@ -5,17 +5,14 @@ $this->set('clientId', $loas[0]['Client']['clientId']);
 <?=$layout->blockStart('toolbar');?>
     <a href="/clients/<?=$loas[0]['Client']['clientId']?>/loas/add" title="Add New Loa" class="button add"><span><b class="icon"></b>Add New Loa</span></a>
 <?=$layout->blockEnd();?>
-<div class="loas index">
-<h2 class="title">Viewing LOAs for <?=$loas[0]['Client']['name']?></h2>
-<p>
-<?php
-echo $paginator->counter(array(
-'format' => __('Page %page% of %pages%, showing %current% records out of %count% total, starting on record %start%, ending on %end%', true)
-));
-?></p>
+<div id="loa-index" class="loas index">
+	<h2 class="title">Viewing LOAs for <?=$loas[0]['Client']['name']?></h2>
+<?php echo $this->renderElement('ajax_paginator', array('divToPaginate' => 'loa-index', 'showCount' => true))?>
 <table cellpadding="0" cellspacing="0">
 <tr>
 	<th><?php echo $paginator->sort('Approval Status', 'customerApprovalStatusId');?></th>
+	<th><?php echo $paginator->sort('Start Date', 'startDate');?></th>
+	<th><?php echo $paginator->sort('End Date', 'endDate');?></th>
 	<th><?php echo $paginator->sort('Value', 'loaValue');?></th>
 	<th><?php echo $paginator->sort('Total Remitted', 'totalRemitted');?></th>
 	<th><?php echo $paginator->sort('# Packages', 'loaNumberPackages');?></th>
@@ -34,6 +31,8 @@ foreach ($loas as $loa):
 
 	<tr<?php echo $class;?>>
 		<td><?php echo $loa['LoaCustomerApprovalStatus']['customerApprovalStatusName'];?></td>
+		<td><?php echo $loa['Loa']['startDate'];?></td>
+		<td><?php echo $loa['Loa']['endDate'];?></td>
 		<td><?php echo $loa['Loa']['loaValue'];?></td>
 		<td><?php echo $loa['Loa']['totalRemitted'];?></td>
 		<td><?php echo $loa['Loa']['loaNumberPackages'];?></td>
@@ -45,9 +44,5 @@ foreach ($loas as $loa):
 	</tr>
 <?php endforeach; ?>
 </table>
-</div>
-<div class="paging">
-	<?php echo $paginator->prev('<< '.__('previous', true), array(), null, array('class'=>'disabled'));?>
- | 	<?php echo $paginator->numbers();?>
-	<?php echo $paginator->next(__('next', true).' >>', array(), null, array('class'=>'disabled'));?>
+<?php echo $this->renderElement('ajax_paginator', array('divToPaginate' => 'loa-index'))?>
 </div>

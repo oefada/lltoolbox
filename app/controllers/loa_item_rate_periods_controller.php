@@ -21,10 +21,10 @@ class LoaItemRatePeriodsController extends AppController {
 		if (!empty($this->data)) {
 			$this->LoaItemRatePeriod->create();
 			if ($this->LoaItemRatePeriod->save($this->data)) {
-				$this->Session->setFlash(__('The LOA Item Rate Period has been saved', true));
 				if ($this->RequestHandler->isAjax()) {
 					$this->set('closeModalbox', true);
 				} else {
+					$this->Session->setFlash(__('The LOA Item Rate Period has been saved', true));
 					$this->redirect(array('controller' => 'loa_items', 'action'=>'edit', 'id' => $this->params['data']['LoaItem']['loaItemId']));
 				}
 			} else {
@@ -44,10 +44,10 @@ class LoaItemRatePeriodsController extends AppController {
 		}
 		if (!empty($this->data)) {
 			if ($this->LoaItemRatePeriod->save($this->data)) {
-				$this->Session->setFlash(__('The LoaItemRatePeriod has been saved', true));
 				if ($this->RequestHandler->isAjax()) {
 					$this->set('closeModalbox', true);
 				} else {
+					$this->Session->setFlash(__('The LOA Item Rate Period has been saved', true));
 					$this->redirect(array('controller' => 'loa_items', 'action'=>'edit', 'id' => $this->params['data']['LoaItem']['loaItemId']));
 				}
 			} else {

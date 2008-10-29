@@ -57,8 +57,10 @@ class LoasController extends AppController {
 		if (!empty($this->data)) {
 			if ($this->Loa->save($this->data)) {
 				$this->Session->setFlash(__('The Loa has been saved', true));
-				$this->redirect(array('action'=>'index'));
+				$this->redirect(array('action'=>'edit', $this->data['Loa']['loaId']));
 			} else {
+				$loa = $this->Loa->find($this->data['Loa']['loaId']);
+				$this->data['Client'] = $loa['Client'];
 				$this->Session->setFlash(__('The Loa could not be saved. Please, try again.', true));
 			}
 		}

@@ -246,10 +246,21 @@ h2 {
 						padding: 0;
 						margin: 0;
 					}
-					#page-toolbar-inner .search-bar{
-						border: none;
+					#page-toolbar-inner #search-bar{
+						position: relative;
 						background: #f1f1f1;
 						width: 100%;
+					}
+					.search-input-with-livesearch {
+						position: relative;
+						float: left;
+						display: inline;
+						padding: 0;
+						margin:0;
+					}
+					#page-toolbar-inner #search-bar-inner{
+						padding: 0;
+						margin: 0;
 					}
 					#page-toolbar-inner .button-bar{
 						border: none;
@@ -270,7 +281,7 @@ h2 {
 						height: 15px;
 						float: left;
 						clear:none;
-						width: 210px;
+						width: 300px;
 					}
 					.page-toolbar input[type=submit] {
 						background: #545454 ;
@@ -458,10 +469,35 @@ span.highlight {
 div.auto_complete    {
 	position         	:absolute;
 	background-color 	:white;
+	top					:22px;
 	margin          	:0px;
 	padding          	:0px;
-	width				:400px;
+	z-index				:99;
+	width				:100%;
 } 
+div.auto_complete ul {
+	border: 3px solid #d5d5d5;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	width: 100%;
+}
+div.auto_complete li{
+	margin: 0;
+	padding: 0;
+}
+div.auto_complete li a {
+	display: block;
+	margin: 0;
+	padding: 3px;
+}
+div.auto_complete li a:hover {
+	background: #f5f2e2;
+}
+div.auto_complete span.highlight {
+	background: none;
+	color: #900;
+}
 li.selected    { background-color: #ffb; }
 /*MESSAGE BOX CLEAN	serie	  		 */
 	.clean-gray{
@@ -546,10 +582,12 @@ h2 .inline-counter .p {
 	color: #CFCFCF;
 }
 
-input, textarea {
+div.input, input, textarea {
 	font-size: 100%;
 	font-family: "Verdana", "lucida grande", sans-serif;
 	padding: 5px;
+}
+input, textarea {
 	border: 1px solid #898989;
 }
 input[type=submit] {
@@ -577,8 +615,9 @@ fieldset input.error { border-color: #C00; background-color: #FEF; }
 fieldset input:focus,
 fieldset input.error:focus, 
 fieldset textarea:focus {	background-color: #f5f2e2; border-color: #c9b865; }
+fieldset div.controlset { margin-left: 0;}
 fieldset div.controlset label, 
-fieldset div.controlset input { border: none; display: inline; float: none; }
+fieldset div.controlset input { border: none; display: inline; float: none; margin-right: 5px;}
 fieldset div.controlset div { margin-left: 170px; }
 fieldset div.controlset2 { padding: 0; margin: 0;}
 fieldset div.controlset2 label,
@@ -633,3 +672,8 @@ fieldset div.buttonrow { margin-left: 180px; }
     background-image:url(../img/nav_button_left_on.png);
 	color: #706e5f;
     }
+
+#footer, .cake-sql-log caption{
+	background: #555;
+	color: #f1f1f1;
+}

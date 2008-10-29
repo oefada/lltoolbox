@@ -4,6 +4,7 @@ Are you sure you want to reset this user's password? An email confirmation will 
 </div>
 <div style="text-align: center">
 <?php echo $ajax->form('resetPassword', 'post', array('update' => 'MB_content', 'model' => 'User', 'complete' => 'closeModalbox()'));?>
+	<?php echo $form->input('User.userId') ?>
 	<input type="hidden" name="data[reset]" value="true" />
 	<input type="button" name="nevermind" value="Nevermind..." onclick="Modalbox.hide()" />
 	<input type="submit" name="Continue" value="Yes, continue" />

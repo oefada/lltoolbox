@@ -7,7 +7,7 @@ if(isset($this->viewVars['searchController'])) {
 	$controllerName = $this->params['controller'];
 }
 $controllerName = Inflector::camelize($controllerName);	//make sure the controller name is always in the right format
-
+$controllerUrl = Inflector::underscore($controllerName);
 $fullControllerName = $controllerName.'Controller';
 
 if(!isset($this->viewVars['searchController']) &&class_exists($fullControllerName)) {					//just in case the controller doesn't exist
@@ -17,25 +17,31 @@ if(!isset($this->viewVars['searchController']) &&class_exists($fullControllerNam
 if ($this->viewVars['searchController'] || method_exists($controller , 'search') || isset($this->searchController)):
  ?>
 <div id='search-bar' class="clearfix">
-<div id='search-bar-inner'>
+<div id='search-bar-inner' class="clearfix">
 <?php $defSearchValue = "Search {$controllerName}"; ?>
 <form accept-charset="UNKNOWN" enctype="application/x-www-form-urlencoded" method="get" action="/<?=$controllerName?>/search">
-<input id="query" maxlength="2147483647" name="query" type="text" value="<?=$defSearchValue?>" onfocus="if($F(this) == '<?=$defSearchValue?>') { $(this).value = '';}" onblur="if($F(this) == '') { $(this).value = '<?=$defSearchValue?>' }"/>
-<input type="submit" value="Search" />
+	<div class="clearfix">
+		<div class="search-input-with-livesearch">
+			<input id="query" maxlength="2147483647" name="query" type="text" value="<?=$defSearchValue?>" onfocus="if($F(this) == '<?=$defSearchValue?>') { $(this).value = '';}" onblur="if($F(this) == '') { $(this).value = '<?=$defSearchValue?>' }" />
+			<div id="livesearch" class="auto_complete"><!-- Results will load here --></div>
+		</div>
+		<input type="submit" value="Search" />
+	</div>
+	
 </form>
  
 <?php
 $options = array(
 	'update' => 'livesearch',
-	'url'    => "/{$controllerName}/search",
+	'url'    => "/{$controllerUrl}/search",
 	'frequency' => 1,
-	'loading' => "if(\$F('query') != '' && \$F('query') != '$defSearchValue') { Element.hide('livesearch');Element.show('spinner') }",
+	'loading' => "if(\$F('query') != '' && \$F('query') != '$defSearchValue') { Element.show('spinner') }",
 	'complete' => "if(\$F('query') != '' && \$F('query') != '$defSearchValue') { Element.hide('spinner');Effect.Appear('livesearch') }"
 );
 
 print $ajax->observeField('query', $options);
 ?>
+
 </div>
-<div id="livesearch" class="auto_complete"><!-- Results will load here --></div>
 </div>
 <?php endif; //end method exists check ?>

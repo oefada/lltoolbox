@@ -26,19 +26,48 @@
 			</div>
 		</fieldset>
 		<fieldset>
+			<legend class="collapsible"><span class="handle">Web Account</span></legend>
+				<?php
+					$userSiteExtended = $user['UserSiteExtended'];
+					?>
+				<div class="collapsibleContent">
+				<?php if (!empty($userSiteExtended['username'])):?>
+					<div class="input text"><label>Username</label> <strong><?php echo $userSiteExtended['username'];?></strong></div>
+					<div class="input text"><label>Initial Subscribe Date</label> <?php echo $userSiteExtended['initialSubscribeDate'];?></div>
+					<div class="input text"><label>Registration Date</label> <?php echo $userSiteExtended['registrationDate'];?></div>
+					<div class="input text"><label>Last Login</label> <?php echo $userSiteExtended['lastLogin'];?></div>
+					<div class="input text"><label>&nbsp;</label><?php echo $html->link('Reset Password', '/users/resetPassword/'.$userSiteExtended['userSiteExtendedId'],
+					array(
+						'title' => 'Reset Password',
+						'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
+						'complete' => 'closeModalbox()'
+						), null, false); ?>
+					</div>
+			<?php else: ?>
+				<h3>This user does not have a web account</h3>
+			<?php endif; ?>
+				</div>
+		</fieldset>
+		<fieldset>
 			<legend class="collapsible"><span class="handle">Preferences</span></legend>
 			<div class="collapsibleContent">
 			<?php
 				echo $form->input('userAcquisitionSourceId');
 				echo $form->input('registrationDate', array('disabled' => true));
 				echo $form->input('initialSignUpDate', array('disabled' => true));
+			?>
+			<div class="controlset">
+			<?php
 				echo $form->input('doNotContact');
 				echo $form->input('inactive');
 				echo $form->input('clientNotificationEmailsActive');
+			?>
+			</div>
+			<?php
 				echo $form->input('notes');
 			?>
 			</div>
-		</fieldset>	
+		</fieldset>
 	</fieldset>
 <?php echo $form->end('Submit');?>
 </div>
@@ -74,11 +103,6 @@
 	<?php endforeach; ?>
 	</table>
 <?php endif; ?>
-	<div class="actions">
-		<ul>
-			<li><?php echo $html->link(__('New User Mail Optin', true), array('controller'=> 'user_mail_optins', 'action'=>'add'));?> </li>
-		</ul>
-	</div>
 	</div>
 </div>
 <div class="related">
@@ -124,58 +148,6 @@
 	<div class="actions">
 		<ul>
 			<li><?php echo $html->link(__('New User Referral', true), array('controller'=> 'user_referrals', 'action'=>'add'));?> </li>
-		</ul>
-	</div>
-	</div>
-</div>
-<div class="related">
-	<h3 class="collapsible"><span class="handle"><?php __('Related User Site Extendeds');?></span> <?=$html2->c($user['UserSiteExtended'])?></h3>
-	<div class="collapsibleContent">
-	<?php if (!empty($user['UserSiteExtended'])):?>
-	<table cellpadding = "0" cellspacing = "0">
-	<tr>
-		<th><?php __('Username'); ?></th>
-		<th><?php __('Initial Subscribe Date'); ?></th>
-		<th><?php __('Registration Date'); ?></th>
-		<th><?php __('Last Login'); ?></th>
-		<th><?php __('Last Bid Date'); ?></th>
-		<th><?php __('Num Purchases'); ?></th>
-		<th><?php __('Num Bids'); ?></th>
-		<th class="actions"><?php __('Actions');?></th>
-	</tr>
-	<?php
-		$i = 0;
-		foreach ($user['UserSiteExtended'] as $userSiteExtended):
-			$class = null;
-			if ($i++ % 2 == 0) {
-				$class = ' class="altrow"';
-			}
-		?>
-		<tr<?php echo $class;?>>
-			<td><?php echo $userSiteExtended['username'];?></td>
-			<td><?php echo $userSiteExtended['initialSubscribeDate'];?></td>
-			<td><?php echo $userSiteExtended['registrationDate'];?></td>
-			<td><?php echo $userSiteExtended['lastLogin'];?></td>
-			<td><?php echo $userSiteExtended['lastBidDate'];?></td>
-			<td><?php echo $userSiteExtended['numPurchases'];?></td>
-			<td><?php echo $userSiteExtended['numBids'];?></td>
-			<td class="actions">
-				<?php echo $html->link('Reset Password', '/users/resetPassword/'.$user['User']['userId'],
-				array(
-					'title' => 'Reset Password',
-					'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
-					'complete' => 'closeModalbox()'
-					), null, false); ?>
-			</td>
-		</tr>
-	<?php endforeach; ?>
-	</table>
-<?php endif; ?>
-
-	<div class="actions">
-		<ul>
-			<li><?php echo $html->link(__('New User Site Extended', true), array('controller'=> 'user_site_extendeds', 'action'=>'add'));?> </li>
-
 		</ul>
 	</div>
 	</div>
@@ -266,12 +238,6 @@
 	<?php endforeach; ?>
 	</table>
 <?php endif; ?>
-
-	<div class="actions">
-		<ul>
-			<li><?php echo $html->link(__('New User Preference', true), array('controller'=> 'user_preferences', 'action'=>'add'));?> </li>
-		</ul>
-	</div>
 	</div>
 </div>
 <div class="related">
@@ -316,13 +282,6 @@
 	<?php endforeach; ?>
 	</table>
 <?php endif; ?>
-
-	<div class="actions">
-		<ul>
-			<li><?php echo $html->link(__('New Bid', true), array('controller'=> 'bids', 'action'=>'add'));?> </li>
-		</ul>
-	</div>
-	</div>
 </div>
 <div class="related">
 	<h3 class="collapsible"><span class="handle"><?php __('Related Addresses');?>  (<?=count($user['Address'])?>)</span></h3>

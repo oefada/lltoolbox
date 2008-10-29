@@ -1,4 +1,4 @@
-<script>
+<script type="text/javascript">
 function addAmenity() {
 	if($F('AmenitySelectId') > 0 && $('amenity_'+$F('AmenitySelectId')) == null) {
 		$('amenitylist').down('ul').insert({'bottom': "<li id='amenity_"+$F('AmenitySelectId')+"'><input type='hidden' name='data[Amenity][Amenity][]' value='"+$F('AmenitySelectId')+"' />"+$F('AmenitySelect')+'<a href="javascript: return false;" onclick="$(\'amenity_'+$F('AmenitySelectId')+'\').remove();">(remove)</a>'+"</li>"});
@@ -118,43 +118,3 @@ $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']
 
 <?php echo $form->end('Submit');?>
 </div>
-<?php if (!isset($submission) || !$submission): ?>
-<div class="related">
-	<h3 class="collapsible"><span class="handle">Related LOAs</span><?=$html2->c($client['Loa'])?></h2>
-	<div class="collapsibleContent">
-		<?php if (isset($client['Loa'])): ?>
-		<table>
-			<tr>
-			<th>LOA Id</th>
-			<th>Approval Status</th>
-			<th>Value</th>
-			<th>Total Remitted</th>
-			<th class="actions"><?php __('Actions');?></th>
-			</tr>
-		<?php
-		$i = 0;
-		foreach ($client['Loa'] as $loa):
-			$class = null;
-			if ($i++ % 2 == 0) {
-				$class = ' class="altrow"';
-			}?>
-			<tr<?php echo $class?>>
-				<td><?=$loa['loaId']?></td>
-				<td><?=$loa['customerApprovalStatusId']?>
-				<?php if ($loa['customerApprovalDate']):
-					echo 'Approved On: '.$loa['customerApprovalDate'];
-				endif ?>	
-				</td>
-				<td><?=$loa['loaValue']?></td>
-				<td><?=$loa['totalRemitted']?></td>
-				<td class="actions">
-					<?php echo $html->link(__('View Details', true), array('controller'=> 'loas', 'action'=>'edit', $loa['loaId'])); ?>
-				</td>
-			</tr>
-		<?php endforeach ?>
-		</table>
-	<?php endif ?>
-		<?= $html->link('Add Loa', '/clients/'.$client['Client']['clientId'].'/loas/add'); ?>
-	</div>
-</div>
-<?php endif ?>

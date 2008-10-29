@@ -3,10 +3,10 @@
 <?php foreach($results as $row): ?>
 	<li><?=$html->link(
 						$text->highlight(
-											$text->excerpt($row['Client']['name'], $query, 20),
+											$text->excerpt($row['User']['firstName']." ".$row['User']['lastName'], $query, 20),
 											$query
-										)."<br />".$html2->c($row['Client']['clientId'], 'Client Id:'),
-						array('action' => 'view', $row['Client']['clientId']),
+										)."<br />".$html2->c($row['User']['userId'], 'User Id:'),
+						array('action' => 'view', $row['User']['userId']),
 						null,
 						false ,
 						false ); ?>

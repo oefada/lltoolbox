@@ -20,6 +20,7 @@ class ClientsController extends AppController {
 	}
 
 	function add() {
+		$this->set('hideSidebar', true);
 		if (!empty($this->data)) {
 			$this->Client->create();
 			if ($this->Client->save($this->data)) {
