@@ -20,7 +20,6 @@
 	<?php
 		echo $html->meta('icon');
 
-		echo $html->css('cake.generic');
 		echo $html->css('main');
 		
 		if(isset($javascript)):

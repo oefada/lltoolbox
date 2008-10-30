@@ -16,6 +16,10 @@
  *   margin, border, padding, overflow
  */
 
+* {
+	margin:0;
+	padding:0;
+}
 
 /** body **/
   body
@@ -142,7 +146,7 @@
   .no-sidebars #content-inner
   {
     margin: 0;
-    padding: 0;
+    padding: 10px;
   }
 
   .sidebar-left #content-inner
@@ -258,6 +262,8 @@
 /** footer **/
   #footer
   {
+	clear: both;
+	padding: 6px 10px;
   }
 
   #footer-inner
