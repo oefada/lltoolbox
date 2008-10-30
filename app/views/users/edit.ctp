@@ -106,53 +106,6 @@
 	</div>
 </div>
 <div class="related">
-	<h3 class="collapsible"><span class="handle"><?php __('Related User Referrals');?></span><?=$html2->c($user['UserReferral'])?></h3>
-	<div class="collapsibleContent">
-	<?php if (!empty($user['UserReferral'])):?>
-	<table cellpadding = "0" cellspacing = "0">
-	<tr>
-		<th><?php __('ReferralDate'); ?></th>
-		<th><?php __('ReferredFirstName'); ?></th>
-		<th><?php __('ReferredLastName'); ?></th>
-		<th><?php __('ReferredEmailAddress'); ?></th>
-		<th><?php __('UserEmail'); ?></th>
-		<th><?php __('ContestId'); ?></th>
-		<th class="actions"><?php __('Actions');?></th>
-	</tr>
-	<?php
-		$i = 0;
-		foreach ($user['UserReferral'] as $userReferral):
-			$class = null;
-			if ($i++ % 2 == 0) {
-				$class = ' class="altrow"';
-			}
-		?>
-		<tr<?php echo $class;?>>
-			<td><?php echo $userReferral['referralDate'];?></td>
-			<td><?php echo $userReferral['referredFirstName'];?></td>
-			<td><?php echo $userReferral['referredLastName'];?></td>
-			<td><?php echo $userReferral['referredEmailAddress'];?></td>
-			<td><?php echo $userReferral['userEmail'];?></td>
-			<td><?php echo $userReferral['contestId'];?></td>
-			
-			<td class="actions">
-				<?php echo $html->link(__('View', true), array('controller'=> 'user_referrals', 'action'=>'view', $userReferral['userReferralId'])); ?>
-				<?php echo $html->link(__('Edit', true), array('controller'=> 'user_referrals', 'action'=>'edit', $userReferral['userReferralId'])); ?>
-				<?php echo $html->link(__('Delete', true), array('controller'=> 'user_referrals', 'action'=>'delete', $userReferral['userReferralId']), null, sprintf(__('Are you sure you want to delete # %s?', true), $userReferral['userReferralId'])); ?>
-			</td>
-		</tr>
-	<?php endforeach; ?>
-	</table>
-<?php endif; ?>
-
-	<div class="actions">
-		<ul>
-			<li><?php echo $html->link(__('New User Referral', true), array('controller'=> 'user_referrals', 'action'=>'add'));?> </li>
-		</ul>
-	</div>
-	</div>
-</div>
-<div class="related">
 	<h3 class="collapsible"><span class="handle"><?php __('Related User Payment Settings');?></span> <?=$html2->c($user['UserPaymentSetting'])?></h3>
 	<div class="collapsibleContent">
 	<?php if (!empty($user['UserPaymentSetting'])):?>
@@ -192,6 +145,7 @@
 								false
 								);
 				?>
+				<?php echo $html->link(__('Delete', true), '/users/'.$user['User']['userId'].'/user_payment_settings/delete/'.$userPaymentSetting['userPaymentSettingId']); ?>
 			</td>
 		</tr>
 	<?php endforeach; ?>
@@ -200,7 +154,7 @@
 
 	<div class="actions">
 		<ul>
-			<li><?php echo $html->link('Add User Payment Setting', '/users/'.$user['User']['userId'].'/userPaymentSettings/add',
+			<li><?php echo $html->link('Add User Payment Setting', '/users/'.$user['User']['userId'].'/user_payment_settings/add',
 			array(
 				'title' => 'New User Payment Setting',
 				'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
@@ -210,36 +164,7 @@
 	</div>
 	</div>
 </div>
-<div class="related">
-	<h3 class="collapsible"><span class="handle"><?php __('Related User Preferences');?></span><?=$html2->c($user['UserPreference'])?></h3>
-	<div class="collapsibleContent">
-	<?php if (!empty($user['UserPreference'])):?>
-	<table cellpadding = "0" cellspacing = "0">
-	<tr>
-		<th><?php __('PreferenceTypeId'); ?></th>
-		<th><?php __('PreferenceValue'); ?></th>
-		<th class="actions"><?php __('Actions');?></th>
-	</tr>
-	<?php
-		$i = 0;
-		foreach ($user['UserPreference'] as $userPreference):
-			$class = null;
-			if ($i++ % 2 == 0) {
-				$class = ' class="altrow"';
-			}
-		?>
-		<tr<?php echo $class;?>>
-			<td><?php echo $userPreference['preferenceTypeId'];?></td>
-			<td><?php echo $userPreference['preferenceValue'];?></td>
-			<td class="actions">
-				<?php echo $html->link(__('Edit', true), array('controller'=> 'user_preferences', 'action'=>'edit', $userPreference['userPreferenceId'])); ?>
-			</td>
-		</tr>
-	<?php endforeach; ?>
-	</table>
-<?php endif; ?>
-	</div>
-</div>
+
 <div class="related">
 	<h3 class="collapsible"><span class="handle"><?php __('Related Bids');?></span> <?=$html2->c($user['Bid'])?></h3>
 	<div class="collapsibleContent">
@@ -274,111 +199,13 @@
 			<td><?php echo $html->image($bid['bidInactive'] ? 'tick.png' : 'cross.png'); ?></td>
 			<td><?php echo $bid['note'];?></td>
 			<td class="actions">
-				<?php echo $html->link(__('View', true), array('controller'=> 'bids', 'action'=>'view', $bid['bidId'])); ?>
 				<?php echo $html->link(__('Edit', true), array('controller'=> 'bids', 'action'=>'edit', $bid['bidId'])); ?>
-				<?php echo $html->link(__('Delete', true), array('controller'=> 'bids', 'action'=>'delete', $bid['bidId']), null, sprintf(__('Are you sure you want to delete # %s?', true), $bid['bidId'])); ?>
 			</td>
 		</tr>
 	<?php endforeach; ?>
 	</table>
 <?php endif; ?>
 </div>
-<div class="related">
-	<h3 class="collapsible"><span class="handle"><?php __('Related Addresses');?>  (<?=count($user['Address'])?>)</span></h3>
-	<div class="collapsibleContent">
-	<?php if (!empty($user['Address'])):?>
-	<table cellpadding = "0" cellspacing = "0">
-	<tr>
-		<th><?php __('AddressTypeId'); ?></th>
-		<th><?php __('Address'); ?></th>
-		<th><?php __('Default Address?'); ?></th>
-		<th class="actions"><?php __('Actions');?></th>
-	</tr>
-	<?php
-		$i = 0;
-		foreach ($user['Address'] as $address):
-			$class = null;
-			if ($i++ % 2 == 0) {
-				$class = ' class="altrow"';
-			}
-		?>
-		<tr<?php echo $class;?>>
-			<td><?php echo $addressTypes[$address['addressTypeId']];?></td>
-			<td>
-			<?php if ($address['address1']): ?>
-				<?php echo $address['address1'];?><br />
-			<?php endif ?>
-			<?php if ($address['address2']): ?>
-				<?php echo $address['address2'];?><br />
-			<?php endif ?>
-			<?php if ($address['address3']): ?>
-				<?php echo $address['address3'];?><br />
-			<?php endif ?>
-			<?php if ($address['stateName']): ?>
-				<?php echo $address['stateName'];?>
-			<?php endif ?>
-			<?php if ($address['city']): ?>
-				<?php echo ', '.$address['city'];?><br />
-			<?php endif ?>
-			<?php if ($address['countryName'] || $address['countryCode']): ?>
-				<?php echo $address['countryName'];?> <?php echo $address['countryCode']?>
-			<?php endif ?>
-			</td>
-			<td><?php echo $html->image($address['defaultAddress'] ? 'tick.png' : 'cross.png'); ?>
-			<td class="actions">
-				<?php echo $html->link(__('View', true), array('controller'=> 'addresses', 'action'=>'view', $address['addressId'])); ?>
-				<?php echo $html->link(__('Edit', true), array('controller'=> 'addresses', 'action'=>'edit', $address['addressId'])); ?>
-				<?php echo $html->link(__('Delete', true), array('controller'=> 'addresses', 'action'=>'delete', $address['addressId']), null, sprintf(__('Are you sure you want to delete # %s?', true), $address['addressId'])); ?>
-			</td>
-		</tr>
-	<?php endforeach; ?>
-	</table>
-<?php endif; ?>
-
-	<div class="actions">
-		<ul>
-			<li><?php echo $html->link(__('New Address', true), array('controller'=> 'addresses', 'action'=>'add'));?> </li>
-		</ul>
-	</div>
-	</div>
-</div>
-<div class="related">
-	<h3 class="collapsible"><span class="handle"><?php __('Related User Acquisition Sources');?>  (<?=count($user['UserAcquisitionSource'])?>)</span></h3>
-	<div class="collapsibleContent">
-	<?php if (!empty($user['UserAcquisitionSource'])):?>
-	<table cellpadding = "0" cellspacing = "0">
-	<tr>
-		<th><?php __('UserAcquisitionSourceId'); ?></th>
-		<th><?php __('UserAqcuisitionSourceName'); ?></th>
-		<th class="actions"><?php __('Actions');?></th>
-	</tr>
-	<?php
-		$i = 0;
-		foreach ($user['UserAcquisitionSource'] as $userAcquisitionSource):
-			$class = null;
-			if ($i++ % 2 == 0) {
-				$class = ' class="altrow"';
-			}
-		?>
-		<tr<?php echo $class;?>>
-			<td><?php echo $userAcquisitionSource['userAcquisitionSourceId'];?></td>
-			<td><?php echo $userAcquisitionSource['userAqcuisitionSourceName'];?></td>
-			<td class="actions">
-				<?php echo $html->link(__('View', true), array('controller'=> 'user_acquisition_sources', 'action'=>'view', $userAcquisitionSource['userAcquisitionSourceId'])); ?>
-				<?php echo $html->link(__('Edit', true), array('controller'=> 'user_acquisition_sources', 'action'=>'edit', $userAcquisitionSource['userAcquisitionSourceId'])); ?>
-				<?php echo $html->link(__('Delete', true), array('controller'=> 'user_acquisition_sources', 'action'=>'delete', $userAcquisitionSource['userAcquisitionSourceId']), null, sprintf(__('Are you sure you want to delete # %s?', true), $userAcquisitionSource['userAcquisitionSourceId'])); ?>
-			</td>
-		</tr>
-	<?php endforeach; ?>
-	</table>
-<?php endif; ?>
-
-	<div class="actions">
-		<ul>
-			<li><?php echo $html->link(__('New User Acquisition Source', true), array('controller'=> 'user_acquisition_sources', 'action'=>'add'));?> </li>
-		</ul>
-	</div>
-	</div>
 </div>
 <div class="related">
 	<h3 class="collapsible"><span class="handle"><?php __('Related Contests');?> (<?=count($user['Contest'])?>)</span></h3>

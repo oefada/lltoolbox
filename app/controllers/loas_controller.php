@@ -18,6 +18,9 @@ class LoasController extends AppController {
 		} else {
 			$this->cakeError('error404');
 		}
+		
+		$this->set('client', $this->Loa->Client->findByClientId($clientId));
+		$this->set('clientId', $clientId);
 	}
 
 	function view($id = null) {

@@ -18,18 +18,15 @@ class Loa extends AppModel {
 						 'ClientLoaPackageRel' => array('foreignKey' => 'loaId'),
 						 'RevenueModelLoaRel' => array('foreignKey' => 'loaId')
 						);
-						
+
 	function validateEndStartDate()
 	{
-		if(isset($data)):
-			$startDate = ife($data['Loa']['startDate'], $data['Loa']['startDate'], $this->data['Loa']['startDate']);
-			$endDate = ife($data['Loa']['endDate'], $data['Loa']['endDate'], $this->data['Loa']['endDate']);
-			
-			if($startDate >= $endDate) {
-				return false;
-			}
-		endif;
-			
+		$startDate = $this->data[$this->name]['startDate'];
+		$endDate = $this->data[$this->name]['endDate'];
+		
+		if($startDate >= $endDate) {
+			return false;
+		}
 		return true;
 	}
 }

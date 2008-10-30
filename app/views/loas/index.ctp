@@ -1,12 +1,14 @@
 <?php
-$this->pageTitle = $loas[0]['Client']['name'].$html2->c($loas[0]['Client']['clientId'], 'Client Id:');
-$this->set('clientId', $loas[0]['Client']['clientId']);
+$this->pageTitle = $client['Client']['name'].$html2->c($client['Client']['clientId'], 'Client Id:');
 ?>
 <?=$layout->blockStart('toolbar');?>
-    <a href="/clients/<?=$loas[0]['Client']['clientId']?>/loas/add" title="Add New Loa" class="button add"><span><b class="icon"></b>Add New Loa</span></a>
+    <a href="/clients/<?=$clientId?>/loas/add" title="Add New Loa" class="button add"><span><b class="icon"></b>Add New Loa</span></a>
 <?=$layout->blockEnd();?>
 <div id="loa-index" class="loas index">
-	<h2 class="title">Viewing LOAs for <?=$loas[0]['Client']['name']?></h2>
+	<h2 class="title">Viewing LOAs for <?=$client['Client']['name']?></h2>
+	<?php if(empty($loas)): ?>
+		No LOAs for this client. <a href="/clients/<?=$clientId?>/loas/add" title="Add New Loa" class="button add"><span><b class="icon"></b>Add New Loa</span></a>
+	<?php else: ?>
 <?php echo $this->renderElement('ajax_paginator', array('divToPaginate' => 'loa-index', 'showCount' => true))?>
 <table cellpadding="0" cellspacing="0">
 <tr>
@@ -45,4 +47,5 @@ foreach ($loas as $loa):
 <?php endforeach; ?>
 </table>
 <?php echo $this->renderElement('ajax_paginator', array('divToPaginate' => 'loa-index'))?>
+<?php endif; ?>
 </div>

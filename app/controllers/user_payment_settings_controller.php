@@ -59,14 +59,14 @@ class UserPaymentSettingsController extends AppController {
 		$this->set(compact('paymentTypes'));
 	}
 
-	function delete($id = null) {
+	function delete($userId = null, $id = null) {
 		if (!$id) {
 			$this->Session->setFlash(__('Invalid id for UserPaymentSetting', true));
-			$this->redirect(array('action'=>'index'));
+			$this->redirect(array('controller' => 'users', 'action'=>'index'));
 		}
 		if ($this->UserPaymentSetting->del($id)) {
 			$this->Session->setFlash(__('UserPaymentSetting deleted', true));
-			$this->redirect(array('action'=>'index'));
+			$this->redirect(array('controller' => 'users', 'action'=>'edit', $userId));
 		}
 	}
 

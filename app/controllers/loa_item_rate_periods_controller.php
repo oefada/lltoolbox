@@ -51,7 +51,7 @@ class LoaItemRatePeriodsController extends AppController {
 					$this->redirect(array('controller' => 'loa_items', 'action'=>'edit', 'id' => $this->params['data']['LoaItem']['loaItemId']));
 				}
 			} else {
-				$this->Session->setFlash(__('The LoaItemRatePeriod could not be saved. Please, try again.', true));
+				$this->Session->setFlash(__('The LoaItemRatePeriod could not be saved. Please, try again.'));
 			}
 		}
 		if (empty($this->data)) {

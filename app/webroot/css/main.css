@@ -76,6 +76,17 @@ div.title-header div.buttons {
 .sidebar-left #content {
 	background: url(../img/content_sidebar_background.gif) 0 0 repeat-y;
 }
+#sidebar-left ul {
+	list-style: none;
+}
+#sidebar-left li {
+	background: #fff;
+	padding: 5px;
+	border-bottom: 1px dotted #b1b1b1;
+}
+#sidebar-left li:before {
+	content: '+';
+}
 div#breadcrumbs {
 	overflow:hidden;
 	margin:0;

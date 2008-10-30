@@ -15,19 +15,19 @@ $this->set('clientId', $this->data['Client']['clientId']);
 		echo $form->input('loaId');
 		echo $form->input('numEmailInclusions');
 		echo $form->input('loaValue');
-		echo $form->input('totalRemitted');
-		echo $form->input('customerApprovalStatusId');
-		echo $form->input('customerApprovalDate');
+		echo $form->input('customerApprovalStatusId', array('label' => 'Client Approval Status'));
+		echo $form->input('customerApprovalDate', array('label' => 'Customer Approval Date'));
 	?>
 	<div class="controlset">
 		<span class='label'>User Options</span><? echo $form->input('upgraded'); ?>
 	</div>
 	<?
 		echo $form->input('loaNumberPackages');
-		echo $form->input('cashPaid');
 		echo $form->input('startDate');
 		echo $form->input('endDate');
-		echo $form->input('totalKept');
+		echo $form->input('totalRemitted', array('disabled' => true));
+		echo $form->input('cashPaid', array('disabled' => true));
+		echo $form->input('totalKept', array('disabled' => true));
 	?>
 	</fieldset>
 	<div class="buttonrow">
@@ -37,6 +37,18 @@ $this->set('clientId', $this->data['Client']['clientId']);
 <div class="related">
 	<h3 class="collapsible"><span class="handle"><?php __('Related LOA Items');?></span></h3>
 	<div class="collapsibleContent">
+		<?php
+		echo $html->link('Add new LOA item',
+						'/loas/'.$loa['Loa']['loaId'].'/loa_items/add',
+						array(
+							'title' => 'Add Loa Item',
+							'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
+							'complete' => 'closeModalbox()'
+							),
+						null,
+						false
+						);
+		?>
 	<?php if (!empty($loa['LoaItem'])):?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
@@ -72,24 +84,6 @@ $this->set('clientId', $this->data['Client']['clientId']);
 	<?php endforeach; ?>
 	</table>
 <?php endif; ?>
-<div class="actions">
-	<ul>
-		
-		<li>
-		<?php
-		echo $html->link('Add new LOA item',
-						'/loas/'.$loa['Loa']['loaId'].'/loa_items/add',
-						array(
-							'title' => 'Add Loa Item',
-							'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
-							'complete' => 'closeModalbox()'
-							),
-						null,
-						false
-						);
-		?></li>
-	</ul>
-</div>
 </div>
 </div>
 
