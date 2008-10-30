@@ -1,7 +1,8 @@
 /* $Id$ */
-
+@import url("cake.generic.css");
 @import url("layout-liquid.css");
 @import url("modalbox.css");
+@import url("typography.css");
 
 #header {
 	background: #a10d03 url(../img/header_bg.gif) top repeat-x;
@@ -11,66 +12,22 @@
 	position: absolute;
 }
 #history-bar {
-	line-height: 27px;
 	padding: 0 10px;
-	font-size: 11px;
-}
-#history-bar a {
-	background: none;
-	color: #fff;
-	font-weight: normal;
 }
 #page {
 	background: #fff;
-}
-#recent-items-list {
-	border-bottom: 1px solid #d99e00;
-	color: #999;
-	font-weight: bold;
-	height: 25px;
-	line-height: 25px;
-}
-#recent-items-list ul {
-	list-style: none;
-}
-.italicize {
-	font-style: italic;
-}
-.lightBlackTextSmall {
-	color: #333;
-	font-size: 85%;
-}
-.grayTextSmall {
-	color: #999;
-	font-size: 90%;
 }
 div.title-header {
 	position: relative;
 	margin: 20px;
 }
-
-div.title-header h1 {
-	font-size: 18px;
-	color: #7f0000;
-	font-family: Tahoma;
-	font-weight: bold;
-}
-
 div.title-header div.buttons {
 	position: absolute;
 	top: 0;
 	right: 10px;
 }
-#content-area h1,
-#content-area h2,
-#content-area h3 {
-	font-family: Tahoma;
-	font-weight: bold;
-}
 #content-area h2 {
-	color: #d99e00;
 	border-bottom: 1px dotted #b1b1b1;
-	font-size: 15px;
 	padding: 5px;
 }
 .sidebar-left #content {
@@ -87,41 +44,6 @@ div.title-header div.buttons {
 #sidebar-left li:before {
 	content: '+';
 }
-div#breadcrumbs {
-	overflow:hidden;
-	margin:0;
-	padding:0;
-	height:30px;
-	line-height:30px;
-	color:#888888;
-	border-bottom:1px solid #eee;
-}
-
-div#breadcrumbs a,
-div#breadcrumbs a:visited,
-div#breadcrumbs em,
-div#breadcrumbs span {
-	float:left;
-	overflow:hidden;
-	height:30px;
-	padding:0 5px;
-	font-style:normal;
-	text-decoration: none;
-	color: #027AC6;
-}
-div#breadcrumbs a:hover {
-	color: #900;
-}
-div#breadcrumbs span {
-	background:url(../img/bg-breadcrumb.png) no-repeat left center;
-	overflow:hidden;
-	padding:0 0 0 10px;
-	width:0px;
-
-	filter:alpha(opacity=40);
-	opacity:0.4;
-}
-
 h2 {
 	margin: 0 0 10px 0;
 	padding: 0;
