@@ -125,7 +125,8 @@ class PackagesController extends AppController {
 		if (!empty($this->data)) {
 			$this->Package->create();
 			if ($this->Package->save($this->data)) {
-				$this->addPackageOfferTypeDefFieldRel();
+				$packageId = $this->Package->getLastInsertID();
+				$this->addPackageOfferTypeDefFieldRel($packageId);
 				$this->Session->setFlash(__('The Package has been saved', true));
 				$this->redirect(array('action'=>'index'));
 			} else {
@@ -171,14 +172,14 @@ class PackagesController extends AppController {
 		$this->set('currencyIds', ($currencyIds));
 	}
 
-	function addPackageOfferTypeDefFieldRel() {
+	function addPackageOfferTypeDefFieldRel($packageId = null) {
 		// this function setups up new offer type default values
 		$packageData = $this->Package->read(null);
 		$formatIds = $this->data['Format']['Format'];
 		$offerTypes = $this->Package->Format->OfferType->find('all');
 		
 		$relData = array();
-		$relData['PackageOfferTypeDefFieldRel']['packageId'] = $this->data['Package']['packageId'];
+		$relData['PackageOfferTypeDefFieldRel']['packageId'] = ($packageId) ? $packageId : $this->data['Package']['packageId'];
 		
 		// delete all existing package to offer type default fields relation
 		$this->Package->PackageOfferTypeDefFieldRel->deleteAll(array('packageId' => $this->data['Package']['packageId']));

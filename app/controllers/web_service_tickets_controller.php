@@ -6,108 +6,106 @@ Configure::write('debug', 0);
 class WebServiceTicketsController extends WebServicesController
 {
 	var $name = 'WebServiceTickets';
-	var $uses = array('ticket','user');
+	var $uses = array('ticket', 'user', 'offer', 'bid');
 	var $serviceUrl = 'http://192.168.100.111/web_service_tickets';
-	var $errorResponse = 0;
-	var $debugResponse = '';
+	var $debugResponse = false;
+	var $errorResponse = false;
 	var $api = array(
-					'requestProcessor1' => array(
-						'doc' => 'Receive New Fixed Price',
+					'newTicketProcessor1' => array(
+						'doc' => 'Receive new requests or winning bids from the ESB and create a new ticket',
 						'input' => array('in0' => 'xsd:string'),
 						'output' => array('return' => 'xsd:string')
-						),
+						)
 					);
 
-	function requestProcessor1($in0)
+	function newTicketProcessor1($in0)
 	{
-		// all transmission via ESB is json encoded
-		$request = json_decode($in0, true);
-		$error = false;
-
-		// these three variables are required so we can create the ticket
-		if (!isset($request['requestId']) || !is_int($request['requestId'])) {
-			$this->errorResponse = 901;
-		} 		
-		if (!isset($request['userId']) || !is_int($request['userId'])) {
-			$this->errorResponse = 902;
-		} 
-		if (!isset($request['offerId']) || !is_int($request['offerId'])) {
-			$this->errorResponse = 903;
-		} 
-		if (!isset($request['formatId']) || !is_int($request['formatId'])) {
-			$this->errorResponse = 904;
-		} 
-		
-		// there was an error so let's respond to the soap call with an error response 0 and init handleError()
-		if ($error) {
-			$request['response'] = $this->errorResponse;
-			return json_encode($request);	
-		} 
-
-		// use the request data to attempt in creating a new ticket
-		if ($this->createNewTicket($request)) {
-			$request['response'] = 1;	
-			
+		$json_decoded = json_decode($in0, true);
+		$this->errorResponse = false;
+		if ($this->createNewTicket($json_decoded)) {
+			$json_decoded['response'] = 1;
 		} else {
-			$request['response'] = $this->errorResponse;
+			$json_decoded['response'] = $this->errorResponse;
 		}
-		
-		return json_encode($request);
+		/*
+		if ($this->debugResponse) {
+			return $this->debugResponse;
+		}
+		*/
+		return json_encode($json_decoded);
 	}
 	
-	function handleError($errorCode) {
-		
-	}
-	
-	function createNewTicket($request) {
-		if (empty($request) || !is_array($request)) {
+	function createNewTicket($data) {
+		if (empty($data) || !is_array($data)) {
 			$this->errorResponse = 905;
+			return false;	
+		}
+		if (!isset($data['userId']) || empty($data['userId'])) {
+			$this->errorResponse = 906;
+			return false;	
+		}
+		if (!isset($data['offerId']) || empty($data['offerId'])) {
+			$this->errorResponse = 907;
 			return false;	
 		}
 		
 		$user = new User();
-		$userData = $user->read(null, $request['userId']);
+		$userData = $user->read(null, $data['userId']);
 		
-		$ticket = new Ticket();
+		$offer = new Offer();
+		$offer->recursive = -1;
+		$offerData = $offer->read(null, $data['offerId']);
+		$offerTypeToFormat = $offer->query("SELECT formatId FROM formatOfferTypeRel WHERE offerTypeId = " . $offerData['Offer']['offerTypeId']);
+		$formatId = $offerTypeToFormat[0]['formatOfferTypeRel']['formatId'];
 		
+		if (isset($data['bidId']) && !empty($data['bidId'])) {
+			$bid = new Bid();
+			$bid->recursive = -1;
+			$bidData = $bid->read(null, $data['bidId']);	
+		}
+	
 		$newTicket = array();
-		$newTicket['Ticket']['ticketStatusId'] 			= 1;
-		$newTicket['Ticket']['packageId'] 				= $request['packageId'];
-		$newTicket['Ticket']['offerId'] 				= $request['offerId'];
-		$newTicket['Ticket']['offerTypeId'] 			= $request['offerTypeId'];
-		$newTicket['Ticket']['formatId'] 				= $request['formatId'];
-		$newTicket['Ticket']['bookingPrice'] 			= $request['bookingPrice'];
-		$newTicket['Ticket']['ticketCreated'] 			= date('Y-m-d H:i:s');
+		$newTicket['Ticket']['ticketStatusId'] 			 = 1;
+		$newTicket['Ticket']['packageId'] 				 = $data['packageId'];
+		$newTicket['Ticket']['offerId'] 				 = $data['offerId'];  
+		$newTicket['Ticket']['offerTypeId'] 			 = $offerData['Offer']['offerTypeId'];
+		$newTicket['Ticket']['formatId'] 				 = $formatId;
+		$newTicket['Ticket']['ticketCreated'] 			 = date('Y-m-d H:i:s');
 		
-		if ($request['formatId'] == 2) {
-			$newTicket['Ticket']['requestId']     		= $request['requestId'];
-			$newTicket['Ticket']['requestDate'] 		= $request['requestDate'];
-			$newTicket['Ticket']['requestArrival'] 		= $request['requestArrival'];
-			$newTicket['Ticket']['requestDeparture']	= $request['requestDeparture'];
-			$newTicket['Ticket']['requestNumGuests']	= $request['requestNumGuests'];
-			$newTicket['Ticket']['requestNotes']		= $request['requestNotes'];
-		} else {
-			$newTicket['Ticket']['bidId'] 				= $request['bidId'];
+		if (isset($data['requestQueueId'])) {
+			$newTicket['Ticket']['requestQueueId']     	 = $data['requestQueueId'];
+			$newTicket['Ticket']['requestQueueDatetime'] = $data['requestQueueDatetime'];
+			$newTicket['Ticket']['requestArrival'] 		 = $data['requestArrivalDate'];
+			$newTicket['Ticket']['requestDeparture']	 = $data['requestDepartureDate'];
+			$newTicket['Ticket']['requestNumGuests']	 = $data['requestNumGuests'];
+			$newTicket['Ticket']['requestNotes']		 = $data['requestNotes'];
+			$newTicket['Ticket']['bookingPrice'] 		 = $data['requestAmount'];
+		} elseif (isset($data['bidId'])) {
+			$newTicket['Ticket']['winningBidQueueId'] 	 = $data['winningBidQueueId'];
+			$newTicket['Ticket']['bidId'] 				 = $data['bidId'];
+			$newTicket['Ticket']['bookingPrice'] 		 = $bidData['Bid']['bidAmount'];
 		}
 		
-		$newTicket['Ticket']['userId'] 					= $userData['User']['userId'];
-		$newTicket['Ticket']['userFirstName'] 			= $userData['User']['firstName'];
-		$newTicket['Ticket']['userLastName'] 			= $userData['User']['lastName'];
-		$newTicket['Ticket']['userEmail1']				= $userData['User']['email'];
-		$newTicket['Ticket']['userWorkPhone']			= $userData['User']['workPhone'];
-		$newTicket['Ticket']['userHomePhone']			= $userData['User']['homePhone'];
-		$newTicket['Ticket']['userMobilePhone']			= $userData['User']['mobilePhone'];
-		$newTicket['Ticket']['userFax'] 				= $userData['User']['fax'];
-		$newTicket['Ticket']['userAddress1']			= $userData['Address'][0]['address1'];
-		$newTicket['Ticket']['userAddress2']			= $userData['Address'][0]['address2'];
-		$newTicket['Ticket']['userAddress3']			= $userData['Address'][0]['address3'];
-		$newTicket['Ticket']['userCity']				= $userData['Address'][0]['city'];
-		$newTicket['Ticket']['userState']				= $userData['Address'][0]['stateName'];
-		$newTicket['Ticket']['userCountry']				= $userData['Address'][0]['countryName'];
-		$newTicket['Ticket']['userZip']					= $userData['Address'][0]['postalCode'];
-		
-		$this->debugResponse = $newTicket;
-		
+		$newTicket['Ticket']['userId'] 					 = $userData['User']['userId'];
+		$newTicket['Ticket']['userFirstName'] 			 = $userData['User']['firstName'];
+		$newTicket['Ticket']['userLastName'] 			 = $userData['User']['lastName'];
+		$newTicket['Ticket']['userEmail1']				 = $userData['User']['email'];
+		$newTicket['Ticket']['userWorkPhone']			 = $userData['User']['workPhone'];
+		$newTicket['Ticket']['userHomePhone']			 = $userData['User']['homePhone'];
+		$newTicket['Ticket']['userMobilePhone']			 = $userData['User']['mobilePhone'];
+		$newTicket['Ticket']['userFax'] 				 = $userData['User']['fax'];
+		$newTicket['Ticket']['userAddress1']			 = $userData['Address'][0]['address1'];
+		$newTicket['Ticket']['userAddress2']			 = $userData['Address'][0]['address2'];
+		$newTicket['Ticket']['userAddress3']			 = $userData['Address'][0]['address3'];
+		$newTicket['Ticket']['userCity']				 = $userData['Address'][0]['city'];
+		$newTicket['Ticket']['userState']				 = $userData['Address'][0]['stateName'];
+		$newTicket['Ticket']['userCountry']				 = $userData['Address'][0]['countryName'];
+		$newTicket['Ticket']['userZip']					 = $userData['Address'][0]['postalCode'];
+	
+		//$this->debugResponse = print_r($newTicket, true);
+		//return false;
+			
+		$ticket = new Ticket();
 		$ticket->create();
 		if ($ticket->save($newTicket)) {
 			return true;	

@@ -3,7 +3,7 @@ class PackageValidityPeriodsController extends AppController {
 
 	var $name = 'PackageValidityPeriods';
 	var $helpers = array('Html', 'Form');
-	var $uses = array('package');
+	//var $uses = array('package');
 
 	function index() {
 		$this->PackageValidityPeriod->recursive = 0;
@@ -20,8 +20,9 @@ class PackageValidityPeriodsController extends AppController {
 
 	function add() {
 		if (!empty($this->data)) {
-			if ($this->PackageValidityPeriod->save($this->data)) {
-				$this->cleanDateRange();
+			/*if ($this->PackageValidityPeriod->save($this->data)) {*/
+			if ($this->addNewDateRange()) {
+				//$this->cleanDateRange();
 				$this->Session->setFlash(__('The PackageValidityPeriod has been saved', true));
 				$this->redirect(array('controller' => 'packages', 'action'=>'view', 'id' => $this->params['data']['PackageValidityPeriod']['packageId']));
 			} else {
@@ -37,8 +38,9 @@ class PackageValidityPeriodsController extends AppController {
 			$this->redirect(array('action'=>'index'));
 		}
 		if (!empty($this->data)) {
-			if ($this->PackageValidityPeriod->save($this->data)) {
-				$this->cleanDateRange();
+			/*if ($this->PackageValidityPeriod->save($this->data)) {*/
+			if ($this->addNewDateRange()) {
+				//$this->cleanDateRange();
 				$this->Session->setFlash(__('The PackageValidityPeriod has been saved', true));
 				$this->redirect(array('controller' => 'packages', 'action'=>'view', 'id' => $this->params['data']['PackageValidityPeriod']['packageId']));
 			} else {
@@ -56,6 +58,7 @@ class PackageValidityPeriodsController extends AppController {
 			return false;	
 		}
 		
+		// retrieve all package info
 		$package = new Package();
 		$packageData = $package->read(null, $packageId);
 		$packageValidityStartDate = strtotime($packageData['Package']['validityStartDate']);
@@ -102,6 +105,7 @@ class PackageValidityPeriodsController extends AppController {
 	
 	
 	function addNewDateRange() {
+
 		// get new date range that is added, edited, or deleted		
 		$newStartTs = strtotime($this->data['PackageValidityPeriod']['startDate']['year'] . '-' . $this->data['PackageValidityPeriod']['startDate']['month'] . '-' . $this->data['PackageValidityPeriod']['startDate']['day']);
 		$newEndTs = strtotime($this->data['PackageValidityPeriod']['endDate']['year'] . '-' . $this->data['PackageValidityPeriod']['endDate']['month'] . '-' . $this->data['PackageValidityPeriod']['endDate']['day']);
@@ -111,21 +115,18 @@ class PackageValidityPeriodsController extends AppController {
 		$packageId = $this->data['PackageValidityPeriod']['packageId'];
 		$packageValidityPeriods = $this->PackageValidityPeriod->findAllBypackageid($packageId);
 		
-		/*
+		
 		// if there are no pvp's, then just add a new one
 		if (!$packageValidityPeriods) {
 			$this->PackageValidityPeriod->create();
 			$this->PackageValidityPeriod->save($this->data);	
 			$this->Session->setFlash(__('The Package Blackout / Validity date range has been added', true));
 			return true;
-		}*/
+		}
 		
 		// carve necessary periods and insert new periods
 		$insertData = array();
 		$insertData['packageId'] = $packageId;
-		
-		print_r($packageValidityPeriods);
-		return false;
 		
 		foreach ($packageValidityPeriods as $pvp) {
 			$pvpStartTs = strtotime($pvp['PackageValidityPeriod']['startDate']);
@@ -152,9 +153,12 @@ class PackageValidityPeriodsController extends AppController {
 					$this->PackageValidityPeriod->save($insertData);
 				}
 				return true;
-			}
+			} 
 		}
-		return false;
+		$this->PackageValidityPeriod->create();
+		$this->PackageValidityPeriod->save($this->data);	
+		$this->Session->setFlash(__('The Package Blackout / Validity date range has been added', true));
+		return true;
 	}
 
 	function carveDatesTs($data, $newStart, $newEnd) {
