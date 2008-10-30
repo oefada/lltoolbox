@@ -9,7 +9,9 @@ class Html2Helper extends HtmlHelper
 	function c($num = 0, $prepend = '', $append = '') {
 		if(is_array($num))
 			$num = count($num);
-
+		if(!isset($num))
+			$num = 0;
+			
 		$out = '<span class="inline-counter"><span class="p">(</span>';
 		if($prepend)
 			$out .= $prepend.' ';
