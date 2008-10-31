@@ -5,7 +5,7 @@ class SchedulingInstance extends AppModel {
 	var $useTable = 'schedulingInstance';
 	var $primaryKey = 'schedulingInstanceId';
 	
-	//var $belongsTo = array('SchedulingMaster' => array('foreignKey' => 'schedulingMasterId'));
+	var $belongsTo = array('SchedulingMaster' => array('foreignKey' => 'schedulingMasterId'));
 	var $hasOne = array('Offer' => array('foreignKey' => 'schedulingInstanceId'));
 }
 ?>
