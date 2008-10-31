@@ -8,7 +8,6 @@ class WebServiceTicketsController extends WebServicesController
 	var $name = 'WebServiceTickets';
 	var $uses = array('ticket', 'user', 'offer', 'bid');
 	var $serviceUrl = 'http://192.168.100.111/web_service_tickets';
-	var $debugResponse = false;
 	var $errorResponse = false;
 	var $api = array(
 					'newTicketProcessor1' => array(
@@ -22,16 +21,9 @@ class WebServiceTicketsController extends WebServicesController
 	{
 		$json_decoded = json_decode($in0, true);
 		$this->errorResponse = false;
-		if ($this->createNewTicket($json_decoded)) {
-			$json_decoded['response'] = 1;
-		} else {
+		if (!$this->createNewTicket($json_decoded)) {
 			$json_decoded['response'] = $this->errorResponse;
-		}
-		/*
-		if ($this->debugResponse) {
-			return $this->debugResponse;
-		}
-		*/
+		} 
 		return json_encode($json_decoded);
 	}
 	
@@ -53,7 +45,7 @@ class WebServiceTicketsController extends WebServicesController
 		$userData = $user->read(null, $data['userId']);
 		
 		$offer = new Offer();
-		$offer->recursive = -1;
+		$offer->recursive = 2;
 		$offerData = $offer->read(null, $data['offerId']);
 		$offerTypeToFormat = $offer->query("SELECT formatId FROM formatOfferTypeRel WHERE offerTypeId = " . $offerData['Offer']['offerTypeId']);
 		$formatId = $offerTypeToFormat[0]['formatOfferTypeRel']['formatId'];
@@ -79,7 +71,7 @@ class WebServiceTicketsController extends WebServicesController
 			$newTicket['Ticket']['requestDeparture']	 = $data['requestDepartureDate'];
 			$newTicket['Ticket']['requestNumGuests']	 = $data['requestNumGuests'];
 			$newTicket['Ticket']['requestNotes']		 = $data['requestNotes'];
-			$newTicket['Ticket']['bookingPrice'] 		 = $data['requestAmount'];
+			$newTicket['Ticket']['bookingPrice'] 		 = $offerData['SchedulingInstance']['SchedulingMaster']['buyNowPrice'];
 		} elseif (isset($data['bidId'])) {
 			$newTicket['Ticket']['winningBidQueueId'] 	 = $data['winningBidQueueId'];
 			$newTicket['Ticket']['bidId'] 				 = $data['bidId'];
@@ -102,9 +94,6 @@ class WebServiceTicketsController extends WebServicesController
 		$newTicket['Ticket']['userCountry']				 = $userData['Address'][0]['countryName'];
 		$newTicket['Ticket']['userZip']					 = $userData['Address'][0]['postalCode'];
 	
-		//$this->debugResponse = print_r($newTicket, true);
-		//return false;
-			
 		$ticket = new Ticket();
 		$ticket->create();
 		if ($ticket->save($newTicket)) {
