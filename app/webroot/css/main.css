@@ -442,13 +442,21 @@ legend.collapsible-closed  {
 }
 
 /* @end Collapsibles */
-
 #spinner {
-	position: absolute;
-	left: 45%;
-	top: 0;
+	position:fixed;
+	top:45%;
+	left:45%;
+	background: #ffc;
+	border:  1px solid #ccc;
+	padding: 10px;
+	line-height: 20px;
+	opacity: 0.8;
+	-moz-opacity: 0.8;
+	font-weight: bold;
 }
-
+#spinner img {
+	margin-right: 10px;
+}
 #loader {
 	position: absolute;
 	left: 40%;

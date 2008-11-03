@@ -104,7 +104,7 @@
       <div id="content"><div id="content-inner">
           <div id="content-header">
 			<div id='loader' style='display: none; text-align: center;'><?=$html->image('ajax-loader.gif')?></div>
-			<div id='spinner' style='display: none; text-align: center;'><?=$html->image('spinner.gif')?></div>
+			<div id='spinner' style='display: none;'><?=$html->image('spinner_small.gif', array('align' => 'top'))?> Loading...</div>
 			<?php if(false)://$html->getCrumbs()): ?>
 			<div id="breadcrumbs"><?= $html->getCrumbs("<span></span>", "Dashboard"); ?></div>
 			<?php endif; ?>

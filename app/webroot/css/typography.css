@@ -107,3 +107,5 @@ h2 .inline-counter .p {
 }
 /* @end */
 /* @end */
+del{background:#FFDDDD;padding:2px;border:1px solid #CC0000;}
+ins{background:#DDFFDD;padding:2px;border:1px solid #00AA00;text-decoration:none}
