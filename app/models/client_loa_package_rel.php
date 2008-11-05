@@ -6,7 +6,8 @@ class ClientLoaPackageRel extends AppModel {
 	var $primaryKey = 'clientLoaPackageRelId';
 	
 	var $belongsTo = array('Package' => array('foreignKey' => 'packageId'),
-						   'Loa' => array('foreignKey' => 'loaId')
+						   'Loa' => array('foreignKey' => 'loaId'),
+						   'Client' => array('foreignKey' => 'clientId')
 						   );
 }
 ?>

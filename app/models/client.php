@@ -6,6 +6,7 @@ class Client extends AppModel {
 	var $primaryKey = 'clientId';
 	var $displayField = 'name';
 	var $order = array('Client.name');
+	var $actsAs = array('Diffable');
 	
 	var $validate = array(
 				'name' => array(
@@ -27,7 +28,8 @@ class Client extends AppModel {
 					 
 	var $hasMany = array('Loa' => array('foreignKey' => 'clientId'),
 					     'Address' => array('foreignKey' => 'clientId'),
-						 'Accolade' => array('foreignKey' => 'clientId')
+						 'Accolade' => array('foreignKey' => 'clientId'),
+						 'Audit' => array('foreignKey' => 'foreignId', 'conditions' => array('Audit.class' => 'Client'), 'limit' => 5, 'order' => 'Audit.created DESC')
 						);
 	
     var $hasAndBelongsToMany = array(

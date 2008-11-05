@@ -90,6 +90,23 @@ class LoasController extends AppController {
 			$this->redirect("/clients/$clientId/loas");
 		}
 	}
+	
+	/*
+	 * Finds an LOA by id and gets the expiration date
+	 * Mainly used as an ajax call from the package interface
+	 * @params $loaId the id of the loa to find the expiration date of
+	 * @returns the expiration date
+	 */
+	function getExpiration($loaId = null) {
+		$this->autoRender = false;
+		
+		if(!empty($this->data['ClientLoaPackageRel']) && null === $loaId) {
+			$clientLoaPackageRel = array_pop($this->data['ClientLoaPackageRel']);
+			$loaId = $clientLoaPackageRel['loaId'];
+		}
+		$loa = $this->Loa->findByLoaId($loaId);
 
+		return $loa['Loa']['endDate'];
+	}
 }
 ?>

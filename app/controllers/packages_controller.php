@@ -3,6 +3,7 @@ class PackagesController extends AppController {
 
 	var $name = 'Packages';
 	var $helpers = array('Html', 'Form');
+	var $uses = array('Package', 'Client');
 
 	function index() {
 		$this->Package->recursive = 0;
@@ -121,10 +122,15 @@ class PackagesController extends AppController {
 		$this->redirect(array('controller' => 'Packages', 'action'=>'view', 'id' => $packageData['Package']['packageId']));
 	}
 
-	function add() {
-		if (!empty($this->data)) {
+	function add($clientId = null) {
+		$this->set('clientId', $clientId);
+		$this->set('currentTab', 'property');
+
+		if (!empty($this->data) && isset($this->data['Package']['complete'])) {
 			$this->Package->create();
-			if ($this->Package->save($this->data)) {
+			//the first saveAll saves packages and all associated date
+			//the second save saves the HABTM format relationships
+			if ($this->Package->saveAll($this->data) && $this->Package->save($this->data)) {
 				$packageId = $this->Package->getLastInsertID();
 				$this->addPackageOfferTypeDefFieldRel($packageId);
 				$this->Session->setFlash(__('The Package has been saved', true));
@@ -134,6 +140,18 @@ class PackagesController extends AppController {
 			}
 		}
 		
+		if(!empty($this->data)):
+			$this->data['ClientLoaPackageRel'] = array_merge($this->data['ClientLoaPackageRel'], array());
+			foreach($this->data['ClientLoaPackageRel'] as $key => $clientLoaPackageRel):
+				$clientLoaDetails[$key] = $this->Client->Loa->findByClientId($clientLoaPackageRel['clientId']);
+				$clientLoaDetails[$key]['ClientLoaPackageRel'] = $clientLoaPackageRel;
+			endforeach;
+			
+			$this->set('clientLoaDetails', $clientLoaDetails);
+		endif;
+		$client = $this->Client->findByClientId($clientId);
+		$this->set('client', $client);
+		
 		$formats = $this->Package->Format->find('list');
 		$this->set('formats', $formats);
 		
@@ -142,6 +160,57 @@ class PackagesController extends AppController {
 		
 		$currencyIds = $this->Package->Currency->find('list');
 		$this->set('currencyIds', ($currencyIds));
+		
+		if(empty($this->data)) {
+			$clients[0] = $this->Client->findByClientId($clientId);
+			$loaIds = $this->Package->ClientLoaPackageRel->Loa->find('list', array('conditions' => array('Loa.clientId' => $clientId)));
+			$loaIds = array($loaIds);
+			$this->set('clients', $clients);
+			$this->set('loaIds', $loaIds);
+			$this->render('add_step_1');
+		} else {
+			$percentSum = 0;
+			$loaIds = array(); //need to reset the array declared before this if/else
+			
+			//this re-numbers the array so we have a continuous array, since people can add/remove items on the list
+			$this->data['ClientLoaPackageRel'] = array_merge($this->data['ClientLoaPackageRel'], array());
+			
+			if(count($this->data['ClientLoaPackageRel']) == 1) {
+				$this->data['ClientLoaPackageRel'][0]['percentOfRevenue'] = 100;
+			}
+			
+			foreach($this->data['ClientLoaPackageRel'] as $clientLoaPackageRel):
+				$clients[] = $this->Client->findByClientId($clientLoaPackageRel['clientId']);
+				$loaIds[] = $this->Client->Loa->find('list', array('conditions' => array('Loa.clientId' => $clientLoaPackageRel['clientId'])));
+				$percentSum += $clientLoaPackageRel['percentOfRevenue'];
+			endforeach;
+			
+			if (100 != $percentSum):
+				$this->Session->setFlash("Total percent of revenue ({$percentSum}%) must add up to 100%");
+				$this->set('clients', $clients);
+				$this->set(compact('loaIds'));
+				$this->render('add_step_1');
+			endif;
+		}
+	}
+	
+	function fetchMultipleClientsFormFragment($clientId = null) {
+		$this->set('rowId', $this->params['named']['rowId']);
+		$this->set('clientId', $clientId);
+		
+		$client = $this->Client->findByClientId($clientId);
+		$this->set('client', $client);
+		
+		$loaIds = $this->Client->Loa->find('list', array('conditions' => array('Loa.clientId' => $clientId)));
+		$this->set(compact('loaIds'));
+		
+		$this->render('_add_step_1_fields');
+	}
+	
+	function selectAdditionalClient() {
+		$this->params['form']['rowId'] = $this->params['named']['rowId'];
+		$this->set('rowId', $this->params['named']['rowId']);
+		$this->set('clients', $this->paginate('Client'));
 	}
 
 	function edit($id = null) {
@@ -151,6 +220,7 @@ class PackagesController extends AppController {
 		}
 		if (!empty($this->data)) {
 			if ($this->Package->save($this->data)) {
+
 				$this->addPackageOfferTypeDefFieldRel();
 				$this->Session->setFlash(__('The Package has been saved', true));
 				$this->redirect(array('action'=>'index'));
@@ -176,22 +246,27 @@ class PackagesController extends AppController {
 		// this function setups up new offer type default values
 		$packageData = $this->Package->read(null);
 		$formatIds = $this->data['Format']['Format'];
+		if(empty($formatIds)) {
+			return;
+		}
 		$offerTypes = $this->Package->Format->OfferType->find('all');
-		
+
 		$relData = array();
 		$relData['PackageOfferTypeDefFieldRel']['packageId'] = ($packageId) ? $packageId : $this->data['Package']['packageId'];
 		
 		// delete all existing package to offer type default fields relation
-		$this->Package->PackageOfferTypeDefFieldRel->deleteAll(array('packageId' => $this->data['Package']['packageId']));
+		$this->Package->PackageOfferTypeDefFieldRel->deleteAll(array('packageId' => $packageId));
 
 		// for all the offer types and associated package formats, create new default value rows w/ 0.00
 		foreach ($offerTypes as $type) {
 			$relData['PackageOfferTypeDefFieldRel']['offerTypeId'] = $type['OfferType']['offerTypeId'];
+
 			if (in_array($type['Format'][0]['formatId'], $formatIds)) {
 				foreach ($type['OfferTypeDefField'] as $typeDefField) {
 					$relData['PackageOfferTypeDefFieldRel']['offerTypeDefFieldId'] = $typeDefField['offerTypeDefFieldId'];
 					$relData['PackageOfferTypeDefFieldRel']['defValue'] = 0.00;
 					$this->Package->PackageOfferTypeDefFieldRel->create();
+
 					$this->Package->PackageOfferTypeDefFieldRel->save($relData);
 				}
 			} 
@@ -237,6 +312,23 @@ class PackagesController extends AppController {
 			$this->Session->setFlash(__('Package deleted', true));
 			$this->redirect(array('action'=>'index'));
 		}
+	}
+	
+	function addBlackoutPeriodRow() {
+		$this->autoRender = false;
+		$this->data['PackageValidityPeriod'][] = array();
+		
+		$this->render('_step_3_blackout_periods');
+	}
+	
+	function removeBlackoutPeriodRow($row) {
+		$this->autoRender = false;
+		
+		unset($this->data['PackageValidityPeriod'][$row]);
+		
+		$this->data['PackageValidityPeriod'] = array_merge($this->data['PackageValidityPeriod'], array());
+		
+		$this->render('_step_3_blackout_periods');
 	}
 
 }

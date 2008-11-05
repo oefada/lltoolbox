@@ -12,7 +12,8 @@ class Package extends AppModel {
 	var $hasMany = array('PackageValidityPeriod' => array('foreignKey' => 'packageId'),
 						 'PackageOfferTypeDefFieldRel' => array('foreignKey' => 'packageId'),
 						 'PackageLoaItemRel' => array('foreignKey' => 'packageId'),
-						 'PackagePromo' => array('foreignKey' => 'packageId')
+						 'PackagePromo' => array('foreignKey' => 'packageId'),
+						 'ClientLoaPackageRel' => array('foreignKey' => 'packageId')
 						);
 	
 	var $hasAndBelongsToMany = array(
