@@ -11,7 +11,8 @@ var cd = {
 		
 		for(var i = 0; i < cd.fieldsetCollapsibleContent.length; i++) {
 			//only collapse if no error message is contained within
-			if(!$(cd.fieldsetCollapsibleContent[i]).down('.error-message')) {
+			if (!$(cd.fieldsetCollapsibleContent[i]).hasClassName('disableAutoCollapse') &&
+				!$(cd.fieldsetCollapsibleContent[i]).down('.error-message')) {
 				cd.fieldsetCollapsibleContent[i].hide();
 				Element.addClassName(cd.fieldsetCollapsibleContent[i],'closed');
 			}
@@ -19,7 +20,9 @@ var cd = {
 		
 		for(var i = 0; i < cd.fieldsetHandles.length; i++) {
 			//only collapse if no error message is contained within
-			if(!$(cd.fieldsetHandles[i]).up().next('.collapsibleContent').down('.error-message')) {
+			if($(cd.fieldsetHandles[i]).next('.collapsibleContent') &&
+				!$(cd.fieldsetHandles[i]).next('.collapsibleContent').hasClassName('disableAutoCollapse') &&
+				!$(cd.fieldsetHandles[i]).next('.collapsibleContent').down('.error-message')) {
 				Element.removeClassName(cd.fieldsetHandles[i].up(), 'collapsible');
 				Element.addClassName(cd.fieldsetHandles[i].up(), 'collapsible-closed');
 			}
@@ -42,9 +45,9 @@ var cd = {
 		return e.srcElement;
 	},
 	collapse : function(e) {
-		var el = Element.up(cd.getEventSrc(e)).next('div.collapsibleContent');
+		var el = cd.getEventSrc(e).next('div.collapsibleContent');
 
-		if ( Element.hasClassName(el,'closed') ) {
+		if (el && Element.hasClassName(el,'closed') ) {
 			new Effect.Parallel(
 				[
 					new Effect.BlindDown(el,{sync:true}),
@@ -58,7 +61,7 @@ var cd = {
 			Element.removeClassName(cd.getEventSrc(e).up(), 'collapsible-closed');
 			Element.addClassName(cd.getEventSrc(e).up(), 'collapsible');
 			Element.removeClassName(el,'closed');
-		} else {
+		} else if(el) {
 			new Effect.Parallel(
 				[
 					new Effect.BlindUp(el,{sync:true}),
