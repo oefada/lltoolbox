@@ -3,9 +3,8 @@ class TicketsController extends AppController {
 
 	var $name = 'Tickets';
 	var $helpers = array('Html', 'Form');
-
+	
 	function index() {
-		$this->Ticket->recursive = 0;
 		$this->set('tickets', $this->paginate());
 	}
 

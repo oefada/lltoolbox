@@ -30,7 +30,8 @@ class User extends AppModel {
 						 'UserPreference' => array('foreignKey' => 'userId'),
 						 'Bid' => array('foreignKey' => 'userId'),
 						 'Address' => array('foreignKey' => 'userId'),
-						 'UserAcquisitionSource' => array('foreignKey' => 'userAcquisitionSourceId')
+						 'UserAcquisitionSource' => array('foreignKey' => 'userAcquisitionSourceId'),
+						 'Ticket' => array('foreignKey' => 'userId')
 						);
 
 	var $hasAndBelongsToMany = array(

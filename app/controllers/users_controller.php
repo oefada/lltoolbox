@@ -30,6 +30,7 @@ class UsersController extends AppController {
 	}
 
 	function edit($id = null) {
+		$this->set('userId', $id);
 		if (!$id && empty($this->data)) {
 			$this->flash(__('Invalid User', true), array('action'=>'index'));
 		}
@@ -140,10 +141,36 @@ class UsersController extends AppController {
 	    return $password;
 	}
 	
+	function tickets($id) {
+		$this->autoRender = false;
+		$userTickets = $this->paginate('Ticket', array('Ticket.userId' => $id));
+		$this->set('tickets', $userTickets);
+		$this->render('../tickets/index');
+	}
 	
+	function bids($id) {
+		$this->autoRender = false;
+		$this->set('bids', $this->paginate('Bid', array('Bid.userId' => $id)));
+		$this->render('../bids/index');
+	}
+
 	function beforeFilter() {
 		parent::beforeFilter();
 		$this->set('currentTab', 'customers');
+		
+		$userId = $this->User->id;
+
+		if(!isset($id) && isset($this->params['pass'][0])){
+			$userId = $this->params['pass'][0];
+		}
+
+		$this->User->recursive = 1;
+		$user = $this->User->findByUserId($this->User->id);
+
+		$this->set('user', $user);
+		$this->set('userId', $this->User->id);
+		$this->set('numUserTickets', $this->User->Ticket->find('count', array('conditions' => array('Ticket.userId' => $userId))));
+		$this->set('numUserBids', $this->User->Bid->find('count', array('conditions' => array('Bid.userId' => $userId))));
 	}
 }
 ?>

@@ -7,7 +7,8 @@ class Ticket extends AppModel {
 	
 	var $belongsTo = array('TicketStatus' => array('foreignKey' => 'ticketStatusId'),
 						   'Package' => array('foreignKey' => 'packageId'),
-						   'Offer' => array('foreignKey' => 'offerId'));
+						   'Offer' => array('foreignKey' => 'offerId'),
+						   'User' => array('foreignKey' => 'userId'));
 	
 	var $hasMany = array('PaymentDetail' => array('foreignKey' => 'ticketId'),
 						 'PpvNotice' => array('foreignKey' => 'ticketId')

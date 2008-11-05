@@ -444,23 +444,24 @@ legend.collapsible-closed  {
 /* @end Collapsibles */
 #spinner {
 	position:fixed;
-	top:45%;
+	top:0;
 	left:45%;
 	background: #ffc;
-	border:  1px solid #ccc;
-	padding: 10px;
+	border: 1px solid #e5e5e5;
+	padding: 5px 10px;
 	line-height: 20px;
-	opacity: 0.8;
-	-moz-opacity: 0.8;
+	opacity: 0.9;
+	-moz-opacity: 0.9;
 	font-weight: bold;
+	z-index: 10001; /* Above modalbox */
 }
 #spinner img {
 	margin-right: 10px;
 }
 #loader {
-	position: absolute;
-	left: 40%;
-	top: 15px;
+	position: fixed;
+	top: 0;
+	left: 45%;
 }
 
 /* @group =search */

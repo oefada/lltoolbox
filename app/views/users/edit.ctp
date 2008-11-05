@@ -1,4 +1,4 @@
-<?php  $this->pageTitle = __('User', true);?>
+<?php  $this->pageTitle = $user['User']['firstName'].' '.$user['User']['lastName'].$html2->c($user['User']['userId'], 'User Id:');?>
 <div class="users form">
 <?php echo $form->create('User');?>
 <?php if ($user['User']['inactive']): ?>
@@ -163,49 +163,6 @@
 		</ul>
 	</div>
 	</div>
-</div>
-
-<div class="related">
-	<h3 class="collapsible"><span class="handle"><?php __('Related Bids');?></span> <?=$html2->c($user['Bid'])?></h3>
-	<div class="collapsibleContent">
-	<?php if (!empty($user['Bid'])):?>
-	<table cellpadding = "0" cellspacing = "0">
-	<tr>
-		<th><?php __('BidId'); ?></th>
-		<th><?php __('OfferId'); ?></th>
-		<th><?php __('Bid Date'); ?></th>
-		<th><?php __('Amount'); ?></th>
-		<th><?php __('Max Bid'); ?></th>
-		<th><?php __('Auto Rebid'); ?></th>
-		<th><?php __('Bid Inactive'); ?></th>
-		<th><?php __('Note'); ?></th>
-		<th class="actions"><?php __('Actions');?></th>
-	</tr>
-	<?php
-		$i = 0;
-		foreach ($user['Bid'] as $bid):
-			$class = null;
-			if ($i++ % 2 == 0) {
-				$class = ' class="altrow"';
-			}
-		?>
-		<tr<?php echo $class;?>>
-			<td><?php echo $bid['bidId'];?></td>
-			<td><?php echo $bid['offerId'];?></td>
-			<td><?php echo $bid['bidDateTime'];?></td>
-			<td><?php echo $bid['bidAmount'];?></td>
-			<td><?php echo $bid['maxBid'];?></td>
-			<td><?php echo $html->image($bid['autoRebid'] ? 'tick.png' : 'cross.png'); ?></td>
-			<td><?php echo $html->image($bid['bidInactive'] ? 'tick.png' : 'cross.png'); ?></td>
-			<td><?php echo $bid['note'];?></td>
-			<td class="actions">
-				<?php echo $html->link(__('Edit', true), array('controller'=> 'bids', 'action'=>'edit', $bid['bidId'])); ?>
-			</td>
-		</tr>
-	<?php endforeach; ?>
-	</table>
-<?php endif; ?>
-</div>
 </div>
 <div class="related">
 	<h3 class="collapsible"><span class="handle"><?php __('Related Contests');?> (<?=count($user['Contest'])?>)</span></h3>
