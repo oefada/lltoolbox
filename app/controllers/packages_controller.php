@@ -141,6 +141,13 @@ class PackagesController extends AppController {
 		}
 		
 		if(!empty($this->data)):
+		//this re-numbers the array so we have a continuous array, since people can add/remove items on the list
+			$this->data['ClientLoaPackageRel'] = array_merge($this->data['ClientLoaPackageRel'], array());
+		
+			if(count($this->data['ClientLoaPackageRel']) == 1) {
+				$this->data['ClientLoaPackageRel'][0]['percentOfRevenue'] = '100';
+			}
+			
 			$this->data['ClientLoaPackageRel'] = array_merge($this->data['ClientLoaPackageRel'], array());
 			foreach($this->data['ClientLoaPackageRel'] as $key => $clientLoaPackageRel):
 				$clientLoaDetails[$key] = $this->Client->Loa->findByClientId($clientLoaPackageRel['clientId']);
@@ -172,19 +179,13 @@ class PackagesController extends AppController {
 			$percentSum = 0;
 			$loaIds = array(); //need to reset the array declared before this if/else
 			
-			//this re-numbers the array so we have a continuous array, since people can add/remove items on the list
-			$this->data['ClientLoaPackageRel'] = array_merge($this->data['ClientLoaPackageRel'], array());
-			
-			if(count($this->data['ClientLoaPackageRel']) == 1) {
-				$this->data['ClientLoaPackageRel'][0]['percentOfRevenue'] = 100;
-			}
-			
 			foreach($this->data['ClientLoaPackageRel'] as $clientLoaPackageRel):
 				$clients[] = $this->Client->findByClientId($clientLoaPackageRel['clientId']);
 				$loaIds[] = $this->Client->Loa->find('list', array('conditions' => array('Loa.clientId' => $clientLoaPackageRel['clientId'])));
 				$percentSum += $clientLoaPackageRel['percentOfRevenue'];
 			endforeach;
 			
+			//if the percentages don't add up to 100%, re-display the first form
 			if (100 != $percentSum):
 				$this->Session->setFlash("Total percent of revenue ({$percentSum}%) must add up to 100%");
 				$this->set('clients', $clients);
