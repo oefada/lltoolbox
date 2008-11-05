@@ -143,12 +143,6 @@ class PackagesController extends AppController {
 		if(!empty($this->data)):
 		//this re-numbers the array so we have a continuous array, since people can add/remove items on the list
 			$this->data['ClientLoaPackageRel'] = array_merge($this->data['ClientLoaPackageRel'], array());
-		
-			if(count($this->data['ClientLoaPackageRel']) == 1) {
-				$this->data['ClientLoaPackageRel'][0]['percentOfRevenue'] = '100';
-			}
-			
-			$this->data['ClientLoaPackageRel'] = array_merge($this->data['ClientLoaPackageRel'], array());
 			foreach($this->data['ClientLoaPackageRel'] as $key => $clientLoaPackageRel):
 				$clientLoaDetails[$key] = $this->Client->Loa->findByClientId($clientLoaPackageRel['clientId']);
 				$clientLoaDetails[$key]['ClientLoaPackageRel'] = $clientLoaPackageRel;
@@ -178,6 +172,12 @@ class PackagesController extends AppController {
 		} else {
 			$percentSum = 0;
 			$loaIds = array(); //need to reset the array declared before this if/else
+			
+			$this->data['ClientLoaPackageRel'] = array_merge($this->data['ClientLoaPackageRel'], array());
+		
+			if(count($this->data['ClientLoaPackageRel']) == 1) {
+				$this->data['ClientLoaPackageRel'][0]['percentOfRevenue'] = '100';
+			}
 			
 			foreach($this->data['ClientLoaPackageRel'] as $clientLoaPackageRel):
 				$clients[] = $this->Client->findByClientId($clientLoaPackageRel['clientId']);

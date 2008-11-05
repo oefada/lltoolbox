@@ -2,9 +2,11 @@
 $this->pageTitle = $client['Client']['name'];
 ?>
 <?php echo $form->create('Package', array('url' => "/clients/$clientId/packages/add"));?>
+
 <fieldset class="collapsible">
 <legend class="handle">Step 1 - Select a LOA</legend>
-<div class="collapsibleContent disableAutoCollapse">
+
+<div id='step1Fields' class="collapsibleContent disableAutoCollapse">
 <?php 
 $rowId = 0;
 $showFirstPercentOfRevenue = false;
@@ -32,5 +34,16 @@ $rowId++;
 } while(isset($this->data['ClientLoaPackageRel'][$rowId]));
 ?>
 </div>
+
+<div id='addLink'>
+<?=$html->link($html->image('i-create.gif', array('align' => 'top', 'style' => 'padding-right: 5px;')).'Multi product Offers? Add more Clients',
+		    	"/packages/selectAdditionalClient",
+				array(
+					'title' => 'Select additional client',
+					'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
+					'complete' => 'closeModalbox()'),
+				null,false) ?>
+</div>
+
 </fieldset>
 <?php echo $form->end('Continue');?>

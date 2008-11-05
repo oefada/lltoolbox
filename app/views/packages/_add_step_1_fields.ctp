@@ -15,7 +15,7 @@
 <?php
 	echo $form->input('ClientLoaPackageRel.'.$rowId.'.percentOfRevenue');
 ?>
-	<?php if ($rowId == 0): ?>
+	<?php if ($rowId == 0 && !$showFirstPercentOfRevenue): ?>
 	</div>
 	<?php endif; ?>
 <script type="text/javascript">
@@ -26,18 +26,6 @@ array('url' => array( 'controller' => 'loas', 'action' => 'getExpiration', '\'+$
 ));
 ?>
 </script>
-</div>
-<? if(!isset($hideAddLink) || $hideAddLink != true): ?>
-<div id='addLink_<?=$rowId?>'>
-<?=$html->link($html->image('i-create.gif', array('align' => 'top', 'style' => 'padding-right: 5px;')).'Multi product Offers? Add more Clients',
-		    	"/packages/selectAdditionalClient/rowId:".$rowId,
-				array(
-					'title' => 'Select additional client',
-					'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
-					'complete' => 'closeModalbox()'),
-				null,false) ?>
-</div>
-<? endif; ?>
 <?php echo $ajax->observeField('ClientLoaPackageRel'.$rowId.'LoaId',
 							array('url' => array('controller' => 'loas', 'action' => 'getExpiration'),
 								'update' => 'loaExpirationDate'.$rowId,
@@ -45,3 +33,4 @@ array('url' => array( 'controller' => 'loas', 'action' => 'getExpiration', '\'+$
 								'indicator' => 'spinner')
 							);
 ?>
+</div>

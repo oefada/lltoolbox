@@ -34,11 +34,11 @@ foreach ($clients as $client):
 		</td>
 		<td class="actions">
 			<?php echo $ajax->link(__('Select', true),
-				array('action' => 'fetchMultipleClientsFormFragment', $client['Client']['clientId'], 'rowId' => $rowId+1),
-				array('update' => 'client_'.($rowId+1),
-					  'before' => '$("client_'.$rowId.'").insert({after: "<div id=\"client_'.($rowId+1).'\"></div>"})',
+				array('action' => 'fetchMultipleClientsFormFragment', $client['Client']['clientId'], 'rowId' => $client['Client']['clientId']),
+				array('update' => 'client_'.($client['Client']['clientId']),
+					  'before' => '$("step1Fields").insert({bottom: "<div id=\"client_'.($client['Client']['clientId']).'\"></div>"})',
 					  'indicator' => 'spinner',
-					  'success' => 'Modalbox.hide(); $("firstPercentOfRevenue").setStyle({\'display\': \'block\'}); $("addLink_'.$rowId.'").remove(); $("ClientLoaPackageRel0PercentOfRevenue").removeAttribute("disabled")'));
+					  'success' => 'Modalbox.hide(); $("firstPercentOfRevenue").setStyle({\'display\': \'block\'}); $("ClientLoaPackageRel0PercentOfRevenue").removeAttribute("disabled")'));
 			?>
 		</td>
 	</tr>
