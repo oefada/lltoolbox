@@ -30,8 +30,8 @@ $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']
 		echo $form->input('checkRateUrl');
 		echo $form->input('numRooms');
 	?>
-	<fieldset>
-		<legend class="collapsible"><span class="handle">Contact Details</span></legend>
+	<fieldset class="collapsible">
+		<legend class="handle">Contact Details</legend>
 		<div class="collapsibleContent">
 		<?php
 		echo $form->input('email');
@@ -77,8 +77,8 @@ $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']
 		endif;?>
 		</div>
 	</fieldset>
-	<fieldset>
-		<legend class="collapsible"><span class="handle">Geographic Details</span></legend>
+	<fieldset class="collapsible">
+		<legend class="handle">Geographic Details</legend>
 		<div class="collapsibleContent">
 		<?php
 		echo $form->input('customMapLat');
@@ -88,8 +88,8 @@ $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']
 		?>
 		</div>
 	</fieldset>
-	<fieldset>
-		<legend class="collapsible"><span class="handle">Amenities</span> <?=$html2->c($client['Amenity']); ?></legend>
+	<fieldset class="collapsible">
+		<legend class="handle">Amenities <?=$html2->c($client['Amenity']); ?></legend>
 		<div class="collapsibleContent">
 			<div id="amenitylist">
 				<ul>
@@ -106,8 +106,8 @@ $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']
 		</div>
 		</div>
 		</fieldset>
-		<fieldset>
-			<legend class="collapsible"><span class="handle">Themes</span> <?=$html2->c($client['Theme']); ?></legend>
+		<fieldset class="collapsible">
+			<legend class="handle">Themes <?=$html2->c($client['Theme']); ?></legend>
 			<div class="collapsibleContent">
 				<div class='controlset2'>
 					<?php echo $form->input('Theme', array('multiple' => 'checkbox', 'label' => false)); ?>
