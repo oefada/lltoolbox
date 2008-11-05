@@ -75,7 +75,7 @@ class WebServiceTicketsController extends WebServicesController
 		} elseif (isset($data['bidId'])) {
 			$newTicket['Ticket']['winningBidQueueId'] 	 = $data['winningBidQueueId'];
 			$newTicket['Ticket']['bidId'] 				 = $data['bidId'];
-			$newTicket['Ticket']['bookingPrice'] 		 = $bidData['Bid']['bidAmount'];
+			$newTicket['Ticket']['bookingPrice'] 		 = $data['bookingPrice'];
 		}
 		
 		$newTicket['Ticket']['userId'] 					 = $userData['User']['userId'];
