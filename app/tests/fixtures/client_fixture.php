@@ -55,7 +55,8 @@ class ClientFixture extends CakeTestFixture {
 			'numRooms'  => 1,
 			'airportCode'  => 'Lorem ip',
 			'oldProductId'  => 1,
-			'seoName'  => 'Lorem ipsum dolor sit amet'
+			'seoName'  => 'Lorem ipsum dolor sit amet',
+			'revision' => 1
 			));
 }
 ?>

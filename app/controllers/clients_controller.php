@@ -31,7 +31,6 @@ class ClientsController extends AppController {
 			}
 		}
 		
-		
 		$amenities = $this->Client->Amenity->find('all', array('conditions' => array('Amenity.amenityId' => $this->data['Amenity']['Amenity'])));
 		$this->data['Amenity'] = array();
 		foreach($amenities as $amenity):
@@ -49,7 +48,6 @@ class ClientsController extends AppController {
 	}
 
 	function edit($id = null) {
-		
 		if (!$id && empty($this->data)) {
 			$this->Session->setFlash(__('Invalid Client', true));
 			$this->redirect(array('action'=>'index'));
@@ -126,6 +124,13 @@ class ClientsController extends AppController {
 				$this->render('index');
 			}
 		endif;
+	}
+	
+	function rollback($revisionId) {
+		$client = $this->Client->rollback($revisionId);
+
+		$this->Session->setFlash(__('The Client has been reverted to revision '.$revisionId, true));
+		$this->redirect(array('action' => 'edit', $client['clientId']));
 	}
 }
 ?>
