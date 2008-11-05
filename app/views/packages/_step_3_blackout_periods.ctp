@@ -2,7 +2,8 @@
 	$i = 0;
 	
 	//make sure we always have atleast one start and end date
-	do{
+	if(isset($this->data['PackageValidityPeriod'])):
+	foreach($this->data['PackageValidityPeriod'] as $i => $packageValidityPeriod): 
 		echo "<h5>Blackout Period ".($i+1)."</h5>";
 		echo (1 <= $i) ? "<hr>": '';
 		echo $form->input('PackageValidityPeriod.'.$i.'.startDate');
@@ -12,7 +13,8 @@
 						array('action' => 'removeBlackoutPeriodRow', $i),
 						array('update' => 'blackoutPeriods', 'with' => '$("PackageAddForm").serialize()', 'indicator' => 'spinner'));
 
-	} while (isset($this->data['PackageValidityPeriod'][++$i]));
+	endforeach;
+	endif;
 ?>
 <br /><br />
 <?=
