@@ -1,12 +1,12 @@
 <?php
-/* SVN FILE: $Id: default.ctp 9 2008-10-10 05:08:45Z vgarcia $ */
+/* SVN FILE: $Id$ */
 /**
  * Three column layout.
  *
  * @filesource
- * @version			$Revision: 9 $
- * @modifiedby		$LastChangedBy: vgarcia $
- * @lastmodified	$Date: 2008-10-09 22:08:45 -0700 (Thu, 09 Oct 2008) $
+ * @version			$Revision$
+ * @modifiedby		$LastChangedBy$
+ * @lastmodified	$Date$
  */
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
