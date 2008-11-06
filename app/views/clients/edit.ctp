@@ -11,7 +11,6 @@ $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']
 ?>
 <?=$layout->blockStart('toolbar');?>
 <a href="/clients/add" title="Add New Loa" class="button add"><span><b class="icon"></b>Add New Client</span></a>
-<?= $html->link('<span><b class="icon"></b>Delete Client</span>', array('action'=>'delete', $form->value('Client.clientId')), array('class' => 'button del'), sprintf(__('Are you sure you want to delete # %s?', true), $form->value('Client.clientId')), false); ?>
 <?=$layout->blockEnd();?>
 <div class="clients form">
 	<h2 class="title">Client Details</h2>
