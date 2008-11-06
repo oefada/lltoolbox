@@ -13,9 +13,9 @@
 		echo $form->input('lastName');		
 		echo $form->input('email');
 	?>
-		<fieldset>
-			<legend class="collapsible"><span class="handle">Contact Details</span></legend>
-			<div class="collapsibleContent">
+		<fieldset class="collapsible">
+			<legend class="handle">Contact Details</legend>
+			<div class="collapsibleContent related">
 			<?php
 				echo $form->input('workPhone');
 				echo $form->input('mobilePhone');
@@ -25,8 +25,8 @@
 				?>
 			</div>
 		</fieldset>
-		<fieldset>
-			<legend class="collapsible"><span class="handle">Web Account</span></legend>
+		<fieldset class="collapsible">
+			<legend class="handle">Web Account</legend>
 				<?php
 					$userSiteExtended = $user['UserSiteExtended'];
 					?>
@@ -44,13 +44,13 @@
 						), null, false); ?>
 					</div>
 			<?php else: ?>
-				<h3>This user does not have a web account</h3>
+				<div class='icon-yellow'>This user does not have a web account</div>
 			<?php endif; ?>
 				</div>
 		</fieldset>
-		<fieldset>
-			<legend class="collapsible"><span class="handle">Preferences</span></legend>
-			<div class="collapsibleContent">
+		<fieldset class="collapsible">
+			<legend class="handle">Preferences</legend>
+			<div class="collapsibleContent related">
 			<?php
 				echo $form->input('userAcquisitionSourceId');
 				echo $form->input('registrationDate', array('disabled' => true));
@@ -71,9 +71,9 @@
 	</fieldset>
 <?php echo $form->end('Submit');?>
 </div>
-<div class="related">
-	<h3 class="collapsible"><span class="handle"><?php __('Related User Mail Optins');?></span> <?=$html2->c($user['UserMailOptin']);?></h3>
-	<div class="collapsibleContent">
+<div class="collapsible">
+	<h3 class="handle"><?php __('Related User Mail Optins');?> <?=$html2->c($user['UserMailOptin']);?></h3>
+	<div class="collapsibleContent related">
 	<?php if (!empty($user['UserMailOptin'])):?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
@@ -105,9 +105,9 @@
 <?php endif; ?>
 	</div>
 </div>
-<div class="related">
-	<h3 class="collapsible"><span class="handle"><?php __('Related User Payment Settings');?></span> <?=$html2->c($user['UserPaymentSetting'])?></h3>
-	<div class="collapsibleContent">
+<div class="collapsible">
+	<h3 class="handle"><?php __('Related User Payment Settings');?> <?=$html2->c($user['UserPaymentSetting'])?></h3>
+	<div class="collapsibleContent related">
 	<?php if (!empty($user['UserPaymentSetting'])):?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
@@ -164,9 +164,9 @@
 	</div>
 	</div>
 </div>
-<div class="related">
-	<h3 class="collapsible"><span class="handle"><?php __('Related Contests');?> (<?=count($user['Contest'])?>)</span></h3>
-	<div class="collapsibleContent">
+<div class="collapsible">
+	<h3 class="handle"><?php __('Related Contests');?> (<?=count($user['Contest'])?>)</h3>
+	<div class="collapsibleContent related">
 	<?php if (!empty($user['Contest'])):?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
