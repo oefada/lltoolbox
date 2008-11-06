@@ -34,9 +34,9 @@ $this->set('clientId', $this->data['Client']['clientId']);
 		<?php echo $form->end('Submit');?>
 	</div>
 </div>
-<div class="related">
-	<h3 class="collapsible"><span class="handle"><?php __('Related LOA Items');?></span></h3>
-	<div class="collapsibleContent">
+<div class="collapsible">
+	<div class="handle"><?php __('Related LOA Items');?></div>
+	<div class="related collapsibleContent">
 		<?php
 		echo $html->link('Add new LOA item',
 						'/loas/'.$loa['Loa']['loaId'].'/loa_items/add',
@@ -87,9 +87,9 @@ $this->set('clientId', $this->data['Client']['clientId']);
 </div>
 </div>
 
-<div class="related">
-	<h3 class="collapsible"><span class="handle"><?php __('Related LOA Tiers');?></span></h3>
-	<div class="collapsibleContent">
+<div class="collapsible">
+	<div class="handle"><?php __('Related LOA Tiers');?></div>
+	<div class="collapsibleContent related">
 	<?php if (!empty($loa['RevenueModelLoaRel'])):?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
