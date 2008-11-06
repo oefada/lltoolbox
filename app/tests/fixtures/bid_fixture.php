@@ -14,9 +14,13 @@ class BidFixture extends CakeTestFixture {
 			'bidDateTime'  => '2008-07-18 17:28:50',
 			'bidAmount'  => '123.45',
 			'autoRebid'  => 0,
-			'bidInactive'  => 0,
+			'inactive'  => 0,
 			'maxBid'  => '555.55',
-			'note' => ''
+			'note' => '',
+			'winningBid' => 0,
+			'lastModified' => null,
+			'transmitted' => 0,
+			'transmittedDatetime' => null
 			));
 }
 ?>

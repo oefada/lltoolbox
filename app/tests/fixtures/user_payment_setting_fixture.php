@@ -14,6 +14,10 @@ class UserPaymentSettingFixture extends CakeTestFixture {
 			'nameOnCard'  => 'Test Person',
 			'expYear'  => '2010',
 			'expMonth'  => '5',
+			'created' => null,
+			'modified' => null,
+			'address1' => null,
+			'address2' => null,
 			'paymentTypeId' => 1
 			));
 }
