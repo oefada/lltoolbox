@@ -16,7 +16,7 @@ class Bid extends AppModel {
 		unset($this->data['Bid']);
 		
 		$this->data['Bid']['bidId'] = $bidData['bidId'];
-		$this->data['Bid']['bidInactive'] = $bidData['bidInactive'];
+		$this->data['Bid']['inactive'] = $bidData['inactive'];
 
 		endif;
 		return true;
