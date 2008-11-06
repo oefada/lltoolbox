@@ -37,6 +37,15 @@ class UserPaymentSettingTestCase extends CakeTestCase {
 				'routingNumber' => '',
 				'accountNumber' => '',
 				'paymentTypeId' => 1,
+				'address1' => null,
+				'address2' => null,
+				'city' => null,
+				'state' => null,
+				'country' => null,
+				'postalCode' => null,
+				'inactive' => 0,
+				'created' => null,
+				'modified' => null
 				));
 		
 		$this->assertEqual($results, $expected);

@@ -33,10 +33,16 @@ class BidTestCase extends CakeTestCase {
 			'bidDateTime'  => '2008-07-18 17:28:50',
 			'bidAmount'  => '123.45',
 			'autoRebid'  => 0,
-			'bidInactive'  => 0,
+			'inactive'  => 0,
 			'maxBid'  => '555.55',
-			'note' => ''
+			'note' => '',
+			'winningBid' => 0,
+			'lastModified' => null,
+			'transmitted' => 0,
+			'transmittedDatetime' => null
 			));
+			debug($expected);
+			debug($results);
 		$this->assertEqual($results, $expected);
 	}
 	
@@ -79,28 +85,28 @@ class BidTestCase extends CakeTestCase {
 		$this->Bid->recursive = -1;
 		$bid = $this->Bid->find('first');
 		$expected = 1;
-		$bid['Bid']['bidInactive'] = $expected;
+		$bid['Bid']['inactive'] = $expected;
 		
 		$this->assertTrue($this->Bid->save($bid));
 		unset($bid);
 		
 		$bid = $this->Bid->find('first');
 		
-		$this->assertEqual($expected,$bid['Bid']['bidInactive']);
+		$this->assertEqual($expected,$bid['Bid']['inactive']);
 	}
 	
 	function testSetActive() {
 		$this->Bid->recursive = -1;
 		$bid = $this->Bid->find('first');
-		$expected = $bid['Bid']['bidInactive'];
+		$expected = $bid['Bid']['inactive'];
 		$expected = 0;
-		$bid['Bid']['bidInactive'] = $expected;
+		$bid['Bid']['inactive'] = $expected;
 		$this->assertTrue($this->Bid->save($bid));
 		unset($bid);
 		
 		$bid = $this->Bid->find('first');
 		
-		$this->assertEqual($expected,$bid['Bid']['bidInactive']);
+		$this->assertEqual($expected,$bid['Bid']['inactive']);
 	}
 }
 ?>

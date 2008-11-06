@@ -43,7 +43,9 @@ class RevenueModelLoaRelTestCase extends CakeTestCase {
 			'collected'  => 1,
 			'expMaxOffers'  => 1,
 			'expDate'  => '2008-10-05',
-			'expFee'  => 10
+			'expFee'  => 10,
+			'created' => null,
+			'modified' => null
 			));
 		$this->assertEqual($results, $expected);
 	}
