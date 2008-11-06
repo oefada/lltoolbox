@@ -29,6 +29,7 @@ class ClientTestCase extends CakeTestCase {
 		$expected = array('Client' => array(
 			'clientId'  => 1,
 			'parentClientId'  => 1,
+			'oldProductId' => 1,
 			'name'  => 'Lorem ipsum dolor sit amet',
 			'url'  => 'Lorem ipsum dolor sit amet',
 			'email'  => 'test@test.com',
@@ -50,6 +51,8 @@ class ClientTestCase extends CakeTestCase {
 			'airportCode'  => 'Lorem ip',
 			'oldProductId'  => 1,
 			'seoName'  => 'Lorem ipsum dolor sit amet',
+			'created' => null,
+			'modified' => null,
 			'revision' => 1
 			));
 		$this->assertEqual($results, $expected);
