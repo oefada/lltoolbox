@@ -41,8 +41,6 @@ class BidTestCase extends CakeTestCase {
 			'transmitted' => 0,
 			'transmittedDatetime' => null
 			));
-			debug($expected);
-			debug($results);
 		$this->assertEqual($results, $expected);
 	}
 	
