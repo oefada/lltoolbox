@@ -1,6 +1,8 @@
 <fieldset id="chooseItems" class="collapsible">
 	<legend class="handle">Step 4 - Choose Items</legend>
 	<div class="collapsibleContent">
+		<p>The LOA items shown in this list are the eligible items that can be added to this package. 
+			The currency for each item must match the currency for this package for it to be eligible.</p>
 	<table>
 		<tr>
 			<th>&nbsp;</th>

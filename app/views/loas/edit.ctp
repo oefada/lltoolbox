@@ -73,7 +73,16 @@ $this->set('clientId', $this->data['Client']['clientId']);
 			<td><?php echo $number->currency($loaItem['itemBasePrice']); ?></td>
 			<td><?php echo $loaItem['perPerson'];?></td>
 			<td class="actions">
-				<?php echo $html->link(__('Edit', true), array('controller'=> 'loa_items', 'action'=>'edit', $loaItem['loaItemId'])); ?>
+				<?php echo $html->link('Edit',
+								'/loa_items/edit/'.$loaItem['loaItemId'],
+								array(
+									'title' => 'Edit Loa Item',
+									'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
+									'complete' => 'closeModalbox()'
+									),
+								null,
+								false
+								); ?>
 				<?php echo $html->link(__('Delete', true), array('controller'=> 'loa_items', 'action'=>'delete', $loaItem['loaItemId']), null, sprintf(__('Are you sure you want to delete # %s?', true), $loaItem['loaItemId'])); ?>
 			</td>
 		</tr>

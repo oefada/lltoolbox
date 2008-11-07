@@ -6,7 +6,9 @@ class LoaItem extends AppModel {
 	var $primaryKey = 'loaItemId';
 	var $displayField = 'itemName';
 	
-	var $belongsTo = array('LoaItemType' => array('foreignKey' => 'loaItemTypeId'));
+	var $belongsTo = array('LoaItemType' => array('foreignKey' => 'loaItemTypeId'),
+							'Loa' => array('foreignKey' => "loaId"),
+							'Currency' => array('foreignKey' => 'currencyId'));
 	var $hasOne = array('Fee' => array('foreignKey' => 'loaItemId'),
 						'PackageLoaItemRel' => array('foreignKey' => 'loaItemId')
 					   );

@@ -27,9 +27,11 @@ $ajax->link($html->image('i-create.gif').'Add Blackout Period',
 				null,false);
 ?>
 &nbsp;&nbsp;
-<?=
+<?
+/*
 $ajax->link($html->image('delete.png').'Remove all blackout periods',
 					array('action' => 'removeBlackoutPeriodRow', 'all'),
 					array('update' => 'blackoutPeriods', 'with' => '$("PackageAddForm").serialize()', 'indicator' => 'spinner'),
 					null, false);
+					*/
 ?>

@@ -28,7 +28,7 @@ class LoaItemsController extends AppController {
 				$this->Session->setFlash(__('The LoaItem has been saved', true));
 				if ($this->RequestHandler->isAjax()) {
 					$this->set('closeModalbox', true);
-					$this->Session->setFlash(__('The LoaItem has been saved', true));
+					$this->Session->setFlash(__('The LoaItem has been saved', true), 'default', array(), 'success');
 				} else {
 					$this->redirect(array('controller' => 'loas', 'action'=>'view', 'id' => $this->params['data']['LoaItem']['loaId']));
 				}
@@ -42,7 +42,9 @@ class LoaItemsController extends AppController {
 		
 		$feeTypeIds = $this->LoaItem->Fee->FeeType->find('list');
 		$this->set('feeTypeIds', ($feeTypeIds));
-		
+		$loa = $this->LoaItem->Loa->findByLoaId($this->params['loaId']);
+		$this->set('currencyId', $loa['Loa']['currencyId']);
+
 		$this->data['LoaItem']['loaId'] = $this->params['loaId'];
 	}
 	
@@ -63,9 +65,14 @@ class LoaItemsController extends AppController {
 			$this->LoaItem->LoaItemRatePeriod->set($this->data);
 			*/
 			
-			if ($this->LoaItem->save($this->data) && $this->LoaItem->Fee->save() /*&& $this->LoaItem->LoaItemRatePeriod->save()*/ ) {				
-				$this->Session->setFlash(__('The LoaItem has been saved', true));
-				$this->redirect(array('controller' => 'loas', 'action' => 'view', 'id' => $this->data['LoaItem']['loaId']));
+			if ($this->LoaItem->save($this->data) && $this->LoaItem->Fee->save() /*&& $this->LoaItem->LoaItemRatePeriod->save()*/ ) {	
+				
+				if ($this->RequestHandler->isAjax()) {
+					$this->set('closeModalbox', true);
+					$this->Session->setFlash(__('The LoaItem has been saved', true), 'default', array(), 'success');
+				} else {
+					$this->redirect(array('controller' => 'loas', 'action'=>'view', 'id' => $this->params['data']['LoaItem']['loaId']));
+				}
 			} else {
 				$this->Session->setFlash(__('The LoaItem could not be saved. Please, try again.', true));
 			}
@@ -78,6 +85,9 @@ class LoaItemsController extends AppController {
 		
 		$feeTypeIds = $this->LoaItem->Fee->FeeType->find('list');
 		$this->set('feeTypeIds', ($feeTypeIds));
+		
+		$currencyIds = $this->LoaItem->Currency->find('list');
+		$this->set(compact('currencyIds'));
 	}
 
 	function delete($id = null) {
