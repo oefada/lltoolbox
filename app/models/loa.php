@@ -6,7 +6,8 @@ class Loa extends AppModel {
 	var $primaryKey = 'loaId';
 
 	var $belongsTo = array('LoaCustomerApprovalStatus' => array('foreignKey' => 'customerApprovalStatusId'),
-						   'Client' => array('foreignKey' => 'clientId')
+						   'Client' => array('foreignKey' => 'clientId'),
+						   'Currency' => array('foreignKey' => 'currencyId')
 						  );
 	var $validate = array('startDate' => array('rule' => array('validateEndStartDate'), 'message' => 'Start date must be less than end date'),
 							'endDate' => array('rule' => array('validateEndStartDate'), 'message' => 'Start date must be less than end date')

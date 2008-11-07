@@ -25,6 +25,7 @@ $this->set('clientId', $this->data['Client']['clientId']);
 		echo $form->input('loaNumberPackages');
 		echo $form->input('startDate');
 		echo $form->input('endDate');
+		echo $form->input('currencyId');
 		echo $form->input('totalRemitted', array('disabled' => true));
 		echo $form->input('cashPaid', array('disabled' => true));
 		echo $form->input('totalKept', array('disabled' => true));

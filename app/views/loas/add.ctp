@@ -15,6 +15,7 @@ $this->set('clientId', $this->data['Loa']['clientId']);
 		echo $form->input('loaNumberPackages');
 		echo $form->input('startDate');
 		echo $form->input('endDate');
+		echo $form->input('currencyId');
 	?>
 	</fieldset>
 <?php echo $form->end('Submit');?>

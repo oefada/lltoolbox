@@ -48,8 +48,10 @@ class LoasController extends AppController {
 
 		$this->Loa->Client->recursive = -1;
 		$client = $this->Loa->Client->find('clientId = '.$clientId, 'name');
+		$currencyIds = $this->Loa->Currency->find('list');
 		$this->set('clientName', $client['Client']['name']);
-		$this->set(compact('customerApprovalStatusIds'));
+		$this->set(compact('customerApprovalStatusIds', 'currencyIds'));
+		
 	}
 
 	function edit($id = null) {
@@ -72,8 +74,8 @@ class LoasController extends AppController {
 			$this->data = $this->Loa->read(null, $id);
 		}
 		$loaCustomerApprovalStatuses = $this->Loa->LoaCustomerApprovalStatus->find('list');
-
-		$this->set(compact('loaCustomerApprovalStatuses'));
+		$currencyIds = $this->Loa->Currency->find('list');
+		$this->set(compact('loaCustomerApprovalStatuses', 'currencyIds'));
 	}
 
 	function delete($id = null) {
