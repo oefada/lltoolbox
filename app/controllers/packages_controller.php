@@ -292,8 +292,12 @@ class PackagesController extends AppController {
 						
 						
 		$this->Package->ClientLoaPackageRel->recursive = -1;
-		$this->data['ClientLoaPackageRel'] = $this->Package->ClientLoaPackageRel->findByPackageId($id);
-
+		$clientLoaPackageRel = $this->Package->ClientLoaPackageRel->findAllByPackageId($id);
+		unset($this->data['ClientLoaPackageRel']);
+		foreach($clientLoaPackageRel as $a):
+			$this->data['ClientLoaPackageRel'][] = $a['ClientLoaPackageRel'];
+		endforeach;
+		
 		foreach($this->data['ClientLoaPackageRel'] as $key => $clientLoaPackageRel):
 			$clientLoaDetails[$key] = $this->Client->Loa->findByClientId($clientLoaPackageRel['clientId']);
 			$clientLoaDetails[$key]['ClientLoaPackageRel'] = $clientLoaPackageRel;
