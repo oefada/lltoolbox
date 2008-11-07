@@ -4,6 +4,7 @@ $this->pageTitle = $client['Client']['name'].$html2->c($client['Client']['client
 <?=$layout->blockStart('toolbar');?>
     <a href="/clients/<?=$clientId?>/loas/add" title="Add New Loa" class="button add"><span><b class="icon"></b>Add New Loa</span></a>
 <?=$layout->blockEnd();?>
+<?php if(count($loas)): ?>
 <div id="loa-index" class="loas index">
 	<h2 class="title">Viewing LOAs for <?=$client['Client']['name']?></h2>
 	<?php if(empty($loas)): ?>
@@ -49,3 +50,12 @@ foreach ($loas as $loa):
 <?php echo $this->renderElement('ajax_paginator', array('divToPaginate' => 'loa-index'))?>
 <?php endif; ?>
 </div>
+<?php else: ?>
+	  <div class="blankBar">
+	  <h1>
+	    <?=$ajax->link("Add the first LOA for {$client['Client']['name']}", "/clients/$clientId/loas/add", array('update' => 'content-area', 'indicator' => 'loading')) ?>
+	  </h1>
+	  <p>Create, manage, and delete LOAs related to this client.</p>
+	</div>
+
+<?php endif; ?>

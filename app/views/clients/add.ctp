@@ -28,8 +28,8 @@ $this->pageTitle = 'Add Client';
 		echo $form->input('checkRateUrl');
 		echo $form->input('numRooms');
 	?>
-	<fieldset>
-		<legend class="collapsible"><span class="handle">Contact Details</span></legend>
+	<fieldset class="collapsible">
+		<legend class="handle">Contact Details</legend>
 		<div class="collapsibleContent">
 		<?php
 		echo $form->input('email');
@@ -75,8 +75,8 @@ $this->pageTitle = 'Add Client';
 		endif;?>
 		</div>
 	</fieldset>
-	<fieldset>
-		<legend class="collapsible"><span class="handle">Geographic Details</span></legend>
+	<fieldset class="collapsible">
+		<legend class="handle">Geographic Details</legend>
 		<div class="collapsibleContent">
 		<?php
 		echo $form->input('customMapLat');
@@ -86,8 +86,8 @@ $this->pageTitle = 'Add Client';
 		?>
 		</div>
 	</fieldset>
-	<fieldset>
-		<legend class="collapsible"><span class="handle">Amenities</span></legend>
+	<fieldset class="collapsible">
+		<legend class="handle">Amenities</legend>
 		<div class="collapsibleContent">
 			<div id="amenitylist">
 				<ul>
@@ -104,8 +104,8 @@ $this->pageTitle = 'Add Client';
 		</div>
 		</div>
 		</fieldset>
-		<fieldset>
-			<legend class="collapsible"><span class="handle">Themes</span></legend>
+		<fieldset class="collapsible">
+			<legend class="handle">Themes</legend>
 			<div class="collapsibleContent">
 				<div class='controlset2'>
 					<?php echo $form->input('Theme', array('multiple' => 'checkbox', 'label' => false)); ?>

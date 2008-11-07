@@ -1,8 +1,9 @@
 <?php
 $this->pageTitle = $client['Client']['name'].$html2->c($client['Client']['clientId'], 'Client Id:');
 ?>
+<h2><?php __('View All Packages');?></h2>
+<?php if(count($packages) > 0): ?>
 <div id='packages-index' class="packages index">
-<h2><?php __('Packages');?></h2>
 <?= $this->renderElement('ajax_paginator', array('divToPaginate' => 'packages-index', 'showCount' => true))?>
 <table cellpadding="0" cellspacing="0">
 <tr>
@@ -45,3 +46,12 @@ foreach ($packages as $package):
 </table>
 <?= $this->renderElement('ajax_paginator', array('divToPaginate' => 'packages-index'))?>
 </div>
+<?php else: ?>
+	  <div class="blankBar">
+	  <h1>
+	    <?=$ajax->link("Add the first package for {$client['Client']['name']}", "/clients/$clientId/packages/add", array('update' => 'content-area', 'indicator' => 'loading')) ?>
+	  </h1>
+	  <p>Create, manage, and delete packages related to this client.</p>
+	</div>
+
+<?php endif; ?>

@@ -125,9 +125,9 @@
 			<?php if (isset($this->viewVars['currentTab']) && file_exists(ELEMENTS.'/sidebar/menu_for_'.$this->viewVars['currentTab'].'.ctp')): ?>
 				<?php echo $this->renderElement('sidebar/menu_for_'.$this->viewVars['currentTab']); ?>
 			<?php endif; ?>
-	  <?php endif;?>
 		<div style="clear: both;"></div>
-        </div></div> <!-- /#sidebar-left-inner, /#sidebar-left -->
+		</div></div> <!-- /#sidebar-left-inner, /#sidebar-left -->
+	  <?php endif;?>
 
     </div></div> <!-- /#main-inner, /#main -->
 
