@@ -109,7 +109,11 @@
 			<div id="breadcrumbs"><?= $html->getCrumbs("<span></span>", "Dashboard"); ?></div>
 			<?php endif; ?>
 
-            <?php $session->flash(); ?>
+            <?php $session->flash();
+			$session->flash('error');
+			$session->flash('success');
+			?>
+
           </div> <!-- /#content-header -->
 
         <div id="content-area" style="padding-top: 10px">
