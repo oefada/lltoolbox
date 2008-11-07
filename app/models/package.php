@@ -15,7 +15,15 @@ class Package extends AppModel {
 						 'PackagePromo' => array('foreignKey' => 'packageId'),
 						 'ClientLoaPackageRel' => array('foreignKey' => 'packageId')
 						);
-	
+						
+	var $validate = array('packageName' => VALID_NOT_EMPTY,
+						'numConcurrentOffers' => array('rule' => 'numeric', 'message' => 'Must be a number'),
+						'maxNumSales' => array('rule' => 'numeric', 'message' => 'Must  be a number'),
+						'numGuests' => array('rule' => 'numeric', 'message' => 'Must be a number'),
+						'numNights' => array('rule' => 'numeric', 'message' => 'Must be a number'),
+						'endDate' => array('rule' => array('validateDateRanges'), 'message' => 'End Date must be greater than Start Date'),
+						'validityEndDate' => array('rule' => array('validateDateRanges'), 'message' => 'End Date must be greater than Start Date'));
+		
 	var $hasAndBelongsToMany = array(
 								'Format' => 
 									array('className' => 'Format',
@@ -25,5 +33,17 @@ class Package extends AppModel {
 									)
 								);
 
+	function validateDateRanges($data) {
+		$packageStartDate = $this->data['Package']['startDate'];
+		$packageEndDate = $this->data['Package']['endDate'];
+		
+		$validityStartDate = $this->data['Package']['validityStartDate'];
+		$validityEndDate = $this->data['Package']['validityEndDate'];
+		
+		if(isset($data['validityEndDate']) && $validityStartDate >= $validityEndDate)	return false;
+		if(isset($data['endDate']) && $packageStartDate >= $packageEndDate)	return false;
+
+		return true;
+	}
 }
 ?>
