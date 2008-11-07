@@ -289,28 +289,37 @@ p.error em {
 
 .icon-yellow {
 	border: solid 1px #DEDEDE;
-	background: #FFFFCC url(../img/error.png) 8px 6px no-repeat;
+	background: #FFFFCC url(../img/info.png) 5px center no-repeat;
 	color: #222222;
-	padding: 4px;
+	padding: 4px 4px 4px 30px;
 	text-align: center;
+	font-weight: bold;
+	width: 500px;
+	margin: 0 auto;
 }
 
-.icon-ok {
+.icon-ok,
+#successMessage {
 	border: solid 1px #90ac13;
-	background: #eef4d3 url(../img/accept.png) 8px 6px no-repeat;
+	background: #eef4d3 url(../img/ok.png) 5px center no-repeat;
 	color: #6b800d;
 	font-weight: bold;
-	padding: 4px;
+	padding: 4px 4px 4px 30px;
 	text-align: center;
+	width: 500px;
+	margin: 0 auto;
 }
 
-.icon-error {
+.icon-error,
+#errorMessage {
 	border: solid 1px #CC0000;
-	background: #F7CBCA url(../img/exclamation.png) 8px 6px no-repeat;
-	color: #CC0000;
+	background: #F7CBCA url(../img/alert.png) 5px center no-repeat;
+	color: #333;
 	font-weight: bold;
-	padding: 4px;
+	padding: 4px 4px 4px 30px;
 	text-align: center;
+	width: 500px;
+	margin: 0 auto;
 }
 
 /* @end Icons */

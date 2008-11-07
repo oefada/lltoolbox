@@ -1,5 +1,6 @@
-<h4 class="collapsible<?if(isset($closed) && $closed) echo '-closed'?>"><span class="handle">Rate Periods</span> <?=$html2->c($loaItem['LoaItemRatePeriod'])?></h4>
-<div class="collapsibleContent<?if(isset($closed) && $closed) echo ' closed'?>" style="padding: 5px; <?if(isset($closed) && $closed) echo ' display: none;"'?>">
+<div class="collapsible<?if(isset($closed) && $closed) echo '-closed'?>">
+<span class="handle">Rate Periods</span> <?=$html2->c($loaItem['LoaItemRatePeriod'])?>
+<div class="related collapsibleContent<?if(isset($closed) && $closed) echo ' closed'?>" style="padding: 5px; <?if(isset($closed) && $closed) echo ' display: none;"'?>">
 <?if($loaItem['LoaItemRatePeriod']): ?>
 	<table style="">
 	<tr>
@@ -60,4 +61,5 @@ echo $html->link('Add Rate Period',
 				false
 				);
 ?>
+</div>
 </div>

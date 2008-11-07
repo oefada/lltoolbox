@@ -3,11 +3,19 @@ class PackagesController extends AppController {
 
 	var $name = 'Packages';
 	var $helpers = array('Html', 'Form');
-	var $uses = array('Package', 'Client');
+	var $uses = array('Package', 'Client', 'PackageRatePeriod', 'PackageRatePeriodItemRel');
 
-	function index() {
+	function index($clientId = null) {
+		if (!isset($clientId)) {
+			$this->cakeError('error404');
+		}
 		$this->Package->recursive = 0;
-		$this->set('packages', $this->paginate());
+		$this->set('packages', $this->paginate('ClientLoaPackageRel', array('ClientLoaPackageRel.clientId' => $clientId)));
+		
+		$this->set('client', $this->Client->findByClientId($clientId));
+		$this->set('clientId', $clientId);
+		$this->set('currentTab', 'property');
+		$this->set('searchController' ,'client');
 	}
 
 	function view($id = null) {
@@ -20,15 +28,15 @@ class PackagesController extends AppController {
 
 		// this query grabs all the package rate periods via the packageRatePeriodItemRel table.
 		$packageRatePeriods = $this->Package->query("SELECT DISTINCT(prp.packageRatePeriodId), startDate, endDate, approvedRetailPrice FROM packageLoaItemRel AS plir INNER JOIN packageRatePeriodItemRel AS prpir ON plir.packageLoaItemRelId = prpir.packageLoaItemRelId INNER JOIN packageRatePeriod AS prp ON prpir.packageRatePeriodId = prp.packageratePeriodId WHERE plir.packageId = $id;");
-		$this->set('packageRatePeriods', $packageRatePeriods);			
+		$this->set('packageRatePeriods', $packageRatePeriods);		
 	}
 	
-	function carveRatePeriods() {
+	function carveRatePeriods($clientId = null, $id = null) {
 		// set recursive to 2 so we can access all the package loa item relations also
 		$this->Package->recursive = 2;
 		
-		$packageData = $this->Package->read(null);
-		
+		$packageData = $this->Package->read(null, $id);
+
 		// the first record has the ids we need to handle all the rate periods and rate period item relations
 		$ratePeriodItemTemp = $packageData['PackageLoaItemRel'][0]['PackageRatePeriodItemRel'];
 
@@ -37,14 +45,13 @@ class PackagesController extends AppController {
 			$this->Package->PackageLoaItemRel->PackageRatePeriodItemRel->deleteAll(array('PackageRatePeriodItemRel.packageRatePeriodId' => $rel['packageRatePeriodId']));
 			$this->Package->PackageLoaItemRel->PackageRatePeriodItemRel->PackageRatePeriod->deleteAll(array('PackageRatePeriod.packageRatePeriodId' => $rel['packageRatePeriodId']));
 		}
-	
+		
 		// retrieve all loa items related to this package id
-		$data = $this->Package->PackageLoaItemRel->LoaItem->find('all', array('conditions' => array('PackageLoaItemRel.packageId' => $packageData['Package']['packageId'])));
+		$data = $this->Package->PackageLoaItemRel->LoaItem->find('all', array('conditions' => array('PackageLoaItemRel.packageId' => $id)));
 
 		// populate with loa items and their rate periods
 		$itemRatePeriods = array(); 
 		$packageLoaItemRel = array();
-		$packageData = $this->Package->read(null);
 		
 		/*  ======= CARVING ==============
 		 *  Include the package start and end dates
@@ -77,15 +84,16 @@ class PackagesController extends AppController {
 			// load this array with overall package to item relation
 			$packageLoaItemRel[$v['PackageLoaItemRel']['packageLoaItemRelId']] = $v['PackageLoaItemRel'];
 		}
-		
+
 		// we now have package rate period dates so sort the dates
 		sort($packageDates);
-		
+	
 		$one_day = 24 * 60 * 60;
 		$count = count($packageDates) - 1;
-		
+
 		// cycle through each item rate period using $packageDates start-end pairs.
 		// for each start-end pair, use $packageLoaItemRelId to obtain item prices and ids.
+
 		for ($i=0; $i < $count; $i++) {
 			$packageLoaItemRelId = array();
 			$rangeStart = strtotime($packageDates[$i]);
@@ -93,8 +101,8 @@ class PackagesController extends AppController {
 			
 			foreach ($itemRatePeriods as $v) {
 				// if the item rate period falls within the start-end pair, then this rate period has a valid item and use the approved retail price, other use base price
-				$ratePeriodItemPrice = (($rangeStart >= strtotime($v['startDate'])) && ($rangeEnd <= strtotime($v['endDate']))) ? $v['approvedRetailPrice'] : $v['itemBasePrice'];				
-				
+				$ratePeriodItemPrice = (($rangeStart >= strtotime($v['startDate'])) && ($rangeEnd <= strtotime($v['endDate']))) ? $v['approvedRetailPrice'] : $v['itemBasePrice'];		
+
 				// if there is an price override, use it.  if there is a no charge, then the price is zeroed out
 				if ($packageLoaItemRel[$v['packageLoaItemRelId']]['priceOverride']) {
 					$ratePeriodItemPrice = $packageLoaItemRel[$v['packageLoaItemRelId']]['priceOverride'];
@@ -103,23 +111,40 @@ class PackagesController extends AppController {
 					$ratePeriodItemPrice = 0;	
 				}
 				$packageLoaItemRelId[$v['packageLoaItemRelId']] = $ratePeriodItemPrice * $packageLoaItemRel[$v['packageLoaItemRelId']]['quantity'];
+				
 			}
 
 			// create package rate period for this start-end pair
+			/*
 			$insertSql = "INSERT INTO packageRatePeriod SET packageRatePeriodName = 'PACKAGE RATE PERIOD', ";
 			$insertSql.= "startDate = '" . date('Y-m-d', $rangeStart) . "', endDate = '" . date('Y-m-d', $rangeEnd) . "', ";
-			$insertSql.= "approvedRetailPrice = " . array_sum($packageLoaItemRelId) . ", approved = 0, approvedBy = 'AUTO'";
-			
+			$insertSql.= "approvedRetailPrice = " . array_sum($packageLoaItemRelId) . ", approved = 0, approvedBy = 'AUTO';";
+			*/
+			$packageRatePeriod = array('PackageRatePeriod' => array('packageRatePeriodName' => 'PACKAGE RATE PERIOD',
+																	'startDate' => date('Y-m-d', $rangeStart),
+																	'endDate' => date('Y-m-d', $rangeEnd),
+																	'approvedRetailPrice' => array_sum($packageLoaItemRelId),
+																	'approved' => 0,
+																	'approvedBy' => 'AUTO'));
 			// now we can populate the packageRatePeriodItemRel because we have a package rate period
-			if (mysql_query($insertSql)) {
-				$packageRatePeriodId = 	mysql_insert_id();
+			$this->PackageRatePeriod->create();
+			$this->PackageRatePeriod->set($packageRatePeriod);
+			if ($this->PackageRatePeriod->save()) {
+				$packageRatePeriodId = $this->PackageRatePeriod->id;
+
 				foreach ($packageLoaItemRelId as $id => $price) {
-					mysql_query("INSERT INTO packageRatePeriodItemRel SET packageRatePeriodId = $packageRatePeriodId, packageLoaItemRelId = $id, ratePeriodPrice = $price");
+					$packageRatePeriodItemRel = array(
+										'PackageRatePeriodItemRel' => array(
+																'packageRatePeriodId' => $packageRatePeriodId,
+																'packageLoaItemRelId' => $id,
+																'ratePeriodPrice' => $price
+																	)
+														);
+					$this->PackageRatePeriodItemRel->create();
+					$this->PackageRatePeriodItemRel->save($packageRatePeriodItemRel);
 				}	
 			}
 		}
-		$this->Session->setFlash(__('The Package Rate Periods have been recalculated', true));
-		$this->redirect(array('controller' => 'Packages', 'action'=>'view', 'id' => $packageData['Package']['packageId']));
 	}
 
 	function add($clientId = null) {
@@ -128,15 +153,19 @@ class PackagesController extends AppController {
 
 		if (!empty($this->data) && isset($this->data['Package']['complete'])) {
 			$this->Package->create();
+			
+			$this->addPackageLoaItems();
+			
 			//the first saveAll saves packages and all associated date
 			//the second save saves the HABTM format relationships
 			if ($this->Package->saveAll($this->data) && $this->Package->save($this->data)) {
 				$packageId = $this->Package->getLastInsertID();
 				$this->addPackageOfferTypeDefFieldRel($packageId);
-				$this->Session->setFlash(__('The Package has been saved', true));
-				$this->redirect(array('action'=>'index'));
+				$this->carveRatePeriods($packageId);
+				$this->Session->setFlash(__('The Package has been saved', true), 'default', array(), 'success');
+				$this->redirect("/clients/$clientId/packages");
 			} else {
-				$this->Session->setFlash(__('The Package could not be saved. Please, try again.', true));
+				$this->Session->setFlash(__('The Package could not be saved. Please, try again.', true), 'default', array(), 'error');
 			}
 		}
 		
@@ -195,6 +224,21 @@ class PackagesController extends AppController {
 		}
 	}
 	
+	function addPackageLoaItems() {
+		if(!isset($this->data['PackageLoaItemRel'])) {
+			return;
+		}
+		$origPackageLoaItemRel = $this->data['PackageLoaItemRel'];
+		unset($this->data['PackageLoaItemRel']);
+		
+		if (isset($this->data['Package']['CheckedLoaItems'])):
+		foreach($this->data['Package']['CheckedLoaItems'] as $k=>$checkedLoaItem) {
+			$this->data['PackageLoaItemRel'][$k]['quantity'] = $origPackageLoaItemRel[$checkedLoaItem]['quantity'];
+			$this->data['PackageLoaItemRel'][$k]['loaItemId'] = $checkedLoaItem;
+		}
+		endif;
+	}
+	
 	function fetchMultipleClientsFormFragment($clientId = null) {
 		$this->set('rowId', $this->params['named']['rowId']);
 		$this->set('clientId', $clientId);
@@ -214,25 +258,40 @@ class PackagesController extends AppController {
 		$this->set('clients', $this->paginate('Client'));
 	}
 
-	function edit($id = null) {
-		if (!$id && empty($this->data)) {
+	function edit($clientId = null, $id = null) {
+		if (!$clientId && !$id && empty($this->data)) {
 			$this->Session->setFlash(__('Invalid Package', true));
 			$this->redirect(array('action'=>'index'));
 		}
 		if (!empty($this->data)) {
-			if ($this->Package->save($this->data)) {
-
-				$this->addPackageOfferTypeDefFieldRel();
-				$this->Session->setFlash(__('The Package has been saved', true));
-				$this->redirect(array('action'=>'index'));
+			$this->addPackageLoaItems();
+			if ($this->Package->saveAll($this->data) && $this->Package->save($this->data)) {
+				$this->addPackageOfferTypeDefFieldRel($id);
+				$this->carveRatePeriods($id);
+				$this->Session->setFlash(__('The Package has been saved', true), 'default', array(), 'success');
+				$this->redirect("/clients/$clientId/packages/edit/$id");
 			} else {
-				$this->Session->setFlash(__('The Package could not be saved. Please, try again.', true));
+				$this->Session->setFlash(__('The Package could not be saved. Please, try again.', true), 'default', array(), 'error');
 			}
 		}
 		if (empty($this->data)) {
-			$this->data = $this->Package->read(null, $id);
+			$this->Package->recursive = 2;
+			$package = $this->Package->read(null, $id);
+			$this->data = $package;
+			$this->set('package', $package);
 		}
 						
+						
+		$this->Package->ClientLoaPackageRel->recursive = -1;
+		$this->data['ClientLoaPackageRel'] = $this->Package->ClientLoaPackageRel->findByPackageId($id);
+
+		foreach($this->data['ClientLoaPackageRel'] as $key => $clientLoaPackageRel):
+			$clientLoaDetails[$key] = $this->Client->Loa->findByClientId($clientLoaPackageRel['clientId']);
+			$clientLoaDetails[$key]['ClientLoaPackageRel'] = $clientLoaPackageRel;
+		endforeach;
+		
+		$this->set('clientLoaDetails', $clientLoaDetails);
+		
 		$formats = $this->Package->Format->find('list');
 		$this->set('formats', $formats);
 		
@@ -241,6 +300,15 @@ class PackagesController extends AppController {
 		
 		$currencyIds = $this->Package->Currency->find('list');
 		$this->set('currencyIds', ($currencyIds));
+		
+		$client = $this->Client->findByClientId($clientId);
+		$this->set('client', $client);
+		
+		$this->set('clientId', $clientId);
+		
+		// this query grabs all the package rate periods via the packageRatePeriodItemRel table.
+		$packageRatePeriods = $this->Package->query("SELECT DISTINCT(prp.packageRatePeriodId), startDate, endDate, approvedRetailPrice FROM packageLoaItemRel AS plir INNER JOIN packageRatePeriodItemRel AS prpir ON plir.packageLoaItemRelId = prpir.packageLoaItemRelId INNER JOIN packageRatePeriod AS prp ON prpir.packageRatePeriodId = prp.packageratePeriodId WHERE plir.packageId = $id;");
+		$this->set('packageRatePeriods', $packageRatePeriods);
 	}
 
 	function addPackageOfferTypeDefFieldRel($packageId = null) {
@@ -256,7 +324,7 @@ class PackagesController extends AppController {
 		$relData['PackageOfferTypeDefFieldRel']['packageId'] = ($packageId) ? $packageId : $this->data['Package']['packageId'];
 		
 		// delete all existing package to offer type default fields relation
-		$this->Package->PackageOfferTypeDefFieldRel->deleteAll(array('packageId' => $packageId));
+		$this->Package->PackageOfferTypeDefFieldRel->deleteAll(array('PackageOfferTypeDefFieldRel.packageId' => $packageId), true);
 
 		// for all the offer types and associated package formats, create new default value rows w/ 0.00
 		foreach ($offerTypes as $type) {
@@ -325,7 +393,14 @@ class PackagesController extends AppController {
 	function removeBlackoutPeriodRow($row) {
 		$this->autoRender = false;
 		
-		unset($this->data['PackageValidityPeriod'][$row]);
+		if($row == 'all') {
+			unset($this->data['PackageValidityPeriod']);
+		} else {
+			if(isset($this->data['PackageValidityPeriod'][$row]['packageValidityPeriodId'])) {
+				$this->Package->PackageValidityPeriod->delete($this->data['PackageValidityPeriod'][$row]);
+			}
+			unset($this->data['PackageValidityPeriod'][$row]);
+		}
 		
 		$this->data['PackageValidityPeriod'] = array_merge($this->data['PackageValidityPeriod'], array());
 		
