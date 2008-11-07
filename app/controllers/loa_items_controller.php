@@ -65,7 +65,7 @@ class LoaItemsController extends AppController {
 			$this->LoaItem->LoaItemRatePeriod->set($this->data);
 			*/
 			
-			if ($this->LoaItem->save($this->data) && $this->LoaItem->Fee->save() /*&& $this->LoaItem->LoaItemRatePeriod->save()*/ ) {	
+			if ($this->LoaItem->save($this->data) /*&& $this->LoaItem->LoaItemRatePeriod->save()*/ ) {	
 				
 				if ($this->RequestHandler->isAjax()) {
 					$this->set('closeModalbox', true);
@@ -101,13 +101,6 @@ class LoaItemsController extends AppController {
 		if ($this->LoaItem->del($id)) {
 			$this->Session->setFlash(__('LoaItem deleted', true));
 			$this->redirect(array('controller' => 'loas', 'action'=>'edit', $loaItem['LoaItem']['loaId']));
-		}
-	}
-	
-	function beforeFilter() {
-		if($this->RequestHandler->isAjax()) {
-			$this->layout = 'ajax';
-			Configure::write('debug', '0');
 		}
 	}
 }
