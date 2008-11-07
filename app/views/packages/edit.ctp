@@ -33,31 +33,6 @@ $this->pageTitle = $client['Client']['name'].$html2->c($client['Client']['client
 	</table>
 </div>
 
-<h3>Package Validity Date Ranges</h3>
-<div class="mB mT"><a href="/packages/<?php echo $package['Package']['packageId'];?>/packageValidityPeriods/add">Add New Blackout / Validity</a></div>
-<div class="mB">
-	<table cellpadding="2" cellspacing="0">
-	<tr>
-		<th width="100">Package Validity Id</th>
-		<th>Start Date</th>
-		<th>End Date</th>
-		<th>Type</th>
-	</tr>
-	<?php	
-	foreach ($package['PackageValidityPeriod'] as $k=>$v) {
-	?>
-		<tr>
-			<td><a href="/packageValidityPeriods/edit/<?php echo $v['packageValidityPeriodId'];?>"><?php echo $v['packageValidityPeriodId'];?></a></td>
-			<td><?php echo $v['startDate'];?></td>
-			<td><?php echo $v['endDate'];?></td>
-			<td><?php echo $v['isBlackout'] ? 'BLACKOUT' : 'VALIDITY';?></td>
-		</tr>
-	<?php
-	}
-	?>
-	</table>
-</div>
-
 <h3>Package LOA Items</h3>
 <div class="mB mT"><a href="/packages/<?php echo $package['Package']['packageId'];?>/packageLoaItemRels/add">Add New LOA Item to Package</a></div>
 <div class="mB">
