@@ -38,7 +38,7 @@ foreach ($packages as $package):
 			<?php echo $package['Package']['created']; ?>
 		</td>
 		<td class="actions">
-			<?php echo $html->link(__('View Details', true), array('action'=>'view', $package['Package']['packageId'])); ?>
+			<?php echo $html->link(__('View Details', true), "/clients/$clientId/packages/edit/{$package['Package']['packageId']}"); ?>
 		</td>
 	</tr>
 <?php endforeach; ?>
