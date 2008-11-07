@@ -19,34 +19,6 @@ class ClientsController extends AppController {
 		$this->redirect(array('action'=>'edit', $id));
 	}
 
-	function add() {
-		$this->set('hideSidebar', true);
-		if (!empty($this->data)) {
-			$this->Client->create();
-			if ($this->Client->save($this->data)) {
-				$this->Session->setFlash(__('The Client has been saved', true));
-				$this->redirect(array('action'=>'index'));
-			} else {
-				$this->Session->setFlash(__('The Client could not be saved. Please, try again.', true));
-			}
-		}
-		
-		$amenities = $this->Client->Amenity->find('all', array('conditions' => array('Amenity.amenityId' => $this->data['Amenity']['Amenity'])));
-		$this->data['Amenity'] = array();
-		foreach($amenities as $amenity):
-			$this->data['Amenity'][] = $amenity['Amenity'];
-		endforeach;
-	
-		$amenities = $this->Client->Amenity->find('list');	
-		$clientLevelIds = $this->Client->ClientLevel->find('list');
-		$clientStatusIds = $this->Client->ClientStatus->find('list');
-		$clientTypeIds = $this->Client->ClientType->find('list');
-		$regions = $this->Client->Region->find('list');
-		$clientAcquisitionSources = $this->Client->ClientAcquisitionSource->find('list');
-		$themes = $this->Client->Theme->find('list');
-		$this->set(compact('amenities', 'clientLevelIds', 'clientStatusIds', 'clientTypeIds', 'regions', 'clientAcquisitionSources', 'themes'));
-	}
-
 	function edit($id = null) {
 		if (!$id && empty($this->data)) {
 			$this->Session->setFlash(__('Invalid Client', true));

@@ -9,9 +9,6 @@ function addAmenity() {
 <?php
 $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']['clientId'], 'Client Id:');
 ?>
-<?=$layout->blockStart('toolbar');?>
-<a href="/clients/add" title="Add New Loa" class="button add"><span><b class="icon"></b>Add New Client</span></a>
-<?=$layout->blockEnd();?>
 <div class="clients form">
 	<h2 class="title">Client Details</h2>
 <?php echo $form->create('Client');?>
