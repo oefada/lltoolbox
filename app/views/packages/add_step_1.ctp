@@ -1,5 +1,5 @@
 <?php
-$this->pageTitle = $client['Client']['name'];
+$this->pageTitle = $client['Client']['name'].$html2->c($client['Client']['clientId'], 'Client Id:');
 ?>
 <?php echo $form->create('Package', array('url' => "/clients/$clientId/packages/add"));?>
 

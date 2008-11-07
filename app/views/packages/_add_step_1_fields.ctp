@@ -1,10 +1,12 @@
 <div id='clientInner_<?=$rowId?>'>
+<?php if($rowId > 0): ?>
 <hr>
 <h5><?=$client['Client']['name']?> <?php if ($rowId > 0) {
 	echo $html->link($html->image('delete.png', array('align' => 'top', 'style' => 'padding-right: 5px;')).'Remove', '#', array('onclick' => 'new Effect.Highlight("client_'.$rowId.'"); $("client_'.$rowId.'").fade({afterFinish: function() { $("client_'.$rowId.'").remove() }});'), null, false);
 }?></h5>
+<?php endif; ?>
 <?php
-		echo $form->input('ClientLoaPackageRel.'.$rowId.'.clientId', array('value' => $clientId));
+		echo $form->input('ClientLoaPackageRel.'.$rowId.'.clientId', array('value' => $clientId, 'type' => 'hidden'));
 		echo $form->input('ClientLoaPackageRel.'.$rowId.'.loaId', array('options' => $loaIds));
 ?>
 	<div class="input text"><label>LOA Expiration Date:</label><div id="loaExpirationDate<?=$rowId?>" style="display: inline"></div></div>

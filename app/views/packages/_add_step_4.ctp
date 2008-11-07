@@ -1,5 +1,6 @@
-<fieldset class="collapsible">
+<fieldset id="chooseItems" class="collapsible">
 	<legend class="handle">Step 4 - Choose Items</legend>
+	<div class="collapsibleContent">
 	<table>
 		<tr>
 			<th>&nbsp;</th>
@@ -7,16 +8,25 @@
 			<th>Base Price</th>
 			<th>Quanity</th>
 		</tr>
-	<?php foreach($clientLoaDetails as $clientLoaDetail): ?>
+	<?php 
+		$loaItemCount = 0;
+		foreach($clientLoaDetails as $clientLoaDetail): ?>
 		<? foreach($clientLoaDetail['LoaItem'] as $k => $loaItem): ?>
 			<tr>
-				<td><?= $form->checkbox('loaItemIds[]', array('value' => $loaItem['loaItemId'])) ?></td>
+				<td><input type="checkbox" name="data[Package][CheckedLoaItems][]" value="<?=$loaItem['loaItemId']?>"  /></td>
 				<td><?=$loaItem['itemName']?></td>
 				<td><?=$loaItem['itemBasePrice']?></td>
-				<td><?= $form->input('PackageLoaItemRel.'.$k.'.quantity') ?></td>
+				<td><?= $form->input('PackageLoaItemRel.'.$loaItem['loaItemId'].'.quantity') ?></td>
 			</tr>
-			<? debug($loaItem) ?>
-		<? endforeach; ?>
+		<?
+		$loaItemCount++;
+		endforeach; ?>
 	<?php endforeach;?>
+	<?php if ($loaItemCount == 0): ?>
+		<tr>
+			<td colspan='4'><div class='icon-yellow'>There are no LOA Items for the selected LOAs. Add some items to the LOA(s), then return to creating the package.</div></td>
+		</tr>	
+	<?php endif; ?>
 	</table>
+	</div>
 </fieldset>

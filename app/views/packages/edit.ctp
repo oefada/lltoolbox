@@ -1,36 +1,148 @@
+<?php
+$this->pageTitle = $client['Client']['name'].$html2->c($client['Client']['clientId'], 'Client Id:');
+?>
 <div class="packages form">
-<?php echo $form->create('Package');?>
-	<fieldset>
- 		<legend><?php __('Edit Package');?></legend>
-	<?php
-		echo $form->input('packageId');
-		echo $form->input('packageStatusId');
-		echo $form->input('currencyId');
-		echo $form->input('packageName');
-		echo $form->input('subtitle');
-		echo $form->input('currencyAsOfDate');
-		echo $form->input('numSold');
-		echo $form->input('numConcurrentOffers');
-		echo $form->input('suppressRetailOnDisplay');
-		echo $form->input('startDate');
-		echo $form->input('endDate');
-		echo $form->input('maxOffersToSell');
-		echo $form->input('dateClientApproved');
-		echo $form->input('copiedFromPackageId');
-		echo $form->input('restrictions');
-		echo $form->input('validityStartDate');
-		echo $form->input('validityEndDate');
-		echo $form->input('approvedRetailPrice');
-		echo $form->input('numNights');
-		echo $form->input('numGuests');
-		echo $form->input('Format', array('label' => 'Allowed Formats', 'multiple' => 'checkbox'));
-	?>
-	</fieldset>
+<?php echo $form->create('Package', array('url' => "/clients/{$clientId}/packages/edit/{$this->data['Package']['packageId']}", 'id'=>'PackageAddForm'));?>
+<?php echo $this->renderElement('../packages/_add_step_1'); ?>
+<?php echo $this->renderElement('../packages/_add_step_2'); ?>
+<?php echo $this->renderElement('../packages/_add_step_3'); ?>
+<?php echo $this->renderElement('../packages/_add_step_4'); ?>
+<?php echo $this->renderElement('../packages/_add_step_5'); ?>
+<?php echo $this->renderElement('../packages/_add_step_6'); ?>
+<?php echo $form->input('Package.packageId'); ?>
 <?php echo $form->end('Submit');?>
+
+<h3>Package Formats</h3>
+<div class="mB mT"><a href="/Packages/editFormats/<?php echo $package['Package']['packageId'];?>">Edit Default Values</a></div>
+<div class="mB">
+	<table>
+	<tr>
+		<th>Format Type</th>
+		<th>Default Values</th>
+		<th>Options</th>
+	</tr>
+	<?php
+	foreach ($package['Format'] as $k => $v) {
+		echo "<tr>";
+		echo "<td>$v[formatName]</td>";
+		echo "<td>*</td>";
+		echo "<td><a href='#'>Schedule this Offer Type</a></td>";
+		echo "</tr>";
+	}
+	?>
+	</table>
 </div>
-<div class="actions">
-	<ul>
-		<li><?php echo $html->link(__('Delete', true), array('action'=>'delete', $form->value('Package.packageId')), null, sprintf(__('Are you sure you want to delete # %s?', true), $form->value('Package.packageId'))); ?></li>
-		<li><?php echo $html->link(__('List Packages', true), array('action'=>'index'));?></li>
-	</ul>
+
+<h3>Package Validity Date Ranges</h3>
+<div class="mB mT"><a href="/packages/<?php echo $package['Package']['packageId'];?>/packageValidityPeriods/add">Add New Blackout / Validity</a></div>
+<div class="mB">
+	<table cellpadding="2" cellspacing="0">
+	<tr>
+		<th width="100">Package Validity Id</th>
+		<th>Start Date</th>
+		<th>End Date</th>
+		<th>Type</th>
+	</tr>
+	<?php	
+	foreach ($package['PackageValidityPeriod'] as $k=>$v) {
+	?>
+		<tr>
+			<td><a href="/packageValidityPeriods/edit/<?php echo $v['packageValidityPeriodId'];?>"><?php echo $v['packageValidityPeriodId'];?></a></td>
+			<td><?php echo $v['startDate'];?></td>
+			<td><?php echo $v['endDate'];?></td>
+			<td><?php echo $v['isBlackout'] ? 'BLACKOUT' : 'VALIDITY';?></td>
+		</tr>
+	<?php
+	}
+	?>
+	</table>
+</div>
+
+<h3>Package LOA Items</h3>
+<div class="mB mT"><a href="/packages/<?php echo $package['Package']['packageId'];?>/packageLoaItemRels/add">Add New LOA Item to Package</a></div>
+<div class="mB">
+	<table cellpadding="2" cellspacing="0">
+	<tr>
+		<th width="100">Package Item Id</th>
+		<th>Item Id</th>
+		<th>Name</th>
+		<th>Group Id</th>
+		<th>Price Override</th>
+		<th>Quanitiy</th>
+		<th>No charge</th>
+	</tr>
+	<?php	
+	foreach ($package['PackageLoaItemRel'] as $k=>$v) {
+	?>
+		<tr>
+			<td><a href="/packageLoaItemRels/edit/<?php echo $v['packageLoaItemRelId'];?>"><?php echo $v['packageLoaItemRelId'];?></a></td>
+			<td><?php echo $v['loaItemId'];?></td>
+			<td><?php echo $v['LoaItem']['itemName'];?></td>
+			<td><?php echo $v['loaItemGroupId'];?></td>
+			<td><?php echo $v['priceOverride'];?></td>
+			<td><?php echo $v['quantity'];?></td>
+			<td><?php echo $v['noCharge'];?></td>
+		</tr>
+	<?php
+	}
+	?>
+	</table>
+</div>
+
+<h3>Package Rate Periods</h3>
+<div class="mB mT">
+	<table cellpadding="2" cellspacing="0">
+	
+	<?php
+	echo '<tr>';
+	echo '<th>Range</th>';
+	foreach ($packageRatePeriods as $k => $v) {
+		echo '<th>' . $v['prp']['startDate'] . '<br />to<br />' . $v['prp']['endDate'] . "</th>\n";
+	}
+	echo '</tr>';
+	?>	
+
+	<?php
+	foreach ($package['PackageLoaItemRel'] as $a => $b) {
+		echo '<tr>';
+		echo '<td>' . $b['LoaItem']['itemName'] . '</td>';
+		foreach ($b['PackageRatePeriodItemRel'] as $ratePeriodItem) {
+			echo '<td>$' . $ratePeriodItem['ratePeriodPrice'] . '</td>';
+		}
+		echo '</tr>';
+	}
+	?>
+
+	<?php
+	echo '<tr>';
+	echo '<td>Overall Price</td>';
+	foreach ($packageRatePeriods as $k => $v) {
+		echo '<td><strong>$' . $v['prp']['approvedRetailPrice'] . '</strong></td>';
+	}
+	echo '</tr>';
+	?>
+	
+	</table>
+</div>
+
+<h3>Package Promos</h3>
+<div class="mB mT"><a href="/packages/<?php echo $package['Package']['packageId'];?>/packagePromos/add">Add New Package Promo</a></div>
+<div class="mB">
+	<table>
+	<tr>
+		<th>Package Promo Id</th>
+		<th>Description</th>
+		<th>Promo Code</th>
+	</tr>
+	<?php
+	foreach ($package['PackagePromo'] as $k => $v) {
+		echo '<tr>';
+		echo '<td><a href="/packagePromos/edit/'. $v['packagePromoId'] . '">' . $v['packagePromoId'] . '</a></td>';
+		echo '<td>' . $v['description'] . '</td>';
+		echo '<td>' . $v['promoCode'] . '</td>';
+		echo '</tr>';
+	}
+	?>
+	</table>
+</div>
 </div>
