@@ -4,6 +4,12 @@ class PackagesController extends AppController {
 	var $name = 'Packages';
 	var $helpers = array('Html', 'Form');
 	var $uses = array('Package', 'Client', 'PackageRatePeriod', 'PackageRatePeriodItemRel');
+	
+	function beforeFilter() {
+		parent::beforeFilter();
+		$this->set('currentTab', 'property');
+		$this->set('searchController' ,'client');
+	}
 
 	function index($clientId = null) {
 		if (!isset($clientId)) {
@@ -38,6 +44,9 @@ class PackagesController extends AppController {
 		$packageData = $this->Package->read(null, $id);
 
 		// the first record has the ids we need to handle all the rate periods and rate period item relations
+		if(!isset($packageData['PackageLoaItemRel'][0])) {
+			return;
+		}
 		$ratePeriodItemTemp = $packageData['PackageLoaItemRel'][0]['PackageRatePeriodItemRel'];
 
 		// let's delete ALL the package loa item relations and and package rate periods related to THIS package id
