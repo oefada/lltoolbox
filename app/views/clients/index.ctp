@@ -9,9 +9,6 @@ if (isset($query)) {
 $this->set('hideSidebar', true);
 ?>
 
-<?=$layout->blockStart('toolbar');?>
-    <a href="/clients/add" title="Add New Loa" class="button add"><span><b class="icon"></b>Add New Client</span></a>
-<?=$layout->blockEnd();?>
 <div id="client-index">
 	<?php echo $this->renderElement('ajax_paginator', array('divToPaginate' => 'client-index', 'showCount' => true)); ?>
 <div class="clients index">

@@ -30,5 +30,8 @@
 		</tr>	
 	<?php endif; ?>
 	</table>
+	<div id='ratePeriods'>
+	</div>
 	</div>
 </fieldset>
+<?=$ajax->observeForm('PackageAddForm', array('url' => "/clients/$clientId/packages/carveRatePeriodsForDisplay", 'update' => 'ratePeriods', 'frequency' => 0.5, 'indicator' => 'spinner'))?>
