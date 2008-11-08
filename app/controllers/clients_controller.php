@@ -57,17 +57,6 @@ class ClientsController extends AppController {
 		$this->set('client', $this->data);
 		$this->set(compact('addresses', 'amenities','clientLevelIds','clientStatusIds','clientTypeIds','regions','clientAcquisitionSourceIds', 'loas', 'themes'));
 	}
-
-	function delete($id = null) {
-		if (!$id) {
-			$this->Session->setFlash(__('Invalid id for Client', true));
-			$this->redirect(array('action'=>'index'));
-		}
-		if ($this->Client->del($id)) {
-			$this->Session->setFlash(__('Client deleted', true));
-			$this->redirect(array('action'=>'index'));
-		}
-	}
 	
 	function search()
 	{
