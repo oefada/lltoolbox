@@ -157,15 +157,27 @@ class PackagesController extends AppController {
 	}
 	
 	function carveRatePeriodsForDisplay() {
+		$this->autoRender = false;
+		
 		// set recursive to 2 so we can access all the package loa item relations also
 		$this->Package->recursive = 2;
+		
+		$packageData = $this->Package->read(null, $id);
 
-		$packageData = $this->data;
+		// the first record has the ids we need to handle all the rate periods and rate period item relations
+		if(!isset($packageData['PackageLoaItemRel'][0])) {
+			return;
+		}
+		$ratePeriodItemTemp = $packageData['PackageLoaItemRel'][0]['PackageRatePeriodItemRel'];
 
-		// retrieve all loa items related to this package
-		foreach($this->data['Package']['CheckedLoaItems'] as $itemId):
-			$data[] = $this->Package->PackageLoaItemRel->LoaItem->read(null, $itemId);
-		endforeach;
+		// let's delete ALL the package loa item relations and and package rate periods related to THIS package id
+		foreach ($ratePeriodItemTemp as $rel) {
+			$this->Package->PackageLoaItemRel->PackageRatePeriodItemRel->deleteAll(array('PackageRatePeriodItemRel.packageRatePeriodId' => $rel['packageRatePeriodId']));
+			$this->Package->PackageLoaItemRel->PackageRatePeriodItemRel->PackageRatePeriod->deleteAll(array('PackageRatePeriod.packageRatePeriodId' => $rel['packageRatePeriodId']));
+		}
+		
+		// retrieve all loa items related to this package id
+		$data = $this->Package->PackageLoaItemRel->LoaItem->find('all', array('conditions' => array('PackageLoaItemRel.packageId' => $id)));
 
 		// populate with loa items and their rate periods
 		$itemRatePeriods = array(); 
@@ -178,9 +190,9 @@ class PackagesController extends AppController {
 		 */
 		 
 		$packageDates = array();
-		$packageDates[] = $packageStartDate = $packageData['Package']['startDate']['year'].'-'.$packageData['Package']['startDate']['month'].'-'.$packageData['Package']['startDate']['day'];
-		$packageDates[] = $packageEndDate = $packageData['Package']['startDate']['year'].'-'.$packageData['Package']['startDate']['month'].'-'.$packageData['Package']['startDate']['day'];
-		
+		$packageDates[] = $packageStartDate = substr($packageData['Package']['startDate'], 0, 10);
+		$packageDates[] = $packageEndDate = substr($packageData['Package']['endDate'], 0, 10);
+								
 		// go through every loa item rate period
 		foreach ($data as $k => $v) {
 			foreach ($v['LoaItemRatePeriod'] as $a => $b) {
@@ -190,27 +202,24 @@ class PackagesController extends AppController {
 				if (($b['endDate'] >= $packageStartDate) && ($b['endDate'] <= $packageEndDate) && !in_array($b['endDate'], $packageDates)) { 
 					$packageDates[] = $b['endDate'];
 				}
-				echo "<pre>";
-				print_r($v);
-				echo "</pre>";
 				// add the package loa item relation id so we can use as lookup later below
-				$b['packageLoaItemRelId'] = $v['LoaItem']['loaItemId'];
-
+				$b['packageLoaItemRelId'] = $v['PackageLoaItemRel']['packageLoaItemRelId'];
+				
 				// add the item base price 
 				$b['itemBasePrice'] = $v['LoaItem']['itemBasePrice'];
 				
 				// finally add essential data we need to the overall loa item array
 				$itemRatePeriods[] = $b;
 			}
+			// load this array with overall package to item relation
+			$packageLoaItemRel[$v['PackageLoaItemRel']['packageLoaItemRelId']] = $v['PackageLoaItemRel'];
 		}
 
 		// we now have package rate period dates so sort the dates
 		sort($packageDates);
-		
+	
 		$one_day = 24 * 60 * 60;
 		$count = count($packageDates) - 1;
-		
-		print_r($packageDates);
 
 		// cycle through each item rate period using $packageDates start-end pairs.
 		// for each start-end pair, use $packageLoaItemRelId to obtain item prices and ids.
@@ -222,7 +231,7 @@ class PackagesController extends AppController {
 			
 			foreach ($itemRatePeriods as $v) {
 				// if the item rate period falls within the start-end pair, then this rate period has a valid item and use the approved retail price, other use base price
-				$ratePeriodItemPrice = (($rangeStart >= strtotime($v['startDate'])) && ($rangeEnd <= strtotime($v['endDate']))) ? $v['approvedRetailPrice'] : false;		
+				$ratePeriodItemPrice = (($rangeStart >= strtotime($v['startDate'])) && ($rangeEnd <= strtotime($v['endDate']))) ? $v['approvedRetailPrice'] : $v['itemBasePrice'];		
 
 				// if there is an price override, use it.  if there is a no charge, then the price is zeroed out
 				if ($packageLoaItemRel[$v['packageLoaItemRelId']]['priceOverride']) {
@@ -232,35 +241,41 @@ class PackagesController extends AppController {
 					$ratePeriodItemPrice = 0;	
 				}
 				$packageLoaItemRelId[$v['packageLoaItemRelId']] = $ratePeriodItemPrice * $packageLoaItemRel[$v['packageLoaItemRelId']]['quantity'];
+				
 			}
-			
-			if ($packageLoaItemRelId[$v['packageLoaItemRelId']] == false):
-				$packageLoaItemRelId[$v['packageLoaItemRelId']] = $v['itemBasePrice'];
-			endif;
 
-			$packageRatePeriod[$i] = array('PackageRatePeriod' => array(
+			// create package rate period for this start-end pair
+			/*
+			$insertSql = "INSERT INTO packageRatePeriod SET packageRatePeriodName = 'PACKAGE RATE PERIOD', ";
+			$insertSql.= "startDate = '" . date('Y-m-d', $rangeStart) . "', endDate = '" . date('Y-m-d', $rangeEnd) . "', ";
+			$insertSql.= "approvedRetailPrice = " . array_sum($packageLoaItemRelId) . ", approved = 0, approvedBy = 'AUTO';";
+			*/
+			$packageRatePeriod = array('PackageRatePeriod' => array('packageRatePeriodName' => 'PACKAGE RATE PERIOD',
 																	'startDate' => date('Y-m-d', $rangeStart),
 																	'endDate' => date('Y-m-d', $rangeEnd),
 																	'approvedRetailPrice' => array_sum($packageLoaItemRelId),
 																	'approved' => 0,
-																	'packageLoaItemRelId' => $id,
-																	
 																	'approvedBy' => 'AUTO'));
 			// now we can populate the packageRatePeriodItemRel because we have a package rate period
-	
-			foreach ($packageLoaItemRelId as $id => $price) {
-				$packageRatePeriod[$i]['PackageRatePeriodItemRel'] = array(
-									'PackageRatePeriodItemRel' => array(
-															'packageLoaItemRelId' => $id,
-															'ratePeriodPrice' => $price
-																)
-													);
+			$this->PackageRatePeriod->create();
+			$this->PackageRatePeriod->set($packageRatePeriod);
+			if ($this->PackageRatePeriod->save()) {
+				$packageRatePeriodId = $this->PackageRatePeriod->id;
+
+				foreach ($packageLoaItemRelId as $id => $price) {
+					$packageRatePeriodItemRel = array(
+										'PackageRatePeriodItemRel' => array(
+																'packageRatePeriodId' => $packageRatePeriodId,
+																'packageLoaItemRelId' => $id,
+																'ratePeriodPrice' => $price
+																	)
+														);
+					$this->PackageRatePeriodItemRel->create();
+					$this->PackageRatePeriodItemRel->save($packageRatePeriodItemRel);
+				}	
 			}
 		}
-		
-		echo "<pre>";
-		print_r($packageRatePeriod);
-		echo "</pre>";
+		$this->render(null,null,'package_rate_periods');
 	}
 
 	function add($clientId = null) {
