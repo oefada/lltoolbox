@@ -10,6 +10,11 @@ $this->pageTitle = $client['Client']['name'].$html2->c($client['Client']['client
 <?php echo $this->renderElement('../packages/_add_step_5'); ?>
 <?php echo $this->renderElement('../packages/_add_step_6'); ?>
 <?php echo $form->input('Package.packageId'); ?>
+<?php 
+	foreach($this->data['ClientLoaPackageRel'] as $k => $v):
+		echo $form->input('ClientLoaPackageRel.'.$k.'.clientLoaPackageRelId');
+	endforeach;
+?>
 <?php echo $form->end('Submit');?>
 
 <h3>Package Formats</h3>
@@ -28,37 +33,6 @@ $this->pageTitle = $client['Client']['name'].$html2->c($client['Client']['client
 		echo "<td>*</td>";
 		echo "<td><a href='#'>Schedule this Offer Type</a></td>";
 		echo "</tr>";
-	}
-	?>
-	</table>
-</div>
-
-<h3>Package LOA Items</h3>
-<div class="mB mT"><a href="/packages/<?php echo $package['Package']['packageId'];?>/packageLoaItemRels/add">Add New LOA Item to Package</a></div>
-<div class="mB">
-	<table cellpadding="2" cellspacing="0">
-	<tr>
-		<th width="100">Package Item Id</th>
-		<th>Item Id</th>
-		<th>Name</th>
-		<th>Group Id</th>
-		<th>Price Override</th>
-		<th>Quanitiy</th>
-		<th>No charge</th>
-	</tr>
-	<?php	
-	foreach ($package['PackageLoaItemRel'] as $k=>$v) {
-	?>
-		<tr>
-			<td><a href="/packageLoaItemRels/edit/<?php echo $v['packageLoaItemRelId'];?>"><?php echo $v['packageLoaItemRelId'];?></a></td>
-			<td><?php echo $v['loaItemId'];?></td>
-			<td><?php echo $v['LoaItem']['itemName'];?></td>
-			<td><?php echo $v['loaItemGroupId'];?></td>
-			<td><?php echo $v['priceOverride'];?></td>
-			<td><?php echo $v['quantity'];?></td>
-			<td><?php echo $v['noCharge'];?></td>
-		</tr>
-	<?php
 	}
 	?>
 	</table>

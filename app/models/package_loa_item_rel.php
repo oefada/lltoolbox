@@ -11,6 +11,8 @@ class PackageLoaItemRel extends AppModel {
 		
 	var $hasMany = array('PackageRatePeriodItemRel' => array('foreignKey' => 'packageLoaItemRelId'));	
 	
+	var $validate = array('quantity' => array('rule' => 'numeric', 'message' => 'Must be a number'));
+	
 	/*			
 	var $hasAndBelongsToMany = array(
 								'packageRatePeriod' => 

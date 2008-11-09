@@ -292,11 +292,11 @@ class PackagesController extends AppController {
 			if ($this->Package->saveAll($this->data) && $this->Package->save($this->data)) {
 				$packageId = $this->Package->getLastInsertID();
 				$this->addPackageOfferTypeDefFieldRel($packageId);
-				$this->carveRatePeriods($packageId);
+				$this->carveRatePeriods($clientId, $packageId);
 				$this->Session->setFlash(__('The Package has been saved', true), 'default', array(), 'success');
 				$this->redirect("/clients/$clientId/packages");
 			} else {
-				$this->Session->setFlash(__('The Package could not be saved. Please, try again.', true), 'default', array(), 'error');
+				$this->Session->setFlash(__('The Package could not be saved. Please correct the errors below and try again.', true), 'default', array(), 'error');
 			}
 		}
 		
@@ -364,8 +364,8 @@ class PackagesController extends AppController {
 		
 		if (isset($this->data['Package']['CheckedLoaItems'])):
 		foreach($this->data['Package']['CheckedLoaItems'] as $k=>$checkedLoaItem) {
-			$this->data['PackageLoaItemRel'][$k]['quantity'] = $origPackageLoaItemRel[$checkedLoaItem]['quantity'];
-			$this->data['PackageLoaItemRel'][$k]['loaItemId'] = $checkedLoaItem;
+			$this->data['PackageLoaItemRel'][$checkedLoaItem]['quantity'] = $origPackageLoaItemRel[$checkedLoaItem]['quantity'];
+			$this->data['PackageLoaItemRel'][$checkedLoaItem]['loaItemId'] = $checkedLoaItem;
 		}
 		endif;
 	}
@@ -384,25 +384,81 @@ class PackagesController extends AppController {
 	}
 	
 	function selectAdditionalClient() {
-		$this->params['form']['rowId'] = $this->params['named']['rowId'];
-		$this->set('rowId', $this->params['named']['rowId']);
 		$this->set('clients', $this->paginate('Client'));
 	}
 
+	function updatePackageLoaItems() {
+		//grab the new quantities from the form, the data array looks like the one from the databases but with only the quantity field
+		$currentItemIds = array();
+		$newPackageLoaItemRel = $this->data['PackageLoaItemRel'];
+		
+		unset($this->data['PackageLoaItemRel']);
+	
+		//set the PackageLoaItemRel array to the arrays stored in this package
+		$this->Package->PackageLoaItemRel->recursive = -1;
+		$packageLoaItemRelations = $this->Package->PackageLoaItemRel->find('all', array('conditions' => array('PackageLoaItemRel.packageId' => $this->data['Package']['packageId'])));
+	
+		//loop through all of the loa items associated to this package
+		if (!isset($this->data['Package']['CheckedLoaItems'])) {
+			return $this->Package->PackageLoaItemRel->deleteAll(array('PackageLoaItemRel.packageId' => $this->data['Package']['packageId'], true));
+		}
+		
+		foreach ($packageLoaItemRelations as $k => &$packageLoaItemRel):
+			$packageLoaItemRel = $packageLoaItemRel['PackageLoaItemRel'];
+			//delete all of the items that are no longer associated with this package
+			if (!in_array($packageLoaItemRel['loaItemId'], $this->data['Package']['CheckedLoaItems'])) {
+				if ($this->Package->PackageLoaItemRel->delete($packageLoaItemRel['packageLoaItemRelId'])) {
+					unset($this->data['PackageLoaItemRel'][$k]);										//unset the array so when we don't re-save this 
+				}
+			} else {																					//if the new quantity is different from the old, update the field
+				$currentItemIds[] = $packageLoaItemRel['loaItemId'];
+				$packageLoaItemRel['quantity'] = $newPackageLoaItemRel[$packageLoaItemRel['loaItemId']]['quantity'];
+				$this->data['PackageLoaItemRel'][] = $packageLoaItemRel;
+			}
+		endforeach;
+		
+		//here we deal with the new items
+		if (isset($this->data['Package']['CheckedLoaItems'])):
+		foreach($this->data['Package']['CheckedLoaItems'] as $k => $checkedLoaItem) {
+			if (!in_array($checkedLoaItem, $currentItemIds)):
+				$newPackageLoaItems[$k]['quantity'] = $newPackageLoaItemRel[$checkedLoaItem]['quantity'];
+				$newPackageLoaItems[$k]['loaItemId'] = $checkedLoaItem;
+				$newPackageLoaItems[$k]['packageId'] = $this->data['Package']['packageId'];
+			endif;
+		}
+		endif;
+			if (isset($this->data['PackageLoaItemRel']) && is_array($this->data['PackageLoaItemRel']) && isset($newPackageLoaItems)):
+				$this->data['PackageLoaItemRel'] = array_merge_recursive($this->data['PackageLoaItemRel'], $newPackageLoaItems);
+			elseif(isset($newPackageLoaItems)):
+				$this->data['PackageLoaItemRel'] = $newPackageLoaItems;
+			endif;
+			
+		$this->setUpPackageLoaItemRelArray();
+		return true;
+	}
+	
+	function setUpPackageLoaItemRelArray() {
+		$tmp = array();
+		foreach($this->data['PackageLoaItemRel'] as $v) {
+			$tmp[$v['loaItemId']] = $v;
+		}
+		
+		$this->data['PackageLoaItemRel'] = $tmp;
+	}
+	
 	function edit($clientId = null, $id = null) {
 		if (!$clientId && !$id && empty($this->data)) {
-			$this->Session->setFlash(__('Invalid Package', true));
-			$this->redirect(array('action'=>'index'));
+			$this->Session->setFlash(__('Invalid Package or Client', true));
+			$this->redirect(array('controller' => 'clients', 'action'=>'index'));
 		}
 		if (!empty($this->data)) {
-			$this->addPackageLoaItems();
-			if ($this->Package->saveAll($this->data) && $this->Package->save($this->data)) {
+			if ($this->updatePackageLoaItems() && $this->Package->saveAll($this->data) && $this->Package->save($this->data)) {
 				$this->addPackageOfferTypeDefFieldRel($id);
-				$this->carveRatePeriods($id);
+				$this->carveRatePeriods($clientId, $id);
 				$this->Session->setFlash(__('The Package has been saved', true), 'default', array(), 'success');
 				$this->redirect("/clients/$clientId/packages/edit/$id");
 			} else {
-				$this->Session->setFlash(__('The Package could not be saved. Please, try again.', true), 'default', array(), 'error');
+				$this->Session->setFlash(__('The Package could not be saved. Please correct the errors again and try again.', true), 'default', array(), 'error');
 			}
 		}
 		if (empty($this->data)) {
@@ -410,40 +466,54 @@ class PackagesController extends AppController {
 			$package = $this->Package->read(null, $id);
 			$this->data = $package;
 			$this->set('package', $package);
-		}
-						
-						
+		}						
+		
 		$this->Package->ClientLoaPackageRel->recursive = -1;
 		$clientLoaPackageRel = $this->Package->ClientLoaPackageRel->findAllByPackageId($id);
-		unset($this->data['ClientLoaPackageRel']);
-		foreach($clientLoaPackageRel as $a):
-			$this->data['ClientLoaPackageRel'][] = $a['ClientLoaPackageRel'];
-		endforeach;
-		
+	
 		foreach($this->data['ClientLoaPackageRel'] as $key => $clientLoaPackageRel):
 			$clientLoaDetails[$key] = $this->Client->Loa->findByClientId($clientLoaPackageRel['clientId']);
 			$clientLoaDetails[$key]['ClientLoaPackageRel'] = $clientLoaPackageRel;
 		endforeach;
 		
-		$this->set('clientLoaDetails', $clientLoaDetails);
 		
 		$formats = $this->Package->Format->find('list');
 		$this->set('formats', $formats);
 		
 		$packageStatusIds = $this->Package->PackageStatus->find('list');
 		$this->set('packageStatusIds', ($packageStatusIds));
-		
+
 		$currencyIds = $this->Package->Currency->find('list');
 		$this->set('currencyIds', ($currencyIds));
+		
+		$packageLoaItems = $this->Package->PackageLoaItemRel->findAllByPackageId($this->data['Package']['packageId']);
+		
+		foreach ($packageLoaItems as $k => $v):
+			$this->data['Package']['CheckedLoaItems'][] = $v['PackageLoaItemRel']['loaItemId'];
+		endforeach;
+		
+		//sort the LOA Items so that the checked ones appear at the top
+		foreach($clientLoaDetails as $k => $a) {
+			uasort($clientLoaDetails[$k]['LoaItem'], array($this, 'sortLoaItemsForEdit'));
+		}
+		
+		
+		$this->set('clientLoaDetails', $clientLoaDetails);
 		
 		$client = $this->Client->findByClientId($clientId);
 		$this->set('client', $client);
 		
 		$this->set('clientId', $clientId);
 		
+		$this->setUpPackageLoaItemRelArray();
+		
 		// this query grabs all the package rate periods via the packageRatePeriodItemRel table.
 		$packageRatePeriods = $this->Package->query("SELECT DISTINCT(prp.packageRatePeriodId), startDate, endDate, approvedRetailPrice FROM packageLoaItemRel AS plir INNER JOIN packageRatePeriodItemRel AS prpir ON plir.packageLoaItemRelId = prpir.packageLoaItemRelId INNER JOIN packageRatePeriod AS prp ON prpir.packageRatePeriodId = prp.packageratePeriodId WHERE plir.packageId = $id;");
 		$this->set('packageRatePeriods', $packageRatePeriods);
+	}
+	
+	function sortLoaItemsForEdit($a, $b) {
+		return in_array($b['loaItemId'], $this->data['Package']['CheckedLoaItems']);
 	}
 
 	function addPackageOfferTypeDefFieldRel($packageId = null) {
@@ -499,7 +569,7 @@ class PackagesController extends AppController {
 				$this->Session->setFlash(__('The Package has been saved', true));
 				$this->redirect(array('action'=>'index'));
 			} else {
-				$this->Session->setFlash(__('The Package could not be saved. Please, try again.', true));
+				$this->Session->setFlash(__('The Package could not be saved. Please correct the errors below and try again.', true));
 			}
 		}
 		if (empty($this->data)) {

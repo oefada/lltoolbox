@@ -15,10 +15,10 @@
 		foreach($clientLoaDetails as $clientLoaDetail): ?>
 		<? foreach($clientLoaDetail['LoaItem'] as $k => $loaItem): ?>
 			<tr>
-				<td><input type="checkbox" name="data[Package][CheckedLoaItems][]" value="<?=$loaItem['loaItemId']?>"  /></td>
+				<td><input type="checkbox" name="data[Package][CheckedLoaItems][]" value="<?=$loaItem['loaItemId']?>"<? if (isset($this->data['Package']['CheckedLoaItems']) && in_array($loaItem['loaItemId'], $this->data['Package']['CheckedLoaItems'])) { echo ' checked="checked"'; } ?> /></td>
 				<td><?=$loaItem['itemName']?></td>
-				<td><?=$loaItem['itemBasePrice']?></td>
-				<td><?= $form->input('PackageLoaItemRel.'.$loaItem['loaItemId'].'.quantity') ?></td>
+				<td><?=$number->currency($loaItem['itemBasePrice'], $this->data['Currency']['currencyCode']) ?></td>
+				<td><?= $form->input('PackageLoaItemRel.'.$loaItem['loaItemId'].'.quantity', array('label' => false)) ?></td>
 			</tr>
 		<?
 		$loaItemCount++;

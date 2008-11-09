@@ -304,10 +304,8 @@ p.error em {
 	background: #eef4d3 url(../img/ok.png) 5px center no-repeat;
 	color: #6b800d;
 	font-weight: bold;
-	padding: 4px 4px 4px 30px;
-	text-align: center;
-	width: 500px;
-	margin: 0 auto;
+	padding: 4px 4px 4px 40px;
+	text-align: left;
 }
 
 .icon-error,
@@ -316,10 +314,8 @@ p.error em {
 	background: #F7CBCA url(../img/alert.png) 5px center no-repeat;
 	color: #333;
 	font-weight: bold;
-	padding: 4px 4px 4px 30px;
-	text-align: center;
-	width: 500px;
-	margin: 0 auto;
+	padding: 4px 4px 4px 40px;
+	text-align: left;
 }
 
 /* @end Icons */
