@@ -10,6 +10,8 @@
 
 @import url("typography.css");
 
+@import url("datepicker.css");
+
 /* @group General */
 
 #header {

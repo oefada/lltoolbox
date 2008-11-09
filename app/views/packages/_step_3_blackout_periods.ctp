@@ -14,8 +14,8 @@
 		echo "</strong>";
 		echo (1 <= $i) ? "<hr>": '';
 		echo $form->input('PackageValidityPeriod.'.$i.'.packageValidityPeriodId');
-		echo $form->input('PackageValidityPeriod.'.$i.'.startDate');
-		echo $form->input('PackageValidityPeriod.'.$i.'.endDate');
+		echo $datePicker->picker('PackageValidityPeriod.'.$i.'.startDate');
+		echo $datePicker->picker('PackageValidityPeriod.'.$i.'.endDate');
 	endforeach;
 	endif;
 ?>

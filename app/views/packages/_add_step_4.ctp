@@ -17,7 +17,7 @@
 			<tr>
 				<td><input type="checkbox" name="data[Package][CheckedLoaItems][]" value="<?=$loaItem['loaItemId']?>"<? if (isset($this->data['Package']['CheckedLoaItems']) && in_array($loaItem['loaItemId'], $this->data['Package']['CheckedLoaItems'])) { echo ' checked="checked"'; } ?> /></td>
 				<td><?=$loaItem['itemName']?></td>
-				<td><?=$number->currency($loaItem['itemBasePrice'], $this->data['Currency']['currencyCode']) ?></td>
+				<td><?=$number->currency($loaItem['itemBasePrice'], $currencyCodes[$loaItem['currencyId']]) ?></td>
 				<td><?= $form->input('PackageLoaItemRel.'.$loaItem['loaItemId'].'.quantity', array('label' => false)) ?></td>
 			</tr>
 		<?

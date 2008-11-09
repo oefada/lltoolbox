@@ -289,6 +289,7 @@ class PackagesController extends AppController {
 			
 			//the first saveAll saves packages and all associated date
 			//the second save saves the HABTM format relationships
+
 			if ($this->Package->saveAll($this->data) && $this->Package->save($this->data)) {
 				$packageId = $this->Package->getLastInsertID();
 				$this->addPackageOfferTypeDefFieldRel($packageId);
@@ -300,16 +301,7 @@ class PackagesController extends AppController {
 			}
 		}
 		
-		if(!empty($this->data)):
-		//this re-numbers the array so we have a continuous array, since people can add/remove items on the list
-			$this->data['ClientLoaPackageRel'] = array_merge($this->data['ClientLoaPackageRel'], array());
-			foreach($this->data['ClientLoaPackageRel'] as $key => $clientLoaPackageRel):
-				$clientLoaDetails[$key] = $this->Client->Loa->findByClientId($clientLoaPackageRel['clientId']);
-				$clientLoaDetails[$key]['ClientLoaPackageRel'] = $clientLoaPackageRel;
-			endforeach;
-			
-			$this->set('clientLoaDetails', $clientLoaDetails);
-		endif;
+		
 		$client = $this->Client->findByClientId($clientId);
 		$this->set('client', $client);
 		
@@ -329,30 +321,49 @@ class PackagesController extends AppController {
 			$this->set('clients', $clients);
 			$this->set('loaIds', $loaIds);
 			$this->render('add_step_1');
-		} else {
-			$percentSum = 0;
-			$loaIds = array(); //need to reset the array declared before this if/else
-			
-			$this->data['ClientLoaPackageRel'] = array_merge($this->data['ClientLoaPackageRel'], array());
-		
-			if(count($this->data['ClientLoaPackageRel']) == 1) {
-				$this->data['ClientLoaPackageRel'][0]['percentOfRevenue'] = '100';
-			}
-			
-			foreach($this->data['ClientLoaPackageRel'] as $clientLoaPackageRel):
-				$clients[] = $this->Client->findByClientId($clientLoaPackageRel['clientId']);
-				$loaIds[] = $this->Client->Loa->find('list', array('conditions' => array('Loa.clientId' => $clientLoaPackageRel['clientId'])));
-				$percentSum += $clientLoaPackageRel['percentOfRevenue'];
-			endforeach;
-			
-			//if the percentages don't add up to 100%, re-display the first form
-			if (100 != $percentSum):
-				$this->Session->setFlash("Total percent of revenue ({$percentSum}%) must add up to 100%");
-				$this->set('clients', $clients);
-				$this->set(compact('loaIds'));
-				$this->render('add_step_1');
-			endif;
+			return;
 		}
+		
+		$percentSum = 0;
+		$loaIds = array(); //need to reset the array declared before this if/else
+			
+		$this->data['ClientLoaPackageRel'] = array_merge($this->data['ClientLoaPackageRel'], array());
+		
+		if(count($this->data['ClientLoaPackageRel']) == 1) {
+			$this->data['ClientLoaPackageRel'][0]['percentOfRevenue'] = '100';
+		}
+			
+		foreach($this->data['ClientLoaPackageRel'] as $clientLoaPackageRel):
+			$percentSum += $clientLoaPackageRel['percentOfRevenue'];
+		endforeach;
+		
+		//if the percentages don't add up to 100%, re-display the first form
+		if (100 != $percentSum):
+			$this->Session->setFlash("Total percent of revenue ({$percentSum}%) must add up to 100%");
+			$this->set('clients', $clients);
+			$this->set(compact('loaIds'));
+			$this->render('add_step_1');
+		endif;
+
+		//this re-numbers the array so we have a continuous array, since people can add/remove items on the list
+		$this->data['ClientLoaPackageRel'] = array_merge($this->data['ClientLoaPackageRel'], array());
+		foreach($this->data['ClientLoaPackageRel'] as $key => $clientLoaPackageRel):
+			$loa = $this->Client->Loa->findByClientId($clientLoaPackageRel['clientId']);
+			
+			//remove all of the LOA Items that are not the same currency as the LOA
+			foreach($loa['LoaItem'] as $k => $loaItem) {
+				if($loaItem['currencyId'] != $loa['Currency']['currencyId']) {
+					unset($loa['LoaItem'][$k]);
+				}
+			}
+			$clientLoaDetails[$key] = $loa;
+			$clientLoaDetails[$key]['ClientLoaPackageRel'] = $clientLoaPackageRel;
+		endforeach;
+			
+		$this->set('clientLoaDetails', $clientLoaDetails);
+		$this->data['Currency'] = $clientLoaDetails[0]['Currency'];
+		$this->data['Package']['currencyId'] = $clientLoaDetails[0]['Currency']['currencyId'];
+		$this->set('currencyCodes', $this->Package->Currency->find('list', array('fields' => array('currencyCode'))));
 	}
 	
 	function addPackageLoaItems() {
@@ -473,7 +484,15 @@ class PackagesController extends AppController {
 	
 		foreach($this->data['ClientLoaPackageRel'] as $key => $clientLoaPackageRel):
 			$clientLoaDetails[$key] = $this->Client->Loa->findByClientId($clientLoaPackageRel['clientId']);
+			
 			$clientLoaDetails[$key]['ClientLoaPackageRel'] = $clientLoaPackageRel;
+			
+			//remove all LOA Items that don't have the same currency as the package
+			foreach($clientLoaDetails[$key]['LoaItem'] as $k => $v) {
+				if($v['currencyId'] != $this->data['Package']['currencyId']) {
+					unset($clientLoaDetails[$key]['LoaItem'][$k]);
+				}
+			}
 		endforeach;
 		
 		
@@ -497,7 +516,6 @@ class PackagesController extends AppController {
 			uasort($clientLoaDetails[$k]['LoaItem'], array($this, 'sortLoaItemsForEdit'));
 		}
 		
-		
 		$this->set('clientLoaDetails', $clientLoaDetails);
 		
 		$client = $this->Client->findByClientId($clientId);
@@ -510,9 +528,14 @@ class PackagesController extends AppController {
 		// this query grabs all the package rate periods via the packageRatePeriodItemRel table.
 		$packageRatePeriods = $this->Package->query("SELECT DISTINCT(prp.packageRatePeriodId), startDate, endDate, approvedRetailPrice FROM packageLoaItemRel AS plir INNER JOIN packageRatePeriodItemRel AS prpir ON plir.packageLoaItemRelId = prpir.packageLoaItemRelId INNER JOIN packageRatePeriod AS prp ON prpir.packageRatePeriodId = prp.packageratePeriodId WHERE plir.packageId = $id;");
 		$this->set('packageRatePeriods', $packageRatePeriods);
+		
+		$this->set('currencyCodes', $this->Package->Currency->find('list', array('fields' => array('currencyCode'))));
 	}
 	
 	function sortLoaItemsForEdit($a, $b) {
+		if(!isset($this->data['Package']['CheckedLoaItems'])) {
+			return;
+		}
 		return in_array($b['loaItemId'], $this->data['Package']['CheckedLoaItems']);
 	}
 
