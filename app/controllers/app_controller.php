@@ -47,7 +47,7 @@ class AppController extends Controller {
 		$this->Sanitize = new Sanitize();
 		
 		if($this->RequestHandler->isAjax()) {
-			Configure::write('debug', '2');
+			Configure::write('debug', '0');
 		}
 	}
 }
