@@ -232,10 +232,12 @@ class PackagesController extends AppController {
 			
 			foreach ($itemRatePeriods as $v) {
 				// if the item rate period falls within the start-end pair, then this rate period has a valid item and use the approved retail price, other use base price
-				$ratePeriodItemPrice = (($rangeStart >= strtotime($v['startDate'])) && ($rangeEnd <= strtotime($v['endDate']))) ? $v['approvedRetailPrice'] : $v['itemBasePrice'];		
+				$ratePeriodItemPrice = (($rangeStart >= strtotime($v['startDate'])) && ($rangeEnd <= strtotime($v['endDate']))) ? $v['approvedRetailPrice'] : $v['itemBasePrice'];	
+
 				if (!isset($loas[$v['loaItemId']]['Periods'][$pCount])) {
 					$packageLoaItemRelId[$v['loaItemId']] = $loas[$v['loaItemId']]['Periods'][$pCount] = $ratePeriodItemPrice * $loas[$v['loaItemId']]['quantity'];
 				}
+				
 			}
 										
 			$packageRatePeriods[$pCount]['startDate'] = $packageDates[$i];
@@ -247,7 +249,11 @@ class PackagesController extends AppController {
 
 		$this->set('loas', $loas);
 		$this->set('packageRatePeriods', $packageRatePeriods);
-		$this->render(null,null,'package_rate_periods_display');
+		if(count($packageRatePeriods) > 1) {
+			$this->render(null,null,'package_rate_periods_display');
+		} else {
+			return;
+		}
 	}
 
 	function add($clientId = null) {
