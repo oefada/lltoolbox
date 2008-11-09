@@ -114,29 +114,4 @@ $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']
 
 <?php echo $form->end('Submit');?>
 
-<h3>Recent Changes/Audit Trail</h3>
-<table>
-	<tr>
-		<th>When</th>
-		<th>Who</th>
-		<th>What</th>
-	</tr>
-	<tr>
-		<td style="border-top: 1px solid #ccc">2008-10-12</td>
-		<td style="border-top: 1px solid #ccc">User Two</td>
-		<td style="border-top: 1px solid #ccc"><strong>name:</strong> <del>A better name</del><ins>1350 Collins - Villa Spiaggia</ins><br /><br />
-			<strong>clientType:</strong> <del>Tour</del><ins>Property</ins><br /></td>
-	</tr>
-	<tr>
-		<td style="border-top: 1px solid #ccc">2008-10-12</td>
-		<td style="border-top: 1px solid #ccc">User Two</td>
-		<td style="border-top: 1px solid #ccc"><strong>name:</strong> <del>The New Name</del><ins>A better name</ins></td>
-	</tr>
-	<tr>
-		<td style="border-top: 1px solid #ccc">2008-10-10</td>
-		<td style="border-top: 1px solid #ccc">User One</td>
-		<td style="border-top: 1px solid #ccc"><strong>name:</strong> <del>original name</del><ins>The New Name</ins></td>
-	</tr>
-
-</table>
 </div>
