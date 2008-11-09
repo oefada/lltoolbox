@@ -383,7 +383,8 @@ class PackagesController extends AppController {
 	
 		//loop through all of the loa items associated to this package
 		if (!isset($this->data['Package']['CheckedLoaItems'])) {
-			return $this->Package->PackageLoaItemRel->deleteAll(array('PackageLoaItemRel.packageId' => $this->data['Package']['packageId'], true));
+			$this->Package->PackageLoaItemRel->deleteAll(array('PackageLoaItemRel.packageId' => $this->data['Package']['packageId'], true));
+			return true;
 		}
 		
 		foreach ($packageLoaItemRelations as $k => &$packageLoaItemRel):
@@ -422,11 +423,14 @@ class PackagesController extends AppController {
 	
 	function setUpPackageLoaItemRelArray() {
 		$tmp = array();
+		if(isset($this->data['PackageLoaItemRel'])):
 		foreach($this->data['PackageLoaItemRel'] as $v) {
 			$tmp[$v['loaItemId']] = $v;
 		}
 		
 		$this->data['PackageLoaItemRel'] = $tmp;
+		
+		endif;
 	}
 	
 	function edit($clientId = null, $id = null) {
@@ -444,12 +448,14 @@ class PackagesController extends AppController {
 				$this->Session->setFlash(__('The Package could not be saved. Please correct the errors again and try again.', true), 'default', array(), 'error');
 			}
 		}
+
+		$this->Package->recursive = 2;
+		$package = $this->Package->read(null, $id);
+		$this->set('package', $package);
+		
 		if (empty($this->data)) {
-			$this->Package->recursive = 2;
-			$package = $this->Package->read(null, $id);
 			$this->data = $package;
-			$this->set('package', $package);
-		}						
+		}
 		
 		$this->Package->ClientLoaPackageRel->recursive = -1;
 		$clientLoaPackageRel = $this->Package->ClientLoaPackageRel->findAllByPackageId($id);
