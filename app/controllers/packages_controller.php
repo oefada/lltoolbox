@@ -228,16 +228,17 @@ class PackagesController extends AppController {
 		for ($i=0; $i < $count; $i++) {
 		
 			$rangeStart = strtotime($packageDates[$i]);
-			$rangeEnd = strtotime($packageDates[($i + 1)]) - $one_day;
+			$rangeEnd = strtotime($packageDates[($i + 1)]);
 			
 			foreach ($itemRatePeriods as $v) {
 				// if the item rate period falls within the start-end pair, then this rate period has a valid item and use the approved retail price, other use base price
 				$ratePeriodItemPrice = (($rangeStart >= strtotime($v['startDate'])) && ($rangeEnd <= strtotime($v['endDate']))) ? $v['approvedRetailPrice'] : $v['itemBasePrice'];	
-
-				if (!isset($loas[$v['loaItemId']]['Periods'][$pCount])) {
-					$packageLoaItemRelId[$v['loaItemId']] = $loas[$v['loaItemId']]['Periods'][$pCount] = $ratePeriodItemPrice * $loas[$v['loaItemId']]['quantity'];
-				}
 				
+				$packageLoaItemRelId[$v['loaItemId']] = $loas[$v['loaItemId']]['Periods'][$pCount] = $ratePeriodItemPrice * $loas[$v['loaItemId']]['quantity'];
+
+				if($ratePeriodItemPrice != $v['itemBasePrice']) {
+					break;
+				}
 			}
 										
 			$packageRatePeriods[$pCount]['startDate'] = $packageDates[$i];
