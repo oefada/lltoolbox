@@ -12,11 +12,11 @@
 	?>	
 
 	<?php
-	foreach ($package['PackageLoaItemRel'] as $a => $b) {
+	foreach ($loas as $a => $b) {
 		echo '<tr>';
-		echo '<td>' . $b['LoaItem']['itemName'] . '</td>';
-		foreach ($b['PackageRatePeriodItemRel'] as $ratePeriodItem) {
-			echo '<td>$' . $ratePeriodItem['ratePeriodPrice'] . '</td>';
+		echo '<td>' . $b['itemName'] . '</td>';
+		foreach ($b['Periods'] as $index => $price) {
+			echo '<td>$' . $price . '</td>';
 		}
 		echo '</tr>';
 	}
