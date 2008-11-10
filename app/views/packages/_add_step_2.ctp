@@ -55,10 +55,9 @@
 	echo $form->input('approvedRetailPriceInUSD', array('disabled' => 'disabled', 'label' => 'USD', 'value' => '$'.$this->data['Package']['approvedRetailPrice']*1.2));
 ?></div>
 <script language="javascript">
-  // Example using periodic Form Observer
-  var obs=new Form.Element.EventObserver($("PackageApprovedRetailPrice"),displayAlert);
-  var obs2=new Form.Element.EventObserver($("PackageApprovedRetailPriceExchangeRate"),displayAlert);
-  function displayAlert(){
+  var obs=new Form.Element.EventObserver($("PackageApprovedRetailPrice"),updateUsdPrice);
+  var obs2=new Form.Element.EventObserver($("PackageApprovedRetailPriceExchangeRate"),updateUsdPrice);
+  function updateUsdPrice(){
      $('PackageApprovedRetailPriceInUSD').value = '$'+($F('PackageApprovedRetailPrice')*$F('PackageApprovedRetailPriceExchangeRate'));
   }
 </script>
