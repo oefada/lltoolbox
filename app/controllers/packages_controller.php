@@ -484,10 +484,10 @@ class PackagesController extends AppController {
 		}
 		
 		$this->Package->ClientLoaPackageRel->recursive = -1;
-		$clientLoaPackageRel = $this->Package->ClientLoaPackageRel->findAllByPackageId($id);
+		$foundClientLoaPackageRel = $this->Package->ClientLoaPackageRel->findAllByPackageId($id);
 	
 		foreach($this->data['ClientLoaPackageRel'] as $key => $clientLoaPackageRel):
-			$clientLoaDetails[$key] = $this->Client->Loa->findByClientId($clientLoaPackageRel['clientId']);
+			$clientLoaDetails[$key] = $this->Client->Loa->findByLoaId($foundClientLoaPackageRel['loaId']);
 			
 			$clientLoaDetails[$key]['ClientLoaPackageRel'] = $clientLoaPackageRel;
 			
