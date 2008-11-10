@@ -52,7 +52,7 @@
 <?php
 	echo "<label for='PackageApprovedRetailPriceExchangeRate'>Exchange Rate</label>";
 	echo $form->select('approvedRetailPriceExchangeRate', array('1.2' => 'Today (1.2)', '1.5' => '7 Day Average (1.5)', '0.8' => '28 day average (0.8)'), null, array('label' => 'Exchange Rate'), false);
-	echo $form->input('approvedRetailPriceInUSD', array('disabled' => 'disabled', 'label' => 'USD', 'value' => '$'.$this->data['Package']['approvedRetailPrice']*1.2));
+	echo $form->input('approvedRetailPriceInUSD', array('disabled' => 'disabled', 'label' => 'USD', 'value' => '$'.@$this->data['Package']['approvedRetailPrice']*1.2));
 ?></div>
 <script language="javascript">
   var obs=new Form.Element.EventObserver($("PackageApprovedRetailPrice"),updateUsdPrice);

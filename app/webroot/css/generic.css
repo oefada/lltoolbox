@@ -69,6 +69,7 @@ table {
 	text-align: center;
 	padding: 7px;
 }
+fieldset th,
 .related th {
 	background: #949494;
 	color: #000;
@@ -78,11 +79,13 @@ table {
 	text-align: center;
 	padding: 7px;
 }
+fieldset fieldset table,
 .related table table {
 	border-collapse: collapse;
 	border: 1px solid #bbb;
 	padding: 0;
 }
+fieldset fieldset table th,
 .related table table th {
 	color: #333;
 	background: #e5e5e5;

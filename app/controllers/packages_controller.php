@@ -214,7 +214,6 @@ class PackagesController extends AppController {
 				$itemRatePeriods[] = $b;
 			}
 		}
-		
 		// we now have package rate period dates so sort the dates
 		sort($packageDates);
 		
@@ -237,10 +236,6 @@ class PackagesController extends AppController {
 				$ratePeriodItemPrice = (($rangeStart >= strtotime($v['startDate'])) && ($rangeEnd <= strtotime($v['endDate']))) ? $v['approvedRetailPrice'] : $v['itemBasePrice'];	
 				
 				$packageLoaItemRelId[$v['loaItemId']] = $loas[$v['loaItemId']]['Periods'][$pCount] = $ratePeriodItemPrice * $loas[$v['loaItemId']]['quantity'];
-
-				if($ratePeriodItemPrice != $v['itemBasePrice']) {
-					break;
-				}
 			}
 										
 			$packageRatePeriods[$pCount]['startDate'] = $packageDates[$i];
