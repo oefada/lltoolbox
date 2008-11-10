@@ -6,10 +6,30 @@
 	echo $form->input('packageStatusId', array('label' => 'Status'));
 	echo $form->input('packageName');
 	echo $form->input('subtitle');
-	echo $datePicker->picker('startDate', array('label' => 'Package Start Date'));
-	echo $datePicker->picker('endDate', array('label' => 'Package End Date'));
-	echo $datePicker->picker('validityStartDate');
-	echo $datePicker->picker('validityEndDate');
+	echo $form->input('shortBlurb');
+?>
+
+<div style="float: left; clear: none">
+<?php
+	echo $form->input('startDate', array('label' => 'Package Start Date'));
+?>
+</div>
+<div style="float: left; clear: none">
+<?php
+	echo $form->input('endDate', array('label' => 'Package End Date'));
+?>
+</div>
+<div style="float: left; clear: left">
+<?php
+	echo $form->input('validityStartDate');
+?>
+</div>
+<div style="float: left; clear: none">
+<?php
+	echo $form->input('validityEndDate');
+?>
+</div>
+<?php
 	echo $form->input('numGuests');
 	echo $form->input('numNights');
 	echo $form->input('maxNumSales');

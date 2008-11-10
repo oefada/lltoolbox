@@ -29,7 +29,7 @@ class DatePickerHelper extends FormHelper {
             $view->addScript($this->Javascript->link('jscalendar/calendar.js'));
             $view->addScript($this->Javascript->link('jscalendar/lang/calendar-en.js'));
             $view->addScript($this->Javascript->link('common.js'));
-            $view->addScript($this->Html->css('../js/jscalendar/skins/aqua/theme'));
+            $view->addScript($this->Html->css('../js/jscalendar/calendar-blue'));
         }
     }
 

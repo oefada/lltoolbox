@@ -70,7 +70,7 @@ $this->set('clientId', $this->data['Client']['clientId']);
 		<tr<?php echo $class;?>>
 			<td><?php echo $loaItem['LoaItemType']['loaItemTypeName'];?></td>
 			<td><?php echo $loaItem['itemName'];?></td>
-			<td><?php echo $number->currency($loaItem['itemBasePrice']); ?></td>
+			<td><?php echo $number->currency($loaItem['itemBasePrice'], $currencyCodes[$loaItem['currencyId']]); ?></td>
 			<td><?php echo $loaItem['perPerson'];?></td>
 			<td class="actions">
 				<?php echo $html->link('Edit',

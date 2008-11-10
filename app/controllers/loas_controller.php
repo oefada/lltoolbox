@@ -46,10 +46,11 @@ class LoasController extends AppController {
 		$this->data['Loa']['clientId'] = $clientId;
 		$customerApprovalStatusIds = $this->Loa->LoaCustomerApprovalStatus->find('list');
 
-		$this->Loa->Client->recursive = -1;
+		$this->Loa->Client->recursive = 1;
 		$client = $this->Loa->Client->find('clientId = '.$clientId, 'name');
 		$currencyIds = $this->Loa->Currency->find('list');
 		$this->set('clientName', $client['Client']['name']);
+		$this->set('client', $this->Loa->Client->findByClientId($clientId));
 		$this->set(compact('customerApprovalStatusIds', 'currencyIds'));
 		
 	}
@@ -76,6 +77,8 @@ class LoasController extends AppController {
 		$loaCustomerApprovalStatuses = $this->Loa->LoaCustomerApprovalStatus->find('list');
 		$currencyIds = $this->Loa->Currency->find('list');
 		$this->set(compact('loaCustomerApprovalStatuses', 'currencyIds'));
+		$this->set('client', $this->Loa->Client->findByClientId($this->data['Loa']['clientId']));
+		$this->set('currencyCodes', $this->Loa->Currency->find('list', array('fields' => array('currencyCode'))));
 	}
 
 	function delete($id = null) {

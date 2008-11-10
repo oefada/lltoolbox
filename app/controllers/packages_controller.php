@@ -250,13 +250,10 @@ class PackagesController extends AppController {
 
 		$this->set('loas', $loas);
 		$this->set('packageRatePeriods', $packageRatePeriods);
-		if(count($packageRatePeriods) > 1) {
-			$this->render(null,null,'package_rate_periods_display');
-		} else {
-			return;
-		}
-	}
 
+		$this->render(null,null,'package_rate_periods_display');
+	}
+	
 	function add($clientId = null) {
 		$this->set('clientId', $clientId);
 		$this->set('currentTab', 'property');
@@ -345,6 +342,12 @@ class PackagesController extends AppController {
 		$this->set('currencyCodes', $this->Package->Currency->find('list', array('fields' => array('currencyCode'))));
 	}
 	
+	/**
+	 * Function is called from {@link add()} to link LOA Items to the package
+	 *
+	 * @see updatePackageLoaItems()
+	 * @todo consolidate with {@link updatePackageLoaItems}
+	 */
 	function addPackageLoaItems() {
 		if(!isset($this->data['PackageLoaItemRel'])) {
 			return;
@@ -360,6 +363,13 @@ class PackagesController extends AppController {
 		endif;
 	}
 	
+	/**
+	 * This method is called from the view for {@link selectAdditionalClient()} after a client is selected
+	 * It uses the clientId passed to retrieve all of the fields needed to add a new client to step 1
+	 *
+	 * @param int $clientId
+	 * @author Victor Garcia
+	 */
 	function fetchMultipleClientsFormFragment($clientId = null) {
 		$this->set('rowId', $this->params['named']['rowId']);
 		$this->set('clientId', $clientId);
@@ -373,10 +383,22 @@ class PackagesController extends AppController {
 		$this->render('_add_step_1_fields');
 	}
 	
+	/**
+	 * Method displays a modal dialog box with all the clients. Used in conjunction with {@link fetchMultipleClientsFormFragment()}
+	 *
+	 * @author Victor Garcia
+	 */
 	function selectAdditionalClient() {
 		$this->set('clients', $this->paginate('Client'));
 	}
-
+	
+	/**
+	 * Method works just like {@link addPackageLoaItems()} but for existing packages. It is called from {@link edit()}
+	 * It goes through all checked items and updates quantities or removes them from the relationship as needed
+	 *
+	 * @see addPackageLoaItems()
+	 * @todo consolidate with {@link addPackageLoaItems}
+	 */
 	function updatePackageLoaItems() {
 		//grab the new quantities from the form, the data array looks like the one from the databases but with only the quantity field
 		$currentItemIds = array();

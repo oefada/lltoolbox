@@ -8,8 +8,6 @@
 		echo $form->input('startDate');
 		echo $form->input('endDate');
 		echo $form->input('approvedRetailPrice');
-		echo $form->input('approved');
-		echo $form->input('approvedBy');
 	?>
 	</fieldset>
 <?php echo $form->end('Submit');?>

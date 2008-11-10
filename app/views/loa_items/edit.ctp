@@ -7,9 +7,8 @@
 		echo $form->input('loaItemTypeId');
 		echo $form->input('loaId', array('type' => 'hidden'));
 		echo $form->input('itemName');
+		echo $form->input('currencyId', array('disabled' => 'disabled'));
 		echo $form->input('itemBasePrice');
-		echo $form->input('perPerson');
-		echo $form->input('currencyId');
 	?>
 	</fieldset>
 <?php echo $form->end('Submit');?>
