@@ -27,7 +27,6 @@
 			echo $javascript->link('scriptaculous/scriptaculous');
 			echo $javascript->link('modalbox');
 			echo $javascript->link('collapsible');
-			echo $javascript->link('datepicker'); 
 		endif;
 
 		echo $scripts_for_layout;

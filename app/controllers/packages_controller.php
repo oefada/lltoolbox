@@ -171,13 +171,15 @@ class PackagesController extends AppController {
 
 		// retrieve all loa items related to this package id
 		$data = $this->Package->PackageLoaItemRel->LoaItem->find('all', array('conditions' => array('LoaItem.loaItemId' => $loaIds)));
-
+		$currencyCodes = $this->Package->Currency->find('list', array('fields' => 'currencyCode'));
 		foreach ($data as $k => $v) {
 			if (isset($loas[$v['LoaItem']['loaItemId']])) {
-				$loas[$v['LoaItem']['loaItemId']]['itemName'] = $v['LoaItem']['itemName'];	
+				$loas[$v['LoaItem']['loaItemId']]['itemName'] = $v['LoaItem']['itemName'];
+				$loas[$v['LoaItem']['loaItemId']]['currencyCode'] = $currencyCodes[$v['LoaItem']['currencyId']];
+				$currencyCode = $currencyCodes[$v['LoaItem']['currencyId']];
 			}
 		}
-
+		$this->set('currencyCode', $currencyCode);
 		// populate with loa items and their rate periods
 		$itemRatePeriods = array(); 
 		
