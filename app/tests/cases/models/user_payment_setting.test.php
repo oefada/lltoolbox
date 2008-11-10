@@ -69,6 +69,36 @@ class UserPaymentSettingTestCase extends CakeTestCase {
 		$this->assertEqual($expected, $result);
 	}
 	
+	function testCreateCreditCard() {
+		$this->UserPaymentSetting->create();
+		
+		$data['userId'] = 503708;
+		$data['ccNumber'] = '6011215125020568';
+		$data['nameOnCard'] = 'Arons Lee';
+		$data['routingNumber'] = null;
+		$data['accountNumber'] = null;
+		$data['nameOnAccount'] = null;
+		$data['paymentTypeId'] = 1;
+		$data['expYear'] = '2009';
+		$data['expMonth'] = '05';
+		$data['address1'] = '15135 asdfasd fasd';
+		$data['address2'] = null;
+		$data['city'] = 'Gardena';
+		$data['state'] = 'CA';
+		$data['country'] = 'USA';
+		$data['postalCode'] = 90247;
+		$this->assertTrue($this->UserPaymentSetting->save($data));	
+
+		$data2['userId'] = 1;
+		$data2['ccNumber'] = '4716640701248403';
+		$data2['nameOnCard'] = 'Arons Lee';
+		$data2['expYear'] = '2009';
+		$data2['expMonth'] = '05';
+		$this->UserPaymentSetting->create();
+		$this->UserPaymentSetting->set($data2);
+		$this->assertTrue($this->UserPaymentSetting->save());
+	}
+	
 	function testCreditCardIsMaskedOnFind() {
 		$p1 = $this->UserPaymentSetting->findByUserPaymentSettingId(2);
 
