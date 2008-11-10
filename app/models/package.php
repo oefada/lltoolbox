@@ -13,7 +13,7 @@ class Package extends AppModel {
 						 'PackageOfferTypeDefFieldRel' => array('foreignKey' => 'packageId'),
 						 'PackageLoaItemRel' => array('foreignKey' => 'packageId'),
 						 'PackagePromo' => array('foreignKey' => 'packageId'),
-						 'ClientLoaPackageRel' => array('foreignKey' => 'packageId')
+						 'ClientLoaPackageRel' => array('foreignKey' => 'packageId', 'dependent' => true)
 						);
 						
 	var $validate = array('packageName' => VALID_NOT_EMPTY,
