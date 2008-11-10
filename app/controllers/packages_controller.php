@@ -299,7 +299,7 @@ class PackagesController extends AppController {
 		
 		$percentSum = 0;
 		$loaIds = array(); //need to reset the array declared before this if/else
-			
+	
 		$this->data['ClientLoaPackageRel'] = array_merge($this->data['ClientLoaPackageRel'], array());
 		
 		if(count($this->data['ClientLoaPackageRel']) == 1) {
@@ -321,7 +321,7 @@ class PackagesController extends AppController {
 		//this re-numbers the array so we have a continuous array, since people can add/remove items on the list
 		$this->data['ClientLoaPackageRel'] = array_merge($this->data['ClientLoaPackageRel'], array());
 		foreach($this->data['ClientLoaPackageRel'] as $key => $clientLoaPackageRel):
-			$loa = $this->Client->Loa->findByClientId($clientLoaPackageRel['clientId']);
+			$loa = $this->Client->Loa->findByLoaId($clientLoaPackageRel['loaId']);
 			
 			//remove all of the LOA Items that are not the same currency as the LOA
 			foreach($loa['LoaItem'] as $k => $loaItem) {
