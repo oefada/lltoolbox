@@ -28,10 +28,9 @@ class LoaItem extends AppModel {
 	 * @param array $quantities the quantities that are used to multiply the rate period or base price and get the full price
 	 * @param string $startDate the left boundary for dates
 	 * @param string $endDate the right boundary for dates
-	 * @param int $packageId used for saving/updating
 	 * @return array that contains the rate period boundaries for all items
 	 */
-	function carveRatePeriods($itemIds = array(), $quantities = array(), $startDate = null, $endDate = null, $packageId = null) {
+	function carveRatePeriods($itemIds = array(), $quantities = array(), $startDate = null, $endDate = null) {
 		if(empty($itemIds)):
 			$itemIds = array($this->id);		//if no itemIds were passed, set the id to $this->id
 		elseif(is_int($itemIds)):
@@ -64,7 +63,7 @@ class LoaItem extends AppModel {
 					endif;
 				endforeach;
 				
-				$data = array('packageId' => $packageId,
+				$data = array(
 				'loaItemId' => $itemId,
 				'startDate' => date('Y-m-d', $rangeStart),
 				'endDate' => date('Y-m-d', $rangeEnd),
