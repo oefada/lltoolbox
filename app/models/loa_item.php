@@ -112,12 +112,11 @@ class LoaItem extends AppModel {
 			$this->loaItems[$this->id] = $this->data;
 			
  			foreach($this->data['LoaItemRatePeriod'] as $loaItemRatePeriod):
-
-				if(null == $startDate || $loaItemRatePeriod['startDate'] > $startDate):
+				if(null != $startDate && strtotime($loaItemRatePeriod['startDate']) > strtotime($startDate) && strtotime($loaItemRatePeriod['startDate']) < strtotime($endDate)):
 					$ratePeriodBoundaries[] = $loaItemRatePeriod['startDate'];
 				endif;
 			
-				if(null == $endDate || $loaItemRatePeriod['endDate'] < $endDate):
+				if(null != $endDate && strtotime($loaItemRatePeriod['endDate']) < strtotime($endDate) && strtotime($loaItemRatePeriod['endDate']) > strtotime($startDate)):
 					$ratePeriodBoundaries[] = $loaItemRatePeriod['endDate'];
 				endif;
 			endforeach;
