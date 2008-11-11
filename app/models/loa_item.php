@@ -87,6 +87,7 @@ class LoaItem extends AppModel {
 		
 		$packageRatePeriods['Boundaries'] = $carvedBoundaries;
 		$packageRatePeriods['IncludedItems'] = $items;
+
 		return $packageRatePeriods;
 	}
 	
@@ -133,7 +134,9 @@ class LoaItem extends AppModel {
 			array_push($ratePeriodBoundaries, $endDate);
 		endif;
 		
-		$ratePeriodBoundaries = array_unique($ratePeriodBoundaries); 
+		$ratePeriodBoundaries = array_unique($ratePeriodBoundaries);
+		$ratePeriodBoundaries = array_merge($ratePeriodBoundaries, array());	//fix the fact that array_unique does not re-number keys
+
 		return $ratePeriodBoundaries;
 	}
 }
