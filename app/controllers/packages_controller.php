@@ -162,91 +162,16 @@ class PackagesController extends AppController {
 		// set recursive to 2 so we can access all the package loa item relations also		
 		$this->Package->recursive = 2;
 
-		foreach ($this->data['PackageLoaItemRel'] as $k => $v) {
-			if (in_array($k, $this->data['Package']['CheckedLoaItems'])) {
-				$loas[$k] = $v;
-				$loaIds[] = $k;
-			}
-		}
-
 		// retrieve all loa items related to this package id
-		$data = $this->Package->PackageLoaItemRel->LoaItem->find('all', array('conditions' => array('LoaItem.loaItemId' => $loaIds)));
 		$currencyCodes = $this->Package->Currency->find('list', array('fields' => 'currencyCode'));
-		foreach ($data as $k => $v) {
-			if (isset($loas[$v['LoaItem']['loaItemId']])) {
-				$loas[$v['LoaItem']['loaItemId']]['itemName'] = $v['LoaItem']['itemName'];
-				$loas[$v['LoaItem']['loaItemId']]['currencyCode'] = $currencyCodes[$v['LoaItem']['currencyId']];
-				$currencyCode = $currencyCodes[$v['LoaItem']['currencyId']];
-			}
-		}
-		$this->set('currencyCode', $currencyCode);
-		// populate with loa items and their rate periods
-		$itemRatePeriods = array(); 
-		
-		/*  ======= CARVING ==============
-		 *  Include the package start and end dates
-		 *  Include all unique loa item rate periods
-		 *  ==============================
-		 */
-		 
-		$packageDates = array();
-		$packageDates[] = $packageStartDate = $this->data['Package']['startDate']['year'] . '-' . $this->data['Package']['startDate']['month'] . '-' . $this->data['Package']['startDate']['day'];
-		$packageDates[] = $packageEndDate = $this->data['Package']['endDate']['year'] . '-' . $this->data['Package']['endDate']['month'] . '-' . $this->data['Package']['endDate']['day'];
-								
-		// go through every loa item rate period
-		$i = 0;
-		foreach ($data as $k => $v) {
-			foreach ($v['LoaItemRatePeriod'] as $a => $b) {
-				if (($b['startDate'] >= $packageStartDate) && ($b['startDate'] <= $packageEndDate) && !in_array($b['startDate'], $packageDates)) {
-					$packageDates[] = $b['startDate'];
-				}
-				if (($b['endDate'] >= $packageStartDate) && ($b['endDate'] <= $packageEndDate) && !in_array($b['endDate'], $packageDates)) { 
-					$packageDates[] = $b['endDate'];
-				}
-				// add the package loa item relation id so we can use as lookup later below
-				$i++;
-				$b['packageLoaItemRelId'] = $i;
-				
-				// add the item base price 
-				$b['itemBasePrice'] = $v['LoaItem']['itemBasePrice'];
-				
-				// finally add essential data we need to the overall loa item array
-				$itemRatePeriods[] = $b;
-			}
-		}
-		// we now have package rate period dates so sort the dates
-		sort($packageDates);
-		
-		$one_day = 24 * 60 * 60;
-		$count = count($packageDates) - 1;
+		$this->set('currencyCodes', $currencyCodes);
 
-		// cycle through each item rate period using $packageDates start-end pairs.
-		// for each start-end pair, use $packageLoaItemRelId to obtain item prices and ids.
-
-		$packageRatePeriods = array();
-		$pCount = 0;
+		$packageStartDate = $this->data['Package']['startDate']['year'] . '-' . $this->data['Package']['startDate']['month'] . '-' . $this->data['Package']['startDate']['day'];
+		$packageEndDate = $this->data['Package']['endDate']['year'] . '-' . $this->data['Package']['endDate']['month'] . '-' . $this->data['Package']['endDate']['day'];
 		
-		for ($i=0; $i < $count; $i++) {
-		
-			$rangeStart = strtotime($packageDates[$i]);
-			$rangeEnd = strtotime($packageDates[($i + 1)]);
-			
-			foreach ($itemRatePeriods as $v) {
-				// if the item rate period falls within the start-end pair, then this rate period has a valid item and use the approved retail price, other use base price
-				$ratePeriodItemPrice = (($rangeStart >= strtotime($v['startDate'])) && ($rangeEnd <= strtotime($v['endDate']))) ? $v['approvedRetailPrice'] : $v['itemBasePrice'];	
-				
-				$packageLoaItemRelId[$v['loaItemId']] = $loas[$v['loaItemId']]['Periods'][$pCount] = $ratePeriodItemPrice * $loas[$v['loaItemId']]['quantity'];
-			}
-										
-			$packageRatePeriods[$pCount]['startDate'] = $packageDates[$i];
-			$packageRatePeriods[$pCount]['endDate'] = $packageDates[($i + 1)];
-			$packageRatePeriods[$pCount]['packageRatePeriodPrice'] = array_sum($packageLoaItemRelId);
-				
-			$pCount++;
-		}
+		$carvedRatePeriods = $this->Package->PackageLoaItemRel->LoaItem->carveRatePeriods($this->data['Package']['CheckedLoaItems'], $this->data['PackageLoaItemRel'], $packageStartDate, $packageEndDate);
 
-		$this->set('loas', $loas);
-		$this->set('packageRatePeriods', $packageRatePeriods);
+		$this->set('packageRatePeriods', $carvedRatePeriods);
 
 		$this->render(null,null,'package_rate_periods_display');
 	}
