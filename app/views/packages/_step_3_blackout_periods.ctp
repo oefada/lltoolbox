@@ -4,6 +4,7 @@
 	//make sure we always have atleast one start and end date
 	if(isset($this->data['PackageValidityPeriod'])):
 	foreach($this->data['PackageValidityPeriod'] as $i => $packageValidityPeriod): 
+		echo "<div style='clear: both; float: none'>";
 		echo "<strong>";
 		echo $ajax->link($html->image('delete.png'),
 							array('action' => 'removeBlackoutPeriodRow', $i),
@@ -14,12 +15,13 @@
 		echo "</strong>";
 		echo (1 <= $i) ? "<hr>": '';
 		echo $form->input('PackageValidityPeriod.'.$i.'.packageValidityPeriodId');
-		echo $datePicker->picker('PackageValidityPeriod.'.$i.'.startDate');
-		echo $datePicker->picker('PackageValidityPeriod.'.$i.'.endDate');
+		echo '<div style="float: left; clear: left; "><strong>Start</strong>'.$datePicker->picker('PackageValidityPeriod.'.$i.'.startDate', array('label' => false)).'</div>';
+		echo '<div style="float:left; clear: right; "><strong>End</strong>'.$datePicker->picker('PackageValidityPeriod.'.$i.'.endDate', array('label' => false)).'</div>';
+		echo "</div>";
 	endforeach;
 	endif;
 ?>
-<br /><br />
+<div style="clear: both"></div>
 <?=
 $ajax->link($html->image('i-create.gif').'Add Blackout Period',
 				array('action' => 'addBlackoutPeriodRow'),
