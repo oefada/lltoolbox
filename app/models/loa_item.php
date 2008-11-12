@@ -79,7 +79,7 @@ class LoaItem extends AppModel {
 				
 				if (!isset($periodPrices[$i])) $periodPrices[$i] = 0;
 				
-				$periodPrices[$i] += $data['ratePeriodPrice'];
+				$periodPrices[$i] += $data['ratePeriodPrice']*$data['quantity'];
 				$packageRatePeriods['PackageRatePeriod'][] = $data;
 				$items[$itemId]['PackageRatePeriod'][] = $data;
 				
