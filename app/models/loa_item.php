@@ -73,7 +73,7 @@ class LoaItem extends AppModel {
 				'loaItemId' => $itemId,
 				'startDate' => date('Y-m-d', $rangeStart),
 				'endDate' => date('Y-m-d', $rangeEnd),
-				'ratePeriodPrice' => $ratePeriodPrice*(isset($quantities[$itemId]) ? $quantities[$itemId]['quantity'] : 0),
+				'ratePeriodPrice' => $ratePeriodPrice,
 				'quantity' => (isset($quantities[$itemId]) ? $quantities[$itemId]['quantity'] : 0)
 				);
 				
