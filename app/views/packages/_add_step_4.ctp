@@ -40,6 +40,7 @@
 	</table>
 	<div id='ratePeriods'>
 	</div>
+	<?= $this->renderElement('../packages/package_rate_periods', array('packageRatePreview' => false)) ?>
 	</div>
 </fieldset>
 <?=$ajax->observeForm('PackageAddForm', array('url' => "/clients/$clientId/packages/carveRatePeriodsForDisplay", 'update' => 'ratePeriods', 'frequency' => 0.5, 'indicator' => 'spinner'))?>

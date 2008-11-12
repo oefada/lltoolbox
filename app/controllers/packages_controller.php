@@ -64,8 +64,8 @@ class PackagesController extends AppController {
 		$carvedRatePeriods = $this->Package->PackageLoaItemRel->LoaItem->carveRatePeriods($this->data['Package']['CheckedLoaItems'], $this->data['PackageLoaItemRel'], $packageStartDate, $packageEndDate);
 
 		$this->set('packageRatePeriods', $carvedRatePeriods);
-
-		$this->render(null,null,'package_rate_periods_display');
+		$this->set('packageRatePreview', true);
+		$this->render(null,null,'package_rate_periods');
 	}
 	
 	function add($clientId = null) {
@@ -283,8 +283,8 @@ class PackagesController extends AppController {
 			$this->redirect(array('controller' => 'clients', 'action'=>'index'));
 		}
 		if (!empty($this->data)) {
+			$this->Package->PackageRatePeriod->deleteAll(array('PackageRatePeriod.packageId' => $this->data['Package']['packageId']));
 			$this->carveRatePeriods($clientId);
-			debug($this->data);
 			if ($this->updatePackageLoaItems() && $this->Package->saveAll($this->data) && $this->Package->save($this->data)) {
 				$this->addPackageOfferTypeDefFieldRel($id);
 				$this->Session->setFlash(__('The Package has been saved', true), 'default', array(), 'success');
@@ -318,7 +318,6 @@ class PackagesController extends AppController {
 			}
 		endforeach;
 		
-		
 		$formats = $this->Package->Format->find('list');
 		$this->set('formats', $formats);
 		
@@ -348,11 +347,36 @@ class PackagesController extends AppController {
 		
 		$this->setUpPackageLoaItemRelArray();
 		
-		// this query grabs all the package rate periods via the packageRatePeriodItemRel table.
-		$packageRatePeriods = $this->Package->query("SELECT DISTINCT(prp.packageRatePeriodId), startDate, endDate, approvedRetailPrice FROM packageLoaItemRel AS plir INNER JOIN packageRatePeriodItemRel AS prpir ON plir.packageLoaItemRelId = prpir.packageLoaItemRelId INNER JOIN packageRatePeriod AS prp ON prpir.packageRatePeriodId = prp.packageratePeriodId WHERE plir.packageId = $id;");
+		$itemList = $this->Package->PackageLoaItemRel->LoaItem->find('list');
+		$itemCurrencyIds = $this->Package->PackageLoaItemRel->LoaItem->find('list', array('fields' => array('currencyId')));
+		
+		foreach($this->data['PackageRatePeriod'] as $ratePeriod):
+			//setup the arrays needed to draw the rate period table			
+			//the boundaries are used to draw all of the columns
+			$boundaries[$ratePeriod['startDate']]['rangeStart'] = $ratePeriod['startDate'];
+			$boundaries[$ratePeriod['startDate']]['rangeEnd'] = $ratePeriod['endDate'];
+			
+			if(!isset($boundaries[$ratePeriod['startDate']]['rangeSum'])) $boundaries[$ratePeriod['startDate']]['rangeSum'] = 0;
+			$boundaries[$ratePeriod['startDate']]['rangeSum'] += $ratePeriod['ratePeriodPrice']*$ratePeriod['quantity'];
+			
+			//setup an array that has itemId => array('startDate', 'endDate', 'price'), so we can draw each row
+			$itemRatePeriods['IncludedItems'][$ratePeriod['loaItemId']]['itemName'] = $itemList[$ratePeriod['loaItemId']];
+			$itemRatePeriods['IncludedItems'][$ratePeriod['loaItemId']]['currencyId'] = $itemCurrencyIds[$ratePeriod['loaItemId']];
+			$itemRatePeriods['IncludedItems'][$ratePeriod['loaItemId']]['PackageRatePeriod'][] = $ratePeriod;
+		endforeach;
+
+		
+		//sort and re-set keys for the boundaries array
+		sort($boundaries);
+		array_merge($boundaries, array());
+		
+		$packageRatePeriods = $itemRatePeriods;
+		$packageRatePeriods['Boundaries'] = $boundaries;
+
 		$this->set('packageRatePeriods', $packageRatePeriods);
 		
 		$this->set('currencyCodes', $this->Package->Currency->find('list', array('fields' => array('currencyCode'))));
+		
 	}
 	
 	function sortLoaItemsForEdit($a, $b) {

@@ -46,7 +46,20 @@ div.title-header div.buttons {
 }
 
 /* @end */
-
+/* @group Forms */
+tr.lastRow td {
+	background: #cf6;
+	font-weight: bold;
+	border-top: 1px solid #ccc;
+	border-bottom: none;
+	padding: 5px;
+}
+tr.lastRowLight td {
+	background: #e5e5e5;
+	font-weight: bold;
+	color: #555;
+}
+/* @end */
 /*
 @group Sidebar
 */
