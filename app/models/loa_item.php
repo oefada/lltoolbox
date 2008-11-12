@@ -54,14 +54,20 @@ class LoaItem extends AppModel {
 			foreach($itemIds as $itemId):
 				$items[$itemId]['itemName'] = $itemList[$itemId];
 				$items[$itemId]['currencyId'] = $currencyList[$itemId];
-				foreach($this->loaItems[$itemId]['LoaItemRatePeriod'] as $loaItemRatePeriod):
-					if( strtotime($loaItemRatePeriod['startDate']) <= $rangeStart && strtotime($loaItemRatePeriod['endDate']) >= $rangeEnd):
-						$ratePeriodPrice = $loaItemRatePeriod['approvedRetailPrice'];
-						break;
-					else:
-						$ratePeriodPrice = $this->loaItems[$itemId]['LoaItem']['itemBasePrice'];
-					endif;
-				endforeach;
+				
+				
+				if (empty($this->loaItems[$itemId]['LoaItemRatePeriod'])):									//if item has no rate periods, we always use the item base price
+					$ratePeriodPrice = $this->loaItems[$itemId]['LoaItem']['itemBasePrice'];
+				else:																						//if item has atleast one rate period, loop through them and set the prices
+					foreach($this->loaItems[$itemId]['LoaItemRatePeriod'] as $loaItemRatePeriod):
+						if( strtotime($loaItemRatePeriod['startDate']) <= $rangeStart && strtotime($loaItemRatePeriod['endDate']) >= $rangeEnd):
+							$ratePeriodPrice = $loaItemRatePeriod['approvedRetailPrice'];
+							break;
+						else:
+							$ratePeriodPrice = $this->loaItems[$itemId]['LoaItem']['itemBasePrice'];
+						endif;
+					endforeach;
+				endif; //end rate period test
 				
 				$data = array(
 				'loaItemId' => $itemId,
