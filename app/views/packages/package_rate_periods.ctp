@@ -36,6 +36,11 @@
 	}
 	echo '</tr>';
 	?>
+	
+	<?php
+	//we only need to show exchange rates if the currency is not USD
+	if($currencyCode != 'USD'):
+	?>
 	<?php
 	echo '<tr class="lastRowLight">';
 	echo '<td style="border-top: 1px solid #ccc">Exchange Rate Today (1.2)</td>';
@@ -60,6 +65,6 @@
 	}
 	echo '</tr>';
 	?>
-	
+	<?php endif; //end currencyCode check?>
 	</table>
 </div>
