@@ -345,7 +345,6 @@ class PackagesController extends AppController {
 		$itemList = $this->Package->PackageLoaItemRel->LoaItem->find('list');
 		$itemCurrencyIds = $this->Package->PackageLoaItemRel->LoaItem->find('list', array('fields' => array('currencyId')));
 		
-		if(isset($this->data['PackageRatePeriod'])):
 		foreach($this->data['PackageRatePeriod'] as $ratePeriod):
 			//setup the arrays needed to draw the rate period table			
 			//the boundaries are used to draw all of the columns
@@ -371,14 +370,16 @@ class PackagesController extends AppController {
 		
 			$this->set('packageRatePeriods', $packageRatePeriods);
 		endif;
-		endif;
+		
 		$this->set('currencyCodes', $this->Package->Currency->find('list', array('fields' => array('currencyCode'))));
 		
-		foreach ($this->data['Format'] as $format):
-		 	$formatList[] = $format['formatId'];
-		endforeach;
+		if(!isset($this->data['Format']['Format'])):
+			foreach ($this->data['Format'] as $format):
+		 		$formatList[] = $format['formatId'];
+			endforeach;
 		
-		$this->data['Format']['Format'] = $formatList;
+			$this->data['Format']['Format'] = $formatList;
+		endif;
 		
 		$this->setupOfferTypeDefArray();
 	}
