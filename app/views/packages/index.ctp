@@ -1,17 +1,17 @@
 <?php
 $this->pageTitle = $client['Client']['name'].$html2->c($client['Client']['clientId'], 'Client Id:');
 ?>
-<h2><?php __('View All Packages');?></h2>
 <?php if(count($packages) > 0): ?>
 <div id='packages-index' class="packages index">
+<h2><?php __('View All Packages');?></h2>
 <?= $this->renderElement('ajax_paginator', array('divToPaginate' => 'packages-index', 'showCount' => true))?>
 <table cellpadding="0" cellspacing="0">
 <tr>
-	<th><?php echo $paginator->sort('packageName');?></th>
-	<th><?php echo $paginator->sort('Package Status', 'packageStatusId');?></th>
-	<th><?php echo $paginator->sort('startDate');?></th>
-	<th><?php echo $paginator->sort('endDate');?></th>
-	<th><?php echo $paginator->sort('created');?></th>
+	<th><?php echo $paginator->sort('Package Name', 'Package.packageName');?></th>
+	<th><?php echo $paginator->sort('Package Status', 'Package.packageStatusId');?></th>
+	<th><?php echo $paginator->sort('Start Date', 'Package.startDate');?></th>
+	<th><?php echo $paginator->sort('End Date', 'Package.endDate');?></th>
+	<th><?php echo $paginator->sort('Created', 'Package.created');?></th>
 	<th class="actions"><?php __('Actions');?></th>
 </tr>
 <?php
