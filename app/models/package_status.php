@@ -5,5 +5,7 @@ class PackageStatus extends AppModel {
 	var $useTable = 'packageStatus';
 	var $primaryKey = 'packageStatusId';
 	var $displayField = 'packageStatusName';
+	
+	var $hasMany = array('Package' => array('foreignKey' => 'packageStatusId'));
 }
 ?>

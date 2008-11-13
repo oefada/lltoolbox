@@ -8,7 +8,7 @@ $this->pageTitle = $client['Client']['name'].$html2->c($client['Client']['client
 <table cellpadding="0" cellspacing="0">
 <tr>
 	<th><?php echo $paginator->sort('packageName');?></th>
-	<th><?php echo $paginator->sort('packageStatusId');?></th>
+	<th><?php echo $paginator->sort('Package Status', 'packageStatusId');?></th>
 	<th><?php echo $paginator->sort('startDate');?></th>
 	<th><?php echo $paginator->sort('endDate');?></th>
 	<th><?php echo $paginator->sort('created');?></th>
@@ -27,7 +27,7 @@ foreach ($packages as $package):
 			<?php echo $package['Package']['packageName']; ?>
 		</td>
 		<td>
-			<?php echo $package['Package']['packageStatusId']; ?>
+			<?php echo $packageStatusIds[$package['Package']['packageStatusId']]; ?>
 		</td>
 		<td>
 			<?php echo $package['Package']['startDate']; ?>

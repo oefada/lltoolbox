@@ -15,9 +15,9 @@ class PackagesController extends AppController {
 		if (!isset($clientId)) {
 			$this->cakeError('error404');
 		}
-		$this->Package->recursive = 0;
-		$this->set('packages', $this->paginate('ClientLoaPackageRel', array('ClientLoaPackageRel.clientId' => $clientId)));
 		
+		$this->set('packages', $this->paginate('ClientLoaPackageRel', array('ClientLoaPackageRel.clientId' => $clientId)));
+		$this->set('packageStatusIds', $this->Package->PackageStatus->find('list'));
 		$this->set('client', $this->Client->findByClientId($clientId));
 		$this->set('clientId', $clientId);
 		$this->set('currentTab', 'property');
