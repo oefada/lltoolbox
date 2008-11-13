@@ -1,5 +1,5 @@
 <fieldset class="collapsible">
-	<legend class="handle">Step 6 - Approvals</legend>
+	<h3 class="handle">Step 6 - Approvals</h3>
 	<div class="collapsibleContent controlset2">
 		<fieldset style="border: none">
 		<label>Approved By Client</label>

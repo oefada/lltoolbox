@@ -1,5 +1,5 @@
 <fieldset class="collapsible">
-	<legend class="handle">Step 2 - Add Basic Package Information</legend>
+	<h3 class="handle">Step 2 - Add Basic Package Information</h3>
 	<div class="collapsibleContent disableAutoCollapse">
 <?php
 	

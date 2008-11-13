@@ -89,19 +89,6 @@ h2 {
 	padding: 0;
 }
 
-.inlineForms {
-	float: left;
-	width: 100%;
-	padding: 0;
-	margin: 0 0 10px 0;
-}
-
-.inlineForms div {
-	float: left;
-	clear: none;
-	padding: 0;
-	margin: 0 3px 0 0;
-}
 
 /* @group Navigation */
 
@@ -410,16 +397,17 @@ span.highlight {
 
 /* @group Collapsibles */
 
-.collapsible,
-.collapsible-closed {
-	margin: 0;
-	padding: 0;
-}
+
 .collapsible,
 .collapsible-closed {
 	border-top: 1px solid #c9b865;
 	margin: 0;
 	padding: 0 0 5px 0;
+}
+fieldset.collapsible,
+fieldset.collapsible-closed {
+	margin: 0;
+	padding: 0;
 }
 legend.collapsible,
 legend.collapsible-closed  {
@@ -427,6 +415,7 @@ legend.collapsible-closed  {
 	padding: 0;
 	margin: 0;
 }
+
 .collapsibleContent .collapsible,
 .collapsibleContent .collapsible-closed {
 	border: none;
@@ -435,7 +424,7 @@ legend.collapsible-closed  {
 }
 .collapsible .handle,
 .collapsible-closed .handle {
-	padding-left: 15px;
+	padding: 0 15px;
 	cursor: pointer;
 }
 
@@ -452,6 +441,15 @@ legend.collapsible-closed  {
 	color: #d99e00;
 	text-decoration: underline;
 	font-size: 14px;
+}
+
+.collapsible .collapsible,
+.collapsible-closed .collapsible,
+.collapsible .collapsible-closed,
+.collapsible-closed .collapsible-closed {
+	padding-left: 10px;
+	margin-left: 20px;
+	border-top: 1px solid #c9b865;
 }
 
 /* @end Collapsibles */
@@ -700,6 +698,28 @@ fieldset div.buttonrow {
 	margin-left: 180px;
 }
 
+.inlineForms {
+	float: left;
+	padding: 0;
+	margin: 0 0 10px 0;
+}
+
+.inlineForms div {
+	float: left;
+	clear: none;
+	padding: 0;
+	margin: 0 3px 0 0;
+}
+fieldset.smallLabels label {
+	width: 100px;
+	margin: 0;
+	padding: 0;
+	font-size: 12px;
+}
+fieldset.smallLabels input {
+	margin-left: 5px;
+	padding: 3px;
+}
 /* @end */
 /* @group blank slate */
 div.blankBar {

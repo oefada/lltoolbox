@@ -79,3 +79,27 @@ var cd = {
 	}
 };
 Event.observe(window,'load',cd.init,false);
+
+function fancyShow(idOfObject) {
+	new Effect.Parallel(
+		[
+			new Effect.BlindDown($(idOfObject),{sync:true}),
+			new Effect.Appear($(idOfObject),{sync:true})
+		],
+		{
+			duration:0.5
+		}
+	);
+}
+
+function fancyHide(idOfObject) {
+	new Effect.Parallel(
+		[
+			new Effect.BlindUp($(idOfObject),{sync:true}),
+			new Effect.Fade($(idOfObject),{sync:true})
+		],
+		{
+			duration:0.5
+		}
+	);
+}

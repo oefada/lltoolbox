@@ -59,6 +59,7 @@ a:hover {
 	text-transform: uppercase;
 	font-family: Tahoma;
 	font-weight: bold;
+	padding-left: 15px;
 }
 /* @end */
 /* @group history bar */

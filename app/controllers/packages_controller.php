@@ -38,6 +38,8 @@ class PackagesController extends AppController {
 	}
 	
 	function carveRatePeriods($clientId = null, $id = null) {
+		if(empty($this->data['Package']['CheckedLoaItems']))
+			return;
 		$this->Package->recursive = 2;
 		
 		$packageStartDate = $this->data['Package']['validityStartDate']['year'] . '-' . $this->data['Package']['validityStartDate']['month'] . '-' . $this->data['Package']['validityStartDate']['day'];
@@ -71,20 +73,10 @@ class PackagesController extends AppController {
 	function add($clientId = null) {
 		$this->set('clientId', $clientId);
 		$this->set('currentTab', 'property');
-
+		
 		if (!empty($this->data) && isset($this->data['Package']['complete'])) {
-			$this->Package->create();
-			
 			$this->addPackageLoaItems();
-			
-			//the first saveAll saves packages and all associated date
-			//the second save saves the HABTM format relationships
-			$this->carveRatePeriods($clientId, $packageId);
-
 			if ($this->Package->saveAll($this->data) && $this->Package->save($this->data)) {
-				$packageId = $this->Package->getLastInsertID();
-				$this->addPackageOfferTypeDefFieldRel($packageId);
-				
 				$this->Session->setFlash(__('The Package has been saved', true), 'default', array(), 'success');
 				$this->redirect("/clients/$clientId/packages");
 			} else {
@@ -165,7 +157,7 @@ class PackagesController extends AppController {
 	 */
 	function addPackageLoaItems() {
 		if(!isset($this->data['PackageLoaItemRel'])) {
-			return;
+			return true;
 		}
 		$origPackageLoaItemRel = $this->data['PackageLoaItemRel'];
 		unset($this->data['PackageLoaItemRel']);
@@ -176,6 +168,8 @@ class PackagesController extends AppController {
 			$this->data['PackageLoaItemRel'][$checkedLoaItem]['loaItemId'] = $checkedLoaItem;
 		}
 		endif;
+		
+		return true;
 	}
 	
 	/**
@@ -285,22 +279,22 @@ class PackagesController extends AppController {
 		if (!empty($this->data)) {
 			$this->Package->PackageRatePeriod->deleteAll(array('PackageRatePeriod.packageId' => $this->data['Package']['packageId']));
 			$this->carveRatePeriods($clientId);
-			if ($this->updatePackageLoaItems() && $this->Package->saveAll($this->data) && $this->Package->save($this->data)) {
-				$this->addPackageOfferTypeDefFieldRel($id);
+			$this->updatePackageLoaItems();
+
+			if ($this->Package->saveAll($this->data) && $this->Package->save($this->data)) {
 				$this->Session->setFlash(__('The Package has been saved', true), 'default', array(), 'success');
 				$this->redirect("/clients/$clientId/packages/edit/$id");
 			} else {
-				$this->Session->setFlash(__('The Package could not be saved. Please correct the errors again and try again.', true), 'default', array(), 'error');
+				$this->Session->setFlash(__('The Package could not be saved. Please correct the errors below and try again.', true), 'default', array(), 'error');
 			}
 		}
-
-		$this->Package->recursive = 2;
-		$package = $this->Package->read(null, $id);
-		$this->set('package', $package);
 		
 		if (empty($this->data)) {
+			$this->Package->recursive = 2;
+			$package = $this->Package->read(null, $id);
 			$this->data = $package;
 		}
+		$this->set('package', $package);
 		
 		$this->Package->ClientLoaPackageRel->recursive = -1;
 		$clientLoaPackageRel = $this->Package->ClientLoaPackageRel->findAllByPackageId($id);
@@ -350,6 +344,7 @@ class PackagesController extends AppController {
 		$itemList = $this->Package->PackageLoaItemRel->LoaItem->find('list');
 		$itemCurrencyIds = $this->Package->PackageLoaItemRel->LoaItem->find('list', array('fields' => array('currencyId')));
 		
+		if(isset($this->data['PackageRatePeripd'])):
 		foreach($this->data['PackageRatePeriod'] as $ratePeriod):
 			//setup the arrays needed to draw the rate period table			
 			//the boundaries are used to draw all of the columns
@@ -364,19 +359,39 @@ class PackagesController extends AppController {
 			$itemRatePeriods['IncludedItems'][$ratePeriod['loaItemId']]['currencyId'] = $itemCurrencyIds[$ratePeriod['loaItemId']];
 			$itemRatePeriods['IncludedItems'][$ratePeriod['loaItemId']]['PackageRatePeriod'][] = $ratePeriod;
 		endforeach;
-
 		
+		if (isset($boundaries)):
 		//sort and re-set keys for the boundaries array
-		sort($boundaries);
-		array_merge($boundaries, array());
+			sort($boundaries);
+			array_merge($boundaries, array());
 		
-		$packageRatePeriods = $itemRatePeriods;
-		$packageRatePeriods['Boundaries'] = $boundaries;
-
-		$this->set('packageRatePeriods', $packageRatePeriods);
+			$packageRatePeriods = $itemRatePeriods;
+			$packageRatePeriods['Boundaries'] = $boundaries;
 		
+			$this->set('packageRatePeriods', $packageRatePeriods);
+		endif;
+		endif;
 		$this->set('currencyCodes', $this->Package->Currency->find('list', array('fields' => array('currencyCode'))));
 		
+		foreach ($this->data['Format'] as $format):
+		 	$formatList[] = $format['formatId'];
+		endforeach;
+		
+		$this->data['Format']['Format'] = $formatList;
+		
+		$this->setupOfferTypeDefArray();
+	}
+	
+	function setupOfferTypeDefArray()
+	{
+		if(empty($this->data['PackageOfferTypeDefField'])) {
+			return;
+		}
+		foreach ($this->data['PackageOfferTypeDefField'] as $defField):
+			$defFieldViewArray[$defField['offerTypeId']] = $defField;
+		endforeach;
+		unset($this->data['PackageOfferTypeDefField']);
+		$this->data['PackageOfferTypeDefField'] = $defFieldViewArray;
 	}
 	
 	function sortLoaItemsForEdit($a, $b) {
@@ -384,67 +399,6 @@ class PackagesController extends AppController {
 			return;
 		}
 		return in_array($b['loaItemId'], $this->data['Package']['CheckedLoaItems']);
-	}
-
-	function addPackageOfferTypeDefFieldRel($packageId = null) {
-		// this function setups up new offer type default values
-		$packageData = $this->Package->read(null);
-		$formatIds = $this->data['Format']['Format'];
-		if(empty($formatIds)) {
-			return;
-		}
-		$offerTypes = $this->Package->Format->OfferType->find('all');
-
-		$relData = array();
-		$relData['PackageOfferTypeDefFieldRel']['packageId'] = ($packageId) ? $packageId : $this->data['Package']['packageId'];
-		
-		// delete all existing package to offer type default fields relation
-		$this->Package->PackageOfferTypeDefFieldRel->deleteAll(array('PackageOfferTypeDefFieldRel.packageId' => $packageId), true);
-
-		// for all the offer types and associated package formats, create new default value rows w/ 0.00
-		foreach ($offerTypes as $type) {
-			$relData['PackageOfferTypeDefFieldRel']['offerTypeId'] = $type['OfferType']['offerTypeId'];
-
-			if (in_array($type['Format'][0]['formatId'], $formatIds)) {
-				foreach ($type['OfferTypeDefField'] as $typeDefField) {
-					$relData['PackageOfferTypeDefFieldRel']['offerTypeDefFieldId'] = $typeDefField['offerTypeDefFieldId'];
-					$relData['PackageOfferTypeDefFieldRel']['defValue'] = 0.00;
-					$this->Package->PackageOfferTypeDefFieldRel->create();
-
-					$this->Package->PackageOfferTypeDefFieldRel->save($relData);
-				}
-			} 
-		}
-	}
-	
-	function editFormats($id = null) {
-		// this is so we can edit existing package offer type default values
-		// the default offer types and values are normalized so we have to do this work around
-		$this->Package->recursive = 2;
-		if (!$id && empty($this->data)) {
-			$this->Session->setFlash(__('Invalid Package', true));
-			$this->redirect(array('action'=>'index'));
-		}
-		if (!empty($this->data)) {
-			$updateArray = array();
-			$tmpData = $this->Package->read(null, $id);
-			foreach ($tmpData['PackageOfferTypeDefFieldRel'] as $k => $defFields) {
-				$tmpData['PackageOfferTypeDefFieldRel'][$k]['defValue'] = $this->data['PackageOfferTypeDefFieldRel']['defValue'][$defFields['packageOfferTypeDefFieldRelId']];
-				unset($tmpData['PackageOfferTypeDefFieldRel'][$k]['OfferTypeDefField']);
-				$updateArray[] = $tmpData['PackageOfferTypeDefFieldRel'][$k];
-			}
-
-			// save any changes to the package offer type default values
-			if ($this->Package->PackageOfferTypeDefFieldRel->saveAll($updateArray)) {
-				$this->Session->setFlash(__('The Package has been saved', true));
-				$this->redirect(array('action'=>'index'));
-			} else {
-				$this->Session->setFlash(__('The Package could not be saved. Please correct the errors below and try again.', true));
-			}
-		}
-		if (empty($this->data)) {
-			$this->data = $this->Package->read(null, $id);
-		}
 	}
 
 	function delete($id = null) {
@@ -480,6 +434,20 @@ class PackagesController extends AppController {
 		$this->data['PackageValidityPeriod'] = array_merge($this->data['PackageValidityPeriod'], array());
 		
 		$this->render('_step_3_blackout_periods');
+	}
+	
+	function getOfferTypeDefaultsHtmlFragment($packageId = null) {
+		$this->autoRender = false;
+		$formatId = $this->data['Format']['Format'][0];
+		$this->Package->PackageOfferTypeDefField->recursive = -1;
+
+		$this->setupOfferTypeDefArray();
+		
+		if(!empty($formatId)):
+				$this->render(null, null, "format_defaults_$formatId");
+		else:
+			return '';
+		endif;
 	}
 
 }

@@ -1,3 +1,4 @@
+<? if (isset($packageRatePeriods) && count($packageRatePeriods['Boundaries'])): ?>
 <h3><?= (@$packageRatePreview) ? 'New ': 'Saved '?>Package Rate Periods<? if (@$packageRatePreview) echo ' Preview'?></h3>
 <div class="mB mT">
 	<table cellpadding="2" cellspacing="0">
@@ -68,3 +69,6 @@
 	<?php endif; //end currencyCode check?>
 	</table>
 </div>
+<? else: ?>
+<p class='icon-yellow'>No package rate periods are available for this package. Check that the correct validity dates are set and that items are checked if you were expecting to see a rate period grid.</p>
+<? endif; ?>

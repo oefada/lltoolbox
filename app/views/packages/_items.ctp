@@ -1,5 +1,5 @@
 <fieldset id="chooseItems" class="collapsible">
-	<legend class="handle">Step 4 - Choose Items</legend>
+	<h3 class="handle">Items/Inclusions</h3>
 	<div class="collapsibleContent">
 		<p>The LOA items shown in this list are the eligible items that can be added to this package. 
 			The currency for each item must match the currency for this package for it to be eligible.</p>
@@ -38,9 +38,6 @@
 		</tr>	
 	<?php endif; ?>
 	</table>
-	<div id='ratePeriods'>
-	</div>
-	<?= $this->renderElement('../packages/package_rate_periods', array('packageRatePreview' => false)) ?>
 	</div>
 </fieldset>
 <?=$ajax->observeForm('PackageAddForm', array('url' => "/clients/$clientId/packages/carveRatePeriodsForDisplay", 'update' => 'ratePeriods', 'frequency' => 0.5, 'indicator' => 'spinner'))?>

@@ -11,12 +11,6 @@ class OfferType extends AppModel {
 									  'joinTable' => 'formatOfferTypeRel',
 									  'foreignKey' => 'offerTypeId',
 									  'associationForeignKey' => 'formatId'
-								),
-							'OfferTypeDefField' => 
-									array('className' => 'OfferTypeDefField',
-										  'joinTable' => 'offerTypeOfferTypeDefFieldRel',
-										  'foreignKey' => 'offerTypeId',
-										  'associationForeignKey' => 'offerTypeDefFieldId'
 								)
 							);
 }
