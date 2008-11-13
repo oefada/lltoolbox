@@ -76,6 +76,7 @@ class PackagesController extends AppController {
 		
 		if (!empty($this->data) && isset($this->data['Package']['complete'])) {
 			$this->addPackageLoaItems();
+			$this->carveRatePeriods($clientId);
 			if ($this->Package->saveAll($this->data) && $this->Package->save($this->data)) {
 				$this->Session->setFlash(__('The Package has been saved', true), 'default', array(), 'success');
 				$this->redirect("/clients/$clientId/packages");
@@ -344,7 +345,7 @@ class PackagesController extends AppController {
 		$itemList = $this->Package->PackageLoaItemRel->LoaItem->find('list');
 		$itemCurrencyIds = $this->Package->PackageLoaItemRel->LoaItem->find('list', array('fields' => array('currencyId')));
 		
-		if(isset($this->data['PackageRatePeripd'])):
+		if(isset($this->data['PackageRatePeriod'])):
 		foreach($this->data['PackageRatePeriod'] as $ratePeriod):
 			//setup the arrays needed to draw the rate period table			
 			//the boundaries are used to draw all of the columns
