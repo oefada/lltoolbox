@@ -57,30 +57,22 @@ class SchedulingMastersController extends AppController {
 	}
 
 	function createInstances() {
-		$masterData = $this->data;
+		$masterData = $this->SchedulingMaster->read(null);
 		$iterations = $masterData['SchedulingMaster']['iterations'];
-		if ($iterations == 0) $iterations = 1;
-
-		$schedulingDelayCtrlDesc = $this->SchedulingMaster->SchedulingDelayCtrl->findBySchedulingDelayCtrlId($masterData['SchedulingMaster']['schedulingDelayCtrlId']);
-		$schedulingDelayCtrlDesc = $schedulingDelayCtrlDesc['SchedulingDelayCtrl']['schedulingDelayCtrlDesc'];
-		
+			
 		$instanceData = array();
 		$instanceData['SchedulingInstance']['schedulingMasterId'] = $masterData['SchedulingMaster']['schedulingMasterId'];
 		$instanceData['SchedulingInstance']['startDate'] = $masterData['SchedulingMaster']['startDate'];
-
-		$startDate = $instanceData['SchedulingInstance']['startDate']['year'].'-'.$instanceData['SchedulingInstance']['startDate']['month'].'-'.$instanceData['SchedulingInstance']['startDate']['day'].' ';
-		$startDate .= $instanceData['SchedulingInstance']['startDate']['hour'].':'.$instanceData['SchedulingInstance']['startDate']['min'].$instanceData['SchedulingInstance']['startDate']['meridian'];
-
+						
 		for ($i = 0; $i < $iterations; $i++) {
-			$endDate = strtotime($startDate. ' + ' . $masterData['SchedulingMaster']['numDaysToRun'] . ' days');
+			$endDate = strtotime($instanceData['SchedulingInstance']['startDate'] . ' +' . $masterData['SchedulingMaster']['numDaysToRun'] . ' days');
 			$instanceData['SchedulingInstance']['endDate'] = date('Y-m-d H:i:s', $endDate);		
-			
+				
 			$this->SchedulingMaster->SchedulingInstance->create();
 			$this->SchedulingMaster->SchedulingInstance->save($instanceData);
-
-			$startDate = strtotime($instanceData['SchedulingInstance']['endDate'] . ' + ' . $schedulingDelayCtrlDesc);
+		
+			$startDate = strtotime($instanceData['SchedulingInstance']['endDate'] . ' +' . $masterData['SchedulingDelayCtrl']['schedulingDelayCtrlDesc']);
 			$instanceData['SchedulingInstance']['startDate'] = date('Y-m-d H:i:s', $startDate);	
-			$startDate = $instanceData['SchedulingInstance']['startDate'];
 		}
 	}
 
