@@ -75,9 +75,8 @@ class SchedulingMastersController extends AppController {
 			$endDate = strtotime($startDate. ' + ' . $masterData['SchedulingMaster']['numDaysToRun'] . ' days');
 			$instanceData['SchedulingInstance']['endDate'] = date('Y-m-d H:i:s', $endDate);		
 			
-			echo $instanceData['SchedulingInstance']['endDate']."<br />";
-			//$this->SchedulingMaster->SchedulingInstance->create();
-			//$this->SchedulingMaster->SchedulingInstance->save($instanceData);
+			$this->SchedulingMaster->SchedulingInstance->create();
+			$this->SchedulingMaster->SchedulingInstance->save($instanceData);
 
 			$startDate = strtotime($instanceData['SchedulingInstance']['endDate'] . ' + ' . $schedulingDelayCtrlDesc);
 			$instanceData['SchedulingInstance']['startDate'] = date('Y-m-d H:i:s', $startDate);	
