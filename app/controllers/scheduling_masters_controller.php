@@ -22,22 +22,19 @@ class SchedulingMastersController extends AppController {
 	function add() {
 		if (!empty($this->data)) {
 			$this->SchedulingMaster->create();
+			
 			if ($this->SchedulingMaster->save($this->data)) {
-				if ($this->data['SchedulingMaster']['iterations']) {
-					$this->createInstances();	
-				}
+				$this->createInstances();
 				if ($this->RequestHandler->isAjax()) {
 					$this->Session->setFlash(__('The Schedule has been saved', true), 'default', array(), 'success');
 					$this->set('closeModalbox', true);
-				} else {
-					$this->redirect(array('controller' => 'scheduling'));
 				}
 			} else {
 				$this->Session->setFlash(__('The SchedulingMaster could not be saved. Please, try again.', true));
 			}
 		}
-		
-		if (empty($this->data)) {
+		 
+		if (empty($this->data) && isset($this->params['named']['date'])) {
 			$date = explode('-', $this->params['named']['date']);
 			$this->data['SchedulingMaster']['startDate']['year'] = $date[0];
 			$this->data['SchedulingMaster']['startDate']['month'] = $date[1];
@@ -60,22 +57,31 @@ class SchedulingMastersController extends AppController {
 	}
 
 	function createInstances() {
-		$masterData = $this->SchedulingMaster->read(null);
+		$masterData = $this->data;
 		$iterations = $masterData['SchedulingMaster']['iterations'];
-			
+		if ($iterations == 0) $iterations = 1;
+
+		$schedulingDelayCtrlDesc = $this->SchedulingMaster->SchedulingDelayCtrl->findBySchedulingDelayCtrlId($masterData['SchedulingMaster']['schedulingDelayCtrlId']);
+		$schedulingDelayCtrlDesc = $schedulingDelayCtrlDesc['SchedulingDelayCtrl']['schedulingDelayCtrlDesc'];
+		
 		$instanceData = array();
 		$instanceData['SchedulingInstance']['schedulingMasterId'] = $masterData['SchedulingMaster']['schedulingMasterId'];
 		$instanceData['SchedulingInstance']['startDate'] = $masterData['SchedulingMaster']['startDate'];
-						
+
+		$startDate = $instanceData['SchedulingInstance']['startDate']['year'].'-'.$instanceData['SchedulingInstance']['startDate']['month'].'-'.$instanceData['SchedulingInstance']['startDate']['day'].' ';
+		$startDate .= $instanceData['SchedulingInstance']['startDate']['hour'].':'.$instanceData['SchedulingInstance']['startDate']['min'].$instanceData['SchedulingInstance']['startDate']['meridian'];
+
 		for ($i = 0; $i < $iterations; $i++) {
-			$endDate = strtotime($instanceData['SchedulingInstance']['startDate'] . ' +' . $masterData['SchedulingMaster']['numDaysToRun'] . ' days');
+			$endDate = strtotime($startDate. ' + ' . $masterData['SchedulingMaster']['numDaysToRun'] . ' days');
 			$instanceData['SchedulingInstance']['endDate'] = date('Y-m-d H:i:s', $endDate);		
-				
-			$this->SchedulingMaster->SchedulingInstance->create();
-			$this->SchedulingMaster->SchedulingInstance->save($instanceData);
-		
-			$startDate = strtotime($instanceData['SchedulingInstance']['endDate'] . ' +' . $masterData['SchedulingDelayCtrl']['schedulingDelayCtrlDesc']);
+			
+			echo $instanceData['SchedulingInstance']['endDate']."<br />";
+			//$this->SchedulingMaster->SchedulingInstance->create();
+			//$this->SchedulingMaster->SchedulingInstance->save($instanceData);
+
+			$startDate = strtotime($instanceData['SchedulingInstance']['endDate'] . ' + ' . $schedulingDelayCtrlDesc);
 			$instanceData['SchedulingInstance']['startDate'] = date('Y-m-d H:i:s', $startDate);	
+			$startDate = $instanceData['SchedulingInstance']['startDate'];
 		}
 	}
 
