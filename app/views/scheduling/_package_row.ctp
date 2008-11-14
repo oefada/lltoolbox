@@ -31,8 +31,14 @@ foreach($package['Scheduling'] as $master):
 	$beginOn = date('j', strtotime($startDate));
 	
 	$width = 100/$monthDays * $days;
-	$left = 100/$monthDays*($beginOn-1);
-	
+	$lastMonthDays = date("t", strtotime($year . "-" . $month . "-01 -1 month"));
+
+	if (date('m', strtotime($startDate)) != $month) {
+		$left = 0-100/$monthDays*($lastMonthDays-$beginOn+1);
+	} else {
+		$left = 100/$monthDays*($beginOn-1);
+	}
+
 	$classes = array('sItem', 'oType'.$master['SchedulingMaster']['offerTypeId']);
 
 	if (substr($mstrStartDate, 0, 10) == substr($startDate, 0, 10)) {

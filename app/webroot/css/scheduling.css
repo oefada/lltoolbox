@@ -2,6 +2,7 @@
 	position: relative;
 	float: none;
 	clear: both;
+	overflow: hidden;
 }
 #mDayContainer {
 	width: 100%;
