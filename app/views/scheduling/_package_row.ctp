@@ -61,7 +61,7 @@ foreach($package['Scheduling'] as $k => $master):
 	<?php 
 	if (substr($mstrStartDate, 0, 10) == substr($startDate, 0, 10)) {
 	?>
-		<div style="width: <?=$width?>%; left: <?=$left?>%"<?=$class?> onclick="Modalbox.show('/scheduling_masters/edit/<?=$instance['schedulingMasterId']?>')">	
+		<div style="width: <?=$width?>%; left: <?=$left?>%"<?=$class?> ondblclick="Modalbox.show('/scheduling_masters/edit/<?=$instance['schedulingMasterId']?>')">	
 		RV: <?=$number->currency($master['SchedulingMaster']['retailValue'])?>
 	<?php
 	} else {
