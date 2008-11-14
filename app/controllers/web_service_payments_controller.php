@@ -1,12 +1,16 @@
 <?php
 
 App::import('Vendor', 'nusoap/web_services_controller');
+
+require(APP.'/vendors/pp/Processor.class.php');
+//require(APP.'/vendors/aes.php');
+
 Configure::write('debug', 0);
 
 class WebServicePaymentsController extends WebServicesController
 {
 	var $name = 'WebServicePayments';
-	var $uses = 'UserPaymentSetting';
+	var $uses = array('UserPaymentSetting','Ticket', 'PaymentDetail');
 	var $serviceUrl = 'http://192.168.100.111/web_service_payments';
 	var $errorResponse = array();
 	var $api = array(
@@ -54,7 +58,41 @@ class WebServicePaymentsController extends WebServicesController
 	
 	function processPayment($in0) {
 		$data = json_decode($in0, true);
-		$this->initProcessPayment($data);	
+		if (!isset($data['userId']) || empty($data['userId'])) {
+			return '0';	
+		}
+		if (!isset($data['userPaymentSettingId']) || empty($data['userPaymentSettingId'])) {
+			return '0';	
+		}
+		if (!isset($data['ticketId']) || empty($data['ticketId'])) {
+			return '0';	
+		}
+		
+		$this->Ticket->recursive = -1;
+		$ticket = $this->Ticket->read(null, $data['ticketId']);
+		if (!$ticket) {
+			return '0';	
+		} 
+		if ($ticket['Ticket']['userId'] != $data['userId']) {
+			return '0';
+		}
+		
+		$this->UserPaymentSetting->recursive = -1;
+		$userPaymentSetting = $this->UserPaymentSetting->read(null, $data['userPaymentSettingId']);
+		if (!$userPaymentSetting) {
+			return '0';	
+		}
+		
+		// init payment processing
+		$processor = new Processor('AIM');
+		$processor->InitPayment($userPaymentSetting, $ticket);	
+		//$processor->SubmitPost();
+		
+		if (!$processor->ChargeSuccess()) {
+			return $processor->GetResponseTxt();
+		} else {
+			return 'good charge';	
+		}
 	}
 }
 ?>

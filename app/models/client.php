@@ -27,7 +27,6 @@ class Client extends AppModel {
 					 );
 					 
 	var $hasMany = array('Loa' => array('foreignKey' => 'clientId'),
-					     'Address' => array('foreignKey' => 'clientId'),
 						 'Accolade' => array('foreignKey' => 'clientId'),
 						 'Audit' => array('foreignKey' => 'foreignId', 'conditions' => array('Audit.class' => 'Client'), 'limit' => 5, 'order' => 'Audit.created DESC')
 						);

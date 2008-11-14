@@ -1,4 +1,7 @@
 <?php
+
+App::import('Vendor', 'nusoap_client/lib/nusoap');
+
 class ClientsController extends AppController {
 
 	var $name = 'Clients';
@@ -55,7 +58,38 @@ class ClientsController extends AppController {
 		$clientAcquisitionSourceIds = $this->Client->ClientAcquisitionSource->find('list');
 		$themes = $this->Client->Theme->find('list');
 		$this->set('client', $this->data);
-		$this->set(compact('addresses', 'amenities','clientLevelIds','clientStatusIds','clientTypeIds','regions','clientAcquisitionSourceIds', 'loas', 'themes'));
+		//$this->set(compact('addresses', 'amenities','clientLevelIds','clientStatusIds','clientTypeIds','regions','clientAcquisitionSourceIds', 'loas', 'themes'));
+		$this->set(compact('amenities','clientLevelIds','clientStatusIds','clientTypeIds','regions','clientAcquisitionSourceIds', 'loas', 'themes'));
+	}
+	
+	function updateClientLive($id = null) {
+		if (!$id) {
+			$this->Session->setFlash(__('Invalid Client', true));
+			$this->redirect(array('action'=>'index'));
+		}
+		
+		$this->Client->recursive = 2;
+		$client = $this->Client->read(null, $id);
+		unset($client['Loa']);
+		unset($client['Region']);
+		unset($client['ClientAcquisitionSource']);
+		unset($client['Audit']);
+		unset($client['Tag']);
+		unset($client['User']);
+		
+		$webservice_live_url = 'http://livedev.luxurylink.com/web_services/update_client.php?wsdl';
+		$webservice_live_method_name = 'updateClient';
+		$webservice_live_method_param = 'in0';
+
+		$soap_client = new nusoap_client($webservice_live_url, true);
+
+		$data_json_encoded = json_encode($client);
+
+        $response = $soap_client->call($webservice_live_method_name, array($webservice_live_method_param => $data_json_encoded));
+
+		echo $response;
+ 				
+		die();
 	}
 	
 	function search()
