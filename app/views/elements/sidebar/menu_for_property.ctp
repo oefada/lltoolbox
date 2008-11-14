@@ -5,7 +5,8 @@
 	<li>Package
 		<ul>
 			<li><?=$html->link('List All', "/clients/$clientId/packages", array('update' => 'content-area', 'indicator' => 'spinner'))?></li>
-			<li><?=$html->link('Create', "/clients/$clientId/packages/add", array('update' => 'content-area', 'indicator' => 'spinner'))?></li></ul>
+			<li><?=$html->link('Create', "/clients/$clientId/packages/add", array('update' => 'content-area', 'indicator' => 'spinner'))?></li>
+			<li><?=$html->link('Scheduling', "/scheduling/index/clientId:{$clientId}", array('update' => 'content-area', 'indicator' => 'spinner'))?></li></ul>
 	</li>
 	<li>Offers</li>
 	<li>Reports</li>
