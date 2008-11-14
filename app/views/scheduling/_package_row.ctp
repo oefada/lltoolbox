@@ -14,15 +14,24 @@
 </div>
 <div class='sGrid'>
 <?php
+if($this->data['masterRows'] >= 5) {
+	$this->data['masterRows'] = 0;
+	echo $this->renderElement('../scheduling/_days');
+}
+?>
+<?php
 if (!is_array($package['Scheduling'])) { $package['Scheduling'] = array(); }
-foreach($package['Scheduling'] as $master):
+foreach($package['Scheduling'] as $k => $master):
 	$mstrStartDate = $master['SchedulingMaster']['startDate'];
+
 	if (count($master['SchedulingInstance'])):
+	$this->data['masterRows']++;
 ?>
 <div class='masterRow'>
 <?= $this->renderElement('../scheduling/_days', array('grid' => true)) ?>
 
 <? foreach($master['SchedulingInstance'] as $instance):
+
 	$startDate = $instance['startDate'];
 	$endDate = $instance['endDate'];
 	$days = strtotime($endDate)-strtotime($startDate);
@@ -48,16 +57,16 @@ foreach($package['Scheduling'] as $master):
 	}
 	
 	$class = " class='".implode($classes, ' ')."'";
-	
 	?>
-	<div style="width: <?=$width?>%; left: <?=$left?>%"<?=$class?>>	
 	<?php 
 	if (substr($mstrStartDate, 0, 10) == substr($startDate, 0, 10)) {
 	?>
+		<div style="width: <?=$width?>%; left: <?=$left?>%"<?=$class?> onclick="Modalbox.show('/scheduling_masters/edit/<?=$instance['schedulingMasterId']?>')">	
 		RV: <?=$number->currency($master['SchedulingMaster']['retailValue'])?>
 	<?php
 	} else {
 	?>
+		<div style="width: <?=$width?>%; left: <?=$left?>%"<?=$class?>>	
 		Iteration 
 	<?php
 	}
