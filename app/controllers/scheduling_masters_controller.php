@@ -25,19 +25,34 @@ class SchedulingMastersController extends AppController {
 			if ($this->SchedulingMaster->save($this->data)) {
 				if ($this->data['SchedulingMaster']['iterations']) {
 					$this->createInstances();	
-				}		
-				$this->Session->setFlash(__('The SchedulingMaster has been saved', true));
-				$this->redirect(array('action'=>'index'));
+				}
+				if ($this->RequestHandler->isAjax()) {
+					$this->Session->setFlash(__('The Schedule has been saved', true), 'default', array(), 'success');
+					$this->set('closeModalbox', true);
+				} else {
+					$this->redirect(array('controller' => 'scheduling'));
+				}
 			} else {
 				$this->Session->setFlash(__('The SchedulingMaster could not be saved. Please, try again.', true));
 			}
 		}
 		
+		if (empty($this->data)) {
+			$date = explode('-', $this->params['named']['date']);
+			$this->data['SchedulingMaster']['startDate']['year'] = $date[0];
+			$this->data['SchedulingMaster']['startDate']['month'] = $date[1];
+			$this->data['SchedulingMaster']['startDate']['day'] = $date[2];
+		}
 		$merchandisingFlags = $this->SchedulingMaster->MerchandisingFlag->find('list');
 		$schedulingStatusIds = $this->SchedulingMaster->SchedulingStatus->find('list');
 		$schedulingDelayCtrlIds = $this->SchedulingMaster->SchedulingDelayCtrl->find('list');
 		$remittanceTypeIds = $this->SchedulingMaster->RemittanceType->find('list');
+		$packageId = $this->params['named']['packageId'];
+		$package = $this->SchedulingMaster->Package->findByPackageId($packageId);
 		
+		
+		$this->set('package', $package);
+		$this->set('packageId', $packageId);
 		$this->set('merchandisingFlags', $merchandisingFlags);
 		$this->set('schedulingStatusIds', $schedulingStatusIds);
 		$this->set('schedulingDelayCtrlIds', $schedulingDelayCtrlIds);

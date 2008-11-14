@@ -32,8 +32,8 @@ h2 {
 	font-size: 190%;
 }
 h3 {
-	color: #993;
-	font-size: 165%;
+	color: #7f0000;
+	font-size: 95%;
 }
 h4 {
 	color: #993;
@@ -110,3 +110,7 @@ h2 .inline-counter .p {
 /* @end */
 del{background:#FFDDDD;padding:2px;border:1px solid #CC0000;}
 ins{background:#DDFFDD;padding:2px;border:1px solid #00AA00;text-decoration:none}
+
+.textRed {
+	color: #7f0000;
+}

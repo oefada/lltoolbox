@@ -21,12 +21,16 @@
 		echo $html->meta('icon');
 
 		echo $html->css('main');
+		echo $html->css('datepicker');
 		
 		if(isset($javascript)):
 			echo $javascript->link('prototype');
 			echo $javascript->link('scriptaculous/scriptaculous');
 			echo $javascript->link('modalbox');
 			echo $javascript->link('collapsible');
+			echo $javascript->link('datepicker');
+			echo $javascript->link('livepipe');
+			echo $javascript->link('tabs');
 		endif;
 
 		echo $scripts_for_layout;

@@ -1,44 +1,84 @@
 <div class="schedulingMasters form">
-<?php echo $form->create('SchedulingMaster');?>
+<style>
+/* Subsection Tabs
+--------------------*/
+ul.subsection_tabs {
+	list-style:none;
+	margin:0 0 5px 0;
+	padding:0;
+	clear:both;
+	border-bottom:1px solid #ccc;
+	height:20px;
+	clear:both;
+}
+
+ul.subsection_tabs li.tab {
+	float:left;
+	margin-right:7px;
+	text-align:center;
+}
+
+ul.subsection_tabs li.tab a {
+	display:block;
+	height:20px;
+	padding:0 6px 0 6px;
+	background-color:#fff;
+	color:#666;
+	width:80px;
+}
+
+ul.subsection_tabs li.tab a:hover {
+	color:#666;
+}
+
+ul.subsection_tabs li.tab a.active {
+	background-color:#ddd;
+}
+
+ul.subsection_tabs li.source_code {
+	float:right;
+}
+
+</style>
+<?php echo $ajax->form('add', 'post', array('url' => "/scheduling_masters/add/packageId:{$packageId}", 'update' => 'MB_content', 'model' => 'SchedulingMaster', 'complete' => 'closeModalbox()'));?>
+
+<ul id="tabs_example_one" class="subsection_tabs">
+	<li class="tab"><a class="active" href="#one">Setup</a></li>
+	<li class="tab"><a class="" href="#two">Merchandising</a></li>
+</ul>
 	<fieldset>
- 		<legend><?php __('Add SchedulingMaster');?></legend>
+ 		<legend><?php echo $package['Package']['packageName'] ?></legend>
+	
+		<div id='one'>
 	<?php
-		echo $form->input('packageId');
-		echo $form->input('offerTypeId');
-		echo $form->input('schedulingDelayCtrlId');
-		echo $form->input('remittanceTypeId');
-		echo $form->input('schedulingStatusId');
-		echo $form->input('packageName');
-		echo $form->input('subTitle');
-		echo $form->input('startDate');
-		echo $form->input('endDate');
-		echo $form->input('numWinners');
-		echo $form->input('numDaysToRun');
-		echo $form->input('iterations');
-		echo $form->input('retailValue');
-		echo $form->input('minBid');
+		echo $form->input('offerTypeId', array('label' => 'Type'));
 		echo $form->input('openingBid');
+		echo $form->input('retailValue');
 		echo $form->input('maxBid');
+		echo $form->input('bidIncrement');
+		echo $form->input('numWinners');
 		echo $form->input('buyNowPrice');
-		echo $form->input('reserveAmt');
-		echo $form->input('overrideOfferName');
-		echo $form->input('MerchandisingFlag');
+		echo $form->input('numDaysToRun');
+		echo $form->input('schedulingDelayCtrlId');
+		echo $form->input('iterations');
+		echo $form->input('endDate');
+		echo $form->input('schedulingStatusId');
+		echo $form->input('previewDate');
+		echo $form->input('startDate');
+		
+		echo $form->input('packageName', array('value' => $package['Package']['packageName'], 'type' => 'hidden'));
+		echo $form->input('subTitle',  array('value' => $package['Package']['subtitle'], 'type' => 'hidden'));
+		echo $form->input('packageId', array('value' => $packageId, 'type' => 'hidden'));
 	?>
+		</div>
+		<div id='two' style="display: none">	
+		<?php echo $form->input('MerchandisingFlag'); ?>
+		</div>
 	</fieldset>
 <?php echo $form->end('Submit');?>
 </div>
-<div class="actions">
-	<ul>
-		<li><?php echo $html->link(__('List SchedulingMasters', true), array('action'=>'index'));?></li>
-		<li><?php echo $html->link(__('List Scheduling Statuses', true), array('controller'=> 'scheduling_statuses', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Scheduling Status', true), array('controller'=> 'scheduling_statuses', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Scheduling Delay Ctrls', true), array('controller'=> 'scheduling_delay_ctrls', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Scheduling Delay Ctrl', true), array('controller'=> 'scheduling_delay_ctrls', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Remittance Types', true), array('controller'=> 'remittance_types', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Remittance Type', true), array('controller'=> 'remittance_types', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Scheduling Instances', true), array('controller'=> 'scheduling_instances', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Scheduling Instance', true), array('controller'=> 'scheduling_instances', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Merchandising Flags', true), array('controller'=> 'merchandising_flags', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Merchandising Flag', true), array('controller'=> 'merchandising_flags', 'action'=>'add')); ?> </li>
-	</ul>
-</div>
+<script>new Control.Tabs('tabs_example_one');  </script>
+
+<?php
+if (isset($closeModalbox) && $closeModalbox) echo "<div id='closeModalbox'></div>";
+?>

@@ -14,7 +14,8 @@ class Package extends AppModel {
 						 'PackageLoaItemRel' => array('foreignKey' => 'packageId'),
 						 'PackagePromo' => array('foreignKey' => 'packageId'),
 						 'ClientLoaPackageRel' => array('foreignKey' => 'packageId', 'dependent' => true),
-						 'PackageRatePeriod' => array('foreignKey' => 'packageId')
+						 'PackageRatePeriod' => array('foreignKey' => 'packageId'),
+						 'SchedulingMaster' => array('foreignKey' => 'packageId')
 						);
 						
 	var $validate = array('packageName' => VALID_NOT_EMPTY,
