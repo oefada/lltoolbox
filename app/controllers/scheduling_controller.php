@@ -44,7 +44,7 @@ class SchedulingController extends AppController {
 		$this->Package->ClientLoaPackageRel->contain('Package');
 		$packages = $this->Package->ClientLoaPackageRel->findAllByClientId($clientId);
 	
-		$this->_addPackageSchedulingInstances(&$packages, $month);
+		$this->_addPackageSchedulingInstances($packages, $month);
 		
 		return $packages;
 	}
