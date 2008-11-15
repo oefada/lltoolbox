@@ -21,8 +21,8 @@ if ($this->viewVars['searchController'] || method_exists($controller , 'search')
 <?php $defSearchValue = "Search {$controllerName}"; ?>
 <form accept-charset="UNKNOWN" enctype="application/x-www-form-urlencoded" method="get" action="/<?=$controllerName?>/search">
 	<div class="clearfix">
-		<div class="search-input-with-livesearch">
-			<input id="query" maxlength="2147483647" name="query" type="text" value="<?=$defSearchValue?>" onfocus="if($F(this) == '<?=$defSearchValue?>') { $(this).value = '';} else { $('livesearch').show(); }" onblur="$('livesearch').hide(); if($F(this) == '') { $(this).value = '<?=$defSearchValue?>' }" />
+		<div class="search-input-with-livesearch" on>
+			<input id="query" maxlength="2147483647" name="query" type="text" value="<?=$defSearchValue?>" onfocus="if($F(this) == '<?=$defSearchValue?>') { $(this).value = '';} else { $('livesearch').show(); }" onblur="Element.hide.delay(0.2, 'livesearch'); if($F(this) == '') { $(this).value = '<?=$defSearchValue?>' }" />
 			<div id="livesearch" class="auto_complete"><!-- Results will load here --></div>
 		</div>
 		<input type="submit" value="Search" />
