@@ -55,6 +55,32 @@ foreach ($clients as $client):
 			<?php echo $html->link(__('View Details', true), array('action'=>'edit', $client['Client']['clientId'])); ?>
 		</td>
 	</tr>
+	<? 
+		$numChildren = count($client['ChildClient']);
+	if ($numChildren): ?>
+	<tr<?php echo $class;?>>
+		<td colspan=5 class='collapsible' style='padding: 0 10px; border: 0'>
+				<h3 class='handle'>Show Children <?=$html2->c($numChildren)?></h3>
+			<div class='collapsibleContent'>
+		<table>
+			<?foreach($client['ChildClient'] as $child):?>
+			<tr<?php echo $class;?>>
+				<td>
+					<strong>
+					<?php if (isset($query)): ?>
+						<?php echo $text->highlight($child['name'], $query); ?>
+					<?php else: ?>
+						<?php echo $html->link($child['name'], array('action'=>'edit', $child['clientId'])); ?>
+					<?php endif ?>
+					</strong>
+				</td>
+			</tr>
+		<? endforeach; ?>
+		</table>
+		</div>
+		</td>
+	</tr>
+	<? endif; ?>
 <?php endforeach; ?>
 </table>
 </div>

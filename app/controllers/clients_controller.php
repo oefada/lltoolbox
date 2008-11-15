@@ -13,7 +13,8 @@ class ClientsController extends AppController {
 	}
 	
 	function index() {
-		$this->Client->recursive = 0;
+		$this->Client->recursive = 2;
+		$this->paginate = array('conditions' => array('OR' => array('parentClientId IS NULL', 'parentClientId' => '0')));
 
 		$this->set('clients', $this->paginate());
 	}

@@ -23,12 +23,14 @@ class Client extends AppModel {
 						   'ClientStatus' => array('foreignKey' => 'clientStatusId'),
 						   'ClientType' => array('foreignKey' => 'clientTypeId'),
 						   'Region' => array('foreignKey' => 'regionId'),
-						   'ClientAcquisitionSource' => array('foreignKey' => 'clientAcquisitionSourceId')
+						   'ClientAcquisitionSource' => array('foreignKey' => 'clientAcquisitionSourceId',
+						   'ParentClient' => array('className' => 'Client', 'foreignKey' => 'parentClientId'))
 					 );
 					 
 	var $hasMany = array('Loa' => array('foreignKey' => 'clientId'),
 						 'Accolade' => array('foreignKey' => 'clientId'),
-						 'Audit' => array('foreignKey' => 'foreignId', 'conditions' => array('Audit.class' => 'Client'), 'limit' => 5, 'order' => 'Audit.created DESC')
+						 'Audit' => array('foreignKey' => 'foreignId', 'conditions' => array('Audit.class' => 'Client'), 'limit' => 5, 'order' => 'Audit.created DESC'),
+						 'ChildClient' => array('className' => 'Client', 'foreignKey' => 'parentClientId')
 						);
 	
     var $hasAndBelongsToMany = array(

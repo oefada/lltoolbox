@@ -6,8 +6,8 @@ var cd = {
 		cd.contentDivs = $$('.collapsibleContent');
 		
 		//grab and close all collapsible divs in fieldsets
-		cd.fieldsetHandles = $$('fieldset .handle');
-		cd.fieldsetCollapsibleContent = $$('fieldset .collapsibleContent');
+		cd.fieldsetHandles = $$('.handle');
+		cd.fieldsetCollapsibleContent = $$('.collapsibleContent');
 		
 		for(var i = 0; i < cd.fieldsetCollapsibleContent.length; i++) {
 			//only collapse if no error message is contained within
