@@ -47,5 +47,18 @@ class Package extends AppModel {
 
 		return true;
 	}
+	
+	function cloneData($data)
+	{
+		$data['Package']['copiedFromPackageId'] = $data['Package']['packageId'];
+	
+		foreach ($data['ClientLoaPackageRel'] as &$packageRel):
+			unset($packageRel['clientLoaPackageRelId']);
+		endforeach;
+	
+		unset($data['Package']['packageId']);
+		
+		return $data;
+	}
 }
 ?>

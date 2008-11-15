@@ -13,7 +13,12 @@ $this->pageTitle = $client['Client']['name'].$html2->c($client['Client']['client
 		echo $form->input('ClientLoaPackageRel.'.$k.'.clientLoaPackageRelId');
 	endforeach;
 ?>
-<?php echo $form->end('Submit');?>
+<input type='hidden' id='clone' name='data[clone]' value='' />
+<div class='buttonrow'>
+<?php echo $form->submit() ?>
+<?php echo $form->submit('Clone Package', array('onclick' => '$("clone").value = "clone"')) ?>
+</div>
+<?php echo $form->end();?>
 
 <h3>Package Promos</h3>
 <div class="mB mT"><a href="/packages/<?php echo $package['Package']['packageId'];?>/packagePromos/add">Add New Package Promo</a></div>

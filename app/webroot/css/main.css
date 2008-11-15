@@ -696,8 +696,14 @@ fieldset div.controlset2 div.checkbox {
 	padding:  2px;
 }
 
-fieldset div.buttonrow {
-	margin-left: 180px;
+div.buttonrow {
+	margin-left: 170px;
+}
+
+div.buttonrow div.submit {
+	display: inline-block;
+	clear: none;
+	margin: 0;
 }
 
 .inlineForms {

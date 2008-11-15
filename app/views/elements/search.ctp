@@ -27,7 +27,6 @@ if ($this->viewVars['searchController'] || method_exists($controller , 'search')
 		</div>
 		<input type="submit" value="Search" />
 	</div>
-	
 </form>
  
 <?php

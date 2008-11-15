@@ -278,13 +278,25 @@ class PackagesController extends AppController {
 			$this->redirect(array('controller' => 'clients', 'action'=>'index'));
 		}
 		if (!empty($this->data)) {
-			$this->Package->PackageRatePeriod->deleteAll(array('PackageRatePeriod.packageId' => $this->data['Package']['packageId']));
+			if (@$this->data['clone'] == 'clone') {
+				$this->data = $this->Package->cloneData($this->data);
+				$this->addPackageLoaItems();
+				$cloned = true;
+			} else {
+				$this->Package->PackageRatePeriod->deleteAll(array('PackageRatePeriod.packageId' => $this->data['Package']['packageId']));
+				$this->updatePackageLoaItems();
+				$cloned = false;
+			}
+			
 			$this->carveRatePeriods($clientId);
-			$this->updatePackageLoaItems();
 
 			if ($this->Package->saveAll($this->data) && $this->Package->save($this->data)) {
-				$this->Session->setFlash(__('The Package has been saved', true), 'default', array(), 'success');
-				$this->redirect("/clients/$clientId/packages/edit/$id");
+				if(true == $cloned) {
+					$this->Session->setFlash(__('Package was cloned from package #'.$this->data['Package']['copiedFromPackageId'], true), 'default', array(), 'success');
+				} else {
+					$this->Session->setFlash(__('The Package has been saved', true), 'default', array(), 'success');
+				}
+				$this->redirect("/clients/$clientId/packages/edit/".$this->Package->id);
 			} else {
 				$this->Session->setFlash(__('The Package could not be saved. Please correct the errors below and try again.', true), 'default', array(), 'error');
 			}
@@ -382,6 +394,11 @@ class PackagesController extends AppController {
 		endif;
 		
 		$this->setupOfferTypeDefArray();
+	}
+		
+	function clonePackage($clientId = null, $id = null)
+	{
+		$this->Package->clonePackage($id);
 	}
 	
 	function setupOfferTypeDefArray()
