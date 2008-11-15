@@ -22,6 +22,14 @@ class WebServicePaymentsController extends WebServicesController
 						'input' => array('in0' => 'xsd:string'),
 						'output' => array('return' => 'xsd:string')
 						),
+					'removeCard' => array(
+						'input' => array('in0' => 'xsd:string'),
+						'output' => array('return' => 'xsd:string')
+						),
+					'setPrimaryCard' => array(
+						'input' => array('in0' => 'xsd:string'),
+						'output' => array('return' => 'xsd:string')
+						),
 					'processPayment' => array(
 						'input' => array('in0' => 'xsd:string'),
 						'output' => array('return' => 'xsd:string')
@@ -48,9 +56,41 @@ class WebServicePaymentsController extends WebServicesController
 		if (empty($data['userId'])) {
 			return '0';	
 		} 
-		$userPaymentSettingData = $this->UserPaymentSetting->find('all', array('conditions' => array('userId' => $data['userId'])));
+		$this->UserPaymentSetting->recursive = -1;
+		$userPaymentSettingData = $this->UserPaymentSetting->find('all', array('conditions' => array('userId' => $data['userId'], 'inactive' => 0)));
 		if ($userPaymentSettingData) {
-			return json_encode($userPaymentSettingData);	
+			$response = array();
+			foreach ($userPaymentSettingData as $k => $v) {
+				$response[] = $v['UserPaymentSetting'];	
+			}
+			return json_encode($response);	
+		} else {
+			return '0';	
+		}
+	}
+	
+	function setPrimaryCard($in0) {
+		$data = json_decode($in0, true);
+		if (empty($data['userId']) || empty($data['userPaymentSettingId'])) {						
+			return '0';	
+		} 	
+		$this->UserPaymentSetting->query('UPDATE userPaymentSetting SET primaryCC = 0 WHERE userId = ' . $data['userId']);
+		$data['primaryCC'] = 1;
+		if ($this->UserPaymentSetting->save($data)) {
+			return '1';
+		} else {
+			return '0';	
+		}
+	}
+	
+	function removeCard($in0) {
+		$data = json_decode($in0, true);
+		if (empty($data['userId']) || empty($data['userPaymentSettingId'])) {
+			return '0';	
+		} 
+		$data['inactive'] = 1;
+		if ($this->UserPaymentSetting->save($data)) {
+			return '1';
 		} else {
 			return '0';	
 		}
