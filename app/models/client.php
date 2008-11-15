@@ -56,6 +56,12 @@ class Client extends AppModel {
 										  'joinTable' => 'clientThemeRel',
 										  'foreignKey' => 'clientId',
 										  'associationForeignKey' => 'themeId'
+								   ),
+								'Destination' => 
+									array('className' => 'Destination',
+										  'joinTable' => 'clientDestinationRel',
+										  'foreignKey' => 'clientId',
+										  'associationForeignKey' => 'destinationId'
 								   )
                                ); 		
 }
