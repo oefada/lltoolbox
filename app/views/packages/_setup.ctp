@@ -69,12 +69,12 @@
 	<? /* -- BEGIN Scheduling Start/End Dates -- */?>
 	<div style="float: left; clear: none">
 	<?php
-		echo $form->input('startDate', array('label' => 'Package Start Date'));
+		echo $form->input('startDate', array('label' => 'Scheduling Range Start'));
 	?>
 	</div>
 	<div style="float: left; clear: none">
 	<?php
-		echo $form->input('endDate', array('label' => 'Package End Date'));
+		echo $form->input('endDate', array('label' => 'Scheduling Range End'));
 	?>
 	</div>
 	<? /* -- END Scheduling Start/End Dates -- */?>
