@@ -32,7 +32,7 @@ class SchedulingMastersController extends AppController {
 					$this->set('closeModalbox', true);
 				}
 			} else {
-				$this->Session->setFlash(__('The SchedulingMaster could not be saved. Please, try again.', true));
+				$this->Session->setFlash(__('The Schedule could not be saved. Please correct the errors below.', true), 'default', array(), 'error');
 			}
 		}
 		 

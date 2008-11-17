@@ -1,4 +1,7 @@
 <div class="schedulingMasters form">
+    <?php $session->flash();
+	$session->flash('error');
+	?>
 <style>
 /* Subsection Tabs
 --------------------*/
