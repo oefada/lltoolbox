@@ -1,7 +1,7 @@
 <div class="loaItemRatePeriods form">
 <?php echo $ajax->form('add', 'post', array('url' => "/loa_items/{$this->data['LoaItemRatePeriod']['loaItemId']}/loa_item_rate_periods/add", 'update' => 'MB_content', 'model' => 'LoaItemRatePeriod', 	'complete' => 'closeModalbox()'));?>
 	<fieldset>
- 		<legend><?php __('Add LoaItemRatePeriod');?></legend>
+ 		<legend>Rate Period for <?php echo $loaItem['LoaItem']['itemName'].$html2->c($loaItem['LoaItem']['itemBasePrice'], 'base price: '.$loaItem['Currency']['currencyCode'])?></legend>
 	<?php
 		echo $form->input('loaItemId', array('type' => 'hidden'));
 		echo $form->input('loaItemRatePeriodName');

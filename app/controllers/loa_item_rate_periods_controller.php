@@ -31,8 +31,9 @@ class LoaItemRatePeriodsController extends AppController {
 				$this->Session->setFlash(__('The LoaItemRatePeriod could not be saved. Please, try again.', true));
 			}
 		}
-		/*$loaItems = $this->LoaItemRatePeriod->LoaItem->find('list');
-		$this->set(compact('loaItems'));*/
+		$this->LoaItemRatePeriod->LoaItem->recursive = 0;
+		$loaItem = $this->LoaItemRatePeriod->LoaItem->findByLoaItemId($this->params['loaItemId']);
+		$this->set(compact('loaItem'));
 		
 		$this->data['LoaItemRatePeriod']['loaItemId'] = $this->params['loaItemId'];
 	}
