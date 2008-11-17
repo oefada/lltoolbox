@@ -14,7 +14,7 @@
  *   font-family, text-decoration, text-align
  */
 body {
-	color: #000;
+	color: #545454;
 	font-family: Verdana,helvetica,arial,sans-serif;
 	font-size: 12px;
 }
@@ -60,6 +60,11 @@ a:hover {
 	font-family: Tahoma;
 	font-weight: bold;
 	padding-left: 15px;
+}
+.collapsibleContent .collapsible .handle,
+.collapsibleContent .collapsible-closed .handle {
+	text-transform: none;
+	font-size: 110%;
 }
 /* @end */
 /* @group history bar */

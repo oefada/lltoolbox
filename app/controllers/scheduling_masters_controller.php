@@ -47,10 +47,15 @@ class SchedulingMastersController extends AppController {
 
 		$packageId 				= $this->params['named']['packageId'];
 		$package 				= $this->SchedulingMaster->Package->findByPackageId($packageId);
-		
+
 		foreach ($package['Format'] as $format):
 			$formatIds[] = $format['formatId'];
 		endforeach;
+		
+		if (count($formatIds) == 0) {
+			echo '<h3>This package is not ready to be scheduled because no formats have been associated with it</h3>';
+			die();
+		}
 		
 		/* Get all Offer Types available for this package based on Format */
 		$this->SchedulingMaster->Package->Format->Behaviors->attach('Containable');
@@ -100,6 +105,7 @@ class SchedulingMastersController extends AppController {
 			$this->redirect(array('action'=>'index'));
 		}
 		if (!empty($this->data)) {
+			$this->data['SchedulingMaster']['schedulingMasterId'] = $id;
 			if ($this->SchedulingMaster->save($this->data)) {
 				$this->Session->setFlash(__('The SchedulingMaster has been saved', true));
 				$this->redirect(array('action'=>'index'));
@@ -115,10 +121,27 @@ class SchedulingMastersController extends AppController {
 		$schedulingDelayCtrlIds = $this->SchedulingMaster->SchedulingDelayCtrl->find('list');
 		$remittanceTypeIds = $this->SchedulingMaster->RemittanceType->find('list');
 		
+		$packageId 				= $this->data['SchedulingMaster']['packageId'];
+		$package 				= $this->SchedulingMaster->Package->findByPackageId($packageId);
+		
+		foreach ($package['Format'] as $format):
+			$formatIds[] = $format['formatId'];
+		endforeach;
+		
+		/* Get all Offer Types available for this package based on Format */
+		$this->SchedulingMaster->Package->Format->Behaviors->attach('Containable');
+		$formats = $this->SchedulingMaster->Package->Format->find('all', array('conditions' => array('formatId' => $formatIds), 'contain' => array('OfferType')));
+
+		foreach ($formats[0]['OfferType'] as $k => $v) {
+			$offerTypeIds[$v['offerTypeId']] = $v['offerTypeName'];
+		}
+		
+		$this->set('offerTypeIds', 				$offerTypeIds);
 		$this->set('merchandisingFlags', $merchandisingFlags);
 		$this->set('schedulingStatusIds', $schedulingStatusIds);
 		$this->set('schedulingDelayCtrlIds', $schedulingDelayCtrlIds);
 		$this->set('remittanceTypeIds', $remittanceTypeIds);
+		$this->render('add');
 	}
 
 	function delete($id = null) {

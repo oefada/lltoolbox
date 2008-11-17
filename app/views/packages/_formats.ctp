@@ -1,4 +1,4 @@
-<fieldset class="collapsible">
+<fieldset class="collapsible lastCollapsible">
 	<h3 class="handle">Formats</h3>
 	<div class="collapsibleContent">
 		<div class="controlset2">
@@ -13,7 +13,7 @@
 				<? endif; ?>
 			</div>
 			<?=$ajax->observeField('FormatFormat'.$formatId, array(
-																'url' => array('action' => 'getOfferTypeDefaultsHtmlFragment', $this->data['Package']['packageId']),
+																'url' => array('action' => 'getOfferTypeDefaultsHtmlFragment', @$this->data['Package']['packageId']),
 																'update' => 'offerTypesDefaults'.$formatId,
 																'indicator' => 'spinner',
 																'before' => 'if(!($("FormatFormat'.$formatId.'").checked)) { fancyHide("offerTypesDefaults'.$formatId.'") }',

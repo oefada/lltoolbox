@@ -5,6 +5,11 @@
 		echo $form->input('packageStatusId', array('label' => 'Status'));
 		echo $form->input('currencyId', array('disabled' => 'true', 'label' => 'Currency'));
 		echo $form->input('currencyId', array('type' => 'hidden'));
+		if (!empty($this->data['Package']['copiedFromPackageId'])):
+		echo "<label>Cloned from package</label>";
+		echo $html->link($this->data['Package']['copiedFromPackageId'], "/clients/$clientId/packages/edit/".$this->data['Package']['copiedFromPackageId']);
+		endif;
+		echo '<span class="hint" id="hintForPackagePackageName">This is the internal name for this package<span class="hint-pointer">&nbsp;</span></span>';
 		echo $form->input('Package.packageName', array('label' => 'Working Name'));
 		echo $form->input('numGuests');
 		echo $form->input('numNights');
@@ -32,7 +37,7 @@
 	<div style="clear: both; margin: 0; padding: 0"></div>
 	<? /* -- BEGIN Items and Rate Periods -- */?>
 	<?php echo $this->renderElement('../packages/_items'); ?>
-	<fieldset class="collapsible">
+	<fieldset class="collapsible lastCollapsible">
 		<h3 class="handle">Rate Periods</h3>
 		<div class='collapsibleContent'>
 			<div id='ratePeriods'>

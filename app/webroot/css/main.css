@@ -406,22 +406,22 @@ span.highlight {
 	margin: 0;
 	padding: 0 0 5px 0;
 }
+.lastCollapsible {
+	margin-bottom: 10px;
+	border-bottom: 1px solid #c9b865;
+}
 fieldset.collapsible,
 fieldset.collapsible-closed {
-	margin: 0;
 	padding: 0;
 }
 legend.collapsible,
 legend.collapsible-closed  {
 	border:  none;
 	padding: 0;
-	margin: 0;
 }
 
 .collapsibleContent .collapsible,
 .collapsibleContent .collapsible-closed {
-	border: none;
-	margin: 0;
 	padding: 0 0 5px 0;
 }
 .collapsible .handle,
@@ -576,7 +576,7 @@ div.auto_complete li.selected {
 div.input, input, textarea {
 	font-size: 100%;
 	font-family: "Verdana", "lucida grande", sans-serif;
-	padding: 5px;
+	padding: 2px;
 }
 
 input, textarea {
