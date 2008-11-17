@@ -289,7 +289,9 @@ class PackagesController extends AppController {
 			}
 			
 			$this->carveRatePeriods($clientId);
-
+			//remove all offer type defaults so we don't get duplicates
+			$this->Package->PackageOfferTypeDefField->deleteAll(array('PackageOfferTypeDefField.packageId' => $this->data['Package']['packageId']));
+			
 			if ($this->Package->saveAll($this->data) && $this->Package->save($this->data)) {
 				if(true == $cloned) {
 					$this->Session->setFlash(__('Package was cloned from package #'.$this->data['Package']['copiedFromPackageId'], true), 'default', array(), 'success');
