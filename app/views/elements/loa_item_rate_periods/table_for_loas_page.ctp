@@ -5,7 +5,7 @@
 	<table style="">
 	<tr>
 		<th>Name</th>
-		<th>Approved Retail Price</th>
+		<th>Price</th>
 		<th>Start Date</th>
 		<th>End Date</th>
 		<th>Approved</th>
@@ -16,7 +16,7 @@
 ?>
 	<tr id='<?=$trId?>'>
 		<td><?=$loaItemRatePeriod['loaItemRatePeriodName']?></td>
-		<td><?=$number->currency($loaItemRatePeriod['approvedRetailPrice'], $currencyCodes[$loaItem['currencyId']]);?></td>
+		<td><?=$number->currency($loaItemRatePeriod['price'], $currencyCodes[$loaItem['currencyId']]);?></td>
 		<td><?=$loaItemRatePeriod['startDate']?></td>
 		<td><?=$loaItemRatePeriod['endDate'] ?></td>
 		<td><?=$html->image($loaItemRatePeriod['approved'] ? 'tick.png' : 'cross.png') ?>
