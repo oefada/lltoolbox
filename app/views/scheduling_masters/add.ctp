@@ -54,12 +54,13 @@ ul.subsection_tabs li.source_code {
 		<div id='one'>
 	<?php
 		echo $form->input('offerTypeId', array('label' => 'Type'));
-		echo $form->input('openingBid');
+		echo '<div id="defaults">';
+		if (isset($defaultFile)) {
+			echo $this->renderElement('../scheduling_masters/'.$defaultFile);
+		}
+		echo '</div>';
 		echo $form->input('retailValue');
-		echo $form->input('maxBid');
 		echo $form->input('bidIncrement');
-		echo $form->input('numWinners');
-		echo $form->input('buyNowPrice');
 		echo $form->input('numDaysToRun');
 		echo $form->input('schedulingDelayCtrlId');
 		echo $form->input('iterations');
@@ -71,6 +72,11 @@ ul.subsection_tabs li.source_code {
 		echo $form->input('packageName', array('value' => $package['Package']['packageName'], 'type' => 'hidden'));
 		echo $form->input('subTitle',  array('value' => $package['Package']['subtitle'], 'type' => 'hidden'));
 		echo $form->input('packageId', array('value' => $packageId, 'type' => 'hidden'));
+		
+		echo $ajax->observeField('SchedulingMasterOfferTypeId', array(
+																'url' => '/scheduling_masters/getOfferTypeDefaults/packageId:'.$packageId,
+																'frequency' => 0.2,
+																'update' => 'defaults'));
 	?>
 		</div>
 		<div id='two' style="display: none">	

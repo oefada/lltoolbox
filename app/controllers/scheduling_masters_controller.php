@@ -62,10 +62,33 @@ class SchedulingMastersController extends AppController {
 		/* Get all Offer Types available for this package based on Format */
 		$this->SchedulingMaster->Package->Format->Behaviors->attach('Containable');
 		$formats = $this->SchedulingMaster->Package->Format->find('all', array('conditions' => array('formatId' => $formatIds), 'contain' => array('OfferType')));
-
-		foreach ($formats[0]['OfferType'] as $k => $v) {
-			$offerTypeIds[$v['offerTypeId']] = $v['offerTypeName'];
+		
+		foreach ($formats as $format) {
+			foreach ($format['OfferType'] as $k => $v) {
+				$offerTypeIds[$v['offerTypeId']] = $v['offerTypeName'];
+			}
 		}
+		
+		foreach($offerTypeIds as $k => $id) {
+			$firstOfferId = $k;
+			break;
+		}
+		$offerTypeId = (isset($this->data['SchedulingMaster']['offerTypeId'])) ? $this->data['SchedulingMaster']['offerTypeId'] : $firstOfferId;
+		$this->SchedulingMaster->Package->PackageOfferTypeDefField->recursive = -1;
+		$defaults = $this->SchedulingMaster->Package->PackageOfferTypeDefField->find('first', array('conditions' => array('PackageOfferTypeDefField.packageId' => $packageId, 'PackageOfferTypeDefField.offerTypeId' => $offerTypeId)));
+
+		switch ($offerTypeId):
+			case 1:
+			case 2:
+			case 6:
+				$this->set('defaultFile', 'offer_type_defaults_1');
+			break;
+			case 3:
+			case 4:
+				$this->set('defaultFile', 'offer_type_defaults_2');
+			break;
+		endswitch;
+		$this->set(compact('defaults'));
 		
 		$merchandisingFlags 					= $this->SchedulingMaster->MerchandisingFlag->find('list');
 		$schedulingStatusIds 					= $this->SchedulingMaster->SchedulingStatus->find('list');
@@ -156,6 +179,26 @@ class SchedulingMastersController extends AppController {
 			$this->redirect(array('action'=>'index'));
 		}
 	}
+	
+	function getOfferTypeDefaults() {
+		$this->autoRender = false;
+		$packageId = $this->params['named']['packageId'];
+		$offerTypeId = $this->data['SchedulingMaster']['offerTypeId'];
+		$this->SchedulingMaster->Package->PackageOfferTypeDefField->recursive = -1;
+		$defaults = $this->SchedulingMaster->Package->PackageOfferTypeDefField->find('first', array('conditions' => array('PackageOfferTypeDefField.packageId' => $packageId, 'PackageOfferTypeDefField.offerTypeId' => $offerTypeId)));
+		$this->set(compact('defaults'));
 
+		switch ($offerTypeId):
+			case 1:
+			case 2:
+			case 6:
+				$this->render('offer_type_defaults_1');
+			break;
+			case 3:
+			case 4:
+				$this->render('offer_type_defaults_2');
+			break;
+		endswitch;
+	}
 }
 ?>
