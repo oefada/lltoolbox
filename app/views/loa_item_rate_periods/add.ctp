@@ -7,7 +7,7 @@
 		echo $form->input('loaItemRatePeriodName');
 		echo $form->input('startDate');
 		echo $form->input('endDate');
-		echo $form->input('approvedRetailPrice');
+		echo $form->input('price');
 	?>
 	</fieldset>
 <?php echo $form->end('Submit');?>
