@@ -22,5 +22,39 @@ class SchedulingMaster extends AppModel {
 									)
 								);
 	
+	var $validate = array('numDaysToRun' => array('rule' => 
+												array('comparison', '>=', 1),
+												'message' => 'Must be greater than or equal to 1'
+												),
+						'iterations' => array('rule' => 
+													array('comparison', '>=', 1),
+													'message' => 'Must be greater than or equal to 1'
+												),
+						'startDate' => array('rule' => 
+													array('validateDateRanges'),
+													'message' => 'Date must be greater than today and time must be atleast 6 hours from now'
+												),
+						'endDate' => array('rule' => 
+													array('validateDateRanges'),
+													'message' => 'Must be greater than today and greater than the start date'
+												),
+						'previewDate' => array('rule' => 
+													array('validateDateRanges'),
+													'message' => 'Date must be greater than today and time must be atleast 6 hours from now'
+												)
+						);
+	
+	function validateDateRanges($data) {
+		$packageStartDate = $this->data['SchedulingMaster']['startDate'];
+		$packageEndDate = $this->data['SchedulingMaster']['endDate'];
+		
+		$previewDate = $this->data['SchedulingMaster']['previewDate'];
+		
+		if(isset($data['previewDate']) && (strtotime($previewDate.' -6 hours') < time()))		return false;
+		if(isset($data['startDate']) && strtotime($data['startDate'].' -6 hours') < time()) 	return false;
+		if(isset($data['endDate']) && ($packageStartDate >= $packageEndDate))					return false;
+		
+		return true;
+	}
 }
 ?>

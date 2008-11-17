@@ -40,7 +40,7 @@ ul.subsection_tabs li.source_code {
 }
 
 </style>
-<?php echo $ajax->form('add', 'post', array('url' => "/scheduling_masters/add/packageId:{$packageId}", 'update' => 'MB_content', 'model' => 'SchedulingMaster', 'complete' => 'closeModalbox()', 'before' => 'Modalbox.deactivate();', 'indicator' => 'spinner'));?>
+<?php echo $ajax->form('add', 'post', array('url' => "/scheduling_masters/add/packageId:{$packageId}", 'update' => 'MB_content', 'model' => 'SchedulingMaster', 'complete' => 'Modalbox.activate(); closeModalbox()', 'before' => 'Modalbox.deactivate();', 'indicator' => 'spinner'));?>
 <ul id="tabs_example_one" class="subsection_tabs">
 	<li class="tab"><a class="active" href="#one">Setup</a></li>
 	<li class="tab"><a class="" href="#two">Merchandising</a></li>

@@ -22,7 +22,9 @@ class SchedulingMastersController extends AppController {
 	function add() {
 		if (!empty($this->data)) {
 			$this->SchedulingMaster->create();
-			
+			$package = $this->SchedulingMaster->Package->findByPackageId($this->data['SchedulingMaster']['packageId']);
+			$this->data['SchedulingMaster']['validityStartDate'] = $package['Package']['validityStartDate'];
+			$this->data['SchedulingMaster']['validityEndDate'] = $package['Package']['validityEndDate'];
 			if ($this->SchedulingMaster->save($this->data)) {
 				$this->createInstances();
 				if ($this->RequestHandler->isAjax()) {

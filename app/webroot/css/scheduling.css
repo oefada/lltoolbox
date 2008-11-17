@@ -15,6 +15,8 @@
 	text-align: center;
 	line-height: 20px;
 	border-right: 1px solid #f7f7f7;
+	font-weight: bold;
+	font-size: 11px;
 }
 
 #mDayContainer .cDayToday,
@@ -53,6 +55,7 @@
 	position: relative;
 	clear: both;
 	height: 110px;
+	padding: 2px;
 }
 .sGrid .sItem {
 	position: absolute;
@@ -88,6 +91,24 @@
 .masterRow .oType3,
 .masterRow .oType4 {
 	border-top: 7px solid #7e0001;
+}
+.oKeys {
+	color: #545454;
+	font-size: 11px;
+}
+.oKeys div {
+	width: 0;
+	height: 0;
+	padding: 0;
+	margin: 0 4px;
+	display: inline-block;
+	clear: none;
+}
+.oKey1 {
+	border: 5px solid #d99f00;
+}
+.oKey2 {
+	border: 5px solid #3d7e20;
 }
 .masterRow .oType6 {
 	border-top: 7px solid #710a65;

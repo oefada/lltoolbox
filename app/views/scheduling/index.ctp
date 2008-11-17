@@ -1,6 +1,6 @@
 <script>
-function openSchedulingOverlay(date, packageId) {
-	Modalbox.show("/scheduling_masters/add/packageId:"+packageId+"/date:"+$F(date));
+function openSchedulingOverlay(date, packageId, packageName) {
+	Modalbox.show("/scheduling_masters/add/packageId:"+packageId+"/date:"+$F(date), {title: 'Scheduling '+packageName});
 }
 var dp = datePickerController.datePickers["dp-normal-1"];
 function gotoMonth()
@@ -14,7 +14,7 @@ function gotoMonth()
 </script>
 <h2 class='title'>Scheduling</h2>
 <div id='sContainer'>
-	<div style="text-align: right"></strong>KEY:</strong> Single<div class='oType1 key'></div> Fixed Price<div class='oType2 key'></div><strong class='textRed'>Go To:</strong>
+	<div style="text-align: right" class='oKeys'><strong>KEY:</strong> Single<div class='oType1 oKey1'></div> Fixed Price<div class='oType2 oKey2'></div><strong class='textRed'>Go To:</strong>
 	<input type="hidden" class="format-y-m-d divider-dash" id="dp-normal-1" name="dp-normal-1" value="<?=$year.'-'.$month.'-01'?>" maxlength="10" size='10' onchange='javascript: gotoMonth(); return false;' /></div>
 
 	<h3><?=$monthYearString?></h3>
