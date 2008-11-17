@@ -79,7 +79,7 @@ class PackagesController extends AppController {
 			$this->carveRatePeriods($clientId);
 			if ($this->Package->saveAll($this->data) && $this->Package->save($this->data)) {
 				$this->Session->setFlash(__('The Package has been saved', true), 'default', array(), 'success');
-				$this->redirect("/clients/$clientId/packages");
+				$this->redirect("/clients/$clientId/packages/edit/{$this->Package->id}");
 			} else {
 				$this->Session->setFlash(__('The Package could not be saved. Please correct the errors below and try again.', true), 'default', array(), 'error');
 			}
@@ -386,6 +386,7 @@ class PackagesController extends AppController {
 		$this->set('currencyCodes', $this->Package->Currency->find('list', array('fields' => array('currencyCode'))));
 		
 		if(!isset($this->data['Format']['Format'])):
+			$formatList = array();
 			foreach ($this->data['Format'] as $format):
 		 		$formatList[] = $format['formatId'];
 			endforeach;

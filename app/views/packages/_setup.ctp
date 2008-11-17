@@ -9,7 +9,6 @@
 		echo "<label>Cloned from package</label>";
 		echo $html->link($this->data['Package']['copiedFromPackageId'], "/clients/$clientId/packages/edit/".$this->data['Package']['copiedFromPackageId']);
 		endif;
-		echo '<span class="hint" id="hintForPackagePackageName">This is the internal name for this package<span class="hint-pointer">&nbsp;</span></span>';
 		echo $form->input('Package.packageName', array('label' => 'Working Name'));
 		echo $form->input('numGuests');
 		echo $form->input('numNights');
