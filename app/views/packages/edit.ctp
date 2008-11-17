@@ -19,25 +19,4 @@ $this->pageTitle = $client['Client']['name'].$html2->c($client['Client']['client
 <?php echo $form->submit('Clone Package', array('onclick' => '$("clone").value = "clone"')) ?>
 </div>
 <?php echo $form->end();?>
-
-<h3>Package Promos</h3>
-<div class="mB mT"><a href="/packages/<?php echo $package['Package']['packageId'];?>/packagePromos/add">Add New Package Promo</a></div>
-<div class="mB">
-	<table>
-	<tr>
-		<th>Package Promo Id</th>
-		<th>Description</th>
-		<th>Promo Code</th>
-	</tr>
-	<?php
-	foreach ($package['PackagePromo'] as $k => $v) {
-		echo '<tr>';
-		echo '<td><a href="/packagePromos/edit/'. $v['packagePromoId'] . '">' . $v['packagePromoId'] . '</a></td>';
-		echo '<td>' . $v['description'] . '</td>';
-		echo '<td>' . $v['promoCode'] . '</td>';
-		echo '</tr>';
-	}
-	?>
-	</table>
-</div>
 </div>
