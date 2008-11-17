@@ -5,10 +5,10 @@
 	</div>
 	<div class='scheduleThisPackage'>
 		<strong>Schedule This Package</strong> - Start Date
-		<input type="hidden" class="format-y-m-d divider-dash range-low-today" id="dp-package-<?=$package['Package']['packageId']?>" name="dp-normal-<?=$package['Package']['packageId']?>" value="<?=$year.'-'.$month.'-01'?>" maxlength="10"/>
+		<input type="hidden" class="format-y-m-d divider-dash range-low-today fill-grid-no-select opacity-99" id="dp-package-<?=$package['Package']['packageId']?>" name="dp-normal-<?=$package['Package']['packageId']?>" value="<?=$year.'-'.$month.'-01'?>" maxlength="10"/>
 		<script>
 			var dp = datePickerController.datePickers["dp-package-<?=$package['Package']['packageId']?>"];
-			new Form.Element.EventObserver($("dp-package-<?=$package['Package']['packageId']?>"), function() { openSchedulingOverlay("dp-package-<?=$package['Package']['packageId']?>", <?=$package['Package']['packageId']?>, '<?=htmlentities($package['Package']['packageName'])?>'); });
+			new Form.Element.Observer($("dp-package-<?=$package['Package']['packageId']?>"), 0.2, function() { if($F("dp-package-<?=$package['Package']['packageId']?>") == '') { return; } openSchedulingOverlay("dp-package-<?=$package['Package']['packageId']?>", <?=$package['Package']['packageId']?>, '<?=htmlentities($package['Package']['packageName'])?>'); $("dp-package-<?=$package['Package']['packageId']?>").value = ''});
 		</script>
 	</div>
 </div>
