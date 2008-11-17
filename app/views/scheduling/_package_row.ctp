@@ -5,10 +5,10 @@
 	</div>
 	<div class='scheduleThisPackage'>
 		<strong>Schedule This Package</strong> - Start Date
-		<input type="hidden" class="format-y-m-d divider-dash" id="dp-package-<?=$package['Package']['packageId']?>" name="dp-normal-<?=$package['Package']['packageId']?>" value="<?=$year.'-'.$month.'-01'?>" maxlength="10"/>
+		<input type="hidden" class="format-y-m-d divider-dash range-low-today" id="dp-package-<?=$package['Package']['packageId']?>" name="dp-normal-<?=$package['Package']['packageId']?>" value="<?=$year.'-'.$month.'-01'?>" maxlength="10"/>
 		<script>
 			var dp = datePickerController.datePickers["dp-package-<?=$package['Package']['packageId']?>"];
-			new Form.Element.EventObserver($("dp-package-<?=$package['Package']['packageId']?>"), function() { openSchedulingOverlay("dp-package-<?=$package['Package']['packageId']?>", <?=$package['Package']['packageId']?>); });
+			new Form.Element.EventObserver($("dp-package-<?=$package['Package']['packageId']?>"), function() { openSchedulingOverlay("dp-package-<?=$package['Package']['packageId']?>", <?=$package['Package']['packageId']?>, '<?=htmlentities($package['Package']['packageName'])?>'); });
 		</script>
 	</div>
 </div>
@@ -61,7 +61,7 @@ foreach($package['Scheduling'] as $k => $master):
 	<?php 
 	if (substr($mstrStartDate, 0, 10) == substr($startDate, 0, 10)) {
 	?>
-		<div style="width: <?=$width?>%; left: <?=$left?>%"<?=$class?> ondblclick="Modalbox.show('/scheduling_masters/edit/<?=$instance['schedulingMasterId']?>')">	
+		<div style="width: <?=$width?>%; left: <?=$left?>%"<?=$class?> ondblclick="Modalbox.show('/scheduling_masters/edit/<?=$instance['schedulingMasterId']?>', {title: 'Edit Scheduling Master'});">	
 		RV: <?=$number->currency($master['SchedulingMaster']['retailValue'])?>
 	<?php
 	} else {
