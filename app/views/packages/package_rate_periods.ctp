@@ -20,10 +20,17 @@
 			$class = ' class="altrow"';
 		}
 		echo "<tr{$class}>";
-		echo '<td>' . $b['itemName'] . '</td>';
+		echo '<td rowspan="2">' . $b['itemName'] . '</td>';
 		foreach($b['PackageRatePeriod'] as $itemRatePeriod) {
 			$currencyCode = $currencyCodes[$b['currencyId']];
-			echo '<td>' . $number->currency($itemRatePeriod['ratePeriodPrice'], $currencyCode).' x '.$itemRatePeriod['quantity'].' = <em>'.$number->currency($itemRatePeriod['ratePeriodPrice']*$itemRatePeriod['quantity'], $currencyCode). '</em></td>';
+			echo '<td style="text-align: right;">' . $number->currency($itemRatePeriod['ratePeriodPrice']*$itemRatePeriod['quantity'], $currencyCode). '</td>';
+		}
+		echo '</tr>';
+		echo "<tr{$class}>";
+		foreach($b['PackageRatePeriod'] as $itemRatePeriod) {
+			$currencyCode = $currencyCodes[$b['currencyId']];
+			echo '<td style="border-top: 1px solid #e5e5e5;text-align: center;color:#777">' . $itemRatePeriod['quantity'].'@'.$number->currency($itemRatePeriod['ratePeriodPrice'], $currencyCode);
+			echo '</td>';	
 		}
 		echo '</tr>';
 	}
@@ -33,7 +40,7 @@
 	echo '<tr class="lastRow">';
 	echo '<td>Overall Price</td>';
 	foreach ($packageRatePeriods['Boundaries'] as $k => $v) {
-		echo '<td><strong>' . $number->currency($v['rangeSum'], $currencyCode) . '</strong></td>';
+		echo '<td style="text-align: right;"><strong>' . $number->currency($v['rangeSum'], $currencyCode) . '</strong></td>';
 	}
 	echo '</tr>';
 	?>
