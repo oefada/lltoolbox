@@ -201,6 +201,12 @@ class SchedulingMastersController extends AppController {
 		endswitch;
 	}
 	
+	/**
+	 * Method called from Prototip using ajax. Finds all of the performance metrics and passes them into a view file.
+	 * View file is shown in a tooltip.
+	 *
+	 * @param int $id of the scheduling master to grab performance metrics for
+	 */
 	function performanceTooltip($id) {
 		$this->SchedulingMaster->SchedulingMasterPerformance->recursive = -1;
 		$metrics = $this->SchedulingMaster->SchedulingMasterPerformance->find('first', array('conditions' => array('SchedulingMasterPerformance.schedulingMasterId' => $id)));

@@ -2,7 +2,7 @@
 class SchedulingController extends AppController {
 
 	var $name = 'Scheduling';
-	var $uses = array('Package', 'SchedulingMaster', 'SchedulingInstance');
+	var $uses = array('Package', 'SchedulingMaster', 'SchedulingInstance');		//we need to access more than the default model in here
 
 	function beforeFilter() {
 		parent::beforeFilter();
@@ -10,10 +10,16 @@ class SchedulingController extends AppController {
 		$this->set('searchController' ,'client');
 	}
 	
+	/**
+	 * The main landing point for scheduling. All other methods in this class are  called from here.
+	 * Method sets up the necessary variables needed to render the main scheduling interface.
+	 *
+	 * @param int $clientId the id of the client that we are scheduling for  
+	 */
 	function index($clientId = null)
 	{
 		/* Grab all necessary parameters from the URL */
-		$clientId 	= @$this->params['named']['clientId'];
+		$clientId 	= @$this->params['named']['clientId'];						//client id is used to fetch all packages for this client
 		$month 		= @$this->params['named']['month'];
 		$month 		= (empty($month)) ? date('m') : $month;
 		$year 		= @$this->params['named']['year'];
@@ -22,11 +28,11 @@ class SchedulingController extends AppController {
 		// we need to know how many days are in this month
 		$monthDays = $this->_monthDays($month, $year);
 
-		$monthYearString = date('F Y', strtotime($year.'-'.$month.'-01'));
+		$monthYearString = date('F Y', strtotime($year.'-'.$month.'-01'));		//string to display as a heading in the view
 		
-		$packages = $this->_clientPackages($clientId, $month);
+		$packages = $this->_clientPackages($clientId, $month);					//grab all client packages
 		
-		$client['Client'] = $packages[0]['Client'];
+		$client['Client'] = $packages[0]['Client'];								//the first package has the client details
 		$clientName = $packages[0]['Client']['name'];
 
 		$this->set('packages', $packages);
@@ -37,7 +43,7 @@ class SchedulingController extends AppController {
 	 * Method returns all of the packages for a client id
 	 *
 	 * @param int $clientId
-	 * @return array $packages an associative array with all of the package data
+	 * @return array $packages an associative array with all of the package data needed in the view
 	 */
 	function _clientPackages($clientId, $month) {
 		$this->Package->ClientLoaPackageRel->recursive = 2;
@@ -50,31 +56,37 @@ class SchedulingController extends AppController {
 		
 		return $packages;
 	}
-	
+	/**
+	 * Associates all of the scheduling instances with each package array
+	 *
+	 * @see _clientPackages()
+	 * @param array $packages byref package array which we inject with scheduling instances
+	 */
 	function _addPackageSchedulingInstances(&$packages, $month = null) {
-		foreach($packages as $package):
+		foreach($packages as $package):											//extract all the package ids
 			$packageIds[] = $package['Package']['packageId'];
 		endforeach;
 		
+		// We need to grab all of hte scheduling masters and instances associated to each package, but we want to contain it all
 		$this->Package->SchedulingMaster->recursive = 1;
 		$this->Package->SchedulingMaster->Behaviors->attach('Containable');
 		$this->Package->SchedulingMaster->contain('SchedulingInstance');
-		$this->Package->SchedulingMaster->SchedulingInstance->conditions = array('OR' => array('month(SchedulingInstance.startDate)' => date('m'), 
-						'month(SchedulingInstance.endDate)' => date('m')
-				));
 		
+		//select all instances for each package
 		$packageSchedulingInstance = $this->Package->SchedulingMaster->find('all', array('conditions' => 
-																					array('SchedulingMaster.packageId' => $packageIds),
+																					array('SchedulingMaster.packageId' => $packageIds),//array packageIds causes this to act as an IN clause
 																					'contain' => array('SchedulingInstance' => array('conditions' => array('OR'=> array('month(SchedulingInstance.startDate) =' => $month, 
 																									'month(SchedulingInstance.endDate) =' => $month))
 																							))
 																				   )
 																			);
-						
+		
+		//loop through all of the instances and associate them nicely so we can look them up below				
 		foreach($packageSchedulingInstance as $instance) {
 			$instances[$instance['SchedulingMaster']['packageId']][] = $instance;
 		}
 		
+		//for each package we include a new associate array that has all of the scheduling details
 		foreach($packages as &$package):
 			$package['Scheduling'] = @$instances[$package['Package']['packageId']];
 		endforeach;
