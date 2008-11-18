@@ -471,6 +471,13 @@ class PackagesController extends AppController {
 			return '';
 		endif;
 	}
+	
+	function performanceTooltip($id) {
+		$this->Package->PackagePerformance->recursive = -1;
+		$metrics = $this->Package->PackagePerformance->find('first', array('conditions' => array('PackagePerformance.packageId' => $id)));
+
+		$this->set('metrics', $metrics['PackagePerformance']);
+	}
 
 }
 ?>

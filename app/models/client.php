@@ -68,7 +68,7 @@ class Client extends AppModel {
                                );
 	function afterFind($results) {
 		foreach ($results as $key => $val):
-			if (isset($val['Client'])):
+			if (isset($val['Client']) && is_int($key)):
 				$results[$key]['Client']['numLoas'] = count($this->Loa->find('list', array('conditions' => array('clientId' => $val['Client']['clientId']))));				
 			endif;
 		endforeach;

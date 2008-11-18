@@ -22,6 +22,7 @@
 
 		echo $html->css('main');
 		echo $html->css('datepicker');
+		echo $html->css('prototip');
 		
 		if(isset($javascript)):
 			echo $javascript->link('prototype');
@@ -31,6 +32,7 @@
 			echo $javascript->link('datepicker');
 			echo $javascript->link('livepipe');
 			echo $javascript->link('tabs');
+			echo $javascript->link('prototip');
 		endif;
 
 		echo $scripts_for_layout;

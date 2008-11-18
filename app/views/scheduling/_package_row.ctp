@@ -1,6 +1,6 @@
 <div id='package_<?=$package['Package']['packageId']?>'>
 <div class='pkgTitle clearfix'>
-	<div class='title'>
+	<div class='title' id='packageTitle<?=$package['Package']['packageId']?>'>
 		<strong>Package <?=$row?></strong> - <?=$package['Package']['packageName']?> <?=$html2->c($package['Package']['packageId'], 'ID')?>
 	</div>
 	<div class='scheduleThisPackage'>
@@ -79,3 +79,8 @@ endif;
 endforeach; //end master loop ?>
 </div>
 </div>
+<?
+if (isset($package['Package']['PackagePerformance'])):
+$prototip->tooltip('packageTitle'.$package['Package']['packageId'], array('ajax' => array('url' => '/packages/performanceTooltip/'.$package['Package']['packageId'], 'options' => array('method' => 'get'))));
+endif;
+?>

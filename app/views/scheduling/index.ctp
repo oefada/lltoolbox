@@ -34,3 +34,4 @@ function gotoMonth()
 		</div>
 	</div>
 </div>
+<?=$prototip->renderTooltips();?>

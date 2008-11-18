@@ -9,6 +9,8 @@ class Package extends AppModel {
 						   'PackageStatus' => array('foreignKey' => 'packageStatusId')
 						);
 	
+	var $hasOne = array('PackagePerformance' => array('foreignKey' => 'packageId'));
+	
 	var $hasMany = array('PackageValidityPeriod' => array('foreignKey' => 'packageId'),
 						 'PackageOfferTypeDefField' => array('foreignKey' => 'packageId'),
 						 'PackageLoaItemRel' => array('foreignKey' => 'packageId'),
