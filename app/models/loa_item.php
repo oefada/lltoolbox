@@ -53,6 +53,8 @@ class LoaItem extends AppModel {
 
 			foreach($itemIds as $itemId):
 				$items[$itemId]['itemName'] = $itemList[$itemId];
+				$fee = $this->Fee->find('first', array('contain' => array('Fee'), 'conditions' => array('Fee.loaItemId' => $itemId)));
+				$items[$itemId]['feePercent'] = @$fee['Fee']['feePercent'];
 				$items[$itemId]['currencyId'] = $currencyList[$itemId];
 				
 				
@@ -79,7 +81,7 @@ class LoaItem extends AppModel {
 				
 				if (!isset($periodPrices[$i])) $periodPrices[$i] = 0;
 				
-				$periodPrices[$i] += $data['ratePeriodPrice']*$data['quantity'];
+				$periodPrices[$i] += $data['ratePeriodPrice']*$data['quantity']+$data['ratePeriodPrice']*$fee['Fee']['feePercent']/100;
 				$packageRatePeriods['PackageRatePeriod'][] = $data;
 				$items[$itemId]['PackageRatePeriod'][] = $data;
 				

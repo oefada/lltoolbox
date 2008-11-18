@@ -9,6 +9,9 @@
 		echo $form->input('itemName');
 		echo $form->input('currencyId', array('disabled' => 'disabled'));
 		echo $form->input('itemBasePrice');
+		echo $form->input('Fee.feeId');
+		echo $form->input('Fee.feeName');
+		echo $form->input('Fee.feePercent');
 	?>
 	</fieldset>
 <?php echo $form->end('Submit');?>

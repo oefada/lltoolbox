@@ -8,6 +8,8 @@
 		echo $form->input('loaId', array('type' => "hidden"));
 		echo $form->input('itemName');
 		echo $form->input('itemBasePrice');
+		echo $form->input('Fee.feeName');
+		echo $form->input('Fee.feePercent');
 		echo $form->input('currencyId', array('value' => $currencyId, 'type' => 'hidden'));
 	?>
 	</fieldset>

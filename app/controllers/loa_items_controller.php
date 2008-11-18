@@ -65,7 +65,7 @@ class LoaItemsController extends AppController {
 			$this->LoaItem->LoaItemRatePeriod->set($this->data);
 			*/
 			
-			if ($this->LoaItem->save($this->data) /*&& $this->LoaItem->LoaItemRatePeriod->save()*/ ) {	
+			if ($this->LoaItem->saveAll($this->data) /*&& $this->LoaItem->LoaItemRatePeriod->save()*/ ) {	
 				
 				if ($this->RequestHandler->isAjax()) {
 					$this->set('closeModalbox', true);
