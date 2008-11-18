@@ -136,7 +136,9 @@
 	left: -1000px;
 	height: 16px;
 	width: 16px;
-	border: 1px solid #dddddd;
+	background: #ffc;
+	border: 1px solid #e5e5e5;
+	padding: 5px 10px;
 	overflow: hidden;
 }
 
