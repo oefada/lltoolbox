@@ -43,7 +43,7 @@ class SchedulingController extends AppController {
 		$this->Package->ClientLoaPackageRel->recursive = 2;
 		$this->Package->ClientLoaPackageRel->Behaviors->attach('Containable');
 
-		$this->Package->ClientLoaPackageRel->contain(array('Package' => array('PackagePerformance'), 'Client', 'Loa'));
+		$this->Package->ClientLoaPackageRel->contain('Package', 'Client', 'Loa');
 		$packages = $this->Package->ClientLoaPackageRel->findAllByClientId($clientId);
 	
 		$this->_addPackageSchedulingInstances($packages, $month);
