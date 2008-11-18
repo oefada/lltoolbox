@@ -1,3 +1,4 @@
+<?php $this->pageTitle = $clientName?>
 <script>
 function openSchedulingOverlay(date, packageId, packageName) {
 	Modalbox.show("/scheduling_masters/add/packageId:"+packageId+"/date:"+$F(date), {title: 'Scheduling '+packageName});

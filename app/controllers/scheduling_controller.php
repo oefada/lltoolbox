@@ -26,9 +26,11 @@ class SchedulingController extends AppController {
 		
 		$packages = $this->_clientPackages($clientId, $month);
 		
-		$this->set('packages', $packages);
+		$client['Client'] = $packages[0]['Client'];
+		$clientName = $packages[0]['Client']['name'];
 
-		$this->set(compact('clientId', 'month', 'year', 'monthDays', 'monthYearString'));
+		$this->set('packages', $packages);
+		$this->set(compact('clientId', 'month', 'year', 'monthDays', 'monthYearString', 'clientName', 'client'));
 	}
 	
 	/**
@@ -40,8 +42,10 @@ class SchedulingController extends AppController {
 	function _clientPackages($clientId, $month) {
 		$this->Package->ClientLoaPackageRel->recursive = 2;
 		$this->Package->ClientLoaPackageRel->Behaviors->attach('Containable');
-	    
-		$this->Package->ClientLoaPackageRel->contain('Package');
+	    $this->Package->ClientLoaPackageRel->Client->Behaviors->attach('Containable');
+	
+		$this->Package->ClientLoaPackageRel->contain('Package', 'Client', 'Loa');
+		$this->Package->ClientLoaPackageRel->Client->contain('Loa');
 		$packages = $this->Package->ClientLoaPackageRel->findAllByClientId($clientId);
 	
 		$this->_addPackageSchedulingInstances($packages, $month);

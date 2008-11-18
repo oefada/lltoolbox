@@ -20,7 +20,7 @@
 			$class = ' class="altrow"';
 		}
 		echo "<tr{$class}>";
-		echo '<td rowspan="2">' . $b['itemName'] . '</td>';
+		echo '<td rowspan="2" style="vertical-align: middle">' . $b['itemName'] . '</td>';
 		foreach($b['PackageRatePeriod'] as $itemRatePeriod) {
 			$currencyCode = $currencyCodes[$b['currencyId']];
 			echo '<td style="text-align: right;">' . $number->currency($itemRatePeriod['ratePeriodPrice']*$itemRatePeriod['quantity'], $currencyCode). '</td>';
