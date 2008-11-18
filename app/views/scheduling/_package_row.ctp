@@ -61,9 +61,17 @@ foreach($package['Scheduling'] as $k => $master):
 	<?php 
 	if (substr($mstrStartDate, 0, 10) == substr($startDate, 0, 10)) {
 	?>
-		<div style="width: <?=$width?>%; left: <?=$left?>%"<?=$class?> ondblclick="Modalbox.show('/scheduling_masters/edit/<?=$instance['schedulingMasterId']?>', {title: 'Edit Scheduling Master'});">	
+		<div id='schedulingMaster<?=$master['SchedulingMaster']['schedulingMasterId']?>' style="width: <?=$width?>%; left: <?=$left?>%"<?=$class?> ondblclick="Modalbox.show('/scheduling_masters/edit/<?=$instance['schedulingMasterId']?>', {title: 'Edit Scheduling Master'});">	
 		RV: <?=$number->currency($master['SchedulingMaster']['retailValue'])?>
+		
+		
 	<?php
+		$prototip->tooltip('schedulingMaster'.$master['SchedulingMaster']['schedulingMasterId'], array('ajax' =>
+		 																		array('url' => '/scheduling_masters/performanceTooltip/'.$master['SchedulingMaster']['schedulingMasterId'], 
+																						'options' => array('method' => 'get')
+																					),
+																				'title' => 'Scheduling Master Performance'
+																				));
 	} else {
 	?>
 		<div style="width: <?=$width?>%; left: <?=$left?>%"<?=$class?>>	
@@ -76,16 +84,16 @@ foreach($package['Scheduling'] as $k => $master):
 </div>
 <? 
 endif;
+
+
 endforeach; //end master loop ?>
 </div>
 </div>
 <?
-if (isset($package['Package']['PackagePerformance'])):
 $prototip->tooltip('packageTitle'.$package['Package']['packageId'], array('ajax' =>
  																		array('url' => '/packages/performanceTooltip/'.$package['Package']['packageId'], 
 																				'options' => array('method' => 'get')
 																			),
 																		'title' => 'Package Performance'
 																		));
-endif;
 ?>

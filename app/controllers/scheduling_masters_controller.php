@@ -200,5 +200,12 @@ class SchedulingMastersController extends AppController {
 			break;
 		endswitch;
 	}
+	
+	function performanceTooltip($id) {
+		$this->SchedulingMaster->SchedulingMasterPerformance->recursive = -1;
+		$metrics = $this->SchedulingMaster->SchedulingMasterPerformance->find('first', array('conditions' => array('SchedulingMasterPerformance.schedulingMasterId' => $id)));
+
+		$this->set('metrics', $metrics['SchedulingMasterPerformance']);
+	}
 }
 ?>

@@ -10,6 +10,8 @@ class SchedulingMaster extends AppModel {
 						   'RemittanceType' => array('foreignKey' => 'remittanceTypeId'),
 						   'Package' => array('foreignKey' => 'packageId')
 						  );
+	
+	var $hasOne = array('SchedulingMasterPerformance' => array('foreignKey' => 'schedulingMasterId'));
 						  
 	var $hasMany = array('SchedulingInstance' => array('foreignKey' => 'schedulingMasterId'));
 
