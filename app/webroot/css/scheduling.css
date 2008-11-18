@@ -83,6 +83,7 @@
 	border-left: 1px dashed #777;
 	border-right: 1px dashed #777;
 	border-bottom: 1px dashed #777;
+	cursor: auto;
 }
 .masterRow .oType1 {
 	border-top: 7px solid #d99f00;
