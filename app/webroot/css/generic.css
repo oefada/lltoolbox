@@ -52,8 +52,8 @@ ul, li {
 /* @end */
 /* @group Tables */
 table {
-	background: #fff;
 	border:1px solid #ccc;
+	border-collapse: collapse;
 	border-right:0;
 	clear: both;
 	color: #333;
@@ -104,7 +104,6 @@ th a:hover {
 	text-decoration: none;
 }
 table tr td {
-	background: #fff;
 	border-right: 1px solid #ccc;
 	padding: 4px;
 	vertical-align: top;
