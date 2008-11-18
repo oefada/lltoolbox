@@ -69,6 +69,14 @@ Prototip.Styles = {
     borderColor: '#606060',
     radius: 6,
     stem: { height: 12, width: 15 }
+  },
+
+  'toolboxblue': {
+    className: 'toolboxblue',
+    border: 3,
+    borderColor: '#545454',
+    radius: 3,
+    stem: { height: 12, width: 15 }
   }
 };
 

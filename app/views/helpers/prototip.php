@@ -6,6 +6,8 @@
     var $tips = array();
 
     function tooltip($el, $content, $options = array()) {
+		$content['style'] = 'toolboxblue';
+		$content['stem'] = 'topLeft';
         if (isset($options['render']) && $options['render'] == true) {
             return $this->Javascript->codeBlock($this->output($this->_createTip($el, $content, $options)));
         } else {

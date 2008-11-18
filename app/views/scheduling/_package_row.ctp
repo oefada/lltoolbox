@@ -81,6 +81,11 @@ endforeach; //end master loop ?>
 </div>
 <?
 if (isset($package['Package']['PackagePerformance'])):
-$prototip->tooltip('packageTitle'.$package['Package']['packageId'], array('ajax' => array('url' => '/packages/performanceTooltip/'.$package['Package']['packageId'], 'options' => array('method' => 'get'))));
+$prototip->tooltip('packageTitle'.$package['Package']['packageId'], array('ajax' =>
+ 																		array('url' => '/packages/performanceTooltip/'.$package['Package']['packageId'], 
+																				'options' => array('method' => 'get')
+																			),
+																		'title' => 'Package Performance'
+																		));
 endif;
 ?>
