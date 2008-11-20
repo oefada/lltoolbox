@@ -15,8 +15,11 @@
  */
 body {
 	color: #545454;
-	font-family: Verdana,helvetica,arial,sans-serif;
+	font-family: Verdana, Helvetica, Arial, sans-serif;
 	font-size: 12px;
+}
+p {
+    line-height: 20px;
 }
 /* @group =headers */
 h1, h2, h3, h4 {

@@ -26,6 +26,16 @@ class SchedulingMastersController extends AppController {
 			$this->data['SchedulingMaster']['validityStartDate'] = $package['Package']['validityStartDate'];
 			$this->data['SchedulingMaster']['validityEndDate'] = $package['Package']['validityEndDate'];
 			$this->data['SchedulingMaster']['retailValue'] = $package['Package']['approvedRetailPrice'];
+			
+			//if this is a mystery auction we override some fields
+			if (in_array(3, $this->data['MerchandisingFlag']['MerchandisingFlag'])) {
+			    $this->data['SchedulingMaster']['openingBid']   = $this->data['Mystery']['openingBid'];
+			    $this->data['SchedulingMaster']['bidIncrement'] = $this->data['Mystery']['bidIncrement'];
+			    $this->data['SchedulingMaster']['packageName']  = $this->data['Mystery']['packageName'];
+			    $this->data['SchedulingMaster']['subtitle']     = $this->data['Mystery']['subtitle'];
+			    $this->data['SchedulingMaster']['shortBlurb']   = $this->data['Mystery']['shortBlurb'];
+			}
+			
 			if ($this->SchedulingMaster->save($this->data)) {
 				$this->createInstances();
 				if ($this->RequestHandler->isAjax()) {
@@ -67,6 +77,8 @@ class SchedulingMastersController extends AppController {
 			$this->data['SchedulingMaster']['endDate']['month']         = $packageEndDate['month'];
 			$this->data['SchedulingMaster']['endDate']['day']           = $packageEndDate['day'];
 			$this->data['SchedulingMaster']['numDaysToRun']             = 3;
+			
+			$this->data['SchedulingMaster']['packageName']              = trim($package['Package']['packageName']);
 		}
 		
 		/* Get all Offer Types available for this package based on Format */

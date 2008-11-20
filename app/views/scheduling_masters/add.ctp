@@ -2,17 +2,15 @@
     <?php $session->flash();
 	$session->flash('error');
 	?>
+	<?php /* TODO: Move these styles outside of here when it's finalized*/ ?>
 <style>
 /* Subsection Tabs
 --------------------*/
 ul.subsection_tabs {
 	list-style:none;
 	margin:0 0 5px 0;
-	padding:0;
 	clear:both;
-	border-bottom:1px solid #ccc;
-	height:20px;
-	clear:both;
+	height: 30px;
 }
 
 ul.subsection_tabs li.tab {
@@ -23,11 +21,10 @@ ul.subsection_tabs li.tab {
 
 ul.subsection_tabs li.tab a {
 	display:block;
-	height:20px;
-	padding:0 6px 0 6px;
-	background-color:#fff;
-	color:#666;
-	width:80px;
+	margin: 0;
+	padding: 10px 10px 0 10px;
+	color:#7f0000;
+	text-decoration: none;
 }
 
 ul.subsection_tabs li.tab a:hover {
@@ -35,11 +32,9 @@ ul.subsection_tabs li.tab a:hover {
 }
 
 ul.subsection_tabs li.tab a.active {
-	background-color:#ddd;
-}
-
-ul.subsection_tabs li.source_code {
-	float:right;
+	color: #fff;
+	padding: 10px 10px 0 10px;
+	background-color:#545454;
 }
 
 </style>
@@ -47,13 +42,13 @@ ul.subsection_tabs li.source_code {
 <ul id="tabs_example_one" class="subsection_tabs">
 	<li class="tab"><a class="active" href="#one">Setup</a></li>
 	<li class="tab"><a class="" href="#two">Merchandising</a></li>
+	<li class="tab" id='mysteryTab' style="display: none"><a class="" href="#three">Mystery Auction Setup</a></li>
 </ul>
 	<fieldset>
- 		<legend><?php echo $package['Package']['packageName'] ?></legend>
-	
 		<div id='one'>
+			<p class='clean-gray'><?php echo $package['Package']['shortBlurb'] ?> <?php echo $package['Package']['shortBlurb'] ?> <?php echo $package['Package']['shortBlurb'] ?> <?php echo $package['Package']['shortBlurb'] ?> <?php echo $package['Package']['shortBlurb'] ?></p>
 	<?php
-		echo $form->input('offerTypeId', array('label' => 'Type'));
+		echo $form->input('offerTypeId', array('label' => 'Offer Type'));
 		echo '<div id="defaults">';
 		if (isset($defaultFile)) {
 			echo $this->renderElement('../scheduling_masters/'.$defaultFile);
@@ -81,10 +76,9 @@ ul.subsection_tabs li.source_code {
 		echo $form->input('endDate', array('minYear' => date('Y'), 'maxYear' => $packageEndDate['year'], 'after' => 'Or, <a href="#" onclick=\'$("SchedulingMasterIterationSchedulingOption").value = "0"; javascript:$("iterations").toggle(); $("endDate").toggle() \'>choose fixed number of iterations</a>'));
 		echo '</div>';
 		
-		echo $form->input('schedulingStatusId');
 		echo $form->input('previewDate');
 		echo $form->input('startDate', array('minYear' => date('Y'), 'maxYear' => $packageEndDate['year']));
-		
+		echo $form->input('additionalDescription', array('rows' => 2));
 		echo $form->input('packageName', array('value' => $package['Package']['packageName'], 'type' => 'hidden'));
 		echo $form->input('subTitle',  array('value' => $package['Package']['subtitle'], 'type' => 'hidden'));
 		echo $form->input('packageId', array('value' => $packageId, 'type' => 'hidden'));
@@ -98,13 +92,37 @@ ul.subsection_tabs li.source_code {
 		<div id='two' style="display: none">	
 		<?php echo $form->input('MerchandisingFlag'); ?>
 		</div>
+		<div id='three' style="display: none">
+			<?php
+			$openingBid 	= (!empty($this->data['SchedulingMaster']['openingBid'])) 	? $this->data['SchedulingMaster']['openingBid'] 	: 1;
+			$bidIncrement 	= (!empty($this->data['SchedulingMaster']['bidIncrement'])) ? $this->data['SchedulingMaster']['bidIncrement'] 	: 1;
+			echo $form->input('Mystery.openingBid', array('value' => $openingBid));
+			echo $form->input('Mystery.bidIncrement', array('value' => $bidIncrement));
+			echo $form->input('Mystery.packageName');
+			echo $form->input('Mystery.subtitle');
+			echo $form->input('Mystery.shortBlurb', array('rows' => 3));
+			?>
+		</div>
 	</fieldset>
 <?php echo $form->end('Schedule Me');?>
 </div>
 <script>
+new Control.Tabs('tabs_example_one', {afterChange: function(){Modalbox.resizeToContent()}});
 
-new Control.Tabs('tabs_example_one');
+function merchandisingSetup(element, value) {
+	for (var i = 0; i < value.length; i++) {
+		if (value[i] == 3) {
+			if ($('mysteryTab').getStyle('display') == 'none') {
+				$('mysteryTab').show();
+				new Effect.Highlight('mysteryTab', {duration: 2});
+			}
+			return;
+		}
+	}
+	$('mysteryTab').hide();
+}
 
+new Form.Element.EventObserver('MerchandisingFlagMerchandisingFlag', function(element, value) {merchandisingSetup(element, value);});
 </script>
 
 <?php

@@ -152,7 +152,6 @@ form {
 	padding: 0;
 }
 fieldset {
-	margin-top: 30px;
 	padding: 10px 20px;
 	border: none;
 }
@@ -253,7 +252,7 @@ p.error em {
 	background: #EFEFEF;
 	color: #222222;
 	padding: 4px;
-	text-align: center;
+	text-align: left;
 }
 
 .clean-yellow {
