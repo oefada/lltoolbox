@@ -71,7 +71,7 @@ ul.subsection_tabs li.source_code {
 		}
 		
 		//the scheduling iteration option is 0 = iterations, 1 = endDate
-		echo $form->input('iterationSchedulingOption', array('type' => 'text'));
+		echo $form->input('iterationSchedulingOption', array('type' => 'hidden'));
 		echo '<div id="iterations"'.$iterationsStyle.'>';
 		echo $form->input('iterations', array('after' => 'Or, <a href="#" onclick=\'javascript:$("SchedulingMasterIterationSchedulingOption").value = "1"; $("iterations").toggle(); $("endDate").toggle() \'>choose infinite iterations until end date.</a>'));
 		echo '</div>';
