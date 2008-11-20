@@ -59,15 +59,31 @@ ul.subsection_tabs li.source_code {
 			echo $this->renderElement('../scheduling_masters/'.$defaultFile);
 		}
 		echo '</div>';
-		echo $form->input('retailValue');
-		echo $form->input('bidIncrement');
 		echo $form->input('numDaysToRun');
-		echo $form->input('schedulingDelayCtrlId');
-		echo $form->input('iterations');
-		echo $form->input('endDate');
+		echo $form->input('schedulingDelayCtrlId', array('onchange' => 'this.selectedIndex = 0'));
+		
+		$iterationsStyle = $endDateStyle = ' style="padding: 0; margin: 0"';
+		//shows only when fixed number of iterations is selected
+		if (!empty($this->data['SchedulingMaster']['iterationSchedulingOption']) && $this->data['SchedulingMaster']['iterationSchedulingOption'] == 1) {
+			$iterationsStyle = ' style="padding: 0; margin: 0; display: none"';
+		} else {
+			$endDateStyle = ' style="padding: 0; margin: 0; display: none"';
+		}
+		
+		//the scheduling iteration option is 0 = iterations, 1 = endDate
+		echo $form->input('iterationSchedulingOption', array('type' => 'text'));
+		echo '<div id="iterations"'.$iterationsStyle.'>';
+		echo $form->input('iterations', array('after' => 'Or, <a href="#" onclick=\'javascript:$("SchedulingMasterIterationSchedulingOption").value = "1"; $("iterations").toggle(); $("endDate").toggle() \'>choose infinite iterations until end date.</a>'));
+		echo '</div>';
+		
+		//shows only when infinite iterations until end date is selected
+		echo '<div id="endDate"'.$endDateStyle.'>';
+		echo $form->input('endDate', array('minYear' => date('Y'), 'maxYear' => $packageEndDate['year'], 'after' => 'Or, <a href="#" onclick=\'$("SchedulingMasterIterationSchedulingOption").value = "0"; javascript:$("iterations").toggle(); $("endDate").toggle() \'>choose fixed number of iterations</a>'));
+		echo '</div>';
+		
 		echo $form->input('schedulingStatusId');
 		echo $form->input('previewDate');
-		echo $form->input('startDate');
+		echo $form->input('startDate', array('minYear' => date('Y'), 'maxYear' => $packageEndDate['year']));
 		
 		echo $form->input('packageName', array('value' => $package['Package']['packageName'], 'type' => 'hidden'));
 		echo $form->input('subTitle',  array('value' => $package['Package']['subtitle'], 'type' => 'hidden'));
@@ -85,7 +101,11 @@ ul.subsection_tabs li.source_code {
 	</fieldset>
 <?php echo $form->end('Schedule Me');?>
 </div>
-<script>new Control.Tabs('tabs_example_one');  </script>
+<script>
+
+new Control.Tabs('tabs_example_one');
+
+</script>
 
 <?php
 if (isset($closeModalbox) && $closeModalbox) echo "<div id='closeModalbox'></div>";
