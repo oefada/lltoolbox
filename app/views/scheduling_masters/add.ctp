@@ -46,7 +46,7 @@ ul.subsection_tabs li.tab a.active {
 </ul>
 	<fieldset>
 		<div id='one'>
-			<p class='clean-gray'><?php echo $package['Package']['shortBlurb'] ?> <?php echo $package['Package']['shortBlurb'] ?> <?php echo $package['Package']['shortBlurb'] ?> <?php echo $package['Package']['shortBlurb'] ?> <?php echo $package['Package']['shortBlurb'] ?></p>
+			<p class='clean-gray'><?php echo $package['Package']['shortBlurb'] ?></p>
 	<?php
 		echo $form->input('offerTypeId', array('label' => 'Offer Type'));
 		echo '<div id="defaults">';
