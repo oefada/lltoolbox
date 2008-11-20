@@ -4,6 +4,10 @@
 	?>
 	<?php /* TODO: Move these styles outside of here when it's finalized*/ ?>
 <style>
+div {
+	padding: 0;
+	margin: 0;
+}
 /* Subsection Tabs
 --------------------*/
 ul.subsection_tabs {
