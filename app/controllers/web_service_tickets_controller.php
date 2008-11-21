@@ -6,7 +6,7 @@ Configure::write('debug', 0);
 class WebServiceTicketsController extends WebServicesController
 {
 	var $name = 'WebServiceTickets';
-	var $uses = array('ticket', 'user', 'offer', 'bid', );
+	var $uses = array('Ticket', 'User', 'Offer', 'Bid');
 	var $serviceUrl = 'http://192.168.100.22/web_service_tickets';
 	var $errorResponse = false;
 	var $api = array(
@@ -41,19 +41,16 @@ class WebServiceTicketsController extends WebServicesController
 			return false;	
 		}
 		
-		$user = new User();
-		$userData = $user->read(null, $data['userId']);
+		$userData = $this->User->read(null, $data['userId']);
 		
-		$offer = new Offer();
-		$offer->recursive = 2;
-		$offerData = $offer->read(null, $data['offerId']);
-		$offerTypeToFormat = $offer->query("SELECT formatId FROM formatOfferTypeRel WHERE offerTypeId = " . $offerData['Offer']['offerTypeId']);
+		$this->Offer->recursive = 2;
+		$offerData = $this->Offer->read(null, $data['offerId']);
+		$offerTypeToFormat = $this->Offer->query("SELECT formatId FROM formatOfferTypeRel WHERE offerTypeId = " . $offerData['Offer']['offerTypeId']);
 		$formatId = $offerTypeToFormat[0]['formatOfferTypeRel']['formatId'];
 		
 		if (isset($data['bidId']) && !empty($data['bidId'])) {
-			$bid = new Bid();
-			$bid->recursive = -1;
-			$bidData = $bid->read(null, $data['bidId']);	
+			$this->Bid->recursive = -1;
+			$bidData = $this->Bid->read(null, $data['bidId']);	
 		}
 	
 		$newTicket = array();
@@ -62,20 +59,19 @@ class WebServiceTicketsController extends WebServicesController
 		$newTicket['Ticket']['offerId'] 				 = $data['offerId'];  
 		$newTicket['Ticket']['offerTypeId'] 			 = $offerData['Offer']['offerTypeId'];
 		$newTicket['Ticket']['formatId'] 				 = $formatId;
-		$newTicket['Ticket']['ticketCreated'] 			 = date('Y-m-d H:i:s');
 		
 		if (isset($data['requestQueueId'])) {
 			$newTicket['Ticket']['requestQueueId']     	 = $data['requestQueueId'];
 			$newTicket['Ticket']['requestQueueDatetime'] = $data['requestQueueDatetime'];
 			$newTicket['Ticket']['requestArrival'] 		 = $data['requestArrival'];
-			$newTicket['Ticket']['requestDeparture']	 = $data['requestDeparture];
+			$newTicket['Ticket']['requestDeparture']	 = $data['requestDeparture'];
 			$newTicket['Ticket']['requestNumGuests']	 = $data['requestNumGuests'];
 			$newTicket['Ticket']['requestNotes']		 = $data['requestNotes'];
-			$newTicket['Ticket']['bookingPrice'] 		 = $offerData['SchedulingInstance']['SchedulingMaster']['buyNowPrice'];
+			$newTicket['Ticket']['billingPrice'] 		 = $offerData['SchedulingInstance']['SchedulingMaster']['buyNowPrice'];
 		} elseif (isset($data['bidId'])) {
 			$newTicket['Ticket']['winningBidQueueId'] 	 = $data['winningBidQueueId'];
 			$newTicket['Ticket']['bidId'] 				 = $data['bidId'];
-			$newTicket['Ticket']['bookingPrice'] 		 = $data['bookingPrice'];
+			$newTicket['Ticket']['billingPrice'] 		 = $data['billingPrice'];
 		}
 		
 		$newTicket['Ticket']['userId'] 					 = $userData['User']['userId'];
@@ -93,13 +89,12 @@ class WebServiceTicketsController extends WebServicesController
 		$newTicket['Ticket']['userState']				 = $userData['Address'][0]['stateName'];
 		$newTicket['Ticket']['userCountry']				 = $userData['Address'][0]['countryName'];
 		$newTicket['Ticket']['userZip']					 = $userData['Address'][0]['postalCode'];
-	
-		$ticket = new Ticket();
-		$ticket->create();
-		if ($ticket->save($newTicket)) {
+
+		$this->Ticket->create();
+		if ($this->Ticket->save($newTicket)) {
 			return true;	
 		} else {
-			$this->errorResponse = 906;
+			$this->errorResponse = 908;
 			return false;
 		}
 	}
