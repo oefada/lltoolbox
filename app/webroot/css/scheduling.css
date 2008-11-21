@@ -33,12 +33,26 @@
 #mDayContainer .cLastDay {
 	border-right: none;
 }
-
+#pContainer .handle {
+    float: left;
+    clear: none;
+    border: none;
+    text-decoration: none;
+    width: 16px;
+    height: 22px;
+    padding: 0 5px 0 0;
+}
+#pContainer .collapsible-closed .handle {
+    background: url('../img/toggle_plus.png') 0 5px no-repeat;
+}
+#pContainer .collapsible .handle {
+    background: url('../img/toggle_minus.png') 0 5px no-repeat;
+}
 .pkgTitle {
 	background: #545454;
 	padding: 5px;
 	color: #fff;
-	clear: both;
+	clear: right;
 }
 .pkgTitle .title {
 	float: left;

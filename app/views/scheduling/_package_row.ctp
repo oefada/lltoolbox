@@ -1,4 +1,5 @@
-<div id='package_<?=$package['Package']['packageId']?>'>
+<div id='package_<?=$package['Package']['packageId']?>' class='collapsible'>
+<div class='handle'>&nbsp;</div>
 <div class='pkgTitle clearfix'>
 	<div class='title' id='packageTitle<?=$package['Package']['packageId']?>'>
 		<strong>Package <?=$row?></strong> - <?=$package['Package']['packageName']?> <?=$html2->c($package['Package']['packageId'], 'ID')?>
@@ -12,7 +13,7 @@
 		</script>
 	</div>
 </div>
-<div class='sGrid'>
+<div class='sGrid collapsibleContent disableAutoCollapse'>
 <?php
 if($this->data['masterRows'] >= 5) {
 	$this->data['masterRows'] = 0;
