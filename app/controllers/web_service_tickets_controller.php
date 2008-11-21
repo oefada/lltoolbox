@@ -6,8 +6,8 @@ Configure::write('debug', 0);
 class WebServiceTicketsController extends WebServicesController
 {
 	var $name = 'WebServiceTickets';
-	var $uses = array('ticket', 'user', 'offer', 'bid');
-	var $serviceUrl = 'http://192.168.100.111/web_service_tickets';
+	var $uses = array('ticket', 'user', 'offer', 'bid', );
+	var $serviceUrl = 'http://192.168.100.22/web_service_tickets';
 	var $errorResponse = false;
 	var $api = array(
 					'newTicketProcessor1' => array(
@@ -67,8 +67,8 @@ class WebServiceTicketsController extends WebServicesController
 		if (isset($data['requestQueueId'])) {
 			$newTicket['Ticket']['requestQueueId']     	 = $data['requestQueueId'];
 			$newTicket['Ticket']['requestQueueDatetime'] = $data['requestQueueDatetime'];
-			$newTicket['Ticket']['requestArrival'] 		 = $data['requestArrivalDate'];
-			$newTicket['Ticket']['requestDeparture']	 = $data['requestDepartureDate'];
+			$newTicket['Ticket']['requestArrival'] 		 = $data['requestArrival'];
+			$newTicket['Ticket']['requestDeparture']	 = $data['requestDeparture];
 			$newTicket['Ticket']['requestNumGuests']	 = $data['requestNumGuests'];
 			$newTicket['Ticket']['requestNotes']		 = $data['requestNotes'];
 			$newTicket['Ticket']['bookingPrice'] 		 = $offerData['SchedulingInstance']['SchedulingMaster']['buyNowPrice'];

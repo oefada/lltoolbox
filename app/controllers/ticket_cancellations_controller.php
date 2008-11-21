@@ -24,7 +24,7 @@ class TicketCancellationsController extends AppController {
 			$ticket['Ticket']['ticketStatusId'] = 7;
 			$this->TicketCancellation->create();
 			if ($this->TicketCancellation->save($this->data) && $this->TicketCancellation->Ticket->save($ticket)) {
-				$this->Session->setFlash(__('The TicketCancellation has been saved', true));
+				$this->Session->setFlash(__('This ticket has been cancelled.', true));
 				$this->redirect(array('controller' => 'tickets', 'action' => 'view', 'id' => $this->data['TicketCancellation']['ticketId']));
 			} else {
 				$this->Session->setFlash(__('The TicketCancellation could not be saved. Please, try again.', true));
@@ -49,10 +49,10 @@ class TicketCancellationsController extends AppController {
 		}
 		if (!empty($this->data)) {
 			if ($this->TicketCancellation->save($this->data)) {
-				$this->Session->setFlash(__('The TicketCancellation has been saved', true));
-				$this->redirect(array('action'=>'index'));
+				$this->Session->setFlash(__('The ticket cancellation has been updated.', true));
+				$this->redirect(array('controller' => 'tickets', 'action' => 'view', 'id' => $this->data['TicketCancellation']['ticketId']));
 			} else {
-				$this->Session->setFlash(__('The TicketCancellation could not be saved. Please, try again.', true));
+				$this->Session->setFlash(__('The ticket cancellation could not be saved. Please, try again.', true));
 			}
 		}
 		if (empty($this->data)) {

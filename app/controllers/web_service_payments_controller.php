@@ -41,6 +41,18 @@ class WebServicePaymentsController extends WebServicesController
 		if (empty($data['userId'])) {
 			return '0';
 		}
+		$this->UserPaymentSetting->recursive = -1;
+		$userPaymentSettingData = $this->UserPaymentSetting->find('all', array('conditions' => array('userId' => $data['userId'], 'inactive' => 0)));
+		$foundPrimaryCC = false;
+		foreach ($userPaymentSettingData as $k => $v) {
+			if ($v['UserPaymentSetting']['primaryCC'] == 1) {
+				$foundPrimaryCC = true;
+				break;
+			}	
+		}
+		if (!$foundPrimaryCC) {
+			$data['primaryCC'] = 1;	
+		}
 		if (!isset($data['userPaymentSettingId']) || empty($data['userPaymentSettingId'])) {
 			$this->UserPaymentSetting->create();	
 		} 

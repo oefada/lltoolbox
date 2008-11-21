@@ -24,10 +24,10 @@ class TicketRefundsController extends AppController {
 			$ticket['Ticket']['ticketStatusId'] = 8;
 			$this->TicketRefund->create();
 			if ($this->TicketRefund->save($this->data)  && $this->TicketRefund->Ticket->save($ticket)) {
-				$this->Session->setFlash(__('The TicketRefund has been saved', true));
+				$this->Session->setFlash(__('The refund note has been added to this ticket', true));
 				$this->redirect(array('controller' => 'tickets', 'action' => 'view', 'id' => $this->data['TicketRefund']['ticketId']));
 			} else {
-				$this->Session->setFlash(__('The TicketRefund could not be saved. Please, try again.', true));
+				$this->Session->setFlash(__('The ticket refund could not be saved. Please, try again.', true));
 			}
 		}
 		
@@ -49,10 +49,10 @@ class TicketRefundsController extends AppController {
 		}
 		if (!empty($this->data)) {
 			if ($this->TicketRefund->save($this->data)) {
-				$this->Session->setFlash(__('The TicketRefund has been saved', true));
-				$this->redirect(array('action'=>'index'));
+				$this->Session->setFlash(__('The ticket refund information has been updated.', true));
+				$this->redirect(array('controller' => 'tickets', 'action' => 'view', 'id' => $this->data['TicketRefund']['ticketId']));
 			} else {
-				$this->Session->setFlash(__('The TicketRefund could not be saved. Please, try again.', true));
+				$this->Session->setFlash(__('The ticket refund could not be saved. Please, try again.', true));
 			}
 		}
 		if (empty($this->data)) {

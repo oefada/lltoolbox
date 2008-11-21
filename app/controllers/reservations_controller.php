@@ -21,10 +21,10 @@ class ReservationsController extends AppController {
 		if (!empty($this->data)) {
 			$this->Reservation->create();
 			if ($this->Reservation->save($this->data)) {
-				$this->Session->setFlash(__('The Reservation has been saved', true));
+				$this->Session->setFlash(__('The Reservation has been updated', true));
 				$this->redirect(array('controller' => 'tickets', 'action' => 'view', 'id' => $this->data['Reservation']['ticketId']));
 			} else {
-				$this->Session->setFlash(__('The Reservation could not be saved. Please, try again.', true));
+				$this->Session->setFlash(__('The Reservation could not be updated. Please, try again.', true));
 			}
 		}
 		
@@ -45,10 +45,10 @@ class ReservationsController extends AppController {
 		}
 		if (!empty($this->data)) {
 			if ($this->Reservation->save($this->data)) {
-				$this->Session->setFlash(__('The Reservation has been saved', true));
-				$this->redirect(array('action'=>'index'));
+				$this->Session->setFlash(__('The Reservation has been updated', true));
+				$this->redirect(array('controller' => 'tickets', 'action' => 'view', 'id' => $this->data['Reservation']['ticketId']));
 			} else {
-				$this->Session->setFlash(__('The Reservation could not be saved. Please, try again.', true));
+				$this->Session->setFlash(__('The Reservation could not be updated. Please, try again.', true));
 			}
 		}
 		if (empty($this->data)) {

@@ -2,7 +2,15 @@
 class TicketsController extends AppController {
 
 	var $name = 'Tickets';
-	var $helpers = array('Html', 'Form');
+	var $helpers = array('Html', 'Form', 'Ajax', 'Text', 'Layout', 'Number');
+	var $uses = array('Ticket','OfferType');
+	var $paginate;
+
+	/*function beforeFilter() {
+		parent::beforeFilter();
+		$this->set('currentTab', 'property');
+		$this->set('searchController' ,'client');
+	}*/
 	
 	function index() {
 		$this->set('tickets', $this->paginate());
@@ -13,50 +21,36 @@ class TicketsController extends AppController {
 			$this->Session->setFlash(__('Invalid Ticket.', true));
 			$this->redirect(array('action'=>'index'));
 		}
-		
-		$ticket = $this->Ticket->read(null, $id);
-		
-		if (($ticket['Ticket']['isFlake'] || ($ticket['Ticket']['ticketStatusId'] == 7)) && empty($ticket['TicketCancellation']['ticketId'])) {
-			$showCancellation = true;
-		} else {
-			$showCancellation = false;	
-		}
-		
-		$refundWholeTicket = false;
-		foreach ($ticket['PaymentDetail'] as $pd) {
-			if ($pd['refundWholeTicket']) {
-				$refundWholeTicket = true;	
-				break;
-			}	
-		}
-		
-		if (($ticket['Ticket']['ticketStatusId'] == 8 || $refundWholeTicket) && empty($ticket['TicketRefund']['ticketId'])) {
-			$showRefund = true;
-		} else {
-			$showRefund = false;	
-		}
 
-		$validNextBid = false;
-		if (!empty($ticket['TicketCancellation']['ticketId'])) {
-			$bids = $this->Ticket->Offer->Bid->query('SELECT * from bid WHERE offerId = ' . $ticket['Offer']['offerId'] . ' AND bidId != ' . $ticket['Ticket']['bidId'] . ' ORDER BY bidId DESC');
-			foreach ($bids as $bid) {
-				if (($bid['bid']['bidInactive'] != 1) && ($bid['bid']['bidId'] != $ticket['Ticket']['bidId']) && ($bid['bid']['userId'] != $ticket['Ticket']['userId'])) {
-					$validNextBid = true;
-					break;
-				}
-			}	
-		}
-		
-		$showNewReservationLink = !empty($ticket['Reservation']['ticketId']) ? true : false;
-		
-		$this->set('showNewReservationLink', $showNewReservationLink);
-		$this->set('validNextBid', $validNextBid);
-		$this->set('showCancellation', $showCancellation);
-		$this->set('showRefund', $showRefund);
+		$this->Ticket->recursive = 2;
+		$ticket = $this->Ticket->read(null, $id);
+
 		$this->set('ticket', $ticket);
+		$this->set('offerType', $this->OfferType->find('list'));
+	}
+
+	function edit($id = null) {	
+		// only for updating ticket notes for now.  should not be able to update anything else.
+		if (!$id && empty($this->data)) {
+			$this->Session->setFlash(__('Invalid Ticket', true));
+			$this->redirect(array('action'=>'index'));
+		}
+		if (!empty($this->data) && !empty($this->data['Ticket']['ticketId'])) {
+			if ($this->Ticket->save($this->data)) {
+				$this->Session->setFlash(__('The ticket note has been updated.', true));
+				$this->redirect(array('action'=>'view', 'id' => $id));
+			} else {
+				$this->Session->setFlash(__('The ticket note was not saved. Please, try again.', true));
+			}
+		}
+		if (empty($this->data)) {
+			$this->data = $this->Ticket->read(null, $id);
+		}
+		$this->set('ticketStatusIds', $this->Ticket->TicketStatus->find('list'));
 	}
 
 	function add() {
+		die('ACCESS DENIED -- YOU CANNOT MANUALLY CREATE A TICKET');
 		if (!empty($this->data)) {
 			$this->Ticket->create();
 			if ($this->Ticket->save($this->data)) {
@@ -71,26 +65,8 @@ class TicketsController extends AppController {
 		
 	}
 
-	function edit($id = null) {
-		if (!$id && empty($this->data)) {
-			$this->Session->setFlash(__('Invalid Ticket', true));
-			$this->redirect(array('action'=>'index'));
-		}
-		if (!empty($this->data)) {
-			if ($this->Ticket->save($this->data)) {
-				$this->Session->setFlash(__('The Ticket has been saved', true));
-				$this->redirect(array('action'=>'view', 'id' => $id));
-			} else {
-				$this->Session->setFlash(__('The Ticket could not be saved. Please, try again.', true));
-			}
-		}
-		if (empty($this->data)) {
-			$this->data = $this->Ticket->read(null, $id);
-		}
-		$this->set('ticketStatusIds', $this->Ticket->TicketStatus->find('list'));
-	}
-
 	function delete($id = null) {
+		die('ACCESS DENIED -- YOU CANNOT MANUALLY DELETE A TICKET');
 		if (!$id) {
 			$this->Session->setFlash(__('Invalid id for Ticket', true));
 			$this->redirect(array('action'=>'index'));
@@ -222,22 +198,6 @@ class TicketsController extends AppController {
 			$this->Session->setFlash(__('Could not find the next eligible bid -- a new ticket was NOT created.', true));
 			return false;	
 		}
-		
-		/*
-		
-		//attach  containable behavior, can also be done in the model through an actsAs
-		$this->Ticket->Behaviors->attach('Containable');
-		
-		//choose which child/sibling models we want to return besides the current one
-		$this->Ticket->contain('Offer');
-		
-		//do a normal read
-		$ticketData = $this->Ticket->read(null, $id);
-		$offerId = $ticketData['Offer']['offerId'];
-		
-		//we only get Ticket and whatevr we contained by, in this case, Offer
-		debug($ticketData);
-		*/
 	}
 
 }
