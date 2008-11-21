@@ -7,7 +7,7 @@ class WebServiceBidsController extends WebServicesController
 {
 	var $name = 'WebServiceBids';
 	var $uses = 'bid';
-	var $serviceUrl = 'http://192.168.100.111/web_service_bids';
+	var $serviceUrl = 'http://192.168.100.22/web_service_bids';
 	var $errorResponse = false;
 	var $api = array(
 					'newBidProcessor1' => array(

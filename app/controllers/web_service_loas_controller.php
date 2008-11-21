@@ -7,8 +7,8 @@ Configure::write('debug', 0);
 class WebServiceLoasController extends WebServicesController
 {
 	var $name = 'WebServiceLoas';
-	var $uses = array('Ticket', 'Loa');
-	var $serviceUrl = 'http://192.168.100.111/web_service_loas';
+	var $uses = array('ticket', 'Loa');
+	var $serviceUrl = 'http://192.168.100.22/web_service_loas';
 	var $errorResponse = array();
 	var $api = array(
 					'updateTrack' => array(

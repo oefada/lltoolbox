@@ -11,7 +11,7 @@ class WebServicePaymentsController extends WebServicesController
 {
 	var $name = 'WebServicePayments';
 	var $uses = array('UserPaymentSetting','Ticket', 'PaymentDetail');
-	var $serviceUrl = 'http://192.168.100.111/web_service_payments';
+	var $serviceUrl = 'http://192.168.100.22/web_service_payments';
 	var $errorResponse = array();
 	var $api = array(
 					'setUserPaymentSetting' => array(

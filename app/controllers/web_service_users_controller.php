@@ -7,7 +7,7 @@ class WebServiceUsersController extends WebServicesController
 {
 	var $name = 'WebServiceUsers';
 	var $uses = 'User';
-	var $serviceUrl = 'http://192.168.100.111/web_service_users';
+	var $serviceUrl = 'http://192.168.100.22/web_service_users';
 	var $errorResponse = array();
 	var $api = array(
 					'userProcessor1' => array(
