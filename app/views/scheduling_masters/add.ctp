@@ -111,8 +111,6 @@ ul.subsection_tabs li.tab a.active {
 <?php echo $form->end('Schedule Me');?>
 </div>
 <script>
-new Control.Tabs('tabs_example_one', {afterChange: function(){Modalbox.resizeToContent()}});
-
 function merchandisingSetup(element, value) {
 	for (var i = 0; i < value.length; i++) {
 		if (value[i] == 3) {
@@ -127,6 +125,8 @@ function merchandisingSetup(element, value) {
 }
 
 new Form.Element.EventObserver('MerchandisingFlagMerchandisingFlag', function(element, value) {merchandisingSetup(element, value);});
+
+new Control.Tabs('tabs_example_one', {afterChange: function(){Modalbox.resizeToContent()}});
 </script>
 
 <?php

@@ -43,7 +43,8 @@ class SchedulingMaster extends AppModel {
 												),
 						'previewDate' => array('rule' => 
 													array('validateDateRanges'),
-													'message' => 'Date must be greater than today and time must be atleast 1 hour from now'
+													'message' => 'Date must be greater than today and time must be atleast 1 hour from now',
+													'on' => 'create'
 												)
 						);
 	

@@ -179,21 +179,59 @@ class SchedulingMastersController extends AppController {
 		}
 		if (!empty($this->data)) {
 			$this->data['SchedulingMaster']['schedulingMasterId'] = $id;
-			echo $this->data['SchedulingMaster']['iterationSchedulingOption'] ;
-			if ($this->data['SchedulingMaster']['iterationSchedulingOption'] == 0) {
-			    unset ($this->data['SchedulingMaster']['endDate']);
-			}
+			$originalData = $this->SchedulingMaster->read(null, $id);
 			
-			if ($this->SchedulingMaster->save($this->data)) {
-				$this->Session->setFlash(__('The SchedulingMaster has been saved', true));
-				$this->redirect(array('action'=>'index'));
-			} else {
-				$this->Session->setFlash(__('The SchedulingMaster could not be saved. Please, try again.', true));
-			}
+			$remainingIterations = 0;
+			foreach ($originalData['SchedulingInstance'] as $k => $instance):
+    		    if (strtotime($instance['startDate']) > time()) {
+    		        $remainingIterations++;
+                }
+    		endforeach;
+    		
+    		/* If there are no future iterations, we can't do anything. */
+    		if ($remainingIterations == 0) {
+    		    if ($this->RequestHandler->isAjax()) {
+					$this->Session->setFlash(__('The Schedule could not be saved', true), 'default', array(), 'error');
+					$this->set('closeModalbox', true);
+				}
+    		}
+    		
+    		/* If no iterations have gone live yet, we can do whatever we want to this */
+    		if ($remainingIterations == count($originalData['SchedulingInstance'])) {
+    		    $this->SchedulingMaster->SchedulingInstance->deleteAll(array('SchedulingInstance.schedulingMasterId' => $id));
+            			//if this is a mystery auction we override some fields
+            			if (in_array(3, $this->data['MerchandisingFlag']['MerchandisingFlag'])) {
+            			    $this->data['SchedulingMaster']['openingBid']   = $this->data['Mystery']['openingBid'];
+            			    $this->data['SchedulingMaster']['bidIncrement'] = $this->data['Mystery']['bidIncrement'];
+            			    $this->data['SchedulingMaster']['packageName']  = $this->data['Mystery']['packageName'];
+            			    $this->data['SchedulingMaster']['subtitle']     = $this->data['Mystery']['subtitle'];
+            			    $this->data['SchedulingMaster']['shortBlurb']   = $this->data['Mystery']['shortBlurb'];
+            			}
+
+            			if ($this->SchedulingMaster->save($this->data)) {
+            				$this->createInstances();
+            				if ($this->RequestHandler->isAjax()) {
+            					$this->Session->setFlash(__('The Schedule has been saved', true), 'default', array(), 'success');
+            					$this->set('closeModalbox', true);
+            				}
+            			} else {
+            				$this->Session->setFlash(__('The Schedule could not be saved. Please correct the errors below.', true), 'default', array(), 'error');
+            			}
+    		} else {
+    		    echo '<h3 class="icon-error">Could not save changes. Atleast one offer has already gone live. You must delete all future offers and create a new scheduling master. ';
+    		}
 		}
 		if (empty($this->data)) {
 			$this->data = $this->SchedulingMaster->read(null, $id);
 		}
+		
+		/* Check if there are any iterations left. If there are none, then we can't edit this */
+		$remainingIterations = 0;
+		foreach ($this->data['SchedulingInstance'] as $k => $instance):
+		    if (strtotime($instance['startDate']) > time()) {
+		        $remainingIterations++;
+            }
+		endforeach;
 		$merchandisingFlags = $this->SchedulingMaster->MerchandisingFlag->find('list');
 		$schedulingStatusIds = $this->SchedulingMaster->SchedulingStatus->find('list');
 		$schedulingDelayCtrlIds = $this->SchedulingMaster->SchedulingDelayCtrl->find('list');
@@ -214,23 +252,25 @@ class SchedulingMastersController extends AppController {
 			$offerTypeIds[$v['offerTypeId']] = $v['offerTypeName'];
 		}
 		
+		$this->set('remainingIterations',       $remainingIterations);
 		$this->set('offerTypeIds', 				$offerTypeIds);
-		$this->set('merchandisingFlags', $merchandisingFlags);
-		$this->set('schedulingStatusIds', $schedulingStatusIds);
-		$this->set('schedulingDelayCtrlIds', $schedulingDelayCtrlIds);
-		$this->set('remittanceTypeIds', $remittanceTypeIds);
-		$this->render('add');
+		$this->set('merchandisingFlags',        $merchandisingFlags);
+		$this->set('schedulingStatusIds',       $schedulingStatusIds);
+		$this->set('schedulingDelayCtrlIds',    $schedulingDelayCtrlIds);
 	}
 
 	function delete($id = null) {
+	    $this->autoRender = false;
 		if (!$id) {
 			$this->Session->setFlash(__('Invalid id for SchedulingMaster', true));
-			$this->redirect(array('action'=>'index'));
+			$this->set('closeModalbox', true);
 		}
-		if ($this->SchedulingMaster->del($id)) {
-			$this->Session->setFlash(__('SchedulingMaster deleted', true));
-			$this->redirect(array('action'=>'index'));
-		}
+
+		$this->SchedulingMaster->deleteAll(array('SchedulingMaster.startDate > NOW()', 'SchedulingMaster.schedulingMasterId' => $id));
+	    $this->SchedulingMaster->SchedulingInstance->deleteAll(array('SchedulingInstance.startDate > NOW()', 'SchedulingInstance.schedulingMasterId' => $id));
+	    
+		$this->Session->setFlash(__('The scheduling master and/or iterations have been deleted', true), 'default', array(), 'success');	
+		echo "<div id='closeModalbox'>abc</div>";
 	}
 	
 	function getOfferTypeDefaults() {
