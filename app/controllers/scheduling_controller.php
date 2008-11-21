@@ -26,7 +26,7 @@ class SchedulingController extends AppController {
 
 		$monthYearString = date('F Y', strtotime($year.'-'.$month.'-01'));		//string to display as a heading in the view
 		
-		$packages = $this->_clientPackages($clientId, $month);					//grab all client packages
+		$packages = $this->_clientPackages($clientId, $month, $year);					//grab all client packages
 		
 		$client['Client'] = $packages[0]['Client'];								//the first package has the client details
 		$clientName = $packages[0]['Client']['name'];
@@ -41,13 +41,13 @@ class SchedulingController extends AppController {
 	 * @param int $clientId
 	 * @return array $packages an associative array with all of the package data needed in the view
 	 */
-	function _clientPackages($clientId, $month) {
+	function _clientPackages($clientId, $month, $year) {
 		$this->Package->ClientLoaPackageRel->Behaviors->attach('Containable');
 
 		$this->Package->ClientLoaPackageRel->contain('Package', 'Client', 'Loa');
 		$packages = $this->Package->ClientLoaPackageRel->findAllByClientId($clientId);
 	
-		$this->_addPackageSchedulingInstances($packages, $month);
+		$this->_addPackageSchedulingInstances($packages, $month, $year);
 		
 		return $packages;
 	}
@@ -57,7 +57,7 @@ class SchedulingController extends AppController {
 	 * @see _clientPackages()
 	 * @param array $packages byref package array which we inject with scheduling instances
 	 */
-	function _addPackageSchedulingInstances(&$packages, $month = null) {
+	function _addPackageSchedulingInstances(&$packages, $month = null, $year) {
 		foreach($packages as $package):											//extract all the package ids
 			$packageIds[] = $package['Package']['packageId'];
 		endforeach;
@@ -68,9 +68,12 @@ class SchedulingController extends AppController {
 		$this->Package->SchedulingMaster->contain('SchedulingInstance');
 		
 		$containConditions = array('conditions' => array('OR'=> array('month(SchedulingInstance.startDate) =' =>  $month, 
-					                                                                       'month(SchedulingInstance.endDate) ='   =>  $month
-					                                                                      )
-					                                                        )
+					                                                  'month(SchedulingInstance.endDate) ='   =>  $month
+					                                                  ),
+					                                     'AND' => array('OR'=> array('year(SchedulingInstance.startDate) =' =>  $year, 
+                                                                      'year(SchedulingInstance.endDate) ='   =>  $year
+                                                                      ))
+                                                         )
 					              );
 		//select all instances for each package
 		$packageSchedulingInstance = $this->Package->SchedulingMaster->find('all', array('conditions'   =>  array('SchedulingMaster.packageId'  =>  $packageIds),//array packageIds causes this to act as an IN clause
