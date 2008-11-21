@@ -58,6 +58,7 @@ echo $ajax->form('edit', 'post', array('url' => "/scheduling_masters/edit/{$this
 		<?php endif; ?>
 		<div id='one'>
 	<?php
+		echo $form->input('schedulingStatusId');
 		echo $form->input('offerTypeId', array('label' => 'Offer Type'));
 		echo '<div id="defaults">';
 		if (isset($defaultFile)) {

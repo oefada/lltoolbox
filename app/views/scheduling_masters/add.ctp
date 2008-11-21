@@ -52,6 +52,7 @@ ul.subsection_tabs li.tab a.active {
 		<div id='one'>
 			<p class='clean-gray'><?php echo $package['Package']['shortBlurb'] ?></p>
 	<?php
+		echo $form->input('schedulingStatusId');
 		echo $form->input('offerTypeId', array('label' => 'Offer Type'));
 		echo '<div id="defaults">';
 		if (isset($defaultFile)) {
