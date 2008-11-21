@@ -6,7 +6,7 @@ Configure::write('debug', 0);
 class WebServiceBidsController extends WebServicesController
 {
 	var $name = 'WebServiceBids';
-	var $uses = 'bid';
+	var $uses = 'Bid';
 	var $serviceUrl = 'http://192.168.100.22/web_service_bids';
 	var $errorResponse = false;
 	var $api = array(
@@ -41,15 +41,14 @@ class WebServiceBidsController extends WebServicesController
 			return false;	
 		}
 		
-		$bid = new Bid();
-		$bid->skipBeforeSaveFilter = true;
-		$bidData  = $bid->read(null, $data['bidId']);
+		$this->Bid->skipBeforeSaveFilter = true;
+		$bidData  = $this->Bid->read(null, $data['bidId']);
 	
 		$bidSave = array();
 		$bidSave['Bid'] = $data;
 	
 		if (!$bidData) {
-			if ($bid->save($bidSave)) {
+			if ($this->Bid->save($bidSave)) {
 				return true;
 			} else {
 				$this->errorResponse = 504;
