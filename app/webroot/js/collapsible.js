@@ -51,7 +51,7 @@ var cd = {
 			new Effect.Parallel(
 				[
 					new Effect.BlindDown(el,{sync:true}),
-					//new Effect.Appear(el,{sync:true})
+					new Effect.Appear(el,{sync:true})
 				],
 				{
 					duration:0.5,
@@ -65,7 +65,7 @@ var cd = {
 			new Effect.Parallel(
 				[
 					new Effect.BlindUp(el,{sync:true}),
-					//new Effect.Fade(el,{sync:true})
+					new Effect.Fade(el,{sync:true})
 				],
 				{
 					duration:0.5,

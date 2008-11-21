@@ -56,18 +56,18 @@ function gotoMonth(theLink, month)
 		?>
 		</select>
 		</div>
-    	<div><a href='#' onclick='javascript: gotoMonth(this, 1)'>Jan</a></div>
-		<div><a href='#' onclick='javascript: gotoMonth(this, 2)'>Feb</a></div>
-		<div><a href='#' onclick='javascript: gotoMonth(this, 3)'>Mar</a></div>
-		<div><a href='#' onclick='javascript: gotoMonth(this, 4)'>Apr</a></div>
+    	<div><a href='javascript: void(0);' onclick='javascript: gotoMonth(this, 1)'>Jan</a></div>
+		<div><a href='javascript: void(0);' onclick='javascript: gotoMonth(this, 2)'>Feb</a></div>
+		<div><a href='javascript: void(0);' onclick='javascript: gotoMonth(this, 3)'>Mar</a></div>
+		<div><a href='javascript: void(0);' onclick='javascript: gotoMonth(this, 4)'>Apr</a></div>
 		<div class='first'><a href='#' onclick='javascript: gotoMonth(this, 5)'>May</a></div>
-		<div><a href='#' onclick='javascript: gotoMonth(this, 6)'>Jun</a></div>
-		<div><a href='#' onclick='javascript: gotoMonth(this, 7)'>Jul</a></div>
-		<div><a href='#' onclick='javascript: gotoMonth(this, 8)'>Aug</a></div>
+		<div><a href='javascript: void(0);' onclick='javascript: gotoMonth(this, 6)'>Jun</a></div>
+		<div><a href='javascript: void(0);' onclick='javascript: gotoMonth(this, 7)'>Jul</a></div>
+		<div><a href='javascript: void(0);' onclick='javascript: gotoMonth(this, 8)'>Aug</a></div>
 		<div class='first'><a href='#' onclick='javascript: gotoMonth(this, 9)'>Sept</a></div>
-		<div><a href='#' onclick='javascript: gotoMonth(this, 10)'>Oct</a></div>
-		<div><a href='#' onclick='javascript: gotoMonth(this, 11)'>Nov</a></div>
-		<div><a href='#' onclick='javascript: gotoMonth(this, 12)'>Dec</a></div>
+		<div><a href='javascript: void(0);' onclick='javascript: gotoMonth(this, 10)'>Oct</a></div>
+		<div><a href='javascript: void(0);' onclick='javascript: gotoMonth(this, 11)'>Nov</a></div>
+		<div><a href='javascript: void(0);' onclick='javascript: gotoMonth(this, 12)'>Dec</a></div>
 	</div>
 
 	<script type="text/javascript" language="javascript">
