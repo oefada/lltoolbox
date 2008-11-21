@@ -22,11 +22,3 @@
 	</fieldset>
 <?php echo $form->end('Submit');?>
 </div>
-<div class="actions">
-	<ul>
-		<li><?php echo $html->link(__('Delete', true), array('action'=>'delete', $form->value('Reservation.ticketId')), null, sprintf(__('Are you sure you want to delete # %s?', true), $form->value('Reservation.ticketId'))); ?></li>
-		<li><?php echo $html->link(__('List Reservations', true), array('action'=>'index'));?></li>
-		<li><?php echo $html->link(__('List Tickets', true), array('controller'=> 'tickets', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Ticket', true), array('controller'=> 'tickets', 'action'=>'add')); ?> </li>
-	</ul>
-</div>
