@@ -36,6 +36,18 @@
  * @package		cake
  * @subpackage	cake.app
  */
+uses('sanitize');
 class AppController extends Controller {
+	var $helpers = array('Html2', 'Form', 'Text', 'Pagination', 'Layout', 'Ajax', 'StrictAutocomplete', 'Number', 'DatePicker', 'Prototip');
+	var $components = array('RequestHandler');
+	var $Sanitize;
+	
+	function beforeFilter() {
+		$this->Sanitize = new Sanitize();
+		
+		if($this->RequestHandler->isAjax()) {
+			Configure::write('debug', '0');
+		}
+	}
 }
 ?>
