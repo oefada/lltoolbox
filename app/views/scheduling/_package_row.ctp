@@ -2,7 +2,7 @@
 <div class='handle'>&nbsp;</div>
 <div class='pkgTitle clearfix'>
 	<div class='title' id='packageTitle<?=$package['Package']['packageId']?>'>
-		<strong>Package <?=$row?></strong> - <?=$package['Package']['packageName']?> <?=$html2->c($package['Package']['packageId'], 'ID')?>
+		<?=$html->link($text->truncate(trim($package['Package']['packageName']), 55), "/clients/$clientId/packages/edit/{$package['Package']['packageId']}")?> <?=$html2->c($package['Package']['packageId'], 'ID')?>
 	</div>
 	<div class='scheduleThisPackage'>
 		<strong>Schedule This Package</strong> - Start Date
@@ -65,7 +65,7 @@ foreach($package['Scheduling'] as $k => $master):
 	if (substr($mstrStartDate, 0, 10) == substr($startDate, 0, 10)) {
 	?>
 		<div id='schedulingMaster<?=$master['SchedulingMaster']['schedulingMasterId']?>' style="width: <?=$width?>%; left: <?=$left?>%"<?=$class?> ondblclick="Modalbox.show('/scheduling_masters/edit/<?=$instance['schedulingMasterId']?>', {title: 'Edit Scheduling Master'});">	
-		RV: <?=$number->currency($master['SchedulingMaster']['retailValue'])?>
+		<strong>Retail Value</strong><br /><?=$number->currency($master['SchedulingMaster']['retailValue'])?>
 		
 		
 	<?php

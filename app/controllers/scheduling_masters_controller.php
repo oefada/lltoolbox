@@ -62,6 +62,11 @@ class SchedulingMastersController extends AppController {
 			echo '<h3>This package is not ready to be scheduled because no formats have been associated with it</h3>';
 			die();
 		}
+		//if package is not approved, do not allow scheduling
+		if ($package['Package']['packageStatusId'] != 4) {
+			echo '<h3>This package cannot be scheduled because it is not approved.</h3>';
+			die();
+		}
 		
 		if (empty($this->data) && isset($this->params['named']['date'])) {
 			$date = explode('-', $this->params['named']['date']);
@@ -79,9 +84,27 @@ class SchedulingMastersController extends AppController {
 			$this->data['SchedulingMaster']['numDaysToRun']             = 3;
 			
 			$this->data['SchedulingMaster']['packageName']              = trim($package['Package']['packageName']);
+			$this->data['SchedulingMaster']['retailValue']              = $package['Package']['approvedRetailPrice'];
 		}
+	
+	    $this->setOfferTypeDefaultAndDropdown($formatIds);
 		
-		/* Get all Offer Types available for this package based on Format */
+		$merchandisingFlags 					= $this->SchedulingMaster->MerchandisingFlag->find('list');
+		$schedulingStatusIds 					= $this->SchedulingMaster->SchedulingStatus->find('list');
+		$schedulingDelayCtrlIds 				= $this->SchedulingMaster->SchedulingDelayCtrl->find('list');
+		$remittanceTypeIds 						= $this->SchedulingMaster->RemittanceType->find('list');
+    
+		
+		$this->set('package', 					$package);
+		$this->set('packageId', 				$packageId);
+		$this->set('merchandisingFlags', 		$merchandisingFlags);
+		$this->set('schedulingStatusIds', 		$schedulingStatusIds);
+		$this->set('schedulingDelayCtrlIds', 	$schedulingDelayCtrlIds);
+		$this->set('remittanceTypeIds', 		$remittanceTypeIds);
+	}
+	
+	function setOfferTypeDefaultAndDropdown($formatIds) {
+	    /* Get all Offer Types available for this package based on Format */
 		$this->SchedulingMaster->Package->Format->Behaviors->attach('Containable');
 		$formats = $this->SchedulingMaster->Package->Format->find('all', array('conditions' => array('formatId' => $formatIds), 'contain' => array('OfferType')));
 		
@@ -117,18 +140,7 @@ class SchedulingMastersController extends AppController {
 			    break;
 		endswitch;
 		
-		$merchandisingFlags 					= $this->SchedulingMaster->MerchandisingFlag->find('list');
-		$schedulingStatusIds 					= $this->SchedulingMaster->SchedulingStatus->find('list');
-		$schedulingDelayCtrlIds 				= $this->SchedulingMaster->SchedulingDelayCtrl->find('list');
-		$remittanceTypeIds 						= $this->SchedulingMaster->RemittanceType->find('list');
-    
-		$this->set('offerTypeIds', 				$offerTypeIds);
-		$this->set('package', 					$package);
-		$this->set('packageId', 				$packageId);
-		$this->set('merchandisingFlags', 		$merchandisingFlags);
-		$this->set('schedulingStatusIds', 		$schedulingStatusIds);
-		$this->set('schedulingDelayCtrlIds', 	$schedulingDelayCtrlIds);
-		$this->set('remittanceTypeIds', 		$remittanceTypeIds);
+		$this->set('offerTypeIds', $offerTypeIds);
 	}
 
 	function createInstances() {
@@ -158,8 +170,10 @@ class SchedulingMastersController extends AppController {
 		    $startEndRange = strtotime($endDate) - strtotime($masterStartDate);
 
 		    $iterations = floor($startEndRange / $totalInstanceTime);
+		    $this->SchedulingMaster->id = $masterData['SchedulingMaster']['schedulingMasterId'];
+		    $this->SchedulingMaster->saveField('iterations', $iterations);
 		}
-		
+
 		for ($i = 0; $i < $iterations; $i++) {
 			$endDate = strtotime($instanceData['SchedulingInstance']['startDate'] . ' +' . $masterData['SchedulingMaster']['numDaysToRun'] . ' days');
 			$instanceData['SchedulingInstance']['endDate'] = date('Y-m-d H:i:s', $endDate);		
@@ -244,16 +258,11 @@ class SchedulingMastersController extends AppController {
 			$formatIds[] = $format['formatId'];
 		endforeach;
 		
-		/* Get all Offer Types available for this package based on Format */
-		$this->SchedulingMaster->Package->Format->Behaviors->attach('Containable');
-		$formats = $this->SchedulingMaster->Package->Format->find('all', array('conditions' => array('formatId' => $formatIds), 'contain' => array('OfferType')));
-
-		foreach ($formats[0]['OfferType'] as $k => $v) {
-			$offerTypeIds[$v['offerTypeId']] = $v['offerTypeName'];
-		}
+		$this->setOfferTypeDefaultAndDropdown($formatIds);
 		
+		$this->set('package', 					$package);
+		$this->set('packageId', 				$packageId);
 		$this->set('remainingIterations',       $remainingIterations);
-		$this->set('offerTypeIds', 				$offerTypeIds);
 		$this->set('merchandisingFlags',        $merchandisingFlags);
 		$this->set('schedulingStatusIds',       $schedulingStatusIds);
 		$this->set('schedulingDelayCtrlIds',    $schedulingDelayCtrlIds);

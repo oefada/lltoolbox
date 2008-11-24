@@ -68,6 +68,7 @@
 	</script>
 	<? /* -- END Retail Prices/Exchange Rate -- */?>
 	<div style="clear: both"></div>
+	<?php echo $form->input('reservePrice'); ?>
 	<?php echo $this->renderElement('../packages/_formats'); ?>
 	
 	<? /* -- BEGIN Scheduling Start/End Dates -- */?>

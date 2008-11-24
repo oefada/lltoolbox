@@ -4,7 +4,7 @@
 <strong><em>Standard Auction</em></strong>
 <?=$form->input('PackageOfferTypeDefField.1.offerTypeId', array('value' => 1, 'type' => 'hidden')) ?>
 <?=$form->input('PackageOfferTypeDefField.1.default1', array('label' => 'Opening Bid', 'size' => 5)) ?>
-<?=$form->input('PackageOfferTypeDefField.1.default2', array('label' => 'Number of Winners', 'size' => 5)) ?>
+<?=$form->input('PackageOfferTypeDefField.1.default2', array('value' => 1, 'label' => 'Number of Winners', 'size' => 5, 'readonly' => 'readonly')) ?>
 </div>
 <div style="float: left; clear: none">
 <strong><em>Best Shot</em></strong>

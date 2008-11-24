@@ -1,7 +1,7 @@
 <?php $this->pageTitle = $clientName.$html2->c($clientId, 'Client Id:') ?>
 <script>
 function openSchedulingOverlay(date, packageId, packageName) {
-	Modalbox.show("/scheduling_masters/add/packageId:"+packageId+"/date:"+$F(date), {title: 'Scheduling '+packageName});
+	Modalbox.show("/scheduling_masters/add/packageId:"+packageId+"/date:"+$F(date), {title: 'Scheduling <a href="/clients/<?=$clientId?>/packages/edit/'+packageId+'" target="_blank">'+packageName+'</a>'});
 }
 var dp = datePickerController.datePickers["dp-normal-1"];
 function gotoMonth(theLink, month)
