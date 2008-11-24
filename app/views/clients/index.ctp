@@ -10,7 +10,7 @@ $this->set('hideSidebar', true);
 ?>
 
 <div id="client-index">
-	<?php echo $this->renderElement('ajax_paginator', array('divToPaginate' => 'client-index', 'showCount' => true)); ?>
+	<?php echo $this->renderElement('ajax_paginator', array('showCount' => true)); ?>
 <div class="clients index">
 	<?php if (isset($query) && !empty($query)): ?>
 		<div style="clear: both">
@@ -84,5 +84,5 @@ foreach ($clients as $client):
 <?php endforeach; ?>
 </table>
 </div>
-<?php echo $this->renderElement('ajax_paginator', array('divToPaginate' => 'client-index')); ?>
+<?php echo $this->renderElement('ajax_paginator'); ?>
 </div>

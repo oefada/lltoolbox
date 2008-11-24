@@ -10,7 +10,11 @@
 	<?php endif ?>
 <div class="paging">
 <?php
+if (isset($divToPaginate) && $divToPaginate != false) {
 echo $paginator->options(array('update' => $divToPaginate, 'indicator' => 'spinner', 'url' => $this->params['form']));
+} else {
+	echo $paginator->options(array('url' => $this->params['form']));
+}
 echo $paginator->prev('<< Prev', array('class' => 'nextprev'), null, array('class' => 'disabled'));
 echo $paginator->numbers(array('first' => ' <<< ', 'last' => '>>>', 'separator' => ''));
 echo $paginator->next('Next >>', array('class' => 'nextprev'), null, array('class' => 'disabled'));

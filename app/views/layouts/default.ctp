@@ -81,7 +81,7 @@
 		    <div id="mainNav">
 				<ul>
 		      		<li<?if(@($this->viewVars['currentTab'] == 'home')) echo ' class="current"'?>><?=$html->link('Home', '/')?></li>
-		      		<li<?if(@($this->viewVars['currentTab'] == 'property')) echo ' class="current"'?>><?=$html->link('Property', array('controller' => 'clients', 'action' => 'index'))?></li>
+		      		<li<?if(@($this->viewVars['currentTab'] == 'property')) echo ' class="current"'?>><?=$html->link('Clients', array('controller' => 'clients', 'action' => 'index'))?></li>
 		      		<li<?if(@($this->viewVars['currentTab'] == 'siteMerchandising')) echo ' class="current"'?>><a href="#">Site Merchandising</a></li>
 		      		<li<?if(@($this->viewVars['currentTab'] == 'reports')) echo ' class="current"'?>><a href="#">Reports</a></li>
 		      		<li<?if(@($this->viewVars['currentTab'] == 'customers')) echo ' class="current"'?>><?=$html->link('Customers', array('controller' => 'users', 'action' => 'index'))?></li>
