@@ -67,7 +67,7 @@ if ($remainingIterations) {
 } else {
 	echo "</form>";
 }?>
-<?=$ajax->link('Delete this scheduling master or all future iterations',
+<?=$ajax->link('Delete this scheduling master and all future iterations',
 			   array('action' => 'delete', $this->data['SchedulingMaster']['schedulingMasterId']),
 			   array('update' => 'MB_content', 'complete' => 'closeModalbox()'),
 			   'Are you sure? This action is irreversible.');
