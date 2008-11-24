@@ -594,7 +594,11 @@ input[type=submit] {
 	color: #fff;
 	background: #7f0000;
 }
-
+*[readonly],
+*[disabled] {
+    border: 1px solid #e5e5e5;
+    background: #f1f1f1;
+}
 fieldset form p {
 	margin: 0;
 }
