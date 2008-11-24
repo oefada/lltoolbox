@@ -57,6 +57,17 @@ ul.subsection_tabs li.tab a.active {
 	}
 	?>
 	<li class="tab" id='mysteryTab'<?=$style?>><a class="" href="#three">Mystery Auction Setup</a></li>
+	<?php
+	//only hide the mystery setup if the mystery flag is not set
+	$style = ' style="display: none"';
+	foreach ($this->data['MerchandisingFlag'] as $flag) {
+		if ($flag['merchandisingFlagId'] == 1) {
+			$style = '';
+			break;
+		}
+	}
+	?>
+	<li class="tab" id='previewTab'<?=$style?>><a class="" href="#four">Preview Setup</a></li>
 </ul>
 
 <?php echo $this->renderElement('../scheduling_masters/_form') ?>
@@ -75,16 +86,32 @@ if ($remainingIterations) {
 </div>
 <script>
 function merchandisingSetup(element, value) {
+	mysteryTab = false;
+	previewTab = false;
 	for (var i = 0; i < value.length; i++) {
 		if (value[i] == 3) {
 			if ($('mysteryTab').getStyle('display') == 'none') {
 				$('mysteryTab').show();
 				new Effect.Highlight('mysteryTab', {duration: 2});
 			}
-			return;
+			mysteryTab = true;
+		}
+		
+		if (value[i] == 1) {
+			if ($('previewTab').getStyle('display') == 'none') {
+				$('previewTab').show();
+				new Effect.Highlight('previewTab', {duration: 2});
+			}
+			previewTab = true;
 		}
 	}
-	$('mysteryTab').hide();
+	
+	if (mysteryTab == false) {
+		$('mysteryTab').hide();
+	}
+	if (previewTab == false) {
+		$('previewTab').hide();
+	}
 }
 
 new Form.Element.EventObserver('MerchandisingFlagMerchandisingFlag', function(element, value) {merchandisingSetup(element, value);});

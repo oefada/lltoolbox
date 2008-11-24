@@ -39,7 +39,6 @@
 		echo $form->input('endDate', array('minYear' => date('Y'), 'maxYear' => $packageEndDate['year'], 'after' => 'Or, <a href="#" onclick=\'$("SchedulingMasterIterationSchedulingOption").value = "0"; javascript:$("iterations").toggle(); $("endDate").toggle() \'>choose fixed number of iterations</a>'));
 		echo '</div>';
 		
-		echo $form->input('previewDate');
 		echo $form->input('startDate', array('minYear' => date('Y'), 'maxYear' => $packageEndDate['year']));
 		echo $form->input('packageName', array('value' => $package['Package']['packageName'], 'type' => 'hidden'));
 		echo $form->input('subTitle',  array('value' => $package['Package']['subtitle'], 'type' => 'hidden'));
@@ -57,5 +56,8 @@
 		</div>
 		<div id='three' style="display: none">
 			<?php echo $this->renderElement('../scheduling_masters/_mystery_fields'); ?>
+		</div>
+		<div id='four' style="display: none">
+			<?php echo $form->input('previewDate'); ?>
 		</div>
 	</fieldset>

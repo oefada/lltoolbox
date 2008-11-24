@@ -40,11 +40,6 @@ class SchedulingMaster extends AppModel {
 						'endDate' => array('rule' => 
 													array('validateDateRanges'),
 													'message' => 'Must be greater than today and greater than the start date'
-												),
-						'previewDate' => array('rule' => 
-													array('validateDateRanges'),
-													'message' => 'Date must be greater than today and time must be atleast 1 hour from now',
-													'on' => 'create'
 												)
 						);
 	
@@ -52,9 +47,6 @@ class SchedulingMaster extends AppModel {
 		$packageStartDate = $this->data['SchedulingMaster']['startDate'];
 		$packageEndDate = $this->data['SchedulingMaster']['endDate'];
 		
-		$previewDate = $this->data['SchedulingMaster']['previewDate'];
-		
-		if(isset($data['previewDate']) && (strtotime($previewDate.' -1 hours') < time()))		return false;
 		if(isset($data['startDate']) && strtotime($data['startDate'].' -1 hours') < time()) 	return false;
 		if(isset($data['endDate']) && $this->data['SchedulingMaster']['iterationSchedulingOption'] && ($packageStartDate >= $packageEndDate))	return false;
 		
