@@ -66,16 +66,15 @@ class Client extends AppModel {
 										  'associationForeignKey' => 'destinationId'
 								   )
                                );
-	function afterFind($results) {
+    function afterFind($results) {
 		foreach ($results as $key => $val):
 			if (isset($val['Client']) && is_int($key)):
-			    $this->Loa->recursive = -1;
-				$count = $this->Loa->find('first', array('fields' => array('COUNT(*) AS numLoas'), 'conditions' => array('clientId' => $val['Client']['clientId'])));
-				$results[$key]['Client']['numLoas'] = $count[0]['numLoas'];	
+				$results[$key]['Client']['numLoas'] = count($this->Loa->find('list', array('conditions' => array('clientId' => $val['Client']['clientId']))));				
 			endif;
 		endforeach;
 		
 	return $results;
 	}
+
 }
 ?>
