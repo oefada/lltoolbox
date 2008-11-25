@@ -5,5 +5,7 @@ class MerchandisingFlag extends AppModel {
 	var $useTable = 'merchandisingFlag';
 	var $primaryKey = 'merchandisingFlagId';
 	var $displayField = 'merchandisingFlagName';
+	
+	var $order = "merchandisingFlagName";
 }
 ?>
