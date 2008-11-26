@@ -68,7 +68,7 @@
                  {
                      if (@md5($old_data[$modelx->name][$field]) !== @md5($model->data[$model->name][$field]))
                      {
-                         // we have a change 
+                         // we have a change
                         $output = @Set::merge(array($field=>inline_diff($old_data[$model->name][$field], $model->data[$model->name][$field], $nl)), $output);
 
 						$revised[] = $field;
