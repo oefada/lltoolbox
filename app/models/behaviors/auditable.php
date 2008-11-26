@@ -39,7 +39,7 @@
                      // use all fields except primaryKey, revision, created and modified
                      foreach ($model->data[$model->name] as $key => $val)
                      {
-                         if (!in_array($key, array('revision','created','modified',$model->primaryKey)))
+                         if (!in_array($key, array('revision','created','modified',$model->primaryKey)) && $model->hasField($key))
                          {
                              $fields[] = $key;
                          }
@@ -66,7 +66,7 @@
 
                  foreach ($fields as $field)
                  {
-                     if (@md5($old_data[$model->name][$field]) !== @md5($model->data[$model->name][$field]))
+                     if (@md5($old_data[$modelx->name][$field]) !== @md5($model->data[$model->name][$field]))
                      {
                          // we have a change
                         $output = @Set::merge(array($field=>inline_diff($old_data[$model->name][$field], $model->data[$model->name][$field], $nl)), $output);
@@ -84,52 +84,26 @@
 
                      // save the diff
                      $content = serialize($output);
+                     
 
                      $revision = $this->_increment_revision(&$model,$model->data[$model->name][$model->primaryKey]);
-
-                     $model->Diff->save(array(
+                     $model->bindModel(
+                      array('hasMany' => array(
+                      'Audit' => array(
+                      'className' => 'Audit'
+                      )
+                      )
+                      )
+                      );
+                     $model->Audit->save(array(
                                        'class'=>$model->name,
 										'userId' => 'Anonymous',
                                        'foreignId'=>$model->data[$model->name][$model->primaryKey],
-                                       'content'=>$content,
+                                       'contents'=>$content,
                                        'revision'=>$revision));
-                 }
+                               }
              }
              return true;
-         }
-
-         function rollback(&$model, $diff_id)
-         {
-             // get the diff
-             $model->Diff->recursive = -1;
-             $data = $model->Diff->findByAuditId($diff_id);
-
-             if (!empty($data))
-             {
-                 $fields = unserialize($data['Audit']['content']);
-
-                 foreach($fields as $key => $value)
-                 {
-                     // remove <del> and </del> tags and anything in between
-
-                     $fields[$key] = preg_replace('/<del>.*?<\/del>/','',$fields[$key]);
-
-                     // and remove <ins> and </ins> leaving the enclosed string
-
-                     $fields[$key] = preg_replace('/<ins>/','',$fields[$key]);
-                     $fields[$key] = preg_replace('/<\/ins>/','',$fields[$key]);
-                 }
-
-                 $fields = Set::merge(array($model->primaryKey =>$data['Audit']['foreign_id']),$fields);
-				 unset($fields['diffable_revised']);
-				
-				 $data[$model->name] = $fields;
-                 if ($model->save($data))
-                 {
-                     return $fields;
-                 }
-             }
-             return false;
          }
 
          function _increment_revision(&$model, $id)
