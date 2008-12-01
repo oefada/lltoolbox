@@ -6,12 +6,17 @@ Configure::write('debug', 0);
 class WebServiceTicketsController extends WebServicesController
 {
 	var $name = 'WebServiceTickets';
-	var $uses = array('Ticket', 'User', 'Offer', 'Bid');
-	var $serviceUrl = 'http://192.168.100.22/web_service_tickets';
+	var $uses = array('Ticket', 'User', 'Offer', 'Bid', 'ClientLoaPackageRel', 'RevenueModelLoaRel');
+	var $serviceUrl = 'http://192.168.100.111/web_service_tickets';
 	var $errorResponse = false;
 	var $api = array(
 					'newTicketProcessor1' => array(
 						'doc' => 'Receive new requests or winning bids from the ESB and create a new ticket',
+						'input' => array('in0' => 'xsd:string'),
+						'output' => array('return' => 'xsd:string')
+						),
+					'updateTrackDetail' => array(
+						'doc' => 'N/A',
 						'input' => array('in0' => 'xsd:string'),
 						'output' => array('return' => 'xsd:string')
 						)
@@ -92,11 +97,74 @@ class WebServiceTicketsController extends WebServicesController
 
 		$this->Ticket->create();
 		if ($this->Ticket->save($newTicket)) {
+			$this->updateTrackPending($this->Ticket->getLastInsertId());
 			return true;	
 		} else {
 			$this->errorResponse = 908;
 			return false;
 		}
 	}
+
+	function updateTrackPending($ticketId) {
+		if (!$ticketId) {
+			return false;	
+		}
+		$this->Ticket->recursive = -1;
+		$ticket = $this->Ticket->read(null, $id);
+		$packageId = $ticket['Ticket']['packageId'];
+		$this->ClientLoaPackageRel->recursive = 2;
+		$clientLoaPackageRel = $this->ClientLoaPackageRel->findBypackageid($packageId);
+		$revenueModelLoaRel = $clientLoaPackageRel['Loa']['RevenueModelLoaRel'][0];
+		
+		if (!empty($revenueModelLoaRel['revenueModelLoaRelId'])) {
+			$revenueModelLoaRel['pending']+= $ticket['Ticket']['billingPrice'];
+			$this->RevenueModelLoaRel->save($revenueModelLoaRel);
+		}
+	}
+	
+	function updateTrackDetail($in0) {
+		$data = json_decode($in0, true);
+		
+		$this->Ticket->recursive = -1;
+		$ticket = $this->Ticket->read(null, $data['ticketId']);
+		
+		$this->ClientLoaPackageRel->recursive = -1;
+		$clientLoaPackageRel = $this->ClientLoaPackageRel->findBypackageid($data['packageId']);	
+		
+		$this->RevenueModelLoaRel->recursive = 2;
+		$revenueModelLoaRel = $this->RevenueModelLoaRel->findByloaid($clientLoaPackageRel['ClientLoaPackageRel']['loaId']);
+	
+		$expCrit 			= $revenueModelLoaRel['ExpirationCriterium'];
+		$revModel 			= $revenueModelLoaRel['RevenueModel'];
+		$revModelLoa		= $revenueModelLoaRel['RevenueModelLoaRel'];
+		$revModelLoaDetail 	= $revenueModelLoaRel['RevenueModelLoaRelDetail'];
+	
+		$revModelLoaDetail	= array();
+	
+		switch ($revModel['revenueModelId']) {
+			case 1:
+				if (empty($revModelLoaDetail)) {
+					$revModelLoaDetail['revenueModelLoaRelId'] 	= $revModelLoa['revenueModelLoaId'];
+					$revModelLoaDetail['ticketId'] 				= $data['ticketId'];
+					$revModelLoaDetail['cycle'] 				= 1;
+					$revModelLoaDetail['iteration'] 			= 1;
+					$revModelLoaDetail['amountKept'] 			= ($revModelLoa['keepPercentage'] / 100) * $ticket['Ticket']['billingAmount'];
+					$revModelLoaDetail['amountRemitted'] 		= $ticket['Ticket']['billingAmount'] - $revModelLoaDetail['amountKept']
+					//$revModelLoaDetail[''] = 
+				} else {
+					
+				}
+				break;
+			case 2:
+				break;
+			case 3:
+				break;
+		}
+
+
+		return print_r($revModelLoaDetail, true);
+		
+	}
+	
 }
 ?>

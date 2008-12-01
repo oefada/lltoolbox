@@ -11,8 +11,7 @@ class PaymentDetailsController extends AppController {
 
 	function view($id = null) {
 		if (!$id) {
-			$this->Session->setFlash(__('Invalid PaymentDetail.', true));
-			$this->redirect(array('action'=>'index'));
+			$this->Session->setFlash(__('Invalid Payment Detail Id.', true), 'default', array(), 'error');
 		}
 		$this->set('paymentDetail', $this->PaymentDetail->read(null, $id));
 	}
@@ -22,7 +21,9 @@ class PaymentDetailsController extends AppController {
 			$this->PaymentDetail->create();
 			if ($this->PaymentDetail->save($this->data)) {
 				$this->Session->setFlash(__('Payment was successfully charged.', true), 'default', array(), 'success');
-				$this->redirect(array('controller' => 'tickets', 'action'=>'view', 'id' => $this->data['PaymentDetail']['ticketId']));
+				//$this->redirect(array('controller' => 'tickets', 'action'=>'view', 'id' => $this->data['PaymentDetail']['ticketId']));
+				$this->redirect(array('controller' => 'tickets', 'action'=>'updateTrackDetail', 'id' => $this->data['PaymentDetail']['ticketId']));
+				die();
 			} else {
 				$this->Session->setFlash(__('The payment cannot be processed yet -- please correct the errors below first.', true), 'default', array(), 'error');
 			}
@@ -35,16 +36,18 @@ class PaymentDetailsController extends AppController {
 		$this->set('paymentProcessorIds', $this->PaymentDetail->PaymentProcessor->find('list'));		
 	}
 
+	// ----------------------------------------------------------
+	// NO ONE IS ALLOWED TO EDIT OR DELETE PAYMENT DETAIL RECORDS
+	// ----------------------------------------------------------
+
 	function edit($id = null) {	
+		$this->Session->setFlash(__('Access Denied - You cannot perform that operation.', true), 'default', array(), 'error');
+		$this->redirect(array('action'=>'index'));
+		die('ACCESS DENIED');
 		if (!$id && empty($this->data)) {
 			$this->Session->setFlash(__('Invalid PaymentDetail', true));
 			$this->redirect(array('action'=>'index'));
-		}
-		
-		// added so that user cannot edit or delete payment details
-		$this->Session->setFlash(__('You do not have permissions to alter the payment details for this transaction', true));
-		$this->redirect(array('action'=>'view', 'id' => $id));
-		
+		}		
 		if (!empty($this->data)) {
 			if ($this->PaymentDetail->save($this->data)) {
 				$this->Session->setFlash(__('The PaymentDetail has been saved', true));
@@ -61,15 +64,13 @@ class PaymentDetailsController extends AppController {
 	}
 
 	function delete($id = null) {
+		$this->Session->setFlash(__('Access Denied - You cannot perform that operation.', true), 'default', array(), 'error');
+		$this->redirect(array('action'=>'index'));
+		die('ACCESS DENIED');
 		if (!$id) {
 			$this->Session->setFlash(__('Invalid id for PaymentDetail', true));
 			$this->redirect(array('action'=>'index'));
 		}
-		
-		// added so that user cannot edit or delete payment details
-		$this->Session->setFlash(__('You do not have permissions to alter the payment details for this transaction', true));
-		$this->redirect(array('action'=>'view', 'id' => $id));
-		
 		if ($this->PaymentDetail->del($id)) {
 			$this->Session->setFlash(__('PaymentDetail deleted', true));
 			$this->redirect(array('action'=>'index'));

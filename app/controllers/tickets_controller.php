@@ -1,9 +1,12 @@
 <?php
+
+App::import('Vendor', 'nusoap_client/lib/nusoap');
+
 class TicketsController extends AppController {
 
 	var $name = 'Tickets';
 	var $helpers = array('Html', 'Form', 'Ajax', 'Text', 'Layout', 'Number');
-	var $uses = array('Ticket','OfferType');
+	var $uses = array('Ticket','OfferType', 'ClientLoaPackageRel', 'RevenueModelLoaRel');
 	var $paginate;
 
 	/*function beforeFilter() {
@@ -18,7 +21,7 @@ class TicketsController extends AppController {
 
 	function view($id = null) {
 		if (!$id) {
-			$this->Session->setFlash(__('Invalid Ticket.', true));
+			$this->Session->setFlash(__('Invalid Ticket.', true), 'default', array(), 'error');
 			$this->redirect(array('action'=>'index'));
 		}
 
@@ -32,15 +35,15 @@ class TicketsController extends AppController {
 	function edit($id = null) {	
 		// only for updating ticket notes for now.  should not be able to update anything else.
 		if (!$id && empty($this->data)) {
-			$this->Session->setFlash(__('Invalid Ticket', true));
+			$this->Session->setFlash(__('Invalid Ticket.', true), 'default', array(), 'error');
 			$this->redirect(array('action'=>'index'));
 		}
 		if (!empty($this->data) && !empty($this->data['Ticket']['ticketId'])) {
 			if ($this->Ticket->save($this->data)) {
-				$this->Session->setFlash(__('The ticket note has been updated.', true));
+				$this->Session->setFlash(__('The ticket note has been saved.', true), 'default', array(), 'success');
 				$this->redirect(array('action'=>'view', 'id' => $id));
 			} else {
-				$this->Session->setFlash(__('The ticket note was not saved. Please, try again.', true));
+				$this->Session->setFlash(__('The ticket note has not been saved due to an error.', true), 'default', array(), 'error');
 			}
 		}
 		if (empty($this->data)) {
@@ -48,9 +51,45 @@ class TicketsController extends AppController {
 		}
 		$this->set('ticketStatusIds', $this->Ticket->TicketStatus->find('list'));
 	}
+	
+	function updateTrackDetail($id) {
+		if (!$id) {
+			$this->Session->setFlash(__('Invalid Ticket.', true), 'default', array(), 'error');
+			$this->redirect(array('action'=>'index'));
+		}
+		
+		$this->Ticket->recursive = -1;
+		$ticket = $this->Ticket->read(null, $id);
+		
+		// [send to webservice tickets]
+		$webservice_live_url = 'http://192.168.100.111/web_service_tickets?wsdl';
+		$webservice_live_method_name = 'updateTrackDetail';
+		$webservice_live_method_param = 'in0';
+
+		$data = array();
+		$data['key'] = 'AXPAdFKlo3kZSfk30kA30234SDfjpgQ';
+		$data['ticketId'] = $ticket['Ticket']['ticketId'];
+		$data['packageId'] = $ticket['Ticket']['packageId'];
+
+		$data_json_encoded = json_encode($data);
+
+		$soap_client = new nusoap_client($webservice_live_url, true);
+        $response = $soap_client->call($webservice_live_method_name, array($webservice_live_method_param => $data_json_encoded));
+ 			
+ 		echo $response;
+ 			
+		//$this->redirect(array('action'=>'view', 'id' => $id));
+		die();
+	}
+
+	// -------------------------------------------
+	// NO ONE IS ALLOWED TO EDIT OR DELETE TICKETS
+	// -------------------------------------------
 
 	function add() {
-		die('ACCESS DENIED -- YOU CANNOT MANUALLY CREATE A TICKET');
+		$this->Session->setFlash(__('Access Denied - You cannot perform that operation.', true), 'default', array(), 'error');
+		$this->redirect(array('action'=>'index'));
+		die('ACCESS DENIED');
 		if (!empty($this->data)) {
 			$this->Ticket->create();
 			if ($this->Ticket->save($this->data)) {
@@ -60,13 +99,13 @@ class TicketsController extends AppController {
 				$this->Session->setFlash(__('The Ticket could not be saved. Please, try again.', true));
 			}
 		}
-		
 		$this->set('ticketStatusIds', $this->Ticket->TicketStatus->find('list'));
-		
 	}
 
 	function delete($id = null) {
-		die('ACCESS DENIED -- YOU CANNOT MANUALLY DELETE A TICKET');
+		$this->Session->setFlash(__('Access Denied - You cannot perform that operation.', true), 'default', array(), 'error');
+		$this->redirect(array('action'=>'index'));
+		die('ACCESS DENIED');
 		if (!$id) {
 			$this->Session->setFlash(__('Invalid id for Ticket', true));
 			$this->redirect(array('action'=>'index'));
@@ -77,8 +116,12 @@ class TicketsController extends AppController {
 		}
 	}
 	
+	// -------------------------------------------------------
+	// DO NOT USE OR ALTER ANY OF THE FUNCTIONS BELOW .... YET
+	// -------------------------------------------------------
+	
 	function updateTicketStatus($id = null, $ticketStatusId = null) {
-		//bah dont use this function yet
+		//dont use this function yet
 		if (!$id) {
 			$this->Session->setFlash(__('Invalid id for Ticket', true));
 			//$this->redirect(array('action'=>'index'));				
