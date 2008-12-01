@@ -1,13 +1,5 @@
 <?php
 
-/* 
- * PROCESSOR CLASS for auto crediting card processing
- * ==================================================
- * Developed by Arons Lee (Luxury Link)
- * Email: alee@luxurylink.com
- * 
- */
-
 require(APP.'/vendors/pp/AIM.module.php');
 require(APP.'/vendors/pp/PAYPAL.module.php');
 require(APP.'/vendors/pp/NOVA.module.php');
