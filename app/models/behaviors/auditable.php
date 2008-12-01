@@ -46,7 +46,7 @@
                      }
                  } elseif (!is_array($fields)) {
                      // single field
-                     $fields = array($fields);
+                     $fields = array($fields); 
                  }
 
                  // check if this is a new record rather than an update (ie: dont diff the data)
