@@ -22,7 +22,7 @@ class Package extends AppModel {
 						
 	var $validate = array('packageName' => VALID_NOT_EMPTY,
 						'numConcurrentOffers' => array('rule' => 'numeric', 'message' => 'Must be a number'),
-						'maxNumSales' => array('rule' => 'numeric', 'message' => 'Must  be a number'),
+						'maxNumSales' => array('rule' => 'numeric', 'message' => 'Must  be a number', 'allowEmpty' => true),
 						'numGuests' => array('rule' => 'numeric', 'message' => 'Must be a number'),
 						'numNights' => array('rule' => 'numeric', 'message' => 'Must be a number'),
 						'endDate' => array('rule' => array('validateDateRanges'), 'message' => 'End Date must be greater than Start Date'),
