@@ -166,6 +166,7 @@ class PackagesController extends AppController {
 		if (isset($this->data['Package']['CheckedLoaItems'])):
 		foreach($this->data['Package']['CheckedLoaItems'] as $k=>$checkedLoaItem) {
 			$this->data['PackageLoaItemRel'][$checkedLoaItem]['quantity'] = $origPackageLoaItemRel[$checkedLoaItem]['quantity'];
+			$this->data['PackageLoaItemRel'][$checkedLoaItem]['weight'] = $origPackageLoaItemRel[$checkedLoaItem]['weight'];
 			$this->data['PackageLoaItemRel'][$checkedLoaItem]['overrideDisplayName'] = $origPackageLoaItemRel[$checkedLoaItem]['overrideDisplayName'];
 			$this->data['PackageLoaItemRel'][$checkedLoaItem]['loaItemId'] = $checkedLoaItem;
 		}
@@ -237,6 +238,7 @@ class PackagesController extends AppController {
 			} else {																					//if the new quantity is different from the old, update the field
 				$currentItemIds[] = $packageLoaItemRel['loaItemId'];
 				$packageLoaItemRel['quantity'] = $newPackageLoaItemRel[$packageLoaItemRel['loaItemId']]['quantity'];
+				$packageLoaItemRel['weight'] = $newPackageLoaItemRel[$packageLoaItemRel['loaItemId']]['weight'];
 				$packageLoaItemRel['overrideDisplayName'] = $newPackageLoaItemRel[$packageLoaItemRel['loaItemId']]['overrideDisplayName'];
 				$this->data['PackageLoaItemRel'][] = $packageLoaItemRel;
 			}
@@ -247,6 +249,8 @@ class PackagesController extends AppController {
 		foreach($this->data['Package']['CheckedLoaItems'] as $k => $checkedLoaItem) {
 			if (!in_array($checkedLoaItem, $currentItemIds)):
 				$newPackageLoaItems[$k]['quantity'] = $newPackageLoaItemRel[$checkedLoaItem]['quantity'];
+				$newPackageLoaItems[$k]['overrideDisplayName'] = $newPackageLoaItemRel[$checkedLoaItem]['overrideDisplayName'];
+				$newPackageLoaItems[$k]['weight'] = $newPackageLoaItemRel[$checkedLoaItem]['weight'];
 				$newPackageLoaItems[$k]['loaItemId'] = $checkedLoaItem;
 				$newPackageLoaItems[$k]['packageId'] = $this->data['Package']['packageId'];
 			endif;
