@@ -1,16 +1,29 @@
-<?php if (isset($user)):
-$this->pageTitle = $this->pageTitle = $user['User']['firstName'].' '.$user['User']['lastName'].$html2->c($user['User']['userId'], 'User Id:');
-endif ?>
-<div id='tickets-index' class="tickets index">
-<h2><?php __('Tickets');?></h2>
-<?php echo $this->renderElement('ajax_paginator', array('divToPaginate' => 'tickets-index', 'showCount' => true))?>
+<?php
+$this->pageTitle = 'Tickets';
+if (isset($query)) {
+	$html->addCrumb('Tickets', '/tickets');
+	$html->addCrumb('search for '.$query);
+} else {
+	$html->addCrumb('Tickets');
+}
+$this->set('hideSidebar', true);
+?>
+
+<div id="ticket-index">
+	<?php echo $this->renderElement('ajax_paginator', array('divToPaginate' => 'ticket-index', 'showCount' => true)); ?>
+<div class="tickets index">
+	<?php if (isset($query) && !empty($query)): ?>
+		<div style="clear: both">
+		<strong>Search Criteria:</strong> <?php echo $query; ?>
+		</div>
+	<?php endif ?>
 <table cellpadding="0" cellspacing="0">
 <tr>
-	<th><?php echo $paginator->sort('ticketId');?></th>
-	<th><?php echo $paginator->sort('ticketStatusId');?></th>
-	<th><?php echo $paginator->sort('PackageName');?></th>
-	<th><?php echo $paginator->sort('userFirstName');?></th>
-	<th><?php echo $paginator->sort('userLastName');?></th>
+	<th><?php echo $paginator->sort('Ticket.ticketId');?></th>
+	<th><?php echo $paginator->sort('Ticket.ticketStatusId');?></th>
+	<th><?php echo $paginator->sort('Ticket.PackageName');?></th>
+	<th><?php echo $paginator->sort('Ticket.userFirstName');?></th>
+	<th><?php echo $paginator->sort('Ticket.userLastName');?></th>
 	<th class="actions"><?php __('Actions');?></th>
 </tr>
 <?php
