@@ -8,6 +8,7 @@
 		<tr>
 			<th>&nbsp;</th>
 			<th>Description</th>
+			<th>Override Display Name</th>
 			<th>Base Price<br/>
 				<? foreach($clientLoaDetails[0]['LoaItem'] as $loaItem): ?>
 				(base currency <?=$currencyCodes[$loaItem['currencyId']]?>
@@ -25,6 +26,7 @@
 			<tr>
 				<td><input type="checkbox" name="data[Package][CheckedLoaItems][]" value="<?=$loaItem['loaItemId']?>"<? if (isset($this->data['Package']['CheckedLoaItems']) && in_array($loaItem['loaItemId'], $this->data['Package']['CheckedLoaItems'])) { echo ' checked="checked"'; } ?> /></td>
 				<td><?=$loaItem['itemName']?></td>
+				<td><?=$form->input('PackageLoaItemRel.'.$loaItem['loaItemId'].'.overrideDisplayName', array('label' => false)) ?></td>
 				<td><div style="text-align: right"><span style="text-align:left"><?=$number->currency($loaItem['itemBasePrice'], $currencyCodes[$loaItem['currencyId']]) ?></span>&nbsp;&nbsp;<span style="text-align: right"><?=$number->currency($loaItem['itemBasePrice']*$fakeExchangeRates[$loaItem['currencyId']], 'USD') ?></span></td>
 				<td><?= $form->input('PackageLoaItemRel.'.$loaItem['loaItemId'].'.quantity', array('label' => false)) ?></td>
 			</tr>
@@ -34,7 +36,7 @@
 	<?php endforeach;?>
 	<?php if ($loaItemCount == 0): ?>
 		<tr>
-			<td colspan='4'><div class='icon-yellow'>There are no LOA Items for the selected LOAs. Add some items to the LOA(s), then return to creating the package.</div></td>
+			<td colspan='5'><div class='icon-yellow'>There are no LOA Items for the selected LOAs. Add some items to the LOA(s), then return to creating the package.</div></td>
 		</tr>	
 	<?php endif; ?>
 	</table>
