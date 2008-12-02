@@ -214,7 +214,7 @@ class PackagesController extends AppController {
 	function updatePackageLoaItems() {
 		//grab the new quantities from the form, the data array looks like the one from the databases but with only the quantity field
 		$currentItemIds = array();
-		$newPackageLoaItemRel = $this->data['PackageLoaItemRel'];
+		$newPackageLoaItemRel = @$this->data['PackageLoaItemRel'];
 		
 		unset($this->data['PackageLoaItemRel']);
 	
@@ -417,6 +417,10 @@ class PackagesController extends AppController {
 		}
 		foreach ($this->data['PackageOfferTypeDefField'] as $defField):
 			$defFieldViewArray[$defField['offerTypeId']] = $defField;
+			
+			if (in_array($defField['offerTypeId'], array(1,2,6))) {
+			    $defFieldViewArray[$defField['offerTypeId']]['percentRetail'] = round($defField['openingBid']/$this->data['Package']['approvedRetailPrice']*100, 2);
+			}
 		endforeach;
 		unset($this->data['PackageOfferTypeDefField']);
 		$this->data['PackageOfferTypeDefField'] = $defFieldViewArray;
