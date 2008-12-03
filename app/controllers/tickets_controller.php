@@ -109,7 +109,7 @@ class TicketsController extends AppController {
 		$headers = "From: LuxuryLink.com<auction@luxurylink.com>\r\nReply-To: auction@luxurylink.com\r\nBcc: winnernotifications@luxurylink.com\r\n";
         $headers.= "Content-type: text/html\r\n";
 
-		@mail('devmail@luxurylink.com', 'testing winner not', $output, $headers);
+		@mail('alee@luxurylink.com', 'testing winner not', $output, $headers);
 		
 		die();	
 	}
