@@ -6,7 +6,7 @@ class TicketsController extends AppController {
 
 	var $name = 'Tickets';
 	var $helpers = array('Html', 'Form', 'Ajax', 'Text', 'Layout', 'Number');
-	var $uses = array('Ticket','OfferType', 'ClientLoaPackageRel', 'RevenueModelLoaRel');
+	var $uses = array('Ticket','OfferType', 'User', 'ClientLoaPackageRel', 'RevenueModelLoaRel', 'RevenueModelLoaRelDetail');
 	var $paginate;
 
 	/*function beforeFilter() {
@@ -16,6 +16,7 @@ class TicketsController extends AppController {
 	}*/
 	
 	function index() {
+		$this->Ticket->recursive = 1;
 		$this->set('tickets', $this->paginate());
 	}
 
@@ -50,6 +51,67 @@ class TicketsController extends AppController {
 			$this->data = $this->Ticket->read(null, $id);
 		}
 		$this->set('ticketStatusIds', $this->Ticket->TicketStatus->find('list'));
+	}
+
+	function ppv($id) {
+		$this->Ticket->recursive = 0;
+		$ticket = $this->Ticket->read(null, $id);
+
+		$this->ClientLoaPackageRel->recursive = 0;
+		$clientLoaPackageRel = $this->ClientLoaPackageRel->findBypackageid($ticket['Ticket']['packageId']);
+		
+		$liveOffer	= $this->Ticket->query("select * from livedev.offer as LiveOffer where offerId = " . $ticket['Ticket']['offerId'] . " limit 1");
+		
+		// data arrays
+		// ---------------------------------------------------------
+		$ticketData 	= $ticket['Ticket'];
+		$packageData 	= $ticket['Package'];
+		$offerData 		= $ticket['Offer'];
+		$userData 		= $ticket['User'];
+		$clientData 	= $clientLoaPackageRel['Client'];
+		$loaData 		= $clientLoaPackageRel['Loa'];
+		$liveOfferData 	= $liveOffer[0]['LiveOffer'];
+		
+		// vars for templates
+		// ----------------------------------------------------------
+		$ticketId 			= $ticketData['ticketId'];
+		$userId 			= $userData['userId'];
+		$userFirstName 		= ucwords(strtolower($userData['firstName']));
+		$userLastName 		= ucwords(strtolower($userData['lastName']));
+		$userEmail 			= $userData['email'];
+		$offerId			= $offerData['offerId'];
+		$clientId			= $clientData['clientId'];
+		$oldProductId		= $clientData['oldProductId'];
+		$packageName 		= $packageData['packageName'];
+		$packageSubtitle	= $packageData['subtitle'];
+		$clientName 		= $clientData['name'];
+		$packageIncludes 	= $packageData['packageIncludes'];
+		$legalText			= $packageData['legalText'];
+		$validityNote		= $packageData['validityNote'];
+		$offerTypeId		= $offerData['offerTypeId'];
+		$offerEndDate		= date('M d Y H:i A', strtotime($liveOfferData['endDate']));
+		$billingPrice		= number_format($ticketData['billingPrice'], 2, '.', ',');
+		$llFeeAmount		= in_array($offerTypeId, array(1,2,6)) ? 30 : 40;
+		$llFee				= number_format($llFeeAmount, 2, '.', ',');
+		$totalPrice			= number_format(($ticketData['billingPrice'] + $llFeeAmount),  2, '.', ',');
+		$maxNumWinners		= $liveOfferData['maxNumWinners'];
+		
+		$checkoutHash		= md5($ticketId . $userId . $offerId . 'LL_L33T_KEY');
+		$checkoutKey		= base64_encode(serialize(array('ticketId' => $ticketId, 'userId' => $userId, 'offerId' => $offerId, 'zKey' => $checkoutHash)));
+		$checkoutLink		= "https://www.luxurylink.com/my/my_purchse.php?z=$checkoutKey";
+		
+		$show_mc 			= false;
+		
+		ob_start();
+		include('../vendors/email_msgs/notifications/winner_notification_w_checkout.html');
+		$output = ob_get_clean();
+		
+		$headers = "From: LuxuryLink.com<auction@luxurylink.com>\r\nReply-To: auction@luxurylink.com\r\nBcc: winnernotifications@luxurylink.com\r\n";
+        $headers.= "Content-type: text/html\r\n";
+
+		@mail('devmail@luxurylink.com', 'testing winner not', $output, $headers);
+		
+		die();	
 	}
 	
 	function updateTrackDetail($id) {
