@@ -65,13 +65,6 @@ while($row = mysql_fetch_array($select)) {
 	$data[$row['slotId']] = $row;
 }
 ?>
-<!DOCTYPE htmlPUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html>
-<head>
-<title><?=$page_name;?></title>
-<script language="JavaScript" src="../Include/admin_js.js"></script>
-<script language="JavaScript" src="../Include/admin_ajax.js"></script>
-<script language="JavaScript" src="../Include/tablednd.js"></script>
 <script language="javascript" type="text/javascript">
 
 function daysInMonth(iMonth, iYear)
@@ -181,6 +174,3 @@ You are editing for: <strong><? echo date('F d, Y (l)', strtotime("$month/$day/$
 <div id="ajaxLoader" style="display: none; margin: 0px; padding: 0px; width: 126px; height: 22px;"></div>
 <div id="updateMsg"></div>
 </div>
-
-</body>
-</html>
