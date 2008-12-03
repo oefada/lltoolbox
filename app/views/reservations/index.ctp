@@ -12,17 +12,13 @@ echo $paginator->counter(array(
 	<th><?php echo $paginator->sort('ticketId');?></th>
 	<th><?php echo $paginator->sort('roomType');?></th>
 	<th><?php echo $paginator->sort('numNights');?></th>
-	<th><?php echo $paginator->sort('availabilityConfirmDate');?></th>
 	<th><?php echo $paginator->sort('availabilityConfirmUserId');?></th>
 	<th><?php echo $paginator->sort('customerConsentDate');?></th>
 	<th><?php echo $paginator->sort('arrivalDate');?></th>
 	<th><?php echo $paginator->sort('departureDate');?></th>
 	<th><?php echo $paginator->sort('reservationRequestDate');?></th>
-	<th><?php echo $paginator->sort('reservationMadeDate');?></th>
-	<th><?php echo $paginator->sort('reservationMadeUserId');?></th>
 	<th><?php echo $paginator->sort('reservationConfirmToCustomer');?></th>
 	<th><?php echo $paginator->sort('reservationConfirmNum');?></th>
-	<th><?php echo $paginator->sort('reservationConfirmUserId');?></th>
 	<th class="actions"><?php __('Actions');?></th>
 </tr>
 <?php
@@ -44,9 +40,6 @@ foreach ($reservations as $reservation):
 			<?php echo $reservation['Reservation']['numNights']; ?>
 		</td>
 		<td>
-			<?php echo $reservation['Reservation']['availabilityConfirmDate']; ?>
-		</td>
-		<td>
 			<?php echo $reservation['Reservation']['availabilityConfirmUserId']; ?>
 		</td>
 		<td>
@@ -62,19 +55,10 @@ foreach ($reservations as $reservation):
 			<?php echo $reservation['Reservation']['reservationRequestDate']; ?>
 		</td>
 		<td>
-			<?php echo $reservation['Reservation']['reservationMadeDate']; ?>
-		</td>
-		<td>
-			<?php echo $reservation['Reservation']['reservationMadeUserId']; ?>
-		</td>
-		<td>
 			<?php echo $reservation['Reservation']['reservationConfirmToCustomer']; ?>
 		</td>
 		<td>
 			<?php echo $reservation['Reservation']['reservationConfirmNum']; ?>
-		</td>
-		<td>
-			<?php echo $reservation['Reservation']['reservationConfirmUserId']; ?>
 		</td>
 		<td class="actions">
 			<?php echo $html->link(__('View', true), array('action'=>'view', $reservation['Reservation']['ticketId'])); ?>

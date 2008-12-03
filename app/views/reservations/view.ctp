@@ -21,11 +21,6 @@
 			<?php echo $reservation['Reservation']['numNights']; ?>
 			&nbsp;
 		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('AvailabilityConfirmDate'); ?></dt>
-		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $reservation['Reservation']['availabilityConfirmDate']; ?>
-			&nbsp;
-		</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('AvailabilityConfirmUserId'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
 			<?php echo $reservation['Reservation']['availabilityConfirmUserId']; ?>
@@ -51,16 +46,6 @@
 			<?php echo $reservation['Reservation']['reservationRequestDate']; ?>
 			&nbsp;
 		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('ReservationMadeDate'); ?></dt>
-		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $reservation['Reservation']['reservationMadeDate']; ?>
-			&nbsp;
-		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('ReservationMadeUserId'); ?></dt>
-		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $reservation['Reservation']['reservationMadeUserId']; ?>
-			&nbsp;
-		</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('ReservationConfirmToCustomer'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
 			<?php echo $reservation['Reservation']['reservationConfirmToCustomer']; ?>
@@ -69,11 +54,6 @@
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('ReservationConfirmNum'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
 			<?php echo $reservation['Reservation']['reservationConfirmNum']; ?>
-			&nbsp;
-		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('ReservationConfirmUserId'); ?></dt>
-		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $reservation['Reservation']['reservationConfirmUserId']; ?>
 			&nbsp;
 		</dd>
 	</dl>

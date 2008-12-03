@@ -56,45 +56,115 @@
 		<tr>
 			<td colspan="2">
 				<strong>User Payment Setting (choose one):</strong><br /><br />
+				
+				<fieldset class="collapsible">
+					<legend class="handle" style="font-size:12px;">Existing Card</legend>
+					<div class="collapsibleContent">
 					
-				<table style="background:whitesmoke;margin:0px;padding:0px;" cellspacing="0" cellpadding="0" border="1">
-				<tr>
-					<td>&nbsp;</td>
-					<td><i>Card Id</i></td>
-					<td><i>Name on Card</i></td>
-					<td><i>Address</i></td>
-					<td><i>Card Number</i></td>
-					<td><i>Exp</i></td>
-					<td><i>Primary</i></td>
-				</tr>
-				<?php 				
-				$counter = 0;
-				foreach ($userPaymentSetting as $upsId => $upsValue) { 
-					if ($upsValue['inactive']) {
-						continue;
-					}	
-					?>
-					<tr>
-						<td>
-							<input type="radio" name="data[PaymentDetail][userPaymentSettingId]" id="PaymentDetailUserPaymentSettingId" value="<?php echo $upsValue['userPaymentSettingId'];?>" />
-						</td>
-						<td><?php echo $upsValue['userPaymentSettingId'];?></td>
-						<td><?php echo $upsValue['nameOnCard'];?></td>
-						<td>
-							<?php echo $upsValue['address1'];?><br />
-							<?php if ($upsValue['address2']) { echo $upsValue['address2'] . '<br />'; } ?>
-							<?php echo $upsValue['city'] . ', ' . $upsValue['state'] . ' ' . $upsValue['postalCode'];?>
-						</td>
-						<td><?php echo $upsValue['ccNumber'];?></td>
-						<td><?php echo $upsValue['expMonth'] . '/' . $upsValue['expYear'];?></td>
-						<td><?php echo ($upsValue['primaryCC']) ? 'Yes' : 'No';?></td>
-					</tr>
-				<?php } ?>
-				</table>
+						<table style="background:whitesmoke;margin:0px;padding:0px;" cellspacing="0" cellpadding="0" border="1">
+						<tr>
+							<td>&nbsp;</td>
+							<td><i>Card Id</i></td>
+							<td><i>Name on Card</i></td>
+							<td><i>Address</i></td>
+							<td><i>Card Number</i></td>
+							<td><i>Exp</i></td>
+							<td><i>Primary</i></td>
+						</tr>
+						<?php 				
+						$counter = 0;
+						foreach ($userPaymentSetting as $upsId => $upsValue) { 
+							if ($upsValue['inactive']) {
+								continue;
+							}	
+							?>
+							<tr>
+								<td>
+									<input type="radio" name="data[PaymentDetail][userPaymentSettingId]" id="PaymentDetailUserPaymentSettingId" value="<?php echo $upsValue['userPaymentSettingId'];?>" />
+								</td>
+								<td><?php echo $upsValue['userPaymentSettingId'];?></td>
+								<td><?php echo $upsValue['nameOnCard'];?></td>
+								<td>
+									<?php echo $upsValue['address1'];?><br />
+									<?php if ($upsValue['address2']) { echo $upsValue['address2'] . '<br />'; } ?>
+									<?php echo $upsValue['city'] . ', ' . $upsValue['state'] . ' ' . $upsValue['postalCode'];?>
+								</td>
+								<td><?php echo $upsValue['ccNumber'];?></td>
+								<td><?php echo $upsValue['expMonth'] . '/' . $upsValue['expYear'];?></td>
+								<td><?php echo ($upsValue['primaryCC']) ? 'Yes' : 'No';?></td>
+							</tr>
+						<?php } ?>
+						</table>
+				
+					</div>
+				</fieldset>
+			
+				<br />
+			
+				<fieldset class="collapsible">
+					<legend class="handle" style="font-size:12px;">Add New Card</legend>
+					<div class="collapsibleContent">
+						
+						<table style="background:whitesmoke;margin:0px;padding:0px;" cellspacing="0" cellpadding="0" border="0">
+							<tr>
+								<td width="150">Name on Card</td>
+								<td><input type="text" name="data[UserPaymentSetting][]" id="PaymentDetailPaymentAmount" size="30" /></td>
+							</tr>
+							<tr>
+								<td>Address 1</td>
+								<td><input type="text" name="data[UserPaymentSetting][]" id="PaymentDetailPaymentAmount" size="50" /></td>
+							</tr>
+							<tr>
+								<td>Address 2</td>
+								<td><input type="text" name="data[UserPaymentSetting][]" id="PaymentDetailPaymentAmount" size="50" /></td>
+							</tr>
+							<tr>
+								<td>City</td>
+								<td><input type="text" name="data[UserPaymentSetting][]" id="PaymentDetailPaymentAmount" size="20" /></td>
+							</tr>
+							<tr>
+								<td>State</td>
+								<td><input type="text" name="data[UserPaymentSetting][]" id="PaymentDetailPaymentAmount" size="20" /></td>
+							</tr>
+							<tr>
+								<td>Country</td>
+								<td><input type="text" name="data[UserPaymentSetting][]" id="PaymentDetailPaymentAmount" size="20" /></td>
+							</tr>
+							<tr>
+								<td>Postal/Zip Code</td>
+								<td><input type="text" name="data[UserPaymentSetting][]" id="PaymentDetailPaymentAmount" size="10" /></td>
+							</tr>
+							<tr>
+								<td>Card Number</td>
+								<td><input type="text" name="data[UserPaymentSetting][]" id="PaymentDetailPaymentAmount" size="50" /></td>
+							</tr>
+							<tr>
+								<td>Expiration Month</td>
+								<td><input type="text" name="data[UserPaymentSetting][]" id="PaymentDetailPaymentAmount" /></td>
+							</tr>
+							<tr>
+								<td>Expiration Year</td>
+								<td><input type="text" name="data[UserPaymentSetting][]" id="PaymentDetailPaymentAmount" /></td>
+							</tr>
+							<tr>
+								<td>CVVS</td>
+								<td><input type="text" name="data[UserPaymentSetting][]" id="PaymentDetailPaymentAmount" size="5" /></td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td>
+									<br />
+									<input type="checkbox" name="data[UserPaymentSetting][]" id="PaymentDetailPaymentAmount" />&nbsp;
+									Save this record for this user 
+								</td>
+							</tr>
+						</table>
+						
+					</div>
+				</fieldset>
 				
 				<?php echo $form->error('userPaymentSettingId') ?>
 			</td>
-		
 		</tr>
 		<tr>
 			<td><strong>Initials</strong></td>

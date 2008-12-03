@@ -13,7 +13,7 @@ $this->searchController = 'Tickets';
 			</tr>
 			<tr>
 				<td width="200"><strong>Status</strong></td>
-				<td><?php echo $ticket['TicketStatus']['ticketStatusName']; ?></td>
+				<td><strong><?php echo $ticket['TicketStatus']['ticketStatusName']; ?></strong></td>
 			</tr>
 			<tr>
 				<td width="200"><strong>Package Name</strong></td>
@@ -188,14 +188,12 @@ $this->searchController = 'Tickets';
 		<table cellpadding = "0" cellspacing = "0">
 		<tr>
 			<th><?php __('PpvNoticeId'); ?></th>
-			<th><?php __('PpvNoticeTypeId'); ?></th>
-			<th><?php __('TicketId'); ?></th>
+			<th><?php __('Notice Type'); ?></th>
 			<th><?php __('To'); ?></th>
 			<th><?php __('From'); ?></th>
 			<th><?php __('Cc'); ?></th>
-			<th><?php __('Body'); ?></th>
-			<th><?php __('DateSent'); ?></th>
 			<th><?php __('Subject'); ?></th>
+			<th><?php __('DateSent'); ?></th>
 			<th class="actions"><?php __('Actions');?></th>
 		</tr>
 		<?php
@@ -208,23 +206,34 @@ $this->searchController = 'Tickets';
 			?>
 			<tr<?php echo $class;?>>
 				<td><?php echo $ppvNotice['ppvNoticeId'];?></td>
-				<td><?php echo $ppvNotice['ppvNoticeTypeId'];?></td>
-				<td><?php echo $ppvNotice['ticketId'];?></td>
-				<td><?php echo $ppvNotice['to'];?></td>
-				<td><?php echo $ppvNotice['from'];?></td>
-				<td><?php echo $ppvNotice['cc'];?></td>
-				<td><?php echo $ppvNotice['body'];?></td>
-				<td><?php echo $ppvNotice['dateSent'];?></td>
-				<td><?php echo $ppvNotice['subject'];?></td>
+				<td><?php echo $ppvNotice['PpvNoticeType']['ppvNoticeTypeName'];?></td>
+				<td><?php echo $ppvNotice['emailTo'];?></td>
+				<td><?php echo $ppvNotice['emailFrom'];?></td>
+				<td><?php echo $ppvNotice['emailCc'];?></td>
+				<td><?php echo $ppvNotice['emailSubject'];?></td>
+				<td><?php echo $ppvNotice['emailSentDatetime'];?></td>
 				<td class="actions">
 					<?php echo $html->link(__('View', true), array('controller'=> 'ppv_notices', 'action'=>'view', $ppvNotice['ppvNoticeId'])); ?>
-					<?php echo $html->link(__('Edit', true), array('controller'=> 'ppv_notices', 'action'=>'edit', $ppvNotice['ppvNoticeId'])); ?>
-					<?php echo $html->link(__('Delete', true), array('controller'=> 'ppv_notices', 'action'=>'delete', $ppvNotice['ppvNoticeId']), null, sprintf(__('Are you sure you want to delete # %s?', true), $ppvNotice['ppvNoticeId'])); ?>
 				</td>
 			</tr>
 		<?php endforeach; ?>
 		</table>
 	<?php endif; ?>
+	<?php 
+		echo $html->link('Send New Notice', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add');
+		/*
+		echo $html->link('Send New Notice',
+			'/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add',
+			array(
+				'title' => 'Send New Notice',
+				'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
+				'complete' => 'closeModalbox()'
+				),
+			null,
+			false
+		);
+		*/
+		?>
 	</div>
 </div>
 
@@ -248,35 +257,27 @@ $this->searchController = 'Tickets';
 				<td><?php echo $ticket['Reservation']['numNights'];?></td>
 			</tr>
 			<tr>
-				<td width="200">Availability Confirm Date</td>
-				<td><?php echo $ticket['Reservation']['availabilityConfirmDate'];?></td>
-			</tr>
-			<tr class="altrow">
 				<td width="200">Customer Consent Date</td>
 				<td><?php echo $ticket['Reservation']['customerConsentDate'];?></td>
 			</tr>
-			<tr>
+			<tr class="altrow">
 				<td width="200">Arrival Date</td>
 				<td><?php echo $ticket['Reservation']['arrivalDate'];?></td>
 			</tr>
-			<tr class="altrow">
+			<tr>
 				<td width="200">Department Date</td>
 				<td><?php echo $ticket['Reservation']['departureDate'];?></td>
 			</tr>
-			<tr>
+			<tr class="altrow">
 				<td width="200">Reservation Request Date</td>
 				<td><?php echo $ticket['Reservation']['reservationRequestDate'];?></td>
-			</tr>
-			<tr class="altrow">
-				<td width="200">Reservation Made Date</td>
-				<td><?php echo $ticket['Reservation']['reservationMadeDate'];?></td>
 			</tr>
 			<tr>
 				<td width="200">Reservation Confirm to Customer</td>
 				<td><?php echo $ticket['Reservation']['reservationConfirmToCustomer'];?></td>
 			</tr>
 			<tr class="altrow">
-				<td width="200">Reservation Confirmation NUmber</td>
+				<td width="200">Reservation Confirmation Number</td>
 				<td><?php echo $ticket['Reservation']['reservationConfirmNum'];?></td>
 			</tr>
 		</table>
@@ -294,10 +295,10 @@ $this->searchController = 'Tickets';
 		?>
 	<?php else: ?>
 		<?php
-		echo $html->link('Start Reservation Procses',
+		echo $html->link('Edit Reservation Information',
 			'/tickets/' . $ticket['Ticket']['ticketId'] . '/reservations/add',
 			array(
-				'title' => 'Reservation',
+				'title' => 'Edit Reservation Information',
 				'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
 				'complete' => 'closeModalbox()'
 				),

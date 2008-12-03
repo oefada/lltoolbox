@@ -19,11 +19,11 @@ $this->set('hideSidebar', true);
 	<?php endif ?>
 <table cellpadding="0" cellspacing="0">
 <tr>
-	<th><?php echo $paginator->sort('Ticket.ticketId');?></th>
-	<th><?php echo $paginator->sort('Ticket.ticketStatusId');?></th>
-	<th><?php echo $paginator->sort('Ticket.PackageName');?></th>
-	<th><?php echo $paginator->sort('Ticket.userFirstName');?></th>
-	<th><?php echo $paginator->sort('Ticket.userLastName');?></th>
+	<th><?php echo $paginator->sort('Ticket Id', 'Ticket.ticketId');?></th>
+	<th><?php echo $paginator->sort('Status', 'Ticket.ticketStatusId');?></th>
+	<th><?php echo $paginator->sort('Package Name', 'Ticket.packageName');?></th>
+	<th><?php echo $paginator->sort('User First name', 'Ticket.userFirstName');?></th>
+	<th><?php echo $paginator->sort('User Last Name', 'Ticket.userLastName');?></th>
 	<th class="actions"><?php __('Actions');?></th>
 </tr>
 <?php
@@ -39,7 +39,7 @@ foreach ($tickets as $ticket):
 			<?php echo $ticket['Ticket']['ticketId']; ?>
 		</td>
 		<td>
-			<?php echo $html->link($ticket['TicketStatus']['ticketStatusName'], array('controller'=> 'ticket_statuses', 'action'=>'view', $ticket['TicketStatus']['ticketStatusId'])); ?>
+			<?php echo $ticket['TicketStatus']['ticketStatusName']; ?>
 		</td>
 		<td>
 			<?php echo $ticket['Package']['packageName']; ?>

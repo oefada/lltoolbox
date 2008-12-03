@@ -40,24 +40,4 @@
 	</fieldset>
 <?php echo $form->end('Submit');?>
 </div>
-<div class="actions">
-	<ul>
-		<li><?php echo $html->link(__('List Tickets', true), array('action'=>'index'));?></li>
-		<li><?php echo $html->link(__('List Ticket Statuses', true), array('controller'=> 'ticket_statuses', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Ticket Status', true), array('controller'=> 'ticket_statuses', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Packages', true), array('controller'=> 'packages', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Package', true), array('controller'=> 'packages', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Offers', true), array('controller'=> 'offers', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Offer', true), array('controller'=> 'offers', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Ticket Cancellations', true), array('controller'=> 'ticket_cancellations', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Ticket Cancellation', true), array('controller'=> 'ticket_cancellations', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Ticket Refunds', true), array('controller'=> 'ticket_refunds', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Ticket Refund', true), array('controller'=> 'ticket_refunds', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Reservations', true), array('controller'=> 'reservations', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Reservation', true), array('controller'=> 'reservations', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Payment Details', true), array('controller'=> 'payment_details', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Payment Detail', true), array('controller'=> 'payment_details', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Ppv Notices', true), array('controller'=> 'ppv_notices', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Ppv Notice', true), array('controller'=> 'ppv_notices', 'action'=>'add')); ?> </li>
-	</ul>
-</div>
+
