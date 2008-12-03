@@ -27,11 +27,12 @@ class PpvNoticesController extends AppController {
 				$this->Session->setFlash(__('The PpvNotice could not be saved. Please, try again.', true));
 			}
 		}
-		$tickets = $this->PpvNotice->Ticket->find('list');
-		$this->set(compact('tickets'));
-		
 		$this->set('ppvNoticeTypeIds', $this->PpvNotice->PpvNoticeType->find('list'));
+		$this->data['PpvNotice']['ticketId'] = $this->params['ticketId'];
 	}
+
+	/*
+	// NO EDIT OR DELETE FOR PPV -- JUST SENDING OUT
 
 	function edit($id = null) {
 		if (!$id && empty($this->data)) {
@@ -65,6 +66,8 @@ class PpvNoticesController extends AppController {
 			$this->redirect(array('action'=>'index'));
 		}
 	}
+	
+	*/
 
 }
 ?>

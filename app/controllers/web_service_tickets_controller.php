@@ -6,7 +6,7 @@ Configure::write('debug', 0);
 class WebServiceTicketsController extends WebServicesController
 {
 	var $name = 'WebServiceTickets';
-	var $uses = array('Ticket', 'User', 'Offer', 'Bid', 'ClientLoaPackageRel', 'RevenueModelLoaRel');
+	var $uses = array('Ticket', 'User', 'Offer', 'Bid', 'ClientLoaPackageRel', 'RevenueModelLoaRel', 'Loa', 'RevenueModelLoaRelDetail');
 	var $serviceUrl = 'http://192.168.100.111/web_service_tickets';
 	var $errorResponse = false;
 	var $api = array(
@@ -98,11 +98,97 @@ class WebServiceTicketsController extends WebServicesController
 		$this->Ticket->create();
 		if ($this->Ticket->save($newTicket)) {
 			$this->updateTrackPending($this->Ticket->getLastInsertId());
+			$user_payment_setting = $this->findValidUserPaymentSetting($userData['User']['userId']);
+			
+			if (is_array($user_payment_setting) && !empty($user_payment_setting)) {
+				// has valid cc card to charge
+				
+			} elseif ($user_payment_setting == 'EXPIRED') {
+				// has valid cc card but is expired
+				
+			} else {
+				// has no valid cc on file
+				
+			}
+			
 			return true;	
 		} else {
 			$this->errorResponse = 908;
 			return false;
 		}
+	}
+
+	function ppv($id) {
+		$this->Ticket->recursive = 0;
+		$ticket = $this->Ticket->read(null, $id);
+
+		$this->ClientLoaPackageRel->recursive = 0;
+		$clientLoaPackageRel = $this->ClientLoaPackageRel->findBypackageid($ticket['Ticket']['packageId']);
+		
+		$liveOffer	= $this->Ticket->query("select * from livedev.offer as LiveOffer where offerId = " . $ticket['Ticket']['offerId'] . " limit 1");
+		
+		// data arrays
+		// ---------------------------------------------------------
+		$ticketData 	= $ticket['Ticket'];
+		$packageData 	= $ticket['Package'];
+		$offerData 		= $ticket['Offer'];
+		$userData 		= $ticket['User'];
+		$clientData 	= $clientLoaPackageRel['Client'];
+		$loaData 		= $clientLoaPackageRel['Loa'];
+		$liveOfferData 	= $liveOffer[0]['LiveOffer'];
+		
+		// vars for templates
+		// ----------------------------------------------------------
+		$ticketId 			= $ticketData['ticketId'];
+		$userId 			= $userData['userId'];
+		$userFirstName 		= ucwords(strtolower($userData['firstName']));
+		$userLastName 		= ucwords(strtolower($userData['lastName']));
+		$userEmail 			= $userData['email'];
+		$offerId			= $offerData['offerId'];
+		$clientId			= $clientData['clientId'];
+		$oldProductId		= $clientData['oldProductId'];
+		$packageName 		= $packageData['packageName'];
+		$packageSubtitle	= $packageData['subtitle'];
+		$clientName 		= $clientData['name'];
+		$packageIncludes 	= $packageData['packageIncludes'];
+		$legalText			= $packageData['legalText'];
+		$validityNote		= $packageData['validityNote'];
+		$offerTypeId		= $offerData['offerTypeId'];
+		$offerEndDate		= date('M d Y H:i A', strtotime($liveOfferData['endDate']));
+		$billingPrice		= number_format($ticketData['billingPrice'], 2, '.', ',');
+		$llFeeAmount		= in_array($offerTypeId, array(1,2,6)) ? 30 : 40;
+		$llFee				= number_format($llFeeAmount, 2, '.', ',');
+		$totalPrice			= number_format(($ticketData['billingPrice'] + $llFeeAmount),  2, '.', ',');
+		$maxNumWinners		= $liveOfferData['maxNumWinners'];
+		
+		$checkoutHash		= md5($ticketId . $userId . $offerId . 'LL_L33T_KEY');
+		$checkoutKey		= base64_encode(serialize(array('ticketId' => $ticketId, 'userId' => $userId, 'offerId' => $offerId, 'zKey' => $checkoutHash)));
+		$checkoutLink		= "https://www.luxurylink.com/my/my_purchse.php?z=$checkoutKey";
+		
+		$show_mc 			= false;
+		
+		ob_start();
+		include('../vendors/email_msgs/notifications/winner_notification_w_checkout.html');
+		$output = ob_get_clean();
+	}
+		
+	function findValidUserPaymentSetting($userId) {
+		$ups = $this->User->query("select * from userPaymentSetting as UserPaymentSetting where userId = $userId and inactive = 0 order by primaryCC desc, expYear desc");
+		$year_now = date('Y');
+		$month_now = date('m');
+		if (empty($ups)) {
+			return false;
+		}
+		$found_valid_cc = false;
+		foreach ($ups as $k => $v) {
+			if (($v['UserPaymentSetting']['expYear'] < $year_now) || ($v['UserPaymentSetting']['expYear'] == $year_now && $v['UserPaymentSetting']['expMonth'] < $month_now)) {
+				continue;	
+			} else {
+				$found_valid_cc = true;
+				break;
+			}
+		}
+		return ($found_valid_cc) ? $v : 'EXPIRED';
 	}
 
 	function updateTrackPending($ticketId) {
@@ -119,6 +205,8 @@ class WebServiceTicketsController extends WebServicesController
 		if (!empty($revenueModelLoaRel['revenueModelLoaRelId'])) {
 			$revenueModelLoaRel['pending']+= $ticket['Ticket']['billingPrice'];
 			$this->RevenueModelLoaRel->save($revenueModelLoaRel);
+		} else {
+				
 		}
 	}
 	
@@ -130,40 +218,48 @@ class WebServiceTicketsController extends WebServicesController
 		
 		$this->ClientLoaPackageRel->recursive = -1;
 		$clientLoaPackageRel = $this->ClientLoaPackageRel->findBypackageid($data['packageId']);	
+	
+		$ticketId = $ticket['Ticket']['ticketId'];
+		$loaId = $clientLoaPackageRel['ClientLoaPackageRel']['loaId'];
+		
+		$this->Loa->recursive = -1;
+		$loa = $this->Loa->read(null, $loaId);
+		
+		// ---------------- rev stuff ---------------------
 		
 		$this->RevenueModelLoaRel->recursive = 2;
-		$revenueModelLoaRel = $this->RevenueModelLoaRel->findByloaid($clientLoaPackageRel['ClientLoaPackageRel']['loaId']);
+		$revenueModelLoaRel = $this->RevenueModelLoaRel->findByloaid($loaId);
 	
-		$expCrit 			= $revenueModelLoaRel['ExpirationCriterium'];
-		$revModel 			= $revenueModelLoaRel['RevenueModel'];
-		$revModelLoa		= $revenueModelLoaRel['RevenueModelLoaRel'];
-		$revModelLoaDetail 	= $revenueModelLoaRel['RevenueModelLoaRelDetail'];
-	
-		$revModelLoaDetail	= array();
-	
-		switch ($revModel['revenueModelId']) {
+		$exp 			= $revenueModelLoaRel['ExpirationCriterium'];
+		$model 			= $revenueModelLoaRel['RevenueModel'];
+		$track 			= $revenueModelLoaRel['RevenueModelLoaRel'];
+		$trackDetail 	= $revenueModelLoaRel['RevenueModelLoaRelDetail'];
+				
+		$revModelLoaDetailSave							= array();
+		$revModelLoaDetailSave['revenueModelLoaRelId'] 	= $track['revenueModelLoaId'];
+		$revModelLoaDetailSave['ticketId'] 				= $ticketId;
+		
+		switch ($model['revenueModelId']) {
 			case 1:
-				if (empty($revModelLoaDetail)) {
-					$revModelLoaDetail['revenueModelLoaRelId'] 	= $revModelLoa['revenueModelLoaId'];
-					$revModelLoaDetail['ticketId'] 				= $data['ticketId'];
-					$revModelLoaDetail['cycle'] 				= 1;
-					$revModelLoaDetail['iteration'] 			= 1;
-					$revModelLoaDetail['amountKept'] 			= ($revModelLoa['keepPercentage'] / 100) * $ticket['Ticket']['billingAmount'];
-					$revModelLoaDetail['amountRemitted'] 		= $ticket['Ticket']['billingAmount'] - $revModelLoaDetail['amountKept']
-					//$revModelLoaDetail[''] = 
+				if (empty($trackDetail)) {
+					$revModelLoaDetailSave['cycle'] 				= 1;
+					$revModelLoaDetailSave['iteration'] 			= 1;
 				} else {
-					
+					$revModelLoaDetailSave['cycle'] 				= $trackDetail['cycle'];
+					$revModelLoaDetailSave['iteration'] 			= $trackDetail['iteration']++;
 				}
+				$revModelLoaDetailSave['amountKept'] 			= ($track['keepPercentage'] / 100) * $ticket['Ticket']['billingPrice'];
+				$revModelLoaDetailSave['amountRemitted'] 		= $ticket['Ticket']['billingPrice'] - $revModelLoaDetailSave['amountKept'];
+				
 				break;
 			case 2:
 				break;
 			case 3:
 				break;
 		}
-
-
-		return print_r($revModelLoaDetail, true);
+		return print_r($revModelLoaDetailSave, true);
 		
+		// ------------- end rev stuff --------------------
 	}
 	
 }
