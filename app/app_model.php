@@ -43,10 +43,10 @@ class AppModel extends Model{
 	* Constructor just sets some defaults for Luxury Link and calls the parent constructor.
 	*/
 	function __construct($id = false, $table = null, $ds = null) {
-		if ($this->name === null) {
+		if ($this->name === null && get_class($this) != 'AppModel') {
 			$this->name = get_class($this);
 		}
-
+		
 		//only do this on models other than AppModel
 		if($this->name != 'AppModel'):
 			//Use the model name as the table name (forget about the cake plurals)
