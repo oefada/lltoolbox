@@ -20,37 +20,7 @@ if ($gRemoveAuctionId) {
 }
 
 ?>
-	<style type="text/css">
-		body {
-			background: white;
-			padding: 20px;
-		}
-		input {
-			border: 1px solid silver;
-			height: 20px;
-		}
-		.table th {
-			font-size: 11px;
-			text-align: left;
-			padding: 5px 2px;
-			padding-right: 10px;
-			border-bottom: 1px solid silver;
-			background: #F0F0F0;
-		}
-		.table td {
-			padding: 2px;
-		}
-		.table .redRow td {
-			color: #990000;
-			font-weight: bold;
-		}
-		.table .grayRow td {
-			color: silver;
-		}
-		.table2 td {
-			padding: 5px;
-		}		
-	</style>
+
 </HEAD>
 
 <BODY>
