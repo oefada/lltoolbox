@@ -53,7 +53,7 @@ class TicketsController extends AppController {
 		$this->set('ticketStatusIds', $this->Ticket->TicketStatus->find('list'));
 	}
 
-	function ppv($id) {
+	function ppv($id, $ppv_type, $send = false) {
 		$this->Ticket->recursive = 0;
 		$ticket = $this->Ticket->read(null, $id);
 
@@ -106,12 +106,11 @@ class TicketsController extends AppController {
 		include('../vendors/email_msgs/notifications/winner_notification_w_checkout.html');
 		$output = ob_get_clean();
 		
-		$headers = "From: LuxuryLink.com<auction@luxurylink.com>\r\nReply-To: auction@luxurylink.com\r\nBcc: winnernotifications@luxurylink.com\r\n";
-        $headers.= "Content-type: text/html\r\n";
-
-		@mail('alee@luxurylink.com', 'testing winner not', $output, $headers);
-		
-		die();	
+		if ($send) {
+			$headers = "From: LuxuryLink.com<auction@luxurylink.com>\r\nReply-To: auction@luxurylink.com\r\nBcc: winnernotifications@luxurylink.com\r\n";
+        	$headers.= "Content-type: text/html\r\n";
+			@mail('alee@luxurylink.com', 'testing winner not', $output, $headers);
+		}
 	}
 	
 	function updateTrackDetail($id) {
