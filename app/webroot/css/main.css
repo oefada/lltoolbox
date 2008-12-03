@@ -780,13 +780,41 @@ div.blankExample p {
 	margin: 0 0 15px 0;
 }
 /* @end */
+/* @group sortable menu items */
+.listItem {
+	background: #eee;
+	padding: 2px 0 2px 10px;
+	margin-bottom: 2px;
+	margin-left: 50px;
+}
+
+.sortableElement {
+	cursor: move;
+	
+}
+
+.sortableElement span.text {
+	margin-left: 50px;
+}
+.row_actions {
+	position: absolute;
+	padding: 2px 0 3px 0;
+	left: 0;
+	font-size: 12px;
+	cursor: default;
+	margin-left: -50px;
+}
+.row_actions a:link,
+.row_actions a:visited {
+	
+}
+/* @end */
 /* @group footer */
 #footer {
 	background: #880a00;
 	color: #f5f5f5;
 }
 /* @end */
-
 div.ticket-table {
 	float: left;
 	padding:0px;
