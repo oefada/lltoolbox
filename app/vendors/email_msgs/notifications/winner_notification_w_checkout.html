@@ -1,0 +1,135 @@
+<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">
+<html>
+<head>
+</head>
+
+<body>
+<table width="700" border="1" cellpadding="20">
+<tr>
+<td>
+<center>
+<a href="http://www.luxurylink.com/"><img src="http://www.luxurylink.com/gfx/MailPics/email_header.gif" border="0"></a>
+</center>
+<font face=Arial size=2><BR>
+<p>Dear <?php echo $userFirstName;?> <?php echo $userLastName;?>:</p>
+
+<?php if ($offerTypeId == 1) :?>
+							 <!-- Standard Auction Messaging -->
+							<p>
+							Congratulations! You have placed the winning bid for the Luxury Link Auction, 
+							<?php echo $packageName;?>, which closed <?php echo $offerEndDate;?> Pacific Time. 
+							</p>
+
+<?php elseif ($offerTypeId == 2) :?> 
+							<!-- Best Shot Auction Messaging -->
+							<p>
+							Congratulations! You have placed one of the top <?php echo $maxNumWinners;?> winning bids 
+							for the Luxury Link Best Shot Auction, <?php echo $packageName;?>, which closed 
+							<?php echo $offerEndDate;?> Pacific Time. All winning bidders will pay the same price, 
+							which may be equal to or LESS than your best shot bid, but never more. 
+							</p>
+
+<?php elseif ($offerTypeId == 6) :?>
+							<!-- Dutch Auction Messaging -->
+							<p>
+							Congratulations! You have placed one of the top <?php echo $maxNumWinners;?> winning bids 
+							for the Luxury Link Dutch Auction, <?php echo $packageName;?>, which closed 
+							<?php echo $offerEndDate;?> Pacific Time. All winning bidders will pay the same price, 
+							which may be equal to or LESS than your best shot bid, but never more. 
+							</p>
+<?php endif;?>
+					
+			<center>
+			<div style="width: 680px; border: 1px solid #a3a3a3; background-color: #F0F0F0; padding: 15px; font-family: Verdana, Arial; color: #444444; line-height: 15px; font-size: 11px; text-align: left;">
+			<img style="font-family: Verdana, Arial; font-size: 11px; border-color: silver;" src='http://www.luxurylink.com/images/my/hdr-sub-buying_package.gif' />
+			<table style="width: 680px; background-color: #F0F0F0; margin-top: 15px; auto; padding: 4px;">
+				<tr>
+					<td width="90" align="left" valign="top" style="font-family: Verdana, Arial; color: #444444; line-height: 15px; font-size: 11px">
+						<div style="margin-right:10px; width:86px; height: 80px; padding: 6px 10px 10px 6px; background: url('http://www.luxurylink.com/images/shared/shadow-list-light-silver.gif') no-repeat top left; overflow: hidden;"><img src="http://www.luxurylink.com/images/por/<?php echo $oldProductId;?>/<?php echo $oldProductId;?>-list-sml-01.jpg" alt="<?php echo $packageName;?>" border="0" /></div>
+					</td>
+					<td width="490" align="left" valign="top" style="font-family: Verdana, Arial; color: #444444; line-height: 15px; font-size: 11px">
+						<div style="width: 480px; font-weight: bold;"><?php echo $packageName;?></div>
+						<div style="width: 480px; color:#806284; font-weight: bold;"><?php echo $clientName;?></div>
+						<div style="width: 480px; font-weight: bold;"><?php echo $packageSubtitle;?></div>
+						<br />
+						<table cellspacing="0" cellspacing="0" border="0">
+						<tr style="font-family: Verdana, Arial; color: #444444; line-height: 15px; font-size: 11px">
+							<td width="180" valign="top" align="left">
+							Your Winning Bid:
+							</td>
+							<td width="90" valign="top" align="right">
+							$<?php echo $billingPrice;?>
+							</td>
+							<td rowspan="4" valign="top" align="right">
+								<div style="margin-left:35px; margin-bottom:15px;"><a target="_blank" href="https://www.scanalert.com/RatingVerify?ref=www.luxurylink.com"><img width="115" height="32" border="0" src="http://images.scanalert.com/meter/www.luxurylink.com/12.gif" alt="McAfee Secure sites help keep you safe from identity theft, credit card fraud, spyware, spam, viruses and online scams" oncontextmenu="alert('Copying Prohibited by Law - McAfee Secure is a Trademark of McAfee, Inc.'); return false;"></a></div>
+								<div style="margin-left:35px;"><script src=https://seal.verisign.com/getseal?host_name=www.luxurylink.com&size=L&use_flash=NO&use_transparent=NO&lang=en></script></div>
+							</td>
+						</tr>
+						<tr style="font-family: Verdana, Arial; color: #444444; line-height: 15px; font-size: 11px">
+							<td width="180" valign="top" align="left">
+							Auction Handling Fee:
+							</td>
+							<td width="90" valign="top" align="right">
+							$<?php echo $llFee;?>
+							</td>
+						</tr>
+						<tr style="font-family: Verdana, Arial; color: #444444; line-height: 15px; font-size: 11px">
+							<td width="180" valign="top" align="left" style="font-weight: bold;">
+							Total Due:
+							</td>
+							<td width="90" valign="top" align="right" style="font-weight: bold;">
+							$<?php echo $totalPrice;?>
+							</td>
+						</tr>
+						<tr>
+							<td align="left" rowspan="2" valign="top" style="font-family: Verdana, Arial; color: #444444; line-height: 15px; font-size: 11px">
+								<br />
+								<a href="<?php echo $checkoutLink;?>" border="0"><img src="http://www.luxurylink.com/images/buttons/btn_submit_payment_info.png" border="0"></a>
+								<br /><br />
+								<?php echo $packageIncludes;?>
+							</td>
+						</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+			</div>
+			</center>
+						<p>
+						If you are a first time auction winner or do not have current credit card details on file, please click above to submit 
+						your credit card information directly into our secure servers to expedite processing.  Or if you prefer, call us with 
+						your credit card information at 888-297-3299 or 310-215-8060.  Please note:  your purchase must be finalized within 
+						24 hours of the closing date and time to secure the package in your name.
+						</p>
+
+						<p>
+						If we have your current credit card information on file, the package will be automatically secured in your name by 
+						processing this card.
+						</p>
+
+						<p>
+						Luxury Link strongly recommends the purchase of travel insurance. There are many reputable companies from which to choose; please contact your insurance provider for a recommendation.
+						</p>
+
+
+<?php if ($show_mc): ?>
+	<div style="padding:20px 0px;">
+		<img border="0" src="http://view.atdmt.com/AST/view/114828977/direct;wi.1;hi.1/01/" />
+		<img border="0" src="http://view.atdmt.com/AST/view/114828978/direct;wi.1;hi.1/01/" />
+		<a href="http://clk.atdmt.com/AST/go/114828977/direct;wi.1;hi.1/01/"><img src="http://www.luxurylink.com/images/mini/mc_logo.gif" align="left" border="0" style="float:left; padding-right:10px;"/></a>World Mastercard® is the preferred card for this Select Travel Offer.<br/><a href="http://clk.atdmt.com/AST/go/114828978/direct;wi.1;hi.1/01/">Sign up for one</a>.
+		<div style="clear:both;">&nbsp;</div>
+	</div>
+<?php endif; ?>
+
+						Auction Department<br>
+						Luxury Link<br>
+						www.luxurylink.com<br>
+                        
+						<BR><center><a href="http://www.luxurylink.com/"><img src="http://www.luxurylink.com/gfx/MailPics/email_footer.gif" border="0"></a><br><a href="http://www.luxurylink.com/"><strong>www.luxurylink.com</strong></a>
+                    </center>
+      </font>
+                    </td>
+                    </tr>
+                    </table>
+                        </body>
+						</html>

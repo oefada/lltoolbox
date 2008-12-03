@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">
+<html>
+<head>
+</head>
+
+<body>
+<table width="500" border="1" cellpadding="20">
+<tr>
+<td>
+<center>
+<a href="http://www.luxurylink.com/"><img src="http://www.luxurylink.com/gfx/MailPics/email_header.gif" border="0"></a>
+</center>
+<font face="Arial" size="2"><BR>
+User Account ID: <?php echo $userId;?><br />
+Ticket Reference ID: <?php echo $ticketId;?><br />
+<p>Dear <?php echo $userFirstName;?> <?php echo $userLastName;?>:</p>
+
+<?php if ($offerTypeId == 1) :?> 
+							<!-- Standard Auction Messaging -->
+							<p>Congratulations! You have placed the winning bid for the Luxury Link Auction, 
+							<?php echo $packageName;?>, which closed <?php echo $offerEndDate;?> Pacific Time. 
+							Your purchase price for this luxury travel package is $<?php echo $billingPrice;?>*.
+							</p>
+<?php elseif ($offerTypeId == 2) :?> 
+							<!-- Best Shot Auction Messaging -->
+							<p>Congratulations! You have placed one of the top <?php echo $maxNumWinners;?> winning bids 
+							for the Luxury Link Best Shot Auction, <?php echo $packageName;?>, which closed 
+							<?php echo $offerEndDate;?> Pacific Time. All winning bidders will pay the same price, 
+							which may be equal to or LESS than your best shot bid, but never more. 
+							Therefore, your purchase price for this luxury travel package is $<?php echo $billingPrice;?>*.
+							</p>
+
+<?php elseif ($offerTypeId == 6) : ?> 
+							<!-- Dutch Auction Messaging -->
+							<p>Congratulations! You have placed one of the top <?php echo $maxNumWinners;?> winning bids 
+							for the Luxury Link Dutch Auction, <?php echo $packageName;?>, which closed 
+							<?php echo $offerEndDate;?> Pacific Time. All winning bidders will pay the same price, 
+							which may be equal to or LESS than your best shot bid, but never more. 
+							Therefore, your purchase price for this luxury travel package is $<?php echo $billingPrice;?>*.
+							</p>
+<?php endif;?>
+
+						<p>Per Luxury Link Auction Rules, your purchase must be finalized within 24 hours 
+						of the closing date and time of the auction in order to secure the package in your name. 
+						If you are a first time auction winner, a Luxury Link representative 
+						will be in touch shortly to collect your credit card information. 
+						You may also contact us at 888-297-3299 or 310-215-8060.</p>
+						<p>If we have your current credit card information on file, 
+						the package will be automatically secured in your name by 
+						processing this card.</p>
+
+						<p><?php echo $packageIncludes;?></p>
+						<?php echo $validityNote;?></p>
+						<b>*<?php echo $legalText;?></b><br>
+
+						<p>*Price does not include auction handling fee of $<?php echo $llFee;?>.</b><p>
+						Luxury Link strongly recommends purchasing travel insurance protection through a reputable firm. A variety of plans and carriers are available online or through your personal insurance agency. 
+						
+                        <br><br>Sincerely,<p>
+						Auction Department<br>
+						LuxuryLink.com<br>
+						http://www.luxurylink.com<br>
+						Toll Free in the U.S. 888-297-3299<br>
+						Outside the U.S. 310-215-8060<br>
+						Facsimile 310-215-8279</p>
+						<p><i>"An outstanding way to gain access to the best quality travel options all over the world"</i><br>
+						The New York Times Entrée<p>
+						<i>"One of four travel auction sites worth watching. Indulgent!"</i><br>
+						The Washington Post<p>
+						<i>Named one of the Internet&#039;s "Most Helpful Travel Web Sites"</i><br>
+						The Los Angeles Times</p>
+	
+                        <BR><center><a href="http://www.luxurylink.com/"><img src="http://www.luxurylink.com/gfx/MailPics/email_footer.gif" border="0"></a><br><a href="http://www.luxurylink.com/"><strong>www.luxurylink.com</strong></a>
+                    </center>
+      </font>
+                    </td>
+                    </tr>
+                    </table>
+                        </body>
+						</html>

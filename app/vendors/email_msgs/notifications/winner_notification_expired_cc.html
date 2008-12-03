@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">
+<html>
+<body>
+	<table width="500" border="1" cellpadding="20">
+		<tr>
+			<td>
+				<center>
+				<a href="http://www.luxurylink.com/"><img src="http://www.luxurylink.com/gfx/MailPics/email_header.gif" border="0"></a>
+				</center>
+				<font face=Arial size=2>
+				<br />
+
+				Dear <?php echo $userFirstName;?> <?php echo $userLastName;?>,<p>
+		
+				<p>
+				Re: <?php echo $packageName;?> and <?php echo $clientName;?>
+				</p>
+
+				The {$cc_type_name} card we have on file with last four numbers {$cc_four} 
+				has expired. Please <a href="<?php echo $checkoutLink;?>">click here</a> to enter a new 
+				credit card number. In order to secure your package we need to receive payment within 24 
+				hours of the auction closing. Should you need additional assistance, please do not 
+				hesitate to contact a Luxury Link representative at (888) 297-3299 or (310) 215-8060 who will 
+				be able to help finalize your transaction.
+				<br /><br />
+		  		<strong>
+				Ticket Reference ID# <?php echo $ticketId;?>
+				</strong>
+				<br /><br />
+		  		
+				Warm regards,<br />
+				Auction Department<br />
+				Luxury Link<br />
+				www.luxurylink.com
+
+				</font>
+			</td>
+		</tr>
+	</table>
+</body>
+</html>
