@@ -91,20 +91,5 @@ class RevenueModelLoaRel extends AppModel {
 		}
 		return $validPresets;
 	}
-	
-	function beforeSave() {
-		//increase tier #
-		$conditions = array(
-	   		'conditions' => array('RevenueModelLoaRel.loaId' => $this->data['RevenueModelLoaRel']['loaId']), //array of conditions
-	    	'recursive' => 0, //int
-	    	'fields' => array('MAX(RevenueModelLoaRel.tierNum) AS maxTier') //array of field names
-	   );
-	   
-		$lastTier = $this->find('first', $conditions);
-		$newTier = ($lastTier[0]['maxTier']) ? $lastTier[0]['maxTier']+1 : 1 ;
-		$this->data['RevenueModelLoaRel']['tierNum'] = $newTier;
-
-		return true;
-	}
 }
 ?>
