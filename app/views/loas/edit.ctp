@@ -19,9 +19,12 @@ $this->set('clientId', $this->data['Client']['clientId']);
 		echo $form->input('customerApprovalDate', array('label' => 'Customer Approval Date'));
 	?>
 	<div class="controlset">
-		<span class='label'>User Options</span><? echo $form->input('upgraded'); ?>
+		<span class='label'>&nbsp;</span>
+		<? echo $form->input('upgraded');
+		 ?>
 	</div>
 	<?
+		echo $form->input('valueAdds');
 		echo $form->input('loaNumberPackages');
 		echo $form->input('startDate');
 		echo $form->input('endDate');
