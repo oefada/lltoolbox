@@ -58,7 +58,8 @@
 	float: left;
 	cursor: help;
 }
-.pkgTitle .title a:link {
+.pkgTitle .title a,
+.pkgTitle .title a:visited {
     color: #fff;
     font-weight: bold;
 }
