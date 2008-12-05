@@ -686,7 +686,8 @@ fieldset div.controlset2 {
 	margin: 0;
 }
 
-fieldset div.controlset2 input[type=hidden] {
+fieldset div.controlset2 input[type=hidden],
+fieldset div.controlset3 input[type=hidden] {
 	display: none;
 	padding: 0;
 	margin: 0;
@@ -699,7 +700,32 @@ fieldset div.controlset2 div.checkbox {
 	margin: 0;
 	padding:  2px;
 }
-
+fieldset div.controlset3 label {
+    float: none;
+    clear: both;
+    padding: 0;
+    text-align: left;
+    width: auto;
+}
+fieldset div.controlset3 div.checkbox {
+    float: left;
+    clear: none;
+    padding: 0;
+    margin: 0;
+}
+fieldset div.controlset3 div.checkbox label {
+    text-align: left;
+    float: left;
+    clear: none;
+    width: auto;
+    padding: 0 3px 0 0;
+}
+fieldset div.controlset3 div.checkbox input {
+	float: left;
+	clear: none;
+	margin: 0;
+	padding:  2px;
+}
 div.buttonrow {
 	margin-left: 170px;
 }

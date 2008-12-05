@@ -1,9 +1,11 @@
 <?php
 	$i = 0;
 	
-	//make sure we always have atleast one start and end date
 	if(isset($this->data['PackageValidityPeriod'])):
 	foreach($this->data['PackageValidityPeriod'] as $i => $packageValidityPeriod): 
+		if ($packageValidityPeriod['isWeekDayRepeat']) {
+			continue;
+		}
 		echo "<div style='clear: both; float: none'>";
 		echo "<strong>";
 		echo $ajax->link($html->image('delete.png'),

@@ -76,6 +76,7 @@ class PackagesController extends AppController {
 		
 		if (!empty($this->data) && isset($this->data['Package']['complete'])) {
 			$this->addPackageLoaItems();
+			$this->getBlackoutDaysNumber();
 			$this->carveRatePeriods($clientId);
 			if ($this->Package->saveAll($this->data) && $this->Package->save($this->data)) {
 				$this->Session->setFlash(__('The Package has been saved', true), 'default', array(), 'success');
@@ -107,7 +108,7 @@ class PackagesController extends AppController {
 			$this->render('add_step_1');
 			return;
 		}
-		
+
 		$percentSum = 0;
 		$loaIds = array(); //need to reset the array declared before this if/else
 	
@@ -148,6 +149,65 @@ class PackagesController extends AppController {
 		$this->data['Currency'] = $clientLoaDetails[0]['Currency'];
 		$this->data['Package']['currencyId'] = $clientLoaDetails[0]['Currency']['currencyId'];
 		$this->set('currencyCodes', $this->Package->Currency->find('list', array('fields' => array('currencyCode'))));
+	}
+	
+	function getBlackoutDaysNumber($reverse = 0) {
+	    if ($reverse == 0) {
+	        $days = $this->data['Package']['Recurring Day Blackout'];
+	        
+	        if (empty($days)) {
+	            unset($this->data['Package']['blackoutDays']);
+	            return;
+	        }
+	        
+	        $this->data['Package']['blackoutDays'] = implode(',', $days);
+
+	        $blackoutDays = $this->_createBlackoutsBasedOnDays($days);
+
+	        if (is_array($this->data['PackageValidityPeriod'])) {
+	            $this->data['PackageValidityPeriod'] = array_merge($this->data['PackageValidityPeriod'], $blackoutDays);
+	        } else {
+	            $this->data['PackageValidityPeriod'] = $blackoutDays;
+	        }
+	    } else {
+	        $days = $this->data['Package']['blackoutDays'];
+	        $this->data['Package']['Recurring Day Blackout'] = explode(',', $days);
+	    }
+	}
+	
+	function _createBlackoutsBasedOnDays($selectedDays) {
+	    $validityStartDate  = is_array($this->data['Package']['validityStartDate']) ? implode('/', $this->data['Package']['validityStartDate']): $this->data['Package']['validityStartDate'] ;
+	    $validityEndDate    = is_array($this->data['Package']['validityEndDate']) ? implode('/', $this->data['Package']['validityEndDate']): $this->data['Package']['validityEndDate'] ;
+	    
+	    $weekDays = array(1=>'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday');
+	    
+	    $seedDate = strtotime($validityStartDate);
+	    
+	    $dayOfStartDate = date('N', $seedDate);
+	    
+	    $isWeekDayRepeat = 1;
+	    if (in_array($dayOfStartDate, $selectedDays)) {
+	        $startDate = date('Y-m-d', $seedDate);
+	        $endDate = $startDate;
+	        $blackoutDays[] = compact('startDate', 'endDate', 'isWeekDayRepeat');
+	    }
+	    
+	    $timeStampEndDate = strtotime($validityEndDate);
+	    while($seedDate <= $timeStampEndDate): 
+	        foreach ($selectedDays as $day):
+	            $blackoutDay = strtotime("next {$weekDays[$day]}", $seedDate);
+	            
+	            if ($blackoutDay < $timeStampEndDate) {
+	                $startDate = date('Y-m-d', $blackoutDay);
+	                $endDate = $startDate;
+	                $blackoutDays[] = compact('startDate', 'endDate', 'isWeekDayRepeat');
+	            }
+	        endforeach;
+	        
+	        $seedDate = strtotime('next week', $seedDate);
+	    endwhile;
+	    
+	    return $blackoutDays;
 	}
 	
 	/**
@@ -293,10 +353,14 @@ class PackagesController extends AppController {
 				$this->updatePackageLoaItems();
 				$cloned = false;
 			}
-			
+
+			$this->getBlackoutDaysNumber();
 			$this->carveRatePeriods($clientId);
 			//remove all offer type defaults so we don't get duplicates
-			$this->Package->PackageOfferTypeDefField->deleteAll(array('PackageOfferTypeDefField.packageId' => $this->data['Package']['packageId']));
+			$this->Package->PackageOfferTypeDefField->deleteAll(array('PackageOfferTypeDefField.packageId' => $this->data['Package']['packageId']), false);
+			
+			//remove all recurring days so we don't get duplicates
+			$this->Package->PackageValidityPeriod->deleteAll(array('PackageValidityPeriod.packageId' => $this->data['Package']['packageId'], 'isWeekDayRepeat' => 1), false);
 			
 			if ($this->Package->saveAll($this->data) && $this->Package->save($this->data)) {
 				if(true == $cloned) {
@@ -316,7 +380,7 @@ class PackagesController extends AppController {
 			$this->data = $package;
 		}
 		$this->set('package', $package);
-		
+		$this->getBlackoutDaysNumber(1);
 		$this->Package->ClientLoaPackageRel->recursive = -1;
 		$clientLoaPackageRel = $this->Package->ClientLoaPackageRel->findAllByPackageId($id);
 	
@@ -418,7 +482,7 @@ class PackagesController extends AppController {
 		foreach ($this->data['PackageOfferTypeDefField'] as $defField):
 			$defFieldViewArray[$defField['offerTypeId']] = $defField;
 			
-			if (in_array($defField['offerTypeId'], array(1,2,6))) {
+			if (in_array($defField['offerTypeId'], array(1,2,6)) && $this->data['Package']['approvedRetailPrice'] != 0) {
 			    $defFieldViewArray[$defField['offerTypeId']]['percentRetail'] = round($defField['openingBid']/$this->data['Package']['approvedRetailPrice']*100, 2);
 			}
 		endforeach;
