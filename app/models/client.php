@@ -19,8 +19,7 @@ class Client extends AppModel {
 				)
 			);
 	
-	var $belongsTo = array('ClientLevel' => array('foreignKey' => 'clientLevelId'),
-						   'ClientStatus' => array('foreignKey' => 'clientStatusId'),
+	var $belongsTo = array(
 						   'ClientType' => array('foreignKey' => 'clientTypeId'),
 						   'Region' => array('foreignKey' => 'regionId'),
 						   'ClientAcquisitionSource' => array('foreignKey' => 'clientAcquisitionSourceId',
