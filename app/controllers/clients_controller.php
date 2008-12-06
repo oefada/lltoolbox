@@ -53,8 +53,6 @@ class ClientsController extends AppController {
 		}
 
 		$amenities = $this->Client->Amenity->find('list');
-		$clientLevelIds = $this->Client->ClientLevel->find('list');
-		$clientStatusIds = $this->Client->ClientStatus->find('list');
 		$clientTypeIds = $this->Client->ClientType->find('list');
 		$clientAcquisitionSourceIds = $this->Client->ClientAcquisitionSource->find('list');
 		$themes = $this->Client->Theme->find('list');
