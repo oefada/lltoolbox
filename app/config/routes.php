@@ -35,6 +35,8 @@
  */
 	Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
 	
+	Router::connect('/login', array('controller' => 'sessions', 'action' => 'login'));
+	Router::connect('/logout', array('controller' => 'sessions', 'action' => 'logout'));
 	
 	Router::connect('/:controller/:id', array('action' => 'edit'), array('id' => "[0-9]+", 'pass' => array('id')));
 /**
