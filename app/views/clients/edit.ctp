@@ -13,7 +13,9 @@ $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']
 	<h2 class="title">Client Details</h2>
 <?php echo $form->create('Client');?>
 	<fieldset>
-		<div class="inlineForms"><? echo $form->input('clientTypeId', array('label' => 'Client Type')); ?><? echo $form->input('clientLevelId', array('label' => 'Client Level')); ?><? echo $form->input('clientStatusId', array('label' => 'Client Status')); ?></div>
+		<? echo $form->input('clientTypeId', array('label' => 'Client Type')); ?>
+		<div class="input text"><label>Client Level</label><?=$this->data['ClientLevel']['clientLevelName']?></div>
+		<div class="input select"><label>Client Status</label><?=$this->data['ClientStatus']['clientStatusName']?></div>
 	<?php
 		echo $form->input('clientId');
 		echo $form->input('parentClientId');
