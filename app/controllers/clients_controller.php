@@ -14,7 +14,7 @@ class ClientsController extends AppController {
 	
 	function index() {
 		$this->Client->recursive = 1;
-		$this->paginate = array('contain' => array('ChildClient'), 'fields' => array('Client.name, Client.clientTypeId'), 'conditions' => array('OR' => array('parentClientId IS NULL')));
+		$this->paginate = array('contain' => array('ChildClient', 'ClientType'), 'fields' => array('Client.name, Client.clientTypeId, ClientType.clientTypeName'), 'conditions' => array('OR' => array('parentClientId IS NULL')));
 
 		$this->set('clients', $this->paginate());
 	}

@@ -7,7 +7,8 @@ class Loa extends AppModel {
 
 	var $belongsTo = array('LoaCustomerApprovalStatus' => array('foreignKey' => 'customerApprovalStatusId'),
 						   'Client' => array('foreignKey' => 'clientId'),
-						   'Currency' => array('foreignKey' => 'currencyId')
+						   'Currency' => array('foreignKey' => 'currencyId'),
+						   'LoaLevel' => array('foreignKey' => 'loaLevelId')
 						  );
 	var $validate = array('startDate' => array('rule' => array('validateEndStartDate'), 'message' => 'Start date must be less than end date'),
 							'endDate' => array('rule' => array('validateEndStartDate'), 'message' => 'Start date must be less than end date')
@@ -19,6 +20,8 @@ class Loa extends AppModel {
 						 'ClientLoaPackageRel' => array('foreignKey' => 'loaId'),
 						 'RevenueModelLoaRel' => array('foreignKey' => 'loaId')
 						);
+    
+    var $actsAs = array('Containable');
 
 	function validateEndStartDate()
 	{
