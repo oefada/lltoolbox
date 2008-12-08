@@ -1,22 +1,17 @@
-{if $emailMode == true}
 <!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">
 <html>
 <body>
-{if $ppv_auto}
-User Account ID #{$user_id}<br />
-Ticket Reference ID #{$ticket_id}<br />
-<br />
-{/if}
 <table width="500" border="1" cellpadding="20">
 <tr>
 <td>
 <center>
-<a href=http://www.luxurylink.com/Home.phtml?Click=LLAmerOnSaleEmail&rd=Home/HomeMain.phtml><img src=http://www.luxurylink.com/gfx/MailPics/email_header.gif border=0></a>
+<a href="http://www.luxurylink.com/"><img src="http://www.luxurylink.com/gfx/MailPics/email_header.gif" border="0"></a>
 </center>
-<font face=Arial size=2>
+<font face="Arial" size="2">
 <BR>
-{/if}
-
+	User Account ID #<?php echo $userId;?><br />
+	Ticket Reference ID #<?php echo $ticketId;?><br />
+<br />
 {if $auction_type_id == 1 or $auction_type_id ==6}
 	{if $product_type_text == 'MERCHANDISE'}
 		<p>Dear {$email_name},</p>
