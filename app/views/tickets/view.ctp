@@ -21,11 +21,11 @@ $this->searchController = 'Tickets';
 			</tr>
 			<tr>
 				<td><strong>Package Id</strong></td>
-				<td><?php echo $html->link($ticket['Package']['packageId'], array('controller'=> 'packages', 'action'=>'view', $ticket['Package']['packageId'])); ?></td>
+				<td><?php echo $html->link($ticket['Ticket']['packageId'], array('controller'=> 'packages', 'action'=>'view', $ticket['Ticket']['packageId'])); ?></td>
 			</tr>
 			<tr>
 				<td><strong>Offer Id</strong></td>
-				<td><?php echo $html->link($ticket['Offer']['offerId'], array('controller'=> 'offers', 'action'=>'view', $ticket['Offer']['offerId'])); ?></td>
+				<td><?php echo $html->link($ticket['Ticket']['offerId'], array('controller'=> 'offers', 'action'=>'view', $ticket['Ticket']['offerId'])); ?></td>
 			</tr>
 			<tr>
 				<td><strong>Offer Type</strong></td>
@@ -219,21 +219,16 @@ $this->searchController = 'Tickets';
 		<?php endforeach; ?>
 		</table>
 	<?php endif; ?>
+	
 	<?php 
-		echo $html->link('Send New Notice', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add');
-		/*
-		echo $html->link('Send New Notice',
-			'/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add',
-			array(
-				'title' => 'Send New Notice',
-				'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
-				'complete' => 'closeModalbox()'
-				),
-			null,
-			false
-		);
-		*/
-		?>
+		foreach ($ppvNoticeTypes as $ppvId => $ppvName) {
+			$link_title = 'Send New ' . $ppvName;
+			$link_url   = '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/' . $ppvId;
+			echo $html->link($link_title, $link_url);
+			echo '<br /><br />';
+		}
+	?>
+	
 	</div>
 </div>
 
