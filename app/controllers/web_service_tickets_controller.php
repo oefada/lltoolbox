@@ -102,12 +102,17 @@ class WebServiceTicketsController extends WebServicesController
 
 		$this->Ticket->create();
 		if ($this->Ticket->save($newTicket)) {
+	
+			// ticket is now created. werd
 			$ticketId = $this->Ticket->getLastInsertId();
 			
+			// update the tracks 
 			$this->updateTrackPending($ticketId);
 			
+			// find out if there is a valid credit card to charge.  charge and send appropiate emails
 			$user_payment_setting = $this->findValidUserPaymentSetting($userData['User']['userId']);
 			
+			// param settings for the ppv function
 			$ppv_settings = array();
 			$ppv_settings['ticketId'] 		= $ticketId;
 			$ppv_settings['send'] 			= 1;
@@ -127,6 +132,7 @@ class WebServiceTicketsController extends WebServicesController
 				$ppv_settings['emailType'] 	= 6;
 			}
 			
+			// send out winner notifications
 			$this->ppv(json_encode($ppv_settings));
 			
 			return true;	
