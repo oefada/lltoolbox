@@ -7,7 +7,7 @@ class WebServiceTicketsController extends WebServicesController
 {
 	var $name = 'WebServiceTickets';
 	var $uses = array('Ticket', 'User', 'Offer', 'Bid', 'ClientLoaPackageRel', 'RevenueModelLoaRel', 'Loa', 'RevenueModelLoaRelDetail');
-	var $serviceUrl = 'http://192.168.100.111/web_service_tickets';
+	var $serviceUrl = 'http://192.168.100.22/web_service_tickets';
 	var $errorResponse = false;
 	var $api = array(
 					'newTicketProcessor1' => array(
@@ -102,19 +102,30 @@ class WebServiceTicketsController extends WebServicesController
 
 		$this->Ticket->create();
 		if ($this->Ticket->save($newTicket)) {
-			$this->updateTrackPending($this->Ticket->getLastInsertId());
+			$ticketId = $this->Ticket->getLastInsertId();
+			
+			$this->updateTrackPending($ticketId);
+			
 			$user_payment_setting = $this->findValidUserPaymentSetting($userData['User']['userId']);
+			
+			$ppv_settings = array();
+			$ppv_settings['ticketId'] 		= $ticketId;
+			$ppv_settings['send'] 			= 1;
+			$ppv_settings['display']		= 0;
+			$ppv_settings['returnString']	= 0;
 			
 			if (is_array($user_payment_setting) && !empty($user_payment_setting)) {
 				// has valid cc card to charge
-				
+				$ppv_settings['emailType'] 	= 5;
 			} elseif ($user_payment_setting == 'EXPIRED') {
 				// has valid cc card but is expired
-				
+				$ppv_settings['emailType'] 	= 8;
 			} else {
 				// has no valid cc on file
-				
+				$ppv_settings['emailType'] 	= 6;
 			}
+			
+			$this->ppv(json_encode($ppv_settings));
 			
 			return true;	
 		} else {
@@ -183,27 +194,35 @@ class WebServiceTicketsController extends WebServicesController
 		switch ($emailType) {
 			case 1:
 				include('../vendors/email_msgs/ppv/conf_ppv.html');
+				$subject = 'testing conf ppv';
 				break;
 			case 2:
 				include('../vendors/email_msgs/ppv/res_ppv.html');
+				$subject = 'testing res ppv';
 				break;
 			case 3:
 				include('../vendors/email_msgs/ppv/winner_ppv.html');
+				$subject = 'testing winner ppv';
 				break;
 			case 4: 
 				include('../vendors/email_msgs/ppv/client_ppv.html');
+				$subject = 'testing client ppv';
 				break;
 			case 5:
 				include('../vendors/email_msgs/notifications/winner_notification.html');
+				$subject = 'testing winn notif';
 				break;
 			case 6:
 				include('../vendors/email_msgs/notifications/winner_notification_w_checkout.html');
+				$subject = 'testing winn notif w checkout';
 				break;
 			case 7:
 				include('../vendors/email_msgs/notifications/winner_notification_decline_cc.html');
+				$subject = 'testing winn notif w decline cc';
 				break;
 			case 8:
 				include('../vendors/email_msgs/notifications/winner_notification_expired_cc.html');
+				$subject = 'testing winn notif w expired cc';
 				break;
 			default:
 				break;
@@ -220,7 +239,7 @@ class WebServiceTicketsController extends WebServicesController
 		if ($send) {
 			$headers = "From: LuxuryLink.com<auction@luxurylink.com>\r\nReply-To: auction@luxurylink.com\r\nBcc: winnernotifications@luxurylink.com\r\n";
         	$headers.= "Content-type: text/html\r\n";
-			@mail('alee@luxurylink.com', 'testing winner not', $output, $headers);
+			@mail('devmail@luxurylink.com', $subject, $output, $headers);
 		}
 	}
 		

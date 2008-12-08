@@ -36,8 +36,6 @@ class PpvNoticesController extends AppController {
 		$webservice_live_method_param = 'in0';
 		
 		if (!empty($this->data)) {
-			print_r($this->data);
-			die();
 			$this->PpvNotice->create();
 			if ($this->PpvNotice->save($this->data)) {
 				$this->Session->setFlash(__('The PpvNotice has been saved', true));

@@ -59,7 +59,7 @@ class TicketsController extends AppController {
 		$ticket = $this->Ticket->read(null, $id);
 		
 		// [send to webservice tickets]
-		$webservice_live_url = 'http://192.168.100.111/web_service_tickets?wsdl';
+		$webservice_live_url = 'http://192.168.100.22/web_service_tickets?wsdl';
 		$webservice_live_method_name = 'updateTrackDetail';
 		$webservice_live_method_param = 'in0';
 
