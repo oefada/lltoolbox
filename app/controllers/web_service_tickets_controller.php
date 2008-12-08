@@ -107,7 +107,7 @@ class WebServiceTicketsController extends WebServicesController
 			
 			// if non-auction, just stop here as charging and ppv should not be auto
 			if ($formatId == 2) {
-				return true;	
+				//return true;	
 			}
 			
 			// find out if there is a valid credit card to charge.  charge and send appropiate emails
