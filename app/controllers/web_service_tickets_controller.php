@@ -6,7 +6,7 @@ Configure::write('debug', 0);
 class WebServiceTicketsController extends WebServicesController
 {
 	var $name = 'WebServiceTickets';
-	var $uses = array('Ticket', 'User', 'Offer', 'Bid', 'ClientLoaPackageRel', 'RevenueModelLoaRel', 'Loa', 'RevenueModelLoaRelDetail');
+	var $uses = array('Ticket', 'User', 'Offer', 'Bid', 'ClientLoaPackageRel', 'RevenueModelLoaRel', 'Loa', 'RevenueModelLoaRelDetail', 'PpvNotice');
 	var $serviceUrl = 'http://192.168.100.22/web_service_tickets';
 	var $errorResponse = false;
 	var $api = array(
@@ -111,12 +111,14 @@ class WebServiceTicketsController extends WebServicesController
 			$ppv_settings = array();
 			$ppv_settings['ticketId'] 		= $ticketId;
 			$ppv_settings['send'] 			= 1;
+			$ppv_settings['autoProcessPpv']	= 0;
 			$ppv_settings['display']		= 0;
 			$ppv_settings['returnString']	= 0;
 			
 			if (is_array($user_payment_setting) && !empty($user_payment_setting)) {
 				// has valid cc card to charge
-				$ppv_settings['emailType'] 	= 5;
+				$ppv_settings['emailType'] 		= 5;
+				$ppv_settings['autoProcessPpv'] = 1;
 			} elseif ($user_payment_setting == 'EXPIRED') {
 				// has valid cc card but is expired
 				$ppv_settings['emailType'] 	= 8;
@@ -137,11 +139,12 @@ class WebServiceTicketsController extends WebServicesController
 	function ppv($in0) {
 		$params = json_decode($in0, true);
 		
-		$ticketId = $params['ticketId'];
-		$send = $params['send'];
-		$display = $params['display'];
-		$returnString = $params['returnString'];
-		$emailType = $params['emailType'];
+		$ticketId 		= $params['ticketId'];
+		$send 			= $params['send'];
+		$display 		= $params['display'];
+		$returnString 	= $params['returnString'];
+		$emailType 		= $params['emailType'];
+		$autoProcessPpv	= $params['autoProcessPpv'];
 		
 		$this->Ticket->recursive = 0;
 		$ticket = $this->Ticket->read(null, $ticketId);
@@ -227,6 +230,7 @@ class WebServiceTicketsController extends WebServicesController
 			default:
 				break;
 		}
+		
 		$output = ob_get_clean();
 		
 		if ($returnString) {
