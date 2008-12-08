@@ -19,6 +19,11 @@ class WebServiceTicketsController extends WebServicesController
 						'doc' => 'N/A',
 						'input' => array('in0' => 'xsd:string'),
 						'output' => array('return' => 'xsd:string')
+						),
+					'ppv' => array(
+						'doc' => 'N/A',
+						'input' => array('in0' => 'xsd:string'),
+						'output' => array('return' => 'xsd:string')
 						)
 					);
 
@@ -117,6 +122,108 @@ class WebServiceTicketsController extends WebServicesController
 			return false;
 		}
 	}
+		
+	function ppv($in0) {
+		$params = json_decode($in0, true);
+		
+		$ticketId = $params['ticketId'];
+		$send = $params['send'];
+		$display = $params['display'];
+		$returnString = $params['returnString'];
+		$emailType = $params['emailType'];
+		
+		$this->Ticket->recursive = 0;
+		$ticket = $this->Ticket->read(null, $ticketId);
+
+		$this->ClientLoaPackageRel->recursive = 0;
+		$clientLoaPackageRel = $this->ClientLoaPackageRel->findBypackageid($ticket['Ticket']['packageId']);
+		
+		$liveOffer	= $this->Ticket->query("select * from livedev.offer as LiveOffer where offerId = " . $ticket['Ticket']['offerId'] . " limit 1");
+		
+		// data arrays
+		// ---------------------------------------------------------
+		$ticketData 	= $ticket['Ticket'];
+		$packageData 	= $ticket['Package'];
+		$offerData 		= $ticket['Offer'];
+		$userData 		= $ticket['User'];
+		$clientData 	= $clientLoaPackageRel['Client'];
+		$loaData 		= $clientLoaPackageRel['Loa'];
+		$liveOfferData 	= $liveOffer[0]['LiveOffer'];
+
+		// vars for templates
+		// ----------------------------------------------------------
+		$userId 			= $userData['userId'];
+		$userFirstName 		= ucwords(strtolower($userData['firstName']));
+		$userLastName 		= ucwords(strtolower($userData['lastName']));
+		$userEmail 			= $userData['email'];
+		$offerId			= $offerData['offerId'];
+		$clientId			= $clientData['clientId'];
+		$oldProductId		= $clientData['oldProductId'];
+		$packageName 		= $packageData['packageName'];
+		$packageSubtitle	= $packageData['subtitle'];
+		$clientName 		= $clientData['name'];
+		$packageIncludes 	= $packageData['packageIncludes'];
+		$legalText			= $packageData['legalText'];
+		$validityNote		= $packageData['validityNote'];
+		$offerTypeId		= $offerData['offerTypeId'];
+		$offerEndDate		= date('M d Y H:i A', strtotime($liveOfferData['endDate']));
+		$billingPrice		= number_format($ticketData['billingPrice'], 2, '.', ',');
+		$llFeeAmount		= in_array($offerTypeId, array(1,2,6)) ? 30 : 40;
+		$llFee				= number_format($llFeeAmount, 2, '.', ',');
+		$totalPrice			= number_format(($ticketData['billingPrice'] + $llFeeAmount),  2, '.', ',');
+		$maxNumWinners		= $liveOfferData['maxNumWinners'];
+		
+		$checkoutHash		= md5($ticketId . $userId . $offerId . 'LL_L33T_KEY');
+		$checkoutKey		= base64_encode(serialize(array('ticketId' => $ticketId, 'userId' => $userId, 'offerId' => $offerId, 'zKey' => $checkoutHash)));
+		$checkoutLink		= "https://www.luxurylink.com/my/my_purchse.php?z=$checkoutKey";
+		
+		$show_mc 			= false;
+
+		ob_start();
+		switch ($emailType) {
+			case 1:
+				include('../vendors/email_msgs/ppv/conf_ppv.html');
+				break;
+			case 2:
+				include('../vendors/email_msgs/ppv/res_ppv.html');
+				break;
+			case 3:
+				include('../vendors/email_msgs/ppv/winner_ppv.html');
+				break;
+			case 4: 
+				include('../vendors/email_msgs/ppv/client_ppv.html');
+				break;
+			case 5:
+				include('../vendors/email_msgs/notifications/winner_notification.html');
+				break;
+			case 6:
+				include('../vendors/email_msgs/notifications/winner_notification_w_checkout.html');
+				break;
+			case 7:
+				include('../vendors/email_msgs/notifications/winner_notification_decline_cc.html');
+				break;
+			case 8:
+				include('../vendors/email_msgs/notifications/winner_notification_expired_cc.html');
+				break;
+			default:
+				break;
+		}
+		$output = ob_get_clean();
+		
+		if ($returnString) {
+			return $output;	
+		} 
+		if ($display) {
+			echo $output;	
+		}
+		
+		if ($send) {
+			$headers = "From: LuxuryLink.com<auction@luxurylink.com>\r\nReply-To: auction@luxurylink.com\r\nBcc: winnernotifications@luxurylink.com\r\n";
+        	$headers.= "Content-type: text/html\r\n";
+			@mail('alee@luxurylink.com', 'testing winner not', $output, $headers);
+		}
+	}
+		
 		
 	function findValidUserPaymentSetting($userId) {
 		$ups = $this->User->query("select * from userPaymentSetting as UserPaymentSetting where userId = $userId and inactive = 0 order by primaryCC desc, expYear desc");

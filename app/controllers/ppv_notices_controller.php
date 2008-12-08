@@ -1,8 +1,12 @@
 <?php
+
+App::import('Vendor', 'nusoap_client/lib/nusoap');
+
 class PpvNoticesController extends AppController {
 
 	var $name = 'PpvNotices';
-	var $helpers = array('Html', 'Form');
+	var $helpers = array('Html', 'Form', 'Javascript', 'Ajax');
+	var $uses = array('PpvNotice', 'Ticket');
 
 	function index() {
 		$this->PpvNotice->recursive = 0;
@@ -17,8 +21,23 @@ class PpvNoticesController extends AppController {
 		$this->set('ppvNotice', $this->PpvNotice->read(null, $id));
 	}
 
-	function add() {
+	function add($ticketId, $id) {
+		
+		// [send to webservice tickets]
+		$data = array();
+		$data['ticketId'] = $ticketId;
+		$data['send'] = 0;
+		$data['display'] = 0;
+		$data['returnString'] = 1;
+		$data['emailType'] = $id;
+		
+		$webservice_live_url = 'http://192.168.100.111/web_service_tickets?wsdl';
+		$webservice_live_method_name = 'ppv';
+		$webservice_live_method_param = 'in0';
+		
 		if (!empty($this->data)) {
+			print_r($this->data);
+			die();
 			$this->PpvNotice->create();
 			if ($this->PpvNotice->save($this->data)) {
 				$this->Session->setFlash(__('The PpvNotice has been saved', true));
@@ -28,7 +47,14 @@ class PpvNoticesController extends AppController {
 			}
 		}
 		$this->set('ppvNoticeTypeIds', $this->PpvNotice->PpvNoticeType->find('list'));
-		$this->data['PpvNotice']['ticketId'] = $this->params['ticketId'];
+		$this->data['PpvNotice']['ticketId'] = $ticketId;
+		$this->data['PpvNotice']['ppvNoticeTypeId'] = $id;
+
+		$data_json_encoded = json_encode($data);
+		$soap_client = new nusoap_client($webservice_live_url, true);
+        $response = $soap_client->call($webservice_live_method_name, array($webservice_live_method_param => $data_json_encoded));
+               
+        $this->data['PpvNotice']['emailBody'] = $response;
 	}
 
 	/*
