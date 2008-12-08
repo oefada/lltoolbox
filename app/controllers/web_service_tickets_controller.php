@@ -8,6 +8,7 @@ class WebServiceTicketsController extends WebServicesController
 	var $name = 'WebServiceTickets';
 	var $uses = array('Ticket', 'User', 'Offer', 'Bid', 'ClientLoaPackageRel', 'RevenueModelLoaRel', 'Loa', 'RevenueModelLoaRelDetail', 'PpvNotice');
 	var $serviceUrl = 'http://toolboxdev.luxurylink.com/web_service_tickets';
+	//var $serviceUrl = 'http://192.168.100.111/web_service_tickets';
 	var $errorResponse = false;
 	var $api = array(
 					'newTicketProcessor1' => array(
@@ -31,7 +32,7 @@ class WebServiceTicketsController extends WebServicesController
 	{
 		$json_decoded = json_decode($in0, true);
 		$this->errorResponse = false;
-		if (!$this->createNewTicket($json_decoded)) {
+		if (!$this->createNewTicket($json_decoded)) {			
 			$json_decoded['response'] = $this->errorResponse;
 		} 
 		return json_encode($json_decoded);
@@ -55,19 +56,14 @@ class WebServiceTicketsController extends WebServicesController
 		
 		$this->Offer->recursive = 2;
 		$offerData = $this->Offer->read(null, $data['offerId']);
-		$offerTypeToFormat = $this->Offer->query("SELECT formatId FROM formatOfferTypeRel WHERE offerTypeId = " . $offerData['Offer']['offerTypeId']);
+		$offerTypeToFormat = $this->Offer->query("SELECT formatId FROM formatOfferTypeRel WHERE offerTypeId = " . $offerData['SchedulingInstance']['SchedulingMaster']['offerTypeId']);
 		$formatId = $offerTypeToFormat[0]['formatOfferTypeRel']['formatId'];
 		
-		if (isset($data['bidId']) && !empty($data['bidId'])) {
-			$this->Bid->recursive = -1;
-			$bidData = $this->Bid->read(null, $data['bidId']);	
-		}
-	
 		$newTicket = array();
 		$newTicket['Ticket']['ticketStatusId'] 			 = 1;
 		$newTicket['Ticket']['packageId'] 				 = $data['packageId'];
 		$newTicket['Ticket']['offerId'] 				 = $data['offerId'];  
-		$newTicket['Ticket']['offerTypeId'] 			 = $offerData['Offer']['offerTypeId'];
+		$newTicket['Ticket']['offerTypeId'] 			 = $offerData['SchedulingInstance']['SchedulingMaster']['offerTypeId'];
 		$newTicket['Ticket']['formatId'] 				 = $formatId;
 		
 		if (isset($data['requestQueueId'])) {
@@ -109,6 +105,11 @@ class WebServiceTicketsController extends WebServicesController
 			// update the tracks 
 			$this->updateTrackPending($ticketId);
 			
+			// if non-auction, just stop here as charging and ppv should not be auto
+			if ($formatId == 2) {
+				return true;	
+			}
+			
 			// find out if there is a valid credit card to charge.  charge and send appropiate emails
 			$user_payment_setting = $this->findValidUserPaymentSetting($userData['User']['userId']);
 			
@@ -133,10 +134,9 @@ class WebServiceTicketsController extends WebServicesController
 			}
 			
 			// send out winner notifications
-			$this->ppv(json_encode($ppv_settings));
-			
+			$this->ppv(json_encode($ppv_settings));			
 			return true;	
-		} else {
+		} else {			
 			$this->errorResponse = 908;
 			return false;
 		}
