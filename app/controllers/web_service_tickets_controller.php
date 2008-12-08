@@ -30,6 +30,9 @@ class WebServiceTicketsController extends WebServicesController
 	function newTicketProcessor1($in0)
 	{
 		$json_decoded = json_decode($in0, true);
+		$fh = fopen('../vendors/testing/' . strtotime() . '.txt', 'r');
+		fwrite($fh, print_r($json_decoded, true));
+		fclose($fh);
 		$this->errorResponse = false;
 		if (!$this->createNewTicket($json_decoded)) {
 			$json_decoded['response'] = $this->errorResponse;
