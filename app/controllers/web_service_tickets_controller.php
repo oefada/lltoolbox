@@ -247,9 +247,9 @@ class WebServiceTicketsController extends WebServicesController
 			// send out email now
 			@mail($emailTo, $emailSubject, $emailBody, $emailHeaders);
 			
-			$emailSentDatetime = date('Y-m-d H:i:s');
+			$emailSentDatetime = strtotime('now');
 
-			$emailBodyFileName = $emailSentDatetime . '_' . $ticketId . '_' . $ppvNoticeTypeId . '.html';
+			$emailBodyFileName = $ticketId . '_' . $ppvNoticeTypeId . '_' . $emailSentDatetime . '.html';
 			
 			$fh = fopen("../vendors/email_msgs/toolbox_sent_messages/$emailBodyFileName", 'w');
 			fwrite($fh, $emailBody);
