@@ -7,10 +7,10 @@ class TicketsController extends AppController {
 	var $name = 'Tickets';
 	var $helpers = array('Html', 'Form', 'Ajax', 'Text', 'Layout', 'Number');
 	var $uses = array('Ticket','OfferType', 'User', 'ClientLoaPackageRel', 'RevenueModelLoaRel', 'RevenueModelLoaRelDetail');
-	var $paginate;
 
 	function index() {
-		$this->Ticket->recursive = 1;
+		$this->paginate = array('fields' => array('Ticket.ticketId', 'TicketStatus.ticketStatusName', 'Package.packageName', 'Ticket.userFirstName', 'Ticket.userLastName'),
+		                        'contain' => array('Package', 'TicketStatus'));
 		$this->set('tickets', $this->paginate());
 	}
 
