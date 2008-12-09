@@ -8,22 +8,16 @@
 <a href="http://www.luxurylink.com/"><img src="http://www.luxurylink.com/gfx/MailPics/email_header.gif" border="0"></a>
 </center>
 <font face="Arial" size="2">
-<BR>
-	User Account ID #<?php echo $userId;?><br />
-	Ticket Reference ID #<?php echo $ticketId;?><br />
+User Account ID #<?php echo $userId;?><br />
+Ticket Reference ID #<?php echo $ticketId;?><br />
 <br />
-{if $auction_type_id == 1 or $auction_type_id ==6}
-	{if $product_type_text == 'MERCHANDISE'}
-		<p>Dear {$email_name},</p>
-		<p>Congratulations on your purchase of {$auction_name} {$product_desc}.
-		This email will confirm that your purchase has been charged to your credit card in the amount of ${$auction_sale_price}
-		plus the auction handling fee of ${$llFee.auc}.*</p>
-		<p>After applicable sales tax, shipping, and insurance charges have been determined and your credit card charged accordingly, a separate receipt will be transmitted.</p>
-	{else}
+
+{if $auction_type_id == 1 or $auction_type_id == 6}
+
 		Dear {$email_name},<p>
 		Thank you for your purchase of this special package from {$auction_name} in the amount of ${$auction_sale_price} 
 		plus the ${$llFee.auc} auction handling fee.<p>
-	{/if}
+
 
 	{if $is_auc_fac}
 	<div style="background: #e5e5e5; padding: 5px 10px">
@@ -39,17 +33,7 @@
 	{if $product_type_text != 'MERCHANDISE'}{$validity[1]}{/if}<br>
 	{$auction_legal_text}<p>
 
-	{if $product_type_text == 'MERCHANDISE'}
-		This email serves as your receipt that you have paid in full for the merchandise above, excluding applicable sales tax, shipping, and insurance charges. Please retain a copy for your records. Your purchase will be shipped via an insured carrier no later than 7 business days from the date of purchase. If you have any questions or additional needs, please don't hesitate to contact our Auction Department.<p>
-		Enjoy your purchase!<p>
-		Warm regards,<br>
-		Auction Department<br>
-		LuxuryLink.com<br>
-		http://www.luxurylink.com<br>
-    Toll Free in the U.S. (888) 297-3299<br>
-    Outside the U.S. (310) 215-8060<br>
-		Facsimile (310) 215-8279<p>
-	{else}
+
 		{if $auction_wholesale == 1}
 	    <strong>Please note as stated in our rules section and on all LuxuryLink.com auction pages,
 	    this package is non-refundable.</strong><p>
@@ -92,15 +76,7 @@
 			This email serves as your receipt that you have paid in full.  Please present a copy upon check-in.
 			If you have any questions or additional needs, please contact the Auction Department at Luxury Link.<p>
 		{/if}
-		Have a fantastic trip!<p>
-		Warm regards,<br>
-		Auction Department<br>
-		LuxuryLink.com<br>
-		http://www.luxurylink.com<br>
-		Toll Free in the U.S. (888) 297-3299<br>
-		Outside the U.S. (310) 215-8060<br>
-		Facsimile (310) 215-8279<p>
-	{/if}
+
 {/if}
 
 {if $auction_type_id == 2 and $auction_wholesale == 1}
@@ -131,14 +107,7 @@
  	Package is non-refundable and non-cancellable within 29 days of scheduled departure date. Any changes within 30 days of the scheduled departure date
 	will be subject to a $100 fee plus additional charges based on the policies
 	of the travel provider, which may result in substantial penalties.<p>
-	Have a fantastic trip!<p>
-	Warm regards,<br>
-	Auction Department<br>
-	LuxuryLink.com<br>
-	auction@luxurylink.com<br>
-	Toll Free in the U.S. (888) 297-3299<br>
-	Outside the U.S. (310) 215-8060<br>
-	Facsimile (310) 215-8279<p>
+
 {/if}
 
 {if $auction_type_id == 2 and $auction_wholesale != 1}
@@ -182,34 +151,19 @@
 
 	This email serves as your receipt that you have paid in full.  Please present a copy upon check-in.
 	If you have any questions or additional needs, please contact the Auction Department at Luxury Link.<p>
-	Have a fantastic trip!<p>
-	Warm regards,<br>
-	Auction Department<br>
-	LuxuryLink.com<br>
-	http://www.luxurylink.com<br>
-	Toll Free in the U.S. (888) 297-3299<br>
-	Outside the U.S. (310) 215-8060<br>
-	Facsimile (310) 215-8279<p>
+
 {/if}
 
 {if $auction_type_id > 2 and $auction_type_id != 6}
 	Dear {$email_name},<p>
-	{if $product_type_text == 'MERCHANDISE'}
-		<p>Congratulations on your purchase of {$auction_name} {$product_desc}.
-		This email will confirm that your purchase has been charged to your credit card in the amount of ${$auction_sale_price}
-		plus the auction handling fee of ${$llFee.fp}.*</p>
-		<p>After applicable sales tax, shipping, and insurance charges have been determined and your credit card charged accordingly, a separate receipt will be transmitted.</p>
-	{else}
+
 		Congratulations on your Luxury Link purchase of this special {if $auction_made_to_order != 1}package{else}offer{/if} from {$auction_name}.
 		This letter confirms your purchase{if $auction_made_to_order != 1} of the following package{/if} in the amount of ${$auction_sale_price}
 		
 		{if $auction_type_id == 3}  plus the ${$llFee.fp} handling fee.<p>{/if}
 		{if $auction_type_id == 4}  plus the ${$llFee.fp} handling fee.<p>{/if}
 		{if $auction_type_id == 5}  plus the ${$llFee.auc} handling fee.<p>{/if}
-	
-	{/if}
 
-	
 
 	{if $auction_type_id == 5}
 		{if $submit6}
@@ -227,16 +181,7 @@
     {$auction_legal_text}<p>
 	{/if}
 	
-	{if $product_type_text == 'MERCHANDISE'}
-		This email serves as your receipt that you have paid in full for the merchandise above, excluding applicable sales tax, shipping, and insurance charges. Please retain a copy for your records. Your purchase will be shipped via an insured carrier no later than 7 business days from the date of purchase. If you have any questions or additional needs, please don't hesitate to contact our LuxeLife Department.<p>
-		Enjoy your purchase!<p>
-		Warm regards,<br><br>
-		LuxuryLink.com<br>
-		http://www.luxurylink.com<br>
-    Toll Free in the U.S. (888) 297-3299<br>
-    Outside the U.S. (310) 215-8060<br>
-		Facsimile (310) 215-8279<p>
-	{else}
+
 		Please contact Reservations at Luxury Link,
 		reservations@luxurylink.com or (888) 297-3299 to make reservations.<p>
 		If a cancellation occurs to a hotel only package after the booking but at least 15 days prior to check-in, a fee of $35 will apply.  
@@ -252,7 +197,7 @@
 		Changes to Air/Hotel combined packages may be made up to 7 days prior to departure. A fee of $150 plus additional charges based 
 		on the policies of the travel providers, hotel and airline.  No changes or cancellations may be made within 7 days of departure.<p>
 			
-	  This email serves as your receipt that you have paid in full.
+		  This email serves as your receipt that you have paid in full.
 		Please present a copy upon check-in.	
 		If you have any questions or additional needs,
 		please contact the Fixed Rate/Best Buy Department at LuxuryLink.com (888) 297-3299.
@@ -261,22 +206,23 @@
 		Luxury Link strongly recommends the purchase of travel insurance. There are many reputable companies from which to choose; please contact your insurance provider for a recommendation.
 		</p>
 
-		Have a fantastic trip!<p>
-		Warm regards,<br>
-		Fixed Rate/Best Buy Department<br>
-	  LuxuryLink.com<br>
-		auction@luxurylink.com<br>
-		Toll Free in the U.S. (888) 297-3299<br>
-		Outside the U.S. (310) 215-8060<br>
-		Facsimile (310) 215-8279<p>
-	{/if}
 {/if}
 
+<p>Have a fantastic trip!<p>
+<p>Warm regards,</p>
 
+<p>
+<?php echo (in_array($offerTypeId, array(1,2,6))) ? 'Auction Department' : 'Fixed Rate/Best Buy Department';?><br>
+LuxuryLink.com<br>
+http://www.luxurylink.com<br>
+Toll Free in the U.S. (888) 297-3299<br>
+Outside the U.S. (310) 215-8060<br>
+Facsimile (310) 215-8279
+</p>
 
-
-{if $emailMode == true}
-<BR><center><a href=http://www.luxurylink.com/Home.phtml?Click=LLAmerOnSaleEmail&rd=Home/HomeMain.phtml><img src=http://www.luxurylink.com/gfx/MailPics/email_footer.gif border=0></a><br><a href=http://www.luxurylink.com/Home.phtml?Click=LLAmerOnSaleEmail&rd=Home/HomeMain.phtml><B>www.luxurylink.com</b></a>
+<br /><br />
+<center>
+	<a href="http://www.luxurylink.com/"><img src="http://www.luxurylink.com/gfx/MailPics/email_footer.gif" border="0"></a><br><a href="http://www.luxurylink.com/"><strong>www.luxurylink.com</strong></a>
 </center>
 </font>
 </td>
@@ -284,4 +230,3 @@
 </table>
 </body>
 </html>
-{/if}

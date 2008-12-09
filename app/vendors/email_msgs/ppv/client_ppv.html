@@ -1,3 +1,4 @@
+<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">
 <html>
 <body>
 User Account ID #<?php echo $userId;?><br />
@@ -22,9 +23,9 @@ Ticket Reference ID #<?php echo $ticketId;?><br />
 		contacting you shortly. The winning bid amount was $<?php echo $billingPrice;?>.
 		</p>
 		
-		{if $grnt==2}
-			On this occasion Luxury Link will subsidize the winning bid amount to guarantee ${$product_price_split[$index]}; this amount will be reflected on your month end statement.<br>
-		{/if}
+		<?php if ($guarantee == 2) : ?>
+			<p>On this occasion Luxury Link will subsidize the winning bid amount to guarantee ${$product_price_split[$index]}; this amount will be reflected on your month end statement.</p>
+		<?php endif;?>
 	
 <?php elseif ($offerTypeId == 2) : ?>		
 	
@@ -35,14 +36,11 @@ Ticket Reference ID #<?php echo $ticketId;?><br />
 	    This Best Shot auction closed on <?php echo $offerEndDate;?>. The winning bid amount was $<?php billingPrice;?>.
 		</p>
 		
-		{if $grnt==2}
-			On this occasion Luxury Link will subsidize the winning bid amount to guarantee ${$product_price_split[$index]}; this amount will be reflected on your month end statement.<br>
-		{/if}
+		<?php if ($guarantee == 2) : ?>
+			<p>On this occasion Luxury Link will subsidize the winning bid amount to guarantee ${$product_price_split[$index]}; this amount will be reflected on your month end statement.</p>
+		<?php endif;?>
 		
-		<p>
-	    The following Luxury Link Guest has paid in full for the package detailed below
-	    and will be contacting you shortly:
-	    </p>
+		<p>The following Luxury Link Guest has paid in full for the package detailed below and will be contacting you shortly:</p>
 	    
 		<p><?php echo $userFirstName;?> <?php echo $userLastName;?> (<?php echo $userEmail;?>)</p>
 	

@@ -1,4 +1,3 @@
-{if $emailMode == true}
 <!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">
 <html>
 <body>
@@ -9,12 +8,13 @@
 <a href="http://www.luxurylink.com/"><img src="http://www.luxurylink.com/gfx/MailPics/email_header.gif" border="0"></a>
 </center>
 <font face=Arial size=2>
-<BR>
-{/if}
+<br />
 
-Dear {$contact_name[$index]},<p>
-Congratulations! The following Luxury Link Guest has requested a{$article} {$type_text} 
-package at {$product_name_split[$index]}:<p>
+<p>Dear {$contact_name[$index]},</p>
+
+<p>Congratulations! The following Luxury Link Guest has requested a{$article} {$type_text} package at {$product_name_split[$index]}:</p>
+
+<p>
 {$email_name}<br>
 	{if $public_user_address1}
 		{$public_user_address1}<br>
@@ -29,39 +29,38 @@ package at {$product_name_split[$index]}:<p>
 		{$public_user_country}<br>
 	{/if}
 Home Phone: {$public_user_phone_h}<br>
-Work Phone: {$public_user_phone_w}<p>
+Work Phone: {$public_user_phone_w}
+</p>
 
 Arrival: {if $arrival_date}{$arrival_date}{else}N/A{/if}<br>
-Departure: {if $departure_date}{$departure_date}{else}N/A{/if}<p>
+Departure: {if $departure_date}{$departure_date}{else}N/A{/if}
 
+<p>Please forward the confirmation number to my attention, if available.</p>
 
+<p>We have received a request for one package in the amount of  ${$multi_sale_price[$index]} with the following inclusions:</p>
 
-Please forward the confirmation number to my attention, if available.<p>
-We have received a request for one package in the amount of 
-${$multi_sale_price[$index]} with the following inclusions:<p>
-	{if $submit7}
-		{$inclusions_html}<p>
-	{else}
-
-{$inclusions[1]}<p>
-{$validity[1]}<br>
-{$legal_stripped[0]}<p>
-<br>
-	{/if}
-Thank you for your exceptional care of our Luxury Link Guests! We&#039;ll be in touch.<p>
-Warm regards,<p>
-Reservations Sales<br>
-LuxuryLink.com<br>
-reservations@luxurylink.com<br>
-Toll Free in the U.S. (888) 297-3299<br>
-Outside the U.S. (310) 215-8060<br>
-Facsimile (310) 215-8279<p>
-
+	<p><?php echo $packageIncludes;?></p>
+	<p><?php echo $validityNote;?></p>
+	<p><?php echo $legalText;?></p>
 	
+	<p>Thank you for your exceptional care of our Luxury Link Guests! We&#039;ll be in touch.<p>
+	
+	<p>Warm regards,</p>
+	
+	<p>
+	Reservations Sales<br>
+	LuxuryLink.com<br>
+	The World's Leading Luxury Travel Website<br>
+	http://www.luxurylink.com<br>
+	reservations@luxurylink.com<br>
+	(In the U.S.) 888.297.3299<br>
+	(Outside the U.S.) 310.215.8060<br>
+	(Fax) 310.215.8279
+	</p>	
 
-{if $emailMode == true}
-
-<BR><center><a href=http://www.luxurylink.com/Home.phtml?Click=LLAmerOnSaleEmail&rd=Home/HomeMain.phtml><img src=http://www.luxurylink.com/gfx/MailPics/email_footer.gif border=0></a><br><a href=http://www.luxurylink.com/Home.phtml?Click=LLAmerOnSaleEmail&rd=Home/HomeMain.phtml><B>www.luxurylink.com</b></a>
+<br /><br />
+<center>
+	<a href="http://www.luxurylink.com/"><img src="http://www.luxurylink.com/gfx/MailPics/email_footer.gif" border="0"></a><br><a href="http://www.luxurylink.com/"><strong>www.luxurylink.com</strong></a>
 </center>
 </font>
 </td>
@@ -69,4 +68,3 @@ Facsimile (310) 215-8279<p>
 </table>
 </body>
 </html>
-{/if}
