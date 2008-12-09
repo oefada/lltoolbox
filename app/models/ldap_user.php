@@ -28,7 +28,9 @@ class LdapUser extends AppModel {
 
 	function __destruct()
 	{
-	    ldap_close($this->ds);
+	    if (function_exists('ldap_close')) {
+	        ldap_close($this->ds);
+        }
 	}
 	
 	function findAll($attribute = 'uid', $value = '*', $baseDn = 'OU=LuxuryLinkUser,DC=luxurylink,DC=com')
