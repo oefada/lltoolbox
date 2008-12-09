@@ -239,6 +239,8 @@ class WebServiceTicketsController extends WebServicesController
 			$checkoutKey		= base64_encode(serialize(array('ticketId' => $ticketId, 'userId' => $userId, 'offerId' => $offerId, 'zKey' => $checkoutHash)));
 			$checkoutLink		= "https://www.luxurylink.com/my/my_purchse.php?z=$checkoutKey";
 			
+			$guarantee			= false;
+			
 			$show_mc 			= false;
 	
 			ob_start();
