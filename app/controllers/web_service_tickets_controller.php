@@ -267,6 +267,8 @@ class WebServiceTicketsController extends WebServicesController
 			echo $totalPrice . ' totalPrice<br />';
 			echo $maxNumWinners . ' maxNumWinners<br />';
 			
+			$ppvNoticeTypeId = 1;
+			
 			switch ($ppvNoticeTypeId) {
 				case 1:
 					include('../vendors/email_msgs/ppv/conf_ppv.html');
