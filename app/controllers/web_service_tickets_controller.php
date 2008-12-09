@@ -153,7 +153,12 @@ class WebServiceTicketsController extends WebServicesController
 			$errorBody.= print_r($offerData, true);
 			$errorBody.= "\nUSER PAYMENT DATA\n";
 			$errorBody.= print_r($user_payment_setting, true);
-			@mail('devmail@luxurylink.com', 'Ticketing Error - Failed to Create New Ticket', $errorBody);
+			
+			$emailFrom = 'System<geeks@luxurylink.com>';
+			$emailHeaders = "From: $emailFrom\r\n";
+        	$emailHeaders.= "Content-type: text/html\r\n";
+        	
+			@mail('devmail@luxurylink.com', 'Ticketing Error - Failed to Create New Ticket', $errorBody, $emailHeaders);
 			return false;
 		}
 	}
