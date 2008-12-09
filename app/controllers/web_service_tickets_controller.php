@@ -6,7 +6,7 @@ Configure::write('debug', 0);
 class WebServiceTicketsController extends WebServicesController
 {
 	var $name = 'WebServiceTickets';
-	var $uses = array('Ticket', 'User', 'Offer', 'Bid', 'ClientLoaPackageRel', 'RevenueModelLoaRel', 'Loa', 'RevenueModelLoaRelDetail', 'PpvNotice');
+	var $uses = array('Ticket', 'User', 'Offer', 'Bid', 'ClientLoaPackageRel', 'RevenueModelLoaRel', 'Loa', 'RevenueModelLoaRelDetail', 'PpvNotice', 'Address');
 	var $serviceUrl = 'http://toolboxdev.luxurylink.com/web_service_tickets';
 	//var $serviceUrl = 'http://192.168.100.111/web_service_tickets';
 	var $errorResponse = false;
@@ -60,7 +60,10 @@ class WebServiceTicketsController extends WebServicesController
 		$this->User->recursive = -1;
 		$userData = $this->User->read(null, $data['userId']);
 		
-		@mail('devmail@luxurylink.com','Ticketing Process Debug Error 3', print_r($data, true));
+		$this->Address->recusrive = -1;
+		$addressData = $this->Address->findAllByuserid($data['userId']);
+		
+		@mail('devmail@luxurylink.com','Ticketing Process Debug Error 3', print_r($addressData, true));
 		
 		@mail('devmail@luxurylink.com','Ticketing Process Debug Error USER', print_r($userData, true));
 		
