@@ -115,9 +115,11 @@ class WebServiceTicketsController extends WebServicesController
 			
 			// param settings for the ppv function
 			$ppv_settings = array();
-			$ppv_settings['ticketId'] 		= $ticketId;
-			$ppv_settings['send'] 			= 1;
-			$ppv_settings['returnString']	= 0;
+			$ppv_settings['ticketId'] 			= $ticketId;
+			$ppv_settings['send'] 				= 1;
+			$ppv_settings['autoBuild']			= 1;
+			$ppv_settings['manualEmailBody']	= 0;
+			$ppv_settings['returnString']		= 0;
 			
 			if (is_array($user_payment_setting) && !empty($user_payment_setting)) {
 				// has valid cc card to charge
@@ -133,6 +135,7 @@ class WebServiceTicketsController extends WebServicesController
 			
 			// send out winner notifications
 			$this->ppv(json_encode($ppv_settings));
+			
 			return true;	
 		} else {			
 			$this->errorResponse = 908;
@@ -144,99 +147,107 @@ class WebServiceTicketsController extends WebServicesController
 		$params = json_decode($in0, true);
 		
 		// required params for sending and viewing ppvs
-		$ticketId 			= $params['ticketId'];
-		$send 				= $params['send'];
-		$returnString 		= $params['returnString'];
-		$ppvNoticeTypeId	= $params['ppvNoticeTypeId'];
+		$ticketId 			= isset($params['ticketId']) ? $params['ticketId'] : null;
+		$send 				= isset($params['send']) ? $params['send'] : false;
+		$autoBuild			= isset($params['autoBuild']) ? $params['autoBuild'] : false;
+		$returnString 		= isset($params['returnString']) ? $params['returnString'] : false;
+		$manualEmailBody	= isset($params['manualEmailBody']) ? $params['manualEmailBody'] : null;
+		$ppvNoticeTypeId	= isset($params['ppvNoticeTypeId']) ? $params['ppvNoticeTypeId'] : null;
 		
 		// error checking here for required params
 		
-		$this->Ticket->recursive = 0;
-		$ticket = $this->Ticket->read(null, $ticketId);
-
-		$this->ClientLoaPackageRel->recursive = 0;
-		$clientLoaPackageRel = $this->ClientLoaPackageRel->findBypackageid($ticket['Ticket']['packageId']);
+		if ($autoBuild) {
+			$this->Ticket->recursive = 0;
+			$ticket = $this->Ticket->read(null, $ticketId);
+	
+			$this->ClientLoaPackageRel->recursive = 0;
+			$clientLoaPackageRel = $this->ClientLoaPackageRel->findBypackageid($ticket['Ticket']['packageId']);
 		
-		$liveOffer	= $this->Ticket->query("select * from livedev.offer as LiveOffer where offerId = " . $ticket['Ticket']['offerId'] . " limit 1");
+			$liveOffer	= $this->Ticket->query("select * from livedev.offer as LiveOffer where offerId = " . $ticket['Ticket']['offerId'] . " limit 1");
 		
-		// data arrays
-		// ---------------------------------------------------------
-		$ticketData 	= $ticket['Ticket'];
-		$packageData 	= $ticket['Package'];
-		$offerData 		= $ticket['Offer'];
-		$userData 		= $ticket['User'];
-		$clientData 	= $clientLoaPackageRel['Client'];
-		$loaData 		= $clientLoaPackageRel['Loa'];
-		$liveOfferData 	= $liveOffer[0]['LiveOffer'];
-
-		// vars for email templates
-		// ----------------------------------------------------------
-		$userId 			= $userData['userId'];
-		$userFirstName 		= ucwords(strtolower($userData['firstName']));
-		$userLastName 		= ucwords(strtolower($userData['lastName']));
-		$userEmail 			= $userData['email'];
-		$offerId			= $offerData['offerId'];
-		$clientId			= $clientData['clientId'];
-		$oldProductId		= $clientData['oldProductId'];
-		$packageName 		= $packageData['packageName'];
-		$packageSubtitle	= $packageData['subtitle'];
-		$clientName 		= $clientData['name'];
-		$packageIncludes 	= $packageData['packageIncludes'];
-		$legalText			= $packageData['legalText'];
-		$validityNote		= $packageData['validityNote'];
-		$offerTypeId		= $offerData['offerTypeId'];
-		$offerEndDate		= date('M d Y H:i A', strtotime($liveOfferData['endDate']));
-		$billingPrice		= number_format($ticketData['billingPrice'], 2, '.', ',');
-		$llFeeAmount		= in_array($offerTypeId, array(1,2,6)) ? 30 : 40;
-		$llFee				= number_format($llFeeAmount, 2, '.', ',');
-		$totalPrice			= number_format(($ticketData['billingPrice'] + $llFeeAmount),  2, '.', ',');
-		$maxNumWinners		= $liveOfferData['maxNumWinners'];
+			// data arrays
+			// ---------------------------------------------------------
+			$ticketData 	= $ticket['Ticket'];
+			$packageData 	= $ticket['Package'];
+			$offerData 		= $ticket['Offer'];
+			$userData 		= $ticket['User'];
+			$clientData 	= $clientLoaPackageRel['Client'];
+			$loaData 		= $clientLoaPackageRel['Loa'];
+			$liveOfferData 	= $liveOffer[0]['LiveOffer'];
+	
+			// vars for email templates
+			// ----------------------------------------------------------
+			$userId 			= $userData['userId'];
+			$userFirstName 		= ucwords(strtolower($userData['firstName']));
+			$userLastName 		= ucwords(strtolower($userData['lastName']));
+			$userEmail 			= $userData['email'];
+			$offerId			= $offerData['offerId'];
+			$clientId			= $clientData['clientId'];
+			$oldProductId		= $clientData['oldProductId'];
+			$packageName 		= $packageData['packageName'];
+			$packageSubtitle	= $packageData['subtitle'];
+			$clientName 		= $clientData['name'];
+			$packageIncludes 	= $packageData['packageIncludes'];
+			$legalText			= $packageData['legalText'];
+			$validityNote		= $packageData['validityNote'];
+			$offerTypeId		= $offerData['offerTypeId'];
+			$offerEndDate		= date('M d Y H:i A', strtotime($liveOfferData['endDate']));
+			$billingPrice		= number_format($ticketData['billingPrice'], 2, '.', ',');
+			$llFeeAmount		= in_array($offerTypeId, array(1,2,6)) ? 30 : 40;
+			$llFee				= number_format($llFeeAmount, 2, '.', ',');
+			$totalPrice			= number_format(($ticketData['billingPrice'] + $llFeeAmount),  2, '.', ',');
+			$maxNumWinners		= $liveOfferData['maxNumWinners'];
+			
+			$checkoutHash		= md5($ticketId . $userId . $offerId . 'LL_L33T_KEY');
+			$checkoutKey		= base64_encode(serialize(array('ticketId' => $ticketId, 'userId' => $userId, 'offerId' => $offerId, 'zKey' => $checkoutHash)));
+			$checkoutLink		= "https://www.luxurylink.com/my/my_purchse.php?z=$checkoutKey";
+			
+			$show_mc 			= false;
+	
+			ob_start();
+			
+			switch ($ppvNoticeTypeId) {
+				case 1:
+					include('../vendors/email_msgs/ppv/conf_ppv.html');
+					$emailSubject = 'testing conf ppv';
+					break;
+				case 2:
+					include('../vendors/email_msgs/ppv/res_ppv.html');
+					$emailSubject = 'testing res ppv';
+					break;
+				case 3:
+					include('../vendors/email_msgs/ppv/winner_ppv.html');
+					$emailSubject = 'testing winner ppv';
+					break;
+				case 4: 
+					include('../vendors/email_msgs/ppv/client_ppv.html');
+					$emailSubject = 'testing client ppv';
+					break;
+				case 5:
+					include('../vendors/email_msgs/notifications/winner_notification.html');
+					$emailSubject = 'testing winn notif';
+					break;
+				case 6:
+					include('../vendors/email_msgs/notifications/winner_notification_w_checkout.html');
+					$emailSubject = 'testing winn notif w checkout';
+					break;
+				case 7:
+					include('../vendors/email_msgs/notifications/winner_notification_decline_cc.html');
+					$emailSubject = 'testing winn notif w decline cc';
+					break;
+				case 8:
+					include('../vendors/email_msgs/notifications/winner_notification_expired_cc.html');
+					$emailSubject = 'testing winn notif w expired cc';
+					break;
+				default:
+					break;
+			}	
+			$emailBody = ob_get_clean();
+		} 
 		
-		$checkoutHash		= md5($ticketId . $userId . $offerId . 'LL_L33T_KEY');
-		$checkoutKey		= base64_encode(serialize(array('ticketId' => $ticketId, 'userId' => $userId, 'offerId' => $offerId, 'zKey' => $checkoutHash)));
-		$checkoutLink		= "https://www.luxurylink.com/my/my_purchse.php?z=$checkoutKey";
-		
-		$show_mc 			= false;
-
-		ob_start();
-		switch ($ppvNoticeTypeId) {
-			case 1:
-				include('../vendors/email_msgs/ppv/conf_ppv.html');
-				$emailSubject = 'testing conf ppv';
-				break;
-			case 2:
-				include('../vendors/email_msgs/ppv/res_ppv.html');
-				$emailSubject = 'testing res ppv';
-				break;
-			case 3:
-				include('../vendors/email_msgs/ppv/winner_ppv.html');
-				$emailSubject = 'testing winner ppv';
-				break;
-			case 4: 
-				include('../vendors/email_msgs/ppv/client_ppv.html');
-				$emailSubject = 'testing client ppv';
-				break;
-			case 5:
-				include('../vendors/email_msgs/notifications/winner_notification.html');
-				$emailSubject = 'testing winn notif';
-				break;
-			case 6:
-				include('../vendors/email_msgs/notifications/winner_notification_w_checkout.html');
-				$emailSubject = 'testing winn notif w checkout';
-				break;
-			case 7:
-				include('../vendors/email_msgs/notifications/winner_notification_decline_cc.html');
-				$emailSubject = 'testing winn notif w decline cc';
-				break;
-			case 8:
-				include('../vendors/email_msgs/notifications/winner_notification_expired_cc.html');
-				$emailSubject = 'testing winn notif w expired cc';
-				break;
-			default:
-				break;
+		if (!$autoBuild && $manualEmailBody) {
+			$emailBody = $manualEmailBody;	
 		}
-		
-		$emailBody = ob_get_clean();
 	
 		if ($send) {
 			$emailTo = 'devmail@luxurylink.com';
@@ -264,9 +275,8 @@ class WebServiceTicketsController extends WebServicesController
 			$ppvNoticeSave['emailSubject']		= $emailSubject;
 			$ppvNoticeSave['emailBodyFileName']	= $emailBodyFileName;
 			$ppvNoticeSave['emailSentDatetime']	= date('Y-m-d H:i:s', $emailSentDatetime);
-			
-			@mail('alee@luxurylink.com', 'testing', print_r($ppvNoticeSave, true), $emailHeaders);
-			
+
+			// save the record!
 			$this->PpvNotice->create();
 			$this->PpvNotice->save($ppvNoticeSave);
 		}
