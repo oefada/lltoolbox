@@ -106,7 +106,7 @@ class WebServiceTicketsController extends WebServicesController
 			$this->updateTrackPending($ticketId);
 			
 			// if non-auction, just stop here as charging and ppv should not be auto
-			if ($formatId == 2) {
+			if ($formatId != 1) {
 				return true;	
 			}
 			
@@ -117,24 +117,22 @@ class WebServiceTicketsController extends WebServicesController
 			$ppv_settings = array();
 			$ppv_settings['ticketId'] 		= $ticketId;
 			$ppv_settings['send'] 			= 1;
-			$ppv_settings['autoProcessPpv']	= 0;
-			$ppv_settings['display']		= 0;
 			$ppv_settings['returnString']	= 0;
 			
 			if (is_array($user_payment_setting) && !empty($user_payment_setting)) {
 				// has valid cc card to charge
-				$ppv_settings['emailType'] 		= 5;
+				$ppv_settings['ppvNoticeTypeId'] 	= 5;
 				$ppv_settings['autoProcessPpv'] = 1;
 			} elseif ($user_payment_setting == 'EXPIRED') {
 				// has valid cc card but is expired
-				$ppv_settings['emailType'] 	= 8;
+				$ppv_settings['ppvNoticeTypeId'] 	= 8;
 			} else {
 				// has no valid cc on file
-				$ppv_settings['emailType'] 	= 6;
+				$ppv_settings['ppvNoticeTypeId'] 	= 6;
 			}
 			
 			// send out winner notifications
-			$this->ppv(json_encode($ppv_settings));			
+			$this->ppv(json_encode($ppv_settings));
 			return true;	
 		} else {			
 			$this->errorResponse = 908;
@@ -145,12 +143,13 @@ class WebServiceTicketsController extends WebServicesController
 	function ppv($in0) {
 		$params = json_decode($in0, true);
 		
-		$ticketId 		= $params['ticketId'];
-		$send 			= $params['send'];
-		$display 		= $params['display'];
-		$returnString 	= $params['returnString'];
-		$emailType 		= $params['emailType'];
-		$autoProcessPpv	= $params['autoProcessPpv'];
+		// required params for sending and viewing ppvs
+		$ticketId 			= $params['ticketId'];
+		$send 				= $params['send'];
+		$returnString 		= $params['returnString'];
+		$ppvNoticeTypeId	= $params['ppvNoticeTypeId'];
+		
+		// error checking here for required params
 		
 		$this->Ticket->recursive = 0;
 		$ticket = $this->Ticket->read(null, $ticketId);
@@ -170,7 +169,7 @@ class WebServiceTicketsController extends WebServicesController
 		$loaData 		= $clientLoaPackageRel['Loa'];
 		$liveOfferData 	= $liveOffer[0]['LiveOffer'];
 
-		// vars for templates
+		// vars for email templates
 		// ----------------------------------------------------------
 		$userId 			= $userData['userId'];
 		$userFirstName 		= ucwords(strtolower($userData['firstName']));
@@ -200,56 +199,78 @@ class WebServiceTicketsController extends WebServicesController
 		$show_mc 			= false;
 
 		ob_start();
-		switch ($emailType) {
+		switch ($ppvNoticeTypeId) {
 			case 1:
 				include('../vendors/email_msgs/ppv/conf_ppv.html');
-				$subject = 'testing conf ppv';
+				$emailSubject = 'testing conf ppv';
 				break;
 			case 2:
 				include('../vendors/email_msgs/ppv/res_ppv.html');
-				$subject = 'testing res ppv';
+				$emailSubject = 'testing res ppv';
 				break;
 			case 3:
 				include('../vendors/email_msgs/ppv/winner_ppv.html');
-				$subject = 'testing winner ppv';
+				$emailSubject = 'testing winner ppv';
 				break;
 			case 4: 
 				include('../vendors/email_msgs/ppv/client_ppv.html');
-				$subject = 'testing client ppv';
+				$emailSubject = 'testing client ppv';
 				break;
 			case 5:
 				include('../vendors/email_msgs/notifications/winner_notification.html');
-				$subject = 'testing winn notif';
+				$emailSubject = 'testing winn notif';
 				break;
 			case 6:
 				include('../vendors/email_msgs/notifications/winner_notification_w_checkout.html');
-				$subject = 'testing winn notif w checkout';
+				$emailSubject = 'testing winn notif w checkout';
 				break;
 			case 7:
 				include('../vendors/email_msgs/notifications/winner_notification_decline_cc.html');
-				$subject = 'testing winn notif w decline cc';
+				$emailSubject = 'testing winn notif w decline cc';
 				break;
 			case 8:
 				include('../vendors/email_msgs/notifications/winner_notification_expired_cc.html');
-				$subject = 'testing winn notif w expired cc';
+				$emailSubject = 'testing winn notif w expired cc';
 				break;
 			default:
 				break;
 		}
 		
-		$output = ob_get_clean();
-		
-		if ($returnString) {
-			return $output;	
-		} 
-		if ($display) {
-			echo $output;	
+		$emailBody = ob_get_clean();
+	
+		if ($send) {
+			$emailTo = 'devmail@luxurylink.com';
+			$emailFrom = 'LuxuryLink.com<auction@luxurylink.com>';
+			$emailHeaders = "From: $emailFrom\r\n";
+        	$emailHeaders.= "Content-type: text/html\r\n";
+			
+			// send out email now
+			@mail($emailTo, $emailSubject, $emailBody, $emailHeaders);
+			
+			$emailSentDatetime = date('Y-m-d H:i:s');
+
+			$emailBodyFileName = $emailSentDatetime . '_' . $ticketId . '_' . $ppvNoticeTypeId . '.html';
+			
+			$fh = fopen("../vendors/email_msgs/toolbox_sent_messages/$emailBodyFileName", 'w');
+			fwrite($fh, $emailBody);
+			fclose($fh);
+			
+			$ppvNoticeSave = array();
+			$ppvNoticeSave['ppvNoticeTypeId']	= $ppvNoticeTypeId; 
+			$ppvNoticeSave['ticketId'] 			= $ticketId;
+			$ppvNoticeSave['emailTo']			= $emailTo;
+			$ppvNoticeSave['emailFrom']			= $emailFrom;
+			$ppvNoticeSave['emailCc']			= '';
+			$ppvNoticeSave['emailSubject']		= $emailSubject;
+			$ppvNoticeSave['emailBodyFileName']	= $emailBodyFileName;
+			$ppvNoticeSave['emailSentDatetime']	= $emailSentDatetime;
+			
+			$this->PpvNotice->create();
+			$this->PpvNotice->save($ppvNoticeSave);
 		}
 		
-		if ($send) {
-			$headers = "From: LuxuryLink.com<auction@luxurylink.com>\r\nReply-To: auction@luxurylink.com\r\nBcc: winnernotifications@luxurylink.com\r\n";
-        	$headers.= "Content-type: text/html\r\n";
-			@mail('devmail@luxurylink.com', $subject, $output, $headers);
+		if ($returnString) {
+			return $emailBody;	
 		}
 	}
 		
