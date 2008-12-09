@@ -57,7 +57,7 @@ class WebServiceTicketsController extends WebServicesController
 		
 		@mail('devmail@luxurylink.com','Ticketing Process Debug Error 2', print_r($data, true));
 		
-		$this->User->recursive = 0;
+		$this->User->recursive = 1;
 		$userData = $this->User->read(null, $data['userId']);
 		
 		@mail('devmail@luxurylink.com','Ticketing Process Debug Error 3', print_r($data, true));
