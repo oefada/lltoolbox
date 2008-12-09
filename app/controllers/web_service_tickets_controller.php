@@ -217,7 +217,7 @@ class WebServiceTicketsController extends WebServicesController
 			$packageIncludes 	= $packageData['packageIncludes'];
 			$legalText			= $packageData['legalText'];
 			$validityNote		= $packageData['validityNote'];
-			$offerTypeId		= $offerData['offerTypeId'];
+			$offerTypeId		= $liveOfferData['offerTypeId'];
 			$offerEndDate		= date('M d Y H:i A', strtotime($liveOfferData['endDate']));
 			$billingPrice		= number_format($ticketData['billingPrice'], 2, '.', ',');
 			$llFeeAmount		= in_array($offerTypeId, array(1,2,6)) ? 30 : 40;
