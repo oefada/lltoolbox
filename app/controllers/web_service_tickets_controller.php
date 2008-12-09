@@ -36,7 +36,11 @@ class WebServiceTicketsController extends WebServicesController
 		$this->errorResponse = false;
 		if (!$this->createNewTicket($json_decoded)) {			
 			$json_decoded['response'] = $this->errorResponse;
-			@mail('devmail@luxurylink.com', 'Ticketing Error - Failed to Start Ticket Process', print_r($json_decoded, true));
+			
+			$emailFrom = 'System<geeks@luxurylink.com>';
+			$emailHeaders = "From: $emailFrom\r\n";
+        	$emailHeaders.= "Content-type: text/html\r\n";
+			@mail('devmail@luxurylink.com', 'Ticketing Error - Failed to Complete ESB Cycle', print_r($json_decoded, true), $emailHeaders);
 		} 
 		return json_encode($json_decoded);
 	}
