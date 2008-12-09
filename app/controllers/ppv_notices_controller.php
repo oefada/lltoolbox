@@ -43,7 +43,7 @@ class PpvNoticesController extends AppController {
         		$response = $soap_client->call($webservice_live_method_name, array($webservice_live_method_param => $data_json_encoded));
 				
 				$this->Session->setFlash(__('The Ppv/Notice has been sent.', true));
-				$this->redirect(array('action'=>'index'));
+				$this->redirect(array('controller' => 'tickets', 'action'=>'view', 'id' => $this->data['PpvNotice']['ticketId']));
 				
 		}
 		$this->set('ppvNoticeTypeIds', $this->PpvNotice->PpvNoticeType->find('list'));
