@@ -34,13 +34,9 @@ class WebServiceTicketsController extends WebServicesController
 	{
 		$json_decoded = json_decode($in0, true);
 		$this->errorResponse = false;
+		@mail('devmail@luxurylink.com','Ticketing Process Debug Error 1', print_r($json_decoded, true));
 		if (!$this->createNewTicket($json_decoded)) {			
 			$json_decoded['response'] = $this->errorResponse;
-			
-			$emailFrom = 'System<geeks@luxurylink.com>';
-			$emailHeaders = "From: $emailFrom\r\n";
-        	$emailHeaders.= "Content-type: text/html\r\n";
-			@mail('devmail@luxurylink.com', 'Ticketing Error - Failed to Complete ESB Cycle', print_r($json_decoded, true), $emailHeaders);
 		} 
 		return json_encode($json_decoded);
 	}
@@ -58,6 +54,8 @@ class WebServiceTicketsController extends WebServicesController
 			$this->errorResponse = 907;
 			return false;	
 		}
+		
+		@mail('devmail@luxurylink.com','Ticketing Process Debug Error 2', print_r($data, true));
 		
 		$userData = $this->User->read(null, $data['userId']);
 		
@@ -146,6 +144,7 @@ class WebServiceTicketsController extends WebServicesController
 			return true;	
 		} else {			
 			$this->errorResponse = 908;
+			/*
 			$errorBody = "DEBUG MESSAGE\n\n";
 			$errorBody.= "--------------------------------\n\n";
 			$errorBody.= "\nINPUT DATA:\n";
@@ -164,6 +163,7 @@ class WebServiceTicketsController extends WebServicesController
         	$emailHeaders.= "Content-type: text/html\r\n";
         	
 			@mail('devmail@luxurylink.com', 'Ticketing Error - Failed to Create New Ticket', $errorBody, $emailHeaders);
+			*/
 			return false;
 		}
 	}
