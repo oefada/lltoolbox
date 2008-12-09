@@ -249,7 +249,7 @@ class WebServiceTicketsController extends WebServicesController
 			
 			$emailSentDatetime = strtotime('now');
 
-			$emailBodyFileName = $ticketId . '_' . $ppvNoticeTypeId . '_' . $emailSentDatetime;
+			$emailBodyFileName = $ticketId . '_' . $ppvNoticeTypeId . '_' . $emailSentDatetime . '.html';
 			
 			$fh = fopen("../vendors/email_msgs/toolbox_sent_messages/$emailBodyFileName", 'w');
 			fwrite($fh, $emailBody);
