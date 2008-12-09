@@ -17,6 +17,8 @@ class WebServiceUsersController extends WebServicesController
 						)
 					);
 
+	function beforeFilter() { $this->Auth->allow('*'); }
+
 	function userProcessor1($in0)
 	{
 		$json_decoded = json_decode($in0, true);

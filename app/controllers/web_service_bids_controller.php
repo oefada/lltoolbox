@@ -17,6 +17,8 @@ class WebServiceBidsController extends WebServicesController
 						)
 					);
 
+	function beforeFilter() { $this->Auth->allow('*'); }
+
 	function newBidProcessor1($in0)
 	{
 		$json_decoded = json_decode($in0, true);
