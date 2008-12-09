@@ -66,6 +66,7 @@ class WebServiceTicketsController extends WebServicesController
 		$offerTypeToFormat = $this->Offer->query("SELECT formatId FROM formatOfferTypeRel WHERE offerTypeId = " . $offerData['SchedulingInstance']['SchedulingMaster']['offerTypeId']);
 		$formatId = $offerTypeToFormat[0]['formatOfferTypeRel']['formatId'];
 		
+		// create a new ticket!
 		$newTicket = array();
 		$newTicket['Ticket']['ticketStatusId'] 			 = 1;
 		$newTicket['Ticket']['packageId'] 				 = $data['packageId'];
@@ -162,7 +163,6 @@ class WebServiceTicketsController extends WebServicesController
 			
 			$emailFrom = 'System<geeks@luxurylink.com>';
 			$emailHeaders = "From: $emailFrom\r\n";
-        	$emailHeaders.= "Content-type: text/html\r\n";
         	
 			@mail('devmail@luxurylink.com', 'Ticketing Error - Failed to Create New Ticket', $errorBody, $emailHeaders);
 
