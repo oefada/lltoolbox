@@ -103,13 +103,13 @@ class WebServiceTicketsController extends WebServicesController
 		$newTicket['Ticket']['userHomePhone']			 = $userData['User']['homePhone'];
 		$newTicket['Ticket']['userMobilePhone']			 = $userData['User']['mobilePhone'];
 		$newTicket['Ticket']['userFax'] 				 = $userData['User']['fax'];
-		$newTicket['Ticket']['userAddress1']			 = $userData['Address'][0]['address1'];
-		$newTicket['Ticket']['userAddress2']			 = $userData['Address'][0]['address2'];
-		$newTicket['Ticket']['userAddress3']			 = $userData['Address'][0]['address3'];
-		$newTicket['Ticket']['userCity']				 = $userData['Address'][0]['city'];
-		$newTicket['Ticket']['userState']				 = $userData['Address'][0]['stateName'];
-		$newTicket['Ticket']['userCountry']				 = $userData['Address'][0]['countryName'];
-		$newTicket['Ticket']['userZip']					 = $userData['Address'][0]['postalCode'];
+		$newTicket['Ticket']['userAddress1']			 = $addressData['Address']['address1'];
+		$newTicket['Ticket']['userAddress2']			 = $addressData['Address']['address2'];
+		$newTicket['Ticket']['userAddress3']			 = $addressData['Address']['address3'];
+		$newTicket['Ticket']['userCity']				 = $addressData['Address']['city'];
+		$newTicket['Ticket']['userState']				 = $addressData['Address']['stateName'];
+		$newTicket['Ticket']['userCountry']				 = $addressData['Address']['countryName'];
+		$newTicket['Ticket']['userZip']					 = $addressData['Address']['postalCode'];
 
 		@mail('devmail@luxurylink.com','Ticketing Process Debug Error 5', print_r($data, true));
 		@mail('devmail@luxurylink.com','Ticketing Process Debug Error TICKET', print_r($newTicket, true));
