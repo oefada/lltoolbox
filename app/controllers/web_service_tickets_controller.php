@@ -248,7 +248,8 @@ class WebServiceTicketsController extends WebServicesController
 		} 
 		
 		if (!$autoBuild && $manualEmailBody) {
-			$emailBody = $manualEmailBody;	
+			$emailBody = $manualEmailBody;
+			$emailSubject = 'manual sending';	
 		}
 	
 		if ($send) {

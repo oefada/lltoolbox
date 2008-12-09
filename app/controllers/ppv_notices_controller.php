@@ -23,31 +23,41 @@ class PpvNoticesController extends AppController {
 
 	function add($ticketId, $id) {
 		
-		// [send to webservice tickets]
-		$data = array();
-		$data['ticketId'] = $ticketId;
-		$data['send'] = 0;
-		$data['display'] = 0;
-		$data['returnString'] = 1;
-		$data['emailType'] = $id;
-		
+		// web service for tickets for getting/sending ppv
 		$webservice_live_url = 'http://toolboxdev.luxurylink.com/web_service_tickets?wsdl';
 		$webservice_live_method_name = 'ppv';
 		$webservice_live_method_param = 'in0';
 		
 		if (!empty($this->data)) {
-			$this->PpvNotice->create();
-			if ($this->PpvNotice->save($this->data)) {
-				$this->Session->setFlash(__('The PpvNotice has been saved', true));
+			
+				$data = array();
+				$data['ticketId'] 			= $this->data['PpvNotice']['ticketId'];
+				$data['send'] 				= 1;
+				$data['autoBuild'] 			= 0;
+				$data['manualEmailBody']	= $this->data['PpvNotice']['emailBody'];
+				$data['returnString'] 		= 0;
+				$data['ppvNoticeTypeId'] 	= $this->data['PpvNotice']['ppvNoticeTypeId'];
+				
+				$data_json_encoded = json_encode($data);
+				$soap_client = new nusoap_client($webservice_live_url, true);
+        		$response = $soap_client->call($webservice_live_method_name, array($webservice_live_method_param => $data_json_encoded));
+				
+				$this->Session->setFlash(__('The Ppv/Notice has been sent.', true));
 				$this->redirect(array('action'=>'index'));
-			} else {
-				$this->Session->setFlash(__('The PpvNotice could not be saved. Please, try again.', true));
-			}
+				
 		}
 		$this->set('ppvNoticeTypeIds', $this->PpvNotice->PpvNoticeType->find('list'));
 		$this->data['PpvNotice']['ticketId'] = $ticketId;
 		$this->data['PpvNotice']['ppvNoticeTypeId'] = $id;
 
+		$data = array();
+		$data['ticketId'] 			= $ticketId;
+		$data['send'] 				= 0;
+		$data['autoBuild'] 			= 1;
+		$data['manualEmailBody']	= 0;
+		$data['returnString'] 		= 1;
+		$data['ppvNoticeTypeId'] 	= $id;
+		
 		$data_json_encoded = json_encode($data);
 		$soap_client = new nusoap_client($webservice_live_url, true);
         $response = $soap_client->call($webservice_live_method_name, array($webservice_live_method_param => $data_json_encoded));
