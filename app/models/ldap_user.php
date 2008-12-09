@@ -16,9 +16,11 @@ class LdapUser extends AppModel {
 	{
 	    parent::__construct();
 	    try {
-	        $this->ds = ldap_connect($this->host, $this->port);
-	        ldap_set_option($this->ds, LDAP_OPT_PROTOCOL_VERSION, 3);
-	        @ldap_bind($this->ds, $this->user, $this->pass);
+	        if(function_exists('ldap_connect')) {
+	            $this->ds = ldap_connect($this->host, $this->port);
+	            ldap_set_option($this->ds, LDAP_OPT_PROTOCOL_VERSION, 3);
+	            @ldap_bind($this->ds, $this->user, $this->pass);
+            }
 	    } catch (Exception $e) {
 	        echo $e->getMessage();
 	    }
