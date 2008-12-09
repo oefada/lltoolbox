@@ -18,7 +18,6 @@
 		echo $form->input('ppvNoticeTypeId', array('disabled' => 'disabled'));
 		echo $form->input('ppvNoticeTypeId', array('type' => 'hidden'));
 		echo $form->input('ticketId', array('readonly'=>'readonly'));
-		echo $form->input('emailSubject', array('readonly' => 'readonly', 'size' => '70'));
 	?>
 	</fieldset>
 	<?php echo $form->input('emailBody', array('label' => '', 'cols' => '150', 'rows' => '30'));?>
