@@ -213,7 +213,18 @@ $this->searchController = 'Tickets';
 				<td><?php echo $ppvNotice['emailSubject'];?></td>
 				<td><?php echo $ppvNotice['emailSentDatetime'];?></td>
 				<td class="actions">
-					<?php echo $html->link(__('View', true), array('controller'=> 'ppv_notices', 'action'=>'view', $ppvNotice['ppvNoticeId'])); ?>
+					<?php
+					echo $html->link('View',
+							'/ppv_notices/view/' . $ppvNotice['ppvNoticeId'],
+							array(
+								'title' => 'View PPV / Notice',
+								'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
+								'complete' => 'closeModalbox()'
+							),
+							null,
+							false
+						);
+					?>
 				</td>
 			</tr>
 		<?php endforeach; ?>
