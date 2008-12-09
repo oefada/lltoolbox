@@ -36,6 +36,7 @@ class WebServiceTicketsController extends WebServicesController
 		$this->errorResponse = false;
 		if (!$this->createNewTicket($json_decoded)) {			
 			$json_decoded['response'] = $this->errorResponse;
+			@mail('devmail@luxurylink.com', 'Ticketing Error - Failed to Start Ticket Process', print_r($json_decoded, true));
 		} 
 		return json_encode($json_decoded);
 	}
@@ -97,25 +98,6 @@ class WebServiceTicketsController extends WebServicesController
 		$newTicket['Ticket']['userState']				 = $userData['Address'][0]['stateName'];
 		$newTicket['Ticket']['userCountry']				 = $userData['Address'][0]['countryName'];
 		$newTicket['Ticket']['userZip']					 = $userData['Address'][0]['postalCode'];
-
-		$errorBody = "DEBUG MESSAGE\n\n";
-		$errorBody.= "--------------------------------\n\n";
-		$errorBody.= "\nINPUT DATA:\n";
-		$errorBody.= print_r($data, true);
-		$errorBody.= "\nTICKET DATA CREATE ATTEMPT\n";
-		$errorBody.= print_r($newTicket, true);
-		$errorBody.= "\nUSER DATA\n";
-		$errorbody.= print_r($userData, true);
-		$errorBody.= "\nOFFER DATA\n";
-		$errorBody.= print_r($offerData, true);
-		$errorBody.= "\nUSER PAYMENT DATA\n";
-		$errorBody.= print_r($user_payment_setting, true);
-		
-		$emailFrom = 'System<geeks@luxurylink.com>';
-		$emailHeaders = "From: $emailFrom\r\n";
-    	$emailHeaders.= "Content-type: text/html\r\n";
-    	
-		@mail('devmail@luxurylink.com', 'Ticketing Error - Failed to Create New Ticket', $errorBody, $emailHeaders);
 
 		$this->Ticket->create();
 		if ($this->Ticket->save($newTicket)) {
