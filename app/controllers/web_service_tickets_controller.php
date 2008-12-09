@@ -34,7 +34,6 @@ class WebServiceTicketsController extends WebServicesController
 	{
 		$json_decoded = json_decode($in0, true);
 		$this->errorResponse = false;
-		@mail('devmail@luxurylink.com','Ticketing Process Debug Error 1', print_r($json_decoded, true));
 		if (!$this->createNewTicket($json_decoded)) {			
 			$json_decoded['response'] = $this->errorResponse;
 		} 
@@ -55,24 +54,17 @@ class WebServiceTicketsController extends WebServicesController
 			return false;	
 		}
 		
-		@mail('devmail@luxurylink.com','Ticketing Process Debug Error 2', print_r($data, true));
-		
 		$this->User->recursive = -1;
 		$userData = $this->User->read(null, $data['userId']);
 		
 		$this->Address->recursive = -1;
 		$addressData = $this->Address->findByuserid($data['userId']);
-		
-		@mail('devmail@luxurylink.com','Ticketing Process Debug Error 3', print_r($addressData, true));
-		
-		@mail('devmail@luxurylink.com','Ticketing Process Debug Error USER', print_r($userData, true));
-		
+
 		$this->Offer->recursive = 2;
 		$offerData = $this->Offer->read(null, $data['offerId']);
+		
 		$offerTypeToFormat = $this->Offer->query("SELECT formatId FROM formatOfferTypeRel WHERE offerTypeId = " . $offerData['SchedulingInstance']['SchedulingMaster']['offerTypeId']);
 		$formatId = $offerTypeToFormat[0]['formatOfferTypeRel']['formatId'];
-		
-		@mail('devmail@luxurylink.com','Ticketing Process Debug Error 4', print_r($data, true));
 		
 		$newTicket = array();
 		$newTicket['Ticket']['ticketStatusId'] 			 = 1;
@@ -111,9 +103,6 @@ class WebServiceTicketsController extends WebServicesController
 		$newTicket['Ticket']['userCountry']				 = $addressData['Address']['countryName'];
 		$newTicket['Ticket']['userZip']					 = $addressData['Address']['postalCode'];
 
-		@mail('devmail@luxurylink.com','Ticketing Process Debug Error 5', print_r($data, true));
-		@mail('devmail@luxurylink.com','Ticketing Process Debug Error TICKET', print_r($newTicket, true));
-
 		$this->Ticket->create();
 		if ($this->Ticket->save($newTicket)) {
 	
@@ -122,9 +111,7 @@ class WebServiceTicketsController extends WebServicesController
 			
 			// update the tracks 
 			$this->updateTrackPending($ticketId);
-			
-			@mail('devmail@luxurylink.com','Ticketing Process Debug Error 6', print_r($data, true));
-			
+
 			// if non-auction, just stop here as charging and ppv should not be auto
 			if ($formatId != 1) {
 				return true;	
@@ -132,8 +119,6 @@ class WebServiceTicketsController extends WebServicesController
 			
 			// find out if there is a valid credit card to charge.  charge and send appropiate emails
 			$user_payment_setting = $this->findValidUserPaymentSetting($userData['User']['userId']);
-			
-			@mail('devmail@luxurylink.com','Ticketing Process Debug Error 7', print_r($data, true));
 			
 			// param settings for the ppv function
 			$ppv_settings = array();
@@ -161,7 +146,7 @@ class WebServiceTicketsController extends WebServicesController
 			return true;	
 		} else {			
 			$this->errorResponse = 908;
-			/*
+
 			$errorBody = "DEBUG MESSAGE\n\n";
 			$errorBody.= "--------------------------------\n\n";
 			$errorBody.= "\nINPUT DATA:\n";
@@ -180,7 +165,7 @@ class WebServiceTicketsController extends WebServicesController
         	$emailHeaders.= "Content-type: text/html\r\n";
         	
 			@mail('devmail@luxurylink.com', 'Ticketing Error - Failed to Create New Ticket', $errorBody, $emailHeaders);
-			*/
+
 			return false;
 		}
 	}
