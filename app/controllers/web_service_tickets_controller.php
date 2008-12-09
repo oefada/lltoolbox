@@ -61,6 +61,8 @@ class WebServiceTicketsController extends WebServicesController
 		
 		@mail('devmail@luxurylink.com','Ticketing Process Debug Error 3', print_r($data, true));
 		
+		@mail('devmail@luxurylink.com','Ticketing Process Debug Error USER', print_r($userData, true));
+		
 		$this->Offer->recursive = 2;
 		$offerData = $this->Offer->read(null, $data['offerId']);
 		$offerTypeToFormat = $this->Offer->query("SELECT formatId FROM formatOfferTypeRel WHERE offerTypeId = " . $offerData['SchedulingInstance']['SchedulingMaster']['offerTypeId']);
