@@ -208,15 +208,25 @@ class WebServiceTicketsController extends WebServicesController
 			$userFirstName 		= ucwords(strtolower($userData['firstName']));
 			$userLastName 		= ucwords(strtolower($userData['lastName']));
 			$userEmail 			= $userData['email'];
+			
+			$userWorkPhone		= $userData['workPhone'];
+			$userMobilePhone	= $userData['mobilePhone'];
+			$userHomePhone		= $userData['homePhone'];
+			
+			$userPhone			= $userHomePhone;
+			$userPhone			= !$userPhone && $userMobilePhone ? $userMobilePhone : $userWorkPhone;
+			
 			$offerId			= $offerData['offerId'];
 			$clientId			= $clientData['clientId'];
 			$oldProductId		= $clientData['oldProductId'];
 			$packageName 		= $packageData['packageName'];
 			$packageSubtitle	= $packageData['subtitle'];
 			$clientName 		= $clientData['name'];
+			
 			$packageIncludes 	= $packageData['packageIncludes'];
 			$legalText			= $packageData['legalText'];
 			$validityNote		= $packageData['validityNote'];
+			
 			$offerTypeId		= $liveOfferData['offerTypeId'];
 			$offerEndDate		= date('M d Y H:i A', strtotime($liveOfferData['endDate']));
 			$billingPrice		= number_format($ticketData['billingPrice'], 2, '.', ',');
@@ -233,6 +243,7 @@ class WebServiceTicketsController extends WebServicesController
 	
 			ob_start();
 			
+			echo "<h1>$ppvNoticeTypeId</h1>";
 			echo $userId . ' userId<br />';
 			echo $userFirstName . ' userFirstName<br />';
 			echo $userLastName . ' userLastName<br />';
@@ -254,35 +265,37 @@ class WebServiceTicketsController extends WebServicesController
 			echo $totalPrice . ' totalPrice<br />';
 			echo $maxNumWinners . ' maxNumWinners<br />';
 			
+			$ppvNoticeTypeId = 1;
+			
 			switch ($ppvNoticeTypeId) {
 				case 1:
 					include('../vendors/email_msgs/ppv/conf_ppv.html');
 					$emailSubject = 'testing conf ppv';
-					break;
+					//break;
 				case 2:
 					include('../vendors/email_msgs/ppv/res_ppv.html');
 					$emailSubject = 'testing res ppv';
-					break;
+					//break;
 				case 3:
 					include('../vendors/email_msgs/ppv/winner_ppv.html');
 					$emailSubject = 'testing winner ppv';
-					break;
+					//break;
 				case 4: 
 					include('../vendors/email_msgs/ppv/client_ppv.html');
 					$emailSubject = 'testing client ppv';
-					break;
+					//break;
 				case 5:
 					include('../vendors/email_msgs/notifications/winner_notification.html');
 					$emailSubject = 'testing winn notif';
-					break;
+					//break;
 				case 6:
 					include('../vendors/email_msgs/notifications/winner_notification_w_checkout.html');
 					$emailSubject = 'testing winn notif w checkout';
-					break;
+					//break;
 				case 7:
 					include('../vendors/email_msgs/notifications/winner_notification_decline_cc.html');
 					$emailSubject = 'testing winn notif w decline cc';
-					break;
+					//break;
 				case 8:
 					include('../vendors/email_msgs/notifications/winner_notification_expired_cc.html');
 					$emailSubject = 'testing winn notif w expired cc';
