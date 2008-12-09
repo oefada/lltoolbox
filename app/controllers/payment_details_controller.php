@@ -39,6 +39,8 @@ class PaymentDetailsController extends AppController {
 	// ----------------------------------------------------------
 	// NO ONE IS ALLOWED TO EDIT OR DELETE PAYMENT DETAIL RECORDS
 	// ----------------------------------------------------------
+	
+	/*
 
 	function edit($id = null) {	
 		$this->Session->setFlash(__('Access Denied - You cannot perform that operation.', true), 'default', array(), 'error');
@@ -76,5 +78,6 @@ class PaymentDetailsController extends AppController {
 			$this->redirect(array('action'=>'index'));
 		}
 	}
+	*/
 }
 ?>
