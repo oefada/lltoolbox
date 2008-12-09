@@ -132,7 +132,7 @@ class WebServiceTicketsController extends WebServicesController
 			if (is_array($user_payment_setting) && !empty($user_payment_setting)) {
 				// has valid cc card to charge
 				$ppv_settings['ppvNoticeTypeId'] 	= 5;
-				$ppv_settings['autoProcessPpv'] = 1;
+
 			} elseif ($user_payment_setting == 'EXPIRED') {
 				// has valid cc card but is expired
 				$ppv_settings['ppvNoticeTypeId'] 	= 8;
@@ -232,6 +232,27 @@ class WebServiceTicketsController extends WebServicesController
 			$show_mc 			= false;
 	
 			ob_start();
+			
+			echo $userId . ' userId<br />';
+			echo $userFirstName . ' userFirstName<br />';
+			echo $userLastName . ' userLastName<br />';
+			echo $userEmail . ' userEmail<br />';
+			echo $offerId . ' offerId<br />';
+			echo $clientId . ' clientId<br />';
+			echo $oldProductId . ' oldProductId<br />';
+			echo $packageName . ' packageName<br />';
+			echo $packageSubtitle . ' packageSubtitle<br />';
+			echo $clientName . ' clientName<br />';
+			echo $packageIncludes . ' packageIncludes<br />';
+			echo $legalText . ' legalText<br />';
+			echo $validityNote . ' validityNote<br />';
+			echo $offerTypeId . ' offerTypeId<br />';
+			echo $offerEndDate . ' offerEndDate<br />';
+			echo $billingPrice . ' billingPrice<br />';
+			echo $llFeeAmount . ' llFeeAmount<br />';
+			echo $llFee . ' llFee<br />';
+			echo $totalPrice . ' totalPrice<br />';
+			echo $maxNumWinners . ' maxNumWinners<br />';
 			
 			switch ($ppvNoticeTypeId) {
 				case 1:
