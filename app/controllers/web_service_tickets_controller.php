@@ -263,7 +263,7 @@ class WebServiceTicketsController extends WebServicesController
 			$ppvNoticeSave['emailCc']			= '';
 			$ppvNoticeSave['emailSubject']		= $emailSubject;
 			$ppvNoticeSave['emailBodyFileName']	= $emailBodyFileName;
-			$ppvNoticeSave['emailSentDatetime']	= $emailSentDatetime;
+			$ppvNoticeSave['emailSentDatetime']	= date('Y-m-d H:i:s', $emailSentDatetime);
 			
 			@mail('alee@luxurylink.com', 'testing', print_r($ppvNoticeSave, true), $emailHeaders);
 			
