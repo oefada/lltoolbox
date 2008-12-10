@@ -12,21 +12,7 @@ class TicketsController extends AppController {
 		$this->paginate = array('fields' => array('Ticket.ticketId', 'TicketStatus.ticketStatusName', 'Package.packageName', 'Ticket.userFirstName', 'Ticket.userLastName'),
 		                        'contain' => array('Package', 'TicketStatus'));
 		$this->set('tickets', $this->paginate());
-		echo $this->aesEncrypt('asdfasdfa');
 	}
-
-	
-	function aesEncrypt($input)
-	{
-	    $input = str_replace(' ','',$input);
-	    if(!$input) return false;
-        $key = @md5('werdUpLLDev');
-        $ivSize = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_CBC);
-        $iv = mcrypt_create_iv($ivSize, MCRYPT_RAND);
-        $enc = mcrypt_encrypt(MCRYPT_RIJNDAEL_128, $key, $input, MCRYPT_MODE_ECB, $iv);
-    	return bin2hex($enc);
-	}
-
 
 	function view($id = null) {
 		if (!$id) {
