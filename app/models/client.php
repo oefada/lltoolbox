@@ -68,7 +68,7 @@ class Client extends AppModel {
 
     function afterFind($results) {
 		foreach ($results as $key => $val):
-			if (isset($val['Client']) && is_int($key)):
+			if (!empty($val['Client']) && is_int($key)):
 			    $loas = $this->Loa->find('list', array('contain' => array(), 'fields' => array('loaId'), 'conditions' => array('clientId' => $val['Client']['clientId'])));
 			    $currentLoa = $this->Loa->find('first', array('contain' => array('LoaLevel'), 'fields'=>array('Loa.loaLevelId, LoaLevel.loaLevelName'), 'conditions' => array('Loa.clientId' => $val['Client']['clientId'], 'Loa.endDate <=' => 'NOW()')));
 			    

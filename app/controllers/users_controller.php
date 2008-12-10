@@ -43,13 +43,12 @@ class UsersController extends AppController {
 		if (empty($this->data)) {
 			$this->data = $this->User->read(null, $id);
 		}
-		$contests = $this->User->Contest->find('list');
-		$clients = $this->User->Client->find('list');
+
 		$salutationIds = $this->User->Salutation->find('list');
 		$paymentTypes = $this->User->UserPaymentSetting->PaymentType->find('list');
 		$addressTypes = $this->User->Address->AddressType->find('list');
 		$this->set('user', $this->data);
-		$this->set(compact('user', 'contests','clients','salutationIds', 'paymentTypes', 'addressTypes'));
+		$this->set(compact('user', 'salutationIds', 'paymentTypes', 'addressTypes'));
 	}
 
 	function delete($id = null) {
