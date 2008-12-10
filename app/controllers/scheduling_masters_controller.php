@@ -176,6 +176,11 @@ class SchedulingMastersController extends AppController {
 
 		for ($i = 0; $i < $iterations; $i++) {
 			$endDate = strtotime($instanceData['SchedulingInstance']['startDate'] . ' +' . $masterData['SchedulingMaster']['numDaysToRun'] . ' days');
+			
+			while ($this->_isHoliday($endDate)) {
+			    $endDate = strtotime('+1 day', $endDate);
+			}
+			
 			$instanceData['SchedulingInstance']['endDate'] = date('Y-m-d H:i:s', $endDate);		
 				
 			$this->SchedulingMaster->SchedulingInstance->create();
@@ -184,6 +189,35 @@ class SchedulingMastersController extends AppController {
 			$startDate = strtotime($instanceData['SchedulingInstance']['endDate'] . ' +' . $masterData['SchedulingDelayCtrl']['schedulingDelayCtrlDesc']);
 			$instanceData['SchedulingInstance']['startDate'] = date('Y-m-d H:i:s', $startDate);	
 		}
+	}
+	
+	function _isHoliday($timestamp) {
+	    $holidays = array('1/1','7/4','12/24','12/25');
+	    //memorial day, labor day
+	    date('Y', $timestamp);
+	    //thanksgiving, friday after thanksgiving
+	    $thanksgiving = strtotime("third thursday",mktime(0,0,0,11,1,date('Y', $timestamp)));
+	    $holidays[] = date('n/j', $thanksgiving);
+	    $holidays[] = date('n/j', strtotime('+1 day', $thanksgiving));
+	    
+	    //memorial day
+	    $lastMondayInMay = strtotime("fourth monday",mktime(0,0,0,5,1,date('Y', $timestamp)));
+	    $nextMonday =  strtotime("fifth monday",mktime(0,0,0,5,1,date('Y', $timestamp)));
+	    
+	    if(date('n', $nextMonday) == '5') {
+	        $lastMondayInMay = $nextMonday;
+	    }
+	    $holidays[] = date('n/j', $lastMondayInMay);
+	    
+	    //labor day
+	    $holidays[] = date('n/j', strtotime('monday', mktime(0,0,0,9,1,date('y', $timestamp))));
+	    
+	    //check all of the days in the holidays array
+	    if (in_array(date('n/j', $timestamp), $holidays)) {
+	        return true;
+	    }
+    
+        return false;
 	}
 
 	function edit($id = null) {
