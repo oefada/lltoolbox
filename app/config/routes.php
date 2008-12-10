@@ -33,6 +33,8 @@
  * its action called 'display', and we pass a param to select the view file
  * to use (in this case, /app/views/pages/home.thtml)...
  */
+    Router::parseExtensions('rss','xml','pdf');
+	
 	Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
 	
 	Router::connect('/login', array('controller' => 'sessions', 'action' => 'login'));
