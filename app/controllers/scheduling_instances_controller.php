@@ -57,6 +57,23 @@ class SchedulingInstancesController extends AppController {
 			$this->redirect(array('action'=>'index'));
 		}
 	}
+	
+	/**
+	 * Method called from Prototip using ajax. Finds all of the performance metrics and passes them into a view file.
+	 * View file is shown in a tooltip.
+	 *
+	 * @param int $id of the scheduling instance to grab performance metrics for
+	 */
+	function performanceTooltip($id) {
+	    $metrics = $this->SchedulingInstance->query('SELECT TicketStatus.ticketStatusName, MAX(Bid.bidAmount) as maxBidAmount,'.
+	                                                ' MAX(Bid.bidDateTime) as maxBidDateTime, COUNT(*) as numBids, COUNT(DISTINCT Bid.userId) as numUniqueBidders'.
+	                                                ' FROM bid as Bid LEFT JOIN offer as Offer ON (Bid.offerId = Offer.offerID)'.
+	                                                ' LEFT JOIN ticket as Ticket ON (Offer.offerId = Ticket.offerId)'.
+	                                                ' LEFT JOIN ticketStatus as TicketStatus ON(Ticket.ticketStatusId = TicketStatus.ticketStatusId)'.
+	                                                ' WHERE Offer.schedulingInstanceId = '.$id);
+
+		$this->set('metrics', $metrics[0]);
+	}
 
 }
 ?>

@@ -64,7 +64,7 @@ foreach($package['Scheduling'] as $k => $master):
 	<?php 
 	if (substr($mstrStartDate, 0, 10) == substr($startDate, 0, 10)) {
 	?>
-		<div id='schedulingMaster<?=$master['SchedulingMaster']['schedulingMasterId']?>' style="width: <?=$width?>%; left: <?=$left?>%"<?=$class?> ondblclick="Modalbox.show('/scheduling_masters/edit/<?=$instance['schedulingMasterId']?>', {title: 'Edit Scheduling Master'});">	
+		<div id='schedulingMaster<?=$master['SchedulingMaster']['schedulingMasterId']?>' style="width: <?=$width?>%; left: <?=$left?>%"<?=$class?> onclick="Modalbox.show('/scheduling_masters/edit/<?=$instance['schedulingMasterId']?>', {title: 'Edit Scheduling Master'});">	
 		<strong>Retail Value</strong><br /><?=$number->currency($master['SchedulingMaster']['retailValue'])?>
 		
 		
@@ -77,9 +77,15 @@ foreach($package['Scheduling'] as $k => $master):
 																				));
 	} else {
 	?>
-		<div style="width: <?=$width?>%; left: <?=$left?>%"<?=$class?>>	
+		<div id="schedulingInstance<?=$instance['schedulingInstanceId']?>"style="width: <?=$width?>%; left: <?=$left?>%"<?=$class?>>	
 		Iteration 
 	<?php
+		$prototip->tooltip('schedulingInstance'.$instance['schedulingInstanceId'], array('ajax' =>
+		 																		array('url' => '/scheduling_instances/performanceTooltip/'.$instance['schedulingInstanceId'], 
+																						'options' => array('method' => 'get')
+																					),
+																				'title' => 'Scheduling Instance Performance'
+																				));
 	}
 	?>
 	</div>
