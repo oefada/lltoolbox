@@ -15,4 +15,14 @@ function aesEncrypt($input)
 }
 
 
+function aesDecrypt($enc_input)
+{
+    if(!$enc_input) return false;
+    $key = @md5('werdUpLLDev');
+    $ivSize = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_CBC);
+    $iv = mcrypt_create_iv($ivSize, MCRYPT_RAND);
+    return trim(mcrypt_decrypt(MCRYPT_RIJNDAEL_128, $key, pack('H*', $enc_input), MCRYPT_MODE_ECB, $iv));
+}
+
+
 ?>
