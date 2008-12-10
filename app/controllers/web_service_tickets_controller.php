@@ -256,9 +256,9 @@ class WebServiceTicketsController extends WebServicesController
 			echo $packageName . ' packageName<br />';
 			echo $packageSubtitle . ' packageSubtitle<br />';
 			echo $clientName . ' clientName<br />';
-			echo $packageIncludes . ' packageIncludes<br />';
-			echo $legalText . ' legalText<br />';
-			echo $validityNote . ' validityNote<br />';
+			echo "<br />********<br />" . $packageIncludes . '<br /> ***** packageIncludes<br />';
+			echo "<br />********<br />" . $legalText . '<br />******** legalText<br />';
+			echo "<br />********<br />" . $validityNote . '<br />******* validityNote<br />';
 			echo $offerTypeId . ' offerTypeId<br />';
 			echo $offerEndDate . ' offerEndDate<br />';
 			echo $billingPrice . ' billingPrice<br />';
@@ -349,7 +349,6 @@ class WebServiceTicketsController extends WebServicesController
 			return $emailBody;	
 		}
 	}
-		
 		
 	function findValidUserPaymentSetting($userId) {
 		$ups = $this->User->query("select * from userPaymentSetting as UserPaymentSetting where userId = $userId and inactive = 0 order by primaryCC desc, expYear desc");
