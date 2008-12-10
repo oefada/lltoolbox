@@ -86,7 +86,7 @@
                      $content = serialize($output);
                      
 
-                     $revision = $this->_increment_revision(&$model,$model->data[$model->name][$model->primaryKey]);
+                     $revision = $this->_increment_revision($model,$model->data[$model->name][$model->primaryKey]);
                      $model->bindModel(
                       array('hasMany' => array(
                       'Audit' => array(
@@ -97,7 +97,7 @@
                       );
                      $model->Audit->save(array(
                                        'class'=>$model->name,
-										'userId' => 'Anonymous',
+										'username' => $userDetails['samaccountname'][0],
                                        'foreignId'=>$model->data[$model->name][$model->primaryKey],
                                        'contents'=>$content,
                                        'revision'=>$revision));
@@ -110,7 +110,7 @@
          {
              $model->query("UPDATE {$model->useTable} SET revision = revision + 1 WHERE {$model->primaryKey} = '{$id}'");
 
-             return $this->_get_revision(&$model, $id);
+             return $this->_get_revision($model, $id);
          }
 
          function _get_revision(&$model, $id)
