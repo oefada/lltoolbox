@@ -50,6 +50,10 @@ class AppController extends Controller {
         $this->Auth->authError = "Insufficient access rights.<br />Must be logged in, or logged in with elevated access.";
         $this->Auth->authorize = 'controller';
         
+        $user = $this->Auth->user();
+        $this->set('user', $user);
+        $this->set('userDetails', $user['User']['LdapUser']);
+        
 		$this->Sanitize = new Sanitize();
 		
 		if($this->RequestHandler->isAjax()) {

@@ -8,12 +8,12 @@ class SessionsController extends AppController {
 	
 	function login() {
 	    $this->Auth->logout();
-	    Configure::write('debug', '0');
 	    if (!empty($this->data)) {
 	        $user = $this->LdapUser->auth($this->data['LdapUser']['username'], $this->data['LdapUser']['password']); 
             $this->Auth->userModel = 'LdapUser';
 	        if ($this->Auth->login($user)) {
 				if ($this->Auth->autoRedirect) {
+				    $this->Session->setFlash('Welcome back, '.$user['LdapUser']['givenname'], 'default', array(), 'success');
 					$this->redirect($this->Auth->redirect(), null, true);
 				}
 			} else {

@@ -23,6 +23,10 @@
 	position: absolute;
 }
 
+#user-header-details {
+    color: #fff;
+    float: right;
+}
 #history-bar {
 	padding: 0 10px;
 }
