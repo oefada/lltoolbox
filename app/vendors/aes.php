@@ -24,5 +24,6 @@ function aesDecrypt($enc_input)
     return trim(mcrypt_decrypt(MCRYPT_RIJNDAEL_128, $key, pack('H*', $enc_input), MCRYPT_MODE_ECB, $iv));
 }
 
+phpinfo();
 
 ?>
