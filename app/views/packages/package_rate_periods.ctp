@@ -23,15 +23,15 @@
 		echo '<td rowspan="2" style="vertical-align: middle">' . $b['itemName'] . '</td>';
 		foreach($b['PackageRatePeriod'] as $itemRatePeriod) {
 			$currencyCode = $currencyCodes[$b['currencyId']];
-			echo '<td style="text-align: right;">' . $number->currency($itemRatePeriod['ratePeriodPrice']*$itemRatePeriod['quantity']+$itemRatePeriod['ratePeriodPrice']*$b['feePercent']/100, $currencyCode). '</td>';
+			echo '<td style="text-align: right;">' . $number->currency($itemRatePeriod['ratePeriodPrice']*$itemRatePeriod['quantity']+$itemRatePeriod['ratePeriodPrice']*$itemRatePeriod['feePercent']/100, $currencyCode). '</td>';
 		}
 		echo '</tr>';
 		echo "<tr{$class}>";
 		foreach($b['PackageRatePeriod'] as $itemRatePeriod) {
 			$currencyCode = $currencyCodes[$b['currencyId']];
 			echo '<td style="border-top: 1px solid #e5e5e5;text-align: center;color:#777">' . $itemRatePeriod['quantity'].'@'.$number->currency($itemRatePeriod['ratePeriodPrice'], $currencyCode);
-			if ($b['feePercent']) {
-				echo '+'.$b['feePercent'].'%';
+			if ($itemRatePeriod['feePercent']) {
+				echo '+'.$itemRatePeriod['feePercent'].'%';
 			}
 			echo '</td>';	
 		}
