@@ -45,8 +45,7 @@ class PackagesController extends AppController {
 		$packageStartDate = $this->data['Package']['validityStartDate']['year'] . '-' . $this->data['Package']['validityStartDate']['month'] . '-' . $this->data['Package']['validityStartDate']['day'];
 		$packageEndDate = $this->data['Package']['validityEndDate']['year'] . '-' . $this->data['Package']['validityEndDate']['month'] . '-' . $this->data['Package']['validityEndDate']['day'];
 		
-		$carvedRatePeriods = $this->Package->PackageLoaItemRel->LoaItem->carveRatePeriods($this->data['Package']['CheckedLoaItems'], $this->data['PackageLoaItemRel'], $packageStartDate, $packageEndDate);
-
+		$carvedRatePeriods = $this->Package->PackageLoaItemRel->LoaItem->carveRatePeriods($this->data['Package']['CheckedLoaItems'], $this->data['PackageLoaItemRel'], $packageStartDate, $packageEndDate); 
 		$this->data['PackageRatePeriod'] = $carvedRatePeriods['PackageRatePeriod'];
 	}
 	
@@ -436,7 +435,7 @@ class PackagesController extends AppController {
 			$boundaries[$ratePeriod['startDate']]['rangeEnd'] = $ratePeriod['endDate'];
 			
 			if(!isset($boundaries[$ratePeriod['startDate']]['rangeSum'])) $boundaries[$ratePeriod['startDate']]['rangeSum'] = 0;
-			$boundaries[$ratePeriod['startDate']]['rangeSum'] += $ratePeriod['ratePeriodPrice']*$ratePeriod['quantity'];
+			$boundaries[$ratePeriod['startDate']]['rangeSum'] += $ratePeriod['ratePeriodPrice']*$ratePeriod['quantity']+($ratePeriod['ratePeriodPrice']*$ratePeriod['quantity']*$ratePeriod['feePercent']/100);
 			
 			//setup an array that has itemId => array('startDate', 'endDate', 'price'), so we can draw each row
 			$itemRatePeriods['IncludedItems'][$ratePeriod['loaItemId']]['itemName'] = $itemList[$ratePeriod['loaItemId']];
