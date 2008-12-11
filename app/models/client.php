@@ -69,14 +69,10 @@ class Client extends AppModel {
     function afterFind($results) {
 		foreach ($results as $key => $val):
 			if (!empty($val['Client']) && is_int($key)):
+			    //TODO: Turn the following two queries into one
 			    $loas = $this->Loa->find('list', array('contain' => array(), 'fields' => array('loaId'), 'conditions' => array('clientId' => $val['Client']['clientId'])));
 			    $currentLoa = $this->Loa->find('first', array('contain' => array('LoaLevel'), 'fields'=>array('Loa.loaLevelId, LoaLevel.loaLevelName'), 'conditions' => array('Loa.clientId' => $val['Client']['clientId'], 'Loa.endDate <=' => 'NOW()')));
 			    
-			    if (empty($currentLoa)) {
-			        $results[$key]['ClientStatus']['clientStatusName'] = 'No Active LOA';
-			    } else {
-			        $results[$key]['ClientStatus']['clientStatusName'] = 'Active';
-			    }
 			    $results[$key]['ClientLevel']['clientLevelId'] = $currentLoa['LoaLevel']['loaLevelId'];
 			    $results[$key]['ClientLevel']['clientLevelName'] = $currentLoa['LoaLevel']['loaLevelName'];
 				$results[$key]['Client']['numLoas'] = count($loas);				
