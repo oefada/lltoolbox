@@ -15,7 +15,6 @@ $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']
 	<fieldset>
 		<? echo $form->input('clientTypeId', array('label' => 'Client Type')); ?>
 		<div class="input text"><label>Client Level</label><?=$this->data['ClientLevel']['clientLevelName']?></div>
-		<div class="input select"><label>Client Status</label><?=$this->data['ClientStatus']['clientStatusName']?></div>
 	<?php
 		echo $form->input('clientId');
 		echo $form->input('parentClientId');
