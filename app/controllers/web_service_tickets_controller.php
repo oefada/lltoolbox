@@ -244,7 +244,8 @@ class WebServiceTicketsController extends WebServicesController
 			$show_mc 			= false;
 	
 			ob_start();
-			
+
+			/*			
 			echo "<h1>$ppvNoticeTypeId</h1>";
 			echo $userId . ' userId<br />';
 			echo $userFirstName . ' userFirstName<br />';
@@ -266,6 +267,7 @@ class WebServiceTicketsController extends WebServicesController
 			echo $llFee . ' llFee<br />';
 			echo $totalPrice . ' totalPrice<br />';
 			echo $maxNumWinners . ' maxNumWinners<br />';
+			*/
 			
 			switch ($ppvNoticeTypeId) {
 				case 1:
