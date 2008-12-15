@@ -7,8 +7,8 @@ class WebServiceTicketsController extends WebServicesController
 {
 	var $name = 'WebServiceTickets';
 	var $uses = array('Ticket', 'User', 'Offer', 'Bid', 'ClientLoaPackageRel', 'RevenueModelLoaRel', 'Loa', 'RevenueModelLoaRelDetail', 'PpvNotice', 'Address');
-	var $serviceUrl = 'http://toolboxdev.luxurylink.com/web_service_tickets';
-	//var $serviceUrl = 'http://192.168.100.111/web_service_tickets';
+	//var $serviceUrl = 'http://toolboxdev.luxurylink.com/web_service_tickets';
+	var $serviceUrl = 'http://192.168.100.111/web_service_tickets';
 	var $errorResponse = false;
 	var $api = array(
 					'newTicketProcessor1' => array(
@@ -227,7 +227,8 @@ class WebServiceTicketsController extends WebServicesController
 			$legalText			= $packageData['legalText'];
 			$validityNote		= $packageData['validityNote'];
 			
-			$offerTypeId		= $liveOfferData['offerTypeId'];
+			//$offerTypeId		= $liveOfferData['offerTypeId'];
+			$offerTypeId		= $ticket['Ticket']['offerTypeId'];
 			$offerEndDate		= date('M d Y H:i A', strtotime($liveOfferData['endDate']));
 			$billingPrice		= number_format($ticketData['billingPrice'], 2, '.', ',');
 			$llFeeAmount		= in_array($offerTypeId, array(1,2,6)) ? 30 : 40;
@@ -239,35 +240,13 @@ class WebServiceTicketsController extends WebServicesController
 			$checkoutKey		= base64_encode(serialize(array('ticketId' => $ticketId, 'userId' => $userId, 'offerId' => $offerId, 'zKey' => $checkoutHash)));
 			$checkoutLink		= "https://www.luxurylink.com/my/my_purchse.php?z=$checkoutKey";
 			
+			// some unknowns
 			$guarantee			= false;
-			
 			$show_mc 			= false;
+			$is_auc_fac			= false;
+			$wholesale			= 0;
 	
 			ob_start();
-
-			/*			
-			echo "<h1>$ppvNoticeTypeId</h1>";
-			echo $userId . ' userId<br />';
-			echo $userFirstName . ' userFirstName<br />';
-			echo $userLastName . ' userLastName<br />';
-			echo $userEmail . ' userEmail<br />';
-			echo $offerId . ' offerId<br />';
-			echo $clientId . ' clientId<br />';
-			echo $oldProductId . ' oldProductId<br />';
-			echo $packageName . ' packageName<br />';
-			echo $packageSubtitle . ' packageSubtitle<br />';
-			echo $clientName . ' clientName<br />';
-			echo "<br />********<br />" . $packageIncludes . '<br /> ***** packageIncludes<br />';
-			echo "<br />********<br />" . $legalText . '<br />******** legalText<br />';
-			echo "<br />********<br />" . $validityNote . '<br />******* validityNote<br />';
-			echo $offerTypeId . ' offerTypeId<br />';
-			echo $offerEndDate . ' offerEndDate<br />';
-			echo $billingPrice . ' billingPrice<br />';
-			echo $llFeeAmount . ' llFeeAmount<br />';
-			echo $llFee . ' llFee<br />';
-			echo $totalPrice . ' totalPrice<br />';
-			echo $maxNumWinners . ' maxNumWinners<br />';
-			*/
 			
 			switch ($ppvNoticeTypeId) {
 				case 1:
@@ -326,6 +305,7 @@ class WebServiceTicketsController extends WebServicesController
 
 			$emailBodyFileName = $ticketId . '_' . $ppvNoticeTypeId . '_' . $emailSentDatetime . '.html';
 			
+			// save the email as a flat file
 			$fh = fopen("../vendors/email_msgs/toolbox_sent_messages/$emailBodyFileName", 'w');
 			fwrite($fh, $emailBody);
 			fclose($fh);
