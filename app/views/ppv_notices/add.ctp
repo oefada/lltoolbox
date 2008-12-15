@@ -19,7 +19,8 @@
 		echo $form->input('ppvNoticeTypeId', array('type' => 'hidden'));
 		echo $form->input('ticketId', array('readonly'=>'readonly'));
 	?>
+		<br /><br />
+		<textarea id="PpvNoticeEmailBody" name="data[PpvNotice][emailBody]" cols="140" rows="30"><?php echo $ppv_body_text;?></textarea>
 	</fieldset>
-	<?php echo $form->input('emailBody', array('label' => '', 'cols' => '150', 'rows' => '30'));?>
 <?php echo $form->end('Submit');?>
 </div>
