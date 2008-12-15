@@ -62,8 +62,10 @@ class PpvNoticesController extends AppController {
 		$data_json_encoded = json_encode($data);
 		$soap_client = new nusoap_client($webservice_live_url, true);
         $response = $soap_client->call($webservice_live_method_name, array($webservice_live_method_param => $data_json_encoded));
-                             
-        $this->data['PpvNotice']['emailBody'] = $response;
+                   
+        //$this->data['PpvNotice']['emailBody'] = htmlspecialchars($response, ENT_QUOTES, "UTF-8");
+        //$this->data['PpvNotice']['emailBody'] = preg_replace('/[^a-z0-9]/', '', $response); 
+     	$this->set('ppv_body_text', $response);
 	}
 
 	/*

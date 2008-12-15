@@ -75,8 +75,7 @@ class TicketsController extends AppController {
  			
  		echo $response;
  			
-		//$this->redirect(array('action'=>'view', 'id' => $id));
-		die();
+		$this->redirect(array('action'=>'view', 'id' => $id));
 	}
 
 	// -------------------------------------------
