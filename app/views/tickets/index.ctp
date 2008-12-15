@@ -24,6 +24,9 @@ $this->set('hideSidebar', true);
 	<th><?php echo $paginator->sort('Package Name', 'Ticket.packageName');?></th>
 	<th><?php echo $paginator->sort('User First name', 'Ticket.userFirstName');?></th>
 	<th><?php echo $paginator->sort('User Last Name', 'Ticket.userLastName');?></th>
+	<th>Payment Status</th>
+	<th>Client PPV</th>
+	<th>Winner PPV</th>
 	<th class="actions"><?php __('Actions');?></th>
 </tr>
 <?php
@@ -46,6 +49,15 @@ foreach ($tickets as $ticket):
 		</td>
 		<td>
 			<?php echo $ticket['Ticket']['userFirstName']; ?>
+		</td>
+		<td>
+			<?php echo $ticket['Ticket']['userLastName']; ?>
+		</td>
+		<td>
+			<?php echo $ticket['Ticket']['userLastName']; ?>
+		</td>
+		<td>
+			<?php echo $ticket['Ticket']['userLastName']; ?>
 		</td>
 		<td>
 			<?php echo $ticket['Ticket']['userLastName']; ?>
