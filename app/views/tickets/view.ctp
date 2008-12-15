@@ -158,7 +158,21 @@ $this->searchController = 'Tickets';
 					<td align="center"><?php echo $number->currency($paymentDetail['paymentAmount']);?></td>
 					<td align="center"><?php echo $paymentDetail['PaymentProcessor']['paymentProcessorName'];?></td>
 					<td align="center"><?php echo $processed_flag;?></td>
-					<td class="actions"><?php echo $html->link(__('View', true), array('controller'=> 'payment_details', 'action'=>'view', $paymentDetail['paymentDetailId'])); ?></td>
+					<td class="actions">
+						<?php //echo $html->link(__('View', true), array('controller'=> 'payment_details', 'action'=>'view', $paymentDetail['paymentDetailId'])); ?>
+						<?php
+							echo $html->link('View',
+									'/payment_details/view/' . $paymentDetail['paymentDetailId'],
+									array(
+										'title' => 'View Payment Transaction Details',
+										'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
+										'complete' => 'closeModalbox()'
+									),
+									null,
+									false
+								);
+						?>
+					</td>
 				</tr>
 			<?php endforeach; ?>
 		</table>
