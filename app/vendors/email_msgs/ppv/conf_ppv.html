@@ -25,14 +25,11 @@ Departure: {if $departure_date}{$departure_date}{else}N/A{/if}
 
 {if $room_category == true} Room Category Selected: {$room_category}<p>{/if}
 
+<p><?php echo $packageIncludes;?></p>
+<p><?php echo $validityNote;?></p>
+<p><?php echo $legalText;?></p>
 
-{$inclusions[1]}<p>
-{$validity[1]}<br>
-{$legal_stripped[0]}<p>
-<br>
-
-
-{if $auction_type_id != 2}
+<?php if ($offerTypeId != 2) : ?>
 	Please contact the property directly for any special requests.<p>
 	{section name=product loop=$multi_product_split}
 		{$contact_name[product]}<br>
@@ -44,22 +41,23 @@ Departure: {if $departure_date}{$departure_date}{else}N/A{/if}
 		Facsimile: {$contact_fax[product]}<br>
 		Email: {$ticket_email1[product]}<p>
 	{/section}
-{/if}
+<?php endif;?>
 
-{if !$is_auc_fac}
-	{if $auction_type_id == 2 && $auction_wholesale == 1}
+<?php if (!$is_auc_fac) : ?>
+
+	<?php if ($offerTypeId == 2 && $wholesale == 1) : ?>
 		If a change occurs after the booking, but at least 30 days before 
 		departure, a fee of $50 will apply. Package is non-refundable and non-cancellable within 29 days of scheduled departure date. Any changes 
 		within 30 days of the scheduled departure date will be subject to a $100 fee 
 		plus additional charges based on the policies of the travel provider, which 
 		may result in substantial penalties.<p>
-	{else}
+	<?php else: ?>
 		If a change or cancellation occurs after the booking, but at least 30 days before departure, a fee of $50 will apply. 
 		Package is non-refundable and non-cancellable within 29 days of scheduled departure date. 
 		Any changes within 30 days of the scheduled departure date 
 		will be subject to a $100 fee plus additional charges based on the policies 
 		of the travel provider, which may result in substantial penalties.<p>
-	{/if}
+	<?php endif;?>
 	
 	<p>
 	'Buy Now' Cancellation Policy
@@ -69,11 +67,11 @@ Departure: {if $departure_date}{$departure_date}{else}N/A{/if}
 		<li>A customer "No Show" could result in a forfeiture of entire package amount plus any additional hotel penalty.</li>
 	</ul>
 	</p>
-{/if}
+<?php endif;?>
 
-{if $is_auc_fac}
+<?php if ($is_auc_fac) : ?>
 	<p><strong>Please note as stated in our rules section and on all LuxuryLink.com auction pages, this package is non-refundable.</strong></p>
-{/if}
+<?php endif;?>
 
 <p>
 This email serves as your receipt that you have paid in full. Please present a copy upon check-in. 	
