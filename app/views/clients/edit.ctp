@@ -32,6 +32,10 @@ $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']
 		<div class="collapsibleContent">
 		<?php
 		echo $form->input('email');
+		echo $form->input('ppvEmail1');
+		echo $form->input('ppvEmail2');
+		echo $form->input('ppvEmail3');
+		echo $form->input('contactSalutation');
 		echo $form->input('phone1');
 		echo $form->input('phone2');
 		echo $form->input('country');
