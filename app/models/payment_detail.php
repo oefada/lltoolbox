@@ -19,13 +19,6 @@ class PaymentDetail extends AppModel {
 					        'on' => 'create',
 					        'message' => 'Initials are required before submitting a payment.'
 					    ),
-					     'userPaymentSettingId' => array(
-					        'rule' => 'numeric', 
-					        'required' => true,
-					        'allowEmpty' => false,
-					        'on' => 'create',
-					        'message' => 'You must choose one of the User Payment Settings above.'
-					    ),
 					     'paymentAmount' => array(
 					        'rule' => 'numeric', 
 					        'required' => true,
