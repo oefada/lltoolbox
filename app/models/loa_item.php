@@ -53,10 +53,9 @@ class LoaItem extends AppModel {
 
 			foreach($itemIds as $itemId):
 				$items[$itemId]['itemName'] = $itemList[$itemId];
-				$fee = $this->Fee->find('first', array('contain' => array('Fee'), 'conditions' => array('Fee.loaItemId' => $itemId)));
-				$items[$itemId]['feePercent'] = @$fee['Fee']['feePercent'];
+				$fee = $this->Fee->find('first', array('conditions' => array('Fee.loaItemId' => $itemId)));;
+				$items[$itemId]['feePercent'] = $fee['Fee']['feePercent'];
 				$items[$itemId]['currencyId'] = $currencyList[$itemId];
-				
 				
 				if (empty($this->loaItems[$itemId]['LoaItemRatePeriod'])):									//if item has no rate periods, we always use the item base price
 					$ratePeriodPrice = $this->loaItems[$itemId]['LoaItem']['itemBasePrice'];
@@ -76,7 +75,9 @@ class LoaItem extends AppModel {
 				'startDate' => date('Y-m-d', $rangeStart),
 				'endDate' => date('Y-m-d', $rangeEnd),
 				'ratePeriodPrice' => $ratePeriodPrice,
-				'quantity' => (isset($quantities[$itemId]) ? $quantities[$itemId]['quantity'] : 0)
+				'quantity' => (isset($quantities[$itemId]) ? $quantities[$itemId]['quantity'] : 0),
+				'feePercent' => $items[$itemId]['feePercent'],
+				'currencyId' => $items[$itemId]['currencyId']
 				);
 				
 				if (!isset($periodPrices[$i])) $periodPrices[$i] = 0;
