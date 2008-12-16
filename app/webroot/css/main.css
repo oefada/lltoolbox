@@ -859,3 +859,40 @@ div.ticket-table td {
 div.ticket-table table {
 	border-right: 1px solid #a3a3a3;
 }
+
+/* ticket search form */
+
+div #ticket-search-box {
+	width: 400px;
+}
+
+div #ticket-search-box table {
+	border: 1px solid #a3a3a3;
+}
+
+div #ticket-search-box td,th {
+	border-bottom: 1px solid #a3a3a3;
+	border-right: 1px solid #a3a3a3;
+	text-align: left;
+}
+
+div #ticket-search-box td {
+	background-color: #FFFFEE;
+	font-size:10px;
+}
+
+div #ticket-search-box select, input {
+	font-size: 10px;
+}
+
+div #ticket-search-box th {
+	font-weight: bold;
+	padding: 5px;
+	background-color: #FFFFDD;
+}
+
+.tickets-view-td td {
+	padding: 10px;
+} 
+
+/* end ticket search form */
