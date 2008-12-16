@@ -9,9 +9,69 @@ class TicketsController extends AppController {
 	var $uses = array('Ticket','OfferType', 'User', 'ClientLoaPackageRel', 'RevenueModelLoaRel', 'RevenueModelLoaRelDetail');
 
 	function index() {
-		$this->paginate = array('fields' => array('Ticket.ticketId', 'TicketStatus.ticketStatusName', 'Package.packageName', 'Ticket.userFirstName', 'Ticket.userLastName'),
-		                        'contain' => array('Package', 'TicketStatus'));
+		
+		// set search criteria from form post or set defaults
+		$form = $this->params['form'];
+		$named = $this->params['named'];
+		
+		if (empty($form) && !empty($named)) {
+			$form = $named;	
+		}
+
+		$s_ticket_id = isset($form['s_ticket_id']) ? $form['s_ticket_id'] : '';
+		$s_offer_id = isset($form['s_offer_id']) ? $form['s_offer_id'] : '';
+		$s_user_id = isset($form['s_user_id']) ? $form['s_user_id'] : '';
+		$s_offer_type_id = isset($form['s_offer_type_id']) ? $form['s_offer_type_id'] : 1;
+		$s_ticket_status_id = isset($form['s_ticket_status_id']) ? $form['s_ticket_status_id'] : 1;
+		$s_start_y = isset($form['s_start_y']) ? $form['s_start_y'] : date('Y');
+		$s_start_m = isset($form['s_start_m']) ? $form['s_start_m'] : date('m');
+		$s_start_d = isset($form['s_start_d']) ? $form['s_start_d'] : date('d');
+		$s_end_y = isset($form['s_end_y']) ? $form['s_end_y'] : date('Y');
+		$s_end_m = isset($form['s_end_m']) ? $form['s_end_m'] : date('m');
+		$s_end_d = isset($form['s_end_d']) ? $form['s_end_d'] : date('d');
+
+		$this->set('s_ticket_id', $s_ticket_id);
+		$this->set('s_offer_id', $s_offer_id);
+		$this->set('s_user_id', $s_user_id);
+		$this->set('s_offer_type_id', $s_offer_type_id);
+		$this->set('s_ticket_status_id', $s_ticket_status_id);
+		$this->set('s_start_y', $s_start_y);   
+		$this->set('s_start_m', $s_start_m);   
+		$this->set('s_start_d', $s_start_d);   
+		$this->set('s_end_y', $s_end_y);   
+		$this->set('s_end_m', $s_end_m);   
+		$this->set('s_end_d', $s_end_d);   
+		
+		$s_start_date = $s_start_y . '-' . $s_start_m . '-' . $s_start_d . ' 00:00:00';
+		$s_end_date = $s_end_y . '-' . $s_end_m . '-' . $s_end_d . ' 23:59:59';
+		
+		$this->paginate = array('fields' => array(
+									'Ticket.ticketId', 'Ticket.offerTypeId', 'Ticket.created', 
+									'Ticket.offerId', 'Ticket.userId', 'TicketStatus.ticketStatusName', 
+									'Ticket.userFirstName', 'Ticket.userLastName', 'Package.packageName'),
+		                        'contain' => array(
+		                        	'TicketStatus', 'Package')
+		                        );
+		    
+		if ($s_ticket_id) {
+			$this->paginate['conditions']['Ticket.ticketId'] = $s_ticket_id;    
+		} elseif ($s_offer_id) {
+			$this->paginate['conditions']['Ticket.offerId'] = $s_offer_id;    
+		} elseif ($s_user_id) {
+			   $this->paginate['conditions']['Ticket.userId'] = $s_user_id;            		     
+		} else {    
+			$this->paginate['conditions']['Ticket.created BETWEEN ? AND ?'] = array($s_start_date, $s_end_date);             		
+			if ($s_offer_type_id) {
+				$this->paginate['conditions']['Ticket.offerTypeId'] = $s_offer_type_id;	
+			}
+			if ($s_ticket_status_id) {
+				$this->paginate['conditions']['Ticket.ticketStatusId'] = $s_ticket_status_id;	
+			}
+		}
+		         
 		$this->set('tickets', $this->paginate());
+		$this->set('offerType', $this->OfferType->find('list'));
+		$this->set('ticketStatus', $this->Ticket->TicketStatus->find('list'));
 	}
 
 	function view($id = null) {
