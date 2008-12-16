@@ -7,6 +7,7 @@
 		echo $form->input('loaItemTypeId');
 		echo $form->input('loaId', array('type' => "hidden"));
 		echo $form->input('itemName');
+		echo $form->input('merchandisingDescription', array('label' => 'Publishing Description'));
 		echo $form->input('itemBasePrice');
 		echo $form->input('Fee.feeName');
 		echo $form->input('Fee.feePercent');
