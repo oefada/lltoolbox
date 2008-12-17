@@ -13,9 +13,10 @@ class TicketsController extends AppController {
 		// set search criteria from form post or set defaults
 		$form = $this->params['form'];
 		$named = $this->params['named'];
-		
+
 		if (empty($form) && !empty($named)) {
-			$form = $named;	
+			$form = $named;
+			$this->params['form'] = $this->params['named'];
 		}
 
 		$s_ticket_id = isset($form['s_ticket_id']) ? $form['s_ticket_id'] : '';
