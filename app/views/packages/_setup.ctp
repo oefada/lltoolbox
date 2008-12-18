@@ -46,12 +46,13 @@
 	</fieldset>
 	<? /* -- END Items and Rate Periods -- */?>
 	
-	<? /* -- BEGIN Retail Prices/Exchange Rate -- */?>
+	<? /* -- BEGIN Retail Prices/Exchange Rate -- */ ?>
 	<div style="float: left; clear: none">
 	<?php
 		echo $form->input('approvedRetailPrice', array('label' => 'Retail Value<br />'.$this->data['Currency']['currencyCode']));
 	?>
 	</div>
+	<?php if ($this->data['Currency']['currencyCode'] != 'USD'): ?>
 	<div style="float: left; clear: none">
 	<?php
 		echo "<label for='PackageApprovedRetailPriceExchangeRate'>Exchange Rate</label>";
@@ -66,6 +67,7 @@
 	     $('PackageApprovedRetailPriceInUSD').value = '$'+($F('PackageApprovedRetailPrice')*$F('PackageApprovedRetailPriceExchangeRate'));
 	  }
 	</script>
+	<?php endif; //end exchange rate for non-us currency ?>
 	<? /* -- END Retail Prices/Exchange Rate -- */?>
 	<div style="clear: both"></div>
 	<?php echo $form->input('reservePrice'); ?>

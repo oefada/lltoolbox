@@ -29,7 +29,17 @@
 				<td><?=$form->input('PackageLoaItemRel.'.$loaItem['loaItemId'].'.weight', array('label' => false)) ?></td>
 				<td><?=$loaItem['itemName']?></td>
 				<td><?=$form->input('PackageLoaItemRel.'.$loaItem['loaItemId'].'.overrideDisplayName', array('label' => false)) ?></td>
-				<td><div style="text-align: right"><span style="text-align:left"><?=$number->currency($loaItem['itemBasePrice'], $currencyCodes[$loaItem['currencyId']]) ?></span>&nbsp;&nbsp;<span style="text-align: right"><?=$number->currency($loaItem['itemBasePrice']*$fakeExchangeRates[$loaItem['currencyId']], 'USD') ?></span></td>
+				<td><div style="text-align: right"><span style="text-align:left">
+				<?=$number->currency($loaItem['itemBasePrice'], $currencyCodes[$loaItem['currencyId']]) ?>
+				</span>&nbsp;&nbsp;
+				
+				<?php if ($currencyCodes[$loaItem['currencyId']] != 'USD'): ?>
+				<span style="text-align: right">
+				<?=$number->currency($loaItem['itemBasePrice']*$fakeExchangeRates[$loaItem['currencyId']], 'USD') ?>
+				</span>
+				<?php endif; ?>
+				
+				</td>
 				<td><?= $form->input('PackageLoaItemRel.'.$loaItem['loaItemId'].'.quantity', array('label' => false)) ?></td>
 			</tr>
 		<?
