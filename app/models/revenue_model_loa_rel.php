@@ -11,7 +11,7 @@ class RevenueModelLoaRel extends AppModel {
 						  
 	var $hasMany = array('RevenueModelLoaRelDetail' => array('foreignKey' => 'revenueModelLoaRelId'));
 	
-	var $validate = array (
+	var $validate = array(
 						'loaId' => array(
 								'rule' => 'numeric',
 								'message' => 'The Loa Id must be numeric.'
