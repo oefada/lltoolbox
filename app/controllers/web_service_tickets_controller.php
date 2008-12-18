@@ -37,6 +37,7 @@ class WebServiceTicketsController extends WebServicesController
 		if (!$this->createNewTicket($json_decoded)) {			
 			$json_decoded['response'] = $this->errorResponse;
 		} 
+		return $this->debug;
 		return json_encode($json_decoded);
 	}
 	
@@ -121,7 +122,8 @@ class WebServiceTicketsController extends WebServicesController
 			// find out if there is a valid credit card to charge.  charge and send appropiate emails
 			$user_payment_setting = $this->findValidUserPaymentSetting($userData['User']['userId']);
 			
-			// param settings for the ppv function
+			// ----------------------------------------------
+			// set ppv params
 			$ppv_settings = array();
 			$ppv_settings['ticketId'] 			= $ticketId;
 			$ppv_settings['send'] 				= 1;
@@ -140,6 +142,8 @@ class WebServiceTicketsController extends WebServicesController
 				// has no valid cc on file
 				$ppv_settings['ppvNoticeTypeId'] 	= 6;
 			}
+			// end ppv params
+			// -----------------------------------------------
 			
 			// send out winner notifications
 			$this->ppv(json_encode($ppv_settings));
@@ -364,8 +368,9 @@ class WebServiceTicketsController extends WebServicesController
 			$revenueModelLoaRel['pending']+= $ticket['Ticket']['billingPrice'];
 			$this->RevenueModelLoaRel->save($revenueModelLoaRel);
 		} else {
-				
+					
 		}
+		$this->debug = print_r($ticket, true) . print_r($clientLoaPackageRel, true) . print_r($revenueModelLoaRel, true);
 	}
 	
 	function updateTrackDetail($in0) {
