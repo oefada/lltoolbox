@@ -37,7 +37,6 @@ class WebServiceTicketsController extends WebServicesController
 		if (!$this->createNewTicket($json_decoded)) {			
 			$json_decoded['response'] = $this->errorResponse;
 		} 
-		return $this->debug;
 		return json_encode($json_decoded);
 	}
 	
@@ -383,6 +382,7 @@ class WebServiceTicketsController extends WebServicesController
 				break;
 			}
 		}
+		mail('alee@luxurylink.com','ups_ticket',print_r($v, true));
 		return ($found_valid_cc) ? $v : 'EXPIRED';
 	}
 
@@ -403,7 +403,7 @@ class WebServiceTicketsController extends WebServicesController
 		} else {
 					
 		}
-		$this->debug = print_r($ticket, true) . print_r($clientLoaPackageRel, true) . print_r($revenueModelLoaRel, true);
+		mail('alee@luxurylink.com','track', print_r($ticket, true) . print_r($clientLoaPackageRel, true) . print_r($revenueModelLoaRel, true));
 	}
 	
 	function updateTrackDetail($in0) {
