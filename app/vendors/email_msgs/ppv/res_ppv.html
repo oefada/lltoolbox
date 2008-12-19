@@ -10,30 +10,24 @@
 <font face="Arial" size="2">
 <br />
 
-<p>Dear <?php echo $userFirstName;?> <?php echo $userLastName;?>,</p>
+<p>Dear <?php echo $clients[0]['contactSalutation'];?>,</p>
 
-<p>Congratulations! The following Luxury Link Guest has requested a{$article} {$type_text} package at <?php echo $clientName;?>:</p>
+<p>Congratulations! The following Luxury Link Guest has requested <?php echo $offerTypeArticle;?> <?php echo $offerType[$offerTypeId];?> package at <?php echo $clientName;?>:</p>
 
 <p>
-{$email_name}<br>
-	{if $public_user_address1}
-		{$public_user_address1}<br>
-	{/if}
-	{if $public_user_address2}
-		{$public_user_address2}<br>
-	{/if}
-	{if $public_user_city}
-		{$public_user_city} {$public_user_state} {$public_user_zip}<br>
-	{/if}
-	{if $public_user_country}
-		{$public_user_country}<br>
-	{/if}
-Home Phone: {$public_user_phone_h}<br>
-Work Phone: {$public_user_phone_w}
+<?php echo $userFirstName . ' ' . $userLastName;?><br />
+<?php echo $userAddressData['address1'];?><br/ >
+<?php echo $userAddressData['city'] . ', ' . $userAddressData['stateName'] . ' ' . $userAddressData['postalCode'];?><br />
+<?php if ($userAddressData['countryName']) { echo $userAddressData['countryName'];}?>
+<br /><br />
+Home Phone: <?php echo $userData['homePhone'];?><br>
+Work Phone: <?php echo $userData['workPhone'];?>
 </p>
 
-Arrival: {if $arrival_date}{$arrival_date}{else}N/A{/if}<br>
-Departure: {if $departure_date}{$departure_date}{else}N/A{/if}
+<p>
+<strong>Arrival: <?php echo ($ticketData['requestArrival']) ? $ticketData['requestArrival'] : 'N/A';?><br></strong>
+<strong>Departure: <?php echo ($ticketData['requestDeparture']) ? $ticketData['requestDeparture'] : 'N/A';?></strong>
+</p>
 
 <p>Please forward the confirmation number to my attention, if available.</p>
 

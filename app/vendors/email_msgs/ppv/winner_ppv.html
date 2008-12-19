@@ -19,7 +19,7 @@ Thank you for your purchase of this special package from <?php echo $packageName
 plus the $<?php echo $llFee;?> auction handling fee.
 </p>
 
-<?php if ($offerTypeid == 1 || $offerTypeId == 6) : ?>
+<?php if ($offerTypeId == 1 || $offerTypeId == 6) : ?>
 
 	<?php if ($is_auc_fac) :?>
 		<div style="background: #e5e5e5; padding: 5px 10px">
@@ -56,16 +56,16 @@ plus the $<?php echo $llFee;?> auction handling fee.
 		<?php if (!$is_auc_fac) : ?>
 	 	 To secure your reservations, please contact the property directly to place your reservations:<p>
 			<!-- SECTION LOOP -->
-			{section name=product loop=$multi_product_split}
-				{$contact_name[product]}<br>
-				{if $contact_title[product]}
-					{$contact_title[product]}<br>
-				{/if}
-				{$auction_name}<br>
-				Telephone: {$contact_phone[product]}<br>
-				Facsimile: {$contact_fax[product]}<br>
-				Email: {$ticket_email1[product]}<p>
-			{/section}
+			<?php foreach ($clients as $k => $client) : ?>
+				<p>
+				<?php echo $client['contactSalutation'];?><br />
+				<?php echo $packageName;?><br />
+				<?php echo $client['name'];?><br />
+				Telephone: <?php echo $client['phone1'];?><br />
+				Facsimile: <?php echo $client['fax'];?><br />
+				Email: <?php echo $client['ppvEmail1'];?>
+				<p>
+			<?php endforeach; ?>
 			<!-- END SECTION LOOP -->
 		<?php endif;?>
 	
@@ -125,16 +125,16 @@ plus the $<?php echo $llFee;?> auction handling fee.
 		To secure your reservations, please contact the property directly to place your reservations:<p>
 	
 		<!-- SECTION LOOP -->
-		{section name=product loop=$multi_product_split}			
-			{$contact_name[product]}<br>
-			{if $contact_title[product]}
-				{$contact_title[product]}<br>
-			{/if}
-			{$auction_name}<br>
-			Telephone: {$contact_phone[product]}<br>
-			Facsimile: {$contact_fax[product]}<br>
-			Email: {$ticket_email1[product]}<p>
-		{/section}
+		<?php foreach ($clients as $k => $client) : ?>
+		<p>
+			<?php echo $client['contactSalutation'];?><br />
+			<?php echo $packageName;?><br />
+			<?php echo $client['name'];?><br />
+			Telephone: <?php echo $client['phone1'];?><br />
+			Facsimile: <?php echo $client['fax'];?><br />
+			Email: <?php echo $client['ppvEmail1'];?>
+		<p>
+		<?php endforeach; ?>
 		<!-- END SECTION LOOP-->
 	<?php endif;?>
 
