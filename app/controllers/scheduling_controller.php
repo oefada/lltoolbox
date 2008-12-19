@@ -28,6 +28,11 @@ class SchedulingController extends AppController {
 		
 		$packages = $this->_clientPackages($clientId, $month, $year);					//grab all client packages
 		
+		$currentLoaId = $packages[0]['Client']['currentLoaId'];
+		$currentLoa = $this->Package->ClientLoaPackageRel->Loa->find('first', array('contain' => array(), 'conditions' => array('Loa.loaId' => $currentLoaId), 'fields' => 'Loa.endDate'));
+
+		$this->set('loaEndDate', $currentLoa['Loa']['endDate']);
+		
 		$client['Client'] = $packages[0]['Client'];								//the first package has the client details
 		$clientName = $packages[0]['Client']['name'];
 

@@ -20,6 +20,12 @@
 		} else {
 			$classes[] = 'cDayNotToday';
 		}
+
+		if (strtotime($year.'-'.$month.'-'.$day) > strtotime('-14 days', strtotime($loaEndDate)) &&
+			strtotime($year.'-'.$month.'-'.$day) <= strtotime($loaEndDate)) {
+			$classes[] = 'loaEndDate';
+			$prototip->tooltip($clientId.$month.$year.$day, 'Loa End Date on '.$loaEndDate);
+		}
 		
 		$class = ' class="'.implode($classes, ' ').'"';
 	?>

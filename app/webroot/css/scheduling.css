@@ -74,6 +74,7 @@
 	position: relative;
 	border: 1px solid #c8c8c8;
 }
+/* @group Flags */
 .sGrid .packageFlags {
     position: relative;
     clear: both;
@@ -84,6 +85,11 @@
     height: 10px;
     cursor: hand;
 }
+#mDayContainer .loaEndDate {
+    background: #900;
+    color: #e5e5e5;
+}
+/* @end flags */
 .sGrid .masterRow {
 	position: relative;
 	clear: both;
