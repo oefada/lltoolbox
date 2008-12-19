@@ -6,7 +6,7 @@ Configure::write('debug', 0);
 class WebServiceTicketsController extends WebServicesController
 {
 	var $name = 'WebServiceTickets';
-	var $uses = array('Ticket', 'User', 'Offer', 'Bid', 'ClientLoaPackageRel', 'RevenueModelLoaRel', 'Loa', 'RevenueModelLoaRelDetail', 'PpvNotice', 'Address');
+	var $uses = array('Ticket', 'User', 'Offer', 'Bid', 'ClientLoaPackageRel', 'RevenueModelLoaRel', 'OfferType', 'Loa', 'RevenueModelLoaRelDetail', 'PpvNotice', 'Address');
 	var $serviceUrl = 'http://toolboxdev.luxurylink.com/web_service_tickets';
 	//var $serviceUrl = 'http://192.168.100.111/web_service_tickets';
 	var $errorResponse = false;
@@ -188,29 +188,38 @@ class WebServiceTicketsController extends WebServicesController
 		// error checking here for required params
 		
 		if ($autoBuild) {
+			
 			$this->Ticket->recursive = 0;
 			$ticket = $this->Ticket->read(null, $ticketId);
+	
+			$this->Address->recursive = -1;
 	
 			$this->ClientLoaPackageRel->recursive = 0;
 			$clientLoaPackageRel = $this->ClientLoaPackageRel->findBypackageid($ticket['Ticket']['packageId']);
 		
 			$liveOffer	= $this->Ticket->query("select * from livedev.offer as LiveOffer where offerId = " . $ticket['Ticket']['offerId'] . " limit 1");
 		
+			ob_start();
+		
 			// data arrays
 			// ---------------------------------------------------------
-			$ticketData 	= $ticket['Ticket'];
-			$packageData 	= $ticket['Package'];
-			$offerData 		= $ticket['Offer'];
-			$userData 		= $ticket['User'];
-			$clientData 	= $clientLoaPackageRel['Client'];
-			$loaData 		= $clientLoaPackageRel['Loa'];
-			$liveOfferData 	= $liveOffer[0]['LiveOffer'];
+			$ticketData 		= $ticket['Ticket'];
+			$packageData 		= $ticket['Package'];
+			$offerData 			= $ticket['Offer'];
+			$userData 			= $ticket['User'];
+			$userAddressData	= $this->Address->findByuserid($userData['userId']);
+			$userAddressData	= $userAddressData['Address'];
+			$clientData 		= $clientLoaPackageRel['Client'];
+			$loaData 			= $clientLoaPackageRel['Loa'];
+			$liveOfferData 		= $liveOffer[0]['LiveOffer'];
+			$offerType			= $this->OfferType->find('list');
 	
 			// vars for email templates
 			// ----------------------------------------------------------
+			
 			$userId 			= $userData['userId'];
-			$userFirstName 		= ucwords(strtolower($userData['firstName']));
-			$userLastName 		= ucwords(strtolower($userData['lastName']));
+			$userFirstName		= ucwords(strtolower($userData['firstName']));
+			$userLastName		= ucwords(strtolower($userData['lastName']));
 			$userEmail 			= $userData['email'];
 			
 			$userWorkPhone		= $userData['workPhone'];
@@ -218,21 +227,24 @@ class WebServiceTicketsController extends WebServicesController
 			$userHomePhone		= $userData['homePhone'];
 			
 			$userPhone			= $userHomePhone;
-			$userPhone			= !$userPhone && $userMobilePhone ? $userMobilePhone : $userWorkPhone;
+			$userPhone			= !$userPhone && $userMobilePhone ? $userMobilePhone : $userPhone;
+			$userPhone			= !$userPhone && $userWorkPhone ? $userWorkPhone : $userPhone;
+			
+			$clients			= array();
+			$clients[]			= $clientData;
+			$clientId			= $clientData['clientId'];
+			$clientName 		= $clientData['name'];
 			
 			$offerId			= $offerData['offerId'];
-			$clientId			= $clientData['clientId'];
 			$oldProductId		= $clientData['oldProductId'];
 			$packageName 		= $packageData['packageName'];
 			$packageSubtitle	= $packageData['subtitle'];
-			$clientName 		= $clientData['name'];
 			
 			$packageIncludes 	= $packageData['packageIncludes'];
 			$legalText			= $packageData['legalText'];
 			$validityNote		= $packageData['validityNote'];
 			
-			//$offerTypeId		= $liveOfferData['offerTypeId'];
-			$offerTypeId		= $ticket['Ticket']['offerTypeId'];
+			$offerTypeId		= $ticketData['offerTypeId'];
 			$offerEndDate		= date('M d Y H:i A', strtotime($liveOfferData['endDate']));
 			$billingPrice		= number_format($ticketData['billingPrice'], 2, '.', ',');
 			$llFeeAmount		= in_array($offerTypeId, array(1,2,6)) ? 30 : 40;
@@ -243,14 +255,35 @@ class WebServiceTicketsController extends WebServicesController
 			$checkoutHash		= md5($ticketId . $userId . $offerId . 'LL_L33T_KEY');
 			$checkoutKey		= base64_encode(serialize(array('ticketId' => $ticketId, 'userId' => $userId, 'offerId' => $offerId, 'zKey' => $checkoutHash)));
 			$checkoutLink		= "https://www.luxurylink.com/my/my_purchse.php?z=$checkoutKey";
-			
+
 			// some unknowns
 			$guarantee			= false;
-			$show_mc 			= false;
 			$is_auc_fac			= false;
 			$wholesale			= 0;
 	
-			ob_start();
+			$offerTypeArticle	= in_array(strtolower($offerType[$offerTypeId]{0}), array('a','e','i','o','u')) ? 'an' : 'a';
+
+			/*
+			
+			echo 'asdddddddddddddddd';
+			echo '<h1>address</h1>';
+			print_r($userAddressData);
+			echo '<h1>ticket</h1>';
+			print_r($ticketData);
+			echo '<h1>package</h1>';
+			print_r($packageData);
+			echo '<h1>offer</h1>';
+			print_r($offerData);
+			echo '<h1>user</h1>';
+			print_r($userData);
+			echo '<h1>client</h1>';
+			print_r($clientData);
+			echo '<h1>loa</h1>';
+			print_r($loaData);
+			echo '<h1>live</h1>';
+			print_r($liveOfferData);
+			
+			*/
 			
 			switch ($ppvNoticeTypeId) {
 				case 1:
@@ -287,7 +320,7 @@ class WebServiceTicketsController extends WebServicesController
 					break;
 				default:
 					break;
-			}	
+			}
 			$emailBody = ob_get_clean();
 		} 
 		
