@@ -20,6 +20,9 @@ class SchedulingMastersController extends AppController {
 	}
 
 	function add() {
+	    $packageId 				= $this->params['named']['packageId'];
+		$package 				= $this->SchedulingMaster->Package->findByPackageId($packageId);
+	    
 		if (!empty($this->data)) {
 			$this->SchedulingMaster->create();
 			$package = $this->SchedulingMaster->Package->findByPackageId($this->data['SchedulingMaster']['packageId']);
@@ -36,6 +39,11 @@ class SchedulingMastersController extends AppController {
 			    $this->data['SchedulingMaster']['shortBlurb']   = $this->data['Mystery']['shortBlurb'];
 			}
 			
+			//associate the tracks from each client to this offer
+			foreach ($package['ClientLoaPackageRel'] as $v) {
+			    $this->data['RevenueModelLoaRel']['RevenueModelLoaRel'][] = $v['revenueModelLoaId'];
+			}
+
 			if ($this->SchedulingMaster->save($this->data)) {
 				$this->createInstances();
 				if ($this->RequestHandler->isAjax()) {
@@ -47,8 +55,6 @@ class SchedulingMastersController extends AppController {
 			}
 		}
 		
-		$packageId 				= $this->params['named']['packageId'];
-		$package 				= $this->SchedulingMaster->Package->findByPackageId($packageId);
 		$packageEndDate = explode('-', $package['Package']['endDate']);
 		$packageEndDate = array('year' => $packageEndDate[0], 'month' => $packageEndDate[1], 'day' => $packageEndDate['2']);
 		$this->set('packageEndDate', $packageEndDate);

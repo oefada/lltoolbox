@@ -17,11 +17,16 @@ class SchedulingMaster extends AppModel {
 
 	var $hasAndBelongsToMany = array(
 								'MerchandisingFlag' => 
-									array('className' => 'merchandisingFlag',
+									array('className' => 'MerchandisingFlag',
 										  'joinTable' => 'schedulingMasterMerchFlagRel',
 										  'foreignKey' => 'schedulingMasterId',
 										  'associationForeignKey' => 'merchandisingFlagId'
-									)
+									),
+								'RevenueModelLoaRel' => 
+								    array('className' => 'RevenueModelLoaRel',
+								          'joinTable' => 'schedulingMasterTrackRel',
+								          'foreignKey' => 'schedulingMasterId',
+								          'associationForeignKey' => 'trackRelId')
 								);
 	
 	var $validate = array('numDaysToRun' => array('rule' => 
