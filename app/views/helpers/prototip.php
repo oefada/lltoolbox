@@ -6,8 +6,23 @@
     var $tips = array();
 
     function tooltip($el, $content, $options = array()) {
-		$content['style'] = 'toolboxblue';
-		$content['stem'] = 'topLeft';
+        
+        if (is_array($content)) {
+            if (!isset($content['style'])) {
+                $content['style'] = 'toolboxblue';
+            }
+            if (!isset($content['stem'])) {
+        		$content['stem'] = 'topLeft';
+            }
+        } else {
+            if (!isset($options['style'])) {
+                $options['style'] = 'toolboxblue';
+            }
+            if (!isset($options['stem'])) {
+        		$options['stem'] = 'topLeft';
+            }
+        }
+		
         if (isset($options['render']) && $options['render'] == true) {
             return $this->Javascript->codeBlock($this->output($this->_createTip($el, $content, $options)));
         } else {
@@ -26,11 +41,13 @@
     function _createTip($el, $content, $options = array()) {
         $valid_el = array('\'', '$');
         if (!in_array(substr($el, 0, 1), $valid_el)) $el = "'$el'";
-		if (isset($content['ajax'])) {
+
+		if (is_array($content) && !empty($content['ajax'])) {
             return 'new Tip('.$el.', '.json_encode($content).');';
 		}
 		if (substr($content, 0, 1) != '\'' &&
             substr($content, 0, 4) != 'new ') $content = "'$content'";
+        
         if ($options) {
             return 'new Tip('.$el.', '.$content.', '.$this->_parseOptions($options).');';
         } else {
