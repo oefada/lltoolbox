@@ -52,13 +52,12 @@ class ClientsController extends AppController {
 			endif;
 		}
 
-		$amenities = $this->Client->Amenity->find('list');
 		$clientTypeIds = $this->Client->ClientType->find('list');
 		$clientAcquisitionSourceIds = $this->Client->ClientAcquisitionSource->find('list');
 		$themes = $this->Client->Theme->find('list');
 		$this->set('client', $this->data);
 		//$this->set(compact('addresses', 'amenities','clientLevelIds','clientStatusIds','clientTypeIds','regions','clientAcquisitionSourceIds', 'loas', 'themes'));
-		$this->set(compact('amenities','clientLevelIds','clientStatusIds','clientTypeIds','regions','clientAcquisitionSourceIds', 'loas', 'themes'));
+		$this->set(compact('clientLevelIds','clientStatusIds','clientTypeIds','regions','clientAcquisitionSourceIds', 'loas', 'themes'));
 	}
 	
 	function updateClientLive($id = null) {
