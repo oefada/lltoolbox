@@ -74,6 +74,16 @@
 	position: relative;
 	border: 1px solid #c8c8c8;
 }
+.sGrid .packageFlags {
+    position: relative;
+    clear: both;
+    height: 15px;
+}
+.sGrid .packageFlags .flag {
+    position: absolute;
+    height: 10px;
+    cursor: hand;
+}
 .sGrid .masterRow {
 	position: relative;
 	clear: both;

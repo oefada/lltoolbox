@@ -1,3 +1,4 @@
+<? define('CELL_WIDTH',  100/$monthDays); ?>
 <div id='package_<?=$package['Package']['packageId']?>' class='collapsible'>
 <div class='handle'>&nbsp;</div>
 <div class='pkgTitle clearfix'>
@@ -14,6 +15,23 @@
 	</div>
 </div>
 <div class='sGrid collapsibleContent disableAutoCollapse'>
+	<?
+	$validityEndDate = strtotime($package['Package']['validityEndDate']);
+	$validityFlagDate = strtotime('-60 days', $validityEndDate);
+	
+	if (date('m', $validityFlagDate) == $month):
+		$flagPosition = CELL_WIDTH * (date('d', $validityFlagDate) - 1);
+	?>
+	<div id='package-<?=$package['Package']['packageId']?>-flags' class="packageFlags">
+	<div id='package-<?=$package['Package']['packageId']?>-flag-validityEndDate' class="flag validityEndDateFlag" style='width: <?=CELL_WIDTH?>; left: <?=$flagPosition?>%'>
+		<?php
+		echo $html->image('flag.png');
+		$prototip->tooltip('package-'.$package['Package']['packageId'].'-flag-validityEndDate', 'Validity End Date is 60 days from now on '.$package['Package']['validityEndDate'], array('title' => 'Flag Details'));
+		?>
+		
+	</div>
+	</div>
+	<?php endif; ?>
 <?php
 if($this->data['masterRows'] >= 5) {
 	$this->data['masterRows'] = 0;
@@ -30,7 +48,6 @@ foreach($package['Scheduling'] as $k => $master):
 ?>
 <div class='masterRow'>
 <?= $this->renderElement('../scheduling/_days', array('grid' => true)) ?>
-
 <? foreach($master['SchedulingInstance'] as $instance):
 
 	$startDate = $instance['startDate'];
