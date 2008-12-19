@@ -62,5 +62,28 @@ class Package extends AppModel {
 		
 		return $data;
 	}
+	
+	function beforeSave() {
+        //get all descriptions for the inclusions and populate a text area field to store all of this on the database.
+        
+        //only do this if the package loa item rel array is there because we need the weights
+	    if (isset($this->data['PackageLoaItemRel'])):
+	        if (!empty($this->data['Package']['CheckedLoaItems'])) {
+                $itemDescriptions = $this->query("SELECT LoaItem.loaItemId, LoaItem.merchandisingDescription FROM loaItem AS LoaItem WHERE LoaItem.loaItemId IN(".implode(',', $this->data['Package']['CheckedLoaItems']).")");
+	        }
+	        foreach ($itemDescriptions as $v) {
+	            $itemId = $v['LoaItem']['loaItemId'];
+	            $weight = $this->data['PackageLoaItemRel'][$itemId]['weight'];
+	            $descriptions[$weight] = $v['LoaItem']['merchandisingDescription'];
+	        }
+	        
+	        //sort the array by the weights so the implode works
+            ksort($descriptions);
+            
+            
+	        $this->data['Package']['inclusions'] = implode("\r\n", $descriptions);
+	    endif;
+	    return true;
+	}
 }
 ?>
