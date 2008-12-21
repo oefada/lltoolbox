@@ -8,6 +8,7 @@ class SchedulingController extends AppController {
 		parent::beforeFilter();
 		$this->set('currentTab', 'property');
 		$this->set('searchController' ,'client');
+		$this->set('clientId', $this->params['named']['clientId']);
 	}
 	
 	/**
@@ -28,13 +29,15 @@ class SchedulingController extends AppController {
 		
 		$packages = $this->_clientPackages($clientId, $month, $year);					//grab all client packages
 		
-		$currentLoaId = $packages[0]['Client']['currentLoaId'];
-		$currentLoa = $this->Package->ClientLoaPackageRel->Loa->find('first', array('contain' => array(), 'conditions' => array('Loa.loaId' => $currentLoaId), 'fields' => 'Loa.endDate'));
+		$client = $this->Package->ClientLoaPackageRel->Client->find('first', array('contain' => array(), 'conditions' => array('Client.clientId' => $clientId)));
+		$currentLoaId = $client['Client']['currentLoaId'];
+		$currentLoa = $this->Package->ClientLoaPackageRel->Loa->find('first', array('contain' => array(), 'conditions' => array('Loa.loaId' => $currentLoaId), 'fields' => 'Loa.loaValue, Loa.membershipBalance, Loa.membershipBalance, Loa.startDate, Loa.endDate'));
 
+        $this->set('currentLoa', $currentLoa);
 		$this->set('loaEndDate', $currentLoa['Loa']['endDate']);
 		
-		$client['Client'] = $packages[0]['Client'];								//the first package has the client details
-		$clientName = $packages[0]['Client']['name'];
+		$client['Client'] = $client['Client'];								//the first package has the client details
+		$clientName = $client['Client']['name'];
 
         $this->set('packages', $packages);
 		$this->set(compact('clientId', 'month', 'year', 'monthDays', 'monthYearString', 'clientName', 'client'));

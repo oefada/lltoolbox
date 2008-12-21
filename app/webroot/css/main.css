@@ -50,7 +50,15 @@ div.title-header div.buttons {
 	border-bottom: 1px dotted #b1b1b1;
 	padding: 0;
 }
+span.left{
+float:left;
+text-align:right;
+}
 
+span.right{
+float:right;
+text-align:left;
+}
 /* @end */
 /* @group Forms */
 tr.lastRow td {

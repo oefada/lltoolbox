@@ -1,9 +1,9 @@
 <div class="user">
 <?php echo $form->create('Session', array('action' => 'login'));?>
 	<?php
-		echo $form->input('LdapUser.username');
-		echo $form->input('LdapUser.password');
-		echo $form->input('LdapUser.blankPassword', array('type' => 'hidden'));
+		echo $form->input('LdapUser.samaccountname', array('label' => 'Username'));
+		echo $form->input('LdapUser.pass', array('type' => 'password'));
+		echo $form->input('LdapUser.password', array('type' => 'hidden'));
 	?>
 <?php echo $form->end('Sign In');?>
 </div>

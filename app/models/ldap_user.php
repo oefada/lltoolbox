@@ -3,13 +3,14 @@ class LdapUser extends AppModel {
 
 	var $name 		= 'LdapUser';
 	var $useTable 	= false;
-	var $primaryKey = 'samAccountName';
+	var $primaryKey = 'samaccountname';
 	var $host 		= 'manila.luxurylink.com';
 	var $port 		= 389;
 	var $baseDN 	= 'OU=ServiceAccounts,DC=luxurylink,DC=com';
 	var $userBaseDN = 'OU=LuxuryLinkUser,DC=luxurylink,DC=com';
 	var $user 		= 'luxury';
 	var $pass		= 'traveler';
+	var $actsAs     = array('Acl');
 	
 	var $ds;
 	
@@ -53,20 +54,21 @@ class LdapUser extends AppModel {
 	public function auth($uid, $password)
 	{
 	    if ($uid == 'luxurylink' && $password == 'traveler') {
-	        $this->data = array('LdapUser' => array('samAccountName' => $uid,
+	        $this->data = array('LdapUser' => array('samaccountname' => $uid,
 	                                                'givenname' => 'Luxury Link',
 	                                                'displayname' => 'Luxury Link',
-	                                                'mail' => 'll@luxurylink.com'));
+	                                                'mail' => 'll@luxurylink.com',
+	                                                'password' => ''));
 	        return $this->data;
 	    }
 	    $result = $this->findAll('samAccountName', $uid);
-
+        
 	    if(isset($result[0]) && !empty($password))
-	    {
+	    {    
 	        if (@ldap_bind($this->ds, $result[0]['LdapUser']['dn'], $password))
 	            {
 	                $this->data = $result[0];
-	                return $this->data;
+	                return $result[0];
 	            }
 	            else
 	            {
@@ -104,13 +106,23 @@ class LdapUser extends AppModel {
         }
     } 
 	
-	function beforeFind($query) {
-	    return array();
-	}
-	
-	function find() {
-	    $this->data = array('LdapUser' => $this->data);
-	    return $this->data;
+	function find($conditions = array()) {
+	    if (isset($conditions["`LdapUser`.`samaccountname`"]) && !empty($conditions["`LdapUser`.`samaccountname`"]['samaccountname'])){
+	        $username = $conditions["`LdapUser`.`samaccountname`"]['samaccountname'];
+	        if ($username == 'luxurylink') {
+    	        $this->data = array('LdapUser' => array('samaccountname' => $username,
+    	                                                'givenname' => 'Luxury Link',
+    	                                                'displayname' => 'Luxury Link',
+    	                                                'mail' => 'll@luxurylink.com',
+    	                                                'username' => ''));
+    	        return $this->data;
+    	    }
+    	    
+	        $result = $this->findAll('samAccountName', $username);
+	        return $result[0];
+	    }
+	    
+	    return null;
 	}
 	
 	function findLargestUidNumber()
@@ -131,6 +143,7 @@ class LdapUser extends AppModel {
 	
      private function convert_from_ldap($data)
      {
+         $final = false;
        foreach ($data as $key => $row):
           if($key === 'count') continue;
 
@@ -158,5 +171,8 @@ class LdapUser extends AppModel {
        return $final;
     }
 	
+	function parentNode() {
+	    
+	}
 }
 ?>

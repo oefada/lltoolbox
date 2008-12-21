@@ -9,8 +9,7 @@ class SessionsController extends AppController {
 	function login() {
 	    $this->Auth->logout();
 	    if (!empty($this->data)) {
-	        $user = $this->LdapUser->auth($this->data['LdapUser']['username'], $this->data['LdapUser']['password']); 
-            $this->Auth->userModel = 'LdapUser';
+	        $user = $this->LdapUser->auth($this->data['LdapUser']['samaccountname'], $this->data['LdapUser']['pass']);
 	        if ($this->Auth->login($user)) {
 				if ($this->Auth->autoRedirect) {
 				    $this->Session->setFlash('Welcome back, '.$user['LdapUser']['givenname'], 'default', array(), 'success');
@@ -18,7 +17,7 @@ class SessionsController extends AppController {
 				}
 			} else {
 				$this->Session->setFlash($this->Auth->loginError, 'default', array(), 'auth');
-				$this->data[$this->Auth->userModel]['password'] = null;
+				$this->data[$this->Auth->userModel]['pass'] = null;
 			}
 	    }
 	}

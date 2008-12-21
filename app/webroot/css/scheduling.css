@@ -154,3 +154,82 @@
 .masterRow .oType6 {
 	border-top: 7px solid #710a65;
 }
+div.module#module-schedulingraphs h1{
+text-align:left;
+}
+
+div.module#module-schedulingraphs table{
+    margin:10px auto 30px auto;
+}
+
+div.module#module-schedulingraphs table td {
+    padding: 0;
+    margin: 0;
+}
+div.module#module-schedulingraphs table tbody {
+    background: #fafafa;
+}
+div.module#module-schedulingraphs div.module-content{
+margin-bottom:30px;
+}
+
+div.module#module-schedulingraphs table tfoot{
+display:none;
+height:0;
+overflow:hidden;
+}
+
+div.module#module-schedulingraphs table td,div.module#module-schedulingraphs table th{
+border:6px solid white;
+}
+
+div.module#module-schedulingraphs table tr.hidden,div.module#module-schedulingraphs table tr.hidden td{
+height:0;
+line-height:0;
+overflow:visible;}
+
+div.module#module-schedulingraphs table tr{
+vertical-align:top;
+}
+
+div.module#module-schedulingraphs table tr td.overbalance{
+visibility:hidden;}
+
+div.module#module-schedulingraphs table tr.overbalance td.overbalance{
+visibility:visible;}
+
+div.module#module-schedulingraphs table tr.overbalance span{
+display:none;}
+
+div.module#module-schedulingraphs table tbody th{
+text-align:right;font-weight:normal;}
+
+div.module#module-schedulingraphs thead th.bar{
+text-align:center;width:302px;}
+
+div.module#module-schedulingraphs table td.bar{
+background:#eee url(../img/scheduling/shadow.png) repeat-x left center;}
+
+div.module#module-schedulingraphs table td.bar div.bar{
+background:#cbe662 url(../img/scheduling/3d.png) repeat-x left center;font-weight:bold;line-height:14px;height:14px;text-align:right;}
+
+div.module#module-schedulingraphs table td.bar div.bar span{
+margin:0 2px;}
+
+div#month-container{
+position:absolute;}
+
+div#month-line{
+position:absolute;top:0;height:178px;border-left:1px solid #000;z-index:10;}
+
+div#month-line small{
+bottom:-15px;color:#685c53;font-weight:bold;left:-50px;letter-spacing:1px;position:absolute;text-align:center;text-transform:uppercase;width:100px;}
+
+div.module#module-schedulingraphs table tr.warning div.bar{
+background-color:#f2dd45;border-color:#f7eb90;}
+
+div.module#module-schedulingraphs table tr.overbalance div.bar{
+background-color:#c00;border-color:#ff881f}
+
+div.module#module-schedulingraphs table td.overbalance{
+color:#c00;font-weight:bold;}
