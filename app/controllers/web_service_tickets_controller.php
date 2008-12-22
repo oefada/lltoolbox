@@ -112,7 +112,7 @@ class WebServiceTicketsController extends WebServicesController
 			
 			// update the tracks 
 			$schedulingMasterId = $offerData['SchedulingInstance']['SchedulingMaster']['schedulingMasterId'];
-			$smid = $this->RevenueModelLoaRel->query("select revenueModelLoaRelId from schedulingMasterTrackRel where schedulingMasterId = $schedulingMasterId");
+			$smid = $this->RevenueModelLoaRel->query("select revenueModelLoaRelId from schedulingMasterTrackRel where schedulingMasterId = $schedulingMasterId limit 1");
 			$smid = $smid[0]['schedulingMasterTrackRel']['revenueModelLoaRelId'];
 			if (!empty($smid)) {
 				$this->addTrackPending($smid, $newTicket['Ticket']['billingPrice']);
@@ -377,79 +377,6 @@ class WebServiceTicketsController extends WebServicesController
 			}
 		}
 		return false;
-	}
-
-	/*
-	function updateTrackPending($ticketId) {
-		if (!$ticketId) {
-			return false;	
-		}
-		$this->Ticket->recursive = -1;
-		$ticket = $this->Ticket->read(null, $id);
-		$packageId = $ticket['Ticket']['packageId'];
-		$this->ClientLoaPackageRel->recursive = 2;
-		$clientLoaPackageRel = $this->ClientLoaPackageRel->findBypackageid($packageId);
-		$revenueModelLoaRel = $clientLoaPackageRel['Loa']['RevenueModelLoaRel'][0];
-		
-		if (!empty($revenueModelLoaRel['revenueModelLoaRelId'])) {
-			$revenueModelLoaRel['pending']+= $ticket['Ticket']['billingPrice'];
-			$this->RevenueModelLoaRel->save($revenueModelLoaRel);
-		} else {
-					
-		}
-	}
-	*/
-	
-	function updateTrackDetail($in0) {
-		$data = json_decode($in0, true);
-		
-		$this->Ticket->recursive = -1;
-		$ticket = $this->Ticket->read(null, $data['ticketId']);
-		
-		$this->ClientLoaPackageRel->recursive = -1;
-		$clientLoaPackageRel = $this->ClientLoaPackageRel->findBypackageid($data['packageId']);	
-	
-		$ticketId = $ticket['Ticket']['ticketId'];
-		$loaId = $clientLoaPackageRel['ClientLoaPackageRel']['loaId'];
-		
-		$this->Loa->recursive = -1;
-		$loa = $this->Loa->read(null, $loaId);
-		
-		// ---------------- rev stuff ---------------------
-		
-		$this->RevenueModelLoaRel->recursive = 2;
-		$revenueModelLoaRel = $this->RevenueModelLoaRel->findByloaid($loaId);
-	
-		$exp 			= $revenueModelLoaRel['ExpirationCriterium'];
-		$model 			= $revenueModelLoaRel['RevenueModel'];
-		$track 			= $revenueModelLoaRel['RevenueModelLoaRel'];
-		$trackDetail 	= $revenueModelLoaRel['RevenueModelLoaRelDetail'];
-				
-		$revModelLoaDetailSave							= array();
-		$revModelLoaDetailSave['revenueModelLoaRelId'] 	= $track['revenueModelLoaId'];
-		$revModelLoaDetailSave['ticketId'] 				= $ticketId;
-		
-		switch ($model['revenueModelId']) {
-			case 1:
-				if (empty($trackDetail)) {
-					$revModelLoaDetailSave['cycle'] 				= 1;
-					$revModelLoaDetailSave['iteration'] 			= 1;
-				} else {
-					$revModelLoaDetailSave['cycle'] 				= $trackDetail['cycle'];
-					$revModelLoaDetailSave['iteration'] 			= $trackDetail['iteration']++;
-				}
-				$revModelLoaDetailSave['amountKept'] 			= ($track['keepPercentage'] / 100) * $ticket['Ticket']['billingPrice'];
-				$revModelLoaDetailSave['amountRemitted'] 		= $ticket['Ticket']['billingPrice'] - $revModelLoaDetailSave['amountKept'];
-				
-				break;
-			case 2:
-				break;
-			case 3:
-				break;
-		}
-		return print_r($revModelLoaDetailSave, true);
-		
-		// ------------- end rev stuff --------------------
 	}
 	
 }
