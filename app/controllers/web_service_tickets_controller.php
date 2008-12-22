@@ -386,6 +386,7 @@ class WebServiceTicketsController extends WebServicesController
 	}
 
 	function updateTrackPending($ticketId) {
+		mail('alee@luxurylink.com', 'test',$ticketId);
 		if (!$ticketId) {
 			return false;	
 		}
