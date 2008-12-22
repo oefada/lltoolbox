@@ -382,7 +382,6 @@ class WebServiceTicketsController extends WebServicesController
 				break;
 			}
 		}
-		mail('alee@luxurylink.com','ups_ticket',print_r($v, true));
 		return ($found_valid_cc) ? $v : 'EXPIRED';
 	}
 
