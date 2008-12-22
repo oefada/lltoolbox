@@ -66,6 +66,8 @@ class WebServiceTicketsController extends WebServicesController
 		$offerTypeToFormat = $this->Offer->query("SELECT formatId FROM formatOfferTypeRel WHERE offerTypeId = " . $offerData['SchedulingInstance']['SchedulingMaster']['offerTypeId']);
 		$formatId = $offerTypeToFormat[0]['formatOfferTypeRel']['formatId'];
 		
+		mail('alee@luxurylink.com','offer', print_r($offerData,true));
+		
 		// create a new ticket!
 		$newTicket = array();
 		$newTicket['Ticket']['ticketStatusId'] 			 = 1;
@@ -111,7 +113,7 @@ class WebServiceTicketsController extends WebServicesController
 			$ticketId = $this->Ticket->getLastInsertId();
 			
 			// update the tracks 
-			$this->updateTrackPending($ticketId);
+			//$this->addTrackPending($ticketId, $newTicket['Ticket']['billingPrice']);
 
 			// if non-auction, just stop here as charging and ppv should not be auto
 			if ($formatId != 1) {
@@ -385,8 +387,17 @@ class WebServiceTicketsController extends WebServicesController
 		return ($found_valid_cc) ? $v : 'EXPIRED';
 	}
 
+	function addTrackPending($revenueModelLoaRelId, $pendingAmount) {
+		$revenueModelLoaRel = $this->RevenueModelLoaRel->read(null, $revenueModelLoaRelId);		
+		if (!empty($revenueModelLoaRel)) {
+			$revenueModelLoaRel['RevenueModelLoaRel']['pending'] += $pendingAmount;
+			$this->RevenueModelLoaRel->save($revenueModelLoaRel['RevenueModelLoaRel']);
+		}
+		$revenueModelLoaRel = $this->RevenueModelLoaRel->read(null, $id);		
+		return true;
+	}
+
 	function updateTrackPending($ticketId) {
-		mail('alee@luxurylink.com', 'test',$ticketId);
 		if (!$ticketId) {
 			return false;	
 		}
@@ -403,7 +414,6 @@ class WebServiceTicketsController extends WebServicesController
 		} else {
 					
 		}
-		mail('alee@luxurylink.com','track', print_r($revenueModelLoaRel, true));
 	}
 	
 	function updateTrackDetail($in0) {
