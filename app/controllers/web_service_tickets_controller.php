@@ -386,7 +386,6 @@ class WebServiceTicketsController extends WebServicesController
 	}
 
 	function updateTrackPending($ticketId) {
-		mail('alee@luxurylink.com', 'test',$ticketId);
 		if (!$ticketId) {
 			return false;	
 		}
@@ -403,7 +402,6 @@ class WebServiceTicketsController extends WebServicesController
 		} else {
 					
 		}
-		mail('alee@luxurylink.com','track', print_r($ticket, true) . print_r($clientLoaPackageRel, true) . print_r($revenueModelLoaRel, true));
 	}
 	
 	function updateTrackDetail($in0) {
