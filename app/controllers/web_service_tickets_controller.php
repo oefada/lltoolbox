@@ -66,8 +66,6 @@ class WebServiceTicketsController extends WebServicesController
 		$offerTypeToFormat = $this->Offer->query("SELECT formatId FROM formatOfferTypeRel WHERE offerTypeId = " . $offerData['SchedulingInstance']['SchedulingMaster']['offerTypeId']);
 		$formatId = $offerTypeToFormat[0]['formatOfferTypeRel']['formatId'];
 		
-		mail('alee@luxurylink.com','offer', print_r($offerData,true));
-		
 		// create a new ticket!
 		$newTicket = array();
 		$newTicket['Ticket']['ticketStatusId'] 			 = 1;
@@ -113,7 +111,10 @@ class WebServiceTicketsController extends WebServicesController
 			$ticketId = $this->Ticket->getLastInsertId();
 			
 			// update the tracks 
-			//$this->addTrackPending($ticketId, $newTicket['Ticket']['billingPrice']);
+			$schedulingMasterId = $offerData['SchedulingInstance']['SchedulingMaster']['schedulingMasterId'];
+			$smid = $this->RevenueModelLoaRel->query("select revenueModelLoaRelId from schedulingMasterTrackRel where schedulingMasterId = $schedulingMasterId");
+			mail('alee@luxurylink.com','test',print_r($smid,true));
+			//$this->addTrackPending(, $newTicket['Ticket']['billingPrice']);
 
 			// if non-auction, just stop here as charging and ppv should not be auto
 			if ($formatId != 1) {
@@ -264,28 +265,6 @@ class WebServiceTicketsController extends WebServicesController
 	
 			$offerTypeArticle	= in_array(strtolower($offerType[$offerTypeId]{0}), array('a','e','i','o','u')) ? 'an' : 'a';
 
-			/*
-			
-			echo 'asdddddddddddddddd';
-			echo '<h1>address</h1>';
-			print_r($userAddressData);
-			echo '<h1>ticket</h1>';
-			print_r($ticketData);
-			echo '<h1>package</h1>';
-			print_r($packageData);
-			echo '<h1>offer</h1>';
-			print_r($offerData);
-			echo '<h1>user</h1>';
-			print_r($userData);
-			echo '<h1>client</h1>';
-			print_r($clientData);
-			echo '<h1>loa</h1>';
-			print_r($loaData);
-			echo '<h1>live</h1>';
-			print_r($liveOfferData);
-			
-			*/
-			
 			switch ($ppvNoticeTypeId) {
 				case 1:
 					include('../vendors/email_msgs/ppv/conf_ppv.html');
@@ -391,12 +370,14 @@ class WebServiceTicketsController extends WebServicesController
 		$revenueModelLoaRel = $this->RevenueModelLoaRel->read(null, $revenueModelLoaRelId);		
 		if (!empty($revenueModelLoaRel)) {
 			$revenueModelLoaRel['RevenueModelLoaRel']['pending'] += $pendingAmount;
-			$this->RevenueModelLoaRel->save($revenueModelLoaRel['RevenueModelLoaRel']);
+			if ($this->RevenueModelLoaRel->save($revenueModelLoaRel['RevenueModelLoaRel'])) {
+				return true;	
+			}
 		}
-		$revenueModelLoaRel = $this->RevenueModelLoaRel->read(null, $id);		
-		return true;
+		return false;
 	}
 
+	/*
 	function updateTrackPending($ticketId) {
 		if (!$ticketId) {
 			return false;	
@@ -415,6 +396,7 @@ class WebServiceTicketsController extends WebServicesController
 					
 		}
 	}
+	*/
 	
 	function updateTrackDetail($in0) {
 		$data = json_decode($in0, true);

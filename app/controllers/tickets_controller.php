@@ -109,35 +109,6 @@ class TicketsController extends AppController {
 		}
 		$this->set('ticketStatusIds', $this->Ticket->TicketStatus->find('list'));
 	}
-	
-	function updateTrackDetail($id) {
-		if (!$id) {
-			$this->Session->setFlash(__('Invalid Ticket.', true), 'default', array(), 'error');
-			$this->redirect(array('action'=>'index'));
-		}
-		
-		$this->Ticket->recursive = -1;
-		$ticket = $this->Ticket->read(null, $id);
-		
-		// [send to webservice tickets]
-		$webservice_live_url = 'http://toolboxdev.luxurylink.com/web_service_tickets?wsdl';
-		$webservice_live_method_name = 'updateTrackDetail';
-		$webservice_live_method_param = 'in0';
-
-		$data = array();
-		$data['key'] = 'AXPAdFKlo3kZSfk30kA30234SDfjpgQ';
-		$data['ticketId'] = $ticket['Ticket']['ticketId'];
-		$data['packageId'] = $ticket['Ticket']['packageId'];
-
-		$data_json_encoded = json_encode($data);
-
-		$soap_client = new nusoap_client($webservice_live_url, true);
-        $response = $soap_client->call($webservice_live_method_name, array($webservice_live_method_param => $data_json_encoded));
- 			
- 		echo $response;
- 			
-		$this->redirect(array('action'=>'view', 'id' => $id));
-	}
 
 	// -------------------------------------------
 	// NO ONE IS ALLOWED TO EDIT OR DELETE TICKETS
