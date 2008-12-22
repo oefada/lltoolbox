@@ -113,8 +113,10 @@ class WebServiceTicketsController extends WebServicesController
 			// update the tracks 
 			$schedulingMasterId = $offerData['SchedulingInstance']['SchedulingMaster']['schedulingMasterId'];
 			$smid = $this->RevenueModelLoaRel->query("select revenueModelLoaRelId from schedulingMasterTrackRel where schedulingMasterId = $schedulingMasterId");
-			mail('alee@luxurylink.com','test',print_r($smid,true));
-			//$this->addTrackPending(, $newTicket['Ticket']['billingPrice']);
+			$smid = $smid[0]['schedulingMasterTrackRel']['revenueModelLoaRelId'];
+			if (!empty($smid)) {
+				$this->addTrackPending($smid, $newTicket['Ticket']['billingPrice']);
+			}
 
 			// if non-auction, just stop here as charging and ppv should not be auto
 			if ($formatId != 1) {
