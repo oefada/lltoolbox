@@ -22,7 +22,7 @@ class Client extends AppModel {
 	var $belongsTo = array(
 						   'ClientType' => array('foreignKey' => 'clientTypeId'),
 						   'Region' => array('foreignKey' => 'regionId'),
-						   'ParentClient' => array('className' => 'Client', 'foreignKey' => 'parentClientId'))
+						   'ParentClient' => array('className' => 'Client', 'foreignKey' => 'parentClientId')
 					 );
 					 
 	var $hasMany = array('Loa' => array('foreignKey' => 'clientId'),
