@@ -5,8 +5,7 @@ class Fee extends AppModel {
 	var $useTable = 'fee';
 	var $primaryKey = 'feeId';
 	
-	var $belongsTo = array('LoaItem' => array('foreignKey' => 'loaItemId'),
-						   'FeeType' => array('foreignKey' => 'feeTypeId')
+	var $belongsTo = array('LoaItem' => array('foreignKey' => 'loaItemId')
 					);
 }
 ?>
