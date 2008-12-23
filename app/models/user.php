@@ -40,12 +40,6 @@ class User extends AppModel {
 										  'joinTable' => 'contestUserRel',
 										  'foreignKey' => 'userId',
 										  'associationForeignKey' => 'contestId'
-									),
-								'Client' => 
-									array('className' => 'Client',
-										  'joinTable' => 'clientUserRel',
-										  'foreignKey' => 'userId',
-										  'associationForeignKey' => 'clientId'
 									)
 								);
 }

@@ -39,12 +39,6 @@ class Client extends AppModel {
 	                                     'associationForeignKey'=> 'tagId',
 	                                     'unique'       => true,
 	                               ),
-								'User' => 
-									array('className' => 'User',
-										  'joinTable' => 'clientUserRel',
-										  'foreignKey' => 'clientId',
-										  'associationForeignKey' => 'userId'
-								   ),
 								'Amenity' => 
 									array('className' => 'Amenity',
 										  'joinTable' => 'clientAmenityRel',
