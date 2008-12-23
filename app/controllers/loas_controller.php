@@ -12,7 +12,7 @@ class LoasController extends AppController {
 	}
 
 	function index($clientId = null) {
-		if(isset($clientId) && $this->Loa->Client->find('count', array('conditions' => array('clientId' => $clientId)))) {
+		if(isset($clientId) && $this->Loa->Client->find('count', array('conditions' => array('Client.clientId' => $clientId)))) {
 			$this->Loa->recursive = 0;
 			$this->set('loas', $this->paginate('Loa', array('Client.clientId' => $clientId)));
 		} else {
