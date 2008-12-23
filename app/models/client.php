@@ -22,7 +22,6 @@ class Client extends AppModel {
 	var $belongsTo = array(
 						   'ClientType' => array('foreignKey' => 'clientTypeId'),
 						   'Region' => array('foreignKey' => 'regionId'),
-						   'ClientAcquisitionSource' => array('foreignKey' => 'clientAcquisitionSourceId',
 						   'ParentClient' => array('className' => 'Client', 'foreignKey' => 'parentClientId'))
 					 );
 					 
