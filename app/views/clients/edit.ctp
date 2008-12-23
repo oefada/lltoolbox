@@ -23,7 +23,6 @@ $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']
 	<?php
 		echo $form->input('companyName');
 		echo $form->input('url');
-		echo $form->input('clientAcquisitionSourceId');
 		echo $form->input('checkRateUrl');
 		echo $form->input('numRooms');
 	?>

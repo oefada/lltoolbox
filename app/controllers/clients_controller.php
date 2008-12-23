@@ -53,7 +53,6 @@ class ClientsController extends AppController {
 		}
 
 		$clientTypeIds = $this->Client->ClientType->find('list');
-		$clientAcquisitionSourceIds = $this->Client->ClientAcquisitionSource->find('list');
 		$themes = $this->Client->Theme->find('list');
 		$this->set('client', $this->data);
 		//$this->set(compact('addresses', 'amenities','clientLevelIds','clientStatusIds','clientTypeIds','regions','clientAcquisitionSourceIds', 'loas', 'themes'));
