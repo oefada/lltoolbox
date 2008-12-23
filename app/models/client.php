@@ -64,7 +64,7 @@ class Client extends AppModel {
 		foreach ($results as $key => $val):
 			if (!empty($val['Client']) && is_int($key)):
 			    //TODO: Turn the following two queries into one
-			    $loas = $this->Loa->find('list', array('contain' => array(), 'fields' => array('loaId'), 'conditions' => array('clientId' => $val['Client']['clientId'])));
+			    $loas = $this->Loa->find('list', array('contain' => array(), 'fields' => array('loaId'), 'conditions' => array('Loa.clientId' => $val['Client']['clientId'])));
 			    $currentLoa = $this->Loa->find('first', array('contain' => array('LoaLevel'), 'fields'=>array('Loa.loaId, Loa.loaLevelId, LoaLevel.loaLevelName'), 'conditions' => array('Loa.clientId' => $val['Client']['clientId'])));
 
 			    $results[$key]['Client']['currentLoaId'] = $currentLoa['Loa']['loaId']; 
