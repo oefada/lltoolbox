@@ -5,12 +5,9 @@ class PackageLoaItemRel extends AppModel {
 	var $useTable = 'packageLoaItemRel';
 	var $primaryKey = 'packageLoaItemRelId';
 	var $belongsTo = array('LoaItem' => array('foreignKey' => 'loaItemId'),
-						   'Package' => array('foreignKey' => 'packageId'),
-						   'LoaItemGroup' => array('foreignKey' => 'loaItemGroupId')
+						   'Package' => array('foreignKey' => 'packageId')
 					);
 		
-	var $hasMany = array('PackageRatePeriodItemRel' => array('foreignKey' => 'packageLoaItemRelId'));	
-	
 	var $validate = array('quantity' => array('rule' => 'numeric', 'message' => 'Must be a number'));
 	
 	/*			

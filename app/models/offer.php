@@ -5,9 +5,7 @@ class Offer extends AppModel {
 	var $useTable = 'offer';
 	var $primaryKey = 'offerId';
 	
-	var $belongsTo = array('OfferStatus' => array('foreignKey' => 'offerStatusId'), 
-						   'SchedulingInstance' => array('foreignKey' => 'schedulingInstanceId')	
-							);
+	var $belongsTo = array('SchedulingInstance' => array('foreignKey' => 'schedulingInstanceId'));
 	
 	//var $hasOne = array('SchedulingInstance' => array('foreignKey' => 'schedulingInstanceId'));
 
