@@ -6,7 +6,7 @@ class TicketsController extends AppController {
 
 	var $name = 'Tickets';
 	var $helpers = array('Html', 'Form', 'Ajax', 'Text', 'Layout', 'Number');
-	var $uses = array('Ticket','OfferType', 'User', 'ClientLoaPackageRel', 'RevenueModelLoaRel', 'RevenueModelLoaRelDetail');
+	var $uses = array('Ticket','OfferType', 'User', 'ClientLoaPackageRel', 'RevenueModelLoaRel', 'RevenueModelLoaRelDetail','Offer','Loa');
 
 	function index() {
 		
@@ -14,11 +14,13 @@ class TicketsController extends AppController {
 		$form = $this->params['form'];
 		$named = $this->params['named'];
 
+		// ajaxed paginated form elements come in via params['named']
 		if (empty($form) && !empty($named)) {
 			$form = $named;
 			$this->params['form'] = $this->params['named'];
 		}
 
+		// set values and set defaults        
 		$s_ticket_id = isset($form['s_ticket_id']) ? $form['s_ticket_id'] : '';
 		$s_offer_id = isset($form['s_offer_id']) ? $form['s_offer_id'] : '';
 		$s_user_id = isset($form['s_user_id']) ? $form['s_user_id'] : '';
@@ -30,7 +32,7 @@ class TicketsController extends AppController {
 		$s_end_y = isset($form['s_end_y']) ? $form['s_end_y'] : date('Y');
 		$s_end_m = isset($form['s_end_m']) ? $form['s_end_m'] : date('m');
 		$s_end_d = isset($form['s_end_d']) ? $form['s_end_d'] : date('d');
-
+		
 		$this->set('s_ticket_id', $s_ticket_id);
 		$this->set('s_offer_id', $s_offer_id);
 		$this->set('s_user_id', $s_user_id);
@@ -43,6 +45,7 @@ class TicketsController extends AppController {
 		$this->set('s_end_m', $s_end_m);   
 		$this->set('s_end_d', $s_end_d);   
 		
+		// use these dates in the sql for date range search
 		$s_start_date = $s_start_y . '-' . $s_start_m . '-' . $s_start_d . ' 00:00:00';
 		$s_end_date = $s_end_y . '-' . $s_end_m . '-' . $s_end_d . ' 23:59:59';
 		
@@ -54,6 +57,7 @@ class TicketsController extends AppController {
 		                        	'TicketStatus', 'Package')
 		                        );
 		    
+		// if search via ticket id, offer id, or user id, then dont use other search conditions
 		if ($s_ticket_id) {
 			$this->paginate['conditions']['Ticket.ticketId'] = $s_ticket_id;    
 		} elseif ($s_offer_id) {
@@ -110,56 +114,92 @@ class TicketsController extends AppController {
 		$this->set('ticketStatusIds', $this->Ticket->TicketStatus->find('list'));
 	}
 
-	function updateTrackDetail($in0) {
-		$data = json_decode($in0, true);
+	function updateTrackDetail($id) {
 		
+		// settings for data retrieval
+		// ---------------------------------------------------------
 		$this->Ticket->recursive = -1;
-		$ticket = $this->Ticket->read(null, $data['ticketId']);
-		
-		$this->ClientLoaPackageRel->recursive = -1;
-		$clientLoaPackageRel = $this->ClientLoaPackageRel->findBypackageid($data['packageId']);	
-	
-		$ticketId = $ticket['Ticket']['ticketId'];
-		$loaId = $clientLoaPackageRel['ClientLoaPackageRel']['loaId'];
-		
+		$this->Offer->recursive = 2;
 		$this->Loa->recursive = -1;
-		$loa = $this->Loa->read(null, $loaId);
-		
-		// ---------------- rev stuff ---------------------
-		
 		$this->RevenueModelLoaRel->recursive = 2;
-		$revenueModelLoaRel = $this->RevenueModelLoaRel->findByloaid($loaId);
-	
-		$exp 			= $revenueModelLoaRel['ExpirationCriterium'];
-		$model 			= $revenueModelLoaRel['RevenueModel'];
-		$track 			= $revenueModelLoaRel['RevenueModelLoaRel'];
-		$trackDetail 	= $revenueModelLoaRel['RevenueModelLoaRelDetail'];
-				
-		$revModelLoaDetailSave							= array();
-		$revModelLoaDetailSave['revenueModelLoaRelId'] 	= $track['revenueModelLoaId'];
-		$revModelLoaDetailSave['ticketId'] 				= $ticketId;
 		
-		switch ($model['revenueModelId']) {
+		// data retrieval
+		// ---------------------------------------------------------
+		$ticket = $this->Ticket->read(null, $id);
+		$offer = $this->Offer->read(null, $ticket['Ticket']['offerId']);
+		$schedulingMasterId = $offer['SchedulingInstance']['SchedulingMaster']['schedulingMasterId'];
+		$smid = $this->RevenueModelLoaRel->query("select revenueModelLoaRelId from schedulingMasterTrackRel where schedulingMasterId = $schedulingMasterId limit 1");
+		$revenueModelLoaRelId = $smid[0]['schedulingMasterTrackRel']['revenueModelLoaRelId'];
+		$revenueModelLoaRel = $this->RevenueModelLoaRel->read(null, $revenueModelLoaRelId);
+		
+		// vars to work with
+		// ---------------------------------------------------------
+		$track 				= $revenueModelLoaRel['RevenueModelLoaRel'];
+		$track_detail 		= $revenueModelLoaRel['RevenueModelLoaRelDetail'];
+		$track_iteration	= 0;
+		$track_cycle		= 0;		
+		$loa				= $this->Loa->read(null, $track['loaId']);
+		
+		// set the track cycle and iteration counts
+		// ---------------------------------------------------------
+		foreach ($track_detail as $k => $td) {
+			$track_iteration = $td['iteration'] > $track_iteration ? $td['iteration'] : $track_iteration;
+			$track_cycle     = $td['cycle'] > $track_cycle ? $td['cycle'] : $track_cycle;
+		}
+		
+		// set new track information for insert into revenueModelLoaRelDetail
+		// ---------------------------------------------------------
+		$new_track_detail 							= array();
+		$new_track_detail['revenueModelLoaRelId']	= $revenueModelLoaRelId;
+		$new_track_detail['ticketId']				= $id;
+		$new_track_detail['cycle'] 					= ++$track_cycle;
+		$new_track_detail['iteration'] 				= ++$track_iteration;
+	
+		// track detail calculations	
+		// ---------------------------------------------------------
+		switch ($track['revenueModelId']) {
 			case 1:
-				if (empty($trackDetail)) {
-					$revModelLoaDetailSave['cycle'] 				= 1;
-					$revModelLoaDetailSave['iteration'] 			= 1;
-				} else {
-					$revModelLoaDetailSave['cycle'] 				= $trackDetail['cycle'];
-					$revModelLoaDetailSave['iteration'] 			= $trackDetail['iteration']++;
-				}
-				$revModelLoaDetailSave['amountKept'] 			= ($track['keepPercentage'] / 100) * $ticket['Ticket']['billingPrice'];
-				$revModelLoaDetailSave['amountRemitted'] 		= $ticket['Ticket']['billingPrice'] - $revModelLoaDetailSave['amountKept'];
-				
+				// this is a revenue split model
+				$new_track_detail['cycle']					= 1;  // just default to 1 for revenue split
+				$new_track_detail['amountKept'] 			= ($track['keepPercentage'] / 100) * $ticket['Ticket']['billingPrice'];
+				$new_track_detail['amountRemitted'] 		= $ticket['Ticket']['billingPrice'] - $new_track_detail['amountKept'];
 				break;
 			case 2:
+				
+				// this is an x for y average
 				break;
 			case 3:
+				// this is an x for y
+				
+				break;
+			default: 
+				return false;
 				break;
 		}
-		return print_r($revModelLoaDetailSave, true);
 		
-		// ------------- end rev stuff --------------------
+		// update the track record (revenueModelLoaRel)
+		// ---------------------------------------------------------
+		$track['pending']   -= $ticket['Ticket']['billingPrice'];
+		$track['collected'] += $ticket['Ticket']['billingPrice'];
+		
+		// update the loa record
+		// ---------------------------------------------------------
+		$loa['Loa']['loaValue']			 += $ticket['Ticket']['billingPrice'];
+		$loa['Loa']['totalKept']		 += $new_track_detail['amountKept'];
+		$loa['Loa']['totalRemitted']	 += $new_track_detail['amountRemitted'];
+		$loa['Loa']['membershipBalance'] -= $new_track_detail['amountKept'];
+		
+		// do all the inserts or updates here
+		// ---------------------------------------------------------
+		$this->Loa->save($loa);
+		$this->RevenueModelLoaRel->save($track);
+		$this->RevenueModelLoaRel->RevenueModelLoaRelDetail->create();
+		$this->RevenueModelLoaRel->RevenueModelLoaRelDetail->save($new_track_detail);
+		
+		print_r($track);
+		print_r($new_track_detail);
+		
+		die();
 	}
 
 	// -------------------------------------------
