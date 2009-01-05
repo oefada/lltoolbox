@@ -3,7 +3,7 @@ class PackagesController extends AppController {
 
 	var $name = 'Packages';
 	var $helpers = array('Html', 'Form');
-	var $uses = array('Package', 'Client', 'PackageRatePeriod', 'PackageRatePeriodItemRel');
+	var $uses = array('Package', 'Client', 'PackageRatePeriod');
 	
 	function beforeFilter() {
 		parent::beforeFilter();
