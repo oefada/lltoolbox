@@ -655,5 +655,101 @@ class DboMysql extends DboMysqlBase {
 	function getEncoding() {
 		return mysql_client_encoding($this->connection);
 	}
+
+/**
+ * DataSource Query abstraction. Changed by vgarcia so the findBy and findAllBy reflect our naming convention
+ *
+ * @return resource Result resource identifier
+ */
+	function query() {
+		$args	  = func_get_args();
+		$fields	  = null;
+		$order	  = null;
+		$limit	  = null;
+		$page	  = null;
+		$recursive = null;
+
+		if (count($args) == 1) {
+			return $this->fetchAll($args[0]);
+
+		} elseif (count($args) > 1 && (strpos(strtolower($args[0]), 'findby') === 0 || strpos(strtolower($args[0]), 'findallby') === 0)) {
+			$params = $args[1];
+
+			if (strpos(strtolower($args[0]), 'findby') === 0) {
+				$all  = false;
+				$field = Inflector::variable(preg_replace('/findBy/i', '', $args[0]));
+			} else {
+				$all  = true;
+				$field = Inflector::variable(preg_replace('/findAllBy/i', '', $args[0]));
+			}
+
+			$or = (strpos($field, '_or_') !== false);
+			if ($or) {
+				$field = explode('_or_', $field);
+			} else {
+				$field = explode('_and_', $field);
+			}
+			$off = count($field) - 1;
+
+			if (isset($params[1 + $off])) {
+				$fields = $params[1 + $off];
+			}
+
+			if (isset($params[2 + $off])) {
+				$order = $params[2 + $off];
+			}
+
+			if (!array_key_exists(0, $params)) {
+				return false;
+			}
+
+			$c = 0;
+			$conditions = array();
+
+			foreach ($field as $f) {
+				$conditions[$args[2]->alias . '.' . $f] = $params[$c];
+				$c++;
+			}
+
+			if ($or) {
+				$conditions = array('OR' => $conditions);
+			}
+
+			if ($all) {
+				if (isset($params[3 + $off])) {
+					$limit = $params[3 + $off];
+				}
+
+				if (isset($params[4 + $off])) {
+					$page = $params[4 + $off];
+				}
+
+				if (isset($params[5 + $off])) {
+					$recursive = $params[5 + $off];
+				}
+				return $args[2]->find('all', compact('conditions', 'fields', 'order', 'limit', 'page', 'recursive'));
+			} else {
+				if (isset($params[3 + $off])) {
+					$recursive = $params[3 + $off];
+				}
+				return $args[2]->find('first', compact('conditions', 'fields', 'order', 'recursive'));
+			}
+		} else {
+			if (isset($args[1]) && $args[1] === true) {
+				return $this->fetchAll($args[0], true);
+			} else if (isset($args[1]) && !is_array($args[1]) ) {
+				return $this->fetchAll($args[0], false);
+			} else if (isset($args[1]) && is_array($args[1])) {
+				$offset = 0;
+				if (isset($args[2])) {
+					$cache = $args[2];
+				} else {
+					$cache = true;
+				}
+				$args[1] = array_map(array(&$this, 'value'), $args[1]);
+				return $this->fetchAll(String::insert($args[0], $args[1]), $cache);
+			}
+		}
+	}
 }
 ?>
