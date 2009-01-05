@@ -53,7 +53,7 @@ class TicketsController extends AppController {
 									'Ticket.ticketId', 'Ticket.offerTypeId', 'Ticket.created', 
 									'Ticket.offerId', 'Ticket.userId', 'TicketStatus.ticketStatusName', 
 									'Ticket.userFirstName', 'Ticket.userLastName', 'Package.packageName'),
-		                        'contain' => array(
+		                        	'contain' => array(
 		                        	'TicketStatus', 'Package')
 		                        );
 		    
@@ -118,59 +118,79 @@ class TicketsController extends AppController {
 		
 		// settings for data retrieval
 		// ---------------------------------------------------------
-		$this->Ticket->recursive = -1;
-		$this->Offer->recursive = 2;
-		$this->Loa->recursive = -1;
-		$this->RevenueModelLoaRel->recursive = 2;
+		$this->Ticket->recursive 				= -1;
+		$this->Offer->recursive 				=  2;
+		$this->Loa->recursive 					= -1;
+		$this->RevenueModelLoaRel->recursive 	= -1;
 		
 		// data retrieval
 		// ---------------------------------------------------------
-		$ticket = $this->Ticket->read(null, $id);
-		$offer = $this->Offer->read(null, $ticket['Ticket']['offerId']);
-		$schedulingMasterId = $offer['SchedulingInstance']['SchedulingMaster']['schedulingMasterId'];
-		$smid = $this->RevenueModelLoaRel->query("select revenueModelLoaRelId from schedulingMasterTrackRel where schedulingMasterId = $schedulingMasterId limit 1");
-		$revenueModelLoaRelId = $smid[0]['schedulingMasterTrackRel']['revenueModelLoaRelId'];
-		$revenueModelLoaRel = $this->RevenueModelLoaRel->read(null, $revenueModelLoaRelId);
+		$ticket 				= $this->Ticket->read(null, $id);
+		$offer 					= $this->Offer->read(null, $ticket['Ticket']['offerId']);
+		$schedulingMasterId 	= $offer['SchedulingInstance']['SchedulingMaster']['schedulingMasterId'];
+		$smid 					= $this->RevenueModelLoaRel->query("select revenueModelLoaRelId from schedulingMasterTrackRel where schedulingMasterId = $schedulingMasterId limit 1");
+		$revenueModelLoaRelId 	= $smid[0]['schedulingMasterTrackRel']['revenueModelLoaRelId'];
+		$revenueModelLoaRel 	= $this->RevenueModelLoaRel->read(null, $revenueModelLoaRelId);
+		$last_track_detail 		= $this->RevenueModelLoaRel->query("select * from revenueModelLoaRelDetail where revenueModelLoaRelId = $revenueModelLoaRelId order by revenueModelLoaRelDetailId desc limit 1");
 		
 		// vars to work with
 		// ---------------------------------------------------------
-		$track 				= $revenueModelLoaRel['RevenueModelLoaRel'];
-		$track_detail 		= $revenueModelLoaRel['RevenueModelLoaRelDetail'];
-		$track_iteration	= 0;
-		$track_cycle		= 0;		
-		$loa				= $this->Loa->read(null, $track['loaId']);
-		
-		// set the track cycle and iteration counts
-		// ---------------------------------------------------------
-		foreach ($track_detail as $k => $td) {
-			$track_iteration = $td['iteration'] > $track_iteration ? $td['iteration'] : $track_iteration;
-			$track_cycle     = $td['cycle'] > $track_cycle ? $td['cycle'] : $track_cycle;
-		}
+		$track 					= $revenueModelLoaRel['RevenueModelLoaRel'];
+		$last_track_detail		= $last_track_detail[0]['revenueModelLoaRelDetail'];
+		$ticket_amount			= $ticket['Ticket']['billingPrice'];
+		$ticket_amount = rand(400,1200);
+		$loa					= $this->Loa->read(null, $track['loaId']);
 		
 		// set new track information for insert into revenueModelLoaRelDetail
 		// ---------------------------------------------------------
 		$new_track_detail 							= array();
 		$new_track_detail['revenueModelLoaRelId']	= $revenueModelLoaRelId;
 		$new_track_detail['ticketId']				= $id;
-		$new_track_detail['cycle'] 					= ++$track_cycle;
-		$new_track_detail['iteration'] 				= ++$track_iteration;
 	
 		// track detail calculations	
 		// ---------------------------------------------------------
 		switch ($track['revenueModelId']) {
 			case 1:
 				// this is a revenue split model
-				$new_track_detail['cycle']					= 1;  // just default to 1 for revenue split
-				$new_track_detail['amountKept'] 			= ($track['keepPercentage'] / 100) * $ticket['Ticket']['billingPrice'];
-				$new_track_detail['amountRemitted'] 		= $ticket['Ticket']['billingPrice'] - $new_track_detail['amountKept'];
+				$new_track_detail['cycle']					= 1;
+				$new_track_detail['iteration']				= ++$last_track_detail['iteration'];
+				$new_track_detail['amountKept'] 			= ($track['keepPercentage'] / 100) * $ticket_amount;
+				$new_track_detail['amountRemitted'] 		= $ticket_amount - $new_track_detail['amountKept'];
 				break;
 			case 2:
-				
 				// this is an x for y average
+				
 				break;
 			case 3:
 				// this is an x for y
-				
+				if (($last_track_detail['iteration'] + 1) == $track['y']) {
+					$new_track_detail['cycle']		= $last_track_detail['cycle'];
+					$new_track_detail['iteration']	= ++$last_track_detail['iteration'];
+					$new_track_detail['xyRunningTotal'] = $last_track_detail['xyRunningTotal'] + $ticket_amount;
+					$new_track_detail['xyAverage']	= (($new_track_detail['xyRunningTotal'] / $track['y']) * $track['x']);
+					if ($new_track_detail['xyAverage'] > $ticket_amount) {
+						$new_track_detail['keepBalDue']		= $new_track_detail['xyAverage'] - $ticket_amount;
+						$new_track_detail['amountKept'] 	= $ticket_amount;
+						$new_track_detail['amountRemitted'] = 0;
+					} else {
+						$new_track_detail['keepBalDue']		= 0;
+						$new_track_detail['amountKept'] 	= $new_track_detail['xyAverage'];
+						$new_track_detail['amountRemitted'] = $ticket_amount - $new_track_detail['amountKept'];
+					}
+				} else {
+					if ($last_track_detail['iteration'] == $track['y']) {
+						$new_track_detail['cycle']			= ++$last_track_detail['cycle'];
+						$new_track_detail['iteration']		= 1;
+						$new_track_detail['xyRunningTotal'] = $ticket_amount;
+						//$new_track_detail['xyRunningTotal'] = $last_track_detail['xyRunningTotal'] - $last_track_detail['keepBalDue'];
+					} else {
+						$new_track_detail['cycle']			= $last_track_detail['cycle'];
+						$new_track_detail['iteration']		= ++$last_track_detail['iteration'];
+						$new_track_detail['xyRunningTotal'] = $last_track_detail['xyRunningTotal'] + $ticket_amount;	
+					}
+					$new_track_detail['amountKept']		= $last_track_detail['keepBalDue'];
+					$new_track_detail['amountRemitted']	= $ticket_amount - $last_track_detail['keepBalDue'];
+				}
 				break;
 			default: 
 				return false;
@@ -179,12 +199,12 @@ class TicketsController extends AppController {
 		
 		// update the track record (revenueModelLoaRel)
 		// ---------------------------------------------------------
-		$track['pending']   -= $ticket['Ticket']['billingPrice'];
-		$track['collected'] += $ticket['Ticket']['billingPrice'];
+		$track['pending']   -= $ticket_amount;
+		$track['collected'] += $ticket_amount;
 		
 		// update the loa record
 		// ---------------------------------------------------------
-		$loa['Loa']['loaValue']			 += $ticket['Ticket']['billingPrice'];
+		$loa['Loa']['loaValue']			 += $ticket_amount;
 		$loa['Loa']['totalKept']		 += $new_track_detail['amountKept'];
 		$loa['Loa']['totalRemitted']	 += $new_track_detail['amountRemitted'];
 		$loa['Loa']['membershipBalance'] -= $new_track_detail['amountKept'];
