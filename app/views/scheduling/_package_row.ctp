@@ -76,6 +76,10 @@ foreach($package['Scheduling'] as $k => $master):
 		$classes[] = 'sIteration';
 	}
 	
+	if ($loaBalanceFlag['errorSchedulingInstanceId'] == $instance['schedulingInstanceId']) {
+		$classes[] = 'instanceError';
+	}
+	
 	$class = " class='".implode($classes, ' ')."'";
 	?>
 	<?php 

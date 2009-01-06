@@ -38,9 +38,9 @@ class SchedulingController extends AppController {
 		
 		$client['Client'] = $client['Client'];								//the first package has the client details
 		$clientName = $client['Client']['name'];
-
+        $loaBalanceFlag = $this->_setLoaBalanceFlag($clientId, $currentLoa['Loa']);
         $this->set('packages', $packages);
-		$this->set(compact('clientId', 'month', 'year', 'monthDays', 'monthYearString', 'clientName', 'client'));
+		$this->set(compact('clientId', 'month', 'year', 'monthDays', 'monthYearString', 'clientName', 'client', 'loaBalanceFlag'));
 	}
 
 	/**
@@ -98,6 +98,40 @@ class SchedulingController extends AppController {
 		foreach($packages as &$package):
 			$package['Scheduling'] = @$instances[$package['Package']['packageId']];
 		endforeach;
+	}
+	
+	function _setLoaBalanceFlag($clientId, $currentLoa) {
+	    $loaMembershipBalance = $currentLoa['membershipBalance'];
+	    $loaValue = $currentLoa['loaValue'];
+	    
+	    /* Get all of the instances that have not gone live yet for this client */
+	    $totals = $this->Package->query("SELECT MAX(SchedulingMaster.openingBid) AS maxOpeningBid, SUM(SchedulingMaster.openingBid) AS totalOpeningBidSum FROM clientLoaPackageRel AS ClientLoaPackageRel INNER JOIN
+	                           schedulingMaster AS SchedulingMaster ON (ClientLoaPackageRel.packageId = SchedulingMaster.packageId) INNER JOIN
+	                           schedulingInstance AS SchedulingInstance ON (SchedulingInstance.schedulingMasterId = SchedulingMaster.schedulingMasterId)
+	                           WHERE ClientLoaPackageRel.clientId = $clientId AND SchedulingInstance.endDate > NOW()
+	                           GROUP BY ClientLoaPackageRel.clientId");
+
+        $returnArray['totalOpeningBidSum']  =   $totals[0][0]['totalOpeningBidSum'];
+        $returnArray['maxOpeningBid']       =   $totals[0][0]['maxOpeningBid'];
+        $returnArray['class']               =   '';
+        
+        $returnArray['errorSchedulingInstanceId']   =     null;
+	    if ($totals[0][0]['maxOpeningBid'] >= $loaMembershipBalance) {
+	        $returnArray['class'] = 'icon-error';
+	        
+	        $result = $this->Package->query("SELECT schedulingInstanceId FROM clientLoaPackageRel AS ClientLoaPackageRel INNER JOIN
+    	                                        schedulingMaster AS SchedulingMaster ON (ClientLoaPackageRel.packageId = SchedulingMaster.packageId) INNER JOIN
+    	                                        schedulingInstance AS SchedulingInstance ON (SchedulingInstance.schedulingMasterId = SchedulingMaster.schedulingMasterId)
+    	                                        WHERE ClientLoaPackageRel.clientId = $clientId AND SchedulingInstance.endDate > NOW() AND SchedulingMaster.openingBid = {$totals[0][0]['maxOpeningBid']}
+    	                                        ORDER BY SchedulingInstance.endDate ASC
+    	                                        LIMIT 1");
+    	                                        
+            $returnArray['errorSchedulingInstanceId'] = $result[0]['SchedulingInstance']['schedulingInstanceId'];
+	    } else if ($totals[0][0]['totalOpeningBidSum'] >= $loaMembershipBalance) {
+	        $returnArray['class'] = 'icon-yellow';
+	    }
+	    
+	    return $returnArray;
 	}
 	
 	/**
