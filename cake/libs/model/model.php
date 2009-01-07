@@ -1277,10 +1277,11 @@ class Model extends Overloadable {
 					'recursive' => -1,
 					'fields' => $this->hasAndBelongsToMany[$assoc]['associationForeignKey']
 				));
-
+                if (isset($this->{$join}->_schema[$this->{$join}->primaryKey])) {   
 				$isUUID = !empty($this->{$join}->primaryKey) && (($this->{$join}->_schema[$this->{$join}->primaryKey]['type'] === 'string' && $this->{$join}->_schema[$this->{$join}->primaryKey]['length'] === 36)
 						|| ($this->{$join}->_schema[$this->{$join}->primaryKey]['type'] === 'binary' && $this->{$join}->_schema[$this->{$join}->primaryKey]['length'] === 16));
-
+                    
+                }
 				$newData = $newValues = array();
 
 				foreach ((array)$data as $row) {
