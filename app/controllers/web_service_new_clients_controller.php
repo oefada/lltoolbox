@@ -12,7 +12,7 @@ class WebServiceNewClientsController extends WebServicesController
 	var $api = array(
 					'save_client' => array(
 						'doc' => 'Save new client or update record from Sugar',
-						'input' => array('sm_request' => 'xsd:string'),
+						'input' => array('in0' => 'xsd:string'),
 						'output' => array('return' => 'xsd:string')
 						)
 					);
@@ -28,7 +28,7 @@ class WebServiceNewClientsController extends WebServicesController
 	    // JOSN decoded the request into an assoc. array
 	    $decoded_request = json_decode($sm_request, true);
 	
-		mail('alee@luxurylink.com','sugar',print_r($decoded_request));
+		mail('alee@luxurylink.com','sugar',print_r($decoded_request, true));
 		/*
 	
 	    //$tests = ll_execute_sproc('llsp_ins_esb_test', array('text'=> print_r($decoded_request['client'],true)));
@@ -73,7 +73,7 @@ class WebServiceNewClientsController extends WebServicesController
 	    // tests to see if we were getting correct response from the request
 	    return $encoded_response;
 	    */
-	    return '1';
+	    return $decoded_request;
 	}
 }
 ?>
