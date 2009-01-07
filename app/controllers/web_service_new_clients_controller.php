@@ -12,7 +12,7 @@ class WebServiceNewClientsController extends WebServicesController
 	var $api = array(
 					'save_client' => array(
 						'doc' => 'Save new client or update record from Sugar',
-						'input' => array('in0' => 'xsd:string'),
+						'input' => array('sm_request' => 'xsd:string'),
 						'output' => array('return' => 'xsd:string')
 						)
 					);
@@ -20,7 +20,7 @@ class WebServiceNewClientsController extends WebServicesController
 	function beforeFilter() { $this->Auth->allow('*'); }
 
 	// main function to update or insert client records
-	function save_client($in0)
+	function save_client($sm_request)
 	{
 	    $response_value = '';
 	    $sm_sproc_response = array();
