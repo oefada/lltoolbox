@@ -105,11 +105,11 @@ class SchedulingController extends AppController {
 	    $loaValue = $currentLoa['loaValue'];
 	    
 	    /* Get all of the instances that have not gone live yet for this client */
-	    $totals = $this->Package->query("SELECT MAX(SchedulingMaster.openingBid) AS maxOpeningBid, SUM(SchedulingMaster.openingBid) AS totalOpeningBidSum FROM clientLoaPackageRel AS ClientLoaPackageRel INNER JOIN
-	                           schedulingMaster AS SchedulingMaster ON (ClientLoaPackageRel.packageId = SchedulingMaster.packageId) INNER JOIN
-	                           schedulingInstance AS SchedulingInstance ON (SchedulingInstance.schedulingMasterId = SchedulingMaster.schedulingMasterId)
-	                           WHERE ClientLoaPackageRel.clientId = $clientId AND SchedulingInstance.endDate > NOW()
-	                           GROUP BY ClientLoaPackageRel.clientId");
+	    $totals = $this->Package->query("CALL getClientCurrentAndFutureInstances($clientId)");
+
+	    if (empty($totals)) {
+	        return array();
+	    }
 
         $returnArray['totalOpeningBidSum']  =   $totals[0][0]['totalOpeningBidSum'];
         $returnArray['maxOpeningBid']       =   $totals[0][0]['maxOpeningBid'];
@@ -127,11 +127,13 @@ class SchedulingController extends AppController {
     	                                        LIMIT 1");
     	                                        
             $returnArray['errorSchedulingInstanceId'] = $result[0]['SchedulingInstance']['schedulingInstanceId'];
+             return $returnArray;
 	    } else if ($totals[0][0]['totalOpeningBidSum'] >= $loaMembershipBalance) {
 	        $returnArray['class'] = 'icon-yellow';
+	         return $returnArray;
 	    }
 	    
-	    return $returnArray;
+	    return array();
 	}
 	
 	/**
