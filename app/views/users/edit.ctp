@@ -101,6 +101,8 @@
 		</tr>
 	<?php endforeach; ?>
 	</table>
+<?php else: ?>
+	This User has no mail opt-ins
 <?php endif; ?>
 	</div>
 </div>
