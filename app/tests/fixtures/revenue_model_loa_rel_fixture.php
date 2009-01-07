@@ -2,13 +2,13 @@
 /* SVN FILE: $Id$ */
 /* Client Fixture generated on: 2008-10-21 23:10:40 : 1224657520*/
 
-class RevenueModelLoaRelFixture extends CakeTestFixture {
-	var $name = 'RevenueModelLoaRel';
-	var $table = 'revenueModelLoaRel';
-	var $import = array('model' => 'RevenueModelLoaRel', 'connection' => 'default');
+class TrackFixture extends CakeTestFixture {
+	var $name = 'Track';
+	var $table = 'track';
+	var $import = array('model' => 'Track', 'connection' => 'default');
 	
 	var $records = array(array(
-		'revenueModelLoaRelId'  => 3,
+		'trackId'  => 3,
 		'loaId'  => 1,
 		'revenueModelId'  => 1,
 		'expirationCriteriaId'  => 1,

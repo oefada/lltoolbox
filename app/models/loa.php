@@ -18,7 +18,7 @@ class Loa extends AppModel {
 
 	var $hasMany = array('LoaItem' => array('foreignKey' => 'loaId'), 
 						 'ClientLoaPackageRel' => array('foreignKey' => 'loaId'),
-						 'RevenueModelLoaRel' => array('foreignKey' => 'loaId')
+						 'Track' => array('foreignKey' => 'loaId')
 						);
     
     var $actsAs = array('Containable');

@@ -41,7 +41,7 @@ class SchedulingMastersController extends AppController {
 			
 			//associate the tracks from each client to this offer
 			foreach ($package['ClientLoaPackageRel'] as $v) {
-			    $this->data['RevenueModelLoaRel']['RevenueModelLoaRel'][] = $v['revenueModelLoaId'];
+			    $this->data['Track']['Track'][] = $v['revenueModelLoaId'];
 			}
 
 			if ($this->SchedulingMaster->save($this->data)) {

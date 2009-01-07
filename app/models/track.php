@@ -1,15 +1,15 @@
 <?php
-class RevenueModelLoaRel extends AppModel {
+class Track extends AppModel {
 
-	var $name = 'RevenueModelLoaRel';
-	var $useTable = 'revenueModelLoaRel';
-	var $primaryKey = 'revenueModelLoaRelId';
+	var $name = 'Track';
+	var $useTable = 'track';
+	var $primaryKey = 'trackId';
 	
 	var $belongsTo = array('ExpirationCriterium' => array('foreignKey' => 'expirationCriteriaId'),
 						   'RevenueModel' => array('foreignKey' => 'revenueModelId')
 						  );
 						  
-	var $hasMany = array('RevenueModelLoaRelDetail' => array('foreignKey' => 'revenueModelLoaRelId'));
+	var $hasMany = array('TrackDetail' => array('foreignKey' => 'trackId'));
 	
 	var $validate = array(
 						'loaId' => array(
@@ -50,7 +50,7 @@ class RevenueModelLoaRel extends AppModel {
 						
 	function checkExp($data) {
 		$validPresets = true;
-		$expCriteriaId = $this->data['RevenueModelLoaRel']['expirationCriteriaId'];
+		$expCriteriaId = $this->data['Track']['expirationCriteriaId'];
 		if (isset($data['expMaxOffers']) && $expCriteriaId == 2) {
 			$value = $data['expMaxOffers'];
 			if (!$value || !is_numeric($value) || floor($value) != $value) {
@@ -72,7 +72,7 @@ class RevenueModelLoaRel extends AppModel {
 	
 	function checkPresets($data) {
 		$validPresets = true;
-		$revModelId = $this->data['RevenueModelLoaRel']['revenueModelId'];
+		$revModelId = $this->data['Track']['revenueModelId'];
 		if (isset($data['keepPercentage']) && $revModelId == 1) {
 			$value = $data['keepPercentage'];
 			if (!$value || !is_numeric($value) || !($value >=0 && $value <= 100)) {

@@ -1,5 +1,5 @@
-<div class="revenueModelLoaRels index">
-<h2><?php __('RevenueModelLoaRels');?></h2>
+<div class="tracks index">
+<h2><?php __('Tracks');?></h2>
 <p>
 <?php
 echo $paginator->counter(array(
@@ -8,7 +8,7 @@ echo $paginator->counter(array(
 ?></p>
 <table cellpadding="0" cellspacing="0">
 <tr>
-	<th><?php echo $paginator->sort('revenueModelLoaRelId');?></th>
+	<th><?php echo $paginator->sort('trackId');?></th>
 	<th><?php echo $paginator->sort('loaId');?></th>
 	<th><?php echo $paginator->sort('revenueModelId');?></th>
 	<th><?php echo $paginator->sort('expirationCriteriaId');?></th>
@@ -30,7 +30,7 @@ echo $paginator->counter(array(
 </tr>
 <?php
 $i = 0;
-foreach ($revenueModelLoaRels as $revenueModelLoaRel):
+foreach ($tracks as $track):
 	$class = null;
 	if ($i++ % 2 == 0) {
 		$class = ' class="altrow"';
@@ -38,63 +38,63 @@ foreach ($revenueModelLoaRels as $revenueModelLoaRel):
 ?>
 	<tr<?php echo $class;?>>
 		<td>
-			<?php echo $revenueModelLoaRel['RevenueModelLoaRel']['revenueModelLoaRelId']; ?>
+			<?php echo $track['Track']['trackId']; ?>
 		</td>
 		<td>
-			<?php echo $revenueModelLoaRel['RevenueModelLoaRel']['loaId']; ?>
+			<?php echo $track['Track']['loaId']; ?>
 		</td>
 		<td>
-			<?php echo $html->link($revenueModelLoaRel['RevenueModel']['revenueModelName'], array('controller'=> 'revenue_models', 'action'=>'view', $revenueModelLoaRel['RevenueModel']['revenueModelId'])); ?>
+			<?php echo $html->link($track['RevenueModel']['revenueModelName'], array('controller'=> 'revenue_models', 'action'=>'view', $track['RevenueModel']['revenueModelId'])); ?>
 		</td>
 		<td>
-			<?php echo $html->link($revenueModelLoaRel['ExpirationCriterium']['expirationCriteriaName'], array('controller'=> 'expiration_criteria', 'action'=>'view', $revenueModelLoaRel['ExpirationCriterium']['expirationCriteriaId'])); ?>
+			<?php echo $html->link($track['ExpirationCriterium']['expirationCriteriaName'], array('controller'=> 'expiration_criteria', 'action'=>'view', $track['ExpirationCriterium']['expirationCriteriaId'])); ?>
 		</td>
 		<td>
-			<?php echo $revenueModelLoaRel['RevenueModelLoaRel']['tierNum']; ?>
+			<?php echo $track['Track']['tierNum']; ?>
 		</td>
 		<td>
-			<?php echo $revenueModelLoaRel['RevenueModelLoaRel']['isUpgrade']; ?>
+			<?php echo $track['Track']['isUpgrade']; ?>
 		</td>
 		<td>
-			<?php echo $revenueModelLoaRel['RevenueModelLoaRel']['fee']; ?>
+			<?php echo $track['Track']['fee']; ?>
 		</td>
 		<td>
-			<?php echo $revenueModelLoaRel['RevenueModelLoaRel']['x']; ?>
+			<?php echo $track['Track']['x']; ?>
 		</td>
 		<td>
-			<?php echo $revenueModelLoaRel['RevenueModelLoaRel']['y']; ?>
+			<?php echo $track['Track']['y']; ?>
 		</td>
 		<td>
-			<?php echo $revenueModelLoaRel['RevenueModelLoaRel']['iteration']; ?>
+			<?php echo $track['Track']['iteration']; ?>
 		</td>
 		<td>
-			<?php echo $revenueModelLoaRel['RevenueModelLoaRel']['cycle']; ?>
+			<?php echo $track['Track']['cycle']; ?>
 		</td>
 		<td>
-			<?php echo $revenueModelLoaRel['RevenueModelLoaRel']['balanceDue']; ?>
+			<?php echo $track['Track']['balanceDue']; ?>
 		</td>
 		<td>
-			<?php echo $revenueModelLoaRel['RevenueModelLoaRel']['keepPercentage']; ?>
+			<?php echo $track['Track']['keepPercentage']; ?>
 		</td>
 		<td>
-			<?php echo $revenueModelLoaRel['RevenueModelLoaRel']['pending']; ?>
+			<?php echo $track['Track']['pending']; ?>
 		</td>
 		<td>
-			<?php echo $revenueModelLoaRel['RevenueModelLoaRel']['collected']; ?>
+			<?php echo $track['Track']['collected']; ?>
 		</td>
 		<td>
-			<?php echo $revenueModelLoaRel['RevenueModelLoaRel']['expMaxOffers']; ?>
+			<?php echo $track['Track']['expMaxOffers']; ?>
 		</td>
 		<td>
-			<?php echo $revenueModelLoaRel['RevenueModelLoaRel']['expDate']; ?>
+			<?php echo $track['Track']['expDate']; ?>
 		</td>
 		<td>
-			<?php echo $revenueModelLoaRel['RevenueModelLoaRel']['expFee']; ?>
+			<?php echo $track['Track']['expFee']; ?>
 		</td>
 		<td class="actions">
-			<?php echo $html->link(__('View', true), array('action'=>'view', $revenueModelLoaRel['RevenueModelLoaRel']['revenueModelLoaRelId'])); ?>
-			<?php echo $html->link(__('Edit', true), array('action'=>'edit', $revenueModelLoaRel['RevenueModelLoaRel']['revenueModelLoaRelId'])); ?>
-			<?php echo $html->link(__('Delete', true), array('action'=>'delete', $revenueModelLoaRel['RevenueModelLoaRel']['revenueModelLoaRelId']), null, sprintf(__('Are you sure you want to delete # %s?', true), $revenueModelLoaRel['RevenueModelLoaRel']['revenueModelLoaRelId'])); ?>
+			<?php echo $html->link(__('View', true), array('action'=>'view', $track['Track']['trackId'])); ?>
+			<?php echo $html->link(__('Edit', true), array('action'=>'edit', $track['Track']['trackId'])); ?>
+			<?php echo $html->link(__('Delete', true), array('action'=>'delete', $track['Track']['trackId']), null, sprintf(__('Are you sure you want to delete # %s?', true), $track['Track']['trackId'])); ?>
 		</td>
 	</tr>
 <?php endforeach; ?>
@@ -107,7 +107,7 @@ foreach ($revenueModelLoaRels as $revenueModelLoaRel):
 </div>
 <div class="actions">
 	<ul>
-		<li><?php echo $html->link(__('New RevenueModelLoaRel', true), array('action'=>'add')); ?></li>
+		<li><?php echo $html->link(__('New Track', true), array('action'=>'add')); ?></li>
 		<li><?php echo $html->link(__('List Expiration Criteria', true), array('controller'=> 'expiration_criteria', 'action'=>'index')); ?> </li>
 		<li><?php echo $html->link(__('New Expiration Criterium', true), array('controller'=> 'expiration_criteria', 'action'=>'add')); ?> </li>
 		<li><?php echo $html->link(__('List Revenue Models', true), array('controller'=> 'revenue_models', 'action'=>'index')); ?> </li>

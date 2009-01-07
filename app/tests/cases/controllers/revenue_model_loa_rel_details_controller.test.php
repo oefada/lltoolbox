@@ -1,26 +1,26 @@
 <?php 
 /* SVN FILE: $Id$ */
-/* RevenueModelLoaRelDetailsController Test cases generated on: 2008-10-21 14:10:43 : 1224624523*/
-App::import('Controller', 'RevenueModelLoaRelDetails');
+/* TrackDetailsController Test cases generated on: 2008-10-21 14:10:43 : 1224624523*/
+App::import('Controller', 'TrackDetails');
 
-class TestRevenueModelLoaRelDetails extends RevenueModelLoaRelDetailsController {
+class TestTrackDetails extends TrackDetailsController {
 	var $autoRender = false;
 }
 
-class RevenueModelLoaRelDetailsControllerTest extends CakeTestCase {
-	var $RevenueModelLoaRelDetails = null;
+class TrackDetailsControllerTest extends CakeTestCase {
+	var $TrackDetails = null;
 
 	function setUp() {
-		$this->RevenueModelLoaRelDetails = new TestRevenueModelLoaRelDetails();
-		$this->RevenueModelLoaRelDetails->constructClasses();
+		$this->TrackDetails = new TestTrackDetails();
+		$this->TrackDetails->constructClasses();
 	}
 
-	function testRevenueModelLoaRelDetailsControllerInstance() {
-		$this->assertTrue(is_a($this->RevenueModelLoaRelDetails, 'RevenueModelLoaRelDetailsController'));
+	function testTrackDetailsControllerInstance() {
+		$this->assertTrue(is_a($this->TrackDetails, 'TrackDetailsController'));
 	}
 
 	function tearDown() {
-		unset($this->RevenueModelLoaRelDetails);
+		unset($this->TrackDetails);
 	}
 }
 ?>

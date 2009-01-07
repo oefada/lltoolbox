@@ -109,7 +109,7 @@ $this->set('clientId', $this->data['Client']['clientId']);
 				<li>
 				<?php
 				echo $html->link('Add new LOA track',
-								'/loas/'.$loa['Loa']['loaId'].'/revenue_model_loa_rels/add',
+								'/loas/'.$loa['Loa']['loaId'].'/tracks/add',
 								array(
 									'title' => 'Add LOA Track',
 									'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
@@ -121,7 +121,7 @@ $this->set('clientId', $this->data['Client']['clientId']);
 				?></li>
 			</ul>
 		</div>
-	<?php if (!empty($loa['RevenueModelLoaRel'])):?>
+	<?php if (!empty($loa['Track'])):?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
 		<th><?php __('Track #')?></th>
@@ -131,7 +131,7 @@ $this->set('clientId', $this->data['Client']['clientId']);
 	</tr>
 	<?php
 		$i = 0;
-		foreach ($loa['RevenueModelLoaRel'] as $track):
+		foreach ($loa['Track'] as $track):
 			$class = null;
 			if ($i++ % 2 == 0) {
 				$class = ' class="altrow"';
@@ -144,7 +144,7 @@ $this->set('clientId', $this->data['Client']['clientId']);
 			<td class="actions">
 				<?php
 				echo $html->link('Edit',
-								'/revenue_model_loa_rels/edit/'.$track['revenueModelLoaRelId'],
+								'/tracks/edit/'.$track['trackId'],
 								array(
 									'title' => 'Edit LOA Track',
 									'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
@@ -154,7 +154,7 @@ $this->set('clientId', $this->data['Client']['clientId']);
 								false
 								);
 				?>
-				<?php echo $html->link(__('Delete', true), array('controller'=> 'revenue_model_loa_rels', 'action'=>'delete', $track['revenueModelLoaRelId']), null, sprintf(__('Are you sure you want to delete # %s?', true), $track['revenueModelLoaRelId'])); ?>
+				<?php echo $html->link(__('Delete', true), array('controller'=> 'tracks', 'action'=>'delete', $track['trackId']), null, sprintf(__('Are you sure you want to delete # %s?', true), $track['trackId'])); ?>
 			</td>
 		</tr>
 	<?php endforeach; ?>

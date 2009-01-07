@@ -6,7 +6,7 @@ class TicketsController extends AppController {
 
 	var $name = 'Tickets';
 	var $helpers = array('Html', 'Form', 'Ajax', 'Text', 'Layout', 'Number');
-	var $uses = array('Ticket','OfferType', 'User', 'ClientLoaPackageRel', 'RevenueModelLoaRel', 'RevenueModelLoaRelDetail','Offer','Loa');
+	var $uses = array('Ticket','OfferType', 'User', 'ClientLoaPackageRel', 'Track', 'TrackDetail','Offer','Loa');
 
 	function index() {
 		
@@ -121,30 +121,30 @@ class TicketsController extends AppController {
 		$this->Ticket->recursive 				= -1;
 		$this->Offer->recursive 				=  2;
 		$this->Loa->recursive 					= -1;
-		$this->RevenueModelLoaRel->recursive 	= -1;
+		$this->Track->recursive 	= -1;
 		
 		// data retrieval
 		// ---------------------------------------------------------
 		$ticket 				= $this->Ticket->read(null, $id);
 		$offer 					= $this->Offer->read(null, $ticket['Ticket']['offerId']);
 		$schedulingMasterId 	= $offer['SchedulingInstance']['SchedulingMaster']['schedulingMasterId'];
-		$smid 					= $this->RevenueModelLoaRel->query("select revenueModelLoaRelId from schedulingMasterTrackRel where schedulingMasterId = $schedulingMasterId limit 1");
-		$revenueModelLoaRelId 	= $smid[0]['schedulingMasterTrackRel']['revenueModelLoaRelId'];
-		$revenueModelLoaRel 	= $this->RevenueModelLoaRel->read(null, $revenueModelLoaRelId);
-		$last_track_detail 		= $this->RevenueModelLoaRel->query("select * from revenueModelLoaRelDetail where revenueModelLoaRelId = $revenueModelLoaRelId order by revenueModelLoaRelDetailId desc limit 1");
+		$smid 					= $this->Track->query("select trackId from schedulingMasterTrackRel where schedulingMasterId = $schedulingMasterId limit 1");
+		$trackId 	= $smid[0]['schedulingMasterTrackRel']['trackId'];
+		$track 	= $this->Track->read(null, $trackId);
+		$last_track_detail 		= $this->Track->query("select * from trackDetail where trackId = $trackId order by trackDetailId desc limit 1");
 		
 		// vars to work with
 		// ---------------------------------------------------------
-		$track 					= $revenueModelLoaRel['RevenueModelLoaRel'];
-		$last_track_detail		= $last_track_detail[0]['revenueModelLoaRelDetail'];
+		$track 					= $track['Track'];
+		$last_track_detail		= $last_track_detail[0]['trackDetail'];
 		$ticket_amount			= $ticket['Ticket']['billingPrice'];
 		$ticket_amount = rand(400,1200);
 		$loa					= $this->Loa->read(null, $track['loaId']);
 		
-		// set new track information for insert into revenueModelLoaRelDetail
+		// set new track information for insert into trackDetail
 		// ---------------------------------------------------------
 		$new_track_detail 							= array();
-		$new_track_detail['revenueModelLoaRelId']	= $revenueModelLoaRelId;
+		$new_track_detail['trackId']	= $trackId;
 		$new_track_detail['ticketId']				= $id;
 	
 		// track detail calculations	
@@ -197,7 +197,7 @@ class TicketsController extends AppController {
 				break;
 		}
 		
-		// update the track record (revenueModelLoaRel)
+		// update the track record (track)
 		// ---------------------------------------------------------
 		$track['pending']   -= $ticket_amount;
 		$track['collected'] += $ticket_amount;
@@ -212,9 +212,9 @@ class TicketsController extends AppController {
 		// do all the inserts or updates here
 		// ---------------------------------------------------------
 		$this->Loa->save($loa);
-		$this->RevenueModelLoaRel->save($track);
-		$this->RevenueModelLoaRel->RevenueModelLoaRelDetail->create();
-		$this->RevenueModelLoaRel->RevenueModelLoaRelDetail->save($new_track_detail);
+		$this->Track->save($track);
+		$this->Track->TrackDetail->create();
+		$this->Track->TrackDetail->save($new_track_detail);
 		
 		print_r($track);
 		print_r($new_track_detail);

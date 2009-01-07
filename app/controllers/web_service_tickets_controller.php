@@ -6,7 +6,7 @@ Configure::write('debug', 0);
 class WebServiceTicketsController extends WebServicesController
 {
 	var $name = 'WebServiceTickets';
-	var $uses = array('Ticket', 'User', 'Offer', 'Bid', 'ClientLoaPackageRel', 'RevenueModelLoaRel', 'OfferType', 'Loa', 'RevenueModelLoaRelDetail', 'PpvNotice', 'Address');
+	var $uses = array('Ticket', 'User', 'Offer', 'Bid', 'ClientLoaPackageRel', 'Track', 'OfferType', 'Loa', 'TrackDetail', 'PpvNotice', 'Address');
 	var $serviceUrl = 'http://toolboxdev.luxurylink.com/web_service_tickets';
 	//var $serviceUrl = 'http://192.168.100.111/web_service_tickets';
 	var $errorResponse = false;
@@ -112,8 +112,8 @@ class WebServiceTicketsController extends WebServicesController
 			
 			// update the tracks 
 			$schedulingMasterId = $offerData['SchedulingInstance']['SchedulingMaster']['schedulingMasterId'];
-			$smid = $this->RevenueModelLoaRel->query("select revenueModelLoaRelId from schedulingMasterTrackRel where schedulingMasterId = $schedulingMasterId limit 1");
-			$smid = $smid[0]['schedulingMasterTrackRel']['revenueModelLoaRelId'];
+			$smid = $this->Track->query("select trackId from schedulingMasterTrackRel where schedulingMasterId = $schedulingMasterId limit 1");
+			$smid = $smid[0]['schedulingMasterTrackRel']['trackId'];
 			if (!empty($smid)) {
 				$this->addTrackPending($smid, $newTicket['Ticket']['billingPrice']);
 			}
@@ -368,11 +368,11 @@ class WebServiceTicketsController extends WebServicesController
 		return ($found_valid_cc) ? $v : 'EXPIRED';
 	}
 
-	function addTrackPending($revenueModelLoaRelId, $pendingAmount) {
-		$revenueModelLoaRel = $this->RevenueModelLoaRel->read(null, $revenueModelLoaRelId);		
-		if (!empty($revenueModelLoaRel)) {
-			$revenueModelLoaRel['RevenueModelLoaRel']['pending'] += $pendingAmount;
-			if ($this->RevenueModelLoaRel->save($revenueModelLoaRel['RevenueModelLoaRel'])) {
+	function addTrackPending($trackId, $pendingAmount) {
+		$track = $this->Track->read(null, $trackId);		
+		if (!empty($track)) {
+			$track['Track']['pending'] += $pendingAmount;
+			if ($this->Track->save($track['Track'])) {
 				return true;	
 			}
 		}

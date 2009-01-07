@@ -1,12 +1,13 @@
-<div class="revenueModelLoaRels form">
-	<?php echo $ajax->form('add', 'post', array('url' => "/loas/{$this->data['RevenueModelLoaRel']['loaId']}/revenue_model_loa_rels/add", 'update' => 'MB_content', 'model' => 'RevenueModelLoaRel', 	'complete' => 'closeModalbox()'));?>
+<div class="tracks form">
+	<?php echo $ajax->form('add', 'post', array('url' => "/revenue_model_loa_rels/edit/{$this->data['Track']['trackId']}", 'update' => 'MB_content', 'model' => 'Track', 	'complete' => 'closeModalbox()'));?>
 	<fieldset>
 	<?php
+		echo $form->input('trackId', array('type' => 'hidden'));
 		echo $form->input('loaId', array('type' => 'hidden'));
 		echo $form->input('revenueModelId');
 	?>
 	<fieldset id="revenueModelCriteria">
-		<?php if (!isset($this->data['RevenueModelLoaRel']['revenueModelId']) || $this->data['RevenueModelLoaRel']['revenueModelId'] == 1): ?>
+		<?php if (!isset($this->data['Track']['revenueModelId']) || $this->data['Track']['revenueModelId'] == 1): ?>
 			<?php echo $this->render('_revenue_split_form'); ?>
 		<?php else: ?>
 			<?php echo $this->render('_xy_form'); ?>
@@ -18,8 +19,8 @@
 	<fieldset id="expirationCriteria">
 		<?php
 		$this->hasRendered = false;
-		if(is_numeric($this->data['RevenueModelLoaRel']['expirationCriteriaId'])) {
-			$expCriteriaIdForm = $this->data['RevenueModelLoaRel']['expirationCriteriaId'];
+		if(is_numeric($this->data['Track']['expirationCriteriaId'])) {
+			$expCriteriaIdForm = $this->data['Track']['expirationCriteriaId'];
 		} else {
 			$expCriteriaIdForm = 1;
 		}
@@ -30,7 +31,7 @@
 </div>
 
 <?php echo $ajax->observeField(
-               "RevenueModelLoaRelRevenueModelId",
+               "TrackRevenueModelId",
                array(
                   "update"=>"revenueModelCriteria",
                   "url"=>"/revenue_model_loa_rels/revenue_model_criteria_form",
@@ -40,7 +41,7 @@
 ?>
 
 <?php echo $ajax->observeField(
-               "RevenueModelLoaRelExpirationCriteriaId",
+               "TrackExpirationCriteriaId",
                array(
                   "update"=>"expirationCriteria",
                   "url"=>"/revenue_model_loa_rels/expiration_criteria_form",

@@ -22,11 +22,11 @@ class SchedulingMaster extends AppModel {
 										  'foreignKey' => 'schedulingMasterId',
 										  'associationForeignKey' => 'merchandisingFlagId'
 									),
-								'RevenueModelLoaRel' => 
-								    array('className' => 'RevenueModelLoaRel',
+								'Track' => 
+								    array('className' => 'Track',
 								          'joinTable' => 'schedulingMasterTrackRel',
 								          'foreignKey' => 'schedulingMasterId',
-								          'associationForeignKey' => 'revenueModelLoaRelId')
+								          'associationForeignKey' => 'trackId')
 								);
 	
 	var $validate = array('numDaysToRun' => array('rule' => 

@@ -2,8 +2,8 @@
 	<?php
 	//grab the tracks from the LOA and create a list for the select/checklist
 	$tracks = array();
-	foreach($clientLoaDetail['RevenueModelLoaRel'] as $v) {
-		$tracks[$v['revenueModelLoaRelId']] = $v['trackNum'];
+	foreach($clientLoaDetail['Track'] as $v) {
+		$tracks[$v['trackId']] = $v['trackNum'];
 	}
 	?>
 <fieldset style="padding: 0; margin: 0">
