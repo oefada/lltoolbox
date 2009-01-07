@@ -163,7 +163,7 @@ class PackagesController extends AppController {
 
 	        $blackoutDays = $this->_createBlackoutsBasedOnDays($days);
 
-	        if (is_array($this->data['PackageValidityPeriod'])) {
+	        if (isset($this->data['PackageValidityPeriod']) && is_array($this->data['PackageValidityPeriod'])) {
 	            $this->data['PackageValidityPeriod'] = array_merge($this->data['PackageValidityPeriod'], $blackoutDays);
 	        } else {
 	            $this->data['PackageValidityPeriod'] = $blackoutDays;

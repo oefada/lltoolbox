@@ -39,8 +39,9 @@ All Prices In <?=$package['Currency']['currencyName']?>
 	<tr>
 		<th>Inclusions</th>
 		<td>
-		<? foreach($package['PackageLoaItemRel'] as $itemRel): ?>
-			<?=$itemRel['overrideDisplayName']?><br />
+		<? 
+		foreach($packageRatePeriods['IncludedItems'] as $item): ?>
+			<?echo $item['itemName']?><br />
 		<? endforeach; ?>
 		</td>
 	</tr>
@@ -53,6 +54,7 @@ All Prices In <?=$package['Currency']['currencyName']?>
 			<?=date('F d, Y', strtotime($package['Package']['validityStartDate']))?> - <?=date('F d, Y', strtotime($package['Package']['validityEndDate']))?>
 		</td>
 	</tr>
+	<?php if (!empty($package['Package']['blackoutDays'])): ?>
 	<tr>
 		<th>Blackout Dates</th>
 		<td>
@@ -84,6 +86,7 @@ All Prices In <?=$package['Currency']['currencyName']?>
 			?>
 		</td>
 	</tr>
+	<?php endif; ?>
 </table>
 
 <?= $this->renderElement('../packages/package_rate_periods') ?>
