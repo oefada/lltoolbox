@@ -10,7 +10,7 @@ class ClientsController extends AppController {
 	function beforeFilter() {
 		parent::beforeFilter();
 		$this->set('currentTab', 'property');
-		$this->set('clientId', $this->Client->id);
+		$this->set('clientId', $this->params['id']);
 	}
 	
 	function index() {
