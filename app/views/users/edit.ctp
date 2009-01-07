@@ -76,7 +76,7 @@
 	<?php if (!empty($user['UserMailOptin'])):?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
-		<th><?php __('MailingListId'); ?></th>
+		<th><?php __('Mailing List'); ?></th>
 		<th><?php __('Optin'); ?></th>
 		<th><?php __('Optin Date'); ?></th>
 		<th><?php __('Optout Date'); ?></th>
@@ -91,13 +91,10 @@
 			}
 		?>
 		<tr<?php echo $class;?>>
-			<td><?php echo $userMailOptin['mailingListId'];?></td>
+			<td><?php echo $mailingListIds[$userMailOptin['mailingListId']];?></td>
 			<td><?php echo $html->image($userMailOptin['optin'] ? 'tick.png' : 'cross.png');?></td>
 			<td><?php echo $userMailOptin['optinDate'];?></td>
 			<td><?php echo $userMailOptin['optoutDate'];?></td>
-			<td class="actions">
-				<?php echo $html->link(__('View Details', true), array('controller'=> 'user_mail_optins', 'action'=>'edit', $userMailOptin['userMailOptinId'])); ?>
-			</td>
 		</tr>
 	<?php endforeach; ?>
 	</table>
