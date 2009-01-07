@@ -64,9 +64,12 @@ class StatesController extends AppController {
 		}
 	}
 	
-	function get_cities() {
-		$cities = $this->State->City->find('list', array('conditions' => array('City.stateId' => $this->data['State']['State'] ) ) );		
-		$this->set('cities', $cities);
+	function get_cities($stateId = null) {
+	    if ($stateId == null) {
+	        $stateId = $this->data['Client']['stateId'];
+	    }
+		$cityIds = $this->State->City->find('list', array('conditions' => array('City.stateId' => $stateId ) ) );		
+		$this->set(compact('cityIds'));
 		$this->layout = 'ajax';
 	}
 

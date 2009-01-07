@@ -1,6 +1,1 @@
-<?php 
-	echo $form->label('cities', 'Cities');
-	echo $form->select('City.City', $cities, null, array('multiple' => true)); 
-	
-	
-?>
+<?php echo $form->input('Client.cityId', array('type' => 'select', 'label' => 'City')); ?>

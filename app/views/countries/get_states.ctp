@@ -1,14 +1,27 @@
-<?php 
-	echo $form->label('states', 'States');
-	echo $form->select('State.State', $states, null, array('multiple' => true)); 
-	
-	echo $ajax->observeField( 
-		'StateState', 
-	    	array(
-		        'url' => array( 'controller' => 'states', 'action' => 'get_cities' ),
-	        	'frequency' => 0.2,
-	        	'update' => 'citydiv'
-	    	)
-	); 
-	
+<?php
+echo $form->input('Client.stateId', array('type' => 'select', 'label' => 'State'));
+echo $ajax->observeField(
+               "ClientStateId",
+               array(
+                  "update"=>"cityChooser",
+                  "url"=>"/states/get_cities"
+               )
+          );
+echo $ajax->observeField(
+               "ClientStateId",
+               array(
+                  "update"=>"cityChooser",
+                  "url"=>"/states/get_cities",
+				  'indicator' => 'spinner'
+               )
+          );
+$arrayKeys = array_keys($stateIds);
+$firstStateId = $arrayKeys[0];
+$runOnce = $ajax->remoteFunction(
+               array(
+                  "update"=>"cityChooser",
+                  "url"=>"/states/get_cities/$firstStateId"
+               )
+          );
+echo $javascript->codeBlock($runOnce);
 ?>

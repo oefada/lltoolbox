@@ -5,6 +5,7 @@ App::import('Vendor', 'nusoap_client/lib/nusoap');
 class ClientsController extends AppController {
 
 	var $name = 'Clients';
+	var $uses = array('Client', 'Country');
 
 	function beforeFilter() {
 		parent::beforeFilter();
@@ -56,7 +57,14 @@ class ClientsController extends AppController {
 		$themes = $this->Client->Theme->find('list');
 		$this->set('client', $this->data);
 		//$this->set(compact('addresses', 'amenities','clientLevelIds','clientStatusIds','clientTypeIds','regions','clientAcquisitionSourceIds', 'loas', 'themes'));
-		$this->set(compact('clientLevelIds','clientStatusIds','clientTypeIds','regions','clientAcquisitionSourceIds', 'loas', 'themes'));
+		$countryIds = $this->Country->find('list');
+		if (!empty($this->data['Client']['countryId'])) {
+		    $stateIds = $this->Country->State->find('list', array('conditions' => array('State.countryId' => $this->data['Client']['countryId'])));
+		}
+		if (!empty($this->data['Client']['stateId'])) {
+		    $cityIds = $this->Country->State->City->find('list', array('conditions' => array('City.stateId' => $this->data['Client']['stateId'])));
+		}
+		$this->set(compact('clientLevelIds','clientStatusIds','clientTypeIds','regions','clientAcquisitionSourceIds', 'loas', 'themes', 'countryIds', 'stateIds', 'cityIds'));
 	}
 	
 	function updateClientLive($id = null) {

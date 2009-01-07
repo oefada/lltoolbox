@@ -28,7 +28,7 @@ foreach ($states as $state):
 			<?php echo $state['State']['stateId']; ?>
 		</td>
 		<td>
-			<?php echo $html->link($state['Country']['countryText'], array('controller'=> 'countries', 'action'=>'view', $state['Country']['countryId'])); ?>
+			<?php echo $html->link($state['Country']['countryName'], array('controller'=> 'countries', 'action'=>'view', $state['Country']['countryId'])); ?>
 		</td>
 		<td>
 			<?php echo $state['State']['stateCode']; ?>

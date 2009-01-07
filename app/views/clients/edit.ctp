@@ -37,10 +37,38 @@ $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']
 		echo $form->input('contactSalutation');
 		echo $form->input('phone1');
 		echo $form->input('phone2');
-		echo $form->input('country');
+	?>
+
+	<?	echo $form->input('Client.countryId', array('type' => 'select', 'label' => 'Country')); ?>
+	<div id='stateChooser' style="padding: 0; margin:0">
+	<?php
+	echo $form->input('Client.stateId', array('type' => 'select', 'label' => 'State'));
+	echo $ajax->observeField(
+	               "ClientStateId",
+	               array(
+	                  "update"=>"cityChooser",
+	                  "url"=>"/states/get_cities",
+					  'indicator' => 'spinner'
+	               )
+	          );
+	?>
+	</div>
+	<div id='cityChooser' style="padding: 0; margin:0"><?	echo $form->input('Client.cityId', array('type' => 'select', 'label' => 'City')); ?></div>
+		
+	<?php echo $ajax->observeField(
+	               "ClientCountryId",
+	               array(
+	                  "update"=>"stateChooser",
+	                  "url"=>"/countries/get_states",
+					  'indicator' => 'spinner'
+	               )
+	          );
+	?>
+
+	<?
 		echo $form->input('regionId');
 		echo $form->input('airportCode');
-		?>
+	?>
 		<? if(isset($client['Address'])): ?>
 		<h4>Addresses</h4>
 		<?php foreach ($client['Address'] as $address):
