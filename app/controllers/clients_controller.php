@@ -5,12 +5,12 @@ App::import('Vendor', 'nusoap_client/lib/nusoap');
 class ClientsController extends AppController {
 
 	var $name = 'Clients';
-	var $uses = array('Client', 'Country');
 
 	function beforeFilter() {
 		parent::beforeFilter();
 		$this->set('currentTab', 'property');
-		$this->set('clientId', $this->params['id']);
+		$this->set('clientId', $this->Client->id);
+		$this->Country = new Country;
 	}
 	
 	function index() {
