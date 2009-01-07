@@ -47,7 +47,11 @@ class RevenueModelLoaRelsController extends AppController {
 		if (!empty($this->data)) {
 			if ($this->RevenueModelLoaRel->save($this->data)) {
 				$this->Session->setFlash(__('The RevenueModelLoaRel has been saved', true));
-				$this->redirect(array('action'=>'index'));
+				if ($this->RequestHandler->isAjax()) {
+					$this->set('closeModalbox', true);
+				} else {
+					$this->redirect(array('action'=>'index'));
+				}
 			} else {
 				$this->Session->setFlash(__('The RevenueModelLoaRel could not be saved. Please, try again.', true));
 			}
@@ -55,9 +59,10 @@ class RevenueModelLoaRelsController extends AppController {
 		if (empty($this->data)) {
 			$this->data = $this->RevenueModelLoaRel->read(null, $id);
 		}
-		$expirationCriteria = $this->RevenueModelLoaRel->ExpirationCriterium->find('list');
-		$revenueModels = $this->RevenueModelLoaRel->RevenueModel->find('list');
-		$this->set(compact('expirationCriteria','revenueModels'));
+		
+		$expirationCriteriaIds = $this->RevenueModelLoaRel->ExpirationCriterium->find('list');
+		$revenueModelIds = $this->RevenueModelLoaRel->RevenueModel->find('list');
+		$this->set(compact('expirationCriteriaIds', 'revenueModelIds'));
 	}
 
 	function delete($id = null) {
