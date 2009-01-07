@@ -100,7 +100,7 @@ class PackagesController extends AppController {
 		
 		if(empty($this->data)) {
 			$clients[0] = $this->Client->findByClientId($clientId);
-			$loaIds = $this->Package->ClientLoaPackageRel->Loa->find('list', array('conditions' => array('Loa.clientId' => $clientId)));
+			$loaIds = $this->Package->ClientLoaPackageRel->Loa->find('list', array('conditions' => array('Loa.clientId' => $clientId, 'Loa.endDate > NOW()')));
 			$loaIds = array($loaIds);
 			$this->set('clients', $clients);
 			$this->set('loaIds', $loaIds);
