@@ -40,8 +40,6 @@ class LoaItemsController extends AppController {
 		$loaItemTypeIds = $this->LoaItem->LoaItemType->find('list');
 		$this->set('loaItemTypeIds', ($loaItemTypeIds));
 		
-		$feeTypeIds = $this->LoaItem->Fee->FeeType->find('list');
-		$this->set('feeTypeIds', ($feeTypeIds));
 		$loa = $this->LoaItem->Loa->findByLoaId($this->params['loaId']);
 		$this->set('currencyId', $loa['Loa']['currencyId']);
 
@@ -82,9 +80,6 @@ class LoaItemsController extends AppController {
 		}
 		$loaItemTypeIds = $this->LoaItem->LoaItemType->find('list');
 		$this->set('loaItemTypeIds', ($loaItemTypeIds));
-		
-		$feeTypeIds = $this->LoaItem->Fee->FeeType->find('list');
-		$this->set('feeTypeIds', ($feeTypeIds));
 		
 		$currencyIds = $this->LoaItem->Currency->find('list');
 		$this->set(compact('currencyIds'));
