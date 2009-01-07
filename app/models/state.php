@@ -1,10 +1,11 @@
 <?php
 class State extends AppModel {
 
-	var $name = 'State';
-	var $useTable = 'state';
-	var $primaryKey = 'stateId';
-	var $displayField = 'stateName';
+	var $name           = 'State';
+	var $useTable       = 'state';
+	var $primaryKey     = 'stateId';
+	var $displayField   = 'stateName';
+	var $order          = 'stateName';
 	
 	var $belongsTo = array('Country' => array('foreignKey' => 'countryId'));
 	

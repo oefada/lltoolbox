@@ -1,10 +1,11 @@
 <?php
 class City extends AppModel {
 
-	var $name = 'City';
-	var $useTable = 'city';
-	var $primaryKey = 'cityId';
-	var $displayField = 'cityName';
+	var $name           = 'City';
+	var $useTable       = 'city';
+	var $primaryKey     = 'cityId';
+	var $displayField   = 'cityName';
+	var $order          = 'cityName';
 	
 	var $belongsTo = array('State' => array('foreignKey' => 'stateId'),
 						   'Country' => array('foreignKey' => 'countryId')
