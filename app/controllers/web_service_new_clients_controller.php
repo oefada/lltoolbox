@@ -28,7 +28,11 @@ class WebServiceNewClientsController extends WebServicesController
 	    // JOSN decoded the request into an assoc. array
 	    $decoded_request = json_decode($sm_request, true);
 	
-		mail('alee@luxurylink.com','sugar',print_r($decoded_request, true));
+		$client = array();
+		$client['name'] = 'testing ' . strtotime('now');
+		$this->Client->create();
+		$this->Client->save($client);
+		
 		/*
 	
 	    //$tests = ll_execute_sproc('llsp_ins_esb_test', array('text'=> print_r($decoded_request['client'],true)));
