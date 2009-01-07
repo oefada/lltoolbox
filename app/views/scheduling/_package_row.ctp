@@ -105,7 +105,7 @@ foreach($package['Scheduling'] as $k => $master):
 		 																		array('url' => '/scheduling_instances/performanceTooltip/'.$instance['schedulingInstanceId'], 
 																						'options' => array('method' => 'get')
 																					),
-																				'title' => 'Scheduling Instance Performance'
+																				'title' => 'Offer Performance'
 																				));
 	}
 	?>
