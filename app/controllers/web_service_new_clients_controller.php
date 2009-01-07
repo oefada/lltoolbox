@@ -29,7 +29,7 @@ class WebServiceNewClientsController extends WebServicesController
 	    $decoded_request = json_decode($sm_request, true);
 	
 		mail('alee@luxurylink.com','sugar',print_r($decoded_request));
-		die();
+		/*
 	
 	    //$tests = ll_execute_sproc('llsp_ins_esb_test', array('text'=> print_r($decoded_request['client'],true)));
 	    //$tests = ll_execute_sproc('llsp_ins_esb_test', array('text'=> $sm_request));
@@ -72,6 +72,8 @@ class WebServiceNewClientsController extends WebServicesController
 	
 	    // tests to see if we were getting correct response from the request
 	    return $encoded_response;
+	    */
+	    return '1';
 	}
 }
 ?>
