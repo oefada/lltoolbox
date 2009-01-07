@@ -33,7 +33,6 @@
 				<div class="collapsibleContent">
 				<?php if (!empty($userSiteExtended['username'])):?>
 					<div class="input text"><label>Username</label> <strong><?php echo $userSiteExtended['username'];?></strong></div>
-					<div class="input text"><label>Initial Subscribe Date</label> <?php echo $userSiteExtended['initialSubscribeDate'];?></div>
 					<div class="input text"><label>Registration Date</label> <?php echo $userSiteExtended['registrationDate'];?></div>
 					<div class="input text"><label>Last Login</label> <?php echo $userSiteExtended['lastLogin'];?></div>
 					<div class="input text"><label>&nbsp;</label><?php echo $html->link('Reset Password', '/users/resetPassword/'.$userSiteExtended['userSiteExtendedId'],
