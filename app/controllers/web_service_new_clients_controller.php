@@ -28,18 +28,14 @@ class WebServiceNewClientsController extends WebServicesController
 	    // JOSN decoded the request into an assoc. array
 	    $decoded_request = json_decode($sm_request, true);
 	
-		$client = array();
-		$client['name'] = 'testing ' . strtotime('now');
-		$this->Client->create();
-		$this->Client->save($client);
-		
-		/*
-	
 	    //$tests = ll_execute_sproc('llsp_ins_esb_test', array('text'=> print_r($decoded_request['client'],true)));
 	    //$tests = ll_execute_sproc('llsp_ins_esb_test', array('text'=> $sm_request));
 	
 	    // look for a client id but no error check
 	    $client_id = trim($decoded_request['client']['client_id']);
+	
+		$tmptmp = print_r($decoded_request, true);
+		mail('alee@luxurylink.com','testing new client', $tmptmp);
 	
 	    // respond with DB operation mode
 	    if (!$client_id || empty($client_id)) {
@@ -49,6 +45,8 @@ class WebServiceNewClientsController extends WebServicesController
 	    } else {
 	        $response_value = '-1';
 	    }
+	
+		/*
 	
 	    // this SPROC inserts or updates and checks for client active / expiration dates
 	    $result = ll_execute_sproc('llsp_upd_client_mstr_from_sugar', $decoded_request['client']);
@@ -77,7 +75,6 @@ class WebServiceNewClientsController extends WebServicesController
 	    // tests to see if we were getting correct response from the request
 	    return $encoded_response;
 	    */
-	    return $decoded_request;
 	}
 }
 ?>
