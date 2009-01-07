@@ -13,6 +13,7 @@
 		echo $form->input('lastName');		
 		echo $form->input('email');
 	?>
+	<div class='controlset'><?php echo $form->input('inactive'); ?></div>
 		<fieldset class="collapsible">
 			<legend class="handle">Contact Details</legend>
 			<div class="collapsibleContent related">
@@ -58,7 +59,6 @@
 			<div class="controlset">
 			<?php
 				echo $form->input('doNotContact');
-				echo $form->input('inactive');
 				echo $form->input('clientNotificationEmailsActive');
 			?>
 			</div>
