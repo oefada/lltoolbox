@@ -130,13 +130,16 @@
 .masterRow .oType1 {
 	border-top: 7px solid #d99f00;
 }
-.masterRow .oType2 {
+.masterRow .oType2,
+.masterRow .oType3,
+.masterRow .oType4 {
 	border-top: 7px solid #3d7e20;
 }
+/*
 .masterRow .oType3,
 .masterRow .oType4 {
 	border-top: 7px solid #7e0001;
-}
+}*/
 .oKeys {
 	color: #545454;
 	font-size: 11px;
