@@ -33,7 +33,12 @@
          </tr>
      </thead>
             <tbody>
-				<? $width = ($balancePaid)/($currentLoa['Loa']['loaValue'])*300;
+				<? 
+					if ($currentLoa['Loa']['loaValue'] > 0){
+						$width = ($balancePaid)/($currentLoa['Loa']['loaValue'])*300;
+					} else {
+						$width = 0;
+					}
 					if ($width < 0) $width = 0;
 					if ($width > 300) $width = 300;
 					
@@ -45,6 +50,7 @@
 					if ($width < 150 && $width < $left - 50) {
 						$class = ' class="warning"';
 					}
+					
 				?>
             <tr<?=$class?> id="budget-1">
             	<th>LOA Current Balance</th>
@@ -59,16 +65,25 @@
 				?>
 				</td>
             </tr>
-			<? $width = ($balancePaid+$loaBalanceFlag['totalOpeningBidSum'])/($currentLoa['Loa']['loaValue'])*300;
+			<?
+				if (!isset($loaBalanceFlag['totalOpeningBidSum'])) {
+					$loaBalanceFlag['totalOpeningBidSum'] = 0;
+				}
+				if ($currentLoa['Loa']['loaValue'] > 0) {
+					$width = ($balancePaid+$loaBalanceFlag['totalOpeningBidSum'])/($currentLoa['Loa']['loaValue'])*300;
+				} else {
+					$width = 0;
+				}
+				
 				if ($width < 0) $width = 0;
 				if ($width > 300) $width = 300;
 				
 				$class = '';
-				if ($loaBalanceFlag['class'] == 'icon-error') {
+				if (isset($loaBalanceFlag['class']) && $loaBalanceFlag['class'] == 'icon-error') {
 					$class = ' class="overbalance"';
 				}
 				
-				if ($loaBalanceFlag['class'] == 'icon-yellow') {
+				if (isset($loaBalanceFlag['class']) && $loaBalanceFlag['class'] == 'icon-yellow') {
 					$class = ' class="warning"';
 				}
 			?>
@@ -76,7 +91,7 @@
             	<th>Projected Balance</th>
                 <td class="bar"><div class="bar" style="width: <?=$width?>px"><span <?if(!empty($loaBalanceFlag['class'])) echo 'style="display:none"'?>><?='$'.($balancePaid+$loaBalanceFlag['totalOpeningBidSum'])?></span></div></td>
                 <td><?='$'.$currentLoa['Loa']['loaValue']?></td>
-				<td class='<?=$loaBalanceFlag['class']?>'>
+				<td class='<?php echo isset($loaBalanceFlag['class']) ? $loaBalanceFlag['class'] : "" ?>'>
 				<? 
 				$amountOver = ($balancePaid+$loaBalanceFlag['totalOpeningBidSum']-$currentLoa['Loa']['loaValue']);
 				if ($amountOver > 0) {
