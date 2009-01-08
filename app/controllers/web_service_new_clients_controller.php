@@ -40,36 +40,46 @@ class WebServiceNewClientsController extends WebServicesController
 	        $response_value = '-1';
 	    }
 		
-		$client_data = array();
+		// map data from Sugar to toolbox client table structure
+		$client_data_save = array();
+        $client_data_save['name']				= $decoded_request['client']['client_name'];
+        $client_data_save['clientTypeId']		= $decoded_request['client']['client_type_id'];
+        $client_data_save['longDesc']			= $decoded_request['client']['client_desc'];        
+        $client_data_save['contactSalutation']	= $decoded_request['client']['client_name1'];
+        $client_data_save['email']				= $decoded_request['client']['client_email_address1'];
+        $client_data_save['phone1']				= $decoded_request['client']['client_phone1'];
+        $client_data_sawe['phone2']				= $decoded_request['client']['client_phone2'];
+        $client_data_save['fax']				= $decoded_request['client']['client_fax1'];
+       	$client_data_save['address1']			= $decoded_request['client']['client_address1'];
+        $client_data_save['address2']			= $decoded_request['client']['client_address2'];
+        $client_data_save['address3']			= $decoded_request['client']['client_address3'];
 		
-		// check for new active loa/client start and end daets
 		if ($client_id && is_numeric($client_id)) {
-			$loas = $this->Loa->query("select min(startDate) as startDate, max(endDate) as endDate from loa where clientId = $client_id and inactive <> 1");
-			$tmp = print_r($loas, true);
-			mail('alee@luxurylink.com','testing client', $tmp);
-        	$client_data['clientId'] = $decoded_request['client']['client_id'];	
-        	//$decoded_request['client']['client_level_id'];
-        	//$decoded_request['client']['client_date_active'];
-        	//$decoded_request['client']['client_date_expire'];
+			// ======= EXISTING CLIENT UPDATE ========
+        	$client_data_save['clientId'] = $client_id;
+        	
+        	// send back possible new loa changes back to Sugar
+        	$loa_result = $this->Loa->query("select min(startDate) as startDate, max(endDate) as endDate from loa where clientId = $client_id and inactive <> 1");
+        	$new_start_date = $loa_result[0][0]['startDate'];
+        	$new_end_date = $loa_result[0][0]['endDate'];
+        	if ($new_start_date && $new_end_date) {
+        		$decoded_request['client']['client_date_active'] = $new_start_date;
+        		$decoded_request['client']['client_date_expire'] = $new_end_date;
+        	}
+        	
+        	$this->Client->save($client_data_save);
+        	
+		} else {
+			// ======= NEW CLIENT INSERT =============
+			$this->Client->create();
+			$this->Client->save($client_data_save);
+			
+			// get new client id and send back to Sugar
+			$decoded_request['client']['client_id'] = $this->Client->getLastInsertID();
 		}
-	    
-	    $loas = $this->Loa->query("select min(startDate) as startDate, max(endDate) as endDate from loa where clientId = 2763 and inactive <> 1");
-			$tmp = print_r($loas, true);
-			mail('alee@luxurylink.com','testing client', $tmp);
-	    
-        $client_data['name']				= $decoded_request['client']['client_name'];
-        $client_data['clientTypeId']		= $decoded_request['client']['client_type_id'];
-        $client_data['longDesc']			= $decoded_request['client']['client_desc'];        
-        $client_data['contactSalutation']	= $decoded_request['client']['client_name1'];
-        $client_data['email']				= $decoded_request['client']['client_email_address1'];
-        $client_data['phone1']				= $decoded_request['client']['client_phone1'];
-        $client_data['phone2']				= $decoded_request['client']['client_phone2'];
-        $client_data['fax']					= $decoded_request['client']['client_fax1'];
-       	$client_data['address1']			= $decoded_request['client']['client_address1'];
-        $client_data['address2']			= $decoded_request['client']['client_address2'];
-        $client_data['address3']			= $decoded_request['client']['client_address3'];
 
-		//decoded_request['client']['manager_ini'];
+		//$decoded_request['client']['client_level_id'];
+		//$decoded_request['client']['manager_ini'];
         //$decoded_request['client']['manager'];
 		//$decoded_request['client']['client_name2'];
         //$decoded_request['client']['client_name3'];
