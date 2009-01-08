@@ -54,7 +54,7 @@ class DatePickerHelper extends FormHelper {
             unset($options['showstime']);
         }
 
-        $options['after'] = $this->Html->link($this->Html->image('../js/jscalendar/img.gif'), '#', array('onClick'=>"return showCalendar('".$htmlAttributes['id']."', '".$this->format."'$time); return false;"), null, false);
+        $options['after'] = $this->Html->link($this->Html->image('../js/jscalendar/img.gif', array('align' => 'top')), '#', array('onClick'=>"return showCalendar('".$htmlAttributes['id']."', '".$this->format."'$time); return false;"), null, false);
         $output = $this->input($fieldName, $options);
 
         return $output;

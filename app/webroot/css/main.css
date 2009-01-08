@@ -770,6 +770,76 @@ fieldset.smallLabels input {
 	margin-left: 5px;
 	padding: 3px;
 }
+
+/* @group advanced_search */
+div.advancedSearch {
+    background: #f1f1f1;
+    padding: 10px;
+}
+div.advancedSearch fieldset {
+    float: none;
+    padding: 0;
+}
+div.advancedSearch fieldset div {
+    padding: 0;
+    margin: 0;
+}
+div.advancedSearch fieldset h3.title {
+    padding: 0;
+    margin: 0 0 15px 0;
+    font-weight: normal;
+    font-family: verdana;
+}
+
+div.advancedSearch fieldset label,
+div.advancedSearch fieldset select {
+    width: 125px;
+    text-align: left;
+    margin-right: 10px;
+    padding: 0;
+}
+
+div.advancedSearch fieldset input {
+    width: 95px;
+    margin-right: 2px;
+}
+div.advancedSearch div.submit {
+    padding: 0;
+    margin: 0;
+}
+div.advancedSearch input[type=submit] {
+    float: none;
+    background: #535353;
+    border: none;
+    padding: 3px;
+    font-size: 11px;
+    font-weight: bold;
+}
+div.advancedSearch fieldset div.fieldRow {
+    clear: both;
+    margin-bottom: 15px;
+    padding: 0;
+}
+div.advancedSearch fieldset div.lastFieldRow {
+    margin: 0;
+}
+div.advancedSearch fieldset div.range label {
+    float: none;
+    display: inline;
+    padding: 0;
+    margin: 0 0 0 2px;
+    width: auto;
+}
+div.advancedSearch fieldset div.range {
+    display: inline;
+}
+
+div.advancedSearch fieldset div.range div.date{
+    display: inline;
+}
+
+/* @end */
+
 /* @end */
 /* @group blank slate */
 div.blankBar {
