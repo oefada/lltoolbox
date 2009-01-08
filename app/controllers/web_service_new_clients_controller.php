@@ -6,7 +6,7 @@ Configure::write('debug', 0);
 class WebServiceNewClientsController extends WebServicesController
 {
 	var $name = 'WebServiceNewClients';
-	var $uses = 'Client';
+	var $uses = array('Loa','Client');
 	var $serviceUrl = 'http://toolboxdev.luxurylink.com/web_service_new_clients';
 	var $errorResponse = false;
 	var $api = array(
@@ -28,14 +28,8 @@ class WebServiceNewClientsController extends WebServicesController
 	    // JOSN decoded the request into an assoc. array
 	    $decoded_request = json_decode($sm_request, true);
 	
-	    //$tests = ll_execute_sproc('llsp_ins_esb_test', array('text'=> print_r($decoded_request['client'],true)));
-	    //$tests = ll_execute_sproc('llsp_ins_esb_test', array('text'=> $sm_request));
-	
 	    // look for a client id but no error check
 	    $client_id = trim($decoded_request['client']['client_id']);
-	
-		$tmptmp = print_r($decoded_request, true);
-		mail('alee@luxurylink.com','testing new client', $tmptmp);
 	
 	    // respond with DB operation mode
 	    if (!$client_id || empty($client_id)) {
@@ -45,15 +39,50 @@ class WebServiceNewClientsController extends WebServicesController
 	    } else {
 	        $response_value = '-1';
 	    }
-
-
-		return '1';
-	
-		/*
-
 		
+		$client_data = array();
+		
+		// check for new active loa/client start and end daets
+		if ($client_id && is_numeric($client_id)) {
+			$loas = $this->Loa->query("select min(startDate) as startDate, max(endDate) as endDate from loa where clientId = $client_id and inactive <> 1");
+			$tmp = print_r($loas, true);
+			mail('alee@luxurylink.com','testing client', $tmp);
+        	$client_data['clientId'] = $decoded_request['client']['client_id'];	
+        	//$decoded_request['client']['client_level_id'];
+        	//$decoded_request['client']['client_date_active'];
+        	//$decoded_request['client']['client_date_expire'];
+		}
+	    
+        $client_data['name']				= $decoded_request['client']['client_name'];
+        $client_data['clientTypeId']		= $decoded_request['client']['client_type_id'];
+        $client_data['longDesc']			= $decoded_request['client']['client_desc'];        
+        $client_data['contactSalutation']	= $decoded_request['client']['client_name1'];
+        $client_data['email']				= $decoded_request['client']['client_email_address1'];
+        $client_data['phone1']				= $decoded_request['client']['client_phone1'];
+        $client_data['phone2']				= $decoded_request['client']['client_phone2'];
+        $client_data['fax']					= $decoded_request['client']['client_fax1'];
+       	$client_data['address1']			= $decoded_request['client']['client_address1'];
+        $client_data['address2']			= $decoded_request['client']['client_address2'];
+        $client_data['address3']			= $decoded_request['client']['client_address3'];
+
+		//decoded_request['client']['manager_ini'];
+        //$decoded_request['client']['manager'];
+		//$decoded_request['client']['client_name2'];
+        //$decoded_request['client']['client_name3'];
+		//$decoded_request['client']['client_note'];
+        //$decoded_request['client']['client_email_address2'];
+        //$decoded_request['client']['client_email_address3'];        
+        //$decoded_request['client']['client_phone3'];		
+		//$decoded_request['client']['client_fax2'];
+        //$decoded_request['client']['client_fax3'];
+        //$decoded_request['client']['client_cell1'];
+        //$decoded_request['client']['client_cell2'];
+        //$decoded_request['client']['client_cell3'];
+		
+		/*
+		// ======== THIS IS OLD WAY
 	    // this SPROC inserts or updates and checks for client active / expiration dates
-	    $result = ll_execute_sproc('llsp_upd_client_mstr_from_sugar', $decoded_request['client']);
+	    //$result = ll_execute_sproc('llsp_upd_client_mstr_from_sugar', $decoded_request['client']);
 	
 	    // DB error
 	    if (!$result || !mssql_num_rows($result)) {
@@ -67,6 +96,8 @@ class WebServiceNewClientsController extends WebServicesController
 	        }
 	    }
 	
+		*/
+	
 	    $decoded_request['request']['response'] = $response_value;
 	    $decoded_request['request']['response_time'] = time();
 	
@@ -76,9 +107,8 @@ class WebServiceNewClientsController extends WebServicesController
 	    $client = new nusoap_client('http://192.168.100.22:8888/services2/ClientReceiver2?wsdl',true);
 	    $response_esb = $client->call('soap_call', array('args' => $encoded_response));
 	
-	    // tests to see if we were getting correct response from the request
+	    // this tests to see if we were getting correct response from the request
 	    return $encoded_response;
-	    */
 	}
 }
 ?>
