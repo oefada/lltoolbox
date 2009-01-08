@@ -53,6 +53,10 @@ class WebServiceNewClientsController extends WebServicesController
         	//$decoded_request['client']['client_date_expire'];
 		}
 	    
+	    $loas = $this->Loa->query("select min(startDate) as startDate, max(endDate) as endDate from loa where clientId = 2763 and inactive <> 1");
+			$tmp = print_r($loas, true);
+			mail('alee@luxurylink.com','testing client', $tmp);
+	    
         $client_data['name']				= $decoded_request['client']['client_name'];
         $client_data['clientTypeId']		= $decoded_request['client']['client_type_id'];
         $client_data['longDesc']			= $decoded_request['client']['client_desc'];        
