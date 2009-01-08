@@ -45,9 +45,13 @@ class WebServiceNewClientsController extends WebServicesController
 	    } else {
 	        $response_value = '-1';
 	    }
+
+
+		return '1';
 	
 		/*
-	
+
+		
 	    // this SPROC inserts or updates and checks for client active / expiration dates
 	    $result = ll_execute_sproc('llsp_upd_client_mstr_from_sugar', $decoded_request['client']);
 	
