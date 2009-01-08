@@ -23,19 +23,6 @@ class PackagesController extends AppController {
 		$this->set('currentTab', 'property');
 		$this->set('searchController' ,'client');
 	}
-
-	function view($id = null) {
-		$this->Package->recursive = 2;
-		if (!$id) {
-			$this->Session->setFlash(__('Invalid Package.', true));
-			$this->redirect(array('action'=>'index'));
-		}
-		$this->set('package', $this->Package->read(null, $id));
-
-		// this query grabs all the package rate periods via the packageRatePeriodItemRel table.
-		$packageRatePeriods = $this->Package->query("SELECT DISTINCT(prp.packageRatePeriodId), startDate, endDate, approvedRetailPrice FROM packageLoaItemRel AS plir INNER JOIN packageRatePeriodItemRel AS prpir ON plir.packageLoaItemRelId = prpir.packageLoaItemRelId INNER JOIN packageRatePeriod AS prp ON prpir.packageRatePeriodId = prp.packageratePeriodId WHERE plir.packageId = $id;");
-		$this->set('packageRatePeriods', $packageRatePeriods);		
-	}
 	
 	function carveRatePeriods($clientId = null, $id = null) {
 		if(empty($this->data['Package']['CheckedLoaItems']))
