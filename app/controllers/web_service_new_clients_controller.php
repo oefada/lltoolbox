@@ -6,7 +6,7 @@ Configure::write('debug', 0);
 class WebServiceNewClientsController extends WebServicesController
 {
 	var $name = 'WebServiceNewClients';
-	var $uses = array('Client');
+	var $uses = 'Client';
 	var $serviceUrl = 'http://toolboxdev.luxurylink.com/web_service_new_clients';
 	var $errorResponse = false;
 	var $api = array(
@@ -78,7 +78,7 @@ class WebServiceNewClientsController extends WebServicesController
 			$decoded_request['client']['client_id'] = $this->Client->getLastInsertID();
 		}
 
-		$tmp = print_r($decoded_request, true) . print_r($client_data_save);
+		$tmp = print_r($decoded_request, true) . print_r($client_data_save, true);
 		mail('alee@luxurylink.com','testing client', $tmp);
 
 		//$decoded_request['client']['client_level_id'];
