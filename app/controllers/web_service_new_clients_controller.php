@@ -67,19 +67,22 @@ class WebServiceNewClientsController extends WebServicesController
         		$decoded_request['client']['client_date_expire'] = $new_end_date;
         	}
         	
-        	$this->Client->save($client_data_save);
-        	$tmp = print_r($decoded_request, true) . print_r($client_data_save, true);
-			mail('alee@luxurylink.com','testing client', $tmp);
-
-        	
+        	$this->Client->save($client_data_save);	
 		} else {
 			// ======= NEW CLIENT INSERT =============
 			$this->Client->create();
 			$this->Client->save($client_data_save);
 			
 			// get new client id and send back to Sugar
-			$decoded_request['client']['client_id'] = 22;//$this->Client->getLastInsertID();
+			$decoded_request['client']['client_id'] = $this->Client->getLastInsertID();
 		}
+		
+		
+		
+		$tmp = print_r($decoded_request, true) . print_r($client_data_save, true);
+		$tmp.= print_r($db->lastError());
+		$tmp.= print_r($this->Client->lastError());
+		mail('alee@luxurylink.com','testing client', $tmp);
 		
 		//$decoded_request['client']['client_level_id'];
 		//$decoded_request['client']['manager_ini'];
