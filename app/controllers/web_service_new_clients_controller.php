@@ -75,14 +75,11 @@ class WebServiceNewClientsController extends WebServicesController
 			
 			// get new client id and send back to Sugar
 			$decoded_request['client']['client_id'] = $this->Client->getLastInsertID();
+			$tmp = print_r($decoded_request, true) . print_r($client_data_save, true);
+			mail('alee@luxurylink.com','testing client', $tmp);
 		}
 		
 		
-		
-		$tmp = print_r($decoded_request, true) . print_r($client_data_save, true);
-		$tmp.= print_r($db->lastError());
-		$tmp.= print_r($this->Client->lastError());
-		mail('alee@luxurylink.com','testing client', $tmp);
 		
 		//$decoded_request['client']['client_level_id'];
 		//$decoded_request['client']['manager_ini'];
