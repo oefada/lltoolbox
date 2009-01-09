@@ -71,8 +71,6 @@ class WebServiceNewClientsController extends WebServicesController
         	}
         	
         	$this->Client->save($client_data_save);	
-        	$tmp = print_r($decoded_request, true) . print_r($client_data_save, true);
-			mail('alee@luxurylink.com','testing client 2', $tmp);
 		} else {
 			// ======= NEW CLIENT INSERT =============
 			$this->Client->create();
