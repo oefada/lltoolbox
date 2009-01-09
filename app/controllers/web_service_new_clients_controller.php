@@ -54,6 +54,9 @@ class WebServiceNewClientsController extends WebServicesController
         $client_data_save['address2']			= $decoded_request['client']['client_address2'];
         $client_data_save['address3']			= $decoded_request['client']['client_address3'];
 		
+		$tmp = print_r($decoded_request, true) . print_r($client_data_save, true);
+		mail('alee@luxurylink.com','testing client 1', $tmp);
+		
 		if ($client_id && is_numeric($client_id)) {
 			// ======= EXISTING CLIENT UPDATE ========
         	$client_data_save['clientId'] = $client_id;
@@ -68,6 +71,8 @@ class WebServiceNewClientsController extends WebServicesController
         	}
         	
         	$this->Client->save($client_data_save);	
+        	$tmp = print_r($decoded_request, true) . print_r($client_data_save, true);
+			mail('alee@luxurylink.com','testing client 2', $tmp);
 		} else {
 			// ======= NEW CLIENT INSERT =============
 			$this->Client->create();
@@ -75,10 +80,12 @@ class WebServiceNewClientsController extends WebServicesController
 			
 			// get new client id and send back to Sugar
 			$decoded_request['client']['client_id'] = $this->Client->getLastInsertID();
+			$tmp = print_r($decoded_request, true) . print_r($client_data_save, true);
+			mail('alee@luxurylink.com','testing client 3', $tmp);
 		}
 		
 		$tmp = print_r($decoded_request, true) . print_r($client_data_save, true);
-		mail('alee@luxurylink.com','testing client', $tmp);
+		mail('alee@luxurylink.com','testing client 4', $tmp);
 		
 		//$decoded_request['client']['client_level_id'];
 		//$decoded_request['client']['manager_ini'];
