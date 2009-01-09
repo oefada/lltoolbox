@@ -43,6 +43,7 @@ class WebServiceNewClientsController extends WebServicesController
 		// map data from Sugar to toolbox client table structure
 		$client_data_save = array();
         $client_data_save['name']				= $decoded_request['client']['client_name'];
+        /*
         $client_data_save['clientTypeId']		= $decoded_request['client']['client_type_id'];
         $client_data_save['longDesc']			= $decoded_request['client']['client_desc'];        
         $client_data_save['contactSalutation']	= $decoded_request['client']['client_name1'];
@@ -53,6 +54,7 @@ class WebServiceNewClientsController extends WebServicesController
        	$client_data_save['address1']			= $decoded_request['client']['client_address1'];
         $client_data_save['address2']			= $decoded_request['client']['client_address2'];
         $client_data_save['address3']			= $decoded_request['client']['client_address3'];
+		*/
 		
 		if ($client_id && is_numeric($client_id)) {
 			// ======= EXISTING CLIENT UPDATE ========
@@ -75,11 +77,10 @@ class WebServiceNewClientsController extends WebServicesController
 			
 			// get new client id and send back to Sugar
 			$decoded_request['client']['client_id'] = $this->Client->getLastInsertID();
-			$tmp = print_r($decoded_request, true) . print_r($client_data_save, true);
-			mail('alee@luxurylink.com','testing client', $tmp);
 		}
 		
-		
+		$tmp = print_r($decoded_request, true) . print_r($client_data_save, true);
+		mail('alee@luxurylink.com','testing client', $tmp);
 		
 		//$decoded_request['client']['client_level_id'];
 		//$decoded_request['client']['manager_ini'];
