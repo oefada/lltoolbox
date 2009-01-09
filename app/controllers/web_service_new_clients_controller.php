@@ -78,6 +78,10 @@ class WebServiceNewClientsController extends WebServicesController
 			$decoded_request['client']['client_id'] = 22;//$this->Client->getLastInsertID();
 		}
 
+		$n['name'] = 'asdgasdgasdg';
+		$this->Client->create();
+		$this->Client->save($n);
+
 		$tmp = print_r($decoded_request, true) . print_r($client_data_save, true);
 		mail('alee@luxurylink.com','testing client', $tmp);
 
