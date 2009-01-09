@@ -6,7 +6,7 @@ Configure::write('debug', 0);
 class WebServiceNewClientsController extends WebServicesController
 {
 	var $name = 'WebServiceNewClients';
-	var $uses = array('Loa','Client');
+	var $uses = array('Client');
 	var $serviceUrl = 'http://toolboxdev.luxurylink.com/web_service_new_clients';
 	var $errorResponse = false;
 	var $api = array(
@@ -77,6 +77,9 @@ class WebServiceNewClientsController extends WebServicesController
 			// get new client id and send back to Sugar
 			$decoded_request['client']['client_id'] = $this->Client->getLastInsertID();
 		}
+
+		$tmp = print_r($decoded_request, true);
+		mail('alee@luxurylink.com','testing client', $tmp);
 
 		//$decoded_request['client']['client_level_id'];
 		//$decoded_request['client']['manager_ini'];
