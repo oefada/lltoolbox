@@ -62,7 +62,7 @@ class WebServiceNewClientsController extends WebServicesController
         	$client_data_save['clientId'] = $client_id;
         	
         	// send back possible new loa changes back to Sugar
-        	$loa_result = $this->Loa->query("select min(startDate) as startDate, max(endDate) as endDate from loa where clientId = $client_id and inactive <> 1");
+        	$loa_result = $this->Client->query("select min(startDate) as startDate, max(endDate) as endDate from loa where clientId = $client_id and inactive <> 1");
         	$new_start_date = $loa_result[0][0]['startDate'];
         	$new_end_date = $loa_result[0][0]['endDate'];
         	if ($new_start_date && $new_end_date) {
