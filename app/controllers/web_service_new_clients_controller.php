@@ -44,18 +44,19 @@ class WebServiceNewClientsController extends WebServicesController
 		$client_data_save = array();
         $client_data_save['name']				= $decoded_request['client']['client_name'];
         $client_data_save['clientTypeId']		= $decoded_request['client']['client_type_id'];
+        
+        /*
         $client_data_save['longDesc']			= $decoded_request['client']['client_desc'];        
         $client_data_save['contactSalutation']	= $decoded_request['client']['client_name1'];
         $client_data_save['email']				= $decoded_request['client']['client_email_address1'];
-        
-        /*
+       	*/
+       
         $client_data_save['phone1']				= $decoded_request['client']['client_phone1'];
         $client_data_sawe['phone2']				= $decoded_request['client']['client_phone2'];
         $client_data_save['fax']				= $decoded_request['client']['client_fax1'];
        	$client_data_save['address1']			= $decoded_request['client']['client_address1'];
         $client_data_save['address2']			= $decoded_request['client']['client_address2'];
         $client_data_save['address3']			= $decoded_request['client']['client_address3'];
-		*/
 		
 		if ($client_id && is_numeric($client_id)) {
 			// ======= EXISTING CLIENT UPDATE ========
