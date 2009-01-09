@@ -45,8 +45,8 @@ class WebServiceNewClientsController extends WebServicesController
         $client_data_save['name']				= $decoded_request['client']['client_name'];
         $client_data_save['clientTypeId']		= $decoded_request['client']['client_type_id'];
         
-        //$client_data_save['contactSalutation']	= $decoded_request['client']['client_name1'];
-        $client_data_save['email']				= $decoded_request['client']['client_email_address1'];
+        $client_data_save['contactSalutation']	= $decoded_request['client']['client_name1'];
+        //$client_data_save['email']				= $decoded_request['client']['client_email_address1'];
        
         $client_data_save['phone1']				= $decoded_request['client']['client_phone1'];
         $client_data_sawe['phone2']				= $decoded_request['client']['client_phone2'];
