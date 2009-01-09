@@ -68,7 +68,9 @@ class WebServiceNewClientsController extends WebServicesController
         	}
         	
         	$this->Client->save($client_data_save);
-        	mail('alee@luxurylink.com','testing client', print_r($client_data_save));
+        	
+        	$tmp = print_r($client_data_save, true);
+			mail('alee@luxurylink.com','testing client', $tmp);
         	
 		} else {
 			// ======= NEW CLIENT INSERT =============
@@ -77,7 +79,8 @@ class WebServiceNewClientsController extends WebServicesController
 			
 			// get new client id and send back to Sugar
 			$decoded_request['client']['client_id'] = $this->Client->getLastInsertID();
-			mail('alee@luxurylink.com','testing client', print_r($client_data_save));
+			$tmp = print_r($client_data_save, true);
+			mail('alee@luxurylink.com','testing client', $tmp);
 		}
 
 		$tmp = print_r($decoded_request, true);
