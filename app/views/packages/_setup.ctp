@@ -70,7 +70,7 @@
 	<?php endif; //end exchange rate for non-us currency ?>
 	<? /* -- END Retail Prices/Exchange Rate -- */?>
 	<div style="clear: both"></div>
-	<?php echo $form->input('reservePrice'); ?>
+	<?php echo $form->input('reservePrice', array('label' => 'Guarantee Amount')); ?>
 	<?php echo $this->renderElement('../packages/_formats'); ?>
 	
 	<? /* -- BEGIN Scheduling Start/End Dates -- */?>
