@@ -408,7 +408,7 @@ $this->searchController = 'Tickets';
 			</tr>
 			<tr class="altrow">
 				<td width="200">Refund Date</td>
-				<td><?php echo $ticket['TicketRefund']['dateRefunded'];?></td>
+				<td><?php echo $ticket['TicketRefund']['dateRequested'];?></td>
 			</tr>
 			<tr>
 				<td width="200">Refund Amount</td>
