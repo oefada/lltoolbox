@@ -39,8 +39,31 @@
 		echo $form->input('endDate', array('minYear' => date('Y'), 'maxYear' => $packageEndDate['year'], 'after' => 'Or, <a href="#" onclick=\'$("SchedulingMasterIterationSchedulingOption").value = "0"; javascript:$("iterations").toggle(); $("endDate").toggle() \'>choose fixed number of iterations</a>'));
 		echo '</div>';
 		
-		echo $form->input('startDate', array('minYear' => date('Y'), 'maxYear' => $packageEndDate['year']));
-		echo $form->input('trackId', array('value' => $package['ClientLoaPackageRel'][0]['revenueModelLoaId'], 'type' => 'hidden'));
+		echo $form->input('startDatePicker', array('class' => 'format-m-d-y divider-dash highlight-days-06 no-transparency range-low-today fill-grid-no-select',
+													'label' => 'Start Date',
+													'readonly' => 'readonly'));
+?>
+<script>
+delete datePickerController.datePickers['SchedulingMasterStartDatePicker'];
+datePickerController.addDatePicker('SchedulingMasterStartDatePicker', {'id':'SchedulingMasterStartDatePicker',
+																		'highlightDays':'0,0,0,0,0,1,1',
+																		'disableDays':'',
+																		'divider':'-',
+																		'format':'m-d-y',
+																		'locale':true,
+																		'splitDate':0,
+																		'noTransparency':true,
+																		'staticPos':false,
+																		'hideInput':false,
+																		'low':datePickerController.dateFormat((new Date().getMonth() + 1) + "/" + new Date().getDate() + "/" + new Date().getFullYear(), true)
+																		});
+
+</script>
+<?	    
+		echo $form->label('Start Time');
+		echo $form->dateTime('startDateTime', 'NONE', '12', null, array(), false);
+
+		echo $form->input('trackId', array('value' => $package['ClientLoaPackageRel'][0]['trackId'], 'type' => 'hidden'));
 		echo $form->input('packageName', array('value' => $package['Package']['packageName'], 'type' => 'hidden'));
 		echo $form->input('subTitle',  array('value' => $package['Package']['subtitle'], 'type' => 'hidden'));
 		echo $form->input('packageId', array('value' => $packageId, 'type' => 'hidden'));
