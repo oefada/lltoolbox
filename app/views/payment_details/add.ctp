@@ -77,10 +77,11 @@
 							if ($upsValue['inactive']) {
 								continue;
 							}	
+							$selectPrimaryCC = $upsValue['primaryCC'] ? 'checked' : '';
 							?>
 							<tr>
 								<td>
-									<input type="radio" name="data[PaymentDetail][userPaymentSettingId]" id="PaymentDetailUserPaymentSettingId" value="<?php echo $upsValue['userPaymentSettingId'];?>" />
+									<input <?php echo $selectPrimaryCC;?> type="radio" name="data[PaymentDetail][userPaymentSettingId]" id="PaymentDetailUserPaymentSettingId" value="<?php echo $upsValue['userPaymentSettingId'];?>" />
 								</td>
 								<td><?php echo $upsValue['userPaymentSettingId'];?></td>
 								<td><?php echo $upsValue['nameOnCard'];?></td>
