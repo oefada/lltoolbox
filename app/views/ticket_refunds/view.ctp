@@ -16,9 +16,9 @@
 			<?php echo $ticketRefund['TicketRefund']['ticketId']; ?>
 			&nbsp;
 		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('DateRefunded'); ?></dt>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Date Requested'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $ticketRefund['TicketRefund']['dateRefunded']; ?>
+			<?php echo $ticketRefund['TicketRefund']['dateRequested']; ?>
 			&nbsp;
 		</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('AmountRefunded'); ?></dt>
@@ -27,14 +27,4 @@
 			&nbsp;
 		</dd>
 	</dl>
-</div>
-<div class="actions">
-	<ul>
-		<li><?php echo $html->link(__('Edit TicketRefund', true), array('action'=>'edit', $ticketRefund['TicketRefund']['ticketRefundId'])); ?> </li>
-		<li><?php echo $html->link(__('Delete TicketRefund', true), array('action'=>'delete', $ticketRefund['TicketRefund']['ticketRefundId']), null, sprintf(__('Are you sure you want to delete # %s?', true), $ticketRefund['TicketRefund']['ticketRefundId'])); ?> </li>
-		<li><?php echo $html->link(__('List TicketRefunds', true), array('action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New TicketRefund', true), array('action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Refund Reasons', true), array('controller'=> 'refund_reasons', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Refund Reason', true), array('controller'=> 'refund_reasons', 'action'=>'add')); ?> </li>
-	</ul>
 </div>

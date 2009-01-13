@@ -11,7 +11,7 @@ echo $paginator->counter(array(
 	<th><?php echo $paginator->sort('ticketRefundId');?></th>
 	<th><?php echo $paginator->sort('refundReasonId');?></th>
 	<th><?php echo $paginator->sort('ticketId');?></th>
-	<th><?php echo $paginator->sort('dateRefunded');?></th>
+	<th><?php echo $paginator->sort('dateRequested');?></th>
 	<th><?php echo $paginator->sort('amountRefunded');?></th>
 	<th class="actions"><?php __('Actions');?></th>
 </tr>
@@ -34,7 +34,7 @@ foreach ($ticketRefunds as $ticketRefund):
 			<?php echo $ticketRefund['TicketRefund']['ticketId']; ?>
 		</td>
 		<td>
-			<?php echo $ticketRefund['TicketRefund']['dateRefunded']; ?>
+			<?php echo $ticketRefund['TicketRefund']['dateRequested']; ?>
 		</td>
 		<td>
 			<?php echo $ticketRefund['TicketRefund']['amountRefunded']; ?>
@@ -52,11 +52,4 @@ foreach ($ticketRefunds as $ticketRefund):
 	<?php echo $paginator->prev('<< '.__('previous', true), array(), null, array('class'=>'disabled'));?>
  | 	<?php echo $paginator->numbers();?>
 	<?php echo $paginator->next(__('next', true).' >>', array(), null, array('class'=>'disabled'));?>
-</div>
-<div class="actions">
-	<ul>
-		<li><?php echo $html->link(__('New TicketRefund', true), array('action'=>'add')); ?></li>
-		<li><?php echo $html->link(__('List Refund Reasons', true), array('controller'=> 'refund_reasons', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Refund Reason', true), array('controller'=> 'refund_reasons', 'action'=>'add')); ?> </li>
-	</ul>
 </div>

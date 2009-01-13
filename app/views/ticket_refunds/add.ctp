@@ -5,7 +5,7 @@
 	<?php
 		echo $form->input('refundReasonId');
 		echo $form->input('ticketId', array('readonly' => 'readonly'));
-		echo $form->input('dateRefunded');
+		echo $form->input('dateRequested');
 		echo $form->input('amountRefunded');
 		echo $form->input('refundNotes');
 	?>
