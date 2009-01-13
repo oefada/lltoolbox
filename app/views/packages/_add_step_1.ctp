@@ -18,7 +18,7 @@
 	<?php echo $form->input('ClientLoaPackageRel.'.$k.'.clientId', array('type' => 'hidden')) ?>
 	<?php echo $form->input('ClientLoaPackageRel.'.$k.'.loaId', array('type' => 'hidden')) ?>
 	<?php echo $form->input('ClientLoaPackageRel.'.$k.'.percentOfRevenue', array('type' => 'hidden')) ?>
-	<?php echo $form->input('ClientLoaPackageRel.'.$k.'.revenueModelLoaId', array('options' => $tracks, 'label' => 'Track #')) ?>
+	<?php echo $form->input('ClientLoaPackageRel.'.$k.'.trackId', array('options' => $tracks, 'label' => 'Track #')) ?>
 </fieldset>
 <?php } ?>
 <?php echo $form->input('complete', array('type' => 'hidden', 'value' => true)) ?>
