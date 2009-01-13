@@ -41,13 +41,13 @@ class TicketRefundsController extends AppController {
 				$emailHeaders = "From: $emailFrom\r\n";
         		$emailHeaders.= "Content-type: text/html\r\n";
 				$emailSubject = 'Refund Initiated for Ticket Id ' . $ticket['Ticket']['ticketId'];
-				$emailBody = '<strong>Refund Request has been submitted for Ticket Id ' . $ticket['Ticket']['ticketId'] . '</strong><br /><br />';
+				$emailBody = '<strong>A refund request has been submitted for Ticket Id ' . $ticket['Ticket']['ticketId'] . '</strong><br /><br />';
 				$emailBody.= '<table width="700" cellspacing="2" cellpadding="2" border="0">';
-				$emailBody.= '<tr><td width="200">Ticket Id</td><td>' . $ticket['Ticket']['ticketId'] . '</td></tr>';
-				$emailBody.= '<tr><td width="200">Date Requested</td><td>' . $dateRequested . '</td></tr>';
-				$emailBody.= '<tr><td width="200">Amount Refunded</td><td>$'. number_format($this->data['TicketRefund']['amountRefunded'],2,'.','') .'</td></tr>';
-				$emailBody.= '<tr><td width="200">Refund Reason</td><td>' . $refundReasons[$this->data['TicketRefund']['refundReasonId']] .'</td></tr>';
-				$emailBody.= '<tr><td width="200">Refund Notes</td><td>'. $this->data['TicketRefund']['refundNotes'] .'</td></tr>';
+				$emailBody.= '<tr><td width="200" valign="top">Ticket Id</td><td>' . $ticket['Ticket']['ticketId'] . '</td></tr>';
+				$emailBody.= '<tr><td width="200" valign="top">Date Requested</td><td>' . $dateRequested . '</td></tr>';
+				$emailBody.= '<tr><td width="200" valign="top">Amount Refunded</td><td>$'. number_format($this->data['TicketRefund']['amountRefunded'],2,'.','') .'</td></tr>';
+				$emailBody.= '<tr><td width="200" valign="top">Refund Reason</td><td>' . $refundReasons[$this->data['TicketRefund']['refundReasonId']] .'</td></tr>';
+				$emailBody.= '<tr><td width="200" valign="top">Refund Notes</td><td>'. $this->data['TicketRefund']['refundNotes'] .'</td></tr>';
 				$emailBody.= '</table>';
 				// send out email now
 				@mail($emailTo, $emailSubject, $emailBody, $emailHeaders);
