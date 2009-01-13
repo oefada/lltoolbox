@@ -16,7 +16,7 @@ class Ticket extends AppModel {
 						 'PpvNotice' => array('foreignKey' => 'ticketId')
 						);
 	
-	var $hasOne = array('TicketCancellation' => array('foreignKey' => 'ticketId'),
+	var $hasOne = array('TicketWriteoff' => array('foreignKey' => 'ticketId'),
 						'TicketRefund' => array('foreignKey' => 'ticketId'),
 						'Reservation' => array('foreignKey' => 'ticketId')
 						);
