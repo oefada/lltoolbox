@@ -4,8 +4,8 @@
  		<legend><?php __('Edit UserPaymentSetting');?></legend>
 	<?php
 		echo $form->input('userPaymentSettingId');
-		echo $form->input('nameOnCard');
-		echo $form->input('ccNumber', array('disabled' => 'disabled'));
+		//echo $form->input('nameOnCard');
+		//echo $form->input('ccNumber', array('disabled' => 'disabled'));
 		echo $form->input('userId', array('type' => 'hidden'));
 		echo $form->input('expMonth');
 		echo $form->input('expYear');
