@@ -18,6 +18,7 @@ class TicketRefundsController extends AppController {
 	}
 
 	function add() {
+		$refundReasons = $this->TicketRefund->RefundReason->find('list');
 		if (!empty($this->data) && $this->data['TicketRefund']['ticketId']) {
 			$ticket = array();
 			$ticket['Ticket']['ticketId'] = $this->data['TicketRefund']['ticketId'];
@@ -25,6 +26,32 @@ class TicketRefundsController extends AppController {
 			$this->TicketRefund->create();
 			if ($this->TicketRefund->save($this->data)  && $this->TicketRefund->Ticket->save($ticket)) {
 				$this->Session->setFlash(__('The refund note has been added to this ticket', true));
+				
+				// mail this info to accounting@luxurylink.com
+				// TODO:  this is temporary email system.  Must make email wrapper function / class later.
+				$dateRequested = $this->data['TicketRefund']['dateRequested']['year'];
+				$dateRequested.= '-' . $this->data['TicketRefund']['dateRequested']['month'];
+				$dateRequested.= '-' . $this->data['TicketRefund']['dateRequested']['day'];
+				$dateRequested.= ' ' . $this->data['TicketRefund']['dateRequested']['hour'];
+				$dateRequested.= ':' . $this->data['TicketRefund']['dateRequested']['min'];
+				$dateRequested.= ' ' . $this->data['TicketRefund']['dateRequested']['meridian'];
+				
+				$emailTo = 'devmail@luxurylink.com';
+				$emailFrom = 'LuxuryLink.com Accounting<accounting@luxurylink.com>';
+				$emailHeaders = "From: $emailFrom\r\n";
+        		$emailHeaders.= "Content-type: text/html\r\n";
+				$emailSubject = 'Refund Initiated for Ticket Id ' . $ticket['Ticket']['ticketId'];
+				$emailBody = '<strong>Refund Request for Ticket Id: ' . $ticket['Ticket']['ticketId'] . '</strong><br /><br />';
+				$emailBody.= '<table width="700" cellspacing="2" cellpadding="2" border="0">';
+				$emailBody.= '<tr><td width="250">Ticket Id</td><td>' . $ticket['Ticket']['ticketId'] . '</td></tr>';
+				$emailBody.= '<tr><td width="250">Date Requested</td><td>' . $dateRequested . '</td></tr>';
+				$emailBody.= '<tr><td width="250">Amount Refunded</td><td>$'. number_format($this->data['TicketRefund']['amountRefunded'],2,'.','') .'</td></tr>';
+				$emailBody.= '<tr><td width="250">Refund Notes</td><td>'. $this->data['TicketRefund']['refundNotes'] .'</td></tr>';
+				$emailBody.= '<tr><td width="250">Refund Reason</td><td>' . $refundReasons[$this->data['TicketRefund']['refundReasonId']] .'</td></tr>';
+				$emailBody.= '</table>';
+				// send out email now
+				@mail($emailTo, $emailSubject, $emailBody, $emailHeaders);
+				
 				$this->redirect(array('controller' => 'tickets', 'action' => 'view', 'id' => $this->data['TicketRefund']['ticketId']));
 			} else {
 				$this->Session->setFlash(__('The ticket refund could not be saved. Please, try again.', true));
@@ -38,7 +65,7 @@ class TicketRefundsController extends AppController {
 			$this->redirect(array('controller' => 'tickets', 'action'=>'index'));
 		} 
 		
-		$this->set('refundReasonIds', $this->TicketRefund->RefundReason->find('list'));
+		$this->set('refundReasonIds', $refundReasons);
 		$this->data['TicketRefund']['ticketId'] = $ticketId;
 	}
 
