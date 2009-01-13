@@ -21,11 +21,19 @@ $this->searchController = 'Tickets';
 			</tr>
 			<tr>
 				<td><strong>Package Id</strong></td>
-				<td><?php echo $html->link($ticket['Ticket']['packageId'], array('controller'=> 'packages', 'action'=>'view', $ticket['Ticket']['packageId'])); ?></td>
+				<td><?php echo $html->link($ticket['Ticket']['packageId'], array('controller'=> 'clients', 'action'=> $ticket['Ticket']['packageId'] . '/packages')); ?></td>
+			</tr>
+			<tr>
+				<td width="200"><strong>Client Name</strong></td>
+				<td><?php echo $ticket['Client']['name']; ?></td>
+			</tr>
+			<tr>
+				<td><strong>Client Id</strong></td>
+				<td><?php echo $html->link($ticket['Client']['clientId'], array('controller'=> 'clients', 'action'=>'edit', $ticket['Client']['clientId'])); ?></td>
 			</tr>
 			<tr>
 				<td><strong>Offer Id</strong></td>
-				<td><?php echo $html->link($ticket['Ticket']['offerId'], array('controller'=> 'offers', 'action'=>'view', $ticket['Ticket']['offerId'])); ?></td>
+				<td><?php echo $html->link($ticket['Ticket']['offerId'], array('controller'=> 'reports', 'action'=>'offer_search', 'filter:'.urlencode($offer_search_serialize))); ?></td>
 			</tr>
 			<tr>
 				<td><strong>Offer Type</strong></td>

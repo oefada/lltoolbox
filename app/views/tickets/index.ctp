@@ -170,7 +170,8 @@ $this->set('hideSidebar', true);
 	<th width="10"><?php echo $paginator->sort('Status', 'Ticket.ticketStatusId');?></th>
 	<th width="10"><?php echo $paginator->sort('Offer Type', 'Ticket.offerTypeId');?></th>
 	<th width="10"><?php echo $paginator->sort('Offer Id', 'Ticket.offerId');?></th>
-	<th><?php echo $paginator->sort('Package Name', 'Package.packageName');?></th>
+	<th width="10"><?php echo $paginator->sort('Client Id', 'Client.clientId');?></th>
+	<th><?php echo $paginator->sort('Client Name', 'Client.name');?></th>
 	<th width="10"><?php echo $paginator->sort('User Id', 'Ticket.userId');?></th>
 	<th><?php echo $paginator->sort('User First Name', 'Ticket.userFirstName');?></th>
 	<th><?php echo $paginator->sort('User Last Name', 'Ticket.userLastName');?></th>
@@ -201,7 +202,10 @@ foreach ($tickets as $ticket):
 			<?php echo $ticket['Ticket']['offerId'];?>
 		</td>
 		<td>
-			<?php echo $ticket['Package']['packageName'];?>
+			<?php echo $ticket['Client']['clientId'];?>
+		</td>
+		<td>
+			<?php echo $ticket['Client']['name'];?>
 		</td>
 		<td>
 			<?php echo $ticket['Ticket']['userId'];?>
