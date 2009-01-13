@@ -267,14 +267,21 @@ class WebServiceTicketsController extends WebServicesController
 	
 			$offerTypeArticle	= in_array(strtolower($offerType[$offerTypeId]{0}), array('a','e','i','o','u')) ? 'an' : 'a';
 
+			// false until there's a need to change the ticket status
+			$newTicketStatus 	= false;
+
 			switch ($ppvNoticeTypeId) {
 				case 1:
+					// send out res confirmation
 					include('../vendors/email_msgs/ppv/conf_ppv.html');
 					$emailSubject = 'testing conf ppv';
+					$newTicketStatus = 4;
 					break;
 				case 2:
+					// send out res request
 					include('../vendors/email_msgs/ppv/res_ppv.html');
 					$emailSubject = 'testing res ppv';
+					$newTicketStatus = 3;
 					break;
 				case 3:
 					include('../vendors/email_msgs/ppv/winner_ppv.html');
@@ -342,10 +349,26 @@ class WebServiceTicketsController extends WebServicesController
 			// save the record!
 			$this->PpvNotice->create();
 			$this->PpvNotice->save($ppvNoticeSave);
+			
+			// update ticket status if required
+			if ($newTicketStatus) {
+				$this->updateTicketStatus($ticketId, $newTicketStatus);
+			}
 		}
 		
 		if ($returnString) {
 			return $emailBody;	
+		}
+	}
+		
+	function updateTicketStatus($ticketId, $newStatusId) {
+		$updateTicket = array();
+		$updateTicket['ticketId'] = $ticketId;
+		$updateTicket['ticketStatusId'] = $newStatusId;
+		if ($this->Ticket->save($updateTicket)) {
+			return 1;	
+		} else {
+			return 0;	
 		}
 	}
 		
