@@ -13,11 +13,11 @@ if(!isset($query)) $query = '';?>
 	<th><?php echo $paginator->sort('bidId');?></th>
 	<th><?php echo $paginator->sort('offerId');?></th>
 	<th><?php echo $paginator->sort('User', 'userId');?></th>
-	<th><?php echo $paginator->sort('bidDateTime');?></th>
+	<th><?php echo $paginator->sort('bidDatetime');?></th>
 	<th><?php echo $paginator->sort('bidAmount');?></th>
 	<th><?php echo $paginator->sort('autoRebid');?></th>
 	<th><?php echo $paginator->sort('maxBid');?></th>
-	<th><?php echo $paginator->sort('bidInactive');?></th>
+	<th><?php echo $paginator->sort('inactive');?></th>
 	<th><?php echo $paginator->sort('note');?></th>
 	<th class="actions"><?php __('Actions');?></th>
 </tr>
@@ -40,7 +40,7 @@ foreach ($bids as $bid):
 			<?php echo $text->highlight($bid['User']['firstName'].' '.$bid['User']['lastName'], $query); ?> <?php echo $text->highlight($html2->c($bid['Bid']['userId'], 'User Id:'), $query); ?>
 		</td>
 		<td>
-			<?php echo $bid['Bid']['bidDateTime']; ?>
+			<?php echo $bid['Bid']['bidDatetime']; ?>
 		</td>
 		<td>
 			<?php echo $bid['Bid']['bidAmount']; ?>
@@ -52,7 +52,7 @@ foreach ($bids as $bid):
 			<?php echo $bid['Bid']['maxBid']; ?>
 		</td>
 		<td>
-			<?php echo $bid['Bid']['bidInactive']; ?>
+			<?php echo $bid['Bid']['inactive']; ?>
 		</td>
 		<td>
 			<?php echo $bid['Bid']['note']; ?>
