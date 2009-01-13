@@ -29,7 +29,15 @@ class SchedulingMastersController extends AppController {
 			$this->data['SchedulingMaster']['validityStartDate'] = $package['Package']['validityStartDate'];
 			$this->data['SchedulingMaster']['validityEndDate'] = $package['Package']['validityEndDate'];
 			$this->data['SchedulingMaster']['retailValue'] = $package['Package']['approvedRetailPrice'];
-			
+
+			$date = explode('-', $this->data['SchedulingMaster']['startDatePicker']);
+
+			$this->data['SchedulingMaster']['startDate']['month']     =   $date[0];
+			$this->data['SchedulingMaster']['startDate']['day']   =   $date[1];
+			$this->data['SchedulingMaster']['startDate']['year']    =   $date[2];
+
+            $this->data['SchedulingMaster']['startDate'] = array_merge($this->data['SchedulingMaster']['startDate'], $this->data['SchedulingMaster']['startDateTime']);
+
 			//if this is a mystery auction we override some fields
 			if (in_array(3, $this->data['MerchandisingFlag']['MerchandisingFlag'])) {
 			    $this->data['SchedulingMaster']['openingBid']   = $this->data['Mystery']['openingBid'];
@@ -41,7 +49,7 @@ class SchedulingMastersController extends AppController {
 			
 			//associate the tracks from each client to this offer
 			foreach ($package['ClientLoaPackageRel'] as $v) {
-			    $this->data['Track']['Track'][] = $v['revenueModelLoaId'];
+			    $this->data['Track']['Track'][] = $v['trackId'];
 			}
 
 			if ($this->SchedulingMaster->save($this->data)) {
@@ -76,11 +84,12 @@ class SchedulingMastersController extends AppController {
 		
 		if (empty($this->data) && isset($this->params['named']['date'])) {
 			$date = explode('-', $this->params['named']['date']);
-
+            
+            $this->data['SchedulingMaster']['startDatePicker'] = date("m-d-Y", strtotime($this->params['named']['date']));
             //populate the start date to the date selected from the datepicker
-			$this->data['SchedulingMaster']['startDate']['year'] 		= $date[0];
-			$this->data['SchedulingMaster']['startDate']['month'] 		= $date[1];
-			$this->data['SchedulingMaster']['startDate']['day'] 		= $date[2];
+			$this->data['SchedulingMaster']['startDateTime']['hour'] 		= date('g');
+			$this->data['SchedulingMaster']['startDateTime']['min']         = 0;
+			$this->data['SchedulingMaster']['startDateTime']['meridian']    = date('a');
 			
 			//default end date to the end date for the package scheduling range
 			
@@ -126,7 +135,7 @@ class SchedulingMastersController extends AppController {
 		
 		$offerTypeId = (isset($this->data['SchedulingMaster']['offerTypeId'])) ? $this->data['SchedulingMaster']['offerTypeId'] : $firstOfferId;
 		$this->SchedulingMaster->Package->PackageOfferTypeDefField->recursive = -1;
-		$defaults = $this->SchedulingMaster->Package->PackageOfferTypeDefField->find('first', array('conditions' => array('PackageOfferTypeDefField.packageId' => $packageId, 'PackageOfferTypeDefField.offerTypeId' => $offerTypeId)));        
+		$defaults = $this->SchedulingMaster->Package->PackageOfferTypeDefField->find('first', array('conditions' => array('PackageOfferTypeDefField.offerTypeId' => $offerTypeId)));        
 		$this->set(compact('defaults'));    //send defaults to the view for the drop down
 		
 		switch ($offerTypeId):
@@ -261,6 +270,15 @@ class SchedulingMastersController extends AppController {
             			    $this->data['SchedulingMaster']['subtitle']     = $this->data['Mystery']['subtitle'];
             			    $this->data['SchedulingMaster']['shortBlurb']   = $this->data['Mystery']['shortBlurb'];
             			}
+            			
+            			$date = explode('-', $this->data['SchedulingMaster']['startDatePicker']);
+
+            			$this->data['SchedulingMaster']['startDate']['month']     =   $date[0];
+            			$this->data['SchedulingMaster']['startDate']['day']   =   $date[1];
+            			$this->data['SchedulingMaster']['startDate']['year']    =   $date[2];
+
+                        $this->data['SchedulingMaster']['startDate'] = array_merge($this->data['SchedulingMaster']['startDate'], $this->data['SchedulingMaster']['startDateTime']);
+            			
 
             			if ($this->SchedulingMaster->save($this->data)) {
             				$this->createInstances();
@@ -277,6 +295,13 @@ class SchedulingMastersController extends AppController {
 		}
 		if (empty($this->data)) {
 			$this->data = $this->SchedulingMaster->read(null, $id);
+		
+			$date       = explode(' ', $this->data['SchedulingMaster']['startDate']);
+			$datePicker = explode('-', $date[0]);
+
+			$this->data['SchedulingMaster']['startDatePicker']     =   date('m-d-Y', strtotime($date[0]));
+			
+			$this->data['SchedulingMaster']['startDateTime'] = $this->data['SchedulingMaster']['startDate'];
 		}
 		
 		/* Check if there are any iterations left. If there are none, then we can't edit this */
