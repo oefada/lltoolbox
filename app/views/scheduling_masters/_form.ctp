@@ -2,7 +2,8 @@
 		<div id='one'>
 			<p class='clean-gray'><?php echo $package['Package']['shortBlurb'] ?></p>
 	<?php
-		echo $form->input('offerTypeId', array('label' => 'Offer Type'));		
+		echo $form->input('offerTypeId', array('label' => 'Offer Type'));
+		echo "<strong>For Fixed Price offer types, number of days to run, scheduling delay, and number of iterations will be ignored. You must choose an end date for fixed price offers.</strong>";		
 		echo $form->input('retailValue', array('disabled' => 'disabled'));
 		
 		/* TODO: Marketing/Judy needs to be able to override the defaults*/
@@ -31,7 +32,7 @@
 		//the scheduling iteration option is 0 = iterations, 1 = endDate
 		echo $form->input('iterationSchedulingOption', array('type' => 'hidden'));
 		echo '<div id="iterations"'.$iterationsStyle.'>';
-		echo $form->input('iterations', array('after' => 'Or, <a href="#" onclick=\'javascript:$("SchedulingMasterIterationSchedulingOption").value = "1"; $("iterations").toggle(); $("endDate").toggle() \'>choose infinite iterations until end date.</a>'));
+		echo $form->input('iterations', array('after' => 'Or, <a href="#" onclick=\'javascript:$("SchedulingMasterIterationSchedulingOption").value = "1"; $("iterations").toggle(); $("endDate").toggle() \'>choose end date.</a>'));
 		echo '</div>';
 		
 		//shows only when infinite iterations until end date is selected

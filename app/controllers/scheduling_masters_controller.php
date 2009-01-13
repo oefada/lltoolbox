@@ -170,6 +170,16 @@ class SchedulingMastersController extends AppController {
 		$instanceData['SchedulingInstance']['schedulingMasterId'] 	= $masterData['SchedulingMaster']['schedulingMasterId'];
 		$instanceData['SchedulingInstance']['startDate'] 			= $masterData['SchedulingMaster']['startDate'];
 		
+		/*
+		 * For fixed price offers, we only grab the start and end dates. Don't care about number of iterations, or delays.
+		 */
+		if (in_array($masterData['SchedulingMaster']['offerTypeId'], array(3,4))) {
+		    $instanceData['SchedulingInstance']['startDate']    = $masterData['SchedulingMaster']['startDate'];
+		    $instanceData['SchedulingInstance']['endDate']      = $masterData['SchedulingMaster']['endDate'];
+		    $this->SchedulingMaster->SchedulingInstance->create();
+			$this->SchedulingMaster->SchedulingInstance->save($instanceData);
+		    return true;
+		}
 		/* 
 		 * If using the endDate to determine how many iterations to create, we need to calculate this number
 		 * This basically does the following arithmethic:
