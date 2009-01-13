@@ -1,12 +1,15 @@
 <?php
 
+//ini_set('max_execution_time', 0);
+//ini_set('memory_limit', '256M');
+
 App::import('Vendor', 'nusoap_client/lib/nusoap');
 
 class TicketsController extends AppController {
 
 	var $name = 'Tickets';
 	var $helpers = array('Html', 'Form', 'Ajax', 'Text', 'Layout', 'Number');
-	var $uses = array('Ticket','OfferType', 'User', 'ClientLoaPackageRel', 'Track', 'TrackDetail','Offer','Loa');
+	var $uses = array('Ticket','OfferType', 'User', 'ClientLoaPackageRel', 'Track', 'TrackDetail','Offer','Loa','Client');
 
 	function index() {
 		
@@ -19,7 +22,7 @@ class TicketsController extends AppController {
 			$form = $named;
 			$this->params['form'] = $this->params['named'];
 		}
-
+		
 		// set values and set defaults        
 		$s_ticket_id = isset($form['s_ticket_id']) ? $form['s_ticket_id'] : '';
 		$s_offer_id = isset($form['s_offer_id']) ? $form['s_offer_id'] : '';
@@ -41,7 +44,7 @@ class TicketsController extends AppController {
 		$this->set('s_start_y', $s_start_y);   
 		$this->set('s_start_m', $s_start_m);   
 		$this->set('s_start_d', $s_start_d);   
-		$this->set('s_end_y', $s_end_y);   
+		$this->set('s_end_y', $s_end_y);
 		$this->set('s_end_m', $s_end_m);   
 		$this->set('s_end_d', $s_end_d);   
 		
@@ -52,9 +55,9 @@ class TicketsController extends AppController {
 		$this->paginate = array('fields' => array(
 									'Ticket.ticketId', 'Ticket.offerTypeId', 'Ticket.created', 
 									'Ticket.offerId', 'Ticket.userId', 'TicketStatus.ticketStatusName', 
-									'Ticket.userFirstName', 'Ticket.userLastName', 'Package.packageName'),
+									'Ticket.userFirstName', 'Ticket.userLastName', 'Client.name'),
 		                        	'contain' => array(
-		                        	'TicketStatus', 'Package')
+		                        	'TicketStatus', 'Package', 'Client')
 		                        );
 		    
 		// if search via ticket id, offer id, or user id, then dont use other search conditions
@@ -63,7 +66,7 @@ class TicketsController extends AppController {
 		} elseif ($s_offer_id) {
 			$this->paginate['conditions']['Ticket.offerId'] = $s_offer_id;    
 		} elseif ($s_user_id) {
-			   $this->paginate['conditions']['Ticket.userId'] = $s_user_id;            		     
+			$this->paginate['conditions']['Ticket.userId'] = $s_user_id;            		     
 		} else {    
 			$this->paginate['conditions']['Ticket.created BETWEEN ? AND ?'] = array($s_start_date, $s_end_date);             		
 			if ($s_offer_type_id) {
@@ -92,6 +95,12 @@ class TicketsController extends AppController {
 		
 		$this->set('offerType', $this->OfferType->find('list'));
 		$this->set('ppvNoticeTypes', $this->Ticket->PpvNotice->PpvNoticeType->find('list'));
+		
+		$this->data = array();
+		$this->data['condition1']['field'] = "Offer.offerId";
+		$this->data['condition1']['value'] = $ticket['Ticket']['offerId'];
+		$offer_search_serialize = serialize($this->data);
+		$this->set('offer_search_serialize', $offer_search_serialize);
 	}
 
 	function edit($id = null) {	
@@ -115,22 +124,22 @@ class TicketsController extends AppController {
 	}
 
 	function updateTrackDetail($id) {
-		
+	
 		// settings for data retrieval
 		// ---------------------------------------------------------
 		$this->Ticket->recursive 				= -1;
 		$this->Offer->recursive 				=  2;
 		$this->Loa->recursive 					= -1;
-		$this->Track->recursive 	= -1;
-		
+		$this->Track->recursive 				= -1;
+
 		// data retrieval
 		// ---------------------------------------------------------
 		$ticket 				= $this->Ticket->read(null, $id);
 		$offer 					= $this->Offer->read(null, $ticket['Ticket']['offerId']);
 		$schedulingMasterId 	= $offer['SchedulingInstance']['SchedulingMaster']['schedulingMasterId'];
 		$smid 					= $this->Track->query("select trackId from schedulingMasterTrackRel where schedulingMasterId = $schedulingMasterId limit 1");
-		$trackId 	= $smid[0]['schedulingMasterTrackRel']['trackId'];
-		$track 	= $this->Track->read(null, $trackId);
+		$trackId 				= $smid[0]['schedulingMasterTrackRel']['trackId'];
+		$track 					= $this->Track->read(null, $trackId);
 		$last_track_detail 		= $this->Track->query("select * from trackDetail where trackId = $trackId order by trackDetailId desc limit 1");
 		
 		// vars to work with
@@ -138,13 +147,13 @@ class TicketsController extends AppController {
 		$track 					= $track['Track'];
 		$last_track_detail		= $last_track_detail[0]['trackDetail'];
 		$ticket_amount			= $ticket['Ticket']['billingPrice'];
-		$ticket_amount = rand(400,1200);
+		$ticket_amount 			= rand(400,1200); // remove remove remove remove after testing remove remove remove remove remove after testing
 		$loa					= $this->Loa->read(null, $track['loaId']);
 		
 		// set new track information for insert into trackDetail
 		// ---------------------------------------------------------
 		$new_track_detail 							= array();
-		$new_track_detail['trackId']	= $trackId;
+		$new_track_detail['trackId']				= $trackId;
 		$new_track_detail['ticketId']				= $id;
 	
 		// track detail calculations	
@@ -217,8 +226,7 @@ class TicketsController extends AppController {
 		$this->Track->TrackDetail->save($new_track_detail);
 		
 		print_r($track);
-		print_r($new_track_detail);
-		
+		print_r($new_track_detail);		
 		die();
 	}
 
