@@ -102,7 +102,7 @@ class SchedulingMastersController extends AppController {
 			$this->data['SchedulingMaster']['retailValue']              = $package['Package']['approvedRetailPrice'];
 		}
 	
-	    $this->setOfferTypeDefaultAndDropdown($formatIds);
+	    $this->setOfferTypeDefaultAndDropdown($packageId, $formatIds);
 		
 		$merchandisingFlags 					= $this->SchedulingMaster->MerchandisingFlag->find('list');
 		$schedulingStatusIds 					= $this->SchedulingMaster->SchedulingStatus->find('list');
@@ -118,7 +118,7 @@ class SchedulingMastersController extends AppController {
 		$this->set('remittanceTypeIds', 		$remittanceTypeIds);
 	}
 	
-	function setOfferTypeDefaultAndDropdown($formatIds) {
+	function setOfferTypeDefaultAndDropdown($packageId, $formatIds) {
 	    /* Get all Offer Types available for this package based on Format */
 		$this->SchedulingMaster->Package->Format->Behaviors->attach('Containable');
 		$formats = $this->SchedulingMaster->Package->Format->find('all', array('conditions' => array('formatId' => $formatIds), 'contain' => array('OfferType')));
@@ -135,7 +135,7 @@ class SchedulingMastersController extends AppController {
 		
 		$offerTypeId = (isset($this->data['SchedulingMaster']['offerTypeId'])) ? $this->data['SchedulingMaster']['offerTypeId'] : $firstOfferId;
 		$this->SchedulingMaster->Package->PackageOfferTypeDefField->recursive = -1;
-		$defaults = $this->SchedulingMaster->Package->PackageOfferTypeDefField->find('first', array('conditions' => array('PackageOfferTypeDefField.offerTypeId' => $offerTypeId)));        
+		$defaults = $this->SchedulingMaster->Package->PackageOfferTypeDefField->find('first', array('conditions' => array('PackageOfferTypeDefField.packageId' => $packageId, 'PackageOfferTypeDefField.offerTypeId' => $offerTypeId)));        
 		$this->set(compact('defaults'));    //send defaults to the view for the drop down
 		
 		switch ($offerTypeId):
@@ -323,7 +323,7 @@ class SchedulingMastersController extends AppController {
 			$formatIds[] = $format['formatId'];
 		endforeach;
 		
-		$this->setOfferTypeDefaultAndDropdown($formatIds);
+		$this->setOfferTypeDefaultAndDropdown($packageId, $formatIds);
 		
 		$this->set('package', 					$package);
 		$this->set('packageId', 				$packageId);
