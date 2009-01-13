@@ -1,7 +1,7 @@
 <?php
 uses('model' . DS . 'connection_manager');
 $db = ConnectionManager::getInstance();
-$connected = $db->getDataSource('default');
+$connected = $db->getDataSource('mysql_driver_default');
 
 ini_set('error_reporting', 2039);
 
