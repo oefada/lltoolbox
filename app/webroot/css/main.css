@@ -775,6 +775,7 @@ fieldset.smallLabels input {
 div.advancedSearch {
     background: #f1f1f1;
     padding: 10px;
+    margin-bottom: 20px;
 }
 div.advancedSearch fieldset {
     float: none;
