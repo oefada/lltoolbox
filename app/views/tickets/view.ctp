@@ -340,33 +340,33 @@ $this->searchController = 'Tickets';
 
 <br />
 <div class="collapsible">
-	<div class="handle"><?php __('Cancellation');?></div>
+	<div class="handle"><?php __('Write-Off');?></div>
 	<div class="collapsibleContent related">
 	<br />
-	<?php if (!empty($ticket['TicketCancellation']['ticketCancellationId'])):?>
+	<?php if (!empty($ticket['TicketWriteoff']['ticketWriteoffId'])):?>
 		<table cellpadding="0" cellspacing="0">
 			<tr class="altrow">
-				<td width="200">Cancellation Id</td>
-				<td><?php echo $ticket['TicketCancellation']['ticketCancellationId'];?></td>
+				<td width="200">Writeoff Id</td>
+				<td><?php echo $ticket['TicketWriteoff']['ticketWriteoffId'];?></td>
 			</tr>
 			<tr>
-				<td width="200">Cancellation Reason</td>
-				<td><?php echo $ticket['TicketCancellation']['CancellationReason']['cancellationReasonName'];?></td>
+				<td width="200">Writeoff Reason</td>
+				<td><?php echo $ticket['TicketWriteoff']['TicketWriteoffReason']['ticketWriteoffReasonName'];?></td>
 			</tr>
 			<tr class="altrow">
-				<td width="200">Cancellation Date</td>
-				<td><?php echo $ticket['TicketCancellation']['dateCancelled'];?></td>
+				<td width="200">Writeoff Date</td>
+				<td><?php echo $ticket['TicketWriteoff']['dateRequested'];?></td>
 			</tr>
 			<tr>
-				<td width="200">Cancellation Notes</td>
-				<td><?php echo $ticket['TicketCancellation']['cancellationNotes'];?></td>
+				<td width="200">Writeoff Notes</td>
+				<td><?php echo $ticket['TicketWriteoff']['writeoffNotes'];?></td>
 			</tr>
 		</table>
 		<?php
-		echo $html->link('Edit Ticket Cancellation',
-			'/ticket_cancellations/edit/' . $ticket['TicketCancellation']['ticketCancellationId'],
+		echo $html->link('Edit Ticket Write-Off',
+			'/ticket_writeoffs/edit/' . $ticket['TicketWriteoff']['ticketWriteoffId'],
 			array(
-				'title' => 'Edit Ticket Cancellation',
+				'title' => 'Edit Ticket Write-Off',
 				'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
 				'complete' => 'closeModalbox()'
 				),
@@ -376,10 +376,10 @@ $this->searchController = 'Tickets';
 		?>
 	<?php else: ?>
 		<?php
-		echo $html->link('Cancel this Ticket',
-			'/tickets/' . $ticket['Ticket']['ticketId'] . '/ticket_cancellations/add',
+		echo $html->link('Write-Off this Ticket',
+			'/tickets/' . $ticket['Ticket']['ticketId'] . '/ticket_writeoffs/add',
 			array(
-				'title' => 'Ticket Cancellation',
+				'title' => 'Ticket Write-Off',
 				'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
 				'complete' => 'closeModalbox()'
 				),
