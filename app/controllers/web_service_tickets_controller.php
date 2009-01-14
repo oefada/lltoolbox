@@ -70,6 +70,7 @@ class WebServiceTicketsController extends WebServicesController
 		$newTicket = array();
 		$newTicket['Ticket']['ticketStatusId'] 			 = 1;
 		$newTicket['Ticket']['packageId'] 				 = $data['packageId'];
+		$newTicket['Ticket']['clientId']				 = $data['clientId'];
 		$newTicket['Ticket']['offerId'] 				 = $data['offerId'];  
 		$newTicket['Ticket']['offerTypeId'] 			 = $offerData['SchedulingInstance']['SchedulingMaster']['offerTypeId'];
 		$newTicket['Ticket']['formatId'] 				 = $formatId;
