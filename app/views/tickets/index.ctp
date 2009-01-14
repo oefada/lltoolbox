@@ -25,7 +25,7 @@ $this->set('hideSidebar', true);
 					<select name="s_start_y">
 						<?php 
 						for ($i = date('Y'); $i > 2005; $i--) { 
-							$selected = ($k == $s_start_y) ? 'selected="selected"' : ''; 
+							$selected = ($i == $s_start_y) ? 'selected="selected"' : ''; 
 							echo "<option value=\"$i\" $selected>$i</option>\n"; 
 						}
 						?>
@@ -58,7 +58,7 @@ $this->set('hideSidebar', true);
 					<select name="s_end_y">
 						<?php 
 						for ($i = date('Y'); $i > 2005; $i--) { 
-							$selected = ($k == $s_end_y) ? 'selected="selected"' : ''; 
+							$selected = ($i == $s_end_y) ? 'selected="selected"' : ''; 
 							echo "<option value=\"$i\" $selected>$i</option>\n"; 
 						}
 						?>
