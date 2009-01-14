@@ -267,21 +267,16 @@ class WebServiceTicketsController extends WebServicesController
 	
 			$offerTypeArticle	= in_array(strtolower($offerType[$offerTypeId]{0}), array('a','e','i','o','u')) ? 'an' : 'a';
 
-			// false until there's a need to change the ticket status
-			$newTicketStatus 	= false;
-
 			switch ($ppvNoticeTypeId) {
 				case 1:
 					// send out res confirmation
 					include('../vendors/email_msgs/ppv/conf_ppv.html');
 					$emailSubject = 'testing conf ppv';
-					$newTicketStatus = 4;
 					break;
 				case 2:
 					// send out res request
 					include('../vendors/email_msgs/ppv/res_ppv.html');
 					$emailSubject = 'testing res ppv';
-					$newTicketStatus = 3;
 					break;
 				case 3:
 					include('../vendors/email_msgs/ppv/winner_ppv.html');
@@ -350,10 +345,15 @@ class WebServiceTicketsController extends WebServicesController
 			$this->PpvNotice->create();
 			$this->PpvNotice->save($ppvNoticeSave);
 			
+			$newTicketStatus = false;
+			if ($ppvNoticeTypeId == 1) {
+				$newTicketStatus = 4;		
+			} else ($ppvNoticeTypeId == 2) {
+				$newTicketStatus = 3;
+			}
+			
 			// update ticket status if required
-			@mail('devmail@luxurylink.com', 'testing testing 1', $newTicketStatus);
 			if ($newTicketStatus) {
-				@mail('devmail@luxurylink.com', 'testing testing 2', $newTicketStatus);
 				$this->updateTicketStatus($ticketId, $newTicketStatus);
 			}
 		}
@@ -367,8 +367,6 @@ class WebServiceTicketsController extends WebServicesController
 		$updateTicket = array();
 		$updateTicket['ticketId'] = $ticketId;
 		$updateTicket['ticketStatusId'] = $newStatusId;
-		$tmp = print_r($updateTicket, true);
-		@mail('devmail@luxurylink.com', 'testing testing 3', $tmp);
 		if ($this->Ticket->save($updateTicket)) {
 			return 1;	
 		} else {
