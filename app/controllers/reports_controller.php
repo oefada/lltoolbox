@@ -356,5 +356,150 @@ class ReportsController extends AppController {
 	    $conditions[] = 'SchedulingMaster.offerTypeId IN (1,2,6)';  //filter only auction types
 	    return implode($conditions, ' AND ');
 	}
+	
+	function fixed_price() {
+	    if (!empty($this->data)) {
+	        $conditions = $this->_fixed_price_build_conditions($this->data);
+	        
+	        if (!empty($this->params['named']['page'])) {
+	            $page = $this->params['named']['page'];
+	            $limit = (($page-1)*20).',20';
+	        } else {
+	            $page = 1;
+	            $limit = 20;
+	        }
+	        
+	        if (!empty($this->params['named']['sortBy'])) {
+	            $direction = (@$this->params['named']['sortDirection'] == 'DESC') ? 'DESC' : 'ASC';
+	            $order = $this->params['named']['sortBy'].' '.$direction;
+	            
+	            $this->set('sortBy', $this->params['named']['sortBy']);
+	            $this->set('sortDirection', $direction);
+	        } else {
+	            $order = 'Offer.offerId';
+	            
+	            $this->set('sortBy', 'Offer.offerId');
+    	        $this->set('sortDirection', 'DESC');
+	        }
+	        
+            $count = "SELECT COUNT(DISTINCT Ticket.ticketId) AS numRecords
+                                FROM ticket AS Ticket
+                                INNER JOIN offerType as OfferType ON (OfferType.offerTypeId = Ticket.offerTypeId)
+                                INNER JOIN client AS Client ON (Client.clientId = Ticket.clientId)
+                                INNER JOIN offer AS Offer ON (Offer.offerId = Ticket.offerId)
+                                INNER JOIN schedulingInstance AS SchedulingInstance ON (SchedulingInstance.schedulingInstanceId = Offer.schedulingInstanceId)
+                                INNER JOIN schedulingMaster AS SchedulingMaster ON (SchedulingMaster.schedulingMasterId = SchedulingInstance.schedulingMasterId)
+                                INNER JOIN package AS Package ON (Package.packageId = SchedulingMaster.packageId)
+                                INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Package.packageId AND ClientLoaPackageRel.clientId = Ticket.clientId)
+                                LEFT JOIN track AS Track ON (Track.trackId = ClientLoaPackageRel.trackId)
+                                LEFT JOIN paymentDetail AS PaymentDetail ON (PaymentDetail.ticketId = Ticket.ticketId AND PaymentDetail.userId = Ticket.userId)
+                    WHERE $conditions";
+
+	        $results = $this->OfferType->query($count);
+	        $numRecords = $results[0][0]['numRecords'];
+            $numPages = ceil($numRecords / 20);
+                
+	        $sql = "SELECT
+                                        Offer.offerId,
+                                        Ticket.ticketId,
+                                    	Client.name,
+                                    	Ticket.userFirstName,
+                                    	Ticket.userLastName,
+                                    	Track.applyToMembershipBal,
+                                    	OfferType.offerTypeName,
+                                    	Ticket.userCountry,
+                                    	Ticket.userState,
+                                    	Ticket.userCity,
+                                    	Ticket.requestQueueDateTime,
+                                    	Ticket.billingPrice,
+                                    	SUM(PaymentDetail.ppBillingAmount) as moneyCollected,
+                                    	IF(SUM(PaymentDetail.ppBillingAmount)>=Ticket.billingPrice, MAX(PaymentDetail.paymentDatetime), 0) AS dateCollected
+                                FROM ticket AS Ticket
+                                INNER JOIN offerType as OfferType ON (OfferType.offerTypeId = Ticket.offerTypeId)
+                                INNER JOIN client AS Client ON (Client.clientId = Ticket.clientId)
+                                INNER JOIN offer AS Offer ON (Offer.offerId = Ticket.offerId)
+                                INNER JOIN schedulingInstance AS SchedulingInstance ON (SchedulingInstance.schedulingInstanceId = Offer.schedulingInstanceId)
+                                INNER JOIN schedulingMaster AS SchedulingMaster ON (SchedulingMaster.schedulingMasterId = SchedulingInstance.schedulingMasterId)
+                                INNER JOIN package AS Package ON (Package.packageId = SchedulingMaster.packageId)
+                                INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Package.packageId AND ClientLoaPackageRel.clientId = Ticket.clientId)
+                                LEFT JOIN track AS Track ON (Track.trackId = ClientLoaPackageRel.trackId)
+                                LEFT JOIN paymentDetail AS PaymentDetail ON (PaymentDetail.ticketId = Ticket.ticketId AND PaymentDetail.userId = Ticket.userId)
+                    WHERE $conditions
+                    GROUP BY Ticket.ticketId
+                    ORDER BY $order
+	                LIMIT $limit";
+
+	        $results = $this->OfferType->query($sql);
+
+            $this->set('currentPage', $page);
+            $this->set('numRecords', $numRecords);
+            $this->set('numPages', $numPages);
+            $this->set('data', $this->data);
+	        $this->set('results', $results);
+	        $this->set('serializedFormInput', serialize($this->data));
+	    }
+	}
+	
+	function _fixed_price_build_conditions($data) {
+	    $conditions = array();
+	    foreach ($data as $k => $ca) {
+	        if (isset($ca['value']['between'])) {
+                $betweenCondition = $ca['value']['between'];
+            } else {
+                $betweenCondition = false;
+            }
+            
+            /* Check if the conditions have valid data and can be used in a where clause */
+	        if (empty($ca['field']) ||
+	            empty($ca['value'])) {
+	                continue;                               //skip if no valid data found
+	            }
+
+            /* If we got this far then that means we have adequate data for a where clause */
+            if (is_array($betweenCondition)) {              //check for a condition eligible for BETWEEN                 
+                $firstValue = array_shift($betweenCondition);
+                $secondValue = array_shift($betweenCondition);
+                
+                if (strlen($firstValue) == 0) {
+                    $firstValue = NULL;
+                }
+                
+                if (strlen($secondValue) == 0) {
+                    $secondValue = NULL;
+                }
+                $betweenCondition = true;
+                if (!strlen($firstValue)  && !strlen($secondValue)) {   //if both between values were ommited, it's invalid
+                    continue;
+                }
+            } else {
+                unset($firstValue);
+                unset($secondValue);
+                $betweenCondition = false;
+            }
+
+	        if ($betweenCondition):                                    //generate valid SQL for a between condition
+	            if (NULL !== $firstValue && NULL !== $secondValue) {    //if both values were entered, it's a between
+	                $conditions[$k] =   $ca['field'].' BETWEEN '."'{$firstValue}'".' AND '."'{$secondValue}'";
+	            } else {                                                //if only one value was entered, it's not a between
+	                $conditions[$k] =   $ca['field'].' = '."'{$firstValue}'";
+	            }
+	            
+	        else:
+	            if(is_array($ca['value'])) {
+	                //wrap in single quotes
+	                foreach ($ca['value'] as $value) {
+	                    $values[] = "'{$value}'";
+	                }
+	                $conditions[$k] =   $ca['field'].' IN('.implode(',', $values).')';
+	            } else {
+	                $conditions[$k] =   $ca['field'].' = '."'{$ca['value']}'";
+	            }
+	            
+	        endif; //end generate SQL for between condition
+	    }
+	    
+	    $conditions[] = 'Ticket.requestQueueId IS NOT NULL';  //filter only fixed price types
+	    return implode($conditions, ' AND ');
+	}
 }
 ?>

@@ -110,7 +110,7 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 		<td><?=$html->link($number->currency($result['Loa']['membershipBalance'], 'USD', array('places' => 0)), array('controller' => 'loas', 'action' => 'edit', $result['Loa']['loaId']))?></td>
 		<td style="background: <?php echo ($result[0]['futureInstances']) ? 'none' : '#bc3226' ?>; text-align:center"><?php echo ($result[0]['futureInstances']) ? 'YES' : 'NO' ?></td>
 	</tr>
-<?php endforeach; ?>
+<?php endforeach; //TODO: add totals ?>
 </table>
 <?=$pagination->Paginate("/reports/offer_search/filter:".urlencode($serializedFormInput)."/sortBy:$sortBy/sortDirection:$sortDirection/page:", $currentPage, $numPages)?>
 <?php elseif (!empty($data)): ?>
