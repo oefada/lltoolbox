@@ -365,6 +365,7 @@ class WebServiceTicketsController extends WebServicesController
 		$updateTicket = array();
 		$updateTicket['ticketId'] = $ticketId;
 		$updateTicket['ticketStatusId'] = $newStatusId;
+		@mail('devmail@luxurylink.com', 'testing testing testing', print_r($updateTicket, true));
 		if ($this->Ticket->save($updateTicket)) {
 			return 1;	
 		} else {
