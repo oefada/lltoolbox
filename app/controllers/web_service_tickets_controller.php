@@ -348,7 +348,7 @@ class WebServiceTicketsController extends WebServicesController
 			$newTicketStatus = false;
 			if ($ppvNoticeTypeId == 1) {
 				$newTicketStatus = 4;		
-			} else ($ppvNoticeTypeId == 2) {
+			} elseif ($ppvNoticeTypeId == 2) {
 				$newTicketStatus = 3;
 			}
 			
