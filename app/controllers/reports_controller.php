@@ -216,7 +216,9 @@ class ReportsController extends AppController {
                     INNER JOIN schedulingMaster AS SchedulingMaster ON (SchedulingMaster.schedulingMasterId = SchedulingInstance.schedulingInstanceId)
                     INNER JOIN offerType as OfferType ON (OfferType.offerTypeId = SchedulingMaster.offerTypeId)
                     INNER JOIN package AS Package ON (Package.packageId = SchedulingMaster.packageId)
-                    INNER JOIN client AS Client ON (Client.clientId = Ticket.clientId)
+                    INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Package.packageId)
+                    INNER JOIN client AS Client ON (Client.clientId = ClientLoaPackageRel.clientId)
+                    LEFT JOIN track AS Track ON (Track.trackId = ClientLoaPackageRel.trackId)
                     WHERE $conditions";
 
 	        $results = $this->OfferType->query($count);
@@ -226,7 +228,7 @@ class ReportsController extends AppController {
 	        $sql = "SELECT
                             Offer.offerId,
                         	Client.name,
-                        	#Remit Type,
+                        	Track.applyToMembershipBal,
                         	OfferType.offerTypeName,
             				(SELECT Country.countryName FROM country AS Country WHERE Country.countryId = Client.countryId) AS country,
             				(SELECT State.stateName FROM state AS State WHERE State.stateId = Client.stateId) AS state,
@@ -239,21 +241,23 @@ class ReportsController extends AppController {
                         	COUNT(Bid.bidId) AS numBids,
                         	COUNT(DISTINCT Bid.userId) AS uniqueBids,
                         	COUNT(DISTINCT Ticket.ticketId) AS numTickets,
-                        	COUNT(DISTINCT Ticket2.ticketId) AS numTicketsCollected,
                         	SUM(Ticket.billingPrice) AS moneyPotential,
+                        	COUNT(DISTINCT Ticket2.ticketId) AS numTicketsCollected,
                         	SUM(Ticket2.billingPrice) AS moneyCollected
                     FROM offer AS Offer
                     LEFT JOIN ticket AS Ticket ON (Ticket.offerId = Offer.offerId)
-                    LEFT JOIN ticket AS Ticket2 ON (Ticket2.offerId = Offer.offerId AND Ticket2.ticketStatusId IN (5,6))
+                    LEFT JOIN ticket AS Ticket2 ON (Ticket2.offerId = Offer.offerId AND Ticket2.ticketStatusId = 6)
                     LEFT JOIN bid AS Bid ON (Bid.offerId = Offer.offerId)
                     INNER JOIN schedulingInstance AS SchedulingInstance ON (SchedulingInstance.schedulingInstanceId = Offer.schedulingInstanceId)
                     INNER JOIN schedulingMaster AS SchedulingMaster ON (SchedulingMaster.schedulingMasterId = SchedulingInstance.schedulingInstanceId)
                     INNER JOIN offerType as OfferType ON (OfferType.offerTypeId = SchedulingMaster.offerTypeId)
                     INNER JOIN package AS Package ON (Package.packageId = SchedulingMaster.packageId)
-                    INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Package.packageId)
+                    INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Offer.packageId)
                     INNER JOIN client AS Client ON (Client.clientId = ClientLoaPackageRel.clientId)
+                    LEFT JOIN track AS Track ON (Track.trackId = ClientLoaPackageRel.trackId)
                     WHERE $conditions
-                    GROUP BY Offer.offerId
+                    GROUP BY Client.clientId, Offer.offerId
+                    ORDER BY $order
 	                LIMIT $limit";
 	        
 	        $results = $this->OfferType->query($sql);
@@ -328,12 +332,14 @@ class ReportsController extends AppController {
 	            }
 	            
 	        else:
-	            
-	            //for Client.name and Package.packageName it's faster and better to do a match
-	            if ($ca['field'] == 'Client.name' || $ca['field'] == 'Package.packageName') {
-	                $conditions[$k] =   "MATCH({$ca['field']}) AGAINST('{$ca['value']}' IN BOOLEAN MODE)";
+	            if(is_array($ca['value'])) {
+	                //wrap in single quotes
+	                foreach ($ca['value'] as $value) {
+	                    $values[] = "'{$value}'";
+	                }
+	                $conditions[$k] =   $ca['field'].' IN('.implode(',', $values).')';
 	            } else {
-	               $conditions[$k] =   $ca['field'].' = '."'{$ca['value']}'";
+	                $conditions[$k] =   $ca['field'].' = '."'{$ca['value']}'";
 	            }
 	            
 	        endif; //end generate SQL for between condition
