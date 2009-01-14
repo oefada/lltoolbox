@@ -351,8 +351,9 @@ class WebServiceTicketsController extends WebServicesController
 			$this->PpvNotice->save($ppvNoticeSave);
 			
 			// update ticket status if required
+			@mail('devmail@luxurylink.com', 'testing testing 1', $newTicketStatus);
 			if ($newTicketStatus) {
-				@mail('devmail@luxurylink.com', 'testing testing te', $newTicketStatus);
+				@mail('devmail@luxurylink.com', 'testing testing 2', $newTicketStatus);
 				$this->updateTicketStatus($ticketId, $newTicketStatus);
 			}
 		}
@@ -367,7 +368,7 @@ class WebServiceTicketsController extends WebServicesController
 		$updateTicket['ticketId'] = $ticketId;
 		$updateTicket['ticketStatusId'] = $newStatusId;
 		$tmp = print_r($updateTicket, true);
-		@mail('devmail@luxurylink.com', 'testing testing testing', $tmp);
+		@mail('devmail@luxurylink.com', 'testing testing 3', $tmp);
 		if ($this->Ticket->save($updateTicket)) {
 			return 1;	
 		} else {
