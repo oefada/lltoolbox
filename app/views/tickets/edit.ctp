@@ -14,7 +14,6 @@ $this->pageTitle = $this->data['Package']['packageName'].$html2->c($this->data['
 		echo $form->input('packageId', array('disabled' => 'disabled'));
 		echo $form->input('offerId', array('disabled' => 'disabled'));
 		echo $form->input('billingPrice', array('disabled' => 'disabled'));
-		echo $form->input('bookingPrice', array('disabled' => 'disabled'));
 		echo $form->input('userId', array('disabled' => 'disabled'));
 		echo $form->input('userFirstName');
 		echo $form->input('userLastName');

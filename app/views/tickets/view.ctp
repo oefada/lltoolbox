@@ -40,10 +40,6 @@ $this->searchController = 'Tickets';
 				<td><?php echo $offerType[$ticket['Ticket']['offerTypeId']]; ?></td>
 			</tr>
 			<tr>
-				<td><strong>Booking Price</strong></td>
-				<td><?php echo $number->currency($ticket['Ticket']['bookingPrice']); ?></td>
-			</tr>
-			<tr>
 				<td><strong>Billing Price</strong></td>
 				<td><?php echo $number->currency($ticket['Ticket']['billingPrice']); ?></td>
 			</tr>
@@ -262,79 +258,6 @@ $this->searchController = 'Tickets';
 		}
 	?>
 	
-	</div>
-</div>
-
-<br />
-<div class="collapsible">
-	<div class="handle"><?php __('Reservations');?></div>
-	<div class="collapsibleContent related">
-	<br />
-	<?php if (!empty($ticket['Reservation']['ticketId'])):?>
-		<table cellpadding="0" cellspacing="0">
-			<tr class="altrow">
-				<td width="200">Reservation Id</td>
-				<td><?php echo $ticket['Reservation']['reservationId'];?></td>
-			</tr>
-			<tr>
-				<td width="200">Room Type</td>
-				<td><?php echo $ticket['Reservation']['roomType'];?></td>
-			</tr>
-			<tr class="altrow">
-				<td width="200">Number of Nights</td>
-				<td><?php echo $ticket['Reservation']['numNights'];?></td>
-			</tr>
-			<tr>
-				<td width="200">Customer Consent Date</td>
-				<td><?php echo $ticket['Reservation']['customerConsentDate'];?></td>
-			</tr>
-			<tr class="altrow">
-				<td width="200">Arrival Date</td>
-				<td><?php echo $ticket['Reservation']['arrivalDate'];?></td>
-			</tr>
-			<tr>
-				<td width="200">Department Date</td>
-				<td><?php echo $ticket['Reservation']['departureDate'];?></td>
-			</tr>
-			<tr class="altrow">
-				<td width="200">Reservation Request Date</td>
-				<td><?php echo $ticket['Reservation']['reservationRequestDate'];?></td>
-			</tr>
-			<tr>
-				<td width="200">Reservation Confirm to Customer</td>
-				<td><?php echo $ticket['Reservation']['reservationConfirmToCustomer'];?></td>
-			</tr>
-			<tr class="altrow">
-				<td width="200">Reservation Confirmation Number</td>
-				<td><?php echo $ticket['Reservation']['reservationConfirmNum'];?></td>
-			</tr>
-		</table>
-		<?php
-		echo $html->link('Edit Reservation',
-			'/reservations/edit/' . $ticket['Reservation']['reservationId'],
-			array(
-				'title' => 'Edit Reservation',
-				'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
-				'complete' => 'closeModalbox()'
-				),
-			null,
-			false
-		);
-		?>
-	<?php else: ?>
-		<?php
-		echo $html->link('Edit Reservation Information',
-			'/tickets/' . $ticket['Ticket']['ticketId'] . '/reservations/add',
-			array(
-				'title' => 'Edit Reservation Information',
-				'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
-				'complete' => 'closeModalbox()'
-				),
-			null,
-			false
-		);
-		?>
-	<?php endif; ?>
 	</div>
 </div>
 

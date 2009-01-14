@@ -15,7 +15,6 @@
 		echo $form->input('paymentAuthDate');
 		echo $form->input('paymentSettleDate');
 		echo $form->input('billingPrice');
-		echo $form->input('bookingPrice');
 		echo $form->input('userId');
 		echo $form->input('userFirstName');
 		echo $form->input('userLastName');
