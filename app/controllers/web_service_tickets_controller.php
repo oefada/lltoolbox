@@ -27,7 +27,7 @@ class WebServiceTicketsController extends WebServicesController
 						'output' => array('return' => 'xsd:string')
 						)
 					);
-
+					
 	function beforeFilter() { $this->Auth->allow('*'); }
 
 	function newTicketProcessor1($in0)
@@ -107,7 +107,7 @@ class WebServiceTicketsController extends WebServicesController
 		$this->Ticket->create();
 		if ($this->Ticket->save($newTicket)) {
 	
-			// ticket is now created. werd
+			// ticket is now created. 
 			$ticketId = $this->Ticket->getLastInsertId();
 			
 			// update the tracks 
