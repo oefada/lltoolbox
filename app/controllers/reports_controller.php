@@ -4,7 +4,8 @@ class ReportsController extends AppController {
 	var $uses = array('OfferType');
 	var $helpers = array('Pagination');
 	//TODO: Add sorting, speed up the sql by adding indexes or a loading splash page, double check accuracy of data
-	function offer_search() {
+	
+	function beforeFilter() {
 	    if (!empty($this->params['named']['filter'])) {
 	        $filter = urldecode($this->params['named']['filter']);
 	        $get    = @unserialize($filter);
@@ -13,7 +14,8 @@ class ReportsController extends AppController {
 	            $this->data = $get;
 	        }
 	    }
-
+	}
+	function offer_search() {
 	    if (!empty($this->data)) {
 	        $conditions = $this->_offer_search_build_conditions($this->data);
 	        
