@@ -557,5 +557,58 @@ class ReportsController extends AppController {
 
 	        $this->set('results', $results);
 	}
+	
+	function auction_timeslot() {
+	    if (!empty($this->data)) {
+	        $conditions = $this->_bids_build_conditions($this->data); //we can use the same conditions as bids
+	        
+	        if (!empty($this->params['named']['page'])) {
+	            $page = $this->params['named']['page'];
+	            $limit = (($page-1)*20).',20';
+	        } else {
+	            $page = 1;
+	            $limit = 20;
+	        }
+	        
+	        if (!empty($this->params['named']['sortBy'])) {
+	            $direction = (@$this->params['named']['sortDirection'] == 'DESC') ? 'DESC' : 'ASC';
+	            $order = $this->params['named']['sortBy'].' '.$direction;
+	            
+	            $this->set('sortBy', $this->params['named']['sortBy']);
+	            $this->set('sortDirection', $direction);
+	        } else {
+	            $order = 'Offer.offerId';
+	            
+	            $this->set('sortBy', 'Offer.offerId');
+    	        $this->set('sortDirection', 'DESC');
+	        }
+
+	        $sql = "SELECT DATE_FORMAT(SchedulingInstance.endDate, '%Y-%m-%d') as onlyEndDate, OfferType.offerTypeName, COUNT(DISTINCT SchedulingInstance.schedulingInstanceId) as numOffers,
+                        CASE
+                            WHEN HOUR(SchedulingInstance.endDate) BETWEEN 0 AND 7 THEN -1 #before 7am
+                                WHEN HOUR(SchedulingInstance.endDate) BETWEEN 7 AND 16 THEN HOUR(SchedulingInstance.endDate) #everything in between
+                                WHEN HOUR(SchedulingInstance.endDate) BETWEEN 16 AND 24 THEN 999 #after 5pm
+                            END as timeOfDay
+                    FROM offer AS Offer
+                    INNER JOIN schedulingInstance AS SchedulingInstance ON (SchedulingInstance.schedulingInstanceId = Offer.schedulingInstanceId)
+                    INNER JOIN schedulingMaster AS SchedulingMaster ON (SchedulingMaster.schedulingMasterId = SchedulingInstance.schedulingMasterId)
+                    LEFT JOIN offerType AS OfferType ON (SchedulingMaster.offerTypeId = OfferType.offerTypeId)
+                    WHERE $conditions
+                    GROUP BY onlyEndDate, timeOfDay, OfferType.offerTypeId
+                    ORDER BY onlyEndDate, timeOfDay ASC";
+
+	        $results = $this->OfferType->query($sql);
+	        
+	        //have to get the results in a format that we can easily loop through
+	        $rows = array();
+	        foreach ($results as $r) {
+	            $rows[$r[0]['onlyEndDate']][$r['OfferType']['offerTypeName']][$r[0]['timeOfDay']] = $r[0]['numOffers'];
+	        }
+	        
+            $this->set('data', $this->data);
+	        $this->set('results', $rows);
+	        $this->set('serializedFormInput', serialize($this->data));
+	    }
+	}
 }
 ?>
