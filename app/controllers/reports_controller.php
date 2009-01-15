@@ -252,7 +252,7 @@ class ReportsController extends AppController {
                     INNER JOIN schedulingMaster AS SchedulingMaster ON (SchedulingMaster.schedulingMasterId = SchedulingInstance.schedulingInstanceId)
                     INNER JOIN offerType as OfferType ON (OfferType.offerTypeId = SchedulingMaster.offerTypeId)
                     INNER JOIN package AS Package ON (Package.packageId = SchedulingMaster.packageId)
-                    INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Offer.packageId)
+                    INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Package.packageId)
                     INNER JOIN client AS Client ON (Client.clientId = ClientLoaPackageRel.clientId)
                     LEFT JOIN track AS Track ON (Track.trackId = ClientLoaPackageRel.trackId)
                     WHERE $conditions
