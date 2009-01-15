@@ -501,5 +501,61 @@ class ReportsController extends AppController {
 	    $conditions[] = 'Ticket.requestQueueId IS NOT NULL';  //filter only fixed price types
 	    return implode($conditions, ' AND ');
 	}
+	
+	function aging() {
+	        $sql = "SELECT Client.clientId, Client.name,
+            	                        Loa.loaId,
+            	                        Loa.startDate,
+            	                        MAX(Loa.endDate) AS loaEndDate,
+            	                        Loa.membershipFee, Loa.membershipBalance
+                                FROM client AS Client
+                                INNER JOIN loa AS Loa ON (Loa.clientId = Client.clientId)
+            					WHERE Loa.startDate BETWEEN DATE_ADD(NOW(), INTERVAL -90 DAY) AND NOW()
+                                GROUP BY Client.clientId, Loa.loaId
+                                ORDER BY Loa.startDate DESC";
+
+	        $results['0 to 90'] = $this->OfferType->query($sql);
+	        
+	        $sql = "SELECT Client.clientId, Client.name,
+            	                        Loa.loaId,
+            	                        Loa.startDate,
+            	                        MAX(Loa.endDate) AS loaEndDate,
+            	                        Loa.membershipFee, Loa.membershipBalance
+                                FROM client AS Client
+                                INNER JOIN loa AS Loa ON (Loa.clientId = Client.clientId)
+            					WHERE Loa.startDate BETWEEN DATE_ADD(NOW(), INTERVAL -180 DAY) AND DATE_ADD(NOW(), INTERVAL -90 DAY)
+                                GROUP BY Client.clientId, Loa.loaId
+                                ORDER BY Loa.startDate DESC";
+
+	        $results['91 to 180'] = $this->OfferType->query($sql);
+	        
+	        $sql = "SELECT Client.clientId, Client.name,
+            	                        Loa.loaId,
+            	                        Loa.startDate,
+            	                        MAX(Loa.endDate) AS loaEndDate,
+            	                        Loa.membershipFee, Loa.membershipBalance
+                                FROM client AS Client
+                                INNER JOIN loa AS Loa ON (Loa.clientId = Client.clientId)
+            					WHERE Loa.startDate BETWEEN DATE_ADD(NOW(), INTERVAL -270 DAY) AND DATE_ADD(NOW(), INTERVAL -180 DAY)
+                                GROUP BY Client.clientId, Loa.loaId
+                                ORDER BY Loa.startDate DESC";
+
+	        $results['181 to 270'] = $this->OfferType->query($sql);
+	        
+	        $sql = "SELECT Client.clientId, Client.name,
+            	                        Loa.loaId,
+            	                        Loa.startDate,
+            	                        MAX(Loa.endDate) AS loaEndDate,
+            	                        Loa.membershipFee, Loa.membershipBalance
+                                FROM client AS Client
+                                INNER JOIN loa AS Loa ON (Loa.clientId = Client.clientId)
+            					WHERE Loa.startDate BETWEEN DATE_ADD(NOW(), INTERVAL -1 YEAR) AND DATE_ADD(NOW(), INTERVAL -270 DAY)
+                                GROUP BY Client.clientId, Loa.loaId
+                                ORDER BY Loa.startDate DESC";
+
+	        $results['271 to 365'] = $this->OfferType->query($sql);
+
+	        $this->set('results', $results);
+	}
 }
 ?>
