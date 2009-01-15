@@ -47,6 +47,13 @@
 	<?php echo $form->text('condition6.value')?>
 	</div>
 </div>
+
+<div class="controlset fieldRow" style="border: 0">
+<?php 		echo $form->checkbox('paging.disablePagination');
+			echo $form->label('paging.disablePagination');?>
+</div>
+
+
 </fieldset>
 <?php echo $form->submit('Search') ?>
 </div>

@@ -5,6 +5,10 @@ class ReportsController extends AppController {
 	var $helpers = array('Pagination');
 	//TODO: Add sorting, speed up the sql by adding indexes or a loading splash page, double check accuracy of data
 	
+	var $page;
+	var $limit;
+	var $perPage = 20;
+	
 	function beforeFilter() {
 	    parent::beforeFilter();
 	    if (!empty($this->params['named']['filter'])) {
@@ -15,18 +19,22 @@ class ReportsController extends AppController {
 	            $this->data = $get;
 	        }
 	    }
+
+	    if (!empty($this->params['named']['page'])) {
+            $this->page = $this->params['named']['page'];
+            $this->limit = (($this->page-1)*20).',20';
+        } elseif($this->data['paging']['disablePagination'] == 1) {
+            $this->page = 1;
+            $this->perPage = 9999;
+            $this->limit = 9999;
+        } else {
+            $this->page = 1;
+            $this->limit = 20;
+        }
 	}
 	function offer_search() {
 	    if (!empty($this->data)) {
 	        $conditions = $this->_offer_search_build_conditions($this->data);
-	        
-	        if (!empty($this->params['named']['page'])) {
-	            $page = $this->params['named']['page'];
-	            $limit = (($page-1)*20).',20';
-	        } else {
-	            $page = 1;
-	            $limit = 20;
-	        }
 	        
 	        if (!empty($this->params['named']['sortBy'])) {
 	            $direction = (@$this->params['named']['sortDirection'] == 'DESC') ? 'DESC' : 'ASC';
@@ -55,7 +63,7 @@ class ReportsController extends AppController {
 
 	        $results = $this->OfferType->query($count);
 	        $numRecords = $results[0][0]['numRecords'];
-            $numPages = ceil($numRecords / 20);
+            $numPages = ceil($numRecords / $this->perPage);
                 
 	        $sql = "SELECT
 	                SchedulingInstance.schedulingInstanceId, (SchedulingInstance.endDate >= NOW()) AS offerStatus, IF(SchedulingInstance.endDate >= NOW(), SchedulingInstance.startDate, SchedulingInstance.endDate) AS dateOpenedOrClosed,
@@ -84,11 +92,11 @@ class ReportsController extends AppController {
 	                WHERE $conditions
 	                GROUP BY Offer.offerId, SchedulingMaster.schedulingMasterId
 	                ORDER BY $order
-	                LIMIT $limit";
+	                LIMIT $this->limit";
 	        
 	        $results = $this->OfferType->query($sql);
             
-            $this->set('currentPage', $page);
+            $this->set('currentPage', $this->page);
             $this->set('numRecords', $numRecords);
             $this->set('numPages', $numPages);
             $this->set('data', $this->data);
@@ -185,15 +193,7 @@ class ReportsController extends AppController {
 	function bids() {
 	    if (!empty($this->data)) {
 	        $conditions = $this->_bids_build_conditions($this->data);
-	        
-	        if (!empty($this->params['named']['page'])) {
-	            $page = $this->params['named']['page'];
-	            $limit = (($page-1)*20).',20';
-	        } else {
-	            $page = 1;
-	            $limit = 20;
-	        }
-	        
+
 	        if (!empty($this->params['named']['sortBy'])) {
 	            $direction = (@$this->params['named']['sortDirection'] == 'DESC') ? 'DESC' : 'ASC';
 	            $order = $this->params['named']['sortBy'].' '.$direction;
@@ -207,10 +207,11 @@ class ReportsController extends AppController {
     	        $this->set('sortDirection', 'DESC');
 	        }
 	        
-            $count = "SELECT COUNT(DISTINCT Offer.offerId) as numRecords
+        $count = "    SELECT
+                            Offer.offerId
                     FROM offer AS Offer
                     LEFT JOIN ticket AS Ticket ON (Ticket.offerId = Offer.offerId)
-                    LEFT JOIN ticket AS Ticket2 ON (Ticket2.offerId = Offer.offerId AND Ticket2.ticketStatusId IN (5,6))
+                    LEFT JOIN ticket AS Ticket2 ON (Ticket2.offerId = Offer.offerId AND Ticket2.ticketStatusId = 6)
                     LEFT JOIN bid AS Bid ON (Bid.offerId = Offer.offerId)
                     INNER JOIN schedulingInstance AS SchedulingInstance ON (SchedulingInstance.schedulingInstanceId = Offer.schedulingInstanceId)
                     INNER JOIN schedulingMaster AS SchedulingMaster ON (SchedulingMaster.schedulingMasterId = SchedulingInstance.schedulingInstanceId)
@@ -219,11 +220,12 @@ class ReportsController extends AppController {
                     INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Package.packageId)
                     INNER JOIN client AS Client ON (Client.clientId = ClientLoaPackageRel.clientId)
                     LEFT JOIN track AS Track ON (Track.trackId = ClientLoaPackageRel.trackId)
-                    WHERE $conditions";
+                    WHERE $conditions
+                    GROUP BY Offer.offerId, Client.clientId";
 
 	        $results = $this->OfferType->query($count);
-	        $numRecords = $results[0][0]['numRecords'];
-            $numPages = ceil($numRecords / 20);
+	        $numRecords = count($results);
+            $numPages = ceil($numRecords / $this->perPage);
                 
 	        $sql = "SELECT
                             Offer.offerId,
@@ -256,13 +258,13 @@ class ReportsController extends AppController {
                     INNER JOIN client AS Client ON (Client.clientId = ClientLoaPackageRel.clientId)
                     LEFT JOIN track AS Track ON (Track.trackId = ClientLoaPackageRel.trackId)
                     WHERE $conditions
-                    GROUP BY Client.clientId, Offer.offerId
+                    GROUP BY Offer.offerId, Client.clientId
                     ORDER BY $order
-	                LIMIT $limit";
+	                LIMIT $this->limit";
 	        
 	        $results = $this->OfferType->query($sql);
             
-            $this->set('currentPage', $page);
+            $this->set('currentPage', $this->page);
             $this->set('numRecords', $numRecords);
             $this->set('numPages', $numPages);
             $this->set('data', $this->data);
@@ -361,14 +363,6 @@ class ReportsController extends AppController {
 	    if (!empty($this->data)) {
 	        $conditions = $this->_fixed_price_build_conditions($this->data);
 	        
-	        if (!empty($this->params['named']['page'])) {
-	            $page = $this->params['named']['page'];
-	            $limit = (($page-1)*20).',20';
-	        } else {
-	            $page = 1;
-	            $limit = 20;
-	        }
-	        
 	        if (!empty($this->params['named']['sortBy'])) {
 	            $direction = (@$this->params['named']['sortDirection'] == 'DESC') ? 'DESC' : 'ASC';
 	            $order = $this->params['named']['sortBy'].' '.$direction;
@@ -418,20 +412,17 @@ class ReportsController extends AppController {
                                 INNER JOIN offerType as OfferType ON (OfferType.offerTypeId = Ticket.offerTypeId)
                                 INNER JOIN client AS Client ON (Client.clientId = Ticket.clientId)
                                 INNER JOIN offer AS Offer ON (Offer.offerId = Ticket.offerId)
-                                INNER JOIN schedulingInstance AS SchedulingInstance ON (SchedulingInstance.schedulingInstanceId = Offer.schedulingInstanceId)
-                                INNER JOIN schedulingMaster AS SchedulingMaster ON (SchedulingMaster.schedulingMasterId = SchedulingInstance.schedulingMasterId)
-                                INNER JOIN package AS Package ON (Package.packageId = SchedulingMaster.packageId)
-                                INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Package.packageId AND ClientLoaPackageRel.clientId = Ticket.clientId)
+                                INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Ticket.packageId AND ClientLoaPackageRel.clientId = Ticket.clientId)
                                 LEFT JOIN track AS Track ON (Track.trackId = ClientLoaPackageRel.trackId)
                                 LEFT JOIN paymentDetail AS PaymentDetail ON (PaymentDetail.ticketId = Ticket.ticketId AND PaymentDetail.userId = Ticket.userId)
                     WHERE $conditions
                     GROUP BY Ticket.ticketId
                     ORDER BY $order
-	                LIMIT $limit";
+	                LIMIT $this->limit";
 
 	        $results = $this->OfferType->query($sql);
 
-            $this->set('currentPage', $page);
+            $this->set('currentPage', $this->page);
             $this->set('numRecords', $numRecords);
             $this->set('numPages', $numPages);
             $this->set('data', $this->data);
@@ -561,14 +552,6 @@ class ReportsController extends AppController {
 	function auction_timeslot() {
 	    if (!empty($this->data)) {
 	        $conditions = $this->_bids_build_conditions($this->data); //we can use the same conditions as bids
-	        
-	        if (!empty($this->params['named']['page'])) {
-	            $page = $this->params['named']['page'];
-	            $limit = (($page-1)*20).',20';
-	        } else {
-	            $page = 1;
-	            $limit = 20;
-	        }
 	        
 	        if (!empty($this->params['named']['sortBy'])) {
 	            $direction = (@$this->params['named']['sortDirection'] == 'DESC') ? 'DESC' : 'ASC';

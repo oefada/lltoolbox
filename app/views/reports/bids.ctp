@@ -37,9 +37,13 @@
 		echo $form->select('condition3.value', array(1 => 'Standard', 2 => 'Best Shot', 6 => 'Dutch'), null, array('multiple' => 'checkbox'))?>
 </div>
 </div>
-
+<div class="controlset fieldRow" style="border: 0">
+<?php 		echo $form->checkbox('paging.disablePagination');
+			echo $form->label('paging.disablePagination');?>
+</div>
 </div>
 </fieldset>
+
 <?php echo $form->submit('Search') ?>
 </div>
 
@@ -88,15 +92,27 @@ if (!empty($results)): ?>
 			<th><?=sortLink('numTicketsCollected', '# Collected', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('moneyPotential', '$ Potential', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('moneyCollected', '$ Collected', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('moneyCollected', '% Tickets Collected', $currentPage, $serializedFormInput, $this, $html)?></th>
 		</tr>
-<?php foreach ($results as $k => $r):
+<?php
+$bids = 0;
+$uniqueBids = 0;
+$tickets = 0;
+$numTicketsCollected = 0;
+$moneyPotential = 0;
+$moneyCollected = 0;
+foreach ($results as $k => $r):
 $class = ($k % 2) ? ' class="altrow"' : '';
 
 $collectedStyle = '';
 if (0 != $r[0]['numTickets'] && 1 !== $r[0]['numTicketsCollected']/$r[0]['numTickets']) {
 	$collectedStyle = ' style="background: #c00; color: #fff"';
 }
+$bids += $r[0]['numBids'];
+$uniqueBids += $r[0]['uniqueBids'];
+$tickets += $r[0]['numTickets'];
+$numTicketsCollected += $r[0]['numTicketsCollected'];
+$moneyPotential += $r[0]['moneyPotential'];
+$moneyCollected += $r[0]['moneyCollected'];
 ?>
 	<tr<?=$class?>>
 		<td><?=$r['Offer']['offerId']?></td>
@@ -116,17 +132,26 @@ if (0 != $r[0]['numTickets'] && 1 !== $r[0]['numTicketsCollected']/$r[0]['numTic
 		<td><?=$r[0]['numTickets']?></td>
 		<td><?=$r[0]['numTicketsCollected']?></td>
 		<td><?=$number->currency($r[0]['moneyPotential'], 'USD', array('places' => 0))?></td>
-		<td><?=$number->currency($r[0]['moneyCollected'], 'USD', array('places' => 0))?></td>
-		<td<?=$collectedStyle?>>
-		<?
-		if ($r[0]['numTickets'] == 0) {
-			echo '0%';
-		} else {
-			echo $number->toPercentage($r[0]['numTicketsCollected']/$r[0]['numTickets']*100, 0);
-		}
-		?></td>
+		<td<?=$collectedStyle?>><?=$number->currency($r[0]['moneyCollected'], 'USD', array('places' => 0))?></td>
 	</tr>
 <?php endforeach; ?>
+	<tr class='related'>
+		<th colspan=12 rowspan=2 style="text-align:right;">Sheet Totals:</th>
+		<th># Of Bids</td>
+		<th># Of Unique Bids</td>
+		<th># Of Tickets</td>
+		<th># Of Tickets Collected</td>
+		<th>$ Potential</td>
+		<th>$ Collected</td>
+	</tr>
+	<tr>
+		<td><?=$bids?></td>
+		<td><?=$uniqueBids?></td>
+		<td><?=$tickets?></td>
+		<td><?=$numTicketsCollected?></td>
+		<td><?=$number->currency($moneyPotential, 'USD', array('places' => 0))?></td>
+		<td><?=$number->currency($moneyCollected, 'USD', array('places' => 0))?></td>
+	</tr>
 </table>
 <?=$pagination->Paginate("/reports/bids/filter:".urlencode($serializedFormInput)."/sortBy:$sortBy/sortDirection:$sortDirection/page:", $currentPage, $numPages)?>
 <?php elseif (!empty($data)): ?>

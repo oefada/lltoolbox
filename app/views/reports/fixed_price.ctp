@@ -1,4 +1,4 @@
-<?php $this->pageTitle = "Bid Search" ?>
+<?php $this->pageTitle = "Fixed Price Search" ?>
 
 <div class='advancedSearch' style="width: 800px">
 	<?php echo $form->create('', array('action' => 'fixed_price'))?>
@@ -37,6 +37,12 @@
 		echo $form->select('condition3.value', array(3 => 'Exclusive', 4 => 'Best Buy'), null, array('multiple' => 'checkbox'))?>
 </div>
 </div>
+
+<div class="controlset fieldRow" style="border: 0">
+<?php 		echo $form->checkbox('paging.disablePagination');
+			echo $form->label('paging.disablePagination');?>
+</div>
+
 
 </div>
 </fieldset>
