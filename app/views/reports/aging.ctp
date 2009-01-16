@@ -20,11 +20,15 @@ function sortLink($field, $title, $view, $html) {
 	return $html->link($title, $url);
 }
 
-if (!empty($results)): ?>
+if (!empty($results)): 
+$i = 1;
+?>
 <?php foreach($results as $periodName => $timeperiod): ?>
 	<div><h2>Accounts aged <?=$periodName?> days</h2><?=count($timeperiod)?> records found</div>
 	<table style="margin-top: 20px">
 		<tr>
+			<th>&nbsp;</th>
+			<th><?=sortLink('Offer.offerId', 'Age (Days)', $this, $html)?></th>
 			<th><?=sortLink('Offer.offerId', 'Client ID', $this, $html)?></th>
 			<th><?=sortLink('Client.name', 'Client Name', $this, $html)?></th>
 			<th><?=sortLink('Track.applyToMembershipBal', 'LOA ID', $this, $html)?></th>
@@ -40,6 +44,8 @@ if (!empty($results)): ?>
 $class = ($k % 2) ? ' class="altrow"' : '';
 ?>
 	<tr<?=$class?>>
+		<td><?=$i++?></td>
+		<td><?=$r[0]['age']?></td>
 		<td><?=$r['Client']['clientId']?></td>
 		<td><?=$r['Client']['name']?></td>
 		<td><?=$r['Loa']['loaId']?></td>
