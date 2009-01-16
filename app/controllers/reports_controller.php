@@ -502,7 +502,7 @@ class ReportsController extends AppController {
                                 FROM client AS Client
                                 INNER JOIN loa AS Loa ON (Loa.clientId = Client.clientId)
             					WHERE Loa.startDate BETWEEN DATE_ADD(NOW(), INTERVAL -90 DAY) AND NOW()
-            					        AND Loa.membershipBalance > 0 AND Loa.membershipFee > 0
+            					        AND Loa.membershipBalance > 0
                                 GROUP BY Client.clientId, Loa.loaId
                                 ORDER BY Loa.startDate DESC";
 
@@ -516,7 +516,7 @@ class ReportsController extends AppController {
                                 FROM client AS Client
                                 INNER JOIN loa AS Loa ON (Loa.clientId = Client.clientId)
             					WHERE Loa.startDate BETWEEN DATE_ADD(NOW(), INTERVAL -180 DAY) AND DATE_ADD(NOW(), INTERVAL -90 DAY)
-            					    AND Loa.membershipBalance > 0 AND Loa.membershipFee > 0
+            					    AND Loa.membershipBalance > 0
                                 GROUP BY Client.clientId, Loa.loaId
                                 ORDER BY Loa.startDate DESC";
 
@@ -530,7 +530,7 @@ class ReportsController extends AppController {
                                 FROM client AS Client
                                 INNER JOIN loa AS Loa ON (Loa.clientId = Client.clientId)
             					WHERE Loa.startDate BETWEEN DATE_ADD(NOW(), INTERVAL -270 DAY) AND DATE_ADD(NOW(), INTERVAL -180 DAY)
-            					    AND Loa.membershipBalance > 0 AND Loa.membershipFee > 0
+            					    AND Loa.membershipBalance > 0
                                 GROUP BY Client.clientId, Loa.loaId
                                 ORDER BY Loa.startDate DESC";
 
@@ -544,7 +544,7 @@ class ReportsController extends AppController {
                                 FROM client AS Client
                                 INNER JOIN loa AS Loa ON (Loa.clientId = Client.clientId)
             					WHERE Loa.startDate BETWEEN DATE_ADD(NOW(), INTERVAL -1 YEAR) AND DATE_ADD(NOW(), INTERVAL -270 DAY)
-            					    AND Loa.membershipBalance > 0 AND Loa.membershipFee > 0
+            					    AND Loa.membershipBalance > 0
                                 GROUP BY Client.clientId, Loa.loaId
                                 ORDER BY Loa.startDate DESC";
 
