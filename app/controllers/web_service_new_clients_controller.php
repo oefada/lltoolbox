@@ -75,7 +75,7 @@ class WebServiceNewClientsController extends WebServicesController
 			$this->Client->save($client_data_save);
 			
 			// get new client id and send back to Sugar
-			$decoded_request['client']['client_id'] = $this->Client->getLastInsertID();
+			$decoded_request['client']['client_id'] = $this->Client->getLastInsertId();
 		}
 		
 		//$decoded_request['client']['client_desc'];        
