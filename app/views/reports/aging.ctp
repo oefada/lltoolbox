@@ -36,9 +36,6 @@ $i = 1;
 			<th><?=sortLink('country', 'End Date', $this, $html)?></th>
 			<th><?=sortLink('state', 'Membership Fee', $this, $html)?></th>
 			<th><?=sortLink('city', 'Remaining Balance', $this, $html)?></th>
-			<th><?=sortLink('percentMinBid', 'Remits Remaining', $this, $html)?></th>
-			<th><?=sortLink('percentClose', 'Original Owed', $this, $html)?></th>
-			<th><?=sortLink('Package.approvedRetailPrice', 'Additional Packages Sold', $this, $html)?></th>
 		</tr>
 <?php foreach ($timeperiod as $k => $r):
 $class = ($k % 2) ? ' class="altrow"' : '';
@@ -53,9 +50,6 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 		<td><?=$r[0]['loaEndDate']?></td>
 		<td><?=$r['Loa']['membershipFee']?></td>
 		<td><?=$r['Loa']['membershipBalance']?></td>
-		<td>?</td>
-		<td>?</td>
-		<td>?</td>
 	</tr>
 <?php endforeach; //TODO: add totals ?>
 </table>
