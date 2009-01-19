@@ -40,6 +40,8 @@ class WebServiceNewClientsController extends WebServicesController
 	        $response_value = '-1';
 	    }
 		
+		mail('alee@luxurylink.com','test 1', print_r($decoded_request, true));
+		
 		// map data from Sugar to toolbox client table structure
 		$client_data_save = array();
         $client_data_save['name']				= $decoded_request['client']['client_name'];
@@ -78,6 +80,9 @@ class WebServiceNewClientsController extends WebServicesController
 			$decoded_request['client']['client_id'] = $this->Client->getLastInsertId();
 		}
 		
+		mail('alee@luxurylink.com','test 2', print_r($client_data_save, true));
+		mail('alee@luxurylink.com','test 3', print_r($decoded_request, true));
+		
 		//$decoded_request['client']['client_desc'];        
 		//$decoded_request['client']['client_level_id'];
 		//$decoded_request['client']['manager_ini'];
@@ -100,8 +105,10 @@ class WebServiceNewClientsController extends WebServicesController
 	    $encoded_response = json_encode($decoded_request);
 	
 	    // sugar has to update appropiate site manger id.  send to esb client id and sugar id
-	    $client = new nusoap_client('http://192.168.100.22:8888/services2/ClientReceiver2?wsdl',true);
+	    $client = new nusoap_client('http://sugardev.luxurylink.com:8888/services2/ClientReceiver2?wsdl',true);
 	    $response_esb = $client->call('soap_call', array('args' => $encoded_response));
+	
+		mail('alee@luxurylink.com','test 4', print_r($response_esb, true));
 	
 	    // this tests to see if we were getting correct response from the request
 	    return $encoded_response;
