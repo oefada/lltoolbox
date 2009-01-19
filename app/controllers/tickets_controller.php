@@ -83,6 +83,7 @@ class TicketsController extends AppController {
 	}
 
 	function view($id = null) {
+				
 		if (!$id) {
 			$this->Session->setFlash(__('Invalid Ticket.', true), 'default', array(), 'error');
 			$this->redirect(array('action'=>'index'));
