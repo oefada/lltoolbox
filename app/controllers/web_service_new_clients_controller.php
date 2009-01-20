@@ -1,6 +1,7 @@
 <?php
 
 App::import('Vendor', 'nusoap/web_services_controller');
+App::import('Vendor', 'nusoap_client/lib/nusoap');
 Configure::write('debug', 0);
 
 class WebServiceNewClientsController extends WebServicesController
@@ -105,7 +106,9 @@ class WebServiceNewClientsController extends WebServicesController
 	    $encoded_response = json_encode($decoded_request);
 	
 	    // sugar has to update appropiate site manger id.  send to esb client id and sugar id
-	    $client = new nusoap_client('http://sugardev.luxurylink.com:8888/services2/ClientReceiver2?wsdl',true);
+	    $webservice_live_url = 'http://sugardev.luxurylink.com:8888/services2/ClientReceiver2?wsdl';
+		
+	    $client = new nusoap_client($webservice_live_url, true);
 	    $response_esb = $client->call('soap_call', array('args' => $encoded_response));
 	
 		mail('alee@luxurylink.com','test 4', print_r($response_esb, true));
