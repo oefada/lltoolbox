@@ -106,11 +106,11 @@ class WebServiceNewClientsController extends WebServicesController
 	    $encoded_response = json_encode($decoded_request);
 	
 	    // sugar has to update appropiate site manger id.  send to esb client id and sugar id
-	    $webservice_live_url = 'http://192.168.100.22:8888/services2/ClientReceiver2?wsdl';
+	    $webservice_live_url = 'http://sugardev.luxurylink.com:8888/services2/ClientReceiver2?wsdl';
 		
 	    $soap_client = new soap_client($webservice_live_url, true);
 	    $response_esb = $soap_client->call('soap_call', array('args' => $encoded_response));
-	    
+	    unset($soap_client);
 		mail('alee@luxurylink.com','test 4', print_r($response_esb, true));
 	
 	    // this tests to see if we were getting correct response from the request
