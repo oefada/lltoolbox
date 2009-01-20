@@ -1,8 +1,10 @@
 <?php
 
+Configure::write('debug', 0);
 App::import('Vendor', 'nusoap/web_services_controller');
 //App::import('Vendor', 'nusoap_client/lib/nusoap');
-Configure::write('debug', 0);
+
+// TODO:  should work on sugarprod.
 
 class WebServiceNewClientsController extends WebServicesController
 {
