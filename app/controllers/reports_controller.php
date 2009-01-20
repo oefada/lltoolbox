@@ -601,5 +601,163 @@ class ReportsController extends AppController {
 	        $this->set('serializedFormInput', serialize($this->data));
 	    }
 	}
+	
+	function auction_winner() {
+	    if (!empty($this->data)) {
+	        $conditions = $this->_build_conditions($this->data);
+	        
+	        if (!empty($this->params['named']['sortBy'])) {
+	            $direction = (@$this->params['named']['sortDirection'] == 'DESC') ? 'DESC' : 'ASC';
+	            $order = $this->params['named']['sortBy'].' '.$direction;
+	            
+	            $this->set('sortBy', $this->params['named']['sortBy']);
+	            $this->set('sortDirection', $direction);
+	        } else {
+	            $order = 'Ticket.ticketId';
+	            
+	            $this->set('sortBy', 'Ticket.ticketId');
+    	        $this->set('sortDirection', 'DESC');
+	        }
+            
+            if (empty($conditions)) {
+                $conditions = '1=1';
+            }
+             $sql = "SELECT COUNT(DISTINCT Ticket.ticketId) as numRecords
+                        FROM ticket AS Ticket
+                               INNER JOIN offer AS Offer USING(offerId)
+                               INNER JOIN offerType AS OfferType USING(offerTypeId)
+                               INNER JOIN schedulingInstance AS SchedulingInstance USING(schedulingInstanceId)
+                               INNER JOIN client as Client USING(clientId)
+                               LEFT JOIN paymentDetail AS PaymentDetail USING (ticketId)
+                               LEFT JOIN paymentProcessor AS PaymentProcessor USING (paymentProcessorId)
+                               LEFT JOIN userPaymentSetting AS UserPaymentSetting USING (userPaymentSettingId)
+                               INNER JOIN package AS Package USING(packageId)
+                               INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.clientId = Ticket.clientId AND ClientLoaPackageRel.packageId = Ticket.packageId)
+                               LEFT JOIN track AS Track USING(trackId)
+                        WHERE $conditions";
+
+    	    $results = $this->OfferType->query($sql);
+    	    $numRecords = $results[0][0]['numRecords'];
+            $numPages = ceil($numRecords / $this->limit);
+            
+            $sql = "SELECT SchedulingInstance.endDate,
+                           PaymentDetail.paymentDatetime, 
+                           Ticket.ticketId,
+                           Client.clientId,
+                           Client.name,
+                           Ticket.userFirstName,
+                           Ticket.userLastName,
+                           Ticket.userAddress1,
+                           Ticket.userAddress2,
+                           Ticket.userCity,
+                           Ticket.userState,
+                           Ticket.userCountry,
+                           Ticket.userZip,
+                           Ticket.userWorkPhone,
+                           Ticket.userHomePhone,
+                           Ticket.userMobilePhone,
+                           Ticket.userEmail1,
+                           UserPaymentSetting.ccType,
+                           PaymentDetail.ppCardNumLastFour,
+                           PaymentDetail.ppExpMonth,
+                           PaymentDetail.ppExpYear,
+                           SUM(PaymentDetail.ppBillingAmount) as revenue,
+                           Package.numNights,
+                           OfferType.offerTypeName,
+                           ROUND((SUM(PaymentDetail.ppBillingAmount) / Package.approvedRetailPrice * 100)) as percentOfRetail,
+                           PaymentProcessor.paymentProcessorName,
+                           Track.applyToMembershipBal,
+                           Package.validityStartDate,
+                           Package.validityEndDate
+                    FROM ticket AS Ticket
+                           INNER JOIN offer AS Offer USING(offerId)
+                           INNER JOIN offerType AS OfferType USING(offerTypeId)
+                           INNER JOIN schedulingInstance AS SchedulingInstance USING(schedulingInstanceId)
+                           INNER JOIN client as Client USING(clientId)
+                           LEFT JOIN paymentDetail AS PaymentDetail USING (ticketId)
+                           LEFT JOIN paymentProcessor AS PaymentProcessor USING (paymentProcessorId)
+                           LEFT JOIN userPaymentSetting AS UserPaymentSetting USING (userPaymentSettingId)
+                           INNER JOIN package AS Package USING(packageId)
+                           INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.clientId = Ticket.clientId AND ClientLoaPackageRel.packageId = Ticket.packageId)
+                           LEFT JOIN track AS Track USING(trackId)
+                    WHERE $conditions
+                    GROUP BY Ticket.ticketId
+                    ORDER BY $order
+	                LIMIT $this->limit";
+	        
+	        $results = $this->OfferType->query($sql);
+            
+            $this->set('currentPage', $this->page);
+            $this->set('numRecords', $numRecords);
+            $this->set('numPages', $numPages);
+            $this->set('data', $this->data);
+	        $this->set('results', $results);
+	        $this->set('serializedFormInput', serialize($this->data));
+	    }
+	}
+	
+	//TODO: A lot of duplication of code, use this method as a template for all the others and cut down on the number of times the following code is repeated
+	function _build_conditions($data) {
+	    $conditions = array();
+	    foreach ($data as $k => $ca) {
+	        if (isset($ca['value']['between'])) {
+                $betweenCondition = $ca['value']['between'];
+            } else {
+                $betweenCondition = false;
+            }
+            
+            /* Check if the conditions have valid data and can be used in a where clause */
+	        if (empty($ca['field']) ||
+	            empty($ca['value'])) {
+	                continue;                               //skip if no valid data found
+	            }
+
+            /* If we got this far then that means we have adequate data for a where clause */
+            if (is_array($betweenCondition)) {              //check for a condition eligible for BETWEEN                 
+                $firstValue = array_shift($betweenCondition);
+                $secondValue = array_shift($betweenCondition);
+                
+                if (strlen($firstValue) == 0) {
+                    $firstValue = NULL;
+                }
+                
+                if (strlen($secondValue) == 0) {
+                    $secondValue = NULL;
+                }
+                $betweenCondition = true;
+                if (!strlen($firstValue)  && !strlen($secondValue)) {   //if both between values were ommited, it's invalid
+                    continue;
+                }
+            } else {
+                unset($firstValue);
+                unset($secondValue);
+                $betweenCondition = false;
+            }
+
+            if (isset($ca['explicit']) && $ca['explicit'] == 'true'):
+                $conditions[$k] =   $ca['field'].' '.$ca['value'];
+            elseif ($betweenCondition):                                    //generate valid SQL for a between condition
+	            if (NULL !== $firstValue && NULL !== $secondValue) {    //if both values were entered, it's a between
+	                $conditions[$k] =   $ca['field'].' BETWEEN '."'{$firstValue}'".' AND '."'{$secondValue}'";
+	            } else {                                                //if only one value was entered, it's not a between
+	                $conditions[$k] =   $ca['field'].' = '."'{$firstValue}'";
+	            }
+	            
+	        else:
+	            if(is_array($ca['value'])) {
+	                //wrap in single quotes
+	                foreach ($ca['value'] as $value) {
+	                    $values[] = "'{$value}'";
+	                }
+	                $conditions[$k] =   $ca['field'].' IN('.implode(',', $values).')';
+	            } else {
+	                $conditions[$k] =   $ca['field'].' = '."'{$ca['value']}'";
+	            }
+	            
+	        endif; //end generate SQL for between condition
+	    }
+	    
+	    return implode($conditions, ' AND ');
+	}
 }
 ?>
