@@ -47,6 +47,12 @@ h4 {
 	color: #d99e00;
 	font-size: 15px;
 }
+
+input, textarea {
+	font-size: 12px !important;
+	font-family: "Verdana", "lucida grande", sans-serif;
+	padding: 2px;
+}
 /* @end */
 /* @end */
 /* @group links */

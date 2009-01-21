@@ -585,14 +585,9 @@ div.auto_complete li.selected {
 
 /* @group Forms */
 
-div.input, input, textarea {
-	font-size: 100%;
-	font-family: "Verdana", "lucida grande", sans-serif;
-	padding: 2px;
-}
-
 input, textarea {
 	border: 1px solid #898989;
+	width: 400px;
 }
 
 input[type=submit] {
