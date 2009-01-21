@@ -28,7 +28,8 @@ class Client extends AppModel {
 	var $hasMany = array('Loa' => array('foreignKey' => 'clientId'),
 						 'Accolade' => array('foreignKey' => 'clientId'),
 						 'Audit' => array('foreignKey' => 'foreignId', 'conditions' => array('Audit.class' => 'Client'), 'limit' => 5, 'order' => 'Audit.created DESC'),
-						 'ChildClient' => array('className' => 'Client', 'foreignKey' => 'parentClientId')
+						 'ChildClient' => array('className' => 'Client', 'foreignKey' => 'parentClientId'),
+						 'ClientContact' => array('className' => 'ClientContact', 'foreignKey' => 'clientId')
 						);
 	
     var $hasAndBelongsToMany = array(

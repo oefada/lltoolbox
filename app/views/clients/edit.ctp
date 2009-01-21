@@ -46,8 +46,8 @@ $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']
 		echo $form->input('fax');
 		echo $form->input('estaraPhoneLocal');
 		echo $form->input('estaraPhoneIntl');
-	?>
-
+		?>
+		
 	<?	echo $form->input('Client.countryId', array('type' => 'select', 'label' => 'Country')); ?>
 	<div id='stateChooser' style="padding: 0; margin:0">
 	<?php
@@ -99,6 +99,19 @@ $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']
 		endif;
 		endforeach;
 		endif;?>
+		<div style="padding: 5px; margin-top: 10px">
+			<h2>Client Contacts</h2>
+		<?php foreach ($this->data['ClientContact'] as $c): ?>
+		<div style="background: #fdfdfd; padding: 10px; margin: 10px; border: 1px solid #ccc; float: left; clear: none; width: 250px; height: 85px">
+			<strong>Name:</strong> <?=$c['name']?><br />
+			<strong>Title:</strong> <?=$c['businessTitle']?><br />
+			<strong>Email:</strong> <?=$c['emailAddress']?><br />
+			<strong>Phone:</strong> <?=$c['phone']?><br />
+			<strong>Fax:</strong> <?=$c['fax']?>
+		</div>
+		<?php endforeach; ?>
+		<?php if (empty($this->data['ClientContact'])) echo 'No Client Contacts available.'?>
+		</div>
 		</div>
 	</fieldset>
 	<fieldset class="collapsible">
