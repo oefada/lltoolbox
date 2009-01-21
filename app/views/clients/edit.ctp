@@ -15,6 +15,11 @@ $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']
 	<fieldset>
 		<? echo $form->input('clientTypeId', array('label' => 'Client Type')); ?>
 		<div class="input text"><label>Client Level</label><?=$this->data['ClientLevel']['clientLevelName']?></div>
+		<div class="controlset">
+		<?
+		echo $form->input('inactive');
+		?>
+		</div>
 	<?php
 		echo $form->input('clientId');
 		echo $form->input('parentClientId');
@@ -30,11 +35,7 @@ $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']
 		echo $form->input('blurb');
 		echo $form->input('keywords');
 	?>
-	<div class="controlset">
-	<?
-	echo $form->input('inactive');
-	?>
-	</div>
+
 	<fieldset class="collapsible">
 		<legend class="handle">Contact Details</legend>
 		<div class="collapsibleContent">
