@@ -84,7 +84,7 @@
 		      		<li<?if(@($this->viewVars['currentTab'] == 'property')) echo ' class="current"'?>><?=$html->link('Clients', array('controller' => 'clients', 'action' => 'index'))?></li>
 		      		<li<?if(@($this->viewVars['currentTab'] == 'siteMerchandising')) echo ' class="current"'?>><a href="/pages/legacytools">Site Merchandising</a></li>
 		      		<li<?if(@($this->viewVars['currentTab'] == 'reports')) echo ' class="current"'?>><a href="#">Reports</a></li>
-		      		<li<?if(@($this->viewVars['currentTab'] == 'customers')) echo ' class="current"'?>><?=$html->link('Customers', array('controller' => 'users', 'action' => 'index'))?></li>
+		      		<li<?if(@($this->viewVars['currentTab'] == 'customers')) echo ' class="current"'?>><?=$html->link('Concierge', array('controller' => 'users', 'action' => 'index'))?></li>
 					<li style="float: right; width: auto; background: none"><a href="/logout" style="background: none">Logout</a></li>
 		    	</ul>
 			</div>
