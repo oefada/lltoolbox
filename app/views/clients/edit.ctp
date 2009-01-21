@@ -18,6 +18,7 @@ $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']
 	<?php
 		echo $form->input('clientId');
 		echo $form->input('parentClientId');
+		echo $form->input('oldProductId', array('type' => 'disabled'));
 		echo $form->input('name');
 	?>
 	<?php
@@ -25,18 +26,26 @@ $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']
 		echo $form->input('url');
 		echo $form->input('checkRateUrl');
 		echo $form->input('numRooms');
+		echo $form->input('longDesc');
+		echo $form->input('blurb');
+		echo $form->input('keywords');
 	?>
+	<div class="controlset">
+	<?
+	echo $form->input('inactive');
+	?>
+	</div>
 	<fieldset class="collapsible">
 		<legend class="handle">Contact Details</legend>
 		<div class="collapsibleContent">
 		<?php
+		echo $form->input('contactName');
 		echo $form->input('email');
-		echo $form->input('ppvEmail1');
-		echo $form->input('ppvEmail2');
-		echo $form->input('ppvEmail3');
-		echo $form->input('contactSalutation');
 		echo $form->input('phone1');
 		echo $form->input('phone2');
+		echo $form->input('fax');
+		echo $form->input('estaraPhoneLocal');
+		echo $form->input('estaraPhoneIntl');
 	?>
 
 	<?	echo $form->input('Client.countryId', array('type' => 'select', 'label' => 'Country')); ?>
@@ -66,13 +75,12 @@ $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']
 	?>
 
 	<?
-		echo $form->input('regionId');
 		echo $form->input('airportCode');
 	?>
 		<? if(isset($client['Address'])): ?>
 		<h4>Addresses</h4>
 		<?php foreach ($client['Address'] as $address):
-				if($address['address1'] or $address['address2'] or $address['address3'] or $address['city'] or $address['stateName'] or $address['postalCode']):
+				if($address['address1'] or $address['address2'] or $address['city'] or $address['stateName'] or $address['postalCode']):
 		?>
 			
 			<div style="position: relative; float: left; width: 220px; height: 120px; clear: none; border: 1px solid #e5e5e5; margin-bottom: 5px; background: url(/img/bgshade-brown.gif) repeat-x;">
@@ -82,20 +90,8 @@ $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']
 				<?php if ($address['address2']):
 					echo $address['address2']."<br />";
 				endif ?>
-				<?php if ($address['address3']):
-					echo $address['address3']."<br />";
-				endif ?>
-				<?php if ($address['city']):
-					echo $address['city'].", ";
-				endif ?>
-				<?php if ($address['stateName']):
-					echo $address['stateName']." ";
-				endif ?>
 				<?php if ($address['postalCode']):
 					echo $address['postalCode']."<br />";
-				endif ?>
-				<?php if ($address['countrytext']):
-					echo $address['countrytext']."<br />";
 				endif ?>
 				<div style="position: absolute; bottom: 0;"><?=$html->link('Edit', array('controller' => 'addresses', 'action' => 'edit', $address['addressId'])) ?> | <?php echo $html->link(__('Delete', true), array('controller' => 'addresses', 'action'=>'delete', $address['addressId']), null, sprintf(__('Are you sure you want to delete # %s?', true), $address['addressId'])); ?></div>
 			</div>
@@ -109,6 +105,7 @@ $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']
 		<legend class="handle">Geographic Details</legend>
 		<div class="collapsibleContent">
 		<?php
+		echo $form->input('locationDisplay');
 		echo $form->input('customMapLat');
 		echo $form->input('customMapLong');
 		echo $form->input('customMapZoomMap');
@@ -140,6 +137,18 @@ $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']
 				<div class='controlset2'>
 					<?php echo $form->input('Theme', array('multiple' => 'checkbox', 'label' => false)); ?>
 				</div>
+			</div>
+			</fieldset>
+		<fieldset class="collapsible">
+			<legend class="handle">Misc.</legend>
+			<div class="collapsibleContent">
+					<?php
+					echo $form->input('numGalImgs');
+					echo $form->input('capImg1');
+					echo $form->input('capImg2');
+					echo $form->input('capImg3');
+					echo $form->input('capImg4');
+					?>
 			</div>
 			</fieldset>
 	</fieldset>
