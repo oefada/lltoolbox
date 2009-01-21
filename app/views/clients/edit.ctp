@@ -18,7 +18,7 @@ $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']
 	<?php
 		echo $form->input('clientId');
 		echo $form->input('parentClientId');
-		echo $form->input('oldProductId', array('type' => 'disabled'));
+		echo $form->input('oldProductId', array('disabled' => 'disabled'));
 		echo $form->input('name');
 	?>
 	<?php
