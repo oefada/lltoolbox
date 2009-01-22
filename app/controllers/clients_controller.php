@@ -12,7 +12,7 @@ class ClientsController extends AppController {
 		$this->set('clientId', $this->Client->id);
 		$this->Country = new Country;
 	}
-	
+
 	function index() {
 		$this->Client->recursive = 1;
 		$this->paginate = array('contain' => array('ChildClient', 'ClientType'), 'fields' => array('Client.name, Client.clientTypeId, ClientType.clientTypeName'), 'conditions' => array('OR' => array('parentClientId IS NULL')));
@@ -23,7 +23,7 @@ class ClientsController extends AppController {
 	function view($id = null) {
 		$this->redirect(array('action'=>'edit', $id));
 	}
-
+	
 	function edit($id = null) {
 		if (!$id && empty($this->data)) {
 			$this->Session->setFlash(__('Invalid Client', true));
@@ -67,6 +67,7 @@ class ClientsController extends AppController {
 		$this->set(compact('clientLevelIds','clientStatusIds','clientTypeIds','regions','clientAcquisitionSourceIds', 'loas', 'themes', 'countryIds', 'stateIds', 'cityIds'));
 	}
 	
+	// have to do this over again because so many changes have been made to client [alee] 1-20-2009
 	function updateClientLive($id = null) {
 		if (!$id) {
 			$this->Session->setFlash(__('Invalid Client', true));
