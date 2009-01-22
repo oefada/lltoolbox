@@ -108,13 +108,25 @@ class WebServiceNewClientsController extends WebServicesController
 	    $encoded_response = json_encode($decoded_request);
 	
 	    // sugar has to update appropiate site manger id.  send to esb client id and sugar id
-	    $soap_client_sugar = new soap_client('http://sugardev.luxurylink.com:8888/services2/ClientReceiver2?wsdl', true);
-	    $response_esb = $soap_client_sugar->call('soap_call', array('args' => $encoded_response));
-	    unset($soap_client_sugar);
-		mail('alee@luxurylink.com','test 4', print_r($response_esb, true));
-	
+	    //$soap_client_sugar = new soap_client('http://sugardev.luxurylink.com:8888/services2/ClientReceiver2?wsdl', true);
+	    //$response_esb = $soap_client_sugar->call('soap_call', array('args' => $encoded_response));
+	    //unset($soap_client_sugar);
+	    
+	    $this->sendToSugar($encoded_response);
+	    	
 	    // this tests to see if we were getting correct response from the request
 	    return $encoded_response;
+	}
+	
+	function sendToSugar($data) {
+		ini_set("soap.wsdl_cache_enabled", "0"); // disabling WSDL cache
+		$client = new SoapClient('http://sugardev.luxurylink.com:8888/services2/ClientReceiver2?wsdl'); 
+		try {
+			$client->soap_call($data);
+		} catch (SoapFault $exception) {
+			@mail('alee@luxurylink.com', 'debug', $exception);
+		}
+		return true;
 	}
 }
 ?>
