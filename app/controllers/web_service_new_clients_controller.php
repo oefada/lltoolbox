@@ -2,9 +2,6 @@
 
 Configure::write('debug', 0);
 App::import('Vendor', 'nusoap/web_services_controller');
-//App::import('Vendor', 'nusoap_client/lib/nusoap');
-
-// TODO:  should work on sugarprod.
 
 class WebServiceNewClientsController extends WebServicesController
 {
@@ -42,8 +39,6 @@ class WebServiceNewClientsController extends WebServicesController
 	    } else {
 	        $response_value = '-1';
 	    }
-		
-		mail('alee@luxurylink.com','test 1', print_r($decoded_request, true));
 		
 		// map data from Sugar to toolbox client table structure
 		$client_data_save = array();
@@ -83,9 +78,6 @@ class WebServiceNewClientsController extends WebServicesController
 			$decoded_request['client']['client_id'] = $this->Client->getLastInsertId();
 		}
 		
-		mail('alee@luxurylink.com','test 2', print_r($client_data_save, true));
-		mail('alee@luxurylink.com','test 3', print_r($decoded_request, true));
-		
 		//$decoded_request['client']['client_desc'];        
 		//$decoded_request['client']['client_level_id'];
 		//$decoded_request['client']['manager_ini'];
@@ -106,12 +98,11 @@ class WebServiceNewClientsController extends WebServicesController
 	    $decoded_request['request']['response_time'] = time();
 	
 	    $encoded_response = json_encode($decoded_request);
-	
-	    // sugar has to update appropiate site manger id.  send to esb client id and sugar id
-	    //$soap_client_sugar = new soap_client('http://sugardev.luxurylink.com:8888/services2/ClientReceiver2?wsdl', true);
-	    //$response_esb = $soap_client_sugar->call('soap_call', array('args' => $encoded_response));
-	    //unset($soap_client_sugar);
-	    
+
+		// send info back to sugar -- should only go back to Sugar webservice on new clients so we can give Sugar back new client id.
+		// look in Sugar : /var/www/html/soap/SoapSugarUsers.php for the web service 'update_client'
+		// look in Sugar : /var/www/html/custom/modules/Accounts/SiteManagerAgent.php for the after hook Sugar logic.
+		
 	    $this->sendToSugar($encoded_response);
 	    	
 	    // this tests to see if we were getting correct response from the request
@@ -119,12 +110,15 @@ class WebServiceNewClientsController extends WebServicesController
 	}
 	
 	function sendToSugar($data) {
+		// had to use this custom native soap class and functions because couldn't run both cakephp nusoap server and client
+		// this soap call to made to sugar in order to give Sugar the new clientId from toolbox so it's recorded in Sugar
+
 		ini_set("soap.wsdl_cache_enabled", "0"); // disabling WSDL cache
 		$client = new SoapClient('http://sugardev.luxurylink.com:8888/services2/ClientReceiver2?wsdl'); 
 		try {
 			$client->soap_call($data);
 		} catch (SoapFault $exception) {
-			@mail('alee@luxurylink.com', 'debug', $exception);
+			@mail('geeks@luxurylink.com', 'need to make a new error handling function', $exception);
 		}
 		return true;
 	}
