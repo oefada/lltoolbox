@@ -38,7 +38,7 @@ foreach ($clients as $client):
 			<?php if (isset($query)): ?>
 				<?php echo $text->highlight($client['Client']['name'], $query); ?>
 			<?php else: ?>
-				<?php echo $client['Client']['name']; ?>
+				<?php echo $html->link(__($client['Client']['name'], true), array('action'=>'edit', $client['Client']['clientId'])); ?>
 			<?php endif ?>
 			</strong>		</td>
 		<td>
