@@ -11,6 +11,8 @@ class ReportsController extends AppController {
 	
 	function beforeFilter() {
 	    parent::beforeFilter();
+	    $this->set('currentTab', 'reports');
+	    
 	    if (!empty($this->params['named']['filter'])) {
 	        $filter = urldecode($this->params['named']['filter']);
 	        $get    = @unserialize($filter);
@@ -32,6 +34,10 @@ class ReportsController extends AppController {
             $this->limit = 20;
         }
 	}
+	
+	function index() {
+	}
+
 	function offer_search() {
 	    if (!empty($this->data)) {
 	        $conditions = $this->_offer_search_build_conditions($this->data);
