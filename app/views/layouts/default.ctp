@@ -14,7 +14,7 @@
 <head>
 	<?php echo $html->charset(); ?>
 	<title>
-		<?php __('LL webtools:'); ?>
+		<?php __('LL Toolbox:'); ?>
 		<?php echo strip_tags($title_for_layout) ?>
 	</title>
 	<?php
