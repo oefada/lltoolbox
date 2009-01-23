@@ -20,13 +20,13 @@ class ReportsController extends AppController {
 	        }
 	    }
 
-	    if (!empty($this->params['named']['page'])) {
-            $this->page = $this->params['named']['page'];
-            $this->limit = (($this->page-1)*20).',20';
-        } elseif($this->data['paging']['disablePagination'] == 1) {
+	     if($this->data['paging']['disablePagination'] == 1) {
             $this->page = 1;
             $this->perPage = 9999;
             $this->limit = 9999;
+        } elseif (!empty($this->params['named']['page'])) {
+                $this->page = $this->params['named']['page'];
+                $this->limit = (($this->page-1)*20).',20';
         } else {
             $this->page = 1;
             $this->limit = 20;
@@ -391,7 +391,7 @@ class ReportsController extends AppController {
 
 	        $results = $this->OfferType->query($count);
 	        $numRecords = $results[0][0]['numRecords'];
-            $numPages = ceil($numRecords / 20);
+            $numPages = ceil($numRecords / $this->perPage);
                 
 	        $sql = "SELECT
                                         Offer.offerId,
@@ -638,7 +638,7 @@ class ReportsController extends AppController {
 
     	    $results = $this->OfferType->query($sql);
     	    $numRecords = $results[0][0]['numRecords'];
-            $numPages = ceil($numRecords / $this->limit);
+            $numPages = ceil($numRecords / $this->perPage);
             
             $sql = "SELECT SchedulingInstance.endDate,
                            PaymentDetail.paymentDatetime, 
@@ -696,6 +696,85 @@ class ReportsController extends AppController {
 	    }
 	}
 	
+	function cmr() {
+	    if (!empty($this->data)) {
+	        $conditions = $this->_build_conditions($this->data);
+	        
+	        if (!empty($this->params['named']['sortBy'])) {
+	            $direction = (@$this->params['named']['sortDirection'] == 'DESC') ? 'DESC' : 'ASC';
+	            $order = $this->params['named']['sortBy'].' '.$direction;
+	            
+	            $this->set('sortBy', $this->params['named']['sortBy']);
+	            $this->set('sortDirection', $direction);
+	        } else {
+	            $order = 'Loa.loaId';
+	            
+	            $this->set('sortBy', 'Loa.loaId');
+    	        $this->set('sortDirection', 'DESC');
+	        }
+            
+            if (empty($conditions)) {
+                $conditions = '1=1';
+            }
+
+             $sql = "SELECT COUNT(DISTINCT Loa.loaId) as numRecords
+                        FROM client as Client
+                        INNER JOIN loa as Loa USING(clientId)
+                        LEFT JOIN loaLevel as LoaLevel USING(loaLevelId)
+                        WHERE Loa.endDate >= NOW() AND $conditions";
+
+    	    $results = $this->OfferType->query($sql);
+    	    $numRecords = $results[0][0]['numRecords'];
+            $numPages = ceil($numRecords / $this->perPage);
+            
+            $sql = "SELECT 
+                        Client.name,
+                        LoaLevel.loaLevelName,
+                        Loa.endDate,
+                        Loa.loaNumberPackages,
+                        #remit packages sold
+                        #remit packages left
+                        Loa.upgraded,
+                        Loa.totalRemitted,
+                        (SELECT cityName from city where cityId = Client.cityId) as city,
+                        (SELECT stateName from state where stateId = Client.stateId) as state,
+                        (SELECT countryName from country where countryId = Client.countryId) as country,
+                        Loa.loaId,
+                        Loa.clientId,
+                        Loa.membershipBalance,
+                        Loa.loaValue,
+                        Loa.startDate,
+                        DATEDIFF(NOW(), Loa.startDate) as loaNumberOfDaysActive,
+                        ROUND( (Loa.loaValue / DATEDIFF(Loa.endDate, Loa.startDate)), 2) as dailyMembershipFee,
+                        ROUND( (Loa.loaValue - Loa.membershipBalance) / (Loa.loaValue / DATEDIFF(Loa.endDate, Loa.startDate)) ) as numDaysPaid,
+                        (Loa.startDate + INTERVAL ( (Loa.loaValue - Loa.membershipBalance) / (Loa.loaValue / DATEDIFF(Loa.endDate, Loa.startDate)) ) DAY) as paidThru,
+                        DATEDIFF(Loa.endDate, (Loa.startDate + INTERVAL ( (Loa.loaValue - Loa.membershipBalance) / (Loa.loaValue / DATEDIFF(Loa.endDate, Loa.startDate)) ) DAY)) as daysBehindSchedule
+                    FROM client as Client
+                    INNER JOIN loa as Loa USING(clientId)
+                    LEFT JOIN loaLevel as LoaLevel USING(loaLevelId)
+                    WHERE Loa.endDate >= NOW() AND $conditions
+                    GROUP BY Loa.loaId, Client.clientId
+                    ORDER BY $order
+	                LIMIT $this->limit";
+	        
+	        $results = $this->OfferType->query($sql);
+            
+            $this->set('currentPage', $this->page);
+            $this->set('numRecords', $numRecords);
+            $this->set('numPages', $numPages);
+            $this->set('data', $this->data);
+	        $this->set('results', $results);
+	        $this->set('serializedFormInput', serialize($this->data));
+	    }
+	    
+	        
+	        $country = new Country;
+	        $state = new State;
+	        $loaLevel = new LoaLevel;
+	        $this->set('countries', $country->find('list'));
+	        $this->set('states', $state->find('list'));
+	        $this->set('loaTypes', $loaLevel->find('list'));
+	}
 	//TODO: A lot of duplication of code, use this method as a template for all the others and cut down on the number of times the following code is repeated
 	function _build_conditions($data) {
 	    $conditions = array();
@@ -750,6 +829,9 @@ class ReportsController extends AppController {
 	                    $values[] = "'{$value}'";
 	                }
 	                $conditions[$k] =   $ca['field'].' IN('.implode(',', $values).')';
+	            } elseif (strpos($ca['field'], 'MATCH=') !== false) {
+	                $field = substr($ca['field'], strpos($ca['field'], '=')+1);
+	                $conditions[$k] =   'MATCH('.$field.') AGAINST('."'{$ca['value']}' IN BOOLEAN MODE)";
 	            } else {
 	                $conditions[$k] =   $ca['field'].' = '."'{$ca['value']}'";
 	            }
