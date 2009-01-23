@@ -4,6 +4,7 @@
 if(Configure::read() > 0):
 	Debugger::checkSessionKey();
 endif;
+$this->set('hideSidebar', true);
 ?>
 <p>
 <?php
