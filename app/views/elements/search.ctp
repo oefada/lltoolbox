@@ -14,7 +14,7 @@ if(!isset($this->viewVars['searchController']) &&class_exists($fullControllerNam
 	$controller = new $fullControllerName;
 }
 
-if ($this->viewVars['searchController'] || method_exists($controller , 'search') || isset($this->searchController)):
+if (@$this->viewVars['searchController'] || method_exists($controller , 'search') || isset($this->searchController)):
  ?>
 <div id='search-bar' class="clearfix">
 <div id='search-bar-inner' class="clearfix">
