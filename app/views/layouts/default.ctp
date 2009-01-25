@@ -89,9 +89,8 @@
 		    	</ul>
 			</div>
 		</div></div> <!-- /#navbar-inner, /#navbar -->
-		<? if($this->renderElement('search')): ?>
+		<? if(strlen($this->renderElement('search')) != 0): ?>
 			<div id="page-toolbar"><div id="page-toolbar-inner" class="page-toolbar clearfix">
-				
 				<table>
 					<tr>
 						<td class="search-bar"><?php echo $this->renderElement('search')?></td>
@@ -102,7 +101,6 @@
 						</td>
 					</tr>
 				</table>
-				
 			</div></div>
 			<? endif; ?>
 			<div class='title-header'>

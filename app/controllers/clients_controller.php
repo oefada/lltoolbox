@@ -144,17 +144,17 @@ class ClientsController extends AppController {
 			$query = $this->Sanitize->escape($this->params['form']['query']);
 
 			$this->Client->recursive = -1;
-			$results = $this->Client->find('all', array('conditions' => array('name LIKE' => "%$query%"), 'limit' => 5));
+			$results = $this->Client->find('all', array('conditions' => array("MATCH(Client.name) AGAINST('$query' IN BOOLEAN MODE)"), 'limit' => 5));
 			$this->set('query', $query);
 			$this->set('results', $results);
 			
 			if (isset($this->params['requested'])) {
 				return $results;
-			} elseif($_GET['query'] ||  $this->params['named']['query']) {
+			} elseif(@$_GET['query'] || @ $this->params['named']['query']) {
 				$this->autoRender = false;
 				$this->Client->recursive = 0;
 
-				$this->paginate = array('conditions' => array('name LIKE' => "%$query%"));
+				$this->paginate = array('conditions' => array("MATCH(Client.name) AGAINST('$query' IN BOOLEAN MODE)"));
 				$this->set('query', $query);
 				$this->set('clients', $this->paginate());
 				$this->render('index');
