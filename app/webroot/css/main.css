@@ -711,6 +711,9 @@ fieldset div.controlset2 div.checkbox {
 	margin: 0;
 	padding:  2px;
 }
+fieldset div.controlset2 div.checkbox input {
+    width: auto;
+}
 fieldset div.controlset3 label {
     float: none;
     clear: both;
