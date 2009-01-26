@@ -7,7 +7,7 @@
 	<table>
 		<tr>
 			<th>&nbsp;</th>
-			<th>Order</th>
+			<th style="width: 70px">Order</th>
 			<th>Description</th>
 			<th>Base Price<br/>
 				<? foreach($clientLoaDetails[0]['LoaItem'] as $loaItem): ?>
@@ -17,7 +17,7 @@
 					endforeach;
 				?>
 			</th>
-			<th>Quanity</th>
+			<th style="width: 70px">Quanity</th>
 		</tr>
 	<?php 
 		$loaItemCount = 0;
