@@ -468,7 +468,7 @@ class PackagesController extends AppController {
 			if (in_array($defField['offerTypeId'], array(1,2,6)) && $this->data['Package']['approvedRetailPrice'] != 0) {
 			    $defFieldViewArray[$defField['offerTypeId']]['percentRetail'] = round($defField['openingBid']/$this->data['Package']['approvedRetailPrice']*100, 2);
 			} elseif ($this->data['Package']['approvedRetailPrice'] != 0) {
-			    $defFieldViewArray[$defField['offerTypeId']]['percentRetail'] = round($defField['requestPrice']/$this->data['Package']['approvedRetailPrice']*100, 2);
+			    $defFieldViewArray[$defField['offerTypeId']]['percentRetail'] = round($defField['buyNowPrice']/$this->data['Package']['approvedRetailPrice']*100, 2);
 			}
 		endforeach;
 		unset($this->data['PackageOfferTypeDefField']);
