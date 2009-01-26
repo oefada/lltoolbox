@@ -137,7 +137,7 @@ $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']
 				<?php endforeach?>
 				</ul>
 			</div>
-		<div style="float: left; display: inline;x" >
+		<div style="float: left; display: inline; width: 470px" >
 			<input type="button" value="Add" onclick="javascript: addAmenity(); return false;" style="float: right; margin-top: 5px" />
 			<?php
 			echo $strictAutocomplete->autoComplete('amenity_select', '/amenities/auto_complete');
