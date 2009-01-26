@@ -25,7 +25,7 @@
 		<? foreach($clientLoaDetail['LoaItem'] as $k => $loaItem): ?>
 			<tr>
 				<td><input type="checkbox" name="data[Package][CheckedLoaItems][]" value="<?=$loaItem['loaItemId']?>"<? if (isset($this->data['Package']['CheckedLoaItems']) && in_array($loaItem['loaItemId'], $this->data['Package']['CheckedLoaItems'])) { echo ' checked="checked"'; } ?> /></td>
-				<td><?=$form->input('PackageLoaItemRel.'.$loaItem['loaItemId'].'.weight', array('label' => false, 'size' => '2')) ?></td>
+				<td><?=$form->input('PackageLoaItemRel.'.$loaItem['loaItemId'].'.weight', array('label' => false, 'size' => '2', 'style' => 'width: 50px')) ?></td>
 				<td><?=$loaItem['itemName']?></td>
 				<td><div style="text-align: right"><span style="text-align:left">
 				<?=$number->currency($loaItem['itemBasePrice'], $currencyCodes[$loaItem['currencyId']]) ?>
@@ -38,7 +38,7 @@
 				<?php endif; ?>
 				
 				</td>
-				<td><?= $form->input('PackageLoaItemRel.'.$loaItem['loaItemId'].'.quantity', array('label' => false)) ?></td>
+				<td><?= $form->input('PackageLoaItemRel.'.$loaItem['loaItemId'].'.quantity', array('label' => false, 'style' => 'width: 50px')) ?></td>
 			</tr>
 		<?
 		$loaItemCount++;
