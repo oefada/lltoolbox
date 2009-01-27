@@ -14,7 +14,7 @@ $this->set('clientId', $this->data['Client']['clientId']);
 	<?php
 		echo $form->input('loaId');
 		echo $form->input('numEmailInclusions');
-		echo $form->input('loaValue');
+		echo $form->input('loaValue', array('disabled' => true));
 		echo $form->input('customerApprovalStatusId', array('label' => 'Client Approval Status'));
 		echo $form->input('customerApprovalDate', array('label' => 'Customer Approval Date'));
 	?>
@@ -29,8 +29,10 @@ $this->set('clientId', $this->data['Client']['clientId']);
 		echo $form->input('startDate');
 		echo $form->input('endDate');
 		echo $form->input('currencyId');
+		echo $form->input('membershipFee', array('disabled' => true));
+		echo $form->input('membershipBalance', array('disabled' => true));
 		echo $form->input('totalRemitted', array('disabled' => true));
-		echo $form->input('cashPaid', array('disabled' => true));
+		echo $form->input('cashPaid');
 		echo $form->input('totalKept', array('disabled' => true));
 	?>
 	</fieldset>
