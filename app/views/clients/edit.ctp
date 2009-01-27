@@ -49,10 +49,10 @@ $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']
 		echo $form->input('estaraPhoneIntl');
 		?>
 		
-	<?	echo $form->input('Client.countryId', array('type' => 'select', 'label' => 'Country')); ?>
+	<?	echo $form->input('Client.countryId', array('type' => 'select', 'label' => 'Country', 'empty' => true)); ?>
 	<div id='stateChooser' style="padding: 0; margin:0">
 	<?php
-	echo $form->input('Client.stateId', array('type' => 'select', 'label' => 'State'));
+	echo $form->input('Client.stateId', array('type' => 'select', 'label' => 'State', 'empty' => true));
 	echo $ajax->observeField(
 	               "ClientStateId",
 	               array(
@@ -63,7 +63,7 @@ $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']
 	          );
 	?>
 	</div>
-	<div id='cityChooser' style="padding: 0; margin:0"><?	echo $form->input('Client.cityId', array('type' => 'select', 'label' => 'City')); ?></div>
+	<div id='cityChooser' style="padding: 0; margin:0"><?	echo $form->input('Client.cityId', array('type' => 'select', 'label' => 'City', 'empty' => true)); ?></div>
 		
 	<?php echo $ajax->observeField(
 	               "ClientCountryId",
