@@ -670,6 +670,7 @@ fieldset textarea:focus {
 
 fieldset div.controlset {
 	margin-left: 0;
+	padding-left: 0;
 }
 
 fieldset div.controlset label, 
@@ -678,6 +679,7 @@ fieldset div.controlset input {
 	display: inline;
 	float: none;
 	margin-right: 5px;
+	padding: 0;
 }
 
 fieldset div.controlset input {
