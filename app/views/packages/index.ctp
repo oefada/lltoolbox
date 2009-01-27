@@ -24,7 +24,7 @@ foreach ($packages as $package):
 ?>
 	<tr<?php echo $class;?>>
 		<td>
-			<?php echo $package['Package']['packageName']; ?>
+			<?php echo $html->link($package['Package']['packageName'], "/clients/$clientId/packages/edit/{$package['Package']['packageId']}"); ?>
 		</td>
 		<td>
 			<?php echo $packageStatusIds[$package['Package']['packageStatusId']]; ?>
