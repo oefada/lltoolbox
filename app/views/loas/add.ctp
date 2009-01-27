@@ -10,7 +10,7 @@ $this->set('clientId', $this->data['Loa']['clientId']);
 		echo $form->input('clientId', array('type' => 'hidden'));
 		echo $form->input('numEmailInclusions');
 		echo $form->input('loaValue');
-		echo $form->input('loaCustomerApprovalStatusId', array('label' => 'Client Approval Status'));
+		echo $form->input('customerApprovalStatusId', array('label' => 'Client Approval Status'));
 		echo '<div class="controlset">'.$form->input('upgraded')."</div>";
 		echo $form->input('loaNumberPackages');
 		echo $form->input('startDate');
