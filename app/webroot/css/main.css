@@ -924,6 +924,17 @@ div.blankExample p {
 	
 }
 /* @end */
+/* @group misc */
+.clientContact {
+    background: #fdfdfd; padding: 10px; margin: 10px; border: 1px solid #ccc; float: left; clear: none; width: 250px; height: 85px;
+}
+.clientContactType1 {
+    background: #fdfdfd url(../img/page_white_star.png) no-repeat 97% 5%;
+}
+.clientContactType2 {
+    background: #fdfdfd url(../img/house.png) no-repeat 97% 5%;
+}
+/* @end */
 /* @group footer */
 #footer {
 	background: #880a00;

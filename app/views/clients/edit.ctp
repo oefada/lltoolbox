@@ -103,7 +103,7 @@ $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']
 		<div style="padding: 5px; margin-top: 10px">
 			<h2>Reservation Contacts</h2>
 		<?php foreach ($this->data['ClientContact'] as $c): ?>
-		<div style="background: #fdfdfd; padding: 10px; margin: 10px; border: 1px solid #ccc; float: left; clear: none; width: 250px; height: 85px">
+		<div class="clientContact clientContactType<?=$c['clientContactTypeId']?>">
 			<strong>Name:</strong> <?=$c['name']?><br />
 			<strong>Title:</strong> <?=$c['businessTitle']?><br />
 			<strong>Email:</strong> <?=$c['emailAddress']?><br />
