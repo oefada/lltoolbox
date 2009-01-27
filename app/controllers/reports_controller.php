@@ -830,6 +830,80 @@ class ReportsController extends AppController {
 	        $this->set('offerTypeIds', $offerType->find('list'));
 	}
 	
+	function packages() {
+	    if (!empty($this->data)) {
+	        $conditions = $this->_build_conditions($this->data);
+	        
+	        if (!empty($this->params['named']['sortBy'])) {
+	            $direction = (@$this->params['named']['sortDirection'] == 'DESC') ? 'DESC' : 'ASC';
+	            $order = $this->params['named']['sortBy'].' '.$direction;
+	            
+	            $this->set('sortBy', $this->params['named']['sortBy']);
+	            $this->set('sortDirection', $direction);
+	        } else {
+	            $order = 'Client.clientId';
+	            
+	            $this->set('sortBy', 'Client.clientId');
+    	        $this->set('sortDirection', 'DESC');
+	        }
+            
+            if (empty($conditions)) {
+                $conditions = '1=1';
+            }
+            
+            $sql = "SELECT 
+                        COUNT(cl.clientLoaPackageRelId) as numRecords
+                    FROM package AS Package
+                        LEFT JOIN packageStatus AS PackageStatus USING (packageStatusId)
+                        LEFT JOIN clientLoaPackageRel AS cl USING (packageId)
+                        LEFT JOIN client AS Client USING (clientId)
+                        INNER JOIN loa AS Loa USING (loaId)
+                        LEFT JOIN track AS Track USING (trackId)
+                        LEFT JOIN revenueModel as RevenueModel USING (revenueModelId)
+                        WHERE Loa.endDate >= NOW() AND $conditions";
+	         
+	        $count = $this->OfferType->query($sql);
+    	    $numRecords = $count[0][0]['numRecords'];
+            $numPages = ceil($numRecords / $this->perPage);
+            
+            $sql = "SELECT 
+                        Client.clientId,
+                        Client.name,
+                        Package.packageId,
+                        Package.packageName,
+                        PackageStatus.packageStatusName,
+                        RevenueModel.revenueModelName,
+                        Client.managerUsername
+                    FROM package AS Package
+                    LEFT JOIN packageStatus AS PackageStatus USING (packageStatusId)
+                    LEFT JOIN clientLoaPackageRel AS cl USING (packageId)
+                    LEFT JOIN client AS Client USING (clientId)
+                    LEFT JOIN loa AS Loa USING (loaId)
+                    LEFT JOIN track AS Track USING (trackId)
+                    LEFT JOIN revenueModel as RevenueModel USING (revenueModelId)
+                    WHERE Loa.endDate >= NOW() AND $conditions
+                    GROUP BY cl.clientLoaPackageRelId
+                    ORDER BY $order
+	                LIMIT $this->limit";
+	         
+	        $results = $this->OfferType->query($sql);
+	        $this->set('currentPage', $this->page);
+            $this->set('numRecords', $numRecords);
+            $this->set('numPages', $numPages);
+            $this->set('data', $this->data);
+	        $this->set('results', $results);
+	        $this->set('serializedFormInput', serialize($this->data));
+	    }
+	        
+            $condition1Options = array('MATCH=Client.name' => 'Client Name',
+                                        'MATCH=Client.managerUsername' => 'Manager Username');
+            $revenueModel = new RevenueModel;
+            $packageStatus = new PackageStatus;
+            $this->set('condition1Options', $condition1Options);
+            $this->set('revenueModelIds', $revenueModel->find('list'));
+            $this->set('packageStatusIds', $packageStatus->find('list'));
+	}
+	
 	//TODO: A lot of duplication of code, use this method as a template for all the others and cut down on the number of times the following code is repeated
 	function _build_conditions($data) {
 	    $conditions = array();

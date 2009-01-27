@@ -7,4 +7,5 @@
 	<li><?=$html->link('Fixed Price', 'fixed_price')?></li>
 	<li><?=$html->link('Inventory Management', 'imr')?></li>
 	<li><?=$html->link('Offer Search', 'offer_search')?></li>
+	<li><?=$html->link('Package Search', 'packages')?></li>
 </ul>
