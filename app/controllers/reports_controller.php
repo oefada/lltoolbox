@@ -781,6 +781,55 @@ class ReportsController extends AppController {
 	        $this->set('states', $state->find('list'));
 	        $this->set('loaTypes', $loaLevel->find('list'));
 	}
+	
+	function imr() {
+	    if (!empty($this->data)) {
+	        $conditions = $this->_build_conditions($this->data);
+	        
+	        if (!empty($this->params['named']['sortBy'])) {
+	            $direction = (@$this->params['named']['sortDirection'] == 'DESC') ? 'DESC' : 'ASC';
+	            $order = $this->params['named']['sortBy'].' '.$direction;
+	            
+	            $this->set('sortBy', $this->params['named']['sortBy']);
+	            $this->set('sortDirection', $direction);
+	        } else {
+	            $order = 'schedulingMasterId';
+	            
+	            $this->set('sortBy', 'schedulingMasterId');
+    	        $this->set('sortDirection', 'DESC');
+	        }
+            
+            if (empty($conditions)) {
+                $conditions = '1=1';
+            }
+            
+            $sql = "CALL imrReport(\"$conditions\", '$order', '{$this->limit}', @numRecords)";
+	         
+	        $results = $this->OfferType->query($sql);
+
+	        $sql2 = 'SELECT @numRecords as numRecords';
+	        
+	        $count = $this->OfferType->query($sql2);
+    	    $numRecords = $count[0][0]['numRecords'];
+            $numPages = ceil($numRecords / $this->perPage);
+            
+            $this->set('currentPage', $this->page);
+            $this->set('numRecords', $numRecords);
+            $this->set('numPages', $numPages);
+            $this->set('data', $this->data);
+	        $this->set('results', $results);
+	        $this->set('serializedFormInput', serialize($this->data));
+	    }
+	    
+	        
+	        $country = new Country;
+	        $state = new State;
+	        $offerType = new OfferType;
+	        $this->set('countries', $country->find('list'));
+	        $this->set('states', $state->find('list'));
+	        $this->set('offerTypeIds', $offerType->find('list'));
+	}
+	
 	//TODO: A lot of duplication of code, use this method as a template for all the others and cut down on the number of times the following code is repeated
 	function _build_conditions($data) {
 	    $conditions = array();
