@@ -144,7 +144,20 @@ class ClientsController extends AppController {
 			$query = $this->Sanitize->escape($this->params['form']['query']);
 
 			$this->Client->recursive = -1;
-			$results = $this->Client->find('all', array('conditions' => array("MATCH(Client.name) AGAINST('$query' IN BOOLEAN MODE)"), 'limit' => 5));
+			
+			$queryPieces = explode(" ", $query);
+			
+			$sqlquery = '';
+			foreach($queryPieces as $piece) {
+			    if (strlen($piece) > 3) {
+			        $sqlquery .= '+';
+			    }
+			    $sqlquery .= $piece.'* ';
+			}
+			
+			$conditions = array("MATCH(Client.name) AGAINST('$sqlquery' IN BOOLEAN MODE)");
+			$results = $this->Client->find('all', array('conditions' => $conditions, 'limit' => 5));
+
 			$this->set('query', $query);
 			$this->set('results', $results);
 			
@@ -154,7 +167,7 @@ class ClientsController extends AppController {
 				$this->autoRender = false;
 				$this->Client->recursive = 0;
 
-				$this->paginate = array('conditions' => array("MATCH(Client.name) AGAINST('$query' IN BOOLEAN MODE)"));
+				$this->paginate = array('conditions' => $conditions);
 				$this->set('query', $query);
 				$this->set('clients', $this->paginate());
 				$this->render('index');
