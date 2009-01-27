@@ -13,6 +13,7 @@ $this->set('clientId', $this->data['Client']['clientId']);
 	<fieldset>
 	<?php
 		echo $form->input('loaId');
+		echo $form->input('loaLevelId', array('disabled' => true, 'label' => 'LOA Level'));
 		echo $form->input('numEmailInclusions');
 		echo $form->input('loaValue', array('disabled' => true));
 		echo $form->input('customerApprovalStatusId', array('label' => 'Client Approval Status'));

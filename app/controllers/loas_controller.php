@@ -49,9 +49,10 @@ class LoasController extends AppController {
 		$this->Loa->Client->recursive = 1;
 		$client = $this->Loa->Client->find('Client.clientId = '.$clientId, 'name');
 		$currencyIds = $this->Loa->Currency->find('list');
+		$loaLevelIds = $this->Loa->LoaLevel->find('list');
 		$this->set('clientName', $client['Client']['name']);
 		$this->set('client', $this->Loa->Client->findByClientId($clientId));
-		$this->set(compact('customerApprovalStatusIds', 'currencyIds'));
+		$this->set(compact('customerApprovalStatusIds', 'currencyIds', 'loaLevelIds'));
 		
 	}
 
@@ -76,7 +77,8 @@ class LoasController extends AppController {
 		}
 		$customerApprovalStatusIds = $this->Loa->LoaCustomerApprovalStatus->find('list');
 		$currencyIds = $this->Loa->Currency->find('list');
-		$this->set(compact('customerApprovalStatusIds', 'currencyIds'));
+		$loaLevelIds = $this->Loa->LoaLevel->find('list');
+		$this->set(compact('customerApprovalStatusIds', 'currencyIds', 'loaLevelIds'));
 		$this->set('client', $this->Loa->Client->findByClientId($this->data['Loa']['clientId']));
 		$this->set('currencyCodes', $this->Loa->Currency->find('list', array('fields' => array('currencyCode'))));
 	}
