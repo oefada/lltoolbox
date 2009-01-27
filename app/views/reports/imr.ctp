@@ -15,16 +15,12 @@
 </div>
 </div>
 
-<div style="float: left; margin-right: 50px;">
+<div style="float: left; border-right: 1px solid #000; padding-right: 25px">
 	<div class="fieldRow">
 			<?echo $form->select('condition2.field', array('MATCH=mangerUsername' => 'Manager Username', 'MATCH=teamName' => 'Team Name', 'MATCH=name' => 'Client Name', 'clientId' => 'Client Id'))?>
 			<?echo $form->text('condition2.value')?>
 	</div>
-	<div class="fieldRow">
-			<?echo $form->label('Status')?>
-			<?echo $form->text('condition3.field', array('value' => 'status', 'type' => 'hidden'))?>
-			<?echo $form->select('condition3.value', array('Live' => 'Live', 'Ended' => 'Not Live', 'Scheduled' => 'Scheduled'))?>
-	</div>
+
 
 	<div class="fieldRow">
 			<?echo $form->label('Country')?>
@@ -39,7 +35,13 @@
 
 </div>
 
-<div style="float: left; clear: none;">
+<div style="float: left; clear: none; padding-left: 25px">
+	<div class="fieldRow">
+			<?echo $form->label('Status')?>
+			<?echo $form->text('condition3.field', array('value' => 'status', 'type' => 'hidden'))?>
+			<?echo $form->select('condition3.value', array('Live' => 'Live', 'Ended' => 'Not Live', 'Scheduled' => 'Scheduled'))?>
+	</div>
+	
 	<div class="fieldRow">
 			<?echo $form->label('Offer Type')?>
 			<?echo $form->text('condition6.field', array('value' => 'offerTypeId', 'type' => 'hidden'))?>

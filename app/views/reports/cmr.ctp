@@ -5,7 +5,7 @@
 <fieldset>
 <h3 class='title'>SEARCH CLIENTS BY:</h3>
 
-<div style="float: left; ">
+<div style="float: left; border-right: 1px solid #000; padding-right: 25px">
 <div class="fieldRow">
 		<?echo $form->select('condition1.field', array('MATCH=Client.managerUsername' => 'Manager Username', 'MATCH=Client.name' => 'Client Name', 'MATCH=Client.teamname' => 'Team Name'))?>
 		<?echo $form->text('condition1.value')?>
@@ -15,7 +15,8 @@
 		<?echo $form->text('condition2.field', array('value' => 'Loa.loaTypeId', 'type' => 'hidden'))?>
 		<?echo $form->select('condition2.value', $loaTypes)?>
 </div>
-
+</div>
+<div style="float: left; clear: none; padding-left: 25px">
 <div class="fieldRow">
 		<?echo $form->label('Country')?>
 		<?echo $form->text('condition3.field', array('value' => 'Client.countryId', 'type' => 'hidden'))?>
@@ -26,7 +27,8 @@
 		<?echo $form->text('condition4.field', array('value' => 'Client.stateId', 'type' => 'hidden'))?>
 		<?echo $form->select('condition4.value', $states)?>
 </div>
-
+</div>
+<div style="clear: both; padding-top: 10px">
 <div class="fieldRow">
 <?echo $form->select('condition5.field', array('Loa.startDate' => 'Loa Term Start Date', 'Loa.endDate' => 'Loa Term End Date'))?>
 <div class="range">
@@ -42,9 +44,8 @@
 <?php 		echo $form->checkbox('paging.disablePagination');
 			echo $form->label('paging.disablePagination');?>
 </div>
-
-
 </div>
+
 </fieldset>
 <?php echo $form->submit('Search') ?>
 </div>
