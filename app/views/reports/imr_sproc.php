@@ -68,9 +68,6 @@ CREATE TEMPORARY TABLE tmpImrTable SELECT
             END IF;
         UNTIL curdone END REPEAT;
     CLOSE sidcur;
-DROP TABLE IF EXISTS tmpTable;
-CREATE TABLE tmpTable (val BLOB);
-INSERT INTO tmpTable (val) VALUES(@conditions);
 
 SET @sql = concat('SELECT COUNT(*) INTO @numRecords FROM tmpImrTable AS ImrReport WHERE ', @conditions);
 PREPARE stmt FROM @sql;
