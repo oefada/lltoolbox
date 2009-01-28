@@ -16,6 +16,7 @@ $this->pageTitle = $client['Client']['name'].$html2->c($client['Client']['client
 <input type='hidden' id='clone' name='data[clone]' value='' />
 <div class='buttonrow'>
 	<?=$html->link('Download PDF to send to client for approval.', '/clients/'.$clientId.'/packages/edit/'.$this->data["Package"]["packageId"].'.pdf')?><br />
+	<?=$html->link('Preview as Auction', "http://livedev.luxurylink.com/luxury-hotels/preview.html?pid={$this->data['ClientLoaPackageRel'][0]['clientId']}&oid={$this->data['Package']['packageId']}&preview=package")?><br />
 <?php echo $form->submit() ?>
 <?php echo $form->submit('Clone Package', array('onclick' => '$("clone").value = "clone"')) ?>
 </div>
