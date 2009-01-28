@@ -17,7 +17,7 @@
 					endforeach;
 				?>
 			</th>
-			<th style="width: 70px">Quanity</th>
+			<th style="width: 70px">Quantity</th>
 		</tr>
 	<?php 
 		$loaItemCount = 0;
