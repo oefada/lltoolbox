@@ -39,8 +39,6 @@ $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']
 		<legend class="handle">Contact Details</legend>
 		<div class="collapsibleContent">
 		<?php
-		echo $form->input('contactName');
-		echo $form->input('email');
 		echo $form->input('phone1');
 		echo $form->input('phone2');
 		echo $form->input('fax');
