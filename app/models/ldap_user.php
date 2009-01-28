@@ -67,7 +67,7 @@ class LdapUser extends AppModel
 
         if(isset($result[0]))
         {
-            if (ldap_bind($this->ds, $result[0]['LdapUser']['dn'], $password))
+            if (@ldap_bind($this->ds, $result[0]['LdapUser']['dn'], $password))
             {
                 return $result;
             }
