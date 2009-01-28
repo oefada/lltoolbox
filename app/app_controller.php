@@ -39,22 +39,10 @@
 uses('sanitize');
 class AppController extends Controller {
 	var $helpers = array('Html2', 'Form', 'Text', 'Pagination', 'Layout', 'Ajax', 'StrictAutocomplete', 'Number', 'DatePicker', 'Prototip', 'Session');
-	var $components = array('RequestHandler', 'Acl', 'Auth');
+	var $components = array('RequestHandler');
 	var $Sanitize;
 	
 	function beforeFilter() {
-        $this->Auth->loginAction = array('controller' => 'sessions', 'action' => 'login');  
-        $this->Auth->loginRedirect = array('controller' => 'pages', 'action' => 'display', 'home');
-        $this->Auth->loginError = "Could not log you in, please try again.";
-        $this->Auth->authError = "Insufficient access rights.<br />Must be logged in, or logged in with elevated access.";
-        $this->Auth->authorize = 'controller';
-        //$this->Acl->allow(array('*'),array('*'),'*');
-        $this->Auth->userModel = 'LdapUser';
-        
-        $user = $this->Auth->user();
-        $this->set('user', $user);
-        $this->set('userDetails', $user['LdapUser']);
-        
 		$this->Sanitize = new Sanitize();
 		
 		if($this->RequestHandler->isAjax()) {
