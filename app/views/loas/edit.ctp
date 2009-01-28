@@ -29,7 +29,6 @@ $this->set('clientId', $this->data['Client']['clientId']);
 		echo $form->input('loaNumberPackages');
 		echo $form->input('startDate');
 		echo $form->input('endDate');
-		echo $form->input('currencyId');
 		echo $form->input('membershipFee', array('disabled' => true));
 		echo $form->input('membershipBalance', array('disabled' => true));
 		echo $form->input('totalRemitted', array('disabled' => true));
@@ -45,6 +44,7 @@ $this->set('clientId', $this->data['Client']['clientId']);
 	<div class="handle"><?php __('Related LOA Items');?></div>
 	<div class="related collapsibleContent">
 		<?php
+		echo $form->input('currencyId', array('label' => 'Item Currency'));
 		echo $html->link('Add new LOA item',
 						'/loas/'.$loa['Loa']['loaId'].'/loa_items/add',
 						array(
