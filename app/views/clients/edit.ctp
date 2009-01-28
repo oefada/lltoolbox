@@ -27,7 +27,6 @@ $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']
 		echo $form->input('name');
 	?>
 	<?php
-		echo $form->input('companyName');
 		echo $form->input('url');
 		echo $form->input('checkRateUrl');
 		echo $form->input('numRooms');
