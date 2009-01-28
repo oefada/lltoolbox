@@ -48,7 +48,7 @@ class AppModel extends Model{
 		}
 		
 		//only do this on models other than AppModel
-		if($this->name != 'AppModel' && get_class($this) != 'Aco' && get_class($this) != 'Aro'):
+		if($this->name != 'AppModel' && get_class($this) != 'Aco' && get_class($this) != 'Aro' && get_class($this) != 'ApiClass'):
 			//Use the model name as the table name (forget about the cake plurals)
 			if ($this->useTable !== false) {
 				if ($this->useTable === null) {
