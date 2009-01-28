@@ -87,7 +87,7 @@ class Client extends AppModel {
 		}
 		$tmp.= print_r($this->data, true);
 		mail('alee@luxurylink.com', 'client integration testing', $tmp);
-		die();
+		return true;
 	}
 
 }
