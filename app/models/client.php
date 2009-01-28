@@ -78,5 +78,17 @@ class Client extends AppModel {
 	return $results;
 	}
 
+	// this is for integration of clients to live clients. 
+	function afterSave($created) {
+		if ($created) {
+			$tmp = "CLIENT CREATED\n\n";	
+		} else {
+			$tmp = "CLIENT UPDATED\n\n";	
+		}
+		$tmp.= print_r($this->data, true);
+		mail('alee@luxurylink.com', 'client integration testing', $tmp);
+		die();
+	}
+
 }
 ?>
