@@ -25,7 +25,6 @@ $this->set('clientId', $this->data['Client']['clientId']);
 		 ?>
 	</div>
 	<?
-		echo $form->input('valueAdds');
 		echo $form->input('loaNumberPackages', array('label' => 'Commission-Free Packages'));
 		echo $form->input('startDate');
 		echo $form->input('endDate');
