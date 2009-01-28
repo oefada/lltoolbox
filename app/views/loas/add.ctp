@@ -13,7 +13,7 @@ $this->set('clientId', $this->data['Loa']['clientId']);
 		echo $form->input('loaValue');
 		echo $form->input('customerApprovalStatusId', array('label' => 'Client Approval Status'));
 		echo '<div class="controlset">'.$form->input('upgraded')."</div>";
-		echo $form->input('loaNumberPackages');
+		echo $form->input('loaNumberPackages', array('label' => 'Commission-Free Packages'));
 		echo $form->input('startDate');
 		echo $form->input('endDate');
 		echo $form->input('currencyId');
