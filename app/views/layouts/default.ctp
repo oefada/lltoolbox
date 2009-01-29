@@ -71,7 +71,7 @@
         <div id="logo-title">
 
             <div id="logo"><img src="/img/sm_logo.png" alt="" id="logo-image" /></div>
-			<div id='user-header-details'><?=$userDetails['displayName']?><?=$html2->c($userDetails['email'])?></div>
+			<div id='user-header-details'><?=$userDetails['displayname']?><?=$html2->c($userDetails['mail'])?></div>
         </div> <!-- /#logo-title -->
     </div></div> <!-- /#header-inner, /#header -->
 

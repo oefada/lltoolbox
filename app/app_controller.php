@@ -56,8 +56,9 @@ class AppController extends Controller {
             }
             
             $user = $this->LdapAuth->user();
+
             $this->set('user', $user);
-            $this->set('userDetails', $user['AdminUser']);
+            $this->set('userDetails', $user['LdapUser']);
         }
                 
 		$this->Sanitize = new Sanitize();

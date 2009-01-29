@@ -72,5 +72,43 @@ class LdapAuthComponent extends AuthComponent {
 
                 return $model;
         }
+        
+    /**
+ * Get the current user from the session.
+ *
+ * @param string $key field to retrive.  Leave null to get entire User record
+ * @return mixed User record. or null if no user is logged in.
+ * @access public
+ */
+	function user($key = null) {
+	    $ldap =& $this->getLdapModel();
+	    
+		$this->__setDefaults();
+		
+		if (!$this->Session->check($this->sessionKey)) {
+			return null;
+		}
+		
+		$localUser = $this->Session->read($this->sessionKey);
+		
+		if (!isset($localUser['samaccountname'])) {
+		    $user = $ldap->read(null, $localUser['username']);
+		    $user = $user['LdapUser'];
+		    $user['username'] = $localUser['username'];
+		    $user['password'] = @$localUser['password'];
+		    $this->Session->write($this->sessionKey, $user);
+		}
+
+		if ($key == null) {
+			return array($this->ldapModel => $this->Session->read($this->sessionKey));
+		} else {
+			$user = $this->Session->read($this->sessionKey);
+			if (isset($user[$key])) {
+				return $user[$key];
+			}
+			return null;
+		}
+
+	}
 }
 ?>
