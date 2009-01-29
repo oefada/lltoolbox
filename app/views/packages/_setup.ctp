@@ -89,7 +89,7 @@
 	<?php
 		echo $form->input('maxNumSales');
 		echo $form->input('notes');
-		echo $form->input('dateClientApproved');
+		echo $form->input('dateClientApproved', array('disabled' => true, 'empty' => true));
 	?>
 	</div>
 </fieldset>

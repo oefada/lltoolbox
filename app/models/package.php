@@ -97,6 +97,14 @@ class Package extends AppModel {
             
 	        $this->data['Package']['inclusions'] = implode("\r\n", $descriptions);
 	    endif;
+	    
+	    //dynamically set the client approved date
+    	$orig = $this->find('Package.packageId = '.$this->data['Package']['packageId'], array('packageStatusId'));
+
+    	if (@$orig['Package']['packageStatusId'] != 3 && $this->data['Package']['packageStatusId'] == 3) {
+    	    $this->data['Package']['dateClientApproved'] = date('Y-m-d H:i:s');
+    	}
+
 	    return true;
 	}
 }
