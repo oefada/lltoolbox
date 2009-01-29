@@ -641,7 +641,14 @@ fieldset span.label {
 	color: #898989;
 	font-weight: bold;
 }
-
+table label {
+    margin: 0;
+    color: #333;
+    float: none;
+    font-weight: normal;
+    width: auto;
+    text-align: left;
+}
 fieldset label.error, 
 fieldset span.error {
 	color: #C00;
