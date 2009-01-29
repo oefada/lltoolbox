@@ -32,7 +32,13 @@ $this->set('clientId', $this->data['Client']['clientId']);
 		echo $form->input('membershipFee', array('disabled' => true));
 		echo $form->input('membershipBalance', array('disabled' => true));
 		echo $form->input('totalRemitted', array('disabled' => true));
-		echo $form->input('cashPaid');
+		
+		if ($userDetails['username'] == 'cyoung') {
+			echo $form->input('cashPaid');
+		} else {
+			echo $form->input('cashPaid', array('disabled' => true));
+		}
+		
 		echo $form->input('totalKept', array('disabled' => true));
 	?>
 	</fieldset>
