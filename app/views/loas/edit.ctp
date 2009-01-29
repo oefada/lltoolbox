@@ -17,6 +17,7 @@ $this->set('clientId', $this->data['Client']['clientId']);
 		echo $form->input('cashOrBarter', array('type' => 'select', 'options' => array(1 => 'Cash', 2 => 'Barter'), 'empty' => true));
 		echo $form->input('numEmailInclusions');
 		echo $form->input('loaValue', array('disabled' => true));
+		echo $form->input('Loa.currencyId', array('label' => 'Item Currency'));
 		echo $form->input('customerApprovalStatusId', array('label' => 'Client Approval Status'));
 		echo $form->input('customerApprovalDate', array('label' => 'Package in Date', 'disabled' => true, 'empty' => true));
 	?>
@@ -50,7 +51,6 @@ $this->set('clientId', $this->data['Client']['clientId']);
 	<div class="handle"><?php __('Related LOA Items');?></div>
 	<div class="related collapsibleContent">
 		<?php
-		echo $form->input('Loa.currencyId', array('label' => 'Item Currency'));
 		echo $html->link('Add new LOA item',
 						'/loas/'.$loa['Loa']['loaId'].'/loa_items/add',
 						array(
