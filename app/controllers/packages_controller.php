@@ -213,6 +213,7 @@ class PackagesController extends AppController {
 		foreach($this->data['Package']['CheckedLoaItems'] as $k=>$checkedLoaItem) {
 			$this->data['PackageLoaItemRel'][$checkedLoaItem]['quantity'] = $origPackageLoaItemRel[$checkedLoaItem]['quantity'];
 			$this->data['PackageLoaItemRel'][$checkedLoaItem]['weight'] = $origPackageLoaItemRel[$checkedLoaItem]['weight'];
+			$this->data['PackageLoaItemRel'][$checkedLoaItem]['loaItemTypeId'] = $origPackageLoaItemRel[$checkedLoaItem]['loaItemTypeId'];
 			$this->data['PackageLoaItemRel'][$checkedLoaItem]['loaItemId'] = $checkedLoaItem;
 		}
 		endif;
@@ -294,6 +295,7 @@ class PackagesController extends AppController {
 			if (!in_array($checkedLoaItem, $currentItemIds)):
 				$newPackageLoaItems[$k]['quantity'] = $newPackageLoaItemRel[$checkedLoaItem]['quantity'];
 				$newPackageLoaItems[$k]['weight'] = $newPackageLoaItemRel[$checkedLoaItem]['weight'];
+				$newPackageLoaItems[$k]['loaItemTypeId'] = $newPackageLoaItemRel[$checkedLoaItem]['loaItemTypeId'];
 				$newPackageLoaItems[$k]['loaItemId'] = $checkedLoaItem;
 				$newPackageLoaItems[$k]['packageId'] = $this->data['Package']['packageId'];
 			endif;

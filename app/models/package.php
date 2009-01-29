@@ -24,7 +24,8 @@ class Package extends AppModel {
 						'numConcurrentOffers' => array('rule' => 'numeric', 'message' => 'Must be a number'),
 						'maxNumSales' => array('rule' => 'numeric', 'message' => 'Must  be a number', 'allowEmpty' => true),
 						'numGuests' => array('rule' => 'numeric', 'message' => 'Must be a number'),
-						'numNights' => array('rule' => 'numeric', 'message' => 'Must be a number'),
+						'numNights' => array('numeric' => array('rule' => 'numeric', 'message' => 'Must be a number'),
+						                    'validateNumNightsAddsUp' => array('rule' => 'validateNumNightsAddsUp', 'message' => 'Must match with the number of nights entered for each room item below.')),
 						'endDate' => array('rule' => array('validateDateRanges'), 'message' => 'End Date must be greater than Start Date'),
 						'validityEndDate' => array('rule' => array('validateDateRanges'), 'message' => 'End Date must be greater than Start Date'));
 		
@@ -49,7 +50,20 @@ class Package extends AppModel {
 
 		return true;
 	}
-	
+	function validateNumNightsAddsUp($data) {
+	    $numNights = 0;
+	    foreach ($this->data['PackageLoaItemRel'] as $item) {
+	        if ($item['loaItemTypeId'] == 1) {
+	            $numNights += $item['quantity'];
+	        }
+	    }
+	    
+	    if ($numNights == $data['numNights']) {
+	        return true;
+	    }
+
+	    return false;
+	}
 	function cloneData($data)
 	{
 		$data['Package']['copiedFromPackageId'] = $data['Package']['packageId'];
