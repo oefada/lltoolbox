@@ -103,6 +103,13 @@ class DboMysqli extends DboMysqlBase {
  * @access protected
  */
 	function _execute($sql) {
+	    static $dblastused;
+        if ($dblastused != $this->config["database"]) {
+            $this->disconnect();
+            $this->connect();
+        }
+        $dblastused = $this->config["database"];
+
 		if (preg_match('/^\s*call/i', $sql)) {
 			return $this->_executeProcedure($sql);
 		} else {

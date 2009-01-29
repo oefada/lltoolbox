@@ -404,6 +404,13 @@ class DboMysql extends DboMysqlBase {
  * @access protected
  */
 	function _execute($sql) {
+        static $dblastused;
+        if ($dblastused != $this->config["database"]) {
+            $this->disconnect();
+            $this->connect();
+        }
+        $dblastused = $this->config["database"];
+
 		return mysql_query($sql, $this->connection);
 	}
 /**
