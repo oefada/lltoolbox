@@ -50,7 +50,7 @@ $this->set('clientId', $this->data['Client']['clientId']);
 	<div class="handle"><?php __('Related LOA Items');?></div>
 	<div class="related collapsibleContent">
 		<?php
-		echo $form->input('currencyId', array('label' => 'Item Currency'));
+		echo $form->input('Loa.currencyId', array('label' => 'Item Currency'));
 		echo $html->link('Add new LOA item',
 						'/loas/'.$loa['Loa']['loaId'].'/loa_items/add',
 						array(
