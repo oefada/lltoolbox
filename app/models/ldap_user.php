@@ -28,7 +28,7 @@ class LdapUser extends AppModel
 
     function __destruct()
     {
-        sldap_close($this->ds);
+        ldap_close($this->ds);
     }
 
     function findAll($attribute = 'samaccountname', $value = '*', $baseDn = '')
