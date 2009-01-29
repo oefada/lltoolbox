@@ -49,7 +49,7 @@ class LdapUser extends AppModel
 
     function read($fields=null, $samaccountname)
     {
-        $r = ldap_search($this->ds, $this->baseDn, 'samaccountname='. $samaccountname);
+        $r = ldap_search($this->ds, $this->userBaseDn, 'samaccountname='. $samaccountname);
         if ($r)
         {
             $l = ldap_get_entries($this->ds, $r);
