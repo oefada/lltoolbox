@@ -18,7 +18,7 @@ $this->set('clientId', $this->data['Client']['clientId']);
 		echo $form->input('numEmailInclusions');
 		echo $form->input('loaValue', array('disabled' => true));
 		echo $form->input('customerApprovalStatusId', array('label' => 'Client Approval Status'));
-		echo $form->input('customerApprovalDate', array('label' => 'Customer Approval Date'));
+		echo $form->input('customerApprovalDate', array('label' => 'Package in Date', 'disabled' => true));
 	?>
 	<div class="controlset">
 		<span class='label'>&nbsp;</span>

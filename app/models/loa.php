@@ -33,5 +33,15 @@ class Loa extends AppModel {
 		}
 		return true;
 	}
+	
+	function beforeSave($options) {
+	    $orig = $this->find('Loa.loaId = '.$this->data['Loa']['loaId'], array('customerApprovalStatusId'));
+	    
+	    if (@$orig['Loa']['customerApprovalStatusId'] != 2 && $this->data['Loa']['customerApprovalStatusId'] == 2) {
+	        $this->data['Loa']['customerApprovalDate'] = date('Y-m-d H:i:s');
+	    }
+	    
+	    return true;
+	}
 }
 ?>
