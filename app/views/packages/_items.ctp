@@ -1,36 +1,3 @@
-<script>
-function perPersonPerNight(type, itemId) {
-	var pp_val = $F('perPerson_'+itemId);
-	var pn_val = $F('perNight_'+itemId);
-	var quantityField = $('PackageLoaItemRel'+itemId+'Quantity');
-	var basePrice = $F('PackageLoaItemRel'+itemId+'BasePrice');
-	var numNights = $F('PackageNumNights');
-	var numGuests = $F('PackageNumGuests');
-	var quantity;
-	
-	if (pp_val || pn_val) {
-		quantityField.writeAttribute('readonly');
-		quantity = 1;
-		if (pp_val) {
-			quantity = quantity * numGuests;
-		}
-		
-		if (pn_val) {
-			quantity = quantity * numNights;
-		}
-		
-		quantityField.value = quantity;
-	} else {
-		quantityField.value = '';
-		quantityField.writeAttribute('readonly', false);
-	}
-}
-
-function updateAllPerPersonPerNight() {
-	
-}
-
-</script>
 <fieldset id="chooseItems" class="collapsible">
 	<h3 class="handle">Items/Inclusions</h3>
 	<div class="collapsibleContent">
@@ -93,8 +60,8 @@ function updateAllPerPersonPerNight() {
 					</div>
 					<? if($loaItem['loaItemTypeId'] != 1): ?>
 					<div class="controlset" style="float: left; margin-left: 3px; clear: none">
-					<input type="checkbox" name="perPerson_<?=$loaItem['loaItemId']?>" id="perPerson_<?=$loaItem['loaItemId']?>" value="1" onclick="perPersonPerNight('pp', <?=$loaItem['loaItemId']?>)" /><label for="perPerson_<?=$loaItem['loaItemId']?>">PP</label><br />
-					<input type="checkbox" name="perNight_<?=$loaItem['loaItemId']?>" id="perNight_<?=$loaItem['loaItemId']?>" value="1" onclick="perPersonPerNight('pn', <?=$loaItem['loaItemId']?>)" /><label for="perNight_<?=$loaItem['loaItemId']?>">PN</label>
+					<input type="checkbox" name="perPerson_<?=$loaItem['loaItemId']?>" id="perPerson_<?=$loaItem['loaItemId']?>" value="1" onclick="perPersonPerNight(<?=$loaItem['loaItemId']?>)" /><label for="perPerson_<?=$loaItem['loaItemId']?>">PP</label><br />
+					<input type="checkbox" name="perNight_<?=$loaItem['loaItemId']?>" id="perNight_<?=$loaItem['loaItemId']?>" value="1" onclick="perPersonPerNight(<?=$loaItem['loaItemId']?>)" /><label for="perNight_<?=$loaItem['loaItemId']?>">PN</label>
 					</div>
 					<? endif; ?>
 					<?= $form->input('PackageLoaItemRel.'.$loaItem['loaItemId'].'.loaItemTypeId', array('type' => 'hidden', 'value' => $loaItem['loaItemTypeId'])) ?>
