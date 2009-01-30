@@ -206,6 +206,7 @@ class PackagesController extends AppController {
 		if(!isset($this->data['PackageLoaItemRel'])) {
 			return true;
 		}
+
 		$origPackageLoaItemRel = $this->data['PackageLoaItemRel'];
 		unset($this->data['PackageLoaItemRel']);
 		
@@ -261,7 +262,7 @@ class PackagesController extends AppController {
 		//grab the new quantities from the form, the data array looks like the one from the databases but with only the quantity field
 		$currentItemIds = array();
 		$newPackageLoaItemRel = @$this->data['PackageLoaItemRel'];
-		
+
 		unset($this->data['PackageLoaItemRel']);
 	
 		//set the PackageLoaItemRel array to the arrays stored in this package
@@ -285,6 +286,7 @@ class PackagesController extends AppController {
 				$currentItemIds[] = $packageLoaItemRel['loaItemId'];
 				$packageLoaItemRel['quantity'] = $newPackageLoaItemRel[$packageLoaItemRel['loaItemId']]['quantity'];
 				$packageLoaItemRel['weight'] = $newPackageLoaItemRel[$packageLoaItemRel['loaItemId']]['weight'];
+				$packageLoaItemRel['loaItemTypeId'] = $newPackageLoaItemRel[$packageLoaItemRel['loaItemId']]['loaItemTypeId'];
 				$this->data['PackageLoaItemRel'][] = $packageLoaItemRel;
 			}
 		endforeach;
