@@ -66,73 +66,7 @@ class ClientsController extends AppController {
 		}
 		$this->set(compact('clientLevelIds','clientStatusIds','clientTypeIds','regions','clientAcquisitionSourceIds', 'loas', 'themes', 'countryIds', 'stateIds', 'cityIds'));
 	}
-	
-	// have to do this over again because so many changes have been made to client [alee] 1-20-2009
-	function updateClientLive($id = null) {
-		if (!$id) {
-			$this->Session->setFlash(__('Invalid Client', true));
-			$this->redirect(array('action'=>'index'));
-		}
 		
-		$this->Client->recursive = 1;
-		$data = $this->Client->read(null, $id);
-
-		// array we are sending to the service
-		$update = array();
-	
-		// ------------ [build client] --------------
-		$update['Client'] = $data['Client'];
-		$update['Client']['clientTypeName'] = $data['ClientType']['clientTypeName'];
-		$update['Client']['clientLevelName'] = $data['ClientLevel']['clientLevelName'];
-		$update['Client']['clientStatusName'] = $data['ClientStatus']['clientStatusName'];
-		unset($update['Client']['created']);
-		unset($update['Client']['modified']);
-		unset($update['Client']['revision']);
-		
-		// ------------ [build clientThemeRel] ------
-		$update['ClientThemeRel'] = $themeIds = array();
-		foreach ($data['Theme'] as $k => $theme) {
-			$themeIds[] = $theme['themeId'];
-			unset($theme['ClientThemeRel']['created']);
-			unset($theme['ClientThemeRel']['modified']);
-			$update['ClientThemeRel'][] = $theme['ClientThemeRel'];
-		}
-		sort($themeIds);
-		$update['Client']['themeIds'] = implode('-', $themeIds);
-		
-		// ------------ [build clientDestinationRel] -----------
-		$update['ClientDestinationRel'] = $destinationIds = array();
-		foreach ($data['Destination'] as $k => $destination) {
-			$destinationIds[] = $destination['destinationId'];
-			unset($destination['ClientDestinationRel']['created']);
-			unset($destination['ClientDestinationRel']['modified']);
-			$update['ClientDestinationRel'][] = $destination['ClientDestinationRel'];
-		}
-		sort($destinationIds);
-		$update['Client']['destinationIds'] = implode('-', $destinationIds);
-		
-		// ------------ [build clientAmenityRel] ----------------
-		$update['ClientAmenityRel'] = array();
-		foreach ($data['Amenity'] as $k => $amenity) {
-			$update['ClientAmenityRel'][] = $amenity['ClientAmenityRel'];
-		}
-		
-		// ------------ [send $update to the web service] --------
-		$webservice_live_url = 'http://livedev.luxurylink.com/web_services/update_client.php?wsdl';
-		$webservice_live_method_name = 'updateClient';
-		$webservice_live_method_param = 'in0';
-
-		$soap_client = new nusoap_client($webservice_live_url, true);
-
-		$data_json_encoded = json_encode($update);
-
-        $response = $soap_client->call($webservice_live_method_name, array($webservice_live_method_param => $data_json_encoded));
- 			
- 		echo $response;
- 			
-		die();
-	}
-	
 	function search()
 	{
 		if(!empty($_GET['query'])) {

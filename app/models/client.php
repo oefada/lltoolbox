@@ -78,17 +78,130 @@ class Client extends AppModel {
 	return $results;
 	}
 
-	// this is for integration of clients to live clients. 
 	function afterSave($created) {
-		if ($created) {
-			$tmp = "CLIENT CREATED\n\n";	
-		} else {
-			$tmp = "CLIENT UPDATED\n\n";	
+		// ----------------------------------------------------------------------
+		// client integration to live clients
+		// ----------------------------------------------------------------------
+		// $created specifies if a client record was created in toolbox.  
+		// ONLY true if client created via Sugar as toolbox cannot create new client records
+		
+		
+		// get client record from toolbox so we can update live client
+		// -----------------------------------------------------------------
+		$clientId 				= $this->data['Client']['clientId'];
+		$clientToolbox 			= $this->read(null, $clientId);	
+		$themeIds 				= array();
+		$destinationIds			= array();
+		$liveClientDataSave 	= array();		
+		$errors					= array();
+		
+		// switch to live and retrieve the client table schema from the live db client
+		// -----------------------------------------------------------------
+		$this->useDbConfig 		= 'live';
+		$this->schema(true);
+		$this->recursive 		= -1;
+		$clientLiveSchema 		= $this->query('DESCRIBE client');
+		
+		// check if this client record already exists in live client
+		// -----------------------------------------------------------------
+		$checkClient			= $this->query('SELECT COUNT(*) AS count FROM client WHERE clientId = ' . $clientId . ' ORDER BY clientId ASC LIMIT 1');
+		$clientExistsOnLive		= $checkClient[0][0]['count'] ? true : false;
+		
+		// prepare and map the client data to save to live
+		// -----------------------------------------------------------------
+		foreach ($clientLiveSchema as $column) {
+			$field = $column['COLUMNS']['Field'];
+			if (isset($clientToolbox['Client'][$field])) {
+				$liveClientDataSave[$field] = Sanitize::escape($clientToolbox['Client'][$field], 'live');
+			} 
 		}
-		$tmp.= print_r($this->data, true);
-		mail('alee@luxurylink.com', 'client integration testing', $tmp);
+		
+		// get all the client's theme ids 
+		// -----------------------------------------------------------------
+		foreach ($clientToolbox['Theme'] as $theme) {
+			$themeIds[] = $theme['themeId'];
+		}
+		sort($themeIds);
+		$tmp = '';
+		$insert_arr = array();
+		$insert_arr['clientId'] = $clientId;
+		for ($i = 1; $i <= 150; $i++) {
+			if (in_array($i, $themeIds)) {
+				$insert_arr["theme$i"] = 1;
+				$tmp.= "theme$i=1,";	
+			} else {
+				$tmp.= "theme$i=0,";
+			}
+		}
+		$update_tmp = rtrim($tmp, ',');
+		$sql = "INSERT INTO clientThemeLookup (". implode(',',array_keys($insert_arr)) .") VALUES (". implode(',',array_values($insert_arr)) .") ON DUPLICATE KEY UPDATE $update_tmp";						
+		$result = $this->query($sql);
+				
+		// get all the clients destination ids
+		// -----------------------------------------------------------------
+		foreach ($clientToolbox['Destination'] as $destination) {
+			$destinationIds[] = $destination['themeId'];
+		}
+		sort($destinationIds);
+		$tmp = '';
+		$insert_arr = array();
+		$insert_arr['clientId'] = $clientId;
+		for ($i = 1; $i <= 150; $i++) {
+			if (in_array($i, $destinationIds)) {
+				$insert_arr["destination$i"] = 1;
+				$tmp.= "destination$i=1,";	
+			} else {
+				$tmp.= "destination$i=0,";
+			}
+		}
+		$update_tmp = rtrim($tmp, ',');
+		$sql = "INSERT INTO clientDestinationLookup (". implode(',',array_keys($insert_arr)) .") VALUES (". implode(',',array_values($insert_arr)) .") ON DUPLICATE KEY UPDATE $update_tmp";
+		$result = $this->query($sql);
+		
+		// map other fields manually
+		// -----------------------------------------------------------------
+		$liveClientDataSave['clientLevelId'] = $clientToolbox['ClientLevel']['clientLevelId'];
+		$liveClientDataSave['clientLevelName'] = $clientToolbox['ClientLevel']['clientLevelName'];
+		$liveClientDataSave['destinationIds'] = implode(',', $destinationIds);
+		$liveClientDataSave['themeIds'] = implode(',', $themeIds);
+		
+		if ($clientExistsOnLive) {
+			//  perform client UPDATE
+			unset($liveClientDataSave['clientId']);
+			$sql = 'UPDATE client SET ';
+			foreach ($liveClientDataSave as $k => $v) {
+				$sql.= "$k = \"$v\",";	
+			}
+			$sql = rtrim($sql, ',') . ' WHERE clientId = ' . $clientId;
+			$result = $this->query($sql);
+		} else {
+			//  perform client INSERT
+			$sql = 'INSERT INTO client ('. implode(',',array_keys($liveClientDataSave)) .') VALUES("'. implode('","',array_values($liveClientDataSave)) .'")';
+			$result = $this->query($sql);
+		}
+		
+		// send email if error
+		// -----------------------------------------------------------------
+		if (!empty($errors)) {
+			$emailTo = 'devmail@luxurylink.com';
+			$emailFrom = 'Toolbox <devmail@luxurylink.com>';
+			$emailHeaders = "From: $emailFrom\r\n";
+        	$emailHeaders.= "Content-type: text/html\r\n";
+			$emailSubject = 'Client Integration Error Has Occured';
+			$emailBody = 'An error has occured while trying to update:<br /><br />Database: live<br />Table: client<br />ClientId: ' . $clientId . '<br /><br />';
+			if ($created) {
+				$emailBody.= 'Operation Attempted: Create new client on live db.<br /><br />';	
+			} else {
+				$emailBody.= 'Operation Attempted: Update client on live db.<br /><br />';	
+			}
+			$emailBody.= print_r($liveClientDataSave, true);
+			$emailBody.= print_r($_SERVER, true);
+			// send out email now
+			@mail($emailTo, $emailSubject, $emailBody, $emailHeaders);	
+		}
+		
 		return true;
 	}
-
+	
 }
 ?>
