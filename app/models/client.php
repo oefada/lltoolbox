@@ -35,27 +35,27 @@ class Client extends AppModel {
     var $hasAndBelongsToMany = array(
 								'Tag' =>
 	                               array('className'    => 'Tag',
-	                                     'joinTable'    => 'clientTag',
 	                                     'foreignKey'   => 'clientId',
 	                                     'associationForeignKey'=> 'tagId',
+	                                     'with' => 'clientTag',
 	                                     'unique'       => true,
 	                               ),
 								'Amenity' => 
 									array('className' => 'Amenity',
-										  'joinTable' => 'clientAmenityRel',
 										  'foreignKey' => 'clientId',
+										  'with' => 'clientAmenityRel',
 										  'associationForeignKey' => 'amenityId'
 								   ),
 								'Theme' => 
 									array('className' => 'Theme',
-										  'joinTable' => 'clientThemeRel',
 										  'foreignKey' => 'clientId',
+										  'with' => 'clientThemeRel',
 										  'associationForeignKey' => 'themeId'
 								   ),
 								'Destination' => 
 									array('className' => 'Destination',
-										  'joinTable' => 'clientDestinationRel',
 										  'foreignKey' => 'clientId',
+										  'with' => 'clientDestinationRel',
 										  'associationForeignKey' => 'destinationId'
 								   )
                                );
