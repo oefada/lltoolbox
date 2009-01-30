@@ -15,7 +15,7 @@ echo $paginator->counter(array(
 	<th><?php echo $paginator->sort('remittanceTypeId');?></th>
 	<th><?php echo $paginator->sort('schedulingStatusId');?></th>
 	<th><?php echo $paginator->sort('packageName');?></th>
-	<th><?php echo $paginator->sort('subTitle');?></th>
+	<th><?php echo $paginator->sort('subtitle');?></th>
 	<th><?php echo $paginator->sort('startDate');?></th>
 	<th><?php echo $paginator->sort('endDate');?></th>
 	<th><?php echo $paginator->sort('numWinners');?></th>
@@ -61,7 +61,7 @@ foreach ($schedulingMasters as $schedulingMaster):
 			<?php echo $schedulingMaster['SchedulingMaster']['packageName']; ?>
 		</td>
 		<td>
-			<?php echo $schedulingMaster['SchedulingMaster']['subTitle']; ?>
+			<?php echo $schedulingMaster['SchedulingMaster']['subtitle']; ?>
 		</td>
 		<td>
 			<?php echo $schedulingMaster['SchedulingMaster']['startDate']; ?>

@@ -38,7 +38,7 @@
 		</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('SubTitle'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $schedulingMaster['SchedulingMaster']['subTitle']; ?>
+			<?php echo $schedulingMaster['SchedulingMaster']['subtitle']; ?>
 			&nbsp;
 		</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('StartDate'); ?></dt>

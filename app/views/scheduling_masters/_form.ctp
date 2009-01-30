@@ -66,7 +66,7 @@ datePickerController.addDatePicker('SchedulingMasterStartDatePicker', {'id':'Sch
 
 		echo $form->input('trackId', array('value' => $package['ClientLoaPackageRel'][0]['trackId'], 'type' => 'hidden'));
 		echo $form->input('packageName', array('value' => $package['Package']['packageName'], 'type' => 'hidden'));
-		echo $form->input('subTitle',  array('value' => $package['Package']['subtitle'], 'type' => 'hidden'));
+		echo $form->input('subtitle',  array('value' => $package['Package']['subtitle'], 'type' => 'hidden'));
 		echo $form->input('packageId', array('value' => $packageId, 'type' => 'hidden'));
 		
 		echo $ajax->observeField('SchedulingMasterOfferTypeId', array(
