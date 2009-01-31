@@ -1,4 +1,3 @@
-<? define('CELL_WIDTH',  100/$monthDays); ?>
 <div id='package_<?=$package['Package']['packageId']?>' class='collapsible'>
 <div class='handle'>&nbsp;</div>
 <div class='pkgTitle clearfix'>
@@ -87,14 +86,14 @@ foreach($package['Scheduling'] as $k => $master):
 		
 	<?php
 		$prototip->tooltip('schedulingMaster'.$master['SchedulingMaster']['schedulingMasterId'], array('ajax' =>
-		 																		array('url' => '/scheduling_masters/performanceTooltip/'.$master['SchedulingMaster']['schedulingMasterId'], 
+		 																		array('url' => '/scheduling_instances/performanceTooltip/'.$instance['schedulingMasterId'], 
 																						'options' => array('method' => 'get')
 																					),
 																				'title' => 'Scheduling Master Performance'
 																				));
 	} else {
 	?>
-		<div id="schedulingInstance<?=$instance['schedulingInstanceId']?>"style="width: <?=$width?>%; left: <?=$left?>%"<?=$class?>>	
+		<div id="schedulingInstance<?=$instance['schedulingInstanceId']?>"style="width: <?=$width?>%; left: <?=$left?>%"<?=$class?> onclick="Modalbox.show('/scheduling_masters/edit/<?=$instance['schedulingMasterId']?>', {title: 'Edit Scheduling Master'});">	
 		Iteration 
 	<?php
 		$prototip->tooltip('schedulingInstance'.$instance['schedulingInstanceId'], array('ajax' =>

@@ -96,6 +96,7 @@ function gotoMonth(theLink, month)
 			<?php
 			$row = 1;
 			$this->data['masterRows'] = 0;
+			define('CELL_WIDTH',  100/$monthDays);
 			foreach($packages as $package):
 				echo $this->renderElement('../scheduling/_package_row', array('package' => $package, 'row' => $row++, 'masterRows' => $this->data['masterRows']));
 			endforeach;
