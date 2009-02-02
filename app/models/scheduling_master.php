@@ -8,7 +8,8 @@ class SchedulingMaster extends AppModel {
 	var $belongsTo = array('SchedulingStatus' => array('foreignKey' => 'schedulingStatusId'),
 						   'SchedulingDelayCtrl' => array('foreignKey' => 'schedulingDelayCtrlId'),
 						   'RemittanceType' => array('foreignKey' => 'remittanceTypeId'),
-						   'Package' => array('foreignKey' => 'packageId')
+						   'Package' => array('foreignKey' => 'packageId'),
+						   'OfferType' => array('foreignKey' => 'offerTypeId')
 						  );
 	
 	var $hasOne = array('SchedulingMasterPerformance' => array('foreignKey' => 'schedulingMasterId'));

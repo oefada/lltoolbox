@@ -8,9 +8,10 @@
 		<span class="masterListTarget" id="masterListTarget<?=$package['Package']['packageId']?>"><a href="javascript: void(0);" style="color: #fff"><?= count($package['Package']['masterList']) ?> Masters</a></span>
 		<div class="masterList" id="masterList<?=$package['Package']['packageId']?>" style="display: none">
 		<?php foreach($package['Package']['masterList'] as $m):
+			$offerTypeName = $m['OfferType']['offerTypeName'];
 			$m = $m['SchedulingMaster'];
 		?>
-			<a href="javascript: void(0);" onclick="Modalbox.show('/scheduling_masters/edit/<?=$m['schedulingMasterId']?>', {title: 'Edit Scheduling Master'});">#<?=$m['schedulingMasterId']?>: <?=date('M d, Y', strtotime($m['startDate']))?></a><br />
+			<a href="javascript: void(0);" onclick="Modalbox.show('/scheduling_masters/edit/<?=$m['schedulingMasterId']?>', {title: 'Edit Scheduling Master'});"><?=$offerTypeName?> #<?=$m['schedulingMasterId']?>: <?=date('M d, Y', strtotime($m['startDate']))?></a><br />
 		<?php endforeach; ?>	
 		</div>
 		<strong>Schedule This Package</strong> - Start Date
@@ -138,7 +139,7 @@ new Tip("masterListTarget<?=$package['Package']['packageId']?>", $("masterList<?
 	stem: 'topRight',
 	hook: { target: 'bottomMiddle', tip: 'topRight' },
 	offset: { x: 6, y: 0 },
-	width: '150px',
+	width: '200px',
 	style: 'toolboxblue',
 	showOn: 'click'
 });
