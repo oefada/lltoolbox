@@ -41,7 +41,7 @@ function gotoMonth(theLink, month)
 	clear: left;
 }
 </style>
-<h2 class='title'>Scheduling</h2>
+<h2 class='title'>Scheduling for <?=$monthYearString?></h2>
 <div id='schedulingGraphs' style="float: left; clear: both">
 	<?php echo $this->renderElement('../scheduling/_graph')?>
 </div>
@@ -87,7 +87,7 @@ function gotoMonth(theLink, month)
 	});
 	</script>
 
-	<h3><?=$monthYearString?></h3>
+	<h3 style="font-size: 13px;"><?=$monthYearString?></h3>
 	
 	<div id='cContainer' class='clearfix'>
 		<?php echo $this->renderElement('../scheduling/_days'); ?>
