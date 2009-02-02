@@ -1,4 +1,4 @@
-<ul>
+<ul class="tree">
 	<? $clientId = $this->viewVars['clientId'] ?>
 	<li><?=$html->link('Info/Attributes', array("controller" => 'clients', 'action' => 'edit', $clientId), array('update' => 'content-area', 'indicator' => 'spinner'))?></li>
 	<li><?=$html->link('LOA', "/clients/$clientId/loas", array('update' => 'content-area', 'indicator' => 'spinner') )?> <?=$html2->c($client['Client']['numLoas'])?></li>

@@ -1,4 +1,4 @@
-<ul>
+<ul class="tree">
 	<li><?=$html->link('Aging', 'aging')?></li>
 	<li><?=$html->link('Auction Timeslot', 'auction_timeslot')?></li>
 	<li><?=$html->link('Auction Winner', 'auction_winner')?></li>

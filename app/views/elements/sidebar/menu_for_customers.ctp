@@ -2,7 +2,7 @@
 if(isset($this->viewVars['userId'])):
 $userId = $this->viewVars['userId']; 
 ?>
-<ul>
+<ul id="menu" class="tree">
 	<li><?=$html->link('Info/Attributes', array("controller" => 'users', 'action' => 'edit', $userId))?></li>
 	<li><?=$html->link('Tickets', "/users/tickets/$userId")?><?=$html2->c($numUserTickets)?></li>
 	<li><?=$html->link('Bids', "/users/bids/$userId")?><?=$html2->c($numUserBids)?></li>
