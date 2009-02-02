@@ -2,9 +2,17 @@
 <div class='handle'>&nbsp;</div>
 <div class='pkgTitle clearfix'>
 	<div class='title' id='packageTitle<?=$package['Package']['packageId']?>'>
-		<?=$html->link($text->truncate(trim($package['Package']['packageName']), 55), "/clients/$clientId/packages/edit/{$package['Package']['packageId']}")?> <?=$html2->c($package['Package']['packageId'], 'ID')?>
+		<?=$html->link($text->truncate(trim($package['Package']['packageName']), 45), "/clients/$clientId/packages/edit/{$package['Package']['packageId']}")?> <?=$html2->c($package['Package']['packageId'], 'ID')?>
 	</div>
 	<div class='scheduleThisPackage'>
+		<span class="masterListTarget" id="masterListTarget<?=$package['Package']['packageId']?>"><a href="javascript: void(0);" style="color: #fff"><?= count($package['Package']['masterList']) ?> Masters</a></span>
+		<div class="masterList" id="masterList<?=$package['Package']['packageId']?>" style="display: none">
+		<?php foreach($package['Package']['masterList'] as $m):
+			$m = $m['SchedulingMaster'];
+		?>
+			<a href="javascript: void(0);" onclick="Modalbox.show('/scheduling_masters/edit/<?=$m['schedulingMasterId']?>', {title: 'Edit Scheduling Master'});">#<?=$m['schedulingMasterId']?>: <?=date('M d, Y', strtotime($m['startDate']))?></a><br />
+		<?php endforeach; ?>	
+		</div>
 		<strong>Schedule This Package</strong> - Start Date
 		<input type="hidden" class="format-y-m-d divider-dash range-low-today fill-grid-no-select opacity-99" id="dp-package-<?=$package['Package']['packageId']?>" name="dp-normal-<?=$package['Package']['packageId']?>" value="<?=$year.'-'.$month.'-01'?>" maxlength="10"/>
 		<script>
@@ -122,3 +130,16 @@ $prototip->tooltip('packageTitle'.$package['Package']['packageId'], array('ajax'
 																		'title' => 'Package Performance'
 																		));
 ?>
+<script type="text/javascript" language="javascript">
+new Tip("masterListTarget<?=$package['Package']['packageId']?>", $("masterList<?=$package['Package']['packageId']?>").cloneNode(true), {
+	title: "Scheduling Master List",
+	target: $("masterListTarget<?=$package['Package']['packageId']?>"),
+	hideOn: { element: 'closeButton', event: 'click' },
+	stem: 'topRight',
+	hook: { target: 'bottomMiddle', tip: 'topRight' },
+	offset: { x: 6, y: 0 },
+	width: '150px',
+	style: 'toolboxblue',
+	showOn: 'click'
+});
+</script>

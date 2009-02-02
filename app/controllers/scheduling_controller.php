@@ -54,7 +54,15 @@ class SchedulingController extends AppController {
 
 		$this->Package->ClientLoaPackageRel->contain('Package', 'Client', 'Loa');
 		$packages = $this->Package->ClientLoaPackageRel->find('all', array('conditions' => array('ClientLoaPackageRel.clientId' => $clientId, 'packageStatusId' => 4)));
-	
+	    
+	    $this->Package->SchedulingMaster->Behaviors->attach('Containable');
+	    foreach ($packages as $k => $package) {
+	        $packages[$k]['Package']['masterList'] = $this->Package->SchedulingMaster->find('all', array('conditions' => array('SchedulingMaster.packageId' => $package['Package']['packageId']),
+	                                                                                        'fields' => array('SchedulingMaster.schedulingMasterId', 'SchedulingMaster.startDate'),
+	                                                                                        'contain' => array()
+	                                                                                        ));
+	    }
+	    
 		$this->_addPackageSchedulingInstances($packages, $month, $year);
 		
 		return $packages;
