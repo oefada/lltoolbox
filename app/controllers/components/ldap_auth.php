@@ -5,7 +5,8 @@ class LdapAuthComponent extends AuthComponent {
         var $ldapModel = 'LdapUser';
 
         function startup(&$controller) {
-                if (isset($controller->data[$this->userModel])) {
+                //Need the is_array because control->data can be an XML object if it's a soap request
+                if (is_array($controller->data) && isset($controller->data[$this->userModel])) {
                         $username = $controller->data[$this->userModel][$this->fields['username']];
 
                         $password = $controller->data[$this->userModel][$this->fields['password']];
