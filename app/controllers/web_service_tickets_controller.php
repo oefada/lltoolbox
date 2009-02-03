@@ -66,6 +66,8 @@ class WebServiceTicketsController extends WebServicesController
 		$offerTypeToFormat = $this->Offer->query("SELECT formatId FROM formatOfferTypeRel WHERE offerTypeId = " . $offerData['SchedulingInstance']['SchedulingMaster']['offerTypeId']);
 		$formatId = $offerTypeToFormat[0]['formatOfferTypeRel']['formatId'];
 		
+		mail('devmail@luxurylink.com', 'Ticket Creation Error: X-1' , 'Error Detected:  Need a better error detection system.');
+		
 		// create a new ticket!
 		$newTicket = array();
 		$newTicket['Ticket']['ticketStatusId'] 			 = 1;
@@ -106,8 +108,9 @@ class WebServiceTicketsController extends WebServicesController
 		$newTicket['Ticket']['userZip']					 = $addressData['Address']['postalCode'];
 
 		$this->Ticket->create();
+		mail('devmail@luxurylink.com', 'Ticket Creation Error: X-2' , 'Error Detected:  Need a better error detection system.');
 		if ($this->Ticket->save($newTicket)) {
-	
+			mail('devmail@luxurylink.com', 'Ticket Creation Error: X-3' , 'Error Detected:  Need a better error detection system.');
 			// ticket is now created. 
 			$ticketId = $this->Ticket->getLastInsertId();
 			
@@ -151,10 +154,13 @@ class WebServiceTicketsController extends WebServicesController
 			// -----------------------------------------------
 			
 			// send out winner notifications
+			mail('devmail@luxurylink.com', 'Ticket Creation Error: X-5' , 'Error Detected:  Need a better error detection system.');
 			$this->ppv(json_encode($ppv_settings));
+			mail('devmail@luxurylink.com', 'Ticket Creation Error: X-6' , 'Error Detected:  Need a better error detection system.');
 			
 			return true;	
 		} else {			
+			mail('devmail@luxurylink.com', 'Ticket Creation Error: X-4' , 'Error Detected:  Need a better error detection system.');
 			$this->errorResponse = 908;
 
 			$errorBody = "DEBUG MESSAGE\n\n";
