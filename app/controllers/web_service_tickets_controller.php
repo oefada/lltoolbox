@@ -34,7 +34,6 @@ class WebServiceTicketsController extends WebServicesController
 	{
 		$json_decoded = json_decode($in0, true);
 		$this->errorResponse = false;
-		return 'asdgasasdg';
 		if (!$this->createNewTicket($json_decoded)) {			
 			$json_decoded['response'] = $this->errorResponse;
 		} 
