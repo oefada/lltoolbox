@@ -110,7 +110,14 @@ class WebServiceTicketsController extends WebServicesController
 			// ticket is now created. 
 			$ticketId = $this->Ticket->getLastInsertId();
 			
-			mail('devmail@luxurylink.com', "Ticket #$ticketId Successfully Created", "Ticket has been created!  \n\n" . print_r($newTicket, true));
+			$emailTo = 'devmail@luxurylink.com';
+			$emailFrom = 'Toolbox Web Service<devmail@luxurylink.com>';
+			$emailHeaders = "From: $emailFrom\r\n";
+        	$emailHeaders.= "Content-type: text/html\r\n";
+			$emailSubject = "Ticket #$ticketId Successfully Created";
+			$emailBody = "Ticket #$ticketId has been successfully created.<br /><br />" . print_r($newTicket, true);
+			// send out email now
+			@mail($emailTo, $emailSubject, $emailBody, $emailHeaders);
 			
 			// update the tracks 
 			$schedulingMasterId = $offerData['SchedulingInstance']['SchedulingMaster']['schedulingMasterId'];
@@ -154,6 +161,9 @@ class WebServiceTicketsController extends WebServicesController
 			// send out winner notifications
 			$this->ppv(json_encode($ppv_settings));
 			
+			// send out loser transactional upsell email
+			$this->sendTransactionalUpsell($data['offerId']);
+			
 			return true;	
 		} else {			
 			$this->errorResponse = 908;
@@ -180,6 +190,10 @@ class WebServiceTicketsController extends WebServicesController
 		}
 	}
 		
+	function sendTransactionalUpsell($offerId) {
+		mail('devmail@luxurylink.com', 'Transactional Email Start', $offerId);
+	}
+	
 	function ppv($in0) {
 		$params = json_decode($in0, true);
 		
