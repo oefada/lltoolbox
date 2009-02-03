@@ -34,6 +34,7 @@ class WebServiceTicketsController extends WebServicesController
 	{
 		$json_decoded = json_decode($in0, true);
 		$this->errorResponse = false;
+		mail('devmail@luxurylink.com', 'Ticket Creation Error: X-0' , 'Error Detected:  Need a better error detection system.');
 		if (!$this->createNewTicket($json_decoded)) {			
 			$json_decoded['response'] = $this->errorResponse;
 		} 
