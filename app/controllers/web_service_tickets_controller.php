@@ -162,7 +162,7 @@ class WebServiceTicketsController extends WebServicesController
 			$this->ppv(json_encode($ppv_settings));
 			
 			// send out loser transactional upsell email
-			$this->sendTransactionalUpsell($data['offerId']);
+			$this->sendTransactionalUpsell($data['offerId'], $offerData);
 			
 			return true;	
 		} else {			
@@ -190,8 +190,10 @@ class WebServiceTicketsController extends WebServicesController
 		}
 	}
 		
-	function sendTransactionalUpsell($offerId) {
-		mail('devmail@luxurylink.com', 'Transactional Email Start', $offerId);
+	function sendTransactionalUpsell($offerId, $offerArray = array()) {
+		// TODO: handle if offer id only - but just use offerArray data for now
+		
+		mail('devmail@luxurylink.com', 'Transactional Email Start', $offerId . print_r($offerArray, true));
 	}
 	
 	function ppv($in0) {
