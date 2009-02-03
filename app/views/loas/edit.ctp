@@ -16,7 +16,7 @@ $this->set('clientId', $this->data['Client']['clientId']);
 		echo $form->input('loaLevelId', array('disabled' => true, 'label' => 'LOA Level'));
 		echo $form->input('cashOrBarter', array('type' => 'select', 'options' => array(1 => 'Cash', 2 => 'Barter'), 'empty' => true));
 		echo $form->input('numEmailInclusions');
-		echo $form->input('loaValue', array('disabled' => true));
+		echo $form->input('loaValue', array('disabled' => true, 'label' => 'Total Revenue'));
 		echo $form->input('Loa.currencyId', array('label' => 'Item Currency'));
 		echo $form->input('customerApprovalStatusId', array('label' => 'Client Approval Status'));
 		echo $form->input('customerApprovalDate', array('label' => 'Package in Date', 'disabled' => true, 'empty' => true));
