@@ -36,7 +36,7 @@ class WebServicePaymentsController extends WebServicesController
 						)
 					);
 
-	function beforeFilter() { $this->Auth->allow('*'); }
+	function beforeFilter() { $this->LdapAuth->allow('*'); }
 
 	function setUserPaymentSetting($in0) {
 		$data = json_decode($in0, true);

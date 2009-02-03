@@ -17,7 +17,7 @@ class WebServiceUsersController extends WebServicesController
 						)
 					);
 
-	function beforeFilter() { $this->Auth->allow('*'); }
+	function beforeFilter() { $this->LdapAuth->allow('*'); }
 
 	function userProcessor1($in0)
 	{

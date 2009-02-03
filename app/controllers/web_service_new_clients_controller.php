@@ -17,7 +17,7 @@ class WebServiceNewClientsController extends WebServicesController
 						)
 					);
 
-	function beforeFilter() { $this->Auth->allow('*'); }
+	function beforeFilter() { $this->LdapAuth->allow('*'); }
 
 	// main function to update or insert client records
 	function save_client($sm_request)
