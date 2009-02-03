@@ -154,7 +154,7 @@ $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']
 			</div>
 			</fieldset>
 		<fieldset class="collapsible">
-			<legend class="handle">Misc.</legend>
+			<legend class="handle">Images</legend>
 			<div class="collapsibleContent">
 					<?php
 					echo $form->input('numGalImgs');
