@@ -82,6 +82,7 @@ class LoaItemRatePeriodsController extends AppController {
 		$loaItem = array_merge_recursive($loaItems, $loaItems['LoaItem']);
 
 		$this->set('loaItem', $loaItem);
+		$this->set('currencyCodes', $this->LoaItemRatePeriod->LoaItem->Loa->Currency->find('list', array('fields' => array('currencyCode'))));
 		$this->render(null, 'ajax', '/elements/loa_item_rate_periods/table_for_loas_page');
 	}
 
