@@ -55,6 +55,8 @@ class WebServiceTicketsController extends WebServicesController
 			return false;	
 		}
 		
+		mail('devmail@luxurylink.com','Ticket Creation Process Error:  X1', 'Need a better error detection email system.' . print_r($data, true));
+		
 		$this->User->recursive = -1;
 		$userData = $this->User->read(null, $data['userId']);
 		
