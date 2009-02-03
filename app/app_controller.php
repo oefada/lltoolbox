@@ -49,7 +49,7 @@ class AppController extends Controller {
             $this->LdapAuth->loginError = "Could not log you in, please try again.";
             $this->LdapAuth->authError = "Insufficient access rights.<br />Must be logged in, or logged in with elevated access.";
             $this->LdapAuth->userModel = 'AdminUser';
-            #$this->LdapAuth->authorize = 'actions';
+            $this->LdapAuth->authorize = 'controller';
             
             if (in_array(low($this->params['controller']), $this->publicControllers)) {
             	    $this->LdapAuth->allow();
