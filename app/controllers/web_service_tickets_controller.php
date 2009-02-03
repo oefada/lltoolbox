@@ -32,7 +32,6 @@ class WebServiceTicketsController extends WebServicesController
 
 	function newTicketProcessor1($in0)
 	{
-		mail('devmail@luxurylink.com','Ticket Creation Process Error:  X1', 'Need a better error detection email system.');
 		$json_decoded = json_decode($in0, true);
 		$this->errorResponse = false;
 		return 'asdgasasdg';
@@ -106,6 +105,8 @@ class WebServiceTicketsController extends WebServicesController
 		$newTicket['Ticket']['userState']				 = $addressData['Address']['stateName'];
 		$newTicket['Ticket']['userCountry']				 = $addressData['Address']['countryName'];
 		$newTicket['Ticket']['userZip']					 = $addressData['Address']['postalCode'];
+
+		mail('devmail@luxurylink.com','Ticket Creation Process Error:  X1', 'Need a better error detection email system.' . print_r($newTicketm true));
 
 		$this->Ticket->create();
 		if ($this->Ticket->save($newTicket)) {
