@@ -19,7 +19,7 @@ class LdapAuthComponent extends AuthComponent {
                 }
                 
                 //Continue with standard auth process
-                return parent::startup($controller);
+                return parent::startup(&$controller);
         }
 
         function preauthUser($username, $password) {
