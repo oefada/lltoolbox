@@ -28,7 +28,7 @@ class WebServiceTicketsController extends WebServicesController
 						)
 					);
 					
-	function beforeFilter() { $this->Auth->allow('*'); }
+	function beforeFilter() { $this->LdapAuth->allow('*'); }
 
 	function newTicketProcessor1($in0)
 	{
