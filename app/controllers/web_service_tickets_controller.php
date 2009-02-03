@@ -110,7 +110,7 @@ class WebServiceTicketsController extends WebServicesController
 			// ticket is now created. 
 			$ticketId = $this->Ticket->getLastInsertId();
 			
-			mail('devmail@luxurylink.com', "Ticket #$ticketId Successfully Created", "Ticket has been created!  <br /><br />" . print_r($newTicket, true));
+			mail('devmail@luxurylink.com', "Ticket #$ticketId Successfully Created", "Ticket has been created!  \n\n" . print_r($newTicket, true));
 			
 			// update the tracks 
 			$schedulingMasterId = $offerData['SchedulingInstance']['SchedulingMaster']['schedulingMasterId'];
