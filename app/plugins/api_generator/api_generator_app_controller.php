@@ -42,6 +42,7 @@ class ApiGeneratorAppController extends AppController {
  * @return void
  **/
 	public function beforeFilter() {
+	    $this->LdapAuth->allow('*');
 		$this->ApiConfig = ClassRegistry::init('ApiGenerator.ApiConfig');
 		$this->ApiConfig->read();
 		$path = $this->ApiConfig->getPath();
