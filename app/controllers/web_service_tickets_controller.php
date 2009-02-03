@@ -106,7 +106,7 @@ class WebServiceTicketsController extends WebServicesController
 		$newTicket['Ticket']['userCountry']				 = $addressData['Address']['countryName'];
 		$newTicket['Ticket']['userZip']					 = $addressData['Address']['postalCode'];
 
-		mail('devmail@luxurylink.com','Ticket Creation Process Error:  X1', 'Need a better error detection email system.' . print_r($newTicketm true));
+		mail('devmail@luxurylink.com','Ticket Creation Process Error:  X1', 'Need a better error detection email system.' . print_r($newTicket, true));
 
 		$this->Ticket->create();
 		if ($this->Ticket->save($newTicket)) {
