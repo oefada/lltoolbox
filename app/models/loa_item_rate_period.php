@@ -29,23 +29,25 @@ class LoaItemRatePeriod extends AppModel {
         $end = $this->data['LoaItemRatePeriod']['endDate'];
 
 	    if (empty($this->data['LoaItemRatePeriod']['loaItemRatePeriodId'])) {
-	        $condition = sprintf("loaItemId = %u and ('%s' between startDate and endDate or '%s' between startDate and endDate)", $itemId, $start, $end);
+	        $condition = sprintf("loaItemId = %u and ('%s' between startDate and endDate or '%s' between startDate and endDate  or ('%s' <= startDate AND  '%s' >= endDate))", $itemId, $start, $end, $start, $end);
 	    } else {
 	        $id = $this->data['LoaItemRatePeriod']['loaItemRatePeriodId'];
-	        $condition = sprintf("loaItemRatePeriodId != %u and loaItemId = %u and ('%s' between startDate and endDate or '%s' between startDate and endDate)", $id, $itemId, $start, $end);
+	        $condition = sprintf("loaItemRatePeriodId != %u and loaItemId = %u and ('%s' between startDate and endDate or '%s' between startDate and endDate  or ('%s' <= startDate AND  '%s' >= endDate))", $id, $itemId, $start, $end, $start, $end);
 	    }
+	    
+	    echo $condition;
 	    	    
-	    $sql = 'SELECT startDate, endDate FROM loaItemRatePeriod AS LoaItemRatePeriod WHERE '.$condition;
+	    $sql = 'SELECT startDate, endDate FROM loaItemRatePeriod AS LoaItemRatePeriod WHERE '.$condition.' ORDER BY startDate ASC';
 	    
 	    $results = $this->query($sql);
 
 	    if (!empty($results)) {
 	        $overlapping_dates = array();
 	        foreach ($results as $result) {
-	            $start = $result['LoaItemRatePeriod']['startDate'];
-                $end = $result['LoaItemRatePeriod']['endDate'];
+	            $startDate = $result['LoaItemRatePeriod']['startDate'];
+                $endDate = $result['LoaItemRatePeriod']['endDate'];
                 
-	            $overlapping_dates[] = $start.' to '.$end;
+	            $overlapping_dates[] = $startDate.' to '.$endDate;
 	        }   
 	        
     	    $this->invalidate('startDate', 'Dates over lap with the following rate period(s): '.implode(', ', $overlapping_dates));
