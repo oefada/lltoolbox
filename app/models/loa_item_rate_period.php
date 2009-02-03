@@ -35,8 +35,6 @@ class LoaItemRatePeriod extends AppModel {
 	        $condition = sprintf("loaItemRatePeriodId != %u and loaItemId = %u and ('%s' between startDate and endDate or '%s' between startDate and endDate  or ('%s' <= startDate AND  '%s' >= endDate))", $id, $itemId, $start, $end, $start, $end);
 	    }
 	    
-	    echo $condition;
-	    	    
 	    $sql = 'SELECT startDate, endDate FROM loaItemRatePeriod AS LoaItemRatePeriod WHERE '.$condition.' ORDER BY startDate ASC';
 	    
 	    $results = $this->query($sql);
@@ -48,7 +46,7 @@ class LoaItemRatePeriod extends AppModel {
                 $endDate = $result['LoaItemRatePeriod']['endDate'];
                 
 	            $overlapping_dates[] = $startDate.' to '.$endDate;
-	        }   
+	        }
 	        
     	    $this->invalidate('startDate', 'Dates over lap with the following rate period(s): '.implode(', ', $overlapping_dates));
 	    }
