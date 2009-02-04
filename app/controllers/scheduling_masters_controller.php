@@ -157,9 +157,60 @@ class SchedulingMastersController extends AppController {
 		
 		$this->set('offerTypeIds', $offerTypeIds);
 	}
+	
+	/**
+	 * Temporary method to be used during migration. This will fill in the iterations for a master with missing iterations.
+	 * METHOD NOT TO BE USED AFTER LAUNCH OR THE SKY WILL FALL OUT OF THE HEAVENS!!!
+	 */
+	function fix_instances() {
+	    Configure::write('debug', 3);
+	    
+	    $sql = 'SELECT schedulingMasterId, numDaysToRun, SchedulingMaster.endDate, MAX(SchedulingInstance.endDate) as maxEndDate, iterations, COUNT(DISTINCT schedulingInstanceId) as numIterations 
+                                                                                        FROM schedulingMaster AS SchedulingMaster
+                                                                                        INNER JOIN schedulingInstance AS SchedulingInstance USING (schedulingMasterId) 
+                                                                                        WHERE iterations <> -1 AND SchedulingMaster.offerTypeId IN (1, 2, 6) OR iterations IS NULL
+                                                                                        GROUP BY schedulingMasterId 
+                                                                                        HAVING numIterations <> iterations OR iterations IS NULL';
+	    $masters = $this->SchedulingMaster->query($sql);
 
-	function createInstances() {
-		$masterData                 = $this->SchedulingMaster->read(null);
+	    foreach ($masters as $master):
+
+	        $masterData = $master;
+	        
+	        if ($master['SchedulingMaster']['endDate'] == null) {
+    	        $masterData['SchedulingMaster']['iterationSchedulingOption'] = 0;
+    	        $masterData['SchedulingMaster']['iterations'] = $masterData['SchedulingMaster']['iterations'] - $master[0]['numIterations'];
+	        } else {
+    	        $masterData['SchedulingMaster']['iterationSchedulingOption'] = 1;
+	        }
+	        $masterData['SchedulingMaster']['startDate'] = $master[0]['maxEndDate'];
+	        $masterData['SchedulingDelayCtrl']['schedulingDelayCtrlDesc'] = '1 hour';
+
+	        $this->createInstances($masterData, &$iterations);
+	        
+	        if ($master['SchedulingMaster']['endDate'] == null) {
+                //set end date here
+	        } else {
+    	        $iterations = $iterations + $master[0]['numIterations'];
+    		    $this->SchedulingMaster->id = $masterData['SchedulingMaster']['schedulingMasterId'];
+    	        $this->SchedulingMaster->saveField('iterations', $iterations);
+	        }
+	        ob_end_flush();
+	    endforeach;
+	    
+	    $this->autoRender = false;
+	}
+	
+	/**
+	 * Method creates instances for a master.
+	 * @param array optional array to be used as a fake master to override how the method works (@see fix_instances)
+	 */
+	function createInstances($masterData = array(), &$numIterations = null) {
+	    
+	    if (empty($masterData)):
+		    $masterData                 = $this->SchedulingMaster->read(null);
+		endif;
+		
 		$iterations                 = $masterData['SchedulingMaster']['iterations'];
 		$masterStartDate            = $masterData['SchedulingMaster']['startDate'];
 		$numDaysToRun               = $masterData['SchedulingMaster']['numDaysToRun'];
@@ -195,10 +246,12 @@ class SchedulingMastersController extends AppController {
 		    $startEndRange = strtotime($endDate) - strtotime($masterStartDate);
 
 		    $iterations = floor($startEndRange / $totalInstanceTime);
+		    $numIterations = $iterations;
 		    $this->SchedulingMaster->id = $masterData['SchedulingMaster']['schedulingMasterId'];
 		    $this->SchedulingMaster->saveField('iterations', $iterations);
 		}
 
+        //TODO: Put this logic in the model where it belongs
 		for ($i = 0; $i < $iterations; $i++) {
 			$endDate = strtotime($instanceData['SchedulingInstance']['startDate'] . ' +' . $masterData['SchedulingMaster']['numDaysToRun'] . ' days');
 			
@@ -207,15 +260,35 @@ class SchedulingMastersController extends AppController {
 			}
 			
 			$instanceData['SchedulingInstance']['endDate'] = date('Y-m-d H:i:s', $endDate);		
-				
-			$this->SchedulingMaster->SchedulingInstance->create();
-			$this->SchedulingMaster->SchedulingInstance->save($instanceData);
+
+            $instancesToSave[] = $instanceData;
 		
 			$startDate = strtotime($instanceData['SchedulingInstance']['endDate'] . ' +' . $masterData['SchedulingDelayCtrl']['schedulingDelayCtrlDesc']);
+			
+			//check if the start date is greater than 4pm, 16 in 24-hour format
+			if (date('G', $startDate) >= 16) {
+			    $startDate = strtotime('-10 hours', $startDate);
+			    $startDate = strtotime('+1 day', $startDate);
+			}
+			//check if new start date is to open on a holiday, if so, push it ahead a day
+			while ($this->_isHoliday($startDate)) {
+			    $startDate = strtotime('+1 day', $startDate);
+			}
+			
 			$instanceData['SchedulingInstance']['startDate'] = date('Y-m-d H:i:s', $startDate);	
+		}
+		
+		if (!empty($instancesToSave)) {
+    		$this->SchedulingMaster->SchedulingInstance->create();
+    		$this->SchedulingMaster->SchedulingInstance->saveAll($instancesToSave);
 		}
 	}
 	
+	/**
+	 * Method takes a timestamp and determins if it falls on a predeterined holiday
+	 * @param $timestamp the timestamp to check
+	 * @return boolean true if timestamp falls on a holiday, false if not
+	 */
 	function _isHoliday($timestamp) {
 	    $holidays = array('1/1','7/4','12/24','12/25');
 	    //memorial day, labor day
@@ -343,6 +416,7 @@ class SchedulingMastersController extends AppController {
 		$this->set('schedulingDelayCtrlIds',    $schedulingDelayCtrlIds);
 	}
 
+    //TODO: fix the number of iterations after delete
 	function delete($id = null) {
 	    $this->autoRender = false;
 		if (!$id) {
