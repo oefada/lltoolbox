@@ -165,7 +165,7 @@ class SchedulingMastersController extends AppController {
 	function fix_instances() {
 	    Configure::write('debug', 3);
 	    
-	    $sql = 'SELECT schedulingMasterId, numDaysToRun, SchedulingMaster.endDate, MAX(SchedulingInstance.endDate) as maxEndDate, iterations, COUNT(DISTINCT schedulingInstanceId) as numIterations 
+	    $sql = 'SELECT schedulingMasterId, offerTypeId, numDaysToRun, SchedulingMaster.endDate, MAX(SchedulingInstance.endDate) as maxEndDate, iterations, COUNT(DISTINCT schedulingInstanceId) as numIterations 
                                                                                         FROM schedulingMaster AS SchedulingMaster
                                                                                         INNER JOIN schedulingInstance AS SchedulingInstance USING (schedulingMasterId) 
                                                                                         WHERE iterations <> -1 AND SchedulingMaster.offerTypeId IN (1, 2, 6) OR iterations IS NULL
@@ -195,7 +195,6 @@ class SchedulingMastersController extends AppController {
     		    $this->SchedulingMaster->id = $masterData['SchedulingMaster']['schedulingMasterId'];
     	        $this->SchedulingMaster->saveField('iterations', $iterations);
 	        }
-	        ob_end_flush();
 	    endforeach;
 	    
 	    $this->autoRender = false;
