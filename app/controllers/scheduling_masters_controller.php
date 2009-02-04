@@ -174,7 +174,7 @@ class SchedulingMastersController extends AppController {
 	    $masters = $this->SchedulingMaster->query($sql);
 
 	    foreach ($masters as $master):
-
+            set_time_limit(30);
 	        $masterData = $master;
 	        
 	        if ($master['SchedulingMaster']['endDate'] == null) {
