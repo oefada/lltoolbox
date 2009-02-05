@@ -1,7 +1,7 @@
 <script type="text/javascript">
 function addAmenity() {
 	if($F('AmenitySelectId') > 0 && $('amenity_'+$F('AmenitySelectId')) == null) {
-		$('amenitylist').down('ul').insert({'bottom': "<li id='amenity_"+$F('AmenitySelectId')+"'><input type='hidden' name='data[Amenity][Amenity][]' value='"+$F('AmenitySelectId')+"' />"+$F('AmenitySelect')+'<a href="javascript: return false;" onclick="$(\'amenity_'+$F('AmenitySelectId')+'\').remove();">(remove)</a>'+"</li>"});
+		$('amenitylist').down('ul').insert({'bottom': "<li id='amenity_"+$F('AmenitySelectId')+"'><input type='hidden' name='data[ClientAmenityRel][][amenityId]' value='"+$F('AmenitySelectId')+"' />"+$F('AmenitySelect')+'<a href="javascript: return false;" onclick="$(\'amenity_'+$F('AmenitySelectId')+'\').remove();">(remove)</a>'+"</li>"});
 		new Effect.Highlight($($F('AmenitySelectId')));
 	}
 }
@@ -128,12 +128,26 @@ $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']
 		</div>
 	</fieldset>
 	<fieldset class="collapsible">
-		<legend class="handle">Amenities <?=$html2->c($client['Amenity']); ?></legend>
+		<legend class="handle">Amenities <?=$html2->c($client['ClientAmenityRel']); ?></legend>
 		<div class="collapsibleContent">
 			<div id="amenitylist">
-				<ul>
-				<?php foreach($client['Amenity'] as $amenity):?>
-					<li id="amenity_<?=$amenity['amenityId']?>"><input type='hidden' name='data[Amenity][Amenity][]' value="<?=$amenity['amenityId']?>"><?=$amenity['amenityName']?> <a href="javascript: return false;" onclick="$('amenity_<?=$amenity['amenityId']?>').remove();">(remove)</a></li>
+				<div class="columnLabels">&nbsp;</div>
+				<ul style="list-style: none; padding-left: 20px;">
+				<?php
+				 foreach($client['ClientAmenityRel'] as $k => $amenity):
+				?>
+						<li id="amenity_<?=$amenity['amenityId']?>" style="padding: 3px 0 3px 0">
+						<span class="radio altcol"><input type="radio" name="data[ClientAmenityRel][<?=$k?>][amenityTypeId]" value='4' <? if($amenity['amenityTypeId'] == 4) echo 'checked="checked"'?>/></span>
+						<span class="radio"><input type="radio" name="data[ClientAmenityRel][<?=$k?>][amenityTypeId]" value='7' <? if($amenity['amenityTypeId'] == 7) echo 'checked="checked"'?>/></span>
+						<span class="radio altcol"><input type="radio" name="data[ClientAmenityRel][<?=$k?>][amenityTypeId]" value='3' <? if($amenity['amenityTypeId'] == 3) echo 'checked="checked"'?>/></span>
+						<span class="radio"><input type="radio" name="data[ClientAmenityRel][<?=$k?>][amenityTypeId]" value='2' <? if($amenity['amenityTypeId'] == 2) echo 'checked="checked"'?>/></span>
+						<span class="radio altcol"><input type="radio" name="data[ClientAmenityRel][<?=$k?>][amenityTypeId]" value='1' <? if($amenity['amenityTypeId'] == 1) echo 'checked="checked"'?>/></span>
+						<span class="radio"><input type="radio" name="data[ClientAmenityRel][<?=$k?>][amenityTypeId]" value='5' <? if(empty($amenity['amenityTypeId']) || $amenity['amenityTypeId'] == 5) echo 'checked="checked"'?>/></span>
+						<span<? if($k %2 == 0) echo ' style="background: #f5f2e2; padding: 3px 0 3px 0"' ?>>
+							<input type='hidden' name='data[ClientAmenityRel][<?=$k?>][clientAmenityRelId]' value="<?=$amenity['clientAmenityRelId']?>">
+							<input type='hidden' name='data[ClientAmenityRel][<?=$k?>][amenityId]' value="<?=$amenity['amenityId']?>"><?=$amenity['Amenity']['amenityName']?> <a href="javascript: return false;" onclick="$('amenity_<?=$amenity['amenityId']?>').remove();">(remove)</a>
+						</span>
+						</li>
 				<?php endforeach?>
 				</ul>
 			</div>

@@ -1043,3 +1043,28 @@ div #ticket-search-box th {
  background-color: #fff;
 }
 /* @end */
+
+/* @group amenity list */
+#amenitylist .columnLabels {
+padding: 0; 
+margin: 0; 
+width: 142px; 
+height: 69px; 
+background: url(../img/client_amenities_column_labels.gif) no-repeat bottom left; 
+margin-left: 0;
+}
+#amenitylist ul {
+    padding: 0;
+    margin: 0;
+    background: url(../img/amenity_background.gif) repeat-y 10px 0;
+}
+#amenitylist span.radio {
+    padding: 0 1px 5px 1px;
+    margin: 0 0 10px 0;
+    width: 15px;
+    font-size: 0;
+}
+#amenitylist span.radio input{
+    border: none;
+    width: 15px;
+}

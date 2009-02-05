@@ -30,7 +30,13 @@ class ClientsController extends AppController {
 			$this->redirect(array('action'=>'index'));
 		}
 		if (!empty($this->data)) {
-			if ($this->Client->save($this->data)) {
+			if ($this->Client->save($this->data) && $this->Client->saveAll($this->data)) {
+			    foreach ($this->data['ClientAmenityRel'] as $am) {
+			        $clientAmenityRelIds[] = $am['clientAmenityRelId'];
+			    }
+			    
+			    $this->Client->ClientAmenityRel->deleteAll(array('clientId' => $this->data['Client']['clientId'], 'NOT' => array('clientAmenityRelId' => $clientAmenityRelIds)));
+			    
 				$this->Session->setFlash(__('The Client has been saved', true));
 				$this->redirect(array('action'=>'edit', 'id' => $id));
 			} else {
@@ -40,6 +46,7 @@ class ClientsController extends AppController {
 		}
 		//set up our data, if it's a form post, we still need all related data
 		if (empty($this->data)) {
+		    $this->Client->recursive = 2;
 			$this->data = $this->Client->read(null, $id);
 		} else {
 			if(isset($this->data['Amenity']['Amenity'])):
@@ -64,7 +71,7 @@ class ClientsController extends AppController {
 		if (!empty($this->data['Client']['stateId'])) {
 		    $cityIds = $this->Country->State->City->find('list', array('conditions' => array('City.stateId' => $this->data['Client']['stateId'])));
 		}
-		$this->set(compact('clientLevelIds','clientStatusIds','clientTypeIds','regions','clientAcquisitionSourceIds', 'loas', 'themes', 'countryIds', 'stateIds', 'cityIds'));
+		$this->set(compact('clientStatusIds','clientTypeIds','regions','clientAcquisitionSourceIds', 'loas', 'themes', 'countryIds', 'stateIds', 'cityIds'));
 	}
 		
 	function search()

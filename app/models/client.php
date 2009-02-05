@@ -29,7 +29,8 @@ class Client extends AppModel {
 						 'Accolade' => array('foreignKey' => 'clientId'),
 						 'Audit' => array('foreignKey' => 'foreignId', 'conditions' => array('Audit.class' => 'Client'), 'limit' => 5, 'order' => 'Audit.created DESC'),
 						 'ChildClient' => array('className' => 'Client', 'foreignKey' => 'parentClientId'),
-						 'ClientContact' => array('className' => 'ClientContact', 'foreignKey' => 'clientId')
+						 'ClientContact' => array('className' => 'ClientContact', 'foreignKey' => 'clientId'),
+						 'ClientAmenityRel' => array('className' => 'ClientAmenityRel', 'foreignKey' => 'clientId')
 						);
 	
     var $hasAndBelongsToMany = array(
@@ -40,12 +41,6 @@ class Client extends AppModel {
 	                                     'with' => 'clientTag',
 	                                     'unique'       => true,
 	                               ),
-								'Amenity' => 
-									array('className' => 'Amenity',
-										  'foreignKey' => 'clientId',
-										  'with' => 'clientAmenityRel',
-										  'associationForeignKey' => 'amenityId'
-								   ),
 								'Theme' => 
 									array('className' => 'Theme',
 										  'foreignKey' => 'clientId',

@@ -5,8 +5,10 @@ class Amenity extends AppModel {
 	var $useTable = 'amenity';
 	var $primaryKey = 'amenityId';
 	var $displayField = 'amenityName';
-
-	var $belongsTo = array('AmenityType' => array('foreignKey' => 'amenityTypeId'));
+	
+	var $hasMany = array(
+	   'ClientAmenityRel' => array('className' => 'ClientAmenityRel', 'foreignKey' => 'amenityId')
+	   );
 
 }
 ?>
