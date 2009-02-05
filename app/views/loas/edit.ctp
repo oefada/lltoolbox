@@ -67,8 +67,8 @@ $this->set('clientId', $this->data['Client']['clientId']);
 	<tr>
 		<th><?php __('Type'); ?></th>
 		<th><?php __('Name'); ?></th>
+		<th><?php __('Live Site Description'); ?></th>
 		<th><?php __('Base Price'); ?></th>
-		<th><?php __('Per Person'); ?></th>
 		<th class="actions"><?php __('Actions');?></th>
 	</tr>
 	<?php
@@ -82,8 +82,8 @@ $this->set('clientId', $this->data['Client']['clientId']);
 		<tr<?php echo $class;?>>
 			<td><?php echo $loaItem['LoaItemType']['loaItemTypeName'];?></td>
 			<td><?php echo $loaItem['itemName'];?></td>
+			<td><?php echo $text->excerpt($loaItem['merchandisingDescription'], 100);?></td>
 			<td><?php echo $number->currency($loaItem['itemBasePrice'], $currencyCodes[$loaItem['currencyId']]); ?></td>
-			<td><?php echo $loaItem['perPerson'];?></td>
 			<td class="actions">
 				<?php echo $html->link('Edit',
 								'/loa_items/edit/'.$loaItem['loaItemId'],

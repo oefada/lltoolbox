@@ -74,6 +74,7 @@ class LoasController extends AppController {
 		$this->Loa->recursive = 2;
 		if (empty($this->data)) {
 			$this->data = $this->Loa->read(null, $id);
+			usort($this->data['LoaItem'], array($this, 'sortLoaItemsByType'));
 		}
 		$customerApprovalStatusIds = $this->Loa->LoaCustomerApprovalStatus->find('list');
 		$currencyIds = $this->Loa->Currency->find('list');
@@ -81,6 +82,13 @@ class LoasController extends AppController {
 		$this->set(compact('customerApprovalStatusIds', 'currencyIds', 'loaLevelIds'));
 		$this->set('client', $this->Loa->Client->findByClientId($this->data['Loa']['clientId']));
 		$this->set('currencyCodes', $this->Loa->Currency->find('list', array('fields' => array('currencyCode'))));
+	}
+	
+	function sortLoaItemsByType($a, $b) {
+	    if ($a['LoaItemType']['loaItemTypeName'] ==  $b['LoaItemType']['loaItemTypeName']) {
+            return 0;
+        }
+        return ($a['LoaItemType']['loaItemTypeName'] < $b['LoaItemType']['loaItemTypeName']) ? -1 : 1;
 	}
 
 	function delete($id = null) {
