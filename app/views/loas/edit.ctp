@@ -83,7 +83,12 @@ $this->set('clientId', $this->data['Client']['clientId']);
 			<td><?php echo $loaItem['LoaItemType']['loaItemTypeName'];?></td>
 			<td><?php echo $loaItem['itemName'];?></td>
 			<td><?php echo $text->excerpt($loaItem['merchandisingDescription'], 100);?></td>
-			<td><?php echo $number->currency($loaItem['itemBasePrice'], $currencyCodes[$loaItem['currencyId']]); ?></td>
+			<td><?php echo $number->currency($loaItem['itemBasePrice'], $currencyCodes[$loaItem['currencyId']]); ?>
+			<?php if (!empty($loaItem['Fee']['feePercent'])) {
+				echo '+'.$loaItem['Fee']['feePercent'].'%';
+			}?>	
+				
+			</td>
 			<td class="actions">
 				<?php echo $html->link('Edit',
 								'/loa_items/edit/'.$loaItem['loaItemId'],
