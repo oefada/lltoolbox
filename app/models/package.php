@@ -79,7 +79,7 @@ class Package extends AppModel {
 	
 	function beforeSave() {
         //get all descriptions for the inclusions and populate a text area field to store all of this on the database.
-        
+        if ( $this->data['Package']['repopulateInclusions'] ) {
         //only do this if the package loa item rel array is there because we need the weights
 	    if (isset($this->data['PackageLoaItemRel'])):
 	        if (!empty($this->data['Package']['CheckedLoaItems'])) {
@@ -97,6 +97,7 @@ class Package extends AppModel {
             
 	        $this->data['Package']['inclusions'] = implode("\r\n", $descriptions);
 	    endif;
+        }
 	    
 	    //dynamically set the client approved date
     	$orig = $this->find('Package.packageId = '.$this->data['Package']['packageId'], array('packageStatusId'));

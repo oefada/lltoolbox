@@ -72,7 +72,6 @@ class PackagesController extends AppController {
 			}
 		}
 		
-		
 		$client = $this->Client->findByClientId($clientId);
 		$this->set('client', $client);
 		
@@ -362,7 +361,6 @@ class PackagesController extends AppController {
 		}
 		
 		if (empty($this->data)) {
-			$this->Package->recursive = 2;
 			$package = $this->Package->read(null, $id);
 			$this->data = $package;
 		}
@@ -381,6 +379,15 @@ class PackagesController extends AppController {
 				if($v['currencyId'] != $this->data['Package']['currencyId']) {
 					unset($clientLoaDetails[$key]['LoaItem'][$k]);
 				}
+			}
+			
+			//Get all the fees for each item
+			foreach($clientLoaDetails[$key]['LoaItem'] as $k => $v) {
+			    $itemId = $v['loaItemId'];
+			    $this->Package->PackageLoaItemRel->LoaItem->Behaviors->attach('Containable');
+			    $this->Package->PackageLoaItemRel->LoaItem->contain('Fee');
+			    $loaItem = $this->Package->PackageLoaItemRel->LoaItem->read(null, $itemId);
+			    $clientLoaDetails[$key]['LoaItem'][$k]['Fee'] = $loaItem['Fee'];
 			}
 		endforeach;
 		

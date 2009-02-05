@@ -7,6 +7,7 @@ class PackageLoaItemRel extends AppModel {
 	var $belongsTo = array('LoaItem' => array('foreignKey' => 'loaItemId'),
 						   'Package' => array('foreignKey' => 'packageId')
 					);
+	var $orderBy = array('LoaItemType.loaItemTypeName');
 		
 	var $validate = array('quantity' => array('rule' => 'numeric', 'message' => 'Must be a number'));
 	

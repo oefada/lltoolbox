@@ -44,6 +44,9 @@
 				<td><label for="item_<?=$k2*$k?>"><?=$loaItem['itemName']?></label></td>
 				<td><div style="text-align: right"><span style="text-align:left">
 				<?=$number->currency($loaItem['itemBasePrice'], $currencyCodes[$loaItem['currencyId']]) ?>
+				<? if (!empty($loaItem['Fee']['feePercent'])):
+					echo ' + '.$loaItem['Fee']['feePercent'].'%';
+				endif; ?>
 				<?=$form->input('PackageLoaItemRel.'.$loaItem['loaItemId'].'.basePrice', array('type' => 'hidden', 'disabled' => true, 'value' => $loaItem['itemBasePrice']))?>
 				</span>&nbsp;&nbsp;
 				
@@ -60,7 +63,6 @@
 					</div>
 					<? if($loaItem['loaItemTypeId'] != 1): ?>
 					<div class="controlset" style="float: left; margin-left: 3px; clear: none">
-					<input type="checkbox" name="perPerson_<?=$loaItem['loaItemId']?>" id="perPerson_<?=$loaItem['loaItemId']?>" value="1" onclick="perPersonPerNight(<?=$loaItem['loaItemId']?>)" /><label for="perPerson_<?=$loaItem['loaItemId']?>">PP</label><br />
 					<input type="checkbox" name="perNight_<?=$loaItem['loaItemId']?>" id="perNight_<?=$loaItem['loaItemId']?>" value="1" onclick="perPersonPerNight(<?=$loaItem['loaItemId']?>)" /><label for="perNight_<?=$loaItem['loaItemId']?>">PN</label>
 					</div>
 					<? endif; ?>
