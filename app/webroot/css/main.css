@@ -1058,11 +1058,11 @@ margin-left: 0;
     margin: 0;
     background: url(../img/amenity_background.gif) repeat-y 10px 0;
 }
-#amenitylist span.radio {
-    padding: 0 1px 5px 1px;
-    margin: 0 0 10px 0;
-    width: 15px;
-    font-size: 0;
+#amenitylist ul li input {
+    margin: 0 4px 0 2px !important;
+    background: blue;
+    width: 20px;
+    border: 1px solid red !important;
 }
 #amenitylist span.radio input{
     border: none;

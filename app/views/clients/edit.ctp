@@ -1,7 +1,9 @@
 <script type="text/javascript">
+var num = 1000;
 function addAmenity() {
 	if($F('AmenitySelectId') > 0 && $('amenity_'+$F('AmenitySelectId')) == null) {
-		$('amenitylist').down('ul').insert({'bottom': "<li id='amenity_"+$F('AmenitySelectId')+"'><input type='hidden' name='data[ClientAmenityRel][][amenityId]' value='"+$F('AmenitySelectId')+"' />"+$F('AmenitySelect')+'<a href="javascript: return false;" onclick="$(\'amenity_'+$F('AmenitySelectId')+'\').remove();">(remove)</a>'+"</li>"});
+		$('amenitylist').down('ul').insert({'bottom': "<li id='amenity_"+$F('AmenitySelectId')+"' style='padding: 3px 0 3px 0'><span class=\"radio altcol\"><input type=\"radio\" name=\"data[ClientAmenityRel]["+num+"][amenityTypeId]\" value='4'/></span><span class=\"radio\"><input type=\"radio\" name=\"data[ClientAmenityRel]["+num+"][amenityTypeId]\" value='7' /></span><span class=\"radio altcol\"><input type=\"radio\" name=\"data[ClientAmenityRel]["+num+"][amenityTypeId]\" value='3' /></span><span class=\"radio\"><input type=\"radio\" name=\"data[ClientAmenityRel]["+num+"][amenityTypeId]\" value='2' /></span><span class=\"radio altcol\"><input type=\"radio\" name=\"data[ClientAmenityRel]["+num+"][amenityTypeId]\" value='1'/></span><span class=\"radio\"><input type=\"radio\" name=\"data[ClientAmenityRel]["+num+"][amenityTypeId]\" value='5' checked='checked'/></span><input type='hidden' name='data[ClientAmenityRel]["+num+"][amenityId]' value='"+$F('AmenitySelectId')+"' />"+$F('AmenitySelect')+'<a href="javascript: return false;" onclick="$(\'amenity_'+$F('AmenitySelectId')+'\').remove();">(remove)</a>'+"</li>"});
+		num++;
 		new Effect.Highlight($($F('AmenitySelectId')));
 	}
 }
@@ -136,13 +138,13 @@ $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']
 				<?php
 				 foreach($client['ClientAmenityRel'] as $k => $amenity):
 				?>
-						<li id="amenity_<?=$amenity['amenityId']?>" style="padding: 3px 0 3px 0">
-						<span class="radio altcol"><input type="radio" name="data[ClientAmenityRel][<?=$k?>][amenityTypeId]" value='4' <? if($amenity['amenityTypeId'] == 4) echo 'checked="checked"'?>/></span>
-						<span class="radio"><input type="radio" name="data[ClientAmenityRel][<?=$k?>][amenityTypeId]" value='7' <? if($amenity['amenityTypeId'] == 7) echo 'checked="checked"'?>/></span>
-						<span class="radio altcol"><input type="radio" name="data[ClientAmenityRel][<?=$k?>][amenityTypeId]" value='3' <? if($amenity['amenityTypeId'] == 3) echo 'checked="checked"'?>/></span>
-						<span class="radio"><input type="radio" name="data[ClientAmenityRel][<?=$k?>][amenityTypeId]" value='2' <? if($amenity['amenityTypeId'] == 2) echo 'checked="checked"'?>/></span>
-						<span class="radio altcol"><input type="radio" name="data[ClientAmenityRel][<?=$k?>][amenityTypeId]" value='1' <? if($amenity['amenityTypeId'] == 1) echo 'checked="checked"'?>/></span>
-						<span class="radio"><input type="radio" name="data[ClientAmenityRel][<?=$k?>][amenityTypeId]" value='5' <? if(empty($amenity['amenityTypeId']) || $amenity['amenityTypeId'] == 5) echo 'checked="checked"'?>/></span>
+						<li id="amenity_<?=$amenity['amenityId']?>" style="padding: 3px 0 3px 0;">
+							<input type="radio" name="data[ClientAmenityRel][<?=$k?>][amenityTypeId]" value='4' <? if($amenity['amenityTypeId'] == 4) echo 'checked="checked"'?>
+							/><input type="radio" name="data[ClientAmenityRel][<?=$k?>][amenityTypeId]" value='7' <? if($amenity['amenityTypeId'] == 7) echo 'checked="checked"'?>
+							/><input type="radio" name="data[ClientAmenityRel][<?=$k?>][amenityTypeId]" value='3' <? if($amenity['amenityTypeId'] == 3) echo 'checked="checked"'?>
+							/><input type="radio" name="data[ClientAmenityRel][<?=$k?>][amenityTypeId]" value='2' <? if($amenity['amenityTypeId'] == 2) echo 'checked="checked"'?>
+							/><input type="radio" name="data[ClientAmenityRel][<?=$k?>][amenityTypeId]" value='1' <? if($amenity['amenityTypeId'] == 1) echo 'checked="checked"'?>
+							/><input type="radio" name="data[ClientAmenityRel][<?=$k?>][amenityTypeId]" value='5' <? if(empty($amenity['amenityTypeId']) || $amenity['amenityTypeId'] == 5) echo 'checked="checked"'?>/>
 						<span<? if($k %2 == 0) echo ' style="background: #f5f2e2; padding: 3px 0 3px 0"' ?>>
 							<input type='hidden' name='data[ClientAmenityRel][<?=$k?>][clientAmenityRelId]' value="<?=$amenity['clientAmenityRelId']?>">
 							<input type='hidden' name='data[ClientAmenityRel][<?=$k?>][amenityId]' value="<?=$amenity['amenityId']?>"><?=$amenity['Amenity']['amenityName']?> <a href="javascript: return false;" onclick="$('amenity_<?=$amenity['amenityId']?>').remove();">(remove)</a>
