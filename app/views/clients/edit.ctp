@@ -139,12 +139,12 @@ $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']
 				 foreach($client['ClientAmenityRel'] as $k => $amenity):
 				?>
 						<li id="amenity_<?=$amenity['amenityId']?>" style="padding: 3px 0 3px 0;">
-							<input type="radio" name="data[ClientAmenityRel][<?=$k?>][amenityTypeId]" value='4' <? if($amenity['amenityTypeId'] == 4) echo 'checked="checked"'?>
-							/><input type="radio" name="data[ClientAmenityRel][<?=$k?>][amenityTypeId]" value='7' <? if($amenity['amenityTypeId'] == 7) echo 'checked="checked"'?>
-							/><input type="radio" name="data[ClientAmenityRel][<?=$k?>][amenityTypeId]" value='3' <? if($amenity['amenityTypeId'] == 3) echo 'checked="checked"'?>
-							/><input type="radio" name="data[ClientAmenityRel][<?=$k?>][amenityTypeId]" value='2' <? if($amenity['amenityTypeId'] == 2) echo 'checked="checked"'?>
-							/><input type="radio" name="data[ClientAmenityRel][<?=$k?>][amenityTypeId]" value='1' <? if($amenity['amenityTypeId'] == 1) echo 'checked="checked"'?>
-							/><input type="radio" name="data[ClientAmenityRel][<?=$k?>][amenityTypeId]" value='5' <? if(empty($amenity['amenityTypeId']) || $amenity['amenityTypeId'] == 5) echo 'checked="checked"'?>/>
+							<span class="radio"><input type="radio" name="data[ClientAmenityRel][<?=$k?>][amenityTypeId]" value='4'<? if($amenity['amenityTypeId'] == 4) echo ' checked="checked"'?>/></span
+							><span class="radio "><input type="radio" name="data[ClientAmenityRel][<?=$k?>][amenityTypeId]" value='7'<? if($amenity['amenityTypeId'] == 7) echo ' checked="checked"'?>/></span
+							><span class="radio"><input type="radio" name="data[ClientAmenityRel][<?=$k?>][amenityTypeId]" value='3'<? if($amenity['amenityTypeId'] == 3) echo ' checked="checked"'?>/></span
+							><span class="radio "><input type="radio" name="data[ClientAmenityRel][<?=$k?>][amenityTypeId]" value='2'<? if($amenity['amenityTypeId'] == 2) echo ' checked="checked"'?>/></span
+							><span class="radio "><input type="radio" name="data[ClientAmenityRel][<?=$k?>][amenityTypeId]" value='1'<? if($amenity['amenityTypeId'] == 1) echo ' checked="checked"'?>/></span
+							><span class="radio "><input type="radio" name="data[ClientAmenityRel][<?=$k?>][amenityTypeId]" value='5' <? if(empty($amenity['amenityTypeId']) || $amenity['amenityTypeId'] == 5) echo 'checked="checked"'?>/></span>
 						<span<? if($k %2 == 0) echo ' style="background: #f5f2e2; padding: 3px 0 3px 0"' ?>>
 							<input type='hidden' name='data[ClientAmenityRel][<?=$k?>][clientAmenityRelId]' value="<?=$amenity['clientAmenityRelId']?>">
 							<input type='hidden' name='data[ClientAmenityRel][<?=$k?>][amenityId]' value="<?=$amenity['amenityId']?>"><?=$amenity['Amenity']['amenityName']?> <a href="javascript: return false;" onclick="$('amenity_<?=$amenity['amenityId']?>').remove();">(remove)</a>
