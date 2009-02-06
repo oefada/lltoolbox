@@ -18,7 +18,25 @@
 	<?php echo $form->input('ClientLoaPackageRel.'.$k.'.clientId', array('type' => 'hidden')) ?>
 	<?php echo $form->input('ClientLoaPackageRel.'.$k.'.loaId', array('type' => 'hidden')) ?>
 	<?php echo $form->input('ClientLoaPackageRel.'.$k.'.percentOfRevenue', array('type' => 'hidden')) ?>
+	<? if(count($clientLoaDetails) > 1): ?>
+	<?php echo $form->input('ClientLoaPackageRel.'.$k.'.numNights', array('onchange' => 'updateNumNights()', 'class' => 'multiProductNumNights')) ?>
+	<? endif; ?>
 	<?php echo $form->input('ClientLoaPackageRel.'.$k.'.trackId', array('options' => $tracks, 'label' => 'Track #')) ?>
 </fieldset>
 <?php } ?>
+<? if(count($clientLoaDetails) > 1): ?>
+<script>
+	function updateNumNights() {
+		var el = $$('.multiProductNumNights');
+		var count = 0;
+
+		for (var i = 0; i < el.length; i++) {
+			count += parseInt( $F(el[i]) );
+		}
+		
+		$('PackageNumNights').value = count;
+	}
+</script>
+<? endif;?>
+
 <?php echo $form->input('complete', array('type' => 'hidden', 'value' => true)) ?>

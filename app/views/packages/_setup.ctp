@@ -11,7 +11,11 @@
 		endif;
 		echo $form->input('Package.packageName', array('label' => 'Working Name'));
 		echo $form->input('numGuests');
-		echo $form->input('numNights');
+		if(count($clientLoaDetails) > 1):
+			echo $form->input('numNights', array('readonly' => true));
+		else:
+			echo $form->input('numNights');
+		endif;
 		?>
 	<? /* -- BEGIN Validity and Blackouts -- */?>
 		<div style="clear: both; ">

@@ -19,7 +19,7 @@ function perPersonPerNight(itemId) {
 	if (pp_val || pn_val) {
 		quantityField.writeAttribute('readonly');
 		quantity = 1;
-		if (pp_val) {ΩÅ
+		if (pp_val) {
 			quantity = quantity * numGuests;
 		}
 		

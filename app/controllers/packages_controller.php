@@ -61,6 +61,7 @@ class PackagesController extends AppController {
 		$this->set('currentTab', 'property');
 		
 		if (!empty($this->data) && isset($this->data['Package']['complete'])) {
+            $this->data = $this->setCorrectNumNights($this->data);
 			$this->addPackageLoaItems();
 			$this->getBlackoutDaysNumber();
 			$this->carveRatePeriods($clientId);
@@ -339,7 +340,8 @@ class PackagesController extends AppController {
 				$this->updatePackageLoaItems();
 				$cloned = false;
 			}
-
+            
+            $this->data = $this->setCorrectNumNights($this->data);
 			$this->getBlackoutDaysNumber();
 			$this->carveRatePeriods($clientId);
 			//remove all offer type defaults so we don't get duplicates
@@ -468,6 +470,19 @@ class PackagesController extends AppController {
 		$this->Package->clonePackage($id);
 	}
 	
+	function setCorrectNumNights($data) {
+	    //set correct number of nights for single product package
+	    if ( count( $data['ClientLoaPackageRel']) == 1) {
+	        $data['ClientLoaPackageRel'][0]['numNights'] = $data['Package']['numNights'];
+	    } if ( count( $data['ClientLoaPackageRel'] > 1)) {
+	        $numNights = 0;
+	        foreach($data['ClientLoaPackageRel'] as $v) {
+	            $numNights += $v['numNights'];
+	        }
+	        $data['Package']['numNights'] = $numNights;
+	    }
+	    return $data;
+	}
 	function setupOfferTypeDefArray()
 	{
 		if(empty($this->data['PackageOfferTypeDefField'])) {

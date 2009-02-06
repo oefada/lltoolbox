@@ -48,18 +48,8 @@ class ClientsController extends AppController {
 		if (empty($this->data)) {
 		    $this->Client->recursive = 2;
 			$this->data = $this->Client->read(null, $id);
-		} else {
-			if(isset($this->data['Amenity']['Amenity'])):
-				$amenities = $this->Client->Amenity->find('all', array('conditions' => array('Amenity.amenityId' => $this->data['Amenity']['Amenity'])));
-				$this->data['Amenity'] = array();
-				foreach($amenities as $amenity):
-					$this->data['Amenity'][] = $amenity['Amenity'];
-				endforeach;
-			else:
-				$this->data['Amenity'] = array();
-			endif;
 		}
-
+		
 		$clientTypeIds = $this->Client->ClientType->find('list');
 		$themes = $this->Client->Theme->find('list');
 		$this->set('client', $this->data);
