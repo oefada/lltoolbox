@@ -9,7 +9,7 @@ $this->set('clientId', $this->data['Loa']['clientId']);
 	<?php
 		echo $form->input('clientId', array('type' => 'hidden'));
 		echo $form->input('loaLevelId', array('label' => 'LOA Level'));
-		echo $form->input('cashOrBarter', array('type' => 'select', 'options' => array(1 => 'Cash', 2 => 'Barter'), 'empty' => true));
+		echo $form->input('cash', array('type' => 'select', 'options' => array(0 => 'Barter', 1 => 'Cash')));
 		echo $form->input('numEmailInclusions');
 		echo $form->input('loaValue');
 		echo $form->input('customerApprovalStatusId', array('label' => 'Client Approval Status'));
