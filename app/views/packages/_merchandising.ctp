@@ -3,7 +3,6 @@
 	<div class="collapsibleContent disableAutoCollapse">
 <?php
 	echo $form->input('packageTitle');
-	echo $form->input('subtitle');
 	echo $form->input('shortBlurb');
 	echo $form->input('restrictions', array('label' => 'Terms & Conditions'));
 	echo $form->input('additionalDescription', array('label' => 'Additional Description'));
