@@ -50,18 +50,21 @@ $this->set('clientId', $this->data['Client']['clientId']);
 <div class="collapsible">
 	<div class="handle"><?php __('Related LOA Items');?></div>
 	<div class="related collapsibleContent">
+		<div style="float: right">
 		<?php
-		echo $html->link('Add new LOA item',
+		echo $html->link('<span><b class="icon"></b>Add Loa Item</span>',
 						'/loas/'.$loa['Loa']['loaId'].'/loa_items/add',
 						array(
 							'title' => 'Add Loa Item',
 							'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
-							'complete' => 'closeModalbox()'
+							'complete' => 'closeModalbox()',
+							'class' => 'button add'
 							),
 						null,
 						false
 						);
 		?>
+		</div>
 	<?php if (!empty($loa['LoaItem'])):?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
