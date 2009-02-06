@@ -1,5 +1,5 @@
 <div class="tracks form">
-	<?php echo $ajax->form('add', 'post', array('url' => "/loas/{$this->data['Track']['loaId']}/revenue_model_loa_rels/add", 'update' => 'MB_content', 'model' => 'Track', 	'complete' => 'closeModalbox()'));?>
+	<?php echo $ajax->form('add', 'post', array('url' => "/loas/{$this->data['Track']['loaId']}/tracks/add", 'update' => 'MB_content', 'model' => 'Track', 	'complete' => 'closeModalbox()'));?>
 	<fieldset>
 	<?php
 		echo $form->input('loaId', array('type' => 'hidden'));
@@ -33,7 +33,7 @@
                "TrackRevenueModelId",
                array(
                   "update"=>"revenueModelCriteria",
-                  "url"=>"/revenue_model_loa_rels/revenue_model_criteria_form",
+                  "url"=>"/tracks/revenue_model_criteria_form",
 				  'complete' => 'closeModalbox()'
                )
           )
@@ -43,7 +43,7 @@
                "TrackExpirationCriteriaId",
                array(
                   "update"=>"expirationCriteria",
-                  "url"=>"/revenue_model_loa_rels/expiration_criteria_form",
+                  "url"=>"/tracks/expiration_criteria_form",
 				 'complete' => 'closeModalbox()'
                )
           )
