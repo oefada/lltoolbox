@@ -59,11 +59,24 @@
 				</td>
 				<td>
 					<div class="controlset2" style="float: left; clear: none; width: 50px">
-					<?= $form->input('PackageLoaItemRel.'.$loaItem['loaItemId'].'.quantity', array('label' => false, 'style' => 'width: 30px;')) ?>
+					<?
+					$attributes = array('label' => false, 'style' => 'width: 30px;');
+					if (empty($this->data['PackageLoaItemRel'][$loaItem['loaItemId']]['quantity'])) {
+						$attributes['value'] = 1;
+					}
+					if ($loaItem['loaItemTypeId'] != 1) {
+						$attributes['readonly'] = true;
+					}
+					echo $form->input('PackageLoaItemRel.'.$loaItem['loaItemId'].'.quantity', $attributes);
+					?>
 					</div>
 					<? if($loaItem['loaItemTypeId'] != 1): ?>
 					<div class="controlset" style="float: left; margin-left: 3px; clear: none">
-					<input type="checkbox" name="perNight_<?=$loaItem['loaItemId']?>" id="perNight_<?=$loaItem['loaItemId']?>" value="1" onclick="perPersonPerNight(<?=$loaItem['loaItemId']?>)" /><label for="perNight_<?=$loaItem['loaItemId']?>">PN</label>
+						<? $checked = '';
+						if( @$this->data['PackageLoaItemRel'][$loaItem['loaItemId']]['quantity'] == $this->data['Package']['numNights']) {
+							$checked = ' checked="checked"';
+						}?>
+					<input type="checkbox" name="perNight_<?=$loaItem['loaItemId']?>" id="perNight_<?=$loaItem['loaItemId']?>" value="1" onclick="perPersonPerNight(<?=$loaItem['loaItemId']?>)"<?=$checked?> /><label for="perNight_<?=$loaItem['loaItemId']?>">PN</label>
 					</div>
 					<? endif; ?>
 					<?= $form->input('PackageLoaItemRel.'.$loaItem['loaItemId'].'.loaItemTypeId', array('type' => 'hidden', 'value' => $loaItem['loaItemTypeId'])) ?>
