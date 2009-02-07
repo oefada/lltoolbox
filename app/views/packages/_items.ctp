@@ -73,7 +73,7 @@
 					<? if($loaItem['loaItemTypeId'] != 1): ?>
 					<div class="controlset" style="float: left; margin-left: 3px; clear: none">
 						<? $checked = '';
-						if( @$this->data['PackageLoaItemRel'][$loaItem['loaItemId']]['quantity'] == $this->data['Package']['numNights']) {
+						if( @$this->data['PackageLoaItemRel'][$loaItem['loaItemId']]['quantity'] == $this->data['Package']['numNights'] && $this->data['Package']['numNights'] > 0) {
 							$checked = ' checked="checked"';
 						}?>
 					<input type="checkbox" name="perNight_<?=$loaItem['loaItemId']?>" id="perNight_<?=$loaItem['loaItemId']?>" value="1" onclick="perPersonPerNight(<?=$loaItem['loaItemId']?>)"<?=$checked?> /><label for="perNight_<?=$loaItem['loaItemId']?>">PN</label>
