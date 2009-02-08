@@ -78,7 +78,7 @@
 					<a href="/sessions/masquerade/revert" style="color: #ddad00">Unmasquerade</a>
 					</strong>
 				<?php else: ?>
-					<?=$userDetails['displayname']?><?=$html2->c($userDetails['mail'])?>
+					<?=$userDetails['displayname']?><?=$html2->c($userDetails['samaccountname'])?>
 				<?php endif; ?>
 			</div>
         </div> <!-- /#logo-title -->
