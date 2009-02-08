@@ -23,7 +23,7 @@ if ( @$value['LdapUser']['useraccountcontrol'] == 66050 ) {
 $class = implode(' ', $classes);
 ?>
 <tr class="<?=$class?>">
-   <td><?=@$value['LdapUser']['samaccountname']</td>
+   <td><?=@$value['LdapUser']['samaccountname']?></td>
    <td><?=@$value['LdapUser']['mail']?></td>
    <td><?=@$value['LdapUser']['cn']?></td>
 	<td>
