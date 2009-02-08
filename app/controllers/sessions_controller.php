@@ -10,9 +10,10 @@ class SessionsController extends AppController {
 	
 	function logout(){
         $this->Session->setFlash('Logout');
-        $this->Auth->_isLoggedIn = false;
+        $this->LdapAuth->_isLoggedIn = false;
 	    $this->redirect($this->LdapAuth->logout());
     }
+    
 }
 
 ?>
