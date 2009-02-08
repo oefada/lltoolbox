@@ -42,6 +42,7 @@ class LdapUser extends AppModel
             ldap_sort($this->ds, $r, "sn");
             
             $result = ldap_get_entries($this->ds, $r);
+            $result = $this->afterFind($result);
             return $this->convert_from_ldap($result);
         }
         return null;
@@ -54,6 +55,7 @@ class LdapUser extends AppModel
         {
             $l = ldap_get_entries($this->ds, $r);
             $convert = $this->convert_from_ldap($l);
+            $convert = $this->afterFind($convert);
             return $convert[0];
         }
     }
@@ -64,7 +66,7 @@ class LdapUser extends AppModel
             return false;
         }
         $result = $this->findAll('samaccountname', $samaccountname);
-
+        $result = $this->afterFind($result);
         if(isset($result[0]))
         {
             if (@ldap_bind($this->ds, $result[0]['LdapUser']['dn'], $password))
@@ -110,6 +112,25 @@ class LdapUser extends AppModel
          endforeach;
       endforeach;
       return $final;
+     }
+     
+     function afterFind($data) {
+         if (is_array($data)) {
+         foreach ($data as $k => $v) {
+             if (isset($v['LdapUser']['memberof']) && is_array($v['LdapUser']['memberof'])) {
+             foreach ($v['LdapUser']['memberof'] as $v2) {
+                 $group = substr($v2, 3, strpos($v2, ',')-3);
+                 
+                 if (trim($group)) {
+                     $groups[] = trim($group);
+                 }
+             }
+             $data[$k]['LdapUser']['groups'] = $groups;
+            }
+         }
+        }
+        
+        return $data;
      }
 }
 ?>

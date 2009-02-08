@@ -71,7 +71,16 @@
         <div id="logo-title">
 
             <div id="logo"><img src="/img/sm_logo.png" alt="" id="logo-image" /></div>
-			<div id='user-header-details'><?=$userDetails['displayname']?><?=$html2->c($userDetails['mail'])?></div>
+			<div id='user-header-details'>
+				<?php if(@$userDetails['masquerading'] == true): ?>
+					<strong><?=$userDetails['originalUser']['LdapUser']['samaccountname']?><br />
+					Masquerading as <?=$userDetails['displayname']?><?=$html2->c($userDetails['samaccountname'])?><br />
+					<a href="/sessions/masquerade/revert" style="color: #ddad00">Unmasquerade</a>
+					</strong>
+				<?php else: ?>
+					<?=$userDetails['displayname']?><?=$html2->c($userDetails['mail'])?>
+				<?php endif; ?>
+			</div>
         </div> <!-- /#logo-title -->
     </div></div> <!-- /#header-inner, /#header -->
 

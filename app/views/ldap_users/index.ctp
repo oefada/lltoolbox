@@ -43,6 +43,9 @@ $class = implode(' ', $classes);
 	</td>
    <td>
       <?php	echo $html->link('View', '/ldap_users/view/' . $value['LdapUser']['samaccountname'])?>
+	<?php if(in_array('Geeks', $userDetails['groups'])): ?>
+	  <?php	echo $html->link('Masquerade', '/sessions/masquerade/' . $value['LdapUser']['samaccountname'])?>
+	<?php endif; ?>
    </td>
 </tr>
 <?php endforeach; ?>
