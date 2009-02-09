@@ -4,7 +4,7 @@
 <?php
 	echo $form->input('packageTitle');
 	echo $form->input('shortBlurb');
-	echo $form->input('restrictions', array('label' => 'Terms & Conditions'));
+	echo $form->input('termsAndConditions', array('label' => 'Terms & Conditions'));
 	echo $form->input('additionalDescription', array('label' => 'Additional Description'));
 	echo $form->input('inclusions', array('label' => 'Inclusions'));
 	echo "<div class='controlset'>";
