@@ -162,9 +162,6 @@ class WebServiceTicketsController extends WebServicesController
 			// send out winner notifications
 			$this->ppv(json_encode($ppv_settings));
 			
-			// send out loser transactional upsell email
-			//$this->sendTransactionalUpsell($data['offerId'], $offerData);
-			
 			return true;	
 		} else {			
 			$this->errorResponse = 908;
@@ -190,18 +187,7 @@ class WebServiceTicketsController extends WebServicesController
 			return false;
 		}
 	}
-		
-	function sendTransactionalUpsell($offerId, $offerArray = array()) {
-		// TODO: handle if offer id only - but just use offerArray data for now
-		
-		// ** HANDLE TRANSACTIONAL UPSELL EMAIL IN FRONTEND
-		
-		mail('devmail@luxurylink.com', 'Transactional Email Start', $offerId . print_r($offerArray, true));
-		
-		// do not send if only one bidder
-		
-	}
-	
+
 	function ppv($in0) {
 		$params = json_decode($in0, true);
 		
