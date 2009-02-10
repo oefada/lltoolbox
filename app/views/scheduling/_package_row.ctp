@@ -59,6 +59,9 @@ foreach($package['Scheduling'] as $k => $master):
 <? foreach($master['SchedulingInstance'] as $instance):
 
 	$startDate = $instance['startDate'];
+	$startDateOnly = explode(' ', $startDate);
+	$startDateOnly = $startDateOnly[0];
+	
 	$endDate = $instance['endDate'];
 	$days = (strtotime($endDate) - strtotime($startDate)) / (60 * 60 * 24);
 
@@ -66,15 +69,17 @@ foreach($package['Scheduling'] as $k => $master):
 	$endHour = date('G', strtotime($endDate));
 	$beginOn = date('j', strtotime($startDate));
 	
-	$width = 100/$monthDays * $days;// + (100/$monthDays * $endHour/24);
+	
+	$width = $days*100/$monthDays;// + (100/$monthDays * $endHour/24);
 	$lastMonthDays = date("t", strtotime($year . "-" . $month . "-01 -1 month"));
 
-	if (date('m', strtotime($startDate)) != $month) {
-		$left = 0-100/$monthDays*($lastMonthDays-$beginOn+1);
-	} else {
-		$left = 100/$monthDays*($beginOn-1); // + (100/$monthDays * $beginHour/24);
-	}
-
+	//if (date('m', strtotime($startDate)) != $month) {
+		$left = 100/$monthDays*(strtotime($startDateOnly)-strtotime($year.'-'.$month.'-01'))/(60 * 60 * 24);
+	//	echo $left;
+	//} else {
+	//	$left = 100/$monthDays*(strtotime($startDateOnly)-strtotime($year.'-'.$month.'-01'))/(60 * 60 * 24);
+	//}
+	
 	$classes = array('sItem', 'oType'.$master['SchedulingMaster']['offerTypeId']);
 
 	if (substr($mstrStartDate, 0, 10) == substr($startDate, 0, 10)) {
