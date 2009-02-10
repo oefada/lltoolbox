@@ -464,6 +464,42 @@ class PackagesController extends AppController {
 		
 		$this->setupOfferTypeDefArray();
 	}
+	
+	function preview($clientId = null, $id = null) {
+        $this->Package->Behaviors->attach('Containable');
+        $this->Package->contain(array('PackageLoaItemRel', 'ClientLoaPackageRel', 'Currency'));
+
+	    $package = $this->Package->read(null, $id);
+	    
+	    foreach ($package['ClientLoaPackageRel'] as $clientRel) {
+	        if ($clientId == $clientRel['clientId']) {
+	            $this->Client->recursive = -1;
+        	    $client = $this->Client->read(null, $clientId);
+        	    $package['Client'] = $client['Client'];
+        	    break;
+	        }
+	    }
+	    
+	    if (!isset($client)) {
+	        $this->cakeError('error404');
+	    }
+	    
+	    $this->Package->PackageLoaItemRel->LoaItem->Behaviors->attach('Containable');
+	    $this->Package->PackageLoaItemRel->LoaItem->contain(array('Fee', 'LoaItemRatePeriod'));
+
+	    foreach ($package['PackageLoaItemRel'] as $packageLoaItemRel) {
+	        $items[$packageLoaItemRel['loaItemId']] = $this->Package->PackageLoaItemRel->LoaItem->read(null, $packageLoaItemRel['loaItemId']);
+	    }
+
+	    foreach ($items as $item) {
+	        if($item['LoaItem']['loaItemTypeId'] != 1) {
+	            continue;
+	        }
+	        $ratePeriods[$item['LoaItem']['loaItemId']] = $this->Package->PackageLoaItemRel->LoaItem->carveRatePeriods(array($item['LoaItem']['loaItemId']), array(), $package['Package']['startDate'], $package['Package']['endDate']);
+	    }
+	    
+	    $this->set(compact('package', 'items', 'ratePeriods'));
+	}
 		
 	function clonePackage($clientId = null, $id = null)
 	{
