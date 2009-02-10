@@ -118,8 +118,10 @@ class Client extends AppModel {
 		
 		// get all the client's theme ids 
 		// -----------------------------------------------------------------
-		foreach ($clientToolbox['Theme'] as $theme) {
-			$themeIds[] = $theme['themeId'];
+		if ($clientToolbox['Theme']) {
+			foreach ($clientToolbox['Theme'] as $theme) {
+				$themeIds[] = $theme['themeId'];
+			}
 		}
 		sort($themeIds);
 		$tmp = '';
@@ -139,8 +141,10 @@ class Client extends AppModel {
 				
 		// get all the clients destination ids
 		// -----------------------------------------------------------------
-		foreach ($clientToolbox['Destination'] as $destination) {
-			$destinationIds[] = $destination['themeId'];
+		if ($clientToolbox['Destination']) {
+			foreach ($clientToolbox['Destination'] as $destination) {
+				$destinationIds[] = $destination['themeId'];
+			}
 		}
 		sort($destinationIds);
 		$tmp = '';
