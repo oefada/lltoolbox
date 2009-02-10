@@ -25,5 +25,12 @@ class Html2Helper extends HtmlHelper
 		
 		return $out;
 	}
+	
+	/*
+	 * Formats a date to display in more human-friendly format
+	 */
+	function date($date) {
+	   return date('M d, Y', strtotime($date));
+	}
 }
 ?>
