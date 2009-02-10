@@ -17,7 +17,7 @@ class WebServiceBidsController extends WebServicesController
 						)
 					);
 
-	function beforeFilter() { $this-LdapAuth->allow('*'); }
+	function beforeFilter() { $this->LdapAuth->allow('*'); }
 
 	function newBidProcessor1($in0)
 	{
