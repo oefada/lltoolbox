@@ -616,7 +616,7 @@ fieldset form fieldset div {
 }
 
 fieldset label, 
-fieldset span.label {
+.label {
 	margin-right: 10px;
 	padding-right: 10px;
 	width: 150px;
