@@ -84,7 +84,11 @@ class SchedulingController extends AppController {
 		$this->Package->SchedulingMaster->contain('SchedulingInstance');
 		
 		$containConditions = array('conditions' => array('OR'=> array('month(SchedulingInstance.startDate) =' =>  $month, 
-					                                                  'month(SchedulingInstance.endDate) ='   =>  $month
+					                                                  'month(SchedulingInstance.endDate) ='   =>  $month,
+					                                                  'AND' => array(
+					                                                  'month(SchedulingInstance.startDate) <=' => $month,
+					                                                  'month(SchedulingInstance.endDate) >=' => $month
+					                                                  )
 					                                                  ),
 					                                     'AND' => array('OR'=> array('year(SchedulingInstance.startDate) =' =>  $year, 
                                                                       'year(SchedulingInstance.endDate) ='   =>  $year
