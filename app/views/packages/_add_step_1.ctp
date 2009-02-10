@@ -12,7 +12,7 @@
 	<label>Client</label> <?=$clientLoaDetail['Client']['name']?><br />
 	<? endif; ?>
 	<label>LOA Id</label> <?=$clientLoaDetail['Loa']['loaId']?><br />
-	<label>LOA Expiration</label> <?=$clientLoaDetail['Loa']['endDate']?><br />
+	<label>LOA Expiration</label> <?=$html2->date($clientLoaDetail['Loa']['endDate'])?><br />
 	<label>Percent Revenue</label> <?=$number->topercentage($clientLoaDetail['ClientLoaPackageRel']['percentOfRevenue'])?>
 	<?php echo $form->input('ClientLoaPackageRel.'.$k.'.clientLoaPackageRelId', array('type' => 'hidden')) ?>
 	<?php echo $form->input('ClientLoaPackageRel.'.$k.'.clientId', array('type' => 'hidden')) ?>

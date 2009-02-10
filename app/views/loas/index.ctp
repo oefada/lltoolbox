@@ -34,8 +34,8 @@ foreach ($loas as $loa):
 
 	<tr<?php echo $class;?>>
 		<td><?php echo $loa['LoaCustomerApprovalStatus']['customerApprovalStatusName'];?></td>
-		<td><?php echo $loa['Loa']['startDate'];?></td>
-		<td><?php echo $loa['Loa']['endDate'];?></td>
+		<td><?php echo $html2->date($loa['Loa']['startDate']);?></td>
+		<td><?php echo $html2->date($loa['Loa']['endDate']);?></td>
 		<td><?php echo $loa['Loa']['loaValue'];?></td>
 		<td><?php echo $loa['Loa']['totalRemitted'];?></td>
 		<td><?php echo $loa['Loa']['loaNumberPackages'];?></td>

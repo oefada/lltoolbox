@@ -7,7 +7,7 @@
 	echo '<tr>';
 	echo '<th>Range</th>';
 	foreach ($packageRatePeriods['Boundaries'] as $k => $v) {
-		echo '<th>' . $v['rangeStart'] . '<br />to<br />' . $v['rangeEnd'] . "</th>\n";
+		echo '<th>' . $html2->date($v['rangeStart']) . '<br />to<br />' . $html2->date($v['rangeEnd']) . "</th>\n";
 	}
 	echo '</tr>';
 	?>	

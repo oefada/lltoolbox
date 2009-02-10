@@ -17,8 +17,8 @@
 	<tr id='<?=$trId?>'>
 		<td><?=$loaItemRatePeriod['loaItemRatePeriodName']?></td>
 		<td><?=$number->currency($loaItemRatePeriod['price'], $currencyCodes[$loaItem['currencyId']]);?></td>
-		<td><?=$loaItemRatePeriod['startDate']?></td>
-		<td><?=$loaItemRatePeriod['endDate'] ?></td>
+		<td><?=$html2->date($loaItemRatePeriod['startDate'])?></td>
+		<td><?=$html2->date($loaItemRatePeriod['endDate']) ?></td>
 		<td><?=$html->image($loaItemRatePeriod['approved'] ? 'tick.png' : 'cross.png') ?>
 			<?php if ($loaItemRatePeriod['approved'] && $loaItemRatePeriod['approvedBy']): ?>
 				By: <?=$loaItemRatePeriod['approvedBy']?>

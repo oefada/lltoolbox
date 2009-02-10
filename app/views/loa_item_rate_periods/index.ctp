@@ -37,10 +37,10 @@ foreach ($loaItemRatePeriods as $loaItemRatePeriod):
 			<?php echo $loaItemRatePeriod['LoaItemRatePeriod']['loaItemRatePeriodName']; ?>
 		</td>
 		<td>
-			<?php echo $loaItemRatePeriod['LoaItemRatePeriod']['startDate']; ?>
+			<?php echo $html2->date($loaItemRatePeriod['LoaItemRatePeriod']['startDate']); ?>
 		</td>
 		<td>
-			<?php echo $loaItemRatePeriod['LoaItemRatePeriod']['endDate']; ?>
+			<?php echo $html2->date($loaItemRatePeriod['LoaItemRatePeriod']['endDate']); ?>
 		</td>
 		<td>
 			<?php echo $loaItemRatePeriod['LoaItemRatePeriod']['approvedRetailPrice']; ?>

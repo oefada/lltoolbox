@@ -30,13 +30,13 @@ foreach ($packages as $package):
 			<?php echo $packageStatusIds[$package['Package']['packageStatusId']]; ?>
 		</td>
 		<td>
-			<?php echo $package['Package']['startDate']; ?>
+			<?php echo $html2->date($package['Package']['startDate']); ?>
 		</td>
 		<td>
-			<?php echo $package['Package']['endDate']; ?>
+			<?php echo $html2->date($package['Package']['endDate']); ?>
 		</td>
 		<td>
-			<?php echo $package['Package']['created']; ?>
+			<?php echo $html2->date($package['Package']['created']); ?>
 		</td>
 		<td class="actions">
 			<?php echo $html->link(__('View Details', true), "/clients/$clientId/packages/edit/{$package['Package']['packageId']}"); ?>
