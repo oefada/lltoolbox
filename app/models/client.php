@@ -94,7 +94,7 @@ class Client extends AppModel {
 		$destinationIds			= array();
 		$liveClientDataSave 	= array();		
 		$errors					= array();
-		
+
 		// switch to live and retrieve the client table schema from the live db client
 		// -----------------------------------------------------------------
 		$this->useDbConfig 		= 'live';
@@ -160,10 +160,10 @@ class Client extends AppModel {
 		
 		// map other fields manually
 		// -----------------------------------------------------------------
-		$liveClientDataSave['clientLevelId'] = $clientToolbox['ClientLevel']['clientLevelId'];
-		$liveClientDataSave['clientLevelName'] = $clientToolbox['ClientLevel']['clientLevelName'];
-		$liveClientDataSave['destinationIds'] = implode(',', $destinationIds);
-		$liveClientDataSave['themeIds'] = implode(',', $themeIds);
+		//$liveClientDataSave['clientLevelId'] = '';
+		//$liveClientDataSave['clientLevelName'] = $clientToolbox['ClientLevel']['clientLevelName'];
+		//$liveClientDataSave['destinationIds'] = implode(',', $destinationIds);
+		//$liveClientDataSave['themeIds'] = implode(',', $themeIds);
 		
 		if ($clientExistsOnLive) {
 			//  perform client UPDATE
