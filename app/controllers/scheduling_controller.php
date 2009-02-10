@@ -91,7 +91,11 @@ class SchedulingController extends AppController {
 					                                                  )
 					                                                  ),
 					                                     'AND' => array('OR'=> array('year(SchedulingInstance.startDate) =' =>  $year, 
-                                                                      'year(SchedulingInstance.endDate) ='   =>  $year
+                                                                      'year(SchedulingInstance.endDate) ='   =>  $year,
+                                                                      'AND' => array(
+  					                                                  'year(SchedulingInstance.startDate) <=' => $year,
+  					                                                  'year(SchedulingInstance.endDate) >=' => $year
+  					                                                  )
                                                                       ))
                                                          )
 					              );
