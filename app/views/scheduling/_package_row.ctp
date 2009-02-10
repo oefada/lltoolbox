@@ -60,9 +60,8 @@ foreach($package['Scheduling'] as $k => $master):
 
 	$startDate = $instance['startDate'];
 	$endDate = $instance['endDate'];
-	$days = strtotime($endDate)-strtotime($startDate);
-	
-	$days = date('j', $days);
+	$days = (strtotime($endDate) - strtotime($startDate)) / (60 * 60 * 24);
+
 	$beginHour = date('G', strtotime($startDate));
 	$endHour = date('G', strtotime($endDate));
 	$beginOn = date('j', strtotime($startDate));
