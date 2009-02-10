@@ -45,7 +45,6 @@ class WebServiceBidsController extends WebServicesController
 		}
 		
 		$this->Bid->skipBeforeSaveFilter = true;
-		$bidData  = $this->Bid->read(null, $data['bidId']);
 	
 		$bidSave = array();
 		$bidSave['Bid'] = $data;
