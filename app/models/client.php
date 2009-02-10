@@ -118,7 +118,7 @@ class Client extends AppModel {
 		
 		// get all the client's theme ids 
 		// -----------------------------------------------------------------
-		if ($clientToolbox['Theme']) {
+		if (isset($clientToolbox['Theme'])) {
 			foreach ($clientToolbox['Theme'] as $theme) {
 				$themeIds[] = $theme['themeId'];
 			}
@@ -141,7 +141,7 @@ class Client extends AppModel {
 				
 		// get all the clients destination ids
 		// -----------------------------------------------------------------
-		if ($clientToolbox['Destination']) {
+		if (isset($clientToolbox['Destination'])) {
 			foreach ($clientToolbox['Destination'] as $destination) {
 				$destinationIds[] = $destination['themeId'];
 			}
