@@ -7,7 +7,7 @@ class WebServiceUsersController extends WebServicesController
 {
 	var $name = 'WebServiceUsers';
 	var $uses = 'User';
-	var $serviceUrl = 'http://toolboxdev.luxurylink.com/web_service_users';
+	var $serviceUrl = 'http://toolbox.luxurylink.com/web_service_users';
 	var $errorResponse = array();
 	var $api = array(
 					'userProcessor1' => array(

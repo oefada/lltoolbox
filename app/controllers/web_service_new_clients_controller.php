@@ -7,7 +7,7 @@ class WebServiceNewClientsController extends WebServicesController
 {
 	var $name = 'WebServiceNewClients';
 	var $uses = 'Client';
-	var $serviceUrl = 'http://toolboxdev.luxurylink.com/web_service_new_clients';
+	var $serviceUrl = 'http://toolbox.luxurylink.com/web_service_new_clients';
 	var $errorResponse = false;
 	var $api = array(
 					'save_client' => array(

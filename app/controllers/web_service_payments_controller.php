@@ -11,7 +11,7 @@ class WebServicePaymentsController extends WebServicesController
 {
 	var $name = 'WebServicePayments';
 	var $uses = array('UserPaymentSetting','Ticket', 'PaymentDetail');
-	var $serviceUrl = 'http://toolboxdev.luxurylink.com/web_service_payments';
+	var $serviceUrl = 'http://toolbox.luxurylink.com/web_service_payments';
 	var $errorResponse = array();
 	var $api = array(
 					'setUserPaymentSetting' => array(

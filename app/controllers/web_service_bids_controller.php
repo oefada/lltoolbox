@@ -7,7 +7,7 @@ class WebServiceBidsController extends WebServicesController
 {
 	var $name = 'WebServiceBids';
 	var $uses = 'Bid';
-	var $serviceUrl = 'http://toolboxdev.luxurylink.com/web_service_bids';
+	var $serviceUrl = 'http://toolbox.luxurylink.com/web_service_bids';
 	var $errorResponse = false;
 	var $api = array(
 					'newBidProcessor1' => array(
