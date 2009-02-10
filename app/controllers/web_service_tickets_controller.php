@@ -36,6 +36,7 @@ class WebServiceTicketsController extends WebServicesController
 		$this->errorResponse = false;
 		if (!$this->createNewTicket($json_decoded)) {			
 			$json_decoded['response'] = $this->errorResponse;
+			mail('devmail@luxurylink.com','WEBSERVICE ERROR (TICKETS):  Cannot update ticket on toolboxprod-db', print_r($json_decoded, true));
 		} 
 		return json_encode($json_decoded);
 	}
