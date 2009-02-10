@@ -50,16 +50,11 @@ class WebServiceBidsController extends WebServicesController
 		$bidSave = array();
 		$bidSave['Bid'] = $data;
 	
-		if (!$bidData) {
-			if ($this->Bid->save($bidSave)) {
-				return true;
-			} else {
-				$this->errorResponse = 504;
-				return false;	
-			}
+		if ($this->Bid->save($bidSave)) {
+			return true;
 		} else {
-			$this->errorResponse = 505;
-			return false;
+			$this->errorResponse = 504;
+			return false;	
 		}
 	}
 
