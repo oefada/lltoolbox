@@ -31,11 +31,12 @@ class ClientsController extends AppController {
 		}
 		if (!empty($this->data)) {
 			if ($this->Client->save($this->data) && $this->Client->saveAll($this->data)) {
-			    foreach ($this->data['ClientAmenityRel'] as $am) {
-			        $clientAmenityRelIds[] = $am['clientAmenityRelId'];
-			    }
-			    
-			    $this->Client->ClientAmenityRel->deleteAll(array('clientId' => $this->data['Client']['clientId'], 'NOT' => array('clientAmenityRelId' => $clientAmenityRelIds)));
+				if (isset($this->data['ClientAmenityRel']) && !empty($this->data['ClientAmenityRel'])) {
+			    	foreach ($this->data['ClientAmenityRel'] as $am) {
+				        $clientAmenityRelIds[] = $am['clientAmenityRelId'];
+			    	}
+			    	$this->Client->ClientAmenityRel->deleteAll(array('clientId' => $this->data['Client']['clientId'], 'NOT' => array('clientAmenityRelId' => $clientAmenityRelIds)));
+				}
 			    
 				$this->Session->setFlash(__('The Client has been saved', true));
 				$this->redirect(array('action'=>'edit', 'id' => $id));
