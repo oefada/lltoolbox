@@ -69,6 +69,7 @@ ul.subsection_tabs li.tab a.active {
 	?>
 	<li class="tab" id='previewTab'<?=$style?>><a class="" href="#four">Preview Setup</a></li>
 </ul>
+<a href="http://live.luxurylink.com/luxury-hotels/preview.html?pid=<?=$package['ClientLoaPackageRel'][0]['clientId']?>&oid=<?=$this->data['SchedulingMaster']['schedulingMasterId']?>&preview=master">Preview offer on live site</a>
 
 <?php echo $this->renderElement('../scheduling_masters/_form') ?>
 <?php echo $form->input('schedulingMasterId') ?>
@@ -118,7 +119,6 @@ new Form.Element.EventObserver('MerchandisingFlagMerchandisingFlag', function(el
 
 new Control.Tabs('tabs_example_one', {afterChange: function(){Modalbox.resizeToContent()}});
 </script>
-
 <?php
 if (isset($closeModalbox) && $closeModalbox) echo "<div id='closeModalbox'></div>";
 ?>
