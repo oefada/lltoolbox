@@ -174,10 +174,11 @@ class SchedulingMastersController extends AppController {
                                                                                         HAVING numIterations <> iterations OR iterations IS NULL';
 	    $masters = $this->SchedulingMaster->query($sql);
 
+        //$file = fopen('/tmp/test.txt', 'w+');
 	    foreach ($masters as $master):
             set_time_limit(120);
 	        $masterData = $master;
-	        
+
 	        if ($master['SchedulingMaster']['endDate'] == null) {
     	        $masterData['SchedulingMaster']['iterationSchedulingOption'] = 0;
     	        $masterData['SchedulingMaster']['iterations'] = $masterData['SchedulingMaster']['iterations'] - $master[0]['numIterations'];
@@ -187,7 +188,13 @@ class SchedulingMastersController extends AppController {
 	        $masterData['SchedulingMaster']['startDate'] = $master[0]['maxEndDate'];
 	        $masterData['SchedulingDelayCtrl']['schedulingDelayCtrlDesc'] = '1 hour';
 
-	        $this->createInstances($masterData, &$out);
+            $this->SchedulingMaster->query('LOCK TABLES schedulingInstance AS SchedulingInstance WRITE, schedulingMaster AS SchedulingMaster WRITE;');
+	        $instanceData = $this->createInstances($masterData, &$out);
+	        $this->SchedulingMaster->query('UNLOCK TABLES;');
+	        
+	        //foreach($instanceData as $instance) {
+	        //    fwrite($file, implode(',', $instance));
+	        //}
 	        
 		    $this->SchedulingMaster->id = $masterData['SchedulingMaster']['schedulingMasterId'];
 	        if ($master['SchedulingMaster']['endDate'] == null) {
@@ -198,6 +205,8 @@ class SchedulingMastersController extends AppController {
 	        }
 	    endforeach;
 	    
+	    //fclose($file);
+	    
 	    $this->autoRender = false;
 	}
 	
@@ -205,7 +214,7 @@ class SchedulingMastersController extends AppController {
 	 * Method creates instances for a master.
 	 * @param array optional array to be used as a fake master to override how the method works (@see fix_instances)
 	 */
-	function createInstances($masterData = array(), &$out = null) {
+	function createInstances($masterData = array(), &$out = null, $skipDb = false) {
 	    
 	    if (empty($masterData)):
 		    $masterData                 = $this->SchedulingMaster->read(null);
@@ -254,6 +263,7 @@ class SchedulingMastersController extends AppController {
         if ($iterations > 30) $iterations = 30;
         //TODO: Put this logic in the model where it belongs
 		for ($i = 0; $i < $iterations; $i++) {
+		    echo $instanceData['SchedulingInstance']['startDate'].'<br>';
 			$endDate = strtotime($instanceData['SchedulingInstance']['startDate'] . ' +' . $masterData['SchedulingMaster']['numDaysToRun'] . ' days');
 			
 			while ($this->_isHoliday($endDate)) {
@@ -277,7 +287,7 @@ class SchedulingMastersController extends AppController {
 			    $startDate = strtotime('+1 day', $startDate);   //push to next day
 			    $startDate = date('Y-m-d', $startDate);         //conver to just Y-m-d
 			    $startDate = $startDate.' 08:00:00';            //set time to 8am
-			    $startDate = strtotime($startdate);             //save ne date as timestamp
+			    $startDate = strtotime($startDate);             //save new date as timestamp
 			}
 			//check if new start date is to open on a holiday, if so, push it ahead a day
 			while ($this->_isHoliday($startDate)) {
@@ -291,9 +301,11 @@ class SchedulingMastersController extends AppController {
 			$instanceData['SchedulingInstance']['startDate'] = date('Y-m-d H:i:s', $startDate);	
 		}
 		
-		if (!empty($instancesToSave)) {
+		if (!empty($instancesToSave) && $skipDb != true) {
     		$this->SchedulingMaster->SchedulingInstance->create();
     		$this->SchedulingMaster->SchedulingInstance->saveAll($instancesToSave);
+		} else {
+		    return $instancesToSave;
 		}
 	}
 	
