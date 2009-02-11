@@ -169,7 +169,7 @@ class SchedulingMastersController extends AppController {
                                                                                         FROM schedulingMaster AS SchedulingMaster
                                                                                         INNER JOIN schedulingInstance AS SchedulingInstance USING (schedulingMasterId) 
                                                                                         WHERE SchedulingMaster.offerTypeId IN (1, 2, 6) AND (iterations IS NULL OR SchedulingMaster.endDate IS NULL)
-                                                                                        AND SchedulingMaster.endDate >= NOW() OR SchedulingMaster.endDate IS NULL
+                                                                                        AND SchedulingMaster.endDate >= NOW() AND SchedulingMaster.endDate <= NOW() + INTERVAL 3 MONTH
                                                                                         GROUP BY schedulingMasterId 
                                                                                         HAVING numIterations <> iterations OR iterations IS NULL';
 	    $masters = $this->SchedulingMaster->query($sql);
@@ -251,7 +251,7 @@ class SchedulingMastersController extends AppController {
 		    $this->SchedulingMaster->id = $masterData['SchedulingMaster']['schedulingMasterId'];
 		    $this->SchedulingMaster->saveField('iterations', $iterations);
 		}
-
+        if ($iterations > 30) $iterations = 30;
         //TODO: Put this logic in the model where it belongs
 		for ($i = 0; $i < $iterations; $i++) {
 			$endDate = strtotime($instanceData['SchedulingInstance']['startDate'] . ' +' . $masterData['SchedulingMaster']['numDaysToRun'] . ' days');
