@@ -53,7 +53,7 @@
 <?php
 //TODO: put this in a helper
 function sortLink($field, $title, $currentPage, $serializedFormInput, $view, $html) {
-	$url = "/reports/bids/filter:";
+	$url = "/reports/fixed_price/filter:";
 	$url .= urlencode($serializedFormInput);
 	$url .= "/page:$currentPage";
 	$url .= "/sortBy:$field";
@@ -73,7 +73,7 @@ function sortLink($field, $title, $currentPage, $serializedFormInput, $view, $ht
 
 if (!empty($results)): ?>
 	<div style='float: right'><?=$numRecords?> records found</div>
-	<?=$pagination->Paginate("/reports/bids/filter:".urlencode($serializedFormInput)."/sortBy:$sortBy/sortDirection:$sortDirection/page:", $currentPage, $numPages)?>
+	<?=$pagination->Paginate("/reports/fixed_price/filter:".urlencode($serializedFormInput)."/sortBy:$sortBy/sortDirection:$sortDirection/page:", $currentPage, $numPages)?>
 	<table style="margin-top: 20px">
 		<tr>
 			<th><?=sortLink('Offer.offerId', 'Offer ID', $currentPage, $serializedFormInput, $this, $html)?></th>
@@ -110,7 +110,7 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 	</tr>
 <?php endforeach; //TODO: add totals ?>
 </table>
-<?=$pagination->Paginate("/reports/bids/filter:".urlencode($serializedFormInput)."/sortBy:$sortBy/sortDirection:$sortDirection/page:", $currentPage, $numPages)?>
+<?=$pagination->Paginate("/reports/fixed_price/filter:".urlencode($serializedFormInput)."/sortBy:$sortBy/sortDirection:$sortDirection/page:", $currentPage, $numPages)?>
 <?php elseif (!empty($data)): ?>
 <p>No results were found for the entered filters.</p>
 <p><strong>Tips:</strong> If searching by client or package name, enter four or more characters.
