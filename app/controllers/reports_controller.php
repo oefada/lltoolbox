@@ -21,6 +21,14 @@ class ReportsController extends AppController {
 	            $this->data = $get;
 	        }
 	    }
+	    
+	    if ($this->data['download']['csv'] == 1) {
+	        Configure::write('debug', '0');
+	        $this->data['paging']['disablePagination'] == 1;
+
+            $this->viewPath .= '/csv';
+	        $this->layoutPath = 'csv';
+        }
 
 	     if($this->data['paging']['disablePagination'] == 1) {
             $this->page = 1;
@@ -33,6 +41,8 @@ class ReportsController extends AppController {
             $this->page = 1;
             $this->limit = 20;
         }
+        
+        
 	}
 	
 	function index() {
