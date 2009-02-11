@@ -30,10 +30,10 @@ class ClientsController extends AppController {
 			$this->redirect(array('action'=>'index'));
 		}
 		if (!empty($this->data)) {
-			if ($this->Client->save($this->data) && $this->Client->saveAll($this->data)) {
+			if ($this->Client->saveAll($this->data)) {
 				if (isset($this->data['ClientAmenityRel']) && !empty($this->data['ClientAmenityRel'])) {
 			    	foreach ($this->data['ClientAmenityRel'] as $am) {
-				        $clientAmenityRelIds[] = $am['clientAmenityRelId'];
+				        $clientAmenityRelIds[] = @$am['clientAmenityRelId'];
 			    	}
 			    	$this->Client->ClientAmenityRel->deleteAll(array('clientId' => $this->data['Client']['clientId'], 'NOT' => array('clientAmenityRelId' => $clientAmenityRelIds)));
 				}
