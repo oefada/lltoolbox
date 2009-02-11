@@ -85,7 +85,6 @@ class Client extends AppModel {
 		// $created specifies if a client record was created in toolbox.  
 		// ONLY true if client created via Sugar as toolbox cannot create new client records
 		
-		
 		// get client record from toolbox so we can update live client
 		// -----------------------------------------------------------------
 		$clientId 				= $this->data['Client']['clientId'];
