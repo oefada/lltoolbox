@@ -643,7 +643,7 @@ class ReportsController extends AppController {
              $sql = "SELECT COUNT(DISTINCT Ticket.ticketId) as numRecords
                         FROM ticket AS Ticket
                                INNER JOIN offer AS Offer USING(offerId)
-                               INNER JOIN offerType AS OfferType USING(offerTypeId)
+                               LEFT JOIN offerType AS OfferType USING(offerTypeId)
                                INNER JOIN schedulingInstance AS SchedulingInstance USING(schedulingInstanceId)
                                INNER JOIN client as Client USING(clientId)
                                LEFT JOIN paymentDetail AS PaymentDetail USING (ticketId)
@@ -689,7 +689,7 @@ class ReportsController extends AppController {
                            Package.validityEndDate
                     FROM ticket AS Ticket
                            INNER JOIN offer AS Offer USING(offerId)
-                           INNER JOIN offerType AS OfferType USING(offerTypeId)
+                           LEFT JOIN offerType AS OfferType USING(offerTypeId)
                            INNER JOIN schedulingInstance AS SchedulingInstance USING(schedulingInstanceId)
                            INNER JOIN client as Client USING(clientId)
                            LEFT JOIN paymentDetail AS PaymentDetail USING (ticketId)
