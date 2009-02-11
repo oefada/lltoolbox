@@ -412,9 +412,11 @@ class ReportsController extends AppController {
                                     	Ticket.userCity,
                                     	Ticket.requestQueueDateTime,
                                     	Ticket.billingPrice,
+                                    	TicketStatus.ticketStatusName,
                                     	SUM(PaymentDetail.ppBillingAmount) as moneyCollected,
                                     	IF(SUM(PaymentDetail.ppBillingAmount)>=Ticket.billingPrice, MAX(PaymentDetail.paymentDatetime), 0) AS dateCollected
                                 FROM ticket AS Ticket
+                                LEFT JOIN ticketStatus AS TicketStatus USING (ticketStatusId)
                                 INNER JOIN offerType as OfferType ON (OfferType.offerTypeId = Ticket.offerTypeId)
                                 INNER JOIN client AS Client ON (Client.clientId = Ticket.clientId)
                                 INNER JOIN offer AS Offer ON (Offer.offerId = Ticket.offerId)
