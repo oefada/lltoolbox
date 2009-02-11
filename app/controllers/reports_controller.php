@@ -384,13 +384,13 @@ class ReportsController extends AppController {
 	        
             $count = "SELECT COUNT(DISTINCT Ticket.ticketId) AS numRecords
                                 FROM ticket AS Ticket
-                                INNER JOIN offerType as OfferType ON (OfferType.offerTypeId = Ticket.offerTypeId)
-                                INNER JOIN client AS Client ON (Client.clientId = Ticket.clientId)
-                                INNER JOIN offer AS Offer ON (Offer.offerId = Ticket.offerId)
-                                INNER JOIN schedulingInstance AS SchedulingInstance ON (SchedulingInstance.schedulingInstanceId = Offer.schedulingInstanceId)
-                                INNER JOIN schedulingMaster AS SchedulingMaster ON (SchedulingMaster.schedulingMasterId = SchedulingInstance.schedulingMasterId)
-                                INNER JOIN package AS Package ON (Package.packageId = SchedulingMaster.packageId)
-                                INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Package.packageId AND ClientLoaPackageRel.clientId = Ticket.clientId)
+                                LEFT JOIN offerType as OfferType ON (OfferType.offerTypeId = Ticket.offerTypeId)
+                                LEFT JOIN client AS Client ON (Client.clientId = Ticket.clientId)
+                                LEFT JOIN offer AS Offer ON (Offer.offerId = Ticket.offerId)
+                                LEFT JOIN schedulingInstance AS SchedulingInstance ON (SchedulingInstance.schedulingInstanceId = Offer.schedulingInstanceId)
+                                LEFT JOIN schedulingMaster AS SchedulingMaster ON (SchedulingMaster.schedulingMasterId = SchedulingInstance.schedulingMasterId)
+                                LEFT JOIN package AS Package ON (Package.packageId = SchedulingMaster.packageId)
+                                LEFT JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Package.packageId AND ClientLoaPackageRel.clientId = Ticket.clientId)
                                 LEFT JOIN track AS Track ON (Track.trackId = ClientLoaPackageRel.trackId)
                                 LEFT JOIN paymentDetail AS PaymentDetail ON (PaymentDetail.ticketId = Ticket.ticketId AND PaymentDetail.userId = Ticket.userId)
                     WHERE $conditions";
@@ -417,10 +417,10 @@ class ReportsController extends AppController {
                                     	IF(SUM(PaymentDetail.ppBillingAmount)>=Ticket.billingPrice, MAX(PaymentDetail.paymentDatetime), 0) AS dateCollected
                                 FROM ticket AS Ticket
                                 LEFT JOIN ticketStatus AS TicketStatus USING (ticketStatusId)
-                                INNER JOIN offerType as OfferType ON (OfferType.offerTypeId = Ticket.offerTypeId)
-                                INNER JOIN client AS Client ON (Client.clientId = Ticket.clientId)
-                                INNER JOIN offer AS Offer ON (Offer.offerId = Ticket.offerId)
-                                INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Ticket.packageId AND ClientLoaPackageRel.clientId = Ticket.clientId)
+                                LEFT JOIN offerType as OfferType ON (OfferType.offerTypeId = Ticket.offerTypeId)
+                                LEFT JOIN client AS Client ON (Client.clientId = Ticket.clientId)
+                                LEFT JOIN offer AS Offer ON (Offer.offerId = Ticket.offerId)
+                                LEFT JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Ticket.packageId AND ClientLoaPackageRel.clientId = Ticket.clientId)
                                 LEFT JOIN track AS Track ON (Track.trackId = ClientLoaPackageRel.trackId)
                                 LEFT JOIN paymentDetail AS PaymentDetail ON (PaymentDetail.ticketId = Ticket.ticketId AND PaymentDetail.userId = Ticket.userId)
                     WHERE $conditions
