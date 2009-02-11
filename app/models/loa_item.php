@@ -10,8 +10,8 @@ class LoaItem extends AppModel {
 							'Loa' => array('foreignKey' => "loaId"),
 							'Currency' => array('foreignKey' => 'currencyId'));
 
-	var $hasOne = array('Fee' => array('foreignKey' => 'loaItemId'),
-						'PackageLoaItemRel' => array('foreignKey' => 'loaItemId')
+	var $hasOne = array('Fee' => array('foreignKey' => 'loaItemId', 'dependent' => true),
+						'PackageLoaItemRel' => array('foreignKey' => 'loaItemId', 'dependent' => true)
 					   );
 	var $hasMany = array('LoaItemRatePeriod' => array('foreignKey' => 'loaItemId', 'dependent'=> true));
 	
