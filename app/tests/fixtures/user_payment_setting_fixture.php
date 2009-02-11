@@ -5,7 +5,7 @@
 class UserPaymentSettingFixture extends CakeTestFixture {
 	var $name = 'UserPaymentSetting';
 	var $table = 'userPaymentSetting';
-	var $import = array('model' => 'UserPaymentSetting', 'connection' => 'default');
+	var $import = array('model' => 'UserPaymentSetting', 'records' => false, 'connection' => 'default');
 
 	var $records = array(array(
 			'userPaymentSettingId'  => 1,

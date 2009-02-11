@@ -3,18 +3,13 @@
 /* UserPaymentSetting Test cases generated on: 2008-10-21 23:10:40 : 1224657520*/
 App::import('Model', 'UserPaymentSetting');
 
-class TestUserPaymentSetting extends UserPaymentSetting {
-	var $cacheSources = false;
-	var $useDbConfig  = 'test_suite';
-}
-
 class UserPaymentSettingTestCase extends CakeTestCase {
 	var $UserPaymentSetting = null;
 	var $fixtures = array('app.user_payment_setting');
 
 	function start() {
 		parent::start();
-		$this->UserPaymentSetting = new TestUserPaymentSetting();
+		$this->UserPaymentSetting = ClassRegistry::init('UserPaymentSetting');
 	}
 
 	function testUserPaymentSettingInstance() {
@@ -24,11 +19,13 @@ class UserPaymentSettingTestCase extends CakeTestCase {
 	function testUserPaymentSettingFind() {
 		$this->UserPaymentSetting->recursive = -1;
 		$results = $this->UserPaymentSetting->find('first');
+
 		$this->assertTrue(!empty($results));
 
 		$expected = array('UserPaymentSetting' => array(
 				'userPaymentSettingId'  => 1,
 				'ccNumber'  => '************0656',
+				'ccType' => '',
 				'userId'  => 1,
 				'nameOnCard'  => 'Test Person',
 				'expYear'  => '2010',
@@ -45,7 +42,9 @@ class UserPaymentSettingTestCase extends CakeTestCase {
 				'postalCode' => null,
 				'inactive' => 0,
 				'created' => null,
-				'modified' => null
+				'modified' => null,
+				'primaryCC' => null,
+				'oldCardId' => null
 				));
 		
 		$this->assertEqual($results, $expected);

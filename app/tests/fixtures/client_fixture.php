@@ -15,10 +15,7 @@ class ClientFixture extends CakeTestFixture {
 			'phone1' => array('type'=>'string', 'null' => true, 'default' => NULL, 'length' => 15),
 			'phone2' => array('type'=>'string', 'null' => true, 'default' => NULL, 'length' => 15),
 			'clientTypeId' => array('type'=>'integer', 'null' => true, 'default' => NULL),
-			'clientLevelId' => array('type'=>'integer', 'null' => true, 'default' => NULL),
 			'regionId' => array('type'=>'integer', 'null' => true, 'default' => NULL),
-			'clientStatusId' => array('type'=>'integer', 'null' => true, 'default' => NULL),
-			'clientAcquisitionSourceId' => array('type'=>'integer', 'null' => true, 'default' => NULL),
 			'customMapLat' => array('type'=>'float', 'null' => true, 'default' => NULL),
 			'customMapLong' => array('type'=>'float', 'null' => true, 'default' => NULL),
 			'customMapZoomMap' => array('type'=>'float', 'null' => true, 'default' => NULL),
@@ -41,10 +38,7 @@ class ClientFixture extends CakeTestFixture {
 			'phone1'  => 'Lorem ipsum d',
 			'phone2'  => 'Lorem ipsum d',
 			'clientTypeId'  => 1,
-			'clientLevelId'  => 1,
 			'regionId'  => 1,
-			'clientStatusId'  => 1,
-			'clientAcquisitionSourceId'  => 1,
 			'customMapLat'  => 1,
 			'customMapLong'  => 1,
 			'customMapZoomMap'  => 1,
@@ -55,8 +49,7 @@ class ClientFixture extends CakeTestFixture {
 			'numRooms'  => 1,
 			'airportCode'  => 'Lorem ip',
 			'oldProductId'  => 1,
-			'seoName'  => 'Lorem ipsum dolor sit amet',
-			'revision' => 1
+			'seoName'  => 'Lorem ipsum dolor sit amet'
 			));
 }
 ?>
