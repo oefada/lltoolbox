@@ -5,7 +5,7 @@ App::import('Model', 'UserPaymentSetting');
 
 class UserPaymentSettingTestCase extends CakeTestCase {
 	var $UserPaymentSetting = null;
-	var $fixtures = array('app.user_payment_setting');
+	var $fixtures = array('app.user_payment_setting', 'app.payment_type');
 
 	function start() {
 		parent::start();
