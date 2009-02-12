@@ -164,18 +164,27 @@ class SchedulingMastersController extends AppController {
 	 */
 	function fix_instances() {
 	    Configure::write('debug', 3);
-	    
+
 	    $sql = 'SELECT schedulingMasterId, offerTypeId, numDaysToRun, SchedulingMaster.endDate, MAX(SchedulingInstance.endDate) as maxEndDate, iterations, COUNT(DISTINCT schedulingInstanceId) as numIterations 
-                                                                                        FROM schedulingMaster AS SchedulingMaster
-                                                                                        INNER JOIN schedulingInstance AS SchedulingInstance USING (schedulingMasterId) 
-                                                                                        WHERE SchedulingMaster.offerTypeId IN (1, 2, 6) AND (iterations IS NULL OR SchedulingMaster.endDate IS NULL)
-                                                                                        AND SchedulingMaster.endDate >= NOW()
-                                                                                        GROUP BY schedulingMasterId 
-                                                                                        HAVING numIterations <> iterations OR iterations IS NULL';
+                FROM schedulingMaster AS SchedulingMaster
+                INNER JOIN schedulingInstance AS SchedulingInstance USING (schedulingMasterId) 
+                WHERE SchedulingMaster.offerTypeId IN (1, 2, 6) AND (iterations IS NULL AND SchedulingMaster.endDate >= NOW())
+                OR SchedulingMaster.endDate IS NULL
+                GROUP BY schedulingMasterId 
+                HAVING numIterations <> iterations OR iterations IS NULL';
 	    $masters = $this->SchedulingMaster->query($sql);
 
         //$file = fopen('/tmp/test.txt', 'w+');
-	    foreach ($masters as $master):
+        $file = fopen("php://memory", 'w+');
+        $c = count($masters);
+        $m_time = explode(" ",microtime());
+        $m_time = $m_time[0] + $m_time[1];
+        $loadstart = $m_time;
+
+        $this->SchedulingMaster->query('LOCK TABLES schedulingInstance AS SchedulingInstance WRITE, schedulingMaster AS SchedulingMaster WRITE;');
+        $this->SchedulingMaster->query('ALTER TABLE schedulingInstance DISABLE KEYS;');
+	    foreach ($masters as $k => $master):
+
             set_time_limit(120);
 	        $masterData = $master;
 
@@ -187,26 +196,43 @@ class SchedulingMastersController extends AppController {
 	        }
 	        $masterData['SchedulingMaster']['startDate'] = $master[0]['maxEndDate'];
 	        $masterData['SchedulingDelayCtrl']['schedulingDelayCtrlDesc'] = '1 hour';
+	        
+	        if (strtotime($masterData['SchedulingMaster']['startDate']) <= time() && strtotime($masterData['SchedulingMaster']['endDate']) > time()) {
+	            $masterData['SchedulingMaster']['startDate'] = date('Y-m-d H:i:s');
+	        }
+	        
+	        $this->createInstances($masterData, &$out, true, $file);
 
-            $this->SchedulingMaster->query('LOCK TABLES schedulingInstance AS SchedulingInstance WRITE, schedulingMaster AS SchedulingMaster WRITE;');
-	        $instanceData = $this->createInstances($masterData, &$out);
-	        $this->SchedulingMaster->query('UNLOCK TABLES;');
-	        
-	        //foreach($instanceData as $instance) {
-	        //    fwrite($file, implode(',', $instance));
-	        //}
-	        
 		    $this->SchedulingMaster->id = $masterData['SchedulingMaster']['schedulingMasterId'];
-	        if ($master['SchedulingMaster']['endDate'] == null) {
+		    
+		    if ($master['SchedulingMaster']['endDate'] == null) {
                 $this->SchedulingMaster->saveField('endDate', $out['endDate']);
 	        } else {
     	        $iterations = $out['iterations'] + $master[0]['numIterations'];
     	        $this->SchedulingMaster->saveField('iterations', $iterations);
 	        }
 	    endforeach;
+	    $m_time = explode(" ",microtime());
+        $m_time = $m_time[0] + $m_time[1];
+        $loadend = $m_time;
+        $loadtotal = ($loadend - $loadstart);
+        $mins = floor ($loadtotal / 60);
+        echo "<br /><br /><small><em>Finished in ". $mins ." minutes</em></small>";
+        
+	    $this->SchedulingMaster->query('ALTER TABLE schedulingInstance ENABLE KEYS;');
+        $this->SchedulingMaster->query('UNLOCK TABLES;');
+        rewind($file);
+        $file2 = fopen('/tmp/test.txt', 'w+');
+        fwrite($file2, stream_get_contents($file));
+	    fclose($file);
+	    fclose($file2);
 	    
-	    //fclose($file);
-	    
+	    $result = $this->SchedulingMaster->query('LOAD DATA INFILE "/tmp/test.txt"
+            INTO TABLE schedulingInstance
+            FIELDS TERMINATED BY ","
+            LINES TERMINATED BY "\n"
+            (schedulingMasterId, startDate, endDate);');
+	    debug($result);
 	    $this->autoRender = false;
 	}
 	
@@ -214,7 +240,7 @@ class SchedulingMastersController extends AppController {
 	 * Method creates instances for a master.
 	 * @param array optional array to be used as a fake master to override how the method works (@see fix_instances)
 	 */
-	function createInstances($masterData = array(), &$out = null, $skipDb = false) {
+	function createInstances($masterData = array(), &$out = null, $skipDb = false, $file = null) {
 	    
 	    if (empty($masterData)):
 		    $masterData                 = $this->SchedulingMaster->read(null);
@@ -257,13 +283,12 @@ class SchedulingMastersController extends AppController {
 
 		    $iterations = floor($startEndRange / $totalInstanceTime);
 		    $out['iterations'] = $iterations;
-		    $this->SchedulingMaster->id = $masterData['SchedulingMaster']['schedulingMasterId'];
-		    $this->SchedulingMaster->saveField('iterations', $iterations);
+		    //$this->SchedulingMaster->id = $masterData['SchedulingMaster']['schedulingMasterId'];
+		    //$this->SchedulingMaster->saveField('iterations', $iterations);
 		}
-        if ($iterations > 30) $iterations = 30;
+
         //TODO: Put this logic in the model where it belongs
 		for ($i = 0; $i < $iterations; $i++) {
-		    echo $instanceData['SchedulingInstance']['startDate'].'<br>';
 			$endDate = strtotime($instanceData['SchedulingInstance']['startDate'] . ' +' . $masterData['SchedulingMaster']['numDaysToRun'] . ' days');
 			
 			while ($this->_isHoliday($endDate)) {
@@ -278,8 +303,12 @@ class SchedulingMastersController extends AppController {
 				
             $out['endDate'] = $instanceData['SchedulingInstance']['endDate'];
             
-            $instancesToSave[] = $instanceData;
-		
+            if ($skipDb != true) {
+        		$this->SchedulingMaster->SchedulingInstance->create();
+        		$this->SchedulingMaster->SchedulingInstance->save($instanceData);
+    		} else {
+                fwrite($file, $instanceData['SchedulingInstance']['schedulingMasterId'].",".$instanceData['SchedulingInstance']['startDate'].",".$instanceData['SchedulingInstance']['endDate']."\n");
+    		}
 			$startDate = strtotime($instanceData['SchedulingInstance']['endDate'] . ' +' . $masterData['SchedulingDelayCtrl']['schedulingDelayCtrlDesc']);
 			
 			//check if the start date is greater than 4pm, 16 in 24-hour format
@@ -289,11 +318,7 @@ class SchedulingMastersController extends AppController {
 			    $startDate = $startDate.' 08:00:00';            //set time to 8am
 			    $startDate = strtotime($startDate);             //save new date as timestamp
 			}
-			//check if new start date is to open on a holiday, if so, push it ahead a day
-			while ($this->_isHoliday($startDate)) {
-			    $startDate = strtotime('+1 day', $startDate);
-			}
-			
+
 			if ($startDate > $masterEndDate) {
 			    break;
 			}
@@ -301,12 +326,10 @@ class SchedulingMastersController extends AppController {
 			$instanceData['SchedulingInstance']['startDate'] = date('Y-m-d H:i:s', $startDate);	
 		}
 		
-		if (!empty($instancesToSave) && $skipDb != true) {
-    		$this->SchedulingMaster->SchedulingInstance->create();
-    		$this->SchedulingMaster->SchedulingInstance->saveAll($instancesToSave);
-		} else {
+		if (!empty($instancesToSave) && $skipDb == true) {
 		    return $instancesToSave;
-		}
+	    }
+
 	}
 	
 	/**
