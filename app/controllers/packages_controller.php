@@ -135,6 +135,9 @@ class PackagesController extends AppController {
 		$this->data['Currency'] = $clientLoaDetails[0]['Currency'];
 		$this->data['Package']['currencyId'] = $clientLoaDetails[0]['Currency']['currencyId'];
 		$this->set('currencyCodes', $this->Package->Currency->find('list', array('fields' => array('currencyCode'))));
+		
+		$loaItemTypes = $this->Package->PackageLoaItemRel->LoaItem->LoaItemType->find('list');
+		$this->set(compact('loaItemTypes'));
 	}
 	
 	function getBlackoutDaysNumber($reverse = 0) {
@@ -463,6 +466,9 @@ class PackagesController extends AppController {
 		endif;
 		
 		$this->setupOfferTypeDefArray();
+		
+		$loaItemTypes = $this->Package->PackageLoaItemRel->LoaItem->LoaItemType->find('list');
+		$this->set(compact('loaItemTypes'));
 	}
 	
 	function preview($clientId = null, $id = null) {
