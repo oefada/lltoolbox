@@ -6,7 +6,7 @@ if (empty($this->pageTitle )) {
 }
 ?>
 <style>
-<? include('/css/pdf.css'); ?>
+<? include('css/pdf.css'); ?>
 </style>
 <?
 $dompdf = new DOMPDF();
