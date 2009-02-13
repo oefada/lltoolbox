@@ -24,7 +24,7 @@ class ReportsController extends AppController {
 	    
 	    if ($this->data['download']['csv'] == 1) {
 	        Configure::write('debug', '0');
-	        $this->data['paging']['disablePagination'] == 1;
+	        $this->data['paging']['disablePagination'] = 1;
 
             $this->viewPath .= '/csv';
 	        $this->layoutPath = 'csv';
@@ -225,25 +225,25 @@ class ReportsController extends AppController {
 	        }
 	        
         $count = "    SELECT
-                            Offer.offerId
-                    FROM offer AS Offer
-                    LEFT JOIN ticket AS Ticket ON (Ticket.offerId = Offer.offerId)
-                    LEFT JOIN ticket AS Ticket2 ON (Ticket2.offerId = Offer.offerId AND Ticket2.ticketStatusId = 6)
-                    LEFT JOIN bid AS Bid ON (Bid.offerId = Offer.offerId)
-                    INNER JOIN schedulingInstance AS SchedulingInstance ON (SchedulingInstance.schedulingInstanceId = Offer.schedulingInstanceId)
-                    INNER JOIN schedulingMaster AS SchedulingMaster ON (SchedulingMaster.schedulingMasterId = SchedulingInstance.schedulingMasterId)
-                    INNER JOIN offerType as OfferType ON (OfferType.offerTypeId = SchedulingMaster.offerTypeId)
-                    INNER JOIN package AS Package ON (Package.packageId = SchedulingMaster.packageId)
-                    INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Package.packageId)
-                    INNER JOIN client AS Client ON (Client.clientId = ClientLoaPackageRel.clientId)
-                    LEFT JOIN track AS Track ON (Track.trackId = ClientLoaPackageRel.trackId)
+                        Offer.offerId
+                        FROM offer AS Offer
+                        LEFT JOIN ticket AS Ticket ON (Ticket.offerId = Offer.offerId)
+                        LEFT JOIN ticket AS Ticket2 ON (Ticket2.offerId = Offer.offerId AND Ticket2.ticketStatusId = 6)
+                        LEFT JOIN bid AS Bid ON (Bid.offerId = Offer.offerId)
+                        INNER JOIN schedulingInstance AS SchedulingInstance ON (SchedulingInstance.schedulingInstanceId = Offer.schedulingInstanceId)
+                        INNER JOIN schedulingMaster AS SchedulingMaster ON (SchedulingMaster.schedulingMasterId = SchedulingInstance.schedulingMasterId)
+                        INNER JOIN offerType as OfferType ON (OfferType.offerTypeId = SchedulingMaster.offerTypeId)
+                        INNER JOIN package AS Package ON (Package.packageId = SchedulingMaster.packageId)
+                        INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Package.packageId)
+                        INNER JOIN client AS Client ON (Client.clientId = ClientLoaPackageRel.clientId)
+                        LEFT JOIN track AS Track ON (Track.trackId = ClientLoaPackageRel.trackId)
                     WHERE $conditions
                     GROUP BY Offer.offerId, Client.clientId";
 
 	        $results = $this->OfferType->query($count);
 	        $numRecords = count($results);
             $numPages = ceil($numRecords / $this->perPage);
-                
+
 	        $sql = "SELECT
                             Offer.offerId,
                         	Client.name,
@@ -259,10 +259,10 @@ class ReportsController extends AppController {
                         	SchedulingInstance.endDate,
                         	COUNT(Bid.bidId) AS numBids,
                         	COUNT(DISTINCT Bid.userId) AS uniqueBids,
-                        	COUNT(DISTINCT Ticket.ticketId) AS numTickets,
-                        	SUM(Ticket.billingPrice) AS moneyPotential,
-                        	COUNT(DISTINCT Ticket2.ticketId) AS numTicketsCollected,
-                        	SUM(Ticket2.billingPrice) AS moneyCollected
+                        	COUNT(DISTINCT Ticket2.ticketId) AS numTickets,
+                        	(SELECT SUM(Ticket2.billingPrice) FROM ticket AS Ticket2 WHERE Ticket2.offerId = Offer.offerId) as moneyPotential,
+                        	COUNT(DISTINCT Ticket.ticketId) AS numTicketsCollected,
+                        	(SELECT SUM(Ticket3.billingPrice) FROM ticket AS Ticket3 WHERE Ticket3.offerId = Offer.offerId AND Ticket3.ticketStatusId = 6) as moneyCollected
                     FROM offer AS Offer
                     LEFT JOIN ticket AS Ticket ON (Ticket.offerId = Offer.offerId)
                     LEFT JOIN ticket AS Ticket2 ON (Ticket2.offerId = Offer.offerId AND Ticket2.ticketStatusId = 6)
@@ -278,9 +278,9 @@ class ReportsController extends AppController {
                     GROUP BY Offer.offerId, Client.clientId
                     ORDER BY $order
 	                LIMIT $this->limit";
-	        
+
 	        $results = $this->OfferType->query($sql);
-            
+
             $this->set('currentPage', $this->page);
             $this->set('numRecords', $numRecords);
             $this->set('numPages', $numPages);
