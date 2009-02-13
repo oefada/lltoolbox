@@ -74,7 +74,7 @@ class UsersController extends AppController {
 		}
 		if(!empty($this->params['form']['query'])):
 			$query = $this->Sanitize->escape($this->params['form']['query']);
-			$conditions = array('OR' => array('User.firstName LIKE' => "$query%", 'User.lastName LIKE' => "$query%", 'User.email LIKE' => "$query%"));
+			$conditions = array('OR' => array("MATCH(User.lastName,User.firstName,User.email) AGAINST('$query' IN BOOLEAN MODE)"));
 
 			if($_GET['query'] ||  $this->params['named']['query']) {
 
