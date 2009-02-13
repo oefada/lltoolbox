@@ -20,7 +20,7 @@
 		echo $form->input('ticketId', array('readonly'=>'readonly'));
 	?>
 		<br /><br />
-		<textarea id="PpvNoticeEmailBody" name="data[PpvNotice][emailBody]" cols="140" rows="30"><?php echo $ppv_body_text;?></textarea>
+		<textarea id="PpvNoticeEmailBody" name="data[PpvNotice][emailBody]" cols="140" rows="30" style="width:900px;"><?php echo $ppv_body_text;?></textarea>
 	</fieldset>
 <?php echo $form->end('Submit');?>
 </div>
