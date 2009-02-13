@@ -691,13 +691,13 @@ class ReportsController extends AppController {
                     FROM ticket AS Ticket
                            INNER JOIN offer AS Offer USING(offerId)
                            LEFT JOIN offerType AS OfferType USING(offerTypeId)
-                           INNER JOIN schedulingInstance AS SchedulingInstance USING(schedulingInstanceId)
-                           INNER JOIN client as Client USING(clientId)
+                           LEFT JOIN schedulingInstance AS SchedulingInstance USING(schedulingInstanceId)
+                           LEFT JOIN client as Client USING(clientId)
                            LEFT JOIN paymentDetail AS PaymentDetail USING (ticketId)
                            LEFT JOIN paymentProcessor AS PaymentProcessor USING (paymentProcessorId)
                            LEFT JOIN userPaymentSetting AS UserPaymentSetting USING (userPaymentSettingId)
-                           INNER JOIN package AS Package USING(packageId)
-                           INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.clientId = Ticket.clientId AND ClientLoaPackageRel.packageId = Ticket.packageId)
+                           LEFT JOIN package AS Package USING(packageId)
+                           LEFT JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.clientId = Ticket.clientId AND ClientLoaPackageRel.packageId = Ticket.packageId)
                            LEFT JOIN track AS Track USING(trackId)
                     WHERE $conditions
                     GROUP BY Ticket.ticketId
