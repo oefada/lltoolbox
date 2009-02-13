@@ -5,7 +5,7 @@
 	<?php
 		echo $form->input('offerId');
 		echo $form->input('userId');
-		echo $form->input('bidDateTime');
+		echo $form->input('bidDatetime');
 		echo $form->input('bidAmount');
 		echo $form->input('autoRebid');
 		echo $form->input('bidInactive');

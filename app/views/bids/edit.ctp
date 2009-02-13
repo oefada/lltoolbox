@@ -6,7 +6,7 @@
 		echo $form->input('bidId', array('readonly' => 'readonly', 'type' => 'text'));
 		echo $form->input('offerId', array('readonly' => 'readonly'));
 		echo $form->input('userId', array('readonly' => 'readonly'));
-		echo $form->input('bidDateTime', array('disabled' => 'disabled'));
+		echo $form->input('bidDatetime', array('disabled' => 'disabled'));
 		echo $form->input('bidAmount', array('readonly' => 'readonly'));
 		echo $form->input('maxBid', array('readonly' => 'readonly'));
 		echo $form->input('note', array('type' => 'textfield'));

@@ -16,9 +16,9 @@
 			<?php echo $bid['Bid']['userId']; ?>
 			&nbsp;
 		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('BidDateTime'); ?></dt>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('BidDatetime'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $bid['Bid']['bidDateTime']; ?>
+			<?php echo $bid['Bid']['bidDatetime']; ?>
 			&nbsp;
 		</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('BidAmount'); ?></dt>
