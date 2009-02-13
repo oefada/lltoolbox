@@ -31,9 +31,9 @@
 			<?php echo $bid['Bid']['autoRebid']; ?>
 			&nbsp;
 		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('BidInactive'); ?></dt>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('inactive'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $bid['Bid']['bidInactive']; ?>
+			<?php echo $bid['Bid']['inactive']; ?>
 			&nbsp;
 		</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('MaxBid'); ?></dt>
@@ -47,14 +47,4 @@
 			&nbsp;
 		</dd>
 	</dl>
-</div>
-<div class="actions">
-	<ul>
-		<li><?php echo $html->link(__('Edit Bid', true), array('action'=>'edit', $bid['Bid']['bidId'])); ?> </li>
-		<li><?php echo $html->link(__('Delete Bid', true), array('action'=>'delete', $bid['Bid']['bidId']), null, sprintf(__('Are you sure you want to delete # %s?', true), $bid['Bid']['bidId'])); ?> </li>
-		<li><?php echo $html->link(__('List Bids', true), array('action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Bid', true), array('action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Offers', true), array('controller'=> 'offers', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Offer', true), array('controller'=> 'offers', 'action'=>'add')); ?> </li>
-	</ul>
 </div>

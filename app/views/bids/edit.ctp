@@ -16,7 +16,7 @@
 		<label>Bid Settings</label>
 	<?php
 		echo $form->input('autoRebid', array('disabled' => 'disabled'));
-		echo $form->input('bidInactive', array('readonly' => 'readonly'));
+		echo $form->input('inactive', array('readonly' => 'readonly'));
 	?>
 	</div>
 	</fieldset>
