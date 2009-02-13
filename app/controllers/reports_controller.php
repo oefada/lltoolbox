@@ -124,6 +124,7 @@ class ReportsController extends AppController {
 	                        'SchedulingMaster.packageId' => 'Package ID',
 	                        'Offer.offerId' => 'Offer ID',
 	                        'Client.name' => 'Client Name',
+	                        'Client.managerUsername' => 'Manager Username',
 	                        'Package.packageName' => 'Offer Title'
 	                        );
 
