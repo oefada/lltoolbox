@@ -25,17 +25,17 @@ foreach ($users as $user):
 ?>
 	<tr<?php echo $class;?>>
 		<td>
-			<?php echo $text->highlight($user['User']['userId'], $query); ?>
+			<?php echo $user['User']['userId']; ?>
 		</td>
 
 		<td>
-			<?php echo $text->highlight($user['User']['firstName'], $query); ?>
+			<?php echo $user['User']['firstName']; ?>
 		</td>
 		<td>
-			<?php echo $text->highlight($user['User']['lastName'], $query); ?>
+			<?php echo $user['User']['lastName']; ?>
 		</td>
 		<td>
-			<?php echo $text->highlight($user['User']['email'], $query); ?>
+			<?php echo $user['User']['email']; ?>
 		</td>
 		<td>
 			<?php echo $user['User']['inactive']; ?>

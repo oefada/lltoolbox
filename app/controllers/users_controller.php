@@ -74,6 +74,16 @@ class UsersController extends AppController {
 		}
 		if(!empty($this->params['form']['query'])):
 			$query = $this->Sanitize->escape($this->params['form']['query']);
+			
+			$parts = explode(' ', $query);
+			
+			$query = '';
+			foreach ($parts as $part) {
+			    if (strlen($part) > 3) {
+			        $query .= '+';
+			    }
+			    $query .= $part.'* ';
+			}
 			$conditions = array('OR' => array("MATCH(User.lastName,User.firstName,User.email) AGAINST('$query' IN BOOLEAN MODE)"));
 
 			if($_GET['query'] ||  $this->params['named']['query']) {
