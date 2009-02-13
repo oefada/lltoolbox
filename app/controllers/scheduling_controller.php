@@ -53,7 +53,13 @@ class SchedulingController extends AppController {
 		$this->Package->ClientLoaPackageRel->Behaviors->attach('Containable');
 
 		$this->Package->ClientLoaPackageRel->contain('Package', 'Client', 'Loa');
-		$packages = $this->Package->ClientLoaPackageRel->find('all', array('conditions' => array('ClientLoaPackageRel.clientId' => $clientId, 'packageStatusId' => 4)));
+		
+		$numDaysInMonth = date('t', strtotime($year.'-'.$month.'-01'));
+		$loa = $this->Package->query("SELECT GROUP_CONCAT(loaId) AS loaIds FROM loa AS Loa WHERE ('$year-$month-01' BETWEEN Loa.startDate AND Loa.endDate OR '$year-$month-$numDaysInMonth' BETWEEN Loa.startDate AND Loa.endDate) AND clientId = $clientId GROUP BY clientId");
+
+		$loaIds = $loa[0][0]['loaIds'];
+
+		$packages = $this->Package->ClientLoaPackageRel->find('all', array('conditions' => array('ClientLoaPackageRel.clientId' => $clientId, 'packageStatusId' => 4, 'ClientLoaPackageRel.loaId' => $loaIds)));
 	    
 	    $this->Package->SchedulingMaster->Behaviors->attach('Containable');
 	    foreach ($packages as $k => $package) {
