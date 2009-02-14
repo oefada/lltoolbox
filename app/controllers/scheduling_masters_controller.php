@@ -254,7 +254,7 @@ class SchedulingMastersController extends AppController {
 	    fclose($file);
 	    //fclose($file2);
 	    
-	    $result = $this->SchedulingMaster->query('LOAD DATA INFILE "/tmp/test.txt"
+	    $result = $this->SchedulingMaster->query('LOAD DATA LOCAL INFILE "/tmp/test.txt"
             INTO TABLE schedulingInstance
             FIELDS TERMINATED BY ","
             LINES TERMINATED BY "\n"
