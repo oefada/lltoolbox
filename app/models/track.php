@@ -40,11 +40,7 @@ class Track extends AppModel {
 											'rule' => array('date'),
 											'message' => 'Must be a valid date.',
 											'allowEmpty' => true)
-								), 
-						'expFee' => array(
-								'rule' => array('checkExp'),
-								'message' => 'This field is required for the expiration criteria you have selected.'
-								)
+								),
 						);
 						
 						
@@ -59,11 +55,6 @@ class Track extends AppModel {
 		} elseif (isset($data['expDate']) && $expCriteriaId == 3) {
 			$value = $data['expDate'];
 			if (!$value) {
-				$validPresets = false;						
-			}			
-		} elseif (isset($data['expFee']) && $expCriteriaId == 1) {
-			$value = $data['expFee'];
-			if (!$value || !is_numeric($value)) {
 				$validPresets = false;						
 			}			
 		}
