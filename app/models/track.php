@@ -82,5 +82,16 @@ class Track extends AppModel {
 		}
 		return $validPresets;
 	}
+	
+	function beforeSave($created) {
+	    if ($created) {
+	        $sql = 'SELECT MAX(trackNum) as maxTrackNum FROM track WHERE loaId = '.$this->data['Track']['loaId'];
+	        $result = $this->query($sql);
+	        
+	        $this->data['Track']['trackNum'] = $result[0][0]['maxTrackNum']+1;
+	    }
+	    
+	    return true;
+	}
 }
 ?>
