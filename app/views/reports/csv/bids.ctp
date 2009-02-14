@@ -3,7 +3,7 @@ echo "Auction ID,Product Name,Remit Type,Offer Type,Date Close,# Pkgs,# Bids,# U
 foreach ($results as $r):
 	$line = array(
 		$r['Offer']['offerId'],
-		'"'.$r['Client']['name'].'"',
+		str_replace(',', $r['Client']['name']),
 		($r['Track']['applyToMembershipBal']) ? 'Keep' : 'Remit',
 		$r['OfferType']['offerTypeName'],
 		date('M d Y  g:i:00:000A', strtotime($r['SchedulingInstance']['endDate'])),

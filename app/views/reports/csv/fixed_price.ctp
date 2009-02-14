@@ -4,8 +4,8 @@ foreach ($results as $r):
 	$line = array(
 	$r['Offer']['offerId'],
 	$r['Ticket']['ticketId'],
-	$r['Client']['name'],
-	$r['Ticket']['userFirstName'].' '.$r['Ticket']['userLastName'],
+	str_replace(',', $r['Client']['name']),
+	str_replace(',', $r['Ticket']['userFirstName'].' '.$r['Ticket']['userLastName']),
 	($r['Track']['applyToMembershipBal']) ? 'Keep' : 'Remit',
 	$r['OfferType']['offerTypeName'],
 	$r['Ticket']['requestQueueDateTime'],
@@ -14,7 +14,8 @@ foreach ($results as $r):
 	($r['Ticket']['billingPrice'] == $r[0]['moneyCollected']) ? 1 : 0,
 	$r['Ticket']['billingPrice'],
 	$r[0]['moneyCollected'],
-	$r['TicketStatus']['ticketStatusName']);
+	str_replace(',', $r['TicketStatus']['ticketStatusName'])
+	);
 	
 	echo implode(',', $line)."\r\n";
 endforeach; ?>
