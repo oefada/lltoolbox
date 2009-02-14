@@ -127,15 +127,20 @@
 	border-bottom: 1px dashed #777;
 	cursor: auto;
 }
-.masterRow .oType1,
-.masterRow .oType2,
-.masterRow .oType6 {
-	border-top: 7px solid #d99f00;
-}
-.masterRow .oType3,
-.masterRow .oType4 {
-	border-top: 7px solid #3d7e20;
-}
+/*Standard*/
+.masterRow .oType1 { border-top: 7px solid #d99f00;}
+
+/*Exclusive*/
+.masterRow .oType2 { border-top: 7px solid #606;}
+
+/*Exclusive*/
+.masterRow .oType3 { border-top: 7px solid #3d7e20;}
+
+/*Best Buy*/
+.masterRow .oType4 { border-top: 7px solid #30f;}
+
+/*Dutch Auction*/
+.masterRow .oType6 { border-top: 7px solid #c39; }
 /*
 .masterRow .oType3,
 .masterRow .oType4 {
@@ -157,10 +162,16 @@
 	border: 5px solid #d99f00;
 }
 .oKey2 {
+	border: 5px solid #606;
+}
+.oKey3 {
 	border: 5px solid #3d7e20;
 }
-.masterRow .oType6 {
-	border-top: 7px solid #710a65;
+.oKey4 {
+	border: 5px solid #30f;
+}
+.oKey6 {
+	border: 5px solid #c39;
 }
 div.module#module-schedulingraphs h1{
 text-align:left;

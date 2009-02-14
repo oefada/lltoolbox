@@ -46,7 +46,7 @@ function gotoMonth(theLink, month)
 	<?php echo $this->renderElement('../scheduling/_graph')?>
 </div>
 <div id='sContainer'>
-	<div style="text-align: right" class='oKeys'><strong>KEY:</strong> Single<div class='oType1 oKey1'></div> Fixed Price<div class='oType2 oKey2'></div><strong class='textRed'>Go To:</strong>
+	<div style="text-align: right" class='oKeys'><strong>KEY:</strong> <div class='oType1 oKey1'></div>Standard Auction <div class='oType2 oKey2'></div>Best Shot <div class='oType3 oKey3'></div>Exclusive <div class='oType4 oKey4'></div>Best Buy <div class='oType6 oKey6'></div>Dutch Auction<strong class='textRed'>Go To:</strong>
 	<img src="/img/cal.png" id='monthPickerTarget' style='cursor: pointer' /></div>
     <div id="monthPickerDiv" class='clearfix' style='display: none'>
 		<div style="clear: both; text-align: center; float: none" class='yearPickerDiv'>Year:
