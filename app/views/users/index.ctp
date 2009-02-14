@@ -1,10 +1,13 @@
-<div id='users-index' class="users index">
 <?php
 $this->pageTitle = __('Users', true);
 $this->set('hideSidebar', true);
 ?>
+
+<?php if(isset($query)): ?>
+<div id='users-index' class="users index">
+
 <?php $html->addCrumb('Users'); ?>
-<?php if(!isset($query)) $query = ''; ?>
+<?php if(isset($query)) $query = ''; ?>
 <?php echo $this->renderElement('ajax_paginator', array('divToPaginate' => 'users-index', 'showCount' => true))?>
 <table cellpadding="0" cellspacing="0">
 <tr>
@@ -48,3 +51,8 @@ foreach ($users as $user):
 </table>
 <?php echo $this->renderElement('ajax_paginator', array('divToPaginate' => 'users-index'))?>
 </div>
+<?php else: ?>
+User Search (type in criteria at the top left of the page)<br />
+<a href="/tickets">Search Tickets</a><br />
+<a href="/bids">Search Bids</a><br /><br />
+<?php endif; ?>
