@@ -12,6 +12,7 @@ $this->set('hideSidebar', true);
 <table cellpadding="0" cellspacing="0">
 <tr>
 	<th><?php echo $paginator->sort('userId');?></th>
+	<th><?php echo $paginator->sort('UserSiteExtended.username');?></th>
 	<th><?php echo $paginator->sort('firstName');?></th>
 	<th><?php echo $paginator->sort('lastName');?></th>
 	<th><?php echo $paginator->sort('email');?></th>
@@ -29,6 +30,10 @@ foreach ($users as $user):
 	<tr<?php echo $class;?>>
 		<td>
 			<?php echo $user['User']['userId']; ?>
+		</td>
+		
+		<td>
+			<?php echo $user['UserSiteExtended']['username']; ?>
 		</td>
 
 		<td>

@@ -6,7 +6,8 @@ class UsersController extends AppController {
 	var $user;
 
 	function index() {
-		$this->User->recursive = -1;
+		$this->User->Behaviors->attach('Containable');
+		$this->User->contain(array('UserSiteExtended'));
 		$this->set('users', $this->paginate());
 	}
 
@@ -87,17 +88,16 @@ class UsersController extends AppController {
 			$conditions = array('OR' => array("MATCH(User.lastName,User.firstName,User.email) AGAINST('$query' IN BOOLEAN MODE)"));
 
 			if($_GET['query'] ||  $this->params['named']['query']) {
-
 				$this->autoRender = false;
-				$this->User->recursive = -1;
 
-				$this->paginate = array('conditions' => $conditions, 'contain' => array('User'), 'fields' => array('User.userId', 'User.firstName', 'User.lastName', 'User.email', 'User.inactive'));
+				$this->paginate = array('conditions' => $conditions, 'contain' => array('User', 'UserSiteExtended'), 'fields' => array('UserSiteExtended.username', 'User.userId', 'User.firstName', 'User.lastName', 'User.email', 'User.inactive'));
 				$this->set('query', $query);
 
 				$this->set('users', $this->paginate());
 				$this->render('index');
 			} else {
-				$this->User->recursive = -1;
+				$this->User->Behaviors->attach('Containable');
+        		$this->User->contain(array('User','UserSiteExtended'));
 				$results = $this->User->find('all', array('conditions' => $conditions, 'limit' => 5));
 				$this->set('query', $query);
 				$this->set('results', $results);
