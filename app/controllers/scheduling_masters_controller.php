@@ -30,12 +30,29 @@ class SchedulingMastersController extends AppController {
 			$this->data['SchedulingMaster']['validityEndDate'] = $package['Package']['validityEndDate'];
 			$this->data['SchedulingMaster']['retailValue'] = $package['Package']['approvedRetailPrice'];
 
-			$date = explode('-', $this->data['SchedulingMaster']['startDatePicker']);
+            $datePickerDate = explode('-', $this->data['SchedulingMaster']['startDatePicker']);
+            $dateTime = $datePickerDate[2].'-'.$datePickerDate[0].'-'.$datePickerDate[1];
+            $dateTime .= ' ';
+            $dateTime .= $this->data['SchedulingMaster']['startDateTime']['hour'].':00:00 '.$this->data['SchedulingMaster']['startDateTime']['meridian'];
 
-			$this->data['SchedulingMaster']['startDate']['month']     =   $date[0];
-			$this->data['SchedulingMaster']['startDate']['day']   =   $date[1];
-			$this->data['SchedulingMaster']['startDate']['year']    =   $date[2];
+            if (date('G', strtotime($dateTime)) >= 16) {
+			    $startDate = strtotime('+1 day',  strtotime($dateTime));   //push to next day
+			    $startDate = date('Y-m-d', $startDate);         //convert to just Y-m-d
+			    $date = explode('-', $startDate);
+			    
+			    $this->data['SchedulingMaster']['startDateTime']['hour'] = '08';
+			    $this->data['SchedulingMaster']['startDateTime']['min'] = '00';
+			    $this->data['SchedulingMaster']['startDateTime']['meridian'] = 'am';
+			} else {
+			    $date[0] = $datePickerDate[2];
+			    $date[1] = $datePickerDate[0];
+			    $date[2] = $datePickerDate[1];
+			}
 
+            $this->data['SchedulingMaster']['startDate']['year']    =   $date[0];
+			$this->data['SchedulingMaster']['startDate']['month']     =   $date[1];
+			$this->data['SchedulingMaster']['startDate']['day']   =   $date[2];
+			
             $this->data['SchedulingMaster']['startDate'] = array_merge($this->data['SchedulingMaster']['startDate'], $this->data['SchedulingMaster']['startDateTime']);
 
 			//if this is a mystery auction we override some fields
@@ -51,7 +68,7 @@ class SchedulingMastersController extends AppController {
 			foreach ($package['ClientLoaPackageRel'] as $v) {
 			    $this->data['Track']['Track'][] = $v['trackId'];
 			}
-
+			
 			if ($this->SchedulingMaster->save($this->data)) {
 				$this->createInstances();
 				if ($this->RequestHandler->isAjax()) {
@@ -163,36 +180,46 @@ class SchedulingMastersController extends AppController {
 	 * METHOD NOT TO BE USED AFTER LAUNCH OR THE SKY WILL FALL OUT OF THE HEAVENS!!!
 	 */
 	function fix_instances() {
-	    Configure::write('debug', 3);
+	    Configure::write('debug', 0);
 
-	    $sql = 'SELECT schedulingMasterId, offerTypeId, numDaysToRun, SchedulingMaster.endDate, MAX(SchedulingInstance.endDate) as maxEndDate, iterations, COUNT(DISTINCT schedulingInstanceId) as numIterations 
-                FROM schedulingMaster AS SchedulingMaster
-                INNER JOIN schedulingInstance AS SchedulingInstance USING (schedulingMasterId) 
-                WHERE SchedulingMaster.offerTypeId IN (1, 2, 6) AND (iterations IS NULL AND SchedulingMaster.endDate >= NOW())
-                OR SchedulingMaster.endDate IS NULL
-                GROUP BY schedulingMasterId 
-                HAVING numIterations <> iterations OR iterations IS NULL';
+	   /* $sql = 'SELECT schedulingMasterId, offerTypeId, numDaysToRun, SchedulingMaster.endDate, MAX(SchedulingInstance.endDate) as maxEndDate, iterations, COUNT(DISTINCT schedulingInstanceId) as numIterations 
+                                FROM schedulingMaster AS SchedulingMaster
+                                INNER JOIN schedulingInstance AS SchedulingInstance USING (schedulingMasterId) 
+                                WHERE SchedulingMaster.offerTypeId IN (1, 2, 6) AND (SchedulingMaster.endDate > NOW() OR SchedulingMaster.endDate IS NULL)
+                                GROUP BY schedulingMasterId 
+                                HAVING (iterations <> numIterations OR iterations IS NULL)AND (iterations IS NULL XOR SchedulingMaster.endDate IS NULL)';*/
+                                
+        $sql = 'SELECT schedulingMasterId, offerTypeId, numDaysToRun, SchedulingMaster.endDate, MAX(SchedulingInstance.endDate) as maxEndDate, iterations, COUNT(DISTINCT schedulingInstanceId) as numIterations 
+                       FROM schedulingMaster AS SchedulingMaster
+                        INNER JOIN schedulingInstance AS SchedulingInstance USING (schedulingMasterId) 
+                        WHERE SchedulingMaster.offerTypeId IN (1, 2, 6) AND (SchedulingMaster.endDate > NOW() OR SchedulingMaster.endDate IS NULL)
+                        GROUP BY schedulingMasterId 
+                        HAVING (iterations <> numIterations OR iterations IS NULL) AND (iterations IS NULL XOR SchedulingMaster.endDate IS NULL) AND maxEndDate >= NOW()';
+
 	    $masters = $this->SchedulingMaster->query($sql);
 
-        //$file = fopen('/tmp/test.txt', 'w+');
-        $file = fopen("php://memory", 'w+');
+        $file = fopen('/tmp/test.txt', 'w+');
+        //$file = fopen("php://memory", 'w+');
         $c = count($masters);
         $m_time = explode(" ",microtime());
         $m_time = $m_time[0] + $m_time[1];
         $loadstart = $m_time;
 
-        $this->SchedulingMaster->query('LOCK TABLES schedulingInstance AS SchedulingInstance WRITE, schedulingMaster AS SchedulingMaster WRITE;');
+        //$this->SchedulingMaster->query('LOCK TABLES schedulingInstance AS SchedulingInstance WRITE, schedulingMaster AS SchedulingMaster WRITE;');
         $this->SchedulingMaster->query('ALTER TABLE schedulingInstance DISABLE KEYS;');
 	    foreach ($masters as $k => $master):
 
             set_time_limit(120);
 	        $masterData = $master;
 
-	        if ($master['SchedulingMaster']['endDate'] == null) {
+	        if (empty($master['SchedulingMaster']['endDate'])) {
     	        $masterData['SchedulingMaster']['iterationSchedulingOption'] = 0;
     	        $masterData['SchedulingMaster']['iterations'] = $masterData['SchedulingMaster']['iterations'] - $master[0]['numIterations'];
-	        } else {
+    	        $masterData['SchedulingMaster']['endDate'] = '2099-01-01';
+	        } elseif(empty($master['SchedulingMaster']['iterations'])) {
     	        $masterData['SchedulingMaster']['iterationSchedulingOption'] = 1;
+	        } else {
+	            continue;
 	        }
 	        $masterData['SchedulingMaster']['startDate'] = $master[0]['maxEndDate'];
 	        $masterData['SchedulingDelayCtrl']['schedulingDelayCtrlDesc'] = '1 hour';
@@ -201,13 +228,14 @@ class SchedulingMastersController extends AppController {
 	            $masterData['SchedulingMaster']['startDate'] = date('Y-m-d H:i:s');
 	        }
 	        
-	        $this->createInstances($masterData, &$out, true, $file);
+	        $this->createInstances($masterData, $out, true, $file);
 
 		    $this->SchedulingMaster->id = $masterData['SchedulingMaster']['schedulingMasterId'];
 		    
 		    if ($master['SchedulingMaster']['endDate'] == null) {
                 $this->SchedulingMaster->saveField('endDate', $out['endDate']);
 	        } else {
+	            //echo $master['SchedulingMaster']['schedulingMasterId'],':',$master[0]['numIterations'],'+',$out['iterations'],"\n";
     	        $iterations = $out['iterations'] + $master[0]['numIterations'];
     	        $this->SchedulingMaster->saveField('iterations', $iterations);
 	        }
@@ -216,23 +244,22 @@ class SchedulingMastersController extends AppController {
         $m_time = $m_time[0] + $m_time[1];
         $loadend = $m_time;
         $loadtotal = ($loadend - $loadstart);
-        $mins = floor ($loadtotal / 60);
-        echo "<br /><br /><small><em>Finished in ". $mins ." minutes</em></small>";
+        echo "<br /><br /><small><em>Finished in ". $loadtotal ." seconds</em></small>";
         
 	    $this->SchedulingMaster->query('ALTER TABLE schedulingInstance ENABLE KEYS;');
-        $this->SchedulingMaster->query('UNLOCK TABLES;');
-        rewind($file);
-        $file2 = fopen('/tmp/test.txt', 'w+');
-        fwrite($file2, stream_get_contents($file));
+        //$this->SchedulingMaster->query('UNLOCK TABLES;');
+        //rewind($file);
+        //$file2 = fopen('/tmp/test.txt', 'w+');
+        //fwrite($file2, stream_get_contents($file));
 	    fclose($file);
-	    fclose($file2);
+	    //fclose($file2);
 	    
 	    $result = $this->SchedulingMaster->query('LOAD DATA INFILE "/tmp/test.txt"
             INTO TABLE schedulingInstance
             FIELDS TERMINATED BY ","
             LINES TERMINATED BY "\n"
             (schedulingMasterId, startDate, endDate);');
-	    debug($result);
+	    print_r($result);
 	    $this->autoRender = false;
 	}
 	
@@ -282,11 +309,17 @@ class SchedulingMastersController extends AppController {
 		    $startEndRange = strtotime($endDate) - strtotime($masterStartDate);
 
 		    $iterations = floor($startEndRange / $totalInstanceTime);
-		    $out['iterations'] = $iterations;
-		    //$this->SchedulingMaster->id = $masterData['SchedulingMaster']['schedulingMasterId'];
-		    //$this->SchedulingMaster->saveField('iterations', $iterations);
+		    
+		    if (false == $skipDb) {
+		        $this->SchedulingMaster->id = $masterData['SchedulingMaster']['schedulingMasterId'];
+    		    $this->SchedulingMaster->saveField('iterations', $iterations);
+		    }
 		}
-
+		
+		if ($iterations <= 0) {
+		    return;
+		}
+        $out['iterations'] = 0;
         //TODO: Put this logic in the model where it belongs
 		for ($i = 0; $i < $iterations; $i++) {
 			$endDate = strtotime($instanceData['SchedulingInstance']['startDate'] . ' +' . $masterData['SchedulingMaster']['numDaysToRun'] . ' days');
@@ -295,7 +328,7 @@ class SchedulingMastersController extends AppController {
 			    $endDate = strtotime('+1 day', $endDate);
 			}
 			
-			if ($startDate > $masterEndDate) {
+			if ($endDate > $masterEndDate) {
 			    break;
 			}
 			
@@ -303,10 +336,11 @@ class SchedulingMastersController extends AppController {
 				
             $out['endDate'] = $instanceData['SchedulingInstance']['endDate'];
             
-            if ($skipDb != true) {
+            if (false == $skipDb) {
         		$this->SchedulingMaster->SchedulingInstance->create();
         		$this->SchedulingMaster->SchedulingInstance->save($instanceData);
     		} else {
+    		    $out['iterations'] += 1;
                 fwrite($file, $instanceData['SchedulingInstance']['schedulingMasterId'].",".$instanceData['SchedulingInstance']['startDate'].",".$instanceData['SchedulingInstance']['endDate']."\n");
     		}
 			$startDate = strtotime($instanceData['SchedulingInstance']['endDate'] . ' +' . $masterData['SchedulingDelayCtrl']['schedulingDelayCtrlDesc']);
@@ -319,10 +353,6 @@ class SchedulingMastersController extends AppController {
 			    $startDate = strtotime($startDate);             //save new date as timestamp
 			}
 
-			if ($startDate > $masterEndDate) {
-			    break;
-			}
-			
 			$instanceData['SchedulingInstance']['startDate'] = date('Y-m-d H:i:s', $startDate);	
 		}
 		
@@ -338,28 +368,36 @@ class SchedulingMastersController extends AppController {
 	 * @return boolean true if timestamp falls on a holiday, false if not
 	 */
 	function _isHoliday($timestamp) {
-	    $holidays = array('1/1','7/4','12/24','12/25');
+	    $dateToCheck = date('n/j', $timestamp);
+	    
+	    if('1/1' == $dateToCheck) return true;
+	    if('7/4' == $dateToCheck) return true;
+	    if('12/24' == $dateToCheck) return true;
+	    if('12/25' == $dateToCheck) return true;
+	    
 	    //memorial day, labor day
-	    date('Y', $timestamp);
-	    //thanksgiving, friday after thanksgiving
-	    $thanksgiving = strtotime("third thursday",mktime(0,0,0,11,1,date('Y', $timestamp)));
-	    $holidays[] = date('n/j', $thanksgiving);
-	    $holidays[] = date('n/j', strtotime('+1 day', $thanksgiving));
-	    
-	    //memorial day
-	    $lastMondayInMay = strtotime("fourth monday",mktime(0,0,0,5,1,date('Y', $timestamp)));
-	    $nextMonday =  strtotime("fifth monday",mktime(0,0,0,5,1,date('Y', $timestamp)));
-	    
-	    if(date('n', $nextMonday) == '5') {
-	        $lastMondayInMay = $nextMonday;
-	    }
-	    $holidays[] = date('n/j', $lastMondayInMay);
-	    
-	    //labor day
-	    $holidays[] = date('n/j', strtotime('monday', mktime(0,0,0,9,1,date('y', $timestamp))));
+	    $year = date('Y', $timestamp);
+        if(!isset($this->_tmpHolidays[$year])) {
+            //thanksgiving, friday after thanksgiving
+    	    $thanksgiving = strtotime("third thursday",mktime(0,0,0,11,1,$year));
+    	    $this->_tmpHolidays[$year][] = date('n/j', $thanksgiving);
+    	    $this->_tmpHolidays[$year][] = date('n/j', strtotime('+1 day', $thanksgiving));
+
+    	    //memorial day
+    	    $lastMondayInMay = strtotime("fourth monday",mktime(0,0,0,5,1,$year));
+    	    $nextMonday =  strtotime("fifth monday",mktime(0,0,0,5,1,$year));
+
+    	    if(date('n', $nextMonday) == '5') {
+    	        $lastMondayInMay = $nextMonday;
+    	    }
+    	    $this->_tmpHolidays[$year][] = date('n/j', $lastMondayInMay);
+
+    	    //labor day
+    	    $this->_tmpHolidays[$year][] = date('n/j', strtotime('monday', mktime(0,0,0,9,1,$year)));
+        }
 	    
 	    //check all of the days in the holidays array
-	    if (in_array(date('n/j', $timestamp), $holidays)) {
+	    if (in_array($dateToCheck, $this->_tmpHolidays[$year])) {
 	        return true;
 	    }
     
