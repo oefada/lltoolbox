@@ -127,10 +127,11 @@
 	border-bottom: 1px dashed #777;
 	cursor: auto;
 }
-.masterRow .oType1 {
+.masterRow .oType1,
+.masterRow .oType2,
+.masterRow .oType6 {
 	border-top: 7px solid #d99f00;
 }
-.masterRow .oType2,
 .masterRow .oType3,
 .masterRow .oType4 {
 	border-top: 7px solid #3d7e20;
