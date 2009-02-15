@@ -68,7 +68,7 @@ class WebServiceTicketsController extends WebServicesController
 		$formatId = $offerTypeToFormat[0]['formatOfferTypeRel']['formatId'];
 		
 		$offerLive = $this->Offer->query('SELECT * FROM offerLive WHERE offerId = ' . $data['offerId']);
-		$offerLive = $offerLive[0];
+		$offerLive = $offerLive[0]['offerLive'];
 		
 		// create a new ticket!
 		$newTicket = array();
@@ -129,12 +129,6 @@ class WebServiceTicketsController extends WebServicesController
 			$smid = $smid[0]['schedulingMasterTrackRel']['trackId'];
 			if (!empty($smid)) {
 				$this->addTrackPending($smid, $newTicket['Ticket']['billingPrice']);
-			}
-
-			// PREVENT ALL restricted auctions here - mystery, red hot, multi-client , etc
-			if ($offerLive['offerLive']['isMystery']) {
-				mail('devmail@luxurylink.com','myster yes','asdgsadg');
-				return true;	
 			}
 
 			// if non-auction, just stop here as charging and ppv should not be auto
