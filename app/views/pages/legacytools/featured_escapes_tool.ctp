@@ -97,15 +97,17 @@ if (mysql_num_rows($result)) {
 		$data_products[] = $row;
 	}
 }
-
-$result = mysql_query("SELECT styleId, styleTypeId, styleName FROM style_mstr ORDER BY styleName");
+/*
+$result = mysql_query("SELECT themeId, themeName FROM theme ORDER BY themeName");
 while($row = mysql_fetch_array($result)) {
-	if ($row['styleTypeId'] == 1) {
-		$style_dest[$row['styleId']] = $row['styleName'];
-	} else {
-		$style_life[$row['styleId']] = $row['styleName'];
-	}
+	$style_life[$row['themeId']] = $row['themeName'];
 }
+
+$result = mysql_query("SELECT destinationId, destinationName FROM destination ORDER BY destinationName");
+while($row = mysql_fetch_array($result)) {
+	$style_dest[$row['styleId']] = $row['styleName'];
+}*/
+
 
 $tmp = explode('-', $data['styles']);
 $style_dest_selected = $tmp[0];
