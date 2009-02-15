@@ -70,6 +70,8 @@ class WebServiceTicketsController extends WebServicesController
 		$offerLive = $this->Offer->query('SELECT * FROM offerLive WHERE offerId = ' . $data['offerId']);
 		$offerLive = $offerLive[0]['offerLive'];
 		
+		mail('devmail@luxurylink.com', 'testing a', print_r($offerLive, true));
+		
 		// create a new ticket!
 		$newTicket = array();
 		$newTicket['Ticket']['ticketStatusId'] 			 = 1;
