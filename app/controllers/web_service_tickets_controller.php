@@ -6,7 +6,7 @@ Configure::write('debug', 0);
 class WebServiceTicketsController extends WebServicesController
 {
 	var $name = 'WebServiceTickets';
-	var $uses = array('Ticket', 'User', 'Offer', 'Bid', 'ClientLoaPackageRel', 'Track', 'OfferType', 'Loa', 'TrackDetail', 'PpvNotice', 'Address');
+	var $uses = array('Ticket', 'Client', 'User', 'Offer', 'Bid', 'ClientLoaPackageRel', 'Track', 'OfferType', 'Loa', 'TrackDetail', 'PpvNotice', 'Address');
 	var $serviceUrl = 'http://toolbox.luxurylink.com/web_service_tickets';
 	//var $serviceUrl = 'http://192.168.100.111/web_service_tickets';
 	var $errorResponse = false;
@@ -67,6 +67,9 @@ class WebServiceTicketsController extends WebServicesController
 
 		$this->Offer->recursive = 2;
 		$offerData = $this->Offer->read(null, $data['offerId']);
+		
+		$this->Client->recursive = -1;
+		$clientData = $this->Client->read(null, $data['clientId']);
 		
 		$offerTypeToFormat = $this->Offer->query("SELECT formatId FROM formatOfferTypeRel WHERE offerTypeId = " . $offerData['SchedulingInstance']['SchedulingMaster']['offerTypeId']);
 		$formatId = $offerTypeToFormat[0]['formatOfferTypeRel']['formatId'];
@@ -158,7 +161,7 @@ class WebServiceTicketsController extends WebServicesController
 				$ppv_settings['ppvNoticeTypeId'] 	= 6;
 			}
 
-			// restricted auctions -- do not auto process these beyond sending winner notif.
+			// set restricted auctions so no autocharging happens
 			// -------------------------------------------------------------------------------
 			$restricted_auction = false;
 			
@@ -177,7 +180,9 @@ class WebServiceTicketsController extends WebServicesController
             if(stristr($offerLive['offerName'], 'AUCTION') && stristr($offerLive['offerName'],'DAY')) {
             	$restricted_auction = true;
             }
-            
+             
+ 			// do no autoprocess / charge restricted auctions. send them old winner notification w/o checkout
+ 			// -------------------------------------------------------------------------------           
             if ($restricted_auction) {
             	$ppv_settings['ppvNoticeTypeId'] = 5;	
             }
@@ -200,6 +205,8 @@ class WebServiceTicketsController extends WebServicesController
 			$debug_tmp.= print_r($userData, true);
 			$debug_tmp.= "\n\nADDRESS\n\n";
 			$debug_tmp.= print_r($addressData, true);
+			$debug_tmp.= "\n\nCLIENT DATA\n\n";
+			$debug_tmp.= print_r($clientData, true);
 			$debug_tmp.= "\n\nOFFER DATA\n\n";
 			$debug_tmp.= print_r($offerData, true);
 			$debug_tmp.= "\n\nOFFER LIVE\n\n";
