@@ -3,7 +3,7 @@
 	//grab the tracks from the LOA and create a list for the select/checklist
 	$tracks = array();
 	foreach($clientLoaDetail['Track'] as $v) {
-		$tracks[$v['trackId']] = $v['trackNum'];
+		$tracks[$v['trackId']] = $v['trackNum'].'-'.$trackExpirationCriteriaIds[$v['expirationCriteriaId']];
 	}
 	?>
 <fieldset style="padding: 0; margin: 0">
