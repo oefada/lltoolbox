@@ -68,6 +68,7 @@ class WebServiceTicketsController extends WebServicesController
 		$formatId = $offerTypeToFormat[0]['formatOfferTypeRel']['formatId'];
 		
 		$offerLive = $this->Offer->query('SELECT * FROM offerLive WHERE offerId = ' . $data['offerId']);
+		$offerLive = $offerLive[0];
 		
 		// create a new ticket!
 		$newTicket = array();
@@ -131,8 +132,9 @@ class WebServiceTicketsController extends WebServicesController
 			}
 
 			// PREVENT ALL restricted auctions here - mystery, red hot, multi-client , etc
-
-			mail('devmail@luxurylink.com', 'testing mystery', print_r($offerLive, true));
+			if ($offerLive['isMystery']) {
+				return true;	
+			}
 
 			// if non-auction, just stop here as charging and ppv should not be auto
 			if ($formatId != 1) {
