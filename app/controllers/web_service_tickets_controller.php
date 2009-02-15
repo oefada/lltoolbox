@@ -188,19 +188,19 @@ class WebServiceTicketsController extends WebServicesController
 			// -------------------------------------------------------------------------------
 			$debug_tmp = "DATA\n\n";
 			$debug_tmp.= print_r($data, true);
-			$debug_tmp.= "USERDATA\n\n";
+			$debug_tmp.= "\n\nUSERDATA\n\n";
 			$debug_tmp.= print_r($userData, true);
-			$debug_tmp.= "ADDRESS\n\n";
+			$debug_tmp.= "\n\nADDRESS\n\n";
 			$debug_tmp.= print_r($addressData, true);
-			$debug_tmp.= "OFFER DATA\n\n";
+			$debug_tmp.= "\n\nOFFER DATA\n\n";
 			$debug_tmp.= print_r($offerData, true);
-			$debug_tmp.= "OFFER LIVE\n\n";
+			$debug_tmp.= "\n\nOFFER LIVE\n\n";
 			$debug_tmp.= print_r($offerLive, true);
-			$debug_tmp.= "PPV SETTING\n\n";
+			$debug_tmp.= "\n\nPPV SETTING\n\n";
 			$debug_tmp.= print_r($ppv_settings, true);
-			$debug_tmp.= "TICKET\n\n";
+			$debug_tmp.= "\n\nTICKET\n\n";
 			$debug_tmp.= print_r($newTicket, true);
-			$debug_tmp.= "USER PAYMENT SETTING\n\n";
+			$debug_tmp.= "\n\nUSER PAYMENT SETTING\n\n";
 			$debug_tmp.= print_r($user_payment_setting, true);
 			
 			$emailTo = 'devmail@luxurylink.com';
