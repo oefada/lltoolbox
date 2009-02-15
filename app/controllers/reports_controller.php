@@ -109,7 +109,7 @@ class ReportsController extends AppController {
 	                GROUP BY Offer.offerId, SchedulingMaster.schedulingMasterId
 	                ORDER BY $order
 	                LIMIT $this->limit";
-	        echo $sql;
+	        
 	        $results = $this->OfferType->query($sql);
             
             $this->set('currentPage', $this->page);
