@@ -179,7 +179,7 @@ class WebServiceTicketsController extends WebServicesController
             }
             
             if ($restricted_auction) {
-            	$ppv_settiongs['ppvNoticeTypeId'] = 1;	
+            	$ppv_settings['ppvNoticeTypeId'] = 1;	
             }
 
 			// send out winner notifications
