@@ -180,7 +180,11 @@ class ReportsController extends AppController {
             
 	        if ($betweenCondition):                                    //generate valid SQL for a between condition
 	            if (NULL !== $firstValue && NULL !== $secondValue) {    //if both values were entered, it's a between
-	                $conditions[$k] =   $ca['field'].' BETWEEN '."'{$firstValue}'".' AND '."'{$secondValue}'";
+	                if($ca['field'] == 'SchedulingInstance.liveDuring') {
+	                    $conditions[$k] = "SchedulingInstance.startDate <= '$firstValue' AND SchedulingInstance.endDate >= '$secondValue'";
+	                } else {
+    	                $conditions[$k] =   $ca['field'].' BETWEEN '."'{$firstValue}'".' AND '."'{$secondValue}'";
+	                }
 	            } else {                                                //if only one value was entered, it's not a between
 	                $conditions[$k] =   $ca['field'].' = '."'{$firstValue}'";
 	            }
@@ -195,14 +199,6 @@ class ReportsController extends AppController {
 	            }
 	            
 	        endif; //end generate SQL for between condition
-	        
-	        //for live during we need to tweak the condition a little bit
-	        if ($ca['field'] == 'SchedulingInstance.liveDuring') {
-	            $originalCondition = $conditions[$k];
-	            $conditions[$k] = str_replace('liveDuring', 'startDate', $originalCondition);
-	            $conditions[$k] .= ' AND ';
-	            $conditions[$k] .= str_replace('liveDuring', 'endDate', $originalCondition);
-	        }
 	    }
 	    return implode($conditions, ' AND ');
 	}
