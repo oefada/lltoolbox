@@ -757,7 +757,7 @@ class ReportsController extends AppController {
                         Loa.loaId,
                         Loa.clientId,
                         Loa.membershipBalance,
-                        Loa.loaValue,
+                        Loa.membershipFee,
                         Loa.startDate,
                         DATEDIFF(NOW(), Loa.startDate) as loaNumberOfDaysActive,
                         ROUND( (Loa.loaValue / DATEDIFF(Loa.endDate, Loa.startDate)), 2) as dailyMembershipFee,

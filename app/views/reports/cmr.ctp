@@ -92,7 +92,7 @@ if (!empty($results)): ?>
 			<th><?=sortLink('Loa.loaId', 'LOA ID', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('Client.clientId', 'Client ID', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('Loa.membershipBalance', 'Balance', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Loa.loaValue', 'Membership Fee', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('Loa.membershipFee', 'Membership Fee', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('Loa.startDate', 'LOA Term Start', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('loaNumberOfDaysActive', 'Number of Days Active', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('dailyMembershipFee', 'Daily Membership Rate', $currentPage, $serializedFormInput, $this, $html)?></th>
