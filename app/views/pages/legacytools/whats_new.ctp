@@ -1,7 +1,7 @@
 <?
 uses('model' . DS . 'connection_manager');
 $db = ConnectionManager::getInstance();
-$connected = $db->getDataSource('live_mysql');
+$connected = $db->getDataSource('default_mysql');
 
 $gRemoveWhatsNewId = ($_GET['remove']) ? $_GET['remove'] : false;
 $gAdd = ($_GET['addWhatsNew'] || $_GET['addAccolade']) ? true : false;
