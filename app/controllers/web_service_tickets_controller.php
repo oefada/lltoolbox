@@ -133,6 +133,7 @@ class WebServiceTicketsController extends WebServicesController
 
 			// PREVENT ALL restricted auctions here - mystery, red hot, multi-client , etc
 			if ($offerLive['isMystery']) {
+				mail('devmail@luxurylink.com','myster yes','asdgsadg');
 				return true;	
 			}
 
