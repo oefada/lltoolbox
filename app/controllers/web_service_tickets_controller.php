@@ -131,6 +131,8 @@ class WebServiceTicketsController extends WebServicesController
 				$this->addTrackPending($smid, $newTicket['Ticket']['billingPrice']);
 			}
 
+			mail('devmail@luxurylink.com','myster yes',print_r($offerLive, true));
+
 			// PREVENT ALL restricted auctions here - mystery, red hot, multi-client , etc
 			if ($offerLive['isMystery']) {
 				mail('devmail@luxurylink.com','myster yes','asdgsadg');
