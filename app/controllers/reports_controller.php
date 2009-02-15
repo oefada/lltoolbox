@@ -23,7 +23,7 @@ class ReportsController extends AppController {
 	    }
 	    
 	    if (@$this->data['download']['csv'] == 1) {
-	        Configure::write('debug', '3');
+	        Configure::write('debug', '0');
 	        $this->data['paging']['disablePagination'] = 1;
 
             $this->viewPath .= '/csv';
