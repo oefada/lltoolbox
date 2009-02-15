@@ -168,16 +168,16 @@ class WebServiceTicketsController extends WebServicesController
 			if ($offerLive['isMystery'] || $offerLive['retailValue'] == 1 || $offerLIve['openingBid'] == 1) {
 				$restricted_auction = true;	
 			}
-			/*if(($product_client_type_id > 12) && ($product_client_type_id < 19)) { // cruises
-            	$restricted_auction = true;
-            }*/
-            if(stristr($offerLive['offerName'], 'RED') && stristr($offerLive['offerName'],'HOT')) {
+			if ($clientData['Client']['clientTypeId'] == 3 || stristr($clientData['Client']['name'], 'CRUISE')) { 
             	$restricted_auction = true;
             }
-            if(stristr($offerLive['offerName'], 'FEATURED') && stristr($offerLive['offerName'],'AUCTION')) {
+            if (stristr($offerLive['offerName'], 'RED') && stristr($offerLive['offerName'],'HOT')) {
             	$restricted_auction = true;
             }
-            if(stristr($offerLive['offerName'], 'AUCTION') && stristr($offerLive['offerName'],'DAY')) {
+            if (stristr($offerLive['offerName'], 'FEATURED') && stristr($offerLive['offerName'],'AUCTION')) {
+            	$restricted_auction = true;
+            }
+            if (stristr($offerLive['offerName'], 'AUCTION') && stristr($offerLive['offerName'],'DAY')) {
             	$restricted_auction = true;
             }
              
