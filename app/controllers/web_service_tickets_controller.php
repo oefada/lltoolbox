@@ -186,28 +186,28 @@ class WebServiceTicketsController extends WebServicesController
 			
 			// send out ticket created email - not necessary but just be like Nike and just do it
 			// -------------------------------------------------------------------------------
-			$debug_tmp = "DATA\n";
+			$debug_tmp = "DATA\n\n";
 			$debug_tmp.= print_r($data, true);
-			$debug_tmp.= "USERDATA\n";
+			$debug_tmp.= "USERDATA\n\n";
 			$debug_tmp.= print_r($userData, true);
-			$debug_tmp.= "ADDRESS\n";
+			$debug_tmp.= "ADDRESS\n\n";
 			$debug_tmp.= print_r($addressData, true);
-			$debug_tmp.= "OFFER DATA\n";
+			$debug_tmp.= "OFFER DATA\n\n";
 			$debug_tmp.= print_r($offerData, true);
-			$debug_tmp.= "OFFER LIVE\n";
+			$debug_tmp.= "OFFER LIVE\n\n";
 			$debug_tmp.= print_r($offerLive, true);
-			$debug_tmp.= "PPV SETTING\n";
+			$debug_tmp.= "PPV SETTING\n\n";
 			$debug_tmp.= print_r($ppv_settings, true);
-			$debug_tmp.= "TICKET\n";
+			$debug_tmp.= "TICKET\n\n";
 			$debug_tmp.= print_r($newTicket, true);
-			$debug_tmp.= "USER PAYMENT SETTING\n";
+			$debug_tmp.= "USER PAYMENT SETTING\n\n";
 			$debug_tmp.= print_r($user_payment_setting, true);
 			
 			$emailTo = 'devmail@luxurylink.com';
 			$emailFrom = 'Toolbox Web Service<devmail@luxurylink.com>';
 			$emailHeaders = "From: $emailFrom\r\n";
 			$emailSubject = "Ticket #$ticketId Successfully Created";
-			$emailBody = "Ticket #$ticketId has been successfully created.<br /><br />" . print_r($newTicket, true) . $debug_tmp;
+			$emailBody = "Ticket #$ticketId has been successfully created.\n\n" . $debug_tmp;
 			@mail($emailTo, $emailSubject, $emailBody, $emailHeaders);
 			
 			return true;	
