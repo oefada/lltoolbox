@@ -21,7 +21,7 @@ $this->searchController = 'Tickets';
 			</tr>
 			<tr>
 				<td><strong>Package Id</strong></td>
-				<td><?php echo $html->link($ticket['Ticket']['packageId'], array('controller'=> 'clients', 'action'=> $ticket['Ticket']['packageId'] . '/packages')); ?></td>
+				<td><?php echo $html->link($ticket['Ticket']['packageId'], array('controller'=> 'clients/' . $ticket['Ticket']['clientId'], 'action'=> '/packages/edit/' . $ticket['Ticket']['packageId'])); ?></td>
 			</tr>
 			<tr>
 				<td width="200"><strong>Client Name</strong></td>
