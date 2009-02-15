@@ -1,7 +1,7 @@
 <?
 uses('model' . DS . 'connection_manager');
 $db = ConnectionManager::getInstance();
-$connected = $db->getDataSource('live');
+$connected = $db->getDataSource('live_mysql');
 
 $gRemoveAuctionId = (@$_GET['remove']) ? @$_GET['remove'] : false;
 $gAddAuctionId = (@$_GET['add']) ? @$_GET['add'] : false;

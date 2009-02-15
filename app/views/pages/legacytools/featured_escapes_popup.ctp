@@ -1,7 +1,7 @@
 <?php
 uses('model' . DS . 'connection_manager');
 $db = ConnectionManager::getInstance();
-$connected = $db->getDataSource('live');
+$connected = $db->getDataSource('live_mysql');
 
 $Page_Name = "featured_escapes_popup";
 
