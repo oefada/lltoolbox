@@ -1,7 +1,6 @@
 <?php
 uses('model' . DS . 'connection_manager');
 $db = ConnectionManager::getInstance();
-debug($db->_dataSources);
 $connected = $db->getDataSource('live_mysql');
 
 $page = 'merchandise_images_tool';
