@@ -42,6 +42,8 @@ class WebServiceTicketsController extends WebServicesController
 	}
 
 	function createNewTicket($data) {
+		// if we do not have these values then void
+		// -------------------------------------------------------------------------------
 		if (empty($data) || !is_array($data)) {
 			$this->errorResponse = 905;
 			return false;	
@@ -55,6 +57,8 @@ class WebServiceTicketsController extends WebServicesController
 			return false;	
 		}
 		
+		// gather all data for ticket creation
+		// -------------------------------------------------------------------------------
 		$this->User->recursive = -1;
 		$userData = $this->User->read(null, $data['userId']);
 		
@@ -71,6 +75,7 @@ class WebServiceTicketsController extends WebServicesController
 		$offerLive = $offerLive[0]['offerLive'];
 		
 		// create a new ticket!
+		// -------------------------------------------------------------------------------
 		$newTicket = array();
 		$newTicket['Ticket']['ticketStatusId'] 			 = 1;
 		$newTicket['Ticket']['packageId'] 				 = $data['packageId'];
@@ -111,19 +116,11 @@ class WebServiceTicketsController extends WebServicesController
 
 		$this->Ticket->create();
 		if ($this->Ticket->save($newTicket)) {
-			// ticket is now created. 
+
 			$ticketId = $this->Ticket->getLastInsertId();
 			
-			$emailTo = 'devmail@luxurylink.com';
-			$emailFrom = 'Toolbox Web Service<devmail@luxurylink.com>';
-			$emailHeaders = "From: $emailFrom\r\n";
-        	$emailHeaders.= "Content-type: text/html\r\n";
-			$emailSubject = "Ticket #$ticketId Successfully Created";
-			$emailBody = "Ticket #$ticketId has been successfully created.<br /><br />" . print_r($newTicket, true);
-			// send out email now
-			@mail($emailTo, $emailSubject, $emailBody, $emailHeaders);
-			
-			// update the tracks 
+			// update the tracks
+			// -------------------------------------------------------------------------------
 			$schedulingMasterId = $offerData['SchedulingInstance']['SchedulingMaster']['schedulingMasterId'];
 			$smid = $this->Track->query("select trackId from schedulingMasterTrackRel where schedulingMasterId = $schedulingMasterId limit 1");
 			$smid = $smid[0]['schedulingMasterTrackRel']['trackId'];
@@ -132,15 +129,17 @@ class WebServiceTicketsController extends WebServicesController
 			}
 
 			// if non-auction, just stop here as charging and ppv should not be auto
+			// -------------------------------------------------------------------------------
 			if ($formatId != 1) {
 				return true;	
 			}
 			
 			// find out if there is a valid credit card to charge.  charge and send appropiate emails
+			// -------------------------------------------------------------------------------
 			$user_payment_setting = $this->findValidUserPaymentSetting($userData['User']['userId']);
 			
-			// ----------------------------------------------
 			// set ppv params
+			// -------------------------------------------------------------------------------
 			$ppv_settings = array();
 			$ppv_settings['ticketId'] 			= $ticketId;
 			$ppv_settings['send'] 				= 1;
@@ -151,7 +150,6 @@ class WebServiceTicketsController extends WebServicesController
 			if (is_array($user_payment_setting) && !empty($user_payment_setting)) {
 				// has valid cc card to charge
 				$ppv_settings['ppvNoticeTypeId'] 	= 5;
-
 			} elseif ($user_payment_setting == 'EXPIRED') {
 				// has valid cc card but is expired
 				$ppv_settings['ppvNoticeTypeId'] 	= 8;
@@ -159,14 +157,65 @@ class WebServiceTicketsController extends WebServicesController
 				// has no valid cc on file
 				$ppv_settings['ppvNoticeTypeId'] 	= 6;
 			}
-			// end ppv params
-			// -----------------------------------------------
-			
+
+			// restricted auctions -- do not auto process these beyond sending winner notif.
+			// -------------------------------------------------------------------------------
+			$restricted_auction = false;
+			if ($offerLive['isMystery']) {
+				$restricted_auction = true;	
+			}
+			/*if(($product_client_type_id > 12) && ($product_client_type_id < 19)) { // cruises
+            	$restricted_auction = true;
+            }*/
+            if(stristr($offerLive['offerName'], 'RED') && stristr($offerLive['offerName'],'HOT')) {
+            	$restricted_auction = true;
+            }
+            if(stristr($offerLive['offerName'], 'FEATURED') && stristr($offerLive['offerName'],'AUCTION')) {
+            	$restricted_auction = true;
+            }
+            if(stristr($offerLive['offerName'], 'AUCTION') && stristr($offerLive['offerName'],'DAY')) {
+            	$restricted_auction = true;
+            }
+
 			// send out winner notifications
+			// -------------------------------------------------------------------------------
 			$this->ppv(json_encode($ppv_settings));
 			
+			// auto charge here
+			// -------------------------------------------------------------------------------
+			
+			// send out ticket created email - not necessary but just be like Nike and just do it
+			// -------------------------------------------------------------------------------
+			$debug_tmp = "DATA\n";
+			$debug_tmp.= print_r($data, true);
+			$debug_tmp.= "USERDATA\n";
+			$debug_tmp.= print_r($userData, true);
+			$debug_tmp.= "ADDRESS\n";
+			$debug_tmp.= print_r($addressData, true);
+			$debug_tmp.= "OFFER DATA\n";
+			$debug_tmp.= print_r($offerData, true);
+			$debug_tmp.= "OFFER LIVE\n";
+			$debug_tmp.= print_r($offerLive, true);
+			$debug_tmp.= "PPV SETTING\n";
+			$debug_tmp.= print_r($ppv_settings, true);
+			$debug_tmp.= "TICKET\n";
+			$debug_tmp.= print_r($newTicket, true);
+			$debug_tmp.= "USER PAYMENT SETTING\n";
+			$debug_tmp.= print_r($user_payment_setting, true);
+			
+			$emailTo = 'devmail@luxurylink.com';
+			$emailFrom = 'Toolbox Web Service<devmail@luxurylink.com>';
+			$emailHeaders = "From: $emailFrom\r\n";
+        	$emailHeaders.= "Content-type: text/html\r\n";
+			$emailSubject = "Ticket #$ticketId Successfully Created";
+			$emailBody = "Ticket #$ticketId has been successfully created.<br /><br />" . print_r($newTicket, true) . $debug_tmp;
+			@mail($emailTo, $emailSubject, $emailBody, $emailHeaders);
+			
 			return true;	
+			
 		} else {			
+			// ticket was not succesfully created so send devmail alert
+			// -------------------------------------------------------------------------------
 			$this->errorResponse = 908;
 
 			$errorBody = "DEBUG MESSAGE\n\n";
