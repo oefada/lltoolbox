@@ -206,7 +206,6 @@ class WebServiceTicketsController extends WebServicesController
 			$emailTo = 'devmail@luxurylink.com';
 			$emailFrom = 'Toolbox Web Service<devmail@luxurylink.com>';
 			$emailHeaders = "From: $emailFrom\r\n";
-        	$emailHeaders.= "Content-type: text/html\r\n";
 			$emailSubject = "Ticket #$ticketId Successfully Created";
 			$emailBody = "Ticket #$ticketId has been successfully created.<br /><br />" . print_r($newTicket, true) . $debug_tmp;
 			@mail($emailTo, $emailSubject, $emailBody, $emailHeaders);
