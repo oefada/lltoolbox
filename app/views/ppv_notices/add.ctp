@@ -11,7 +11,6 @@
 		theme_advanced_buttons3_add : "fullpage"
     });
 </script> 
-
 	<fieldset>
  		<legend><?php __('Send Notification / PPV');?></legend>
 	<?php
@@ -19,8 +18,8 @@
 		echo $form->input('ppvNoticeTypeId', array('type' => 'hidden'));
 		echo $form->input('ticketId', array('readonly'=>'readonly'));
 	?>
-		<br /><br />
-		<textarea id="PpvNoticeEmailBody" name="data[PpvNotice][emailBody]" cols="140" rows="30" style="width:900px;"><?php echo $ppv_body_text;?></textarea>
+		<div style="text-align:right;"><?php echo $form->submit('Send');?></div>
+		<textarea id="PpvNoticeEmailBody" name="data[PpvNotice][emailBody]" cols="140" rows="30" style="width:100%;"><?php echo $ppv_body_text;?></textarea>
 	</fieldset>
-<?php echo $form->end('Submit');?>
+<?php echo $form->end();?>
 </div>
