@@ -67,14 +67,14 @@ class ReportsController extends AppController {
 	        
             $count = "SELECT COUNT(DISTINCT Offer.offerId) as numRecords
 	                FROM offer AS Offer
-	                INNER JOIN bid AS Bid ON (Bid.offerId = Offer.offerId)
+	                LEFT JOIN bid AS Bid ON (Bid.offerId = Offer.offerId)
 	                INNER JOIN schedulingInstance AS SchedulingInstance ON (SchedulingInstance.schedulingInstanceId = Offer.schedulingInstanceId)
 	                INNER JOIN schedulingMaster AS SchedulingMaster ON (SchedulingMaster.schedulingMasterId = SchedulingInstance.schedulingInstanceId)
-	                INNER JOIN offerType as OfferType ON (OfferType.offerTypeId = SchedulingMaster.offerTypeId)
-	                INNER JOIN package AS Package ON (Package.packageId = SchedulingMaster.packageId)
-	                INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Package.packageId)
-	                INNER JOIN loa AS Loa ON (Loa.loaId = ClientLoaPackageRel.loaId)
-	                INNER JOIN client AS Client ON (Client.clientId = ClientLoaPackageRel.clientId)
+	                LEFT JOIN offerType as OfferType ON (OfferType.offerTypeId = SchedulingMaster.offerTypeId)
+	                LEFT JOIN package AS Package ON (Package.packageId = SchedulingMaster.packageId)
+	                LEFT JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Package.packageId)
+	                LEFT JOIN loa AS Loa ON (Loa.loaId = ClientLoaPackageRel.loaId)
+	                LEFT JOIN client AS Client ON (Client.clientId = ClientLoaPackageRel.clientId)
 	                WHERE $conditions";
 
 	        $results = $this->OfferType->query($count);
@@ -97,19 +97,19 @@ class ReportsController extends AppController {
                         WHERE SchedulingMaster2.schedulingMasterId = SchedulingMaster.schedulingMasterId AND SchedulingInstance2.endDate >= NOW()
 	                ) AS futureInstances
 	                FROM offer AS Offer
-	                INNER JOIN bid AS Bid ON (Bid.offerId = Offer.offerId)
+	                LEFT JOIN bid AS Bid ON (Bid.offerId = Offer.offerId)
 	                INNER JOIN schedulingInstance AS SchedulingInstance ON (SchedulingInstance.schedulingInstanceId = Offer.schedulingInstanceId)
 	                INNER JOIN schedulingMaster AS SchedulingMaster ON (SchedulingMaster.schedulingMasterId = SchedulingInstance.schedulingInstanceId)
-	                INNER JOIN offerType as OfferType ON (OfferType.offerTypeId = SchedulingMaster.offerTypeId)
-	                INNER JOIN package AS Package ON (Package.packageId = SchedulingMaster.packageId)
-	                INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Package.packageId)
-	                INNER JOIN loa AS Loa ON (Loa.loaId = ClientLoaPackageRel.loaId)
-	                INNER JOIN client AS Client ON (Client.clientId = ClientLoaPackageRel.clientId)
+	                LEFT JOIN offerType as OfferType ON (OfferType.offerTypeId = SchedulingMaster.offerTypeId)
+	                LEFT JOIN package AS Package ON (Package.packageId = SchedulingMaster.packageId)
+	                LEFT JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Package.packageId)
+	                LEFT JOIN loa AS Loa ON (Loa.loaId = ClientLoaPackageRel.loaId)
+	                LEFT JOIN client AS Client ON (Client.clientId = ClientLoaPackageRel.clientId)
 	                WHERE $conditions
 	                GROUP BY Offer.offerId, SchedulingMaster.schedulingMasterId
 	                ORDER BY $order
 	                LIMIT $this->limit";
-	        
+	        echo $sql;
 	        $results = $this->OfferType->query($sql);
             
             $this->set('currentPage', $this->page);
@@ -508,7 +508,7 @@ class ReportsController extends AppController {
 	        endif; //end generate SQL for between condition
 	    }
 	    
-	    $conditions[] = 'Ticket.requestQueueId IS NOT NULL';  //filter only fixed price types
+	    $conditions[] = 'Ticket.formatId = 2';  //filter only fixed price types
 	    return implode($conditions, ' AND ');
 	}
 	
