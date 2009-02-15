@@ -27,7 +27,7 @@ class ReportsController extends AppController {
 	        $this->data['paging']['disablePagination'] = 1;
 
             $this->viewPath .= '/csv';
-	        $this->layoutPath = 'reports/csv';
+	        $this->layoutPath = 'csv';
         }
 
 	     if(@$this->data['paging']['disablePagination'] == 1) {
