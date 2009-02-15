@@ -161,6 +161,7 @@ class WebServiceTicketsController extends WebServicesController
 			// restricted auctions -- do not auto process these beyond sending winner notif.
 			// -------------------------------------------------------------------------------
 			$restricted_auction = false;
+			
 			if ($offerLive['isMystery']) {
 				$restricted_auction = true;	
 			}
@@ -176,6 +177,10 @@ class WebServiceTicketsController extends WebServicesController
             if(stristr($offerLive['offerName'], 'AUCTION') && stristr($offerLive['offerName'],'DAY')) {
             	$restricted_auction = true;
             }
+            
+            if ($restricted_auction) {
+            	$ppv_settiongs['ppvNoticeTypeId'] = 1;	
+            }
 
 			// send out winner notifications
 			// -------------------------------------------------------------------------------
@@ -183,6 +188,9 @@ class WebServiceTicketsController extends WebServicesController
 			
 			// auto charge here
 			// -------------------------------------------------------------------------------
+			if (!$restricted_auction) {
+				// yeeee
+			}
 			
 			// send out ticket created email - not necessary but just be like Nike and just do it
 			// -------------------------------------------------------------------------------
