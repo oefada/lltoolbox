@@ -109,7 +109,7 @@
 	<?php if (!empty($user['UserPaymentSetting'])):?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
-		<th><?php __('Payment Type'); ?></th>
+		<th><?php __('Card Type'); ?></th>
 		<th><?php __('Cc Number'); ?></th>
 		<th><?php __('Name On Card'); ?></th>
 		<th><?php __('Exp Year'); ?></th>
@@ -125,7 +125,7 @@
 			}
 		?>
 		<tr<?php echo $class;?>>
-			<td><?php echo $paymentTypes[$userPaymentSetting['paymentTypeId']];?></td>
+			<td><?php echo $userPaymentSetting['ccType'];?></td>
 			<td><?php echo $userPaymentSetting['ccNumber'];?></td>
 			<td><?php echo $userPaymentSetting['nameOnCard'];?></td>
 			<td><?php echo $userPaymentSetting['expYear'];?></td>
