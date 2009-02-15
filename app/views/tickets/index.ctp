@@ -85,6 +85,22 @@ $this->set('hideSidebar', true);
 			</tr>
 			<tr>
 				<td width="150">
+					Format Type
+				</td>
+				<td>
+					<select name="s_format_id"> 
+						<option value="0">All</option>
+						<?php 
+						foreach ($format as $k=>$v) {  
+							$selected = ($k == $s_format_id) ? 'selected="selected"' : ''; 
+							echo "<option value=\"$k\" $selected>$v</option>\n"; 
+						}
+						?>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td width="150">
 					Offer Type
 				</td>
 				<td>

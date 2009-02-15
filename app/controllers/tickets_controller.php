@@ -9,7 +9,7 @@ class TicketsController extends AppController {
 
 	var $name = 'Tickets';
 	var $helpers = array('Html', 'Form', 'Ajax', 'Text', 'Layout', 'Number');
-	var $uses = array('Ticket','OfferType', 'User', 'ClientLoaPackageRel', 'Track', 'TrackDetail','Offer','Loa','Client');
+	var $uses = array('Ticket','OfferType', 'Format', 'User', 'ClientLoaPackageRel', 'Track', 'TrackDetail','Offer','Loa','Client');
 
 	function index() {
 		
@@ -27,8 +27,9 @@ class TicketsController extends AppController {
 		$s_ticket_id = isset($form['s_ticket_id']) ? $form['s_ticket_id'] : '';
 		$s_offer_id = isset($form['s_offer_id']) ? $form['s_offer_id'] : '';
 		$s_user_id = isset($form['s_user_id']) ? $form['s_user_id'] : '';
-		$s_offer_type_id = isset($form['s_offer_type_id']) ? $form['s_offer_type_id'] : 1;
-		$s_ticket_status_id = isset($form['s_ticket_status_id']) ? $form['s_ticket_status_id'] : 1;
+		$s_format_id = isset($form['s_format_id']) ? $form['s_format_id'] : '';
+		$s_offer_type_id = isset($form['s_offer_type_id']) ? $form['s_offer_type_id'] : 0;
+		$s_ticket_status_id = isset($form['s_ticket_status_id']) ? $form['s_ticket_status_id'] : 0;
 		$s_start_y = isset($form['s_start_y']) ? $form['s_start_y'] : date('Y');
 		$s_start_m = isset($form['s_start_m']) ? $form['s_start_m'] : date('m');
 		$s_start_d = isset($form['s_start_d']) ? $form['s_start_d'] : date('d');
@@ -39,6 +40,7 @@ class TicketsController extends AppController {
 		$this->set('s_ticket_id', $s_ticket_id);
 		$this->set('s_offer_id', $s_offer_id);
 		$this->set('s_user_id', $s_user_id);
+		$this->set('s_format_id', $s_format_id);
 		$this->set('s_offer_type_id', $s_offer_type_id);
 		$this->set('s_ticket_status_id', $s_ticket_status_id);
 		$this->set('s_start_y', $s_start_y);   
@@ -55,7 +57,7 @@ class TicketsController extends AppController {
 		$this->paginate = array('fields' => array(
 									'Ticket.ticketId', 'Ticket.offerTypeId', 'Ticket.created', 
 									'Ticket.offerId', 'Ticket.userId', 'TicketStatus.ticketStatusName', 
-									'Ticket.userFirstName', 'Ticket.userLastName', 'Client.name', 'Ticket.billingPrice'),
+									'Ticket.userFirstName', 'Ticket.userLastName', 'Client.name', 'Ticket.billingPrice', 'Ticket.formatId'),
 		                        	'contain' => array(
 		                        	'TicketStatus', 'Package', 'Client')
 		                        );
@@ -72,12 +74,16 @@ class TicketsController extends AppController {
 			if ($s_offer_type_id) {
 				$this->paginate['conditions']['Ticket.offerTypeId'] = $s_offer_type_id;	
 			}
+			if ($s_format_id) {
+				$this->paginate['conditions']['Ticket.formatId'] = $s_format_id;	
+			}
 			if ($s_ticket_status_id) {
 				$this->paginate['conditions']['Ticket.ticketStatusId'] = $s_ticket_status_id;	
 			}
 		}
 		         
 		$this->set('tickets', $this->paginate());
+		$this->set('format', $this->Format->find('list'));
 		$this->set('offerType', $this->OfferType->find('list'));
 		$this->set('ticketStatus', $this->Ticket->TicketStatus->find('list'));
 	}
