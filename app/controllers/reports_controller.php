@@ -22,7 +22,7 @@ class ReportsController extends AppController {
 	        }
 	    }
 	    
-	    if ($this->data['download']['csv'] == 1) {
+	    if (@$this->data['download']['csv'] == 1) {
 	        Configure::write('debug', '0');
 	        $this->data['paging']['disablePagination'] = 1;
 
@@ -30,7 +30,7 @@ class ReportsController extends AppController {
 	        $this->layoutPath = 'csv';
         }
 
-	     if($this->data['paging']['disablePagination'] == 1) {
+	     if(@$this->data['paging']['disablePagination'] == 1) {
             $this->page = 1;
             $this->perPage = 9999;
             $this->limit = 9999;
