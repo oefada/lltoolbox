@@ -42,6 +42,7 @@ class WebServiceTicketsController extends WebServicesController
 	}
 
 	function createNewTicket($data) {
+		
 		// if we do not have these values then void
 		// -------------------------------------------------------------------------------
 		if (empty($data) || !is_array($data)) {
@@ -181,7 +182,7 @@ class WebServiceTicketsController extends WebServicesController
             	$restricted_auction = true;
             }
              
- 			// do no autoprocess / charge restricted auctions. send them old winner notification w/o checkout
+ 			// do no autocharge restricted auctions. send them old winner notification w/o checkout
  			// -------------------------------------------------------------------------------           
             if ($restricted_auction) {
             	$ppv_settings['ppvNoticeTypeId'] = 5;	
@@ -255,9 +256,11 @@ class WebServiceTicketsController extends WebServicesController
 	}
 
 	function ppv($in0) {
+		
 		$params = json_decode($in0, true);
 		
 		// required params for sending and viewing ppvs
+		// -------------------------------------------------------------------------------
 		$ticketId 			= isset($params['ticketId']) ? $params['ticketId'] : null;
 		$send 				= isset($params['send']) ? $params['send'] : false;
 		$autoBuild			= isset($params['autoBuild']) ? $params['autoBuild'] : false;
@@ -265,8 +268,10 @@ class WebServiceTicketsController extends WebServicesController
 		$manualEmailBody	= isset($params['manualEmailBody']) ? $params['manualEmailBody'] : null;
 		$ppvNoticeTypeId	= isset($params['ppvNoticeTypeId']) ? $params['ppvNoticeTypeId'] : null;
 		
-		// error checking here for required params
+		// TODO: error checking for params
 		
+		// retrieve data to fill out the email templates
+		// -------------------------------------------------------------------------------
 		if ($autoBuild) {
 			
 			$this->Ticket->recursive = 0;
@@ -279,10 +284,8 @@ class WebServiceTicketsController extends WebServicesController
 		
 			$liveOffer	= $this->Ticket->query("select * from offerLive as LiveOffer where offerId = " . $ticket['Ticket']['offerId'] . " limit 1");
 		
-			ob_start();
-		
 			// data arrays
-			// ---------------------------------------------------------
+			// -------------------------------------------------------------------------------
 			$ticketData 		= $ticket['Ticket'];
 			$packageData 		= $ticket['Package'];
 			$offerData 			= $ticket['Offer'];
@@ -294,8 +297,29 @@ class WebServiceTicketsController extends WebServicesController
 			$liveOfferData 		= $liveOffer[0]['LiveOffer'];
 			$offerType			= $this->OfferType->find('list');
 	
+			$debug_tmp = "TICKET\n\n";
+			$debug_tmp.= print_r($ticketData, true);
+			$debug_tmp.= "\n\nPACKAGE\n\n";
+			$debug_tmp.= print_r($packageData, true);
+			$debug_tmp.= "\n\nOFFER\n\n";
+			$debug_tmp.= print_r($offerData, true);
+			$debug_tmp.= "\n\nUSER DATA\n\n";
+			$debug_tmp.= print_r($userData, true);
+			$debug_tmp.= "\n\nCLIENT DATA\n\n";
+			$debug_tmp.= print_r($clientData, true);
+			$debug_tmp.= "\n\nLOA DATA\n\n";
+			$debug_tmp.= print_r($loaData, true);
+			$debug_tmp.= "\n\nLIVE OFFER\n\n";
+			$debug_tmp.= print_r($liveOfferData, true);
+			$emailTo = 'devmail@luxurylink.com';
+			$emailFrom = 'Toolbox Web Service<devmail@luxurylink.com>';
+			$emailHeaders = "From: $emailFrom\r\n";
+			$emailSubject = "PPV SENT";
+			$emailBody = $debug_tmp;
+			@mail($emailTo, $emailSubject, $emailBody, $emailHeaders);
+	
 			// vars for email templates
-			// ----------------------------------------------------------
+			// -------------------------------------------------------------------------------
 			
 			$userId 			= $userData['userId'];
 			$userFirstName		= ucwords(strtolower($userData['firstName']));
@@ -337,11 +361,14 @@ class WebServiceTicketsController extends WebServicesController
 			$checkoutLink		= "https://www.luxurylink.com/my/my_purchse.php?z=$checkoutKey";
 
 			// some unknowns
+			// -------------------------------------------------------------------------------
 			$guarantee			= false;
 			$is_auc_fac			= false;
 			$wholesale			= 0;
 	
 			$offerTypeArticle	= in_array(strtolower($offerType[$offerTypeId]{0}), array('a','e','i','o','u')) ? 'an' : 'a';
+
+			ob_start();
 
 			switch ($ppvNoticeTypeId) {
 				case 1:
@@ -384,25 +411,29 @@ class WebServiceTicketsController extends WebServicesController
 			$emailBody = ob_get_clean();
 		} 
 		
+		// if sending from toolbox tool ppvNotice
+		// -------------------------------------------------------------------------------
 		if (!$autoBuild && $manualEmailBody) {
 			$emailBody = $manualEmailBody;
 			$emailSubject = 'manual sending';	
 		}
 	
+		// send the email out!
+		// -------------------------------------------------------------------------------
 		if ($send) {
 			$emailTo = 'devmail@luxurylink.com';
 			$emailFrom = 'LuxuryLink.com<auction@luxurylink.com>';
 			$emailHeaders = "From: $emailFrom\r\n";
         	$emailHeaders.= "Content-type: text/html\r\n";
 			
-			// send out email now
 			@mail($emailTo, $emailSubject, $emailBody, $emailHeaders);
 			
 			$emailSentDatetime = strtotime('now');
 
 			$emailBodyFileName = $ticketId . '_' . $ppvNoticeTypeId . '_' . $emailSentDatetime . '.html';
 			
-			// save the email as a flat file
+			// save the email as a flat file on /vendors/email_msgs/toolbox_sent_messages
+			// -------------------------------------------------------------------------------
 			$fh = fopen("../vendors/email_msgs/toolbox_sent_messages/$emailBodyFileName", 'w');
 			fwrite($fh, $emailBody);
 			fclose($fh);
@@ -417,18 +448,19 @@ class WebServiceTicketsController extends WebServicesController
 			$ppvNoticeSave['emailBodyFileName']	= $emailBodyFileName;
 			$ppvNoticeSave['emailSentDatetime']	= date('Y-m-d H:i:s', $emailSentDatetime);
 
-			// save the record!
+			// save the record in the database
+			// -------------------------------------------------------------------------------
 			$this->PpvNotice->create();
 			$this->PpvNotice->save($ppvNoticeSave);
 			
+			// update ticket status if required
+			// -------------------------------------------------------------------------------
 			$newTicketStatus = false;
 			if ($ppvNoticeTypeId == 1) {
 				$newTicketStatus = 4;		
 			} elseif ($ppvNoticeTypeId == 2) {
 				$newTicketStatus = 3;
 			}
-			
-			// update ticket status if required
 			if ($newTicketStatus) {
 				$this->updateTicketStatus($ticketId, $newTicketStatus);
 			}
