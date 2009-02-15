@@ -593,11 +593,11 @@ class ReportsController extends AppController {
     	        $this->set('sortDirection', 'DESC');
 	        }
 
-	        $sql = "SELECT DATE_FORMAT(SchedulingInstance.endDate, '%Y-%m-%d') as onlyEndDate, OfferType.offerTypeName, COUNT(DISTINCT SchedulingInstance.schedulingInstanceId) as numOffers,
+	        $sql = "SELECT HOUR(SchedulingInstance.endDate), DATE_FORMAT(SchedulingInstance.endDate, '%Y-%m-%d') as onlyEndDate, OfferType.offerTypeName, COUNT(DISTINCT SchedulingInstance.schedulingInstanceId) as numOffers,
                         CASE
-                            WHEN HOUR(SchedulingInstance.endDate) BETWEEN 0 AND 7 THEN -1 #before 7am
+                            WHEN HOUR(SchedulingInstance.endDate) BETWEEN 0 AND 6 THEN -1 #before 7am
                                 WHEN HOUR(SchedulingInstance.endDate) BETWEEN 7 AND 16 THEN HOUR(SchedulingInstance.endDate) #everything in between
-                                WHEN HOUR(SchedulingInstance.endDate) BETWEEN 16 AND 24 THEN 999 #after 5pm
+                                WHEN HOUR(SchedulingInstance.endDate) BETWEEN 17 AND 24 THEN 999 #after 5pm
                             END as timeOfDay
                     FROM offer AS Offer
                     INNER JOIN schedulingInstance AS SchedulingInstance ON (SchedulingInstance.schedulingInstanceId = Offer.schedulingInstanceId)
@@ -608,7 +608,7 @@ class ReportsController extends AppController {
                     ORDER BY onlyEndDate, timeOfDay ASC";
 
 	        $results = $this->OfferType->query($sql);
-	        
+
 	        //have to get the results in a format that we can easily loop through
 	        $rows = array();
 	        foreach ($results as $r) {
