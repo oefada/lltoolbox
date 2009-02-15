@@ -130,7 +130,7 @@ class WebServiceTicketsController extends WebServicesController
 
 			// if non-auction, just stop here as charging and ppv should not be auto
 			// -------------------------------------------------------------------------------
-			if ($formatId != 1) {
+			if ($formatId != 1 || !in_array($offerLive['offerTypeId'], array(1,2,6))) {
 				return true;	
 			}
 			
@@ -162,7 +162,7 @@ class WebServiceTicketsController extends WebServicesController
 			// -------------------------------------------------------------------------------
 			$restricted_auction = false;
 			
-			if ($offerLive['isMystery']) {
+			if ($offerLive['isMystery'] || $offerLive['retailValue'] == 1 || $offerLIve['openingBid'] == 1) {
 				$restricted_auction = true;	
 			}
 			/*if(($product_client_type_id > 12) && ($product_client_type_id < 19)) { // cruises
@@ -179,7 +179,7 @@ class WebServiceTicketsController extends WebServicesController
             }
             
             if ($restricted_auction) {
-            	$ppv_settings['ppvNoticeTypeId'] = 1;	
+            	$ppv_settings['ppvNoticeTypeId'] = 5;	
             }
 
 			// send out winner notifications
