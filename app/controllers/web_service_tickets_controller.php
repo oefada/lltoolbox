@@ -70,8 +70,6 @@ class WebServiceTicketsController extends WebServicesController
 		$offerLive = $this->Offer->query('SELECT * FROM offerLive WHERE offerId = ' . $data['offerId']);
 		$offerLive = $offerLive[0]['offerLive'];
 		
-		mail('devmail@luxurylink.com', 'testing a', print_r($offerLive, true));
-		
 		// create a new ticket!
 		$newTicket = array();
 		$newTicket['Ticket']['ticketStatusId'] 			 = 1;
@@ -216,7 +214,7 @@ class WebServiceTicketsController extends WebServicesController
 			$this->ClientLoaPackageRel->recursive = 0;
 			$clientLoaPackageRel = $this->ClientLoaPackageRel->findBypackageid($ticket['Ticket']['packageId']);
 		
-			$liveOffer	= $this->Ticket->query("select * from livedev.offer as LiveOffer where offerId = " . $ticket['Ticket']['offerId'] . " limit 1");
+			$liveOffer	= $this->Ticket->query("select * from offerLive as LiveOffer where offerId = " . $ticket['Ticket']['offerId'] . " limit 1");
 		
 			ob_start();
 		
@@ -260,8 +258,8 @@ class WebServiceTicketsController extends WebServicesController
 			$packageSubtitle	= $packageData['subtitle'];
 			
 			$packageIncludes 	= $packageData['packageIncludes'];
-			$legalText			= $packageData['legalText'];
-			$validityNote		= $packageData['validityNote'];
+			$legalText			= $packageData['termsAndConditions'];
+			$validityNote		= $packageData['validityDisclaimer'];
 			
 			$offerTypeId		= $ticketData['offerTypeId'];
 			$offerEndDate		= date('M d Y H:i A', strtotime($liveOfferData['endDate']));
@@ -269,7 +267,7 @@ class WebServiceTicketsController extends WebServicesController
 			$llFeeAmount		= in_array($offerTypeId, array(1,2,6)) ? 30 : 40;
 			$llFee				= number_format($llFeeAmount, 2, '.', ',');
 			$totalPrice			= number_format(($ticketData['billingPrice'] + $llFeeAmount),  2, '.', ',');
-			$maxNumWinners		= $liveOfferData['maxNumWinners'];
+			$maxNumWinners		= $liveOfferData['numWinners'];
 			
 			$checkoutHash		= md5($ticketId . $userId . $offerId . 'LL_L33T_KEY');
 			$checkoutKey		= base64_encode(serialize(array('ticketId' => $ticketId, 'userId' => $userId, 'offerId' => $offerId, 'zKey' => $checkoutHash)));
