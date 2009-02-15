@@ -11,6 +11,7 @@
 		theme_advanced_buttons3_add : "fullpage"
     });
 </script> 
+
 	<fieldset>
  		<legend><?php __('Send Notification / PPV');?></legend>
 	<?php

@@ -128,6 +128,10 @@ class WebServiceTicketsController extends WebServicesController
 				$this->addTrackPending($smid, $newTicket['Ticket']['billingPrice']);
 			}
 
+			// PREVENT ALL restricted auctions here - mystery, red hot, multi-client , etc
+
+			mail('devmail@luxurylink.com', 'testing mystery', print_r($offerData, true));
+
 			// if non-auction, just stop here as charging and ppv should not be auto
 			if ($formatId != 1) {
 				return true;	
