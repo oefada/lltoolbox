@@ -55,7 +55,7 @@ class TicketsController extends AppController {
 		$this->paginate = array('fields' => array(
 									'Ticket.ticketId', 'Ticket.offerTypeId', 'Ticket.created', 
 									'Ticket.offerId', 'Ticket.userId', 'TicketStatus.ticketStatusName', 
-									'Ticket.userFirstName', 'Ticket.userLastName', 'Client.name'),
+									'Ticket.userFirstName', 'Ticket.userLastName', 'Client.name', 'Ticket.billingPrice'),
 		                        	'contain' => array(
 		                        	'TicketStatus', 'Package', 'Client')
 		                        );

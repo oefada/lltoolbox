@@ -163,18 +163,19 @@ $this->set('hideSidebar', true);
 		</div>
 	<?php endif ?>
 		
-<table cellpadding="0" cellspacing="0" class="tickets-view-td">
+<table cellpadding="0" cellspacing="0" class="tickets-view-td" style="font-size:11px;">
 <tr>
 	<th width="10"><?php echo $paginator->sort('Ticket Id', 'Ticket.ticketId');?></th>
-	<th width="10"><?php echo $paginator->sort('Ticket Created', 'Ticket.created');?></th>
-	<th width="10"><?php echo $paginator->sort('Status', 'Ticket.ticketStatusId');?></th>
 	<th width="10"><?php echo $paginator->sort('Offer Type', 'Ticket.offerTypeId');?></th>
 	<th width="10"><?php echo $paginator->sort('Offer Id', 'Ticket.offerId');?></th>
 	<th width="10"><?php echo $paginator->sort('Client Id', 'Client.clientId');?></th>
-	<th><?php echo $paginator->sort('Client Name', 'Client.name');?></th>
+	<th width="200"><?php echo $paginator->sort('Client Name', 'Client.name');?></th>
 	<th width="10"><?php echo $paginator->sort('User Id', 'Ticket.userId');?></th>
-	<th><?php echo $paginator->sort('User First Name', 'Ticket.userFirstName');?></th>
-	<th><?php echo $paginator->sort('User Last Name', 'Ticket.userLastName');?></th>
+	<th width="100"><?php echo $paginator->sort('User First Name', 'Ticket.userFirstName');?></th>
+	<th width="100"><?php echo $paginator->sort('User Last Name', 'Ticket.userLastName');?></th>
+	<th width="10"><?php echo $paginator->sort('Sale Price', 'Ticket.billingPrice');?></th>
+	<th width="10"><?php echo $paginator->sort('Ticket Created', 'Ticket.created');?></th>
+	<th width="10"><?php echo $paginator->sort('Status', 'Ticket.ticketStatusId');?></th>
 	<th class="actions"><?php __('Actions');?></th>
 </tr>
 <?php
@@ -188,12 +189,6 @@ foreach ($tickets as $ticket):
 	<tr<?php echo $class;?>>
 		<td>
 			<?php echo $ticket['Ticket']['ticketId']; ?>
-		</td>
-		<td>
-			<?php echo $ticket['Ticket']['created'];?>
-		</td>
-		<td>
-			<?php echo $ticket['TicketStatus']['ticketStatusName']; ?>
 		</td>
 		<td>
 			<?php echo $offerType[$ticket['Ticket']['offerTypeId']]; ?>
@@ -215,6 +210,15 @@ foreach ($tickets as $ticket):
 		</td>
 		<td>
 			<?php echo $ticket['Ticket']['userLastName']; ?>
+		</td>
+		<td>
+			<?php echo $number->currency($ticket['Ticket']['billingPrice']);?>
+		</td>
+		<td>
+			<?php echo $ticket['Ticket']['created'];?>
+		</td>
+		<td style="font-weight:bold;">
+			<?php echo $ticket['TicketStatus']['ticketStatusName']; ?>
 		</td>
 		<td class="actions">
 			<?php echo $html->link(__('View Details', true), array('controller' => 'tickets', 'action'=>'view', $ticket['Ticket']['ticketId'])); ?>
