@@ -6,7 +6,7 @@
 	echo $form->input('shortBlurb');
 	echo $form->input('termsAndConditions', array('label' => 'Terms & Conditions'));
 	echo $form->input('additionalDescription', array('label' => 'Additional Description'));
-	echo $form->input('inclusions', array('label' => 'Inclusions'));
+	echo $form->input('packageIncludes', array('label' => 'Inclusions'));
 	echo "<div class='controlset'>";
 	echo $form->input('repopulateInclusions', array('label' => 'Reset and Repopulate Inclusions on Save', 'type' => 'checkbox'));
 	echo "</div>";

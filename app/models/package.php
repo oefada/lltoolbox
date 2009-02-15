@@ -95,7 +95,7 @@ class Package extends AppModel {
             ksort($descriptions);
             
             
-	        $this->data['Package']['inclusions'] = implode("\r\n", $descriptions);
+	        $this->data['Package']['packageIncludes'] = implode("\r\n", $descriptions);
 	    endif;
         }
 	    
