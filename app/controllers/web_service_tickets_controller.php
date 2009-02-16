@@ -2,6 +2,7 @@
 
 Configure::write('debug', 0);
 App::import('Vendor', 'nusoap/web_services_controller');
+App::import('Vendor', 'aes.php');
 
 class WebServiceTicketsController extends WebServicesController
 {
@@ -359,7 +360,7 @@ class WebServiceTicketsController extends WebServicesController
 			
 			$offerTypeArticle	= in_array(strtolower($offerType[$offerTypeId]{0}), array('a','e','i','o','u')) ? 'an' : 'a';
 
-			$ccFour				= $userPaymentData['UserPaymentSetting']['ccNumber'];
+			$ccFour				= substr(aes_decrypt($userPaymentData['UserPaymentSetting']['ccNumber']), -4, 4);
 			$ccType				= $userPaymentData['UserPaymentSetting']['ccType'];
 
 			// some unknowns
