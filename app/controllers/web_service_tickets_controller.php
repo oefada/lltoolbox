@@ -1,8 +1,7 @@
 <?php
 
-App::import('Vendor', 'nusoap/web_services_controller');
-//App::import('Vendor', 'aes.php');
 Configure::write('debug', 0);
+App::import('Vendor', 'nusoap/web_services_controller');
 
 class WebServiceTicketsController extends WebServicesController
 {
@@ -296,7 +295,7 @@ class WebServiceTicketsController extends WebServicesController
 			$clientData			= $clientLoaPackageRel = $this->ClientLoaPackageRel->findAllBypackageid($ticket['Ticket']['packageId']);
 			$liveOfferData 		= $liveOffer[0]['LiveOffer'];
 			$offerType			= $this->OfferType->find('list');
-			//$userPaymentData	= $this->findValidUserPaymentSetting($ticketData['userId']);
+			$userPaymentData	= $this->findValidUserPaymentSetting($ticketData['userId']);
 		
 			$debug_tmp = "TICKET\n\n";
 			$debug_tmp.= print_r($ticketData, true);
@@ -360,8 +359,8 @@ class WebServiceTicketsController extends WebServicesController
 			
 			$offerTypeArticle	= in_array(strtolower($offerType[$offerTypeId]{0}), array('a','e','i','o','u')) ? 'an' : 'a';
 
-			//$ccFour				= $userPaymentData['UserPaymentSetting']['ccNumber'];
-			//$ccType				= $userPaymentData['UserPaymentSetting']['ccType'];
+			$ccFour				= $userPaymentData['UserPaymentSetting']['ccNumber'];
+			$ccType				= $userPaymentData['UserPaymentSetting']['ccType'];
 
 			// some unknowns
 			// -------------------------------------------------------------------------------
@@ -390,7 +389,7 @@ class WebServiceTicketsController extends WebServicesController
 			$clientName 		= $clients[0]['name'];
 			$oldProductId		= $clients[0]['oldProductId'];
 	
-			mail('devmail@luxurylink.com', "$clientId and $clientName and $oldProductId " . 'testing contacts', print_r($clients, true));
+			mail('devmail@luxurylink.com', testing contacts', print_r($clients, true));
 			
 			// auction facilitator
 			// -------------------------------------------------------------------------------
