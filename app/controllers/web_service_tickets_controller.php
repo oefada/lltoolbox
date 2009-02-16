@@ -271,7 +271,7 @@ class WebServiceTicketsController extends WebServicesController
 		$ppvNoticeTypeId	= isset($params['ppvNoticeTypeId']) ? $params['ppvNoticeTypeId'] : null;
 		
 		//testing
-		$ppvNoticeTypeId = 4;
+		$ppvNoticeTypeId = 1;
 		
 		// TODO: error checking for params
 		
