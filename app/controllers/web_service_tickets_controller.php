@@ -365,9 +365,9 @@ class WebServiceTicketsController extends WebServicesController
 			// -------------------------------------------------------------------------------
 			//$clients			= array();
 			//$clients[]		= $clientData;
-			//$clientId			= $clientData[0]['Client']['clientId'];
-			//$clientName 		= $clientData[0]['Client']['name'];
-			//$oldProductId		= $clientData[0]['Client']['oldProductId'];
+			$clientId			= $clientData[0]['Client']['clientId'];
+			$clientName 		= $clientData[0]['Client']['name'];
+			$oldProductId		= $clientData[0]['Client']['oldProductId'];
 	
 			// auction facilitator
 			// -------------------------------------------------------------------------------
