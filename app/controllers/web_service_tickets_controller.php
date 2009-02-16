@@ -298,6 +298,7 @@ class WebServiceTicketsController extends WebServicesController
 			$offerType			= $this->OfferType->find('list');
 			$userPaymentData	= $this->findValidUserPaymentSetting($ticketData['userId']);
 		
+			/*
 			$debug_tmp = "TICKET\n\n";
 			$debug_tmp.= print_r($ticketData, true);
 			$debug_tmp.= "\n\nPACKAGE\n\n";
@@ -318,6 +319,7 @@ class WebServiceTicketsController extends WebServicesController
 			$emailSubject = "PPV SENT";
 			$emailBody = $debug_tmp;
 			@mail($emailTo, $emailSubject, $emailBody, $emailHeaders);
+			*/
 	
 			// vars for email templates
 			// -------------------------------------------------------------------------------
@@ -390,7 +392,7 @@ class WebServiceTicketsController extends WebServicesController
 			$clientName 		= $clients[0]['name'];
 			$oldProductId		= $clients[0]['oldProductId'];
 	
-			mail('devmail@luxurylink.com', 'testing contacts', print_r($clients, true));
+			//mail('devmail@luxurylink.com', 'testing contacts', print_r($clients, true));
 			
 			// auction facilitator
 			// -------------------------------------------------------------------------------
