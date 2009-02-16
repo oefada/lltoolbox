@@ -32,6 +32,7 @@ class WebServiceTicketsController extends WebServicesController
 
 	function newTicketProcessor1($in0)
 	{
+		
 		$json_decoded = json_decode($in0, true);
 		$this->errorResponse = false;
 		if (!$this->createNewTicket($json_decoded)) {			
@@ -268,6 +269,9 @@ class WebServiceTicketsController extends WebServicesController
 		$manualEmailBody	= isset($params['manualEmailBody']) ? $params['manualEmailBody'] : null;
 		$ppvNoticeTypeId	= isset($params['ppvNoticeTypeId']) ? $params['ppvNoticeTypeId'] : null;
 		
+		//testing
+		$ppvNoticeTypeId = 4;
+		
 		// TODO: error checking for params
 		
 		// retrieve data to fill out the email templates
@@ -275,13 +279,9 @@ class WebServiceTicketsController extends WebServicesController
 		if ($autoBuild) {
 			
 			$this->Ticket->recursive = 0;
-			$ticket = $this->Ticket->read(null, $ticketId);
-	
 			$this->Address->recursive = -1;
-	
 			$this->ClientLoaPackageRel->recursive = 0;
-			$clientLoaPackageRel = $this->ClientLoaPackageRel->findAllBypackageid($ticket['Ticket']['packageId']);
-		
+			$ticket = $this->Ticket->read(null, $ticketId);
 			$liveOffer	= $this->Ticket->query("select * from offerLive as LiveOffer where offerId = " . $ticket['Ticket']['offerId'] . " limit 1");
 		
 			// data arrays
@@ -292,16 +292,13 @@ class WebServiceTicketsController extends WebServicesController
 			$userData 			= $ticket['User'];
 			$userAddressData	= $this->Address->findByuserid($userData['userId']);
 			$userAddressData	= $userAddressData['Address'];
-			$clientData 		= $clientLoaPackageRel['Client'];
-			$loaData 			= $clientLoaPackageRel['Loa'];
+			$clientData			= $clientLoaPackageRel = $this->ClientLoaPackageRel->findAllBypackageid($ticket['Ticket']['packageId']);
 			$liveOfferData 		= $liveOffer[0]['LiveOffer'];
 			$offerType			= $this->OfferType->find('list');
-				
+
 			$debug_tmp = "TICKET\n\n";
 			$debug_tmp.= print_r($ticketData, true);
 			$debug_tmp.= "\n\nCLIENTS\n\n";
-			$debug_tmp.= print_r($clientLoaPackageRel, true);
-			$debug_tmp.= "\n\nPACKAGE\n\n";
 			$debug_tmp.= print_r($packageData, true);
 			$debug_tmp.= "\n\nOFFER\n\n";
 			$debug_tmp.= print_r($offerData, true);
@@ -309,8 +306,6 @@ class WebServiceTicketsController extends WebServicesController
 			$debug_tmp.= print_r($userData, true);
 			$debug_tmp.= "\n\nCLIENT DATA\n\n";
 			$debug_tmp.= print_r($clientData, true);
-			$debug_tmp.= "\n\nLOA DATA\n\n";
-			$debug_tmp.= print_r($loaData, true);
 			$debug_tmp.= "\n\nLIVE OFFER\n\n";
 			$debug_tmp.= print_r($liveOfferData, true);
 			$emailTo = 'devmail@luxurylink.com';
@@ -336,13 +331,13 @@ class WebServiceTicketsController extends WebServicesController
 			$userPhone			= !$userPhone && $userMobilePhone ? $userMobilePhone : $userPhone;
 			$userPhone			= !$userPhone && $userWorkPhone ? $userWorkPhone : $userPhone;
 			
-			$clients			= array();
-			$clients[]			= $clientData;
-			$clientId			= $clientData['clientId'];
-			$clientName 		= $clientData['name'];
+			//$clients			= array();
+			//$clients[]		= $clientData;
+			//$clientId			= $clientData['clientId'];
+			//$clientName 		= $clientData['name'];
+			//$oldProductId		= $clientData['oldProductId'];
 			
 			$offerId			= $offerData['offerId'];
-			$oldProductId		= $clientData['oldProductId'];
 			$packageName 		= $packageData['packageName'];
 			$packageSubtitle	= $packageData['subtitle'];
 			
@@ -361,14 +356,17 @@ class WebServiceTicketsController extends WebServicesController
 			$checkoutHash		= md5($ticketId . $userId . $offerId . 'LL_L33T_KEY');
 			$checkoutKey		= base64_encode(serialize(array('ticketId' => $ticketId, 'userId' => $userId, 'offerId' => $offerId, 'zKey' => $checkoutHash)));
 			$checkoutLink		= "https://www.luxurylink.com/my/my_purchse.php?z=$checkoutKey";
+			
+			$offerTypeArticle	= in_array(strtolower($offerType[$offerTypeId]{0}), array('a','e','i','o','u')) ? 'an' : 'a';
 
 			// some unknowns
 			// -------------------------------------------------------------------------------
 			$guarantee			= false;
-			$is_auc_fac			= false;
 			$wholesale			= 0;
 	
-			$offerTypeArticle	= in_array(strtolower($offerType[$offerTypeId]{0}), array('a','e','i','o','u')) ? 'an' : 'a';
+			// auction facilitator
+			// -------------------------------------------------------------------------------
+			$is_auc_fac			= false;
 
 			ob_start();
 
@@ -423,49 +421,7 @@ class WebServiceTicketsController extends WebServicesController
 		// send the email out!
 		// -------------------------------------------------------------------------------
 		if ($send) {
-			$emailTo = 'devmail@luxurylink.com';
-			$emailFrom = 'LuxuryLink.com<auction@luxurylink.com>';
-			$emailHeaders = "From: $emailFrom\r\n";
-        	$emailHeaders.= "Content-type: text/html\r\n";
-			
-			@mail($emailTo, $emailSubject, $emailBody, $emailHeaders);
-			
-			$emailSentDatetime = strtotime('now');
-
-			$emailBodyFileName = $ticketId . '_' . $ppvNoticeTypeId . '_' . $emailSentDatetime . '.html';
-			
-			// save the email as a flat file on /vendors/email_msgs/toolbox_sent_messages
-			// -------------------------------------------------------------------------------
-			$fh = fopen("../vendors/email_msgs/toolbox_sent_messages/$emailBodyFileName", 'w');
-			fwrite($fh, $emailBody);
-			fclose($fh);
-			
-			$ppvNoticeSave = array();
-			$ppvNoticeSave['ppvNoticeTypeId']	= $ppvNoticeTypeId; 
-			$ppvNoticeSave['ticketId'] 			= $ticketId;
-			$ppvNoticeSave['emailTo']			= $emailTo;
-			$ppvNoticeSave['emailFrom']			= $emailFrom;
-			$ppvNoticeSave['emailCc']			= '';
-			$ppvNoticeSave['emailSubject']		= $emailSubject;
-			$ppvNoticeSave['emailBodyFileName']	= $emailBodyFileName;
-			$ppvNoticeSave['emailSentDatetime']	= date('Y-m-d H:i:s', $emailSentDatetime);
-
-			// save the record in the database
-			// -------------------------------------------------------------------------------
-			$this->PpvNotice->create();
-			$this->PpvNotice->save($ppvNoticeSave);
-			
-			// update ticket status if required
-			// -------------------------------------------------------------------------------
-			$newTicketStatus = false;
-			if ($ppvNoticeTypeId == 1) {
-				$newTicketStatus = 4;		
-			} elseif ($ppvNoticeTypeId == 2) {
-				$newTicketStatus = 3;
-			}
-			if ($newTicketStatus) {
-				$this->updateTicketStatus($ticketId, $newTicketStatus);
-			}
+			$this->sendPpvEmail('devmail@luxurylink.com', 'alee@luxurylink.com', $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId);	
 		}
 		
 		if ($returnString) {
@@ -473,7 +429,59 @@ class WebServiceTicketsController extends WebServicesController
 		}
 	}
 		
+	function sendPpvEmail($emailTo, $emailCc, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId) {
+		
+		// send out ppv and winner notification emails
+		// -------------------------------------------------------------------------------
+		$emailTo = 'devmail@luxurylink.com';
+		$emailFrom = 'LuxuryLink.com<auction@luxurylink.com>';
+		$emailHeaders = "From: $emailFrom\r\n";
+    	$emailHeaders.= "Content-type: text/html\r\n";
+		
+		@mail($emailTo, $emailSubject, $emailBody, $emailHeaders);
+		
+		// below is for logging the email and updating the ticket
+		// -------------------------------------------------------------------------------
+		
+		$emailSentDatetime = strtotime('now');
+		$emailBodyFileName = $ticketId . '_' . $ppvNoticeTypeId . '_' . $emailSentDatetime . '.html';
+		
+		// save the email as a flat file on /vendors/email_msgs/toolbox_sent_messages
+		// -------------------------------------------------------------------------------
+		$fh = fopen("../vendors/email_msgs/toolbox_sent_messages/$emailBodyFileName", 'w');
+		fwrite($fh, $emailBody);
+		fclose($fh);
+		
+		$ppvNoticeSave = array();
+		$ppvNoticeSave['ppvNoticeTypeId']	= $ppvNoticeTypeId; 
+		$ppvNoticeSave['ticketId'] 			= $ticketId;
+		$ppvNoticeSave['emailTo']			= $emailTo;
+		$ppvNoticeSave['emailFrom']			= $emailFrom;
+		$ppvNoticeSave['emailCc']			= $emailCc;
+		$ppvNoticeSave['emailSubject']		= $emailSubject;
+		$ppvNoticeSave['emailBodyFileName']	= $emailBodyFileName;
+		$ppvNoticeSave['emailSentDatetime']	= date('Y-m-d H:i:s', $emailSentDatetime);
+
+		// save the record in the database
+		// -------------------------------------------------------------------------------
+		$this->PpvNotice->create();
+		$this->PpvNotice->save($ppvNoticeSave);
+		
+		// update ticket status if required
+		// -------------------------------------------------------------------------------
+		$newTicketStatus = false;
+		if ($ppvNoticeTypeId == 1) {
+			$newTicketStatus = 4;		
+		} elseif ($ppvNoticeTypeId == 2) {
+			$newTicketStatus = 3;
+		}
+		if ($newTicketStatus) {
+			$this->updateTicketStatus($ticketId, $newTicketStatus);
+		}
+	}
+		
 	function updateTicketStatus($ticketId, $newStatusId) {
+		
 		$updateTicket = array();
 		$updateTicket['ticketId'] = $ticketId;
 		$updateTicket['ticketStatusId'] = $newStatusId;
@@ -485,6 +493,7 @@ class WebServiceTicketsController extends WebServicesController
 	}
 		
 	function findValidUserPaymentSetting($userId) {
+		
 		$ups = $this->User->query("select * from userPaymentSetting as UserPaymentSetting where userId = $userId and inactive = 0 order by primaryCC desc, expYear desc");
 		$year_now = date('Y');
 		$month_now = date('m');
@@ -504,6 +513,7 @@ class WebServiceTicketsController extends WebServicesController
 	}
 
 	function addTrackPending($trackId, $pendingAmount) {
+		
 		$track = $this->Track->read(null, $trackId);		
 		if (!empty($track)) {
 			$track['Track']['pending'] += $pendingAmount;
