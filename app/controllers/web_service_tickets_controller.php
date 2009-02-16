@@ -298,7 +298,7 @@ class WebServiceTicketsController extends WebServicesController
 
 			$debug_tmp = "TICKET\n\n";
 			$debug_tmp.= print_r($ticketData, true);
-			$debug_tmp.= "\n\PACKAGE\n\n";
+			$debug_tmp.= "\n\nPACKAGE\n\n";
 			$debug_tmp.= print_r($packageData, true);
 			$debug_tmp.= "\n\nOFFER\n\n";
 			$debug_tmp.= print_r($offerData, true);
