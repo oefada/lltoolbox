@@ -298,7 +298,7 @@ class WebServiceTicketsController extends WebServicesController
 
 			$debug_tmp = "TICKET\n\n";
 			$debug_tmp.= print_r($ticketData, true);
-			$debug_tmp.= "\n\nCLIENTS\n\n";
+			$debug_tmp.= "\n\PACKAGE\n\n";
 			$debug_tmp.= print_r($packageData, true);
 			$debug_tmp.= "\n\nOFFER\n\n";
 			$debug_tmp.= print_r($offerData, true);
@@ -333,7 +333,7 @@ class WebServiceTicketsController extends WebServicesController
 			$userPhone			= !$userPhone && $userWorkPhone ? $userWorkPhone : $userPhone;
 			
 			$offerId			= $offerData['offerId'];
-			$packageName 		= $packageData['packageName'];
+			$packageName 		= strip_tags($liveOfferData['offerName']);
 			$packageSubtitle	= $packageData['subtitle'];
 			
 			$packageIncludes 	= $packageData['packageIncludes'];
@@ -365,9 +365,9 @@ class WebServiceTicketsController extends WebServicesController
 			// -------------------------------------------------------------------------------
 			//$clients			= array();
 			//$clients[]		= $clientData;
-			//$clientId			= $clientData['clientId'];
-			//$clientName 		= $clientData['name'];
-			//$oldProductId		= $clientData['oldProductId'];
+			$clientId			= $clientData[0]['Client']['clientId'];
+			$clientName 		= $clientData[0]['Client']['name'];
+			$oldProductId		= $clientData[0]['Client']['oldProductId'];
 	
 			// auction facilitator
 			// -------------------------------------------------------------------------------
