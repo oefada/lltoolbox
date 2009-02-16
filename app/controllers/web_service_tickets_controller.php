@@ -321,6 +321,7 @@ class WebServiceTicketsController extends WebServicesController
 			$userId 			= $userData['userId'];
 			$userFirstName		= ucwords(strtolower($userData['firstName']));
 			$userLastName		= ucwords(strtolower($userData['lastName']));
+			$emailName			= "$userFirstName $userLastName";
 			$userEmail 			= $userData['email'];
 			
 			$userWorkPhone		= $userData['workPhone'];
@@ -331,12 +332,6 @@ class WebServiceTicketsController extends WebServicesController
 			$userPhone			= !$userPhone && $userMobilePhone ? $userMobilePhone : $userPhone;
 			$userPhone			= !$userPhone && $userWorkPhone ? $userWorkPhone : $userPhone;
 			
-			//$clients			= array();
-			//$clients[]		= $clientData;
-			//$clientId			= $clientData['clientId'];
-			//$clientName 		= $clientData['name'];
-			//$oldProductId		= $clientData['oldProductId'];
-			
 			$offerId			= $offerData['offerId'];
 			$packageName 		= $packageData['packageName'];
 			$packageSubtitle	= $packageData['subtitle'];
@@ -346,6 +341,8 @@ class WebServiceTicketsController extends WebServicesController
 			$validityNote		= $packageData['validityDisclaimer'];
 			
 			$offerTypeId		= $ticketData['offerTypeId'];
+			$offerTypeName		= $offerType[$offerTypeId];
+			$offerTypeBidder	= ($offerTypeId == 1) ? 'Winner' : 'Winning Bidder';
 			$offerEndDate		= date('M d Y H:i A', strtotime($liveOfferData['endDate']));
 			$billingPrice		= number_format($ticketData['billingPrice'], 2, '.', ',');
 			$llFeeAmount		= in_array($offerTypeId, array(1,2,6)) ? 30 : 40;
@@ -364,54 +361,63 @@ class WebServiceTicketsController extends WebServicesController
 			$guarantee			= false;
 			$wholesale			= 0;
 	
+			// fetch client contacts
+			// -------------------------------------------------------------------------------
+			//$clients			= array();
+			//$clients[]		= $clientData;
+			//$clientId			= $clientData['clientId'];
+			//$clientName 		= $clientData['name'];
+			//$oldProductId		= $clientData['oldProductId'];
+	
 			// auction facilitator
 			// -------------------------------------------------------------------------------
 			$is_auc_fac			= false;
+		}
 
-			ob_start();
-
-			switch ($ppvNoticeTypeId) {
-				case 1:
-					// send out res confirmation
-					include('../vendors/email_msgs/ppv/conf_ppv.html');
-					$emailSubject = 'testing conf ppv';
-					break;
-				case 2:
-					// send out res request
-					include('../vendors/email_msgs/ppv/res_ppv.html');
-					$emailSubject = 'testing res ppv';
-					break;
-				case 3:
-					include('../vendors/email_msgs/ppv/winner_ppv.html');
-					$emailSubject = 'testing winner ppv';
-					break;
-				case 4: 
-					include('../vendors/email_msgs/ppv/client_ppv.html');
-					$emailSubject = 'testing client ppv';
-					break;
-				case 5:
-					include('../vendors/email_msgs/notifications/winner_notification.html');
-					$emailSubject = 'testing winn notif';
-					break;
-				case 6:
-					include('../vendors/email_msgs/notifications/winner_notification_w_checkout.html');
-					$emailSubject = 'testing winn notif w checkout';
-					break;
-				case 7:
-					include('../vendors/email_msgs/notifications/winner_notification_decline_cc.html');
-					$emailSubject = 'testing winn notif w decline cc';
-					break;
-				case 8:
-					include('../vendors/email_msgs/notifications/winner_notification_expired_cc.html');
-					$emailSubject = 'testing winn notif w expired cc';
-					break;
-				default:
-					break;
-			}
-			$emailBody = ob_get_clean();
-		} 
+		// fetch template with the vars above
+		// -------------------------------------------------------------------------------
+		ob_start();
+		switch ($ppvNoticeTypeId) {
+			case 1:
+				// send out res confirmation
+				include('../vendors/email_msgs/ppv/conf_ppv.html');
+				$emailSubject = "Luxury Link $offerTypeName Confirmation - $packageName";
+				//break;
+			case 2:
+				// send out res request
+				include('../vendors/email_msgs/ppv/res_ppv.html');
+				$emailSubject = "Luxury Link $offerTypeName Reservation Request";
+				//break;
+			case 3:
+				include('../vendors/email_msgs/ppv/winner_ppv.html');
+				$emailSubject = "Luxury Link Package Purchase Verification - $packageName";
+				//break;
+			case 4: 
+				include('../vendors/email_msgs/ppv/client_ppv.html');
+				$emailSubject = "Luxury Link $offerTypeName Winner - $emailName";
+				//break;
+			case 5:
+				include('../vendors/email_msgs/notifications/winner_notification.html');
+				$emailSubject = "Luxury Link $offerTypeName $offerTypeBidder - $packageName";
+				//break;
+			case 6:
+				include('../vendors/email_msgs/notifications/winner_notification_w_checkout.html');
+				$emailSubject = "Luxury Link $offerTypeName $offerTypeBidder - $packageName";
+				//break;
+			case 7:
+				include('../vendors/email_msgs/notifications/winner_notification_decline_cc.html');
+				$emailSubject = "Luxury Link $offerTypeName $offerTypeBidder - $packageName";
+				//break;
+			case 8:
+				include('../vendors/email_msgs/notifications/winner_notification_expired_cc.html');
+				$emailSubject = "Luxury Link $offerTypeName $offerTypeBidder - $packageName";
+				//break;
+			default:
+				break;
+		}
+		$emailBody = ob_get_clean();
 		
-		// if sending from toolbox tool ppvNotice
+		// if sending from toolbox tool ppvNotice add screen (manual edit and send)
 		// -------------------------------------------------------------------------------
 		if (!$autoBuild && $manualEmailBody) {
 			$emailBody = $manualEmailBody;
@@ -424,6 +430,8 @@ class WebServiceTicketsController extends WebServicesController
 			$this->sendPpvEmail('devmail@luxurylink.com', 'alee@luxurylink.com', $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId);	
 		}
 		
+		// return the string for toolbox ppvNotice add screen (manual edit and send)
+		// -------------------------------------------------------------------------------
 		if ($returnString) {
 			return $emailBody;	
 		}
