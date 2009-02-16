@@ -360,7 +360,7 @@ class WebServiceTicketsController extends WebServicesController
 			
 			$offerTypeArticle	= in_array(strtolower($offerType[$offerTypeId]{0}), array('a','e','i','o','u')) ? 'an' : 'a';
 
-			$ccFour				= substr(aes_decrypt($userPaymentData['UserPaymentSetting']['ccNumber']), -4, 4);
+			$ccFour				= substr(aesDecrypt($userPaymentData['UserPaymentSetting']['ccNumber']), -4, 4);
 			$ccType				= $userPaymentData['UserPaymentSetting']['ccType'];
 
 			// some unknowns
