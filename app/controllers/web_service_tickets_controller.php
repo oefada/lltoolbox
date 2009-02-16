@@ -380,9 +380,9 @@ class WebServiceTicketsController extends WebServicesController
 				$clients[] = $tmp;
 			}
 			
-			$clientId			= $client[0]['clientId'];
-			$clientName 		= $client[0]['name'];
-			$oldProductId		= $client[0]['oldProductId'];
+			$clientId			= $clients[0]['clientId'];
+			$clientName 		= $clients[0]['name'];
+			$oldProductId		= $clients[0]['oldProductId'];
 	
 			mail('devmail@luxurylink.com', 'testing contacts', print_r($clients, true));
 			
