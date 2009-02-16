@@ -295,6 +295,8 @@ class WebServiceTicketsController extends WebServicesController
 			$clientData			= $clientLoaPackageRel = $this->ClientLoaPackageRel->findAllBypackageid($ticket['Ticket']['packageId']);
 			$liveOfferData 		= $liveOffer[0]['LiveOffer'];
 			$offerType			= $this->OfferType->find('list');
+			$clientContacts		= array();
+			
 
 			$debug_tmp = "TICKET\n\n";
 			$debug_tmp.= print_r($ticketData, true);
@@ -363,8 +365,7 @@ class WebServiceTicketsController extends WebServicesController
 	
 			// fetch client contacts
 			// -------------------------------------------------------------------------------
-			//$clients			= array();
-			//$clients[]		= $clientData;
+			$clients			= $clientData;
 			$clientId			= $clientData[0]['Client']['clientId'];
 			$clientName 		= $clientData[0]['Client']['name'];
 			$oldProductId		= $clientData[0]['Client']['oldProductId'];
