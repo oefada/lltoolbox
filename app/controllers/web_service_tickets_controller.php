@@ -464,7 +464,7 @@ class WebServiceTicketsController extends WebServicesController
 		
 		// if sending from toolbox tool ppvNotice add screen (manual edit and send)
 		// -------------------------------------------------------------------------------
-		if (!$autoBuild && $manualEmailBody) {
+		if ($manualEmailBody) {
 			$emailBody = $manualEmailBody;
 		}
 	
