@@ -16,13 +16,17 @@ class CurrencyShell extends Shell {
     
     function prepare_api_url() {
         $currencyList = $this->Currency->find('list', array('fields' => 'currencyCode'));
-        
+
         $this->currencyCodeList = $currencyList;
         
         $currencyString = '';
         foreach ($currencyList as $currencyCode) {
             if ($currencyCode == 'USD') { continue; }
             $currencyString .= $currencyCode.'USD'.'=X+';
+        }
+        
+        if (empty($currencyString)) {
+            die('No currency codes found');
         }
         
         return $this->api_url.'&f='.$this->api_format.'&'.'s='.$currencyString;
@@ -45,6 +49,7 @@ class CurrencyShell extends Shell {
             if (empty($line)) {
                 continue;
             }
+            
             
             $parts = explode(',', $line);
 
