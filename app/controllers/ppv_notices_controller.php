@@ -34,7 +34,6 @@ class PpvNoticesController extends AppController {
 				$data = array();
 				$data['ticketId'] 			= $this->data['PpvNotice']['ticketId'];
 				$data['send'] 				= 1;
-				$data['autoBuild'] 			= 0;
 				$data['manualEmailBody']	= $this->data['PpvNotice']['emailBody'];
 				$data['returnString'] 		= 0;
 				$data['ppvNoticeTypeId'] 	= $this->data['PpvNotice']['ppvNoticeTypeId'];
@@ -54,7 +53,6 @@ class PpvNoticesController extends AppController {
 		$data = array();
 		$data['ticketId'] 			= $ticketId;
 		$data['send'] 				= 0;
-		$data['autoBuild'] 			= 1;
 		$data['manualEmailBody']	= 0;
 		$data['returnString'] 		= 1;
 		$data['ppvNoticeTypeId'] 	= $id;
