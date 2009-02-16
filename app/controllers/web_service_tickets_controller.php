@@ -295,9 +295,7 @@ class WebServiceTicketsController extends WebServicesController
 			$clientData			= $clientLoaPackageRel = $this->ClientLoaPackageRel->findAllBypackageid($ticket['Ticket']['packageId']);
 			$liveOfferData 		= $liveOffer[0]['LiveOffer'];
 			$offerType			= $this->OfferType->find('list');
-			$clientContacts		= array();
-			
-
+		
 			$debug_tmp = "TICKET\n\n";
 			$debug_tmp.= print_r($ticketData, true);
 			$debug_tmp.= "\n\nPACKAGE\n\n";
@@ -365,10 +363,28 @@ class WebServiceTicketsController extends WebServicesController
 	
 			// fetch client contacts
 			// -------------------------------------------------------------------------------
-			$clients			= $clientData;
-			$clientId			= $clientData[0]['Client']['clientId'];
-			$clientName 		= $clientData[0]['Client']['name'];
-			$oldProductId		= $clientData[0]['Client']['oldProductId'];
+			//$clients			= $clientData;
+			//$clientId			= $clientData[0]['Client']['clientId'];
+			//$clientName 		= $clientData[0]['Client']['name'];
+			//$oldProductId		= $clientData[0]['Client']['oldProductId'];
+			
+			$clients		 	= array();
+			foreach ($clientData as $k => $v) {
+				$tmp = $v['Client'];
+				$tmp_result = $this->Ticket->query('SELECT * FROM clientContact WHERE clientId = ' . $v['Client']['clientId'] . ' ORDER BY primaryContact');
+				foreach ($tmp_result as $a = > $b) {
+					$contacts = array();
+					$contacts['ppv_name'] 			= $b['clientContact']['name'];
+					$contacts['ppv_title'] 			= $b['clientContact']['businessTitle'];
+					$contacts['ppv_email_address'] 	= $b['clientContact']['emailAddress']; 
+					$contacts['ppv_phone'] 			= $b['clientContact']['phone'];
+					$contacts['ppv_fax'] 			= $b['clientContact']['fax'];
+					$tmp['contacts'][] = $contacts;
+				}
+				$clients[] = $tmp;
+			}
+	
+			mail('devmail@luxurylink.com', 'testing contacts', print_r($clients, true));
 	
 			// auction facilitator
 			// -------------------------------------------------------------------------------
@@ -428,7 +444,7 @@ class WebServiceTicketsController extends WebServicesController
 		// send the email out!
 		// -------------------------------------------------------------------------------
 		if ($send) {
-			$this->sendPpvEmail('devmail@luxurylink.com', 'alee@luxurylink.com', $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId);	
+			$this->sendPpvEmail('devmail@luxurylink.com', 'alee@luxurylink.com', 'alee@luxurylink.com', $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId);	
 		}
 		
 		// return the string for toolbox ppvNotice add screen (manual edit and send)
@@ -438,7 +454,7 @@ class WebServiceTicketsController extends WebServicesController
 		}
 	}
 		
-	function sendPpvEmail($emailTo, $emailCc, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId) {
+	function sendPpvEmail($emailTo, $emailCc, $emailBcc, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId) {
 		
 		// send out ppv and winner notification emails
 		// -------------------------------------------------------------------------------
