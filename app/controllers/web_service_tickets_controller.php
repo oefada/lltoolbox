@@ -372,7 +372,7 @@ class WebServiceTicketsController extends WebServicesController
 			foreach ($clientData as $k => $v) {
 				$tmp = $v['Client'];
 				$tmp_result = $this->Ticket->query('SELECT * FROM clientContact WHERE clientId = ' . $v['Client']['clientId'] . ' ORDER BY primaryContact');
-				foreach ($tmp_result as $a = > $b) {
+				foreach ($tmp_result as $a => $b) {
 					$contacts = array();
 					$contacts['ppv_name'] 			= $b['clientContact']['name'];
 					$contacts['ppv_title'] 			= $b['clientContact']['businessTitle'];
