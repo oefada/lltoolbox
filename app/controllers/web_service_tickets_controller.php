@@ -270,9 +270,6 @@ class WebServiceTicketsController extends WebServicesController
 		$manualEmailBody	= isset($params['manualEmailBody']) ? $params['manualEmailBody'] : null;
 		$ppvNoticeTypeId	= isset($params['ppvNoticeTypeId']) ? $params['ppvNoticeTypeId'] : null;
 		
-		//testing
-		$ppvNoticeTypeId = 1;
-		
 		// TODO: error checking for params
 		
 		// retrieve data to fill out the email templates
@@ -469,7 +466,6 @@ class WebServiceTicketsController extends WebServicesController
 		// -------------------------------------------------------------------------------
 		if (!$autoBuild && $manualEmailBody) {
 			$emailBody = $manualEmailBody;
-			$emailSubject = 'manual sending';	
 		}
 	
 		// send the email out!
