@@ -4,7 +4,6 @@
 ?>
 <div class="paymentDetails form">
 <?php echo $form->create('PaymentDetail', array('url' => "/tickets/{$ticket['Ticket']['ticketId']}/paymentDetails/add"));?>
-<?php //echo $ajax->form('add', 'post', array('url' => "/tickets/{$ticket['Ticket']['ticketId']}/paymentDetails/add", 'update' => 'MB_content', 'model' => 'PaymentDetail', 	'complete' => 'closeModalbox()'));?>
 	
 	<?php echo $form->input('ticketId', array('type' => 'hidden', 'value' => $ticket['Ticket']['ticketId']));?>
 	<?php echo $form->input('userId', array('type' => 'hidden', 'value' => $ticket['Ticket']['userId']));?>
