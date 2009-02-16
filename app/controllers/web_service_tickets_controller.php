@@ -389,7 +389,7 @@ class WebServiceTicketsController extends WebServicesController
 			$clientName 		= $clients[0]['name'];
 			$oldProductId		= $clients[0]['oldProductId'];
 	
-			mail('devmail@luxurylink.com', testing contacts', print_r($clients, true));
+			mail('devmail@luxurylink.com', 'testing contacts', print_r($clients, true));
 			
 			// auction facilitator
 			// -------------------------------------------------------------------------------
