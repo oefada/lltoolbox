@@ -363,11 +363,6 @@ class WebServiceTicketsController extends WebServicesController
 	
 			// fetch client contacts
 			// -------------------------------------------------------------------------------
-			//$clients			= $clientData;
-			//$clientId			= $clientData[0]['Client']['clientId'];
-			//$clientName 		= $clientData[0]['Client']['name'];
-			//$oldProductId		= $clientData[0]['Client']['oldProductId'];
-			
 			$clients		 	= array();
 			
 			foreach ($clientData as $k => $v) {
@@ -384,6 +379,10 @@ class WebServiceTicketsController extends WebServicesController
 				}
 				$clients[] = $tmp;
 			}
+			
+			$clientId			= $client[0]['clientId'];
+			$clientName 		= $client[0]['name'];
+			$oldProductId		= $client[0]['oldProductId'];
 	
 			mail('devmail@luxurylink.com', 'testing contacts', print_r($clients, true));
 			
