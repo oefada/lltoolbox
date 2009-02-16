@@ -398,7 +398,7 @@ class WebServiceTicketsController extends WebServicesController
 			// northern california - destinationId = 81
 			// italy - destinationId = 6
 			$auc_fac_result = $this->Ticket->query('SELECT count(*) AS auc_count FROM clientDestinationRel WHERE clientId = ' . $clientId . ' AND destinationId IN (6,81,82)');
-			mail('devmail@luxurylink.com','auc_fac', print_r($auc_fac_result, true));
+			$is_auc_fac = ($auc_fac_result[0][0]['auc_count']) ? true : false;
 			
 			// auction facilitator overrides
 			// -------------------------------------------------------------------------------
