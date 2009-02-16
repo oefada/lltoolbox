@@ -280,7 +280,7 @@ class WebServiceTicketsController extends WebServicesController
 			$this->Address->recursive = -1;
 	
 			$this->ClientLoaPackageRel->recursive = 0;
-			$clientLoaPackageRel = $this->ClientLoaPackageRel->findBypackageid($ticket['Ticket']['packageId']);
+			$clientLoaPackageRel = $this->ClientLoaPackageRel->findAllBypackageid($ticket['Ticket']['packageId']);
 		
 			$liveOffer	= $this->Ticket->query("select * from offerLive as LiveOffer where offerId = " . $ticket['Ticket']['offerId'] . " limit 1");
 		
@@ -296,7 +296,7 @@ class WebServiceTicketsController extends WebServicesController
 			$loaData 			= $clientLoaPackageRel['Loa'];
 			$liveOfferData 		= $liveOffer[0]['LiveOffer'];
 			$offerType			= $this->OfferType->find('list');
-	
+				
 			$debug_tmp = "TICKET\n\n";
 			$debug_tmp.= print_r($ticketData, true);
 			$debug_tmp.= "\n\nPACKAGE\n\n";
