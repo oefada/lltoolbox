@@ -7,8 +7,7 @@
         theme : "advanced",
         mode : "textareas",
         convert_urls : false,
-        plugins : "fullpage",
-		theme_advanced_buttons3_add : "fullpage"
+		theme_advanced_buttons3_add : "fullpage, forecolor"
     });
 </script> 
 
