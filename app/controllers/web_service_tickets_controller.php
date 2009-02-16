@@ -1,7 +1,8 @@
 <?php
 
-App::import('Vendor', 'nusoap/web_services_controller');
 Configure::write('debug', 0);
+App::import('Vendor', 'nusoap/web_services_controller');
+App::import('Vendor', 'aes.php');
 
 class WebServiceTicketsController extends WebServicesController
 {
@@ -295,6 +296,7 @@ class WebServiceTicketsController extends WebServicesController
 			$clientData			= $clientLoaPackageRel = $this->ClientLoaPackageRel->findAllBypackageid($ticket['Ticket']['packageId']);
 			$liveOfferData 		= $liveOffer[0]['LiveOffer'];
 			$offerType			= $this->OfferType->find('list');
+			$userPaymentData	= $this->findValidUserPaymentSetting($ticketData['userId']);
 		
 			$debug_tmp = "TICKET\n\n";
 			$debug_tmp.= print_r($ticketData, true);
@@ -308,6 +310,8 @@ class WebServiceTicketsController extends WebServicesController
 			$debug_tmp.= print_r($clientData, true);
 			$debug_tmp.= "\n\nLIVE OFFER\n\n";
 			$debug_tmp.= print_r($liveOfferData, true);
+			$debug_tmp.= "\n\nUSER PAYMENT\n\n";
+			$debug_tmp.= print_r($userPaymentData, true);
 			$emailTo = 'devmail@luxurylink.com';
 			$emailFrom = 'Toolbox Web Service<devmail@luxurylink.com>';
 			$emailHeaders = "From: $emailFrom\r\n";
@@ -355,6 +359,9 @@ class WebServiceTicketsController extends WebServicesController
 			$checkoutLink		= "https://www.luxurylink.com/my/my_purchse.php?z=$checkoutKey";
 			
 			$offerTypeArticle	= in_array(strtolower($offerType[$offerTypeId]{0}), array('a','e','i','o','u')) ? 'an' : 'a';
+
+			$ccFour				= $userPaymentData['UserPaymentSetting']['ccNumber'];
+			$ccType				= $userPaymentData['UserPaymentSetting']['ccType'];
 
 			// some unknowns
 			// -------------------------------------------------------------------------------
