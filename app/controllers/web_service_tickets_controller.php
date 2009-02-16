@@ -1,8 +1,8 @@
 <?php
 
-Configure::write('debug', 0);
 App::import('Vendor', 'nusoap/web_services_controller');
 //App::import('Vendor', 'aes.php');
+Configure::write('debug', 0);
 
 class WebServiceTicketsController extends WebServicesController
 {
