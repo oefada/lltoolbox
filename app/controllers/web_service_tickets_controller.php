@@ -364,7 +364,6 @@ class WebServiceTicketsController extends WebServicesController
 			// fetch client contacts
 			// -------------------------------------------------------------------------------
 			$clients		 	= array();
-			
 			foreach ($clientData as $k => $v) {
 				$tmp = $v['Client'];
 				$tmp_result = $this->Ticket->query('SELECT * FROM clientContact WHERE clientContactTypeId = 1 and clientId = ' . $v['Client']['clientId'] . ' ORDER BY primaryContact');
@@ -384,7 +383,7 @@ class WebServiceTicketsController extends WebServicesController
 			$clientName 		= $clients[0]['name'];
 			$oldProductId		= $clients[0]['oldProductId'];
 	
-			mail('devmail@luxurylink.com', 'testing contacts', print_r($clients, true));
+			mail('devmail@luxurylink.com', "$clientId and $clientName and $oldProductId " . 'testing contacts', print_r($clients, true));
 			
 			// auction facilitator
 			// -------------------------------------------------------------------------------
