@@ -683,13 +683,10 @@ fieldset div.controlset div {
 	margin-left: 150px;
 }
 
-fieldset div.controlset2 {
-	padding: 0;
-	margin: 0;
-}
-
 fieldset div.controlset2 label,
-fieldset div.controlset2 {
+fieldset div.controlset2,
+fieldset div.controlset3 label,
+fieldset div.controlset3 {
 	display: inline;
 	float: none;
 	padding: 0;
@@ -703,42 +700,24 @@ fieldset div.controlset3 input[type=hidden] {
 	margin: 0;
 }
 
-fieldset div.controlset2 div.checkbox {
+fieldset div.controlset2 div.checkbox,
+fieldset div.controlset3 div.checkbox {
 	float: left;
 	width: 25%;
 	clear: none;
 	margin: 0;
 	padding:  2px;
 }
-fieldset div.controlset2 div.checkbox input {
-    width: auto;
-}
-fieldset div.controlset3 label {
-    float: none;
-    clear: both;
-    padding: 0;
-    text-align: left;
-    width: auto;
-}
-fieldset div.controlset3 div.checkbox {
-    float: left;
-    clear: none;
-    padding: 0;
-    margin: 0;
-}
-fieldset div.controlset3 div.checkbox label {
-    text-align: left;
-    float: left;
-    clear: none;
-    width: auto;
-    padding: 0 3px 0 0;
-}
+
+fieldset div.controlset2 div.checkbox input,
 fieldset div.controlset3 div.checkbox input {
-	float: left;
-	clear: none;
-	margin: 0;
-	padding:  2px;
+    width: auto;
 }
+
+fieldset div.controlset3 div.checkbox {
+	width: auto;
+}
+
 div.buttonrow {
 	margin-left: 170px;
 }
