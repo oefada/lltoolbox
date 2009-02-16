@@ -274,7 +274,7 @@ class WebServiceTicketsController extends WebServicesController
 		
 		// retrieve data to fill out the email templates
 		// -------------------------------------------------------------------------------
-		if ($autoBuild) {
+		if ($autoBuild || 1) {
 			
 			$this->Ticket->recursive = 0;
 			$this->Address->recursive = -1;
