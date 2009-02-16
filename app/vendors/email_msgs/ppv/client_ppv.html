@@ -14,7 +14,7 @@ Ticket Reference ID #<?php echo $ticketId;?><br />
 
 <?php if ($offerTypeId == 1 || $offerTypeId == 6) : ?>		
 	
-		<p>Dear <?php echo $clients[0]['contactSalutation'];?>,</p>
+		<p>Dear <?php echo $clientName;?>,</p>
 		
 		<p>
 		The Luxury Link <?php echo $packageName;?>, <?php echo $packageSubtitle;?>, closed <?php echo $offerEndDate;?>. The winning bidder, 
@@ -24,7 +24,7 @@ Ticket Reference ID #<?php echo $ticketId;?><br />
 	
 <?php elseif ($offerTypeId == 2) : ?>		
 	
-		<p>Dear <?php echo $clients[0]['contactSalutation'];?>,</p>
+		<p>Dear <?php echo $clientName;?>,</p>
 		
 		<p>
 	    Congratulations on a successful Luxury Link Best Shot Auction for <?php echo $packageName;?>.
