@@ -149,7 +149,6 @@ class WebServiceTicketsController extends WebServicesController
 			$ppv_settings = array();
 			$ppv_settings['ticketId'] 			= $ticketId;
 			$ppv_settings['send'] 				= 1;
-			$ppv_settings['autoBuild']			= 1;
 			$ppv_settings['manualEmailBody']	= 0;
 			$ppv_settings['returnString']		= 0;
 			
@@ -265,7 +264,6 @@ class WebServiceTicketsController extends WebServicesController
 		// -------------------------------------------------------------------------------
 		$ticketId 			= isset($params['ticketId']) ? $params['ticketId'] : null;
 		$send 				= isset($params['send']) ? $params['send'] : false;
-		$autoBuild			= isset($params['autoBuild']) ? $params['autoBuild'] : false;
 		$returnString 		= isset($params['returnString']) ? $params['returnString'] : false;
 		$manualEmailBody	= isset($params['manualEmailBody']) ? $params['manualEmailBody'] : null;
 		$ppvNoticeTypeId	= isset($params['ppvNoticeTypeId']) ? $params['ppvNoticeTypeId'] : null;
@@ -274,141 +272,139 @@ class WebServiceTicketsController extends WebServicesController
 		
 		// retrieve data to fill out the email templates
 		// -------------------------------------------------------------------------------
-		if ($autoBuild || 1) {
 			
-			$this->Ticket->recursive = 0;
-			$this->Address->recursive = -1;
-			$this->ClientLoaPackageRel->recursive = 0;
-			$ticket = $this->Ticket->read(null, $ticketId);
-			$liveOffer	= $this->Ticket->query("select * from offerLive as LiveOffer where offerId = " . $ticket['Ticket']['offerId'] . " limit 1");
-		
-			// data arrays
-			// -------------------------------------------------------------------------------
-			$ticketData 		= $ticket['Ticket'];
-			$packageData 		= $ticket['Package'];
-			$offerData 			= $ticket['Offer'];
-			$userData 			= $ticket['User'];
-			$userAddressData	= $this->Address->findByuserid($userData['userId']);
-			$userAddressData	= $userAddressData['Address'];
-			$clientData			= $clientLoaPackageRel = $this->ClientLoaPackageRel->findAllBypackageid($ticket['Ticket']['packageId']);
-			$liveOfferData 		= $liveOffer[0]['LiveOffer'];
-			$offerType			= $this->OfferType->find('list');
-			$userPaymentData	= $this->findValidUserPaymentSetting($ticketData['userId']);
-		
-			/*
-			$debug_tmp = "TICKET\n\n";
-			$debug_tmp.= print_r($ticketData, true);
-			$debug_tmp.= "\n\nPACKAGE\n\n";
-			$debug_tmp.= print_r($packageData, true);
-			$debug_tmp.= "\n\nOFFER\n\n";
-			$debug_tmp.= print_r($offerData, true);
-			$debug_tmp.= "\n\nUSER DATA\n\n";
-			$debug_tmp.= print_r($userData, true);
-			$debug_tmp.= "\n\nCLIENT DATA\n\n";
-			$debug_tmp.= print_r($clientData, true);
-			$debug_tmp.= "\n\nLIVE OFFER\n\n";
-			$debug_tmp.= print_r($liveOfferData, true);
-			$debug_tmp.= "\n\nUSER PAYMENT\n\n";
-			$debug_tmp.= print_r($userPaymentData, true);
-			$emailTo = 'devmail@luxurylink.com';
-			$emailFrom = 'Toolbox Web Service<devmail@luxurylink.com>';
-			$emailHeaders = "From: $emailFrom\r\n";
-			$emailSubject = "PPV SENT";
-			$emailBody = $debug_tmp;
-			@mail($emailTo, $emailSubject, $emailBody, $emailHeaders);
-			*/
+		$this->Ticket->recursive = 0;
+		$this->Address->recursive = -1;
+		$this->ClientLoaPackageRel->recursive = 0;
+		$ticket = $this->Ticket->read(null, $ticketId);
+		$liveOffer	= $this->Ticket->query("select * from offerLive as LiveOffer where offerId = " . $ticket['Ticket']['offerId'] . " limit 1");
 	
-			// vars for email templates
-			// -------------------------------------------------------------------------------
-			
-			$userId 			= $userData['userId'];
-			$userFirstName		= ucwords(strtolower($userData['firstName']));
-			$userLastName		= ucwords(strtolower($userData['lastName']));
-			$emailName			= "$userFirstName $userLastName";
-			$userEmail 			= $userData['email'];
-			
-			$userWorkPhone		= $userData['workPhone'];
-			$userMobilePhone	= $userData['mobilePhone'];
-			$userHomePhone		= $userData['homePhone'];
-			
-			$userPhone			= $userHomePhone;
-			$userPhone			= !$userPhone && $userMobilePhone ? $userMobilePhone : $userPhone;
-			$userPhone			= !$userPhone && $userWorkPhone ? $userWorkPhone : $userPhone;
-			
-			$offerId			= $offerData['offerId'];
-			$packageName 		= strip_tags($liveOfferData['offerName']);
-			$packageSubtitle	= $packageData['subtitle'];
-			
-			$packageIncludes 	= $packageData['packageIncludes'];
-			$legalText			= $packageData['termsAndConditions'];
-			$validityNote		= $packageData['validityDisclaimer'];
-			
-			$offerTypeId		= $ticketData['offerTypeId'];
-			$offerTypeName		= $offerType[$offerTypeId];
-			$offerTypeBidder	= ($offerTypeId == 1) ? 'Winner' : 'Winning Bidder';
-			$offerEndDate		= date('M d Y H:i A', strtotime($liveOfferData['endDate']));
-			$billingPrice		= number_format($ticketData['billingPrice'], 2, '.', ',');
-			$llFeeAmount		= in_array($offerTypeId, array(1,2,6)) ? 30 : 40;
-			$llFee				= number_format($llFeeAmount, 2, '.', ',');
-			$totalPrice			= number_format(($ticketData['billingPrice'] + $llFeeAmount),  2, '.', ',');
-			$maxNumWinners		= $liveOfferData['numWinners'];
-			
-			$checkoutHash		= md5($ticketId . $userId . $offerId . 'LL_L33T_KEY');
-			$checkoutKey		= base64_encode(serialize(array('ticketId' => $ticketId, 'userId' => $userId, 'offerId' => $offerId, 'zKey' => $checkoutHash)));
-			$checkoutLink		= "https://www.luxurylink.com/my/my_purchse.php?z=$checkoutKey";
-			
-			$offerTypeArticle	= in_array(strtolower($offerType[$offerTypeId]{0}), array('a','e','i','o','u')) ? 'an' : 'a';
+		// data arrays
+		// -------------------------------------------------------------------------------
+		$ticketData 		= $ticket['Ticket'];
+		$packageData 		= $ticket['Package'];
+		$offerData 			= $ticket['Offer'];
+		$userData 			= $ticket['User'];
+		$userAddressData	= $this->Address->findByuserid($userData['userId']);
+		$userAddressData	= $userAddressData['Address'];
+		$clientData			= $clientLoaPackageRel = $this->ClientLoaPackageRel->findAllBypackageid($ticket['Ticket']['packageId']);
+		$liveOfferData 		= $liveOffer[0]['LiveOffer'];
+		$offerType			= $this->OfferType->find('list');
+		$userPaymentData	= $this->findValidUserPaymentSetting($ticketData['userId']);
+	
+		/*
+		$debug_tmp = "TICKET\n\n";
+		$debug_tmp.= print_r($ticketData, true);
+		$debug_tmp.= "\n\nPACKAGE\n\n";
+		$debug_tmp.= print_r($packageData, true);
+		$debug_tmp.= "\n\nOFFER\n\n";
+		$debug_tmp.= print_r($offerData, true);
+		$debug_tmp.= "\n\nUSER DATA\n\n";
+		$debug_tmp.= print_r($userData, true);
+		$debug_tmp.= "\n\nCLIENT DATA\n\n";
+		$debug_tmp.= print_r($clientData, true);
+		$debug_tmp.= "\n\nLIVE OFFER\n\n";
+		$debug_tmp.= print_r($liveOfferData, true);
+		$debug_tmp.= "\n\nUSER PAYMENT\n\n";
+		$debug_tmp.= print_r($userPaymentData, true);
+		$emailTo = 'devmail@luxurylink.com';
+		$emailFrom = 'Toolbox Web Service<devmail@luxurylink.com>';
+		$emailHeaders = "From: $emailFrom\r\n";
+		$emailSubject = "PPV SENT";
+		$emailBody = $debug_tmp;
+		@mail($emailTo, $emailSubject, $emailBody, $emailHeaders);
+		*/
 
-			$ccFour				= substr(aesDecrypt($userPaymentData['UserPaymentSetting']['ccNumber']), -4, 4);
-			$ccType				= $userPaymentData['UserPaymentSetting']['ccType'];
+		// vars for email templates
+		// -------------------------------------------------------------------------------
+		
+		$userId 			= $userData['userId'];
+		$userFirstName		= ucwords(strtolower($userData['firstName']));
+		$userLastName		= ucwords(strtolower($userData['lastName']));
+		$emailName			= "$userFirstName $userLastName";
+		$userEmail 			= $userData['email'];
+		
+		$userWorkPhone		= $userData['workPhone'];
+		$userMobilePhone	= $userData['mobilePhone'];
+		$userHomePhone		= $userData['homePhone'];
+		
+		$userPhone			= $userHomePhone;
+		$userPhone			= !$userPhone && $userMobilePhone ? $userMobilePhone : $userPhone;
+		$userPhone			= !$userPhone && $userWorkPhone ? $userWorkPhone : $userPhone;
+		
+		$offerId			= $offerData['offerId'];
+		$packageName 		= strip_tags($liveOfferData['offerName']);
+		$packageSubtitle	= $packageData['subtitle'];
+		
+		$packageIncludes 	= $packageData['packageIncludes'];
+		$legalText			= $packageData['termsAndConditions'];
+		$validityNote		= $packageData['validityDisclaimer'];
+		
+		$offerTypeId		= $ticketData['offerTypeId'];
+		$offerTypeName		= $offerType[$offerTypeId];
+		$offerTypeBidder	= ($offerTypeId == 1) ? 'Winner' : 'Winning Bidder';
+		$offerEndDate		= date('M d Y H:i A', strtotime($liveOfferData['endDate']));
+		$billingPrice		= number_format($ticketData['billingPrice'], 2, '.', ',');
+		$llFeeAmount		= in_array($offerTypeId, array(1,2,6)) ? 30 : 40;
+		$llFee				= number_format($llFeeAmount, 2, '.', ',');
+		$totalPrice			= number_format(($ticketData['billingPrice'] + $llFeeAmount),  2, '.', ',');
+		$maxNumWinners		= $liveOfferData['numWinners'];
+		
+		$checkoutHash		= md5($ticketId . $userId . $offerId . 'LL_L33T_KEY');
+		$checkoutKey		= base64_encode(serialize(array('ticketId' => $ticketId, 'userId' => $userId, 'offerId' => $offerId, 'zKey' => $checkoutHash)));
+		$checkoutLink		= "https://www.luxurylink.com/my/my_purchse.php?z=$checkoutKey";
+		
+		$offerTypeArticle	= in_array(strtolower($offerType[$offerTypeId]{0}), array('a','e','i','o','u')) ? 'an' : 'a';
 
-			// some unknowns
-			// -------------------------------------------------------------------------------
-			$guarantee			= false;
-			$wholesale			= 0;
-	
-			// fetch client contacts
-			// -------------------------------------------------------------------------------
-			$clients		 	= array();
-			foreach ($clientData as $k => $v) {
-				$tmp = $v['Client'];
-				$tmp_result = $this->Ticket->query('SELECT * FROM clientContact WHERE clientContactTypeId = 1 and clientId = ' . $v['Client']['clientId'] . ' ORDER BY primaryContact');
-				foreach ($tmp_result as $a => $b) {
-					$contacts = array();
-					$contacts['ppv_name'] 			= $b['clientContact']['name'];
-					$contacts['ppv_title'] 			= $b['clientContact']['businessTitle'];
-					$contacts['ppv_email_address'] 	= $b['clientContact']['emailAddress']; 
-					$contacts['ppv_phone'] 			= $b['clientContact']['phone'];
-					$contacts['ppv_fax'] 			= $b['clientContact']['fax'];
-					$tmp['contacts'][] = $contacts;
-				}
-				$clients[] = $tmp;
+		$ccFour				= substr(aesDecrypt($userPaymentData['UserPaymentSetting']['ccNumber']), -4, 4);
+		$ccType				= $userPaymentData['UserPaymentSetting']['ccType'];
+
+		// some unknowns
+		// -------------------------------------------------------------------------------
+		$guarantee			= false;
+		$wholesale			= 0;
+
+		// fetch client contacts
+		// -------------------------------------------------------------------------------
+		$clients		 	= array();
+		foreach ($clientData as $k => $v) {
+			$tmp = $v['Client'];
+			$tmp_result = $this->Ticket->query('SELECT * FROM clientContact WHERE clientContactTypeId = 1 and clientId = ' . $v['Client']['clientId'] . ' ORDER BY primaryContact');
+			foreach ($tmp_result as $a => $b) {
+				$contacts = array();
+				$contacts['ppv_name'] 			= $b['clientContact']['name'];
+				$contacts['ppv_title'] 			= $b['clientContact']['businessTitle'];
+				$contacts['ppv_email_address'] 	= $b['clientContact']['emailAddress']; 
+				$contacts['ppv_phone'] 			= $b['clientContact']['phone'];
+				$contacts['ppv_fax'] 			= $b['clientContact']['fax'];
+				$tmp['contacts'][] = $contacts;
 			}
-			
-			$clientId			= $clients[0]['clientId'];
-			$clientName 		= $clients[0]['name'];
-			$oldProductId		= $clients[0]['oldProductId'];
-	
-			//mail('devmail@luxurylink.com', 'testing contacts', print_r($clients, true));
-			
-			// auction facilitator
-			// -------------------------------------------------------------------------------
-			// southern california - destinationId = 82
-			// northern california - destinationId = 81
-			// italy - destinationId = 6
-			$auc_fac_result = $this->Ticket->query('SELECT count(*) AS auc_count FROM clientDestinationRel WHERE clientId = ' . $clientId . ' AND destinationId IN (6,81,82)');
-			$is_auc_fac = ($auc_fac_result[0][0]['auc_count']) ? true : false;
-			
-			// auction facilitator overrides
-			// -------------------------------------------------------------------------------
-			$auc_fac_enable		= array(2138, 2811, 1826, 3401, 2692, 1205, 2076, 762, 3411, 2445, 3418, 654);
-			$auc_fac_disable	= array(1013, 3253);
-			if (in_array($clientId, $auc_fac_disable)) {
-				$is_auc_fac = false;	
-			}
-			if (in_array($clientId, $auc_fac_enable)) {
-				$is_auc_fac = true;	
-			}
+			$clients[] = $tmp;
+		}
+		
+		$clientId			= $clients[0]['clientId'];
+		$clientName 		= $clients[0]['name'];
+		$oldProductId		= $clients[0]['oldProductId'];
+
+		//mail('devmail@luxurylink.com', 'testing contacts', print_r($clients, true));
+		
+		// auction facilitator
+		// -------------------------------------------------------------------------------
+		// southern california - destinationId = 82
+		// northern california - destinationId = 81
+		// italy - destinationId = 6
+		$auc_fac_result = $this->Ticket->query('SELECT count(*) AS auc_count FROM clientDestinationRel WHERE clientId = ' . $clientId . ' AND destinationId IN (6,81,82)');
+		$is_auc_fac = ($auc_fac_result[0][0]['auc_count']) ? true : false;
+		
+		// auction facilitator overrides
+		// -------------------------------------------------------------------------------
+		$auc_fac_enable		= array(2138, 2811, 1826, 3401, 2692, 1205, 2076, 762, 3411, 2445, 3418, 654);
+		$auc_fac_disable	= array(1013, 3253);
+		if (in_array($clientId, $auc_fac_disable)) {
+			$is_auc_fac = false;	
+		}
+		if (in_array($clientId, $auc_fac_enable)) {
+			$is_auc_fac = true;	
 		}
 
 		// fetch template with the vars above
