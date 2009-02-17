@@ -72,7 +72,7 @@ class AppController extends Controller {
 		    Configure::write('debug', '0');
 		}
 
-		if (is_object($this->{$this->modelClass}) && $this->{$this->modelClass}->Behaviors->attached('Logable')) {
+		if (isset($this->{$this->modelClass}) && is_object($this->{$this->modelClass}) && $this->{$this->modelClass}->Behaviors->attached('Logable')) {
      	    $this->{$this->modelClass}->setUserData($user);
      	    $this->{$this->modelClass}->setUserIp($this->_userIp());
      	 }
