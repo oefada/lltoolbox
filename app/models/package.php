@@ -37,7 +37,7 @@ class Package extends AppModel {
 										  'associationForeignKey' => 'formatId'
 									)
 								);
-    var $actsAs = array('Loggable');
+    var $actsAs = array('Logable');
 	function validateDateRanges($data) {
 		$packageStartDate = $this->data['Package']['startDate'];
 		$packageEndDate = $this->data['Package']['endDate'];
