@@ -263,9 +263,9 @@ class WebServicePaymentsController extends WebServicesController
 		// return result whether success or denied
 		// ---------------------------------------------------------------------------
 		if ($processor->ChargeSuccess()) {
-				
+			return 'SUCCESS';
 		} else {
-			
+			return 'FAILURE';
 		}
 	}
 }
