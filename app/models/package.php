@@ -52,6 +52,8 @@ class Package extends AppModel {
 	}
 	function validateNumNightsAddsUp($data) {
 	    $numNights = 0;
+	    
+	    if(isset($this->data['PackageLoaItemRel']) && is_array($this->data['PackageLoaItemRel'])) {
 	    foreach ($this->data['PackageLoaItemRel'] as $item) {
 	        if ($item['loaItemTypeId'] == 1) {
 	            $numNights += $item['quantity'];
@@ -61,13 +63,13 @@ class Package extends AppModel {
 	    if ($numNights == $data['numNights']) {
 	        return true;
 	    }
-
+        }
 	    return false;
 	}
 	function cloneData($data)
 	{
 		$data['Package']['copiedFromPackageId'] = $data['Package']['packageId'];
-	
+	    $data['Package']['packageStatusId'] = 1;
 		foreach ($data['ClientLoaPackageRel'] as &$packageRel):
 			unset($packageRel['clientLoaPackageRelId']);
 		endforeach;
