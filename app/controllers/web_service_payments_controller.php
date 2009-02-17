@@ -225,7 +225,7 @@ class WebServicePaymentsController extends WebServicesController
 		// ---------------------------------------------------------------------------
 		$processor = new Processor($paymentProcessorName);
 		$processor->InitPayment($userPaymentSettingPost, $ticket);	
-		$processor->SubmitPost();  do not turn on until launch!
+		//$processor->SubmitPost();  //do not turn on until launch!
 
 		// save the response from the payment processor
 		// ---------------------------------------------------------------------------
