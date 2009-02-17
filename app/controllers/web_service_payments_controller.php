@@ -109,48 +109,8 @@ class WebServicePaymentsController extends WebServicesController
 			return '0';	
 		}
 	}
-	
+
 	function processPayment($in0) {
-		$data = json_decode($in0, true);
-		if (!isset($data['userId']) || empty($data['userId'])) {
-			return '0';	
-		}
-		if (!isset($data['userPaymentSettingId']) || empty($data['userPaymentSettingId'])) {
-			return '0';	
-		}
-		if (!isset($data['ticketId']) || empty($data['ticketId'])) {
-			return '0';	
-		}
-		
-		$this->Ticket->recursive = -1;
-		$ticket = $this->Ticket->read(null, $data['ticketId']);
-		if (!$ticket) {
-			return '0';	
-		} 
-		if ($ticket['Ticket']['userId'] != $data['userId']) {
-			return '0';
-		}
-		
-		$this->UserPaymentSetting->recursive = -1;
-		$userPaymentSetting = $this->UserPaymentSetting->read(null, $data['userPaymentSettingId']);
-		if (!$userPaymentSetting) {
-			return '0';	
-		}
-		
-		// init payment processing
-		$processor = new Processor('AIM');
-		$processor->InitPayment($userPaymentSetting, $ticket);	
-		//$processor->SubmitPost();
-		
-		if (!$processor->ChargeSuccess()) {
-			return $processor->GetResponseTxt();
-		} else {
-			return 'good charge';	
-		}
-	}
-	
-	// testingdebug
-	function processPayment2($in0) {
 		// ---------------------------------------------------------------------------
 		// SUBMIT PAYMENT VIA PROCESSOR [alee@luxurylink.com]
 		// ---------------------------------------------------------------------------
@@ -161,7 +121,8 @@ class WebServicePaymentsController extends WebServicesController
 		//           (5) initials
 		//			 (6) autoCharge
 		//           (7) saveUps
-		//           (8) userPaymentSettingId or userPaymentSetting data array
+		//			 (8) zAuthHashKey
+		//           (9) userPaymentSettingId or userPaymentSetting data array
 		//
 		// SEND TO PAYMENT PROCESSOR: $userPaymentSettingPost
 		// ---------------------------------------------------------------------------
@@ -191,23 +152,34 @@ class WebServicePaymentsController extends WebServicesController
 		if (!isset($data['saveUps'])) {
 			return '107';	
 		}
+		if (!isset($data['zAuthHashKey']) || !$data['zAuthHashKey']) {
+			return '108';	
+		}
 		
 		// also check the hash for more security
 		// ---------------------------------------------------------------------------
+		$hashCheck = md5('L33T_KEY_LL' . $data['userId'] . $data['ticketId'] . $data['paymentProcessorId'] . $data['paymentAmount'] . $data['initials']);
+		if (trim($hashCheck) !== trim($data['zAuthHashKey'])) {
+			return '109';	
+		}
+		unset($hashCheck);
 		
 		// and even some more error checking.
 		// ---------------------------------------------------------------------------
 		$this->Ticket->recursive = -1;
 		$ticket = $this->Ticket->read(null, $data['ticketId']);
 		if (!$ticket) {
-			return '108';
+			return '110';
 		} 
 		if ($ticket['Ticket']['userId'] != $data['userId']) {
-			return '109';
+			return '111';
 		}
 		
 		// check paymentAmount with ticket.billingPrice for security measure until later
 		// ---------------------------------------------------------------------------
+		if ($ticket['Ticket']['billingPrice'] != $data['paymentAmount']) {
+			return '112';	
+		}
 		
 		// use either the data sent over or retrieve from the db with the id
 		// ---------------------------------------------------------------------------
@@ -225,7 +197,7 @@ class WebServicePaymentsController extends WebServicesController
 		}
 		
 		if (!$userPaymentSettingPost || empty($userPaymentSettingPost)) {
-				return '110';
+				return '113';
 		} 
 		
 		// set which processor to use
@@ -245,11 +217,15 @@ class WebServicePaymentsController extends WebServicesController
 				break;
 		}
 		
+		if (!$paymentProcessorName) {
+			return '114';	
+		}
+		
 		// init payment processing and submit payment
 		// ---------------------------------------------------------------------------
 		$processor = new Processor($paymentProcessorName);
 		$processor->InitPayment($userPaymentSettingPost, $ticket);	
-		//$processor->SubmitPost();  do not turn on until launch!
+		$processor->SubmitPost();  do not turn on until launch!
 
 		// save the response from the payment processor
 		// ---------------------------------------------------------------------------
@@ -281,12 +257,16 @@ class WebServicePaymentsController extends WebServicesController
 
 		$this->PaymentDetail->create();
 		if (!$this->PaymentDetail->save($paymentDetail)) {
-			return '111';
+			return '115';
 		}
 		
-		// okay everything good -- lets send a good response back. either charged or declined
+		// return result whether success or denied
 		// ---------------------------------------------------------------------------
-		return '0';
+		if ($processor->ChargeSuccess()) {
+				
+		} else {
+			
+		}
 	}
 }
 ?>
