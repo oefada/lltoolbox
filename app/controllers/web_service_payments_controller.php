@@ -178,12 +178,12 @@ class WebServicePaymentsController extends WebServicesController
 		$tmp['userPaymentSettingId'] 				= false; //59877;
 		
 		$tmp['userPaymentSetting'] 					= array();
-		$tmp['userPaymentSetting']['ccNumber'] 		= '4640320008760365';
+		$tmp['userPaymentSetting']['ccNumber'] 		= '4640320008760123';
 		$tmp['userPaymentSetting']['ccType'] 		= 'VI';
 		$tmp['userPaymentSetting']['userId'] 		= 1130607;
 		$tmp['userPaymentSetting']['nameOnCard'] 	= 'Arons Lee';
-		$tmp['userPaymentSetting']['expYear'] 		= '2009';
-		$tmp['userPaymentSetting']['expMonth'] 		= '09';
+		$tmp['userPaymentSetting']['expYear'] 		= '2012';
+		$tmp['userPaymentSetting']['expMonth'] 		= '04';
 		$tmp['userPaymentSetting']['address1'] 		= '123 Fake St.';
 		$tmp['userPaymentSetting']['address2'] 		= 'Street 2 Fake Test';
 		$tmp['userPaymentSetting']['city'] 			= 'Fake Test City';
@@ -303,13 +303,13 @@ class WebServicePaymentsController extends WebServicesController
 		$paymentDetail['initials']				= $data['initials'];
 
 		$this->PaymentDetail->create();
-		if ($this->PaymentDetail->save($paymentDetail)) {
-			echo 'yeeeeeeeee save';
-		} else {
-			echo 'nooooooo save';	
+		if (!$this->PaymentDetail->save($paymentDetail)) {
+			return '111';
 		}
 		
-		die('DONE');
+		// okay everything good -- lets send a good response back. either charged or declined
+		// ---------------------------------------------------------------------------
+		return '0';
 	}
 }
 ?>
