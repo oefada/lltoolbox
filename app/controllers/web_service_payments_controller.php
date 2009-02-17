@@ -2,8 +2,8 @@
 
 App::import('Vendor', 'nusoap/web_services_controller');
 
-require(APP.'/vendors/pp/Processor.class.php');
-//require(APP.'/vendors/aes.php');
+require(APP.'/vendors/pp/Processor.class.php');  
+App::Import('Vendor', 'aes.php');
 
 Configure::write('debug', 0);
 
@@ -147,6 +147,169 @@ class WebServicePaymentsController extends WebServicesController
 		} else {
 			return 'good charge';	
 		}
+	}
+	
+	// testingdebug
+	function processPayment2($in0) {
+		// ---------------------------------------------------------------------------
+		// SUBMIT PAYMENT VIA PROCESSOR [alee@luxurylink.com]
+		// ---------------------------------------------------------------------------
+		// REQUIRED: (1) userId
+		//           (2) ticketId
+		//			 (3) paymentProcessorId
+		// 			 (4) paymentAmount
+		//           (5) initials
+		//			 (6) autoCharge
+		//           (7) saveUps
+		//           (8) userPaymentSettingId or userPaymentSetting data array
+		//
+		// SEND TO PAYMENT PROCESSOR: $userPaymentSettingPost
+		//
+		// ---------------------------------------------------------------------------
+		/* START SAMPLE INPUT */
+		$tmp = array();
+		$tmp['userId'] 								= 1130607;
+		$tmp['ticketId'] 							= 132433;
+		$tmp['paymentProcessorId'] 					= 3;
+		$tmp['paymentAmount'] 						= 1.00; // TODO: handle error check on this
+		$tmp['initials'] 							= 'AL';
+		$tmp['autoCharge']							= 0;
+		$tmp['saveUps'] 							= 0;    // TODO: handle this guy
+		$tmp['userPaymentSettingId'] 				= false; //59877;
+		
+		$tmp['userPaymentSetting'] 					= array();
+		$tmp['userPaymentSetting']['ccNumber'] 		= '4640320008760365';
+		$tmp['userPaymentSetting']['ccType'] 		= 'VI';
+		$tmp['userPaymentSetting']['userId'] 		= 1130607;
+		$tmp['userPaymentSetting']['nameOnCard'] 	= 'Arons Lee';
+		$tmp['userPaymentSetting']['expYear'] 		= '2009';
+		$tmp['userPaymentSetting']['expMonth'] 		= '09';
+		$tmp['userPaymentSetting']['address1'] 		= '123 Fake St.';
+		$tmp['userPaymentSetting']['address2'] 		= 'Street 2 Fake Test';
+		$tmp['userPaymentSetting']['city'] 			= 'Fake Test City';
+		$tmp['userPaymentSetting']['state'] 		= 'CA';
+		$tmp['userPaymentSetting']['country'] 		= 'US';
+		$tmp['userPaymentSetting']['postalCode'] 	= 90501;
+		
+		$in0 = json_encode($tmp);
+		/* END SAMPLE INPUT */
+		// ---------------------------------------------------------------------------
+		
+		// good o' error checking my friends.  make this as strict as possible
+		// ---------------------------------------------------------------------------
+		$data = json_decode($in0, true);
+
+		if (!isset($data['userId']) || empty($data['userId'])) {
+			return '101';
+		}
+		if (!isset($data['ticketId']) || empty($data['ticketId'])) {
+			return '102';
+		}
+		if (!isset($data['paymentProcessorId']) || !$data['paymentProcessorId']) {
+			return '103';	
+		}
+		if (!isset($data['paymentAmount']) || !$data['paymentAmount']) {
+			return '104';	
+		}
+		if (!isset($data['initials']) || empty($data['initials'])) {
+			return '105';	
+		}
+		if (!isset($data['autoCharge'])) {
+			return '106';	
+		}
+		if (!isset($data['saveUps'])) {
+			return '107';	
+		}
+		
+		// and even some more error checking.
+		// ---------------------------------------------------------------------------
+		$this->Ticket->recursive = -1;
+		$ticket = $this->Ticket->read(null, $data['ticketId']);
+		if (!$ticket) {
+			return '108';
+		} 
+		if ($ticket['Ticket']['userId'] != $data['userId']) {
+			return '109';
+		}
+		
+		// use either the data sent over or retrieve from the db with the id
+		// ---------------------------------------------------------------------------
+		$userPaymentSettingPost = array();
+		
+		$usingUpsId = false;
+		if (isset($data['userPaymentSettingId']) && !empty($data['userPaymentSettingId']) && is_numeric($data['userPaymentSettingId'])) {
+			$tmp_result = $this->Ticket->query('SELECT * FROM userPaymentSetting WHERE userPaymentSettingId = ' . $data['userPaymentSettingId'] . ' LIMIT 1');
+			$userPaymentSettingPost['UserPaymentSetting'] = $tmp_result[0]['userPaymentSetting'];
+			$userPaymentSettingPost['UserPaymentSetting']['ccNumber'] = aesFullDecrypt($userPaymentSettingPost['UserPaymentSetting']['ccNumber']);
+			unset($tmp_result);
+			$usingUpsId = true;
+		} else {
+			$userPaymentSettingPost['UserPaymentSetting'] = $data['userPaymentSetting'];	
+		}
+		
+		if (!$userPaymentSettingPost || empty($userPaymentSettingPost)) {
+				return '110';
+		} 
+		
+		// set which processor to use
+		// ---------------------------------------------------------------------------
+		$paymentProcessorName = false;
+		switch($data['paymentProcessorId']) {
+			case 1:
+				$paymentProcessorName = 'NOVA';
+				break;
+			case 3:
+				$paymentProcessorName = 'PAYPAL';
+				break;
+			case 4:
+				$paymentProcessorName = 'AIM';
+				break;
+			default:
+				break;
+		}
+		
+		// init payment processing and submit payment
+		// ---------------------------------------------------------------------------
+		$processor = new Processor($paymentProcessorName);
+		$processor->InitPayment($userPaymentSettingPost, $ticket);	
+		//$processor->SubmitPost();  do not turn on until launch!
+
+		// save the response from the payment processor
+		// ---------------------------------------------------------------------------
+		$nameSplit 								= str_word_count($userPaymentSettingPost['UserPaymentSetting']['nameOnCard'], 1);
+		$firstName 								= trim($nameSplit[0]);
+		$lastName 								= trim(array_pop($nameSplit));
+		
+		$paymentDetail 							= array();
+		$paymentDetail 							= $processor->GetMappedResponse();
+		$paymentDetail['paymentTypeId'] 		= 1; 
+		$paymentDetail['paymentAmount']			= $ticket['Ticket']['billingPrice'];
+		$paymentDetail['ticketId']				= $ticket['Ticket']['ticketId'];
+		$paymentDetail['userId']				= $ticket['Ticket']['userId'];
+		$paymentDetail['userPaymentSettingId']	= ($usingUpsId) ? $data['userPaymentSettingId'] : '';
+		$paymentDetail['paymentProcessorId']	= $data['paymentProcessorId'];
+		$paymentDetail['ppFirstName']			= $firstName;
+		$paymentDetail['ppLastName']			= $lastName;
+		$paymentDetail['ppBillingAddress1']		= $userPaymentSettingPost['UserPaymentSetting']['address1'];
+		$paymentDetail['ppBillingCity']			= $userPaymentSettingPost['UserPaymentSetting']['city'];
+		$paymentDetail['ppBillingState']		= $userPaymentSettingPost['UserPaymentSetting']['state'];
+		$paymentDetail['ppBillingZip']			= $userPaymentSettingPost['UserPaymentSetting']['postalCode'];
+		$paymentDetail['ppBillingCountry']		= $userPaymentSettingPost['UserPaymentSetting']['country'];
+		$paymentDetail['ppCardNumLastFour']		= substr($userPaymentSettingPost['UserPaymentSetting']['ccNumber'], -4, 4);
+		$paymentDetail['ppExpMonth']			= $userPaymentSettingPost['UserPaymentSetting']['expMonth'];
+		$paymentDetail['ppExpYear']				= $userPaymentSettingPost['UserPaymentSetting']['expYear'];
+		$paymentDetail['ppBillingAmount']		= $data['paymentAmount'];
+		$paymentDetail['autoProcessed']			= $data['autoCharge'];
+		$paymentDetail['initials']				= $data['initials'];
+
+		$this->PaymentDetail->create();
+		if ($this->PaymentDetail->save($paymentDetail)) {
+			echo 'yeeeeeeeee save';
+		} else {
+			echo 'nooooooo save';	
+		}
+		
+		die('DONE');
 	}
 }
 ?>
