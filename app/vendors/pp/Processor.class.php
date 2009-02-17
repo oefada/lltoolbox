@@ -16,15 +16,16 @@ class Processor
 		if (!in_array($processor_name, $this->module_list)) {
 			return false;
 		}
-
 		$this->module = new $processor_name();
 		$this->processor_name = $processor_name;
 	} 
 	
 	function InitPayment($userPaymentSetting, $ticket) {
 		// build needed parameters for a post.
-		$ups = $userPaymentSetting['UserPaymentSetting'];
 		
+		$ups = $userPaymentSetting['UserPaymentSetting'];
+		$ups['expMonth'] = str_pad(substr($ups['expMonth'], -2, 2), 2, '0', STR_PAD_LEFT);
+		$ups['expYear'] = str_pad(substr($ups['expYear'], -2, 2), 2, '0', STR_PAD_LEFT);
 		$nameSplit = str_word_count($ups['nameOnCard'], 1);
 		$firstName = trim($nameSplit[0]);
 		$lastName = trim(array_pop($nameSplit));
@@ -83,6 +84,10 @@ class Processor
 	function GetResponseTxt() {
 		return $this->module->GetResponseTxt($this->response_data);
 	}
+	
+	function GetMappedResponse() {
+		return $this->module->GetMappedResponse($this->response_data);
+	}
 
 	function IsValidResponse($ticket_id) {
 		return $this->module->IsValidResponse($this->response_data, $ticket_id);
@@ -102,9 +107,6 @@ class Processor
 	}
 
 	private function SetPostFields($params) {
-		/*  Returns a query string with key=values.  
-		 *	values are encoded for API friendly POST.
-		 */
 	    $tmp_str = '';
 	    foreach ($params as $k => $v) {
 	 	   $tmp_str .= "$k=" . urlencode($v) . '&';

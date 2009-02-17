@@ -1,5 +1,10 @@
 <?php
 
+// NOVA (MYVIRTUAL MERCHANT) PAYMENT MODULE
+// --------------------------------------------------------------------------
+// To be used with Processor.class.php only.  [alee@luxurylink.com]
+// Note:  See bottom of this page for sample responses
+
 class NOVA
 {
 	var $url = 'https://www.myvirtualmerchant.com/VirtualMerchant/process.do';
@@ -7,31 +12,31 @@ class NOVA
 	var $post_data;
 
 	function NOVA($test_param = FALSE) {
+		
 		$this->post_data = array();
-		$this->post_data['ssl_merchant_id'] = '506345';
-		$this->post_data['ssl_user_id'] = 'web';
-		$this->post_data['ssl_pin'] = '252176';
-		$this->post_data['ssl_transaction_type'] = 'CCSALE';
-		$this->post_data['ssl_test_mode'] = $test_param ? 'TRUE' : 'FALSE';
-		$this->post_data['ssl_result_format'] = 'ASCII';
-		$this->post_data['ssl_show_form'] = '0';
-		$this->post_data['ssl_cvv2cvc2_indicator'] = '0';
-		$this->post_data['ssl_salestax'] = '0';
+		$this->post_data['ssl_merchant_id'] 		= '506345';
+		$this->post_data['ssl_user_id'] 			= 'web';
+		$this->post_data['ssl_pin'] 				= '252176';
+		$this->post_data['ssl_transaction_type'] 	= 'CCSALE';
+		$this->post_data['ssl_test_mode'] 			= $test_param ? 'TRUE' : 'FALSE';
+		$this->post_data['ssl_result_format'] 		= 'ASCII';
+		$this->post_data['ssl_show_form']	 		= '0';
+		$this->post_data['ssl_cvv2cvc2_indicator'] 	= '0';
+		$this->post_data['ssl_salestax'] 			= '0';
 
-		$this->map_params = array();                               // MD     DB
-		$this->map_params['map_ticket_id'] = 'ssl_invoice_number'; // 25     
-		$this->map_params['map_total_amount'] = 'ssl_amount'; 	   // 13	 
-		$this->map_params['map_description'] = 'ssl_description';  // 255    255
-		$this->map_params['map_first_name'] = 'ssl_first_name';    // 20     25
-		$this->map_params['map_last_name'] = 'ssl_last_name';      // 30     25
-		$this->map_params['map_street'] = 'ssl_avs_address';       // 20     60
-		//$this->map_Params['map_street2'] = 'ssl_address2';         // 30     xx
-		$this->map_params['map_city'] = 'ssl_city';                // 30     30    
-		$this->map_params['map_state'] = 'ssl_state';              // 30     2
-		$this->map_params['map_zip'] = 'ssl_avs_zip';              // 9      10
-		$this->map_params['map_expiration'] = 'ssl_exp_date';      // 4      2
-		$this->map_params['map_card_num'] = 'ssl_card_number';     // 19    
-		//$this->map_params['map_country'] = 'ssl_country';          // 50
+		$this->map_params = array();   
+		$this->map_params['map_ticket_id'] 			= 'ssl_invoice_number'; // 25     
+		$this->map_params['map_total_amount'] 		= 'ssl_amount'; 	   // 13	 
+		$this->map_params['map_first_name'] 		= 'ssl_first_name';    // 20     25
+		$this->map_params['map_last_name'] 			= 'ssl_last_name';      // 30     25
+		$this->map_params['map_street'] 			= 'ssl_avs_address';       // 20     60
+		$this->map_params['map_street2'] 			= 'ssl_address2';         // 30     xx
+		$this->map_params['map_city'] 				= 'ssl_city';                // 30     30    
+		$this->map_params['map_state'] 				= 'ssl_state';              // 30     2
+		$this->map_params['map_zip'] 				= 'ssl_avs_zip';              // 9      10
+		$this->map_params['map_country'] 			= 'ssl_country';          // 50
+		$this->map_params['map_expiration'] 		= 'ssl_exp_date';      // 4      2
+		$this->map_params['map_card_num'] 			= 'ssl_card_number';     // 19    
 	}
 
 	function ProcessResponse($raw_response) {
@@ -52,26 +57,21 @@ class NOVA
 		}else return false;
 	}
 
-	/*
-	function UpdateCCTxt($txt_submission_id, $response, $initials = '') {
-		global $C_connection;
-		$cc_ini = $initials ? $initials : 'AUTO';
-		$query = "UPDATE cc_txn_mstr SET "
-			. "txtTransactionID = '$response[ssl_txn_id]',"
-			. "txtCardService = 'NOVA',"
-			. "txtResponseDate = getdate(),"
-			. "txtApprovalStatus = '$response[ssl_result]',"
-			. "txtApprovalCode = '$response[ssl_approval_code]',"
-			. "txtAVSCode = '$response[ssl_avs_response]',"
-			. "txtAVSResponseText = '$response[ssl_result_message]',"
-			. "txtResponseSubcode = '$response[ssl_cvv2_response]',"
-			. "txtReasonCode = '',"
-			. "txtInitials = '$cc_ini' "
-			. "WHERE txtSubmissionID = '$txt_submission_id'";
-
-		$update_cc_txt = mssql_query($query,$C_connection);
+	function GetMappedResponse($response) {
+		$paymentDetail = array();
+		
+		$paymentDetail['ppResponseDate']		= date('Y-m-d H:i:s', strtotime('now'));
+		$paymentDetail['ppTransactionId']		= $response['ssl_txn_id'];
+		$paymentDetail['ppApprovalText']		= $response['ssl_result_message'];
+		$paymentDetail['ppApprovalCode']		= $response['ssl_result'];
+		$paymentDetail['ppAvsCode']				= $response['ssl_avs_response'];
+		$paymentDetail['ppResponseText']		= '';
+		$paymentDetail['ppResponseSubCode']		= '';
+		$paymentDetail['ppReasonCode']			= '';
+		$paymentDetail['isSuccessfulCharge']	= ($response['ssl_result'] == '0') && (stristr($response['ssl_result_message'], 'APPROVAL')) ? 1 : 0;
+		
+		return $paymentDetail;
 	}
-	*/
 	
 	function IsValidResponse($response, $valid_param) {
 		if(isset($response['ssl_invoice_number'])) {
@@ -89,4 +89,120 @@ class NOVA
 		}
 	}
 }
+
+/* 
+----------------------------------------------------------------
+SAMPLE RESPONSES -- ALL RESPONSES ARE DATATYPE (STRING)
+----------------------------------------------------------------
+
+[INVALID CARD]
+
+ssl_card_number=41********1111
+ssl_exp_date=0611
+ssl_amount=1.00
+ssl_customer_code=
+ssl_salestax=0.00
+ssl_invoice_number=132433
+ssl_surcharge_amount=
+ssl_reference_number=
+ssl_original_date=
+ssl_original_time=
+ssl_tran_code=
+ssl_sku_number=
+ssl_egc_tender_type=
+ssl_account_type=*
+ssl_customer_number=
+ssl_result=1
+ssl_result_message=INVALID CARD
+ssl_txn_id=156A4BE6F-4586-E942-14BD-143208212832
+ssl_approval_code=      
+ssl_cvv2_response=
+ssl_avs_response=U
+ssl_account_balance=0.00
+ssl_txn_time=02/16/2009 04:48:41 PM
+
+
+[DECLINED]
+
+ssl_card_number=46********0365
+ssl_exp_date=1210
+ssl_amount=1.00
+ssl_customer_code=
+ssl_salestax=0.00
+ssl_invoice_number=132433
+ssl_surcharge_amount=
+ssl_reference_number=
+ssl_original_date=
+ssl_original_time=
+ssl_tran_code=
+ssl_sku_number=
+ssl_egc_tender_type=
+ssl_account_type=*
+ssl_customer_number=
+ssl_result=1
+ssl_result_message=DECLINED
+ssl_txn_id=29B77966C-506D-9689-9EF8-7AB147D3D90A
+ssl_approval_code=      
+ssl_cvv2_response=
+ssl_avs_response=N
+ssl_account_balance=0.00
+ssl_txn_time=02/16/2009 05:02:09 PM
+
+[INVALID EXP]
+
+ssl_card_number=46********0365
+ssl_exp_date=0009
+ssl_amount=1.00
+ssl_customer_code=
+ssl_salestax=0.00
+ssl_invoice_number=132433
+ssl_surcharge_amount=
+ssl_reference_number=
+ssl_original_date=
+ssl_original_time=
+ssl_tran_code=
+ssl_sku_number=
+ssl_egc_tender_type=
+ssl_account_type=*
+ssl_customer_number=
+ssl_result=1
+ssl_result_message=INV EXP DATE
+ssl_txn_id=2CC5D1DFF-6911-A6F3-C842-5D42A35E1A19
+ssl_approval_code=      
+ssl_cvv2_response=
+ssl_avs_response= 
+ssl_account_balance=0.00
+ssl_txn_time=02/16/2009 05:03:53 PM
+
+[APPROVAL]
+
+ssl_card_number=46********0365
+ssl_exp_date=0909
+ssl_amount=1.00
+ssl_customer_code=
+ssl_salestax=0.00
+ssl_invoice_number=132433
+ssl_surcharge_amount=
+ssl_reference_number=
+ssl_original_date=
+ssl_original_time=
+ssl_tran_code=
+ssl_sku_number=
+ssl_egc_tender_type=
+ssl_account_type=*
+ssl_customer_number=
+ssl_result=0
+ssl_result_message=APPROVAL
+ssl_txn_id=122049FAC-200A-D9F0-DE8D-3BA196FCE1DC
+ssl_approval_code=338962
+ssl_cvv2_response=
+ssl_avs_response=N
+ssl_account_balance=0.00
+ssl_txn_time=02/16/2009 05:05:17 PM
+
+----------------------------------------------------------------
+END OF SAMPLE RESPONSES -- ALL RESPONSES ARE DATATYPE (STRING)
+----------------------------------------------------------------
+*/
+
 ?>
