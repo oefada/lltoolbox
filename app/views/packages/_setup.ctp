@@ -2,7 +2,21 @@
 	<h3 class="handle">Setup</h3>
 	<div class="collapsibleContent disableAutoCollapse">
 		<?php
-		echo $form->input('packageStatusId', array('label' => 'Status'));
+		
+		if ($this->data['Package']['internalApproval'] == 1) {
+			echo $form->input('packageStatusId', array('label' => 'Status'));
+		} else {
+			echo $form->input('packageStatusId', array('label' => 'Status', 'disabled' => true));
+		}
+		
+		echo "<div class='controlset'>";
+		if (in_array("Merchandising", $userDetails['groups'])) {
+			echo $form->input('internalApproval', array('label' => 'Approved By Merchandising'));
+		} else {
+			echo $form->input('internalApproval', array('label' => 'Approved By Merchandising', 'disabled' => true));
+		}
+		echo "</div>";
+		
 		echo $form->input('currencyId', array('disabled' => 'true', 'label' => 'Currency'));
 		echo $form->input('currencyId', array('type' => 'hidden'));
 		if (!empty($this->data['Package']['copiedFromPackageId'])):
@@ -13,7 +27,7 @@
 		echo $form->input('numGuests');
 		if(count($clientLoaDetails) > 1):
 			echo $form->input('numNights', array('readonly' => true));
-		else:
+		else: 
 			echo $form->input('numNights');
 		endif;
 		?>
