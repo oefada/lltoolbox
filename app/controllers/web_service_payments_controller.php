@@ -164,35 +164,6 @@ class WebServicePaymentsController extends WebServicesController
 		//           (8) userPaymentSettingId or userPaymentSetting data array
 		//
 		// SEND TO PAYMENT PROCESSOR: $userPaymentSettingPost
-		//
-		// ---------------------------------------------------------------------------
-		/* START SAMPLE INPUT */
-		$tmp = array();
-		$tmp['userId'] 								= 1130607;
-		$tmp['ticketId'] 							= 132433;
-		$tmp['paymentProcessorId'] 					= 3;
-		$tmp['paymentAmount'] 						= 1.00; // TODO: handle error check on this
-		$tmp['initials'] 							= 'AL';
-		$tmp['autoCharge']							= 0;
-		$tmp['saveUps'] 							= 0;    // TODO: handle this guy
-		$tmp['userPaymentSettingId'] 				= false; //59877;
-		
-		$tmp['userPaymentSetting'] 					= array();
-		$tmp['userPaymentSetting']['ccNumber'] 		= '4640320008760123';
-		$tmp['userPaymentSetting']['ccType'] 		= 'VI';
-		$tmp['userPaymentSetting']['userId'] 		= 1130607;
-		$tmp['userPaymentSetting']['nameOnCard'] 	= 'Arons Lee';
-		$tmp['userPaymentSetting']['expYear'] 		= '2012';
-		$tmp['userPaymentSetting']['expMonth'] 		= '04';
-		$tmp['userPaymentSetting']['address1'] 		= '123 Fake St.';
-		$tmp['userPaymentSetting']['address2'] 		= 'Street 2 Fake Test';
-		$tmp['userPaymentSetting']['city'] 			= 'Fake Test City';
-		$tmp['userPaymentSetting']['state'] 		= 'CA';
-		$tmp['userPaymentSetting']['country'] 		= 'US';
-		$tmp['userPaymentSetting']['postalCode'] 	= 90501;
-		
-		$in0 = json_encode($tmp);
-		/* END SAMPLE INPUT */
 		// ---------------------------------------------------------------------------
 		
 		// good o' error checking my friends.  make this as strict as possible
@@ -221,6 +192,9 @@ class WebServicePaymentsController extends WebServicesController
 			return '107';	
 		}
 		
+		// also check the hash for more security
+		// ---------------------------------------------------------------------------
+		
 		// and even some more error checking.
 		// ---------------------------------------------------------------------------
 		$this->Ticket->recursive = -1;
@@ -231,6 +205,9 @@ class WebServicePaymentsController extends WebServicesController
 		if ($ticket['Ticket']['userId'] != $data['userId']) {
 			return '109';
 		}
+		
+		// check paymentAmount with ticket.billingPrice for security measure until later
+		// ---------------------------------------------------------------------------
 		
 		// use either the data sent over or retrieve from the db with the id
 		// ---------------------------------------------------------------------------
