@@ -369,7 +369,10 @@ class PackagesController extends AppController {
 		if (empty($this->data)) {
 			$package = $this->Package->read(null, $id);
 			$this->data = $package;
+		} else {
+		    $package = $this->data;
 		}
+		    
 		$this->set('package', $package);
 		$this->getBlackoutDaysNumber(1);
 		$this->Package->ClientLoaPackageRel->recursive = -1;
