@@ -71,6 +71,21 @@ class AppController extends Controller {
 		    error_reporting(E_ERROR);
 		    Configure::write('debug', '0');
 		}
+
+		if (is_object($this->{$this->modelClass}) && $this->{$this->modelClass}->Behaviors->attached('Logable')) {
+     	    $this->{$this->modelClass}->setUserData($user);
+     	    $this->{$this->modelClass}->setUserIp($this->_userIp());
+     	 }
+	}
+	
+	function _userIp() {
+	    if (@$_SERVER['HTTP_X_FORWARD_FOR']) {
+            $ip = $_SERVER['HTTP_X_FORWARD_FOR'];
+        } else {
+            $ip = $_SERVER['REMOTE_ADDR'];
+        }
+        
+        return $ip;
 	}
 	
 	function isAuthorized() {

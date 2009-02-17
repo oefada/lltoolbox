@@ -10,6 +10,7 @@ class LdapUser extends AppModel
 	var $userBaseDn = 'OU=LuxuryLinkUser,DC=luxurylink,DC=com';
 	var $user 		= 'luxury';
 	var $pass		= 'traveler';
+	var $displayField = 'displayname';
 
     var $ds;
 

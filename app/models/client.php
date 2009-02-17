@@ -6,7 +6,7 @@ class Client extends AppModel {
 	var $primaryKey = 'clientId';
 	var $displayField = 'name';
 	var $order = array('Client.name');
-	var $actsAs = array('Containable');
+	var $actsAs = array('Containable', 'Logable');
 	
 	var $validate = array(
 				'name' => array(
