@@ -56,7 +56,7 @@ class AppController extends Controller {
             }
             
             $user = $this->LdapAuth->user();
-
+            $this->user = $user;
             $this->set('user', $user);
             $this->set('userDetails', $user['LdapUser']);
         }
