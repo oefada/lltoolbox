@@ -1,6 +1,11 @@
 	<fieldset>
 		<div id='one'>
-			<p class='clean-gray'><?php echo $package['Package']['shortBlurb'] ?></p>
+			<p class='clean-gray'>
+				<? if(!empty($this->data['SchedulingMaster']['schedulingMasterId'])): ?>
+				<strong>Scheduling Master Id:</strong> <?php echo $this->data['SchedulingMaster']['schedulingMasterId'] ?><br />
+				<? endif; ?>
+			<?php echo $package['Package']['shortBlurb'] ?>
+			</p>
 	<?php
 		echo $form->input('offerTypeId', array('label' => 'Offer Type'));
 		echo "<strong>For Fixed Price offer types, number of days to run, scheduling delay, and number of iterations will be ignored. You must choose an end date for fixed price offers.</strong>";		
