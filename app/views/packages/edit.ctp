@@ -45,6 +45,12 @@ function updateAllPerPersonPerNight() {
 </script>
 
 <div class="packages form">
+	<div style="float: right;">
+	<?=$html->link('<span>Download PDF</span>', '/clients/'.$clientId.'/packages/preview/'.$this->data["Package"]["packageId"].'.pdf', array('class' => 'button'), null, false)?>
+	<?=$html->link('<span>Preview as Auction</span>', "http://livedev.luxurylink.com/luxury-hotels/preview.html?pid={$this->data['ClientLoaPackageRel'][0]['clientId']}&oid={$this->data['Package']['packageId']}&preview=package", array('target' => '_blank', 'class' => 'button'), null, false)?>
+	<?=$html->link('<span>Send for Merch Approval</span>', "/clients/$clientId/packages/send_for_merch_approval/{$this->data['Package']['packageId']}", array('onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
+	'complete' => 'closeModalbox()','class' => 'button'), null, false)?>
+	</div>
 <?php echo $form->create('Package', array('url' => "/clients/{$clientId}/packages/edit/{$this->data['Package']['packageId']}", 'id'=>'PackageAddForm'));?>
 
 <?php echo $this->renderElement('../packages/_add_step_1'); ?>
@@ -57,9 +63,7 @@ function updateAllPerPersonPerNight() {
 	endforeach;
 ?>
 <input type='hidden' id='clone' name='data[clone]' value='' />
-<div class='buttonrow'>
-	<?=$html->link('Download PDF to send to client for approval.', '/clients/'.$clientId.'/packages/preview/'.$this->data["Package"]["packageId"].'.pdf')?><br />
-	<?=$html->link('Preview as Auction', "http://livedev.luxurylink.com/luxury-hotels/preview.html?pid={$this->data['ClientLoaPackageRel'][0]['clientId']}&oid={$this->data['Package']['packageId']}&preview=package", array('target' => '_blank'))?><br />
+<div class='buttonrow'>	
 <?php echo $form->submit() ?>
 <?php echo $form->submit('Clone Package', array('onclick' => '$("clone").value = "clone"')) ?>
 </div>

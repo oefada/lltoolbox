@@ -9,6 +9,8 @@ class PackagesController extends AppController {
 		parent::beforeFilter();
 		$this->set('currentTab', 'property');
 		$this->set('searchController' ,'client');
+		$this->set('currentTab', 'property');
+		$this->set('searchController' ,'client');
 	}
 
 	function index($clientId = null) {
@@ -20,8 +22,6 @@ class PackagesController extends AppController {
 		$this->set('packageStatusIds', $this->Package->PackageStatus->find('list'));
 		$this->set('client', $this->Client->findByClientId($clientId));
 		$this->set('clientId', $clientId);
-		$this->set('currentTab', 'property');
-		$this->set('searchController' ,'client');
 	}
 	
 	function carveRatePeriods($clientId = null, $id = null) {
@@ -120,7 +120,7 @@ class PackagesController extends AppController {
 		$this->data['ClientLoaPackageRel'] = array_merge($this->data['ClientLoaPackageRel'], array());
 		foreach($this->data['ClientLoaPackageRel'] as $key => $clientLoaPackageRel):
 			$loa = $this->Client->Loa->findByLoaId($clientLoaPackageRel['loaId']);
-			
+			$track = $this->Client->Loa->Track->findByTrackId($clientLoaPackageRel['trackId']);
 			//remove all of the LOA Items that are not the same currency as the LOA
 			foreach($loa['LoaItem'] as $k => $loaItem) {
 				if($loaItem['currencyId'] != $loa['Currency']['currencyId']) {
@@ -129,8 +129,9 @@ class PackagesController extends AppController {
 			}
 			$clientLoaDetails[$key] = $loa;
 			$clientLoaDetails[$key]['ClientLoaPackageRel'] = $clientLoaPackageRel;
+			$clientLoaDetails[$key]['ClientLoaPackageRel']['Track'] = $track['Track'];
 		endforeach;
-			
+		
 		$this->set('clientLoaDetails', $clientLoaDetails);
 		$this->data['Currency'] = $clientLoaDetails[0]['Currency'];
 		$this->data['Package']['currencyId'] = $clientLoaDetails[0]['Currency']['currencyId'];
@@ -372,7 +373,7 @@ class PackagesController extends AppController {
 		} else {
 		    $package = $this->data;
 		}
-		    
+
 		$this->set('package', $package);
 		$this->getBlackoutDaysNumber(1);
 		$this->Package->ClientLoaPackageRel->recursive = -1;
@@ -416,10 +417,26 @@ class PackagesController extends AppController {
 		endforeach;
 		
 		//sort the LOA Items so that the checked ones appear at the top
-		foreach($clientLoaDetails as $k => $a) {
+		$approvalNotNeeded = 0;
+		foreach($clientLoaDetails as $k => $a):
 			uasort($clientLoaDetails[$k]['LoaItem'], array($this, 'sortLoaItemsForEdit'));
-		}
-		
+			
+			$track = $this->Package->ClientLoaPackageRel->Loa->Track->findByTrackId($a['ClientLoaPackageRel']['trackId']);
+			
+			//Check if the track is a Keep track. Internal approval only needed for keep tracks
+			if (empty($track['Track']['applyToMembershipBal']) && isset($approvalNotNeeded)) {
+			    $approvalNotNeeded = 1;
+			} else {
+			    unset($approvalNotNeeded);
+			}
+			
+			$clientLoaDetails[$k]['ClientLoaPackageRel']['Track'] = $track['Track'];
+		endforeach;
+        
+        if (isset($approvalNotNeeded) && $approvalNotNeeded == 1) {
+            $this->data['Package']['internalApproval'] = $approvalNotNeeded;
+        }
+        
 		$this->set('clientLoaDetails', $clientLoaDetails);
 		
 		$client = $this->Client->findByClientId($clientId);
@@ -603,6 +620,28 @@ class PackagesController extends AppController {
 			return '';
 		endif;
 	}
+	
+	function send_for_merch_approval($clientId, $packageId) {
+	    $this->set('client', $this->Client->findByClientId($clientId));
+	    $this->set('clientId', $clientId);
+	    $this->set('packageId', $packageId);
+
+	    if (!empty($this->data)) {
+	        $subject = 'Package awaiting approval';
+	        
+	        $body = "The following package was submitted for approval by ".$this->user['LdapUser']['displayname'].": ";
+	        $body .= "http://toolbox.luxurylink.com/clients/$clientId/packages/edit/$packageId";
+	        $body .= "\n\nAdditional Message: ";
+	        $body .= $this->data['additionalMessage'];
+                
+            if(mail('approval@luxurylink.com', $subject, $body)) {
+                $this->set('closeModalbox', true);
+                $this->Session->setFlash(__('The Package has been submitted for Merchandising approval', true), 'default', array(), 'success');
+            } else {
+                $this->Session->setFlash(__('The Package could not be sent to merchandising for approval', true), 'default', array(), 'error');
+            }
+	    }
+    }
 	
 	function performanceTooltip($id) {
 		$this->Package->PackagePerformance->recursive = -1;
