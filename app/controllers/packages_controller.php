@@ -634,7 +634,7 @@ class PackagesController extends AppController {
 	        $body .= "\n\nAdditional Message: ";
 	        $body .= $this->data['additionalMessage'];
                 
-            if(mail('approval@luxurylink.com', $subject, $body)) {
+            if(mail('approval@luxurylink.com', $subject, $body, "Reply-To: {$this->user['LdapUser']['mail']}")) {
                 $this->set('closeModalbox', true);
                 $this->Session->setFlash(__('The Package has been submitted for Merchandising approval', true), 'default', array(), 'success');
             } else {
