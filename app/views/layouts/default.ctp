@@ -89,7 +89,9 @@
 		<div id="navbar"><div id="navbar-inner" class="region">
 		    <div id="mainNav">
 				<ul>
+					<?if(0):?>
 		      		<li<?if(@($this->viewVars['currentTab'] == 'home')) echo ' class="current"'?>><?=$html->link('Home', '/')?></li>
+					<?endif;?>
 		      		<li<?if(@($this->viewVars['currentTab'] == 'property')) echo ' class="current"'?>><?=$html->link('Clients', array('controller' => 'clients', 'action' => 'index'))?></li>
 		      		<li<?if(@($this->viewVars['currentTab'] == 'siteMerchandising')) echo ' class="current"'?>><a href="/pages/legacytools">Site Merchandising</a></li>
 		      		<li<?if(@($this->viewVars['currentTab'] == 'reports')) echo ' class="current"'?>><?=$html->link('Reports', array('controller' => 'reports', 'action' => 'index'))?></li>
