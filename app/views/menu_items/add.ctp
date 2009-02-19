@@ -13,7 +13,7 @@
 		if($this->data['MenuItem']['externalLink']) {
 			echo $this->render(null, false, 'url_input_form' );
 		} else {
-			echo $this->render(null, false, 'styles_select_form' );
+			echo $this->render(null, false, 'landing_pages_select_form' );
 		}
 		?>
 	</div>

@@ -2,7 +2,6 @@
 class MenuTitleImage extends AppModel {
 
 	var $name = 'MenuTitleImage';
-	var $useDbConfig = 'live';
 	var $useTable = 'menuTitleImage';
 	var $primaryKey = 'menuTitleImageId';
 	var $displayField = 'menuTitleImageName';

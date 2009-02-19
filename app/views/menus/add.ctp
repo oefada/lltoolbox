@@ -10,7 +10,7 @@
 	<?
 		echo $form->input('menuName');
 		echo $form->input('menuSubtitle');
-		echo $form->input('Style');
+		echo $form->input('LandingPage');
 	?>
 	</fieldset>
 	

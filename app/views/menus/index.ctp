@@ -29,15 +29,15 @@ echo $paginator->counter(array(
 ?></p>
 <?php
 $i = 0;
-foreach ($styles as $style):
+foreach ($landingPages as $landingPage):
 	$class = null;
 	if ($i++ % 2 == 0) {
 		$class = ' class="altrow"';
 	}
 ?>
 <dl<?=$class?>>
-	<?= $html->link($style['Style']['styleName'], array('action' => 'edit_by_style', 'id' => $style['Style']['styleId'])) ?>
-	<?php if($style['Style']['styleInactive']) echo '(inactive)'; ?>
+	<?= $html->link($landingPage['LandingPage']['landingPageName'], array('action' => 'edit_by_landing_page', 'id' => $landingPage['LandingPage']['landingPageId'])) ?>
+	<?php if($landingPage['LandingPage']['inactive']) echo '(inactive)'; ?>
 </dl>
 <?php endforeach; ?>
 </div>

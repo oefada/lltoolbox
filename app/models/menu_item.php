@@ -2,7 +2,6 @@
 class MenuItem extends AppModel {
 
 	var $name = 'MenuItem';
-	var $useDbConfig = 'live';
 	var $useTable = 'menuItem';
 	var $primaryKey = 'menuItemId';
 	

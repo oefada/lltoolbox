@@ -2,21 +2,20 @@
 class Menu extends AppModel {
 
 	var $name = 'Menu';
-	var $useDbConfig = 'live';
 	var $useTable = 'menu';
 	var $primaryKey = 'menuId';
 	
-	var $hasMany = array('MenuItem' => array('foreignKey' => 'menuId'));
+	var $hasMany = array('MenuItem' => array('foreignKey' => 'menuId', 'dependent' => true));
 	
 	var $belongsTo = array(
 						'MenuTitleImage' => array('className' => 'MenuTitleImage', 'foreignKey' => 'menuTitleImageId')
 						);
 	
 	var $hasAndBelongsToMany = array(
-						'Style' => array(
-										'joinTable' => 'menuStyleRel',
+						'LandingPage' => array(
+										'with' => 'menuLandingPageRel',
 										'foreignKey' => 'menuId',
-										'associationForeignKey' => 'referenceId'
+										'associationForeignKey' => 'landingPageId'
 										)
 								);
 								

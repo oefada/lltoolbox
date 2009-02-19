@@ -1,7 +1,7 @@
 <?php
-class StylesController extends AppController {
+class LandingPagesController extends AppController {
 
-	var $name = 'Styles';
+	var $name = 'LandingPages';
 	var $helpers = array('Html', 'Javascript', 'Ajax');
 	
 	function search() {
@@ -9,7 +9,7 @@ class StylesController extends AppController {
 			$query = $this -> Sanitize -> paranoid($this->params['form']['query']);
 	
 			if (strlen($query) > 0) {
-				$result = $this->Style->findAll("styleName LIKE '%".$query."%' OR styleId LIKE '%".$query."%'");
+				$result = $this->LandingPage->findAll("styleName LIKE '%".$query."%' OR styleId LIKE '%".$query."%'");
 				$this->set('result', $result);
 			}
 		}

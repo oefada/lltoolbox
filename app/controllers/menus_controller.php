@@ -3,13 +3,13 @@ class MenusController extends AppController {
 
 	var $name = 'Menus';
 	var $helpers = array('Html', 'Form', 'Ajax', 'Javascript');
-	var $uses = array('Menu', 'Style');
+	var $uses = array('Menu', 'LandingPage');
 	var $components = array('RequestHandler');
 
 	function index() {
-		$this->Style->recursive = 1;
+		$this->LandingPage->recursive = 1;
 		
-		$this->set('styles', $this->paginate('Style'));
+		$this->set('landingPages', $this->paginate('LandingPage'));
 	}
 
 	function view($id = null) {
@@ -21,9 +21,9 @@ class MenusController extends AppController {
 		$this->set('menu', $this->Menu->read(null, $id));
 	}
 	
-	function edit_by_style($styleId = null) {
-		$this->Style->recursive = 2;
-		$menus = $this->Style->read(null, $styleId);
+	function edit_by_landing_page($landingPageId = null) {
+		$this->LandingPage->recursive = 2;
+		$menus = $this->LandingPage->read(null, $landingPageId);
 		
 		usort($menus['Menu'], array("Menu", "__sort"));
 		
@@ -37,7 +37,7 @@ class MenusController extends AppController {
 			}
 			
 		}
-		$this->set('styleId', $styleId);
+		$this->set('landingPageId', $landingPageId);
 		$this->set('menus', $menus);
 	}
 	
@@ -60,15 +60,15 @@ class MenusController extends AppController {
 				$this->Session->setFlash(__('The Menu could not be saved. Please, try again.', true));
 			}
 		}
-		$styles = $this->Menu->Style->find('list');
+		$landingPages = $this->Menu->LandingPage->find('list');
 		
-		if(isset($this->params['named']['styleId']) && is_numeric($this->params['named']['styleId'])) {
-			$this->data['Style']['Style'][] = $this->params['named']['styleId'];
+		if(isset($this->params['named']['landingPageId']) && is_numeric($this->params['named']['landingPageId'])) {
+			$this->data['LandingPage']['LandingPage'][] = $this->params['named']['landingPageId'];
 		}
 		
 		$menuTitleImageIds = $this->Menu->MenuTitleImage->find('list');
 		
-		$this->set(compact('styles', 'menuTitleImageIds'));
+		$this->set(compact('landingPages', 'menuTitleImageIds'));
 	}
 
 	function edit($id = null) {
@@ -87,9 +87,9 @@ class MenusController extends AppController {
 		if (empty($this->data)) {
 			$this->data = $this->Menu->read(null, $id);
 		}
-		$styles = $this->Menu->Style->find('list');
+		$landingPages = $this->Menu->LandingPage->find('list');
 		$menuTitleImageIds = $this->Menu->MenuTitleImage->find('list');
-		$this->set(compact('styles','menuTitleImageIds'));
+		$this->set(compact('landingPages','menuTitleImageIds'));
 	}
 
 	function delete($id = null) {

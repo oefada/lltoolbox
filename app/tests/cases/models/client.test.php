@@ -3,20 +3,15 @@
 /* Client Test cases generated on: 2008-10-21 23:10:40 : 1224657520*/
 App::import('Model', 'Client');
 
-class TestClient extends Client {
-	var $cacheSources = false;
-	var $useDbConfig  = 'test_suite';
-}
-
 class ClientTestCase extends CakeTestCase {
 	var $Client = null;
-	var $fixtures = array('app.client');
+	var $fixtures = array('app.client', 'app.user_payment_setting');
 
 	function start() {
 		parent::start();
-		$this->Client = new TestClient();
+        $this->Client = ClassRegistry::init('Client');
 	}
-
+    	
 	function testClientInstance() {
 		$this->assertTrue(is_a($this->Client, 'Client'));
 	}
@@ -25,7 +20,7 @@ class ClientTestCase extends CakeTestCase {
 		$this->Client->recursive = -1;
 		$results = $this->Client->find('first');
 		$this->assertTrue(!empty($results));
-
+debug($results);
 		$expected = array('Client' => array(
 			'clientId'  => 1,
 			'parentClientId'  => 1,
@@ -35,11 +30,8 @@ class ClientTestCase extends CakeTestCase {
 			'email'  => 'test@test.com',
 			'phone1'  => 'Lorem ipsum d',
 			'phone2'  => 'Lorem ipsum d',
-			'clientTypeId'  => 1,
-			'clientLevelId'  => 1,
 			'regionId'  => 1,
 			'clientStatusId'  => 1,
-			'clientAcquisitionSourceId'  => 1,
 			'customMapLat'  => 1,
 			'customMapLong'  => 1,
 			'customMapZoomMap'  => 1,
@@ -52,9 +44,9 @@ class ClientTestCase extends CakeTestCase {
 			'oldProductId'  => 1,
 			'seoName'  => 'Lorem ipsum dolor sit amet',
 			'created' => null,
-			'modified' => null,
-			'revision' => 1
-			));
+			'modified' => null
+			),
+			'ClientLevel' => array('clientLevelId' => null, 'clientLevelName' => null));
 		$this->assertEqual($results, $expected);
 	}
 	

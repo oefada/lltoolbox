@@ -2,15 +2,6 @@
 class MenuItemsController extends AppController {
 
 	var $name = 'MenuItems';
-	var $helpers = array('Html', 'Form', 'Ajax', 'Javascript');
-	var $components = array('RequestHandler');
-	
-	
-	function beforeFilter() {
-		if ($this->RequestHandler->isAjax()) {
-			Configure::write('debug', '0');
-		}
-	}
 
 	function index() {
 		$this->MenuItem->recursive = 0;
@@ -55,9 +46,9 @@ class MenuItemsController extends AppController {
 			$this->redirect(array('action' => 'index'));
 		}
 		
-		$styles = $this->MenuItem->Menu->Style->find('list');
+		$landingPages = $this->MenuItem->Menu->LandingPage->find('list');
 
-		$this->set(compact('styles'));
+		$this->set(compact('landingPages'));
 	}
 
 	function edit($menuId = null, $id = null) {
@@ -84,8 +75,8 @@ class MenuItemsController extends AppController {
 			$this->data = $this->MenuItem->read(null, $id);
 		}
 		
-		$styles = $this->MenuItem->Menu->Style->find('list');
-		$this->set(compact('styles'));
+		$landingPages = $this->MenuItem->Menu->LandingPage->find('list');
+		$this->set(compact('landingPages'));
 	}
 
 	function delete($id = null) {
@@ -131,12 +122,12 @@ class MenuItemsController extends AppController {
 		$this->data['MenuItem']['externalLink'] = 1;
 	}
 	
-	function styles_select_form() {
+	function landing_pages_select_form() {
 		$this->data['MenuItem']['externalLink'] = 0;
 		
-		$styles = $this->MenuItem->Menu->Style->find('list');
+		$landingPages = $this->MenuItem->Menu->LandingPage->find('list');
 		
-		$this->set(compact('styles'));
+		$this->set(compact('landingPages'));
 	}
 }
 ?>

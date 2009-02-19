@@ -1,4 +1,4 @@
-<h2>Editing Menus for <?= $menus['Style']['styleName'] ?></h2>
+<h2>Editing Menus for <?= $menus['LandingPage']['landingPageName'] ?></h2>
 <span class="deemphasize">Drag and drop the menus or menu items to re-order</span>
 <div id='ajax_indicator' style="display: none;"><img src='/img/ajax-loader.gif' alt='Loading...' /></div>
 <div id='menus'>
@@ -27,7 +27,7 @@ endif;
 <?php if(!$menus['Menu']): ?> 
 	<div class="notice">No menus for this style yet,
 	<?php
-	echo $html->link(__('add a new menu.', true), array('controller'=> 'menus', 'action'=>'add', 'styleId' => $menus['Style']['styleId'])); ?>
+	echo $html->link(__('add a new menu.', true), array('controller'=> 'menus', 'action'=>'add', 'landingPageId' => $menus['LandingPage']['landingPageId'])); ?>
 	</div>
 <?php endif; ?>
 
