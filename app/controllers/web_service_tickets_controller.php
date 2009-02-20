@@ -152,15 +152,23 @@ class WebServiceTicketsController extends WebServicesController
 			$ppv_settings['manualEmailBody']	= 0;
 			$ppv_settings['returnString']		= 0;
 			
+			$auto_charge_card = false;
 			if (is_array($user_payment_setting) && !empty($user_payment_setting)) {
 				// has valid cc card to charge
+				// -------------------------------------------
 				$ppv_settings['ppvNoticeTypeId'] 	= 5;
+				$auto_charge_card = true;
+				
 			} elseif ($user_payment_setting == 'EXPIRED') {
 				// has valid cc card but is expired
+				// -------------------------------------------
 				$ppv_settings['ppvNoticeTypeId'] 	= 8;
+				
 			} else {
 				// has no valid cc on file
+				// -------------------------------------------
 				$ppv_settings['ppvNoticeTypeId'] 	= 6;
+				
 			}
 
 			// set restricted auctions so no autocharging happens
@@ -187,15 +195,19 @@ class WebServiceTicketsController extends WebServicesController
  			// -------------------------------------------------------------------------------           
             if ($restricted_auction) {
             	$ppv_settings['ppvNoticeTypeId'] = 5;	
+            	$auto_charge_card = false;
             }
 
 			// send out winner notifications
 			// -------------------------------------------------------------------------------
 			$this->ppv(json_encode($ppv_settings));
 			
+			// TODO:  check if user has already paid for this ticket
+			// -------------------------------------------------------------------------------
+			
 			// auto charge here
 			// -------------------------------------------------------------------------------
-			if (!$restricted_auction) {
+			if (!$restricted_auction && $auto_charge_card) {
 				// yeeee
 			}
 			
