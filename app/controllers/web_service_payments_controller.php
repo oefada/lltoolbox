@@ -149,7 +149,7 @@ class WebServicePaymentsController extends WebServicesController
 		if (!isset($data['autoCharge'])) {
 			return '106';	
 		}
-		if (!isset($data['saveUps'])) {
+		if (!isset($data['saveUps'])) { // TODO: add new UPS record
 			return '107';	
 		}
 		if (!isset($data['zAuthHashKey']) || !$data['zAuthHashKey']) {
@@ -225,7 +225,7 @@ class WebServicePaymentsController extends WebServicesController
 		// ---------------------------------------------------------------------------
 		$processor = new Processor($paymentProcessorName);
 		$processor->InitPayment($userPaymentSettingPost, $ticket);	
-		//$processor->SubmitPost();  //do not turn on until launch!
+		$processor->SubmitPost();  
 
 		// save the response from the payment processor
 		// ---------------------------------------------------------------------------
