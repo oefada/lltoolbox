@@ -9,7 +9,6 @@ class WebServiceTicketsController extends WebServicesController
 	var $name = 'WebServiceTickets';
 	var $uses = array('Ticket', 'Client', 'User', 'Offer', 'Bid', 'ClientLoaPackageRel', 'Track', 'OfferType', 'Loa', 'TrackDetail', 'PpvNotice', 'Address');
 	var $serviceUrl = 'http://toolbox.luxurylink.com/web_service_tickets';
-	//var $serviceUrl = 'http://192.168.100.111/web_service_tickets';
 	var $errorResponse = false;
 	var $api = array(
 					'newTicketProcessor1' => array(
