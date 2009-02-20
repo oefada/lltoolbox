@@ -112,7 +112,7 @@ class WebServicePaymentsController extends WebServicesController
 
 	function processPayment($in0) {
 		// ---------------------------------------------------------------------------
-		// SUBMIT PAYMENT VIA PROCESSOR [alee@luxurylink.com]
+		// SUBMIT PAYMENT VIA PROCESSOR 
 		// ---------------------------------------------------------------------------
 		// REQUIRED: (1) userId
 		//           (2) ticketId
@@ -149,7 +149,7 @@ class WebServicePaymentsController extends WebServicesController
 		if (!isset($data['autoCharge'])) {
 			return '106';	
 		}
-		if (!isset($data['saveUps'])) { // TODO: add new UPS record
+		if (!isset($data['saveUps'])) { 
 			return '107';	
 		}
 		if (!isset($data['zAuthHashKey']) || !$data['zAuthHashKey']) {
@@ -189,7 +189,6 @@ class WebServicePaymentsController extends WebServicesController
 		if (isset($data['userPaymentSettingId']) && !empty($data['userPaymentSettingId']) && is_numeric($data['userPaymentSettingId'])) {
 			$tmp_result = $this->Ticket->query('SELECT * FROM userPaymentSetting WHERE userPaymentSettingId = ' . $data['userPaymentSettingId'] . ' LIMIT 1');
 			$userPaymentSettingPost['UserPaymentSetting'] = $tmp_result[0]['userPaymentSetting'];
-			$userPaymentSettingPost['UserPaymentSetting']['ccNumber'] = aesFullDecrypt($userPaymentSettingPost['UserPaymentSetting']['ccNumber']);
 			unset($tmp_result);
 			$usingUpsId = true;
 		} else {
@@ -198,7 +197,9 @@ class WebServicePaymentsController extends WebServicesController
 		
 		if (!$userPaymentSettingPost || empty($userPaymentSettingPost)) {
 				return '113';
-		} 
+		}
+		
+		$userPaymentSettingPost['UserPaymentSetting']['ccNumber'] = aesFullDecrypt($userPaymentSettingPost['UserPaymentSetting']['ccNumber']);
 		
 		// set which processor to use
 		// ---------------------------------------------------------------------------
@@ -232,6 +233,7 @@ class WebServicePaymentsController extends WebServicesController
 		$nameSplit 								= str_word_count($userPaymentSettingPost['UserPaymentSetting']['nameOnCard'], 1);
 		$firstName 								= trim($nameSplit[0]);
 		$lastName 								= trim(array_pop($nameSplit));
+		$userPaymentSettingPost['UserPaymentSetting']['expMonth'] = str_pad($userPaymentSettingPost['UserPaymentSetting']['expMonth'], 2, '0', STR_PAD_LEFT);
 		
 		$paymentDetail 							= array();
 		$paymentDetail 							= $processor->GetMappedResponse();
@@ -257,15 +259,22 @@ class WebServicePaymentsController extends WebServicesController
 
 		$this->PaymentDetail->create();
 		if (!$this->PaymentDetail->save($paymentDetail)) {
+			mail('devmail@luxurylink.com', 'WEB SERVICE ERROR: PAYMENT PROCESSED BUT NOT SAVED', print_r($paymentDetail, true));
 			return '115';
 		}
-		
+				
 		// return result whether success or denied
 		// ---------------------------------------------------------------------------
 		if ($processor->ChargeSuccess()) {
-			return 'SUCCESS';
+			// if saving new user card information
+			// ---------------------------------------------------------------------------
+			if ($data['saveUps'] && !$usingUpsId && !empty($userPaymentSettingPost['UserPaymentSetting'])) {
+				$this->UserPaymentSetting->create();
+				$this->UserPaymentSetting->save($userPaymentSettingPost['UserPaymentSetting']);
+			}
+			return 'CHARGE_SUCCESS';
 		} else {
-			return 'FAILURE';
+			return $processor->GetResponseTxt();
 		}
 	}
 }
