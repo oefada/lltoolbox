@@ -291,29 +291,6 @@ class WebServiceTicketsController extends WebServicesController
 		$liveOfferData 		= $liveOffer[0]['LiveOffer'];
 		$offerType			= $this->OfferType->find('list');
 		$userPaymentData	= $this->findValidUserPaymentSetting($ticketData['userId']);
-	
-		/*
-		$debug_tmp = "TICKET\n\n";
-		$debug_tmp.= print_r($ticketData, true);
-		$debug_tmp.= "\n\nPACKAGE\n\n";
-		$debug_tmp.= print_r($packageData, true);
-		$debug_tmp.= "\n\nOFFER\n\n";
-		$debug_tmp.= print_r($offerData, true);
-		$debug_tmp.= "\n\nUSER DATA\n\n";
-		$debug_tmp.= print_r($userData, true);
-		$debug_tmp.= "\n\nCLIENT DATA\n\n";
-		$debug_tmp.= print_r($clientData, true);
-		$debug_tmp.= "\n\nLIVE OFFER\n\n";
-		$debug_tmp.= print_r($liveOfferData, true);
-		$debug_tmp.= "\n\nUSER PAYMENT\n\n";
-		$debug_tmp.= print_r($userPaymentData, true);
-		$emailTo = 'devmail@luxurylink.com';
-		$emailFrom = 'Toolbox Web Service<devmail@luxurylink.com>';
-		$emailHeaders = "From: $emailFrom\r\n";
-		$emailSubject = "PPV SENT";
-		$emailBody = $debug_tmp;
-		@mail($emailTo, $emailSubject, $emailBody, $emailHeaders);
-		*/
 
 		// vars for email templates
 		// -------------------------------------------------------------------------------
@@ -352,7 +329,7 @@ class WebServiceTicketsController extends WebServicesController
 		
 		$checkoutHash		= md5($ticketId . $userId . $offerId . 'LL_L33T_KEY');
 		$checkoutKey		= base64_encode(serialize(array('ticketId' => $ticketId, 'userId' => $userId, 'offerId' => $offerId, 'zKey' => $checkoutHash)));
-		$checkoutLink		= "https://www.luxurylink.com/my/my_purchse.php?z=$checkoutKey";
+		$checkoutLink		= "https://www.luxurylink.com/my/my_purchase.php?z=$checkoutKey";
 		
 		$offerTypeArticle	= in_array(strtolower($offerType[$offerTypeId]{0}), array('a','e','i','o','u')) ? 'an' : 'a';
 
@@ -385,8 +362,6 @@ class WebServiceTicketsController extends WebServicesController
 		$clientId			= $clients[0]['clientId'];
 		$clientName 		= $clients[0]['name'];
 		$oldProductId		= $clients[0]['oldProductId'];
-
-		//mail('devmail@luxurylink.com', 'testing contacts', print_r($clients, true));
 		
 		// auction facilitator
 		// -------------------------------------------------------------------------------
