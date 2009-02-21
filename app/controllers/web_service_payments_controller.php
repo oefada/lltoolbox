@@ -262,7 +262,6 @@ class WebServicePaymentsController extends WebServicesController
 		$this->PaymentDetail->create();
 		if (!$this->PaymentDetail->save($paymentDetail)) {
 			mail('devmail@luxurylink.com', 'WEB SERVICE ERROR: PAYMENT PROCESSED BUT NOT SAVED', print_r($paymentDetail, true));
-			return '115';
 		}
 				
 		// return result whether success or denied
