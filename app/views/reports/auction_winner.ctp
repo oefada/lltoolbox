@@ -120,7 +120,17 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 		<td><?=$r[0]['revenue']?></td>
 		<td><?=$r['Package']['numNights']?></td>
 		<td><?=$r['OfferType']['offerTypeName']?></td>
-		<td>FEE</td>
+		<td><?switch($r['OfferType']['offerTypeName']) {
+			case 'Standard Auction':
+			case 'Dutch Auction':
+			case 'Best Shot':
+				echo '$30';
+				break;
+			case 'Best Buy':
+			case 'Exclusive':
+				echo '$40';
+				break;
+		}?></td>
 		<td><?=$r[0]['percentOfRetail']?></td>
 		<td><?=$r['Track']['applyToMembershipBal']?></td>
 		<td><?=$r['Package']['validityStartDate']?></td>
