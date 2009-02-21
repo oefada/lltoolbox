@@ -59,6 +59,8 @@ class WebServiceTicketsController extends WebServicesController
 			return false;	
 		}
 		
+		mail('devmail@luxurylink.com','auxillary debug email', print_r($data, true));
+		
 		// gather all data for ticket creation
 		// -------------------------------------------------------------------------------
 		$this->User->recursive = -1;
