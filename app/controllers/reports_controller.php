@@ -657,7 +657,7 @@ class ReportsController extends AppController {
             $numPages = ceil($numRecords / $this->perPage);
             
             $sql = "SELECT SchedulingInstance.endDate,
-                           PaymentDetail.paymentDatetime, 
+                           PaymentDetail.ppResponseDate, 
                            Ticket.ticketId,
                            Client.clientId,
                            Client.name,

@@ -162,7 +162,7 @@ $this->searchController = 'Tickets';
 			?>
 				<tr<?php echo $class;?>>
 					<td align="center"><?php echo $paymentDetail['paymentDetailId']; ?></td>
-					<td align="center"><?php echo $paymentDetail['paymentDatetime'];?></td>
+					<td align="center"><?php echo $paymentDetail['ppResponseDate'];?></td>
 					<td align="center"><?php echo $number->currency($paymentDetail['paymentAmount']);?></td>
 					<td align="center"><?php echo $paymentDetail['PaymentProcessor']['paymentProcessorName'];?></td>
 					<td align="center"><?php echo $processed_flag;?></td>

@@ -14,7 +14,7 @@ foreach ($results as $r):
 	}
 	$line = array(
 	$r['SchedulingInstance']['endDate'],
-	$r['PaymentDetail']['paymentDatetime'],
+	$r['PaymentDetail']['ppResponseDate'],
 	$r['Ticket']['ticketId'],
 	$r['Client']['clientId'],
 	$r['Client']['name'],

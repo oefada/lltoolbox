@@ -100,7 +100,7 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 ?>
 	<tr<?=$class?>>
 		<td><?=$r['SchedulingInstance']['endDate']?></td>
-		<td><?=$r['PaymentDetail']['paymentDatetime']?></td>
+		<td><?=$r['PaymentDetail']['ppResponseDate']?></td>
 		<td><?=$r['Ticket']['ticketId']?></td>
 		<td><?=$r['Client']['clientId']?></td>
 		<td><?=$r['Client']['name']?></td>
