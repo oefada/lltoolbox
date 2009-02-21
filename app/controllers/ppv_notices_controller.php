@@ -24,7 +24,6 @@ class PpvNoticesController extends AppController {
 	function add($ticketId, $id) {
 		
 		// web service for tickets for getting/sending ppv
-		//$webservice_live_url = 'http://192.168.100.111/web_service_tickets?wsdl';
 		$webservice_live_url = 'http://toolbox.luxurylink.com/web_service_tickets?wsdl';
 		$webservice_live_method_name = 'ppv';
 		$webservice_live_method_param = 'in0';
@@ -61,8 +60,6 @@ class PpvNoticesController extends AppController {
 		$soap_client = new nusoap_client($webservice_live_url, true);
         $response = $soap_client->call($webservice_live_method_name, array($webservice_live_method_param => $data_json_encoded));
                    
-        //$this->data['PpvNotice']['emailBody'] = htmlspecialchars($response, ENT_QUOTES, "UTF-8");
-        //$this->data['PpvNotice']['emailBody'] = preg_replace('/[^a-z0-9]/', '', $response); 
      	$this->set('ppv_body_text', $response);
 	}
 
