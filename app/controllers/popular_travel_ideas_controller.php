@@ -28,8 +28,8 @@ class PopularTravelIdeasController extends AppController {
 				$this->Session->setFlash(__('The PopularTravelIdea could not be saved. Please, try again.', true));
 			}
 		}
-		$styleIds = $this->PopularTravelIdea->Style->find('list');
-		$this->set(compact('styleIds'));
+		$referenceIds = $this->PopularTravelIdea->LandingPage->find('list');
+		$this->set(compact('referenceIds'));
 	}
 
 	function edit($id = null) {
@@ -48,8 +48,8 @@ class PopularTravelIdeasController extends AppController {
 		if (empty($this->data)) {
 			$this->data = $this->PopularTravelIdea->read(null, $id);
 		}
-		$styleIds = $this->PopularTravelIdea->Style->find('list');
-		$this->set(compact('styleIds'));
+		$referenceIds = $this->PopularTravelIdea->LandingPage->find('list');
+		$this->set(compact('referenceIds'));
 	}
 
 	function delete($id = null) {
@@ -77,6 +77,7 @@ class PopularTravelIdeasController extends AppController {
 	}
 	
 	function beforeFilter() {
+	    parent::beforeFilter();
 		$this->Sanitize = new Sanitize();
 	}
 }

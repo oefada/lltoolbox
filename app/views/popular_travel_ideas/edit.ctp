@@ -4,7 +4,7 @@
  		<legend><?php __('Edit PopularTravelIdea');?></legend>
 	<?php
 		echo $form->input('popularTravelIdeaId');
-		echo $form->input('styleId');
+		echo $form->input('referenceId');
 		echo $form->input('popularTravelIdeaName');
 		echo $form->input('linkToMultipleStyles');
 		echo $form->input('keywords');

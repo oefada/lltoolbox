@@ -3,7 +3,7 @@
 	<fieldset>
  		<legend><?php __('Add PopularTravelIdea');?></legend>
 	<?php
-		echo $form->input('styleId');
+		echo $form->input('referenceId');
 		echo $form->input('popularTravelIdeaName');
 		echo $form->input('linkToMultipleStyles');
 		echo $form->input('keywords');

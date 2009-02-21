@@ -30,7 +30,7 @@ echo $paginator->counter(array(
 <table cellpadding="0" cellspacing="0">
 <tr>
 	<th><?php echo $paginator->sort('popularTravelIdeaId');?></th>
-	<th><?php echo $paginator->sort('styleId');?></th>
+	<th><?php echo $paginator->sort('landingPageId');?></th>
 	<th><?php echo $paginator->sort('popularTravelIdeaName');?></th>
 	<th><?php echo $paginator->sort('linkToMultipleStyles');?></th>
 	<th><?php echo $paginator->sort('keywords');?></th>
@@ -49,7 +49,7 @@ foreach ($popularTravelIdeas as $popularTravelIdea):
 			<?php echo $popularTravelIdea['PopularTravelIdea']['popularTravelIdeaId']; ?>
 		</td>
 		<td>
-			<?php echo $popularTravelIdea['Style']['styleId'].' - '.$popularTravelIdea['Style']['styleName']; ?>
+			<?php echo $popularTravelIdea['LandingPage']['landingPageId'].' - '.$popularTravelIdea['LandingPage']['landingPageName']; ?>
 		</td>
 		<td>
 			<?php echo $popularTravelIdea['PopularTravelIdea']['popularTravelIdeaName']; ?>

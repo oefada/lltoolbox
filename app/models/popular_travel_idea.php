@@ -8,10 +8,10 @@ class PopularTravelIdea extends AppModel {
 
 	//The Associations below have been created with all possible keys, those that are not needed can be removed
 	var $belongsTo = array(
-			'Style' => array('className' => 'Style',
+			'LandingPage' => array('className' => 'LandingPage',
 								'foreignKey' => 'referenceId',
 								'conditions' => '',
-								'fields' => 'Style.styleId, Style.styleName',
+								'fields' => 'LandingPage.landingPageId, LandingPage.landingPageName',
 								'order' => ''
 			)
 	);

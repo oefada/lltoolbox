@@ -46,18 +46,18 @@ LOA_start_date DATETIME,
 LOA_end_date DATETIME, 
 LOA_mail_shots INT, 
 mail_shots_remaining DECIMAL(6,3))");
-
-mysql_query("INSERT INTO temp_products
+$sql = "INSERT INTO temp_products
 SELECT MAX(p.clientId) AS clientId, p.name AS product_name, l.startDate AS LOA_start_date, l.endDate AS LOA_end_date, l.numEmailInclusions AS LOA_mail_shots,
 (l.numEmailInclusions - SUM(ct.mailing_segment_credit_type_value))
 AS mailing_shots_remaining
 FROM client p 
-INNER JOIN loa l ON p.clientId = l.clientId
+LEFT JOIN loa l ON p.clientId = l.clientId
 LEFT JOIN mailing_segment_credit c ON l.loaId = c.LOA_id
 LEFT JOIN mailing_segment_credit_type ct ON c.mailing_segment_credit_type_id = ct.mailing_segment_credit_type_id
 WHERE (l.inactive = 0) AND '$mailing_schedule_date' BETWEEN l.startDate AND l.endDate AND (l.numEmailInclusions > 0)
-GROUP BY p.name, l.startDate, l.endDate, l.numEmailInclusions;");
-
+GROUP BY p.name, l.startDate, l.endDate, l.numEmailInclusions";
+mysql_query($sql);
+echo $sql;
 if(!empty($filter_product_name)):
 	$filter_product_name = $filter_product_name.'%';
 	$result = mysql_query("SELECT *, (mail_shots_remaining / (DATEDIFF(NOW(), LOA_end_date)+1) * 100) AS mailing_score
@@ -79,7 +79,6 @@ else:
 endif;
 //end TODO
 
-echo mysql_error();
 while($row = mysql_fetch_assoc($result)) {
 	$products[$row['clientId']] = $row;
 	$products[$row['clientId']]['products_scheduled'] = (in_array($row['clientId'], $products_scheduled)) ? 1 : 0;
