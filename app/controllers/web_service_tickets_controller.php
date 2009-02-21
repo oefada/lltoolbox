@@ -400,19 +400,27 @@ class WebServiceTicketsController extends WebServicesController
 				// send out res confirmation
 				include('../vendors/email_msgs/ppv/conf_ppv.html');
 				$emailSubject = "Luxury Link $offerTypeName Confirmation - $packageName";
+				$emailBcc = 'thread@luxurylink.com';
 				break;
 			case 2:
 				// send out res request
 				include('../vendors/email_msgs/ppv/res_ppv.html');
 				$emailSubject = "Luxury Link $offerTypeName Reservation Request";
+				$emailBcc = 'thread@luxurylink.com';
 				break;
 			case 3:
 				include('../vendors/email_msgs/ppv/winner_ppv.html');
 				$emailSubject = "Luxury Link Package Purchase Verification - $packageName";
+				$emailFrom = "LuxuryLink.com<auction@luxurylink.com>";
+				$emailReplyTo = 'auction@luxurylink.com';
+				$emailBcc = 'thread@luxurylink.com';
 				break;
 			case 4: 
 				include('../vendors/email_msgs/ppv/client_ppv.html');
 				$emailSubject = "Luxury Link $offerTypeName Winner - $emailName";
+				$emailFrom = "LuxuryLink.com<auction@luxurylink.com>";
+				$emailReplyTo = 'auction@luxurylink.com';
+				$emailBcc = 'thread@luxurylink.com';
 				break;
 			case 5:
 				include('../vendors/email_msgs/notifications/winner_notification.html');
