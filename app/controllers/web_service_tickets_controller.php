@@ -226,8 +226,13 @@ class WebServiceTicketsController extends WebServicesController
             	$auto_charge_card = false;
             }
 
-			// TODO:  check if user has already paid for this ticket
+			// check if user has already paid for this ticket
 			// -------------------------------------------------------------------------------
+			$checkExists = $this->PaymentDetail->query("SELECT * FROM paymentDetail WHERE ticketId = $ticketId");
+			if (isset($checkExists[0]['paymentDetail']) && !empty($checkExists[0]['paymentDetail'])) {
+				$auto_charge_card = false;
+				$ppv_settings['ppvNoticeTypeId'] = 5;	
+			}
 
 			// auto charge here
 			// -------------------------------------------------------------------------------
