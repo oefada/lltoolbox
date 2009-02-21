@@ -235,6 +235,8 @@ class WebServicePaymentsController extends WebServicesController
 		$lastName 								= trim(array_pop($nameSplit));
 		$userPaymentSettingPost['UserPaymentSetting']['expMonth'] = str_pad($userPaymentSettingPost['UserPaymentSetting']['expMonth'], 2, '0', STR_PAD_LEFT);
 		
+		$fee = in_array($ticket['Ticket']['offerTypeId'], array(1,2,6)) ? 30 : 40;
+		
 		$paymentDetail 							= array();
 		$paymentDetail 							= $processor->GetMappedResponse();
 		$paymentDetail['paymentTypeId'] 		= 1; 
@@ -253,7 +255,7 @@ class WebServicePaymentsController extends WebServicesController
 		$paymentDetail['ppCardNumLastFour']		= substr($userPaymentSettingPost['UserPaymentSetting']['ccNumber'], -4, 4);
 		$paymentDetail['ppExpMonth']			= $userPaymentSettingPost['UserPaymentSetting']['expMonth'];
 		$paymentDetail['ppExpYear']				= $userPaymentSettingPost['UserPaymentSetting']['expYear'];
-		$paymentDetail['ppBillingAmount']		= $data['paymentAmount'];
+		$paymentDetail['ppBillingAmount']		= $data['paymentAmount'] + $fee;
 		$paymentDetail['autoProcessed']			= $data['autoCharge'];
 		$paymentDetail['initials']				= $data['initials'];
 
@@ -272,6 +274,12 @@ class WebServicePaymentsController extends WebServicesController
 				$this->UserPaymentSetting->create();
 				$this->UserPaymentSetting->save($userPaymentSettingPost['UserPaymentSetting']);
 			}
+			
+			$ticketStatusChange = array();
+			$ticketStatusChange['ticketId'] = $ticket['Ticket']['ticketId'];
+			$ticketStatusChange['ticketStatusId'] = 5;
+			$this->Ticket->save($ticketStatusChange);
+			
 			return 'CHARGE_SUCCESS';
 		} else {
 			return $processor->GetResponseTxt();
