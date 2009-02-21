@@ -66,7 +66,7 @@ class Track extends AppModel {
 		$revModelId = $this->data['Track']['revenueModelId'];
 		if (isset($data['keepPercentage']) && $revModelId == 1) {
 			$value = $data['keepPercentage'];
-			if (!$value || !is_numeric($value) || !($value >=0 && $value <= 100)) {
+			if (!is_numeric($value) || !($value >= 0 && $value <= 100)) {
 				$validPresets = false;	
 			}
 		} elseif (isset($data['x']) && ($revModelId == 2 || $revModelId == 3)) {
