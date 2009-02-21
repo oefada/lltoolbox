@@ -183,18 +183,18 @@ class WebServiceTicketsController extends WebServicesController
 			if (is_array($user_payment_setting) && !empty($user_payment_setting)) {
 				// has valid cc card to charge
 				// -------------------------------------------
-				$ppv_settings['ppvNoticeTypeId'] 	= 6;
+				$ppv_settings['ppvNoticeTypeId'] 	= 5;
 				$auto_charge_card = true;
 				
 			} elseif ($user_payment_setting == 'EXPIRED') {
 				// has valid cc card but is expired
 				// -------------------------------------------
-				$ppv_settings['ppvNoticeTypeId'] 	= 8;
+				$ppv_settings['ppvNoticeTypeId'] 	= 5;
 				
 			} else {
 				// has no valid cc on file
 				// -------------------------------------------
-				$ppv_settings['ppvNoticeTypeId'] 	= 6;
+				$ppv_settings['ppvNoticeTypeId'] 	= 5;
 				
 			}
 
