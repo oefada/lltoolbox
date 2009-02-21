@@ -59,8 +59,6 @@ class WebServiceTicketsController extends WebServicesController
 			return false;	
 		}
 		
-		mail('devmail@luxurylink.com','auxillary debug email', print_r($data, true));
-		
 		// gather all data for ticket creation
 		// -------------------------------------------------------------------------------
 		$this->User->recursive = -1;
@@ -125,6 +123,34 @@ class WebServiceTicketsController extends WebServicesController
 		if ($this->Ticket->save($newTicket)) {
 
 			$ticketId = $this->Ticket->getLastInsertId();
+
+			// send out ticket created email - not necessary but just be like Nike and just do it
+			// -------------------------------------------------------------------------------
+			$debug_tmp = "DATA\n\n";
+			$debug_tmp.= print_r($data, true);
+			$debug_tmp.= "\n\nUSERDATA\n\n";
+			$debug_tmp.= print_r($userData, true);
+			$debug_tmp.= "\n\nADDRESS\n\n";
+			$debug_tmp.= print_r($addressData, true);
+			$debug_tmp.= "\n\nCLIENT DATA\n\n";
+			$debug_tmp.= print_r($clientData, true);
+			$debug_tmp.= "\n\nOFFER DATA\n\n";
+			$debug_tmp.= print_r($offerData, true);
+			$debug_tmp.= "\n\nOFFER LIVE\n\n";
+			$debug_tmp.= print_r($offerLive, true);
+			$debug_tmp.= "\n\nPPV SETTING\n\n";
+			$debug_tmp.= print_r($ppv_settings, true);
+			$debug_tmp.= "\n\nTICKET\n\n";
+			$debug_tmp.= print_r($newTicket, true);
+			$debug_tmp.= "\n\nUSER PAYMENT SETTING\n\n";
+			$debug_tmp.= print_r($user_payment_setting, true);
+			
+			$emailTo = 'devmail@luxurylink.com';
+			$emailFrom = 'Toolbox Web Service<devmail@luxurylink.com>';
+			$emailHeaders = "From: $emailFrom\r\n";
+			$emailSubject = "Ticket #$ticketId Successfully Created";
+			$emailBody = "Ticket #$ticketId has been successfully created.\n\n" . $debug_tmp;
+			@mail($emailTo, $emailSubject, $emailBody, $emailHeaders);
 			
 			// update the tracks
 			// -------------------------------------------------------------------------------
@@ -212,36 +238,7 @@ class WebServiceTicketsController extends WebServicesController
 				// yeeee
 			}
 			
-			// send out ticket created email - not necessary but just be like Nike and just do it
-			// -------------------------------------------------------------------------------
-			$debug_tmp = "DATA\n\n";
-			$debug_tmp.= print_r($data, true);
-			$debug_tmp.= "\n\nUSERDATA\n\n";
-			$debug_tmp.= print_r($userData, true);
-			$debug_tmp.= "\n\nADDRESS\n\n";
-			$debug_tmp.= print_r($addressData, true);
-			$debug_tmp.= "\n\nCLIENT DATA\n\n";
-			$debug_tmp.= print_r($clientData, true);
-			$debug_tmp.= "\n\nOFFER DATA\n\n";
-			$debug_tmp.= print_r($offerData, true);
-			$debug_tmp.= "\n\nOFFER LIVE\n\n";
-			$debug_tmp.= print_r($offerLive, true);
-			$debug_tmp.= "\n\nPPV SETTING\n\n";
-			$debug_tmp.= print_r($ppv_settings, true);
-			$debug_tmp.= "\n\nTICKET\n\n";
-			$debug_tmp.= print_r($newTicket, true);
-			$debug_tmp.= "\n\nUSER PAYMENT SETTING\n\n";
-			$debug_tmp.= print_r($user_payment_setting, true);
-			
-			$emailTo = 'devmail@luxurylink.com';
-			$emailFrom = 'Toolbox Web Service<devmail@luxurylink.com>';
-			$emailHeaders = "From: $emailFrom\r\n";
-			$emailSubject = "Ticket #$ticketId Successfully Created";
-			$emailBody = "Ticket #$ticketId has been successfully created.\n\n" . $debug_tmp;
-			@mail($emailTo, $emailSubject, $emailBody, $emailHeaders);
-			
 			return true;	
-			
 		} else {			
 			// ticket was not succesfully created so send devmail alert
 			// -------------------------------------------------------------------------------
