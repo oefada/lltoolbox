@@ -30,9 +30,12 @@ class Processor
 		$firstName = trim($nameSplit[0]);
 		$lastName = trim(array_pop($nameSplit));
 		
+		$fee = in_array($ticket['Ticket']['offerTypeId'], array(1,2,6)) ? 30 : 40;
+		$ticket['Ticket']['billingPrice'] += $fee;
+		
 		$db_params = array();
 		$db_params['map_ticket_id'] 				= $ticket['Ticket']['ticketId'];
-		$db_params['map_total_amount'] 				= 1; //$ticket['Ticket']['billingPrice']; ALEEEEEEEE TESTING DEBUG REMOVE ON LAUNCH
+		$db_params['map_total_amount'] 				= $ticket['Ticket']['billingPrice'];
 		$db_params['map_first_name'] 				= substr($firstName, 0, 20);
 		$db_params['map_last_name'] 				= substr($lastName, 0, 20);
 		$db_params['map_street'] 					= substr(trim($ups['address1']), 0, 20);
@@ -41,8 +44,8 @@ class Processor
 		$db_params['map_state'] 					= substr(trim($ups['state']), 0, 20);
 		$db_params['map_zip'] 						= substr(trim($ups['postalCode']),0, 9);
 		$db_params['map_country'] 					= substr(trim($ups['country']),0,20);
-		$db_params['map_expiration'] 				= '0909'; //$ups['expMonth'] . $ups['expYear']; ALEEEE TESTING DEBUG REMOVE ON LAUNCH
-		$db_params['map_card_num'] 					= '4640320008760364'; //$ups['ccNumber'];
+		$db_params['map_expiration'] 				= $ups['expMonth'] . $ups['expYear']; 
+		$db_params['map_card_num'] 					= trim($ups['ccNumber']);
 		
 		$this->post_data = $this->MapParams($db_params);
 	}
