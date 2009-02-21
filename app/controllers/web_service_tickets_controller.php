@@ -183,7 +183,7 @@ class WebServiceTicketsController extends WebServicesController
 			if (is_array($user_payment_setting) && !empty($user_payment_setting)) {
 				// has valid cc card to charge
 				// -------------------------------------------
-				$ppv_settings['ppvNoticeTypeId'] 	= 5;
+				$ppv_settings['ppvNoticeTypeId'] 	= 6;
 				$auto_charge_card = true;
 				
 			} elseif ($user_payment_setting == 'EXPIRED') {
@@ -417,24 +417,28 @@ class WebServiceTicketsController extends WebServicesController
 			case 5:
 				include('../vendors/email_msgs/notifications/winner_notification.html');
 				$emailSubject = "Luxury Link $offerTypeName $offerTypeBidder - $packageName";
+				$emailFrom = "LuxuryLink.com<auction@luxurylink.com>";
 				$emailReplyTo = "auction@luxurylink.com";
 				$emailBcc = 'winnernotifications@luxurylink.com';
 				break;
 			case 6:
 				include('../vendors/email_msgs/notifications/winner_notification_w_checkout.html');
 				$emailSubject = "Luxury Link $offerTypeName $offerTypeBidder - $packageName";
+				$emailFrom = "LuxuryLink.com<auction@luxurylink.com>";
 				$emailReplyTo = "auction@luxurylink.com";
 				$emailBcc = 'winnernotifications@luxurylink.com';
 				break;
 			case 7:
 				include('../vendors/email_msgs/notifications/winner_notification_decline_cc.html');
 				$emailSubject = "Luxury Link $offerTypeName $offerTypeBidder - $packageName";
+				$emailFrom = "LuxuryLink.com<auction@luxurylink.com>";
 				$emailReplyTo = "auction@luxurylink.com";
 				$emailBcc = 'winnernotifications@luxurylink.com';
 				break;
 			case 8:
 				include('../vendors/email_msgs/notifications/winner_notification_expired_cc.html');
 				$emailSubject = "Luxury Link $offerTypeName $offerTypeBidder - $packageName";
+				$emailFrom = "LuxuryLink.com<auction@luxurylink.com>";
 				$emailReplyTo = "auction@luxurylink.com";
 				$emailBcc = 'winnernotifications@luxurylink.com';
 				break;
@@ -452,7 +456,7 @@ class WebServiceTicketsController extends WebServicesController
 		// send the email out!
 		// -------------------------------------------------------------------------------
 		if ($send) {
-			$this->sendPpvEmail('devmail@luxurylink.com', 'alee@luxurylink.com', 'alee@luxurylink.com', $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId);	
+			$this->sendPpvEmail($userEmail, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId);	
 		}
 		
 		// return the string for toolbox ppvNotice add screen (manual edit and send)
@@ -462,13 +466,14 @@ class WebServiceTicketsController extends WebServicesController
 		}
 	}
 		
-	function sendPpvEmail($emailTo, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId) {
+	function sendPpvEmail($emailTo, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId) {
 		
 		// send out ppv and winner notification emails
 		// -------------------------------------------------------------------------------
-		$emailTo = 'devmail@luxurylink.com';
-		$emailFrom = 'LuxuryLink.com<auction@luxurylink.com>';
 		$emailHeaders = "From: $emailFrom\r\n";
+		$emailHeaders.= "Cc: $emailCc\r\n";
+		$emailHeaders.= "Reply-To: $emailReplyTo\r\n";
+		$emailHeaders.= "Bcc: $emailBcc\r\n";
     	$emailHeaders.= "Content-type: text/html\r\n";
 		
 		@mail($emailTo, $emailSubject, $emailBody, $emailHeaders);
