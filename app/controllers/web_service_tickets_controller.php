@@ -3,11 +3,12 @@
 Configure::write('debug', 0);
 App::import('Vendor', 'nusoap/web_services_controller');
 App::import('Vendor', 'aes.php');
+require(APP.'/vendors/pp/Processor.class.php');  
 
 class WebServiceTicketsController extends WebServicesController
 {
 	var $name = 'WebServiceTickets';
-	var $uses = array('Ticket', 'Client', 'User', 'Offer', 'Bid', 'ClientLoaPackageRel', 'Track', 'OfferType', 'Loa', 'TrackDetail', 'PpvNotice', 'Address');
+	var $uses = array('Ticket', 'UserPaymentSetting','PaymentDetail', 'Client', 'User', 'Offer', 'Bid', 'ClientLoaPackageRel', 'Track', 'OfferType', 'Loa', 'TrackDetail', 'PpvNotice', 'Address');
 	var $serviceUrl = 'http://toolbox.luxurylink.com/web_service_tickets';
 	var $errorResponse = false;
 	var $api = array(
@@ -189,12 +190,12 @@ class WebServiceTicketsController extends WebServicesController
 			} elseif ($user_payment_setting == 'EXPIRED') {
 				// has valid cc card but is expired
 				// -------------------------------------------
-				$ppv_settings['ppvNoticeTypeId'] 	= 5;
+				$ppv_settings['ppvNoticeTypeId'] 	= 8;
 				
 			} else {
 				// has no valid cc on file
 				// -------------------------------------------
-				$ppv_settings['ppvNoticeTypeId'] 	= 5;
+				$ppv_settings['ppvNoticeTypeId'] 	= 6;
 				
 			}
 
@@ -225,19 +226,34 @@ class WebServiceTicketsController extends WebServicesController
             	$auto_charge_card = false;
             }
 
-			// send out winner notifications
-			// -------------------------------------------------------------------------------
-			$this->ppv(json_encode($ppv_settings));
-			
 			// TODO:  check if user has already paid for this ticket
 			// -------------------------------------------------------------------------------
-			
+
 			// auto charge here
 			// -------------------------------------------------------------------------------
 			if (!$restricted_auction && $auto_charge_card) {
-				// yeeee
+				$data_post = array();
+		        $data_post['userId']                 = $userData['User']['userId'];
+		        $data_post['ticketId']               = $ticketId;
+		        $data_post['paymentProcessorId']     = $newTicket['Ticket']['billingPrice'] > 500 ? 1 : 4;
+		        $data_post['paymentAmount']          = $newTicket['Ticket']['billingPrice'];
+		        $data_post['initials']               = 'AUTOCHARGE';
+		        $data_post['autoCharge']             = 1;
+		        $data_post['saveUps']                = 0;
+		        $data_post['zAuthHashKey']           = md5('L33T_KEY_LL' . $data_post['userId'] . $data_post['ticketId'] . $data_post['paymentProcessorId'] . $data_post['paymentAmount'] . $data_post['initials']);
+				$data_post['userPaymentSettingId']	 = $user_payment_setting['UserPaymentSetting']['userPaymentSettingId'];
+				
+				$data_post_result = $this->processPaymentTicket(json_encode($data_post));
+				if ($data_post_result == 'CHARGE_SUCCESS') {
+					$ppv_settings['ppvNoticeTypeId'] = 5;	
+				} else {
+					$ppv_settings['ppvNoticeTypeId'] = 7;
+				}
 			}
-			
+		
+			// send out winner notifications
+			// -------------------------------------------------------------------------------
+			$this->ppv(json_encode($ppv_settings));
 			return true;	
 		} else {			
 			// ticket was not succesfully created so send devmail alert
@@ -568,6 +584,181 @@ class WebServiceTicketsController extends WebServicesController
 			}
 		}
 		return false;
+	}
+	
+	function processPaymentTicket($in0) {
+		// ---------------------------------------------------------------------------
+		// SUBMIT PAYMENT VIA PROCESSOR 
+		// ---------------------------------------------------------------------------
+		// REQUIRED: (1) userId
+		//           (2) ticketId
+		//			 (3) paymentProcessorId
+		// 			 (4) paymentAmount
+		//           (5) initials
+		//			 (6) autoCharge
+		//           (7) saveUps
+		//			 (8) zAuthHashKey
+		//           (9) userPaymentSettingId or userPaymentSetting data array
+		//
+		// SEND TO PAYMENT PROCESSOR: $userPaymentSettingPost
+		// ---------------------------------------------------------------------------
+		
+		// good o' error checking my friends.  make this as strict as possible
+		// ---------------------------------------------------------------------------
+		$data = json_decode($in0, true);
+
+		if (!isset($data['userId']) || empty($data['userId'])) {
+			return '101';
+		}
+		if (!isset($data['ticketId']) || empty($data['ticketId'])) {
+			return '102';
+		}
+		if (!isset($data['paymentProcessorId']) || !$data['paymentProcessorId']) {
+			return '103';	
+		}
+		if (!isset($data['paymentAmount']) || !$data['paymentAmount']) {
+			return '104';	
+		}
+		if (!isset($data['initials']) || empty($data['initials'])) {
+			return '105';	
+		}
+		if (!isset($data['autoCharge'])) {
+			return '106';	
+		}
+		if (!isset($data['saveUps'])) { 
+			return '107';	
+		}
+		if (!isset($data['zAuthHashKey']) || !$data['zAuthHashKey']) {
+			return '108';	
+		}
+		
+		// also check the hash for more security
+		// ---------------------------------------------------------------------------
+		$hashCheck = md5('L33T_KEY_LL' . $data['userId'] . $data['ticketId'] . $data['paymentProcessorId'] . $data['paymentAmount'] . $data['initials']);
+		if (trim($hashCheck) !== trim($data['zAuthHashKey'])) {
+			return '109';	
+		}
+		unset($hashCheck);
+		
+		// and even some more error checking.
+		// ---------------------------------------------------------------------------
+		$this->Ticket->recursive = -1;
+		$ticket = $this->Ticket->read(null, $data['ticketId']);
+		if (!$ticket) {
+			return '110';
+		} 
+		if ($ticket['Ticket']['userId'] != $data['userId']) {
+			return '111';
+		}
+		
+		// check paymentAmount with ticket.billingPrice for security measure until later
+		// ---------------------------------------------------------------------------
+		if ($ticket['Ticket']['billingPrice'] != $data['paymentAmount']) {
+			return '112';	
+		}
+		
+		// use either the data sent over or retrieve from the db with the id
+		// ---------------------------------------------------------------------------
+		$userPaymentSettingPost = array();
+		
+		$usingUpsId = false;
+		if (isset($data['userPaymentSettingId']) && !empty($data['userPaymentSettingId']) && is_numeric($data['userPaymentSettingId'])) {
+			$tmp_result = $this->Ticket->query('SELECT * FROM userPaymentSetting WHERE userPaymentSettingId = ' . $data['userPaymentSettingId'] . ' LIMIT 1');
+			$userPaymentSettingPost['UserPaymentSetting'] = $tmp_result[0]['userPaymentSetting'];
+			unset($tmp_result);
+			$usingUpsId = true;
+		} else {
+			$userPaymentSettingPost['UserPaymentSetting'] = $data['userPaymentSetting'];	
+		}
+		
+		if (!$userPaymentSettingPost || empty($userPaymentSettingPost)) {
+				return '113';
+		}
+		
+		$userPaymentSettingPost['UserPaymentSetting']['ccNumber'] = aesFullDecrypt($userPaymentSettingPost['UserPaymentSetting']['ccNumber']);
+		
+		// set which processor to use
+		// ---------------------------------------------------------------------------
+		$paymentProcessorName = false;
+		switch($data['paymentProcessorId']) {
+			case 1:
+				$paymentProcessorName = 'NOVA';
+				break;
+			case 3:
+				$paymentProcessorName = 'PAYPAL';
+				break;
+			case 4:
+				$paymentProcessorName = 'AIM';
+				break;
+			default:
+				break;
+		}
+		
+		if (!$paymentProcessorName) {
+			return '114';	
+		}
+		
+		// init payment processing and submit payment
+		// ---------------------------------------------------------------------------
+		$processor = new Processor($paymentProcessorName);
+		$processor->InitPayment($userPaymentSettingPost, $ticket);	
+		$processor->SubmitPost();  
+
+		// save the response from the payment processor
+		// ---------------------------------------------------------------------------
+		$nameSplit 								= str_word_count($userPaymentSettingPost['UserPaymentSetting']['nameOnCard'], 1);
+		$firstName 								= trim($nameSplit[0]);
+		$lastName 								= trim(array_pop($nameSplit));
+		$userPaymentSettingPost['UserPaymentSetting']['expMonth'] = str_pad($userPaymentSettingPost['UserPaymentSetting']['expMonth'], 2, '0', STR_PAD_LEFT);
+		
+		$fee = in_array($ticket['Ticket']['offerTypeId'], array(1,2,6)) ? 30 : 40;
+		
+		$paymentDetail 							= array();
+		$paymentDetail 							= $processor->GetMappedResponse();
+		$paymentDetail['paymentTypeId'] 		= 1; 
+		$paymentDetail['paymentAmount']			= $ticket['Ticket']['billingPrice'];
+		$paymentDetail['ticketId']				= $ticket['Ticket']['ticketId'];
+		$paymentDetail['userId']				= $ticket['Ticket']['userId'];
+		$paymentDetail['userPaymentSettingId']	= ($usingUpsId) ? $data['userPaymentSettingId'] : '';
+		$paymentDetail['paymentProcessorId']	= $data['paymentProcessorId'];
+		$paymentDetail['ppFirstName']			= $firstName;
+		$paymentDetail['ppLastName']			= $lastName;
+		$paymentDetail['ppBillingAddress1']		= $userPaymentSettingPost['UserPaymentSetting']['address1'];
+		$paymentDetail['ppBillingCity']			= $userPaymentSettingPost['UserPaymentSetting']['city'];
+		$paymentDetail['ppBillingState']		= $userPaymentSettingPost['UserPaymentSetting']['state'];
+		$paymentDetail['ppBillingZip']			= $userPaymentSettingPost['UserPaymentSetting']['postalCode'];
+		$paymentDetail['ppBillingCountry']		= $userPaymentSettingPost['UserPaymentSetting']['country'];
+		$paymentDetail['ppCardNumLastFour']		= substr($userPaymentSettingPost['UserPaymentSetting']['ccNumber'], -4, 4);
+		$paymentDetail['ppExpMonth']			= $userPaymentSettingPost['UserPaymentSetting']['expMonth'];
+		$paymentDetail['ppExpYear']				= $userPaymentSettingPost['UserPaymentSetting']['expYear'];
+		$paymentDetail['ppBillingAmount']		= $data['paymentAmount'] + $fee;
+		$paymentDetail['autoProcessed']			= $data['autoCharge'];
+		$paymentDetail['initials']				= $data['initials'];
+
+		$this->PaymentDetail->create();
+		if (!$this->PaymentDetail->save($paymentDetail)) {
+			mail('devmail@luxurylink.com', 'WEB SERVICE ERROR: PAYMENT PROCESSED BUT NOT SAVED', print_r($this->PaymentDetail->validationErrors,true)  . print_r($paymentDetail, true));
+		}
+				
+		// return result whether success or denied
+		// ---------------------------------------------------------------------------
+		if ($processor->ChargeSuccess()) {
+			// if saving new user card information
+			// ---------------------------------------------------------------------------
+			if ($data['saveUps'] && !$usingUpsId && !empty($userPaymentSettingPost['UserPaymentSetting'])) {
+				$this->UserPaymentSetting->create();
+				$this->UserPaymentSetting->save($userPaymentSettingPost['UserPaymentSetting']);
+			}
+			
+			$ticketStatusChange = array();
+			$ticketStatusChange['ticketId'] = $ticket['Ticket']['ticketId'];
+			$ticketStatusChange['ticketStatusId'] = 5;
+			$this->Ticket->save($ticketStatusChange);
+			
+			return 'CHARGE_SUCCESS';
+		} else {
+			return $processor->GetResponseTxt();
+		}
 	}
 }
 ?>
