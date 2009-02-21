@@ -420,8 +420,8 @@ class ReportsController extends AppController {
                                     	Ticket.requestQueueDateTime,
                                     	Ticket.billingPrice,
                                     	TicketStatus.ticketStatusName,
-                                    	SUM(PaymentDetail.ppBillingAmount) as moneyCollected,
-                                    	IF(SUM(PaymentDetail.ppBillingAmount)>=Ticket.billingPrice, MAX(PaymentDetail.paymentDatetime), 0) AS dateCollected
+                                    	SUM(PaymentDetail2.paymentAmount) as moneyCollected,
+                                    	IF(SUM(PaymentDetail2.paymentAmount)>=Ticket.billingPrice, MAX(PaymentDetail2.ppResponseDate), '') AS dateCollected
                                 FROM ticket AS Ticket
                                 LEFT JOIN ticketStatus AS TicketStatus USING (ticketStatusId)
                                 LEFT JOIN offerType as OfferType ON (OfferType.offerTypeId = Ticket.offerTypeId)
@@ -430,6 +430,7 @@ class ReportsController extends AppController {
                                 LEFT JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Ticket.packageId AND ClientLoaPackageRel.clientId = Ticket.clientId)
                                 LEFT JOIN track AS Track ON (Track.trackId = ClientLoaPackageRel.trackId)
                                 LEFT JOIN paymentDetail AS PaymentDetail ON (PaymentDetail.ticketId = Ticket.ticketId AND PaymentDetail.userId = Ticket.userId)
+                                LEFT JOIN paymentDetail AS PaymentDetail2 ON (PaymentDetail2.paymentDetailId = PaymentDetail.paymentDetailId AND PaymentDetail2.isSuccessfulCharge = 1)
                     WHERE $conditions
                     GROUP BY Ticket.ticketId
                     ORDER BY $order
