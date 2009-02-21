@@ -9,23 +9,5 @@ class PaymentDetail extends AppModel {
 						   'PaymentType' => array('foreignKey' => 'paymentTypeId'),
 						   'PaymentProcessor' => array('foreignKey' => 'paymentProcessorId')
 						  );
-
-
-	var $validate = array(
-					    'initials' => array(
-					        'rule' => 'alphaNumeric', 
-					        'required' => true,
-					        'allowEmpty' => false,
-					        'on' => 'create',
-					        'message' => 'Initials are required before submitting a payment.'
-					    ),
-					     'paymentAmount' => array(
-					        'rule' => 'numeric', 
-					        'required' => true,
-					        'allowEmpty' => false,
-					        'on' => 'create',
-					        'message' => 'Payment amount must be in integer and greater than 0.'
-					    )
-					);
 }
 ?>
