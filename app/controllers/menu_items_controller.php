@@ -3,6 +3,11 @@ class MenuItemsController extends AppController {
 
 	var $name = 'MenuItems';
 
+	function beforeFilter() {
+	    parent::beforeFilter();
+	    $this->set('currentTab', 'menu_app');
+	}
+	
 	function index() {
 		$this->MenuItem->recursive = 0;
 		

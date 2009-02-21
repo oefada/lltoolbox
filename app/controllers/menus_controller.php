@@ -5,6 +5,11 @@ class MenusController extends AppController {
 	var $helpers = array('Html', 'Form', 'Ajax', 'Javascript');
 	var $uses = array('Menu', 'LandingPage');
 	var $components = array('RequestHandler');
+	
+	function beforeFilter() {
+	    parent::beforeFilter();
+	    $this->set('currentTab', 'menu_app');
+	}
 
 	function index() {
 		$this->LandingPage->recursive = 1;
