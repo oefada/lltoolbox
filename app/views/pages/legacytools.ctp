@@ -7,5 +7,6 @@
 <li><?=$html->link("Auction Clearance Promo", 'legacytools/auction_exclusive_promo')?></li>
 <li><?=$html->link("What's New", 'legacytools/whats_new')?></li>
 <li><?=$html->link("Menu Tool", '/menus')?></li>
+<li><?=$html->link("Popular Travel Ideas Tool", '/popular_travel_ideas')?></li>
 </ul>
 <br />
