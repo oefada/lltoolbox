@@ -47,7 +47,7 @@ function updateAllPerPersonPerNight() {
 <div class="packages form">
 	<div style="float: right;">
 	<?=$html->link('<span>Download PDF</span>', '/clients/'.$clientId.'/packages/preview/'.$this->data["Package"]["packageId"].'.pdf', array('class' => 'button'), null, false)?>
-	<?=$html->link('<span>Preview as Auction</span>', "http://livedev.luxurylink.com/luxury-hotels/preview.html?pid={$this->data['ClientLoaPackageRel'][0]['clientId']}&oid={$this->data['Package']['packageId']}&preview=package", array('target' => '_blank', 'class' => 'button'), null, false)?>
+	<?=$html->link('<span>Preview as Auction</span>', "http://www.luxurylink.com/luxury-hotels/preview.html?pid={$this->data['ClientLoaPackageRel'][0]['clientId']}&oid={$this->data['Package']['packageId']}&preview=package", array('target' => '_blank', 'class' => 'button'), null, false)?>
 	<?=$html->link('<span>Send for Merch Approval</span>', "/clients/$clientId/packages/send_for_merch_approval/{$this->data['Package']['packageId']}", array('onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
 	'complete' => 'closeModalbox()','class' => 'button'), null, false)?>
 	</div>

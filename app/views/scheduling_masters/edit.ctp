@@ -69,7 +69,7 @@ ul.subsection_tabs li.tab a.active {
 	?>
 	<li class="tab" id='previewTab'<?=$style?>><a class="" href="#four">Preview Setup</a></li>
 </ul>
-<a href="http://live.luxurylink.com/luxury-hotels/preview.html?pid=<?=$package['ClientLoaPackageRel'][0]['clientId']?>&oid=<?=$this->data['SchedulingMaster']['schedulingMasterId']?>&preview=master">Preview offer on live site</a>
+<a href="http://www.luxurylink.com/luxury-hotels/preview.html?pid=<?=$package['ClientLoaPackageRel'][0]['clientId']?>&oid=<?=$this->data['SchedulingMaster']['schedulingMasterId']?>&preview=master">Preview offer on live site</a>
 
 <?php echo $this->renderElement('../scheduling_masters/_form') ?>
 <?php echo $form->input('schedulingMasterId') ?>
