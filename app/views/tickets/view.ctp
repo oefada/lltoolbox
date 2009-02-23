@@ -226,6 +226,15 @@ $this->searchController = 'Tickets';
 				if ($i++ % 2 == 0) {
 					$class = ' class="altrow"';
 				}
+				
+				if ($ppvNotice['emailBody'] && !$ppvNotice['emailBodyFileName']) {
+					$ppvNotice['emailTo'] = 'LEGACY';
+						$ppvNotice['emailTo'] = 'LEGACY';
+						$ppvNotice['emailFrom'] = 'LEGACY';
+						$ppvNotice['emailCc'] = 'LEGACY';
+						$ppvNotice['emailSubject'] = 'LEGACY';
+				}
+				
 			?>
 			<tr<?php echo $class;?>>
 				<td><?php echo $ppvNotice['ppvNoticeId'];?></td>
