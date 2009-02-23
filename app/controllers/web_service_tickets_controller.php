@@ -391,6 +391,7 @@ class WebServiceTicketsController extends WebServicesController
 		}
 		
 		$clientId			= $clients[0]['clientId'];
+		$clientNameP 		= $clients[0]['name'];
 		$clientName 		= $clients[0]['contacts'][0]['ppv_name'];
 		$clientPrimaryEmail = $clients[0]['contacts'][0]['ppv_email_address'];
 		$oldProductId		= $clients[0]['oldProductId'];
