@@ -43,43 +43,31 @@ class WebServiceNewClientsController extends WebServicesController
 		// map data from Sugar to toolbox client table structure
 		$client_data_save = array();
         $client_data_save['name']				= $decoded_request['client']['client_name'];
-        $client_data_save['clientTypeId']		= $decoded_request['client']['client_type_id'];
-        
-        //$client_data_save['contactSalutation']	= $decoded_request['client']['client_name1'];
-        //$client_data_save['email']				= $decoded_request['client']['client_email_address1'];
-       
-       	/*
         $client_data_save['phone1']				= $decoded_request['client']['client_phone1'];
-        $client_data_sawe['phone2']				= $decoded_request['client']['client_phone2'];
+        $client_data_save['phone2']				= $decoded_request['client']['client_phone2'];
         $client_data_save['fax']				= $decoded_request['client']['client_fax1'];
-       	$client_data_save['address1']			= $decoded_request['client']['client_address1'];
-        $client_data_save['address2']			= $decoded_request['client']['client_address2'];
-        $client_data_save['address3']			= $decoded_request['client']['client_address3'];
-		*/
-		
+        
 		if ($client_id && is_numeric($client_id)) {
 			// ======= EXISTING CLIENT UPDATE ========
         	$client_data_save['clientId'] = $client_id;
-        	
-        	// send back possible new loa changes back to Sugar
-        	$loa_result = $this->Client->query("select min(startDate) as startDate, max(endDate) as endDate from loa where clientId = $client_id and inactive <> 1");
-        	$new_start_date = $loa_result[0][0]['startDate'];
-        	$new_end_date = $loa_result[0][0]['endDate'];
-        	if ($new_start_date && $new_end_date) {
-        		$decoded_request['client']['client_date_active'] = $new_start_date;
-        		$decoded_request['client']['client_date_expire'] = $new_end_date;
-        	}
-        	
-        	$this->Client->save($client_data_save);	
+        	$this->Client->save($client_data_save);		
 		} else {
 			// ======= NEW CLIENT INSERT =============
-			$client_data_save['inactive'] = 1; // set new clients from sugar to inactive
+			$client_data_save['inactive'] 				= 1; // set new clients from sugar to inactive
+			$client_data_save['created'] 				= date('Y-m-d H:i:s', strtotime('now'));
+			$client_data_save['managerUsername'] 		= $decoded_request['client']['manager'];
 			
 			$this->Client->create();
 			$this->Client->save($client_data_save);
 			
 			// get new client id and send back to Sugar
 			$decoded_request['client']['client_id'] = $this->Client->getLastInsertId();
+			
+			// new client is created now...reupdate with information
+			$new_client_data_update = array();
+			$new_client_data_update['clientId'] 		= $decoded_request['client']['client_id'];
+			$new_client_data_update['oldProductId'] 	= '0-' . $decoded_request['client']['client_id'];
+			$this->Client->save($new_client_data_update);
 		}
 		
 		//$decoded_request['client']['client_desc'];        
