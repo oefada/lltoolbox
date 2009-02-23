@@ -44,7 +44,7 @@ $this->searchController = 'Tickets';
 				<td><?php echo $offerType[$ticket['Ticket']['offerTypeId']]; ?></td>
 			</tr>
 			<tr>
-				<td><strong>Billing Price</strong></td>
+				<td><strong>Ticket Amount</strong></td>
 				<td><?php echo $number->currency($ticket['Ticket']['billingPrice']); ?></td>
 			</tr>
 			<tr>
@@ -135,7 +135,7 @@ $this->searchController = 'Tickets';
 
 <br />
 <div class="collapsible">
-	<div class="handle"><?php __('Payment Detail History');?></div>
+	<div class="handle"><?php __('Payment Detail History ('. count($ticket['PaymentDetail']) .')');?></div>
 	<div class="collapsibleContent related">
 	<br />
 	<?php if (!empty($ticket['PaymentDetail'])):?>
@@ -144,6 +144,7 @@ $this->searchController = 'Tickets';
 			<th><?php __('Payment Detail Id'); ?></th>
 			<th><?php __('Processed Date'); ?></th>
 			<th><?php __('Billing Amount'); ?></th>
+			<th><?php __('Last Four CC'); ?></th>
 			<th><?php __('Processor'); ?></th>
 			<th><?php __('Status'); ?></th>
 			<th><?php __('Initials'); ?></th>
@@ -162,9 +163,10 @@ $this->searchController = 'Tickets';
 					<td align="center"><?php echo $paymentDetail['paymentDetailId']; ?></td>
 					<td align="center"><?php echo $paymentDetail['ppResponseDate'];?></td>
 					<td align="center"><?php echo $number->currency($paymentDetail['ppBillingAmount']);?></td>
+					<td align="center"><?php echo $paymentDetail['ppCardNumLastFour'];?></td>
 					<td align="center"><?php echo $paymentDetail['PaymentProcessor']['paymentProcessorName'];?></td>
 					<td align="center"><?php echo $processed_flag;?></td>
-					<td align="center"><?php echo $paymentDetail['PaymentProcessor']['initials'];?></td>
+					<td align="center"><?php echo $paymentDetail['initials'];?></td>
 					<td class="actions">
 						<?php //echo $html->link(__('View', true), array('controller'=> 'payment_details', 'action'=>'view', $paymentDetail['paymentDetailId'])); ?>
 						<?php
@@ -202,7 +204,7 @@ $this->searchController = 'Tickets';
 
 <br />
 <div class="collapsible">
-	<div class="handle"><?php __('Notifications and PPVs');?></div>
+	<div class="handle"><?php __('Notifications and PPVs ('. count($ticket['PpvNotice']) .')');?></div>
 	<div class="collapsibleContent related">
 	<br />
 	<?php if (!empty($ticket['PpvNotice'])):?>
