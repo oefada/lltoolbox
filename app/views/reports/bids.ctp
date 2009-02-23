@@ -122,7 +122,7 @@ $moneyCollected += $r[0]['moneyCollected'];
 		<td><?=$r['Offer']['offerId']?></td>
 		<td><?=$r['Client']['name']?></td>
 		<td><?
-		switch($r['auction_mstr']['auction_wholesale']) {
+		switch($r['auction_mstr']['remitStatus']) {
             case 0:
                     echo 'Remit';
                     break;
