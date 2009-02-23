@@ -3,7 +3,7 @@
 
 if ($ppvNotice['PpvNotice']['emailBody']) {
 	echo $ppvNotice['PpvNotice']['emailBody'];
-} else 
+} else {
 	include('../vendors/email_msgs/toolbox_sent_messages/' . $ppvNotice['PpvNotice']['emailBodyFileName']);
 }
 
