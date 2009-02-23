@@ -13,9 +13,9 @@
 <div class="range">
 	<?echo $datePicker->picker('condition1.value.between.0', array('label' => 'From'))?>
 	<?echo $datePicker->picker('condition1.value.between.1', array('label' => 'To'))?>
-	<a href="#" onclick='javascript: $("condition1valueBetween0").value = "<?=date('Y-m-d')?>"; $("condition1valueBetween1").value = "<?=date('Y-m-d', strtotime('+1 day'))?>"'>Today</a> | 
-	<a href="#" onclick='javascript: $("condition1valueBetween0").value = "<?=date('Y-m-d', strtotime('-1 day'))?>"; $("condition1valueBetween1").value = "<?=date('Y-m-d')?>"'>Yesterday</a> |
-	<a href="#" onclick='javascript: $("condition1valueBetween0").value = "<?=date('Y-m-d', strtotime('-1 week'))?>"; $("condition1valueBetween1").value = "<?=date('Y-m-d')?>"'>This Week</a>
+	<a href="#" onclick='javascript: $(&quot;condition1valueBetween0&quot;).value = &quot;<?=date('Y-m-d')?>&quot;; $(&quot;condition1valueBetween1&quot;).value = &quot;<?=date('Y-m-d', strtotime('+1 day'))?>&quot;'>Today</a> | 
+	<a href="#" onclick='javascript: $(&quot;condition1valueBetween0&quot;).value = &quot;<?=date('Y-m-d', strtotime('-1 day'))?>&quot;; $(&quot;condition1valueBetween1&quot;).value = &quot;<?=date('Y-m-d')?>&quot;'>Yesterday</a> |
+	<a href="#" onclick='javascript: $(&quot;condition1valueBetween0&quot;).value = &quot;<?=date('Y-m-d', strtotime('-1 week'))?>&quot;; $(&quot;condition1valueBetween1&quot;).value = &quot;<?=date('Y-m-d')?>&quot;'>This Week</a>
 </div>
 </div>
 
@@ -182,16 +182,16 @@ $moneyCollected += $r[0]['moneyCollected'];
 <?php elseif (!empty($data)): ?>
 <p>No results were found for the entered filters.</p>
 <p><strong>Tips:</strong> If searching by client or package name, enter four or more characters.
-	<br />For client and package name you can make a search term required by adding a "+" before it, exclude it by adding a "-",
-	or search a complete phrase by adding quotes "" around it. By default, offers that contain any of the search terms are returned.
+	<br />For client and package name you can make a search term required by adding a &quot;+&quot; before it, exclude it by adding a &quot;-&quot;,
+	or search a complete phrase by adding quotes &quot;&quot; around it. By default, offers that contain any of the search terms are returned.
 </p>
 <?php else: ?>
 	<div class='blankExample'>
 		<h1>Enter some search criteria above to search offers</h1>
 		<p>This offer search report will search through all current and past offers using the search criteria entered above.</p>
 		<p><strong>Tips:</strong> If searching by client or package name, enter four or more characters.
-			<br />For client and package name you can make a search term required by adding a "+" before it, exclude it by adding a "-",
-			or search a complete phrase by adding quotes "" around it. By default, offers that contain any of the search terms in client name or package name are returned.
+			<br />For client and package name you can make a search term required by adding a &quot;+&quot; before it, exclude it by adding a &quot;-&quot;,
+			or search a complete phrase by adding quotes &quot;&quot; around it. By default, offers that contain any of the search terms in client name or package name are returned.
 			<a href="#" target="_blank">Learn more</a>
 		</p>
 		<?=$html->image('blank_slate_examples/reports_bids.gif')?>

@@ -644,7 +644,8 @@ class ReportsController extends AppController {
             if (empty($conditions)) {
                 $conditions = '1=1';
             }
-             $sql = "SELECT COUNT(DISTINCT Ticket.ticketId) as numRecords
+            
+            $sql = "SELECT COUNT(DISTINCT Ticket.ticketId) as numRecords
                         FROM ticket AS Ticket
                                INNER JOIN offer AS Offer USING(offerId)
                                LEFT JOIN offerType AS OfferType USING(offerTypeId)
@@ -670,12 +671,11 @@ class ReportsController extends AppController {
                            Client.name,
                            Ticket.userFirstName,
                            Ticket.userLastName,
-                           Ticket.userAddress1,
-                           Ticket.userAddress2,
-                           Ticket.userCity,
-                           Ticket.userState,
-                           Ticket.userCountry,
-                           Ticket.userZip,
+                           PaymentDetail.ppBillingAddress1,
+                           PaymentDetail.ppBillingCity,
+                           PaymentDetail.ppBillingState,
+                           PaymentDetail.ppBillingCountry,
+                           PaymentDetail.ppBillingZip,
                            Ticket.userWorkPhone,
                            Ticket.userHomePhone,
                            Ticket.userMobilePhone,
@@ -689,7 +689,7 @@ class ReportsController extends AppController {
                            OfferType.offerTypeName,
                            ROUND((SUM(PaymentDetail.ppBillingAmount) / Package.approvedRetailPrice * 100)) as percentOfRetail,
                            PaymentProcessor.paymentProcessorName,
-                           auction_mstr.auction_wholesale,
+                           auction_mstr.auction_wholesale as remitStatus,
                            #Track.applyToMembershipBal,
                            Package.validityStartDate,
                            Package.validityEndDate

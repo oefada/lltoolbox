@@ -9,7 +9,7 @@
 
 <div class="fieldRow">
 <label>Date Closed</label>
-<?echo $form->text('condition1.field', array('value' => 'SchedulingInstance.endDate', 'type' => 'hidden'))?>
+<?echo $form->text('condition1.field', array('value' => 'PaymentDetail.ppResponseDate', 'type' => 'hidden'))?>
 <div class="range">
 	<?echo $datePicker->picker('condition1.value.between.0', array('label' => 'From'))?>
 	<?echo $datePicker->picker('condition1.value.between.1', array('label' => 'To'))?>
@@ -17,13 +17,6 @@
 	<a href="#" onclick='javascript: $("condition1valueBetween0").value = "<?=date('Y-m-d', strtotime('-1 day'))?>"; $("condition1valueBetween1").value = "<?=date('Y-m-d')?>"'>Yesterday</a> |
 	<a href="#" onclick='javascript: $("condition1valueBetween0").value = "<?=date('Y-m-d', strtotime('-1 week'))?>"; $("condition1valueBetween1").value = "<?=date('Y-m-d')?>"'>This Week</a>
 </div>
-</div>
-
-<div class="controlset fieldRow" style="float: left; clear: none">
-	<?php echo $form->label('Ticket Status')?>
-	<?echo $form->text('condition2.field', array('value' => 'PaymentDetail.paymentDetailId', 'type' => 'hidden'))?>
-	<?echo $form->text('condition2.explicit', array('value' => 'true', 'type' => 'hidden'))?>
-	<?php echo $form->select('condition2.value', array('IS NOT NULL' => 'Payment Processed')).'(leave blank for All)';?>
 </div>
 
 <div class="controlset fieldRow" style="border: 0">
@@ -106,16 +99,16 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 		<td><?=$r['Client']['name']?></td>
 		<td><?=$r['Ticket']['userFirstName']?></td>
 		<td><?=$r['Ticket']['userLastName']?></td>
-		<td><?=$r['Ticket']['userAddress1']?></td>
-		<td><?=$r['Ticket']['userAddress2']?></td>
-		<td><?=$r['Ticket']['userCity']?></td>
-		<td><?=$r['Ticket']['userState']?></td>
-		<td><?=$r['Ticket']['userZip']?></td>
-		<td><?=$r['Ticket']['userCountry']?></td>
+		<td><?=$r['PaymentDetail']['ppBillingAddress1']?></td>
+		<td>&nbsp;</td>
+		<td><?=$r['PaymentDetail']['ppBillingCity']?></td>
+		<td><?=$r['PaymentDetail']['ppBillingState']?></td>
+		<td><?=$r['PaymentDetail']['ppBillingZip']?></td>
+		<td><?=$r['PaymentDetail']['ppBillingCountry']?></td>
 		<td><?=$r['Ticket']['userHomePhone']?></td>
 		<td><?=$r['Ticket']['userEmail1']?></td>
 		<td><?=$r['UserPaymentSetting']['ccType']?></td>
-		<td><?=$r['PaymentDetail']['ppCardNumLastFour']?></td>
+		<td>xxxx<?=$r['PaymentDetail']['ppCardNumLastFour']?></td>
 		<td><?=$r['PaymentDetail']['ppExpMonth'].'/'.$r['PaymentDetail']['ppExpYear']?></td>
 		<td><?=$r[0]['revenue']?></td>
 		<td><?=$r['Package']['numNights']?></td>

@@ -134,7 +134,7 @@
 
           </div> <!-- /#content-header -->
 
-        <div id="content-area" style="padding-top: 10px; overflow:visible">
+        <div id="content-area" style="padding-top: 10px">
           <?php print $content_for_layout; ?>
         </div>
       </div></div> <!-- /#content-inner, /#content -->
