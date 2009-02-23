@@ -122,7 +122,7 @@ $moneyCollected += $r[0]['moneyCollected'];
 		<td><?=$r['Offer']['offerId']?></td>
 		<td><?=$r['Client']['name']?></td>
 		<td><?
-		switch($r[0]['remitStatus']) {
+		switch($r['auction_mstr']['auction_wholesale']) {
             case 0:
                     echo 'Remit';
                     break;
@@ -139,7 +139,7 @@ $moneyCollected += $r[0]['moneyCollected'];
                    	echo 'PFP';
                     break;
 			default:
-					echo 'Remit';
+					echo '';
 					break;
 		}
 		?></td>
