@@ -8,6 +8,7 @@
 	<?php echo $form->input('ticketId', array('type' => 'hidden', 'value' => $ticket['Ticket']['ticketId']));?>
 	<?php echo $form->input('userId', array('type' => 'hidden', 'value' => $ticket['Ticket']['userId']));?>
 	<?php echo $form->input('paymentTypeId', array('type' => 'hidden', 'value' => '1'));?>
+	<?php echo $form->input('billingPrice', array('type' => 'hidden', 'value' => $ticket['Ticket']['billingPrice']));?>
 	
 	<h2>Process payment for:</h2>
 	<br />
@@ -107,54 +108,54 @@
 						
 						<table style="background:whitesmoke;margin:0px;padding:0px;" cellspacing="0" cellpadding="0" border="0">
 							<tr>
+								<td width="150">Use New Card</td>
+								<td><input type="checkbox" name="data[UserPaymentSetting][useNewCard]" id="UserPaymentSettingUseNewCard" /></td>
+							</tr>
+							<tr>
 								<td width="150">Name on Card</td>
-								<td><input type="text" name="data[UserPaymentSetting][]" id="PaymentDetailPaymentAmount" size="30" /></td>
+								<td><input type="text" name="data[UserPaymentSetting][nameOnCard]" id="UserPaymentSettingNameOnCard" size="30" /></td>
 							</tr>
 							<tr>
 								<td>Address 1</td>
-								<td><input type="text" name="data[UserPaymentSetting][]" id="PaymentDetailPaymentAmount" size="50" /></td>
+								<td><input type="text" name="data[UserPaymentSetting][address1]" id="UserPaymentSettingAddress1" size="50" /></td>
 							</tr>
 							<tr>
 								<td>Address 2</td>
-								<td><input type="text" name="data[UserPaymentSetting][]" id="PaymentDetailPaymentAmount" size="50" /></td>
+								<td><input type="text" name="data[UserPaymentSetting][address2]" id="UserPaymentSettingAddress2" size="50" /></td>
 							</tr>
 							<tr>
 								<td>City</td>
-								<td><input type="text" name="data[UserPaymentSetting][]" id="PaymentDetailPaymentAmount" size="20" /></td>
+								<td><input type="text" name="data[UserPaymentSetting][city]" id="UserPaymentSettingCity" size="20" /></td>
 							</tr>
 							<tr>
 								<td>State</td>
-								<td><input type="text" name="data[UserPaymentSetting][]" id="PaymentDetailPaymentAmount" size="20" /></td>
+								<td><input type="text" name="data[UserPaymentSetting][state]" id="UserPaymentSettingState" size="20" /></td>
 							</tr>
 							<tr>
 								<td>Country</td>
-								<td><input type="text" name="data[UserPaymentSetting][]" id="PaymentDetailPaymentAmount" size="20" /></td>
+								<td><input type="text" name="data[UserPaymentSetting][country]" id="UserPaymentSettingCountry" size="20" /></td>
 							</tr>
 							<tr>
 								<td>Postal/Zip Code</td>
-								<td><input type="text" name="data[UserPaymentSetting][]" id="PaymentDetailPaymentAmount" size="10" /></td>
+								<td><input type="text" name="data[UserPaymentSetting][postalCode]" id="UserPaymentSettingPostalCode" size="10" /></td>
 							</tr>
 							<tr>
 								<td>Card Number</td>
-								<td><input type="text" name="data[UserPaymentSetting][]" id="PaymentDetailPaymentAmount" size="50" /></td>
+								<td><input type="text" name="data[UserPaymentSetting][ccNumber]" id="UserPaymentSettingCcNumber" size="50" /></td>
 							</tr>
 							<tr>
 								<td>Expiration Month</td>
-								<td><input type="text" name="data[UserPaymentSetting][]" id="PaymentDetailPaymentAmount" /></td>
+								<td><input type="text" name="data[UserPaymentSetting][expMonth]" id="UserPaymentSettingExpMonth" /></td>
 							</tr>
 							<tr>
 								<td>Expiration Year</td>
-								<td><input type="text" name="data[UserPaymentSetting][]" id="PaymentDetailPaymentAmount" /></td>
-							</tr>
-							<tr>
-								<td>CVVS</td>
-								<td><input type="text" name="data[UserPaymentSetting][]" id="PaymentDetailPaymentAmount" size="5" /></td>
+								<td><input type="text" name="data[UserPaymentSetting][expYear]" id="UserPaymentSettingExpYear" /></td>
 							</tr>
 							<tr>
 								<td>&nbsp;</td>
 								<td>
 									<br />
-									<input type="checkbox" name="data[UserPaymentSetting][]" id="PaymentDetailPaymentAmount" />&nbsp;
+									<input type="checkbox" name="data[UserPaymentSetting][save]" id="UserPaymentSettingSave" />&nbsp;
 									Save this record for this user 
 								</td>
 							</tr>
@@ -172,7 +173,9 @@
 		</tr>
 		<tr>
 			<td><strong>Payment Amount</strong></td>
-			<td><input type="text" name="data[PaymentDetail][paymentAmount]" id="PaymentDetailPaymentAmount" /><?php echo $form->error('paymentAmount') ?></td>
+			<td><input type="text" readonly="readonly" name="data[PaymentDetail][paymentAmount]" id="PaymentDetailPaymentAmount" value="<?php echo $ticket['Ticket']['totalBillingAmount'];?>" /><?php echo $form->error('paymentAmount') ?>
+			(Includes Auction Fee)
+			</td>
 		</tr>
 	</table>
 
