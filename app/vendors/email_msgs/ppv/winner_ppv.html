@@ -59,12 +59,12 @@ plus the $<?php echo $llFee;?> auction handling fee.
 			<!-- SECTION LOOP -->
 			<?php foreach ($clients as $k => $client) : ?>
 				<p>
-				<?php echo $client['contactSalutation'];?><br />
+				<?php echo $client['contacts'][0]['ppv_name'];?><br />
 				<?php echo $packageName;?><br />
 				<?php echo $client['name'];?><br />
-				Telephone: <?php echo $client['phone1'];?><br />
-				Facsimile: <?php echo $client['fax'];?><br />
-				Email: <?php echo $client['ppvEmail1'];?>
+				Telephone: <?php echo $client['contacts'][0]['ppv_phone'];?><br />
+				Facsimile: <?php echo $client['contacts'][0]['ppv_fax'];?><br />
+				Email: <?php echo $client['contacts'][0]['ppv_email_address'];?>
 				<p>
 			<?php endforeach; ?>
 			<!-- END SECTION LOOP -->
@@ -128,12 +128,12 @@ plus the $<?php echo $llFee;?> auction handling fee.
 		<!-- SECTION LOOP -->
 		<?php foreach ($clients as $k => $client) : ?>
 		<p>
-			<?php echo $client['contactSalutation'];?><br />
+			<?php echo $client['contacts'][0]['ppv_name'];?><br />
 			<?php echo $packageName;?><br />
 			<?php echo $client['name'];?><br />
-			Telephone: <?php echo $client['phone1'];?><br />
-			Facsimile: <?php echo $client['fax'];?><br />
-			Email: <?php echo $client['ppvEmail1'];?>
+			Telephone: <?php echo $client['contacts'][0]['ppv_phone'];?><br />
+			Facsimile: <?php echo $client['contacts'][0]['ppv_fax'];?><br />
+			Email: <?php echo $client['contacts'][0]['ppv_email_address'];?>
 		<p>
 		<?php endforeach; ?>
 		<!-- END SECTION LOOP-->
