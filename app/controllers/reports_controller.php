@@ -214,10 +214,10 @@ class ReportsController extends AppController {
 	            $this->set('sortBy', $this->params['named']['sortBy']);
 	            $this->set('sortDirection', $direction);
 	        } else {
-	            $order = 'Offer.offerId';
+	            $order = 'Offer.offerId ASC';
 	            
 	            $this->set('sortBy', 'Offer.offerId');
-    	        $this->set('sortDirection', 'DESC');
+    	        $this->set('sortDirection', 'ASC');
 	        }
 	        
         $count = "    SELECT
@@ -243,7 +243,8 @@ class ReportsController extends AppController {
 	        $sql = "SELECT
                             Offer.offerId,
                         	Client.name,
-                        	Track.applyToMembershipBal,
+                        	auction_mstr.auction_wholesale as remitStatus,
+                        	#Track.applyToMembershipBal,
                         	OfferType.offerTypeName,
             				(SELECT Country.countryName FROM country AS Country WHERE Country.countryId = Client.countryId) AS country,
             				(SELECT State.stateName FROM state AS State WHERE State.stateId = Client.stateId) AS state,
@@ -261,6 +262,7 @@ class ReportsController extends AppController {
                         	(SELECT SUM(Ticket3.billingPrice) FROM ticket AS Ticket3 WHERE Ticket3.offerId = Offer.offerId AND Ticket3.ticketStatusId = 6) as moneyCollected
                     FROM offer AS Offer
                     LEFT JOIN ticket AS Ticket ON (Ticket.offerId = Offer.offerId)
+                    LEFT JOIN luxurymasterMigrate.auction_mstr as auction_mstr ON (auction_mstr.auction_id = Package.packageId)
                     LEFT JOIN ticket AS Ticket2 ON (Ticket2.offerId = Offer.offerId AND Ticket2.ticketStatusId = 6)
                     LEFT JOIN bid AS Bid ON (Bid.offerId = Offer.offerId)
                     INNER JOIN schedulingInstance AS SchedulingInstance ON (SchedulingInstance.schedulingInstanceId = Offer.schedulingInstanceId)
@@ -412,7 +414,8 @@ class ReportsController extends AppController {
                                     	Client.name,
                                     	Ticket.userFirstName,
                                     	Ticket.userLastName,
-                                    	Track.applyToMembershipBal,
+                                    	auction_mstr.auction_wholesale as remitStatus,
+                                    	#Track.applyToMembershipBal,
                                     	OfferType.offerTypeName,
                                     	Ticket.userCountry,
                                     	Ticket.userState,
@@ -423,6 +426,7 @@ class ReportsController extends AppController {
                                     	SUM(PaymentDetail2.paymentAmount) as moneyCollected,
                                     	IF(SUM(PaymentDetail2.paymentAmount)>=Ticket.billingPrice, MAX(PaymentDetail2.ppResponseDate), '') AS dateCollected
                                 FROM ticket AS Ticket
+                                LEFT JOIN luxurymasterMigrate.auction_mstr as auction_mstr ON (auction_mstr.auction_id = Package.packageId)
                                 LEFT JOIN ticketStatus AS TicketStatus USING (ticketStatusId)
                                 LEFT JOIN offerType as OfferType ON (OfferType.offerTypeId = Ticket.offerTypeId)
                                 LEFT JOIN client AS Client ON (Client.clientId = Ticket.clientId)
@@ -641,6 +645,7 @@ class ReportsController extends AppController {
              $sql = "SELECT COUNT(DISTINCT Ticket.ticketId) as numRecords
                         FROM ticket AS Ticket
                                INNER JOIN offer AS Offer USING(offerId)
+                               LEFT JOIN luxurymasterMigrate.auction_mstr as auction_mstr ON (auction_mstr.auction_id = Package.packageId)
                                LEFT JOIN offerType AS OfferType USING(offerTypeId)
                                INNER JOIN schedulingInstance AS SchedulingInstance USING(schedulingInstanceId)
                                INNER JOIN client as Client USING(clientId)
@@ -682,11 +687,13 @@ class ReportsController extends AppController {
                            OfferType.offerTypeName,
                            ROUND((SUM(PaymentDetail.ppBillingAmount) / Package.approvedRetailPrice * 100)) as percentOfRetail,
                            PaymentProcessor.paymentProcessorName,
-                           Track.applyToMembershipBal,
+                           auction_mstr.auction_wholesale,
+                           #Track.applyToMembershipBal,
                            Package.validityStartDate,
                            Package.validityEndDate
                     FROM ticket AS Ticket
                            INNER JOIN offer AS Offer USING(offerId)
+                           LEFT JOIN luxurymasterMigrate.auction_mstr as auction_mstr ON (auction_mstr.auction_id = Package.packageId)
                            LEFT JOIN offerType AS OfferType USING(offerTypeId)
                            LEFT JOIN schedulingInstance AS SchedulingInstance USING(schedulingInstanceId)
                            LEFT JOIN client as Client USING(clientId)

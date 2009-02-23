@@ -132,7 +132,29 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 				break;
 		}?></td>
 		<td><?=$r[0]['percentOfRetail']?></td>
-		<td><?=$r['Track']['applyToMembershipBal']?></td>
+		<td><?
+		switch($r[0]['remitStatus']) {
+            case 0:
+                    echo 'Remit';
+                    break;
+
+            case 1:
+                    echo 'Wholesale';
+                    break;
+
+            case 2:
+                    echo 'Keep';
+                    break;
+
+            case 3:
+                   	echo 'PFP';
+                    break;
+			default:
+					echo 'Remit';
+					break;
+		}
+		?>
+		</td>
 		<td><?=$r['Package']['validityStartDate']?></td>
 		<td><?=$r['Package']['validityEndDate']?></td>
 	</tr>

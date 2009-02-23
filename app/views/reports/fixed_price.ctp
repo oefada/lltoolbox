@@ -21,10 +21,10 @@
 
 <div class="fieldRow" style="float: left; margin-right: 30px">
 <label>Remit Type</label>
-<?echo $form->text('condition2.field', array('value' => 'Track.applyToMembershipBal', 'type' => 'hidden'))?>
+<?echo $form->text('condition2.field', array('value' => 'auction_mstr.auction_wholesale', 'type' => 'hidden'))?>
 <div class="range">
 	<?php
-		echo $form->select('condition2.value', array(1 => 'Keep', 0 => 'Remit'), null, array('multiple' => 'checkbox'))
+		echo $form->select('condition2.value', array(2 => 'Keep', 0 => 'Remit'), null, array('multiple' => 'checkbox'))
 	?>
 </div>
 </div>
@@ -102,7 +102,28 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 		<td><?=$r['Ticket']['ticketId']?></td>
 		<td><?=$r['Client']['name']?></td>
 		<td><?=$r['Ticket']['userFirstName'].' '.$r['Ticket']['userLastName']?></td>
-		<td><?=($r['Track']['applyToMembershipBal']) ? 'Barter' : 'Remit'?></td>
+		<td><?
+		switch($r[0]['remitStatus']) {
+            case 0:
+                    echo 'Remit';
+                    break;
+
+            case 1:
+                    echo 'Wholesale';
+                    break;
+
+            case 2:
+                    echo 'Keep';
+                    break;
+
+            case 3:
+                   	echo 'PFP';
+                    break;
+			default:
+					echo 'Remit';
+					break;
+		}
+		?></td>
 		<td><?=$r['OfferType']['offerTypeName']?></td>
 		<td><?=$r['Ticket']['userCountry']?></td>
 		<td><?=$r['Ticket']['userState']?></td>
