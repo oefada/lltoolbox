@@ -12,6 +12,26 @@ foreach ($results as $r):
 			$fee = 40;
 			break;
 	}
+	switch($r['auction_mstr']['remitStatus']) {
+        case 0:
+                $remit = 'Remit';
+                break;
+
+        case 1:
+                $remit = 'Wholesale';
+                break;
+
+        case 2:
+                $remit = 'Keep';
+                break;
+
+        case 3:
+               	$remit = 'PFP';
+                break;
+		default:
+				$remit = '';
+				break;
+	}
 	$line = array(
 	$r['SchedulingInstance']['endDate'],
 	$r['PaymentDetail']['ppResponseDate'],
@@ -44,7 +64,7 @@ foreach ($results as $r):
 	$fee,
 	$r[0]['percentOfRetail'],
 	$r['PaymentProcessor']['paymentProcessorName'],
-	($r['Track']['applyToMembershipBal']) ? 'Keep' : 'Remit',
+	$remit,
 	0,
 	$r['Package']['validityStartDate'],
 	$r['Package']['validityEndDate'],
