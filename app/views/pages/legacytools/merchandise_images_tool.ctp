@@ -134,7 +134,7 @@ for($i=1; $i<=$num_greg_days; $i++) {
 You are editing for: <strong><? echo date('F d, Y (l)', strtotime("$month/$day/$year"));?></strong><br /><br />
 
 <div style="text-align:right;margin-top:5px;margin-bottom:5px;">
-	<a href="http://preview.luxurylink.com/?test10=c&date=<?=$date_string;?>" target="_BLANK">Preview (Click Save First)</a>
+	<a href="http://www.luxurylink.com/?test10=c&date=<?=$date_string;?>" target="_BLANK">Preview (Click Save First)</a>
 </div>
 
 <form method="post" action="<?=$page;?>">
