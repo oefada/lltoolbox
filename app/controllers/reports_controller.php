@@ -73,6 +73,7 @@ class ReportsController extends AppController {
 	                LEFT JOIN offerType as OfferType ON (OfferType.offerTypeId = SchedulingMaster.offerTypeId)
 	                LEFT JOIN package AS Package ON (Package.packageId = SchedulingMaster.packageId)
 	                LEFT JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Package.packageId)
+	                LEFT JOIN luxurymasterMigrate.auction_mstr as auction_mstr ON (auction_mstr.auction_id = Package.packageId)
 	                LEFT JOIN loa AS Loa ON (Loa.loaId = ClientLoaPackageRel.loaId)
 	                LEFT JOIN client AS Client ON (Client.clientId = ClientLoaPackageRel.clientId)
 	                WHERE $conditions";
@@ -90,6 +91,7 @@ class ReportsController extends AppController {
 	                COUNT(Bid.bidId) as numberOfBids,
 	                SchedulingMaster.schedulingMasterId, SchedulingMaster.openingBid, SchedulingMaster.packageName,
 	                Loa.loaId, Loa.endDate, Loa.membershipBalance,
+	                auction_mstr.auction_wholesale AS remitStatus,
 	                (SELECT COUNT(*) 
 	                    FROM schedulingInstance AS SchedulingInstance2
 	                    INNER JOIN schedulingMaster AS SchedulingMaster2 
@@ -103,6 +105,7 @@ class ReportsController extends AppController {
 	                LEFT JOIN offerType as OfferType ON (OfferType.offerTypeId = SchedulingMaster.offerTypeId)
 	                LEFT JOIN package AS Package ON (Package.packageId = SchedulingMaster.packageId)
 	                LEFT JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Package.packageId)
+	                LEFT JOIN luxurymasterMigrate.auction_mstr as auction_mstr ON (auction_mstr.auction_id = Package.packageId)
 	                LEFT JOIN loa AS Loa ON (Loa.loaId = ClientLoaPackageRel.loaId)
 	                LEFT JOIN client AS Client ON (Client.clientId = ClientLoaPackageRel.clientId)
 	                WHERE $conditions
@@ -190,9 +193,13 @@ class ReportsController extends AppController {
 	            }
 	            
 	        else:
-	            
-	            //for Client.name and Package.packageName it's faster and better to do a match
-	            if ($ca['field'] == 'Client.name' || $ca['field'] == 'Package.packageName') {
+	            if(is_array($ca['value'])) {
+                    //wrap in single quotes
+                    foreach ($ca['value'] as $value) {
+                        $values[] = "'{$value}'";
+                    }
+                    $conditions[$k] =   $ca['field'].' IN('.implode(',', $values).')';
+                }else if ($ca['field'] == 'Client.name' || $ca['field'] == 'Package.packageName') {
 	                $conditions[$k] =   "MATCH({$ca['field']}) AGAINST('{$ca['value']}' IN BOOLEAN MODE)";
 	            } else {
 	               $conditions[$k] =   $ca['field'].' = '."'{$ca['value']}'";

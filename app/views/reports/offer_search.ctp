@@ -18,12 +18,22 @@
 <label style='padding-left: 20px'>To</label><?echo $form->text('condition2.value.between.1')?>
 </div>
 </div>
+
 <div class="fieldRow lastFieldRow">
 <?echo $form->select('condition3.field', $condition3Options)?>
 <div class='range'>
 
 <?echo $datePicker->picker('condition3.value.between.0', array('label' => 'From'))?>
 <?echo $datePicker->picker('condition3.value.between.1', array('label' => 'To'))?>
+</div>
+</div>
+<div class="fieldRow" style="float: left; margin-right: 30px">
+<label>Remit Type</label>
+<?echo $form->text('condition2.field', array('value' => 'auction_mstr.auction_wholesale', 'type' => 'hidden'))?>
+<div class="range">
+	<?php
+		echo $form->select('condition2.value', array(2 => 'Keep', 0 => 'Remit'), null, array('multiple' => 'checkbox'))
+	?>
 </div>
 </div>
 </div>
@@ -97,6 +107,7 @@ if (!empty($results)): ?>
 			<th><?=sortLink('Loa.endDate', 'LOA Term End', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('Loa.endDate', 'LOA Track End', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('Loa.membershipBalance', 'LOA Balance', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('auction_mstr.auction_wholesale', 'Remit Type', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('futureInstances', 'Will Repeat', $currentPage, $serializedFormInput, $this, $html)?></th>
 		</tr>
 <?php foreach ($results as $k => $result):
@@ -115,6 +126,28 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 		<td><?=$html->link(date('M j, Y', strtotime($result['Loa']['endDate'])), array('controller' => 'loas', 'action' => 'edit', $result['Loa']['loaId']))?></td>
 		<td>?</td>
 		<td><?=$html->link($number->currency($result['Loa']['membershipBalance'], 'USD', array('places' => 0)), array('controller' => 'loas', 'action' => 'edit', $result['Loa']['loaId']))?></td>
+		<td><?
+		switch($result['auction_mstr']['remitStatus']) {
+            case 0:
+                    echo 'Remit';
+                    break;
+
+            case 1:
+                    echo 'Wholesale';
+                    break;
+
+            case 2:
+                    echo 'Keep';
+                    break;
+
+            case 3:
+                   	echo 'PFP';
+                    break;
+			default:
+					echo '';
+					break;
+		}
+		?></td>
 		<td style="background: <?php echo ($result[0]['futureInstances']) ? 'none' : '#bc3226' ?>; text-align:center"><?php echo ($result[0]['futureInstances']) ? 'YES' : 'NO' ?></td>
 	</tr>
 <?php endforeach; //TODO: add totals ?>
