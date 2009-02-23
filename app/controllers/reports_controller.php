@@ -629,7 +629,7 @@ class ReportsController extends AppController {
 	            $this->set('sortBy', $this->params['named']['sortBy']);
 	            $this->set('sortDirection', $direction);
 	        } else {
-	            $order = 'Ticket.ticketId';
+	            $order = 'Ticket.ticketId DESC';
 	            
 	            $this->set('sortBy', 'Ticket.ticketId');
     	        $this->set('sortDirection', 'DESC');
