@@ -103,7 +103,7 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 		<td><?=$r['Client']['name']?></td>
 		<td><?=$r['Ticket']['userFirstName'].' '.$r['Ticket']['userLastName']?></td>
 		<td><?
-		switch($r[0]['remitStatus']) {
+		switch($r['auction_mstr']['remitStatus']) {
             case 0:
                     echo 'Remit';
                     break;

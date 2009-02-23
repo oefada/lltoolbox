@@ -133,7 +133,7 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 		}?></td>
 		<td><?=$r[0]['percentOfRetail']?></td>
 		<td><?
-		switch($r[0]['remitStatus']) {
+		switch($r['auction_mstr']['remitStatus']) {
             case 0:
                     echo 'Remit';
                     break;
