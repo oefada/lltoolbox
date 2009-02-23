@@ -47,11 +47,10 @@ class PaymentDetailsController extends AppController {
 	        $data['initials']               = $this->data['PaymentDetail']['initials'];
 	        $data['autoCharge']             = 0;
 	        $data['saveUps']                = $saveNewCard;
-	        $data['zAuthHashKey']           = md5('L33T_KEY_LL' . $data['userId'] . $data['ticketId'] . $data['paymentProcessorId'] . $data['paymentAmount'] . $data['initials']);
-	        
 	        if (!$data['initials']) {
 	        	$data['initials'] = 'MANUALTOOLBOX';	
 	        }
+	        $data['zAuthHashKey']           = md5('L33T_KEY_LL' . $data['userId'] . $data['ticketId'] . $data['paymentProcessorId'] . $data['paymentAmount'] . $data['initials']);
 	        
 	        if ($usingNewCard) {
 	        	$data['userPaymentSetting'] = $this->data['UserPaymentSetting'];
