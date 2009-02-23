@@ -318,7 +318,7 @@ class WebServiceTicketsController extends WebServicesController
 		$userData 			= $ticket['User'];
 		$userAddressData	= $this->Address->findByuserid($userData['userId']);
 		$userAddressData	= $userAddressData['Address'];
-		$clientData			= $clientLoaPackageRel = $this->ClientLoaPackageRel->findAllBypackageid($ticket['Ticket']['packageId']);
+		$clientData			= $this->ClientLoaPackageRel->findAllBypackageid($ticket['Ticket']['packageId']);
 		$liveOfferData 		= $liveOffer[0]['LiveOffer'];
 		$offerType			= $this->OfferType->find('list');
 		$userPaymentData	= $this->findValidUserPaymentSetting($ticketData['userId']);
@@ -391,8 +391,8 @@ class WebServiceTicketsController extends WebServicesController
 		}
 		
 		$clientId			= $clients[0]['clientId'];
-		$clientName 		= $clients[0]['name'];
-		$clientPrimaryEmail = $clients[0]['emailAddress'];
+		$clientName 		= $clients[0]['contacts'][0]['ppv_name'];
+		$clientPrimaryEmail = $clients[0]['contacts'][0]['ppv_email_address'];
 		$oldProductId		= $clients[0]['oldProductId'];
 		
 		// auction facilitator
