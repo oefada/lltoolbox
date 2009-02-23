@@ -146,15 +146,13 @@ $this->searchController = 'Tickets';
 			<th><?php __('Billing Amount'); ?></th>
 			<th><?php __('Processor'); ?></th>
 			<th><?php __('Status'); ?></th>
+			<th><?php __('Initials'); ?></th>
 			<th class="actions"><?php __('Actions');?></th>
 		</tr>
 		<?php
 			$i = 0;
 			foreach ($ticket['PaymentDetail'] as $paymentDetail):
-				$processed_flag = $paymentDetail['successfulCharge'] ? 'Payment Successful' : 'Payment Declined';
-				if ($paymentDetail['autoProcessed']) {
-					$processed_flag.= ' (Auto)';
-				}
+				$processed_flag = $paymentDetail['isSuccessfulCharge'] ? 'Payment Successful' : 'Payment Declined';
 				$class = null;
 				if ($i++ % 2 == 0) {
 					$class = ' class="altrow"';
@@ -163,9 +161,10 @@ $this->searchController = 'Tickets';
 				<tr<?php echo $class;?>>
 					<td align="center"><?php echo $paymentDetail['paymentDetailId']; ?></td>
 					<td align="center"><?php echo $paymentDetail['ppResponseDate'];?></td>
-					<td align="center"><?php echo $number->currency($paymentDetail['paymentAmount']);?></td>
+					<td align="center"><?php echo $number->currency($paymentDetail['ppBillingAmount']);?></td>
 					<td align="center"><?php echo $paymentDetail['PaymentProcessor']['paymentProcessorName'];?></td>
 					<td align="center"><?php echo $processed_flag;?></td>
+					<td align="center"><?php echo $paymentDetail['PaymentProcessor']['initials'];?></td>
 					<td class="actions">
 						<?php //echo $html->link(__('View', true), array('controller'=> 'payment_details', 'action'=>'view', $paymentDetail['paymentDetailId'])); ?>
 						<?php
