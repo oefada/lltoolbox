@@ -377,7 +377,7 @@ class WebServiceTicketsController extends WebServicesController
 		$clients		 	= array();
 		foreach ($clientData as $k => $v) {
 			$tmp = $v['Client'];
-			$tmp_result = $this->Ticket->query('SELECT * FROM clientContact WHERE clientContactTypeId = 1 and clientId = ' . $v['Client']['clientId'] . ' ORDER BY primaryContact');
+			$tmp_result = $this->Ticket->query('SELECT * FROM clientContact WHERE clientContactTypeId = 1 and clientId = ' . $v['Client']['clientId'] . ' ORDER BY primaryContact DESC');
 			foreach ($tmp_result as $a => $b) {
 				$contacts = array();
 				$contacts['ppv_name'] 			= $b['clientContact']['name'];
@@ -392,6 +392,7 @@ class WebServiceTicketsController extends WebServicesController
 		
 		$clientId			= $clients[0]['clientId'];
 		$clientName 		= $clients[0]['name'];
+		$clientPrimaryEmail = $clients[0]['emailAddress'];
 		$oldProductId		= $clients[0]['oldProductId'];
 		
 		// auction facilitator
@@ -420,14 +421,20 @@ class WebServiceTicketsController extends WebServicesController
 			case 1:
 				// send out res confirmation
 				include('../vendors/email_msgs/ppv/conf_ppv.html');
-				$emailSubject = "Luxury Link $offerTypeName Confirmation - $packageName";
+				$emailSubject = "Luxury Link $offerTypeName Reservation Confirmation";
+				$emailFrom = "LuxuryLink.com<reservations@luxurylink.com>";
+				$emailReplyTo = "reservations@luxurylink.com";
 				$emailBcc = 'thread@luxurylink.com';
+				$userEmail = $clientPrimaryEmail;
 				break;
 			case 2:
 				// send out res request
 				include('../vendors/email_msgs/ppv/res_ppv.html');
 				$emailSubject = "Luxury Link $offerTypeName Reservation Request";
+				$emailFrom = "LuxuryLink.com<reservations@luxurylink.com>";
+				$emailReplyTo = "reservations@luxurylink.com";
 				$emailBcc = 'thread@luxurylink.com';
+				$userEmail = $clientPrimaryEmail;
 				break;
 			case 3:
 				include('../vendors/email_msgs/ppv/winner_ppv.html');
@@ -442,6 +449,7 @@ class WebServiceTicketsController extends WebServicesController
 				$emailFrom = "LuxuryLink.com<auction@luxurylink.com>";
 				$emailReplyTo = 'auction@luxurylink.com';
 				$emailBcc = 'thread@luxurylink.com';
+				$userEmail = $clientPrimaryEmail;
 				break;
 			case 5:
 				include('../vendors/email_msgs/notifications/winner_notification.html');
