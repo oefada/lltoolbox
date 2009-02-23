@@ -99,10 +99,10 @@ foreach($package['Scheduling'] as $k => $master):
 		
 	<?php
 		$prototip->tooltip('schedulingMaster'.$master['SchedulingMaster']['schedulingMasterId'], array('ajax' =>
-		 																		array('url' => '/scheduling_instances/performanceTooltip/'.$instance['schedulingMasterId'], 
+		 																		array('url' => '/scheduling_instances/performanceTooltip/'.$instance['schedulingInstanceId'], 
 																						'options' => array('method' => 'get')
 																					),
-																				'title' => 'Scheduling Master Performance'
+																				'title' => 'Offer Performance'
 																				));
 	} else {
 	?>

@@ -71,8 +71,11 @@ class SchedulingInstancesController extends AppController {
 	                                                ' LEFT JOIN ticket as Ticket ON (Offer.offerId = Ticket.offerId)'.
 	                                                ' LEFT JOIN ticketStatus as TicketStatus ON(Ticket.ticketStatusId = TicketStatus.ticketStatusId)'.
 	                                                ' WHERE Offer.schedulingInstanceId = '.$id);
+	    $this->SchedulingInstance->recursive = -1;
+        $schedulingInstance = $this->SchedulingInstance->find('first', array('conditions' => array('SchedulingInstance.schedulingInstanceId ' => $id)));
 
 		$this->set('metrics', $metrics[0]);
+		$this->set('schedulingInstance', $schedulingInstance);
 	}
 
 }

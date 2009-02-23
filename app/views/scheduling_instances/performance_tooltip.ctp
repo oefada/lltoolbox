@@ -1,6 +1,15 @@
 <table>
 	<tr>
 		<td style='font-weight: bold'>
+			Start Date - End Date
+		</td>
+		<td style='text-align: right'>
+			<?=date('M d, Y h:i:sa', strtotime($schedulingInstance['SchedulingInstance']['startDate']))?> - 
+			<?=date('M d, Y h:i:sa', strtotime($schedulingInstance['SchedulingInstance']['endDate']))?>
+		</td>
+	</tr>
+	<tr>
+		<td style='font-weight: bold'>
 			# Bids:
 		</td>
 		<td style='text-align: right'>
