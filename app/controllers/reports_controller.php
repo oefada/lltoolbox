@@ -230,6 +230,7 @@ class ReportsController extends AppController {
                         INNER JOIN schedulingMaster AS SchedulingMaster ON (SchedulingMaster.schedulingMasterId = SchedulingInstance.schedulingMasterId)
                         INNER JOIN offerType as OfferType ON (OfferType.offerTypeId = SchedulingMaster.offerTypeId)
                         INNER JOIN package AS Package ON (Package.packageId = SchedulingMaster.packageId)
+                        INNER JOIN luxurymasterMigrate.auction_mstr as auction_mstr ON (auction_mstr.auction_id = Package.packageId)
                         INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Package.packageId)
                         INNER JOIN client AS Client ON (Client.clientId = ClientLoaPackageRel.clientId)
                         LEFT JOIN track AS Track ON (Track.trackId = ClientLoaPackageRel.trackId)
@@ -262,13 +263,13 @@ class ReportsController extends AppController {
                         	(SELECT SUM(Ticket3.billingPrice) FROM ticket AS Ticket3 WHERE Ticket3.offerId = Offer.offerId AND Ticket3.ticketStatusId = 6) as moneyCollected
                     FROM offer AS Offer
                     LEFT JOIN ticket AS Ticket ON (Ticket.offerId = Offer.offerId)
-                    LEFT JOIN luxurymasterMigrate.auction_mstr as auction_mstr ON (auction_mstr.auction_id = Package.packageId)
                     LEFT JOIN ticket AS Ticket2 ON (Ticket2.offerId = Offer.offerId AND Ticket2.ticketStatusId = 6)
                     LEFT JOIN bid AS Bid ON (Bid.offerId = Offer.offerId)
                     INNER JOIN schedulingInstance AS SchedulingInstance ON (SchedulingInstance.schedulingInstanceId = Offer.schedulingInstanceId)
                     INNER JOIN schedulingMaster AS SchedulingMaster ON (SchedulingMaster.schedulingMasterId = SchedulingInstance.schedulingMasterId)
                     INNER JOIN offerType as OfferType ON (OfferType.offerTypeId = SchedulingMaster.offerTypeId)
                     INNER JOIN package AS Package ON (Package.packageId = SchedulingMaster.packageId)
+                    INNER JOIN luxurymasterMigrate.auction_mstr as auction_mstr ON (auction_mstr.auction_id = Package.packageId)
                     INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Package.packageId)
                     INNER JOIN client AS Client ON (Client.clientId = ClientLoaPackageRel.clientId)
                     LEFT JOIN track AS Track ON (Track.trackId = ClientLoaPackageRel.trackId)
