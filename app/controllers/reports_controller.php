@@ -646,7 +646,6 @@ class ReportsController extends AppController {
              $sql = "SELECT COUNT(DISTINCT Ticket.ticketId) as numRecords
                         FROM ticket AS Ticket
                                INNER JOIN offer AS Offer USING(offerId)
-                               LEFT JOIN luxurymasterMigrate.auction_mstr as auction_mstr ON (auction_mstr.auction_id = Package.packageId)
                                LEFT JOIN offerType AS OfferType USING(offerTypeId)
                                INNER JOIN schedulingInstance AS SchedulingInstance USING(schedulingInstanceId)
                                INNER JOIN client as Client USING(clientId)
@@ -654,6 +653,7 @@ class ReportsController extends AppController {
                                LEFT JOIN paymentProcessor AS PaymentProcessor USING (paymentProcessorId)
                                LEFT JOIN userPaymentSetting AS UserPaymentSetting USING (userPaymentSettingId)
                                INNER JOIN package AS Package USING(packageId)
+                               INNER JOIN luxurymasterMigrate.auction_mstr as auction_mstr ON (auction_mstr.auction_id = Package.packageId)
                                INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.clientId = Ticket.clientId AND ClientLoaPackageRel.packageId = Ticket.packageId)
                                LEFT JOIN track AS Track USING(trackId)
                         WHERE $conditions";
@@ -694,7 +694,6 @@ class ReportsController extends AppController {
                            Package.validityEndDate
                     FROM ticket AS Ticket
                            INNER JOIN offer AS Offer USING(offerId)
-                           LEFT JOIN luxurymasterMigrate.auction_mstr as auction_mstr ON (auction_mstr.auction_id = Package.packageId)
                            LEFT JOIN offerType AS OfferType USING(offerTypeId)
                            LEFT JOIN schedulingInstance AS SchedulingInstance USING(schedulingInstanceId)
                            LEFT JOIN client as Client USING(clientId)
@@ -702,6 +701,7 @@ class ReportsController extends AppController {
                            LEFT JOIN paymentProcessor AS PaymentProcessor USING (paymentProcessorId)
                            LEFT JOIN userPaymentSetting AS UserPaymentSetting USING (userPaymentSettingId)
                            LEFT JOIN package AS Package USING(packageId)
+                           INNER JOIN luxurymasterMigrate.auction_mstr as auction_mstr ON (auction_mstr.auction_id = Package.packageId)
                            LEFT JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.clientId = Ticket.clientId AND ClientLoaPackageRel.packageId = Ticket.packageId)
                            LEFT JOIN track AS Track USING(trackId)
                     WHERE $conditions

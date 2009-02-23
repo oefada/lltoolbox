@@ -150,7 +150,7 @@ $class = ($k % 2) ? ' class="altrow"' : '';
                    	echo 'PFP';
                     break;
 			default:
-					echo 'Remit';
+					echo '';
 					break;
 		}
 		?>
