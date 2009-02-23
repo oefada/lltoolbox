@@ -8,6 +8,8 @@
 <td>
 <center><a href="http://www.luxurylink.com/"><img src="http://www.luxurylink.com/images/shared/ll_logo2.gif" border="0"></a></center><br /><br />
 <font face="Arial" size="2">
+User Account ID #<?php echo $userId;?><br />
+Ticket Reference ID #<?php echo $ticketId;?><br />
 <br />
 
 <p>Dear <?php echo $clientName;?>,</p>
@@ -31,7 +33,7 @@ Work Phone: <?php echo $userData['workPhone'];?>
 
 <p>Please forward the confirmation number to my attention, if available.</p>
 
-<p>We have received a request for one package in the amount of  ${$multi_sale_price[$index]} with the following inclusions:</p>
+<p>We have received a request for one package in the amount of $<?php echo $billingPrice;?> with the following inclusions:</p>
 
 	<p><?php echo $packageIncludes;?></p>
 	<p><?php echo $validityNote;?></p>
