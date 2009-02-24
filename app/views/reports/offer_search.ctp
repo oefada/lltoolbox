@@ -108,6 +108,7 @@ if (!empty($results)): ?>
 			<th><?=sortLink('Loa.endDate', 'LOA Track End', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('Loa.membershipBalance', 'LOA Balance', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('auction_mstr.auction_wholesale', 'Remit Type', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('Client.managerUsername', 'Manager Username', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('futureInstances', 'Will Repeat', $currentPage, $serializedFormInput, $this, $html)?></th>
 		</tr>
 <?php foreach ($results as $k => $result):
@@ -148,6 +149,7 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 					break;
 		}
 		?></td>
+		<td><?=$result['Client']['managerUsername']?></td>
 		<td style="background: <?php echo ($result[0]['futureInstances']) ? 'none' : '#bc3226' ?>; text-align:center"><?php echo ($result[0]['futureInstances']) ? 'YES' : 'NO' ?></td>
 	</tr>
 <?php endforeach; //TODO: add totals ?>

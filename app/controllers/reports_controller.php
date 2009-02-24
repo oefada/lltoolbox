@@ -97,7 +97,8 @@ class ReportsController extends AppController {
 	                    INNER JOIN schedulingMaster AS SchedulingMaster2 
                         ON (SchedulingInstance2.schedulingMasterId = SchedulingMaster2.schedulingMasterId)
                         WHERE SchedulingMaster2.schedulingMasterId = SchedulingMaster.schedulingMasterId AND SchedulingInstance2.endDate >= NOW()
-	                ) AS futureInstances
+	                ) AS futureInstances,
+	                Client.managerUsername
 	                FROM offer AS Offer
 	                LEFT JOIN bid AS Bid ON (Bid.offerId = Offer.offerId)
 	                INNER JOIN schedulingInstance AS SchedulingInstance ON (SchedulingInstance.schedulingInstanceId = Offer.schedulingInstanceId)
@@ -780,7 +781,8 @@ class ReportsController extends AppController {
                         ROUND( (Loa.loaValue / DATEDIFF(Loa.endDate, Loa.startDate)), 2) as dailyMembershipFee,
                         ROUND( (Loa.loaValue - Loa.membershipBalance) / (Loa.loaValue / DATEDIFF(Loa.endDate, Loa.startDate)) ) as numDaysPaid,
                         (Loa.startDate + INTERVAL ( (Loa.loaValue - Loa.membershipBalance) / (Loa.loaValue / DATEDIFF(Loa.endDate, Loa.startDate)) ) DAY) as paidThru,
-                        DATEDIFF(Loa.endDate, (Loa.startDate + INTERVAL ( (Loa.loaValue - Loa.membershipBalance) / (Loa.loaValue / DATEDIFF(Loa.endDate, Loa.startDate)) ) DAY)) as daysBehindSchedule
+                        DATEDIFF(Loa.endDate, (Loa.startDate + INTERVAL ( (Loa.loaValue - Loa.membershipBalance) / (Loa.loaValue / DATEDIFF(Loa.endDate, Loa.startDate)) ) DAY)) as daysBehindSchedule,
+                        Client.managerUsername
                     FROM client as Client
                     INNER JOIN loa as Loa USING(clientId)
                     LEFT JOIN loaLevel as LoaLevel USING(loaLevelId)

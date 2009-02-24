@@ -99,6 +99,7 @@ if (!empty($results)): ?>
 			<th><?=sortLink('numDaysPaid', '# Days Paid', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('paidThru', 'Paid Thru', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('daysBehindSchedule', 'Days Behind Schedule', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('Client.managerUsername', 'Manager', $currentPage, $serializedFormInput, $this, $html)?></th>
 		</tr>
 <?php foreach ($results as $k => $r):
 $class = ($k % 2) ? ' class="altrow"' : '';
@@ -119,13 +120,14 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 		<td><?=$r['Loa']['loaId']?></td>
 		<td><?=$r['Loa']['clientId']?></td>
 		<td><?=$r['Loa']['membershipBalance']?></td>
-		<td><?=$r['Loa']['loaValue']?></td>
+		<td><?=$r['Loa']['membershipFee']?></td>
 		<td><?=$r['Loa']['startDate']?></td>
 		<td><?=$r[0]['loaNumberOfDaysActive']?></td>
 		<td><?=$r[0]['dailyMembershipFee']?></td>
 		<td><?=$r[0]['numDaysPaid']?></td>
 		<td><?=$r[0]['paidThru']?></td>
 		<td><?=$r[0]['daysBehindSchedule']?></td>
+		<td><?=$r['Client']['managerUsername']?></td>
 	</tr>
 <?php endforeach; //TODO: add totals ?>
 </table>
