@@ -227,6 +227,7 @@ class PaymentDetailsController extends AppController {
 		$paymentDetail['ppBillingAmount']		= $data['paymentAmount'];
 		$paymentDetail['autoProcessed']			= $data['autoCharge'];
 		$paymentDetail['initials']				= $data['initials'];
+		$paymentDetail['ccType']				= $userPaymentSettingPost['UserPaymentSetting']['ccType'];
 
 		$this->PaymentDetail->create();
 		if (!$this->PaymentDetail->save($paymentDetail)) {

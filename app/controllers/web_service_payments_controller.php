@@ -258,6 +258,7 @@ class WebServicePaymentsController extends WebServicesController
 		$paymentDetail['ppBillingAmount']		= $data['paymentAmount'] + $fee;
 		$paymentDetail['autoProcessed']			= $data['autoCharge'];
 		$paymentDetail['initials']				= $data['initials'];
+		$paymentDetail['ccType']				= $userPaymentSettingPost['UserPaymentSetting']['ccType'];
 
 		$this->PaymentDetail->create();
 		if (!$this->PaymentDetail->save($paymentDetail)) {
