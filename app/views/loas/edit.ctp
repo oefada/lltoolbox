@@ -13,7 +13,14 @@ $this->set('clientId', $this->data['Client']['clientId']);
 	<fieldset>
 	<?php
 		echo $form->input('loaId');
-		echo $form->input('loaLevelId', array('disabled' => true, 'label' => 'LOA Level'));
+		
+		//only tmccord can edit loa level
+		if ($userDetails['username'] == 'tmccord') {
+			$disabled = false;
+		} else {
+			$disabled = true;
+		}
+		echo $form->input('loaLevelId', array('disabled' => $disabled, 'label' => 'LOA Level'));
 		echo $form->input('cash', array('type' => 'select', 'options' => array(0 => 'Barter', 1 => 'Cash')));
 		echo $form->input('numEmailInclusions');
 		echo $form->input('loaValue', array('disabled' => true, 'label' => 'Total Revenue'));
