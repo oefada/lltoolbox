@@ -5,45 +5,19 @@
 <fieldset>
 <h3 class='title'>SEARCH CLIENTS BY:</h3>
 
-<div style="float: left; border-right: 1px solid #000; padding-right: 25px">
 <div class="fieldRow">
-		<?echo $form->select('condition1.field', array('MATCH=Client.managerUsername' => 'Manager Username', 'MATCH=Client.name' => 'Client Name', 'MATCH=Client.teamname' => 'Team Name'))?>
+		<label>Manager Username</label>
+		<?echo $form->text('condition1.field', array('value' => 'LIKE=Client.managerUsername', 'type' => 'hidden'))?>
 		<?echo $form->text('condition1.value')?>
 </div>
 <div class="fieldRow">
-		<?echo $form->label('LOA Type')?>
-		<?echo $form->text('condition2.field', array('value' => 'Loa.loaTypeId', 'type' => 'hidden'))?>
-		<?echo $form->select('condition2.value', $loaTypes)?>
-</div>
-</div>
-<div style="float: left; clear: none; padding-left: 25px">
-<div class="fieldRow">
-		<?echo $form->label('Country')?>
-		<?echo $form->text('condition3.field', array('value' => 'Client.countryId', 'type' => 'hidden'))?>
-		<?echo $form->select('condition3.value', $countries)?>
-</div>
-<div class="fieldRow">
-		<?echo $form->label('State/Province')?>
-		<?echo $form->text('condition4.field', array('value' => 'Client.stateId', 'type' => 'hidden'))?>
-		<?echo $form->select('condition4.value', $states)?>
-</div>
-</div>
-<div style="clear: both; padding-top: 10px">
-<div class="fieldRow">
-<?echo $form->select('condition5.field', array('Loa.startDate' => 'Loa Term Start Date', 'Loa.endDate' => 'Loa Term End Date'))?>
-<div class="range">
-	<?echo $datePicker->picker('condition5.value.between.0', array('label' => 'From'))?>
-	<?echo $datePicker->picker('condition5.value.between.1', array('label' => 'To'))?>
-	<a href="#" onclick='javascript: $("condition5valueBetween0").value = "<?=date('Y-m-d')?>"; $("condition5valueBetween1").value = "<?=date('Y-m-d', strtotime('+1 day'))?>"'>Today</a> | 
-	<a href="#" onclick='javascript: $("condition5valueBetween0").value = "<?=date('Y-m-d', strtotime('-1 day'))?>"; $("condition5valueBetween1").value = "<?=date('Y-m-d')?>"'>Yesterday</a> |
-	<a href="#" onclick='javascript: $("condition5valueBetween0").value = "<?=date('Y-m-d', strtotime('-1 week'))?>"; $("condition5valueBetween1").value = "<?=date('Y-m-d')?>"'>This Week</a>
-</div>
+		<label>Client search criteria</label>
+		<?echo $form->select('condition2.value', array(1 => 'Has current live auctions', 'Does not have current live auctions', 'Has current fixed priced offers', 'Does not have current fixed priced offers'))?>
 </div>
 
 <div class="controlset fieldRow" style="border: 0">
 <?php 		echo $form->checkbox('paging.disablePagination');
 			echo $form->label('paging.disablePagination');?>
-</div>
 </div>
 
 </fieldset>
@@ -106,7 +80,7 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 ?>
 	<tr<?=$class?>>
 		<td><?=$k+1?></td>
-		<td><?=$r['Client']['name']?></td>
+		<td><?=$html->link($r['Client']['name'], array('controller' => 'clients', 'action' => 'edit', $r['Client']['clientId']))?></td>
 		<td><?=$r['LoaLevel']['loaLevelName']?></td>
 		<td><?=$r['Loa']['endDate']?></td>
 		<td>?</td>
@@ -117,8 +91,8 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 		<td><?=$r[0]['city']?></td>
 		<td><?=$r[0]['state']?></td>
 		<td><?=$r[0]['country']?></td>
-		<td><?=$r['Loa']['loaId']?></td>
-		<td><?=$r['Loa']['clientId']?></td>
+		<td><?=$html->link($r['Loa']['loaId'], '/clients/'.$r['Client']['clientId'].'/loas/edit/'.$r['Loa']['loaId'])?></td>
+		<td><?=$html->link($r['Loa']['clientId'], array('controller' => 'clients', 'action' => 'edit', $r['Client']['clientId']))?></td>
 		<td><?=$r['Loa']['membershipBalance']?></td>
 		<td><?=$r['Loa']['membershipFee']?></td>
 		<td><?=$r['Loa']['startDate']?></td>

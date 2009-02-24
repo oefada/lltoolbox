@@ -750,8 +750,28 @@ class ReportsController extends AppController {
                 $conditions = '1=1';
             }
 
-             $sql = "SELECT COUNT(DISTINCT Loa.loaId) as numRecords
+            switch ( $this->data['condition2']['value'] ):
+                case 1:
+                    $subquery = '(SELECT COUNT(*) FROM offerLive as OfferLive2 WHERE NOW() BETWEEN OfferLive2.startDate AND OfferLive2.endDate AND OfferLive2.offerTypeId IN (1,2,6) AND OfferLive2.clientId = Client.clientId) AS countSubqueryOffers,';
+                    $having = 'HAVING countSubqueryOffers > 0';
+                    break;
+                case 2:
+                    $subquery = '(SELECT COUNT(*) FROM offerLive as OfferLive2 WHERE NOW() BETWEEN OfferLive2.startDate AND OfferLive2.endDate AND OfferLive2.offerTypeId IN (1,2,6) AND OfferLive2.clientId = Client.clientId) AS countSubqueryOffers,';
+                    $having = 'HAVING countSubqueryOffers = 0';
+                    break;
+                case 3:
+                    $subquery = '(SELECT COUNT(*) FROM offerLive as OfferLive2 WHERE NOW() BETWEEN OfferLive2.startDate AND OfferLive2.endDate AND OfferLive2.offerTypeId IN (3,4) AND OfferLive2.clientId = Client.clientId) AS countSubqueryOffers,';
+                    $having = 'HAVING countSubqueryOffers > 0';
+                    break;
+                case 4:
+                    $subquery = '(SELECT COUNT(*) FROM offerLive as OfferLive2 WHERE NOW() BETWEEN OfferLive2.startDate AND OfferLive2.endDate AND OfferLive2.offerTypeId IN (3,4) AND OfferLive2.clientId = Client.clientId) AS countSubqueryOffers,';
+                    $having = 'HAVING countSubqueryOffers = 0';
+                    break;
+            endswitch;
+
+            $sql = "SELECT COUNT(DISTINCT Loa.loaId) as numRecords
                         FROM client as Client
+                        LEFT JOIN offerLive as OfferLive USING(clientId)
                         INNER JOIN loa as Loa USING(clientId)
                         LEFT JOIN loaLevel as LoaLevel USING(loaLevelId)
                         WHERE Loa.endDate >= NOW() AND $conditions";
@@ -761,6 +781,8 @@ class ReportsController extends AppController {
             $numPages = ceil($numRecords / $this->perPage);
             
             $sql = "SELECT 
+                        $subquery
+                        Client.clientId,
                         Client.name,
                         LoaLevel.loaLevelName,
                         Loa.endDate,
@@ -788,6 +810,7 @@ class ReportsController extends AppController {
                     LEFT JOIN loaLevel as LoaLevel USING(loaLevelId)
                     WHERE Loa.endDate >= NOW() AND $conditions
                     GROUP BY Loa.loaId, Client.clientId
+                    $having
                     ORDER BY $order
 	                LIMIT $this->limit";
 	        
@@ -800,14 +823,6 @@ class ReportsController extends AppController {
 	        $this->set('results', $results);
 	        $this->set('serializedFormInput', serialize($this->data));
 	    }
-	    
-	        
-	        $country = new Country;
-	        $state = new State;
-	        $loaLevel = new LoaLevel;
-	        $this->set('countries', $country->find('list'));
-	        $this->set('states', $state->find('list'));
-	        $this->set('loaTypes', $loaLevel->find('list'));
 	}
 	
 	function imr() {
@@ -989,7 +1004,10 @@ class ReportsController extends AppController {
 	            } elseif (strpos($ca['field'], 'MATCH=') !== false) {
 	                $field = substr($ca['field'], strpos($ca['field'], '=')+1);
 	                $conditions[$k] =   'MATCH('.$field.') AGAINST('."'{$ca['value']}' IN BOOLEAN MODE)";
-	            } else {
+	            } elseif (strpos($ca['field'], 'LIKE=') !== false) {
+    	                $field = substr($ca['field'], strpos($ca['field'], '=')+1);
+    	                $conditions[$k] =   "{$field} LIKE '{$ca['value']}%'";
+    	        } else {
 	                $conditions[$k] =   $ca['field'].' = '."'{$ca['value']}'";
 	            }
 	            
