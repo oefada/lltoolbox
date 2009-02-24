@@ -8,7 +8,6 @@
 	<?php echo $form->input('ticketId', array('type' => 'hidden', 'value' => $ticket['Ticket']['ticketId']));?>
 	<?php echo $form->input('userId', array('type' => 'hidden', 'value' => $ticket['Ticket']['userId']));?>
 	<?php echo $form->input('paymentTypeId', array('type' => 'hidden', 'value' => '1'));?>
-	<?php echo $form->input('billingPrice', array('type' => 'hidden', 'value' => $ticket['Ticket']['billingPrice']));?>
 	
 	<h2>Process payment for:</h2>
 	<br />
@@ -173,7 +172,7 @@
 		</tr>
 		<tr>
 			<td><strong>Payment Amount</strong></td>
-			<td><input type="text" readonly="readonly" name="data[PaymentDetail][paymentAmount]" id="PaymentDetailPaymentAmount" value="<?php echo $ticket['Ticket']['totalBillingAmount'];?>" /><?php echo $form->error('paymentAmount') ?>
+			<td><input type="text" name="data[PaymentDetail][paymentAmount]" id="PaymentDetailPaymentAmount" value="<?php echo $ticket['Ticket']['totalBillingAmount'];?>" /><?php echo $form->error('paymentAmount') ?>
 			(Includes Auction Fee)
 			</td>
 		</tr>
