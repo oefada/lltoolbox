@@ -2,8 +2,22 @@
 <?php $session->flash();
 	$session->flash('error');
 ?>
+
+<script language="javascript">
+<!--
+function confirmSubmit()
+{
+	var agree = confirm("Are you sure you want to continue?  Clicking 'Ok' will submit this payment.");
+	if (agree)
+		return true ;
+	else
+		return false ;
+	}
+// -->
+</script>
+
 <div class="paymentDetails form">
-<?php echo $form->create('PaymentDetail', array('url' => "/tickets/{$ticket['Ticket']['ticketId']}/paymentDetails/add"));?>
+<?php echo $form->create('PaymentDetail', array('url' => "/tickets/{$ticket['Ticket']['ticketId']}/paymentDetails/add", 'onsubmit' => "return confirmSubmit()"));?>
 	
 	<?php echo $form->input('ticketId', array('type' => 'hidden', 'value' => $ticket['Ticket']['ticketId']));?>
 	<?php echo $form->input('userId', array('type' => 'hidden', 'value' => $ticket['Ticket']['userId']));?>
