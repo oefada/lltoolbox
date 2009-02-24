@@ -135,7 +135,7 @@ class Client extends AppModel {
 			}
 		}
 		$update_tmp = rtrim($tmp, ',');
-		$sql = "INSERT INTO clientThemeLookup (". implode(',',array_keys($insert_arr)) .") VALUES (". implode(',',array_values($insert_arr)) .") ON DUPLICATE KEY UPDATE $update_tmp";						
+		$sql = "INSERT DELAYED INTO clientThemeLookup (". implode(',',array_keys($insert_arr)) .") VALUES (". implode(',',array_values($insert_arr)) .") ON DUPLICATE KEY UPDATE $update_tmp";						
 		$result = $this->query($sql);
 				
 		// get all the clients destination ids
