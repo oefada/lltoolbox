@@ -43,7 +43,7 @@ class PaymentDetailsController extends AppController {
 	        $data['userId']                 = $this->data['PaymentDetail']['userId'];
 	        $data['ticketId']               = $this->data['PaymentDetail']['ticketId'];
 	        $data['paymentProcessorId']     = $this->data['PaymentDetail']['paymentProcessorId'];
-	        $data['paymentAmount']          = $this->data['PaymentDetail']['billingPrice'];
+	        $data['paymentAmount']          = $this->data['PaymentDetail']['paymentAmount'];
 	        $data['initials']               = $this->data['PaymentDetail']['initials'];
 	        $data['autoCharge']             = 0;
 	        $data['saveUps']                = $saveNewCard;
@@ -60,7 +60,7 @@ class PaymentDetailsController extends AppController {
 	        } else {
 		        $badPaymentRequest = true;
 		    }
-	        
+
 	        if (!$badPaymentRequest) {
 	        	$paymentResponse = $this->processPaymentTicket(json_encode($data));
 	        	if (trim($paymentResponse) == 'CHARGE_SUCCESS') {
@@ -147,13 +147,7 @@ class PaymentDetailsController extends AppController {
 		if ($ticket['Ticket']['userId'] != $data['userId']) {
 			return '111';
 		}
-		
-		// check paymentAmount with ticket.billingPrice for security measure until later
-		// ---------------------------------------------------------------------------
-		if ($ticket['Ticket']['billingPrice'] != $data['paymentAmount']) {
-			return '112';	
-		}
-		
+
 		// use either the data sent over or retrieve from the db with the id
 		// ---------------------------------------------------------------------------
 		$userPaymentSettingPost = array();
@@ -195,6 +189,10 @@ class PaymentDetailsController extends AppController {
 			return '114';	
 		}
 		
+		// only for toolbox area -- allow payment override
+		// ---------------------------------------------------------------------------
+		$ticket['Ticket']['billingAmountOverride'] = $data['paymentAmount'];
+		
 		// init payment processing and submit payment
 		// ---------------------------------------------------------------------------
 		$processor = new Processor($paymentProcessorName);
@@ -208,12 +206,10 @@ class PaymentDetailsController extends AppController {
 		$lastName 								= trim(array_pop($nameSplit));
 		$userPaymentSettingPost['UserPaymentSetting']['expMonth'] = str_pad($userPaymentSettingPost['UserPaymentSetting']['expMonth'], 2, '0', STR_PAD_LEFT);
 		
-		$fee = in_array($ticket['Ticket']['offerTypeId'], array(1,2,6)) ? 30 : 40;
-		
 		$paymentDetail 							= array();
 		$paymentDetail 							= $processor->GetMappedResponse();
 		$paymentDetail['paymentTypeId'] 		= 1; 
-		$paymentDetail['paymentAmount']			= $ticket['Ticket']['billingPrice'];
+		$paymentDetail['paymentAmount']			= $data['paymentAmount'];
 		$paymentDetail['ticketId']				= $ticket['Ticket']['ticketId'];
 		$paymentDetail['userId']				= $ticket['Ticket']['userId'];
 		$paymentDetail['userPaymentSettingId']	= ($usingUpsId) ? $data['userPaymentSettingId'] : '';
@@ -228,7 +224,7 @@ class PaymentDetailsController extends AppController {
 		$paymentDetail['ppCardNumLastFour']		= substr($userPaymentSettingPost['UserPaymentSetting']['ccNumber'], -4, 4);
 		$paymentDetail['ppExpMonth']			= $userPaymentSettingPost['UserPaymentSetting']['expMonth'];
 		$paymentDetail['ppExpYear']				= $userPaymentSettingPost['UserPaymentSetting']['expYear'];
-		$paymentDetail['ppBillingAmount']		= $data['paymentAmount'] + $fee;
+		$paymentDetail['ppBillingAmount']		= $data['paymentAmount'];
 		$paymentDetail['autoProcessed']			= $data['autoCharge'];
 		$paymentDetail['initials']				= $data['initials'];
 
@@ -256,59 +252,6 @@ class PaymentDetailsController extends AppController {
 		} else {
 			return $processor->GetResponseTxt();
 		}
-	}
-	
-	/*
-	function sendToPayment($data) {
-		ini_set("soap.wsdl_cache_enabled", "0"); // disabling WSDL cache
-		$client = new SoapClient('http://toolbox.luxurylink.com/web_service_payments/?wsdl'); 
-		try {
-			$response = $client->processPayment($data);
-			return $response;
-		} catch (SoapFault $exception) {
-			@mail('geeks@luxurylink.com', 'WEB SERVICE ERROR:  paymentDetail LL manual charge error', $exception);
-			return false;
-		}
-	}
-	*/
-
-	function test() {
-		$data['ppResponseDate'] 			= '2009-02-21 10:13:43';
-	    $data['ppTransactionId'] 			= '15FE8E86B-DDD9-F891-7432-D3C25AF1F6BF';
-	    $data['ppApprovalText'] 			= 'APPROVAL';
-	    $data['ppApprovalCode'] 			= 0;
-	    $data['ppAvsCode'] 					= 'Y';
-	    $data['ppResponseText'] 			= '';
-	    $data['ppResponseSubCode'] 			= '';
-	    $data['ppReasonCode'] 				= '';
-	    $data['isSuccessfulCharge'] 		= 1;
-	    $data['paymentTypeId'] 				= 1;
-	    $data['paymentAmount'] 				= 1385;
-	    $data['ticketId'] 					= 132654;
-	    $data['userId'] 					= 1197768;
-	    $data['userPaymentSettingId'] 		= '';
-	    $data['paymentProcessorId'] 		= 1;
-	    $data['ppFirstName'] 				= 'Wofford';
-	    $data['ppLastName'] 				= 'III';
-	    $data['ppBillingAddress1'] 			= '5421 Princess St';
-	    $data['ppBillingCity'] 				= 'Charlotte';
-	    $data['ppBillingState'] 			= 'NC';
-	    $data['ppBillingZip'] 				= 28269;
-		$data['ppBillingCountry'] 			= 'US';
-	    $data['ppCardNumLastFour'] 			= 5796;
-	    $data['ppExpMonth'] 				= 10;
-	    $data['ppExpYear'] 					= 2012;
-	    $data['ppBillingAmount'] 			= 1415;
-	    $data['autoProcessed'] 				= 0;
-	    $data['initials'] 					= 'USERCHECKOUT';
-		
-		$this->PaymentDetail->create();
-		if (!$this->PaymentDetail->save($data)) {
-			echo '1111111111';	
-		} else {
-			echo '22222222222';	
-		}
-		die('asdfs');	
 	}
 
 	// ----------------------------------------------------------
