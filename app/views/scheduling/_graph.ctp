@@ -79,7 +79,7 @@
 				if ($width > 300) $width = 300;
 				
 				$class = '';
-				if (isset($loaBalanceFlag['class']) && $loaBalanceFlag['class'] == 'icon-error') {
+				if (isset($loaBalanceFlag['class']) && $loaBalanceFlag['class'] == 'icon-error' || $amountOver > 0) {
 					$class = ' class="overbalance"';
 				}
 				
