@@ -54,6 +54,24 @@ class PaymentDetailsController extends AppController {
 	        
 	        if ($usingNewCard) {
 	        	$data['userPaymentSetting'] = $this->data['UserPaymentSetting'];
+	        	switch (substr($data['userPaymentSetting']['ccNumber'], 0, 1)) {
+	        		case 4:
+	        			$ccType = 'VI';
+	        			break;
+	        		case 5:
+	        			$ccType = 'MC';
+	        			break;
+	        		case 6:
+	        			$ccType = 'DS';
+	        			break;
+	        		case 3:	
+	        			$ccType = 'AX';
+	        			break;
+	        		default:
+	        			$ccType = '';
+	        			break;
+	        	}
+				$data['userPaymentSetting']['ccType']			= $ccType;
 	        	$data['userPaymentSetting']['ccNumber'] 		= aesEncrypt($data['userPaymentSetting']['ccNumber']);
 	        } elseif ($this->data['PaymentDetail']['userPaymentSettingId']) {
 	        	$data['userPaymentSettingId'] = $this->data['PaymentDetail']['userPaymentSettingId'];
