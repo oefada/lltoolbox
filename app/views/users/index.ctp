@@ -13,10 +13,10 @@ $this->set('hideSidebar', true);
 <tr>
 	<th><?php echo $paginator->sort('userId');?></th>
 	<th><?php echo $paginator->sort('UserSiteExtended.username');?></th>
+	<th><?php echo $paginator->sort('# Tickets');?></th>
 	<th><?php echo $paginator->sort('firstName');?></th>
 	<th><?php echo $paginator->sort('lastName');?></th>
 	<th><?php echo $paginator->sort('email');?></th>
-	<th><?php echo $paginator->sort('inactive');?></th>
 	<th class="actions"><?php __('Actions');?></th>
 </tr>
 <?php
@@ -35,6 +35,10 @@ foreach ($users as $user):
 		<td>
 			<?php echo $user['UserSiteExtended']['username']; ?>
 		</td>
+		
+		<td>
+			<?php echo count($user['Ticket']); ?>
+		</td>
 
 		<td>
 			<?php echo $user['User']['firstName']; ?>
@@ -44,9 +48,6 @@ foreach ($users as $user):
 		</td>
 		<td>
 			<?php echo $user['User']['email']; ?>
-		</td>
-		<td>
-			<?php echo $user['User']['inactive']; ?>
 		</td>
 		<td class="actions">
 			<?php echo $html->link(__('View Details', true), array('action'=>'edit', $user['User']['userId'])); ?>

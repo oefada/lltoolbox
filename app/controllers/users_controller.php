@@ -90,7 +90,7 @@ class UsersController extends AppController {
 			if($_GET['query'] ||  $this->params['named']['query']) {
 				$this->autoRender = false;
 
-				$this->paginate = array('conditions' => $conditions, 'contain' => array('User', 'UserSiteExtended'), 'fields' => array('UserSiteExtended.username', 'User.userId', 'User.firstName', 'User.lastName', 'User.email', 'User.inactive'));
+				$this->paginate = array('conditions' => $conditions, 'contain' => array('User', 'UserSiteExtended', 'Ticket'), 'fields' => array('UserSiteExtended.username', 'User.userId', 'User.firstName', 'User.lastName', 'User.email', 'User.inactive'));
 				$this->set('query', $query);
 
 				$this->set('users', $this->paginate());
