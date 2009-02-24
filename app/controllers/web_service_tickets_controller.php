@@ -234,6 +234,7 @@ class WebServiceTicketsController extends WebServicesController
 				$ppv_settings['ppvNoticeTypeId'] = 5;	
 			}
 
+			$autoSendClientWinnerPpv = false;
 			// auto charge here
 			// -------------------------------------------------------------------------------
 			if (!$restricted_auction && $auto_charge_card) {
@@ -251,6 +252,7 @@ class WebServiceTicketsController extends WebServicesController
 				$data_post_result = $this->processPaymentTicket(json_encode($data_post));
 				if ($data_post_result == 'CHARGE_SUCCESS') {
 					$ppv_settings['ppvNoticeTypeId'] = 5;	
+					$autoSendClientWinnerPpv = true;
 				} else {
 					$ppv_settings['ppvNoticeTypeId'] = 7;
 				}
@@ -259,6 +261,17 @@ class WebServiceTicketsController extends WebServicesController
 			// send out winner notifications
 			// -------------------------------------------------------------------------------
 			$this->ppv(json_encode($ppv_settings));
+			
+			// send out client and winner ppv if charge is successfully charged
+			// -------------------------------------------------------------------------------
+			if ($autoSendClientWinnerPpv) {
+				$ppv_settings['ppvNoticeTypeId'] = 4; 
+				$this->ppv(json_encode($ppv_settings));	
+				
+				$ppv_settings['ppvNoticeTypeId'] = 3;
+				$this->ppv(json_encode($ppv_settings));	
+			}
+			
 			return true;	
 		} else {			
 			// ticket was not succesfully created so send devmail alert
