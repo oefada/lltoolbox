@@ -55,7 +55,7 @@ class WebServiceNewClientsController extends WebServicesController
 			// ======= NEW CLIENT INSERT =============
 			$client_data_save['inactive'] 				= 1; // set new clients from sugar to inactive
 			$client_data_save['created'] 				= date('Y-m-d H:i:s', strtotime('now'));
-			$client_data_save['managerUsername'] 		= $decoded_request['client']['manager'];
+			$client_data_save['managerUsername'] 		= $decoded_request['client']['manager_ini'];
 			
 			$this->Client->create();
 			$this->Client->save($client_data_save);
