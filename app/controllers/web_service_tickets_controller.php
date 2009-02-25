@@ -544,9 +544,9 @@ class WebServiceTicketsController extends WebServicesController
 		
 		// get initials
 		// -------------------------------------------------------------------------------
-		if (!$ppvInitials && isset($_SESSION['Auth']['AdminUser']['mailnickname'])) {
-			$ppvInitials = $_SESSION['Auth']['AdminUser']['mailnickname'];
-		} 
+		if (!$ppvInitials) {
+			$ppvInitials = 'N/A';	
+		}
 		
 		$ppvNoticeSave = array();
 		$ppvNoticeSave['ppvNoticeTypeId']	= $ppvNoticeTypeId; 
