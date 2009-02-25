@@ -30,12 +30,20 @@ class PpvNoticesController extends AppController {
 		
 		if (!empty($this->data)) {
 			
+				if (isset($_SESSION['Auth']['AdminUser']['mailnickname'])) {
+					$ppvInitials = $_SESSION['Auth']['AdminUser']['mailnickname'];
+				} else {
+					$ppvInitials = 'TOOLBOX';	
+				}
+			
 				$data = array();
 				$data['ticketId'] 			= $this->data['PpvNotice']['ticketId'];
 				$data['send'] 				= 1;
 				$data['manualEmailBody']	= $this->data['PpvNotice']['emailBody'];
 				$data['returnString'] 		= 0;
 				$data['ppvNoticeTypeId'] 	= $this->data['PpvNotice']['ppvNoticeTypeId'];
+				$data['initials']			= $ppvInitials;
+				
 				
 				$data_json_encoded = json_encode($data);
 				$soap_client = new nusoap_client($webservice_live_url, true);
