@@ -107,16 +107,23 @@ class UsersController extends AppController {
 	}
 	
 	/**
-	 * Method resets a user's password in the UserSiteExtended model
+	 * Method resets a user's password in the UserSiteExtended model. Needs to update directly on live, hence the setDataSource
 	 * @params $id the id of the row in the UserSiteExtended table NOT the id of the main user account
 	 * @returns
 	 */
 	function resetPassword($id = null) {
 		if(!empty($this->data)) {
+		    $this->User->setDataSource("live");
+		    $this->User->UserSiteExtended->setDataSource("live");
+		    
 			$newPassword = $this->generatePassword();
 			$this->User->UserSiteExtended->id = $id;
 			$this->User->UserSiteExtended->saveField('passwordHash', $newPassword);
 			$this->set('newPassword', $newPassword);
+			
+			$userSiteExtended = $this->User->UserSiteExtended->read(null, $id);
+			$this->User->id = $userSiteExtended['UserSiteExtended']['userId'];
+			$this->User->saveField('transmitted', 0);
 		} else {
 			$this->data = $this->User->read(null, $id);
 		}
