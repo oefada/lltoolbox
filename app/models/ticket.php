@@ -4,7 +4,7 @@ class Ticket extends AppModel {
 	var $name = 'Ticket';
 	var $useTable = 'ticket';
 	var $primaryKey = 'ticketId';
-	var $actsAs = array('Containable');
+	var $actsAs = array('Containable', 'Logable');
 	var $belongsTo = array('TicketStatus' => array('foreignKey' => 'ticketStatusId'),
 						   'Package' => array('foreignKey' => 'packageId'),
 						   'Offer' => array('foreignKey' => 'offerId'),
