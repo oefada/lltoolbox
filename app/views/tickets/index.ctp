@@ -215,7 +215,7 @@ foreach ($tickets as $ticket):
 			<?php echo $offerType[$ticket['Ticket']['offerTypeId']]; ?>
 		</td>
 		<td>
-			<a href="http://www.luxurylink.com/portfolio/por_offer_redirect.php?oid=<?php echo $ticket['Ticket']['offerId'];?>" target="_BLANK"><?php echo $ticket['Ticket']['offerId'];?></a>
+			<a href="http://www.luxurylink.com/portfolio/por_offer_redirect.php?pid=<?php echo $ticket['Client']['clientId'];?>" target="_BLANK"><?php echo $ticket['Ticket']['offerId'];?></a>
 		</td>
 		<td>
 			<a href="http://www.luxurylink.com/portfolio/por_offer_redirect.php?pid=<?php echo $ticket['Client']['clientId'];?>" target="_BLANK"><?php echo $ticket['Client']['clientId'];?></a>

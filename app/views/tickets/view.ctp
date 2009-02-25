@@ -42,7 +42,7 @@ $this->searchController = 'Tickets';
 				<td><strong>Offer Id</strong></td>
 				<td>
 					<?php echo $html->link($ticket['Ticket']['offerId'], array('controller'=> 'reports', 'action'=>'offer_search', 'filter:'.urlencode($offer_search_serialize))); ?>
-					&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://www.luxurylink.com/portfolio/por_offer_redirect.php?oid=<?php echo $ticket['Ticket']['offerId'];?>" target="_BLANK">Offer Page</a>
+					&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://www.luxurylink.com/portfolio/por_offer_redirect.php?pid=<?php echo $ticket['Ticket']['clientId'];?>" target="_BLANK">Offer Page</a>
 				</td>
 			</tr>
 			<tr>
