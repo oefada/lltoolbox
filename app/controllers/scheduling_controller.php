@@ -62,7 +62,7 @@ class SchedulingController extends AppController {
             $packages = $this->Package->ClientLoaPackageRel->find('all', array('conditions' => array('ClientLoaPackageRel.clientId' => $clientId, 'packageStatusId' => 4)));
         } else { // if current LOA is found, display only packages for the current LOA to limit clutter
             $loaIds = $loa[0][0]['loaIds'];
-            $packages = $this->Package->ClientLoaPackageRel->find('all', array('conditions' => array('ClientLoaPackageRel.clientId' => $clientId, 'packageStatusId' => 4, 'ClientLoaPackageRel.loaId' => $loaIds)));  
+            $packages = $this->Package->ClientLoaPackageRel->find('all', array('conditions' => array('ClientLoaPackageRel.clientId' => $clientId, 'packageStatusId' => 4, 'ClientLoaPackageRel.loaId' => $loaIds)));
         }
         
 	    $this->Package->SchedulingMaster->Behaviors->attach('Containable');
@@ -92,29 +92,16 @@ class SchedulingController extends AppController {
 		$this->Package->SchedulingMaster->recursive = 1;
 		$this->Package->SchedulingMaster->Behaviors->attach('Containable');
 		$this->Package->SchedulingMaster->contain('SchedulingInstance');
-		
-		$containConditions = array('conditions' => array('OR'=> array('month(SchedulingInstance.startDate) =' =>  $month, 
-					                                                  'month(SchedulingInstance.endDate) ='   =>  $month,
-					                                                  'AND' => array(
-					                                                  'month(SchedulingInstance.startDate) <=' => $month,
-					                                                  'month(SchedulingInstance.endDate) >=' => $month
-					                                                  )
-					                                                  ),
-					                                     'AND' => array('OR'=> array('year(SchedulingInstance.startDate) =' =>  $year, 
-                                                                      'year(SchedulingInstance.endDate) ='   =>  $year,
-                                                                      'AND' => array(
-  					                                                  'year(SchedulingInstance.startDate) <=' => $year,
-  					                                                  'year(SchedulingInstance.endDate) >=' => $year
-  					                                                  )
-                                                                      ))
-                                                         )
-					              );
+
+		$containConditions = array('conditions' => array("(month(SchedulingInstance.startDate) = $month AND year(SchedulingInstance.startDate) = $year) OR
+		                                                    (month(SchedulingInstance.endDate = $month) AND year(SchedulingInstance.endDate) = $year) OR
+		                                                    (SchedulingInstance.startDate <= '$year-$month-01' AND SchedulingInstance.endDate >= '$year-$month-".date('t', strtotime("$year-$month-01"))."')"));
 		//select all instances for each package
 		$packageSchedulingInstance = $this->Package->SchedulingMaster->find('all', array('conditions'   =>  array('SchedulingMaster.packageId'  =>  $packageIds),//array packageIds causes this to act as an IN clause
 																					     'contain'      =>  array('SchedulingInstance'          =>  $containConditions)
 																				        )
 																			);
-		
+
 		//loop through all of the instances and associate them nicely so we can look them up below				
 		foreach($packageSchedulingInstance as $instance) {
 			$instances[$instance['SchedulingMaster']['packageId']][] = $instance;
