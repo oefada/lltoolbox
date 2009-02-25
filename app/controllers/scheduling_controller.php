@@ -57,10 +57,14 @@ class SchedulingController extends AppController {
 		$numDaysInMonth = date('t', strtotime($year.'-'.$month.'-01'));
 		$loa = $this->Package->query("SELECT GROUP_CONCAT(loaId) AS loaIds FROM loa AS Loa WHERE ('$year-$month-01' BETWEEN Loa.startDate AND Loa.endDate OR '$year-$month-$numDaysInMonth' BETWEEN Loa.startDate AND Loa.endDate) AND clientId = $clientId GROUP BY clientId");
 
-		$loaIds = $loa[0][0]['loaIds'];
-
-		$packages = $this->Package->ClientLoaPackageRel->find('all', array('conditions' => array('ClientLoaPackageRel.clientId' => $clientId, 'packageStatusId' => 4, 'ClientLoaPackageRel.loaId' => $loaIds)));
-	    
+        //if no current LOA is found, display all packages
+        if (empty($loa)) {
+            $packages = $this->Package->ClientLoaPackageRel->find('all', array('conditions' => array('ClientLoaPackageRel.clientId' => $clientId, 'packageStatusId' => 4)));
+        } else { // if current LOA is found, display only packages for the current LOA to limit clutter
+            $loaIds = $loa[0][0]['loaIds'];
+            $packages = $this->Package->ClientLoaPackageRel->find('all', array('conditions' => array('ClientLoaPackageRel.clientId' => $clientId, 'packageStatusId' => 4, 'ClientLoaPackageRel.loaId' => $loaIds)));  
+        }
+        
 	    $this->Package->SchedulingMaster->Behaviors->attach('Containable');
 	    foreach ($packages as $k => $package) {
 	        $packages[$k]['Package']['masterList'] = $this->Package->SchedulingMaster->find('all', array('conditions' => array('SchedulingMaster.packageId' => $package['Package']['packageId']),
