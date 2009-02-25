@@ -9,7 +9,7 @@
         convert_urls : false,
         theme_advanced_toolbar_location : "top",
     	theme_advanced_toolbar_align : "left",
-        theme_advanced_text_colors : "CC0000",
+        theme_advanced_text_colors : "CC0000,1d54e1",
 		theme_advanced_buttons3_add : "fullpage, forecolor"
     });
 </script> 
