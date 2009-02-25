@@ -179,6 +179,7 @@ class WebServiceTicketsController extends WebServicesController
 			$ppv_settings['send'] 				= 1;
 			$ppv_settings['manualEmailBody']	= 0;
 			$ppv_settings['returnString']		= 0;
+			$ppv_settings['initials']			= 'AUTO';
 			
 			$auto_charge_card = false;
 			if (is_array($user_payment_setting) && !empty($user_payment_setting)) {
@@ -311,6 +312,7 @@ class WebServiceTicketsController extends WebServicesController
 		$returnString 		= isset($params['returnString']) ? $params['returnString'] : false;
 		$manualEmailBody	= isset($params['manualEmailBody']) ? $params['manualEmailBody'] : null;
 		$ppvNoticeTypeId	= isset($params['ppvNoticeTypeId']) ? $params['ppvNoticeTypeId'] : null;
+		$ppvInitials		= isset($params['initials']) ? $params['initials'] : null;
 		
 		// TODO: error checking for params
 		
@@ -506,7 +508,7 @@ class WebServiceTicketsController extends WebServicesController
 		// send the email out!
 		// -------------------------------------------------------------------------------
 		if ($send) {
-			$this->sendPpvEmail($userEmail, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId);	
+			$this->sendPpvEmail($userEmail, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials);	
 		}
 		
 		// return the string for toolbox ppvNotice add screen (manual edit and send)
@@ -516,7 +518,7 @@ class WebServiceTicketsController extends WebServicesController
 		}
 	}
 		
-	function sendPpvEmail($emailTo, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId) {
+	function sendPpvEmail($emailTo, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials) {
 		
 		// send out ppv and winner notification emails
 		// -------------------------------------------------------------------------------
@@ -540,6 +542,12 @@ class WebServiceTicketsController extends WebServicesController
 		fwrite($fh, $emailBody);
 		fclose($fh);
 		
+		// get initials
+		// -------------------------------------------------------------------------------
+		if (!$ppvInitials && isset($_SESSION['Auth']['AdminUser']['mailnickname'])) {
+			$ppvInitials = $_SESSION['Auth']['AdminUser']['mailnickname'];
+		} 
+		
 		$ppvNoticeSave = array();
 		$ppvNoticeSave['ppvNoticeTypeId']	= $ppvNoticeTypeId; 
 		$ppvNoticeSave['ticketId'] 			= $ticketId;
@@ -549,11 +557,14 @@ class WebServiceTicketsController extends WebServicesController
 		$ppvNoticeSave['emailSubject']		= $emailSubject;
 		$ppvNoticeSave['emailBodyFileName']	= $emailBodyFileName;
 		$ppvNoticeSave['emailSentDatetime']	= date('Y-m-d H:i:s', $emailSentDatetime);
+		$ppvNoticeSave['initials']			= $ppvInitials;
 
 		// save the record in the database
 		// -------------------------------------------------------------------------------
 		$this->PpvNotice->create();
-		$this->PpvNotice->save($ppvNoticeSave);
+		if (!$this->PpvNotice->save($ppvNoticeSave)) {
+			mail('devmail@luxurylink.com', 'WEB SERVICE TICKETS: ppv record not saved', print_r($ppvNoticeSave, true));	
+		}
 		
 		// update ticket status if required
 		// -------------------------------------------------------------------------------
