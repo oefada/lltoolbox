@@ -93,8 +93,9 @@ function confirmSubmit()
 								//continue;
 							}	
 							$selectPrimaryCC = $upsValue['primaryCC'] && !$upsValue['inactive'] ? 'checked' : '';
+							$cardInactiveColor = $upsValue['inactive'] ? '#CC0000;' : '#009900;';
 							?>
-							<tr>
+							<tr style="color: <?php echo $cardInactiveColor;?>">
 								<td>
 									<input <?php echo $selectPrimaryCC;?> type="radio" name="data[PaymentDetail][userPaymentSettingId]" id="PaymentDetailUserPaymentSettingId" value="<?php echo $upsValue['userPaymentSettingId'];?>" />
 								</td>
@@ -109,7 +110,7 @@ function confirmSubmit()
 								<td><?php echo $upsValue['ccNumber'];?></td>
 								<td><?php echo $upsValue['expMonth'] . '/' . $upsValue['expYear'];?></td>
 								<td><?php echo ($upsValue['primaryCC']) ? 'Yes' : 'No';?></td>
-								<td><?php echo ($upsValue['inactive']) ? 'Yes' : 'No';?></td>
+								<td><?php echo ($upsValue['inactive']) ? '<strong>Yes</strong>' : 'No';?></td>
 							</tr>
 						<?php } ?>
 						</table>
