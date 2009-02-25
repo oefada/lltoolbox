@@ -676,6 +676,7 @@ class ReportsController extends AppController {
                            PaymentDetail.ppResponseDate, 
                            Ticket.ticketId,
                            Client.clientId,
+                           Client.oldProductId,
                            Client.name,
                            Ticket.userFirstName,
                            Ticket.userLastName,
@@ -688,7 +689,7 @@ class ReportsController extends AppController {
                            Ticket.userHomePhone,
                            Ticket.userMobilePhone,
                            Ticket.userEmail1,
-                           UserPaymentSetting.ccType,
+                           PaymentDetail.ccType,
                            PaymentDetail.ppCardNumLastFour,
                            PaymentDetail.ppExpMonth,
                            PaymentDetail.ppExpYear,
@@ -703,12 +704,12 @@ class ReportsController extends AppController {
                            Package.validityEndDate
                     FROM ticket AS Ticket
                            INNER JOIN offer AS Offer USING(offerId)
-                           LEFT JOIN offerType AS OfferType USING(offerTypeId)
+                           LEFT JOIN offerType AS OfferType ON (Ticket.offerTypeId = OfferType.offerTypeId)
                            LEFT JOIN schedulingInstance AS SchedulingInstance USING(schedulingInstanceId)
                            LEFT JOIN client as Client USING(clientId)
-                           LEFT JOIN paymentDetail AS PaymentDetail USING (ticketId)
+                           LEFT JOIN paymentDetail AS PaymentDetail ON (PaymentDetail.ticketId = Ticket.ticketId)
                            LEFT JOIN paymentProcessor AS PaymentProcessor USING (paymentProcessorId)
-                           LEFT JOIN userPaymentSetting AS UserPaymentSetting USING (userPaymentSettingId)
+                           LEFT JOIN userPaymentSetting AS UserPaymentSetting ON (UserPaymentSetting.userPaymentSettingId = PaymentDetail.userPaymentSettingId)
                            LEFT JOIN package AS Package USING(packageId)
                            LEFT JOIN luxurymasterMigrate.auction_mstr as auction_mstr ON (auction_mstr.auction_id = Package.packageId)
                            LEFT JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.clientId = Ticket.clientId AND ClientLoaPackageRel.packageId = Ticket.packageId)

@@ -107,7 +107,7 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 		<td><?=$r['PaymentDetail']['ppBillingCountry']?></td>
 		<td><?=$r['Ticket']['userHomePhone']?></td>
 		<td><?=$r['Ticket']['userEmail1']?></td>
-		<td><?=$r['UserPaymentSetting']['ccType']?></td>
+		<td><?=$r['PaymentDetail']['ccType']?></td>
 		<td>xxxx<?=$r['PaymentDetail']['ppCardNumLastFour']?></td>
 		<td><?=$r['PaymentDetail']['ppExpMonth'].'/'.$r['PaymentDetail']['ppExpYear']?></td>
 		<td><?=$r[0]['revenue']?></td>

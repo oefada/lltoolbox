@@ -1,5 +1,5 @@
 <?php
-echo "Booking Date,Payment Date,Booking,Vendor ID,Vendor,Guest First Name,Guest Last Name,Address1,Address2,City,State,Zip,Country,Phone,Email,CC Type,CC Number,CC Exp,Type,Product Type,Revenue,Tax,COG,Profit,Room Nights,Confirmation Number,Arrival Date,Auction Type,Handling Fee,Percent,CC Processor,Remit Type,Adjust Amount,Validity Start Date,Validity End Date,Paid Search Id,Ref Url\n";
+echo "Booking Date,Payment Date,Booking,Vendor ID,Old Product Id,Vendor,Guest First Name,Guest Last Name,Address1,Address2,City,State,Zip,Country,Phone,Email,CC Type,CC Number,CC Exp,Type,Product Type,Revenue,Tax,COG,Profit,Room Nights,Confirmation Number,Arrival Date,Auction Type,Handling Fee,Percent,CC Processor,Remit Type,Adjust Amount,Validity Start Date,Validity End Date,Paid Search Id,Ref Url\n";
 foreach ($results as $r):
 	switch($r['OfferType']['offerTypeName']) {
 		case 'Standard Auction':
@@ -37,6 +37,7 @@ foreach ($results as $r):
 	date('M d Y h:i:sA', strtotime($r['PaymentDetail']['ppResponseDate'])),
 	$r['Ticket']['ticketId'],
 	$r['Client']['clientId'],
+	$r['Client']['oldProductId'],
 	str_replace(',', '', $r['Client']['name']),
 	str_replace(',', '', $r['Ticket']['userFirstName']),
 	str_replace(',', '', $r['Ticket']['userLastName']),
@@ -48,8 +49,8 @@ foreach ($results as $r):
 	$r['PaymentDetail']['ppBillingCountry'],
 	$r['Ticket']['userHomePhone'],
 	$r['Ticket']['userEmail1'],
-	$r['UserPaymentSetting']['ccType'],
-	$r['PaymentDetail']['ppCardNumLastFour'],
+	$r['PaymentDetail']['ccType'],
+	'xxxx'.$r['PaymentDetail']['ppCardNumLastFour'],
 	$r['PaymentDetail']['ppExpMonth'].'/'.$r['PaymentDetail']['ppExpYear'],
 	'N/A',
 	'N/A',
