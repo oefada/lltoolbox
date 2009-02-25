@@ -52,7 +52,9 @@ function updateAllPerPersonPerNight() {
 	'complete' => 'closeModalbox()','class' => 'button'), null, false)?>
 	</div>
 <?php echo $form->create('Package', array('url' => "/clients/{$clientId}/packages/edit/{$this->data['Package']['packageId']}", 'id'=>'PackageAddForm'));?>
-
+<fieldset style="margin: 0pt; padding: 0pt;">
+		<label>Package ID</label><?=$this->data['Package']['packageId']?>
+</fieldset>
 <?php echo $this->renderElement('../packages/_add_step_1'); ?>
 <?php echo $this->renderElement('../packages/_setup'); ?>
 <?php echo $this->renderElement('../packages/_merchandising'); ?>
