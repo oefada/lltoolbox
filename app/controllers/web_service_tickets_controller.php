@@ -26,6 +26,11 @@ class WebServiceTicketsController extends WebServicesController
 						'doc' => 'N/A',
 						'input' => array('in0' => 'xsd:string'),
 						'output' => array('return' => 'xsd:string')
+						),
+					'autoSendFromCheckout' => array(
+						'doc' => 'N/A',
+						'input' => array('in0' => 'xsd:string'),
+						'output' => array('return' => 'xsd:string')
 						)
 					);
 					
@@ -299,6 +304,24 @@ class WebServiceTicketsController extends WebServicesController
 
 			return false;
 		}
+	}
+
+	function autoSendFromCheckout($in0) {
+		// from the frontend checkout, only ticketId comes in.  fill the rest for security
+		// -------------------------------------------------------------------------------
+		$params = json_decode($in0, true);
+		$params['send'] 			= 1;
+		$params['returnString']		= 0;
+		$params['manualEmailBody']	= 0;
+		$params['initials']			= 'AUTO_USER_CHECKOUT';
+		
+		// send both the client and winner ppvs
+		// -------------------------------------------------------------------------------
+		$params['ppvNoticeTypeId'] = 4; 
+		$this->ppv(json_encode($params));	
+		
+		$params['ppvNoticeTypeId'] = 3;
+		$this->ppv(json_encode($params));	
 	}
 
 	function ppv($in0) {
