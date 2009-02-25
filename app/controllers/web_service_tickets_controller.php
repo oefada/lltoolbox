@@ -439,7 +439,6 @@ class WebServiceTicketsController extends WebServicesController
 				$emailFrom = "LuxuryLink.com<reservations@luxurylink.com>";
 				$emailReplyTo = "reservations@luxurylink.com";
 				$emailBcc = 'thread@luxurylink.com';
-				$userEmail = $clientPrimaryEmail;
 				break;
 			case 2:
 				// send out res request
