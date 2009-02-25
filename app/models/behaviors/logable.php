@@ -400,7 +400,11 @@ class LogableBehavior extends ModelBehavior
     			return true;
     		} 
     		$logData['Log']['change'] = implode(', ',$changed_fields);
-    		$logData['Log']['changes'] = $changes;		
+    		$logData['Log']['changes'] = $changes;
+    		
+    		if (empty($logData['Log']['change']) || empty($logData['Log']['changes'])) {
+    		    return;
+    		}		
     	}  
     	$this->_saveLog($Model, $logData);
     }
