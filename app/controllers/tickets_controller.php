@@ -4,6 +4,7 @@
 //ini_set('memory_limit', '256M');
 
 App::import('Vendor', 'nusoap_client/lib/nusoap');
+App::Import('Vendor', 'aes.php');
 
 class TicketsController extends AppController {
 
@@ -59,7 +60,7 @@ class TicketsController extends AppController {
 									'Ticket.offerId', 'Ticket.userId', 'TicketStatus.ticketStatusName', 
 									'Ticket.userFirstName', 'Ticket.userLastName', 'Client.name', 'Ticket.billingPrice', 'Ticket.formatId'),
 		                        	'contain' => array(
-		                        	'TicketStatus', 'Package', 'Client')
+		                        		'TicketStatus', 'Package', 'Client')
 		                        );
 		    
 		// if search via ticket id, offer id, or user id, then dont use other search conditions
@@ -81,11 +82,37 @@ class TicketsController extends AppController {
 				$this->paginate['conditions']['Ticket.ticketStatusId'] = $s_ticket_status_id;	
 			}
 		}
-		         
-		$this->set('tickets', $this->paginate());
+		
+		$tickets_index = $this->paginate();
+	
+		foreach ($tickets_index as $k => $v) {
+			$tickets_index[$k]['Ticket']['validCard'] = $this->getValidCcOnFile($v['Ticket']['userId']);
+
+		}
+		
+		$this->set('tickets', $tickets_index);
 		$this->set('format', $this->Format->find('list'));
 		$this->set('offerType', $this->OfferType->find('list'));
 		$this->set('ticketStatus', $this->Ticket->TicketStatus->find('list'));
+	}
+
+	function getValidCcOnFile($userId) {
+		$ups = $this->User->query("select * from userPaymentSetting as UserPaymentSetting where userId = $userId and inactive = 0 order by primaryCC desc, expYear desc");
+		$year_now = date('Y');
+		$month_now = date('m');
+		if (empty($ups)) {
+			return 'NONE';
+		}
+		$found_valid_cc = false;
+		foreach ($ups as $k => $v) {
+			if (($v['UserPaymentSetting']['expYear'] < $year_now) || ($v['UserPaymentSetting']['expYear'] == $year_now && $v['UserPaymentSetting']['expMonth'] < $month_now)) {
+				continue;	
+			} else {
+				$found_valid_cc = true;
+				break;
+			}
+		}
+		return ($found_valid_cc) ? $v['UserPaymentSetting']['ccType'] . '-' . substr(aesDecrypt($v['UserPaymentSetting']['ccNumber']), -4, 4) : 'EXPIRED';
 	}
 
 	function view($id = null) {

@@ -182,6 +182,7 @@ $this->set('hideSidebar', true);
 <table cellpadding="0" cellspacing="0" class="tickets-view-td" style="font-size:11px;">
 <tr>
 	<th width="10"><?php echo $paginator->sort('Ticket Id', 'Ticket.ticketId');?></th>
+	<th width="10"><?php echo $paginator->sort('Ticket Created', 'Ticket.created');?></th>
 	<th width="10"><?php echo $paginator->sort('Offer Type', 'Ticket.offerTypeId');?></th>
 	<th width="10"><?php echo $paginator->sort('Offer Id', 'Ticket.offerId');?></th>
 	<th width="10"><?php echo $paginator->sort('Client Id', 'Client.clientId');?></th>
@@ -190,12 +191,13 @@ $this->set('hideSidebar', true);
 	<th width="100"><?php echo $paginator->sort('User First Name', 'Ticket.userFirstName');?></th>
 	<th width="100"><?php echo $paginator->sort('User Last Name', 'Ticket.userLastName');?></th>
 	<th width="10"><?php echo $paginator->sort('Sale Price', 'Ticket.billingPrice');?></th>
-	<th width="10"><?php echo $paginator->sort('Ticket Created', 'Ticket.created');?></th>
 	<th width="10"><?php echo $paginator->sort('Status', 'Ticket.ticketStatusId');?></th>
-	<th class="actions"><?php __('Actions');?></th>
+	<th width="10" style="color:#FFF;">CC</th>
+	<th class="actions" style="color:#FFF;"><?php __('Actions');?></th>
 </tr>
 <?php
 $i = 0;
+
 foreach ($tickets as $ticket):
 	$class = null;
 	if ($i++ % 2 == 0) {
@@ -207,19 +209,22 @@ foreach ($tickets as $ticket):
 			<?php echo $ticket['Ticket']['ticketId']; ?>
 		</td>
 		<td>
+			<?php echo $ticket['Ticket']['created'];?>
+		</td>
+		<td>
 			<?php echo $offerType[$ticket['Ticket']['offerTypeId']]; ?>
 		</td>
 		<td>
-			<?php echo $ticket['Ticket']['offerId'];?>
+			<a href="http://www.luxurylink.com/portfolio/por_offer_redirect.php?oid=<?php echo $ticket['Ticket']['offerId'];?>" target="_BLANK"><?php echo $ticket['Ticket']['offerId'];?></a>
 		</td>
 		<td>
-			<?php echo $ticket['Client']['clientId'];?>
+			<a href="http://www.luxurylink.com/portfolio/por_offer_redirect.php?pid=<?php echo $ticket['Client']['clientId'];?>" target="_BLANK"><?php echo $ticket['Client']['clientId'];?></a>
 		</td>
 		<td>
 			<?php echo $ticket['Client']['name'];?>
 		</td>
 		<td>
-			<?php echo $ticket['Ticket']['userId'];?>
+			<a href="/users/view/<?php echo $ticket['Ticket']['userId'];?>" target="_BLANK"><?php echo $ticket['Ticket']['userId'];?></a>
 		</td>
 		<td>
 			<?php echo $ticket['Ticket']['userFirstName']; ?>
@@ -230,11 +235,11 @@ foreach ($tickets as $ticket):
 		<td>
 			<?php echo $number->currency($ticket['Ticket']['billingPrice']);?>
 		</td>
-		<td>
-			<?php echo $ticket['Ticket']['created'];?>
-		</td>
 		<td style="font-weight:bold;">
 			<?php echo $ticket['TicketStatus']['ticketStatusName']; ?>
+		</td>
+		<td>
+			<?php echo $ticket['Ticket']['validCard']; ?>
 		</td>
 		<td class="actions">
 			<?php echo $html->link(__('View Details', true), array('controller' => 'tickets', 'action'=>'view', $ticket['Ticket']['ticketId'])); ?>

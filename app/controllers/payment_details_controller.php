@@ -8,7 +8,7 @@ class PaymentDetailsController extends AppController {
 
 	var $name = 'PaymentDetails';
 	var $helpers = array('Html', 'Form', 'Ajax', 'Text', 'Layout', 'Number');
-	var $uses = array('PaymentDetail', 'Ticket', 'UserPaymentSetting', 'PpvNotice');
+	var $uses = array('PaymentDetail', 'Ticket', 'UserPaymentSetting', 'PpvNotice', 'Country');
 
 	function index() {
 		$this->PaymentDetail->recursive = 0;
@@ -95,7 +95,22 @@ class PaymentDetailsController extends AppController {
 		$ticket = $this->PaymentDetail->Ticket->read(null, $this->params['ticketId']);
 		$ticket['Ticket']['totalBillingAmount'] = in_array($ticket['Ticket']['offerTypeId'], array(1,2,6)) ? 30 : 40;
 		$ticket['Ticket']['totalBillingAmount'] += $ticket['Ticket']['billingPrice'];
+		
+		$selectExpMonth = array();
+		for ($i = 1; $i < 13; $i++) {
+			$se_m = str_pad($i, 2, '0', STR_PAD_LEFT);
+			$selectExpMonth[] = $se_m;
+		}
+		$selectExpYear = array();
+		$yearPlusSeven = date('Y', strtotime("+7 YEAR"));
+		for ($i = date('Y'); $i <= $yearPlusSeven; $i++) {
+			$selectExpYear[] = $i;	
+		}
+
 		$this->set('ticket', $ticket);
+		$this->set('countries', $this->Country->find('list'));
+		$this->set('selectExpMonth', $selectExpMonth);
+		$this->set('selectExpYear', $selectExpYear);
 		$this->set('userPaymentSetting', $ticket['User']['UserPaymentSetting']);
 		$this->set('paymentTypeIds', $this->PaymentDetail->PaymentType->find('list'));
 		$this->set('paymentProcessorIds', $this->PaymentDetail->PaymentProcessor->find('list'));		

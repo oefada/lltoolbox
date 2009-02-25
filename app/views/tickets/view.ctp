@@ -33,11 +33,17 @@ $this->searchController = 'Tickets';
 			</tr>
 			<tr>
 				<td><strong>Client Id</strong></td>
-				<td><?php echo $html->link($ticket['Client']['clientId'], array('controller'=> 'clients', 'action'=>'edit', $ticket['Client']['clientId'])); ?></td>
+				<td>
+					<?php echo $html->link($ticket['Client']['clientId'], array('controller'=> 'clients', 'action'=>'edit', $ticket['Client']['clientId'])); ?>
+					&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://www.luxurylink.com/portfolio/por_offer_redirect.php?pid=<?php echo $ticket['Ticket']['clientId'];?>" target="_BLANK">Travel Detail Page</a>
+				</td>
 			</tr>
 			<tr>
 				<td><strong>Offer Id</strong></td>
-				<td><?php echo $html->link($ticket['Ticket']['offerId'], array('controller'=> 'reports', 'action'=>'offer_search', 'filter:'.urlencode($offer_search_serialize))); ?></td>
+				<td>
+					<?php echo $html->link($ticket['Ticket']['offerId'], array('controller'=> 'reports', 'action'=>'offer_search', 'filter:'.urlencode($offer_search_serialize))); ?>
+					&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://www.luxurylink.com/portfolio/por_offer_redirect.php?oid=<?php echo $ticket['Ticket']['offerId'];?>" target="_BLANK">Offer Page</a>
+				</td>
 			</tr>
 			<tr>
 				<td><strong>Offer Type</strong></td>
@@ -147,6 +153,7 @@ $this->searchController = 'Tickets';
 			<th><?php __('Last Four CC'); ?></th>
 			<th><?php __('Processor'); ?></th>
 			<th><?php __('Status'); ?></th>
+			<th><?php __('CC Type'); ?></th>
 			<th><?php __('Initials'); ?></th>
 			<th class="actions"><?php __('Actions');?></th>
 		</tr>
@@ -166,6 +173,7 @@ $this->searchController = 'Tickets';
 					<td align="center"><?php echo $paymentDetail['ppCardNumLastFour'];?></td>
 					<td align="center"><?php echo $paymentDetail['PaymentProcessor']['paymentProcessorName'];?></td>
 					<td align="center"><?php echo $processed_flag;?></td>
+					<td align="center"><?php echo $paymentDetail['ccType']; ?></td>
 					<td align="center"><?php echo $paymentDetail['initials'];?></td>
 					<td class="actions">
 						<?php //echo $html->link(__('View', true), array('controller'=> 'payment_details', 'action'=>'view', $paymentDetail['paymentDetailId'])); ?>

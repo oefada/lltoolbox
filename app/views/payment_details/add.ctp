@@ -71,7 +71,7 @@ function confirmSubmit()
 				<strong>User Payment Setting (choose one):</strong><br /><br />
 				
 				<fieldset class="collapsible">
-					<legend class="handle" style="font-size:12px;">Existing Card</legend>
+					<legend class="handle" style="font-size:12px;">Existing Cards (<?php echo count($userPaymentSetting);?>)</legend>
 					<div class="collapsibleContent">
 					
 						<table style="background:whitesmoke;margin:0px;padding:0px;" cellspacing="0" cellpadding="0" border="1">
@@ -80,17 +80,19 @@ function confirmSubmit()
 							<td><i>Card Id</i></td>
 							<td><i>Name on Card</i></td>
 							<td><i>Address</i></td>
+							<td><i>CC Type</i></td>
 							<td><i>Card Number</i></td>
 							<td><i>Exp</i></td>
 							<td><i>Primary</i></td>
+							<td><i>Inactive</i></td>
 						</tr>
 						<?php 				
 						$counter = 0;
 						foreach ($userPaymentSetting as $upsId => $upsValue) { 
 							if ($upsValue['inactive']) {
-								continue;
+								//continue;
 							}	
-							$selectPrimaryCC = $upsValue['primaryCC'] ? 'checked' : '';
+							$selectPrimaryCC = $upsValue['primaryCC'] && !$upsValue['inactive'] ? 'checked' : '';
 							?>
 							<tr>
 								<td>
@@ -103,9 +105,11 @@ function confirmSubmit()
 									<?php if ($upsValue['address2']) { echo $upsValue['address2'] . '<br />'; } ?>
 									<?php echo $upsValue['city'] . ', ' . $upsValue['state'] . ' ' . $upsValue['postalCode'];?>
 								</td>
+								<td><?php echo $upsValue['ccType'];?></td>
 								<td><?php echo $upsValue['ccNumber'];?></td>
 								<td><?php echo $upsValue['expMonth'] . '/' . $upsValue['expYear'];?></td>
 								<td><?php echo ($upsValue['primaryCC']) ? 'Yes' : 'No';?></td>
+								<td><?php echo ($upsValue['inactive']) ? 'Yes' : 'No';?></td>
 							</tr>
 						<?php } ?>
 						</table>
@@ -121,8 +125,8 @@ function confirmSubmit()
 						
 						<table style="background:whitesmoke;margin:0px;padding:0px;" cellspacing="0" cellpadding="0" border="0">
 							<tr>
-								<td width="150">Use New Card</td>
-								<td><input type="checkbox" name="data[UserPaymentSetting][useNewCard]" id="UserPaymentSettingUseNewCard" /></td>
+								<td width="150"><br /><strong>Use New Card</strong><br /><br /></td>
+								<td><br /><input type="checkbox" name="data[UserPaymentSetting][useNewCard]" id="UserPaymentSettingUseNewCard" /><br /><br /></td>
 							</tr>
 							<tr>
 								<td width="150">Name on Card</td>
@@ -146,7 +150,16 @@ function confirmSubmit()
 							</tr>
 							<tr>
 								<td>Country</td>
-								<td><input type="text" name="data[UserPaymentSetting][country]" id="UserPaymentSettingCountry" size="20" /></td>
+								<td>
+									<select name="data[UserPaymentSetting][country]" id="UserPaymentSettingCountry">
+										<option value="US">US</option>
+										<?php
+										foreach ($countries as $ckey => $country) {
+											echo "<option value=\"$country\">$country</option>\n";
+										}
+										?>
+									</select>
+								</td>
 							</tr>
 							<tr>
 								<td>Postal/Zip Code</td>
@@ -158,11 +171,27 @@ function confirmSubmit()
 							</tr>
 							<tr>
 								<td>Expiration Month</td>
-								<td><input type="text" name="data[UserPaymentSetting][expMonth]" id="UserPaymentSettingExpMonth" /></td>
+								<td>
+									<select name="data[UserPaymentSetting][expMonth]" id="UserPaymentSettingExpMonth">
+										<?php
+										foreach ($selectExpMonth as $mkey => $eMonth) {
+											echo "<option value=\"$eMonth\">$eMonth</option>\n";
+										}
+										?>
+									</select>
+								</td>
 							</tr>
 							<tr>
 								<td>Expiration Year</td>
-								<td><input type="text" name="data[UserPaymentSetting][expYear]" id="UserPaymentSettingExpYear" /></td>
+								<td>
+									<select name="data[UserPaymentSetting][expYear]" id="UserPaymentSettingExpYear">
+										<?php
+										foreach ($selectExpYear as $ykey => $eYear) {
+											echo "<option value=\"$eYear\">$eYear</option>\n";
+										}
+										?>
+									</select>
+								</td>
 							</tr>
 							<tr>
 								<td>&nbsp;</td>
@@ -181,12 +210,12 @@ function confirmSubmit()
 			</td>
 		</tr>
 		<tr>
-			<td><strong>Initials</strong></td>
-			<td><input type="text" name="data[PaymentDetail][initials]" id="PaymentDetailInitials" maxlength="5" size="5" /><?php echo $form->error('initials') ?></td>
+			<td style="padding-top:10px;padding-bottom:10px;"><strong>Initials</strong></td>
+			<td style="padding-top:10px;padding-bottom:10px;"><input type="text" name="data[PaymentDetail][initials]" id="PaymentDetailInitials" maxlength="5" size="5" /><?php echo $form->error('initials') ?></td>
 		</tr>
-		<tr>
-			<td><strong>Payment Amount</strong></td>
-			<td><input type="text" name="data[PaymentDetail][paymentAmount]" id="PaymentDetailPaymentAmount" value="<?php echo $ticket['Ticket']['totalBillingAmount'];?>" /><?php echo $form->error('paymentAmount') ?>
+		<tr style="background-color: #CCEEBB;">
+			<td style="padding-top:10px;padding-bottom:10px;"><strong>Payment Amount</strong></td>
+			<td style="padding-top:10px;padding-bottom:10px;"><input type="text" name="data[PaymentDetail][paymentAmount]" id="PaymentDetailPaymentAmount" value="<?php echo $ticket['Ticket']['totalBillingAmount'];?>" /><?php echo $form->error('paymentAmount') ?>
 			(Includes Auction Fee)
 			</td>
 		</tr>
