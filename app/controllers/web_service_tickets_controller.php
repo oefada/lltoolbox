@@ -369,7 +369,7 @@ class WebServiceTicketsController extends WebServicesController
 		$userLastName		= ucwords(strtolower($userData['lastName']));
 		$emailName			= "$userFirstName $userLastName";
 		$userEmail 			= $userData['email'];
-		
+
 		$userWorkPhone		= $userData['workPhone'];
 		$userMobilePhone	= $userData['mobilePhone'];
 		$userHomePhone		= $userData['homePhone'];
@@ -402,9 +402,11 @@ class WebServiceTicketsController extends WebServicesController
 		
 		$offerTypeArticle	= in_array(strtolower($offerType[$offerTypeId]{0}), array('a','e','i','o','u')) ? 'an' : 'a';
 
-		$ccFour				= substr(aesDecrypt($userPaymentData['UserPaymentSetting']['ccNumber']), -4, 4);
-		$ccType				= $userPaymentData['UserPaymentSetting']['ccType'];
-
+		if (is_array($userPaymentData) && !empty($userPaymentData)) {
+			$ccFour				= substr(aesDecrypt($userPaymentData['UserPaymentSetting']['ccNumber']), -4, 4);
+			$ccType				= $userPaymentData['UserPaymentSetting']['ccType'];
+		}
+		
 		// some unknowns
 		// -------------------------------------------------------------------------------
 		$guarantee			= false;
@@ -433,7 +435,7 @@ class WebServiceTicketsController extends WebServicesController
 		$clientName 		= $clients[0]['contacts'][0]['ppv_name'];
 		$clientPrimaryEmail = $clients[0]['contacts'][0]['ppv_email_address'];
 		$oldProductId		= $clients[0]['oldProductId'];
-		
+
 		// auction facilitator
 		// -------------------------------------------------------------------------------
 		// southern california - destinationId = 82
@@ -521,7 +523,7 @@ class WebServiceTicketsController extends WebServicesController
 				break;
 		}
 		$emailBody = ob_get_clean();
-		
+
 		// if sending from toolbox tool ppvNotice add screen (manual edit and send)
 		// -------------------------------------------------------------------------------
 		if ($manualEmailBody) {
