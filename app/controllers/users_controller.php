@@ -83,7 +83,7 @@ class UsersController extends AppController {
 			    if (strlen($part) > 3) {
 			        $query .= '+';
 			    }
-			    $query .= $part.'* ';
+			    $query .= $part.' ';
 			}
 			$conditions = array('OR' => array("MATCH(User.lastName,User.firstName,User.email) AGAINST('$query' IN BOOLEAN MODE)"));
 
