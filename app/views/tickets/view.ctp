@@ -222,9 +222,9 @@ $this->searchController = 'Tickets';
 			<th><?php __('Notice Type'); ?></th>
 			<th><?php __('To'); ?></th>
 			<th><?php __('From'); ?></th>
-			<th><?php __('Cc'); ?></th>
 			<th><?php __('Subject'); ?></th>
 			<th><?php __('DateSent'); ?></th>
+			<th><?php __('Initials'); ?></th>
 			<th class="actions"><?php __('Actions');?></th>
 		</tr>
 		<?php
@@ -249,9 +249,9 @@ $this->searchController = 'Tickets';
 				<td><?php echo $ppvNotice['PpvNoticeType']['ppvNoticeTypeName'];?></td>
 				<td><?php echo $ppvNotice['emailTo'];?></td>
 				<td><?php echo $ppvNotice['emailFrom'];?></td>
-				<td><?php echo $ppvNotice['emailCc'];?></td>
 				<td><?php echo $ppvNotice['emailSubject'];?></td>
 				<td><?php echo $ppvNotice['emailSentDatetime'];?></td>
+				<td><?php echo $ppvNotice['initials'];?></td>
 				<td class="actions">
 					<?php
 					echo $html->link('View',
