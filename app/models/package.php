@@ -90,7 +90,12 @@ class Package extends AppModel {
 	        foreach ($itemDescriptions as $v) {
 	            $itemId = $v['LoaItem']['loaItemId'];
 	            $weight = $this->data['PackageLoaItemRel'][$itemId]['weight'];
-	            $descriptions[$weight] = $v['LoaItem']['merchandisingDescription'];
+	            
+	            if (!isset($descriptions[$weight])) {
+	                $descriptions[$weight] = $v['LoaItem']['merchandisingDescription'];
+	            } else {
+	                $descriptions[] = $v['LoaItem']['merchandisingDescription'];
+	            }
 	        }
 	        
 	        //sort the array by the weights so the implode works
