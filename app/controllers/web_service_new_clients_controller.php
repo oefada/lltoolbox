@@ -69,11 +69,13 @@ class WebServiceNewClientsController extends WebServicesController
 			// get new client id and send back to Sugar
 			$decoded_request['client']['client_id'] = $this->Client->getLastInsertId();
 			
+			/*
 			// new client is created now...reupdate with information
 			$new_client_data_update = array();
 			$new_client_data_update['clientId'] 		= $decoded_request['client']['client_id'];
 			$new_client_data_update['oldProductId'] 	= '0-' . $decoded_request['client']['client_id'];
 			$this->Client->save($new_client_data_update);
+			*/
 		}
 		
 	    $decoded_request['request']['response'] = $response_value;
