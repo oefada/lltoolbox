@@ -1,7 +1,6 @@
 <?php
 
 App::import('Vendor', 'nusoap_client/lib/nusoap');
-Configure::write('debug', 2); //debug
 
 class PpvNoticesController extends AppController {
 
@@ -12,19 +11,6 @@ class PpvNoticesController extends AppController {
 	function index() {
 		$this->PpvNotice->recursive = 0;
 		$this->set('ppvNotices', $this->paginate());
-	}
-	
-	function sendToSugar() {
-		// had to use this custom native soap class and functions because couldn't run both cakephp nusoap server and client
-		// this soap call to made to sugar in order to give Sugar the new clientId from toolbox so it's recorded in Sugar
-		$client = new SoapClient('http://sugarprod.luxurylink.com:8888/services2/ClientReceiver2?wsdl'); 
-		try {
-			echo 'yeeeee';
-			//$client->soap_call($data);
-		} catch (SoapFault $exception) {
-			//@mail('devmail@luxurylink.com', 'WEB SERVICE UPDATE CLIENT FROM SUGAR : Could not send postback to Sugar', $exception);
-		}
-		die('asdgasdgdg');
 	}
 
 	function view($id = null) {
