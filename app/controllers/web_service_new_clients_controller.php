@@ -99,7 +99,6 @@ class WebServiceNewClientsController extends WebServicesController
 					continue;
 		    	}
 		    	$checkResult = $this->ClientContact->query("SELECT * FROM clientContact WHERE clientId = $client_id");
-		    	mail('devmail@luxurylink.com', 'WEB SERVICE CLIENTS: From Sugar - Contacts', print_r($checkResult, true));
 		    }
 		}
 	      
