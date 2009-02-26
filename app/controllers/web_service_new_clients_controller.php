@@ -106,7 +106,7 @@ class WebServiceNewClientsController extends WebServicesController
 		// this soap call to made to sugar in order to give Sugar the new clientId from toolbox so it's recorded in Sugar
 
 		ini_set("soap.wsdl_cache_enabled", "0"); // disabling WSDL cache
-		$client = new SoapClient('http://sugardev.luxurylink.com:8888/services2/ClientReceiver2?wsdl'); 
+		$client = new SoapClient('http://sugarprod.luxurylink.com:8888/services2/ClientReceiver2?wsdl'); 
 		try {
 			$client->soap_call($data);
 		} catch (SoapFault $exception) {
