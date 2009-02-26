@@ -27,9 +27,7 @@ class WebServiceNewClientsController extends WebServicesController
 	
 	    // JOSN decoded the request into an assoc. array
 	    $decoded_request = json_decode($sm_request, true);
-	
-		mail('devmail@luxurylink.com', 'testing sugar contacts' , print_r($decoded_request,true)); // debug only alee 
-		
+
 	    // look for a client id but no error check
 	    $client_id = trim($decoded_request['client']['client_id']);
 	
@@ -80,9 +78,7 @@ class WebServiceNewClientsController extends WebServicesController
 		
 	    $decoded_request['request']['response'] = $response_value;
 	    $decoded_request['request']['response_time'] = time();
-	
-		mail('devmail@luxurylink.com', 'testing sugar contacts 2' , print_r($decoded_request,true)); // debug only alee 
-	
+
 	    $encoded_response = json_encode($decoded_request);
 
 		// send info back to sugar -- should only go back to Sugar webservice on new clients so we can give Sugar back new client id.
@@ -98,10 +94,10 @@ class WebServiceNewClientsController extends WebServicesController
 	function sendToSugar($data) {
 		// had to use this custom native soap class and functions because couldn't run both cakephp nusoap server and client
 		// this soap call to made to sugar in order to give Sugar the new clientId from toolbox so it's recorded in Sugar
-		ini_set("soap.wsdl_cache_enabled", "0"); // disabling WSDL cache
-		$client = new SoapClient('http://sugarprod.luxurylink.com:8888/services2/ClientReceiver2?wsdl'); 
-		mail('devmail@luxurylink.com', 'testing sugar contacts 4' , print_r($data,true)); // debug only alee 
+		
 		try {
+			$client = new SoapClient('http://sugarprod.luxurylink.com:8888/services2/ClientReceiver2?wsdl'); 
+			mail('devmail@luxurylink.com', 'testing sugar contacts 4' , print_r($client, true) . print_r($data,true)); // debug only alee 
 			$client->soap_call($data);
 			mail('devmail@luxurylink.com', 'testing sugar contacts 3' , print_r($client, true) . print_r($data,true)); // debug only alee 
 		} catch (SoapFault $exception) {
