@@ -49,6 +49,7 @@ class WebServiceNewClientsController extends WebServicesController
         $client_data_save['name']				= $decoded_request['client']['client_name'];
         $client_data_save['managerUsername'] 	= $decoded_request['client']['manager_ini'];
 		$client_data_save['teamName']			= $decoded_request['client']['team_name'];
+		$client_data_save['clientTypeId']		= $decoded_request['client']['client_type_id'];
         $client_data_save['modified']			= $date_now;
             
 		if ($client_id && is_numeric($client_id)) {
@@ -77,6 +78,8 @@ class WebServiceNewClientsController extends WebServicesController
 		
 	    $decoded_request['request']['response'] = $response_value;
 	    $decoded_request['request']['response_time'] = time();
+	
+		mail('devmail@luxurylink.com', 'testing sugar contacts 2' , print_r($decoded_request,true)); // debug only alee 
 	
 	    $encoded_response = json_encode($decoded_request);
 
