@@ -92,13 +92,50 @@ class WebServiceNewClientsController extends WebServicesController
 	    // clientContactTypeId = 1 is reservation SUGAR -> (AUC, CCALL, ALL_AUC)
 	    // clientContactTypeId = 2 is homepage notification SUGAR ->(MKT, CCALL, ALL, ALL_AUC)
 	    
+	  	$reservationContacts = array('AUC', 'CCALL', 'ALL_AUC');
+	  	$homepageContacts = array('MKT', 'ALL', 'CCALL', 'ALL_AUC');
+	    
 	    if ($client_id) {
 		    $contacts = $decoded_request['contacts'];
 		    foreach ($contacts as $k => $contact) {
-		    	if (empty($contact['recipient_type_c'])) {
+		    	$contact_id = $contact['contact_id'];
+		    	$recipient_type	 = $contact['recipient_type_c'];
+		    	
+		    	if (empty($recipient_type)) {
 					continue;
 		    	}
-		    	$checkResult = $this->ClientContact->query("SELECT * FROM clientContact WHERE clientId = $client_id");
+				if (!in_array($recipient_type, $reservationContacts) || !in_array($recipient_type, $homepageContacts)) {
+					continue;
+				}
+
+		    	$newClientContact = array();
+		    	$newClientContact['clientId']				= $client_id;
+		    	$newClientContact['primaryContact']			= $contact['primary_c'];
+		    	$newClientContact['name']					= $contact['contact_name'];
+		    	$newClientContact['emailAddress']			= $contact['email_address'];
+		    	$newClientContact['phone']					= $contact['phone_work'];
+		    	$newClientContact['fax']					= $contact['phone_fax'];
+		    	$newClientContact['sugarContactId']			= $contact_id;
+				
+				$checkResult = $this->ClientContact->query("SELECT * FROM clientContact WHERE clientId = $client_id AND sugarContactId = $contact_id");
+		    	
+		    	if (empty($checkResult)) {
+		    		if (in_array($recipient_type, $reservationContacts)) {
+		    			$newClientContact['clientContactTypeId'] = 1;
+		    			$this->ClientContact->create();
+		    			$this->ClientContact->save($newClientContact);
+		    		}
+		    		if (in_array($recipient_type, $homepageContacts)) {
+		    			$newClientContact['clientContactTypeId'] = 2;
+		    			$this->ClientContact->create();
+		    			$this->ClientContact->save($newClientContact);
+		    		}
+		    	} else {
+					foreach ($checkResult as $bb => $tb_contact) {
+						$newClientContact['clientContactId'] = $tb_contact['clientContact']['clientContactId'];
+						$this->ClientContact->save($newClientContact);	
+					}
+				}
 		    }
 		}
 	      
