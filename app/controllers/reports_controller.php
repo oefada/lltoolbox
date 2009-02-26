@@ -99,7 +99,9 @@ class ReportsController extends AppController {
                         ON (SchedulingInstance2.schedulingMasterId = SchedulingMaster2.schedulingMasterId)
                         WHERE SchedulingMaster2.schedulingMasterId = SchedulingMaster.schedulingMasterId AND SchedulingInstance2.endDate >= NOW()
 	                ) AS futureInstances,
-	                Client.managerUsername
+	                Client.managerUsername,
+	                IF((Package.validityEndDate - INTERVAL 60 DAY) <= NOW(), 1, 0) as validityEndApproaching,
+	                IF((Loa.endDate - INTERVAL 14 DAY) <= NOW(), 1, 0) as loaEndApproaching
 	                FROM offer AS Offer
 	                LEFT JOIN bid AS Bid ON (Bid.offerId = Offer.offerId)
 	                INNER JOIN schedulingInstance AS SchedulingInstance ON (SchedulingInstance.schedulingInstanceId = Offer.schedulingInstanceId)

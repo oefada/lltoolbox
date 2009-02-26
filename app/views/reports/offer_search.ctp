@@ -97,15 +97,16 @@ if (!empty($results)): ?>
 		<tr>
 			<th><?=sortLink('Client.name', 'Client Name', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('OfferType.offerTypeName', 'Offer Type', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('Package.packageId', 'Package ID', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('SchedulingMaster.packageName', 'Offer Name', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('Package.numNights', 'Room Nights', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('Package.validityEndDate', 'Validity End', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('offerStatus', 'Status', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('dateOpenedOrClosed', 'Date Opened/Closed', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('numberOfBids', '# Bids', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('Package.approvedRetailPrice', 'Retail Value', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('SchedulingMaster.openingBid', 'Opening Bid Amount', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('Loa.endDate', 'LOA Term End', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Loa.endDate', 'LOA Track End', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('Loa.membershipBalance', 'LOA Balance', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('auction_mstr.auction_wholesale', 'Remit Type', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('Client.managerUsername', 'Manager Username', $currentPage, $serializedFormInput, $this, $html)?></th>
@@ -117,16 +118,23 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 	<tr<?=$class?>>
 		<td><?=$html->link($result['Client']['name'], array('controller' => 'clients', 'action' => 'edit', $result['Client']['clientId']))?></td>
 		<td><?=$result['OfferType']['offerTypeName']?></td>
-		<td><?=$html->link(strip_tags($result['SchedulingMaster']['packageName']), "/clients/{$result['Client']['clientId']}/packages/edit/{$result['Package']['packageId']}")?></td>
+		<td><?=$result['Package']['packageId']?></td>
+		<td><?
+				$month = date('m', strtotime($result['SchedulingInstance']['endDate']));
+				$year = date('Y', strtotime($result['SchedulingInstance']['endDate']));
+				echo $html->link(strip_tags($result['SchedulingMaster']['packageName']), "/scheduling/index/clientId:{$result['Client']['clientId']}/month:$month/year:$year")?></td>
 		<td style="text-align: center"><?=$result['Package']['numNights']?></td>
+		<td><div<?php echo ($result[0]['loaEndApproaching']) ? ' style="min-height: 20px; line-height: 20px; padding: 4px; border: 4px solid #ff0;"' : '' ?>>
+				<?=date('M j, Y', strtotime($result['Package']['validityEndDate']))?>
+			</div>
+		</td>
 		<td><?php echo ($result[0]['offerStatus']) ? 'Open' : 'Closed' ?></td>
 		<td><?=date('M j, Y h:i:s A', strtotime($result[0]['dateOpenedOrClosed']))?></td>
 		<td style="text-align: center"><?=$html->link($result[0]['numberOfBids'], '/bids/search?query='.$result['Offer']['offerId'])?></td>
 		<td><?=$number->currency($result['Package']['approvedRetailPrice'], 'USD', array('places' => 0))?></td>
 		<td><?=$result['SchedulingMaster']['openingBid']?></td>
-		<td><?=$html->link(date('M j, Y', strtotime($result['Loa']['endDate'])), array('controller' => 'loas', 'action' => 'edit', $result['Loa']['loaId']))?></td>
-		<td>?</td>
-		<td><?=$html->link($number->currency($result['Loa']['membershipBalance'], 'USD', array('places' => 0)), array('controller' => 'loas', 'action' => 'edit', $result['Loa']['loaId']))?></td>
+		<td><div<?php echo ($result[0]['loaEndApproaching']) ? ' style="min-height: 20px; line-height: 20px; padding: 4px; border: 4px solid #ff0;"' : '' ?>><?=$html->link(date('M j, Y', strtotime($result['Loa']['endDate'])), array('controller' => 'loas', 'action' => 'edit', $result['Loa']['loaId']))?></div></td>
+		<td><div<?php if ($result['Loa']['membershipBalance'] <= 0) { echo ' style="min-height: 20px; line-height: 20px; padding: 4px; border: 4px solid #c00;"'; } else if($result['Loa']['membershipBalance'] <= 1000) { echo ' style="min-height: 20px; line-height: 20px; padding: 4px; border: 4px solid #ff0;"';} ?>><?=$html->link($number->currency($result['Loa']['membershipBalance'], 'USD', array('places' => 0)), array('controller' => 'loas', 'action' => 'edit', $result['Loa']['loaId']))?></div></td>
 		<td><?
 		switch($result['auction_mstr']['remitStatus']) {
             case 0:
@@ -150,7 +158,11 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 		}
 		?></td>
 		<td><?=$result['Client']['managerUsername']?></td>
-		<td style="background: <?php echo ($result[0]['futureInstances']) ? 'none' : '#bc3226' ?>; text-align:center"><?php echo ($result[0]['futureInstances']) ? 'YES' : 'NO' ?></td>
+		<td>
+			<div<?php echo ($result[0]['futureInstances']) ? '': ' style="min-height: 20px; line-height: 20px; padding: 4px; border: 4px solid #c00;"' ; ?>>
+				<?php echo ($result[0]['futureInstances']) ? 'YES' : 'NO' ?>
+			</div>
+		</td>
 	</tr>
 <?php endforeach; //TODO: add totals ?>
 </table>
