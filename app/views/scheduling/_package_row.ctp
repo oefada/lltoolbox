@@ -74,9 +74,13 @@ foreach($package['Scheduling'] as $k => $master):
 	$lastMonthDays = date("t", strtotime($year . "-" . $month . "-01 -1 month"));
 	$left = 100/$monthDays*(strtotime($startDateOnly)-strtotime($year.'-'.$month.'-01'))/(60 * 60 * 24);
 
-	if ($width >= 100 && $left < 0) {
+	if ($width >= 100 && $left < 0 && date('m', strtotime($endDate)) != $month) {
 		$width = 100;
 		$left = 0;
+	} elseif($width >= 100 && $left < 0 && date('m', strtotime($endDate)) == $month) {
+		$left = 0;
+		$diff = strtotime($endDate)-strtotime($year.'-'.$month.'-01');
+		$width = round($diff / 86400)*100/$monthDays;
 	}
 
 	$classes = array('sItem', 'oType'.$master['SchedulingMaster']['offerTypeId']);

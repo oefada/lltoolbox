@@ -84,10 +84,11 @@ class ReportsController extends AppController {
                 
 	        $sql = "SELECT
 	                SchedulingInstance.schedulingInstanceId, (SchedulingInstance.endDate >= NOW()) AS offerStatus, IF(SchedulingInstance.endDate >= NOW(), SchedulingInstance.startDate, SchedulingInstance.endDate) AS dateOpenedOrClosed,
+	                SchedulingInstance.endDate,
 	                Client.clientId, Client.name,
 	                OfferType.offerTypeName,
 	                Offer.offerId,
-	                Package.packageId, Package.numNights, Package.approvedRetailPrice, 
+	                Package.packageId, Package.numNights, Package.approvedRetailPrice, Package.validityEndDate,
 	                COUNT(Bid.bidId) as numberOfBids,
 	                SchedulingMaster.schedulingMasterId, SchedulingMaster.openingBid, SchedulingMaster.packageName,
 	                Loa.loaId, Loa.endDate, Loa.membershipBalance,
