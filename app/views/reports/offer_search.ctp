@@ -130,7 +130,11 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 		</td>
 		<td><?php echo ($result[0]['offerStatus']) ? 'Open' : 'Closed' ?></td>
 		<td><?=date('M j, Y h:i:s A', strtotime($result[0]['dateOpenedOrClosed']))?></td>
-		<td style="text-align: center"><?=$html->link($result[0]['numberOfBids'], '/bids/search?query='.$result['Offer']['offerId'])?></td>
+		<td style="text-align: center">
+			<div<?php echo ($result[0]['flagBids']) ? 'style="min-height: 20px; line-height: 20px; padding: 4px; border: 4px solid #c00;"': '' ; ?>>
+				<?=$html->link($result[0]['numberOfBids'], '/bids/search?query='.$result['Offer']['offerId'])?>
+			</div>
+		</td>
 		<td><?=$number->currency($result['Package']['approvedRetailPrice'], 'USD', array('places' => 0))?></td>
 		<td><?=$result['SchedulingMaster']['openingBid']?></td>
 		<td><div<?php echo ($result[0]['loaEndApproaching']) ? ' style="min-height: 20px; line-height: 20px; padding: 4px; border: 4px solid #ff0;"' : '' ?>><?=$html->link(date('M j, Y', strtotime($result['Loa']['endDate'])), array('controller' => 'loas', 'action' => 'edit', $result['Loa']['loaId']))?></div></td>
