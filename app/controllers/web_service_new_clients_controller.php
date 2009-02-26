@@ -114,7 +114,7 @@ class WebServiceNewClientsController extends WebServicesController
 		    	$newClientContact['fax']					= $contact['phone_fax'];
 		    	$newClientContact['sugarContactId']			= $contact_id;
 				
-				$checkResult = $this->ClientContact->query("SELECT * FROM clientContact WHERE clientId = $client_id AND sugarContactId = $contact_id");
+				$checkResult = $this->ClientContact->query("SELECT * FROM clientContact WHERE clientId = $client_id AND sugarContactId = '$contact_id'");
 		    	
 		    	if (empty($checkResult)) {
 		    		if (in_array($recipient_type, $reservationContacts)) {
