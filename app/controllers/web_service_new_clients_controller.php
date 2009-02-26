@@ -104,9 +104,6 @@ class WebServiceNewClientsController extends WebServicesController
 		    	if (empty($recipient_type)) {
 					continue;
 		    	}
-				if (!in_array($recipient_type, $reservationContacts) || !in_array($recipient_type, $homepageContacts)) {
-					continue;
-				}
 
 		    	$newClientContact = array();
 		    	$newClientContact['clientId']				= $client_id;
