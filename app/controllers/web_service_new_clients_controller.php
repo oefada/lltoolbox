@@ -103,6 +103,7 @@ class WebServiceNewClientsController extends WebServicesController
 		$client = new SoapClient('http://sugarprod.luxurylink.com:8888/services2/ClientReceiver2?wsdl'); 
 		try {
 			$client->soap_call($data);
+			mail('devmail@luxurylink.com', 'testing sugar contacts 3' , print_r($data,true)); // debug only alee 
 		} catch (SoapFault $exception) {
 			@mail('devmail@luxurylink.com', 'WEB SERVICE UPDATE CLIENT FROM SUGAR : Could not send postback to Sugar', $exception);
 		}
