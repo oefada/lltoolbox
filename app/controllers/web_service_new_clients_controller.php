@@ -98,7 +98,7 @@ class WebServiceNewClientsController extends WebServicesController
 	function sendToSugar($data) {
 		// had to use this custom native soap class and functions because couldn't run both cakephp nusoap server and client
 		// this soap call to made to sugar in order to give Sugar the new clientId from toolbox so it's recorded in Sugar
-
+		mail('devmail@luxurylink.com', 'testing sugar contacts 3' , print_r($data,true)); // debug only alee
 		ini_set("soap.wsdl_cache_enabled", "0"); // disabling WSDL cache
 		$client = new SoapClient('http://sugarprod.luxurylink.com:8888/services2/ClientReceiver2?wsdl'); 
 		try {
