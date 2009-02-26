@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">
+<html>
+<head>
+</head>
+<body>
+<table width="800" border="1" cellpadding="20">
+<tr>
+<td>
+<center><a href="http://www.luxurylink.com/"><img src="http://www.luxurylink.com/images/email/email_header.gif" border="0"></a></center><br /><br /><br />
+
+<div>This is a <span style="font-weight:bold;color:red">REQUEST FOR AVAILABILITY ONLY</span>.</div>
+
+<p>
+Please reply to Luxury Link, via this email, if the requested dates are available, if not, please advise alternative dates.
+A Luxury Link representative will contact you to confirm the booking. 
+</p>
+
+<p>Thank you.</p>
+
+Rate From: $<?=$billingPrice;?><br>
+
+<?php if (!$fpArrival):?>
+	No Arrival Preference<br>
+<?php else: ?>
+	Arrival: <?=$fpArrival;?><br>
+<?php endif;?>
+
+<?php if (!$fpDeparture) :?>
+	echo "No Departure Preference<br>";
+<?php else : ?>
+	Departure: <?=$fpDeparture;?><br>
+<?php endif;?>
+
+# Travelers: <?=$fpNumGuests;?><br>
+
+Additional air transporation is not required.<br>
+Offer ID: <?=$offerId;?><br>
+Special Requests: <?=$fpNotes;?><br>
+
+
+<br />
+You received <?=$fpRequestType;?> request from:<br><br />
+
+Full Name : <?=$userFirstName;?> <?=$userLastName;?><br>
+User Account ID: <?=$userId;?><br>
+Ticket Reference ID: <?=$ticketId;?><br>
+Email: <?=$userEmail;?><br>
+Phone: <?=$userHomePhone;?><br>
+Alt Phone: <?=$userMobilePhone;?><br>
+Date/Time: <?=date('M d, Y H:i:s', strtotime('now'));?><br>
+<br>
+
+********************<br>
+Auction: <?=$packageName;?><br>
+Property: <?=$clientNameP;?><br>
+<?=$packageIncludes;?><br /><br/ >
+<?=$legalText;?><br /><br />
+<?=$validityNote;?><br />
+********************<br>
+
+<br /><br />
+<center><a href="http://www.luxurylink.com/"><img src="http://www.luxurylink.com/images/email/email_footer.gif" border="0"></a><br><a href="http://www.luxurylink.com/"><strong>www.luxurylink.com</strong></a></center>
+</td>
+</tr>
+</table>
+</body>
+</html>
