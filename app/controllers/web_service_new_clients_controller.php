@@ -47,7 +47,6 @@ class WebServiceNewClientsController extends WebServicesController
         $client_data_save['name']				= $decoded_request['client']['client_name'];
         $client_data_save['managerUsername'] 	= $decoded_request['client']['manager_ini'];
 		$client_data_save['teamName']			= $decoded_request['client']['team_name'];
-		$client_data_save['clientTypeId']		= $decoded_request['client']['client_type_id'];
         $client_data_save['modified']			= $date_now;
             
         mail('devmail@luxurylink.com', 'WEB SERVICE CLIENTS: From Sugar', print_r($decoded_request, true));
