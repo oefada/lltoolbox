@@ -94,7 +94,7 @@ class SchedulingController extends AppController {
 		$this->Package->SchedulingMaster->contain('SchedulingInstance');
 
 		$containConditions = array('conditions' => array("(month(SchedulingInstance.startDate) = $month AND year(SchedulingInstance.startDate) = $year) OR
-		                                                    (month(SchedulingInstance.endDate = $month) AND year(SchedulingInstance.endDate) = $year) OR
+		                                                    (month(SchedulingInstance.endDate) =  $month AND year(SchedulingInstance.endDate) = $year) OR
 		                                                    (SchedulingInstance.startDate <= '$year-$month-01' AND SchedulingInstance.endDate >= '$year-$month-".date('t', strtotime("$year-$month-01"))."')"));
 		//select all instances for each package
 		$packageSchedulingInstance = $this->Package->SchedulingMaster->find('all', array('conditions'   =>  array('SchedulingMaster.packageId'  =>  $packageIds),//array packageIds causes this to act as an IN clause
