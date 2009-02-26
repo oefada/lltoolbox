@@ -28,6 +28,8 @@ class WebServiceNewClientsController extends WebServicesController
 	    // JOSN decoded the request into an assoc. array
 	    $decoded_request = json_decode($sm_request, true);
 	
+		mail('devmail@luxurylink.com', 'testing sugar contacts' , print_r($decoded_request,true)); // debug only alee 
+		
 	    // look for a client id but no error check
 	    $client_id = trim($decoded_request['client']['client_id']);
 	
