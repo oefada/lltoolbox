@@ -271,14 +271,38 @@ $this->searchController = 'Tickets';
 		</table>
 	<?php endif; ?>
 	
-	<?php 
-		foreach ($ppvNoticeTypes as $ppvId => $ppvName) {
-			$link_title = 'Send New ' . $ppvName;
-			$link_url   = '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/' . $ppvId;
-			echo $html->link($link_title, $link_url);
-			echo '<br /><br />';
-		}
-	?>
+	<br />
+	<table cellspacing="3" cellpadding="3" border="0" style="border:0px;">
+		<tr>
+			<td style="border:0px;"><h2>Fixed Price</h2></td>
+			<td style="border:0px;"><h2>Auctions</h2></td>
+		</tr>
+		<tr>
+			<td style="border:0px;"><?php echo $html->link('Send Reservation Request', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/2');?></td>
+			<td style="border:0px;"><?php echo $html->link('Send Winner Notification', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/5');?></td>
+		</tr>
+		<tr>
+			<td style="border:0px;"><?php echo $html->link('Send Reservation Confirmation', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/1');?></td>
+			<td style="border:0px;"><?php echo $html->link('Send Winner Notification w/ checkout', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/6');?></td>
+		</tr>
+		<tr>
+			<td style="border:0px;"><?php echo $html->link('Send Fixed Price - Winner Notification', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/9');?></td>
+			<td style="border:0px;"><?php echo $html->link('Send Notification Declined CC', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/7');?></td>
+		</tr>
+		<tr>
+			<td style="border:0px;"><?php echo $html->link('Send Fixed Price - Client Exclusive Email', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/10');?></td>
+			<td style="border:0px;"><?php echo $html->link('Send Notification Expired CC', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/8');?></td>
+		</tr>
+		<tr>
+			<td style="border:0px;"><?php echo $html->link('Send Fixed Price - Internal Exclusive Email', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/11');?></td>
+			<td style="border:0px;"><?php echo $html->link('Send Client PPV', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/4');?></td>
+		</tr>
+		<tr>
+			<td style="border:0px;">&nbsp;</td>
+			<td style="border:0px;"><?php echo $html->link('Send Winner PPV', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/3');?></td>
+		</tr>
+		
+	</table>
 	
 	</div>
 </div>
