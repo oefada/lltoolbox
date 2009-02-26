@@ -31,10 +31,47 @@ class WebServiceTicketsController extends WebServicesController
 						'doc' => 'N/A',
 						'input' => array('in0' => 'xsd:string'),
 						'output' => array('return' => 'xsd:string')
-						)
+						),
+					'createFixedPriceTicket' => array(
+						'doc' => 'N/A',
+						'input' => array('in0' => 'xsd:string'),
+						'output' => array('return' => 'xsd:string')
+						)	
 					);
 					
 	function beforeFilter() { $this->LdapAuth->allow('*'); }
+
+	function createFixedPriceTicket($in0) {
+		// only used for creating fixed price tickets.
+		// createNewTicket returns a ticket id for fixed price offers only so frontend can get ticket id
+		// -------------------------------------------------------------------------------
+		$json_decoded = json_decode($in0, true);
+		$ticketId = $this->createNewTicket($json_decoded);
+		
+		// send out fixed price request emails
+		// -------------------------------------------------------------------------------
+		$params 					= array();
+		$params['ticketId']			= $ticketId;
+		$params['send'] 			= 1;
+		$params['returnString']		= 0;
+		$params['manualEmailBody']	= 0;
+		$params['initials']			= 'AUTO';
+		
+		// send out fixed price emails
+		// -------------------------------------------------------------------------------
+		$params['ppvNoticeTypeId'] = 9; 
+		$this->ppv(json_encode($params));	
+		
+		$params['ppvNoticeTypeId'] = 10;
+		$this->ppv(json_encode($params));	
+		
+		$params['ppvNoticeTypeId'] = 11;
+		$this->ppv(json_encode($params));
+		
+		// return ticket id to the frontend live site
+		// -------------------------------------------------------------------------------
+		return $ticketId;
+	}
 
 	function newTicketProcessor1($in0)
 	{
@@ -170,7 +207,7 @@ class WebServiceTicketsController extends WebServicesController
 			// if non-auction, just stop here as charging and ppv should not be auto
 			// -------------------------------------------------------------------------------
 			if ($formatId != 1 || !in_array($offerLive['offerTypeId'], array(1,2,6))) {
-				return true;	
+				return $ticketId;	
 			}
 			
 			// find out if there is a valid credit card to charge.  charge and send appropiate emails
@@ -360,10 +397,9 @@ class WebServiceTicketsController extends WebServicesController
 		$liveOfferData 		= $liveOffer[0]['LiveOffer'];
 		$offerType			= $this->OfferType->find('list');
 		$userPaymentData	= $this->findValidUserPaymentSetting($ticketData['userId']);
-
-		// vars for email templates
-		// -------------------------------------------------------------------------------
 		
+		// vars for all email templates
+		// -------------------------------------------------------------------------------
 		$userId 			= $userData['userId'];
 		$userFirstName		= ucwords(strtolower($userData['firstName']));
 		$userLastName		= ucwords(strtolower($userData['lastName']));
@@ -400,8 +436,21 @@ class WebServiceTicketsController extends WebServicesController
 		$checkoutKey		= base64_encode(serialize(array('ticketId' => $ticketId, 'userId' => $userId, 'offerId' => $offerId, 'zKey' => $checkoutHash)));
 		$checkoutLink		= "https://www.luxurylink.com/my/my_purchase.php?z=$checkoutKey";
 		
+		$loaLevelId			= isset($clientData[0]['Loa']['loaLevelId']) ? $clientData[0]['Loa']['loaLevelId'] : false;
+		$wholesale			= ($loaLevelId) ? 1 : 0;
+		
 		$offerTypeArticle	= in_array(strtolower($offerType[$offerTypeId]{0}), array('a','e','i','o','u')) ? 'an' : 'a';
+		
+		// fixed price variables
+		// -------------------------------------------------------------------------------
+		$fpRequestType		= ($wholesale) ? 'A Wholesale Exclusive' : 'An Exclusive';
+		$fpArrival			= isset($ticketData['requestArrival']) ? date('M d, Y', strtotime($ticketData['requestArrival'])) : 'N/A';
+		$fpDeparture		= isset($ticketData['requestDeparture']) ? date('M d, Y', strtotime($ticketData['requestDeparture'])) : 'N/A';
+		$fpNumGuests		= $ticketData['requestNumGuests'];
+		$fpNotes			= $ticketData['requestNotes'];
 
+		// cc variables
+		// -------------------------------------------------------------------------------
 		if (is_array($userPaymentData) && !empty($userPaymentData)) {
 			$ccFour				= substr(aesDecrypt($userPaymentData['UserPaymentSetting']['ccNumber']), -4, 4);
 			$ccType				= $userPaymentData['UserPaymentSetting']['ccType'];
@@ -410,7 +459,6 @@ class WebServiceTicketsController extends WebServicesController
 		// some unknowns
 		// -------------------------------------------------------------------------------
 		$guarantee			= false;
-		$wholesale			= 0;
 
 		// fetch client contacts
 		// -------------------------------------------------------------------------------
@@ -518,6 +566,26 @@ class WebServiceTicketsController extends WebServicesController
 				$emailFrom = "LuxuryLink.com<auction@luxurylink.com>";
 				$emailReplyTo = "auction@luxurylink.com";
 				$emailBcc = 'winnernotifications@luxurylink.com';
+				break;
+			case 9:
+				include('../vendors/email_msgs/fixed_price/msg_fixedprice.html');
+				$emailSubject = "LuxuryLink.com: Your Travel Request Has Been Received";
+				$emailFrom = "LuxuryLink.com<exclusives@luxurylink.com>";
+				$emailReplyTo = "exclusives@luxurylink.com";
+				break;
+			case 10:
+				include('../vendors/email_msgs/fixed_price/msg_client_fixedprice.html');
+				$emailSubject = "$fpRequestType Request Has Come In!";
+				$emailFrom = "LuxuryLink.com<exclusives@luxurylink.com>";
+				$emailReplyTo = "exclusives@luxurylink.com";
+				$userEmail = $clientPrimaryEmail;
+				break;
+			case 11:
+				include('../vendors/email_msgs/fixed_price/msg_internal_fixedprice.html');
+				$emailSubject = "$fpRequestType Request Has Come In!";
+				$emailFrom = "LuxuryLink.com<exclusives@luxurylink.com>";
+				$emailReplyTo = "exclusives@luxurylink.com";
+				$userEmail = 'exclusives@luxurylink.com';
 				break;
 			default:
 				break;
