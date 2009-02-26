@@ -47,7 +47,7 @@ class OfferLive extends AppModel {
             $instance->saveField('endDate', $newInstanceEndDate);
         }
         
-        return false;
+        return true;
     }
 }
 ?>

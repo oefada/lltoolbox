@@ -11,10 +11,9 @@ class OfferLivesController extends AppController {
 	function edit($id = null) {
 		if (!empty($this->data)) {
 			if ($this->OfferLive->save($this->data)) {
-				$this->Session->setFlash(__('The offer has been saved', true));
-				$this->redirect(array('action'=>'index'));
+				$this->Session->setFlash(__('The Offer has been modified', true), 'default', array(), 'success');
 			} else {
-				$this->Session->setFlash(__('The offer could not be saved. Please, try again.', true));
+				$this->Session->setFlash(__('The Offer could not be modified', true), 'default', array(), 'error');
 			}
 		}
 		if (empty($this->data)) {
