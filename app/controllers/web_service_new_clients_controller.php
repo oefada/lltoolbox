@@ -6,7 +6,7 @@ App::import('Vendor', 'nusoap/web_services_controller');
 class WebServiceNewClientsController extends WebServicesController
 {
 	var $name = 'WebServiceNewClients';
-	var $uses = 'Client';
+	var $uses = array('Client','ClientContact');
 	var $serviceUrl = 'http://toolbox.luxurylink.com/web_service_new_clients';
 	var $errorResponse = false;
 	var $api = array(
@@ -66,7 +66,7 @@ class WebServiceNewClientsController extends WebServicesController
 			$this->Client->save($client_data_save);
 			
 			// get new client id and send back to Sugar
-			$decoded_request['client']['client_id'] = $this->Client->getLastInsertId();
+			$client_id = $decoded_request['client']['client_id'] = $this->Client->getLastInsertId();
 			
 			/*
 			// new client is created now...reupdate with information
@@ -85,9 +85,24 @@ class WebServiceNewClientsController extends WebServicesController
 		// send info back to sugar -- should only go back to Sugar webservice on new clients so we can give Sugar back new client id.
 		// look in Sugar : /var/www/html/soap/SoapSugarUsers.php for the web service 'update_client'
 		// look in Sugar : /var/www/html/custom/modules/Accounts/SiteManagerAgent.php for the after hook Sugar logic.
-		
 	    $this->sendToSugar($encoded_response);
-	    	
+	    
+	    // update client contacts
+	    // ----------------------------------------------------------------------
+	    // clientContactTypeId = 1 is reservation SUGAR -> (AUC, CCALL, ALL_AUC)
+	    // clientContactTypeId = 2 is homepage notification SUGAR ->(MKT, CCALL, ALL, ALL_AUC)
+	    
+	    if ($client_id) {
+		    $contacts = $decoded_request['contacts'];
+		    foreach ($contacts as $k => $contact) {
+		    	if (empty($contact['recipient_type_c'])) {
+					continue;
+		    	}
+		    	$checkResult = $this->ClientContact->query("SELECT * FROM clientContact WHERE clientId = $client_id");
+		    	mail('devmail@luxurylink.com', 'WEB SERVICE CLIENTS: From Sugar - Contacts', print_r($checkResult, true));
+		    }
+		}
+	      
 	    // this tests to see if we were getting correct response from the request
 	    return $encoded_response;
 	}
