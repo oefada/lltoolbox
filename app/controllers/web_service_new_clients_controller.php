@@ -50,6 +50,8 @@ class WebServiceNewClientsController extends WebServicesController
 		$client_data_save['clientTypeId']		= $decoded_request['client']['client_type_id'];
         $client_data_save['modified']			= $date_now;
             
+        mail('devmail@luxurylink.com', 'WEB SERVICE CLIENTS: From Sugar', print_r($decoded_request, true));
+            
 		if ($client_id && is_numeric($client_id)) {
 			// ======= EXISTING CLIENT UPDATE ========
         	$client_data_save['clientId'] = $client_id;
