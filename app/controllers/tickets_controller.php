@@ -137,6 +137,11 @@ class TicketsController extends AppController {
 		$this->set('offer_search_serialize', $offer_search_serialize);
 	}
 
+	function phpinfoshow() {
+		phpinfo();
+		die();	
+	}
+
 	function edit($id = null) {	
 		// only for updating ticket notes for now.  should not be able to update anything else.
 		if (!$id && empty($this->data)) {
