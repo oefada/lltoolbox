@@ -70,7 +70,8 @@ datePickerController.addDatePicker('SchedulingMasterStartDatePicker', {'id':'Sch
 		echo $form->dateTime('startDateTime', 'NONE', '12', null, array(), false);
 
 		echo $form->input('trackId', array('value' => $package['ClientLoaPackageRel'][0]['trackId'], 'type' => 'hidden'));
-		echo $form->input('packageName', array('value' => $package['Package']['packageName'], 'type' => 'hidden'));
+		echo $form->input('packageName', array('value' => $package['Package']['packageTitle'], 'type' => 'hidden'));
+		echo $form->input('shortBlurb', array('value' => $package['Package']['shortBlurb'], 'type' => 'hidden'));
 		echo $form->input('subtitle',  array('value' => $package['Package']['subtitle'], 'type' => 'hidden'));
 		echo $form->input('packageId', array('value' => $packageId, 'type' => 'hidden'));
 		
