@@ -42,22 +42,25 @@ class WebServiceNewClientsController extends WebServicesController
 	        $response_value = '-1';
 	    }
 		
+		$date_now = date('Y-m-d H:i:s', strtotime('now'));
+		
 		// map data from Sugar to toolbox client table structure
 		$client_data_save = array();
         $client_data_save['name']				= $decoded_request['client']['client_name'];
-        $client_data_save['phone1']				= $decoded_request['client']['client_phone1'];
-        $client_data_save['phone2']				= $decoded_request['client']['client_phone2'];
-        $client_data_save['fax']				= $decoded_request['client']['client_fax1'];
-        
+        $client_data_save['managerUsername'] 	= $decoded_request['client']['manager_ini'];
+		$client_data_save['teamName']			= $decoded_request['client']['team_name'];
+        $client_data_save['modified']			= $date_now;
+            
 		if ($client_id && is_numeric($client_id)) {
 			// ======= EXISTING CLIENT UPDATE ========
         	$client_data_save['clientId'] = $client_id;
-        	$this->Client->save($client_data_save);		
+        	$this->Client->save($client_data_save);
+        	$decoded_request['client']['client_id'] = $client_id;
+        			
 		} else {
 			// ======= NEW CLIENT INSERT =============
 			$client_data_save['inactive'] 				= 1; // set new clients from sugar to inactive
-			$client_data_save['created'] 				= date('Y-m-d H:i:s', strtotime('now'));
-			$client_data_save['managerUsername'] 		= $decoded_request['client']['manager_ini'];
+			$client_data_save['created'] 				= $date_now;
 			
 			$this->Client->create();
 			$this->Client->save($client_data_save);
@@ -72,22 +75,6 @@ class WebServiceNewClientsController extends WebServicesController
 			$this->Client->save($new_client_data_update);
 		}
 		
-		//$decoded_request['client']['client_desc'];        
-		//$decoded_request['client']['client_level_id'];
-		//$decoded_request['client']['manager_ini'];
-        //$decoded_request['client']['manager'];
-		//$decoded_request['client']['client_name2'];
-        //$decoded_request['client']['client_name3'];
-		//$decoded_request['client']['client_note'];
-        //$decoded_request['client']['client_email_address2'];
-        //$decoded_request['client']['client_email_address3'];        
-        //$decoded_request['client']['client_phone3'];		
-		//$decoded_request['client']['client_fax2'];
-        //$decoded_request['client']['client_fax3'];
-        //$decoded_request['client']['client_cell1'];
-        //$decoded_request['client']['client_cell2'];
-        //$decoded_request['client']['client_cell3'];
-	
 	    $decoded_request['request']['response'] = $response_value;
 	    $decoded_request['request']['response_time'] = time();
 	
@@ -112,7 +99,7 @@ class WebServiceNewClientsController extends WebServicesController
 		try {
 			$client->soap_call($data);
 		} catch (SoapFault $exception) {
-			@mail('geeks@luxurylink.com', 'need to make a new error handling function', $exception);
+			@mail('devmail@luxurylink.com', 'WEB SERVICE UPDATE CLIENT FROM SUGAR : Could not send postback to Sugar', $exception);
 		}
 		return true;
 	}
