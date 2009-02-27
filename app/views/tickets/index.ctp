@@ -169,6 +169,7 @@ $this->set('hideSidebar', true);
 		</table>
 		</form>
 	</div>
+	<div><a href="/tickets/add/">Create Manual Ticket</a></div>
 
 	<?php echo $this->renderElement('ajax_paginator', array('divToPaginate' => 'ticket-index', 'showCount' => true)); ?>
 
