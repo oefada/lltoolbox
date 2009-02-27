@@ -483,7 +483,18 @@ class WebServiceTicketsController extends WebServicesController
 		$clientName 		= $clients[0]['contacts'][0]['ppv_name'];
 		$clientPrimaryEmail = $clients[0]['contacts'][0]['ppv_email_address'];
 		$oldProductId		= $clients[0]['oldProductId'];
-
+		
+		// build client CC list and check all email addresses
+		// -------------------------------------------------------------------------------
+		$countClientContact = count($clients[0]['contacts']);
+		$clientCc			= array();
+		if ($countClientContact) {
+			for ($i = 1; $i < $countClientContact; $i++) {
+				$clientCc[] = $clients[0]['contacts'][$i]['ppv_email_address'];
+			}
+		}
+		$clientCcEmail = implode(',', array_unique($clientCc));
+		
 		// auction facilitator
 		// -------------------------------------------------------------------------------
 		// southern california - destinationId = 82
@@ -523,6 +534,7 @@ class WebServiceTicketsController extends WebServicesController
 				$emailReplyTo = "reservations@luxurylink.com";
 				$emailBcc = 'thread@luxurylink.com';
 				$userEmail = $clientPrimaryEmail;
+				$emailCc = $clientCcEmail;
 				break;
 			case 3:
 				include('../vendors/email_msgs/ppv/winner_ppv.html');
@@ -538,6 +550,7 @@ class WebServiceTicketsController extends WebServicesController
 				$emailReplyTo = 'auction@luxurylink.com';
 				$emailBcc = 'thread@luxurylink.com';
 				$userEmail = $clientPrimaryEmail;
+				$emailCc = $clientCcEmail;
 				break;
 			case 5:
 				include('../vendors/email_msgs/notifications/winner_notification.html');
@@ -579,6 +592,7 @@ class WebServiceTicketsController extends WebServicesController
 				$emailFrom = "LuxuryLink.com<exclusives@luxurylink.com>";
 				$emailReplyTo = "exclusives@luxurylink.com";
 				$userEmail = $clientPrimaryEmail;
+				$emailCc = $clientCcEmail;
 				break;
 			case 11:
 				include('../vendors/email_msgs/fixed_price/msg_internal_fixedprice.html');
