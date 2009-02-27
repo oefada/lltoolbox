@@ -61,16 +61,23 @@ class Client extends AppModel {
 			if (!empty($val['Client']) && is_int($key)):
 			    //TODO: Turn the following two queries into one
 			    $loas = $this->Loa->find('list', array('contain' => array(), 'fields' => array('loaId'), 'conditions' => array('Loa.clientId' => $val['Client']['clientId'])));
-			    $currentLoa = $this->Loa->find('first', array('contain' => array('LoaLevel'), 'fields'=>array('Loa.loaId, Loa.loaLevelId, LoaLevel.loaLevelName'), 'conditions' => array('Loa.clientId' => $val['Client']['clientId'])));
+			    $currentLoa = $this->Loa->find('first', array('contain' => array('LoaLevel'), 'fields'=>array('Loa.loaId, Loa.loaLevelId, LoaLevel.loaLevelName'), 'conditions' => array('Loa.clientId' => $val['Client']['clientId'], 'NOW() BETWEEN Loa.startDate AND Loa.endDate')));
                 
                 //look to the parent if there's no LOA for this client
                 if (empty($currentLoa) && !empty($val['Client']['parentClientId'])) {
-                    $currentLoa = $this->Loa->find('first', array('contain' => array('LoaLevel'), 'fields'=>array('Loa.loaId, Loa.loaLevelId, LoaLevel.loaLevelName'), 'conditions' => array('Loa.clientId' => $val['Client']['parentClientId'])));
+                    $currentLoa = $this->Loa->find('first', array('contain' => array('LoaLevel'), 'fields'=>array('Loa.loaId, Loa.loaLevelId, LoaLevel.loaLevelName'), 'conditions' => array('Loa.clientId' => $val['Client']['parentClientId'], 'NOW() BETWEEN Loa.startDate AND Loa.endDate')));
                 }
                 
-			    $results[$key]['Client']['currentLoaId'] = $currentLoa['Loa']['loaId']; 
-			    $results[$key]['ClientLevel']['clientLevelId'] = $currentLoa['LoaLevel']['loaLevelId'];
-			    $results[$key]['ClientLevel']['clientLevelName'] = $currentLoa['LoaLevel']['loaLevelName'];
+                if (empty($currentLoa)) {
+                    $results[$key]['Client']['currentLoaId'] = NULL;
+    			    $results[$key]['ClientLevel']['clientLevelId'] = NULL;
+    			    $results[$key]['ClientLevel']['clientLevelName'] = 'Non-Client';
+                } else {
+                    $results[$key]['Client']['currentLoaId'] = $currentLoa['Loa']['loaId'];
+    			    $results[$key]['ClientLevel']['clientLevelId'] = $currentLoa['LoaLevel']['loaLevelId'];
+    			    $results[$key]['ClientLevel']['clientLevelName'] = $currentLoa['LoaLevel']['loaLevelName'];
+                }
+			    
 				$results[$key]['Client']['numLoas'] = count($loas);				
 			endif;
 		endforeach;
