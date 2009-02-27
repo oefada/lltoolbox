@@ -4,12 +4,7 @@
 	<?php
 		echo $form->input('offerId');
 		echo $form->input('offerName');
-
-		//only Geeks group can alter the end date of a live offer
-		if (in_array('Geeks', $user['LdapUser']['groups'])) {
-			echo $form->input('endDate');	
-		}
-		
+		echo $form->input('endDate');
 		echo $form->input('buyNowPrice');
 		echo $form->input('termsAndConditions');
 		echo $form->input('validityDisclaimer');
