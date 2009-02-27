@@ -269,27 +269,26 @@ class TicketsController extends AppController {
 		die();
 	}
 
-	// -------------------------------------------
-	// NO ONE IS ALLOWED TO EDIT OR DELETE TICKETS
-	// -------------------------------------------
-	/*
-
 	function add() {
-		$this->Session->setFlash(__('Access Denied - You cannot perform that operation.', true), 'default', array(), 'error');
-		$this->redirect(array('action'=>'index'));
-		die('ACCESS DENIED');
 		if (!empty($this->data)) {
 			$this->Ticket->create();
 			if ($this->Ticket->save($this->data)) {
-				$this->Session->setFlash(__('The Ticket has been saved', true));
-				$this->redirect(array('action'=>'index'));
+				$this->Session->setFlash(__('This manual ticket has been created successfully', true));
+				$this->redirect(array('action'=>'view', 'id' => $this->Ticket->getLastInsertId()));
 			} else {
 				$this->Session->setFlash(__('The Ticket could not be saved. Please, try again.', true));
 			}
 		}
 		$this->set('ticketStatusIds', $this->Ticket->TicketStatus->find('list'));
+		$this->set('formatIds', $this->Format->find('list'));
+		$this->set('offerTypeIds', $this->OfferType->find('list'));
 	}
 
+	// -------------------------------------------
+	// NO ONE IS ALLOWED TO EDIT OR DELETE TICKETS
+	// -------------------------------------------
+	/*
+	
 	function delete($id = null) {
 		$this->Session->setFlash(__('Access Denied - You cannot perform that operation.', true), 'default', array(), 'error');
 		$this->redirect(array('action'=>'index'));
