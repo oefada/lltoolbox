@@ -437,7 +437,6 @@ class WebServiceTicketsController extends WebServicesController
 		$checkoutLink		= "https://www.luxurylink.com/my/my_purchase.php?z=$checkoutKey";
 		
 		$loaLevelId			= isset($clientData[0]['Loa']['loaLevelId']) ? $clientData[0]['Loa']['loaLevelId'] : false;
-		$wholesale			= ($loaLevelId) ? 1 : 0;
 		
 		$offerTypeArticle	= in_array(strtolower($offerType[$offerTypeId]{0}), array('a','e','i','o','u')) ? 'an' : 'a';
 		
@@ -459,6 +458,7 @@ class WebServiceTicketsController extends WebServicesController
 		// some unknowns
 		// -------------------------------------------------------------------------------
 		$guarantee			= false;
+		$wholesale			= false;
 
 		// fetch client contacts
 		// -------------------------------------------------------------------------------
