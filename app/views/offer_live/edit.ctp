@@ -9,6 +9,7 @@
 		echo $form->input('termsAndConditions');
 		echo $form->input('validityDisclaimer');
 		echo $form->input('additionalDescription');
+		echo $form->input('offerIncludes');
 		echo $form->input('shortBlurb');
 		echo $form->input('validityStart');
 		echo $form->input('validityEnd');
