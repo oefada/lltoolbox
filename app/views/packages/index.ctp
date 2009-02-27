@@ -7,11 +7,12 @@ $this->pageTitle = $client['Client']['name'].$html2->c($client['Client']['client
 <?= $this->renderElement('ajax_paginator', array('divToPaginate' => 'packages-index', 'showCount' => true))?>
 <table cellpadding="0" cellspacing="0">
 <tr>
-	<th><?php echo $paginator->sort('Package Name', 'Package.packageName');?></th>
-	<th><?php echo $paginator->sort('Package Status', 'Package.packageStatusId');?></th>
-	<th><?php echo $paginator->sort('Start Date', 'Package.startDate');?></th>
-	<th><?php echo $paginator->sort('End Date', 'Package.endDate');?></th>
-	<th><?php echo $paginator->sort('Created', 'Package.created');?></th>
+	<th><?php echo $paginator->sort('LOA ID', 'ClientLoaPackageRel.loaId', array('url' => array('clientId' => $clientId)));?></th>
+	<th><?php echo $paginator->sort('Package Name', 'Package.packageName', array('url' => array('clientId' => $clientId)));?></th>
+	<th><?php echo $paginator->sort('Package Status', 'Package.packageStatusId', array('url' => array('clientId' => $clientId)));?></th>
+	<th><?php echo $paginator->sort('Start Date', 'Package.startDate', array('url' => array('clientId' => $clientId)));?></th>
+	<th><?php echo $paginator->sort('End Date', 'Package.endDate', array('url' => array('clientId' => $clientId)));?></th>
+	<th><?php echo $paginator->sort('Created', 'Package.created', array('url' => array('clientId' => $clientId)));?></th>
 	<th class="actions"><?php __('Actions');?></th>
 </tr>
 <?php
@@ -23,6 +24,9 @@ foreach ($packages as $package):
 	}
 ?>
 	<tr<?php echo $class;?>>
+		<td>
+			<?php echo $package['ClientLoaPackageRel']['loaId']; ?>
+		</td>
 		<td>
 			<?php echo $html->link($package['Package']['packageName'], "/clients/$clientId/packages/edit/{$package['Package']['packageId']}"); ?>
 		</td>

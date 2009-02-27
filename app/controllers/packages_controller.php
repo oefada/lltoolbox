@@ -14,8 +14,12 @@ class PackagesController extends AppController {
 	}
 
 	function index($clientId = null) {
-		if (!isset($clientId)) {
+		if (!isset($clientId) && !isset($this->params['named']['clientId'])) {
 			$this->cakeError('error404');
+		}
+		
+		if (isset($this->params['named']['clientId']) && $clientId == null) {
+		    $clientId = $this->params['named']['clientId'];
 		}
 		
 		$this->set('packages', $this->paginate('ClientLoaPackageRel', array('ClientLoaPackageRel.clientId' => $clientId)));
