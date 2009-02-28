@@ -36,13 +36,13 @@ if(isset($_GET['do_ajax'])) {
 	$title = isset($_GET['title']) ? trim($_GET['title']) : false;
 	$hdr_img = isset($_GET['hdr_img']) ? trim($_GET['hdr_img']) : false;
 	$offerTitle = isset($_GET['offerTitle']) ? trim($_GET['offerTitle']) : false;
-	$offerId = isset($_GET['offerId']) ? trim($_GET['offerId']) : false;
+	$packageId = isset($_GET['packageId']) ? trim($_GET['packageId']) : false;
 
 	$result = mysql_query("SELECT * FROM featuredEscape WHERE dateLive = '$date_string'");
 	if (mysql_num_rows($result)) {
-		$sql = "UPDATE featuredEscape SET title = '$title', styles = '$styles', headerImgSrc = '$hdr_img', offerTitle = '$offerTitle', offerId = '$offerId' WHERE dateLive = '$date_string'";
+		$sql = "UPDATE featuredEscape SET title = '$title', styles = '$styles', headerImgSrc = '$hdr_img', offerTitle = '$offerTitle', packageId = '$packageId' WHERE dateLive = '$date_string'";
 	} else {
-		$sql = "INSERT INTO featuredEscape (dateLive, title, styles, headerImgSrc, offerTitle, offerId) VALUES ('$date_string','$title','$styles','$hdr_img','$offerTitle','$offerId')";
+		$sql = "INSERT INTO featuredEscape (dateLive, title, styles, headerImgSrc, offerTitle, packageId) VALUES ('$date_string','$title','$styles','$hdr_img','$offerTitle','$packageId')";
 	}
 
 	$result = mysql_query($sql);
@@ -62,7 +62,7 @@ if(isset($_GET['do_ajax'])) {
 			if(!is_numeric($oid) || $oid <= 0) {
 				$oid = '';
 			}
-			$insert_rows = mysql_query("INSERT INTO featuredEscapeClientOffer (dateLive,clientId,offerId,slotId) VALUES ('$date_string','$pid','$oid','$slot')");
+			$insert_rows = mysql_query("INSERT INTO featuredEscapeClientOffer (dateLive,clientId,packageId,slotId) VALUES ('$date_string','$pid','$oid','$slot')");
 			if ($insert_rows) {
 				$slot++;
 			} else {
@@ -87,16 +87,17 @@ $style_dest = array();
 $style_life = array();
 
 $result = mysql_query("SELECT * from featuredEscape WHERE dateLive = '$date_string'");
-$data = mysql_fetch_array($result);
+$data = mysql_fetch_assoc($result);
 
 if (mysql_num_rows($result)) {
 	$result = mysql_query("SELECT fep.*, p.name FROM featuredEscapeClientOffer fep 
 							INNER JOIN client p ON fep.clientId = p.clientId 
 							WHERE fep.dateLive = '$date_string' ORDER BY fep.slotId");
-	while ($row = mysql_fetch_array($result)) {
+	while ($row = mysql_fetch_assoc($result)) {
 		$data_products[] = $row;
 	}
 }
+
 /*
 $result = mysql_query("SELECT themeId, themeName FROM theme ORDER BY themeName");
 while($row = mysql_fetch_array($result)) {
@@ -182,7 +183,7 @@ function updateFeaturedEscapesAuto() {
 	}
 }
 
-function append_row_damnit(tblId, offerId, oid, auctionName, d_open, d_close)
+function append_row_damnit(tblId, packageId, oid, auctionName, d_open, d_close)
 {
 	var tbl = document.getElementById(tblId);
 	var newRow = tbl.insertRow(tbl.rows.length);
@@ -192,7 +193,7 @@ function append_row_damnit(tblId, offerId, oid, auctionName, d_open, d_close)
 	newCell.setAttribute("onDblClick","deleteRow('" + tblId + "',parseInt(this.innerHTML))");
 
 	var newCell = newRow.insertCell(1);
-	newCell.innerHTML =  offerId ;
+	newCell.innerHTML =  packageId ;
 
 	var newCell = newRow.insertCell(2);
 	newCell.innerHTML = oid;
@@ -238,7 +239,7 @@ function processUpdateFeaturedEscapes(year, month, day, tbl_id) {
 	var style_life = document.getElementById('fe_style_life').value;
 	var hdr_img_src = document.getElementById('fe_headerImgSrc').value;
 	var offerTitle = document.getElementById('fe_offerTitle').value;
-	var offerId = document.getElementById('fe_offerId').value;
+	var packageId = document.getElementById('fe_packageId').value;
 
 	var clientIds = '';
 	var rows = document.getElementById(tbl_id).tBodies[0].rows;
@@ -273,7 +274,7 @@ function processUpdateFeaturedEscapes(year, month, day, tbl_id) {
 	link += "&style_l=" + style_life;
 	link += "&hdr_img=" + escape(hdr_img_src);
 	link += "&offerTitle=" + escape(offerTitle);
-	link += "&offerId=" + escape(offerId);
+	link += "&packageId=" + escape(packageId);
 	link += "&product_str=" + clientIds;
 
 	executeAjax(link, updateMsg);	
@@ -382,11 +383,11 @@ You are editing for: <strong><? echo date('F d, Y (l)', strtotime("$month/$day/$
 	</tr>
 	<tr> 
 		<td style="background-color: #CCEE88; font-weight: bold;" colspan="2">Gray Box Offer Title</td>
-		<td style="background-color: #CCEE88; font-weight: bold;" colspan="2">Offer Id</td>
+		<td style="background-color: #CCEE88; font-weight: bold;" colspan="2">Package Id</td>
 	</tr>
 	<tr> 
 		<td style="background-color: #CCEE88; font-weight: bold;" colspan="2"><input id="fe_offerTitle" type="text" style="width:100%;" value="<?=$data['offerTitle'];?>" /></td>
-		<td style="background-color: #CCEE88; font-weight: bold;" colspan="2"><input id="fe_offerId" type="text" style="width:100%;" value="<?=$data['offerId'];?>" /></td>
+		<td style="background-color: #CCEE88; font-weight: bold;" colspan="2"><input id="fe_packageId" type="text" style="width:100%;" value="<?=$data['packageId'];?>" /></td>
 	</tr>
 	</table>				
 </div>
@@ -402,7 +403,7 @@ You are editing for: <strong><? echo date('F d, Y (l)', strtotime("$month/$day/$
 <tr NoDrag NoDrop>
 	<th width="30">Slot</th>
 	<th width="100">Product ID</th>
-	<th width="100">Offer ID</th>
+	<th width="100">Package ID</th>
 	<th>Product Name</th>
 </tr>
 <?
@@ -413,7 +414,7 @@ foreach($data_products as $k=>$v) {
 <tr>
 	<td ondblclick="deleteRow('dest_table',parseInt(this.innerHTML));"><? echo $i;?></td>
 	<td><? echo $v['clientId']; ?></td>
-	<td><? echo $v['offerId']; ?></td>
+	<td><? echo $v['packageId']; ?></td>
 	<td><? echo $v['name']; ?></td>
 </tr>
 <?
@@ -430,7 +431,7 @@ tableDnD.init(table);
 
 <br /><br/ >
 Product ID: <input type="text" id="addManualPID" /> <br />
-Featured Offer ID: <input type="text" id='addManualOID'>
+Featured Package ID: <input type="text" id='addManualOID'>
 <input type="button" onclick="addManualProduct();" value="Add Product Id" />
 
 <div id="submit_but" style="display: '';text-align:right;">
