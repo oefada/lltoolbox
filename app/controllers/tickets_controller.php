@@ -10,7 +10,7 @@ class TicketsController extends AppController {
 
 	var $name = 'Tickets';
 	var $helpers = array('Html', 'Form', 'Ajax', 'Text', 'Layout', 'Number');
-	var $uses = array('Ticket','OfferType', 'Format', 'User', 'ClientLoaPackageRel', 'Track', 'TrackDetail','Offer','Loa','Client');
+	var $uses = array('Ticket','OfferType', 'Format', 'User', 'ClientLoaPackageRel', 'Track', 'TrackDetail','Offer','Loa','Client', 'OfferLive');
 
 	function index() {
 		
@@ -271,17 +271,61 @@ class TicketsController extends AppController {
 
 	function add() {
 		if (!empty($this->data)) {
-			$this->Ticket->create();
-			if ($this->Ticket->save($this->data)) {
-				$this->Session->setFlash(__('This manual ticket has been created successfully', true));
-				$this->redirect(array('action'=>'view', 'id' => $this->Ticket->getLastInsertId()));
+			if (!$this->data['Ticket']['offerId'] || !is_numeric($this->data['Ticket']['offerId'])) {
+				$this->Session->setFlash(__('The ticket was not created.  The offerId cannot be blank and must be a number.', true), 'default', array(), 'error');
+			} elseif (!$this->data['Ticket']['userId'] || !is_numeric($this->data['Ticket']['userId'])) {
+				$this->Session->setFlash(__('The ticket was not created.  The userId cannot be blank and must be a number.', true), 'default', array(), 'error');
+			} elseif (!$this->data['Ticket']['billingPrice'] || !is_numeric($this->data['Ticket']['billingPrice'])) {
+				$this->Session->setFlash(__('The ticket was not created.  The billingPrice cannot be blank and must be a number.', true), 'default', array(), 'error');
 			} else {
-				$this->Session->setFlash(__('The Ticket could not be saved. Please, try again.', true));
+				$this->User->recursive = 1;
+				$this->OfferLive->recursive = -1;
+				$userData = $this->User->read(null, $this->data['Ticket']['userId']);
+				$offerData = $this->OfferLive->read(null, $this->data['Ticket']['offerId']);
+				if (empty($userData)) {
+					$this->Session->setFlash(__('The ticket was not created.  Invalid User Id.', true), 'default', array(), 'error');
+				} elseif (empty($offerData)) {
+					$this->Session->setFlash(__('The ticket was not created.  Invalid Offer Id.', true), 'default', array(), 'error');
+				} else {
+					$this->data['Ticket']['ticketStatusId'] 	= 1;
+					$this->data['Ticket']['packageId'] 			= $offerData['OfferLive']['packageId'];
+					$this->data['Ticket']['clientId']			= $offerData['OfferLive']['clientId'];
+					$this->data['Ticket']['formatId']			= in_array($offerData['OfferLive']['offerTypeId'], array(1,2,6)) ? 1 : 2;
+					$this->data['Ticket']['offerTypeId']		= $offerData['OfferLive']['offerTypeId'];
+					$this->data['Ticket']['userFirstName']		= $userData['User']['firstName'];
+					$this->data['Ticket']['userLastName']		= $userData['User']['lastName'];
+					$this->data['Ticket']['userEmail1']			= $userData['User']['email'];
+					$this->data['Ticket']['userWorkPhone']		= $userData['User']['workPhone'];
+					$this->data['Ticket']['userHomePhone']		= $userData['User']['homePhone'];
+					$this->data['Ticket']['userMobilePhone']	= $userData['User']['mobilePhone'];
+					$this->data['Ticket']['userFax']			= $userData['User']['fax'];
+					$this->data['Ticket']['userAddress1']		= $userData['Address'][0]['address1'];
+					$this->data['Ticket']['userAddress2']		= $userData['Address'][0]['address2'];
+					$this->data['Ticket']['userCity']			= $userData['Address'][0]['address3'];
+					$this->data['Ticket']['userState']			= $userData['Address'][0]['stateName'];
+					$this->data['Ticket']['userCountry']		= $userData['Address'][0]['countryText'];
+					$this->data['Ticket']['userZip']			= $userData['Address'][0]['postalCode'];
+					$this->data['Ticket']['ticketNotes']		= 'MANUALLY CREATED TICKET' . trim($this->data['Ticket']['ticketNotes']);
+
+					$this->Ticket->create();
+					if ($this->Ticket->save($this->data)) {
+						$this->Session->setFlash(__('This manual ticket has been created successfully', true));
+						$this->redirect(array('action'=>'view', 'id' => $this->Ticket->getLastInsertId()));
+					} else {
+						$this->Session->setFlash(__('The Ticket could not be saved. Please, try again.', true));
+					}
+				}
 			}
 		}
 		$this->set('ticketStatusIds', $this->Ticket->TicketStatus->find('list'));
 		$this->set('formatIds', $this->Format->find('list'));
 		$this->set('offerTypeIds', $this->OfferType->find('list'));
+		if (isset($_SESSION['Auth']['AdminUser']['mailnickname'])) {
+			$manualTicketInitials = $_SESSION['Auth']['AdminUser']['mailnickname'];
+		} else {
+			$manualTicketInitials = 'MANUAL_TICKET';	
+		}
+		$this->data['Ticket']['manualTicketInitials'] = $manualTicketInitials;
 	}
 
 	// -------------------------------------------
