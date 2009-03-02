@@ -55,7 +55,7 @@ if ($_POST['submit_mei']) {
 	} 
 
 	foreach ($image_url as $k=>$v) {
-		$insert = mysql_query("insert into merchandiseImage (dateLive,slotId,clientId,imageUrl,linkUrl,offerId) VALUES ('$date_string','$k','$product_id[$k]','$v', '$link_url[$k]','$offer_id[$k]')");
+		$insert = mysql_query("insert into merchandiseImage (dateLive,slotId,clientId,imageUrl,linkUrl,packageId) VALUES ('$date_string','$k','$product_id[$k]','$v', '$link_url[$k]','$offer_id[$k]')");
 	}
 
 }
@@ -146,7 +146,7 @@ You are editing for: <strong><? echo date('F d, Y (l)', strtotime("$month/$day/$
 	<tr>
 		<th width="30">Slot</th>
 		<th width="50">Product Id</th>
-		<th width="50">Offer Id</th>
+		<th width="50">Package Id</th>
 		<th>Image Url</th>
 		<th>Link Url</th>
 	</tr>
@@ -156,7 +156,7 @@ You are editing for: <strong><? echo date('F d, Y (l)', strtotime("$month/$day/$
 	<tr>
 		<td><?=$i;?></td>
 		<td><input type="text" style="width:100%;" name="mei_pid_<?=$i;?>" value="<?=@$data[$i]['clientId'];?>" /></td>
-		<td><input type="text" style="width:100%;" name="mei_oid_<?=$i;?>" value="<?=@$data[$i]['offerId'];?>" /></td>
+		<td><input type="text" style="width:100%;" name="mei_oid_<?=$i;?>" value="<?=@$data[$i]['packageId'];?>" /></td>
 		<td><input type="text" style="width:100%;" name="mei_image_url_<?=$i;?>" value="<?=@$data[$i]['imageUrl'];?>" /></td>
 		<td><input type="text" style="width:100%;" name="mei_link_url_<?=$i;?>" value="<?=@$data[$i]['linkUrl'];?>" /></td>
 	</tr>
