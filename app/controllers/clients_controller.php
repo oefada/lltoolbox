@@ -67,8 +67,10 @@ class ClientsController extends AppController {
 		
 	function search()
 	{
+	    $inactive = 0;
 		if(!empty($_GET['query'])) {
 			$this->params['form']['query'] = $_GET['query'];
+			$inactive = @$_GET['inactive'];
  		} elseif(!empty($this->params['named']['query'])) {
 			$this->params['form']['query'] = $this->params['named']['query'];
 		}
@@ -88,6 +90,10 @@ class ClientsController extends AppController {
 			}
 			
 			$conditions = array("MATCH(Client.name) AGAINST('$sqlquery' IN BOOLEAN MODE)");
+			
+			if (!$inactive) {
+			    $conditions['Client.inactive'] = 0;
+			}
 			$results = $this->Client->find('all', array('conditions' => $conditions, 'limit' => 5));
 
 			$this->set('query', $query);
