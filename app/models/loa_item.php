@@ -112,7 +112,9 @@ class LoaItem extends AppModel {
 	 * @return array that contains the rate period boundaries for all items
 	 */
 	function getRatePeriodBoundaries($itemIds = array(), $startDate = null, $endDate = null) {
-		
+		$endDate = strtotime('+1 day', strtotime($endDate));
+		$endDate = date('Y-m-d', $endDate);
+
 		$ratePeriodBoundaries = array();
 		//loop through all of the items
 		foreach($itemIds as $itemId):
@@ -121,6 +123,8 @@ class LoaItem extends AppModel {
 			$this->loaItems[$this->id] = $this->data;
 			
  			foreach($this->data['LoaItemRatePeriod'] as $loaItemRatePeriod):
+ 			    $loaItemRatePeriod['endDate'] = date('Y-m-d', strtotime('+1 day', strtotime($loaItemRatePeriod['endDate'])));
+ 			    
 				if(null != $startDate && strtotime($loaItemRatePeriod['startDate']) > strtotime($startDate) && strtotime($loaItemRatePeriod['startDate']) < strtotime($endDate)):
 					$ratePeriodBoundaries[] = $loaItemRatePeriod['startDate'];
 				endif;
