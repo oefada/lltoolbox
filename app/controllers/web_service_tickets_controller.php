@@ -87,6 +87,8 @@ class WebServiceTicketsController extends WebServicesController
 
 	function createNewTicket($data) {
 		
+		mail('devmail@luxurylink.com','WEBSERVICE CREATE TICKET ATTEMPT', print_r($data, true));
+		
 		// if we do not have these values then void
 		// -------------------------------------------------------------------------------
 		if (empty($data) || !is_array($data)) {
