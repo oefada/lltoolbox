@@ -37,7 +37,11 @@
 		//the scheduling iteration option is 0 = iterations, 1 = endDate
 		echo $form->input('iterationSchedulingOption', array('type' => 'hidden'));
 		echo '<div id="iterations"'.$iterationsStyle.'>';
-		echo $form->input('iterations', array('after' => 'Or, <a href="#" onclick=\'javascript:$("SchedulingMasterIterationSchedulingOption").value = "1"; $("iterations").toggle(); $("endDate").toggle() \'>choose end date.</a>'));
+		if (empty($this->data['SchedulingMaster']['iterations'])) {
+			echo $form->input('iterations', array('value' => 1, 'after' => 'Or, <a href="#" onclick=\'javascript:$("SchedulingMasterIterationSchedulingOption").value = "1"; $("iterations").toggle(); $("endDate").toggle() \'>choose end date.</a>'));
+		} else {
+			echo $form->input('iterations', array('after' => 'Or, <a href="#" onclick=\'javascript:$("SchedulingMasterIterationSchedulingOption").value = "1"; $("iterations").toggle(); $("endDate").toggle() \'>choose end date.</a>'));
+		}
 		echo '</div>';
 		
 		//shows only when infinite iterations until end date is selected

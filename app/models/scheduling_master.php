@@ -46,7 +46,15 @@ class SchedulingMaster extends AppModel {
 						'endDate' => array('rule' => 
 													array('validateDateRanges'),
 													'message' => 'Must be greater than today and greater than the start date'
-												)
+												),
+						'openingBid' => array('rule' => 
+                        							array('validateOpeningBid'),
+                        							'message' => 'Opening bid cannot be $0.00. Adjust the package and then return to schedule it.'
+                        							),
+                        'buyNowPrice' => array('rule' => 
+                                                    array('validatebuyNowPrice'),
+                                                    'message' => 'Buy Now Price cannot be $0.00. Adjust the package and then return to schedule it.'
+                                                    )
 						);
 	
 	function validateDateRanges($data) {
@@ -57,6 +65,30 @@ class SchedulingMaster extends AppModel {
 		if(isset($data['endDate']) && $this->data['SchedulingMaster']['iterationSchedulingOption'] && ($packageStartDate >= $packageEndDate))	return false;
 		
 		return true;
+	}
+	
+	function validateOpeningBid() {
+	    $auctionTypes = array(1,2,6);
+	    
+	    if (in_array($this->data['SchedulingMaster']['offerTypeId'], $auctionTypes)) {
+	        if(!isset($this->data['SchedulingMaster']['openingBid']) || $this->data['SchedulingMaster']['openingBid'] <= 0) {
+	            return false;
+	        }
+	    }
+
+	    return true;
+	}
+	
+	function validatebuyNowPrice() {
+	    $buyNowTypes = array(3,4);
+	    
+	    if (in_array($this->data['SchedulingMaster']['offerTypeId'], $buyNowTypes)) {
+	        if(!isset($this->data['SchedulingMaster']['buyNowPrice']) || $this->data['SchedulingMaster']['buyNowPrice'] <= 0) {
+	            return false;
+	        }
+	    }
+
+	    return true;
 	}
 }
 ?>
