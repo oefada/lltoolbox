@@ -3,6 +3,7 @@
 	<fieldset>
 	<?php
 		echo $form->input('loaId', array('type' => 'hidden'));
+		echo $form->input('trackName');
 		echo $form->input('revenueModelId');
 	?>
 	<fieldset id="revenueModelCriteria">

@@ -148,7 +148,7 @@ $this->set('clientId', $this->data['Client']['clientId']);
 	<?php if (!empty($loa['Track'])):?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
-		<th><?php __('Track #')?></th>
+		<th><?php __('Track Name')?></th>
 		<th><?php __('Revenue Model'); ?></th>
 		<th><?php __('Expiration Criteria'); ?></th>
 		<th class="actions"><?php __('Actions');?></th>
@@ -162,7 +162,7 @@ $this->set('clientId', $this->data['Client']['clientId']);
 			}
 		?>
 		<tr<?php echo $class;?>>
-			<td><?php echo $track['trackNum']?></td>
+			<td><?php echo $track['trackName']?></td>
 			<td><?php echo $track['RevenueModel']['revenueModelName'];?></td>
 			<td><?php echo $track['ExpirationCriterium']['expirationCriteriaName'];?></td>
 			<td class="actions">
