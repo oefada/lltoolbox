@@ -3,7 +3,7 @@
 	//grab the tracks from the LOA and create a list for the select/checklist
 	$tracks = array();
 	foreach($clientLoaDetail['Track'] as $v) {
-		$tracks[$v['trackId']] = $v['trackNum'].'-'.$trackExpirationCriteriaIds[$v['expirationCriteriaId']];
+		$tracks[$v['trackId']] = $v['trackName'];
 	}
 	?>
 <fieldset style="padding: 0; margin: 0">
@@ -21,7 +21,7 @@
 	<? if(count($clientLoaDetails) > 1): ?>
 	<?php echo $form->input('ClientLoaPackageRel.'.$k.'.numNights', array('onchange' => 'updateNumNights()', 'class' => 'multiProductNumNights')) ?>
 	<? endif; ?>
-	<?php echo $form->input('ClientLoaPackageRel.'.$k.'.trackId', array('options' => $tracks, 'label' => 'Track #')) ?>
+	<?php echo $form->input('ClientLoaPackageRel.'.$k.'.trackId', array('options' => $tracks, 'label' => 'Track Name')) ?>
 </fieldset>
 <?php } ?>
 <? if(count($clientLoaDetails) > 1): ?>
