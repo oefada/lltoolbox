@@ -129,7 +129,7 @@ class SchedulingController extends AppController {
         $returnArray['class']               =   '';
         
         $returnArray['errorSchedulingInstanceId']   =     null;
-	    if ($totals[0][0]['maxOpeningBid'] >= $loaMembershipBalance) {
+	    if (isset($totals[0][0]['maxOpeningBid']) && $totals[0][0]['maxOpeningBid'] >= $loaMembershipBalance) {
 	        $returnArray['class'] = 'icon-error';
 	        
 	        $result = $this->Package->query("SELECT schedulingInstanceId FROM clientLoaPackageRel AS ClientLoaPackageRel INNER JOIN
