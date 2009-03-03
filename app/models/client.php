@@ -69,8 +69,8 @@ class Client extends AppModel {
                 }
                 
                 if (empty($currentLoa)) {
-                    $results[$key]['Client']['currentLoaId'] = NULL;
-    			    $results[$key]['ClientLevel']['clientLevelId'] = NULL;
+                    $results[$key]['Client']['currentLoaId'] = 0;
+    			    $results[$key]['ClientLevel']['clientLevelId'] = 0;
     			    $results[$key]['ClientLevel']['clientLevelName'] = 'Non-Client';
                 } else {
                     $results[$key]['Client']['currentLoaId'] = $currentLoa['Loa']['loaId'];
