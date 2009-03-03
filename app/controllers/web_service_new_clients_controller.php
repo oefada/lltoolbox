@@ -68,8 +68,8 @@ class WebServiceNewClientsController extends WebServicesController
 			
 			// new client is created now...reupdate with information
 			$new_client_data_update = array();
-			$new_client_data_update['clientId'] 		= $decoded_request['client']['client_id'];
-			$new_client_data_update['oldProductId'] 	= '0-' . $decoded_request['client']['client_id'];
+			$new_client_data_update['clientId'] 		= $client_id;
+			$new_client_data_update['oldProductId'] 	= "0-$client_id";
 			$this->Client->save($new_client_data_update);
 			
 		}
