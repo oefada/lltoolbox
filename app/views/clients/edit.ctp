@@ -25,6 +25,11 @@ $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']
 	<?php
 		echo $form->input('clientId');
 		echo $form->input('parentClientId');
+		
+		if ($this->data['Client']['parentClientId']):
+			echo $html->link('View Parent', '/clients/'.$this->data['Client']['parentClientId']);
+		endif;
+		
 		echo $form->input('oldProductId', array('disabled' => 'disabled'));
 		echo $form->input('name');
 	?>
