@@ -170,8 +170,8 @@ class Client extends AppModel {
 		
 		// map other fields manually
 		// -----------------------------------------------------------------
-		//$liveClientDataSave['clientLevelId'] = '';
-		//$liveClientDataSave['clientLevelName'] = $clientToolbox['ClientLevel']['clientLevelName'];
+		$liveClientDataSave['loaLevelId'] = $clientToolbox['ClientLevel']['clientLevelId'];
+		$liveClientDataSave['loaLevelName'] = $clientToolbox['ClientLevel']['clientLevelName'];
 		//$liveClientDataSave['destinationIds'] = implode(',', $destinationIds);
 		//$liveClientDataSave['themeIds'] = implode(',', $themeIds);
 		
