@@ -85,6 +85,7 @@ function confirmSubmit()
 							<td><i>Exp</i></td>
 							<td><i>Primary</i></td>
 							<td><i>Inactive</i></td>
+							<td><i>Card Added</i></td>
 						</tr>
 						<?php 				
 						$counter = 0;
@@ -111,6 +112,7 @@ function confirmSubmit()
 								<td><?php echo $upsValue['expMonth'] . '/' . $upsValue['expYear'];?></td>
 								<td><?php echo ($upsValue['primaryCC']) ? 'Yes' : 'No';?></td>
 								<td><?php echo ($upsValue['inactive']) ? '<strong>Yes</strong>' : 'No';?></td>
+								<td><?php echo $upsValue['created'];?></td>
 							</tr>
 						<?php } ?>
 						</table>
