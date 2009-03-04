@@ -37,7 +37,7 @@ $this->set('clientId', $this->data['Client']['clientId']);
 		echo $form->input('loaNumberPackages', array('label' => 'Commission-Free Packages'));
 		echo $form->input('startDate');
 		echo $form->input('endDate');
-		echo $form->input('membershipFee', array('disabled' => true));
+		echo $form->input('membershipFee', array('disabled' => $disabled));
 		echo $form->input('membershipBalance', array('disabled' => true));
 		echo $form->input('totalRemitted', array('disabled' => true));
 		
