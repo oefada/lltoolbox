@@ -48,6 +48,7 @@ class WebServiceNewClientsController extends WebServicesController
         $client_data_save['managerUsername'] 	= $decoded_request['client']['manager_ini'];
 		$client_data_save['teamName']			= $decoded_request['client']['team_name'];
         $client_data_save['modified']			= $date_now;
+        $client_data_save['seoName']			= $this->convertToSeoName($client_data_save['name']);
             
 		if ($client_id && is_numeric($client_id)) {
 			// ======= EXISTING CLIENT UPDATE ========
@@ -57,9 +58,12 @@ class WebServiceNewClientsController extends WebServicesController
         			
 		} else {
 			// ======= NEW CLIENT INSERT =============
+			$next_auto_inc_result = $this->Client->query("SHOW TABLE STATUS WHERE Name = 'client'");
+			$next_client_auto_id = $next_auto_inc_result[0]['Auto_increment'];
+			
 			$client_data_save['inactive'] 				= 1; // set new clients from sugar to inactive
 			$client_data_save['created'] 				= $date_now;
-			$client_data_save['seoName']				= $this->convertToSeoName($client_data_save['name']);
+			$client_data_save['oldProductId']			= "0-$next_client_auto_id";
 			
 			$this->Client->create();
 			$this->Client->save($client_data_save);
@@ -67,14 +71,6 @@ class WebServiceNewClientsController extends WebServicesController
 			// get new client id and send back to Sugar
 			$client_id = $decoded_request['client']['client_id'] = $this->Client->getLastInsertId();
 			
-			// new client is created now...reupdate with new client 'oldProductId' for images
-			$new_client_data_update = array();
-			$new_client_data_update['clientId'] 		= $client_id;
-			$new_client_data_update['oldProductId'] 	= "0-$client_id";
-			
-			$this->Client->useDbConfig 		= 'default';
-			$this->Client->schema(true);
-			$this->Client->save($new_client_data_update);
 		}
 		
 	    $decoded_request['request']['response'] = $response_value;
