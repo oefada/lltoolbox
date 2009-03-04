@@ -188,10 +188,6 @@ class Client extends AppModel {
 			$result = $this->query($sql);
 		}
 		
-		// reset client model source
-		$this->useDbConfig 		= 'default';
-		$this->schema(true);
-		
 		// send email if error
 		// -----------------------------------------------------------------
 		if (!empty($errors)) {
