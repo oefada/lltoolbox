@@ -185,6 +185,7 @@ $this->set('hideSidebar', true);
 	<th width="10"><?php echo $paginator->sort('Ticket Id', 'Ticket.ticketId');?></th>
 	<th width="10"><?php echo $paginator->sort('Ticket Created', 'Ticket.created');?></th>
 	<th width="10"><?php echo $paginator->sort('Offer Type', 'Ticket.offerTypeId');?></th>
+	<th width="10" style="color:#FFF;">Track</th>
 	<th width="10"><?php echo $paginator->sort('Offer Id', 'Ticket.offerId');?></th>
 	<th width="10"><?php echo $paginator->sort('Client Id', 'Client.clientId');?></th>
 	<th width="200"><?php echo $paginator->sort('Client Name', 'Client.name');?></th>
@@ -193,7 +194,7 @@ $this->set('hideSidebar', true);
 	<th width="100"><?php echo $paginator->sort('User Last Name', 'Ticket.userLastName');?></th>
 	<th width="10"><?php echo $paginator->sort('Sale Price', 'Ticket.billingPrice');?></th>
 	<th width="10"><?php echo $paginator->sort('Status', 'Ticket.ticketStatusId');?></th>
-	<th width="10" style="color:#FFF;">CC</th>
+	<th width="10" style="color:#FFF;">CC</th>	
 	<th class="actions" style="color:#FFF;"><?php __('Actions');?></th>
 </tr>
 <?php
@@ -214,6 +215,9 @@ foreach ($tickets as $ticket):
 		</td>
 		<td>
 			<?php echo $offerType[$ticket['Ticket']['offerTypeId']]; ?>
+		</td>
+		<td>
+			<?php echo $ticket['Ticket']['trackName']; ?>
 		</td>
 		<td>
 			<a href="http://www.luxurylink.com/portfolio/por_offer_redirect.php?pid=<?php echo $ticket['Client']['clientId'];?>" target="_BLANK"><?php echo $ticket['Ticket']['offerId'];?></a>
