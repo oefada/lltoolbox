@@ -21,8 +21,6 @@ class TrackDetailsController extends AppController {
 	function add() {
 		if (!empty($this->data)) {
 			$this->TrackDetail->create();
-			print_r($this->data);
-			die();
 			if ($this->TrackDetail->save($this->data)) {
 				$this->Session->setFlash(__('The TrackDetail has been saved', true));
 				$this->redirect(array('controller' => 'tickets', 'action'=>'view', 'id' => $this->data['TrackDetail']['ticketId']));

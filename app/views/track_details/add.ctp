@@ -88,9 +88,9 @@ function confirmSubmit()
 <?php else: ?>
 
 	<?php echo $form->create('TrackDetail', array('url' => "/tickets/$ticketId/trackDetails/add", 'onsubmit' => "return confirmSubmit()"));?>		
-		<input type="hidden" id="TrackUsingToolboxNonAuto" name="data[Track][trackUsingToolboxNonAuto]" value="1" />
 		<?php
 			if ($track['revenueModelId'] == 1) {
+				echo "<input type=\"hidden\" id=\"TrackUsingToolboxNonAuto\" name=\"data[Track][trackUsingToolboxNonAuto]\" value=\"1\" />";
 				$checked = $track['applyToMembershipBal'] ? "checked=\"checked\"" : '';
 				echo "<div style='padding:5px;'>";
 				echo "Apply to membership balance: ";
