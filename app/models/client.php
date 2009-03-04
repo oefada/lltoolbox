@@ -172,8 +172,6 @@ class Client extends AppModel {
 		// -----------------------------------------------------------------
 		$liveClientDataSave['loaLevelId'] = $clientToolbox['ClientLevel']['clientLevelId'];
 		$liveClientDataSave['loaLevelName'] = $clientToolbox['ClientLevel']['clientLevelName'];
-		//$liveClientDataSave['destinationIds'] = implode(',', $destinationIds);
-		//$liveClientDataSave['themeIds'] = implode(',', $themeIds);
 		
 		if ($clientExistsOnLive) {
 			//  perform client UPDATE
@@ -189,6 +187,10 @@ class Client extends AppModel {
 			$sql = 'INSERT INTO client ('. implode(',',array_keys($liveClientDataSave)) .') VALUES("'. implode('","',array_values($liveClientDataSave)) .'")';
 			$result = $this->query($sql);
 		}
+		
+		// reset client model source
+		$this->useDbConfig 		= 'default';
+		$this->schema(true);
 		
 		// send email if error
 		// -----------------------------------------------------------------
