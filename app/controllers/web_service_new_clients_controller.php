@@ -59,6 +59,7 @@ class WebServiceNewClientsController extends WebServicesController
 			// ======= NEW CLIENT INSERT =============
 			$client_data_save['inactive'] 				= 1; // set new clients from sugar to inactive
 			$client_data_save['created'] 				= $date_now;
+			$client_data_save['seoName']				= $this->convertToSeoName($client_data_save['name']);
 			
 			$this->Client->create();
 			$this->Client->save($client_data_save);
@@ -66,12 +67,14 @@ class WebServiceNewClientsController extends WebServicesController
 			// get new client id and send back to Sugar
 			$client_id = $decoded_request['client']['client_id'] = $this->Client->getLastInsertId();
 			
-			// new client is created now...reupdate with information
+			// new client is created now...reupdate with new client 'oldProductId' for images
 			$new_client_data_update = array();
 			$new_client_data_update['clientId'] 		= $client_id;
 			$new_client_data_update['oldProductId'] 	= "0-$client_id";
-			$this->Client->save($new_client_data_update);
 			
+			$this->Client->useDbConfig 		= 'default';
+			$this->Client->schema(true);
+			$this->Client->save($new_client_data_update);
 		}
 		
 	    $decoded_request['request']['response'] = $response_value;
@@ -147,6 +150,37 @@ class WebServiceNewClientsController extends WebServicesController
 			@mail('devmail@luxurylink.com', 'WEB SERVICE UPDATE CLIENT FROM SUGAR : Could not send postback to Sugar', $exception);
 		}
 		return true;
+	}
+	
+	function convertToSeoName($str) {
+	    $str = strtolower(html_entity_decode($str, ENT_QUOTES, "ISO-8859-1"));  // convert everything to lower string
+	    $search_accent = explode(",","ç,æ,~\,á,é,í,ó,ú,à,è,ì,ò,ù,ä,ë,ï,ö,ü,ÿ,â,ê,î,ô,û,å,e,i,ø,u,ñ");
+	    $replace_accent = explode(",","c,ae,oe,a,e,i,o,u,a,e,i,o,u,a,e,i,o,u,y,a,e,i,o,u,a,e,i,o,u,n");
+	    $search_accent[] = '&';
+	    $replace_accent[] = ' and ';
+	    $str = str_replace($search_accent, $replace_accent, $str);
+	    $str = preg_replace("/<([^<>]*)>/", ' ', $str);                     // remove html tags
+	    $str_array = preg_split("/[^a-zA-Z0-9]+/", $str);                   // remove non-alphanumeric
+	    $count_a = count($str_array);
+	    if ($count_a) {
+	        if ($str_array[0] == 'the') {
+	            array_shift($str_array);
+	        }
+	        if (isset($str_array[($count_a - 1)]) && (($str_array[($count_a - 1)] == 'the') || !$str_array[($count_a - 1)])) {
+	            array_pop($str_array);
+	        }
+	        for ($i=0; $i<$count_a; $i++) {
+	            if ($str_array[$i]=='s' && strlen($str_array[($i - 1)])>1) {
+	                $str_array[($i - 1)] = $str_array[($i - 1)] . 's';
+	                unset($str_array[$i]);
+	            } elseif ($str_array[$i]=='' || !$str_array[$i]) {
+	                unset($str_array[$i]);
+	            }
+	        }
+	        return (substr(implode('-', $str_array), 0, 499));
+	    }else {
+	        return '';
+	    }
 	}
 }
 ?>
