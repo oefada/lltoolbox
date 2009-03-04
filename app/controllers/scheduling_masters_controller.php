@@ -150,7 +150,7 @@ class SchedulingMastersController extends AppController {
 			}
 		}
 		
-		sort($offerTypeIds);    //Sort offer types by name
+		asort($offerTypeIds);    //Sort offer types by name
 		
 		$offerTypeId = (isset($this->data['SchedulingMaster']['offerTypeId'])) ? $this->data['SchedulingMaster']['offerTypeId'] : $firstOfferId;
 		$this->SchedulingMaster->Package->PackageOfferTypeDefField->recursive = -1;
