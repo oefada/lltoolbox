@@ -59,7 +59,7 @@ class WebServiceNewClientsController extends WebServicesController
 		} else {
 			// ======= NEW CLIENT INSERT =============
 			$next_auto_inc_result = $this->Client->query("SHOW TABLE STATUS WHERE Name = 'client'");
-			$next_client_auto_id = $next_auto_inc_result[0]['Auto_increment'];
+			$next_client_auto_id = $next_auto_inc_result[0]['TABLES']['Auto_increment'];
 			
 			$client_data_save['inactive'] 				= 1; // set new clients from sugar to inactive
 			$client_data_save['created'] 				= $date_now;
