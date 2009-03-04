@@ -4,7 +4,8 @@
 				<? if(!empty($this->data['SchedulingMaster']['schedulingMasterId'])): ?>
 				<strong>Scheduling Master Id:</strong> <?php echo $this->data['SchedulingMaster']['schedulingMasterId'] ?><br />
 				<? endif; ?>
-			<?php echo $package['Package']['shortBlurb'] ?>
+			<?php echo $package['Package']['shortBlurb'] ?><br />
+			<?php echo 'Package Validity: '.date('M j, Y', $package['Package']['validityStartDate']).' to '.date('M j, Y', $package['Package']['validityEndDate']) ?>
 			</p>
 	<?php
 		echo $form->input('offerTypeId', array('label' => 'Offer Type'));
