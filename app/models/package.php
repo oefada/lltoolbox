@@ -55,6 +55,13 @@ class Package extends AppModel {
 	    
 	    if(isset($this->data['PackageLoaItemRel']) && is_array($this->data['PackageLoaItemRel'])) {
 	    foreach ($this->data['PackageLoaItemRel'] as $item) {
+	        
+	        //If type Pre-packaged is included, skip validation and just return true
+	        if ($item['loaItemTypeId'] == 12) {
+	            return true;
+	        }
+	        
+	        //If type room night is included, keep a running count of the room nights
 	        if ($item['loaItemTypeId'] == 1) {
 	            $numNights += $item['quantity'];
 	        }

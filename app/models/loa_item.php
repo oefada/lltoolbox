@@ -5,6 +5,7 @@ class LoaItem extends AppModel {
 	var $useTable = 'loaItem';
 	var $primaryKey = 'loaItemId';
 	var $displayField = 'itemName';
+	var $actsAs = array('Logable');
 	
 	var $belongsTo = array('LoaItemType' => array('foreignKey' => 'loaItemTypeId'),
 							'Loa' => array('foreignKey' => "loaId"),
