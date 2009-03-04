@@ -89,7 +89,7 @@ class ClientsController extends AppController {
 			    $sqlquery .= $piece.'* ';
 			}
 			
-			$conditions = array("MATCH(Client.name) AGAINST('$sqlquery' IN BOOLEAN MODE)");
+			$conditions = array("MATCH(Client.name) AGAINST('$sqlquery' IN BOOLEAN MODE) OR Client.clientId LIKE '%$query%'");
 			
 			if (!$inactive) {
 			    $conditions['Client.inactive'] = 0;
