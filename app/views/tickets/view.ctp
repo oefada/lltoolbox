@@ -35,7 +35,6 @@ $this->searchController = 'Tickets';
 				<td><strong>Client Id</strong></td>
 				<td>
 					<?php echo $html->link($ticket['Client']['clientId'], array('controller'=> 'clients', 'action'=>'edit', $ticket['Client']['clientId'])); ?>
-					&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://www.luxurylink.com/portfolio/por_offer_redirect.php?pid=<?php echo $ticket['Ticket']['clientId'];?>" target="_BLANK">Travel Detail Page</a>
 				</td>
 			</tr>
 			<tr>
@@ -412,6 +411,64 @@ $this->searchController = 'Tickets';
 			null,
 			false
 		);
+		?>
+	<?php endif; ?>
+	</div>
+</div>
+
+<br />
+<div class="collapsible">
+	<div class="handle"><?php __("Revenue Allocation ($trackExistsCount)");?></div>
+	<div class="collapsibleContent related">
+	<br />
+	<?php if ($trackDetailExists):?>
+		<table cellspacing="0" cellpadding="0">
+ 			<tr>
+ 				<th style="text-align:center;">Track Detail Id</th>
+ 				<th style="text-align:center;">Ticket Id</th>
+ 				<th style="text-align:center;">Ticket Amount</th>
+ 				<th style="text-align:center;">Cycle</th>
+ 				<th style="text-align:center;">Iteration</th>
+ 				<th style="text-align:center;">Amount Kept</th>
+ 				<th style="text-align:center;">Amount Remitted</th>
+ 				<th style="text-align:center;">xy Running Total</th>
+ 				<th style="text-align:center;">xy Average</th>
+ 				<th style="text-align:center;">Keep Balance Due</th>
+ 				<th style="text-align:center;">Initials</th>
+ 			</tr>
+ 			<?php foreach ($trackDetails as $k => $v) : ?>
+ 			<?php $class_alt = ($v['trackDetail']['ticketId'] == $ticket['Ticket']['ticketId']) ? 'class="altrow"' : ''; ?>
+ 			<?php if (!$class_alt) continue ;?>
+ 			<tr <?php echo $class_alt;?> >
+				<td style="text-align:center;"><?=$v['trackDetail']['trackDetailId'];?></td>
+				<td style="text-align:center;"><?=$v['trackDetail']['ticketId'];?></td>
+				<td style="text-align:center;"><?=$number->currency($v['trackDetail']['ticketAmount']);?></td>
+				<td style="text-align:center;"><?=$v['trackDetail']['cycle'];?></td>
+				<td style="text-align:center;"><?=$v['trackDetail']['iteration'];?></td>
+				<td style="text-align:center;"><?=$number->currency($v['trackDetail']['amountKept']);?></td>
+				<td style="text-align:center;"><?=$number->currency($v['trackDetail']['amountRemitted']);?></td>
+				<td style="text-align:center;"><?=$number->currency($v['trackDetail']['xyRunningTotal']);?></td>
+				<td style="text-align:center;"><?=$number->currency($v['trackDetail']['xyAverage']);?></td>
+				<td style="text-align:center;"><?=$number->currency($v['trackDetail']['keepBalDue']);?></td>
+				<td style="text-align:center;"><?=$v['trackDetail']['initials'];?></td>
+			</tr>
+			<?php endforeach; ?>
+		</table>
+		<?php echo $html->link('View Track Detail', '/tickets/' . $ticket['Ticket']['ticketId'] . '/trackDetails/add');?>
+	<?php else: ?>
+		<?php
+		echo $html->link('Add Track Detail', '/tickets/' . $ticket['Ticket']['ticketId'] . '/trackDetails/add');
+		/*
+		echo $html->link('Add Track Detail',
+			'/tickets/' . $ticket['Ticket']['ticketId'] . '/trackDetails/add',
+			array(
+				'title' => 'Ticket - Track Detail Revenue Allocation',
+				'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
+				'complete' => 'closeModalbox()'
+				),
+			null,
+			false
+		);*/
 		?>
 	<?php endif; ?>
 	</div>
