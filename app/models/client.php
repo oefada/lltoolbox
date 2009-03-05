@@ -61,11 +61,11 @@ class Client extends AppModel {
 			if (!empty($val['Client']) && is_int($key)):
 			    //TODO: Turn the following two queries into one
 			    $loas = $this->Loa->find('list', array('contain' => array(), 'fields' => array('loaId'), 'conditions' => array('Loa.clientId' => $val['Client']['clientId'])));
-			    $currentLoa = $this->Loa->find('first', array('contain' => array('LoaLevel'), 'fields'=>array('Loa.loaId, Loa.loaLevelId, LoaLevel.loaLevelName'), 'conditions' => array('Loa.clientId' => $val['Client']['clientId'], 'NOW() BETWEEN Loa.startDate AND Loa.endDate')));
+			    $currentLoa = $this->Loa->find('first', array('contain' => array('LoaLevel'), 'fields'=>array('Loa.loaId, Loa.loaLevelId, LoaLevel.loaLevelName'), 'conditions' => array('Loa.clientId' => $val['Client']['clientId'], 'NOW() BETWEEN Loa.startDate AND Loa.endDate', 'inactive' => 0)));
                 
                 //look to the parent if there's no LOA for this client
                 if (empty($currentLoa) && !empty($val['Client']['parentClientId'])) {
-                    $currentLoa = $this->Loa->find('first', array('contain' => array('LoaLevel'), 'fields'=>array('Loa.loaId, Loa.loaLevelId, LoaLevel.loaLevelName'), 'conditions' => array('Loa.clientId' => $val['Client']['parentClientId'], 'NOW() BETWEEN Loa.startDate AND Loa.endDate')));
+                    $currentLoa = $this->Loa->find('first', array('contain' => array('LoaLevel'), 'fields'=>array('Loa.loaId, Loa.loaLevelId, LoaLevel.loaLevelName'), 'conditions' => array('Loa.clientId' => $val['Client']['parentClientId'], 'NOW() BETWEEN Loa.startDate AND Loa.endDate', 'inactive' => 0)));
                 }
                 
                 if (empty($currentLoa)) {
