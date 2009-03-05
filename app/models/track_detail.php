@@ -144,6 +144,7 @@ class TrackDetail extends AppModel {
 		// ---------------------------------------------------------
 		$track['pending']   -= $ticket_amount;
 		$track['collected'] += $ticket_amount;
+		$track['modified']	 = date('Y-m-d H:i:s', strtotime('now'));
 		$trackModel->save($track);
 		
 		// update the loa record
@@ -153,6 +154,7 @@ class TrackDetail extends AppModel {
 			$applyToMembershipBal = isset($this->data['Track']['applyToMembershipBal']) && $this->data['Track']['applyToMembershipBal'] == 'on' ? true : false;
 		}
 		if ($applyToMembershipBal) {
+			$loa['Loa']['modified']			  = date('Y-m-d H:i:s', strtotime('now'));
 			$loa['Loa']['loaValue']			 += $ticket_amount;
 			$loa['Loa']['totalKept']		 += $this->data['TrackDetail']['amountKept'];
 			$loa['Loa']['totalRemitted']	 += $this->data['TrackDetail']['amountRemitted'];
