@@ -107,6 +107,12 @@ class PaymentDetailsController extends AppController {
 			$selectExpYear[] = $i;	
 		}
 
+		if (isset($_SESSION['Auth']['AdminUser']['mailnickname'])) {
+			$initials_user = $_SESSION['Auth']['AdminUser']['mailnickname'];
+		} else {
+			$initials_user = false;
+		}
+
 		$this->set('ticket', $ticket);
 		$this->set('countries', $this->Country->find('list'));
 		$this->set('selectExpMonth', $selectExpMonth);
@@ -114,6 +120,7 @@ class PaymentDetailsController extends AppController {
 		$this->set('userPaymentSetting', $ticket['User']['UserPaymentSetting']);
 		$this->set('paymentTypeIds', $this->PaymentDetail->PaymentType->find('list'));
 		$this->set('paymentProcessorIds', $this->PaymentDetail->PaymentProcessor->find('list'));		
+		$this->set('initials_user', $initials_user);
 	}
 	
 	function processPaymentTicket($in0) {
