@@ -214,7 +214,11 @@ function confirmSubmit()
 		</tr>
 		<tr>
 			<td style="padding-top:10px;padding-bottom:10px;"><strong>Initials</strong></td>
-			<td style="padding-top:10px;padding-bottom:10px;"><input type="text" name="data[PaymentDetail][initials]" id="PaymentDetailInitials" maxlength="5" size="5" /><?php echo $form->error('initials') ?></td>
+			<?php if ($initials_user) : ?>
+				<td style="padding-top:10px;padding-bottom:10px;"><input type="text" name="data[PaymentDetail][initials]" id="PaymentDetailInitials" maxlength="15" size="15" readonly="readonly" value="<?=$initials_user;?>" /></td>
+			<?php else : ?>
+				<td style="padding-top:10px;padding-bottom:10px;"><input type="text" name="data[PaymentDetail][initials]" id="PaymentDetailInitials" maxlength="15" size="15" /><?php echo $form->error('initials') ?></td>
+			<?php endif; ?>
 		</tr>
 		<tr style="background-color: #CCEEBB;">
 			<td style="padding-top:10px;padding-bottom:10px;"><strong>Payment Amount</strong></td>
