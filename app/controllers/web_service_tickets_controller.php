@@ -525,7 +525,6 @@ class WebServiceTicketsController extends WebServicesController
 				$emailFrom = "LuxuryLink.com<reservations@luxurylink.com>";
 				$emailReplyTo = "reservations@luxurylink.com";
 				$emailBcc = 'thread@luxurylink.com';
-				$returnPath = 'reservations@luxurylink.com';
 				break;
 			case 2:
 				// send out res request
@@ -536,7 +535,6 @@ class WebServiceTicketsController extends WebServicesController
 				$emailBcc = 'thread@luxurylink.com';
 				$userEmail = $clientPrimaryEmail;
 				$emailCc = $clientCcEmail;
-				$returnPath = 'reservations@luxurylink.com';
 				break;
 			case 3:
 				include('../vendors/email_msgs/ppv/winner_ppv.html');
@@ -544,7 +542,6 @@ class WebServiceTicketsController extends WebServicesController
 				$emailFrom = "LuxuryLink.com<auction@luxurylink.com>";
 				$emailReplyTo = 'auction@luxurylink.com';
 				$emailBcc = 'thread@luxurylink.com';
-				$returnPath = 'auction@luxurylink.com';
 				break;
 			case 4: 
 				include('../vendors/email_msgs/ppv/client_ppv.html');
@@ -554,7 +551,6 @@ class WebServiceTicketsController extends WebServicesController
 				$emailBcc = 'thread@luxurylink.com';
 				$userEmail = $clientPrimaryEmail;
 				$emailCc = $clientCcEmail;
-				$returnPath = 'auction@luxurylink.com';
 				break;
 			case 5:
 				include('../vendors/email_msgs/notifications/winner_notification.html');
@@ -562,7 +558,6 @@ class WebServiceTicketsController extends WebServicesController
 				$emailFrom = "LuxuryLink.com<auction@luxurylink.com>";
 				$emailReplyTo = "auction@luxurylink.com";
 				$emailBcc = 'winnernotifications@luxurylink.com';
-				$returnPath = 'auction@luxurylink.com';
 				break;
 			case 6:
 				include('../vendors/email_msgs/notifications/winner_notification_w_checkout.html');
@@ -570,7 +565,6 @@ class WebServiceTicketsController extends WebServicesController
 				$emailFrom = "LuxuryLink.com<auction@luxurylink.com>";
 				$emailReplyTo = "auction@luxurylink.com";
 				$emailBcc = 'winnernotifications@luxurylink.com';
-				$returnPath = 'auction@luxurylink.com';
 				break;
 			case 7:
 				include('../vendors/email_msgs/notifications/winner_notification_decline_cc.html');
@@ -578,7 +572,6 @@ class WebServiceTicketsController extends WebServicesController
 				$emailFrom = "LuxuryLink.com<auction@luxurylink.com>";
 				$emailReplyTo = "auction@luxurylink.com";
 				$emailBcc = 'winnernotifications@luxurylink.com';
-				$returnPath = 'auction@luxurylink.com';
 				break;
 			case 8:
 				include('../vendors/email_msgs/notifications/winner_notification_expired_cc.html');
@@ -586,14 +579,12 @@ class WebServiceTicketsController extends WebServicesController
 				$emailFrom = "LuxuryLink.com<auction@luxurylink.com>";
 				$emailReplyTo = "auction@luxurylink.com";
 				$emailBcc = 'winnernotifications@luxurylink.com';
-				$returnPath = 'auction@luxurylink.com';
 				break;
 			case 9:
 				include('../vendors/email_msgs/fixed_price/msg_fixedprice.html');
 				$emailSubject = "LuxuryLink.com: Your Travel Request Has Been Received";
 				$emailFrom = "LuxuryLink.com<exclusives@luxurylink.com>";
 				$emailReplyTo = "exclusives@luxurylink.com";
-				$returnPath = 'exclusives@luxurylink.com';
 				break;
 			case 10:
 				include('../vendors/email_msgs/fixed_price/msg_client_fixedprice.html');
@@ -602,7 +593,6 @@ class WebServiceTicketsController extends WebServicesController
 				$emailReplyTo = "exclusives@luxurylink.com";
 				$userEmail = $clientPrimaryEmail;
 				$emailCc = $clientCcEmail;
-				$returnPath = 'exclusives@luxurylink.com';
 				break;
 			case 11:
 				include('../vendors/email_msgs/fixed_price/msg_internal_fixedprice.html');
@@ -610,7 +600,6 @@ class WebServiceTicketsController extends WebServicesController
 				$emailFrom = "LuxuryLink.com<exclusives@luxurylink.com>";
 				$emailReplyTo = "exclusives@luxurylink.com";
 				$userEmail = 'exclusives@luxurylink.com';
-				$returnPath = 'exclusives@luxurylink.com';
 				break;
 			default:
 				break;
@@ -626,7 +615,7 @@ class WebServiceTicketsController extends WebServicesController
 		// send the email out!
 		// -------------------------------------------------------------------------------
 		if ($send) {
-			$this->sendPpvEmail($userEmail, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials, $returnPath);	
+			$this->sendPpvEmail($userEmail, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials);	
 		}
 		
 		// return the string for toolbox ppvNotice add screen (manual edit and send)
@@ -636,7 +625,7 @@ class WebServiceTicketsController extends WebServicesController
 		}
 	}
 		
-	function sendPpvEmail($emailTo, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials, $returnPath) {
+	function sendPpvEmail($emailTo, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials) {
 		
 		// send out ppv and winner notification emails
 		// -------------------------------------------------------------------------------
@@ -646,7 +635,7 @@ class WebServiceTicketsController extends WebServicesController
 		$emailHeaders.= "Bcc: $emailBcc\r\n";
     	$emailHeaders.= "Content-type: text/html\r\n";
 		
-		@mail($emailTo, $emailSubject, $emailBody, $emailHeaders, "-f $returnPath");
+		@mail($emailTo, $emailSubject, $emailBody, $emailHeaders);
 		
 		// below is for logging the email and updating the ticket
 		// -------------------------------------------------------------------------------
