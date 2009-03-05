@@ -31,7 +31,7 @@ $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']
 		endif;
 		
 		echo $form->input('oldProductId', array('disabled' => 'disabled'));
-		echo $form->input('name');
+		echo $form->input('name', array('disabled' => 'disabled'));
 	?>
 	<?php
 		echo $form->input('url');
