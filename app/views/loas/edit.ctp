@@ -20,6 +20,7 @@ $this->set('clientId', $this->data['Client']['clientId']);
 		} else {
 			$disabled = true;
 		}
+		echo $form->input('clientId', array('type' => 'hidden'));
 		echo $form->input('loaLevelId', array('disabled' => $disabled, 'label' => 'LOA Level'));
 		echo $form->input('cash', array('type' => 'select', 'options' => array(0 => 'Barter', 1 => 'Cash')));
 		echo $form->input('numEmailInclusions');

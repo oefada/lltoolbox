@@ -43,5 +43,15 @@ class Loa extends AppModel {
 	    
 	    return true;
 	}
+	
+	function afterSave() {
+		if (isset($this->data['Loa']['clientId'])) {
+			// if any update to LOA, update the client record also so it gets update on live site for clients
+			$client = new Client();
+			$clientData = $client->read(null, $this->data['Loa']['clientId']);
+			$clientData['Client']['modified'] = date('Y-m-d H:i:s', strtotime('now'));
+			$client->save($clientData['Client']);	
+		}
+	}
 }
 ?>
