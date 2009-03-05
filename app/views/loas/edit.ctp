@@ -32,6 +32,8 @@ $this->set('clientId', $this->data['Client']['clientId']);
 		<span class='label'>&nbsp;</span>
 		<? echo $form->input('upgraded');
 		 ?>
+		<? echo $form->input('inactive');
+		 ?>
 	</div>
 	<?
 		echo $form->input('loaNumberPackages', array('label' => 'Commission-Free Packages'));
