@@ -8,7 +8,7 @@ class PaymentDetailsController extends AppController {
 
 	var $name = 'PaymentDetails';
 	var $helpers = array('Html', 'Form', 'Ajax', 'Text', 'Layout', 'Number');
-	var $uses = array('PaymentDetail', 'Ticket', 'UserPaymentSetting', 'PpvNotice', 'Country');
+	var $uses = array('PaymentDetail', 'Ticket', 'UserPaymentSetting', 'PpvNotice', 'Country', 'Track', 'TrackDetail');
 
 	function index() {
 		$this->PaymentDetail->recursive = 0;
@@ -270,6 +270,21 @@ class PaymentDetailsController extends AppController {
 		// return result whether success or denied
 		// ---------------------------------------------------------------------------
 		if ($processor->ChargeSuccess()) {
+			
+			// allocate revenue to loa and tracks
+			// ---------------------------------------------------------------------------
+			$track = $this->TrackDetail->getTrackRecord($ticket['Ticket']['ticketId']);
+			if ($track) {
+				$trackDetailExists = $this->TrackDetail->findExistingTrackTicket($track['trackId'], $ticket['Ticket']['ticketId']);	
+				if (!$trackDetailExists) {
+					$new_track_detail = $this->TrackDetail->getNewTrackDetailRecord($track, $ticket['Ticket']['ticketId']);
+					if ($new_track_detail) {
+						$this->TrackDetail->create();
+						$this->TrackDetail->save($new_track_detail);
+					}
+				}
+			}
+			
 			// if saving new user card information
 			// ---------------------------------------------------------------------------
 			if ($data['saveUps'] && !$usingUpsId && !empty($userPaymentSettingPost['UserPaymentSetting'])) {

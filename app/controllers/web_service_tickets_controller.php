@@ -8,7 +8,7 @@ require(APP.'/vendors/pp/Processor.class.php');
 class WebServiceTicketsController extends WebServicesController
 {
 	var $name = 'WebServiceTickets';
-	var $uses = array('Ticket', 'UserPaymentSetting','PaymentDetail', 'Client', 'User', 'Offer', 'Bid', 'ClientLoaPackageRel', 'Track', 'OfferType', 'Loa', 'TrackDetail', 'PpvNotice', 'Address');
+	var $uses = array('Ticket', 'UserPaymentSetting','PaymentDetail', 'Client', 'User', 'Offer', 'Bid', 'ClientLoaPackageRel', 'Track', 'OfferType', 'Loa', 'TrackDetail', 'PpvNotice', 'Address', 'Track', 'TrackDetail');
 	var $serviceUrl = 'http://toolbox.luxurylink.com/web_service_tickets';
 	var $errorResponse = false;
 	var $api = array(
@@ -888,6 +888,21 @@ class WebServiceTicketsController extends WebServicesController
 		// return result whether success or denied
 		// ---------------------------------------------------------------------------
 		if ($processor->ChargeSuccess()) {
+			
+			// allocate revenue to loa and tracks
+			// ---------------------------------------------------------------------------
+			$track = $this->TrackDetail->getTrackRecord($ticket['Ticket']['ticketId']);
+			if ($track) {
+				$trackDetailExists = $this->TrackDetail->findExistingTrackTicket($track['trackId'], $ticket['Ticket']['ticketId']);	
+				if (!$trackDetailExists) {
+					$new_track_detail = $this->TrackDetail->getNewTrackDetailRecord($track, $ticket['Ticket']['ticketId']);
+					if ($new_track_detail) {
+						$this->TrackDetail->create();
+						$this->TrackDetail->save($new_track_detail);
+					}
+				}
+			}
+			
 			// if saving new user card information
 			// ---------------------------------------------------------------------------
 			if ($data['saveUps'] && !$usingUpsId && !empty($userPaymentSettingPost['UserPaymentSetting'])) {

@@ -52,30 +52,44 @@ class TrackDetailsController extends AppController {
 		$this->set('ticketId', $this->params['ticketId']);
 		$this->set('trackDetailExists', $trackDetailExists);
 	}
-	
-	
-	/*
+
 	function updateTracks() {
 		$sql = "select distinct(t.ticketId) from ticket t inner join paymentDetail pd on pd.ticketId = t.ticketId and pd.isSuccessfulCharge = 1 where t.created > '2009-02-21' order by t.ticketId";
 		$result = $this->Ticket->query($sql);
+		
+		$c = count($result);
+		$c1 = $c2 = $c3 = $c4 = 0;
 		
 		foreach ($result as $k => $v) {
 			$ticketId = $v['t']['ticketId'];
 			$track = $this->TrackDetail->getTrackRecord($ticketId);
 			$new_track_detail = array();
 			if (!empty($track)) {
-				$ticket_track[] = $ticketId;
+				$c2++;
+				$trackDetailExists = $this->TrackDetail->findExistingTrackTicket($track['trackId'], $ticketId);
 				$new_track_detail = $this->TrackDetail->getNewTrackDetailRecord($track, $ticketId);
-				if ($new_track_detail) {
-					$this->TrackDetail->create();
-					$this->TrackDetail->save($new_track_detail);
-				} 	
+				if ($new_track_detail && !$trackDetailExists) {
+					$c4++;
+					//$this->TrackDetail->create();
+					//if (!$this->TrackDetail->save($new_track_detail)) {
+						//print_r($new_track_detail);	
+					//}
+				} else {
+					$c3++;
+				}
+			} else {
+				$c1++;	
 			}
 		}
 		
+		echo "COUNT: $c<br />";
+		echo "COUNT NO TRACK: $c1<br />";
+		echo "COUNT TRACK: $c2<br />";
+		echo "COUNT TD NO EXISTS: $c4<br />";
+		echo "COUNT TD EXISTS: $c3<br />";
+		
 		die('COMPLETE!');	
 	}
-	*/
 	
 	/*
 	function edit($id = null) {
