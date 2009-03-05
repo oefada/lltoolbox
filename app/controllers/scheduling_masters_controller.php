@@ -135,7 +135,7 @@ class SchedulingMastersController extends AppController {
 		$this->set('remittanceTypeIds', 		$remittanceTypeIds);
 	}
 	
-	function setOfferTypeDefaultAndDropdown($packageId, $formatIds) {
+	function setOfferTypeDefaultAndDropdown($packageId, $formatIds, $schedulingMaster = false) {
 	    /* Get all Offer Types available for this package based on Format */
 		$this->SchedulingMaster->Package->Format->Behaviors->attach('Containable');
 		$formats = $this->SchedulingMaster->Package->Format->find('all', array('conditions' => array('formatId' => $formatIds), 'contain' => array('OfferType')));
@@ -154,7 +154,12 @@ class SchedulingMastersController extends AppController {
 		
 		$offerTypeId = (isset($this->data['SchedulingMaster']['offerTypeId'])) ? $this->data['SchedulingMaster']['offerTypeId'] : $firstOfferId;
 		$this->SchedulingMaster->Package->PackageOfferTypeDefField->recursive = -1;
-		$defaults = $this->SchedulingMaster->Package->PackageOfferTypeDefField->find('first', array('conditions' => array('PackageOfferTypeDefField.packageId' => $packageId, 'PackageOfferTypeDefField.offerTypeId' => $offerTypeId)));        
+		if ($schedulingMaster) {
+		    $defaults['PackageOfferTypeDefField']['buyNowPrice'] = $schedulingMaster['SchedulingMaster']['buyNowPrice'];
+		    $defaults['PackageOfferTypeDefField']['openingBid'] = $schedulingMaster['SchedulingMaster']['openingBid'];
+		} else {
+		    $defaults = $this->SchedulingMaster->Package->PackageOfferTypeDefField->find('first', array('conditions' => array('PackageOfferTypeDefField.packageId' => $packageId, 'PackageOfferTypeDefField.offerTypeId' => $offerTypeId)));        
+		}
 		$this->set(compact('defaults'));    //send defaults to the view for the drop down
 		
 		switch ($offerTypeId):
@@ -406,7 +411,7 @@ class SchedulingMastersController extends AppController {
 			$formatIds[] = $format['formatId'];
 		endforeach;
 		
-		$this->setOfferTypeDefaultAndDropdown($packageId, $formatIds);
+		$this->setOfferTypeDefaultAndDropdown($packageId, $formatIds, $this->data);
 		
 		$this->set('package', 					$package);
 		$this->set('packageId', 				$packageId);
