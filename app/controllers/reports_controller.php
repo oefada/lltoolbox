@@ -42,7 +42,9 @@ class ReportsController extends AppController {
             $this->limit = 20;
         }
         
-        
+        //None of these reports need absolutely fresh data, so perform all queries during this session in
+        //no lock mode, to improve performance and not lock tables
+        $this->OfferType->query('SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;');
 	}
 	
 	function index() {
@@ -834,7 +836,30 @@ class ReportsController extends AppController {
 	
 	function imr() {
 	    if (!empty($this->data)) {
+	        
+	        if(isset($this->data['condition1'])) {
+	            $liveDuringStartDate  = $this->data['condition1']['value']['between'][0];
+	            $liveDuringEndDate    = $this->data['condition1']['value']['between'][1];
+	            
+	            $condition1Saved = $this->data['condition1'];
+	            unset($this->data['condition1']);
+	        }
+	        
 	        $conditions = $this->_build_conditions($this->data);
+	        
+	        
+	        
+	        if (isset($liveDuringStartDate)) {
+	            $this->data['condition1'] = $condition1Saved; // restore this so the drop down reflects the right data
+	            if (strlen($conditions)) {
+	                $conditions .= " AND ";
+	            }
+	            
+	            $conditions .= "(startDate BETWEEN '$liveDuringStartDate' AND '$liveDuringEndDate' + INTERVAL 1 DAY";
+	            $conditions .= " OR endDate BETWEEN '$liveDuringStartDate' AND '$liveDuringEndDate' + INTERVAL 1 DAY";
+	            $conditions .= " OR (startDate <= '$liveDuringStartDate' AND endDate >= '$liveDuringEndDate')";
+	            $conditions .= ")";
+	        }
 	        
 	        if (!empty($this->params['named']['sortBy'])) {
 	            $direction = (@$this->params['named']['sortDirection'] == 'DESC') ? 'DESC' : 'ASC';

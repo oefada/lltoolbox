@@ -1,10 +1,11 @@
 <?php
 class OfferType extends AppModel {
 
-	var $name = 'OfferType';
-	var $useTable = 'offerType';
-	var $primaryKey = 'offerTypeId';
-	var $displayField = 'offerTypeName';
+	var $name           = 'OfferType';
+	var $useTable       = 'offerType';
+	var $primaryKey     = 'offerTypeId';
+	var $displayField   = 'offerTypeName';
+	
 	var $hasAndBelongsToMany = array(
 							'Format' => 
 								array('className' => 'Format',

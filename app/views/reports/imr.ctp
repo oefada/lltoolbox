@@ -5,14 +5,20 @@
 <fieldset>
 <h3 class='title'>SEARCH IMR BY:</h3>
 <div class="fieldRow">
-<?echo $form->select('condition1.field', array('startDate' => 'Scheduling Master Start Date', 'endDate' => 'Scheduling Master End Date', 'validityEndDate' => 'Validity End Date'))?>
+<?echo $form->select('condition1.field', array('liveDuring' => 'Live During'))?>
 <div class="range">
 	<?echo $datePicker->picker('condition1.value.between.0', array('label' => 'From'))?>
 	<?echo $datePicker->picker('condition1.value.between.1', array('label' => 'To'))?>
-	<a href="#" onclick='javascript: $("condition1valueBetween0").value = "<?=date('Y-m-d')?>"; $("condition1valueBetween1").value = "<?=date('Y-m-d', strtotime('+1 day'))?>"'>Today</a> | 
-	<a href="#" onclick='javascript: $("condition1valueBetween0").value = "<?=date('Y-m-d', strtotime('-1 day'))?>"; $("condition1valueBetween1").value = "<?=date('Y-m-d')?>"'>Yesterday</a> |
+	<a href="#" onclick='javascript: $("condition1valueBetween0").value = "<?=date('Y-m-d')?>"; $("condition1valueBetween1").value = "<?=date('Y-m-d')?>"'>Today</a> | 
+	<a href="#" onclick='javascript: $("condition1valueBetween0").value = "<?=date('Y-m-d', strtotime('-1 day'))?>"; $("condition1valueBetween1").value = "<?=date('Y-m-d', strtotime('-1 day'))?>"'>Yesterday</a> |
 	<a href="#" onclick='javascript: $("condition1valueBetween0").value = "<?=date('Y-m-d', strtotime('-1 week'))?>"; $("condition1valueBetween1").value = "<?=date('Y-m-d')?>"'>This Week</a>
+	<a href="#" onclick='javascript: $("condition1valueBetween0").value = "<?=date('Y-m-d', strtotime('1 month'))?>"; $("condition1valueBetween1").value = "<?=date('Y-m-d', strtotime('2 month'))?>"'>Next Month</a>
 </div>
+</div>
+<div class="fieldRow controlset" style="float: left; margin-right: 30px">
+<label>Remit Type</label>
+<?php echo $form->text('condition2.field', array('value' => 'auction_mstr.auction_wholesale', 'type' => 'hidden'))?>
+<?php echo $form->select('condition2.value', array(2 => 'Keep', 0 => 'Remit'), null, array('multiple' => 'checkbox'))?>
 </div>
 
 <div style="float: left; border-right: 1px solid #000; padding-right: 25px">
@@ -39,7 +45,7 @@
 	<div class="fieldRow">
 			<?echo $form->label('Status')?>
 			<?echo $form->text('condition3.field', array('value' => 'status', 'type' => 'hidden'))?>
-			<?echo $form->select('condition3.value', array('Live' => 'Live', 'Ended' => 'Not Live', 'Scheduled' => 'Scheduled'))?>
+			<?echo $form->select('condition3.value', array('Live' => 'Live', 'Ended' => 'Not Live', 'Scheduled' => 'Scheduled'), null, array('multiple' => true))?>
 	</div>
 	
 	<div class="fieldRow">
@@ -61,7 +67,7 @@
 <?php
 //TODO: put this in a helper
 function sortLink($field, $title, $currentPage, $serializedFormInput, $view, $html) {
-	$url = "/reports/cmr/filter:";
+	$url = "/reports/imr/filter:";
 	$url .= urlencode($serializedFormInput);
 	$url .= "/page:$currentPage";
 	$url .= "/sortBy:$field";
@@ -81,7 +87,7 @@ function sortLink($field, $title, $currentPage, $serializedFormInput, $view, $ht
 
 if (!empty($results)): ?>
 	<div style='float: right'><?=$numRecords?> records found</div>
-	<?=$pagination->Paginate("/reports/cmr/filter:".urlencode($serializedFormInput)."/sortBy:$sortBy/sortDirection:$sortDirection/page:", $currentPage, $numPages)?>
+	<?=$pagination->Paginate("/reports/imr/filter:".urlencode($serializedFormInput)."/sortBy:$sortBy/sortDirection:$sortDirection/page:", $currentPage, $numPages)?>
 	<table style="margin-top: 20px">
 		<tr>
 			<th>&nbsp;</th>
@@ -92,7 +98,7 @@ if (!empty($results)): ?>
 			<th><?=sortLink('a', 'Retail', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('a', 'Starting Bid', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('Loa.upgraded', 'Validity End', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('a', 'Inventory Status', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('a', 'Status', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('city', 'Bid History', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('state', 'Open Date', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('country', 'Close Date', $currentPage, $serializedFormInput, $this, $html)?></th>
@@ -111,8 +117,8 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 ?>
 	<tr<?=$class?>>
 		<td><?=$k+1?></td>
-		<td><?=$r['name']?></td>
-		<td><?=$r['packageName']?></td>
+		<td><?=$html->link($r['name'], '/clients/'.$r['clientId'], array('target' => '_blank'))?></td>
+		<td><?=$html->link($r['packageId'], '/clients/'.$r['clientId'].'/packages/edit/'.$r['packageId'], array('target' => '_blank'))?></td>
 		<td><?=$r['offerTypeName']?></td>
 		<td><?=$r['numNights']?></td>
 		<td><?=$r['retailValue']?></td>
@@ -133,7 +139,7 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 	</tr>
 <?php endforeach; //TODO: add totals ?>
 </table>
-<?=$pagination->Paginate("/reports/cmr/filter:".urlencode($serializedFormInput)."/sortBy:$sortBy/sortDirection:$sortDirection/page:", $currentPage, $numPages)?>
+<?=$pagination->Paginate("/reports/imr/filter:".urlencode($serializedFormInput)."/sortBy:$sortBy/sortDirection:$sortDirection/page:", $currentPage, $numPages)?>
 <?php elseif (!empty($data)): ?>
 <p>No results were found for the entered filters.</p>
 <p><strong>Tips:</strong> If searching by client or package name, enter four or more characters.
