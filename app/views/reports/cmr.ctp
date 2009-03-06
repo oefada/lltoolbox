@@ -4,15 +4,29 @@
 	<?php echo $form->create('', array('action' => 'cmr'))?>
 <fieldset>
 <h3 class='title'>SEARCH CLIENTS BY:</h3>
-
 <div class="fieldRow">
-		<label>Manager Username</label>
-		<?echo $form->text('condition1.field', array('value' => 'LIKE=Client.managerUsername', 'type' => 'hidden'))?>
-		<?echo $form->text('condition1.value')?>
+	<label>Loa Balance</label>
+	<?echo $form->text('condition1.field', array('value' => 'Loa.membershipBalance', 'type' => 'hidden'))?>
+	<?echo $form->select('condition1.value', array('!= 0' => 'Has Balance', '=0' => 'No Balance'))?>
 </div>
 <div class="fieldRow">
-		<label>Client search criteria</label>
-		<?echo $form->select('condition2.value', array(1 => 'Has current live auctions', 'Does not have current live auctions', 'Has current fixed priced offers', 'Does not have current fixed priced offers'))?>
+		<label>Client auction search criteria</label>
+		<?echo $form->select('condition2.value', array(1 => 'Has live auctions', 'Live fixed priced offers', 'All', 'No live offers'))?>
+</div>
+<div class="fieldRow">
+		<label>Loa Level</label>
+		<?echo $form->text('condition3.field', array('value' => 'Loa.loalevelId', 'type' => 'hidden'))?>
+		<?echo $form->select('condition3.value', array(1 => 'Wholesale', 2 => 'Sponsorship'))?>
+</div>
+<div class="fieldRow">
+		<label>Manager Username</label>
+		<?echo $form->text('condition4.field', array('value' => 'LIKE=Client.managerUsername', 'type' => 'hidden'))?>
+		<?echo $form->text('condition4.value')?>
+</div>
+<div class="fieldRow">
+		<label>Client name</label>
+		<?echo $form->text('condition5.field', array('value' => 'LIKE=Client.name', 'type' => 'hidden'))?>
+		<?echo $form->text('condition5.value')?>
 </div>
 
 <div class="controlset fieldRow" style="border: 0">

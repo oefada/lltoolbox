@@ -765,15 +765,14 @@ class ReportsController extends AppController {
                     $having = 'HAVING countSubqueryOffers > 0';
                     break;
                 case 2:
-                    $subquery = '(SELECT COUNT(*) FROM offerLive as OfferLive2 WHERE NOW() BETWEEN OfferLive2.startDate AND OfferLive2.endDate AND OfferLive2.offerTypeId IN (1,2,6) AND OfferLive2.clientId = Client.clientId) AS countSubqueryOffers,';
-                    $having = 'HAVING countSubqueryOffers = 0';
-                    break;
-                case 3:
                     $subquery = '(SELECT COUNT(*) FROM offerLive as OfferLive2 WHERE NOW() BETWEEN OfferLive2.startDate AND OfferLive2.endDate AND OfferLive2.offerTypeId IN (3,4) AND OfferLive2.clientId = Client.clientId) AS countSubqueryOffers,';
                     $having = 'HAVING countSubqueryOffers > 0';
                     break;
+                case 3:
+                    //all
+                    break;
                 case 4:
-                    $subquery = '(SELECT COUNT(*) FROM offerLive as OfferLive2 WHERE NOW() BETWEEN OfferLive2.startDate AND OfferLive2.endDate AND OfferLive2.offerTypeId IN (3,4) AND OfferLive2.clientId = Client.clientId) AS countSubqueryOffers,';
+                    $subquery = '(SELECT COUNT(*) FROM offerLive as OfferLive2 WHERE NOW() BETWEEN OfferLive2.startDate AND OfferLive2.endDate AND OfferLive2.clientId = Client.clientId) AS countSubqueryOffers,';
                     $having = 'HAVING countSubqueryOffers = 0';
                     break;
             endswitch;
@@ -1039,6 +1038,9 @@ class ReportsController extends AppController {
 	            } elseif (strpos($ca['field'], 'LIKE=') !== false) {
     	                $field = substr($ca['field'], strpos($ca['field'], '=')+1);
     	                $conditions[$k] =   "{$field} LIKE '{$ca['value']}%'";
+    	        } elseif (strpos($ca['value'], '!=') !== false) {
+    	            $value = substr($ca['value'], strpos($ca['value'], '=')+2);
+	                $conditions[$k] =   "{$ca['field']} != '{$value}'";
     	        } else {
 	                $conditions[$k] =   $ca['field'].' = '."'{$ca['value']}'";
 	            }
