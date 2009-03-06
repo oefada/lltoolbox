@@ -151,6 +151,15 @@ $this->set('hideSidebar', true);
 			</tr>
 			<tr>
 				<td width="150">
+					Client Id
+				</td>
+				<td>
+					<input type="text" id="s_client_id" name="s_client_id" value="<?php echo $s_client_id;?>" />
+					&nbsp;<a href="javascript:void(0);" onclick="document.getElementById('s_client_id').value = '';">Clear</a>
+				</td>
+			</tr>
+			<tr>
+				<td width="150">
 					User Id
 				</td>
 				<td>

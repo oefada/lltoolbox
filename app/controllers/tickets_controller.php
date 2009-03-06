@@ -24,11 +24,13 @@ class TicketsController extends AppController {
 			$this->params['form'] = $this->params['named'];
 		}
 		
+	
 		// set values and set defaults        
 		$s_ticket_id = isset($form['s_ticket_id']) ? $form['s_ticket_id'] : '';
 		$s_offer_id = isset($form['s_offer_id']) ? $form['s_offer_id'] : '';
 		$s_user_id = isset($form['s_user_id']) ? $form['s_user_id'] : '';
 		$s_format_id = isset($form['s_format_id']) ? $form['s_format_id'] : '';
+		$s_client_id = isset($form['s_client_id']) ? $form['s_client_id'] : '';
 		$s_offer_type_id = isset($form['s_offer_type_id']) ? $form['s_offer_type_id'] : 0;
 		$s_ticket_status_id = isset($form['s_ticket_status_id']) ? $form['s_ticket_status_id'] : 0;
 		$s_start_y = isset($form['s_start_y']) ? $form['s_start_y'] : date('Y');
@@ -38,9 +40,14 @@ class TicketsController extends AppController {
 		$s_end_m = isset($form['s_end_m']) ? $form['s_end_m'] : date('m');
 		$s_end_d = isset($form['s_end_d']) ? $form['s_end_d'] : date('d');
 		
+		if (isset($_GET['searchClientId'])) {
+			$s_client_id = $_GET['searchClientId'];		
+		}
+		
 		$this->set('s_ticket_id', $s_ticket_id);
 		$this->set('s_offer_id', $s_offer_id);
 		$this->set('s_user_id', $s_user_id);
+		$this->set('s_client_id', $s_client_id);
 		$this->set('s_format_id', $s_format_id);
 		$this->set('s_offer_type_id', $s_offer_type_id);
 		$this->set('s_ticket_status_id', $s_ticket_status_id);
@@ -58,9 +65,12 @@ class TicketsController extends AppController {
 		$this->paginate = array('fields' => array(
 									'Ticket.ticketId', 'Ticket.offerTypeId', 'Ticket.created', 
 									'Ticket.offerId', 'Ticket.userId', 'TicketStatus.ticketStatusName', 
-									'Ticket.userFirstName', 'Ticket.userLastName', 'Client.name', 'Ticket.billingPrice', 'Ticket.formatId'),
-		                        	'contain' => array(
-		                        		'TicketStatus', 'Package', 'Client')
+									'Ticket.userFirstName', 'Ticket.userLastName', 'Client.name', 'Ticket.billingPrice', 'Ticket.formatId'
+									),
+		                        'contain' => array('TicketStatus', 'Package', 'Client'),
+		                        'order' => array(
+		                        	'Ticket.ticketId' => 'desc'
+		                        	)
 		                        );
 		    
 		// if search via ticket id, offer id, or user id, then dont use other search conditions
@@ -69,7 +79,9 @@ class TicketsController extends AppController {
 		} elseif ($s_offer_id) {
 			$this->paginate['conditions']['Ticket.offerId'] = $s_offer_id;    
 		} elseif ($s_user_id) {
-			$this->paginate['conditions']['Ticket.userId'] = $s_user_id;            		     
+			$this->paginate['conditions']['Ticket.userId'] = $s_user_id;       
+		} elseif ($s_client_id) {
+			$this->paginate['conditions']['Ticket.clientId'] = $s_client_id;       
 		} else {    
 			$this->paginate['conditions']['Ticket.created BETWEEN ? AND ?'] = array($s_start_date, $s_end_date);             		
 			if ($s_offer_type_id) {
@@ -231,6 +243,49 @@ class TicketsController extends AppController {
 			$manualTicketInitials = 'MANUAL_TICKET';	
 		}
 		$this->data['Ticket']['manualTicketInitials'] = $manualTicketInitials;
+	}
+
+	function search()
+	{
+		if(!empty($_GET['query'])) {
+			$this->params['form']['query'] = $_GET['query'];
+ 		} elseif(!empty($this->params['named']['query'])) {
+			$this->params['form']['query'] = $this->params['named']['query'];
+		}
+		if(!empty($this->params['form']['query'])):
+			$query = $this->Sanitize->escape($this->params['form']['query']);
+
+			$this->Client->recursive = -1;
+			
+			$queryPieces = explode(" ", $query);
+			
+			$sqlquery = '';
+			foreach($queryPieces as $piece) {
+			    if (strlen($piece) > 3) {
+			        $sqlquery .= '+';
+			    }
+			    $sqlquery .= $piece.'* ';
+			}
+			
+			$conditions = array("(MATCH(Client.name) AGAINST('$sqlquery' IN BOOLEAN MODE) OR Client.clientId LIKE '%$query%' OR Client.name = '$query')");
+
+			$results = $this->Client->find('all', array('conditions' => $conditions, 'limit' => 5));
+
+			$this->set('query', $query);
+			$this->set('results', $results);
+			
+			if (isset($this->params['requested'])) {
+				return $results;
+			} elseif(@$_GET['query'] || @ $this->params['named']['query']) {
+				$this->autoRender = false;
+				$this->Client->recursive = 0;
+
+				$this->paginate = array('conditions' => $conditions);
+				$this->set('query', $query);
+				$this->set('clients', $this->paginate());;
+				$this->render('index');
+			}
+		endif;
 	}
 
 	// -------------------------------------------
