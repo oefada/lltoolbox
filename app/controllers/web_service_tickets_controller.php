@@ -759,6 +759,7 @@ class WebServiceTicketsController extends WebServicesController
 		//           (7) saveUps
 		//			 (8) zAuthHashKey
 		//           (9) userPaymentSettingId or userPaymentSetting data array
+		//           (10) toolboxManualCharge
 		//
 		// SEND TO PAYMENT PROCESSOR: $userPaymentSettingPost
 		// ---------------------------------------------------------------------------
@@ -791,6 +792,11 @@ class WebServiceTicketsController extends WebServicesController
 		if (!isset($data['zAuthHashKey']) || !$data['zAuthHashKey']) {
 			return '108';	
 		}
+		if (isset($data['toolboxManualCharge']) && ($data['toolboxManualCharge'] == 'toolbox')) {
+			$toolboxManualCharge = true;
+		} else {
+			$toolboxManualCharge = false;	
+		}
 		
 		// also check the hash for more security
 		// ---------------------------------------------------------------------------
@@ -809,12 +815,6 @@ class WebServiceTicketsController extends WebServicesController
 		} 
 		if ($ticket['Ticket']['userId'] != $data['userId']) {
 			return '111';
-		}
-		
-		// check paymentAmount with ticket.billingPrice for security measure until later
-		// ---------------------------------------------------------------------------
-		if ($ticket['Ticket']['billingPrice'] != $data['paymentAmount']) {
-			return '112';	
 		}
 		
 		// use either the data sent over or retrieve from the db with the id
@@ -858,6 +858,10 @@ class WebServiceTicketsController extends WebServicesController
 			return '114';	
 		}
 		
+		if ($toolboxManualCharge) {
+			$ticket['Ticket']['billingAmountOverride'] = $data['paymentAmount'];	
+		}
+		
 		// init payment processing and submit payment
 		// ---------------------------------------------------------------------------
 		$processor = new Processor($paymentProcessorName);
@@ -872,11 +876,12 @@ class WebServiceTicketsController extends WebServicesController
 		$userPaymentSettingPost['UserPaymentSetting']['expMonth'] = str_pad($userPaymentSettingPost['UserPaymentSetting']['expMonth'], 2, '0', STR_PAD_LEFT);
 		
 		$fee = in_array($ticket['Ticket']['offerTypeId'], array(1,2,6)) ? 30 : 40;
+		$totalChargedAmount = ($toolboxManualCharge) ? $data['paymentAmount'] : $data['paymentAmount'] + $fee;
 		
 		$paymentDetail 							= array();
 		$paymentDetail 							= $processor->GetMappedResponse();
 		$paymentDetail['paymentTypeId'] 		= 1; 
-		$paymentDetail['paymentAmount']			= $ticket['Ticket']['billingPrice'];
+		$paymentDetail['paymentAmount']			= $data['paymentAmount'];
 		$paymentDetail['ticketId']				= $ticket['Ticket']['ticketId'];
 		$paymentDetail['userId']				= $ticket['Ticket']['userId'];
 		$paymentDetail['userPaymentSettingId']	= ($usingUpsId) ? $data['userPaymentSettingId'] : '';
@@ -891,7 +896,7 @@ class WebServiceTicketsController extends WebServicesController
 		$paymentDetail['ppCardNumLastFour']		= substr($userPaymentSettingPost['UserPaymentSetting']['ccNumber'], -4, 4);
 		$paymentDetail['ppExpMonth']			= $userPaymentSettingPost['UserPaymentSetting']['expMonth'];
 		$paymentDetail['ppExpYear']				= $userPaymentSettingPost['UserPaymentSetting']['expYear'];
-		$paymentDetail['ppBillingAmount']		= $data['paymentAmount'] + $fee;
+		$paymentDetail['ppBillingAmount']		= $totalChargedAmount;
 		$paymentDetail['autoProcessed']			= $data['autoCharge'];
 		$paymentDetail['initials']				= $data['initials'];
 		$paymentDetail['ccType']				= $userPaymentSettingPost['UserPaymentSetting']['ccType'];
