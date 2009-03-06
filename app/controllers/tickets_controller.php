@@ -23,8 +23,7 @@ class TicketsController extends AppController {
 			$form = $named;
 			$this->params['form'] = $this->params['named'];
 		}
-		
-	
+
 		// set values and set defaults        
 		$s_ticket_id = isset($form['s_ticket_id']) ? $form['s_ticket_id'] : '';
 		$s_offer_id = isset($form['s_offer_id']) ? $form['s_offer_id'] : '';
@@ -42,6 +41,13 @@ class TicketsController extends AppController {
 		
 		if (isset($_GET['searchClientId'])) {
 			$s_client_id = $_GET['searchClientId'];		
+		}
+
+		if (isset($_GET['query'])) {
+			$query = $_GET['query'];
+			if (is_numeric($query)) {
+				$s_ticket_id = $_GET['query'];			
+			} 
 		}
 		
 		$this->set('s_ticket_id', $s_ticket_id);
@@ -254,8 +260,6 @@ class TicketsController extends AppController {
 		}
 		if(!empty($this->params['form']['query'])):
 			$query = $this->Sanitize->escape($this->params['form']['query']);
-
-			$this->Client->recursive = -1;
 			
 			$queryPieces = explode(" ", $query);
 			
@@ -267,9 +271,14 @@ class TicketsController extends AppController {
 			    $sqlquery .= $piece.'* ';
 			}
 			
-			$conditions = array("(MATCH(Client.name) AGAINST('$sqlquery' IN BOOLEAN MODE) OR Client.clientId LIKE '%$query%' OR Client.name = '$query')");
+			$this->Client->recursive = -1;
+			$conditions = array("(MATCH(Client.name) AGAINST('$sqlquery' IN BOOLEAN MODE))");
 
-			$results = $this->Client->find('all', array('conditions' => $conditions, 'limit' => 5));
+			$results = $this->Client->find('all', array(
+													'conditions' => $conditions, 
+													'limit' => 5
+													)
+											);
 
 			$this->set('query', $query);
 			$this->set('results', $results);
@@ -277,13 +286,7 @@ class TicketsController extends AppController {
 			if (isset($this->params['requested'])) {
 				return $results;
 			} elseif(@$_GET['query'] || @ $this->params['named']['query']) {
-				$this->autoRender = false;
-				$this->Client->recursive = 0;
-
-				$this->paginate = array('conditions' => $conditions);
-				$this->set('query', $query);
-				$this->set('clients', $this->paginate());;
-				$this->render('index');
+				$this->redirect(array('controller' => 'tickets', 'action' => 'index/?query=' . $query));	
 			}
 		endif;
 	}
