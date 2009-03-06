@@ -32,6 +32,11 @@ class WebServiceTicketsController extends WebServicesController
 						'input' => array('in0' => 'xsd:string'),
 						'output' => array('return' => 'xsd:string')
 						),
+					'processPaymentTicket' => array(
+						'doc' => 'N/A',
+						'input' => array('in0' => 'xsd:string'),
+						'output' => array('return' => 'xsd:string')
+						),
 					'createFixedPriceTicket' => array(
 						'doc' => 'N/A',
 						'input' => array('in0' => 'xsd:string'),
