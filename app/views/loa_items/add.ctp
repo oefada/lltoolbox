@@ -12,6 +12,10 @@
 		echo $form->input('Fee.feeName');
 		echo $form->input('Fee.feePercent');
 		echo $form->input('currencyId', array('value' => $currencyId, 'type' => 'hidden'));
+		
+		echo '<div class="controlset">';
+		echo $form->input('addAnother', array('label' => 'Save and add another', 'type' => 'checkbox'));
+		echo '</div>';
 	?>
 	</fieldset>
 <?php echo $form->end('Submit');?>

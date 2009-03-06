@@ -26,12 +26,18 @@ class LoaItemsController extends AppController {
 			$this->LoaItem->create();
 			if ($this->LoaItem->saveAll($this->data)) {
 				$this->Session->setFlash(__('The LoaItem has been saved', true));
-				if ($this->RequestHandler->isAjax()) {
-					$this->set('closeModalbox', true);
-					$this->Session->setFlash(__('The LoaItem has been saved', true), 'default', array(), 'success');
-				} else {
-					$this->redirect(array('controller' => 'loas', 'action'=>'view', 'id' => $this->params['data']['LoaItem']['loaId']));
-				}
+				
+				if ($this->data['LoaItem']['addAnother'] != 1):
+				    if ($this->RequestHandler->isAjax()) {
+					    $this->set('closeModalbox', true);
+					    $this->Session->setFlash(__('The LoaItem has been saved', true), 'default', array(), 'success');
+				    } else {
+					    $this->redirect(array('controller' => 'loas', 'action'=>'view', 'id' => $this->params['data']['LoaItem']['loaId']));
+				    }
+				else:
+				    $this->Session->setFlash(__('The LoaItem has been saved', true), 'default', array(), 'success');
+				    unset($this->data['LoaItem']);
+				endif;
 			} else {
 				$this->Session->setFlash(__('The LoaItem could not be saved. Please, try again.', true));
 			}
