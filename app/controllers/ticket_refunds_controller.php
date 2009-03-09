@@ -36,7 +36,7 @@ class TicketRefundsController extends AppController {
 				$dateRequested.= ':' . $this->data['TicketRefund']['dateRequested']['min'];
 				$dateRequested.= ' ' . $this->data['TicketRefund']['dateRequested']['meridian'];
 				
-				$emailTo = 'devmail@luxurylink.com';
+				$emailTo = 'accounting@luxurylink.com';
 				$emailFrom = 'LuxuryLink.com Accounting<accounting@luxurylink.com>';
 				$emailHeaders = "From: $emailFrom\r\n";
         		$emailHeaders.= "Content-type: text/html\r\n";

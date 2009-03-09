@@ -25,7 +25,6 @@ class WebServiceBidsController extends WebServicesController
 		$this->errorResponse = false;
 		if (!$this->pushBidToSm($json_decoded)) {
 			$json_decoded['response'] = $this->errorResponse;
-			mail('devmail@luxurylink.com','WEBSERVICE ERROR (BIDS):  Cannot update bid on toolboxprod-db', print_r($json_decoded, true));
 		} 
 		return json_encode($json_decoded);
 	}

@@ -143,7 +143,7 @@ class WebServiceNewClientsController extends WebServicesController
 		try {
 			$client->soap_call($data);
 		} catch (SoapFault $exception) {
-			@mail('devmail@luxurylink.com', 'WEB SERVICE UPDATE CLIENT FROM SUGAR : Could not send postback to Sugar', $exception);
+			// do nothing
 		}
 		return true;
 	}

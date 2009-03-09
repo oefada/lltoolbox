@@ -85,7 +85,7 @@ class WebServiceTicketsController extends WebServicesController
 		$this->errorResponse = false;
 		if (!$this->createNewTicket($json_decoded)) {			
 			$json_decoded['response'] = $this->errorResponse;
-			mail('devmail@luxurylink.com','WEBSERVICE ERROR (TICKETS):  Cannot update ticket on toolboxprod-db', print_r($json_decoded, true));
+			@mail('devmail@luxurylink.com','WEBSERVICE ERROR (TICKETS):  Cannot update ticket on toolboxprod-db', print_r($json_decoded, true), '-f devmail@luxurylink.com');
 		} 
 		return json_encode($json_decoded);
 	}
@@ -172,34 +172,6 @@ class WebServiceTicketsController extends WebServicesController
 
 			$ticketId = $this->Ticket->getLastInsertId();
 
-			// send out ticket created email - not necessary but just be like Nike and just do it
-			// -------------------------------------------------------------------------------
-			$debug_tmp = "DATA\n\n";
-			$debug_tmp.= print_r($data, true);
-			$debug_tmp.= "\n\nUSERDATA\n\n";
-			$debug_tmp.= print_r($userData, true);
-			$debug_tmp.= "\n\nADDRESS\n\n";
-			$debug_tmp.= print_r($addressData, true);
-			$debug_tmp.= "\n\nCLIENT DATA\n\n";
-			$debug_tmp.= print_r($clientData, true);
-			$debug_tmp.= "\n\nOFFER DATA\n\n";
-			$debug_tmp.= print_r($offerData, true);
-			$debug_tmp.= "\n\nOFFER LIVE\n\n";
-			$debug_tmp.= print_r($offerLive, true);
-			$debug_tmp.= "\n\nPPV SETTING\n\n";
-			$debug_tmp.= print_r($ppv_settings, true);
-			$debug_tmp.= "\n\nTICKET\n\n";
-			$debug_tmp.= print_r($newTicket, true);
-			$debug_tmp.= "\n\nUSER PAYMENT SETTING\n\n";
-			$debug_tmp.= print_r($user_payment_setting, true);
-			
-			$emailTo = 'devmail@luxurylink.com';
-			$emailFrom = 'Toolbox Web Service<devmail@luxurylink.com>';
-			$emailHeaders = "From: $emailFrom\r\n";
-			$emailSubject = "Ticket #$ticketId Successfully Created";
-			$emailBody = "Ticket #$ticketId has been successfully created.\n\n" . $debug_tmp;
-			@mail($emailTo, $emailSubject, $emailBody, $emailHeaders);
-			
 			// update the tracks
 			// -------------------------------------------------------------------------------
 			$schedulingMasterId = $offerData['SchedulingInstance']['SchedulingMaster']['schedulingMasterId'];
@@ -342,7 +314,7 @@ class WebServiceTicketsController extends WebServicesController
 			$emailFrom = 'System<geeks@luxurylink.com>';
 			$emailHeaders = "From: $emailFrom\r\n";
         	
-			@mail('devmail@luxurylink.com', 'Ticketing Error - Failed to Create New Ticket', $errorBody, $emailHeaders);
+			@mail('devmail@luxurylink.com', 'Ticketing Error - Failed to Create New Ticket', $errorBody, $emailHeaders, '-f devmail@luxurylink.com');
 
 			return false;
 		}
@@ -686,7 +658,7 @@ class WebServiceTicketsController extends WebServicesController
 		// -------------------------------------------------------------------------------
 		$this->PpvNotice->create();
 		if (!$this->PpvNotice->save($ppvNoticeSave)) {
-			mail('devmail@luxurylink.com', 'WEB SERVICE TICKETS: ppv record not saved', print_r($ppvNoticeSave, true));	
+			@mail('devmail@luxurylink.com', 'WEB SERVICE TICKETS: ppv record not saved', print_r($ppvNoticeSave, true), '-f devmail@luxurylink.com');	
 		}
 		
 		// update ticket status if required
@@ -903,7 +875,7 @@ class WebServiceTicketsController extends WebServicesController
 
 		$this->PaymentDetail->create();
 		if (!$this->PaymentDetail->save($paymentDetail)) {
-			mail('devmail@luxurylink.com', 'WEB SERVICE ERROR: PAYMENT PROCESSED BUT NOT SAVED', print_r($this->PaymentDetail->validationErrors,true)  . print_r($paymentDetail, true));
+			@mail('devmail@luxurylink.com', 'WEB SERVICE ERROR: PAYMENT PROCESSED BUT NOT SAVED', print_r($this->PaymentDetail->validationErrors,true)  . print_r($paymentDetail, true), '-f devmail@luxurylink.com');
 		}
 				
 		// return result whether success or denied
