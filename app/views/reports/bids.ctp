@@ -77,6 +77,7 @@ if (!empty($results)): ?>
 	<div style='float: right'><?=$numRecords?> records found</div>
 	<?=$pagination->Paginate("/reports/bids/filter:".urlencode($serializedFormInput)."/sortBy:$sortBy/sortDirection:$sortDirection/page:", $currentPage, $numPages)?>
 	<table style="margin-top: 20px">
+		<thead class='fixedHeader'>
 		<tr>
 			<th><?=sortLink('Offer.offerId', 'Offer Id', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('Client.name', 'Client Name', $currentPage, $serializedFormInput, $this, $html)?></th>
@@ -97,6 +98,7 @@ if (!empty($results)): ?>
 			<th><?=sortLink('moneyPotential', '$ Potential', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('moneyCollected', '$ Collected', $currentPage, $serializedFormInput, $this, $html)?></th>
 		</tr>
+		</thead>
 <?php
 $bids = 0;
 $uniqueBids = 0;

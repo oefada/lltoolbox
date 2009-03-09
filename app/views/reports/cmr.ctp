@@ -64,6 +64,7 @@ if (!empty($results)): ?>
 	<div style='float: right'><?=$numRecords?> records found</div>
 	<?=$pagination->Paginate("/reports/cmr/filter:".urlencode($serializedFormInput)."/sortBy:$sortBy/sortDirection:$sortDirection/page:", $currentPage, $numPages)?>
 	<table style="margin-top: 20px">
+		<thead class='fixedHeader'>
 		<tr>
 			<th>&nbsp;</th>
 			<th><?=sortLink('Client.name', 'Client Name', $currentPage, $serializedFormInput, $this, $html)?></th>
@@ -89,6 +90,7 @@ if (!empty($results)): ?>
 			<th><?=sortLink('daysBehindSchedule', 'Days Behind Schedule', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('Client.managerUsername', 'Manager', $currentPage, $serializedFormInput, $this, $html)?></th>
 		</tr>
+		</thead>
 <?php foreach ($results as $k => $r):
 $class = ($k % 2) ? ' class="altrow"' : '';
 ?>

@@ -94,6 +94,7 @@ if (!empty($results)): ?>
 	<div style='float: right'><?=$numRecords?> records found</div>
 	<?=$pagination->Paginate("/reports/offer_search/filter:".urlencode($serializedFormInput)."/sortBy:$sortBy/sortDirection:$sortDirection/page:", $currentPage, $numPages)?>
 	<table style="margin-top: 20px">
+		<thead class='fixedHeader'>
 		<tr>
 			<th><?=sortLink('Client.name', 'Client Name', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('OfferType.offerTypeName', 'Offer Type', $currentPage, $serializedFormInput, $this, $html)?></th>
@@ -112,6 +113,7 @@ if (!empty($results)): ?>
 			<th><?=sortLink('Client.managerUsername', 'Manager Username', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('futureInstances', 'Will Repeat', $currentPage, $serializedFormInput, $this, $html)?></th>
 		</tr>
+		</thead>
 <?php foreach ($results as $k => $result):
 $class = ($k % 2) ? ' class="altrow"' : '';
 ?>

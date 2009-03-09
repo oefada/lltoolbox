@@ -89,6 +89,7 @@ if (!empty($results)): ?>
 	<div style='float: right'><?=$numRecords?> records found</div>
 	<?=$pagination->Paginate("/reports/imr/filter:".urlencode($serializedFormInput)."/sortBy:$sortBy/sortDirection:$sortDirection/page:", $currentPage, $numPages)?>
 	<table style="margin-top: 20px">
+		<thead class='fixedHeader'>
 		<tr>
 			<th>&nbsp;</th>
 			<th><?=sortLink('Client.name', 'Client Name', $currentPage, $serializedFormInput, $this, $html)?></th>
@@ -111,6 +112,7 @@ if (!empty($results)): ?>
 			<th><?=sortLink('dailyMembershipFee', 'Team', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('numDaysPaid', 'Manager', $currentPage, $serializedFormInput, $this, $html)?></th>
 		</tr>
+		</thead>
 <?php foreach ($results as $k => $r):
 $r = $r['ImrReport'];
 $class = ($k % 2) ? ' class="altrow"' : '';
