@@ -35,8 +35,15 @@ class OfferLive extends AppModel {
         return true;
     }
     
-    function beforeSave($created) {
+    function afterSave($created) {
         //TODO: update instance with new date
+        if (!$created && !empty($this->data['OfferLive']['endDate'])) {
+            $results = $this->query("SELECT schedulingInstanceId, endDate FROM schedulingInstance as SchedulingInstance INNER JOIN offer USING(schedulingInstanceId) WHERE offerId = ".$this->data['OfferLive']['offerId']);
+            $results = $results[0];
+            if($results['SchedulingInstance']['endDate'] != $this->data['OfferLive']['endDate']) {
+                $this->query("UPDATE schedulingInstance SET endDate = '{$this->data['OfferLive']['endDate']}' WHERE schedulingInstanceId = ".$results['SchedulingInstance']['schedulingInstanceId']); 
+            }
+        }
         return true;
     }
 }
