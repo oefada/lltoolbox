@@ -193,26 +193,6 @@ class Client extends AppModel {
 			$result = $this->query($sql);
 		}
 		
-		// send email if error
-		// -----------------------------------------------------------------
-		if (!empty($errors)) {
-			$emailTo = 'devmail@luxurylink.com';
-			$emailFrom = 'Toolbox <devmail@luxurylink.com>';
-			$emailHeaders = "From: $emailFrom\r\n";
-        	$emailHeaders.= "Content-type: text/html\r\n";
-			$emailSubject = 'Client Integration Error Has Occured';
-			$emailBody = 'An error has occured while trying to update:<br /><br />Database: live<br />Table: client<br />ClientId: ' . $clientId . '<br /><br />';
-			if ($created) {
-				$emailBody.= 'Operation Attempted: Create new client on live db.<br /><br />';	
-			} else {
-				$emailBody.= 'Operation Attempted: Update client on live db.<br /><br />';	
-			}
-			$emailBody.= print_r($liveClientDataSave, true);
-			$emailBody.= print_r($_SERVER, true);
-			// send out email now
-			@mail($emailTo, $emailSubject, $emailBody, $emailHeaders);	
-		}
-		
 		return true;
 	}
 	
