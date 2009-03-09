@@ -12,10 +12,6 @@ class Client extends AppModel {
 				'name' => array(
 					'rule' => '/[a-zA-Z0-9]/',
 					'message' => 'Client name must only contain letters.'
-				),
-				'email' => array(
-					'rule' => 'email',
-					'message' => 'Invalid email address.'
 				)
 			);
 	
