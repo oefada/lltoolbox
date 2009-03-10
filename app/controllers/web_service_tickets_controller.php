@@ -85,7 +85,7 @@ class WebServiceTicketsController extends WebServicesController
 		$this->errorResponse = false;
 		if (!$this->createNewTicket($json_decoded)) {			
 			$json_decoded['response'] = $this->errorResponse;
-			@mail('devmail@luxurylink.com','WEBSERVICE ERROR (TICKETS):  Cannot update ticket on toolboxprod-db', print_r($json_decoded, true), '-f devmail@luxurylink.com');
+			@mail('devmail@luxurylink.com','WEBSERVICE ERROR (TICKETS):  Cannot update ticket on toolboxprod-db', print_r($json_decoded, true));
 		} 
 		return json_encode($json_decoded);
 	}
@@ -314,7 +314,7 @@ class WebServiceTicketsController extends WebServicesController
 			$emailFrom = 'System<geeks@luxurylink.com>';
 			$emailHeaders = "From: $emailFrom\r\n";
         	
-			@mail('devmail@luxurylink.com', 'Ticketing Error - Failed to Create New Ticket', $errorBody, $emailHeaders, '-f devmail@luxurylink.com');
+			@mail('devmail@luxurylink.com', 'Ticketing Error - Failed to Create New Ticket', $errorBody, $emailHeaders);
 
 			return false;
 		}
@@ -661,7 +661,7 @@ class WebServiceTicketsController extends WebServicesController
 		// -------------------------------------------------------------------------------
 		$this->PpvNotice->create();
 		if (!$this->PpvNotice->save($ppvNoticeSave)) {
-			@mail('devmail@luxurylink.com', 'WEB SERVICE TICKETS: ppv record not saved', print_r($ppvNoticeSave, true), '-f devmail@luxurylink.com');	
+			@mail('devmail@luxurylink.com', 'WEB SERVICE TICKETS: ppv record not saved', print_r($ppvNoticeSave, true));	
 		}
 		
 		// update ticket status if required
@@ -902,7 +902,7 @@ class WebServiceTicketsController extends WebServicesController
 
 		$this->PaymentDetail->create();
 		if (!$this->PaymentDetail->save($paymentDetail)) {
-			@mail('devmail@luxurylink.com', 'WEB SERVICE ERROR: PAYMENT PROCESSED BUT NOT SAVED', print_r($this->PaymentDetail->validationErrors,true)  . print_r($paymentDetail, true), '-f devmail@luxurylink.com');
+			@mail('devmail@luxurylink.com', 'WEB SERVICE ERROR: PAYMENT PROCESSED BUT NOT SAVED', print_r($this->PaymentDetail->validationErrors,true)  . print_r($paymentDetail, true));
 		}
 				
 		// return result whether success or denied
