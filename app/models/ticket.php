@@ -8,10 +8,9 @@ class Ticket extends AppModel {
 	var $belongsTo = array('TicketStatus' => array('foreignKey' => 'ticketStatusId'),
 						   'Package' => array('foreignKey' => 'packageId'),
 						   'Offer' => array('foreignKey' => 'offerId'),
-						   'User' => array('foreignKey' => 'userId'),
-						   'Client' => array('foreignKey' => 'clientId')
+						   'User' => array('foreignKey' => 'userId')
 						);
-	
+
 	var $hasMany = array('PaymentDetail' => array('foreignKey' => 'ticketId'),
 						 'PpvNotice' => array('foreignKey' => 'ticketId')
 						);
@@ -27,6 +26,12 @@ class Ticket extends AppModel {
 	    }
 	    
 	    return $options;
+	}
+	
+	function getClientsFromPackageId($packageId) {
+		$sql = 'SELECT Client.clientId, Client.name, Client.clientTypeId FROM clientLoaPackageRel cr INNER JOIN client as Client ON Client.clientId = cr.clientId WHERE cr.packageId = ' . $packageId;
+		$clients = $this->query($sql);
+		return $clients;
 	}
 }
 ?>

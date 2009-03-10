@@ -19,7 +19,7 @@ Ticket Reference ID #<?php echo $ticketId;?><br />
 		<p>
 		The Luxury Link <?php echo $packageName;?>, <?php echo $packageSubtitle;?>, closed <?php echo $offerEndDate;?>. The winning bidder, 
 		<?php echo $userFirstName;?> <?php echo $userLastName;?> (<?php echo $userEmail;?>, <?php echo $userPhone;?>), has paid in full for the following auction package and will be 
-		contacting you shortly. The winning bid amount was $<?php echo $billingPrice;?>.
+		contacting you shortly. The winning bid amount was $<?php echo $clientAdjustedPrice;?>.
 		</p>
 	
 <?php elseif ($offerTypeId == 2) : ?>		
@@ -28,7 +28,7 @@ Ticket Reference ID #<?php echo $ticketId;?><br />
 		
 		<p>
 	    Congratulations on a successful Luxury Link Best Shot Auction for <?php echo $packageName;?>.
-	    This Best Shot auction closed on <?php echo $offerEndDate;?>. The winning bid amount was $<?php billingPrice;?>.
+	    This Best Shot auction closed on <?php echo $offerEndDate;?>. The winning bid amount was $<?php echo $clientAdjustedPrice;?>.
 		</p>
 		
 		<p>The following Luxury Link Guest has paid in full for the package detailed below and will be contacting you shortly:</p>

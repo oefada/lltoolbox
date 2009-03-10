@@ -4,6 +4,9 @@ $this->searchController = 'Tickets';
 ?>
 <div class="tickets view">
 	<h2 class="title">Ticket Detail</h2>
+	<?php if (count($ticket['Client']) > 1) {
+		echo "<h3>*** This is a MULTI-CLIENT package ***</h3>";
+	} ?>
 	<br />
 	<div class="ticket-table">
 		<table width="100%" cellpadding="0" cellspacing="0" border="0">
@@ -28,13 +31,12 @@ $this->searchController = 'Tickets';
 				<td><?php echo $html->link($ticket['Ticket']['packageId'], array('controller'=> 'clients/' . $ticket['Ticket']['clientId'], 'action'=> '/packages/edit/' . $ticket['Ticket']['packageId'])); ?></td>
 			</tr>
 			<tr>
-				<td width="200"><strong>Client Name</strong></td>
-				<td><?php echo $ticket['Client']['name']; ?></td>
-			</tr>
-			<tr>
-				<td><strong>Client Id</strong></td>
+				<td width="200"><strong>Client(s)</strong></td>
 				<td>
-					<?php echo $html->link($ticket['Client']['clientId'], array('controller'=> 'clients', 'action'=>'edit', $ticket['Client']['clientId'])); ?>
+					<?php foreach ($ticket['Client'] as $client) :?>
+						<?php echo $html->link($client['Client']['clientId'], array('controller'=> 'clients', 'action'=>'edit', $client['Client']['clientId'])); ?> - 
+						<?php echo $client['Client']['name']; ?><br />
+					<?php endforeach;?>
 				</td>
 			</tr>
 			<tr>

@@ -196,8 +196,7 @@ $this->set('hideSidebar', true);
 	<th width="10"><?php echo $paginator->sort('Offer Type', 'Ticket.offerTypeId');?></th>
 	<th width="10" style="color:#FFF;">Track</th>
 	<th width="10"><?php echo $paginator->sort('Offer Id', 'Ticket.offerId');?></th>
-	<th width="10"><?php echo $paginator->sort('Client Id', 'Client.clientId');?></th>
-	<th width="200"><?php echo $paginator->sort('Client Name', 'Client.name');?></th>
+	<th width="250" style="color:#FFF;">Client</th>
 	<th width="10"><?php echo $paginator->sort('User Id', 'Ticket.userId');?></th>
 	<th width="100"><?php echo $paginator->sort('User First Name', 'Ticket.userFirstName');?></th>
 	<th width="100"><?php echo $paginator->sort('User Last Name', 'Ticket.userLastName');?></th>
@@ -229,13 +228,13 @@ foreach ($tickets as $ticket):
 			<?php echo $ticket['Ticket']['trackName']; ?>
 		</td>
 		<td>
-			<a href="http://www.luxurylink.com/portfolio/por_offer_redirect.php?pid=<?php echo $ticket['Client']['clientId'];?>" target="_BLANK"><?php echo $ticket['Ticket']['offerId'];?></a>
+			<?php echo $ticket['Ticket']['offerId']; ?>
 		</td>
 		<td>
-			<a href="http://www.luxurylink.com/portfolio/por_offer_redirect.php?pid=<?php echo $ticket['Client']['clientId'];?>" target="_BLANK"><?php echo $ticket['Client']['clientId'];?></a>
-		</td>
-		<td>
-			<?php echo $ticket['Client']['name'];?>
+			<?php foreach ($ticket['Client'] as $client) : ?>
+			<a href="http://www.luxurylink.com/portfolio/por_offer_redirect.php?pid=<?php echo $client['Client']['clientId'];?>" target="_BLANK"><?php echo $client['Client']['clientId'];?></a> - <?php echo $client['Client']['name'];?>
+			<br /><br />
+			<?php endforeach; ?>
 		</td>
 		<td>
 			<a href="/users/view/<?php echo $ticket['Ticket']['userId'];?>" target="_BLANK"><?php echo $ticket['Ticket']['userId'];?></a>

@@ -67,13 +67,13 @@ class TicketsController extends AppController {
 		// use these dates in the sql for date range search
 		$s_start_date = $s_start_y . '-' . $s_start_m . '-' . $s_start_d . ' 00:00:00';
 		$s_end_date = $s_end_y . '-' . $s_end_m . '-' . $s_end_d . ' 23:59:59';
-		
+				
 		$this->paginate = array('fields' => array(
 									'Ticket.ticketId', 'Ticket.offerTypeId', 'Ticket.created', 
 									'Ticket.offerId', 'Ticket.userId', 'TicketStatus.ticketStatusName', 
-									'Ticket.userFirstName', 'Ticket.userLastName', 'Client.name', 'Ticket.billingPrice', 'Ticket.formatId'
+									'Ticket.userFirstName', 'Ticket.userLastName', 'Ticket.packageId', 'Ticket.billingPrice', 'Ticket.formatId'
 									),
-		                        'contain' => array('TicketStatus', 'Package', 'Client'),
+		                        'contain' => array('TicketStatus'),
 		                        'order' => array(
 		                        	'Ticket.ticketId' => 'desc'
 		                        	)
@@ -102,11 +102,13 @@ class TicketsController extends AppController {
 		}
 		
 		$tickets_index = $this->paginate();
-	
+
 		foreach ($tickets_index as $k => $v) {
 			$tickets_index[$k]['Ticket']['validCard'] = $this->getValidCcOnFile($v['Ticket']['userId']);
 			$track = $this->TrackDetail->getTrackRecord($v['Ticket']['ticketId']);
-			$tickets_index[$k]['Ticket']['trackName'] = ($track['trackName']) ? $track['trackName'] : 'N/A';
+			$tickets_index[$k]['Ticket']['trackName'] = ($track['trackName']) ? $track['trackName'] : 'N/A';	
+			$clients = $this->Ticket->getClientsFromPackageId($v['Ticket']['packageId']);
+			$tickets_index[$k]['Client'] = $clients;
 		}
 		
 		$this->set('tickets', $tickets_index);
@@ -143,6 +145,8 @@ class TicketsController extends AppController {
 
 		$this->Ticket->recursive = 2;
 		$ticket = $this->Ticket->read(null, $id);
+
+		$ticket['Client'] = $this->Ticket->getClientsFromPackageId($ticket['Ticket']['packageId']);
 
 		$this->set('ticket', $ticket);
 		
@@ -212,7 +216,6 @@ class TicketsController extends AppController {
 				} else {
 					$this->data['Ticket']['ticketStatusId'] 	= 1;
 					$this->data['Ticket']['packageId'] 			= $offerData['OfferLive']['packageId'];
-					$this->data['Ticket']['clientId']			= $offerData['OfferLive']['clientId'];
 					$this->data['Ticket']['formatId']			= in_array($offerData['OfferLive']['offerTypeId'], array(1,2,6)) ? 1 : 2;
 					$this->data['Ticket']['offerTypeId']		= $offerData['OfferLive']['offerTypeId'];
 					$this->data['Ticket']['userFirstName']		= $userData['User']['firstName'];

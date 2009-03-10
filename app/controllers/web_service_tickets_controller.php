@@ -118,21 +118,19 @@ class WebServiceTicketsController extends WebServicesController
 		$this->Offer->recursive = 2;
 		$offerData = $this->Offer->read(null, $data['offerId']);
 		
-		$this->Client->recursive = -1;
-		$clientData = $this->Client->read(null, $data['clientId']);
-		
 		$offerTypeToFormat = $this->Offer->query("SELECT formatId FROM formatOfferTypeRel WHERE offerTypeId = " . $offerData['SchedulingInstance']['SchedulingMaster']['offerTypeId']);
 		$formatId = $offerTypeToFormat[0]['formatOfferTypeRel']['formatId'];
 		
 		$offerLive = $this->Offer->query('SELECT * FROM offerLive WHERE offerId = ' . $data['offerId']);
 		$offerLive = $offerLive[0]['offerLive'];
 		
+		$clientData = $this->Ticket->getClientsFromPackageId($data['packageId']);
+		
 		// create a new ticket!
 		// -------------------------------------------------------------------------------
 		$newTicket = array();
 		$newTicket['Ticket']['ticketStatusId'] 			 = 1;
 		$newTicket['Ticket']['packageId'] 				 = $data['packageId'];
-		$newTicket['Ticket']['clientId']				 = $data['clientId'];
 		$newTicket['Ticket']['offerId'] 				 = $data['offerId'];  
 		$newTicket['Ticket']['offerTypeId'] 			 = $offerData['SchedulingInstance']['SchedulingMaster']['offerTypeId'];
 		$newTicket['Ticket']['formatId'] 				 = $formatId;
@@ -223,12 +221,14 @@ class WebServiceTicketsController extends WebServicesController
 			// -------------------------------------------------------------------------------
 			$restricted_auction = false;
 			
+			foreach ($clientData as $client) {
+				if ($client['Client']['clientTypeId'] == 3 || stristr($client['Client']['name'], 'CRUISE')) { 
+            		$restricted_auction = true;
+            	}	
+			}
 			if ($offerLive['isMystery'] || $offerLive['retailValue'] == 1 || $offerLIve['openingBid'] == 1) {
 				$restricted_auction = true;	
 			}
-			if ($clientData['Client']['clientTypeId'] == 3 || stristr($clientData['Client']['name'], 'CRUISE')) { 
-            	$restricted_auction = true;
-            }
             if (stristr($offerLive['offerName'], 'RED') && stristr($offerLive['offerName'],'HOT')) {
             	$restricted_auction = true;
             }
@@ -285,10 +285,10 @@ class WebServiceTicketsController extends WebServicesController
 			// send out client and winner ppv if charge is successfully charged
 			// -------------------------------------------------------------------------------
 			if ($autoSendClientWinnerPpv) {
-				$ppv_settings['ppvNoticeTypeId'] = 4; 
+				$ppv_settings['ppvNoticeTypeId'] = 4;    // client PPV
 				$this->ppv(json_encode($ppv_settings));	
 				
-				$ppv_settings['ppvNoticeTypeId'] = 3;
+				$ppv_settings['ppvNoticeTypeId'] = 3;    // winner PPV
 				$this->ppv(json_encode($ppv_settings));	
 			}
 			
@@ -331,10 +331,10 @@ class WebServiceTicketsController extends WebServicesController
 		
 		// send both the client and winner ppvs
 		// -------------------------------------------------------------------------------
-		$params['ppvNoticeTypeId'] = 4; 
+		$params['ppvNoticeTypeId'] = 4;    // client PPV
 		$this->ppv(json_encode($params));	
 		
-		$params['ppvNoticeTypeId'] = 3;
+		$params['ppvNoticeTypeId'] = 3;    // winner PPV
 		$this->ppv(json_encode($params));	
 	}
 
@@ -443,6 +443,7 @@ class WebServiceTicketsController extends WebServicesController
 		foreach ($clientData as $k => $v) {
 			$tmp = $v['Client'];
 			$tmp_result = $this->Ticket->query('SELECT * FROM clientContact WHERE clientContactTypeId = 1 and clientId = ' . $v['Client']['clientId'] . ' ORDER BY primaryContact DESC');
+			$contact_cc_string = array();
 			foreach ($tmp_result as $a => $b) {
 				$contacts = array();
 				$contacts['ppv_name'] 			= $b['clientContact']['name'];
@@ -450,8 +451,13 @@ class WebServiceTicketsController extends WebServicesController
 				$contacts['ppv_email_address'] 	= $b['clientContact']['emailAddress']; 
 				$contacts['ppv_phone'] 			= $b['clientContact']['phone'];
 				$contacts['ppv_fax'] 			= $b['clientContact']['fax'];
+				if ($a > 0) {
+					$contact_cc_string[] = $b['clientContact']['emailAddress'];
+				}
 				$tmp['contacts'][] = $contacts;
 			}
+			$tmp['contact_cc_string'] = implode(',', array_unique($contact_cc_string));
+			$tmp['percentOfRevenue'] = $v['ClientLoaPackageRel']['percentOfRevenue'];
 			$clients[] = $tmp;
 		}
 		
@@ -460,36 +466,12 @@ class WebServiceTicketsController extends WebServicesController
 		$clientName 		= $clients[0]['contacts'][0]['ppv_name'];
 		$clientPrimaryEmail = $clients[0]['contacts'][0]['ppv_email_address'];
 		$oldProductId		= $clients[0]['oldProductId'];
-		
-		// build client CC list and check all email addresses
-		// -------------------------------------------------------------------------------
-		$countClientContact = count($clients[0]['contacts']);
-		$clientCc			= array();
-		if ($countClientContact) {
-			for ($i = 1; $i < $countClientContact; $i++) {
-				$clientCc[] = $clients[0]['contacts'][$i]['ppv_email_address'];
-			}
-		}
-		$clientCcEmail = implode(',', array_unique($clientCc));
+		$clientCcEmail 		= $clients[0]['contact_cc_string'];
+		$clientAdjustedPrice = number_format(($clients[0]['percentOfRevenue'] / 100) * $ticketData['billingPrice'], 2, '.', ',');
 		
 		// auction facilitator
 		// -------------------------------------------------------------------------------
-		// southern california - destinationId = 82
-		// northern california - destinationId = 81
-		// italy - destinationId = 6
-		$auc_fac_result = $this->Ticket->query('SELECT count(*) AS auc_count FROM clientDestinationRel WHERE clientId = ' . $clientId . ' AND destinationId IN (6,81,82)');
-		$is_auc_fac = ($auc_fac_result[0][0]['auc_count']) ? true : false;
-		
-		// auction facilitator overrides
-		// -------------------------------------------------------------------------------
-		$auc_fac_enable		= array(2138, 2811, 1826, 3401, 2692, 1205, 2076, 762, 3411, 2445, 3418, 654, 3401);
-		$auc_fac_disable	= array(1013, 3253);
-		if (in_array($clientId, $auc_fac_disable)) {
-			$is_auc_fac = false;	
-		}
-		if (in_array($clientId, $auc_fac_enable)) {
-			$is_auc_fac = true;	
-		}
+		$is_auc_fac = $this->isAuctionFacilitator($clientId);
 
 		// fetch template with the vars above
 		// -------------------------------------------------------------------------------
@@ -502,7 +484,6 @@ class WebServiceTicketsController extends WebServicesController
 				$emailFrom = "LuxuryLink.com<reservations@luxurylink.com>";
 				$emailReplyTo = "reservations@luxurylink.com";
 				$emailBcc = 'thread@luxurylink.com';
-				$returnPath = 'reservations@luxurylink.com';
 				break;
 			case 2:
 				// send out res request
@@ -513,7 +494,6 @@ class WebServiceTicketsController extends WebServicesController
 				$emailBcc = 'thread@luxurylink.com';
 				$userEmail = $clientPrimaryEmail;
 				$emailCc = $clientCcEmail;
-				$returnPath = 'reservations@luxurylink.com';
 				break;
 			case 3:
 				include('../vendors/email_msgs/ppv/winner_ppv.html');
@@ -521,7 +501,6 @@ class WebServiceTicketsController extends WebServicesController
 				$emailFrom = "LuxuryLink.com<auction@luxurylink.com>";
 				$emailReplyTo = 'auction@luxurylink.com';
 				$emailBcc = 'thread@luxurylink.com';
-				$returnPath = 'auction@luxurylink.com';
 				break;
 			case 4: 
 				include('../vendors/email_msgs/ppv/client_ppv.html');
@@ -531,7 +510,6 @@ class WebServiceTicketsController extends WebServicesController
 				$emailBcc = 'thread@luxurylink.com';
 				$userEmail = $clientPrimaryEmail;
 				$emailCc = $clientCcEmail;
-				$returnPath = 'auction@luxurylink.com';
 				break;
 			case 5:
 				include('../vendors/email_msgs/notifications/winner_notification.html');
@@ -539,7 +517,6 @@ class WebServiceTicketsController extends WebServicesController
 				$emailFrom = "LuxuryLink.com<auction@luxurylink.com>";
 				$emailReplyTo = "auction@luxurylink.com";
 				$emailBcc = 'winnernotifications@luxurylink.com';
-				$returnPath = 'auction@luxurylink.com';
 				break;
 			case 6:
 				include('../vendors/email_msgs/notifications/winner_notification_w_checkout.html');
@@ -547,7 +524,6 @@ class WebServiceTicketsController extends WebServicesController
 				$emailFrom = "LuxuryLink.com<auction@luxurylink.com>";
 				$emailReplyTo = "auction@luxurylink.com";
 				$emailBcc = 'winnernotifications@luxurylink.com';
-				$returnPath = 'auction@luxurylink.com';
 				break;
 			case 7:
 				include('../vendors/email_msgs/notifications/winner_notification_decline_cc.html');
@@ -555,7 +531,6 @@ class WebServiceTicketsController extends WebServicesController
 				$emailFrom = "LuxuryLink.com<auction@luxurylink.com>";
 				$emailReplyTo = "auction@luxurylink.com";
 				$emailBcc = 'winnernotifications@luxurylink.com';
-				$returnPath = 'auction@luxurylink.com';
 				break;
 			case 8:
 				include('../vendors/email_msgs/notifications/winner_notification_expired_cc.html');
@@ -563,14 +538,12 @@ class WebServiceTicketsController extends WebServicesController
 				$emailFrom = "LuxuryLink.com<auction@luxurylink.com>";
 				$emailReplyTo = "auction@luxurylink.com";
 				$emailBcc = 'winnernotifications@luxurylink.com';
-				$returnPath = 'auction@luxurylink.com';
 				break;
 			case 9:
 				include('../vendors/email_msgs/fixed_price/msg_fixedprice.html');
 				$emailSubject = "LuxuryLink.com: Your Travel Request Has Been Received";
 				$emailFrom = "LuxuryLink.com<exclusives@luxurylink.com>";
 				$emailReplyTo = "exclusives@luxurylink.com";
-				$returnPath = 'exclusives@luxurylink.com';
 				break;
 			case 10:
 				include('../vendors/email_msgs/fixed_price/msg_client_fixedprice.html');
@@ -579,7 +552,6 @@ class WebServiceTicketsController extends WebServicesController
 				$emailReplyTo = "exclusives@luxurylink.com";
 				$userEmail = $clientPrimaryEmail;
 				$emailCc = $clientCcEmail;
-				$returnPath = 'exclusives@luxurylink.com';
 				break;
 			case 11:
 				include('../vendors/email_msgs/fixed_price/msg_internal_fixedprice.html');
@@ -587,23 +559,54 @@ class WebServiceTicketsController extends WebServicesController
 				$emailFrom = "LuxuryLink.com<exclusives@luxurylink.com>";
 				$emailReplyTo = "exclusives@luxurylink.com";
 				$userEmail = 'exclusives@luxurylink.com';
-				$returnPath = 'exclusives@luxurylink.com';
 				break;
 			default:
 				break;
 		}
 		$emailBody = ob_get_clean();
-
+		
 		// if sending from toolbox tool ppvNotice add screen (manual edit and send)
 		// -------------------------------------------------------------------------------
 		if ($manualEmailBody) {
 			$emailBody = $manualEmailBody;
 		}
-	
+
 		// send the email out!
 		// -------------------------------------------------------------------------------
 		if ($send) {
-			$this->sendPpvEmail($userEmail, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials, $returnPath);	
+			$this->sendPpvEmail($userEmail, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials);	
+			
+			// AUTO SECTION FOR MULTI CLIENT PPV for multi-client packages send client emails [CLIENT PPV]
+			// -------------------------------------------------------------------------------
+			$count_clients = count($clients);
+			if ((in_array($ppvNoticeTypeId, array(2,4,10))) && (!$manualEmailBody) && ($count_clients > 1)) {
+				for ($i = 1; $i < $count_clients; $i++) {
+					$clientId			= $clients[$i]['clientId'];
+					$clientNameP 		= $clients[$i]['name'];
+					$clientName 		= $clients[$i]['contacts'][0]['ppv_name'];
+					$clientPrimaryEmail = $clients[$i]['contacts'][0]['ppv_email_address'];
+					$oldProductId		= $clients[$i]['oldProductId'];
+					$clientCcEmail 		= $clients[$i]['contact_cc_string'];	
+					$clientAdjustedPrice = number_format(($clients[$i]['percentOfRevenue'] / 100) * $ticketData['billingPrice'], 2, '.', ',');
+					$is_auc_fac 		= $this->isAuctionFacilitator($clientId);
+					ob_start();
+					switch ($ppvNoticeTypeId) {
+						case 2:
+							include('../vendors/email_msgs/ppv/res_ppv.html');
+							break;
+						case 4:
+							include('../vendors/email_msgs/ppv/client_ppv.html');
+							break;
+						case 10:
+							include('../vendors/email_msgs/fixed_price/msg_client_fixedprice.html');
+							break;
+					}
+					$emailBody = ob_get_clean();
+					$userEmail = $clientPrimaryEmail;
+					$emailCc = $clientCcEmail;
+					$this->sendPpvEmail($userEmail, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials);	
+				}	
+			}
 		}
 		
 		// return the string for toolbox ppvNotice add screen (manual edit and send)
@@ -613,7 +616,7 @@ class WebServiceTicketsController extends WebServicesController
 		}
 	}
 		
-	function sendPpvEmail($emailTo, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials, $returnPath) {
+	function sendPpvEmail($emailTo, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials) {
 		
 		// send out ppv and winner notification emails
 		// -------------------------------------------------------------------------------
@@ -623,7 +626,7 @@ class WebServiceTicketsController extends WebServicesController
 		$emailHeaders.= "Bcc: $emailBcc\r\n";
     	$emailHeaders.= "Content-type: text/html\r\n";
 		
-		@mail($emailTo, $emailSubject, $emailBody, $emailHeaders, "-f $returnPath");
+		@mail($emailTo, $emailSubject, $emailBody, $emailHeaders);
 		
 		// below is for logging the email and updating the ticket
 		// -------------------------------------------------------------------------------
@@ -672,6 +675,30 @@ class WebServiceTicketsController extends WebServicesController
 		if ($newTicketStatus) {
 			$this->updateTicketStatus($ticketId, $newTicketStatus);
 		}
+	}
+		
+	function isAuctionFacilitator($clientId) {
+		// southern california - destinationId = 82 
+		// northern california - destinationId = 81
+		// italy - destinationId = 6
+		
+		if (!$clientId) {
+			return false;	
+		}
+		$auc_fac_result = $this->Ticket->query('SELECT count(*) AS auc_count FROM clientDestinationRel WHERE clientId = ' . $clientId . ' AND destinationId IN (6,81,82)');
+		$is_auc_fac = ($auc_fac_result[0][0]['auc_count']) ? true : false;
+		
+		// auction facilitator overrides
+		// -------------------------------------------------------------------------------
+		$auc_fac_enable		= array(2138, 2811, 1826, 3401, 2692, 1205, 2076, 762, 3411, 2445, 3418, 654, 3401);
+		$auc_fac_disable	= array(1013, 3253);
+		if (in_array($clientId, $auc_fac_disable)) {
+			$is_auc_fac = false;	
+		}
+		if (in_array($clientId, $auc_fac_enable)) {
+			$is_auc_fac = true;	
+		}
+		return $is_auc_fac;	
 	}
 		
 	function updateTicketStatus($ticketId, $newStatusId) {
