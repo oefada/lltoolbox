@@ -640,8 +640,11 @@ class PackagesController extends AppController {
 	        $body .= "http://toolbox.luxurylink.com/clients/$clientId/packages/edit/$packageId";
 	        $body .= "\n\nAdditional Message: ";
 	        $body .= $this->data['additionalMessage'];
+	        
+	        $headers = "Reply-To: {$this->user['LdapUser']['mail']}\n";
+	        $headers .= "Return-Path: {$this->user['LdapUser']['mail']}";
                 
-            if(mail('approval@luxurylink.com', $subject, $body, "Reply-To: {$this->user['LdapUser']['mail']}")) {
+            if(mail('approval@luxurylink.com', $subject, $body, $headers)) {
                 $this->set('closeModalbox', true);
                 $this->Session->setFlash(__('The Package has been submitted for Merchandising approval', true), 'default', array(), 'success');
             } else {
