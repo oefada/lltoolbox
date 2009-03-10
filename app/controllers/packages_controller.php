@@ -642,7 +642,7 @@ class PackagesController extends AppController {
 	        $body .= $this->data['additionalMessage'];
 	        
 	        $headers = "Reply-To: {$this->user['LdapUser']['mail']}\n";
-	        $headers .= "Return-Path: {$this->user['LdapUser']['mail']}";
+	        $headers .= "From: {$this->user['LdapUser']['mail']}";
                 
             if(mail('approval@luxurylink.com', $subject, $body, $headers)) {
                 $this->set('closeModalbox', true);
