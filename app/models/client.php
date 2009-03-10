@@ -133,45 +133,45 @@ class Client extends AppModel {
 			foreach ($clientToolbox['Theme'] as $theme) {
 				$themeIds[] = $theme['themeId'];
 			}
-		}
-		sort($themeIds);
-		$tmp = '';
-		$insert_arr = array();
-		$insert_arr['clientId'] = $clientId;
-		for ($i = 1; $i <= 150; $i++) {
-			if (in_array($i, $themeIds)) {
-				$insert_arr["theme$i"] = 1;
-				$tmp.= "theme$i=1,";	
-			} else {
-				$tmp.= "theme$i=0,";
+			sort($themeIds);
+			$tmp = '';
+			$insert_arr = array();
+			$insert_arr['clientId'] = $clientId;
+			for ($i = 1; $i <= 150; $i++) {
+				if (in_array($i, $themeIds)) {
+					$insert_arr["theme$i"] = 1;
+					$tmp.= "theme$i=1,";	
+				} else {
+					$tmp.= "theme$i=0,";
+				}
 			}
+			$update_tmp = rtrim($tmp, ',');
+			$sql = "INSERT DELAYED INTO clientThemeLookup (". implode(',',array_keys($insert_arr)) .") VALUES (". implode(',',array_values($insert_arr)) .") ON DUPLICATE KEY UPDATE $update_tmp";						
+			$result = $this->query($sql);
 		}
-		$update_tmp = rtrim($tmp, ',');
-		$sql = "INSERT DELAYED INTO clientThemeLookup (". implode(',',array_keys($insert_arr)) .") VALUES (". implode(',',array_values($insert_arr)) .") ON DUPLICATE KEY UPDATE $update_tmp";						
-		$result = $this->query($sql);
 				
 		// get all the clients destination ids
 		// -----------------------------------------------------------------
 		if (isset($clientToolbox['Destination'])) {
 			foreach ($clientToolbox['Destination'] as $destination) {
-				$destinationIds[] = $destination['themeId'];
+				$destinationIds[] = $destination['destinationId'];
 			}
-		}
-		sort($destinationIds);
-		$tmp = '';
-		$insert_arr = array();
-		$insert_arr['clientId'] = $clientId;
-		for ($i = 1; $i <= 150; $i++) {
-			if (in_array($i, $destinationIds)) {
-				$insert_arr["destination$i"] = 1;
-				$tmp.= "destination$i=1,";	
-			} else {
-				$tmp.= "destination$i=0,";
+			sort($destinationIds);
+			$tmp = '';
+			$insert_arr = array();
+			$insert_arr['clientId'] = $clientId;
+			for ($i = 1; $i <= 150; $i++) {
+				if (in_array($i, $destinationIds)) {
+					$insert_arr["destination$i"] = 1;
+					$tmp.= "destination$i=1,";	
+				} else {
+					$tmp.= "destination$i=0,";
+				}
 			}
+			$update_tmp = rtrim($tmp, ',');
+			$sql = "INSERT INTO clientDestinationLookup (". implode(',',array_keys($insert_arr)) .") VALUES (". implode(',',array_values($insert_arr)) .") ON DUPLICATE KEY UPDATE $update_tmp";
+			$result = $this->query($sql);
 		}
-		$update_tmp = rtrim($tmp, ',');
-		$sql = "INSERT INTO clientDestinationLookup (". implode(',',array_keys($insert_arr)) .") VALUES (". implode(',',array_values($insert_arr)) .") ON DUPLICATE KEY UPDATE $update_tmp";
-		$result = $this->query($sql);
 		
 		// map other fields manually
 		// -----------------------------------------------------------------
