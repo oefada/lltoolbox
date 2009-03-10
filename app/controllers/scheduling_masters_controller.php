@@ -413,6 +413,14 @@ class SchedulingMastersController extends AppController {
 		
 		$this->setOfferTypeDefaultAndDropdown($packageId, $formatIds, $this->data);
 		
+		//the state of the master is 0 if it hasn't gone live yet, or 1 if atleast one iteration has gone live
+		if (strtotime($this->data['SchedulingMaster']['startDate']) >= time()) {
+		    $masterState = 0;
+		} else {
+		    $masterState = 1;
+		}
+		
+		$this->set('masterState',               $masterState);
 		$this->set('package', 					$package);
 		$this->set('packageId', 				$packageId);
 		$this->set('remainingIterations',       $remainingIterations);
@@ -421,7 +429,6 @@ class SchedulingMastersController extends AppController {
 		$this->set('schedulingDelayCtrlIds',    $schedulingDelayCtrlIds);
 	}
 
-    //TODO: fix the number of iterations after delete
 	function delete($id = null) {
 	    $this->autoRender = false;
 		if (!$id) {
@@ -429,9 +436,19 @@ class SchedulingMastersController extends AppController {
 			$this->set('closeModalbox', true);
 		}
 
-		$this->SchedulingMaster->deleteAll(array('SchedulingMaster.startDate > NOW()', 'SchedulingMaster.schedulingMasterId' => $id));
+	    $this->SchedulingMaster->deleteAll(array('SchedulingMaster.startDate > NOW()', 'SchedulingMaster.schedulingMasterId' => $id));
 	    $this->SchedulingMaster->SchedulingInstance->deleteAll(array('SchedulingInstance.startDate > NOW()', 'SchedulingInstance.schedulingMasterId' => $id));
+	 
+	    $this->SchedulingMaster->id = $id;
+	    $masterData = $this->SchedulingMaster->read();
 	    
+	    if(!empty($masterData)) {
+    	    $numInstances = count($masterData['SchedulingInstance']);
+
+    	    $this->SchedulingMaster->saveField('iterations', $numInstances);
+	    }
+
+
 		$this->Session->setFlash(__('The scheduling master and/or iterations have been deleted', true), 'default', array(), 'success');	
 		echo "<div id='closeModalbox'>abc</div>";
 	}
