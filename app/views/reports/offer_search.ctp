@@ -103,7 +103,8 @@ if (!empty($results)): ?>
 			<th><?=sortLink('Package.numNights', 'Room Nights', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('Package.validityEndDate', 'Validity End', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('offerStatus', 'Status', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('dateOpenedOrClosed', 'Date Opened/Closed', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('startDate', 'Date Opened', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('endDate', 'Date Closed', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('numberOfBids', '# Bids', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('Package.approvedRetailPrice', 'Retail Value', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('SchedulingMaster.openingBid', 'Opening Bid Amount', $currentPage, $serializedFormInput, $this, $html)?></th>
@@ -131,7 +132,8 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 			</div>
 		</td>
 		<td><?php echo ($result[0]['offerStatus']) ? 'Open' : 'Closed' ?></td>
-		<td><?=date('M j, Y h:i:s A', strtotime($result[0]['dateOpenedOrClosed']))?></td>
+		<td><?=date('M j, Y h:i:s A', strtotime($result['SchedulingInstance']['startDate']))?></td>
+		<td><?=date('M j, Y h:i:s A', strtotime($result['SchedulingInstance']['endDate']))?></td>
 		<td style="text-align: center">
 			<div<?php echo ($result[0]['flagBids']) ? 'style="min-height: 20px; line-height: 20px; padding: 4px; border: 4px solid #c00;"': '' ; ?>>
 				<?=$html->link($result[0]['numberOfBids'], '/bids/search?query='.$result['Offer']['offerId'])?>
@@ -140,7 +142,7 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 		<td><?=$number->currency($result['Package']['approvedRetailPrice'], 'USD', array('places' => 0))?></td>
 		<td><?=$result['SchedulingMaster']['openingBid']?></td>
 		<td><div<?php echo ($result[0]['loaEndApproaching']) ? ' style="min-height: 20px; line-height: 20px; padding: 4px; border: 4px solid #ff0;"' : '' ?>><?=$html->link(date('M j, Y', strtotime($result['Loa']['endDate'])), array('controller' => 'loas', 'action' => 'edit', $result['Loa']['loaId']))?></div></td>
-		<td><div<?php if ($result['Loa']['membershipBalance'] <= 0) { echo ' style="min-height: 20px; line-height: 20px; padding: 4px; border: 4px solid #c00;"'; } else if($result['Loa']['membershipBalance'] <= 1000) { echo ' style="min-height: 20px; line-height: 20px; padding: 4px; border: 4px solid #ff0;"';} ?>><?=$html->link($number->currency($result['Loa']['membershipBalance'], 'USD', array('places' => 0)), array('controller' => 'loas', 'action' => 'edit', $result['Loa']['loaId']))?></div></td>
+		<td><div<?php if ($result['Loa']['membershipBalance'] <= 0 && $result['Track']['applyToMembershipBal']) { echo ' style="min-height: 20px; line-height: 20px; padding: 4px; border: 4px solid #c00;"'; } else if($result['Loa']['membershipBalance'] <= 1000) { echo ' style="min-height: 20px; line-height: 20px; padding: 4px; border: 4px solid #ff0;"';} ?>><?=$html->link($number->currency($result['Loa']['membershipBalance'], 'USD', array('places' => 0)), array('controller' => 'loas', 'action' => 'edit', $result['Loa']['loaId']))?></div></td>
 		<td><?
 		switch($result['auction_mstr']['remitStatus']) {
             case 0:

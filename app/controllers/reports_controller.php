@@ -85,8 +85,7 @@ class ReportsController extends AppController {
             $numPages = ceil($numRecords / $this->perPage);
                 
 	        $sql = "SELECT
-	                SchedulingInstance.schedulingInstanceId, (SchedulingInstance.endDate >= NOW()) AS offerStatus, IF(SchedulingInstance.endDate >= NOW(), SchedulingInstance.startDate, SchedulingInstance.endDate) AS dateOpenedOrClosed,
-	                SchedulingInstance.endDate,
+	                SchedulingInstance.schedulingInstanceId, (SchedulingInstance.endDate >= NOW()) AS offerStatus, SchedulingInstance.startDate, SchedulingInstance.endDate,
 	                Client.clientId, Client.name,
 	                OfferType.offerTypeName,
 	                Offer.offerId,
@@ -104,7 +103,8 @@ class ReportsController extends AppController {
 	                Client.managerUsername,
 	                IF((Package.validityEndDate - INTERVAL 60 DAY) <= NOW(), 1, 0) as validityEndApproaching,
 	                IF((Loa.endDate - INTERVAL 14 DAY) <= NOW(), 1, 0) as loaEndApproaching,
-	                IF(SchedulingMasterPerformance.numOffersNoBid >= 10, 1, 0) as flagBids
+	                IF(SchedulingMasterPerformance.numOffersNoBid >= 10, 1, 0) as flagBids,
+	                Track.applyToMembershipBal
 	                FROM offer AS Offer
 	                LEFT JOIN bid AS Bid ON (Bid.offerId = Offer.offerId)
 	                INNER JOIN schedulingInstance AS SchedulingInstance ON (SchedulingInstance.schedulingInstanceId = Offer.schedulingInstanceId)
@@ -113,6 +113,7 @@ class ReportsController extends AppController {
 	                LEFT JOIN offerType as OfferType ON (OfferType.offerTypeId = SchedulingMaster.offerTypeId)
 	                LEFT JOIN package AS Package ON (Package.packageId = SchedulingMaster.packageId)
 	                LEFT JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Package.packageId)
+	                LEFT JOIN track AS Track ON (Track.trackid = ClientLoaPackageRel.trackId)
 	                LEFT JOIN luxurymasterMigrate.auction_mstr as auction_mstr ON (auction_mstr.auction_id = Package.packageId)
 	                LEFT JOIN loa AS Loa ON (Loa.loaId = ClientLoaPackageRel.loaId)
 	                LEFT JOIN client AS Client ON (Client.clientId = ClientLoaPackageRel.clientId)
@@ -207,8 +208,10 @@ class ReportsController extends AppController {
                         $values[] = "'{$value}'";
                     }
                     $conditions[$k] =   $ca['field'].' IN('.implode(',', $values).')';
-                }else if ($ca['field'] == 'Client.name' || $ca['field'] == 'Package.packageName') {
+                }else if ($ca['field'] == 'Package.packageName') {
 	                $conditions[$k] =   "MATCH({$ca['field']}) AGAINST('{$ca['value']}' IN BOOLEAN MODE)";
+	            } else if ($ca['field'] == 'Client.name') {
+	                $conditions[$k] =   "{$ca['field']} LIKE '%{$ca['value']}%'";
 	            } else {
 	               $conditions[$k] =   $ca['field'].' = '."'{$ca['value']}'";
 	            }
