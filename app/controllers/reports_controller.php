@@ -258,7 +258,7 @@ class ReportsController extends AppController {
 
 	        $sql = "SELECT
                             Offer.offerId,
-                        	Client.name,
+                        	GROUP_CONCAT(Client.name) as clientNames,
                         	auction_mstr.auction_wholesale as remitStatus,
                         	#Track.applyToMembershipBal,
                         	OfferType.offerTypeName,
@@ -411,12 +411,12 @@ class ReportsController extends AppController {
             $count = "SELECT COUNT(DISTINCT Ticket.ticketId) AS numRecords
                                 FROM ticket AS Ticket
                                 LEFT JOIN offerType as OfferType ON (OfferType.offerTypeId = Ticket.offerTypeId)
-                                LEFT JOIN client AS Client ON (Client.clientId = Ticket.clientId)
                                 LEFT JOIN offer AS Offer ON (Offer.offerId = Ticket.offerId)
                                 LEFT JOIN schedulingInstance AS SchedulingInstance ON (SchedulingInstance.schedulingInstanceId = Offer.schedulingInstanceId)
                                 LEFT JOIN schedulingMaster AS SchedulingMaster ON (SchedulingMaster.schedulingMasterId = SchedulingInstance.schedulingMasterId)
                                 LEFT JOIN package AS Package ON (Package.packageId = SchedulingMaster.packageId)
-                                LEFT JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Package.packageId AND ClientLoaPackageRel.clientId = Ticket.clientId)
+                                LEFT JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Package.packageId)
+                                LEFT JOIN client AS Client ON (Client.clientId = ClientLoaPackageRel.clientId)
                                 LEFT JOIN luxurymasterMigrate.auction_mstr as auction_mstr ON (auction_mstr.auction_id = Ticket.packageId)
                                 LEFT JOIN track AS Track ON (Track.trackId = ClientLoaPackageRel.trackId)
                                 LEFT JOIN paymentDetail AS PaymentDetail ON (PaymentDetail.ticketId = Ticket.ticketId AND PaymentDetail.userId = Ticket.userId)
@@ -429,7 +429,8 @@ class ReportsController extends AppController {
 	        $sql = "SELECT
                                         Offer.offerId,
                                         Ticket.ticketId,
-                                    	Client.name,
+                                        GROUP_CONCAT(Client.clientId) as clientIds
+                                    	GROUP_CONCAT(Client.name) as clientNames,
                                     	Ticket.userFirstName,
                                     	Ticket.userLastName,
                                     	auction_mstr.auction_wholesale as remitStatus,
@@ -446,9 +447,9 @@ class ReportsController extends AppController {
                                 FROM ticket AS Ticket
                                 LEFT JOIN ticketStatus AS TicketStatus USING (ticketStatusId)
                                 LEFT JOIN offerType as OfferType ON (OfferType.offerTypeId = Ticket.offerTypeId)
-                                LEFT JOIN client AS Client ON (Client.clientId = Ticket.clientId)
                                 LEFT JOIN offer AS Offer ON (Offer.offerId = Ticket.offerId)
-                                LEFT JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Ticket.packageId AND ClientLoaPackageRel.clientId = Ticket.clientId)
+                                LEFT JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Ticket.packageId)
+                                LEFT JOIN client AS Client ON (Client.clientId = ClientLoaPackageRel.clientId)
                                 LEFT JOIN luxurymasterMigrate.auction_mstr as auction_mstr ON (auction_mstr.auction_id = Ticket.packageId)
                                 LEFT JOIN track AS Track ON (Track.trackId = ClientLoaPackageRel.trackId)
                                 LEFT JOIN paymentDetail AS PaymentDetail ON (PaymentDetail.ticketId = Ticket.ticketId AND PaymentDetail.userId = Ticket.userId)
@@ -666,13 +667,13 @@ class ReportsController extends AppController {
                                INNER JOIN offer AS Offer USING(offerId)
                                LEFT JOIN offerType AS OfferType USING(offerTypeId)
                                INNER JOIN schedulingInstance AS SchedulingInstance USING(schedulingInstanceId)
-                               INNER JOIN client as Client USING(clientId)
                                LEFT JOIN paymentDetail AS PaymentDetail USING (ticketId)
                                LEFT JOIN paymentProcessor AS PaymentProcessor USING (paymentProcessorId)
                                LEFT JOIN userPaymentSetting AS UserPaymentSetting USING (userPaymentSettingId)
                                INNER JOIN package AS Package USING(packageId)
                                LEFT JOIN luxurymasterMigrate.auction_mstr as auction_mstr ON (auction_mstr.auction_id = Package.packageId)
-                               INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.clientId = Ticket.clientId AND ClientLoaPackageRel.packageId = Ticket.packageId)
+                               INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Ticket.packageId)
+                               INNER JOIN client as Client ON(Client.clientId = ClientLoaPackageRel.clientId)
                                LEFT JOIN track AS Track USING(trackId)
                         WHERE $conditions";
 
@@ -683,9 +684,9 @@ class ReportsController extends AppController {
             $sql = "SELECT SchedulingInstance.endDate,
                            PaymentDetail.ppResponseDate, 
                            Ticket.ticketId,
-                           Client.clientId,
-                           Client.oldProductId,
-                           Client.name,
+                           GROUP_CONCAT(DISTINCT Client.clientId) as clientIds,
+                           GROUP_CONCAT(DISTINCT Client.oldProductId) as oldProductIds,
+                           GROUP_CONCAT(DISTINCT Client.name) as clientNames,
                            Ticket.userFirstName,
                            Ticket.userLastName,
                            PaymentDetail.ppBillingAddress1,
@@ -714,13 +715,13 @@ class ReportsController extends AppController {
                            INNER JOIN offer AS Offer USING(offerId)
                            LEFT JOIN offerType AS OfferType ON (Ticket.offerTypeId = OfferType.offerTypeId)
                            LEFT JOIN schedulingInstance AS SchedulingInstance USING(schedulingInstanceId)
-                           LEFT JOIN client as Client USING(clientId)
                            LEFT JOIN paymentDetail AS PaymentDetail ON (PaymentDetail.ticketId = Ticket.ticketId)
                            LEFT JOIN paymentProcessor AS PaymentProcessor USING (paymentProcessorId)
                            LEFT JOIN userPaymentSetting AS UserPaymentSetting ON (UserPaymentSetting.userPaymentSettingId = PaymentDetail.userPaymentSettingId)
                            LEFT JOIN package AS Package USING(packageId)
                            LEFT JOIN luxurymasterMigrate.auction_mstr as auction_mstr ON (auction_mstr.auction_id = Package.packageId)
-                           LEFT JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.clientId = Ticket.clientId AND ClientLoaPackageRel.packageId = Ticket.packageId)
+                           LEFT JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Ticket.packageId)
+                           LEFT JOIN client as Client ON(Client.clientId = ClientLoaPackageRel.clientId)
                            LEFT JOIN track AS Track USING(trackId)
                     WHERE $conditions
                     GROUP BY Ticket.ticketId

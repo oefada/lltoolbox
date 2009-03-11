@@ -122,7 +122,7 @@ $moneyCollected += $r[0]['moneyCollected'];
 ?>
 	<tr<?=$class?>>
 		<td><?=$r['Offer']['offerId']?></td>
-		<td><?=$r['Client']['name']?></td>
+		<td><?=$r[0]['clientNames']?></td>
 		<td><?
 		switch($r['auction_mstr']['remitStatus']) {
             case 0:

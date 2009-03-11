@@ -24,8 +24,8 @@ switch($r['auction_mstr']['remitStatus']) {
 	$line = array(
 	$r['Offer']['offerId'],
 	$r['Ticket']['ticketId'],
-	str_replace(',', $r['Client']['name']),
-	str_replace(',', $r['Ticket']['userFirstName'].' '.$r['Ticket']['userLastName']),
+	str_replace(',', '|', $r[0]['clientNames']),
+	str_replace(',', '', $r['Ticket']['userFirstName'].' '.$r['Ticket']['userLastName']),
 	$remit,
 	$r['OfferType']['offerTypeName'],
 	$r['Ticket']['requestQueueDateTime'],

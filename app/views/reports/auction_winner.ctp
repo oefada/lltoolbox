@@ -97,8 +97,8 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 		<td><?=$r['SchedulingInstance']['endDate']?></td>
 		<td><?=$r['PaymentDetail']['ppResponseDate']?></td>
 		<td><?=$r['Ticket']['ticketId']?></td>
-		<td><?=$r['Client']['clientId']?></td>
-		<td><?=$r['Client']['name']?></td>
+		<td><?=$r[0]['clientIds']?></td>
+		<td><?=$r[0]['clientNames']?></td>
 		<td><?=$r['Ticket']['userFirstName']?></td>
 		<td><?=$r['Ticket']['userLastName']?></td>
 		<td><?=$r['PaymentDetail']['ppBillingAddress1']?></td>

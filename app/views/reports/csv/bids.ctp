@@ -23,7 +23,7 @@ foreach ($results as $r):
 	}
 	$line = array(
 		$r['Offer']['offerId'],
-		str_replace(',', $r['Client']['name']),
+		str_replace(',', '|', $r[0]['clientNames']),
 		$remit,
 		$r['OfferType']['offerTypeName'],
 		date('M d Y  g:i:00:000A', strtotime($r['SchedulingInstance']['endDate'])),

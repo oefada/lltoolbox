@@ -100,7 +100,7 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 	<tr<?=$class?>>
 		<td><?=$r['Offer']['offerId']?></td>
 		<td><?=$r['Ticket']['ticketId']?></td>
-		<td><?=$r['Client']['name']?></td>
+		<td><?=$r[0]['clientNames']?></td>
 		<td><?=$r['Ticket']['userFirstName'].' '.$r['Ticket']['userLastName']?></td>
 		<td><?
 		switch($r['auction_mstr']['remitStatus']) {
