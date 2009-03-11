@@ -68,7 +68,7 @@ class SchedulingMaster extends AppModel {
 	
 	function validateIterations() {
 	    if (1 == $this->data['SchedulingMaster']['iterationSchedulingOption']) {
-	        return $this->data['SchedulingMaster']['iterations'] >= 1;
+	        return ($this->data['SchedulingMaster']['iterations'] >= 1);
 	    }
 	    
 	    return true;
