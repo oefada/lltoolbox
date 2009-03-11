@@ -429,6 +429,7 @@ $this->searchController = 'Tickets';
  				<th style="text-align:center;">Track Detail Id</th>
  				<th style="text-align:center;">Ticket Id</th>
  				<th style="text-align:center;">Ticket Amount</th>
+ 				<th style="text-align:center;">Allocated Amount</th>
  				<th style="text-align:center;">Cycle</th>
  				<th style="text-align:center;">Iteration</th>
  				<th style="text-align:center;">Amount Kept</th>
@@ -445,6 +446,7 @@ $this->searchController = 'Tickets';
 				<td style="text-align:center;"><?=$v['trackDetail']['trackDetailId'];?></td>
 				<td style="text-align:center;"><?=$v['trackDetail']['ticketId'];?></td>
 				<td style="text-align:center;"><?=$number->currency($v['trackDetail']['ticketAmount']);?></td>
+				<td style="text-align:center;"><?=$number->currency($v['trackDetail']['allocatedAmount']);?></td>
 				<td style="text-align:center;"><?=$v['trackDetail']['cycle'];?></td>
 				<td style="text-align:center;"><?=$v['trackDetail']['iteration'];?></td>
 				<td style="text-align:center;"><?=$number->currency($v['trackDetail']['amountKept']);?></td>
