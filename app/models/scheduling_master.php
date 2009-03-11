@@ -35,9 +35,8 @@ class SchedulingMaster extends AppModel {
 												'message' => 'Must be greater than or equal to 1'
 												),
 						'iterations' => array('rule' => 
-													array('comparison', '>=', 1),
-													'message' => 'Must be greater than or equal to 1',
-													'allowEmpty' => true
+													array('validateIterations'),
+													'message' => 'Iterations must be greater than or equal to 1'
 												),
 						'startDate' => array('rule' => 
 													array('validateDateRanges'),
@@ -47,7 +46,7 @@ class SchedulingMaster extends AppModel {
 													array('validateDateRanges'),
 													'message' => 'Must be greater than today and greater than the start date'
 												),
-						'openingBid' => array('rule' => 
+						'openingBid' => array('rule' =>
                         							array('validateOpeningBid'),
                         							'message' => 'Opening bid cannot be $0.00. Adjust the package and then return to schedule it.'
                         							),
@@ -65,6 +64,14 @@ class SchedulingMaster extends AppModel {
 		if(isset($data['endDate']) && $this->data['SchedulingMaster']['iterationSchedulingOption'] && ($packageStartDate >= $packageEndDate))	return false;
 		
 		return true;
+	}
+	
+	function validateIterations() {
+	    if (1 == $this->data['SchedulingMaster']['iterationSchedulingOption']) {
+	        return $this->data['SchedulingMaster']['iterations'] >= 1;
+	    }
+	    
+	    return true;
 	}
 	
 	function validateOpeningBid() {
