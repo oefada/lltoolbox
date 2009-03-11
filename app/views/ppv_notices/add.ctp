@@ -1,5 +1,5 @@
 <div class="ppvNotices form">
-<?php echo $form->create(null, array('url' => array('controller' => 'tickets/' . $this->params['ticketId'], 'action' => 'ppvNotices/add/' . $this->params['id']))); ?>
+<?php echo $form->create(null, array('url' => array('controller' => 'tickets/' . $this->params['ticketId'], 'action' => 'ppvNotices/add/' . $this->params['id'] . $clientIdParam  ))); ?>
 <?php echo $javascript->link('tiny_mce/tiny_mce.js');?>
 
 <script type="text/javascript">

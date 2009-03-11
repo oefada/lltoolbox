@@ -79,6 +79,8 @@
 	
 	Router::connect('/tickets/:ticketId/:controller/:action', array(), array('ticketId' => '[0-9]+', 'pass' => array('ticketId')));
 	Router::connect('/tickets/:ticketId/:controller/:action/:id', array(), array('ticketId' => '[0-9]+', 'id' => '[0-9]+', 'pass' => array('ticketId', 'id')));
+
+	Router::connect('/tickets/:ticketId/:controller/:action/:id/:clientId', array(), array('ticketId' => '[0-9]+', 'id' => '[0-9]+', 'clientId' => '[0-9]+', 'pass' => array('ticketId', 'id', 'clientId')));
 	
 	Router::connect('/menus/:menuId/:controller/:action', array(), array('menuId' => '[0-9]+', 'id' => '[0-9]+', 'pass' => array('menuId')));
 	Router::connect('/menus/:menuId/:controller/:action/:id', array(), array('menuId' => '[0-9]+', 'id' => '[0-9]+', 'pass' => array('menuId','id')));

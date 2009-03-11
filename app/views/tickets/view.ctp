@@ -291,12 +291,36 @@ $this->searchController = 'Tickets';
 			<td style="border:0px;"><?php echo $html->link('Send Notification Declined CC', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/7');?></td>
 		</tr>
 		<tr>
-			<td style="border:0px;"><?php echo $html->link('Send Fixed Price - Client Exclusive Email', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/10');?></td>
+			<?php if (count($ticket['Client']) > 1) : ?>
+				<td style="border:0px;">
+					** Multi-Client Package **<br />
+					<?php 
+						foreach ($ticket['Client'] as $k=>$client) {
+							echo $html->link("Send Fixed Price - Client Exclusive Email [". $client['Client']['name'] . "]", '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/10/' . $client['Client']['clientId']);	
+							echo '<br />';
+						}
+					?>
+				</td>
+			<?php else : ?>
+				<td style="border:0px;"><?php echo $html->link('Send Fixed Price - Client Exclusive Email', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/10');?></td>
+			<?php endif; ?>
 			<td style="border:0px;"><?php echo $html->link('Send Notification Expired CC', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/8');?></td>
 		</tr>
 		<tr>
 			<td style="border:0px;"><?php echo $html->link('Send Fixed Price - Internal Exclusive Email', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/11');?></td>
-			<td style="border:0px;"><?php echo $html->link('Send Client PPV', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/4');?></td>
+			<?php if (count($ticket['Client']) > 1) : ?>
+				<td style="border:0px;">
+					** Multi-Client Package **<br />
+					<?php 
+						foreach ($ticket['Client'] as $k=>$client) {
+							echo $html->link("Send Client PPV [". $client['Client']['name'] . "]", '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/4/' . $client['Client']['clientId']);	
+							echo '<br />';
+						}
+					?>
+				</td>
+			<?php else : ?>
+				<td style="border:0px;"><?php echo $html->link('Send Client PPV', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/4');?></td>
+			<?php endif; ?>
 		</tr>
 		<tr>
 			<td style="border:0px;">&nbsp;</td>

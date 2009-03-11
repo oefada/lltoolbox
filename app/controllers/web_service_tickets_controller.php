@@ -350,6 +350,7 @@ class WebServiceTicketsController extends WebServicesController
 		$manualEmailBody	= isset($params['manualEmailBody']) ? $params['manualEmailBody'] : null;
 		$ppvNoticeTypeId	= isset($params['ppvNoticeTypeId']) ? $params['ppvNoticeTypeId'] : null;
 		$ppvInitials		= isset($params['initials']) ? $params['initials'] : null;
+		$clientIdParam		= isset($params['clientId']) ? $params['clientId'] : false;
 		
 		// TODO: error checking for params
 		
@@ -440,8 +441,12 @@ class WebServiceTicketsController extends WebServicesController
 		// fetch client contacts
 		// -------------------------------------------------------------------------------
 		$clients		 	= array();
+		$multi_client_map_override = false;
 		foreach ($clientData as $k => $v) {
 			$tmp = $v['Client'];
+			if ($clientIdParam && ($clientIdParam == $tmp['clientId'])) {
+				$multi_client_map_override = $k;
+			}
 			$tmp_result = $this->Ticket->query('SELECT * FROM clientContact WHERE clientContactTypeId = 1 and clientId = ' . $v['Client']['clientId'] . ' ORDER BY primaryContact DESC');
 			$contact_cc_string = array();
 			foreach ($tmp_result as $a => $b) {
@@ -458,16 +463,18 @@ class WebServiceTicketsController extends WebServicesController
 			}
 			$tmp['contact_cc_string'] = implode(',', array_unique($contact_cc_string));
 			$tmp['percentOfRevenue'] = $v['ClientLoaPackageRel']['percentOfRevenue'];
-			$clients[] = $tmp;
+			$clients[$k] = $tmp;
 		}
 		
-		$clientId			= $clients[0]['clientId'];
-		$clientNameP 		= $clients[0]['name'];
-		$clientName 		= $clients[0]['contacts'][0]['ppv_name'];
-		$clientPrimaryEmail = $clients[0]['contacts'][0]['ppv_email_address'];
-		$oldProductId		= $clients[0]['oldProductId'];
-		$clientCcEmail 		= $clients[0]['contact_cc_string'];
-		$clientAdjustedPrice = number_format(($clients[0]['percentOfRevenue'] / 100) * $ticketData['billingPrice'], 2, '.', ',');
+		$client_index = ($multi_client_map_override !== false) ? $multi_client_map_override : 0;
+		
+		$clientId			= $clients[$client_index]['clientId'];
+		$clientNameP 		= $clients[$client_index]['name'];
+		$clientName 		= $clients[$client_index]['contacts'][0]['ppv_name'];
+		$clientPrimaryEmail = $clients[$client_index]['contacts'][0]['ppv_email_address'];
+		$oldProductId		= $clients[$client_index]['oldProductId'];
+		$clientCcEmail 		= $clients[$client_index]['contact_cc_string'];
+		$clientAdjustedPrice = number_format(($clients[$client_index]['percentOfRevenue'] / 100) * $ticketData['billingPrice'], 2, '.', ',');
 		
 		// auction facilitator
 		// -------------------------------------------------------------------------------
