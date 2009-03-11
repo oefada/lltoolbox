@@ -105,7 +105,8 @@ class TicketsController extends AppController {
 
 		foreach ($tickets_index as $k => $v) {
 			$tickets_index[$k]['Ticket']['validCard'] = $this->getValidCcOnFile($v['Ticket']['userId']);
-			$track = $this->TrackDetail->getTrackRecord($v['Ticket']['ticketId']);
+			$tracks = $this->TrackDetail->getTrackRecord($v['Ticket']['ticketId']);
+			$track = $tracks[0];
 			$tickets_index[$k]['Ticket']['trackName'] = ($track['trackName']) ? $track['trackName'] : 'N/A';	
 			$clients = $this->Ticket->getClientsFromPackageId($v['Ticket']['packageId']);
 			$tickets_index[$k]['Client'] = $clients;
@@ -160,7 +161,8 @@ class TicketsController extends AppController {
 		$this->set('offer_search_serialize', $offer_search_serialize);
 		
 		// revenue stuff
-		$track = $this->TrackDetail->getTrackRecord($id);
+		$tracks = $this->TrackDetail->getTrackRecord($id);
+		$track = $tracks[0];
 		$trackDetailExists = false;
 		if ($track) {
 			$trackDetailExists = $this->TrackDetail->findExistingTrackTicket($track['trackId'], $id);			

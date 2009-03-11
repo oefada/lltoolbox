@@ -32,10 +32,11 @@ class TrackDetailsController extends AppController {
 		// fetch and process all the information need for this 'next' track record
 		// -------------------------------------------------------------------------------------------------
 		$trackDetailExists = false;
-		$track = $this->TrackDetail->getTrackRecord($this->params['ticketId']);
-		if (!$track) {
+		$tracks = $this->TrackDetail->getTrackRecord($this->params['ticketId']);
+		if (!$tracks) {
 			$this->Session->setFlash(__('There is no TRACK found for this Package.', true));
 		} else {
+			$track = $tracks[0];
 			$this->set('trackDetails', $this->TrackDetail->getAllTrackDetails($track['trackId']));
 			$trackDetailExists = $this->TrackDetail->findExistingTrackTicket($track['trackId'], $this->params['ticketId']);
 			if ($trackDetailExists) {
@@ -90,7 +91,7 @@ class TrackDetailsController extends AppController {
 		
 		die('COMPLETE!');	
 	}
-	
+
 	/*
 	function edit($id = null) {
 		if (!$id && empty($this->data)) {

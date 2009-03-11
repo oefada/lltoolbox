@@ -911,14 +911,16 @@ class WebServiceTicketsController extends WebServicesController
 			
 			// allocate revenue to loa and tracks
 			// ---------------------------------------------------------------------------
-			$track = $this->TrackDetail->getTrackRecord($ticket['Ticket']['ticketId']);
-			if ($track) {
-				$trackDetailExists = $this->TrackDetail->findExistingTrackTicket($track['trackId'], $ticket['Ticket']['ticketId']);	
-				if (!$trackDetailExists) {
-					$new_track_detail = $this->TrackDetail->getNewTrackDetailRecord($track, $ticket['Ticket']['ticketId']);
-					if ($new_track_detail) {
-						$this->TrackDetail->create();
-						$this->TrackDetail->save($new_track_detail);
+			$tracks = $this->TrackDetail->getTrackRecord($ticket['Ticket']['ticketId']);
+			if (!empty($tracks)) {
+				foreach ($tracks as $track) {
+					$trackDetailExists = $this->TrackDetail->findExistingTrackTicket($track['trackId'], $ticket['Ticket']['ticketId']);	
+					if (!$trackDetailExists) {
+						$new_track_detail = $this->TrackDetail->getNewTrackDetailRecord($track, $ticket['Ticket']['ticketId']);
+						if ($new_track_detail) {
+							$this->TrackDetail->create();
+							$this->TrackDetail->save($new_track_detail);
+						}
 					}
 				}
 			}

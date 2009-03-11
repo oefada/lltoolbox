@@ -49,6 +49,7 @@ function confirmSubmit()
 		 				<th style="text-align:center;">Track Detail Id</th>
 		 				<th style="text-align:center;">Ticket Id</th>
 		 				<th style="text-align:center;">Ticket Amount</th>
+		 				<th style="text-align:center;">Allocated Amount</th>
 		 				<th style="text-align:center;">Cycle</th>
 		 				<th style="text-align:center;">Iteration</th>
 		 				<th style="text-align:center;">Amount Kept</th>
@@ -63,6 +64,7 @@ function confirmSubmit()
 	 					<td style="text-align:center;"><?=$v['trackDetail']['trackDetailId'];?></td>
 	 					<td style="text-align:center;"><?=$v['trackDetail']['ticketId'];?></td>
 	 					<td style="text-align:center;"><?=$number->currency($v['trackDetail']['ticketAmount']);?></td>
+	 					<td style="text-align:center;"><?=$number->currency($v['trackDetail']['allocatedAmount']);?></td>
 	 					<td style="text-align:center;"><?=$v['trackDetail']['cycle'];?></td>
 	 					<td style="text-align:center;"><?=$v['trackDetail']['iteration'];?></td>
 	 					<td style="text-align:center;"><?=$number->currency($v['trackDetail']['amountKept']);?></td>
@@ -100,6 +102,7 @@ function confirmSubmit()
 			echo $form->input('trackId', array('readonly' => 'readonly'));
 			echo $form->input('ticketId', array('readonly' => 'readonly'));
 			echo $form->input('ticketAmount', array('readonly' => 'readonly'));
+			echo $form->input('allocatedAmount', array('readonly' => 'readonly'));
 			echo $form->input('cycle', array('readonly' => 'readonly'));
 			echo $form->input('iteration', array('readonly' => 'readonly'));			
 			echo $form->input('initials', array('readonly' => 'readonly'));
