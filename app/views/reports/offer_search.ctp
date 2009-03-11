@@ -142,7 +142,15 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 		<td><?=$number->currency($result['Package']['approvedRetailPrice'], 'USD', array('places' => 0))?></td>
 		<td><?=$result['SchedulingMaster']['openingBid']?></td>
 		<td><div<?php echo ($result[0]['loaEndApproaching']) ? ' style="min-height: 20px; line-height: 20px; padding: 4px; border: 4px solid #ff0;"' : '' ?>><?=$html->link(date('M j, Y', strtotime($result['Loa']['endDate'])), array('controller' => 'loas', 'action' => 'edit', $result['Loa']['loaId']))?></div></td>
-		<td><div<?php if ($result['Loa']['membershipBalance'] <= 0 && $result['Track']['applyToMembershipBal']) { echo ' style="min-height: 20px; line-height: 20px; padding: 4px; border: 4px solid #c00;"'; } else if($result['Loa']['membershipBalance'] <= 1000) { echo ' style="min-height: 20px; line-height: 20px; padding: 4px; border: 4px solid #ff0;"';} ?>><?=$html->link($number->currency($result['Loa']['membershipBalance'], 'USD', array('places' => 0)), array('controller' => 'loas', 'action' => 'edit', $result['Loa']['loaId']))?></div></td>
+		<td>
+			<div<?php if ($result['Loa']['membershipBalance'] <= 0 && $result['Track']['applyToMembershipBal']) { 
+							echo ' style="min-height: 20px; line-height: 20px; padding: 4px; border: 4px solid #c00;"'; 
+							} else if($result['Loa']['membershipBalance'] <= 1000 && $result['Track']['applyToMembershipBal']) {
+								echo ' style="min-height: 20px; line-height: 20px; padding: 4px; border: 4px solid #ff0;"';
+						} ?>>
+			<?=$html->link($number->currency($result['Loa']['membershipBalance'], 'USD', array('places' => 0)), array('controller' => 'loas', 'action' => 'edit', $result['Loa']['loaId']))?>
+			</div>
+		</td>
 		<td><?
 		switch($result['auction_mstr']['remitStatus']) {
             case 0:
