@@ -629,12 +629,13 @@ class PackagesController extends AppController {
 	}
 	
 	function send_for_merch_approval($clientId, $packageId) {
-	    $this->set('client', $this->Client->findByClientId($clientId));
+		$clientData = $this->Client->findByClientId($clientId);
+	    $this->set('client', $clientData);
 	    $this->set('clientId', $clientId);
 	    $this->set('packageId', $packageId);
 
 	    if (!empty($this->data)) {
-	        $subject = 'Package awaiting approval';
+	        $subject = $clientData['Client']['name'] . ' - Package awaiting approval';
 	        
 	        $body = "The following package was submitted for approval by ".$this->user['LdapUser']['displayname'].": ";
 	        $body .= "http://toolbox.luxurylink.com/clients/$clientId/packages/edit/$packageId";
