@@ -1,6 +1,14 @@
 <table>
 	<tr>
 		<td style='font-weight: bold'>
+			Offer ID
+		</td>
+		<td style='text-align: right'>
+			<?=$metrics['OfferLive']['offerId']?>
+		</td>
+	</tr>
+	<tr>
+		<td style='font-weight: bold'>
 			Start Date - End Date
 		</td>
 		<td style='text-align: right'>
