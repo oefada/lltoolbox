@@ -33,6 +33,7 @@
 		<? 
 		$i = 0;
 		foreach($c['LoaItem'] as $k2 => $loaItem):
+		
 			if ($i++ % 2 == 0) {
 				$class = ' class="altrow"';
 			} else {
@@ -43,7 +44,7 @@
 				<td><input type="checkbox" id="item_<?=$k2*$k?>" name="data[Package][CheckedLoaItems][]" value="<?=$loaItem['loaItemId']?>"<? if (isset($this->data['Package']['CheckedLoaItems']) && in_array($loaItem['loaItemId'], $this->data['Package']['CheckedLoaItems'])) { echo ' checked="checked"'; } ?> /></td>
 				<td><?=$form->input('PackageLoaItemRel.'.$loaItem['loaItemId'].'.weight', array('label' => false, 'size' => '2', 'style' => 'width: 50px')) ?></td>
 				<td><?=$loaItemTypes[$loaItem['loaItemTypeId']]?></td>
-				<td><label for="item_<?=$k2*$k?>"><?=$loaItem['itemName']?></label></td>
+				<td><label for="item_<?=$k2*$k?>"><?=$loaItem['itemName']?></label><div style="color:#ccc"><?=$loaItem['merchandisingDescription']?></div></td>
 				<td><div style="text-align: right"><span style="text-align:left">
 				<?=$number->currency($loaItem['itemBasePrice'], $currencyCodes[$loaItem['currencyId']]) ?>
 				<? if (!empty($loaItem['Fee']['feePercent'])):
