@@ -3,6 +3,7 @@ class SchedulingMastersController extends AppController {
 
 	var $name = 'SchedulingMasters';
 	var $helpers = array('Html', 'Form');
+	var $uses       = array('SchedulingMaster', 'OfferLive');
 
 	function index() {
 		$this->SchedulingMaster->recursive = 0;
@@ -34,7 +35,7 @@ class SchedulingMastersController extends AppController {
             $dateTime = $datePickerDate[2].'-'.$datePickerDate[0].'-'.$datePickerDate[1];
             $dateTime .= ' ';
             $dateTime .= $this->data['SchedulingMaster']['startDateTime']['hour'].':00:00 '.$this->data['SchedulingMaster']['startDateTime']['meridian'];
-
+            
             if (date('G', strtotime($dateTime)) >= 16) {
 			    $startDate = strtotime('+1 day',  strtotime($dateTime));   //push to next day
 			    $startDate = date('Y-m-d', $startDate);         //convert to just Y-m-d
@@ -68,7 +69,7 @@ class SchedulingMastersController extends AppController {
 			foreach ($package['ClientLoaPackageRel'] as $v) {
 			    $this->data['Track']['Track'][] = $v['trackId'];
 			}
-			
+
 			if ($this->SchedulingMaster->save($this->data)) {
 				$this->createInstances();
 				if ($this->RequestHandler->isAjax()) {
@@ -451,6 +452,55 @@ class SchedulingMastersController extends AppController {
 
 		$this->Session->setFlash(__('The scheduling master and/or iterations have been deleted', true), 'default', array(), 'success');	
 		echo "<div id='closeModalbox'>abc</div>";
+	}
+	
+	function closeFixedPriceOffer($id = null) {
+	    if (!$id) {
+			$this->Session->setFlash(__('Invalid id for SchedulingMaster', true));
+			$this->set('closeModalbox', true);
+			die();
+		}
+		
+		$this->data = $this->SchedulingMaster->read(null, $id);
+		if($this->data['SchedulingMaster']['offerTypeId'] != 3 && $this->data['SchedulingMaster']['offerTypeId'] != 4) {
+		    $this->Session->setFlash(__('Cannot stop a non-fixed priced offer', true), 'default', array(), 'error');
+			$this->set('closeModalbox', true);
+		    die();
+		}
+
+		if(strtotime($this->data['SchedulingMaster']['startDate']) < time()) {
+		    $newEndDate = date('Y-m-d H:i:s');
+            
+            $schedulingInstanceId = $this->data['SchedulingInstance'][0]['schedulingInstanceId'];
+		    $offerLiveResults = $this->OfferLive->query("SELECT OfferLive.* FROM offerLive as OfferLive INNER JOIN  offer AS Offer USING(offerId) WHERE Offer.schedulingInstanceId = ".$schedulingInstanceId);
+		    
+            $schedulingMaster['SchedulingMaster']       = $this->data['SchedulingMaster'];
+		    $schedulingInstance['SchedulingInstance']   = $this->data['SchedulingInstance'][0];
+		    $offerLive['OfferLive']                     = $offerLiveResults[0]['OfferLive'];
+		    
+		    $schedulingMaster['SchedulingMaster']['endDate']        = $newEndDate;
+		    $schedulingInstance['SchedulingInstance']['endDate']    = $newEndDate;
+		    $offerLive['OfferLive']['endDate']                      = $newEndDate;
+
+            if ($this->SchedulingMaster->save($schedulingMaster) &&
+                $this->SchedulingMaster->SchedulingInstance->save($schedulingInstance) &&
+                $this->OfferLive->save($offerLive) )
+            {
+                    
+                $this->Session->setFlash(__('The offer has been stopped', true), 'default', array(), 'success');
+        		$this->set('closeModalbox', true);
+            
+            } else {
+            
+                $this->Session->setFlash(__('The offer could not been stopped, please contact tech support and report this issue', true), 'default', array(), 'error');
+        		$this->set('closeModalbox', true);
+            
+            }
+		} else {
+		    $this->delete($id);
+		    $this->Session->setFlash(__('The offer has been stopped', true), 'default', array(), 'success');
+    		$this->set('closeModalbox', true);
+		}
 	}
 	
 	function getOfferTypeDefaults() {

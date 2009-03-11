@@ -69,7 +69,6 @@ ul.subsection_tabs li.tab a.active {
 	?>
 	<li class="tab" id='previewTab'<?=$style?>><a class="" href="#four">Preview Setup</a></li>
 </ul>
-<a href="http://www.luxurylink.com/luxury-hotels/preview.html?clid=<?=$package['ClientLoaPackageRel'][0]['clientId']?>&oid=<?=$this->data['SchedulingMaster']['schedulingMasterId']?>&preview=master">Preview offer on live site</a>
 
 <?php echo $this->renderElement('../scheduling_masters/_form') ?>
 <?php echo $form->input('schedulingMasterId') ?>
@@ -79,11 +78,39 @@ if ($remainingIterations) {
 } else {
 	echo "</form>";
 }?>
-<?=$ajax->link('Delete this scheduling master and all future iterations',
-			   array('action' => 'delete', $this->data['SchedulingMaster']['schedulingMasterId']),
-			   array('update' => 'MB_content', 'complete' => 'closeModalbox()'),
-			   'Are you sure? This action is irreversible.');
+<div style="margin: 0 auto; width: 400px">
+<a href="http://www.luxurylink.com/luxury-hotels/preview.html?clid=<?=$package['ClientLoaPackageRel'][0]['clientId']?>&oid=<?=$this->data['SchedulingMaster']['schedulingMasterId']?>&preview=master" class='button' target="_blank"><span>Preview offer on live site</span></a>
+<?
+/*** Delete/Close Offer Link ***/
+$action = 'delete';
+
+switch($masterState) {
+	case 0:
+		$linkTitle = 'Delete this master and all future instances';
+		break;
+	case 1:
+		switch($this->data['SchedulingMaster']['offerTypeId']) {
+			case 3:
+			case 4:
+				$linkTitle = 'Close this Fixed Price Offer';
+				$action = 'closeFixedPriceOffer';
+				break;
+			default:
+				$linkTitle = 'Delete all future instances for this master';
+				break;
+		}
+		break;
+}
+
+echo $ajax->link("<span>$linkTitle</span>",
+			   array('action' => $action, $this->data['SchedulingMaster']['schedulingMasterId']),
+			   array('update' => 'MB_content', 'complete' => 'closeModalbox()', 'class' => 'button'),
+			   'Are you sure? This action is irreversible.',
+				false);
+
+/*** End Delete/Close Offer Link ***/
 ?>
+</div>
 </div>
 <script>
 function merchandisingSetup(element, value) {
