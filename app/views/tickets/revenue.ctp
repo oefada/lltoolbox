@@ -235,7 +235,7 @@ foreach ($tickets as $ticket):
 		<td style="text-align:center;">
 			<?php 
 			foreach ($ticket['Tracks'] as $track) {
-				echo $html->image($track['trackDetail']['status'] ? 'tick.png' : 'cross.png') . '<br /><br />';
+				echo $html->image($track['trackDetail']['status'] == 1 ? 'tick.png' : 'cross.png') . '<br /><br />';
 			}
 			?>
 		</td>

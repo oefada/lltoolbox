@@ -398,9 +398,9 @@ class TicketsController extends AppController {
 			} else {
 				$tracks[0]['trackId'] = '<strong>NO TRACK!</strong>';
 				$tracks[0]['trackName'] = '<strong>NO TRACK!</strong>';
-				$tracks[0]['trackDetail']['allocatedAmount'] = '-';
-				$tracks[0]['trackDetail']['amountKept'] = '-';
-				$tracks[0]['trackDetail']['amountRemitted'] = '-';
+				$tracks[0]['trackDetail']['allocatedAmount'] = '<strong>NO TRACK!</strong>';
+				$tracks[0]['trackDetail']['amountKept'] = '<strong>NO TRACK!</strong>';
+				$tracks[0]['trackDetail']['amountRemitted'] = '<strong>NO TRACK!</strong>';
 				$tracks[0]['trackDetail']['status'] = '0';
 				$tickets_index[$k]['Ticket']['is_multi_track'] = false;
 			}
