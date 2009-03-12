@@ -40,7 +40,7 @@ class WebServiceNewClientsController extends WebServicesController
 	        $response_value = '-1';
 	    }
 		
-		@mail('devmail@luxurylink.com', 'SUGAR-to-TOOLBOX: Record pushed', print_r($decoded_request));
+		@mail('devmail@luxurylink.com', 'SUGAR-to-TOOLBOX: Record pushed', print_r($decoded_request, true));
 		
 		$date_now = date('Y-m-d H:i:s', strtotime('now'));
 		
