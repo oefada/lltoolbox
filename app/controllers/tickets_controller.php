@@ -371,7 +371,11 @@ class TicketsController extends AppController {
 		
 		$tickets_index = $this->paginate();
 
+		// TODO : OPTIMIZE THIS SECTION
 		foreach ($tickets_index as $k => $v) {
+			$paymentDetail = $this->Ticket->query("select sum(ppBillingAmount) as sumPayment from paymentDetail where isSuccessfulCharge = 1 and ticketId = " . $v['Ticket']['ticketId']);
+			$sumPayment = !empty($paymentDetail) && isset($paymentDetail[0][0]['sumPayment']) ? $paymentDetail[0][0]['sumPayment'] : 0;
+			$tickets_index[$k]['Ticket']['sumPayment'] = '$' . number_format($sumPayment, 2, '.',',');
 			$clients = $this->Ticket->getClientsFromPackageId($v['Ticket']['packageId']);
 			$tickets_index[$k]['Client'] = $clients;
 			$tracks = $this->TrackDetail->getTrackRecord($v['Ticket']['ticketId']);

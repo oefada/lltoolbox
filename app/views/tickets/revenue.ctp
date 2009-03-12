@@ -153,9 +153,10 @@ $this->set('hideSidebar', true);
 	<th width="10"><?php echo $paginator->sort('Ticket Created', 'Ticket.created');?></th>
 	<th width="10"><?php echo $paginator->sort('Offer Id', 'Ticket.offerId');?></th>
 	<th width="250" style="color:#FFF;">Client</th>
+	<th width="10" style="text-align:center;color:#FFF;">Ticket Amount</th>
+	<th width="10" style="text-align:center;color:#FFF;">Payment Collected</th>
 	<th width="10" style="text-align:center;color:#FFF;">Track Id</th>
 	<th width="10" style="text-align:center;color:#FFF;">Track Name</th>
-	<th width="10" style="text-align:center;color:#FFF;">Ticket Amount</th>
 	<th width="10" style="text-align:center;color:#FFF;">Allocation Amount</th>
 	<th width="10" style="text-align:center;color:#FFF;">Keep Amount</th>
 	<th width="10" style="text-align:center;color:#FFF;">Remit Amount</th>
@@ -189,6 +190,16 @@ foreach ($tickets as $ticket):
 		<td style="text-align:center;">
 			<?php 
 			foreach ($ticket['Tracks'] as $track) {
+				echo $number->currency($ticket['Ticket']['billingPrice']) . '<br /><br />';
+			}
+			?>
+		</td>
+		<td>
+			<?php echo $ticket['Ticket']['sumPayment']; ?>
+		</td>
+		<td style="text-align:center;">
+			<?php 
+			foreach ($ticket['Tracks'] as $track) {
 				echo $track['trackId'] . '<br /><br />';	
 			}
 			?>
@@ -197,13 +208,6 @@ foreach ($tickets as $ticket):
 			<?php 
 			foreach ($ticket['Tracks'] as $track) {
 				echo $track['trackName'] . '<br /><br />';	
-			}
-			?>
-		</td>
-		<td style="text-align:center;">
-			<?php 
-			foreach ($ticket['Tracks'] as $track) {
-				echo $number->currency($ticket['Ticket']['billingPrice']) . '<br /><br />';
 			}
 			?>
 		</td>
