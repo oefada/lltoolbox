@@ -40,6 +40,8 @@ class WebServiceNewClientsController extends WebServicesController
 	        $response_value = '-1';
 	    }
 		
+		@mail('devmail@luxurylink.com', 'SUGAR-to-TOOLBOX: Record pushed', print_r($decoded_request));
+		
 		$date_now = date('Y-m-d H:i:s', strtotime('now'));
 		
 		// map data from Sugar to toolbox client table structure
