@@ -24,6 +24,29 @@ class ClientsController extends AppController {
 		$this->redirect(array('action'=>'edit', $id));
 	}
 	
+	function add($parentId = null) {
+	    if (!$parentId) {
+	        $this->Session->setFlash(__('Invalid Parent Client ID', true));
+			$this->redirect(array('action'=>'index'));
+	    }
+
+	    if (!empty($this->data)) {
+	        $this->data['Client']['createdInToolbox'] = 1;
+	        
+	        $this->Client->create();
+	        if($this->Client->save($this->data)) {
+	            $this->Session->setFlash(__('The Child Client has been saved, <a href="/clients/edit/'.$this->Client->id.'">click here to edit it</a>', true), 'default', array(), 'success');
+	            $this->set('closeModalbox', true);
+	        } else {
+	            $this->Session->setFlash(__('The Client could not be saved. Please, try again.', true), 'default', array(), 'error');
+	        }
+	    }
+	    
+	    $this->data['Client']['parentClientId'] = $parentId;
+	    $clientTypeIds = $this->Client->ClientType->find('list');
+	    $this->set('clientTypeIds', $clientTypeIds);
+	}
+	
 	function edit($id = null) {
 		if (!$id && empty($this->data)) {
 			$this->Session->setFlash(__('Invalid Client', true));

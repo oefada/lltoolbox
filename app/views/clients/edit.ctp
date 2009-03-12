@@ -13,6 +13,21 @@ $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']
 ?>
 <div class="clients form">
 	<h2 class="title">Client Details</h2>
+	<div style="float: right">
+	<?php
+	echo $html->link('<span><b class="icon"></b>Add Child Client</span>',
+					"/clients/add/$clientId",
+					array(
+						'title' => 'Add Child Client',
+						'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
+						'complete' => 'closeModalbox()',
+						'class' => 'button add'
+						),
+					null,
+					false
+					);
+	?>
+	</div>
 <?php echo $form->create('Client');?>
 	<fieldset>
 		<? echo $form->input('clientTypeId', array('label' => 'Client Type')); ?>
@@ -31,7 +46,8 @@ $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']
 		endif;
 		
 		echo $form->input('oldProductId', array('disabled' => 'disabled'));
-		echo $form->input('name', array('disabled' => 'disabled'));
+
+		echo $form->input('name', array('disabled' => !$this->data['Client']['createdInToolbox']));
 	?>
 	<?php
 		echo $form->input('url');

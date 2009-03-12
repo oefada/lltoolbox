@@ -99,7 +99,12 @@ class Client extends AppModel {
 		
 		// get client record from toolbox so we can update live client
 		// -----------------------------------------------------------------
-		$clientId 				= $this->data['Client']['clientId'];
+		if ($created && !isset($this->data['Client']['clientId'])) {
+		    $clientId           = $this->getInsertId();
+		} else {
+		    $clientId 			= $this->data['Client']['clientId'];
+		}
+		
 		$clientToolbox 			= $this->read(null, $clientId);	
 		$themeIds 				= array();
 		$destinationIds			= array();
