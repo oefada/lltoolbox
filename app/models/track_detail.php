@@ -56,6 +56,15 @@ class TrackDetail extends AppModel {
 		return (!empty($result)) ? true : false;
 	}
 	
+	function getExistingTrackTicket($trackId, $ticketId) {
+		$result = $this->query("SELECT * FROM trackDetail WHERE trackId = $trackId and ticketId = $ticketId");
+		if (!empty($result)) {
+			return $result[0]['trackDetail'];
+		} else {
+			return false;	
+		}
+	}
+	
 	function __getTicketAmount($ticketId, $loaId) {
 		$result = $this->query("SELECT t.billingPrice, clpr.*  FROM ticket t INNER JOIN clientLoaPackageRel clpr on clpr.packageId = t.packageId AND clpr.loaId = $loaId WHERE t.ticketId = $ticketId");
 		if (!empty($result)) {

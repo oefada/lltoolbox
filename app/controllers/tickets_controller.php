@@ -296,6 +296,116 @@ class TicketsController extends AppController {
 		endif;
 	}
 
+	function revenue() {
+		
+		// set search criteria from form post or set defaults
+		$form = $this->params['form'];
+		$named = $this->params['named'];
+
+		// ajaxed paginated form elements come in via params['named']
+		if (empty($form) && !empty($named)) {
+			$form = $named;
+			$this->params['form'] = $this->params['named'];
+		}
+
+		// set values and set defaults        
+		$s_ticket_id = isset($form['s_ticket_id']) ? $form['s_ticket_id'] : '';
+		$s_offer_id = isset($form['s_offer_id']) ? $form['s_offer_id'] : '';
+		$s_format_id = isset($form['s_format_id']) ? $form['s_format_id'] : '';
+		$s_client_id = isset($form['s_client_id']) ? $form['s_client_id'] : '';
+		$s_start_y = isset($form['s_start_y']) ? $form['s_start_y'] : date('Y');
+		$s_start_m = isset($form['s_start_m']) ? $form['s_start_m'] : date('m');
+		$s_start_d = isset($form['s_start_d']) ? $form['s_start_d'] : date('d');
+		$s_end_y = isset($form['s_end_y']) ? $form['s_end_y'] : date('Y');
+		$s_end_m = isset($form['s_end_m']) ? $form['s_end_m'] : date('m');
+		$s_end_d = isset($form['s_end_d']) ? $form['s_end_d'] : date('d');
+		
+		if (isset($_GET['searchClientId'])) {
+			$s_client_id = $_GET['searchClientId'];		
+		}
+
+		if (isset($_GET['query'])) {
+			$query = $_GET['query'];
+			if (is_numeric($query)) {
+				$s_ticket_id = $_GET['query'];			
+			} 
+		}
+		
+		$this->set('s_ticket_id', $s_ticket_id);
+		$this->set('s_offer_id', $s_offer_id);
+		$this->set('s_client_id', $s_client_id);
+		$this->set('s_format_id', $s_format_id);
+		$this->set('s_start_y', $s_start_y);   
+		$this->set('s_start_m', $s_start_m);   
+		$this->set('s_start_d', $s_start_d);   
+		$this->set('s_end_y', $s_end_y);
+		$this->set('s_end_m', $s_end_m);   
+		$this->set('s_end_d', $s_end_d);   
+		
+		// use these dates in the sql for date range search
+		$s_start_date = $s_start_y . '-' . $s_start_m . '-' . $s_start_d . ' 00:00:00';
+		$s_end_date = $s_end_y . '-' . $s_end_m . '-' . $s_end_d . ' 23:59:59';
+				
+		$this->paginate = array('fields' => array(
+									'Ticket.ticketId', 'Ticket.created', 'Ticket.offerId', 'Ticket.packageId', 'Ticket.billingPrice', 'Ticket.formatId'
+									),
+		                        'contain' => array('TicketStatus'),
+		                        'order' => array(
+		                        	'Ticket.ticketId' => 'desc'
+		                        	)
+		                        );
+		    
+		// if search via ticket id, offer id, or user id, then dont use other search conditions
+		if ($s_ticket_id) {
+			$this->paginate['conditions']['Ticket.ticketId'] = $s_ticket_id;    
+		} elseif ($s_offer_id) {
+			$this->paginate['conditions']['Ticket.offerId'] = $s_offer_id;    
+		} elseif ($s_client_id) {
+			$this->paginate['conditions']['Ticket.clientId'] = $s_client_id;       
+		} else {    
+			$this->paginate['conditions']['Ticket.created BETWEEN ? AND ?'] = array($s_start_date, $s_end_date);             		
+			if ($s_format_id) {
+				$this->paginate['conditions']['Ticket.formatId'] = $s_format_id;	
+			}
+		}
+		
+		$tickets_index = $this->paginate();
+
+		foreach ($tickets_index as $k => $v) {
+			$clients = $this->Ticket->getClientsFromPackageId($v['Ticket']['packageId']);
+			$tickets_index[$k]['Client'] = $clients;
+			$tracks = $this->TrackDetail->getTrackRecord($v['Ticket']['ticketId']);
+			if (!empty($tracks)) {
+				foreach ($tracks as $a => $track) {
+					$tracks[$a]['trackDetail'] = $this->TrackDetail->getExistingTrackTicket($track['trackId'], $v['Ticket']['ticketId']);
+					if (!empty($tracks[$a]['trackDetail'])) {
+						$tracks[$a]['trackDetail']['status'] = '1';	
+						$tracks[$a]['trackDetail']['allocatedAmount'] = '$' . number_format($tracks[$a]['trackDetail']['allocatedAmount'], 2, '.',',');
+						$tracks[$a]['trackDetail']['amountKept'] = '$' . number_format($tracks[$a]['trackDetail']['amountKept'], 2, '.',',');
+						$tracks[$a]['trackDetail']['amountRemitted'] = '$' . number_format($tracks[$a]['trackDetail']['amountRemitted'], 2, '.',',');
+					} else {
+						$tracks[$a]['trackDetail']['allocatedAmount'] = '-';
+						$tracks[$a]['trackDetail']['amountKept'] = '-';
+						$tracks[$a]['trackDetail']['amountRemitted'] = '-';
+						$tracks[$a]['trackDetail']['status'] = '0';				
+					}
+				}
+				$tickets_index[$k]['Ticket']['is_multi_track'] = count($tracks) > 1 ? true : false;
+			} else {
+				$tracks[0]['trackId'] = '<strong>NO TRACK!</strong>';
+				$tracks[0]['trackName'] = '<strong>NO TRACK!</strong>';
+				$tracks[0]['trackDetail']['allocatedAmount'] = '-';
+				$tracks[0]['trackDetail']['amountKept'] = '-';
+				$tracks[0]['trackDetail']['amountRemitted'] = '-';
+				$tracks[0]['trackDetail']['status'] = '0';
+				$tickets_index[$k]['Ticket']['is_multi_track'] = false;
+			}
+			$tickets_index[$k]['Tracks'] = $tracks;
+		}
+		$this->set('tickets', $tickets_index);
+		$this->set('format', $this->Format->find('list'));
+	}
+
 	// -------------------------------------------
 	// NO ONE IS ALLOWED TO EDIT OR DELETE TICKETS
 	// -------------------------------------------
