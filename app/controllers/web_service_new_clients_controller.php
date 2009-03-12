@@ -40,7 +40,7 @@ class WebServiceNewClientsController extends WebServicesController
 	        $response_value = '-1';
 	    }
 		
-		@mail('devmail@luxurylink.com', 'SUGAR-to-TOOLBOX: Record pushed', print_r($decoded_request, true));
+		//@mail('devmail@luxurylink.com', 'SUGAR-to-TOOLBOX: Record pushed', print_r($decoded_request, true));
 		
 		$date_now = date('Y-m-d H:i:s', strtotime('now'));
 		
@@ -90,8 +90,8 @@ class WebServiceNewClientsController extends WebServicesController
 	    // clientContactTypeId = 1 is reservation SUGAR -> (AUC, CCALL, ALL_AUC)
 	    // clientContactTypeId = 2 is homepage notification SUGAR ->(MKT, CCALL, ALL, ALL_AUC)
 	    
-	  	$reservationContacts = array('AUC', 'CCALL', 'ALL_AUC');
-	  	$homepageContacts = array('MKT', 'ALL', 'CCALL', 'ALL_AUC');
+	  	$reservationContacts = array('AUC', 'CCALL', 'ALL_AUC', 'ALL.AUC');
+	  	$homepageContacts = array('MKT', 'ALL', 'CCALL', 'ALL_AUC', 'ALL.AUC');
 	    
 	    if ($client_id) {
 		    $contacts = $decoded_request['contacts'];
