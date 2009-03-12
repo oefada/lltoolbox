@@ -188,11 +188,7 @@ foreach ($tickets as $ticket):
 			<?php endforeach; ?>
 		</td>
 		<td style="text-align:center;">
-			<?php 
-			foreach ($ticket['Tracks'] as $track) {
-				echo $number->currency($ticket['Ticket']['billingPrice']) . '<br /><br />';
-			}
-			?>
+			<?php echo $number->currency($ticket['Ticket']['billingPrice']) . '<br /><br />';?>
 		</td>
 		<td>
 			<?php echo $ticket['Ticket']['sumPayment']; ?>
