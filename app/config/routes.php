@@ -69,7 +69,7 @@
 	
 // ROUTES ADDED 10-13-08 for adding package promo to package
 	Router::connect('/clients/:clientId/:controller/:action', array(), array('clientId' => '[0-9]+', 'pass' => array('clientId')));
-	Router::connect('/clients/:clientId/:controller/:action/:id', array(), array('clientId' => '[0-9]+', 'id' => '[0-9]+', 'pass' => array('clientId','id')));
+	Router::connect('/clients/:clientId/:controller/:action/:id:ext', array(), array('clientId' => '[0-9]+', 'id' => '[0-9]+', 'pass' => array('clientId','id')));
 
 	Router::connect('/users/:userId/:controller/:action', array(), array('userId' => '[0-9]+', 'pass' => array('userId')));
 	Router::connect('/users/:userId/:controller/:action/:id', array(), array('userId' => '[0-9]+', 'id' => '[0-9]+', 'pass' => array('userId', 'id')));

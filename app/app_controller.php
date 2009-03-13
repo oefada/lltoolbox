@@ -39,7 +39,7 @@
 uses('sanitize');
 class AppController extends Controller {
 	var $helpers = array('Html2', 'Form', 'Text', 'Pagination', 'Layout', 'Ajax', 'StrictAutocomplete', 'Number', 'DatePicker', 'Prototip', 'Session');
-	var $components = array('RequestHandler', 'Acl', 'LdapAuth');
+	var $components = array('Acl', 'LdapAuth', 'RequestHandler');
 	var $publicControllers = array('sessions');
 	var $Sanitize;
 	
@@ -70,10 +70,6 @@ class AppController extends Controller {
 		if ($this->RequestHandler->prefers('pdf') || $this->RequestHandler->prefers('doc')) {
 		    error_reporting(E_ERROR);
 		    Configure::write('debug', '0');
-		}
-		
-		if($this->params['url']['ext'] == 'doc') {
-		    $this->layout = 'doc/default';
 		}
 
 		if (isset($this->{$this->modelClass}) && is_object($this->{$this->modelClass}) && $this->{$this->modelClass}->Behaviors->attached('Logable')) {

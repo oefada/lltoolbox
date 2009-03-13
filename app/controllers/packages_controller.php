@@ -534,6 +534,12 @@ class PackagesController extends AppController {
 	    }
 	    
 	    $this->set(compact('package', 'items', 'ratePeriods'));
+	    
+	    //Fix with the routes... this isn't being automatically pulled
+	    if ($this->RequestHandler->prefers('doc')) {
+	        $this->layout = 'doc/default';
+		    $this->render('doc/preview');
+		}
 	}
 		
 	function clonePackage($clientId = null, $id = null)
