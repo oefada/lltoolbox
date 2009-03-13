@@ -81,7 +81,7 @@ class UsersController extends AppController {
 		}
 		if(!empty($this->params['form']['query'])):
 			$query = $this->Sanitize->escape($this->params['form']['query']);
-			
+			$origQuery = $query;
 			$parts = explode(' ', $query);
 			
 			$query = '';
@@ -91,7 +91,7 @@ class UsersController extends AppController {
 			    }
 			    $query .= $part.' ';
 			}
-			$conditions = array('OR' => array("MATCH(User.lastName,User.firstName,User.email) AGAINST('$query' IN BOOLEAN MODE)", 'User.userId' => $query));
+			$conditions = array('OR' => array("MATCH(User.lastName,User.firstName,User.email) AGAINST('$query' IN BOOLEAN MODE)", 'User.userId' => $origQuery));
 
 			if($_GET['query'] ||  $this->params['named']['query']) {
 				$this->autoRender = false;
