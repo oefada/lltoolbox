@@ -214,6 +214,7 @@ class SchedulingMastersController extends AppController {
 			$this->SchedulingMaster->SchedulingInstance->save($instanceData);
 		    return true;
 		}
+		
 		/* 
 		 * If using the endDate to determine how many iterations to create, we need to calculate this number
 		 * This basically does the following arithmethic:
@@ -241,18 +242,49 @@ class SchedulingMastersController extends AppController {
 		}
         $out['iterations'] = 0;
         //TODO: Put this logic in the model where it belongs
+        
+        if (!empty($this->data['SchedulingMaster']['endDatePicker'])) {
+            //we have to format the date and time for the DB... fun stuff
+            $endDate = explode('-', $this->data['SchedulingMaster']['endDatePicker']);
+
+			$this->data['SchedulingMaster']['firstIterationEndDate']['month']     =   $endDate[0];
+			$this->data['SchedulingMaster']['firstIterationEndDate']['day']   =   $endDate[1];
+			$this->data['SchedulingMaster']['firstIterationEndDate']['year']    =   $endDate[2];
+
+			$this->data['SchedulingMaster']['firstIterationEndDate'] = $this->data['SchedulingMaster']['firstIterationEndDate']['year'].'-'.
+			                                                            $this->data['SchedulingMaster']['firstIterationEndDate']['month'].'-'.
+			                                                            $this->data['SchedulingMaster']['firstIterationEndDate']['day'].' ';
+			$this->data['SchedulingMaster']['firstIterationEndDateTime'] = $this->data['SchedulingMaster']['firstIterationEndDateTime']['hour'].':'.
+			        $this->data['SchedulingMaster']['firstIterationEndDateTime']['min'].':00 '.
+			        $this->data['SchedulingMaster']['firstIterationEndDateTime']['meridian'];
+			
+			$dateTime = $this->data['SchedulingMaster']['firstIterationEndDate'].' '.$this->data['SchedulingMaster']['firstIterationEndDateTime'];
+			$firstIterationDateTime = date('Y-m-d H:i:s', strtotime($dateTime));
+
+			$firstIterationEndFixed = true;
+        }
+        
 		for ($i = 0; $i < $iterations; $i++) {
-			$endDate = strtotime($instanceData['SchedulingInstance']['startDate'] . ' +' . $masterData['SchedulingMaster']['numDaysToRun'] . ' days');
+		    
+		    //for the first iteration, if an end date is picked, we use that date/time and bypass all holiday checks
+		    //this only applies for the first iteration of a master
+		    if (true === $firstIterationEndFixed && 0 == $i):
+		        $endDate = strtotime($firstIterationDateTime);
+		    
+		        $instanceData['SchedulingInstance']['endDate'] = $firstIterationDateTime;
+		    else:
+			    $endDate = strtotime($instanceData['SchedulingInstance']['startDate'] . ' +' . $masterData['SchedulingMaster']['numDaysToRun'] . ' days');
 			
-			while ($this->_isHoliday($endDate)) {
-			    $endDate = strtotime('+1 day', $endDate);
-			}
+			    while ($this->_isHoliday($endDate)) {
+			        $endDate = strtotime('+1 day', $endDate);
+			    }
 			
-			if ($endDate > $masterEndDate) {
-			    break;
-			}
+			    if ($endDate > $masterEndDate) {
+			        break;
+			    }
 			
-			$instanceData['SchedulingInstance']['endDate'] = date('Y-m-d H:i:s', $endDate);
+			    $instanceData['SchedulingInstance']['endDate'] = date('Y-m-d H:i:s', $endDate);
+			endif;
 				
             $out['endDate'] = $instanceData['SchedulingInstance']['endDate'];
             
@@ -367,7 +399,6 @@ class SchedulingMastersController extends AppController {
             			$this->data['SchedulingMaster']['startDate']['year']    =   $date[2];
 
                         $this->data['SchedulingMaster']['startDate'] = array_merge($this->data['SchedulingMaster']['startDate'], $this->data['SchedulingMaster']['startDateTime']);
-            			
 
             			if ($this->SchedulingMaster->save($this->data)) {
             				$this->createInstances();

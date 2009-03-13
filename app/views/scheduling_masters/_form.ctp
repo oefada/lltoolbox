@@ -53,6 +53,7 @@
 		echo $form->input('startDatePicker', array('class' => 'format-m-d-y divider-dash highlight-days-06 no-transparency range-low-today fill-grid-no-select',
 													'label' => 'Start Date',
 													'readonly' => 'readonly'));
+
 ?>
 <script>
 delete datePickerController.datePickers['SchedulingMasterStartDatePicker'];
@@ -73,6 +74,30 @@ datePickerController.addDatePicker('SchedulingMasterStartDatePicker', {'id':'Sch
 <?	    
 		echo $form->label('Start Time');
 		echo $form->dateTime('startDateTime', 'NONE', '12', null, array(), false);
+
+		echo $form->input('endDatePicker', array('class' => 'format-m-d-y divider-dash highlight-days-06 no-transparency range-low-today fill-grid-no-select',
+												 'label' => 'First Instance End Date',
+												 'readonly' => 'readonly'));
+?>
+<script>
+delete datePickerController.datePickers['SchedulingMasterEndDatePicker'];
+datePickerController.addDatePicker('SchedulingMasterEndDatePicker', {'id':'SchedulingMasterEndDatePicker',
+																		'highlightDays':'0,0,0,0,0,1,1',
+																		'disableDays':'',
+																		'divider':'-',
+																		'format':'m-d-y',
+																		'locale':true,
+																		'splitDate':0,
+																		'noTransparency':true,
+																		'staticPos':false,
+																		'hideInput':false,
+																		'low':datePickerController.dateFormat((new Date().getMonth() + 1) + "/" + new Date().getDate() + "/" + new Date().getFullYear(), true)
+																		});
+
+</script>
+<?php
+		echo $form->label('First Instance End Time');
+		echo $form->dateTime('firstIterationEndDateTime', 'NONE', '12', null, array(), false);
 
 		echo $form->input('trackId', array('value' => $package['ClientLoaPackageRel'][0]['trackId'], 'type' => 'hidden'));
 		echo $form->input('packageName', array('value' => $package['Package']['packageTitle'], 'type' => 'hidden'));
