@@ -14,13 +14,41 @@ function confirmSubmit()
 <div class="trackDetails form">
 <fieldset>
 	 		<legend><?php __('Add TrackDetail');?></legend>
+
+	 		<?php if ($loa) : ?>
+		 		<h2>LOA Information</h2>
+		 		<table cellspacing="0" cellpadding="0" border="1">
+		 			<tr>
+		 				<th style="text-align:center;">Loa Id</th>
+		 				<th style="text-align:center;">Cash</th>
+		 				<th style="text-align:center;">Membership Fee</th>
+		 				<th style="text-align:center;">Membership Balance</th>
+		 				<th style="text-align:center;">Loa Value</th>
+		 				<th style="text-align:center;">Total Kept</th>
+		 				<th style="text-align:center;">Total Remitted</th>
+		 				<th style="text-align:center;">Upgraded</th>
+		 				<th style="text-align:center;">Upgraded Date</th>
+		 			</tr>
+		 			<tr>
+		 				<td style="text-align:center;"><a href="/loas/edit/<?=$loa['Loa']['loaId'];?>" target="_BLANK"><?=$loa['Loa']['loaId'];?></a></td>
+						<td style="text-align:center;"><?=$number->currency($loa['Loa']['cash']);?></td>
+						<td style="text-align:center;"><?=$number->currency($loa['Loa']['membershipFee']);?></td>
+						<td style="text-align:center;"><?=$number->currency($loa['Loa']['membershipBalance']);?></td>
+						<td style="text-align:center;"><?=$number->currency($loa['Loa']['loaValue']);?></td>
+						<td style="text-align:center;"><?=$number->currency($loa['Loa']['totalKept']);?></td>
+						<td style="text-align:center;"><?=$number->currency($loa['Loa']['totalRemitted']);?></td>
+						<td style="text-align:center;"><?php echo $loa['Loa']['upgraded'] ? 'Yes' : 'No' ;?></td>
+						<td style="text-align:center;"><?=$loa['Loa']['upgradeDate'];?></td>
+		 			</tr>
+		 		</table>
+		 		<br />
+		 	<?php endif;?>
 	 		
 	 		<?php if ($track) : ?>
 		 		<h2><?=$revenueModels[$track['revenueModelId']];?> - <?=$track['trackName'];?></h2>
 		 		<table cellspacing="0" cellpadding="0" border="1">
 		 			<tr>
 		 				<th style="text-align:center;">Track Id</th>
-		 				<th style="text-align:center;">Loa Id</th>
 		 				<th style="text-align:center;">Track Name</th>
 		 				<th style="text-align:center;">Keep Percentage</th>
 		 				<th style="text-align:center;">Pending</th>
@@ -30,7 +58,6 @@ function confirmSubmit()
 		 			</tr>
 		 			<tr>
 		 				<td style="text-align:center;"><?=$track['trackId'];?></td>
-		 				<td style="text-align:center;"><a href="/loas/edit/<?=$track['loaId'];?>" target="_BLANK"><?=$track['loaId'];?></a></td>
 		 				<td style="text-align:center;"><?=$track['trackName'];?></td>
 		 				<td style="text-align:center;"><?=$track['keepPercentage'];?>%</td>
 		 				<td style="text-align:center;"><?=$number->currency($track['pending']);?></td>
@@ -56,12 +83,12 @@ function confirmSubmit()
 		 				<th style="text-align:center;">Amount Remitted</th>
 		 				<th style="text-align:center;">xy Running Total</th>
 		 				<th style="text-align:center;">xy Average</th>
-		 				<th style="text-align:center;">Keep Balance Due</th>
+		 				<th style="text-align:center;">Upgraded Balance Due</th>
 		 				<th style="text-align:center;">Initials</th>
 		 			</tr>
 		 			<?php foreach ($trackDetails as $k => $v) : ?>
-		 			<tr>
-	 					<td style="text-align:center;"><?=$v['trackDetail']['trackDetailId'];?></td>
+		 			<tr <?php if ($v['trackDetail']['ticketId'] == $ticketId) { echo 'class="altrow"';} ?>>
+	 					<td style="text-align:center;"><a href="/tickets/<?=$v['trackDetail']['ticketId'];?>/trackDetails/edit/<?=$v['trackDetail']['trackDetailId'];?>"><?=$v['trackDetail']['trackDetailId'];?></a></td>
 	 					<td style="text-align:center;"><?=$v['trackDetail']['ticketId'];?></td>
 	 					<td style="text-align:center;"><?=$number->currency($v['trackDetail']['ticketAmount']);?></td>
 	 					<td style="text-align:center;"><?=$number->currency($v['trackDetail']['allocatedAmount']);?></td>

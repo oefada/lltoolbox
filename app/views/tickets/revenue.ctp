@@ -155,7 +155,6 @@ $this->set('hideSidebar', true);
 	<th width="250" style="color:#FFF;">Client</th>
 	<th width="10" style="text-align:center;color:#FFF;">Ticket Amount</th>
 	<th width="10" style="text-align:center;color:#FFF;">Payment Collected</th>
-	<th width="10" style="text-align:center;color:#FFF;">Track Id</th>
 	<th width="10" style="text-align:center;color:#FFF;">Track Name</th>
 	<th width="10" style="text-align:center;color:#FFF;">Allocation Amount</th>
 	<th width="10" style="text-align:center;color:#FFF;">Keep Amount</th>
@@ -173,7 +172,7 @@ foreach ($tickets as $ticket):
 ?>
 	<tr<?php echo $class;?>>
 		<td>
-			<?php echo $ticket['Ticket']['ticketId']; ?>
+			<a href="/tickets/view/<?php echo $ticket['Ticket']['ticketId']; ?>" target="_BLANK"><?php echo $ticket['Ticket']['ticketId']; ?></a>
 		</td>
 		<td>
 			<?php echo $ticket['Ticket']['created'];?>
@@ -192,13 +191,6 @@ foreach ($tickets as $ticket):
 		</td>
 		<td>
 			<?php echo $ticket['Ticket']['sumPayment']; ?>
-		</td>
-		<td style="text-align:center;">
-			<?php 
-			foreach ($ticket['Tracks'] as $track) {
-				echo $track['trackId'] . '<br /><br />';	
-			}
-			?>
 		</td>
 		<td style="text-align:center;">
 			<?php 
@@ -237,7 +229,7 @@ foreach ($tickets as $ticket):
 		</td>
 		
 		<td class="actions">
-			<a href="/tickets/<?php echo $ticket['Ticket']['ticketId'];?>/trackDetails/add" target="_BLANK">View Details</a>
+			<a href="/tickets/<?php echo $ticket['Ticket']['ticketId'];?>/trackDetails/add" target="_BLANK">View / Edit Track Details</a>
 		</td>
 	</tr>
 <?php endforeach; ?>

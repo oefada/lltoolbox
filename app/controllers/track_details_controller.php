@@ -48,6 +48,8 @@ class TrackDetailsController extends AppController {
 		
 		// set some vars
 		// -------------------------------------------------------------------------------------------------
+		$this->Loa->recursive = -1;
+		$this->set('loa', $this->Loa->read(null, $track['loaId']));
 		$this->set('track', $track);
 		$this->set('revenueModels', $this->RevenueModel->find('list'));
 		$this->set('ticketId', $this->params['ticketId']);
@@ -92,24 +94,31 @@ class TrackDetailsController extends AppController {
 		die('COMPLETE!');	
 	}
 
-	/*
-	function edit($id = null) {
-		if (!$id && empty($this->data)) {
-			$this->Session->setFlash(__('Invalid TrackDetail', true));
-			$this->redirect(array('action'=>'index'));
-		}
+	function edit($ticketId = null, $trackDetailId = null) {
 		if (!empty($this->data)) {
-			if ($this->TrackDetail->save($this->data)) {
-				$this->Session->setFlash(__('The TrackDetail has been saved', true));
-				$this->redirect(array('action'=>'index'));
+			if ($this->TrackDetail->reverseBalances($trackDetailId)) {
+				if ($this->TrackDetail->save($this->data)) {
+					$this->Session->setFlash(__('The TrackDetail has been updated', true));
+					$this->redirect(array('controller' => 'tickets', 'action'=>'view', 'id' => $this->data['TrackDetail']['ticketId']));
+				} else {
+					$this->Session->setFlash(__('Track Detail was not saved.  Please check your input and try again.', true));
+				}
 			} else {
-				$this->Session->setFlash(__('The TrackDetail could not be saved. Please, try again.', true));
+				$this->Session->setFlash(__('Track Detail was not saved.  Could not reverse the balances.', true));
 			}
 		}
-		if (empty($this->data)) {
-			$this->data = $this->TrackDetail->read(null, $id);
-		}
+		
+		// -------------------------------------------------------------------------------------------------
+		$tracks = $this->TrackDetail->getTrackRecord($ticketId);
+		$track = $tracks[0];
+		$this->data = $this->TrackDetail->read(null, $trackDetailId);
+		$this->set('trackDetails', $this->TrackDetail->getAllTrackDetails($track['trackId']));
+		$this->Loa->recursive = -1;
+		$this->set('loa', $this->Loa->read(null, $track['loaId']));
+		$this->set('track', $track);
+		$this->set('revenueModels', $this->RevenueModel->find('list'));
+		$this->set('ticketId', $ticketId);
+		$this->set('trackDetailId', $trackDetailId);
 	}
-	*/
 }
 ?>
