@@ -91,7 +91,7 @@ class UsersController extends AppController {
 			    }
 			    $query .= $part.' ';
 			}
-			$conditions = array('OR' => array("MATCH(User.lastName,User.firstName,User.email) AGAINST('$query' IN BOOLEAN MODE)"));
+			$conditions = array('OR' => array("MATCH(User.lastName,User.firstName,User.email) AGAINST('$query' IN BOOLEAN MODE)", 'User.userId' => $query));
 
 			if($_GET['query'] ||  $this->params['named']['query']) {
 				$this->autoRender = false;
