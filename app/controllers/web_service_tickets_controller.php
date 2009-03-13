@@ -864,9 +864,23 @@ class WebServiceTicketsController extends WebServicesController
 			return '114';	
 		}
 		
-		if ($toolboxManualCharge) {
-			$ticket['Ticket']['billingAmountOverride'] = $data['paymentAmount'];	
+		// handle fees, promo discounts, etc
+		// ---------------------------------------------------------------------------
+		$fee = in_array($ticket['Ticket']['offerTypeId'], array(1,2,6)) ? 30 : 40;
+		$totalChargeAmount = $data['paymentAmount'];
+		
+		if (!$toolboxManualCharge) {
+			// this is either autocharge or user checkout so add the fees
+			$totalChargeAmount += $fee; 
+			$promo = $this->Ticket->getTicketOfferPromo($ticket['Ticket']['ticketId']);
+			if ($promo && isset($promo['opc']['promoAmount']) && is_numeric($promo['opc']['promoAmount'])) {
+				$totalChargeAmount -= $promo['opc']['promoAmount'];
+			}
 		}
+		
+		// set total charge amount to send to processor
+		// ---------------------------------------------------------------------------
+		$ticket['Ticket']['billingPrice'] = $totalChargeAmount;
 		
 		// init payment processing and submit payment
 		// ---------------------------------------------------------------------------
@@ -880,9 +894,6 @@ class WebServiceTicketsController extends WebServicesController
 		$firstName 								= trim($nameSplit[0]);
 		$lastName 								= trim(array_pop($nameSplit));
 		$userPaymentSettingPost['UserPaymentSetting']['expMonth'] = str_pad($userPaymentSettingPost['UserPaymentSetting']['expMonth'], 2, '0', STR_PAD_LEFT);
-		
-		$fee = in_array($ticket['Ticket']['offerTypeId'], array(1,2,6)) ? 30 : 40;
-		$totalChargedAmount = ($toolboxManualCharge) ? $data['paymentAmount'] : $data['paymentAmount'] + $fee;
 		
 		$paymentDetail 							= array();
 		$paymentDetail 							= $processor->GetMappedResponse();
@@ -902,7 +913,7 @@ class WebServiceTicketsController extends WebServicesController
 		$paymentDetail['ppCardNumLastFour']		= substr($userPaymentSettingPost['UserPaymentSetting']['ccNumber'], -4, 4);
 		$paymentDetail['ppExpMonth']			= $userPaymentSettingPost['UserPaymentSetting']['expMonth'];
 		$paymentDetail['ppExpYear']				= $userPaymentSettingPost['UserPaymentSetting']['expYear'];
-		$paymentDetail['ppBillingAmount']		= $totalChargedAmount;
+		$paymentDetail['ppBillingAmount']		= $totalChargeAmount;
 		$paymentDetail['autoProcessed']			= $data['autoCharge'];
 		$paymentDetail['initials']				= $data['initials'];
 		$paymentDetail['ccType']				= $userPaymentSettingPost['UserPaymentSetting']['ccType'];

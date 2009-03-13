@@ -33,5 +33,21 @@ class Ticket extends AppModel {
 		$clients = $this->query($sql);
 		return $clients;
 	}
+	
+	function getTicketOfferPromo($ticketId) {
+		if (!$ticketId || !is_numeric($ticketId)) {
+			return false;	
+		}
+		$promo_sql = "SELECT opc.* FROM ticket t ";
+		$promo_sql.= "INNER JOIN offerPromoTracking opt ON opt.offerId = t.offerId AND opt.userId = t.userId ";
+		$promo_sql.= "LEFT JOIN offerPromoCode opc USING (offerPromoCodeId) ";
+		$promo_sql.= "WHERE t.ticketId = $ticketId ORDER BY offerPromoTrackingId DESC LIMIT 1";		
+		$promo_result = $this->query($promo_sql);
+		if (!empty($promo_result)) {
+			return $promo_result[0];	
+		} else {
+			return false;
+		}
+	}
 }
 ?>

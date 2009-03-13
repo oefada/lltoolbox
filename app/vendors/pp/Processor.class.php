@@ -30,13 +30,6 @@ class Processor
 		$firstName = trim($nameSplit[0]);
 		$lastName = trim(array_pop($nameSplit));
 		
-		$fee = in_array($ticket['Ticket']['offerTypeId'], array(1,2,6)) ? 30 : 40;
-		$ticket['Ticket']['billingPrice'] += $fee;
-		
-		if (isset($ticket['Ticket']['billingAmountOverride'])) {
-			$ticket['Ticket']['billingPrice'] = $ticket['Ticket']['billingAmountOverride'];
-		}
-		
 		$db_params = array();
 		$db_params['map_ticket_id'] 				= $ticket['Ticket']['ticketId'];
 		$db_params['map_total_amount'] 				= $ticket['Ticket']['billingPrice'];
