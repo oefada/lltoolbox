@@ -187,7 +187,8 @@ class TrackDetail extends AppModel {
 		$loaModel->recursive = -1;
 		
 		$allocated_amount = $this->data['TrackDetail']['allocatedAmount'];
-		$track = $this->getTrackRecord($this->data['TrackDetail']['ticketId']);
+		$tracks = $this->getTrackRecord($this->data['TrackDetail']['ticketId']);
+		$track = $tracks[0];
 		
 		// retrieve LOA data
 		// ---------------------------------------------------------
