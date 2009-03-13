@@ -432,7 +432,7 @@ class ReportsController extends AppController {
 	        $sql = "SELECT
                                         Offer.offerId,
                                         Ticket.ticketId,
-                                        GROUP_CONCAT(Client.clientId) as clientIds
+                                        GROUP_CONCAT(Client.clientId) as clientIds,
                                     	GROUP_CONCAT(Client.name) as clientNames,
                                     	Ticket.userFirstName,
                                     	Ticket.userLastName,
