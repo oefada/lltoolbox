@@ -67,9 +67,13 @@ class AppController extends Controller {
 			Configure::write('debug', '0');
 		}
 		
-		if ($this->RequestHandler->prefers('pdf')) {
+		if ($this->RequestHandler->prefers('pdf') || $this->RequestHandler->prefers('doc')) {
 		    error_reporting(E_ERROR);
 		    Configure::write('debug', '0');
+		}
+		
+		if($this->params['url']['ext'] == 'doc') {
+		    $this->layout = 'doc/default';
 		}
 
 		if (isset($this->{$this->modelClass}) && is_object($this->{$this->modelClass}) && $this->{$this->modelClass}->Behaviors->attached('Logable')) {

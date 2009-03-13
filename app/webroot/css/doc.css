@@ -1,0 +1,18 @@
+* {
+    font-family: Times;
+}
+
+h1 {
+    font-size: 15pt;
+    margin: 0;
+}
+
+table {
+    width: 100%;
+}
+
+table.leftcol th {
+    text-align: left;
+    width: 100pt;
+    font-size: 10pt;
+}
