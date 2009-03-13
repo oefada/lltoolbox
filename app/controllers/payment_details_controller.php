@@ -103,6 +103,11 @@ class PaymentDetailsController extends AppController {
 		$ticket = $this->PaymentDetail->Ticket->read(null, $this->params['ticketId']);
 		$ticket['Ticket']['totalBillingAmount'] = in_array($ticket['Ticket']['offerTypeId'], array(1,2,6)) ? 30 : 40;
 		$ticket['Ticket']['totalBillingAmount'] += $ticket['Ticket']['billingPrice'];
+		$promo = $this->Ticket->getTicketOfferPromo($ticket['Ticket']['ticketId']);
+		if ($promo && isset($promo['opc']['promoAmount']) && is_numeric($promo['opc']['promoAmount'])) {
+			$ticket['Ticket']['totalBillingAmount'] -= $promo['opc']['promoAmount'];
+			$ticket['Promo'] = $promo;
+		}
 		
 		$selectExpMonth = array();
 		for ($i = 1; $i < 13; $i++) {

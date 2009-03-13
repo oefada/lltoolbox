@@ -375,6 +375,7 @@ class WebServiceTicketsController extends WebServicesController
 		$liveOfferData 		= $liveOffer[0]['LiveOffer'];
 		$offerType			= $this->OfferType->find('list');
 		$userPaymentData	= $this->findValidUserPaymentSetting($ticketData['userId']);
+		$promoData			= $this->Ticket->getTicketOfferPromo($ticketId);
 		
 		// vars for all email templates
 		// -------------------------------------------------------------------------------

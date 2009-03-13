@@ -21,7 +21,10 @@
 		echo $form->input('ppvNoticeTypeId', array('type' => 'hidden'));
 		echo $form->input('ticketId', array('readonly'=>'readonly'));
 	?>
-		<div style="text-align:right;"><?php echo $form->submit('Send');?></div>
+		<?php if ($promo) :?>
+			<h3 style="margin:20px;padding:0px;">** This ticket is associated with PROMO CODE  **</h3>
+		<?php endif; ?>
+		<div style="text-align:right;margin:0px;padding:0px;"><?php echo $form->submit('Send');?></div>
 		<textarea id="PpvNoticeEmailBody" name="data[PpvNotice][emailBody]" cols="140" rows="30" style="width:100%;"><?php echo $ppv_body_text;?></textarea>
 	</fieldset>
 <?php echo $form->end();?>

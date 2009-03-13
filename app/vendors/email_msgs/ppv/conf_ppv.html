@@ -14,7 +14,14 @@ Ticket Reference ID #<?php echo $ticketId;?><br />
 
 <p>Dear <?php echo $userFirstName;?> <?php echo $userLastName;?>, </p>
 
-<p>Congratulations on your Luxury Link purchase of this special package from <strong><?php echo $clientNameP;?></strong>. This letter confirms your purchase of the following package in the amount of $<?php echo $billingPrice;?> plus the <?php echo $llFee;?> <?php if (in_array($offerTypeId, array(1,2,6))) echo 'auction';?> handling fee.</p>
+<p>
+Congratulations on your Luxury Link purchase of this special package from <strong><?php echo $clientNameP;?></strong>. 
+This letter confirms your purchase of the following package in the amount of $<?php echo $billingPrice;?> 
+plus the <?php echo $llFee;?> <?php if (in_array($offerTypeId, array(1,2,6))) echo 'auction';?> handling fee.  
+<?php if (!empty($promoData)) :?>
+	Your promotional code has been accepted and your savings will be reflected in the final amount charged to your card.
+<?php endif;?>
+</p>
 
 <p>Your reservation has been confirmed for:</p>
 

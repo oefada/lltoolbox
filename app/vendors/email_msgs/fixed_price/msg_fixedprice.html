@@ -14,6 +14,9 @@
 			We have received your request for pricing and availability for the <?php echo $clientNameP;?> : "<?php echo $packageName;?>"
 			offer at the Luxury Link exclusive rate of $<?php echo $billingPrice;?> plus the $<?php echo $llFeeAmount;?> handling fee.  
 			A representative will contact you within 24 hours of receiving your request.
+			<?php if (!empty($promoData)) :?>
+			Your promotional code has been accepted and applicable savings will be reflected in the charge amount at the time of purchase.
+			<?php endif;?>
 			</p>
 
 			<p>

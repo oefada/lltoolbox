@@ -72,6 +72,8 @@ class PpvNoticesController extends AppController {
 			$clientIdParam = '';	
 		}
 
+		$this->set('promo', $this->Ticket->getTicketOfferPromo($ticketId));
+
 		$this->set('clientIdParam', $clientIdParam);
 		$data_json_encoded = json_encode($data);
 		$soap_client = new nusoap_client($webservice_live_url, true);

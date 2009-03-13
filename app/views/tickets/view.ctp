@@ -133,7 +133,12 @@ $this->searchController = 'Tickets';
 						);
 				?>
 				</td>
-				<td><?php echo $ticket['Ticket']['ticketNotes']; ?></td>
+				<td>
+				<?php if (!empty($ticket['Promo'])) :?>
+					<h3 style="margin:0px;padding:0px;padding-bottom:5px;">** Promo Code [<?=$ticket['Promo']['opc']['promoCode'];?>] **</h3>
+					<h3 style="margin:0px;padding:0px;padding-bottom:5px;">Amount: <?php echo $number->currency($ticket['Promo']['opc']['promoAmount']);?></h3>
+				<?php endif; ?>
+				<?php echo $ticket['Ticket']['ticketNotes']; ?></td>
 			</tr>
 		</table>
 	</div>

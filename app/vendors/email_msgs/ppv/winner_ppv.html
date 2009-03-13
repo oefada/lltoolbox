@@ -17,6 +17,9 @@ Ticket Reference ID #<?php echo $ticketId;?><br />
 
 <p>
 Thank you for your purchase of this special package from <?php echo $clientNameP;?> in the amount of $<?php echo $billingPrice;?> plus the $<?php echo $llFee;?> auction handling fee.
+<?php if (!empty($promoData)) :?>
+	Your promotional code has been accepted and your savings will be reflected in the final amount charged to your card.
+<?php endif;?>
 </p>
 
 <?php if ($offerTypeId == 1 || $offerTypeId == 6) : ?>

@@ -71,7 +71,7 @@ class TicketsController extends AppController {
 		$this->paginate = array('fields' => array(
 									'Ticket.ticketId', 'Ticket.offerTypeId', 'Ticket.created', 
 									'Ticket.offerId', 'Ticket.userId', 'TicketStatus.ticketStatusName', 
-									'Ticket.userFirstName', 'Ticket.userLastName', 'Ticket.packageId', 'Ticket.billingPrice', 'Ticket.formatId'
+									'Ticket.userFirstName', 'Ticket.userLastName', 'Ticket.packageId', 'Ticket.billingPrice', 'Ticket.formatId', 'Ticket.ticketNotes'
 									),
 		                        'contain' => array('TicketStatus'),
 		                        'order' => array(
@@ -109,6 +109,7 @@ class TicketsController extends AppController {
 			$track = $tracks[0];
 			$tickets_index[$k]['Ticket']['trackName'] = ($track['trackName']) ? $track['trackName'] : 'N/A';	
 			$clients = $this->Ticket->getClientsFromPackageId($v['Ticket']['packageId']);
+			$tickets_index[$k]['Promo'] = $this->Ticket->getTicketOfferPromo($v['Ticket']['ticketId']);
 			$tickets_index[$k]['Client'] = $clients;
 		}
 		
@@ -148,6 +149,7 @@ class TicketsController extends AppController {
 		$ticket = $this->Ticket->read(null, $id);
 
 		$ticket['Client'] = $this->Ticket->getClientsFromPackageId($ticket['Ticket']['packageId']);
+		$ticket['Promo'] = $this->Ticket->getTicketOfferPromo($id);
 
 		$this->set('ticket', $ticket);
 		

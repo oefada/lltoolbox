@@ -196,13 +196,12 @@ $this->set('hideSidebar', true);
 	<th width="10"><?php echo $paginator->sort('Offer Type', 'Ticket.offerTypeId');?></th>
 	<th width="10" style="color:#FFF;">Track</th>
 	<th width="10"><?php echo $paginator->sort('Offer Id', 'Ticket.offerId');?></th>
-	<th width="250" style="color:#FFF;">Client</th>
-	<th width="10"><?php echo $paginator->sort('User Id', 'Ticket.userId');?></th>
-	<th width="100"><?php echo $paginator->sort('User First Name', 'Ticket.userFirstName');?></th>
-	<th width="100"><?php echo $paginator->sort('User Last Name', 'Ticket.userLastName');?></th>
+	<th width="220" style="color:#FFF;">Client</th>
+	<th width="220" style="color:#FFF;">User</th>
 	<th width="10"><?php echo $paginator->sort('Sale Price', 'Ticket.billingPrice');?></th>
 	<th width="10"><?php echo $paginator->sort('Status', 'Ticket.ticketStatusId');?></th>
 	<th width="10" style="color:#FFF;">CC</th>	
+	<th width="220" style="color:#FFF;">Notes</th>
 	<th class="actions" style="color:#FFF;"><?php __('Actions');?></th>
 </tr>
 <?php
@@ -237,13 +236,7 @@ foreach ($tickets as $ticket):
 			<?php endforeach; ?>
 		</td>
 		<td>
-			<a href="/users/view/<?php echo $ticket['Ticket']['userId'];?>" target="_BLANK"><?php echo $ticket['Ticket']['userId'];?></a>
-		</td>
-		<td>
-			<?php echo $ticket['Ticket']['userFirstName']; ?>
-		</td>
-		<td>
-			<?php echo $ticket['Ticket']['userLastName']; ?>
+			<a href="/users/view/<?php echo $ticket['Ticket']['userId'];?>" target="_BLANK"><?php echo $ticket['Ticket']['userId'];?></a> - <?php echo $ticket['Ticket']['userFirstName']; ?> <?php echo $ticket['Ticket']['userLastName']; ?>
 		</td>
 		<td>
 			<?php echo $number->currency($ticket['Ticket']['billingPrice']);?>
@@ -253,6 +246,13 @@ foreach ($tickets as $ticket):
 		</td>
 		<td>
 			<?php echo $ticket['Ticket']['validCard']; ?>
+		</td>
+		<td>
+			<?php if (!empty($ticket['Promo'])) :?>
+			<h3 style="margin:0px;padding:0px;padding-bottom:5px;">** Promo Code [<?=$ticket['Promo']['opc']['promoCode'];?>] **</h3>
+			<h3 style="margin:0px;padding:0px;padding-bottom:5px;">Amount: <?php echo $number->currency($ticket['Promo']['opc']['promoAmount']);?></h3>
+			<?php endif; ?>
+			<?php echo $ticket['Ticket']['ticketNotes']; ?>
 		</td>
 		<td class="actions">
 			<?php echo $html->link(__('View Details', true), array('controller' => 'tickets', 'action'=>'view', $ticket['Ticket']['ticketId'])); ?>
