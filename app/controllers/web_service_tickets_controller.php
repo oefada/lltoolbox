@@ -357,6 +357,8 @@ class WebServiceTicketsController extends WebServicesController
 		// retrieve data to fill out the email templates
 		// -------------------------------------------------------------------------------
 			
+		mail('devmail@luxurylink.com', 'testing', print_r($params, true));
+			
 		$this->Ticket->recursive = 0;
 		$this->Address->recursive = -1;
 		$this->ClientLoaPackageRel->recursive = 0;
