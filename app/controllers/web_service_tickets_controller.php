@@ -433,9 +433,17 @@ class WebServiceTicketsController extends WebServicesController
 			$ccType				= $userPaymentData['UserPaymentSetting']['ccType'];
 		}
 		
+		// guarantee amount
+		// -------------------------------------------------------------------------------
+		$guarantee = false;
+		if ($packageData['reservePrice'] && is_numeric($packageData['reservePrice']) && ($packageData['reservePrice'] > 0)) {
+			if ($ticketData['billingPrice'] < $packageData['reservePrice']) {
+				$guarantee = number_format($packageData['reservePrice'], 2, '.', ',');
+			}
+		}
+		
 		// some unknowns
 		// -------------------------------------------------------------------------------
-		$guarantee			= false;
 		$wholesale			= false;
 
 		// fetch client contacts

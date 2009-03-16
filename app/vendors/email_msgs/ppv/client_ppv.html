@@ -37,6 +37,12 @@ Ticket Reference ID #<?php echo $ticketId;?><br />
 	
 <?php endif; ?>
 	
+	<?php if ($guarantee) : ?>
+		<p>
+		On this occasion Luxury Link will subsidize the winning bid amount to guarantee $<?=$guarantee;?>; this amount will be reflected on your month end statement.
+		</p>
+	<?php endif ;?>
+	
 	<p><?php echo $packageIncludes;?></p>
 	<p><?php echo $validityNote;?></p>
 	<p><?php echo $legalText;?></p>

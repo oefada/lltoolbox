@@ -82,7 +82,12 @@ class TrackDetail extends AppModel {
 		
 		$ticket_amount = $ticket_and_rev['t']['billingPrice'];
 		$allocated_amount = (($ticket_and_rev['clpr']['percentOfRevenue'] / 100) * $ticket_amount);
-		
+		$result = $this->query("select p.reservePrice from ticket t inner join package p using (packageId) where t.ticketId = $ticketId");
+		$reserve_amount = (!empty($result) && isset($result[0]['p']['reservePrice']) && ($result[0]['p']['reservePrice'] > 0)) ? $result[0]['p']['reservePrice'] : false;
+		if ($reserve_amount && ($allocated_amount < $reserve_amount)) {
+			$allocated_amount = $reserve_amount;
+		}
+
 		// set new track information
 		// ---------------------------------------------------------
 		$new_track_detail 							= array();
