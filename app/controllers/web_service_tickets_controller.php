@@ -455,7 +455,12 @@ class WebServiceTicketsController extends WebServicesController
 			if ($clientIdParam && ($clientIdParam == $tmp['clientId'])) {
 				$multi_client_map_override = $k;
 			}
-			$tmp_result = $this->Ticket->query('SELECT * FROM clientContact WHERE clientContactTypeId = 1 and clientId = ' . $v['Client']['clientId'] . ' ORDER BY primaryContact DESC');
+			if (!empty($v['Client']['parentClientId']) && is_numeric($v['Client']['parentClientId']) && ($v['Client']['parentClientId'] > 0) && ($v['Client']['clientId'] != $v['Client']['parentClientId'])) {
+				$add_parent_client_sql = "OR clientId = " . $v['Client']['parentClientId'];
+			} else {
+				$add_parent_client_sql = '';	
+			}
+			$tmp_result = $this->Ticket->query("SELECT * FROM clientContact WHERE clientContactTypeId = 1 AND (clientId = " . $v['Client']['clientId'] . " $add_parent_client_sql) ORDER BY primaryContact DESC");
 			$contact_cc_string = array();
 			foreach ($tmp_result as $a => $b) {
 				$contacts = array();
