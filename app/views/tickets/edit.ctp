@@ -7,9 +7,12 @@ $this->pageTitle = $this->data['Package']['packageName'].$html2->c($this->data['
 	<fieldset>
 	<?php
 		echo $form->input('ticketId', array('type' => 'hidden'));
+		if ($allow_status_edit) {
+			echo $form->input('ticketStatusId');
+		} 
 		echo $form->input('ticketNotes', array('cols'=> '80', 'rows' => '15'));
 		/*
-		// just tickets for now
+		// just tickets for nowz
 		echo $form->input('ticketStatusId', array('disabled' => 'disabled'));
 		echo $form->input('packageId', array('disabled' => 'disabled'));
 		echo $form->input('offerId', array('disabled' => 'disabled'));
