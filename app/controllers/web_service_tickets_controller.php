@@ -178,6 +178,27 @@ class WebServiceTicketsController extends WebServicesController
 			if (!empty($smid)) {
 				$this->addTrackPending($smid, $newTicket['Ticket']['billingPrice']);
 			}
+			
+			// take down future instances of offers if reached package.maxNumSales
+			// -------------------------------------------------------------------------------
+			$packageMaxNumSales = $this->Ticket->getPackageNumMaxSales($data['packageId']);
+			$derivedPackageNumSales = $this->Ticket->getDerivedPackageNumSales($data['packageId']);
+			
+			if ((($packageMaxNumSales !== false) && ($derivedPackageNumSales !== false)) && (($packageMaxNumSales - $derivedPackageNumSales) == 1)) {
+				$this->Ticket->insertMessageQueuePackage($ticketId, 'PACKAGE');
+				if ($schedulingMasterId && is_numeric($schedulingMasterId) && ($schedulingMasterId > 0)) {
+					$this->SchedulingMaster->deleteAll(array('SchedulingMaster.startDate > NOW()', 'SchedulingMaster.schedulingMasterId' => $schedulingMasterId));
+	   		 		$this->SchedulingMaster->SchedulingInstance->deleteAll(array('SchedulingInstance.startDate > NOW()', 'SchedulingInstance.schedulingMasterId' => $schedulingMasterId));
+	   		 		if (in_array($offerLive['offerTypeId'], array(3,4))) {
+	   		 			$offerLiveSave = array();
+	   		 			$offerLiveSave['offerId'] = $offerLive['offerId'];
+	   		 			$offerLiveSave['endDate'] = date('Y-m-d H:i:s', strtotime('now'));
+	   		 			if (!$this->OfferLive->save($offerLiveSave)) {
+	   		 				@mail('devmail@luxurylink.com', 'ERROR: WEB SERVICE TICKET - FP OFFER TAKE DOWN', 'FP offer was not taken down on an attempt.' . print_r($data, true));
+	   		 			}
+	   		 		}
+	   		 	}
+			}
 
 			// if non-auction, just stop here as charging and ppv should not be auto
 			// -------------------------------------------------------------------------------
@@ -290,19 +311,6 @@ class WebServiceTicketsController extends WebServicesController
 				
 				$ppv_settings['ppvNoticeTypeId'] = 3;    // winner PPV
 				$this->ppv(json_encode($ppv_settings));	
-			}
-			
-			// take down future instances of offers if reached package.maxNumSales
-			// -------------------------------------------------------------------------------
-			$packageMaxNumSales = $this->Ticket->getPackageNumMaxSales($data['packageId']);
-			$derivedPackageNumSales = $this->Ticket->getDerivedPackageNumSales($data['packageId']);
-			
-			if ((($packageMaxNumSales !== false) && ($derivedPackageNumSales !== false)) && (($packageMaxNumSales - $derivedPackageNumSales) == 1)) {
-				$this->Ticket->insertMessageQueuePackage($ticketId, 'PACKAGE');
-				if ($schedulingMasterId && is_numeric($schedulingMasterId) && ($schedulingMasterId > 0)) {
-					$this->SchedulingMaster->deleteAll(array('SchedulingMaster.startDate > NOW()', 'SchedulingMaster.schedulingMasterId' => $schedulingMasterId));
-	   		 		$this->SchedulingMaster->SchedulingInstance->deleteAll(array('SchedulingInstance.startDate > NOW()', 'SchedulingInstance.schedulingMasterId' => $schedulingMasterId));
-	   		 	}
 			}
 			
 			// finally, return back
