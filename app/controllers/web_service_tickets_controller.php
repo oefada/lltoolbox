@@ -8,7 +8,7 @@ require(APP.'/vendors/pp/Processor.class.php');
 class WebServiceTicketsController extends WebServicesController
 {
 	var $name = 'WebServiceTickets';
-	var $uses = array('Ticket', 'UserPaymentSetting','PaymentDetail', 'Client', 'User', 'Offer', 'Bid', 'ClientLoaPackageRel', 'Track', 'OfferType', 'Loa', 'TrackDetail', 'PpvNotice', 'Address', 'Track', 'TrackDetail');
+	var $uses = array('Ticket', 'UserPaymentSetting','PaymentDetail', 'Client', 'User', 'Offer', 'Bid', 'ClientLoaPackageRel', 'Track', 'OfferType', 'Loa', 'TrackDetail', 'PpvNotice', 'Address', 'OfferLive', 'SchedulingMaster', 'SchedulingInstance');
 	var $serviceUrl = 'http://toolbox.luxurylink.com/web_service_tickets';
 	var $errorResponse = false;
 	var $api = array(
@@ -292,7 +292,23 @@ class WebServiceTicketsController extends WebServicesController
 				$this->ppv(json_encode($ppv_settings));	
 			}
 			
+			// take down future instances of offers if reached package.maxNumSales
+			// -------------------------------------------------------------------------------
+			$packageMaxNumSales = $this->Ticket->getPackageNumMaxSales($data['packageId']);
+			$derivedPackageNumSales = $this->Ticket->getDerivedPackageNumSales($data['packageId']);
+			
+			if ((($packageMaxNumSales !== false) && ($derivedPackageNumSales !== false)) && (($packageMaxNumSales - $derivedPackageNumSales) == 1)) {
+				$this->Ticket->insertMessageQueuePackage($ticketId, 'PACKAGE');
+				if ($schedulingMasterId && is_numeric($schedulingMasterId) && ($schedulingMasterId > 0)) {
+					$this->SchedulingMaster->deleteAll(array('SchedulingMaster.startDate > NOW()', 'SchedulingMaster.schedulingMasterId' => $schedulingMasterId));
+	   		 		$this->SchedulingMaster->SchedulingInstance->deleteAll(array('SchedulingInstance.startDate > NOW()', 'SchedulingInstance.schedulingMasterId' => $schedulingMasterId));
+	   		 	}
+			}
+			
+			// finally, return back
+			// -------------------------------------------------------------------------------
 			return true;	
+			
 		} else {			
 			// ticket was not succesfully created so send devmail alert
 			// -------------------------------------------------------------------------------
