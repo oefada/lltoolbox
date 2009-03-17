@@ -169,6 +169,15 @@ $this->set('hideSidebar', true);
 			</tr>
 			<tr>
 				<td width="150">
+					Package Id
+				</td>
+				<td>
+					<input type="text" id="s_package_id" name="s_package_id" value="<?php echo $s_package_id;?>" />
+					&nbsp;<a href="javascript:void(0);" onclick="document.getElementById('s_package_id').value = '';">Clear</a>
+				</td>
+			</tr>
+			<tr>
+				<td width="150">
 					&nbsp;
 				</td>
 				<td>
@@ -193,9 +202,10 @@ $this->set('hideSidebar', true);
 <tr>
 	<th width="10"><?php echo $paginator->sort('Ticket Id', 'Ticket.ticketId');?></th>
 	<th width="10"><?php echo $paginator->sort('Ticket Created', 'Ticket.created');?></th>
+	<th width="10"><?php echo $paginator->sort('Offer Id', 'Ticket.offerId');?></th>
 	<th width="10"><?php echo $paginator->sort('Offer Type', 'Ticket.offerTypeId');?></th>
 	<th width="10" style="color:#FFF;">Track</th>
-	<th width="10"><?php echo $paginator->sort('Offer Id', 'Ticket.offerId');?></th>
+	<th width="10" style="color:#FFF;">Package Id</th>
 	<th width="220" style="color:#FFF;">Client</th>
 	<th width="220" style="color:#FFF;">User</th>
 	<th width="10"><?php echo $paginator->sort('Sale Price', 'Ticket.billingPrice');?></th>
@@ -221,13 +231,16 @@ foreach ($tickets as $ticket):
 			<?php echo $ticket['Ticket']['created'];?>
 		</td>
 		<td>
+			<?php echo $ticket['Ticket']['offerId']; ?>
+		</td>
+		<td>
 			<?php echo $offerType[$ticket['Ticket']['offerTypeId']]; ?>
 		</td>
 		<td>
 			<?php echo $ticket['Ticket']['trackName']; ?>
-		</td>
+		</td>		
 		<td>
-			<?php echo $ticket['Ticket']['offerId']; ?>
+			<?php echo $ticket['Ticket']['packageId']; ?>
 		</td>
 		<td>
 			<?php foreach ($ticket['Client'] as $client) : ?>

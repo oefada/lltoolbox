@@ -30,6 +30,7 @@ class TicketsController extends AppController {
 		$s_user_id = isset($form['s_user_id']) ? $form['s_user_id'] : '';
 		$s_format_id = isset($form['s_format_id']) ? $form['s_format_id'] : '';
 		$s_client_id = isset($form['s_client_id']) ? $form['s_client_id'] : '';
+		$s_package_id = isset($form['s_package_id']) ? $form['s_package_id'] : '';
 		$s_offer_type_id = isset($form['s_offer_type_id']) ? $form['s_offer_type_id'] : 0;
 		$s_ticket_status_id = isset($form['s_ticket_status_id']) ? $form['s_ticket_status_id'] : 0;
 		$s_start_y = isset($form['s_start_y']) ? $form['s_start_y'] : date('Y');
@@ -54,6 +55,7 @@ class TicketsController extends AppController {
 		$this->set('s_offer_id', $s_offer_id);
 		$this->set('s_user_id', $s_user_id);
 		$this->set('s_client_id', $s_client_id);
+		$this->set('s_package_id', $s_package_id);
 		$this->set('s_format_id', $s_format_id);
 		$this->set('s_offer_type_id', $s_offer_type_id);
 		$this->set('s_ticket_status_id', $s_ticket_status_id);
@@ -70,7 +72,7 @@ class TicketsController extends AppController {
 				
 		$this->paginate = array('fields' => array(
 									'Ticket.ticketId', 'Ticket.offerTypeId', 'Ticket.created', 
-									'Ticket.offerId', 'Ticket.userId', 'TicketStatus.ticketStatusName', 
+									'Ticket.offerId', 'Ticket.userId', 'TicketStatus.ticketStatusName', 'Ticket.packageId', 
 									'Ticket.userFirstName', 'Ticket.userLastName', 'Ticket.packageId', 'Ticket.billingPrice', 'Ticket.formatId', 'Ticket.ticketNotes'
 									),
 		                        'contain' => array('TicketStatus'),
@@ -88,6 +90,8 @@ class TicketsController extends AppController {
 			$this->paginate['conditions']['Ticket.userId'] = $s_user_id;       
 		} elseif ($s_client_id) {
 			$this->paginate['conditions']['Ticket.clientId'] = $s_client_id;       
+		} elseif ($s_package_id) {
+			$this->paginate['conditions']['Ticket.packageId'] = $s_package_id;       
 		} else {    
 			$this->paginate['conditions']['Ticket.created BETWEEN ? AND ?'] = array($s_start_date, $s_end_date);             		
 			if ($s_offer_type_id) {
@@ -100,7 +104,7 @@ class TicketsController extends AppController {
 				$this->paginate['conditions']['Ticket.ticketStatusId'] = $s_ticket_status_id;	
 			}
 		}
-		
+	
 		$tickets_index = $this->paginate();
 
 		foreach ($tickets_index as $k => $v) {
