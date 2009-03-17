@@ -486,6 +486,8 @@ class SchedulingMastersController extends AppController {
 	}
 	
 	function closeFixedPriceOffer($id = null) {
+		// NOTE:  there is a variation of this function inside web_service_tickets_controller to automatically stop offers if it hits the number of max num sales
+		
 	    if (!$id) {
 			$this->Session->setFlash(__('Invalid id for SchedulingMaster', true));
 			$this->set('closeModalbox', true);
