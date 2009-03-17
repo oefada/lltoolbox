@@ -49,5 +49,64 @@ class Ticket extends AppModel {
 			return false;
 		}
 	}
+	
+	function getDerivedPackageNumSales($packageId) {
+		$sql = "SELECT count(*) AS COUNT FROM ticket INNER JOIN paymentDetail pd ON ticket.ticketId = pd.ticketId AND pd.isSuccessfulCharge = 1 ";
+		$sql.= "WHERE ticket.packageId = $packageId AND ticket.ticketStatusId NOT IN (7,8)";
+		$result = $this->query($sql);
+		if(!empty($result) && isset($result[0][0]['COUNT']) && is_numeric($result[0][0]['COUNT'])) {
+			return $result[0][0]['COUNT'];	
+		} else {
+			return false;	
+		}
+	}
+	
+	function getPackageNumMaxSales($packageId) {
+		$sql = "SELECT maxNumSales FROM package WHERE packageId = $packageId";
+		$result = $this->query($sql);
+		if(!empty($result) && isset($result[0]['package']['maxNumSales']) && is_numeric($result[0]['package']['maxNumSales']) && ($result[0]['package']['maxNumSales'] > 0)) {
+			return ($result[0]['package']['maxNumSales']);
+		} else {
+			return false;	
+		}
+	}
+
+	function insertMessageQueuePackage($ticketId, $type) {
+		$sql = "select clpr.loaId, clpr.packageId, clpr.clientId, c.name, c.managerUsername, p.packageName from ticket t ";
+		$sql.= "inner join clientLoaPackageRel clpr on t.packageId = clpr.packageId ";
+		$sql.= "inner join package p on p.packageId = clpr.packageId ";
+		$sql.= "inner join client c on c.clientId = clpr.clientId ";
+		$sql.= "where t.ticketId = $ticketId";
+		$result = $this->query($sql);
+		
+		if (!empty($result)) {
+			$loaId = $result[0]['clpr']['loaId'];
+			$clientId = $result[0]['clpr']['clientId'];
+			$packageId = $result[0]['clpr']['packageId'];
+			$packageName = $result[0]['p']['packageName'];
+			$clientName = $result[0]['c']['name'];
+			$toUser = $result[0]['c']['managerUsername'];
+		
+			switch ($type) {
+				case 'PACKAGE':
+					$title = "Maximum Number of Sales for Package [$packageName]";
+					$description = "If funded, this pending ticket, <a href='/tickets/view/$ticketId'>$ticketId</a>, will satisfy the maximum number of sales for this package, <a href='/clients/$clientId/packages/edit/$packageId'>$packageName</a>. ";
+					$description.= "All fixed priced offers for this package have ended and all live scheduled auctions will not reschedule.";
+					$model = 'Package';
+					break;
+				case 'LOA':
+					$title = "Maximum Number of Sales for LOA [$clientName]";
+					$description = "If funded, this pending ticket, <a href='/tickets/view/$ticketId'>$ticketId</a>, will satisfy the maximum number of sales for this LOA <a href='/loas/edit/$loaId'>$loaId</a>. ";
+					$description.= "All fixed priced offers for this LOA have ended and all live scheduled auctions will not reschedule.";
+					$model = 'Loa';
+					break;	
+			}	
+			
+			$description = mysql_real_escape_string($description);
+			
+			$sql = "CALL insertQueueMessage(\"$toUser\", \"$title\", \"$description\", \"$model\", 0)";
+			$this->query($sql);
+		}
+	}
 }
 ?>
