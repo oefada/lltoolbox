@@ -33,7 +33,7 @@
 			echo $javascript->link('livepipe');
 			echo $javascript->link('tabs');
 			echo $javascript->link('prototip');
-			echo $javascript->link('fixed_table_headers');
+			//echo $javascript->link('fixed_table_headers');
 		endif;
 
 		echo $scripts_for_layout;
