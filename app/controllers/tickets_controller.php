@@ -197,6 +197,16 @@ class TicketsController extends AppController {
 		if (empty($this->data)) {
 			$this->data = $this->Ticket->read(null, $id);
 		}
+		if (isset($_SESSION['Auth']['AdminUser']['mailnickname'])) {
+			$initials_user = $_SESSION['Auth']['AdminUser']['mailnickname'];
+		} else {
+			$initials_user = false;
+		}
+		
+		// only ticket status edit only for CHRISTINE YOUNG
+		$allow_status_edit = in_array(trim($initials_user), array('cyoung','alee')) ? true : false;
+		
+		$this->set('allow_status_edit', $allow_status_edit);
 		$this->set('ticketStatusIds', $this->Ticket->TicketStatus->find('list'));
 	}
 
