@@ -78,7 +78,8 @@ class TicketsController extends AppController {
 		                        'contain' => array('TicketStatus'),
 		                        'order' => array(
 		                        	'Ticket.ticketId' => 'desc'
-		                        	)
+		                        	),
+		                        'limit' => 50
 		                        );
 		    
 		// if search via ticket id, offer id, or user id, then dont use other search conditions
