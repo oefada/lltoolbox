@@ -32,7 +32,10 @@ class ClientsController extends AppController {
 
 	    if (!empty($this->data)) {
 	        $this->data['Client']['createdInToolbox'] = 1;
-	        
+
+			// alee 03-17-2009 - add SEO NAME for child clients	        
+	        $this->data['Client']['seoName'] = $this->convertToSeoName($this->data['Client']['name']);
+
 	        $this->Client->create();
 	        if($this->Client->save($this->data)) {
 	            $this->Session->setFlash(__('The Child Client has been saved, <a href="/clients/edit/'.$this->Client->id.'">click here to edit it</a>', true), 'default', array(), 'success');
@@ -141,6 +144,37 @@ class ClientsController extends AppController {
 
 		$this->Session->setFlash(__('The Client has been reverted to revision '.$revisionId, true));
 		$this->redirect(array('action' => 'edit', $client['clientId']));
+	}
+	
+	function convertToSeoName($str) {
+	    $str = strtolower(html_entity_decode($str, ENT_QUOTES, "ISO-8859-1"));  // convert everything to lower string
+	    $search_accent = explode(",","ç,æ,~\,á,é,í,ó,ú,à,è,ì,ò,ù,ä,ë,ï,ö,ü,ÿ,â,ê,î,ô,û,å,e,i,ø,u,ñ");
+	    $replace_accent = explode(",","c,ae,oe,a,e,i,o,u,a,e,i,o,u,a,e,i,o,u,y,a,e,i,o,u,a,e,i,o,u,n");
+	    $search_accent[] = '&';
+	    $replace_accent[] = ' and ';
+	    $str = str_replace($search_accent, $replace_accent, $str);
+	    $str = preg_replace("/<([^<>]*)>/", ' ', $str);                     // remove html tags
+	    $str_array = preg_split("/[^a-zA-Z0-9]+/", $str);                   // remove non-alphanumeric
+	    $count_a = count($str_array);
+	    if ($count_a) {
+	        if ($str_array[0] == 'the') {
+	            array_shift($str_array);
+	        }
+	        if (isset($str_array[($count_a - 1)]) && (($str_array[($count_a - 1)] == 'the') || !$str_array[($count_a - 1)])) {
+	            array_pop($str_array);
+	        }
+	        for ($i=0; $i<$count_a; $i++) {
+	            if ($str_array[$i]=='s' && strlen($str_array[($i - 1)])>1) {
+	                $str_array[($i - 1)] = $str_array[($i - 1)] . 's';
+	                unset($str_array[$i]);
+	            } elseif ($str_array[$i]=='' || !$str_array[$i]) {
+	                unset($str_array[$i]);
+	            }
+	        }
+	        return (substr(implode('-', $str_array), 0, 499));
+	    }else {
+	        return '';
+	    }
 	}
 }
 ?>
