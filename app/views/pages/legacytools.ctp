@@ -8,5 +8,6 @@
 <li><?=$html->link("What's New", 'legacytools/whats_new')?></li>
 <li><?=$html->link("Menu Tool", '/menus')?></li>
 <li><?=$html->link("Popular Travel Ideas Tool", '/popular_travel_ideas')?></li>
+<li><?=$html->link("Homepage Merchandising Modules", '/homepage_merchandisings')?></li>
 </ul>
 <br />
