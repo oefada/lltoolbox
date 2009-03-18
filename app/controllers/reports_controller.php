@@ -718,7 +718,7 @@ class ReportsController extends AppController {
                            INNER JOIN offer AS Offer USING(offerId)
                            LEFT JOIN offerType AS OfferType ON (Ticket.offerTypeId = OfferType.offerTypeId)
                            LEFT JOIN schedulingInstance AS SchedulingInstance USING(schedulingInstanceId)
-                           LEFT JOIN paymentDetail AS PaymentDetail ON (PaymentDetail.ticketId = Ticket.ticketId)
+                           LEFT JOIN paymentDetail AS PaymentDetail ON (PaymentDetail.ticketId = Ticket.ticketId AND PaymentDetail.isSuccessfulCharge <> 0)
                            LEFT JOIN paymentProcessor AS PaymentProcessor USING (paymentProcessorId)
                            LEFT JOIN userPaymentSetting AS UserPaymentSetting ON (UserPaymentSetting.userPaymentSettingId = PaymentDetail.userPaymentSettingId)
                            LEFT JOIN package AS Package USING(packageId)
