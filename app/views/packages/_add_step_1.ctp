@@ -21,7 +21,7 @@
 	<? if(count($clientLoaDetails) > 1): ?>
 	<?php echo $form->input('ClientLoaPackageRel.'.$k.'.numNights', array('onchange' => 'updateNumNights()', 'class' => 'multiProductNumNights')) ?>
 	<? endif; ?>
-	<?php echo $form->input('ClientLoaPackageRel.'.$k.'.trackId', array('options' => $tracks, 'label' => 'Track Name')) ?>
+	<?php echo $form->input('ClientLoaPackageRel.'.$k.'.trackId', array('options' => $tracks, 'label' => 'Track Name', 'empty' => true)) ?>
 </fieldset>
 <?php } ?>
 <? if(count($clientLoaDetails) > 1): ?>

@@ -30,7 +30,7 @@ $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']
 	</div>
 <?php echo $form->create('Client');?>
 	<fieldset>
-		<? echo $form->input('clientTypeId', array('label' => 'Client Type')); ?>
+		<? echo $form->input('clientTypeId', array('label' => 'Client Type', 'empty' => true)); ?>
 		<div class="input text"><label>LOA Level</label><?=$this->data['ClientLevel']['clientLevelName']?></div>
 		<div class="controlset">
 		<?
