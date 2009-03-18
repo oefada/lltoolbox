@@ -189,7 +189,15 @@ $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']
 					<?php echo $form->input('Theme', array('multiple' => 'checkbox', 'label' => false)); ?>
 				</div>
 			</div>
-			</fieldset>
+		</fieldset>
+		<fieldset class="collapsible">
+			<legend class="handle">Destinations <?=$html2->c($client['Destination']); ?></legend>
+			<div class="collapsibleContent">
+				<div class='controlset2'>
+					<?php echo $form->input('Destination', array('multiple' => 'checkbox', 'label' => false)); ?>
+				</div>
+			</div>
+		</fieldset>
 		<fieldset class="collapsible">
 			<legend class="handle">Images</legend>
 			<div class="collapsibleContent">

@@ -79,6 +79,7 @@ class ClientsController extends AppController {
 		
 		$clientTypeIds = $this->Client->ClientType->find('list');
 		$themes = $this->Client->Theme->find('list');
+		$destinations = $this->Client->Destination->find('list');
 		$this->set('client', $this->data);
 		//$this->set(compact('addresses', 'amenities','clientLevelIds','clientStatusIds','clientTypeIds','regions','clientAcquisitionSourceIds', 'loas', 'themes'));
 		$countryIds = $this->Country->find('list');
@@ -88,7 +89,7 @@ class ClientsController extends AppController {
 		if (!empty($this->data['Client']['stateId'])) {
 		    $cityIds = $this->Country->State->City->find('list', array('conditions' => array('City.stateId' => $this->data['Client']['stateId'])));
 		}
-		$this->set(compact('clientStatusIds','clientTypeIds','regions','clientAcquisitionSourceIds', 'loas', 'themes', 'countryIds', 'stateIds', 'cityIds'));
+		$this->set(compact('clientStatusIds','clientTypeIds','regions','clientAcquisitionSourceIds', 'loas', 'themes', 'destinations', 'countryIds', 'stateIds', 'cityIds'));
 	}
 		
 	function search()
