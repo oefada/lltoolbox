@@ -133,6 +133,23 @@ $this->set('hideSidebar', true);
 			</tr>
 			<tr>
 				<td width="150">
+					Promo Code
+				</td>
+				<td>
+					<select name="s_promo_code_id"> 
+						<option value="0"></option>
+						<option value="a" <?php if($s_promo_code_id == 'a'){ echo 'selected="selected"'; } ;?>>ALL PROMO CODES</option>
+						<?php 
+						foreach ($offerPromoCodeIds as $k=>$v) {  
+							$selected = ($k == $s_promo_code_id) ? 'selected="selected"' : ''; 
+							echo "<option value=\"$k\" $selected>$v</option>\n"; 
+						}
+						?>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td width="150">
 					Ticket Id
 				</td>
 				<td>
@@ -273,6 +290,6 @@ foreach ($tickets as $ticket):
 	</tr>
 <?php endforeach; ?>
 </table>
-<?php echo $this->renderElement('ajax_paginator', array('divToPaginate' => 'tickets-index'))?>
+<?php echo $this->renderElement('ajax_paginator', array('divToPaginate' => 'ticket-index', 'showCount' => true))?>
 
 </div>

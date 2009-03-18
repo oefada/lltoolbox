@@ -10,7 +10,7 @@ class TicketsController extends AppController {
 
 	var $name = 'Tickets';
 	var $helpers = array('Html', 'Form', 'Ajax', 'Text', 'Layout', 'Number');
-	var $uses = array('Ticket','OfferType', 'Format', 'User', 'ClientLoaPackageRel', 'Track', 'TrackDetail','Offer','Loa','Client', 'OfferLive');
+	var $uses = array('Ticket','OfferType', 'Format', 'User', 'ClientLoaPackageRel', 'Track', 'TrackDetail','Offer','Loa','Client', 'OfferLive', 'OfferPromoCode');
 
 	function index() {
 		
@@ -31,6 +31,7 @@ class TicketsController extends AppController {
 		$s_format_id = isset($form['s_format_id']) ? $form['s_format_id'] : '';
 		$s_client_id = isset($form['s_client_id']) ? $form['s_client_id'] : '';
 		$s_package_id = isset($form['s_package_id']) ? $form['s_package_id'] : '';
+		$s_promo_code_id = isset($form['s_promo_code_id']) ? $form['s_promo_code_id'] : '';
 		$s_offer_type_id = isset($form['s_offer_type_id']) ? $form['s_offer_type_id'] : 0;
 		$s_ticket_status_id = isset($form['s_ticket_status_id']) ? $form['s_ticket_status_id'] : 0;
 		$s_start_y = isset($form['s_start_y']) ? $form['s_start_y'] : date('Y');
@@ -56,6 +57,7 @@ class TicketsController extends AppController {
 		$this->set('s_user_id', $s_user_id);
 		$this->set('s_client_id', $s_client_id);
 		$this->set('s_package_id', $s_package_id);
+		$this->set('s_promo_code_id', $s_promo_code_id);
 		$this->set('s_format_id', $s_format_id);
 		$this->set('s_offer_type_id', $s_offer_type_id);
 		$this->set('s_ticket_status_id', $s_ticket_status_id);
@@ -92,7 +94,7 @@ class TicketsController extends AppController {
 		} elseif ($s_client_id) {
 			$this->paginate['conditions']['Ticket.clientId'] = $s_client_id;       
 		} elseif ($s_package_id) {
-			$this->paginate['conditions']['Ticket.packageId'] = $s_package_id;       
+			$this->paginate['conditions']['Ticket.packageId'] = $s_package_id;    
 		} else {    
 			$this->paginate['conditions']['Ticket.created BETWEEN ? AND ?'] = array($s_start_date, $s_end_date);             		
 			if ($s_offer_type_id) {
@@ -104,10 +106,21 @@ class TicketsController extends AppController {
 			if ($s_ticket_status_id) {
 				$this->paginate['conditions']['Ticket.ticketStatusId'] = $s_ticket_status_id;	
 			}
+			if ($s_promo_code_id ) {
+				$this->paginate['contain'][] = 'OfferPromoTracking';
+				$this->paginate['group'] = array('Ticket.ticketId');
+				$this->paginate['order'] = array('Ticket.ticketId' => 'desc', 'OfferPromoTracking.offerPromoTrackingId' => 'desc');
+				if ($s_promo_code_id == 'a') {
+					$this->paginate['conditions']['OfferPromoTracking.offerPromoCodeId > '] = 0;
+				} else {
+					$this->paginate['conditions']['OfferPromoTracking.offerPromoCodeId'] = $s_promo_code_id;
+				}
+			}
 		}
 	
+	
 		$tickets_index = $this->paginate();
-
+		
 		foreach ($tickets_index as $k => $v) {
 			$tickets_index[$k]['Ticket']['validCard'] = $this->getValidCcOnFile($v['Ticket']['userId']);
 			$tracks = $this->TrackDetail->getTrackRecord($v['Ticket']['ticketId']);
@@ -122,6 +135,7 @@ class TicketsController extends AppController {
 		$this->set('format', $this->Format->find('list'));
 		$this->set('offerType', $this->OfferType->find('list'));
 		$this->set('ticketStatus', $this->Ticket->TicketStatus->find('list'));
+		$this->set('offerPromoCodeIds', $this->OfferPromoCode->find('list', array('order' => array('OfferPromoCode.promoCode' => 'asc'))));
 	}
 
 	function getValidCcOnFile($userId) {

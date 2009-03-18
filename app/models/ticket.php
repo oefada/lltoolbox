@@ -8,7 +8,8 @@ class Ticket extends AppModel {
 	var $belongsTo = array('TicketStatus' => array('foreignKey' => 'ticketStatusId'),
 						   'Package' => array('foreignKey' => 'packageId'),
 						   'Offer' => array('foreignKey' => 'offerId'),
-						   'User' => array('foreignKey' => 'userId')
+						   'User' => array('foreignKey' => 'userId'),
+						   'OfferPromoTracking' => array('foreignKey' => false, 'conditions' => array('Ticket.offerId = OfferPromoTracking.offerId AND Ticket.userId = OfferPromoTracking.userId'))
 						);
 
 	var $hasMany = array('PaymentDetail' => array('foreignKey' => 'ticketId'),
@@ -26,6 +27,21 @@ class Ticket extends AppModel {
 	    }
 	    
 	    return $options;
+	}
+	
+	// override paginate count only for tickets!
+	function paginateCount($conditions = null, $recursive = 0, $extra = array()) {
+		$params = array('conditions' => $conditions);
+		foreach ($conditions as $k => $v) {
+			if (stristr($k, 'promo')) {
+				$params['contain'] = array('OfferPromoTracking');
+				$params['fields'] = array('COUNT(distinct ticketId) as count');
+				$result = $this->find('count', $params);
+				return $result;
+			}
+		}
+		$result = $this->find('count', $params);
+		return $result;
 	}
 	
 	function getClientsFromPackageId($packageId) {
@@ -69,6 +85,10 @@ class Ticket extends AppModel {
 		} else {
 			return false;	
 		}
+	}
+
+	function getLoaMembershipTotalPackages($loaId) {
+			
 	}
 
 	function insertMessageQueuePackage($ticketId, $type) {
