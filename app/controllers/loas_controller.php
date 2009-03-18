@@ -90,6 +90,41 @@ class LoasController extends AppController {
         }
         return ($a['LoaItemType']['loaItemTypeName'] < $b['LoaItemType']['loaItemTypeName']) ? -1 : 1;
 	}
+	
+	function maintTracking($id = null) {
+		$this->Loa->recursive = 0;
+		$loa = $this->data = $this->Loa->read(null, $id);
+		
+		$tracks = array();
+		$track_details = array();
+		
+		$tracks_result = $this->Loa->query('SELECT * FROM track WHERE loaId = ' . $loa['Loa']['loaId']);
+		foreach ($tracks_result as $track) {
+			$tracks[$track['track']['trackId']] = $track['track'];
+			$offer_result = $this->Loa->query('SELECT offerId,packageId,offerTypeName,offerSubtitle,startDate,endDate,retailValue,openingBid FROM offerLive WHERE packageId IN (SELECT packageId FROM clientLoaPackageRel WHERE loaId = 5372 AND trackId IN (62)) ORDER BY offerId ASC');
+			$offers = array();
+			foreach ($offer_result as $offer) {
+				$offers[$offer['offerLive']['offerId']] = $offer['offerLive'];	
+			}
+			$tracks[$track['track']['trackId']]['offers'] = $offers;
+		}
+		
+		if (!empty($tracks)) {
+			$track_details_result = $this->Loa->query('SELECT trackDetail.*, ticket.offerId FROM trackDetail INNER JOIN ticket USING (ticketId) WHERE trackId IN (' . implode(',', array_keys($tracks)) . ') ORDER BY trackId ASC');
+			foreach ($track_details_result as $track_detail) {
+				$track_details[$track_detail['ticket']['offerId']] = $track_detail['trackDetail'];
+			}
+			$trackWarning = false;
+		} else {
+			$trackWarning = '<h3 style="font-size:15px;">*** NO TRACK IS SETUP FOR THIS LOA ***</h3><br /><br />';	
+		}
+		
+		$this->set('trackWarning', $trackWarning);
+		$this->set('loa', $loa);
+		$this->set('tracks', $tracks);
+		$this->set('track_details', $track_details);
+		$this->set('client', $this->Loa->Client->findByClientId($this->data['Loa']['clientId']));
+	}
 
 	function delete($id = null) {
 		if (!$id) {
