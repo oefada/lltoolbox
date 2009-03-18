@@ -36,6 +36,11 @@
 			<?php echo $homepageMerchandising['HomepageMerchandising']['html']; ?>
 			&nbsp;
 		</dd>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Inactive'); ?></dt>
+		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
+			<?php echo $homepageMerchandising['HomepageMerchandising']['inactive']; ?>
+			&nbsp;
+		</dd>
 	</dl>
 </div>
 <div class="actions">

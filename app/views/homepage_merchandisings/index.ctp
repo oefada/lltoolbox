@@ -15,6 +15,7 @@ echo $paginator->counter(array(
 	<th><?php echo $paginator->sort('linkText');?></th>
 	<th><?php echo $paginator->sort('linkUrl');?></th>
 	<th><?php echo $paginator->sort('html');?></th>
+	<th><?php echo $paginator->sort('inactive');?></th>
 	<th class="actions"><?php __('Actions');?></th>
 </tr>
 <?php
@@ -46,6 +47,9 @@ foreach ($homepageMerchandisings as $homepageMerchandising):
 		</td>
 		<td>
 			<?php echo $homepageMerchandising['HomepageMerchandising']['html']; ?>
+		</td>
+		<td>
+			<?php echo $homepageMerchandising['HomepageMerchandising']['inactive']; ?>
 		</td>
 		<td class="actions">
 			<?php echo $html->link(__('View', true), array('action'=>'view', $homepageMerchandising['HomepageMerchandising']['homepageMerchandisingId'])); ?>

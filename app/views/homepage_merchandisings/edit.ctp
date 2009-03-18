@@ -10,6 +10,7 @@
 		echo $form->input('linkText');
 		echo $form->input('linkUrl');
 		echo $form->input('html');
+		echo $form->input('inactive');
 	?>
 	</fieldset>
 <?php echo $form->end('Submit');?>
