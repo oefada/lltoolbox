@@ -106,7 +106,6 @@ $this->set('clientId', $this->data['Client']['clientId']);
 						<td style="text-align:center;"> - </td>
 						<td style="text-align:center;"> - </td>
 						<td style="text-align:center;"> - </td>
-						<td style="text-align:center;"> - </td>
 					<?php endif; ?>
 					
 				</tr>			
