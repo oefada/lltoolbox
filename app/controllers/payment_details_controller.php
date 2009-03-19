@@ -126,6 +126,15 @@ class PaymentDetailsController extends AppController {
 			$initials_user = false;
 		}
 
+		if (in_array($initials_user, array('cyoung','alee','bscott'))) {
+			if (!empty($ticket['User']['UserPaymentSetting'])) {
+				foreach ($ticket['User']['UserPaymentSetting'] as $ups_key => $ups) {
+					$cc_full = $this->PaymentDetail->query('SELECT ccNumber FROM userPaymentSetting WHERE userPaymentSettingId = ' . $ups['userPaymentSettingId']);				
+					$ticket['User']['UserPaymentSetting'][$ups_key]['ccNumber'] = aesFullDecrypt($cc_full[0]['userPaymentSetting']['ccNumber']);
+				}
+			}
+		}
+
 		$this->set('ticket', $ticket);
 		$this->set('countries', $this->Country->find('list'));
 		$this->set('selectExpMonth', $selectExpMonth);
