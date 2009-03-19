@@ -42,7 +42,7 @@ foreach ($loas as $loa):
 		<td><?php echo $loa['Loa']['loaNumberPackages'];?></td>
 		<td><?php echo $loa['Loa']['cashPaid'];?></td>
 		<td><?php echo $html->image($loa['Loa']['upgraded'] ? 'tick.png' : 'cross.png');?></td>
-		<td><a href="/loas/maintTracking/<?php echo $loa['Loa']['loaId'];?>">View Loa Maintenance</a></td>
+		<td><a href="/loas/maintTracking/<?php echo $loa['Loa']['loaId'];?>">View Loa Data</a></td>
 		<td class="actions">
 			<?php echo $html->link(__('View Details', true), array('controller'=> 'loas', 'action'=>'edit', $loa['Loa']['loaId'])); ?>
 		</td>
