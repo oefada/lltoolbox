@@ -4,7 +4,7 @@
 			Offer ID
 		</td>
 		<td style='text-align: right'>
-			<?=$metrics['OfferLive']['offerId']?>
+			<?=$offer['Offer']['offerId']?>
 		</td>
 	</tr>
 	<tr>

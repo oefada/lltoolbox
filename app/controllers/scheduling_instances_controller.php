@@ -65,7 +65,7 @@ class SchedulingInstancesController extends AppController {
 	 * @param int $id of the scheduling instance to grab performance metrics for
 	 */
 	function performanceTooltip($id) {
-	    $metrics = $this->SchedulingInstance->query('SELECT OfferLive.offerId, TicketStatus.ticketStatusName, MAX(Bid.bidAmount) as maxBidAmount,'.
+	    $metrics = $this->SchedulingInstance->query('SELECT TicketStatus.ticketStatusName, MAX(Bid.bidAmount) as maxBidAmount,'.
 	                                                ' MAX(Bid.bidDateTime) as maxBidDateTime, COUNT(*) as numBids, COUNT(DISTINCT Bid.userId) as numUniqueBidders'.
 	                                                ' FROM bid as Bid LEFT JOIN offer as Offer ON (Bid.offerId = Offer.offerID)'.
 	                                                ' LEFT JOIN offerLive AS OfferLive ON (OfferLive.offerId = Offer.offerId)'.
@@ -74,9 +74,11 @@ class SchedulingInstancesController extends AppController {
 	                                                ' WHERE Offer.schedulingInstanceId = '.$id);
 	    $this->SchedulingInstance->recursive = -1;
         $schedulingInstance = $this->SchedulingInstance->find('first', array('conditions' => array('SchedulingInstance.schedulingInstanceId ' => $id)));
+        $offer = $this->SchedulingInstance->Offer->find('first', array('conditions' => array('Offer.schedulingInstanceId ' => $id)));
 
 		$this->set('metrics', $metrics[0]);
 		$this->set('schedulingInstance', $schedulingInstance);
+		$this->set('offer', $offer);
 	}
 
 }
