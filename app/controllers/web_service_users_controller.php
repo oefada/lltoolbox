@@ -42,8 +42,6 @@ class WebServiceUsersController extends WebServicesController
 		if (isset($data['UserSiteExtended'][0])) {
 			$data['UserSiteExtended'] = $data['UserSiteExtended'][0];
 		}
-
-		@mail('devmail@luxurylink.com', 'WEB SERVICE: User', print_r($data, true));	
 	
 		if ($this->User->saveAll($data, false)) {
 			return true;
