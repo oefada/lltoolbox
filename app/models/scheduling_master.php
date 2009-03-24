@@ -97,5 +97,27 @@ class SchedulingMaster extends AppModel {
 
 	    return true;
 	}
+	
+	function end() {
+	    $instnance = new SchedulingInstance;
+	    $test = $instnance->find('first');
+	    debug($test);
+	}
+	
+	function endTrack() {
+	    
+	}
+	
+	function endPackage() {
+	    
+	}
+	
+	function endFixedPrice() {
+	    
+	}
+	
+	function endAuction() {
+	    
+	}
 }
 ?>

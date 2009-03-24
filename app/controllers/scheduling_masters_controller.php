@@ -529,9 +529,9 @@ class SchedulingMastersController extends AppController {
 		    $schedulingInstance['SchedulingInstance']['endDate']    = $newEndDate;
 		    $offerLive['OfferLive']['endDate']                      = $newEndDate;
 
-            if ($this->SchedulingMaster->save($schedulingMaster) &&
-                $this->SchedulingMaster->SchedulingInstance->save($schedulingInstance) &&
-                $this->OfferLive->save($offerLive) )
+            if ($this->SchedulingMaster->save($schedulingMaster, false) &&
+                $this->SchedulingMaster->SchedulingInstance->save($schedulingInstance, false) &&
+                $this->OfferLive->save($offerLive, false) )
             {
                     
                 $this->Session->setFlash(__('The offer has been stopped', true), 'default', array(), 'success');
