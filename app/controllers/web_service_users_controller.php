@@ -42,6 +42,7 @@ class WebServiceUsersController extends WebServicesController
 		if ($this->User->saveAll($data, false)) {
 			return true;
 		} else {
+			@mail('devmail@luxurylink.com', 'WEB SERVICE: User Save Failed', print_r($this->validationErrors, true) . print_r($data, true));	
 			$this->errorResponse = 505;
 			return false;	
 		}
