@@ -22,6 +22,7 @@ class WebServiceUsersController extends WebServicesController
 	function userProcessor1($in0)
 	{
 		$json_decoded = json_decode($in0, true);
+		@mail('devmail@luxurylink.com', 'testing user bus', print_r($json_decoded, true));
 		$this->errorResponse = false;
 		if (!$this->updateUserBackend($json_decoded)) {
 			$json_decoded['response'] = $this->errorResponse;
