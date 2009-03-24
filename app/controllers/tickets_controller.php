@@ -44,6 +44,10 @@ class TicketsController extends AppController {
 		if (isset($_GET['searchClientId'])) {
 			$s_client_id = $_GET['searchClientId'];		
 		}
+		
+		if (isset($_GET['searchUserId'])) {
+			$s_user_id = $_GET['searchUserId'];		
+		}
 
 		if (isset($_GET['query'])) {
 			$query = $_GET['query'];
