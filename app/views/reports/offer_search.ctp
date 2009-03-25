@@ -127,7 +127,7 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 				$year = date('Y', strtotime($result['SchedulingInstance']['endDate']));
 				echo $html->link(strip_tags($result['SchedulingMaster']['packageName']), "/scheduling/index/clientId:{$result['Client']['clientId']}/month:$month/year:$year")?></td>
 		<td style="text-align: center"><?=$result['Package']['numNights']?></td>
-		<td><div<?php echo ($result[0]['loaEndApproaching']) ? ' style="min-height: 20px; line-height: 20px; padding: 4px; border: 4px solid #ff0;"' : '' ?>>
+		<td><div<?php echo ($result[0]['validityEndApproaching']) ? ' style="min-height: 20px; line-height: 20px; padding: 4px; border: 4px solid #ff0;"' : '' ?>>
 				<?=date('M j, Y', strtotime($result['Package']['validityEndDate']))?>
 			</div>
 		</td>
