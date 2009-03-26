@@ -172,6 +172,7 @@ class SchedulingMastersController extends AppController {
 		if ($schedulingMaster) {
 		    $defaults['PackageOfferTypeDefField']['buyNowPrice'] = $schedulingMaster['SchedulingMaster']['buyNowPrice'];
 		    $defaults['PackageOfferTypeDefField']['openingBid'] = $schedulingMaster['SchedulingMaster']['openingBid'];
+		    $defaults['PackageOfferTypeDefField'] = $schedulingMaster['SchedulingMaster'];
 		} else {
 		    $defaults = $this->SchedulingMaster->Package->PackageOfferTypeDefField->find('first', array('conditions' => array('PackageOfferTypeDefField.packageId' => $packageId, 'PackageOfferTypeDefField.offerTypeId' => $offerTypeId)));        
 		}
