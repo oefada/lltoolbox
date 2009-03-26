@@ -51,11 +51,18 @@ class WebServicePaymentsController extends WebServicesController
 		if (!$foundPrimaryCC) {
 			$data['primaryCC'] = 1;	
 		}
+		
+		$created = false;
 		if (!isset($data['userPaymentSettingId']) || empty($data['userPaymentSettingId'])) {
 			$this->UserPaymentSetting->create();	
+			$created = true;
 		} 
 		if ($this->UserPaymentSetting->save($data)) {
-			return '1';
+			if ($created) {
+				return $this->UserPaymentSetting->getLastInsertId();
+			} else {
+				return '1';	
+			}
 		} else {
 			return '0';
 		}
