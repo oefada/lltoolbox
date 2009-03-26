@@ -201,7 +201,7 @@ class Client extends AppModel {
 		$this->useDbConfig 		= 'default';
 		$this->schema(true);
 		
-		@mail('devmail@luxurylink.com', 'DEBUG CLIENT AFTER SAVE', $sql);
+		@mail('devmail@luxurylink.com', 'DEBUG CLIENT AFTER SAVE', print_r($this->data, true) . print_r($checkClient, true) . $sql);
 		
 		return true;
 	}
