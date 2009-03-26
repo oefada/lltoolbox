@@ -170,9 +170,9 @@ class SchedulingMastersController extends AppController {
 		$offerTypeId = (isset($this->data['SchedulingMaster']['offerTypeId'])) ? $this->data['SchedulingMaster']['offerTypeId'] : $firstOfferId;
 		$this->SchedulingMaster->Package->PackageOfferTypeDefField->recursive = -1;
 		if ($schedulingMaster) {
+		    $defaults['PackageOfferTypeDefField'] = $schedulingMaster['SchedulingMaster'];
 		    $defaults['PackageOfferTypeDefField']['buyNowPrice'] = $schedulingMaster['SchedulingMaster']['buyNowPrice'];
 		    $defaults['PackageOfferTypeDefField']['openingBid'] = $schedulingMaster['SchedulingMaster']['openingBid'];
-		    $defaults['PackageOfferTypeDefField'] = $schedulingMaster['SchedulingMaster'];
 		} else {
 		    $defaults = $this->SchedulingMaster->Package->PackageOfferTypeDefField->find('first', array('conditions' => array('PackageOfferTypeDefField.packageId' => $packageId, 'PackageOfferTypeDefField.offerTypeId' => $offerTypeId)));        
 		}
