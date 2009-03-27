@@ -99,10 +99,13 @@ class Client extends AppModel {
 		
 		// get client record from toolbox so we can update live client
 		// -----------------------------------------------------------------
+		$a = 0;
 		if ($created && !isset($this->data['Client']['clientId'])) {
 		    $clientId           = $this->getInsertId();
+		    $a = 1;
 		} else {
 		    $clientId 			= $this->data['Client']['clientId'];
+		    $a = 2;
 		}
 		
 		$clientToolbox 			= $this->read(null, $clientId);	
@@ -202,7 +205,7 @@ class Client extends AppModel {
 		$this->schema(true);
 		$this->recursive 		= 2;
 		
-		@mail('devmail@luxurylink.com', "DEBUG CLIENT AFTER SAVE clientId: $clientId", print_r($this->data, true) . print_r($checkClient, true) . $sql);
+		@mail('devmail@luxurylink.com', "DEBUG CLIENT AFTER SAVE clientId: $clientId and $a", print_r($this->data, true) . print_r($checkClient, true) . $sql);
 		
 		return true;
 	}
