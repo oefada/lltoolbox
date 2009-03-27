@@ -25,6 +25,9 @@ class PpvNoticesController extends AppController {
 		
 		// web service for tickets for getting/sending ppv
 		$webservice_live_url = 'http://toolbox.luxurylink.com/web_service_tickets?wsdl';
+		if (stristr($_SERVER['HTTP_HOST'], 'dev')) {
+			$webservice_live_url = 'http://toolboxdev.luxurylink.com/web_service_tickets?wsdl';
+		}
 		$webservice_live_method_name = 'ppv';
 		$webservice_live_method_param = 'in0';
 		
