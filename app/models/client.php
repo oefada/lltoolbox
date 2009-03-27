@@ -200,11 +200,7 @@ class Client extends AppModel {
 			$sql = 'INSERT INTO client ('. implode(',',array_keys($liveClientDataSave)) .') VALUES("'. implode('","',array_values($liveClientDataSave)) .'")';
 			$result = $this->query($sql);
 		}
-		
-		$this->useDbConfig 		= 'default';
-		$this->schema(true);
-		$this->recursive 		= 2;
-		
+
 		@mail('devmail@luxurylink.com', "DEBUG CLIENT AFTER SAVE clientId: $clientId and $a", print_r($this->data, true) . print_r($checkClient, true) . $sql);
 		
 		return true;
