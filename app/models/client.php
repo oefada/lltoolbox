@@ -108,7 +108,7 @@ class Client extends AppModel {
 		    $a = 2;
 		}
 		
-		@mail('devmail@luxurylink.com', "1 DEBUG CLIENT AFTER SAVE clientId: $clientId and $a", print_r($this->data, true) . print_r($checkClient, true) . $sql);
+		@mail('devmail@luxurylink.com', "1 DEBUG CLIENT AFTER SAVE clientId: $clientId and $a and " . $this->id, print_r($this->data, true) . print_r($checkClient, true) . $sql);
 		
 		$clientToolbox 			= $this->read(null, $clientId);	
 		$themeIds 				= array();
