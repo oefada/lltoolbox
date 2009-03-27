@@ -95,6 +95,10 @@ class WebServicesController extends AppController
 			//$wsdl="{$this->name}wsdl";
 			$wsdl="{$this->name}";
 			$urn="urn:$wsdl";
+			// changing environment to dev
+			if (stristr($_SERVER['HTTP_HOST'], 'dev')) {
+				$this->serviceUrl = $this->serviceUrlDev;
+			}
 			$this->_soap_server->configureWSDL($wsdl, $urn, $this->serviceUrl);				
 				
 			foreach ($this->api as $name => $method)
