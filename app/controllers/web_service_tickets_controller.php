@@ -562,6 +562,13 @@ class WebServiceTicketsController extends WebServicesController
 				$emailReplyTo = "auction@luxurylink.com";
 				$emailBcc = 'winnernotifications@luxurylink.com';
 				break;
+			case 6:
+				include('../vendors/email_msgs/notifications/winner_notification_w_checkout.html');
+				$emailSubject = "Luxury Link $offerTypeName $offerTypeBidder - $packageName";
+				$emailFrom = "LuxuryLink.com<auction@luxurylink.com>";
+				$emailReplyTo = "auction@luxurylink.com";
+				$emailBcc = 'winnernotifications@luxurylink.com';
+				break;
 			case 7:
 				include('../vendors/email_msgs/notifications/winner_notification_decline_cc.html');
 				$emailSubject = "Luxury Link Auction Winner - $clientNameP";
