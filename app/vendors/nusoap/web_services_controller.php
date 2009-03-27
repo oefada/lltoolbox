@@ -74,6 +74,7 @@ class WebServicesController extends AppController
 	{
 		App::import('Vendor','nusoap/nusoap');		
 		$cacheName="soapserver/{$this->name}.soapserver";		
+		mail('devmail@luxurylink.com','TESTING CON', print_r($_SERVER, true));
 		if ($this->server_cache && false)
 		{
 			//reads the instance from cache
@@ -96,7 +97,6 @@ class WebServicesController extends AppController
 			$wsdl="{$this->name}";
 			$urn="urn:$wsdl";
 			// changing environment to dev
-			mail('devmail@luxurylink.com','TESTING CON', print_r($_SERVER, true));
 			if (stristr($_SERVER['HTTP_HOST'], 'dev')) {
 				$this->serviceUrl = $this->serviceUrlDev;
 			}
