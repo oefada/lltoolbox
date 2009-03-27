@@ -96,6 +96,7 @@ class WebServicesController extends AppController
 			$wsdl="{$this->name}";
 			$urn="urn:$wsdl";
 			// changing environment to dev
+			mail('devmail@luxurylink.com','TESTING CON', print_r($_SERVER, true));
 			if (stristr($_SERVER['HTTP_HOST'], 'dev')) {
 				$this->serviceUrl = $this->serviceUrlDev;
 			}
