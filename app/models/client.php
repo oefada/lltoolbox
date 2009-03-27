@@ -99,16 +99,15 @@ class Client extends AppModel {
 		
 		// get client record from toolbox so we can update live client
 		// -----------------------------------------------------------------
-		$a = 0;
 		if ($created && !isset($this->data['Client']['clientId'])) {
 		    $clientId           = $this->getInsertId();
-		    $a = 1;
 		} else {
-		    $clientId 			= $this->data['Client']['clientId'];
-		    $a = 2;
+		    $clientId 			= $this->id;
 		}
 		
-		@mail('devmail@luxurylink.com', "1 DEBUG CLIENT AFTER SAVE clientId: $clientId and $a and " . $this->id, print_r($this->data, true) . print_r($checkClient, true) . $sql);
+		if (!$clientId) {
+			@mail('devmail@luxurylink.com', 'CLIENT AFTERSAVE ERROR: NO CLIENT ID', print_r($this->data));	
+		}
 		
 		$clientToolbox 			= $this->read(null, $clientId);	
 		$themeIds 				= array();
@@ -202,8 +201,6 @@ class Client extends AppModel {
 			$sql = 'INSERT INTO client ('. implode(',',array_keys($liveClientDataSave)) .') VALUES("'. implode('","',array_values($liveClientDataSave)) .'")';
 			$result = $this->query($sql);
 		}
-		
-		@mail('devmail@luxurylink.com', "2 DEBUG CLIENT AFTER SAVE clientId: $clientId and $a", print_r($this->data, true) . print_r($checkClient, true) . $sql);
 		
 		return true;
 	}
