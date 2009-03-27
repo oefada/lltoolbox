@@ -10,6 +10,7 @@ class WebServiceTicketsController extends WebServicesController
 	var $name = 'WebServiceTickets';
 	var $uses = array('Ticket', 'UserPaymentSetting','PaymentDetail', 'Client', 'User', 'Offer', 'Bid', 'ClientLoaPackageRel', 'Track', 'OfferType', 'Loa', 'TrackDetail', 'PpvNotice', 'Address', 'OfferLive', 'SchedulingMaster', 'SchedulingInstance');
 	var $serviceUrl = 'http://toolbox.luxurylink.com/web_service_tickets';
+	var $serviceUrlDev = 'http://toolboxdev.luxurylink.com/web_service_tickets';
 	var $errorResponse = false;
 	var $api = array(
 					'newTicketProcessor1' => array(
@@ -78,9 +79,7 @@ class WebServiceTicketsController extends WebServicesController
 		return $ticketId;
 	}
 
-	function newTicketProcessor1($in0)
-	{
-		
+	function newTicketProcessor1($in0) {
 		$json_decoded = json_decode($in0, true);
 		$this->errorResponse = false;
 		if (!$this->createNewTicket($json_decoded)) {			
@@ -91,7 +90,6 @@ class WebServiceTicketsController extends WebServicesController
 	}
 
 	function createNewTicket($data) {
-
 		// if we do not have these values then void
 		// -------------------------------------------------------------------------------
 		if (empty($data) || !is_array($data)) {
@@ -363,9 +361,8 @@ class WebServiceTicketsController extends WebServicesController
 	}
 
 	function ppv($in0) {
-		
 		$params = json_decode($in0, true);
-		
+
 		// required params for sending and viewing ppvs
 		// -------------------------------------------------------------------------------
 		$ticketId 			= isset($params['ticketId']) ? $params['ticketId'] : null;
@@ -423,6 +420,8 @@ class WebServiceTicketsController extends WebServicesController
 		$packageIncludes 	= $packageData['packageIncludes'];
 		$legalText			= $packageData['termsAndConditions'];
 		$validityNote		= $packageData['validityDisclaimer'];
+		$validityLeadIn     = $packageData['validityLeadInLine'];
+		$addtlDescription   = $packageData['additionalDescription'];
 		
 		$offerTypeId		= $ticketData['offerTypeId'];
 		$offerTypeName		= $offerType[$offerTypeId];
@@ -510,6 +509,7 @@ class WebServiceTicketsController extends WebServicesController
 		$clientName 		= $clients[$client_index]['contacts'][0]['ppv_name'];
 		$clientPrimaryEmail = $clients[$client_index]['contacts'][0]['ppv_email_address'];
 		$oldProductId		= $clients[$client_index]['oldProductId'];
+		$locationDisplay	= $clients[$client_index]['locationDisplay'];
 		$clientCcEmail 		= $clients[$client_index]['contact_cc_string'];
 		$clientAdjustedPrice = number_format(($clients[$client_index]['percentOfRevenue'] / 100) * $ticketData['billingPrice'], 2, '.', ',');
 		
@@ -524,7 +524,7 @@ class WebServiceTicketsController extends WebServicesController
 			case 1:
 				// send out res confirmation
 				include('../vendors/email_msgs/ppv/conf_ppv.html');
-				$emailSubject = "Luxury Link $offerTypeName Reservation Confirmation";
+				$emailSubject = "Your Luxury Link Booking is Confirmed - $clientNameP";
 				$emailFrom = "LuxuryLink.com<reservations@luxurylink.com>";
 				$emailReplyTo = "reservations@luxurylink.com";
 				$emailBcc = 'thread@luxurylink.com';
@@ -532,7 +532,7 @@ class WebServiceTicketsController extends WebServicesController
 			case 2:
 				// send out res request
 				include('../vendors/email_msgs/ppv/res_ppv.html');
-				$emailSubject = "Luxury Link $offerTypeName Reservation Request";
+				$emailSubject = "Please Confirm This Luxury Link Booking Request";
 				$emailFrom = "LuxuryLink.com<reservations@luxurylink.com>";
 				$emailReplyTo = "reservations@luxurylink.com";
 				$emailBcc = 'thread@luxurylink.com';
@@ -541,14 +541,14 @@ class WebServiceTicketsController extends WebServicesController
 				break;
 			case 3:
 				include('../vendors/email_msgs/ppv/winner_ppv.html');
-				$emailSubject = "Luxury Link Package Purchase Verification - $packageName";
+				$emailSubject = "Luxury Link Package Purchase Receipt - $clientNameP";
 				$emailFrom = "LuxuryLink.com<auction@luxurylink.com>";
 				$emailReplyTo = 'auction@luxurylink.com';
 				$emailBcc = 'thread@luxurylink.com';
 				break;
 			case 4: 
 				include('../vendors/email_msgs/ppv/client_ppv.html');
-				$emailSubject = "Luxury Link $offerTypeName Winner - $emailName";
+				$emailSubject = "Luxury Link Auction Winner Notification - $userFirstName $userLastName";
 				$emailFrom = "LuxuryLink.com<auction@luxurylink.com>";
 				$emailReplyTo = 'auction@luxurylink.com';
 				$emailBcc = 'thread@luxurylink.com';
@@ -557,41 +557,34 @@ class WebServiceTicketsController extends WebServicesController
 				break;
 			case 5:
 				include('../vendors/email_msgs/notifications/winner_notification.html');
-				$emailSubject = "Luxury Link $offerTypeName $offerTypeBidder - $packageName";
-				$emailFrom = "LuxuryLink.com<auction@luxurylink.com>";
-				$emailReplyTo = "auction@luxurylink.com";
-				$emailBcc = 'winnernotifications@luxurylink.com';
-				break;
-			case 6:
-				include('../vendors/email_msgs/notifications/winner_notification_w_checkout.html');
-				$emailSubject = "Luxury Link $offerTypeName $offerTypeBidder - $packageName";
+				$emailSubject = "Luxury Link Auction Winner - $clientNameP";
 				$emailFrom = "LuxuryLink.com<auction@luxurylink.com>";
 				$emailReplyTo = "auction@luxurylink.com";
 				$emailBcc = 'winnernotifications@luxurylink.com';
 				break;
 			case 7:
 				include('../vendors/email_msgs/notifications/winner_notification_decline_cc.html');
-				$emailSubject = "Luxury Link $offerTypeName $offerTypeBidder - $packageName";
+				$emailSubject = "Luxury Link Auction Winner - $clientNameP";
 				$emailFrom = "LuxuryLink.com<auction@luxurylink.com>";
 				$emailReplyTo = "auction@luxurylink.com";
 				$emailBcc = 'winnernotifications@luxurylink.com';
 				break;
 			case 8:
 				include('../vendors/email_msgs/notifications/winner_notification_expired_cc.html');
-				$emailSubject = "Luxury Link $offerTypeName $offerTypeBidder - $packageName";
+				$emailSubject = "Luxury Link Auction Winner - $clientNameP";
 				$emailFrom = "LuxuryLink.com<auction@luxurylink.com>";
 				$emailReplyTo = "auction@luxurylink.com";
 				$emailBcc = 'winnernotifications@luxurylink.com';
 				break;
 			case 9:
 				include('../vendors/email_msgs/fixed_price/msg_fixedprice.html');
-				$emailSubject = "LuxuryLink.com: Your Travel Request Has Been Received";
+				$emailSubject = "Luxury Link - Your Request Has Been Received";
 				$emailFrom = "LuxuryLink.com<exclusives@luxurylink.com>";
 				$emailReplyTo = "exclusives@luxurylink.com";
 				break;
 			case 10:
 				include('../vendors/email_msgs/fixed_price/msg_client_fixedprice.html');
-				$emailSubject = "$fpRequestType Request Has Come In!";
+				$emailSubject = "An Exclusive Luxury Link Booking Request Has Come In!";
 				$emailFrom = "LuxuryLink.com<exclusives@luxurylink.com>";
 				$emailReplyTo = "exclusives@luxurylink.com";
 				$userEmail = $clientPrimaryEmail;
@@ -603,6 +596,45 @@ class WebServiceTicketsController extends WebServicesController
 				$emailFrom = "LuxuryLink.com<exclusives@luxurylink.com>";
 				$emailReplyTo = "exclusives@luxurylink.com";
 				$userEmail = 'exclusives@luxurylink.com';
+				break;
+			case 12:
+				include('../vendors/email_msgs/fixed_price/notification_acknowledgement.html');
+				$emailSubject = "Luxury Link Travel Request - $clientNameP";
+				$emailFrom = "LuxuryLink.com<exclusives@luxurylink.com>";
+				$emailReplyTo = "exclusives@luxurylink.com";
+				break;
+			case 13:
+				include('../vendors/email_msgs/fixed_price/notification_dates_available.html');
+				$emailSubject = "Luxury Link Travel Request - $clientNameP";
+				$emailFrom = "LuxuryLink.com<exclusives@luxurylink.com>";
+				$emailReplyTo = "exclusives@luxurylink.com";
+				break;
+			case 14:
+				include('../vendors/email_msgs/fixed_price/notification_dates_not_available.html');
+				$emailSubject = "Luxury Link Travel Request - $clientNameP";
+				$emailFrom = "LuxuryLink.com<exclusives@luxurylink.com>";
+				$emailReplyTo = "exclusives@luxurylink.com";
+				break;
+			case 15:
+				include('../vendors/email_msgs/notifications/chase_money_notification.html');
+				$emailSubject = "Luxury Link Auction Winner - $clientNameP";
+				$emailFrom = "LuxuryLink.com<auction@luxurylink.com>";
+				$emailReplyTo = "auction@luxurylink.com";
+				$emailBcc = 'winnernotifications@luxurylink.com';
+				break;
+			case 16:
+				include('../vendors/email_msgs/notifications/first_offense_flake.html');
+				$emailSubject = "Luxury Link Auction Winner - $clientNameP";
+				$emailFrom = "LuxuryLink.com<auction@luxurylink.com>";
+				$emailReplyTo = "auction@luxurylink.com";
+				$emailBcc = 'winnernotifications@luxurylink.com';
+				break;
+			case 17:
+				include('../vendors/email_msgs/notifications/second_offense_flake.html');
+				$emailSubject = "Luxury Link Auction Winner - $clientNameP";
+				$emailFrom = "LuxuryLink.com<auction@luxurylink.com>";
+				$emailReplyTo = "auction@luxurylink.com";
+				$emailBcc = 'winnernotifications@luxurylink.com';
 				break;
 			default:
 				break;
@@ -630,6 +662,7 @@ class WebServiceTicketsController extends WebServicesController
 					$clientName 		= $clients[$i]['contacts'][0]['ppv_name'];
 					$clientPrimaryEmail = $clients[$i]['contacts'][0]['ppv_email_address'];
 					$oldProductId		= $clients[$i]['oldProductId'];
+					$locationDisplay	= $clients[$i]['locationDisplay'];
 					$clientCcEmail 		= $clients[$i]['contact_cc_string'];	
 					$clientAdjustedPrice = number_format(($clients[$i]['percentOfRevenue'] / 100) * $ticketData['billingPrice'], 2, '.', ',');
 					$is_auc_fac 		= $this->isAuctionFacilitator($clientId);
@@ -661,6 +694,13 @@ class WebServiceTicketsController extends WebServicesController
 	}
 		
 	function sendPpvEmail($emailTo, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials) {
+		
+		if (stristr($_SERVER['HTTP_HOST'], 'dev')) {
+			$emailTo = $emailCc = $emailBcc = 'devmail@luxurylink.com';	
+			$appendDevMessage = "---- DEV MAIL ---- \nORIGINAL TO:  $emailTo\nORIGINAL CC: $emailCc\nORIGINAL BCC: $emailBcc";
+			$emailBody = $appendDevMessage . $emailBody;
+			$emailSubject = "DEV - " . $emailSubject;
+		}
 		
 		// send out ppv and winner notification emails
 		// -------------------------------------------------------------------------------
@@ -810,6 +850,13 @@ class WebServiceTicketsController extends WebServicesController
 		// good o' error checking my friends.  make this as strict as possible
 		// ---------------------------------------------------------------------------
 		$data = json_decode($in0, true);
+
+		// DEV STOP!
+		// ---------------------------------------------------------------------------
+		if (stristr($_SERVER['HTTP_HOST'], 'dev')) {
+			@mail('devmail@luxurylink.com','DEV - PAYMENT STOP', print_r($data, true));
+			die();
+		}
 
 		if (!isset($data['userId']) || empty($data['userId'])) {
 			return '101';
