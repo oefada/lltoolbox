@@ -202,7 +202,7 @@ class Client extends AppModel {
 		$this->schema(true);
 		$this->recursive 		= 2;
 		
-		@mail('devmail@luxurylink.com', 'DEBUG CLIENT AFTER SAVE', print_r($this->data, true) . print_r($checkClient, true) . $sql);
+		@mail('devmail@luxurylink.com', "DEBUG CLIENT AFTER SAVE clientId: $clientId", print_r($this->data, true) . print_r($checkClient, true) . $sql);
 		
 		return true;
 	}
