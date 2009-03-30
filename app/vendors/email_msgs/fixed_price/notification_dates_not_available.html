@@ -1,10 +1,13 @@
 <?php include('../vendors/email_msgs/email_includes/header.html');?>
 
-<h1 style="color:#990000;font-size:16px;margin:0px;padding:0px;margin-bottom:30px;">Congratulations, you won the <?=$offerTypeName;?> for <?=$clientNameP;?></h1>
+<p>Dear <?=$userFirstName;?> <?=$userLastName;?>,</p>
 
-<p>Dear <?php echo $userFirstName;?> <?php echo $userLastName;?>:</p>
+<p>
+Unfortunately, the dates you requested are <span style="font-weight:bold;color:#990000;">not available at this time</span>.  We may be able to assist you with alternate dates, or another package 
+or property.  Please contact me if you would like further assistance.
+</p>
 
-<p>You are Buying this Package:</p>
+<p>You Requested:</p>
 
 <table cellpadding="10" cellspacing="0" border="0" style="width:100%;background-color:#E0E0CD;margin-top:15px;margin-bottom:15px;">
 	<tr>
@@ -18,38 +21,36 @@
 			<div style="height:15px;margin-top:15px;border-top:1px solid #B0B0B0;">&nbsp;</div>
 			<table cellspacing="0" cellpadding="5" border="0">
 			<tr>
-				<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="160">Your Winning Bid:</td>
+				<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="160">Ticket ID:</td>
+				<td style="color:#444444;font-size:12px;" valign="top" align="left"><?=$ticketId;?></td>
+			</tr>
+			<tr>
+				<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="160">Price:</td>
 				<td style="color:#444444;font-size:12px;" valign="top" align="left">$<?=$billingPrice;?></td>
 			</tr>
 			<tr>
-				<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="160">Auction Handling Fee:</td>
+				<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="160">Handling Fee:</td>
 				<td style="color:#444444;font-size:12px;" valign="top" align="left">$<?=$llFee;?></td>
 			</tr>
 			<tr>
-				<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="160">Total Due:</td>
-				<td style="color:#990000;font-size:12px;font-weight:bold;" valign="top" align="left">$<?=$totalPrice;?></td>
+				<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="160">Preferred Dates:</td>
+				<td style="color:#444444;font-size:12px;" valign="top" align="left">Start: <?=$fpArrival;?> &nbsp;&nbsp;&nbsp;&nbsp;End: <?=$fpDeparture;?></td>
+			</tr>
+			<tr>
+				<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="160">Alternate Dates:</td>
+				<td style="color:#444444;font-size:12px;" valign="top" align="left">&nbsp;</td>
+			</tr>
+			<tr>
+				<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="160">Special Requests:</td>
+				<td style="color:#444444;font-size:12px;" valign="top" align="left"><?=$fpNotes;?></td>
 			</tr>
 			</table>
 		</td>
 	</tr>
 </table>
-
-<?php if (!empty($promoData)) :?>
-	<p>Your promotional code has been accepted and your savings will be reflected in the final amount charged to your card.<p>
-<?php endif;?>
-						
-<p><?php echo $packageIncludes;?></p>
-<p><span style="font-weight:bold;"><?php echo $validityLeadIn;?></span><br /><?php echo $validityNote;?></p>
-<p><?php echo $legalText;?></p>
-<?php if ($addtlDescription):?>
-<p><?php echo $addtlDescription;?></p>
-<?php endif ;?>
-
-<p>If the current credit card you have on file does not go through, we will contact you to update the information.</p>
-
+	
 <p>
 <br /><br />
-Warm Regards,<br /><br />
 Travel Concierge Team<br />
 LuxuryLink.com
 </p>		

@@ -1,12 +1,4 @@
-<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">
-<html>
-<head>
-</head>
-<body>
-<table width="800" border="1" cellpadding="20">
-<tr>
-<td>
-<center><a href="http://www.luxurylink.com/"><img src="http://www.luxurylink.com/images/email/email_header.gif" border="0"></a></center><br /><br /><br />
+<?php include('../vendors/email_msgs/email_includes/header.html');?>
 
 You received <?=$fpRequestType;?> request from:<br><br />
 
@@ -47,10 +39,4 @@ Additional air transporation is not required.<br>
 Offer ID: <?=$offerId;?><br>
 Special Requests: <?=$fpNotes;?><br>
 
-<br /><br />
-<center><a href="http://www.luxurylink.com/"><img src="http://www.luxurylink.com/images/email/email_footer.gif" border="0"></a><br><a href="http://www.luxurylink.com/"><strong>www.luxurylink.com</strong></a></center>
-</td>
-</tr>
-</table>
-</body>
-</html>
+<?php include('../vendors/email_msgs/email_includes/footer.html');?>

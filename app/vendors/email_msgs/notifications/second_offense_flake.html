@@ -1,0 +1,24 @@
+<?php include('../vendors/email_msgs/email_includes/header.html');?>
+
+<p>Dear <?php echo $userFirstName;?> <?php echo $userLastName;?>,<br /><br /><p>
+
+<p>
+We have been unsuccessful in collecting your winning bid on the <?=$clientNameP;?> auction that closed on <?=$offerEndDate;?>. 
+Our records indicate that this has happened previously, prompting us to send you an email explaining our auction payment 
+rules, and cautioning you to be clear on all terms and conditions before placing future bids. 
+</p>
+
+<p>
+The integrity of our auction process depends on all participants abiding by the stated rules and conditions. 
+To be fair to those bidders who are serious about their participation, we regret that we must ask you to 
+refrain from future bidding. Accordingly we have deactivated your bidding privileges. 
+</p>
+
+<p>
+<br /><br />
+Warm Regards,<br /><br />
+Travel Concierge Team<br />
+LuxuryLink.com
+</p>		
+
+<?php include('../vendors/email_msgs/email_includes/footer.html');?>

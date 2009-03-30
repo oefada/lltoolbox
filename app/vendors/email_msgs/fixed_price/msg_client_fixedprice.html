@@ -1,67 +1,87 @@
-<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">
-<html>
-<head>
-</head>
-<body>
-<table width="800" border="1" cellpadding="20">
-<tr>
-<td>
-<center><a href="http://www.luxurylink.com/"><img src="http://www.luxurylink.com/images/email/email_header.gif" border="0"></a></center><br /><br /><br />
+<?php include('../vendors/email_msgs/email_includes/header.html');?>
 
-<div>This is a <span style="font-weight:bold;color:red">REQUEST FOR AVAILABILITY ONLY</span>.</div>
+<h1 style="color:#990000;font-size:16px;margin:0px;padding:0px;margin-bottom:30px;">This is a REQUEST FOR AVAILABILITY ONLY.</h1>
 
 <p>
-Please reply to Luxury Link, via this email, if the requested dates are available, if not, please advise alternative dates.
-A Luxury Link representative will contact you to confirm the booking. 
+Please reply to Luxury Link via this email to let us know if the requested dates are available.  Also, please note any special requests, 
+and quote pricing as applicable.  If these dates are not available, please advise alternative dates.  A Luxury Link representative will 
+contact you to confirm the booking.  Thank you.
 </p>
 
-<p>Thank you.</p>
-
-Rate From: $<?=$clientAdjustedPrice;?><br>
-
-<?php if (!$fpArrival):?>
-	No Arrival Preference<br>
-<?php else: ?>
-	Arrival: <?=$fpArrival;?><br>
-<?php endif;?>
-
-<?php if (!$fpDeparture) :?>
-	echo "No Departure Preference<br>";
-<?php else : ?>
-	Departure: <?=$fpDeparture;?><br>
-<?php endif;?>
-
-# Travelers: <?=$fpNumGuests;?><br>
-
-Additional air transporation is not required.<br>
-Offer ID: <?=$offerId;?><br>
-Special Requests: <?=$fpNotes;?><br>
-
-
-<br />
-You received <?=$fpRequestType;?> request from:<br><br />
-
-Full Name : <?=$userFirstName;?> <?=$userLastName;?><br>
-User Account ID: <?=$userId;?><br>
-Ticket Reference ID: <?=$ticketId;?><br>
-Email: <?=$userEmail;?><br>
-Phone: <?=$userHomePhone;?><br>
-Alt Phone: <?=$userMobilePhone;?><br>
-Date/Time: <?=date('M d, Y H:i:s', strtotime('now'));?><br>
-<br>
-
-********************<br>
-Auction: <?=$packageName;?><br>
-Property: <?=$clientNameP;?><br>
-<?=$packageIncludes;?><br /><br/ >
-<?=$legalText;?><br /><br />
-<?=$validityNote;?><br />
-********************<br>
-
-<br /><br />
-<center><a href="http://www.luxurylink.com/"><img src="http://www.luxurylink.com/images/email/email_footer.gif" border="0"></a><br><a href="http://www.luxurylink.com/"><strong>www.luxurylink.com</strong></a></center>
-</td>
-</tr>
+<table cellpadding="5" cellspacing="0" border="0" style="width:100%;background-color:#E0E0CD;margin-top:25px;margin-bottom:25px;">
+	<tr>
+		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">Ticket Reference ID:</td>
+		<td style="color:#444444;font-size:12px;" valign="top" align="left"><?=$ticketId;?></td>
+	</tr>
+	<tr>
+		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">&nbsp;</td>
+		<td style="color:#444444;font-size:12px;" valign="top" align="left">&nbsp;</td>
+	</tr>
+	<tr>
+		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">Full Name:</td>
+		<td style="color:#444444;font-size:12px;" valign="top" align="left"><?=$userFirstName;?> <?=$userLastName;?></td>
+	</tr>
+	<tr>
+		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">Arrival:</td>
+		<td style="color:#444444;font-size:12px;" valign="top" align="left"><?=$fpArrival;?></td>
+	</tr>
+	<tr>
+		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">Departure:</td>
+		<td style="color:#444444;font-size:12px;" valign="top" align="left"><?=$fpDeparture;?></td>
+	</tr>
+	<tr>
+		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170"># Travelers:</td>
+		<td style="color:#444444;font-size:12px;" valign="top" align="left"><?=$fpNumGuests;?></td>
+	</tr>
+	<tr>
+		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">Rate From:</td>
+		<td style="color:#444444;font-size:12px;" valign="top" align="left">$<?=$clientAdjustedPrice;?></td>
+	</tr>
+	<tr>
+		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">Offer ID:</td>
+		<td style="color:#444444;font-size:12px;" valign="top" align="left"><?=$offerId;?></td>
+	</tr>
+	<tr>
+		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">Special Requests</td>
+		<td style="color:#444444;font-size:12px;" valign="top" align="left"><?=$fpNotes;?></td>
+	</tr>
+	<tr>
+		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">Alternate Arrival</td>
+		<td style="color:#444444;font-size:12px;" valign="top" align="left">&nbsp;</td>
+	</tr>
+	<tr>
+		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">Alternate Departure:</td>
+		<td style="color:#444444;font-size:12px;" valign="top" align="left">&nbsp;</td>
+	</tr>
+	<tr>
+		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">&nbsp;</td>
+		<td style="color:#444444;font-size:12px;" valign="top" align="left">&nbsp;</td>
+	</tr>
+	<tr>
+		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">Email:</td>
+		<td style="color:#444444;font-size:12px;" valign="top" align="left"><?=$userEmail;?></td>
+	</tr>
+	<tr>
+		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">Phone:</td>
+		<td style="color:#444444;font-size:12px;" valign="top" align="left"><?=$userPhone;?></td>
+	</tr>
 </table>
-</body>
-</html>
+
+<div style="font-size:12px;font-weight:bold;color:#990000;">Package: <?=$packageName;?></div>
+<div style="font-size:12px;font-weight:bold;color:#990000;">Property: <?=$clientNameP;?></div>
+
+<p><?php echo $packageIncludes;?></p>
+<p><span style="font-weight:bold;"><?php echo $validityLeadIn;?></span><br /><?php echo $validityNote;?></p>
+<p><?php echo $legalText;?></p>
+<?php if ($addtlDescription):?>
+<p><?php echo $addtlDescription;?></p>
+<?php endif ;?>
+
+<p>
+<br /><br />
+Warm Regards,<br /><br />
+Travel Concierge Team<br />
+LuxuryLink.com
+</p>		
+	
+<?php include('../vendors/email_msgs/email_includes/footer.html');?>

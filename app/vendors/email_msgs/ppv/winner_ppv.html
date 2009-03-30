@@ -1,17 +1,12 @@
-<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">
-<html>
-<head>
-</head>
-<body>
-<table width="800" border="1" cellpadding="20">
-<tr>
-<td>
-<center><a href="http://www.luxurylink.com/"><img src="http://www.luxurylink.com/images/email/email_header.gif" border="0"></a></center><br /><br /><br />
+<?php include('../vendors/email_msgs/email_includes/header.html');?>
 
+<h1 style="color:#990000;font-size:16px;margin:0px;padding:0px;margin-bottom:30px;">Congratulations, you won the <?=$offerTypeName;?> for <?=$clientNameP;?></h1>
 
-User Account ID #<?php echo $userId;?><br />
-Ticket Reference ID #<?php echo $ticketId;?><br />
-<br />
+<p>
+<span style="font-weight:bold;">User Account ID:</span>  <?php echo $userId;?><br />
+<span style="font-weight:bold;">Ticket Reference ID:</span>  <?php echo $ticketId;?>
+<br /><br />
+</p>
 
 <p>Dear <?php echo $userFirstName;?> <?php echo $userLastName;?>,</p>
 
@@ -22,148 +17,76 @@ Thank you for your purchase of this special package from <?php echo $clientNameP
 <?php endif;?>
 </p>
 
-<?php if ($offerTypeId == 1 || $offerTypeId == 6) : ?>
-
+<table cellpadding="10" cellspacing="0" border="0" style="width:100%;background-color:#E0E0CD;margin-top:15px;margin-bottom:15px;">
+	<tr>
+		<td width="245" align="left" valign="top">
+			<div style="width: 225px; height: 169px; padding: 8px 12px 12px 8px; background: url(http://www.luxurylink.com/images/shared/shadow-gal-lrg-light-olive.gif) no-repeat top left; overflow: hidden;"><img src="http://www.luxurylink.com/images/por/<?php echo $oldProductId;?>/<?php echo $oldProductId;?>-gal-lrg-01.jpg" alt="<?php echo $packageName;?>" border="0" /></div>
+		</td>
+		<td align="left" valign="top">
+			<div style="color:#990000;font-size:16px;"><?php echo $clientNameP;?></div>
+			<div style="color:#444444;font-size:12px;"><?php echo $locationDisplay;?></div><br />
+			<div style="color:#990000;font-size:12px;"><?php echo $packageName;?> <br /><br /><a style="color:#336699;" href="http://www.luxurylink.com/portfolio/por_offer_redirect.php?oid=<?=$offerId;?>">View Package Details</a></div>
+			<?php if ($is_auc_fac) :?>
+			<div style="height:15px;margin-top:15px;border-top:1px solid #B0B0B0;">&nbsp;</div>
+			<table cellspacing="0" cellpadding="5" border="0">
+			<tr>
+				<td style="color:#444444;font-size:12px;"><a href="https://www.luxurylink.com/my/my_date_request.php?tid=<?php echo $ticketId;?>"><img src="http://www.luxurylink.com/images/buttons/btn_email_preferred_dates.gif" alt="Submit Your Preferred Travel Dates" /></a></td>
+			</tr>
+			</table>
+			<?php endif; ?>
+		</td>
+	</tr>
 	<?php if ($is_auc_fac) :?>
-		<div style="background: #e5e5e5; padding: 5px 10px">
-			<p style="color: #900; font-weight: bold; font-size: 14px;">Submit your preferred travel dates</p>
-			<p>
-			<a href="https://www.luxurylink.com/my/my_date_request.php?tid=<?php echo $ticketId;?>">Click here</a> or call 1-888-297-3299 / 1-310-215-8060.<br />
-			Luxury Link will assist you with the booking process.  Once you submit your preferred travel dates, a Luxury Link representative will contact you. 
-			</p>
-		</div>
+	<tr>
+		<td colspan="2" style="color:#444444;font-size:12px;">
+		<a href="https://www.luxurylink.com/my/my_date_request.php?tid=<?php echo $ticketId;?>">Click here</a>
+			Once you submit our preferred travel dates, a Luxury Link Tarvel Concierge will assist you in securing those dates.  You can submit your dates online, or 
+			call us at 1-888-297-3299 / 1-310-215-8060.
+		</td>
+	</tr>
 	<?php endif;?>
+</table>
 
-	<p><?php echo $packageIncludes;?></p>
-	<p><?php echo $validityNote;?></p>
-	<p><?php echo $legalText;?></p>
-
-	<?php if ($wholesale == 1) : ?>
-	
-	    <p><strong>Please note as stated in our rules section and on all LuxuryLink.com auction pages, this package is non-refundable.</strong><p>
-		<p>	
-		Please contact reservations@luxurylink.com or the Auction Department
-		at (888) 297-3299 within 30 days with your preferred dates of travel and airline certificates.<p>
-		If a change occurs after the booking, but at least 30 days before departure, a fee of $50 will apply.
-	  	Package is non-refundable and non-cancellable within 29 days of scheduled departure date. Any changes within 30 days of the scheduled departure date
-		will be subject to a $100 fee plus additional charges based on the policies of the travel provider, which may result in substantial penalties.
-		</p>
-			
-		<p>Luxury Link strongly recommends the purchase of travel insurance. There are many reputable companies from which to choose; please contact your insurance provider for a recommendation.</p>
-
-	<?php else : ?>
-
-	    <strong>Please note as stated in our rules section and on all LuxuryLink.com auction pages, this package is non-refundable.</strong>
-	      
-		<p>Luxury Link strongly recommends the purchase of travel insurance. There are many reputable companies from which to choose; please contact your insurance provider for a recommendation.</p>
-	
-		<?php if (!$is_auc_fac) : ?>
-	 	 To secure your reservations, please contact the property directly to place your reservations:<p>
-			<!-- SECTION LOOP -->
-			<?php foreach ($clients as $k => $client) : ?>
-				<p>
-				<?php echo $client['contacts'][0]['ppv_name'];?><br />
-				<?php echo $packageName;?><br />
-				<?php echo $client['name'];?><br />
-				Telephone: <?php echo $client['contacts'][0]['ppv_phone'];?><br />
-				Facsimile: <?php echo $client['contacts'][0]['ppv_fax'];?><br />
-				Email: <?php echo $client['contacts'][0]['ppv_email_address'];?>
-				<p>
-			<?php endforeach; ?>
-			<!-- END SECTION LOOP -->
-		<?php endif;?>
-	
-		<p>This email serves as your receipt that you have paid in full.  Please present a copy upon check-in. If you have any questions or additional needs, please contact the Auction Department at Luxury Link.<p>
-	
-	<?php endif;?>
-
-<?php elseif ($offerTypeId == 2 && $wholesale == 1) : ?>
-
-	<?php if ($is_auc_fac) : ?>
+<?php if (!$is_auc_fac) : ?>
+<div style="padding:15px;background-color:#E4E4E4;margin-bottom:15px;">
+	<div style="color:#990000;"><strong>Please contact the property directly for any special requests.</strong></div>
+	<?php foreach ($clients as $k => $client) : ?>
 		<p>
-		Luxury Link will assist you with the booking process.  Please <a href="https://www.luxurylink.com/my/my_date_request.php?tid={$ticket_id}">click here</a> to submit your preferred travel dates.  
-		Once you submit your preferred travel dates, a Luxury Link representative will contact you.
-		</p>
-	<?php endif;?>
-
-	<p><?php echo $packageIncludes;?></p>
-	<p><?php echo $validityNote;?></p>
-	<p><?php echo $legalText;?></p>
-	
-  	<p><strong>Please note as stated in our rules section and on all LuxuryLink.com auction pages, this package is non-refundable.</strong><p>
-	Please contact reservations@luxurylink.com or the Auction Department at (888) 297-3299 within 30 days
-	with your preferred dates of travel and airline certificates.
-  
-	<p>
-	Luxury Link strongly recommends the purchase of travel insurance. There are many reputable companies from which to choose; please contact your insurance provider for a recommendation.
-	</p>
-
-	If a change occurs after the booking, but at least 30 days before departure, a fee of $50 will apply.
- 	Package is non-refundable and non-cancellable within 29 days of scheduled departure date. Any changes within 30 days of the scheduled departure date
-	will be subject to a $100 fee plus additional charges based on the policies
-	of the travel provider, which may result in substantial penalties.<p>
-
-<?php elseif ($offerTypeId == 2 && $wholesale != 1) : ?>
-
-	
-	<?php if ($is_auc_fac) : ?>
+		<?php echo $client['contacts'][0]['ppv_name'];?><br />
+		<?php echo $packageName;?><br />
+		<?php echo $client['name'];?><br />
+		Telephone: <?php echo $client['contacts'][0]['ppv_phone'];?><br />
+		Facsimile: <?php echo $client['contacts'][0]['ppv_fax'];?><br />
+		Email: <?php echo $client['contacts'][0]['ppv_email_address'];?>
 		<p>
-		Luxury Link will assist you with the booking process.  Please <a href="https://www.luxurylink.com/my/my_date_request.php?tid={$ticket_id}">click here</a> to submit your preferred travel dates.  
-		Once you submit your preferred travel dates, a Luxury Link representative will contact you.
-		</p>
-	<?php endif;?>
-
-	<p><?php echo $packageIncludes;?></p>
-	<p><?php echo $validityNote;?></p>
-	<p><?php echo $legalText;?></p>
-	
-	<p><strong>Please note as stated in our rules section and on all LuxuryLink.com auction pages, this package is non-refundable.</strong><p>
-	Please contact reservations@luxurylink.com or the Auction Department at (888) 297-3299 within 30 days
-	with your preferred dates of travel and airline certificates.
-  
-	<p>
-	Luxury Link strongly recommends the purchase of travel insurance. There are many reputable companies from which to choose; please contact your insurance provider for a recommendation.
-	</p>
-  
-  	<?php if (!$is_auc_fac) : ?>
-		To secure your reservations, please contact the property directly to place your reservations:<p>
-	
-		<!-- SECTION LOOP -->
-		<?php foreach ($clients as $k => $client) : ?>
-		<p>
-			<?php echo $client['contacts'][0]['ppv_name'];?><br />
-			<?php echo $packageName;?><br />
-			<?php echo $client['name'];?><br />
-			Telephone: <?php echo $client['contacts'][0]['ppv_phone'];?><br />
-			Facsimile: <?php echo $client['contacts'][0]['ppv_fax'];?><br />
-			Email: <?php echo $client['contacts'][0]['ppv_email_address'];?>
-		<p>
-		<?php endforeach; ?>
-		<!-- END SECTION LOOP-->
-	<?php endif;?>
-
-	This email serves as your receipt that you have paid in full.  Please present a copy upon check-in.
-	If you have any questions or additional needs, please contact the Auction Department at Luxury Link.<p>
-
+	<?php endforeach; ?>
+</div>
 <?php endif; ?>
 
-<p>Have a fantastic trip!<p>
-<p>Warm regards,</p>
+<p><?php echo $packageIncludes;?></p>
+<p><span style="font-weight:bold;"><?php echo $validityLeadIn;?></span><br /><?php echo $validityNote;?></p>
+<p><?php echo $legalText;?></p>
+<?php if ($addtlDescription):?>
+<p><?php echo $addtlDescription;?></p>
+<?php endif ;?>
+
+<p style="font-weight:bold;color:#990000;"><strong><br />Please note as stated in our rules section and on all LuxuryLink.com auction pages, this package is non-refundable.<br /><br /></strong></p>
 
 <p>
-<?php echo (in_array($offerTypeId, array(1,2,6))) ? 'Auction Department' : 'Fixed Rate/Best Buy Department';?><br>
-LuxuryLink.com<br>
-The World's Leading Luxury Travel Website<br>
-http://www.luxurylink.com<br>
-(In the U.S.) 888.297.3299<br>
-(Outside the U.S.) 310.215.8060<br>
-(Fax) 310.215.8279
+Luxury Link strongly recommends the purchase of travel insurance.  There are many reputable companies from which to choose; please contact your insurance 
+provider for a recommendation!
 </p>
 
+<p>This email serves as your receipt that you have paid in full.  If you have any questions or additional needs, please contact the Auction Department at Luxury Link.</p>
+
+<p>Have a fantastic trip!</p>
+
+<p>
 <br /><br />
-<center><a href="http://www.luxurylink.com/"><img src="http://www.luxurylink.com/images/email/email_footer.gif" border="0"></a><br><a href="http://www.luxurylink.com/"><strong>www.luxurylink.com</strong></a></center>
-</td>
-</tr>
-</table>
-</body>
-</html>
+Warm Regards,<br /><br />
+Travel Concierge Team<br />
+LuxuryLink.com
+</p>		
+
+
+<?php include('../vendors/email_msgs/email_includes/footer.html');?>

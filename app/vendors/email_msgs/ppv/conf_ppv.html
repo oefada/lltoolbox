@@ -1,43 +1,60 @@
-<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">
-<html>
-<head>
-</head>
-<body>
-<table width="800" border="1" cellpadding="20">
-<tr>
-<td>
-<center><a href="http://www.luxurylink.com/"><img src="http://www.luxurylink.com/images/email/email_header.gif" border="0"></a></center><br /><br /><br />
+<?php include('../vendors/email_msgs/email_includes/header.html');?>
 
-User Account ID #<?php echo $userId;?><br />
-Ticket Reference ID #<?php echo $ticketId;?><br />
-<br />
+<h1 style="color:#990000;font-size:16px;margin:0px;padding:0px;margin-bottom:30px;">Your Reservation is Confirmed!</h1>
 
 <p>Dear <?php echo $userFirstName;?> <?php echo $userLastName;?>, </p>
 
 <p>
-Congratulations on your Luxury Link purchase of this special package from <strong><?php echo $clientNameP;?></strong>. 
-This letter confirms your purchase of the following package in the amount of $<?php echo $billingPrice;?> 
-plus the <?php echo $llFee;?> <?php if (in_array($offerTypeId, array(1,2,6))) echo 'auction';?> handling fee.  
+Congratulations!
+<strong>This letter confirms your purchase of the following package <?=$clientNameP;?> in the amount of $<?php echo $billingPrice;?> 
+plus the $<?php echo $llFee;?> handling fee.</strong> 
 <?php if (!empty($promoData)) :?>
 	Your promotional code has been accepted and your savings will be reflected in the final amount charged to your card.
 <?php endif;?>
 </p>
 
-<p>Your reservation has been confirmed for:</p>
-
-<p>
-<strong>Arrival: <?=$fpArrival;?><br></strong>
-<strong>Departure: <?=$fpDeparture;?></strong>
-</p>
-
-<p><strong>Confirmation #: 000000</strong></p>
+<table cellpadding="10" cellspacing="0" border="0" style="width:100%;background-color:#E0E0CD;margin-top:15px;margin-bottom:15px;">
+	<tr>
+		<td width="245" align="left" valign="top">
+			<div style="width: 225px; height: 169px; padding: 8px 12px 12px 8px; background: url(http://www.luxurylink.com/images/shared/shadow-gal-lrg-light-olive.gif) no-repeat top left; overflow: hidden;"><img src="http://www.luxurylink.com/images/por/<?php echo $oldProductId;?>/<?php echo $oldProductId;?>-gal-lrg-01.jpg" alt="<?php echo $packageName;?>" border="0" /></div>
+		</td>
+		<td align="left" valign="top">
+			<div style="color:#990000;font-size:16px;"><?php echo $clientNameP;?></div>
+			<div style="color:#444444;font-size:12px;"><?php echo $locationDisplay;?></div><br />
+			<div style="color:#990000;font-size:12px;"><?php echo $packageName;?></div>
+			<div style="height:15px;margin-top:15px;border-top:1px solid #B0B0B0;">&nbsp;</div>
+			<div style="color:#990000;font-weight:bold;font-size:12px;margin-bottom:15px;">Reservation Details:</div>
+			<table cellspacing="0" cellpadding="5" border="0">
+			<tr>
+				<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="160">Confirmation #:</td>
+				<td style="color:#444444;font-size:12px;" valign="top" align="left">xxxxxx</td>
+			</tr>
+			<tr>
+				<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="160">Arrival:</td>
+				<td style="color:#444444;font-size:12px;" valign="top" align="left">xxxxxx</td>
+			</tr>
+			<tr>
+				<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="160">Departure:</td>
+				<td style="color:#444444;font-size:12px;" valign="top" align="left">xxxxxx</td>
+			</tr>
+			<tr>
+				<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="160">Special Requests:</td>
+				<td style="color:#444444;font-size:12px;" valign="top" align="left"><?=$fpNotes;?></td>
+			</tr>
+			</table>
+		</td>
+	</tr>
+</table>
 
 <p><?php echo $packageIncludes;?></p>
-<p><?php echo $validityNote;?></p>
+<p><span style="font-weight:bold;"><?php echo $validityLeadIn;?></span><br /><?php echo $validityNote;?></p>
 <p><?php echo $legalText;?></p>
+<?php if ($addtlDescription):?>
+<p><?php echo $addtlDescription;?></p>
+<?php endif ;?>
 
-<?php if ($offerTypeId != 2) : ?>
-	<p>Please contact the property directly for any special requests.</p>
+<div style="padding:15px;background-color:#E4E4E4;margin-bottom:15px;">
+	<div style="color:#990000;"><strong>Please contact the property directly for any special requests.</strong></div>
 	<?php foreach ($clients as $k => $client) : ?>
 		<p>
 		<?php echo $client['contacts'][0]['ppv_name'];?><br />
@@ -48,26 +65,11 @@ plus the <?php echo $llFee;?> <?php if (in_array($offerTypeId, array(1,2,6))) ec
 		Email: <?php echo $client['contacts'][0]['ppv_email_address'];?>
 		<p>
 	<?php endforeach; ?>
-<?php endif;?>
+</div>
 
-<?php if (!$is_auc_fac) : ?>
-
-	<?php if ($offerTypeId == 2 && $wholesale == 1) : ?>
-		If a change occurs after the booking, but at least 30 days before 
-		departure, a fee of $50 will apply. Package is non-refundable and non-cancellable within 29 days of scheduled departure date. Any changes 
-		within 30 days of the scheduled departure date will be subject to a $100 fee 
-		plus additional charges based on the policies of the travel provider, which 
-		may result in substantial penalties.<p>
-	<?php else: ?>
-		If a change or cancellation occurs after the booking, but at least 30 days before departure, a fee of $50 will apply. 
-		Package is non-refundable and non-cancellable within 29 days of scheduled departure date. 
-		Any changes within 30 days of the scheduled departure date 
-		will be subject to a $100 fee plus additional charges based on the policies 
-		of the travel provider, which may result in substantial penalties.<p>
-	<?php endif;?>
-	
+<?php if (!$is_auc_fac) : ?>	
 	<p>
-	'Buy Now' Cancellation Policy
+	Luxury Link 'Buy Now' Cancellation Policy
 	<ul>
 		<li>Cancellation up to 15 days prior to trip entails a penalty fee of US $35 plus any additional hotel penalties.</li>
 		<li>Cancellation that is between the day of departure and 14 days prior to entails a penalty fee of US $100 plus any additional hotel penalties.</li>
@@ -81,30 +83,16 @@ plus the <?php echo $llFee;?> <?php if (in_array($offerTypeId, array(1,2,6))) ec
 <?php endif;?>
 
 <p>
-This email serves as your receipt that you have paid in full. Please present a copy upon check-in. 	
-If you have any questions or additional needs, 	please contact the Auction Department at LuxuryLink.com (888) 297-3299.
+<strong>This email serves as your receipt that you have paid in full. Please present a copy upon check-in.</strong>	
+If you have any questions or additional needs, please contact Luxury Link at (888) 297-3299.
 </p>
 		
-<p>
-Luxury Link strongly recommends the purchase of travel insurance. There are many reputable companies from which to choose; please contact your insurance provider for a recommendation.
-</p>
-
-<p>Warm regards,</p>
+<p>Luxury Link strongly recommends the purchase of travel insurance. There are many reputable companies from which to choose; please contact your insurance provider for a recommendation.</p>
 
 <p>
-Auction Department<br>
-LuxuryLink.com<br>
-The World's Leading Luxury Travel Website<br>
-http://www.luxurylink.com<br>
-(In the U.S.) 888.297.3299<br>
-(Outside the U.S.) 310.215.8060<br>
-(Fax) 310.215.8279
-</p>	
-
 <br /><br />
-<center><a href="http://www.luxurylink.com/"><img src="http://www.luxurylink.com/images/email/email_footer.gif" border="0"></a><br><a href="http://www.luxurylink.com/"><strong>www.luxurylink.com</strong></a></center>
-</td>
-</tr>
-</table>
-</body>
-</html>
+Travel Concierge Team<br />
+LuxuryLink.com
+</p>		
+
+<?php include('../vendors/email_msgs/email_includes/footer.html');?>

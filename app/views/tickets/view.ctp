@@ -284,16 +284,16 @@ $this->searchController = 'Tickets';
 			<td style="border:0px;"><h2>Auctions</h2></td>
 		</tr>
 		<tr>
-			<td style="border:0px;"><?php echo $html->link('Send Reservation Request', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/2');?></td>
-			<td style="border:0px;"><?php echo $html->link('Send Winner Notification', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/5');?></td>
+			<td style="border:0px;"><?php echo $html->link('Fixed Price - Winner Notification', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/9');?></td>
+			<td style="border:0px;"><?php echo $html->link('Winner Notification', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/5');?></td>
 		</tr>
 		<tr>
-			<td style="border:0px;"><?php echo $html->link('Send Reservation Confirmation', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/1');?></td>
-			<td style="border:0px;"><?php echo $html->link('Send Winner Notification w/ checkout', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/6');?></td>
+			<td style="border:0px;"><?php echo $html->link('Fixed Price - Internal Exclusive Email', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/11');?></td>
+			<td style="border:0px;">&nbsp;</td>
 		</tr>
 		<tr>
-			<td style="border:0px;"><?php echo $html->link('Send Fixed Price - Winner Notification', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/9');?></td>
-			<td style="border:0px;"><?php echo $html->link('Send Notification Declined CC', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/7');?></td>
+			<td style="border:0px;"><?php echo $html->link('Reservation Request (No Special Requests)', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/2');?></td>
+			<td style="border:0px;"><?php echo $html->link('Notification Declined CC', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/7');?></td>
 		</tr>
 		<tr>
 			<?php if (count($ticket['Client']) > 1) : ?>
@@ -301,35 +301,47 @@ $this->searchController = 'Tickets';
 					** Multi-Client Package **<br />
 					<?php 
 						foreach ($ticket['Client'] as $k=>$client) {
-							echo $html->link("Send Fixed Price - Client Exclusive Email [". $client['Client']['name'] . "]", '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/10/' . $client['Client']['clientId']);	
+							echo $html->link("Reservation Request - Client Exclusive Email [". $client['Client']['name'] . "]", '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/10/' . $client['Client']['clientId']);	
 							echo '<br />';
 						}
 					?>
 				</td>
 			<?php else : ?>
-				<td style="border:0px;"><?php echo $html->link('Send Fixed Price - Client Exclusive Email', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/10');?></td>
+				<td style="border:0px;"><?php echo $html->link('Reservation Request - Client Exclusive Email', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/10');?></td>
 			<?php endif; ?>
-			<td style="border:0px;"><?php echo $html->link('Send Notification Expired CC', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/8');?></td>
+			<td style="border:0px;"><?php echo $html->link('Notification Expired CC', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/8');?></td>
 		</tr>
 		<tr>
-			<td style="border:0px;"><?php echo $html->link('Send Fixed Price - Internal Exclusive Email', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/11');?></td>
+			<td style="border:0px;"><?php echo $html->link('Reservation Confirmation', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/1');?></td>
 			<?php if (count($ticket['Client']) > 1) : ?>
 				<td style="border:0px;">
 					** Multi-Client Package **<br />
 					<?php 
 						foreach ($ticket['Client'] as $k=>$client) {
-							echo $html->link("Send Client PPV [". $client['Client']['name'] . "]", '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/4/' . $client['Client']['clientId']);	
+							echo $html->link("Client PPV [". $client['Client']['name'] . "]", '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/4/' . $client['Client']['clientId']);	
 							echo '<br />';
 						}
 					?>
 				</td>
 			<?php else : ?>
-				<td style="border:0px;"><?php echo $html->link('Send Client PPV', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/4');?></td>
+				<td style="border:0px;"><?php echo $html->link('Client PPV', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/4');?></td>
 			<?php endif; ?>
 		</tr>
 		<tr>
 			<td style="border:0px;">&nbsp;</td>
-			<td style="border:0px;"><?php echo $html->link('Send Winner PPV', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/3');?></td>
+			<td style="border:0px;"><?php echo $html->link('Winner PPV', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/3');?></td>
+		</tr>
+		<tr>
+			<td style="border:0px;"><?php echo $html->link('Reservation Acknowledgement', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/12');?></td>	
+			<td style="border:0px;"><?php echo $html->link('Chase Money', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/15');?></td>	
+		</tr>
+		<tr>
+			<td style="border:0px;"><?php echo $html->link('Reservation Dates Available', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/13');?></td>	
+			<td style="border:0px;"><?php echo $html->link('1st Offense Flake', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/16');?></td>	
+		</tr>
+		<tr>
+			<td style="border:0px;"><?php echo $html->link('Reservation Dates Not Available', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/14');?></td>	
+			<td style="border:0px;"><?php echo $html->link('2nd Offense Flake', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/17');?></td>	
 		</tr>
 		
 	</table>

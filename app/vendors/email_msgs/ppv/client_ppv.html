@@ -1,70 +1,65 @@
-<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">
-<html>
-<head>
-</head>
-<body>
-<table width="800" border="1" cellpadding="20">
-<tr>
-<td>
-<center><a href="http://www.luxurylink.com/"><img src="http://www.luxurylink.com/images/email/email_header.gif" border="0"></a></center><br /><br /><br />
+<?php include('../vendors/email_msgs/email_includes/header.html');?>
 
-User Account ID #<?php echo $userId;?><br />
-Ticket Reference ID #<?php echo $ticketId;?><br />
-<br />
+<p>Dear <?php echo $clientName;?>,</p>
 
-<?php if ($offerTypeId == 1 || $offerTypeId == 6) : ?>		
+<p>The following Luxury Link Auction has been paid in full:</p>		
 	
-		<p>Dear <?php echo $clientName;?>,</p>
-		
-		<p>
-		The Luxury Link <?php echo $packageName;?>, <?php echo $packageSubtitle;?>, closed <?php echo $offerEndDate;?>. The winning bidder, 
-		<?php echo $userFirstName;?> <?php echo $userLastName;?> (<?php echo $userEmail;?>, <?php echo $userPhone;?>), has paid in full for the following auction package and will be 
-		contacting you shortly. The winning bid amount was $<?php echo $clientAdjustedPrice;?>.
-		</p>
+<?php if ($guarantee) : ?>
+	<p>On this occasion Luxury Link will subsidize the winning bid amount to guarantee $<?=$guarantee;?>; this amount will be reflected on your month end statement.</p>
+<?php endif ;?>
 	
-<?php elseif ($offerTypeId == 2) : ?>		
-	
-		<p>Dear <?php echo $clientName;?>,</p>
-		
-		<p>
-	    Congratulations on a successful Luxury Link Best Shot Auction for <?php echo $packageName;?>.
-	    This Best Shot auction closed on <?php echo $offerEndDate;?>. The winning bid amount was $<?php echo $clientAdjustedPrice;?>.
-		</p>
-		
-		<p>The following Luxury Link Guest has paid in full for the package detailed below and will be contacting you shortly:</p>
-	    
-		<p><?php echo $userFirstName;?> <?php echo $userLastName;?> (<?php echo $userEmail;?>)</p>
-	
-<?php endif; ?>
-	
-	<?php if ($guarantee) : ?>
-		<p>
-		On this occasion Luxury Link will subsidize the winning bid amount to guarantee $<?=$guarantee;?>; this amount will be reflected on your month end statement.
-		</p>
-	<?php endif ;?>
-	
-	<p><?php echo $packageIncludes;?></p>
-	<p><?php echo $validityNote;?></p>
-	<p><?php echo $legalText;?></p>
-	
-	<p>Thank you for the exceptional care you provide to all our Luxury Link auction winners.<p>
-	
-	<p>Warm regards,</p>
-	
-	<p>
-	Auction Department<br>
-	LuxuryLink.com<br>
-	The World's Leading Luxury Travel Website<br>
-	http://www.luxurylink.com<br>
-	(In the U.S.) 888.297.3299<br>
-	(Outside the U.S.) 310.215.8060<br>
-	(Fax) 310.215.8279
-	</p>	
-
-<br /><br />
-<center><a href="http://www.luxurylink.com/"><img src="http://www.luxurylink.com/images/email/email_footer.gif" border="0"></a><br><a href="http://www.luxurylink.com/"><strong>www.luxurylink.com</strong></a></center>
-</td>
-</tr>
+<table cellpadding="10" cellspacing="0" border="0" style="width:100%;background-color:#E0E0CD;margin-top:15px;margin-bottom:15px;">
+	<tr>
+		<td width="245" align="left" valign="top">
+			<div style="width: 225px; height: 169px; padding: 8px 12px 12px 8px; background: url(http://www.luxurylink.com/images/shared/shadow-gal-lrg-light-olive.gif) no-repeat top left; overflow: hidden;"><img src="http://www.luxurylink.com/images/por/<?php echo $oldProductId;?>/<?php echo $oldProductId;?>-gal-lrg-01.jpg" alt="<?php echo $packageName;?>" border="0" /></div>
+		</td>
+		<td align="left" valign="top">
+			<div style="color:#990000;font-size:16px;"><?php echo $clientNameP;?></div>
+			<div style="color:#444444;font-size:12px;"><?php echo $locationDisplay;?></div><br />
+			<div style="color:#990000;font-size:12px;"><?php echo $packageName;?></div>
+			<div style="height:15px;margin-top:15px;border-top:1px solid #B0B0B0;">&nbsp;</div>
+			<table cellspacing="0" cellpadding="5" border="0">
+			<tr>
+				<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="160">Ticket Reference ID:</td>
+				<td style="color:#444444;font-size:12px;" valign="top" align="left"><?=$ticketId;?></td>
+			</tr>
+			<tr>
+				<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="160">Auction Close Date:</td>
+				<td style="color:#444444;font-size:12px;" valign="top" align="left"><?=$offerEndDate;?></td>
+			</tr>
+			<tr>
+				<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="160">Winning Amount:</td>
+				<td style="color:#444444;font-size:12px;" valign="top" align="left"><?=$clientAdjustedPrice;?></td>
+			</tr>
+			<tr>
+				<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="160">Winning Bidder:</td>
+				<td style="color:#444444;font-size:12px;" valign="top" align="left"><?php echo $userFirstName;?> <?php echo $userLastName;?></td>
+			</tr>
+			<tr>
+				<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="160">Email:</td>
+				<td style="color:#444444;font-size:12px;" valign="top" align="left"><?=$userEmail;?></td>
+			</tr>
+			<tr>
+				<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="160">Phone:</td>
+				<td style="color:#444444;font-size:12px;" valign="top" align="left"><?=$userPhone;?></td>
+			</tr>
+			</table>
+		</td>
+	</tr>
 </table>
-</body>
-</html>
+	
+<p><?php echo $packageIncludes;?></p>
+<p><span style="font-weight:bold;"><?php echo $validityLeadIn;?></span><br /><?php echo $validityNote;?></p>
+<p><?php echo $legalText;?></p>
+<?php if ($addtlDescription):?>
+<p><?php echo $addtlDescription;?></p>
+<?php endif ;?>
+	
+<p>
+<br /><br />
+Warm Regards,<br /><br />
+Travel Concierge Team<br />
+LuxuryLink.com
+</p>		
+
+<?php include('../vendors/email_msgs/email_includes/footer.html');?>
