@@ -68,36 +68,6 @@ $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']
 		echo $form->input('estaraPhoneLocal');
 		echo $form->input('estaraPhoneIntl');
 		?>
-		
-	<?	echo $form->input('Client.countryId', array('type' => 'select', 'label' => 'Country', 'empty' => true)); ?>
-	<div id='stateChooser' style="padding: 0; margin:0">
-	<?php
-	echo $form->input('Client.stateId', array('type' => 'select', 'label' => 'State', 'empty' => true));
-	echo $ajax->observeField(
-	               "ClientStateId",
-	               array(
-	                  "update"=>"cityChooser",
-	                  "url"=>"/states/get_cities",
-					  'indicator' => 'spinner'
-	               )
-	          );
-	?>
-	</div>
-	<div id='cityChooser' style="padding: 0; margin:0"><?	echo $form->input('Client.cityId', array('type' => 'select', 'label' => 'City', 'empty' => true)); ?></div>
-		
-	<?php echo $ajax->observeField(
-	               "ClientCountryId",
-	               array(
-	                  "update"=>"stateChooser",
-	                  "url"=>"/countries/get_states",
-					  'indicator' => 'spinner'
-	               )
-	          );
-	?>
-
-	<?
-		echo $form->input('airportCode');
-	?>
 		<? if(isset($client['Address'])): ?>
 		<h4>Addresses</h4>
 		<?php foreach ($client['Address'] as $address):
@@ -142,13 +112,49 @@ $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']
 		<legend class="handle">Geographic Details</legend>
 		<div class="collapsibleContent">
 		<?php
-		echo $form->input('locationDisplay');
 		echo $form->input('customMapLat');
 		echo $form->input('customMapLong');
 		echo $form->input('customMapZoomMap');
 		echo $form->input('customMapZoomSat');
 		?>
+		<br /><br />
+		<?
+			echo $form->input('address1');
+			echo $form->input('address2');
+			echo $form->input('postalCode');
+		?>
+		<?	echo $form->input('Client.countryId', array('type' => 'select', 'label' => 'Country', 'empty' => true)); ?>
+		<div id='stateChooser' style="padding: 0; margin:0">
+		<?php
+		echo $form->input('Client.stateId', array('type' => 'select', 'label' => 'State', 'empty' => true));
+		echo $ajax->observeField(
+		               "ClientStateId",
+		               array(
+		                  "update"=>"cityChooser",
+		                  "url"=>"/states/get_cities",
+						  'indicator' => 'spinner'
+		               )
+		          );
+		?>
 		</div>
+		<div id='cityChooser' style="padding: 0; margin:0"><?	echo $form->input('Client.cityId', array('type' => 'select', 'label' => 'City', 'empty' => true)); ?></div>
+
+		<?php echo $ajax->observeField(
+		               "ClientCountryId",
+		               array(
+		                  "update"=>"stateChooser",
+		                  "url"=>"/countries/get_states",
+						  'indicator' => 'spinner'
+		               )
+		          );
+		?>
+		<?
+			echo $form->input('locationDisplay');
+			echo $form->input('airportCode');
+		?>
+		</div>
+		
+		
 	</fieldset>
 	<fieldset class="collapsible">
 		<legend class="handle">Amenities <?=$html2->c($client['ClientAmenityRel']); ?></legend>
