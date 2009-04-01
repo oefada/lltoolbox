@@ -113,5 +113,18 @@ class WebServicePaymentsController extends WebServicesController
 			return '0';	
 		}
 	}
+	
+	function changeCardExp($in0) {
+		$data = json_decode($in0, true);
+		if (empty($data['userId']) || empty($data['userPaymentSettingId']) || empty($data['expMonth']) || empty($data['expYear'])) {
+			return '0';	
+		}
+
+		if ($this->UserPaymentSetting->save($data)) {
+			return '1';
+		} else {
+			return '0';	
+		}
+	}
 }
 ?>
