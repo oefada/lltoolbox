@@ -17,6 +17,22 @@ Thank you for your purchase of this special package from <?php echo $clientNameP
 <?php endif;?>
 </p>
 
+<?php if (!$is_auc_fac) : ?>
+<div style="padding:15px;background-color:#E4E4E4;margin-top:15px;margin-bottom:15px;">
+	<div style="color:#990000;"><strong>To secure your reservations, please contact the property directly to place your reservations.</strong></div>
+	<?php foreach ($clients as $k => $client) : ?>
+		<p>
+		<?php echo $client['contacts'][0]['ppv_name'];?><br />
+		<?php echo $packageName;?><br />
+		<?php echo $client['name'];?><br />
+		Telephone: <?php echo $client['contacts'][0]['ppv_phone'];?><br />
+		Facsimile: <?php echo $client['contacts'][0]['ppv_fax'];?><br />
+		Email: <?php echo $client['contacts'][0]['ppv_email_address'];?>
+		<p>
+	<?php endforeach; ?>
+</div>
+<?php endif; ?>
+
 <table cellpadding="10" cellspacing="0" border="0" style="width:100%;background-color:#E0E0CD;margin-top:15px;margin-bottom:15px;">
 	<tr>
 		<td width="245" align="left" valign="top">
@@ -46,22 +62,6 @@ Thank you for your purchase of this special package from <?php echo $clientNameP
 	</tr>
 	<?php endif;?>
 </table>
-
-<?php if (!$is_auc_fac) : ?>
-<div style="padding:15px;background-color:#E4E4E4;margin-bottom:15px;">
-	<div style="color:#990000;"><strong>Please contact the property directly for any special requests.</strong></div>
-	<?php foreach ($clients as $k => $client) : ?>
-		<p>
-		<?php echo $client['contacts'][0]['ppv_name'];?><br />
-		<?php echo $packageName;?><br />
-		<?php echo $client['name'];?><br />
-		Telephone: <?php echo $client['contacts'][0]['ppv_phone'];?><br />
-		Facsimile: <?php echo $client['contacts'][0]['ppv_fax'];?><br />
-		Email: <?php echo $client['contacts'][0]['ppv_email_address'];?>
-		<p>
-	<?php endforeach; ?>
-</div>
-<?php endif; ?>
 
 <p><?php echo $packageIncludes;?></p>
 <p><span style="font-weight:bold;"><?php echo $validityLeadIn;?></span><br /><?php echo $validityNote;?></p>
