@@ -141,7 +141,11 @@
       </div></div> <!-- /#content-inner, /#content -->
 	  <?php if(!isset($this->viewVars['hideSidebar']) || $this->viewVars['hideSidebar'] === false): ?>
 		<div id="sidebar-left"><div id="sidebar-left-inner" class="region region-left">
-			<?php if (isset($this->viewVars['currentTab']) && file_exists(ELEMENTS.'/sidebar/menu_for_'.$this->viewVars['currentTab'].'.ctp')): ?>
+			<?php if(file_exists(ELEMENTS.'/sidebar/menu_for_'.$this->params['controller'].'_'.$this->params['action'].'.ctp')): ?>
+				<?php echo $this->renderElement('sidebar/menu_for_'.$$this->params['controller'].'_'.$this->params['action']); ?>
+			<?php elseif(file_exists(ELEMENTS.'/sidebar/menu_for_'.$this->params['controller'].'.ctp')): ?>
+				<?php echo $this->renderElement('sidebar/menu_for_'.$this->params['controller']); ?>
+			<?php elseif (isset($this->viewVars['currentTab']) && file_exists(ELEMENTS.'/sidebar/menu_for_'.$this->viewVars['currentTab'].'.ctp')): ?>
 				<?php echo $this->renderElement('sidebar/menu_for_'.$this->viewVars['currentTab']); ?>
 			<?php endif; ?>
 		<div style="clear: both;"></div>
