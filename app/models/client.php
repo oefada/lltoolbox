@@ -52,7 +52,7 @@ class Client extends AppModel {
                                );
 
     function afterFind($results, $primary = false) {
-        if ($primary == true):
+        if ($primary == true && $this->recursive != -1):
 		foreach ($results as $key => $val):
 			if (!empty($val['Client']) && is_int($key)):
 			    //TODO: Turn the following two queries into one
