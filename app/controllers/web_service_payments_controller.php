@@ -30,6 +30,10 @@ class WebServicePaymentsController extends WebServicesController
 					'setPrimaryCard' => array(
 						'input' => array('in0' => 'xsd:string'),
 						'output' => array('return' => 'xsd:string')
+						),
+					'changeCardExp' => array(
+						'input' => array('in0' => 'xsd:string'),
+						'output' => array('return' => 'xsd:string')
 						)
 					);
 
