@@ -210,7 +210,7 @@ class WebServiceTicketsController extends WebServicesController
 			
 			// find out if there is a valid credit card to charge.  charge and send appropiate emails
 			// -------------------------------------------------------------------------------
-			$user_payment_setting = $this->findValidUserPaymentSetting($userData['User']['userId']);
+			$user_payment_setting = $this->findValidUserPaymentSetting($userData['User']['userId'], $data['bidId']);
 			
 			// set ppv params
 			// -------------------------------------------------------------------------------
@@ -808,9 +808,12 @@ class WebServiceTicketsController extends WebServicesController
 		}
 	}
 		
-	function findValidUserPaymentSetting($userId) {
+	function findValidUserPaymentSetting($userId, $bidId = null) {
 		
 		$ups = $this->User->query("select * from userPaymentSetting as UserPaymentSetting where userId = $userId and inactive = 0 order by primaryCC desc, expYear desc");
+		if ($bidId && is_numeric($bidId)) {
+			$ups = $this->User->query("select * from userPaymentSetting as UserPaymentSetting where userPaymentSettingId = (select userPaymentSettingId from bid where bidId = $bidId)");
+		}
 		$year_now = date('Y');
 		$month_now = date('m');
 		if (empty($ups)) {
