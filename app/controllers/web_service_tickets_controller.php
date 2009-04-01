@@ -68,7 +68,11 @@ class WebServiceTicketsController extends WebServicesController
 		$params['ppvNoticeTypeId'] = 9; 
 		$this->ppv(json_encode($params));	
 		
-		$params['ppvNoticeTypeId'] = 10;
+		if (trim($json_decoded['requestNotes'])) {
+			$params['ppvNoticeTypeId'] = 10;
+		} else {
+			$params['ppvNoticeTypeId'] = 2;
+		}
 		$this->ppv(json_encode($params));	
 		
 		$params['ppvNoticeTypeId'] = 11;
