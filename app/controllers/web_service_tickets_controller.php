@@ -424,7 +424,7 @@ class WebServiceTicketsController extends WebServicesController
 		$addtlDescription   = $packageData['additionalDescription'];
 		
 		$offerTypeId		= $ticketData['offerTypeId'];
-		$offerTypeName		= $offerType[$offerTypeId];
+		$offerTypeName		= str_replace('Standard ', '', $offerType[$offerTypeId]);
 		$offerTypeBidder	= ($offerTypeId == 1) ? 'Winner' : 'Winning Bidder';
 		$offerEndDate		= date('M d Y H:i A', strtotime($liveOfferData['endDate']));
 		$billingPrice		= number_format($ticketData['billingPrice'], 2, '.', ',');
