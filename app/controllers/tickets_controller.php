@@ -77,7 +77,7 @@ class TicketsController extends AppController {
 		$s_end_date = $s_end_y . '-' . $s_end_m . '-' . $s_end_d . ' 23:59:59';
 				
 		$this->paginate = array('fields' => array(
-									'Ticket.ticketId', 'Ticket.offerTypeId', 'Ticket.created', 
+									'Ticket.ticketId', 'Ticket.offerTypeId', 'Ticket.created', 'Ticket.bidId',  
 									'Ticket.offerId', 'Ticket.userId', 'TicketStatus.ticketStatusName', 'Ticket.packageId', 
 									'Ticket.userFirstName', 'Ticket.userLastName', 'Ticket.packageId', 'Ticket.billingPrice', 'Ticket.formatId', 'Ticket.ticketNotes'
 									),
@@ -126,7 +126,7 @@ class TicketsController extends AppController {
 		$tickets_index = $this->paginate();
 		
 		foreach ($tickets_index as $k => $v) {
-			$tickets_index[$k]['Ticket']['validCard'] = $this->getValidCcOnFile($v['Ticket']['userId']);
+			$tickets_index[$k]['Ticket']['validCard'] = $this->getValidCcOnFile($v['Ticket']['userId'], $v['Ticket']['bidId']);
 			$tracks = $this->TrackDetail->getTrackRecord($v['Ticket']['ticketId']);
 			$track = $tracks[0];
 			$tickets_index[$k]['Ticket']['trackName'] = ($track['trackName']) ? $track['trackName'] : 'N/A';	
@@ -142,8 +142,11 @@ class TicketsController extends AppController {
 		$this->set('offerPromoCodeIds', $this->OfferPromoCode->find('list', array('order' => array('OfferPromoCode.promoCode' => 'asc'))));
 	}
 
-	function getValidCcOnFile($userId) {
+	function getValidCcOnFile($userId, $bidId = null) {
 		$ups = $this->User->query("select * from userPaymentSetting as UserPaymentSetting where userId = $userId and inactive = 0 order by primaryCC desc, expYear desc");
+		if ($bidId && is_numeric($bidId)) {
+			$ups = $this->User->query("select * from userPaymentSetting as UserPaymentSetting where userPaymentSettingId = (select userPaymentSettingId from bid where bidId = $bidId)");
+		}
 		$year_now = date('Y');
 		$month_now = date('m');
 		if (empty($ups)) {
