@@ -1,6 +1,6 @@
 <?php 
 /* SVN FILE: $Id$ */
-/* AccoladesController Test cases generated on: 2008-10-13 10:10:48 : 1223919288*/
+/* AccoladesController Test cases generated on: 2009-04-01 14:04:54 : 1238621754*/
 App::import('Controller', 'Accolades');
 
 class TestAccolades extends AccoladesController {

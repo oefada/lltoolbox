@@ -5,5 +5,6 @@ class AccoladeSource extends AppModel {
 	var $useTable = 'accoladeSource';
 	var $primaryKey = 'accoladeSourceId';
 	var $displayField = 'accoladeSourceName';
+	var $order = 'accoladeSourceName';
 }
 ?>
