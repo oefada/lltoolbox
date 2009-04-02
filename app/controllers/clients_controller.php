@@ -56,6 +56,7 @@ class ClientsController extends AppController {
 			$this->redirect(array('action'=>'index'));
 		}
 		if (!empty($this->data)) {
+	        $this->data['Client']['seoName'] = $this->convertToSeoName($this->data['Client']['name']);
 			if ($this->Client->saveAll($this->data)) {
 				if (isset($this->data['ClientAmenityRel']) && !empty($this->data['ClientAmenityRel'])) {
 			    	foreach ($this->data['ClientAmenityRel'] as $am) {
