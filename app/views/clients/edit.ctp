@@ -39,6 +39,7 @@ $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']
 		</div>
 	<?php
 		echo $form->input('clientId');
+		echo $form->input('name', array('type' => 'hidden'));
 		echo $form->input('parentClientId', array('disabled' => 'disabled'));
 		
 		if ($this->data['Client']['parentClientId']):
