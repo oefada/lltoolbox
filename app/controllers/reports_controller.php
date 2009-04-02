@@ -852,7 +852,7 @@ class ReportsController extends AppController {
 	        
 	        
 	        
-	        if (isset($liveDuringStartDate)) {
+	        if (!empty($liveDuringStartDate)) {
 	            $this->data['condition1'] = $condition1Saved; // restore this so the drop down reflects the right data
 	            if (strlen($conditions)) {
 	                $conditions .= " AND ";

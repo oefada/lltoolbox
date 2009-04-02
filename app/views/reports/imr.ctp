@@ -23,7 +23,7 @@
 
 <div style="float: left; border-right: 1px solid #000; padding-right: 25px">
 	<div class="fieldRow">
-			<?echo $form->select('condition2.field', array('MATCH=managerUsername' => 'Manager Username', 'MATCH=teamName' => 'Team Name', 'MATCH=name' => 'Client Name', 'clientId' => 'Client Id'))?>
+			<?echo $form->select('condition2.field', array('MATCH=managerUsername' => 'Manager Username', 'MATCH=teamName' => 'Team Name', 'LIKE=name' => 'Client Name', 'clientId' => 'Client Id'))?>
 			<?echo $form->text('condition2.value')?>
 	</div>
 
