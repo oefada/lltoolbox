@@ -15,7 +15,7 @@
 		<?php endif ?>
 	</fieldset>
 	<?php
-		echo $form->input('expirationCriteriaId');
+		echo $form->input('expirationCriteriaId', array('label' => 'Track Type'));
 	?>
 	<fieldset id="expirationCriteria">
 		<?php
