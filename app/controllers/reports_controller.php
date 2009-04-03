@@ -781,15 +781,16 @@ class ReportsController extends AppController {
                     break;
             endswitch;
 
-            $sql = "SELECT COUNT(DISTINCT Loa.loaId) as numRecords
+            $sql = "SELECT $subquery 1
                         FROM client as Client
-                        LEFT JOIN offerLive as OfferLive USING(clientId)
                         INNER JOIN loa as Loa USING(clientId)
                         LEFT JOIN loaLevel as LoaLevel USING(loaLevelId)
-                        WHERE Loa.endDate >= NOW() AND $conditions";
+                        WHERE Loa.endDate >= NOW() AND $conditions
+                        GROUP BY Loa.loaId, Client.clientId
+                        $having";
 
     	    $results = $this->OfferType->query($sql);
-    	    $numRecords = $results[0][0]['numRecords'];
+    	    $numRecords = count($results);
             $numPages = ceil($numRecords / $this->perPage);
             
             $sql = "SELECT 
