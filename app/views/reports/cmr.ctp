@@ -25,7 +25,7 @@
 </div>
 <div class="fieldRow">
 		<label>Client name</label>
-		<?echo $form->text('condition5.field', array('value' => 'LIKE=Client.name', 'type' => 'hidden'))?>
+		<?echo $form->select('condition5.field', array('LIKE=Client.name' => 'Client Name', 'Client.clientId' => 'Client ID'))?>
 		<?echo $form->text('condition5.value')?>
 </div>
 
