@@ -785,7 +785,7 @@ class WebServiceTicketsController extends WebServicesController
 		
 		// auction facilitator overrides
 		// -------------------------------------------------------------------------------
-		$auc_fac_enable		= array(2138, 2811, 1826, 3401, 2692, 1205, 2076, 762, 3411, 2445, 3418, 654, 3401);
+		$auc_fac_enable		= array(2138, 2811, 1826, 3401, 2692, 1205, 2076, 762, 3411, 2445, 3418, 654, 3401, 3053, 3182, 7776);
 		$auc_fac_disable	= array(1013, 3253);
 		if (in_array($clientId, $auc_fac_disable)) {
 			$is_auc_fac = false;	
