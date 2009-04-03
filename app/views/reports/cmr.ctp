@@ -11,8 +11,9 @@
 </div>
 <div class="fieldRow">
 		<label>Client auction search criteria</label>
-		<?echo $form->select('condition2.value', array(1 => 'Has live auctions', 'Live fixed priced offers', 'All', 'No live offers'))?>
+		<?echo $form->select('condition2.value', array(1 => 'Has live auctions', 'Live fixed priced offers', 'No live auctions', 'No live fixed price', 'No live offers of any kind', 'Live fixed price AND live auctions'))?>
 </div>
+
 <div class="fieldRow">
 		<label>Loa Level</label>
 		<?echo $form->text('condition3.field', array('value' => 'Loa.loalevelId', 'type' => 'hidden'))?>

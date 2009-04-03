@@ -773,11 +773,21 @@ class ReportsController extends AppController {
                     $having = 'HAVING countSubqueryOffers > 0';
                     break;
                 case 3:
-                    //all
+                    $subquery = '(SELECT COUNT(*) FROM offerLive as OfferLive2 WHERE NOW() BETWEEN OfferLive2.startDate AND OfferLive2.endDate AND OfferLive2.offerTypeId IN (1,2,6) AND OfferLive2.clientId = Client.clientId) AS countSubqueryOffers,';
+                    $having = 'HAVING countSubqueryOffers = 0';
                     break;
                 case 4:
+                    $subquery = '(SELECT COUNT(*) FROM offerLive as OfferLive2 WHERE NOW() BETWEEN OfferLive2.startDate AND OfferLive2.endDate AND OfferLive2.offerTypeId IN (3,4) AND OfferLive2.clientId = Client.clientId) AS countSubqueryOffers,';
+                    $having = 'HAVING countSubqueryOffers = 0';
+                    break;
+                case 5:
                     $subquery = '(SELECT COUNT(*) FROM offerLive as OfferLive2 WHERE NOW() BETWEEN OfferLive2.startDate AND OfferLive2.endDate AND OfferLive2.clientId = Client.clientId) AS countSubqueryOffers,';
                     $having = 'HAVING countSubqueryOffers = 0';
+                    break;
+                case 6:
+                    $subquery = '(SELECT COUNT(*) FROM offerLive as OfferLive2 WHERE NOW() BETWEEN OfferLive2.startDate AND OfferLive2.endDate AND OfferLive2.offerTypeId IN (1,2,6) AND OfferLive2.clientId = Client.clientId) AS countSubqueryOffers,';
+                    $subquery .= '(SELECT COUNT(*) FROM offerLive as OfferLive2 WHERE NOW() BETWEEN OfferLive2.startDate AND OfferLive2.endDate AND OfferLive2.offerTypeId IN (3,4) AND OfferLive2.clientId = Client.clientId) AS countSubqueryOffers2,';
+                    $having = 'HAVING countSubqueryOffers > 0 AND countSubqueryOffers2 > 0';
                     break;
             endswitch;
 
