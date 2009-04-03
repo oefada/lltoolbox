@@ -792,7 +792,7 @@ class ReportsController extends AppController {
     	    $results = $this->OfferType->query($sql);
     	    $numRecords = count($results);
             $numPages = ceil($numRecords / $this->perPage);
-            
+
             $sql = "SELECT 
                         $subquery
                         Client.clientId,
@@ -812,6 +812,8 @@ class ReportsController extends AppController {
                         Loa.membershipBalance,
                         Loa.membershipFee,
                         Loa.startDate,
+                        Loa.loaNumberPackages,
+                        Loa.numberPackagesRemaining,
                         DATEDIFF(NOW(), Loa.startDate) as loaNumberOfDaysActive,
                         ROUND( (Loa.loaValue / DATEDIFF(Loa.endDate, Loa.startDate)), 2) as dailyMembershipFee,
                         ROUND( (Loa.loaValue - Loa.membershipBalance) / (Loa.loaValue / DATEDIFF(Loa.endDate, Loa.startDate)) ) as numDaysPaid,

@@ -80,10 +80,9 @@ if (!empty($results)): ?>
 			<th><?=sortLink('Loa.membershipFee', 'Membership Fee', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('Loa.membershipBalance', 'Balance', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('Loa.upgraded', 'Upgraded', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('a', 'Remit Packages', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('a', 'Remit Packages Sold Current', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('a', 'Remit Packages Left', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('a', 'Remit Packages Sold Current($)', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('Loa.loaNumberPackages', 'Remit Packages', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('Loa.loaNumberPackages', 'Remit Packages Sold Current', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('Loa.numberPackagesRemaining', 'Remit Packages Left', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('loaNumberOfDaysActive', 'Number of Days Active', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('dailyMembershipFee', 'Daily Membership Rate', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('numDaysPaid', '# Days Paid', $currentPage, $serializedFormInput, $this, $html)?></th>
@@ -107,10 +106,9 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 		<td><?=$r['Loa']['membershipFee']?></td>
 		<td><?=$r['Loa']['membershipBalance']?></td>
 		<td><?=$html->image($r['Loa']['upgraded'] ? 'tick.png' : 'cross.png')?></td>
-		<td>?</td>
-		<td>?</td>
-		<td>?</td>
-		<td>?</td>
+		<td><?=$r['Loa']['loaNumberPackages']?></td>
+		<td><?=$r['Loa']['loaNumberPackages']-$r['Loa']['numberPackagesRemaining']?></td>
+		<td><?=$r['Loa']['numberPackagesRemaining']?></td>
 		<td><?=$r[0]['loaNumberOfDaysActive']?></td>
 		<td><?=$r[0]['dailyMembershipFee']?></td>
 		<td><?=$r[0]['numDaysPaid']?></td>
