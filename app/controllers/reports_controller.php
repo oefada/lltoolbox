@@ -828,7 +828,7 @@ class ReportsController extends AppController {
                     $having
                     ORDER BY $order
 	                LIMIT $this->limit";
-	        
+
 	        $results = $this->OfferType->query($sql);
             
             $this->set('currentPage', $this->page);
