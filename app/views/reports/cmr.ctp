@@ -73,25 +73,25 @@ if (!empty($results)): ?>
 		<tr>
 			<th>&nbsp;</th>
 			<th><?=sortLink('Client.name', 'Client Name', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('Client.managerUsername', 'Manager', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('Loa.loaTypeId', 'LOA Type', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('Loa.startDate', 'LOA Term Start', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('Loa.endDate', 'LOA Term End', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('Loa.membershipFee', 'Membership Fee', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('Loa.membershipBalance', 'Balance', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('Loa.upgraded', 'Upgraded', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('a', 'Remit Packages', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('a', 'Remit Packages Sold Current', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('a', 'Remit Packages Left', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Loa.upgraded', 'Upgraded', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('a', 'Remit Packages Sold Current($)', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('city', 'City', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('state', 'State', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('country', 'Country', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Loa.membershipBalance', 'Balance', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Loa.membershipFee', 'Membership Fee', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Loa.startDate', 'LOA Term Start', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('loaNumberOfDaysActive', 'Number of Days Active', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('dailyMembershipFee', 'Daily Membership Rate', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('numDaysPaid', '# Days Paid', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('paidThru', 'Paid Thru', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('daysBehindSchedule', 'Days Behind Schedule', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Client.managerUsername', 'Manager', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('city', 'City', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('state', 'State', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('country', 'Country', $currentPage, $serializedFormInput, $this, $html)?></th>
 		</tr>
 		</thead>
 <?php foreach ($results as $k => $r):
@@ -100,25 +100,25 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 	<tr<?=$class?>>
 		<td><?=$k+1?></td>
 		<td><?=$html->link($r['Client']['name'].', '.$r['Client']['clientId'], array('controller' => 'clients', 'action' => 'edit', $r['Client']['clientId']))?></td>
+		<td><?=$r['Client']['managerUsername']?></td>
 		<td><?=$html->link($r['Loa']['loaId'], '/clients/'.$r['Client']['clientId'].'/loas/edit/'.$r['Loa']['loaId'])?>, <?=$r['LoaLevel']['loaLevelName']?></td>
+		<td><?=$r['Loa']['startDate']?></td>
 		<td><?=$r['Loa']['endDate']?></td>
-		<td>?</td>
-		<td>?</td>
-		<td>?</td>
+		<td><?=$r['Loa']['membershipFee']?></td>
+		<td><?=$r['Loa']['membershipBalance']?></td>
 		<td><?=$html->image($r['Loa']['upgraded'] ? 'tick.png' : 'cross.png')?></td>
 		<td>?</td>
-		<td><?=$r[0]['city']?></td>
-		<td><?=$r[0]['state']?></td>
-		<td><?=$r[0]['country']?></td>
-		<td><?=$r['Loa']['membershipBalance']?></td>
-		<td><?=$r['Loa']['membershipFee']?></td>
-		<td><?=$r['Loa']['startDate']?></td>
+		<td>?</td>
+		<td>?</td>
+		<td>?</td>
 		<td><?=$r[0]['loaNumberOfDaysActive']?></td>
 		<td><?=$r[0]['dailyMembershipFee']?></td>
 		<td><?=$r[0]['numDaysPaid']?></td>
 		<td><?=$r[0]['paidThru']?></td>
 		<td><?=$r[0]['daysBehindSchedule']?></td>
-		<td><?=$r['Client']['managerUsername']?></td>
+		<td><?=$r[0]['city']?></td>
+		<td><?=$r[0]['state']?></td>
+		<td><?=$r[0]['country']?></td>	
 	</tr>
 <?php endforeach; //TODO: add totals ?>
 </table>
