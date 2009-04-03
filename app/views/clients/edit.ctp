@@ -48,7 +48,7 @@ $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']
 		
 		echo $form->input('oldProductId', array('disabled' => 'disabled'));
 
-		echo $form->input('name', array('disabled' => !$this->data['Client']['createdInToolbox']));
+		echo $form->input('name', array('disabled' => !($this->data['Client']['createdInToolbox'] || $this->data['Client']['parentClientId'])));
 	?>
 	<?php
 		echo $form->input('url');
