@@ -84,7 +84,6 @@ if (!empty($results)): ?>
 			<th><?=sortLink('state', 'State', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('country', 'Country', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('Loa.loaId', 'LOA ID', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Client.clientId', 'Client ID', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('Loa.membershipBalance', 'Balance', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('Loa.membershipFee', 'Membership Fee', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('Loa.startDate', 'LOA Term Start', $currentPage, $serializedFormInput, $this, $html)?></th>
@@ -101,7 +100,7 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 ?>
 	<tr<?=$class?>>
 		<td><?=$k+1?></td>
-		<td><?=$html->link($r['Client']['name'], array('controller' => 'clients', 'action' => 'edit', $r['Client']['clientId']))?></td>
+		<td><?=$html->link($r['Client']['name'].', '.$r['Client']['clientId'], array('controller' => 'clients', 'action' => 'edit', $r['Client']['clientId']))?></td>
 		<td><?=$r['LoaLevel']['loaLevelName']?></td>
 		<td><?=$r['Loa']['endDate']?></td>
 		<td>?</td>
@@ -113,7 +112,6 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 		<td><?=$r[0]['state']?></td>
 		<td><?=$r[0]['country']?></td>
 		<td><?=$html->link($r['Loa']['loaId'], '/clients/'.$r['Client']['clientId'].'/loas/edit/'.$r['Loa']['loaId'])?></td>
-		<td><?=$html->link($r['Loa']['clientId'], array('controller' => 'clients', 'action' => 'edit', $r['Client']['clientId']))?></td>
 		<td><?=$r['Loa']['membershipBalance']?></td>
 		<td><?=$r['Loa']['membershipFee']?></td>
 		<td><?=$r['Loa']['startDate']?></td>
