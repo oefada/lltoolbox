@@ -864,7 +864,6 @@ class ReportsController extends AppController {
 	        $conditions = $this->_build_conditions($this->data);
 	        
 	        
-	        
 	        if (!empty($liveDuringStartDate)) {
 	            $this->data['condition1'] = $condition1Saved; // restore this so the drop down reflects the right data
 	            if (strlen($conditions)) {
@@ -911,6 +910,12 @@ class ReportsController extends AppController {
 	        $this->set('results', $results);
 	        $this->set('serializedFormInput', serialize($this->data));
 	    }
+	    
+	    if (empty($this->data)) {
+	        $this->data['condition1']['field'] = 'liveDuring';
+            $this->data['condition1']['value']['between'][] = date('Y-m-d', strtotime('2 months ago'));
+            $this->data['condition1']['value']['between'][] = date('Y-m-d', strtotime('+1 month'));
+        }
 	    
 	        
 	        $country = new Country;

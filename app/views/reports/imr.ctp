@@ -5,14 +5,23 @@
 <fieldset>
 <h3 class='title'>SEARCH IMR BY:</h3>
 <div class="fieldRow">
-<?echo $form->select('condition1.field', array('liveDuring' => 'Live During'))?>
+	<label>Live During</label>
+<?echo $form->text('condition1.field', array('value' => 'liveDuring', 'type' => 'hidden'))?>
 <div class="range">
 	<?echo $datePicker->picker('condition1.value.between.0', array('label' => 'From'))?>
 	<?echo $datePicker->picker('condition1.value.between.1', array('label' => 'To'))?>
 	<a href="#" onclick='javascript: $("condition1valueBetween0").value = "<?=date('Y-m-d')?>"; $("condition1valueBetween1").value = "<?=date('Y-m-d')?>"'>Today</a> | 
 	<a href="#" onclick='javascript: $("condition1valueBetween0").value = "<?=date('Y-m-d', strtotime('-1 day'))?>"; $("condition1valueBetween1").value = "<?=date('Y-m-d', strtotime('-1 day'))?>"'>Yesterday</a> |
-	<a href="#" onclick='javascript: $("condition1valueBetween0").value = "<?=date('Y-m-d', strtotime('-1 week'))?>"; $("condition1valueBetween1").value = "<?=date('Y-m-d')?>"'>This Week</a>
+	<a href="#" onclick='javascript: $("condition1valueBetween0").value = "<?=date('Y-m-d', strtotime('-1 week'))?>"; $("condition1valueBetween1").value = "<?=date('Y-m-d')?>"'>Last Week</a> |
 	<a href="#" onclick='javascript: $("condition1valueBetween0").value = "<?=date('Y-m-d', strtotime('1 month'))?>"; $("condition1valueBetween1").value = "<?=date('Y-m-d', strtotime('2 month'))?>"'>Next Month</a>
+</div>
+</div>
+<div class="fieldRow">
+	<label>Validity End</label>
+<?echo $form->text('condition7.field', array('value' => 'validityEndDate', 'type' => 'hidden'))?>
+<div class="range">
+	<?echo $datePicker->picker('condition7.value.between.0', array('label' => 'From'))?>
+	<?echo $datePicker->picker('condition7.value.between.1', array('label' => 'To'))?>
 </div>
 </div>
 <div class="fieldRow controlset" style="float: left; margin-right: 30px">
@@ -98,7 +107,7 @@ if (!empty($results)): ?>
 			<th><?=sortLink('a', 'Room Nights', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('a', 'Retail', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('a', 'Starting Bid', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Loa.upgraded', 'Validity End', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('Loa.endDate', 'Validity End', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('a', 'Status', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('city', 'Bid History', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('state', 'Open Date', $currentPage, $serializedFormInput, $this, $html)?></th>
