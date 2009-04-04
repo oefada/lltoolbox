@@ -136,7 +136,11 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 		<td><?=$r['openingBid']?></td>
 		<td><?=$r['validityEndDate']?></td>
 		<td><?=$r['status']?></td>
-		<td><?=$r['bidHistory']?></td>
+		<td><?
+		
+		echo preg_replace("/([0-9]+):([0-9]+)/", "<a href='/reports/offer_search/offerId:\\1'>\\2</a>", $r['bidHistory']);
+		
+		?></td>
 		<td><?=$r['startDate']?></td>
 		<td><?=$r['endDate']?></td>
 		<td><?=$r['startingBidPercentOfRetail']?></td>

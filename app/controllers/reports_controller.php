@@ -51,6 +51,10 @@ class ReportsController extends AppController {
 	}
 
 	function offer_search() {
+	    if (isset($this->params['named']['offerId'])) {
+	        $this->data['condition1']['field'] = 'Offer.offerId';
+	        $this->data['condition1']['value'] = $this->params['named']['offerId'];
+	    }
 	    if (!empty($this->data)) {
 	        $conditions = $this->_offer_search_build_conditions($this->data);
 	        
