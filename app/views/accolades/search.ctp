@@ -9,7 +9,7 @@
 		
 	</li>
 <?php endforeach;?>
-	<li class="showAll"><?=$html->link("Show All Results", '/clients/search?query='.$query)?></li>
+	<li class="showAll"><?=$html->link("Show All Results", '/accolades/search?query='.$query)?></li>
 </ul>
 
 <?php endif; ?>
