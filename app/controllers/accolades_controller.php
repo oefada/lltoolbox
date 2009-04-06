@@ -83,7 +83,7 @@ class AccoladesController extends AppController {
 
 			$this->Accolades->recursive = -1;
 
-			$conditions = array("Accolade.clientId = '$query'");
+			$conditions = array("Accolade.clientId = '$query' OR AccoladeSource.accoladeSourceName LIKE '$query%' OR Client.name LIKE '$query%'");
 			
 			if (!$inactive) {
 			    $conditions['Accolade.inactive'] = 0;

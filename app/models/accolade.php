@@ -5,6 +5,7 @@ class Accolade extends AppModel {
 	var $useTable = 'accolade';
 	var $primaryKey = 'accoladeId';
 
-	var $belongsTo = array('AccoladeSource' => array('foreignKey' => 'accoladeSourceId'));
+	var $belongsTo = array('AccoladeSource' => array('foreignKey' => 'accoladeSourceId'),
+	                        'Client' => array('foreignKey' => 'clientId'));
 }
 ?>
