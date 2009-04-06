@@ -81,9 +81,9 @@ class PressesController extends AppController {
 		if(!empty($this->params['form']['query'])):
 			$query = $this->Sanitize->escape($this->params['form']['query']);
 
-			$this->Press->recursive = -1;
+			$this->Press->recursive = 1;
 
-			$conditions = array("Press.clientId = '$query'");
+			$conditions = array("Press.clientId = '$query' OR Client.name LIKE '$query%'");
 			
 			if (!$inactive) {
 			    $conditions['Press.inactive'] = 0;

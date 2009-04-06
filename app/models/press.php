@@ -3,7 +3,8 @@ class Press extends AppModel {
 
 	var $name = 'Press';
 	
-	var $belongsTo = array('PressType' => array('foreignKey' => 'pressTypeId'));
+	var $belongsTo = array('PressType' => array('foreignKey' => 'pressTypeId'),
+	                        'Client' => array('foreignKey' => 'clientId'));
 
 }
 ?>
