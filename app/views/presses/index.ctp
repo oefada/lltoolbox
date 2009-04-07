@@ -21,7 +21,7 @@ foreach ($presses as $press):
 ?>
 	<tr<?php echo $class;?>>
 		<td>
-			<?php echo $press['Press']['clientId']; ?>
+			<?php echo $press['Client']['name'].$html2->c($press['Press']['clientId']); ?>
 		</td>
 		<td>
 			<?php echo $press['Press']['pressTitle']; ?>

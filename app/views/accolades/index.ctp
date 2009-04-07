@@ -21,7 +21,7 @@ foreach ($accolades as $accolade):
 ?>
 	<tr<?php echo $class;?>>
 		<td>
-			<?php echo $accolade['Accolade']['clientId']; ?>
+			<?php echo $accolade['Client']['name'].$html2->c($accolade['Accolade']['clientId']); ?>
 		</td>
 		<td>
 			<?php echo $html->link($accolade['AccoladeSource']['accoladeSourceName'], array('controller'=> 'accolade_sources', 'action'=>'view', $accolade['AccoladeSource']['accoladeSourceId'])); ?>
