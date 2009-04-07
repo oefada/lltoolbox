@@ -30,7 +30,7 @@
 </div>
 </div>
 <div class="fieldRow" style="float: left; margin-right: 30px">
-<label>Remit Type</label>
+<label>LOA Track Type</label>
 <?echo $form->text('condition2.field', array('value' => 'auction_mstr.auction_wholesale', 'type' => 'hidden'))?>
 <div class="range">
 	<?php
@@ -127,7 +127,7 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 		<td><?
 				$month = date('m', strtotime($result['SchedulingInstance']['endDate']));
 				$year = date('Y', strtotime($result['SchedulingInstance']['endDate']));
-				echo $html->link(strip_tags($result['SchedulingMaster']['packageName']), "/scheduling/index/clientId:{$result['Client']['clientId']}/month:$month/year:$year")?></td>
+				echo $html->link(strip_tags($result['SchedulingMaster']['packageName']), "/scheduling/index/clientId:{$result['Client']['clientId']}/month:$month/year:$year", array('target' => '_blank'))?></td>
 		<td style="text-align: center"><?=$result['Package']['numNights']?></td>
 		<td><div<?php echo ($result[0]['validityEndApproaching']) ? ' style="min-height: 20px; line-height: 20px; padding: 4px; border: 4px solid #ff0;"' : '' ?>>
 				<?=date('M j, Y', strtotime($result['Package']['validityEndDate']))?>
