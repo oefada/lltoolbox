@@ -13,8 +13,6 @@ echo $paginator->counter(array(
 	<th><?php echo $paginator->sort('destinationName');?></th>
 	<th><?php echo $paginator->sort('includeInNav');?></th>
 	<th><?php echo $paginator->sort('display');?></th>
-	<th><?php echo $paginator->sort('leftValue');?></th>
-	<th><?php echo $paginator->sort('rightValue');?></th>
 	<th><?php echo $paginator->sort('tagId');?></th>
 	<th class="actions"><?php __('Actions');?></th>
 </tr>
@@ -41,12 +39,6 @@ foreach ($destinations as $destination):
 		</td>
 		<td>
 			<?php echo $destination['Destination']['display']; ?>
-		</td>
-		<td>
-			<?php echo $destination['Destination']['leftValue']; ?>
-		</td>
-		<td>
-			<?php echo $destination['Destination']['rightValue']; ?>
 		</td>
 		<td>
 			<?php echo $html->link($destination['Tag']['tagId'], array('controller'=> 'tags', 'action'=>'view', $destination['Tag']['tagId'])); ?>

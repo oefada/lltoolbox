@@ -7,16 +7,7 @@
 		echo $form->input('destinationName');
 		echo $form->input('includeInNav');
 		echo $form->input('display');
-		echo $form->input('leftValue');
-		echo $form->input('rightValue');
 	?>
 	</fieldset>
 <?php echo $form->end('Submit');?>
-</div>
-<div class="actions">
-	<ul>
-		<li><?php echo $html->link(__('List Destinations', true), array('action'=>'index'));?></li>
-		<li><?php echo $html->link(__('List Tags', true), array('controller'=> 'tags', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Tag', true), array('controller'=> 'tags', 'action'=>'add')); ?> </li>
-	</ul>
 </div>
