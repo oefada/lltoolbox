@@ -2,71 +2,72 @@
 
 <div class='advancedSearch' style="width: 800px">
 	<?php echo $form->create('', array('action' => 'offer_search'))?>
-<fieldset>
-<h3 class='title'>SEARCH OFFERS BY:</h3>
+	<fieldset>
+		<h3 class='title'>SEARCH OFFERS BY:</h3>
 
-<div style="float: left; border-right: 1px solid #000; padding-right: 25px">
-	<div class="fieldRow">
-<?echo $form->select('condition1.field', $condition1Options)?>
-<?echo $form->text('condition1.value', array('style' => 'width: 250px'))?>
-	</div>
-	<div class="fieldRow">
-<label>Retail Price</label>
-<?echo $form->text('condition2.field', array('value' => 'Package.approvedRetailPrice', 'type' => 'hidden'))?>
-<div class="range">
-<label>From</label><?echo $form->text('condition2.value.between.0')?>
-<label style='padding-left: 20px'>To</label><?echo $form->text('condition2.value.between.1')?>
-</div>
-</div>
+		<div style="float: left; border-right: 1px solid #000; padding-right: 25px">
+			<div class="fieldRow">
+				<?echo $form->select('condition1.field', $condition1Options)?>
+			<?echo $form->text('condition1.value', array('style' => 'width: 250px'))?>
+			</div>
+			
+			<div class="fieldRow lastFieldRow">
+				<?echo $form->select('condition3.field', $condition3Options)?>
+				<div class='range'>
 
-<div class="fieldRow lastFieldRow">
-<?echo $form->select('condition3.field', $condition3Options)?>
-<div class='range'>
-
-<?echo $datePicker->picker('condition3.value.between.0', array('label' => 'From'))?>
-<?echo $datePicker->picker('condition3.value.between.1', array('label' => 'To'))?>
-<a href="#" onclick='javascript: $("condition3valueBetween0").value = "<?=date('Y-m-d')?>"; $("condition3valueBetween1").value = "<?=date('Y-m-d')?>"'>Today</a> | 
-<a href="#" onclick='javascript: $("condition3valueBetween0").value = "<?=date('Y-m-d', strtotime('-1 week'))?>"; $("condition3valueBetween1").value = "<?=date('Y-m-d')?>"'>Last Week</a>
-</div>
-</div>
-<div class="fieldRow" style="float: left; margin-right: 30px">
-<label>LOA Track Type</label>
-<?echo $form->text('condition2.field', array('value' => 'auction_mstr.auction_wholesale', 'type' => 'hidden'))?>
-<div class="range">
-	<?php
-		echo $form->select('condition2.value', array(2 => 'Keep', 0 => 'Remit'), null, array('multiple' => 'checkbox'))
-	?>
-</div>
-</div>
-</div>
-
-<div style="float: left; clear: none; padding-left: 25px">
-	<div class="fieldRow">
-	<label>Offer Type</label>
-	<?php echo $form->text('condition4.field', array('value' => 'SchedulingMaster.offerTypeId', 'type' => 'hidden'))?>
-	<?php echo $form->select('condition4.value', $condition4Options)?>
-	</div>
+					<?echo $datePicker->picker('condition3.value.between.0', array('label' => 'From'))?>
+					<?echo $datePicker->picker('condition3.value.between.1', array('label' => 'To'))?>
+					<a href="#" onclick='javascript: $("condition3valueBetween0").value = "<?=date('Y-m-d')?>"; $("condition3valueBetween1").value = "<?=date('Y-m-d')?>"'>Today</a> | 
+					<a href="#" onclick='javascript: $("condition3valueBetween0").value = "<?=date('Y-m-d', strtotime('-1 week'))?>"; $("condition3valueBetween1").value = "<?=date('Y-m-d')?>"'>Last Week</a>
+				</div>
+			</div>
+			
+			<div class="fieldRow">
+				<label>Retail Price</label>
+				<?echo $form->text('condition2.field', array('value' => 'Package.approvedRetailPrice', 'type' => 'hidden'))?>
+				<div class="range">
+					<label>From</label><?echo $form->text('condition2.value.between.0')?>
+					<label style='padding-left: 20px'>To</label><?echo $form->text('condition2.value.between.1')?>
+				</div>
+			</div>
+			
+			<div class="fieldRow">
+				<label>Offer Type</label>
+				<?php echo $form->text('condition4.field', array('value' => 'SchedulingMaster.offerTypeId', 'type' => 'hidden'))?>
+				<?php echo $form->select('condition4.value', $condition4Options)?>
+			</div>
 	
-	<div class="fieldRow">
-	<label># of Room Nights</label>
-	<?php echo $form->text('condition5.field', array('value' => 'Package.numNights', 'type' => 'hidden'))?>
-	<?php echo $form->text('condition5.value')?>
-	</div>
+			<div class="fieldRow">
+				<label># of Room Nights</label>
+				<?php echo $form->text('condition5.field', array('value' => 'Package.numNights', 'type' => 'hidden'))?>
+				<?php echo $form->text('condition5.value')?>
+			</div>
 	
-	<div class="fieldRow">
-	<label>Loa Track</label>
-	<?php echo $form->text('condition6.field', array('value' => 'ClientLoaPackageRel.trackId', 'type' => 'hidden'))?>
-	<?php echo $form->text('condition6.value')?>
-	</div>
-</div>
+			<div class="fieldRow lastFieldRow">
+				<label>Loa Track</label>
+				<?php echo $form->text('condition6.field', array('value' => 'ClientLoaPackageRel.trackId', 'type' => 'hidden'))?>
+				<?php echo $form->text('condition6.value')?>
+			</div>
+		</div>
+			<div style="float: left; clear: none; padding-left: 25px">
+				<div class="fieldRow" style="float: left; margin-right: 30px">
+					<label>LOA Track Type</label>
+					<?echo $form->text('condition2.field', array('value' => 'auction_mstr.auction_wholesale', 'type' => 'hidden'))?>
+					<div class="range">
+						<?php
+							echo $form->select('condition2.value', array(2 => 'Keep', 0 => 'Remit'), null, array('multiple' => 'checkbox'))
+						?>
+					</div>
+				</div>
+			</div>
 
-<div class="controlset fieldRow" style="border: 0">
-<?php 		echo $form->checkbox('paging.disablePagination');
-			echo $form->label('paging.disablePagination');?>
-</div>
+			<div class="controlset fieldRow" style="border: 0">
+				<?php 		echo $form->checkbox('paging.disablePagination');
+					echo $form->label('paging.disablePagination');?>
+			</div>
 
 
-</fieldset>
+	</fieldset>
 <?php echo $form->submit('Search') ?>
 </div>
 
@@ -129,7 +130,19 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 				$year = date('Y', strtotime($result['SchedulingInstance']['endDate']));
 				echo $html->link(strip_tags($result['SchedulingMaster']['packageName']), "/scheduling/index/clientId:{$result['Client']['clientId']}/month:$month/year:$year", array('target' => '_blank'))?></td>
 		<td style="text-align: center"><?=$result['Package']['numNights']?></td>
-		<td><div<?php echo ($result[0]['validityEndApproaching']) ? ' style="min-height: 20px; line-height: 20px; padding: 4px; border: 4px solid #ff0;"' : '' ?>>
+		<td><div<?php 
+					switch($result[0]['validityEndApproaching']) {
+						case 1:
+							$color = '#ff0';
+						break;
+						case 2:
+							$color = '#f60';
+						break;
+						case 3:
+							$color = '#f00';
+						break;
+					}
+					echo ($result[0]['validityEndApproaching']) ? ' style="min-height: 20px; line-height: 20px; padding: 4px; border: 4px solid '.$color.';"' : '' ?>>
 				<?=date('M j, Y', strtotime($result['Package']['validityEndDate']))?>
 			</div>
 		</td>
@@ -177,8 +190,14 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 		?></td>
 		<td><?=$result['Client']['managerUsername']?></td>
 		<td>
-			<div<?php echo ($result[0]['futureInstances']) ? '': ' style="min-height: 20px; line-height: 20px; padding: 4px; border: 4px solid #c00;"' ; ?>>
-				<?php echo ($result[0]['futureInstances']) ? 'YES' : 'NO' ?>
+			<div<?php echo ($result[0]['futureInstances'] || in_array($result['OfferType']['offerTypeId'], unserialize(OFFER_TYPES_FIXED_PRICED))) ? '': ' style="min-height: 20px; line-height: 20px; padding: 4px; border: 4px solid #c00;"' ; ?>>
+				<?php
+					if (in_array($result['OfferType']['offerTypeId'], unserialize(OFFER_TYPES_FIXED_PRICED))): 
+						echo "N/A";
+					else:
+						echo ($result[0]['futureInstances']) ? 'YES' : 'NO';
+				 	endif;
+				?>
 			</div>
 		</td>
 	</tr>

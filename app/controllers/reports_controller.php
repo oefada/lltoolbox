@@ -91,6 +91,7 @@ class ReportsController extends AppController {
 	        $sql = "SELECT
 	                SchedulingInstance.schedulingInstanceId, (SchedulingInstance.endDate >= NOW()) AS offerStatus, SchedulingInstance.startDate, SchedulingInstance.endDate,
 	                Client.clientId, Client.name,
+	                OfferType.offerTypeId,
 	                OfferType.offerTypeName,
 	                Offer.offerId,
 	                Package.packageId, Package.numNights, Package.approvedRetailPrice, Package.validityEndDate,
@@ -105,7 +106,7 @@ class ReportsController extends AppController {
                         WHERE SchedulingMaster2.schedulingMasterId = SchedulingMaster.schedulingMasterId AND SchedulingInstance2.endDate >= NOW()
 	                ) AS futureInstances,
 	                Client.managerUsername,
-	                IF((Package.validityEndDate - INTERVAL 60 DAY) <= NOW(), 1, 0) as validityEndApproaching,
+	                IF((Package.validityEndDate - INTERVAL 14 DAY) <= NOW(), 3, IF((Package.validityEndDate - INTERVAL 30 DAY) <= NOW(), 2, IF((Package.validityEndDate - INTERVAL 60 DAY) <= NOW(), 1, 0))) as validityEndApproaching,
 	                IF((Loa.endDate - INTERVAL 14 DAY) <= NOW(), 1, 0) as loaEndApproaching,
 	                IF(SchedulingMasterPerformance.numOffersNoBid >= 10, 1, 0) as flagBids,
 	                Track.applyToMembershipBal

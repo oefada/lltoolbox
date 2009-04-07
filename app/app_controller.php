@@ -76,6 +76,16 @@ class AppController extends Controller {
      	    $this->{$this->modelClass}->setUserData($user);
      	    $this->{$this->modelClass}->setUserIp($this->_userIp());
      	 }
+     	 
+     	 $this->_defineConstants();
+	}
+	
+	/**
+	 * Method used to define constants for things we use repeatedly. Examples are the ID's for certain offer types.
+	 */
+	function _defineConstants() {
+	    define('OFFER_TYPES_FIXED_PRICED', serialize(array(3, 4)));
+	    define('OFFER_TYPES_AUCTION', serialize(array(1, 2, 6)));
 	}
 	
 	function _userIp() {
