@@ -25,6 +25,8 @@
 
 <?echo $datePicker->picker('condition3.value.between.0', array('label' => 'From'))?>
 <?echo $datePicker->picker('condition3.value.between.1', array('label' => 'To'))?>
+<a href="#" onclick='javascript: $("condition3valueBetween0").value = "<?=date('Y-m-d')?>"; $("condition3valueBetween1").value = "<?=date('Y-m-d')?>"'>Today</a> | 
+<a href="#" onclick='javascript: $("condition3valueBetween0").value = "<?=date('Y-m-d', strtotime('-1 week'))?>"; $("condition3valueBetween1").value = "<?=date('Y-m-d')?>"'>Last Week</a>
 </div>
 </div>
 <div class="fieldRow" style="float: left; margin-right: 30px">
