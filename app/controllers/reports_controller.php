@@ -96,7 +96,7 @@ class ReportsController extends AppController {
 	                Offer.offerId,
 	                Package.packageId, Package.numNights, Package.approvedRetailPrice, Package.validityEndDate,
 	                COUNT(Bid.bidId) as numberOfBids,
-	                SchedulingMaster.schedulingMasterId, SchedulingMaster.openingBid, SchedulingMaster.packageName,
+	                SchedulingMaster.schedulingMasterId, SchedulingMaster.openingBid, SchedulingMaster.packageName, SchedulingMaster.numDaysToRun,
 	                Loa.loaId, Loa.endDate, Loa.membershipBalance,
 	                auction_mstr.auction_wholesale AS remitStatus,
 	                (SELECT COUNT(*) 

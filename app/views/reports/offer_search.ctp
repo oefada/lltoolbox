@@ -108,6 +108,7 @@ if (!empty($results)): ?>
 			<th><?=sortLink('offerStatus', 'Status', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('startDate', 'Date Opened', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('endDate', 'Date Closed', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('SchedulingMaster.numDaysToRun', '# Days', $currentPage, $serializedFormInput, $this, $html)?>
 			<th><?=sortLink('numberOfBids', '# Bids', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('Package.approvedRetailPrice', 'Retail Value', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('SchedulingMaster.openingBid', 'Opening Bid Amount', $currentPage, $serializedFormInput, $this, $html)?></th>
@@ -149,6 +150,7 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 		<td><?php echo ($result[0]['offerStatus']) ? 'Open' : 'Closed' ?></td>
 		<td><?=date('M j, Y h:i:s A', strtotime($result['SchedulingInstance']['startDate']))?></td>
 		<td><?=date('M j, Y h:i:s A', strtotime($result['SchedulingInstance']['endDate']))?></td>
+		<td><?=$result['SchedulingMaster']['numDaysToRun']?></td>
 		<td style="text-align: center">
 			<div<?php echo ($result[0]['flagBids']) ? 'style="min-height: 20px; line-height: 20px; padding: 4px; border: 4px solid #c00;"': '' ; ?>>
 				<?=$html->link($result[0]['numberOfBids'], '/bids/search?query='.$result['Offer']['offerId'])?>
