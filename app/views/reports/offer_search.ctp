@@ -112,7 +112,7 @@ if (!empty($results)): ?>
 			<th><?=sortLink('SchedulingMaster.openingBid', 'Opening Bid Amount', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('Loa.endDate', 'LOA Term End', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('Loa.membershipBalance', 'LOA Balance', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('auction_mstr.auction_wholesale', 'Remit Type', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('auction_mstr.auction_wholesale', 'LOA Track Type', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('Client.managerUsername', 'Manager Username', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('futureInstances', 'Will Repeat', $currentPage, $serializedFormInput, $this, $html)?></th>
 		</tr>
