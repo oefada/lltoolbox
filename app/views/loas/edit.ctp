@@ -15,7 +15,7 @@ $this->set('clientId', $this->data['Client']['clientId']);
 		echo $form->input('loaId');
 		
 		//only tmccord can edit loa level
-		if ($userDetails['username'] == 'tmccord') {
+		if ($userDetails['username'] == 'tmccord' || $userDetails['username'] == 'dpen') {
 			$disabled = false;
 		} else {
 			$disabled = true;
