@@ -6,10 +6,12 @@ class ClientScoresController extends AppController {
 
 	function index() {
 		$this->ClientScore->recursive = 0;
+		$this->ClientScore->Client->recursive = -1;
 		$this->set('clientScores', $this->paginate());
 	}
 
 	function add() {
+		$this->ClientScore->Client->recursive = -1;
 		if (!empty($this->data)) {
 			$this->ClientScore->create();
 			if ($this->ClientScore->save($this->data)) {
@@ -26,6 +28,7 @@ class ClientScoresController extends AppController {
 	}
 
 	function edit($id = null) {
+		$this->ClientScore->Client->recursive = -1;
 		if (!$id && empty($this->data)) {
 			$this->Session->setFlash(__('Invalid ClientScore', true));
 			$this->redirect(array('action'=>'index'));
