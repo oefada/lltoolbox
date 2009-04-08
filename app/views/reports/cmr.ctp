@@ -7,7 +7,7 @@
 <div class="fieldRow">
 	<label>Loa Balance</label>
 	<?echo $form->text('condition1.field', array('value' => 'Loa.membershipBalance', 'type' => 'hidden'))?>
-	<?echo $form->select('condition1.value', array('!= 0' => 'Has Balance', '=0' => 'No Balance'))?>
+	<?echo $form->select('condition1.value', array('> 0' => 'Has Balance', '=0' => 'No Balance'))?>
 </div>
 <div class="fieldRow">
 		<label>Client auction search criteria</label>
