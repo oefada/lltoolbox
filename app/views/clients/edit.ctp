@@ -9,7 +9,7 @@ function addAmenity() {
 }
 </script>
 <?php
-$this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']['clientId'], 'Client Id:');
+$this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']['clientId'], 'Client Id:').'<br />'.$html2->c('manager: '.$this->data['Client']['managerUsername']);
 ?>
 <div class="clients form">
 	<h2 class="title">Client Details</h2>
