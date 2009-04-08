@@ -99,9 +99,9 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 ?>
 	<tr<?=$class?>>
 		<td><?=$k+1?></td>
-		<td><?=$html->link($r['Client']['name'].', '.$r['Client']['clientId'], array('controller' => 'clients', 'action' => 'edit', $r['Client']['clientId']), array('terget' => '_blank'))?></td>
+		<td><?=$html->link($r['Client']['name'].', '.$r['Client']['clientId'], array('controller' => 'clients', 'action' => 'edit', $r['Client']['clientId']), array('target' => '_blank'))?></td>
 		<td><?=$r['Client']['managerUsername']?></td>
-		<td><?=$html->link($r['Loa']['loaId'], '/clients/'.$r['Client']['clientId'].'/loas/edit/'.$r['Loa']['loaId'], array('terget' => '_blank'))?>, <?=$r['LoaLevel']['loaLevelName']?></td>
+		<td><?=$html->link($r['Loa']['loaId'], '/clients/'.$r['Client']['clientId'].'/loas/edit/'.$r['Loa']['loaId'], array('target' => '_blank'))?>, <?=$r['LoaLevel']['loaLevelName']?></td>
 		<td><?=$r['Loa']['startDate']?></td>
 		<td><?=$r['Loa']['endDate']?></td>
 		<td><?=$r['Loa']['membershipFee']?></td>
