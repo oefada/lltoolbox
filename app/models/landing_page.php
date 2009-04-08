@@ -6,6 +6,7 @@ class LandingPage extends AppModel {
 	var $primaryKey = 'landingPageId';
 	var $displayField = 'landingPageName';
 	var $order = array('LandingPage.landingPageName');
+	var $belongsTo = array('LandingPageType' => array('foreignKey' => 'landingPageTypeId'));
 
 	var $hasAndBelongsToMany = array(
 						'Menu' => array(
