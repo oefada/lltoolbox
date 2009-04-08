@@ -47,7 +47,7 @@ class WebServiceNewClientsController extends WebServicesController
 		
 		// map data from Sugar to toolbox client table structure
 		$client_data_save = array();
-        $client_data_save['name']				= $decoded_request['client']['client_name'];
+        $client_data_save['name']				= str_replace('&#039;', "'", $decoded_request['client']['client_name']);
         $client_data_save['managerUsername'] 	= $decoded_request['client']['manager_ini'];
 		$client_data_save['teamName']			= $decoded_request['client']['team_name'];
         $client_data_save['modified']			= $date_now;
