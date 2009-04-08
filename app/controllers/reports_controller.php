@@ -200,7 +200,7 @@ class ReportsController extends AppController {
                         //check balance (keep) status and flag
                         if ($v2['ExpirationCriteria']['expirationCriteriaId'] == 1 && $v2['Loa']['membershipBalance'] - $currentPrice <= 500) {
                             if ($v2[0]['numBids'] > 0) {
-                                $results[$k][0]['loaBalanceFlag'] = 'red';
+                                $results[$k][0]['loaBalanceFlag'] = 'darkred';
                             } else {
                                 $results[$k][0]['loaBalanceFlag'] = 'orange';
                             }
@@ -208,7 +208,7 @@ class ReportsController extends AppController {
                         
                         //check loa number packages and flag red if there's already a bid
                         } elseif ($v2['ExpirationCriteria']['expirationCriteriaId'] == 4 && $v2[0]['numBids'] > 0 && $v2['Loa']['loaNumberPackages'] - $numPackagesSold <= 1) {
-                            $results[$k][0]['loaBalanceFlag'] = 'red';
+                            $results[$k][0]['loaBalanceFlag'] = 'darkred';
                             break;
                         }
                     endforeach;
@@ -221,7 +221,7 @@ class ReportsController extends AppController {
                         $results[$k][0]['loaBalanceFlag'] = 'orange';
                     }
 	            } else {
-	                $results[$k][0]['iterationBidFlag'] = 'red';
+	                $results[$k][0]['iterationBidFlag'] = 'darkred';
 	            }
 
 	            if (empty($futureInstances)) {
