@@ -20,6 +20,8 @@ class PackagesController extends AppController {
 		
 		if (isset($this->params['named']['clientId']) && $clientId == null) {
 		    $clientId = $this->params['named']['clientId'];
+		} else {
+		    $this->params['named']['clientId'] = $clientId;
 		}
 		
 		$this->set('packages', $this->paginate('ClientLoaPackageRel', array('ClientLoaPackageRel.clientId' => $clientId)));

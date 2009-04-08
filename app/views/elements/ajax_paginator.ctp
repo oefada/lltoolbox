@@ -10,8 +10,11 @@
 	<?php endif ?>
 <div class="paging">
 <?php
+if (!$this->params['form']) {
+	$this->params['form'] = $this->params['named'];
+}
 if (isset($divToPaginate) && $divToPaginate != false) {
-echo $paginator->options(array('update' => $divToPaginate, 'indicator' => 'spinner', 'url' => $this->params['form']));
+	echo $paginator->options(array('update' => $divToPaginate, 'indicator' => 'spinner', 'url' => $this->params['form']));
 } else {
 	echo $paginator->options(array('url' => $this->params['form']));
 }

@@ -4,7 +4,7 @@ $this->pageTitle = $client['Client']['name'].$html2->c($client['Client']['client
 <?php if(count($packages) > 0): ?>
 <div id='packages-index' class="packages index">
 <h2><?php __('View All Packages');?></h2>
-<?= $this->renderElement('ajax_paginator', array('divToPaginate' => 'packages-index', 'showCount' => true))?>
+<?= $this->renderElement('ajax_paginator', array('showCount' => true))?>
 <table cellpadding="0" cellspacing="0">
 <tr>
 	<th><?php echo $paginator->sort('LOA ID', 'ClientLoaPackageRel.loaId', array('url' => array('clientId' => $clientId)));?></th>
@@ -48,7 +48,7 @@ foreach ($packages as $package):
 	</tr>
 <?php endforeach; ?>
 </table>
-<?= $this->renderElement('ajax_paginator', array('divToPaginate' => 'packages-index'))?>
+<?= $this->renderElement('ajax_paginator')?>
 </div>
 <?php else: ?>
 	  <div class="blankBar">
