@@ -1174,7 +1174,10 @@ class ReportsController extends AppController {
     	        } elseif (strpos($ca['value'], '!=') !== false) {
     	            $value = substr($ca['value'], strpos($ca['value'], '=')+2);
 	                $conditions[$k] =   "{$ca['field']} != '{$value}'";
-    	        } else {
+    	        } elseif (strpos($ca['value'], '>') !== false) {
+        	            $value = trim(substr($ca['value'], strpos($ca['value'], '>')+1));
+    	                $conditions[$k] =   "{$ca['field']} > '{$value}'";
+        	    } else {
 	                $conditions[$k] =   $ca['field'].' = '."'{$ca['value']}'";
 	            }
 	            
