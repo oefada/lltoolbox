@@ -47,7 +47,27 @@ function gotoMonth(theLink, month)
 </div>
 <div id='sContainer'>
 	<div style="text-align: right" class='oKeys'><strong>KEY:</strong> <div class='oType1 oKey1'></div>Standard Auction <div class='oType2 oKey2'></div>Best Shot <div class='oType3 oKey3'></div>Exclusive <div class='oType4 oKey4'></div>Best Buy <div class='oType6 oKey6'></div>Dutch Auction<strong class='textRed'>Go To:</strong>
-	<img src="/img/cal.png" id='monthPickerTarget' style='cursor: pointer' /></div>
+	<img src="/img/cal.png" id='monthPickerTarget' style='cursor: pointer' />
+	<?php
+	$prevYear = $nextYear = $year;
+	$prevMonth = $nextMonth = $month;
+	
+	if ($month == 12) {
+		$prevMonth = $month - 1;
+		$nextMonth = 1;
+		$nextYear = $year + 1;
+	} elseif ($month == 1) {
+		$prevMonth = 12;
+		$prevYear = $year - 1;
+	} else {
+		$prevMonth = $month - 1;
+		$nextMonth = $month + 1;
+	}
+	?>
+	<br />
+	<a href="/scheduling/index/clientId:<?=$clientId?>/month:<?=$prevMonth?>/year:<?=$prevYear?>">&lt; Prev Month</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="/scheduling/index/clientId:<?=$clientId?>/month:<?=$nextMonth?>/year:<?=$nextYear?>">Next Month &gt;</a>
+	
+	</div>
     <div id="monthPickerDiv" class='clearfix' style='display: none'>
 		<div style="clear: both; text-align: center; float: none" class='yearPickerDiv'>Year:
 		<select name="yearPicker" class='yearPicker'>
@@ -72,6 +92,7 @@ function gotoMonth(theLink, month)
 		<div><a href='javascript: void(0);' onclick='javascript: gotoMonth(this, 11)'>Nov</a></div>
 		<div><a href='javascript: void(0);' onclick='javascript: gotoMonth(this, 12)'>Dec</a></div>
 	</div>
+	
 
 	<script type="text/javascript" language="javascript">
 	new Tip('monthPickerTarget', $('monthPickerDiv').cloneNode(true), {
@@ -88,7 +109,7 @@ function gotoMonth(theLink, month)
 	</script>
 
 	<h3 style="font-size: 13px;"><?=$monthYearString?></h3>
-	
+
 	<div id='cContainer' class='clearfix'>
 		<?php echo $this->renderElement('../scheduling/_days'); ?>
 		
