@@ -942,7 +942,7 @@ class ReportsController extends AppController {
                         DATEDIFF(Loa.endDate, (Loa.startDate + INTERVAL ( (Loa.loaValue - Loa.membershipBalance) / (Loa.loaValue / DATEDIFF(Loa.endDate, Loa.startDate)) ) DAY)) as daysBehindSchedule,
                         Client.managerUsername
                     FROM client as Client
-                    INNER JOIN loa as Loa USING(clientId)
+                    INNER JOIN loa as Loa ON(Loa.clientId = Client.clientId AND Loa.inactive != 1)
                     LEFT JOIN loaLevel as LoaLevel USING(loaLevelId)
                     WHERE Loa.endDate >= NOW() AND $conditions
                     GROUP BY Loa.loaId, Client.clientId
