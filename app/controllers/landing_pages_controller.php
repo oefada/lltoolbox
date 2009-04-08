@@ -15,14 +15,63 @@ class LandingPagesController extends AppController {
 		}
 		$this->layout = 'ajax';
 	}
-	
+
 	function index() {
-		$this->redirect(array('controller' => 'menus'));
+		$this->LandingPage->recursive = 0;
+		$this->paginate['limit'] = 100;
+		$this->set('landingPages', $this->paginate());
 	}
+
+	function edit($id = null) {
+		if (!$id && empty($this->data)) {
+			$this->Session->setFlash(__('Invalid LandingPage', true));
+			$this->redirect(array('action'=>'index'));
+		}
+		if (!empty($this->data)) {
+			if ($this->LandingPage->save($this->data)) {
+				$this->Session->setFlash(__('The LandingPage has been saved', true));
+				$this->redirect(array('action'=>'index'));
+			} else {
+				$this->Session->setFlash(__('The LandingPage could not be saved. Please, try again.', true));
+			}
+		}
+		if (empty($this->data)) {
+			$this->data = $this->LandingPage->read(null, $id);
+		}
+		$menus = $this->LandingPage->Menu->find('list');
+		$landingPageTypes = $this->LandingPage->LandingPageType->find('list');
+		$this->set(compact('menus'));
+		$this->set('landingPageTypeIds', $landingPageTypes);
+	}
+
+	/* disable for now
 	
 	function add() {
-		$this->redirect(array('controller' => 'menus'));
+		if (!empty($this->data)) {
+			$this->LandingPage->create();
+			if ($this->LandingPage->save($this->data)) {
+				$this->Session->setFlash(__('The LandingPage has been saved', true));
+				$this->redirect(array('action'=>'index'));
+			} else {
+				$this->Session->setFlash(__('The LandingPage could not be saved. Please, try again.', true));
+			}
+		}
+		$menus = $this->LandingPage->Menu->find('list');
+		$landingPageTypes = $this->LandingPage->LandingPageType->find('list');
+		$this->set(compact('menus', 'landingPageTypes'));
 	}
-	
+
+	function delete($id = null) {
+		if (!$id) {
+			$this->Session->setFlash(__('Invalid id for LandingPage', true));
+			$this->redirect(array('action'=>'index'));
+		}
+		if ($this->LandingPage->del($id)) {
+			$this->Session->setFlash(__('LandingPage deleted', true));
+			$this->redirect(array('action'=>'index'));
+		}
+	}
+
+	*/
 }
 ?>
