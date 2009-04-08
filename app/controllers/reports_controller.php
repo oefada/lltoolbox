@@ -79,7 +79,8 @@ class ReportsController extends AppController {
 	                LEFT JOIN offerType as OfferType ON (OfferType.offerTypeId = SchedulingMaster.offerTypeId)
 	                LEFT JOIN package AS Package ON (Package.packageId = SchedulingMaster.packageId)
 	                LEFT JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Package.packageId)
-	                LEFT JOIN luxurymasterMigrate.auction_mstr as auction_mstr ON (auction_mstr.auction_id = Package.packageId)
+	                LEFT JOIN track AS Track ON (Track.trackid = ClientLoaPackageRel.trackId)
+	                INNER JOIN expirationCriteria AS ExpirationCriteria ON (ExpirationCriteria.expirationCriteriaId = Track.expirationCriteriaId)
 	                LEFT JOIN loa AS Loa ON (Loa.loaId = ClientLoaPackageRel.loaId)
 	                LEFT JOIN client AS Client ON (Client.clientId = ClientLoaPackageRel.clientId)
 	                WHERE $conditions";
@@ -98,18 +99,19 @@ class ReportsController extends AppController {
 	                COUNT(Bid.bidId) as numberOfBids,
 	                SchedulingMaster.schedulingMasterId, SchedulingMaster.openingBid, SchedulingMaster.packageName, SchedulingMaster.numDaysToRun,
 	                Loa.loaId, Loa.endDate, Loa.membershipBalance,
-	                auction_mstr.auction_wholesale AS remitStatus,
 	                (SELECT COUNT(*) 
 	                    FROM schedulingInstance AS SchedulingInstance2
 	                    INNER JOIN schedulingMaster AS SchedulingMaster2 
                         ON (SchedulingInstance2.schedulingMasterId = SchedulingMaster2.schedulingMasterId)
                         WHERE SchedulingMaster2.schedulingMasterId = SchedulingMaster.schedulingMasterId AND SchedulingInstance2.endDate >= NOW()
 	                ) AS futureInstances,
+	                Track.applyToMembershipBal,
 	                Client.managerUsername,
 	                IF((Package.validityEndDate - INTERVAL 14 DAY) <= NOW(), 3, IF((Package.validityEndDate - INTERVAL 30 DAY) <= NOW(), 2, IF((Package.validityEndDate - INTERVAL 60 DAY) <= NOW(), 1, 0))) as validityEndApproaching,
 	                IF((Loa.endDate - INTERVAL 14 DAY) <= NOW(), 1, 0) as loaEndApproaching,
 	                IF(SchedulingMasterPerformance.numOffersNoBid >= 10, 1, 0) as flagBids,
-	                Track.applyToMembershipBal
+	                ExpirationCriteria.expirationCriteriaId,
+	                ExpirationCriteria.expirationCriteriaName
 	                FROM offer AS Offer
 	                LEFT JOIN bid AS Bid ON (Bid.offerId = Offer.offerId)
 	                INNER JOIN schedulingInstance AS SchedulingInstance ON (SchedulingInstance.schedulingInstanceId = Offer.schedulingInstanceId)
@@ -119,7 +121,7 @@ class ReportsController extends AppController {
 	                LEFT JOIN package AS Package ON (Package.packageId = SchedulingMaster.packageId)
 	                LEFT JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Package.packageId)
 	                LEFT JOIN track AS Track ON (Track.trackid = ClientLoaPackageRel.trackId)
-	                LEFT JOIN luxurymasterMigrate.auction_mstr as auction_mstr ON (auction_mstr.auction_id = Package.packageId)
+	                INNER JOIN expirationCriteria AS ExpirationCriteria ON (ExpirationCriteria.expirationCriteriaId = Track.expirationCriteriaId)
 	                LEFT JOIN loa AS Loa ON (Loa.loaId = ClientLoaPackageRel.loaId)
 	                LEFT JOIN client AS Client ON (Client.clientId = ClientLoaPackageRel.clientId)
 	                WHERE $conditions
@@ -128,6 +130,104 @@ class ReportsController extends AppController {
 	                LIMIT $this->limit";
 	        
 	        $results = $this->OfferType->query($sql);
+	        
+	        foreach ($results as $k => $v) {
+	            $results[$k][0]['lastInstance'] = 0;
+	            
+	            $futureInstances = $this->OfferType->query("SELECT schedulingInstanceId FROM schedulingInstance AS SchedulingInstance 
+	                                    INNER JOIN schedulingMaster AS SchedulingMaster USING(schedulingMasterId)
+	                                    INNER JOIN clientLoaPackageRel AS cl USING(packageId)
+	                                    INNER JOIN loa AS Loa USING(loaId)
+	                                    WHERE Loa.loaId = {$v['Loa']['loaId']} 
+	                                    AND SchedulingInstance.startDate > '{$v['SchedulingInstance']['endDate']}'
+	                                    AND SchedulingInstance.endDate <= '{$v['Loa']['endDate']}'");
+	                                 
+	            $last12IterationBids =  $this->OfferType->query("SELECT COUNT(Bid.bidId) AS numBids FROM bid AS Bid
+	                                                        INNER JOIN offer AS Offer USING(offerId)
+	                                                        INNER JOIN schedulingInstance AS SchedulingInstance USING(schedulingInstanceId) 
+                    	                                    INNER JOIN schedulingMaster AS SchedulingMaster USING(schedulingMasterId)
+                    	                                    INNER JOIN clientLoaPackageRel AS cl USING(packageId)
+                    	                                    WHERE cl.packageId = {$v['Package']['packageId']}
+                    	                                    ORDER BY SchedulingInstance.endDate DESC LIMIT 12");
+
+	            if ($last12IterationBids[0][0]['numBids'] > 0) {
+	                $last8IterationBids =  $this->OfferType->query("SELECT COUNT(Bid.bidId) AS numBids FROM bid AS Bid
+    	                                                        INNER JOIN offer AS Offer USING(offerId)
+    	                                                        INNER JOIN schedulingInstance AS SchedulingInstance USING(schedulingInstanceId) 
+                        	                                    INNER JOIN schedulingMaster AS SchedulingMaster USING(schedulingMasterId)
+                        	                                    INNER JOIN clientLoaPackageRel AS cl USING(packageId)
+                        	                                    WHERE cl.packageId = {$v['Package']['packageId']}
+                        	                                    ORDER BY SchedulingInstance.endDate DESC LIMIT 8");
+                    
+                    if ($last8IterationBids[0][0]['numBids'] == 0) {
+                        $results[$k][0]['iterationBidFlag'] = '#ff0';
+                    }
+                    
+                    //Calculate number of packages sold for this loa
+                    $sql = "SELECT count(*) AS COUNT FROM ticket INNER JOIN paymentDetail pd ON (ticket.ticketId = pd.ticketId AND pd.isSuccessfulCharge = 1) INNER JOIN clientLoaPackageRel cl ON (ticket.packageId = cl.packageId) ";
+            		$sql.= "WHERE cl.loaId = {$v['Loa']['loaId']} AND ticket.ticketStatusId NOT IN (7,8)";
+            		$result = $this->OfferType->query($sql);
+            		
+            		$numPackagesSold = $result[0][0]['COUNT'];
+                    
+                    //Get all live offers for this LOA
+                    $liveOffers = $this->OfferType->query("SELECT OfferLive.offerTypeId, OfferLive.openingBid, OfferLive.buyNowPrice, ExpirationCriteria.expirationCriteriaId,
+                                                                    Loa.membershipBalance, Loa.numberPackagesRemaining, COUNT(Bid.bidId) as numBids
+                                                                    FROM offerLive AS OfferLive 
+                                                                    LEFT JOIN bid AS Bid USING(offerId)
+                                                                    INNER JOIN clientLoaPackageRel as cl USING(packageId) 
+                                                                    INNER JOIN loa AS Loa USING(loaId)
+                                                                    INNER JOIN track AS Track ON (Track.trackId = cl.trackId)
+                                                                    INNER JOIN expirationCriteria AS ExpirationCriteria USING(expirationCriteriaId)
+                                                                    WHERE Loa.loaId = {$v['Loa']['loaId']} AND OfferLive.isClosed = 0
+                                                                    GROUP BY Loa.loaId");
+
+                    $priceSum           = 0;
+                    
+                    //calculate loa balance flags
+                    foreach ($liveOffers as $k2 => $v2):            
+                        $currentPrice = 0;
+                        
+                        //sum the opening bid or buy now price
+                        if (in_array($v2['OfferLive']['offerTypeId'], unserialize(OFFER_TYPES_AUCTION))) {
+                            $currentPrice = $v2['OfferLive']['openingBid'];
+                            $priceSum += $v2['OfferLive']['openingBid'];
+                        } elseif (in_array($v2['OfferLive']['offerTypeId'], unserialize(OFFER_TYPES_FIXED_PRICED))) {
+                            $currentPrice = $v2['OfferLive']['openingBid'];
+                            $priceSum += $v2['OfferLive']['buyNowPrice'];
+                        }
+                        
+                        //check balance (keep) status and flag
+                        if ($v2['ExpirationCriteria']['expirationCriteriaId'] == 1 && $v2['Loa']['membershipBalance'] - $currentPrice <= 500) {
+                            if ($v2[0]['numBids'] > 0) {
+                                $results[$k][0]['loaBalanceFlag'] = 'red';
+                            } else {
+                                $results[$k][0]['loaBalanceFlag'] = 'orange';
+                            }
+                            break;
+                        
+                        //check loa number packages and flag red if there's already a bid
+                        } elseif ($v2['ExpirationCriteria']['expirationCriteriaId'] == 4 && $v2[0]['numBids'] > 0 && $v2['Loa']['loaNumberPackages'] - $numPackagesSold <= 1) {
+                            $results[$k][0]['loaBalanceFlag'] = 'red';
+                            break;
+                        }
+                    endforeach;
+                    
+                    //do the same check but on the sum now
+                    if ($liveOffers[0]['ExpirationCriteria']['expirationCriteriaId'] == 1 && $liveOffers[0]['Loa']['membershipBalance'] - $priceSum <= 500) {
+                        $results[$k][0]['loaBalanceFlag'] = 'yellow';
+                    } elseif ($liveOffers[0]['ExpirationCriteria']['expirationCriteriaId'] == 4
+                                && $liveOffers[0]['Loa']['loaNumberPackages'] - $numPackagesSold - count($liveOffers) <= 2) {
+                        $results[$k][0]['loaBalanceFlag'] = 'orange';
+                    }
+	            } else {
+	                $results[$k][0]['iterationBidFlag'] = 'red';
+	            }
+
+	            if (empty($futureInstances)) {
+	                $results[$k][0]['lastInstance'] = 1;
+	            }
+	        }
             
             $this->set('currentPage', $this->page);
             $this->set('numRecords', $numRecords);
@@ -207,10 +307,16 @@ class ReportsController extends AppController {
 	            }
 	            
 	        else:
-	            if(is_array($ca['value'])) {
-                    //wrap in single quotes
-                    foreach ($ca['value'] as $value) {
-                        $values[] = "'{$value}'";
+	            if(is_array($ca['value']) || ($ca['field'] == 'ExpirationCriteria.expirationCriteriaId' && $ca['value'][0] == 'keep')) {
+                   
+                    
+                    //override for expiration criteria type keep
+                    if ($ca['field'] == 'ExpirationCriteria.expirationCriteriaId' && $ca['value'][0] == 'keep') {
+                        $values = array(1, 4);
+                    } else {
+                        foreach ($ca['value'] as $value) {
+                            $values[] = "'{$value}'";  //wrap in single quotes
+                        }
                     }
                     $conditions[$k] =   $ca['field'].' IN('.implode(',', $values).')';
                 }else if ($ca['field'] == 'Package.packageName') {

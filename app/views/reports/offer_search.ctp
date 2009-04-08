@@ -52,10 +52,10 @@
 			<div style="float: left; clear: none; padding-left: 25px">
 				<div class="fieldRow" style="float: left; margin-right: 30px">
 					<label>LOA Track Type</label>
-					<?echo $form->text('condition2.field', array('value' => 'auction_mstr.auction_wholesale', 'type' => 'hidden'))?>
+					<?echo $form->text('condition2.field', array('value' => 'ExpirationCriteria.expirationCriteriaId', 'type' => 'hidden'))?>
 					<div class="range">
 						<?php
-							echo $form->select('condition2.value', array(2 => 'Keep', 0 => 'Remit'), null, array('multiple' => 'checkbox'))
+							echo $form->select('condition2.value', array('keep' => 'Keep', 2 => 'Remit', 3 => 'Commision/Upgrade'), null, array('multiple' => 'checkbox'))
 						?>
 					</div>
 				</div>
@@ -158,32 +158,33 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 		</td>
 		<td><?=$number->currency($result['Package']['approvedRetailPrice'], 'USD', array('places' => 0))?></td>
 		<td><?=$result['SchedulingMaster']['openingBid']?></td>
-		<td><div<?php echo ($result[0]['loaEndApproaching']) ? ' style="min-height: 20px; line-height: 20px; padding: 4px; border: 4px solid #ff0;"' : '' ?>><?=$html->link(date('M j, Y', strtotime($result['Loa']['endDate'])), array('controller' => 'loas', 'action' => 'edit', $result['Loa']['loaId']))?></div></td>
+		<td><div<?php 
+				if ($result[0]['lastInstance']) {
+					$color = '#c00';
+				} else {
+					$color = '#ff0';
+				}
+				echo ($result[0]['loaEndApproaching'] || $result[0]['lastInstance']) ? ' style="min-height: 20px; line-height: 20px; padding: 4px; border: 4px solid '.$color.';"' : '' ?>><?=$html->link(date('M j, Y', strtotime($result['Loa']['endDate'])), array('controller' => 'loas', 'action' => 'edit', $result['Loa']['loaId']))?></div></td>
 		<td>
-			<div<?php if ($result['Loa']['membershipBalance'] <= 0 && $result['Track']['applyToMembershipBal']) { 
-							echo ' style="min-height: 20px; line-height: 20px; padding: 4px; border: 4px solid #c00;"'; 
-							} else if($result['Loa']['membershipBalance'] <= 1000 && $result['Track']['applyToMembershipBal']) {
-								echo ' style="min-height: 20px; line-height: 20px; padding: 4px; border: 4px solid #ff0;"';
-						} ?>>
+			<div<?php if (isset($result[0]['loaBalanceFlag'])) { 
+							echo " style='min-height: 20px; line-height: 20px; padding: 4px; border: 4px solid {$result[0]['loaBalanceFlag']};'"; 
+							}?>>
 			<?=$html->link($number->currency($result['Loa']['membershipBalance'], 'USD', array('places' => 0)), array('controller' => 'loas', 'action' => 'edit', $result['Loa']['loaId']))?>
 			</div>
 		</td>
 		<td><?
-		switch($result['auction_mstr']['remitStatus']) {
-            case 0:
-                    echo 'Remit';
-                    break;
-
+		switch($result['ExpirationCriteria']['expirationCriteriaId']) {
             case 1:
-                    echo 'Wholesale';
-                    break;
-
-            case 2:
+			case 4:
                     echo 'Keep';
                     break;
 
+            case 2:
+                    echo 'Remit';
+                    break;
+
             case 3:
-                   	echo 'PFP';
+                    echo 'Commision/Upgrade';
                     break;
 			default:
 					echo '';
