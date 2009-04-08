@@ -1,19 +1,14 @@
 <div class="schedulingInstances form">
 <?php echo $form->create('SchedulingInstance');?>
 	<fieldset>
- 		<legend><?php __('Add SchedulingInstance');?></legend>
+ 		<legend>Extend Offer <?=$schedulingMaster['SchedulingMaster']['packageName']?></legend>
+		<p><?=$schedulingMaster['SchedulingMaster']['shortBlurb']?></p>
+		<br /><br />
 	<?php
-		echo $form->input('schedulingMasterId');
+		echo $form->input('schedulingMasterId', array('type' => 'hidden'));
 		echo $form->input('startDate');
-		echo $form->input('endDate');
 	?>
+	<p><strong>To extend this offer for one more iteration, pick the start date for the new iteration. The end date will automatically be calculated</strong></p>
 	</fieldset>
 <?php echo $form->end('Submit');?>
-</div>
-<div class="actions">
-	<ul>
-		<li><?php echo $html->link(__('List SchedulingInstances', true), array('action'=>'index'));?></li>
-		<li><?php echo $html->link(__('List Offers', true), array('controller'=> 'offers', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Offer', true), array('controller'=> 'offers', 'action'=>'add')); ?> </li>
-	</ul>
 </div>

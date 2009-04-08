@@ -201,6 +201,9 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 						echo ($result[0]['futureInstances']) ? 'YES' : 'NO';
 				 	endif;
 				?>
+				<?php if (in_array($result['OfferType']['offerTypeId'], unserialize(OFFER_TYPES_AUCTION))): ?>
+					<br /><br /><a href="/scheduling_instances/add/schedulingMasterId:<?=$result['SchedulingMaster']['schedulingMasterId']?>" target="_blank">Extend For 1 More Iteration</a>
+				<?php endif;?>
 			</div>
 		</td>
 	</tr>
