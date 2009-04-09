@@ -12,7 +12,6 @@
 		echo $form->input('textBody');
 		echo $form->input('communityUrl');
 		echo $form->input('mainHomepageStyle');
-		echo $form->input('tripAdvisorAward');
 		echo $form->input('inactive');
 	?>
 	</fieldset>
