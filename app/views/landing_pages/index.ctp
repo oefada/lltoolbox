@@ -14,6 +14,7 @@ echo $paginator->counter(array(
 	<th><?php echo $paginator->sort('referenceId');?></th>
 	<th><?php echo $paginator->sort('isSponsored');?></th>
 	<th><?php echo $paginator->sort('inactive');?></th>
+	<th>Travel Ideas</th>
 	<th class="actions"><?php __('Actions');?></th>
 </tr>
 <?php
@@ -42,6 +43,13 @@ foreach ($landingPages as $landingPage):
 		</td>
 		<td>
 			<?php echo $landingPage['LandingPage']['inactive']; ?>
+		</td>
+		<td>
+			<?php 
+			if ($landingPage['LandingPage']['landingPageTypeId'] == 1) {
+				echo $html->link(__('Edit Travel Ideas', true), array('controller' => 'travel_ideas', 'action'=>'index', $landingPage['LandingPage']['landingPageId'])); 
+			}
+			?>
 		</td>
 		<td class="actions">
 			<?php echo $html->link(__('Edit', true), array('action'=>'edit', $landingPage['LandingPage']['landingPageId'])); ?>
