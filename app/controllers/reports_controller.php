@@ -855,6 +855,10 @@ class ReportsController extends AppController {
 	
 	function cmr() {
 	    if (!empty($this->data)) {
+	        if ($this->data['condition2']['value'] == 'keep') {
+	            $this->data['condition2']['value'] = array(1, 4);
+	        }
+	        
 	        $conditions = $this->_build_conditions($this->data);
 	        
 	        if (!empty($this->params['named']['sortBy'])) {
