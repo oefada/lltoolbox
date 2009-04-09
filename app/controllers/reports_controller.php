@@ -1149,7 +1149,7 @@ class ReportsController extends AppController {
             for ($i = 0; $i <= 12; $i++) {
                 $ts = strtotime("-".(12-($i-1))." months");
                 $months[$i] = date('Ym', $ts);
-                $monthNames[$i] = date('M-Y', $ts);
+                $monthNames[$i] = date('M Y', $ts);
             }
             
             $results = $keyedResults;

@@ -5,6 +5,12 @@
 td, th {
 	padding: 5px;
 }
+th {
+	font-size: 10px;
+}
+td {
+	text-align: right;
+}
 </style>
 <div class='advancedSearch' style="width: 800px">
 	<?php echo $form->create('Client', array('url' => '/reports/car'))?>
@@ -50,7 +56,7 @@ td, th {
 	<?php for($i = 0; $i <= 12; $i++)
 			echo "<th class='blackBg'>".$monthNames[$i]."</th>";
 	?>
-    <td>Last 12 Months</td>
+    <th class="blackBg">Last 12 Months</td>
   </tr>
   <tr>
     <th><strong>phone</strong></th>
@@ -106,49 +112,49 @@ td, th {
     <?php for($i = 0; $i <= 12; $i++)
 			echo "<td>&nbsp;</td>";
 	?>
-    <td>0</td>
+    <td>&nbsp;</td>
   </tr>
   <tr>
     <th><strong>auctions $$</strong></th>
     <?php for($i = 0; $i <= 12; $i++)
 			echo "<td>&nbsp;</td>";
 	?>
-    <td>0</td>
+    <td>&nbsp;</td>
   </tr>
   <tr>
     <th>&nbsp;</th>
     <?php for($i = 0; $i <= 12; $i++)
 			echo "<td>&nbsp;</td>";
 	?>
-    <td>0</td>
+    <td>&nbsp;</td>
   </tr>
   <tr>
     <th><strong>fixed price sold</strong></th>
     <?php for($i = 0; $i <= 12; $i++)
 			echo "<td>&nbsp;</td>";
 	?>
-    <td>0</td>
+    <td>&nbsp;</td>
   </tr>
   <tr>
     <th><strong>fixed price $$</strong></th>
     <?php for($i = 0; $i <= 12; $i++)
 			echo "<td>&nbsp;</td>";
 	?>
-    <td>0</td>
+    <td>&nbsp;</td>
   </tr>
   <tr>
     <th>&nbsp;</th>
     <?php for($i = 0; $i <= 12; $i++)
 			echo "<td>&nbsp;</td>";
 	?>
-    <td>0</td>
+    <td>&nbsp;</td>
   </tr>
   <tr>
     <th><strong>$$ remitted</strong></th>
     <?php for($i = 0; $i <= 12; $i++)
 			echo "<td>&nbsp;</td>";
 	?>
-    <td>0</td>
+    <td>&nbsp;</td>
   </tr>
 </table>
 <? endif; ?>
