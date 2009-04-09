@@ -98,6 +98,10 @@ th a {
 	display: block;
 	text-decoration: none;
 }
+th.blackBg {
+    background:#545454;
+	color: #fff;
+}
 th a:hover {
 	background: #ccc;
 	color: #333;
