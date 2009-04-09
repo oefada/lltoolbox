@@ -13,6 +13,7 @@ echo $paginator->counter(array(
 	<th><?php echo $paginator->sort('landingPageTypeId');?></th>
 	<th><?php echo $paginator->sort('referenceId');?></th>
 	<th><?php echo $paginator->sort('isSponsored');?></th>
+	<th><?php echo $paginator->sort('tripAdvisorAward');?></th>
 	<th><?php echo $paginator->sort('inactive');?></th>
 	<th>Travel Ideas</th>
 	<th class="actions"><?php __('Actions');?></th>
@@ -40,6 +41,9 @@ foreach ($landingPages as $landingPage):
 		</td>
 		<td>
 			<?php echo $landingPage['LandingPage']['isSponsored']; ?>
+		</td>
+		<td>
+			<?php echo $landingPage['LandingPage']['tripAdvisorAward']; ?>
 		</td>
 		<td>
 			<?php echo $landingPage['LandingPage']['inactive']; ?>
