@@ -9,6 +9,7 @@
 		echo $form->input('travelIdeaBlurb');
 		echo $form->input('travelIdeaLinkText');
 		echo $form->input('travelIdeaUrl');
+		echo $form->input('tripAdvisorAward');
 	?>
 	</fieldset>
 <?php echo $form->end('Submit');?>

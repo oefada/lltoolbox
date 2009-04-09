@@ -40,6 +40,7 @@ foreach ($travelIdeas as $travelIdea):
 		?>
 	</h3>
 	<div style="font-size:13px;"><span style="font-weight:bold;">Blurb: </span><?php echo $travelIdea['TravelIdea']['travelIdeaBlurb'];?></div>
+	<div style="font-size:13px;"><span style="font-weight:bold;">Trip Advisor Award: </span><?php echo $travelIdea['TravelIdea']['tripAdvisorAward'];?></div>
 	<div style="font-size:13px;"><span style="font-weight:bold;">Link Text: </span><?php echo $travelIdea['TravelIdea']['travelIdeaLinkText'];?></div>
 	<div style="font-size:13px;margin-bottom:3px;"><span style="font-weight:bold;">Url: </span><?php echo $travelIdea['TravelIdea']['travelIdeaUrl'];?></div>
 	<?php echo $html->link(__('Delete Travel Idea', true), array('action'=>'delete', 'id'=>$travelIdea['TravelIdea']['travelIdeaId'] . '/' . $landingPage['LandingPage']['landingPageId']), null, sprintf(__('Are you sure you want to delete %s?', true), $travelIdea['TravelIdea']['travelIdeaHeader'])); ?>
