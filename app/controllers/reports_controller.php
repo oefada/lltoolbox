@@ -1115,6 +1115,56 @@ class ReportsController extends AppController {
             $this->set('packageStatusIds', $packageStatus->find('list'));
 	}
 	
+	function car() {
+	    if (!empty($this->data)) {
+	        $clientId = $this->data['Client']['clientName_id'];
+	        $results = $this->OfferType->query("SELECT DATE_FORMAT(activityStart, '%Y%m' ) as yearMonth, phone, webRefer, productView, searchView, destinationView, email FROM reporting.carConsolidatedView AS rs 
+	                                            WHERE CURDATE() - INTERVAL 1 YEAR <= activityStart AND clientId = '$clientId' 
+	                                            ORDER BY activityStart");
+            
+            $totals['phone'] = 0;
+            $totals['webRefer'] = 0;
+            $totals['productView'] = 0;
+            $totals['searchView'] = 0;
+            $totals['destinationView'] = 0;
+            $totals['email'] = 0;
+            
+            //sum the totals for the last 12 months and put everything in an array we can easily reference later
+            foreach($results as $k => $v):
+                $keyedResults[$v[0]['yearMonth']] = array_merge($v['rs'], $v[0]);           //set the key for each to the year and month so we can iterate through it easily
+
+                $totals['phone'] += $v['rs']['phone'];
+                $totals['webRefer'] += $v['rs']['webRefer'];
+                $totals['productView'] += $v['rs']['productView'];
+                $totals['searchView'] += $v['rs']['searchView'];
+                $totals['destinationView'] += $v['rs']['destinationView'];
+                $totals['email'] += $v['rs']['email'];
+            endforeach;
+            
+            for ($i = 0; $i <= 12; $i++) {
+                $ts = strtotime("-".(12-$i)." months");
+                $months[$i] = date('Ym', $ts);
+                $monthNames[$i] = date('M-Y', $ts);
+            }
+            
+            $results = $keyedResults;
+            
+            $client = new Client;
+            $client->recursive = -1;
+            $clients = $client->find('list');
+            
+            $client->recursive = 0;
+            $clientDetails = $client->read(null, $clientId);
+            
+            $client->Loa->recursive = -1;
+            $loa = $client->Loa->find('loaId = '.$clientDetails['Client']['currentLoaId']);
+            
+            $clientDetails['Loa'] = $loa['Loa'];
+            
+            $this->set(compact('results', 'totals', 'months', 'monthNames', 'clients', 'clientDetails'));
+	    }
+	}
+	
 	//TODO: A lot of duplication of code, use this method as a template for all the others and cut down on the number of times the following code is repeated
 	function _build_conditions($data) {
 	    $conditions = array();
