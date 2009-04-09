@@ -812,7 +812,7 @@ class WebServiceTicketsController extends WebServicesController
 		
 		$ups = $this->User->query("select * from userPaymentSetting as UserPaymentSetting where userId = $userId and inactive = 0 order by primaryCC desc, expYear desc");
 		if ($bidId && is_numeric($bidId)) {
-			$ups = $this->User->query("select * from userPaymentSetting as UserPaymentSetting where userPaymentSettingId = (select userPaymentSettingId from bid where bidId = $bidId)");
+			$ups = $this->User->query("select * from userPaymentSetting as UserPaymentSetting where userId = $userId and userPaymentSettingId = (select userPaymentSettingId from bid where bidId = $bidId)");
 		}
 		$year_now = date('Y');
 		$month_now = date('m');
