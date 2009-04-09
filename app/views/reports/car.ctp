@@ -2,6 +2,9 @@
 #ClientName {
 	width: 500px;
 }
+td, th {
+	padding: 5px;
+}
 </style>
 <div class='advancedSearch' style="width: 800px">
 	<?php echo $form->create('Client', array('url' => '/reports/car'))?>
@@ -23,7 +26,7 @@
 </div>
 
 <div class="fieldRow">
-	<label>Current LOA start date</label><?=date('M d, Y', strtotime($clientDetails['Loa']['startDate']))?>
+	<label>Current LOA start date</label><?=date('M d, Y', strtotime($clientDetails['Loa']['startDate'])).$html2->c($clientDetails['Loa']['loaId'])?>
 </div>
 
 <div class="fieldRow">
@@ -45,7 +48,7 @@
   <tr>
     <td>&nbsp;</td>
 	<?php for($i = 0; $i <= 12; $i++)
-			echo "<th>".$monthNames[$i]."</th>";
+			echo "<th class='blackBg'>".$monthNames[$i]."</th>";
 	?>
     <td>Last 12 Months</td>
   </tr>
@@ -56,8 +59,8 @@
 	?>
     <td><?=@$totals['phone']?></td>
   </tr>
-  <tr>
-    <th class="altrow"><strong>web</strong></th>
+  <tr class="altrow">
+    <th><strong>web</strong></th>
     <?php for($i = 0; $i <= 12; $i++)
 			echo "<td>".@$results[$months[$i]]['webRefer']."</td>";
 	?>
@@ -70,7 +73,7 @@
 	?>
     <td><?=@$totals['productView']?></td>
   </tr>
-  <tr>
+  <tr class="altrow">
     <th><strong>search</strong></th>
     <?php for($i = 0; $i <= 12; $i++)
 			echo "<td>".@$results[$months[$i]]['searchView']."</td>";
@@ -84,7 +87,7 @@
 	?>
     <td><?=@$totals['destinationView']?></td>
   </tr>
-  <tr>
+  <tr class="altrow">
     <th><strong>email</strong></th>
     <?php for($i = 0; $i <= 12; $i++)
 			echo "<td>".@$results[$months[$i]]['email']."</td>";
@@ -96,7 +99,7 @@
     <?php for($i = 0; $i <= 12; $i++)
 			echo "<td>&nbsp;</td>";
 	?>
-    <td>0</td>
+    <td>&nbsp;</td>
   </tr>
   <tr>
     <th><strong>auctions sold</strong></th>

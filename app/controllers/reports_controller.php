@@ -1119,7 +1119,7 @@ class ReportsController extends AppController {
 	    if (!empty($this->data)) {
 	        $clientId = $this->data['Client']['clientName_id'];
 	        $results = $this->OfferType->query("SELECT DATE_FORMAT(activityStart, '%Y%m' ) as yearMonth, phone, webRefer, productView, searchView, destinationView, email FROM reporting.carConsolidatedView AS rs 
-	                                            WHERE CURDATE() - INTERVAL 1 YEAR <= activityStart AND clientId = '$clientId' 
+	                                            WHERE CURDATE() - INTERVAL 13 MONTH <= activityStart AND clientId = '$clientId' 
 	                                            ORDER BY activityStart");
             
             $totals['phone'] = 0;
@@ -1132,6 +1132,11 @@ class ReportsController extends AppController {
             //sum the totals for the last 12 months and put everything in an array we can easily reference later
             foreach($results as $k => $v):
                 $keyedResults[$v[0]['yearMonth']] = array_merge($v['rs'], $v[0]);           //set the key for each to the year and month so we can iterate through it easily
+                
+                if ($k == 0 && count($results) >= 12) {
+                    continue;
+                }
+                //we don't want to count the first month in the totals if there are 13 months
 
                 $totals['phone'] += $v['rs']['phone'];
                 $totals['webRefer'] += $v['rs']['webRefer'];
@@ -1142,7 +1147,7 @@ class ReportsController extends AppController {
             endforeach;
             
             for ($i = 0; $i <= 12; $i++) {
-                $ts = strtotime("-".(12-$i)." months");
+                $ts = strtotime("-".(12-($i-1))." months");
                 $months[$i] = date('Ym', $ts);
                 $monthNames[$i] = date('M-Y', $ts);
             }
