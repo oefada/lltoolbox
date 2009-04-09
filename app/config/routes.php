@@ -85,7 +85,11 @@
 	Router::connect('/menus/:menuId/:controller/:action', array(), array('menuId' => '[0-9]+', 'id' => '[0-9]+', 'pass' => array('menuId')));
 	Router::connect('/menus/:menuId/:controller/:action/:id', array(), array('menuId' => '[0-9]+', 'id' => '[0-9]+', 'pass' => array('menuId','id')));
 	
-
+// ROUTES ADDED 04-08-09 for adding travel idea items to travel ideas via landing page id
+	Router::connect('/travel_ideas/:travelIdeaId/:controller/:action/:landingPageId', array(), array('travelIdeaId' => '[0-9]+', 'landingPageId' => '[0-9]+', 'pass' => array('travelIdeaId', 'landingPageId')));
+	Router::connect('/travel_ideas/:travelIdeaId/:controller/:action/:id/:landingPageId', array(), array('travelIdeaId' => '[0-9]+', 'id' => '[0-9]+', 'landingPageId' => '[0-9]+', 'pass' => array('travelIdeaId', 'id', 'landingPageId')));
+	
+	Router::connect('/travel_idea_items/:travelIdeaItemId/:controller/:action/:id/:travelIdeaId/:landingPageId', array(), array('travelIdeaId' => '[0-9]+', 'id' => '[0-9]+', 'landingPageId' => '[0-9]+', 'pass' => array('travelIdeaId', 'id', 'landingPageId')));
 
 	
 ?>
