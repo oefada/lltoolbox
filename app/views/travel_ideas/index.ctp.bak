@@ -1,0 +1,91 @@
+<div class="travelIdeas index">
+
+<?php if (!empty($travelIdeas)) :?>
+
+<h2><?php __('Travel Ideas for ' . $landingPage['LandingPage']['landingPageName']);?></h2>
+<p>
+<?php
+echo $paginator->counter(array(
+'format' => __('Page %page% of %pages%, showing %current% records out of %count% total, starting on record %start%, ending on %end%', true)
+));
+?></p>
+<table cellpadding="0" cellspacing="0">
+<tr>
+	<th><?php echo $paginator->sort('travelIdeaId');?></th>
+	<th><?php echo $paginator->sort('landingPageId');?></th>
+	<th><?php echo $paginator->sort('travelIdeaHeader');?></th>
+	<th><?php echo $paginator->sort('travelIdeaBlurb');?></th>
+	<th><?php echo $paginator->sort('travelIdeaLinkText');?></th>
+	<th><?php echo $paginator->sort('travelIdeaUrl');?></th>
+	<th class="actions"><?php __('Actions');?></th>
+</tr>
+<?php
+$i = 0;
+foreach ($travelIdeas as $travelIdea):
+	$class = null;
+	if ($i++ % 2 == 0) {
+		$class = ' class="altrow"';
+	}
+?>
+	<tr<?php echo $class;?>>
+		<td>
+			<?php echo $travelIdea['TravelIdea']['travelIdeaId']; ?>
+		</td>
+		<td>
+			<?php echo $travelIdea['LandingPage']['landingPageName']; ?>
+		</td>
+		<td>
+			<?php echo $travelIdea['TravelIdea']['travelIdeaHeader']; ?>
+		</td>
+		<td>
+			<?php echo $travelIdea['TravelIdea']['travelIdeaBlurb']; ?>
+		</td>
+		<td>
+			<?php echo $travelIdea['TravelIdea']['travelIdeaLinkText']; ?>
+		</td>
+		<td>
+			<?php echo $travelIdea['TravelIdea']['travelIdeaUrl']; ?>
+		</td>
+		<td class="actions">
+			<?php
+				echo $html->link('Edit',
+					'/travel_ideas/edit/' . $travelIdea['TravelIdea']['travelIdeaId'],
+					array(
+						'title' => 'Add Client Score',
+						'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
+						'complete' => 'closeModalbox()'
+						),
+					null,
+					false
+				);
+			?>
+			<?php echo $html->link(__('Delete', true), array('action'=>'delete', 'id'=>$travelIdea['TravelIdea']['travelIdeaId'] . '/' . $landingPage['LandingPage']['landingPageId']), null, sprintf(__('Are you sure you want to delete %s?', true), $travelIdea['TravelIdea']['travelIdeaHeader'])); ?>
+		</td>
+	</tr>
+<?php endforeach; ?>
+</table>
+</div>
+<div class="paging">
+	<?php echo $paginator->prev('<< '.__('previous', true), array(), null, array('class'=>'disabled'));?>
+ | 	<?php echo $paginator->numbers();?>
+	<?php echo $paginator->next(__('next', true).' >>', array(), null, array('class'=>'disabled'));?>
+</div>
+<div class="actions">
+	<ul>
+		<li>
+		<?php
+			echo $html->link('New Travel Idea for ' . $landingPage['LandingPage']['landingPageName'],
+				'/travel_ideas/add/' . $landingPage['LandingPage']['landingPageId'] ,
+				array(
+					'title' => 'Add Travel Idea for ' . $landingPage['LandingPage']['landingPageName'],
+					'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
+					'complete' => 'closeModalbox()'
+					),
+				null,
+				false
+			);
+		?>
+		</li>
+	</ul>
+</div>
+<?php endif; ?>
