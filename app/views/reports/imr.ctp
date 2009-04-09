@@ -27,7 +27,7 @@
 <div class="fieldRow controlset" style="float: left; margin-right: 30px">
 <label>Remit Type</label>
 <?php echo $form->text('condition2.field', array('value' => 'auction_mstr.auction_wholesale', 'type' => 'hidden'))?>
-<?php echo $form->select('condition2.value', array(2 => 'Keep', 0 => 'Remit'), null, array('multiple' => 'checkbox'))?>
+<?php echo $form->select('condition2.value', array('keep' => 'Keep', 2 => 'Remit', 3 => 'Commision/Upgrade'), null, array('multiple' => 'checkbox'))?>
 </div>
 
 <div style="float: left; border-right: 1px solid #000; padding-right: 25px">
@@ -102,24 +102,22 @@ if (!empty($results)): ?>
 		<tr>
 			<th>&nbsp;</th>
 			<th><?=sortLink('Client.name', 'Client Name', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Loa.loaTypeId', 'Package Title', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Loa.endDate', 'Offer Type', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('a', 'Package Title', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('a', 'Offer Type', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('a', 'Room Nights', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('a', 'Retail', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('a', 'Starting Bid', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Loa.endDate', 'Validity End', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('a', 'Validity End', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('a', 'Status', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('city', 'Bid History', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('state', 'Open Date', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('country', 'Close Date', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Loa.loaId', 'Starting Bid - % retail', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Client.clientId', 'Offer Notes', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Loa.membershipBalance', 'Style', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Loa.loaValue', 'City', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Loa.startDate', 'State', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('loaNumberOfDaysActive', 'Country', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('dailyMembershipFee', 'Team', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('numDaysPaid', 'Manager', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('a', 'Bid History', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('a', 'Open Date', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('a', 'Close Date', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('a', 'Starting Bid - % retail', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('a', 'Offer Notes', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('a', 'City', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('a', 'State', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('a', 'Country', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('a', 'Manager', $currentPage, $serializedFormInput, $this, $html)?></th>
 		</tr>
 		</thead>
 <?php foreach ($results as $k => $r):
@@ -145,11 +143,9 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 		<td><?=$r['endDate']?></td>
 		<td><?=$r['startingBidPercentOfRetail']?></td>
 		<td>&nbsp;</td>
-		<td><?=$r['merchandisingFlags']?></td>
 		<td><?=$r['city']?></td>
 		<td><?=$r['state']?></td>
 		<td><?=$r['country']?></td>
-		<td><?=$r['teamName']?></td>
 		<td><?=$r['managerUsername']?></td>
 	</tr>
 <?php endforeach; //TODO: add totals ?>
