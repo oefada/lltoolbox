@@ -12,7 +12,6 @@ echo $paginator->counter(array(
 	<th><?php echo $paginator->sort('primaryStyleId');?></th>
 	<th><?php echo $paginator->sort('articleTitle');?></th>
 	<th><?php echo $paginator->sort('articleAuthor');?></th>
-	<th><?php echo $paginator->sort('articleBody');?></th>
 	<th class="actions"><?php __('Actions');?></th>
 </tr>
 <?php
@@ -35,9 +34,6 @@ foreach ($articles as $article):
 		</td>
 		<td>
 			<?php echo $article['Article']['articleAuthor']; ?>
-		</td>
-		<td>
-			<?php echo substr($article['Article']['articleBody'], 0, 70) . ' ... '; ?>
 		</td>
 		<td class="actions">
 			<?php echo $html->link(__('View', true), array('action'=>'view', $article['Article']['articleId'])); ?>
