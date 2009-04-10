@@ -10,5 +10,7 @@
 <li><?=$html->link("Menu Tool", '/menus')?></li>
 <li><?=$html->link("Popular Travel Ideas Tool", '/popular_travel_ideas')?></li>
 <li><?=$html->link("Homepage Merchandising Modules", '/homepage_merchandisings')?></li>
+
+<li><?=$html->link("Keyword Search Redirect Tool", '/search_redirects')?></li>
 </ul>
 <br />
