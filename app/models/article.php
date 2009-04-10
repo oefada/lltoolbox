@@ -5,6 +5,7 @@ class Article extends AppModel {
 	var $useTable = 'article';
 	var $primaryKey = 'articleId';
 	var $displayField = 'articleTitle';
-
+	
+	var $hasMany = array('ArticleRel' => array('foreignKey' => 'articleId'));
 }
 ?>
