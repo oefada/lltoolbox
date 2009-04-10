@@ -3,6 +3,7 @@ class ArticlesController extends AppController {
 
 	var $name = 'Articles';
 	var $helpers = array('Html', 'Form');
+	var $uses = array('Article', 'LandingPage');
 
 	function index() {
 		$this->Article->recursive = 0;
@@ -27,8 +28,8 @@ class ArticlesController extends AppController {
 				$this->Session->setFlash(__('The Article could not be saved. Please, try again.', true));
 			}
 		}
-		$destinations = $this->Article->Destination->find('list', array('order' => 'destinationName'));
-		$this->set('destinationIds', $destinations);
+		$primaryStyles = $this->LandingPage->find('list', array('order' => 'landingPageName'));
+		$this->set('primaryStyleIds', $primaryStyles);
 	}
 
 	function edit($id = null) {
@@ -47,8 +48,8 @@ class ArticlesController extends AppController {
 		if (empty($this->data)) {
 			$this->data = $this->Article->read(null, $id);
 		}
-		$destinations = $this->Article->Destination->find('list', array('order' => 'destinationName'));
-		$this->set('destinationIds', $destinations);
+		$primaryStyles = $this->LandingPage->find('list', array('order' => 'landingPageName'));
+		$this->set('primaryStyleIds', $primaryStyles);
 	}
 
 	function delete($id = null) {
