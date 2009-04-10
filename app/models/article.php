@@ -5,7 +5,7 @@ class Article extends AppModel {
 	var $useTable = 'article';
 	var $primaryKey = 'articleId';
 	var $displayField = 'articleTitle';
-	var $belongsTo = array('Destination' => array('foreignKey' => 'destinationId'));
+	var $belongsTo = array('LandingPage' => array('foreignKey' => 'landingPageId'));
 
 }
 ?>
