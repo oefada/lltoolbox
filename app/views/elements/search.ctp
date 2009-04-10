@@ -19,7 +19,7 @@ if (@$this->viewVars['searchController'] || method_exists($controller , 'search'
 <div id='search-bar' class="clearfix">
 <div id='search-bar-inner' class="clearfix">
 <?php $defSearchValue = "Search {$controllerName}"; ?>
-<form accept-charset="UNKNOWN" enctype="application/x-www-form-urlencoded" method="get" action="/<?=$controllerName?>/search">
+<form accept-charset="UNKNOWN" enctype="application/x-www-form-urlencoded" method="get" action="/<?=$controllerUrl?>/search">
 	<div class="clearfix">
 		<div class="search-input-with-livesearch" on>
 			<input id="query" autocomplete='off' maxlength="2147483647" name="query" type="text" value="<?=$defSearchValue?>" onfocus="if($F(this) == '<?=$defSearchValue?>') { $(this).value = '';} else { $('livesearch').show(); }" onblur="Element.hide.delay(0.2, 'livesearch'); if($F(this) == '') { $(this).value = '<?=$defSearchValue?>' }" />
