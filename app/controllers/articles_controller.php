@@ -8,6 +8,8 @@ class ArticlesController extends AppController {
 	function index() {
 		$this->Article->recursive = 0;
 		$this->set('articles', $this->paginate());
+		$primaryStyles = $this->LandingPage->find('list', array('order' => 'landingPageName'));
+		$this->set('primaryStyleIds', $primaryStyles);
 	}
 
 	function view($id = null) {
@@ -16,6 +18,8 @@ class ArticlesController extends AppController {
 			$this->redirect(array('action'=>'index'));
 		}
 		$this->set('article', $this->Article->read(null, $id));
+		$primaryStyles = $this->LandingPage->find('list', array('order' => 'landingPageName'));
+		$this->set('primaryStyleIds', $primaryStyles);
 	}
 
 	function add() {
