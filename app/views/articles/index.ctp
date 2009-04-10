@@ -28,16 +28,13 @@ foreach ($articles as $article):
 			<?php echo $article['Article']['articleId']; ?>
 		</td>
 		<td>
-			<?php echo $article['LandingPage']['landingPageName']; ?>
+			<?php echo $primaryStyleIds[$article['Article']['primaryStyleId']]; ?>
 		</td>
 		<td>
 			<?php echo $article['Article']['articleTitle']; ?>
 		</td>
 		<td>
 			<?php echo $article['Article']['articleAuthor']; ?>
-		</td>
-		<td>
-			<?php echo $article['Article']['articleMetaDescription']; ?>
 		</td>
 		<td>
 			<?php echo substr($article['Article']['articleBody'], 0, 70) . ' ... '; ?>

@@ -8,7 +8,7 @@
 		</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Primary Style'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $article['LandingPage']['landingPageName']; ?>
+			<?php echo $primaryStyleIds[$article['Article']['primaryStyleId']]; ?>
 			&nbsp;
 		</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('ArticleTitle'); ?></dt>
