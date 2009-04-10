@@ -7,6 +7,7 @@
 		echo $form->input('primaryStyleId');
 		echo $form->input('articleTitle');
 		echo $form->input('articleAuthor');
+		echo $form->input('articlePageCount');
 		echo $form->input('articleMetaDescription');
 		echo $form->input('articleBody', array('style' => 'width:100%;height:700px;'));
 	?>
