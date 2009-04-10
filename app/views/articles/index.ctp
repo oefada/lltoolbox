@@ -9,7 +9,7 @@ echo $paginator->counter(array(
 <table cellpadding="0" cellspacing="0">
 <tr>
 	<th><?php echo $paginator->sort('articleId');?></th>
-	<th><?php echo $paginator->sort('destinationId');?></th>
+	<th><?php echo $paginator->sort('primaryStyleId');?></th>
 	<th><?php echo $paginator->sort('articleTitle');?></th>
 	<th><?php echo $paginator->sort('articleAuthor');?></th>
 	<th><?php echo $paginator->sort('articleBody');?></th>
@@ -28,13 +28,16 @@ foreach ($articles as $article):
 			<?php echo $article['Article']['articleId']; ?>
 		</td>
 		<td>
-			<?php echo $article['Destination']['destinationName']; ?>
+			<?php echo $article['LandingPage']['landingPageName']; ?>
 		</td>
 		<td>
 			<?php echo $article['Article']['articleTitle']; ?>
 		</td>
 		<td>
 			<?php echo $article['Article']['articleAuthor']; ?>
+		</td>
+		<td>
+			<?php echo $article['Article']['articleMetaDescription']; ?>
 		</td>
 		<td>
 			<?php echo substr($article['Article']['articleBody'], 0, 70) . ' ... '; ?>

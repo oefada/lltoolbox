@@ -6,9 +6,9 @@
 			<?php echo $article['Article']['articleId']; ?>
 			&nbsp;
 		</dd>
-		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Destination'); ?></dt>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('Primary Style'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
-			<?php echo $article['Destination']['destinationName']; ?>
+			<?php echo $article['LandingPage']['landingPageName']; ?>
 			&nbsp;
 		</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('ArticleTitle'); ?></dt>
@@ -19,6 +19,11 @@
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('ArticleAuthor'); ?></dt>
 		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
 			<?php echo $article['Article']['articleAuthor']; ?>
+			&nbsp;
+		</dd>
+		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('ArticleMetaDescription'); ?></dt>
+		<dd<?php if ($i++ % 2 == 0) echo $class;?>>
+			<?php echo $article['Article']['articleMetaDescription']; ?>
 			&nbsp;
 		</dd>
 		<dt<?php if ($i % 2 == 0) echo $class;?>><?php __('ArticleBody'); ?></dt>
