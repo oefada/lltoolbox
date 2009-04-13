@@ -61,55 +61,55 @@ td {
   <tr>
     <th><strong>phone</strong></th>
     <?php for($i = 0; $i <= 12; $i++)
-			echo "<td>".@$results[$months[$i]]['phone']."</td>";
+			echo "<td>".@$number->format($results[$months[$i]]['phone'])."</td>";
 	?>
     <td><strong>
-      <?=@$totals['phone']?>
+      <?=@$number->format($totals['phone'])?>
     </strong></td>
   </tr>
   <tr class="altrow">
     <th><strong>web</strong></th>
     <?php for($i = 0; $i <= 12; $i++)
-			echo "<td>".@$results[$months[$i]]['webRefer']."</td>";
+			echo "<td>".@$number->format($results[$months[$i]]['webRefer'])."</td>";
 	?>
     <td><strong>
-      <?=@$totals['webRefer']?>
+      <?=@$number->format($totals['webRefer'])?>
     </strong></td>
   </tr>
   <tr>
     <th><strong>portfolio</strong></th>
     <?php for($i = 0; $i <= 12; $i++)
-			echo "<td>".@$results[$months[$i]]['productView']."</td>";
+			echo "<td>".@$number->format($results[$months[$i]]['productView'])."</td>";
 	?>
     <td><strong>
-      <?=@$totals['productView']?>
+      <?=@$number->format($totals['productView'])?>
     </strong></td>
   </tr>
   <tr class="altrow">
     <th><strong>search</strong></th>
     <?php for($i = 0; $i <= 12; $i++)
-			echo "<td>".@$results[$months[$i]]['searchView']."</td>";
+			echo "<td>".@$number->format($results[$months[$i]]['searchView'])."</td>";
 	?>
     <td><strong>
-      <?=@$totals['searchView']?>
+      <?=@$number->format($totals['searchView'])?>
     </strong></td>
   </tr>
   <tr>
     <th><strong>home/destination</strong></th>
     <?php for($i = 0; $i <= 12; $i++)
-			echo "<td>".@$results[$months[$i]]['destinationView']."</td>";
+			echo "<td>".@$number->format($results[$months[$i]]['destinationView'])."</td>";
 	?>
     <td><strong>
-      <?=@$totals['destinationView']?>
+      <?=@$number->format($totals['destinationView'])?>
     </strong></td>
   </tr>
   <tr class="altrow">
     <th><strong>email</strong></th>
     <?php for($i = 0; $i <= 12; $i++)
-			echo "<td>".@$results[$months[$i]]['email']."</td>";
+			echo "<td>".@$number->format($results[$months[$i]]['email'])."</td>";
 	?>
     <td><strong>
-      <?=@$totals['email']?>
+      <?=@$number->format($totals['email'])?>
     </strong></td>
   </tr>
   <tr>
@@ -119,21 +119,25 @@ td {
 	?>
     <td>&nbsp;</td>
   </tr>
-  <tr>
+  <tr class="altrow">
     <th><strong>auctions sold</strong></th>
     <?php for($i = 0; $i <= 12; $i++)
-			echo "<td>&nbsp;</td>";
+			echo "<td>".@$number->format($results[$months[$i]]['aucTickets'])."</td>";
 	?>
-    <td>&nbsp;</td>
+    <td><strong>
+      <?=@$number->format($totals['aucTickets'])?>
+    </strong></td>
   </tr>
   <tr>
     <th><strong>auctions $$</strong></th>
     <?php for($i = 0; $i <= 12; $i++)
-			echo "<td>&nbsp;</td>";
+			echo "<td>".@$number->format($results[$months[$i]]['aucRevenue'])."</td>";
 	?>
-    <td>&nbsp;</td>
+    <td><strong>
+      <?=@$number->format($totals['aucRevenue'])?>
+    </strong></td>
   </tr>
-  <tr>
+  <tr class="altrow">
     <th>&nbsp;</th>
     <?php for($i = 0; $i <= 12; $i++)
 			echo "<td>&nbsp;</td>";
@@ -143,30 +147,20 @@ td {
   <tr>
     <th><strong>fixed price sold</strong></th>
     <?php for($i = 0; $i <= 12; $i++)
-			echo "<td>&nbsp;</td>";
+			echo "<td>".@$number->format($results[$months[$i]]['fpTickets'])."</td>";
 	?>
-    <td>&nbsp;</td>
+    <td><strong>
+      <?=@$number->format($totals['fpTickets'])?>
+    </strong></td>
   </tr>
-  <tr>
+  <tr class="altrow">
     <th><strong>fixed price $$</strong></th>
     <?php for($i = 0; $i <= 12; $i++)
-			echo "<td>&nbsp;</td>";
+			echo "<td>".@$number->format($results[$months[$i]]['fpRevenue'])."</td>";
 	?>
-    <td>&nbsp;</td>
-  </tr>
-  <tr>
-    <th>&nbsp;</th>
-    <?php for($i = 0; $i <= 12; $i++)
-			echo "<td>&nbsp;</td>";
-	?>
-    <td>&nbsp;</td>
-  </tr>
-  <tr>
-    <th><strong>$$ remitted</strong></th>
-    <?php for($i = 0; $i <= 12; $i++)
-			echo "<td>&nbsp;</td>";
-	?>
-    <td>&nbsp;</td>
+    <td><strong>
+      <?=@$number->format($totals['fpRevenue'])?>
+    </strong></td>
   </tr>
 </table>
 <? endif; ?>

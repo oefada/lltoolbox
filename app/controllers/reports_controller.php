@@ -1118,9 +1118,18 @@ class ReportsController extends AppController {
 	function car() {
 	    if (!empty($this->data)) {
 	        $clientId = $this->data['Client']['clientName_id'];
-	        $results = $this->OfferType->query("SELECT DATE_FORMAT(activityStart, '%Y%m' ) as yearMonth, phone, webRefer, productView, searchView, destinationView, email FROM reporting.carConsolidatedView AS rs 
-	                                            WHERE CURDATE() - INTERVAL 13 MONTH <= activityStart AND clientId = '$clientId' 
-	                                            ORDER BY activityStart");
+	        $results = $this->OfferType->query("SELECT DATE_FORMAT(activityStart, '%Y%m' ) as yearMonth, 
+	                                                    DATE_FORMAT(auc.firstTicketDate, '%Y%m' ) as aucYearMonth,
+	                                                    DATE_FORMAT(fp.firstTicketDate, '%Y%m' ) as fpYearMonth,
+	                                                    phone, webRefer, productView, searchView, destinationView, email, 
+	                                            auc.tickets as aucTickets, auc.revenue as aucRevenue,
+	                                            fp.tickets as fpTickets, fp.revenue as fpRevenue
+	                                            FROM reporting.carConsolidatedView AS rs
+	                                            LEFT JOIN reporting.carAuctionSold auc ON(auc.clientid = $clientId AND DATE_FORMAT(auc.firstTicketDate, '%Y%m' ) = DATE_FORMAT(activityStart, '%Y%m' ))
+	                                            LEFT JOIN reporting.carFixedPriceSold fp ON(fp.clientid = $clientId AND DATE_FORMAT(fp.firstTicketDate, '%Y%m' ) = DATE_FORMAT(activityStart, '%Y%m' ))
+	                                            WHERE CURDATE() - INTERVAL 13 MONTH <= activityStart 
+	                                            AND rs.clientId = '$clientId' 
+	                                            ORDER BY activityStart ");
             
             $totals['phone'] = 0;
             $totals['webRefer'] = 0;
@@ -1128,10 +1137,14 @@ class ReportsController extends AppController {
             $totals['searchView'] = 0;
             $totals['destinationView'] = 0;
             $totals['email'] = 0;
+            $totals['aucTickets'] = 0;
+            $totals['aucRevenue'] = 0;
+            $totals['fpTickets'] = 0;
+            $totals['fpRevenue'] = 0;
             
             //sum the totals for the last 12 months and put everything in an array we can easily reference later
             foreach($results as $k => $v):
-                $keyedResults[$v[0]['yearMonth']] = array_merge($v['rs'], $v[0]);           //set the key for each to the year and month so we can iterate through it easily
+                $keyedResults[$v[0]['yearMonth']] = array_merge($v['rs'], $v['auc'], $v['fp'], $v[0]);           //set the key for each to the year and month so we can iterate through it easily
                 
                 if ($k == 0 && count($results) >= 12) {
                     continue;
@@ -1144,6 +1157,10 @@ class ReportsController extends AppController {
                 $totals['searchView'] += $v['rs']['searchView'];
                 $totals['destinationView'] += $v['rs']['destinationView'];
                 $totals['email'] += $v['rs']['email'];
+                $totals['aucTickets'] += $v['auc']['aucTickets'];
+                $totals['aucRevenue'] += $v['auc']['aucRevenue'];
+                $totals['fpTickets'] += $v['fp']['fpTickets'];
+                $totals['fpRevenue'] += $v['fp']['fpRevenue'];
             endforeach;
             
             for ($i = 0; $i <= 12; $i++) {
