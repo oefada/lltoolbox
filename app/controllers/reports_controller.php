@@ -928,7 +928,7 @@ class ReportsController extends AppController {
                         #remit packages sold
                         #remit packages left
                         Loa.upgraded,
-                        Loa.totalRemitted,
+                        Loa.totalRemitted,Ch4113
                         (SELECT cityName from city where cityId = Client.cityId) as city,
                         (SELECT stateName from state where stateId = Client.stateId) as state,
                         (SELECT countryName from country where countryId = Client.countryId) as country,
@@ -1162,7 +1162,7 @@ class ReportsController extends AppController {
             $clientDetails = $client->read(null, $clientId);
             
             $client->Loa->recursive = -1;
-            $loa = $client->Loa->find('loaId = '.$clientDetails['Client']['currentLoaId']);
+            $loa = $client->Loa->find('first', array('conditions' => array('Loa.clientId' => $client->id)));
             
             $clientDetails['Loa'] = $loa['Loa'];
             
