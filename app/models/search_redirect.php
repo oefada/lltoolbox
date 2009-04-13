@@ -5,7 +5,7 @@ class SearchRedirect extends AppModel {
 	var $useTable = 'searchRedirect';
 	var $primaryKey = 'searchRedirectId';
 	
-	var $validate = array('keyword' => array('regex' => array('rule' => array('validateKeyword'), 'message' => 'Only lower-cased letters and numbers are allowed'),
+	var $validate = array('keyword' => array('regex' => array('rule' => array('validateKeyword'), 'message' => 'Only lower-cased letters, numbers, and spaces are allowed'),
 	                                        'isUnique' => array('rule' => array('isUnique'), 'message' => 'This keyword already exists')
 	                                        ),
 	                      'redirectUrl' => array('notEmpty')
