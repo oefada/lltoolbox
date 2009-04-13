@@ -32,11 +32,11 @@ td {
 </div>
 
 <div class="fieldRow">
-	<label>Current LOA start date</label><?=date('M d, Y', strtotime($clientDetails['Loa']['startDate'])).$html2->c($clientDetails['Loa']['loaId'])?>
+	<label>Most Recent LOA start date</label><?=date('M d, Y', strtotime($clientDetails['Loa']['startDate'])).$html2->c($clientDetails['Loa']['loaId'])?>
 </div>
 
 <div class="fieldRow">
-	<label>Membership Fee</label><?=$number->currency($clientDetails['Loa']['membershipFee'])?>
+	<label>Membership Fee</label><?=$number->currency($clientDetails['Loa']['membershipFee'], 'USD', array('places' => 0))?>
 </div>
 
 <div class="fieldRow lastRow">
@@ -63,42 +63,54 @@ td {
     <?php for($i = 0; $i <= 12; $i++)
 			echo "<td>".@$results[$months[$i]]['phone']."</td>";
 	?>
-    <td><?=@$totals['phone']?></td>
+    <td><strong>
+      <?=@$totals['phone']?>
+    </strong></td>
   </tr>
   <tr class="altrow">
     <th><strong>web</strong></th>
     <?php for($i = 0; $i <= 12; $i++)
 			echo "<td>".@$results[$months[$i]]['webRefer']."</td>";
 	?>
-    <td><?=@$totals['webRefer']?></td>
+    <td><strong>
+      <?=@$totals['webRefer']?>
+    </strong></td>
   </tr>
   <tr>
     <th><strong>portfolio</strong></th>
     <?php for($i = 0; $i <= 12; $i++)
 			echo "<td>".@$results[$months[$i]]['productView']."</td>";
 	?>
-    <td><?=@$totals['productView']?></td>
+    <td><strong>
+      <?=@$totals['productView']?>
+    </strong></td>
   </tr>
   <tr class="altrow">
     <th><strong>search</strong></th>
     <?php for($i = 0; $i <= 12; $i++)
 			echo "<td>".@$results[$months[$i]]['searchView']."</td>";
 	?>
-    <td><?=@$totals['searchView']?></td>
+    <td><strong>
+      <?=@$totals['searchView']?>
+    </strong></td>
   </tr>
   <tr>
     <th><strong>home/destination</strong></th>
     <?php for($i = 0; $i <= 12; $i++)
 			echo "<td>".@$results[$months[$i]]['destinationView']."</td>";
 	?>
-    <td><?=@$totals['destinationView']?></td>
+    <td><strong>
+      <?=@$totals['destinationView']?>
+    </strong></td>
   </tr>
   <tr class="altrow">
     <th><strong>email</strong></th>
     <?php for($i = 0; $i <= 12; $i++)
 			echo "<td>".@$results[$months[$i]]['email']."</td>";
 	?>
-    <td><?=@$totals['email']?></td>
+    <td><strong>
+      <?=@$totals['email']?>
+    </strong></td>
   </tr>
   <tr>
     <th>&nbsp;</th>
