@@ -142,6 +142,8 @@ class WebServiceTicketsController extends WebServicesController
 			$newTicket['Ticket']['requestQueueDatetime'] = $data['requestQueueDatetime'];
 			$newTicket['Ticket']['requestArrival'] 		 = $data['requestArrival'];
 			$newTicket['Ticket']['requestDeparture']	 = $data['requestDeparture'];
+			$newTicket['Ticket']['requestArrival2'] 	 = $data['requestArrival2'];
+			$newTicket['Ticket']['requestDeparture2']	 = $data['requestDeparture2'];
 			$newTicket['Ticket']['requestNumGuests']	 = $data['requestNumGuests'];
 			$newTicket['Ticket']['requestNotes']		 = $data['requestNotes'];
 			$newTicket['Ticket']['billingPrice'] 		 = $offerData['SchedulingInstance']['SchedulingMaster']['buyNowPrice'];
@@ -450,6 +452,8 @@ class WebServiceTicketsController extends WebServicesController
 		$fpRequestType		= ($wholesale) ? 'A Wholesale Exclusive' : 'An Exclusive';
 		$fpArrival			= isset($ticketData['requestArrival']) ? date('M d, Y', strtotime($ticketData['requestArrival'])) : 'N/A';
 		$fpDeparture		= isset($ticketData['requestDeparture']) ? date('M d, Y', strtotime($ticketData['requestDeparture'])) : 'N/A';
+		$fpArrival2			= isset($ticketData['requestArrival2']) ? date('M d, Y', strtotime($ticketData['requestArrival2'])) : 'N/A';
+		$fpDeparture2		= isset($ticketData['requestDeparture2']) ? date('M d, Y', strtotime($ticketData['requestDeparture2'])) : 'N/A';
 		$fpNumGuests		= $ticketData['requestNumGuests'];
 		$fpNotes			= $ticketData['requestNotes'];
 
