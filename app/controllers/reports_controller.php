@@ -1118,18 +1118,24 @@ class ReportsController extends AppController {
 	function car() {
 	    if (!empty($this->data)) {
 	        $clientId = $this->data['Client']['clientName_id'];
-	        $results = $this->OfferType->query("SELECT DATE_FORMAT(activityStart, '%Y%m' ) as yearMonth, 
-	                                                    DATE_FORMAT(auc.firstTicketDate, '%Y%m' ) as aucYearMonth,
-	                                                    DATE_FORMAT(fp.firstTicketDate, '%Y%m' ) as fpYearMonth,
-	                                                    phone, webRefer, productView, searchView, destinationView, email, 
-	                                            auc.tickets as aucTickets, auc.revenue as aucRevenue,
-	                                            fp.tickets as fpTickets, fp.revenue as fpRevenue
+	        $results = $this->OfferType->query("SELECT DATE_FORMAT(activityStart, '%Y%m' ) as yearMonth,
+	                                                    phone, webRefer, productView, searchView, destinationView, email
 	                                            FROM reporting.carConsolidatedView AS rs
-	                                            LEFT JOIN reporting.carAuctionSold auc ON(auc.clientid = $clientId AND DATE_FORMAT(auc.firstTicketDate, '%Y%m' ) = DATE_FORMAT(activityStart, '%Y%m' ))
-	                                            LEFT JOIN reporting.carFixedPriceSold fp ON(fp.clientid = $clientId AND DATE_FORMAT(fp.firstTicketDate, '%Y%m' ) = DATE_FORMAT(activityStart, '%Y%m' ))
-	                                            WHERE CURDATE() - INTERVAL 13 MONTH <= activityStart 
+	                                            WHERE CURDATE() - INTERVAL 14 MONTH <= activityStart
 	                                            AND rs.clientId = '$clientId' 
 	                                            ORDER BY activityStart ");
+	        
+	        $auctions = $this->OfferType->query("SELECT DATE_FORMAT(auc.firstTicketDate, '%Y%m' ) as yearMonth, tickets as aucTickets, revenue as aucRevenue
+    	                                            FROM reporting.carAuctionSold AS auc
+    	                                            WHERE CURDATE() - INTERVAL 14 MONTH <= firstTicketDate 
+    	                                            AND auc.clientid = '$clientId' 
+    	                                            ORDER BY firstTicketDate ");
+    	
+    	    $fixedprice = $this->OfferType->query("SELECT DATE_FORMAT(fp.firstTicketDate, '%Y%m' ) as yearMonth, tickets as fpTickets, revenue as fpRevenue
+    	                                            FROM reporting.carFixedPriceSold AS fp
+    	                                            WHERE CURDATE() - INTERVAL 14 MONTH <= firstTicketDate 
+    	                                            AND fp.clientid = '$clientId' 
+    	                                            ORDER BY firstTicketDate ");
             
             $totals['phone'] = 0;
             $totals['webRefer'] = 0;
@@ -1142,14 +1148,31 @@ class ReportsController extends AppController {
             $totals['fpTickets'] = 0;
             $totals['fpRevenue'] = 0;
             
+            //setup array of all months we are using in this view
+            for ($i = 0; $i <= 12; $i++) {
+                $ts = strtotime("-".(12-($i-1))." months");
+                $months[$i] = date('Ym', $ts);
+                $monthNames[$i] = date('M Y', $ts);
+            }
+
+            foreach($auctions as $k => $v):
+                $auctionsKeyed[$v[0]['yearMonth']] = $v['auc'];     //set the key for each to the year and month so we can iterate through it easily
+            endforeach;
+            
+            foreach($fixedprice as $k => $v):
+                $fpKeyed[$v[0]['yearMonth']] = $v['fp'];           //set the key for each to the year and month so we can iterate through it easily
+            endforeach;
+
             //sum the totals for the last 12 months and put everything in an array we can easily reference later
             foreach($results as $k => $v):
-                $keyedResults[$v[0]['yearMonth']] = array_merge($v['rs'], $v['auc'], $v['fp'], $v[0]);           //set the key for each to the year and month so we can iterate through it easily
-                
-                if ($k == 0 && count($results) >= 12) {
+                $v['auc'] = @$auctionsKeyed[$v[0]['yearMonth']];
+                $v['fp'] = @$fpKeyed[$v[0]['yearMonth']];
+                $keyedResults[$v[0]['yearMonth']] = array_merge($v['rs'], (array)@$auctionsKeyed[$v[0]['yearMonth']], (array)@$fpKeyed[$v[0]['yearMonth']], $v[0]);           //set the key for each to the year and month so we can iterate through it easily
+
+                //we don't want to count any months in the total that aren't going to be displayed
+                if (!in_array($v[0]['yearMonth'], $months) || $months[0] == $v[0]['yearMonth']) {
                     continue;
                 }
-                //we don't want to count the first month in the totals if there are 13 months
 
                 $totals['phone'] += $v['rs']['phone'];
                 $totals['webRefer'] += $v['rs']['webRefer'];
@@ -1157,18 +1180,12 @@ class ReportsController extends AppController {
                 $totals['searchView'] += $v['rs']['searchView'];
                 $totals['destinationView'] += $v['rs']['destinationView'];
                 $totals['email'] += $v['rs']['email'];
-                $totals['aucTickets'] += $v['auc']['aucTickets'];
-                $totals['aucRevenue'] += $v['auc']['aucRevenue'];
-                $totals['fpTickets'] += $v['fp']['fpTickets'];
-                $totals['fpRevenue'] += $v['fp']['fpRevenue'];
+                $totals['aucTickets'] += @$v['auc']['aucTickets'];
+                $totals['aucRevenue'] += @$v['auc']['aucRevenue'];
+                $totals['fpTickets'] += @$v['fp']['fpTickets'];
+                $totals['fpRevenue'] += @$v['fp']['fpRevenue'];
             endforeach;
-            
-            for ($i = 0; $i <= 12; $i++) {
-                $ts = strtotime("-".(12-($i-1))." months");
-                $months[$i] = date('Ym', $ts);
-                $monthNames[$i] = date('M Y', $ts);
-            }
-            
+
             $results = $keyedResults;
             
             $client = new Client;
