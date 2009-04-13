@@ -54,6 +54,10 @@ email,<?php for($i = 0; $i <= 12; $i++)
 			echo '"'.@$number->format($totals['email']).'"'?>
   <?="\n"?>
   <?="\n"?>
+auctions live,<?php for($i = 0; $i <= 12; $i++)
+			echo '"'.@$number->format($results[$months[$i]]['numberAuctions']).'",';
+			echo '"'.@$number->format($totals['aucTotals']).'"'?>
+  <?="\n"?>
 auctions sold,<?php for($i = 0; $i <= 12; $i++)
 			echo '"'.@$number->format($results[$months[$i]]['aucTickets']).'",';
 			echo '"'.@$number->format($totals['aucTickets']).'"'?>
@@ -62,6 +66,10 @@ auctions $$,<?php for($i = 0; $i <= 12; $i++)
 			echo '"'.@$number->format($results[$months[$i]]['aucRevenue']).'",';
 			echo '"'.@$number->format($totals['aucRevenue']).'"'?>
   <?="\n"?>
+  <?="\n"?>
+fixed price live,<?php for($i = 0; $i <= 12; $i++)
+			echo '"'.@$number->format($results[$months[$i]]['numberPackages']).'",';
+			echo '"'.@$number->format($totals['fpTotals']).'"'?>
   <?="\n"?>
 fixed price sold,<?php for($i = 0; $i <= 12; $i++)
 			echo '"'.@$number->format($results[$months[$i]]['fpTickets']).'",';

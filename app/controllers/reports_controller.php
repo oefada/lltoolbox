@@ -1136,6 +1136,18 @@ class ReportsController extends AppController {
     	                                            WHERE CURDATE() - INTERVAL 14 MONTH <= firstTicketDate 
     	                                            AND fp.clientid = '$clientId' 
     	                                            ORDER BY firstTicketDate ");
+    	                                            
+    	    $auctionsTotal = $this->OfferType->query("SELECT DATE_FORMAT(auc.minStartDate, '%Y%m' ) as yearMonth, numberAuctions
+        	                                        FROM reporting.carAuction AS auc
+        	                                        WHERE CURDATE() - INTERVAL 14 MONTH <= minStartDate 
+        	                                        AND auc.clientid = '$clientId' 
+        	                                        ORDER BY minStartDate ");
+        	                                        
+            $fixedpriceTotal = $this->OfferType->query("SELECT DATE_FORMAT(fp.lastUpdate, '%Y%m' ) as yearMonth, numberPackages
+        	                                        FROM reporting.carFixedPricePackage AS fp
+        	                                        WHERE CURDATE() - INTERVAL 14 MONTH <= lastUpdate 
+        	                                        AND fp.clientid = '$clientId' 
+        	                                        ORDER BY lastUpdate ");
             
             $totals['phone'] = 0;
             $totals['webRefer'] = 0;
@@ -1147,6 +1159,8 @@ class ReportsController extends AppController {
             $totals['aucRevenue'] = 0;
             $totals['fpTickets'] = 0;
             $totals['fpRevenue'] = 0;
+            $totals['aucTotals'] = 0;
+            $totals['fpTotals'] = 0;
             
             //setup array of all months we are using in this view
             for ($i = 0; $i <= 12; $i++) {
@@ -1162,12 +1176,25 @@ class ReportsController extends AppController {
             foreach($fixedprice as $k => $v):
                 $fpKeyed[$v[0]['yearMonth']] = $v['fp'];           //set the key for each to the year and month so we can iterate through it easily
             endforeach;
+            
+            foreach($auctionsTotal as $k => $v):
+                $aucTotKeyed[$v[0]['yearMonth']] = $v['auc'];           //set the key for each to the year and month so we can iterate through it easily
+            endforeach;
+            
+            foreach($fixedpriceTotal as $k => $v):
+                $fpTotKeyed[$v[0]['yearMonth']] = $v['fp'];           //set the key for each to the year and month so we can iterate through it easily
+            endforeach;
 
             //sum the totals for the last 12 months and put everything in an array we can easily reference later
             foreach($results as $k => $v):
                 $v['auc'] = @$auctionsKeyed[$v[0]['yearMonth']];
                 $v['fp'] = @$fpKeyed[$v[0]['yearMonth']];
-                $keyedResults[$v[0]['yearMonth']] = array_merge($v['rs'], (array)@$auctionsKeyed[$v[0]['yearMonth']], (array)@$fpKeyed[$v[0]['yearMonth']], $v[0]);           //set the key for each to the year and month so we can iterate through it easily
+                $keyedResults[$v[0]['yearMonth']] = array_merge($v['rs'],
+                                                                $v[0],
+                                                                (array)@$auctionsKeyed[$v[0]['yearMonth']],
+                                                                (array)@$fpKeyed[$v[0]['yearMonth']],
+                                                                (array)@$aucTotKeyed[$v[0]['yearMonth']],
+                                                                (array)@$fpTotKeyed[$v[0]['yearMonth']]);           //set the key for each to the year and month so we can iterate through it easily
 
                 //we don't want to count any months in the total that aren't going to be displayed
                 if (!in_array($v[0]['yearMonth'], $months) || $months[0] == $v[0]['yearMonth']) {
@@ -1184,6 +1211,9 @@ class ReportsController extends AppController {
                 $totals['aucRevenue'] += @$v['auc']['aucRevenue'];
                 $totals['fpTickets'] += @$v['fp']['fpTickets'];
                 $totals['fpRevenue'] += @$v['fp']['fpRevenue'];
+                
+                $totals['aucTotals'] += @$aucTotKeyed[$v[0]['yearMonth']]['numberAuctions'];
+                $totals['fpTotals'] += @$fpTotKeyed[$v[0]['yearMonth']]['numberPackages'];
             endforeach;
 
             $results = $keyedResults;
