@@ -1156,9 +1156,6 @@ class ReportsController extends AppController {
             
             $client = new Client;
             $client->recursive = -1;
-            $clients = $client->find('list');
-            
-            $client->recursive = 0;
             $clientDetails = $client->read(null, $clientId);
             
             $client->Loa->recursive = -1;
