@@ -44,7 +44,9 @@ td {
 </div>
 <?php endif; ?>
 </fieldset>
-
+<div class="controlset fieldRow">
+	<?php echo $form->checkbox('download.csv');
+			echo $form->label('download.csv', 'Download as CSV');?></div>
 <?php echo $form->submit('Search') ?>
 </div>
 
