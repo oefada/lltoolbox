@@ -16,7 +16,7 @@ class SearchRedirect extends AppModel {
 	 * PHP 5.1.6 is bugged and always returns 0
 	 */                
 	function validateKeyword() {
-	   if (!preg_match("/^[a-z0-9]+$/", $this->data['SearchRedirect']['keyword'])) {
+	   if (!preg_match("/^[a-z0-9\s]+$/", $this->data['SearchRedirect']['keyword'])) {
 	       return false;
 	   }
 	   return true;
