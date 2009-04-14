@@ -182,7 +182,7 @@ class ClientsController extends AppController {
 	function auto_complete() {
 		$clients = $this->Client->find('all', array(
    		'conditions' => array(
-   			'Client.name LIKE' => $this->data['Client']['clientName'].'%',
+   			'Client.name LIKE' => '%'.$this->data['Client']['clientName'].'%',
    			),
 			'limit' => 10,
    			'fields' => array('clientId', 'name')
