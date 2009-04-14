@@ -1,5 +1,50 @@
 <?php $this->pageTitle = "LOA Quarterly Aging Report" ?>
+<script>
+/*
+ * InPlaceEditor extension that adds a 'click to edit' text when the field is 
+ * empty.
+ */
+Ajax.InPlaceEditorWithEmptyText = Class.create(Ajax.InPlaceEditor, {
 
+  initialize : function($super, element, url, options) {
+
+    if (!options.emptyText)        options.emptyText      = "click to edit&hellip";
+    if (!options.emptyClassName)   options.emptyClassName = "inplaceeditor-empty";
+
+    $super(element, url, options);
+
+    this.checkEmpty();
+  },
+
+  checkEmpty : function() {
+
+    if (this.element.innerHTML.length == 0 && this.options.emptyText) {
+
+      this.element.appendChild(
+          new Element("span", { className : this.options.emptyClassName }).update(this.options.emptyText)
+        );
+    }
+
+  },
+
+  getText : function($super) {
+
+    if (empty_span = this.element.select("." + this.options.emptyClassName).first()) {
+      empty_span.remove();
+    }
+
+    return $super();
+
+  },
+
+  wrapUp : function($super, transport) {
+    this.checkEmpty();
+    return $super(transport);
+  }
+
+});
+
+</script>
 <div class='index'>
 <?php
 //TODO: put this in a helper
@@ -36,6 +81,7 @@ $i = 1;
 			<th><?=sortLink('country', 'End Date', $this, $html)?></th>
 			<th><?=sortLink('state', 'Membership Fee', $this, $html)?></th>
 			<th><?=sortLink('city', 'Remaining Balance', $this, $html)?></th>
+			<th><?=sortLink('Loa.notes', 'Notes', $this, $html)?></th>
 		</tr>
 <?php foreach ($timeperiod as $k => $r):
 $class = ($k % 2) ? ' class="altrow"' : '';
@@ -50,6 +96,12 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 		<td><?=$r[0]['loaEndDate']?></td>
 		<td><?=$r['Loa']['membershipFee']?></td>
 		<td><?=$r['Loa']['membershipBalance']?></td>
+		<td>
+			<p id="notes-<?=$r['Loa']['loaId']?>"><?=$r['Loa']['notes']?></p>
+			<script type="text/javascript">
+			 new Ajax.InPlaceEditorWithEmptyText("notes-<?=$r['Loa']['loaId']?>", '/loas/inplace_notes_save', {rows:5,cols:30});
+			</script>
+		</td>
 	</tr>
 <?php endforeach; //TODO: add totals ?>
 </table>

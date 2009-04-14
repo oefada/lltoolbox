@@ -158,5 +158,14 @@ class LoasController extends AppController {
 
 		return $loa['Loa']['endDate'];
 	}
+	
+	function inplace_notes_save() {
+	    $this->autoRender = false;
+	    
+	    $this->Loa->id = str_replace('notes-', "", $this->params['form']['editorId']);
+	    $this->Loa->saveField('notes', $this->params['form']['value']);
+	    $notesSaved = $this->Loa->read('notes');
+	    echo $notesSaved['Loa']['notes'];
+	}
 }
 ?>
