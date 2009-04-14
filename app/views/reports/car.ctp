@@ -32,7 +32,7 @@ td {
 </div>
 
 <div class="fieldRow">
-	<label>Most Recent LOA start date</label><?=date('M d, Y', strtotime($clientDetails['Loa']['startDate'])).$html2->c($clientDetails['Loa']['loaId'])?>
+	<label>Most Recent LOA start date</label><?=date('M d, Y', strtotime($clientDetails['Loa']['startDate'])).' '.$html2->c($clientDetails['Loa']['loaId'])?>
 </div>
 
 <div class="fieldRow">
