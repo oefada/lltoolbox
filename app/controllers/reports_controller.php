@@ -651,7 +651,7 @@ class ReportsController extends AppController {
             	                        Loa.loaId,
             	                        Loa.startDate,
             	                        MAX(Loa.endDate) AS loaEndDate,
-            	                        Loa.membershipFee, Loa.membershipBalance,
+            	                        Loa.membershipFee, Loa.membershipBalance, Loa.notes,
             	                        DATEDIFF(NOW(), Loa.startDate) as age
                                 FROM client AS Client
                                 INNER JOIN loa AS Loa ON (Loa.clientId = Client.clientId)
@@ -666,7 +666,7 @@ class ReportsController extends AppController {
             	                        Loa.loaId,
             	                        Loa.startDate,
             	                        MAX(Loa.endDate) AS loaEndDate,
-            	                        Loa.membershipFee, Loa.membershipBalance,
+            	                        Loa.membershipFee, Loa.membershipBalance, Loa.notes,
             	                        DATEDIFF(NOW(), Loa.startDate) as age
                                 FROM client AS Client
                                 INNER JOIN loa AS Loa ON (Loa.clientId = Client.clientId)
@@ -681,7 +681,7 @@ class ReportsController extends AppController {
             	                        Loa.loaId,
             	                        Loa.startDate,
             	                        MAX(Loa.endDate) AS loaEndDate,
-            	                        Loa.membershipFee, Loa.membershipBalance,
+            	                        Loa.membershipFee, Loa.membershipBalance, Loa.notes,
             	                        DATEDIFF(NOW(), Loa.startDate) as age
                                 FROM client AS Client
                                 INNER JOIN loa AS Loa ON (Loa.clientId = Client.clientId)
@@ -696,7 +696,7 @@ class ReportsController extends AppController {
             	                        Loa.loaId,
             	                        Loa.startDate,
             	                        MAX(Loa.endDate) AS loaEndDate,
-            	                        Loa.membershipFee, Loa.membershipBalance,
+            	                        Loa.membershipFee, Loa.membershipBalance, Loa.notes,
             	                        DATEDIFF(NOW(), Loa.startDate) as age
                                 FROM client AS Client
                                 INNER JOIN loa AS Loa ON (Loa.clientId = Client.clientId)
