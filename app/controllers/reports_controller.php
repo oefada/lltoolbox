@@ -1118,7 +1118,7 @@ class ReportsController extends AppController {
 	function car() {
 	    if (!empty($this->data)) {
 	        $clientId = $this->data['Client']['clientName_id'];
-	        $results = $this->OfferType->query("SELECT DATE_FORMAT(activityStart, '%Y%m' ) as yearMonth,
+	        $stats = $this->OfferType->query("SELECT DATE_FORMAT(activityStart, '%Y%m' ) as yearMonth,
 	                                                    phone, webRefer, productView, searchView, destinationView, email
 	                                            FROM reporting.carConsolidatedView AS rs
 	                                            WHERE CURDATE() - INTERVAL 14 MONTH <= activityStart
@@ -1149,19 +1149,6 @@ class ReportsController extends AppController {
         	                                        AND fp.clientid = '$clientId' 
         	                                        ORDER BY lastUpdate ");
             
-            $totals['phone'] = 0;
-            $totals['webRefer'] = 0;
-            $totals['productView'] = 0;
-            $totals['searchView'] = 0;
-            $totals['destinationView'] = 0;
-            $totals['email'] = 0;
-            $totals['aucTickets'] = 0;
-            $totals['aucRevenue'] = 0;
-            $totals['fpTickets'] = 0;
-            $totals['fpRevenue'] = 0;
-            $totals['aucTotals'] = 0;
-            $totals['fpTotals'] = 0;
-            
             //setup array of all months we are using in this view
             for ($i = 0; $i <= 12; $i++) {
                 $ts = strtotime("-".(12-($i-1))." months");
@@ -1186,34 +1173,48 @@ class ReportsController extends AppController {
             endforeach;
 
             //sum the totals for the last 12 months and put everything in an array we can easily reference later
-            foreach($results as $k => $v):
-                $v['auc'] = @$auctionsKeyed[$v[0]['yearMonth']];
-                $v['fp'] = @$fpKeyed[$v[0]['yearMonth']];
-                $keyedResults[$v[0]['yearMonth']] = array_merge($v['rs'],
-                                                                $v[0],
-                                                                (array)@$auctionsKeyed[$v[0]['yearMonth']],
-                                                                (array)@$fpKeyed[$v[0]['yearMonth']],
-                                                                (array)@$aucTotKeyed[$v[0]['yearMonth']],
-                                                                (array)@$fpTotKeyed[$v[0]['yearMonth']]);           //set the key for each to the year and month so we can iterate through it easily
-
-                //we don't want to count any months in the total that aren't going to be displayed
-                if (!in_array($v[0]['yearMonth'], $months) || $months[0] == $v[0]['yearMonth']) {
-                    continue;
-                }
-
-                $totals['phone'] += $v['rs']['phone'];
-                $totals['webRefer'] += $v['rs']['webRefer'];
-                $totals['productView'] += $v['rs']['productView'];
-                $totals['searchView'] += $v['rs']['searchView'];
-                $totals['destinationView'] += $v['rs']['destinationView'];
-                $totals['email'] += $v['rs']['email'];
-                $totals['aucTickets'] += @$v['auc']['aucTickets'];
-                $totals['aucRevenue'] += @$v['auc']['aucRevenue'];
-                $totals['fpTickets'] += @$v['fp']['fpTickets'];
-                $totals['fpRevenue'] += @$v['fp']['fpRevenue'];
+            foreach($stats as $k => $v):
+                $keyedStats[$v[0]['yearMonth']] = array_merge($v['rs'], $v[0]);           //set the key for each to the year and month so we can iterate through it easily
+            endforeach;
+            
+            
+            
+            $totals['phone'] = 0;
+            $totals['webRefer'] = 0;
+            $totals['productView'] = 0;
+            $totals['searchView'] = 0;
+            $totals['destinationView'] = 0;
+            $totals['email'] = 0;
+            $totals['aucTickets'] = 0;
+            $totals['aucRevenue'] = 0;
+            $totals['fpTickets'] = 0;
+            $totals['fpRevenue'] = 0;
+            $totals['aucTotals'] = 0;
+            $totals['fpTotals'] = 0;
+            
+            foreach ($months as $k => $month):
+                $keyedResults[$month] = array_merge((array)@$keyedStats[$month],
+                                                (array)@$auctionsKeyed[$month],
+                                                (array)@$fpKeyed[$month],
+                                                (array)@$aucTotKeyed[$month],
+                                                (array)@$fpTotKeyed[$month]);
                 
-                $totals['aucTotals'] += @$aucTotKeyed[$v[0]['yearMonth']]['numberAuctions'];
-                $totals['fpTotals'] += @$fpTotKeyed[$v[0]['yearMonth']]['numberPackages'];
+                //only count the last 12 months in the totals, months array has 13 months
+                if ($k == 0) {
+                    continue;
+                }                     
+                $totals['phone'] += @$keyedResults[$month]['phone'];
+                $totals['webRefer'] += @$keyedResults[$month]['webRefer'];
+                $totals['productView'] += @$keyedResults[$month]['productView'];
+                $totals['searchView'] += @$keyedResults[$month]['searchView'];
+                $totals['destinationView'] += @$keyedResults[$month]['destinationView'];
+                $totals['email'] += @$keyedResults[$month]['email'];
+                $totals['aucTickets'] += @$keyedResults[$month]['aucTickets'];
+                $totals['aucRevenue'] += @$keyedResults[$month]['aucRevenue'];
+                $totals['fpTickets'] += @$keyedResults[$month]['fpTickets'];
+                $totals['fpRevenue'] += @$keyedResults[$month]['fpRevenue'];
+                $totals['aucTotals'] += @$keyedResults[$month]['numberAuctions'];
+                $totals['fpTotals'] += @$keyedResults[$month]['numberPackages'];
             endforeach;
 
             $results = $keyedResults;
