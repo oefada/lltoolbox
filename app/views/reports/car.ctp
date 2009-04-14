@@ -189,7 +189,7 @@ td {
 	?>
     <td>&nbsp;</td>
   </tr>
-  <tr>
+  <tr class="altrow">
     <td><strong>total sold</strong></td>
     <?php for($i = 0; $i <= 12; $i++)
 			echo "<td>".@$number->format($results[$months[$i]]['aucTickets']+$results[$months[$i]]['fpTickets'])."</td>";
@@ -198,7 +198,7 @@ td {
       <?=@$number->format($totals['aucTickets']+$totals['fpTickets'])?>
     </strong></td>
   </tr>
-  <tr class="altrow">
+  <tr>
     <td><strong>total $$</strong></td>
     <?php for($i = 0; $i <= 12; $i++)
 			echo "<td>".@$number->currency($results[$months[$i]]['aucRevenue']+$results[$months[$i]]['fpRevenue'], 'USD', array('places' => 0))."</td>";
