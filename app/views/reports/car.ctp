@@ -195,7 +195,7 @@ td {
 			echo "<td>".@$number->format($results[$months[$i]]['aucTickets']+$results[$months[$i]]['fpTickets'])."</td>";
 	?>
     <td><strong>
-      <?=@$number->format($totals['aucTotals']+$totals['fpTotals'])?>
+      <?=@$number->format($totals['aucTickets']+$totals['fpTickets'])?>
     </strong></td>
   </tr>
   <tr class="altrow">
