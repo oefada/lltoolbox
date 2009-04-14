@@ -24,27 +24,26 @@
 ?>
 phone,<?php for($i = 0; $i <= 12; $i++)
 			echo '"'.@$number->format($results[$months[$i]]['phone']).'",';	
-				
 			echo @'"'.$number->format($totals['phone']).'"';
-	?>
-	<? echo "\n"; ?>
+?>
+<?="\n"; ?>
 web,<?php for($i = 0; $i <= 12; $i++)
 			echo '"'.@$number->format($results[$months[$i]]['webRefer']).'",';
 			
 			echo '"'.@$number->format($totals['webRefer']).'"';
 	?> 
-  <?="\n"?>
+<?="\n"?>
 portfolio,<?php for($i = 0; $i <= 12; $i++)
 			echo '"'.@$number->format($results[$months[$i]]['productView']).'",';
 			
 			echo '"'.@$number->format($totals['productView']).'"';
 			?>
-  <?="\n"?>
+<?="\n"?>
 search,<?php for($i = 0; $i <= 12; $i++)
 			echo '"'.@$number->format($results[$months[$i]]['searchView']).'",';
 			echo '"'.@$number->format($totals['searchView']).'"'?>
     
-  <?="\n"?>
+<?="\n"?>
 home/destination,<?php for($i = 0; $i <= 12; $i++)
 			echo '"'.@$number->format($results[$months[$i]]['destinationView']).'",';
 			echo '"'.@$number->format($totals['destinationView']).'"'?> 
@@ -52,29 +51,29 @@ home/destination,<?php for($i = 0; $i <= 12; $i++)
 email,<?php for($i = 0; $i <= 12; $i++)
 			echo '"'.@$number->format($results[$months[$i]]['email']).'",';
 			echo '"'.@$number->format($totals['email']).'"'?>
-  <?="\n"?>
-  <?="\n"?>
+<?="\n"?>
+<?="\n"?>
 auctions live,<?php for($i = 0; $i <= 12; $i++)
 			echo '"'.@$number->format($results[$months[$i]]['numberAuctions']).'",';
 			echo '"'.@$number->format($totals['aucTotals']).'"'?>
-  <?="\n"?>
+<?="\n"?>
 auctions sold,<?php for($i = 0; $i <= 12; $i++)
 			echo '"'.@$number->format($results[$months[$i]]['aucTickets']).'",';
 			echo '"'.@$number->format($totals['aucTickets']).'"'?>
-  <?="\n"?>
+<?="\n"?>
 auctions $$,<?php for($i = 0; $i <= 12; $i++)
 			echo '"'.@$number->format($results[$months[$i]]['aucRevenue']).'",';
 			echo '"'.@$number->format($totals['aucRevenue']).'"'?>
-  <?="\n"?>
-  <?="\n"?>
+<?="\n"?>
+<?="\n"?>
 fixed price live,<?php for($i = 0; $i <= 12; $i++)
 			echo '"'.@$number->format($results[$months[$i]]['numberPackages']).'",';
 			echo '"'.@$number->format($totals['fpTotals']).'"'?>
-  <?="\n"?>
+<?="\n"?>
 fixed price sold,<?php for($i = 0; $i <= 12; $i++)
 			echo '"'.@$number->format($results[$months[$i]]['fpTickets']).'",';
 			echo '"'.@$number->format($totals['fpTickets']).'"'?>
-  <?="\n"?>
+<?="\n"?>
 fixed price $$,<?php for($i = 0; $i <= 12; $i++)
 			echo '"'.@$number->format($results[$months[$i]]['fpRevenue']).'",';
 			echo '"'.@$number->format($totals['fpRevenue']).'"'?>
