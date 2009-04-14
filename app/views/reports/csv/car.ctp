@@ -78,4 +78,13 @@ fixed price sold,<?php for($i = 0; $i <= 12; $i++)
 fixed price $$,<?php for($i = 0; $i <= 12; $i++)
 			echo '"'.@$number->format($results[$months[$i]]['fpRevenue']).'",';
 			echo '"'.@$number->format($totals['fpRevenue']).'"'?>
+<?="\n"?>
+<?="\n"?>
+total sold,<?php for($i = 0; $i <= 12; $i++) 
+				echo '"'.@$number->format($results[$months[$i]]['aucTickets']+$results[$months[$i]]['fpTickets']).'",';
+				echo '"'.@$number->format($totals['aucTickets']+$totals['fpTickets']).'"';?>
+<?="\n"?>
+total $$,<?php for($i = 0; $i <= 12; $i++) 
+				echo '"'.@$number->currency($results[$months[$i]]['aucRevenue']+$results[$months[$i]]['fpRevenue'], 'USD', array('places' => 0)).'",';
+				echo '"'.@$number->currency($totals['aucRevenue']+$totals['fpRevenue'], 'USD', array('places' => 0)).'"'?>
 <? endif; ?>
