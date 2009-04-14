@@ -658,7 +658,7 @@ class ReportsController extends AppController {
             					WHERE Loa.startDate BETWEEN DATE_ADD(NOW(), INTERVAL -91 DAY) AND NOW()
             					        AND Loa.membershipBalance > 0
                                 GROUP BY Client.clientId, Loa.loaId
-                                ORDER BY Loa.startDate DESC, Loa.membershipBalance DESC";
+                                ORDER BY Loa.startDate ASC, Loa.membershipBalance DESC";
 
 	        $results['0 to 90'] = $this->OfferType->query($sql);
 	        
@@ -673,7 +673,7 @@ class ReportsController extends AppController {
             					WHERE Loa.startDate BETWEEN DATE_ADD(NOW(), INTERVAL -181 DAY) AND DATE_ADD(NOW(), INTERVAL -91 DAY)
             					    AND Loa.membershipBalance > 0
                                 GROUP BY Client.clientId, Loa.loaId
-                                ORDER BY Loa.startDate DESC, Loa.membershipBalance DESC";
+                                ORDER BY Loa.startDate ASC, Loa.membershipBalance DESC";
 
 	        $results['91 to 180'] = $this->OfferType->query($sql);
 	        
@@ -688,7 +688,7 @@ class ReportsController extends AppController {
             					WHERE Loa.startDate BETWEEN DATE_ADD(NOW(), INTERVAL -271 DAY) AND DATE_ADD(NOW(), INTERVAL -181 DAY)
             					    AND Loa.membershipBalance > 0
                                 GROUP BY Client.clientId, Loa.loaId
-                                ORDER BY Loa.startDate DESC, Loa.membershipBalance DESC";
+                                ORDER BY Loa.startDate ASC, Loa.membershipBalance DESC";
 
 	        $results['181 to 270'] = $this->OfferType->query($sql);
 	        
@@ -703,10 +703,10 @@ class ReportsController extends AppController {
             					WHERE Loa.startDate BETWEEN DATE_ADD(NOW(), INTERVAL -1 YEAR) AND DATE_ADD(NOW(), INTERVAL -271 DAY)
             					    AND Loa.membershipBalance > 0
                                 GROUP BY Client.clientId, Loa.loaId
-                                ORDER BY Loa.startDate DESC, Loa.membershipBalance DESC";
+                                ORDER BY Loa.startDate ASC, Loa.membershipBalance DESC";
 
 	        $results['271 to 365'] = $this->OfferType->query($sql);
-
+            $results = array_reverse($results);
 	        $this->set('results', $results);
 	}
 	
