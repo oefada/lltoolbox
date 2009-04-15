@@ -59,6 +59,58 @@ class SchedulingInstancesController extends AppController {
 		
 		$this->set('schedulingMaster', $schedulingMaster);
 	}
+	
+	function auto_extend() {
+	    if (empty($this->data['SchedulingInstance']['schedulingMasterId']) && empty($this->params['named']['schedulingMasterId'])) {
+	        die("Need scheduling master ID");
+	    }
+	    
+	    $this->SchedulingInstance->SchedulingMaster->id = $this->params['named']['schedulingMasterId'];
+	    $schedulingMaster = $this->SchedulingInstance->SchedulingMaster->read();
+	    
+	    if (!empty($this->data)){
+	    $schedulingInstance = $this->SchedulingInstance->query("SELECT MAX(endDate) as maxEndDate FROM schedulingInstance WHERE schedulingMasterId = {$this->SchedulingInstance->SchedulingMaster->id}");
+	    
+	    $startDate = strtotime("{$schedulingInstance[0][0]['maxEndDate']} +1 hour");
+	    
+	    if ($startDate < time()) {
+	        $startDate = strtotime("+1 hour");
+	    }
+	    
+	    if (date('G', $startDate) >= 17) {
+		    $startDate = strtotime('+1 day', $startDate);   //push to next day
+		    $startDate = date('Y-m-d', $startDate);         //convert to just Y-m-d
+		    $startDate = $startDate.' 07:00:00';            //set time to 8am
+		    $startDate = strtotime($startDate);             //save new date as timestamp
+		}
+		
+		$endDate = strtotime('+' . $schedulingMaster['SchedulingMaster']['numDaysToRun'] . ' days', $startDate);
+	    
+	    while ($this->SchedulingInstance->_isHoliday($endDate)) {
+	        $endDate = strtotime('+1 day', $endDate);
+	    }
+	    
+	    $schedulingInstance['SchedulingInstance'] = array('schedulingMasterId' => $schedulingMaster['SchedulingMaster']['schedulingMasterId'],
+	                                                        'startDate' => date("Y-m-d H:00:00", $startDate),
+	                                                        'endDate' => date("Y-m-d H:00:00", $endDate)
+	                                                    );
+	    
+	    if ($this->SchedulingInstance->save($schedulingInstance)) {
+            $schedulingMaster['SchedulingMaster']['iterations']++;
+            $this->SchedulingInstance->SchedulingMaster->save($schedulingMaster);
+            if ($this->RequestHandler->isAjax()) {
+				$this->Session->setFlash(__('The new instance was saved', true), 'default', array(), 'success');
+				$this->set('closeModalbox', true);
+			}
+        } else {
+            if ($this->RequestHandler->isAjax()) {
+				$this->Session->setFlash(__('The new instance could not be saved', true), 'default', array(), 'error');
+				$this->set('closeModalbox', true);
+			}
+        }
+        }
+        $this->set('schedulingMaster', $schedulingMaster);
+	}
 
 	function edit($id = null) {
 		if (!$id && empty($this->data)) {

@@ -193,7 +193,19 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 				 	endif;
 				?>
 				<?php if (in_array($result['OfferType']['offerTypeId'], unserialize(OFFER_TYPES_AUCTION)) && !$result[0]['futureInstances']): ?>
-					<br /><br /><a href="/scheduling_instances/add/schedulingMasterId:<?=$result['SchedulingMaster']['schedulingMasterId']?>" target="_blank">Extend For 1 More Iteration</a>
+					<br /><br />
+					<?php
+					echo $html->link('Extend For 1 More Iteration',
+									"/scheduling_instances/auto_extend/schedulingMasterId:{$result['SchedulingMaster']['schedulingMasterId']}",
+									array(
+										'title' => 'Extend Offer',
+										'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
+										'complete' => 'closeModalbox()'
+										),
+									null,
+									false
+									);
+					?>
 				<?php endif;?>
 			</div>
 		</td>
