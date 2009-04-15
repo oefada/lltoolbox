@@ -236,7 +236,9 @@ a.button span b.icon {
 .edit b.icon {
 	background-image: url(../img/edit.png);
 }
-
+.excel b.icon {
+    background-image: url(../img/page_excel.png);
+}
 .but-go b.icon {
 	background-image: url(../img/i-arrow.gif);
 }
@@ -474,6 +476,16 @@ legend.collapsible-closed  {
 	top: 0;
 	left: 45%;
 }
+
+.inplaceeditor-saving {
+    background: url('/img/spinner_small.gif') bottom right no-repeat;
+}
+
+.inplaceeditor-empty {
+    font-style: italic;
+    color: #999;
+}
+
 
 /* @group =search */
 

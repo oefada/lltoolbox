@@ -1,4 +1,10 @@
 <?php $this->pageTitle = "LOA Quarterly Aging Report" ?>
+<style>
+th {
+	font-size: 11px;
+	padding: 0;
+}
+</style>
 <script>
 /*
  * InPlaceEditor extension that adds a 'click to edit' text when the field is 
@@ -69,6 +75,9 @@ if (!empty($results)):
 $i = 1;
 ?>
 <?php foreach($results as $periodName => $timeperiod): ?>
+	<div style="float: right">
+	<?= $html->link('<span><b class="icon"></b>Export Report</span>', array('action'=>'aging.csv'), array('class' => 'button excel'), null, false); ?>
+	</div>
 	<div><h2>Accounts aged <?=$periodName?> days</h2><?=count($timeperiod)?> records found</div>
 	<table style="margin-top: 20px">
 		<tr>
