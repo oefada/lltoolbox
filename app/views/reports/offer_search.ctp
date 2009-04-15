@@ -192,7 +192,7 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 						echo ($result[0]['futureInstances']) ? 'YES' : 'NO';
 				 	endif;
 				?>
-				<?php if (in_array($result['OfferType']['offerTypeId'], unserialize(OFFER_TYPES_AUCTION))): ?>
+				<?php if (in_array($result['OfferType']['offerTypeId'], unserialize(OFFER_TYPES_AUCTION)) && !$result[0]['futureInstances']): ?>
 					<br /><br /><a href="/scheduling_instances/add/schedulingMasterId:<?=$result['SchedulingMaster']['schedulingMasterId']?>" target="_blank">Extend For 1 More Iteration</a>
 				<?php endif;?>
 			</div>
@@ -201,22 +201,5 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 <?php endforeach; //TODO: add totals ?>
 </table>
 <?=$pagination->Paginate("/reports/offer_search/filter:".urlencode($serializedFormInput)."/sortBy:$sortBy/sortDirection:$sortDirection/page:", $currentPage, $numPages)?>
-<?php elseif (!empty($data)): ?>
-<p>No results were found for the entered filters.</p>
-<p><strong>Tips:</strong> If searching by client or package name, enter four or more characters.
-	<br />For client and package name you can make a search term required by adding a "+" before it, exclude it by adding a "-",
-	or search a complete phrase by adding quotes "" around it. By default, offers that contain any of the search terms are returned.
-</p>
-<?php else: ?>
-	<div class='blankExample'>
-		<h1>Enter some search criteria above to search offers</h1>
-		<p>This offer search report will search through all current and past offers using the search criteria entered above.</p>
-		<p><strong>Tips:</strong> If searching by client or package name, enter four or more characters.
-			<br />For client and package name you can make a search term required by adding a "+" before it, exclude it by adding a "-",
-			or search a complete phrase by adding quotes "" around it. By default, offers that contain any of the search terms in client name or package name are returned.
-			<a href="#" target="_blank">Learn more</a>
-		</p>
-		<?=$html->image('blank_slate_examples/reports_offer_search.gif')?>
-	</div>
 <?php endif; ?>
 </div>
