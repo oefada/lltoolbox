@@ -123,8 +123,13 @@ td {
   </tr>
   <tr>
     <td><strong>auctions live</strong></td>
-    <?php for($i = 0; $i <= 12; $i++)
-			echo "<td>".@$number->format($results[$months[$i]]['numberAuctions'])."</td>";
+    <?php for($i = 0; $i <= 12; $i++) {
+			$style = '';
+				if(!@$results[$months[$i]]['numberAuctions']) {
+					$style = " style='background-color: red; color: #fff'";
+				}
+			echo "<td$style>".@$number->format($results[$months[$i]]['numberAuctions'])."</td>";
+		}
 	?>
     <td>&nbsp;</td>
   </tr>
@@ -155,8 +160,13 @@ td {
   </tr>
   <tr>
     <td><strong>fixed price live</strong></td>
-    <?php for($i = 0; $i <= 12; $i++)
-			echo "<td>".@$number->format($results[$months[$i]]['numberPackages'])."</td>";
+    <?php for($i = 0; $i <= 12; $i++) {
+			$style = '';
+			if(!@$results[$months[$i]]['numberPackages']) {
+				$style = " style='background-color: red; color: #fff'";
+			}
+				echo "<td$style>".@$number->format($results[$months[$i]]['numberPackages'])."</td>";
+			}
 	?>
     <td>&nbsp;</td>
   </tr>
