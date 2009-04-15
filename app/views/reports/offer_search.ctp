@@ -5,7 +5,7 @@
 	<fieldset>
 		<h3 class='title'>SEARCH OFFERS BY:</h3>
 
-		<div style="float: left; border-right: 1px solid #000; padding-right: 25px">
+		<div>
 			<div class="fieldRow">
 				<?echo $form->select('condition1.field', $condition1Options)?>
 			<?echo $form->text('condition1.value', array('style' => 'width: 250px'))?>
@@ -30,27 +30,18 @@
 					<label style='padding-left: 20px'>To</label><?echo $form->text('condition2.value.between.1')?>
 				</div>
 			</div>
-			
-			<div class="fieldRow">
-				<label>Offer Type</label>
-				<?php echo $form->text('condition4.field', array('value' => 'SchedulingMaster.offerTypeId', 'type' => 'hidden'))?>
-				<?php echo $form->select('condition4.value', $condition4Options)?>
-			</div>
 	
-			<div class="fieldRow">
+			<div class="fieldRow" style="margin-bottom: 10px;">
 				<label># of Room Nights</label>
 				<?php echo $form->text('condition5.field', array('value' => 'Package.numNights', 'type' => 'hidden'))?>
 				<?php echo $form->text('condition5.value')?>
 			</div>
-	
-			<div class="fieldRow lastFieldRow">
-				<label>Loa Track</label>
-				<?php echo $form->text('condition6.field', array('value' => 'ClientLoaPackageRel.trackId', 'type' => 'hidden'))?>
-				<?php echo $form->text('condition6.value')?>
-			</div>
-		</div>
-			<div style="float: left; clear: none; padding-left: 25px">
-				<div class="fieldRow" style="float: left; margin-right: 30px">
+				<div class="fieldRow controlset3" style="float: left;">
+					<label>Offer Type</label>
+					<?php echo $form->text('condition4.field', array('value' => 'SchedulingMaster.offerTypeId', 'type' => 'hidden'))?>
+					<?php echo $form->select('condition4.value', $condition4Options, null, array('multiple' => 'checkbox'))?>
+				</div>
+				<div class="fieldRow controlset3" style="float: left; clear: none; margin-right: 30px">
 					<label>LOA Track Type</label>
 					<?echo $form->text('condition2.field', array('value' => 'ExpirationCriteria.expirationCriteriaId', 'type' => 'hidden'))?>
 					<div class="range">
@@ -123,7 +114,7 @@ if (!empty($results)): ?>
 $class = ($k % 2) ? ' class="altrow"' : '';
 ?>
 	<tr<?=$class?>>
-		<td><?=$html->link($result['Client']['name'], array('controller' => 'clients', 'action' => 'edit', $result['Client']['clientId']))?></td>
+		<td><?=$html->link($result['Client']['name'], array('controller' => 'clients', 'action' => 'edit', $result['Client']['clientId']), array('target' => '_blank'))?></td>
 		<td><?=$result['OfferType']['offerTypeName']?></td>
 		<td><?=$result['Package']['packageId']?></td>
 		<td><?
@@ -153,7 +144,7 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 		<td><?=$result['SchedulingMaster']['numDaysToRun']?></td>
 		<td style="text-align: center">
 			<div<?php echo ($result[0]['flagBids']) ? 'style="min-height: 20px; line-height: 20px; padding: 4px; border: 4px solid #c00;"': '' ; ?>>
-				<?=$html->link($result[0]['numberOfBids'], '/bids/search?query='.$result['Offer']['offerId'])?>
+				<?=$html->link($result[0]['numberOfBids'], '/bids/search?query='.$result['Offer']['offerId'], array('target' => '_blank'))?>
 			</div>
 		</td>
 		<td><?=$number->currency($result['Package']['approvedRetailPrice'], 'USD', array('places' => 0))?></td>
@@ -164,12 +155,12 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 				} else {
 					$color = '#ff0';
 				}
-				echo ($result[0]['loaEndApproaching'] || $result[0]['lastInstance']) ? ' style="min-height: 20px; line-height: 20px; padding: 4px; border: 4px solid '.$color.';"' : '' ?>><?=$html->link(date('M j, Y', strtotime($result['Loa']['endDate'])), array('controller' => 'loas', 'action' => 'edit', $result['Loa']['loaId']))?></div></td>
+				echo ($result[0]['loaEndApproaching'] || $result[0]['lastInstance']) ? ' style="min-height: 20px; line-height: 20px; padding: 4px; border: 4px solid '.$color.';"' : '' ?>><?=$html->link(date('M j, Y', strtotime($result['Loa']['endDate'])), array('controller' => 'loas', 'action' => 'edit', $result['Loa']['loaId']), array('target' => '_blank'))?></div></td>
 		<td>
 			<div<?php if (isset($result[0]['loaBalanceFlag'])) { 
 							echo " style='min-height: 20px; line-height: 20px; padding: 4px; border: 4px solid {$result[0]['loaBalanceFlag']};'"; 
 							}?>>
-			<?=$html->link($number->currency($result['Loa']['membershipBalance'], 'USD', array('places' => 0)), array('controller' => 'loas', 'action' => 'edit', $result['Loa']['loaId']))?>
+			<?=$html->link($number->currency($result['Loa']['membershipBalance'], 'USD', array('places' => 0)), array('controller' => 'loas', 'action' => 'edit', $result['Loa']['loaId']), array('target' => '_blank'))?>
 			</div>
 		</td>
 		<td><?
