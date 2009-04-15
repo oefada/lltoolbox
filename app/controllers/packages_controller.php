@@ -668,6 +668,13 @@ class PackagesController extends AppController {
 
 		$this->set('metrics', $metrics['PackagePerformance']);
 	}
+	
+	function tooltipNotes($id) {
+	    $this->Package->recursive = -1;
+		$notes = $this->Package->find('first', array('fields' => 'notes', 'conditions' => array('Package.packageId' => $id)));
+
+		$this->set('notes', $notes['Package']['notes']);
+	}
 
 }
 ?>

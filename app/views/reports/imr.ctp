@@ -25,9 +25,9 @@
 </div>
 </div>
 <div class="fieldRow controlset" style="float: left; margin-right: 30px">
-<label>Remit Type</label>
+<label>LOA Track Type</label>
 <?php echo $form->text('condition2.field', array('value' => 'auction_mstr.auction_wholesale', 'type' => 'hidden'))?>
-<?php echo $form->select('condition2.value', array('keep' => 'Keep', 2 => 'Remit', 3 => 'Commision/Upgrade'), null, array('multiple' => 'checkbox'))?>
+<?php echo $form->select('condition2.value', array('keep' => 'Keep', 2 => 'Commission-free', 3 => 'Commision/Upgrade'), null, array('multiple' => 'checkbox'))?>
 </div>
 
 <div style="float: left; border-right: 1px solid #000; padding-right: 25px">
@@ -102,22 +102,28 @@ if (!empty($results)): ?>
 		<tr>
 			<th>&nbsp;</th>
 			<th><?=sortLink('Client.name', 'Client Name', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('a', 'Manager', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('a', 'Package Title', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('a', 'Offer Type', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('a', 'Room Nights', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('a', 'Retail', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('a', 'Starting Bid', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('a', 'Validity End', $currentPage, $serializedFormInput, $this, $html)?></th>
+			
+			<th><?=sortLink('a', 'Starting Bid - % retail', $currentPage, $serializedFormInput, $this, $html)?></th>
+			
+			<th><?=sortLink('a', 'Retail', $currentPage, $serializedFormInput, $this, $html)?></th>
+			
 			<th><?=sortLink('a', 'Status', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('a', 'Validity End', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('a', 'Bid History', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('a', 'Open Date', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('a', 'Close Date', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('a', 'Starting Bid - % retail', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('a', 'Offer Notes', $currentPage, $serializedFormInput, $this, $html)?></th>
+			
+			
+			<th><?=sortLink('a', 'Package Notes', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('a', 'City', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('a', 'State', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('a', 'Country', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('a', 'Manager', $currentPage, $serializedFormInput, $this, $html)?></th>
+			
 		</tr>
 		</thead>
 <?php foreach ($results as $k => $r):
@@ -127,13 +133,18 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 	<tr<?=$class?>>
 		<td><?=$k+1?></td>
 		<td><?=$html->link($r['name'], '/clients/'.$r['clientId'], array('target' => '_blank'))?></td>
-		<td><?=$html->link($r['packageId'], '/clients/'.$r['clientId'].'/packages/edit/'.$r['packageId'], array('target' => '_blank'))?></td>
+		
+		<td><?=$r['managerUsername']?></td>
+		<td><?=$html->link($r['packageName']."(".$r['packageId'].")", '/clients/'.$r['clientId'].'/packages/edit/'.$r['packageId'], array('target' => '_blank'))?></td>
 		<td><?=$r['offerTypeName']?></td>
 		<td><?=$r['numNights']?></td>
-		<td><?=$r['retailValue']?></td>
 		<td><?=$r['openingBid']?></td>
-		<td><?=$r['validityEndDate']?></td>
+		
+		<td><?=$r['startingBidPercentOfRetail']?></td>
+		
+		<td><?=$r['retailValue']?></td>
 		<td><?=$r['status']?></td>
+		<td><?=$r['validityEndDate']?></td>
 		<td><?
 		
 		echo preg_replace("/([0-9]+):([0-9]+)/", "<a href='/reports/offer_search/offerId:\\1'>\\2</a>", $r['bidHistory']);
@@ -141,16 +152,24 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 		?></td>
 		<td><?=$r['startDate']?></td>
 		<td><?=$r['endDate']?></td>
-		<td><?=$r['startingBidPercentOfRetail']?></td>
-		<td>&nbsp;</td>
+		<td>
+			<a href="#" id="notes-<?=$k?>" onclick="return false;">View Notes</a>
+			<?php $prototip->tooltip('notes-'.$k, array('ajax' =>
+		 														array('url' => '/packages/tooltipNotes/'.$r['packageId'], 
+																	  'options' => array('method' => 'get')
+																		),
+																	'title' => 'Packages Notes'
+														));?>
+		</td>
 		<td><?=$r['city']?></td>
 		<td><?=$r['state']?></td>
 		<td><?=$r['country']?></td>
-		<td><?=$r['managerUsername']?></td>
 	</tr>
 <?php endforeach; //TODO: add totals ?>
 </table>
 <?=$pagination->Paginate("/reports/imr/filter:".urlencode($serializedFormInput)."/sortBy:$sortBy/sortDirection:$sortDirection/page:", $currentPage, $numPages)?>
+
+<?=$prototip->renderTooltips();?>
 <?php elseif (!empty($data)): ?>
 <p>No results were found for the entered filters.</p>
 <p><strong>Tips:</strong> If searching by client or package name, enter four or more characters.
@@ -164,7 +183,7 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 		<p><strong>Tips:</strong> If searching by client or package name, enter four or more characters.
 			<br />For client and package name you can make a search term required by adding a "+" before it, exclude it by adding a "-",
 			or search a complete phrase by adding quotes "" around it. By default, offers that contain any of the search terms in client name or package name are returned.
-			<a href="#" target="_blank">Learn more</a>
+			<a href="#" onclick="return false;" target="_blank">Learn more</a>
 		</p>
 		<?=$html->image('blank_slate_examples/reports_bids.gif')?>
 	</div>
