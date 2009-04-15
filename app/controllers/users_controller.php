@@ -91,12 +91,22 @@ class UsersController extends AppController {
 			    }
 			    $query .= $part.' ';
 			}
-			$conditions = array('OR' => array("MATCH(User.lastName,User.firstName,User.email) AGAINST('$query' IN BOOLEAN MODE)", 'User.userId' => $origQuery, 'UserSiteExtended.username' => "$origQuery"));
+			
+			
+			if (strpos(strtolower($origQuery), 'userid:') !== false) {
+			    $origQuery = substr_replace(strtolower($origQuery), "", 0, 7);
+			    $conditions = array('OR' => array('User.userId' => $origQuery));
+			} else if (strpos(strtolower($origQuery), 'username:') !== false) {
+			    $origQuery = substr_replace(strtolower($origQuery), "", 0, 9);
+			    $conditions = array('OR' => array('UserSiteExtended.username LIKE' => "%$origQuery%"));
+			} else {
+			    $conditions = array('OR' => array("MATCH(User.lastName,User.firstName,User.email) AGAINST('$query' IN BOOLEAN MODE)"));                
+			}
 
 			if($_GET['query'] ||  $this->params['named']['query']) {
 				$this->autoRender = false;
-
-				$this->paginate = array('conditions' => $conditions, 'contain' => array('User', 'UserSiteExtended', 'Ticket'), 'fields' => array('UserSiteExtended.username', 'User.userId', 'User.firstName', 'User.lastName', 'User.email', 'User.inactive'));
+                $this->User->Behaviors->attach('Containable');
+				$this->paginate = array('conditions' => $conditions, 'contain' => array('UserSiteExtended', 'Ticket'), 'fields' => array('UserSiteExtended.username', 'User.userId', 'User.firstName', 'User.lastName', 'User.email', 'User.inactive'));
 				$this->set('query', $query);
 
 				$this->set('users', $this->paginate());
