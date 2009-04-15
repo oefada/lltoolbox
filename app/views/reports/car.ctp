@@ -126,9 +126,7 @@ td {
     <?php for($i = 0; $i <= 12; $i++)
 			echo "<td>".@$number->format($results[$months[$i]]['numberAuctions'])."</td>";
 	?>
-    <td><strong>
-      <?=@$number->format($totals['aucTotals'])?>
-    </strong></td>
+    <td>&nbsp;</td>
   </tr>
   <tr class="altrow">
     <td><strong>auctions sold</strong></td>
@@ -160,9 +158,7 @@ td {
     <?php for($i = 0; $i <= 12; $i++)
 			echo "<td>".@$number->format($results[$months[$i]]['numberPackages'])."</td>";
 	?>
-    <td><strong>
-      <?=@$number->format($totals['fpTotals'])?>
-    </strong></td>
+    <td>&nbsp;</td>
   </tr>
   <tr class="altrow">
     <td><strong>fixed price sold</strong></td>
