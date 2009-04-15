@@ -92,7 +92,6 @@ class UsersController extends AppController {
 			    $query .= $part.' ';
 			}
 			
-			
 			if (strpos(strtolower($origQuery), 'userid:') !== false) {
 			    $origQuery = substr_replace(strtolower($origQuery), "", 0, 7);
 			    $conditions = array('OR' => array('User.userId' => $origQuery));
