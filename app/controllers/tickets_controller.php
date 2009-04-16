@@ -30,6 +30,8 @@ class TicketsController extends AppController {
 		$s_user_id = isset($form['s_user_id']) ? $form['s_user_id'] : '';
 		$s_format_id = isset($form['s_format_id']) ? $form['s_format_id'] : '';
 		$s_client_id = isset($form['s_client_id']) ? $form['s_client_id'] : '';
+		$s_bid_id = isset($form['s_bid_id']) ? $form['s_bid_id'] : '';
+		$s_request_queue_id = isset($form['s_request_queue_id']) ? $form['s_request_queue_id'] : '';
 		$s_package_id = isset($form['s_package_id']) ? $form['s_package_id'] : '';
 		$s_promo_code_id = isset($form['s_promo_code_id']) ? $form['s_promo_code_id'] : '';
 		$s_offer_type_id = isset($form['s_offer_type_id']) ? $form['s_offer_type_id'] : 0;
@@ -60,6 +62,8 @@ class TicketsController extends AppController {
 		$this->set('s_offer_id', $s_offer_id);
 		$this->set('s_user_id', $s_user_id);
 		$this->set('s_client_id', $s_client_id);
+		$this->set('s_bid_id', $s_bid_id);
+		$this->set('s_request_queue_id', $s_request_queue_id);
 		$this->set('s_package_id', $s_package_id);
 		$this->set('s_promo_code_id', $s_promo_code_id);
 		$this->set('s_format_id', $s_format_id);
@@ -78,7 +82,7 @@ class TicketsController extends AppController {
 				
 		$this->paginate = array('fields' => array(
 									'Ticket.ticketId', 'Ticket.offerTypeId', 'Ticket.created', 'Ticket.bidId',  
-									'Ticket.offerId', 'Ticket.userId', 'TicketStatus.ticketStatusName', 'Ticket.packageId', 
+									'Ticket.offerId', 'Ticket.userId', 'TicketStatus.ticketStatusName', 'Ticket.packageId', 'Ticket.requestQueueId',
 									'Ticket.userFirstName', 'Ticket.userLastName', 'Ticket.packageId', 'Ticket.billingPrice', 'Ticket.formatId', 'Ticket.ticketNotes'
 									),
 		                        'contain' => array('TicketStatus'),
@@ -95,8 +99,12 @@ class TicketsController extends AppController {
 			$this->paginate['conditions']['Ticket.offerId'] = $s_offer_id;    
 		} elseif ($s_user_id) {
 			$this->paginate['conditions']['Ticket.userId'] = $s_user_id;       
+		} elseif ($s_bid_id) {
+			$this->paginate['conditions']['Ticket.bidId'] = $s_bid_id;       
 		} elseif ($s_client_id) {
 			$this->paginate['conditions']['Ticket.clientId'] = $s_client_id;       
+		} elseif ($s_request_queue_id) {
+			$this->paginate['conditions']['Ticket.requestQueueId'] = $s_request_queue_id;    
 		} elseif ($s_package_id) {
 			$this->paginate['conditions']['Ticket.packageId'] = $s_package_id;    
 		} else {    
