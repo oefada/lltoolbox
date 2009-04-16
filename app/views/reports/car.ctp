@@ -1,3 +1,4 @@
+<? $this->pageTitle = 'Client Activity Report (internal use)'?>
 <style>
 #ClientName {
 	width: 500px;
