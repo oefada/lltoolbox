@@ -468,6 +468,13 @@ class SchedulingMastersController extends AppController {
 		    $masterState = 1;
 		}
 		
+		/* Since we are editing a master, no info should come from the package at this point, so we can override it all with the data already in the master
+		 * Reference light house ticket #423
+		 */
+		$package['Package'] = $this->data['SchedulingMaster'];
+		$package['Package']['reservePrice'] = $this->data['SchedulingMaster']['reserveAmt'];    //these fields are named differently
+		
+		
 		$this->set('masterState',               $masterState);
 		$this->set('package', 					$package);
 		$this->set('packageId', 				$packageId);

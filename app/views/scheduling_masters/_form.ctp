@@ -18,7 +18,7 @@
 			echo $this->renderElement('../scheduling_masters/'.$defaultFile);
 		}
 		echo '</div>';
-		echo $form->input('reservePrice', array('value' => $package['Package']['reservePrice'], 'disabled' => 'disabled'));
+		echo $form->input('reserveAmt', array('value' => $package['Package']['reservePrice'], 'disabled' => 'disabled'));
 		if (empty($this->data['SchedulingMaster']['numDaysToRun'])) {
 			$this->data['SchedulingMaster']['numDaysToRun'] = 3;
 		}
