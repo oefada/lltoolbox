@@ -7,4 +7,5 @@ echo $form->input('Mystery.packageName');
 echo $form->input('Mystery.subtitle');
 echo $form->input('Mystery.shortBlurb', array('rows' => 2));
 echo $form->input('additionalDescription', array('rows' => 2));
+echo $form->input('mysteryIncludes', array('rows' => 2));
 ?>

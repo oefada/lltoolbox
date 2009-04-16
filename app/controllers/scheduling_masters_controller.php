@@ -131,6 +131,7 @@ class SchedulingMastersController extends AppController {
 			$this->data['SchedulingMaster']['numDaysToRun']             = 3;
 			
 			$this->data['SchedulingMaster']['packageName']              = trim($package['Package']['packageName']);
+			$this->data['SchedulingMaster']['mysteryIncludes']              = trim($package['Package']['packageIncludes']);
 			$this->data['SchedulingMaster']['retailValue']              = $package['Package']['approvedRetailPrice'];
 		}
 	
