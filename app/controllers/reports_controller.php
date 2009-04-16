@@ -80,7 +80,7 @@ class ReportsController extends AppController {
 	                LEFT JOIN package AS Package ON (Package.packageId = SchedulingMaster.packageId)
 	                LEFT JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Package.packageId)
 	                LEFT JOIN track AS Track ON (Track.trackid = ClientLoaPackageRel.trackId)
-	                INNER JOIN expirationCriteria AS ExpirationCriteria ON (ExpirationCriteria.expirationCriteriaId = Track.expirationCriteriaId)
+	                LEFT JOIN expirationCriteria AS ExpirationCriteria ON (ExpirationCriteria.expirationCriteriaId = Track.expirationCriteriaId)
 	                LEFT JOIN loa AS Loa ON (Loa.loaId = ClientLoaPackageRel.loaId)
 	                LEFT JOIN client AS Client ON (Client.clientId = ClientLoaPackageRel.clientId)
 	                WHERE $conditions";
@@ -121,7 +121,7 @@ class ReportsController extends AppController {
 	                LEFT JOIN package AS Package ON (Package.packageId = SchedulingMaster.packageId)
 	                LEFT JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Package.packageId)
 	                LEFT JOIN track AS Track ON (Track.trackid = ClientLoaPackageRel.trackId)
-	                INNER JOIN expirationCriteria AS ExpirationCriteria ON (ExpirationCriteria.expirationCriteriaId = Track.expirationCriteriaId)
+	                LEFT JOIN expirationCriteria AS ExpirationCriteria ON (ExpirationCriteria.expirationCriteriaId = Track.expirationCriteriaId)
 	                LEFT JOIN loa AS Loa ON (Loa.loaId = ClientLoaPackageRel.loaId)
 	                LEFT JOIN client AS Client ON (Client.clientId = ClientLoaPackageRel.clientId)
 	                WHERE $conditions
@@ -985,9 +985,9 @@ class ReportsController extends AppController {
 	                $conditions .= " AND ";
 	            }
 	            
-	            $conditions .= "(startDate BETWEEN '$liveDuringStartDate' AND '$liveDuringEndDate' + INTERVAL 1 DAY";
-	            $conditions .= " OR endDate BETWEEN '$liveDuringStartDate' AND '$liveDuringEndDate' + INTERVAL 1 DAY";
-	            $conditions .= " OR (startDate <= '$liveDuringStartDate' AND endDate >= '$liveDuringEndDate')";
+	            $conditions .= "(schedulingInstanceStartDate BETWEEN '$liveDuringStartDate' AND '$liveDuringEndDate' + INTERVAL 1 DAY";
+	            $conditions .= " OR schedulingInstanceEndDate BETWEEN '$liveDuringStartDate' AND '$liveDuringEndDate' + INTERVAL 1 DAY";
+	            $conditions .= " OR (schedulingInstanceStartDate <= '$liveDuringStartDate' AND schedulingInstanceEndDate >= '$liveDuringEndDate')";
 	            $conditions .= ")";
 	        }
 	        

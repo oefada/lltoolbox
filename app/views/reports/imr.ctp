@@ -101,29 +101,31 @@ if (!empty($results)): ?>
 		<thead class='fixedHeader'>
 		<tr>
 			<th>&nbsp;</th>
-			<th><?=sortLink('Client.name', 'Client Name', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('a', 'Manager', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('a', 'Package Title', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('a', 'Offer Type', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('a', 'Room Nights', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('a', 'Starting Bid', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('name', 'Client Name', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('managerUsername', 'Manager', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('packageName', 'Package Title', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('offerTypeName', 'Offer Type', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('numDaysToRun', 'Offer Length', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('numNights', 'Room Nights', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('openingBid', 'Starting Bid', $currentPage, $serializedFormInput, $this, $html)?></th>
 			
-			<th><?=sortLink('a', 'Starting Bid - % retail', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('startingBidPercentOfRetail', 'Starting Bid - % retail', $currentPage, $serializedFormInput, $this, $html)?></th>
 			
-			<th><?=sortLink('a', 'Retail', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('retailValue', 'Retail', $currentPage, $serializedFormInput, $this, $html)?></th>
 			
-			<th><?=sortLink('a', 'Status', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('a', 'Validity End', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('a', 'Bid History', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('a', 'Open Date', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('a', 'Close Date', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('status', 'Status', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('bidHistory', 'Bid History', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('startDate', 'Master Start', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('endDate', 'Master End', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('liveStartDate', 'Current Offer Open', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('liveEndDate', 'Current Offer Close', $currentPage, $serializedFormInput, $this, $html)?></th>
 			
-			
-			<th><?=sortLink('a', 'Package Notes', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('a', 'City', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('a', 'State', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('a', 'Country', $currentPage, $serializedFormInput, $this, $html)?></th>
-			
+			<th><?=sortLink('validityEnd', 'Validity End', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('loaTermEnd', 'LOA Term End', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('notes', 'Package Notes', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('city', 'City', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('state', 'State', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('country', 'Country', $currentPage, $serializedFormInput, $this, $html)?></th>
 		</tr>
 		</thead>
 <?php foreach ($results as $k => $r):
@@ -137,6 +139,7 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 		<td><?=$r['managerUsername']?></td>
 		<td><?=$html->link($r['packageName']."(".$r['packageId'].")", '/clients/'.$r['clientId'].'/packages/edit/'.$r['packageId'], array('target' => '_blank'))?></td>
 		<td><?=$r['offerTypeName']?></td>
+		<td><?=$r['numDaysToRun']?></td>
 		<td><?=$r['numNights']?></td>
 		<td><?=$r['openingBid']?></td>
 		
@@ -144,14 +147,21 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 		
 		<td><?=$r['retailValue']?></td>
 		<td><?=$r['status']?></td>
-		<td><?=$r['validityEndDate']?></td>
 		<td><?
 		
 		echo preg_replace("/([0-9]+):([0-9]+)/", "<a href='/reports/offer_search/offerId:\\1'>\\2</a>", $r['bidHistory']);
 		
 		?></td>
+
 		<td><?=$r['startDate']?></td>
 		<td><?=$r['endDate']?></td>
+		
+		<td><?=$r['liveStartDate']?></td>
+		<td><?=$r['liveEndDate']?></td>
+		
+		<td><?=$r['validityEndDate']?></td>
+		<td><?=$r['loaTermEnd']?></td>
+
 		<td>
 			<a href="#" id="notes-<?=$k?>" onclick="return false;">View Notes</a>
 			<?php $prototip->tooltip('notes-'.$k, array('ajax' =>
@@ -161,6 +171,7 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 																	'title' => 'Packages Notes'
 														));?>
 		</td>
+
 		<td><?=$r['city']?></td>
 		<td><?=$r['state']?></td>
 		<td><?=$r['country']?></td>
