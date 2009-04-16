@@ -186,6 +186,24 @@ $this->set('hideSidebar', true);
 			</tr>
 			<tr>
 				<td width="150">
+					Bid Id
+				</td>
+				<td>
+					<input type="text" id="s_bid_id" name="s_bid_id" value="<?php echo $s_bid_id;?>" />
+					&nbsp;<a href="javascript:void(0);" onclick="document.getElementById('s_bid_id').value = '';">Clear</a>
+				</td>
+			</tr>
+			<tr>
+				<td width="150">
+					Request Queue Id (Fixed-Price)
+				</td>
+				<td>
+					<input type="text" id="s_request_queue_id" name="s_request_queue_id" value="<?php echo $s_request_queue_id;?>" />
+					&nbsp;<a href="javascript:void(0);" onclick="document.getElementById('s_request_queue_id').value = '';">Clear</a>
+				</td>
+			</tr>
+			<tr>
+				<td width="150">
 					Package Id
 				</td>
 				<td>
