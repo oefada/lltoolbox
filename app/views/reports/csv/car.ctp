@@ -8,7 +8,7 @@
 	echo '"'.$clientDetails['Client']['locationDisplay']."\"\n";
 	
 	echo '"Most Recent LOA start date",';
-	echo '"'.date('M d, Y', strtotime($clientDetails['Loa']['startDate']))."({$clientDetails['Loa']['loaId']})\"\n";
+	echo '"'.date('M d, Y', strtotime($clientDetails['Loa']['startDate']))." ({$clientDetails['Loa']['loaId']})\"\n";
 	
 	echo '"Membership Fee",';
 	echo '"'.$number->currency($clientDetails['Loa']['membershipFee'], 'USD', array('places' => 0))."\"\n";
@@ -62,8 +62,8 @@ auctions sold,<?php for($i = 0; $i <= 12; $i++)
 			echo '"'.@$number->format($totals['aucTickets']).'"'?>
 <?="\n"?>
 auctions $$,<?php for($i = 0; $i <= 12; $i++)
-			echo '"'.@$number->format($results[$months[$i]]['aucRevenue']).'",';
-			echo '"'.@$number->format($totals['aucRevenue']).'"'?>
+			echo '"'.@$number->currency($results[$months[$i]]['aucRevenue'], 'USD', array('places' => 0)).'",';
+			echo '"'.@$number->currency($totals['aucRevenue'], 'USD', array('places' => 0)).'"'?>
 <?="\n"?>
 <?="\n"?>
 fixed price live,<?php for($i = 0; $i <= 12; $i++)
@@ -75,8 +75,8 @@ fixed price sold,<?php for($i = 0; $i <= 12; $i++)
 			echo '"'.@$number->format($totals['fpTickets']).'"'?>
 <?="\n"?>
 fixed price $$,<?php for($i = 0; $i <= 12; $i++)
-			echo '"'.@$number->format($results[$months[$i]]['fpRevenue']).'",';
-			echo '"'.@$number->format($totals['fpRevenue']).'"'?>
+			echo '"'.@$number->currency($results[$months[$i]]['fpRevenue'], 'USD', array('places' => 0)).'",';
+			echo '"'.@$number->currency($totals['fpRevenue'], 'USD', array('places' => 0)).'"'?>
 <?="\n"?>
 <?="\n"?>
 total sold,<?php for($i = 0; $i <= 12; $i++) 
