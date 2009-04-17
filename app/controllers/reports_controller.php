@@ -928,7 +928,7 @@ class ReportsController extends AppController {
                         #remit packages sold
                         #remit packages left
                         Loa.upgraded,
-                        Loa.totalRemitted,Ch4113
+                        Loa.totalRemitted,
                         (SELECT cityName from city where cityId = Client.cityId) as city,
                         (SELECT stateName from state where stateId = Client.stateId) as state,
                         (SELECT countryName from country where countryId = Client.countryId) as country,
