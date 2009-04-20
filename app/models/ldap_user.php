@@ -18,11 +18,10 @@ class LdapUser extends AppModel
     function __construct()
     {
         parent::__construct();
-        $this->ds = ldap_connect($this->host, $this->port);
-	if (!$this->ds) {
-		$this->ds = ldap_connect($this->backupHost, $this->port);
-	}
-        ldap_set_option($this->ds, LDAP_OPT_PROTOCOL_VERSION, 3);
+		
+		$this->ds = ldap_connect($this->host, $this->port);
+        
+		ldap_set_option($this->ds, LDAP_OPT_PROTOCOL_VERSION, 3);
         if ($this->user) {
             ldap_bind($this->ds, $this->user, $this->pass);
         } else {
