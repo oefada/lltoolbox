@@ -452,8 +452,8 @@ class WebServiceTicketsController extends WebServicesController
 		$fpRequestType		= ($wholesale) ? 'A Wholesale Exclusive' : 'An Exclusive';
 		$fpArrival			= isset($ticketData['requestArrival']) ? date('M d, Y', strtotime($ticketData['requestArrival'])) : 'N/A';
 		$fpDeparture		= isset($ticketData['requestDeparture']) ? date('M d, Y', strtotime($ticketData['requestDeparture'])) : 'N/A';
-		$fpArrival2			= isset($ticketData['requestArrival2']) ? date('M d, Y', strtotime($ticketData['requestArrival2'])) : 'N/A';
-		$fpDeparture2		= isset($ticketData['requestDeparture2']) ? date('M d, Y', strtotime($ticketData['requestDeparture2'])) : 'N/A';
+		$fpArrival2			= isset($ticketData['requestArrival2']) && ($ticketData['requestArrival2'] != '0000-00-00') ? date('M d, Y', strtotime($ticketData['requestArrival2'])) : 'N/A';
+		$fpDeparture2		= isset($ticketData['requestDeparture2']) && ($ticketData['requestDeparture2'] != '0000-00-00') ? date('M d, Y', strtotime($ticketData['requestDeparture2'])) : 'N/A';
 		$fpNumGuests		= $ticketData['requestNumGuests'];
 		$fpNotes			= $ticketData['requestNotes'];
 
