@@ -36,7 +36,7 @@ class SchedulingMastersController extends AppController {
             $dateTime .= ' ';
             $dateTime .= $this->data['SchedulingMaster']['startDateTime']['hour'].':00:00 '.$this->data['SchedulingMaster']['startDateTime']['meridian'];
             
-            if (date('G', strtotime($dateTime)) >= 16) {
+            /*if (date('G', strtotime($dateTime)) >= 16) {
 			    $startDate = strtotime('+1 day',  strtotime($dateTime));   //push to next day
 			    $startDate = date('Y-m-d', $startDate);         //convert to just Y-m-d
 			    $date = explode('-', $startDate);
@@ -48,8 +48,12 @@ class SchedulingMastersController extends AppController {
 			    $date[0] = $datePickerDate[2];
 			    $date[1] = $datePickerDate[0];
 			    $date[2] = $datePickerDate[1];
-			}
+			}*/
 
+            $date[0] = $datePickerDate[2];
+		    $date[1] = $datePickerDate[0];
+		    $date[2] = $datePickerDate[1];
+		    
             $this->data['SchedulingMaster']['startDate']['year']    =   $date[0];
 			$this->data['SchedulingMaster']['startDate']['month']     =   $date[1];
 			$this->data['SchedulingMaster']['startDate']['day']   =   $date[2];
