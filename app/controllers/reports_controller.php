@@ -299,7 +299,11 @@ class ReportsController extends AppController {
 	            if (NULL !== $firstValue && NULL !== $secondValue) {    //if both values were entered, it's a between
 	                if($ca['field'] == 'SchedulingInstance.liveDuring') {
 	                    $conditions[$k] = "SchedulingInstance.startDate <= '$firstValue' AND SchedulingInstance.endDate >= '$secondValue'";
-	                } else {
+	                } else if($ca['field'] == 'SchedulingInstance.startDate') {
+	                    $conditions[$k] = "SchedulingInstance.startDate >= '$firstValue' AND SchedulingInstance.startDate <= '$secondValue' + INTERVAL 1 DAY";
+	                } else if($ca['field'] == 'SchedulingInstance.endDate') {
+                        $conditions[$k] = "SchedulingInstance.endDate >= '$firstValue' AND SchedulingInstance.endDate <= '$secondValue' + INTERVAL 1 DAY";
+    	            } else {
     	                $conditions[$k] =   $ca['field'].' BETWEEN '."'{$firstValue}'".' AND '."'{$secondValue}'";
 	                }
 	            } else {                                                //if only one value was entered, it's not a between
