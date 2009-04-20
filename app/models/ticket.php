@@ -113,18 +113,20 @@ class Ticket extends AppModel {
 					$description = "If funded, this pending ticket, <a href='/tickets/view/$ticketId'>$ticketId</a>, will satisfy the maximum number of sales for this package, <a href='/clients/$clientId/packages/edit/$packageId'>$packageName</a>. ";
 					$description.= "All fixed priced offers for this package have ended and all live scheduled auctions will not reschedule.";
 					$model = 'Package';
+					$modelId = $packageId;
 					break;
 				case 'LOA':
 					$title = "Maximum Number of Sales for LOA [$clientName]";
 					$description = "If funded, this pending ticket, <a href='/tickets/view/$ticketId'>$ticketId</a>, will satisfy the maximum number of sales for this LOA <a href='/loas/edit/$loaId'>$loaId</a>. ";
 					$description.= "All fixed priced offers for this LOA have ended and all live scheduled auctions will not reschedule.";
 					$model = 'Loa';
+					$modelId = $loaId;
 					break;	
 			}	
 			
-			$description = mysql_real_escape_string($description);
+			$description = Sanitize::Escape($description);
 			
-			$sql = "CALL insertQueueMessage(\"$toUser\", \"$title\", \"$description\", \"$model\", 0)";
+			$sql = "CALL insertQueueMessage('$toUser', '$title', '$description', '$model', $modelId, 3)";
 			$this->query($sql);
 		}
 	}
