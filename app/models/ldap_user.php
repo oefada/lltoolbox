@@ -4,7 +4,8 @@ class LdapUser extends AppModel
 	var $name 		= 'LdapUser';
 	var $useTable 	= false;
 	var $primaryKey = 'samaccountname';
-	var $host 		= 'manila.luxurylink.com';
+	var $host 		= 'lldc01.luxurylink.com';
+	var $backupHost		= 'manila.luxurylink.com';
 	var $port 		= 389;
 	var $baseDn 	= 'OU=ServiceAccounts,DC=luxurylink,DC=com';
 	var $userBaseDn = 'OU=LuxuryLinkUser,DC=luxurylink,DC=com';
@@ -18,6 +19,9 @@ class LdapUser extends AppModel
     {
         parent::__construct();
         $this->ds = ldap_connect($this->host, $this->port);
+	if (!$this->ds) {
+		$this->ds = ldap_connect($this->backupHost, $this->port);
+	}
         ldap_set_option($this->ds, LDAP_OPT_PROTOCOL_VERSION, 3);
         if ($this->user) {
             ldap_bind($this->ds, $this->user, $this->pass);
