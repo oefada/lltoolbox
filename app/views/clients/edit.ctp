@@ -58,6 +58,7 @@ $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']
 		echo $form->input('blurb');
 		echo $form->input('keywords');
 	?>
+		<div class="controlset"><?echo $form->input('showTripAdvisorReview');?></div>
 
 	<fieldset class="collapsible">
 		<legend class="handle">Contact Details</legend>
