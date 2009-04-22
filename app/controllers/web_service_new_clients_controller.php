@@ -41,8 +41,8 @@ class WebServiceNewClientsController extends WebServicesController
 	        $response_value = '-1';
 	    }
 		
-		//@mail('devmail@luxurylink.com', 'SUGAR-to-TOOLBOX: Record pushed', print_r($decoded_request, true));
-		
+		//@mail('devmail@luxurylink.com', 'SUGAR-to-TOOLBOX: Record pushed', print_r($decoded_request, true));			
+
 		$date_now = date('Y-m-d H:i:s', strtotime('now'));
 		
 		// map data from Sugar to toolbox client table structure
@@ -142,7 +142,11 @@ class WebServiceNewClientsController extends WebServicesController
 	function sendToSugar($data) {
 		// had to use this custom native soap class and functions because couldn't run both cakephp nusoap server and client
 		// this soap call to made to sugar in order to give Sugar the new clientId from toolbox so it's recorded in Sugar
-		$client = new SoapClient('http://sugarprod.luxurylink.com:8888/services2/ClientReceiver2?wsdl'); 
+		if (stristr($_SERVER['HTTP_HOST'], 'dev')) {
+			$client = new SoapClient('http://sugardev.luxurylink.com:8888/services2/ClientReceiver2?wsdl'); 
+		} else {
+			$client = new SoapClient('http://sugarprod.luxurylink.com:8888/services2/ClientReceiver2?wsdl'); 
+		}
 		try {
 			$client->soap_call($data);
 		} catch (SoapFault $exception) {
