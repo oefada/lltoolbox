@@ -204,6 +204,8 @@ class WebServiceTicketsController extends WebServicesController
 	   		 	}
 			}
 
+			$this->Ticket->__runLoaSchedulingFlags($data['packageId'], $ticketId, $data['billingPrice']);
+
 			// if non-auction, just stop here as charging and ppv should not be auto
 			// -------------------------------------------------------------------------------
 			if ($formatId != 1 || !in_array($offerLive['offerTypeId'], array(1,2,6))) {
