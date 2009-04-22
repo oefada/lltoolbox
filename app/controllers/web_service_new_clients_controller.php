@@ -55,10 +55,18 @@ class WebServiceNewClientsController extends WebServicesController
             
 		if ($client_id && is_numeric($client_id)) {
 			// ======= EXISTING CLIENT UPDATE ========
-        	$client_data_save['clientId'] = $client_id;
-        	$this->Client->save($client_data_save);
-        	$decoded_request['client']['client_id'] = $client_id;
-        			
+
+			// *** check first by doing a manual update ***
+			$result = $this->Client->query("UPDATE client SET modified = NOW() WHERE clientId = $client_id LIMIT 1");
+			if ($this->Client->getAffectedRows()) {
+        		$client_data_save['clientId'] = $client_id;
+	        	$this->Client->save($client_data_save);
+	        	$decoded_request['client']['client_id'] = $client_id;
+			} else {
+				// the client id was invalid so send devmail, and do nothing
+				@mail('devmail@luxurylink.com', 'SUGAR BUS [CLIENT] -- INVALID CLIENTID', print_r($decoded_request, true));
+				return false;
+			}
 		} else {
 			// ======= NEW CLIENT INSERT =============
 			$next_auto_inc_result = $this->Client->query("SHOW TABLE STATUS WHERE Name = 'client'");
