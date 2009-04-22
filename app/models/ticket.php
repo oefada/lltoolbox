@@ -87,8 +87,78 @@ class Ticket extends AppModel {
 		}
 	}
 
-	function getLoaMembershipTotalPackages($loaId) {
+	function __runLoaSchedulingFlags($packageId, $ticketId, $ticketAmount) {
+		// check to make sure LOA balance is fulfilled 
+		// check to make sure LOA membership num packages is fulfilled
+
+		$loas = $this->query("SELECT * FROM clientLoaPackageRel clpr INNER JOIN loa ON clpr.loaId = loa.loaId WHERE clpr.packageId = $packageId");
+		foreach ($loas as $loa) {
+			// set some LOA data
+			// ------------------------------------------------------------------
+			$loa_id = $loa['loa']['loaId'];
+			$loa_m_balance = $loa['loa']['membershipBalance'];
+			$loa_m_total_packages = $loa['loa']['membershipTotalPackages'];
+			$take_down = false;
 			
+			// get all packageId's on membership balance tracks for this LOA
+			// ------------------------------------------------------------------
+			$sql = "SELECT packageId FROM clientLoaPackageRel clpr ";
+			$sql.= "INNER JOIN schedulingMaster sm USING(packageId) ";
+			$sql.= "INNER JOIN schedulingMasterTrackRel smtr USING (schedulingMasterId) ";
+			$sql.= "INNER JOIN track t ON smtr.trackId = t.trackId AND t.applyToMembershipBal = 1 ";
+			$sql.= "WHERE clpr.loaId = $loa_id GROUP BY clpr.packageId";
+			$result = $this->query($sql);
+			if (!empty($result)) {
+				$package_ids = array();
+				foreach ($result as $clpr) {
+					$package_ids[] = $clpr['clpr']['packageId'];
+				}
+				$package_ids_imp = implode(',', $package_ids);
+			} else {
+				continue;
+			}
+
+			// check LOA packages
+			// ------------------------------------------------------------------
+			if (is_numeric($loa_m_total_packages) && ($loa_m_total_packages > 0)) {         
+				$sql = "SELECT count(*) AS COUNT FROM ticket INNER JOIN paymentDetail pd ON ticket.ticketId = pd.ticketId AND pd.isSuccessfulCharge = 1 ";
+				$sql.= "WHERE ticket.ticketStatusId NOT IN (7,8) AND ticket.packageId IN ($package_ids_imp)";		
+				$result = $this->query($sql);
+				if (!empty($result) && isset($result[0][0]['COUNT']) && is_numeric($result[0][0]['COUNT'])) {
+					$loa_packages_derived = $result[0][0]['COUNT'];
+					if ($loa_packages_derived >= $loa_m_total_packages) {
+						$take_down = true;
+						$this->insertMessageQueuePackage($ticketId, 'LOA_PACKAGES');
+					}
+				}
+			}
+
+			// check LOA balance
+			// ------------------------------------------------------------------
+			if ($loa_m_balance > 0) { 
+				$ticket_amount_adjusted = ($ticketAmount * $loa['clpr']['percentOfRevenue']	) / 100;
+				if (($loa_m_balance - $ticket_amount_adjusted) <= 0) {
+					$take_down = true;
+					$this->insertMessageQueuePackage($ticketId, 'LOA_BALANCE');
+				}
+			}
+
+			// take down those scheduling masters and instances
+			// ------------------------------------------------------------------
+			if ($take_down) {
+				$result = $this->query("SELECT schedulingMasterId FROM schedulingMaster WHERE packageId IN ($package_ids_imp) AND startDate > NOW()");
+				if (!empty($result)) {
+					$sm_ids = array();
+					foreach ($result as $row) {
+						$sm_ids[] = $row['schedulingMaster']['schedulingMasterId'];
+					}
+					$sm_ids_imp = implode(',', $sm_ids);
+					$this->query("DELETE FROM schedulingInstance WHERE schedulingMasterId IN ($sm_ids_imp)");
+					$this->query("DELETE FROM schedulingMaster WHERE schedulingMasterId IN ($sm_ids_imp)");
+					$this->query("UPDATE offerLive SET endDate = NOW() WHERE packageId IN ($package_ids_imp) AND offerTypeId NOT IN (1,2,6) AND endDate > NOW()");
+				}
+			}
+		}
 	}
 
 	function insertMessageQueuePackage($ticketId, $type) {
@@ -115,9 +185,16 @@ class Ticket extends AppModel {
 					$model = 'Package';
 					$modelId = $packageId;
 					break;
-				case 'LOA':
+				case 'LOA_PACKAGES':
 					$title = "Maximum Number of Sales for LOA [$clientName]";
 					$description = "If funded, this pending ticket, <a href='/tickets/view/$ticketId'>$ticketId</a>, will satisfy the maximum number of sales for this LOA <a href='/loas/edit/$loaId'>$loaId</a>. ";
+					$description.= "All fixed priced offers for this LOA have ended and all live scheduled auctions will not reschedule.";
+					$model = 'Loa';
+					$modelId = $loaId;
+					break;	
+				case 'LOA_BALANCE':
+					$title = "Membership Balance for LOA [$clientName]";
+					$description = "If funded, this pending ticket, <a href='/tickets/view/$ticketId'>$ticketId</a>, will satisfy the membership balance for this LOA <a href='/loas/edit/$loaId'>$loaId</a>. ";
 					$description.= "All fixed priced offers for this LOA have ended and all live scheduled auctions will not reschedule.";
 					$model = 'Loa';
 					$modelId = $loaId;
