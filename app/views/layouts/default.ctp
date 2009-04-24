@@ -39,6 +39,8 @@
 		echo $scripts_for_layout;
 	?>
 	<script type="text/javascript">
+		var previousQueueCount = "";
+		
 		function closeModalbox()
 		{
 			if ($('closeModalbox')) {
@@ -55,10 +57,29 @@
 			}
 			return true;
 		}
-		Event.observe(window, 'load',
-			function() { if($('flashMessage')) { new Effect.Highlight($('flashMessage')) }; }
-		);
+		
+		function startupEvents() {
+			var queueCountUpdater = new Ajax.PeriodicalUpdater('queueCounter', '/message_queues/ajaxGetTotals', {
+			  method: 'get', frequency: 3, decay: 1, onSuccess: function(){flashQueueCounter()}
+			});
+		}
+		
+		function flashQueueCounter() {
+			if (previousQueueCount == "") {
+				previousQueueCount = $('queueCounter').innerHTML;
+				return true;
+			}
 
+			if (previousQueueCount != $('queueCounter').innerHTML) {
+				new Effect.Shake('queueCounter');
+				previousQueueCount = $('queueCounter').innerHTML;
+			}
+		}
+		
+		Event.observe(window, 'load',
+			function() { if($('flashMessage')) { new Effect.Highlight($('flashMessage')) };
+			 				startupEvents();}
+		);
 	</script>
 	<script type="text/javascript"><?php /* Needed to avoid Flash of Unstyled Content in IE */ ?> </script>
 </head>
@@ -93,7 +114,7 @@
 					<?if(0):?>
 		      		<li<?if(@($this->viewVars['currentTab'] == 'home')) echo ' class="current"'?>><?=$html->link('Home', '/')?></li>
 					<?endif;?>
-					<li<?if(@($this->viewVars['currentTab'] == 'message_queue')) echo ' class="current"'?>><?=$html->link('My Queue', array('controller' => 'message_queues', 'action' => 'index'))?></li>
+					<li<?if(@($this->viewVars['currentTab'] == 'message_queue')) echo ' class="current"'?>><?=$html->link('My Queue (<span id="queueCounter">'.$queueCountUnread.', '.$queueCountSeverity.'</span>)', array('controller' => 'message_queues', 'action' => 'index'), array(), null, false)?></li>
 		      		<li<?if(@($this->viewVars['currentTab'] == 'property')) echo ' class="current"'?>><?=$html->link('Clients', array('controller' => 'clients', 'action' => 'index'))?></li>
 		      		<li<?if(@($this->viewVars['currentTab'] == 'siteMerchandising')) echo ' class="current"'?>><a href="/pages/legacytools">Site Merchandising</a></li>
 		      		<li<?if(@($this->viewVars['currentTab'] == 'reports')) echo ' class="current"'?>><?=$html->link('Reports', array('controller' => 'reports', 'action' => 'index'))?></li>
