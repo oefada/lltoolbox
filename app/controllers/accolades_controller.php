@@ -85,9 +85,9 @@ class AccoladesController extends AppController {
 
 			$conditions = array("Accolade.clientId = '$query' OR AccoladeSource.accoladeSourceName LIKE '$query%' OR Client.name LIKE '$query%'");
 			
-			if (!$inactive) {
-			    $conditions['Accolade.inactive'] = 0;
-			}
+			//if (!$inactive) {
+			//    $conditions['Accolade.inactive'] = 0;
+			//}
 			$results = $this->Accolade->find('all', array('conditions' => $conditions, 'limit' => 5));
 
 			$this->set('query', $query);
