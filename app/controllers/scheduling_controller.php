@@ -62,6 +62,7 @@ class SchedulingController extends AppController {
             $packages = $this->Package->ClientLoaPackageRel->find('all', array('conditions' => array('ClientLoaPackageRel.clientId' => $clientId, 'packageStatusId' => 4)));
         } else { // if current LOA is found, display only packages for the current LOA to limit clutter
             $loaIds = $loa[0][0]['loaIds'];
+            $loaIds = explode(',', $loaIds);
             $packages = $this->Package->ClientLoaPackageRel->find('all', array('conditions' => array('ClientLoaPackageRel.clientId' => $clientId, 'packageStatusId' => 4, 'ClientLoaPackageRel.loaId' => $loaIds)));
         }
         
