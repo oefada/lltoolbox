@@ -71,7 +71,7 @@
 			}
 
 			if (previousQueueCount != $('queueCounter').innerHTML) {
-				new Effect.Shake('queueCounter');
+				//new Effect.Shake('queueCounter');
 				previousQueueCount = $('queueCounter').innerHTML;
 			}
 		}
