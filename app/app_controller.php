@@ -37,7 +37,7 @@
  * @subpackage	cake.app
  */
 uses('sanitize');
-
+App::import('Model', 'MessageQueue');
 class AppController extends Controller {
 	var $helpers = array('Html2', 'Form', 'Text', 'Pagination', 'Layout', 'Ajax', 'StrictAutocomplete', 'Number', 'DatePicker', 'Prototip', 'Session');
 	var $components = array('Acl', 'LdapAuth', 'RequestHandler');
@@ -78,13 +78,13 @@ class AppController extends Controller {
      	    $this->{$this->modelClass}->setUserIp($this->_userIp());
      	 }
      	 
-     /*	 $messageQueue = new MessageQueue;
+     	 $messageQueue = new MessageQueue;
 
          $unread = $messageQueue->total(array('toUser' => $user['LdapUser']['username'], 'read <>' => 1));
          $severity = $messageQueue->total(array('toUser' => $user['LdapUser']['username'], 'read <>' => 1, 'severity' => 3));
 
      	 $this->set('queueCountUnread', $unread);
-     	 $this->set('queueCountSeverity', $severity);*/
+     	 $this->set('queueCountSeverity', $severity);
      	 $this->_defineConstants();
 	}
 	
