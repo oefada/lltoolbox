@@ -38,7 +38,7 @@ class MessageQueuesController extends AppController {
 		}
 	}
 	
-	function ajaxGetTotals() {
+	function ajax_get_totals() {
 	    $this->autoRender = false;
 	    
 	    $unread = $this->MessageQueue->total(array('toUser' => $this->user['LdapUser']['username'], 'read <>' => 1));
