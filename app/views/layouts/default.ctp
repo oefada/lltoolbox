@@ -60,7 +60,7 @@
 		
 		function startupEvents() {
 			var queueCountUpdater = new Ajax.PeriodicalUpdater('queueCounter', '/message_queues/ajaxGetTotals', {
-			  method: 'get', frequency: 3, decay: 2, onSuccess: function(){flashQueueCounter()}
+			  method: 'get', frequency: 5, decay: 2, onSuccess: function(){flashQueueCounter()}
 			});
 		}
 		
