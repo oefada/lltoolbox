@@ -101,16 +101,29 @@ class WebServiceNewClientsController extends WebServicesController
 	    
 	  	$reservationContacts = array('AUC', 'CCALL', 'ALL_AUC', 'ALL.AUC');
 	  	$homepageContacts = array('MKT', 'ALL', 'CCALL', 'ALL_AUC', 'ALL.AUC');
-	    
+		$deleteContacts = array('NLT');
+
 	    if ($client_id) {
 		    $contacts = $decoded_request['contacts'];
 		    foreach ($contacts as $k => $contact) {
 		    	$contact_id = $contact['contact_id'];
 		    	$recipient_type	 = $contact['recipient_type_c'];
-		    	
+				
+				$checkResult = $this->ClientContact->query("SELECT * FROM clientContact WHERE clientId = $client_id AND sugarContactId = '$contact_id'");
+
+				// delete from TB if NLT recipient type
+				if (!empty($checkResult) && in_array($recipient_type, $deleteContacts)) {
+					$this->ClientContact->query("DELETE FROM clientContact WHERE clientId = $client_id AND sugarContactId = '$contact_id'");
+					continue;
+				}
+
 		    	if (empty($recipient_type)) {
 					continue;
 		    	}
+
+				if (empty($contact['email_address'])) {
+					continue;
+				}
 
 		    	$newClientContact = array();
 		    	$newClientContact['clientId']				= $client_id;
@@ -121,8 +134,6 @@ class WebServiceNewClientsController extends WebServicesController
 		    	$newClientContact['fax']					= $contact['phone_fax'];
 		    	$newClientContact['sugarContactId']			= $contact_id;
 				
-				$checkResult = $this->ClientContact->query("SELECT * FROM clientContact WHERE clientId = $client_id AND sugarContactId = '$contact_id'");
-		    	
 		    	if (empty($checkResult)) {
 		    		if (in_array($recipient_type, $reservationContacts)) {
 		    			$newClientContact['clientContactTypeId'] = 1;
