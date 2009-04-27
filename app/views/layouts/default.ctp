@@ -59,9 +59,9 @@
 		}
 		
 		function startupEvents() {
-			var queueCountUpdater = new Ajax.PeriodicalUpdater('queueCounter', '/message_queues/ajax_get_totals', {
+			/*var queueCountUpdater = new Ajax.PeriodicalUpdater('queueCounter', '/message_queues/ajax_get_totals', {
 			  method: 'get', frequency: 10, decay: 2, onSuccess: function(){flashQueueCounter()}
-			});
+			});*/
 		}
 		
 		function flashQueueCounter() {
