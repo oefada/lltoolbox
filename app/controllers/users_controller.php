@@ -86,7 +86,7 @@ class UsersController extends AppController {
 			
 			$query = '';
 			foreach ($parts as $part) {
-			    if (strlen($part) > 3) {
+			    if (strlen($part) > 2) {
 			        $query .= '+';
 			    }
 			    $query .= $part.' ';
