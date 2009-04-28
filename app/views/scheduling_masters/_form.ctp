@@ -8,7 +8,10 @@
 			<?php echo 'Package Validity: '.date('M j, Y', strtotime($package['Package']['validityStartDate'])).' to '.date('M j, Y', strtotime($package['Package']['validityEndDate'])) ?>
 			</p>
 	<?php
-		echo $form->input('offerTypeId', array('label' => 'Offer Type'));
+		echo $form->input('offerTypeId', array('label' => 'Offer Type', 'empty' => true));
+		if ($singleClientPackage) {
+			echo $form->input('Track', array('options' => $trackIds, 'empty' => true, 'multiple' => false));
+		}
 		echo "<strong>For Fixed Price offer types, number of days to run, scheduling delay, and number of iterations will be ignored. You must choose an end date for fixed price offers.</strong>";		
 		echo $form->input('retailValue', array('disabled' => 'disabled'));
 		
@@ -99,7 +102,6 @@ datePickerController.addDatePicker('SchedulingMasterEndDatePicker', {'id':'Sched
 		echo $form->label('First Instance End Time');
 		echo $form->dateTime('firstIterationEndDateTime', 'NONE', '12', null, array(), false);
 
-		echo $form->input('trackId', array('value' => $package['ClientLoaPackageRel'][0]['trackId'], 'type' => 'hidden'));
 		echo $form->input('packageName', array('value' => $package['Package']['packageTitle'], 'type' => 'hidden'));
 		echo $form->input('shortBlurb', array('value' => $package['Package']['shortBlurb'], 'type' => 'hidden'));
 		echo $form->input('subtitle',  array('value' => $package['Package']['subtitle'], 'type' => 'hidden'));

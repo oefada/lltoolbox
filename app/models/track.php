@@ -4,7 +4,7 @@ class Track extends AppModel {
 	var $name = 'Track';
 	var $useTable = 'track';
 	var $primaryKey = 'trackId';
-	var $displayName = 'trackName';
+	var $displayField = 'trackName';
 	
 	var $belongsTo = array('ExpirationCriterium' => array('foreignKey' => 'expirationCriteriaId'),
 						   'RevenueModel' => array('foreignKey' => 'revenueModelId')

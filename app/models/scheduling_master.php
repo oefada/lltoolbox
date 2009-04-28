@@ -26,6 +26,7 @@ class SchedulingMaster extends AppModel {
 								'Track' => 
 								    array('className' => 'Track',
 								          'joinTable' => 'schedulingMasterTrackRel',
+								          'with' => 'SchedulingMasterTrackRel',
 								          'foreignKey' => 'schedulingMasterId',
 								          'associationForeignKey' => 'trackId')
 								);

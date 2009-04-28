@@ -70,11 +70,14 @@ class SchedulingMastersController extends AppController {
 			}
 			
 			//associate the tracks from each client to this offer
-			foreach ($package['ClientLoaPackageRel'] as $v) {
-			    $this->data['Track']['Track'][] = $v['trackId'];
+			//only if this is a multi client offer, single client comes from user selection
+			if (count($package['ClientLoaPackageRel']) > 1) {
+			    foreach ($package['ClientLoaPackageRel'] as $v) {
+    			    $this->data['Track']['Track'][] = $v['trackId'];
+    			}
 			}
-
-			if ($this->SchedulingMaster->save($this->data)) {
+			
+			if ($this->SchedulingMaster->save($this->data) && $this->SchedulingMaster->saveAll($this->data)) {
 				$this->createInstances();
 				if ($this->RequestHandler->isAjax()) {
 					$this->Session->setFlash(__('The Schedule has been saved', true), 'default', array(), 'success');
@@ -101,6 +104,15 @@ class SchedulingMastersController extends AppController {
 		        $hasTracks = true;
 		        break;
 		    }
+		}
+		
+		if (count($package['ClientLoaPackageRel']) > 1) {
+		    $this->set('singleClientPackage', false);
+		} else {
+		    $this->set('singleClientPackage', true);
+		    
+		    $trackIds = $this->SchedulingMaster->Package->ClientLoaPackageRel->Loa->Track->find('list', array('conditions' => array('loaId' => $package['ClientLoaPackageRel'][0]['loaId'])));
+		    $this->set('trackIds', $trackIds);
 		}
 		
 		//if no formats were selected for this package, we can't schedule it
@@ -470,6 +482,15 @@ class SchedulingMastersController extends AppController {
 		    $masterState = 0;
 		} else {
 		    $masterState = 1;
+		}
+		
+		if (count($package['ClientLoaPackageRel']) > 1) {
+		    $this->set('singleClientPackage', false);
+		} else {
+		    $this->set('singleClientPackage', true);
+		    
+		    $trackIds = $this->SchedulingMaster->Package->ClientLoaPackageRel->Loa->Track->find('list', array('conditions' => array('loaId' => $package['ClientLoaPackageRel'][0]['loaId'])));
+		    $this->set('trackIds', $trackIds);
 		}
 		
 		/* Since we are editing a master, no info should come from the package at this point, so we can override it all with the data already in the master
