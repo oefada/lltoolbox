@@ -96,16 +96,6 @@ class SchedulingMastersController extends AppController {
 			$formatIds[] = $format['formatId'];
 		endforeach;
 		
-		
-		$hasTracks = false;
-		//associate the tracks from each client to this offer
-		foreach ($package['ClientLoaPackageRel'] as $v) {
-		    if (!empty($v['trackId'])) {
-		        $hasTracks = true;
-		        break;
-		    }
-		}
-		
 		if (count($package['ClientLoaPackageRel']) > 1) {
 		    $this->set('singleClientPackage', false);
 		} else {
@@ -118,10 +108,6 @@ class SchedulingMastersController extends AppController {
 		//if no formats were selected for this package, we can't schedule it
 		if (count($formatIds) == 0) {
 			echo '<h3>This package is not ready to be scheduled because no formats have been associated with it.</h3>';
-			die();
-		}
-		if (!$hasTracks) {
-			echo '<h3>This package is not ready to be scheduled because there are no tracks assigned to it.</h3>';
 			die();
 		}
 		//if package is not approved, do not allow scheduling
