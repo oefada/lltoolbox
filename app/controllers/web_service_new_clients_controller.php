@@ -100,7 +100,7 @@ class WebServiceNewClientsController extends WebServicesController
 	    // clientContactTypeId = 2 is homepage notification SUGAR ->(MKT, CCALL, ALL, ALL_AUC)
 	    
 	  	$reservationContacts = array('AUC', 'ALL', 'CCALL', 'ALL_AUC', 'ALL.AUC');
-	  	$homepageContacts = array('MKT', 'ALL', 'CCALL', 'ALL_AUC', 'ALL.AUC');
+	  	$homepageContacts = array('MKT', 'MKT_ALL', 'ALL', 'CCALL', 'ALL_AUC', 'ALL.AUC');
 		$deleteContacts = array('NLT');
 
 	    if ($client_id) {
