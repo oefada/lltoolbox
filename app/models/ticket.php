@@ -180,22 +180,27 @@ class Ticket extends AppModel {
 			switch ($type) {
 				case 'PACKAGE':
 					$title = "Maximum Number of Sales for Package [$packageName]";
-					$description = "If funded, this pending ticket, <a href='/tickets/view/$ticketId'>$ticketId</a>, will satisfy the maximum number of sales for this package, <a href='/clients/$clientId/packages/edit/$packageId'>$packageName</a>. ";
-					$description.= "All fixed priced offers for this package have ended and all live scheduled auctions will not reschedule.";
+					$description = "A pending ticket (Ticket ID# <a href='/tickets/view/$ticketId'>$ticketId</a>) exists for that once funded will ";
+					$description.= "fulfill the Max Number of Sales for <a href='/clients/edit/$clientId'>$clientName</a> (Package ID# <a href='/clients/$clientId/packages/edit/$packageId'>$packageId</a>). ";
+					$description.= "All future auctions have been deleted and all fixed price offers have been closed for this package.";
 					$model = 'Package';
 					$modelId = $packageId;
 					break;
 				case 'LOA_PACKAGES':
 					$title = "Maximum Number of Sales for LOA [$clientName]";
-					$description = "If funded, this pending ticket, <a href='/tickets/view/$ticketId'>$ticketId</a>, will satisfy the maximum number of sales for this LOA <a href='/loas/edit/$loaId'>$loaId</a>. ";
-					$description.= "All fixed priced offers for this LOA have ended and all live scheduled auctions will not reschedule.";
+					$description = "A pending ticket (Ticket ID# <a href='/tickets/view/$ticketId'>$ticketId</a>) exists for that once funded will ";
+					$description.= "fulfill the Membership Number of Packages for <a href='/clients/edit/$clientId'>$clientName</a>. ";
+					$description.= "All future auctions have been deleted and all fixed price offers have been ";
+					$description.= "closed that are associated with this client's current LOA (LOA ID# <a href='/loas/edit/$loaId'>$loaId</a>).";
 					$model = 'Loa';
 					$modelId = $loaId;
 					break;	
 				case 'LOA_BALANCE':
 					$title = "Membership Balance for LOA [$clientName]";
-					$description = "If funded, this pending ticket, <a href='/tickets/view/$ticketId'>$ticketId</a>, will satisfy the membership balance for this LOA <a href='/loas/edit/$loaId'>$loaId</a>. ";
-					$description.= "All fixed priced offers for this LOA have ended and all live scheduled auctions will not reschedule.";
+					$description = "A pending ticket (Ticket ID# <a href='/tickets/view/$ticketId'>$ticketId</a>) exists for that once funded will ";
+					$description.= "fulfill the Membership Balance for <a href='/clients/edit/$clientId'>$clientName</a>. ";
+					$description.= "All future auctions have been deleted and all fixed price offers have been ";
+					$description.= "closed that are associated with this client's current LOA (LOA ID# <a href='/loas/edit/$loaId'>$loaId</a>).";
 					$model = 'Loa';
 					$modelId = $loaId;
 					break;	
