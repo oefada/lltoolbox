@@ -83,5 +83,15 @@ class Track extends AppModel {
 		}
 		return $validPresets;
 	}
+	
+	function beforeSave($created) {
+	    if ($this->data['Track']['expirationCriteriaId'] == 1) {
+	        $this->data['Track']['applyToMembershipBal'] = 1;
+	    } else {
+	        $this->data['Track']['applyToMembershipBal'] = 0;
+	    }
+	    
+	    return true;
+	}
 }
 ?>
