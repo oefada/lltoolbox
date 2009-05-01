@@ -13,7 +13,7 @@ class TicketsController extends AppController {
 	var $uses = array('Ticket','OfferType', 'Format', 'User', 'ClientLoaPackageRel', 'Track', 'TrackDetail','Offer','Loa','Client', 'OfferLive', 'OfferPromoCode');
 
 	function index() {
-		
+
 		// set search criteria from form post or set defaults
 		$form = $this->params['form'];
 		$named = $this->params['named'];
@@ -102,7 +102,25 @@ class TicketsController extends AppController {
 		} elseif ($s_bid_id) {
 			$this->paginate['conditions']['Ticket.bidId'] = $s_bid_id;       
 		} elseif ($s_client_id) {
-			$this->paginate['conditions']['Ticket.clientId'] = $s_client_id;       
+			$this->paginate['joins'] = array(
+				array( 
+		            'table' => 'clientLoaPackageRel', 
+		            'alias' => 'ClientLoaPackageRel', 
+		            'type' => 'inner',  
+		            'conditions'=> array('ClientLoaPackageRel.packageId = Ticket.packageId') 
+			        ), 
+		        array( 
+		            'table' => 'client', 
+		            'alias' => 'Client', 
+		            'type' => 'inner',  
+		            'conditions'=> array( 
+		       	   	   'Client.clientId = ClientLoaPackageRel.clientId', 
+			           'Client.clientId' => $s_client_id 
+		 	           ) 
+					)
+				);
+			$this->paginate['group'] = array('Ticket.ticketId');
+			$this->paginate['conditions']['Ticket.created BETWEEN ? AND ?'] = array($s_start_date, $s_end_date);             		
 		} elseif ($s_request_queue_id) {
 			$this->paginate['conditions']['Ticket.requestQueueId'] = $s_request_queue_id;    
 		} elseif ($s_package_id) {
@@ -130,8 +148,14 @@ class TicketsController extends AppController {
 			}
 		}
 	
-	
 		$tickets_index = $this->paginate();
+		if ($s_client_id) {
+			$this->params['paging']['Ticket']['count'] = count($tickets_index);
+			$this->params['paging']['Ticket']['pageCount'] = ceil(count($tickets_index) / $this->params['paging']['Ticket']['defaults']['limit']);
+			if ($this->params['paging']['Ticket']['pageCount'] < 2) {
+				$this->params['paging']['Ticket']['nextPage'] = '';
+			}
+		}
 		
 		foreach ($tickets_index as $k => $v) {
 			$tickets_index[$k]['Ticket']['validCard'] = $this->getValidCcOnFile($v['Ticket']['userId'], $v['Ticket']['bidId']);
