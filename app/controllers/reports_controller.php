@@ -1154,8 +1154,10 @@ class ReportsController extends AppController {
         	                                        ORDER BY lastUpdate ");
             
             //setup array of all months we are using in this view
+            
+            $today = strtotime(date('Y-m-01'));
             for ($i = 0; $i <= 12; $i++) {
-                $ts = strtotime("-".(12-($i-1))." months");
+                $ts = strtotime("-".(12-($i-1))." months", $today);
                 $months[$i] = date('Ym', $ts);
                 $monthNames[$i] = date('M Y', $ts);
             }
