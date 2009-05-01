@@ -83,6 +83,18 @@ class PpvNoticesController extends AppController {
         $response = $soap_client->call($webservice_live_method_name, array($webservice_live_method_param => $data_json_encoded));
                    
      	$this->set('ppv_body_text', $response);
+		$this->set('ticketId', $ticketId);
+		if ($id == 1) {
+			// reservation confirmation 
+			$reservation = $this->Ticket->query("SELECT * FROM reservation WHERE ticketId = $ticketId");
+			if (!empty($reservation)) {
+				$this->set('hasResData', 1);
+				$this->set('reservation', $reservation[0]['reservation']);
+			} else {
+				$this->set('hasResData', 0);
+			}
+			$this->set('isResConf', 1);
+		}
 	}
 
 	/*

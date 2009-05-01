@@ -8,7 +8,7 @@ require(APP.'/vendors/pp/Processor.class.php');
 class WebServiceTicketsController extends WebServicesController
 {
 	var $name = 'WebServiceTickets';
-	var $uses = array('Ticket', 'UserPaymentSetting','PaymentDetail', 'Client', 'User', 'Offer', 'Bid', 'ClientLoaPackageRel', 'Track', 'OfferType', 'Loa', 'TrackDetail', 'PpvNotice', 'Address', 'OfferLive', 'SchedulingMaster', 'SchedulingInstance');
+	var $uses = array('Ticket', 'UserPaymentSetting','PaymentDetail', 'Client', 'User', 'Offer', 'Bid', 'ClientLoaPackageRel', 'Track', 'OfferType', 'Loa', 'TrackDetail', 'PpvNotice', 'Address', 'OfferLive', 'SchedulingMaster', 'SchedulingInstance', 'Reservation');
 	var $serviceUrl = 'http://toolbox.luxurylink.com/web_service_tickets';
 	var $serviceUrlDev = 'http://toolboxdev.luxurylink.com/web_service_tickets';
 	var $errorResponse = false;
@@ -459,6 +459,16 @@ class WebServiceTicketsController extends WebServicesController
 		$fpNumGuests		= $ticketData['requestNumGuests'];
 		$fpNotes			= $ticketData['requestNotes'];
 
+		if ($ppvNoticeTypeId == 1) {
+			// for reservation confirmation
+			$resData = $this->Ticket->query("SELECT * FROM reservation WHERE ticketId = $ticketId");
+			if (!empty($resData)) {
+				$resConfNum = $resData[0]['reservation']['reservationConfirmNum'];
+				$resArrivalDate = date('M d, Y', strtotime($resData[0]['reservation']['arrivalDate']));
+				$resDepartureDate = date('M d, Y', strtotime($resData[0]['reservation']['departureDate']));
+			}
+		}
+
 		// cc variables
 		// -------------------------------------------------------------------------------
 		if (is_array($userPaymentData) && !empty($userPaymentData)) {
@@ -768,8 +778,18 @@ class WebServiceTicketsController extends WebServicesController
 		// update ticket status if required
 		// -------------------------------------------------------------------------------
 		$newTicketStatus = false;
-		if ($ppvNoticeTypeId == 1) {
-			$newTicketStatus = 4;		
+		if ($ppvNoticeTypeId == 1) {  
+			// reservation confirmation
+			$newTicketStatus = 4;	
+			$resData = $this->Ticket->query("SELECT * FROM reservation WHERE ticketId = $ticketId");
+			if (!empty($resData)) {
+				$reservationId = $resData[0]['reservation']['reservationId'];
+				$reservation = array();
+				$reservation['reservationId'] = $reservationId;
+				$reservation['ticketId'] = $ticketId;
+				$reservation['reservationConfirmToCustomer'] = date('Y:m:d H:i:s', strtotime('now'));
+				$this->Reservation->save($reservation);
+			}
 		} elseif ($ppvNoticeTypeId == 2) {
 			$newTicketStatus = 3;
 		}
