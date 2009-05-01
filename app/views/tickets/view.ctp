@@ -518,4 +518,72 @@ $this->searchController = 'Tickets';
 	<?php endif; ?>
 	</div>
 </div>
+
+<br />
+<div class="collapsible">
+	<div class="handle"><?php __('Reservation Info');?></div>
+	<div class="collapsibleContent related">
+	<br />
+	<?php if (!empty($ticket['Reservation']['reservationId'])):?>
+		<table cellpadding="0" cellspacing="0">
+			<tr class="altrow">
+				<td width="200">Reservation Id</td>
+				<td><?php echo $ticket['Reservation']['reservationId'];?></td>
+			</tr>
+			<tr>
+				<td width="200">Arrival Date</td>
+				<td><?php echo $ticket['Reservation']['arrivalDate'];?></td>
+			</tr>
+			<tr class="altrow">
+				<td width="200">Departure Date</td>
+				<td><?php echo $ticket['Reservation']['departureDate'];?></td>
+			</tr>
+			<tr>
+				<td width="200">Confirmation #</td>
+				<td><?php echo $ticket['Reservation']['reservationConfirmNum'];?></td>
+			</tr>
+			<tr class="altrow">
+				<td width="200">Res. Conf. Sent to User</td>
+				<td>
+					<?php 
+					if ($ticket['Reservation']['reservationConfirmToCustomer']) {
+						echo $ticket['Reservation']['reservationConfirmToCustomer'];
+					} else {
+						echo '<strong>No Email Sent to User Yet</strong><br />';
+					}
+					?>
+				</td>
+			</tr>
+		</table>
+		<?php
+		echo $html->link('Edit Reservation',
+			'/reservations/edit/' . $ticket['Reservation']['reservationId'],
+			array(
+				'title' => 'Edit Reservation',
+				'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
+				'complete' => 'closeModalbox()'
+				),
+			null,
+			false
+		);
+		?>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<?php echo '<a href="/tickets/'. $ticket['Ticket']['ticketId'] .'/ppvNotices/add/1">Send Reservation Confirmation Email</a>';?>
+	<?php else: ?>
+		<?php
+		echo $html->link('Enter Reservation Information',
+			'/tickets/' . $ticket['Ticket']['ticketId'] . '/reservations/add',
+			array(
+				'title' => 'Enter Reservation Information',
+				'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
+				'complete' => 'closeModalbox()'
+				),
+			null,
+			false
+		);
+		?>
+	<?php endif; ?>
+	</div>
+</div>
+
 <br />

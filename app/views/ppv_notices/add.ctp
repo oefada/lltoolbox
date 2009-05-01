@@ -20,11 +20,28 @@
 		echo $form->input('ppvNoticeTypeId', array('disabled' => 'disabled'));
 		echo $form->input('ppvNoticeTypeId', array('type' => 'hidden'));
 		echo $form->input('ticketId', array('readonly'=>'readonly'));
+		if ($isResConf) {
+			echo "<br /><br />";
+			echo "<h2>Reservation Confirmation</h2>";
+			echo "<h3 style='font-size:14px;'>";
+			echo "Please double check the Confirmation #, Arrival Date, and Departure Date for this Reservation Confirmation Email.  If there is incorrect reservation information, ";
+			echo "please <a href='/tickets/view/$ticketId'>click here</a> to back to the ticket screen to edit the Reservation info. Do not manually edit the email below.";
+			echo "</h3>";
+		}
 	?>
 		<?php if ($promo) :?>
 			<h3 style="margin:20px;padding:0px;">** This ticket is associated with PROMO CODE  **</h3>
 		<?php endif; ?>
-		<div style="text-align:right;margin:0px;padding:0px;"><?php echo $form->submit('Send');?></div>
+		<?php if ($isResConf && !$hasResData) :?>
+			<div style="text-align:left;margin:0px;padding:5px;">
+				<h3 style='font-size:14px;font-weight:bold;color:#000000'>
+				** You cannot send out this email until you associated a reservation record to this ticket.
+				 To add a record, <a href='/tickets/view/<?=$ticketId?>'>click here</a>. **
+				</h3><br />
+			</div>
+		<?php else: ?>
+			<div style="text-align:right;margin:0px;padding:0px;"><?php echo $form->submit('Send');?></div>
+		<?php endif;?>
 		<textarea id="PpvNoticeEmailBody" name="data[PpvNotice][emailBody]" cols="140" rows="30" style="width:100%;"><?php echo $ppv_body_text;?></textarea>
 	</fieldset>
 <?php echo $form->end();?>
