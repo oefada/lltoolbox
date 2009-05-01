@@ -111,15 +111,18 @@ class WebServiceNewClientsController extends WebServicesController
 				
 				$checkResult = $this->ClientContact->query("SELECT * FROM clientContact WHERE clientId = $client_id AND sugarContactId = '$contact_id'");
 
-				// delete from TB if NLT recipient type
-				if (!empty($checkResult) && in_array($recipient_type, $deleteContacts)) {
+				// delete from TB and reinsert
+				if (!empty($checkResult)) {
 					$this->ClientContact->query("DELETE FROM clientContact WHERE clientId = $client_id AND sugarContactId = '$contact_id'");
-					continue;
 				}
 
 		    	if (empty($recipient_type)) {
 					continue;
 		    	}
+
+				if (in_array($recipient_type, $deleteContacts)) {
+					continue;
+				}
 
 				if (empty($contact['email_address'])) {
 					continue;
@@ -134,23 +137,16 @@ class WebServiceNewClientsController extends WebServicesController
 		    	$newClientContact['fax']					= $contact['phone_fax'];
 		    	$newClientContact['sugarContactId']			= $contact_id;
 				
-		    	if (empty($checkResult)) {
-		    		if (in_array($recipient_type, $reservationContacts)) {
-		    			$newClientContact['clientContactTypeId'] = 1;
-		    			$this->ClientContact->create();
-		    			$this->ClientContact->save($newClientContact);
-		    		}
-		    		if (in_array($recipient_type, $homepageContacts)) {
-		    			$newClientContact['clientContactTypeId'] = 2;
-		    			$this->ClientContact->create();
-		    			$this->ClientContact->save($newClientContact);
-		    		}
-		    	} else {
-					foreach ($checkResult as $bb => $tb_contact) {
-						$newClientContact['clientContactId'] = $tb_contact['clientContact']['clientContactId'];
-						$this->ClientContact->save($newClientContact);	
-					}
-				}
+		    	if (in_array($recipient_type, $reservationContacts)) {
+		    		$newClientContact['clientContactTypeId'] = 1;
+		    		$this->ClientContact->create();
+		    		$this->ClientContact->save($newClientContact);
+		    	}
+		    	if (in_array($recipient_type, $homepageContacts)) {
+		    		$newClientContact['clientContactTypeId'] = 2;
+		    		$this->ClientContact->create();
+		    		$this->ClientContact->save($newClientContact);
+		    	}
 		    }
 		}
 	      
