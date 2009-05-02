@@ -10,7 +10,7 @@ class TicketsController extends AppController {
 
 	var $name = 'Tickets';
 	var $helpers = array('Html', 'Form', 'Ajax', 'Text', 'Layout', 'Number');
-	var $uses = array('Ticket','OfferType', 'Format', 'User', 'ClientLoaPackageRel', 'Track', 'TrackDetail','Offer','Loa','Client', 'OfferLive', 'OfferPromoCode');
+	var $uses = array('Ticket','OfferType', 'Format', 'User', 'ClientLoaPackageRel', 'Track', 'TrackDetail','Offer','Loa','Client', 'OfferLive', 'OfferPromoCode', 'Reservation');
 
 	function index() {
 
@@ -36,6 +36,7 @@ class TicketsController extends AppController {
 		$s_promo_code_id = isset($form['s_promo_code_id']) ? $form['s_promo_code_id'] : '';
 		$s_offer_type_id = isset($form['s_offer_type_id']) ? $form['s_offer_type_id'] : 0;
 		$s_ticket_status_id = isset($form['s_ticket_status_id']) ? $form['s_ticket_status_id'] : 0;
+		$s_has_reservation = isset($form['s_has_reservation']) ? $form['s_has_reservation'] : 0;
 		$s_start_y = isset($form['s_start_y']) ? $form['s_start_y'] : date('Y');
 		$s_start_m = isset($form['s_start_m']) ? $form['s_start_m'] : date('m');
 		$s_start_d = isset($form['s_start_d']) ? $form['s_start_d'] : date('d');
@@ -69,6 +70,7 @@ class TicketsController extends AppController {
 		$this->set('s_format_id', $s_format_id);
 		$this->set('s_offer_type_id', $s_offer_type_id);
 		$this->set('s_ticket_status_id', $s_ticket_status_id);
+		$this->set('s_has_reservation', $s_has_reservation);
 		$this->set('s_start_y', $s_start_y);   
 		$this->set('s_start_m', $s_start_m);   
 		$this->set('s_start_d', $s_start_d);   
@@ -145,6 +147,11 @@ class TicketsController extends AppController {
 				} else {
 					$this->paginate['conditions']['OfferPromoTracking.offerPromoCodeId'] = $s_promo_code_id;
 				}
+			}
+			if ($s_has_reservation) {
+				$this->paginate['contain'][] = 'Reservation';
+				$this->paginate['group'] = array('Ticket.ticketId');
+				$this->paginate['conditions']['Reservation.reservationId > '] = 0;
 			}
 		}
 	
