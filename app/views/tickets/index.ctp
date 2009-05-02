@@ -213,6 +213,14 @@ $this->set('hideSidebar', true);
 			</tr>
 			<tr>
 				<td width="150">
+					With Reservation Record
+				</td>
+				<td>
+					<input type="checkbox" id="s_has_reservation" name="s_has_reservation" <?php if ($s_has_reservation) echo 'checked="checked"';?>/>
+				</td>
+			</tr>
+			<tr>
+				<td width="150">
 					&nbsp;
 				</td>
 				<td>
