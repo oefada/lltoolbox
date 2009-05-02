@@ -34,10 +34,12 @@ class Ticket extends AppModel {
 		$params = array('conditions' => $conditions);
 		foreach ($conditions as $k => $v) {
 			if (stristr($k, 'promo')) {
-				$params['contain'] = array('OfferPromoTracking');
-				$params['fields'] = array('COUNT(distinct ticketId) as count');
-				$result = $this->find('count', $params);
-				return $result;
+				$params['contain'][] = 'OfferPromoTracking';
+				$params['fields'] = array('COUNT(distinct Ticket.ticketId) as count');
+			}
+			if (stristr($k, 'reservation')) {
+				$params['contain'][] = 'Reservation';
+				$params['fields'] = array('COUNT(distinct Ticket.ticketId) as count');
 			}
 		}
 		$result = $this->find('count', $params);
