@@ -48,7 +48,6 @@ class ClientNewsletterNotifierController extends AppController {
 
                 $this->Email->send();
 	        }
-	        break;
 	    }
 	}
 }
