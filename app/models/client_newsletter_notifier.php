@@ -7,7 +7,12 @@ class ClientNewsletterNotifier extends AppModel {
 	
 	function prepareContactDetails() {
 	    $url = $this->data[$this->name]['url'];
-	    $handle = fopen($url, "r");
+	    
+	    // toolbox can't communicate using www. so we need to direct the connection to one of the servers
+	    // in this case we pick web1 randomly
+	    $urlToOpen = str_replace('http://www.', 'http://web1dmz.', $url);
+	    
+	    $handle = fopen($urlToOpen, "r");
         $contents = '';
         while (!feof($handle)) {
           $contents .= fread($handle, 8192);
