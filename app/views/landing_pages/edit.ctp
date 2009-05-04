@@ -13,7 +13,7 @@
 		echo $form->input('textHeader');
 		echo $form->input('textBody');
 		echo $form->input('communityUrl');
-		echo $form->input('mainHomepageStyle');
+		echo '<div class="controlset">' . $form->input('mainHomepageStyle') . '</div>';
 		echo '<div class="controlset">' . $form->input('inactive') . '</div>';
 	?>
 	</fieldset>
