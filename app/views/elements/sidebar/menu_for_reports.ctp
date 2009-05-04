@@ -10,3 +10,7 @@
 	<li><?=$html->link('Offer Search', 'offer_search')?></li>
 	<li><?=$html->link('Package Search', 'packages')?></li>
 </ul>
+<h3>Other Tools</h3>
+<ul class="tree">
+	<li><?=$html->link('Client Newsletter Notifier', '/client_newsletter_notifier')?></li>
+</ul>
