@@ -22,14 +22,22 @@ class ClientNewsletterNotifier extends AppModel {
         $clients = $this->getClientsFromHtml($contents);
         
         $client = new Client;
+
 	    $cl = $client->find('all', array(
 	                                    'fields' => 'name',
 	                                    'conditions' => array('Client.clientId' => $clients),
 	                                    'contain' => array('ClientContact' => array('conditions' => array('ClientContact.clientContactTypeId' => 2))),
 	                                    ));
-	                                    
-	                                    
-	    return $cl;
+	    
+	    //weed out the non-sponsorship clients
+	    $sponsorshipClients = array();
+		foreach ($cl as $client) {
+		    if ($client['ClientLevel']['clientLevelId'] == 2) {
+		        $sponsorshipClients[] = $client;
+		    }
+		}
+
+	    return $sponsorshipClients;
 	}
 	
 	function getClientsFromHtml($data) {
