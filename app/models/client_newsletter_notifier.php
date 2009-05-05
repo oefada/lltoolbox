@@ -24,7 +24,7 @@ class ClientNewsletterNotifier extends AppModel {
         $client = new Client;
 
 	    $cl = $client->find('all', array(
-	                                    'fields' => 'name',
+	                                    'fields' => array('name', 'managerUsername'),
 	                                    'conditions' => array('Client.clientId' => $clients),
 	                                    'contain' => array('ClientContact' => array('conditions' => array('ClientContact.clientContactTypeId' => 2))),
 	                                    ));
