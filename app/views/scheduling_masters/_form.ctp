@@ -30,7 +30,7 @@
 		echo $form->input('numDaysToRun', array('type' => 'select', 'options' => array(2 => '2', 3 => '3', 7 => '7')));
 		
 		if(in_array($userDetails['username'], array('kferson', 'jlagraff', 'dpen'))) {
-			echo $form->input('schedulingDelayCtrlId', array('onchange' => 'this.selectedIndex = 0', 'label' => 'Scheduling Delay'));
+			echo $form->input('schedulingDelayCtrlId', array('label' => 'Scheduling Delay'));
 		} else {
 			echo $form->input('schedulingDelayCtrlId', array('onchange' => 'this.selectedIndex = 0', 'readonly' => 'readonly', 'label' => 'Scheduling Delay'));
 		}
