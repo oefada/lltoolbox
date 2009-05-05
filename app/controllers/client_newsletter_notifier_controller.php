@@ -31,6 +31,11 @@ class ClientNewsletterNotifierController extends AppController {
 	        
     	        $this->Email->from = 'Client Marketing <clientmarketing@luxurylink.com >';
                 $this->Email->to = $contact['name'].' <'.$contact['emailAddress'].'>';
+                
+                if (!empty($client['Client']['managerUsername'])) {
+                    $this->Email->bcc = $client['Client']['managerUsername'].' <'.$client['Client']['managerUsername'].'>';
+                }
+                
                 $this->Email->subject = "You are featured in this week's Luxury Link ";
                 
                 if ($data['ClientNewsletterNotifier']['themeName']) {
