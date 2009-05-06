@@ -36,7 +36,8 @@ class TicketsController extends AppController {
 		$s_promo_code_id = isset($form['s_promo_code_id']) ? $form['s_promo_code_id'] : '';
 		$s_offer_type_id = isset($form['s_offer_type_id']) ? $form['s_offer_type_id'] : 0;
 		$s_ticket_status_id = isset($form['s_ticket_status_id']) ? $form['s_ticket_status_id'] : 0;
-		$s_has_reservation = isset($form['s_has_reservation']) ? $form['s_has_reservation'] : 0;
+		$s_res_confirmation_num = isset($form['s_res_confirmation_num']) ? $form['s_res_confirmation_num'] : '';
+		$s_res_check_in_date = isset($form['s_res_check_in_date']) ? $form['s_res_check_in_date'] : '';
 		$s_start_y = isset($form['s_start_y']) ? $form['s_start_y'] : date('Y');
 		$s_start_m = isset($form['s_start_m']) ? $form['s_start_m'] : date('m');
 		$s_start_d = isset($form['s_start_d']) ? $form['s_start_d'] : date('d');
@@ -58,30 +59,17 @@ class TicketsController extends AppController {
 				$s_ticket_id = $_GET['query'];			
 			} 
 		}
-		
-		$this->set('s_ticket_id', $s_ticket_id);
-		$this->set('s_offer_id', $s_offer_id);
-		$this->set('s_user_id', $s_user_id);
-		$this->set('s_client_id', $s_client_id);
-		$this->set('s_bid_id', $s_bid_id);
-		$this->set('s_request_queue_id', $s_request_queue_id);
-		$this->set('s_package_id', $s_package_id);
-		$this->set('s_promo_code_id', $s_promo_code_id);
-		$this->set('s_format_id', $s_format_id);
-		$this->set('s_offer_type_id', $s_offer_type_id);
-		$this->set('s_ticket_status_id', $s_ticket_status_id);
-		$this->set('s_has_reservation', $s_has_reservation);
-		$this->set('s_start_y', $s_start_y);   
-		$this->set('s_start_m', $s_start_m);   
-		$this->set('s_start_d', $s_start_d);   
-		$this->set('s_end_y', $s_end_y);
-		$this->set('s_end_m', $s_end_m);   
-		$this->set('s_end_d', $s_end_d);   
-		
+			
+		if ($s_res_check_in_date || $s_res_confirmation_num) {
+			$s_has_reservation = true;
+		} else {
+			$s_has_reservation = false;
+		}
+
 		// use these dates in the sql for date range search
 		$s_start_date = $s_start_y . '-' . $s_start_m . '-' . $s_start_d . ' 00:00:00';
 		$s_end_date = $s_end_y . '-' . $s_end_m . '-' . $s_end_d . ' 23:59:59';
-				
+
 		$this->paginate = array('fields' => array(
 									'Ticket.ticketId', 'Ticket.offerTypeId', 'Ticket.created', 'Ticket.bidId',  
 									'Ticket.offerId', 'Ticket.userId', 'TicketStatus.ticketStatusName', 'Ticket.packageId', 'Ticket.requestQueueId',
@@ -94,6 +82,7 @@ class TicketsController extends AppController {
 		                        'limit' => 50
 		                        );
 		    
+		$single_search = true;
 		// if search via ticket id, offer id, or user id, then dont use other search conditions
 		if ($s_ticket_id) {
 			$this->paginate['conditions']['Ticket.ticketId'] = $s_ticket_id;    
@@ -122,12 +111,12 @@ class TicketsController extends AppController {
 					)
 				);
 			$this->paginate['group'] = array('Ticket.ticketId');
-			$this->paginate['conditions']['Ticket.created BETWEEN ? AND ?'] = array($s_start_date, $s_end_date);             		
 		} elseif ($s_request_queue_id) {
 			$this->paginate['conditions']['Ticket.requestQueueId'] = $s_request_queue_id;    
 		} elseif ($s_package_id) {
 			$this->paginate['conditions']['Ticket.packageId'] = $s_package_id;    
 		} else {    
+			$single_search = false;
 			$this->paginate['conditions']['Ticket.created BETWEEN ? AND ?'] = array($s_start_date, $s_end_date);             		
 			if ($s_offer_type_id) {
 				$this->paginate['conditions']['Ticket.offerTypeId'] = $s_offer_type_id;	
@@ -152,18 +141,48 @@ class TicketsController extends AppController {
 				$this->paginate['contain'][] = 'Reservation';
 				$this->paginate['group'] = array('Ticket.ticketId');
 				$this->paginate['conditions']['Reservation.reservationId > '] = 0;
+				if ($s_res_confirmation_num) {
+					$this->paginate['conditions']['Reservation.reservationConfirmNum'] = trim($s_res_confirmation_num);
+					$single_search = true;
+					unset($this->paginate['conditions']['Ticket.created BETWEEN ? AND ?']);
+				}
+				if ($s_res_check_in_date) {
+					$this->paginate['conditions']['Reservation.arrivalDate BETWEEN ? AND ?'] = array($s_start_date, $s_end_date);             		
+				}
 			}
 		}
 	
-		$tickets_index = $this->paginate();
-		if ($s_client_id) {
-			$this->params['paging']['Ticket']['count'] = count($tickets_index);
-			$this->params['paging']['Ticket']['pageCount'] = ceil(count($tickets_index) / $this->params['paging']['Ticket']['defaults']['limit']);
-			if ($this->params['paging']['Ticket']['pageCount'] < 2) {
-				$this->params['paging']['Ticket']['nextPage'] = '';
-			}
+		if (!$single_search) {
+			$s_ticket_id = $s_offer_id = $s_user_id = $s_bid_id = $s_client_id = $s_request_queue_id = $s_package_id = $s_res_confirmation_num = null;
+		} else {
+			$s_res_check_in_date = $s_offer_type_id = $s_format_id = $s_ticket_status_id = $s_promo_code_id = null;
+			$s_start_y = $s_end_y = date('Y');
+			$s_start_m = $s_end_m = date('m');
+			$s_start_d = $s_end_d = date('d');
 		}
 		
+		$this->set('s_ticket_id', $s_ticket_id);
+		$this->set('s_offer_id', $s_offer_id);
+		$this->set('s_user_id', $s_user_id);
+		$this->set('s_client_id', $s_client_id);
+		$this->set('s_bid_id', $s_bid_id);
+		$this->set('s_request_queue_id', $s_request_queue_id);
+		$this->set('s_package_id', $s_package_id);
+		$this->set('s_promo_code_id', $s_promo_code_id);
+		$this->set('s_format_id', $s_format_id);
+		$this->set('s_offer_type_id', $s_offer_type_id);
+		$this->set('s_ticket_status_id', $s_ticket_status_id);
+		$this->set('s_res_confirmation_num', $s_res_confirmation_num);
+		$this->set('s_res_check_in_date', $s_res_check_in_date);
+		$this->set('s_start_y', $s_start_y);   
+		$this->set('s_start_m', $s_start_m);   
+		$this->set('s_start_d', $s_start_d);   
+		$this->set('s_end_y', $s_end_y);
+		$this->set('s_end_m', $s_end_m);   
+		$this->set('s_end_d', $s_end_d);   
+
+		$tickets_index = $this->paginate();
+
 		foreach ($tickets_index as $k => $v) {
 			$tickets_index[$k]['Ticket']['validCard'] = $this->getValidCcOnFile($v['Ticket']['userId'], $v['Ticket']['bidId']);
 			$tracks = $this->TrackDetail->getTrackRecord($v['Ticket']['ticketId']);
