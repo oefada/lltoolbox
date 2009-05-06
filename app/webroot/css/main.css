@@ -943,34 +943,33 @@ div.ticket-table table {
 }
 
 /* ticket search form */
-
-div #ticket-search-box {
-	width: 400px;
-}
-
 div #ticket-search-box table {
-	border: 1px solid #a3a3a3;
+	border: 0px;
 }
 
 div #ticket-search-box td,th {
-	border-bottom: 1px solid #a3a3a3;
-	border-right: 1px solid #a3a3a3;
 	text-align: left;
+	border: 0px;
 }
 
 div #ticket-search-box td {
-	background-color: #FFFFEE;
-	font-size:10px;
+	background-color: #F1F1F1;
+	font-size:11px;
+	border: 0px;
 }
 
 div #ticket-search-box select, input {
-	font-size: 10px;
+	font-size: 11px;
+}
+
+div #ticket-search-box input {
+	width: 70px;
 }
 
 div #ticket-search-box th {
 	font-weight: bold;
 	padding: 5px;
-	background-color: #FFFFDD;
+	background-color: #F1F1F1;
 }
 
 .tickets-view-td td {
