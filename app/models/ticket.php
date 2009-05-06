@@ -42,6 +42,11 @@ class Ticket extends AppModel {
 				$params['fields'] = array('COUNT(distinct Ticket.ticketId) as count');
 			}
 		}
+		if (isset($extra['joins'])) { // just for client search in ticket
+			$params['joins'] = $extra['joins'];
+			$params['fields'] = array('COUNT(distinct Ticket.ticketId) as count');
+			$params['contain'] = $extra['contain'];
+		}
 		$result = $this->find('count', $params);
 		return $result;
 	}
