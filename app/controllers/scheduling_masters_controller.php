@@ -77,7 +77,7 @@ class SchedulingMastersController extends AppController {
     			}
 			}
 			
-			if ($this->SchedulingMaster->save($this->data) && $this->SchedulingMaster->saveAll($this->data)) {
+			if ($this->SchedulingMaster->saveAll($this->data)) {
 				$this->createInstances();
 				if ($this->RequestHandler->isAjax()) {
 					$this->Session->setFlash(__('The Schedule has been saved', true), 'default', array(), 'success');
