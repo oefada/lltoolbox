@@ -21,20 +21,17 @@ class ReservationsController extends AppController {
 		if (!empty($this->data)) {
 			$this->Reservation->create();
 			if ($this->Reservation->save($this->data)) {
-				$this->Session->setFlash(__('The Reservation has been updated', true));
-				$this->redirect(array('controller' => 'tickets', 'action' => 'view', 'id' => $this->data['Reservation']['ticketId']));
+				$this->Session->setFlash(__('The Reservation has been added', true));
+				$this->redirect('/tickets/'. $this->data['Reservation']['ticketId']  .'/ppvNotices/add/1');
 			} else {
-				$this->Session->setFlash(__('The Reservation could not be updated. Please, try again.', true));
+				$this->Session->setFlash(__('The Reservation could not be added. Please, try again.', true));
 			}
 		}
-		
 		$ticketId = $this->params['ticketId'];
-		
 		if (!$ticketId) {
 			$this->Session->setFlash(__('Invalid ticket ID', true));
 			$this->redirect(array('controller' => 'tickets', 'action'=>'index'));
 		} 
-
 		$this->data['Reservation']['ticketId'] = $ticketId;
 	}
 
@@ -46,7 +43,7 @@ class ReservationsController extends AppController {
 		if (!empty($this->data)) {
 			if ($this->Reservation->save($this->data)) {
 				$this->Session->setFlash(__('The Reservation has been updated', true));
-				$this->redirect(array('controller' => 'tickets', 'action' => 'view', 'id' => $this->data['Reservation']['ticketId']));
+				$this->redirect('/tickets/'. $this->data['Reservation']['ticketId']  .'/ppvNotices/add/1');
 			} else {
 				$this->Session->setFlash(__('The Reservation could not be updated. Please, try again.', true));
 			}
