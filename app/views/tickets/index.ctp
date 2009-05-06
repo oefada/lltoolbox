@@ -13,10 +13,15 @@ $this->set('hideSidebar', true);
 	
 	<div id="ticket-search-box">
 		<form action="/tickets" method="post" id="ticket-search-form" name="ticket-search-form">
-		<table cellpadding="0" cellspacing="0"> 
-			<tr>
-				<th colspan="2">&raquo;&nbsp;Search Criteria</th>
-			</tr>
+		
+		<table cellpadding="0" cellspacing="0" style="border:1px solid silver;">
+		<tr>
+			<th colspan="4" style="border-bottom:1px solid silver;">&raquo;&nbsp;Search Criteria</th>
+		</tr>
+		<tr>
+		<td style="width:350px;">
+
+		<table cellpadding="0" cellspacing="0" style="width:300px;"> 
 			<tr>
 				<td width="150">
 					Start Date
@@ -150,6 +155,21 @@ $this->set('hideSidebar', true);
 			</tr>
 			<tr>
 				<td width="150">
+					Res. Check-In Date<br />
+					via Date Range
+				</td>
+				<td>
+					<input type="checkbox" id="s_res_check_in_date" name="s_res_check_in_date" <?php if ($s_res_check_in_date) { echo 'checked="checked"'; }?> />
+				</td>
+			</tr>
+			</table>
+		
+		</td>
+		<td style="width:370px; border-left:1px solid silver; padding-left: 15px;">
+
+			<table cellspacing="0" cellpadding="0" style="width:355px;">
+			<tr>
+				<td width="120">
 					Ticket Id
 				</td>
 				<td>
@@ -158,7 +178,7 @@ $this->set('hideSidebar', true);
 				</td>
 			</tr>
 			<tr>
-				<td width="150">
+				<td width="120">
 					Offer Id
 				</td>
 				<td>
@@ -167,7 +187,7 @@ $this->set('hideSidebar', true);
 				</td>
 			</tr>
 			<tr>
-				<td width="150">
+				<td width="120">
 					Client Id
 				</td>
 				<td>
@@ -176,7 +196,7 @@ $this->set('hideSidebar', true);
 				</td>
 			</tr>
 			<tr>
-				<td width="150">
+				<td width="120">
 					User Id
 				</td>
 				<td>
@@ -185,7 +205,7 @@ $this->set('hideSidebar', true);
 				</td>
 			</tr>
 			<tr>
-				<td width="150">
+				<td width="120">
 					Bid Id
 				</td>
 				<td>
@@ -194,8 +214,8 @@ $this->set('hideSidebar', true);
 				</td>
 			</tr>
 			<tr>
-				<td width="150">
-					Request Queue Id (Fixed-Price)
+				<td width="120">
+					Request Queue Id
 				</td>
 				<td>
 					<input type="text" id="s_request_queue_id" name="s_request_queue_id" value="<?php echo $s_request_queue_id;?>" />
@@ -203,7 +223,7 @@ $this->set('hideSidebar', true);
 				</td>
 			</tr>
 			<tr>
-				<td width="150">
+				<td width="120">
 					Package Id
 				</td>
 				<td>
@@ -212,22 +232,27 @@ $this->set('hideSidebar', true);
 				</td>
 			</tr>
 			<tr>
-				<td width="150">
-					With Reservation Record
+				<td width="120">
+					Res. Confirmation #
 				</td>
 				<td>
-					<input type="checkbox" id="s_has_reservation" name="s_has_reservation" <?php if ($s_has_reservation) echo 'checked="checked"';?>/>
+					<input style="width:150px;" type="text" id="s_res_confirmation_num" name="s_res_confirmation_num" value="<?php echo $s_res_confirmation_num;?>" />
+					&nbsp;<a href="javascript:void(0);" onclick="document.getElementById('s_res_confirmation_num').value = '';">Clear</a>
 				</td>
 			</tr>
-			<tr>
-				<td width="150">
-					&nbsp;
-				</td>
-				<td>
-					<input type="submit" name="s_submit" value="Search" />
-				</td>
-			</tr>
+			</table>
+
+		</td>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td colspan="4" style="border-top:1px solid silver;background-color: #F1F1F1;">
+				<input type="submit" name="s_submit" value="Search" />
+			</td>
+		</tr>
 		</table>
+		
 		</form>
 	</div>
 	<div><a href="/tickets/add/">Create Manual Ticket</a></div>
@@ -277,7 +302,11 @@ foreach ($tickets as $ticket):
 			<?php echo $ticket['Ticket']['offerId']; ?>
 		</td>
 		<td>
-			<?php echo $offerType[$ticket['Ticket']['offerTypeId']]; ?>
+			<?php 
+			if (isset($offerType[$ticket['Ticket']['offerTypeId']])) {
+				echo $offerType[$ticket['Ticket']['offerTypeId']]; 
+			}
+			?>
 		</td>
 		<td>
 			<?php echo $ticket['Ticket']['trackName']; ?>
