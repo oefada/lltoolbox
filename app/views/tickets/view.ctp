@@ -521,7 +521,15 @@ $this->searchController = 'Tickets';
 
 <br />
 <div class="collapsible">
-	<div class="handle"><?php __('Reservation Info');?></div>
+	<?php
+	$res_count = 0;
+	if (isset($ticket['Reservation']['reservationId'])) {
+		if ($ticket['Reservation']['reservationId'] > 0) {
+			$res_count = 1;
+		}
+	} 
+	?>
+	<div class="handle"><?php __('Reservation Info ('. $res_count  .')');?></div>
 	<div class="collapsibleContent related">
 	<br />
 	<?php if (!empty($ticket['Reservation']['reservationId'])):?>
