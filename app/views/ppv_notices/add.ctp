@@ -20,7 +20,7 @@
 		echo $form->input('ppvNoticeTypeId', array('disabled' => 'disabled'));
 		echo $form->input('ppvNoticeTypeId', array('type' => 'hidden'));
 		echo $form->input('ticketId', array('readonly'=>'readonly'));
-		if ($isResConf) {
+		if (isset($isResConf) && $isResConf) {
 			echo "<br /><br />";
 			echo "<h2>Reservation Confirmation</h2>";
 			echo "<h3 style='font-size:14px;'>";
@@ -32,7 +32,7 @@
 		<?php if ($promo) :?>
 			<h3 style="margin:20px;padding:0px;">** This ticket is associated with PROMO CODE  **</h3>
 		<?php endif; ?>
-		<?php if ($isResConf && !$hasResData) :?>
+		<?php if ((isset($isResConf) && $isResConf) && !$hasResData) :?>
 			<div style="text-align:left;margin:0px;padding:5px;">
 				<h3 style='font-size:14px;font-weight:bold;color:#000000'>
 				** You cannot send out this email until you associated a reservation record to this ticket.
