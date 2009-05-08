@@ -26,7 +26,7 @@ class ClientNewsletterNotifier extends AppModel {
 	    $cl = $client->find('all', array(
 	                                    'fields' => array('name', 'managerUsername'),
 	                                    'conditions' => array('Client.clientId' => $clients),
-	                                    'contain' => array('ClientContact' => array('conditions' => array('ClientContact.clientContactTypeId' => 2))),
+	                                    'contain' => array('ClientContact' => array('conditions' => array('ClientContact.clientContactTypeId' => 2), 'order' => 'ClientContact.primaryContact DESC')),
 	                                    ));
 	    
 	    //weed out the non-sponsorship clients

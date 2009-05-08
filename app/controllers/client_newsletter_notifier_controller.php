@@ -26,33 +26,36 @@ class ClientNewsletterNotifierController extends AppController {
 	
 	function _send($clients, $data) {//TODO: turn off debug
 	    foreach ($clients as $client) {
-	        foreach ($client['ClientContact'] as $contact) {
-	            $this->Email->reset();
+	        $this->Email->reset();
+	        $this->Email->from = 'Client Marketing <clientmarketing@luxurylink.com >';
+	            
+            if (!empty($client['Client']['managerUsername'])) {
+               $this->Email->cc[] = $client['Client']['managerUsername'].' <'.$client['Client']['managerUsername'].'@luxurylink.com>';
+            }
+                
+            $this->Email->subject = "You are featured in this week's Luxury Link ";
+                
+            if ($data['ClientNewsletterNotifier']['themeName']) {
+                $this->Email->subject .= '"'.$data['ClientNewsletterNotifier']['themeName'].'" themed ';
+            }
+            $this->Email->subject .= 'e-Newsletter';
+                
+            $this->Email->template = 'client_newsletter_notifier';
+            $this->Email->sendAs = 'both';
+                
+            $this->set('client', $client['Client']);
+            $this->set('clientContact', $client['ClientContact'][0]);
+            $this->set('theme', $data['ClientNewsletterNotifier']['themeName']);
+            $this->set('url', $data['ClientNewsletterNotifier']['url']);
 	        
-    	        $this->Email->from = 'Client Marketing <clientmarketing@luxurylink.com >';
-                $this->Email->to = $contact['name'].' <'.$contact['emailAddress'].'>';
-                
-                if (!empty($client['Client']['managerUsername'])) {
-                    $this->Email->cc = array($client['Client']['managerUsername'].' <'.$client['Client']['managerUsername'].'@luxurylink.com>');
-                }
-                
-                $this->Email->subject = "You are featured in this week's Luxury Link ";
-                
-                if ($data['ClientNewsletterNotifier']['themeName']) {
-                    $this->Email->subject .= '"'.$data['ClientNewsletterNotifier']['themeName'].'" themed ';
-                }
-                $this->Email->subject .= 'e-Newsletter';
-                
-                $this->Email->template = 'client_newsletter_notifier';
-                $this->Email->sendAs = 'both';
-                
-                $this->set('client', $client['Client']);
-                $this->set('clientContact', $contact);
-                $this->set('theme', $data['ClientNewsletterNotifier']['themeName']);
-                $this->set('url', $data['ClientNewsletterNotifier']['url']);
-
-                $this->Email->send();
+	        $mainContact = array_shift($client['ClientContact']);                       //first contact is primary, relies on order by clause in model
+	        $this->Email->to = $mainContact['name'].' <'.$mainContact['emailAddress'].'>';
+	        
+	        foreach ($client['ClientContact'] as $contact) { //$contact['emailAddress']
+                $this->Email->cc[] = $contact['name'].' <'.$contact['emailAddress'].'>';
 	        }
+	        
+	        $this->Email->send();
 	    }
 	}
 }
