@@ -51,6 +51,7 @@ class ClientNewsletterNotifierController extends AppController {
 	        $mainContact = array_shift($client['ClientContact']);                       //first contact is primary, relies on order by clause in model
 	        $this->Email->to = $mainContact['name'].' <'.$mainContact['emailAddress'].'>';
 	        
+	        // iterate through all remaining contacts, array_shift takes care of the first one for us
 	        foreach ($client['ClientContact'] as $contact) { //$contact['emailAddress']
                 $this->Email->cc[] = $contact['name'].' <'.$contact['emailAddress'].'>';
 	        }
