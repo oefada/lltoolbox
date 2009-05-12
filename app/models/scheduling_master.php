@@ -54,6 +54,9 @@ class SchedulingMaster extends AppModel {
                         'buyNowPrice' => array('rule' => 
                                                     array('validatebuyNowPrice'),
                                                     'message' => 'Buy Now Price cannot be $0.00. Adjust the package and then return to schedule it.'
+                                                    ),
+                        'offerTypeId' => array('rule' => VALID_NOT_EMPTY,
+                                                    'message' => 'Offer type is a required field.'
                                                     )
 						);
 	
@@ -97,6 +100,16 @@ class SchedulingMaster extends AppModel {
 	    }
 
 	    return true;
+	}
+	
+	function beforeValidate() {
+	    foreach ($this->data['Track']['Track'] as $track) {
+	        if (!empty($track)) {
+	            return true;
+	        }
+	    }
+	    
+	    $this->validationErrors['Track']['Track'] = 'Please select a track';
 	}
 	
 	function end() {
