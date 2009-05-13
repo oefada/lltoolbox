@@ -22,10 +22,7 @@
 		}
 		echo '</div>';
 		echo $form->input('reserveAmt', array('value' => $package['Package']['reservePrice'], 'disabled' => 'disabled'));
-		if (empty($this->data['SchedulingMaster']['numDaysToRun'])) {
-			$this->data['SchedulingMaster']['numDaysToRun'] = 3;
-		}
-		
+
 		/* TODO: Marketing/Judy need to be able to se num days to an arbitrary #, and unlock scheduling delay */
 		echo $form->input('numDaysToRun', array('type' => 'select',  'empty' => true, 'options' => array(2 => '2', 3 => '3', 7 => '7')));
 		
