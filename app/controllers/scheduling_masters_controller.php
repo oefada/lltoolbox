@@ -130,7 +130,6 @@ class SchedulingMastersController extends AppController {
 			$this->data['SchedulingMaster']['endDate']['year']          = $packageEndDate['year'];
 			$this->data['SchedulingMaster']['endDate']['month']         = $packageEndDate['month'];
 			$this->data['SchedulingMaster']['endDate']['day']           = $packageEndDate['day'];
-			$this->data['SchedulingMaster']['numDaysToRun']             = 3;
 			
 			$this->data['SchedulingMaster']['packageName']              = trim($package['Package']['packageName']);
 			$this->data['SchedulingMaster']['mysteryIncludes']              = trim($package['Package']['packageIncludes']);
