@@ -27,7 +27,7 @@
 		}
 		
 		/* TODO: Marketing/Judy need to be able to se num days to an arbitrary #, and unlock scheduling delay */
-		echo $form->input('numDaysToRun', array('type' => 'select', 'options' => array(2 => '2', 3 => '3', 7 => '7')));
+		echo $form->input('numDaysToRun', array('type' => 'select',  'empty' => true, 'options' => array(2 => '2', 3 => '3', 7 => '7')));
 		
 		if(in_array($userDetails['username'], array('kferson', 'jlagraff', 'dpen'))) {
 			echo $form->input('schedulingDelayCtrlId', array('label' => 'Scheduling Delay'));

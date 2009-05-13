@@ -57,6 +57,9 @@ class SchedulingMaster extends AppModel {
                                                     ),
                         'offerTypeId' => array('rule' => VALID_NOT_EMPTY,
                                                     'message' => 'Offer type is a required field.'
+                                                    ),
+                        'numDaysToRun' => array('rule' => VALID_NOT_EMPTY,
+                                                    'message' => 'You must select a number of days to run')
                                                     )
 						);
 	
