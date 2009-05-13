@@ -72,6 +72,7 @@ $this->set('clientId', $this->data['Client']['clientId']);
 					<th style="color:#FFF;">End Date</th>
 					<th style="color:#FFF;">Retail Value</th>
 					<th style="color:#FFF;">Opening Bid</th>
+					<th style="color:#FFF;">Track Detail Id</th>
 					<th style="color:#FFF;">Ticket Id</th>
 					<th style="color:#FFF;">Ticket Amount</th>
 					<th style="color:#FFF;">Allocated Amount</th>
@@ -91,6 +92,7 @@ $this->set('clientId', $this->data['Client']['clientId']);
 					<td style="text-align:center;"><?php echo $number->currency($offer['openingBid']);?></td>
 					
 					<?php if (isset($track_details[$offer['offerId']])) :?>
+						<td style="text-align:center;"><a href="/tickets/<?php echo $track_details[$offer['offerId']]['ticketId'];?>/trackDetails/edit/<?php echo $track_details[$offer['offerId']]['trackDetailId'];?>" target="_BLANK"><?php echo $track_details[$offer['offerId']]['trackDetailId'];?></a></td>
 						<td style="text-align:center;"><a href="/tickets/view/<?php echo $track_details[$offer['offerId']]['ticketId'];?>" target="_BLANK"><?php echo $track_details[$offer['offerId']]['ticketId'];?></a></td>
 						<td style="text-align:center;"><?php echo $number->currency($track_details[$offer['offerId']]['ticketAmount']);?></td>
 						<td style="text-align:center;"><?php echo $number->currency($track_details[$offer['offerId']]['allocatedAmount']);?></td>
@@ -99,6 +101,7 @@ $this->set('clientId', $this->data['Client']['clientId']);
 						<td style="text-align:center;"><?php echo $number->currency($track_details[$offer['offerId']]['amountKept']);?></td>
 						<td style="text-align:center;"><?php echo $number->currency($track_details[$offer['offerId']]['amountRemitted']);?></td>					
 					<?php else :?>
+						<td style="text-align:center;"> - </td>
 						<td style="text-align:center;"> - </td>
 						<td style="text-align:center;"> - </td>
 						<td style="text-align:center;"> - </td>
