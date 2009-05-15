@@ -1,6 +1,11 @@
 <?php include('../vendors/email_msgs/email_includes/header.html');?>
 
+
+<?php if ($liveOfferData['isMystery']) : ?>
+<h1 style="color:#990000;font-size:16px;margin:0px;padding:0px;margin-bottom:30px;">Congratulations, you won the Mystery Auction</h1>
+<?php else : ?>
 <h1 style="color:#990000;font-size:16px;margin:0px;padding:0px;margin-bottom:30px;">Congratulations, you won the <?=$offerTypeName;?> for <?=$clientNameP;?></h1>
+<?php endif;?>
 
 <p>Dear <?php echo $userFirstName;?> <?php echo $userLastName;?>:</p>
 
@@ -12,7 +17,11 @@
 			<div style="width: 245px; height: 189px; padding: 8px 12px 12px 8px; background: url(http://www.luxurylink.com/images/shared/shadow-gal-lrg-light-olive.gif) no-repeat top left; overflow: hidden;"><img src="http://www.luxurylink.com/images/por/<?php echo $oldProductId;?>/<?php echo $oldProductId;?>-gal-lrg-01.jpg" alt="<?php echo $packageName;?>" border="0" /></div>
 		</td>
 		<td align="left" valign="top">
+			<?php if ($liveOfferData['isMystery']) : ?>
+			<div style="color:#990000;font-size:16px;font-weight:bold;">Mystery Auction</div>
+			<?php else: ?>
 			<div style="color:#990000;font-size:16px;font-weight:bold;"><?php echo $clientNameP;?></div>
+			<?php endif; ?>
 			<div style="color:#444444;font-size:12px;"><?php echo $locationDisplay;?></div><br />
 			<div style="color:#990000;font-size:12px;"><?php echo $packageName;?> <br /><br /><a style="color:#336699;" href="http://www.luxurylink.com/portfolio/por_offer_redirect.php?oid=<?=$offerId;?>">View Package Details</a></div>
 			<div style="height:15px;margin-top:15px;border-top:1px solid #B0B0B0;">&nbsp;</div>
