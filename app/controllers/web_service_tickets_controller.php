@@ -53,6 +53,10 @@ class WebServiceTicketsController extends WebServicesController
 		// -------------------------------------------------------------------------------
 		$json_decoded = json_decode($in0, true);
 		$ticketId = $this->createNewTicket($json_decoded);
+
+		if (!$ticketId) {
+			return false;
+		}
 		
 		// send out fixed price request emails
 		// -------------------------------------------------------------------------------
@@ -448,7 +452,7 @@ class WebServiceTicketsController extends WebServicesController
 		$loaLevelId			= isset($clientData[0]['Loa']['loaLevelId']) ? $clientData[0]['Loa']['loaLevelId'] : false;
 		
 		$offerTypeArticle	= in_array(strtolower($offerType[$offerTypeId]{0}), array('a','e','i','o','u')) ? 'an' : 'a';
-		
+
 		// fixed price variables
 		// -------------------------------------------------------------------------------
 		$fpRequestType		= ($wholesale) ? 'A Wholesale Exclusive' : 'An Exclusive';
@@ -503,8 +507,9 @@ class WebServiceTicketsController extends WebServicesController
 			} else {
 				$add_parent_client_sql = '';	
 			}
-			$tmp_result = $this->Ticket->query("SELECT * FROM clientContact WHERE clientContactTypeId = 1 AND (clientId = " . $v['Client']['clientId'] . " $add_parent_client_sql) ORDER BY primaryContact DESC");
+			$tmp_result = $this->Ticket->query("SELECT * FROM clientContact WHERE clientContactTypeId in (1,3) AND (clientId = " . $v['Client']['clientId'] . " $add_parent_client_sql) ORDER BY clientContactTypeId, primaryContact DESC");
 			$contact_cc_string = array();
+			$contact_to_string = array();
 			foreach ($tmp_result as $a => $b) {
 				$contacts = array();
 				$contacts['ppv_name'] 			= $b['clientContact']['name'];
@@ -512,12 +517,20 @@ class WebServiceTicketsController extends WebServicesController
 				$contacts['ppv_email_address'] 	= $b['clientContact']['emailAddress']; 
 				$contacts['ppv_phone'] 			= $b['clientContact']['phone'];
 				$contacts['ppv_fax'] 			= $b['clientContact']['fax'];
-				if ($a > 0) {
+				if ($b['clientContact']['clientContactTypeId'] == 1) {
+					$contact_to_string[] = $b['clientContact']['emailAddress'];
+				}
+				if ($b['clientContact']['clientContactTypeId'] == 3) {
 					$contact_cc_string[] = $b['clientContact']['emailAddress'];
 				}
 				$tmp['contacts'][] = $contacts;
 			}
 			$tmp['contact_cc_string'] = implode(',', array_unique($contact_cc_string));
+			$tmp['contact_to_string'] = implode(',', array_unique($contact_to_string));
+			if (!$tmp['contact_to_string'] && !empty($tmp['contact_cc_string'])) {
+				$tmp['contact_to_string'] = $tmp['contact_cc_string'];
+				$tmp['contact_cc_string'] = '';
+			}
 			$tmp['percentOfRevenue'] = $v['ClientLoaPackageRel']['percentOfRevenue'];
 			$clients[$k] = $tmp;
 		}
@@ -527,9 +540,9 @@ class WebServiceTicketsController extends WebServicesController
 		$clientId			= $clients[$client_index]['clientId'];
 		$clientNameP 		= $clients[$client_index]['name'];
 		$clientName 		= $clients[$client_index]['contacts'][0]['ppv_name'];
-		$clientPrimaryEmail = $clients[$client_index]['contacts'][0]['ppv_email_address'];
 		$oldProductId		= $clients[$client_index]['oldProductId'];
 		$locationDisplay	= $clients[$client_index]['locationDisplay'];
+		$clientPrimaryEmail = $clients[$client_index]['contact_to_string'];
 		$clientCcEmail 		= $clients[$client_index]['contact_cc_string'];
 		$clientAdjustedPrice = number_format(($clients[$client_index]['percentOfRevenue'] / 100) * $ticketData['billingPrice'], 2, '.', ',');
 		
@@ -667,6 +680,10 @@ class WebServiceTicketsController extends WebServicesController
 				break;
 		}
 		$emailBody = ob_get_clean();
+
+		if (($ppvNoticeTypeId == 5) && $liveOfferData['isMystery']) {
+			$emailSubject = "Luxury Link Mystery Auction Winner";
+		}
 		
 		// if sending from toolbox tool ppvNotice add screen (manual edit and send)
 		// -------------------------------------------------------------------------------
@@ -687,9 +704,9 @@ class WebServiceTicketsController extends WebServicesController
 					$clientId			= $clients[$i]['clientId'];
 					$clientNameP 		= $clients[$i]['name'];
 					$clientName 		= $clients[$i]['contacts'][0]['ppv_name'];
-					$clientPrimaryEmail = $clients[$i]['contacts'][0]['ppv_email_address'];
 					$oldProductId		= $clients[$i]['oldProductId'];
 					$locationDisplay	= $clients[$i]['locationDisplay'];
+					$clientPrimaryEmail = $clients[$i]['contact_to_string'];
 					$clientCcEmail 		= $clients[$i]['contact_cc_string'];	
 					$clientAdjustedPrice = number_format(($clients[$i]['percentOfRevenue'] / 100) * $ticketData['billingPrice'], 2, '.', ',');
 					$is_auc_fac 		= $this->isAuctionFacilitator($clientId);

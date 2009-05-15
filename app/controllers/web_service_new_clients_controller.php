@@ -48,6 +48,7 @@ class WebServiceNewClientsController extends WebServicesController
 		// map data from Sugar to toolbox client table structure
 		$client_data_save = array();
         $client_data_save['name']				= str_replace('&#039;', "'", $decoded_request['client']['client_name']);
+		$client_data_save['name']				= $this->utf8dec($client_data_save['name']);
         $client_data_save['managerUsername'] 	= $decoded_request['client']['manager_ini'];
 		$client_data_save['teamName']			= $decoded_request['client']['team_name'];
         $client_data_save['modified']			= $date_now;
@@ -99,22 +100,19 @@ class WebServiceNewClientsController extends WebServicesController
 	    // clientContactTypeId = 1 is reservation SUGAR -> (AUC, CCALL, ALL_AUC)
 	    // clientContactTypeId = 2 is homepage notification SUGAR ->(MKT, CCALL, ALL, ALL_AUC)
 	    
-	  	$reservationContacts = array('AUC', 'ALL', 'CCALL', 'ALL_AUC', 'ALL.AUC');
-	  	$homepageContacts = array('MKT', 'MKT_ALL', 'ALL', 'CCALL', 'ALL_AUC', 'ALL.AUC');
+	  	$reservationContacts = array('AUC', 'ALL_AUC', 'ALL.AUC');
+	  	$homepageContacts = array('MKT', 'MKT_ALL', 'ALL');
+		$reservationCopy = array('ALL');
 		$deleteContacts = array('NLT');
 
 	    if ($client_id) {
 		    $contacts = $decoded_request['contacts'];
+			if (!empty($contacts)) {
+				$this->ClientContact->query("DELETE FROM clientContact WHERE clientId = $client_id");
+			}
 		    foreach ($contacts as $k => $contact) {
 		    	$contact_id = $contact['contact_id'];
 		    	$recipient_type	 = $contact['recipient_type_c'];
-				
-				$checkResult = $this->ClientContact->query("SELECT * FROM clientContact WHERE clientId = $client_id AND sugarContactId = '$contact_id'");
-
-				// delete from TB and reinsert
-				if (!empty($checkResult)) {
-					$this->ClientContact->query("DELETE FROM clientContact WHERE clientId = $client_id AND sugarContactId = '$contact_id'");
-				}
 
 		    	if (empty($recipient_type)) {
 					continue;
@@ -147,6 +145,11 @@ class WebServiceNewClientsController extends WebServicesController
 		    		$this->ClientContact->create();
 		    		$this->ClientContact->save($newClientContact);
 		    	}
+		    	if (in_array($recipient_type, $reservationCopy)) {
+		    		$newClientContact['clientContactTypeId'] = 3;
+		    		$this->ClientContact->create();
+		    		$this->ClientContact->save($newClientContact);
+		    	}
 		    }
 		}
 	      
@@ -154,6 +157,11 @@ class WebServiceNewClientsController extends WebServicesController
 	    return $encoded_response;
 	}
 	
+	function utf8dec ( $s_String ) {
+		$s_String = html_entity_decode(htmlentities($s_String." ", ENT_COMPAT, 'UTF-8'));
+		return substr($s_String, 0, strlen($s_String)-1);
+	}
+
 	function sendToSugar($data) {
 		// had to use this custom native soap class and functions because couldn't run both cakephp nusoap server and client
 		// this soap call to made to sugar in order to give Sugar the new clientId from toolbox so it's recorded in Sugar
