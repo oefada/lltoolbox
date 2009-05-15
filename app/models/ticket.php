@@ -112,7 +112,7 @@ class Ticket extends AppModel {
 			$sql = "SELECT packageId FROM clientLoaPackageRel clpr ";
 			$sql.= "INNER JOIN schedulingMaster sm USING(packageId) ";
 			$sql.= "INNER JOIN schedulingMasterTrackRel smtr USING (schedulingMasterId) ";
-			$sql.= "INNER JOIN track t ON smtr.trackId = t.trackId AND t.applyToMembershipBal = 1 ";
+			$sql.= "INNER JOIN track t ON smtr.trackId = t.trackId AND (t.applyToMembershipBal = 1 OR t.expirationCriteriaId = 1) ";
 			$sql.= "WHERE clpr.loaId = $loa_id GROUP BY clpr.packageId";
 			$result = $this->query($sql);
 			if (!empty($result)) {
@@ -142,12 +142,11 @@ class Ticket extends AppModel {
 
 			// check LOA balance
 			// ------------------------------------------------------------------
-			if ($loa_m_balance > 0) { 
-				$ticket_amount_adjusted = ($ticketAmount * $loa['clpr']['percentOfRevenue']	) / 100;
-				if (($loa_m_balance - $ticket_amount_adjusted) <= 0) {
-					$take_down = true;
-					$this->insertMessageQueuePackage($ticketId, 'LOA_BALANCE');
-				}
+
+			$ticket_amount_adjusted = ($ticketAmount * $loa['clpr']['percentOfRevenue']	) / 100;
+			if (($loa_m_balance - $ticket_amount_adjusted) <= 0) {
+				$take_down = true;
+				$this->insertMessageQueuePackage($ticketId, 'LOA_BALANCE');
 			}
 
 			// take down those scheduling masters and instances
