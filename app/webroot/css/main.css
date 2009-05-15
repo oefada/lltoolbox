@@ -920,6 +920,9 @@ div.blankExample p {
 .clientContactType2 {
     background: #fdfdfd url(../img/house.png) no-repeat 97% 5%;
 }
+.clientContactType3 {
+    background: #fdfdfd url(../img/edit.png) no-repeat 97% 5%;
+}
 /* @end */
 /* @group footer */
 #footer {

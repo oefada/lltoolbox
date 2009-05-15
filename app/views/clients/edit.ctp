@@ -104,8 +104,9 @@ $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']
 		</div>
 		<?php endforeach; ?>
 		<div style="clear: both; font-size: 10px; color: #333">
-		<?=$html->image('page_white_star.png')?> Reservation contact<br />
-		<?=$html->image('house.png')?> Home page notification contact
+		<?=$html->image('page_white_star.png')?> Reservation main contact<br />
+		<?=$html->image('house.png')?> Home page notification contact<br />
+		<?=$html->image('edit.png')?> Reservation Copy
 		<?php if (empty($this->data['ClientContact'])) echo 'No Client Contacts available.'?>
 		</div>
 		</div>
