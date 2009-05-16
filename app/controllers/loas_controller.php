@@ -30,6 +30,9 @@ class LoasController extends AppController {
 	function add($clientId = null) {
 		if (!empty($this->data)) {
 			$clientId = $this->data['Loa']['clientId'];
+			$this->data['Loa']['membershipBalance'] = $this->data['Loa']['membershipFee'];
+			$this->data['Loa']['membershipPackagesRemaining'] = $this->data['Loa']['membershipTotalPackages'];
+			$this->data['Loa']['numberPackagesRemaining'] = $this->data['Loa']['loaNumberPackages'];
 			$this->Loa->create();
 			if ($this->Loa->save($this->data)) {
 				$this->Session->setFlash(__('The Loa has been saved', true));
