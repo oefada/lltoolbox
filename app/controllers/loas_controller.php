@@ -104,24 +104,28 @@ class LoasController extends AppController {
 		$tracks_result = $this->Loa->query('SELECT * FROM track WHERE loaId = ' . $loa['Loa']['loaId']);
 		foreach ($tracks_result as $track) {
 			$tracks[$track['track']['trackId']] = $track['track'];
-			$offer_result = $this->Loa->query('SELECT offerId,packageId,offerTypeName,offerSubtitle,startDate,endDate,retailValue,openingBid FROM offerLive WHERE packageId IN (SELECT packageId FROM clientLoaPackageRel WHERE loaId = '. $loa['Loa']['loaId'] .' AND trackId = '. $track['track']['trackId'] .') ORDER BY offerId ASC');
+			$offer_result = $this->Loa->query('SELECT offerId,packageId,offerTypeName,offerSubtitle,startDate,endDate,retailValue,openingBid FROM offerLive 
+											WHERE packageId IN (SELECT packageId FROM clientLoaPackageRel 
+											WHERE loaId = '. $loa['Loa']['loaId'] .' AND trackId = '. $track['track']['trackId'] .') 
+											ORDER BY offerId ASC');
 			$offers = array();
 			foreach ($offer_result as $offer) {
 				$offers[$offer['offerLive']['offerId']] = $offer['offerLive'];	
 			}
 			$tracks[$track['track']['trackId']]['offers'] = $offers;
 		}
-		
+
 		if (!empty($tracks)) {
-			$track_details_result = $this->Loa->query('SELECT trackDetail.*, ticket.offerId FROM trackDetail INNER JOIN ticket USING (ticketId) WHERE trackId IN (' . implode(',', array_keys($tracks)) . ') ORDER BY trackId ASC');
+			$track_details_result = $this->Loa->query('SELECT trackDetail.*, ticket.offerId FROM trackDetail 
+													INNER JOIN ticket USING (ticketId) 
+													WHERE trackId IN (' . implode(',', array_keys($tracks)) . ') ORDER BY trackId ASC');
 			foreach ($track_details_result as $track_detail) {
-				$track_details[$track_detail['ticket']['offerId']] = $track_detail['trackDetail'];
+				$track_details[$track_detail['ticket']['offerId']][] = $track_detail['trackDetail'];
 			}
 			$trackWarning = false;
 		} else {
 			$trackWarning = '<h3 style="font-size:15px;">*** NO TRACK IS SETUP FOR THIS LOA ***</h3><br /><br />';	
 		}
-		
 		$this->set('trackWarning', $trackWarning);
 		$this->set('loa', $loa);
 		$this->set('tracks', $tracks);
