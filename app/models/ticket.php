@@ -94,9 +94,8 @@ class Ticket extends AppModel {
 		}
 	}
 
-	function __runLoaSchedulingFlags($packageId, $ticketId, $ticketAmount) {
+	function __runTakeDownLoaMemBal($packageId, $ticketId, $ticketAmount) {
 		// check to make sure LOA balance is fulfilled 
-		// check to make sure LOA membership num packages is fulfilled
 
 		$loas = $this->query("SELECT * FROM clientLoaPackageRel clpr INNER JOIN loa ON clpr.loaId = loa.loaId WHERE clpr.packageId = $packageId");
 		foreach ($loas as $loa) {
@@ -104,6 +103,37 @@ class Ticket extends AppModel {
 			// ------------------------------------------------------------------
 			$loa_id = $loa['loa']['loaId'];
 			$loa_m_balance = $loa['loa']['membershipBalance'];
+			$ticket_amount_adjusted = ($ticketAmount * $loa['clpr']['percentOfRevenue']	) / 100;
+
+			if (($loa_m_balance - $ticket_amount_adjusted) <= 0) {
+				$this->insertMessageQueuePackage($ticketId, 'LOA_BALANCE');
+				$sql = 'SELECT smtr.schedulingMasterId FROM track t ';
+				$sql.= 'INNER JOIN schedulingMasterTrackRel smtr USING (trackId) ';
+				$sql.= "WHERE t.loaId = $loa_id AND t.expirationCriteriaId = 1";
+				$result = $this->query($sql);
+				if (!empty($result)) {
+					$sm_ids = array();
+					foreach ($result as $row) {
+						$sm_ids[] = $row['smtr']['schedulingMasterId'];
+					}
+					$sm_ids_imp = implode(',', $sm_ids);
+					$this->__deleteOfferLiveOffer($sm_ids_imp);
+					$this->query("DELETE FROM schedulingInstance WHERE schedulingMasterId IN ($sm_ids_imp) AND startDate > NOW()");
+					$this->query("DELETE FROM schedulingMaster WHERE schedulingMasterId IN ($sm_ids_imp) AND startDate > NOW()");
+					$this->__updateSchedulingOfferFixedPrice($sm_ids_imp);
+				} 
+			}
+		}
+	}
+
+	function __runTakeDownLoaNumPackages($packageId, $ticketId) {
+		// check to make sure LOA membership num packages is fulfilled
+
+		$loas = $this->query("SELECT * FROM clientLoaPackageRel clpr INNER JOIN loa ON clpr.loaId = loa.loaId WHERE clpr.packageId = $packageId");
+		foreach ($loas as $loa) {
+			// set some LOA data
+			// ------------------------------------------------------------------
+			$loa_id = $loa['loa']['loaId'];
 			$loa_m_total_packages = $loa['loa']['membershipTotalPackages'];
 			$take_down = false;
 			
@@ -112,7 +142,7 @@ class Ticket extends AppModel {
 			$sql = "SELECT packageId FROM clientLoaPackageRel clpr ";
 			$sql.= "INNER JOIN schedulingMaster sm USING(packageId) ";
 			$sql.= "INNER JOIN schedulingMasterTrackRel smtr USING (schedulingMasterId) ";
-			$sql.= "INNER JOIN track t ON smtr.trackId = t.trackId AND (t.applyToMembershipBal = 1 OR t.expirationCriteriaId = 1) ";
+			$sql.= "INNER JOIN track t ON smtr.trackId = t.trackId AND t.expirationCriteriaId = 3 ";
 			$sql.= "WHERE clpr.loaId = $loa_id GROUP BY clpr.packageId";
 			$result = $this->query($sql);
 			if (!empty($result)) {
@@ -140,31 +170,51 @@ class Ticket extends AppModel {
 				}
 			}
 
-			// check LOA balance
-			// ------------------------------------------------------------------
-
-			$ticket_amount_adjusted = ($ticketAmount * $loa['clpr']['percentOfRevenue']	) / 100;
-			if (($loa_m_balance - $ticket_amount_adjusted) <= 0) {
-				$take_down = true;
-				$this->insertMessageQueuePackage($ticketId, 'LOA_BALANCE');
-			}
-
 			// take down those scheduling masters and instances
 			// ------------------------------------------------------------------
 			if ($take_down) {
-				$result = $this->query("SELECT schedulingMasterId FROM schedulingMaster WHERE packageId IN ($package_ids_imp) AND startDate > NOW()");
+				$result = $this->query("SELECT schedulingMasterId FROM schedulingMaster WHERE packageId IN ($package_ids_imp)");
 				if (!empty($result)) {
 					$sm_ids = array();
 					foreach ($result as $row) {
 						$sm_ids[] = $row['schedulingMaster']['schedulingMasterId'];
 					}
 					$sm_ids_imp = implode(',', $sm_ids);
-					$this->query("DELETE FROM schedulingInstance WHERE schedulingMasterId IN ($sm_ids_imp)");
-					$this->query("DELETE FROM schedulingMaster WHERE schedulingMasterId IN ($sm_ids_imp)");
-					$this->query("UPDATE offerLive SET endDate = NOW() WHERE packageId IN ($package_ids_imp) AND offerTypeId NOT IN (1,2,6) AND endDate > NOW()");
+					$this->__deleteOfferLiveOffer($sm_ids_imp);
+					$this->query("DELETE FROM schedulingInstance WHERE schedulingMasterId IN ($sm_ids_imp) AND startDate > NOW()");
+					$this->query("DELETE FROM schedulingMaster WHERE schedulingMasterId IN ($sm_ids_imp) AND startDate > NOW()");
+					$this->__updateSchedulingOfferFixedPrice($sm_ids_imp);
 				}
 			}
 		}
+	}
+
+	function __deleteOfferLiveOffer($sm_ids_imp) {
+		if (!$sm_ids_imp) {
+			return false;
+		}
+		$sql = 'DELETE offer o,offerLive ol ';
+		$sql.= 'FROM schedulingInstance si ';
+		$sql.= 'INNER JOIN offer o USING(schedulingInstanceId) ';
+		$sql.= 'INNER JOIN offerLive ol USING(offerId) ';
+		$sql.= "WHERE si.schedulingMasterId IN ($sm_ids_imp) ";
+		$sql.= 'AND si.startDate > NOW()';
+		$result = $this->query($sql);
+	}
+
+	function __updateSchedulingOfferFixedPrice($sm_ids_imp) {
+		if (!$sm_ids_imp) {
+			return false;
+		}
+		$sql = 'UPDATE schedulingMaster sm ';
+		$sql.= 'INNER JOIN schedulingInstance si ON sm.schedulingMasterId = si.schedulingMasterId ';
+		$sql.= 'INNER JOIN offer o USING(schedulingInstanceId) ';
+		$sql.= 'INNER JOIN offerLive ol USING(offerId) ';
+		$sql.= 'SET si.endDate = NOW(),ol.endDate = NOW(),sm.endDate ';
+		$sql.= 'WHERE sm.offerTypeId IN(3,4) ';
+		$sql.= "AND sm.schedulingMasterId IN ($sm_ids_imp) ";
+		$sql.= 'AND ol.endDate > NOW()';
+		$result = $this->query($sql);
 	}
 
 	function insertMessageQueuePackage($ticketId, $type) {
