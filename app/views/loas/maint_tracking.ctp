@@ -81,8 +81,13 @@ $this->set('clientId', $this->data['Client']['clientId']);
 					<th style="color:#FFF;">Amount Kept</th>
 					<th style="color:#FFF;">Amount Remitted</th>
 				</tr>
-		<?php foreach ($track['offers'] as $offer) : ?>			
-				<tr <?php echo (isset($track_details[$offer['offerId']])) ? 'style="background-color:#FFFFEE"' : '';?>>
+
+				<?php foreach ($track['offers'] as $offer) : ?>			
+
+				<?php if (isset($track_details[$offer['offerId']])) : ?>				
+
+					<?php foreach ($track_details[$offer['offerId']] as $k => $trackDetail) : ?>			
+					<tr style="background-color:#FFFFEE">
 					<td style="text-align:center;"><?=$offer['offerId'];?></td>
 					<td style="text-align:center;"><?=$offer['packageId'];?></td>
 					<td style="text-align:center;"><?=$offer['offerTypeName'];?></td>
@@ -90,29 +95,41 @@ $this->set('clientId', $this->data['Client']['clientId']);
 					<td style="text-align:center;"><?=$offer['endDate'];?></td>
 					<td style="text-align:center;"><?php echo $number->currency($offer['retailValue']);?></td>
 					<td style="text-align:center;"><?php echo $number->currency($offer['openingBid']);?></td>
-					
-					<?php if (isset($track_details[$offer['offerId']])) :?>
-						<td style="text-align:center;"><a href="/tickets/<?php echo $track_details[$offer['offerId']]['ticketId'];?>/trackDetails/edit/<?php echo $track_details[$offer['offerId']]['trackDetailId'];?>" target="_BLANK"><?php echo $track_details[$offer['offerId']]['trackDetailId'];?></a></td>
-						<td style="text-align:center;"><a href="/tickets/view/<?php echo $track_details[$offer['offerId']]['ticketId'];?>" target="_BLANK"><?php echo $track_details[$offer['offerId']]['ticketId'];?></a></td>
-						<td style="text-align:center;"><?php echo $number->currency($track_details[$offer['offerId']]['ticketAmount']);?></td>
-						<td style="text-align:center;"><?php echo $number->currency($track_details[$offer['offerId']]['allocatedAmount']);?></td>
-						<td style="text-align:center;"><?php echo $track_details[$offer['offerId']]['cycle'];?></td>
-						<td style="text-align:center;"><?php echo $track_details[$offer['offerId']]['iteration'];?></td>
-						<td style="text-align:center;"><?php echo $number->currency($track_details[$offer['offerId']]['amountKept']);?></td>
-						<td style="text-align:center;"><?php echo $number->currency($track_details[$offer['offerId']]['amountRemitted']);?></td>					
-					<?php else :?>
-						<td style="text-align:center;"> - </td>
-						<td style="text-align:center;"> - </td>
-						<td style="text-align:center;"> - </td>
-						<td style="text-align:center;"> - </td>
-						<td style="text-align:center;"> - </td>
-						<td style="text-align:center;"> - </td>
-						<td style="text-align:center;"> - </td>
-						<td style="text-align:center;"> - </td>
-					<?php endif; ?>
-					
-				</tr>			
-		<?php endforeach; ?>
+					<td style="text-align:center;"><a href="/tickets/<?php echo $trackDetail['ticketId'];?>/trackDetails/edit/<?php echo $trackDetail['trackDetailId'];?>" target="_BLANK"><?php echo $trackDetail['trackDetailId'];?></a></td>
+					<td style="text-align:center;"><a href="/tickets/view/<?php echo $trackDetail['ticketId'];?>" target="_BLANK"><?php echo $trackDetail['ticketId'];?></a></td>
+					<td style="text-align:center;"><?php echo $number->currency($trackDetail['ticketAmount']);?></td>
+					<td style="text-align:center;"><?php echo $number->currency($trackDetail['allocatedAmount']);?></td>
+					<td style="text-align:center;"><?php echo $trackDetail['cycle'];?></td>
+					<td style="text-align:center;"><?php echo $trackDetail['iteration'];?></td>
+					<td style="text-align:center;"><?php echo $number->currency($trackDetail['amountKept']);?></td>
+					<td style="text-align:center;"><?php echo $number->currency($trackDetail['amountRemitted']);?></td>					
+					</tr>
+					<?php endforeach; ?>
+
+				<?php else :?>
+
+					<tr>
+					<td style="text-align:center;"><?=$offer['offerId'];?></td>
+					<td style="text-align:center;"><?=$offer['packageId'];?></td>
+					<td style="text-align:center;"><?=$offer['offerTypeName'];?></td>
+					<td style="text-align:center;"><?=$offer['startDate'];?></td>
+					<td style="text-align:center;"><?=$offer['endDate'];?></td>
+					<td style="text-align:center;"><?php echo $number->currency($offer['retailValue']);?></td>
+					<td style="text-align:center;"><?php echo $number->currency($offer['openingBid']);?></td>
+					<td style="text-align:center;"> - </td>
+					<td style="text-align:center;"> - </td>
+					<td style="text-align:center;"> - </td>
+					<td style="text-align:center;"> - </td>
+					<td style="text-align:center;"> - </td>
+					<td style="text-align:center;"> - </td>
+					<td style="text-align:center;"> - </td>
+					<td style="text-align:center;"> - </td>
+					</tr>			
+
+				<?php endif; ?>
+
+				<?php endforeach; ?>
+
 			</table>
 		<?php endif; ?>
 		
