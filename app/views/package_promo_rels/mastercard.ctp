@@ -76,9 +76,9 @@ Event.observe(window, 'load', function() {
     <td colspan="9"><div style="float: left; clear: none;"><a href="#" onclick="javascript:$('ActivateInactivateForm').submit(); return false;">Submit</a></div>
 	<div style="float: right; clear: none; font-weight: bold;" class="textRed">TOTAL FOR LIVE PACKAGES</div>
 	</td>
-    <th>20</th>
-    <th>$3,000</th>
-    <th>$45,900</th>
+    <th>0</th>
+    <th>$0</th>
+    <th>$0</th>
   </tr>
   </tfoot>
 </table>
@@ -112,9 +112,9 @@ Event.observe(window, 'load', function() {
 	    <td colspan="9"><div style="float: left; clear: none;"><a href="#" onclick="javascript:$('ActivateInactivateForm').submit(); return false;">Submit</a></div>
 		<div style="float: right; clear: none; font-weight: bold;" class="textRed">TOTAL FOR LIVE PACKAGES</div>
 		</td>
-	    <th>20</th>
-	    <th>$3,000</th>
-	    <th>$45,900</th>
+	    <th>0</th>
+	    <th>$0</th>
+	    <th>$0</th>
 	  </tr>
 	  </tfoot>
 	</table>
