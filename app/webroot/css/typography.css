@@ -57,7 +57,7 @@ input, textarea {
 /* @end */
 /* @group links */
 a {
-	color: #6d5f2e;
+	color: #336699;
 	text-decoration: underline;
 }
 a:hover {
@@ -126,5 +126,5 @@ del{background:#FFDDDD;padding:2px;border:1px solid #CC0000;}
 ins{background:#DDFFDD;padding:2px;border:1px solid #00AA00;text-decoration:none}
 
 .textRed {
-	color: #7f0000;
+	color: #990000;
 }

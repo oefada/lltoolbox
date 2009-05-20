@@ -647,6 +647,12 @@ table label {
     width: auto;
     text-align: left;
 }
+table.noBorder {
+    border: 0;
+}
+table.noBorder td {
+    border: 0;
+}
 fieldset label.error, 
 fieldset span.error {
 	color: #C00;
@@ -922,6 +928,17 @@ div.blankExample p {
 }
 .clientContactType3 {
     background: #fdfdfd url(../img/edit.png) no-repeat 97% 5%;
+}
+
+th.rowBorderDark,
+td.rowBorderDark,
+.rowBorderDark th,
+.rowBorderDark td {
+    border: 1px solid #000;
+    border-collapse: collapse;
+}
+.textDarkRed {
+    color: #990000;
 }
 /* @end */
 /* @group footer */

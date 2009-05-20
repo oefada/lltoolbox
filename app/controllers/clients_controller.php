@@ -190,5 +190,18 @@ class ClientsController extends AppController {
    		$this->set('clients', $clients);
    		$this->layout = 'ajax';
   	}
+
+	function getClientNameById($id) {
+   		$this->layout = 'ajax';
+		$this->autoRender = false;
+		$client = $this->Client->find('first', array(
+   		'conditions' => array(
+   			'Client.clientId' => $id,
+   			),
+   			'fields' => array('name')
+   			));
+
+		return $client['Client']['name'];
+  	}
 }
 ?>
