@@ -208,7 +208,8 @@ class WebServiceTicketsController extends WebServicesController
 	   		 	}
 			}
 
-			$this->Ticket->__runLoaSchedulingFlags($data['packageId'], $ticketId, $data['billingPrice']);
+			$this->Ticket->__runTakeDownLoaMemBal($data['packageId'], $ticketId, $data['billingPrice']);
+			$this->Ticket->__runTakeDownLoaNumPackages($data['packageId'], $ticketId);
 
 			// if non-auction, just stop here as charging and ppv should not be auto
 			// -------------------------------------------------------------------------------
