@@ -88,7 +88,7 @@ Event.observe(window, 'load', function() {
 	<table border="0" style="margin-bottom: 30px; border: 0">
 	<thead>
 	  <tr class="rowBorderDark">
-	    <th><a href="#">Inactivate</a></th>
+	    <th><a href="#">Activate</a></th>
 	    <th><a href="#">Client ID</a></th>
 	    <th><a href="#">Pkg . ID</a></th>
 	    <th><a href="#">Styles</a></th>
@@ -104,7 +104,7 @@ Event.observe(window, 'load', function() {
 	  </thead>
 	  <tbody class="rowBorderDark">
 	  <?php foreach($inactivePackages as $k => $package):?>
-		<?php echo $this->renderElement('package_promo_rels/mastercard_row', array('k' => $k, 'package' => $package, 'checkboxAction' => 'inactivate')) ?>
+		<?php echo $this->renderElement('package_promo_rels/mastercard_row', array('k' => $k, 'package' => $package, 'checkboxAction' => 'activate')) ?>
 	   <?php endforeach; ?>
 	   </tbody>
 	   <tfoot class="rowBorderDark">
