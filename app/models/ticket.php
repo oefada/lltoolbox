@@ -106,7 +106,6 @@ class Ticket extends AppModel {
 			$ticket_amount_adjusted = ($ticketAmount * $loa['clpr']['percentOfRevenue']	) / 100;
 
 			if (($loa_m_balance - $ticket_amount_adjusted) <= 0) {
-				$this->insertMessageQueuePackage($ticketId, 'LOA_BALANCE');
 				$sql = 'SELECT smtr.schedulingMasterId FROM track t ';
 				$sql.= 'INNER JOIN schedulingMasterTrackRel smtr USING (trackId) ';
 				$sql.= "WHERE t.loaId = $loa_id AND t.expirationCriteriaId = 1";
@@ -121,6 +120,7 @@ class Ticket extends AppModel {
 					$this->query("DELETE FROM schedulingInstance WHERE schedulingMasterId IN ($sm_ids_imp) AND startDate > NOW()");
 					$this->query("DELETE FROM schedulingMaster WHERE schedulingMasterId IN ($sm_ids_imp) AND startDate > NOW()");
 					$this->__updateSchedulingOfferFixedPrice($sm_ids_imp);
+					$this->insertMessageQueuePackage($ticketId, 'LOA_BALANCE');
 				} 
 			}
 		}
