@@ -9,7 +9,18 @@
 	<?=implode(', ', $package['Theme'])?>
 	<br />
 	<? endif; ?>
-	<a href="#" id="benefitCopy_<?=$package['PackagePromoRel']['packagePromoRelId']?>" onclick="return false;">Benefit Copy</a></td>
+	<?php
+	echo $html->link('Benefit Copy',
+					'/package_promo_rels/ajax_edit/'.$package['PackagePromoRel']['packagePromoRelId'],
+					array(
+						'title' => 'Edit Benefit Copy',
+						'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
+						'complete' => 'closeModalbox()'
+						),
+					null,
+					false
+					);
+	?></td>
   <td rowspan="1"><?=$html->link($package['Client']['name'], '/clients/edit/'.$package['Client']['clientId'])?></td>
   <td rowspan="1"><?=$package['OfferLive']['endDate']?></td>
   <td>&nbsp;</td>

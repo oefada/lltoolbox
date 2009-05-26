@@ -27,7 +27,7 @@ Event.observe(window, 'load', function() {
         </tr>
 	    <tr>
 	      <td width="100">&nbsp;</td>
-	      <td width="100"><label for="PackagePromoRelBenefitCopy" style="width: auto">Benefit Copy:</label></td>
+	      <td width="100"><label for="PackagePromoRel Copy" style="width: auto">Benefit Copy:</label></td>
 	      <td colspan="4"><?php echo $form->input('benefitCopy', array('label' => false, 'rows' => 2)); ?></td>
         </tr>
 	    <tr>

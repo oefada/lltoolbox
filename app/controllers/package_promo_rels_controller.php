@@ -58,5 +58,15 @@ class PackagePromoRelsController extends AppController {
 		$this->set('inactivePackages', $inactivePackages);
 		$this->set('activePackages', $activePackages);
 	}
+	
+	function ajax_edit($id) {
+		if (!empty($this->data)) {
+			if($this->PackagePromoRel->save($this->data)) {
+				$this->set('closeModalbox', true);
+			}
+		} else {
+			$this->data = $this->PackagePromoRel->read(null, $id);
+		}
+	}
 }
 ?>
