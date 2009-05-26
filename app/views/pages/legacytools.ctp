@@ -12,5 +12,6 @@
 <li><?=$html->link("Homepage Merchandising Modules", '/homepage_merchandisings')?></li>
 
 <li><?=$html->link("Keyword Search Redirect Tool", '/search_redirects')?></li>
+<li><?=$html->link("MasterCard Promo Tool", '/package_promo_rels/mastercard')?></li>
 </ul>
 <br />
