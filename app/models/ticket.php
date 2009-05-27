@@ -84,6 +84,15 @@ class Ticket extends AppModel {
 		}
 	}
 	
+	function __isValidPackagePromo($packagePromoId, $packageId) {	
+		$result = $this->query("SELECT count(*) as C FROM packagePromoRel WHERE packagePromoId = $packagePromoId AND packageId = $packageId");
+		if ($result[0][0]['C'] > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	function getPackageNumMaxSales($packageId) {
 		$sql = "SELECT maxNumSales FROM package WHERE packageId = $packageId";
 		$result = $this->query($sql);
@@ -210,7 +219,7 @@ class Ticket extends AppModel {
 		$sql.= 'INNER JOIN schedulingInstance si ON sm.schedulingMasterId = si.schedulingMasterId ';
 		$sql.= 'INNER JOIN offer o USING(schedulingInstanceId) ';
 		$sql.= 'INNER JOIN offerLive ol USING(offerId) ';
-		$sql.= 'SET si.endDate = NOW(),ol.endDate = NOW(),sm.endDate ';
+		$sql.= 'SET si.endDate = NOW(),ol.endDate = NOW(),sm.endDate = NOW() ';
 		$sql.= 'WHERE sm.offerTypeId IN(3,4) ';
 		$sql.= "AND sm.schedulingMasterId IN ($sm_ids_imp) ";
 		$sql.= 'AND ol.endDate > NOW()';
