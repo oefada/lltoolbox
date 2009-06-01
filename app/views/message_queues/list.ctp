@@ -1,14 +1,17 @@
-<?php echo $this->renderElement('ajax_paginator', array('showCount' => true)); ?>
+<?php if (!@$read): ?>
+<?php echo $this->renderElement('ajax_paginator', array('showCount' => true, 'divToPaginate' => 'unreadMessages')); ?>
+<?php endif; ?>
 <table cellpadding="0" cellspacing="0">
 <tr>
-	<th><?php echo $paginator->sort($html->image("flag_red.png"), 'severity', array('escape' => false, 'update' => 'messageQueueIndex'));?></th>
-	<th><?php echo $paginator->sort($html->image("tag_blue.png"), 'model', array('escape' => false, 'update' => 'messageQueueIndex'));?></th>
-	<th><?php echo $paginator->sort('Title', 'title', array('update' => 'messageQueueIndex'));?></th>
-	<th><?php echo $paginator->sort('Date', 'created', array('update' => 'messageQueueIndex'));?></th>
+	<th>&nbsp;</th>
+	<th><?php echo $paginator->sort($html->image("flag_red.png"), 'severity', array('escape' => false, 'update' => 'unreadMessages'));?></th>
+	<th><?php echo $paginator->sort($html->image("tag_blue.png"), 'model', array('escape' => false, 'update' => 'unreadMessages'));?></th>
+	<th><?php echo $paginator->sort('Title', 'title', array('update' => 'unreadMessages'));?></th>
+	<th><?php echo $paginator->sort('Date', 'created', array('update' => 'unreadMessages'));?></th>
 </tr>
 <?php
 $i = 0;
-foreach ($messageQueues as $messageQueue):
+foreach ($messages as $messageQueue):
 	$class = null;
 	$classes = array();
 	if ($i++ % 2 == 0) {
@@ -22,6 +25,7 @@ foreach ($messageQueues as $messageQueue):
 	$class = ' class="'.implode(' ', $classes).'"';
 ?>
 	<tr<?php echo $class;?> id='message-<?=$messageQueue['MessageQueue']['messageQueueId']?>' onmouseover="rollover(1, this);" onclick="click(<?=$messageQueue['MessageQueue']['messageQueueId']?>, this);" onmouseout="rollover(0, this);">
+		<td style="text-align: center"><input type="checkbox" onclick="complete(this)" value="<?=$messageQueue['MessageQueue']['messageQueueId']?>" <? if(@$read) echo "checked='checked'" ?>/></td>
 		<td style="text-align: center">
 			<?php 
 			if ($messageQueue['MessageQueue']['severity'] == 3) {
@@ -52,4 +56,6 @@ foreach ($messageQueues as $messageQueue):
 	</tr>
 <?php endforeach; ?>
 </table>
-<?php echo $this->renderElement('ajax_paginator'); ?>
+<?php if (!@$read): ?>
+<?php echo $this->renderElement('ajax_paginator', array('divToPaginate' => 'unreadMessages')); ?>
+<?php endif; ?>

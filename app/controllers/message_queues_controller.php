@@ -8,9 +8,12 @@ class MessageQueuesController extends AppController {
 	    $this->autoRender = false;
 	    
 		$this->MessageQueue->recursive = 0;
-		$this->set('messageQueues', $this->paginate(array("MessageQueue.toUser = '{$this->user['LdapUser']['username']}'")));
+		$unreadMessages = $this->paginate(array("MessageQueue.toUser = '{$this->user['LdapUser']['username']}'", 'read' => 0));
+		$this->set('unreadMessages', $unreadMessages);
+		$this->set('readMessages', $this->MessageQueue->find('all', array('conditions' => array("MessageQueue.toUser = '{$this->user['LdapUser']['username']}'", 'read' => 1))));
 		
 		if ($this->RequestHandler->isAjax()) {
+			$this->set('messages', $unreadMessages);
 		    $this->render('list');
 		} else {
 		    $this->render('index');
@@ -24,7 +27,6 @@ class MessageQueuesController extends AppController {
 		}
 	
 		$this->set('messageQueue', $this->MessageQueue->read(null, $id));
-		$this->MessageQueue->saveField('read', true);
 	}
 
 	function delete($id = null) {
@@ -46,6 +48,21 @@ class MessageQueuesController extends AppController {
 
         echo "$unread, $severity";
 	}
+	
+	function change_status() {
+		$this->autoRender = false;
 
+		$this->set('messageQueue', $this->MessageQueue->read(null, $this->params['named']['messageQueueId']));
+
+		if ($this->params['named']['status'] == 'read') {
+			$status = true;
+		} else {
+			$status = false;
+		}
+		
+		$this->MessageQueue->saveField('read', $status);
+		
+		return true;
+	}
 }
 ?>
