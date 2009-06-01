@@ -3,6 +3,7 @@ class TicketRefundsController extends AppController {
 
 	var $name = 'TicketRefunds';
 	var $helpers = array('Html', 'Form');
+	var $uses = array('Ticket', 'TicketRefund', 'CreditTracking', 'CreditTrackingType', 'CreditTrackingTicketRel');
 
 	function index() {
 		$this->TicketRefund->recursive = 0;
@@ -18,7 +19,6 @@ class TicketRefundsController extends AppController {
 	}
 
 	function add() {
-		$refundReasons = $this->TicketRefund->RefundReason->find('list');
 		if (!empty($this->data) && $this->data['TicketRefund']['ticketId']) {
 			$ticket = array();
 			$ticket['Ticket']['ticketId'] = $this->data['TicketRefund']['ticketId'];
@@ -49,8 +49,20 @@ class TicketRefundsController extends AppController {
 				$emailBody.= '<tr><td width="200" valign="top">Refund Reason</td><td>' . $refundReasons[$this->data['TicketRefund']['refundReasonId']] .'</td></tr>';
 				$emailBody.= '<tr><td width="200" valign="top">Refund Notes</td><td>'. $this->data['TicketRefund']['refundNotes'] .'</td></tr>';
 				$emailBody.= '</table>';
+				
 				// send out email now
 				@mail($emailTo, $emailSubject, $emailBody, $emailHeaders);
+				
+				// credit on file
+				if (($this->data['TicketRefund']['ticketRefundTypeIds'] == 1 || $this->data['TicketRefund']['ticketRefundTypeIds'] == 3) && $this->data['cofAmount'] > 0) {
+					$result = $this->Ticket->query('SELECT userId FROM ticket WHERE ticketId = ' . $this->data['TicketRefund']['ticketId']);
+					$ctdata['CreditTracking']['creditTrackingTypeId'] = 2;
+					$ctdata['CreditTracking']['userId'] = $result[0]['ticket']['userId'];
+					$ctdata['CreditTracking']['amount'] = $this->data['cofAmount'];
+					$ctdata['CreditTracking']['notes'] = $this->data['TicketRefund']['refundNotes'];
+					$this->CreditTracking->create();
+					$this->CreditTracking->save($ctdata);
+				}
 				
 				$this->redirect(array('controller' => 'tickets', 'action' => 'view', 'id' => $this->data['TicketRefund']['ticketId']));
 			} else {
@@ -64,7 +76,11 @@ class TicketRefundsController extends AppController {
 			$this->Session->setFlash(__('Invalid ticket ID', true));
 			$this->redirect(array('controller' => 'tickets', 'action'=>'index'));
 		} 
+
+		$refundReasons = $this->TicketRefund->RefundReason->find('list');
+		$refundTypes = $this->TicketRefund->TicketRefundType->find('list');
 		
+		$this->set('ticketRefundTypeIds', $refundTypes);
 		$this->set('refundReasonIds', $refundReasons);
 		$this->data['TicketRefund']['ticketId'] = $ticketId;
 	}

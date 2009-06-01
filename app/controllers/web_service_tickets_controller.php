@@ -479,11 +479,10 @@ class WebServiceTicketsController extends WebServicesController
 		// for MasterCard sponsor only
 		// -------------------------------------------------------------------------------
 		$mcPromo = false;
-		if (!empty($promoData) && ($promoData['opc']['offerPromoCodeId'] == 43)) {
+		if (!empty($promoData) && (stristr($promoData['opc']['promoCode'], 'LLMCWORLD09'))) {
 			if ($this->Ticket->__isValidPackagePromo(1, $packageId)) {
 				$promoData['opc']['promoAmount'] = number_format($promoData['opc']['promoAmount'], 2, '.', ',');
-				$totalPrice -= $promoData['opc']['promoAmount'];
-				$totalPrice = number_format($totalPrice, 2, '.', ',');
+				$totalPrice	= number_format((($ticketData['billingPrice'] + $llFeeAmount) - $promoData['opc']['promoAmount']),  2, '.', ',');
 				$mcPromo = true;							
 			}
 		}
