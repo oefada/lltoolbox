@@ -21,27 +21,48 @@ your reservation, and will be in touch with you again soon.</strong>
 			<div style="height:15px;margin-top:15px;border-top:1px solid #B0B0B0;">&nbsp;</div>
 			<table cellspacing="0" cellpadding="5" border="0">
 			<tr>
-				<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="160">Ticket ID:</td>
+				<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="240">Ticket ID:</td>
+				<td style="color:#444444;font-size:12px;" valign="top" align="left" width="3">&nbsp;</td>
 				<td style="color:#444444;font-size:12px;" valign="top" align="left"><?=$ticketId;?></td>
 			</tr>
 			<tr>
-				<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="160">Price:</td>
+				<td style="color:#000000;font-size:12px;" valign="top" align="left" width="240">Price:</td>
+				<td style="color:#444444;font-size:12px;" valign="top" align="left" width="3">&nbsp;</td>
 				<td style="color:#444444;font-size:12px;" valign="top" align="left">$<?=$billingPrice;?></td>
 			</tr>
 			<tr>
-				<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="160">Handling Fee:</td>
+				<td style="color:#000000;font-size:12px;" valign="top" align="left" width="240">Handling Fee:</td>
+				<td style="color:#444444;font-size:12px;" valign="top" align="left" width="3">&nbsp;</td>
 				<td style="color:#444444;font-size:12px;" valign="top" align="left">$<?=$llFee;?></td>
 			</tr>
+			<?php if ($mcPromo) : ?>
 			<tr>
-				<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="160">Preferred Dates:</td>
+				<td style="color:#000000;font-size:12px;border-bottom:1px solid silver;padding-bottom:10px;" valign="middle" align="left" width="240">
+					Exclusive Offer with &nbsp;&nbsp;&nbsp;<a href="http://clk.atdmt.com/AST/go/154171765/direct;wi.1;hi.1/01/" target="_blank"><img src="http://www.luxurylink.com/images/shared/mc_small_logo.png" border="0" /></a>
+					<img src="http://view.atdmt.com/AST/view/154171765/direct;wi.1;hi.1/01/" width="1" height="1" border="0" />
+				</td>
+				<td style="color:#444444;font-size:12px;border-bottom:1px solid silver;padding-bottom:10px;" valign="middle" align="left" width="3">-</td>
+				<td style="color:#444444;font-size:12px;border-bottom:1px solid silver;padding-bottom:10px;" valign="middle" align="left">$<?=$promoData['opc']['promoAmount'];?></td>
+			</tr>
+			<?php endif; ?>
+			<tr>
+				<td style="color:#000000;font-size:12px; font-weight:bold; padding-bottom:20px;" valign="top" align="left" width="240">Total Price:</td>
+				<td style="color:#444444;font-size:12px; padding-bottom:20px;" valign="top" align="left" width="3">&nbsp;</td>
+				<td style="color:#990000;font-size:12px; font-weight:bold; padding-bottom:20px;" valign="top" align="left">$<?=$totalPrice;?></td>
+			</tr>
+			<tr>
+				<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="240">Preferred Dates:</td>
+				<td style="color:#444444;font-size:12px;" valign="top" align="left" width="3">&nbsp;</td>
 				<td style="color:#444444;font-size:12px;" valign="top" align="left">Start: <?=$fpArrival;?> &nbsp;&nbsp;&nbsp;&nbsp;End: <?=$fpDeparture;?></td>
 			</tr>
 			<tr>
-				<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="160">Alternate Dates:</td>
+				<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="240">Alternate Dates:</td>
+				<td style="color:#444444;font-size:12px;" valign="top" align="left" width="3">&nbsp;</td>
 				<td style="color:#444444;font-size:12px;" valign="top" align="left">Start: <?=$fpArrival2;?> &nbsp;&nbsp;&nbsp;&nbsp;End: <?=$fpDeparture2;?></td>
 			</tr>
 			<tr>
-				<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="160">Special Requests:</td>
+				<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="240">Special Requests:</td>
+				<td style="color:#444444;font-size:12px;" valign="top" align="left" width="3">&nbsp;</td>
 				<td style="color:#444444;font-size:12px;" valign="top" align="left"><?=$fpNotes;?></td>
 			</tr>
 			</table>
