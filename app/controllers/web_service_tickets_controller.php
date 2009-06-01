@@ -430,12 +430,14 @@ class WebServiceTicketsController extends WebServicesController
 		$packageName 		= strip_tags($liveOfferData['offerName']);
 		$packageSubtitle	= $packageData['subtitle'];
 		
-		$packageIncludes 	= $packageData['packageIncludes'];
-		$legalText			= $packageData['termsAndConditions'];
-		$validityNote		= $packageData['validityDisclaimer'];
+		$packageIncludes 	= $liveOfferData['offerIncludes'];
+		$legalText			= $liveOfferData['termsAndConditions'];
+		$validityNote		= $liveOfferData['validityDisclaimer'];
 		$validityLeadIn     = $packageData['validityLeadInLine'];
-		$addtlDescription   = $packageData['additionalDescription'];
+		$addtlDescription   = $liveOfferData['additionalDescription'];
 		
+		$packageId			= $ticketData['packageId'];
+
 		$offerTypeId		= $ticketData['offerTypeId'];
 		$offerTypeName		= str_replace('Standard ', '', $offerType[$offerTypeId]);
 		$offerTypeBidder	= ($offerTypeId == 1) ? 'Winner' : 'Winning Bidder';
@@ -471,6 +473,18 @@ class WebServiceTicketsController extends WebServicesController
 				$resConfNum = $resData[0]['reservation']['reservationConfirmNum'];
 				$resArrivalDate = date('M d, Y', strtotime($resData[0]['reservation']['arrivalDate']));
 				$resDepartureDate = date('M d, Y', strtotime($resData[0]['reservation']['departureDate']));
+			}
+		}
+
+		// for MasterCard sponsor only
+		// -------------------------------------------------------------------------------
+		$mcPromo = false;
+		if (!empty($promoData) && ($promoData['opc']['offerPromoCodeId'] == 43)) {
+			if ($this->Ticket->__isValidPackagePromo(1, $packageId)) {
+				$promoData['opc']['promoAmount'] = number_format($promoData['opc']['promoAmount'], 2, '.', ',');
+				$totalPrice -= $promoData['opc']['promoAmount'];
+				$totalPrice = number_format($totalPrice, 2, '.', ',');
+				$mcPromo = true;							
 			}
 		}
 
@@ -1017,6 +1031,15 @@ class WebServiceTicketsController extends WebServicesController
 			$promo = $this->Ticket->getTicketOfferPromo($ticket['Ticket']['ticketId']);
 			if ($promo && isset($promo['opc']['promoAmount']) && is_numeric($promo['opc']['promoAmount'])) {
 				$totalChargeAmount -= $promo['opc']['promoAmount'];
+				
+				// for MasterCard sponsor only - check if card is mc
+				// -------------------------------------------------------------------------------
+				if ($promo['opc']['offerPromoCodeId'] == 43) {
+					$isValidPackagePromo = $this->Ticket->__isValidPackagePromo(1, $ticket['Ticket']['packageId']);
+					if (!$isValidPackagePromo || $userPaymentSettingPost['UserPaymentSetting']['ccNumber']{0} != '5') {
+						$totalChargeAmount += $promo['opc']['promoAmount'];
+					}
+				}
 			}
 		}
 		
