@@ -11,11 +11,20 @@ class PackagePromoRelsController extends AppController {
 		$packages = $this->PackagePromoRel->find('all', array('conditions' => array('packagePromoId' => 1)));
 		$inactivePackages = array();
 		$activePackages = array();
+		$this->Ticket = new Ticket();
+		$MCPROMOCODE = $this->PackagePromoRel->query("SELECT offerPromoCodeId FROM offerPromoCode as OfferPromoCode WHERE promoCode = 'LLMCWORLD09'");
+		$MCPROMOCODE = $MCPROMOCODE[0]['OfferPromoCode']['offerPromoCodeId'];
+
+		$offerTypes = $this->Ticket->OfferType->find('list');
+		$offerTypes[1] = "Auction";
 
 		foreach ($packages as $package) {
 			$endDate = $this->PackagePromoRel->query('SELECT MIN(endDate) as endDate FROM offerLive WHERE packageId = '.$package['Package']['packageId'].' AND isClosed = 0 GROUP BY packageId');
+			$tickets = $this->Ticket->find('all', array('conditions' => array('Ticket.packageId' => $package['Package']['packageId'], 'OfferPromoTracking.offerPromoCodeId' => $MCPROMOCODE),
+													'contain' => array('TicketStatus', 'OfferPromoTracking')));
 
 			$package['OfferLive']['endDate'] = @$endDate[0][0]['endDate'];
+			$package['Ticket'] = $tickets;
 			
 			$clientThemes = $this->PackagePromoRel->Client->find('first', array('conditions' => array('Client.clientId' => $package['Client']['clientId']),
 																				'contain' => array('Theme' => array('themeName'))));
@@ -57,6 +66,7 @@ class PackagePromoRelsController extends AppController {
 		
 		$this->set('inactivePackages', $inactivePackages);
 		$this->set('activePackages', $activePackages);
+		$this->set('offerTypes', $offerTypes);
 	}
 	
 	function ajax_edit($id) {

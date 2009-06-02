@@ -8,6 +8,7 @@ class Ticket extends AppModel {
 	var $belongsTo = array('TicketStatus' => array('foreignKey' => 'ticketStatusId'),
 						   'Package' => array('foreignKey' => 'packageId'),
 						   'Offer' => array('foreignKey' => 'offerId'),
+						   'OfferType' => array('foreignKey' => 'offerTypeId'),
 						   'User' => array('foreignKey' => 'userId'),
 						   'OfferPromoTracking' => array('foreignKey' => false, 'conditions' => array('Ticket.offerId = OfferPromoTracking.offerId AND Ticket.userId = OfferPromoTracking.userId'))
 						);

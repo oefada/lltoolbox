@@ -67,8 +67,19 @@ Event.observe(window, 'load', function() {
   </tr>
   </thead>
   <tbody class="rowBorderDark">
-  <?php foreach($activePackages as $k => $package):?>
-	<?php echo $this->renderElement('package_promo_rels/mastercard_row', array('k' => $k, 'package' => $package, 'checkboxAction' => 'inactivate')) ?>
+	<?php $totalTickets = $totalDiscounts = $totalCollected = 0; ?>
+  <?php foreach($activePackages as $k => $package): ?>
+	<?php 
+			$numTickets = count($package['Ticket']);
+
+			$totalTickets += $numTickets;
+			$totalDiscounts += $numTickets * 150;
+			
+			foreach($package['Ticket'] as $ticket ){ //for multiple tickets
+				$totalCollected += $ticket['Ticket']['billingPrice'];
+			}
+	?>
+	<?php echo $this->renderElement('package_promo_rels/mastercard_row', array('k' => $k, 'package' => $package, 'checkboxAction' => 'inactivate', 'numTickets' => $numTickets)) ?>
    <?php endforeach; ?>
    </tbody>
    <tfoot class="rowBorderDark">
@@ -76,9 +87,9 @@ Event.observe(window, 'load', function() {
     <td colspan="9"><div style="float: left; clear: none;"><a href="#" onclick="javascript:$('ActivateInactivateForm').submit(); return false;">Submit</a></div>
 	<div style="float: right; clear: none; font-weight: bold;" class="textRed">TOTAL FOR LIVE PACKAGES</div>
 	</td>
-    <th>0</th>
-    <th>$0</th>
-    <th>$0</th>
+    <th><?=$totalTickets?></th>
+    <th>$<?=$totalDiscounts?></th>
+    <th>$<?=$totalCollected?></th>
   </tr>
   </tfoot>
 </table>
@@ -103,18 +114,29 @@ Event.observe(window, 'load', function() {
 	  </tr>
 	  </thead>
 	  <tbody class="rowBorderDark">
+		<?php $totalTickets = $totalDiscounts = $totalCollected = 0; ?>
 	  <?php foreach($inactivePackages as $k => $package):?>
-		<?php echo $this->renderElement('package_promo_rels/mastercard_row', array('k' => $k, 'package' => $package, 'checkboxAction' => 'activate')) ?>
+		<?php 
+				$numTickets = count($package['Ticket']);
+
+				$totalTickets += $numTickets;
+				$totalDiscounts += $numTickets * 150;
+
+				foreach($package['Ticket'] as $ticket ){ //for multiple tickets
+					$totalCollected += $ticket['Ticket']['billingPrice'];
+				}
+		?>
+		<?php echo $this->renderElement('package_promo_rels/mastercard_row', array('k' => $k, 'package' => $package, 'checkboxAction' => 'activate', 'numTickets' => $numTickets)) ?>
 	   <?php endforeach; ?>
 	   </tbody>
 	   <tfoot class="rowBorderDark">
 	  <tr>
 	    <td colspan="9"><div style="float: left; clear: none;"><a href="#" onclick="javascript:$('ActivateInactivateForm').submit(); return false;">Submit</a></div>
-		<div style="float: right; clear: none; font-weight: bold;" class="textRed">TOTAL FOR LIVE PACKAGES</div>
+		<div style="float: right; clear: none; font-weight: bold;" class="textRed">TOTAL FOR INACTIVE PACKAGES</div>
 		</td>
-	    <th>0</th>
-	    <th>$0</th>
-	    <th>$0</th>
+	    <th><?=$totalTickets?></th>
+	    <th>$<?=$totalDiscounts?></th>
+	    <th>$<?=$totalCollected?></th>
 	  </tr>
 	  </tfoot>
 	</table>

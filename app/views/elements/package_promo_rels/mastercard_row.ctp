@@ -1,10 +1,15 @@
+<?php
+global $totalCollected;
+$rowspan = ($numTickets > 0) ? $numTickets : 1;
+
+?>
 <tr<?php if($k %2) echo ' class="altrow"' ?>>
-  <td rowspan="1" style="text-align: center">
+  <td rowspan="<?=$rowspan?>" style="text-align: center">
 <input type="checkbox" name="data[<?=$checkboxAction?>][]" value="<?=$package['PackagePromoRel']['packagePromoRelId']?>" />	
 </td>
-  <td rowspan="1"><?=$package['Client']['clientId']?></td>
-  <td rowspan="1"><?=$html->link($package['Package']['packageId'], '/scheduling/index/clientId:'.$package['Client']['clientId'])?></td>
-  <td rowspan="1">
+  <td rowspan="<?=$rowspan?>"><?=$package['Client']['clientId']?></td>
+  <td rowspan="<?=$rowspan?>"><?=$html->link($package['Package']['packageId'], '/scheduling/index/clientId:'.$package['Client']['clientId'])?></td>
+  <td rowspan="<?=$rowspan?>">
 	<? if(!empty($package['Theme'])): ?>
 	<?=implode(', ', $package['Theme'])?>
 	<br />
@@ -21,22 +26,32 @@
 					false
 					);
 	?></td>
-  <td rowspan="1"><?=$html->link($package['Client']['name'], '/clients/edit/'.$package['Client']['clientId'])?></td>
-  <td rowspan="1"><?=$package['OfferLive']['endDate']?></td>
-  <td>&nbsp;</td>
-  <td>&nbsp;</td>
-  <td>&nbsp;</td>
-  <td rowspan="1" style="background-color: #ebebeb">&nbsp;</td>
-  <td rowspan="1" style="background-color: #ebebeb">&nbsp;</td>
-  <td rowspan="1" style="background-color: #ebebeb">&nbsp;</td>
+  <td rowspan="<?=$rowspan?>"><?=$html->link($package['Client']['name'], '/clients/edit/'.$package['Client']['clientId'])?></td>
+  <td rowspan="<?=$rowspan?>"><?=$package['OfferLive']['endDate']?></td>
+  <td><?=@$package['Ticket'][0]['Ticket']['ticketId']?></td>
+  <? $collected = @$package['Ticket'][0]['Ticket']['billingPrice']; ?>
+  <td><table class="noBorder" style="width: 100%; margin: 0; padding: 0"><tr><td nowrap><?=@$offerTypes[$package['Ticket'][0]['Ticket']['offerTypeId']]?></td><td align="right">$<?=@$package['Ticket'][0]['Ticket']['billingPrice']?></td></tr></table></td>
+  <td><? if (@$package['Ticket'][0]['Ticket']['ticketId']) echo "$150"; ?></td>
+  <td rowspan="<?=$rowspan?>" style="background-color: #ebebeb"><?=count($package['Ticket'])?></td>
+  <td rowspan="<?=$rowspan?>" style="background-color: #ebebeb">$<?=count($package['Ticket'])*150?></td>
+	<?
+	$rowCollected = 0;
+	foreach($package['Ticket'] as $ticket ){ //for multiple tickets
+		$rowCollected += $ticket['Ticket']['billingPrice'];
+	}
+	?>
+  <td rowspan="<?=$rowspan?>" style="background-color: #ebebeb">$<?=$rowCollected?></td>
 </tr>
-<?php if(0): //for multiple tickets?>
-<tr>
-  <td>&nbsp;</td>
-  <td>&nbsp;</td>
-  <td>&nbsp;</td>
+<?php
+array_shift($package['Ticket']); // remove the first one since we took care of it already
+foreach( $package['Ticket'] as $k2 => $ticket ): //for multiple tickets
+?>
+<tr<?php if($k %2) echo ' class="altrow"' ?>>
+  <td><?=$ticket['Ticket']['ticketId']?></td>
+  <td><table class="noBorder" style="width: 100%; margin: 0; padding: 0"><tr><td nowrap><?=$offerTypes[$ticket['Ticket']['offerTypeId']]?></td><td align="right">$<?=@$ticket['Ticket']['billingPrice']?></td></tr></table></td>
+  <td>$150</td>
   </tr>
- <?php endif; ?>
+ <?php endforeach; ?>
 <?php
 $prototip->tooltip("benefitCopy_{$package['PackagePromoRel']['packagePromoRelId']}", nl2br($package['PackagePromoRel']['benefitCopy']));
 ?>
