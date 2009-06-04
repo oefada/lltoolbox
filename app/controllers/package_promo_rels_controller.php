@@ -20,8 +20,10 @@ class PackagePromoRelsController extends AppController {
 
 		foreach ($packages as $package) {
 			$endDate = $this->PackagePromoRel->query('SELECT MIN(endDate) as endDate FROM offerLive WHERE packageId = '.$package['Package']['packageId'].' AND isClosed = 0 GROUP BY packageId');
-			$tickets = $this->Ticket->find('all', array('conditions' => array('Ticket.packageId' => $package['Package']['packageId'], 'OfferPromoTracking.offerPromoCodeId' => $MCPROMOCODE),
-													'contain' => array('TicketStatus', 'OfferPromoTracking')));
+			$tickets = $this->Ticket->query("SELECT * FROM ticket AS Ticket 
+											INNER JOIN promoTicketRel AS PromoTicketRel USING(ticketId)
+											WHERE Ticket.packageId = '{$package['Package']['packageId']}'
+												AND PromoTicketRel.promoCodeId = {$MCPROMOCODE}");
 
 			$package['OfferLive']['endDate'] = @$endDate[0][0]['endDate'];
 			$package['Ticket'] = $tickets;
