@@ -50,7 +50,7 @@ class GiftCertBalancesController extends AppController {
 					
 					$emailTo = $this->data['recipientEmail'];
 					$emailFrom = 'LuxuryLink.com Accounting<accounting@luxurylink.com>';
-					$emailHeaders = "From: $emailFrom\r\n" . "Bcc: ltum@luxurylink.com\r\n";
+					$emailHeaders = "From: $emailFrom\r\n" . "Bcc: accounting@luxurylink.com\r\n";
 	        		$emailHeaders.= "Content-type: text/html\r\n";
 					$emailSubject = 'Your Gift Certificate';
 					$emailBody = 	'<p>Dear ' . $this->data['recipientName'] . ',</p>' .

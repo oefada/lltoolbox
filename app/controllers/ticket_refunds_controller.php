@@ -52,7 +52,7 @@ class TicketRefundsController extends AppController {
 				$emailBody.= '</table>';
 				
 				// send out email now
-				// @mail($emailTo, $emailSubject, $emailBody, $emailHeaders);
+				@mail($emailTo, $emailSubject, $emailBody, $emailHeaders);
 				
 				// credit on file
 				if (($this->data['TicketRefund']['ticketRefundTypeIds'] == 1 || $this->data['TicketRefund']['ticketRefundTypeIds'] == 3) && $this->data['cofAmount'] > 0) {
