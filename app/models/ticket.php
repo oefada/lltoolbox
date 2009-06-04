@@ -9,12 +9,13 @@ class Ticket extends AppModel {
 						   'Package' => array('foreignKey' => 'packageId'),
 						   'Offer' => array('foreignKey' => 'offerId'),
 						   'OfferType' => array('foreignKey' => 'offerTypeId'),
-						   'User' => array('foreignKey' => 'userId'),
-						   'OfferPromoTracking' => array('foreignKey' => false, 'conditions' => array('Ticket.offerId = OfferPromoTracking.offerId AND Ticket.userId = OfferPromoTracking.userId'))
+						   'User' => array('foreignKey' => 'userId')
 						);
 
 	var $hasMany = array('PaymentDetail' => array('foreignKey' => 'ticketId'),
-						 'PpvNotice' => array('foreignKey' => 'ticketId')
+						 'PpvNotice' => array('foreignKey' => 'ticketId'),
+						 'PromoTicketRel' => array('foreignKey' => 'ticketId'),
+						 'CreditTrackingTicketRel' => array('foreignKey' => 'ticketId')
 						);
 	
 	var $hasOne = array('TicketWriteoff' => array('foreignKey' => 'ticketId'),
@@ -35,7 +36,7 @@ class Ticket extends AppModel {
 		$params = array('conditions' => $conditions);
 		foreach ($conditions as $k => $v) {
 			if (stristr($k, 'promo')) {
-				$params['contain'][] = 'OfferPromoTracking';
+				$params['contain'][] = 'PromoTicketRel';
 				$params['fields'] = array('COUNT(distinct Ticket.ticketId) as count');
 			}
 			if (stristr($k, 'reservation')) {
@@ -52,26 +53,120 @@ class Ticket extends AppModel {
 		return $result;
 	}
 	
+	function findPromoOfferTrackings($userId, $offerId) {
+		$result = $this->query("SELECT promoCodeId FROM promoOfferTracking where userId = $userId and offerId = $offerId");
+		if (!empty($result)) {
+			return $result;
+		} else {
+			return false;
+		}
+	}
+
+	function getTicketPromoData($ticketId) {
+		$sql = "SELECT pc.*, p.promoName, p.amountOff, p.percentOff FROM promoTicketRel ptr ";
+		$sql.= "INNER JOIN promoCode pc ON pc.promoCodeId = ptr.promoCodeId ";
+		$sql.= "INNER JOIN promoCodeRel pcr ON pcr.promoCodeId = pc.promoCodeId ";
+		$sql.= "INNER JOIN promo p on p.promoId = pcr.promoId ";
+		$sql.= "WHERE ptr.ticketId = $ticketId";
+		$result = $this->query($sql);
+		return $result;
+	}
+
+	function getPromoGcCofData($ticketId, $ticketPrice) {
+		$data = array();
+		$data['original_ticket_price'] = $ticketPrice;
+
+		$result = $this->query("SELECT PromoCode.*, Promo.*
+								FROM promoTicketRel as PromoTicketRel 
+								LEFT JOIN promoCode AS PromoCode ON PromoTicketRel.promoCodeId = PromoCode.promoCodeId 
+								LEFT JOIN promoCodeRel AS PromoCodeRel ON PromoCode.promocodeId = PromoCodeRel.promoCodeId 
+								LEFT JOIN promo AS Promo ON PromoCodeRel.promoId = Promo.promoId 
+								WHERE PromoTicketRel.ticketId = $ticketId 
+								GROUP BY PromoTicketRel.promoCodeId
+								");
+
+		foreach ($result as $k => $row) {
+			if ($row['PromoCode']['promoCodeId'] && $row['Promo']['promoId']) {
+				$data['Promo'] = array_merge($row['PromoCode'], $row['Promo']);	
+			} else {
+				$gcSql = 'SELECT * FROM giftCertBalance ';
+				$gcSql.= 'WHERE promoCodeId = ' . $row['PromoCode']['promoCodeId'] . ' ORDER BY giftCertBalanceId DESC LIMIT 1';
+				$gcResult = $this->query($gcSql);
+				if (!empty($gcResult) && ($gcResult[0]['giftCertBalance']['balance'] > 0)) {
+					$data['GiftCert'] = $gcResult[0]['giftCertBalance'];
+				}
+			}
+		}
+
+		if (isset($data['Promo']) && $data['Promo'] && ($ticketPrice > 0)) {
+			// get the amount off for the ticket
+			if ($data['Promo']['percentOff'] && !$data['Promo']['amountOff']) {
+				// for percent off
+				$data['Promo']['totalAmountOff'] = ($ticketPrice * ($data['Promo']['percentOff'] / 100));
+			} elseif (!$data['Promo']['percentOff'] && $data['Promo']['amountOff']) {
+				// for amount off
+				$data['Promo']['totalAmountOff'] = $data['Promo']['amountOff'];
+			} 
+			$ticketPrice = $ticketPrice - $data['Promo']['totalAmountOff'];
+			$data['Promo']['applied'] = ($data['Promo']['totalAmountOff'] > 0) ? 1 : 0;
+		}	
+		
+		if ($ticketPrice > 0) {
+			$ticketPrice += $this->getFeeByTicket($ticketId);
+		}
+		
+		if (isset($data['GiftCert']) && $data['GiftCert'] && ($ticketPrice > 0)) {
+			$new_price = $ticketPrice - $data['GiftCert']['balance'];					
+			if ($new_price < 0) {
+				$data['GiftCert']['totalAmountOff'] = $ticketPrice;
+				$data['GiftCert']['remainingBalance'] = abs($new_price);
+				$new_price = 0;
+			} else {
+				$data['GiftCert']['totalAmountOff'] = $data['GiftCert']['balance'];
+				$data['GiftCert']['remainingBalance'] = false;
+			}
+			$ticketPrice = $new_price;
+			$data['GiftCert']['applied'] = ($data['GiftCert']['totalAmountOff'] > 0) ? 1 : 0;
+		}
+
+		$cofSql = 'SELECT CreditTracking.* FROM ticket AS Ticket ';
+		$cofSql.= 'INNER JOIN creditTracking AS CreditTracking USING (userId) ';
+		$cofSql.= "WHERE Ticket.ticketId = $ticketId ORDER BY CreditTracking.creditTrackingId DESC LIMIT 1";
+		$cofResult = $this->query($cofSql);
+		if (!empty($cofResult) && ($cofResult[0]['CreditTracking']['balance'] > 0)) {
+			$data['Cof'] = $cofResult[0]['CreditTracking'];	
+		}
+		
+		if (isset($data['Cof']) && $data['Cof'] && ($ticketPrice > 0)) {
+			$new_price = $ticketPrice - $data['Cof']['balance'];					
+			if ($new_price < 0) {
+				$data['Cof']['totalAmountOff'] = $ticketPrice;
+				$data['Cof']['remainingBalance'] = abs($new_price);
+				$new_price = 0;
+			} else {
+				$data['Cof']['totalAmountOff'] = $data['Cof']['balance'];
+				$data['Cof']['remainingBalance'] = false;
+			}
+			$ticketPrice = $new_price;
+			$data['Cof']['applied'] = ($data['Cof']['totalAmountOff'] > 0) ? 1 : 0;
+		}
+		$data['applied'] = ($data['Promo']['applied'] || $data['GiftCert']['applied'] || $data['Cof']['applied']) ? 1 : 0;
+		$data['final_price'] = $ticketPrice;
+		return $data;
+	}
+
+	function getFeeByTicket($ticketId) {
+		$result = $this->query("SELECT offerTypeId FROM ticket WHERE ticketId = $ticketId");
+		if (!empty($result)) {
+			return (in_array($result[0]['ticket']['offerTypeId'], array(1,2,6))) ? 30 : 40;
+		}
+		return null;
+	}
+
 	function getClientsFromPackageId($packageId) {
 		$sql = 'SELECT Client.clientId, Client.name, Client.clientTypeId FROM clientLoaPackageRel cr INNER JOIN client as Client ON Client.clientId = cr.clientId WHERE cr.packageId = ' . $packageId;
 		$clients = $this->query($sql);
 		return $clients;
-	}
-	
-	function getTicketOfferPromo($ticketId) {
-		if (!$ticketId || !is_numeric($ticketId)) {
-			return false;	
-		}
-		$promo_sql = "SELECT opc.* FROM ticket t ";
-		$promo_sql.= "INNER JOIN offerPromoTracking opt ON opt.offerId = t.offerId AND opt.userId = t.userId ";
-		$promo_sql.= "LEFT JOIN offerPromoCode opc USING (offerPromoCodeId) ";
-		$promo_sql.= "WHERE t.ticketId = $ticketId ORDER BY offerPromoTrackingId DESC LIMIT 1";		
-		$promo_result = $this->query($promo_sql);
-		if (!empty($promo_result)) {
-			return $promo_result[0];	
-		} else {
-			return false;
-		}
 	}
 	
 	function getDerivedPackageNumSales($packageId) {
