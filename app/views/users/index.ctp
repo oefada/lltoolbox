@@ -1,9 +1,10 @@
 <?php
-$this->pageTitle = __('Users', true);
 $this->set('hideSidebar', true);
 ?>
 
-<?php if(isset($query)): ?>
+<?php if(isset($query)): 
+$this->pageTitle = __('Users', true);
+?>
 <div id='users-index' class="users index">
 
 <?php $html->addCrumb('Users'); ?>
@@ -57,8 +58,24 @@ foreach ($users as $user):
 </table>
 <?php echo $this->renderElement('ajax_paginator', array('divToPaginate' => 'users-index'))?>
 </div>
+
+
+
 <?php else: ?>
-User Search (type in criteria at the top left of the page)<br />
-<a href="/tickets">Search Tickets</a><br />
-<a href="/bids">Search Bids</a><br /><br />
+
+<b>User Search</b> (type in criteria at the top left of the page)
+<ul>
+	<li><a href="/tickets">Search Tickets</a></li>
+	<li><a href="/bids">Search Bids</a></li>
+</ul>
+
+<br/>
+<br/>
+
+<b>Others</b>
+<ul>
+	<li><a href="/credit_trackings">Credit On File</a></li>
+	<li><a href="/gift_cert_balances">Gift Certificates</a></li>
+</ul>
+
 <?php endif; ?>
