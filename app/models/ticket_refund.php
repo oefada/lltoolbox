@@ -7,7 +7,7 @@ class TicketRefund extends AppModel {
 	
 	var $hasOne = array('Ticket' => array('foreignKey' => 'ticketId'));
 	
-	var $belongsTo = array('RefundReason' => array('foreignKey' => 'refundReasonId'));
+	var $belongsTo = array('RefundReason' => array('foreignKey' => 'refundReasonId'), 'TicketRefundType' => array('foreignKey' => 'ticketRefundTypeId'));
 
 }
 ?>
