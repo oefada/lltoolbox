@@ -108,14 +108,14 @@ class PaymentDetailsController extends AppController {
 
 		$this->PaymentDetail->Ticket->recursive = 2;
 		$ticket = $this->PaymentDetail->Ticket->read(null, $this->params['ticketId']);
-		$ticket['Ticket']['totalBillingAmount'] = in_array($ticket['Ticket']['offerTypeId'], array(1,2,6)) ? 30 : 40;
-		$ticket['Ticket']['totalBillingAmount'] += $ticket['Ticket']['billingPrice'];
-		$promo = $this->Ticket->getTicketOfferPromo($ticket['Ticket']['ticketId']);
-		if ($promo && isset($promo['opc']['promoAmount']) && is_numeric($promo['opc']['promoAmount'])) {
-			$ticket['Ticket']['totalBillingAmount'] -= $promo['opc']['promoAmount'];
-			$ticket['Promo'] = $promo;
+		$ticket['Ticket']['totalBillingAmount'] = $ticket['Ticket']['billingPrice'];
+
+		$ticket['UserPromo'] = $this->Ticket->getPromoGcCofData($ticket['Ticket']['ticketId'], $ticket['Ticket']['billingPrice']);
+		if ($ticket['UserPromo']['Promo'] && $ticket['UserPromo']['Promo']['applied']) {
+			$ticket['Ticket']['totalBillingAmount'] -= $ticket['UserPromo']['Promo']['totalAmountOff'];
 		}
-		
+		$ticket['Ticket']['totalBillingAmount'] += in_array($ticket['Ticket']['offerTypeId'], array(1,2,6)) ? 30 : 40;
+	
 		$selectExpMonth = array();
 		for ($i = 1; $i < 13; $i++) {
 			$se_m = str_pad($i, 2, '0', STR_PAD_LEFT);
