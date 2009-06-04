@@ -10,7 +10,11 @@ class TicketsController extends AppController {
 
 	var $name = 'Tickets';
 	var $helpers = array('Html', 'Form', 'Ajax', 'Text', 'Layout', 'Number');
-	var $uses = array('Ticket','OfferType', 'Format', 'User', 'ClientLoaPackageRel', 'Track', 'TrackDetail','Offer','Loa','Client', 'OfferLive', 'OfferPromoCode', 'Reservation');
+
+	var $uses = array('Ticket','OfferType', 'Format', 'User', 'ClientLoaPackageRel', 
+					  'Track', 'TrackDetail','Offer','Loa','Client', 'OfferLive', 
+					  'Reservation', 'PromoTicketRel', 'Promo', 'PromoCode'
+					  );
 
 	function index() {
 
@@ -33,7 +37,7 @@ class TicketsController extends AppController {
 		$s_bid_id = isset($form['s_bid_id']) ? $form['s_bid_id'] : '';
 		$s_request_queue_id = isset($form['s_request_queue_id']) ? $form['s_request_queue_id'] : '';
 		$s_package_id = isset($form['s_package_id']) ? $form['s_package_id'] : '';
-		$s_promo_code_id = isset($form['s_promo_code_id']) ? $form['s_promo_code_id'] : '';
+		$s_promo_code = isset($form['s_promo_code']) ? $form['s_promo_code'] : '';
 		$s_offer_type_id = isset($form['s_offer_type_id']) ? $form['s_offer_type_id'] : 0;
 		$s_ticket_status_id = isset($form['s_ticket_status_id']) ? $form['s_ticket_status_id'] : 0;
 		$s_res_confirmation_num = isset($form['s_res_confirmation_num']) ? $form['s_res_confirmation_num'] : '';
@@ -115,6 +119,20 @@ class TicketsController extends AppController {
 			$this->paginate['conditions']['Ticket.requestQueueId'] = $s_request_queue_id;    
 		} elseif ($s_package_id) {
 			$this->paginate['conditions']['Ticket.packageId'] = $s_package_id;    
+		} elseif ($s_promo_code) {		
+			$promoCodeResult = $this->PromoCode->findBypromoCode($s_promo_code);
+			$s_promo_code_id = $promoCodeResult['PromoCode']['promoCodeId'];
+			$this->paginate['contain'][] = 'PromoTicketRel';
+			$this->paginate['group'] = array('Ticket.ticketId');
+			$this->paginate['joins'] = array(
+							array(
+		           				'table' => 'promoTicketRel', 
+					            'alias' => 'PromoTicketRel', 
+					            'type' => 'inner',  
+					            'conditions'=> array('PromoTicketRel.ticketId = Ticket.ticketId') 
+								)
+							);
+			$this->paginate['conditions']['PromoTicketRel.promoCodeId'] = $s_promo_code_id;
 		} else {    
 			$single_search = false;
 			$this->paginate['conditions']['Ticket.created BETWEEN ? AND ?'] = array($s_start_date, $s_end_date);             		
@@ -126,16 +144,6 @@ class TicketsController extends AppController {
 			}
 			if ($s_ticket_status_id) {
 				$this->paginate['conditions']['Ticket.ticketStatusId'] = $s_ticket_status_id;	
-			}
-			if ($s_promo_code_id ) {
-				$this->paginate['contain'][] = 'OfferPromoTracking';
-				$this->paginate['group'] = array('Ticket.ticketId');
-				$this->paginate['order'] = array('Ticket.ticketId' => 'desc', 'OfferPromoTracking.offerPromoTrackingId' => 'desc');
-				if ($s_promo_code_id == 'a') {
-					$this->paginate['conditions']['OfferPromoTracking.offerPromoCodeId > '] = 0;
-				} else {
-					$this->paginate['conditions']['OfferPromoTracking.offerPromoCodeId'] = $s_promo_code_id;
-				}
 			}
 			if ($s_has_reservation) {
 				$this->paginate['contain'][] = 'Reservation';
@@ -155,7 +163,7 @@ class TicketsController extends AppController {
 		if (!$single_search) {
 			$s_ticket_id = $s_offer_id = $s_user_id = $s_bid_id = $s_client_id = $s_request_queue_id = $s_package_id = $s_res_confirmation_num = null;
 		} else {
-			$s_res_check_in_date = $s_offer_type_id = $s_format_id = $s_ticket_status_id = $s_promo_code_id = null;
+			$s_res_check_in_date = $s_offer_type_id = $s_format_id = $s_ticket_status_id = null;
 			$s_start_y = $s_end_y = date('Y');
 			$s_start_m = $s_end_m = date('m');
 			$s_start_d = $s_end_d = date('d');
@@ -168,7 +176,7 @@ class TicketsController extends AppController {
 		$this->set('s_bid_id', $s_bid_id);
 		$this->set('s_request_queue_id', $s_request_queue_id);
 		$this->set('s_package_id', $s_package_id);
-		$this->set('s_promo_code_id', $s_promo_code_id);
+		$this->set('s_promo_code', $s_promo_code);
 		$this->set('s_format_id', $s_format_id);
 		$this->set('s_offer_type_id', $s_offer_type_id);
 		$this->set('s_ticket_status_id', $s_ticket_status_id);
@@ -189,7 +197,7 @@ class TicketsController extends AppController {
 			$track = $tracks[0];
 			$tickets_index[$k]['Ticket']['trackName'] = ($track['trackName']) ? $track['trackName'] : 'N/A';	
 			$clients = $this->Ticket->getClientsFromPackageId($v['Ticket']['packageId']);
-			$tickets_index[$k]['Promo'] = $this->Ticket->getTicketOfferPromo($v['Ticket']['ticketId']);
+			$tickets_index[$k]['Promo'] = $this->Ticket->getTicketPromoData($v['Ticket']['ticketId']);
 			$tickets_index[$k]['Client'] = $clients;
 		}
 		
@@ -197,7 +205,6 @@ class TicketsController extends AppController {
 		$this->set('format', $this->Format->find('list'));
 		$this->set('offerType', $this->OfferType->find('list'));
 		$this->set('ticketStatus', $this->Ticket->TicketStatus->find('list'));
-		$this->set('offerPromoCodeIds', $this->OfferPromoCode->find('list', array('order' => array('OfferPromoCode.promoCode' => 'asc'))));
 	}
 
 	function getValidCcOnFile($userId, $bidId = null) {
@@ -236,7 +243,7 @@ class TicketsController extends AppController {
 		$ticket = $this->Ticket->read(null, $id);
 
 		$ticket['Client'] = $this->Ticket->getClientsFromPackageId($ticket['Ticket']['packageId']);
-		$ticket['Promo'] = $this->Ticket->getTicketOfferPromo($id);
+		$ticket['Promo'] = $this->Ticket->getTicketPromoData($id);
 
 		$this->set('ticket', $ticket);
 		
