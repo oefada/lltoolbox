@@ -135,8 +135,19 @@ $this->searchController = 'Tickets';
 				</td>
 				<td>
 				<?php if (!empty($ticket['Promo'])) :?>
-					<h3 style="margin:0px;padding:0px;padding-bottom:5px;">** Promo Code [<?=$ticket['Promo']['opc']['promoCode'];?>] **</h3>
-					<h3 style="margin:0px;padding:0px;padding-bottom:5px;">Amount: <?php echo $number->currency($ticket['Promo']['opc']['promoAmount']);?></h3>
+				<?php foreach ($ticket['Promo'] as $t_promo) : ?>
+
+					<h3 style="margin:0px;padding:0px;padding-bottom:5px;">** Promo Code [<?=$t_promo['pc']['promoCode'];?>] **</h3>
+					<h3 style="margin:0px;padding:0px;padding-bottom:5px;">
+						<?php if ($t_promo['p']['amountOff']) : ?>
+						Amount Off: <?php echo $number->currency($t_promo['p']['amountOff']);?>
+						<?php endif; ?>
+						<?php if ($t_promo['p']['percentOff']) : ?>
+						Percent Off: <?php echo $number->currency($t_promo['p']['percentOff']);?>
+						<?php endif; ?>
+					</h3>
+
+				<?php endforeach; ?>
 				<?php endif; ?>
 				<?php echo $ticket['Ticket']['ticketNotes']; ?></td>
 			</tr>

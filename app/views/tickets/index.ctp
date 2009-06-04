@@ -138,23 +138,6 @@ $this->set('hideSidebar', true);
 			</tr>
 			<tr>
 				<td width="150">
-					Promo Code
-				</td>
-				<td>
-					<select name="s_promo_code_id"> 
-						<option value="0"></option>
-						<option value="a" <?php if($s_promo_code_id == 'a'){ echo 'selected="selected"'; } ;?>>ALL PROMO CODES</option>
-						<?php 
-						foreach ($offerPromoCodeIds as $k=>$v) {  
-							$selected = ($k == $s_promo_code_id) ? 'selected="selected"' : ''; 
-							echo "<option value=\"$k\" $selected>$v</option>\n"; 
-						}
-						?>
-					</select>
-				</td>
-			</tr>
-			<tr>
-				<td width="150">
 					Res. Check-In Date<br />
 					via Date Range
 				</td>
@@ -238,6 +221,15 @@ $this->set('hideSidebar', true);
 				<td>
 					<input style="width:150px;" type="text" id="s_res_confirmation_num" name="s_res_confirmation_num" value="<?php echo $s_res_confirmation_num;?>" />
 					&nbsp;<a href="javascript:void(0);" onclick="document.getElementById('s_res_confirmation_num').value = '';">Clear</a>
+				</td>
+			</tr>
+			<tr>
+				<td width="120">
+					Promo Code
+				</td>
+				<td>
+					<input style="width:150px;" type="text" id="s_promo_code" name="s_promo_code" value="<?php echo $s_promo_code;?>" />
+					&nbsp;<a href="javascript:void(0);" onclick="document.getElementById('s_promo_code').value = '';">Clear</a>
 				</td>
 			</tr>
 			</table>
@@ -334,8 +326,19 @@ foreach ($tickets as $ticket):
 		</td>
 		<td>
 			<?php if (!empty($ticket['Promo'])) :?>
-			<h3 style="margin:0px;padding:0px;padding-bottom:5px;">** Promo Code [<?=$ticket['Promo']['opc']['promoCode'];?>] **</h3>
-			<h3 style="margin:0px;padding:0px;padding-bottom:5px;">Amount: <?php echo $number->currency($ticket['Promo']['opc']['promoAmount']);?></h3>
+			<?php foreach ($ticket['Promo'] as $t_promo) : ?>
+
+			<h3 style="margin:0px;padding:0px;padding-bottom:5px;">** Promo Code [<?=$t_promo['pc']['promoCode'];?>] **</h3>
+			<h3 style="margin:0px;padding:0px;padding-bottom:5px;">
+				<?php if ($t_promo['p']['amountOff']) : ?>
+				Amount Off: <?php echo $number->currency($t_promo['p']['amountOff']);?>
+				<?php endif; ?>
+				<?php if ($t_promo['p']['percentOff']) : ?>
+				Percent Off: <?php echo $number->currency($t_promo['p']['percentOff']);?>
+				<?php endif; ?>
+			</h3>
+
+			<?php endforeach; ?>
 			<?php endif; ?>
 			<?php echo $ticket['Ticket']['ticketNotes']; ?>
 		</td>
