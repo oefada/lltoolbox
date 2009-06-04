@@ -3,7 +3,7 @@ class TicketRefundsController extends AppController {
 
 	var $name = 'TicketRefunds';
 	var $helpers = array('Html', 'Form');
-	var $uses = array('Ticket', 'TicketRefund', 'CreditTracking', 'CreditTrackingType', 'CreditTrackingTicketRel');
+	var $uses = array('TicketRefund', 'Ticket', 'CreditTracking', 'CreditTrackingType', 'CreditTrackingTicketRel');
 
 	function index() {
 		$this->TicketRefund->recursive = 0;
@@ -19,12 +19,13 @@ class TicketRefundsController extends AppController {
 	}
 
 	function add() {
-		if (!empty($this->data) && $this->data['TicketRefund']['ticketId']) {
+		$refundReasons = $this->TicketRefund->RefundReason->find('list');
+		if (!empty($this->data) && $this->data['TicketRefund']['ticketId']) {			
 			$ticket = array();
 			$ticket['Ticket']['ticketId'] = $this->data['TicketRefund']['ticketId'];
 			$ticket['Ticket']['ticketStatusId'] = 8;
 			$this->TicketRefund->create();
-			if ($this->TicketRefund->save($this->data)  && $this->TicketRefund->Ticket->save($ticket)) {
+			if ($this->TicketRefund->save($this->data) && $this->TicketRefund->Ticket->save($ticket)) {
 				$this->Session->setFlash(__('The refund note has been added to this ticket', true));
 				
 				// mail this info to accounting@luxurylink.com
@@ -51,7 +52,7 @@ class TicketRefundsController extends AppController {
 				$emailBody.= '</table>';
 				
 				// send out email now
-				@mail($emailTo, $emailSubject, $emailBody, $emailHeaders);
+				// @mail($emailTo, $emailSubject, $emailBody, $emailHeaders);
 				
 				// credit on file
 				if (($this->data['TicketRefund']['ticketRefundTypeIds'] == 1 || $this->data['TicketRefund']['ticketRefundTypeIds'] == 3) && $this->data['cofAmount'] > 0) {
@@ -62,6 +63,12 @@ class TicketRefundsController extends AppController {
 					$ctdata['CreditTracking']['notes'] = $this->data['TicketRefund']['refundNotes'];
 					$this->CreditTracking->create();
 					$this->CreditTracking->save($ctdata);
+					$creditTrackingId = $this->CreditTracking->getLastInsertId();
+					
+					$cttrdata['CreditTrackingTicketRel']['ticketId'] = $ticket['Ticket']['ticketId'];
+					$cttrdata['CreditTrackingTicketRel']['creditTrackingId'] = $creditTrackingId;
+					$this->CreditTrackingTicketRel->create();
+					$this->CreditTrackingTicketRel->save($cttrdata);
 				}
 				
 				$this->redirect(array('controller' => 'tickets', 'action' => 'view', 'id' => $this->data['TicketRefund']['ticketId']));
@@ -77,11 +84,10 @@ class TicketRefundsController extends AppController {
 			$this->redirect(array('controller' => 'tickets', 'action'=>'index'));
 		} 
 
-		$refundReasons = $this->TicketRefund->RefundReason->find('list');
 		$refundTypes = $this->TicketRefund->TicketRefundType->find('list');
 		
-		$this->set('ticketRefundTypeIds', $refundTypes);
 		$this->set('refundReasonIds', $refundReasons);
+		$this->set('ticketRefundTypeIds', $refundTypes);
 		$this->data['TicketRefund']['ticketId'] = $ticketId;
 	}
 
