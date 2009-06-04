@@ -30,7 +30,22 @@
 		}
 	?>
 		<?php if ($promo) :?>
-			<h3 style="margin:20px;padding:0px;">** This ticket is associated with PROMO CODE  **</h3>
+			<h2 style="margin:20px;padding:0px;">** This ticket is associated with PROMO CODE  **</h2>
+
+				<?php foreach ($promo as $t_promo) : ?>
+
+					<h3 style="margin:0px;padding:0px;padding-bottom:5px;">** Promo Code [<?=$t_promo['pc']['promoCode'];?>] **</h3>
+					<h3 style="margin:0px;padding:0px;padding-bottom:5px;">
+						<?php if ($t_promo['p']['amountOff']) : ?>
+						Amount Off: <?php echo $number->currency($t_promo['p']['amountOff']);?>
+						<?php endif; ?>
+						<?php if ($t_promo['p']['percentOff']) : ?>
+						Percent Off: <?php echo $number->currency($t_promo['p']['percentOff']);?>
+						<?php endif; ?>
+					</h3>
+
+				<?php endforeach; ?>
+
 		<?php endif; ?>
 		<?php if ((isset($isResConf) && $isResConf) && !$hasResData) :?>
 			<div style="text-align:left;margin:0px;padding:5px;">
