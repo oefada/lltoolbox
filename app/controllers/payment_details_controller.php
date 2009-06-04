@@ -103,6 +103,9 @@ class PaymentDetailsController extends AppController {
 	        	$this->Session->setFlash(__('No payment account selected. If using new card, must select the Use New Card checkbox', true), 'default', array(), 'error');
 	        }
 		}
+
+		// NO POST BELOW -- GRAB DATA 
+
 		$this->PaymentDetail->Ticket->recursive = 2;
 		$ticket = $this->PaymentDetail->Ticket->read(null, $this->params['ticketId']);
 		$ticket['Ticket']['totalBillingAmount'] = in_array($ticket['Ticket']['offerTypeId'], array(1,2,6)) ? 30 : 40;
