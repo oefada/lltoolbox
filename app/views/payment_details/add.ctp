@@ -46,12 +46,14 @@ function confirmSubmit()
 			<td><strong>Ticket Amount</strong></td>
 			<td><?php echo $number->currency($ticket['Ticket']['billingPrice']);?></td>
 		</tr>
-		<?php if (!empty($ticket['Promo'])) :?>
+		<?php if (!empty($ticket['UserPromo']['Promo'])) :?>
 		<tr>
-			<td><strong>Promo Code</strong></td>
+			<td><strong>Promo Code Applied:</strong></td>
 			<td>
-				<h3 style="margin:0px;padding:0px;padding-bottom:5px;">** Promo Code [<?=$ticket['Promo']['opc']['promoCode'];?>] **</h3>
-				<h3 style="margin:0px;padding:0px;padding-bottom:5px;">Amount: <?php echo $number->currency($ticket['Promo']['opc']['promoAmount']);?></h3>
+				<h3 style="margin:0px;padding:0px;padding-bottom:5px;">
+				<?=$ticket['UserPromo']['Promo']['promoName'];?> - [<?=$ticket['UserPromo']['Promo']['promoCode'];?>] - 
+				Amount Off: <?php echo $number->currency($ticket['UserPromo']['Promo']['totalAmountOff']);?>
+				</h3>
 			</td>
 		</tr>	
 		<?php endif; ?>
@@ -232,7 +234,11 @@ function confirmSubmit()
 		<tr style="background-color: #CCEEBB;">
 			<td style="padding-top:10px;padding-bottom:10px;"><strong>Payment Amount</strong></td>
 			<td style="padding-top:10px;padding-bottom:10px;"><input type="text" name="data[PaymentDetail][paymentAmount]" id="PaymentDetailPaymentAmount" value="<?php echo $ticket['Ticket']['totalBillingAmount'];?>" /><?php echo $form->error('paymentAmount') ?>
-			(Includes Auction Fee <?php if (!empty($ticket['Promo'])) { echo '+ Promo Deduction'; }?> )
+			( Includes Auction Fee 
+			<?php if ($ticket['UserPromo']['Promo'] && $ticket['UserPromo']['Promo']['applied']): ?>
+			+  Promo Code Discount 
+			<?php endif; ?>
+			)
 			</td>
 		</tr>
 	</table>
