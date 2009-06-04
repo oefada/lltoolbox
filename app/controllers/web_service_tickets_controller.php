@@ -8,7 +8,13 @@ require(APP.'/vendors/pp/Processor.class.php');
 class WebServiceTicketsController extends WebServicesController
 {
 	var $name = 'WebServiceTickets';
-	var $uses = array('Ticket', 'UserPaymentSetting','PaymentDetail', 'Client', 'User', 'Offer', 'Bid', 'ClientLoaPackageRel', 'Track', 'OfferType', 'Loa', 'TrackDetail', 'PpvNotice', 'Address', 'OfferLive', 'SchedulingMaster', 'SchedulingInstance', 'Reservation');
+
+	var $uses = array('Ticket', 'UserPaymentSetting','PaymentDetail', 'Client', 'User', 'Offer', 'Bid', 
+					  'ClientLoaPackageRel', 'Track', 'OfferType', 'Loa', 'TrackDetail', 'PpvNotice',
+					  'Address', 'OfferLive', 'SchedulingMaster', 'SchedulingInstance', 'Reservation',
+					  'PromoTicketRel'
+					  );
+
 	var $serviceUrl = 'http://toolbox.luxurylink.com/web_service_tickets';
 	var $serviceUrlDev = 'http://toolboxdev.luxurylink.com/web_service_tickets';
 	var $errorResponse = false;
@@ -211,6 +217,20 @@ class WebServiceTicketsController extends WebServicesController
 			$this->Ticket->__runTakeDownLoaMemBal($data['packageId'], $ticketId, $data['billingPrice']);
 			$this->Ticket->__runTakeDownLoaNumPackages($data['packageId'], $ticketId);
 
+			// find and set promos for this new ticket
+			// -------------------------------------------------------------------------------
+			$promo_data = $this->Ticket->findPromoOfferTrackings($data['userId'], $data['offerId']);
+			if ($promo_data !== false && is_array($promo_data) && !empty($promo_data)) {
+				foreach ($promo_data as $promoOfferTracking) {
+					$promo_ticket_rel = array();
+					$promo_ticket_rel['promoCodeId'] = $promoOfferTracking['promoOfferTracking']['promoCodeId'];
+					$promo_ticket_rel['ticketId'] = $ticketId;
+					$promo_ticket_rel['userId'] = $data['userId'];
+					$this->PromoTicketRel->create();
+					$this->PromoTicketRel->save($promo_ticket_rel);
+				}
+			}
+
 			// if non-auction, just stop here as charging and ppv should not be auto
 			// -------------------------------------------------------------------------------
 			if ($formatId != 1 || !in_array($offerLive['offerTypeId'], array(1,2,6))) {
@@ -408,8 +428,9 @@ class WebServiceTicketsController extends WebServicesController
 		$liveOfferData 		= $liveOffer[0]['LiveOffer'];
 		$offerType			= $this->OfferType->find('list');
 		$userPaymentData	= $this->findValidUserPaymentSetting($ticketData['userId']);
-		$promoData			= $this->Ticket->getTicketOfferPromo($ticketId);
-		
+
+		$promoGcCofData		= $this->Ticket->getPromoGcCofData($ticketId, $ticket['Ticket']['billingPrice']);
+
 		// vars for all email templates
 		// -------------------------------------------------------------------------------
 		$userId 			= $userData['userId'];
@@ -479,10 +500,8 @@ class WebServiceTicketsController extends WebServicesController
 		// for MasterCard sponsor only
 		// -------------------------------------------------------------------------------
 		$mcPromo = false;
-		if (!empty($promoData) && (stristr($promoData['opc']['promoCode'], 'LLMCWORLD09'))) {
+		if (isset($promoGcCofData['Promo']) && (stristr($promoGcCofData['Promo']['promoCode'], 'LLMCWORLD09'))) {
 			if ($this->Ticket->__isValidPackagePromo(1, $packageId)) {
-				$promoData['opc']['promoAmount'] = number_format($promoData['opc']['promoAmount'], 2, '.', ',');
-				$totalPrice	= number_format((($ticketData['billingPrice'] + $llFeeAmount) - $promoData['opc']['promoAmount']),  2, '.', ',');
 				$mcPromo = true;							
 			}
 		}
@@ -1025,19 +1044,18 @@ class WebServiceTicketsController extends WebServicesController
 		$totalChargeAmount = $data['paymentAmount'];
 		
 		if (!$toolboxManualCharge) {
-			// this is either autocharge or user checkout so add the fees
-			$totalChargeAmount += $fee; 
-			$promo = $this->Ticket->getTicketOfferPromo($ticket['Ticket']['ticketId']);
-			if ($promo && isset($promo['opc']['promoAmount']) && is_numeric($promo['opc']['promoAmount'])) {
-				$totalChargeAmount -= $promo['opc']['promoAmount'];
-				
-				// for MasterCard sponsor only - check if card is mc
-				// -------------------------------------------------------------------------------
-				if ($promo['opc']['offerPromoCodeId'] == 43) {
-					$isValidPackagePromo = $this->Ticket->__isValidPackagePromo(1, $ticket['Ticket']['packageId']);
-					if (!$isValidPackagePromo || $userPaymentSettingPost['UserPaymentSetting']['ccNumber']{0} != '5') {
-						$totalChargeAmount += $promo['opc']['promoAmount'];
-					}
+			// this is either autocharge or user checkout
+
+			// fee gets set in getPromoGcCofData
+			$promoGcCofData		= $this->Ticket->getPromoGcCofData($ticket['Ticket']['ticketId'], $totalChargeAmount);
+			$totalChargeAmount  = $promoGcCofData['final_price'];
+
+			// for MasterCard sponsor only - check if card is mc
+			// -------------------------------------------------------------------------------
+			if (isset($promoGcCofData['Promo']) && $promoGcCofData['Promo']['applied'] && (stristr($promoGcCofData['Promo']['promoCode'], 'LLMCWORLD09'))) {
+				$isValidPackagePromo = $this->Ticket->__isValidPackagePromo(1, $ticket['Ticket']['packageId']);
+				if (!$isValidPackagePromo || $userPaymentSettingPost['UserPaymentSetting']['ccNumber']{0} != '5') {
+					$totalChargeAmount += $promoGcCofData['Promo']['totalAmountOff'];
 				}
 			}
 		}
@@ -1119,6 +1137,15 @@ class WebServiceTicketsController extends WebServicesController
 			$ticketStatusChange['ticketStatusId'] = 5;
 			$this->Ticket->save($ticketStatusChange);
 			
+			// if gift cert or cof, create additional payment detail records
+			// ---------------------------------------------------------------------------
+			if (isset($promoGcCofData['GiftCert']) && $promoGcCofData['GiftCert'] && $promoGcCofData['GiftCert']['applied']) {
+				$this->PaymentDetail->saveGiftCert($ticket['Ticket']['ticketId'], $promoGcCofData['GiftCert'], $ticket['Ticket']['userId'], $data['autoCharge'], $data['initials']);
+			}
+			if (isset($promoGcCofData['Cof']) && $promoGcCofData['Cof'] && $promoGcCofData['Cof']['applied']) {
+				$this->PaymentDetail->saveCof($ticket['Ticket']['ticketId'], $promoGcCofData['Cof'], $ticket['Ticket']['userId'], $data['autoCharge'], $data['initials']);
+			}
+
 			return 'CHARGE_SUCCESS';
 		} else {
 			return $processor->GetResponseTxt();
