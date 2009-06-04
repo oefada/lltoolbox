@@ -75,7 +75,7 @@ class PpvNoticesController extends AppController {
 			$clientIdParam = '';	
 		}
 
-		$this->set('promo', $this->Ticket->getTicketOfferPromo($ticketId));
+		$this->set('promo', $this->Ticket->getTicketPromoData($ticketId));
 
 		$this->set('clientIdParam', $clientIdParam);
 		$data_json_encoded = json_encode($data);
