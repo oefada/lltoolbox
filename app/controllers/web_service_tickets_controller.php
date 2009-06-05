@@ -1043,6 +1043,7 @@ class WebServiceTicketsController extends WebServicesController
 		$fee = in_array($ticket['Ticket']['offerTypeId'], array(1,2,6)) ? 30 : 40;
 		$totalChargeAmount = $data['paymentAmount'];
 		
+		$promoGcCofData = array();
 		if (!$toolboxManualCharge) {
 			// this is either autocharge or user checkout
 
@@ -1057,6 +1058,12 @@ class WebServiceTicketsController extends WebServicesController
 				if (!$isValidPackagePromo || $userPaymentSettingPost['UserPaymentSetting']['ccNumber']{0} != '5') {
 					$totalChargeAmount += $promoGcCofData['Promo']['totalAmountOff'];
 				}
+			}
+			
+			// used promo or gc or cof that resulted in complete ticket price coverage -- no cc charge needed
+			// -------------------------------------------------------------------------------
+			if ($promoGcCofData['applied'] && ($promoGcCofData['final_price'] == 0)) {
+				return $this->runPostChargeSuccess($ticket, $data, $usingUpsId, $userPaymentSettingPost, $promoGcCofData, $toolboxManualCharge);
 			}
 		}
 		
@@ -1108,48 +1115,56 @@ class WebServiceTicketsController extends WebServicesController
 		// return result whether success or denied
 		// ---------------------------------------------------------------------------
 		if ($processor->ChargeSuccess()) {
-			
-			// allocate revenue to loa and tracks
-			// ---------------------------------------------------------------------------
-			$tracks = $this->TrackDetail->getTrackRecord($ticket['Ticket']['ticketId']);
-			if (!empty($tracks)) {
-				foreach ($tracks as $track) {
-					$trackDetailExists = $this->TrackDetail->findExistingTrackTicket($track['trackId'], $ticket['Ticket']['ticketId']);	
-					if (!$trackDetailExists) {
-						$new_track_detail = $this->TrackDetail->getNewTrackDetailRecord($track, $ticket['Ticket']['ticketId']);
-						if ($new_track_detail) {
-							$this->TrackDetail->create();
-							$this->TrackDetail->save($new_track_detail);
-						}
+			return $this->runPostChargeSuccess($ticket, $data, $usingUpsId, $userPaymentSettingPost, $promoGcCofData, $toolboxManualCharge);
+		} else {
+			return $processor->GetResponseTxt();
+		}
+	}
+
+	function runPostChargeSuccess($ticket, $data, $usingUpsId, $userPaymentSettingPost, $promoGcCofData, $toolboxManualCharge) {
+
+		// allocate revenue to loa and tracks
+		// ---------------------------------------------------------------------------
+		$tracks = $this->TrackDetail->getTrackRecord($ticket['Ticket']['ticketId']);
+		if (!empty($tracks)) {
+			foreach ($tracks as $track) {
+				$trackDetailExists = $this->TrackDetail->findExistingTrackTicket($track['trackId'], $ticket['Ticket']['ticketId']);	
+				if (!$trackDetailExists) {
+					$new_track_detail = $this->TrackDetail->getNewTrackDetailRecord($track, $ticket['Ticket']['ticketId']);
+					if ($new_track_detail) {
+						$this->TrackDetail->create();
+						$this->TrackDetail->save($new_track_detail);
 					}
 				}
 			}
+		}
 			
-			// if saving new user card information
-			// ---------------------------------------------------------------------------
-			if ($data['saveUps'] && !$usingUpsId && !empty($userPaymentSettingPost['UserPaymentSetting'])) {
-				$this->UserPaymentSetting->create();
-				$this->UserPaymentSetting->save($userPaymentSettingPost['UserPaymentSetting']);
-			}
-			
-			$ticketStatusChange = array();
-			$ticketStatusChange['ticketId'] = $ticket['Ticket']['ticketId'];
-			$ticketStatusChange['ticketStatusId'] = 5;
-			$this->Ticket->save($ticketStatusChange);
-			
-			// if gift cert or cof, create additional payment detail records
-			// ---------------------------------------------------------------------------
+		// if saving new user card information
+		// ---------------------------------------------------------------------------
+		if ($data['saveUps'] && !$usingUpsId && !empty($userPaymentSettingPost['UserPaymentSetting'])) {
+			$this->UserPaymentSetting->create();
+			$this->UserPaymentSetting->save($userPaymentSettingPost['UserPaymentSetting']);
+		}
+
+		// update ticket status to FUNDED
+		// ---------------------------------------------------------------------------
+		$ticketStatusChange = array();
+		$ticketStatusChange['ticketId'] = $ticket['Ticket']['ticketId'];
+		$ticketStatusChange['ticketStatusId'] = 5;
+		
+		// if gift cert or cof, create additional payment detail records
+		// ---------------------------------------------------------------------------
+		if (!$toolboxManualCharge) {
 			if (isset($promoGcCofData['GiftCert']) && $promoGcCofData['GiftCert'] && $promoGcCofData['GiftCert']['applied']) {
 				$this->PaymentDetail->saveGiftCert($ticket['Ticket']['ticketId'], $promoGcCofData['GiftCert'], $ticket['Ticket']['userId'], $data['autoCharge'], $data['initials']);
 			}
 			if (isset($promoGcCofData['Cof']) && $promoGcCofData['Cof'] && $promoGcCofData['Cof']['applied']) {
 				$this->PaymentDetail->saveCof($ticket['Ticket']['ticketId'], $promoGcCofData['Cof'], $ticket['Ticket']['userId'], $data['autoCharge'], $data['initials']);
 			}
-
-			return 'CHARGE_SUCCESS';
-		} else {
-			return $processor->GetResponseTxt();
 		}
+		
+		$this->Ticket->save($ticketStatusChange);
+		return 'CHARGE_SUCCESS';
 	}
 }
 ?>
