@@ -150,6 +150,37 @@ class Ticket extends AppModel {
 			$ticketPrice = $new_price;
 			$data['Cof']['applied'] = ($data['Cof']['totalAmountOff'] > 0) ? 1 : 0;
 		}
+
+		$paymentRecordSql = 'SELECT paymentTypeId, paymentAmount FROM paymentDetail ';
+		$paymentRecordSql.= "WHERE paymentTypeId = 2 AND ticketId = $ticketId AND isSuccessfulCharge = 1";
+		$paymentRecordResult = $this->query($paymentRecordSql);
+		if (!empty($paymentRecordResult)) {
+			if ($data['GiftCert']['applied']) {
+				$ticketPrice += $data['GiftCert']['totalAmountOff'];
+			}
+			foreach ($paymentRecordResult as $payment) {
+				$data['GiftCert']['applied'] = 1;
+				$data['GiftCert']['totalAmountOff'] = $payment['paymentDetail']['paymentAmount'];
+				$ticketPrice -= $payment['paymentDetail']['paymentAmount'];
+				break;
+			}
+		}
+		
+		$paymentRecordSql = 'SELECT paymentTypeId, paymentAmount FROM paymentDetail ';
+		$paymentRecordSql.= "WHERE paymentTypeId = 3 AND ticketId = $ticketId AND isSuccessfulCharge = 1";
+		$paymentRecordResult = $this->query($paymentRecordSql);
+		if (!empty($paymentRecordResult)) {
+			if ($data['Cof']['applied']) {
+				$ticketPrice += $data['Cof']['totalAmountOff'];
+			}
+			foreach ($paymentRecordResult as $payment) {
+				$data['Cof']['applied'] = 1;
+				$data['Cof']['totalAmountOff'] = $payment['paymentDetail']['paymentAmount'];
+				$ticketPrice -= $payment['paymentDetail']['paymentAmount'];
+				break;
+			}
+		}
+
 		$data['applied'] = ($data['Promo']['applied'] || $data['GiftCert']['applied'] || $data['Cof']['applied']) ? 1 : 0;
 		$data['final_price'] = $ticketPrice;
 		return $data;
