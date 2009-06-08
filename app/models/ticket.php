@@ -299,7 +299,7 @@ class Ticket extends AppModel {
 				$result = $this->query($sql);
 				if (!empty($result) && isset($result[0][0]['COUNT']) && is_numeric($result[0][0]['COUNT'])) {
 					$loa_packages_derived = $result[0][0]['COUNT'];
-					if ($loa_packages_derived >= $loa_m_total_packages) {
+					if (($loa_packages_derived + 1) >= $loa_m_total_packages) {
 						$take_down = true;
 						$this->insertMessageQueuePackage($ticketId, 'LOA_PACKAGES');
 					}
