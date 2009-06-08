@@ -42,6 +42,7 @@ class TicketsController extends AppController {
 		$s_ticket_status_id = isset($form['s_ticket_status_id']) ? $form['s_ticket_status_id'] : 0;
 		$s_res_confirmation_num = isset($form['s_res_confirmation_num']) ? $form['s_res_confirmation_num'] : '';
 		$s_res_check_in_date = isset($form['s_res_check_in_date']) ? $form['s_res_check_in_date'] : '';
+		$s_has_promo = isset($form['s_has_promo']) ? $form['s_has_promo'] : '';
 		$s_start_y = isset($form['s_start_y']) ? $form['s_start_y'] : date('Y');
 		$s_start_m = isset($form['s_start_m']) ? $form['s_start_m'] : date('m');
 		$s_start_d = isset($form['s_start_d']) ? $form['s_start_d'] : date('d');
@@ -158,12 +159,25 @@ class TicketsController extends AppController {
 					$this->paginate['conditions']['Reservation.arrivalDate BETWEEN ? AND ?'] = array($s_start_date, $s_end_date);             		
 				}
 			}
+			if ($s_has_promo) {
+				$this->paginate['contain'][] = 'PromoTicketRel';
+				$this->paginate['group'] = array('Ticket.ticketId');
+				$this->paginate['joins'] = array(
+								array(
+			           				'table' => 'promoTicketRel', 
+						            'alias' => 'PromoTicketRel', 
+						            'type' => 'inner',  
+						            'conditions'=> array('PromoTicketRel.ticketId = Ticket.ticketId') 
+									)
+								);
+				$this->paginate['conditions']['PromoTicketRel.promoCodeId > '] = 0;
+			}
 		}
 	
 		if (!$single_search) {
 			$s_ticket_id = $s_offer_id = $s_user_id = $s_bid_id = $s_client_id = $s_request_queue_id = $s_package_id = $s_res_confirmation_num = null;
 		} else {
-			$s_res_check_in_date = $s_offer_type_id = $s_format_id = $s_ticket_status_id = null;
+			$s_res_check_in_date = $s_offer_type_id = $s_format_id = $s_ticket_status_id = $s_has_promo = null;
 			$s_start_y = $s_end_y = date('Y');
 			$s_start_m = $s_end_m = date('m');
 			$s_start_d = $s_end_d = date('d');
@@ -182,6 +196,7 @@ class TicketsController extends AppController {
 		$this->set('s_ticket_status_id', $s_ticket_status_id);
 		$this->set('s_res_confirmation_num', $s_res_confirmation_num);
 		$this->set('s_res_check_in_date', $s_res_check_in_date);
+		$this->set('s_has_promo', $s_has_promo);   
 		$this->set('s_start_y', $s_start_y);   
 		$this->set('s_start_m', $s_start_m);   
 		$this->set('s_start_d', $s_start_d);   
