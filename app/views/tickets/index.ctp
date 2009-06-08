@@ -145,6 +145,14 @@ $this->set('hideSidebar', true);
 					<input type="checkbox" id="s_res_check_in_date" name="s_res_check_in_date" <?php if ($s_res_check_in_date) { echo 'checked="checked"'; }?> />
 				</td>
 			</tr>
+			<tr>
+				<td width="150">
+					Has Promo
+				</td>
+				<td>
+					<input type="checkbox" id="s_has_promo" name="s_has_promo" <?php if ($s_has_promo) { echo 'checked="checked"'; }?> />
+				</td>
+			</tr>
 			</table>
 		
 		</td>
