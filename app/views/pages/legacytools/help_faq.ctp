@@ -77,7 +77,7 @@ switch($option) {
 		break;
 	case "delete":
 		if ($id && $section_helpFaqId) {
-			$sql = "update helpFaq set help_inactive = '1' where helpFaqId = '$section_helpFaqId'";
+			$sql = "update helpFaq set inactive = '1' where helpFaqId = '$section_helpFaqId'";
 			$result = mysql_query($sql);
 	
 			if ($result) {
