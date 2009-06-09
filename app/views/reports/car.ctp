@@ -62,7 +62,7 @@ td {
     <th class="blackBg">Last 12 Months</td>
   </tr>
   <tr>
-    <td style="text-align:left"><strong>phone</strong></td>
+    <td style="text-align:left"><strong>call</strong></td>
     <?php for($i = 0; $i <= 12; $i++)
 			echo "<td>".@$number->format($results[$months[$i]]['phone'])."</td>";
 	?>
@@ -71,7 +71,7 @@ td {
     </strong></td>
   </tr>
   <tr class="altrow">
-    <td style="text-align:left"><strong>web</strong></td>
+    <td style="text-align:left"><strong>click</strong></td>
     <?php for($i = 0; $i <= 12; $i++)
 			echo "<td>".@$number->format($results[$months[$i]]['webRefer'])."</td>";
 	?>
