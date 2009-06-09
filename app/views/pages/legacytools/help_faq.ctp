@@ -3,6 +3,7 @@ $this->viewVars['hideSidebar'] = true;
 uses('model' . DS . 'connection_manager');
 $db = ConnectionManager::getInstance();
 $connected = $db->getDataSource('live_mysql');
+Configure::write('debug', '0');
 
 $action = isset($_GET['action']) ? $_GET['action'] : 'view';
 $option = isset($_POST['option']) ? $_POST['option'] : false;
