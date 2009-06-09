@@ -27,8 +27,8 @@ $rowspan = ($numTickets > 0) ? $numTickets : 1;
 					);
 	?></td>
   <td rowspan="<?=$rowspan?>"><?=$html->link($package['Client']['name'], '/clients/edit/'.$package['Client']['clientId'])?></td>
-  <td rowspan="<?=$rowspan?>"><?=$package['OfferLive']['endDate']?></td>
-  <td><?=@$package['Ticket'][0]['Ticket']['ticketId']?></td>
+  <td rowspan="<?=$rowspan?>"><?=($package['OfferLive']['endDate']) ? date('M d, Y', strtotime($package['OfferLive']['endDate'])) : '';?></td>
+  <td><a href="/tickets?query=<?=@$package['Ticket'][0]['Ticket']['ticketId']?>"><?=@$package['Ticket'][0]['Ticket']['ticketId']?></a></td>
   <? $collected = @$package['Ticket'][0]['Ticket']['billingPrice']; ?>
   <td><table class="noBorder" style="width: 100%; margin: 0; padding: 0"><tr><td nowrap><?=@$offerTypes[$package['Ticket'][0]['Ticket']['offerTypeId']]?></td><td align="right">$<?=@$package['Ticket'][0]['Ticket']['billingPrice']?></td></tr></table></td>
   <td><? if (@$package['Ticket'][0]['Ticket']['ticketId']) echo "$150"; ?></td>
@@ -47,7 +47,7 @@ array_shift($package['Ticket']); // remove the first one since we took care of i
 foreach( $package['Ticket'] as $k2 => $ticket ): //for multiple tickets
 ?>
 <tr<?php if($k %2) echo ' class="altrow"' ?>>
-  <td><?=$ticket['Ticket']['ticketId']?></td>
+  <td><a href="/tickets?query=<?=$package['Ticket']['ticketId']?>"><?=$ticket['Ticket']['ticketId']?></a></td>
   <td><table class="noBorder" style="width: 100%; margin: 0; padding: 0"><tr><td nowrap><?=$offerTypes[$ticket['Ticket']['offerTypeId']]?></td><td align="right">$<?=@$ticket['Ticket']['billingPrice']?></td></tr></table></td>
   <td>$150</td>
   </tr>

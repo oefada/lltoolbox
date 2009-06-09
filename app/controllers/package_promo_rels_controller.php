@@ -17,6 +17,22 @@ class PackagePromoRelsController extends AppController {
 
 		$offerTypes = $this->Ticket->OfferType->find('list');
 		$offerTypes[1] = "Auction";
+		
+		$sortBy = @$this->params['named']['sortBy'];
+		$sortDirection = @$this->params['named']['sortDirection'];
+		
+		if (!$sortBy) {
+			$sortBy = 'Client.name';
+		}
+		
+		if (!$sortDirection) {
+			$sortDirection = 'ASC';
+		}
+		
+		$this->sortBy = $sortBy;
+		$this->sortDirection = $sortDirection;
+		$this->set('sortBy', $sortBy);
+		$this->set('sortDirection', $sortDirection);
 
 		foreach ($packages as $package) {
 			$endDate = $this->PackagePromoRel->query('SELECT MIN(endDate) as endDate FROM offerLive WHERE packageId = '.$package['Package']['packageId'].' AND isClosed = 0 GROUP BY packageId');
@@ -42,7 +58,7 @@ class PackagePromoRelsController extends AppController {
 				$activePackages[] = $package;
 			}
 		}
-		
+
 		if (!empty($this->data)) {
 			if (isset($this->data['PackagePromoRel']['activate_inactivate'])) {
 				if(!empty($this->data['inactivate'])) 
@@ -66,9 +82,26 @@ class PackagePromoRelsController extends AppController {
 			}			
 		}
 		
+		usort($activePackages, array($this, 'sortArray'));
+		usort($inactivePackages, array($this, 'sortArray'));
 		$this->set('inactivePackages', $inactivePackages);
 		$this->set('activePackages', $activePackages);
 		$this->set('offerTypes', $offerTypes);
+	}
+	
+	function sortArray($a, $b) {
+		$parts = explode('.', $this->sortBy);
+		
+		if ($a[$parts[0]][$parts[1]] == $b[$parts[0]][$parts[1]]) {
+			return 0;
+		}
+		
+		if ($this->sortDirection == "ASC") {
+			return ($a[$parts[0]][$parts[1]] < $b[$parts[0]][$parts[1]]) ? -1 : 1;
+		} else {
+			return ($a[$parts[0]][$parts[1]] > $b[$parts[0]][$parts[1]]) ? -1 : 1;
+		}
+		
 	}
 	
 	function ajax_edit($id) {
