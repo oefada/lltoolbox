@@ -187,11 +187,16 @@ class Ticket extends AppModel {
 	}
 
 	function getFeeByTicket($ticketId) {
-		$result = $this->query("SELECT offerTypeId FROM ticket WHERE ticketId = $ticketId");
+		// fees are 40 for both auction and fp -- if any change -- then query offer 
+
+		// TODO:  fees for auctions after 6/10/2009 are 40 remove check after wards
+		$result = $this->query("SELECT offerLive.startDate, offerLive.isAuction FROM ticket INNER JOIN offerLive USING (offerId) WHERE ticket.ticketId = $ticketId LIMIT 1");
 		if (!empty($result)) {
-			return (in_array($result[0]['ticket']['offerTypeId'], array(1,2,6))) ? 30 : 40;
-		}
-		return null;
+			if ($result[0]['offerLive']['isAuction'] && ($result[0]['offerLive']['startDate'] < '2009-06-10')) {
+				return 30;
+			}
+		} 
+		return 40;
 	}
 
 	function getClientsFromPackageId($packageId) {
