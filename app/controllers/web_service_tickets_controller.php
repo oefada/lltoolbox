@@ -720,8 +720,8 @@ class WebServiceTicketsController extends WebServicesController
 			case 20:
 				include('../vendors/email_msgs/notifications/20_auction_your_dates_received.html');
 				$emailSubject = "Your Request has been Received - $clientNameP";
-				$emailFrom = "LuxuryLink.com<auction@luxurylink.com>";
-				$emailReplyTo = "auction@luxurylink.com";
+				$emailFrom = ($isAuction) ? "Luxurylink.com<auction@luxurylink.com>" : "LuxuryLink.com<exclusives@luxurylink.com>";
+				$emailReplyTo = ($isAuction) ? "auction@luxurylink.com" : "exclusives@luxurylink.com";
 				break;
 			default:
 				break;
