@@ -622,15 +622,15 @@ class WebServiceTicketsController extends WebServicesController
 				// send out res confirmation
 				include('../vendors/email_msgs/ppv/conf_ppv.html');
 				$emailSubject = "Your Luxury Link Booking is Confirmed - $clientNameP";
-				$emailFrom = "LuxuryLink.com<confirmations@luxurylink.com>";
-				$emailReplyTo = "resconfirm@luxurylink.com";
+				$emailFrom = ($isAuction) ? "Luxurylink.com<resconfirm@luxurylink.com>" : "LuxuryLink.com<reservations@luxurylink.com>";
+				$emailReplyTo = ($isAuction) ? "resconfirm@luxurylink.com" : "reservations@luxurylink.com";
 				break;
 			case 2:
 				// send out res request
 				include('../vendors/email_msgs/ppv/res_ppv.html');
 				$emailSubject = "Please Confirm This Luxury Link Booking - $userFirstName $userLastName";
-				$emailFrom = "LuxuryLink.com<resrequests@luxurylink.com>";
-				$emailReplyTo = "resrequests@luxurylink.com";
+				$emailFrom = ($isAuction) ? "Luxurylink.com<resrequests@luxurylink.com>" : "LuxuryLink.com<reservations@luxurylink.com>";
+				$emailReplyTo = ($isAuction) ? "resrequests@luxurylink.com" : "reservations@luxurylink.com";
 				$userEmail = $clientPrimaryEmail;
 				$emailCc = $clientCcEmail;
 				break;
