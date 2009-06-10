@@ -479,7 +479,7 @@ class WebServiceTicketsController extends WebServicesController
 		$isAuction			= in_array($offerTypeId, array(1,2,6)) ? true : false;
 
 		$billingPrice		= number_format($ticketData['billingPrice'], 2, '.', ',');
-		$llFeeAmount		= in_array($offerTypeId, array(1,2,6)) ? 30 : 40;
+		$llFeeAmount		= $this->Ticket->getFeeByTicket($ticketId);
 		$llFee				= number_format($llFeeAmount, 2, '.', ',');
 		$totalPrice			= number_format(($ticketData['billingPrice'] + $llFeeAmount),  2, '.', ',');
 		$maxNumWinners		= $liveOfferData['numWinners'];
@@ -1038,7 +1038,7 @@ class WebServiceTicketsController extends WebServicesController
 		
 		// handle fees, promo discounts, etc
 		// ---------------------------------------------------------------------------
-		$fee = in_array($ticket['Ticket']['offerTypeId'], array(1,2,6)) ? 30 : 40;
+		$fee = $this->Ticket->getFeeByTicket($data['ticketId']);
 		$totalChargeAmount = $data['paymentAmount'];
 		
 		$promoGcCofData = array();
