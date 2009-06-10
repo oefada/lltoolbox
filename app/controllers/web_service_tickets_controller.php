@@ -507,12 +507,21 @@ class WebServiceTicketsController extends WebServicesController
 		
 		// auction preferred dates
 		// -------------------------------------------------------------------------------
-		if ($isAuction) {
-			$aucPreferDates = $this->Ticket->query("SELECT * FROM reservationPreferDate as rpd WHERE ticketId = $ticketId ORDER BY reservationPreferDateTypeId");	
+		$aucPreferDates = $this->Ticket->query("SELECT * FROM reservationPreferDate as rpd WHERE ticketId = $ticketId ORDER BY reservationPreferDateTypeId");	
+		if (!empty($aucPreferDates)) {
 			foreach ($aucPreferDates as $aucKey => $aucPreferDateRow) {
 				$aucPreferDates[$aucKey]['rpd']['in'] = date('M d, Y', strtotime($aucPreferDateRow['rpd']['arrivalDate'])); 		
 				$aucPreferDates[$aucKey]['rpd']['out'] = date('M d, Y', strtotime($aucPreferDateRow['rpd']['departureDate'])); 		
 			}
+		}
+
+		if (!$isAuction && !empty($aucPreferDates)) {
+			$fpArrival			= ($aucPreferDates[0]['rpd']['in']) ? $aucPreferDates[0]['rpd']['in'] : 'N/A';
+			$fpDeparture		= ($aucPreferDates[0]['rpd']['out']) ? $aucPreferDates[0]['rpd']['out'] : 'N/A';
+			$fpArrival2			= ($aucPreferDates[1]['rpd']['in']) ? $aucPreferDates[1]['rpd']['in'] : 'N/A';
+			$fpDeparture2		= ($aucPreferDates[1]['rpd']['out']) ? $aucPreferDates[1]['rpd']['out'] : 'N/A';
+			$fpArrival3			= ($aucPreferDates[2]['rpd']['in']) ? $aucPreferDates[2]['rpd']['in'] : 'N/A';
+			$fpDeparture3		= ($aucPreferDates[2]['rpd']['out']) ? $aucPreferDates[2]['rpd']['out'] : 'N/A';
 		}
 
 		if ($ppvNoticeTypeId == 1) {
