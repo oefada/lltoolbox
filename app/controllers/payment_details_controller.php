@@ -114,7 +114,8 @@ class PaymentDetailsController extends AppController {
 		if ($ticket['UserPromo']['Promo'] && $ticket['UserPromo']['Promo']['applied']) {
 			$ticket['Ticket']['totalBillingAmount'] -= $ticket['UserPromo']['Promo']['totalAmountOff'];
 		}
-		$ticket['Ticket']['totalBillingAmount'] += in_array($ticket['Ticket']['offerTypeId'], array(1,2,6)) ? 30 : 40;
+		$fee = $this->Ticket->getFeeByTicket($ticket['Ticket']['ticketId']);
+		$ticket['Ticket']['totalBillingAmount'] += $fee;
 	
 		$selectExpMonth = array();
 		for ($i = 1; $i < 13; $i++) {
