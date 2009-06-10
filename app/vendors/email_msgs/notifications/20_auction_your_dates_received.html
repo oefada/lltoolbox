@@ -1,0 +1,109 @@
+<?php include('../vendors/email_msgs/email_includes/header.html');?>
+
+<p>Dear <?=$userFirstName;?> <?=$userLastName;?>,</p>
+
+<h1 style="color:#990000;font-size:16px;margin:0px;padding:0px;margin-bottom:30px;">Your preferred travel dates have been received.</h1>
+
+<p>
+
+<table cellpadding="10" cellspacing="0" border="0" style="width:100%;background-color:#E0E0CD;margin-top:15px;margin-bottom:15px;">
+	<tr>
+		<td width="245" align="left" valign="top">
+			<div style="width: 245px; height: 189px; padding: 8px 12px 12px 8px; background: url(http://www.luxurylink.com/images/shared/shadow-gal-lrg-light-olive.gif) no-repeat top left; overflow: hidden;"><img src="http://www.luxurylink.com/images/por/<?php echo $oldProductId;?>/<?php echo $oldProductId;?>-gal-lrg-01.jpg" alt="<?php echo $packageName;?>" border="0" /></div>
+		</td>
+		<td align="left" valign="top">
+			<div style="color:#990000;font-size:16px;font-weight:bold;"><?php echo $clientNameP;?></div>
+			<div style="color:#444444;font-size:12px;"><?php echo $locationDisplay;?></div><br />
+			<div style="color:#990000;font-size:12px;"><?php echo $packageName;?> <br /><br /><a style="color:#336699;" href="http://www.luxurylink.com/portfolio/por_offer_redirect.php?oid=<?=$offerId;?>">View Package Details</a></div>
+			<div style="height:15px;margin-top:15px;border-top:1px solid #B0B0B0;">&nbsp;</div>
+			<table cellspacing="0" cellpadding="5" border="0">
+			<tr>
+				<td style="color:#000000;font-size:12px; border-bottom: 1px solid silver; padding-bottom:10px; font-weight:bold;" valign="top" align="left" width="240">Ticket ID:</td>
+				<td style="color:#444444;font-size:12px; border-bottom: 1px solid silver; padding-bottom:10px; padding-right:5px;" valign="top" align="right" width="30">&nbsp;</td>
+				<td style="color:#444444;font-size:12px; border-bottom: 1px solid silver; padding-bottom:10px;" valign="top" align="left"><?=$ticketId;?></td>
+			</tr>
+			<tr>
+				<td style="color:#000000;font-size:12px;font-weight:bold;" valign="top" align="left" width="240">Price:</td>
+				<td style="color:#444444;font-size:12px;padding-right:5px;" valign="top" align="right" width="30">US</td>
+				<td style="color:#444444;font-size:12px;" valign="top" align="left">$<?=$billingPrice;?></td>
+			</tr>
+			<tr>
+				<td style="color:#000000;font-size:12px;font-weight:bold;" valign="top" align="left" width="240">Handling Fee:</td>
+				<td style="color:#444444;font-size:12px;padding-right:5px;" valign="top" align="right" width="30">US</td>
+				<td style="color:#444444;font-size:12px;" valign="top" align="left">$<?=$llFee;?></td>
+			</tr>
+			<?php if ($promoGcCofData['Promo'] && $promoGcCofData['Promo']['applied']) :?>
+			<tr>
+				<td style="color:#000000;font-size:12px;" valign="top" align="left" width="240">
+					<?php if ($mcPromo) : ?>
+					Exclusive Offer with &nbsp;&nbsp;&nbsp;<a href="http://clk.atdmt.com/AST/go/154171765/direct;wi.1;hi.1/01/" target="_blank"><img src="http://www.luxurylink.com/images/shared/mc_small_logo.png" border="0" /></a>
+					<img src="http://view.atdmt.com/AST/view/154171765/direct;wi.1;hi.1/01/" width="1" height="1" border="0" />
+					<?php else: ?>
+					Promotion Applied: 
+					<?php endif; ?>
+				</td>
+				<td style="color:#990000;font-size:12px;padding-right:5px;" valign="top" align="right" width="30">- US</td>
+				<td style="color:#990000;font-size:12px;" valign="top" align="left">$<?=$promoGcCofData['Promo']['totalAmountOff'];?></td>
+			</tr>
+			<?php endif; ?>
+			<?php if ($promoGcCofData['GiftCert'] && $promoGcCofData['GiftCert']['applied']) :?>
+			<tr>
+				<td style="color:#000000;font-size:12px;" valign="top" align="left" width="240">
+					Gift Certificate Applied: 
+				</td>
+				<td style="color:#990000;font-size:12px;padding-right:5px;" valign="top" align="right" width="30">- US</td>
+				<td style="color:#990000;font-size:12px;" valign="top" align="left">$<?=$promoGcCofData['GiftCert']['totalAmountOff'];?></td>
+			</tr>
+			<?php endif; ?>
+			<?php if ($promoGcCofData['Cof'] && $promoGcCofData['Cof']['applied']) :?>
+			<tr>
+				<td style="color:#000000;font-size:12px;" valign="top" align="left" width="240">
+					Credit On File Applied: 
+				</td>
+				<td style="color:#990000;font-size:12px;padding-right:5px;" valign="top" align="right" width="30">- US</td>
+				<td style="color:#990000;font-size:12px;" valign="top" align="left">$<?=$promoGcCofData['Cof']['totalAmountOff'];?></td>
+			</tr>
+			<?php endif; ?>
+			</table>
+
+			<table cellspacing="0" cellpadding="5" border="0" style="margin-top:15px;">
+			<tr>
+				<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="120">Preferred Dates:</td>
+				<td style="color:#444444;font-size:12px;" valign="top" align="left">Check-in: <?php echo ($aucPreferDates[0]['rpd']['in']) ? $aucPreferDates[0]['rpd']['in'] : 'N/A';?></td>
+				<td style="color:#444444;font-size:12px;padding-left:15px;" valign="top" align="left">Check-out: <?php echo ($aucPreferDates[0]['rpd']['out']) ? $aucPreferDates[0]['rpd']['out'] : 'N/A';?></td>
+			</tr>
+			<tr>
+				<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="120">Alternate Dates:</td>
+				<td style="color:#444444;font-size:12px;" valign="top" align="left">Check-in: <?php echo ($aucPreferDates[1]['rpd']['in']) ? $aucPreferDates[1]['rpd']['in'] : 'N/A';?></td>
+				<td style="color:#444444;font-size:12px;padding-left:15px;" valign="top" align="left">Check-out: <?php echo ($aucPreferDates[1]['rpd']['out']) ? $aucPreferDates[1]['rpd']['out'] : 'N/A';?></td>
+			</tr>
+			<tr>
+				<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="120">Alternate Dates:</td>
+				<td style="color:#444444;font-size:12px;" valign="top" align="left">Check-in: <?php echo ($aucPreferDates[2]['rpd']['in']) ? $aucPreferDates[2]['rpd']['in'] : 'N/A';?></td>
+				<td style="color:#444444;font-size:12px;padding-left:15px;" valign="top" align="left">Check-out: <?php echo ($aucPreferDates[2]['rpd']['out']) ? $aucPreferDates[2]['rpd']['out'] : 'N/A';?></td>
+			</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+
+<p>We have contacted <?=$clientNameP;?> on your behalf to secure your reservation.</p>
+
+<p>
+If we are able to secure your dates, we will send you written confirmation by email.  This process 
+typically takes 1-2 business days.  If we are unable to confirm your initial request, we will contact 
+you to assist with alternate arrangements.
+</p>
+			
+<p>
+Our business hours are Monday through Friday, 7am - 5:30pm Pacific Standard Time.  Please feel free to contact our Travel Concierge Department 
+at 888-297-3299 (toll-free in the U.S.) or 310-215-8060, should you have any questions.
+</p>
+			
+<p><br /><br />
+Warm Regards,
+<br /><br />
+Luxury Link
+</p>		
+
+<?php include('../vendors/email_msgs/email_includes/footer.html');?>

@@ -1,0 +1,127 @@
+<?php include('../vendors/email_msgs/email_includes/header.html');?>
+
+<h1 style="color:#990000;font-size:16px;margin:0px;padding:0px;margin-bottom:30px;">Congratulations, you won the auction for <?=$clientNameP;?></h1>
+
+<p>
+<span style="font-weight:bold;">User Account ID:</span>  <?php echo $userId;?><br />
+<span style="font-weight:bold;">Ticket Reference ID:</span>  <?php echo $ticketId;?>
+<br /><br />
+</p>
+
+<p>Dear <?php echo $userFirstName;?> <?php echo $userLastName;?>,</p>
+
+<p>
+Thank you for your payment.  Please save this email, and whenever you're ready, <a href="<?=$dateRequestLink;?>">submit your preferred travel dates</a> 
+and we'll complete your booking.
+</p>
+
+			<table cellspacing="0" cellpadding="5" border="0">
+			<tr>
+				<td style="color:#000000;font-size:12px;" valign="top" align="left" width="240">Your Winning Bid:</td>
+				<td style="color:#444444;font-size:12px;padding-right:5px;" valign="top" align="right" width="30">US</td>
+				<td style="color:#444444;font-size:12px;" valign="top" align="left">$<?=$billingPrice;?></td>
+			</tr>
+			<tr>
+				<td style="color:#000000;font-size:12px;" valign="top" align="left" width="240">Handling Fee:</td>
+				<td style="color:#444444;font-size:12px;padding-right:5px;" valign="top" align="right" width="30">US</td>
+				<td style="color:#444444;font-size:12px;" valign="top" align="left">$<?=$llFee;?></td>
+			</tr>
+			<?php if ($promoGcCofData['Promo'] && $promoGcCofData['Promo']['applied']) :?>
+			<tr>
+				<td style="color:#000000;font-size:12px;" valign="top" align="left" width="240">
+					<?php if ($mcPromo) : ?>
+					Exclusive Offer with &nbsp;&nbsp;&nbsp;<a href="http://clk.atdmt.com/AST/go/154171765/direct;wi.1;hi.1/01/" target="_blank"><img src="http://www.luxurylink.com/images/shared/mc_small_logo.png" border="0" /></a>
+					<img src="http://view.atdmt.com/AST/view/154171765/direct;wi.1;hi.1/01/" width="1" height="1" border="0" />
+					<?php else: ?>
+					Promotion Applied: 
+					<?php endif; ?>
+				</td>
+				<td style="color:#990000;font-size:12px;padding-right:5px;" valign="top" align="right" width="30">- US</td>
+				<td style="color:#990000;font-size:12px;" valign="top" align="left">$<?=$promoGcCofData['Promo']['totalAmountOff'];?></td>
+			</tr>
+			<?php endif; ?>
+			<?php if ($promoGcCofData['GiftCert'] && $promoGcCofData['GiftCert']['applied']) :?>
+			<tr>
+				<td style="color:#000000;font-size:12px;" valign="top" align="left" width="240">
+					Gift Certificate Applied: 
+				</td>
+				<td style="color:#990000;font-size:12px;padding-right:5px;" valign="top" align="right" width="30">- US</td>
+				<td style="color:#990000;font-size:12px;" valign="top" align="left">$<?=$promoGcCofData['GiftCert']['totalAmountOff'];?></td>
+			</tr>
+			<?php endif; ?>
+			<?php if ($promoGcCofData['Cof'] && $promoGcCofData['Cof']['applied']) :?>
+			<tr>
+				<td style="color:#000000;font-size:12px;" valign="top" align="left" width="240">
+					Credit On File Applied: 
+				</td>
+				<td style="color:#990000;font-size:12px;padding-right:5px;" valign="top" align="right" width="30">- US</td>
+				<td style="color:#990000;font-size:12px;" valign="top" align="left">$<?=$promoGcCofData['Cof']['totalAmountOff'];?></td>
+			</tr>
+			<?php endif; ?>
+			<tr>
+				<td style="color:#990000;font-size:12px; font-weight:bold; border-top:1px solid silver; padding-bottom:20px;padding-top:10px;" valign="top" align="left" width="240">Total Paid:</td>
+				<td style="color:#990000;font-size:12px; font-weight:bold; border-top:1px solid silver; padding-bottom:20px;padding-top:10px;padding-right:5px;" valign="top" align="right" width="30">US</td>
+				<td style="color:#990000;font-size:12px; font-weight:bold; border-top:1px solid silver; padding-bottom:20px;padding-top:10px;" valign="top" align="left">
+					<?php if ($promoGcCofData['applied']) : ?>
+					$<?=$promoGcCofData['final_price']; ?>	
+					<?php else: ?>
+					$<?=$totalPrice;?>
+					<?php endif; ?>
+				</td>
+			</tr>
+			</table>
+
+<table cellpadding="10" cellspacing="0" border="0" style="width:100%;background-color:#E0E0CD;margin-top:15px;margin-bottom:15px;">
+	<tr>
+		<td width="245" align="left" valign="top">
+			<div style="width: 245px; height: 189px; padding: 8px 12px 12px 8px; background: url(http://www.luxurylink.com/images/shared/shadow-gal-lrg-light-olive.gif) no-repeat top left; overflow: hidden;"><img src="http://www.luxurylink.com/images/por/<?php echo $oldProductId;?>/<?php echo $oldProductId;?>-gal-lrg-01.jpg" alt="<?php echo $packageName;?>" border="0" /></div>
+		</td>
+		<td align="left" valign="top">
+			<div style="color:#990000;font-size:16px;font-weight:bold;"><?php echo $clientNameP;?></div>
+			<div style="color:#444444;font-size:12px;"><?php echo $locationDisplay;?></div><br />
+			<div style="color:#990000;font-size:12px;"><?php echo $packageName;?> <br /><br /><a style="color:#336699;" href="http://www.luxurylink.com/portfolio/por_offer_redirect.php?oid=<?=$offerId;?>">View Package Details</a></div>
+			<div style="height:15px;margin-top:15px;border-top:1px solid #B0B0B0;">&nbsp;</div>
+			<table cellspacing="0" cellpadding="5" border="0">
+			<tr>
+				<td style="color:#444444;font-size:12px;" align="center">
+					<div style="font-style:italic;margin-bottom:15px;">Whenever you're ready</div>
+					<a href="<?=$dateRequestLink;?>"><img src="http://www.luxurylink.com/images/buttons/btn_email_preferred_dates.gif" alt="Submit Your Preferred Travel Dates" border="0" /></a>
+				</td>
+			</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2" style="color:#444444;font-size:12px;">
+			Once you <a href="<?=$dateRequestLink;?>">submit your preferred travel dates</a>, a Luxury Link Travel Concierge will assist you 
+			in securing reservations.  You can submit your dates online, or call us at 1-888-297-3299 / 1-310-215-8060.
+		</td>
+	</tr>
+</table>
+
+<p><?php echo $packageIncludes;?></p>
+<p><span style="font-weight:bold;"><?php echo $validityLeadIn;?></span><br /><?php echo $validityNote;?></p>
+<p><?php echo $legalText;?></p>
+
+<p style="font-weight:bold;color:#990000;"><strong><br />As stated in our rules section, this package is non-refundable.<br /><br /></strong></p>
+
+<p>
+Luxury Link strongly recommends the purchase of travel insurance.  There are many reputable companies from which to choose; please contact your 
+insurance provider for a recommendation.
+</p>
+
+<p>
+This email serves as your receipt that you have paid in full.  If you have any questions or additional needs, please contact our 
+Travel Concierge at (888) 297-3299 or (310) 215-8060.
+</p>
+
+<p>Have a fantastic trip!</p>
+
+<p>
+<br /><br />
+Warm Regards,<br /><br />
+Luxury Link
+</p>		
+
+
+<?php include('../vendors/email_msgs/email_includes/footer.html');?>
