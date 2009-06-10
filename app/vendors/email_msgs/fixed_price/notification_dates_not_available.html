@@ -3,9 +3,10 @@
 <p>Dear <?=$userFirstName;?> <?=$userLastName;?>,</p>
 
 <p>
-Unfortunately, the dates you requested are <span style="font-weight:bold;color:#990000;">not available at this time</span>.  We may be able to assist you with alternate dates, or another package 
-or property.  Please contact me if you would like further assistance.
+The dates you requested are not available at this time.  <span style="font-weight:bold;">Please <a style="color:#990000;font-weight:bold;" href="<?=$dateRequestLink;?>">submit alternate dates</a> or call our 
+Travel Concierge at (888) 297-3299 or 310-215-8060 for assistance</span>.
 </p>
+
 
 <p>You Requested:</p>
 
@@ -26,12 +27,12 @@ or property.  Please contact me if you would like further assistance.
 				<td style="color:#444444;font-size:12px; border-bottom: 1px solid silver; padding-bottom:10px;" valign="top" align="left"><?=$ticketId;?></td>
 			</tr>
 			<tr>
-				<td style="color:#000000;font-size:12px;" valign="top" align="left" width="240">Package Price:</td>
+				<td style="color:#000000;font-size:12px;font-weight:bold;" valign="top" align="left" width="240">Price:</td>
 				<td style="color:#444444;font-size:12px;padding-right:5px;" valign="top" align="right" width="30">US</td>
 				<td style="color:#444444;font-size:12px;" valign="top" align="left">$<?=$billingPrice;?></td>
 			</tr>
 			<tr>
-				<td style="color:#000000;font-size:12px;" valign="top" align="left" width="240">Handling Fee:</td>
+				<td style="color:#000000;font-size:12px;font-weight:bold;" valign="top" align="left" width="240">Handling Fee:</td>
 				<td style="color:#444444;font-size:12px;padding-right:5px;" valign="top" align="right" width="30">US</td>
 				<td style="color:#444444;font-size:12px;" valign="top" align="left">$<?=$llFee;?></td>
 			</tr>
@@ -67,17 +68,30 @@ or property.  Please contact me if you would like further assistance.
 				<td style="color:#990000;font-size:12px;" valign="top" align="left">$<?=$promoGcCofData['Cof']['totalAmountOff'];?></td>
 			</tr>
 			<?php endif; ?>
+
+			<?php if ($isAuction) : ?>
+			
+			</table>
+			<table cellspacing="0" cellpadding="5" border="0" style="margin-top:15px;">
 			<tr>
-				<td style="color:#990000;font-size:12px; font-weight:bold; border-top:1px solid silver; padding-bottom:20px;padding-top:10px;" valign="top" align="left" width="240">Your Price:</td>
-				<td style="color:#990000;font-size:12px; font-weight:bold; border-top:1px solid silver; padding-bottom:20px;padding-top:10px;padding-right:5px;" valign="top" align="right" width="30">US</td>
-				<td style="color:#990000;font-size:12px; font-weight:bold; border-top:1px solid silver; padding-bottom:20px;padding-top:10px;" valign="top" align="left">
-					<?php if ($promoGcCofData['applied']) : ?>
-					$<?=$promoGcCofData['final_price']; ?>	
-					<?php else: ?>
-					$<?=$totalPrice;?>
-					<?php endif; ?>
-				</td>
+				<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="120">Preferred Dates:</td>
+				<td style="color:#444444;font-size:12px;" valign="top" align="left">Check-in: <?php echo ($aucPreferDates[0]['rpd']['in']) ? $aucPreferDates[0]['rpd']['in'] : 'N/A';?></td>
+				<td style="color:#444444;font-size:12px;padding-left:15px;" valign="top" align="left">Check-out: <?php echo ($aucPreferDates[0]['rpd']['out']) ? $aucPreferDates[0]['rpd']['out'] : 'N/A';?></td>
 			</tr>
+			<tr>
+				<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="120">Alternate Dates:</td>
+				<td style="color:#444444;font-size:12px;" valign="top" align="left">Check-in: <?php echo ($aucPreferDates[1]['rpd']['in']) ? $aucPreferDates[1]['rpd']['in'] : 'N/A';?></td>
+				<td style="color:#444444;font-size:12px;padding-left:15px;" valign="top" align="left">Check-out: <?php echo ($aucPreferDates[1]['rpd']['out']) ? $aucPreferDates[1]['rpd']['out'] : 'N/A';?></td>
+			</tr>
+			<tr>
+				<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="120">Alternate Dates:</td>
+				<td style="color:#444444;font-size:12px;" valign="top" align="left">Check-in: <?php echo ($aucPreferDates[2]['rpd']['in']) ? $aucPreferDates[2]['rpd']['in'] : 'N/A';?></td>
+				<td style="color:#444444;font-size:12px;padding-left:15px;" valign="top" align="left">Check-out: <?php echo ($aucPreferDates[2]['rpd']['out']) ? $aucPreferDates[2]['rpd']['out'] : 'N/A';?></td>
+			</tr>
+			</table>
+
+			<?php else: ?>
+
 			<tr>
 				<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="240">Preferred Dates:</td>
 				<td style="color:#444444;font-size:12px;padding-right:5px;" valign="top" align="right" width="30">&nbsp;</td>
@@ -94,14 +108,16 @@ or property.  Please contact me if you would like further assistance.
 				<td style="color:#444444;font-size:12px;" valign="top" align="left"><?=$fpNotes;?></td>
 			</tr>
 			</table>
+			
+			<?php endif; ?>
 		</td>
 	</tr>
 </table>
 	
 <p>
 <br /><br />
-Travel Concierge Team<br />
-LuxuryLink.com
+Warm Regards,<br /><br />
+Luxury Link
 </p>		
 
 <?php include('../vendors/email_msgs/email_includes/footer.html');?>
