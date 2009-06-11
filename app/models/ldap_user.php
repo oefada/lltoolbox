@@ -4,7 +4,7 @@ class LdapUser extends AppModel
 	var $name 		= 'LdapUser';
 	var $useTable 	= false;
 	var $primaryKey = 'samaccountname';
-	var $host 		= '192.168.101.75';  // TODO:  Change to final location of LDAP --- 'lldc01.luxurylink.com';
+	var $host 		= 'dc1.luxurylink.com'; 
 	var $backupHost	= 'manila.luxurylink.com';
 	var $port 		= 389;
 	var $baseDn 	= 'OU=ServiceAccounts,DC=luxurylink,DC=com';
