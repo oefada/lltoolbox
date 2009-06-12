@@ -11,7 +11,7 @@
 		<td width="245" align="left" valign="top">
 			<div style="width: 245px; height: 189px; padding: 8px 12px 12px 8px; background: url(http://www.luxurylink.com/images/shared/shadow-gal-lrg-light-olive.gif) no-repeat top left; overflow: hidden;"><img src="http://www.luxurylink.com/images/por/<?php echo $oldProductId;?>/<?php echo $oldProductId;?>-gal-lrg-01.jpg" alt="<?php echo $packageName;?>" border="0" /></div>
 		</td>
-		<td align="left" valign="top">
+		<td width="100%" align="left" valign="top">
 			<div style="color:#990000;font-size:16px;font-weight:bold;"><?php echo $clientNameP;?></div>
 			<div style="color:#444444;font-size:12px;"><?php echo $locationDisplay;?></div><br />
 			<div style="color:#990000;font-size:12px;"><?php echo $packageName;?> <br /><br /><a style="color:#336699;" href="http://www.luxurylink.com/portfolio/por_offer_redirect.php?oid=<?=$offerId;?>">View Package Details</a></div>
@@ -20,17 +20,17 @@
 			<tr>
 				<td style="color:#000000;font-size:12px; border-bottom: 1px solid silver; padding-bottom:10px; font-weight:bold;" valign="top" align="left" width="240">Ticket ID:</td>
 				<td style="color:#444444;font-size:12px; border-bottom: 1px solid silver; padding-bottom:10px; padding-right:5px;" valign="top" align="right" width="30">&nbsp;</td>
-				<td style="color:#444444;font-size:12px; border-bottom: 1px solid silver; padding-bottom:10px;" valign="top" align="left"><?=$ticketId;?></td>
+				<td style="color:#444444;font-size:12px; border-bottom: 1px solid silver; padding-bottom:10px;" valign="top" align="right"><?=$ticketId;?></td>
 			</tr>
 			<tr>
 				<td style="color:#000000;font-size:12px;font-weight:bold;" valign="top" align="left" width="240">Price:</td>
 				<td style="color:#444444;font-size:12px;padding-right:5px;" valign="top" align="right" width="30">US</td>
-				<td style="color:#444444;font-size:12px;" valign="top" align="left">$<?=$billingPrice;?></td>
+				<td style="color:#444444;font-size:12px;" valign="top" align="right">$<?=$billingPrice;?></td>
 			</tr>
 			<tr>
 				<td style="color:#000000;font-size:12px;font-weight:bold;" valign="top" align="left" width="240">Handling Fee:</td>
 				<td style="color:#444444;font-size:12px;padding-right:5px;" valign="top" align="right" width="30">US</td>
-				<td style="color:#444444;font-size:12px;" valign="top" align="left">$<?=$llFee;?></td>
+				<td style="color:#444444;font-size:12px;" valign="top" align="right">$<?=$llFee;?></td>
 			</tr>
 			<?php if ($promoGcCofData['Promo'] && $promoGcCofData['Promo']['applied']) :?>
 			<tr>
@@ -43,7 +43,7 @@
 					<?php endif; ?>
 				</td>
 				<td style="color:#990000;font-size:12px;padding-right:5px;" valign="top" align="right" width="30">- US</td>
-				<td style="color:#990000;font-size:12px;" valign="top" align="left">$<?=$promoGcCofData['Promo']['totalAmountOff'];?></td>
+				<td style="color:#990000;font-size:12px;" valign="top" align="right">$<?=$promoGcCofData['Promo']['totalAmountOff'];?></td>
 			</tr>
 			<?php endif; ?>
 			<?php if ($promoGcCofData['GiftCert'] && $promoGcCofData['GiftCert']['applied']) :?>
@@ -52,7 +52,7 @@
 					Gift Certificate Applied: 
 				</td>
 				<td style="color:#990000;font-size:12px;padding-right:5px;" valign="top" align="right" width="30">- US</td>
-				<td style="color:#990000;font-size:12px;" valign="top" align="left">$<?=$promoGcCofData['GiftCert']['totalAmountOff'];?></td>
+				<td style="color:#990000;font-size:12px;" valign="top" align="right">$<?=$promoGcCofData['GiftCert']['totalAmountOff'];?></td>
 			</tr>
 			<?php endif; ?>
 			<?php if ($promoGcCofData['Cof'] && $promoGcCofData['Cof']['applied']) :?>
@@ -61,7 +61,7 @@
 					Credit On File Applied: 
 				</td>
 				<td style="color:#990000;font-size:12px;padding-right:5px;" valign="top" align="right" width="30">- US</td>
-				<td style="color:#990000;font-size:12px;" valign="top" align="left">$<?=$promoGcCofData['Cof']['totalAmountOff'];?></td>
+				<td style="color:#990000;font-size:12px;" valign="top" align="right">$<?=$promoGcCofData['Cof']['totalAmountOff'];?></td>
 			</tr>
 			<?php endif; ?>
 			</table>
@@ -100,10 +100,4 @@ Our business hours are Monday through Friday, 7am - 5:30pm Pacific Standard Time
 at 888-297-3299 (toll-free in the U.S.) or 310-215-8060, should you have any questions.
 </p>
 			
-<p><br /><br />
-Warm Regards,
-<br /><br />
-Luxury Link
-</p>		
-
 <?php include('../vendors/email_msgs/email_includes/footer.html');?>

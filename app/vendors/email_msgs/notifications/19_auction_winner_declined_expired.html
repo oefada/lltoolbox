@@ -20,12 +20,12 @@ Please <a style="font-weight:bold;" href="<?=$checkoutLink;?>">update your credi
 			<tr>
 				<td style="color:#000000;font-size:12px;" valign="top" align="left" width="240">Your Winning Bid:</td>
 				<td style="color:#444444;font-size:12px;padding-right:5px;" valign="top" align="right" width="30">US</td>
-				<td style="color:#444444;font-size:12px;" valign="top" align="left">$<?=$billingPrice;?></td>
+				<td style="color:#444444;font-size:12px;" valign="top" align="right">$<?=$billingPrice;?></td>
 			</tr>
 			<tr>
 				<td style="color:#000000;font-size:12px;" valign="top" align="left" width="240">Handling Fee:</td>
 				<td style="color:#444444;font-size:12px;padding-right:5px;" valign="top" align="right" width="30">US</td>
-				<td style="color:#444444;font-size:12px;" valign="top" align="left">$<?=$llFee;?></td>
+				<td style="color:#444444;font-size:12px;" valign="top" align="right">$<?=$llFee;?></td>
 			</tr>
 			<?php if ($promoGcCofData['Promo'] && $promoGcCofData['Promo']['applied']) :?>
 			<tr>
@@ -38,7 +38,7 @@ Please <a style="font-weight:bold;" href="<?=$checkoutLink;?>">update your credi
 					<?php endif; ?>
 				</td>
 				<td style="color:#990000;font-size:12px;padding-right:5px;" valign="top" align="right" width="30">- US</td>
-				<td style="color:#990000;font-size:12px;" valign="top" align="left">$<?=$promoGcCofData['Promo']['totalAmountOff'];?></td>
+				<td style="color:#990000;font-size:12px;" valign="top" align="right">$<?=$promoGcCofData['Promo']['totalAmountOff'];?></td>
 			</tr>
 			<?php endif; ?>
 			<?php if ($promoGcCofData['GiftCert'] && $promoGcCofData['GiftCert']['applied']) :?>
@@ -47,7 +47,7 @@ Please <a style="font-weight:bold;" href="<?=$checkoutLink;?>">update your credi
 					Gift Certificate Applied: 
 				</td>
 				<td style="color:#990000;font-size:12px;padding-right:5px;" valign="top" align="right" width="30">- US</td>
-				<td style="color:#990000;font-size:12px;" valign="top" align="left">$<?=$promoGcCofData['GiftCert']['totalAmountOff'];?></td>
+				<td style="color:#990000;font-size:12px;" valign="top" align="right">$<?=$promoGcCofData['GiftCert']['totalAmountOff'];?></td>
 			</tr>
 			<?php endif; ?>
 			<?php if ($promoGcCofData['Cof'] && $promoGcCofData['Cof']['applied']) :?>
@@ -56,13 +56,13 @@ Please <a style="font-weight:bold;" href="<?=$checkoutLink;?>">update your credi
 					Credit On File Applied: 
 				</td>
 				<td style="color:#990000;font-size:12px;padding-right:5px;" valign="top" align="right" width="30">- US</td>
-				<td style="color:#990000;font-size:12px;" valign="top" align="left">$<?=$promoGcCofData['Cof']['totalAmountOff'];?></td>
+				<td style="color:#990000;font-size:12px;" valign="top" align="right">$<?=$promoGcCofData['Cof']['totalAmountOff'];?></td>
 			</tr>
 			<?php endif; ?>
 			<tr>
 				<td style="color:#990000;font-size:12px; font-weight:bold; border-top:1px solid silver; padding-bottom:20px;padding-top:10px;" valign="top" align="left" width="240">Total Due:</td>
 				<td style="color:#990000;font-size:12px; font-weight:bold; border-top:1px solid silver; padding-bottom:20px;padding-top:10px;padding-right:5px;" valign="top" align="right" width="30">US</td>
-				<td style="color:#990000;font-size:12px; font-weight:bold; border-top:1px solid silver; padding-bottom:20px;padding-top:10px;" valign="top" align="left">
+				<td style="color:#990000;font-size:12px; font-weight:bold; border-top:1px solid silver; padding-bottom:20px;padding-top:10px;" valign="top" align="right">
 					<?php if ($promoGcCofData['applied']) : ?>
 					$<?=$promoGcCofData['final_price']; ?>	
 					<?php else: ?>
@@ -77,14 +77,13 @@ Please <a style="font-weight:bold;" href="<?=$checkoutLink;?>">update your credi
 		<td width="245" align="left" valign="top">
 			<div style="width: 245px; height: 189px; padding: 8px 12px 12px 8px; background: url(http://www.luxurylink.com/images/shared/shadow-gal-lrg-light-olive.gif) no-repeat top left; overflow: hidden;"><img src="http://www.luxurylink.com/images/por/<?php echo $oldProductId;?>/<?php echo $oldProductId;?>-gal-lrg-01.jpg" alt="<?php echo $packageName;?>" border="0" /></div>
 		</td>
-		<td align="left" valign="top">
+		<td width="100%" align="left" valign="top">
 			<div style="color:#990000;font-size:16px;font-weight:bold;"><?php echo $clientNameP;?></div>
 			<div style="color:#444444;font-size:12px;"><?php echo $locationDisplay;?></div><br />
-			<div style="color:#990000;font-size:12px;"><?php echo $packageName;?> <br /><br /><a style="color:#336699;" href="http://www.luxurylink.com/portfolio/por_offer_redirect.php?oid=<?=$offerId;?>">View Package Details</a></div>
-			<div style="height:15px;margin-top:15px;border-top:1px solid #B0B0B0;">&nbsp;</div>
+			<div style="color:#990000;font-size:12px;"><?php echo $packageName;?><div style="margin-top:3px;"><a style="color:#336699;" href="http://www.luxurylink.com/portfolio/por_offer_redirect.php?oid=<?=$offerId;?>">View Package Details</a></div></div>
 			<table cellspacing="0" cellpadding="5" border="0">
 			<tr>
-				<td style="color:#444444;font-size:12px;" align="center">
+				<td style="color:#444444;font-size:12px;padding-top:20px;" align="center">
 				<a href="<?=$checkoutLink;?>"><img src="http://www.luxurylink.com/images/buttons/btn_email_update_cc.gif" alt="Update Credit Card Information" border="0" /></a>
 				</td>
 			</tr>
@@ -101,14 +100,8 @@ Please <a style="font-weight:bold;" href="<?=$checkoutLink;?>">update your credi
 </table>
 
 <p><?php echo $packageIncludes;?></p>
-<p><span style="font-weight:bold;"><?php echo $validityLeadIn;?></span><br /><?php echo $validityNote;?></p>
+<p><span style="font-weight:bold;"><?php echo $validityLeadIn;?></span><p>
+<p><?php echo $validityNote;?></p>
 <p><?php echo $legalText;?></p>
-
-<p>
-<br /><br />
-Warm Regards,<br /><br />
-Luxury Link
-</p>		
-
 
 <?php include('../vendors/email_msgs/email_includes/footer.html');?>
