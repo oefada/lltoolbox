@@ -105,8 +105,12 @@ class LoasController extends AppController {
 		foreach ($tracks_result as $track) {
 			$tracks[$track['track']['trackId']] = $track['track'];
 			$offer_result = $this->Loa->query('SELECT offerId,packageId,offerTypeName,offerSubtitle,startDate,endDate,retailValue,openingBid FROM offerLive 
-											WHERE packageId IN (SELECT packageId FROM clientLoaPackageRel 
-											WHERE loaId = '. $loa['Loa']['loaId'] .' AND trackId = '. $track['track']['trackId'] .') 
+											WHERE packageId IN (
+																SELECT packageId
+																FROM schedulingMaster sm
+																INNER JOIN schedulingMasterTrackRel smtr USING(schedulingMasterId)
+																WHERE smtr.trackId = '. $track['track']['trackId'] .'
+																) 
 											ORDER BY offerId ASC');
 			$offers = array();
 			foreach ($offer_result as $offer) {
