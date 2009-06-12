@@ -21,7 +21,7 @@ Please present a copy upon check-in.
 		<td width="245" align="left" valign="top">
 			<div style="width: 245px; height: 189px; padding: 8px 12px 12px 8px; background: url(http://www.luxurylink.com/images/shared/shadow-gal-lrg-light-olive.gif) no-repeat top left; overflow: hidden;"><img src="http://www.luxurylink.com/images/por/<?php echo $oldProductId;?>/<?php echo $oldProductId;?>-gal-lrg-01.jpg" alt="<?php echo $packageName;?>" border="0" /></div>
 		</td>
-		<td align="left" valign="top">
+		<td width="100%" align="left" valign="top">
 			<div style="color:#990000;font-size:16px;font-weight:bold;"><?php echo $clientNameP;?></div>
 			<div style="color:#444444;font-size:12px;"><?php echo $locationDisplay;?></div><br />
 			<div style="color:#990000;font-size:12px;"><?php echo $packageName;?></div>
@@ -58,13 +58,13 @@ Please present a copy upon check-in.
 <div style="padding:15px;background-color:#E4E4E4;margin-bottom:15px;">
 	<div style="color:#990000;"><strong>Please contact the property directly for any special requests.</strong></div>
 	<?php foreach ($clients as $k => $client) : ?>
-		<p>
+		<div>
 		<?php echo $client['contacts'][0]['ppv_name'];?><br />
 		<?php echo $client['name'];?><br />
 		Telephone: <?php echo $client['contacts'][0]['ppv_phone'];?><br />
 		Facsimile: <?php echo $client['contacts'][0]['ppv_fax'];?><br />
 		Email: <?php echo $client['contacts'][0]['ppv_email_address'];?>
-		<p>
+		</div>
 	<?php endforeach; ?>
 </div>
 
@@ -80,7 +80,7 @@ Please present a copy upon check-in.
 <?php endif;?>
 
 <?php if ($isAuction) : ?>
-	<p><strong>As stated in our rules section, this package is non-refundable.</strong></p>
+	<p><strong class="color:#990000;">As stated in our rules section, this package is non-refundable.</strong></p>
 <?php endif;?>
 
 <p>Luxury Link strongly recommends the purchase of travel insurance. There are many reputable companies from which to choose; please contact your insurance provider for a recommendation.</p>
@@ -88,11 +88,5 @@ Please present a copy upon check-in.
 <p>
 If you have any questions or additional needs, please contact our Travel Concierge at (888) 297-3299 or (310) 215-8060.
 </p>
-
-<p>
-<br /><br />
-Warm Regards,<br /><br />
-Luxury Link
-</p>		
 
 <?php include('../vendors/email_msgs/email_includes/footer.html');?>

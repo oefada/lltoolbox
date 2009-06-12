@@ -13,7 +13,8 @@ Please reply to confirm the following reservation to Luxury Link and <strong>be 
 If the requested dates are not available, please advise alternate dates.
 </p>
 
-<table cellpadding="5" cellspacing="0" border="0" style="width:100%;background-color:#E0E0CD;margin-top:25px;margin-bottom:25px;">
+<div style="padding:10px;background-color:#E0E0CD;margin-top:25px;margin-bottom:25px;">
+<table cellpadding="5" cellspacing="0" border="0" width="100%">
 	<tr>
 		<td colspan="2" style="padding-bottom:15px; border-bottom:1px solid silver;">
 		<div style="color:#990000;font-size:16px;font-weight:bold;"><?php echo $clientNameP;?></div>
@@ -69,11 +70,11 @@ If the requested dates are not available, please advise alternate dates.
 		<td style="color:#444444;font-size:12px;" valign="top" align="left"><?=$userFirstName;?> <?=$userLastName;?></td>
 	</tr>
 	<tr>
-		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">Arrival:</td>
+		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">Check-in:</td>
 		<td style="color:#444444;font-size:12px;" valign="top" align="left"><?=$fpArrival;?></td>
 	</tr>
 	<tr>
-		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">Departure:</td>
+		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">Check-out:</td>
 		<td style="color:#444444;font-size:12px;" valign="top" align="left"><?=$fpDeparture;?></td>
 	</tr>
 	<tr>
@@ -89,11 +90,11 @@ If the requested dates are not available, please advise alternate dates.
 		<td style="color:#444444;font-size:12px;" valign="top" align="left"><?=$offerId;?></td>
 	</tr>
 	<tr>
-		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">Alternate Arrival</td>
+		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">Alternate Check-in</td>
 		<td style="color:#444444;font-size:12px;" valign="top" align="left"><?=$fpArrival2;?></td>
 	</tr>
 	<tr>
-		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">Alternate Departure:</td>
+		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">Alternate Check-out:</td>
 		<td style="color:#444444;font-size:12px;" valign="top" align="left"><?=$fpDeparture2;?></td>
 	</tr>
 	<tr>
@@ -102,15 +103,11 @@ If the requested dates are not available, please advise alternate dates.
 	</tr>
 	<?php endif; ?>
 </table>
+</div>
 
 <p><?php echo $packageIncludes;?></p>
-<p><span style="font-weight:bold;"><?php echo $validityLeadIn;?></span><br /><?php echo $validityNote;?></p>
+<p><span style="font-weight:bold;"><?php echo $validityLeadIn;?></span><p>
+<p><?php echo $validityNote;?></p>
 <p><?php echo $legalText;?></p>
 
-<p>
-<br /><br />
-Warm Regards,<br /><br />
-Luxury Link
-</p>		
-	
 <?php include('../vendors/email_msgs/email_includes/footer.html');?>
