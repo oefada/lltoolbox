@@ -419,6 +419,13 @@ class WebServiceTicketsController extends WebServicesController
 		$ppvInitials		= isset($params['initials']) ? $params['initials'] : null;
 		$clientIdParam		= isset($params['clientId']) ? $params['clientId'] : false;
 		
+		// sender signature (mainly for manual emails sent from toolbox)
+		// -------------------------------------------------------------------------------
+		$sender_sig 		= isset($params['sender_sig']) ? $params['sender_sig'] : 0;
+		$sender_sig_line	= isset($params['sender_sig_line']) ? $params['sender_sig_line'] : '';
+		$sender_email		= isset($params['sender_email']) ? $params['sender_email'] : '';
+		$sender_ext			= isset($params['sender_ext']) ? $params['sender_ext'] : '';
+
 		// TODO: error checking for params
 		
 		// retrieve data to fill out the email templates
@@ -478,10 +485,10 @@ class WebServiceTicketsController extends WebServicesController
 		$offerEndDate		= date('M d Y H:i A', strtotime($liveOfferData['endDate']));
 		$isAuction			= in_array($offerTypeId, array(1,2,6)) ? true : false;
 
-		$billingPrice		= number_format($ticketData['billingPrice'], 2, '.', ',');
+		$billingPrice		= $ticketData['billingPrice'];
 		$llFeeAmount		= $this->Ticket->getFeeByTicket($ticketId);
-		$llFee				= number_format($llFeeAmount, 2, '.', ',');
-		$totalPrice			= number_format(($ticketData['billingPrice'] + $llFeeAmount),  2, '.', ',');
+		$llFee				= $llFeeAmount;
+		$totalPrice			= $ticketData['billingPrice'] + $llFeeAmount;
 		$maxNumWinners		= $liveOfferData['numWinners'];
 		
 		$checkoutHash		= md5($ticketId . $userId . $offerId . 'LL_L33T_KEY');
@@ -562,7 +569,7 @@ class WebServiceTicketsController extends WebServicesController
 		$guarantee = false;
 		if ($packageData['reservePrice'] && is_numeric($packageData['reservePrice']) && ($packageData['reservePrice'] > 0)) {
 			if ($ticketData['billingPrice'] < $packageData['reservePrice']) {
-				$guarantee = number_format($packageData['reservePrice'], 2, '.', ',');
+				$guarantee = $packageData['reservePrice'];
 			}
 		}
 		
@@ -621,7 +628,7 @@ class WebServiceTicketsController extends WebServicesController
 		$locationDisplay	= $clients[$client_index]['locationDisplay'];
 		$clientPrimaryEmail = $clients[$client_index]['contact_to_string'];
 		$clientCcEmail 		= $clients[$client_index]['contact_cc_string'];
-		$clientAdjustedPrice = number_format(($clients[$client_index]['percentOfRevenue'] / 100) * $ticketData['billingPrice'], 2, '.', ',');
+		$clientAdjustedPrice = ($clients[$client_index]['percentOfRevenue'] / 100) * $ticketData['billingPrice'];
 		
 		// fetch template with the vars above
 		// -------------------------------------------------------------------------------
@@ -764,7 +771,7 @@ class WebServiceTicketsController extends WebServicesController
 					$locationDisplay	= $clients[$i]['locationDisplay'];
 					$clientPrimaryEmail = $clients[$i]['contact_to_string'];
 					$clientCcEmail 		= $clients[$i]['contact_cc_string'];	
-					$clientAdjustedPrice = number_format(($clients[$i]['percentOfRevenue'] / 100) * $ticketData['billingPrice'], 2, '.', ',');
+					$clientAdjustedPrice = ($clients[$i]['percentOfRevenue'] / 100) * $ticketData['billingPrice'];
 					ob_start();
 					switch ($ppvNoticeTypeId) {
 						case 2:

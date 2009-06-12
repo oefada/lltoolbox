@@ -32,9 +32,9 @@ class PpvNoticesController extends AppController {
 		$webservice_live_method_param = 'in0';
 		
 		if (!empty($this->data)) {
-			
-				if (isset($_SESSION['Auth']['AdminUser']['mailnickname'])) {
-					$ppvInitials = $_SESSION['Auth']['AdminUser']['mailnickname'];
+				
+				if (isset($_SESSION['Auth']['AdminUser']['username'])) {
+					$ppvInitials = $_SESSION['Auth']['AdminUser']['username'];
 				} else {
 					$ppvInitials = 'TOOLBOX';	
 				}
@@ -42,10 +42,11 @@ class PpvNoticesController extends AppController {
 				$data = array();
 				$data['ticketId'] 			= $this->data['PpvNotice']['ticketId'];
 				$data['send'] 				= 1;
-				$data['manualEmailBody']	= $this->data['PpvNotice']['emailBody'];
+				$data['manualEmailBody']	= str_replace('<p>&nbsp;</p>', '', $this->data['PpvNotice']['emailBody']);
 				$data['returnString'] 		= 0;
 				$data['ppvNoticeTypeId'] 	= $this->data['PpvNotice']['ppvNoticeTypeId'];
 				$data['initials']			= $ppvInitials;
+
 				if ($clientId) {
 					$data['clientId']		= $clientId;	
 				}
@@ -73,6 +74,32 @@ class PpvNoticesController extends AppController {
 			$clientIdParam = "/$clientId";
 		} else {
 			$clientIdParam = '';	
+		}
+	
+		if (isset($_SESSION['Auth']['AdminUser']['username'])) {
+			$sender_ext = $sender_title = '';
+			$data['sender_sig']         = 1;
+			switch ($_SESSION['Auth']['AdminUser']['username']) {
+				case 'jsanchez':
+					$sender_ext = 149;
+					$sender_title = 'Travel Conierge';
+					break;
+				case 'jawilson':
+					$sender_ext = 167;
+					$sender_title = 'Travel Conierge';
+					break;
+				case 'dvojdany':
+					$sender_ext = 147;
+					$sender_title = 'Customer Care Concierge';
+					break;
+				default:
+					$data['sender_sig'] = 0;
+					break;
+			}
+
+			$data['sender_sig_line']    = $_SESSION['Auth']['AdminUser']['displayname'] . ', ' . $sender_title;
+			$data['sender_email']		= $_SESSION['Auth']['AdminUser']['mail'];
+			$data['sender_ext']			= 'Ext ' . $sender_ext;
 		}
 
 		$this->set('promo', $this->Ticket->getTicketPromoData($ticketId));
