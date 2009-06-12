@@ -1238,9 +1238,341 @@ class ReportsController extends AppController {
 	    }
 	}
 	
+	function mcr() {
+		$this->Client = new Client;
+		$startDate = date("Y-m-d 00:00:00");
+		$endDate = date("Y-m-d 23:59:59");
+		$startDate2 = date("Y-m-d");
+		
+		if (!empty($this->data) || isset($this->params['named']['ql'])) {
+			$conditions = $this->_build_conditions($this->data);
+
+	        if (!empty($this->params['named']['sortBy'])) {
+	            $direction = (@$this->params['named']['sortDirection'] == 'DESC') ? 'DESC' : 'ASC';
+	            $order = $this->params['named']['sortBy'].' '.$direction;
+	            
+	            $this->set('sortBy', $this->params['named']['sortBy']);
+	            $this->set('sortDirection', $direction);
+	        } else {
+	            $order = 'Client.name';
+	            
+	            $this->set('sortBy', 'Client.clientId');
+    	        $this->set('sortDirection', 'DESC');
+	        }
+
+            if (!empty($conditions) || isset($this->params['named']['ql'])) {
+            
+            $sql = "SELECT 
+                        COUNT(cl.clientLoaPackageRelId) as numRecords
+                    FROM package AS Package
+                        LEFT JOIN packageStatus AS PackageStatus USING (packageStatusId)
+                        LEFT JOIN clientLoaPackageRel AS cl USING (packageId)
+                        LEFT JOIN client AS Client USING (clientId)
+                        INNER JOIN loa AS Loa USING (loaId)
+                        LEFT JOIN track AS Track USING (trackId)
+                        LEFT JOIN revenueModel as RevenueModel USING (revenueModelId)
+                        WHERE Loa.endDate >= NOW() AND $conditions";
+	         
+	        //$count = $this->OfferType->query($sql);
+    	    //$numRecords = $count[0][0]['numRecords'];
+            //$numPages = ceil($numRecords / $this->perPage);
+            
+			switch(@$this->params['named']['ql']):
+			case 1:
+				$conditions = "NOW() + INTERVAL 60 DAY >= Loa.endDate";
+			break;
+			case 2:
+				$clients = $this->Client->query("CALL clientsNoScheduledOffersLoa('$startDate2','$startDate2')");
+				foreach($clients as $c) {
+					$clientIds[] = $c['c']['clientId'];
+				}
+				
+				$conditions = "Client.clientId IN (".implode(',', $clientIds).")";
+			break;
+			case 3:
+				$clients = $this->Client->query("SELECT DISTINCT cl.clientId FROM clientLoaPackageRel cl INNER JOIN package USING(packageId) INNER JOIN loa USING(loaId) WHERE NOW() + INTERVAL 60 DAY >= validityEndDate AND validityEndDate >= NOW() AND loa.inactive <> 1");
+				foreach($clients as $c) {
+					$clientIds[] = $c['cl']['clientId'];
+				}
+				$conditions = "Client.clientId IN (".implode(',', $clientIds).")";
+			break;
+			case 4:
+				$noCalls = $this->Client->query("SELECT DISTINCT clientId, MAX(activityStart) as latestDate, activityStart, phone
+												FROM reporting.carConsolidatedView as Referrals
+												WHERE activityStart >= (NOW() - INTERVAL 120 DAY) AND phone = 0 OR phone IS NULL
+												GROUP BY clientId
+												HAVING activityStart = latestDate AND latestDate >= NOW() - INTERVAL 60 DAY");
+
+				foreach($noCalls as $c) {
+					$clientIds[] = $c['Referrals']['clientId'];
+				}
+				$conditions = "Client.clientId IN (".implode(',', $clientIds).")";
+			break;
+			case 5:
+				$this->Client->query("CREATE TEMPORARY TABLE recentTickets SELECT clientLoaPackageRel.clientId FROM ticket AS Ticket INNER JOIN clientLoaPackageRel USING(packageId) WHERE Ticket.created >= (NOW() - INTERVAL 30 DAY)");
+				$noSell = $this->Client->query("SELECT DISTINCT Client.clientId
+												FROM client AS Client
+												INNER JOIN loa AS Loa USING(clientId)
+												INNER JOIN clientLoaPackageRel USING(clientId)
+												LEFT JOIN recentTickets USING (clientId)
+												WHERE recentTickets.clientId IS NULL AND Loa.inactive <> 1 AND Loa.endDate > NOW()");
+				
+				foreach($noSell as $c) {
+					$clientIds[] = $c['Client']['clientId'];
+				}
+				$conditions = "Client.clientId IN (".implode(',', $clientIds).")";
+			break;
+			case 6:
+				$this->Client->query("CREATE TEMPORARY TABLE recentTickets SELECT clientLoaPackageRel.clientId FROM ticket AS Ticket INNER JOIN clientLoaPackageRel USING(packageId) WHERE Ticket.created >= (NOW() - INTERVAL 30 DAY) AND Ticket.offerTypeId IN(3,4)");
+				$noSell = $this->Client->query("SELECT DISTINCT Client.clientId
+												FROM client AS Client
+												INNER JOIN loa AS Loa USING(clientId)
+												INNER JOIN clientLoaPackageRel USING(clientId)
+												LEFT JOIN recentTickets USING (clientId)
+												WHERE recentTickets.clientId IS NULL AND Loa.inactive <> 1 AND Loa.endDate > NOW()");
+				
+				foreach($noSell as $c) {
+					$clientIds[] = $c['Client']['clientId'];
+				}
+				$conditions = "Client.clientId IN (".implode(',', $clientIds).")";
+			break;
+			default:
+				$conditions = $conditions;
+			break;
+			endswitch;
+			
+			$clients = $this->Client->query("SELECT 
+							Client.clientId,
+	                        Client.name,
+							Loa.loaId,
+							Loa.startDate,
+							Loa.endDate,
+							Loa2.startDate,
+							Loa.loaLevelId,
+							Loa.membershipBalance,
+							IF(Loa.totalKept = 0 OR Loa.totalKept IS NULL, 'N/A',ROUND(-Loa.membershipBalance / (Loa.totalKept / (DATEDIFF(Loa.startDate,NOW()))))) as daysUntilKeepEnd
+	                    FROM loa AS Loa
+	                    INNER JOIN client AS Client ON (Client.clientId = Loa.clientId AND curdate() BETWEEN Loa.startDate AND Loa.endDate AND Loa.inactive <> 1)
+						LEFT JOIN loa AS Loa2 ON (Loa2.clientId = Client.clientId AND Loa2.startDate > NOW() AND Loa2.inactive <> 1)
+						LEFT JOIN clientDestinationRel AS ClientDestinationRel ON(Client.clientId = ClientDestinationRel.clientId)
+	                    WHERE $conditions AND Client.inactive <> 1 AND Loa.inactive <> 1
+	                    GROUP BY Loa.loaId
+	                    ORDER BY $order");
+			}
+		}
+
+		switch($this->data['MCR']['pkgRevenueRange']):
+			case 1:
+				$pkgRevenueStart = date('Y-m-d', strtotime('-60 days'));
+				break;
+			case 2:
+				$pkgRevenueStart = date('Y-m-d', strtotime('-90 days'));
+				break;
+			case 3:
+				$pkgRevenueStart = date('Y-m-01');
+				break;
+			case 4:
+				if (date('Y-m-d') < date('Y-04-01')) {
+					$pkgRevenueStart = date('Y-01-01');
+				} else if (date('Y-m-d') < date('Y-07-01')) {
+					$pkgRevenueStart = date('Y-04-01');
+				} else if (date('Y-m-d') < date('Y-10-01')) {
+					$pkgRevenueStart = date('Y-07-01');
+				} else {
+					$pkgRevenueStart = date('Y-10-01');
+				}
+				break;
+			case 0:
+			default:
+				$pkgRevenueStart = date('Y-m-d', strtotime('-30 days'));
+			break;
+		endswitch;
+		
+		$pkgRevenueEnd = date('Y-m-d', strtotime("+1 day"));
+		if (!isset($clients)) {
+			 $clients = array();
+		}
+		foreach($clients as $k => $client) {
+			$clientId = $client['Client']['clientId'];
+			
+			if ($this->data['MCR']['pkgRevenueRange'] == 5) {
+				$pkgRevenueStart = date('Y-m-d', strtotime($client['Loa']['startDate']));
+			}
+			
+			#### Package Revenue ####
+			// Begin Packages Live Today
+			$packagesLive = $this->Client->query("SELECT COUNT(DISTINCT SchedulingMaster.packageId) as packagesLive, offerTypeId FROM schedulingInstance as SchedulingInstance
+												INNER JOIN schedulingMaster as SchedulingMaster USING (schedulingMasterId)
+												INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel USING(packageId)
+												WHERE (SchedulingInstance.startDate between '$startDate' and '$endDate' or SchedulingInstance.endDate between '$startDate' and '$endDate' or (SchedulingInstance.startDate < '$startDate' and SchedulingInstance.endDate > '$endDate')) 
+														AND clientId = $clientId
+												GROUP BY offerTypeId");
+
+			$packageStats = array();
+			$packageStats['packagesLiveToday'] = $packageStats['auctionsLiveToday'] = $packageStats['fpLiveToday'] = 0;
+		
+			foreach ($packagesLive as $v) {
+				$packageStats['packagesLiveToday'] += $v[0]['packagesLive'];
+				
+				switch($v['SchedulingMaster']['offerTypeId']) {
+					case 1:
+					case 2:
+					case 6:
+						$packageStats['auctionsLiveToday'] += $v[0]['packagesLive'];
+					break;
+					case 3:
+					case 4:
+						$packageStats['fpLiveToday'] += $v[0]['packagesLive'];
+				}
+			}
+			// End Packages Live Today
+			// Packages Uptime
+			$packageUptime = $this->Client->query("CALL clientPackagesUptime($clientId, '$pkgRevenueStart', '$pkgRevenueEnd' )");
+			$packageStats['packageUptime'] = $packageUptime[0][0]['packageUptime'];
+			// End Packages Uptime
+			
+			// Begin Total Sold/Total $$
+			$tickets = $this->Client->query("SELECT COUNT(DISTINCT Ticket.ticketId) as totalTickets,
+											SUM(Ticket.billingPrice) AS totalRevenue,
+											ROUND(COUNT(DISTINCT Ticket.ticketId) / (SELECT COUNT(DISTINCT OfferLive.offerId) FROM offerLive AS OfferLive INNER JOIN clientLoaPackageRel as cl2 USING(packageId) WHERE cl2.clientId = $clientId  AND OfferLive.offerTypeId = Ticket.offerTypeId AND (OfferLive.startDate between '$pkgRevenueStart' and '$pkgRevenueEnd' or OfferLive.endDate between '$pkgRevenueStart' and '$pkgRevenueEnd' or (OfferLive.startDate < '$pkgRevenueStart' and OfferLive.endDate > '$pkgRevenueEnd'))) * 100) as closeRate,
+											Ticket.offerTypeId
+											FROM ticket as Ticket
+											INNER JOIN package as Package USING (packageId)
+											INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel USING(packageId)
+											WHERE Ticket.created between '$pkgRevenueStart' and '$pkgRevenueEnd'
+												AND ClientLoaPackageRel.clientId = $clientId
+											GROUP BY Ticket.offerTypeId");
+	
+			$ticketStats = array();
+			$ticketStats['totalSold'] = $ticketStats['totalRevenue'] = $ticketStats['fpRequests'] = $ticketStats['auctionCloseRate'] = 0;
+			
+			foreach ($tickets as $v) {
+				$ticketStats['totalSold'] += $v[0]['totalTickets'];
+				$ticketStats['totalRevenue'] += $v[0]['totalRevenue'];
+				
+				switch($v['Ticket']['offerTypeId']) {
+					case 1:
+					case 2:
+					case 6:
+						$ticketStats['auctionCloseRate'] += $v[0]['closeRate'];
+					break;
+					case 3:
+					case 4:
+						$ticketStats['fpRequests'] += $v[0]['totalTickets'];
+				}
+			}
+			// End Total Sold/Total $$
+			### End Packages Revenue
+			// Begin Referrals/Impressions
+			$referrals = $this->Client->query("SELECT activityStart, webRefer, phone, productView, searchView, email, destinationView
+											FROM reporting.carConsolidatedView as Referrals
+											WHERE Referrals.clientId = $clientId ORDER BY Referrals.activityStart DESC LIMIT 1");
+			// End Referrals/Impressions
+			$clients[$k] = @array_merge($clients[$k], (array)$packageStats, (array)$ticketStats, (array)$referrals[0]);
+		}
+		
+		//Setup Client Manager Usernames
+		$tmp = $this->Client->query("SELECT DISTINCT LOWER(managerUsername) as username FROM client INNER JOIN adminUser ON(adminUser.username = client.managerUsername)");
+
+		foreach ($tmp as $username) {
+			$managerUsernames[$username[0]['username']] = $username[0]['username'];
+		}
+		
+		$this->set('managerUsernames', $managerUsernames);
+		//
+		
+		//Setup Regions
+		$tmp = $this->Client->query("SELECT destinationId, parentId, destinationName FROM destination as Destination ORDER BY destinationName");
+		
+		foreach ($tmp as $k => $v) {
+			$regions[$v['Destination']['destinationId']] = $v['Destination']['destinationName'];
+		}
+		//$regions = $this->destinationTree($tmp);
+
+		$this->set('regions', $regions);		
+		
+		$pkgRevenueRanges = array('Past 30 Days',
+									'Past 60 Days',
+									'Past 90 Days',
+									'Month to Date',
+									'Quarter to Date',
+									'Since LOA Start Date');
+		
+		$this->set('pkgRevenueRanges', $pkgRevenueRanges);
+		
+		//all of the client data aggregated in this one array
+		$this->set('clients', $clients);
+	}
+	
+	function destinationTree($list) {
+		$lookup = array();
+		foreach( $list as $item )
+		{	
+		    $item['children'] = array();
+		    $lookup[$item['Destination']['destinationId']] = $item['Destination'];
+		}
+
+		$tree = array();
+		foreach( $lookup as $id => $foo )
+		{
+		    $item = &$lookup[$id];
+		    if( $item['parentId'] == 0 )
+		    {
+		        $tree[$id] = &$item;
+		    }
+		    else
+		    if( isset( $lookup[$item['parentId']] ) )
+		    {
+		        $lookup[$item['parentId']]['children'][$id] = &$item;
+		    }
+		    else
+		    {
+		        $tree['_orphans_'][$id] = &$item;
+		    }
+		}
+		
+		$this->reduceDestinationTree($tree);
+		
+		return $tree;
+	}
+	
+	function reduceDestinationTree(&$a, $depth)
+	{
+	    foreach($a as $key=>$value)
+	    {
+			//debug($a);
+	        if (is_array($value))
+	           $this->reduceDestinationTree($a[$key], $depth+1);
+
+	    }
+
+	}
+	
+	
+	// Will return the number of days between the two dates passed in
+	function count_days( $a, $b )
+	{
+	    // First we need to break these dates into their constituent parts:
+	    $gd_a = getdate( $a );
+	    $gd_b = getdate( $b );
+
+	    // Now recreate these timestamps, based upon noon on each day
+	    // The specific time doesn't matter but it must be the same each day
+	    $a_new = mktime( 12, 0, 0, $gd_a['mon'], $gd_a['mday'], $gd_a['year'] );
+	    $b_new = mktime( 12, 0, 0, $gd_b['mon'], $gd_b['mday'], $gd_b['year'] );
+
+	    // Subtract these two numbers and divide by the number of seconds in a
+	    //  day. Round the result since crossing over a daylight savings time
+	    //  barrier will cause this time to be off by an hour or two.
+	    return round( abs( $a_new - $b_new ) / 86400 );
+	}
+
 	//TODO: A lot of duplication of code, use this method as a template for all the others and cut down on the number of times the following code is repeated
 	function _build_conditions($data) {
 	    $conditions = array();
+		if (empty($data)) {
+			return false;
+		}
 	    foreach ($data as $k => $ca) {
 	        if (isset($ca['value']['between'])) {
                 $betweenCondition = $ca['value']['between'];

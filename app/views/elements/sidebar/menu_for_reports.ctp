@@ -9,6 +9,7 @@
 	<li><?=$html->link('Inventory Management', 'imr')?></li>
 	<li><?=$html->link('Offer Search', 'offer_search')?></li>
 	<li><?=$html->link('Package Search', 'packages')?></li>
+	<li><?=$html->link('Account Manager Client Report', 'mcr')?></li>
 </ul>
 <h3>Other Tools</h3>
 <ul class="tree">

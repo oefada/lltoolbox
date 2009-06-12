@@ -937,6 +937,13 @@ td.rowBorderDark,
     border: 1px solid #000;
     border-collapse: collapse;
 }
+th.rowBorderWhite,
+td.rowBorderWhite,
+.rowBorderWhite th,
+.rowBorderWhite td {
+    border: 1px solid #fff;
+    border-collapse: collapse;
+}
 .textDarkRed {
     color: #990000;
 }
