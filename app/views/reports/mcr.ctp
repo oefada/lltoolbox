@@ -139,7 +139,7 @@ window.onload = function(){
 			</div>
 		</td>
 	    <th colspan="5" class="blackBg" style="text-align: center">LOA Information</td>
-	    <th colspan="6" class="darkBlackBg rowBorderWhite" style="border-top: 1px solid #000; text-align: center">Referrals/Impressions</td>
+	    <th colspan="6" class="darkBlackBg rowBorderWhite" style="border-top: 1px solid #000; text-align: center">Referrals/Impressions (<?=date('M y', strtotime($latestReferralDate))?>)</td>
 	  </tr>
 	  <tr>
 	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="1" id="sort1">Packages Live Today</a></td>
@@ -184,7 +184,7 @@ window.onload = function(){
 	    <td><?=(int)$row['fpRequests']?></td>
 		<? if ($k == count($clients) - 1) echo "</div>"?>
 	    <td><?=date('m/d/Y', strtotime($row['Loa']['endDate']))?></td>
-	    <td><?=date('m/d/Y', strtotime($row['Loa2']['startDate']))?></td>
+	    <td><?=($row['Loa2']['startDate']) ? date('m/d/Y', strtotime($row['Loa2']['startDate'])) : ''; ?></td>
 	    <td><?=($row['Loa']['loaLevelId'] == 2) ? 'Sponsorship' : 'Wholesale' ;?></td>
 	    <td><?=(int)$row['Loa']['membershipBalance']?></td>
 	    <td><?=(int)$row[0]['daysUntilKeepEnd']?></td>
