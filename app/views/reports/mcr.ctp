@@ -66,8 +66,10 @@ window.onload = function(){
 	background: #000;
 }
 </style>
+
+<?php echo $form->create('', array('url' => '/reports/mcr', 'id' => 'theform', 'name' => 'theform'))?>
+<div style="width: 900px;" class="clearfix">
 <div class="advancedSearch" style="width: 360px; float: left;">
-	<?php echo $form->create('', array('url' => '/reports/mcr'))?>
 	<fieldset>
 	<div class="fieldRow"><label>Account Manager:</label>
 		<?echo $form->hidden('condition1.field', array('value' => 'MATCH=managerUsername'))?>
@@ -91,7 +93,7 @@ window.onload = function(){
 	<div class="fieldRow controlset" style="padding-left: 135px">
 		<?php 		
 					echo $form->hidden('condition4.field', array('value' => 'Loa.loaLevelId'));
-					if ($this->data['condition4']['value'] == 2) {
+					if (@$this->data['condition4']['value'] == 2) {
 						$checked = ' checked="checked"';
 					} else {
 						$checked = '';
@@ -104,27 +106,31 @@ window.onload = function(){
 	</fieldset>
 	
 	<?php echo $form->submit('Search') ?>
-	<?php echo $form->end()?>
+
 </div>
-<div class="advancedSearch" style="margin-left: 20px; width: 430px; float: left;">
+<div class="advancedSearch" style="margin-left: 20px; width: 430px; float: left; clear: none">
 	<h4>Quick Links</h4>
 	<?php
-	echo $html->link('LOAs expiring in less than 60 days', '/reports/mcr/ql:1')."<br />";
-	echo $html->link('Clients with zero packages live Today', '/reports/mcr/ql:2')."<br />";
-	echo $html->link('Clients with packages expiring in less than 60 days', '/reports/mcr/ql:3')."<br />";
-	echo $html->link('Clients with Zero phone calls in the last Month', '/reports/mcr/ql:4')."<br />";
-	echo $html->link('Clients with zero packages sold in last 30 days', '/reports/mcr/ql:5')."<br />";
-	echo $html->link('Clients with zero fixed price requests in last 60 days', '/reports/mcr/ql:6')."<br />";
+	echo $html->link('LOAs expiring in less than 60 days', '/reports/mcr/ql:1', array('onclick' => 'document.theform.action = this.href; document.theform.submit(); return false'))."<br />";
+	echo $html->link('Clients with zero packages live Today', '/reports/mcr/ql:2', array('onclick' => 'document.theform.action = this.href; document.theform.submit(); return false'))."<br />";
+	echo $html->link('Clients with packages expiring in less than 60 days', '/reports/mcr/ql:3', array('onclick' => 'document.theform.action = this.href; document.theform.submit(); return false'))."<br />";
+	echo $html->link('Clients with Zero phone calls in the last Month', '/reports/mcr/ql:4', array('onclick' => 'document.theform.action = this.href; document.theform.submit(); return false'))."<br />";
+	echo $html->link('Clients with zero packages sold in last 30 days', '/reports/mcr/ql:5', array('onclick' => 'document.theform.action = this.href; document.theform.submit(); return false'))."<br />";
+	echo $html->link('Clients with zero fixed price requests in last 60 days', '/reports/mcr/ql:6', array('onclick' => 'document.theform.action = this.href; document.theform.submit(); return false'))."<br />";
 	?>
 </div>
+</div>
+<?php echo $form->end()?>
 <div style="clear: both;"></div>
+<div style="text-align: right"><?=count($clients)?> total rows returned</div>
 <table class="rowBorderDark genericTable" style="text-align: center">
 	<thead>
 		<tr>
+		<th rowspan="2">&nbsp;</th>
 	    <th rowspan="2" class="blackBg" style="text-align: center"><a href="0" id="sort0">Client Name</a></td>
 	    <th colspan="8" class="darkBlackBg rowBorderWhite" style="border-top: 1px solid #000; text-align: center; padding: 5px 0">
 			Package Revenue
-			<div style="float: right;">
+			<div style="position: relative; float: right; clear: none">
 				<?php echo $form->create('', array('url' => $_SERVER['REQUEST_URI']))?>
 					<?php echo $form->hidden('condition1.field');
 						  echo $form->hidden('condition1.value');
@@ -172,7 +178,8 @@ window.onload = function(){
 	}
 ?>
 	  <tr<?=$class?>>
-	    <td style="text-align: left;"><?=$row['Client']['name']?></td>
+		<td><?=$k+1?></td>
+	    <td style="text-align: left;"><?=$html->link($row['Client']['name'], '/clients/edit/'.$row['Client']['clientId'])?></td>
 		<? if ($k == 0) echo "<div id='packageRevenue'>"?>
 	    <td><?=(int)$row['packagesLiveToday']?></td>
 	    <td><?=(int)$row['packageUptime']?></td>
@@ -185,10 +192,16 @@ window.onload = function(){
 		<? if ($k == count($clients) - 1) echo "</div>"?>
 	    <td><?=date('m/d/Y', strtotime($row['Loa']['endDate']))?></td>
 	    <td><?=($row['Loa2']['startDate']) ? date('m/d/Y', strtotime($row['Loa2']['startDate'])) : ''; ?></td>
-	    <td><?=($row['Loa']['loaLevelId'] == 2) ? 'Sponsorship' : 'Wholesale' ;?></td>
+		<?php
+		$data['condition5']['field'] = 'Client.clientId';
+		$data['condition5']['value'] = $row['Client']['clientId'];
+		
+		$url = urlencode(serialize($data));	
+		?>
+	    <td><a href="/reports/cmr/filter:<?=$url?>"><?=($row['Loa']['loaLevelId'] == 2) ? 'Sponsorship' : 'Wholesale' ;?></a></td>
 	    <td><?=(int)$row['Loa']['membershipBalance']?></td>
 	    <td><?=(int)$row[0]['daysUntilKeepEnd']?></td>
-	    <td><?=(int)@$row['Referrals']['webRefer']?></td>
+	    <td><?=$html->link((int)@$row['Referrals']['webRefer'], '/reports/car/clientId:'.$row['Client']['clientId'])?></td>
 	    <td><?=(int)@$row['Referrals']['phone']?></td>
 	    <td><?=(int)@$row['Referrals']['productView']?></td>
 	    <td><?=(int)@$row['Referrals']['searchView']?></td>

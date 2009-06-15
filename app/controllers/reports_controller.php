@@ -1120,8 +1120,9 @@ class ReportsController extends AppController {
 	}
 	
 	function car() {
-	    if (!empty($this->data)) {
-	        $clientId = $this->data['Client']['clientName_id'];
+	    if (!empty($this->data) || !empty($this->params['named']['clientId'])) {
+	        $clientId = (!empty($this->params['named']['clientId'])) ? $this->params['named']['clientId'] : $this->data['Client']['clientName_id'];
+
 	        $stats = $this->OfferType->query("SELECT DATE_FORMAT(activityStart, '%Y%m' ) as yearMonth,
 	                                                    phone, webRefer, productView, searchView, destinationView, email
 	                                            FROM reporting.carConsolidatedView AS rs
@@ -1243,7 +1244,7 @@ class ReportsController extends AppController {
 		$startDate = date("Y-m-d 00:00:00");
 		$endDate = date("Y-m-d 23:59:59");
 		$startDate2 = date("Y-m-d");
-		
+
 		if (!empty($this->data) || isset($this->params['named']['ql'])) {
 			$conditions = $this->_build_conditions($this->data);
 
@@ -1279,7 +1280,7 @@ class ReportsController extends AppController {
             
 			switch(@$this->params['named']['ql']):
 			case 1:
-				$conditions = "NOW() + INTERVAL 60 DAY >= Loa.endDate";
+				$qlconditions = "NOW() + INTERVAL 60 DAY >= Loa.endDate";
 			break;
 			case 2:
 				$clients = $this->Client->query("CALL clientsNoScheduledOffersLoa('$startDate2','$startDate2')");
@@ -1287,14 +1288,14 @@ class ReportsController extends AppController {
 					$clientIds[] = $c['c']['clientId'];
 				}
 				
-				$conditions = "Client.clientId IN (".implode(',', $clientIds).")";
+				$qlconditions = "Client.clientId IN (".implode(',', $clientIds).")";
 			break;
 			case 3:
 				$clients = $this->Client->query("SELECT DISTINCT cl.clientId FROM clientLoaPackageRel cl INNER JOIN package USING(packageId) INNER JOIN loa USING(loaId) WHERE NOW() + INTERVAL 60 DAY >= validityEndDate AND validityEndDate >= NOW() AND loa.inactive <> 1");
 				foreach($clients as $c) {
 					$clientIds[] = $c['cl']['clientId'];
 				}
-				$conditions = "Client.clientId IN (".implode(',', $clientIds).")";
+				$qlconditions = "Client.clientId IN (".implode(',', $clientIds).")";
 			break;
 			case 4:
 				$noCalls = $this->Client->query("SELECT DISTINCT clientId, MAX(activityStart) as latestDate, activityStart, phone
@@ -1306,7 +1307,7 @@ class ReportsController extends AppController {
 				foreach($noCalls as $c) {
 					$clientIds[] = $c['Referrals']['clientId'];
 				}
-				$conditions = "Client.clientId IN (".implode(',', $clientIds).")";
+				$qlconditions = "Client.clientId IN (".implode(',', $clientIds).")";
 			break;
 			case 5:
 				$this->Client->query("CREATE TEMPORARY TABLE recentTickets SELECT clientLoaPackageRel.clientId FROM ticket AS Ticket INNER JOIN clientLoaPackageRel USING(packageId) WHERE Ticket.created >= (NOW() - INTERVAL 30 DAY)");
@@ -1320,7 +1321,7 @@ class ReportsController extends AppController {
 				foreach($noSell as $c) {
 					$clientIds[] = $c['Client']['clientId'];
 				}
-				$conditions = "Client.clientId IN (".implode(',', $clientIds).")";
+				$qlconditions = "Client.clientId IN (".implode(',', $clientIds).")";
 			break;
 			case 6:
 				$this->Client->query("CREATE TEMPORARY TABLE recentTickets SELECT clientLoaPackageRel.clientId FROM ticket AS Ticket INNER JOIN clientLoaPackageRel USING(packageId) WHERE Ticket.created >= (NOW() - INTERVAL 30 DAY) AND Ticket.offerTypeId IN(3,4)");
@@ -1334,12 +1335,18 @@ class ReportsController extends AppController {
 				foreach($noSell as $c) {
 					$clientIds[] = $c['Client']['clientId'];
 				}
-				$conditions = "Client.clientId IN (".implode(',', $clientIds).")";
+				$qlconditions = "Client.clientId IN (".implode(',', $clientIds).")";
 			break;
 			default:
 				$conditions = $conditions;
 			break;
 			endswitch;
+			
+			if (!empty($qlconditions) && !empty($conditions)) {
+				$conditions .= ' AND '.$qlconditions; 
+			} else if(!empty($qlconditions)) {
+				$conditions = $qlconditions;
+			}
 			
 			$clients = $this->Client->query("SELECT 
 							Client.clientId,
@@ -1392,6 +1399,11 @@ class ReportsController extends AppController {
 		if (!isset($clients)) {
 			 $clients = array();
 		}
+		
+		$referrals = $this->Client->query("SELECT DATE_FORMAT(MAX(activityStart), '%Y-%m-%d') as latestReferralDate
+										FROM reporting.carConsolidatedView as Referrals");
+		$latestReferralDate = $referrals[0][0]['latestReferralDate'];
+		
 		foreach($clients as $k => $client) {
 			$clientId = $client['Client']['clientId'];
 			
@@ -1466,7 +1478,7 @@ class ReportsController extends AppController {
 			// Begin Referrals/Impressions
 			$referrals = $this->Client->query("SELECT activityStart, webRefer, phone, productView, searchView, email, destinationView
 											FROM reporting.carConsolidatedView as Referrals
-											WHERE Referrals.clientId = $clientId ORDER BY Referrals.activityStart DESC LIMIT 1");
+											WHERE Referrals.clientId = $clientId AND activityStart = '$latestReferralDate'");
 			// End Referrals/Impressions
 			$clients[$k] = @array_merge($clients[$k], (array)$packageStats, (array)$ticketStats, (array)$referrals[0]);
 		}
@@ -1499,6 +1511,7 @@ class ReportsController extends AppController {
 									'Since LOA Start Date');
 		
 		$this->set('pkgRevenueRanges', $pkgRevenueRanges);
+		$this->set('latestReferralDate', $latestReferralDate);
 		
 		//all of the client data aggregated in this one array
 		$this->set('clients', $clients);
@@ -1629,7 +1642,7 @@ class ReportsController extends AppController {
 	                $conditions[$k] =   'MATCH('.$field.') AGAINST('."'{$ca['value']}' IN BOOLEAN MODE)";
 	            } elseif (strpos($ca['field'], 'LIKE=') !== false) {
     	                $field = substr($ca['field'], strpos($ca['field'], '=')+1);
-    	                $conditions[$k] =   "{$field} LIKE '{$ca['value']}%'";
+    	                $conditions[$k] =   "{$field} LIKE '%{$ca['value']}%'";
     	        } elseif (strpos($ca['value'], '!=') !== false) {
     	            $value = substr($ca['value'], strpos($ca['value'], '=')+2);
 	                $conditions[$k] =   "{$ca['field']} != '{$value}'";
