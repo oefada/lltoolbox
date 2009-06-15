@@ -5,7 +5,7 @@ foreach ($results as $r):
 		case 'Standard Auction':
 		case 'Dutch Auction':
 		case 'Best Shot':
-			$fee = 30;
+			$fee = 40;
 			break;
 		case 'Best Buy':
 		case 'Exclusive':

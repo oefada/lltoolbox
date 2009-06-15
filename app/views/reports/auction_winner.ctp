@@ -119,7 +119,7 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 			case 'Standard Auction':
 			case 'Dutch Auction':
 			case 'Best Shot':
-				echo '$30';
+				echo '$40';
 				break;
 			case 'Best Buy':
 			case 'Exclusive':
