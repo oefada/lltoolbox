@@ -65,6 +65,15 @@ window.onload = function(){
 .darkBlackBg a {
 	background: #000;
 }
+td.error {
+	padding: 0;
+}
+td.error div{
+	bottom: 0;
+	border: 5px solid #900;
+	min-height: 20px;
+	padding: 10px;
+}
 </style>
 
 <?php echo $form->create('', array('url' => '/reports/mcr', 'id' => 'theform', 'name' => 'theform'))?>
@@ -181,7 +190,7 @@ window.onload = function(){
 		<td><?=$k+1?></td>
 	    <td style="text-align: left;"><?=$html->link($row['Client']['name'], '/clients/edit/'.$row['Client']['clientId'])?></td>
 		<? if ($k == 0) echo "<div id='packageRevenue'>"?>
-	    <td><?=(int)$row['packagesLiveToday']?></td>
+	    <td <?if((int)$row['packagesLiveToday'] == 0) echo " class='error'"?>><div><?=(int)$row['packagesLiveToday']?></div></td>
 	    <td><?=(int)$row['packageUptime']?></td>
 	    <td><?=(int)$row['totalSold']?></td>
 	    <td><?=(int)$row['totalRevenue']?></td>
@@ -190,7 +199,7 @@ window.onload = function(){
 	    <td><?=(int)$row['fpLiveToday']?></td>
 	    <td><?=(int)$row['fpRequests']?></td>
 		<? if ($k == count($clients) - 1) echo "</div>"?>
-	    <td><?=date('m/d/Y', strtotime($row['Loa']['endDate']))?></td>
+	    <td <?if(strtotime("+60 days") >= strtotime($row['Loa']['endDate'])) echo " class='error'"?>><div><?=date('m/d/Y', strtotime($row['Loa']['endDate']))?></div></td>
 	    <td><?=($row['Loa2']['startDate']) ? date('m/d/Y', strtotime($row['Loa2']['startDate'])) : ''; ?></td>
 		<?php
 		$data['condition5']['field'] = 'Client.clientId';
@@ -200,9 +209,9 @@ window.onload = function(){
 		?>
 	    <td><a href="/reports/cmr/filter:<?=$url?>"><?=($row['Loa']['loaLevelId'] == 2) ? 'Sponsorship' : 'Wholesale' ;?></a></td>
 	    <td><?=(int)$row['Loa']['membershipBalance']?></td>
-	    <td><?=(int)$row[0]['daysUntilKeepEnd']?></td>
-	    <td><?=$html->link((int)@$row['Referrals']['webRefer'], '/reports/car/clientId:'.$row['Client']['clientId'])?></td>
-	    <td><?=(int)@$row['Referrals']['phone']?></td>
+	    <td <?if((int)$row[0]['daysUntilKeepEnd'] < 30) echo " class='error'"?>><div><?=(int)$row[0]['daysUntilKeepEnd']?></div></td>
+	    <td <?if(@$row['Referrals']['webRefer'] < 100) echo " class='error'"?>><div><?=$html->link((int)@$row['Referrals']['webRefer'], '/reports/car/clientId:'.$row['Client']['clientId'])?></div></td>
+	    <td <?if(@$row['Referrals']['phone'] < 20) echo " class='error'"?>><div><?=(int)@$row['Referrals']['phone']?></div></td>
 	    <td><?=(int)@$row['Referrals']['productView']?></td>
 	    <td><?=(int)@$row['Referrals']['searchView']?></td>
 	    <td><?=(int)@$row['Referrals']['email']?></td>
