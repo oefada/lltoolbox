@@ -183,11 +183,11 @@ th {
 			Keep
 		</td>
 		<td>
-			<a href="/reports/imr/schedulingMasterIds:<?=implode(',',$distressedAuctions[1][1]['ids'])?>"><?=$distressedAuctions[1][1]['numOffers']?></a>
+			<a href="/reports/imr/schedulingMasterIds:<?=implode(',',$distressedAuctions[1][1]['ids'])?>" target="_blank"><?=$distressedAuctions[1][1]['numOffers']?></a>
 		</td>
 		<td><?=round($distressedAuctions[1][1]['numOffers']/$distressedAuctions[1]['totalNumOffers']*100)?></td>
 		<td>
-			<a href="/reports/imr/schedulingMasterIds:<?=implode(',',$distressedAuctions[1][2]['ids'])?>"><?=$distressedAuctions[1][2]['numOffers']?></a>
+			<a href="/reports/imr/schedulingMasterIds:<?=implode(',',$distressedAuctions[1][2]['ids'])?>" target="_blank"><?=$distressedAuctions[1][2]['numOffers']?></a>
 		</td>
 		<td><?=round($distressedAuctions[1][2]['numOffers']/$distressedAuctions[1]['totalNumOffers']*100)?></td>
 	</tr>
@@ -196,11 +196,11 @@ th {
 			Remit
 		</td>
 		<td>
-			<a href="/reports/imr/schedulingMasterIds:<?=implode(',',$distressedAuctions[2][1]['ids'])?>"><?=$distressedAuctions[2][1]['numOffers']?></a>
+			<a href="/reports/imr/schedulingMasterIds:<?=implode(',',$distressedAuctions[2][1]['ids'])?>" target="_blank"><?=$distressedAuctions[2][1]['numOffers']?></a>
 		</td>
 		<td><?=round($distressedAuctions[2][1]['numOffers']/$distressedAuctions[2]['totalNumOffers']*100)?></td>
 		<td>
-			<a href="/reports/imr/schedulingMasterIds:<?=implode(',',$distressedAuctions[2][2]['ids'])?>"><?=$distressedAuctions[2][2]['numOffers']?></a>
+			<a href="/reports/imr/schedulingMasterIds:<?=implode(',',$distressedAuctions[2][2]['ids'])?>" target="_blank"><?=$distressedAuctions[2][2]['numOffers']?></a>
 		</td>
 		<td><?=round($distressedAuctions[2][2]['numOffers']/$distressedAuctions[2]['totalNumOffers']*100)?></td>
 	</tr>
@@ -234,10 +234,10 @@ th {
 			Keep
 		</td>
 		<td>
-			<a href="/reports/imr/schedulingMasterIds:<?=implode(',',$distressedBuyNows[1][1]['ids'])?>"><?=$distressedBuyNows[1][1]['numOffers']?></a>
+			<a href="/reports/imr/schedulingMasterIds:<?=implode(',',$distressedBuyNows[1][1]['ids'])?>" target="_blank"><?=$distressedBuyNows[1][1]['numOffers']?></a>
 		</td>
 		<td>
-			<a href="/reports/imr/schedulingMasterIds:<?=implode(',',$distressedBuyNows[1][2]['ids'])?>"><?=$distressedBuyNows[1][2]['numOffers']?></a>
+			<a href="/reports/imr/schedulingMasterIds:<?=implode(',',$distressedBuyNows[1][2]['ids'])?>" target="_blank"><?=$distressedBuyNows[1][2]['numOffers']?></a>
 		</td>
 	</tr>
 	<tr>
@@ -245,10 +245,10 @@ th {
 			Remit
 		</td>
 		<td>
-			<a href="/reports/imr/schedulingMasterIds:<?=implode(',',$distressedBuyNows[2][1]['ids'])?>"><?=$distressedBuyNows[2][1]['numOffers']?></a>
+			<a href="/reports/imr/schedulingMasterIds:<?=implode(',',$distressedBuyNows[2][1]['ids'])?>" target="_blank"><?=$distressedBuyNows[2][1]['numOffers']?></a>
 		</td>
 		<td>
-			<a href="/reports/imr/schedulingMasterIds:<?=implode(',',$distressedBuyNows[2][2]['ids'])?>"><?=$distressedBuyNows[2][2]['numOffers']?></a>
+			<a href="/reports/imr/schedulingMasterIds:<?=implode(',',$distressedBuyNows[2][2]['ids'])?>" target="_blank"><?=$distressedBuyNows[2][2]['numOffers']?></a>
 		</td>
 	</tr>
 	<tr class="altrow">
@@ -278,13 +278,13 @@ th {
 			Keep
 		</td>
 		<td>
-			<a href="/reports/imr/packageIds:<?=implode(',',$expiringPackages[1][1]['ids'])?>"><?=$expiringPackages[1][1]['numPackages']?></a></div>
+			<a href="/reports/imr/packageIds:<?=implode(',',$expiringPackages[1][1]['ids'])?>" target="_blank"><?=$expiringPackages[1][1]['numPackages']?></a></div>
 		</td>
 		<td>
-			<a href="/reports/imr/packageIds:<?=implode(',',$expiringPackages[1][1]['ids'])?>"><?=$expiringPackages[1][2]['numPackages']?></a></div>
+			<a href="/reports/imr/packageIds:<?=implode(',',$expiringPackages[1][1]['ids'])?>" target="_blank"><?=$expiringPackages[1][2]['numPackages']?></a></div>
 		</td>
 		<td>
-			<a href="/reports/imr/packageIds:<?=implode(',',$expiringPackages[1][1]['ids'])?>"><?=$expiringPackages[1][3]['numPackages']?></a></div>
+			<a href="/reports/imr/packageIds:<?=implode(',',$expiringPackages[1][1]['ids'])?>" target="_blank"><?=$expiringPackages[1][3]['numPackages']?></a></div>
 		</td>
 	</tr>
 	<tr>
@@ -292,13 +292,13 @@ th {
 			Remit
 		</td>
 		<td>
-			<a href="/reports/imr/packageIds:<?=implode(',',$expiringPackages[1][1]['ids'])?>"><?=$expiringPackages[2][1]['numPackages']?></a></div>
+			<a href="/reports/imr/packageIds:<?=implode(',',$expiringPackages[1][1]['ids'])?>" target="_blank"><?=$expiringPackages[2][1]['numPackages']?></a></div>
 		</td>
 		<td>
-			<a href="/reports/imr/packageIds:<?=implode(',',$expiringPackages[1][1]['ids'])?>"><?=$expiringPackages[2][2]['numPackages']?></a></div>
+			<a href="/reports/imr/packageIds:<?=implode(',',$expiringPackages[1][1]['ids'])?>" target="_blank"><?=$expiringPackages[2][2]['numPackages']?></a></div>
 		</td>
 		<td>
-			<a href="/reports/imr/packageIds:<?=implode(',',$expiringPackages[1][1]['ids'])?>"><?=$expiringPackages[2][3]['numPackages']?></a></div>
+			<a href="/reports/imr/packageIds:<?=implode(',',$expiringPackages[1][1]['ids'])?>" target="_blank"><?=$expiringPackages[2][3]['numPackages']?></a></div>
 		</td>
 	</tr>
 	<tr class="altrow">
@@ -328,7 +328,7 @@ th {
 			Keep
 		</td>
 		<td>
-			<a href="/reports/imr/schedulingMasterIds:<?=implode(',',$noBuyNows[1][1]['ids'])?>"><?=$noBuyNows[1][1]['numPackages']?></a>
+			<a href="/reports/imr/schedulingMasterIds:<?=implode(',',$noBuyNows[1][1]['ids'])?>" target="_blank"><?=$noBuyNows[1][1]['numPackages']?></a>
 		</td>
 	</tr>
 	<tr>
@@ -336,7 +336,7 @@ th {
 			Remit
 		</td>
 		<td>
-			<a href="/reports/imr/schedulingMasterIds:<?=implode(',',$noBuyNows[2][1]['ids'])?>"><?=$noBuyNows[2][1]['numPackages']?></a>
+			<a href="/reports/imr/schedulingMasterIds:<?=implode(',',$noBuyNows[2][1]['ids'])?>" target="_blank"><?=$noBuyNows[2][1]['numPackages']?></a>
 		</td>
 	</tr>
 	<tr class="altrow">
@@ -369,7 +369,7 @@ th {
 		</td>
 		<?for ($i = 1; $i <= 4; $i++):?>
 		<td>
-			<a href="/reports/cmr/clientIds:<?=implode(',',(array)@$clientsNoPackages[1][$i]['clientIds'])?>">
+			<a href="/reports/cmr/clientIds:<?=implode(',',(array)@$clientsNoPackages[1][$i]['clientIds'])?>" target="_blank">
 			<?=$clientsNoPackages[1][$i]['numClients']?>
 			</a>
 		</td>
@@ -384,7 +384,7 @@ th {
 		</td>
 		<?for ($i = 1; $i <= 4; $i++):?>
 		<td>
-			<a href="/reports/cmr/clientIds:<?=implode(',',(array)@$clientsNoPackages[2][$i]['clientIds'])?>">
+			<a href="/reports/cmr/clientIds:<?=implode(',',(array)@$clientsNoPackages[2][$i]['clientIds'])?>" target="_blank">
 			<?=$clientsNoPackages[2][$i]['numClients']?>
 			</a>
 		</td>
