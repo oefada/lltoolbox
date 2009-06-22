@@ -73,8 +73,10 @@ function sortLink($field, $title, $view, $html) {
 
 if (!empty($results)): 
 $i = 1;
+$j = 1;
 ?>
 <?php foreach($results as $periodName => $timeperiod): ?>
+	<a name="section-<?=$j?>"></a>
 	<div style="float: right">
 	<?= $html->link('<span><b class="icon"></b>Export Report</span>', array('action'=>'aging.csv'), array('class' => 'button excel'), null, false); ?>
 	</div>
@@ -114,7 +116,9 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 	</tr>
 <?php endforeach; //TODO: add totals ?>
 </table>
-<?php endforeach; //end periods?>
+<?php 
+$j++;
+endforeach; //end periods?>
 
 <?php else: ?>
 	<div class='blankExample'>

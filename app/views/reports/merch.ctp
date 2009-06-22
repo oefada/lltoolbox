@@ -1,4 +1,9 @@
-<? $this->pageTitle = 'Mercandising Dashboard for Today, '.date('m/d/y') ?>
+<? $this->pageTitle = 'Merchandising Dashboard for ';
+	if (date('m/d/y') == date('m/d/y', strtotime($date))) {
+		$this->pageTitle .= ' Today, ';
+	}
+	$this->pageTitle .= date('m/d/y', strtotime($date)); 
+?>
 
 <style>
 table {
@@ -9,7 +14,25 @@ th {
 	color: #fff;
 	padding: 0 5px;
 }
+.dateChooser {
+	float: right;
+	clear: both;
+	width: 300px;
+}
+.dateChooser input {
+	width: 100px;
+}
 </style>
+
+<div class="dateChooser clearfix">
+	<form action="/reports/merch" method="post">
+	<? echo $form->input('datePicker', array('class' => 'format-y-m-d divider-dash highlight-days-06 no-transparency range-high-today fill-grid-no-select',
+											'label' => 'Select another date:',
+											'readonly' => 'readonly',
+											'onchange' => 'form.submit()')); ?>
+	</form>
+</div>
+<div style="clear: both"></div>
 <h2>Sales</h2>
 <table style="width: auto">
 	<tr>
@@ -18,8 +41,8 @@ th {
 		<th>Yesterday</th>
 		<th nowrap>Last 7<br />(daily avg)</th>
 		<th nowrap>Last 30<br />(daily avg)</th>
-		<th><?=$lastMonthDisplay?>/<?=$twoMonthsAgoDisplay?></th>
-		<th><?=$lastMonthDisplay?>/<?=$lastMonthLastYearDisplay?></th>
+		<th nowrap>Last 90<br />(daily avg)</th>
+		<th nowrap>Last 365<br />(daily avg)</th>
 	</tr>
 	<?php
 	$cols = array(1 => 'Auctions Closing',
@@ -35,7 +58,23 @@ th {
 	<tr<?=($i % 2) ? ' class="altrow"': ""?>>
 		<td><?=$cols[$i]?></td>
 		<?php for($j = 1; $j <= 6; $j++): ?>
-		<td><?=@$sales[$i][$j]?></td>
+		<td>
+			<? 
+			$options = null;
+			$options2 = null;
+			if ($i == 1 || $i == 2 || $i == 5 || $i == 6) {
+				$format = "precision";
+				$options = 0;
+			} else if ($i == 3) {
+				$format = "toPercentage";
+				$options = "2";
+			} else {
+				$format = "currency";
+				$options = "USD";
+				$options2 = array('places' => 0);
+			}?>
+		<?=@$number->$format($sales[$i][$j], $options, $options2)?>
+		</td>
 		<?php endfor; ?>
 	</tr>
 	<?php endfor; ?>
@@ -53,13 +92,13 @@ th {
 			Travel Revenue
 		</td>
 		<td>
-			<?=$aging[1]['numClients']?>
+			<?=$number->currency($revenueMtd[0][0]['revenue'], 'USD', array('places' => 0));?>
 		</td>
 		<td>
-			<?=$aging[2]['numClients']?>
+			<?=$number->currency($revenueQtd[0][0]['revenue'], 'USD', array('places' => 0));?>
 		</td>
 		<td>
-			<?=$aging[3]['numClients']?>
+			<?=$number->currency($revenueYtd[0][0]['revenue'], 'USD', array('places' => 0));?>
 		</td>
 	</tr>
 	<tr>
@@ -67,13 +106,13 @@ th {
 			Travel Revenue Goal
 		</td>
 		<td>
-			<?=$aging[1]['numClients']?>
+			?
 		</td>
 		<td>
-			<?=$aging[2]['numClients']?>
+			?
 		</td>
 		<td>
-			<?=$aging[3]['numClients']?>
+			?
 		</td>
 	</tr>
 	<tr class="altrow">
@@ -81,13 +120,13 @@ th {
 			% Travel Revenue Goal
 		</td>
 		<td>
-			<?=$aging[1]['numClients']?>
+			?
 		</td>
 		<td>
-			<?=$aging[2]['numClients']?>
+			?
 		</td>
 		<td>
-			<?=$aging[3]['numClients']?>
+			?
 		</td>
 	</tr>
 </table>
@@ -107,19 +146,19 @@ th {
 			# OF CLIENTS WITH A BALANCE
 		</td>
 		<td>
-			<?=$aging[1]['numClients']?>
+			<a href="/reports/aging/#section-4"><?=$aging[1]['numClients']?></a>
 		</td>
 		<td>
 			<?=round($aging[1]['numClients']/$aging[1]['totalClients']*100)?>
 		</td>
 		<td>
-			<?=$aging[2]['numClients']?>
+			<a href="/reports/aging/#section-3"><?=$aging[2]['numClients']?></a>
 		</td>
 		<td>
 			<?=round($aging[2]['numClients']/$aging[2]['totalClients']*100)?>
 		</td>
 		<td>
-			<?=$aging[3]['numClients']?>
+			<a href="/reports/aging/#section-2"><?=$aging[3]['numClients']?></a>
 		</td>
 		<td>
 			<?=round($aging[3]['numClients']/$aging[3]['totalClients']*100)?>
@@ -144,11 +183,11 @@ th {
 			Keep
 		</td>
 		<td>
-			<a href="<?=implode(',',$distressedAuctions[1][1]['ids'])?>"><?=$distressedAuctions[1][1]['numOffers']?></a>
+			<a href="/reports/imr/schedulingMasterIds:<?=implode(',',$distressedAuctions[1][1]['ids'])?>"><?=$distressedAuctions[1][1]['numOffers']?></a>
 		</td>
 		<td><?=round($distressedAuctions[1][1]['numOffers']/$distressedAuctions[1]['totalNumOffers']*100)?></td>
 		<td>
-			<a href="<?=implode(',',$distressedAuctions[1][2]['ids'])?>"><?=$distressedAuctions[1][2]['numOffers']?></a>
+			<a href="/reports/imr/schedulingMasterIds:<?=implode(',',$distressedAuctions[1][2]['ids'])?>"><?=$distressedAuctions[1][2]['numOffers']?></a>
 		</td>
 		<td><?=round($distressedAuctions[1][2]['numOffers']/$distressedAuctions[1]['totalNumOffers']*100)?></td>
 	</tr>
@@ -157,11 +196,11 @@ th {
 			Remit
 		</td>
 		<td>
-			<a href="<?=implode(',',$distressedAuctions[2][1]['ids'])?>"><?=$distressedAuctions[2][1]['numOffers']?></a>
+			<a href="/reports/imr/schedulingMasterIds:<?=implode(',',$distressedAuctions[2][1]['ids'])?>"><?=$distressedAuctions[2][1]['numOffers']?></a>
 		</td>
 		<td><?=round($distressedAuctions[2][1]['numOffers']/$distressedAuctions[2]['totalNumOffers']*100)?></td>
 		<td>
-			<a href="<?=implode(',',$distressedAuctions[2][2]['ids'])?>"><?=$distressedAuctions[2][2]['numOffers']?></a>
+			<a href="/reports/imr/schedulingMasterIds:<?=implode(',',$distressedAuctions[2][2]['ids'])?>"><?=$distressedAuctions[2][2]['numOffers']?></a>
 		</td>
 		<td><?=round($distressedAuctions[2][2]['numOffers']/$distressedAuctions[2]['totalNumOffers']*100)?></td>
 	</tr>
@@ -195,10 +234,10 @@ th {
 			Keep
 		</td>
 		<td>
-			<a href="<?=implode(',',$distressedBuyNows[1][1]['ids'])?>"><?=$distressedBuyNows[1][1]['numOffers']?></a>
+			<a href="/reports/imr/schedulingMasterIds:<?=implode(',',$distressedBuyNows[1][1]['ids'])?>"><?=$distressedBuyNows[1][1]['numOffers']?></a>
 		</td>
 		<td>
-			<a href="<?=implode(',',$distressedBuyNows[1][2]['ids'])?>"><?=$distressedBuyNows[1][2]['numOffers']?></a>
+			<a href="/reports/imr/schedulingMasterIds:<?=implode(',',$distressedBuyNows[1][2]['ids'])?>"><?=$distressedBuyNows[1][2]['numOffers']?></a>
 		</td>
 	</tr>
 	<tr>
@@ -206,10 +245,10 @@ th {
 			Remit
 		</td>
 		<td>
-			<a href="<?=implode(',',$distressedBuyNows[2][1]['ids'])?>"><?=$distressedBuyNows[2][1]['numOffers']?></a>
+			<a href="/reports/imr/schedulingMasterIds:<?=implode(',',$distressedBuyNows[2][1]['ids'])?>"><?=$distressedBuyNows[2][1]['numOffers']?></a>
 		</td>
 		<td>
-			<a href="<?=implode(',',$distressedBuyNows[2][2]['ids'])?>"><?=$distressedBuyNows[2][2]['numOffers']?></a>
+			<a href="/reports/imr/schedulingMasterIds:<?=implode(',',$distressedBuyNows[2][2]['ids'])?>"><?=$distressedBuyNows[2][2]['numOffers']?></a>
 		</td>
 	</tr>
 	<tr class="altrow">
@@ -239,13 +278,13 @@ th {
 			Keep
 		</td>
 		<td>
-			<?=$expiringPackages[1][1]['numPackages']?>
+			<a href="/reports/imr/packageIds:<?=implode(',',$expiringPackages[1][1]['ids'])?>"><?=$expiringPackages[1][1]['numPackages']?></a></div>
 		</td>
 		<td>
-			<?=$expiringPackages[1][2]['numPackages']?>
+			<a href="/reports/imr/packageIds:<?=implode(',',$expiringPackages[1][1]['ids'])?>"><?=$expiringPackages[1][2]['numPackages']?></a></div>
 		</td>
 		<td>
-			<?=$expiringPackages[1][3]['numPackages']?>
+			<a href="/reports/imr/packageIds:<?=implode(',',$expiringPackages[1][1]['ids'])?>"><?=$expiringPackages[1][3]['numPackages']?></a></div>
 		</td>
 	</tr>
 	<tr>
@@ -253,13 +292,13 @@ th {
 			Remit
 		</td>
 		<td>
-			<?=$expiringPackages[2][1]['numPackages']?>
+			<a href="/reports/imr/packageIds:<?=implode(',',$expiringPackages[1][1]['ids'])?>"><?=$expiringPackages[2][1]['numPackages']?></a></div>
 		</td>
 		<td>
-			<?=$expiringPackages[2][2]['numPackages']?>
+			<a href="/reports/imr/packageIds:<?=implode(',',$expiringPackages[1][1]['ids'])?>"><?=$expiringPackages[2][2]['numPackages']?></a></div>
 		</td>
 		<td>
-			<?=$expiringPackages[2][3]['numPackages']?>
+			<a href="/reports/imr/packageIds:<?=implode(',',$expiringPackages[1][1]['ids'])?>"><?=$expiringPackages[2][3]['numPackages']?></a></div>
 		</td>
 	</tr>
 	<tr class="altrow">
@@ -289,7 +328,7 @@ th {
 			Keep
 		</td>
 		<td>
-			<a href="<?=implode(',',$noBuyNows[1][1]['ids'])?>"><?=$noBuyNows[1][1]['numPackages']?></a>
+			<a href="/reports/imr/schedulingMasterIds:<?=implode(',',$noBuyNows[1][1]['ids'])?>"><?=$noBuyNows[1][1]['numPackages']?></a>
 		</td>
 	</tr>
 	<tr>
@@ -297,7 +336,7 @@ th {
 			Remit
 		</td>
 		<td>
-			<a href="<?=implode(',',$noBuyNows[2][1]['ids'])?>"><?=$noBuyNows[2][1]['numPackages']?></a>
+			<a href="/reports/imr/schedulingMasterIds:<?=implode(',',$noBuyNows[2][1]['ids'])?>"><?=$noBuyNows[2][1]['numPackages']?></a>
 		</td>
 	</tr>
 	<tr class="altrow">
@@ -328,80 +367,44 @@ th {
 		<td style="width: 100px">
 			Keep
 		</td>
+		<?for ($i = 1; $i <= 4; $i++):?>
 		<td>
-			<?=$clientsNoPackages[1][1]['numClients']?>
+			<a href="/reports/cmr/clientIds:<?=implode(',',(array)@$clientsNoPackages[1][$i]['clientIds'])?>">
+			<?=$clientsNoPackages[1][$i]['numClients']?>
+			</a>
 		</td>
 		<td>
-			<?=@round($clientsNoPackages[1][1]['numClients']/$clientsNoPackages['totalClients']*100)?>
+			<?=@round($clientsNoPackages[1][$i]['numClients']/$clientsNoPackages['totalClients']*100)?>
 		</td>
-		<td>
-			<?=$clientsNoPackages[1][2]['numClients']?>
-		</td>
-		<td>
-			<?=@round($clientsNoPackages[1][2]['numClients']/$clientsNoPackages['totalClients']*100)?>
-		</td>
-		<td>
-			<?=$clientsNoPackages[1][3]['numClients']?>
-		</td>
-		<td>
-			<?=@round($clientsNoPackages[1][3]['numClients']/$clientsNoPackages['totalClients']*100)?>
-		</td>
-		<td>
-			<?=$clientsNoPackages[1][4]['numClients']?>
-		</td>
-		<td>
-			<?=@round($clientsNoPackages[1][4]['numClients']/$clientsNoPackages['totalClients']*100)?>
-		</td>
+		<?endfor;?>
 	</tr>
 	<tr>
 		<td style="width: 100px">
 			Remit
 		</td>
+		<?for ($i = 1; $i <= 4; $i++):?>
 		<td>
-			<?=@$clientsNoPackages[2][1]['numClients']?>
+			<a href="/reports/cmr/clientIds:<?=implode(',',(array)@$clientsNoPackages[2][$i]['clientIds'])?>">
+			<?=$clientsNoPackages[2][$i]['numClients']?>
+			</a>
 		</td>
 		<td>
-			<?=@round($clientsNoPackages[2][1]['numClients']/$clientsNoPackages['totalClients']*100)?>
+			<?=@round($clientsNoPackages[2][$i]['numClients']/$clientsNoPackages['totalClients']*100)?>
 		</td>
-		<td>
-			<?=@$clientsNoPackages[2][2]['numClients']?>
-		</td>
-		<td>
-			<?=@round($clientsNoPackages[2][2]['numClients']/$clientsNoPackages['totalClients']*100)?>
-		</td>
-		<td>
-			<?=@$clientsNoPackages[2][3]['numClients']?>
-		</td>
-		<td>
-			<?=@round($clientsNoPackages[2][3]['numClients']/$clientsNoPackages['totalClients']*100)?>
-		</td>
-		<td>
-			<?=@$clientsNoPackages[2][4]['numClients']?>
-		</td>
-		<td>
-			<?=@round($clientsNoPackages[2][4]['numClients']/$clientsNoPackages['totalClients']*100)?>
-		</td>
+		<?endfor;?>
 	</tr>
 	<tr class="altrow">
 		<td style="width: 100px">
 			Total
 		</td>
+		<?for ($i = 1; $i <= 4; $i++):?>
 		<td>
-			<?=@$clientsNoPackages[1][1]['numClients']+@$noBuyNows[2][1]['numClients']?>
+			<?=@$clientsNoPackages[1][$i]['numClients']+@$clientsNoPackages[2][$i]['numClients']?>
 		</td>
-		<td>&nbsp;</td>
 		<td>
-			<?=@$clientsNoPackages[1][2]['numClients']+@$noBuyNows[2][2]['numClients']?>
+			<?=@round(($clientsNoPackages[1][$i]['numClients']/$clientsNoPackages['totalClients']*100)+($clientsNoPackages[2][$i]['numClients']/$clientsNoPackages['totalClients']*100))?>
 		</td>
-		<td>&nbsp;</td>
-		<td>
-			<?=@$clientsNoPackages[1][3]['numClients']+@$noBuyNows[2][3]['numClients']?>
-		</td>
-		<td>&nbsp;</td>
-		<td>
-			<?=@$clientsNoPackages[1][4]['numClients']+@$noBuyNows[2][4]['numClients']?>
-		</td>
-		<td>&nbsp;</td>
+		<?endfor;?>
 	</tr>
 </table>
 </div>
