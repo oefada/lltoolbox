@@ -1682,7 +1682,8 @@ class ReportsController extends AppController {
 											INNER JOIN schedulingMaster USING(schedulingMasterId) 
 											INNER JOIN offer USING(schedulingInstanceId) 
 											INNER JOIN bid USING(offerId)
-											WHERE schedulingInstance.endDate BETWEEN '$date' - INTERVAL 1 DAY AND '$date' + INTERVAL 1 DAY  
+											WHERE schedulingInstance.endDate BETWEEN '$date' - INTERVAL 1 DAY AND '$date' + INTERVAL 1 DAY
+											AND schedulingInstance.endDate <= NOW()
 											GROUP BY DATE_FORMAT(schedulingInstance.endDate, '%Y-%m-%d')");
 		foreach ($tmp as $v) {
 			if ($v[0]['theDate'] == $date) {
@@ -1740,6 +1741,7 @@ class ReportsController extends AppController {
 		$sales[8][1] = 0;	
 		$sales[8][2] = 0;									
 		foreach($tmp as $v) {
+			debug($v[0]['avgSalePrice']);
 			if (in_array($v['Ticket']['offerTypeId'], $auctions)) {
 				$row = '4';
 			} else {
