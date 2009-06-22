@@ -1279,28 +1279,31 @@ class ReportsController extends AppController {
 	            $this->set('sortBy', $this->params['named']['sortBy']);
 	            $this->set('sortDirection', $direction);
 	        } else {
-	            $order = 'Client.name';
 	            
-	            $this->set('sortBy', 'Client.clientId');
+	            
+				switch(@$this->params['named']['ql']):
+				case 1:
+				$order = "Loa2.endDate";
+				break;
+				case 2:
+				case 3:
+				case 5:
+				case 6:
+				$order = "Loa.membershipBalance DESC";
+				break;
+				case 4:
+				$order = "Loa.endDate";
+				break;
+				default:
+				$order = 'Loa.endDate';
+				break;
+				endswitch;
+				
+				$this->set('sortBy', $order);
     	        $this->set('sortDirection', 'DESC');
 	        }
 
             if (!empty($conditions) || isset($this->params['named']['ql'])) {
-            
-            $sql = "SELECT 
-                        COUNT(cl.clientLoaPackageRelId) as numRecords
-                    FROM package AS Package
-                        LEFT JOIN packageStatus AS PackageStatus USING (packageStatusId)
-                        LEFT JOIN clientLoaPackageRel AS cl USING (packageId)
-                        LEFT JOIN client AS Client USING (clientId)
-                        INNER JOIN loa AS Loa USING (loaId)
-                        LEFT JOIN track AS Track USING (trackId)
-                        LEFT JOIN revenueModel as RevenueModel USING (revenueModelId)
-                        WHERE Loa.endDate >= NOW() AND $conditions";
-	         
-	        //$count = $this->OfferType->query($sql);
-    	    //$numRecords = $count[0][0]['numRecords'];
-            //$numPages = ceil($numRecords / $this->perPage);
             
 			switch(@$this->params['named']['ql']):
 			case 1:
