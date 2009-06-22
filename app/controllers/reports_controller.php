@@ -1734,8 +1734,8 @@ class ReportsController extends AppController {
 		
 		# AVG SELL PRICES
 		/* Today/Yesterday */
-		$tmp = $this->Client->query("SELECT ROUND(AVG(Ticket.billingPrice)) as avgSalePrice, ROUND(SUM(Ticket.billingPrice)) as travelRevenue, offerTypeId, DATE_FORMAT(Ticket.created, '%Y-%m-%d') as theDate FROM ticket AS Ticket 
-											WHERE Ticket.created BETWEEN '$date' - INTERVAL 1 DAY AND '$date' + INTERVAL 1 DAY  AND Ticket.ticketStatusId IN(4,5,6)
+		$tmp = $this->Client->query("SELECT GROUP_CONCAT(Ticket.billingPrice) as avgSalePrice, ROUND(SUM(Ticket.billingPrice)) as travelRevenue, offerTypeId, DATE_FORMAT(Ticket.created, '%Y-%m-%d') as theDate, Ticket.ticketStatusId FROM ticket AS Ticket 
+											WHERE Ticket.created BETWEEN '$date' - INTERVAL 1 DAY AND '$date' + INTERVAL 1 DAY  AND Ticket.ticketStatusId IN(3,4,5,6)
 											GROUP BY offerTypeId, DATE_FORMAT(Ticket.created, '%Y-%m-%d')");
 		$sales[8][1] = 0;	
 		$sales[8][2] = 0;									
@@ -1743,6 +1743,9 @@ class ReportsController extends AppController {
 			if (in_array($v['Ticket']['offerTypeId'], $auctions)) {
 				$row = '4';
 			} else {
+				if ($v['Ticket']['ticketStatusId'] == 3) {
+					continue;
+				}
 				$row = '7';
 			}
 			
@@ -1752,71 +1755,94 @@ class ReportsController extends AppController {
 				$col = '2';
 			}
 			
-			$sales[$row][$col] = $v[0]['avgSalePrice'];
+			$sales[$row][$col] = array_merge((array)@$sales[$row][$col], (array)explode(",", $v[0]['avgSalePrice']));
 			$sales[8][$col] += $v[0]['travelRevenue'];
 		}									
 									
 		/* Last 7 Days Avg */
-		$tmp = $this->Client->query("SELECT ROUND(AVG(Ticket.billingPrice)) as avgSalePrice, ROUND(SUM(Ticket.billingPrice)/7) as travelRevenue, offerTypeId FROM ticket AS Ticket 
-											WHERE Ticket.created BETWEEN '$date' - INTERVAL 6 DAY AND '$date' + INTERVAL 1 DAY  AND Ticket.ticketStatusId IN(4,5,6)
+		$tmp = $this->Client->query("SELECT GROUP_CONCAT(Ticket.billingPrice) as avgSalePrice, ROUND(SUM(Ticket.billingPrice)/7) as travelRevenue, offerTypeId, Ticket.ticketStatusId FROM ticket AS Ticket 
+											WHERE Ticket.created BETWEEN '$date' - INTERVAL 6 DAY AND '$date' + INTERVAL 1 DAY  AND Ticket.ticketStatusId IN(3,4,5,6)
 											GROUP BY offerTypeId");
 		$sales[8][3] = 0;
 		foreach($tmp as $v) {
 			if (in_array($v['Ticket']['offerTypeId'], $auctions)) {
 				$row = '4';
 			} else {
+				if ($v['Ticket']['ticketStatusId'] == 3) {
+					continue;
+				}
 				$row = '7';
 			}
-			$sales[$row][3] = $v[0]['avgSalePrice'];
+			$sales[$row][3] = array_merge((array)@$sales[$row][3], (array)explode(",", $v[0]['avgSalePrice']));
 			$sales[8][3] += $v[0]['travelRevenue'];
 		}									
 		
 		/* Last 30 Days Avg */
-		$tmp = $this->Client->query("SELECT ROUND(AVG(Ticket.billingPrice)) as avgSalePrice, ROUND(SUM(Ticket.billingPrice)/30) as travelRevenue, offerTypeId FROM ticket AS Ticket 
-											WHERE Ticket.created BETWEEN '$date' - INTERVAL 29 DAY AND '$date' + INTERVAL 1 DAY  AND Ticket.ticketStatusId IN(4,5,6)
+		$tmp = $this->Client->query("SELECT GROUP_CONCAT(Ticket.billingPrice) as avgSalePrice, ROUND(SUM(Ticket.billingPrice)/30) as travelRevenue, offerTypeId, Ticket.ticketStatusId FROM ticket AS Ticket 
+											WHERE Ticket.created BETWEEN '$date' - INTERVAL 29 DAY AND '$date' + INTERVAL 1 DAY  AND Ticket.ticketStatusId IN(3,4,5,6)
 											GROUP BY offerTypeId");
 		$sales[8][4] = 0;
 		foreach($tmp as $v) {
 			if (in_array($v['Ticket']['offerTypeId'], $auctions)) {
 				$row = '4';
 			} else {
+				if ($v['Ticket']['ticketStatusId'] == 3) {
+					continue;
+				}
 				$row = '7';
 			}
 			
-			$sales[$row][4] = $v[0]['avgSalePrice'];
+			$sales[$row][4] = array_merge((array)@$sales[$row][4], (array)explode(",", $v[0]['avgSalePrice']));
 			$sales[8][4] += $v[0]['travelRevenue'];
 		}
 		
 		/* Last 90 Days Avg */
-		$tmp = $this->Client->query("SELECT ROUND(AVG(Ticket.billingPrice)) as avgSalePrice, ROUND(SUM(Ticket.billingPrice)/90) as travelRevenue, offerTypeId FROM ticket AS Ticket 
-											WHERE Ticket.created BETWEEN '$date' - INTERVAL 89 DAY AND '$date' + INTERVAL 1 DAY  AND Ticket.ticketStatusId IN(4,5,6)
+		$tmp = $this->Client->query("SELECT GROUP_CONCAT(Ticket.billingPrice) as avgSalePrice, ROUND(SUM(Ticket.billingPrice)/90) as travelRevenue, offerTypeId, Ticket.ticketStatusId FROM ticket AS Ticket 
+											WHERE Ticket.created BETWEEN '$date' - INTERVAL 89 DAY AND '$date' + INTERVAL 1 DAY  AND Ticket.ticketStatusId IN(3,4,5,6)
 											GROUP BY offerTypeId");
 		$sales[8][5] = 0;
 		foreach($tmp as $v) {
 			if (in_array($v['Ticket']['offerTypeId'], $auctions)) {
 				$row = '4';
-			} else {
+			} else {				
+				if ($v['Ticket']['ticketStatusId'] == 3) {
+					continue;
+				}
 				$row = '7';
 			}
 			
-			$sales[$row][5] = $v[0]['avgSalePrice'];
+			$sales[$row][5] = array_merge((array)@$sales[$row][5], (array)explode(",", $v[0]['avgSalePrice']));
 			$sales[8][5] += $v[0]['travelRevenue'];
 		}									
 		
 		/* Last 365 Days Avg */
-		$tmp = $this->Client->query("SELECT ROUND(AVG(Ticket.billingPrice)) as avgSalePrice, ROUND(SUM(Ticket.billingPrice)/365) as travelRevenue, offerTypeId FROM ticket AS Ticket 
-											WHERE Ticket.created BETWEEN '$date' - INTERVAL 364 DAY AND '$date' + INTERVAL 1 DAY AND Ticket.ticketStatusId IN(4,5,6)
+		$tmp = $this->Client->query("SELECT GROUP_CONCAT(Ticket.billingPrice) as avgSalePrice, ROUND(SUM(Ticket.billingPrice)/365) as travelRevenue, offerTypeId, Ticket.ticketStatusId FROM ticket AS Ticket 
+											WHERE Ticket.created BETWEEN '$date' - INTERVAL 364 DAY AND '$date' + INTERVAL 1 DAY AND Ticket.ticketStatusId IN(3,4,5,6)
 											GROUP BY offerTypeId");
 		$sales[8][6] = 0;
 		foreach($tmp as $v) {
 			if (in_array($v['Ticket']['offerTypeId'], $auctions)) {
 				$row = '4';
-			} else {
+			} else {				
+				if ($v['Ticket']['ticketStatusId'] == 3) {
+					continue;
+				}
 				$row = '7';
 			}
-			
-			$sales[$row][6] = $v[0]['avgSalePrice'];
+			$sales[$row][6] = array_merge((array)@$sales[$row][6], (array)explode(",", $v[0]['avgSalePrice']));
 			$sales[8][6] += $v[0]['travelRevenue'];
+		}
+		
+		foreach ($sales as $k => $v) {
+			if ($k !== 4 && $k !== 7) {
+				continue;
+			}
+			
+			foreach ($v as $k2 => $v2) {
+				$sum = array_sum($v2);
+				$num = count($v2);
+				$sales[$k][$k2] = $sum/$num;
+			}
 		}
 		# END AVG SELL PRICES
 		
