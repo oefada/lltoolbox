@@ -67,7 +67,7 @@ th {
 				$options = 0;
 			} else if ($i == 3) {
 				$format = "toPercentage";
-				$options = "2";
+				$options = "1";
 			} else {
 				$format = "currency";
 				$options = "USD";

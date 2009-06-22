@@ -1687,10 +1687,10 @@ class ReportsController extends AppController {
 		foreach ($tmp as $v) {
 			if ($v[0]['theDate'] == $date) {
 				$sales[2][1] = $v[0]['numClosing'];
-				$sales[3][1] = ROUND($sales[2][1]/$sales[1][1]*100);
+				$sales[3][1] = ROUND($sales[2][1]/$sales[1][1]*100,1);
 			} else {
 				$sales[2][2] = $v[0]['numClosing'];
-				$sales[3][2] = ROUND($sales[2][2]/$sales[1][2]*100);
+				$sales[3][2] = ROUND($sales[2][2]/$sales[1][2]*100,1);
 			}
 		}
 		
@@ -1701,7 +1701,7 @@ class ReportsController extends AppController {
 											INNER JOIN bid USING(offerId)
 											WHERE schedulingInstance.endDate BETWEEN '$date' - INTERVAL 6 DAY AND '$date' + INTERVAL 1 DAY");
 		$sales[2][3] = $tmp[0][0]['dailyAverage'];
-		$sales[3][3] = ROUND($sales[2][3]/$sales[1][3]*100);
+		$sales[3][3] = ROUND($sales[2][3]/$sales[1][3]*100,1);
 
 		/* Last 30 Days Avg */
 		$tmp = $this->Client->query("SELECT ROUND(COUNT(DISTINCT schedulingInstance.schedulingInstanceId)/30) as dailyAverage FROM schedulingInstance
@@ -1710,7 +1710,7 @@ class ReportsController extends AppController {
 											INNER JOIN bid USING(offerId)
 											WHERE schedulingInstance.endDate BETWEEN '$date' - INTERVAL 29 DAY AND '$date' + INTERVAL 1 DAY ");
 		$sales[2][4] = $tmp[0][0]['dailyAverage'];
-		$sales[3][4] = ROUND($sales[2][4]/$sales[1][4]*100);
+		$sales[3][4] = ROUND($sales[2][4]/$sales[1][4]*100,1);
 		
 		/* Last 90 Days Avg */
 		$tmp = $this->Client->query("SELECT ROUND(COUNT(DISTINCT schedulingInstance.schedulingInstanceId)/90) as dailyAverage FROM schedulingInstance
@@ -1719,7 +1719,7 @@ class ReportsController extends AppController {
 											INNER JOIN bid USING(offerId)
 											WHERE schedulingInstance.endDate BETWEEN '$date' - INTERVAL 89 DAY AND '$date' + INTERVAL 1 DAY ");
 		$sales[2][5] = $tmp[0][0]['dailyAverage'];
-		$sales[3][5] = ROUND($sales[2][5]/$sales[1][5]*100);
+		$sales[3][5] = ROUND($sales[2][5]/$sales[1][5]*100,1);
 		
 		/* Last 365 Days Avg */
 		$tmp = $this->Client->query("SELECT ROUND(COUNT(DISTINCT schedulingInstance.schedulingInstanceId)/365) as dailyAverage FROM schedulingInstance
@@ -1728,7 +1728,7 @@ class ReportsController extends AppController {
 											INNER JOIN bid USING(offerId)
 											WHERE schedulingInstance.endDate BETWEEN '$date' - INTERVAL 364 DAY AND '$date' + INTERVAL 1 DAY ");
 		$sales[2][6] = $tmp[0][0]['dailyAverage'];
-		$sales[3][6] = ROUND($sales[2][6]/$sales[1][6]*100);
+		$sales[3][6] = ROUND($sales[2][6]/$sales[1][6]*100,1);
 		
 		# END AUCTIONS CLOSING WITH BIDS
 		
