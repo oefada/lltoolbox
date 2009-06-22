@@ -1879,14 +1879,14 @@ class ReportsController extends AppController {
 		$sales[5][4] = ROUND($tmp[0][0]['fpRequests']);
 		$sales[6][4] = ROUND($tmp[0][0]['fpFunded']);
 		
-		$tmp = $this->Client->query("SELECT COUNT(DISTINCT Ticket.ticketId)/90 as fpRequests, SUM(IF(PaymentDetail.paymentDetailId IS NULL, 0, 1))/30 as fpFunded FROM ticket AS Ticket 
+		$tmp = $this->Client->query("SELECT COUNT(DISTINCT Ticket.ticketId)/90 as fpRequests, SUM(IF(PaymentDetail.paymentDetailId IS NULL, 0, 1))/90 as fpFunded FROM ticket AS Ticket 
 												LEFT JOIN paymentDetail AS PaymentDetail ON (PaymentDetail.ticketId = Ticket.ticketId AND PaymentDetail.isSuccessfulCharge = 1)
 												WHERE offerTypeId IN (3, 4) AND Ticket.created BETWEEN '$date' - INTERVAL 89 DAY AND '$date' + INTERVAL 1 DAY");
 		$sales[5][5] = ROUND($tmp[0][0]['fpRequests']);
 		$sales[6][5] = ROUND($tmp[0][0]['fpFunded']);
 		
 		
-		$tmp = $this->Client->query("SELECT COUNT(DISTINCT Ticket.ticketId)/365 as fpRequests, SUM(IF(PaymentDetail.paymentDetailId IS NULL, 0, 1))/30 as fpFunded FROM ticket AS Ticket 
+		$tmp = $this->Client->query("SELECT COUNT(DISTINCT Ticket.ticketId)/365 as fpRequests, SUM(IF(PaymentDetail.paymentDetailId IS NULL, 0, 1))/365 as fpFunded FROM ticket AS Ticket 
 												LEFT JOIN paymentDetail AS PaymentDetail ON (PaymentDetail.ticketId = Ticket.ticketId AND PaymentDetail.isSuccessfulCharge = 1)
 												WHERE offerTypeId IN (3, 4) AND Ticket.created BETWEEN '$date' - INTERVAL 364 DAY AND '$date' + INTERVAL 1 DAY");
 		$sales[5][6] = ROUND($tmp[0][0]['fpRequests']);
