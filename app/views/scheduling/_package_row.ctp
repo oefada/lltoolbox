@@ -28,7 +28,7 @@
 	$validityEndDate = strtotime($package['Package']['validityEndDate']);
 	$validityFlagDate = strtotime('-60 days', $validityEndDate);
 	
-	if (date('m', $validityFlagDate) == $month):
+	if (date('m', $validityFlagDate) == $month && date('Y', $validityFlagDate) == $year):
 		$flagPosition = CELL_WIDTH * (date('d', $validityFlagDate) - 1);
 	?>
 	<div id='package-<?=$package['Package']['packageId']?>-flags' class="packageFlags">
