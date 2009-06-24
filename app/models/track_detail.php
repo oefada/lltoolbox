@@ -189,16 +189,13 @@ class TrackDetail extends AppModel {
 			$errors++;
 		}
 		
-		$applyToMembershipBal = $track['applyToMembershipBal'];
-		if (isset($this->data['Track']['trackUsingToolboxNonAuto']) && $track['revenueModelId'] == 1) {
-			$applyToMembershipBal = isset($this->data['Track']['applyToMembershipBal']) && $this->data['Track']['applyToMembershipBal'] == 'on' ? true : false;
-		}
+		$applyToMembershipBal = ($track['expirationCriteriaId'] == 1) ? true : false;
 		if ($applyToMembershipBal) {
 			$loa['Loa']['modified']			  = date('Y-m-d H:i:s', strtotime('now'));
 			$loa['Loa']['loaValue']			 -= $allocated_amount;
-			$loa['Loa']['totalKept']		 -= $this->data['TrackDetail']['amountKept'];
-			$loa['Loa']['totalRemitted']	 -= $this->data['TrackDetail']['amountRemitted'];
-			$loa['Loa']['membershipBalance'] += $this->data['TrackDetail']['amountKept'];
+			$loa['Loa']['totalKept']		 -= $trackDetail['TrackDetail']['amountKept'];
+			$loa['Loa']['totalRemitted']	 -= $trackDetail['TrackDetail']['amountRemitted'];
+			$loa['Loa']['membershipBalance'] += $trackDetail['TrackDetail']['amountKept'];
 			if (!$loaModel->save($loa)) {
 				$errors++;	
 			}
@@ -228,10 +225,7 @@ class TrackDetail extends AppModel {
 		
 		// update the loa record
 		// ---------------------------------------------------------
-		$applyToMembershipBal = $track['applyToMembershipBal'];
-		if (isset($this->data['Track']['trackUsingToolboxNonAuto']) && $track['revenueModelId'] == 1) {
-			$applyToMembershipBal = isset($this->data['Track']['applyToMembershipBal']) && $this->data['Track']['applyToMembershipBal'] == 'on' ? true : false;
-		}
+		$applyToMembershipBal = ($track['expirationCriteriaId'] == 1) ? true : false;
 		if ($applyToMembershipBal) {
 			$loa['Loa']['modified']			  = date('Y-m-d H:i:s', strtotime('now'));
 			$loa['Loa']['loaValue']			 += $allocated_amount;
