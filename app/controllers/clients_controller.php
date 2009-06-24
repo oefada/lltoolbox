@@ -99,9 +99,16 @@ class ClientsController extends AppController {
 		if(!empty($_GET['query'])) {
 			$this->params['form']['query'] = $_GET['query'];
 			$inactive = @$_GET['inactive'];
+			$this->params['form']['inactive'] = $inactive;
  		} elseif(!empty($this->params['named']['query'])) {
 			$this->params['form']['query'] = $this->params['named']['query'];
+			$inactive = @$this->params['named']['inactive'];
+			$this->params['form']['inactive'] = $inactive;
 		}
+		
+		$this->set('inactive', $inactive);
+		
+
 		if(!empty($this->params['form']['query'])):
 			$query = $this->Sanitize->escape($this->params['form']['query']);
 

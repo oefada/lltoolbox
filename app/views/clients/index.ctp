@@ -16,7 +16,7 @@ $this->set('hideSidebar', true);
 	<?php if (isset($query) && !empty($query)): ?>
 		<div style="clear: both">
 		<strong>Search Criteria:</strong> <?php echo $query; ?> 
-		<?php if($_GET['inactive'] == 1): ?>
+		<?php if($inactive == 1): ?>
 			<a href="/clients/search?query=<?=$query?>">(hide inactive)</a>
 		<?php else: ?>
 			<a href="/clients/search?query=<?=$query?>&inactive=1">(show inactive)</a>
