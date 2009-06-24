@@ -32,7 +32,7 @@ class UserPaymentSettingsController extends AppController {
 		$this->set(compact('paymentTypeIds'));
 	}
 
-	function edit($id = null, $userId = null) {
+	function edit($userId = null, $id = null) {
 		if (!$id && empty($this->data)) {
 			$this->Session->setFlash(__('Invalid UserPaymentSetting', true));
 			$this->redirect(array('action'=>'index'));
