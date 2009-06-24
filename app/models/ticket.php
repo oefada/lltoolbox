@@ -257,11 +257,9 @@ class Ticket extends AppModel {
 						$sm_ids[] = $row['smtr']['schedulingMasterId'];
 					}
 					$sm_ids_imp = implode(',', $sm_ids);
-					$this->__deleteOfferLiveOffer($sm_ids_imp);
-					$this->query("DELETE FROM schedulingInstance WHERE schedulingMasterId IN ($sm_ids_imp) AND startDate > NOW()");
-					$this->query("DELETE FROM schedulingMaster WHERE schedulingMasterId IN ($sm_ids_imp) AND startDate > NOW()");
-					$this->__updateSchedulingOfferFixedPrice($sm_ids_imp);
-					$this->insertMessageQueuePackage($ticketId, 'LOA_BALANCE');
+					if ($this->__runTakeDown($sm_ids_imp)) {
+						$this->insertMessageQueuePackage($ticketId, 'LOA_BALANCE');
+					}
 				} 
 			}
 		}
@@ -277,7 +275,8 @@ class Ticket extends AppModel {
 			$loa_id = $loa['loa']['loaId'];
 			$loa_m_total_packages = $loa['loa']['membershipTotalPackages'];
 			$take_down = false;
-			
+			$take_down_fp = false;
+
 			// get all packageId's on membership balance tracks for this LOA
 			// ------------------------------------------------------------------
 			$sql = "SELECT packageId FROM clientLoaPackageRel clpr ";
@@ -302,18 +301,19 @@ class Ticket extends AppModel {
 				$sql = "SELECT count(*) AS COUNT FROM ticket INNER JOIN paymentDetail pd ON ticket.ticketId = pd.ticketId AND pd.isSuccessfulCharge = 1 ";
 				$sql.= "WHERE ticket.ticketStatusId NOT IN (7,8) AND ticket.packageId IN ($package_ids_imp)";		
 				$result = $this->query($sql);
-				if (!empty($result) && isset($result[0][0]['COUNT']) && is_numeric($result[0][0]['COUNT'])) {
+				if (!empty($result)) {
 					$loa_packages_derived = $result[0][0]['COUNT'];
 					if (($loa_packages_derived + 1) >= $loa_m_total_packages) {
 						$take_down = true;
-						$this->insertMessageQueuePackage($ticketId, 'LOA_PACKAGES');
+					} elseif (($loa_m_total_packages - ($loa_packages_derived + 1) == 1)) {
+						$take_down_fp = true;
 					}
 				}
 			}
 
 			// take down those scheduling masters and instances
 			// ------------------------------------------------------------------
-			if ($take_down) {
+			if ($take_down || $take_down_fp) {
 				$result = $this->query("SELECT schedulingMasterId FROM schedulingMaster WHERE packageId IN ($package_ids_imp)");
 				if (!empty($result)) {
 					$sm_ids = array();
@@ -321,19 +321,56 @@ class Ticket extends AppModel {
 						$sm_ids[] = $row['schedulingMaster']['schedulingMasterId'];
 					}
 					$sm_ids_imp = implode(',', $sm_ids);
-					$this->__deleteOfferLiveOffer($sm_ids_imp);
-					$this->query("DELETE FROM schedulingInstance WHERE schedulingMasterId IN ($sm_ids_imp) AND startDate > NOW()");
-					$this->query("DELETE FROM schedulingMaster WHERE schedulingMasterId IN ($sm_ids_imp) AND startDate > NOW()");
-					$this->__updateSchedulingOfferFixedPrice($sm_ids_imp);
+					if ($take_down) {
+						if ($this->__runTakeDown($sm_ids_imp)) {
+							$this->insertMessageQueuePackage($ticketId, 'LOA_PACKAGES');
+						}
+					} elseif ($take_down_fp) {
+						if ($this->__updateSchedulingOfferFixedPrice($sm_ids_imp)) {
+							$this->insertMessageQueuePackage($ticketId, 'LOA_PACKAGES_FP_ONLY');
+						}
+					}
 				}
 			}
 		}
 	}
 
-	function __deleteOfferLiveOffer($sm_ids_imp) {
-		if (!$sm_ids_imp) {
+	function __runTakeDownPackageNumPackages($packageId, $ticketId, $schedulingMasterId) {
+		$packageMaxNumSales = $this->getPackageNumMaxSales($packageId);
+		$derivedPackageNumSales = $this->getDerivedPackageNumSales($packageId);
+			
+		if (($packageMaxNumSales !== false) && ($derivedPackageNumSales !== false)) {
+			if (($derivedPackageNumSales + 1) >= $packageMaxNumSales) {
+				if ($this->__runTakeDown($schedulingMasterId)) {
+					$this->insertMessageQueuePackage($ticketId, 'PACKAGE');
+				}
+			} elseif (($packageMaxNumSales - ($derivedPackageNumSales + 1) == 1)) {
+				if ($this->__updateSchedulingOfferFixedPrice($schedulingMasterId)) {
+					$this->insertMessageQueuePackage($ticketId, 'PACKAGE_FP_ONLY');
+				}
+			}
+		}
+	}
+
+	function __runTakeDown($sm_ids_imp) {
+		if (empty($sm_ids_imp) || !$sm_ids_imp) {
 			return false;
 		}
+		$affected_rows = 0;
+		$affected_rows += $this->__deleteOfferLiveOffer($sm_ids_imp);
+		
+		$this->query("DELETE FROM schedulingInstance WHERE schedulingMasterId IN ($sm_ids_imp) AND startDate > NOW()");
+		$affected_rows += ($this->getAffectedRows()) ? 1 : 0;
+		
+		$this->query("DELETE FROM schedulingMaster WHERE schedulingMasterId IN ($sm_ids_imp) AND startDate > NOW()");
+		$affected_rows += ($this->getAffectedRows()) ? 1 : 0;
+		
+		$affected_rows += $this->__updateSchedulingOfferFixedPrice($sm_ids_imp);
+
+		return ($affected_rows) ? true : false;
+	}
+
+	function __deleteOfferLiveOffer($sm_ids_imp) {
 		$sql = 'DELETE offer o,offerLive ol ';
 		$sql.= 'FROM schedulingInstance si ';
 		$sql.= 'INNER JOIN offer o USING(schedulingInstanceId) ';
@@ -341,12 +378,10 @@ class Ticket extends AppModel {
 		$sql.= "WHERE si.schedulingMasterId IN ($sm_ids_imp) ";
 		$sql.= 'AND si.startDate > NOW()';
 		$result = $this->query($sql);
+		return ($this->getAffectedRows()) ? 1 : 0;
 	}
 
 	function __updateSchedulingOfferFixedPrice($sm_ids_imp) {
-		if (!$sm_ids_imp) {
-			return false;
-		}
 		$sql = 'UPDATE schedulingMaster sm ';
 		$sql.= 'INNER JOIN schedulingInstance si ON sm.schedulingMasterId = si.schedulingMasterId ';
 		$sql.= 'INNER JOIN offer o USING(schedulingInstanceId) ';
@@ -356,6 +391,7 @@ class Ticket extends AppModel {
 		$sql.= "AND sm.schedulingMasterId IN ($sm_ids_imp) ";
 		$sql.= 'AND ol.endDate > NOW()';
 		$result = $this->query($sql);
+		return ($this->getAffectedRows()) ? 1 : 0;
 	}
 
 	function insertMessageQueuePackage($ticketId, $type) {
@@ -383,6 +419,14 @@ class Ticket extends AppModel {
 					$model = 'Package';
 					$modelId = $packageId;
 					break;
+				case 'PACKAGE_FP_ONLY':
+					$title = "Fixed Priced offers have been stopped for Package [$PackageName]";
+					$description = "A pending ticket (Ticket ID# <a href='/tickets/view/$ticketId'>$ticketId</a>) exists for that once funded will ";
+					$description.= "make the number of packages for <a href='/clients/edit/$clientId'>$clientName</a> (Package ID# <a href='/clients/$clientId/packages/edit/$packageId'>$packageId</a>) only be 1 package away from the package Max Num Sales. ";
+					$description.= "All fixed price offers have been closed for this package.";
+					$model = 'Package';
+					$modelId = $packageId;
+					break;
 				case 'LOA_PACKAGES':
 					$title = "Maximum Number of Sales for LOA [$clientName]";
 					$description = "A pending ticket (Ticket ID# <a href='/tickets/view/$ticketId'>$ticketId</a>) exists for that once funded will ";
@@ -392,6 +436,15 @@ class Ticket extends AppModel {
 					$model = 'Loa';
 					$modelId = $loaId;
 					break;	
+				case 'LOA_PACKAGES_FP_ONLY':
+					$title = "Fixed Priced offers have been stopped for LOA [$clientName]";
+					$description = "A pending ticket (Ticket ID# <a href='/tickets/view/$ticketId'>$ticketId</a>) exists for that once funded will ";
+					$description.= "make the number of LOA packages for <a href='/clients/edit/$clientId'>$clientName</a> only be 1 package away from the LOA Membership Number of Packages. ";
+					$description.= "All fixed price offers have been ";
+					$description.= "closed that are associated with this client's current LOA (LOA ID# <a href='/loas/edit/$loaId'>$loaId</a>).";
+					$model = 'Loa';
+					$modelId = $loaId;
+					break;
 				case 'LOA_BALANCE':
 					$title = "Membership Balance for LOA [$clientName]";
 					$description = "A pending ticket (Ticket ID# <a href='/tickets/view/$ticketId'>$ticketId</a>) exists for that once funded will ";
