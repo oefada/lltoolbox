@@ -200,25 +200,7 @@ class WebServiceTicketsController extends WebServicesController
 			
 			// take down future instances of offers if reached package.maxNumSales
 			// -------------------------------------------------------------------------------
-			$packageMaxNumSales = $this->Ticket->getPackageNumMaxSales($data['packageId']);
-			$derivedPackageNumSales = $this->Ticket->getDerivedPackageNumSales($data['packageId']);
-			
-			if ((($packageMaxNumSales !== false) && ($derivedPackageNumSales !== false)) && (($packageMaxNumSales - $derivedPackageNumSales) == 1)) {
-				$this->Ticket->insertMessageQueuePackage($ticketId, 'PACKAGE');
-				if ($schedulingMasterId && is_numeric($schedulingMasterId) && ($schedulingMasterId > 0)) {
-					$this->SchedulingMaster->deleteAll(array('SchedulingMaster.startDate > NOW()', 'SchedulingMaster.schedulingMasterId' => $schedulingMasterId));
-	   		 		$this->SchedulingMaster->SchedulingInstance->deleteAll(array('SchedulingInstance.startDate > NOW()', 'SchedulingInstance.schedulingMasterId' => $schedulingMasterId));
-	   		 		if (in_array($offerLive['offerTypeId'], array(3,4))) {
-	   		 			$offerLiveSave = array();
-	   		 			$offerLiveSave['offerId'] = $offerLive['offerId'];
-	   		 			$offerLiveSave['endDate'] = date('Y-m-d H:i:s', strtotime('now'));
-	   		 			if (!$this->OfferLive->save($offerLiveSave)) {
-	   		 				@mail('devmail@luxurylink.com', 'ERROR: WEB SERVICE TICKET - FP OFFER TAKE DOWN', 'FP offer was not taken down on an attempt.' . print_r($data, true));
-	   		 			}
-	   		 		}
-	   		 	}
-			}
-
+			$this->Ticket->__runTakeDownPackageNumPackages($data['packageId'], $ticketId, $schedulingMasterId);
 			$this->Ticket->__runTakeDownLoaMemBal($data['packageId'], $ticketId, $data['billingPrice']);
 			$this->Ticket->__runTakeDownLoaNumPackages($data['packageId'], $ticketId);
 
@@ -1133,6 +1115,17 @@ class WebServiceTicketsController extends WebServicesController
 		$tracks = $this->TrackDetail->getTrackRecord($ticket['Ticket']['ticketId']);
 		if (!empty($tracks)) {
 			foreach ($tracks as $track) {
+
+				// decrement loa number of packages
+				// ---------------------------------------------------------------------------
+				if ($track['expirationCriteriaId'] == 2) {
+					$this->Ticket->query('UPDATE loa SET numberPackagesRemaining = numberPackagesRemaining - 1 WHERE loaId = ' . $track['loaId'] . ' LIMIT 1');
+				} elseif ($track['expirationCriteriaId'] == 4) {
+					$this->Ticket->query('UPDATE loa SET membershipPackagesRemaining = membershipPackagesRemaining - 1 WHERE loaId = ' . $track['loaId'] . ' LIMIT 1');
+				}
+				
+				// track detail stuff and allocation
+				// ---------------------------------------------------------------------------
 				$trackDetailExists = $this->TrackDetail->findExistingTrackTicket($track['trackId'], $ticket['Ticket']['ticketId']);	
 				if (!$trackDetailExists) {
 					$new_track_detail = $this->TrackDetail->getNewTrackDetailRecord($track, $ticket['Ticket']['ticketId']);
@@ -1150,7 +1143,7 @@ class WebServiceTicketsController extends WebServicesController
 			$this->UserPaymentSetting->create();
 			$this->UserPaymentSetting->save($userPaymentSettingPost['UserPaymentSetting']);
 		}
-
+		
 		// update ticket status to FUNDED
 		// ---------------------------------------------------------------------------
 		$ticketStatusChange = array();
