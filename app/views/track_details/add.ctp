@@ -118,14 +118,6 @@ function confirmSubmit()
 
 	<?php echo $form->create('TrackDetail', array('url' => "/tickets/$ticketId/trackDetails/add", 'onsubmit' => "return confirmSubmit()"));?>		
 		<?php
-			if ($track['revenueModelId'] == 1) {
-				echo "<input type=\"hidden\" id=\"TrackUsingToolboxNonAuto\" name=\"data[Track][trackUsingToolboxNonAuto]\" value=\"1\" />";
-				$checked = $track['applyToMembershipBal'] ? "checked=\"checked\"" : '';
-				echo "<div style='padding:5px;'>";
-				echo "Apply to membership balance: ";
-				echo "<input type=\"checkbox\" id=\"TrackApplyToMembershipBal\" name=\"data[Track][applyToMembershipBal]\" $checked /><br /><br />";
-				echo "</div>";
-			}
 			echo $form->input('trackId', array('readonly' => 'readonly'));
 			echo $form->input('ticketId', array('readonly' => 'readonly'));
 			echo $form->input('ticketAmount', array('readonly' => 'readonly'));
