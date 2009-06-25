@@ -1742,6 +1742,16 @@ class ReportsController extends AppController {
 		$sales[8][2] = 0;	
 							
 		foreach($tmp as $v) {
+
+			
+			if ($v[0]['theDate'] == $date) {
+				$col = '1';
+			} else {
+				$col = '2';
+			}
+			
+			$sales[8][$col] += $v[0]['travelRevenue'];
+			
 			if (in_array($v['Ticket']['offerTypeId'], $auctions)) {
 				$row = '4';
 			} else {
@@ -1751,14 +1761,8 @@ class ReportsController extends AppController {
 				$row = '7';
 			}
 			
-			if ($v[0]['theDate'] == $date) {
-				$col = '1';
-			} else {
-				$col = '2';
-			}
-			
 			$sales[$row][$col] = array_merge((array)@$sales[$row][$col], (array)explode(",", $v[0]['avgSalePrice']));
-			$sales[8][$col] += $v[0]['travelRevenue'];
+			
 		}									
 						
 		/* Last 7 Days Avg */
@@ -1767,6 +1771,7 @@ class ReportsController extends AppController {
 											GROUP BY offerTypeId, ticketStatusId");
 		$sales[8][3] = 0;
 		foreach($tmp as $v) {
+			$sales[8][3] += $v[0]['travelRevenue'];
 			if (in_array($v['Ticket']['offerTypeId'], $auctions)) {
 				$row = '4';
 			} else {
@@ -1776,7 +1781,6 @@ class ReportsController extends AppController {
 				$row = '7';
 			}
 			$sales[$row][3] = array_merge((array)@$sales[$row][3], (array)explode(",", $v[0]['avgSalePrice']));
-			$sales[8][3] += $v[0]['travelRevenue'];
 		}									
 
 		/* Last 30 Days Avg */
@@ -1785,6 +1789,8 @@ class ReportsController extends AppController {
 											GROUP BY offerTypeId, ticketStatusId");
 		$sales[8][4] = 0;
 		foreach($tmp as $v) {
+			
+			$sales[8][4] += $v[0]['travelRevenue'];
 			if (in_array($v['Ticket']['offerTypeId'], $auctions)) {
 				$row = '4';
 			} else {
@@ -1795,7 +1801,7 @@ class ReportsController extends AppController {
 			}
 			
 			$sales[$row][4] = array_merge((array)@$sales[$row][4], (array)explode(",", $v[0]['avgSalePrice']));
-			$sales[8][4] += $v[0]['travelRevenue'];
+			
 		}
 		
 		/* Last 90 Days Avg */
@@ -1804,6 +1810,8 @@ class ReportsController extends AppController {
 											GROUP BY offerTypeId, ticketStatusId");
 		$sales[8][5] = 0;
 		foreach($tmp as $v) {
+			
+			$sales[8][5] += $v[0]['travelRevenue'];
 			if (in_array($v['Ticket']['offerTypeId'], $auctions)) {
 				$row = '4';
 			} else {				
@@ -1814,7 +1822,7 @@ class ReportsController extends AppController {
 			}
 			
 			$sales[$row][5] = array_merge((array)@$sales[$row][5], (array)explode(",", $v[0]['avgSalePrice']));
-			$sales[8][5] += $v[0]['travelRevenue'];
+			
 		}									
 		
 		/* Last 365 Days Avg */
@@ -1823,6 +1831,8 @@ class ReportsController extends AppController {
 											GROUP BY offerTypeId, ticketStatusId");
 		$sales[8][6] = 0;
 		foreach($tmp as $v) {
+			
+			$sales[8][6] += $v[0]['travelRevenue'];
 			if (in_array($v['Ticket']['offerTypeId'], $auctions)) {
 				$row = '4';
 			} else {				
@@ -1832,7 +1842,7 @@ class ReportsController extends AppController {
 				$row = '7';
 			}
 			$sales[$row][6] = array_merge((array)@$sales[$row][6], (array)explode(",", $v[0]['avgSalePrice']));
-			$sales[8][6] += $v[0]['travelRevenue'];
+			
 		}
 		
 		foreach ($sales as $k => $v) {
