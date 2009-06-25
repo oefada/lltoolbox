@@ -12,7 +12,7 @@ class WebServiceTicketsController extends WebServicesController
 	var $uses = array('Ticket', 'UserPaymentSetting','PaymentDetail', 'Client', 'User', 'Offer', 'Bid', 
 					  'ClientLoaPackageRel', 'Track', 'OfferType', 'Loa', 'TrackDetail', 'PpvNotice',
 					  'Address', 'OfferLive', 'SchedulingMaster', 'SchedulingInstance', 'Reservation',
-					  'PromoTicketRel'
+					  'PromoTicketRel', 'Promo', 'TicketReferFriend'
 					  );
 
 	var $serviceUrl = 'http://toolbox.luxurylink.com/web_service_tickets';
@@ -214,7 +214,16 @@ class WebServiceTicketsController extends WebServicesController
 					$promo_ticket_rel['ticketId'] = $ticketId;
 					$promo_ticket_rel['userId'] = $data['userId'];
 					$this->PromoTicketRel->create();
-					$this->PromoTicketRel->save($promo_ticket_rel);
+					if ($this->PromoTicketRel->save($promo_ticket_rel)) {
+						$referrerUserId = $this->Promo->checkInsertRaf($promo_ticket_rel['promoCodeId']);
+						if ($referrerUserId !== false && is_numeric($referrerUserId)) {
+							$ticket_refer_friend = array();
+							$ticket_refer_friend['ticketId'] = $ticketId;
+							$ticket_refer_friend['referrerUserId'] = $referrerUserId;
+							$ticket_refer_friend['datetime'] = date('Y:m:d H:i:s', strtotime('now'));
+							$this->TicketReferFriend->save($ticket_refer_friend);
+						}
+					}
 				}
 			}
 
@@ -780,7 +789,7 @@ class WebServiceTicketsController extends WebServicesController
 			return $emailBody;	
 		}
 	}
-		
+
 	function sendPpvEmail($emailTo, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials) {
 		
 		if (stristr($_SERVER['HTTP_HOST'], 'dev')) {
@@ -1162,6 +1171,28 @@ class WebServiceTicketsController extends WebServicesController
 		}
 		
 		$this->Ticket->save($ticketStatusChange);
+
+		// RAF promo -- send out referrer purchase notification
+		// ---------------------------------------------------------------------------
+		if (isset($promoGcCofData['Promo']) && $promoGcCofData['Promo']['promoId'] == 60) {
+			$ticketReferFriend = $this->TicketReferFriend->read(null, $ticket['Ticket']['ticketId']);
+			if (!empty($ticketReferFriend)) {
+				$rafData = $this->Promo->getRafData($promoGcCofData['Promo']['promoCodeId']);
+				$emailTo = $rafData['User']['email'];
+				$emailFrom = $emailReplyTo = 'referafriend@luxurylink.com';
+				$emailCc = $emailBcc = '';
+				$emailSubject = 'Your Friend Has Made a Luxury Link Purchase';
+				$ppvNoticeTypeId = 21;
+				$ppvInitials = 'AUTO_RAF';
+				$ticketId = $ticket['Ticket']['ticketId'];
+				$url = 'http://www.luxurylink.com';
+				ob_start();
+				include('../vendors/email_msgs/notifications/21_raf_referrer_purchase_notification.html');
+				$emailBody = ob_get_clean();
+				$this->sendPpvEmail($emailTo, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials);	
+			}
+		}
+
 		return 'CHARGE_SUCCESS';
 	}
 }
