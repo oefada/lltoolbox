@@ -28,11 +28,12 @@ function initializeFunctions(){
 function sortTable(columnIndex){
 	unsortedRows = $$(".genericTable tbody tr");
 	sortedRows = unsortedRows.sortBy(function(node, i){
-		var value = node.childElements()[columnIndex].collectTextNodes();
+		var value = node.childElements()[columnIndex].collectTextNodes().stripTags();
+
 					if(!isNaN(value)){
-						return parseInt(node.childElements()[columnIndex].collectTextNodes());
+						return parseInt(node.childElements()[columnIndex].collectTextNodes().stripTags());
 					}
-					return node.childElements()[columnIndex].collectTextNodes();
+					return node.childElements()[columnIndex].collectTextNodes().stripTags();
 	});
 
 	// reverse
