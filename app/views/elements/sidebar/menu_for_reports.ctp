@@ -10,6 +10,7 @@
 	<li><?=$html->link('Offer Search', 'offer_search')?></li>
 	<li><?=$html->link('Package Search', 'packages')?></li>
 	<li><?=$html->link('Account Manager Client Report', 'mcr')?></li>
+	<li><?=$html->link('Merchandising Dashboard', 'merch')?></li>
 </ul>
 <h3>Other Tools</h3>
 <ul class="tree">
