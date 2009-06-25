@@ -136,7 +136,7 @@ td.error div{
 	<thead>
 		<tr>
 		<th rowspan="2">&nbsp;</th>
-	    <th rowspan="2" class="blackBg" style="text-align: center"><a href="0" id="sort0">Client Name</a></td>
+	    <th rowspan="2" class="blackBg" style="text-align: center"><a href="1" id="sort1">Client Name</a></td>
 	    <th colspan="8" class="darkBlackBg rowBorderWhite" style="border-top: 1px solid #000; text-align: center; padding: 5px 0">
 			Package Revenue
 			<div style="position: relative; float: right; clear: none">
