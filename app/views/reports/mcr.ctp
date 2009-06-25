@@ -29,13 +29,20 @@ function sortTable(columnIndex){
 	unsortedRows = $$(".genericTable tbody tr");
 	sortedRows = unsortedRows.sortBy(function(node, i){
 		var value = node.childElements()[columnIndex].collectTextNodes().stripTags();
-
-					if(!isNaN(value)){
-						return parseInt(node.childElements()[columnIndex].collectTextNodes().stripTags());
-					}
-					return node.childElements()[columnIndex].collectTextNodes().stripTags();
+		if (node.childElements()[columnIndex].hasClassName('dateRow')) {
+			if (value) {
+				var theDate = new Date(value);
+				return theDate.getTime()/1000.0;
+			} else {
+				return '';
+			}
+		}
+		if(!isNaN(value) && !node.childElements()[columnIndex].hasClassName('textSort')){
+			return parseInt(value);
+		}
+		return value;
 	});
-
+	
 	// reverse
 	if(unsortedRows.first() == sortedRows.first()){
 		sortedRows.reverse();
@@ -166,8 +173,8 @@ td.error div{
 	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="7" id="sort7">Auctions Close Rate</a></td>
 	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="8" id="sort8">FP Live Today</a></td>
 	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="9" id="sort9"># of FP Requests</a></td>
-	    <th class="blackBg" style="text-align: center"><a href="10" id="sort10">Exp. Date</a></td>
-	    <th class="blackBg" style="text-align: center"><a href="11" id="sort11">Renewed<br />(LOA Start)</a></td>
+	    <th class="blackBg dateRow" style="text-align: center"><a href="10" id="sort10">Exp. Date</a></td>
+	    <th class="blackBg dateRow" style="text-align: center"><a href="11" id="sort11">Renewed<br />(LOA Start)</a></td>
 	    <th class="blackBg" style="text-align: center"><a href="12" id="sort12">LOA Type</a></td>
 	    <th class="blackBg" style="text-align: center"><a href="13" id="sort13">LOA Bal</a></td>
 	    <th class="blackBg" style="text-align: center"><a href="14" id="sort14">Days until keep ends</a></td>
@@ -189,7 +196,7 @@ td.error div{
 ?>
 	  <tr<?=$class?>>
 		<td><?=$k+1?></td>
-	    <td style="text-align: left;"><?=$html->link($row['Client']['name'], '/clients/edit/'.$row['Client']['clientId'])?></td>
+	    <td style="text-align: left;" class="textSort"><?=$html->link($row['Client']['name'], '/clients/edit/'.$row['Client']['clientId'])?></td>
 		<? if ($k == 0) echo "<div id='packageRevenue'>"?>
 	    <td <?if((int)$row['packagesLiveToday'] == 0) echo " class='error'"?>><div><?=(int)$row['packagesLiveToday']?></div></td>
 	    <td><?=(int)$row['packageUptime']?></td>
@@ -200,8 +207,8 @@ td.error div{
 	    <td><?=(int)$row['fpLiveToday']?></td>
 	    <td><?=(int)$row['fpRequests']?></td>
 		<? if ($k == count($clients) - 1) echo "</div>"?>
-	    <td <?if(strtotime("+60 days") >= strtotime($row['Loa']['endDate'])) echo " class='error'"?>><div><?=date('m/d/Y', strtotime($row['Loa']['endDate']))?></div></td>
-	    <td><?=($row['Loa2']['startDate']) ? date('m/d/Y', strtotime($row['Loa2']['startDate'])) : ''; ?></td>
+	    <td  class="dateRow<?if(strtotime("+60 days") >= strtotime($row['Loa']['endDate'])) echo " error"?>"><div><?=date('m/d/Y', strtotime($row['Loa']['endDate']))?></div></td>
+	    <td class="dateRow"><?=($row['Loa2']['startDate']) ? date('m/d/Y', strtotime($row['Loa2']['startDate'])) : ''; ?></td>
 		<?php
 		$data['condition5']['field'] = 'Client.clientId';
 		$data['condition5']['value'] = $row['Client']['clientId'];
