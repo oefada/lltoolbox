@@ -157,25 +157,25 @@ td.error div{
 	    <th colspan="6" class="darkBlackBg rowBorderWhite" style="border-top: 1px solid #000; text-align: center">Referrals/Impressions (<?=date('M y', strtotime($latestReferralDate))?>)</td>
 	  </tr>
 	  <tr>
-	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="1" id="sort1">Packages Live Today</a></td>
-	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="2" id="sort2">Packages Up Time</a></td>
-	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="3" id="sort3">Total Sold</a></td>
-	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="4" id="sort4">Total $$</a></td>
-	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="5" id="sort5">Auctions Live Today</a></td>
-	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="6" id="sort6">Auctions Close Rate</a></td>
-	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="7" id="sort7">FP Live Today</a></td>
-	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="8" id="sort8"># of FP Requests</a></td>
-	    <th class="blackBg" style="text-align: center"><a href="9" id="sort9">Exp. Date</a></td>
-	    <th class="blackBg" style="text-align: center"><a href="10" id="sort10">Renewed<br />(LOA Start)</a></td>
-	    <th class="blackBg" style="text-align: center"><a href="11" id="sort11">LOA Type</a></td>
-	    <th class="blackBg" style="text-align: center"><a href="12" id="sort12">LOA Bal</a></td>
-	    <th class="blackBg" style="text-align: center"><a href="13" id="sort13">Days until keep ends</a></td>
-	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="14" id="sort14">Web</a></td>
-	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="15" id="sort15">Phone</a></td>
-	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="16" id="sort16">Portfolio</a></td>
-	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="17" id="sort17">Search</a></td>
-	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="18" id="sort18">Email</a></td>
-	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="19" id="sort19">Home/Dest</a></td>
+	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="2" id="sort2">Packages Live Today</a></td>
+	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="3" id="sort3">Packages Up Time</a></td>
+	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="4" id="sort4">Total Sold</a></td>
+	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="5" id="sort5">Total $$</a></td>
+	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="6" id="sort6">Auctions Live Today</a></td>
+	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="7" id="sort7">Auctions Close Rate</a></td>
+	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="8" id="sort8">FP Live Today</a></td>
+	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="9" id="sort9"># of FP Requests</a></td>
+	    <th class="blackBg" style="text-align: center"><a href="10" id="sort10">Exp. Date</a></td>
+	    <th class="blackBg" style="text-align: center"><a href="11" id="sort11">Renewed<br />(LOA Start)</a></td>
+	    <th class="blackBg" style="text-align: center"><a href="12" id="sort12">LOA Type</a></td>
+	    <th class="blackBg" style="text-align: center"><a href="13" id="sort13">LOA Bal</a></td>
+	    <th class="blackBg" style="text-align: center"><a href="14" id="sort14">Days until keep ends</a></td>
+	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="15" id="sort15">Web</a></td>
+	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="16" id="sort16">Phone</a></td>
+	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="17" id="sort17">Portfolio</a></td>
+	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="18" id="sort18">Search</a></td>
+	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="19" id="sort19">Email</a></td>
+	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="20" id="sort20">Home/Dest</a></td>
 	  </tr>
 	</thead>
 	<tbody>
