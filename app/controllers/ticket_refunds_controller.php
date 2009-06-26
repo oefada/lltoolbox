@@ -1,9 +1,12 @@
 <?php
+
+Configure::write('debug', 0);
+
 class TicketRefundsController extends AppController {
 
 	var $name = 'TicketRefunds';
 	var $helpers = array('Html', 'Form');
-	var $uses = array('TicketRefund', 'Ticket', 'CreditTracking', 'CreditTrackingType', 'CreditTrackingTicketRel');
+	var $uses = array('TicketRefund', 'Ticket', 'CreditTracking', 'CreditTrackingType', 'CreditTrackingTicketRel', 'TicketReferFriend', 'Promo');
 
 	function index() {
 		$this->TicketRefund->recursive = 0;
@@ -71,6 +74,29 @@ class TicketRefundsController extends AppController {
 					$this->CreditTrackingTicketRel->save($cttrdata);
 				}
 				
+				// raf adjustments
+				$ticketReferFriend = $this->TicketReferFriend->read(null, $ticket['Ticket']['ticketId']);
+				if (!empty($ticketReferFriend)) {
+					$rafData = $this->Promo->getRafDataByTicketId($ticket['Ticket']['ticketId']);
+					
+					$emailTo = $rafData['User']['email'];
+					$emailSubject = 'Your Friend Has Refunded Their Luxury Link Purchase';
+					$emailFrom = 'LuxuryLink.com <referafriend@luxurylink.com>';
+					$emailHeaders = "From: $emailFrom\r\n";
+					$emailHeaders.= "Bcc: thread@luxurylink.com\r\n";
+	        		$emailHeaders.= "Content-type: text/html\r\n";
+
+					$url = 'http://www.luxurylink.com';
+
+					ob_start();
+					include('../vendors/email_msgs/notifications/22_raf_refund_notification.html');
+					$emailBody = ob_get_clean();
+				
+					@mail($emailTo, $emailSubject, $emailBody, $emailHeaders);
+
+					$ticketReferFriend['TicketReferFriend']['refunded'] = date('Y:m:d H:i:s', strtotime('now'));
+					$this->TicketReferFriend->save($ticketReferFriend);
+				}
 				$this->redirect(array('controller' => 'tickets', 'action' => 'view', 'id' => $this->data['TicketRefund']['ticketId']));
 			} else {
 				$this->Session->setFlash(__('The ticket refund could not be saved. Please, try again.', true));
