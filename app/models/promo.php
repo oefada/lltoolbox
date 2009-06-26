@@ -44,5 +44,20 @@ class Promo extends AppModel {
 		
 		return (!empty($result)) ? $result[0] : false;
 	}
+
+	function getRafDataByTicketId($ticketId) {
+		if (!$ticketId) {
+			return false;
+		}
+		
+		$sql = "SELECT User.firstname, User.email, Charity.charityName FROM ticketReferFriend as TicketReferFriend ";
+		$sql.= "INNER JOIN promoCodeOwner as PromoCodeOwner ON TicketReferFriend.referrerUserId = PromoCodeOwner.userId ";
+		$sql.= "INNER JOIN user as User ON PromoCodeOwner.userId = User.userId ";
+		$sql.= "INNER JOIN charity as Charity ON PromoCodeOwner.charityId = Charity.charityId ";
+		$sql.= "WHERE TicketReferFriend.ticketId = $ticketId";
+		$result = $this->query($sql);
+		
+		return (!empty($result)) ? $result[0] : false;
+	}
 }
 ?>
