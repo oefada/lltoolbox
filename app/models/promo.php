@@ -36,7 +36,7 @@ class Promo extends AppModel {
 			return false;
 		}
 	
-		$sql = "SELECT User.firstname, User.email, Charity.charityName FROM promoCodeOwner as PromoCodeOwner ";
+		$sql = "SELECT User.firstName, User.email, Charity.charityName FROM promoCodeOwner as PromoCodeOwner ";
 		$sql.= "INNER JOIN user as User USING (userId) ";
 		$sql.= "INNER JOIN charty as Charity USING (charityId) ";
 		$sql.= "WHERE PromoCodeOwner.promoCodeId = $promoCodeId";
@@ -50,7 +50,7 @@ class Promo extends AppModel {
 			return false;
 		}
 		
-		$sql = "SELECT User.firstname, User.email, Charity.charityName FROM ticketReferFriend as TicketReferFriend ";
+		$sql = "SELECT User.firstName, User.email, Charity.charityName FROM ticketReferFriend as TicketReferFriend ";
 		$sql.= "INNER JOIN promoCodeOwner as PromoCodeOwner ON TicketReferFriend.referrerUserId = PromoCodeOwner.userId ";
 		$sql.= "INNER JOIN user as User ON PromoCodeOwner.userId = User.userId ";
 		$sql.= "INNER JOIN charity as Charity ON PromoCodeOwner.charityId = Charity.charityId ";
