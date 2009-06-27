@@ -88,7 +88,7 @@ class TicketsController extends AppController {
 									'Ticket.userFirstName', 'Ticket.userLastName', 'Ticket.packageId', 'Ticket.billingPrice', 'Ticket.formatId', 'Ticket.ticketNotes',
 									'PpvNotice.emailSentDatetime'
 									),
-		                        'contain' => array('TicketStatus', 'PpvNotice'),
+		                        'contain' => array('TicketStatus'),
 		                        'order' => array(
 		                        	'Ticket.ticketId' => 'desc'
 		                        	),
