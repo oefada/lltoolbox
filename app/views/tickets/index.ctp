@@ -243,7 +243,14 @@ $this->set('hideSidebar', true);
 			</table>
 
 		</td>
-		<td>&nbsp;</td>
+		<td style="border-left:1px solid silver;width:300px;padding-left:15px;">
+			<table cellspacing="0" cellpadding="0" style="width:285px;">
+			<tr><td><strong>Quick Links</strong></td></tr>
+			<tr>
+				<td><a href="/tickets/index/?s_ticket_status_id=3&s_format_id=1">Auction Res. Requests by Most Recent Date</a></td>
+			</tr>
+			</table>
+		</td>
 		<td>&nbsp;</td>
 		</tr>
 		<tr>
@@ -278,6 +285,7 @@ $this->set('hideSidebar', true);
 	<th width="220" style="color:#FFF;">User</th>
 	<th width="10"><?php echo $paginator->sort('Sale Price', 'Ticket.billingPrice');?></th>
 	<th width="10"><?php echo $paginator->sort('Status', 'Ticket.ticketStatusId');?></th>
+	<th width="10"><?php echo $paginator->sort('Res. Request Date', 'PpvNotice.emailSentDatetime');?></th>
 	<th width="10" style="color:#FFF;">CC</th>	
 	<th width="220" style="color:#FFF;">Notes</th>
 	<th class="actions" style="color:#FFF;"><?php __('Actions');?></th>
@@ -328,6 +336,9 @@ foreach ($tickets as $ticket):
 		</td>
 		<td style="font-weight:bold;">
 			<?php echo $ticket['TicketStatus']['ticketStatusName']; ?>
+		</td>
+		<td>
+			<?php isset($ticket['PpvNotice']['emailSentDatetime']) ? $ticket['PpvNotice']['emailSentDatetime'] : ''; ?>
 		</td>
 		<td>
 			<?php echo $ticket['Ticket']['validCard']; ?>
