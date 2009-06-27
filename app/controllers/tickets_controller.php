@@ -49,7 +49,7 @@ class TicketsController extends AppController {
 		$s_end_y = isset($form['s_end_y']) ? $form['s_end_y'] : date('Y');
 		$s_end_m = isset($form['s_end_m']) ? $form['s_end_m'] : date('m');
 		$s_end_d = isset($form['s_end_d']) ? $form['s_end_d'] : date('d');
-		
+
 		if (isset($_GET['searchClientId'])) {
 			$s_client_id = $_GET['searchClientId'];		
 		}
@@ -64,7 +64,14 @@ class TicketsController extends AppController {
 				$s_ticket_id = $_GET['query'];			
 			} 
 		}
-			
+	
+		$allowed_query_keys = array('s_ticket_status_id', 's_format_id', 's_offer_type_id');
+		foreach ($this->params['url'] as $key => $value) {
+			if (in_array($key, $allowed_query_keys)) {
+				$$key = $value;
+			}
+		}
+
 		if ($s_res_check_in_date || $s_res_confirmation_num) {
 			$s_has_reservation = true;
 		} else {
@@ -78,13 +85,23 @@ class TicketsController extends AppController {
 		$this->paginate = array('fields' => array(
 									'Ticket.ticketId', 'Ticket.offerTypeId', 'Ticket.created', 'Ticket.bidId',  
 									'Ticket.offerId', 'Ticket.userId', 'TicketStatus.ticketStatusName', 'Ticket.packageId', 'Ticket.requestQueueId',
-									'Ticket.userFirstName', 'Ticket.userLastName', 'Ticket.packageId', 'Ticket.billingPrice', 'Ticket.formatId', 'Ticket.ticketNotes'
+									'Ticket.userFirstName', 'Ticket.userLastName', 'Ticket.packageId', 'Ticket.billingPrice', 'Ticket.formatId', 'Ticket.ticketNotes',
+									'PpvNotice.emailSentDatetime'
 									),
-		                        'contain' => array('TicketStatus'),
+		                        'contain' => array('TicketStatus', 'PpvNotice'),
 		                        'order' => array(
 		                        	'Ticket.ticketId' => 'desc'
 		                        	),
-		                        'limit' => 50
+		                        'limit' => 50,
+								'joins' => array(
+												array(
+						           				'table' => 'ppvNotice', 
+									            'alias' => 'PpvNotice', 
+									            'type' => 'left',  
+									            'conditions'=> array('PpvNotice.ticketId = Ticket.ticketId', 'PpvNotice.ppvNoticeTypeId IN (2,10)') 
+												)
+										),
+								'group' => array('Ticket.ticketId')
 		                        );
 		    
 		$single_search = true;
@@ -145,6 +162,9 @@ class TicketsController extends AppController {
 			}
 			if ($s_ticket_status_id) {
 				$this->paginate['conditions']['Ticket.ticketStatusId'] = $s_ticket_status_id;	
+				if ($s_ticket_status_id == 3) {
+		        	$this->paginate['order'] = array('PpvNotice.emailSentDatetime' => 'desc');
+				}
 			}
 			if ($s_has_reservation) {
 				$this->paginate['contain'][] = 'Reservation';
