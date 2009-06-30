@@ -337,6 +337,7 @@ class SchedulingMastersController extends AppController {
 	 * @return boolean true if timestamp falls on a holiday, false if not
 	 */
 	function _isHoliday($timestamp) {
+		return false;	//not honoring holidays anymore
 	    $dateToCheck = date('n/j', $timestamp);
 	    
 	    if('1/1' == $dateToCheck) return true;
