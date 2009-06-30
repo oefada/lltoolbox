@@ -122,13 +122,15 @@ class TicketsController extends AppController {
 		} elseif ($s_bid_id) {
 			$this->paginate['conditions']['Ticket.bidId'] = $s_bid_id;       
 		} elseif ($s_client_id) {
-			$this->paginate['joins'] = array(
+			$this->paginate['joins'][] = 
 				array( 
 		            'table' => 'clientLoaPackageRel', 
 		            'alias' => 'ClientLoaPackageRel', 
 		            'type' => 'inner',  
 		            'conditions'=> array('ClientLoaPackageRel.packageId = Ticket.packageId') 
-			        ), 
+			        );
+
+			$this->paginate['joins'][] = 
 		        array( 
 		            'table' => 'client', 
 		            'alias' => 'Client', 
@@ -136,9 +138,8 @@ class TicketsController extends AppController {
 		            'conditions'=> array( 
 		       	   	   'Client.clientId = ClientLoaPackageRel.clientId', 
 			           'Client.clientId' => $s_client_id 
-		 	           ) 
-					)
-				);
+					   )
+					);
 			$this->paginate['group'] = array('Ticket.ticketId');
 		} elseif ($s_request_queue_id) {
 			$this->paginate['conditions']['Ticket.requestQueueId'] = $s_request_queue_id;    
@@ -149,14 +150,13 @@ class TicketsController extends AppController {
 			$s_promo_code_id = $promoCodeResult['PromoCode']['promoCodeId'];
 			$this->paginate['contain'][] = 'PromoTicketRel';
 			$this->paginate['group'] = array('Ticket.ticketId');
-			$this->paginate['joins'] = array(
+			$this->paginate['joins'][] = 
 							array(
 		           				'table' => 'promoTicketRel', 
 					            'alias' => 'PromoTicketRel', 
 					            'type' => 'inner',  
 					            'conditions'=> array('PromoTicketRel.ticketId = Ticket.ticketId') 
-								)
-							);
+								);
 			$this->paginate['conditions']['PromoTicketRel.promoCodeId'] = $s_promo_code_id;
 		} else {    
 			$single_search = false;
@@ -189,13 +189,12 @@ class TicketsController extends AppController {
 			if ($s_has_promo) {
 				$this->paginate['contain'][] = 'PromoTicketRel';
 				$this->paginate['group'] = array('Ticket.ticketId');
-				$this->paginate['joins'] = array(
+				$this->paginate['joins'][] = 
 								array(
 			           				'table' => 'promoTicketRel', 
 						            'alias' => 'PromoTicketRel', 
 						            'type' => 'inner',  
 						            'conditions'=> array('PromoTicketRel.ticketId = Ticket.ticketId') 
-									)
 								);
 				$this->paginate['conditions']['PromoTicketRel.promoCodeId > '] = 0;
 			}
