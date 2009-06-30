@@ -4,7 +4,10 @@
 
 <p>
 <strong>One of your friends, who made a qualifying purchase on Luxury Link, refunded their package.</strong> 
-Unfortunately, you will not be receiving the $100 Credit on your account and <?=$rafData['Charity']['charityName'];?> will not receive $50.
+Unfortunately, you will not be receiving the $100 Credit on your account. 
+<?php if ($rafData['Charity']['charityName']) : ?>
+Also, <?=$rafData['Charity']['charityName'];?> will not receive $50.
+<?php endif; ?>
 </p>
 
 <p style="margin-bottom:30px;">

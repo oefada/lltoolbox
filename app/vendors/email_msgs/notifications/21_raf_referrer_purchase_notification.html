@@ -5,7 +5,9 @@
 <p>
 Congratulations!  One of your friends made a qualifying purchase on Luxury Link.  
 Expect to see a $100 Credit on your account in approximately 90 days.  
+<?php if ($rafData['Charity']['charityName']) : ?>
 In addition, we will be donating $50 to <?=$rafData['Charity']['charityName'];?> in your name. Thanks for helping out!
+<?php endif; ?>
 </p>
 
 <p style="margin-bottom:30px;">
