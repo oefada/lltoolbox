@@ -27,7 +27,7 @@ class TicketsController extends AppController {
 			$form = $named;
 			$this->params['form'] = $this->params['named'];
 		}
-
+		
 		// set values and set defaults        
 		$s_ticket_id = isset($form['s_ticket_id']) ? $form['s_ticket_id'] : '';
 		$s_offer_id = isset($form['s_offer_id']) ? $form['s_offer_id'] : '';
@@ -64,14 +64,15 @@ class TicketsController extends AppController {
 				$s_ticket_id = $_GET['query'];			
 			} 
 		}
-	
+		
 		$allowed_query_keys = array('s_ticket_status_id', 's_format_id', 's_offer_type_id');
 		foreach ($this->params['url'] as $key => $value) {
 			if (in_array($key, $allowed_query_keys)) {
 				$$key = $value;
+				$this->params['form'][$key] = $value;
 			}
 		}
-
+	
 		if ($s_res_check_in_date || $s_res_confirmation_num) {
 			$s_has_reservation = true;
 		} else {
@@ -105,9 +106,15 @@ class TicketsController extends AppController {
 		                        );
 		    
 		$single_search = true;
+		$single_search_override = false;
 		// if search via ticket id, offer id, or user id, then dont use other search conditions
 		if ($s_ticket_id) {
 			$this->paginate['conditions']['Ticket.ticketId'] = $s_ticket_id;    
+		} elseif ($s_ticket_status_id == 3 && $s_format_id ==1 ) {
+			$this->paginate['conditions']['Ticket.formatId'] = 1;
+			$this->paginate['conditions']['Ticket.ticketStatusId'] = 3;
+			$this->paginate['order'] = array('PpvNotice.emailSentDatetime' => 'desc');
+			$single_search_override = true;
 		} elseif ($s_offer_id) {
 			$this->paginate['conditions']['Ticket.offerId'] = $s_offer_id;    
 		} elseif ($s_user_id) {
@@ -197,7 +204,10 @@ class TicketsController extends AppController {
 		if (!$single_search) {
 			$s_ticket_id = $s_offer_id = $s_user_id = $s_bid_id = $s_client_id = $s_request_queue_id = $s_package_id = $s_res_confirmation_num = null;
 		} else {
-			$s_res_check_in_date = $s_offer_type_id = $s_format_id = $s_ticket_status_id = $s_has_promo = null;
+			$s_res_check_in_date = $s_offer_type_id = $s_has_promo = null;
+			if (!$single_search_override) {
+				$s_ticket_status_id = $s_format_id = null;
+			}
 			$s_start_y = $s_end_y = date('Y');
 			$s_start_m = $s_end_m = date('m');
 			$s_start_d = $s_end_d = date('d');
