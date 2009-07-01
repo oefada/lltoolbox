@@ -35,6 +35,7 @@ class TicketsController extends AppController {
 		$s_format_id = isset($form['s_format_id']) ? $form['s_format_id'] : '';
 		$s_client_id = isset($form['s_client_id']) ? $form['s_client_id'] : '';
 		$s_bid_id = isset($form['s_bid_id']) ? $form['s_bid_id'] : '';
+		$s_quick_link = isset($form['s_quick_link']) ? $form['s_quick_link'] : '';
 		$s_request_queue_id = isset($form['s_request_queue_id']) ? $form['s_request_queue_id'] : '';
 		$s_package_id = isset($form['s_package_id']) ? $form['s_package_id'] : '';
 		$s_promo_code = isset($form['s_promo_code']) ? $form['s_promo_code'] : '';
@@ -65,7 +66,7 @@ class TicketsController extends AppController {
 			} 
 		}
 		
-		$allowed_query_keys = array('s_ticket_status_id', 's_format_id', 's_offer_type_id');
+		$allowed_query_keys = array('s_ticket_status_id', 's_format_id', 's_offer_type_id', 's_quick_link');
 		foreach ($this->params['url'] as $key => $value) {
 			if (in_array($key, $allowed_query_keys)) {
 				$$key = $value;
@@ -110,10 +111,14 @@ class TicketsController extends AppController {
 		// if search via ticket id, offer id, or user id, then dont use other search conditions
 		if ($s_ticket_id) {
 			$this->paginate['conditions']['Ticket.ticketId'] = $s_ticket_id;    
-		} elseif ($s_ticket_status_id == 3 && $s_format_id ==1 ) {
-			$this->paginate['conditions']['Ticket.formatId'] = 1;
-			$this->paginate['conditions']['Ticket.ticketStatusId'] = 3;
-			$this->paginate['order'] = array('PpvNotice.emailSentDatetime' => 'desc');
+		} elseif (isset($s_quick_link) && !empty($s_quick_link)) {
+			switch ($s_quick_link) {
+				case 1:
+					$this->paginate['conditions']['Ticket.formatId'] = 1;
+					$this->paginate['conditions']['Ticket.ticketStatusId'] = 3;
+					$this->paginate['order'] = array('PpvNotice.emailSentDatetime' => 'desc');
+					break;
+			}
 			$single_search_override = true;
 		} elseif ($s_offer_id) {
 			$this->paginate['conditions']['Ticket.offerId'] = $s_offer_id;    
@@ -184,6 +189,7 @@ class TicketsController extends AppController {
 				}
 				if ($s_res_check_in_date) {
 					$this->paginate['conditions']['Reservation.arrivalDate BETWEEN ? AND ?'] = array($s_start_date, $s_end_date);             		
+					unset($this->paginate['conditions']['Ticket.created BETWEEN ? AND ?']);
 				}
 			}
 			if ($s_has_promo) {
