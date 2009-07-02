@@ -5,6 +5,7 @@ class DealAlertsController extends AppController {
 	function beforeFilter() { $this->LdapAuth->allow('*'); }
 	function email_blast() {
 		$date = date('Y-m-d H:i:s');
+		Configure::write('debug', 0);
 		
 		$emailsToSend = array();
 		$this->autoRender = false;
