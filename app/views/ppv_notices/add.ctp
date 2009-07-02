@@ -22,6 +22,8 @@
 		echo $form->input('ppvNoticeTypeId', array('disabled' => 'disabled'));
 		echo $form->input('ppvNoticeTypeId', array('type' => 'hidden'));
 		echo $form->input('ticketId', array('readonly'=>'readonly'));
+		echo $form->input('emailTo');
+		echo $form->input('emailCc');
 		if (isset($isResConf) && $isResConf) {
 			echo "<br /><br />";
 			echo "<h2>Reservation Confirmation</h2>";
