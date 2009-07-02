@@ -15,7 +15,7 @@ class DealAlertsController extends AppController {
 		$subs = $this->DealAlert->query("SELECT DealAlert.*, User.userId, User.email, User.firstName, User.lastName FROM dealAlert AS DealAlert
 										INNER JOIN user AS User USING(userId)
 										WHERE lastAction = 'EMAIL'");
-		debug($subs);
+
 		foreach ($subs as $sub) {
 			$clientId = $sub['DealAlert']['clientId'];
 			
