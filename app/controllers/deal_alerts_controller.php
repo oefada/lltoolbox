@@ -5,16 +5,17 @@ class DealAlertsController extends AppController {
 	
 	function email_blast() {
 		$date = date('Y-m-d H:i:s');
+		
 		$emailsToSend = array();
 		$this->autoRender = false;
 
 		//TAKE CARE OF THE ORIGINAL SUBSCRIBERS
 		//the last action date is the same for all of these, so it's easy to find the new packages for all clients
 		//one global date to search for for each client, so we can calculate one global list of new packages per client
-		$subs = $this->DealAlert->query("SELECT DealAlert.*, User.email, User.firstName, User.lastName FROM dealAlert AS DealAlert
+		$subs = $this->DealAlert->query("SELECT DealAlert.*, User.userId, User.email, User.firstName, User.lastName FROM dealAlert AS DealAlert
 										INNER JOIN user AS User USING(userId)
 										WHERE lastAction = 'EMAIL'");
-		
+		debug($subs);
 		foreach ($subs as $sub) {
 			$clientId = $sub['DealAlert']['clientId'];
 			
@@ -25,7 +26,8 @@ class DealAlertsController extends AppController {
 														oldProductId,
 														seoName,
 														OfferLive.offerId,
-														Client.locationDisplay
+														Client.locationDisplay,
+														OfferLive.startDate
 														FROM offerLive AS OfferLive 
 														INNER JOIN clientLoaPackageRel cl USING(packageId)
 														INNER JOIN client AS Client ON(Client.clientId = $clientId)
@@ -43,7 +45,8 @@ class DealAlertsController extends AppController {
 									'seoName' => $pkg['Client']['seoName'],
 									'offerId' => $pkg['OfferLive']['offerId'],
 									'clientId' => $pkg['Client']['clientId'],
-									'locationDisplay' => $pkg['Client']['locationDisplay']);
+									'locationDisplay' => $pkg['Client']['locationDisplay'],
+									'startDate' => $pkg['OfferLive']['startDate']);
 				}
 								
 				$newPackages[$clientId] = $tmp;
@@ -52,6 +55,7 @@ class DealAlertsController extends AppController {
 				@$emailsToSend[$sub['DealAlert']['userId']] = array('email' => $sub['User']['email'],
 																	'firstName' => $sub['User']['firstName'],
 																	'lastName' => $sub['User']['lastName'],
+																	'userId' => $sub['User']['userId'],
 																	'packages' => array_merge((array)$emailsToSend[$sub['DealAlert']['userId']]['packages'], (array)$newPackages[$clientId]));
 			}
 		}
@@ -70,7 +74,8 @@ class DealAlertsController extends AppController {
 													oldProductId,
 													seoName,
 													OfferLive.offerId,
-													Client.locationDisplay
+													Client.locationDisplay,
+													OfferLive.startDate
 														FROM offerLive AS OfferLive 
 														INNER JOIN clientLoaPackageRel cl USING(packageId)
 														INNER JOIN client AS Client ON(Client.clientId = $clientId)
@@ -95,19 +100,21 @@ class DealAlertsController extends AppController {
 			$emailsToSend[$sub['DealAlert']['userId']] = array('email' => $sub['User']['email'],
 																	'firstName' => $sub['User']['firstName'],
 																	'lastName' => $sub['User']['lastName'],
+																	'userId' => $sub['User']['userId'],
 																	'packages' => array_merge((array)$emailsToSend[$sub['DealAlert']['userId']]['packages'], (array)$tmp));
 		}
-		
-		$subs = $this->DealAlert->query("UPDATE dealAlert SET lastActionDate = '$date' AND lastAction = 'EMAIL'");
+
+		$subs = $this->DealAlert->query("UPDATE dealAlert SET lastActionDate = '$date', lastAction = 'EMAIL'");
 		
 		foreach ($emailsToSend as $k => $v) {
 			foreach ($v['packages'] as $k2 => $v2) {
-				$this->mail($v['email'], $v['firstName'], $v['lastName'], $v2);
+				$this->mail($v['email'], $v['firstName'], $v['lastName'], $v['userId'], $v2);
 			}
 		}
+
 	}
 	
-	function mail($email, $firstName, $lastName, $package) {
+	function mail($email, $firstName, $lastName, $userId, $package) {
 		$package['email'] = $email;
 		$package['firstName'] = $firstName;
 		$package['lastName'] = $lastName;

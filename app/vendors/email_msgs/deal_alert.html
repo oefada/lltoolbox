@@ -21,5 +21,5 @@
 			<div><a style="color:#336699;" href="http://www.luxurylink.com/portfolio/por_offer_redirect.php?oid=<?=$package['offerId'];?>"><strong>View Package</strong></a></div></td>
 	</tr>
 </table>
-<? $sender_sig = $sender_sig_line = 'If you do not want to receive these notifications in the future, please <a href="http://www.luxurylink.com/LL/deal_alert.php?unsub='.$package['email'].'">unsubscribe</a>.' ?>
+<? $sender_sig = $sender_sig_line = 'If you do not want to receive these notifications in the future, please <a href="http://www.luxurylink.com/LL/deal_alert.php?unsub='.$package['userId'].'&clid='.$package['clientId'].'">unsubscribe</a>.' ?>
 <?php include('../vendors/email_msgs/email_includes/footer.html');?>
