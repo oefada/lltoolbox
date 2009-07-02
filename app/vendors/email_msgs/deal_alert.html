@@ -1,0 +1,25 @@
+<?php include('../vendors/email_msgs/email_includes/header.html');?>
+
+<h1 style="color:#990000;font-size:16px;margin:0px;padding:0px;margin-bottom:30px;"><?=$package['clientName']?> has a New Package</h1>
+
+
+<p>Dear <?php echo $package['firstName'];?> <?php echo $package['lastName'];?>,</p>
+
+<p>You signed up to receive a notification when a new package became available for <?=$package['clientName']?>
+, and a <strong>new package is available!</strong></p>
+<table cellpadding="10" cellspacing="0" border="0" style="width:100%;background-color:#E0E0CD;margin-top:15px;margin-bottom:15px;">
+  <tr>
+		<td width="245" align="left" valign="top">
+			<div style="width: 245px; height: 189px; padding: 8px 12px 12px 8px; background: url(http://www.luxurylink.com/images/shared/shadow-gal-lrg-light-olive.gif) no-repeat top left; overflow: hidden;"><img src="http://www.luxurylink.com/images/por/<?php echo $package['oldProductId'];?>/<?php echo $package['oldProductId'];?>-gal-lrg-01.jpg" border="0" /></div>
+		</td>
+		<td width="100%" align="left" valign="top">
+			<div>
+			  <a href="<?=$package['clientUrl']?>" style="color:#990000;font-size:16px;text-decoration: none;"><?=$package['clientName']?></a>
+	    </div>
+			<div style="color:#444444;font-size:12px;"><?=$package['locationDisplay']?></div><br /><br />
+			<div style="color:#444444;font-weight:bold;font-size:12px;"><?php echo $package['shortBlurb'];?></div><br /><br />
+			<div><a style="color:#336699;" href="http://www.luxurylink.com/portfolio/por_offer_redirect.php?oid=<?=$package['offerId'];?>"><strong>View Package</strong></a></div></td>
+	</tr>
+</table>
+<? $sender_sig = $sender_sig_line = 'If you do not want to receive these notifications in the future, please <a href="http://www.luxurylink.com/LL/deal_alert.php?unsub='.$package['email'].'">unsubscribe</a>.' ?>
+<?php include('../vendors/email_msgs/email_includes/footer.html');?>
