@@ -121,10 +121,11 @@ class DealAlertsController extends AppController {
 		$package['email'] = $email;
 		$package['firstName'] = $firstName;
 		$package['lastName'] = $lastName;
+		$package['userId'] = $userId;
 		// fetch template with the vars above
 		// -------------------------------------------------------------------------------
 		ob_start();
-		include('../vendors/email_msgs/deal_alert.html');
+		include(VENDORS.'/email_msgs/deal_alert.html');
 		$emailBody = ob_get_clean();
 		
 		$emailSubject = $package['clientName']." has a New Package";
