@@ -10,7 +10,11 @@
 <table cellpadding="10" cellspacing="0" border="0" style="width:100%;background-color:#E0E0CD;margin-top:15px;margin-bottom:15px;">
   <tr>
 		<td width="245" align="left" valign="top">
-			<div style="width: 245px; height: 189px; padding: 8px 12px 12px 8px; background: url(http://www.luxurylink.com/images/shared/shadow-gal-lrg-light-olive.gif) no-repeat top left; overflow: hidden;"><img src="http://www.luxurylink.com/images/por/<?php echo $package['oldProductId'];?>/<?php echo $package['oldProductId'];?>-gal-lrg-01.jpg" border="0" /></div>
+			<div style="width: 245px; height: 189px; padding: 8px 12px 12px 8px; background: url(http://www.luxurylink.com/images/shared/shadow-gal-lrg-light-olive.gif) no-repeat top left; overflow: hidden;">
+				<a href="<?=$package['clientUrl']?>">
+				<img src="http://www.luxurylink.com/images/por/<?php echo $package['oldProductId'];?>/<?php echo $package['oldProductId'];?>-gal-lrg-01.jpg" border="0" />
+				</a>
+			</div>
 		</td>
 		<td width="100%" align="left" valign="top">
 			<div>
@@ -21,5 +25,5 @@
 			<div><a style="color:#336699;" href="http://www.luxurylink.com/portfolio/por_offer_redirect.php?oid=<?=$package['offerId'];?>"><strong>View Package</strong></a></div></td>
 	</tr>
 </table>
-<? $sender_sig = $sender_sig_line = 'If you do not want to receive these notifications in the future, please <a href="http://www.luxurylink.com/LL/deal_alert.php?unsub='.$package['userId'].'&clid='.$package['clientId'].'">unsubscribe</a>.' ?>
+<? $footer_sig = 'If you do not want to receive these notifications in the future, please <a href="http://www.luxurylink.com/LL/deal_alert.php?unsub='.$package['userId'].'&clid='.$package['clientId'].'">unsubscribe</a>.' ?>
 <?php include('../vendors/email_msgs/email_includes/footer.html');?>
