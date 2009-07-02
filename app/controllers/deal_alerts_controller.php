@@ -2,6 +2,9 @@
 class DealAlertsController extends AppController {
 
 	var $name = 'DealAlerts';
+	var $helpers = array('Layout');
+	var $components = array('RequestHandler');
+	
 	function beforeFilter() { $this->LdapAuth->allow('*'); }
 	function email_blast() {
 		$date = date('Y-m-d H:i:s');
