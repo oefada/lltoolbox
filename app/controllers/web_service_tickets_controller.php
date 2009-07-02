@@ -417,6 +417,11 @@ class WebServiceTicketsController extends WebServicesController
 		$sender_email		= isset($params['sender_email']) ? $params['sender_email'] : '';
 		$sender_ext			= isset($params['sender_ext']) ? $params['sender_ext'] : '';
 
+		// override the to and cc fields from toolbox manual send
+		// -------------------------------------------------------------------------------
+		$override_email_to  = isset($params['override_email_to']) && !empty($params['override_email_to']) ? $params['override_email_to'] : false;
+		$override_email_cc  = isset($params['override_email_cc']) && !empty($params['override_email_cc']) ? $params['override_email_cc'] : false;
+
 		// TODO: error checking for params
 		
 		// retrieve data to fill out the email templates
@@ -748,6 +753,12 @@ class WebServiceTicketsController extends WebServicesController
 		// send the email out!
 		// -------------------------------------------------------------------------------
 		if ($send) {
+			if (trim($override_email_to)) {
+				$userEmail = $override_email_to;
+			}
+			if (trim($override_email_cc)) {
+				$emailCc = $override_email_cc;
+			}
 			$this->sendPpvEmail($userEmail, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials);	
 			
 			// AUTO SECTION FOR MULTI CLIENT PPV for multi-client packages send client emails [CLIENT PPV]

@@ -33,31 +33,35 @@ class PpvNoticesController extends AppController {
 		
 		if (!empty($this->data)) {
 				
-				if (isset($_SESSION['Auth']['AdminUser']['username'])) {
-					$ppvInitials = $_SESSION['Auth']['AdminUser']['username'];
+				if (empty($this->data['PpvNotice']['emailTo'])) {
+					$this->Session->setFlash(__('The Email To field cannot be empty', true));
 				} else {
-					$ppvInitials = 'TOOLBOX';	
+					if (isset($_SESSION['Auth']['AdminUser']['username'])) {
+						$ppvInitials = $_SESSION['Auth']['AdminUser']['username'];
+					} else {
+						$ppvInitials = 'TOOLBOX';	
+					}
+					$data = array();
+					$data['ticketId'] 			= $this->data['PpvNotice']['ticketId'];
+					$data['send'] 				= 1;
+					$data['manualEmailBody']	= str_replace('<p>&nbsp;</p>', '', $this->data['PpvNotice']['emailBody']);
+					$data['returnString'] 		= 0;
+					$data['ppvNoticeTypeId'] 	= $this->data['PpvNotice']['ppvNoticeTypeId'];
+					$data['initials']			= $ppvInitials;
+					$data['override_email_to']  = $this->data['PpvNotice']['emailTo'];
+					$data['override_email_cc']  = $this->data['PpvNotice']['emailCc'];
+	
+					if ($clientId) {
+						$data['clientId']		= $clientId;	
+					}
+					
+					$data_json_encoded = json_encode($data);
+					$soap_client = new nusoap_client($webservice_live_url, true);
+	        		$response = $soap_client->call($webservice_live_method_name, array($webservice_live_method_param => $data_json_encoded));
+					
+					$this->Session->setFlash(__('The Ppv/Notice has been sent.', true));
+					$this->redirect(array('controller' => 'tickets', 'action'=>'view', 'id' => $this->data['PpvNotice']['ticketId']));
 				}
-			
-				$data = array();
-				$data['ticketId'] 			= $this->data['PpvNotice']['ticketId'];
-				$data['send'] 				= 1;
-				$data['manualEmailBody']	= str_replace('<p>&nbsp;</p>', '', $this->data['PpvNotice']['emailBody']);
-				$data['returnString'] 		= 0;
-				$data['ppvNoticeTypeId'] 	= $this->data['PpvNotice']['ppvNoticeTypeId'];
-				$data['initials']			= $ppvInitials;
-
-				if ($clientId) {
-					$data['clientId']		= $clientId;	
-				}
-				
-				$data_json_encoded = json_encode($data);
-				$soap_client = new nusoap_client($webservice_live_url, true);
-        		$response = $soap_client->call($webservice_live_method_name, array($webservice_live_method_param => $data_json_encoded));
-				
-				$this->Session->setFlash(__('The Ppv/Notice has been sent.', true));
-				$this->redirect(array('controller' => 'tickets', 'action'=>'view', 'id' => $this->data['PpvNotice']['ticketId']));
-				
 		}
 		$this->set('ppvNoticeTypeIds', $this->PpvNotice->PpvNoticeType->find('list'));
 		$this->data['PpvNotice']['ticketId'] = $ticketId;
@@ -103,6 +107,15 @@ class PpvNoticesController extends AppController {
 		}
 
 		$this->set('promo', $this->Ticket->getTicketPromoData($ticketId));
+
+		if (in_array($id, array(2,4,10))) {
+			$clientContacts = $this->Ticket->getClientContacts($ticketId);
+			$this->data['PpvNotice']['emailTo'] = $clientContacts['contact_to_string'];
+			$this->data['PpvNotice']['emailCc'] = $clientContacts['contact_cc_string'];
+		} else {
+			$ticket_user_email = $this->Ticket->query("SELECT userEmail1 FROM ticket WHERE ticketId = $ticketId LIMIT 1");
+			$this->data['PpvNotice']['emailTo'] = $ticket_user_email[0]['ticket']['userEmail1'];
+		}
 
 		$this->set('clientIdParam', $clientIdParam);
 		$data_json_encoded = json_encode($data);
