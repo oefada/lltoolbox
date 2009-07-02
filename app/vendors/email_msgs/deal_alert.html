@@ -1,4 +1,4 @@
-<?php include(VENDORS.'/email_msgs/email_includes/header.html');?>
+<?php include(APP_PATH.'vendors/email_msgs/email_includes/header.html');?>
 
 <h1 style="color:#990000;font-size:16px;margin:0px;padding:0px;margin-bottom:30px;"><?=$package['clientName']?> has a New Package</h1>
 
@@ -26,4 +26,4 @@
 	</tr>
 </table>
 <? $footer_sig = 'If you do not want to receive these notifications in the future, please <a href="http://www.luxurylink.com/LL/deal_alert.php?unsub='.$package['userId'].'&clid='.$package['clientId'].'">unsubscribe</a>.' ?>
-<?php include(VENDORS.'/email_msgs/email_includes/footer.html');?>
+<?php include(APP_PATH.'vendors/email_msgs/email_includes/footer.html');?>

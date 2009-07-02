@@ -125,7 +125,7 @@ class DealAlertsController extends AppController {
 		// fetch template with the vars above
 		// -------------------------------------------------------------------------------
 		ob_start();
-		include(VENDORS.'/email_msgs/deal_alert.html');
+		include(APP_PATH.'vendors/email_msgs/deal_alert.html');
 		$emailBody = ob_get_clean();
 		
 		$emailSubject = $package['clientName']." has a New Package";
