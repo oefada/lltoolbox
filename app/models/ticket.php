@@ -53,6 +53,40 @@ class Ticket extends AppModel {
 		return $result;
 	}
 	
+	function getClientContacts($ticketId) {
+		$contacts = array();
+		$sql = "SELECT c.clientId, c.parentClientId FROM ticket t ";
+		$sql.= "INNER JOIN clientLoaPackageRel clpr USING (packageId) ";
+		$sql.= "INNER JOIN client c ON clpr.clientId = c.clientId ";
+		$sql.= "WHERE t.ticketId = $ticketId";
+		$result = $this->query($sql);
+		if (!empty($result)) {
+			$client = $result[0]['c'];
+			if (!empty($client['parentClientId']) && is_numeric($client['parentClientId']) && ($client['parentClientId'] > 0) && ($client['clientId'] != $client['parentClientId'])) {
+				$add_parent_client_sql = "OR clientId = " . $client['parentClientId'];
+			} else {
+				$add_parent_client_sql = '';	
+			}
+			$contact_to_string = $contact_cc_string = array();
+			$tmp_result = $this->query("SELECT * FROM clientContact WHERE clientContactTypeId in (1,3) AND (clientId = " . $client['clientId'] . " $add_parent_client_sql) ORDER BY clientContactTypeId, primaryContact DESC");
+			foreach ($tmp_result as $a => $b) {
+				if ($b['clientContact']['clientContactTypeId'] == 1) {
+					$contact_to_string[] = $b['clientContact']['emailAddress'];
+				}
+				if ($b['clientContact']['clientContactTypeId'] == 3) {
+					$contact_cc_string[] = $b['clientContact']['emailAddress'];
+				}
+			}
+			$contacts['contact_cc_string'] = implode(',', array_unique($contact_cc_string));
+			$contacts['contact_to_string'] = implode(',', array_unique($contact_to_string));
+			if (!$contacts['contact_to_string'] && !empty($contacts['contact_cc_string'])) {
+				$contacts['contact_to_string'] = $contacts['contact_cc_string'];
+				$contacts['contact_cc_string'] = '';
+			}
+		}
+		return $contacts;
+	}
+
 	function findPromoOfferTrackings($userId, $offerId) {
 		$result = $this->query("SELECT promoCodeId FROM promoOfferTracking where userId = $userId and offerId = $offerId");
 		if (!empty($result)) {
