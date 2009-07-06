@@ -112,7 +112,6 @@ class WebServiceNewClientsController extends WebServicesController
 			if (!empty($contacts)) {
 				$this->ClientContact->query("DELETE FROM clientContact WHERE clientId = $client_id");
 			}
-			@mail('devmail@luxurylink.com', 'SUGAR BUS -- CLIENTS CONTACTS SAVE', print_r($decoded_request, true));
 		    foreach ($contacts as $k => $contact) {
 		    	$contact_id = $contact['contact_id'];
 		    	$recipient_type	 = $contact['recipient_type_c'];
