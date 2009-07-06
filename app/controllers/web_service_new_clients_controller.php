@@ -108,7 +108,6 @@ class WebServiceNewClientsController extends WebServicesController
 		$deleteContacts = array('NLT');
 
 	    if ($client_id) {
-			@mail('devmail@luxurylink.com', 'SUGAR BUS -- CONTACTS SAVE', print_r($decoded_request, true));
 		    $contacts = $decoded_request['contacts'];
 			if (!empty($contacts)) {
 				$this->ClientContact->query("DELETE FROM clientContact WHERE clientId = $client_id");
