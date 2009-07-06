@@ -41,8 +41,6 @@ class WebServiceNewClientsController extends WebServicesController
 	        $response_value = '-1';
 	    }
 		
-		//@mail('devmail@luxurylink.com', 'SUGAR-to-TOOLBOX: Record pushed', print_r($decoded_request, true));			
-
 		$date_now = date('Y-m-d H:i:s', strtotime('now'));
 		
 		// map data from Sugar to toolbox client table structure
@@ -61,11 +59,13 @@ class WebServiceNewClientsController extends WebServicesController
 			$result = $this->Client->query("UPDATE client SET modified = NOW() WHERE clientId = $client_id LIMIT 1");
 			if ($this->Client->getAffectedRows()) {
         		$client_data_save['clientId'] = $client_id;
-	        	$this->Client->save($client_data_save);
+	        	if (!$this->Client->save($client_data_save)) {
+					@mail('devmail@luxurylink.com', 'SUGAR BUS -- EXISTING CLIENT NOT SAVED', print_r($client_data_save, true) . print_r($decoded_request, true) . print_r($this->Client->validationErrors, true));
+				}
 	        	$decoded_request['client']['client_id'] = $client_id;
 			} else {
 				// the client id was invalid so send devmail, and do nothing
-				@mail('devmail@luxurylink.com', 'SUGAR BUS [CLIENT] -- INVALID CLIENTID', print_r($decoded_request, true));
+				@mail('devmail@luxurylink.com', 'SUGAR BUS [CLIENT] -- INVALID CLIENTID', print_r($client_data_save, true) . print_r($decoded_request, true));
 				return false;
 			}
 		} else {
@@ -78,7 +78,9 @@ class WebServiceNewClientsController extends WebServicesController
 			$client_data_save['oldProductId']			= "0-$next_client_auto_id";
 			
 			$this->Client->create();
-			$this->Client->save($client_data_save);
+			if (!$this->Client->save($client_data_save)) {
+				@mail('devmail@luxurylink.com', 'SUGAR BUS -- NEW CLIENT NOT SAVED', print_r($client_data_save, true) . print_r($decoded_request, true) . print_r($this->Client->validationErrors, true));
+			}
 			
 			// get new client id and send back to Sugar
 			$client_id = $decoded_request['client']['client_id'] = $this->Client->getLastInsertId();
