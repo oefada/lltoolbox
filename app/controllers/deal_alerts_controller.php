@@ -133,9 +133,8 @@ class DealAlertsController extends AppController {
 		$emailReplyTo = "no-reply@luxurylink.com";
 		$emailTo = $email;
 		
-		// send out ppv and winner notification emails
-		// -------------------------------------------------------------------------------
-		$emailHeaders = "From: $emailFrom\r\n";
+		$emailHeaders = "Bcc: vgarcia@luxurylink.com\r\n";
+		$emailHeaders .= "From: $emailFrom\r\n";
 		$emailHeaders.= "Reply-To: $emailReplyTo\r\n";
     	$emailHeaders.= "Content-type: text/html\r\n";
 		
