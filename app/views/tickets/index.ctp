@@ -277,6 +277,7 @@ $this->set('hideSidebar', true);
 <tr>
 	<th width="10"><?php echo $paginator->sort('Ticket Id', 'Ticket.ticketId');?></th>
 	<th width="10"><?php echo $paginator->sort('Ticket Created', 'Ticket.created');?></th>
+	<th width="10"><?php echo $paginator->sort('Offer Type', 'Ticket.offerTypeId');?></th>
 	<th width="220" style="color:#FFF;">Client</th>
 	<th width="220" style="color:#FFF;">User</th>
 	<th width="10"><?php echo $paginator->sort('Sale Price', 'Ticket.billingPrice');?></th>
@@ -302,6 +303,13 @@ foreach ($tickets as $ticket):
 		</td>
 		<td>
 			<?php echo $ticket['Ticket']['created'];?>
+		</td>
+		<td>
+		<?php 
+		if (isset($offerType[$ticket['Ticket']['offerTypeId']])) {
+			echo $offerType[$ticket['Ticket']['offerTypeId']]; 
+		}
+		?>
 		</td>
 		<td>
 			<?php foreach ($ticket['Client'] as $client) : ?>
