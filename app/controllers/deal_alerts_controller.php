@@ -34,9 +34,9 @@ class DealAlertsController extends AppController {
 														FROM offerLive AS OfferLive 
 														INNER JOIN clientLoaPackageRel cl USING(packageId)
 														INNER JOIN client AS Client ON(Client.clientId = $clientId)
-														LEFT JOIN offerLive AS OfferLivePrev ON (OfferLivePrev.startDate <= '{$sub['DealAlert']['lastActionDate']}' AND OfferLivePrev.packageId = OfferLive.packageId)
+														LEFT JOIN offerLive AS OfferLivePrev ON (OfferLivePrev.startDate <= ('{$sub['DealAlert']['lastActionDate']}' - INTERVAL 5 MINUTE) AND OfferLivePrev.packageId = OfferLive.packageId)
 														WHERE cl.clientId = $clientId
-														AND OfferLivePrev.offerId IS NULL AND OfferLive.startDate BETWEEN '{$sub['DealAlert']['lastActionDate']}' AND ('{$sub['DealAlert']['lastActionDate']}' + INTERVAL 5 MINUTE)");
+														AND OfferLivePrev.offerId IS NULL AND OfferLive.startDate BETWEEN ('{$sub['DealAlert']['lastActionDate']}' - INTERVAL 5 MINUTE) AND '{$sub['DealAlert']['lastActionDate']}'");
 
 				$tmp = array();
 				foreach ($tmpNew as $pkg) {
@@ -81,9 +81,9 @@ class DealAlertsController extends AppController {
 														FROM offerLive AS OfferLive 
 														INNER JOIN clientLoaPackageRel cl USING(packageId)
 														INNER JOIN client AS Client ON(Client.clientId = $clientId)
-														LEFT JOIN offerLive AS OfferLivePrev ON (OfferLivePrev.startDate <= '{$sub['DealAlert']['lastActionDate']}' AND OfferLivePrev.packageId = OfferLive.packageId)
-														WHERE cl.clientId = $clientId
-														AND OfferLivePrev.offerId IS NULL AND OfferLive.startDate BETWEEN '{$sub['DealAlert']['lastActionDate']}' AND ('{$sub['DealAlert']['lastActionDate']}' + INTERVAL 5 MINUTE)");
+													LEFT JOIN offerLive AS OfferLivePrev ON (OfferLivePrev.startDate <= ('{$sub['DealAlert']['lastActionDate']}' - INTERVAL 5 MINUTE) AND OfferLivePrev.packageId = OfferLive.packageId)
+													WHERE cl.clientId = $clientId
+													AND OfferLivePrev.offerId IS NULL AND OfferLive.startDate BETWEEN ('{$sub['DealAlert']['lastActionDate']}' - INTERVAL 5 MINUTE) AND '{$sub['DealAlert']['lastActionDate']}'");
 
 				$tmp = array();
 				foreach ($tmpNew as $pkg) {
