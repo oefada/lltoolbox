@@ -277,16 +277,13 @@ $this->set('hideSidebar', true);
 <tr>
 	<th width="10"><?php echo $paginator->sort('Ticket Id', 'Ticket.ticketId');?></th>
 	<th width="10"><?php echo $paginator->sort('Ticket Created', 'Ticket.created');?></th>
-	<th width="10"><?php echo $paginator->sort('Offer Id', 'Ticket.offerId');?></th>
-	<th width="10"><?php echo $paginator->sort('Offer Type', 'Ticket.offerTypeId');?></th>
-	<th width="10" style="color:#FFF;">Track</th>
-	<th width="10" style="color:#FFF;">Package Id</th>
 	<th width="220" style="color:#FFF;">Client</th>
 	<th width="220" style="color:#FFF;">User</th>
 	<th width="10"><?php echo $paginator->sort('Sale Price', 'Ticket.billingPrice');?></th>
 	<th width="10"><?php echo $paginator->sort('Status', 'Ticket.ticketStatusId');?></th>
 	<th width="10"><?php echo $paginator->sort('Res. Request Date', 'PpvNotice.emailSentDatetime');?></th>
 	<th width="10" style="color:#FFF;">CC</th>	
+	<th width="140" style="color:#FFF;">Res. Preferred Date</th>	
 	<th width="220" style="color:#FFF;">Notes</th>
 	<th class="actions" style="color:#FFF;"><?php __('Actions');?></th>
 </tr>
@@ -305,22 +302,6 @@ foreach ($tickets as $ticket):
 		</td>
 		<td>
 			<?php echo $ticket['Ticket']['created'];?>
-		</td>
-		<td>
-			<?php echo $ticket['Ticket']['offerId']; ?>
-		</td>
-		<td>
-			<?php 
-			if (isset($offerType[$ticket['Ticket']['offerTypeId']])) {
-				echo $offerType[$ticket['Ticket']['offerTypeId']]; 
-			}
-			?>
-		</td>
-		<td>
-			<?php echo $ticket['Ticket']['trackName']; ?>
-		</td>		
-		<td>
-			<?php echo $ticket['Ticket']['packageId']; ?>
 		</td>
 		<td>
 			<?php foreach ($ticket['Client'] as $client) : ?>
@@ -342,6 +323,12 @@ foreach ($tickets as $ticket):
 		</td>
 		<td>
 			<?php echo $ticket['Ticket']['validCard']; ?>
+		</td>
+		<td <?php if (!empty($ticket['ResPreferDate']) && $ticket['ResPreferDate']['flagged'] == 1) { echo "style='background-color:#990000;color:#FFFFFF;font-weight:bold;";}?> >
+			<?php if (!empty($ticket['ResPreferDate'])) : ?>
+			Check-in: <?php echo $ticket['ResPreferDate']['arrival']; ?><br />
+			Check-out: <?php echo $ticket['ResPreferDate']['departure']; ?>
+			<?php endif; ?>
 		</td>
 		<td>
 			<?php if (!empty($ticket['Promo'])) :?>
