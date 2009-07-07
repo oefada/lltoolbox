@@ -88,7 +88,7 @@ class TicketsController extends AppController {
 									'Ticket.ticketId', 'Ticket.offerTypeId', 'Ticket.created', 'Ticket.bidId',  
 									'Ticket.offerId', 'Ticket.userId', 'TicketStatus.ticketStatusName', 'Ticket.packageId', 'Ticket.requestQueueId',
 									'Ticket.userFirstName', 'Ticket.userLastName', 'Ticket.packageId', 'Ticket.billingPrice', 'Ticket.formatId', 'Ticket.ticketNotes',
-									'PpvNotice.emailSentDatetime'
+									'PpvNotice.emailSentDatetime', 'ReservationPreferDate.arrivalDate', 'ReservationPreferDate.departureDate'
 									),
 		                        'contain' => array('TicketStatus'),
 		                        'order' => array(
@@ -101,6 +101,12 @@ class TicketsController extends AppController {
 									            'alias' => 'PpvNotice', 
 									            'type' => 'left',  
 									            'conditions'=> array('PpvNotice.ticketId = Ticket.ticketId', 'PpvNotice.ppvNoticeTypeId IN (2,10)') 
+												),
+												array(
+						           				'table' => 'reservationPreferDate', 
+									            'alias' => 'ReservationPreferDate', 
+									            'type' => 'left',  
+									            'conditions'=> array('ReservationPreferDate.ticketId = Ticket.ticketId', 'ReservationPreferDateTypeId' => 1) 
 												)
 										),
 								'group' => array('Ticket.ticketId')
@@ -240,20 +246,21 @@ class TicketsController extends AppController {
 		$this->set('s_end_d', $s_end_d);   
 
 		$tickets_index = $this->paginate();
-
 		foreach ($tickets_index as $k => $v) {
 			$tickets_index[$k]['Ticket']['validCard'] = $this->getValidCcOnFile($v['Ticket']['userId'], $v['Ticket']['bidId']);
-			$tracks = $this->TrackDetail->getTrackRecord($v['Ticket']['ticketId']);
-			$track = $tracks[0];
-			$tickets_index[$k]['Ticket']['trackName'] = ($track['trackName']) ? $track['trackName'] : 'N/A';	
 			$clients = $this->Ticket->getClientsFromPackageId($v['Ticket']['packageId']);
 			$tickets_index[$k]['Promo'] = $this->Ticket->getTicketPromoData($v['Ticket']['ticketId']);
 			$tickets_index[$k]['Client'] = $clients;
+			$tickets_index[$k]['ResPreferDate'] = array();
+			if (in_array($v['Ticket']['offerTypeId'], array(1,2,6)) && !empty($v['ReservationPreferDate']['arrivalDate']) && !empty($v['ReservationPreferDate']['departureDate'])) {
+				$tickets_index[$k]['ResPreferDate']['arrival'] = $v['ReservationPreferDate']['arrivalDate'];
+				$tickets_index[$k]['ResPreferDate']['departure'] = $v['ReservationPreferDate']['departureDate'];
+				$tickets_index[$k]['ResPreferDate']['flagged'] =  (strtotime($tickets_index[$k]['ResPreferDate']['arrival']) - strtotime('NOW') <= 604800) ? 1 : 0;
+			}
 		}
-		
+
 		$this->set('tickets', $tickets_index);
 		$this->set('format', $this->Format->find('list'));
-		$this->set('offerType', $this->OfferType->find('list'));
 		$this->set('ticketStatus', $this->Ticket->TicketStatus->find('list'));
 	}
 
