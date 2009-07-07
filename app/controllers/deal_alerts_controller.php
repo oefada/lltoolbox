@@ -36,7 +36,7 @@ class DealAlertsController extends AppController {
 														INNER JOIN client AS Client ON(Client.clientId = $clientId)
 														LEFT JOIN offerLive AS OfferLivePrev ON (OfferLivePrev.startDate <= '{$sub['DealAlert']['lastActionDate']}' AND OfferLivePrev.packageId = OfferLive.packageId)
 														WHERE cl.clientId = $clientId
-														AND OfferLivePrev.offerId IS NULL");
+														AND OfferLivePrev.offerId IS NULL AND OfferLive.startDate BETWEEN '{$sub['DealAlert']['lastActionDate']}' AND ('{$sub['DealAlert']['lastActionDate']}' + INTERVAL 5 MINUTE)");
 
 				$tmp = array();
 				foreach ($tmpNew as $pkg) {
@@ -71,7 +71,6 @@ class DealAlertsController extends AppController {
 		foreach ($subs as $sub) {
 			$clientId = $sub['DealAlert']['clientId'];
 			
-			//if this client doesn't have a list of new packages, create it now
 			$tmpNew = $this->DealAlert->query("SELECT DISTINCT(OfferLive.packageId), Client.name, OfferLive.shortBlurb,
 													Client.clientId,
 													oldProductId,
@@ -84,7 +83,7 @@ class DealAlertsController extends AppController {
 														INNER JOIN client AS Client ON(Client.clientId = $clientId)
 														LEFT JOIN offerLive AS OfferLivePrev ON (OfferLivePrev.startDate <= '{$sub['DealAlert']['lastActionDate']}' AND OfferLivePrev.packageId = OfferLive.packageId)
 														WHERE cl.clientId = $clientId
-														AND OfferLivePrev.offerId IS NULL");
+														AND OfferLivePrev.offerId IS NULL AND OfferLive.startDate BETWEEN '{$sub['DealAlert']['lastActionDate']}' AND ('{$sub['DealAlert']['lastActionDate']}' + INTERVAL 5 MINUTE)");
 
 				$tmp = array();
 				foreach ($tmpNew as $pkg) {
@@ -99,12 +98,13 @@ class DealAlertsController extends AppController {
 									'locationDisplay' => $pkg['CLient']['locationDisplay']);
 				}
 							
-			
+			if (!empty($tmp)) {
 			$emailsToSend[$sub['DealAlert']['userId']] = array('email' => $sub['User']['email'],
 																	'firstName' => $sub['User']['firstName'],
 																	'lastName' => $sub['User']['lastName'],
 																	'userId' => $sub['User']['userId'],
 																	'packages' => array_merge((array)$emailsToSend[$sub['DealAlert']['userId']]['packages'], (array)$tmp));
+			}
 		}
 
 		$subs = $this->DealAlert->query("UPDATE dealAlert SET lastActionDate = '$date', lastAction = 'EMAIL'");
