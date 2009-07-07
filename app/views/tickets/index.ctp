@@ -324,7 +324,7 @@ foreach ($tickets as $ticket):
 		<td>
 			<?php echo $ticket['Ticket']['validCard']; ?>
 		</td>
-		<td <?php if (!empty($ticket['ResPreferDate']) && $ticket['ResPreferDate']['flagged'] == 1) { echo "style='background-color:#990000;color:#FFFFFF;font-weight:bold;";}?> >
+		<td <?php if (!empty($ticket['ResPreferDate']) && $ticket['ResPreferDate']['flagged'] == 1) { echo "style='background-color:#990000;color:#FFFFFF;font-weight:bold;'";}?> >
 			<?php if (!empty($ticket['ResPreferDate'])) : ?>
 			Check-in: <?php echo $ticket['ResPreferDate']['arrival']; ?><br />
 			Check-out: <?php echo $ticket['ResPreferDate']['departure']; ?>
