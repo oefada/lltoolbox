@@ -261,6 +261,7 @@ class TicketsController extends AppController {
 
 		$this->set('tickets', $tickets_index);
 		$this->set('format', $this->Format->find('list'));
+		$this->set('offerType', $this->OfferType->find('list'));
 		$this->set('ticketStatus', $this->Ticket->TicketStatus->find('list'));
 	}
 
