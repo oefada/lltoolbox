@@ -119,8 +119,15 @@ class DealAlertsController extends AppController {
 	
 	function mail($email, $firstName, $lastName, $userId, $package) {
 		$package['email'] = $email;
-		$package['firstName'] = $firstName;
-		$package['lastName'] = $lastName;
+
+		if (!$firstName && !$lastName) {
+			$package['firstName'] = $email;
+			$package['lastName'] = '';
+		} else {
+			$package['firstName'] = $firstName;
+			$package['lastName'] = $lastName;
+		}
+		
 		$package['userId'] = $userId;
 		// fetch template with the vars above
 		// -------------------------------------------------------------------------------
