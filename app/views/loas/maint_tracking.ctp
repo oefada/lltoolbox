@@ -29,7 +29,7 @@ $this->set('clientId', $this->data['Client']['clientId']);
 			<td style="text-align:center;"><?=$loa['Loa']['endDate'];?></td>
 			<td style="text-align:center;"><?php echo $number->currency($loa['Loa']['membershipFee']);?></td>
 			<td style="text-align:center;"><?php echo $number->currency($loa['Loa']['membershipBalance']);?></td>
-			<td style="text-align:center;"><?php echo $number->currency($loa['Loa']['loaValue']);?></td>
+			<td style="text-align:center;"><?php echo $number->currency($loa['Loa']['totalRevenue']);?></td>
 			<td style="text-align:center;"><?php echo $number->currency($loa['Loa']['totalKept']);?></td>
 			<td style="text-align:center;"><?php echo $number->currency($loa['Loa']['totalRemitted']);?></td>
 			<td style="text-align:center;"><?=$loa['Loa']['numEmailInclusions'];?></td>
