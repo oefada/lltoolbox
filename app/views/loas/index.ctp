@@ -16,7 +16,7 @@ $this->pageTitle = $client['Client']['name'].$html2->c($client['Client']['client
 	<th><?php echo $paginator->sort('Approval Status', 'customerApprovalStatusId');?></th>
 	<th><?php echo $paginator->sort('Start Date', 'startDate');?></th>
 	<th><?php echo $paginator->sort('End Date', 'endDate');?></th>
-	<th><?php echo $paginator->sort('Value', 'totalRevenue');?></th>
+	<th><?php echo $paginator->sort('Total Revenue', 'totalRevenue');?></th>
 	<th><?php echo $paginator->sort('Total Remitted', 'totalRemitted');?></th>
 	<th><?php echo $paginator->sort('# Packages', 'loaNumberPackages');?></th>
 	<th><?php echo $paginator->sort('Cash Paid', 'cashPaid');?></th>
