@@ -14,7 +14,7 @@ $this->set('clientId', $this->data['Client']['clientId']);
 			<th style="color:#FFF;">End Date</th>
 			<th style="color:#FFF;">Membership Fee</th>
 			<th style="color:#FFF;">Membership Balance</th>
-			<th style="color:#FFF;">Loa Value</th>
+			<th style="color:#FFF;">Total Revenue</th>
 			<th style="color:#FFF;">Total Kept</th>
 			<th style="color:#FFF;">Total Remitted</th>
 			<th style="color:#FFF;">Num. Email Inclusions</th>
