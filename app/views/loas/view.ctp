@@ -32,9 +32,9 @@ $html->addCrumb('LOA #'.$loa['Loa']['loaId']);
 		</td>
 		</tr>
 		<tr<?php if ($i++ % 2 == 0) echo $class;?>>
-		<td><?php __('LoaValue'); ?></td>
+		<td><?php __('totalRevenue'); ?></td>
 		<td>
-			<?php echo $number->currency($loa['Loa']['loaValue']); ?>
+			<?php echo $number->currency($loa['Loa']['totalRevenue']); ?>
 			&nbsp;
 		</td>
 		</tr>
