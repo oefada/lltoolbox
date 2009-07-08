@@ -954,10 +954,10 @@ class ReportsController extends AppController {
                         Loa.loaNumberPackages,
                         Loa.numberPackagesRemaining,
                         DATEDIFF(NOW(), Loa.startDate) as loaNumberOfDaysActive,
-                        ROUND( (Loa.loaValue / DATEDIFF(Loa.endDate, Loa.startDate)), 2) as dailyMembershipFee,
-                        ROUND( (Loa.loaValue - Loa.membershipBalance) / (Loa.loaValue / DATEDIFF(Loa.endDate, Loa.startDate)) ) as numDaysPaid,
-                        (Loa.startDate + INTERVAL ( (Loa.loaValue - Loa.membershipBalance) / (Loa.loaValue / DATEDIFF(Loa.endDate, Loa.startDate)) ) DAY) as paidThru,
-                        DATEDIFF(Loa.endDate, (Loa.startDate + INTERVAL ( (Loa.loaValue - Loa.membershipBalance) / (Loa.loaValue / DATEDIFF(Loa.endDate, Loa.startDate)) ) DAY)) as daysBehindSchedule,
+                        ROUND( (Loa.totalRevenue / DATEDIFF(Loa.endDate, Loa.startDate)), 2) as dailyMembershipFee,
+                        ROUND( (Loa.totalRevenue - Loa.membershipBalance) / (Loa.totalRevenue / DATEDIFF(Loa.endDate, Loa.startDate)) ) as numDaysPaid,
+                        (Loa.startDate + INTERVAL ( (Loa.totalRevenue - Loa.membershipBalance) / (Loa.totalRevenue / DATEDIFF(Loa.endDate, Loa.startDate)) ) DAY) as paidThru,
+                        DATEDIFF(Loa.endDate, (Loa.startDate + INTERVAL ( (Loa.totalRevenue - Loa.membershipBalance) / (Loa.totalRevenue / DATEDIFF(Loa.endDate, Loa.startDate)) ) DAY)) as daysBehindSchedule,
                         Client.managerUsername
                     FROM client as Client
                     INNER JOIN loa as Loa ON(Loa.clientId = Client.clientId AND Loa.inactive != 1)
