@@ -28,15 +28,14 @@ class DealAlertsController extends AppController {
 														Client.clientId,
 														oldProductId,
 														seoName,
-														OfferLive.offerId,
-														Client.locationDisplay,
-														OfferLive.startDate
+														Client.locationDisplay
 														FROM offerLive AS OfferLive 
 														INNER JOIN clientLoaPackageRel cl USING(packageId)
 														INNER JOIN client AS Client ON(Client.clientId = $clientId)
 														LEFT JOIN offerLive AS OfferLivePrev ON (OfferLivePrev.startDate <= ('{$sub['DealAlert']['lastActionDate']}' - INTERVAL 5 MINUTE) AND OfferLivePrev.packageId = OfferLive.packageId)
 														WHERE cl.clientId = $clientId
-														AND OfferLivePrev.offerId IS NULL AND OfferLive.startDate BETWEEN ('{$sub['DealAlert']['lastActionDate']}' - INTERVAL 5 MINUTE) AND '{$sub['DealAlert']['lastActionDate']}'");
+														AND OfferLivePrev.offerId IS NULL AND OfferLive.startDate BETWEEN ('{$sub['DealAlert']['lastActionDate']}' - INTERVAL 5 MINUTE) AND '{$sub['DealAlert']['lastActionDate']}'
+														GROUP BY OfferLive.packageId");
 
 				$tmp = array();
 				foreach ($tmpNew as $pkg) {
@@ -46,10 +45,8 @@ class DealAlertsController extends AppController {
 									'shortBlurb' => $pkg['OfferLive']['shortBlurb'],
 									'oldProductId' => $pkg['Client']['oldProductId'],
 									'seoName' => $pkg['Client']['seoName'],
-									'offerId' => $pkg['OfferLive']['offerId'],
 									'clientId' => $pkg['Client']['clientId'],
-									'locationDisplay' => $pkg['Client']['locationDisplay'],
-									'startDate' => $pkg['OfferLive']['startDate']);
+									'locationDisplay' => $pkg['Client']['locationDisplay']);
 				}
 								
 				$newPackages[$clientId] = $tmp;
@@ -75,15 +72,14 @@ class DealAlertsController extends AppController {
 													Client.clientId,
 													oldProductId,
 													seoName,
-													OfferLive.offerId,
-													Client.locationDisplay,
-													OfferLive.startDate
+													Client.locationDisplay
 														FROM offerLive AS OfferLive 
 														INNER JOIN clientLoaPackageRel cl USING(packageId)
 														INNER JOIN client AS Client ON(Client.clientId = $clientId)
 													LEFT JOIN offerLive AS OfferLivePrev ON (OfferLivePrev.startDate <= ('{$sub['DealAlert']['lastActionDate']}' - INTERVAL 5 MINUTE) AND OfferLivePrev.packageId = OfferLive.packageId)
 													WHERE cl.clientId = $clientId
-													AND OfferLivePrev.offerId IS NULL AND OfferLive.startDate BETWEEN ('{$sub['DealAlert']['lastActionDate']}' - INTERVAL 5 MINUTE) AND '{$sub['DealAlert']['lastActionDate']}'");
+													AND OfferLivePrev.offerId IS NULL AND OfferLive.startDate BETWEEN ('{$sub['DealAlert']['lastActionDate']}' - INTERVAL 5 MINUTE) AND '{$sub['DealAlert']['lastActionDate']}'
+													GROUP BY OfferLive.packageId");
 
 				$tmp = array();
 				foreach ($tmpNew as $pkg) {
@@ -93,7 +89,6 @@ class DealAlertsController extends AppController {
 									'shortBlurb' => $pkg['OfferLive']['shortBlurb'],
 									'oldProductId' => $pkg['Client']['oldProductId'],
 									'seoName' => $pkg['Client']['seoName'],
-									'offerId' => $pkg['OfferLive']['offerId'],
 									'clientId' => $pkg['Client']['clientId'],
 									'locationDisplay' => $pkg['CLient']['locationDisplay']);
 				}
