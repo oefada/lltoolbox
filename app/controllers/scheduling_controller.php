@@ -31,7 +31,7 @@ class SchedulingController extends AppController {
 		
 		$client = $this->Package->ClientLoaPackageRel->Client->find('first', array('contain' => array(), 'conditions' => array('Client.clientId' => $clientId)));
 		$currentLoaId = $client['Client']['currentLoaId'];
-		$currentLoa = $this->Package->ClientLoaPackageRel->Loa->find('first', array('contain' => array(), 'conditions' => array('Loa.loaId' => $currentLoaId), 'fields' => 'Loa.loaValue, Loa.membershipBalance, Loa.membershipBalance, Loa.startDate, Loa.endDate'));
+		$currentLoa = $this->Package->ClientLoaPackageRel->Loa->find('first', array('contain' => array(), 'conditions' => array('Loa.loaId' => $currentLoaId), 'fields' => 'Loa.totalRevenue, Loa.membershipBalance, Loa.membershipBalance, Loa.startDate, Loa.endDate'));
 
         $this->set('currentLoa', $currentLoa);
 		$this->set('loaEndDate', $currentLoa['Loa']['endDate']);
@@ -116,7 +116,7 @@ class SchedulingController extends AppController {
 	
 	function _setLoaBalanceFlag($clientId, $currentLoa) {
 	    $loaMembershipBalance = $currentLoa['membershipBalance'];
-	    $loaValue = $currentLoa['loaValue'];
+	    $totalRevenue = $currentLoa['totalRevenue'];
 	    
 	    /* Get all of the instances that have not gone live yet for this client */
 	    $totals = $this->Package->query("CALL getClientCurrentAndFutureInstances($clientId)");
