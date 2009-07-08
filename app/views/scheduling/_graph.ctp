@@ -20,7 +20,7 @@
 			$ts_startDate = strtotime($currentLoa['Loa']['startDate']);
 			$ts_endDate = strtotime($currentLoa['Loa']['endDate']);
 			$ts_today	  = time();
-			$balancePaid = $currentLoa['Loa']['loaValue'] - $currentLoa['Loa']['membershipBalance'];
+			$balancePaid = $currentLoa['Loa']['totalRevenue'] - $currentLoa['Loa']['membershipBalance'];
 			
 			$divisor = ($ts_endDate-$ts_startDate)/300;
 			$left = ($ts_today-$ts_startDate)/$divisor;
@@ -34,8 +34,8 @@
      </thead>
             <tbody>
 				<? 
-					if ($currentLoa['Loa']['loaValue'] > 0){
-						$width = ($balancePaid)/($currentLoa['Loa']['loaValue'])*300;
+					if ($currentLoa['Loa']['totalRevenue'] > 0){
+						$width = ($balancePaid)/($currentLoa['Loa']['totalRevenue'])*300;
 					} else {
 						$width = 0;
 					}
@@ -55,10 +55,10 @@
             <tr<?=$class?> id="budget-1">
             	<th>LOA Current Balance</th>
                 <td class="bar"><div class="bar" style="width: <?=$width?>px"><span><?='$'.$balancePaid?></span></div></td>
-                <td><?='$'.$currentLoa['Loa']['loaValue']?></td>
+                <td><?='$'.$currentLoa['Loa']['totalRevenue']?></td>
 				<td class="overbalance">
 				<? 
-				$amountOver = ($balancePaid-$currentLoa['Loa']['loaValue']);
+				$amountOver = ($balancePaid-$currentLoa['Loa']['totalRevenue']);
 				if ($amountOver > 0) {
 					echo '$'.$amountOver;
 				}
@@ -69,8 +69,8 @@
 				if (!isset($loaBalanceFlag['totalOpeningBidSum'])) {
 					$loaBalanceFlag['totalOpeningBidSum'] = 0;
 				}
-				if ($currentLoa['Loa']['loaValue'] > 0) {
-					$width = ($balancePaid+$loaBalanceFlag['totalOpeningBidSum'])/($currentLoa['Loa']['loaValue'])*300;
+				if ($currentLoa['Loa']['totalRevenue'] > 0) {
+					$width = ($balancePaid+$loaBalanceFlag['totalOpeningBidSum'])/($currentLoa['Loa']['totalRevenue'])*300;
 				} else {
 					$width = 0;
 				}
@@ -90,10 +90,10 @@
             <tr<?=$class?> id="budget-1">
             	<th>Projected Balance</th>
                 <td class="bar"><div class="bar" style="width: <?=$width?>px"><span <?if(!empty($loaBalanceFlag['class'])) echo 'style="display:none"'?>><?='$'.($balancePaid+$loaBalanceFlag['totalOpeningBidSum'])?></span></div></td>
-                <td><?='$'.$currentLoa['Loa']['loaValue']?></td>
+                <td><?='$'.$currentLoa['Loa']['totalRevenue']?></td>
 				<td class='<?php echo isset($loaBalanceFlag['class']) ? $loaBalanceFlag['class'] : "" ?>'>
 				<? 
-				$amountOver = ($balancePaid+$loaBalanceFlag['totalOpeningBidSum']-$currentLoa['Loa']['loaValue']);
+				$amountOver = ($balancePaid+$loaBalanceFlag['totalOpeningBidSum']-$currentLoa['Loa']['totalRevenue']);
 				if ($amountOver > 0) {
 					echo '$'.$amountOver;
 				}
