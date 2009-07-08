@@ -22,7 +22,7 @@
 	    </div>
 			<div style="color:#444444;font-size:12px;"><?=$package['locationDisplay']?></div><br /><br />
 			<div style="color:#444444;font-weight:bold;font-size:12px;"><?php echo $package['shortBlurb'];?></div><br /><br />
-			<div><a style="color:#336699;" href="http://www.luxurylink.com/portfolio/por_offer_redirect.php?oid=<?=$package['offerId'];?>"><strong>View Package</strong></a></div></td>
+			<div><a style="color:#336699;" href="http://www.luxurylink.com/portfolio/por_offer_redirect.php?clid=<?=$package['clientId']?>&pkid=<?=$package['packageId'];?>"><strong>View Package</strong></a></div></td>
 	</tr>
 </table>
 <? $footer_sig = 'If you do not want to receive these notifications in the future, please <a href="http://www.luxurylink.com/LL/deal_alert.php?unsub='.$package['userId'].'&clid='.$package['clientId'].'">unsubscribe</a>.' ?>
