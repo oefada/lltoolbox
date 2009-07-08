@@ -23,7 +23,7 @@ function confirmSubmit()
 		 				<th style="text-align:center;">Cash</th>
 		 				<th style="text-align:center;">Membership Fee</th>
 		 				<th style="text-align:center;">Membership Balance</th>
-		 				<th style="text-align:center;">Loa Value</th>
+		 				<th style="text-align:center;">Total Revenue</th>
 		 				<th style="text-align:center;">Total Kept</th>
 		 				<th style="text-align:center;">Total Remitted</th>
 		 				<th style="text-align:center;">Upgraded</th>
