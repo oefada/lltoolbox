@@ -192,7 +192,7 @@ class TrackDetail extends AppModel {
 		$applyToMembershipBal = ($track['expirationCriteriaId'] == 1) ? true : false;
 		if ($applyToMembershipBal) {
 			$loa['Loa']['modified']			  = date('Y-m-d H:i:s', strtotime('now'));
-			$loa['Loa']['loaValue']			 -= $allocated_amount;
+			$loa['Loa']['totalRevenue']			 -= $allocated_amount;
 			$loa['Loa']['totalKept']		 -= $trackDetail['TrackDetail']['amountKept'];
 			$loa['Loa']['totalRemitted']	 -= $trackDetail['TrackDetail']['amountRemitted'];
 			$loa['Loa']['membershipBalance'] += $trackDetail['TrackDetail']['amountKept'];
@@ -228,7 +228,7 @@ class TrackDetail extends AppModel {
 		$applyToMembershipBal = ($track['expirationCriteriaId'] == 1) ? true : false;
 		if ($applyToMembershipBal) {
 			$loa['Loa']['modified']			  = date('Y-m-d H:i:s', strtotime('now'));
-			$loa['Loa']['loaValue']			 += $allocated_amount;
+			$loa['Loa']['totalRevenue']			 += $allocated_amount;
 			$loa['Loa']['totalKept']		 += $this->data['TrackDetail']['amountKept'];
 			$loa['Loa']['totalRemitted']	 += $this->data['TrackDetail']['amountRemitted'];
 			$loa['Loa']['membershipBalance'] -= $this->data['TrackDetail']['amountKept'];
