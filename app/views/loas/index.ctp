@@ -16,7 +16,7 @@ $this->pageTitle = $client['Client']['name'].$html2->c($client['Client']['client
 	<th><?php echo $paginator->sort('Approval Status', 'customerApprovalStatusId');?></th>
 	<th><?php echo $paginator->sort('Start Date', 'startDate');?></th>
 	<th><?php echo $paginator->sort('End Date', 'endDate');?></th>
-	<th><?php echo $paginator->sort('Value', 'loaValue');?></th>
+	<th><?php echo $paginator->sort('Value', 'totalRevenue');?></th>
 	<th><?php echo $paginator->sort('Total Remitted', 'totalRemitted');?></th>
 	<th><?php echo $paginator->sort('# Packages', 'loaNumberPackages');?></th>
 	<th><?php echo $paginator->sort('Cash Paid', 'cashPaid');?></th>
@@ -37,7 +37,7 @@ foreach ($loas as $loa):
 		<td><?php echo $loa['LoaCustomerApprovalStatus']['customerApprovalStatusName'];?></td>
 		<td><?php echo $html2->date($loa['Loa']['startDate']);?></td>
 		<td><?php echo $html2->date($loa['Loa']['endDate']);?></td>
-		<td><?php echo $loa['Loa']['loaValue'];?></td>
+		<td><?php echo $loa['Loa']['totalRevenue'];?></td>
 		<td><?php echo $loa['Loa']['totalRemitted'];?></td>
 		<td><?php echo $loa['Loa']['loaNumberPackages'];?></td>
 		<td><?php echo $loa['Loa']['cashPaid'];?></td>
