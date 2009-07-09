@@ -25,9 +25,9 @@ class DealAlertsController extends AppController {
 														FROM offerLive AS OfferLive 
 														INNER JOIN clientLoaPackageRel cl USING(packageId)
 														INNER JOIN client AS Client ON(Client.clientId = $clientId)
-													LEFT JOIN offerLive AS OfferLivePrev ON (OfferLivePrev.startDate <= ('{$sub['DealAlert']['lastActionDate']}' - INTERVAL 5 MINUTE) AND OfferLivePrev.endDate >= ('{$sub['DealAlert']['lastActionDate']}' - INTERVAL 30 DAY) AND OfferLivePrev.endDate >= '{$sub['DealAlert']['subscribeDate']}' AND OfferLivePrev.packageId = OfferLive.packageId)
+													LEFT JOIN offerLive AS OfferLivePrev ON (OfferLivePrev.startDate <= ('{$sub['DealAlert']['lastActionDate']}' - INTERVAL 5 MINUTE) AND OfferLivePrev.endDate >= ('{$sub['DealAlert']['lastActionDate']}' - INTERVAL 30 DAY) AND OfferLivePrev.endDate >= '{$sub['DealAlert']['subscribeDate']}' AND OfferLivePrev.packageId = OfferLive.packageId AND OfferLivePrev.isMystery = 0)
 													WHERE cl.clientId = $clientId
-													AND OfferLivePrev.offerId IS NULL AND OfferLive.startDate BETWEEN ('{$sub['DealAlert']['lastActionDate']}' - INTERVAL 5 MINUTE) AND '{$sub['DealAlert']['lastActionDate']}'
+													AND OfferLivePrev.offerId IS NULL AND OfferLive.startDate BETWEEN ('{$sub['DealAlert']['lastActionDate']}' - INTERVAL 5 MINUTE) AND '{$sub['DealAlert']['lastActionDate']}' AND OfferLive.isMystery = 0
 													GROUP BY OfferLive.packageId");
 
 				$tmp = array();
