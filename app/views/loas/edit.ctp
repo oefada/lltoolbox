@@ -35,6 +35,8 @@ $this->set('clientId', $this->data['Client']['clientId']);
 		 ?>
 		<? echo $form->input('inactive');
 		 ?>
+		<? echo $form->input('guarantee');
+		 ?>
 	</div>
 	<?
 		echo $form->input('membershipTotalPackages');
