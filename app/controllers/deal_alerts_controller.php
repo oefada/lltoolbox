@@ -12,7 +12,7 @@ class DealAlertsController extends AppController {
 		$emailsToSend = array();
 		$this->autoRender = false;
 		
-		$subs = $this->DealAlert->query("SELECT DealAlert.*, User.email FROM dealAlert AS DealAlert
+		$subs = $this->DealAlert->query("SELECT DealAlert.*, User.email, User.userId FROM dealAlert AS DealAlert
 										INNER JOIN user AS User USING(userId)");		
 		foreach ($subs as $sub) {
 			$clientId = $sub['DealAlert']['clientId'];
