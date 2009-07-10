@@ -494,6 +494,12 @@ class Ticket extends AppModel {
 			
 			$sql = "CALL insertQueueMessage('$toUser', '$title', '$description', '$model', $modelId, 3)";
 			$this->query($sql);
+
+			// send one to Christine Young also for membership
+			if ($type == 'LOA_BALANCE') {
+				$sql = "CALL insertQueueMessage('cyoung', '$title', '$description', '$model', $modelId, 3)";
+				$this->query($sql);
+			}
 		}
 	}
 }
