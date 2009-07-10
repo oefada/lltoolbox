@@ -59,6 +59,17 @@ class LoasController extends AppController {
 		
 	}
 
+	function items($id = null) {
+		if (!$id && empty($this->data)) {
+			$this->Session->setFlash(__('Invalid Loa', true));
+			$this->redirect(array('action'=>'index'));
+		}
+		$this->Loa->recursive = 2;
+		$this->data = $this->Loa->read(null, $id);
+		$this->set('client', $this->Loa->Client->findByClientId($this->data['Loa']['clientId']));
+		$this->set('currencyCodes', $this->Loa->Currency->find('list', array('fields' => array('currencyCode'))));
+	}
+
 	function edit($id = null) {
 		if (!$id && empty($this->data)) {
 			$this->Session->setFlash(__('Invalid Loa', true));
