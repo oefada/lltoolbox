@@ -8,6 +8,7 @@
 	<th>Promotion Code</th>
 	<th>Percent Off</th>
 	<th>Dollar Off</th>
+	<th>Minimum <br/>Purchase Amount</th>
    	<th>Start Date</th>
    	<th>End Date</th>
    	<th># of Codes</th>
@@ -37,6 +38,9 @@ foreach ($promos as $promo):
 		</td>
 		<td>
 			<?php echo $promo['Promo']['amountOff']; ?>
+		</td>
+		<td>
+			<?php echo $promo['Promo']['minPurchaseAmount']; ?>
 		</td>
 		<td>
 			<?php echo $promo['Promo']['startDate']; ?>
