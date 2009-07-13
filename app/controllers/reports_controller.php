@@ -1384,6 +1384,8 @@ class ReportsController extends AppController {
 							Loa2.startDate,
 							Loa.loaLevelId,
 							Loa.membershipBalance,
+							Loa.membershipFee,
+							Loa.totalRemitted,
 							IF(Loa.totalKept = 0 OR Loa.totalKept IS NULL, 'N/A',ROUND(-Loa.membershipBalance / (Loa.totalKept / (DATEDIFF(Loa.startDate,NOW()))))) as daysUntilKeepEnd
 	                    FROM loa AS Loa
 	                    INNER JOIN client AS Client ON (Client.clientId = Loa.clientId AND curdate() BETWEEN Loa.startDate AND Loa.endDate AND Loa.inactive <> 1)

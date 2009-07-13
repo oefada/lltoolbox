@@ -177,13 +177,15 @@ td.error div{
 	    <th class="blackBg dateRow" style="text-align: center"><a href="11" id="sort11">Renewed<br />(LOA Start)</a></td>
 	    <th class="blackBg" style="text-align: center"><a href="12" id="sort12">LOA Type</a></td>
 	    <th class="blackBg" style="text-align: center"><a href="13" id="sort13">LOA Bal</a></td>
-	    <th class="blackBg" style="text-align: center"><a href="14" id="sort14">Days until keep ends</a></td>
-	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="15" id="sort15">Web</a></td>
-	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="16" id="sort16">Phone</a></td>
-	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="17" id="sort17">Portfolio</a></td>
-	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="18" id="sort18">Search</a></td>
-	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="19" id="sort19">Email</a></td>
-	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="20" id="sort20">Home/Dest</a></td>
+		<th class="blackBg" style="text-align: center"><a href="14" id="sort14">Membership Fee</a></td>
+		<th class="blackBg" style="text-align: center"><a href="15" id="sort15">Total Remitted</a></td>
+	    <th class="blackBg" style="text-align: center"><a href="16" id="sort16">Days until keep ends</a></td>
+	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="17" id="sort17">Web</a></td>
+	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="18" id="sort18">Phone</a></td>
+	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="19" id="sort19">Portfolio</a></td>
+	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="20" id="sort20">Search</a></td>
+	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="21" id="sort21">Email</a></td>
+	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="22" id="sort22">Home/Dest</a></td>
 	  </tr>
 	</thead>
 	<tbody>
@@ -217,6 +219,8 @@ td.error div{
 		?>
 	    <td><a href="/reports/cmr/filter:<?=$url?>"><?=($row['Loa']['loaLevelId'] == 2) ? 'Sponsorship' : 'Wholesale' ;?></a></td>
 	    <td><?=(int)$row['Loa']['membershipBalance']?></td>
+		<td><?=(int)$row['Loa']['membershipFee']?></td>
+		<td><?=(int)$row['Loa']['totalRemitted']?></td>
 	    <td <?if((int)$row[0]['daysUntilKeepEnd'] < 30) echo " class='error'"?>><div><?=(int)$row[0]['daysUntilKeepEnd']?></div></td>
 	    <td <?if(@$row['Referrals']['webRefer'] < 100) echo " class='error'"?>><div><?=$html->link((int)@$row['Referrals']['webRefer'], '/reports/car/clientId:'.$row['Client']['clientId'])?></div></td>
 	    <td <?if(@$row['Referrals']['phone'] < 20) echo " class='error'"?>><div><?=(int)@$row['Referrals']['phone']?></div></td>
