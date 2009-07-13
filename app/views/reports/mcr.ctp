@@ -107,7 +107,7 @@ td.error div{
 	</fieldset>
 	
 	<fieldset>
-	<div class="fieldRow controlset" style="padding-left: 135px">
+	<div class="fieldRow controlset3 clearfix">
 		<?php 		
 					echo $form->hidden('condition4.field', array('value' => 'Loa.loaLevelId'));
 					if (@$this->data['condition4']['value'] == 2) {
@@ -115,8 +115,10 @@ td.error div{
 					} else {
 						$checked = '';
 					}
-					echo '<input type="checkbox" name="data[condition4][value]" value="2"'.$checked.'>';
-					echo $form->label('hideWholesale');?>
+					echo '<div style="padding-left: 135px;">';
+					echo '<div class="checkbox"><input type="checkbox" name="data[condition4][value]" value="2"'.$checked.'></div>';
+					echo $form->label('hideWholesale');
+					echo '</div>';?>
 		<?php 		
 					echo $form->hidden('condition5.field', array('value' => 'Loa.guarantee'));
 					if (@$this->data['condition5']['value'] == 1) {
@@ -124,8 +126,10 @@ td.error div{
 					} else {
 						$checked = '';
 					}
-					echo '<input type="checkbox" name="data[condition5][value]" value="1"'.$checked.'>';
-					echo $form->label('Money back guarantee');?>
+					echo '<div style="padding-left: 135px;">';
+					echo '<div class="checkbox"><input type="checkbox" name="data[condition5][value]" value="1"'.$checked.'></div>';
+					echo '<label for="data[condition5][value]">Money Back Guarantee</label>';
+					echo '</div>';?>
 	</div>
 	
 	
