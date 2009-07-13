@@ -214,7 +214,7 @@ td.error div{
 	    <td><?=(int)$row['totalSold']?></td>
 	    <td><?=(int)$row['totalRevenue']?></td>
 	    <td><?=(int)$row['auctionsLiveToday']?></td>
-	    <td><?=(int)$row['auctionCloseRate']?></td>4
+	    <td><?=(int)$row['auctionCloseRate']?></td>
 	    <td><?=(int)$row['fpLiveToday']?></td>
 	    <td><?=(int)$row['fpRequests']?></td>
 		<? if ($k == count($clients) - 1) echo "</div>"?>
