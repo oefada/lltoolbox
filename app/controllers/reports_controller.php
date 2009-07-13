@@ -2149,6 +2149,69 @@ class ReportsController extends AppController {
 		$this->set('clientsNoPackages', $clientsNoPackages);
 	#### END Inventory Management ####
 	}
+	
+	function weekly_scorecard() {
+		$rows = $this->OfferType->query("select 
+			weeknumber as col1, weekbeginsunday as col2, 
+			auctionrevenuepotential as col3, auctionRevenuePotentialYoY as col4,
+			auctionslisted as col5, auctionslistedyoy as col6,
+			conversionrate as col7, conversionrateyoy as col8,
+			successfulauctions as col9, successfulauctionsyoy as col10,
+			auctionticketspotential as col11, auctionticketspotentialyoy as col12,
+			auctionrevenuecollected as col13, auctionrevenuecollectedyoy as col14,
+			percentretailcollected as col15, percentretailcollectedyoy as col16,
+			collectionrate as col17, collectionrateyoy as col18,
+			auctionticketscollected as col19, auctionticketscollectedyoy as col20,
+			avgsalepricecollected as col21, avgsalepricecollectedyoy as col22
+		from reporting.weeklyScorecardAuctions WHERE year = DATE_FORMAT(CURDATE(), '%Y')
+		group by weeknumber, year
+		order by year desc, weeknumber asc;");
+
+		$this->set('rows', $rows);
+		
+		if (isset($this->params['named']['cron'])) {
+			$this->autoRender = false;
+			$this->layout = '';
+			$this->render();
+			$attachment = chunk_split(base64_encode($this->output));
+			
+			$to = 'vgarcia@luxurylink.com, mchoe@luxurylink.com';
+			$subject = 'Weekly Scorecard Report';
+			$semi_rand = md5( time() );
+
+			$mime_boundary = "==Multipart_Boundary_x{$semi_rand}x";
+
+		    $headers = "From: <no-reply@toolbox.luxurylink.com>\n";
+		    $headers .= "MIME-Version: 1.0\n";
+		    $headers .= "Content-Type: multipart/related; type=\"multipart/alternative\"; boundary=\"----=MIME_BOUNDRY_main_message\"\n"; 
+		    $headers .= "This is a multi-part message in MIME format.\n";
+		    $headers .= "------=MIME_BOUNDRY_main_message \n"; 
+		    $headers .= "Content-Type: multipart/alternative; boundary=\"----=MIME_BOUNDRY_message_parts\"\n"; 
+
+		    $message = "------=MIME_BOUNDRY_message_parts\n";
+		    $message .= "Content-Type: text/plain; charset=\"iso-8859-1\"\n"; 
+		    $message .= "Content-Transfer-Encoding: quoted-printable\n"; 
+		    $message .= "\n"; 
+		    /* Add our message, in this case it's plain text.  You could also add HTML by changing the Content-Type to text/html */
+		    $message .= "Weekly scorecard report enclosed\n";
+		    $message .= "\n"; 
+		    $message .= "------=MIME_BOUNDRY_message_parts--\n"; 
+		    $message .= "\n"; 
+		    $message .= "------=MIME_BOUNDRY_main_message\n"; 
+		    $message .= "Content-Type: application/octet-stream;\n\tname=\"weekly_scorecard.xls\"\n";
+		    $message .= "Content-Transfer-Encoding: base64\n";
+		    $message .= "Content-Disposition: attachment;\n\tfilename=\"weekly_scorecard.xls\"\n\n";
+		    $message .= $attachment; //The base64 encoded message
+		    $message .= "\n"; 
+		    $message .= "------=MIME_BOUNDRY_main_message--\n"; 
+
+			//send the email
+			$mail_sent = @mail( $to, $subject, $message, $headers );
+			//if the message is sent successfully print "Mail sent". Otherwise print "Mail failed"
+			echo $mail_sent ? "Mail sent" : "Mail failed";
+			$this->output = '';
+		}
+	}
 
 	//TODO: A lot of duplication of code, use this method as a template for all the others and cut down on the number of times the following code is repeated
 	function _build_conditions($data) {
