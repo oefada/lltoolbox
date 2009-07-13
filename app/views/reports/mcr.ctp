@@ -161,7 +161,7 @@ td.error div{
 				<?php echo $form->end(); ?>
 			</div>
 		</td>
-	    <th colspan="5" class="blackBg" style="text-align: center">LOA Information</td>
+	    <th colspan="7" class="blackBg" style="text-align: center">LOA Information</td>
 	    <th colspan="6" class="darkBlackBg rowBorderWhite" style="border-top: 1px solid #000; text-align: center">Referrals/Impressions (<?=date('M y', strtotime($latestReferralDate))?>)</td>
 	  </tr>
 	  <tr>
@@ -176,8 +176,8 @@ td.error div{
 	    <th class="blackBg dateRow" style="text-align: center"><a href="10" id="sort10">Exp. Date</a></td>
 	    <th class="blackBg dateRow" style="text-align: center"><a href="11" id="sort11">Renewed<br />(LOA Start)</a></td>
 	    <th class="blackBg" style="text-align: center"><a href="12" id="sort12">LOA Type</a></td>
-	    <th class="blackBg" style="text-align: center"><a href="13" id="sort13">LOA Bal</a></td>
-		<th class="blackBg" style="text-align: center"><a href="14" id="sort14">Membership Fee</a></td>
+	    <th class="blackBg" style="text-align: center"><a href="13" id="sort13">Membership Fee</a></td>
+		<th class="blackBg" style="text-align: center"><a href="14" id="sort14">LOA Bal</a></td>
 		<th class="blackBg" style="text-align: center"><a href="15" id="sort15">Total Remitted</a></td>
 	    <th class="blackBg" style="text-align: center"><a href="16" id="sort16">Days until keep ends</a></td>
 	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="17" id="sort17">Web</a></td>
@@ -218,8 +218,8 @@ td.error div{
 		$url = urlencode(serialize($data));	
 		?>
 	    <td><a href="/reports/cmr/filter:<?=$url?>"><?=($row['Loa']['loaLevelId'] == 2) ? 'Sponsorship' : 'Wholesale' ;?></a></td>
-	    <td><?=(int)$row['Loa']['membershipBalance']?></td>
-		<td><?=(int)$row['Loa']['membershipFee']?></td>
+	    <td><?=(int)$row['Loa']['membershipFee']?></td>
+		<td><?=(int)$row['Loa']['membershipBalance']?></td>
 		<td><?=(int)$row['Loa']['totalRemitted']?></td>
 	    <td <?if((int)$row[0]['daysUntilKeepEnd'] < 30) echo " class='error'"?>><div><?=(int)$row[0]['daysUntilKeepEnd']?></div></td>
 	    <td <?if(@$row['Referrals']['webRefer'] < 100) echo " class='error'"?>><div><?=$html->link((int)@$row['Referrals']['webRefer'], '/reports/car/clientId:'.$row['Client']['clientId'])?></div></td>
