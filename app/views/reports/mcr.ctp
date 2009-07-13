@@ -120,7 +120,7 @@ td.error div{
 					echo $form->label('hideWholesale');
 					echo '</div>';?>
 		<?php 		
-					echo $form->hidden('condition5.field', array('value' => 'Loa.guarantee'));
+					echo $form->hidden('condition5.field', array('value' => 'Loa.moneyBackGuarantee'));
 					if (@$this->data['condition5']['value'] == 1) {
 						$checked = ' checked="checked"';
 					} else {
