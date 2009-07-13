@@ -35,7 +35,7 @@ $this->set('clientId', $this->data['Client']['clientId']);
 		 ?>
 		<? echo $form->input('inactive');
 		 ?>
-		<? echo $form->input('guarantee', array('label' => 'Money Back Guarantee'));
+		<? echo $form->input('moneyBackGuarantee', array('label' => 'Money Back Guarantee'));
 		 ?>
 	</div>
 	<?
