@@ -117,6 +117,15 @@ td.error div{
 					}
 					echo '<input type="checkbox" name="data[condition4][value]" value="2"'.$checked.'>';
 					echo $form->label('hideWholesale');?>
+		<?php 		
+					echo $form->hidden('condition5.field', array('value' => 'Loa.guarantee'));
+					if (@$this->data['condition5']['value'] == 1) {
+						$checked = ' checked="checked"';
+					} else {
+						$checked = '';
+					}
+					echo '<input type="checkbox" name="data[condition5][value]" value="1"'.$checked.'>';
+					echo $form->label('Money back guarantee');?>
 	</div>
 	
 	
@@ -205,7 +214,7 @@ td.error div{
 	    <td><?=(int)$row['totalSold']?></td>
 	    <td><?=(int)$row['totalRevenue']?></td>
 	    <td><?=(int)$row['auctionsLiveToday']?></td>
-	    <td><?=(int)$row['auctionCloseRate']?></td>
+	    <td><?=(int)$row['auctionCloseRate']?></td>4
 	    <td><?=(int)$row['fpLiveToday']?></td>
 	    <td><?=(int)$row['fpRequests']?></td>
 		<? if ($k == count($clients) - 1) echo "</div>"?>
