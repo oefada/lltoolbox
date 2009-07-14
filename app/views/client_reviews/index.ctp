@@ -54,7 +54,6 @@ foreach ($clientReviews as $clientReview):
 		<td class="actions">
 			<?php echo $html->link(__('View', true), array('action'=>'view', $clientReview['ClientReview']['clientReviewId'])); ?>
 			<?php echo $html->link(__('Edit', true), array('action'=>'edit', $clientReview['ClientReview']['clientReviewId'])); ?>
-			<?php echo $html->link(__('Delete', true), array('action'=>'delete', $clientReview['ClientReview']['clientReviewId']), null, sprintf(__('Are you sure you want to delete # %s?', true), $clientReview['ClientReview']['clientReviewId'])); ?>
 		</td>
 	</tr>
 <?php endforeach; ?>
@@ -68,9 +67,5 @@ foreach ($clientReviews as $clientReview):
 <div class="actions">
 	<ul>
 		<li><?php echo $html->link(__('New ClientReview', true), array('action'=>'add')); ?></li>
-		<li><?php echo $html->link(__('List Clients', true), array('controller'=> 'clients', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Client', true), array('controller'=> 'clients', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Users', true), array('controller'=> 'users', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New User', true), array('controller'=> 'users', 'action'=>'add')); ?> </li>
 	</ul>
 </div>
