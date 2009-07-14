@@ -8,8 +8,8 @@
 		echo $form->input('reviewTitle');
 		echo $form->input('reviewBody');
 		echo $form->input('datetime');
-		echo $form->input('status');
-		echo $form->input('inactive');
+		echo $form->input('status', array('value' => 'approved'));
+		echo '<div class="controlset">'.$form->input('inactive')."</div>";
 	?>
 	</fieldset>
 <?php echo $form->end('Submit');?>
