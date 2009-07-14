@@ -6,6 +6,7 @@ class ClientReviewsController extends AppController {
 
 	function index() {
 		$this->ClientReview->recursive = 0;
+		$this->paginate['order'] = 'ClientReview.datetime DESC';
 		$this->set('clientReviews', $this->paginate());
 	}
 
