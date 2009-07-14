@@ -725,7 +725,7 @@ class ReportsController extends AppController {
                                 ORDER BY Loa.startDate ASC, Loa.membershipBalance DESC";
 
 	        $results['121 to 180'] = $this->OfferType->query($sql);
-            $results = array_reverse($results);
+            
 
 			$sql = "SELECT Client.clientId, Client.name,
             	                        Loa.loaId,
@@ -735,14 +735,14 @@ class ReportsController extends AppController {
             	                        DATEDIFF(NOW(), Loa.startDate) as age
                                 FROM client AS Client
                                 INNER JOIN loa AS Loa ON (Loa.clientId = Client.clientId)
-            					WHERE Loa.startDate >= DATE_ADD(NOW(), INTERVAL -181 DAY)
+            					WHERE Loa.startDate <= DATE_ADD(NOW(), INTERVAL - 181 DAY)
             					    AND Loa.membershipBalance > 0
                                 GROUP BY Client.clientId, Loa.loaId
                                 ORDER BY Loa.startDate ASC, Loa.membershipBalance DESC";
-			
-			$results = array_reverse($results);
 	        
-			$results['180+'] = $this->OfferType->query($sql);
+			$results['180 plus'] = $this->OfferType->query($sql);
+
+			$results = array_reverse($results);
             
 	        $this->set('results', $results);
 	}
