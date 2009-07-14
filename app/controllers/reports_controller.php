@@ -659,12 +659,12 @@ class ReportsController extends AppController {
             	                        DATEDIFF(NOW(), Loa.startDate) as age
                                 FROM client AS Client
                                 INNER JOIN loa AS Loa ON (Loa.clientId = Client.clientId)
-            					WHERE Loa.startDate BETWEEN DATE_ADD(NOW(), INTERVAL -91 DAY) AND NOW()
+            					WHERE Loa.startDate BETWEEN DATE_ADD(NOW(), INTERVAL -31 DAY) AND NOW()
             					        AND Loa.membershipBalance > 0
                                 GROUP BY Client.clientId, Loa.loaId
                                 ORDER BY Loa.startDate ASC, Loa.membershipBalance DESC";
 
-	        $results['0 to 90'] = $this->OfferType->query($sql);
+	        $results['0 to 30'] = $this->OfferType->query($sql);
 	        
 	        $sql = "SELECT Client.clientId, Client.name,
             	                        Loa.loaId,
@@ -674,12 +674,12 @@ class ReportsController extends AppController {
             	                        DATEDIFF(NOW(), Loa.startDate) as age
                                 FROM client AS Client
                                 INNER JOIN loa AS Loa ON (Loa.clientId = Client.clientId)
-            					WHERE Loa.startDate BETWEEN DATE_ADD(NOW(), INTERVAL -181 DAY) AND DATE_ADD(NOW(), INTERVAL -91 DAY)
+            					WHERE Loa.startDate BETWEEN DATE_ADD(NOW(), INTERVAL -61 DAY) AND DATE_ADD(NOW(), INTERVAL -31 DAY)
             					    AND Loa.membershipBalance > 0
                                 GROUP BY Client.clientId, Loa.loaId
                                 ORDER BY Loa.startDate ASC, Loa.membershipBalance DESC";
 
-	        $results['91 to 180'] = $this->OfferType->query($sql);
+	        $results['31 to 60'] = $this->OfferType->query($sql);
 	        
 	        $sql = "SELECT Client.clientId, Client.name,
             	                        Loa.loaId,
@@ -689,12 +689,12 @@ class ReportsController extends AppController {
             	                        DATEDIFF(NOW(), Loa.startDate) as age
                                 FROM client AS Client
                                 INNER JOIN loa AS Loa ON (Loa.clientId = Client.clientId)
-            					WHERE Loa.startDate BETWEEN DATE_ADD(NOW(), INTERVAL -271 DAY) AND DATE_ADD(NOW(), INTERVAL -181 DAY)
+            					WHERE Loa.startDate BETWEEN DATE_ADD(NOW(), INTERVAL -91 DAY) AND DATE_ADD(NOW(), INTERVAL -61 DAY)
             					    AND Loa.membershipBalance > 0
                                 GROUP BY Client.clientId, Loa.loaId
                                 ORDER BY Loa.startDate ASC, Loa.membershipBalance DESC";
 
-	        $results['181 to 270'] = $this->OfferType->query($sql);
+	        $results['61 to 90'] = $this->OfferType->query($sql);
 	        
 	        $sql = "SELECT Client.clientId, Client.name,
             	                        Loa.loaId,
@@ -704,13 +704,46 @@ class ReportsController extends AppController {
             	                        DATEDIFF(NOW(), Loa.startDate) as age
                                 FROM client AS Client
                                 INNER JOIN loa AS Loa ON (Loa.clientId = Client.clientId)
-            					WHERE Loa.startDate BETWEEN DATE_ADD(NOW(), INTERVAL -1 YEAR) AND DATE_ADD(NOW(), INTERVAL -271 DAY)
+            					WHERE Loa.startDate BETWEEN DATE_ADD(NOW(), INTERVAL -121 DAY) AND DATE_ADD(NOW(), INTERVAL -91 DAY)
             					    AND Loa.membershipBalance > 0
                                 GROUP BY Client.clientId, Loa.loaId
                                 ORDER BY Loa.startDate ASC, Loa.membershipBalance DESC";
 
-	        $results['271 to 365'] = $this->OfferType->query($sql);
+	        $results['91 to 120'] = $this->OfferType->query($sql);
+	
+			$sql = "SELECT Client.clientId, Client.name,
+            	                        Loa.loaId,
+            	                        Loa.startDate,
+            	                        MAX(Loa.endDate) AS loaEndDate,
+            	                        Loa.membershipFee, Loa.membershipBalance, Loa.notes,
+            	                        DATEDIFF(NOW(), Loa.startDate) as age
+                                FROM client AS Client
+                                INNER JOIN loa AS Loa ON (Loa.clientId = Client.clientId)
+            					WHERE Loa.startDate BETWEEN DATE_ADD(NOW(), INTERVAL -181 DAY) AND DATE_ADD(NOW(), INTERVAL -121 DAY)
+            					    AND Loa.membershipBalance > 0
+                                GROUP BY Client.clientId, Loa.loaId
+                                ORDER BY Loa.startDate ASC, Loa.membershipBalance DESC";
+
+	        $results['121 to 180'] = $this->OfferType->query($sql);
             $results = array_reverse($results);
+
+			$sql = "SELECT Client.clientId, Client.name,
+            	                        Loa.loaId,
+            	                        Loa.startDate,
+            	                        MAX(Loa.endDate) AS loaEndDate,
+            	                        Loa.membershipFee, Loa.membershipBalance, Loa.notes,
+            	                        DATEDIFF(NOW(), Loa.startDate) as age
+                                FROM client AS Client
+                                INNER JOIN loa AS Loa ON (Loa.clientId = Client.clientId)
+            					WHERE Loa.startDate >= DATE_ADD(NOW(), INTERVAL -181 DAY)
+            					    AND Loa.membershipBalance > 0
+                                GROUP BY Client.clientId, Loa.loaId
+                                ORDER BY Loa.startDate ASC, Loa.membershipBalance DESC";
+			
+			$results = array_reverse($results);
+	        
+			$results['180+'] = $this->OfferType->query($sql);
+            
 	        $this->set('results', $results);
 	}
 	

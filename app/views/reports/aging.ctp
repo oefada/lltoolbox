@@ -74,6 +74,9 @@ function sortLink($field, $title, $view, $html) {
 if (!empty($results)): 
 $i = 1;
 $j = 1;
+
+$grandTotalMembershipFee = 0;
+$grandTotalMembershipBalance = 0;
 ?>
 <?php foreach($results as $periodName => $timeperiod): ?>
 	<a name="section-<?=$j?>"></a>
@@ -94,15 +97,20 @@ $j = 1;
 			<th><?=sortLink('city', 'Remaining Balance', $this, $html)?></th>
 			<th><?=sortLink('Loa.notes', 'Notes', $this, $html)?></th>
 		</tr>
-<?php foreach ($timeperiod as $k => $r):
+<?php
+$subtotalMembershipFee = 0;
+$subtotalMembershipBalance = 0;
+foreach ($timeperiod as $k => $r):
 $class = ($k % 2) ? ' class="altrow"' : '';
+$subtotalMembershipFee += (int)$r['Loa']['membershipFee'];
+$subtotalMembershipBalance += (int)$r['Loa']['membershipBalance'];
 ?>
 	<tr<?=$class?>>
 		<td><?=$i++?></td>
 		<td><?=$r[0]['age']?></td>
 		<td><?=$r['Client']['clientId']?></td>
 		<td><?=$r['Client']['name']?></td>
-		<td><?=$r['Loa']['loaId']?></td>
+		<td><?=$html->link($r['Loa']['loaId'], '/loas/edit/'.$r['Loa']['loaId'])?></td>
 		<td><?=$r['Loa']['startDate']?></td>
 		<td><?=$r[0]['loaEndDate']?></td>
 		<td><?=$r['Loa']['membershipFee']?></td>
@@ -115,11 +123,36 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 		</td>
 	</tr>
 <?php endforeach; //TODO: add totals ?>
+	<tr class="blackBg">
+		<th colspan=7 style="text-align: right">Subtotals:</th>
+		<th><?=$subtotalMembershipFee?></th>
+		<th><?=$subtotalMembershipBalance?></th>
+		<th>
+			&nbsp;
+		</th>
+	</tr>
+	
+<?php if($periodName != '180+'): ?>
 </table>
+<?php endif;?>
 <?php 
 $j++;
-endforeach; //end periods?>
-
+$grandTotalMembershipFee += $subtotalMembershipFee;
+$grandTotalMembershipBalance += $subtotalMembershipBalance;
+endforeach; //end periods
+?>
+	<tr>
+		<th colspan=10>&nbsp;</th>
+	</tr>
+	<tr class="blackBg">
+		<th colspan=7 style="text-align: right">Grand Total:</th>
+		<th><?=$grandTotalMembershipFee?></th>
+		<th><?=$grandTotalMembershipBalance?></th>
+		<th>
+			&nbsp;
+		</th>
+	</tr>
+</table>
 <?php else: ?>
 	<div class='blankExample'>
 		<h1>No results found</h1>
