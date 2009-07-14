@@ -83,7 +83,13 @@ $grandTotalMembershipBalance = 0;
 	<div style="float: right">
 	<?= $html->link('<span><b class="icon"></b>Export Report</span>', array('action'=>'aging.csv'), array('class' => 'button excel'), null, false); ?>
 	</div>
-	<div><h2>Accounts aged <?=$periodName?> days</h2><?=count($timeperiod)?> records found</div>
+	<div><h2>Accounts aged <?=$periodName?> days</h2>
+		<?php if ($showingOld) { ?>
+			<a href="/reports/aging#section-<?=$j?>">Hide LOAs that expired more than 30 days ago</a>
+		<?php } else { ?>
+			<a href="/reports/aging?showOld=1#section-<?=$j?>">Show LOAs that expired more than 30 days ago</a>
+		<?php }?><br />
+	<?=count($timeperiod)?> records found</div>
 	<table style="margin-top: 20px">
 		<tr>
 			<th>&nbsp;</th>
