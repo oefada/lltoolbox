@@ -6,5 +6,7 @@ class Contest extends AppModel {
 	var $primaryKey = 'contestId';
 	var $displayField = 'contestName';
 
+	var $hasMany = array('ContestClientRel' => array('foreignKey' => 'contestId'));
+
 }
 ?>
