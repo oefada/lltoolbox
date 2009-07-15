@@ -69,7 +69,7 @@ class SchedulingController extends AppController {
 	    $this->Package->SchedulingMaster->Behaviors->attach('Containable');
 	    foreach ($packages as $k => $package) {
 	        $packages[$k]['Package']['masterList'] = $this->Package->SchedulingMaster->find('all', array('conditions' => array('SchedulingMaster.packageId' => $package['Package']['packageId']),
-	                                                                                        'fields' => array('SchedulingMaster.schedulingMasterId', 'SchedulingMaster.startDate', 'OfferType.offerTypeName'),
+	                                                                                        'fields' => array('SchedulingMaster.schedulingMasterId', 'SchedulingMaster.startDate', 'SchedulingMaster.endDate', 'OfferType.offerTypeName'),
 	                                                                                        'contain' => array('OfferType')
 	                                                                                        ));
 	    }
