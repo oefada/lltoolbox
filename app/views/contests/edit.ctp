@@ -6,6 +6,7 @@
 		echo $form->input('contestId');
 		echo $form->input('contestName');
 		echo $form->input('descriptionText');
+		echo $form->input('clientIds', array('label' => 'Associated ClientIds<br/>(comma delimited)', 'value' => $clientIds));
 		//echo $form->input('url');
 		echo $form->input('startDate');
 		echo $form->input('endDate');

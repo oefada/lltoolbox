@@ -48,7 +48,6 @@ foreach ($contests as $contest):
 			<?php echo $contest['Contest']['inactive']; ?>
 		</td>
 		<td class="actions">
-			<?php echo $html->link(__('View', true), array('action'=>'view', $contest['Contest']['contestId'])); ?>
 			<?php echo $html->link(__('Edit', true), array('action'=>'edit', $contest['Contest']['contestId'])); ?>
 		</td>
 	</tr>
