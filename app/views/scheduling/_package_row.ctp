@@ -8,12 +8,14 @@
 	<div class='scheduleThisPackage'>
 		<span class="masterListTarget" id="masterListTarget<?=$package['Package']['packageId']?>"><a href="javascript: void(0);" style="color: #fff"><?= count($package['Package']['masterList']) ?> Masters</a></span>
 		<div class="masterList" id="masterList<?=$package['Package']['packageId']?>" style="display: none">
+		<ul>
 		<?php foreach($package['Package']['masterList'] as $m):
 			$offerTypeName = $m['OfferType']['offerTypeName'];
 			$m = $m['SchedulingMaster'];
 		?>
-			<a href="javascript: void(0);" onclick="Modalbox.show('/scheduling_masters/edit/<?=$m['schedulingMasterId']?>', {title: 'Edit Scheduling Master'});"><?=$offerTypeName?> #<?=$m['schedulingMasterId']?>: <?=date('M d, Y', strtotime($m['startDate']))?></a><br />
-		<?php endforeach; ?>	
+			<li style="margin-bottom:5px;"><b><?=$offerTypeName?></b><br/><a href="javascript: void(0);" onclick="Modalbox.show('/scheduling_masters/edit/<?=$m['schedulingMasterId']?>', {title: 'Edit Scheduling Master'});">Master Id #<?=$m['schedulingMasterId']?><br/><?=date('M d, Y', strtotime($m['startDate']))?> - <?=date('M d, Y', strtotime($m['endDate']))?></a></li>
+		<?php endforeach; ?>
+		</ul>	
 		</div>
 		<strong>Schedule This Package</strong> - Start Date
 		<input type="hidden" class="format-y-m-d divider-dash range-low-today fill-grid-no-select opacity-99" id="dp-package-<?=$package['Package']['packageId']?>" name="dp-normal-<?=$package['Package']['packageId']?>" value="<?=$year.'-'.$month.'-01'?>" maxlength="10"/>
