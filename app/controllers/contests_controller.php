@@ -20,8 +20,19 @@ class ContestsController extends AppController {
 
 	function add() {
 		if (!empty($this->data)) {
+			
+			// get clientIds for ContestClientRel
+			foreach (explode(',', $this->data['Contest']['clientIds']) as $key => $value) {
+				if (is_numeric($value)) {
+					$client_row = $this->Contest->query("SELECT 1 FROM client WHERE clientId = $value");
+					if (!empty($client_row[0])) {
+						$this->data['ContestClientRel'][] = array('clientId' => $value);
+					}	
+				}				
+			}
+			
 			$this->Contest->create();
-			if ($this->Contest->save($this->data)) {
+			if ($this->Contest->saveAll($this->data)) {
 				$this->Session->setFlash(__('The Contest has been saved', true));
 				$this->redirect(array('action'=>'index'));
 			} else {
@@ -36,7 +47,19 @@ class ContestsController extends AppController {
 			$this->redirect(array('action'=>'index'));
 		}
 		if (!empty($this->data)) {
-			if ($this->Contest->save($this->data)) {
+			
+			// get clientIds for ContestClientRel
+			foreach (explode(',', $this->data['Contest']['clientIds']) as $key => $value) {
+				if (is_numeric($value)) {
+					$client_row = $this->Contest->query("SELECT 1 FROM client WHERE clientId = $value");
+					if (!empty($client_row[0])) {
+						$this->data['ContestClientRel'][] = array('clientId' => $value);
+					}	
+				}				
+			}
+			$del_client_ids = $this->Contest->query("DELETE FROM contestClientRel WHERE contestId = $id");
+			
+			if ($this->Contest->saveAll($this->data)) {
 				$this->Session->setFlash(__('The Contest has been saved', true));
 				$this->redirect(array('action'=>'index'));
 			} else {
@@ -45,6 +68,8 @@ class ContestsController extends AppController {
 		}
 		if (empty($this->data)) {
 			$this->data = $this->Contest->read(null, $id);
+			$client_ids = $this->Contest->ContestClientRel->find('list', array('fields' => array('clientId'), 'conditions' => array('ContestClientRel.contestId' => $id)));
+			$this->set('clientIds', implode(',', $client_ids));
 		}
 	}
 
