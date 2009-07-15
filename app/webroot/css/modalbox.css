@@ -31,6 +31,7 @@
 }
 
 #MB_content {
+    max-height: 550px;
 	padding: 6px .75em;
 	overflow: auto;
 }
