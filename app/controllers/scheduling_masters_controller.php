@@ -79,7 +79,14 @@ class SchedulingMastersController extends AppController {
 			
 			if ($this->SchedulingMaster->saveAll($this->data)) {
 				$this->createInstances();
-				if ($this->RequestHandler->isAjax()) {
+				
+				$numInstances = $this->SchedulingMaster->query("SELECT COUNT(*) as numInstances FROM schedulingInstance WHERE schedulingMasterId = ".$this->SchedulingMaster->id);
+				
+				//if no instances were created, delete this scheduling master
+				if($numInstances[0][0]['numInstances'] == 0) {
+					$this->SchedulingMaster->delete($this->SchedulingMaster->id);
+					$this->Session->setFlash(__('The Schedule could not be saved. The number of iterations could not fit within the Loa End Date', true), 'default', array(), 'error');
+				} else if ($this->RequestHandler->isAjax()) {
 					$this->Session->setFlash(__('The Schedule has been saved', true), 'default', array(), 'success');
 					$this->set('closeModalbox', true);
 				}
@@ -220,7 +227,7 @@ class SchedulingMastersController extends AppController {
 		
 		$packageId = $this->data['SchedulingMaster']['packageId'];
 		
-		$rows = $this->query("SELECT MIN(Loa.endDate) as minEndDate FROM loa AS Loa INNER JOIN clientLoaPackageRel USING(loaId) WHERE packageId = $packageId");
+		$rows = $this->SchedulingMaster->query("SELECT MIN(Loa.endDate) as minEndDate FROM loa AS Loa INNER JOIN clientLoaPackageRel USING(loaId) WHERE packageId = $packageId");
 		
 		$loaEndDate = $rows[0][0]['minEndDate'];
 		
@@ -426,6 +433,8 @@ class SchedulingMastersController extends AppController {
 
             			if ($this->SchedulingMaster->save($this->data)) {
             				$this->createInstances();
+
+							print_r($this->data); 
             				if ($this->RequestHandler->isAjax()) {
             					$this->Session->setFlash(__('The Schedule has been saved', true), 'default', array(), 'success');
             					$this->set('closeModalbox', true);
