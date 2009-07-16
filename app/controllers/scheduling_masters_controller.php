@@ -218,6 +218,12 @@ class SchedulingMastersController extends AppController {
 		$iterationSchedulingOption  = $masterData['SchedulingMaster']['iterationSchedulingOption'];
 		$instanceData = array();
 		
+		$packageId = $this->data['SchedulingMaster']['packageId'];
+		
+		$rows = $this->query("SELECT MIN(Loa.endDate) as minEndDate FROM loa AS Loa INNER JOIN clientLoaPackageRel USING(loaId) WHERE packageId = $packageId");
+		
+		$loaEndDate = $rows[0][0]['minEndDate'];
+		
 		$instanceData['SchedulingInstance']['schedulingMasterId'] 	= $masterData['SchedulingMaster']['schedulingMasterId'];
 		$instanceData['SchedulingInstance']['startDate'] 			= $masterData['SchedulingMaster']['startDate'];
 		
@@ -292,11 +298,11 @@ class SchedulingMastersController extends AppController {
 		    else:
 			    $endDate = strtotime($instanceData['SchedulingInstance']['startDate'] . ' +' . $masterData['SchedulingMaster']['numDaysToRun'] . ' days');
 			
-			    while ($this->_isHoliday($endDate)) {
+			    /*while ($this->_isHoliday($endDate)) {
 			        $endDate = strtotime('+1 day', $endDate);
-			    }
+			    }*/
 			
-			    if ($endDate > $masterEndDate) {
+			    if ($endDate > $masterEndDate || $endDate > strtotime($loaEndDate)) {
 			        break;
 			    }
 			

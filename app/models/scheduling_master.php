@@ -43,9 +43,11 @@ class SchedulingMaster extends AppModel {
 													array('validateDateRanges'),
 													'message' => 'Date must be greater than today and time must be atleast 1 hour from now'
 												),
-						'endDate' => array('rule' => 
+						'endDate' => array(
+											'validLoaEndDate' => array('rule' => array('validateLoaEndDate'), 'message' => 'End Date cannot be greater than the Loa End Date'),
+											'validDateRange' => array('rule' => 
 													array('validateDateRanges'),
-													'message' => 'Must be greater than today and greater than the start date'
+													'message' => 'Must be greater than today and greater than the start date')
 												),
 						'openingBid' => array('rule' =>
                         							array('validateOpeningBid'),
@@ -66,6 +68,18 @@ class SchedulingMaster extends AppModel {
 		
 		if(isset($data['startDate']) && strtotime($data['startDate'].' -1 hours') < time()) 	return false;
 		if(isset($data['endDate']) && $this->data['SchedulingMaster']['iterationSchedulingOption'] && ($packageStartDate >= $packageEndDate))	return false;
+		
+		return true;
+	}
+	
+	function validateLoaEndDate($data) {
+		$packageId = $this->data['SchedulingMaster']['packageId'];
+		
+		$rows = $this->query("SELECT MIN(Loa.endDate) as minEndDate FROM loa AS Loa INNER JOIN clientLoaPackageRel USING(loaId) WHERE packageId = $packageId");
+
+		if (strtotime($this->data['SchedulingMaster']['endDate']) > strtotime($rows[0][0]['minEndDate']) && $this->data['SchedulingMaster']['iterationSchedulingOption']) {
+			return false;
+		}
 		
 		return true;
 	}
