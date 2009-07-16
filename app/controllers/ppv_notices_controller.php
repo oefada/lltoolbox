@@ -86,11 +86,11 @@ class PpvNoticesController extends AppController {
 			switch ($_SESSION['Auth']['AdminUser']['username']) {
 				case 'jsanchez':
 					$sender_ext = 149;
-					$sender_title = 'Travel Conierge';
+					$sender_title = 'Travel Concierge';
 					break;
 				case 'jawilson':
 					$sender_ext = 167;
-					$sender_title = 'Travel Conierge';
+					$sender_title = 'Travel Concierge';
 					break;
 				case 'dvojdany':
 					$sender_ext = 147;
