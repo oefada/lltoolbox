@@ -309,7 +309,7 @@ class SchedulingMastersController extends AppController {
 			        $endDate = strtotime('+1 day', $endDate);
 			    }*/
 			
-			    if ($endDate > $masterEndDate || $endDate > strtotime($loaEndDate)) {
+			    if (($endDate > $masterEndDate && $iterationSchedgulinOption == 1) || $endDate > strtotime($loaEndDate)) {
 			        break;
 			    }
 			
