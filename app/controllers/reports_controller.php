@@ -2192,6 +2192,19 @@ class ReportsController extends AppController {
 	}
 	
 	function weekly_scorecard() {
+		$tot = $this->OfferType->query("SELECT 
+		 weeknumber as col1, weekBeginSunday as col2,
+		 packagesSold as col3, packagesSoldYoY as col4,
+		 revenueCollected as col5, revenueCollectedYoY as col6,
+		 avgSalePriceCollected as col7, avgSalePriceCollectedYoY as col8
+		FROM reporting.weeklyScorecardTotal as data 
+		WHERE YEAR(weekBeginSunday) = YEAR(NOW())
+		 AND QUARTER = 'Q3'
+		group by weeknumber, YEAR(weekbeginsunday)
+		ORDER BY weekBeginSunday
+		;");
+		$this->set('tot', $tot);
+		
 		$auc = $this->OfferType->query("select 
 			weeknumber as col1, weekbeginsunday as col2, 
 			auctionrevenuepotential as col3, auctionRevenuePotentialYoY as col4,
@@ -2204,7 +2217,7 @@ class ReportsController extends AppController {
 			collectionrate as col17, collectionrateyoy as col18,
 			auctionticketscollected as col19, auctionticketscollectedyoy as col20,
 			avgsalepricecollected as col21, avgsalepricecollectedyoy as col22
-		from reporting.weeklyScorecardAuctions WHERE year = DATE_FORMAT(CURDATE(), '%Y')
+		from reporting.weeklyScorecardAuctions  as data WHERE year = DATE_FORMAT(CURDATE(), '%Y')
 		group by weeknumber, year
 		order by year desc, weeknumber asc;");
 
@@ -2218,11 +2231,74 @@ class ReportsController extends AppController {
 		 collectionrate as col9, collectionrateyoy as col10,
 		 revenuecollected as col11, revenuecollectedyoy as col12,
 		 avgsalepricecollected as col13, avgsalepricecollectedyoy as col14
-		from reporting.weeklyScorecardFixedPrice WHERE YEAR(weekbeginsunday) = DATE_FORMAT(CURDATE(), '%Y')
+		from reporting.weeklyScorecardFixedPrice as data WHERE YEAR(weekbeginsunday) = DATE_FORMAT(CURDATE(), '%Y')
 		group by weeknumber, YEAR(weekbeginsunday)
 		order by weekbeginsunday
 		;");
 		$this->set('fp', $fp);
+		
+		$fp = $this->OfferType->query("select 
+		 weeknumber as col1, weekbeginsunday as col2, 
+		 buynowoffers as col3, buynowoffersyoy as col4,
+		 numberrequests as col5, numberrequestsyoy as col6,
+		 packagessold as col7, packagessoldyoy as col8,
+		 collectionrate as col9, collectionrateyoy as col10,
+		 revenuecollected as col11, revenuecollectedyoy as col12,
+		 avgsalepricecollected as col13, avgsalepricecollectedyoy as col14
+		from reporting.weeklyScorecardFixedPriceSponsor as data 
+		group by weeknumber, YEAR(weekbeginsunday)
+		order by weekbeginsunday
+		;");
+		$this->set('fpSponsored', $fp);
+		
+		$fp = $this->OfferType->query("select 
+			 weeknumber as col1, weekbeginsunday as col2, 
+			 buynowoffers as col3, buynowoffersyoy as col4,
+			 numberrequests as col5, numberrequestsyoy as col6,
+			 packagessold as col7, packagessoldyoy as col8,
+			 collectionrate as col9, collectionrateyoy as col10,
+			 revenuecollected as col11, revenuecollectedyoy as col12,
+			 avgsalepricecollected as col13, avgsalepricecollectedyoy as col14
+			from reporting.weeklyScorecardFixedPriceWholesale as data 
+			group by weeknumber, YEAR(weekbeginsunday)
+			order by weekbeginsunday
+		;");
+		$this->set('fpWholesale', $fp);
+		
+		$fp = $this->OfferType->query("select 
+		 weeknumber as col1, weekbeginsunday as col2, 
+		numberCruisePackages as col3,
+		packagesSold as col4, packagesSoldYoY as col5,
+		revenueCollected as col6, revenueCollectedYoY as col7,
+		avgSalePriceCollected as col8, avgSalePriceCollectedYoY as col9
+		from reporting.weeklyScorecardCruises as data 
+		group by weeknumber, YEAR(weekbeginsunday)
+		order by weekbeginsunday
+		;");
+		$this->set('cruises', $fp);
+		
+		$fp = $this->OfferType->query("select 
+		 weeknumber as col1, weekbeginsunday as col2, 
+		packagesSold as col3, packagesSoldYoY as col4,
+		revenueCollected as col5, revenueCollectedYoY as col6,
+		avgSalePriceCollected as col7, avgSalePriceCollectedYoY as col8
+		from reporting.weeklyScorecardSponsorship as data 
+		group by weeknumber, YEAR(weekbeginsunday)
+		order by weekbeginsunday
+		;");
+		$this->set('sponsorship', $fp);
+		
+		$fp = $this->OfferType->query("
+		select 
+		 weeknumber as col1, weekBeginSunday as col2,
+		 newBuyerActivity as col3, newbuyerYoY as col4,
+		 returningBuyerActivity as col5, returningbuyerYoY as col6,
+		 totalBuyerActivity as col7, totalbuyerYoY as col8
+		from reporting.weeklyScorecardBuyers as data 
+		group by weeknumber, YEAR(weekbeginsunday)
+		order by weekbeginsunday
+		;");
+		$this->set('buyers', $fp);
 		
 		if (isset($this->params['named']['cron'])) {
 			Configure::write('debug', 0);
