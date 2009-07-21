@@ -11,6 +11,11 @@ class ReportsController extends AppController {
 	
 	function beforeFilter() {
 	    parent::beforeFilter();
+	
+		if (isset($this->params['named']['cron']) && $this->params['action'] == 'weekly_scorecard') {
+			$this->LdapAuth->allow();
+		}
+	
 	    $this->set('currentTab', 'reports');
 	    
 	    if (!empty($this->params['named']['filter'])) {
@@ -2191,7 +2196,7 @@ class ReportsController extends AppController {
 	#### END Inventory Management ####
 	}
 	
-	function weekly_scorecard() {
+	function weekly_scorecard() {		
 		$tot = $this->OfferType->query("SELECT 
 		 weeknumber as col1, weekBeginSunday as col2,
 		 packagesSold as col3, packagesSoldYoY as col4,
