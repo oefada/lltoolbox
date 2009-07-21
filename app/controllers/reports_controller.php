@@ -1964,9 +1964,9 @@ class ReportsController extends AppController {
 		}
 		$ytdStart = date('Y-01-01', strtotime($date));
 		
-		$revenueMtd = $this->Client->query("SELECT SUM(Ticket.billingPrice) as revenue FROM ticket as Ticket WHERE Ticket.created >= '$mtdStart' AND Ticket.created <= '$date' AND Ticket.ticketStatusId IN(4,5,6)");
-		$revenueQtd = $this->Client->query("SELECT SUM(Ticket.billingPrice) as revenue FROM ticket as Ticket WHERE Ticket.created >= '$qtdStart' AND Ticket.created <= '$date' AND Ticket.ticketStatusId IN(4,5,6)");
-		$revenueYtd = $this->Client->query("SELECT SUM(Ticket.billingPrice) as revenue FROM ticket as Ticket WHERE Ticket.created >= '$ytdStart' AND Ticket.created <= '$date' AND Ticket.ticketStatusId IN(4,5,6)");
+		$revenueMtd = $this->Client->query("SELECT SUM(Ticket.billingPrice) as revenue FROM ticket as Ticket INNER JOIN paymentDetail pd ON(pd.ticketId = Ticket.ticketId AND pd.isSuccesfulCharge = 1) WHERE Ticket.created >= '$mtdStart' AND Ticket.created <= '$date' AND Ticket.ticketStatusId != 8");
+		$revenueQtd = $this->Client->query("SELECT SUM(Ticket.billingPrice) as revenue FROM ticket as Ticket INNER JOIN paymentDetail pd ON(pd.ticketId = Ticket.ticketId AND pd.isSuccesfulCharge = 1) WHERE Ticket.created >= '$qtdStart' AND Ticket.created <= '$date' AND Ticket.ticketStatusId != 8");
+		$revenueYtd = $this->Client->query("SELECT SUM(Ticket.billingPrice) as revenue FROM ticket as Ticket INNER JOIN paymentDetail pd ON(pd.ticketId = Ticket.ticketId AND pd.isSuccesfulCharge = 1) WHERE Ticket.created >= '$ytdStart' AND Ticket.created <= '$date' AND Ticket.ticketStatusId != 8");
 		$this->set(compact('revenueMtd', 'revenueQtd', 'revenueYtd'));
 		#### End Revenue ####
 	#### BEGIN AGING ####
@@ -2192,7 +2192,7 @@ class ReportsController extends AppController {
 	}
 	
 	function weekly_scorecard() {
-		$rows = $this->OfferType->query("select 
+		$auc = $this->OfferType->query("select 
 			weeknumber as col1, weekbeginsunday as col2, 
 			auctionrevenuepotential as col3, auctionRevenuePotentialYoY as col4,
 			auctionslisted as col5, auctionslistedyoy as col6,
@@ -2208,9 +2208,24 @@ class ReportsController extends AppController {
 		group by weeknumber, year
 		order by year desc, weeknumber asc;");
 
-		$this->set('rows', $rows);
+		$this->set('auc', $auc);
+		
+		$fp = $this->OfferType->query("select 
+		 weeknumber as col1, weekbeginsunday as col2, 
+		 buynowoffers as col3, buynowoffersyoy as col4,
+		 numberrequests as col5, numberrequestsyoy as col6,
+		 packagessold as col7, packagessoldyoy as col8,
+		 collectionrate as col9, collectionrateyoy as col10,
+		 revenuecollected as col11, revenuecollectedyoy as col12,
+		 avgsalepricecollected as col13, avgsalepricecollectedyoy as col14
+		from reporting.weeklyScorecardFixedPrice WHERE YEAR(weekbeginsunday) = DATE_FORMAT(CURDATE(), '%Y')
+		group by weeknumber, YEAR(weekbeginsunday)
+		order by weekbeginsunday
+		;");
+		$this->set('fp', $fp);
 		
 		if (isset($this->params['named']['cron'])) {
+			Configure::write('debug', 0);
 			$this->autoRender = false;
 			$this->layout = '';
 			$this->render();
@@ -2239,9 +2254,9 @@ class ReportsController extends AppController {
 		    $message .= "------=MIME_BOUNDRY_message_parts--\n"; 
 		    $message .= "\n"; 
 		    $message .= "------=MIME_BOUNDRY_main_message\n"; 
-		    $message .= "Content-Type: application/octet-stream;\n\tname=\"weekly_scorecard.xls\"\n";
+		    $message .= "Content-Type: application/octet-stream;\n\tname=\"weekly_scorecard.html\"\n";
 		    $message .= "Content-Transfer-Encoding: base64\n";
-		    $message .= "Content-Disposition: attachment;\n\tfilename=\"weekly_scorecard.xls\"\n\n";
+		    $message .= "Content-Disposition: attachment;\n\tfilename=\"weekly_scorecard.html\"\n\n";
 		    $message .= $attachment; //The base64 encoded message
 		    $message .= "\n"; 
 		    $message .= "------=MIME_BOUNDRY_main_message--\n"; 
