@@ -80,6 +80,45 @@ th {
 	<?php endfor; ?>
 </table>
 <h3>Revenue</h3>
+<?php
+$curMonth = date('n');
+
+$goals[1] = 1961000;
+$goals[2] = 1913000;
+$goals[3] = 1962000;
+$goals[4] = 1792000;
+$goals[5] = 1861000;
+$goals[6] = 1437000;
+$goals[7] = 1397000;
+$goals[8] = 1516000;
+$goals[9] = 1459000;
+$goals[10] = 1210000;
+$goals[11] = 1225000;
+$goals[12] = 1234000;
+
+$mtdGoal = $goals[$curMonth];
+
+if ($curMonth >= 1 && $curMonth <= 3) {
+	$qtdStart = 1;
+} else if($curMonth >= 4 && $curMonth <= 6) {
+	$qtdStart = 4;
+} else if($curMonth >= 7 && $curMonth <= 9) {
+	$qtdStart = 7;
+} else if($curMonth >= 10 && $curMonth <= 12) {
+	$qtdStart = 10;
+}
+
+$qtdGoal = 0;
+for ($i = $qtdStart; $i <= $curMonth; $i++) {
+	$qtdGoal += $goals[$i];
+}
+
+
+$ytdGoal = 0;
+for ($i = 1; $i <= $curMonth; $i++) {
+	$ytdGoal += $goals[$i];
+}
+?>
 <table style="width: auto">
 	<tr>
 		<th>&nbsp;</th>
@@ -106,13 +145,13 @@ th {
 			Travel Revenue Goal
 		</td>
 		<td>
-			?
+			<?=$number->currency($mtdGoal, 'USD', array('places' => 0));?>
 		</td>
 		<td>
-			?
+			<?=$number->currency($qtdGoal, 'USD', array('places' => 0));?>
 		</td>
 		<td>
-			?
+			<?=$number->currency($ytdGoal, 'USD', array('places' => 0));?>
 		</td>
 	</tr>
 	<tr class="altrow">
@@ -120,13 +159,13 @@ th {
 			% Travel Revenue Goal
 		</td>
 		<td>
-			?
+			<?=round($revenueMtd[0][0]['revenue'] / $mtdGoal * 100)?>%
 		</td>
 		<td>
-			?
+			<?=round($revenueQtd[0][0]['revenue'] / $qtdGoal * 100)?>%
 		</td>
 		<td>
-			?
+			<?=round($revenueYtd[0][0]['revenue'] / $ytdGoal * 100)?>%
 		</td>
 	</tr>
 </table>
