@@ -10,7 +10,7 @@ td {
 	border-right: 1px solid #ccc;
 	border-bottom: 1px solid #ccc;
 	padding: 3px 2px 3px 2px;
-	font-size: 12pt;
+	font-size: 10pt;
 }
 </style>
 
