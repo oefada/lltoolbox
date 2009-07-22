@@ -6,10 +6,10 @@
 ?>
 
 <style>
-table {
+#report table {
 	width: auto;
 }
-th {
+#report th {
 	background:#545454;
 	color: #fff;
 	padding: 0 5px;
@@ -33,6 +33,7 @@ th {
 	</form>
 </div>
 <div style="clear: both"></div>
+<div id="report">
 <h2>Sales</h2>
 <table style="width: auto">
 	<tr>
@@ -446,4 +447,5 @@ for ($i = 1; $i <= $curMonth; $i++) {
 		<?endfor;?>
 	</tr>
 </table>
+</div>
 </div>
