@@ -66,7 +66,11 @@
 
 <div class="controlset fieldRow" style="border: 0">
 <?php 		echo $form->checkbox('paging.disablePagination');
-			echo $form->label('paging.disablePagination');?>
+			echo $form->label('paging.disablePagination');
+			
+			echo $form->checkbox('download.csv');
+			echo $form->label('download.csv', 'Download as CSV');
+?>
 </div>
 </fieldset>
 <?php echo $form->submit('Search') ?>
