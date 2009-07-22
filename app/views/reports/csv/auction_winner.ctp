@@ -60,7 +60,7 @@ foreach ($results as $r):
 	'N/A',
 	$r['Package']['numNights'],
 	'',
-	'N/A',
+	(($r['Ticket']['requestArrival']) ? date('M d Y h:i:sA', strtotime($r['Ticket']['requestArrival'])) : ''),
 	$r['OfferType']['offerTypeName'],
 	$fee,
 	$r[0]['percentOfRetail'],

@@ -860,6 +860,7 @@ class ReportsController extends AppController {
                            Ticket.userHomePhone,
                            Ticket.userMobilePhone,
                            Ticket.userEmail1,
+						   Ticket.requestArrival,
                            PaymentDetail.ccType,
                            PaymentDetail.ppCardNumLastFour,
                            PaymentDetail.ppExpMonth,
