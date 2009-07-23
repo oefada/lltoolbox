@@ -2205,7 +2205,7 @@ class ReportsController extends AppController {
 		 avgSalePriceCollected as col7, avgSalePriceCollectedYoY as col8
 		FROM reporting.weeklyScorecardTotal as data 
 		WHERE YEAR(weekBeginSunday) = YEAR(NOW())
-		 AND QUARTER = 'Q3'
+		 AND QUARTER = QUARTER(NOW())
 		group by weeknumber, YEAR(weekbeginsunday)
 		ORDER BY weekBeginSunday
 		;");
@@ -2252,6 +2252,8 @@ class ReportsController extends AppController {
 		 revenuecollected as col11, revenuecollectedyoy as col12,
 		 avgsalepricecollected as col13, avgsalepricecollectedyoy as col14
 		from reporting.weeklyScorecardFixedPriceSponsor as data 
+		WHERE YEAR(weekBeginSunday) = YEAR(NOW())
+		 AND QUARTER = QUARTER(NOW())
 		group by weeknumber, YEAR(weekbeginsunday)
 		order by weekbeginsunday
 		;");
@@ -2266,6 +2268,8 @@ class ReportsController extends AppController {
 			 revenuecollected as col11, revenuecollectedyoy as col12,
 			 avgsalepricecollected as col13, avgsalepricecollectedyoy as col14
 			from reporting.weeklyScorecardFixedPriceWholesale as data 
+			WHERE YEAR(weekBeginSunday) = YEAR(NOW())
+			 AND QUARTER = QUARTER(NOW())
 			group by weeknumber, YEAR(weekbeginsunday)
 			order by weekbeginsunday
 		;");
@@ -2278,6 +2282,8 @@ class ReportsController extends AppController {
 		revenueCollected as col6, revenueCollectedYoY as col7,
 		avgSalePriceCollected as col8, avgSalePriceCollectedYoY as col9
 		from reporting.weeklyScorecardCruises as data 
+		WHERE YEAR(weekBeginSunday) = YEAR(NOW())
+		 AND QUARTER = QUARTER(NOW())
 		group by weeknumber, YEAR(weekbeginsunday)
 		order by weekbeginsunday
 		;");
@@ -2289,6 +2295,8 @@ class ReportsController extends AppController {
 		revenueCollected as col5, revenueCollectedYoY as col6,
 		avgSalePriceCollected as col7, avgSalePriceCollectedYoY as col8
 		from reporting.weeklyScorecardSponsorship as data 
+		WHERE YEAR(weekBeginSunday) = YEAR(NOW())
+		 AND QUARTER = QUARTER(NOW())
 		group by weeknumber, YEAR(weekbeginsunday)
 		order by weekbeginsunday
 		;");
@@ -2301,6 +2309,8 @@ class ReportsController extends AppController {
 		 returningBuyerActivity as col5, returningbuyerYoY as col6,
 		 totalBuyerActivity as col7, totalbuyerYoY as col8
 		from reporting.weeklyScorecardBuyers as data 
+		WHERE YEAR(weekBeginSunday) = YEAR(NOW())
+		 AND QUARTER = QUARTER(NOW())
 		group by weeknumber, YEAR(weekbeginsunday)
 		order by weekbeginsunday
 		;");
