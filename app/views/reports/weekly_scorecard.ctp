@@ -5,6 +5,7 @@ table {
 }
 th {
 	background: #ccc;
+	border: 1px solid black;
 }
 td {
 	border-right: 1px solid #ccc;
@@ -32,11 +33,23 @@ td {
 $row = $row['data'];
 ?>
 <tr>
-	<?php for($i = 1; $i <= 8; $i++): ?>
+	<?php for($i = 1; $i <= 8; $i++):
+		
+		$totals['col'.$i] = (!isset($totals['col'.$i]) ? 0 : $totals['col'.$i] + $row['col'.$i]);
+
+	?>
 	<td><?=$row['col'.$i]?></td>	
 	<?php endfor; ?>
 </tr>
 <?php endforeach; ?>
+<tr>
+	<?php for($i = 1; $i <= 8; $i++):
+	
+		$skip = array(1,2);
+	?>
+	<td><?=in_array($i, $skip) ? '&nbsp;' : $totals['col'.$i]?></td>	
+	<?php endfor; ?>
+</tr>
 </table>
 <p style="page-break-before: always"> </p>
 <h2>2. Auctions</h2>
@@ -65,15 +78,27 @@ $row = $row['data'];
 		<th>ASP</th>
 		<th>YoY</th>
 	</tr>
-<?php foreach($auc as $row):
+<?php 
+$totals = array();
+foreach($auc as $row):
 $row = $row['data'];
 ?>
 <tr>
-	<?php for($i = 1; $i <= 22; $i++): ?>
+	<?php for($i = 1; $i <= 22; $i++): 
+			$totals['col'.$i] = (!isset($totals['col'.$i]) ? 0 : $totals['col'.$i] + $row['col'.$i]);
+	?>
 	<td><?=$row['col'.$i]?></td>	
 	<?php endfor; ?>
 </tr>
 <?php endforeach; ?>
+<tr>
+	<?php for($i = 1; $i <= 22; $i++):
+	
+		$skip = array(1,2);
+	?>
+	<td><?=in_array($i, $skip) ? '&nbsp;' : $totals['col'.$i]?></td>	
+	<?php endfor; ?>
+</tr>
 </table>
 <p style="page-break-before: always"> </p>
 <h2>3. Fixed Price</h2>
@@ -94,15 +119,27 @@ $row = $row['data'];
 		<th>average sale price</th>
 		<th>YoY</th>
 	</tr>
-<?php foreach($fp as $row):
+<?php
+$totals = array();
+foreach($fp as $row):
 $row = $row['data'];
 ?>
 <tr>
-	<?php for($i = 1; $i <= 14; $i++): ?>
+	<?php for($i = 1; $i <= 14; $i++):
+		$totals['col'.$i] = (!isset($totals['col'.$i]) ? 0 : $totals['col'.$i] + $row['col'.$i]);
+	?>
 	<td><?=$row['col'.$i]?></td>	
 	<?php endfor; ?>
 </tr>
 <?php endforeach; ?>
+<tr>
+	<?php for($i = 1; $i <= 14; $i++):
+	
+		$skip = array(1,2);
+	?>
+	<td><?=in_array($i, $skip) ? '&nbsp;' : $totals['col'.$i]?></td>	
+	<?php endfor; ?>
+</tr>
 </table><p style="page-break-before: always"> </p>
 <h2>4. Fixed Price Sponsor</h2>
 <table>
@@ -122,15 +159,27 @@ $row = $row['data'];
 		<th>average sale price</th>
 		<th>YoY</th>
 	</tr>
-<?php foreach($fpSponsored as $row):
+<?php 
+$totals = array();
+foreach($fpSponsored as $row):
 $row = $row['data'];
 ?>
 <tr>
-	<?php for($i = 1; $i <= 14; $i++): ?>
+	<?php for($i = 1; $i <= 14; $i++):
+	$totals['col'.$i] = (!isset($totals['col'.$i]) ? 0 : $totals['col'.$i] + $row['col'.$i]);
+	?>
 	<td><?=$row['col'.$i]?></td>	
 	<?php endfor; ?>
 </tr>
 <?php endforeach; ?>
+<tr>
+	<?php for($i = 1; $i <= 14; $i++):
+	
+		$skip = array(1,2);
+	?>
+	<td><?=in_array($i, $skip) ? '&nbsp;' : $totals['col'.$i]?></td>	
+	<?php endfor; ?>
+</tr>
 </table>
 <p style="page-break-before: always"> </p>
 <h2>5. Fixed Price Wholesale</h2>
@@ -151,15 +200,27 @@ $row = $row['data'];
 		<th>average sale price</th>
 		<th>YoY</th>
 	</tr>
-<?php foreach($fpWholesale as $row):
+<?php
+$totals = array();
+foreach($fpWholesale as $row):
 $row = $row['data'];
 ?>
 <tr>
-	<?php for($i = 1; $i <= 14; $i++): ?>
+	<?php for($i = 1; $i <= 14; $i++):
+	$totals['col'.$i] = (!isset($totals['col'.$i]) ? 0 : $totals['col'.$i] + $row['col'.$i]);
+	?>
 	<td><?=$row['col'.$i]?></td>	
 	<?php endfor; ?>
 </tr>
 <?php endforeach; ?>
+<tr>
+	<?php for($i = 1; $i <= 14; $i++):
+	
+		$skip = array(1,2);
+	?>
+	<td><?=in_array($i, $skip) ? '&nbsp;' : $totals['col'.$i]?></td>	
+	<?php endfor; ?>
+</tr>
 </table>
 <p style="page-break-before: always"> </p>
 <h2>6. Cruises</h2>
@@ -175,15 +236,27 @@ $row = $row['data'];
 		<th>ASP</th>
 		<th>YoY</th>
 	</tr>
-<?php foreach($cruises as $row):
+<?php
+$totals = array();
+foreach($cruises as $row):
 $row = $row['data'];
 ?>
 <tr>
-	<?php for($i = 1; $i <= 9; $i++): ?>
+	<?php for($i = 1; $i <= 9; $i++): 
+	$totals['col'.$i] = (!isset($totals['col'.$i]) ? 0 : $totals['col'.$i] + $row['col'.$i]);
+	?>
 	<td><?=$row['col'.$i]?></td>	
 	<?php endfor; ?>
 </tr>
 <?php endforeach; ?>
+<tr>
+	<?php for($i = 1; $i <= 9; $i++):
+	
+		$skip = array(1,2);
+	?>
+	<td><?=in_array($i, $skip) ? '&nbsp;' : $totals['col'.$i]?></td>	
+	<?php endfor; ?>
+</tr>
 </table>
 <p style="page-break-before: always"> </p>
 <h2>7. Sponsorship</h2>
@@ -198,15 +271,27 @@ $row = $row['data'];
 		<th>ASP</th>
 		<th>YoY</th>
 	</tr>
-<?php foreach($sponsorship as $row):
+<?php
+$totals = array();
+foreach($sponsorship as $row):
 $row = $row['data'];
 ?>
 <tr>
-	<?php for($i = 1; $i <= 8; $i++): ?>
+	<?php for($i = 1; $i <= 8; $i++): 
+	$totals['col'.$i] = (!isset($totals['col'.$i]) ? 0 : $totals['col'.$i] + $row['col'.$i]);
+	?>
 	<td><?=$row['col'.$i]?></td>	
 	<?php endfor; ?>
 </tr>
 <?php endforeach; ?>
+<tr>
+	<?php for($i = 1; $i <= 8; $i++):
+	
+		$skip = array(1,2);
+	?>
+	<td><?=in_array($i, $skip) ? '&nbsp;' : $totals['col'.$i]?></td>	
+	<?php endfor; ?>
+</tr>
 </table>
 <p style="page-break-before: always"> </p>
 <h2>8. Buyers</h2>
@@ -221,13 +306,25 @@ $row = $row['data'];
 		<th>Total</th>
 		<th>YoY</th>
 	</tr>
-<?php foreach($buyers as $row):
+<?php 
+$totals = array();
+foreach($buyers as $row):
 $row = $row['data'];
 ?>
 <tr>
-	<?php for($i = 1; $i <= 8; $i++): ?>
+	<?php for($i = 1; $i <= 8; $i++):
+	$totals['col'.$i] = (!isset($totals['col'.$i]) ? 0 : $totals['col'.$i] + $row['col'.$i]);
+	?>
 	<td><?=$row['col'.$i]?></td>	
 	<?php endfor; ?>
 </tr>
 <?php endforeach; ?>
+<tr>
+	<?php for($i = 1; $i <= 8; $i++):
+	
+		$skip = array(1,2);
+	?>
+	<td><?=in_array($i, $skip) ? '&nbsp;' : $totals['col'.$i]?></td>	
+	<?php endfor; ?>
+</tr>
 </table>
