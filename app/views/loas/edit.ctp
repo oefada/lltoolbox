@@ -22,7 +22,7 @@ $this->set('clientId', $this->data['Client']['clientId']);
 		}
 		echo $form->input('clientId', array('type' => 'hidden'));
 		echo $form->input('loaLevelId', array('disabled' => $disabled, 'label' => 'LOA Level'));
-		echo $form->input('cash', array('type' => 'select', 'options' => array(0 => 'Barter', 1 => 'Cash')));
+		echo $form->input('loaMembershipTypeId', array('label' => 'Membership Type', 'disabled' => true));
 		echo $form->input('numEmailInclusions');
 		echo $form->input('totalRevenue', array('disabled' => true, 'label' => 'Total Revenue'));
 		echo $form->input('Loa.currencyId', array('label' => 'Item Currency'));
@@ -44,6 +44,9 @@ $this->set('clientId', $this->data['Client']['clientId']);
 		echo $form->input('loaNumberPackages', array('label' => 'Commission-Free Packages'));
 		echo $form->input('startDate');
 		echo $form->input('endDate');
+		if ($loa['Loa']['loaMembershipTypeId'] == 3) {
+			echo $form->input('membershipFeeEstimated');	
+		}		
 		echo $form->input('membershipFee', array('disabled' => $disabled));
 		echo $form->input('membershipBalance', array('disabled' => true));
 		echo $form->input('totalRemitted', array('disabled' => true));
@@ -55,6 +58,7 @@ $this->set('clientId', $this->data['Client']['clientId']);
 		}
 		
 		echo $form->input('totalKept', array('disabled' => true));
+		echo $form->input('totalCommission', array('disabled' => true));
 	?>
 	</fieldset>
 	<div class="buttonrow">
@@ -194,3 +198,4 @@ $this->set('clientId', $this->data['Client']['clientId']);
 
 </div>
 </div>
+
