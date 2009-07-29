@@ -2203,13 +2203,23 @@ class ReportsController extends AppController {
 		 packagesSold as col3, packagesSoldYoY as col4,
 		 revenueCollected as col5, revenueCollectedYoY as col6,
 		 avgSalePriceCollected as col7, avgSalePriceCollectedYoY as col8,
-		 revenuetarget, SUM(revenuetarget) as quarterRevenueTarget
+		 revenuetarget
+		FROM reporting.weeklyScorecardTotal as data 
+		WHERE YEAR(weekBeginSunday) = YEAR(NOW())
+		 AND QUARTER = QUARTER(NOW()) AND weekBeginSunday <= NOW()
+		group by quarter, weekBeginSunday
+		ORDER BY weekBeginSunday
+		;");
+		$tmp = $this->OfferType->query("SELECT 
+		 SUM(revenuetarget) as quarterRevenueTarget
 		FROM reporting.weeklyScorecardTotal as data 
 		WHERE YEAR(weekBeginSunday) = YEAR(NOW())
 		 AND QUARTER = QUARTER(NOW()) AND weekBeginSunday <= NOW()
 		group by quarter
 		ORDER BY weekBeginSunday
 		;");
+
+		$tot[0][0] = $tmp[0][0];
 		$this->set('tot', $tot);
 		
 		$qtr = $this->OfferType->query("SELECT SUM(revenuetarget) as revenueTarget
