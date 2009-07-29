@@ -2206,7 +2206,7 @@ class ReportsController extends AppController {
 		 revenuetarget
 		FROM reporting.weeklyScorecardTotal as data 
 		WHERE YEAR(weekBeginSunday) = YEAR(NOW())
-		 AND QUARTER = QUARTER(NOW()) AND weekBeginSunday <= NOW()
+		 AND QUARTER = QUARTER(NOW()) AND weekBeginSunday < CURDATE()
 		group by quarter, weekBeginSunday
 		ORDER BY weekBeginSunday
 		;");
@@ -2214,7 +2214,7 @@ class ReportsController extends AppController {
 		 SUM(revenuetarget) as quarterRevenueTarget
 		FROM reporting.weeklyScorecardTotal as data 
 		WHERE YEAR(weekBeginSunday) = YEAR(NOW())
-		 AND QUARTER = QUARTER(NOW()) AND weekBeginSunday <= NOW()
+		 AND QUARTER = QUARTER(NOW()) AND weekBeginSunday < CURDATE()
 		group by quarter
 		ORDER BY weekBeginSunday
 		;");
@@ -2244,7 +2244,7 @@ class ReportsController extends AppController {
 			auctionticketscollected as col19, auctionticketscollectedyoy as col20,
 			avgsalepricecollected as col21, avgsalepricecollectedyoy as col22
 		from reporting.weeklyScorecardAuctions  as data WHERE year = DATE_FORMAT(CURDATE(), '%Y')
-		 AND QUARTER = QUARTER(NOW()) AND weekBeginSunday <= NOW()
+		 AND QUARTER = QUARTER(NOW()) AND weekBeginSunday < CURDATE()
 		group by weeknumber, year
 		order by year desc, weeknumber asc;");
 
@@ -2258,7 +2258,7 @@ class ReportsController extends AppController {
 		 collectionrate as col9, collectionrateyoy as col10,
 		 revenuecollected as col11, revenuecollectedyoy as col12,
 		 avgsalepricecollected as col13, avgsalepricecollectedyoy as col14
-		from reporting.weeklyScorecardFixedPrice as data WHERE YEAR(weekbeginsunday) = DATE_FORMAT(CURDATE(), '%Y') AND QUARTER = QUARTER(NOW()) AND weekBeginSunday <= NOW()
+		from reporting.weeklyScorecardFixedPrice as data WHERE YEAR(weekbeginsunday) = DATE_FORMAT(CURDATE(), '%Y') AND QUARTER = QUARTER(NOW()) AND weekBeginSunday < CURDATE()
 		group by weeknumber, YEAR(weekbeginsunday)
 		order by weekbeginsunday
 		;");
@@ -2274,7 +2274,7 @@ class ReportsController extends AppController {
 		 avgsalepricecollected as col13, avgsalepricecollectedyoy as col14
 		from reporting.weeklyScorecardFixedPriceSponsor as data 
 		WHERE YEAR(weekBeginSunday) = YEAR(NOW())
-		 AND QUARTER = QUARTER(NOW()) AND weekBeginSunday <= NOW()
+		 AND QUARTER = QUARTER(NOW()) AND weekBeginSunday < CURDATE()
 		group by weeknumber, YEAR(weekbeginsunday)
 		order by weekbeginsunday
 		;");
@@ -2290,7 +2290,7 @@ class ReportsController extends AppController {
 			 avgsalepricecollected as col13, avgsalepricecollectedyoy as col14
 			from reporting.weeklyScorecardFixedPriceWholesale as data 
 			WHERE YEAR(weekBeginSunday) = YEAR(NOW())
-			 AND QUARTER = QUARTER(NOW()) AND weekBeginSunday <= NOW()
+			 AND QUARTER = QUARTER(NOW()) AND weekBeginSunday < CURDATE()
 			group by weeknumber, YEAR(weekbeginsunday)
 			order by weekbeginsunday
 		;");
@@ -2304,7 +2304,7 @@ class ReportsController extends AppController {
 		avgSalePriceCollected as col8, avgSalePriceCollectedYoY as col9
 		from reporting.weeklyScorecardCruises as data 
 		WHERE YEAR(weekBeginSunday) = YEAR(NOW())
-		 AND QUARTER = QUARTER(NOW()) AND weekBeginSunday <= NOW()
+		 AND QUARTER = QUARTER(NOW()) AND weekBeginSunday < CURDATE()
 		group by weeknumber, YEAR(weekbeginsunday)
 		order by weekbeginsunday
 		;");
@@ -2317,7 +2317,7 @@ class ReportsController extends AppController {
 		avgSalePriceCollected as col7, avgSalePriceCollectedYoY as col8
 		from reporting.weeklyScorecardSponsorship as data 
 		WHERE YEAR(weekBeginSunday) = YEAR(NOW())
-		 AND QUARTER = QUARTER(NOW()) AND weekBeginSunday <= NOW()
+		 AND QUARTER = QUARTER(NOW()) AND weekBeginSunday < CURDATE()
 		group by weeknumber, YEAR(weekbeginsunday)
 		order by weekbeginsunday
 		;");
@@ -2331,7 +2331,7 @@ class ReportsController extends AppController {
 		 totalBuyerActivity as col7, totalbuyerYoY as col8
 		from reporting.weeklyScorecardBuyers as data 
 		WHERE YEAR(weekBeginSunday) = YEAR(NOW())
-		 AND QUARTER = QUARTER(NOW()) AND weekBeginSunday <= NOW()
+		 AND QUARTER = QUARTER(NOW()) AND weekBeginSunday < CURDATE()
 		group by weeknumber, YEAR(weekbeginsunday)
 		order by weekbeginsunday
 		;");
