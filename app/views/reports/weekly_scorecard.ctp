@@ -47,11 +47,7 @@ $row = $row['data'];
 <tr>
 	<td style="text-align:right" rowspan=3>current week</td>
 	<td style="text-align:right">actual</td>
-	<?php for($i = 3; $i <= 8; $i++):
-		
-		$totals['col'.$i] = (!isset($totals['col'.$i]) ? $totals['col'.$i] : $totals['col'.$i] + $row['col'.$i]);
-
-	?>
+	<?php for($i = 3; $i <= 8; $i++):?>
 	<td><?=$row['col'.$i]?></td>	
 	<?php endfor; ?>
 </tr>
@@ -148,7 +144,7 @@ $row = $row['data'];
 ?>
 <tr>
 	<?php for($i = 1; $i <= 22; $i++): 
-			$totals['col'.$i] = (!isset($totals['col'.$i]) ? $totals['col'.$i] : $totals['col'.$i] + $row['col'.$i]);
+			$totals['col'.$i] = (!isset($totals['col'.$i]) ? $row['col'.$i] : $totals['col'.$i] + $row['col'.$i]);
 	?>
 	<td><?=$row['col'.$i]?></td>	
 	<?php endfor; ?>
@@ -158,11 +154,7 @@ $row = $row['data'];
 <tr>
 	<td style="text-align:right" rowspan=3>current week</td>
 	<td style="text-align:right">actual</td>
-	<?php for($i = 3; $i <= 22; $i++):
-		
-		$totals['col'.$i] = (!isset($totals['col'.$i]) ? $totals['col'.$i] : $totals['col'.$i] + $row['col'.$i]);
-
-	?>
+	<?php for($i = 3; $i <= 22; $i++): ?>
 	<td><?=$row['col'.$i]?></td>	
 	<?php endfor; ?>
 </tr>
@@ -339,7 +331,7 @@ $row = $row['data'];
 ?>
 <tr>
 	<?php for($i = 1; $i <= 14; $i++):
-		$totals['col'.$i] = (!isset($totals['col'.$i]) ? $totals['col'.$i] : $totals['col'.$i] + $row['col'.$i]);
+		$totals['col'.$i] = (!isset($totals['col'.$i]) ? $row['col'.$i] : $totals['col'.$i] + $row['col'.$i]);
 	?>
 	<td><?=$row['col'.$i]?></td>	
 	<?php endfor; ?>
@@ -349,11 +341,7 @@ $row = $row['data'];
 <tr>
 	<td style="text-align:right" rowspan=3>current week</td>
 	<td style="text-align:right">actual</td>
-	<?php for($i = 3; $i <= 14; $i++):
-		
-		$totals['col'.$i] = (!isset($totals['col'.$i]) ? $totals['col'.$i] : $totals['col'.$i] + $row['col'.$i]);
-
-	?>
+	<?php for($i = 3; $i <= 14; $i++): ?>
 	<td><?=$row['col'.$i]?></td>	
 	<?php endfor; ?>
 </tr>
@@ -468,7 +456,7 @@ $row = $row['data'];
 ?>
 <tr>
 	<?php for($i = 1; $i <= 9; $i++): 
-	$totals['col'.$i] = (!isset($totals['col'.$i]) ? $totals['col'.$i] : $totals['col'.$i] + $row['col'.$i]);
+	$totals['col'.$i] = (!isset($totals['col'.$i]) ? $row['col'.$i] : $totals['col'.$i] + $row['col'.$i]);
 	?>
 	<td><?=$row['col'.$i]?></td>	
 	<?php endfor; ?>
@@ -478,11 +466,7 @@ $row = $row['data'];
 <tr>
 	<td style="text-align:right" rowspan=3>current week</td>
 	<td style="text-align:right">actual</td>
-	<?php for($i = 3; $i <= 8; $i++):
-		
-		$totals['col'.$i] = (!isset($totals['col'.$i]) ? $totals['col'.$i] : $totals['col'.$i] + $row['col'.$i]);
-
-	?>
+	<?php for($i = 3; $i <= 8; $i++):	?>
 	<td><?=$row['col'.$i]?></td>	
 	<?php endfor; ?>
 </tr>
@@ -570,7 +554,7 @@ $row = $row['data'];
 ?>
 <tr>
 	<?php for($i = 1; $i <= 8; $i++): 
-	$totals['col'.$i] = (!isset($totals['col'.$i]) ? $totals['col'.$i] : $totals['col'.$i] + $row['col'.$i]);
+	$totals['col'.$i] = (!isset($totals['col'.$i]) ? $row['col'.$i] : $totals['col'.$i] + $row['col'.$i]);
 	?>
 	<td><?=$row['col'.$i]?></td>	
 	<?php endfor; ?>
@@ -580,11 +564,7 @@ $row = $row['data'];
 <tr>
 	<td style="text-align:right" rowspan=3>current week</td>
 	<td style="text-align:right">actual</td>
-	<?php for($i = 3; $i <= 8; $i++):
-		
-		$totals['col'.$i] = (!isset($totals['col'.$i]) ? $totals['col'.$i] : $totals['col'.$i] + $row['col'.$i]);
-
-	?>
+	<?php for($i = 3; $i <= 8; $i++): ?>
 	<td><?=$row['col'.$i]?></td>	
 	<?php endfor; ?>
 </tr>
@@ -667,7 +647,7 @@ $row = $row['data'];
 ?>
 <tr>
 	<?php for($i = 1; $i <= 8; $i++):
-	$totals['col'.$i] = (!isset($totals['col'.$i]) ? $totals['col'.$i] : $totals['col'.$i] + $row['col'.$i]);
+	$totals['col'.$i] = (!isset($totals['col'.$i]) ? $row['col'.$i] : $totals['col'.$i] + $row['col'.$i]);
 	?>
 	<td><?=$row['col'.$i]?></td>	
 	<?php endfor; ?>
@@ -677,11 +657,7 @@ $row = $row['data'];
 <tr>
 	<td style="text-align:right" rowspan=3>current week</td>
 	<td style="text-align:right">actual</td>
-	<?php for($i = 3; $i <= 8; $i++):
-		
-		$totals['col'.$i] = (!isset($totals['col'.$i]) ? $totals['col'.$i] : $totals['col'.$i] + $row['col'.$i]);
-
-	?>
+	<?php for($i = 3; $i <= 8; $i++): ?>
 	<td><?=$row['col'.$i]?></td>	
 	<?php endfor; ?>
 </tr>
