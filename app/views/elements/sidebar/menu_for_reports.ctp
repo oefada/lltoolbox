@@ -11,6 +11,7 @@
 	<li><?=$html->link('Package Search', 'packages')?></li>
 	<li><?=$html->link('Account Manager Client Report', 'mcr')?></li>
 	<li><?=$html->link('Merchandising Dashboard', 'merch')?></li>
+	<li><?=$html->link('Weekly Scorecard','weekly_scorecard')?></li>
 </ul>
 <h3>Other Tools</h3>
 <ul class="tree">
