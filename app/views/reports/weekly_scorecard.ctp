@@ -49,7 +49,7 @@ $row = $row['data'];
 	<td style="text-align:right">actual</td>
 	<?php for($i = 3; $i <= 8; $i++):
 		
-		$totals['col'.$i] = (!isset($totals['col'.$i]) ? 0 : $totals['col'.$i] + $row['col'.$i]);
+		$totals['col'.$i] = (!isset($totals['col'.$i]) ? $totals['col'.$i] : $totals['col'.$i] + $row['col'.$i]);
 
 	?>
 	<td><?=$row['col'.$i]?></td>	
@@ -148,7 +148,7 @@ $row = $row['data'];
 ?>
 <tr>
 	<?php for($i = 1; $i <= 22; $i++): 
-			$totals['col'.$i] = (!isset($totals['col'.$i]) ? 0 : $totals['col'.$i] + $row['col'.$i]);
+			$totals['col'.$i] = (!isset($totals['col'.$i]) ? $totals['col'.$i] : $totals['col'.$i] + $row['col'.$i]);
 	?>
 	<td><?=$row['col'.$i]?></td>	
 	<?php endfor; ?>
@@ -160,7 +160,7 @@ $row = $row['data'];
 	<td style="text-align:right">actual</td>
 	<?php for($i = 3; $i <= 22; $i++):
 		
-		$totals['col'.$i] = (!isset($totals['col'.$i]) ? 0 : $totals['col'.$i] + $row['col'.$i]);
+		$totals['col'.$i] = (!isset($totals['col'.$i]) ? $totals['col'.$i] : $totals['col'.$i] + $row['col'.$i]);
 
 	?>
 	<td><?=$row['col'.$i]?></td>	
@@ -339,7 +339,7 @@ $row = $row['data'];
 ?>
 <tr>
 	<?php for($i = 1; $i <= 14; $i++):
-		$totals['col'.$i] = (!isset($totals['col'.$i]) ? 0 : $totals['col'.$i] + $row['col'.$i]);
+		$totals['col'.$i] = (!isset($totals['col'.$i]) ? $totals['col'.$i] : $totals['col'.$i] + $row['col'.$i]);
 	?>
 	<td><?=$row['col'.$i]?></td>	
 	<?php endfor; ?>
@@ -351,7 +351,7 @@ $row = $row['data'];
 	<td style="text-align:right">actual</td>
 	<?php for($i = 3; $i <= 14; $i++):
 		
-		$totals['col'.$i] = (!isset($totals['col'.$i]) ? 0 : $totals['col'.$i] + $row['col'.$i]);
+		$totals['col'.$i] = (!isset($totals['col'.$i]) ? $totals['col'.$i] : $totals['col'.$i] + $row['col'.$i]);
 
 	?>
 	<td><?=$row['col'.$i]?></td>	
@@ -468,7 +468,7 @@ $row = $row['data'];
 ?>
 <tr>
 	<?php for($i = 1; $i <= 9; $i++): 
-	$totals['col'.$i] = (!isset($totals['col'.$i]) ? 0 : $totals['col'.$i] + $row['col'.$i]);
+	$totals['col'.$i] = (!isset($totals['col'.$i]) ? $totals['col'.$i] : $totals['col'.$i] + $row['col'.$i]);
 	?>
 	<td><?=$row['col'.$i]?></td>	
 	<?php endfor; ?>
@@ -480,7 +480,7 @@ $row = $row['data'];
 	<td style="text-align:right">actual</td>
 	<?php for($i = 3; $i <= 8; $i++):
 		
-		$totals['col'.$i] = (!isset($totals['col'.$i]) ? 0 : $totals['col'.$i] + $row['col'.$i]);
+		$totals['col'.$i] = (!isset($totals['col'.$i]) ? $totals['col'.$i] : $totals['col'.$i] + $row['col'.$i]);
 
 	?>
 	<td><?=$row['col'.$i]?></td>	
@@ -570,7 +570,7 @@ $row = $row['data'];
 ?>
 <tr>
 	<?php for($i = 1; $i <= 8; $i++): 
-	$totals['col'.$i] = (!isset($totals['col'.$i]) ? 0 : $totals['col'.$i] + $row['col'.$i]);
+	$totals['col'.$i] = (!isset($totals['col'.$i]) ? $totals['col'.$i] : $totals['col'.$i] + $row['col'.$i]);
 	?>
 	<td><?=$row['col'.$i]?></td>	
 	<?php endfor; ?>
@@ -582,7 +582,7 @@ $row = $row['data'];
 	<td style="text-align:right">actual</td>
 	<?php for($i = 3; $i <= 8; $i++):
 		
-		$totals['col'.$i] = (!isset($totals['col'.$i]) ? 0 : $totals['col'.$i] + $row['col'.$i]);
+		$totals['col'.$i] = (!isset($totals['col'.$i]) ? $totals['col'.$i] : $totals['col'.$i] + $row['col'.$i]);
 
 	?>
 	<td><?=$row['col'.$i]?></td>	
@@ -667,7 +667,7 @@ $row = $row['data'];
 ?>
 <tr>
 	<?php for($i = 1; $i <= 8; $i++):
-	$totals['col'.$i] = (!isset($totals['col'.$i]) ? 0 : $totals['col'.$i] + $row['col'.$i]);
+	$totals['col'.$i] = (!isset($totals['col'.$i]) ? $totals['col'.$i] : $totals['col'.$i] + $row['col'.$i]);
 	?>
 	<td><?=$row['col'.$i]?></td>	
 	<?php endfor; ?>
@@ -679,7 +679,7 @@ $row = $row['data'];
 	<td style="text-align:right">actual</td>
 	<?php for($i = 3; $i <= 8; $i++):
 		
-		$totals['col'.$i] = (!isset($totals['col'.$i]) ? 0 : $totals['col'.$i] + $row['col'.$i]);
+		$totals['col'.$i] = (!isset($totals['col'.$i]) ? $totals['col'.$i] : $totals['col'.$i] + $row['col'.$i]);
 
 	?>
 	<td><?=$row['col'.$i]?></td>	
