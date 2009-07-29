@@ -1430,7 +1430,6 @@ class ReportsController extends AppController {
 							Loa.loaLevelId,
 							Loa.membershipBalance,
 							Loa.membershipFee,
-							Loa.totalRemitted,
 							IF(Loa.totalKept = 0 OR Loa.totalKept IS NULL, 'N/A',ROUND(-Loa.membershipBalance / (Loa.totalKept / (DATEDIFF(Loa.startDate,NOW()))))) as daysUntilKeepEnd
 	                    FROM loa AS Loa
 	                    INNER JOIN client AS Client ON (Client.clientId = Loa.clientId AND curdate() BETWEEN Loa.startDate AND Loa.endDate AND Loa.inactive <> 1)
@@ -1528,7 +1527,16 @@ class ReportsController extends AppController {
 											WHERE Ticket.created between '$pkgRevenueStart' and '$pkgRevenueEnd'
 												AND ClientLoaPackageRel.clientId = $clientId
 											GROUP BY Ticket.offerTypeId");
-	
+											
+			$totalRemitted = $this->Client->query("SELECT SUM(Ticket.billingPrice) AS totalLoaRevenue
+											FROM ticket as Ticket
+											INNER JOIN package as Package USING (packageId)
+											INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel USING(packageId)
+											WHERE Ticket.created >= '{$client['Loa']['startDate']}' AND ClientLoaPackageRel.loaId = {$client['Loa']['loaId']}
+												AND ClientLoaPackageRel.clientId = $clientId");
+			
+			$totalRemitted['totalLoaRemitted'] = $totalRemitted[0][0]['totalLoaRevenue'] - $client['Loa']['membershipFee'];
+			
 			$ticketStats = array();
 			$ticketStats['totalSold'] = $ticketStats['totalRevenue'] = $ticketStats['fpRequests'] = $ticketStats['auctionCloseRate'] = 0;
 			
@@ -1554,7 +1562,7 @@ class ReportsController extends AppController {
 											FROM reporting.carConsolidatedView as Referrals
 											WHERE Referrals.clientId = $clientId AND activityStart = '$latestReferralDate'");
 			// End Referrals/Impressions
-			$clients[$k] = @array_merge($clients[$k], (array)$packageStats, (array)$ticketStats, (array)$referrals[0]);
+			$clients[$k] = @array_merge($clients[$k], (array)$packageStats, (array)$ticketStats, (array)$referrals[0], $totalRemitted);
 		}
 		
 		//Setup Client Manager Usernames

@@ -235,7 +235,7 @@ td.error div{
 	    <td><a href="/reports/cmr/filter:<?=$url?>"><?=($row['Loa']['loaLevelId'] == 2) ? 'Sponsorship' : 'Wholesale' ;?></a></td>
 	    <td><?=(int)$row['Loa']['membershipFee']?></td>
 		<td><?=(int)$row['Loa']['membershipBalance']?></td>
-		<td><?=(int)$row['Loa']['totalRemitted']?></td>
+		<td><?=(int)$row['totalLoaRemitted']?></td>
 	    <td <?if((int)$row[0]['daysUntilKeepEnd'] < 30) echo " class='error'"?>><div><?=(int)$row[0]['daysUntilKeepEnd']?></div></td>
 	    <td <?if(@$row['Referrals']['webRefer'] < 100) echo " class='error'"?>><div><?=$html->link((int)@$row['Referrals']['webRefer'], '/reports/car/clientId:'.$row['Client']['clientId'])?></div></td>
 	    <td <?if(@$row['Referrals']['phone'] < 20) echo " class='error'"?>><div><?=(int)@$row['Referrals']['phone']?></div></td>
