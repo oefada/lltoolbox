@@ -82,7 +82,7 @@ $row = $row['data'];
 </tr>
 <?php endforeach; ?>
 <tr><td colspan=8>&nbsp;</td></tr>
-<tr>
+<tr class="altrow">
 	<td style="text-align:right" rowspan=3>current week</td>
 	<td style="text-align:right">actual</td>
 	<?php for($i = 3; $i <= 8; $i++):
@@ -97,7 +97,7 @@ $row = $row['data'];
 	<td><?$echo($row['col'.$i])?></td>	
 	<?php endfor; ?>
 </tr>
-<tr>
+<tr class="altrow">
 	<td style="text-align:right">target</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
@@ -106,7 +106,7 @@ $row = $row['data'];
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 </tr>
-<tr>
+<tr class="altrow">
 	<td style="text-align:right">variance</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
@@ -116,7 +116,7 @@ $row = $row['data'];
 	<td>&nbsp;</td>
 </tr>
 <tr><td colspan=8>&nbsp;</td></tr>
-<tr>
+<tr class="altrow">
 	<td style="text-align:right" rowspan=3>QTD</td>
 	<td style="text-align:right">actual</td>
 	<?php for($i = 3; $i <= 8; $i++):
@@ -132,7 +132,7 @@ $row = $row['data'];
 	<td><?in_array($i, $skip) ? print('&nbsp;') : $echo($totals['col'.$i])?></td>	
 	<?php endfor; ?>
 </tr>
-<tr>
+<tr class="altrow">
 	<td style="text-align:right">target</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
@@ -141,7 +141,7 @@ $row = $row['data'];
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 </tr>
-<tr>
+<tr class="altrow">
 	<td style="text-align:right">variance</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
@@ -215,7 +215,7 @@ $row = $row['data'];
 </tr>
 <?php endforeach; ?>
 <tr><td colspan=22>&nbsp;</td></tr>
-<tr>
+<tr class="altrow">
 	<td style="text-align:right" rowspan=3>current week</td>
 	<td style="text-align:right">actual</td>
 	<?php for($i = 3; $i <= 22; $i++):
@@ -230,7 +230,7 @@ $row = $row['data'];
 	<td><?$echo($row['col'.$i])?></td>	
 	<?php endfor; ?>
 </tr>
-<tr>
+<tr class="altrow">
 	<td style="text-align:right">target</td>
 	<td><?currency($row['revenuetarget'])?></td>
 	<td>&nbsp;</td>
@@ -253,7 +253,7 @@ $row = $row['data'];
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 </tr>
-<tr>
+<tr class="altrow">
 	<td style="text-align:right">variance</td>
 	<td><?percentage(($row['col5']/$row['revenuetarget']-1))?></td>
 	<td>&nbsp;</td>
@@ -277,7 +277,7 @@ $row = $row['data'];
 	<td>&nbsp;</td>
 </tr>
 <tr><td colspan=22>&nbsp;</td></tr>
-<tr>
+<tr class="altrow">
 	<td style="text-align:right" rowspan=3>QTD</td>
 	<td style="text-align:right">actual</td>
 	<?php for($i = 3; $i <= 22; $i++):
@@ -293,7 +293,7 @@ $row = $row['data'];
 	<td><?in_array($i, $skip) ? print('&nbsp;') : $echo($totals['col'.$i])?></td>	
 	<?php endfor; ?>
 </tr>
-<tr>
+<tr class="altrow">
 	<td style="text-align:right">target</td>
 	<td><?currency($auc[0][0]['quarterRevenueTarget'])?></td>
 	<td>&nbsp;</td>
@@ -316,7 +316,7 @@ $row = $row['data'];
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 </tr>
-<tr>
+<tr class="altrow">
 	<td style="text-align:right">variance</td>
 	<td><?percentage(($totals['col3']/$auc[0][0]['quarterRevenueTarget']-1))?></td>
 	<td>&nbsp;</td>
@@ -428,14 +428,14 @@ $row = $row['data'];
 </tr>
 <?php endforeach; ?>
 <tr><td colspan=14>&nbsp;</td></tr>
-<tr>
+<tr class="altrow">
 	<td style="text-align:right" rowspan=3>current week</td>
 	<td style="text-align:right">actual</td>
 	<?php for($i = 3; $i <= 14; $i++): ?>
 	<td><?$echo($row['col'.$i])?></td>	
 	<?php endfor; ?>
 </tr>
-<tr>
+<tr class="altrow">
 	<td style="text-align:right">target</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
@@ -450,7 +450,7 @@ $row = $row['data'];
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 </tr>
-<tr>
+<tr class="altrow">
 	<td style="text-align:right">variance</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
@@ -466,7 +466,7 @@ $row = $row['data'];
 	<td>&nbsp;</td>
 </tr>
 <tr><td colspan=14>&nbsp;</td></tr>
-<tr>
+<tr class="altrow">
 	<td style="text-align:right" rowspan=3>QTD</td>
 	<td style="text-align:right">actual</td>
 	<?php for($i = 3; $i <= 14; $i++):
@@ -482,7 +482,7 @@ $row = $row['data'];
 	<td><?in_array($i, $skip) ? print('&nbsp;') : $echo($totals['col'.$i])?></td>	
 	<?php endfor; ?>
 </tr>
-<tr>
+<tr class="altrow">
 	<td style="text-align:right">target</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
@@ -497,7 +497,7 @@ $row = $row['data'];
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 </tr>
-<tr>
+<tr class="altrow">
 	<td style="text-align:right">variance</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
@@ -571,10 +571,10 @@ $row = $row['data'];
 </tr>
 <?php endforeach; ?>
 <tr><td colspan=9>&nbsp;</td></tr>
-<tr>
+<tr class="altrow">
 	<td style="text-align:right" rowspan=3>current week</td>
 	<td style="text-align:right">actual</td>
-	<?php for($i = 3; $i <= 8; $i++):
+	<?php for($i = 3; $i <= 9; $i++):
 		if (($i % 2 != 0 && $i > 3) || $i == 9) {
 			$echo = 'percentage';
 		} else if(in_array($i, array(6,8))) {
@@ -586,7 +586,7 @@ $row = $row['data'];
 	<td><?$echo($row['col'.$i])?></td>	
 	<?php endfor; ?>
 </tr>
-<tr>
+<tr class="altrow">
 	<td style="text-align:right">target</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
@@ -596,7 +596,7 @@ $row = $row['data'];
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 </tr>
-<tr>
+<tr class="altrow">
 	<td style="text-align:right">variance</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
@@ -607,7 +607,7 @@ $row = $row['data'];
 	<td>&nbsp;</td>
 </tr>
 <tr><td colspan=9>&nbsp;</td></tr>
-<tr>
+<tr class="altrow">
 	<td style="text-align:right" rowspan=3>QTD</td>
 	<td style="text-align:right">actual</td>
 	<?php for($i = 3; $i <= 9; $i++):
@@ -623,7 +623,7 @@ $row = $row['data'];
 	<td><?in_array($i, $skip) ? print('&nbsp;') : $echo($totals['col'.$i])?></td>	
 	<?php endfor; ?>
 </tr>
-<tr>
+<tr class="altrow">
 	<td style="text-align:right">target</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
@@ -633,7 +633,7 @@ $row = $row['data'];
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 </tr>
-<tr>
+<tr class="altrow">
 	<td style="text-align:right">variance</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
@@ -694,14 +694,14 @@ $row = $row['data'];
 </tr>
 <?php endforeach; ?>
 <tr><td colspan=8>&nbsp;</td></tr>
-<tr>
+<tr class="altrow">
 	<td style="text-align:right" rowspan=3>current week</td>
 	<td style="text-align:right">actual</td>
 	<?php for($i = 3; $i <= 8; $i++): ?>
 	<td><?$echo($row['col'.$i])?></td>	
 	<?php endfor; ?>
 </tr>
-<tr>
+<tr class="altrow">
 	<td style="text-align:right">target</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
@@ -710,7 +710,7 @@ $row = $row['data'];
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 </tr>
-<tr>
+<tr class="altrow">
 	<td style="text-align:right">variance</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
@@ -720,7 +720,7 @@ $row = $row['data'];
 	<td>&nbsp;</td>
 </tr>
 <tr><td colspan=8>&nbsp;</td></tr>
-<tr>
+<tr class="altrow">
 	<td style="text-align:right" rowspan=3>QTD</td>
 	<td style="text-align:right">actual</td>
 	<?php for($i = 3; $i <= 8; $i++):
@@ -736,7 +736,7 @@ $row = $row['data'];
 	<td><?in_array($i, $skip) ? print('&nbsp;') : $echo($totals['col'.$i])?></td>	
 	<?php endfor; ?>
 </tr>
-<tr>
+<tr class="altrow">
 	<td style="text-align:right">target</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
@@ -745,7 +745,7 @@ $row = $row['data'];
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 </tr>
-<tr>
+<tr class="altrow">
 	<td style="text-align:right">variance</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
@@ -803,7 +803,7 @@ $row = $row['data'];
 </tr>
 <?php endforeach; ?>
 <tr><td colspan=8>&nbsp;</td></tr>
-<tr>
+<tr class="altrow">
 	<td style="text-align:right" rowspan=3>current week</td>
 	<td style="text-align:right">actual</td>
 	<?php for($i = 3; $i <= 8; $i++): 
@@ -816,7 +816,7 @@ $row = $row['data'];
 	<td><?$echo($row['col'.$i])?></td>	
 	<?php endfor; ?>
 </tr>
-<tr>
+<tr class="altrow">
 	<td style="text-align:right">target</td>
 	<td><?=$row['newBuyerTarget']?></td>
 	<td>&nbsp;</td>
@@ -825,7 +825,7 @@ $row = $row['data'];
 	<td><?=$row['totalBuyerTarget']?></td
 	<td>&nbsp;</td>
 </tr>
-<tr>
+<tr class="altrow">
 	<td style="text-align:right">variance</td>
 	<td><?percentage(($row['col3']/$row['newBuyerTarget']-1))?></td>
 	<td>&nbsp;</td>
@@ -835,7 +835,7 @@ $row = $row['data'];
 	<td>&nbsp;</td>
 </tr>
 <tr><td colspan=8>&nbsp;</td></tr>
-<tr>
+<tr class="altrow">
 	<td style="text-align:right" rowspan=3>QTD</td>
 	<td style="text-align:right">actual</td>
 	<?php for($i = 3; $i <= 8; $i++):
@@ -849,7 +849,7 @@ $row = $row['data'];
 	<td><?in_array($i, $skip) ? print('&nbsp;') : $echo($totals['col'.$i])?></td>	
 	<?php endfor; ?>
 </tr>
-<tr>
+<tr class="altrow">
 	<td style="text-align:right">target</td>
 	<td><?=$buyers[0][0]['quarterNewBuyerTarget']?></td>
 	<td>&nbsp;</td>
@@ -858,7 +858,7 @@ $row = $row['data'];
 	<td><?=$buyers[0][0]['quarterTotalBuyerTarget']?></td>
 	<td>&nbsp;</td>
 </tr>
-<tr>
+<tr class="altrow">
 	<td style="text-align:right">variance</td>
 	<td><?percentage(($totals['col3']/$buyers[0][0]['quarterNewBuyerTarget']-1))?></td>
 	<td>&nbsp;</td>
