@@ -2242,12 +2242,30 @@ class ReportsController extends AppController {
 			percentretailcollected as col15, percentretailcollectedyoy as col16,
 			collectionrate as col17, collectionrateyoy as col18,
 			auctionticketscollected as col19, auctionticketscollectedyoy as col20,
-			avgsalepricecollected as col21, avgsalepricecollectedyoy as col22
+			avgsalepricecollected as col21, avgsalepricecollectedyoy as col22,
+			revenuetarget
 		from reporting.weeklyScorecardAuctions  as data WHERE year = DATE_FORMAT(CURDATE(), '%Y')
 		 AND QUARTER = QUARTER(NOW()) AND weekBeginSunday < CURDATE()
-		group by weeknumber, year
+		group by quarter, weekBeginSunday
 		order by year desc, weeknumber asc;");
-
+		$tmp = $this->OfferType->query("SELECT 
+		 SUM(revenuetarget) as quarterRevenueTarget
+		FROM reporting.weeklyScorecardAuctions as data 
+		WHERE YEAR(weekBeginSunday) = YEAR(NOW())
+		 AND QUARTER = QUARTER(NOW()) AND weekBeginSunday < CURDATE()
+		group by quarter
+		ORDER BY weekBeginSunday
+		;");
+		
+		$auc[0][0] = $tmp[0][0];
+		$aucqtr = $this->OfferType->query("SELECT SUM(revenuetarget) as revenueTarget
+		FROM reporting.weeklyScorecardAuctions
+		WHERE
+		 QUARTER = QUARTER(NOW())
+		 AND YEAR(weekbeginsunday) = YEAR(NOW())
+		ORDER BY weekbeginsunday
+		;");
+		$this->set('aucqtr', $aucqtr);
 		$this->set('auc', $auc);
 		
 		$fp = $this->OfferType->query("select 
@@ -2257,85 +2275,202 @@ class ReportsController extends AppController {
 		 packagessold as col7, packagessoldyoy as col8,
 		 collectionrate as col9, collectionrateyoy as col10,
 		 revenuecollected as col11, revenuecollectedyoy as col12,
-		 avgsalepricecollected as col13, avgsalepricecollectedyoy as col14
+		 avgsalepricecollected as col13, avgsalepricecollectedyoy as col14,
+		revenuetarget
 		from reporting.weeklyScorecardFixedPrice as data WHERE YEAR(weekbeginsunday) = DATE_FORMAT(CURDATE(), '%Y') AND QUARTER = QUARTER(NOW()) AND weekBeginSunday < CURDATE()
-		group by weeknumber, YEAR(weekbeginsunday)
+		group by quarter, weekbeginsunday
 		order by weekbeginsunday
 		;");
+		$tmp = $this->OfferType->query("SELECT 
+		 SUM(revenuetarget) as quarterRevenueTarget
+		FROM reporting.weeklyScorecardFixedPrice as data 
+		WHERE YEAR(weekBeginSunday) = YEAR(NOW())
+		 AND QUARTER = QUARTER(NOW()) AND weekBeginSunday < CURDATE()
+		group by quarter
+		ORDER BY weekBeginSunday
+		;");
+		
+		$fp[0][0] = $tmp[0][0];
+		$fpqtr = $this->OfferType->query("SELECT SUM(revenuetarget) as revenueTarget
+		FROM reporting.weeklyScorecardFixedPrice
+		WHERE
+		 QUARTER = QUARTER(NOW())
+		 AND YEAR(weekbeginsunday) = YEAR(NOW())
+		ORDER BY weekbeginsunday
+		;");
+		$this->set('fpqtr', $fpqtr);
 		$this->set('fp', $fp);
 		
-		$fp = $this->OfferType->query("select 
+		$fpSponsored = $this->OfferType->query("select 
 		 weeknumber as col1, weekbeginsunday as col2, 
 		 buynowoffers as col3, buynowoffersyoy as col4,
 		 numberrequests as col5, numberrequestsyoy as col6,
 		 packagessold as col7, packagessoldyoy as col8,
 		 collectionrate as col9, collectionrateyoy as col10,
 		 revenuecollected as col11, revenuecollectedyoy as col12,
-		 avgsalepricecollected as col13, avgsalepricecollectedyoy as col14
+		 avgsalepricecollected as col13, avgsalepricecollectedyoy as col14,
+		 revenuetarget
 		from reporting.weeklyScorecardFixedPriceSponsor as data 
 		WHERE YEAR(weekBeginSunday) = YEAR(NOW())
 		 AND QUARTER = QUARTER(NOW()) AND weekBeginSunday < CURDATE()
-		group by weeknumber, YEAR(weekbeginsunday)
+		group by quarter, weekbeginsunday
 		order by weekbeginsunday
 		;");
-		$this->set('fpSponsored', $fp);
+		$tmp = $this->OfferType->query("SELECT 
+		 SUM(revenuetarget) as quarterRevenueTarget
+		FROM reporting.weeklyScorecardFixedPriceSponsor as data 
+		WHERE YEAR(weekBeginSunday) = YEAR(NOW())
+		 AND QUARTER = QUARTER(NOW()) AND weekBeginSunday < CURDATE()
+		group by quarter
+		ORDER BY weekBeginSunday
+		;");
 		
-		$fp = $this->OfferType->query("select 
+		$fpSponsored[0][0] = $tmp[0][0];
+		$fpSponsoredQtr = $this->OfferType->query("SELECT SUM(revenuetarget) as revenueTarget
+		FROM reporting.weeklyScorecardFixedPriceSponsor
+		WHERE
+		 QUARTER = QUARTER(NOW())
+		 AND YEAR(weekbeginsunday) = YEAR(NOW())
+		ORDER BY weekbeginsunday
+		;");
+		$this->set('fpSponsoredQtr', $fpSponsoredQtr);
+		$this->set('fpSponsored', $fpSponsored);
+		
+		$fpWholesale = $this->OfferType->query("select 
 			 weeknumber as col1, weekbeginsunday as col2, 
 			 buynowoffers as col3, buynowoffersyoy as col4,
 			 numberrequests as col5, numberrequestsyoy as col6,
 			 packagessold as col7, packagessoldyoy as col8,
 			 collectionrate as col9, collectionrateyoy as col10,
 			 revenuecollected as col11, revenuecollectedyoy as col12,
-			 avgsalepricecollected as col13, avgsalepricecollectedyoy as col14
+			 avgsalepricecollected as col13, avgsalepricecollectedyoy as col14,
+			 revenuetarget
 			from reporting.weeklyScorecardFixedPriceWholesale as data 
 			WHERE YEAR(weekBeginSunday) = YEAR(NOW())
 			 AND QUARTER = QUARTER(NOW()) AND weekBeginSunday < CURDATE()
-			group by weeknumber, YEAR(weekbeginsunday)
+			group by quarter, weekbeginsunday
 			order by weekbeginsunday
 		;");
-		$this->set('fpWholesale', $fp);
+		$tmp = $this->OfferType->query("SELECT 
+		 SUM(revenuetarget) as quarterRevenueTarget
+		FROM reporting.weeklyScorecardFixedPriceWholesale as data 
+		WHERE YEAR(weekBeginSunday) = YEAR(NOW())
+		 AND QUARTER = QUARTER(NOW()) AND weekBeginSunday < CURDATE()
+		group by quarter
+		ORDER BY weekBeginSunday
+		;");
 		
-		$fp = $this->OfferType->query("select 
+		$fpWholesale[0][0] = $tmp[0][0];
+		$fpWholesaleQtr = $this->OfferType->query("SELECT SUM(revenuetarget) as revenueTarget
+		FROM reporting.weeklyScorecardFixedPriceWholesale
+		WHERE
+		 QUARTER = QUARTER(NOW())
+		 AND YEAR(weekbeginsunday) = YEAR(NOW())
+		ORDER BY weekbeginsunday
+		;");
+		$this->set('fpWholesaleQtr', $fpWholesaleQtr);
+		$this->set('fpWholesale', $fpWholesale);
+		
+		$cruises = $this->OfferType->query("select 
 		 weeknumber as col1, weekbeginsunday as col2, 
 		numberCruiseOffers as col3,
 		packagesSold as col4, packagesSoldYoY as col5,
 		revenueCollected as col6, revenueCollectedYoY as col7,
-		avgSalePriceCollected as col8, avgSalePriceCollectedYoY as col9
+		avgSalePriceCollected as col8, avgSalePriceCollectedYoY as col9,
+		revenuetarget
 		from reporting.weeklyScorecardCruises as data 
 		WHERE YEAR(weekBeginSunday) = YEAR(NOW())
 		 AND QUARTER = QUARTER(NOW()) AND weekBeginSunday < CURDATE()
-		group by weeknumber, YEAR(weekbeginsunday)
+		group by quarter, weekbeginsunday
 		order by weekbeginsunday
 		;");
-		$this->set('cruises', $fp);
+		$tmp = $this->OfferType->query("SELECT 
+		 SUM(revenuetarget) as quarterRevenueTarget
+		FROM reporting.weeklyScorecardCruises as data 
+		WHERE YEAR(weekBeginSunday) = YEAR(NOW())
+		 AND QUARTER = QUARTER(NOW()) AND weekBeginSunday < CURDATE()
+		group by quarter
+		ORDER BY weekBeginSunday
+		;");
+
+		$cruises[0][0] = $tmp[0][0];
+		$cruisesQtr = $this->OfferType->query("SELECT SUM(revenuetarget) as revenueTarget
+		FROM reporting.weeklyScorecardCruises
+		WHERE
+		 QUARTER = QUARTER(NOW())
+		 AND YEAR(weekbeginsunday) = YEAR(NOW())
+		ORDER BY weekbeginsunday
+		;");
+		$this->set('cruisesQtr', $cruisesQtr);
 		
-		$fp = $this->OfferType->query("select 
+		$this->set('cruises', $cruises);
+		
+		$sponsorship = $this->OfferType->query("select 
 		 weeknumber as col1, weekbeginsunday as col2, 
 		packagesSold as col3, packagesSoldYoY as col4,
 		revenueCollected as col5, revenueCollectedYoY as col6,
-		avgSalePriceCollected as col7, avgSalePriceCollectedYoY as col8
+		avgSalePriceCollected as col7, avgSalePriceCollectedYoY as col8,
+		revenuetarget
 		from reporting.weeklyScorecardSponsorship as data 
 		WHERE YEAR(weekBeginSunday) = YEAR(NOW())
 		 AND QUARTER = QUARTER(NOW()) AND weekBeginSunday < CURDATE()
-		group by weeknumber, YEAR(weekbeginsunday)
+		group by quarter, weekbeginsunday
 		order by weekbeginsunday
 		;");
-		$this->set('sponsorship', $fp);
+		$tmp = $this->OfferType->query("SELECT 
+		 SUM(revenuetarget) as quarterRevenueTarget
+		FROM reporting.weeklyScorecardSponsorship as data 
+		WHERE YEAR(weekBeginSunday) = YEAR(NOW())
+		 AND QUARTER = QUARTER(NOW()) AND weekBeginSunday < CURDATE()
+		group by quarter
+		ORDER BY weekBeginSunday
+		;");
+
+		$sponsorship[0][0] = $tmp[0][0];
+		$sponsorshipQtr = $this->OfferType->query("SELECT SUM(revenuetarget) as revenueTarget
+		FROM reporting.weeklyScorecardSponsorship
+		WHERE
+		 QUARTER = QUARTER(NOW())
+		 AND YEAR(weekbeginsunday) = YEAR(NOW())
+		ORDER BY weekbeginsunday
+		;");
+		$this->set('sponsorshipQtr', $sponsorshipQtr);
 		
-		$fp = $this->OfferType->query("
+		$this->set('sponsorship', $sponsorship);
+		
+		$buyers = $this->OfferType->query("
 		select 
 		 weeknumber as col1, weekBeginSunday as col2,
 		 newBuyerActivity as col3, newbuyerYoY as col4,
 		 returningBuyerActivity as col5, returningbuyerYoY as col6,
-		 totalBuyerActivity as col7, totalbuyerYoY as col8
+		 totalBuyerActivity as col7, totalbuyerYoY as col8,
+		 newBuyerTarget, returningBuyerTarget, totalBuyerTarget
 		from reporting.weeklyScorecardBuyers as data 
 		WHERE YEAR(weekBeginSunday) = YEAR(NOW())
 		 AND QUARTER = QUARTER(NOW()) AND weekBeginSunday < CURDATE()
-		group by weeknumber, YEAR(weekbeginsunday)
+		group by quarter, weekbeginsunday
 		order by weekbeginsunday
 		;");
-		$this->set('buyers', $fp);
+		$tmp = $this->OfferType->query("SELECT 
+		 SUM(newbuyertarget) quarterNewBuyerTarget, sum(returningbuyertarget) quarterReturningBuyerTarget, sum(totalbuyertarget) quarterTotalBuyerTarget
+		FROM reporting.weeklyScorecardBuyers as data 
+		WHERE YEAR(weekBeginSunday) = YEAR(NOW())
+		 AND QUARTER = QUARTER(NOW()) AND weekBeginSunday < CURDATE()
+		group by quarter, YEAR(weekbeginSunday)
+		ORDER BY weekBeginSunday
+		;");
+
+		$buyers[0][0] = $tmp[0][0];
+		$buyerQtr = $this->OfferType->query("SELECT
+		SUM(newbuyertarget) quarterNewBuyerTarget, sum(returningbuyertarget) quarterReturningBuyerTarget, sum(totalbuyertarget) quarterTotalBuyerTarget
+		FROM reporting.weeklyScorecardBuyers
+		WHERE
+		 QUARTER = QUARTER(NOW())
+		 AND YEAR(weekbeginsunday) = YEAR(NOW())
+		ORDER BY weekbeginsunday
+		;");
+		$this->set('buyerQtr', $buyerQtr);
+		$this->set('buyers', $buyers);
 		
 		if (isset($this->params['named']['cron'])) {
 			Configure::write('debug', 0);
