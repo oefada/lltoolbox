@@ -31,6 +31,7 @@ td {
 	</tr>
 <?php foreach($tot as $row):
 $row = $row['data'];
+
 ?>
 <tr>
 	<?php for($i = 1; $i <= 8; $i++):
@@ -42,13 +43,75 @@ $row = $row['data'];
 	<?php endfor; ?>
 </tr>
 <?php endforeach; ?>
+<tr><td colspan=8>&nbsp;</td></tr>
 <tr>
-	<?php for($i = 1; $i <= 8; $i++):
+	<td style="text-align:right" rowspan=3>current week</td>
+	<td style="text-align:right">actual</td>
+	<?php for($i = 3; $i <= 8; $i++):
+		
+		$totals['col'.$i] = (!isset($totals['col'.$i]) ? 0 : $totals['col'.$i] + $row['col'.$i]);
+
+	?>
+	<td><?=$row['col'.$i]?></td>	
+	<?php endfor; ?>
+</tr>
+<tr>
+	<td style="text-align:right">target</td>
+	<td>&nbsp;</td>
+	<td>&nbsp;</td>
+	<td><?=$row['revenuetarget']?></td>
+	<td>&nbsp;</td>
+	<td>&nbsp;</td>
+	<td>&nbsp;</td>
+</tr>
+<tr>
+	<td style="text-align:right">variance</td>
+	<td>&nbsp;</td>
+	<td>&nbsp;</td>
+	<td><?=round(($row['col5']/$row['revenuetarget']-1)*100)?></td>
+	<td>&nbsp;</td>
+	<td>&nbsp;</td>
+	<td>&nbsp;</td>
+</tr>
+<tr><td colspan=8>&nbsp;</td></tr>
+<tr>
+	<td style="text-align:right" rowspan=3>QTD</td>
+	<td style="text-align:right">actual</td>
+	<?php for($i = 3; $i <= 8; $i++):
 	
 		$skip = array(1,2);
 	?>
 	<td><?=in_array($i, $skip) ? '&nbsp;' : $totals['col'.$i]?></td>	
 	<?php endfor; ?>
+</tr>
+<tr>
+	<td style="text-align:right">target</td>
+	<td>&nbsp;</td>
+	<td>&nbsp;</td>
+	<td><?=$tot[0][0]['quarterRevenueTarget']?></td>
+	<td>&nbsp;</td>
+	<td>&nbsp;</td>
+	<td>&nbsp;</td>
+</tr>
+<tr>
+	<td style="text-align:right">variance</td>
+	<td>&nbsp;</td>
+	<td>&nbsp;</td>
+	<td><?=round(($totals['col5']/$tot[0][0]['quarterRevenueTarget']-1)*100)?></td>
+	<td>&nbsp;</td>
+	<td>&nbsp;</td>
+	<td>&nbsp;</td>
+</tr>
+<tr><td colspan=8>&nbsp;</td></tr>
+<tr>
+	<td style="text-align:right">QTR</td>
+	<td style="text-align:right">target</td>
+	<td>&nbsp;</td>
+	<td>&nbsp;</td>
+	<td><?=$qtr[0][0]['revenueTarget']?></td>
+	<td>&nbsp;</td>
+	<td>&nbsp;</td>
+	<td>&nbsp;</td>
 </tr>
 </table>
 <p style="page-break-before: always"> </p>

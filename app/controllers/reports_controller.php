@@ -2202,14 +2202,24 @@ class ReportsController extends AppController {
 		 weeknumber as col1, weekBeginSunday as col2,
 		 packagesSold as col3, packagesSoldYoY as col4,
 		 revenueCollected as col5, revenueCollectedYoY as col6,
-		 avgSalePriceCollected as col7, avgSalePriceCollectedYoY as col8
+		 avgSalePriceCollected as col7, avgSalePriceCollectedYoY as col8,
+		 revenuetarget, SUM(revenuetarget) as quarterRevenueTarget
 		FROM reporting.weeklyScorecardTotal as data 
 		WHERE YEAR(weekBeginSunday) = YEAR(NOW())
 		 AND QUARTER = QUARTER(NOW()) AND weekBeginSunday <= NOW()
-		group by weeknumber, YEAR(weekbeginsunday)
+		group by quarter
 		ORDER BY weekBeginSunday
 		;");
 		$this->set('tot', $tot);
+		
+		$qtr = $this->OfferType->query("SELECT SUM(revenuetarget) as revenueTarget
+		FROM reporting.weeklyScorecardTotal
+		WHERE
+		 QUARTER = QUARTER(NOW())
+		 AND YEAR(weekbeginsunday) = YEAR(NOW())
+		ORDER BY weekbeginsunday
+		;");
+		$this->set('qtr', $qtr);
 		
 		$auc = $this->OfferType->query("select 
 			weeknumber as col1, weekbeginsunday as col2, 
@@ -2278,7 +2288,7 @@ class ReportsController extends AppController {
 		
 		$fp = $this->OfferType->query("select 
 		 weeknumber as col1, weekbeginsunday as col2, 
-		numberCruisePackages as col3,
+		numberCruiseOffers as col3,
 		packagesSold as col4, packagesSoldYoY as col5,
 		revenueCollected as col6, revenueCollectedYoY as col7,
 		avgSalePriceCollected as col8, avgSalePriceCollectedYoY as col9
