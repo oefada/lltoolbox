@@ -169,7 +169,9 @@ td.error div{
 						echo $form->hidden('condition3.field');
 						echo $form->hidden('condition3.value');
 						echo $form->hidden('condition4.field');
-						echo $form->hidden('condition4.value');?>
+						echo $form->hidden('condition4.value');
+						echo $form->hidden('condition5.field');
+						echo $form->hidden('condition5.value');?>
 				<?=$form->select('MCR.pkgRevenueRange', $pkgRevenueRanges, null, array('onchange' => '$("spinner").show(); submit()'), false); ?>
 				<?php echo $form->end(); ?>
 			</div>
