@@ -101,22 +101,26 @@ $mtdGoal = $goals[$curMonth];
 
 if ($curMonth >= 1 && $curMonth <= 3) {
 	$qtdStart = 1;
+	$qtdEnd = 3;
 } else if($curMonth >= 4 && $curMonth <= 6) {
 	$qtdStart = 4;
+	$qtdEnd = 6;
 } else if($curMonth >= 7 && $curMonth <= 9) {
 	$qtdStart = 7;
+	$qtdEnd = 9;
 } else if($curMonth >= 10 && $curMonth <= 12) {
 	$qtdStart = 10;
+	$qtdEnd = 12;
 }
 
 $qtdGoal = 0;
-for ($i = $qtdStart; $i <= $curMonth; $i++) {
+for ($i = $qtdStart; $i <= $qtdEnd; $i++) {
 	$qtdGoal += $goals[$i];
 }
 
 
 $ytdGoal = 0;
-for ($i = 1; $i <= $curMonth; $i++) {
+for ($i = 1; $i <= 12; $i++) {
 	$ytdGoal += $goals[$i];
 }
 ?>
