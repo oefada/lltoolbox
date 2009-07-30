@@ -80,7 +80,7 @@ class ClientsController extends AppController {
 		
 		$clientTypeIds = $this->Client->ClientType->find('list');
 		$themes = $this->Client->Theme->find('list');
-		$destinations = $this->Client->Destination->find('list');
+		$destinations = $this->Client->Destination->find('list', array('order' => array('destinationName')));
 		$this->set('client', $this->data);
 		//$this->set(compact('addresses', 'amenities','clientLevelIds','clientStatusIds','clientTypeIds','regions','clientAcquisitionSourceIds', 'loas', 'themes'));
 		$countryIds = $this->Country->find('list');
