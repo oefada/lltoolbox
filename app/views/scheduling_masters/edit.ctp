@@ -73,11 +73,12 @@ ul.subsection_tabs li.tab a.active {
 <?php echo $this->renderElement('../scheduling_masters/_form') ?>
 <?php echo $form->input('schedulingMasterId') ?>
 <?php
-if ($remainingIterations) {
+//if ($remainingIterations) {
 	echo $form->end('Save Changes');
-} else {
-	echo "</form>";
-}?>
+//} else {
+//	echo "</form>";
+//}
+?>
 <div style="margin: 0 auto; width: 400px">
 <a href="http://www.luxurylink.com/luxury-hotels/preview.html?clid=<?=$package['ClientLoaPackageRel'][0]['clientId']?>&oid=<?=$this->data['SchedulingMaster']['schedulingMasterId']?>&preview=master" class='button' target="_blank"><span>Preview offer on live site</span></a>
 <?
