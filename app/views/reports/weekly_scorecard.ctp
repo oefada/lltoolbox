@@ -26,7 +26,9 @@ td {
 td.highlight {
 	background-color: #f5f2e2;
 }
-
+table tr.altrow td {
+	background: #f5f2e2;
+}
 </style>
 <?
 function &number() {
