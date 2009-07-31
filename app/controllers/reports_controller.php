@@ -2632,7 +2632,7 @@ class ReportsController extends AppController {
 			$this->render();
 			$attachment = chunk_split(base64_encode($this->output));
 			
-			$to = 'mchoe@luxurylink.com';
+			$to = 'mchoe@luxurylink.com,management@luxurylink.com,jlagraff@luxurylink.com,ahahn@luxurylink.com';
 			$subject = 'Weekly Scorecard Report';
 			$semi_rand = md5( time() );
 
