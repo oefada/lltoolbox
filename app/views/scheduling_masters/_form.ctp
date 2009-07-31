@@ -119,7 +119,7 @@
 		// END DATE / ITERATIONS
 		$iterationsStyle = $endDateStyle = ' style="padding: 0; margin: 0"';
 		//shows only when fixed number of iterations is selected
-		if (!empty($this->data['SchedulingMaster']['iterationSchedulingOption']) && $this->data['SchedulingMaster']['iterationSchedulingOption'] == 1) {
+		if (empty($this->data['SchedulingMaster']['iterationSchedulingOption']) || $this->data['SchedulingMaster']['iterationSchedulingOption'] == 1) {
 			$iterationsStyle = ' style="padding: 0; margin: 0; display: none"';
 		} else {
 			$endDateStyle = ' style="padding: 0; margin: 0; display: none"';
