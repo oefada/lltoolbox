@@ -2,6 +2,7 @@
 		<div id='one'>
 			<p class='clean-gray' style="margin-bottom:15px;">
 				<? if(!empty($this->data['SchedulingMaster']['schedulingMasterId'])): ?>
+				<strong>Package Id:</strong> <?php echo $this->data['SchedulingMaster']['packageId'] ?><br />
 				<strong>Scheduling Master Id:</strong> <?php echo $this->data['SchedulingMaster']['schedulingMasterId'] ?><br />
 				<? endif; ?>
 			<?php echo $package['Package']['shortBlurb'] ?><br />
