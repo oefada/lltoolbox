@@ -39,6 +39,9 @@
         color: black; 
         background: transparent;
     }
+    table tr.altrow td {
+    	background: #f5f2e2;
+    }
     .cake-sql-log {
         display: none;
     }
