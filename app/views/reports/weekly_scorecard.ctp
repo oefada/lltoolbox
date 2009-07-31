@@ -139,7 +139,9 @@ $row = $row['data'];
 		} else {
 			$echo = 'efunc';
 		}
-		$skip = array(1,2,4,6,8);
+		$totals['col4'] = ($totals['col3'] / $totLastYear['packagesSoldPrevious'] - 1);
+		$totals['col6'] = ($totals['col5'] / $totLastYear['revenueCollectedPrevious'] - 1);
+		$skip = array(1,2,8);
 	?>
 	<td><?in_array($i, $skip) ? print('&nbsp;') : $echo($totals['col'.$i])?></td>	
 	<?php endfor; ?>
@@ -168,7 +170,7 @@ $row = $row['data'];
 	<td>&nbsp;</td>
 	<td><?currency($totLastYear['revenueCollectedPrevious'])?></td>
 	<td>&nbsp;</td>
-	<td>&nbsp;</td>
+	<td><?currency($totLastYear['revenueCollectedPrevious']/$totLastYear['packagesSoldPrevious'])?></td>
 	<td>&nbsp;</td>
 </tr>
 <tr><td colspan=8>&nbsp;</td></tr>
@@ -188,7 +190,7 @@ $row = $row['data'];
 	<td>&nbsp;</td>
 	<td><?currency($totLastYear['qtr_revenueCollectedPrevious'])?></td>
 	<td>&nbsp;</td>
-	<td>&nbsp;</td>
+	<td><?currency($totLastYear['qtr_revenueCollectedPrevious']/$totLastYear['qtr_packagesSoldPrevious'])?></td>
 	<td>&nbsp;</td>
 </tr>
 </table>
@@ -319,7 +321,9 @@ $row = $row['data'];
 		} else {
 			$echo = 'efunc';
 		}
-		$skip = array(4,6,8,10,12,14,15,16,18,20,22);
+		
+		$totals['col14'] = $totals['col13'] / $aucLastYear['auctionRevenueCollectedPrevious'] - 1;
+		$skip = array(4,6,8,10,12,15,16,18,20,22);
 	?>
 	<td><?in_array($i, $skip) ? print('&nbsp;') : $echo($totals['col'.$i])?></td>	
 	<?php endfor; ?>
@@ -376,7 +380,7 @@ $row = $row['data'];
 	<td>&nbsp;</td>
 	<td><?=$aucLastYear['auctionsListedPrevious']?></td>
 	<td>&nbsp;</td>
-	<td>&nbsp;</td>
+	<td><?percentage($aucLastYear['successfulAuctionsPrevious']/$aucLastYear['auctionsListedPrevious'])?></td>
 	<td>&nbsp;</td>
 	<td><?=$aucLastYear['successfulAuctionsPrevious']?></td>
 	<td>&nbsp;</td>
@@ -386,11 +390,11 @@ $row = $row['data'];
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
+	<td><?percentage($aucLastYear['auctionTicketsCollectedPrevious']/$aucLastYear['auctionTicketsPotentialPrevious'])?></td>
 	<td>&nbsp;</td>
+	<td><?=$aucLastYear['auctionTicketsCollectedPrevious']?></td>
 	<td>&nbsp;</td>
-	<td>&nbsp;</td>
-	<td>&nbsp;</td>
-	<td>&nbsp;</td>
+	<td><?currency($aucLastYear['auctionRevenueCollectedPrevious']/$aucLastYear['auctionTicketsCollectedPrevious'])?></td>
 	<td>&nbsp;</td>
 </tr>
 <tr><td colspan=22>&nbsp;</td></tr>
@@ -424,7 +428,7 @@ $row = $row['data'];
 	<td>&nbsp;</td>
 	<td><?=$aucLastYear['qtr_auctionsListedPrevious']?></td>
 	<td>&nbsp;</td>
-	<td>&nbsp;</td>
+	<td><?percentage($aucLastYear['qtr_successfulAuctionsPrevious']/$aucLastYear['qtr_auctionsListedPrevious'])?></td>
 	<td>&nbsp;</td>
 	<td><?=$aucLastYear['qtr_successfulAuctionsPrevious']?></td>
 	<td>&nbsp;</td>
@@ -434,11 +438,11 @@ $row = $row['data'];
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
+	<td><?percentage($aucLastYear['qtr_auctionTicketsCollectedPrevious']/$aucLastYear['qtr_auctionTicketsPotentialPrevious'])?></td>
 	<td>&nbsp;</td>
+	<td class="highlight"><?=$aucLastYear['qtr_auctionTicketsCollectedPrevious']?></td>
 	<td>&nbsp;</td>
-	<td class="highlight">&nbsp;</td>
-	<td>&nbsp;</td>
-	<td>&nbsp;</td>
+	<td><?currency($aucLastYear['qtr_auctionRevenueCollectedPrevious']/$aucLastYear['qtr_auctionTicketsCollectedPrevious'])?></td>
 	<td>&nbsp;</td>
 </tr>
 </table>
@@ -576,7 +580,10 @@ $row = $row['data'];
 		} else {
 			$totals['col'.$i] = (!isset($totals['col'.$i]) ? $totals['col'.$i] : $totals['col'.$i] + $totals['col'.$i]);
 		}
-		$skip = array(4,6,8,10,12,14);
+		
+		$totals['col8'] = $totals['col7'] / $lastyear['packagesSoldPrevious'] - 1;
+		$totals['col12'] = $totals['col11'] / $lastyear['revenueCollectedPrevious'] - 1;
+		$skip = array(4,6,10,14);
 	?>
 	<td><?in_array($i, $skip) ? print('&nbsp;') : $echo($totals['col'.$i])?></td>	
 	<?php endfor; ?>
@@ -619,11 +626,11 @@ $row = $row['data'];
 	<td>&nbsp;</td>
 	<td><?=$lastyear['packagesSoldPrevious']?></td>
 	<td>&nbsp;</td>
-	<td>&nbsp;</td>
+	<td><?percentage($lastyear['packagesSoldPrevious']/$lastyear['numberRequestsPrevious'])?></td>
 	<td>&nbsp;</td>
 	<td><?currency($lastyear['revenueCollectedPrevious'])?></td>
 	<td>&nbsp;</td>
-	<td>&nbsp;</td>
+	<td><?currency($lastyear['revenueCollectedPrevious']/$lastyear['packagesSoldPrevious'])?></td>
 	<td>&nbsp;</td>
 </tr>
 <tr><td colspan=14>&nbsp;</td></tr>
@@ -651,11 +658,11 @@ $row = $row['data'];
 	<td>&nbsp;</td>
 	<td><?=$lastyear['qtr_packagesSoldPrevious']?></td>
 	<td>&nbsp;</td>
-	<td>&nbsp;</td>
+	<td><?percentage($lastyear['qtr_packagesSoldPrevious']/$lastyear['qtr_numberRequestsPrevious'])?></td>
 	<td>&nbsp;</td>
 	<td><?currency($lastyear['qtr_revenueCollectedPrevious'])?></td>
 	<td>&nbsp;</td>
-	<td>&nbsp;</td>
+	<td><?currency($lastyear['qtr_revenueCollectedPrevious']/$lastyear['qtr_packagesSoldPrevious'])?></td>
 	<td>&nbsp;</td>
 </tr>
 </table>
@@ -747,7 +754,9 @@ $row = $row['data'];
 	} else {
 		$echo = 'efunc';
 	}
-		$skip = array(5,7,9);
+		$skip = array(5,9);
+		
+	$totals['col7'] = $totals['col6'] / $cruisesLastYear['revenueCollectedPrevious'] - 1;
 	?>
 	<td><?in_array($i, $skip) ? print('&nbsp;') : $echo($totals['col'.$i])?></td>	
 	<?php endfor; ?>
@@ -779,7 +788,7 @@ $row = $row['data'];
 	<td>&nbsp;</td>
 	<td><?currency($cruisesLastYear['revenueCollectedPrevious'])?></td>
 	<td>&nbsp;</td>
-	<td>&nbsp;</td>
+	<td><?currency($cruisesLastYear['revenueCollectedPrevious']/$cruisesLastYear['packagesSoldPrevious'])?></td>
 	<td>&nbsp;</td>
 </tr>
 <tr><td colspan=9>&nbsp;</td></tr>
@@ -801,7 +810,7 @@ $row = $row['data'];
 	<td>&nbsp;</td>
 	<td><?currency($cruisesLastYear['qtr_revenueCollectedPrevious'])?></td>
 	<td>&nbsp;</td>
-	<td>&nbsp;</td>
+	<td><?currency($cruisesLastYear['qtr_revenueCollectedPrevious']/$cruisesLastYear['qtr_packagesSoldPrevious'])?></td>
 	<td>&nbsp;</td>
 </tr>
 </table>
@@ -887,7 +896,10 @@ $row = $row['data'];
 		} else {
 			$echo = 'efunc';
 		}
-		$skip = array(4,6,8);
+		$skip = array(8);
+		
+		$totals['col6'] = $totals['col5'] / $sponsorshipLastYear['revenueCollectedPrevious'] - 1;
+		$totals['col4'] = $totals['col3'] / $sponsorshipLastYear['packagesSoldPrevious'] - 1;
 	?>
 	<td><?in_array($i, $skip) ? print('&nbsp;') : $echo($totals['col'.$i])?></td>	
 	<?php endfor; ?>
@@ -916,7 +928,7 @@ $row = $row['data'];
 	<td>&nbsp;</td>
 	<td><?currency($sponsorshipLastYear['revenueCollectedPrevious'])?></td>
 	<td>&nbsp;</td>
-	<td>&nbsp;</td>
+	<td><?currency($sponsorshipLastYear['revenueCollectedPrevious']/$sponsorshipLastYear['packagesSoldPrevious'])?></td>
 	<td>&nbsp;</td>
 </tr>
 <tr><td colspan=8>&nbsp;</td></tr>
@@ -936,7 +948,7 @@ $row = $row['data'];
 	<td>&nbsp;</td>
 	<td><?currency($sponsorshipLastYear['qtr_revenueCollectedPrevious'])?></td>
 	<td>&nbsp;</td>
-	<td>&nbsp;</td>
+	<td><?currency($sponsorshipLastYear['qtr_revenueCollectedPrevious']/$sponsorshipLastYear['qtr_packagesSoldPrevious'])?></td>
 	<td>&nbsp;</td>
 </tr>
 </table>
@@ -1018,7 +1030,12 @@ $row = $row['data'];
 		} else {
 			$echo = 'efunc';
 		}
-		$skip = array(4,6,8);
+		
+		
+		$totals['col4'] = $totals['col3'] / $buyersLastYear['newBuyerActivityPrevious'] -1 ;
+		$totals['col6'] = $totals['col5'] / $buyersLastYear['returningBuyerActivityPrevious'] - 1;
+		$totals['col8'] = $totals['col7'] / $buyersLastYear['totalBuyerActivityPrevious'] - 1;
+		$skip = array();
 	?>
 	<td><?in_array($i, $skip) ? print('&nbsp;') : $echo($totals['col'.$i])?></td>	
 	<?php endfor; ?>

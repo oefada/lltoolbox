@@ -2282,7 +2282,8 @@ class ReportsController extends AppController {
 		;");
 		
 		$tmp2 = $this->OfferType->query("SELECT SUM(a.auctionsListedPrevious) as auctionsListedPrevious, SUM(a.successfulAuctionsPrevious) as successfulAuctionsPrevious,
-		 SUM(a.auctionTicketsPotentialPrevious) as auctionTicketsPotentialPrevious, SUM(a.auctionRevenueCollectedPrevious) as auctionRevenueCollectedPrevious
+		 SUM(a.auctionTicketsPotentialPrevious) as auctionTicketsPotentialPrevious, SUM(a.auctionRevenueCollectedPrevious) as auctionRevenueCollectedPrevious,
+		 SUM(a.auctionTicketsCollectedPrevious) as auctionTicketsCollectedPrevious
 		FROM reporting.weeklyScorecardAuctions a
 		WHERE 
 		 QUARTER = QUARTER(NOW())
@@ -2290,7 +2291,8 @@ class ReportsController extends AppController {
 		;
 		");
 		$tmp3 = $this->OfferType->query("SELECT SUM(a.auctionsListedPrevious) as qtr_auctionsListedPrevious, SUM(a.successfulAuctionsPrevious) as qtr_successfulAuctionsPrevious,
-		 SUM(a.auctionTicketsPotentialPrevious) as qtr_auctionTicketsPotentialPrevious, SUM(a.auctionRevenueCollectedPrevious) as qtr_auctionRevenueCollectedPrevious
+		 SUM(a.auctionTicketsPotentialPrevious) as qtr_auctionTicketsPotentialPrevious, SUM(a.auctionRevenueCollectedPrevious) as qtr_auctionRevenueCollectedPrevious,
+			SUM(a.auctionTicketsCollectedPrevious) as qtr_auctionTicketsCollectedPrevious
 		FROM reporting.weeklyScorecardAuctions a
 		WHERE 
 		 QUARTER = QUARTER(NOW())
