@@ -38,7 +38,7 @@ class SchedulingMastersController extends AppController {
             // endDate
 			$datePickerDate2 = explode('-', $this->data['SchedulingMaster']['endDatePicker2']);
 			if (in_array($this->data['SchedulingMaster']['offerTypeId'], array(3,4))) {
-				$this->data['SchedulingMaster']['endDate'] = "$datePickerDate2[2]-$datePickerDate2[0]-$datePickerDate2[1] 23:59:59";	
+				$this->data['SchedulingMaster']['endDate'] = "$datePickerDate2[2]-$datePickerDate2[0]-$datePickerDate2[1] 01:00:00";	
 			} else {
 				$this->data['SchedulingMaster']['endDate'] = "$datePickerDate2[2]-$datePickerDate2[0]-$datePickerDate2[1] 16:00:00";	
 			}            
@@ -121,6 +121,9 @@ class SchedulingMastersController extends AppController {
 			
 			// default numDaysToRun
 			$this->data['SchedulingMaster']['numDaysToRun'] = 2;
+			
+			// default iteration
+			$this->data['SchedulingMaster']['iterationSchedulingOption'] = 1;
 			
 			$this->data['SchedulingMaster']['packageName']              = trim($package['Package']['packageName']);
 			$this->data['SchedulingMaster']['mysteryIncludes']              = trim($package['Package']['packageIncludes']);
@@ -442,7 +445,7 @@ class SchedulingMastersController extends AppController {
 
 				 // endDate
 				$datePickerDate2 = explode('-', $this->data['SchedulingMaster']['endDatePicker2']);
-	            $this->data['SchedulingMaster']['endDate'] = "$datePickerDate2[2]-$datePickerDate2[0]-$datePickerDate2[1] 23:59:59";
+	            $this->data['SchedulingMaster']['endDate'] = "$datePickerDate2[2]-$datePickerDate2[0]-$datePickerDate2[1] 01:00:00";
 
 				// set endDate for instance and offerLive
 			    $offerLiveResults = $this->OfferLive->query("SELECT OfferLive.* FROM offerLive as OfferLive INNER JOIN  offer AS Offer USING(offerId) WHERE Offer.schedulingInstanceId = " . $originalData['SchedulingInstance'][0]['schedulingInstanceId']);
