@@ -117,10 +117,10 @@ class SchedulingMastersController extends AppController {
 			$loa = $this->Loa->findByloaId($package['ClientLoaPackageRel'][0]['loaId']);
 			$end_dates = array($package['Package']['endDate'], date("Y-m-d", strtotime("-14 days", strtotime($package['Package']['validityEndDate']))), date("Y-m-d", strtotime($loa['Loa']['endDate'])));
 			sort($end_dates);
-			$this->data['SchedulingMaster']['endDatePicker2'] = $end_dates[0];
+			$this->data['SchedulingMaster']['endDatePicker2'] = date("m-d-Y", strtotime($end_dates[0]));
 			
 			// default numDaysToRun
-			$this->data['SchedulingMaster']['numDaysToRun'] = 3;
+			$this->data['SchedulingMaster']['numDaysToRun'] = 2;
 			
 			$this->data['SchedulingMaster']['packageName']              = trim($package['Package']['packageName']);
 			$this->data['SchedulingMaster']['mysteryIncludes']              = trim($package['Package']['packageIncludes']);
