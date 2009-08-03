@@ -14,17 +14,13 @@
 <li><?=$html->link("Promo Tool", '/promos')?></li>
 <li><?=$html->link("Help FAQ", 'legacytools/help_faq')?></li>
 
-<li><?=$html->link("Landing Page Tool", '/landing_pages')?></li>
-<li><?=$html->link("Client Score Tool", '/client_scores')?></li>
-<li><?=$html->link("Articles Tool", '/articles')?></li>
-</ul>
-
 <br/>
 
 <ul>
 <li><?=$html->link("Landing Pages", '/landing_pages')?></li>
 <li><?=$html->link("Menu Tool", '/menus')?></li>
 <li><?=$html->link("Client Scores", '/client_scores')?></li>
+<li><?=$html->link("Articles", '/articles')?></li>
 </ul>
 
 <br />
