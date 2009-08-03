@@ -369,18 +369,33 @@ class Ticket extends AppModel {
 		}
 	}
 
-	function __runTakeDownPackageNumPackages($packageId, $ticketId, $schedulingMasterId) {
+	function getSmIdsFromPackage($packageId) {
+		$smids = array();
+		$data = $this->query("SELECT schedulingMasterId FROM schedulingMaster WHERE packageId = $packageId");
+		if (!empty($data)) {
+			foreach ($data as $k => $v) {
+				$smids[] = $v['schedulingMaster']['schedulingMasterId'];
+			}
+		}
+		return $smids;
+	}
+
+	function __runTakeDownPackageNumPackages($packageId, $ticketId) {
 		$packageMaxNumSales = $this->getPackageNumMaxSales($packageId);
 		$derivedPackageNumSales = $this->getDerivedPackageNumSales($packageId);
-			
+		
 		if (($packageMaxNumSales !== false) && ($derivedPackageNumSales !== false)) {
-			if (($derivedPackageNumSales + 1) >= $packageMaxNumSales) {
-				if ($this->__runTakeDown($schedulingMasterId)) {
-					$this->insertMessageQueuePackage($ticketId, 'PACKAGE');
-				}
-			} elseif (($packageMaxNumSales - ($derivedPackageNumSales + 1) == 1)) {
-				if ($this->__updateSchedulingOfferFixedPrice($schedulingMasterId)) {
-					$this->insertMessageQueuePackage($ticketId, 'PACKAGE_FP_ONLY');
+			$smids = $this->getSmIdsFromPackage($packageId);
+			if (!empty($smids)) {
+				$schedulingMasterIds = implode(',', $smids);
+				if (($derivedPackageNumSales + 1) >= $packageMaxNumSales) {
+					if ($this->__runTakeDown($schedulingMasterIds)) {
+						$this->insertMessageQueuePackage($ticketId, 'PACKAGE');
+					}
+				} elseif (($packageMaxNumSales - ($derivedPackageNumSales + 1) == 1)) {
+					if ($this->__updateSchedulingOfferFixedPrice($schedulingMasterIds)) {
+						$this->insertMessageQueuePackage($ticketId, 'PACKAGE_FP_ONLY');
+					}
 				}
 			}
 		}
