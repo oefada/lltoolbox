@@ -13,6 +13,10 @@
 <li><?=$html->link("MasterCard Offer Promo Tool", '/package_promo_rels/mastercard')?></li>
 <li><?=$html->link("Promo Tool", '/promos')?></li>
 <li><?=$html->link("Help FAQ", 'legacytools/help_faq')?></li>
+
+<li><?=$html->link("Landing Page Tool", '/landing_pages')?></li>
+<li><?=$html->link("Client Score Tool", '/client_scores')?></li>
+<li><?=$html->link("Articles Tool", '/articles')?></li>
 </ul>
 
 <br/>
