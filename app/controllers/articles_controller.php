@@ -3,7 +3,7 @@ class ArticlesController extends AppController {
 
 	var $name = 'Articles';
 	var $helpers = array('Html', 'Form');
-	var $uses = array('Article', 'LandingPage');
+	var $uses = array('Article', 'ArticleRel', 'LandingPage');
 
 	function index() {
 		$this->Article->recursive = 0;
@@ -25,9 +25,23 @@ class ArticlesController extends AppController {
 	function add() {
 		if (!empty($this->data)) {
 			$this->data['Article']['articleSeoName'] = $this->convertToSeoName($this->data['Article']['articleTitle']);
-			$this->data['Article']['articleUrlDisplay'] = $this->getArticleUrlDisplay($this->data['Article']['primaryStypeId']);
+			$this->data['Article']['articleUrlDisplay'] = $this->getArticleUrlDisplay($this->data['Article']['primaryStyleId']);
 			$this->Article->create();
 			if ($this->Article->save($this->data)) {
+
+				$articleRel = array();
+				$articleRel['articleId'] = $this->Article->id;
+				$articleRel['refId'] = $this->data['Article']['primaryStyleId'];
+				$pstyle = $this->LandingPage->read(null, $this->data['Article']['primaryStyleId']);
+				if ($pstyle['LandingPage']['landingPageTypeId'] == 1) {
+					$articleRel['articleRelTypeId'] = 1;		
+				} 
+				if ($pstyle['LandingPage']['landingPageTypeId'] == 2) {
+					$articleRel['articleRelTypeId'] = 2;		
+				} 
+				$this->ArticleRel->create();
+				$this->ArticleRel->save($articleRel);
+
 				$this->Session->setFlash(__('The Article has been saved', true));
 				$this->redirect(array('action'=>'index'));
 			} else {
@@ -44,8 +58,7 @@ class ArticlesController extends AppController {
 			$this->redirect(array('action'=>'index'));
 		}
 		if (!empty($this->data)) {
-			$this->getArticleUrlDisplay(91);
-			$this->data['Article']['articleUrlDisplay'] = $this->getArticleUrlDisplay($this->data['Article']['primaryStypeId']);
+			$this->data['Article']['articleUrlDisplay'] = $this->getArticleUrlDisplay($this->data['Article']['primaryStyleId']);
 			$this->data['Article']['articleSeoName'] = $this->convertToSeoName($this->data['Article']['articleTitle']);
 			if ($this->Article->save($this->data)) {
 				$this->Session->setFlash(__('The Article has been saved', true));
