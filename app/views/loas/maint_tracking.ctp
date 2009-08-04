@@ -118,6 +118,7 @@ $this->set('clientId', $this->data['Client']['clientId']);
 					<td style="text-align:center;"><?=$offer['endDate'];?></td>
 					<td style="text-align:center;"><?php echo $number->currency($offer['retailValue']);?></td>
 					<td style="text-align:center;"><?php echo $number->currency($offer['openingBid']);?></td>
+					<td style="text-align:center;"><?php echo $number->toPercentage($offer['openingBid'] / $offer['retailValue'] * 100);?></td>
 					<td style="text-align:center;"> - </td>
 					<td style="text-align:center;"> - </td>
 					<td style="text-align:center;"> - </td>
