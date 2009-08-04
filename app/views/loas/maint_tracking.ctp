@@ -72,12 +72,13 @@ $this->set('clientId', $this->data['Client']['clientId']);
 					<th style="color:#FFF;">End Date</th>
 					<th style="color:#FFF;">Retail Value</th>
 					<th style="color:#FFF;">Opening Bid</th>
+					<th style="color:#FFF;">Min Bid % Retail</th>
+					<th style="color:#FFF;">Closing % Retail</th>
 					<th style="color:#FFF;">Track Detail Id</th>
 					<th style="color:#FFF;">Ticket Id</th>
 					<th style="color:#FFF;">Ticket Amount</th>
 					<th style="color:#FFF;">Allocated Amount</th>
 					<th style="color:#FFF;">Cycle</th>
-					<th style="color:#FFF;">Iteration</th>
 					<th style="color:#FFF;">Amount Kept</th>
 					<th style="color:#FFF;">Amount Remitted</th>
 				</tr>
@@ -95,12 +96,13 @@ $this->set('clientId', $this->data['Client']['clientId']);
 					<td style="text-align:center;"><?=$offer['endDate'];?></td>
 					<td style="text-align:center;"><?php echo $number->currency($offer['retailValue']);?></td>
 					<td style="text-align:center;"><?php echo $number->currency($offer['openingBid']);?></td>
+					<td style="text-align:center;"><?php echo $number->toPercentage($offer['openingBid'] / $offer['retailValue']);?></td>
+					<td style="text-align:center;"><?php echo $number->toPercentage($trackDetail['ticketAmount'] / $offer['retailValue']);?></td>
 					<td style="text-align:center;"><a href="/tickets/<?php echo $trackDetail['ticketId'];?>/trackDetails/edit/<?php echo $trackDetail['trackDetailId'];?>" target="_BLANK"><?php echo $trackDetail['trackDetailId'];?></a></td>
 					<td style="text-align:center;"><a href="/tickets/view/<?php echo $trackDetail['ticketId'];?>" target="_BLANK"><?php echo $trackDetail['ticketId'];?></a></td>
 					<td style="text-align:center;"><?php echo $number->currency($trackDetail['ticketAmount']);?></td>
 					<td style="text-align:center;"><?php echo $number->currency($trackDetail['allocatedAmount']);?></td>
 					<td style="text-align:center;"><?php echo $trackDetail['cycle'];?></td>
-					<td style="text-align:center;"><?php echo $trackDetail['iteration'];?></td>
 					<td style="text-align:center;"><?php echo $number->currency($trackDetail['amountKept']);?></td>
 					<td style="text-align:center;"><?php echo $number->currency($trackDetail['amountRemitted']);?></td>					
 					</tr>
