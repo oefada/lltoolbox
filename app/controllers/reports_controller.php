@@ -305,7 +305,7 @@ class ReportsController extends AppController {
 	                if($ca['field'] == 'SchedulingInstance.liveDuring') {
 						$liveDuringCondition = "(SchedulingInstance.startDate BETWEEN '$firstValue' AND '$secondValue' + INTERVAL 1 DAY";
 			            $liveDuringCondition .= " OR SchedulingInstance.endDate BETWEEN '$firstValue' AND '$secondValue' + INTERVAL 1 DAY";
-			            $liveDuringCondition .= " OR (SchedulingInstance.startDate <= '$firstValue' AND SchedulingInstance.endDate >= '$secondValue')";
+			            $liveDuringCondition .= " OR (SchedulingInstance.startDate <= '$firstValue' AND SchedulingInstance.endDate >= '$secondValue'))";
 					
 	                    $conditions[$k] = $liveDuringCondition;
 	                } else if($ca['field'] == 'SchedulingInstance.startDate') {
