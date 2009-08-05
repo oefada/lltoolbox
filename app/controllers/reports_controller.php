@@ -303,7 +303,11 @@ class ReportsController extends AppController {
 	        if ($betweenCondition):                                    //generate valid SQL for a between condition
 	            if (NULL !== $firstValue && NULL !== $secondValue) {    //if both values were entered, it's a between
 	                if($ca['field'] == 'SchedulingInstance.liveDuring') {
-	                    $conditions[$k] = "SchedulingInstance.startDate <= '$firstValue' AND SchedulingInstance.endDate >= '$secondValue'";
+						$liveDuringCondition = "(SchedulingInstance.startDate BETWEEN '$firstValue' AND '$secondValue' + INTERVAL 1 DAY";
+			            $liveDuringCondition .= " OR SchedulingInstance.endDate BETWEEN '$firstValue' AND '$secondValue' + INTERVAL 1 DAY";
+			            $liveDuringCondition .= " OR (SchedulingInstance.startDate <= '$firstValue' AND SchedulingInstance.endDate >= '$secondValue')";
+					
+	                    $conditions[$k] = $liveDuringCondition;
 	                } else if($ca['field'] == 'SchedulingInstance.startDate') {
 	                    $conditions[$k] = "SchedulingInstance.startDate >= '$firstValue' AND SchedulingInstance.startDate <= '$secondValue' + INTERVAL 1 DAY";
 	                } else if($ca['field'] == 'SchedulingInstance.endDate') {
