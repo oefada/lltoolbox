@@ -2634,7 +2634,7 @@ class ReportsController extends AppController {
 			$this->autoRender = false;
 			$this->layout = '';
 			$this->render();
-			$attachment = chunk_split(base64_encode($this->output));
+			$attachment = chunk_split(base64_encode('<html><head></head><body>'.$this->output.'</body></html>'));
 			
 			$to = 'mchoe@luxurylink.com,management@luxurylink.com,jlagraff@luxurylink.com,ahahn@luxurylink.com';
 			$subject = 'Weekly Scorecard Report';
