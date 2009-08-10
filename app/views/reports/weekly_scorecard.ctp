@@ -575,14 +575,6 @@ $row = $row['data'];
 			$echo = 'efunc';
 		}
 
-		if ($i == 13) {
-			$totals['col'.$i] = $totals['col11']/$totals['col7'];
-		} elseif ($i == 9) {
-			$totals['col'.$i] = $totals['col7']/$totals['col5'];
-		} else {
-			$totals['col'.$i] = (!isset($totals['col'.$i]) ? $totals['col'.$i] : $totals['col'.$i] + $totals['col'.$i]);
-		}
-		
 		$totals['col8'] = $totals['col7'] / $lastyear['packagesSoldPrevious'] - 1;
 		$totals['col12'] = $totals['col11'] / $lastyear['revenueCollectedPrevious'] - 1;
 		$skip = array(4,6,10,14);
