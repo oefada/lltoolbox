@@ -319,10 +319,10 @@ class SchedulingMastersController extends AppController {
 			$startDate = strtotime($instanceData['SchedulingInstance']['endDate'] . ' +' . $masterData['SchedulingDelayCtrl']['schedulingDelayCtrlDesc']);
 			
 			//check if the start date is greater than 4pm, 16 in 24-hour format
-			if (date('G', $startDate) >= 17) {
+			if (date('G', $startDate) >= 18) {
 			    $startDate = strtotime('+1 day', $startDate);   //push to next day
 			    $startDate = date('Y-m-d', $startDate);         //conver to just Y-m-d
-			    $startDate = $startDate.' 07:00:00';            //set time to 8am
+			    $startDate = $startDate.' 08:00:00';            //set time to 8am
 			    $startDate = strtotime($startDate);             //save new date as timestamp
 			}
 
