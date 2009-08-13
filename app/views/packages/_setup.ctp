@@ -15,6 +15,7 @@
 		} else {
 			echo $form->input('internalApproval', array('label' => 'Approved By Merchandising', 'disabled' => true));
 		}
+				echo $form->input('isPrivatePackage');
 		echo "</div>";
 		
 		echo $form->input('currencyId', array('disabled' => 'true', 'label' => 'Currency'));
@@ -106,7 +107,6 @@
 	
 	<?php
 		echo $form->input('maxNumSales');
-		echo $form->input('isPrivatePackage');
 		echo $form->input('notes');
 		echo $form->input('dateClientApproved', array('disabled' => true, 'empty' => true));
 	?>
