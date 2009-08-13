@@ -106,6 +106,7 @@
 	
 	<?php
 		echo $form->input('maxNumSales');
+		echo $form->input('isPrivatePackage');
 		echo $form->input('notes');
 		echo $form->input('dateClientApproved', array('disabled' => true, 'empty' => true));
 	?>
