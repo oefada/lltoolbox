@@ -152,6 +152,11 @@ td.error div{
 </div>
 <?php echo $form->end()?>
 <div style="clear: both;"></div>
+<form method="post" action="/reports/mcr">
+<input type="hidden" name="clients" value="<?=htmlspecialchars(serialize($clients))?>" />
+<input type="hidden" name="downloadcsv" value="1">
+<input type="submit" value="Download CSV">
+</form>
 <div style="text-align: right"><?=count($clients)?> total rows returned</div>
 <table class="rowBorderDark genericTable" style="text-align: center">
 	<thead>

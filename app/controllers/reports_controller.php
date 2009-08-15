@@ -1317,7 +1317,13 @@ class ReportsController extends AppController {
 		$startDate = date("Y-m-d 00:00:00");
 		$endDate = date("Y-m-d 23:59:59");
 		$startDate2 = date("Y-m-d");
-
+		
+		if ($_POST['downloadcsv'] == 1) {
+			Configure::write('debug', 0);
+			$this->set('clients', unserialize(stripslashes( htmlspecialchars_decode($_POST['clients']))));
+			$this->viewPath .= '/csv';
+	        $this->layoutPath = 'csv';
+		} else {
 		if (!empty($this->data) || isset($this->params['named']['ql'])) {
 			$conditions = $this->_build_conditions($this->data);
 
@@ -1601,6 +1607,7 @@ class ReportsController extends AppController {
 		
 		//all of the client data aggregated in this one array
 		$this->set('clients', $clients);
+		}
 	}
 	
 	function destinationTree($list) {

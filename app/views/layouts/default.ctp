@@ -23,6 +23,7 @@
 		echo $html->css('main');
 		echo $html->css('datepicker');
 		echo $html->css('prototip');
+		echo $html->css('print', null, array('media' => 'print'));
 		
 		if(isset($javascript)):
 			echo $javascript->link('prototype');
