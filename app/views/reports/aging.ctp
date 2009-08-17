@@ -96,11 +96,14 @@ $grandTotalMembershipBalance = 0;
 			<th><?=sortLink('Offer.offerId', 'Age (Days)', $this, $html)?></th>
 			<th><?=sortLink('Offer.offerId', 'Client ID', $this, $html)?></th>
 			<th><?=sortLink('Client.name', 'Client Name', $this, $html)?></th>
+			<th><?=sortLink('Client.managerUsername', 'Account Manager', $this, $html)?></th>
 			<th><?=sortLink('Track.applyToMembershipBal', 'LOA ID', $this, $html)?></th>
 			<th><?=sortLink('Offer.offerTypeName', 'Start Date', $this, $html)?></th>
 			<th><?=sortLink('country', 'End Date', $this, $html)?></th>
 			<th><?=sortLink('state', 'Membership Fee', $this, $html)?></th>
 			<th><?=sortLink('city', 'Remaining Balance', $this, $html)?></th>
+			<th><?=sortLink('lastSellPrice', 'Last Ticket Price', $this, $html)?></th>
+			<th><?=sortLink('lastSellDate', 'Last Ticket Date', $this, $html)?></th>
 			<th><?=sortLink('Loa.notes', 'Notes', $this, $html)?></th>
 		</tr>
 <?php
@@ -116,11 +119,14 @@ $subtotalMembershipBalance += (int)$r['Loa']['membershipBalance'];
 		<td><?=$r[0]['age']?></td>
 		<td><?=$r['Client']['clientId']?></td>
 		<td><?=$r['Client']['name']?></td>
+		<td><?=$r['Client']['managerUsername']?></td>
 		<td><?=$html->link($r['Loa']['loaId'], '/loas/edit/'.$r['Loa']['loaId'])?></td>
 		<td><?=$r['Loa']['startDate']?></td>
 		<td><?=$r[0]['loaEndDate']?></td>
 		<td><?=$r['Loa']['membershipFee']?></td>
 		<td><?=$r['Loa']['membershipBalance']?></td>
+		<td><?=$r[0]['lastSellPrice']?></td>
+		<td><?=$html->link($r[0]['lastSellDate'], '/loas/maintTracking/'.$r['Loa']['loaId'])?></td>
 		<td>
 			<p id="notes-<?=$r['Loa']['loaId']?>"><?=$r['Loa']['notes']?></p>
 			<script type="text/javascript">
@@ -133,12 +139,12 @@ $subtotalMembershipBalance += (int)$r['Loa']['membershipBalance'];
 		<th colspan=7 style="text-align: right">Subtotals:</th>
 		<th><?=$subtotalMembershipFee?></th>
 		<th><?=$subtotalMembershipBalance?></th>
-		<th>
+		<th colspan=4>
 			&nbsp;
 		</th>
 	</tr>
 	
-<?php if($periodName != '180+'): ?>
+<?php if($periodName != '0 to 30'): ?>
 </table>
 <?php endif;?>
 <?php 
@@ -148,13 +154,13 @@ $grandTotalMembershipBalance += $subtotalMembershipBalance;
 endforeach; //end periods
 ?>
 	<tr>
-		<th colspan=10>&nbsp;</th>
+		<th colspan=13>&nbsp;</th>
 	</tr>
 	<tr class="blackBg">
 		<th colspan=7 style="text-align: right">Grand Total:</th>
 		<th><?=$grandTotalMembershipFee?></th>
 		<th><?=$grandTotalMembershipBalance?></th>
-		<th>
+		<th colspan=4>
 			&nbsp;
 		</th>
 	</tr>

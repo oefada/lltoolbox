@@ -670,26 +670,56 @@ class ReportsController extends AppController {
             	                        Loa.startDate,
             	                        MAX(Loa.endDate) AS loaEndDate,
             	                        Loa.membershipFee, Loa.membershipBalance, Loa.notes,
-            	                        DATEDIFF(NOW(), Loa.startDate) as age
+            	                        DATEDIFF(NOW(), Loa.startDate) as age,
+										Client.managerUsername, Client.locationDisplay,
+										(SELECT Ticket.billingPrice
+											FROM ticket as Ticket 
+											INNER JOIN clientLoaPackageRel clp ON(clp.packageId = Ticket.packageId)
+											WHERE clp.clientId = Client.clientId AND clp.LoaId = Loa.loaId
+											ORDER BY Ticket.created DESC
+											LIMIT 1
+										) as lastSellPrice,
+										(SELECT Ticket.created
+											FROM ticket as Ticket 
+											INNER JOIN clientLoaPackageRel clp ON(clp.packageId = Ticket.packageId)
+											WHERE clp.clientId = Client.clientId AND clp.LoaId = Loa.loaId
+											ORDER BY Ticket.created DESC
+											LIMIT 1
+										) as lastSellDate
                                 FROM client AS Client
                                 INNER JOIN loa AS Loa ON (Loa.clientId = Client.clientId)
             					WHERE Loa.startDate BETWEEN DATE_ADD(NOW(), INTERVAL -31 DAY) AND NOW()
-            					        AND Loa.membershipBalance > 0 AND YEAR(Loa.endDate) >= YEAR(NOW() - INTERVAL 1 YEAR) $condition
+            					        AND Loa.membershipBalance > 0 AND YEAR(Loa.endDate) >= YEAR(NOW() - INTERVAL 1 YEAR) AND Loa.loaLevelId = 2 $condition
                                 GROUP BY Client.clientId, Loa.loaId
                                 ORDER BY Loa.startDate ASC, Loa.membershipBalance DESC";
 
 	        $results['0 to 30'] = $this->OfferType->query($sql);
-	        
+
 	        $sql = "SELECT Client.clientId, Client.name,
             	                        Loa.loaId,
             	                        Loa.startDate,
             	                        MAX(Loa.endDate) AS loaEndDate,
             	                        Loa.membershipFee, Loa.membershipBalance, Loa.notes,
-            	                        DATEDIFF(NOW(), Loa.startDate) as age
+            	                        DATEDIFF(NOW(), Loa.startDate) as age,
+										Client.managerUsername, Client.locationDisplay,
+									(SELECT Ticket.billingPrice
+										FROM ticket as Ticket 
+										INNER JOIN clientLoaPackageRel clp ON(clp.packageId = Ticket.packageId)
+										WHERE clp.clientId = Client.clientId AND clp.LoaId = Loa.loaId
+										ORDER BY Ticket.created DESC
+										LIMIT 1
+									) as lastSellPrice,
+									(SELECT Ticket.created
+										FROM ticket as Ticket 
+										INNER JOIN clientLoaPackageRel clp ON(clp.packageId = Ticket.packageId)
+										WHERE clp.clientId = Client.clientId AND clp.LoaId = Loa.loaId
+										ORDER BY Ticket.created DESC
+										LIMIT 1
+									) as lastSellDate
                                 FROM client AS Client
                                 INNER JOIN loa AS Loa ON (Loa.clientId = Client.clientId)
             					WHERE Loa.startDate BETWEEN DATE_ADD(NOW(), INTERVAL -61 DAY) AND DATE_ADD(NOW(), INTERVAL -31 DAY)
-            					    AND Loa.membershipBalance > 0 AND YEAR(Loa.endDate) >= YEAR(NOW() - INTERVAL 1 YEAR) $condition
+            					    AND Loa.membershipBalance > 0 AND YEAR(Loa.endDate) >= YEAR(NOW() - INTERVAL 1 YEAR) AND Loa.loaLevelId = 2 $condition
                                 GROUP BY Client.clientId, Loa.loaId
                                 ORDER BY Loa.startDate ASC, Loa.membershipBalance DESC";
 
@@ -700,11 +730,26 @@ class ReportsController extends AppController {
             	                        Loa.startDate,
             	                        MAX(Loa.endDate) AS loaEndDate,
             	                        Loa.membershipFee, Loa.membershipBalance, Loa.notes,
-            	                        DATEDIFF(NOW(), Loa.startDate) as age
+            	                        DATEDIFF(NOW(), Loa.startDate) as age,
+										Client.managerUsername, Client.locationDisplay,
+									(SELECT Ticket.billingPrice
+										FROM ticket as Ticket 
+										INNER JOIN clientLoaPackageRel clp ON(clp.packageId = Ticket.packageId)
+										WHERE clp.clientId = Client.clientId AND clp.LoaId = Loa.loaId
+										ORDER BY Ticket.created DESC
+										LIMIT 1
+									) as lastSellPrice,
+									(SELECT Ticket.created
+										FROM ticket as Ticket 
+										INNER JOIN clientLoaPackageRel clp ON(clp.packageId = Ticket.packageId)
+										WHERE clp.clientId = Client.clientId AND clp.LoaId = Loa.loaId
+										ORDER BY Ticket.created DESC
+										LIMIT 1
+									) as lastSellDate
                                 FROM client AS Client
                                 INNER JOIN loa AS Loa ON (Loa.clientId = Client.clientId)
             					WHERE Loa.startDate BETWEEN DATE_ADD(NOW(), INTERVAL -91 DAY) AND DATE_ADD(NOW(), INTERVAL -61 DAY)
-            					    AND Loa.membershipBalance > 0 AND YEAR(Loa.endDate) >= YEAR(NOW() - INTERVAL 1 YEAR) $condition
+            					    AND Loa.membershipBalance > 0 AND YEAR(Loa.endDate) >= YEAR(NOW() - INTERVAL 1 YEAR) AND Loa.loaLevelId = 2 $condition
                                 GROUP BY Client.clientId, Loa.loaId
                                 ORDER BY Loa.startDate ASC, Loa.membershipBalance DESC";
 
@@ -715,11 +760,26 @@ class ReportsController extends AppController {
             	                        Loa.startDate,
             	                        MAX(Loa.endDate) AS loaEndDate,
             	                        Loa.membershipFee, Loa.membershipBalance, Loa.notes,
-            	                        DATEDIFF(NOW(), Loa.startDate) as age
+            	                        DATEDIFF(NOW(), Loa.startDate) as age,
+										Client.managerUsername, Client.locationDisplay,
+									(SELECT Ticket.billingPrice
+										FROM ticket as Ticket 
+										INNER JOIN clientLoaPackageRel clp ON(clp.packageId = Ticket.packageId)
+										WHERE clp.clientId = Client.clientId AND clp.LoaId = Loa.loaId
+										ORDER BY Ticket.created DESC
+										LIMIT 1
+									) as lastSellPrice,
+									(SELECT Ticket.created
+										FROM ticket as Ticket 
+										INNER JOIN clientLoaPackageRel clp ON(clp.packageId = Ticket.packageId)
+										WHERE clp.clientId = Client.clientId AND clp.LoaId = Loa.loaId
+										ORDER BY Ticket.created DESC
+										LIMIT 1
+									) as lastSellDate
                                 FROM client AS Client
                                 INNER JOIN loa AS Loa ON (Loa.clientId = Client.clientId)
             					WHERE Loa.startDate BETWEEN DATE_ADD(NOW(), INTERVAL -121 DAY) AND DATE_ADD(NOW(), INTERVAL -91 DAY)
-            					    AND Loa.membershipBalance > 0 AND YEAR(Loa.endDate) >= YEAR(NOW() - INTERVAL 1 YEAR) $condition
+            					    AND Loa.membershipBalance > 0 AND YEAR(Loa.endDate) >= YEAR(NOW() - INTERVAL 1 YEAR) AND Loa.loaLevelId = 2 $condition
                                 GROUP BY Client.clientId, Loa.loaId
                                 ORDER BY Loa.startDate ASC, Loa.membershipBalance DESC";
 
@@ -730,11 +790,26 @@ class ReportsController extends AppController {
             	                        Loa.startDate,
             	                        MAX(Loa.endDate) AS loaEndDate,
             	                        Loa.membershipFee, Loa.membershipBalance, Loa.notes,
-            	                        DATEDIFF(NOW(), Loa.startDate) as age
+            	                        DATEDIFF(NOW(), Loa.startDate) as age,
+										Client.managerUsername, Client.locationDisplay,
+									(SELECT Ticket.billingPrice
+										FROM ticket as Ticket 
+										INNER JOIN clientLoaPackageRel clp ON(clp.packageId = Ticket.packageId)
+										WHERE clp.clientId = Client.clientId AND clp.LoaId = Loa.loaId
+										ORDER BY Ticket.created DESC
+										LIMIT 1
+									) as lastSellPrice,
+									(SELECT Ticket.created
+										FROM ticket as Ticket 
+										INNER JOIN clientLoaPackageRel clp ON(clp.packageId = Ticket.packageId)
+										WHERE clp.clientId = Client.clientId AND clp.LoaId = Loa.loaId
+										ORDER BY Ticket.created DESC
+										LIMIT 1
+									) as lastSellDate
                                 FROM client AS Client
                                 INNER JOIN loa AS Loa ON (Loa.clientId = Client.clientId)
             					WHERE Loa.startDate BETWEEN DATE_ADD(NOW(), INTERVAL -181 DAY) AND DATE_ADD(NOW(), INTERVAL -121 DAY)
-            					    AND Loa.membershipBalance > 0 AND YEAR(Loa.endDate) >= YEAR(NOW() - INTERVAL 1 YEAR) $condition
+            					    AND Loa.membershipBalance > 0 AND YEAR(Loa.endDate) >= YEAR(NOW() - INTERVAL 1 YEAR) AND Loa.loaLevelId = 2 $condition
                                 GROUP BY Client.clientId, Loa.loaId
                                 ORDER BY Loa.startDate ASC, Loa.membershipBalance DESC";
 
@@ -746,11 +821,26 @@ class ReportsController extends AppController {
             	                        Loa.startDate,
             	                        MAX(Loa.endDate) AS loaEndDate,
             	                        Loa.membershipFee, Loa.membershipBalance, Loa.notes,
-            	                        DATEDIFF(NOW(), Loa.startDate) as age
+            	                        DATEDIFF(NOW(), Loa.startDate) as age,
+										Client.managerUsername, Client.locationDisplay,
+									(SELECT Ticket.billingPrice
+										FROM ticket as Ticket 
+										INNER JOIN clientLoaPackageRel clp ON(clp.packageId = Ticket.packageId)
+										WHERE clp.clientId = Client.clientId AND clp.LoaId = Loa.loaId
+										ORDER BY Ticket.created DESC
+										LIMIT 1
+									) as lastSellPrice,
+									(SELECT Ticket.created
+										FROM ticket as Ticket 
+										INNER JOIN clientLoaPackageRel clp ON(clp.packageId = Ticket.packageId)
+										WHERE clp.clientId = Client.clientId AND clp.LoaId = Loa.loaId
+										ORDER BY Ticket.created DESC
+										LIMIT 1
+									) as lastSellDate
                                 FROM client AS Client
                                 INNER JOIN loa AS Loa ON (Loa.clientId = Client.clientId)
             					WHERE Loa.startDate <= DATE_ADD(NOW(), INTERVAL - 181 DAY)
-            					    AND Loa.membershipBalance > 0 AND YEAR(Loa.endDate) >= YEAR(NOW() - INTERVAL 1 YEAR) $condition
+            					    AND Loa.membershipBalance > 0 AND YEAR(Loa.endDate) >= YEAR(NOW() - INTERVAL 1 YEAR) AND Loa.loaLevelId = 2 $condition
                                 GROUP BY Client.clientId, Loa.loaId
                                 ORDER BY Loa.startDate ASC, Loa.membershipBalance DESC";
 	        
