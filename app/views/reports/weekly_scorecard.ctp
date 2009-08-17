@@ -49,7 +49,7 @@ function efunc($string) {
 }
 
 function percentage($string) {
-	echo number()->toPercentage($string*100, 1);
+	echo number()->toPercentage($string*100, 0);
 }
 
 function currency($string) {
