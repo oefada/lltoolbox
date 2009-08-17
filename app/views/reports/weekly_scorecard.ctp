@@ -15,12 +15,14 @@ td {
 	border-right: 1px solid #ccc;
 	border-bottom: 1px solid #ccc;
 	padding: 3px 4px 3px 4px;
+	font-family: Arial;
 	font-size: 10pt;
 }
 #auctions td {
 	border-right: 1px solid #ccc;
 	border-bottom: 1px solid #ccc;
 	padding: 3px 2px 3px 2px;
+	font-family: Arial;
 	font-size: 10pt;
 }
 td.highlight {
