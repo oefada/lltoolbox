@@ -54,6 +54,7 @@ $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']
 		echo $form->input('url');
 		echo $form->input('checkRateUrl');
 		echo $form->input('numRooms');
+		echo $form->input('numRoomsText');
 		echo $form->input('longDesc');
 		echo $form->input('blurb');
 		echo $form->input('keywords');
