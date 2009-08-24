@@ -22,6 +22,16 @@ class MultisiteBehavior extends ModelBehavior {
 		// no special setup required	
 		$this->settings[$model->name] = $settings;
 		$this->model = &$model;
+		/*
+		$this->model->bindModel(array(
+								'belongsTo' => array(
+									'Multisite' => array(
+													'foreignKey' => $this->model->alias+"."+$this->model->primaryKey,
+													'conditions' => array("Multisite.model = '".$this->model->alias."' AND Multisite.modelId = {$this->model->alias}.{$this->model->primaryKey}")
+									)
+									)
+									)
+								);*/
 	}
 	
 	function afterSave(&$model, $created) {
@@ -31,12 +41,21 @@ class MultisiteBehavior extends ModelBehavior {
 		//delete from all sites so we can re-save
 		if (!$created) {
 			$thisBackup = $this->model;
-
+			
 			$this->model->query("DELETE FROM multiSite WHERE model = '{$this->model->alias}' and modelId = ".$data[$this->model->alias][$this->model->primaryKey]);
 			
 			foreach ($this->databases as $database):
 				$this->model->useDbConfig = $database;
-				$this->model->delete($data[$this->model->alias][$this->model->primaryKey]);
+				$exists = $this->model->query("
+			        SELECT COUNT(*) AS count 
+			        FROM information_schema.tables 
+			        WHERE table_schema = '$database' 
+			        AND table_name = '{$this->model->useTable}'
+			    ");
+
+				if ($exists[0][0]['count'] > 0) {
+					$this->model->delete($data[$this->model->alias][$this->model->primaryKey]);
+				}			    
 			endforeach;
 		}
 		//$this->data overwritten after each save, need to store it here
@@ -49,7 +68,7 @@ class MultisiteBehavior extends ModelBehavior {
 		if (!empty($data[$this->model->alias][$sitesColumn]) && !is_array($data[$this->model->alias][$sitesColumn])) {
 			$data[$this->model->alias][$sitesColumn] = array($data[$this->model->alias][$sitesColumn]);
 		}
-		if (is_array($data[$this->model->alias][$sitesColumn])) {
+		if (isset($data[$this->model->alias][$sitesColumn]) && is_array($data[$this->model->alias][$sitesColumn])) {
 			//iterate through all the databases and save to the selected ones
 			foreach ($data[$this->model->alias][$sitesColumn] as $site) {
 				$this->model->useDbConfig = $this->databases[$site];
@@ -74,8 +93,13 @@ class MultisiteBehavior extends ModelBehavior {
 	}
 
 	/**
-	 * This method injects the results with the array of the associated databases where this record is also saved in
+	 * This method injects the search results of a model with the sites where that model has been saved.
+	 * Method queries the multiSite table for the current model and returns an array of the sites this model has been saved to.
+	 * This array of sites is stored in [‘ModelName’][‘site’].
 	 *
+	 * @param Object model
+	 * @param Array results
+	 * @param bool primary
 	 */
 	function afterFind(&$model, $results, $primary) {
 		if($primary):
