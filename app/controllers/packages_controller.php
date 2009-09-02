@@ -262,7 +262,12 @@ class PackagesController extends AppController {
 	 * @author Victor Garcia
 	 */
 	function selectAdditionalClient() {
-		$this->set('clients', $this->paginate('Client'));
+		$this->set('data', $this->data);
+		if (isset($this->data['search'])):
+			$this->set('clients', $this->paginate('Client', array('Client.name LIKE' => "%{$this->data['search']}%")));
+		else:
+			$this->set('clients', $this->paginate('Client'));
+		endif;
 	}
 	
 	/**
