@@ -13,11 +13,10 @@
 	<? endif; ?>
 	<label>LOA Id</label> <?=$clientLoaDetail['Loa']['loaId']?><br />
 	<label>LOA Expiration</label> <?=$html2->date($clientLoaDetail['Loa']['endDate'])?><br />
-	<label>Percent Revenue</label> <?=$number->topercentage($clientLoaDetail['ClientLoaPackageRel']['percentOfRevenue'])?>
 	<?php echo $form->input('ClientLoaPackageRel.'.$k.'.clientLoaPackageRelId', array('type' => 'hidden')) ?>
 	<?php echo $form->input('ClientLoaPackageRel.'.$k.'.clientId', array('type' => 'hidden')) ?>
 	<?php echo $form->input('ClientLoaPackageRel.'.$k.'.loaId', array('type' => 'hidden')) ?>
-	<?php echo $form->input('ClientLoaPackageRel.'.$k.'.percentOfRevenue', array('type' => 'hidden')) ?>
+	<?php echo $form->input('ClientLoaPackageRel.'.$k.'.percentOfRevenue') ?>
 	<? if(count($clientLoaDetails) > 1): ?>
 	<?php echo $form->input('ClientLoaPackageRel.'.$k.'.numNights', array('onchange' => 'updateNumNights()', 'class' => 'multiProductNumNights')) ?>
 	<?php echo $form->input('ClientLoaPackageRel.'.$k.'.trackId', array('options' => $tracks, 'label' => 'Track Name', 'empty' => true)) ?>

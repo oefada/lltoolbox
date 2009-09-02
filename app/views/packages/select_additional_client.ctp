@@ -1,5 +1,12 @@
 <div id="client-index">
-	<?php echo $this->renderElement('ajax_paginator', array('divToPaginate' => 'client-index', 'showCount' => true)); ?>
+<?php echo $ajax->form('selectAdditionalClient', 'post',
+                     array('update' => 'client-index'));
+?>
+<?php echo $form->input('search', array('value' => $data['search'])); ?>
+<?php echo $form->submit('Search');?>
+</form>
+
+<?php echo $this->renderElement('ajax_paginator', array('divToPaginate' => 'client-index', 'showCount' => true)); ?>
 <div class="clients index">
 <table cellpadding="0" cellspacing="0">
 <tr>
