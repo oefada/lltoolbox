@@ -514,6 +514,7 @@ class Ticket extends AppModel {
 			$clients_for_kat = array(207,439,2423,1615,1617,2803,1631,1616,42,2794,7778);
 			if (in_array($clientId, $clients_for_kat)) {
 				$sql = "CALL insertQueueMessage('kferson', '$title', '$description', '$model', $modelId, 3)";
+				$this->query($sql);
 			}
 
 			// send one to Christine Young and Judy LaGraff also for membership
