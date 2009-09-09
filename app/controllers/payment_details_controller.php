@@ -8,7 +8,7 @@ class PaymentDetailsController extends AppController {
 
 	var $name = 'PaymentDetails';
 	var $helpers = array('Html', 'Form', 'Ajax', 'Text', 'Layout', 'Number');
-	var $uses = array('PaymentDetail', 'Ticket', 'UserPaymentSetting', 'PpvNotice', 'Country', 'Track', 'TrackDetail');
+	var $uses = array('PaymentDetail', 'Ticket', 'UserPaymentSetting', 'PpvNotice', 'Country', 'Track', 'TrackDetail', 'User');
 
 	function index() {
 		$this->PaymentDetail->recursive = 0;
@@ -25,6 +25,70 @@ class PaymentDetailsController extends AppController {
 	function add() {
 		if (!empty($this->data)) {
 			
+			if ($this->data['PaymentDetail']['paymentProcessorId'] == 5) {
+				// for wire transfers only
+				// --------------------------------------------------------
+				$userData = $this->User->read(null, $this->data['PaymentDetail']['userId']);
+				$ticketId = $this->data['PaymentDetail']['ticketId'];
+	
+				$this->data['PaymentDetail']['ccType'] 		 			= 'WT';
+				$this->data['PaymentDetail']['userPaymentSettingId'] 	= '';
+				$this->data['PaymentDetail']['isSuccessfulCharge']		= 1;
+				$this->data['PaymentDetail']['autoProcessed']			= 0;
+				$this->data['PaymentDetail']['ppResponseDate']			= date('Y-m-d H:i:s', strtotime('now'));
+				$this->data['PaymentDetail']['ppBillingAmount']			= $this->data['PaymentDetail']['paymentAmount'];	
+				$this->data['PaymentDetail']['ppCardNumLastFour']		= 'WIRE';
+				$this->data['PaymentDetail']['ppExpMonth']				= 'WT';
+				$this->data['PaymentDetail']['ppExpYear']				= 'WIRE';
+				$this->data['PaymentDetail']['ppFirstName']				= $userData['User']['firstName'];
+				$this->data['PaymentDetail']['ppLastName']				= $userData['User']['lastName'];
+				$this->data['PaymentDetail']['ppBillingAddress1']		= 'WIRE';
+				$this->data['PaymentDetail']['ppBillingCity']			= 'WIRE';
+				$this->data['PaymentDetail']['ppBillingState']			= 'WIRE';
+				$this->data['PaymentDetail']['ppBillingZip']			= 'WIRE';
+				$this->data['PaymentDetail']['ppBillingCountry']		= 'WIRE';
+
+				if ($this->PaymentDetail->save($this->data['PaymentDetail'])) {
+					// update ticket status to FUNDED
+					// ---------------------------------------------------------------------------
+					$ticketStatusChange = array();
+					$ticketStatusChange['ticketId'] = $ticketId;
+					$ticketStatusChange['ticketStatusId'] = 5;
+					$this->Ticket->save($ticketStatusChange);
+		
+					// allocate revenue to loa and tracks
+					// ---------------------------------------------------------------------------
+					$tracks = $this->TrackDetail->getTrackRecord($ticketId);
+					if (!empty($tracks)) {
+						foreach ($tracks as $track) {
+							// track detail stuff and allocation
+							// ---------------------------------------------------------------------------
+							$trackDetailExists = $this->TrackDetail->findExistingTrackTicket($track['trackId'], $ticketId);	
+							if (!$trackDetailExists) {
+								// decrement loa number of packages
+								// ---------------------------------------------------------------------------
+								if ($track['expirationCriteriaId'] == 2) {
+									$this->Ticket->query('UPDATE loa SET numberPackagesRemaining = numberPackagesRemaining - 1 WHERE loaId = ' . $track['loaId'] . ' LIMIT 1');
+								} elseif ($track['expirationCriteriaId'] == 4) {
+									$this->Ticket->query('UPDATE loa SET membershipPackagesRemaining = membershipPackagesRemaining - 1 WHERE loaId = ' . $track['loaId'] . ' LIMIT 1');
+								}
+								$new_track_detail = $this->TrackDetail->getNewTrackDetailRecord($track, $ticketId);
+								if ($new_track_detail) {
+									$this->TrackDetail->create();
+									$this->TrackDetail->save($new_track_detail);
+								}
+							}
+						}
+					}
+	        		$this->Session->setFlash(__('Payment was successfully recorded (wire transfer)', true), 'default', array(), 'success');
+				} else {
+	        		$this->Session->setFlash(__('Payment was not recorded (wire transfer)', true), 'default', array(), 'error');
+				}
+	        	$this->redirect(array('controller' => 'tickets', 'action'=>'view', 'id' => $ticketId));
+				die();
+				// --------------------------------------------------------
+			}
+
 			$usingNewCard = 0;
 			$saveNewCard = 0;
 			
