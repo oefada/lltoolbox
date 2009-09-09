@@ -77,7 +77,7 @@ function confirmSubmit()
 				</select>	
 			</td>
 		</tr>
-		<tr>
+		<tr id="showPaymentSetting">
 			<td colspan="2">
 				<strong>User Payment Setting (choose one):</strong><br /><br />
 				
@@ -223,6 +223,12 @@ function confirmSubmit()
 				<?php echo $form->error('userPaymentSettingId') ?>
 			</td>
 		</tr>
+		<tr id="showWire" style="display:none;">
+			<td colspan="2">
+				<strong>Reference ID:</strong><br /><br />
+				<input type="text" name="data[PaymentDetail][ppTransactionId]" />
+			</td>
+		</tr>
 		<tr>
 			<td style="padding-top:10px;padding-bottom:10px;"><strong>Initials</strong></td>
 			<?php if ($initials_user) : ?>
@@ -248,3 +254,18 @@ function confirmSubmit()
 <?php
 //if (isset($closeModalbox) && $closeModalbox) echo "<div id='closeModalbox'></div>";
 ?>
+<script>
+$('PaymentDetailPaymentProcessorId').observe('change', function(event){
+	var ppValue = $('PaymentDetailPaymentProcessorId').value;
+	switch (ppValue) {
+		case '5':
+			Effect.Fade($('showPaymentSetting'), {queue: 'end', duration: 0.5});
+		    Effect.Appear($('showWire'), {queue: 'end', duration: 0.5});
+			break;
+		default:
+			Effect.Fade($('showWire'), {queue: 'end', duration: 0.5});
+		    Effect.Appear($('showPaymentSetting'), {queue: 'end', duration: 0.5});
+			break;
+	}
+});
+</script>
