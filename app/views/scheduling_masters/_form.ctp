@@ -165,9 +165,6 @@
 
 
 
-		echo $form->input('packageName', array('value' => $package['Package']['packageTitle'], 'type' => 'hidden'));
-		echo $form->input('shortBlurb', array('value' => $package['Package']['shortBlurb'], 'type' => 'hidden'));
-		echo $form->input('subtitle',  array('value' => $package['Package']['subtitle'], 'type' => 'hidden'));
 		echo $form->input('packageId', array('value' => $packageId, 'type' => 'hidden'));
 		
 		echo $ajax->observeField('SchedulingMasterOfferTypeId', array(
