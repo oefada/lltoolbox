@@ -97,11 +97,14 @@ class TrackDetail extends AppModel {
 		$new_track_detail['allocatedAmount']		= $allocated_amount;
 		$new_track_detail['initials']				= isset($_SESSION['Auth']['AdminUser']['mailnickname']) ? $_SESSION['Auth']['AdminUser']['mailnickname'] : 'N/A';
 		
+		$is_y_iteration = false;
+
 		// track detail calculations	
 		// ---------------------------------------------------------
 		switch ($track['revenueModelId']) {
 			case 1:
 				// this is a revenue split model
+				// ==============================================================
 				$new_track_detail['cycle']					= 1;
 				$new_track_detail['iteration']				= ++$last_track_detail['iteration'];
 				$new_track_detail['amountKept'] 			= ($track['keepPercentage'] / 100) * $allocated_amount;
@@ -109,11 +112,13 @@ class TrackDetail extends AppModel {
 				break;
 			case 2:
 				// this is an x for y AVERAGE
+				// ==============================================================
 				if (($last_track_detail['iteration'] + 1) == $track['y']) {
 					$new_track_detail['cycle']				= $last_track_detail['cycle'];
 					$new_track_detail['iteration']			= ++$last_track_detail['iteration'];
 					$new_track_detail['xyRunningTotal'] 	= $last_track_detail['xyRunningTotal'] + $allocated_amount;
 					$new_track_detail['xyAverage']			= (($new_track_detail['xyRunningTotal'] / $track['y']) * $track['x']);
+					$is_y_iteration = true;
 					if ($new_track_detail['xyAverage'] > $allocated_amount) {
 						$new_track_detail['keepBalDue']		= $new_track_detail['xyAverage'] - $allocated_amount;
 						$new_track_detail['amountKept'] 	= $allocated_amount;
@@ -141,7 +146,45 @@ class TrackDetail extends AppModel {
 				break;
 			case 3:
 				// this is an x for y
-				// nothing for now
+				// ==============================================================
+				if ($last_track_detail['iteration'] >= $track['y']) {
+					$new_track_detail['cycle']			= ++$last_track_detail['cycle'];
+					$new_track_detail['iteration']		= 1;
+					$new_track_detail['amountKept'] 	= $allocated_amount;
+					$new_track_detail['amountRemitted'] = 0;
+				} elseif (($last_track_detail['iteration'] + 1) == $track['y']) {
+					$new_track_detail['cycle']			= $last_track_detail['cycle'];
+					$new_track_detail['iteration']		= ++$last_track_detail['iteration'];
+					$new_track_detail['amountKept'] 	= 0;
+					$new_track_detail['amountRemitted'] = $allocated_amount;
+					$is_y_iteration = true;
+				} else {
+					$new_track_detail['cycle']			= $last_track_detail['cycle'];
+					$new_track_detail['iteration']		= ++$last_track_detail['iteration'];
+					$new_track_detail['amountKept'] 	= $allocated_amount;
+					$new_track_detail['amountRemitted'] = 0;
+				}
+				break;
+			case 4:
+				// this is an x for y with commission
+				// ==============================================================
+				if ($last_track_detail['iteration'] >= $track['y']) {
+					$new_track_detail['cycle']			= ++$last_track_detail['cycle'];
+					$new_track_detail['iteration']		= 1;
+					$new_track_detail['amountKept'] 	= $allocated_amount;
+					$new_track_detail['amountRemitted'] = 0;
+				} elseif (($last_track_detail['iteration'] + 1) == $track['y']) {
+					$new_track_detail['cycle']			= $last_track_detail['cycle'];
+					$new_track_detail['iteration']		= ++$last_track_detail['iteration'];
+					$new_track_detail['amountKept'] 	= ($track['commissionPercentage'] / 100) * $allocated_amount;
+					$new_track_detail['amountRemitted'] = $allocated_amount - $new_track_detail['amountKept'];
+					$is_y_iteration = true;
+				} else {
+					$new_track_detail['cycle']			= $last_track_detail['cycle'];
+					$new_track_detail['iteration']		= ++$last_track_detail['iteration'];
+					$new_track_detail['amountKept'] 	= $allocated_amount;
+					$new_track_detail['amountRemitted'] = 0;
+				}
 				break;
 			default: 
 				// some debug email will go out here
@@ -149,7 +192,7 @@ class TrackDetail extends AppModel {
 		}
 
 		// if membership balance met for keep -- disperse allocation to remit and keep
-		if ($track['expirationCriteriaId'] == 1) {
+		if ($track['expirationCriteriaId'] == 1 && !(($track['revenueModelId'] == 3 || $track['revenueModelId'] == 4) && $is_y_iteration)) {
 			$loa_result = $this->query("SELECT membershipBalance FROM loa WHERE loaId = $track[loaId] LIMIT 1");
 			if (!empty($loa_result)) {
 				$loa_membership_balance = $loa_result[0]['loa']['membershipBalance'];
@@ -190,6 +233,7 @@ class TrackDetail extends AppModel {
 		}
 		
 		$applyToMembershipBal = ($track['expirationCriteriaId'] == 1) ? true : false;
+		$applyToMembershipBal = (($track['revenueModelId'] == 3 || $track['revenueModelId'] == 4) && ($this->data['TrackDetail']['iteration'] == $track['y'])) ? false : $applyToMembershipBal;
 		if ($applyToMembershipBal) {
 			$loa['Loa']['modified']			  = date('Y-m-d H:i:s', strtotime('now'));
 			$loa['Loa']['totalRevenue']			 -= $allocated_amount;
@@ -226,6 +270,7 @@ class TrackDetail extends AppModel {
 		// update the loa record
 		// ---------------------------------------------------------
 		$applyToMembershipBal = ($track['expirationCriteriaId'] == 1) ? true : false;
+		$applyToMembershipBal = (($track['revenueModelId'] == 3 || $track['revenueModelId'] == 4) && ($this->data['TrackDetail']['iteration'] == $track['y'])) ? false : $applyToMembershipBal;
 		if ($applyToMembershipBal) {
 			$loa['Loa']['modified']			  = date('Y-m-d H:i:s', strtotime('now'));
 			$loa['Loa']['totalRevenue']			 += $allocated_amount;
