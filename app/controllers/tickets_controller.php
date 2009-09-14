@@ -21,7 +21,7 @@ class TicketsController extends AppController {
 		// set search criteria from form post or set defaults
 		$form = $this->params['form'];
 		$named = $this->params['named'];
-
+	
 		// ajaxed paginated form elements come in via params['named']
 		if (empty($form) && !empty($named)) {
 			$form = $named;
@@ -258,7 +258,14 @@ class TicketsController extends AppController {
 				$tickets_index[$k]['ResPreferDate']['flagged'] =  (strtotime($tickets_index[$k]['ResPreferDate']['arrival']) - strtotime('NOW') <= 604800) ? 1 : 0;
 			}
 		}
+		
+		$csv_link_string = '/tickets/index/';
+		foreach ($this->params['form'] as $kk=>$vv) {
+			$csv_link_string .= "$kk:$vv/";
+		}
+		$csv_link_string .= '.csv';
 
+		$this->set('csv_link_string', $csv_link_string);
 		$this->set('tickets', $tickets_index);
 		$this->set('format', $this->Format->find('list'));
 		$this->set('offerType', $this->OfferType->find('list'));
