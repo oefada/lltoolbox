@@ -249,6 +249,12 @@ $this->set('hideSidebar', true);
 			<tr>
 				<td><a href="/tickets/index/?s_ticket_status_id=3&s_format_id=1&s_quick_link=1">Auction Res. Requests by Most Recent Date</a></td>
 			</tr>
+			<tr>
+				<td><a href="/tickets/add/">Create Manual Ticket</a></td>
+			</tr>
+			<tr>
+				<td><a href="<?=$csv_link_string;?>">Export to CSV</a></td>
+			</tr>
 			</table>
 		</td>
 		<td>&nbsp;</td>
@@ -262,7 +268,6 @@ $this->set('hideSidebar', true);
 		
 		</form>
 	</div>
-	<div><a href="/tickets/add/">Create Manual Ticket</a></div>
 
 	<?php echo $this->renderElement('ajax_paginator', array('divToPaginate' => 'ticket-index', 'showCount' => true)); ?>
 
