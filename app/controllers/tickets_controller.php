@@ -28,6 +28,9 @@ class TicketsController extends AppController {
 			$this->params['form'] = $this->params['named'];
 		}
 		
+		// export take out limit
+		$csv_export = isset($this->params['named']['csv_export']) ? $this->params['named']['csv_export'] : false;
+
 		// set values and set defaults        
 		$s_ticket_id = isset($form['s_ticket_id']) ? $form['s_ticket_id'] : '';
 		$s_offer_id = isset($form['s_offer_id']) ? $form['s_offer_id'] : '';
@@ -111,7 +114,11 @@ class TicketsController extends AppController {
 										),
 								'group' => array('Ticket.ticketId')
 		                        );
-		    
+		   
+		if ($csv_export) {
+			$this->paginate['limit'] = 1000;
+		}
+
 		$single_search = true;
 		$single_search_override = false;
 		// if search via ticket id, offer id, or user id, then dont use other search conditions
@@ -259,7 +266,7 @@ class TicketsController extends AppController {
 			}
 		}
 		
-		$csv_link_string = '/tickets/index/';
+		$csv_link_string = '/tickets/index/csv_export:1/';
 		foreach ($this->params['form'] as $kk=>$vv) {
 			$csv_link_string .= "$kk:$vv/";
 		}
