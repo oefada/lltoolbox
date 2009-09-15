@@ -10,6 +10,8 @@
 	<fieldset id="revenueModelCriteria">
 		<?php if (!isset($this->data['Track']['revenueModelId']) || $this->data['Track']['revenueModelId'] == 1): ?>
 			<?php echo $this->render('_revenue_split_form'); ?>
+		<?php elseif ($this->data['Track']['revenueModelId'] == 4): ?>
+			<?php echo $this->render('_xy_commission_form'); ?>
 		<?php else: ?>
 			<?php echo $this->render('_xy_form'); ?>
 		<?php endif ?>
