@@ -21,6 +21,10 @@ class Track extends AppModel {
 								'rule' => array('checkPresets'),
 								'message' => 'The Keep Percentage field is required for the "Revenue Split" revenue model.  This value must be a number from 0 to 100.'
 								),
+						'commissionPercentage' => array(
+								'rule' => array('checkPresets'),
+								'message' => 'The Commission Percentage field is required for the "X for Y w/ Commission" revenue model.  This value must be a number from 0 to 100.'
+								),
 						'x' => array(
 								'rule' => array('checkPresets'),
 								'message' => 'The X field is required for any "X for Y" revenue models.  This value must be an integer.'
@@ -70,12 +74,17 @@ class Track extends AppModel {
 			if (!is_numeric($value) || !($value >= 0 && $value <= 100)) {
 				$validPresets = false;	
 			}
-		} elseif (isset($data['x']) && ($revModelId == 2 || $revModelId == 3)) {
+		} elseif (isset($data['commissionPercentage']) && $revModelId == 4) {
+			$value = $data['commissionPercentage'];
+			if (!is_numeric($value) || !($value >= 0 && $value <= 100)) {
+				$validPresets = false;	
+			}
+		} elseif (isset($data['x']) && ($revModelId == 2 || $revModelId == 3 || $revModelId == 4)) {
 			$value = $data['x'];
 			if (!$value || !is_numeric($value) || floor($value) != $value) {
 				$validPresets = false;						
 			}
-		} elseif (isset($data['y']) && ($revModelId == 2 || $revModelId == 3)) {
+		} elseif (isset($data['y']) && ($revModelId == 2 || $revModelId == 3 || $revModelId == 4)) {
 			$value = $data['y'];
 			if (!$value || !is_numeric($value) || floor($value) != $value) {
 				$validPresets = false;						
