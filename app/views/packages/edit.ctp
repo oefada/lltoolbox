@@ -7,11 +7,16 @@ Event.observe(window, 'load', function() {
 	$('PackageNumGuests').observe('change', function(e){updateAllPerPersonPerNight();});
 });
 
-function perPersonPerNight(itemId) {
+function perPersonPerNight(itemId, clientRow) {
 	var pn_val = $F('perNight_'+itemId);
 	var quantityField = $('PackageLoaItemRel'+itemId+'Quantity');
 	var basePrice = $F('PackageLoaItemRel'+itemId+'BasePrice');
-	var numNights = $F('PackageNumNights');
+	if ($F('ClientLoaPackageRel'+clientRow+'NumNights')) {
+		var numNights = $F('ClientLoaPackageRel'+clientRow+'NumNights');
+	} else {
+		var numNights = $F('PackageNumNights');
+	}
+	
 	var numGuests = $F('PackageNumGuests');
 	var quantity;
 	
