@@ -11,7 +11,7 @@ function perPersonPerNight(itemId, clientRow) {
 	var pn_val = $F('perNight_'+itemId);
 	var quantityField = $('PackageLoaItemRel'+itemId+'Quantity');
 	var basePrice = $F('PackageLoaItemRel'+itemId+'BasePrice');
-	if ($F('ClientLoaPackageRel'+clientRow+'NumNights')) {
+	if ($('ClientLoaPackageRel'+clientRow+'NumNights')) {
 		var numNights = $F('ClientLoaPackageRel'+clientRow+'NumNights');
 	} else {
 		var numNights = $F('PackageNumNights');
