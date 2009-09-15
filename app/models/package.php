@@ -127,7 +127,10 @@ class Package extends AppModel {
 	
 	function afterSave($created) {
 	    // update validityStart, validityEnd, validityDisclaimer for opened and future fixed price offers in offerLive
-	    $this->query("UPDATE offerLive SET validityStart = '{$this->data['Package']['validityStartDate']}', validityEnd = '{$this->data['Package']['validityEndDate']}', validityDisclaimer = '" . Sanitize::escape($this->data['Package']['validityDisclaimer']) . "' WHERE packageId = {$this->data['Package']['packageId']} AND isAuction = 0 AND now() < endDate");
+	    $validity_disclaimer = ($this->data['Package']['validityLeadInLine']) ? '<p><strong>' . Sanitize::escape($this->data['Package']['validityLeadInLine']) . '</strong></p>' : ' ';
+	    $validity_disclaimer .= Sanitize::escape($this->data['Package']['validityDisclaimer']);
+	    
+	    $this->query("UPDATE offerLive SET validityStart = '{$this->data['Package']['validityStartDate']}', validityEnd = '{$this->data['Package']['validityEndDate']}', validityDisclaimer = '$validity_disclaimer' WHERE packageId = {$this->data['Package']['packageId']} AND isAuction = 0 AND now() < endDate");
 	}
 }
 ?>
