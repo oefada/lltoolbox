@@ -79,7 +79,7 @@
 						if( @$this->data['PackageLoaItemRel'][$loaItem['loaItemId']]['quantity'] == $this->data['Package']['numNights'] && $this->data['Package']['numNights'] > 0) {
 							$checked = ' checked="checked"';
 						}?>
-					<input type="checkbox" name="perNight_<?=$loaItem['loaItemId']?>" id="perNight_<?=$loaItem['loaItemId']?>" value="1" onclick="perPersonPerNight(<?=$loaItem['loaItemId']?>)"<?=$checked?> /><label for="perNight_<?=$loaItem['loaItemId']?>">PN</label>
+					<input type="checkbox" name="perNight_<?=$loaItem['loaItemId']?>" id="perNight_<?=$loaItem['loaItemId']?>" value="1" onclick="perPersonPerNight(<?=$loaItem['loaItemId']?>,<?=$k?>)"<?=$checked?> /><label for="perNight_<?=$loaItem['loaItemId']?>">PN</label>
 					</div>
 					<? endif; ?>
 					<?= $form->input('PackageLoaItemRel.'.$loaItem['loaItemId'].'.loaItemTypeId', array('type' => 'hidden', 'value' => $loaItem['loaItemTypeId'])) ?>
