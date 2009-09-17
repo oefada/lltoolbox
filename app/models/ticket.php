@@ -316,7 +316,7 @@ class Ticket extends AppModel {
 			$sql = "SELECT packageId FROM clientLoaPackageRel clpr ";
 			$sql.= "INNER JOIN schedulingMaster sm USING(packageId) ";
 			$sql.= "INNER JOIN schedulingMasterTrackRel smtr USING (schedulingMasterId) ";
-			$sql.= "INNER JOIN track t ON smtr.trackId = t.trackId AND t.expirationCriteriaId = 3 ";
+			$sql.= "INNER JOIN track t ON smtr.trackId = t.trackId AND t.expirationCriteriaId = 4 ";
 			$sql.= "WHERE clpr.loaId = $loa_id GROUP BY clpr.packageId";
 			$result = $this->query($sql);
 			if (!empty($result)) {
