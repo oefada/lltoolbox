@@ -73,7 +73,9 @@ $echo = 'efunc'; ?>
 	</tr>
 <?php foreach($tot as $row):
 $row = $row['data'];
-
+if($row['col1'] == date('W')) {
+	$currWeek = $row;
+}
 ?>
 <tr>
 	<?php for($i = 1; $i <= 8; $i++):
@@ -110,14 +112,14 @@ $row = $row['data'];
 		$echo = 'efunc';
 	}
 	?>
-	<td><?$echo($row['col'.$i])?></td>	
+	<td><?$echo($currWeek['col'.$i])?></td>	
 	<?php endfor; ?>
 </tr>
 <tr class="altrow">
 	<td style="text-align:right">target</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
-	<td><?currency($row['revenuetarget'])?></td>
+	<td><?currency($currWeek['revenuetarget'])?></td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
@@ -126,7 +128,7 @@ $row = $row['data'];
 	<td style="text-align:right">variance</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
-	<td><?percentage(($row['col5']/$row['revenuetarget']-1))?></td>
+	<td><?percentage(($currWeek['col5']/$currWeek['revenuetarget']-1))?></td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
@@ -229,6 +231,9 @@ $row = $row['data'];
 $totals = array();
 foreach($auc as $row):
 $row = $row['data'];
+if($row['col1'] == date('W')) {
+	    $currWeek = $row;
+}
 ?>
 <tr>
 	<?php for($i = 1; $i <= 22; $i++): 
@@ -264,7 +269,7 @@ $row = $row['data'];
 			$echo = 'efunc';
 		}
 	?>
-	<td><?$echo($row['col'.$i])?></td>	
+	<td><?$echo($currWeek['col'.$i])?></td>	
 	<?php endfor; ?>
 </tr>
 <tr class="altrow">
@@ -279,7 +284,7 @@ $row = $row['data'];
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
-	<td><?currency($row['revenuetarget'])?></td>
+	<td><?currency($currWeek['revenuetarget'])?></td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
@@ -302,7 +307,7 @@ $row = $row['data'];
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
-	<td><?percentage(($row['col13']/$row['revenuetarget']-1))?></td>
+	<td><?percentage(($currWeek['col13']/$currWeek['revenuetarget']-1))?></td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
@@ -496,6 +501,9 @@ switch($k) {
 $totals = array();
 foreach($rows as $row):
 $row = $row['data'];
+if($row['col1'] == date('W')) {
+	    $currWeek = $row;
+}
 ?>
 <tr>
 	<?php for($i = 1; $i <= 14; $i++):
@@ -531,7 +539,7 @@ $row = $row['data'];
 		$echo = 'efunc';
 	}
 	?>
-	<td><?$echo($row['col'.$i])?></td>	
+	<td><?$echo($currWeek['col'.$i])?></td>	
 	<?php endfor; ?>
 </tr>
 <tr class="altrow">
@@ -544,7 +552,7 @@ $row = $row['data'];
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
-	<td><?currency($row['revenuetarget'])?></td>
+	<td><?currency($currWeek['revenuetarget'])?></td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
@@ -559,7 +567,7 @@ $row = $row['data'];
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
-	<td><?percentage(($row['col11']/$row['revenuetarget']-1))?></td>
+	<td><?percentage(($currWeek['col11']/$currWeek['revenuetarget']-1))?></td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
@@ -681,6 +689,9 @@ $row = $row['data'];
 $totals = array();
 foreach($cruises as $row):
 $row = $row['data'];
+if($row['col1'] == date('W')) {
+	    $currWeek = $row;
+}
 ?>
 <tr>
 	<?php for($i = 1; $i <= 9; $i++): 
@@ -715,7 +726,7 @@ $row = $row['data'];
 			$echo = 'efunc';
 		}
 		?>
-	<td><?$echo($row['col'.$i])?></td>	
+	<td><?$echo($currWeek['col'.$i])?></td>	
 	<?php endfor; ?>
 </tr>
 <tr class="altrow">
@@ -723,7 +734,7 @@ $row = $row['data'];
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
-	<td><?currency($row['revenuetarget'])?></td>
+	<td><?currency($currWeek['revenuetarget'])?></td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
@@ -733,7 +744,7 @@ $row = $row['data'];
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
-	<td><?percentage(@($row['col6']/$row['revenuetarget']-1))?></td>
+	<td><?percentage(@($currWeek['col6']/$currWeek['revenuetarget']-1))?></td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
@@ -827,6 +838,9 @@ $row = $row['data'];
 $totals = array();
 foreach($sponsorship as $row):
 $row = $row['data'];
+if($row['col1'] == date('W')) {
+	    $currWeek = $row;
+}
 ?>
 <tr>
 	<?php for($i = 1; $i <= 8; $i++): 
@@ -859,14 +873,14 @@ $row = $row['data'];
 	} else {
 		$echo = 'efunc';
 	}?>
-	<td><?$echo($row['col'.$i])?></td>	
+	<td><?$echo($currWeek['col'.$i])?></td>	
 	<?php endfor; ?>
 </tr>
 <tr class="altrow">
 	<td style="text-align:right">target</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
-	<td><?currency($row['revenuetarget'])?></td>
+	<td><?currency($currWeek['revenuetarget'])?></td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
@@ -875,7 +889,7 @@ $row = $row['data'];
 	<td style="text-align:right">variance</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
-	<td><?percentage(($row['col5']/$row['revenuetarget']-1))?></td>
+	<td><?percentage(($currWeek['col5']/$currWeek['revenuetarget']-1))?></td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
@@ -965,6 +979,9 @@ $row = $row['data'];
 $totals = array();
 foreach($buyers as $row):
 $row = $row['data'];
+if($row['col1'] == date('W')) {
+	$currWeek = $row;
+}
 ?>
 <tr>
 	<?php for($i = 1; $i <= 8; $i++):
@@ -995,16 +1012,16 @@ $row = $row['data'];
 		$echo = 'efunc';
 	}
 	?>
-	<td><?$echo($row['col'.$i])?></td>	
+	<td><?$echo($currWeek['col'.$i])?></td>	
 	<?php endfor; ?>
 </tr>
 <tr class="altrow">
 	<td style="text-align:right">target</td>
-	<td><?=$row['newBuyerTarget']?></td>
+	<td><?=$currWeek['newBuyerTarget']?></td>
 	<td>&nbsp;</td>
-	<td><?=$row['returningBuyerTarget']?></td>
+	<td><?=$currWeek['returningBuyerTarget']?></td>
 	<td>&nbsp;</td>
-	<td><?=$row['totalBuyerTarget']?></td
+	<td><?=$currWeek['totalBuyerTarget']?></td
 	<td>&nbsp;</td>
 </tr>
 <tr class="altrow">
