@@ -65,6 +65,42 @@ class PackagesController extends AppController {
 	function add($clientId = null) {
 		$this->set('clientId', $clientId);
 		$this->set('currentTab', 'property');
+
+		// for hotel offers
+		if ($this->data['Package']['externalOfferUrl']) {
+			
+			$this->data['Package']['packageName'] = $this->data['Package']['packageTitle'];
+			$this->data['Package']['packageStatusId'] = 4;
+			if ($this->Package->saveAll($this->data, array('validate' => false)) && $this->Package->save($this->data, array('validate' => false))) {
+
+				// create schedulingMaster
+				$this->Package->SchedulingMaster->create();
+				$sched_master['SchedulingMaster']['packageId'] = $this->Package->id;
+				$sched_master['SchedulingMaster']['offerTypeId'] = 7;
+				$sched_master['SchedulingMaster']['iterationSchedulingOption'] = 1;
+				$sched_master['SchedulingMaster']['remittanceTypeId'] = 0;
+				$sched_master['SchedulingMaster']['mysteryIncludes'] = '';
+				$sched_master['SchedulingMaster']['startDate'] = $this->data['Package']['startDate'];
+				$sched_master['SchedulingMaster']['endDate'] = $this->data['Package']['endDate'];	            
+	            
+				// create schedulingInstance
+				if ($this->Package->SchedulingMaster->saveAll($sched_master, array('validate' => false))) {
+					$instanceData['SchedulingInstance']['schedulingMasterId'] = $this->Package->SchedulingMaster->id;
+					$instanceData['SchedulingInstance']['startDate'] = $this->data['Package']['startDate'];
+				    $instanceData['SchedulingInstance']['endDate'] = $this->data['Package']['endDate'];
+				    $this->Package->SchedulingMaster->SchedulingInstance->create();
+					$this->Package->SchedulingMaster->SchedulingInstance->save($instanceData);
+				} else {
+					$this->Session->setFlash(__('The Schedule could not be saved. Please correct the errors below.', true), 'default', array(), 'error');
+				}			
+				
+				$this->Session->setFlash(__('The Package has been saved', true), 'default', array(), 'success');
+				$this->redirect("/clients/$clientId/packages/edit/{$this->Package->id}");
+			} else {
+				$this->Session->setFlash(__('The Package could not be saved. Please correct the errors below and try again.', true), 'default', array(), 'error');
+			}			
+			return;
+		}
 		
 		if (!empty($this->data) && isset($this->data['Package']['complete'])) {
             $this->data = $this->setCorrectNumNights($this->data);
@@ -345,11 +381,23 @@ class PackagesController extends AppController {
 	}
 	
 	function edit($clientId = null, $id = null) {
+
 		if (!$clientId && !$id && empty($this->data)) {
 			$this->Session->setFlash(__('Invalid Package or Client', true));
 			$this->redirect(array('controller' => 'clients', 'action'=>'index'));
 		}
+
 		if (!empty($this->data)) {
+			if ($this->data['Package']['externalOfferUrl']) { // for hotel offers
+				if ($this->Package->saveAll($this->data, array('validate' => false)) && $this->Package->save($this->data, array('validate' => false))) {
+					$this->Session->setFlash(__('The Package has been saved', true), 'default', array(), 'success');
+					$this->redirect("/clients/$clientId/packages/edit/".$this->Package->id);
+				} else {
+					$this->Session->setFlash(__('The Package could not be saved. Please correct the errors below and try again.', true), 'default', array(), 'error');
+				}
+				return;
+			}
+			
 			if (@$this->data['clone'] == 'clone') {
 				$this->data = $this->Package->cloneData($this->data);
 				$this->addPackageLoaItems();
