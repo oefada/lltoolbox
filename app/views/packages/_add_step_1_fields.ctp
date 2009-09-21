@@ -10,6 +10,7 @@
 		echo $form->input('ClientLoaPackageRel.'.$rowId.'.loaId', array('options' => $loaIds));
 ?>
 	<div class="input text"><label>LOA Expiration Date:</label><div id="loaExpirationDate<?=$rowId?>" style="display: inline"></div></div>
+	<div class="input text"><label>Package Type:</label><? echo $form->select('packageType', array(0 => 'Standard Package', 1 => 'Hotel Offer'), 0, null, false); ?></div>
 	
 	<?php if ($rowId == 0 && !$showFirstPercentOfRevenue): ?>
 	<div id='firstPercentOfRevenue' style="display: none">
