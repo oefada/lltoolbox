@@ -3,7 +3,7 @@ if ($_POST['data']['Package']['packageType'] == 1) {
 	?><div class="packages form"><?php
 	echo $form->create('Package', array('url' => "/clients/$clientId/packages/add", 'id'=>'PackageAddForm'));
 	echo $this->renderElement('../packages/_add_step_1');
-	echo $this->renderElement('../packages/_add_client_direct');
+	echo $this->renderElement('../packages/_add_hotel_offer');
 	echo $form->end('Submit');
 	?></div><?php
 	

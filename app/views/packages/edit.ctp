@@ -3,7 +3,7 @@ if ($this->data['Package']['externalOfferUrl']) { // for hotel offers
 	?><div class="packages form"><?php
 	echo $form->create('Package', array('url' => "/clients/{$clientId}/packages/edit/{$this->data['Package']['packageId']}", 'id'=>'PackageAddForm'));
 	echo $this->renderElement('../packages/_add_step_1');
-	echo $this->renderElement('../packages/_add_client_direct');
+	echo $this->renderElement('../packages/_add_hotel_offer');
 	echo $form->input('Package.packageId');
 	echo $form->end('Submit');
 	?></div><?php	
