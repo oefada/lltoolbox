@@ -1,4 +1,15 @@
 <?php
+if ($this->data['Package']['externalOfferUrl']) { // for hotel offers
+	?><div class="packages form"><?php
+	echo $form->create('Package', array('url' => "/clients/{$clientId}/packages/edit/{$this->data['Package']['packageId']}", 'id'=>'PackageAddForm'));
+	echo $this->renderElement('../packages/_add_step_1');
+	echo $this->renderElement('../packages/_add_client_direct');
+	echo $form->input('Package.packageId');
+	echo $form->end('Submit');
+	?></div><?php	
+	
+} else {
+
 $this->pageTitle = $client['Client']['name'].$html2->c($client['Client']['clientId'], 'Client Id:');
 ?>
 <script>
@@ -76,3 +87,5 @@ function updateAllPerPersonPerNight() {
 </div>
 <?php echo $form->end();?>
 </div>
+
+<? } ?>
