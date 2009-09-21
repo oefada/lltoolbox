@@ -126,11 +126,22 @@ class Package extends AppModel {
 	}
 	
 	function afterSave($created) {
+		
+		// get validity disclaimer by joining it with validityLeadInLine
+		$validity_disclaimer = ($this->data['Package']['validityLeadInLine']) ? '<p><strong>' . Sanitize::escape($this->data['Package']['validityLeadInLine']) . '</strong></p>' : ' ';
+		$validity_disclaimer .= Sanitize::escape($this->data['Package']['validityDisclaimer']);
+
 	    // update validityStart, validityEnd, validityDisclaimer for opened and future fixed price offers in offerLive
-	    $validity_disclaimer = ($this->data['Package']['validityLeadInLine']) ? '<p><strong>' . Sanitize::escape($this->data['Package']['validityLeadInLine']) . '</strong></p>' : ' ';
-	    $validity_disclaimer .= Sanitize::escape($this->data['Package']['validityDisclaimer']);
+	    $this->query("UPDATE offerLive SET validityStart = '{$this->data['Package']['validityStartDate']}', validityEnd = '{$this->data['Package']['validityEndDate']}', validityDisclaimer = '$validity_disclaimer' WHERE packageId = $this->id AND isAuction = 0 AND now() < endDate");
 	    
-	    $this->query("UPDATE offerLive SET validityStart = '{$this->data['Package']['validityStartDate']}', validityEnd = '{$this->data['Package']['validityEndDate']}', validityDisclaimer = '$validity_disclaimer' WHERE packageId = {$this->data['Package']['packageId']} AND isAuction = 0 AND now() < endDate");
+	    // update offer details in offerLive for hotel offers type (7)
+	    $this->query("
+			UPDATE offerLive
+			SET validityStart = '{$this->data['Package']['validityStartDate']}', validityEnd = '{$this->data['Package']['validityEndDate']}',
+				offerName = '{$this->data['Package']['packageTitle']}', shortBlurb = '{$this->data['Package']['shortBlurb']}', additionalDescription = '{$this->data['Package']['additionalDescription']}',
+				offerIncludes = '{$this->data['Package']['packageIncludes']}', externalOfferUrl = '{$this->data['Package']['externalOfferUrl']}' 
+			WHERE packageId = $this->id AND offerTypeId = 7 AND now() < endDate
+		");
 	}
 }
 ?>
