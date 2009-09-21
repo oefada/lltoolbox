@@ -9,32 +9,38 @@
 			<?php echo 'Package Validity: '.date('M j, Y', strtotime($package['Package']['validityStartDate'])).' to '.date('M j, Y', strtotime($package['Package']['validityEndDate'])) ?>
 			</p>
 	<?php
-		echo $form->input('offerTypeId', array('label' => 'Offer Type', 'empty' => true, 'disabled' => ($masterState) ? true : false));		
-		if ($singleClientPackage) {
-			echo $form->input('Track', array('options' => $trackIds, 'empty' => true, 'multiple' => false, 'disabled' => ($masterState) ? true : false));
-		}
-		//echo "<strong>For Fixed Price offer types, number of days to run, scheduling delay, and number of iterations will be ignored. You must choose an end date for fixed price offers.</strong>";		
-		echo $form->input('retailValue', array('disabled' => 'disabled'));
-		
-		/* TODO: Marketing/Judy needs to be able to override the defaults*/
-		echo '<div id="defaults" style="margin: 0; padding: 0">';
-		if (isset($defaultFile)) {
-			echo $this->renderElement('../scheduling_masters/'.$defaultFile);
-		}
-		echo '</div>';
-		echo $form->input('reserveAmt', array('value' => $package['Package']['reservePrice'], 'disabled' => 'disabled'));
-
-		echo '<span id="numDays"';
-			/* TODO: Marketing/Judy need to be able to se num days to an arbitrary #, and unlock scheduling delay */
-			echo $form->input('numDaysToRun', array('type' => 'select',  'empty' => true, 'options' => array(2 => '2', 3 => '3', 7 => '7'), 'disabled' => ($masterState) ? 'disabled' : false));
-			
-			if(in_array($userDetails['username'], array('kferson', 'jlagraff', 'dpen'))) {
-				echo $form->input('schedulingDelayCtrlId', array('label' => 'Scheduling Delay'));
-			} else {
-				echo $form->input('schedulingDelayCtrlId', array('onchange' => 'this.selectedIndex = 0', 'readonly' => 'readonly', 'label' => 'Scheduling Delay'));
+	
+		if ($package['Format'][0]['formatId'] != 3) {
+			echo $form->input('offerTypeId', array('label' => 'Offer Type', 'empty' => true, 'disabled' => ($masterState) ? true : false));		
+			if ($singleClientPackage) {
+				echo $form->input('Track', array('options' => $trackIds, 'empty' => true, 'multiple' => false, 'disabled' => ($masterState) ? true : false));
 			}
-		echo '</span>';
-
+			//echo "<strong>For Fixed Price offer types, number of days to run, scheduling delay, and number of iterations will be ignored. You must choose an end date for fixed price offers.</strong>";		
+			echo $form->input('retailValue', array('disabled' => 'disabled'));
+			
+			/* TODO: Marketing/Judy needs to be able to override the defaults*/
+			echo '<div id="defaults" style="margin: 0; padding: 0">';
+			if (isset($defaultFile)) {
+				echo $this->renderElement('../scheduling_masters/'.$defaultFile);
+			}
+			echo '</div>';
+			echo $form->input('reserveAmt', array('value' => $package['Package']['reservePrice'], 'disabled' => 'disabled'));
+	
+			echo '<span id="numDays"';
+				/* TODO: Marketing/Judy need to be able to se num days to an arbitrary #, and unlock scheduling delay */
+				echo $form->input('numDaysToRun', array('type' => 'select',  'empty' => true, 'options' => array(2 => '2', 3 => '3', 7 => '7'), 'disabled' => ($masterState) ? 'disabled' : false));
+				
+				if(in_array($userDetails['username'], array('kferson', 'jlagraff', 'dpen'))) {
+					echo $form->input('schedulingDelayCtrlId', array('label' => 'Scheduling Delay'));
+				} else {
+					echo $form->input('schedulingDelayCtrlId', array('onchange' => 'this.selectedIndex = 0', 'readonly' => 'readonly', 'label' => 'Scheduling Delay'));
+				}
+			echo '</span>';
+		} else {
+			echo $form->input('Track', array('options' => $trackIds, 'empty' => true, 'multiple' => false, 'disabled' => ($masterState) ? true : false));
+			echo $form->input('offerTypeId', array('value' => 7, 'type' => 'hidden'));
+			echo $form->input('numDaysToRun', array('value' => 2, 'type' => 'hidden'));
+		}
 
 
 		// START DATE/TIME
@@ -176,14 +182,16 @@
 		<script>
 			Event.observe("SchedulingMasterOfferTypeId", "change", toggle_offertype);			
 			function toggle_offertype(event) {
-				if ($("SchedulingMasterOfferTypeId").getValue() == 3 || $("SchedulingMasterOfferTypeId").getValue() == 4) {
-					$("firstOffer").hide();
-					$("numDays").hide();
-					$("iterations").hide();
-					$("endDate").show();
-				} else {
-					$("firstOffer").show();
-					$("numDays").show();
+				if ($("SchedulingMasterOfferTypeId").getValue() != 7) {
+					if ($("SchedulingMasterOfferTypeId").getValue() == 3 || $("SchedulingMasterOfferTypeId").getValue() == 4) {
+						$("firstOffer").hide();
+						$("numDays").hide();
+						$("iterations").hide();
+						$("endDate").show();
+					} else {
+						$("firstOffer").show();
+						$("numDays").show();
+					}					
 				}
 			}
 			toggle_offertype();
