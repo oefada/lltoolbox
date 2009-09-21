@@ -96,6 +96,10 @@ switch($masterState) {
 				$linkTitle = 'Close this Fixed Price Offer';
 				$action = 'closeFixedPriceOffer';
 				break;
+			case 7:
+				$linkTitle = 'Close this Hotel Offer';
+				$action = 'closeFixedPriceOffer';
+				break;
 			default:
 				$linkTitle = 'Delete all future instances for this master';
 				break;
