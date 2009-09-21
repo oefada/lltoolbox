@@ -25,6 +25,7 @@ class SchedulingMastersController extends AppController {
 		$package 				= $this->SchedulingMaster->Package->findByPackageId($packageId);
 			    
 		if (!empty($this->data)) {
+			
 			$this->SchedulingMaster->create();
 			$package = $this->SchedulingMaster->Package->findByPackageId($this->data['SchedulingMaster']['packageId']);
 			$this->data['SchedulingMaster']['validityStartDate'] = $package['Package']['validityStartDate'];
@@ -137,7 +138,6 @@ class SchedulingMastersController extends AppController {
 		$schedulingDelayCtrlIds 				= $this->SchedulingMaster->SchedulingDelayCtrl->find('list');
 		$remittanceTypeIds 						= $this->SchedulingMaster->RemittanceType->find('list');
     
-		
 		$this->set('package', 					$package);
 		$this->set('packageId', 				$packageId);
 		$this->set('merchandisingFlags', 		$merchandisingFlags);
@@ -185,7 +185,11 @@ class SchedulingMastersController extends AppController {
 			case 4:
 				$this->set('defaultFile', 'offer_type_defaults_2');
 			    break;
-			    
+			
+			case 7:
+				$this->set('defaultFile', 'offer_type_defaults_3');
+				break;
+				    
 			default:
 			    $this->set('defaultFile', false);
 			    break;
@@ -224,7 +228,7 @@ class SchedulingMastersController extends AppController {
 		/*
 		 * For fixed price offers, we only grab the start and end dates. Don't care about number of iterations, or delays.
 		 */
-		if (in_array($masterData['SchedulingMaster']['offerTypeId'], array(3,4))) {
+		if (in_array($masterData['SchedulingMaster']['offerTypeId'], array(3,4,7))) {
 		    $instanceData['SchedulingInstance']['startDate']    = $masterData['SchedulingMaster']['startDate'];
 		    $instanceData['SchedulingInstance']['endDate']      = $masterData['SchedulingMaster']['endDate'];
 		    $this->SchedulingMaster->SchedulingInstance->create();
@@ -401,14 +405,6 @@ class SchedulingMastersController extends AppController {
                 }
     		endforeach;
     		
-    		/* If there are no future iterations, we can't do anything. */
-    		if ($remainingIterations == 0) {
-    		    if ($this->RequestHandler->isAjax()) {
-					$this->Session->setFlash(__('The Schedule could not be saved', true), 'default', array(), 'error');
-					$this->set('closeModalbox', true);
-				}
-    		}
-    		
     		/* If no iterations have gone live yet, we can do whatever we want to this */
     		if ($remainingIterations == count($originalData['SchedulingInstance'])) {
 		    	$this->SchedulingMaster->SchedulingInstance->deleteAll(array('SchedulingInstance.schedulingMasterId' => $id));
@@ -440,8 +436,8 @@ class SchedulingMastersController extends AppController {
     				$this->Session->setFlash(__('The Schedule could not be saved. Please correct the errors below.', true), 'default', array(), 'error');
     			}
     		
-			// save after offer is live: for fixedprices	
- 			} elseif (in_array($originalData['SchedulingMaster']['offerTypeId'], array(3,4))) {
+			// save after offer is live: for fixedprices and hotel offers
+ 			} elseif (in_array($originalData['SchedulingMaster']['offerTypeId'], array(3, 4, 7))) {
 
 				 // endDate
 				$datePickerDate2 = explode('-', $this->data['SchedulingMaster']['endDatePicker2']);
@@ -449,17 +445,22 @@ class SchedulingMastersController extends AppController {
 
 				// set endDate for instance and offerLive
 			    $offerLiveResults = $this->OfferLive->query("SELECT OfferLive.* FROM offerLive as OfferLive INNER JOIN  offer AS Offer USING(offerId) WHERE Offer.schedulingInstanceId = " . $originalData['SchedulingInstance'][0]['schedulingInstanceId']);
-			    $schedulingInstance['SchedulingInstance']   = $originalData['SchedulingInstance'][0];
-			    $offerLive['OfferLive']                     = $offerLiveResults[0]['OfferLive'];
+			    $schedulingInstance['SchedulingInstance']   			= $originalData['SchedulingInstance'][0];
 			    $schedulingInstance['SchedulingInstance']['endDate']    = $this->data['SchedulingMaster']['endDate'];
+				$offerLive['OfferLive']									= $offerLiveResults[0]['OfferLive'];			    
 			    $offerLive['OfferLive']['endDate']                      = $this->data['SchedulingMaster']['endDate'];
-		
-	            if ($this->SchedulingMaster->save($this->data, false) && $this->SchedulingMaster->SchedulingInstance->save($schedulingInstance, false) && $this->OfferLive->save($offerLive, false)) {
-	                $this->Session->setFlash(__('The Schedule has been saved', true), 'default', array(), 'success');
-	        		$this->set('closeModalbox', true);
+			    
+			    if (count($offerLiveResults)) {
+			    	$this->OfferLive->save($offerLive, false);
+			    }
+			    
+            	if ($this->SchedulingMaster->save($this->data, false) && $this->SchedulingMaster->SchedulingInstance->save($schedulingInstance, false)) {
+	            	if ($this->RequestHandler->isAjax()) {
+		                $this->Session->setFlash(__('The Schedule has been saved', true), 'default', array(), 'success');
+		        		$this->set('closeModalbox', true);
+	        		}
 	            } else {
 	                $this->Session->setFlash(__('The Schedule could not be saved. Please correct the errors below.', true), 'default', array(), 'error');
-	        		$this->set('closeModalbox', true);
 	            }
 
 			// save after offer is live: for auctions
@@ -547,16 +548,9 @@ class SchedulingMastersController extends AppController {
 		    
 		    $trackIds = $this->SchedulingMaster->Package->ClientLoaPackageRel->Loa->Track->find('list', array('conditions' => array('loaId' => $package['ClientLoaPackageRel'][0]['loaId'])));
 		    $this->set('trackIds', $trackIds);
-		}
+		}		
 		
-		/* Since we are editing a master, no info should come from the package at this point, so we can override it all with the data already in the master
-		 * Reference light house ticket #423
-		 */
-		$package['Package'] = $this->data['SchedulingMaster'];
-		$package['Package']['reservePrice'] = $this->data['SchedulingMaster']['reserveAmt'];    //these fields are named differently
-		
-		
-		$this->set('masterState',               $masterState);
+		$this->set('masterState',				$masterState);
 		$this->set('package', 					$package);
 		$this->set('packageId', 				$packageId);
 		$this->set('remainingIterations',       $remainingIterations);
@@ -599,7 +593,7 @@ class SchedulingMastersController extends AppController {
 		}
 		
 		$this->data = $this->SchedulingMaster->read(null, $id);
-		if($this->data['SchedulingMaster']['offerTypeId'] != 3 && $this->data['SchedulingMaster']['offerTypeId'] != 4) {
+		if($this->data['SchedulingMaster']['offerTypeId'] != 3 && $this->data['SchedulingMaster']['offerTypeId'] != 4 && $this->data['SchedulingMaster']['offerTypeId'] != 7) {
 		    $this->Session->setFlash(__('Cannot stop a non-fixed priced offer', true), 'default', array(), 'error');
 			$this->set('closeModalbox', true);
 		    die();
@@ -627,7 +621,7 @@ class SchedulingMastersController extends AppController {
                 $this->Session->setFlash(__('The offer has been stopped', true), 'default', array(), 'success');
         		$this->set('closeModalbox', true);
             
-            } else {
+            } else { // will issue this error if there's no offerLive
             
                 $this->Session->setFlash(__('The offer could not been stopped, please contact tech support and report this issue', true), 'default', array(), 'error');
         		$this->set('closeModalbox', true);
