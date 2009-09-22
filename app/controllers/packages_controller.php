@@ -70,6 +70,8 @@ class PackagesController extends AppController {
 		if ($this->data['Package']['externalOfferUrl']) {
 			
 			$this->data['Package']['packageName'] = $this->data['Package']['packageTitle'];
+			$this->data['Package']['validityStartDate'] = $this->data['Package']['startDate'];
+			$this->data['Package']['validityEndDate'] = $this->data['Package']['endDate'];
 			$this->data['Package']['packageStatusId'] = 4;
 			if ($this->Package->saveAll($this->data, array('validate' => false)) && $this->Package->save($this->data, array('validate' => false))) {
 
@@ -389,6 +391,11 @@ class PackagesController extends AppController {
 
 		if (!empty($this->data)) {
 			if ($this->data['Package']['externalOfferUrl']) { // for hotel offers
+			
+				$this->data['Package']['packageName'] = $this->data['Package']['packageTitle'];
+				$this->data['Package']['validityStartDate'] = $this->data['Package']['startDate'];
+				$this->data['Package']['validityEndDate'] = $this->data['Package']['endDate'];
+				
 				if ($this->Package->saveAll($this->data, array('validate' => false)) && $this->Package->save($this->data, array('validate' => false))) {
 					$this->Session->setFlash(__('The Package has been saved', true), 'default', array(), 'success');
 					$this->redirect("/clients/$clientId/packages/edit/".$this->Package->id);
