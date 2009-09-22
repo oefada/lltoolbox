@@ -2320,21 +2320,25 @@ class ReportsController extends AppController {
 		group by quarter, weekBeginSunday
 		ORDER BY weekBeginSunday
 		;");
+		// QTD Revenue Target
 		$tmp = $this->OfferType->query("SELECT 
 		 SUM(revenuetarget) as quarterRevenueTarget
 		FROM reporting.weeklyScorecardTotal as data 
 		WHERE YEAR(weekBeginSunday) = YEAR(NOW())
 		 AND QUARTER = QUARTER(NOW())
+		 AND weeknumber < WEEK(NOW()) + 1
 		group by quarter
 		ORDER BY weekBeginSunday
 		;");
-		
+		//QTD Last Year
 		$tmp2 = $this->OfferType->query("SELECT SUM(t.packagesSoldPrevious) as packagesSoldPrevious, SUM(revenuecollectedprevious) as revenueCollectedPrevious
 		FROM reporting.weeklyScorecardTotal t
 		WHERE 
 		 QUARTER = QUARTER(NOW())
+		 AND YEAR(weekBeginSunday) = YEAR(now())
+		 AND weeknumber < WEEK(NOW()) + 1
 		;");
-
+		// QTR
 		$tmp3 = $this->OfferType->query("SELECT SUM(t.packagesSoldPrevious) as qtr_packagesSoldPrevious, SUM(revenuecollectedprevious) as qtr_revenueCollectedPrevious
 		FROM reporting.weeklyScorecardTotal t
 		WHERE 
@@ -2377,6 +2381,7 @@ class ReportsController extends AppController {
 		FROM reporting.weeklyScorecardAuctions as data 
 		WHERE YEAR(weekBeginSunday) = YEAR(NOW())
 		 AND QUARTER = QUARTER(NOW())
+		 AND weeknumber < WEEK(NOW()) + 1
 		group by quarter
 		ORDER BY weekBeginSunday
 		;");
@@ -2387,6 +2392,8 @@ class ReportsController extends AppController {
 		FROM reporting.weeklyScorecardAuctions a
 		WHERE 
 		 QUARTER = QUARTER(NOW())
+		AND YEAR(weekbeginsunday) = YEAR(now())
+		 AND weeknumber < WEEK(NOW()) + 1
 		;
 		");
 		$tmp3 = $this->OfferType->query("SELECT SUM(a.auctionsListedPrevious) as qtr_auctionsListedPrevious, SUM(a.successfulAuctionsPrevious) as qtr_successfulAuctionsPrevious,
@@ -2431,6 +2438,7 @@ class ReportsController extends AppController {
 		FROM reporting.weeklyScorecardFixedPrice as data 
 		WHERE YEAR(weekBeginSunday) = YEAR(NOW())
 		 AND QUARTER = QUARTER(NOW())
+		 AND weeknumber < WEEK(NOW()) + 1
 		group by quarter
 		ORDER BY weekBeginSunday
 		;");
@@ -2440,6 +2448,8 @@ class ReportsController extends AppController {
 		FROM reporting.weeklyScorecardFixedPrice a
 		WHERE 
 		 QUARTER = QUARTER(NOW())
+		AND  YEAR(weekbeginsunday) = YEAR(now())
+		 AND weeknumber < WEEK(NOW()) + 1
 		;");
 		$tmp3 = $this->OfferType->query("SELECT SUM(a.buyNowOffersPrevious) as qtr_buyNowOffersPrevious, SUM(a.numberRequestsPrevious) as qtr_numberRequestsPrevious,
 		SUM(packagesSoldPrevious) as qtr_packagesSoldPrevious, SUM(revenuecollectedprevious) as qtr_revenueCollectedPrevious
@@ -2482,6 +2492,7 @@ class ReportsController extends AppController {
 		FROM reporting.weeklyScorecardFixedPriceSponsor as data 
 		WHERE YEAR(weekBeginSunday) = YEAR(NOW())
 		 AND QUARTER = QUARTER(NOW())
+		 AND weeknumber < WEEK(NOW()) + 1
 		group by quarter
 		ORDER BY weekBeginSunday
 		;");
@@ -2491,6 +2502,8 @@ class ReportsController extends AppController {
 		FROM reporting.weeklyScorecardFixedPriceSponsor a
 		WHERE 
 		 QUARTER = QUARTER(NOW())
+		 AND YEAR(weekBeginSunday) = YEAR(now())
+		 AND weeknumber < WEEK(NOW()) + 1
 		;");
 		$tmp3 = $this->OfferType->query("SELECT SUM(a.buyNowOffersPrevious) as qtr_buyNowOffersPrevious, SUM(a.numberRequestsPrevious) as qtr_numberRequestsPrevious,
 		SUM(packagesSoldPrevious) as qtr_packagesSoldPrevious, SUM(revenuecollectedprevious) as qtr_revenueCollectedPrevious
@@ -2533,7 +2546,8 @@ class ReportsController extends AppController {
 		 SUM(revenuetarget) as quarterRevenueTarget
 		FROM reporting.weeklyScorecardFixedPriceWholesale as data 
 		WHERE YEAR(weekBeginSunday) = YEAR(NOW())
-		 AND QUARTER = QUARTER(NOW()) 
+		 AND QUARTER = QUARTER(NOW())
+		 AND weeknumber < WEEK(NOW()) + 1
 		group by quarter
 		ORDER BY weekBeginSunday
 		;");
@@ -2543,6 +2557,8 @@ class ReportsController extends AppController {
 		FROM reporting.weeklyScorecardFixedPriceWholesale a
 		WHERE 
 		 QUARTER = QUARTER(NOW())
+		 AND YEAR(weekBeginSunday) = YEAR(now())
+		 AND weeknumber < WEEK(NOW()) + 1
 		 
 		;");
 		$tmp3 = $this->OfferType->query("SELECT SUM(a.buyNowOffersPrevious) as qtr_buyNowOffersPrevious, SUM(a.numberRequestsPrevious) as qtr_numberRequestsPrevious,
@@ -2584,7 +2600,8 @@ class ReportsController extends AppController {
 		 SUM(revenuetarget) as quarterRevenueTarget
 		FROM reporting.weeklyScorecardCruises as data 
 		WHERE YEAR(weekBeginSunday) = YEAR(NOW())
-		 AND QUARTER = QUARTER(NOW()) 
+		 AND QUARTER = QUARTER(NOW())
+		 AND weeknumber < WEEK(NOW()) + 1
 		group by quarter
 		ORDER BY weekBeginSunday
 		;");
@@ -2594,6 +2611,8 @@ class ReportsController extends AppController {
 		FROM reporting.weeklyScorecardCruises a
 		WHERE 
 		 QUARTER = QUARTER(NOW())
+		 AND YEAR(weekBeginSunday) = YEAR(now())
+		 AND weeknumber < WEEK(NOW()) + 1
 		 
 		;");
 		$tmp3 = $this->OfferType->query("SELECT 
@@ -2635,7 +2654,8 @@ class ReportsController extends AppController {
 		 SUM(revenuetarget) as quarterRevenueTarget
 		FROM reporting.weeklyScorecardSponsorship as data 
 		WHERE YEAR(weekBeginSunday) = YEAR(NOW())
-		 AND QUARTER = QUARTER(NOW()) 
+		 AND QUARTER = QUARTER(NOW())
+		 AND weeknumber < WEEK(NOW()) + 1
 		group by quarter
 		ORDER BY weekBeginSunday
 		;");
@@ -2645,7 +2665,8 @@ class ReportsController extends AppController {
 		FROM reporting.weeklyScorecardSponsorship a
 		WHERE 
 		 QUARTER = QUARTER(NOW())
-		 
+		 AND YEAR(weekBeginSunday) = YEAR(now())
+		 AND weeknumber < WEEK(NOW()) + 1
 		;
 		");
 		$tmp3 = $this->OfferType->query("SELECT 
@@ -2689,7 +2710,8 @@ class ReportsController extends AppController {
 		 SUM(newbuyertarget) quarterNewBuyerTarget, sum(returningbuyertarget) quarterReturningBuyerTarget, sum(totalbuyertarget) quarterTotalBuyerTarget
 		FROM reporting.weeklyScorecardBuyers as data 
 		WHERE YEAR(weekBeginSunday) = YEAR(NOW())
-		 AND QUARTER = QUARTER(NOW()) 
+		 AND QUARTER = QUARTER(NOW())
+		 AND weeknumber < WEEK(NOW()) + 1
 		group by quarter, YEAR(weekbeginSunday)
 		ORDER BY weekBeginSunday
 		;");
@@ -2699,6 +2721,8 @@ class ReportsController extends AppController {
 		FROM reporting.weeklyScorecardBuyers b
 		WHERE 
 		 QUARTER = QUARTER(NOW())
+		 AND YEAR(weekBeginSunday) = YEAR(now())
+		 AND weeknumber < WEEK(NOW()) + 1
 		 
 		;");
 		$tmp3 = $this->OfferType->query("SELECT SUM(b.newBuyerActivityPrevious) as qtr_newBuyerActivityPrevious, SUM(b.returningBuyerActivityPrevious) as qtr_returningBuyerActivityPrevious,
