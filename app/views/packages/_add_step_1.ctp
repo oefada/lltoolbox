@@ -20,6 +20,8 @@
 	<?php echo $form->input('ClientLoaPackageRel.'.$k.'.percentOfRevenue') ?>
 	<?php echo $form->input('ClientLoaPackageRel.'.$k.'.numNights', array('onchange' => 'updateNumNights()', 'class' => 'multiProductNumNights')) ?>
 	<?php echo $form->input('ClientLoaPackageRel.'.$k.'.trackId', array('options' => $tracks, 'label' => 'Track Name', 'empty' => true)) ?>
+	<? else: ?>
+		<?php echo $form->input('ClientLoaPackageRel.'.$k.'.percentOfRevenue', array('value' => 100, 'type' => 'hidden')) ?>
 	<? endif; ?>
 </fieldset>
 <?php } ?>

@@ -16,7 +16,11 @@
 	<div id='firstPercentOfRevenue' style="display: none">
 	<?php endif; ?>
 <?php
+	if ($numClients == 1):
+	echo $form->input('ClientLoaPackageRel.'.$rowId.'.percentOfRevenue', array('value' => 100));
+	else:
 	echo $form->input('ClientLoaPackageRel.'.$rowId.'.percentOfRevenue');
+	endif;
 ?>
 	<?php if ($rowId == 0 && !$showFirstPercentOfRevenue): ?>
 	</div>

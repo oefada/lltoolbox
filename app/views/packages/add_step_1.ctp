@@ -23,6 +23,7 @@ do {
 	<?= $this->renderElement('../packages/_add_step_1_fields',
 								array('rowId' => $rowId,
 										'client' => $clients[$rowId],
+										'numClients' => count($clients),
 										'clientId' => ($clients[$rowId]['Client']['clientId'] ? $clients[$rowId]['Client']['clientId'] : $clientId),
 										'loaIds' => $loaIds[$rowId],
 										'hideAddLink' => $hideAddLink,
