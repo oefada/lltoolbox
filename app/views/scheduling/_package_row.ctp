@@ -18,7 +18,7 @@
 		</ul>	
 		</div>
 		<strong>Schedule This Package</strong> - Start Date
-		<input class="format-y-m-d divider-dash range-low-today fill-grid-no-select opacity-99" id="dp-package-<?=$package['Package']['packageId']?>" name="dp-normal-<?=$package['Package']['packageId']?>" value="<?=$year.'-'.$month.'-01'?>" maxlength="10"/>
+		<input type="hidden" class="format-y-m-d divider-dash range-low-today fill-grid-no-select opacity-99" id="dp-package-<?=$package['Package']['packageId']?>" name="dp-normal-<?=$package['Package']['packageId']?>" value="<?=$year.'-'.$month.'-01'?>" maxlength="10"/>
 		<script>
 			Event.observe(window,'load', function() {
 				$("fd-dp-package-<?=$package['Package']['packageId']?>").getElementsBySelector('td').each(function(obj, index){
@@ -28,6 +28,7 @@
 					arr = event.element().className.match(/dmy-(.*)-(.*)-(.*)\s/);
 					
 					if(arr[1]) {
+						$("fd-dp-package-<?=$package['Package']['packageId']?>").fade();
 						openSchedulingOverlay(arr[3]+'-'+arr[2]+'-'+arr[1], <?=$package['Package']['packageId']?>, <?="'",str_replace("'","\'",htmlentities($package['Package']['packageName'])),"'"?>);
 					}
 					return false;});
