@@ -18,12 +18,8 @@
 			<th style="width: 100px">Type</th>
 			<th>Description</th>
 			<th>Base Price<br/>
-				<? foreach($clientLoaDetails[0]['LoaItem'] as $loaItem): ?>
-				(base currency <?=$currencyCodes[$loaItem['currencyId']]?>
-				<br/>Exchange rate to USD = <?=$fakeExchangeRates[$loaItem['currencyId']]?>)
-				<? break;
-					endforeach;
-				?>
+				(base currency <?=$currencyCodes[$c['Loa']['currencyId']]?>
+				<br/>Exchange rate to USD = <?=$fakeExchangeRates[$c['Loa']['currencyId']]?>)
 			</th>
 			<th style="width: 120px">Quantity</th>
 		</tr>
@@ -33,7 +29,6 @@
 		<? 
 		$i = 0;
 		foreach($c['LoaItem'] as $k2 => $loaItem):
-		
 			if ($i++ % 2 == 0) {
 				$class = ' class="altrow"';
 			} else {
@@ -46,16 +41,16 @@
 				<td><?=$loaItemTypes[$loaItem['loaItemTypeId']]?></td>
 				<td><label for="item_<?=$k2*$k?>"><?=$loaItem['itemName']?></label><div style="color:#ccc"><?=$loaItem['merchandisingDescription']?></div></td>
 				<td><div style="text-align: right"><span style="text-align:left">
-				<?=$number->currency($loaItem['itemBasePrice'], $currencyCodes[$loaItem['currencyId']]) ?>
-				<? if (!empty($loaItem['Fee']['feePercent'])):
-					echo ' + '.$loaItem['Fee']['feePercent'].'%';
+				<?=$number->currency($loaItem['itemBasePrice'], $currencyCodes[$c['Loa']['currencyId']]) ?>
+				<? if (!empty($loaItem['Fee'])):
+					echo ' + fee(s)';
 				endif; ?>
 				<?=$form->input('PackageLoaItemRel.'.$loaItem['loaItemId'].'.basePrice', array('type' => 'hidden', 'disabled' => true, 'value' => $loaItem['itemBasePrice']))?>
 				</span>&nbsp;&nbsp;
 				
-				<?php if ($currencyCodes[$loaItem['currencyId']] != 'USD'): ?>
+				<?php if ($currencyCodes[$c['Loa']['currencyId']] != 'USD'): ?>
 				<span style="text-align: right">
-				<?=$number->currency($loaItem['itemBasePrice']*$fakeExchangeRates[$loaItem['currencyId']], 'USD') ?>
+				<?=$number->currency($loaItem['itemBasePrice']*$fakeExchangeRates[$c['Loa']['currencyId']], 'USD') ?>
 				</span>
 				<?php endif; ?>
 				
