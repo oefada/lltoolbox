@@ -2790,6 +2790,55 @@ class ReportsController extends AppController {
 			$this->output = '';
 		}
 	}
+	
+	function deal_alert() {
+		$db = ConnectionManager::getDataSource('live');
+		
+		$top = $db->query("SELECT clientId, client.name, count(*) as n 
+							FROM dealAlert INNER JOIN client USING(clientId) 
+							GROUP BY clientId ORDER by n desc");
+		
+		$subscribeDates = $db->query("SELECT WEEKOFYEAR(subscribeDate) as theWeek, count(*) as n 
+								FROM dealAlert INNER JOIN client USING(clientId) 
+								GROUP BY WEEKOFYEAR(subscribeDate) ORDER by theWeek ASC LIMIT 10 ");
+								
+		foreach ($subscribeDates as $v) {
+			$numSignups[] = $v[0]['n'];
+			$numSignupsWeek[] = $v[0]['theWeek'];
+		}
+
+		$numSignups = $this->googleSimpleEncode($numSignups);
+
+		for($i = 0; $i < 10; $i++) {
+			$points[] = $top[$i][0]['n'];
+			$clients[] = urlencode($top[$i]['client']['name']);
+		}
+		$this->set(compact('top', 'points', 'clients', 'numSignups', 'numSignupsWeek'));
+	}
+	
+	function googleSimpleEncode($values, $max = -1, $min = 0) {
+	        $encoding = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	        $chartdata = '';
+	        $rangemax = 61;
+	        if ($max < 0) {
+	                $max = max($values);
+	        }
+	        if ($max < max($values)) {
+	                $max = max($values);
+	        }
+	        $range = $max - $min;
+	        $scale = $rangemax / $range;
+	        foreach ($values as $k => $v) {
+	                if ($v - $min >= 0) {
+	                        $chartdata .= $encoding[floor(($v - $min) * $scale)];
+	                } else {
+	                        $chartdata .= '_';
+	                }
+	        }
+	        return $chartdata;
+	}
+
+	
 
 	//TODO: A lot of duplication of code, use this method as a template for all the others and cut down on the number of times the following code is repeated
 	function _build_conditions($data) {
