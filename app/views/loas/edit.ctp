@@ -65,6 +65,7 @@ $this->set('clientId', $this->data['Client']['clientId']);
 		<?php echo $form->end('Submit');?>
 	</div>
 </div>
+<!--
 <div class="collapsible">
 	<div class="handle"><?php __('Related LOA Items');?></div>
 	<div class="related collapsibleContent">
@@ -134,6 +135,7 @@ $this->set('clientId', $this->data['Client']['clientId']);
 <?php endif; ?>
 </div>
 </div>
+-->
 
 <div class="collapsible">
 	<div class="handle"><?php __('Related LOA Tracks');?></div>

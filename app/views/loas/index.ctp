@@ -23,6 +23,7 @@ $this->pageTitle = $client['Client']['name'].$html2->c($client['Client']['client
 	<th><?php echo $paginator->sort('Cash Paid', 'cashPaid');?></th>
 	<th><?php echo $paginator->sort('upgraded');?></th>
 	<th>&nbsp;</th>
+	<th>&nbsp;</th>
 	<th class="actions"><?php __('Actions');?></th>
 </tr>
 <?php
@@ -45,6 +46,7 @@ foreach ($loas as $loa):
 		<td><?php echo $loa['Loa']['cashPaid'];?></td>
 		<td><?php echo $html->image($loa['Loa']['upgraded'] ? 'tick.png' : 'cross.png');?></td>
 		<td><a href="/loas/maintTracking/<?php echo $loa['Loa']['loaId'];?>">View Loa Data</a></td>
+		<td><a href="/loas/items/<?php echo $loa['Loa']['loaId'];?>">View Loa Items</a></td>
 		<td class="actions">
 			<?php echo $html->link(__('View Details', true), array('controller'=> 'loas', 'action'=>'edit', $loa['Loa']['loaId'])); ?>
 		</td>
