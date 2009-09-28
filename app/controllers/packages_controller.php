@@ -3,7 +3,7 @@ class PackagesController extends AppController {
 
 	var $name = 'Packages';
 	var $helpers = array('Html', 'Form');
-	var $uses = array('Package', 'Client', 'PackageRatePeriod');
+	var $uses = array('Package', 'Client', 'PackageRatePeriod', 'LoaItem');
 	
 	function beforeFilter() {
 		parent::beforeFilter();
@@ -165,25 +165,20 @@ class PackagesController extends AppController {
 
 		//this re-numbers the array so we have a continuous array, since people can add/remove items on the list
 		$this->data['ClientLoaPackageRel'] = array_merge($this->data['ClientLoaPackageRel'], array());
+		$this->Client->Loa->recursive = 2;
 		foreach($this->data['ClientLoaPackageRel'] as $key => $clientLoaPackageRel):
 			$loa = $this->Client->Loa->findByLoaId($clientLoaPackageRel['loaId']);
 			$track = $this->Client->Loa->Track->findByTrackId($clientLoaPackageRel['trackId']);
-			//remove all of the LOA Items that are not the same currency as the LOA
-			foreach($loa['LoaItem'] as $k => $loaItem) {
-				if($loaItem['currencyId'] != $loa['Currency']['currencyId']) {
-					unset($loa['LoaItem'][$k]);
-				}
-			}
 			$clientLoaDetails[$key] = $loa;
 			$clientLoaDetails[$key]['ClientLoaPackageRel'] = $clientLoaPackageRel;
 			$clientLoaDetails[$key]['ClientLoaPackageRel']['Track'] = $track['Track'];
 		endforeach;
-		
+
 		$this->set('clientLoaDetails', $clientLoaDetails);
 		$this->data['Currency'] = $clientLoaDetails[0]['Currency'];
 		$this->data['Package']['currencyId'] = $clientLoaDetails[0]['Currency']['currencyId'];
 		$this->set('currencyCodes', $this->Package->Currency->find('list', array('fields' => array('currencyCode'))));
-		
+
 		$loaItemTypes = $this->Package->PackageLoaItemRel->LoaItem->LoaItemType->find('list');
 		$trackExpirationCriteriaIds = $this->Package->ClientLoaPackageRel->Loa->Track->ExpirationCriterium->find('list');
 		$this->set(compact('loaItemTypes', 'trackExpirationCriteriaIds'));
@@ -447,26 +442,20 @@ class PackagesController extends AppController {
 		$this->getBlackoutDaysNumber(1);
 		$this->Package->ClientLoaPackageRel->recursive = -1;
 		$clientLoaPackageRel = $this->Package->ClientLoaPackageRel->findAllByPackageId($id);
-	
+		$this->LoaItem->recursive = 2;
+		$this->LoaItem->Behaviors->attach('Containable');
+
 		foreach($this->data['ClientLoaPackageRel'] as $key => $clientLoaPackageRel):
 			$clientLoaDetails[$key] = $this->Client->Loa->findByLoaId($clientLoaPackageRel['loaId']);
 			
 			$clientLoaDetails[$key]['ClientLoaPackageRel'] = $clientLoaPackageRel;
 			
-			//remove all LOA Items that don't have the same currency as the package
-			foreach($clientLoaDetails[$key]['LoaItem'] as $k => $v) {
-				if($v['currencyId'] != $this->data['Package']['currencyId']) {
-					unset($clientLoaDetails[$key]['LoaItem'][$k]);
-				}
-			}
-			
 			//Get all the fees for each item
 			foreach($clientLoaDetails[$key]['LoaItem'] as $k => $v) {
 			    $itemId = $v['loaItemId'];
-			    $this->Package->PackageLoaItemRel->LoaItem->Behaviors->attach('Containable');
-			    $this->Package->PackageLoaItemRel->LoaItem->contain('Fee');
-			    $loaItem = $this->Package->PackageLoaItemRel->LoaItem->read(null, $itemId);
+			    $loaItem = $this->LoaItem->read(null, $itemId);
 			    $clientLoaDetails[$key]['LoaItem'][$k]['Fee'] = $loaItem['Fee'];
+			    $clientLoaDetails[$key]['LoaItem'][$k]['LoaItemRatePeriod'] = $loaItem['LoaItemRatePeriod'];
 			}
 		endforeach;
 		

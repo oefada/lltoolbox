@@ -3,6 +3,7 @@ class LoasController extends AppController {
 
 	var $name = 'Loas';
 	var $helpers = array('Html', 'Form', 'Ajax', 'Text', 'Layout', 'Number');
+	var $uses = array('Loa', 'LoaItemRatePeriod');
 	var $paginate;
 	
 	function beforeFilter() {
@@ -67,8 +68,43 @@ class LoasController extends AppController {
 		}
 		$this->Loa->recursive = 2;
 		$this->data = $this->Loa->read(null, $id);
+		foreach ($this->data['LoaItem'] as $k => $item) {
+			if (!empty($item['LoaItemRatePeriod'])) {
+				foreach ($item['LoaItemRatePeriod'] as $a => $rp) {
+					$tmp = $this->LoaItemRatePeriod->read(null, $rp['loaItemRatePeriodId']);
+					$this->data['LoaItem'][$k]['LoaItemRatePeriod'][$a]['LoaItemRate'] = $tmp['LoaItemRate'];
+					$this->data['LoaItem'][$k]['LoaItemRatePeriod'][$a]['LoaItemDate'] = $tmp['LoaItemDate'];
+				}
+			}
+			if (!empty($item['LoaItemGroup'])) {
+				$this->data['LoaItem'][$k]['isGroup'] = 1;
+				$this->data['LoaItem'][] = $this->data['LoaItem'][$k];
+				unset($this->data['LoaItem'][$k]);
+			}
+		}
+		$this->data['Client']['Loa'] = array_reverse($this->data['Client']['Loa']);
+		$this->data['LoaItem'] = $this->sortItems($this->data['LoaItem']);
+
 		$this->set('client', $this->Loa->Client->findByClientId($this->data['Loa']['clientId']));
 		$this->set('currencyCodes', $this->Loa->Currency->find('list', array('fields' => array('currencyCode'))));
+		$this->set('day_map', array(0=>'Su', 1=>'M', 2=>'Tu', 3=>'W', 4=>'Th', 5=>'F', 6=>'Sa'));
+	}
+
+	function sortItems($data) {
+		$loaItemTypeIds = array(19,1,6,7,5,8,15,16,3,17,18,11);
+		$tmp = array();
+		$ids = array();
+		foreach ($loaItemTypeIds as $itemTypeId) {
+			foreach ($data as $k=>$v) {
+				if ($v['loaItemTypeId'] == $itemTypeId && (!in_array($v['loaItemId'], $ids))) {
+					$tmp[] = $v;
+					$ids[] = $v['loaItemId'];
+					unset($data[$k]);
+				}
+			}
+		}
+		$tmp = array_merge($tmp, $data);
+		return $tmp;
 	}
 
 	function edit($id = null) {

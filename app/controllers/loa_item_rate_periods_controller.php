@@ -70,7 +70,7 @@ class LoaItemRatePeriodsController extends AppController {
 		if ($this->LoaItemRatePeriod->del($id)) {
 			if($this->RequestHandler->isAjax()) {
 				$this->autoRender = false;
-				return true;
+				return;
 			}
 			$this->Session->setFlash(__('LoaItemRatePeriod deleted', true));
 			$this->redirect(array('action'=>'index'));

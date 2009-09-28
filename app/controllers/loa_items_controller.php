@@ -2,8 +2,10 @@
 class LoaItemsController extends AppController {
 
 	var $name = 'LoaItems';
-	var $helpers = array('Html', 'Form', 'Ajax');
+	var $helpers = array('Html', 'Form', 'Ajax', 'Javascript');
 	var $components = array('RequestHandler');
+	var $uses = array('LoaItem', 'LoaItemRatePeriod', 'LoaItemRate', 'LoaItemDate', 'Loa', 'LoaItemGroup');
+	var $isGroup = false;
 
 	function index() {
 		$this->LoaItem->recursive = 0;
@@ -21,12 +23,62 @@ class LoaItemsController extends AppController {
 		$this->set('loaItemTypeIds', ($loaItemTypeIds));
 	}
 
+	function edit_group($id = null) {
+		$this->isGroup = true;
+		$this->edit($id);
+		$this->set('isGroup',1);
+		$this->render('edit');
+	}
+
+	function add_group() {
+		$this->isGroup = true;
+		$this->add();
+		$this->set('isGroup', 1);
+		$this->render('add');
+	}
+
 	function add() {
 		if (!empty($this->data)) {
-			$this->LoaItem->create();
-			if ($this->LoaItem->saveAll($this->data)) {
-				$this->Session->setFlash(__('The LoaItem has been saved', true));
 				
+			$this->LoaItem->create();
+			
+			$loaItemData = array();
+			$loaItemData['LoaItem'] = $this->data['LoaItem'];
+			$loaItemData['Fee'] = $this->data['Fee'];
+			
+			// handle group saves -- remove fees and prepare LoaItemGroup 
+			// ---------------------------------------------------------
+			if ($this->isGroup) {
+				unset($loaItemData['Fee']);
+				foreach ($this->data['LoaItemGroup'] as $groupItemId => $quantity) {
+					$loaItemData['LoaItemGroup'][] = array('groupItemId' => $groupItemId, 'quantity' => $quantity);
+				}
+			} else {
+				foreach ($loaItemData['Fee'] as $k => $loa_item_fee) {
+					if (!trim($loa_item_fee['feeName']) && !trim($loa_item_fee['feePercent'])) {
+						unset($loaItemData['Fee'][$k]);	
+					}
+				}
+			}
+			
+			// save the loaitem and related models -- then do the rate periods
+			// ---------------------------------------------------------
+			if ($this->LoaItem->saveAll($loaItemData)) {
+				$this->Session->setFlash(__('The LoaItem has been saved', true));
+				if (!empty($this->data['LoaItemRatePeriod'])) {
+					foreach ($this->data['LoaItemRatePeriod'] as $k => $v) {
+						$loaItemRatePeriod = array();
+						$loaItemRatePeriod['LoaItemRatePeriod']['loaItemId'] = $this->LoaItem->id;
+						$loaItemRatePeriod['LoaItemRatePeriod']['loaItemRatePeriodName'] = $v['loaItemRatePeriodName'];
+						$loaItemRatePeriod['LoaItemRate'] = array_values($v['LoaItemRate']);
+						$loaItemRatePeriod['LoaItemDate'] = array_values($v['LoaItemDate']);
+						foreach ($loaItemRatePeriod['LoaItemDate'] as $kd => $vd) {
+							$loaItemRatePeriod['LoaItemDate'][$kd]['startDate'] = date('Y-m-d', strtotime($vd['startDate']));
+							$loaItemRatePeriod['LoaItemDate'][$kd]['endDate'] = date('Y-m-d', strtotime($vd['endDate']));
+						}
+						$this->LoaItemRatePeriod->saveAll($loaItemRatePeriod);
+					}
+				}
 				if ($this->data['LoaItem']['addAnother'] != 1):
 				    if ($this->RequestHandler->isAjax()) {
 					    $this->set('closeModalbox', true);
@@ -43,12 +95,38 @@ class LoaItemsController extends AppController {
 			}
 		}
 		
-		$loaItemTypeIds = $this->LoaItem->LoaItemType->find('list');
-		$this->set('loaItemTypeIds', ($loaItemTypeIds));
+		// set loa item type ids -- different for groups
+		// ---------------------------------------------------------
+		$masterLoaItemTypeIds = $this->LoaItem->LoaItemType->find('list');
+		$loaItemTypeIds = $this->setLoaItemTypes($masterLoaItemTypeIds, $this->isGroup);
+		$this->set('loaItemTypeIds', $loaItemTypeIds);
+		$this->set('masterLoaItemTypeIds', $masterLoaItemTypeIds);
+	
+		// pull item rate period info for the views
+		// ---------------------------------------------------------
+		$this->Loa->recursive = 2;
+		$loa = $this->Loa->read(null, $this->params['loaId']);
+		$loa['LoaItem'] = $this->sortItems($loa['LoaItem']);
+		foreach ($loa['LoaItem'] as $k => $item) {
+			if (!empty($item['LoaItemRatePeriod'])) {
+				foreach ($item['LoaItemRatePeriod'] as $a => $rp) {
+					$tmp = $this->LoaItemRatePeriod->read(null, $rp['loaItemRatePeriodId']);
+					$loa['LoaItem'][$k]['LoaItemRatePeriod'][$a]['LoaItemRate'] = $tmp['LoaItemRate'];
+					$loa['LoaItem'][$k]['LoaItemRatePeriod'][$a]['LoaItemDate'] = $tmp['LoaItemDate'];
+				}
+			}
+		}
+		$this->set('loa', $loa);
+		$this->set('day_map', array(0=>'Su', 1=>'M', 2=>'Tu', 3=>'W', 4=>'Th', 5=>'F', 6=>'Sa'));
 		
-		$loa = $this->LoaItem->Loa->findByLoaId($this->params['loaId']);
+		// currency stuff
+		// ---------------------------------------------------------
 		$this->set('currencyId', $loa['Loa']['currencyId']);
+		$this->set('currencyCode', $loa['Currency']['currencyCode']);
+		$this->set('currencyCodes', $this->Loa->Currency->find('list', array('fields' => array('currencyCode'))));
 
+		// other vars
+		// ---------------------------------------------------------
 		$this->data['LoaItem']['loaId'] = $this->params['loaId'];
 	}
 	
@@ -57,20 +135,61 @@ class LoaItemsController extends AppController {
 			$this->Session->setFlash(__('Invalid LoaItem', true));
 			$this->redirect(array('action'=>'index'));
 		}
+		
+		// set loa item type ids -- different for groups
+		// ---------------------------------------------------------
+		$masterLoaItemTypeIds = $this->LoaItem->LoaItemType->find('list');
+		$loaItemTypeIds = $this->setLoaItemTypes($masterLoaItemTypeIds, $this->isGroup);
+		$this->set('loaItemTypeIds', $loaItemTypeIds);
+		$this->set('masterLoaItemTypeIds', $masterLoaItemTypeIds);
+
 		if (!empty($this->data)) {
 			
-			// Save fee
-			$this->LoaItem->Fee->feeId = $this->data['Fee']['feeId'];
-			$this->LoaItem->Fee->set($this->data);
+			$loaItemData = array();
+			$loaItemData['LoaItem'] = $this->data['LoaItem'];
+			$loaItemData['Fee'] = $this->data['Fee'];
 			
-			/*
-			// Save rate period
-			$this->LoaItem->LoaItemRatePeriod->loaItemRatePeriodId = $this->data['LoaItemRatePeriod']['loaItemRatePeriodId'];
-			$this->LoaItem->LoaItemRatePeriod->set($this->data);
-			*/
-			
-			if ($this->LoaItem->saveAll($this->data) /*&& $this->LoaItem->LoaItemRatePeriod->save()*/ ) {	
+			// handle group saves -- remove fees and prepare LoaItemGroup 
+			// ---------------------------------------------------------
+			if ($this->isGroup) {
+				unset($loaItemData['Fee']);
+				foreach ($this->data['LoaItemGroup'] as $groupItemId => $quantity) {
+					$loaItemData['LoaItemGroup'][] = array('groupItemId' => $groupItemId, 'quantity' => $quantity);
+				}
+				$loaItemGroupExisting = $this->LoaItemGroup->findAllByLoaItemId($loaItemData['LoaItem']['loaItemId']);
+				$loaItemGroupExistingIds = array();
+				foreach ($loaItemGroupExisting as $k => $v) {
+					$loaItemGroupExistingIds[] = $v['LoaItemGroup']['loaItemGroupId'];
+				}
+			}
+
+			// save the loaitem and related models -- then do the rate periods
+			// ---------------------------------------------------------
+			if ($this->LoaItem->saveAll($loaItemData)) {	
+
+				if ($this->isGroup && !empty($loaItemGroupExistingIds)) {
+					$this->LoaItemGroup->query("DELETE FROM loaItemGroup WHERE loaItemGroupId IN (". implode(',', $loaItemGroupExistingIds) .")");
+				}
 				
+				if (!empty($this->data['LoaItemRatePeriod'])) {
+					foreach ($this->data['LoaItemRatePeriod'] as $k => $v) {
+						$loaItemRatePeriod = array();
+						if ($v['loaItemRatePeriodId']) {
+							$loaItemRatePeriod['LoaItemRatePeriod']['loaItemRatePeriodId'] = $v['loaItemRatePeriodId'];
+							$this->LoaItem->query("DELETE FROM loaItemRate WHERE loaItemRatePeriodId = $v[loaItemRatePeriodId]");
+							$this->LoaItem->query("DELETE FROM loaItemDate WHERE loaItemRatePeriodId = $v[loaItemRatePeriodId]");
+						}
+						$loaItemRatePeriod['LoaItemRatePeriod']['loaItemId'] = $loaItemData['LoaItem']['loaItemId'];
+						$loaItemRatePeriod['LoaItemRatePeriod']['loaItemRatePeriodName'] = $v['loaItemRatePeriodName'];
+						$loaItemRatePeriod['LoaItemRate'] = array_values($v['LoaItemRate']);
+						$loaItemRatePeriod['LoaItemDate'] = array_values($v['LoaItemDate']);
+						foreach ($loaItemRatePeriod['LoaItemDate'] as $kd => $vd) {
+							$loaItemRatePeriod['LoaItemDate'][$kd]['startDate'] = date('Y-m-d', strtotime($vd['startDate']));
+							$loaItemRatePeriod['LoaItemDate'][$kd]['endDate'] = date('Y-m-d', strtotime($vd['endDate']));
+						}
+						$this->LoaItemRatePeriod->saveAll($loaItemRatePeriod);
+					}
+				}
 				if ($this->RequestHandler->isAjax()) {
 					$this->set('closeModalbox', true);
 					$this->Session->setFlash(__('The LoaItem has been saved', true), 'default', array(), 'success');
@@ -82,13 +201,35 @@ class LoaItemsController extends AppController {
 			}
 		}
 		if (empty($this->data)) {
+			$this->LoaItem->recursive = 2;
 			$this->data = $this->LoaItem->read(null, $id);
-		}
-		$loaItemTypeIds = $this->LoaItem->LoaItemType->find('list');
-		$this->set('loaItemTypeIds', ($loaItemTypeIds));
+			$groups = $this->data['LoaItemGroup'];
+			$group_ids = array();
+			foreach ($groups as $g) {
+				$group_ids[$g['groupItemId']] = $g;
+			}
 		
-		$currencyIds = $this->LoaItem->Currency->find('list');
-		$this->set(compact('currencyIds'));
+			// pull item rate period info for the views
+			// ---------------------------------------------------------
+			$this->Loa->recursive = 2;
+			$loa = $this->Loa->read(null, $this->data['Loa']['loaId']);
+			$loa['LoaItem'] = $this->sortItems($loa['LoaItem']);
+			foreach ($loa['LoaItem'] as $k => $item) {
+				if (!empty($item['LoaItemRatePeriod'])) {
+					foreach ($item['LoaItemRatePeriod'] as $a => $rp) {
+						$tmp = $this->LoaItemRatePeriod->read(null, $rp['loaItemRatePeriodId']);
+						$loa['LoaItem'][$k]['LoaItemRatePeriod'][$a]['LoaItemRate'] = $tmp['LoaItemRate'];
+						$loa['LoaItem'][$k]['LoaItemRatePeriod'][$a]['LoaItemDate'] = $tmp['LoaItemDate'];
+					}
+				}
+			}
+			$this->set('loa', $loa);
+			$this->set('day_map', array(0=>'Su', 1=>'M', 2=>'Tu', 3=>'W', 4=>'Th', 5=>'F', 6=>'Sa'));
+
+			$this->set('groupIds', $group_ids);
+			$this->set('currencyId', $this->data['Loa']['currencyId']);
+			$this->set('currencyCode', $this->data['Loa']['Currency']['currencyCode']);
+		}
 	}
 
 	function delete($id = null) {
@@ -101,7 +242,45 @@ class LoaItemsController extends AppController {
 		$loaItem = $this->LoaItem->read(null, $id);
 		if ($this->LoaItem->del($id)) {
 			$this->Session->setFlash(__('LoaItem deleted', true));
-			$this->redirect(array('controller' => 'loas', 'action'=>'edit', $loaItem['LoaItem']['loaId']));
+			$this->redirect(array('controller' => 'loas', 'action'=>'items', $loaItem['LoaItem']['loaId']));
+		}
+	}
+	
+	function sortItems($data) {
+		$loaItemTypeIds = array(19,1,6,7,5,8,15,16,3,17,18,11);
+		$tmp = array();
+		$ids = array();
+		foreach ($loaItemTypeIds as $itemTypeId) {
+			foreach ($data as $k=>$v) {
+				if ($v['loaItemTypeId'] == $itemTypeId && (!in_array($v['loaItemId'], $ids))) {
+					$tmp[] = $v;
+					$ids[] = $v['loaItemId'];
+					unset($data[$k]);
+				}
+			}
+		}
+		$tmp = array_merge($tmp, $data);
+		return $tmp;
+	}
+	
+	function setLoaItemTypes($arr, $isGroup) {
+		$new_arr = array();
+		if ($isGroup) {
+			$group_item_type_ids = array(12,13,14);
+			foreach ($arr as $k => $v) {
+				if (in_array($k, $group_item_type_ids)) {
+					$new_arr[$k] = $v;
+				}
+			}
+			return $new_arr;
+		} else {
+			$item_type_ids = array(19,1,6,7,5,8,15,16,3,17,18,11);
+			foreach ($item_type_ids as $v) {
+				if (isset($arr[$v])) {
+					$new_arr[$v] = $arr[$v];
+				}
+			}
+			return $new_arr;
 		}
 	}
 }
