@@ -7,10 +7,18 @@ class LoaItemRatePeriod extends AppModel {
 	
 	var $belongsTo = array('LoaItem' => array('foreignKey' => 'loaItemId'));
 	
+	var $hasMany = array('LoaItemRate' => array('foreignKey' => 'loaItemRatePeriodId', 'dependent' => true),
+						 'LoaItemDate' => array('foreignKey' => 'loaItemRatePeriodId', 'dependent' => true)
+						 );
+	
+	/*
+	DISABLED:  now using LoaItemDate
+
 	var $validate = array('startDate' => array('validateEndStartDate' => array('rule' => array('validateEndStartDate'), 'message' => 'Start date must be less than end date'),
 	                                            'validateOverlap' => array('rule' => array('validateOverlap'), 'message' => 'Dates over lap with another rate period')),
 							'endDate' => array('rule' => array('validateEndStartDate'), 'message' => 'Start date must be less than end date')
 							);
+	*/
 
 	function validateEndStartDate()
 	{

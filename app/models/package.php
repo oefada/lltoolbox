@@ -92,27 +92,40 @@ class Package extends AppModel {
         //only do this if the package loa item rel array is there because we need the weights
 	    if (isset($this->data['PackageLoaItemRel'])):
 	        if (!empty($this->data['Package']['CheckedLoaItems'])) {
-                $itemDescriptions = $this->query("SELECT LoaItem.loaItemId, LoaItem.merchandisingDescription FROM loaItem AS LoaItem WHERE LoaItem.loaItemId IN(".implode(',', $this->data['Package']['CheckedLoaItems']).")");
+                $itemDescriptions = $this->query("SELECT LoaItemGroup.*, LoaItem.loaItemId, LoaItem.merchandisingDescription FROM loaItem AS LoaItem 
+												  LEFT JOIN loaItemGroup AS LoaItemGroup USING (loaItemId) 
+												  WHERE LoaItem.loaItemId IN(".implode(',', $this->data['Package']['CheckedLoaItems']).") GROUP BY LoaItem.loaItemId");
 	        }
 	        foreach ($itemDescriptions as $v) {
 	            $itemId = $v['LoaItem']['loaItemId'];
 	            $weight = $this->data['PackageLoaItemRel'][$itemId]['weight'];
-	            
-	            if (!isset($descriptions[$weight])) {
-	                $descriptions[$weight] = $v['LoaItem']['merchandisingDescription'];
-	            } else {
-	                $descriptions[] = $v['LoaItem']['merchandisingDescription'];
-	            }
+
+				if (!isset($descriptions[$weight])) {
+					$descriptions[$weight] = $v['LoaItem']['merchandisingDescription'];
+				} else {
+					$descriptions[] = $v['LoaItem']['merchandisingDescription'];
+				}
+				
+				if ($v['LoaItemGroup']['loaItemGroupId']) {
+					$groupDescriptions = $this->query("SELECT LoaItem.loaItemId, LoaItem.merchandisingDescription FROM loaItemGroup AS LoaItemGroup 
+													   INNER JOIN loaItem AS LoaItem ON LoaItemGroup.groupItemId = LoaItem.loaItemId WHERE LoaItemGroup.loaItemId = $itemId");
+					$gdCount = 1;
+					foreach ($groupDescriptions as $gd) {
+						if ($weight) {
+							$descriptions["$weight.$gdCount"] = $gd['LoaItem']['merchandisingDescription'];
+							$gdCount++;
+						} else {
+							$descriptions[] = $gd['LoaItem']['merchandisingDescription'];
+						}
+					}
+				} 
 	        }
 	        
 	        //sort the array by the weights so the implode works
             ksort($descriptions);
-            
-            
 	        $this->data['Package']['packageIncludes'] = implode("\r\n", $descriptions);
 	    endif;
         }
-	    
 	    //dynamically set the client approved date
 	    if ($created != true) {
     	    $orig = $this->find('Package.packageId = '.$this->data['Package']['packageId'], array('packageStatusId'));
