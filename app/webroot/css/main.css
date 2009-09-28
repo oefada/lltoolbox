@@ -454,6 +454,29 @@ legend.collapsible-closed  {
 	border-top: 1px solid #c9b865;
 }
 
+.rp-collapsible,
+.rp-collapsible-closed {
+	font-size: 14px;
+	font-weight: bold;
+	color: #d99e00;
+}
+
+.rp-collapsible .handle,
+.rp-collapsible-closed .handle {
+	padding: 0 15px;
+	cursor: pointer;
+	text-decoration: underline;
+}
+
+.rp-collapsible .handle {
+	background: url(../img/page_up.gif) 0 center no-repeat;
+}
+
+.rp-collapsible-closed .handle {
+	background: url(../img/page_down.gif) 0 center no-repeat;
+}
+
+
 /* @end Collapsibles */
 #spinner {
 	position:fixed;
@@ -1084,4 +1107,56 @@ margin-left: 0;
 #amenitylist span.radio input{
     border: none;
     width: 15px;
+}
+.goldBorderBottom {
+	border-bottom: 1px solid #c9b865;
+}
+.loaItems td {
+	border-bottom: 1px solid #c9b865;
+}
+table.loaRp {
+	margin:0px;
+	padding:0px;
+}
+table.loaRp td {
+	border: 1px solid silver;
+	border-bottom: 2px solid #444444;
+}
+table.loaRp th {
+	border: 1px solid silver;
+	background-color: #E5E5E5;
+}
+table.loaRp input {
+	margin: 0px;
+	width: auto;
+}
+table.loaRp a {
+	font-size: 11px;
+}
+table.loaRpInner {
+	margin:0px;
+	padding:0px;
+}
+table.loaRpInner td {
+	border: 1px solid silver;
+}
+div.rpDates {
+	margin: 0px;
+	padding: 0px;
+	text-align: right;
+}
+div.rpDates label {
+	display: inline;
+	margin: 0px;
+	padding: 0px;
+	margin-right: 3px;
+	font-size: 11px;
+}
+#loaItemError {
+	padding: 10px;
+	top:0px;
+	font-weight: bold;
+	margin: auto;
+	margin-bottom:10px;
+	text-align: center;
 }
