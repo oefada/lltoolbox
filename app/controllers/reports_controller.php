@@ -1789,10 +1789,10 @@ class ReportsController extends AppController {
 		/* Auctions/Fp Closing Today/Yesterday */
 		$tmp = $this->Client->query("SELECT COUNT(*) as numClosing, DATE_FORMAT(schedulingInstance.endDate, '%Y-%m-%d') as theDate FROM schedulingInstance 
 											INNER JOIN schedulingMaster USING(schedulingMasterId) 
-											WHERE schedulingInstance.endDate BETWEEN '$date' - INTERVAL 1 DAY AND '$date' + INTERVAL 1 DAY 
+											WHERE DATE_FORMAT(schedulingInstance.endDate, '%Y-%m-%d') BETWEEN '$date' - INTERVAL 1 DAY AND '$date'
 												AND offerTypeId IN (1,2,6)
-											GROUP BY DATE_FORMAT(schedulingInstance.endDate, '%Y-%m-%d')");
-		
+											GROUP BY DATE_FORMAT(schedulingInstance.endDate, '%Y-%m-%d');");
+
 		foreach ($tmp as $v) {
 			if ($v[0]['theDate'] == $date) {
 				$sales[1][1] = $v[0]['numClosing'];
