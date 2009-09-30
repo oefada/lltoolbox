@@ -219,7 +219,45 @@ $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']
 					echo $form->input('capImg4');
 					?>
 			</div>
-			</fieldset>
+		</fieldset>
+		
+		<fieldset class="collapsible">
+			<legend class="handle">Tracking Links</legend>
+			<div class="collapsibleContent">
+			
+				<p style="font-size:11px; line-height:15px; margin:10px 0px; font-style:italic;">The client's <b>URL</b> and <b>Check Rate URL</b> at the top of this page are the default URL and are used for display.<br/>Specifying the tracking links below will only replace the default link for that element (e.g. logo, check rates, visit website, etc.).</p>
+				
+				<?
+				echo $form->input('ClientTracking.1.linkUrl', array('label' => 'Link URL<br/><span style="font-weight:normal;">Main Logo</span>'));
+				echo $form->input('ClientTracking.1.impressionImageUrl', array('label' => 'Image Tracking URL<br/><span style="font-weight:normal;">Main Logo</span>'));
+				echo $form->input('ClientTracking.1.clientTrackingTypeId', array('value' => 1, 'type' => 'hidden'));
+				echo $form->input('ClientTracking.1.clientTrackingId', array('type' => 'hidden'));
+				
+				?><br/><?
+				
+				echo $form->input('ClientTracking.7.linkUrl', array('label' => 'Link URL<br/><span style="font-weight:normal;">Check Rates</span>'));
+				echo $form->input('ClientTracking.7.impressionImageUrl', array('label' => 'Image Tracking URL<br/><span style="font-weight:normal;">Check Rates</span>'));
+				echo $form->input('ClientTracking.7.clientTrackingTypeId', array('value' => 7, 'type' => 'hidden'));
+				echo $form->input('ClientTracking.7.clientTrackingId', array('type' => 'hidden'));
+				
+				?><br/><?
+
+				echo $form->input('ClientTracking.3.linkUrl', array('label' => 'Link URL<br/><span style="font-weight:normal;">&quot;Visit Website&quot;</span>'));
+				echo $form->input('ClientTracking.3.impressionImageUrl', array('label' => 'Image Tracking URL<br/><span style="font-weight:normal;">&quot;Visit Website&quot;'));
+				echo $form->input('ClientTracking.3.clientTrackingTypeId', array('value' => 3, 'type' => 'hidden'));
+				echo $form->input('ClientTracking.3.clientTrackingId', array('type' => 'hidden'));
+				
+				?><br/><?
+				
+				echo $form->input('ClientTracking.4.linkUrl', array('label' => 'Link URL<br/><span style="font-weight:normal;">Name in Description</span>'));
+				echo $form->input('ClientTracking.4.impressionImageUrl', array('label' => 'Image Tracking URL<br/><span style="font-weight:normal;">Name in Description</span>'));
+				echo $form->input('ClientTracking.4.clientTrackingTypeId', array('value' => 4, 'type' => 'hidden'));
+				echo $form->input('ClientTracking.4.clientTrackingId', array('type' => 'hidden'));
+				?>
+			
+			</div>
+		</fieldset>
+		
 	</fieldset>
 
 <?php echo $form->end('Submit');?>
