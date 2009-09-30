@@ -79,6 +79,7 @@ class TrackDetail extends AppModel {
 		// ---------------------------------------------------------
 		$last_track_detail = $this->__getLastTrackDetailRecord($track['trackId']);
 		$ticket_and_rev = $this->__getTicketAmount($ticketId, $track['loaId']);
+
 		
 		$ticket_amount = $ticket_and_rev['t']['billingPrice'];
 		$allocated_amount = (($ticket_and_rev['clpr']['percentOfRevenue'] / 100) * $ticket_amount);
@@ -191,22 +192,20 @@ class TrackDetail extends AppModel {
 				break;
 		}
 
+		$loa_result = $this->query("SELECT membershipBalance FROM loa WHERE loaId = $track[loaId] LIMIT 1");
+		$loa_membership_balance = $loa_result[0]['loa']['membershipBalance'];
+		$new_track_detail['loaBalance'] = $loa_membership_balance;
+
 		// if membership balance met for keep -- disperse allocation to remit and keep
 		if ($track['expirationCriteriaId'] == 1 && !(($track['revenueModelId'] == 3 || $track['revenueModelId'] == 4) && $is_y_iteration)) {
-			$loa_result = $this->query("SELECT membershipBalance FROM loa WHERE loaId = $track[loaId] LIMIT 1");
-			if (!empty($loa_result)) {
-				$loa_membership_balance = $loa_result[0]['loa']['membershipBalance'];
-				if (($loa_membership_balance - $new_track_detail['amountKept']) < 0) {
-					if ($loa_membership_balance > 0) {
-						$new_track_detail['amountRemitted'] = $new_track_detail['amountRemitted'] + abs($loa_membership_balance - $new_track_detail['amountKept']);
-						$new_track_detail['amountKept'] = $loa_membership_balance;
-					} else {
-						$new_track_detail['amountRemitted'] = $new_track_detail['amountRemitted'] + $new_track_detail['amountKept'];
-						$new_track_detail['amountKept'] = 0;
-					}
+			if (($loa_membership_balance - $new_track_detail['amountKept']) < 0) {
+				if ($loa_membership_balance > 0) {
+					$new_track_detail['amountRemitted'] = $new_track_detail['amountRemitted'] + abs($loa_membership_balance - $new_track_detail['amountKept']);
+					$new_track_detail['amountKept'] = $loa_membership_balance;
+				} else {
+					$new_track_detail['amountRemitted'] = $new_track_detail['amountRemitted'] + $new_track_detail['amountKept'];
+					$new_track_detail['amountKept'] = 0;
 				}
-			} else {
-				mail('devmail@luxurylink.com', 'TICKET ALLOCATION: Could not find LOA', print_r($track, true));
 			}
 		}
 
@@ -232,17 +231,19 @@ class TrackDetail extends AppModel {
 			$errors++;
 		}
 		
+		$loa['Loa']['modified']			  = date('Y-m-d H:i:s', strtotime('now'));
+		$loa['Loa']['totalRevenue']		 -= $allocated_amount;
+		$loa['Loa']['totalKept']		 -= $trackDetail['TrackDetail']['amountKept'];
+		$loa['Loa']['totalRemitted']	 -= $trackDetail['TrackDetail']['amountRemitted'];
+
 		$applyToMembershipBal = ($track['expirationCriteriaId'] == 1) ? true : false;
 		$applyToMembershipBal = (($track['revenueModelId'] == 3 || $track['revenueModelId'] == 4) && ($this->data['TrackDetail']['iteration'] == $track['y'])) ? false : $applyToMembershipBal;
 		if ($applyToMembershipBal) {
-			$loa['Loa']['modified']			  = date('Y-m-d H:i:s', strtotime('now'));
-			$loa['Loa']['totalRevenue']			 -= $allocated_amount;
-			$loa['Loa']['totalKept']		 -= $trackDetail['TrackDetail']['amountKept'];
-			$loa['Loa']['totalRemitted']	 -= $trackDetail['TrackDetail']['amountRemitted'];
 			$loa['Loa']['membershipBalance'] += $trackDetail['TrackDetail']['amountKept'];
-			if (!$loaModel->save($loa)) {
-				$errors++;	
-			}
+		}
+
+		if (!$loaModel->save($loa)) {
+			$errors++;	
 		}
 		return (!$errors) ? true : false;
 	}
@@ -269,16 +270,18 @@ class TrackDetail extends AppModel {
 		
 		// update the loa record
 		// ---------------------------------------------------------
+		$loa['Loa']['modified']			  = date('Y-m-d H:i:s', strtotime('now'));
+		$loa['Loa']['totalRevenue']		 += $allocated_amount;
+		$loa['Loa']['totalKept']		 += $this->data['TrackDetail']['amountKept'];
+		$loa['Loa']['totalRemitted']	 += $this->data['TrackDetail']['amountRemitted'];
+
 		$applyToMembershipBal = ($track['expirationCriteriaId'] == 1) ? true : false;
 		$applyToMembershipBal = (($track['revenueModelId'] == 3 || $track['revenueModelId'] == 4) && ($this->data['TrackDetail']['iteration'] == $track['y'])) ? false : $applyToMembershipBal;
 		if ($applyToMembershipBal) {
-			$loa['Loa']['modified']			  = date('Y-m-d H:i:s', strtotime('now'));
-			$loa['Loa']['totalRevenue']			 += $allocated_amount;
-			$loa['Loa']['totalKept']		 += $this->data['TrackDetail']['amountKept'];
-			$loa['Loa']['totalRemitted']	 += $this->data['TrackDetail']['amountRemitted'];
 			$loa['Loa']['membershipBalance'] -= $this->data['TrackDetail']['amountKept'];
-			$loaModel->save($loa);
 		}
+
+		$loaModel->save($loa);
 		return true;
 	}
 }
