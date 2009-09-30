@@ -434,9 +434,15 @@ class PackagesController extends AppController {
 		if (empty($this->data)) {
 			$package = $this->Package->read(null, $id);
 			$this->data = $package;
-		} else {
+		} else {			
 		    $package = $this->data;
 		}
+		
+		// map clientTracking: use clientTrackingTypeId as key
+		foreach ($this->data['ClientTracking'] as $k => $v) {
+			$client_trackings[$v['clientTrackingTypeId']] = $v;
+		}
+		$this->data['ClientTracking'] = $client_trackings;
 
 		$this->set('package', $package);
 		$this->getBlackoutDaysNumber(1);
