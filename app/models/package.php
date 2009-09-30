@@ -93,9 +93,12 @@ class Package extends AppModel {
         //only do this if the package loa item rel array is there because we need the weights
 	    if (isset($this->data['PackageLoaItemRel'])):
 	        if (!empty($this->data['Package']['CheckedLoaItems'])) {
-                $itemDescriptions = $this->query("SELECT LoaItemGroup.*, LoaItem.loaItemId, LoaItem.merchandisingDescription FROM loaItem AS LoaItem 
+				$itemDescriptions = $this->query("SELECT LoaItem.loaItemId, LoaItem.merchandisingDescription FROM loaItem AS LoaItem WHERE LoaItem.loaItemId IN(".implode(',', $this->data['Package']['CheckedLoaItems']).")");
+                /* TODO: FOR NEW LOA ITEMS STRUCTURE CHANGE
+				$itemDescriptions = $this->query("SELECT LoaItemGroup.*, LoaItem.loaItemId, LoaItem.merchandisingDescription FROM loaItem AS LoaItem 
 												  LEFT JOIN loaItemGroup AS LoaItemGroup USING (loaItemId) 
 												  WHERE LoaItem.loaItemId IN(".implode(',', $this->data['Package']['CheckedLoaItems']).") GROUP BY LoaItem.loaItemId");
+				*/
 	        }
 	        foreach ($itemDescriptions as $v) {
 	            $itemId = $v['LoaItem']['loaItemId'];
@@ -106,7 +109,8 @@ class Package extends AppModel {
 				} else {
 					$descriptions[] = $v['LoaItem']['merchandisingDescription'];
 				}
-				
+			
+				/* TODO : FOR NEW LOA ITEMS STRUCTURE CHANGE 
 				if ($v['LoaItemGroup']['loaItemGroupId']) {
 					$groupDescriptions = $this->query("SELECT LoaItem.loaItemId, LoaItem.merchandisingDescription FROM loaItemGroup AS LoaItemGroup 
 													   INNER JOIN loaItem AS LoaItem ON LoaItemGroup.groupItemId = LoaItem.loaItemId WHERE LoaItemGroup.loaItemId = $itemId");
@@ -120,6 +124,7 @@ class Package extends AppModel {
 						}
 					}
 				} 
+				*/
 	        }
 	        
 	        //sort the array by the weights so the implode works
