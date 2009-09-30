@@ -77,6 +77,12 @@ class ClientsController extends AppController {
 		    $this->Client->recursive = 2;
 			$this->data = $this->Client->read(null, $id);
 		}
+
+		// map clientTracking: use clientTrackingTypeId as key
+		foreach ($this->data['ClientTracking'] as $k => $v) {
+			$client_trackings[$v['clientTrackingTypeId']] = $v;	
+		}
+		$this->data['ClientTracking'] = $client_trackings;
 		
 		$clientTypeIds = $this->Client->ClientType->find('list');
 		$themes = $this->Client->Theme->find('list');
