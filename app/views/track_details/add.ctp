@@ -125,6 +125,7 @@ function confirmSubmit()
 			echo $form->input('cycle', array('readonly' => 'readonly'));
 			echo $form->input('iteration', array('readonly' => 'readonly'));			
 			echo $form->input('initials', array('readonly' => 'readonly'));
+			echo $form->input('loaBalance', array('readonly' => 'readonly', 'type'=>'hidden'));
 			
 			if ($track['revenueModelId'] == 2) {
 				echo $form->input('xyRunningTotal', array('readonly' => 'readonly'));
