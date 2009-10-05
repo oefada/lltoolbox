@@ -577,7 +577,7 @@ $this->searchController = 'Tickets';
 			'/reservations/edit/' . $ticket['Reservation']['reservationId'],
 			array(
 				'title' => 'Edit Reservation',
-				'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
+				'onclick' => 'window.scrollTo(0,0);Modalbox.show(this.href, {title: this.title});return false',
 				'complete' => 'closeModalbox()'
 				),
 			null,
@@ -592,7 +592,7 @@ $this->searchController = 'Tickets';
 			'/tickets/' . $ticket['Ticket']['ticketId'] . '/reservations/add',
 			array(
 				'title' => 'Enter Reservation Information',
-				'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
+				'onclick' => 'window.scrollTo(0,0);Modalbox.show(this.href, {title: this.title});return false',
 				'complete' => 'closeModalbox()'
 				),
 			null,
@@ -604,3 +604,36 @@ $this->searchController = 'Tickets';
 </div>
 
 <br />
+<script>
+function setEndDate() {
+    var id_s = "ReservationArrivalDate";
+    var id_e = "ReservationDepartureDate";
+    var ts_s = $(id_s).value.replace('-', '/').replace('-', '/');
+    var ts_e = $(id_e).value.replace('-', '/').replace('-', '/');
+    ts_s = Date.parse(ts_s);
+    ts_e = Date.parse(ts_e);
+
+    if (!ts_e || ts_e < ts_s) {
+        var new_ts_e = ts_s + (86400000);
+        var d = new Date();
+        d.setTime(new_ts_e);
+        var month = d.getMonth() + 1;
+        var day = d.getDate();
+        month = PadDigits(month, 2);
+        day = PadDigits(day, 2);
+        $(id_e).value = d.getFullYear() + '-' + month + '-' + day;
+    }
+}
+function PadDigits(n, totalDigits) {
+    n = n.toString();
+    var pd = '';
+    if (totalDigits > n.length)
+    {
+        for (i=0; i < (totalDigits-n.length); i++)
+        {
+            pd += '0';
+        }
+    }
+    return pd + n.toString();
+}
+</script>
