@@ -272,8 +272,15 @@ class Ticket extends AppModel {
 	function __runTakeDownLoaMemBal($packageId, $ticketId, $ticketAmount) {
 		// check to make sure LOA balance is fulfilled 
 
-		$loas = $this->query("SELECT * FROM clientLoaPackageRel clpr INNER JOIN loa ON clpr.loaId = loa.loaId WHERE clpr.packageId = $packageId");
+		$loas = $this->query("SELECT * FROM clientLoaPackageRel clpr INNER JOIN loa ON clpr.loaId = loa.loaId INNER JOIN track ON loa.loaId = track.loaId WHERE clpr.packageId = $packageId");
 		foreach ($loas as $loa) {
+
+			// if not expiration criteria id 1 "membership fee"
+			// ------------------------------------------------------------------
+			if ($loa['track']['expirationCriteriaId'] != 1) {
+				continue;
+			}
+
 			// set some LOA data
 			// ------------------------------------------------------------------
 			$loa_id = $loa['loa']['loaId'];
@@ -302,8 +309,15 @@ class Ticket extends AppModel {
 	function __runTakeDownLoaNumPackages($packageId, $ticketId) {
 		// check to make sure LOA membership num packages is fulfilled
 
-		$loas = $this->query("SELECT * FROM clientLoaPackageRel clpr INNER JOIN loa ON clpr.loaId = loa.loaId WHERE clpr.packageId = $packageId");
+		$loas = $this->query("SELECT * FROM clientLoaPackageRel clpr INNER JOIN loa ON clpr.loaId = loa.loaId INNER JOIN track ON loa.loaId = track.loaId WHERE clpr.packageId = $packageId");
 		foreach ($loas as $loa) {
+
+			// if not expiration criteria id 4 "membership # of packages"
+			// ------------------------------------------------------------------
+			if ($loa['track']['expirationCriteriaId'] != 4) {
+				continue;
+			}
+
 			// set some LOA data
 			// ------------------------------------------------------------------
 			$loa_id = $loa['loa']['loaId'];
@@ -486,11 +500,10 @@ class Ticket extends AppModel {
 					$modelId = $loaId;
 					break;	
 				case 'LOA_PACKAGES_FP_ONLY':
-					$title = "Fixed Priced offers have been stopped for LOA [$clientName]";
-					$description = "A pending ticket (Ticket ID# <a href='/tickets/view/$ticketId'>$ticketId</a>) exists for that once funded will ";
-					$description.= "make the number of LOA packages for <a href='/clients/edit/$clientId'>$clientName</a> only be 1 package away from the LOA Membership Number of Packages. ";
-					$description.= "All fixed price offers have been ";
-					$description.= "closed that are associated with this client's current LOA (LOA ID# <a href='/loas/edit/$loaId'>$loaId</a>).";
+					$title = "Fixed Price offers have been stopped to prevent overselling Membership Total Packages [$clientName]";
+					$description = "Once Ticket ID# $ticketId is funded, we will only need to sell one more package to ";
+					$description.= "fulfill the Membership Total Packages for $clientName.  To prevent overselling, all Fixed Price ";
+					$description.= "offers running on Membership Total Packages track have been taken down.";
 					$model = 'Loa';
 					$modelId = $loaId;
 					break;
