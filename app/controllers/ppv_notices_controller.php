@@ -113,8 +113,8 @@ class PpvNoticesController extends AppController {
 			$this->data['PpvNotice']['emailTo'] = $clientContacts['contact_to_string'];
 			$this->data['PpvNotice']['emailCc'] = $clientContacts['contact_cc_string'];
 		} else {
-			$ticket_user_email = $this->Ticket->query("SELECT userEmail1 FROM ticket WHERE ticketId = $ticketId LIMIT 1");
-			$this->data['PpvNotice']['emailTo'] = $ticket_user_email[0]['ticket']['userEmail1'];
+			$ticket_user_email = $this->Ticket->query("SELECT user.email FROM ticket INNER JOIN user USING (userId) WHERE ticketId =  $ticketId LIMIT 1");
+			$this->data['PpvNotice']['emailTo'] = $ticket_user_email[0]['user']['email'];
 		}
 
 		$this->set('clientIdParam', $clientIdParam);
