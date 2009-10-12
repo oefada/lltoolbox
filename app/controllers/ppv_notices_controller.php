@@ -88,10 +88,6 @@ class PpvNoticesController extends AppController {
 					$sender_ext = 149;
 					$sender_title = 'Travel Concierge';
 					break;
-				case 'jawilson':
-					$sender_ext = 167;
-					$sender_title = 'Travel Concierge';
-					break;
 				case 'dvojdany':
 					$sender_ext = 147;
 					$sender_title = 'Customer Care Concierge';
