@@ -77,7 +77,7 @@ if($row['col1'] == date('W')) {
 	$currWeek = $row;
 }
 ?>
-<tr<?if($row['col1'] == date('W')) { echo ' class="altrow"';}?>>
+<tr>
 	<?php for($i = 1; $i <= 8; $i++):
 		if (in_array($i, array(4,6,8))) {
 			$echo = 'percentage';
@@ -86,14 +86,14 @@ if($row['col1'] == date('W')) {
 		} else {
 			$echo = 'efunc';
 		}
-		
-		//overwrite ASP
-		if ($i == 7) {
-			$totals['col'.$i] = $totals['col5']/$totals['col3'];
-		} else {
-			$totals['col'.$i] = (!isset($totals['col'.$i]) ? $row['col'.$i] : $totals['col'.$i] + $row['col'.$i]);
+		if($row['col1'] <= date('W')){	
+			//overwrite ASP
+			if ($i == 7) {
+				$totals['col'.$i] = $totals['col5']/$totals['col3'];
+			} else {
+				$totals['col'.$i] = (!isset($totals['col'.$i]) ? $row['col'.$i] : $totals['col'.$i] + $row['col'.$i]);
+			}
 		}
-		
 	?>
 	<td><?$echo($row['col'.$i])?></td>	
 	<?php endfor; ?>
@@ -235,7 +235,7 @@ if($row['col1'] == date('W')) {
 	    $currWeek = $row;
 }
 ?>
-<tr<?if($row['col1'] == date('W')) { echo ' class="altrow"';}?>>
+<tr>
 	<?php for($i = 1; $i <= 22; $i++): 
 		if (($i % 2 == 0 && $i > 3) || in_array($i, array(7, 15, 17))) {
 			$echo = 'percentage';
@@ -244,8 +244,9 @@ if($row['col1'] == date('W')) {
 		} else {
 			$echo = 'efunc';
 		}
-		
-		$totals['col'.$i] = (!isset($totals['col'.$i]) ? $row['col'.$i] : $totals['col'.$i] + $row['col'.$i]);
+		if($row['col1'] <= date('W')){
+			$totals['col'.$i] = (!isset($totals['col'.$i]) ? $row['col'.$i] : $totals['col'.$i] + $row['col'.$i]);
+		}	
 	?>
 	<td<?=($i == 13 || $i == 19) ? ' class="highlight"': ''?>><?$echo($row['col'.$i])?></td>	
 	<?php endfor;
@@ -505,7 +506,7 @@ if($row['col1'] == date('W')) {
 	    $currWeek = $row;
 }
 ?>
-<tr<?if($row['col1'] == date('W')) { echo ' class="altrow"';}?>>
+<tr>
 	<?php for($i = 1; $i <= 14; $i++):
 		if (($i % 2 == 0 && $i > 3) || $i == 9) {
 			$echo = 'percentage';
@@ -514,12 +515,14 @@ if($row['col1'] == date('W')) {
 		} else {
 			$echo = 'efunc';
 		}
-		if ($i == 13) {
-			$totals['col'.$i] = $totals['col11']/$totals['col7'];
-		} elseif ($i == 9) {
-			$totals['col'.$i] = $totals['col7']/$totals['col5'];
-		} else {
-			$totals['col'.$i] = (!isset($totals['col'.$i]) ? $row['col'.$i] : $totals['col'.$i] + $row['col'.$i]);
+		if($row['col1'] <= date('W')){
+			if ($i == 13) {
+				$totals['col'.$i] = $totals['col11']/$totals['col7'];
+			} elseif ($i == 9) {
+				$totals['col'.$i] = $totals['col7']/$totals['col5'];
+			} else {
+				$totals['col'.$i] = (!isset($totals['col'.$i]) ? $row['col'.$i] : $totals['col'.$i] + $row['col'.$i]);
+			}
 		}
 	?>
 	<td><?$echo($row['col'.$i])?></td>	
@@ -693,7 +696,7 @@ if($row['col1'] == date('W')) {
 	    $currWeek = $row;
 }
 ?>
-<tr<?if($row['col1'] == date('W')) { echo ' class="altrow"';}?>>
+<tr>
 	<?php for($i = 1; $i <= 9; $i++): 
 	if (($i % 2 != 0 && $i > 3) || $i == 9) {
 		$echo = 'percentage';
@@ -702,11 +705,12 @@ if($row['col1'] == date('W')) {
 	} else {
 		$echo = 'efunc';
 	}
-
-	if ($i == 8) {
-		$totals['col'.$i] = $totals['col6']/$totals['col4'];
-	} else {
-		$totals['col'.$i] = (!isset($totals['col'.$i]) ? $row['col'.$i] : $totals['col'.$i] + $row['col'.$i]);
+	if($row['col1'] <= date('W')){
+		if ($i == 8) {
+			$totals['col'.$i] = $totals['col6']/$totals['col4'];
+		} else {
+			$totals['col'.$i] = (!isset($totals['col'.$i]) ? $row['col'.$i] : $totals['col'.$i] + $row['col'.$i]);
+		}
 	}
 	?>
 	<td><?$echo($row['col'.$i])?></td>	
@@ -842,7 +846,7 @@ if($row['col1'] == date('W')) {
 	    $currWeek = $row;
 }
 ?>
-<tr<?if($row['col1'] == date('W')) { echo ' class="altrow"';}?>>
+<tr>
 	<?php for($i = 1; $i <= 8; $i++): 
 	if (($i % 2 == 0 && $i > 3)) {
 		$echo = 'percentage';
@@ -851,10 +855,12 @@ if($row['col1'] == date('W')) {
 	} else {
 		$echo = 'efunc';
 	}
-	if ($i == 7) {
-		$totals['col'.$i] = $totals['col5']/$totals['col3'];
-	} else {
-		$totals['col'.$i] = (!isset($totals['col'.$i]) ? $row['col'.$i] : $totals['col'.$i] + $row['col'.$i]);
+	if($row['col1'] <= date('W')){
+		if ($i == 7) {
+			$totals['col'.$i] = $totals['col5']/$totals['col3'];
+		} else {
+			$totals['col'.$i] = (!isset($totals['col'.$i]) ? $row['col'.$i] : $totals['col'.$i] + $row['col'.$i]);
+		}
 	}
 	?>
 	<td><?$echo($row['col'.$i])?></td>	
@@ -983,18 +989,19 @@ if($row['col1'] == date('W')) {
 	$currWeek = $row;
 }
 ?>
-<tr<?if($row['col1'] == date('W')) { echo ' class="altrow"';}?>>
+<tr>
 	<?php for($i = 1; $i <= 8; $i++):
 		if (($i % 2 == 0 && $i > 3)) {
 			$echo = 'percentage';
 		} else {
 			$echo = 'efunc';
 		}
-	
-	if ($i == 21) {
-		$totals['col'.$i] = $totals['col19']/$totals['col3'];
-	} else {
-		$totals['col'.$i] = (!isset($totals['col'.$i]) ? $row['col'.$i] : $totals['col'.$i] + $row['col'.$i]);
+	if($row['col1'] <= date('W')){
+		if ($i == 21) {
+			$totals['col'.$i] = $totals['col19']/$totals['col3'];
+		} else {
+			$totals['col'.$i] = (!isset($totals['col'.$i]) ? $row['col'.$i] : $totals['col'.$i] + $row['col'.$i]);
+		}
 	}
 	?>
 	<td><?$echo($row['col'.$i])?></td>	
