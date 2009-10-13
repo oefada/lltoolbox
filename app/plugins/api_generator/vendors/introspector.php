@@ -134,7 +134,7 @@ class Introspector {
  * @param ReflectionFunctionAbstract $func The function you want a signature for.
  * @return void
  **/
-	public static function makeFunctionSignature(ReflectionFunction $func ) {
+	public static function makeFunctionSignature( $func ) {
 		$signature = $func->getName() . '( ';
 		foreach ($func->getParameters() as $param) {
 			$signature .= '$' . $param->getName();
