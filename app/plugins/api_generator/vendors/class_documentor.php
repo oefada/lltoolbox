@@ -168,7 +168,7 @@ class ClassDocumentor extends ReflectionClass {
 					'optional' => $param->isOptional(),
 					'default' => null,
 					'hasDefault' => false,
-					'position' => $k //$param->getPosition() can be used from PHP 5.2.3
+					'position' => $k, //$param->getPosition() can be used from PHP 5.2.3
 					'type' => $type,
 					'comment' => $description
 				);
