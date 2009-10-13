@@ -269,6 +269,10 @@ class Ticket extends AppModel {
 		}
 	}
 
+	function sendDebugEmail($title, $data) {
+		@mail('devmail@luxurylink.com',"SCHEDULING FLAGS DEBUG: $title", print_r($data, true));
+	}
+
 	function __runTakeDownLoaMemBal($packageId, $ticketId, $ticketAmount) {
 		// check to make sure LOA balance is fulfilled 
 
@@ -303,6 +307,16 @@ class Ticket extends AppModel {
 					}
 					$sm_ids_imp = implode(',', $sm_ids);
 					if ($this->__runTakeDown($sm_ids_imp)) {
+						$debug = array();
+						$debug['INPUT']['packageId'] = $packageId;
+						$debug['INPUT']['ticketId'] = $ticketId;
+						$debug['INPUT']['ticketAmount'] = $ticketAmount;
+						$debug['DATA']['Loa'] = $loa;
+						$debug['DATA']['Loas'] = $loas;
+						$debug['DATA']['ticket_amount_adjusted'] = $ticket_amount_adjusted;
+						$debug['DATA']['loa_m_balance'] = $loa_m_balance;
+						$debug['DATA']['sm_ids'] = $sm_ids;
+						$this->sendDebugEmail('LOA_BALANCE', $debug);
 						$this->insertMessageQueuePackage($ticketId, 'LOA_BALANCE');
 					}
 				} 
@@ -313,7 +327,10 @@ class Ticket extends AppModel {
 	function __runTakeDownLoaNumPackages($packageId, $ticketId) {
 		// check to make sure LOA membership num packages is fulfilled
 
-		$loas = $this->query("SELECT * FROM clientLoaPackageRel clpr INNER JOIN loa ON clpr.loaId = loa.loaId INNER JOIN track ON loa.loaId = track.loaId WHERE clpr.packageId = $packageId");
+		$loas = $this->query("SELECT * FROM clientLoaPackageRel clpr 
+								INNER JOIN loa ON clpr.loaId = loa.loaId 
+								INNER JOIN track ON loa.loaId = track.loaId AND track.expirationCriteriaId = 4 
+								WHERE clpr.packageId = $packageId");
 		foreach ($loas as $loa) {
 
 			// if not expiration criteria id 4 "membership # of packages"
@@ -375,10 +392,30 @@ class Ticket extends AppModel {
 					$sm_ids_imp = implode(',', $sm_ids);
 					if ($take_down) {
 						if ($this->__runTakeDown($sm_ids_imp)) {
+							$debug = array();
+							$debug['INPUT']['packageId'] = $packageId;
+							$debug['INPUT']['ticketId'] = $ticketId;
+							$debug['DATA']['loa'] = $loa;
+							$debug['DATA']['loas'] = $loas;
+							$debug['DATA']['loa_m_total_packages'] = $loa_m_total_packages;
+							$debug['DATA']['package_ids'] = $package_ids;
+							$debug['DATA']['loa_packages_derived'] = $loa_packages_derived;
+							$debug['DATA']['sm_ids'] = $sm_ids;
+							$this->sendDebugEmail('LOA_PACKAGES', $debug);
 							$this->insertMessageQueuePackage($ticketId, 'LOA_PACKAGES');
 						}
 					} elseif ($take_down_fp) {
 						if ($this->__updateSchedulingOfferFixedPrice($sm_ids_imp)) {
+							$debug = array();
+							$debug['INPUT']['packageId'] = $packageId;
+							$debug['INPUT']['ticketId'] = $ticketId;
+							$debug['DATA']['loa'] = $loa;
+							$debug['DATA']['loas'] = $loas;
+							$debug['DATA']['loa_m_total_packages'] = $loa_m_total_packages;
+							$debug['DATA']['package_ids'] = $package_ids;
+							$debug['DATA']['loa_packages_derived'] = $loa_packages_derived;
+							$debug['DATA']['sm_ids'] = $sm_ids;
+							$this->sendDebugEmail('LOA_PACKAGES_FP_ONLY', $debug);
 							$this->insertMessageQueuePackage($ticketId, 'LOA_PACKAGES_FP_ONLY');
 						}
 					}
@@ -408,10 +445,24 @@ class Ticket extends AppModel {
 				$schedulingMasterIds = implode(',', $smids);
 				if (($derivedPackageNumSales + 1) >= $packageMaxNumSales) {
 					if ($this->__runTakeDown($schedulingMasterIds)) {
+						$debug = array();
+						$debug['INPUT']['packageId'] = $packageId;
+						$debug['INPUT']['ticketId'] = $ticketId;
+						$debug['DATA']['packageMaxNumSales'] = $packageMaxNumSales;
+						$debug['DATA']['derivedPackageNumSales'] = $derivedPackageNumSales;
+						$debug['DATA']['smids'] = $smids;
+						$this->sendDebugEmail('PACKAGE', $debug);
 						$this->insertMessageQueuePackage($ticketId, 'PACKAGE');
 					}
 				} elseif (($packageMaxNumSales - ($derivedPackageNumSales + 1) == 1)) {
 					if ($this->__updateSchedulingOfferFixedPrice($schedulingMasterIds)) {
+						$debug = array();
+						$debug['INPUT']['packageId'] = $packageId;
+						$debug['INPUT']['ticketId'] = $ticketId;
+						$debug['DATA']['packageMaxNumSales'] = $packageMaxNumSales;
+						$debug['DATA']['derivedPackageNumSales'] = $derivedPackageNumSales;
+						$debug['DATA']['smids'] = $smids;
+						$this->sendDebugEmail('PACKAGE_FP_ONLY', $debug);
 						$this->insertMessageQueuePackage($ticketId, 'PACKAGE_FP_ONLY');
 					}
 				}
