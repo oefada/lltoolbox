@@ -6,6 +6,7 @@ class TrackDetail extends AppModel {
 	var $primaryKey = 'trackDetailId';
 	
 	var $belongsTo = array('Track' => array('foreignKey' => 'trackId'));
+	var $actsAs = array('Logable');
 	
 	function getTrackRecord($ticketId) {
 		$sql = "SELECT t.* FROM ticket tt ";

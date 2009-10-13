@@ -272,7 +272,11 @@ class Ticket extends AppModel {
 	function __runTakeDownLoaMemBal($packageId, $ticketId, $ticketAmount) {
 		// check to make sure LOA balance is fulfilled 
 
-		$loas = $this->query("SELECT * FROM clientLoaPackageRel clpr INNER JOIN loa ON clpr.loaId = loa.loaId INNER JOIN track ON loa.loaId = track.loaId WHERE clpr.packageId = $packageId");
+		$loas = $this->query("SELECT * FROM clientLoaPackageRel clpr 
+							  INNER JOIN loa ON clpr.loaId = loa.loaId 
+							  INNER JOIN track ON loa.loaId = track.loaId AND track.expirationCriteriaId = 1 
+							  WHERE clpr.packageId = $packageId");
+
 		foreach ($loas as $loa) {
 
 			// if not expiration criteria id 1 "membership fee"

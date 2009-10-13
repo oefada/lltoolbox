@@ -9,5 +9,6 @@ class ClientLoaPackageRel extends AppModel {
 						   'Loa' => array('foreignKey' => 'loaId'),
 						   'Client' => array('foreignKey' => 'clientId')
 						   );
+	var $actsAs = array('Logable');
 }
 ?>
