@@ -70,7 +70,7 @@ class FunctionDocumentor extends ReflectionFunction {
 		if (!isset($this->info['comment']['tags']['param'])) {
 			$this->getInfo();
 		}
-		foreach ($params as $param) {
+		foreach ($params as $i => $param) {
 			$type = $description = null;
 			if (isset($this->info['comment']['tags']['param'][$param->name])) {
 				extract($this->info['comment']['tags']['param'][$param->name]);
@@ -78,7 +78,7 @@ class FunctionDocumentor extends ReflectionFunction {
 			$this->params[$param->name] = array(
 				'optional' => $param->isOptional(),
 				'default' => null,
-				'position' => $param->getPosition(),
+				'position' => $i, //$param->getPosition() can be used from PHP 5.2.3
 				'type' => $type,
 				'comment' => $description
 			);

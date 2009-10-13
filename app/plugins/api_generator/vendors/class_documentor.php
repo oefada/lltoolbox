@@ -158,7 +158,7 @@ class ClassDocumentor extends ReflectionClass {
 
 			$params = $method->getParameters();
 			$args = array();
-			foreach ($params as $param) {
+			foreach ($params as $k => $param) {
 				$type = $description = null;
 				if (isset($met['comment']['tags']['param'][$param->name])) {
 					extract($met['comment']['tags']['param'][$param->name]);
@@ -168,7 +168,7 @@ class ClassDocumentor extends ReflectionClass {
 					'optional' => $param->isOptional(),
 					'default' => null,
 					'hasDefault' => false,
-					'position' => $param->getPosition(),
+					'position' => $k //$param->getPosition() can be used from PHP 5.2.3
 					'type' => $type,
 					'comment' => $description
 				);
