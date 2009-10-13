@@ -11,6 +11,7 @@ class SchedulingMaster extends AppModel {
 						   'Package' => array('foreignKey' => 'packageId'),
 						   'OfferType' => array('foreignKey' => 'offerTypeId')
 						  );
+	var $actsAs = array('Logable');
 	
 	var $hasOne = array('SchedulingMasterPerformance' => array('foreignKey' => 'schedulingMasterId'));
 						  
