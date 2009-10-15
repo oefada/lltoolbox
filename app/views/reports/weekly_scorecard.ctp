@@ -31,6 +31,9 @@ td.highlight {
 table tr.altrow td {
 	background: #f5f2e2;
 }
+th, h1, h2 {
+	font-family: Arial;
+}
 </style>
 <?
 function &number() {
