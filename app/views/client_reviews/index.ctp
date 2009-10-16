@@ -10,7 +10,6 @@ echo $paginator->counter(array(
 <tr>
 	<th><?php echo $paginator->sort('clientReviewId');?></th>
 	<th><?php echo $paginator->sort('clientId');?></th>
-	<th><?php echo $paginator->sort('authorUserId');?></th>
 	<th><?php echo $paginator->sort('reviewTitle');?></th>
 	<th><?php echo $paginator->sort('reviewBody');?></th>
 	<th><?php echo $paginator->sort('datetime');?></th>
@@ -31,15 +30,12 @@ foreach ($clientReviews as $clientReview):
 			<?php echo $clientReview['ClientReview']['clientReviewId']; ?>
 		</td>
 		<td>
-			<?php echo $html->link($clientReview['Client']['name'], array('controller'=> 'clients', 'action'=>'view', $clientReview['Client']['clientId'])); ?>
-		</td>
-		<td>
-			<?php echo $html->link($clientReview['User']['title'], array('controller'=> 'users', 'action'=>'view', $clientReview['User']['userId'])); ?>
+			<?php echo  $clientReview['Client']['clientId'] . ': '; echo $html->link($clientReview['Client']['name'], array('controller'=> 'clients', 'action'=>'view', $clientReview['Client']['clientId'])); ?>
 		</td>
 		<td>
 			<?php echo $clientReview['ClientReview']['reviewTitle']; ?>
 		</td>
-		<td>
+		<td style="font-size:10px; line-height:11px;">
 			<?php echo $clientReview['ClientReview']['reviewBody']; ?>
 		</td>
 		<td>
