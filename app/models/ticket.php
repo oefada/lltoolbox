@@ -276,10 +276,14 @@ class Ticket extends AppModel {
 	function __runTakeDownLoaMemBal($packageId, $ticketId, $ticketAmount) {
 		// check to make sure LOA balance is fulfilled 
 
-		$loas = $this->query("SELECT * FROM clientLoaPackageRel clpr 
-							  INNER JOIN loa ON clpr.loaId = loa.loaId 
-							  INNER JOIN track ON loa.loaId = track.loaId AND track.expirationCriteriaId = 1 
-							  WHERE clpr.packageId = $packageId");
+		$loas = $this->query("SELECT clpr.*, loa.*, track.* FROM clientLoaPackageRel clpr 
+							INNER JOIN loa ON clpr.loaId = loa.loaId 
+							INNER JOIN schedulingMaster sm ON clpr.packageId = sm.packageId 
+							INNER JOIN schedulingMasterTrackRel smtr ON sm.schedulingMasterId = smtr.schedulingMasterId 
+							INNER JOIN track ON smtr.trackId = track.trackId AND track.expirationCriteriaId = 1 
+							WHERE clpr.packageId = $packageId 
+							GROUP BY clpr.loaId");
+
 
 		foreach ($loas as $loa) {
 
@@ -326,11 +330,15 @@ class Ticket extends AppModel {
 
 	function __runTakeDownLoaNumPackages($packageId, $ticketId) {
 		// check to make sure LOA membership num packages is fulfilled
+		
+		$loas = $this->query("SELECT clpr.*, loa.*, track.* FROM clientLoaPackageRel clpr 
+							INNER JOIN loa ON clpr.loaId = loa.loaId 
+							INNER JOIN schedulingMaster sm ON clpr.packageId = sm.packageId 
+							INNER JOIN schedulingMasterTrackRel smtr ON sm.schedulingMasterId = smtr.schedulingMasterId 
+							INNER JOIN track ON smtr.trackId = track.trackId AND track.expirationCriteriaId = 4 
+							WHERE clpr.packageId = $packageId 
+							GROUP BY clpr.loaId");
 
-		$loas = $this->query("SELECT * FROM clientLoaPackageRel clpr 
-								INNER JOIN loa ON clpr.loaId = loa.loaId 
-								INNER JOIN track ON loa.loaId = track.loaId AND track.expirationCriteriaId = 4 
-								WHERE clpr.packageId = $packageId");
 		foreach ($loas as $loa) {
 
 			// if not expiration criteria id 4 "membership # of packages"
