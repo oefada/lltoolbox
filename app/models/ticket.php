@@ -546,10 +546,11 @@ class Ticket extends AppModel {
 					$modelId = $packageId;
 					break;
 				case 'PACKAGE_FP_ONLY':
-					$title = "Fixed Priced offers have been stopped for Package [$PackageName]";
-					$description = "A pending ticket (Ticket ID# <a href='/tickets/view/$ticketId'>$ticketId</a>) exists for that once funded will ";
-					$description.= "make the number of packages for <a href='/clients/edit/$clientId'>$clientName</a> (Package ID# <a href='/clients/$clientId/packages/edit/$packageId'>$packageId</a>) only be 1 package away from the package Max Num Sales. ";
-					$description.= "All fixed price offers have been closed for this package.";
+					$title = "Fixed Price offers have been stopped to prevent overselling packages for [$clientName]";
+					$description = "Once Ticket ID# <a href='/tickets/view/$ticketId'>$ticketId</a> is funded, we will only need to sell one more package to ";
+					$description.= "fulfill the Max Number of Sales for Package [<a href='/clients/$clientId/packages/edit/$packageId'>$packageName</a>].  To prevent overselling, all Fixed Price ";
+					$description.= "offers running on this package have been taken down.<br /><br />";
+					$description.= "Client: <a href='/clients/edit/$clientId'>$clientName</a>";
 					$model = 'Package';
 					$modelId = $packageId;
 					break;
@@ -564,9 +565,10 @@ class Ticket extends AppModel {
 					break;	
 				case 'LOA_PACKAGES_FP_ONLY':
 					$title = "Fixed Price offers have been stopped to prevent overselling Membership Total Packages [$clientName]";
-					$description = "Once Ticket ID# $ticketId is funded, we will only need to sell one more package to ";
-					$description.= "fulfill the Membership Total Packages for $clientName.  To prevent overselling, all Fixed Price ";
-					$description.= "offers running on Membership Total Packages track have been taken down.";
+					$description = "Once Ticket ID# <a href='/tickets/view/$ticketId'>$ticketId</a> is funded, we will only need to sell one more package to ";
+					$description.= "fulfill the Membership Total Packages for <a href='/clients/edit/$clientId'>$clientName</a>.  To prevent overselling, all Fixed Price ";
+					$description.= "offers running on Membership Total Packages track have been taken down.<br /><br />";
+					$description.= "Package: <a href='/clients/$clientId/packages/edit/$packageId'>$packageName</a>";
 					$model = 'Loa';
 					$modelId = $loaId;
 					break;
