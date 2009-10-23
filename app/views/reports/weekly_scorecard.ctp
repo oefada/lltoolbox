@@ -17,6 +17,8 @@ td {
 	padding: 3px 4px 3px 4px;
 	font-family: Arial;
 	font-size: 10pt;
+	width: 100px;
+	text-align: right;
 }
 #auctions td {
 	border-right: 1px solid #ccc;
@@ -1036,11 +1038,11 @@ if($row['col1'] == date('W')) {
 </tr>
 <tr class="altrow">
 	<td style="text-align:right">variance</td>
-	<td><?percentage(($row['col3']/$row['newBuyerTarget']-1))?></td>
+	<td><?percentage(($currWeek['col3']/$currWeek['newBuyerTarget']-1))?></td>
 	<td>&nbsp;</td>
-	<td><?percentage(($row['col5']/$row['returningBuyerTarget']-1))?></td>
+	<td><?percentage(($currWeek['col5']/$currWeek['returningBuyerTarget']-1))?></td>
 	<td>&nbsp;</td>
-	<td><?percentage(($row['col7']/$row['totalBuyerTarget']-1))?></td>
+	<td><?percentage(($currWeek['col7']/$currWeek['totalBuyerTarget']-1))?></td>
 	<td>&nbsp;</td>
 </tr>
 <tr><td colspan=8>&nbsp;</td></tr>
