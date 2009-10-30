@@ -15,7 +15,8 @@
 		} else {
 			echo $form->input('internalApproval', array('label' => 'Approved By Merchandising', 'disabled' => true));
 		}
-				echo $form->input('isPrivatePackage', array('label' => '<span style="color: #990000">Is Private Package</span>'));
+		echo $form->input('isPrivatePackage', array('label' => '<span style="color: #990000">Is Private Package</span>'));
+		echo $form->input('isTaxIncluded');
 		echo "</div>";
 		
 		echo $form->input('currencyId', array('disabled' => 'true', 'label' => 'Currency'));
