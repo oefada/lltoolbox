@@ -758,6 +758,30 @@ fieldset div.controlset3 div.checkbox input {
 fieldset div.controlset3 div.checkbox {
 	width: auto;
 }
+fieldset div.controlset4 {
+    padding: 0;
+    margin: 0;
+}
+fieldset div.controlset4 div{
+    float: left;
+    padding: 0;
+}
+fieldset div.controlset4 div.checkbox {
+    float: left;
+    clear: none;
+    padding: 0;
+}
+fieldset div.controlset4 div.checkbox input {
+    float: left;
+    width: auto;
+}
+fieldset div.controlset4 div.checkbox label {
+    float: left;
+    text-align: left;
+    width: auto;
+    height: auto;
+    line-height: 100%;
+}
 
 div.buttonrow {
 	margin-left: 170px;
@@ -1107,6 +1131,45 @@ margin-left: 0;
 #amenitylist span.radio input{
     border: none;
     width: 15px;
+}
+
+div.multiSiteNarrow input,
+div.multiSiteNarrow textarea  {
+    width: 200px;
+}
+
+div.multiSiteNarrow span.siteName {
+    font-weight: bold;
+}
+div.multiSiteNarrowLeft span.siteName {
+    margin-left: 175px;
+}
+#ordAmLst {
+    margin-top: 10px;
+    margin-left: -20px;
+    width: 190px;
+}
+#ordAmLst li {
+    list-style: none;
+    padding-left: 20px;
+    margin-top: -1px;
+    margin-left: 0;
+    cursor: move;
+}
+#ordAmLst li div {
+    display: block;
+    padding: 3px 5px 3px 5px;
+    margin: 0;
+    border: 1px solid #d5d5d5;
+}
+#ordAmLst li:hover {
+    background: url(../img/resize_arrow.png) no-repeat left center;
+    border-top: 1px solid #d5d5d5;
+    border-bottom: 1px solid #d5d5d5;
+}
+#ordAmLst li:hover div {
+    border-top: none;
+    border-bottom: none;
 }
 .goldBorderBottom {
 	border-bottom: 1px solid #c9b865;
