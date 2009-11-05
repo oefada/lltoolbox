@@ -2,7 +2,24 @@
 $this->viewVars['hideSidebar'] = true;
 uses('model' . DS . 'connection_manager');
 $db = ConnectionManager::getInstance();
-$connected = $db->getDataSource('default_mysql');
+@$siteId = isset($_POST['siteId']) ? (int)$_POST['siteId'] : (int)$_GET['siteId'];
+$page = '/pages/legacytools/help_faq';
+
+if ($siteId != 1 && $siteId != 2) {
+	$siteId = 1;
+}
+
+switch ($siteId) {
+	case 1:
+		$connected = $db->getDataSource('luxurylink');
+	break;
+	case 2:
+		$connected = $db->getDataSource('family');
+	break;
+	default:
+		die("No site");
+	break;
+}
 Configure::write('debug', '0');
 
 $action = isset($_GET['action']) ? $_GET['action'] : 'view';
@@ -15,9 +32,10 @@ if ($_GET['option'] == 'delete') {
 $help_mstr = array();
 $section_mstr = array();
 
-$result = mysql_query('select * from helpFaq where inactive <> 1 order by sectionId, topicId');
+$result = $connected->query('select * from helpFaq where inactive <> 1 order by sectionId, topicId');
 
-while ($row = mysql_fetch_array($result)) {
+foreach ($result as $row) {
+	$row = $row['helpFaq'];
 	if (is_numeric($row['topicId'])) {
 		if ($row['topicId'] == 0) {
 			$section_mstr[$row['sectionId']] = trim($row['topicTitle']);
@@ -65,7 +83,7 @@ switch($option) {
 
 		$sql = "insert into helpFaq(sectionId, topicId, text, topicKeywords, topicTitle, topicLink) ";
 		$sql.= "VALUES('$next_section_id', '0', '', '', '$p_new_section_name', '$next_section_topic_link')";
-		$result = mysql_query($sql);
+		$result = $connected->execute($sql);
 		
 		if ($result) {
 			$action = 'complete';
@@ -78,7 +96,7 @@ switch($option) {
 	case "delete":
 		if ($id && $section_helpFaqId) {
 			$sql = "update helpFaq set inactive = '1' where helpFaqId = '$section_helpFaqId'";
-			$result = mysql_query($sql);
+			$result = $connected->execute($sql);
 	
 			if ($result) {
 				$action = 'complete';
@@ -117,7 +135,7 @@ switch($option) {
 
 		$sql = "insert into helpFaq(sectionId, topicId, text, topicKeywords, topicTitle, topicLink) ";
 		$sql.= "VALUES('$p_section_id', '$next_topic_id', '$p_text', '$p_topic_keywords', '$p_topic_title', '$next_topic_link')";
-		$result = mysql_query($sql);
+		$result = $connected->execute($sql);
 		
 		if ($result) {
 			$action = 'complete';
@@ -157,7 +175,7 @@ switch($option) {
 
 		$sql = "update helpFaq set text = '$section_text', topicKeywords = '$section_topic_keywords', ";
 		$sql.= "topicTitle = '$section_topic_title' where helpFaqId = '$section_helpFaqId'";
-		$result = mysql_query($sql);
+		$result = $connected->execute($sql);
 		if ($result) {
 			$action = 'complete';
 			$message_complete = "Updated succesfully.";
@@ -179,7 +197,7 @@ function deleteTopic(id) {
 	if (!id) return false;
 	var confirmed = confirm("Are you 100% sure about deleting this topic?");
 	if (confirmed) {
-		window.location = 'help_faq?option=delete&id=' + id;
+		window.location = 'help_faq?siteId=<?=$siteId?>&option=delete&id=' + id;
 	} else {
 		return false;
 	}
@@ -215,13 +233,26 @@ tinyMCE.init({
 </style>
 
 <div id="container">
+	Select Site: <br /><br />
+	<select id="siteId" name="siteId" onchange="changeSiteRefresh()">
+		<option value="1" <?if($siteId == 1) echo " selected='selected'"?>>Luxury Link</option>
+		<option value="2" <?if($siteId == 2) echo " selected='selected'"?>>Family</option>
+	</select><br /><br />
+	<script language="javascript" type="text/javascript">
+
+	function changeSiteRefresh() {
+		window.location.replace('<?=$page;?>?siteId='+document.getElementById('siteId').value);
+	}
+
+	</script>
 	<div style="padding-bottom:5px; border-bottom:1px solid #a3a3a3; margin-bottom:30px;">
+		
 		<h3 class="hdr">Help and FAQ Tool</h3>
 		Use this tool to edit content for the HELP and FAQ page.<br /><br />
 		<div style="margin-bottom:5px;">
-			<a <? echo $action == 'view' ? "class=\"textBold\"" : '' ?> href="help_faq?action=view">View All Topics</a>
-			<a <? echo $action == 'addSection' ? "class=\"textBold\"" : '' ?> style="margin-left:15px;" href="help_faq?action=addSection">Add New Section</a>
-			<a <? echo $action == 'add' ? "class=\"textBold\"" : '' ?> style="margin-left:15px;" href="help_faq?action=add">Add New Topic</a>
+			<a <? echo $action == 'view' ? "class=\"textBold\"" : '' ?> href="help_faq?siteId=<?=$siteId?>&action=view">View All Topics</a>
+			<a <? echo $action == 'addSection' ? "class=\"textBold\"" : '' ?> style="margin-left:15px;" href="help_faq?siteId=<?=$siteId?>&action=addSection">Add New Section</a>
+			<a <? echo $action == 'add' ? "class=\"textBold\"" : '' ?> style="margin-left:15px;" href="help_faq?siteId=<?=$siteId?>&action=add">Add New Topic</a>
 			<?php
 			if ($action == 'edit') { echo "<span style='margin-left:15px; color:#0077EE; font-weight:bold;'>Editing Topic</span>";   }
 			?>
@@ -260,6 +291,7 @@ tinyMCE.init({
 			?>
 			<div class="clean">
 			<form action="help_faq" method="post">
+			<input type="hidden" name="siteId" value="<?=$siteId?>" />
 			<table style="margin-bottom:25px;" cellspacing="0" cellpadding="0" border="0">
 				<tr>
 					<td class="textBold" width="130" align="left" valign="top">Section Name: </td>
@@ -293,6 +325,7 @@ tinyMCE.init({
 			?>
 			<div class="clean">
 			<form action="help_faq" method="post">
+			<input type="hidden" name="siteId" value="<?=$siteId?>" />
 			<table style="margin-bottom:25px;" cellspacing="0" cellpadding="0" border="0">
 				<tr>
 					<td class="textBold" width="130" align="left" valign="top">New Section: </td>
@@ -309,6 +342,7 @@ tinyMCE.init({
 			?>
 			<div class="clean">
 			<form action="help_faq" method="post">
+			<input type="hidden" name="siteId" value="<?=$siteId?>" />
 			<table style="margin-bottom:25px;" cellspacing="0" cellpadding="0" border="0">
 				<tr>
 					<td class="textBold" width="130" align="left" valign="top">Section: </td>
@@ -352,7 +386,7 @@ tinyMCE.init({
 
 			<tr id="<?=$b['topicLink']?>" <?php if($a==0) { echo $section_hdr;}?>>
 				<td align="left"><?=$b['topicLink']?></td>
-				<td align="left" class="altA"><a href="help_faq?action=edit&id=<?=$b['topicLink']?>"><?=$b['topicTitle']?></a></td>
+				<td align="left" class="altA"><a href="help_faq?siteId=<?=$siteId?>&action=edit&id=<?=$b['topicLink']?>"><?=$b['topicTitle']?></a></td>
 				<td align="center"><? if ($b['text']) echo 'x';?></td>
 				<td align="center"><? if ($b['topicKeywords']) echo 'x';?></td>
 			</tr>

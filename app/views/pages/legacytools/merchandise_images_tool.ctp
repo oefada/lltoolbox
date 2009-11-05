@@ -1,7 +1,24 @@
 <?php
 uses('model' . DS . 'connection_manager');
 $db = ConnectionManager::getInstance();
-$connected = $db->getDataSource('default_mysql');
+
+$siteId = isset($_POST['siteId']) ? (int)$_POST['siteId'] : (int)$_GET['siteId'];
+
+if ($siteId != 1 && $siteId != 2) {
+	$siteId = 1;
+}
+
+switch ($siteId) {
+	case 1:
+		$connected = $db->getDataSource('luxurylink');
+	break;
+	case 2:
+		$connected = $db->getDataSource('family');
+	break;
+	default:
+		die("No site");
+	break;
+}
 
 $page = 'merchandise_images_tool';
 $page_name = 'Merchandise Images Tool';
@@ -44,26 +61,25 @@ if ($_POST['submit_mei']) {
 		}
 	}
 
-	$result = mysql_query( "select * from merchandiseImage where dateLive = '$date_string'");
+	$result = $connected->query("select * from merchandiseImage where dateLive = '$date_string'");
 
-	if (!$result) {
-		die('DATABASE PROBLEM');
-	}
-
-	if (mysql_num_rows($result)) {
-		$delete_result = mysql_query("delete from merchandiseImage where dateLive = '$date_string'");	
+	if (!empty($result)) {
+		$delete_result = $connected->query("delete from merchandiseImage where dateLive = '$date_string'");	
 	} 
 
 	foreach ($image_url as $k=>$v) {
-		$insert = mysql_query("insert into merchandiseImage (dateLive,slotId,clientId,imageUrl,linkUrl,packageId) VALUES ('$date_string','$k','$product_id[$k]','$v', '$link_url[$k]','$offer_id[$k]')");
+		$insert = $connected->query("insert into merchandiseImage (dateLive,slotId,clientId,imageUrl,linkUrl,packageId) VALUES ('$date_string','$k','$product_id[$k]','$v', '$link_url[$k]','$offer_id[$k]')");
 	}
 
 }
 
-$select = mysql_query("select * from merchandiseImage where dateLive = '$date_string' order by slotId");
-while($row = mysql_fetch_array($select)) {
-	$data[$row['slotId']] = $row;
+$select = $connected->query("select * from merchandiseImage where dateLive = '$date_string' order by slotId");
+
+$i = 1;
+foreach($select as $r) {
+	$data[$i++] = $r['merchandiseImage'];
 }
+
 ?>
 <script language="javascript" type="text/javascript">
 
@@ -83,6 +99,10 @@ function changeDateRefresh()
 	}
 }
 
+function changeSiteRefresh() {
+	window.location.replace('<?=$page;?>?siteId='+document.getElementById('siteId').value);
+}
+
 </script>
 
 </head>
@@ -95,6 +115,11 @@ Use this tool to setup the merchandising images on the new homepage.  Double cli
 </div>
 
 <div class="searchBox">
+Select Site: <br /><br />
+<select id="siteId" name="siteId" onchange="changeSiteRefresh()">
+	<option value="1" <?if($siteId == 1) echo " selected='selected'"?>>Luxury Link</option>
+	<option value="2" <?if($siteId == 2) echo " selected='selected'"?>>Family</option>
+</select><br /><br />
 Select Date: <br /><br />
 
 <select id="s_year" name="year" onchange="changeDateRefresh();">
@@ -127,8 +152,8 @@ for($i=1; $i<=$num_greg_days; $i++) {
 ?>
 </select>
 <br /><br />
-<a href="<?=$page;?>?year=<?=date('Y', $ts_prev_day);?>&month=<?=date('m', $ts_prev_day);?>&day=<?=date('d', $ts_prev_day);?>">Prev Day</a>&nbsp;&nbsp;&nbsp;
-<a href="<?=$page;?>?year=<?=date('Y', $ts_next_day);?>&month=<?=date('m', $ts_next_day);?>&day=<?=date('d', $ts_next_day);?>">Next Day</a>
+<a href="<?=$page;?>?year=<?=date('Y', $ts_prev_day);?>&month=<?=date('m', $ts_prev_day);?>&day=<?=date('d', $ts_prev_day);?>&siteId=<?=$siteId?>">Prev Day</a>&nbsp;&nbsp;&nbsp;
+<a href="<?=$page;?>?year=<?=date('Y', $ts_next_day);?>&month=<?=date('m', $ts_next_day);?>&day=<?=date('d', $ts_next_day);?>&siteId=<?=$siteId?>">Next Day</a>
 </div>
 
 You are editing for: <strong><? echo date('F d, Y (l)', strtotime("$month/$day/$year"));?></strong><br /><br />
@@ -141,6 +166,7 @@ You are editing for: <strong><? echo date('F d, Y (l)', strtotime("$month/$day/$
 <input type="hidden" name="year" value="<?=$year;?>" />
 <input type="hidden" name="month" value="<?=$month;?>" />
 <input type="hidden" name="day" value="<?=$day;?>" />
+<input type="hidden" name="siteId" value="<?=$siteId;?>" />
 
 <table width="800" id="dest_table" class="werd" cellspacing="0" cellpadding="0" border="0">
 	<tr>

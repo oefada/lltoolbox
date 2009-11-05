@@ -8,6 +8,7 @@ echo $paginator->counter(array(
 ?></p>
 <table cellpadding="0" cellspacing="0">
 <tr>
+	<th><?php echo $paginator->sort('siteId');?></th>
 	<th><?php echo $paginator->sort('homepageMerchandisingId');?></th>
 	<th><?php echo $paginator->sort('homepageMerchandisingTypeId');?></th>
 	<th><?php echo $paginator->sort('packageId');?></th>
@@ -27,6 +28,9 @@ foreach ($homepageMerchandisings as $homepageMerchandising):
 	}
 ?>
 	<tr<?php echo $class;?>>
+		<td>
+			<?php echo @$sites[$homepageMerchandising['HomepageMerchandising']['sites'][0]]; ?>
+		</td>
 		<td>
 			<?php echo $homepageMerchandising['HomepageMerchandising']['homepageMerchandisingId']; ?>
 		</td>

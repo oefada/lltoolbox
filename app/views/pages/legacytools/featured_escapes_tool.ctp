@@ -1,7 +1,26 @@
 <?php
 uses('model' . DS . 'connection_manager');
 $db = ConnectionManager::getInstance();
-$connected = $db->getDataSource('default_mysql');
+
+$siteId = isset($_POST['siteId']) ? (int)$_POST['siteId'] : false;
+$siteId = !$siteId && isset($_GET['siteId']) ? (int)$_GET['siteId'] : false;
+
+if ($siteId != 1 && $siteId != 2) {
+	$siteId = 1;
+}
+
+switch ($siteId) {
+	case 1:
+		$connected = $db->getDataSource('luxurylink');
+	break;
+	case 2:
+		$connected = $db->getDataSource('family');
+	break;
+	default:
+		die("No site");
+	break;
+}
+
 
 $page = "featured_escapes_tool";
 
@@ -38,19 +57,20 @@ if(isset($_GET['do_ajax'])) {
 	$offerTitle = isset($_GET['offerTitle']) ? trim($_GET['offerTitle']) : false;
 	$packageId = isset($_GET['packageId']) ? trim($_GET['packageId']) : false;
 
-	$result = mysql_query("SELECT * FROM featuredEscape WHERE dateLive = '$date_string'");
-	if (mysql_num_rows($result)) {
+	$result = $connected->query("SELECT * FROM featuredEscape WHERE dateLive = '$date_string'");
+	if (!empty($result)) {
 		$sql = "UPDATE featuredEscape SET title = '$title', styles = '$styles', headerImgSrc = '$hdr_img', offerTitle = '$offerTitle', packageId = '$packageId' WHERE dateLive = '$date_string'";
 	} else {
 		$sql = "INSERT INTO featuredEscape (dateLive, title, styles, headerImgSrc, offerTitle, packageId) VALUES ('$date_string','$title','$styles','$hdr_img','$offerTitle','$packageId')";
 	}
 
-	$result = mysql_query($sql);
+	$result = $connected->execute($sql);
+
 	if (!$result) {
 		echo "<div class='redBox'>DATABASE QUERY FAILED -- Please contact your local friendly developer.</div>";
 		die();
 	} else {
-		$delete_rows = mysql_query("DELETE FROM featuredEscapeClientOffer WHERE dateLive = '$date_string'");
+		$delete_rows = $connected->query("DELETE FROM featuredEscapeClientOffer WHERE dateLive = '$date_string'");
 		$errors = 0;
 		$slot = 1;
 		foreach ($tmp_pid as $k=>$v) {
@@ -62,11 +82,11 @@ if(isset($_GET['do_ajax'])) {
 			if(!is_numeric($oid) || $oid <= 0) {
 				$oid = '';
 			}
-			$insert_rows = mysql_query("INSERT INTO featuredEscapeClientOffer (dateLive,clientId,packageId,slotId) VALUES ('$date_string','$pid','$oid','$slot')");
+			$insert_rows = $connected->execute("INSERT INTO featuredEscapeClientOffer (dateLive,clientId,packageId,slotId) VALUES ('$date_string','$pid','$oid','$slot')");
 			if ($insert_rows) {
 				$slot++;
 			} else {
-				echo mysql_error();
+				echo mysqli_error($connected);
 				$errors++;
 			}
 		}
@@ -86,25 +106,24 @@ $data_products = array();
 $style_dest = array();
 $style_life = array();
 
-$result = mysql_query("SELECT * from featuredEscape WHERE dateLive = '$date_string'");
-$data = mysql_fetch_assoc($result);
+$result = $connected->query("SELECT * from featuredEscape WHERE dateLive = '$date_string'");
+$data = $result[0]['featuredEscape'];
 
-if (mysql_num_rows($result)) {
-	$result = mysql_query("SELECT fep.*, p.name FROM featuredEscapeClientOffer fep 
+if (!empty($result)) {
+	$result = $connected->query("SELECT fep.*, p.name FROM featuredEscapeClientOffer fep 
 							INNER JOIN client p ON fep.clientId = p.clientId 
 							WHERE fep.dateLive = '$date_string' ORDER BY fep.slotId");
-	while ($row = mysql_fetch_assoc($result)) {
-		$data_products[] = $row;
+	foreach ($result as $row) {
+		$data_products[] = array_merge($row['fep'],$row['p']);
 	}
 }
-
 /*
-$result = mysql_query("SELECT themeId, themeName FROM theme ORDER BY themeName");
+$result = $connected->query("SELECT themeId, themeName FROM theme ORDER BY themeName");
 while($row = mysql_fetch_array($result)) {
 	$style_life[$row['themeId']] = $row['themeName'];
 }
 
-$result = mysql_query("SELECT destinationId, destinationName FROM destination ORDER BY destinationName");
+$result = $connected->query("SELECT destinationId, destinationName FROM destination ORDER BY destinationName");
 while($row = mysql_fetch_array($result)) {
 	$style_dest[$row['styleId']] = $row['styleName'];
 }*/
@@ -138,6 +157,7 @@ function changeDateRefresh() {
 function scheduleFeaturedEscapesAuto() {
 	dest_id = document.getElementById('fe_style_dest').value;
 	styleId = document.getElementById('fe_style_life').value;
+	var siteId = document.getElementById('siteId').value;
 	if (!styleId && !dest_id) {
 		alert('Please choose a style or destination.');
 		return false;
@@ -146,7 +166,7 @@ function scheduleFeaturedEscapesAuto() {
 	var rows = document.getElementById('dest_table').tBodies[0].rows;
 
 	var styleIds = dest_id + '-' + styleId;
-	var link = "featured_escapes_popup?do_ajax=1&auto_fill=1&current_slot=" + (rows.length -1) + "&styleIds=" + styleIds;
+	var link = "featured_escapes_popup?do_ajax=1&auto_fill=1&current_slot=" + (rows.length -1) + "&styleIds=" + styleIds + "&siteId=" + siteId;
 
 	executeAjax(link, updateFeaturedEscapesAuto);				
 }
@@ -154,13 +174,14 @@ function scheduleFeaturedEscapesAuto() {
 function addManualProduct() {
 	var pid = document.getElementById('addManualPID').value;
 	var oid = document.getElementById('addManualOID').value;
+	var siteId = document.getElementById('siteId').value;
 	if (!pid) {
 		return false;
 	}
 	if(!oid) {
 		oid = '';
 	}
-	var link = "featured_escapes_popup?do_ajax2=1&pid=" + pid +"&oid=" + oid;
+	var link = "featured_escapes_popup?do_ajax2=1&pid=" + pid +"&oid=" + oid + "&siteId=" + siteId;
 	executeAjax(link, updateFeaturedEscapesAuto);
 }
 
@@ -218,6 +239,7 @@ function append_row_damnit(tblId, packageId, oid, auctionName, d_open, d_close)
 function scheduleFeaturedEscapes() {
 	dest_id = document.getElementById('fe_style_dest').value;
 	styleId = document.getElementById('fe_style_life').value;
+	var siteId = document.getElementById('siteId').value;
 	
 	if (!styleId && !dest_id) {
 		alert('Please choose a style or destination.');
@@ -227,6 +249,7 @@ function scheduleFeaturedEscapes() {
 	var pop_link = "featured_escapes_popup?";
 	pop_link += "style_dest=" + dest_id;
 	pop_link += "&style_life=" + styleId;
+	pop_link += "&siteId=" + siteId;
 
 	var win = window.open(pop_link,"","statusbar=no,scrollbars=yes,resizable=yes,width=650,height=700");
 	return true;
@@ -276,7 +299,7 @@ function processUpdateFeaturedEscapes(year, month, day, tbl_id) {
 	link += "&offerTitle=" + escape(offerTitle);
 	link += "&packageId=" + escape(packageId);
 	link += "&product_str=" + clientIds;
-
+	link += "&siteId=" + <?=$siteId?>;
 	executeAjax(link, updateMsg);	
 
 	document.getElementById('submit_but').style.display = '';
@@ -298,9 +321,13 @@ Use this tool to set the products on the Featured Escapes module on the homepage
 </div>
 
 <div class="searchBox">
+	Select Site: <br /><br />
+	<select id="siteId" name="siteId" onchange="changeSiteRefresh()">
+		<option value="1" <?if($siteId == 1) echo " selected='selected'"?>>Luxury Link</option>
+		<option value="2" <?if($siteId == 2) echo " selected='selected'"?>>Family</option>
+	</select><br /><br />
 Select Date: <br /><br />
 <form method="POST" action="<?=$page;?>">
-
 <select id="s_year" name="year" onchange="changeDateRefresh();">
 <?php
 for($i=2008; $i<2020; $i++) {
@@ -330,13 +357,13 @@ for($i=1; $i<=$num_greg_days; $i++) {
 }
 ?>
 </select>
-
+<input type="hidden" name="siteId" value="<?=$siteId?>" />
 <input type="submit" name="submit_date" value="Submit" />
 </form>
 <br />
 
-<a href="<?=$page;?>?year=<?=date('Y', $ts_prev_day);?>&month=<?=date('m', $ts_prev_day);?>&day=<?=date('d', $ts_prev_day);?>">Prev Day</a>&nbsp;&nbsp;&nbsp;
-<a href="<?=$page;?>?year=<?=date('Y', $ts_next_day);?>&month=<?=date('m', $ts_next_day);?>&day=<?=date('d', $ts_next_day);?>">Next Day</a>
+<a href="<?=$page;?>?year=<?=date('Y', $ts_prev_day);?>&month=<?=date('m', $ts_prev_day);?>&day=<?=date('d', $ts_prev_day);?>&siteId=<?=$siteId?>">Prev Day</a>&nbsp;&nbsp;&nbsp;
+<a href="<?=$page;?>?year=<?=date('Y', $ts_next_day);?>&month=<?=date('m', $ts_next_day);?>&day=<?=date('d', $ts_next_day);?>&siteId=<?=$siteId?>">Next Day</a>
 </div>
 
 You are editing for: <strong><? echo date('F d, Y (l)', strtotime("$month/$day/$year"));?></strong><br /><br />
@@ -399,6 +426,8 @@ You are editing for: <strong><? echo date('F d, Y (l)', strtotime("$month/$day/$
 </div>
 
 <form method="post" action="<?=$page;?>">
+
+<input type="hidden" id="siteId" name="siteId" value="<?=$siteId?>" />
 <table width="800" id="dest_table" class="werd" cellspacing="0" cellpadding="0" border="0">
 <tr NoDrag NoDrop>
 	<th width="30">Slot</th>
@@ -427,6 +456,10 @@ foreach($data_products as $k=>$v) {
 var table = document.getElementById("dest_table");
 var tableDnD = new TableDnD();
 tableDnD.init(table);
+
+function changeSiteRefresh() {
+	window.location.replace('<?=$page;?>?siteId='+document.getElementById('siteId').value);
+}
 </script>
 
 <br /><br/ >

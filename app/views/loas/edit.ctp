@@ -11,6 +11,11 @@ $this->set('clientId', $this->data['Client']['clientId']);
 <div class="loas form">
 <?php echo $form->create('Loa');?>
 	<fieldset>
+		<div class="controlset4">
+		<?
+		echo $form->input('sites', array('multiple' => 'checkbox'));
+		?>
+		</div>
 	<?php
 		echo $form->input('loaId');
 		

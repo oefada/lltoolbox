@@ -1,7 +1,20 @@
 <?php
 uses('model' . DS . 'connection_manager');
 $db = ConnectionManager::getInstance();
-$connected = $db->getDataSource('default_mysql');
+
+$siteId = isset($_REQUEST['siteId']) ? $_REQUEST['siteId'] : false;
+
+switch ($siteId) {
+	case 1:
+		$connected = $db->getDataSource('luxurylink');
+	break;
+	case 2:
+		$connected = $db->getDataSource('family');
+	break;
+	default:
+		die("No site");
+	break;
+}
 
 $Page_Name = "featured_escapes_popup";
 
@@ -16,13 +29,11 @@ if ($do_ajax2 && !$pid) {
 }
 
 if ($do_ajax2) {
-	$result = mysql_query('select name from client where clientId = ' . $pid);
+	$result = $connected->query('select name from client where clientId = ' . $pid);
 	if (!$result) {
 		echo "<div class='redBox'>There has been a database problem.  Please contact your local developer. Werd.</div>";
-	} elseif (!mysql_num_rows($result)) {
-		echo "<div class='redBox'>That product id may not exist.  Please try again.</div>";
 	} else {
-		echo $pid . '@@' . $oid . '@@' . mysql_result($result,0,'name');
+		echo $pid . '@@' . $oid . '@@' . $result[0]['client']['name'];
 	}
 	die();
 }
@@ -42,7 +53,7 @@ if ($do_ajax && $auto_fill) {
 		die();
 	}
 
-	$result = mysql_query("SELECT * FROM style_mstr WHERE styleId = '{$style_ids}'");
+	$result = $connected->query("SELECT * FROM style_mstr WHERE styleId = '{$style_ids}'");
 	if (!$result) {
 		echo "<div class='redBox'>There has been a database problem.  Please contact your local developer. Werd.</div>";
 		die();
@@ -64,11 +75,11 @@ if ($do_ajax && $auto_fill) {
 $style_dest = $_GET['style_dest'];
 $style_life = $_GET['style_life'];
 
-$result = mysql_query("SELECT * FROM style_mstr WHERE styleId = '{$style_dest}'");
+$result = $connected->query("SELECT * FROM style_mstr WHERE styleId = '{$style_dest}'");
 $row = mysql_fetch_array($result);
 $style_dest_name = $row['style_name'];
 
-$result = mysql_query("SELECT * FROM style_mstr WHERE styleId = '{$style_life}'");
+$result = $connected->query("SELECT * FROM style_mstr WHERE styleId = '{$style_life}'");
 $row = mysql_fetch_array($result);
 $style_life_name = $row['style_name'];
 

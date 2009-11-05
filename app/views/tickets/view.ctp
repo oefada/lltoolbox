@@ -95,7 +95,7 @@ $this->searchController = 'Tickets';
 					?>
 				</td>
 			</tr>
-			<?php if ($ticket['Ticket']['requestQueueId']) : ?>
+			<?php if ($ticket['Ticket']['format'] == 2) : ?>
 			<tr>
 				<td><strong>Request Arrival</strong></td>
 				<td><?php echo $ticket['Ticket']['requestArrival']; ?></td>

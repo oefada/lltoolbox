@@ -1,35 +1,33 @@
 <?php
-echo "Auction ID,Ticket ID,Product Name,Public User,Remit Type,Offer Type,Date Close,Request Date,Agent,# Collected,$ Potential,$ Collected,Status\r\n";
+echo "Transaction Site,Auction ID,Ticket ID,Product Name,Public User,Remit Type,Offer Type,Date Close,Request Date,Agent,# Collected,$ Potential,$ Collected,Status\r\n";
 foreach ($results as $r):
-switch($r['auction_mstr']['remitStatus']) {
-    case 0:
-            $remit = 'Remit';
-            break;
-
+switch($r['Track']['expirationCriteriaId']) {
     case 1:
-            $remit = 'Wholesale';
-            break;
-
-    case 2:
+	case 4:
             $remit = 'Keep';
             break;
 
+    case 2:
+            $remit = 'Remit';
+            break;
+
     case 3:
-           	$remit = 'PFP';
+            $remit = 'Commision/Upgrade';
             break;
 	default:
 			$remit = '';
 			break;
 }
 	$line = array(
+		$siteIds[$r['Ticket']['siteId']],
 	$r['Offer']['offerId'],
 	$r['Ticket']['ticketId'],
 	str_replace(',', '|', $r[0]['clientNames']),
 	str_replace(',', '', $r['Ticket']['userFirstName'].' '.$r['Ticket']['userLastName']),
 	$remit,
 	$r['OfferType']['offerTypeName'],
-	$r['Ticket']['requestQueueDateTime'],
 	'',
+	$r['Ticket']['created'],
 	'',
 	($r['Ticket']['billingPrice'] == $r[0]['moneyCollected']) ? 1 : 0,
 	$r['Ticket']['billingPrice'],

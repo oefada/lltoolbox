@@ -12,6 +12,7 @@ $this->pageTitle = 'Keywords';
 
 <table cellpadding="0" cellspacing="0">
 <tr>
+	<th><?php echo $paginator->sort('site');?></th>
 	<th><?php echo $paginator->sort('keyword');?></th>
 	<th><?php echo $paginator->sort('redirectUrl');?></th>
 	<th class="actions"><?php __('Actions');?></th>
@@ -25,6 +26,9 @@ foreach ($searchRedirects as $searchRedirect):
 	}
 ?>
 	<tr<?php echo $class;?>>
+		<td>
+			<?php echo $sites[$searchRedirect['SearchRedirect']['sites'][0]]; ?>
+		</td>
 		<td>
 			<?php echo $searchRedirect['SearchRedirect']['keyword']; ?>
 		</td>

@@ -206,15 +206,6 @@ $this->set('hideSidebar', true);
 			</tr>
 			<tr>
 				<td width="120">
-					Request Queue Id
-				</td>
-				<td>
-					<input type="text" id="s_request_queue_id" name="s_request_queue_id" value="<?php echo $s_request_queue_id;?>" />
-					&nbsp;<a href="javascript:void(0);" onclick="document.getElementById('s_request_queue_id').value = '';">Clear</a>
-				</td>
-			</tr>
-			<tr>
-				<td width="120">
 					Package Id
 				</td>
 				<td>

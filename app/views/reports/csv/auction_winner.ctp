@@ -1,5 +1,5 @@
 <?php
-echo "Booking Date,Payment Date,Booking,Vendor ID,Old Product Id,Vendor,Guest First Name,Guest Last Name,Address1,Address2,City,State,Zip,Country,Phone,Email,CC Type,CC Number,CC Exp,Type,Product Type,Revenue,Tax,COG,Profit,Room Nights,Confirmation Number,Arrival Date,Auction Type,Handling Fee,Percent,CC Processor,Remit Type,Adjust Amount,Validity Start Date,Validity End Date,Paid Search Id,Ref Url\n";
+echo "Site,Booking Date,Payment Date,Booking,Vendor ID,Old Product Id,Vendor,Guest First Name,Guest Last Name,Address1,Address2,City,State,Zip,Country,Phone,Email,CC Type,CC Number,CC Exp,Type,Product Type,Revenue,Tax,COG,Profit,Room Nights,Confirmation Number,Arrival Date,Auction Type,Handling Fee,Percent,CC Processor,Remit Type,Adjust Amount,Validity Start Date,Validity End Date,Paid Search Id,Ref Url\n";
 foreach ($results as $r):
 	switch($r['OfferType']['offerTypeName']) {
 		case 'Standard Auction':
@@ -12,27 +12,23 @@ foreach ($results as $r):
 			$fee = 40;
 			break;
 	}
-	switch($r['auction_mstr']['remitStatus']) {
-        case 0:
-                $remit = 'Remit';
-                break;
 
+	switch($r['ExpirationCriteria']['expirationCriteriaId']) {
         case 1:
-                $remit = 'Wholesale';
-                break;
-
-        case 2:
+		case 4:
                 $remit = 'Keep';
                 break;
-
-        case 3:
-               	$remit = 'PFP';
+        case 2:
+		case 3:
+                $remit = 'Remit';
                 break;
 		default:
 				$remit = '';
 				break;
 	}
+
 	$line = array(
+	$siteIds[$r['Ticket']['siteId']],
 	date('M d Y h:i:sA', strtotime($r['SchedulingInstance']['endDate'])),
 	date('M d Y h:i:sA', strtotime($r['PaymentDetail']['ppResponseDate'])),
 	$r['Ticket']['ticketId'],

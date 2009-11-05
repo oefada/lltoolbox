@@ -23,6 +23,7 @@
 	<? else: ?>
 		<?php echo $form->input('ClientLoaPackageRel.'.$k.'.percentOfRevenue', array('value' => 100, 'type' => 'hidden')) ?>
 	<? endif; ?>
+	<label>Sites</label><span><?=implode(', ', $clientLoaDetail['Loa']['sites'])?></span>
 </fieldset>
 <?php } ?>
 <? if(count($clientLoaDetails) > 1): ?>

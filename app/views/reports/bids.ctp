@@ -79,6 +79,7 @@ if (!empty($results)): ?>
 	<table style="margin-top: 20px">
 		<thead class='fixedHeader'>
 		<tr>
+			<th><?=sortLink('Ticket.siteId', 'Site', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('Offer.offerId', 'Offer Id', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('Client.name', 'Client Name', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('Track.applyToMembershipBal', 'Remit Type', $currentPage, $serializedFormInput, $this, $html)?></th>
@@ -121,24 +122,18 @@ $moneyPotential += $r[0]['moneyPotential'];
 $moneyCollected += $r[0]['moneyCollected'];
 ?>
 	<tr<?=$class?>>
+		<td><?=$siteIds[$r['SchedulingMaster']['siteId']]?></td>
 		<td><?=$r['Offer']['offerId']?></td>
 		<td><?=$r[0]['clientNames']?></td>
 		<td><?
-		switch($r['auction_mstr']['remitStatus']) {
-            case 0:
-                    echo 'Remit';
-                    break;
-
+		switch($r['Track']['expirationCriteriaId']) {
             case 1:
-                    echo 'Wholesale';
-                    break;
-
-            case 2:
+            case 4:
                     echo 'Keep';
                     break;
-
+            case 2:
             case 3:
-                   	echo 'PFP';
+                   	echo 'Remit';
                     break;
 			default:
 					echo '';

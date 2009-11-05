@@ -1,8 +1,10 @@
 <?php
-echo "Client Name,LOA Type,LOA Term End,Remit Packages,Remit Packages Sold Current,Remit Packages Left,Upgraded,Remit Packages Sold Current($),City,State,Country,LOA ID,Client ID,Balance,Membership Fee,LOA Term Start,Number of Days Active,Daily Membership Rate,# Days Paid,Paid Thru,Days Behind Schedule,Manager\r\n";
+echo "Sites,Client Name,LOA Type,LOA Term End,Remit Packages,Remit Packages Sold Current,Remit Packages Left,Upgraded,Remit Packages Sold Current($),City,State,Country,LOA ID,Client ID,Balance,Membership Fee,LOA Term Start,Number of Days Active,Daily Membership Rate,# Days Paid,Paid Thru,Days Behind Schedule,Manager\r\n";
 foreach ($results as $k => $r):
 
-		$line = array($r['Client']['clientId'].'-'.str_replace(',','',$r['Client']['name']),
+		$line = array(
+		'"'.$r['MultiSite']['sites'].'"',
+		$r['Client']['clientId'].'-'.str_replace(',','',$r['Client']['name']),
 		$r['LoaLevel']['loaLevelName'],
 		$r['Loa']['endDate'],
 		'',

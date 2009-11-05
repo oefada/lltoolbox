@@ -62,6 +62,7 @@ if (!empty($results)): ?>
 	<table style="margin-top: 20px">
 		<thead class='fixedHeader'>
 		<tr>
+			<th><?=sortLink('Ticket.siteId', 'Site', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('Offer.offerId', 'Booking Date', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('Client.name', 'Payment Date', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('Track.applyToMembershipBal', 'Ticket ID', $currentPage, $serializedFormInput, $this, $html)?></th>
@@ -94,6 +95,7 @@ if (!empty($results)): ?>
 $class = ($k % 2) ? ' class="altrow"' : '';
 ?>
 	<tr<?=$class?>>
+		<td><?=$siteIds[$r['Ticket']['siteId']]?></td>
 		<td><?=$r['SchedulingInstance']['endDate']?></td>
 		<td><?=$r['PaymentDetail']['ppResponseDate']?></td>
 		<td><?=$r['Ticket']['ticketId']?></td>
@@ -128,21 +130,14 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 		}?></td>
 		<td><?=$r[0]['percentOfRetail']?></td>
 		<td><?
-		switch($r['auction_mstr']['remitStatus']) {
-            case 0:
-                    echo 'Remit';
-                    break;
-
+		switch($r['ExpirationCriteria']['expirationCriteriaId']) {
             case 1:
-                    echo 'Wholesale';
-                    break;
-
-            case 2:
+			case 4:
                     echo 'Keep';
                     break;
-
-            case 3:
-                   	echo 'PFP';
+            case 2:
+			case 3:
+                    echo 'Remit';
                     break;
 			default:
 					echo '';

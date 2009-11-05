@@ -63,7 +63,11 @@
 			<?echo $form->select('condition6.value', $offerTypeIds, null, array('multiple' => true))?>
 	</div>
 </div>
-
+<div class="fieldRow">
+		<label>Site</label>
+		<?echo $form->text('condition7.field', array('value' => 'siteId', 'type' => 'hidden'))?>
+		<?echo $form->select('condition7.value', $siteIds, null, array(), false)?>
+</div>
 <div class="controlset fieldRow" style="border: 0">
 <?php 		echo $form->checkbox('paging.disablePagination');
 			echo $form->label('paging.disablePagination');
@@ -105,6 +109,7 @@ if (!empty($results)): ?>
 		<thead class='fixedHeader'>
 		<tr>
 			<th>&nbsp;</th>
+			<th><?=sortLink('siteId', 'Site', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('name', 'Client Name', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('managerUsername', 'Manager', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('packageName', 'Package Title', $currentPage, $serializedFormInput, $this, $html)?></th>
@@ -138,6 +143,7 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 ?>
 	<tr<?=$class?>>
 		<td><?=$k+1?></td>
+		<td><?=$siteIds[$r['siteId']]?></td>
 		<td><?=$html->link($r['name'], '/clients/'.$r['clientId'], array('target' => '_blank'))?></td>
 		
 		<td><?=$r['managerUsername']?></td>

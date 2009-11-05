@@ -90,10 +90,11 @@ if (!empty($results)): ?>
 	<table style="margin-top: 20px">
 		<thead class='fixedHeader'>
 		<tr>
+			<th><?=sortLink('SchedulingMaster.siteId', 'Site', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('Client.name', 'Client Name', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('OfferType.offerTypeName', 'Offer Type', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('Package.packageId', 'Package ID', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('SchedulingMaster.packageName', 'Offer Name', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('Package.packageName', 'Offer Name', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('Package.numNights', 'Room Nights', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('Package.validityEndDate', 'Validity End', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('offerStatus', 'Status', $currentPage, $serializedFormInput, $this, $html)?></th>
@@ -114,13 +115,14 @@ if (!empty($results)): ?>
 $class = ($k % 2) ? ' class="altrow"' : '';
 ?>
 	<tr<?=$class?>>
+		<td><?= $siteIds[$result['SchedulingMaster']['siteId']]?></td>
 		<td><?=$html->link($result['Client']['name'], array('controller' => 'clients', 'action' => 'edit', $result['Client']['clientId']), array('target' => '_blank'))?></td>
 		<td><?=$result['OfferType']['offerTypeName']?></td>
 		<td><?=$result['Package']['packageId']?></td>
 		<td><?
 				$month = date('m', strtotime($result['SchedulingInstance']['endDate']));
 				$year = date('Y', strtotime($result['SchedulingInstance']['endDate']));
-				echo $html->link(strip_tags($result['SchedulingMaster']['packageName']), "/scheduling/index/clientId:{$result['Client']['clientId']}/month:$month/year:$year", array('target' => '_blank'))?></td>
+				echo $html->link(strip_tags($result['Package']['packageName']), "/scheduling/index/clientId:{$result['Client']['clientId']}/month:$month/year:$year", array('target' => '_blank'))?></td>
 		<td style="text-align: center"><?=$result['Package']['numNights']?></td>
 		<td><div<?php 
 					switch($result[0]['validityEndApproaching']) {

@@ -6,6 +6,11 @@ $this->set('clientId', $this->data['Loa']['clientId']);
 <div class="loas form">
 <?php echo $form->create('Loa');?>
 	<fieldset>
+		<div class="controlset4">
+		<?
+		echo $form->input('sites', array('multiple' => 'checkbox'));
+		?>
+		</div>
 	<?php
 		echo $form->input('clientId', array('type' => 'hidden'));
 		echo $form->input('loaLevelId', array('label' => 'LOA Level'));

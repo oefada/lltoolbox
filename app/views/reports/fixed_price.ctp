@@ -9,7 +9,7 @@
 
 <div class="fieldRow">
 <label>Date Closed</label>
-<?echo $form->text('condition1.field', array('value' => 'Ticket.requestQueueDatetime', 'type' => 'hidden'))?>
+<?echo $form->text('condition1.field', array('value' => 'Ticket.created', 'type' => 'hidden'))?>
 <div class="range">
 	<?echo $datePicker->picker('condition1.value.between.0', array('label' => 'From'))?>
 	<?echo $datePicker->picker('condition1.value.between.1', array('label' => 'To'))?>
@@ -21,10 +21,10 @@
 
 <div class="fieldRow" style="float: left; margin-right: 30px">
 <label>Remit Type</label>
-<?echo $form->text('condition2.field', array('value' => 'auction_mstr.auction_wholesale', 'type' => 'hidden'))?>
+<?echo $form->text('condition2.field', array('value' => 'Track.expirationCriteriaId', 'type' => 'hidden'))?>
 <div class="range">
 	<?php
-		echo $form->select('condition2.value', array(2 => 'Keep', 0 => 'Remit'), null, array('multiple' => 'checkbox'))
+		echo $form->select('condition2.value', array('keep' => 'Keep', 'remit' => 'Remit'), null, array('multiple' => 'checkbox'))
 	?>
 </div>
 </div>
@@ -80,6 +80,7 @@ if (!empty($results)): ?>
 	<?=$pagination->Paginate("/reports/fixed_price/filter:".urlencode($serializedFormInput)."/sortBy:$sortBy/sortDirection:$sortDirection/page:", $currentPage, $numPages)?>
 	<table style="margin-top: 20px">
 		<tr>
+			<th><?=sortLink('Ticket.siteId', 'Transaction Site', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('Offer.offerId', 'Offer ID', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('Client.name', 'Ticket ID', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('Track.applyToMembershipBal', 'Client Name', $currentPage, $serializedFormInput, $this, $html)?></th>
@@ -98,26 +99,24 @@ if (!empty($results)): ?>
 $class = ($k % 2) ? ' class="altrow"' : '';
 ?>
 	<tr<?=$class?>>
+		<td><?= $siteIds[$r['Ticket']['siteId']]?></td>
 		<td><?=$r['Offer']['offerId']?></td>
 		<td><?=$r['Ticket']['ticketId']?></td>
 		<td><?=$r[0]['clientNames']?></td>
 		<td><?=$r['Ticket']['userFirstName'].' '.$r['Ticket']['userLastName']?></td>
 		<td><?
-		switch($r['auction_mstr']['remitStatus']) {
-            case 0:
-                    echo 'Remit';
-                    break;
-
+		switch($r['Track']['expirationCriteriaId']) {
             case 1:
-                    echo 'Wholesale';
-                    break;
-
-            case 2:
+			case 4:
                     echo 'Keep';
                     break;
 
+            case 2:
+                    echo 'Remit';
+                    break;
+
             case 3:
-                   	echo 'PFP';
+                    echo 'Commision/Upgrade';
                     break;
 			default:
 					echo '';
@@ -128,7 +127,7 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 		<td><?=$r['Ticket']['userCountry']?></td>
 		<td><?=$r['Ticket']['userState']?></td>
 		<td><?=$r['Ticket']['userCity']?></td>
-		<td><?=$r['Ticket']['requestQueueDateTime']?></td>
+		<td><?=$r['Ticket']['created']?></td>
 		<td><?=$r[0]['dateCollected']?></td>
 		<td><?=$r['Ticket']['billingPrice']?></td>
 		<td><?=$r[0]['moneyCollected']?></td>

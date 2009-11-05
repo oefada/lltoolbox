@@ -2,6 +2,11 @@
 <?php echo $form->create('Accolade');?>
 	<fieldset>
  		<legend><?php __('Add Accolade');?></legend>
+		<div class="controlset4">
+		<?
+		echo $form->input('sites', array('multiple' => 'checkbox'));
+		?>
+		</div>
 	<?php
 		echo $form->input('accoladeSourceId', array('label' => 'Accolade Source'));
 		echo $form->input('clientId', array('label' => 'Client ID'));

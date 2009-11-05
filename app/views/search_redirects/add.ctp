@@ -10,6 +10,11 @@ $this->pageTitle = 'Keywords';
 <?php echo $form->create('SearchRedirect');?>
 	<fieldset>
  		<legend><?php __('Add SearchRedirect');?></legend>
+		<div class="controlset4">
+		<?
+		echo $form->input('sites');
+		?>
+		</div>
 	<?php
 		echo $form->input('keyword');
 		echo $form->input('redirectUrl');

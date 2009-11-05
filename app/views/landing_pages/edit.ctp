@@ -2,6 +2,11 @@
 <?php echo $form->create('LandingPage');?>
 	<fieldset>
  		<legend><?php __('Edit LandingPage');?></legend>
+		<div class="controlset4">
+		<?
+		echo $form->input('sites', array('multiple' => 'checkbox'));
+		?>
+		</div>
 	<?php
 		echo $form->input('landingPageId');
 		echo $form->input('landingPageName', array('disabled'=>'disabled'));

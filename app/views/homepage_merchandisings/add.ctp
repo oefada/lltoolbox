@@ -2,6 +2,11 @@
 <?php echo $form->create('HomepageMerchandising');?>
 	<fieldset>
  		<legend><?php __('Add HomepageMerchandising');?></legend>
+		<div class="controlset4">
+		<?
+		echo $form->input('sites', array('multiple' => 'checkbox'));
+		?>
+		</div>
 	<?php
 		echo $form->input('homepageMerchandisingId');
 		echo $form->input('homepageMerchandisingTypeId');

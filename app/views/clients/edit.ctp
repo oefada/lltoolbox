@@ -10,6 +10,24 @@ function addAmenity() {
 </script>
 <?php
 $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']['clientId'], 'Client Id:').'<br />'.$html2->c('manager: '.$this->data['Client']['managerUsername']);
+
+$is_luxurylink = false;
+$is_family = false;
+if (empty($this->data['Client']['sites'])) {
+	  $is_luxurylink = true;
+}
+foreach ($this->data['Client']['sites'] as $site) {
+	  switch($site) {
+		    case 'luxurylink':
+				$is_luxurylink = true;
+				break;
+		    case 'family':
+				$is_family = true;
+				break;
+		    default:
+				$is_luxurylink = true;
+	  }
+}
 ?>
 <div class="clients form">
 	<h2 class="title">Client Details</h2>
@@ -31,16 +49,31 @@ $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']
 <?php echo $form->create('Client');?>
 	<fieldset>
 		<? echo $form->input('clientTypeId', array('label' => 'Client Type', 'empty' => true)); ?>
+		<? echo $form->input('clientCollectionId', array('label' => 'Collection', 'empty' => true)); ?>
 		<div class="input text"><label>LOA Level</label><?=$this->data['ClientLevel']['clientLevelName']?></div>
-		<div class="controlset">
+		<div class="controlset4">
+			<label>Hide on</label>
+			<?php foreach($this->data['Client']['sites'] as $site): ?>
+				
+				<?php 
+					if ($site != 'luxurylink'):
+						echo $form->input($site.'_inactive', array('label' => $sites[$site]));
+					else:
+						echo $form->input('inactive', array('label' => $sites[$site]));
+					endif;
+				?>
+			<?php endforeach;?>
+		</div>
+		<div class="controlset4" style="display: none">
+
 		<?
-		echo $form->input('inactive');
+		echo $form->input('sites', array('multiple' => 'checkbox'));
 		?>
 		</div>
 	<?php
 		echo $form->input('clientId');
 		echo $form->input('name', array('type' => 'hidden'));
-		echo $form->input('parentClientId', array('disabled' => 'disabled'));
+		echo $form->input('parentClientId', array('readonly' => 'readonly'));
 		
 		if ($this->data['Client']['parentClientId']):
 			echo $html->link('View Parent', '/clients/'.$this->data['Client']['parentClientId']);
@@ -55,10 +88,36 @@ $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']
 		echo $form->input('checkRateUrl');
 		echo $form->input('numRooms');
 		echo $form->input('numRoomsText');
+		echo $form->input('starRating', array('type' => 'select', 'options' => array('3', '4', '5'), 'empty' => true));
+		if ($is_luxurylink):
+	?>
+	<div style="float: left; width: 400px" class="multiSiteNarrow multiSiteNarrowLeft">
+	<?	echo "<span class='siteName'>Luxury Link.com</span>";
 		echo $form->input('longDesc');
+		echo "<span class='siteName'>Luxury Link.com</span>";
 		echo $form->input('blurb');
+		echo "<span class='siteName'>Luxury Link.com</span>";
 		echo $form->input('keywords');
 	?>
+	</div>
+	<?php endif;
+	      if ($is_family):
+		    $show_label = array('label' => false);
+		    if (!$is_luxurylink):
+				$show_label = array();
+		    endif;
+		    ?>
+	<div style="float: left; <?php if ($is_luxurylink) echo 'clear: right' ?>" class="multiSiteNarrow<?php if (!$is_luxurylink) echo ' multiSiteNarrowLeft' ?>">
+	<?	
+		echo "<span class='siteName'>Family Travel.com</span>";
+		echo $form->input('family_longDesc', $show_label);
+		echo "<span class='siteName'>Family Travel.com</span>";
+		echo $form->input('family_blurb', $show_label);
+		echo "<span class='siteName'>Family Travel.com</span>";
+		echo $form->input('family_keywords', $show_label);
+	?>
+	</div>
+	<?php endif; ?>
 		<div class="controlset"><?echo $form->input('showTripAdvisorReview');?></div>
 
 	<fieldset class="collapsible">
@@ -163,41 +222,110 @@ $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']
 	<fieldset class="collapsible">
 		<legend class="handle">Amenities <?=$html2->c($client['ClientAmenityRel']); ?></legend>
 		<div class="collapsibleContent">
-			<div id="amenitylist">
+			<div id="amenitylist" style="float: left; clear: none">
 				<div class="columnLabels">&nbsp;</div>
 				<ul style="list-style: none; padding-left: 20px;">
 				<?php
+				$familyAmenities = array();
 				 foreach($client['ClientAmenityRel'] as $k => $amenity):
 				?>
 						<li id="amenity_<?=$amenity['amenityId']?>" style="padding: 3px 0 3px 0;">
-							<span class="radio"><input type="radio" name="data[ClientAmenityRel][<?=$k?>][amenityTypeId]" value='4'<? if($amenity['amenityTypeId'] == 4) echo ' checked="checked"'?>/></span
-							><span class="radio "><input type="radio" name="data[ClientAmenityRel][<?=$k?>][amenityTypeId]" value='7'<? if($amenity['amenityTypeId'] == 7) echo ' checked="checked"'?>/></span
-							><span class="radio"><input type="radio" name="data[ClientAmenityRel][<?=$k?>][amenityTypeId]" value='3'<? if($amenity['amenityTypeId'] == 3) echo ' checked="checked"'?>/></span
-							><span class="radio "><input type="radio" name="data[ClientAmenityRel][<?=$k?>][amenityTypeId]" value='2'<? if($amenity['amenityTypeId'] == 2) echo ' checked="checked"'?>/></span
-							><span class="radio "><input type="radio" name="data[ClientAmenityRel][<?=$k?>][amenityTypeId]" value='1'<? if($amenity['amenityTypeId'] == 1) echo ' checked="checked"'?>/></span
+							<span class="radio"><input type="radio" name="data[ClientAmenityRel][<?=$k?>][amenityTypeId]" value='4'<? if($amenity['amenityTypeId'] == 4) echo ' checked="checked"'?> class="amenity_checkbox"/></span
+							><span class="radio "><input type="radio" name="data[ClientAmenityRel][<?=$k?>][amenityTypeId]" value='7'<? if($amenity['amenityTypeId'] == 7) echo ' checked="checked"'?> class="amenity_checkbox"/></span
+							><span class="radio"><input type="radio" name="data[ClientAmenityRel][<?=$k?>][amenityTypeId]" value='3'<? if($amenity['amenityTypeId'] == 3) {echo ' checked="checked"'; $familyAmenities[$k] = $amenity;}?> class="amenity_checkbox"/></span
+							><span class="radio "><input type="radio" name="data[ClientAmenityRel][<?=$k?>][amenityTypeId]" value='2'<? if($amenity['amenityTypeId'] == 2) echo ' checked="checked"'?> class="amenity_checkbox"/></span
+							><span class="radio "><input type="radio" name="data[ClientAmenityRel][<?=$k?>][amenityTypeId]" value='1'<? if($amenity['amenityTypeId'] == 1) echo ' checked="checked"'?> class="amenity_checkbox"/></span
 							><span class="radio "><input type="radio" name="data[ClientAmenityRel][<?=$k?>][amenityTypeId]" value='5' <? if(empty($amenity['amenityTypeId']) || $amenity['amenityTypeId'] == 5) echo 'checked="checked"'?>/></span>
-						<span<? if($k %2 == 0) echo ' style="background: #f5f2e2; padding: 3px 0 3px 0"' ?>>
+						<span<? if($k %2 == 0) echo ' style="background: #f5f2e2; padding: 3px 0 3px 0"' ?> class="nameSpan">
 							<input type='hidden' name='data[ClientAmenityRel][<?=$k?>][clientAmenityRelId]' value="<?=$amenity['clientAmenityRelId']?>">
-							<input type='hidden' name='data[ClientAmenityRel][<?=$k?>][amenityId]' value="<?=$amenity['amenityId']?>"><?=$amenity['Amenity']['amenityName']?> <a href="javascript: return false;" onclick="$('amenity_<?=$amenity['amenityId']?>').remove();">(remove)</a>
+							<input type='hidden' name='data[ClientAmenityRel][<?=$k?>][amenityId]' value="<?=$amenity['amenityId']?>"><span class="name"><?=$amenity['Amenity']['amenityName']?></span> <a href="javascript: return false;" onclick="$('amenity_<?=$amenity['amenityId']?>').remove();">(remove)</a>
 						</span>
 						</li>
 				<?php endforeach?>
 				</ul>
 			</div>
+			<?php if ($is_family): ?>
+			<div style="position: absolute; right: 50px">
+				<strong>Order Family Amenities</strong>
+				<ul id="ordAmLst">
+					<?php 
+					function sortFamilyAmenitites($a, $b) {
+						if ($a['weight'] == $b['weight']) {
+							return 0;
+						}
+						
+						return ($a['weight'] < $b['weight']) ? -1 : 1;
+					}
+
+					usort($familyAmenities, 'sortFamilyAmenitites');
+					
+					foreach($familyAmenities as $k => $v):?>
+						<li id='ordAmLst_amenity_<?=$v['amenityId']?>'><div><?=$v['Amenity']['amenityName']?></div></li>
+					<?php endforeach;?>
+				</ul>
+				<input type="hidden" id="sortedAmenities" name="data[sortedAmenities]">
+			</div>
+			<script>
+			function createSortable() {
+				Sortable.create("ordAmLst",
+				{
+					onUpdate: function() {
+						$('sortedAmenities').value = Sortable.serialize("ordAmLst")
+					}
+				});
+			}
+			function checkboxEvent() {
+				$$(".amenity_checkbox").invoke('observe', 'click', function() {
+					if(this.value == 3) {
+						if(!$('ordAmLst_'+$(this).up().up().id)) {
+							$('ordAmLst').insert({bottom: "<li id='ordAmLst_"+$(this).up().up().id+"'><div>"+$(this).up().up().down('.nameSpan').down('.name').innerHTML+"</div></li>"});
+							new Effect.Highlight($("ordAmLst_"+$(this).up().up().id).down());
+							createSortable();
+						}
+					} else {
+						if($('ordAmLst_'+$(this).up().up().id)) {
+							var idToDelete = 'ordAmLst_'+$(this).up().up().id;
+							new Effect.DropOut($(idToDelete), {afterFinish: function() {$(idToDelete).remove();}});
+							createSortable();
+						}
+					}
+				});
+			}
+			Event.observe(window, 'load', function() {
+				createSortable();
+				$('sortedAmenities').value = Sortable.serialize("ordAmLst")
+				checkboxEvent();
+			});
+			</script>
+		    <?php endif; ?>
 		<div style="float: left; display: inline; width: 470px" >
-			<input type="button" value="Add" onclick="javascript: addAmenity(); return false;" style="float: right; margin-top: 5px" />
+			<input type="button" value="Add" onclick="javascript: addAmenity(); checkboxEvent(); return false;" style="float: right; margin-top: 5px" />
 			<?php
 			echo $strictAutocomplete->autoComplete('amenity_select', '/amenities/auto_complete');
 			?>
+			<a href="/amenities">Manage Amenities</a>
 		</div>
 		</div>
 		</fieldset>
 		<fieldset class="collapsible">
-			<legend class="handle">Themes <?=$html2->c($client['Theme']); ?></legend>
+			<legend class="handle">Themes <?=$html2->c(@array_merge($client['LuxurylinkClientThemeRel'],$client['FamilyClientThemeRel'])); ?></legend>
 			<div class="collapsibleContent">
-				<div class='controlset2'>
-					<?php echo $form->input('Theme', array('multiple' => 'checkbox', 'label' => false)); ?>
+				<?php if ($is_luxurylink): ?>
+				<div class="controlset2" style="float: left; width: 45%; clear: none">
+					<strong>Luxury Link.com</strong><br />
+					<?php foreach($themes as $k => $v): ?>
+						<input type="checkbox" name="data[ClientThemeRel][luxurylink][<?=$k?>]" value="<?=$k?>" <?if(isset($client['LuxurylinkClientThemeRel'][$k])) { echo "checked='checked'";} ?>><label><?=$v?></label><br />
+					<?php endforeach;?>
 				</div>
+				<?php endif; ?>
+				<?php if ($is_family): ?>
+				<div class='controlset2' style="float: left; width: 45%; clear: right">
+					<strong>Family Travel.com</strong><br />
+					<?php foreach($themes as $k => $v): ?>
+						<input type="checkbox" name="data[ClientThemeRel][family][<?=$k?>]" value="<?=$k?>" <?if(isset($client['FamilyClientThemeRel'][$k])) { echo "checked='checked'";} ?>><label><?=$v?></label><br />
+					<?php endforeach;?>
+				</div>
+				<?php endif; ?>
 			</div>
 		</fieldset>
 		<fieldset class="collapsible">

@@ -6,7 +6,6 @@ if ($_POST['data']['Package']['packageType'] == 1) {
 	echo $this->renderElement('../packages/_add_hotel_offer');
 	echo $form->end('Submit');
 	?></div><?php
-	
 } else {
 	$this->pageTitle = $client['Client']['name'].$html2->c($client['Client']['clientId'], 'Client Id:');
 	?>
@@ -14,6 +13,7 @@ if ($_POST['data']['Package']['packageType'] == 1) {
 	Event.observe(window, 'load', function() {
 	  	$('PackageNumNights').observe('change', function(e){updateAllPerPersonPerNight();});
 		$('PackageNumGuests').observe('change', function(e){updateAllPerPersonPerNight();});
+		$('PackageSiteId').observe('change', function(e){toggleGuestsVisibility()});
 	});
 	
 	function perPersonPerNight(itemId) {
@@ -51,16 +51,28 @@ if ($_POST['data']['Package']['packageType'] == 1) {
 		}
 	}
 	
+	function toggleGuestsVisibility() {
+		['numGuests','numChildrenAdults','ageRangeValidity'].each(Element.toggle);
+		switch ($('PackageSiteId').getValue) {
+			case '2':	//Family
+				break;
+			case '1':	//Luxury  Link
+			default:
+				$('PackageNumChildren').setValue('');
+				$('PackageNumAdults').setValue('');
+				break;
+		}
+	}
+	
 	</script>
 	<div class="packages form">
 	<?php echo $form->create('Package', array('url' => "/clients/$clientId/packages/add", 'id'=>'PackageAddForm'));?>
 	
 	<?php echo $this->renderElement('../packages/_add_step_1'); ?>
 	<?php echo $this->renderElement('../packages/_setup'); ?>
+	<?php echo $this->renderElement('../packages/_family_amenities'); ?>
 	<?php echo $this->renderElement('../packages/_merchandising'); ?>
 	
 	<?php echo $form->end('Submit');?>
 	</div>
-<?php
-}
-?>
+<?php } ?>

@@ -2,6 +2,11 @@
 <?php echo $form->create('Destination');?>
 	<fieldset>
  		<legend><?php __('Edit Destination');?></legend>
+		<div class="controlset4">
+		<?
+		echo $form->input('sites', array('multiple' => 'checkbox'));
+		?>
+		</div>
 	<?php
 		echo $form->input('destinationId');
 		echo $form->input('parentId');

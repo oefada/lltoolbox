@@ -2,6 +2,11 @@
 <?php echo $form->create('Article');?>
 	<fieldset>
  		<legend><?php __('Edit Article');?></legend>
+		<div class="controlset4">
+		<?
+		echo $form->input('sites', array('multiple' => 'checkbox'));
+		?>
+		</div>
 	<?php
 		echo $form->input('articleId');
 		echo $form->input('primaryStyleId');

@@ -1,27 +1,21 @@
 <?php
-echo "Auction ID,Product Name,Remit Type,Offer Type,Date Close,# Pkgs,# Bids,# Unique bids,# Tickets,# Collected,$ Potential,$ Collected,% Tickets Collected,Status\n";
+echo "Site, Auction ID,Product Name,Remit Type,Offer Type,Date Close,# Pkgs,# Bids,# Unique bids,# Tickets,# Collected,$ Potential,$ Collected,% Tickets Collected,Status\n";
 foreach ($results as $r):
-	switch($r['auction_mstr']['remitStatus']) {
-        case 0:
-                $remit = 'Remit';
-                break;
-
-        case 1:
-                $remit = 'Wholesale';
-                break;
-
-        case 2:
-                $remit = 'Keep';
-                break;
-
-        case 3:
-               	$remit = 'PFP';
-                break;
+	switch($r['Track']['expirationCriteriaId']) {
+	    case 1:
+	    case 4:
+	            $remit = 'Keep';
+	            break;
+	    case 2:
+	    case 3:
+	           	$remit = 'Remit';
+	            break;
 		default:
 				$remit = '';
 				break;
 	}
 	$line = array(
+		$siteIds[$r['SchedulingMaster']['siteId']],
 		$r['Offer']['offerId'],
 		str_replace(',', '|', $r[0]['clientNames']),
 		$remit,

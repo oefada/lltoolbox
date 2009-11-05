@@ -11,7 +11,11 @@ tinyMCE.init({
 <?php echo $form->create('Press');?>
 	<fieldset>
  		<legend><?php __('Edit Press');?></legend>
-
+		<div class="controlset4">
+		<?
+		echo $form->input('sites', array('multiple' => 'checkbox'));
+		?>
+		</div>
 	<?php
 		echo $form->input('pressId');
 		echo $form->input('pressTypeId');

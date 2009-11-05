@@ -20,6 +20,11 @@
 		<?echo $form->select('condition3.value', array(1 => 'Wholesale', 2 => 'Sponsorship'))?>
 </div>
 <div class="fieldRow">
+		<label>Site</label>
+		<?echo $form->text('condition6.field', array('value' => 'LIKE=MultiSite.sites', 'type' => 'hidden'))?>
+		<?echo $form->select('condition6.value', $sites, null, array(), false)?>
+</div>
+<div class="fieldRow">
 		<label>Manager Username</label>
 		<?echo $form->text('condition4.field', array('value' => 'LIKE=Client.managerUsername', 'type' => 'hidden'))?>
 		<?echo $form->text('condition4.value')?>
@@ -73,6 +78,7 @@ if (!empty($results)): ?>
 		<thead class='fixedHeader'>
 		<tr>
 			<th>&nbsp;</th>
+			<th><?=sortLink('MultiSite.sites', 'Sites', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('Client.name', 'Client Name', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('Client.managerUsername', 'Manager', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('Loa.loaTypeId', 'LOA Type', $currentPage, $serializedFormInput, $this, $html)?></th>
@@ -99,6 +105,7 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 ?>
 	<tr<?=$class?>>
 		<td><?=$k+1?></td>
+		<td><?=str_replace(",", ", ", $r['MultiSite']['sites'])?></td>
 		<td><?=$html->link($r['Client']['name'].', '.$r['Client']['clientId'], array('controller' => 'clients', 'action' => 'edit', $r['Client']['clientId']), array('target' => '_blank'))?></td>
 		<td><?=$r['Client']['managerUsername']?></td>
 		<td><?=$html->link($r['Loa']['loaId'], '/clients/'.$r['Client']['clientId'].'/loas/edit/'.$r['Loa']['loaId'], array('target' => '_blank'))?>, <?=$r['LoaLevel']['loaLevelName']?></td>

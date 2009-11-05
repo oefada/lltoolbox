@@ -17,7 +17,7 @@
 		echo $form->input('PackageOfferTypeDefField.7.buyNowPrice', array('value' => 1, 'type' => 'hidden'));
 		echo $form->input('PackageOfferTypeDefField.7.percentRetail', array('value' => 100, 'type' => 'hidden'));
 		
-		if ($package['Package']['externalOfferUrl']) {
+		if (isset($package['Package']['externalOfferUrl'])) {
 			echo $form->input('externalOfferUrl', array('label' => 'Offer URL'));	
 		} else {
 			echo $form->input('externalOfferUrl', array('label' => 'Offer URL', 'value' => 'http://'));

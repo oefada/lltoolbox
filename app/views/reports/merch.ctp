@@ -30,6 +30,8 @@
 											'label' => 'Select another date:',
 											'readonly' => 'readonly',
 											'onchange' => 'form.submit()')); ?>
+	<div style="padding-left: 150px"><? echo $form->select('site', $sites, null, array('onchange' => 'form.submit()'), false); ?></div>
+
 	</form>
 </div>
 <div style="clear: both"></div>
@@ -278,10 +280,14 @@ for ($i = 1; $i <= 12; $i++) {
 			Keep
 		</td>
 		<td>
-			<a href="/reports/imr/schedulingMasterIds:<?=implode(',',$distressedBuyNows[1][1]['ids'])?>" target="_blank"><?=$distressedBuyNows[1][1]['numOffers']?></a>
+			<?php if (!isset($distressedBuyNows[1][1]['numOffers'])): ?>
+				0
+			<?php else: ?>
+			<a href="/reports/imr/schedulingMasterIds:<?=@implode(',',$distressedBuyNows[1][1]['ids'])?>" target="_blank"><?=$distressedBuyNows[1][1]['numOffers']?></a>
+			<?php endif; ?>
 		</td>
 		<td>
-			<a href="/reports/imr/schedulingMasterIds:<?=implode(',',$distressedBuyNows[1][2]['ids'])?>" target="_blank"><?=$distressedBuyNows[1][2]['numOffers']?></a>
+			<a href="/reports/imr/schedulingMasterIds:<?=@implode(',',$distressedBuyNows[1][2]['ids'])?>" target="_blank"><?=$distressedBuyNows[1][2]['numOffers']?></a>
 		</td>
 	</tr>
 	<tr>
@@ -289,10 +295,10 @@ for ($i = 1; $i <= 12; $i++) {
 			Remit
 		</td>
 		<td>
-			<a href="/reports/imr/schedulingMasterIds:<?=implode(',',$distressedBuyNows[2][1]['ids'])?>" target="_blank"><?=$distressedBuyNows[2][1]['numOffers']?></a>
+			<a href="/reports/imr/schedulingMasterIds:<?=@implode(',',$distressedBuyNows[2][1]['ids'])?>" target="_blank"><?=$distressedBuyNows[2][1]['numOffers']?></a>
 		</td>
 		<td>
-			<a href="/reports/imr/schedulingMasterIds:<?=implode(',',$distressedBuyNows[2][2]['ids'])?>" target="_blank"><?=$distressedBuyNows[2][2]['numOffers']?></a>
+			<a href="/reports/imr/schedulingMasterIds:<?=@implode(',',$distressedBuyNows[2][2]['ids'])?>" target="_blank"><?=$distressedBuyNows[2][2]['numOffers']?></a>
 		</td>
 	</tr>
 	<tr class="altrow">
