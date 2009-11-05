@@ -129,10 +129,8 @@ class Client extends AppModel {
 	  $this->loaId = $this->Loa->get_current_loa($this->data['Client']['clientId']);
 	  $frontend_data = $this->populate_frontend_fields();
 	  $data = array_merge_recursive($this->data, $frontend_data);
-	  if (empty($data['Client']['sites'])) {
-	        $loa = $this->Loa->findByLoaId($this->loaId);
-	  	  $data['Client']['sites'] = $loa['Loa']['sites'];
-	  }
+        $loa = $this->Loa->find('first', array('conditions' => array('loaId' => $this->loaId)));
+  	  $data['Client']['sites'] = $loa['Loa']['sites'];
 	  $this->data = $data;
 	  return true;
 	}
@@ -199,6 +197,7 @@ class Client extends AppModel {
 				}
 			}
 		}
+		$this->useDbConfig = 'default';
 		return true;
 	}
 	

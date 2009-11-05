@@ -84,7 +84,7 @@ class ClientsController extends AppController {
 					  foreach ($this->data['ClientAmenityRel'] as $am) {
 						    $clientAmenityRelIds[] = @$am['clientAmenityRelId'];
 					  }
-					  $this->Client->ClientAmenityRel->deleteAll(array('clientId' => $this->data['Client']['clientId'], 'NOT' => array('clientAmenityRelId' => $clientAmenityRelIds)));
+					  $this->Client->ClientAmenityRel->deleteAll(array('ClientAmenityRel.clientId' => $this->data['Client']['clientId'], 'NOT' => array('clientAmenityRelId' => $clientAmenityRelIds)));
 				}
 				
 			    	//delete all themes
@@ -121,10 +121,13 @@ class ClientsController extends AppController {
 			$this->data = $this->Client->read(null, $id);
 			$this->data['Client']['clientCollectionId'] = $this->data['Client']['parentClientId'];
 		}
-
+		
+		$client_trackings = array();
 		// map clientTracking: use clientTrackingTypeId as key
-		foreach ($this->data['ClientTracking'] as $k => $v) {
-			$client_trackings[$v['clientTrackingTypeId']] = $v;	
+		if (isset($this->data['ClientTracking'])) {
+		    foreach ($this->data['ClientTracking'] as $k => $v) {
+			    $client_trackings[$v['clientTrackingTypeId']] = $v;	
+		    }
 		}
 		$this->data['ClientTracking'] = $client_trackings;
 		
