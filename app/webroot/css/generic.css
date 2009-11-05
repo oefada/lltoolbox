@@ -196,10 +196,12 @@ form div {
 form div.input {
 	color: #444;
 }
-form div.required {
+/*
+form div.required label {
 	color: #333;
 	font-weight: bold;
-}
+}*/
+
 form div.submit {
 	border: 0;
 	clear: both;
