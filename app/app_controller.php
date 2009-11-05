@@ -80,6 +80,7 @@ class AppController extends Controller {
      	    $this->{$this->modelClass}->setUserIp($this->_userIp());
      	 }
      	 
+     	 if ($user):
      	 $messageQueue = new MessageQueue;
 
          $unread = $messageQueue->total(array('toUser' => $user['LdapUser']['username'], 'read <>' => 1));
@@ -87,7 +88,11 @@ class AppController extends Controller {
 
      	 $this->set('queueCountUnread', $unread);
      	 $this->set('queueCountSeverity', $severity);
+     	 
+     	 endif;
 		 $this->set('sites', array('luxurylink' => 'Luxury Link', 'family' => 'Family'));
+		 $this->siteIds = array(1 => 'Luxury Link', 2 => 'Family');
+		 $this->set('siteIds', $this->siteIds);
      	 $this->_defineConstants();
 	}
 	
