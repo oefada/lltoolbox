@@ -10,6 +10,6 @@ class TravelIdeaItem extends AppModel {
 						'TravelIdea' => array('foreignKey' => 'travelIdeaId'),
 						'TravelIdeaItemType' => array('foreignKey' => 'travelIdeaItemTypeId')
 					);
-
+    var $actsAs = array('Multisite');
 }
 ?>

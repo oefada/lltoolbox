@@ -199,13 +199,17 @@ class TrackDetail extends AppModel {
 
 		// if membership balance met for keep -- disperse allocation to remit and keep
 		if ($track['expirationCriteriaId'] == 1 && !(($track['revenueModelId'] == 3 || $track['revenueModelId'] == 4) && $is_y_iteration)) {
-			if (($loa_membership_balance - $new_track_detail['amountKept']) < 0) {
-				if ($loa_membership_balance > 0) {
-					$new_track_detail['amountRemitted'] = $new_track_detail['amountRemitted'] + abs($loa_membership_balance - $new_track_detail['amountKept']);
-					$new_track_detail['amountKept'] = $loa_membership_balance;
-				} else {
-					$new_track_detail['amountRemitted'] = $new_track_detail['amountRemitted'] + $new_track_detail['amountKept'];
-					$new_track_detail['amountKept'] = 0;
+			$loa_result = $this->query("SELECT membershipBalance FROM loa WHERE loaId = $track[loaId] LIMIT 1");
+			if (!empty($loa_result)) {
+				$loa_membership_balance = $loa_result[0]['loa']['membershipBalance'];
+				if (($loa_membership_balance - $new_track_detail['amountKept']) < 0) {
+					if ($loa_membership_balance > 0) {
+						$new_track_detail['amountRemitted'] = $new_track_detail['amountRemitted'] + abs($loa_membership_balance - $new_track_detail['amountKept']);
+						$new_track_detail['amountKept'] = $loa_membership_balance;
+					} else {
+						$new_track_detail['amountRemitted'] = $new_track_detail['amountRemitted'] + $new_track_detail['amountKept'];
+						$new_track_detail['amountKept'] = 0;
+					}
 				}
 			}
 		}

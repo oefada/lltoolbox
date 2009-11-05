@@ -8,5 +8,6 @@ class ArticleRel extends AppModel {
 	var $belongsTo = array(
 						'ArticleRelType' => array('foreignKey' => 'articleRelTypeId')
 					);
+	var $actsAs = array('Multisite');
 }
 ?>

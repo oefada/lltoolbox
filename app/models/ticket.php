@@ -51,6 +51,7 @@ class Ticket extends AppModel {
 		}
 		$result = $this->find('count', $params);
 		return $result;
+
 	}
 	
 	function getClientContacts($ticketId) {

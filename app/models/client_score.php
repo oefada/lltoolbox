@@ -8,5 +8,6 @@ class ClientScore extends AppModel {
 						'ClientScoreType' => array('foreignKey' => 'clientScoreTypeId'),
 						'Client' => array('foreignKey' => 'clientId')
 					);
+	var $actsAs = array('Multisite' => array('inherits' => 'Client'));
 }
 ?>

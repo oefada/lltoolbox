@@ -7,5 +7,6 @@ class Article extends AppModel {
 	var $displayField = 'articleTitle';
 	
 	var $hasMany = array('ArticleRel' => array('foreignKey' => 'articleId'));
+	var $actsAs = array('Multisite');
 }
 ?>

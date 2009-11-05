@@ -9,6 +9,6 @@ class TravelIdea extends AppModel {
 	
 	var $hasMany = array('TravelIdeaItem' => array('foreignKey' => 'travelIdeaId'));
 	var $belongsTo = array('LandingPage' =>array('foreignKey' => 'landingPageId'));
-
+    var $actsAs = array('Multisite');
 }
 ?>

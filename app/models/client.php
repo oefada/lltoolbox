@@ -6,7 +6,9 @@ class Client extends AppModel {
 	var $primaryKey = 'clientId';
 	var $displayField = 'name';
 	var $order = array('Client.name');
-	var $actsAs = array('Containable', 'Logable');
+	var $actsAs = array('Containable',
+				  'Logable',
+				  'Multisite');
 	
 	var $validate = array(
 				'name' => array(
@@ -27,7 +29,7 @@ class Client extends AppModel {
 						 'ChildClient' => array('className' => 'Client', 'foreignKey' => 'parentClientId'),
 						 'ClientContact' => array('className' => 'ClientContact', 'foreignKey' => 'clientId'),
 						 'ClientAmenityRel' => array('className' => 'ClientAmenityRel', 'foreignKey' => 'clientId'),
-						 'ClientTracking' => array('foreignKey' => 'clientId')
+						 'ClientThemeRel' => array('className' => 'ClientThemeRel', 'foreignKey' => 'clientId')
 						);
 	
     var $hasAndBelongsToMany = array(
@@ -41,17 +43,49 @@ class Client extends AppModel {
 								'Theme' => 
 									array('className' => 'Theme',
 										  'foreignKey' => 'clientId',
-										  'with' => 'clientThemeRel',
+										  'with' => 'ClientThemeRel',
 										  'associationForeignKey' => 'themeId'
 								   ),
-								'Destination' => 
-									array('className' => 'Destination',
-										  'foreignKey' => 'clientId',
-										  'with' => 'clientDestinationRel',
-										  'associationForeignKey' => 'destinationId'
-								   )
+						    'Destination' =>
+								array('className' => 'Destination',
+									'foreignKey' => 'clientId',
+									'with' => 'ClientDestinationRel',
+									'associationForeignKey' => 'destinationId'),
+						    'Amenity' =>
+								array('className' => 'Amenity',
+									'foreignKey' => 'clientId',
+									'with' => 'ClientAmenityRel',
+									'associationForeignKey' => 'amenityId')
                                );
-
+    
+	  //use this array to define any models => fields that need to go into the client frontend databases
+	  //that do not exist in the toolbox client database
+	  var $frontend_fields = array('LoaLevel' => array('loaLevelId', 'loaLevelName'),
+					       'ClientType' => array('clientTypeName')
+					  );
+	
+    function populate_frontend_fields() {
+	  $data = array();
+	  foreach ($this->frontend_fields as $model => $fields) {
+		    switch ($model) {
+				case 'LoaLevel':
+					  $loa = $this->Loa->findByLoaId($this->loaId);
+					  foreach ($fields as $field) {
+						    $data['Client'][$field] = $loa['LoaLevel'][$field];					  }
+					  break;
+				case 'ClientType':
+					  $client_type = $this->ClientType->findByClientTypeId($this->data['Client']['clientTypeId']);
+					  foreach ($fields as $field) {
+						    $data['Client'][$field] = $client_type['ClientType'][$field];
+					  }
+					  break;
+				default:
+					  break;
+		    }
+	  }
+	  return $data;	  
+    }
+ 
     function afterFind($results, $primary = false) {
         if ($primary == true && $this->recursive != -1):
 		foreach ($results as $key => $val):
@@ -91,81 +125,33 @@ class Client extends AppModel {
 	return $results;
 	}
 
+	function beforeSave() {
+	  $this->loaId = $this->Loa->get_current_loa($this->data['Client']['clientId']);
+	  $frontend_data = $this->populate_frontend_fields();
+	  $data = array_merge_recursive($this->data, $frontend_data);
+	  if (empty($data['Client']['sites'])) {
+	        $loa = $this->Loa->findByLoaId($this->loaId);
+	  	  $data['Client']['sites'] = $loa['Loa']['sites'];
+	  }
+	  $this->data = $data;
+	  return true;
+	}
+
 	function afterSave($created) {
-		// ----------------------------------------------------------------------
-		// client integration to live clients
-		// ----------------------------------------------------------------------
-		// $created specifies if a client record was created in toolbox.  
-		// ONLY true if client created via Sugar as toolbox cannot create new client records
-		
-		// get client record from toolbox so we can update live client
-		// -----------------------------------------------------------------
-		if ($created && !isset($this->data['Client']['clientId'])) {
-		    $clientId           = $this->getInsertId();
-		} else {
-		    $clientId 			= $this->id;
-		}
-		
+		// run some custom afterSaves for client.	
+		return $this->saveDestThemeLookup($created);
+	  }
+
+	function saveDestThemeLookup($created) {
+		$clientId = ($created && !isset($this->data['Client']['clientId'])) ? $this->getInsertId() : $this->id;
 		if (!$clientId) {
 			@mail('devmail@luxurylink.com', 'CLIENT AFTERSAVE ERROR: NO CLIENT ID', print_r($this->data));	
 		}
 		
-		$clientToolbox 			= $this->read(null, $clientId);	
-		$themeIds 				= array();
-		$destinationIds			= array();
-		$liveClientDataSave 	= array();		
-		$errors					= array();
-
-		// switch to live and retrieve the client table schema from the live db client
+		// for clientDestinationLookup only on the frontend
 		// -----------------------------------------------------------------
-		$this->useDbConfig 		= 'live';
-		$this->schema(true);
-		$this->recursive 		= -1;
-		$clientLiveSchema 		= $this->query('DESCRIBE client');
-		
-		// check if this client record already exists in live client
-		// -----------------------------------------------------------------
-		$checkClient			= $this->query('SELECT COUNT(*) AS count FROM client WHERE clientId = ' . $clientId . ' ORDER BY clientId ASC LIMIT 1');
-		$clientExistsOnLive		= $checkClient[0][0]['count'] ? true : false;
-		
-		// prepare and map the client data to save to live
-		// -----------------------------------------------------------------
-		foreach ($clientLiveSchema as $column) {
-			$field = $column['COLUMNS']['Field'];
-			if (isset($clientToolbox['Client'][$field])) {
-				$liveClientDataSave[$field] = Sanitize::escape($clientToolbox['Client'][$field], 'live');
-			} 
-		}
-		
-		// get all the client's theme ids 
-		// -----------------------------------------------------------------
-		if (isset($clientToolbox['Theme'])) {
-			foreach ($clientToolbox['Theme'] as $theme) {
-				$themeIds[] = $theme['themeId'];
-			}
-			sort($themeIds);
-			$tmp = '';
-			$insert_arr = array();
-			$insert_arr['clientId'] = $clientId;
-			for ($i = 1; $i <= 150; $i++) {
-				if (in_array($i, $themeIds)) {
-					$insert_arr["theme$i"] = 1;
-					$tmp.= "theme$i=1,";	
-				} else {
-					$tmp.= "theme$i=0,";
-				}
-			}
-			$update_tmp = rtrim($tmp, ',');
-			$sql = "INSERT DELAYED INTO clientThemeLookup (". implode(',',array_keys($insert_arr)) .") VALUES (". implode(',',array_values($insert_arr)) .") ON DUPLICATE KEY UPDATE $update_tmp";						
-			$result = $this->query($sql);
-		}
-				
-		// get all the clients destination ids
-		// -----------------------------------------------------------------
-		if (isset($clientToolbox['Destination'])) {
-			foreach ($clientToolbox['Destination'] as $destination) {
-				$destinationIds[] = $destination['destinationId'];
-			}
+		if (isset($this->data['Destination']['Destination']) && !empty($this->data['Destination']['Destination'])) {
+			$destinationIds = $this->data['Destination']['Destination'];
 			sort($destinationIds);
 			$tmp = '';
 			$insert_arr = array();
@@ -179,30 +165,40 @@ class Client extends AppModel {
 				}
 			}
 			$update_tmp = rtrim($tmp, ',');
-			$sql = "INSERT INTO clientDestinationLookup (". implode(',',array_keys($insert_arr)) .") VALUES (". implode(',',array_values($insert_arr)) .") ON DUPLICATE KEY UPDATE $update_tmp";
-			$result = $this->query($sql);
-		}
-		
-		// map other fields manually
-		// -----------------------------------------------------------------
-		$liveClientDataSave['loaLevelId'] = $clientToolbox['ClientLevel']['clientLevelId'];
-		$liveClientDataSave['loaLevelName'] = $clientToolbox['ClientLevel']['clientLevelName'];
-		
-		if ($clientExistsOnLive) {
-			//  perform client UPDATE
-			unset($liveClientDataSave['clientId']);
-			$sql = 'UPDATE client SET ';
-			foreach ($liveClientDataSave as $k => $v) {
-				$sql.= "$k = \"$v\",";	
+			$sql = "INSERT DELAYED INTO clientDestinationLookup (". implode(',',array_keys($insert_arr)) .") VALUES (". implode(',',array_values($insert_arr)) .") ON DUPLICATE KEY UPDATE $update_tmp";
+			foreach ($this->data['Client']['sites'] as $site) {
+				$this->useDbConfig = $site;
+				$result = $this->query($sql);
 			}
-			$sql = rtrim($sql, ',') . ' WHERE clientId = ' . $clientId;
-			$result = $this->query($sql);
-		} else {
-			//  perform client INSERT
-			$sql = 'INSERT INTO client ('. implode(',',array_keys($liveClientDataSave)) .') VALUES("'. implode('","',array_values($liveClientDataSave)) .'")';
-			$result = $this->query($sql);
 		}
 		
+		// for clientThemeLookup only on the frontend
+		// -----------------------------------------------------------------
+		if (isset($this->data['ClientThemeRel']) && !empty($this->data['ClientThemeRel'])) {
+			foreach ($this->data['ClientThemeRel'] as $site => $themeIds) {
+				if (empty($themeIds)) {
+					continue;
+				}
+				sort($themeIds);
+				$tmp = '';
+				$insert_arr = array();
+				$insert_arr['clientId'] = $clientId;
+				for ($i = 1; $i <= 150; $i++) {
+					if (in_array($i, $themeIds)) {
+						$insert_arr["theme$i"] = 1;
+						$tmp.= "theme$i=1,";	
+					} else {
+						$tmp.= "theme$i=0,";
+					}
+				}
+				$update_tmp = rtrim($tmp, ',');
+				$sql = "INSERT DELAYED INTO clientThemeLookup (". implode(',',array_keys($insert_arr)) .") VALUES (". implode(',',array_values($insert_arr)) .") ON DUPLICATE KEY UPDATE $update_tmp";
+				foreach ($this->data['Client']['sites'] as $site) {
+					$this->useDbConfig = $site;
+	  				$result = $this->query($sql);
+				}
+			}
+		}
 		return true;
 	}
 	

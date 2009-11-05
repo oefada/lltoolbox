@@ -17,6 +17,6 @@ class LandingPage extends AppModel {
 								);
 	
 	
-	var $actsAs = array('Containable');
+	var $actsAs = array('Containable', 'Multisite');
 }
 ?>

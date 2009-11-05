@@ -7,5 +7,6 @@ class Accolade extends AppModel {
 
 	var $belongsTo = array('AccoladeSource' => array('foreignKey' => 'accoladeSourceId'),
 	                        'Client' => array('foreignKey' => 'clientId'));
+	var $actsAs = array('Multisite');
 }
 ?>

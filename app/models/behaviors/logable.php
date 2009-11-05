@@ -457,7 +457,7 @@ class LogableBehavior extends ModelBehavior
     		unset($Model->version_id);
     	}
     	
-    	if (isset($this->Log->_schema[ 'ip' ]) && $this->userIP) {
+    	if (isset($this->Log->_schema[ 'ip' ]) && isset($this->userIP)) {
     		$logData['Log']['ip'] = $this->userIP;
     	}
     	

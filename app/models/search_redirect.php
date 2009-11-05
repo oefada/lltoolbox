@@ -10,6 +10,7 @@ class SearchRedirect extends AppModel {
 	                                        ),
 	                      'redirectUrl' => array('notEmpty')
 	                    );
+	var $actsAs = array('Multisite');
 
 	/* This method basically duplicates Cake's Built-In alphaNumeric core rule.
 	 * However, there is a problem with PHP 5.1.6 when using the built-in rule,

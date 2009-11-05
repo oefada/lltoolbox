@@ -7,5 +7,9 @@ class Destination extends AppModel {
 	var $displayField = 'destinationName';
 	
 	var $belongsTo = array('Tag' => array('foreignKey' => 'tagId'));
+	var $hasAndBelongsToMany = array('Client' => array('foreignKey' => 'destinationId',
+							 		   'associationForeignKey' => 'clientId',
+									   'with' => 'ClientDestinationRel'										
+								 ));
 }
 ?>
