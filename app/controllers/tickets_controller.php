@@ -39,7 +39,6 @@ class TicketsController extends AppController {
 		$s_client_id = isset($form['s_client_id']) ? $form['s_client_id'] : '';
 		$s_bid_id = isset($form['s_bid_id']) ? $form['s_bid_id'] : '';
 		$s_quick_link = isset($form['s_quick_link']) ? $form['s_quick_link'] : '';
-		$s_request_queue_id = isset($form['s_request_queue_id']) ? $form['s_request_queue_id'] : '';
 		$s_package_id = isset($form['s_package_id']) ? $form['s_package_id'] : '';
 		$s_promo_code = isset($form['s_promo_code']) ? $form['s_promo_code'] : '';
 		$s_offer_type_id = isset($form['s_offer_type_id']) ? $form['s_offer_type_id'] : 0;
@@ -89,7 +88,7 @@ class TicketsController extends AppController {
 
 		$this->paginate = array('fields' => array(
 									'Ticket.ticketId', 'Ticket.offerTypeId', 'Ticket.created', 'Ticket.bidId',  
-									'Ticket.offerId', 'Ticket.userId', 'TicketStatus.ticketStatusName', 'Ticket.packageId', 'Ticket.requestQueueId',
+									'Ticket.offerId', 'Ticket.userId', 'TicketStatus.ticketStatusName', 'Ticket.packageId', 
 									'Ticket.userFirstName', 'Ticket.userLastName', 'Ticket.packageId', 'Ticket.billingPrice', 'Ticket.formatId', 'Ticket.ticketNotes',
 									'PpvNotice.emailSentDatetime', 'ReservationPreferDate.arrivalDate', 'ReservationPreferDate.departureDate'
 									),
@@ -159,8 +158,6 @@ class TicketsController extends AppController {
 					   )
 					);
 			$this->paginate['group'] = array('Ticket.ticketId');
-		} elseif ($s_request_queue_id) {
-			$this->paginate['conditions']['Ticket.requestQueueId'] = $s_request_queue_id;    
 		} elseif ($s_package_id) {
 			$this->paginate['conditions']['Ticket.packageId'] = $s_package_id;    
 		} elseif ($s_promo_code) {		
@@ -220,7 +217,7 @@ class TicketsController extends AppController {
 		}
 	
 		if (!$single_search) {
-			$s_ticket_id = $s_offer_id = $s_user_id = $s_bid_id = $s_client_id = $s_request_queue_id = $s_package_id = $s_res_confirmation_num = null;
+			$s_ticket_id = $s_offer_id = $s_user_id = $s_bid_id = $s_client_id = $s_package_id = $s_res_confirmation_num = null;
 		} else {
 			$s_res_check_in_date = $s_offer_type_id = $s_has_promo = null;
 			if (!$single_search_override) {
@@ -236,7 +233,6 @@ class TicketsController extends AppController {
 		$this->set('s_user_id', $s_user_id);
 		$this->set('s_client_id', $s_client_id);
 		$this->set('s_bid_id', $s_bid_id);
-		$this->set('s_request_queue_id', $s_request_queue_id);
 		$this->set('s_package_id', $s_package_id);
 		$this->set('s_promo_code', $s_promo_code);
 		$this->set('s_format_id', $s_format_id);

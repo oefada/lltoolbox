@@ -102,7 +102,7 @@ class ReportsController extends AppController {
 	                Offer.offerId,
 	                Package.packageId, Package.numNights, Package.approvedRetailPrice, Package.validityEndDate,
 	                COUNT(Bid.bidId) as numberOfBids,
-	                SchedulingMaster.schedulingMasterId, SchedulingMaster.openingBid, SchedulingMaster.packageName, SchedulingMaster.numDaysToRun,
+	                SchedulingMaster.schedulingMasterId, SchedulingMaster.openingBid, Package.packageName, SchedulingMaster.numDaysToRun,
 	                Loa.loaId, Loa.endDate, Loa.membershipBalance,
 	                (SELECT COUNT(*) 
 	                    FROM schedulingInstance AS SchedulingInstance2
@@ -116,7 +116,8 @@ class ReportsController extends AppController {
 	                IF((Loa.endDate - INTERVAL 14 DAY) <= NOW(), 1, 0) as loaEndApproaching,
 	                IF(SchedulingMasterPerformance.numOffersNoBid >= 10, 1, 0) as flagBids,
 	                ExpirationCriteria.expirationCriteriaId,
-	                ExpirationCriteria.expirationCriteriaName
+	                ExpirationCriteria.expirationCriteriaName,
+					SchedulingMaster.siteId
 	                FROM offer AS Offer
 	                LEFT JOIN bid AS Bid ON (Bid.offerId = Offer.offerId)
 	                INNER JOIN schedulingInstance AS SchedulingInstance ON (SchedulingInstance.schedulingInstanceId = Offer.schedulingInstanceId)
@@ -372,7 +373,6 @@ class ReportsController extends AppController {
                         INNER JOIN schedulingMaster AS SchedulingMaster ON (SchedulingMaster.schedulingMasterId = SchedulingInstance.schedulingMasterId)
                         INNER JOIN offerType as OfferType ON (OfferType.offerTypeId = SchedulingMaster.offerTypeId)
                         INNER JOIN package AS Package ON (Package.packageId = SchedulingMaster.packageId)
-                        LEFT JOIN luxurymasterMigrate.auction_mstr as auction_mstr ON (auction_mstr.auction_id = Package.packageId)
                         INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Package.packageId)
                         INNER JOIN client AS Client ON (Client.clientId = ClientLoaPackageRel.clientId)
                         LEFT JOIN track AS Track ON (Track.trackId = ClientLoaPackageRel.trackId)
@@ -386,7 +386,7 @@ class ReportsController extends AppController {
 	        $sql = "SELECT
                             Offer.offerId,
                         	GROUP_CONCAT(Client.name) as clientNames,
-                        	auction_mstr.auction_wholesale as remitStatus,
+                        	Track.expirationCriteriaId,
                         	#Track.applyToMembershipBal,
                         	OfferType.offerTypeName,
             				(SELECT Country.countryName FROM country AS Country WHERE Country.countryId = Client.countryId) AS country,
@@ -397,6 +397,7 @@ class ReportsController extends AppController {
                         	OfferLive.retailValue,
                         	OfferLive.roomNights,
                         	SchedulingInstance.endDate,
+							SchedulingMaster.siteId,
                         	COUNT(Bid.bidId) AS numBids,
                         	COUNT(DISTINCT Bid.userId) AS uniqueBids,
                         	COUNT(DISTINCT Ticket.ticketId) AS numTickets,
@@ -412,7 +413,6 @@ class ReportsController extends AppController {
                     INNER JOIN schedulingMaster AS SchedulingMaster ON (SchedulingMaster.schedulingMasterId = SchedulingInstance.schedulingMasterId)
                     INNER JOIN offerType as OfferType ON (OfferType.offerTypeId = SchedulingMaster.offerTypeId)
                     INNER JOIN package AS Package ON (Package.packageId = SchedulingMaster.packageId)
-                    LEFT JOIN luxurymasterMigrate.auction_mstr as auction_mstr ON (auction_mstr.auction_id = Package.packageId)
                     INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Package.packageId)
                     INNER JOIN client AS Client ON (Client.clientId = ClientLoaPackageRel.clientId)
                     LEFT JOIN track AS Track ON (Track.trackId = ClientLoaPackageRel.trackId)
@@ -544,7 +544,6 @@ class ReportsController extends AppController {
                                 LEFT JOIN package AS Package ON (Package.packageId = SchedulingMaster.packageId)
                                 LEFT JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Package.packageId)
                                 LEFT JOIN client AS Client ON (Client.clientId = ClientLoaPackageRel.clientId)
-                                LEFT JOIN luxurymasterMigrate.auction_mstr as auction_mstr ON (auction_mstr.auction_id = Ticket.packageId)
                                 LEFT JOIN track AS Track ON (Track.trackId = ClientLoaPackageRel.trackId)
                                 LEFT JOIN paymentDetail AS PaymentDetail ON (PaymentDetail.ticketId = Ticket.ticketId AND PaymentDetail.userId = Ticket.userId)
                     WHERE $conditions";
@@ -560,13 +559,14 @@ class ReportsController extends AppController {
                                     	GROUP_CONCAT(Client.name) as clientNames,
                                     	Ticket.userFirstName,
                                     	Ticket.userLastName,
-                                    	auction_mstr.auction_wholesale as remitStatus,
+                                    	Track.expirationCriteriaId,
                                     	#Track.applyToMembershipBal,
                                     	OfferType.offerTypeName,
                                     	Ticket.userCountry,
                                     	Ticket.userState,
                                     	Ticket.userCity,
-                                    	Ticket.requestQueueDateTime,
+                                    	Ticket.created,
+										Ticket.siteId,
                                     	Ticket.billingPrice,
                                     	TicketStatus.ticketStatusName,
                                     	SUM(PaymentDetail2.paymentAmount) as moneyCollected,
@@ -577,7 +577,6 @@ class ReportsController extends AppController {
                                 LEFT JOIN offer AS Offer ON (Offer.offerId = Ticket.offerId)
                                 LEFT JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Ticket.packageId)
                                 LEFT JOIN client AS Client ON (Client.clientId = ClientLoaPackageRel.clientId)
-                                LEFT JOIN luxurymasterMigrate.auction_mstr as auction_mstr ON (auction_mstr.auction_id = Ticket.packageId)
                                 LEFT JOIN track AS Track ON (Track.trackId = ClientLoaPackageRel.trackId)
                                 LEFT JOIN paymentDetail AS PaymentDetail ON (PaymentDetail.ticketId = Ticket.ticketId AND PaymentDetail.userId = Ticket.userId)
                                 LEFT JOIN paymentDetail AS PaymentDetail2 ON (PaymentDetail2.paymentDetailId = PaymentDetail.paymentDetailId AND PaymentDetail2.isSuccessfulCharge = 1)
@@ -647,6 +646,17 @@ class ReportsController extends AppController {
 	                foreach ($ca['value'] as $value) {
 	                    $values[] = "'{$value}'";
 	                }
+					if ($ca['field'] == 'Track.expirationCriteriaId') {
+						$valTmp = $values;
+						$values = array();
+						foreach($valTmp as $val) {
+							if ($val == "'keep'") {
+								$values[] = '1,4';
+							} elseif($val == "'remit'") {
+								$values[] = '2,3';
+							}
+						}
+					}
 	                $conditions[$k] =   $ca['field'].' IN('.implode(',', $values).')';
 	            } else {
 	                $conditions[$k] =   $ca['field'].' = '."'{$ca['value']}'";
@@ -874,23 +884,25 @@ class ReportsController extends AppController {
                             WHEN HOUR(SchedulingInstance.endDate) BETWEEN 0 AND 6 THEN -1 #before 7am
                                 WHEN HOUR(SchedulingInstance.endDate) BETWEEN 7 AND 16 THEN HOUR(SchedulingInstance.endDate) #everything in between
                                 WHEN HOUR(SchedulingInstance.endDate) BETWEEN 17 AND 24 THEN 999 #after 5pm
-                            END as timeOfDay
+                            END as timeOfDay,
+					SchedulingMaster.siteId
                     FROM offer AS Offer
                     INNER JOIN schedulingInstance AS SchedulingInstance ON (SchedulingInstance.schedulingInstanceId = Offer.schedulingInstanceId)
                     INNER JOIN schedulingMaster AS SchedulingMaster ON (SchedulingMaster.schedulingMasterId = SchedulingInstance.schedulingMasterId)
                     LEFT JOIN offerType AS OfferType ON (SchedulingMaster.offerTypeId = OfferType.offerTypeId)
                     WHERE $conditions
-                    GROUP BY onlyEndDate, timeOfDay, OfferType.offerTypeId
+                    GROUP BY SchedulingMaster.siteId, onlyEndDate, timeOfDay, OfferType.offerTypeId
                     ORDER BY onlyEndDate, timeOfDay ASC";
-
+			
 	        $results = $this->OfferType->query($sql);
 
 	        //have to get the results in a format that we can easily loop through
+			$siteIds = $this->siteIds;
 	        $rows = array();
 	        foreach ($results as $r) {
-	            $rows[$r[0]['onlyEndDate']][$r['OfferType']['offerTypeName']][$r[0]['timeOfDay']] = $r[0]['numOffers'];
+	            $rows[$r[0]['onlyEndDate'].' '.$siteIds[$r['SchedulingMaster']['siteId']]][$r['OfferType']['offerTypeName']][$r[0]['timeOfDay']] = $r[0]['numOffers'];
 	        }
-	        
+
             $this->set('data', $this->data);
 	        $this->set('results', $rows);
 	        $this->set('serializedFormInput', serialize($this->data));
@@ -925,9 +937,8 @@ class ReportsController extends AppController {
                                INNER JOIN schedulingInstance AS SchedulingInstance USING(schedulingInstanceId)
                                LEFT JOIN paymentDetail AS PaymentDetail USING (ticketId)
                                LEFT JOIN paymentProcessor AS PaymentProcessor USING (paymentProcessorId)
-                               LEFT JOIN userPaymentSetting AS UserPaymentSetting USING (userPaymentSettingId)
+                               LEFT JOIN userPaymentSetting AS UserPaymentSetting ON (UserPaymentSetting.userPaymentSettingId = PaymentDetail.userPaymentSettingId)
                                INNER JOIN package AS Package USING(packageId)
-                               LEFT JOIN luxurymasterMigrate.auction_mstr as auction_mstr ON (auction_mstr.auction_id = Package.packageId)
                                INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Ticket.packageId)
                                INNER JOIN client as Client ON(Client.clientId = ClientLoaPackageRel.clientId)
                                LEFT JOIN track AS Track USING(trackId)
@@ -955,6 +966,7 @@ class ReportsController extends AppController {
                            Ticket.userMobilePhone,
                            Ticket.userEmail1,
 						   Ticket.requestArrival,
+						   Ticket.siteId,
                            PaymentDetail.ccType,
                            PaymentDetail.ppCardNumLastFour,
                            PaymentDetail.ppExpMonth,
@@ -964,7 +976,7 @@ class ReportsController extends AppController {
                            OfferType.offerTypeName,
                            ROUND((SUM(PaymentDetail.ppBillingAmount) / Package.approvedRetailPrice * 100)) as percentOfRetail,
                            PaymentProcessor.paymentProcessorName,
-                           auction_mstr.auction_wholesale as remitStatus,
+                           ExpirationCriteria.expirationCriteriaId,
                            #Track.applyToMembershipBal,
                            Package.validityStartDate,
                            Package.validityEndDate
@@ -976,10 +988,10 @@ class ReportsController extends AppController {
                            LEFT JOIN paymentProcessor AS PaymentProcessor USING (paymentProcessorId)
                            LEFT JOIN userPaymentSetting AS UserPaymentSetting ON (UserPaymentSetting.userPaymentSettingId = PaymentDetail.userPaymentSettingId)
                            LEFT JOIN package AS Package USING(packageId)
-                           LEFT JOIN luxurymasterMigrate.auction_mstr as auction_mstr ON (auction_mstr.auction_id = Package.packageId)
                            LEFT JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Ticket.packageId)
                            LEFT JOIN client as Client ON(Client.clientId = ClientLoaPackageRel.clientId)
-                           LEFT JOIN track AS Track USING(trackId)
+                       	   LEFT JOIN track AS Track USING(trackId)
+                           LEFT JOIN expirationCriteria AS ExpirationCriteria USING(expirationCriteriaId)
                     WHERE $conditions
                     GROUP BY Ticket.ticketId
                     ORDER BY $order
@@ -1063,6 +1075,7 @@ class ReportsController extends AppController {
                         FROM client as Client
                         INNER JOIN loa as Loa USING(clientId)
                         LEFT JOIN loaLevel as LoaLevel USING(loaLevelId)
+						LEFT JOIN multiSite as MultiSite ON(MultiSite.model = 'Client' AND MultiSite.modelId = Client.clientId)
                         WHERE Loa.endDate >= NOW() AND $conditions
                         GROUP BY Loa.loaId, Client.clientId
                         $having";
@@ -1097,10 +1110,12 @@ class ReportsController extends AppController {
                         ROUND( (Loa.totalRevenue - Loa.membershipBalance) / (Loa.totalRevenue / DATEDIFF(Loa.endDate, Loa.startDate)) ) as numDaysPaid,
                         (Loa.startDate + INTERVAL ( (Loa.totalRevenue - Loa.membershipBalance) / (Loa.totalRevenue / DATEDIFF(Loa.endDate, Loa.startDate)) ) DAY) as paidThru,
                         DATEDIFF(Loa.endDate, (Loa.startDate + INTERVAL ( (Loa.totalRevenue - Loa.membershipBalance) / (Loa.totalRevenue / DATEDIFF(Loa.endDate, Loa.startDate)) ) DAY)) as daysBehindSchedule,
-                        Client.managerUsername
+                        Client.managerUsername,
+						MultiSite.sites
                     FROM client as Client
                     INNER JOIN loa as Loa ON(Loa.clientId = Client.clientId AND Loa.inactive != 1)
                     LEFT JOIN loaLevel as LoaLevel USING(loaLevelId)
+					LEFT JOIN multiSite as MultiSite ON(MultiSite.model = 'Client' AND MultiSite.modelId = Client.clientId)
                     WHERE Loa.endDate >= NOW() AND $conditions
                     GROUP BY Loa.loaId, Client.clientId
                     $having
@@ -1764,6 +1779,8 @@ class ReportsController extends AppController {
 	}
 	
 	function merch() {
+		$this->Client = new Client();
+
 		if(!empty($this->data['datePicker'])){
 			$date = $this->data['datePicker'];
 		} else {
@@ -1781,17 +1798,31 @@ class ReportsController extends AppController {
 		
 		$this->set(compact('lastMonthDisplay', 'twoMonthsAgoDisplay', 'lastMonthLastYearDisplay'));
 
-		$this->Client = new Client();
+		
 		
 		$auctions = array(1,2,6);
+
+		if (isset($this->data['site']) && $this->params['data']['site'] == 'family') {
+			$siteId = 2;
+			$siteName = 'Family';
+		} else {
+			$siteId = 1;
+			$siteName = 'LuxuryLink';
+		}
+		
+		$siteCondition = "schedulingMaster.siteId = $siteId";
+		$loaSiteCondition = "EXISTS(SELECT * FROM multiSite WHERE model = 'Loa' and modelId = Loa.loaId and sites LIKE '%$siteName%')";
+		$offerLive = "offer$siteName";
+		$ticketSiteCondition = "Ticket.siteId = $siteId";
 		
 		# AUCTIONS/FP CLOSING
 		/* Auctions/Fp Closing Today/Yesterday */
 		$tmp = $this->Client->query("SELECT COUNT(*) as numClosing, DATE_FORMAT(schedulingInstance.endDate, '%Y-%m-%d') as theDate FROM schedulingInstance 
 											INNER JOIN schedulingMaster USING(schedulingMasterId) 
-											WHERE DATE_FORMAT(schedulingInstance.endDate, '%Y-%m-%d') BETWEEN '$date' - INTERVAL 1 DAY AND '$date'
-												AND offerTypeId IN (1,2,6)
-											GROUP BY DATE_FORMAT(schedulingInstance.endDate, '%Y-%m-%d');");
+
+											WHERE DATE_FORMAT(schedulingInstance.endDate, '%Y-%m-%d') BETWEEN '$date' - INTERVAL 1 DAY AND '$date' 
+												AND offerTypeId IN (1,2,6) AND $siteCondition 
+											GROUP BY DATE_FORMAT(schedulingInstance.endDate, '%Y-%m-%d');"); 
 
 		foreach ($tmp as $v) {
 			if ($v[0]['theDate'] == $date) {
@@ -1804,28 +1835,28 @@ class ReportsController extends AppController {
 		/* Auctions/Fp Closing Last 7 Daily Average */
 		$tmp = $this->Client->query("SELECT ROUND(COUNT(*)/7) as dailyAverage FROM schedulingInstance 
 											INNER JOIN schedulingMaster USING(schedulingMasterId) 
-											WHERE schedulingInstance.endDate BETWEEN '$date' - INTERVAL 6 DAY AND '$date' + INTERVAL 1 DAY 
+											WHERE schedulingInstance.endDate BETWEEN '$date' - INTERVAL 6 DAY AND '$date' + INTERVAL 1 DAY  AND $siteCondition 
 											AND offerTypeId IN (1,2,6)");
 		$sales[1][3] = $tmp[0][0]['dailyAverage'];
 
 		/* Auctions/Fp Closing Last 30 Daily Average */
 		$tmp = $this->Client->query("SELECT ROUND(COUNT(*)/30) as dailyAverage FROM schedulingInstance 
 											INNER JOIN schedulingMaster USING(schedulingMasterId) 
-											WHERE schedulingInstance.endDate BETWEEN '$date' - INTERVAL 29 DAY AND '$date' + INTERVAL 1 DAY 
+											WHERE schedulingInstance.endDate BETWEEN '$date' - INTERVAL 29 DAY AND '$date' + INTERVAL 1 DAY   AND $siteCondition
 											AND offerTypeId IN (1,2,6)");
 		$sales[1][4] = $tmp[0][0]['dailyAverage'];
 		
 		/* Auctions/Fp Closing Last 90 Daily Average */
 		$tmp = $this->Client->query("SELECT ROUND(COUNT(*)/90) as dailyAverage FROM schedulingInstance 
 											INNER JOIN schedulingMaster USING(schedulingMasterId) 
-											WHERE schedulingInstance.endDate BETWEEN '$date' - INTERVAL 89 DAY AND '$date' + INTERVAL 1 DAY 
+											WHERE schedulingInstance.endDate BETWEEN '$date' - INTERVAL 89 DAY AND '$date' + INTERVAL 1 DAY  AND $siteCondition
 											AND offerTypeId IN (1,2,6)");
 		$sales[1][5] = $tmp[0][0]['dailyAverage'];
 		
 		/* Auctions/Fp Closing Last 365 Daily Average */
 		$tmp = $this->Client->query("SELECT ROUND(COUNT(*)/365) as dailyAverage FROM schedulingInstance 
 											INNER JOIN schedulingMaster USING(schedulingMasterId) 
-											WHERE schedulingInstance.endDate BETWEEN '$date' - INTERVAL 364 DAY AND '$date' + INTERVAL 1 DAY 
+											WHERE schedulingInstance.endDate BETWEEN '$date' - INTERVAL 364 DAY AND '$date' + INTERVAL 1 DAY  AND $siteCondition
 											AND offerTypeId IN (1,2,6)");
 		$sales[1][6] = $tmp[0][0]['dailyAverage'];
 		
@@ -1839,7 +1870,7 @@ class ReportsController extends AppController {
 											INNER JOIN offer USING(schedulingInstanceId) 
 											INNER JOIN bid USING(offerId)
 											WHERE schedulingInstance.endDate BETWEEN '$date' - INTERVAL 1 DAY AND '$date' + INTERVAL 1 DAY
-											AND schedulingInstance.endDate <= NOW()
+											AND schedulingInstance.endDate <= NOW() AND $siteCondition
 											GROUP BY DATE_FORMAT(schedulingInstance.endDate, '%Y-%m-%d')");
 		foreach ($tmp as $v) {
 			if ($v[0]['theDate'] == $date) {
@@ -1856,7 +1887,7 @@ class ReportsController extends AppController {
 											INNER JOIN schedulingMaster USING(schedulingMasterId) 
 											INNER JOIN offer USING(schedulingInstanceId) 
 											INNER JOIN bid USING(offerId)
-											WHERE schedulingInstance.endDate BETWEEN '$date' - INTERVAL 6 DAY AND '$date' + INTERVAL 1 DAY");
+											WHERE schedulingInstance.endDate BETWEEN '$date' - INTERVAL 6 DAY AND '$date' + INTERVAL 1 DAY  AND $siteCondition");
 		$sales[2][3] = $tmp[0][0]['dailyAverage'];
 		$sales[3][3] = ROUND($sales[2][3]/$sales[1][3]*100,1);
 
@@ -1865,7 +1896,7 @@ class ReportsController extends AppController {
 		 									INNER JOIN schedulingMaster USING(schedulingMasterId) 
 											INNER JOIN offer USING(schedulingInstanceId) 
 											INNER JOIN bid USING(offerId)
-											WHERE schedulingInstance.endDate BETWEEN '$date' - INTERVAL 29 DAY AND '$date' + INTERVAL 1 DAY ");
+											WHERE schedulingInstance.endDate BETWEEN '$date' - INTERVAL 29 DAY AND '$date' + INTERVAL 1 DAY  AND $siteCondition");
 		$sales[2][4] = $tmp[0][0]['dailyAverage'];
 		$sales[3][4] = ROUND($sales[2][4]/$sales[1][4]*100,1);
 		
@@ -1874,7 +1905,7 @@ class ReportsController extends AppController {
 		 									INNER JOIN schedulingMaster USING(schedulingMasterId) 
 											INNER JOIN offer USING(schedulingInstanceId) 
 											INNER JOIN bid USING(offerId)
-											WHERE schedulingInstance.endDate BETWEEN '$date' - INTERVAL 89 DAY AND '$date' + INTERVAL 1 DAY ");
+											WHERE schedulingInstance.endDate BETWEEN '$date' - INTERVAL 89 DAY AND '$date' + INTERVAL 1 DAY  AND $siteCondition");
 		$sales[2][5] = $tmp[0][0]['dailyAverage'];
 		$sales[3][5] = ROUND($sales[2][5]/$sales[1][5]*100,1);
 		
@@ -1883,7 +1914,7 @@ class ReportsController extends AppController {
 		 									INNER JOIN schedulingMaster USING(schedulingMasterId) 
 											INNER JOIN offer USING(schedulingInstanceId) 
 											INNER JOIN bid USING(offerId)
-											WHERE schedulingInstance.endDate BETWEEN '$date' - INTERVAL 364 DAY AND '$date' + INTERVAL 1 DAY ");
+											WHERE schedulingInstance.endDate BETWEEN '$date' - INTERVAL 364 DAY AND '$date' + INTERVAL 1 DAY  AND $siteCondition");
 		$sales[2][6] = $tmp[0][0]['dailyAverage'];
 		$sales[3][6] = ROUND($sales[2][6]/$sales[1][6]*100,1);
 		
@@ -1892,7 +1923,7 @@ class ReportsController extends AppController {
 		# AVG SELL PRICES
 		/* Today/Yesterday */
 		$tmp = $this->Client->query("SELECT GROUP_CONCAT(Ticket.ticketId) as ticketIds, GROUP_CONCAT(Ticket.billingPrice) as avgSalePrice, ROUND(SUM(Ticket.billingPrice)) as travelRevenue, offerTypeId, DATE_FORMAT(Ticket.created, '%Y-%m-%d') as theDate, Ticket.ticketStatusId FROM ticket AS Ticket 
-											WHERE Ticket.created BETWEEN '$date' - INTERVAL 1 DAY AND '$date' + INTERVAL 1 DAY AND Ticket.ticketStatusId IN(3,4,5,6)
+											WHERE Ticket.created BETWEEN '$date' - INTERVAL 1 DAY AND '$date' + INTERVAL 1 DAY AND Ticket.ticketStatusId IN(3,4,5,6)  AND $ticketSiteCondition
 											GROUP BY DATE_FORMAT(Ticket.created, '%Y-%m-%d'), offerTypeId, ticketStatusId");
 		$sales[8][1] = 0;	
 		$sales[8][2] = 0;	
@@ -1923,7 +1954,7 @@ class ReportsController extends AppController {
 						
 		/* Last 7 Days Avg */
 		$tmp = $this->Client->query("SELECT GROUP_CONCAT(Ticket.billingPrice) as avgSalePrice, ROUND(SUM(Ticket.billingPrice)/7) as travelRevenue, offerTypeId, Ticket.ticketStatusId FROM ticket AS Ticket 
-											WHERE Ticket.created BETWEEN '$date' - INTERVAL 6 DAY AND '$date' + INTERVAL 1 DAY  AND Ticket.ticketStatusId IN(3,4,5,6)
+											WHERE Ticket.created BETWEEN '$date' - INTERVAL 6 DAY AND '$date' + INTERVAL 1 DAY  AND Ticket.ticketStatusId IN(3,4,5,6)  AND $ticketSiteCondition
 											GROUP BY offerTypeId, ticketStatusId");
 		$sales[8][3] = 0;
 		foreach($tmp as $v) {
@@ -1941,7 +1972,7 @@ class ReportsController extends AppController {
 
 		/* Last 30 Days Avg */
 		$tmp = $this->Client->query("SELECT GROUP_CONCAT(Ticket.billingPrice) as avgSalePrice, ROUND(SUM(Ticket.billingPrice)/30) as travelRevenue, offerTypeId, Ticket.ticketStatusId FROM ticket AS Ticket 
-											WHERE Ticket.created BETWEEN '$date' - INTERVAL 29 DAY AND '$date' + INTERVAL 1 DAY  AND Ticket.ticketStatusId IN(3,4,5,6)
+											WHERE Ticket.created BETWEEN '$date' - INTERVAL 29 DAY AND '$date' + INTERVAL 1 DAY  AND Ticket.ticketStatusId IN(3,4,5,6) AND $ticketSiteCondition
 											GROUP BY offerTypeId, ticketStatusId");
 		$sales[8][4] = 0;
 		foreach($tmp as $v) {
@@ -1962,7 +1993,7 @@ class ReportsController extends AppController {
 		
 		/* Last 90 Days Avg */
 		$tmp = $this->Client->query("SELECT GROUP_CONCAT(Ticket.billingPrice) as avgSalePrice, ROUND(SUM(Ticket.billingPrice)/90) as travelRevenue, offerTypeId, Ticket.ticketStatusId FROM ticket AS Ticket 
-											WHERE Ticket.created BETWEEN '$date' - INTERVAL 89 DAY AND '$date' + INTERVAL 1 DAY  AND Ticket.ticketStatusId IN(3,4,5,6)
+											WHERE Ticket.created BETWEEN '$date' - INTERVAL 89 DAY AND '$date' + INTERVAL 1 DAY  AND Ticket.ticketStatusId IN(3,4,5,6) AND $ticketSiteCondition
 											GROUP BY offerTypeId, ticketStatusId");
 		$sales[8][5] = 0;
 		foreach($tmp as $v) {
@@ -1983,7 +2014,7 @@ class ReportsController extends AppController {
 		
 		/* Last 365 Days Avg */
 		$tmp = $this->Client->query("SELECT GROUP_CONCAT(Ticket.billingPrice) as avgSalePrice, ROUND(SUM(Ticket.billingPrice)/365) as travelRevenue, offerTypeId, Ticket.ticketStatusId FROM ticket AS Ticket 
-											WHERE Ticket.created BETWEEN '$date' - INTERVAL 364 DAY AND '$date' + INTERVAL 1 DAY AND Ticket.ticketStatusId IN(3,4,5,6)
+											WHERE Ticket.created BETWEEN '$date' - INTERVAL 364 DAY AND '$date' + INTERVAL 1 DAY AND Ticket.ticketStatusId IN(3,4,5,6) AND $ticketSiteCondition
 											GROUP BY offerTypeId, ticketStatusId");
 		$sales[8][6] = 0;
 		foreach($tmp as $v) {
@@ -2019,7 +2050,7 @@ class ReportsController extends AppController {
 											DATE_FORMAT(Ticket.created, '%Y-%m-%d') as theDate
 											FROM ticket AS Ticket 
 											LEFT JOIN paymentDetail AS PaymentDetail ON (PaymentDetail.ticketId = Ticket.ticketId AND PaymentDetail.isSuccessfulCharge = 1)
-											WHERE offerTypeId IN (3, 4) AND Ticket.created BETWEEN '$date' - INTERVAL 1 DAY AND '$date' + INTERVAL 1 DAY
+											WHERE offerTypeId IN (3, 4) AND Ticket.created BETWEEN '$date' - INTERVAL 1 DAY AND '$date' + INTERVAL 1 DAY AND $ticketSiteCondition
 											GROUP BY offerTypeId, DATE_FORMAT(Ticket.created, '%Y-%m-%d')");
 
 		foreach($tmp as $v) {
@@ -2035,26 +2066,26 @@ class ReportsController extends AppController {
 		
 		$tmp = $this->Client->query("SELECT COUNT(DISTINCT Ticket.ticketId)/7 as fpRequests, SUM(IF(PaymentDetail.paymentDetailId IS NULL, 0, 1))/7 as fpFunded FROM ticket AS Ticket 
 												LEFT JOIN paymentDetail AS PaymentDetail ON (PaymentDetail.ticketId = Ticket.ticketId AND PaymentDetail.isSuccessfulCharge = 1)
-												WHERE offerTypeId IN (3, 4) AND Ticket.created BETWEEN '$date' - INTERVAL 6 DAY AND '$date' + INTERVAL 1 DAY");
+												WHERE offerTypeId IN (3, 4) AND Ticket.created BETWEEN '$date' - INTERVAL 6 DAY AND '$date' + INTERVAL 1 DAY AND $ticketSiteCondition");
 		$sales[5][3] = ROUND($tmp[0][0]['fpRequests']);
 		$sales[6][3] = ROUND($tmp[0][0]['fpFunded']);
 		
 		$tmp = $this->Client->query("SELECT COUNT(DISTINCT Ticket.ticketId)/30 as fpRequests, SUM(IF(PaymentDetail.paymentDetailId IS NULL, 0, 1))/30 as fpFunded FROM ticket AS Ticket 
 												LEFT JOIN paymentDetail AS PaymentDetail ON (PaymentDetail.ticketId = Ticket.ticketId AND PaymentDetail.isSuccessfulCharge = 1)
-												WHERE offerTypeId IN (3, 4) AND Ticket.created BETWEEN '$date' - INTERVAL 29 DAY AND '$date' + INTERVAL 1 DAY");
+												WHERE offerTypeId IN (3, 4) AND Ticket.created BETWEEN '$date' - INTERVAL 29 DAY AND '$date' + INTERVAL 1 DAY AND $ticketSiteCondition");
 		$sales[5][4] = ROUND($tmp[0][0]['fpRequests']);
 		$sales[6][4] = ROUND($tmp[0][0]['fpFunded']);
 		
 		$tmp = $this->Client->query("SELECT COUNT(DISTINCT Ticket.ticketId)/90 as fpRequests, SUM(IF(PaymentDetail.paymentDetailId IS NULL, 0, 1))/90 as fpFunded FROM ticket AS Ticket 
 												LEFT JOIN paymentDetail AS PaymentDetail ON (PaymentDetail.ticketId = Ticket.ticketId AND PaymentDetail.isSuccessfulCharge = 1)
-												WHERE offerTypeId IN (3, 4) AND Ticket.created BETWEEN '$date' - INTERVAL 89 DAY AND '$date' + INTERVAL 1 DAY");
+												WHERE offerTypeId IN (3, 4) AND Ticket.created BETWEEN '$date' - INTERVAL 89 DAY AND '$date' + INTERVAL 1 DAY AND $ticketSiteCondition");
 		$sales[5][5] = ROUND($tmp[0][0]['fpRequests']);
 		$sales[6][5] = ROUND($tmp[0][0]['fpFunded']);
 		
 		
 		$tmp = $this->Client->query("SELECT COUNT(DISTINCT Ticket.ticketId)/365 as fpRequests, SUM(IF(PaymentDetail.paymentDetailId IS NULL, 0, 1))/365 as fpFunded FROM ticket AS Ticket 
 												LEFT JOIN paymentDetail AS PaymentDetail ON (PaymentDetail.ticketId = Ticket.ticketId AND PaymentDetail.isSuccessfulCharge = 1)
-												WHERE offerTypeId IN (3, 4) AND Ticket.created BETWEEN '$date' - INTERVAL 364 DAY AND '$date' + INTERVAL 1 DAY");
+												WHERE offerTypeId IN (3, 4) AND Ticket.created BETWEEN '$date' - INTERVAL 364 DAY AND '$date' + INTERVAL 1 DAY AND $ticketSiteCondition");
 		$sales[5][6] = ROUND($tmp[0][0]['fpRequests']);
 		$sales[6][6] = ROUND($tmp[0][0]['fpFunded']);
 		
@@ -2079,9 +2110,9 @@ class ReportsController extends AppController {
 		}
 		$ytdStart = date('Y-01-01', strtotime($date));
 		
-		$revenueMtd = $this->Client->query("SELECT SUM(Ticket.billingPrice) as revenue FROM ticket as Ticket INNER JOIN paymentDetail pd ON(pd.ticketId = Ticket.ticketId AND pd.isSuccessfulCharge = 1) WHERE Ticket.created >= '$mtdStart' AND Ticket.created <= '$date' AND Ticket.ticketStatusId != 8");
-		$revenueQtd = $this->Client->query("SELECT SUM(Ticket.billingPrice) as revenue FROM ticket as Ticket INNER JOIN paymentDetail pd ON(pd.ticketId = Ticket.ticketId AND pd.isSuccessfulCharge = 1) WHERE Ticket.created >= '$qtdStart' AND Ticket.created <= '$date' AND Ticket.ticketStatusId != 8");
-		$revenueYtd = $this->Client->query("SELECT SUM(Ticket.billingPrice) as revenue FROM ticket as Ticket INNER JOIN paymentDetail pd ON(pd.ticketId = Ticket.ticketId AND pd.isSuccessfulCharge = 1) WHERE Ticket.created >= '$ytdStart' AND Ticket.created <= '$date' AND Ticket.ticketStatusId != 8");
+		$revenueMtd = $this->Client->query("SELECT SUM(Ticket.billingPrice) as revenue FROM ticket as Ticket INNER JOIN paymentDetail pd ON(pd.ticketId = Ticket.ticketId AND pd.isSuccessfulCharge = 1) WHERE Ticket.created >= '$mtdStart' AND Ticket.created <= '$date' AND Ticket.ticketStatusId != 8 AND $ticketSiteCondition");
+		$revenueQtd = $this->Client->query("SELECT SUM(Ticket.billingPrice) as revenue FROM ticket as Ticket INNER JOIN paymentDetail pd ON(pd.ticketId = Ticket.ticketId AND pd.isSuccessfulCharge = 1) WHERE Ticket.created >= '$qtdStart' AND Ticket.created <= '$date' AND Ticket.ticketStatusId != 8 AND $ticketSiteCondition");
+		$revenueYtd = $this->Client->query("SELECT SUM(Ticket.billingPrice) as revenue FROM ticket as Ticket INNER JOIN paymentDetail pd ON(pd.ticketId = Ticket.ticketId AND pd.isSuccessfulCharge = 1) WHERE Ticket.created >= '$ytdStart' AND Ticket.created <= '$date' AND Ticket.ticketStatusId != 8 AND $ticketSiteCondition");
 		$this->set(compact('revenueMtd', 'revenueQtd', 'revenueYtd'));
 		#### End Revenue ####
 	#### BEGIN AGING ####
@@ -2090,13 +2121,13 @@ class ReportsController extends AppController {
 										FROM loa AS Loa 
 										WHERE Loa.startDate < NOW() - INTERVAL 60 DAY 
 												AND Loa.inactive <> 1 AND Loa.endDate >= NOW()
-												AND Loa.membershipBalance > 0
+												AND Loa.membershipBalance > 0 AND $loaSiteCondition
 										GROUP BY severity");
 		$tmp2 = $this->Client->query("SELECT COUNT(DISTINCT clientId) as numClients,
 										IF(DATEDIFF(NOW(), startDate) > 121, 3, IF(DATEDIFF(NOW(), startDate) > 91, 2, 1)) as severity 
 										FROM loa AS Loa 
 										WHERE Loa.startDate < NOW() - INTERVAL 60 DAY 
-												AND Loa.inactive <> 1 AND Loa.endDate >= NOW()
+												AND Loa.inactive <> 1 AND Loa.endDate >= NOW() AND $loaSiteCondition
 										GROUP BY severity");
 		
 		foreach ($tmp as $v) {
@@ -2121,7 +2152,7 @@ class ReportsController extends AppController {
 								INNER JOIN schedulingInstance ON(schedulingInstance.schedulingMasterId = schedulingMaster.schedulingMasterId AND schedulingInstance.endDate >= NOW())
 								LEFT JOIN schedulingMasterTrackRel ON(schedulingMasterTrackRel.schedulingMasterId = schedulingMaster.schedulingMasterId)
 								LEFT JOIN track USING(trackId)
-								WHERE numOffersNoBid >= 5
+								WHERE numOffersNoBid >= 5 AND $siteCondition
 								GROUP BY severity, expirationCriteriaId");
 		$tmp2 = $this->Client->query("SELECT COUNT(DISTINCT schedulingMaster.schedulingMasterId) as totalNumOffers,
 											expirationCriteriaId FROM schedulingMasterPerformance 
@@ -2129,6 +2160,7 @@ class ReportsController extends AppController {
 											INNER JOIN schedulingInstance ON(schedulingInstance.schedulingMasterId = schedulingMaster.schedulingMasterId AND schedulingInstance.endDate >= NOW())
 											LEFT JOIN schedulingMasterTrackRel ON(schedulingMasterTrackRel.schedulingMasterId = schedulingMaster.schedulingMasterId)
 											LEFT JOIN track USING(trackId)
+											WHERE $siteCondition
 											GROUP BY expirationCriteriaId");
 
 		foreach ($tmp as $v) {
@@ -2168,7 +2200,7 @@ class ReportsController extends AppController {
 										0)
 									) as severity,
 								expirationCriteriaId
-								FROM offerLive AS OfferLive
+								FROM $offerLive AS OfferLive
 								INNER JOIN offer USING(offerId)
 								INNER JOIN schedulingInstance USING(schedulingInstanceId)
 								LEFT JOIN ticket AS Ticket USING(offerId) 
@@ -2204,7 +2236,7 @@ class ReportsController extends AppController {
 										INNER JOIN track USING(trackId)
 										WHERE Package.validityEndDate <= '$date' + INTERVAL 60 DAY
 												AND Package.validityEndDate >= NOW()
-												AND Loa.endDate >= NOW()
+												AND Loa.endDate >= NOW() AND $loaSiteCondition
 										GROUP BY severity, expirationCriteriaId");
 		foreach ($tmp as $v) {
 			if($v['track']['expirationCriteriaId'] == 1 || $v['track']['expirationCriteriaId'] == 4) {
@@ -2225,8 +2257,8 @@ class ReportsController extends AppController {
 		$tmp = $this->Client->query("SELECT GROUP_CONCAT(DISTINCT Package.packageId) AS ids, COUNT(DISTINCT Package.packageId) AS numPackages,
 		 								expirationCriteriaId
 										FROM package AS Package
-										INNER JOIN offerLive AS OfferLive2 ON(OfferLive2.packageId = Package.packageId AND OfferLive2.isClosed <> 1 AND OfferLive2.offerTypeId IN(1,2,6))
-										LEFT JOIN offerLive AS OfferLive ON(OfferLive.packageId = Package.packageId AND OfferLive.isClosed <> 1 AND OfferLive.offerTypeId IN(3,4))
+										INNER JOIN $offerLive AS OfferLive2 ON(OfferLive2.packageId = Package.packageId AND OfferLive2.isClosed <> 1 AND OfferLive2.offerTypeId IN(1,2,6))
+										LEFT JOIN $offerLive AS OfferLive ON(OfferLive.packageId = Package.packageId AND OfferLive.isClosed <> 1 AND OfferLive.offerTypeId IN(3,4))
 										INNER JOIN clientLoaPackageRel cl ON(cl.packageid = Package.packageId)
 										INNER JOIN loa AS Loa USING(loaId)
 										INNER JOIN track USING(trackId)
@@ -2250,7 +2282,7 @@ class ReportsController extends AppController {
 		//get all clients without packages
 		$tmp = $this->Client->query("CALL clientsNoScheduledOffersLOA('$date','$date')");
 		$tmp2 = $this->Client->query("SELECT COUNT(DISTINCT Loa.clientId) as totalClients FROM loa AS Loa WHERE Loa.inactive <> 1
-									 		AND Loa.endDate >= '$date'");
+									 		AND Loa.endDate >= '$date' AND $loaSiteCondition");
 
 		//get the date of the last live package
 		$clientsNoPackages[1][1]['numClients'] = 0;
@@ -2267,7 +2299,7 @@ class ReportsController extends AppController {
 			
 			if ($clientId && $loaId) {
 				$lastLiveDate = $this->Client->query("SELECT DATEDIFF('$date',MAX(OfferLive.endDate)) as numDays, loaLevelId, membershipPackagesRemaining, membershipBalance
-									FROM offerLive as OfferLive
+									FROM $offerLive as OfferLive
 									INNER JOIN clientLoaPackageRel USING(packageId)
 									INNER JOIN loa as Loa USING(loaId)
 									WHERE clientLoaPackageRel.clientId = {$clientId} AND loaId = {$loaId} AND OfferLive.endDate <= '$date'

@@ -5,11 +5,12 @@ App::import('Vendor', 'nusoap_client/lib/nusoap');
 class ClientsController extends AppController {
 
 	var $name = 'Clients';
+	var $uses = array('Client', 'ClientThemeRel', 'ClientDestinationRel');
 
 	function beforeFilter() {
 		parent::beforeFilter();
 		$this->set('currentTab', 'property');
-		$this->set('clientId', $this->Client->id);
+		$this->set('clientId', @$this->params['pass'][0]);
 		$this->Country = new Country;
 	}
 
@@ -56,15 +57,57 @@ class ClientsController extends AppController {
 			$this->redirect(array('action'=>'index'));
 		}
 		if (!empty($this->data)) {
-	        $this->data['Client']['seoName'] = $this->convertToSeoName($this->data['Client']['name']);
+			$clientCollectionIds = $this->Client->find('list', array('conditions' => 'Client.clientTypeId = 14'));
+			
+			//set collection id
+			if (!empty($this->data['Client']['clientCollectionId'])) {
+				$this->data['Client']['parentClientId'] = $this->data['Client']['clientCollectionId'];
+				
+			//remove collection id as parent if it is not checked and clientCollectionId is empty
+			} elseif (isset($this->data['Client']['parentClientId']) && array_key_exists($this->data['Client']['parentClientId'], $clientCollectionIds)) {
+				$this->data['Client']['parentClientId'] = null;
+			}
+		    /** SORT AMENITIES **/
+		    if (!empty($this->data['sortedAmenities'])):
+				$ordAmLst = array();
+				parse_str($this->data['sortedAmenities'], $ordAmLst);
+				unset($this->data['sortedAmenities']);		    
+				foreach ($this->data['ClientAmenityRel'] as $k => $am) {
+					  $this->data['ClientAmenityRel'][$k]['weight'] = array_pop(array_keys($ordAmLst['ordAmLst'], $am['amenityId'], true));
+				}
+		    endif;
+	         /** END SORT **/
+	         $this->data['Client']['seoName'] = $this->convertToSeoName($this->data['Client']['name']);
+		   $this->Client->ClientDestinationRel->deleteAll(array('ClientDestinationRel.clientId' => $this->data['Client']['clientId']));
 			if ($this->Client->saveAll($this->data)) {
 				if (isset($this->data['ClientAmenityRel']) && !empty($this->data['ClientAmenityRel'])) {
-			    	foreach ($this->data['ClientAmenityRel'] as $am) {
-				        $clientAmenityRelIds[] = @$am['clientAmenityRelId'];
-			    	}
-			    	$this->Client->ClientAmenityRel->deleteAll(array('clientId' => $this->data['Client']['clientId'], 'NOT' => array('clientAmenityRelId' => $clientAmenityRelIds)));
+					  foreach ($this->data['ClientAmenityRel'] as $am) {
+						    $clientAmenityRelIds[] = @$am['clientAmenityRelId'];
+					  }
+					  $this->Client->ClientAmenityRel->deleteAll(array('clientId' => $this->data['Client']['clientId'], 'NOT' => array('clientAmenityRelId' => $clientAmenityRelIds)));
 				}
-			    
+				
+			    	//delete all themes
+			    	$this->Client->ClientThemeRel->deleteAll(array('clientId' => $this->data['Client']['clientId']), true, true);
+				if(!empty($this->data['ClientThemeRel'])):
+				    $clientThemeRel = array();
+				    foreach ($this->data['ClientThemeRel'] as $site => $themes) {
+					  foreach ($themes as $theme):
+						if (isset($clientThemeRel[$theme])) {
+						    $clientThemeRel[$theme]['ClientThemeRel']['sites'][] = $site;
+						} else {
+						    $clientThemeRel[$theme]['ClientThemeRel'] = array('themeId' => $theme,
+											  'clientId' => $this->data['Client']['clientId'],
+											  'sites' => array($site));  
+						}
+					  endforeach;
+				    }
+				    $this->Client->ClientThemeRel->saveThemes($clientThemeRel);
+				//    foreach ($clientThemeRel as $k => $v):
+				//	  $this->Client->ClientThemeRel->create();
+				//	  $this->Client->ClientThemeRel->save($v);
+				//    endforeach;
+			    	endif;
 				$this->Session->setFlash(__('The Client has been saved', true));
 				$this->redirect(array('action'=>'edit', 'id' => $id));
 			} else {
@@ -76,6 +119,7 @@ class ClientsController extends AppController {
 		if (empty($this->data)) {
 		    $this->Client->recursive = 2;
 			$this->data = $this->Client->read(null, $id);
+			$this->data['Client']['clientCollectionId'] = $this->data['Client']['parentClientId'];
 		}
 
 		// map clientTracking: use clientTrackingTypeId as key
@@ -85,8 +129,26 @@ class ClientsController extends AppController {
 		$this->data['ClientTracking'] = $client_trackings;
 		
 		$clientTypeIds = $this->Client->ClientType->find('list');
-		$themes = $this->Client->Theme->find('list');
+		$clientCollectionIds = $this->Client->find('list', array('conditions' => 'Client.clientTypeId = 14'));
+		$themes = $this->Client->Theme->find('list', array('order' => 'themeName'));
 		$destinations = $this->Client->Destination->find('list', array('order' => array('destinationName')));
+
+        // SET UP Client Theme Rels
+		$this->Client->ClientThemeRel->recursive = -1;
+		$this->data['LuxurylinkClientThemeRel'] = array();
+		$this->data['FamilyClientThemeRel'] = array();
+		foreach (@$this->data['ClientThemeRel'] as $k => $v) {
+		    $clientThemeRel = $this->Client->ClientThemeRel->find('first', array('conditions' => array('ClientThemeRel.clientThemeRelId' => $v['clientThemeRelId'])));
+            
+		    if (@in_array('luxurylink', $clientThemeRel['ClientThemeRel']['sites'])) {
+		        $this->data['LuxurylinkClientThemeRel'][$v['themeId']] = $v['clientThemeRelId'];
+		    }
+		    
+		     if (@in_array('family', $clientThemeRel['ClientThemeRel']['sites'])) {
+    		    $this->data['FamilyClientThemeRel'][$v['themeId']] = $v['clientThemeRelId'];
+    		}
+		}
+
 		$this->set('client', $this->data);
 		//$this->set(compact('addresses', 'amenities','clientLevelIds','clientStatusIds','clientTypeIds','regions','clientAcquisitionSourceIds', 'loas', 'themes'));
 		$countryIds = $this->Country->find('list');
@@ -96,7 +158,7 @@ class ClientsController extends AppController {
 		if (!empty($this->data['Client']['stateId'])) {
 		    $cityIds = $this->Country->State->City->find('list', array('conditions' => array('City.stateId' => $this->data['Client']['stateId'])));
 		}
-		$this->set(compact('clientStatusIds','clientTypeIds','regions','clientAcquisitionSourceIds', 'loas', 'themes', 'destinations', 'countryIds', 'stateIds', 'cityIds'));
+		$this->set(compact('clientStatusIds','clientTypeIds','clientCollectionIds','regions','clientAcquisitionSourceIds', 'loas', 'themes', 'destinations', 'countryIds', 'stateIds', 'cityIds'));
 	}
 		
 	function search()

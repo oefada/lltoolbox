@@ -14,14 +14,23 @@ class SessionsController extends AppController {
 	    $this->redirect($this->LdapAuth->logout());
     }
     
-    
+    /**
+	 * Method allows administrators to navigate the application as another user.
+	 * The original user's information is stored in an 'originalUser' subarray.
+	 * A masquerading flag is also set.
+	 *
+	 * @param $user varchar the samaccountname of the user to masquerade as or 'revert'
+	 *
+	 */
     function masquerade($user = null) {
         $currentUser = $this->LdapAuth->user();
 
+		// Only allow Geeks to use this method
         if ((!$currentUser || !in_array('Geeks', $currentUser['LdapUser']['groups'])) && $user != 'revert') {
             $this->redirect('/');
         }
         
+		//if revert is passed in, then try to unmasquerade this user
         if ('revert' == $user) {
             if (!$currentUser['LdapUser']['masquerading']) {
                 $this->redirect('/');

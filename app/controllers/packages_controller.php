@@ -181,7 +181,8 @@ class PackagesController extends AppController {
 
 		$loaItemTypes = $this->Package->PackageLoaItemRel->LoaItem->LoaItemType->find('list');
 		$trackExpirationCriteriaIds = $this->Package->ClientLoaPackageRel->Loa->Track->ExpirationCriterium->find('list');
-		$this->set(compact('loaItemTypes', 'trackExpirationCriteriaIds'));
+		$familyAmenities = $this->Package->FamilyAmenity->find('list');
+		$this->set(compact('loaItemTypes', 'trackExpirationCriteriaIds', 'familyAmenities'));
 	}
 	
 	function getBlackoutDaysNumber($reverse = 0) {
@@ -385,7 +386,7 @@ class PackagesController extends AppController {
 		}
 
 		if (!empty($this->data)) {
-			if ($this->data['Package']['externalOfferUrl']) { // for hotel offers
+			if (!empty($this->data['Package']['externalOfferUrl'])) { // for hotel offers
 			
 				$this->data['Package']['packageName'] = $this->data['Package']['packageTitle'];
 				$this->data['Package']['validityStartDate'] = $this->data['Package']['startDate'];
@@ -410,7 +411,7 @@ class PackagesController extends AppController {
 				$cloned = false;
 			}
             
-            $this->data = $this->setCorrectNumNights($this->data);
+			$this->data = $this->setCorrectNumNights($this->data);
 			$this->getBlackoutDaysNumber();
 			$this->carveRatePeriods($clientId);
 			//remove all offer type defaults so we don't get duplicates
@@ -418,6 +419,8 @@ class PackagesController extends AppController {
 			
 			//remove all recurring days so we don't get duplicates
 			$this->Package->PackageValidityPeriod->deleteAll(array('PackageValidityPeriod.packageId' => $this->data['Package']['packageId'], 'isWeekDayRepeat' => 1), false);
+			
+			$this->Package->PackageAgeRange->deleteAll(array('PackageAgeRange.packageId' => $this->data['Package']['packageId']), false);
 			
 			if ($this->Package->saveAll($this->data) && $this->Package->save($this->data)) {
 				if(true == $cloned) {
@@ -443,6 +446,8 @@ class PackagesController extends AppController {
 			$client_trackings[$v['clientTrackingTypeId']] = $v;
 		}
 		$this->data['ClientTracking'] = $client_trackings;
+	
+		usort($package['PackageAgeRange'], array($this, 'sortPackageAgeRange')); //sort age ranges
 
 		$this->set('package', $package);
 		$this->getBlackoutDaysNumber(1);
@@ -511,7 +516,7 @@ class PackagesController extends AppController {
 		$this->setUpPackageLoaItemRelArray();
 		
 		$itemList = $this->Package->PackageLoaItemRel->LoaItem->find('list');
-		$itemCurrencyIds = $this->Package->PackageLoaItemRel->LoaItem->find('list', array('fields' => array('currencyId')));
+#		$itemCurrencyIds = $this->Package->PackageLoaItemRel->LoaItem->find('list', array('fields' => array('currencyId')));
 		
 		foreach($this->data['PackageRatePeriod'] as $ratePeriod):
 			//setup the arrays needed to draw the rate period table			
@@ -524,7 +529,7 @@ class PackagesController extends AppController {
 			
 			//setup an array that has itemId => array('startDate', 'endDate', 'price'), so we can draw each row
 			$itemRatePeriods['IncludedItems'][$ratePeriod['loaItemId']]['itemName'] = $itemList[$ratePeriod['loaItemId']];
-			$itemRatePeriods['IncludedItems'][$ratePeriod['loaItemId']]['currencyId'] = $itemCurrencyIds[$ratePeriod['loaItemId']];
+#			$itemRatePeriods['IncludedItems'][$ratePeriod['loaItemId']]['currencyId'] = $itemCurrencyIds[$ratePeriod['loaItemId']];
 			$itemRatePeriods['IncludedItems'][$ratePeriod['loaItemId']]['PackageRatePeriod'][] = $ratePeriod;
 		endforeach;
 		
@@ -552,9 +557,10 @@ class PackagesController extends AppController {
 		
 		$this->setupOfferTypeDefArray();
 		
+		$familyAmenities = $this->Package->FamilyAmenity->find('list');
 		$loaItemTypes = $this->Package->PackageLoaItemRel->LoaItem->LoaItemType->find('list');
 		$trackExpirationCriteriaIds = $this->Package->ClientLoaPackageRel->Loa->Track->ExpirationCriterium->find('list');
-		$this->set(compact('loaItemTypes', 'trackExpirationCriteriaIds'));
+		$this->set(compact('loaItemTypes', 'trackExpirationCriteriaIds', 'familyAmenities'));
 	}
 	
 	function preview($clientId = null, $id = null) {
@@ -616,6 +622,13 @@ class PackagesController extends AppController {
 	        $data['Package']['numNights'] = $numNights;
 	    }
 	    return $data;
+	}
+	function sortPackageAgeRange($a, $b) {
+		if ($a['rangeLow'] == $b['rangeLow']) {
+			return 0;
+		}
+
+		return $a['rangeLow'] < $b['rangeLow'] ? -1 : 1;
 	}
 	function setupOfferTypeDefArray()
 	{
@@ -729,6 +742,13 @@ class PackagesController extends AppController {
 		$notes = $this->Package->find('first', array('fields' => 'notes', 'conditions' => array('Package.packageId' => $id)));
 
 		$this->set('notes', $notes['Package']['notes']);
+	}
+	
+	function age_range_row() {
+		$this->autoRender = false;
+		$this->set('row', ++$this->params['url']['last']);
+		$this->set('data', null);
+		$this->render('_age_range_row');
 	}
 
 }

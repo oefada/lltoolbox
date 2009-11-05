@@ -146,7 +146,7 @@ class PaymentDetailsController extends AppController {
 
 	        if (!$badPaymentRequest) {
 	        	$webservice_live_url = 'http://toolbox.luxurylink.com/web_service_tickets?wsdl';
-	        	if (stristr($_SERVER['HTTP_HOST'], 'dev')) {
+	        	if (stristr($_SERVER['HTTP_HOST'], 'dev') || stristr($_SERVER['HTTP_HOST'], 'stage')) {
 	        		die('NO PAYMENT ALLOWED ON DEV');	
 	        	}
 	        	$webservice_live_url = 'http://toolbox.luxurylink.com/web_service_tickets?wsdl';

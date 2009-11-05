@@ -16,16 +16,13 @@ class WebServiceTicketsController extends WebServicesController
 					  );
 
 	var $serviceUrl = 'http://toolbox.luxurylink.com/web_service_tickets';
-	var $serviceUrlDev = 'http://toolboxdev.luxurylink.com/web_service_tickets';
+	var $serviceUrlDev = 'http://alee-toolboxdev.luxurylink.com/web_service_tickets';
+	var $serviceUrlStage = 'http://stage-toolbox.luxurylink.com/web_service_tickets';
 	var $errorResponse = false;
+	var $errorMsg = false;
 	var $api = array(
-					'newTicketProcessor1' => array(
-						'doc' => 'Receive new requests or winning bids from the ESB and create a new ticket',
-						'input' => array('in0' => 'xsd:string'),
-						'output' => array('return' => 'xsd:string')
-						),
-					'updateTrackDetail' => array(
-						'doc' => 'N/A',
+					'processNewTicket' => array(
+						'doc' => 'ticket processor functionality for family and luxurylink',
 						'input' => array('in0' => 'xsd:string'),
 						'output' => array('return' => 'xsd:string')
 						),
@@ -48,31 +45,31 @@ class WebServiceTicketsController extends WebServicesController
 						'doc' => 'N/A',
 						'input' => array('in0' => 'xsd:string'),
 						'output' => array('return' => 'xsd:string')
-						),
-					'createFixedPriceTicket' => array(
-						'doc' => 'N/A',
-						'input' => array('in0' => 'xsd:string'),
-						'output' => array('return' => 'xsd:string')
-						)	
+						)
 					);
 					
 	function beforeFilter() { $this->LdapAuth->allow('*'); }
-
-	function createFixedPriceTicket($in0) {
-		// only used for creating fixed price tickets.
-		// createNewTicket returns a ticket id for fixed price offers only so frontend can get ticket id
-		// -------------------------------------------------------------------------------
+	
+	function processNewTicket($in0) {
 		$json_decoded = json_decode($in0, true);
-		$ticketId = $this->createNewTicket($json_decoded);
+		$this->errorResponse = $this->errorMsg = false;
+		if (!$this->processTicket($json_decoded)) {			
+			@mail('devmail@luxurylink.com', 'WEBSERVICE (TICKETS): ERROR NO. ('. $this->errorResponse .')', $this->errorMsg . "<br /><br />\n\n" . print_r($json_decoded, true));
+			return 'FAIL';
+		}  else {
+			return 'SUCCESS';
+		}
+	}
 
-		if (!$ticketId) {
+	function processFixedPriceTicket($ticketData) {
+		if (!$ticketData['ticketId']) {
 			return false;
 		}
-		
+
 		// send out fixed price request emails
 		// -------------------------------------------------------------------------------
 		$params 					= array();
-		$params['ticketId']			= $ticketId;
+		$params['ticketId']			= $ticketData['ticketId'];
 		$params['send'] 			= 1;
 		$params['returnString']		= 0;
 		$params['manualEmailBody']	= 0;
@@ -83,7 +80,7 @@ class WebServiceTicketsController extends WebServicesController
 		$params['ppvNoticeTypeId'] = 9;     // Fixed Price - Winner Notification
 		$this->ppv(json_encode($params));	
 		
-		if (trim($json_decoded['requestNotes'])) {
+		if (trim($ticketData['requestNotes'])) {
 			$params['ppvNoticeTypeId'] = 10;     // Fixed Price - Client Exclusive Email
 		} else {
 			$params['ppvNoticeTypeId'] = 2;     // Reservation Request
@@ -95,107 +92,65 @@ class WebServiceTicketsController extends WebServicesController
 		
 		// return ticket id to the frontend live site
 		// -------------------------------------------------------------------------------
-		return $ticketId;
+		return true;
 	}
 
-	function newTicketProcessor1($in0) {
-		$json_decoded = json_decode($in0, true);
-		$this->errorResponse = false;
-		if (!$this->createNewTicket($json_decoded)) {			
-			$json_decoded['response'] = $this->errorResponse;
-			@mail('devmail@luxurylink.com','WEBSERVICE ERROR (TICKETS):  Cannot update ticket on toolboxprod-db', print_r($json_decoded, true));
-		} 
-		return json_encode($json_decoded);
-	}
-
-	function createNewTicket($data) {
+	function processTicket($data) {
 		// if we do not have these values then void
 		// -------------------------------------------------------------------------------
 		if (empty($data) || !is_array($data)) {
-			$this->errorResponse = 905;
+			$this->errorResponse = 1101;
+			$this->errorMsg = 'Ticket processing was aborted due to receiving invalid data.';
+			return false;	
+		}
+		if (!isset($data['ticketId']) || empty($data['ticketId'])) {
+			$this->errorResponse = 1102;
+			$this->errorMsg = 'Ticket processing was aborted because the required field ticketId was not supplied.';
 			return false;	
 		}
 		if (!isset($data['userId']) || empty($data['userId'])) {
-			$this->errorResponse = 906;
+			$this->errorResponse = 1103;
+			$this->errorMsg = 'Ticket processing was aborted because the required field userId was not supplied.';
 			return false;	
 		}
 		if (!isset($data['offerId']) || empty($data['offerId'])) {
-			$this->errorResponse = 907;
+			$this->errorResponse = 1104;
+			$this->errorMsg = 'Ticket processing was aborted because the required field offerId was not supplied.';
 			return false;	
 		}
 		
-		// gather all data for ticket creation
-		// -------------------------------------------------------------------------------
-		$this->User->recursive = -1;
-		$userData = $this->User->read(null, $data['userId']);
-		
-		$this->Address->recursive = -1;
-		$addressData = $this->Address->findByuserid($data['userId']);
-
 		$this->Offer->recursive = 2;
 		$offerData = $this->Offer->read(null, $data['offerId']);
+		$clientData = $this->Ticket->getClientsFromPackageId($data['packageId']);
 		
-		$offerTypeToFormat = $this->Offer->query("SELECT formatId FROM formatOfferTypeRel WHERE offerTypeId = " . $offerData['SchedulingInstance']['SchedulingMaster']['offerTypeId']);
-		$formatId = $offerTypeToFormat[0]['formatOfferTypeRel']['formatId'];
-		
+		// gather all data that is necessary
+		// -------------------------------------------------------------------------------
+		/*
+	
 		$offerLive = $this->Offer->query('SELECT * FROM offerLive WHERE offerId = ' . $data['offerId']);
 		$offerLive = $offerLive[0]['offerLive'];
 		
-		$clientData = $this->Ticket->getClientsFromPackageId($data['packageId']);
+		*/
 		
-		// create a new ticket!
-		// -------------------------------------------------------------------------------
-		$newTicket = array();
-		$newTicket['Ticket']['ticketStatusId'] 			 = 1;
-		$newTicket['Ticket']['packageId'] 				 = $data['packageId'];
-		$newTicket['Ticket']['offerId'] 				 = $data['offerId'];  
-		$newTicket['Ticket']['offerTypeId'] 			 = $offerData['SchedulingInstance']['SchedulingMaster']['offerTypeId'];
-		$newTicket['Ticket']['formatId'] 				 = $formatId;
-		
-		if (isset($data['requestQueueId'])) {
-			$newTicket['Ticket']['requestQueueId']     	 = $data['requestQueueId'];
-			$newTicket['Ticket']['requestQueueDatetime'] = $data['requestQueueDatetime'];
-			$newTicket['Ticket']['requestArrival'] 		 = $data['requestArrival'];
-			$newTicket['Ticket']['requestDeparture']	 = $data['requestDeparture'];
-			$newTicket['Ticket']['requestArrival2'] 	 = $data['requestArrival2'];
-			$newTicket['Ticket']['requestDeparture2']	 = $data['requestDeparture2'];
-			$newTicket['Ticket']['requestNumGuests']	 = $data['requestNumGuests'];
-			$newTicket['Ticket']['requestNotes']		 = $data['requestNotes'];
-			$newTicket['Ticket']['billingPrice'] 		 = $offerData['SchedulingInstance']['SchedulingMaster']['buyNowPrice'];
-		} elseif (isset($data['bidId'])) {
-			$newTicket['Ticket']['winningBidQueueId'] 	 = $data['winningBidQueueId'];
-			$newTicket['Ticket']['bidId'] 				 = $data['bidId'];
-			$newTicket['Ticket']['billingPrice'] 		 = $data['billingPrice'];
+		// TODO : check if ticket already exists
+		$result = $this->Ticket->read(null, $data['ticketId']);
+		if (!empty($result)) {
+			$data[] = $_SERVER;
+			@mail('devmail@luxurylink.com', 'WEBSERVICE (TICKETS): Duplicate Ticket Detected', print_r($data, true));
+			return true;
 		}
-		
-		$newTicket['Ticket']['userId'] 					 = $userData['User']['userId'];
-		$newTicket['Ticket']['userFirstName'] 			 = $userData['User']['firstName'];
-		$newTicket['Ticket']['userLastName'] 			 = $userData['User']['lastName'];
-		$newTicket['Ticket']['userEmail1']				 = $userData['User']['email'];
-		$newTicket['Ticket']['userWorkPhone']			 = $userData['User']['workPhone'];
-		$newTicket['Ticket']['userHomePhone']			 = $userData['User']['homePhone'];
-		$newTicket['Ticket']['userMobilePhone']			 = $userData['User']['mobilePhone'];
-		$newTicket['Ticket']['userFax'] 				 = $userData['User']['fax'];
-		$newTicket['Ticket']['userAddress1']			 = $addressData['Address']['address1'];
-		$newTicket['Ticket']['userAddress2']			 = $addressData['Address']['address2'];
-		$newTicket['Ticket']['userAddress3']			 = $addressData['Address']['address3'];
-		$newTicket['Ticket']['userCity']				 = $addressData['Address']['city'];
-		$newTicket['Ticket']['userState']				 = $addressData['Address']['stateName'];
-		$newTicket['Ticket']['userCountry']				 = $addressData['Address']['countryName'];
-		$newTicket['Ticket']['userZip']					 = $addressData['Address']['postalCode'];
 
-		$this->Ticket->create();
-		if ($this->Ticket->save($newTicket)) {
+		if ($this->Ticket->save($data)) {
 
-			$ticketId = $this->Ticket->getLastInsertId();
+			$ticketId = $data['ticketId'];
 
 			// update the tracks
 			// -------------------------------------------------------------------------------
 			$schedulingMasterId = $offerData['SchedulingInstance']['SchedulingMaster']['schedulingMasterId'];
-			$smid = $this->Track->query("select trackId from schedulingMasterTrackRel where schedulingMasterId = $schedulingMasterId limit 1");
+			$smid = $this->Track->query("SELECT trackId FROM schedulingMasterTrackRel WHERE schedulingMasterId = $schedulingMasterId LIMIT 1");
 			$smid = $smid[0]['schedulingMasterTrackRel']['trackId'];
 			if (!empty($smid)) {
-				$this->addTrackPending($smid, $newTicket['Ticket']['billingPrice']);
+				$this->addTrackPending($smid, $data['billingPrice']);
 			}
 			
 			// take down future instances of offers if reached package.maxNumSales
@@ -229,13 +184,14 @@ class WebServiceTicketsController extends WebServicesController
 
 			// if non-auction, just stop here as charging and ppv should not be auto
 			// -------------------------------------------------------------------------------
-			if ($formatId != 1 || !in_array($offerLive['offerTypeId'], array(1,2,6))) {
-				return $ticketId;	
+			if (!in_array($data['offerTypeId'], array(1,2,6))) {
+				$this->processFixedPriceTicket($data);
+				return true;
 			}
 			
 			// find out if there is a valid credit card to charge.  charge and send appropiate emails
 			// -------------------------------------------------------------------------------
-			$user_payment_setting = $this->findValidUserPaymentSetting($userData['User']['userId'], $data['bidId']);
+			$user_payment_setting = $this->findValidUserPaymentSetting($data['userId'], $data['userPaymentSettingId']);
 			
 			// set ppv params
 			// -------------------------------------------------------------------------------
@@ -267,7 +223,7 @@ class WebServiceTicketsController extends WebServicesController
             		$restricted_auction = true;
             	}	
 			}
-			if ($offerLive['isMystery'] || $offerLive['retailValue'] == 1 || $offerLIve['openingBid'] == 1) {
+			if ($offerLive['isMystery'] || $offerLive['retailValue'] == 1 || $offerLive['openingBid'] == 1) {
 				$restricted_auction = true;	
 			}
             if (stristr($offerLive['offerName'], 'RED') && stristr($offerLive['offerName'],'HOT')) {
@@ -294,16 +250,20 @@ class WebServiceTicketsController extends WebServicesController
 				$auto_charge_card = false;
 				$ppv_settings['ppvNoticeTypeId'] = 18;     // Auction Winner Email (PPV)
 			}
+		
+			if (!stristr($_SERVER['HTTP_HOST'], 'toolbox.luxurylink.com')) {
+				$auto_charge_card = false;
+			}
 
 			$autoSendClientWinnerPpv = false;
 			// auto charge here
 			// -------------------------------------------------------------------------------
 			if (!$restricted_auction && $auto_charge_card) {
 				$data_post = array();
-		        $data_post['userId']                 = $userData['User']['userId'];
+		        $data_post['userId']                 = $data['userId'];
 		        $data_post['ticketId']               = $ticketId;
-		        $data_post['paymentProcessorId']     = $newTicket['Ticket']['billingPrice'] > 500 ? 1 : 4;
-		        $data_post['paymentAmount']          = $newTicket['Ticket']['billingPrice'];
+		        $data_post['paymentProcessorId']     = $data['billingPrice'] > 500 ? 1 : 4;
+		        $data_post['paymentAmount']          = $data['billingPrice'];
 		        $data_post['initials']               = 'AUTOCHARGE';
 		        $data_post['autoCharge']             = 1;
 		        $data_post['saveUps']                = 0;
@@ -335,28 +295,10 @@ class WebServiceTicketsController extends WebServicesController
 			return true;	
 			
 		} else {			
-			// ticket was not succesfully created so send devmail alert
+			// ticket was not succesfully saved
 			// -------------------------------------------------------------------------------
-			$this->errorResponse = 908;
-
-			$errorBody = "DEBUG MESSAGE\n\n";
-			$errorBody.= "--------------------------------\n\n";
-			$errorBody.= "\nINPUT DATA:\n";
-			$errorBody.= print_r($data, true);
-			$errorBody.= "\nTICKET DATA CREATE ATTEMPT\n";
-			$errorBody.= print_r($newTicket, true);
-			$errorBody.= "\nUSER DATA\n";
-			$errorbody.= print_r($userData, true);
-			$errorBody.= "\nOFFER DATA\n";
-			$errorBody.= print_r($offerData, true);
-			$errorBody.= "\nUSER PAYMENT DATA\n";
-			$errorBody.= print_r($user_payment_setting, true);
-			
-			$emailFrom = 'System<geeks@luxurylink.com>';
-			$emailHeaders = "From: $emailFrom\r\n";
-        	
-			@mail('devmail@luxurylink.com', 'Ticketing Error - Failed to Create New Ticket', $errorBody, $emailHeaders);
-
+			$this->errorResponse = 1105;
+			$this->errorMsg = "Toolbox could not save this ticket record because the database is down or the data is invalid.";
 			return false;
 		}
 	}
@@ -446,9 +388,11 @@ class WebServiceTicketsController extends WebServicesController
 		$userPaymentData	= $this->findValidUserPaymentSetting($ticketData['userId']);
 
 		$promoGcCofData		= $this->Ticket->getPromoGcCofData($ticketId, $ticket['Ticket']['billingPrice']);
+		
+		// ***************************************************************************************************************
+		// ALL VARIABLES ARE SET HERE -- THIS WAY WE DONT HAVE TO CHANGE A MILLION TEMPLATES IF CHANGE IS MADE TO DB FIELD
+		// ***************************************************************************************************************
 
-		// vars for all email templates
-		// -------------------------------------------------------------------------------
 		$userId 			= $userData['userId'];
 		$userFirstName		= ucwords(strtolower($userData['firstName']));
 		$userLastName		= ucwords(strtolower($userData['lastName']));
@@ -490,8 +434,11 @@ class WebServiceTicketsController extends WebServicesController
 		$checkoutHash		= md5($ticketId . $userId . $offerId . 'LL_L33T_KEY');
 		$checkoutKey		= base64_encode(serialize(array('ticketId' => $ticketId, 'userId' => $userId, 'offerId' => $offerId, 'zKey' => $checkoutHash)));
 		$checkoutLink		= "https://www.luxurylink.com/my/my_purchase.php?z=$checkoutKey";
+
 		if (stristr($_SERVER['HTTP_HOST'], 'dev')) {
-			$checkoutLink		= "https://livedev.luxurylink.com/my/my_purchase.php?z=$checkoutKey";
+			$checkoutLink		= "https://alee-lldev.luxurylink.com/my/my_purchase.php?z=$checkoutKey";
+		} elseif (stristr($_SERVER['HTTP_HOST'], 'stage')) {
+			$checkoutLink		= "https://stage.luxurylink.com/my/my_purchase.php?z=$checkoutKey";
 		}
 		
 		$loaLevelId			= isset($clientData[0]['Loa']['loaLevelId']) ? $clientData[0]['Loa']['loaLevelId'] : false;
@@ -541,7 +488,9 @@ class WebServiceTicketsController extends WebServicesController
 		// -------------------------------------------------------------------------------
 		$dateRequestLink = "https://www.luxurylink.com/my/my_date_request.php?tid=$ticketId";
 		if (stristr($_SERVER['HTTP_HOST'], 'dev')) {
-			$dateRequestLink = "https://livedev.luxurylink.com/my/my_date_request.php?tid=$ticketId";
+			$dateRequestLink = "https://alee-lldev.luxurylink.com/my/my_date_request.php?tid=$ticketId";
+		} elseif (stristr($_SERVER['HTTP_HOST'], 'stage')) {
+			$dateRequestLink = "https://stage.luxurylink.com/my/my_date_request.php?tid=$ticketId";
 		}
 
 		// for MasterCard sponsor only
@@ -626,6 +575,27 @@ class WebServiceTicketsController extends WebServicesController
 		$clientCcEmail 		= $clients[$client_index]['contact_cc_string'];
 		$clientAdjustedPrice = ($clients[$client_index]['percentOfRevenue'] / 100) * $ticketData['billingPrice'];
 		
+		// ********* SITE NAME **********
+		switch ($ticketData['siteId']) {
+			case 1:
+				$siteName = 'Luxury Link';
+				$siteDisplay = 'LuxuryLink.com';
+				$siteUrl = 'http://www.luxurylink.com/';
+				$siteHeader = '990000';
+				$headerLogo = 'http://www.luxurylink.com/images/ll_logo_2009_2.gif';
+				break;
+			case 2:
+				$siteName = 'Family Travel';
+				$siteDisplay = 'FamilyTravel.com';
+				$siteUrl = 'http://www.familytravel.com/';
+				$siteHeader = 'DE6F0A';
+				$headerLogo = 'http://www.luxurylink.com/images/shared/ppv_header_logo_test.jpg';
+				break;
+		}
+		$siteId = $ticketData['siteId'];
+
+		// TODO:  change email address when live with new domain
+
 		// fetch template with the vars above
 		// -------------------------------------------------------------------------------
 		ob_start();
@@ -633,14 +603,14 @@ class WebServiceTicketsController extends WebServicesController
 			case 1:
 				// send out res confirmation
 				include('../vendors/email_msgs/ppv/conf_ppv.html');
-				$emailSubject = "Your Luxury Link Booking is Confirmed - $clientNameP";
+				$emailSubject = "Your $siteName Booking is Confirmed - $clientNameP";
 				$emailFrom = ($isAuction) ? "Luxurylink.com<resconfirm@luxurylink.com>" : "LuxuryLink.com<reservations@luxurylink.com>";
 				$emailReplyTo = ($isAuction) ? "resconfirm@luxurylink.com" : "reservations@luxurylink.com";
 				break;
 			case 2:
 				// send out res request
 				include('../vendors/email_msgs/ppv/res_ppv.html');
-				$emailSubject = "Please Confirm This Luxury Link Booking - $userFirstName $userLastName";
+				$emailSubject = "Please Confirm This $siteName Booking - $userFirstName $userLastName";
 				$emailFrom = ($isAuction) ? "Luxurylink.com<resrequests@luxurylink.com>" : "LuxuryLink.com<reservations@luxurylink.com>";
 				$emailReplyTo = ($isAuction) ? "resrequests@luxurylink.com" : "reservations@luxurylink.com";
 				$userEmail = $clientPrimaryEmail;
@@ -648,7 +618,7 @@ class WebServiceTicketsController extends WebServicesController
 				break;
 			case 4: 
 				include('../vendors/email_msgs/ppv/client_ppv.html');
-				$emailSubject = "Luxury Link Auction Winner Notification - $userFirstName $userLastName";
+				$emailSubject = "$siteName Auction Winner Notification - $userFirstName $userLastName";
 				$emailFrom = "LuxuryLink.com<auctions@luxurylink.com>";
 				$emailReplyTo = 'auctions@luxurylink.com';
 				$userEmail = $clientPrimaryEmail;
@@ -656,19 +626,19 @@ class WebServiceTicketsController extends WebServicesController
 				break;
 			case 5:
 				include('../vendors/email_msgs/notifications/winner_notification.html');
-				$emailSubject = "Luxury Link Auction Winner - $clientNameP";
+				$emailSubject = "$siteName Auction Winner - $clientNameP";
 				$emailFrom = "LuxuryLink.com<auction@luxurylink.com>";
 				$emailReplyTo = "auction@luxurylink.com";
 				break;
 			case 9:
 				include('../vendors/email_msgs/fixed_price/msg_fixedprice.html');
-				$emailSubject = "Luxury Link - Your Request Has Been Received";
+				$emailSubject = "$siteName - Your Request Has Been Received";
 				$emailFrom = "LuxuryLink.com<exclusives@luxurylink.com>";
 				$emailReplyTo = "exclusives@luxurylink.com";
 				break;
 			case 10:
 				include('../vendors/email_msgs/fixed_price/msg_client_fixedprice.html');
-				$emailSubject = "An Exclusive Luxury Link Booking Request Has Come In!";
+				$emailSubject = "An Exclusive $siteName Booking Request Has Come In!";
 				$emailFrom = "LuxuryLink.com<exclusives@luxurylink.com>";
 				$emailReplyTo = "exclusives@luxurylink.com";
 				$userEmail = $clientPrimaryEmail;
@@ -683,49 +653,49 @@ class WebServiceTicketsController extends WebServicesController
 				break;
 			case 12:
 				include('../vendors/email_msgs/fixed_price/notification_acknowledgement.html');
-				$emailSubject = "Your Luxury Link Travel Booking - $clientNameP";
+				$emailSubject = "Your $siteName Travel Booking - $clientNameP";
 				$emailFrom = ($isAuction) ? "Luxurylink.com<auction@luxurylink.com>" : "LuxuryLink.com<exclusives@luxurylink.com>";
 				$emailReplyTo = ($isAuction) ? "auction@luxurylink.com" : "exclusives@luxurylink.com";
 				break;
 			case 13:
 				include('../vendors/email_msgs/fixed_price/notification_dates_available.html');
-				$emailSubject = "Your Luxury Link Travel Booking - $clientNameP";
+				$emailSubject = "Your $siteName Travel Booking - $clientNameP";
 				$emailFrom = ($isAuction) ? "Luxurylink.com<auction@luxurylink.com>" : "LuxuryLink.com<exclusives@luxurylink.com>";
 				$emailReplyTo = ($isAuction) ? "auction@luxurylink.com" : "exclusives@luxurylink.com";
 				break;
 			case 14:
 				include('../vendors/email_msgs/fixed_price/notification_dates_not_available.html');
-				$emailSubject = "Your Luxury Link Travel Booking - $clientNameP";
+				$emailSubject = "Your $siteName Travel Booking - $clientNameP";
 				$emailFrom = ($isAuction) ? "Luxurylink.com<auction@luxurylink.com>" : "LuxuryLink.com<exclusives@luxurylink.com>";
 				$emailReplyTo = ($isAuction) ? "auction@luxurylink.com" : "exclusives@luxurylink.com";
 				break;
 			case 15:
 				include('../vendors/email_msgs/notifications/chase_money_notification.html');
-				$emailSubject = "Luxury Link Auction Winner - $clientNameP";
+				$emailSubject = "$siteName Auction Winner - $clientNameP";
 				$emailFrom = "LuxuryLink.com<auction@luxurylink.com>";
 				$emailReplyTo = "auction@luxurylink.com";
 				break;
 			case 16:
 				include('../vendors/email_msgs/notifications/first_offense_flake.html');
-				$emailSubject = "Luxury Link Auction Winner - $clientNameP";
+				$emailSubject = "$siteName Auction Winner - $clientNameP";
 				$emailFrom = "LuxuryLink.com<auction@luxurylink.com>";
 				$emailReplyTo = "auction@luxurylink.com";
 				break;
 			case 17:
 				include('../vendors/email_msgs/notifications/second_offense_flake.html');
-				$emailSubject = "Luxury Link Auction Winner - $clientNameP";
+				$emailSubject = "$siteName Auction Winner - $clientNameP";
 				$emailFrom = "LuxuryLink.com<auction@luxurylink.com>";
 				$emailReplyTo = "auction@luxurylink.com";
 				break;
 			case 18:
 				include('../vendors/email_msgs/notifications/18_auction_winner_ppv.html');
-				$emailSubject = "Luxury Link Auction Winner Receipt - $clientNameP";
+				$emailSubject = "$siteName Auction Winner Receipt - $clientNameP";
 				$emailFrom = "LuxuryLink.com<auction@luxurylink.com>";
 				$emailReplyTo = "auction@luxurylink.com";
 				break;
 			case 19:
 				include('../vendors/email_msgs/notifications/19_auction_winner_declined_expired.html');
-				$emailSubject = "Luxury Link Auction Winner Notification - $clientNameP";
+				$emailSubject = "$siteName Auction Winner Notification - $clientNameP";
 				$emailFrom = "LuxuryLink.com<auction@luxurylink.com>";
 				$emailReplyTo = "auction@luxurylink.com";
 				break;
@@ -741,7 +711,7 @@ class WebServiceTicketsController extends WebServicesController
 		$emailBody = ob_get_clean();
 
 		if (in_array($ppvNoticeTypeId, array(5,18,19)) && $liveOfferData['isMystery']) {
-			$emailSubject = "Luxury Link Mystery Auction Winner";
+			$emailSubject = "$siteName Mystery Auction Winner";
 		}
 		
 		// if sending from toolbox tool ppvNotice add screen (manual edit and send)
@@ -784,7 +754,8 @@ class WebServiceTicketsController extends WebServicesController
 							break;
 						case 10:
 							include('../vendors/email_msgs/fixed_price/msg_client_fixedprice.html');
-							break;
+					
+					break;
 					}
 					$emailBody = ob_get_clean();
 					$userEmail = $clientPrimaryEmail;
@@ -803,10 +774,11 @@ class WebServiceTicketsController extends WebServicesController
 
 	function sendPpvEmail($emailTo, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials) {
 		
-		if (stristr($_SERVER['HTTP_HOST'], 'dev')) {
+		if (stristr($_SERVER['HTTP_HOST'], 'dev') || stristr($_SERVER['HTTP_HOST'], 'stage')) {
 			$appendDevMessage = "---- DEV MAIL ---- \n<br />ORIGINAL TO:  $emailTo\n<br />ORIGINAL CC: $emailCc\n<br />ORIGINAL BCC: $emailBcc";
 			$emailTo = $emailCc = $emailBcc = 'devmail@luxurylink.com';	
 			$emailBody = $appendDevMessage . $emailBody;
+			$emailBody.= print_r($_SERVER, true);
 			$emailSubject = "DEV - " . $emailSubject;
 		}
 		
@@ -891,12 +863,13 @@ class WebServiceTicketsController extends WebServicesController
 		}
 	}
 		
-	function findValidUserPaymentSetting($userId, $bidId = null) {
-		
-		$ups = $this->User->query("select * from userPaymentSetting as UserPaymentSetting where userId = $userId and inactive = 0 order by primaryCC desc, expYear desc");
-		if ($bidId && is_numeric($bidId)) {
-			$ups = $this->User->query("select * from userPaymentSetting as UserPaymentSetting where userId = $userId and userPaymentSettingId = (select userPaymentSettingId from bid where bidId = $bidId)");
+	function findValidUserPaymentSetting($userId, $upsId = null) {
+		if ($upsId && is_numeric($upsId)) {
+			$ups = $this->User->query("SELECT * FROM userPaymentSetting AS UserPaymentSetting WHERE userId = $userId AND userPaymentSettingId = $upsId");
+		} else {
+			$ups = $this->User->query("SELECT * FROM userPaymentSetting AS UserPaymentSetting WHERE userId = $userId AND inactive = 0 ORDER BY primaryCC DESC, expYear DESC");
 		}
+
 		$year_now = date('Y');
 		$month_now = date('m');
 		if (empty($ups)) {
@@ -950,7 +923,8 @@ class WebServiceTicketsController extends WebServicesController
 
 		// DEV STOP!
 		// ---------------------------------------------------------------------------
-		if (stristr($_SERVER['HTTP_HOST'], 'dev')) {
+		if (stristr($_SERVER['HTTP_HOST'], 'dev') || stristr($_SERVER['HTTP_HOST'], 'stage')) {
+			$data[] = $_SERVER;
 			@mail('devmail@luxurylink.com','DEV - PAYMENT STOP', print_r($data, true));
 			die();
 		}
@@ -1182,6 +1156,18 @@ class WebServiceTicketsController extends WebServicesController
 		}
 		
 		$this->Ticket->save($ticketStatusChange);
+		
+		// ********* SITE NAME **********
+		switch ($ticket['Ticket']['siteId']) {
+			case 1:
+				$siteName = 'Luxury Link';
+				break;
+			case 2:
+				$siteName = 'Family';
+				break;
+			default:
+				$siteName = '';
+		}
 
 		// RAF promo -- send out referrer purchase notification
 		// ---------------------------------------------------------------------------
@@ -1192,7 +1178,7 @@ class WebServiceTicketsController extends WebServicesController
 				$emailTo = $rafData['User']['email'];
 				$emailFrom = $emailReplyTo = 'referafriend@luxurylink.com';
 				$emailCc = $emailBcc = '';
-				$emailSubject = 'Your Friend Has Made a Luxury Link Purchase';
+				$emailSubject = "Your Friend Has Made a $siteName Purchase";
 				$ppvNoticeTypeId = 21;
 				$ppvInitials = 'AUTO_RAF';
 				$ticketId = $ticket['Ticket']['ticketId'];
