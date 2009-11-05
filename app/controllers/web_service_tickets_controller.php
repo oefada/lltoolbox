@@ -125,17 +125,23 @@ class WebServiceTicketsController extends WebServicesController
 		
 		// gather all data that is necessary
 		// -------------------------------------------------------------------------------
-		/*
-	
-		$offerLive = $this->Offer->query('SELECT * FROM offerLive WHERE offerId = ' . $data['offerId']);
-		$offerLive = $offerLive[0]['offerLive'];
+		switch ($data['siteId']) {
+			case 1:
+				$ticketSite = 'offerLuxuryLink';
+				break;
+			case 2:
+				$ticketSite = 'offerFamily';
+				break;
+		}
+		if ($ticketSite) {
+			$offerLive = $this->Offer->query("SELECT * FROM $ticketSite WHERE offerId = " . $data['offerId']);
+			$offerLive = $offerLive[0][$ticketSite];	
+		}
 		
-		*/
-		
-		// TODO : check if ticket already exists
 		$result = $this->Ticket->read(null, $data['ticketId']);
 		if (!empty($result)) {
 			$data[] = $_SERVER;
+			$data[] = $result;
 			@mail('devmail@luxurylink.com', 'WEBSERVICE (TICKETS): Duplicate Ticket Detected', print_r($data, true));
 			return true;
 		}
@@ -251,7 +257,7 @@ class WebServiceTicketsController extends WebServicesController
 				$ppv_settings['ppvNoticeTypeId'] = 18;     // Auction Winner Email (PPV)
 			}
 		
-			if (!stristr($_SERVER['HTTP_HOST'], 'toolbox.luxurylink.com')) {
+			if (stristr($_SERVER['HTTP_HOST'], 'dev') || stristr($_SERVER['HTTP_HOST'], 'stage')) {
 				$auto_charge_card = false;
 			}
 
