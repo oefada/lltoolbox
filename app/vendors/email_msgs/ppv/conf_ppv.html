@@ -1,6 +1,6 @@
 <?php include('../vendors/email_msgs/email_includes/header.html');?>
 
-<h1 style="color:#990000;font-size:16px;margin:0px;padding:0px;margin-bottom:30px;">Your Reservation is Confirmed!</h1>
+<h1 style="color:#<?=$siteHeader;?>;font-size:16px;margin:0px;padding:0px;margin-bottom:30px;">Your Reservation is Confirmed!</h1>
 
 <p>
 <span style="font-weight:bold;">User Account ID:</span>  <?php echo $userId;?><br />
@@ -78,11 +78,11 @@ Please present a copy upon check-in.
 			<div style="width: 245px; height: 189px; padding: 8px 12px 12px 8px; background: url(http://www.luxurylink.com/images/shared/shadow-gal-lrg-light-olive.gif) no-repeat top left; overflow: hidden;"><img src="http://www.luxurylink.com/images/por/<?php echo $oldProductId;?>/<?php echo $oldProductId;?>-gal-lrg-01.jpg" alt="<?php echo $packageName;?>" border="0" /></div>
 		</td>
 		<td width="100%" align="left" valign="top">
-			<div style="color:#990000;font-size:16px;font-weight:bold;"><?php echo $clientNameP;?></div>
+			<div style="color:#<?=$siteHeader;?>;font-size:16px;font-weight:bold;"><?php echo $clientNameP;?></div>
 			<div style="color:#444444;font-size:12px;"><?php echo $locationDisplay;?></div><br />
-			<div style="color:#990000;font-size:12px;"><?php echo $packageName;?></div>
+			<div style="color:#<?=$siteHeader;?>;font-size:12px;"><?php echo $packageName;?></div>
 			<div style="height:15px;margin-top:15px;border-top:1px solid #B0B0B0;">&nbsp;</div>
-			<div style="color:#990000;font-weight:bold;font-size:12px;margin-bottom:15px;">Reservation Details:</div>
+			<div style="color:#<?=$siteHeader;?>;font-weight:bold;font-size:12px;margin-bottom:15px;">Reservation Details:</div>
 			<table cellspacing="0" cellpadding="5" border="0">
 			<tr>
 				<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="160">Confirmation #:</td>
@@ -112,7 +112,7 @@ Please present a copy upon check-in.
 <p><?php echo $legalText;?></p>
 
 <div style="padding:15px;background-color:#E4E4E4;margin-bottom:15px;">
-	<div style="color:#990000;"><strong>Please contact the property directly for any special requests.</strong></div>
+	<div style="color:#<?=$siteHeader;?>;"><strong>Please contact the property directly for any special requests.</strong></div>
 	<?php foreach ($clients as $k => $client) : ?>
 		<div>
 		<?php echo $client['contacts'][0]['ppv_name'];?><br />
@@ -126,7 +126,7 @@ Please present a copy upon check-in.
 
 <?php if (!$isAuction) : ?>	
 	<p>
-	Luxury Link 'Buy Now' Cancellation Policy
+	<?=$siteName;?> 'Buy Now' Cancellation Policy
 	<ul>
 		<li>Cancellation up to 15 days prior to trip entails a penalty fee of US $35 plus any additional hotel penalties.</li>
 		<li>Cancellation that is between the day of departure and 14 days prior to entails a penalty fee of US $100 plus any additional hotel penalties.</li>
@@ -136,10 +136,10 @@ Please present a copy upon check-in.
 <?php endif;?>
 
 <?php if ($isAuction) : ?>
-	<p><strong class="color:#990000;">As stated in our rules section, this package is non-refundable.</strong></p>
+	<p><strong class="color:#<?=$siteHeader;?>;">As stated in our rules section, this package is non-refundable.</strong></p>
 <?php endif;?>
 
-<p>Luxury Link strongly recommends the purchase of travel insurance. There are many reputable companies from which to choose; please contact your insurance provider for a recommendation.</p>
+<p><?=$siteName;?> strongly recommends the purchase of travel insurance. There are many reputable companies from which to choose; please contact your insurance provider for a recommendation.</p>
 
 <p>
 If you have any questions or additional needs, please contact our Travel Concierge at (888) 297-3299 or (310) 215-8060.

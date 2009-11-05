@@ -1,14 +1,14 @@
 <?php include('../vendors/email_msgs/email_includes/header.html');?>
 
-<h1 style="color:#990000;font-size:16px;margin:0px;padding:0px;margin-bottom:30px;">You received <?=$fpRequestType;?> request from:</h1>
+<h1 style="color:#<?=$siteHeader;?>;font-size:16px;margin:0px;padding:0px;margin-bottom:30px;">You received <?=$fpRequestType;?> request from:</h1>
 
 <div style="padding:10px;background-color:#E0E0CD;margin-top:25px;margin-bottom:25px;">
 <table cellpadding="5" cellspacing="0" border="0" width="100%">
 	<tr>
 		<td colspan="2" style="padding-bottom:15px; border-bottom:1px solid silver;">
-			<div style="color:#990000;font-size:16px;font-weight:bold;"><?php echo $clientNameP;?></div>
+			<div style="color:#<?=$siteHeader;?>;font-size:16px;font-weight:bold;"><?php echo $clientNameP;?></div>
 			<div style="color:#444444;font-size:12px;"><?php echo $locationDisplay;?></div><br />
-			<div style="color:#990000;font-size:12px;"><?php echo $packageName;?></div>
+			<div style="color:#<?=$siteHeader;?>;font-size:12px;"><?php echo $packageName;?></div>
 		</td>
 	</tr>
 	<tr>

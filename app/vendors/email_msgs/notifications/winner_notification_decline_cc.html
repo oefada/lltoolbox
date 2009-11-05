@@ -1,13 +1,13 @@
 <?php include('../vendors/email_msgs/email_includes/header.html');?>
 
-<h1 style="color:#990000;font-size:16px;margin:0px;padding:0px;margin-bottom:30px;">Your credit card on file has been declined</h1>
+<h1 style="color:#<?=$siteHeader;?>;font-size:16px;margin:0px;padding:0px;margin-bottom:30px;">Your credit card on file has been declined</h1>
 
 <p>Ticket Reference ID: <?=$ticketId;?><br /><br /></p>
 
 <p>Dear <?php echo $userFirstName;?> <?php echo $userLastName;?>,<p>
 	
 <p style="font-weight:bold;">
-This is an <span style="color:#990000;">Declined Credit Card Notification</span> for <?=$packageName;?> at <?=$clientNameP;?>.
+This is an <span style="color:#<?=$siteHeader;?>;">Declined Credit Card Notification</span> for <?=$packageName;?> at <?=$clientNameP;?>.
 </p>	
 
 <p><br /><center><a href="<?php echo $checkoutLink;?>"><img src="http://www.luxurylink.com/images/buttons/btn_email_update_cc.gif" alt="Update Credit Card Information" border="0" /><a/></center><br /><br /></p>
@@ -22,9 +22,9 @@ This is an <span style="color:#990000;">Declined Credit Card Notification</span>
 			<div style="width: 245px; height: 189px; padding: 8px 12px 12px 8px; background: url(http://www.luxurylink.com/images/shared/shadow-gal-lrg-light-olive.gif) no-repeat top left; overflow: hidden;"><img src="http://www.luxurylink.com/images/por/<?php echo $oldProductId;?>/<?php echo $oldProductId;?>-gal-lrg-01.jpg" alt="<?php echo $packageName;?>" border="0" /></div>
 		</td>
 		<td align="left" valign="top">
-			<div style="color:#990000;font-size:16px;font-weight:bold;"><?php echo $clientNameP;?></div>
+			<div style="color:#<?=$siteHeader;?>;font-size:16px;font-weight:bold;"><?php echo $clientNameP;?></div>
 			<div style="color:#444444;font-size:12px;"><?php echo $locationDisplay;?></div><br />
-			<div style="color:#990000;font-size:12px;"><?php echo $packageName;?> <br /><br /><a style="color:#336699;" href="http://www.luxurylink.com/portfolio/por_offer_redirect.php?oid=<?=$offerId;?>">View Package Details</a></div>
+			<div style="color:#<?=$siteHeader;?>;font-size:12px;"><?php echo $packageName;?> <br /><br /><a style="color:#336699;" href="http://www.luxurylink.com/portfolio/por_offer_redirect.php?oid=<?=$offerId;?>">View Package Details</a></div>
 		</td>
 	</tr>
 </table>
@@ -33,7 +33,7 @@ This is an <span style="color:#990000;">Declined Credit Card Notification</span>
 Please <a href="<?php echo $checkoutLink;?>">click here</a> to enter a new credit card number. 
 In order to secure your package we need to receive payment within 24 
 hours of the auction closing. Should you need additional assistance, please do not 
-hesitate to contact a Luxury Link representative at (888) 297-3299 or (310) 215-8060 who will 
+hesitate to contact a <?=$siteName;?> representative at (888) 297-3299 or (310) 215-8060 who will 
 be able to help finalize your transaction.
 </p>
 

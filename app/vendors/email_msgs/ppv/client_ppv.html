@@ -3,11 +3,11 @@
 <p>Dear <?php echo $clientName;?>,</p>
 
 <p>
-The following Luxury Link auction package has been paid in full.  We will be contacting you soon to request a reservation for this package.
+The following <?=$siteName;?> auction package has been paid in full.  We will be contacting you soon to request a reservation for this package.
 </p>		
 	
 <?php if ($guarantee) : ?>
-	<p>On this occasion Luxury Link will subsidize the winning bid amount to guarantee $<?=$guarantee;?>; this amount will be reflected on your month end statement.</p>
+	<p>On this occasion <?=$siteName;?> will subsidize the winning bid amount to guarantee $<?=$guarantee;?>; this amount will be reflected on your month end statement.</p>
 <?php endif ;?>
 	
 <table cellpadding="10" cellspacing="0" border="0" style="width:100%;background-color:#E0E0CD;margin-top:15px;margin-bottom:15px;">
@@ -16,9 +16,9 @@ The following Luxury Link auction package has been paid in full.  We will be con
 			<div style="width: 245px; height: 189px; padding: 8px 12px 12px 8px; background: url(http://www.luxurylink.com/images/shared/shadow-gal-lrg-light-olive.gif) no-repeat top left; overflow: hidden;"><img src="http://www.luxurylink.com/images/por/<?php echo $oldProductId;?>/<?php echo $oldProductId;?>-gal-lrg-01.jpg" alt="<?php echo $packageName;?>" border="0" /></div>
 		</td>
 		<td width="100%" align="left" valign="top">
-			<div style="color:#990000;font-size:16px;font-weight:bold;"><?php echo $clientNameP;?></div>
+			<div style="color:#<?=$siteHeader;?>;font-size:16px;font-weight:bold;"><?php echo $clientNameP;?></div>
 			<div style="color:#444444;font-size:12px;"><?php echo $locationDisplay;?></div><br />
-			<div style="color:#990000;font-size:12px;"><?php echo $packageName;?></div>
+			<div style="color:#<?=$siteHeader;?>;font-size:12px;"><?php echo $packageName;?></div>
 			<div style="height:15px;margin-top:15px;border-top:1px solid #B0B0B0;">&nbsp;</div>
 			<table cellspacing="0" cellpadding="5" border="0">
 			<tr>

@@ -1,6 +1,6 @@
 <?php include('../vendors/email_msgs/email_includes/header.html');?>
 
-<h1 style="color:#990000;font-size:16px;margin:0px;padding:0px;margin-bottom:30px;">Congratulations, you won the <?=$offerTypeName;?> for <?=$clientNameP;?></h1>
+<h1 style="color:#<?=$siteHeader;?>;font-size:16px;margin:0px;padding:0px;margin-bottom:30px;">Congratulations, you won the <?=$offerTypeName;?> for <?=$clientNameP;?></h1>
 
 <p>
 <span style="font-weight:bold;">User Account ID:</span>  <?php echo $userId;?><br />
@@ -78,9 +78,9 @@ Please <a style="font-weight:bold;" href="<?=$checkoutLink;?>">update your credi
 			<div style="width: 245px; height: 189px; padding: 8px 12px 12px 8px; background: url(http://www.luxurylink.com/images/shared/shadow-gal-lrg-light-olive.gif) no-repeat top left; overflow: hidden;"><img src="http://www.luxurylink.com/images/por/<?php echo $oldProductId;?>/<?php echo $oldProductId;?>-gal-lrg-01.jpg" alt="<?php echo $packageName;?>" border="0" /></div>
 		</td>
 		<td width="100%" align="left" valign="top">
-			<div style="color:#990000;font-size:16px;font-weight:bold;"><?php echo $clientNameP;?></div>
+			<div style="color:#<?=$siteHeader;?>;font-size:16px;font-weight:bold;"><?php echo $clientNameP;?></div>
 			<div style="color:#444444;font-size:12px;"><?php echo $locationDisplay;?></div><br />
-			<div style="color:#990000;font-size:12px;"><?php echo $packageName;?><div style="margin-top:3px;"><a style="color:#336699;" href="http://www.luxurylink.com/portfolio/por_offer_redirect.php?oid=<?=$offerId;?>">View Package Details</a></div></div>
+			<div style="color:#<?=$siteHeader;?>;font-size:12px;"><?php echo $packageName;?><div style="margin-top:3px;"><a style="color:#336699;" href="http://www.luxurylink.com/portfolio/por_offer_redirect.php?oid=<?=$offerId;?>">View Package Details</a></div></div>
 			<table cellspacing="0" cellpadding="5" border="0">
 			<tr>
 				<td style="color:#444444;font-size:12px;padding-top:20px;" align="center">
@@ -93,7 +93,7 @@ Please <a style="font-weight:bold;" href="<?=$checkoutLink;?>">update your credi
 	<tr>
 		<td colspan="2" style="color:#444444;font-size:12px;">
 			In order to secure your package we must receive payment within 24 hours of the auction closing.<br /><br />
-			Should you need additional assistance, please do not hesitate to contact a Luxury Link representative at 
+			Should you need additional assistance, please do not hesitate to contact a <?=$siteName;?> representative at 
 			(888) 297-3299 or (310) 215-8060 to help finalize your transaction.
 		</td>
 	</tr>

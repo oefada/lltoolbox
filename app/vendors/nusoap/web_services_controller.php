@@ -98,6 +98,8 @@ class WebServicesController extends AppController
 			// changing environment to dev
 			if (stristr($_SERVER['HTTP_HOST'], 'dev')) {
 				$this->serviceUrl = $this->serviceUrlDev;
+			} elseif (stristr($_SERVER['HTTP_HOST'], 'stage')) {
+				$this->serviceUrl = $this->serviceUrlStage;
 			}
 			$this->_soap_server->configureWSDL($wsdl, $urn, $this->serviceUrl);				
 				

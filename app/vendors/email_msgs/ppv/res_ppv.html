@@ -1,15 +1,15 @@
 <?php include('../vendors/email_msgs/email_includes/header.html');?>
 
-<h1 style="color:#990000;font-size:16px;margin:0px;padding:0px;margin-bottom:30px;">PLEASE CONFIRM THIS BOOKING REQUEST.</h1>
+<h1 style="color:#<?=$siteHeader;?>;font-size:16px;margin:0px;padding:0px;margin-bottom:30px;">PLEASE CONFIRM THIS BOOKING REQUEST.</h1>
 
 <p>Dear <?php echo $clientName;?>,</p>
 
 <?php if ($isAuction) : ?>
-<p><strong>The following Luxury Link auction package has been paid in full.</strong></p>
+<p><strong>The following <?=$siteName;?> auction package has been paid in full.</strong></p>
 <?php endif; ?>
 
 <p>
-Please reply to confirm the following reservation to Luxury Link and <strong>be sure to include the confirmation number</strong>. 
+Please reply to confirm the following reservation to <?=$siteName;?> and <strong>be sure to include the confirmation number</strong>. 
 If the requested dates are not available, please advise alternate dates.
 </p>
 
@@ -17,9 +17,9 @@ If the requested dates are not available, please advise alternate dates.
 <table cellpadding="5" cellspacing="0" border="0" width="100%">
 	<tr>
 		<td colspan="2" style="padding-bottom:15px; border-bottom:1px solid silver;">
-		<div style="color:#990000;font-size:16px;font-weight:bold;"><?php echo $clientNameP;?></div>
+		<div style="color:#<?=$siteHeader;?>;font-size:16px;font-weight:bold;"><?php echo $clientNameP;?></div>
 		<div style="color:#444444;font-size:12px;"><?php echo $locationDisplay;?></div><br />
-		<div style="color:#990000;font-size:12px;"><?php echo $packageName;?></div>
+		<div style="color:#<?=$siteHeader;?>;font-size:12px;"><?php echo $packageName;?></div>
 		</td>
 	</tr>
 	<tr>

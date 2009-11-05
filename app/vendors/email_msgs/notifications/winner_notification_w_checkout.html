@@ -5,7 +5,7 @@
 <?php if ($offerTypeId == 1) :?>
 							 <!-- Standard Auction Messaging -->
 							<p>
-							Congratulations! You have placed the winning bid for the Luxury Link Auction, 
+							Congratulations! You have placed the winning bid for the <?=$siteName;?> Auction, 
 							<?php echo $packageName;?>, which closed <?php echo $offerEndDate;?> Pacific Time. 
 							</p>
 
@@ -13,7 +13,7 @@
 							<!-- Best Shot Auction Messaging -->
 							<p>
 							Congratulations! You have placed one of the top <?php echo $maxNumWinners;?> winning bids 
-							for the Luxury Link Best Shot Auction, <?php echo $packageName;?>, which closed 
+							for the <?=$siteName;?> Best Shot Auction, <?php echo $packageName;?>, which closed 
 							<?php echo $offerEndDate;?> Pacific Time. All winning bidders will pay the same price, 
 							which may be equal to or LESS than your best shot bid, but never more. 
 							</p>
@@ -22,7 +22,7 @@
 							<!-- Dutch Auction Messaging -->
 							<p>
 							Congratulations! You have placed one of the top <?php echo $maxNumWinners;?> winning bids 
-							for the Luxury Link Dutch Auction, <?php echo $packageName;?>, which closed 
+							for the <?=$siteName;?> Dutch Auction, <?php echo $packageName;?>, which closed 
 							<?php echo $offerEndDate;?> Pacific Time. All winning bidders will pay the same price, 
 							which may be equal to or LESS than your best shot bid, but never more. 
 							</p>
@@ -101,7 +101,7 @@
 						</p>
 
 						<p>
-						Luxury Link strongly recommends the purchase of travel insurance. There are many reputable companies from which to choose; please contact your insurance provider for a recommendation.
+						<?=$siteName;?> strongly recommends the purchase of travel insurance. There are many reputable companies from which to choose; please contact your insurance provider for a recommendation.
 						</p>
 
 
@@ -118,8 +118,8 @@
                         
 <p>
 Auction Department<br>
-LuxuryLink.com<br>
-http://www.luxurylink.com<br>
+<?=$siteDisplay;?><br>
+<?=$siteUrl;?><br>
 Toll Free in the U.S. 888-297-3299<br>
 Outside the U.S. 310-215-8060<br>
 Facsimile 310-215-8279</p>

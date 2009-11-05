@@ -1,6 +1,6 @@
 <?php include('../vendors/email_msgs/email_includes/header.html');?>
 
-<h1 style="color:#990000;font-size:16px;margin:0px;padding:0px;margin-bottom:30px;">Congratulations, you won the auction for <?=$clientNameP;?></h1>
+<h1 style="color:#<?=$siteHeader;?>;font-size:16px;margin:0px;padding:0px;margin-bottom:30px;">Congratulations, you won the auction for <?=$clientNameP;?></h1>
 
 <p>
 <span style="font-weight:bold;">User Account ID:</span>  <?php echo $userId;?><br />
@@ -77,9 +77,9 @@ and we'll complete your booking.
 			<div style="width: 245px; height: 189px; padding: 8px 12px 12px 8px; background: url(http://www.luxurylink.com/images/shared/shadow-gal-lrg-light-olive.gif) no-repeat top left; overflow: hidden;"><img src="http://www.luxurylink.com/images/por/<?php echo $oldProductId;?>/<?php echo $oldProductId;?>-gal-lrg-01.jpg" alt="<?php echo $packageName;?>" border="0" /></div>
 		</td>
 		<td width="100%" align="left" valign="top">
-			<div style="color:#990000;font-size:16px;font-weight:bold;"><?php echo $clientNameP;?></div>
+			<div style="color:#<?=$siteHeader;?>;font-size:16px;font-weight:bold;"><?php echo $clientNameP;?></div>
 			<div style="color:#444444;font-size:12px;"><?php echo $locationDisplay;?></div><br />
-			<div style="color:#990000;font-size:12px;"><?php echo $packageName;?><div style="margin-top:3px;"><a style="color:#336699;" href="http://www.luxurylink.com/portfolio/por_offer_redirect.php?oid=<?=$offerId;?>">View Package Details</a></div></div>
+			<div style="color:#<?=$siteHeader;?>;font-size:12px;"><?php echo $packageName;?><div style="margin-top:3px;"><a style="color:#336699;" href="http://www.luxurylink.com/portfolio/por_offer_redirect.php?oid=<?=$offerId;?>">View Package Details</a></div></div>
 			<table cellspacing="0" cellpadding="5" border="0">
 			<tr>
 				<td style="color:#444444;font-size:12px;" align="center">
@@ -92,7 +92,7 @@ and we'll complete your booking.
 	</tr>
 	<tr>
 		<td colspan="2" style="color:#444444;font-size:12px;">
-			Once you <a href="<?=$dateRequestLink;?>">submit your preferred travel dates</a>, a Luxury Link Travel Concierge will assist you 
+			Once you <a href="<?=$dateRequestLink;?>">submit your preferred travel dates</a>, a <?=$siteName;?> Travel Concierge will assist you 
 			in securing reservations.  You can submit your dates online, or call us at 1-888-297-3299 / 1-310-215-8060.
 		</td>
 	</tr>
@@ -105,7 +105,7 @@ and we'll complete your booking.
 <p style="font-weight:bold;color:#990000;"><strong><br />As stated in our rules section, this package is non-refundable.<br /><br /></strong></p>
 
 <p>
-Luxury Link strongly recommends the purchase of travel insurance.  There are many reputable companies from which to choose; please contact your 
+<?=$siteName;?> strongly recommends the purchase of travel insurance.  There are many reputable companies from which to choose; please contact your 
 insurance provider for a recommendation.
 </p>
 

@@ -1,6 +1,6 @@
 <?php include('../vendors/email_msgs/email_includes/header.html');?>
 
-<h1 style="color:#990000;font-size:16px;margin:0px;padding:0px;margin-bottom:30px;">Congratulations, you won the <?=$offerTypeName;?> for <?=$clientNameP;?></h1>
+<h1 style="color:#<?=$siteHeader;?>;font-size:16px;margin:0px;padding:0px;margin-bottom:30px;">Congratulations, you won the <?=$offerTypeName;?> for <?=$clientNameP;?></h1>
 
 <p>
 <span style="font-weight:bold;">User Account ID:</span>  <?php echo $userId;?><br />
@@ -72,7 +72,7 @@ Thank you for your purchase of this special package from <?php echo $clientNameP
 
 <?php if (!$is_auc_fac) : ?>
 <div style="padding:15px;background-color:#E4E4E4;margin-top:15px;margin-bottom:15px;">
-	<div style="color:#990000;"><strong>To secure your reservations, please contact the property directly to place your reservations.</strong></div>
+	<div style="color:#<?=$siteHeader;?>;"><strong>To secure your reservations, please contact the property directly to place your reservations.</strong></div>
 	<?php foreach ($clients as $k => $client) : ?>
 		<p>
 		<?php echo $client['contacts'][0]['ppv_name'];?><br />
@@ -92,9 +92,9 @@ Thank you for your purchase of this special package from <?php echo $clientNameP
 			<div style="width: 245px; height: 189px; padding: 8px 12px 12px 8px; background: url(http://www.luxurylink.com/images/shared/shadow-gal-lrg-light-olive.gif) no-repeat top left; overflow: hidden;"><img src="http://www.luxurylink.com/images/por/<?php echo $oldProductId;?>/<?php echo $oldProductId;?>-gal-lrg-01.jpg" alt="<?php echo $packageName;?>" border="0" /></div>
 		</td>
 		<td align="left" valign="top">
-			<div style="color:#990000;font-size:16px;font-weight:bold;"><?php echo $clientNameP;?></div>
+			<div style="color:#<?=$siteHeader;?>;font-size:16px;font-weight:bold;"><?php echo $clientNameP;?></div>
 			<div style="color:#444444;font-size:12px;"><?php echo $locationDisplay;?></div><br />
-			<div style="color:#990000;font-size:12px;"><?php echo $packageName;?> <br /><br /><a style="color:#336699;" href="http://www.luxurylink.com/portfolio/por_offer_redirect.php?oid=<?=$offerId;?>">View Package Details</a></div>
+			<div style="color:#<?=$siteHeader;?>;font-size:12px;"><?php echo $packageName;?> <br /><br /><a style="color:#336699;" href="http://www.luxurylink.com/portfolio/por_offer_redirect.php?oid=<?=$offerId;?>">View Package Details</a></div>
 			<?php if ($is_auc_fac) :?>
 			<div style="height:15px;margin-top:15px;border-top:1px solid #B0B0B0;">&nbsp;</div>
 			<table cellspacing="0" cellpadding="5" border="0">
@@ -109,7 +109,7 @@ Thank you for your purchase of this special package from <?php echo $clientNameP
 	<tr>
 		<td colspan="2" style="color:#444444;font-size:12px;">
 		<a href="https://www.luxurylink.com/my/my_date_request.php?tid=<?php echo $ticketId;?>">Click here</a>
-			Once you submit our preferred travel dates, a Luxury Link Tarvel Concierge will assist you in securing those dates.  You can submit your dates online, or 
+			Once you submit our preferred travel dates, a <?=$siteName;?> Tarvel Concierge will assist you in securing those dates.  You can submit your dates online, or 
 			call us at 1-888-297-3299 / 1-310-215-8060.
 		</td>
 	</tr>
@@ -120,14 +120,14 @@ Thank you for your purchase of this special package from <?php echo $clientNameP
 <p><?php echo $validityNote;?></p>
 <p><?php echo $legalText;?></p>
 
-<p style="font-weight:bold;color:#990000;"><strong><br />Please note as stated in our rules section and on all LuxuryLink.com auction pages, this package is non-refundable.<br /><br /></strong></p>
+<p style="font-weight:bold;color:#<?=$siteHeader;?>;"><strong><br />Please note as stated in our rules section and on all <?=$siteDisplay;?> auction pages, this package is non-refundable.<br /><br /></strong></p>
 
 <p>
-Luxury Link strongly recommends the purchase of travel insurance.  There are many reputable companies from which to choose; please contact your insurance 
+<?=$siteName;?> strongly recommends the purchase of travel insurance.  There are many reputable companies from which to choose; please contact your insurance 
 provider for a recommendation!
 </p>
 
-<p>This email serves as your receipt that you have paid in full.  If you have any questions or additional needs, please contact the Auction Department at Luxury Link.</p>
+<p>This email serves as your receipt that you have paid in full.  If you have any questions or additional needs, please contact the Auction Department at <?=$siteName;?>.</p>
 
 <p>Have a fantastic trip!</p>
 
