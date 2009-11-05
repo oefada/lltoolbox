@@ -88,7 +88,7 @@ class ClientsController extends AppController {
 				}
 				
 			    	//delete all themes
-			    	$this->Client->ClientThemeRel->deleteAll(array('clientId' => $this->data['Client']['clientId']), true, true);
+			    	$this->Client->ClientThemeRel->deleteAll(array('ClientThemeRel.clientId' => $this->data['Client']['clientId']), true, true);
 				if(!empty($this->data['ClientThemeRel'])):
 				    $clientThemeRel = array();
 				    foreach ($this->data['ClientThemeRel'] as $site => $themes) {

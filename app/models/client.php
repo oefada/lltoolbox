@@ -201,5 +201,13 @@ class Client extends AppModel {
 		return true;
 	}
 	
+	//save client to multisite after an LOA has been saved
+	function set_sites($client_id, $sites) {
+	    $query = "DELETE FROM multiSite WHERE model = 'Client' AND modelId = {$client_id}";
+	    $this->query($query);
+	    $ins_query = "INSERT INTO multiSite (model, modelId, sites) VALUES ('Client', {$client_id}, '{$sites}')";
+	    $this->query($ins_query);
+	}
+	
 }
 ?>

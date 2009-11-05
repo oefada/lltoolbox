@@ -47,6 +47,7 @@ class Loa extends AppModel {
 	}
 	
 	function afterSave() {
+	      $this->Client->set_sites($this->data['Loa']['clientId'], implode(',', $this->data['Loa']['sites']));
 	      return;
 		if (isset($this->data['Loa']['clientId'])) {
 			// if any update to LOA, update the client record also so it gets update on live site for clients
