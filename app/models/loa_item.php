@@ -58,13 +58,13 @@ class LoaItem extends AppModel {
 
 		$carvedBoundaries = array();
 		$periodPrices = array();
+		$items = array();
 		$i = 0;
-
 		foreach ($ratePeriodBoundaries as $start => $end) :
 			$rangeStart = strtotime($start);
 			$rangeEnd = strtotime($end);
 			$carvedBoundaries[$i] = array('rangeStart' =>  date('Y-m-d', $rangeStart), 'rangeEnd' => date('Y-m-d', $rangeEnd));
-
+			
 			foreach($itemIds as $itemId):
 				$items[$itemId]['itemName'] = $itemList[$itemId];
 				//$items[$itemId]['currencyId'] = $currencyList[$itemId];

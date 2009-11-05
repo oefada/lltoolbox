@@ -38,8 +38,10 @@ class PackagesController extends AppController {
 		$packageStartDate = $this->data['Package']['validityStartDate']['year'] . '-' . $this->data['Package']['validityStartDate']['month'] . '-' . $this->data['Package']['validityStartDate']['day'];
 		$packageEndDate = $this->data['Package']['validityEndDate']['year'] . '-' . $this->data['Package']['validityEndDate']['month'] . '-' . $this->data['Package']['validityEndDate']['day'];
 		
-		$carvedRatePeriods = $this->Package->PackageLoaItemRel->LoaItem->carveRatePeriods($this->data['Package']['CheckedLoaItems'], $this->data['PackageLoaItemRel'], $packageStartDate, $packageEndDate); 
-		$this->data['PackageRatePeriod'] = $carvedRatePeriods['PackageRatePeriod'];
+		$carvedRatePeriods = $this->Package->PackageLoaItemRel->LoaItem->carveRatePeriods($this->data['Package']['CheckedLoaItems'], $this->data['PackageLoaItemRel'], $packageStartDate, $packageEndDate);
+		if (isset($carvedRatePeriods['PackageRatePeriod'])) {
+		   $this->data['PackageRatePeriod'] = $carvedRatePeriods['PackageRatePeriod'];
+		}
 	}
 	
 	function carveRatePeriodsForDisplay() {
@@ -441,9 +443,13 @@ class PackagesController extends AppController {
 		    $package = $this->data;
 		}
 		
+		$client_trackings = array();
+		
 		// map clientTracking: use clientTrackingTypeId as key
-		foreach ($this->data['ClientTracking'] as $k => $v) {
-			$client_trackings[$v['clientTrackingTypeId']] = $v;
+		if (isset($this->data['ClientTracking'])) {
+		   foreach ($this->data['ClientTracking'] as $k => $v) {
+			   $client_trackings[$v['clientTrackingTypeId']] = $v;
+		   }
 		}
 		$this->data['ClientTracking'] = $client_trackings;
 	
