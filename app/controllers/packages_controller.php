@@ -58,7 +58,6 @@ class PackagesController extends AppController {
 		$packageEndDate = $this->data['Package']['validityEndDate']['year'] . '-' . $this->data['Package']['validityEndDate']['month'] . '-' . $this->data['Package']['validityEndDate']['day'];
 		
 		$carvedRatePeriods = $this->Package->PackageLoaItemRel->LoaItem->carveRatePeriods($this->data['Package']['CheckedLoaItems'], $this->data['PackageLoaItemRel'], $packageStartDate, $packageEndDate);
-
 		$this->set('packageRatePeriods', $carvedRatePeriods);
 		$this->set('packageRatePreview', true);
 		$this->render(null,null,'package_rate_periods');
@@ -520,9 +519,8 @@ class PackagesController extends AppController {
 		$this->set('clientId', $clientId);
 		
 		$this->setUpPackageLoaItemRelArray();
-		
 		$itemList = $this->Package->PackageLoaItemRel->LoaItem->find('list');
-#		$itemCurrencyIds = $this->Package->PackageLoaItemRel->LoaItem->find('list', array('fields' => array('currencyId')));
+		//$itemCurrencyIds = $this->Package->PackageLoaItemRel->LoaItem->Loa->find('list', array('fields' => array('currencyId'), 'conditions' => array('Loa.loaId' => $this->data['ClientLoaPackageRel'][0]['loaId'])));
 		
 		foreach($this->data['PackageRatePeriod'] as $ratePeriod):
 			//setup the arrays needed to draw the rate period table			
@@ -535,7 +533,7 @@ class PackagesController extends AppController {
 			
 			//setup an array that has itemId => array('startDate', 'endDate', 'price'), so we can draw each row
 			$itemRatePeriods['IncludedItems'][$ratePeriod['loaItemId']]['itemName'] = $itemList[$ratePeriod['loaItemId']];
-#			$itemRatePeriods['IncludedItems'][$ratePeriod['loaItemId']]['currencyId'] = $itemCurrencyIds[$ratePeriod['loaItemId']];
+			$itemRatePeriods['IncludedItems'][$ratePeriod['loaItemId']]['currencyId'] = $this->data['Package']['currencyId'];
 			$itemRatePeriods['IncludedItems'][$ratePeriod['loaItemId']]['PackageRatePeriod'][] = $ratePeriod;
 		endforeach;
 		
@@ -546,7 +544,6 @@ class PackagesController extends AppController {
 		
 			$packageRatePeriods = $itemRatePeriods;
 			$packageRatePeriods['Boundaries'] = $boundaries;
-		
 			$this->set('packageRatePeriods', $packageRatePeriods);
 		endif;
 		

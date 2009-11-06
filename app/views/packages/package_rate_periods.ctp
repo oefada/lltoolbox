@@ -32,7 +32,7 @@
 		foreach($b['PackageRatePeriod'] as $itemRatePeriod) {
 			$currencyCode = $currencyCodes[$b['currencyId']];
 			echo '<td style="border-top: 1px solid #e5e5e5;text-align: center;color:#777">' . $itemRatePeriod['quantity'].'@'.$number->currency($itemRatePeriod['ratePeriodPrice'], $currencyCode);
-			if ($itemRatePeriod['feePercentDisplay']) {
+			if (isset($itemRatePeriod['feePercentDisplay'])) {
 				echo $itemRatePeriod['feePercentDisplay'];
 			}
 			echo '</td>';	

@@ -64,10 +64,12 @@ class LoaItem extends AppModel {
 			$rangeStart = strtotime($start);
 			$rangeEnd = strtotime($end);
 			$carvedBoundaries[$i] = array('rangeStart' =>  date('Y-m-d', $rangeStart), 'rangeEnd' => date('Y-m-d', $rangeEnd));
-			
 			foreach($itemIds as $itemId):
+				if (!isset($periodPrices[$i])) {
+				   $periodPrices[] = 0;
+				}
 				$items[$itemId]['itemName'] = $itemList[$itemId];
-				//$items[$itemId]['currencyId'] = $currencyList[$itemId];
+				$items[$itemId]['currencyId'] = $currencyList[$itemId];			
 				
 				if (empty($this->loaItems[$itemId]['LoaItemRatePeriod'])):									//if item has no rate periods, we always use the item base price
 					$ratePeriodPrice = $this->loaItems[$itemId]['LoaItem']['itemBasePrice'];
