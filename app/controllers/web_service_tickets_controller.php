@@ -444,7 +444,7 @@ class WebServiceTicketsController extends WebServicesController
 		if (stristr($_SERVER['HTTP_HOST'], 'dev')) {
 			$checkoutLink		= "https://alee-lldev.luxurylink.com/my/my_purchase.php?z=$checkoutKey";
 		} elseif (stristr($_SERVER['HTTP_HOST'], 'stage')) {
-			$checkoutLink		= "https://stage.luxurylink.com/my/my_purchase.php?z=$checkoutKey";
+			$checkoutLink		= "https://stage-luxurylink.luxurylink.com/my/my_purchase.php?z=$checkoutKey";
 		}
 		
 		$loaLevelId			= isset($clientData[0]['Loa']['loaLevelId']) ? $clientData[0]['Loa']['loaLevelId'] : false;
@@ -496,7 +496,7 @@ class WebServiceTicketsController extends WebServicesController
 		if (stristr($_SERVER['HTTP_HOST'], 'dev')) {
 			$dateRequestLink = "https://alee-lldev.luxurylink.com/my/my_date_request.php?tid=$ticketId";
 		} elseif (stristr($_SERVER['HTTP_HOST'], 'stage')) {
-			$dateRequestLink = "https://stage.luxurylink.com/my/my_date_request.php?tid=$ticketId";
+			$dateRequestLink = "https://stage-luxurylink.luxurylink.com/my/my_date_request.php?tid=$ticketId";
 		}
 
 		// for MasterCard sponsor only
