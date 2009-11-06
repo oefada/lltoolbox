@@ -1138,6 +1138,10 @@ div.multiSiteNarrow textarea  {
     width: 200px;
 }
 
+div.multiSiteSingle textarea {
+	width: 100%;
+}
+
 div.multiSiteNarrow span.siteName {
     font-weight: bold;
 }
