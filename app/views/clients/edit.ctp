@@ -89,36 +89,35 @@ foreach ($this->data['Client']['sites'] as $site) {
 		echo $form->input('numRooms');
 		echo $form->input('numRoomsText');
 		echo $form->input('starRating', array('type' => 'select', 'options' => array('3', '4', '5'), 'empty' => true));
-		if ($is_luxurylink):
 	?>
-	<div style="float: left; width: 400px" class="multiSiteNarrow multiSiteNarrowLeft">
-	<?	echo "<span class='siteName'>Luxury Link.com</span>";
-		echo $form->input('longDesc');
-		echo "<span class='siteName'>Luxury Link.com</span>";
-		echo $form->input('blurb');
-		echo "<span class='siteName'>Luxury Link.com</span>";
-		echo $form->input('keywords');
+
+
+	<?php if ($is_luxurylink):?>
+	<div style="float: left; <?=($is_family) ? 'width:47%;' : 'width:100%;'?>" class="multiSiteNarrow multiSiteSingle">
+	<?	echo "<span class='siteName'>Luxury Link.com - Long Desc</span>";
+		echo $form->input('longDesc', array('label'=>false));
+		echo "<span class='siteName'>Luxury Link.com - Blurb</span>";
+		echo $form->input('blurb', array('label'=>false));
+		echo "<span class='siteName'>Luxury Link.com - Keywords</span>";
+		echo $form->input('keywords', array('label'=>false));
 	?>
 	</div>
-	<?php endif;
-	      if ($is_family):
-		    $show_label = array('label' => false);
-		    if (!$is_luxurylink):
-				$show_label = array();
-		    endif;
-		    ?>
-	<div style="float: left; <?php if ($is_luxurylink) echo 'clear: right' ?>" class="multiSiteNarrow<?php if (!$is_luxurylink) echo ' multiSiteNarrowLeft' ?>">
+	<?php endif;?>
+
+	<?php if ($is_family):?>
+	<div style="float: left; <?=($is_luxurylink) ? 'clear:right;width:47%;' : 'width:100%;'?>" class="multiSiteNarrow multiSiteSingle">
 	<?	
-		echo "<span class='siteName'>Family Travel.com</span>";
-		echo $form->input('family_longDesc', $show_label);
-		echo "<span class='siteName'>Family Travel.com</span>";
-		echo $form->input('family_blurb', $show_label);
-		echo "<span class='siteName'>Family Travel.com</span>";
-		echo $form->input('family_keywords', $show_label);
+		echo "<span class='siteName'>Family Travel.com - Long Desc</span>";
+		echo $form->input('family_longDesc', array('label'=>false));
+		echo "<span class='siteName'>Family Travel.com - Blurb</span>";
+		echo $form->input('family_blurb', array('label'=>false));
+		echo "<span class='siteName'>Family Travel.com - Keywords</span>";
+		echo $form->input('family_keywords', array('label'=>false));
 	?>
 	</div>
 	<?php endif; ?>
-		<div class="controlset"><?echo $form->input('showTripAdvisorReview');?></div>
+
+	<div class="controlset"><?echo $form->input('showTripAdvisorReview');?></div>
 
 	<fieldset class="collapsible">
 		<legend class="handle">Contact Details</legend>
