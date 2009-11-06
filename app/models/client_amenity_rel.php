@@ -11,9 +11,16 @@ class ClientAmenityRel extends AppModel {
 	var $actsAs = array('Multisite');
 
 	  function save_amenity($data, $sites) {
+		    $this->useDbConfig = 'default';
 		    $this->create();
 		    $this->data['ClientAmenityRel'] = $data;
 		    $this->data['ClientAmenityRel']['sites'] = $sites;
+		    if (!isset($this->data['ClientAmenityRel']['clientAmenityRelId'])) {
+				$am = $this->query("SELECT * FROM clientAmenityRel WHERE clientId = {$this->data['ClientAmenityRel']['clientId']} AND  amenityId = {$this->data['ClientAmenityRel']['amenityId']}");
+				if (!empty($am)) {
+					  $this->data['ClientAmenityRel']['clientAmenityRelId'] = $am[0]['clientAmenityRel']['clientAmenityRelId'];
+				}		
+		    }
 		    $this->set($this->data);
 		    $this->save();
 	  }

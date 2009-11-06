@@ -272,7 +272,7 @@ class MultisiteBehavior extends ModelBehavior {
 	 * @param Object $model the model we are saving
 	 * @param string $database the database connection key
 	 */
-	function save($model, $database) {	  
+	function save($model, $database) {
 	  if (!isset($this->settings[$model->name]['disableWrite']) || $this->settings[$model->name]['disableWrite'] != true) {
 		$this->_setDb($model, $database);
 		$backup = clone($model);
