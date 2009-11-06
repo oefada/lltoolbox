@@ -2,7 +2,7 @@
 	<h3 class="handle">Setup</h3>
 	<div class="collapsibleContent disableAutoCollapse">
 		<?php
-		echo $form->input('siteId', array('label' => 'Package for'));
+		echo $form->input('siteId', array('label' => 'LOA Sites'));
 		if ($this->data['Package']['internalApproval'] == 1) {
 			echo $form->input('packageStatusId', array('label' => 'Status'));
 		} else {
