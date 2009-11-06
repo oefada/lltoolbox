@@ -29,7 +29,8 @@ class Client extends AppModel {
 						 'ChildClient' => array('className' => 'Client', 'foreignKey' => 'parentClientId'),
 						 'ClientContact' => array('className' => 'ClientContact', 'foreignKey' => 'clientId'),
 						 'ClientAmenityRel' => array('className' => 'ClientAmenityRel', 'foreignKey' => 'clientId'),
-						 'ClientThemeRel' => array('className' => 'ClientThemeRel', 'foreignKey' => 'clientId')
+						 'ClientThemeRel' => array('className' => 'ClientThemeRel', 'foreignKey' => 'clientId'),
+						 'ClientReview' => array('className' => 'ClientReview', 'foreignKey' => 'clientId')
 						);
 	
     var $hasAndBelongsToMany = array(
