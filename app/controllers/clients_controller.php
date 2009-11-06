@@ -83,6 +83,8 @@ class ClientsController extends AppController {
 				if (isset($this->data['ClientAmenityRel']) && !empty($this->data['ClientAmenityRel'])) {
 					  foreach ($this->data['ClientAmenityRel'] as $am) {
 						    $clientAmenityRelIds[] = @$am['clientAmenityRelId'];
+						    $am['clientId'] = $this->data['Client']['clientId'];
+						    $this->Client->ClientAmenityRel->save_amenity($am, $this->data['Client']['sites']);
 					  }
 					  $this->Client->ClientAmenityRel->deleteAll(array('ClientAmenityRel.clientId' => $this->data['Client']['clientId'], 'NOT' => array('clientAmenityRelId' => $clientAmenityRelIds)));
 				}
