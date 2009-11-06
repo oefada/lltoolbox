@@ -62,7 +62,8 @@ class Client extends AppModel {
 	  //use this array to define any models => fields that need to go into the client frontend databases
 	  //that do not exist in the toolbox client database
 	  var $frontend_fields = array('LoaLevel' => array('loaLevelId', 'loaLevelName'),
-					       'ClientType' => array('clientTypeName')
+					       'ClientType' => array('clientTypeName'),
+						 'Client' => array('oldProductId', 'city', 'state')
 					  );
 	
     function populate_frontend_fields() {
@@ -78,6 +79,12 @@ class Client extends AppModel {
 					  $client_type = $this->ClientType->findByClientTypeId($this->data['Client']['clientTypeId']);
 					  foreach ($fields as $field) {
 						    $data['Client'][$field] = $client_type['ClientType'][$field];
+					  }
+					  break;
+				case 'Client':
+					  $client = $this->find('first', array('fields' => $fields, 'conditions' => array('Client.clientId' => $this->data['Client']['clientId'])));
+					  foreach($fields as $field) {
+						    $data['Client'][$field] = $client['Client'][$field];
 					  }
 					  break;
 				default:
