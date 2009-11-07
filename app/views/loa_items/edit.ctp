@@ -204,6 +204,7 @@ if ($isGroup) {
 		<div class="input text">
 			<label>Fee</label>
 			<input class="MB_focusable" name="data[Fee][<?=$k;?>][feeId]" value="<?=$fee['feeId'];?>" id="Fee<?=$k;?>FeeId" type="hidden" />
+			<input class="MB_focusable" name="data[Fee][<?=$k;?>][feeTypeId]" value="<?=$fee['feeTypeId'];?>" id="Fee<?=$k;?>FeeTypeId" type="hidden" />
 			<input class="MB_focusable" name="data[Fee][<?=$k;?>][feeName]" value="<?=$fee['feeName'];?>" id="Fee<?=$k;?>FeeName" type="text" style="width:150px;" />
 			<input class="MB_focusable" name="data[Fee][<?=$k;?>][feePercent]" value="<?=$fee['feePercent'];?>" id="Fee<?=$k;?>FeePercent" type="text" style="width:100px;margin-left:20px;margin-right:5px;" /> 
 			<?php if ($fee['feeTypeId'] == 1) : ?>

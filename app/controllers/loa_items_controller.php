@@ -264,8 +264,8 @@ class LoaItemsController extends AppController {
 					);
 					$this->data['Fee'][] = $tmp;
 				}
-				usort($this->data['Fee'], array('LoaItemsController','usortFeeTypeId'));
 			}
+			usort($this->data['Fee'], array('LoaItemsController','usortFeeTypeId'));
 		}
 	}
 
