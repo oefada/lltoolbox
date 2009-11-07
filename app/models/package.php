@@ -165,12 +165,12 @@ class Package extends AppModel {
 		   $this->PackageAgeRange->deleteAll(array('packageId' => $this->data['Package']['packageId']), false);
 		}
 	   }
-	    $this->query("UPDATE offerLive SET validityStart = '{$this->data['Package']['validityStartDate']}', validityEnd = '{$this->data['Package']['validityEndDate']}', validityDisclaimer = '$validity_disclaimer' WHERE packageId = $this->id AND isAuction = 0 AND now() < endDate");
+	    $this->query("UPDATE offerLuxuryLink SET validityStart = '{$this->data['Package']['validityStartDate']}', validityEnd = '{$this->data['Package']['validityEndDate']}', validityDisclaimer = '$validity_disclaimer' WHERE packageId = $this->id AND isAuction = 0 AND now() < endDate");
 	    
 	    // update offer details in offerLive for hotel offers type (7)
 	    if (!empty($this->data['Package']['externalOfferUrl'])) {
 		$this->query("
-			    UPDATE offerLive
+			    UPDATE offerLuxuryLink
 			    SET validityStart = '{$this->data['Package']['validityStartDate']}', validityEnd = '{$this->data['Package']['validityEndDate']}',
 				    offerName = '{$this->data['Package']['packageTitle']}', shortBlurb = '{$this->data['Package']['shortBlurb']}', additionalDescription = '{$this->data['Package']['additionalDescription']}',
 				    offerIncludes = '{$this->data['Package']['packageIncludes']}', externalOfferUrl = '{$this->data['Package']['externalOfferUrl']}' 
