@@ -205,9 +205,9 @@ if ($isGroup) {
 			<label>Fee</label>
 			<input class="MB_focusable" name="data[Fee][<?=$k;?>][feeId]" value="<?=$fee['feeId'];?>" id="Fee<?=$k;?>FeeId" type="hidden" />
 			<input class="MB_focusable" name="data[Fee][<?=$k;?>][feeName]" value="<?=$fee['feeName'];?>" id="Fee<?=$k;?>FeeName" type="text" style="width:150px;" />
-			<input class="MB_focusable" name="data[Fee][<?=$k;?>][feePercent]" value="<?=$fee['feePercent'];?>" id="Fee<?=$k;?>FeePercent" type="text" style="width:100px;margin-left:20px;margin-right:5px;" /> %
+			<input class="MB_focusable" name="data[Fee][<?=$k;?>][feePercent]" value="<?=$fee['feePercent'];?>" id="Fee<?=$k;?>FeePercent" type="text" style="width:100px;margin-left:20px;margin-right:5px;" /> 
 			<?php if ($fee['feeTypeId'] == 1) : ?>
-				<div style="font-size:11px;padding:0px;margin:0px;margin-left:170px;">(e.g. Taxes, Service Charge)</div>
+				% <div style="font-size:11px;padding:0px;margin:0px;margin-left:170px;">(e.g. Taxes, Service Charge)</div>
 			<?php elseif ($fee['feeTypeId'] == 2) : ?>
 				<strong><?php echo $currencyCode;?></strong>
 				<div style="font-size:11px;padding:0px;margin:0px;margin-left:170px;">(e.g. Resort Fees)</div>
