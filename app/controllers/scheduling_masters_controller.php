@@ -444,7 +444,7 @@ class SchedulingMastersController extends AppController {
 	            $this->data['SchedulingMaster']['endDate'] = "$datePickerDate2[2]-$datePickerDate2[0]-$datePickerDate2[1] 01:00:00";
 
 				// set endDate for instance and offerLive
-			    $offerLiveResults = $this->OfferLive->query("SELECT OfferLive.* FROM offerLive as OfferLive INNER JOIN  offer AS Offer USING(offerId) WHERE Offer.schedulingInstanceId = " . $originalData['SchedulingInstance'][0]['schedulingInstanceId']);
+			    $offerLiveResults = $this->OfferLive->query("SELECT OfferLive.* FROM offerLuxuryLink as OfferLive INNER JOIN  offer AS Offer USING(offerId) WHERE Offer.schedulingInstanceId = " . $originalData['SchedulingInstance'][0]['schedulingInstanceId']);
 			    $schedulingInstance['SchedulingInstance']   			= $originalData['SchedulingInstance'][0];
 			    $schedulingInstance['SchedulingInstance']['endDate']    = $this->data['SchedulingMaster']['endDate'];
 				$offerLive['OfferLive']									= $offerLiveResults[0]['OfferLive'];			    
@@ -603,7 +603,7 @@ class SchedulingMastersController extends AppController {
 		    $newEndDate = date('Y-m-d H:i:s');
             
             $schedulingInstanceId = $this->data['SchedulingInstance'][0]['schedulingInstanceId'];
-		    $offerLiveResults = $this->OfferLive->query("SELECT OfferLive.* FROM offerLive as OfferLive INNER JOIN  offer AS Offer USING(offerId) WHERE Offer.schedulingInstanceId = ".$schedulingInstanceId);
+		    $offerLiveResults = $this->OfferLive->query("SELECT OfferLive.* FROM offerLuxuryLink as OfferLive INNER JOIN  offer AS Offer USING(offerId) WHERE Offer.schedulingInstanceId = ".$schedulingInstanceId);
 		    
             $schedulingMaster['SchedulingMaster']       = $this->data['SchedulingMaster'];
 		    $schedulingInstance['SchedulingInstance']   = $this->data['SchedulingInstance'][0];

@@ -29,14 +29,14 @@ class PromosController extends AppController {
 		
 		$results = $this->Promo->query("
 			SELECT count(*) AS numAuctions
-			FROM ticket INNER JOIN offerLive USING(offerId) INNER JOIN promoOfferTracking USING(offerId) INNER JOIN promoCode USING(promoCodeId) INNER JOIN promoCodeRel USING(promoCodeId)
+			FROM ticket INNER JOIN offerLuxuryLink as offerLive USING(offerId) INNER JOIN promoOfferTracking USING(offerId) INNER JOIN promoCode USING(promoCodeId) INNER JOIN promoCodeRel USING(promoCodeId)
 			WHERE promoId = $id AND isAuction = 1"
 		);
 		$this->set('num_auctions', $results[0][0]['numAuctions']);
 		
 		$results = $this->Promo->query("
 			SELECT count(*) AS numBuyNows
-			FROM ticket INNER JOIN offerLive USING(offerId) INNER JOIN promoOfferTracking USING(offerId) INNER JOIN promoCode USING(promoCodeId) INNER JOIN promoCodeRel USING(promoCodeId)
+			FROM ticket INNER JOIN offerLuxuryLink as offerLive USING(offerId) INNER JOIN promoOfferTracking USING(offerId) INNER JOIN promoCode USING(promoCodeId) INNER JOIN promoCodeRel USING(promoCodeId)
 			WHERE promoId = $id AND isAuction = 0
 		");
 		$this->set('num_buynows', $results[0][0]['numBuyNows']);

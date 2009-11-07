@@ -11,7 +11,7 @@ class WebServiceTicketsController extends WebServicesController
 
 	var $uses = array('Ticket', 'UserPaymentSetting','PaymentDetail', 'Client', 'User', 'Offer', 'Bid', 
 					  'ClientLoaPackageRel', 'Track', 'OfferType', 'Loa', 'TrackDetail', 'PpvNotice',
-					  'Address', 'OfferLive', 'SchedulingMaster', 'SchedulingInstance', 'Reservation',
+					  'Address', 'OfferLuxuryLink', 'SchedulingMaster', 'SchedulingInstance', 'Reservation',
 					  'PromoTicketRel', 'Promo', 'TicketReferFriend'
 					  );
 
@@ -378,7 +378,7 @@ class WebServiceTicketsController extends WebServicesController
 		$this->Address->recursive = -1;
 		$this->ClientLoaPackageRel->recursive = 0;
 		$ticket = $this->Ticket->read(null, $ticketId);
-		$liveOffer	= $this->Ticket->query("select * from offerLive as LiveOffer where offerId = " . $ticket['Ticket']['offerId'] . " limit 1");
+		$liveOffer	= $this->Ticket->query("select * from offerLuxuryLink as LiveOffer where offerId = " . $ticket['Ticket']['offerId'] . " limit 1");
 	
 		// data arrays
 		// -------------------------------------------------------------------------------

@@ -12,7 +12,7 @@ class TicketsController extends AppController {
 	var $helpers = array('Html', 'Form', 'Ajax', 'Text', 'Layout', 'Number');
 
 	var $uses = array('Ticket','OfferType', 'Format', 'User', 'ClientLoaPackageRel', 
-					  'Track', 'TrackDetail','Offer','Loa','Client', 'OfferLive', 
+					  'Track', 'TrackDetail','Offer','Loa','Client', 'OfferLuxuryLink', 
 					  'Reservation', 'PromoTicketRel', 'Promo', 'PromoCode'
 					  );
 
@@ -382,18 +382,18 @@ class TicketsController extends AppController {
 				$this->Session->setFlash(__('The ticket was not created.  The billingPrice cannot be blank and must be a number.', true), 'default', array(), 'error');
 			} else {
 				$this->User->recursive = 1;
-				$this->OfferLive->recursive = -1;
+				$this->OfferLuxuryLink->recursive = -1;
 				$userData = $this->User->read(null, $this->data['Ticket']['userId']);
-				$offerData = $this->OfferLive->read(null, $this->data['Ticket']['offerId']);
+				$offerData = $this->OfferLuxuryLink->read(null, $this->data['Ticket']['offerId']);
 				if (empty($userData)) {
 					$this->Session->setFlash(__('The ticket was not created.  Invalid User Id.', true), 'default', array(), 'error');
 				} elseif (empty($offerData)) {
 					$this->Session->setFlash(__('The ticket was not created.  Invalid Offer Id.', true), 'default', array(), 'error');
 				} else {
 					$this->data['Ticket']['ticketStatusId'] 	= 1;
-					$this->data['Ticket']['packageId'] 			= $offerData['OfferLive']['packageId'];
-					$this->data['Ticket']['formatId']			= in_array($offerData['OfferLive']['offerTypeId'], array(1,2,6)) ? 1 : 2;
-					$this->data['Ticket']['offerTypeId']		= $offerData['OfferLive']['offerTypeId'];
+					$this->data['Ticket']['packageId'] 			= $offerData['OfferLuxuryLink']['packageId'];
+					$this->data['Ticket']['formatId']			= in_array($offerData['OfferLuxuryLink']['offerTypeId'], array(1,2,6)) ? 1 : 2;
+					$this->data['Ticket']['offerTypeId']		= $offerData['OfferLuxuryLink']['offerTypeId'];
 					$this->data['Ticket']['userFirstName']		= $userData['User']['firstName'];
 					$this->data['Ticket']['userLastName']		= $userData['User']['lastName'];
 					$this->data['Ticket']['userEmail1']			= $userData['User']['email'];

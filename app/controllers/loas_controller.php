@@ -159,7 +159,7 @@ class LoasController extends AppController {
 											   INNER JOIN schedulingMaster sm USING (schedulingMasterId) 
 											   INNER JOIN schedulingInstance si USING (schedulingMasterId) 
 											   INNER JOIN offer o USING (schedulingInstanceId) 
-											   INNER JOIN offerLive as offerLive USING (offerId) 
+											   INNER JOIN offerLuxuryLink as offerLive USING (offerId) 
 											   WHERE smtr.trackId = ' . $track['track']['trackId']
 											   );
 			$offers = array();

@@ -35,7 +35,7 @@ class PackagePromoRelsController extends AppController {
 		$this->set('sortDirection', $sortDirection);
 
 		foreach ($packages as $package) {
-			$endDate = $this->PackagePromoRel->query('SELECT MIN(endDate) as endDate FROM offerLive WHERE packageId = '.$package['Package']['packageId'].' AND isClosed = 0 GROUP BY packageId');
+			$endDate = $this->PackagePromoRel->query('SELECT MIN(endDate) as endDate FROM offerLuxuryLink as offerLive WHERE packageId = '.$package['Package']['packageId'].' AND isClosed = 0 GROUP BY packageId');
 			$tickets = $this->Ticket->query("SELECT * FROM ticket AS Ticket 
 											INNER JOIN promoTicketRel AS PromoTicketRel USING(ticketId)
 											WHERE Ticket.packageId = '{$package['Package']['packageId']}'

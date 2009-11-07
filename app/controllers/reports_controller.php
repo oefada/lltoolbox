@@ -179,7 +179,7 @@ class ReportsController extends AppController {
                     //Get all live offers for this LOA
                     $liveOffers = $this->OfferType->query("SELECT OfferLive.offerTypeId, OfferLive.openingBid, OfferLive.buyNowPrice, ExpirationCriteria.expirationCriteriaId,
                                                                     Loa.membershipBalance, Loa.numberPackagesRemaining, COUNT(Bid.bidId) as numBids
-                                                                    FROM offerLive AS OfferLive 
+                                                                    FROM offerLuxuryLink AS OfferLive 
                                                                     LEFT JOIN bid AS Bid USING(offerId)
                                                                     INNER JOIN clientLoaPackageRel as cl USING(packageId) 
                                                                     INNER JOIN loa AS Loa USING(loaId)
@@ -408,7 +408,7 @@ class ReportsController extends AppController {
                     LEFT JOIN ticket AS Ticket ON (Ticket.offerId = Offer.offerId)
                     LEFT JOIN ticket AS Ticket2 ON (Ticket2.offerId = Offer.offerId AND Ticket2.ticketStatusId IN(3,4,5,6))
                     LEFT JOIN bid AS Bid ON (Bid.offerId = Offer.offerId)
-                    INNER JOIN offerLive AS OfferLive ON (OfferLive.offerId = Offer.offerId)
+                    INNER JOIN offerLuxuryLink AS OfferLive ON (OfferLive.offerId = Offer.offerId)
                     INNER JOIN schedulingInstance AS SchedulingInstance ON (SchedulingInstance.schedulingInstanceId = Offer.schedulingInstanceId)
                     INNER JOIN schedulingMaster AS SchedulingMaster ON (SchedulingMaster.schedulingMasterId = SchedulingInstance.schedulingMasterId)
                     INNER JOIN offerType as OfferType ON (OfferType.offerTypeId = SchedulingMaster.offerTypeId)
@@ -1042,28 +1042,28 @@ class ReportsController extends AppController {
 
             switch ( $this->data['condition2']['value'] ):
                 case 1:
-                    $subquery = '(SELECT COUNT(*) FROM offerLive as OfferLive2 WHERE NOW() BETWEEN OfferLive2.startDate AND OfferLive2.endDate AND OfferLive2.offerTypeId IN (1,2,6) AND OfferLive2.clientId = Client.clientId) AS countSubqueryOffers,';
+                    $subquery = '(SELECT COUNT(*) FROM offerLuxuryLink as OfferLive2 WHERE NOW() BETWEEN OfferLive2.startDate AND OfferLive2.endDate AND OfferLive2.offerTypeId IN (1,2,6) AND OfferLive2.clientId = Client.clientId) AS countSubqueryOffers,';
                     $having = 'HAVING countSubqueryOffers > 0';
                     break;
                 case 2:
-                    $subquery = '(SELECT COUNT(*) FROM offerLive as OfferLive2 WHERE NOW() BETWEEN OfferLive2.startDate AND OfferLive2.endDate AND OfferLive2.offerTypeId IN (3,4) AND OfferLive2.clientId = Client.clientId) AS countSubqueryOffers,';
+                    $subquery = '(SELECT COUNT(*) FROM offerLuxuryLink as OfferLive2 WHERE NOW() BETWEEN OfferLive2.startDate AND OfferLive2.endDate AND OfferLive2.offerTypeId IN (3,4) AND OfferLive2.clientId = Client.clientId) AS countSubqueryOffers,';
                     $having = 'HAVING countSubqueryOffers > 0';
                     break;
                 case 3:
-                    $subquery = '(SELECT COUNT(*) FROM offerLive as OfferLive2 WHERE NOW() BETWEEN OfferLive2.startDate AND OfferLive2.endDate AND OfferLive2.offerTypeId IN (1,2,6) AND OfferLive2.clientId = Client.clientId) AS countSubqueryOffers,';
+                    $subquery = '(SELECT COUNT(*) FROM offerLuxuryLink as OfferLive2 WHERE NOW() BETWEEN OfferLive2.startDate AND OfferLive2.endDate AND OfferLive2.offerTypeId IN (1,2,6) AND OfferLive2.clientId = Client.clientId) AS countSubqueryOffers,';
                     $having = 'HAVING countSubqueryOffers = 0';
                     break;
                 case 4:
-                    $subquery = '(SELECT COUNT(*) FROM offerLive as OfferLive2 WHERE NOW() BETWEEN OfferLive2.startDate AND OfferLive2.endDate AND OfferLive2.offerTypeId IN (3,4) AND OfferLive2.clientId = Client.clientId) AS countSubqueryOffers,';
+                    $subquery = '(SELECT COUNT(*) FROM offerLuxuryLink as OfferLive2 WHERE NOW() BETWEEN OfferLive2.startDate AND OfferLive2.endDate AND OfferLive2.offerTypeId IN (3,4) AND OfferLive2.clientId = Client.clientId) AS countSubqueryOffers,';
                     $having = 'HAVING countSubqueryOffers = 0';
                     break;
                 case 5:
-                    $subquery = '(SELECT COUNT(*) FROM offerLive as OfferLive2 WHERE NOW() BETWEEN OfferLive2.startDate AND OfferLive2.endDate AND OfferLive2.clientId = Client.clientId) AS countSubqueryOffers,';
+                    $subquery = '(SELECT COUNT(*) FROM offerLuxuryLink as OfferLive2 WHERE NOW() BETWEEN OfferLive2.startDate AND OfferLive2.endDate AND OfferLive2.clientId = Client.clientId) AS countSubqueryOffers,';
                     $having = 'HAVING countSubqueryOffers = 0';
                     break;
                 case 6:
-                    $subquery = '(SELECT COUNT(*) FROM offerLive as OfferLive2 WHERE NOW() BETWEEN OfferLive2.startDate AND OfferLive2.endDate AND OfferLive2.offerTypeId IN (1,2,6) AND OfferLive2.clientId = Client.clientId) AS countSubqueryOffers,';
-                    $subquery .= '(SELECT COUNT(*) FROM offerLive as OfferLive2 WHERE NOW() BETWEEN OfferLive2.startDate AND OfferLive2.endDate AND OfferLive2.offerTypeId IN (3,4) AND OfferLive2.clientId = Client.clientId) AS countSubqueryOffers2,';
+                    $subquery = '(SELECT COUNT(*) FROM offerLuxuryLink as OfferLive2 WHERE NOW() BETWEEN OfferLive2.startDate AND OfferLive2.endDate AND OfferLive2.offerTypeId IN (1,2,6) AND OfferLive2.clientId = Client.clientId) AS countSubqueryOffers,';
+                    $subquery .= '(SELECT COUNT(*) FROM offerLuxuryLink as OfferLive2 WHERE NOW() BETWEEN OfferLive2.startDate AND OfferLive2.endDate AND OfferLive2.offerTypeId IN (3,4) AND OfferLive2.clientId = Client.clientId) AS countSubqueryOffers2,';
                     $having = 'HAVING countSubqueryOffers > 0 AND countSubqueryOffers2 > 0';
                     break;
 				default:
@@ -1634,7 +1634,7 @@ class ReportsController extends AppController {
 			// Begin Total Sold/Total $$
 			$tickets = $this->Client->query("SELECT COUNT(DISTINCT Ticket.ticketId) as totalTickets,
 											SUM(Ticket.billingPrice) AS totalRevenue,
-											ROUND(COUNT(DISTINCT Ticket.ticketId) / (SELECT COUNT(DISTINCT OfferLive.offerId) FROM offerLive AS OfferLive INNER JOIN clientLoaPackageRel as cl2 USING(packageId) WHERE cl2.clientId = $clientId  AND OfferLive.offerTypeId = Ticket.offerTypeId AND (OfferLive.startDate between '$pkgRevenueStart' and '$pkgRevenueEnd' or OfferLive.endDate between '$pkgRevenueStart' and '$pkgRevenueEnd' or (OfferLive.startDate < '$pkgRevenueStart' and OfferLive.endDate > '$pkgRevenueEnd'))) * 100) as closeRate,
+											ROUND(COUNT(DISTINCT Ticket.ticketId) / (SELECT COUNT(DISTINCT OfferLive.offerId) FROM offerLuxuryLink AS OfferLive INNER JOIN clientLoaPackageRel as cl2 USING(packageId) WHERE cl2.clientId = $clientId  AND OfferLive.offerTypeId = Ticket.offerTypeId AND (OfferLive.startDate between '$pkgRevenueStart' and '$pkgRevenueEnd' or OfferLive.endDate between '$pkgRevenueStart' and '$pkgRevenueEnd' or (OfferLive.startDate < '$pkgRevenueStart' and OfferLive.endDate > '$pkgRevenueEnd'))) * 100) as closeRate,
 											Ticket.offerTypeId
 											FROM ticket as Ticket
 											INNER JOIN package as Package USING (packageId)

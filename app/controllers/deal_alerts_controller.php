@@ -35,17 +35,17 @@ class DealAlertsController extends AppController {
 		foreach ($subs as $sub) {
 			$clientId = $sub['DealAlert']['clientId'];
 			
-			//this query just looks in offerLive for any new auctions/buy nows
+			//this query just looks in live offer for any new auctions/buy nows
 			//the rules state that anything that hasn't been up for the last 30 days is considered 'new'
 			$tmpNew = $this->DealAlert->query("SELECT DISTINCT(OfferLive.packageId), Client.name, OfferLive.shortBlurb,
 													Client.clientId,
 													oldProductId,
 													seoName,
 													Client.locationDisplay
-														FROM offerLive AS OfferLive 
+														FROM offerLuxuryLink AS OfferLive 
 														INNER JOIN clientLoaPackageRel cl USING(packageId)
 														INNER JOIN client AS Client ON(Client.clientId = $clientId)
-													LEFT JOIN offerLive AS OfferLivePrev ON (OfferLivePrev.startDate <= ('{$sub['DealAlert']['lastActionDate']}' - INTERVAL 5 MINUTE) AND OfferLivePrev.endDate >= ('{$sub['DealAlert']['lastActionDate']}' - INTERVAL 30 DAY) AND OfferLivePrev.endDate >= '{$sub['DealAlert']['subscribeDate']}' AND OfferLivePrev.packageId = OfferLive.packageId AND OfferLivePrev.isMystery = 0)
+													LEFT JOIN offerLuxuryLink AS OfferLivePrev ON (OfferLivePrev.startDate <= ('{$sub['DealAlert']['lastActionDate']}' - INTERVAL 5 MINUTE) AND OfferLivePrev.endDate >= ('{$sub['DealAlert']['lastActionDate']}' - INTERVAL 30 DAY) AND OfferLivePrev.endDate >= '{$sub['DealAlert']['subscribeDate']}' AND OfferLivePrev.packageId = OfferLive.packageId AND OfferLivePrev.isMystery = 0)
 													WHERE cl.clientId = $clientId
 													AND OfferLivePrev.offerId IS NULL AND OfferLive.startDate BETWEEN ('{$sub['DealAlert']['lastActionDate']}' - INTERVAL 5 MINUTE) AND '{$sub['DealAlert']['lastActionDate']}' AND OfferLive.isMystery = 0
 													GROUP BY OfferLive.packageId");

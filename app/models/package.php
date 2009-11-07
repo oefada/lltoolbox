@@ -167,7 +167,7 @@ class Package extends AppModel {
 	   }
 	    $this->query("UPDATE offerLuxuryLink SET validityStart = '{$this->data['Package']['validityStartDate']}', validityEnd = '{$this->data['Package']['validityEndDate']}', validityDisclaimer = '$validity_disclaimer' WHERE packageId = $this->id AND isAuction = 0 AND now() < endDate");
 	    
-	    // update offer details in offerLive for hotel offers type (7)
+	    // update offer details in offer for hotel offers type (7)
 	    if (!empty($this->data['Package']['externalOfferUrl'])) {
 		$this->query("
 			    UPDATE offerLuxuryLink
