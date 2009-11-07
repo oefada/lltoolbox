@@ -27,6 +27,7 @@ class LandingPagesController extends AppController {
 			$this->Session->setFlash(__('Invalid LandingPage', true));
 			$this->redirect(array('action'=>'index'));
 		}
+		
 		if (!empty($this->data)) {
 			if ($this->LandingPage->save($this->data)) {
 				$this->Session->setFlash(__('The LandingPage has been saved', true));

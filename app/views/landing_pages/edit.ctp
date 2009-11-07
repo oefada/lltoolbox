@@ -9,9 +9,9 @@
 		</div>
 	<?php
 		echo $form->input('landingPageId');
-		echo $form->input('landingPageName', array('disabled'=>'disabled'));
-		echo $form->input('landingPageTypeId', array('disabled'=>'disabled'));
-		echo $form->input('referenceId', array('disabled'=>'disabled'));
+		echo $form->input('landingPageName');
+		echo $form->input('landingPageTypeId');
+		echo $form->input('referenceId');
 		echo '<div class="controlset">' . $form->input('isSponsored') . '</div>';
 		echo $form->input('pageTitle');
 		echo $form->input('metaDescription');
