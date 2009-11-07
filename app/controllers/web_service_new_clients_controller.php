@@ -8,7 +8,7 @@ class WebServiceNewClientsController extends WebServicesController
 	var $name = 'WebServiceNewClients';
 	var $uses = array('Client','ClientContact');
 	var $serviceUrl = 'http://toolbox.luxurylink.com/web_service_new_clients';
-	var $serviceUrlDev = 'http://toolboxdev.luxurylink.com/web_service_new_clients';
+	var $serviceUrlDev = 'http://alee-toolboxdev.luxurylink.com/web_service_new_clients';
 	var $errorResponse = false;
 	var $api = array(
 					'save_client' => array(
@@ -60,7 +60,7 @@ class WebServiceNewClientsController extends WebServicesController
 			if ($this->Client->getAffectedRows()) {
         		$client_data_save['clientId'] = $client_id;
 	        	if (!$this->Client->save($client_data_save)) {
-					@mail('devmail@luxurylink.com', 'SUGAR BUS -- EXISTING CLIENT NOT SAVED', print_r($client_data_save, true) . print_r($decoded_request, true) . print_r($this->Client->validationErrors, true));
+					@mail('devmail@luxurylink.com', 'SUGAR BUS -- EXISTING CLIENT NOT SAVED', print_r($client_data_save, true) . print_r($this->Client->validationErrors, true) . print_r($decoded_request, true) . print_r($this->Client->validationErrors, true));
 				}
 	        	$decoded_request['client']['client_id'] = $client_id;
 			} else {
