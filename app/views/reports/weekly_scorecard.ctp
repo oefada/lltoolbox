@@ -30,6 +30,9 @@ td {
 td.highlight {
 	background-color: #f5f2e2;
 }
+table tr.currweek td {
+	background-color: #99cc99;
+}
 table tr.altrow td {
 	background: #f5f2e2;
 }
@@ -82,7 +85,7 @@ if($row['col1'] == date('W')) {
 	$currWeek = $row;
 }
 ?>
-<tr<?if($row['col1'] == date('W')) { echo ' class="altrow"';}?>>
+<tr<?if($row['col1'] == date('W')) { echo ' class="currweek"';}?>>
 	<?php for($i = 1; $i <= 8; $i++):
 		if (in_array($i, array(4,6,8))) {
 			$echo = 'percentage';
@@ -240,7 +243,7 @@ if($row['col1'] == date('W')) {
 	    $currWeek = $row;
 }
 ?>
-<tr<?if($row['col1'] == date('W')) { echo ' class="altrow"';}?>>
+<tr<?if($row['col1'] == date('W')) { echo ' class="currweek"';}?>>
 	<?php for($i = 1; $i <= 22; $i++): 
 		if (($i % 2 == 0 && $i > 3) || in_array($i, array(7, 15, 17))) {
 			$echo = 'percentage';
@@ -511,7 +514,7 @@ if($row['col1'] == date('W')) {
 	    $currWeek = $row;
 }
 ?>
-<tr<?if($row['col1'] == date('W')) { echo ' class="altrow"';}?>>
+<tr<?if($row['col1'] == date('W')) { echo ' class="currweek"';}?>>
 	<?php for($i = 1; $i <= 14; $i++):
 		if (($i % 2 == 0 && $i > 3) || $i == 9) {
 			$echo = 'percentage';
@@ -701,7 +704,7 @@ if($row['col1'] == date('W')) {
 	    $currWeek = $row;
 }
 ?>
-<tr<?if($row['col1'] == date('W')) { echo ' class="altrow"';}?>>
+<tr<?if($row['col1'] == date('W')) { echo ' class="currweek"';}?>>
 	<?php for($i = 1; $i <= 9; $i++): 
 	if (($i % 2 != 0 && $i > 3) || $i == 9) {
 		$echo = 'percentage';
@@ -851,7 +854,7 @@ if($row['col1'] == date('W')) {
 	    $currWeek = $row;
 }
 ?>
-<tr<?if($row['col1'] == date('W')) { echo ' class="altrow"';}?>>
+<tr<?if($row['col1'] == date('W')) { echo ' class="currweek"';}?>>
 	<?php for($i = 1; $i <= 8; $i++): 
 	if (($i % 2 == 0 && $i > 3)) {
 		$echo = 'percentage';
@@ -994,7 +997,7 @@ if($row['col1'] == date('W')) {
 	$currWeek = $row;
 }
 ?>
-<tr<?if($row['col1'] == date('W')) { echo ' class="altrow"';}?>>
+<tr<?if($row['col1'] == date('W')) { echo ' class="currweek"';}?>>
 	<?php for($i = 1; $i <= 8; $i++):
 		if (($i % 2 == 0 && $i > 3)) {
 			$echo = 'percentage';
