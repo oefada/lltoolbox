@@ -4,7 +4,7 @@ class LoaItemsController extends AppController {
 	var $name = 'LoaItems';
 	var $helpers = array('Html', 'Form', 'Ajax', 'Javascript');
 	var $components = array('RequestHandler');
-	var $uses = array('LoaItem', 'LoaItemRatePeriod', 'LoaItemRate', 'LoaItemDate', 'Loa', 'LoaItemGroup');
+	var $uses = array('LoaItem', 'LoaItemRatePeriod', 'LoaItemRate', 'LoaItemDate', 'Loa', 'LoaItemGroup', 'Fee');
 	var $isGroup = false;
 
 	function index() {
@@ -161,6 +161,15 @@ class LoaItemsController extends AppController {
 				foreach ($loaItemGroupExisting as $k => $v) {
 					$loaItemGroupExistingIds[] = $v['LoaItemGroup']['loaItemGroupId'];
 				}
+			} else {
+				foreach ($loaItemData['Fee'] as $k => $loa_item_fee) {
+					if (!trim($loa_item_fee['feeName']) && !trim($loa_item_fee['feePercent'])) {
+						if (is_numeric($loa_item_fee['feeId'])) {
+							$this->Fee->del($loa_item_fee['feeId']);
+						}
+						unset($loaItemData['Fee'][$k]);	
+					}
+				}
 			}
 
 			// save the loaitem and related models -- then do the rate periods
@@ -229,7 +238,42 @@ class LoaItemsController extends AppController {
 			$this->set('groupIds', $group_ids);
 			$this->set('currencyId', $this->data['Loa']['currencyId']);
 			$this->set('currencyCode', $this->data['Loa']['Currency']['currencyCode']);
+
+			// handle fees
+			if (count($this->data['Fee']) < 3) {
+				$feeTypeId2 = false;
+				foreach ($this->data['Fee'] as $m => $n) {
+					if ($n['feeTypeId'] == 2) {
+						$feeTypeId2 = true;
+					}
+				}
+				while (count($this->data['Fee']) < 3) {
+					if (!$feeTypeId2) {
+						$feeTypeId = 2;
+						$feeTypeId2 = true;
+					} else {
+						$feeTypeId = 1;
+					}
+					$tmp = array(
+						'feeId' => '',
+						'feeTypeId' => $feeTypeId,
+						'loaItemId' => $this->data['LoaItem']['loaItemId'],
+						'feeName' => '',
+						'feePercent' => '',
+						'LoaItem' => $this->data['LoaItem']
+					);
+					$this->data['Fee'][] = $tmp;
+				}
+				usort($this->data['Fee'], array('LoaItemsController','usortFeeTypeId'));
+			}
 		}
+	}
+
+	function usortFeeTypeId($a, $b) {
+		if ($a['feeTypeId'] == $b['feeTypeId']) {
+			return 0;
+		}
+		return ($a['feeTypeId'] < $b['feeTypeId']) ? -1 : 1;
 	}
 
 	function delete($id = null) {
