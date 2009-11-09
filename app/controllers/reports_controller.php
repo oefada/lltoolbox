@@ -371,11 +371,12 @@ class ReportsController extends AppController {
                         LEFT JOIN bid AS Bid ON (Bid.offerId = Offer.offerId)
                         INNER JOIN schedulingInstance AS SchedulingInstance ON (SchedulingInstance.schedulingInstanceId = Offer.schedulingInstanceId)
                         INNER JOIN schedulingMaster AS SchedulingMaster ON (SchedulingMaster.schedulingMasterId = SchedulingInstance.schedulingMasterId)
+						LEFT JOIN schedulingMasterTrackRel AS SchedulingMasterTrackRel ON (SchedulingMasterTrackRel.schedulingMasterId = SchedulingMaster.schedulingMasterId) 
+						LEFT JOIN track AS Track ON (Track.trackId = SchedulingMasterTrackRel.trackId) 
                         INNER JOIN offerType as OfferType ON (OfferType.offerTypeId = SchedulingMaster.offerTypeId)
                         INNER JOIN package AS Package ON (Package.packageId = SchedulingMaster.packageId)
                         INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Package.packageId)
                         INNER JOIN client AS Client ON (Client.clientId = ClientLoaPackageRel.clientId)
-                        LEFT JOIN track AS Track ON (Track.trackId = ClientLoaPackageRel.trackId)
                     WHERE $conditions
                     GROUP BY Offer.offerId, Client.clientId";
 
@@ -411,11 +412,12 @@ class ReportsController extends AppController {
                     INNER JOIN offerLuxuryLink AS OfferLive ON (OfferLive.offerId = Offer.offerId)
                     INNER JOIN schedulingInstance AS SchedulingInstance ON (SchedulingInstance.schedulingInstanceId = Offer.schedulingInstanceId)
                     INNER JOIN schedulingMaster AS SchedulingMaster ON (SchedulingMaster.schedulingMasterId = SchedulingInstance.schedulingMasterId)
+					LEFT JOIN schedulingMasterTrackRel AS SchedulingMasterTrackRel ON (SchedulingMasterTrackRel.schedulingMasterId = SchedulingMaster.schedulingMasterId) 
+					LEFT JOIN track AS Track ON (Track.trackId = SchedulingMasterTrackRel.trackId) 
                     INNER JOIN offerType as OfferType ON (OfferType.offerTypeId = SchedulingMaster.offerTypeId)
                     INNER JOIN package AS Package ON (Package.packageId = SchedulingMaster.packageId)
                     INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Package.packageId)
                     INNER JOIN client AS Client ON (Client.clientId = ClientLoaPackageRel.clientId)
-                    LEFT JOIN track AS Track ON (Track.trackId = ClientLoaPackageRel.trackId)
                     WHERE $conditions
                     GROUP BY Offer.offerId, Client.clientId
                     ORDER BY $order
