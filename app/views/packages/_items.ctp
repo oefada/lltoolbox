@@ -62,13 +62,13 @@
 					if (empty($this->data['PackageLoaItemRel'][$loaItem['loaItemId']]['quantity'])) {
 						$attributes['value'] = 1;
 					}
-					if ($loaItem['loaItemTypeId'] != 1) {
+					if ($loaItem['loaItemTypeId'] != 1 && $loaItem['loaItemTypeId'] != 20 && $loaItem['loaItemTypeId'] != 12) {
 						$attributes['readonly'] = true;
 					}
 					echo $form->input('PackageLoaItemRel.'.$loaItem['loaItemId'].'.quantity', $attributes);
 					?>
 					</div>
-					<? if($loaItem['loaItemTypeId'] != 1): ?>
+					<? if($loaItem['loaItemTypeId'] != 1 && $loaItem['loaItemTypeId'] != 20 && $loaItem['loaItemTypeId'] != 12): ?>
 					<div class="controlset" style="float: left; margin-left: 3px; clear: none">
 						<? $checked = '';
 						if( @$this->data['PackageLoaItemRel'][$loaItem['loaItemId']]['quantity'] == $this->data['Package']['numNights'] && $this->data['Package']['numNights'] > 0) {

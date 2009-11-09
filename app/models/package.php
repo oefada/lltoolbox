@@ -68,7 +68,7 @@ class Package extends AppModel {
 	    foreach ($this->data['PackageLoaItemRel'] as $item) {
 	        
 	        //If type Pre-packaged is included, skip validation and just return true
-	        if ($item['loaItemTypeId'] == 12) {
+	        if (in_array($item['loaItemTypeId'], array(12,20))) {
 	            return true;
 	        }
 	        
