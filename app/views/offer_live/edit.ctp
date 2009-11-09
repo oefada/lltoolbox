@@ -1,6 +1,6 @@
-<?php echo $form->create('OfferLive');?>
+<?php echo $form->create('OfferLuxuryLink');?>
 <fieldset>
-		<label>Offer ID</label><?=$this->data['OfferLive']['offerId']?>
+		<label>Offer ID</label><?=$this->data['OfferLuxuryLink']['offerId']?>
 	<?php
 		echo $form->input('offerId');
 		echo $form->input('offerName');
