@@ -78,6 +78,9 @@ class SchedulingMaster extends AppModel {
 		
 		$rows = $this->query("SELECT MIN(Loa.endDate) as minEndDate FROM loa AS Loa INNER JOIN clientLoaPackageRel USING(loaId) WHERE packageId = $packageId");
 
+		$this->data['SchedulingMaster']['endDate'] = substr($this->data['SchedulingMaster']['endDate'], 0, 10);
+		$rows[0][0]['minEndDate'] = substr($rows[0][0]['minEndDate'], 0, 10);
+
 		if (strtotime($this->data['SchedulingMaster']['endDate']) > strtotime($rows[0][0]['minEndDate']) && $this->data['SchedulingMaster']['iterationSchedulingOption']) {
 			return false;
 		}
