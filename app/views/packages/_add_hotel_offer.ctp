@@ -24,6 +24,7 @@
 		}
 		
 		echo $form->input('Format', array('value' => 3, 'type' => 'hidden'));
+		echo $form->input('packageStatusId', array('value' => 4, 'type' => 'hidden'));
 	?>
 	</div>
 
