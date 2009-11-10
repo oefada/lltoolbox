@@ -59,7 +59,7 @@ class WebServiceNewClientsController extends WebServicesController
 			$result = $this->Client->query("UPDATE client SET modified = NOW() WHERE clientId = $client_id LIMIT 1");
 			if ($this->Client->getAffectedRows()) {
         		$client_data_save['clientId'] = $client_id;
-	        	if (!$this->Client->save($client_data_save)) {
+	        	if (!$this->Client->save($client_data_save, array('callbacks'=>false))) {
 					@mail('devmail@luxurylink.com', 'SUGAR BUS -- EXISTING CLIENT NOT SAVED', print_r($client_data_save, true) . print_r($this->Client->validationErrors, true) . print_r($decoded_request, true) . print_r($this->Client->validationErrors, true));
 				}
 	        	$decoded_request['client']['client_id'] = $client_id;
@@ -140,17 +140,17 @@ class WebServiceNewClientsController extends WebServicesController
 		    	if (in_array($recipient_type, $reservationContacts)) {
 		    		$newClientContact['clientContactTypeId'] = 1;
 		    		$this->ClientContact->create();
-		    		$this->ClientContact->save($newClientContact);
+		    		$this->ClientContact->save($newClientContact, array('callbacks'=>false));
 		    	}
 		    	if (in_array($recipient_type, $homepageContacts)) {
 		    		$newClientContact['clientContactTypeId'] = 2;
 		    		$this->ClientContact->create();
-		    		$this->ClientContact->save($newClientContact);
+		    		$this->ClientContact->save($newClientContact, array('callbacks'=>false));
 		    	}
 		    	if (in_array($recipient_type, $reservationCopy)) {
 		    		$newClientContact['clientContactTypeId'] = 3;
 		    		$this->ClientContact->create();
-		    		$this->ClientContact->save($newClientContact);
+		    		$this->ClientContact->save($newClientContact, array('callbacks'=>false));
 		    	}
 		    }
 		}
