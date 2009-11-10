@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: dbo_source.php 8004 2009-01-16 20:15:21Z gwoo $ */
+/* SVN FILE: $Id: dbo_source.php 8283 2009-08-03 20:49:17Z gwoo $ */
 /**
  * Short description for file.
  *
@@ -19,9 +19,9 @@
  * @package       cake
  * @subpackage    cake.cake.libs.model.datasources
  * @since         CakePHP(tm) v 0.10.0.1076
- * @version       $Revision: 8004 $
+ * @version       $Revision: 8283 $
  * @modifiedby    $LastChangedBy: gwoo $
- * @lastmodified  $Date: 2009-01-16 12:15:21 -0800 (Fri, 16 Jan 2009) $
+ * @lastmodified  $Date: 2009-08-03 13:49:17 -0700 (Mon, 03 Aug 2009) $
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 App::import('Core', array('Set', 'String'));
@@ -200,9 +200,8 @@ class DboSource extends DataSource {
 		if ($this->error) {
 			$this->showQuery($sql);
 			return false;
-		} else {
-			return $this->_result;
 		}
+		return $this->_result;
 	}
 /**
  * DataSource Query abstraction
@@ -225,10 +224,10 @@ class DboSource extends DataSource {
 
 			if (strpos(strtolower($args[0]), 'findby') === 0) {
 				$all  = false;
-				$field = Inflector::underscore(preg_replace('/findBy/i', '', $args[0]));
+				$field = Inflector::variable(preg_replace('/^findBy/i', '', $args[0])); //changed by VG to variable
 			} else {
 				$all  = true;
-				$field = Inflector::underscore(preg_replace('/findAllBy/i', '', $args[0]));
+				$field = Inflector::variable(preg_replace('/^findAllBy/i', '', $args[0])); //changed by VG to varialbe
 			}
 
 			$or = (strpos($field, '_or_') !== false);
@@ -411,12 +410,23 @@ class DboSource extends DataSource {
 			$data[$i] = str_replace($this->startQuote . '(', '(', $data[$i]);
 			$data[$i] = str_replace(')' . $this->startQuote, ')', $data[$i]);
 
-			if (strpos($data[$i], ' AS ')) {
-				$data[$i] = str_replace(' AS ', $this->endQuote . ' AS ' . $this->startQuote, $data[$i]);
+			if (preg_match('/\s+AS\s+/', $data[$i])) {
+				if (preg_match('/\w+\s+AS\s+/', $data[$i])) {
+					$quoted = $this->endQuote . ' AS ' . $this->startQuote;
+					$data[$i] = str_replace(' AS ', $quoted, $data[$i]);
+				} else {
+					$quoted = ' AS ' . $this->startQuote;
+					$data[$i] = str_replace(' AS ', $quoted, $data[$i]) . $this->endQuote;
+				}
 			}
+
 			if (!empty($this->endQuote) && $this->endQuote == $this->startQuote) {
 				if (substr_count($data[$i], $this->endQuote) % 2 == 1) {
-					$data[$i] = trim($data[$i], $this->endQuote);
+					if (substr($data[$i], -2) == $this->endQuote . $this->endQuote) {
+						$data[$i] = substr($data[$i], 0, -1);
+					} else {
+						$data[$i] = trim($data[$i], $this->endQuote);
+					}
 				}
 			}
 			if (strpos($data[$i], '*')) {
@@ -616,16 +626,22 @@ class DboSource extends DataSource {
 			$queryData['fields'] = $this->fields($model);
 		}
 
-		foreach ($model->__associations as $type) {
-			foreach ($model->{$type} as $assoc => $assocData) {
-				if ($model->recursive > -1) {
-					$linkModel =& $model->{$assoc};
-					$external = isset($assocData['external']);
+		$_associations = $model->__associations;
 
-					if ($model->useDbConfig == $linkModel->useDbConfig) {
-						if (true === $this->generateAssociationQuery($model, $linkModel, $type, $assoc, $assocData, $queryData, $external, $null)) {
-							$linkedModels[] = $type . '/' . $assoc;
-						}
+		if ($model->recursive == -1) {
+			$_associations = array();
+		} else if ($model->recursive == 0) {
+			unset($_associations[2], $_associations[3]);
+		}
+
+		foreach ($_associations as $type) {
+			foreach ($model->{$type} as $assoc => $assocData) {
+				$linkModel =& $model->{$assoc};
+				$external = isset($assocData['external']);
+
+				if ($model->useDbConfig == $linkModel->useDbConfig) {
+					if (true === $this->generateAssociationQuery($model, $linkModel, $type, $assoc, $assocData, $queryData, $external, $null)) {
+						$linkedModels[$type . '/' . $assoc] = true;
 					}
 				}
 			}
@@ -642,12 +658,12 @@ class DboSource extends DataSource {
 
 		$filtered = $this->__filterResults($resultSet, $model);
 
-		if ($model->recursive > 0) {
-			foreach ($model->__associations as $type) {
+		if ($model->recursive > -1) {
+			foreach ($_associations as $type) {
 				foreach ($model->{$type} as $assoc => $assocData) {
 					$linkModel =& $model->{$assoc};
 
-					if (!in_array($type . '/' . $assoc, $linkedModels)) {
+					if (empty($linkedModels[$type . '/' . $assoc])) {
 						if ($model->useDbConfig == $linkModel->useDbConfig) {
 							$db =& $this;
 						} else {
@@ -726,11 +742,11 @@ class DboSource extends DataSource {
 		if ($query = $this->generateAssociationQuery($model, $linkModel, $type, $association, $assocData, $queryData, $external, $resultSet)) {
 			if (!isset($resultSet) || !is_array($resultSet)) {
 				if (Configure::read() > 0) {
-					e('<div style = "font: Verdana bold 12px; color: #FF0000">' . sprintf(__('SQL Error in model %s:', true), $model->alias) . ' ');
+					echo '<div style = "font: Verdana bold 12px; color: #FF0000">' . sprintf(__('SQL Error in model %s:', true), $model->alias) . ' ';
 					if (isset($this->error) && $this->error != null) {
-						e($this->error);
+						echo $this->error;
 					}
-					e('</div>');
+					echo '</div>';
 				}
 				return null;
 			}
@@ -841,11 +857,8 @@ class DboSource extends DataSource {
 
 						foreach ($fetch as $j => $data) {
 							if (
-								(isset($data[$with]) && $data[$with][$foreignKey] === $row[$model->alias][$model->primaryKey]) &&
-								(!in_array($data[$with][$joinKeys[1]], $uniqueIds))
+								(isset($data[$with]) && $data[$with][$foreignKey] === $row[$model->alias][$model->primaryKey])
 							) {
-								$uniqueIds[] = $data[$with][$joinKeys[1]];
-
 								if ($habtmFieldsCount <= 2) {
 									unset($data[$with]);
 								}
@@ -1392,6 +1405,7 @@ class DboSource extends DataSource {
 	function _prepareUpdateFields(&$model, $fields, $quoteValues = true, $alias = false) {
 		$quotedAlias = $this->startQuote . $model->alias . $this->endQuote;
 
+		$updates = array();
 		foreach ($fields as $field => $value) {
 			if ($alias && strpos($field, '.') === false) {
 				$quoted = $model->escapeField($field);
@@ -1501,12 +1515,12 @@ class DboSource extends DataSource {
 		return $join;
 	}
 /**
- * Returns the an SQL calculation, i.e. COUNT() or MAX()
+ * Returns an SQL calculation, i.e. COUNT() or MAX()
  *
  * @param model $model
  * @param string $func Lowercase name of SQL function, i.e. 'count' or 'max'
  * @param array $params Function parameters (any values must be quoted manually)
- * @return string	An SQL calculation function
+ * @return string An SQL calculation function
  * @access public
  */
 	function calculate(&$model, $func, $params = array()) {
@@ -1680,7 +1694,7 @@ class DboSource extends DataSource {
 							strpos($fields[$i], ' ') !== false ||
 							strpos($fields[$i], '(') !== false
 						);
-						$fields[$i] = $this->name(($prefix ? '' : '') . $alias . '.' . $fields[$i]);
+						$fields[$i] = $this->name(($prefix ? $alias . '.' : '') . $fields[$i]);
 					} else {
 						$value = array();
 						$comma = strpos($fields[$i], ',');
@@ -1829,9 +1843,9 @@ class DboSource extends DataSource {
 					if (array_keys($value) === array_values(array_keys($value))) {
 						$count = count($value);
 						if ($count === 1) {
-							$data = $this->name($key) . ' = (';
+							$data = $this->__quoteFields($key) . ' = (';
 						} else {
-							$data = $this->name($key) . ' IN (';
+							$data = $this->__quoteFields($key) . ' IN (';
 						}
 						if ($quoteValues || strpos($value[0], '-!') !== 0) {
 							if (is_object($model)) {
@@ -1893,7 +1907,10 @@ class DboSource extends DataSource {
 				$key = substr($key, 0, $split);
 			}
 		}
+
+
 		$type = (is_object($model) ? $model->getColumnType($key) : null);
+
 		$null = ($value === null || (is_array($value) && empty($value)));
 
 		if (strtolower($operator) === 'not') {
@@ -1902,11 +1919,13 @@ class DboSource extends DataSource {
 			);
 			return $data[0];
 		}
+
 		$value = $this->value($value, $type);
 
-		$key = (strpos($key, '(') !== false || strpos($key, ')') !== false) ?
-			$this->__quoteFields($key) :
-			$key = $this->name($key);
+		if ($key !== '?') {
+			$isKey = (strpos($key, '(') !== false || strpos($key, ')') !== false);
+			$key = $isKey ? $this->__quoteFields($key) : $this->name($key);
+		}
 
 		if ($bound) {
 			return String::insert($key . ' ' . trim($operator), $value);
@@ -1941,6 +1960,7 @@ class DboSource extends DataSource {
 				break;
 			}
 		}
+
 		return "{$key} {$operator} {$value}";
 	}
 /**
@@ -2102,10 +2122,11 @@ class DboSource extends DataSource {
 	function hasAny(&$Model, $sql) {
 		$sql = $this->conditions($sql);
 		$table = $this->fullTableName($Model);
-		$where = $sql ? "WHERE {$sql}" : 'WHERE 1 = 1';
-		$id = $Model->primaryKey;
+		$alias = $this->alias . $this->name($Model->alias);
+		$where = $sql ? "{$sql}" : ' WHERE 1 = 1';
+		$id = $Model->escapeField();
 
-		$out = $this->fetchRow("SELECT COUNT({$id}) {$this->alias}count FROM {$table} {$where}");
+		$out = $this->fetchRow("SELECT COUNT({$id}) {$this->alias}count FROM {$table} {$alias}{$where}");
 
 		if (is_array($out)) {
 			return $out[0]['count'];
@@ -2219,7 +2240,7 @@ class DboSource extends DataSource {
  *
  * @param object $schema An instance of a subclass of CakeSchema
  * @param string $tableName Optional.  If specified only the table name given will be generated.
- *						Otherwise, all tables defined in the schema are generated.
+ *   Otherwise, all tables defined in the schema are generated.
  * @return string
  */
 	function createSchema($schema, $tableName = null) {
@@ -2276,7 +2297,7 @@ class DboSource extends DataSource {
  *
  * @param object $schema An instance of a subclass of CakeSchema
  * @param string $table Optional.  If specified only the table name given will be generated.
- *						Otherwise, all tables defined in the schema are generated.
+ *   Otherwise, all tables defined in the schema are generated.
  * @return string
  */
 	function dropSchema($schema, $table = null) {
@@ -2297,7 +2318,7 @@ class DboSource extends DataSource {
  * Generate a database-native column schema string
  *
  * @param array $column An array structured like the following: array('name'=>'value', 'type'=>'value'[, options]),
- *						where options can be 'default', 'length', or 'key'.
+ *   where options can be 'default', 'length', or 'key'.
  * @return string
  */
 	function buildColumn($column) {
@@ -2367,11 +2388,12 @@ class DboSource extends DataSource {
 				if (!empty($value['unique'])) {
 					$out .= 'UNIQUE ';
 				}
+				$name = $this->startQuote . $name . $this->endQuote;
 			}
 			if (is_array($value['column'])) {
-				$out .= 'KEY '. $name .' (' . join(', ', array_map(array(&$this, 'name'), $value['column'])) . ')';
+				$out .= 'KEY ' . $name . ' (' . join(', ', array_map(array(&$this, 'name'), $value['column'])) . ')';
 			} else {
-				$out .= 'KEY '. $name .' (' . $this->name($value['column']) . ')';
+				$out .= 'KEY ' . $name . ' (' . $this->name($value['column']) . ')';
 			}
 			$join[] = $out;
 		}

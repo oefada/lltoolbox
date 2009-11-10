@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: dbo_mysql.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id: dbo_mysql.php 8283 2009-08-03 20:49:17Z gwoo $ */
 /**
  * MySQL layer for DBO
  *
@@ -19,9 +19,9 @@
  * @package       cake
  * @subpackage    cake.cake.libs.model.datasources.dbo
  * @since         CakePHP(tm) v 0.10.5.1790
- * @version       $Revision: 7945 $
+ * @version       $Revision: 8283 $
  * @modifiedby    $LastChangedBy: gwoo $
- * @lastmodified  $Date: 2008-12-18 18:16:01 -0800 (Thu, 18 Dec 2008) $
+ * @lastmodified  $Date: 2009-08-03 13:49:17 -0700 (Mon, 03 Aug 2009) $
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 /**
@@ -177,7 +177,11 @@ class DboMysqlBase extends DboSource {
 		$table = $this->fullTableName($model);
 		if ($table) {
 			$indexes = $this->query('SHOW INDEX FROM ' . $table);
-			$keys = Set::extract($indexes, '{n}.STATISTICS');
+			if (isset($indexes[0]['STATISTICS'])) {
+				$keys = Set::extract($indexes, '{n}.STATISTICS');
+			} else {
+				$keys = Set::extract($indexes, '{n}.0');
+			}
 			foreach ($keys as $i => $key) {
 				if (!isset($index[$key['Key_name']])) {
 					$col = array();
@@ -404,13 +408,6 @@ class DboMysql extends DboMysqlBase {
  * @access protected
  */
 	function _execute($sql) {
-        static $dblastused;
-        if ($dblastused != $this->config["database"]) {
-            $this->disconnect();
-            $this->connect();
-        }
-        $dblastused = $this->config["database"];
-
 		return mysql_query($sql, $this->connection);
 	}
 /**
@@ -484,9 +481,11 @@ class DboMysql extends DboMysqlBase {
 
 		if ($parent != null) {
 			return $parent;
-		} elseif ($data === null || (is_array($data) && empty($data))) {
+		}
+		if ($data === null || (is_array($data) && empty($data))) {
 			return 'NULL';
-		} elseif ($data === '' && $column !== 'integer' && $column !== 'float' && $column !== 'boolean') {
+		}
+		if ($data === '' && $column !== 'integer' && $column !== 'float' && $column !== 'boolean') {
 			return  "''";
 		}
 		if (empty($column)) {
@@ -661,101 +660,6 @@ class DboMysql extends DboMysqlBase {
  */
 	function getEncoding() {
 		return mysql_client_encoding($this->connection);
-	}
-/**
- * DataSource Query abstraction. Changed by vgarcia so the findBy and findAllBy reflect our naming convention
- *
- * @return resource Result resource identifier
- */
-	function query() {
-		$args	  = func_get_args();
-		$fields	  = null;
-		$order	  = null;
-		$limit	  = null;
-		$page	  = null;
-		$recursive = null;
-
-		if (count($args) == 1) {
-			return $this->fetchAll($args[0]);
-
-		} elseif (count($args) > 1 && (strpos(strtolower($args[0]), 'findby') === 0 || strpos(strtolower($args[0]), 'findallby') === 0)) {
-			$params = $args[1];
-
-			if (strpos(strtolower($args[0]), 'findby') === 0) {
-				$all  = false;
-				$field = Inflector::variable(preg_replace('/findBy/i', '', $args[0]));
-			} else {
-				$all  = true;
-				$field = Inflector::variable(preg_replace('/findAllBy/i', '', $args[0]));
-			}
-
-			$or = (strpos($field, '_or_') !== false);
-			if ($or) {
-				$field = explode('_or_', $field);
-			} else {
-				$field = explode('_and_', $field);
-			}
-			$off = count($field) - 1;
-
-			if (isset($params[1 + $off])) {
-				$fields = $params[1 + $off];
-			}
-
-			if (isset($params[2 + $off])) {
-				$order = $params[2 + $off];
-			}
-
-			if (!array_key_exists(0, $params)) {
-				return false;
-			}
-
-			$c = 0;
-			$conditions = array();
-
-			foreach ($field as $f) {
-				$conditions[$args[2]->alias . '.' . $f] = $params[$c];
-				$c++;
-			}
-
-			if ($or) {
-				$conditions = array('OR' => $conditions);
-			}
-
-			if ($all) {
-				if (isset($params[3 + $off])) {
-					$limit = $params[3 + $off];
-				}
-
-				if (isset($params[4 + $off])) {
-					$page = $params[4 + $off];
-				}
-
-				if (isset($params[5 + $off])) {
-					$recursive = $params[5 + $off];
-				}
-				return $args[2]->find('all', compact('conditions', 'fields', 'order', 'limit', 'page', 'recursive'));
-			} else {
-				if (isset($params[3 + $off])) {
-					$recursive = $params[3 + $off];
-				}
-				return $args[2]->find('first', compact('conditions', 'fields', 'order', 'recursive'));
-			}
-		} else {
-			if (isset($args[1]) && $args[1] === true) {
-				return $this->fetchAll($args[0], true);
-			} else if (isset($args[1]) && !is_array($args[1]) ) {
-				return $this->fetchAll($args[0], false);
-			} else if (isset($args[1]) && is_array($args[1])) {
-				$offset = 0;
-				if (isset($args[2])) {
-					$cache = $args[2];
-				} else {
-					$cache = true;
-				}
-				$args[1] = array_map(array(&$this, 'value'), $args[1]);
-				return $this->fetchAll(String::insert($args[0], $args[1]), $cache);
-			}
-		}
 	}
 }
 ?>

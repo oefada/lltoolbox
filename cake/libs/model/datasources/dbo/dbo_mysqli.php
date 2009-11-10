@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: dbo_mysqli.php 7945 2008-12-19 02:16:01Z gwoo $ */
+/* SVN FILE: $Id: dbo_mysqli.php 8283 2009-08-03 20:49:17Z gwoo $ */
 /**
  * MySQLi layer for DBO
  *
@@ -19,9 +19,9 @@
  * @package       cake
  * @subpackage    cake.cake.libs.model.datasources.dbo
  * @since         CakePHP(tm) v 1.1.4.2974
- * @version       $Revision: 7945 $
+ * @version       $Revision: 8283 $
  * @modifiedby    $LastChangedBy: gwoo $
- * @lastmodified  $Date: 2008-12-18 18:16:01 -0800 (Thu, 18 Dec 2008) $
+ * @lastmodified  $Date: 2009-08-03 13:49:17 -0700 (Mon, 03 Aug 2009) $
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 App::import('Core', 'DboMysql');
@@ -103,18 +103,10 @@ class DboMysqli extends DboMysqlBase {
  * @access protected
  */
 	function _execute($sql) {
-	    static $dblastused;
-        if ($dblastused != $this->config["database"]) {
-            $this->disconnect();
-            $this->connect();
-        }
-        $dblastused = $this->config["database"];
-
 		if (preg_match('/^\s*call/i', $sql)) {
 			return $this->_executeProcedure($sql);
-		} else {
-			return mysqli_query($this->connection, $sql);
 		}
+		return mysqli_query($this->connection, $sql);
 	}
 /**
  * Executes given SQL statement (procedure call).
@@ -147,15 +139,15 @@ class DboMysqli extends DboMysqlBase {
 
 		if (!$result) {
 			return array();
-		} else {
-			$tables = array();
-
-			while ($line = mysqli_fetch_array($result)) {
-				$tables[] = $line[0];
-			}
-			parent::listSources($tables);
-			return $tables;
 		}
+
+		$tables = array();
+
+		while ($line = mysqli_fetch_array($result)) {
+			$tables[] = $line[0];
+		}
+		parent::listSources($tables);
+		return $tables;
 	}
 /**
  * Returns an array of the fields in given table name.
@@ -208,18 +200,19 @@ class DboMysqli extends DboMysqlBase {
 		if ($parent != null) {
 			return $parent;
 		}
-
-		if ($data === null) {
+		if ($data === null || (is_array($data) && empty($data))) {
 			return 'NULL';
 		}
-
 		if ($data === '' && $column !== 'integer' && $column !== 'float' && $column !== 'boolean') {
-			return  "''";
+			return "''";
+		}
+		if (empty($column)) {
+			$column = $this->introspectType($data);
 		}
 
 		switch ($column) {
 			case 'boolean':
-				$data = $this->boolean((bool)$data);
+				return $this->boolean((bool)$data);
 			break;
 			case 'integer' :
 			case 'float' :
@@ -238,20 +231,6 @@ class DboMysqli extends DboMysqlBase {
 		}
 
 		return $data;
-	}
-/**
- * Begin a transaction
- *
- * @param unknown_type $model
- * @return boolean True on success, false on fail
- * (i.e. if the database/model does not support transactions).
- */
-	function begin(&$model) {
-		if (parent::begin($model) && $this->execute('START TRANSACTION')) {
-			$this->_transactionStarted = true;
-			return true;
-		}
-		return false;
 	}
 /**
  * Returns a formatted error message from previous database operation.
@@ -299,7 +278,6 @@ class DboMysqli extends DboMysqlBase {
 		if ($id !== false && !empty($id) && !empty($id[0]) && isset($id[0]['insertID'])) {
 			return $id[0]['insertID'];
 		}
-
 		return null;
 	}
 /**
@@ -358,11 +336,11 @@ class DboMysqli extends DboMysqlBase {
 	function length($real) {
 		$col = str_replace(array(')', 'unsigned'), '', $real);
 		$limit = null;
-
+	
 		if (strpos($col, '(') !== false) {
 			list($col, $limit) = explode('(', $col);
 		}
-
+	
 		if ($limit != null) {
 			return intval($limit);
 		}
@@ -410,9 +388,8 @@ class DboMysqli extends DboMysqlBase {
 				$i++;
 			}
 			return $resultRow;
-		} else {
-			return false;
 		}
+		return false;
 	}
 /**
  * Gets the database encoding
@@ -429,101 +406,6 @@ class DboMysqli extends DboMysqlBase {
  */
 	function hasResult() {
 		return is_object($this->_result);
-	}
-/**
- * DataSource Query abstraction. Changed by vgarcia so the findBy and findAllBy reflect our naming convention
- *
- * @return resource Result resource identifier
- */
-	function query() {
-		$args	  = func_get_args();
-		$fields	  = null;
-		$order	  = null;
-		$limit	  = null;
-		$page	  = null;
-		$recursive = null;
-
-		if (count($args) == 1) {
-			return $this->fetchAll($args[0]);
-
-		} elseif (count($args) > 1 && (strpos(strtolower($args[0]), 'findby') === 0 || strpos(strtolower($args[0]), 'findallby') === 0)) {
-			$params = $args[1];
-
-			if (strpos(strtolower($args[0]), 'findby') === 0) {
-				$all  = false;
-				$field = Inflector::variable(preg_replace('/findBy/i', '', $args[0]));
-			} else {
-				$all  = true;
-				$field = Inflector::variable(preg_replace('/findAllBy/i', '', $args[0]));
-			}
-
-			$or = (strpos($field, '_or_') !== false);
-			if ($or) {
-				$field = explode('_or_', $field);
-			} else {
-				$field = explode('_and_', $field);
-			}
-			$off = count($field) - 1;
-
-			if (isset($params[1 + $off])) {
-				$fields = $params[1 + $off];
-			}
-
-			if (isset($params[2 + $off])) {
-				$order = $params[2 + $off];
-			}
-
-			if (!array_key_exists(0, $params)) {
-				return false;
-			}
-
-			$c = 0;
-			$conditions = array();
-
-			foreach ($field as $f) {
-				$conditions[$args[2]->alias . '.' . $f] = $params[$c];
-				$c++;
-			}
-
-			if ($or) {
-				$conditions = array('OR' => $conditions);
-			}
-
-			if ($all) {
-				if (isset($params[3 + $off])) {
-					$limit = $params[3 + $off];
-				}
-
-				if (isset($params[4 + $off])) {
-					$page = $params[4 + $off];
-				}
-
-				if (isset($params[5 + $off])) {
-					$recursive = $params[5 + $off];
-				}
-				return $args[2]->find('all', compact('conditions', 'fields', 'order', 'limit', 'page', 'recursive'));
-			} else {
-				if (isset($params[3 + $off])) {
-					$recursive = $params[3 + $off];
-				}
-				return $args[2]->find('first', compact('conditions', 'fields', 'order', 'recursive'));
-			}
-		} else {
-			if (isset($args[1]) && $args[1] === true) {
-				return $this->fetchAll($args[0], true);
-			} else if (isset($args[1]) && !is_array($args[1]) ) {
-				return $this->fetchAll($args[0], false);
-			} else if (isset($args[1]) && is_array($args[1])) {
-				$offset = 0;
-				if (isset($args[2])) {
-					$cache = $args[2];
-				} else {
-					$cache = true;
-				}
-				$args[1] = array_map(array(&$this, 'value'), $args[1]);
-				return $this->fetchAll(String::insert($args[0], $args[1]), $cache);
-			}
-		}
 	}
 }
 ?>
