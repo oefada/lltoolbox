@@ -51,7 +51,10 @@ class WebServiceNewClientsController extends WebServicesController
 		$client_data_save['teamName']			= $decoded_request['client']['team_name'];
         $client_data_save['modified']			= $date_now;
         $client_data_save['seoName']			= $this->convertToSeoName($client_data_save['name']);
-            
+        
+		// unbind assoc
+		$this->Client->bindOnly(array(), false);
+
 		if ($client_id && is_numeric($client_id)) {
 			// ======= EXISTING CLIENT UPDATE ========
 
@@ -59,7 +62,7 @@ class WebServiceNewClientsController extends WebServicesController
 			$result = $this->Client->query("UPDATE client SET modified = NOW() WHERE clientId = $client_id LIMIT 1");
 			if ($this->Client->getAffectedRows()) {
         		$client_data_save['clientId'] = $client_id;
-	        	if (!$this->Client->save($client_data_save, array('callbacks'=>false))) {
+	        	if (!$this->Client->save($client_data_save)) {
 					@mail('devmail@luxurylink.com', 'SUGAR BUS -- EXISTING CLIENT NOT SAVED', print_r($client_data_save, true) . print_r($this->Client->validationErrors, true) . print_r($decoded_request, true) . print_r($this->Client->validationErrors, true));
 				}
 	        	$decoded_request['client']['client_id'] = $client_id;
@@ -78,7 +81,7 @@ class WebServiceNewClientsController extends WebServicesController
 			$client_data_save['oldProductId']			= "0-$next_client_auto_id";
 			
 			$this->Client->create();
-			if (!$this->Client->save($client_data_save, array('callbacks'=>false))) {
+			if (!$this->Client->save($client_data_save)) {
 				@mail('devmail@luxurylink.com', 'SUGAR BUS -- NEW CLIENT NOT SAVED', print_r($client_data_save, true) . print_r($this->Client->validationErrors, true) . print_r($decoded_request, true) . print_r($this->Client->validationErrors, true));
 			}
 			
