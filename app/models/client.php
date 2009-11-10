@@ -217,5 +217,18 @@ class Client extends AppModel {
 	    $this->query($ins_query);
 	}
 	
+	function bindOnly($keep_assocs=array(), $reset=true) {
+	     $assocs = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
+	     foreach($assocs as $assoc) {
+		    $models = $this->{$assoc};
+		    foreach($models as $model_name => $assoc_data) {
+				if (!in_array($model_name, $keep_assocs)) {
+					  $this->unbindModel(array($assoc => array($model_name)), $reset);
+				}
+				
+		    }
+	     }
+	}
+	
 }
 ?>
