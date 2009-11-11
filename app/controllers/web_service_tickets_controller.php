@@ -345,6 +345,11 @@ class WebServiceTicketsController extends WebServicesController
 		$this->ppv(json_encode($params));	
 	}
 
+	function numF($str) {
+		// for commas thousand group separater
+		return number_format($str);
+	}
+
 	function ppv($in0) {
 		$params = json_decode($in0, true);
 
@@ -431,10 +436,10 @@ class WebServiceTicketsController extends WebServicesController
 		$offerEndDate		= date('M d Y H:i A', strtotime($liveOfferData['endDate']));
 		$isAuction			= in_array($offerTypeId, array(1,2,6)) ? true : false;
 
-		$billingPrice		= $ticketData['billingPrice'];
-		$llFeeAmount		= $this->Ticket->getFeeByTicket($ticketId);
+		$billingPrice		= $this->numF($ticketData['billingPrice']);
+		$llFeeAmount		= 40;
 		$llFee				= $llFeeAmount;
-		$totalPrice			= $ticketData['billingPrice'] + $llFeeAmount;
+		$totalPrice			= $this->numF($ticketData['billingPrice'] + $llFeeAmount);
 		$maxNumWinners		= $liveOfferData['numWinners'];
 		
 		$checkoutHash		= md5($ticketId . $userId . $offerId . 'LL_L33T_KEY');
@@ -520,7 +525,7 @@ class WebServiceTicketsController extends WebServicesController
 		$guarantee = false;
 		if ($packageData['reservePrice'] && is_numeric($packageData['reservePrice']) && ($packageData['reservePrice'] > 0)) {
 			if ($ticketData['billingPrice'] < $packageData['reservePrice']) {
-				$guarantee = $packageData['reservePrice'];
+				$guarantee = $this->numF($packageData['reservePrice']);
 			}
 		}
 		
@@ -579,7 +584,7 @@ class WebServiceTicketsController extends WebServicesController
 		$locationDisplay	= $clients[$client_index]['locationDisplay'];
 		$clientPrimaryEmail = $clients[$client_index]['contact_to_string'];
 		$clientCcEmail 		= $clients[$client_index]['contact_cc_string'];
-		$clientAdjustedPrice = ($clients[$client_index]['percentOfRevenue'] / 100) * $ticketData['billingPrice'];
+		$clientAdjustedPrice = $this->numF(($clients[$client_index]['percentOfRevenue'] / 100) * $ticketData['billingPrice']);
 		
 		// ********* SITE NAME **********
 		switch ($ticketData['siteId']) {
@@ -749,7 +754,7 @@ class WebServiceTicketsController extends WebServicesController
 					$locationDisplay	= $clients[$i]['locationDisplay'];
 					$clientPrimaryEmail = $clients[$i]['contact_to_string'];
 					$clientCcEmail 		= $clients[$i]['contact_cc_string'];	
-					$clientAdjustedPrice = ($clients[$i]['percentOfRevenue'] / 100) * $ticketData['billingPrice'];
+					$clientAdjustedPrice = $this->numF(($clients[$i]['percentOfRevenue'] / 100) * $ticketData['billingPrice']);
 					ob_start();
 					switch ($ppvNoticeTypeId) {
 						case 2:

@@ -217,7 +217,10 @@ class Ticket extends AppModel {
 		}
 
 		$data['applied'] = ($data['Promo']['applied'] || $data['GiftCert']['applied'] || $data['Cof']['applied']) ? 1 : 0;
-		$data['final_price'] = $ticketPrice;
+		$data['Promo']['totalAmountOff'] = number_format($data['Promo']['totalAmountOff']);
+		$data['Cof']['totalAmountOff'] = number_format($data['Cof']['totalAmountOff']);
+		$data['GiftCert']['totalAmountOff'] = number_format($data['GiftCert']['totalAmountOff']);
+		$data['final_price'] = number_format($ticketPrice);
 		return $data;
 	}
 
