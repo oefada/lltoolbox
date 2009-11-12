@@ -76,7 +76,8 @@ class ClientsController extends AppController {
 					  $this->data['ClientAmenityRel'][$k]['weight'] = array_pop(array_keys($ordAmLst['ordAmLst'], $am['amenityId'], true));
 				}
 		    endif;
-	         /** END SORT **/
+	         /** END SORT **/   
+		   
 	         $this->data['Client']['seoName'] = $this->convertToSeoName($this->data['Client']['name']);
 		   $this->Client->ClientDestinationRel->deleteAll(array('ClientDestinationRel.clientId' => $this->data['Client']['clientId']));
 			if ($this->Client->saveAll($this->data)) {

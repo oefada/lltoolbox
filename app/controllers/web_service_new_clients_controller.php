@@ -44,7 +44,7 @@ class WebServiceNewClientsController extends WebServicesController
 		$date_now = date('Y-m-d H:i:s', strtotime('now'));
 		
 		if ($client_id) {
-			$client = $this->Client->find('first', array('conditions' => array('clientId' => $client_id)));
+			$client = $this->Client->findByClientId($this->data['Client']['clientId']);
 			$client_data_save = $client['Client'];
 		}
 		else {
