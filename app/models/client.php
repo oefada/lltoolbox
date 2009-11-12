@@ -134,10 +134,16 @@ class Client extends AppModel {
 	}
 
 	function beforeSave() {
-	  $this->loaId = $this->Loa->get_current_loa($this->data['Client']['clientId']);
+	  if (empty($this->data['Client']['parentClientId'])) {
+		    $loaClient = $this->data['Client']['clientId'];
+	  }
+	  else {
+		    $loaClient = $this->data['Client']['parentClientId'];
+	  }
+	  $this->loaId = $this->Loa->get_current_loa($loaClient);
 	  $frontend_data = $this->populate_frontend_fields();
 	  $data = array_merge_recursive($this->data, $frontend_data);
-        $loa = $this->Loa->find('first', array('conditions' => array('loaId' => $this->loaId)));
+        $loa = $this->Loa->find('first', array('conditions' => array('Loa.loaId' => $this->loaId, 'Loa.inactive' => 0)));
   	  $data['Client']['sites'] = $loa['Loa']['sites'];
 	  $this->data = $data;
 	  return true;
