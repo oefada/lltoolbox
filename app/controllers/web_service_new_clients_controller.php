@@ -43,8 +43,16 @@ class WebServiceNewClientsController extends WebServicesController
 		
 		$date_now = date('Y-m-d H:i:s', strtotime('now'));
 		
+		if ($client_id) {
+			$client = $this->Client->find('first', array('conditions' => array('clientId' => $client_id)));
+			$client_data_save = $client['Client'];
+		}
+		else {
+			$client_data_save = array();
+		}
+		
 		// map data from Sugar to toolbox client table structure
-		$client_data_save = array();
+		//$client_data_save = array();
         $client_data_save['name']				= str_replace('&#039;', "'", $decoded_request['client']['client_name']);
 		$client_data_save['name']				= $this->utf8dec($client_data_save['name']);
         $client_data_save['managerUsername'] 	= $decoded_request['client']['manager_ini'];
