@@ -444,11 +444,11 @@ class SchedulingMastersController extends AppController {
 	            $this->data['SchedulingMaster']['endDate'] = "$datePickerDate2[2]-$datePickerDate2[0]-$datePickerDate2[1] 01:00:00";
 
 				// set endDate for instance and offerLive
-			    $offerLiveResults = $this->OfferLuxuryLink->query("SELECT OfferLive.* FROM offerLuxuryLink as OfferLive INNER JOIN  offer AS Offer USING(offerId) WHERE Offer.schedulingInstanceId = " . $originalData['SchedulingInstance'][0]['schedulingInstanceId']);
+			    $offerLiveResults = $this->OfferLuxuryLink->query("SELECT OfferLuxuryLink.* FROM offerLuxuryLink as OfferLuxuryLink INNER JOIN  offer AS Offer USING(offerId) WHERE Offer.schedulingInstanceId = " . $originalData['SchedulingInstance'][0]['schedulingInstanceId']);
 			    $schedulingInstance['SchedulingInstance']   			= $originalData['SchedulingInstance'][0];
 			    $schedulingInstance['SchedulingInstance']['endDate']    = $this->data['SchedulingMaster']['endDate'];
-				$offerLive['OfferLive']									= $offerLiveResults[0]['OfferLive'];			    
-			    $offerLive['OfferLive']['endDate']                      = $this->data['SchedulingMaster']['endDate'];
+				$offerLive['OfferLuxuryLink']									= $offerLiveResults[0]['OfferLuxuryLink'];			    
+			    $offerLive['OfferLuxuryLink']['endDate']                      = $this->data['SchedulingMaster']['endDate'];
 			    
 			    if (count($offerLiveResults)) {
 			    	$this->OfferLuxuryLink->save($offerLive, false);
@@ -603,15 +603,15 @@ class SchedulingMastersController extends AppController {
 		    $newEndDate = date('Y-m-d H:i:s');
             
             $schedulingInstanceId = $this->data['SchedulingInstance'][0]['schedulingInstanceId'];
-		    $offerLiveResults = $this->OfferLuxuryLink->query("SELECT OfferLive.* FROM offerLuxuryLink as OfferLive INNER JOIN  offer AS Offer USING(offerId) WHERE Offer.schedulingInstanceId = ".$schedulingInstanceId);
+		    $offerLiveResults = $this->OfferLuxuryLink->query("SELECT OfferLuxuryLink.* FROM offerLuxuryLink as OfferLuxuryLink INNER JOIN  offer AS Offer USING(offerId) WHERE Offer.schedulingInstanceId = ".$schedulingInstanceId);
 		    
             $schedulingMaster['SchedulingMaster']       = $this->data['SchedulingMaster'];
 		    $schedulingInstance['SchedulingInstance']   = $this->data['SchedulingInstance'][0];
-		    $offerLive['OfferLive']                     = $offerLiveResults[0]['OfferLive'];
+		    $offerLive['OfferLuxuryLink']                     = $offerLiveResults[0]['OfferLuxuryLink'];
 		    
 		    $schedulingMaster['SchedulingMaster']['endDate']        = $newEndDate;
 		    $schedulingInstance['SchedulingInstance']['endDate']    = $newEndDate;
-		    $offerLive['OfferLive']['endDate']                      = $newEndDate;
+		    $offerLive['OfferLuxuryLink']['endDate']                      = $newEndDate;
 
             if ($this->SchedulingMaster->save($schedulingMaster, false) &&
                 $this->SchedulingMaster->SchedulingInstance->save($schedulingInstance, false) &&
