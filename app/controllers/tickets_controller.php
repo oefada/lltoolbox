@@ -407,6 +407,8 @@ class TicketsController extends AppController {
 					$this->data['Ticket']['userState']			= $userData['Address'][0]['stateName'];
 					$this->data['Ticket']['userCountry']		= $userData['Address'][0]['countryText'];
 					$this->data['Ticket']['userZip']			= $userData['Address'][0]['postalCode'];
+					$this->data['Ticket']['transmitted']		= 1;
+					$this->data['Ticket']['inProcess']			= 0;
 					$this->data['Ticket']['ticketNotes']		= 'MANUALLY CREATED TICKET' . trim($this->data['Ticket']['ticketNotes']);
 
 					$this->Ticket->create();
