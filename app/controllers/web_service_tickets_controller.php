@@ -138,15 +138,15 @@ class WebServiceTicketsController extends WebServicesController
 			$offerLive = $offerLive[0][$ticketSite];	
 		}
 		
-		$result = $this->Ticket->read(null, $data['ticketId']);
-		if (!empty($result)) {
+		$ticket_toolbox = $this->Ticket->read(null, $data['ticketId']);
+		if (empty($ticket_toolbox)) {
 			$data[] = $_SERVER;
-			$data[] = $result;
-			@mail('devmail@luxurylink.com', 'WEBSERVICE (TICKETS): Duplicate Ticket Detected', print_r($data, true));
-			return true;
+			$data[] = $ticket_toolbox;
+			@mail('devmail@luxurylink.com', 'WEBSERVICE (TICKETS): Ticket data not replicated to Toolbox yet', print_r($data, true));
+			return false;
 		}
 
-		if ($this->Ticket->save($data)) {
+		if ($ticket_toolbox['Ticket']['transmitted'] == 0) {
 
 			$ticketId = $data['ticketId'];
 
@@ -304,7 +304,7 @@ class WebServiceTicketsController extends WebServicesController
 			// ticket was not succesfully saved
 			// -------------------------------------------------------------------------------
 			$this->errorResponse = 1105;
-			$this->errorMsg = "Toolbox could not save this ticket record because the database is down or the data is invalid.";
+			$this->errorMsg = "Detected re-processing of ticket.";
 			return false;
 		}
 	}
