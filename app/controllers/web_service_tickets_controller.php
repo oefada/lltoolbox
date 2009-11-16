@@ -137,15 +137,28 @@ class WebServiceTicketsController extends WebServicesController
 			$offerLive = $this->Offer->query("SELECT * FROM $ticketSite WHERE offerId = " . $data['offerId']);
 			$offerLive = $offerLive[0][$ticketSite];	
 		}
-		
+
+		// lets do some checking! in case of dup tickets or if ticket was already processed
+		// -------------------------------------------------------------------------------
 		$ticket_toolbox = $this->Ticket->read(null, $data['ticketId']);
-		if (empty($ticket_toolbox)) {
+		if (empty($ticket_toolbox) || !$ticket_toolbox) {
 			$data[] = $_SERVER;
 			$data[] = $ticket_toolbox;
-			@mail('devmail@luxurylink.com', 'WEBSERVICE (TICKETS): Ticket data not replicated to Toolbox yet', print_r($data, true));
+			@mail('devmail@luxurylink.com', 'WEBSERVICE (TICKETS): Ticket data not replicated to Toolbox yet or TB DB is down', print_r($data, true));
 			return false;
 		}
 
+		$ticket_payment = $this->PaymentDetail->query('SELECT * FROM paymentDetail WHERE ticketId = ' . $data['ticketId']);
+		if (!empty($ticket_payment)) {
+			$data[] = $_SERVER;
+			$data[] = $ticket_toolbox;
+			$data[] = $ticket_payment;
+			@mail('devmail@luxurylink.com', 'WEBSERVICE (TICKETS): Stopped Processing Ticket -- Existing Payment Detected', print_r($data, true));
+			return true;
+		}
+
+		// all ticket processing happens in here
+		// -------------------------------------------------------------------------------
 		if ($ticket_toolbox['Ticket']['transmitted'] == 0) {
 
 			$ticketId = $data['ticketId'];
@@ -301,8 +314,6 @@ class WebServiceTicketsController extends WebServicesController
 			return true;	
 			
 		} else {			
-			// ticket was not succesfully saved
-			// -------------------------------------------------------------------------------
 			$this->errorResponse = 1105;
 			$this->errorMsg = "Detected re-processing of ticket.";
 			return false;

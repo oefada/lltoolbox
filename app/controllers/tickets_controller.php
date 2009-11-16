@@ -390,6 +390,7 @@ class TicketsController extends AppController {
 				} elseif (empty($offerData)) {
 					$this->Session->setFlash(__('The ticket was not created.  Invalid Offer Id.', true), 'default', array(), 'error');
 				} else {
+					$manual_datetime = date('Y-m-d H:i:s');
 					$this->data['Ticket']['ticketStatusId'] 	= 1;
 					$this->data['Ticket']['packageId'] 			= $offerData['OfferLuxuryLink']['packageId'];
 					$this->data['Ticket']['formatId']			= in_array($offerData['OfferLuxuryLink']['offerTypeId'], array(1,2,6)) ? 1 : 2;
@@ -407,8 +408,10 @@ class TicketsController extends AppController {
 					$this->data['Ticket']['userState']			= $userData['Address'][0]['stateName'];
 					$this->data['Ticket']['userCountry']		= $userData['Address'][0]['countryText'];
 					$this->data['Ticket']['userZip']			= $userData['Address'][0]['postalCode'];
-					$this->data['Ticket']['transmitted']		= 1;
-					$this->data['Ticket']['inProcess']			= 0;
+					$this->data['Ticket']['transmitted']			= 1;
+					$this->data['Ticket']['transmittedDatetime'] 	= $manual_datetime;
+					$this->data['Ticket']['inProcess']				= 0;
+					$this->data['Ticket']['inProcessDatetime'] 		= $manual_datetime;
 					$this->data['Ticket']['ticketNotes']		= 'MANUALLY CREATED TICKET' . trim($this->data['Ticket']['ticketNotes']);
 
 					$this->Ticket->create();
