@@ -949,7 +949,7 @@ class ReportsController extends AppController {
                                LEFT JOIN paymentDetail AS PaymentDetail USING (ticketId)
                                LEFT JOIN paymentProcessor AS PaymentProcessor USING (paymentProcessorId)
                                LEFT JOIN userPaymentSetting AS UserPaymentSetting ON (UserPaymentSetting.userPaymentSettingId = PaymentDetail.userPaymentSettingId)
-                               INNER JOIN package AS Package USING(packageId)
+                               INNER JOIN package AS Package ON Package.packageId = Ticket.packageId 
                                INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Ticket.packageId)
                                INNER JOIN client as Client ON(Client.clientId = ClientLoaPackageRel.clientId)
                         WHERE $conditions";
@@ -1000,10 +1000,9 @@ class ReportsController extends AppController {
                            LEFT JOIN paymentDetail AS PaymentDetail ON (PaymentDetail.ticketId = Ticket.ticketId AND PaymentDetail.isSuccessfulCharge <> 0)
                            LEFT JOIN paymentProcessor AS PaymentProcessor USING (paymentProcessorId)
                            LEFT JOIN userPaymentSetting AS UserPaymentSetting ON (UserPaymentSetting.userPaymentSettingId = PaymentDetail.userPaymentSettingId)
-                           LEFT JOIN package AS Package USING(packageId)
+                           LEFT JOIN package AS Package ON Package.packageId = Ticket.packageId 
                            LEFT JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Ticket.packageId)
                            LEFT JOIN client as Client ON(Client.clientId = ClientLoaPackageRel.clientId)
-                       	   LEFT JOIN track AS Track USING(trackId)
                            LEFT JOIN expirationCriteria AS ExpirationCriteria USING(expirationCriteriaId)
                     WHERE $conditions
                     GROUP BY Ticket.ticketId
