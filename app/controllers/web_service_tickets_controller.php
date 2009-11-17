@@ -268,6 +268,7 @@ class WebServiceTicketsController extends WebServicesController
 			if (isset($checkExists[0]['paymentDetail']) && !empty($checkExists[0]['paymentDetail'])) {
 				$auto_charge_card = false;
 				$ppv_settings['ppvNoticeTypeId'] = 18;     // Auction Winner Email (PPV)
+				return true;
 			}
 		
 			if (stristr($_SERVER['HTTP_HOST'], 'dev') || stristr($_SERVER['HTTP_HOST'], 'stage')) {
