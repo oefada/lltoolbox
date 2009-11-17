@@ -31,6 +31,7 @@ class SchedulingMastersController extends AppController {
 			$this->data['SchedulingMaster']['validityStartDate'] = $package['Package']['validityStartDate'];
 			$this->data['SchedulingMaster']['validityEndDate'] = $package['Package']['validityEndDate'];
 			$this->data['SchedulingMaster']['retailValue'] = $package['Package']['approvedRetailPrice'];
+			$this->data['SchedulingMaster']['siteId'] = $package['Package']['siteId'];
 
 			// startDate
             $datePickerDate = explode('-', $this->data['SchedulingMaster']['startDatePicker']);
