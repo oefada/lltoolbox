@@ -70,7 +70,9 @@ class WebServiceNewClientsController extends WebServicesController
 			$result = $this->Client->query("UPDATE client SET modified = NOW() WHERE clientId = $client_id LIMIT 1");
 			if ($this->Client->getAffectedRows()) {
         		$client_data_save['clientId'] = $client_id;
-	        	if (!$this->Client->save($client_data_save)) {
+				$client_cake_save = array();
+				$client_cake_save['Client'] = $client_data_save;
+	        	if (!$this->Client->save($client_cake_save)) {
 					@mail('devmail@luxurylink.com', 'SUGAR BUS -- EXISTING CLIENT NOT SAVED', print_r($client_data_save, true) . print_r($this->Client->validationErrors, true) . print_r($decoded_request, true) . print_r($this->Client->validationErrors, true));
 				}
 	        	$decoded_request['client']['client_id'] = $client_id;
