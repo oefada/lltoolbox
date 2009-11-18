@@ -132,7 +132,7 @@ function append_row(tblId)
 						<strong style="font-size:11px;">'+ currencyCode +'</strong>\
 						<input type="text" style="width:50px;" id="'+ rowIdText +'_rpd_7" class="rp_price" name="data[LoaItemRatePeriod]['+ rowId +'][LoaItemRate][0][price]" />\
 						<div style="margin-top:5px;padding:0px;">\
-							<a href="javascript:void(0);" onclick="toggleF(\''+  rowIdText +'\', \'s\', \'m\');">Different prices for weeknights/weekends</a>\
+							<!--a href="javascript:void(0);" onclick="toggleF(\''+  rowIdText +'\', \'s\', \'m\');">Different prices for weeknights/weekends</a-->\
 						</div>\
 					</div>\
 					<div id="'+ rowIdText +'_m" class="rpDates" style="display:none;">\
@@ -160,7 +160,7 @@ function append_row(tblId)
 								<input type="text" id="'+ rowIdText +'_rpd_7_1" style="width:50px;" class="rp_price" name="data[LoaItemRatePeriod]['+ rowId +'][LoaItemRate][1][price]" />\
 							</div>\
 							<div style="margin-top:5px;padding:0px;">\
-								<a href="javascript:void(0);" onclick="toggleF(\''+ rowIdText +'\', \'m\',\'s\');">One price for all nights</a>\
+								<!--a href="javascript:void(0);" onclick="toggleF(\''+ rowIdText +'\', \'m\',\'s\');">One price for all nights</a-->\
 							</div>\
 						</div>\
 					</div>';
