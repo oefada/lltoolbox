@@ -106,14 +106,14 @@ class LoaItem extends AppModel {
 					foreach ($this->loaItems[$itemId]['Fee'] as $fee) {
 						if ($fee['feeTypeId'] == 1) {
 							$feeAdjust = ($data['ratePeriodPrice'] * ($fee['feePercent'] / 100));
-							$periodPrices[$i] += $feeAdjust;
-							$items[$itemId]['ratePeriodPriceDisplay'] += $feeAdjust;
-							$items[$itemId]['feePercentDisplay'] .= '+ ' . $fee['feePercent'] . '% ';
+							$periodPrices[$i] += ($feeAdjust * $data['quantity']);
+							$items[$itemId]['ratePeriodPriceDisplay'] += ($feeAdjust * $data['quantity']);
+							$items[$itemId]['feePercentDisplay'] .= '+ ' . $data['quantity'] . '@' . $fee['feePercent'] . '% ';
 						}
 						if ($fee['feeTypeId'] == 2) {
-							$periodPrices[$i] += $fee['feePercent'];
-							$items[$itemId]['ratePeriodPriceDisplay'] += $fee['feePercent'];
-							$items[$itemId]['feePercentDisplay'] .= '+ ' . $fee['feePercent'] . ' ';
+							$periodPrices[$i] += ($fee['feePercent'] * $data['quantity']);
+							$items[$itemId]['ratePeriodPriceDisplay'] += ($fee['feePercent'] * $data['quantity']);
+							$items[$itemId]['feePercentDisplay'] .= '+ ' . $data['quantity'] . '@' . $fee['feePercent'] . ' ';
 						}
 					}
 				} 
