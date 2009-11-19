@@ -79,42 +79,38 @@ class ClientsController extends AppController {
 	         /** END SORT **/   
 		   
 	         $this->data['Client']['seoName'] = $this->convertToSeoName($this->data['Client']['name']);
-		   $this->Client->ClientDestinationRel->deleteAll(array('ClientDestinationRel.clientId' => $this->data['Client']['clientId']));
-			if ($this->Client->saveAll($this->data)) {
+			if ($this->Client->save($this->data)) {
 				if (isset($this->data['ClientAmenityRel']) && !empty($this->data['ClientAmenityRel'])) {
+					  $this->Client->ClientAmenityRel->deleteAll(array('ClientAmenityRel.clientId' => $this->data['Client']['clientId']));
+					  $this->Client->ClientAmenityRel->deleteAllFromFrontEnd($this->data['Client']['clientId'], $this->data['Client']['sites']);
 					  foreach ($this->data['ClientAmenityRel'] as $am) {
 						    $clientAmenityRelIds[] = @$am['clientAmenityRelId'];
-						    $am['clientId'] = $this->data['Client']['clientId'];
 						    $this->Client->ClientAmenityRel->save_amenity($am, $this->data['Client']['sites']);
 					  }
-					  $this->Client->ClientAmenityRel->deleteAll(array('ClientAmenityRel.clientId' => $this->data['Client']['clientId'], 'NOT' => array('clientAmenityRelId' => $clientAmenityRelIds)));
 				}
 				
 			    	//delete all themes
 			    	$this->Client->ClientThemeRel->deleteAll(array('ClientThemeRel.clientId' => $this->data['Client']['clientId']), true, true);
-				if(!empty($this->data['ClientThemeRel'])):
-				    $clientThemeRel = array();
-				    foreach ($this->data['ClientThemeRel'] as $site => $themes) {
-					  foreach ($themes as $theme):
-						if (isset($clientThemeRel[$theme])) {
-						    $clientThemeRel[$theme]['ClientThemeRel']['sites'][] = $site;
-						} else {
-						    $clientThemeRel[$theme]['ClientThemeRel'] = array('themeId' => $theme,
-											  'clientId' => $this->data['Client']['clientId'],
-											  'sites' => array($site));  
-						}
-					  endforeach;
-				    }
-				    $this->Client->ClientThemeRel->saveThemes($clientThemeRel);
-				//    foreach ($clientThemeRel as $k => $v):
-				//	  $this->Client->ClientThemeRel->create();
-				//	  $this->Client->ClientThemeRel->save($v);
-				//    endforeach;
+								$this->Client->ClientThemeRel->deleteAllFromFrontEnd($this->data['Client']['clientId'], $this->data['Client']['sites']);
+								if(!empty($this->data['ClientThemeRel'])):
+												$clientThemeRel = array();
+												foreach ($this->data['ClientThemeRel'] as $site => $themes) {
+																foreach ($themes as $theme):
+																				if (isset($clientThemeRel[$theme])) {
+																								$clientThemeRel[$theme]['ClientThemeRel']['sites'][] = $site;
+																				} else {
+																								$clientThemeRel[$theme]['ClientThemeRel'] = array('themeId' => $theme,
+																																																																								  'clientId' => $this->data['Client']['clientId'],
+																																																																								  'sites' => array($site));  
+																				}
+																endforeach;
+												}
+												$this->Client->ClientThemeRel->saveThemes($clientThemeRel);
 			    	endif;
-				$this->Session->setFlash(__('The Client has been saved', true));
-				$this->redirect(array('action'=>'edit', 'id' => $id));
+								$this->Session->setFlash(__('The Client has been saved', true));
+								$this->redirect(array('action'=>'edit', 'id' => $id));
 			} else {
-				$this->Session->setFlash(__('The Client could not be saved. Please, try again.', true));
+								$this->Session->setFlash(__('The Client could not be saved. Please, try again.', true));
 			}
 			$this->set('submission', true);
 		}

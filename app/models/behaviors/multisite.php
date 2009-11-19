@@ -71,61 +71,59 @@ class MultisiteBehavior extends ModelBehavior {
 	        $model->data[$model->alias][$model->primaryKey] = $model->id;
 	    }
 
-	    if (isset($this->inherits[$model->name]) && $this->inherits[$model->name] != $model->alias):
-	        @$model->data[$model->alias][$this->sitesColumn] = MultisiteBehavior::$sites[$this->inherits[$model->name]];
-	    elseif(isset($this->inheritsExclusive[$model->name]) && $this->inheritsExclusive[$model->name] != $model->alias):
-	        if (!is_array($model->data[$model->alias][$this->sitesColumn])) {
-                $model->data[$model->alias][$this->sitesColumn] = array($model->data[$model->alias][$this->sitesColumn]);
-            }
-	        foreach($model->data[$model->alias][$this->sitesColumn] as $k => $siteToCheck){
-	            if (!is_array(MultisiteBehavior::$sites[$this->inheritsExclusive[$model->name]])) {
-	                MultisiteBehavior::$sites[$this->inheritsExclusive[$model->name]] = array();
-	            }
-	            if(!in_array($siteToCheck, MultisiteBehavior::$sites[$this->inheritsExclusive[$model->name]])) {
-	                unset($model->data[$model->alias][$this->sitesColumn][$k]);
-	            }
-	        }
-	    else:
-	        MultisiteBehavior::$sites[$model->alias] = $model->data[$model->alias][$this->sitesColumn];
-	    endif;
-	    
-	    $modelBackup = clone($model);
-	    
-	    if (!isset($this->settings[$model->name]['disableWrite']) || $this->settings[$model->name]['disableWrite'] != true) {
-		    $this->deleteExternals($modelBackup, $created);
-	    }
+	    MultisiteBehavior::$sites[$model->alias] = $model->data[$model->alias][$this->sitesColumn];
 
-	    if (!empty($model->data[$model->alias][$this->sitesColumn])):
+	    if (!empty($model->data[$model->alias][$this->sitesColumn])) {
 	        if (!is_array($model->data[$model->alias][$this->sitesColumn])) {
 	            $model->data[$model->alias][$this->sitesColumn] = array($model->data[$model->alias][$this->sitesColumn]);
-	        }
-		  
-	        foreach ($model->data[$model->alias][$this->sitesColumn] as $database):
-	            $modelToSave = clone($model);
-	            $this->save($modelToSave, $database);
-	        endforeach;
-		  $this->_setDb(&$model, 'default');
-		  if (!empty($this->settings[$model->name]['propagatesTo'])) {
-		       foreach($this->propagatesTo as $child) {
+	        }	
+	        foreach($this->databases as $database) {
+		    if (isset($model->deleteFirst) && $model->deleteFirst) {
+				$this->deleteAllFromFrontEnd($model, $database);
+		    }
+		    if (!in_array($database, $model->data[$model->alias][$this->sitesColumn])) {
+				  $modelBackup = clone($model);
+				  $this->deleteFromFrontEnd($modelBackup, $database);
+				  continue;
+		    }
+		    $save_model = clone($model);
+		    $this->unbindAssocs($save_model);
+		    $this->saveModel($save_model, $database);
+		    $db = $this->_setDb(&$model, 'default');
+		    if (!empty($this->settings[$model->name]['propagatesTo'])) {
+			 foreach($this->propagatesTo as $child) {
 				$child_model = new $child();
 				$child_model->recursive = -1;
-				$records = $child_model->find('all', array('conditions' => array($model->primaryKey => $model->data[$model->alias][$model->primaryKey])));
+				if (in_array($model->primaryKey, array_keys($child_model->_schema))) {       // the parent model's primary key defines the association in the child model
+					$conditions = array('conditions' => array($model->primaryKey => $model->data[$model->alias][$model->primaryKey]));
+				}
+				else {   // the child model's primary key defines the association
+					$conditions = array('conditions' => array($child_model->primaryKey => $model->data[$model->alias][$child_model->primaryKey]));
+				}
+				$records = $child_model->find('all', $conditions);
+
+				if (isset($child_model->deleteFirst) && $child_model->deleteFirst) {
+				       $this->deleteAllFromFrontEnd($child_model, $database, $model);
+				}
 				foreach($records as $record) {
 					  $child_model->create();
 					  $child_model->id = $record[$child_model->alias][$child_model->primaryKey];
 					  $record[$child_model->alias][$this->sitesColumn] = $model->data[$model->alias][$this->sitesColumn];
 					  $child_model->set($record);
-					  $del_model = clone($child_model);
-					  $this->deleteExternals($del_model, $created);
-					  foreach ($model->data[$model->alias][$this->sitesColumn] as $database) {
-						    $save_child = clone($child_model);
-						    $this->save($save_child, $database);
+					  if (!in_array($database, $child_model->data[$child_model->alias][$this->sitesColumn])) {
+						    $modelBackup = clone($child_model);
+						    $this->deleteFromFrontEnd($modelBackup, $database);
+						    continue;
 					  }
+					  $save_child = clone($child_model);
+					  $this->unbindAssocs($save_child);
+					  $this->saveModel($save_child, $database);
 				}
-				$this->_setDb(&$model, 'default');
-			 }
-		  }  
-	    endif;
+		      }
+		      $this->_setDb(&$model, 'default');
+		   }
+	       }  
+	    }
 	}
 	
 	/**
@@ -155,86 +153,33 @@ class MultisiteBehavior extends ModelBehavior {
 		return $results;
 	}
 	
-	/**
-	 * For a model, we need to delete all its associated models in external databases as well as the primary one
-	 * This method loops through a models assocations, removes the ones that have no tables in the secondary databases,
-	 * and then proceeds to remove the associated records from the secondary databases
-	 *
-	 * @param Object $model The model, passed by reference
-	 * @param bool created
-	 */
-	function deleteExternals(&$model, $created = false) {	  
-	    foreach ($this->databases as $database):
-	        $modelBackup = clone($model);					//it's important to clone this model
-															//deleting it also deletes it's properties, and we are deleting it multiple times
-	        $db = $this->_setDb($modelBackup, $database);
-
-	        if ($this->_tableExists($modelBackup, $db)) {
-	            //$db->delete($modelBackup);
-	            $unbind = array();
-	            foreach ($modelBackup->hasMany as $assoc => $v):
-	                if (!$this->_tableExists($modelBackup->{$assoc}, $db)) {
-	                    $unbind['hasMany'][] = $assoc;							//store array of models to unbind later
-                    } else {
-                        $this->_setDb($modelBackup->{$assoc}, $database);		//we need to set the database of associated models
-													  //to our secondary db's
-                    }
-	            endforeach;
-	            
-	            foreach ($modelBackup->hasOne as $assoc => $v):
-	                if (!$this->_tableExists($modelBackup->{$assoc}, $db)) {
-	                    $unbind['hasOne'][] = $assoc;
-                    } else {
-                        $this->_setDb($modelBackup->{$assoc}, $database);
-                    }
-	            endforeach;
-	            
-	            foreach ($modelBackup->hasAndBelongsToMany as $assoc => $v):
-	                if (!$this->_tableExists($modelBackup->{$assoc}, $db)) {
-	                    $unbind['hasAndBelongsToMany'][] = $assoc;
-                    } else {
-                        $this->_setDb($modelBackup->{$v['with']}, $database);
-                    }
-	            endforeach;
-
-	            $modelBackup->unbindModel($unbind, false);					//unbind all models without tables in secondary dbs
-	            MultisiteBehavior::$currentConnection = $database;
-	            $modelBackup->delete($modelBackup->data[$model->alias][$model->primaryKey]); //deletes main model and all associations
-			
-			//code to nowhere?
-			
-//                $db2 =& ConnectionManager::getDataSource($database);
-//                
-//                foreach ($modelBackup->hasMany as $assoc => $v):
-//	                if (!$this->_tableExists($modelBackup->{$assoc}, $db)) {
-//	                    $unbind['hasMany'][] = $assoc;
-//                    } else {
-//                        $this->_setDb($modelBackup->{$assoc});
-//                    }
-//	            endforeach;
-//	            
-//	            foreach ($modelBackup->hasOne as $assoc => $v):
-//	                if (!$this->_tableExists($modelBackup->{$assoc}, $db)) {
-//	                    $unbind['hasOne'][] = $assoc;
-//                    } else {
-//                        $this->_setDb($modelBackup->{$assoc});
-//                    }
-//	            endforeach;
-//	            
-//	            foreach ($modelBackup->hasAndBelongsToMany as $assoc => $v):
-//	                if (!$this->_tableExists($modelBackup->{$assoc}, $db)) {
-//	                    $unbind['hasAndBelongsToMany'][] = $assoc;
-//                    } else {
-//                        $this->_setDb($modelBackup->{$v['with']});
-//                    }
-//	            endforeach;
-	        }
-	    endforeach;
+	  // clears out HABTM records from front end before saving them
+	  function deleteAllFromFrontEnd($model, $database, $parent=null) {
+		    $db = $this->_setDb(&$model, $database);
+		    if ($parent) {
+				$conditions = array('conditions' => array($parent->primaryKey => $parent->data[$parent->alias][$parent->primaryKey]));
+		    }
+		    else {
+				$conditions = array('conditions' => array($model->primaryKey => $model->data[$model->alias][$model->primaryKey]));
+		    }
+		    $fe_records = $model->find('all', $conditions);
+		    foreach ($fe_records as $fe_record) {
+				$del_model = new $model();
+				$del_model->create();
+				$del_model->id = $fe_record[$model->alias][$model->primaryKey];
+				$del_model->set($fe_record);
+				$this->deleteFromFrontEnd($del_model, $database);
+		    }
+	  }
 	
-	    if ($model->data[$model->alias][$model->primaryKey]) {
-            $db2 =& ConnectionManager::getDataSource('default');
-            $db2->query("DELETE FROM multiSite WHERE model = '{$model->alias}' and modelId = {$model->data[$model->alias][$model->primaryKey]}");
-	     }
+	function deleteFromFrontEnd($model, $database) {
+	   $db = $this->_setDb(&$model, $database);
+	   $del_model = clone($model);
+	   if (!isset($this->settings[$model->name]['disableWrite']) || $this->settings[$model->name]['disableWrite'] != true) {
+		    $this->unbindAssocs($del_model);
+		    $db->delete($del_model);
+	   }
+	   $this->_setDb(&$model, 'default');
 	}
 	
 	/**
@@ -272,9 +217,9 @@ class MultisiteBehavior extends ModelBehavior {
 	 * @param Object $model the model we are saving
 	 * @param string $database the database connection key
 	 */
-	function save($model, $database) {
+	function saveModel($model, $database) {
 	  if (!isset($this->settings[$model->name]['disableWrite']) || $this->settings[$model->name]['disableWrite'] != true) {
-		$this->_setDb($model, $database);
+		$this->_setDb(&$model, $database);
 		$backup = clone($model);
 		$this->prepareSiteSpecificData($model, $database);
 		$model->saveAll($model->data, array('validate' => false, 'callbacks' => false));
@@ -329,6 +274,19 @@ class MultisiteBehavior extends ModelBehavior {
 	        }
 	    }
 	}
+	
+	
+	function unbindAssocs(&$model) {
+	     $assocs = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
+	     foreach($assocs as $assoc) {
+		    $models = $model->{$assoc};
+		    foreach($models as $model_name => $assoc_data) {
+				$model->unbindModel(array($assoc => array($model_name)), true);				
+		    }
+	     }
+	}
+	
+	
     
     /**
      * Simple function to check if a table exists in a given database.
