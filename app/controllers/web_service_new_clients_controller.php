@@ -92,7 +92,7 @@ class WebServiceNewClientsController extends WebServicesController
 			
 			$this->Client->create();
 			if (!$this->Client->save($client_data_save, array('callbacks' => false))) {
-				@mail('devmail@luxurylink.com', 'SUGAR BUS -- NEW CLIENT NOT SAVED', print_r($client_data_save, true) . print_r($this->Client->validationErrors, true) . print_r($decoded_request, true) . print_r($this->Client->validationErrors, true));
+				@mail('devmail@luxurylink.com', 'SUGAR BUS -- NEW CLIENT NOT SAVED ('.$client_id.')', print_r($client_data_save, true) . print_r($this->Client->validationErrors, true) . print_r($decoded_request, true) . print_r($this->Client->validationErrors, true));
 			}
 			
 			// get new client id and send back to Sugar
