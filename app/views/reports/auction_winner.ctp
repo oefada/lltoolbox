@@ -96,7 +96,7 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 ?>
 	<tr<?=$class?>>
 		<td><?=$siteIds[$r['Ticket']['siteId']]?></td>
-		<td><?=$r['SchedulingInstance']['endDate']?></td>
+		<td><?=$r[0]['endDate']?></td>
 		<td><?=$r['PaymentDetail']['ppResponseDate']?></td>
 		<td><?=$r['Ticket']['ticketId']?></td>
 		<td><?=$r[0]['clientIds']?></td>
