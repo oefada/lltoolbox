@@ -29,8 +29,8 @@ foreach ($results as $r):
 
 	$line = array(
 	$siteIds[$r['Ticket']['siteId']],
-	date('M d Y h:i:sA', strtotime($r['SchedulingInstance']['endDate'])),
-	date('M d Y h:i:sA', strtotime($r['PaymentDetail']['ppResponseDate'])),
+	date('M d Y h:i:sA', strtotime($r[0]['endDate'])),
+	date('M d Y h:i:sA', strtotime($r['PaiymentDetail']['ppResponseDate'])),
 	$r['Ticket']['ticketId'],
 	$r[0]['clientIds'],
 	$r[0]['oldProductIds'],
@@ -56,7 +56,7 @@ foreach ($results as $r):
 	'N/A',
 	$r['Package']['numNights'],
 	'',
-	(($r['Ticket']['requestArrival']) ? date('M d Y h:i:sA', strtotime($r['Ticket']['requestArrival'])) : ''),
+	(($r['r']['arrivalDate']) ? date('M d Y', strtotime($r['r']['arrivalDate'])) : ''),
 	$r['OfferType']['offerTypeName'],
 	$fee,
 	$r[0]['percentOfRetail'],
