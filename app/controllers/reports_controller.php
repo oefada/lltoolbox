@@ -958,7 +958,7 @@ class ReportsController extends AppController {
     	    $numRecords = $results[0][0]['numRecords'];
             $numPages = ceil($numRecords / $this->perPage);
             
-            $sql = "SELECT SchedulingInstance.endDate,
+            $sql = "SELECT if(Ticket.offerTypeId IN(3,4),PaymentDetail.ppResponseDate,SchedulingInstance.endDate) endDate,
                            PaymentDetail.ppResponseDate, 
                            Ticket.ticketId,
                            GROUP_CONCAT(DISTINCT Client.clientId) as clientIds,
@@ -975,7 +975,7 @@ class ReportsController extends AppController {
                            Ticket.userHomePhone,
                            Ticket.userMobilePhone,
                            Ticket.userEmail1,
-						   Ticket.requestArrival,
+						   r.arrivalDate,
 						   Ticket.siteId,
                            PaymentDetail.ccType,
                            PaymentDetail.ppCardNumLastFour,
@@ -1004,7 +1004,8 @@ class ReportsController extends AppController {
                            LEFT JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Ticket.packageId)
                            LEFT JOIN client as Client ON(Client.clientId = ClientLoaPackageRel.clientId)
                            LEFT JOIN expirationCriteria AS ExpirationCriteria USING(expirationCriteriaId)
-                    WHERE $conditions
+       					   LEFT JOIN reservation r ON Ticket.ticketId = r.ticketId
+	   				WHERE $conditions
                     GROUP BY Ticket.ticketId
                     ORDER BY $order
 	                LIMIT $this->limit";
@@ -1016,7 +1017,7 @@ class ReportsController extends AppController {
             $this->set('numPages', $numPages);
             $this->set('data', $this->data);
 	        $this->set('results', $results);
-	        $this->set('serializedFormInput', serialize($this->data));
+		    $this->set('serializedFormInput', serialize($this->data));
 	    }
 	}
 	
