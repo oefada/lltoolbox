@@ -7,6 +7,7 @@
 			echo $form->input('packageStatusId', array('label' => 'Status'));
 		} else {
 			echo $form->input('packageStatusId', array('label' => 'Status', 'disabled' => true));
+			echo $form->input('packageStatusId', array('type' => 'hidden'));
 		}
 		
 		echo "<div class='controlset'>";
