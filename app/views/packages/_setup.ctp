@@ -63,6 +63,9 @@
 	</div>
 
 <?php
+
+		echo $form->input('roomGrade');
+		
 		if(count($clientLoaDetails) > 1):
 			echo $form->input('numNights', array('readonly' => true));
 		else: 
