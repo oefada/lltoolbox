@@ -30,7 +30,7 @@ foreach ($results as $r):
 	$line = array(
 	$siteIds[$r['Ticket']['siteId']],
 	date('M d Y h:i:sA', strtotime($r[0]['endDate'])),
-	date('M d Y h:i:sA', strtotime($r['PaiymentDetail']['ppResponseDate'])),
+	date('M d Y h:i:sA', strtotime($r['PaymentDetail']['ppResponseDate'])),
 	$r['Ticket']['ticketId'],
 	$r[0]['clientIds'],
 	$r[0]['oldProductIds'],
