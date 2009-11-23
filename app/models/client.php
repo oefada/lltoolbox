@@ -227,6 +227,15 @@ class Client extends AppModel {
 							$this->id = $client_id;
 							$client = $this->findByClientId($client_id);
 							$client['Client']['sites'] = explode(',', $sites);
+							//These if statements are necessary to prevent Cake from inserting blank Client records to the toolbox db
+						if (empty($client['ParentClient']['clientId'])) {
+							  unset($client['ParentClient']);
+							  $this->unbindModel(array('belongsTo' => array('ParentClient')), $reset=false);
+						}
+						if (empty($client['ChildClient']['clientId'])) {
+									unset($client['ChildClient']);
+									$this->unbindModel(array('hasMany' => array('ChildClient')), $reset=false);
+						}
 							$this->set($client);
 							$this->save();
 			}
