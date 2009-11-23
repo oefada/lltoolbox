@@ -169,11 +169,16 @@ class Package extends AppModel {
 	    
 	    // update offer details in offer for hotel offers type (7)
 	    if (!empty($this->data['Package']['externalOfferUrl'])) {
-		$this->query("
+	    	$package_title = Sanitize::escape($this->data['Package']['packageTitle']);
+	    	$short_blurb = Sanitize::escape($this->data['Package']['shortBlurb']);
+	    	$additionalDescription = Sanitize::escape($this->data['Package']['additionalDescription']);
+	    	$package_includes = Sanitize::escape($this->data['Package']['packageIncludes']);
+	    	
+			$this->query("
 			    UPDATE offerLuxuryLink
 			    SET validityStart = '{$this->data['Package']['validityStartDate']}', validityEnd = '{$this->data['Package']['validityEndDate']}',
-				    offerName = '{$this->data['Package']['packageTitle']}', shortBlurb = '{$this->data['Package']['shortBlurb']}', additionalDescription = '{$this->data['Package']['additionalDescription']}',
-				    offerIncludes = '{$this->data['Package']['packageIncludes']}', externalOfferUrl = '{$this->data['Package']['externalOfferUrl']}' 
+				    offerName = '$package_title', shortBlurb = '$short_blurb', additionalDescription = '$additionalDescription',
+				    offerIncludes = '$package_includes', externalOfferUrl = '{$this->data['Package']['externalOfferUrl']}' 
 			    WHERE packageId = $this->id AND offerTypeId = 7 AND now() < endDate
 		    ");
 	    }
