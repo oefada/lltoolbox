@@ -638,9 +638,6 @@ class WebServiceTicketsController extends WebServicesController
 				$emailReplyTo = ($isAuction) ? "resrequests@luxurylink.com" : "reservations@luxurylink.com";
 				$userEmail = $clientPrimaryEmail;
 				$emailCc = $clientCcEmail;
-				if (!$isAuction) {
-					$emailBcc = "exclusives@luxurylink.com";
-				}
 				break;
 			case 4: 
 				include('../vendors/email_msgs/ppv/client_ppv.html');
