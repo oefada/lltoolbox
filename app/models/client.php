@@ -8,7 +8,8 @@ class Client extends AppModel {
    var $order = array('Client.name');
    var $actsAs = array('Containable',
 					   'Logable',
-					   'Multisite' => array('propagatesTo' => array('ClientDestinationRel'
+					   'Multisite' => array('propagatesTo' => array('ClientDestinationRel',
+																	'ClientTracking'
 															   )));
    
    var $validate = array('name' => array(
@@ -29,6 +30,7 @@ class Client extends AppModel {
 						'ClientAmenityRel' => array('className' => 'ClientAmenityRel', 'foreignKey' => 'clientId'),
 						'ClientDestinationRel' => array('className' => 'ClientDestinationRel', 'foreignKey' => 'clientId'),
 						'ClientThemeRel' => array('className' => 'ClientThemeRel', 'foreignKey' => 'clientId'),
+						'ClientTracking' => array('className' => 'ClientTracking', 'foreignKey' => 'clientId'),
 						'ClientReview' => array('className' => 'ClientReview', 'foreignKey' => 'clientId'),
 						'ImageClient' => array('className' => 'ImageClient', 'foreignKey' => 'clientId')
 					   );
