@@ -31,7 +31,9 @@ td.highlight {
 	background-color: #f5f2e2;
 }
 table tr.currweek td {
-	background-color: #99cc99;
+	/*background-color: #99cc99;*/
+	font-weight: bold;
+	color: black;
 }
 table tr.altrow td {
 	background: #f5f2e2;
