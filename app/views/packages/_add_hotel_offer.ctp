@@ -8,10 +8,18 @@
 		echo $form->input('packageIncludes', array('label' => 'Full Description'));
 		
 		?><div style="float: left; clear: both"><?
-			echo $form->input('startDate', array('label' => 'Original Start Date'));
+			echo $form->input('startDate', array('label' => 'Display Start Date'));
 		?></div><div style="float: left; clear: none"><?
-			echo $form->input('endDate', array('label' => 'Original End Date'));
+			echo $form->input('endDate', array('label' => 'Display End Date'));
 		?></div><?
+
+        ?><div style="float: left; clear: both"><?
+		    echo $form->input('validityStartDate', array('label' => 'Validity Start Date'));
+		?></div><div style="float: left; clear: none"><?
+			echo $form->input('validityEndDate', array('label' => 'Validity End Date'));
+		?></div><?
+
+
 		
 		echo $form->input('PackageOfferTypeDefField.7.offerTypeId', array('value' => 7, 'type' => 'hidden'));
 		echo $form->input('PackageOfferTypeDefField.7.buyNowPrice', array('value' => 1, 'type' => 'hidden'));
