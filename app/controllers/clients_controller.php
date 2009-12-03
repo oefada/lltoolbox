@@ -97,24 +97,24 @@ class ClientsController extends AppController {
 					  }
 				}
 				
-			    	//delete all themes
-			    	$this->Client->ClientThemeRel->deleteAll(array('ClientThemeRel.clientId' => $this->data['Client']['clientId']), true, true);
-					$this->Client->ClientThemeRel->deleteAllFromFrontEnd($this->data['Client']['clientId'], $this->data['Client']['sites']);
-						if(!empty($this->data['ClientThemeRel'])):
-								$clientThemeRel = array();
-								foreach ($this->data['ClientThemeRel'] as $site => $themes) {
-									foreach ($themes as $theme):
-											if (isset($clientThemeRel[$theme])) {
-												$clientThemeRel[$theme]['ClientThemeRel']['sites'][] = $site;
-											} else {
-												$clientThemeRel[$theme]['ClientThemeRel'] = array('themeId' => $theme, 'clientId' => $this->data['Client']['clientId'],	'sites' => array($site));  
-											}
-									endforeach;
-								}
-								$this->Client->ClientThemeRel->saveThemes($clientThemeRel);
-				    	endif;
-						$this->Session->setFlash(__('The Client has been saved', true));
-						$this->redirect(array('action'=>'edit', 'id' => $id));
+				//delete all themes
+				$this->Client->ClientThemeRel->deleteAll(array('ClientThemeRel.clientId' => $this->data['Client']['clientId']), true, true);
+				$this->Client->ClientThemeRel->deleteAllFromFrontEnd($this->data['Client']['clientId'], $this->data['Client']['sites']);
+				if(!empty($this->data['ClientThemeRel'])):
+						$clientThemeRel = array();
+						foreach ($this->data['ClientThemeRel'] as $site => $themes) {
+							foreach ($themes as $theme):
+									if (isset($clientThemeRel[$theme])) {
+										$clientThemeRel[$theme]['ClientThemeRel']['sites'][] = $site;
+									} else {
+										$clientThemeRel[$theme]['ClientThemeRel'] = array('themeId' => $theme, 'clientId' => $this->data['Client']['clientId'],	'sites' => array($site));  
+									}
+							endforeach;
+						}
+						$this->Client->ClientThemeRel->saveThemes($clientThemeRel);
+				endif;
+				$this->Session->setFlash(__('The Client has been saved', true));
+				$this->redirect(array('action'=>'edit', 'id' => $id));
 			} else {
 				$this->Session->setFlash(__('The Client could not be saved. Please, try again.', true));
 			}
