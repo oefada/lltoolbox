@@ -79,6 +79,9 @@ class ClientsController extends AppController {
 	         /** END SORT **/   
 		   
 	         $this->data['Client']['seoName'] = $this->convertToSeoName($this->data['Client']['name']);
+			 if (!empty($this->data['Client']['ageRanges'])) {
+				$this->data['Client']['ageRanges'] = implode(',',$this->data['Client']['ageRanges']);
+			 }
 			if ($this->Client->save($this->data)) {
 				if (isset($this->data['ClientTracking'])) {
 					foreach($this->data['ClientTracking'] as $trackingRecord) {
@@ -156,7 +159,11 @@ class ClientsController extends AppController {
     		    $this->data['FamilyClientThemeRel'][$v['themeId']] = $v['clientThemeRelId'];
     		}
 		}
-
+		
+		if (!empty($this->data['Client']['ageRanges'])) {
+			$ranges = explode(',',$this->data['Client']['ageRanges']);
+			$this->data['Client']['ageRanges'] = $ranges;
+		}
 		$this->set('client', $this->data);
 		//$this->set(compact('addresses', 'amenities','clientLevelIds','clientStatusIds','clientTypeIds','regions','clientAcquisitionSourceIds', 'loas', 'themes'));
 		$countryIds = $this->Country->find('list');
