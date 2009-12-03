@@ -413,10 +413,12 @@ class TicketsController extends AppController {
 					$this->data['Ticket']['inProcess']				= 0;
 					$this->data['Ticket']['inProcessDatetime'] 		= $manual_datetime;
 					$this->data['Ticket']['ticketNotes']		= 'MANUALLY CREATED TICKET' . trim($this->data['Ticket']['ticketNotes']);
-
+					
+					$this->Ticket->useDbConfig = 'shared';
 					$this->Ticket->create();
 					if ($this->Ticket->save($this->data)) {
 						$this->Session->setFlash(__('This manual ticket has been created successfully', true));
+						$this->Ticket->useDbConfig = 'default';
 						$this->redirect(array('action'=>'view', 'id' => $this->Ticket->getLastInsertId()));
 					} else {
 						$this->Session->setFlash(__('The Ticket could not be saved. Please, try again.', true));
