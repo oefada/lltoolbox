@@ -1,3 +1,25 @@
+<style>
+div.ageRanges {
+		position:relative;
+		height:75px;
+}
+
+ul.optionList {
+		position:absolute;
+		left:150px;
+}
+
+ul.optionList li {
+		list-style-type:none;
+}
+
+ul.optionList li input {
+		width:20px;
+}
+
+
+</style>
+
 <script type="text/javascript">
 var num = 1000;
 var clientId = <?php echo $client['Client']['clientId']; ?>;
@@ -330,6 +352,29 @@ foreach ($this->data['Client']['sites'] as $site) {
 				<?php endif; ?>
 			</div>
 		</fieldset>
+		<?php if ($is_family): ?>
+				<fieldset class="collapsible">
+						<legend class="handle">Family</legend>
+						<div class="collapsibleContent">
+								<div class="input ageRanges">
+										<label>Good For Ages</label>
+										<ul class="optionList">
+										    <?php
+												  $ranges = array('less than 1' => 'Less than 1 year: Babies',
+																  '1-4' => '1 - 4 years: Toddlers',
+																  '5-11' => '5 - 11 years: School Age',
+																  '12-18' => '12 - 18 years: Preteens &amp; Teens');
+												  foreach ($ranges as $value => $label):
+														$checked = (in_array($value, $this->data['Client']['ageRanges'])) ? ' checked' : '';
+												  ?>
+														<li><input type="checkbox" name="data[Client][ageRanges][]" value="<?php echo $value; ?>"<?php echo $checked; ?>> <?php echo $label; ?></li>
+												  <?php endforeach; ?>
+										</ul>
+								</div>
+								<?php echo $form->input('familiesShouldKnow'); ?>
+						</div>
+				</fieldset>
+		<?php endif; ?>
 		<fieldset class="collapsible">
 			<legend class="handle">Destinations <?=$html2->c($client['Destination']); ?></legend>
 			<div class="collapsibleContent">
