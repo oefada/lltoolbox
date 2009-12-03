@@ -9,7 +9,8 @@ class Client extends AppModel {
    var $actsAs = array('Containable',
 					   'Logable',
 					   'Multisite' => array('propagatesTo' => array('ClientDestinationRel',
-																	'ClientTracking'
+																	'ClientTracking',
+																	'ClientAmenityRel'
 															   )));
    
    var $validate = array('name' => array(
@@ -205,7 +206,7 @@ class Client extends AppModel {
 			   $sql = "INSERT DELAYED INTO clientThemeLookup (". implode(',',array_keys($insert_arr)) .") VALUES (". implode(',',array_values($insert_arr)) .") ON DUPLICATE KEY UPDATE $update_tmp";
 			   foreach ($this->data['Client']['sites'] as $site) {
 				   $this->useDbConfig = $site;
-						   $result = $this->query($sql);
+				   $result = $this->query($sql);
 			   }
 		   }
 	   }

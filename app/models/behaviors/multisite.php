@@ -78,51 +78,51 @@ class MultisiteBehavior extends ModelBehavior {
 	            $model->data[$model->alias][$this->sitesColumn] = array($model->data[$model->alias][$this->sitesColumn]);
 	        }	
 	        foreach($this->databases as $database) {
-		    if (isset($model->deleteFirst) && $model->deleteFirst) {
-				$this->deleteAllFromFrontEnd($model, $database);
-		    }
-		    if (!in_array($database, $model->data[$model->alias][$this->sitesColumn])) {
-				  $modelBackup = clone($model);
-				  $this->deleteFromFrontEnd($modelBackup, $database);
-				  continue;
-		    }
-		    $save_model = clone($model);
-		    $this->unbindAssocs($save_model);
-		    $this->saveModel($save_model, $database);
-		    $db = $this->_setDb(&$model, 'default');
-		    if (!empty($this->settings[$model->name]['propagatesTo'])) {
-			 foreach($this->propagatesTo as $child) {
-				$child_model = new $child();
-				$child_model->recursive = -1;
-				if (in_array($model->primaryKey, array_keys($child_model->_schema))) {       // the parent model's primary key defines the association in the child model
-					$conditions = array('conditions' => array($model->primaryKey => $model->data[$model->alias][$model->primaryKey]));
+				if (isset($model->deleteFirst) && $model->deleteFirst) {
+					$this->deleteAllFromFrontEnd($model, $database);
 				}
-				else {   // the child model's primary key defines the association
-					$conditions = array('conditions' => array($child_model->primaryKey => $model->data[$model->alias][$child_model->primaryKey]));
+				if (!in_array($database, $model->data[$model->alias][$this->sitesColumn])) {
+					  $modelBackup = clone($model);
+					  $this->deleteFromFrontEnd($modelBackup, $database);
+					  continue;
 				}
-				$records = $child_model->find('all', $conditions);
-
-				if (isset($child_model->deleteFirst) && $child_model->deleteFirst) {
-				       $this->deleteAllFromFrontEnd($child_model, $database, $model);
+				$save_model = clone($model);
+				$this->unbindAssocs($save_model);
+				$this->saveModel($save_model, $database);
+				$db = $this->_setDb(&$model, 'default');
+				if (!empty($this->settings[$model->name]['propagatesTo'])) {
+						foreach($this->propagatesTo as $child) {
+						   $child_model = new $child();
+						   $child_model->recursive = -1;
+						   if (in_array($model->primaryKey, array_keys($child_model->_schema))) {       // the parent model's primary key defines the association in the child model
+							   $conditions = array('conditions' => array($model->primaryKey => $model->data[$model->alias][$model->primaryKey]));
+						   }
+						   else {   // the child model's primary key defines the association
+							   $conditions = array('conditions' => array($child_model->primaryKey => $model->data[$model->alias][$child_model->primaryKey]));
+						   }
+						   $records = $child_model->find('all', $conditions);
+		   
+						   if (isset($child_model->deleteFirst) && $child_model->deleteFirst) {
+								  $this->deleteAllFromFrontEnd($child_model, $database, $model);
+						   }
+						   foreach($records as $record) {
+								 $child_model->create();
+								 $child_model->id = $record[$child_model->alias][$child_model->primaryKey];
+								 $record[$child_model->alias][$this->sitesColumn] = $model->data[$model->alias][$this->sitesColumn];
+								 $child_model->set($record);
+								 if (!in_array($database, $child_model->data[$child_model->alias][$this->sitesColumn])) {
+									   $modelBackup = clone($child_model);
+									   $this->deleteFromFrontEnd($modelBackup, $database);
+									   continue;
+								 }
+								 $save_child = clone($child_model);
+								 $this->unbindAssocs($save_child);
+								 $this->saveModel($save_child, $database);
+						   }
+						 }
+						 $this->_setDb(&$model, 'default');
 				}
-				foreach($records as $record) {
-					  $child_model->create();
-					  $child_model->id = $record[$child_model->alias][$child_model->primaryKey];
-					  $record[$child_model->alias][$this->sitesColumn] = $model->data[$model->alias][$this->sitesColumn];
-					  $child_model->set($record);
-					  if (!in_array($database, $child_model->data[$child_model->alias][$this->sitesColumn])) {
-						    $modelBackup = clone($child_model);
-						    $this->deleteFromFrontEnd($modelBackup, $database);
-						    continue;
-					  }
-					  $save_child = clone($child_model);
-					  $this->unbindAssocs($save_child);
-					  $this->saveModel($save_child, $database);
-				}
-		      }
-		      $this->_setDb(&$model, 'default');
-		   }
-	       }  
+	       }
 	    }
 	}
 	
@@ -177,7 +177,8 @@ class MultisiteBehavior extends ModelBehavior {
 	   $del_model = clone($model);
 	   if (!isset($this->settings[$model->name]['disableWrite']) || $this->settings[$model->name]['disableWrite'] != true) {
 		    $this->unbindAssocs($del_model);
-		    $db->delete($del_model);
+			$query = "DELETE FROM {$del_model->useTable} WHERE {$del_model->primaryKey} = {$del_model->data[$del_model->alias][$del_model->primaryKey]}";
+		    $db->query($query);
 	   }
 	   $this->_setDb(&$model, 'default');
 	}

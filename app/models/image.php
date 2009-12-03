@@ -20,5 +20,37 @@ class Image extends AppModel {
 						}
 						return $filenames;
 			}
+			
+			function createFromFile($data) {
+						$this->create();
+						$this->data['imagePath'] = $data['imagePath'];
+						$this->save($this->data);
+						$imageId = $this->getLastInsertID();
+						unset($data['imagePath']);
+						$this->ImageClient->create();
+						$data['imageId'] = $imageId;
+						$this->ImageClient->set($data);
+						$this->ImageClient->save();
+			}
+			
+			function saveCaptions($postData, $image) {
+							if (!empty($postData['caption']) || !empty($image['Image']['caption'])) {
+									$data['Image']['imageId'] = $image['Image']['imageId'];
+									$data['Image']['caption'] = $postData['caption'];
+									$data['Image']['altTag'] = $postData['caption'];
+									if (empty($image['ImageClient']['caption']) || trim($image['ImageClient']['caption']) == trim($image['Image']['caption'])) {
+												$data['ImageClient']['clientImageId'] = $image['ImageClient']['clientImageId'];
+												$data['ImageClient']['caption'] = $data['Image']['caption'];
+									}
+									
+									$this->create();
+									$this->data = $data['Image'];
+									$this->save($this->data);
+									$this->ImageClient->create();
+									$imgClientData = $data['ImageClient'];
+									$this->ImageClient->set($imgClientData);
+									$this->ImageClient->save();
+						}
+			}
 }
 ?>

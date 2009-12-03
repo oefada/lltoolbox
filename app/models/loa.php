@@ -22,7 +22,7 @@ class Loa extends AppModel {
 						 'Track' => array('foreignKey' => 'loaId')
 						);
     
-	  var $actsAs = array('Containable', 'Multisite' => array('disableWrite' => true));
+    var $actsAs = array('Containable', 'Multisite' => array('disableWrite' => true));
 	  
 
 	function validateEndStartDate()
