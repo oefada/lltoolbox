@@ -82,6 +82,9 @@ class ClientsController extends AppController {
 			 if (!empty($this->data['Client']['ageRanges'])) {
 				$this->data['Client']['ageRanges'] = implode(',',$this->data['Client']['ageRanges']);
 			 }
+			 else {
+				$this->data['Client']['ageRanges'] = null;
+			 }
 			if ($this->Client->save($this->data)) {
 				if (isset($this->data['ClientTracking'])) {
 					foreach($this->data['ClientTracking'] as $trackingRecord) {
