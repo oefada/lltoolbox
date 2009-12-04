@@ -365,7 +365,12 @@ foreach ($this->data['Client']['sites'] as $site) {
 																  '5-11' => '5 - 11 years: School Age',
 																  '12-18' => '12 - 18 years: Preteens &amp; Teens');
 												  foreach ($ranges as $value => $label):
-														$checked = (in_array($value, $this->data['Client']['ageRanges'])) ? ' checked' : '';
+														if (!empty($this->data['Client']['ageRanges'])) {
+																$checked = (in_array($value, $this->data['Client']['ageRanges'])) ? ' checked' : '';
+														}
+														else {
+																$checked = '';
+														}
 												  ?>
 														<li><input type="checkbox" name="data[Client][ageRanges][]" value="<?php echo $value; ?>"<?php echo $checked; ?>> <?php echo $label; ?></li>
 												  <?php endforeach; ?>
