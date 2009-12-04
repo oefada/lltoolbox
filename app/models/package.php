@@ -158,14 +158,33 @@ class Package extends AppModel {
 		$validity_disclaimer = ($this->data['Package']['validityLeadInLine']) ? '<p><strong>' . Sanitize::escape($this->data['Package']['validityLeadInLine']) . '</strong></p>' : ' ';
 		$validity_disclaimer .= Sanitize::escape($this->data['Package']['validityDisclaimer']);
 
-	   //delete from packageAgeRange if numAdults and numChildren isn't set
-	   if (empty($this->data['Package']['numAdults']) && empty($this->data['Package']['numChildren'])) {
+	   //delete from packageAgeRange if this package isn't associated with Family
+	   if (!in_array($this->data['Package']['siteId'], array(2))) {
 		$age_ranges = $this->PackageAgeRange->findByPackageId($this->data['Package']['packageId']);
 		if (!empty($age_ranges)) {
 		   $this->PackageAgeRange->deleteAll(array('packageId' => $this->data['Package']['packageId']), false);
 		}
 	   }
-	    $this->query("UPDATE offerLuxuryLink SET validityStart = '{$this->data['Package']['validityStartDate']}', validityEnd = '{$this->data['Package']['validityEndDate']}', validityDisclaimer = '$validity_disclaimer' WHERE packageId = $this->id AND isAuction = 0 AND now() < endDate");
+
+	  switch ($this->data['Package']['siteId']) {
+		 case 1:		//Luxury Link
+			$table = 'offerLuxuryLink';
+			break;
+		 case 2:		//Family
+			$table = 'offerFamily';
+			break;
+		 default:		//default to Luxury Link
+			$table = 'offerLuxuryLink';
+	  }
+	   
+	    $this->query("UPDATE {$table}
+					 SET validityStart = '{$this->data['Package']['validityStartDate']}',
+					     validityEnd = '{$this->data['Package']['validityEndDate']}',
+						 validityDisclaimer = '$validity_disclaimer',
+						 numGuests = {$this->data['Package']['numGuests']},
+						 minGuests = {$this->data['Package']['minGuests']},
+						 maxAdults = {$this->data['Package']['maxAdults']}
+					 WHERE packageId = $this->id AND isAuction = 0 AND now() < endDate");
 	    
 	    // update offer details in offer for hotel offers type (7)
 	    if (!empty($this->data['Package']['externalOfferUrl'])) {
@@ -175,7 +194,7 @@ class Package extends AppModel {
 	    	$package_includes = Sanitize::escape($this->data['Package']['packageIncludes']);
 	    	
 			$this->query("
-			    UPDATE offerLuxuryLink
+			    UPDATE {$table}
 			    SET validityStart = '{$this->data['Package']['validityStartDate']}', validityEnd = '{$this->data['Package']['validityEndDate']}',
 				    offerName = '$package_title', shortBlurb = '$short_blurb', additionalDescription = '$additionalDescription',
 				    offerIncludes = '$package_includes', externalOfferUrl = '{$this->data['Package']['externalOfferUrl']}' 
