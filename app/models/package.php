@@ -25,6 +25,8 @@ class Package extends AppModel {
 						'numConcurrentOffers' => array('rule' => 'numeric', 'message' => 'Must be a number'),
 						'maxNumSales' => array('rule' => 'numeric', 'message' => 'Must  be a number', 'allowEmpty' => true),
 						'numGuests' => array('rule' => 'numeric', 'message' => 'Must be a number'),
+						'minGuests' => array('rule' => 'numeric', 'message' => 'Must be a number'),
+						'maxAdults' => array('rule' => 'numeric', 'message' => 'Must be a number'),
 						'numNights' => array('numeric' => array('rule' => 'numeric', 'message' => 'Must be a number'),
 						                    'validateNumNightsAddsUp' => array('rule' => 'validateNumNightsAddsUp', 'message' => 'Must match with the number of nights entered for each room item below.')),
 						'endDate' => array('rule' => array('validateDateRanges'), 'message' => 'End Date must be greater than Start Date'),
