@@ -1,4 +1,7 @@
-<?php $this->pageTitle = $clientName.$html2->c($clientId, 'Client Id:') ?>
+<?php $this->pageTitle = $clientName.$html2->c($clientId, 'Client Id:');
+      $siteNames = array('1' => 'LL',
+                         '2' => 'Family');
+?>
 <script>
 function openSchedulingOverlay(date, packageId, packageName) {
 	Modalbox.show("/scheduling_masters/add/packageId:"+packageId+"/date:"+date, {title: 'Scheduling <a href="/clients/<?=$clientId?>/packages/edit/'+packageId+'" target="_blank">'+packageName+'</a>'});
@@ -11,6 +14,38 @@ function gotoMonth(theLink, month)
 	var url = '/scheduling/index/clientId:<?=$clientId?>/month:'+month+'/year:'+$F(yearSelect);
 	window.location.replace( url );
 }
+
+Event.observe(window, 'load', function() {
+    $('selectSite').observe('change', function() {
+            switch (this.value) {
+                case 'LL':
+                    $$('div.Family').each(function(divItem) {
+                                $(divItem).hide();
+                            });
+                    $$('div.LL').each(function(divItem) {
+                                $(divItem).show();
+                            });
+                    break;
+                case 'Family':
+                    $$('div.LL').each(function(divItem){
+                                $(divItem).hide();
+                            });
+                    $$('div.Family').each(function(divItem) {
+                                $(divItem).show();
+                            });
+                    break;
+                case 'all':
+                default:
+                    ['LL', 'Family'].each(function(item) {
+                        var elem = "div."+item;
+                        $$(elem).each(function(divItem) {
+                                $(divItem).show();
+                        });
+                    });
+            }
+    });
+});
+
 </script>
 <style>
 #monthPickerDiv {
@@ -40,8 +75,23 @@ function gotoMonth(theLink, month)
 #monthPickerDiv div.first {
 	clear: left;
 }
+
+div.sitesDropdown {
+    margin:10px 0 10px 0;
+}
+
 </style>
 <h2 class='title'>Scheduling for <?=$monthYearString?></h2>
+<?php if (count($currentLoa['Loa']['sites']) > 1): ?>
+        <div class="sitesDropdown">
+            <strong>Filter packages by site</strong>
+            <select name="site" id="selectSite" />
+                <option value="all" selected>All</option>
+                <option value="LL">Luxury Link</option>
+                <option value="Family">Family</option>
+            </select>
+        </div>
+<?php endif; ?>
 <div id='schedulingGraphs' style="float: left; clear: both">
 	<?php echo $this->renderElement('../scheduling/_graph')?>
 </div>
@@ -119,7 +169,7 @@ function gotoMonth(theLink, month)
 			$this->data['masterRows'] = 0;
 			define('CELL_WIDTH',  100/$monthDays);
 			foreach($packages as $package):
-				echo $this->renderElement('../scheduling/_package_row', array('package' => $package, 'row' => $row++, 'masterRows' => $this->data['masterRows']));
+				echo $this->renderElement('../scheduling/_package_row', array('package' => $package, 'row' => $row++, 'masterRows' => $this->data['masterRows'], 'site' => $siteNames[$package['Package']['siteId']]));
 			endforeach;
 			?>
 		</div>
