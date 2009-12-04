@@ -31,11 +31,10 @@ class SchedulingController extends AppController {
 		
 		$client = $this->Package->ClientLoaPackageRel->Client->find('first', array('contain' => array(), 'conditions' => array('Client.clientId' => $clientId)));
 		$currentLoaId = $client['Client']['currentLoaId'];
-		$currentLoa = $this->Package->ClientLoaPackageRel->Loa->find('first', array('contain' => array(), 'conditions' => array('Loa.loaId' => $currentLoaId), 'fields' => 'Loa.totalRevenue, Loa.membershipBalance, Loa.membershipBalance, Loa.startDate, Loa.endDate'));
+		$currentLoa = $this->Package->ClientLoaPackageRel->Loa->find('first', array('contain' => array(), 'conditions' => array('Loa.loaId' => $currentLoaId)));
 
         $this->set('currentLoa', $currentLoa);
 		$this->set('loaEndDate', $currentLoa['Loa']['endDate']);
-		
 		$client['Client'] = $client['Client'];								//the first package has the client details
 		$clientName = $client['Client']['name'];
         $loaBalanceFlag = $this->_setLoaBalanceFlag($clientId, $currentLoa['Loa']);
