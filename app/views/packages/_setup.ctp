@@ -31,17 +31,15 @@
 
 	<?php switch ($this->data['Package']['siteId']) {
 			case 2: 	//Family
-				$display_guests = 'style="display:none"';
 				$display_all = '';
 				break;
 			case 1:	//Luxury Link
 			default:	//site is null
-				$display_guests = '';
 				$display_all = 'style="display:none"';
 				break;				
 		}
 	?>
-	<div id="numGuests" <?php echo $display_guests; ?>>
+	<div id="numGuests">
 	  <?php echo $form->input('numGuests', array('label' => 'Max # of Guests', 'style' => 'width: 50px;')); ?>
 	  <?php echo $form->input('minGuests', array('label' => 'Min # of Guests', 'style' => 'width: 50px;')); ?>
 	  <?php echo $form->input('maxAdults', array('label' => 'Max # of Adults', 'style' => 'width: 50px;')); ?> 
