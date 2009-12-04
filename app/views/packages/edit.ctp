@@ -60,7 +60,7 @@ function updateAllPerPersonPerNight() {
 }
 
 function toggleGuestsVisibility() {
-	['numGuests','numChildrenAdults','ageRangeValidity'].each(Element.toggle);
+	['ageRangeValidity'].each(Element.toggle);
 	switch ($('PackageSiteId').getValue) {
 		case '2':	//Family
 			break;

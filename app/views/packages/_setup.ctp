@@ -42,24 +42,21 @@
 		}
 	?>
 	<div id="numGuests" <?php echo $display_guests; ?>>
-	<?php echo $form->input('numGuests', array('label' => '# of Guests', 'style' => 'width: 50px;', 'after' => ' <a href="#" class="toggleGuestInput" onclick="return false;">or, enter separate number of adults and children</a>')); ?> 
-	</div>
-	<div id="numChildrenAdults" <?php echo $display_all ?>>
-		<?php echo $form->input('numAdults', array('style' => 'width: 50px', 'label' => '# of Adults')); ?>
-		<?php echo $form->input('numChildren', array('style' => 'width: 50px', 'label' => '# of Children', 'after' => '
-		<a href="#" class="toggleGuestInput" onclick="return false;">or, enter total number of guests</a>')); ?>
+	  <?php echo $form->input('numGuests', array('label' => 'Max # of Guests', 'style' => 'width: 50px;')); ?>
+	  <?php echo $form->input('minGuests', array('label' => 'Min # of Guests', 'style' => 'width: 50px;')); ?>
+	  <?php echo $form->input('maxAdults', array('label' => 'Max # of Adults', 'style' => 'width: 50px;')); ?> 
 	</div>
 	
 	<div class="input select" id="ageRangeValidity" <?php echo $display_all; ?>>
 		<label>Valid for children ages:</label>
 		<div style="float: left; clear:right;" class="clearfix">
-	<?php 
-		$i = 0;
-		do {
-			echo $this->renderElement('../packages/_age_range_row', array('row' => $i, 'data' => @$package['PackageAgeRange'][$i]));
-		} while(isset($package['PackageAgeRange'][++$i]));
-	?>
-		<a href="#" id="addAnotherAgeRange" onclick="return false;">+ Add another age range</a>
+			<?php 
+				$i = 0;
+				do {
+					echo $this->renderElement('../packages/_age_range_row', array('row' => $i, 'data' => @$package['PackageAgeRange'][$i]));
+				} while(isset($package['PackageAgeRange'][++$i]));
+			?>
+			<a href="#" id="addAnotherAgeRange" onclick="return false;">+ Add another age range</a>
 		</div>
 	</div>
 
@@ -160,26 +157,14 @@
 	var storedNumAdults = '';
 	var storedNumChildren = '';
 	$$(".toggleGuestInput").invoke('observe', 'click', function(event) {
-				var idOfContainer = event.element().up().up().id;
-				
-				if (idOfContainer == 'numChildrenAdults') {
-					storedNumAdults = $("PackageNumAdults").value;
-					storedNumChildren = $("PackageNumChildren").value;
-					$("PackageNumAdults").value = '';
-					$("PackageNumChildren").value = '';
-				} else {
-					$("PackageNumAdults").value = storedNumAdults;
-					$("PackageNumChildren").value = storedNumChildren;
-				}
-				
-				$('numChildrenAdults').toggle();
-				$('numGuests').toggle();
 				$('ageRangeValidity').toggle();
-				
 				return false;
 				}
 			);
-	$("numChildrenAdults").observe('change', function() {$('PackageNumGuests').value = parseInt($F('PackageNumAdults')) + parseInt($F('PackageNumChildren'))});
+	
+	if (!parseInt($('PackageMaxAdults').value)) {
+	  $("PackageNumGuests").observe('change', function() {$('PackageMaxAdults').value = $('PackageNumGuests').value});
+	}
 	
 	var numPackageAgeRanges = <?= $i ?>;
 	
