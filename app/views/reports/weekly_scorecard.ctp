@@ -33,7 +33,8 @@ td.highlight {
 table tr.currweek td {
 	/*background-color: #99cc99;*/
 	font-weight: bold;
-	color: black;
+	color: red;
+	font-size: 11pt;
 }
 table tr.altrow td {
 	background: #f5f2e2;
