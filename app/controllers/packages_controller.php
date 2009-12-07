@@ -84,8 +84,8 @@ class PackagesController extends AppController {
 				$sched_master['SchedulingMaster']['remittanceTypeId'] = 0;
 				$sched_master['SchedulingMaster']['mysteryIncludes'] = '';
 				$sched_master['SchedulingMaster']['startDate'] = $this->data['Package']['startDate'];
-				$sched_master['SchedulingMaster']['endDate'] = $this->data['Package']['endDate'];	            
-	            
+				$sched_master['SchedulingMaster']['endDate'] = $this->data['Package']['endDate'];
+				$sched_master['SchedulingMaster']['siteId'] = $this->data['Package']['siteId'];
 				// create schedulingInstance
 				if ($this->Package->SchedulingMaster->saveAll($sched_master, array('validate' => false))) {
 					$instanceData['SchedulingInstance']['schedulingMasterId'] = $this->Package->SchedulingMaster->id;
