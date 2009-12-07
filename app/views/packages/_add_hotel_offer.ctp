@@ -2,6 +2,7 @@
 	<h3 class="handle">Setup</h3>
 	<div class="collapsibleContent disableAutoCollapse">
 	<?php
+	    echo $form->input('siteId', array('label' => 'Package For'));
 		echo $form->input('packageTitle');
 		echo $form->input('shortBlurb');
 		echo $form->input('additionalDescription', array('label' => 'Short Description<br/><br/><span style="font-weight:normal;">Displays on Listing<br/>135 Characters Limit</span>'));
