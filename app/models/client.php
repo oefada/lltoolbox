@@ -57,7 +57,9 @@ class Client extends AppModel {
 			   
    //use this array to define any models => fields that need to go into the client frontend databases
    //that do not exist in the toolbox client database
-   var $frontend_fields = array('LoaLevel' => array('loaLevelId', 'loaLevelName'));
+   var $frontend_fields = array('LoaLevel' => array('loaLevelId', 'loaLevelName'),
+								'ClientType' => array('clientTypeName'),
+								'Client' => array('oldProductId', 'city', 'state'));
 			
    function populate_frontend_fields() {
 	  $data = array();
