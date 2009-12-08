@@ -3,9 +3,7 @@
 	<fieldset>
  		<legend><?php __('Add LandingPage');?></legend>
 		<div class="controlset4">
-		<?
-		echo $form->input('sites', array('multiple' => 'checkbox'));
-		?>
+            <?php echo $form->input('siteId', array('label' => 'Site')); ?>
 		</div>
 	<?php
 		echo $form->input('landingPageName');

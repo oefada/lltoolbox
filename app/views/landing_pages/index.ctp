@@ -1,5 +1,13 @@
 <div class="landingPages index">
 <h2><?php __('LandingPages');?></h2>
+<div class="sitesDropdown">
+    <strong>Filter packages by site</strong>
+    <select name="site" id="selectSite" />
+        <option value="all" selected>All</option>
+        <option value="LL">Luxury Link</option>
+        <option value="Family">Family</option>
+    </select>
+</div>
 <p>
 <?php
 echo $paginator->counter(array(
@@ -10,6 +18,7 @@ echo $paginator->counter(array(
 <tr>
 	<th><?php echo $paginator->sort('landingPageId');?></th>
 	<th><?php echo $paginator->sort('landingPageName');?></th>
+    <th><?php echo $paginator->sort('Site', 'siteId');?></th>
 	<th><?php echo $paginator->sort('landingPageTypeId');?></th>
 	<th><?php echo $paginator->sort('referenceId');?></th>
 	<th><?php echo $paginator->sort('isSponsored');?></th>
@@ -22,8 +31,11 @@ $i = 0;
 foreach ($landingPages as $landingPage):
 	$class = null;
 	if ($i++ % 2 == 0) {
-		$class = ' class="altrow"';
+		$class = ' class="altrow '.$landingPage['LandingPage']['siteId'].'"';
 	}
+    else {
+        $class = ' class="'.$landingPage['LandingPage']['siteId'].'"';
+    }
 ?>
 	<tr<?php echo $class;?>>
 		<td>
@@ -32,6 +44,9 @@ foreach ($landingPages as $landingPage):
 		<td>
 			<?php echo $html->link(__($landingPage['LandingPage']['landingPageName'], true), array('action'=>'edit', $landingPage['LandingPage']['landingPageId'])); ?>
 		</td>
+        <td>
+            <?php echo ucwords($siteIds[$landingPage['LandingPage']['siteId']]); ?>
+        </td>
 		<td>
 			<?php echo $landingPage['LandingPageType']['landingPageTypeName']; ?>
 		</td>
@@ -63,3 +78,36 @@ foreach ($landingPages as $landingPage):
  | 	<?php echo $paginator->numbers();?>
 	<?php echo $paginator->next(__('next', true).' >>', array(), null, array('class'=>'disabled'));?>
 </div>
+
+<script type="text/javascript">
+    Event.observe(window, 'load', function() {
+        $('selectSite').observe('change', function() {
+                switch (this.value) {
+                    case 'LL':
+                        $$('tr.2').each(function(divItem) {
+                                    $(divItem).hide();
+                                });
+                        $$('tr.1').each(function(divItem) {
+                                    $(divItem).show();
+                                });
+                        break;
+                    case 'Family':
+                        $$('tr.1').each(function(divItem){
+                                    $(divItem).hide();
+                                });
+                        $$('tr.2').each(function(divItem) {
+                                    $(divItem).show();
+                                });
+                        break;
+                    case 'all':
+                    default:
+                        ['1','2'].each(function(item) {
+                            var elem = "tr."+item;
+                            $$(elem).each(function(divItem) {
+                                    $(divItem).show();
+                            });
+                        });
+                }
+        });
+    });
+</script>
