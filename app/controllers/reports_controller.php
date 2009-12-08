@@ -873,7 +873,7 @@ class ReportsController extends AppController {
 	function auction_timeslot() {
 	    if (!empty($this->data)) {
 	        $conditions = $this->_bids_build_conditions($this->data); //we can use the same conditions as bids
-	        
+			
 	        if (!empty($this->params['named']['sortBy'])) {
 	            $direction = (@$this->params['named']['sortDirection'] == 'DESC') ? 'DESC' : 'ASC';
 	            $order = $this->params['named']['sortBy'].' '.$direction;
@@ -1436,7 +1436,7 @@ class ReportsController extends AppController {
 		$endDate = date("Y-m-d 23:59:59");
 		$startDate2 = date("Y-m-d");
 		
-		if ($_POST['downloadcsv'] == 1) {
+		if (!empty($_POST['downloadcsv']) && $_POST['downloadcsv'] == 1) {
 			Configure::write('debug', 0);
 			$this->set('clients', unserialize(stripslashes( htmlspecialchars_decode($_POST['clients']))));
 			$this->viewPath .= '/csv';
@@ -1569,32 +1569,37 @@ class ReportsController extends AppController {
 			}
 		}
 
-		switch($this->data['MCR']['pkgRevenueRange']):
-			case 1:
-				$pkgRevenueStart = date('Y-m-d', strtotime('-60 days'));
+	    if (isset($this->data['MCR'])) {
+			switch($this->data['MCR']['pkgRevenueRange']):
+				case 1:
+					$pkgRevenueStart = date('Y-m-d', strtotime('-60 days'));
+					break;
+				case 2:
+					$pkgRevenueStart = date('Y-m-d', strtotime('-90 days'));
+					break;
+				case 3:
+					$pkgRevenueStart = date('Y-m-01');
+					break;
+				case 4:
+					if (date('Y-m-d') < date('Y-04-01')) {
+						$pkgRevenueStart = date('Y-01-01');
+					} else if (date('Y-m-d') < date('Y-07-01')) {
+						$pkgRevenueStart = date('Y-04-01');
+					} else if (date('Y-m-d') < date('Y-10-01')) {
+						$pkgRevenueStart = date('Y-07-01');
+					} else {
+						$pkgRevenueStart = date('Y-10-01');
+					}
+					break;
+				case 0:
+				default:
+					$pkgRevenueStart = date('Y-m-d', strtotime('-30 days'));
 				break;
-			case 2:
-				$pkgRevenueStart = date('Y-m-d', strtotime('-90 days'));
-				break;
-			case 3:
-				$pkgRevenueStart = date('Y-m-01');
-				break;
-			case 4:
-				if (date('Y-m-d') < date('Y-04-01')) {
-					$pkgRevenueStart = date('Y-01-01');
-				} else if (date('Y-m-d') < date('Y-07-01')) {
-					$pkgRevenueStart = date('Y-04-01');
-				} else if (date('Y-m-d') < date('Y-10-01')) {
-					$pkgRevenueStart = date('Y-07-01');
-				} else {
-					$pkgRevenueStart = date('Y-10-01');
-				}
-				break;
-			case 0:
-			default:
-				$pkgRevenueStart = date('Y-m-d', strtotime('-30 days'));
-			break;
-		endswitch;
+			endswitch;
+		}
+		else {
+			$pkgRevenueStart = date('Y-m-d', strtotime('-30 days'));
+		}
 		
 		$pkgRevenueEnd = date('Y-m-d', strtotime("+1 day"));
 		if (!isset($clients)) {
@@ -1608,8 +1613,13 @@ class ReportsController extends AppController {
 		foreach($clients as $k => $client) {
 			$clientId = $client['Client']['clientId'];
 			
-			if ($this->data['MCR']['pkgRevenueRange'] == 5) {
-				$pkgRevenueStart = date('Y-m-d', strtotime($client['Loa']['startDate']));
+			//sites
+			$clients[$k]['Client']['sites'] = $this->Client->get_sites($clientId);
+			
+			if (isset($this->data['MCR'])) {
+				  if ($this->data['MCR']['pkgRevenueRange'] == 5) {
+				  	$pkgRevenueStart = date('Y-m-d', strtotime($client['Loa']['startDate']));
+				}
 			}
 			
 			#### Package Revenue ####
@@ -1692,7 +1702,7 @@ class ReportsController extends AppController {
 			// End Referrals/Impressions
 			$clients[$k] = @array_merge($clients[$k], (array)$packageStats, (array)$ticketStats, (array)$referrals[0], $totalRemitted);
 		}
-		
+
 		//Setup Client Manager Usernames
 		$tmp = $this->Client->query("SELECT DISTINCT LOWER(managerUsername) as username FROM client INNER JOIN adminUser ON(adminUser.username = client.managerUsername)");
 
