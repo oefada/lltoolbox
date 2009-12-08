@@ -276,6 +276,17 @@ class Ticket extends AppModel {
 
 	function __runTakeDownLoaMemBal($packageId, $ticketId, $ticketAmount) {
 		// check to make sure LOA balance is fulfilled 
+		$check_exp_crit = "SELECT track.expirationCriteriaId FROM ticket INNER JOIN offer USING(offerId) 
+						   INNER JOIN schedulingInstance USING(schedulingInstanceId) 
+						   INNER JOIN schedulingMaster USING(schedulingMasterId) 
+						   INNER JOIN schedulingMasterTrackRel USING(schedulingMasterId) 
+						   INNER JOIN track USING (trackId) 
+						   WHERE ticket.ticketId = $ticketId";
+
+		$result = $this->query($check_exp_crit);
+		if ($result[0]['track']['expirationCriteriaId'] != 1) {
+			return false;
+		}
 
 		$loas = $this->query("SELECT clpr.*, loa.*, track.* FROM clientLoaPackageRel clpr 
 							INNER JOIN loa ON clpr.loaId = loa.loaId 
@@ -331,7 +342,19 @@ class Ticket extends AppModel {
 
 	function __runTakeDownLoaNumPackages($packageId, $ticketId) {
 		// check to make sure LOA membership num packages is fulfilled
-		
+	
+		$check_exp_crit = "SELECT track.expirationCriteriaId FROM ticket INNER JOIN offer USING(offerId) 
+						   INNER JOIN schedulingInstance USING(schedulingInstanceId) 
+						   INNER JOIN schedulingMaster USING(schedulingMasterId) 
+						   INNER JOIN schedulingMasterTrackRel USING(schedulingMasterId) 
+						   INNER JOIN track USING (trackId) 
+						   WHERE ticket.ticketId = $ticketId";
+
+		$result = $this->query($check_exp_crit);
+		if ($result[0]['track']['expirationCriteriaId'] != 4) {
+			return false;
+		}
+
 		$loas = $this->query("SELECT clpr.*, loa.*, track.* FROM clientLoaPackageRel clpr 
 							INNER JOIN loa ON clpr.loaId = loa.loaId 
 							INNER JOIN schedulingMaster sm ON clpr.packageId = sm.packageId 
