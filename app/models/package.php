@@ -25,8 +25,12 @@ class Package extends AppModel {
 						'numConcurrentOffers' => array('rule' => 'numeric', 'message' => 'Must be a number'),
 						'maxNumSales' => array('rule' => 'numeric', 'message' => 'Must  be a number', 'allowEmpty' => true),
 						'numGuests' => array('rule' => 'numeric', 'message' => 'Must be a number'),
-						'minGuests' => array('rule' => 'numeric', 'message' => 'Must be a number'),
-						'maxAdults' => array('rule' => 'numeric', 'message' => 'Must be a number'),
+						'minGuests' => array('minGuestsRule1' => array('rule' => 'numeric', 'message' => 'Must be a number'),
+											 'minGuestsRule2' => array('rule' => 'validateGuests', 'message' => 'Minimum # of guests must be less than or equal to the maximum # of guests')
+											),
+						'maxAdults' => array('maxAdultsRule1' => array('rule' => 'numeric', 'message' => 'Must be a number'),
+											 'maxAdultsRule2' => array('rule' => 'validateGuests', 'message' => 'Maximum # of adults must be less than or equal to the maximum # of guests')
+											 ),
 						'numNights' => array('numeric' => array('rule' => 'numeric', 'message' => 'Must be a number'),
 						                    'validateNumNightsAddsUp' => array('rule' => 'validateNumNightsAddsUp', 'message' => 'Must match with the number of nights entered for each room item below.')),
 						'endDate' => array('rule' => array('validateDateRanges'), 'message' => 'End Date must be greater than Start Date'),
@@ -51,6 +55,16 @@ class Package extends AppModel {
 								   )
 								);
     var $actsAs = array('Logable');
+	
+	function validateGuests($data) {
+	  $numGuests = $this->data['Package']['numGuests'];
+	  $guestsValue = array_values($data);
+	  if ($numGuests < $guestsValue[0]) {
+		 return false;
+	  }
+	  return true;
+	}
+	
 	function validateDateRanges($data) {
 		$packageStartDate = $this->data['Package']['startDate'];
 		$packageEndDate = $this->data['Package']['endDate'];
@@ -156,15 +170,17 @@ class Package extends AppModel {
 	}
 	
 	function afterSave($created) {
+		 $packageId = (empty($this->data['Package']['packageId'])) ? $this->getLastInsertID() : $this->data['Package']['packageId'];
+	  
 		// get validity disclaimer by joining it with validityLeadInLine
 		$validity_disclaimer = ($this->data['Package']['validityLeadInLine']) ? '<p><strong>' . Sanitize::escape($this->data['Package']['validityLeadInLine']) . '</strong></p>' : ' ';
 		$validity_disclaimer .= Sanitize::escape($this->data['Package']['validityDisclaimer']);
 
 	   //delete from packageAgeRange if this package isn't associated with Family
 	   if (!in_array($this->data['Package']['siteId'], array(2))) {
-		$age_ranges = $this->PackageAgeRange->findByPackageId($this->data['Package']['packageId']);
+		$age_ranges = $this->PackageAgeRange->findByPackageId($packageId);
 		if (!empty($age_ranges)) {
-		   $this->PackageAgeRange->deleteAll(array('packageId' => $this->data['Package']['packageId']), false);
+		   $this->PackageAgeRange->deleteAll(array('packageId' => $packageId), false);
 		}
 	   }
 
@@ -179,14 +195,23 @@ class Package extends AppModel {
 			$table = 'offerLuxuryLink';
 	  }
 	   
-	    $this->query("UPDATE {$table}
+	  $query = "UPDATE {$table}
 					 SET validityStart = '{$this->data['Package']['validityStartDate']}',
 					     validityEnd = '{$this->data['Package']['validityEndDate']}',
-						 validityDisclaimer = '$validity_disclaimer',
-						 numGuests = {$this->data['Package']['numGuests']},
-						 minGuests = {$this->data['Package']['minGuests']},
-						 maxAdults = {$this->data['Package']['maxAdults']}
-					 WHERE packageId = $this->id AND isAuction = 0 AND now() < endDate");
+						 validityDisclaimer = '$validity_disclaimer' ";
+	  if (!empty($this->data['Package']['numGuests'])) {
+		 $query .= ", numGuests = {$this->data['Package']['numGuests']}";
+	  }
+	  if (!empty($this->data['Package']['minGuests'])) {
+		 $query .= ", minGuests = {$this->data['Package']['minGuests']}";
+	  }
+	  if (!empty($this->data['Package']['maxAdults'])) {
+		 $query .= ", maxAdults = {$this->data['Package']['maxAdults']}";
+	  }
+	  
+	  $query .= " WHERE packageId = $this->id AND isAuction = 0 AND now() < endDate";
+	   
+	    $this->query($query);
 	    
 	    // update offer details in offer for hotel offers type (7)
 	    if (!empty($this->data['Package']['externalOfferUrl'])) {
@@ -197,9 +222,13 @@ class Package extends AppModel {
 	    	
 			$this->query("
 			    UPDATE {$table}
-			    SET validityStart = '{$this->data['Package']['validityStartDate']}', validityEnd = '{$this->data['Package']['validityEndDate']}',
-				    offerName = '$package_title', shortBlurb = '$short_blurb', additionalDescription = '$additionalDescription',
-				    offerIncludes = '$package_includes', externalOfferUrl = '{$this->data['Package']['externalOfferUrl']}' 
+			    SET validityStart = '{$this->data['Package']['validityStartDate']}',
+				    validityEnd = '{$this->data['Package']['validityEndDate']}',
+				    offerName = '$package_title',
+					shortBlurb = '$short_blurb',
+					additionalDescription = '$additionalDescription',
+				    offerIncludes = '$package_includes',
+					externalOfferUrl = '{$this->data['Package']['externalOfferUrl']}' 
 			    WHERE packageId = $this->id AND offerTypeId = 7 AND now() < endDate
 		    ");
 	    }
