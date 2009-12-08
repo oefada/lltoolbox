@@ -163,6 +163,7 @@ td.error div{
 		<tr>
 		<th rowspan="2">&nbsp;</th>
 	    <th rowspan="2" class="blackBg" style="text-align: center"><a href="1" id="sort1">Client Name</a></td>
+        <th rowspan="2" class="blackBg" style="text-align: center"><a href="2" id="sort2">Site(s)</a></th>
 	    <th colspan="8" class="darkBlackBg rowBorderWhite" style="border-top: 1px solid #000; text-align: center; padding: 5px 0">
 			Package Revenue
 			<div style="position: relative; float: right; clear: none">
@@ -185,31 +186,31 @@ td.error div{
 	    <th colspan="6" class="darkBlackBg rowBorderWhite" style="border-top: 1px solid #000; text-align: center">Referrals/Impressions (<?=date('M y', strtotime($latestReferralDate))?>)</td>
 	  </tr>
 	  <tr>
-	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="2" id="sort2">Packages Live Today</a></td>
-	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="3" id="sort3">Packages Up Time</a></td>
-	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="4" id="sort4">Total Sold</a></td>
-	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="5" id="sort5">Total $$</a></td>
-	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="6" id="sort6">Auctions Live Today</a></td>
-	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="7" id="sort7">Auctions Close Rate</a></td>
-	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="8" id="sort8">FP Live Today</a></td>
-	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="9" id="sort9"># of FP Requests</a></td>
-	    <th class="blackBg dateRow" style="text-align: center"><a href="10" id="sort10">Exp. Date</a></td>
-	    <th class="blackBg dateRow" style="text-align: center"><a href="11" id="sort11">Renewed<br />(LOA Start)</a></td>
-	    <th class="blackBg" style="text-align: center"><a href="12" id="sort12">LOA Type</a></td>
-	    <th class="blackBg" style="text-align: center"><a href="13" id="sort13">Membership Fee</a></td>
-		<th class="blackBg" style="text-align: center"><a href="14" id="sort14">LOA Bal</a></td>
-		<th class="blackBg" style="text-align: center"><a href="15" id="sort15">Total Remitted</a></td>
-	    <th class="blackBg" style="text-align: center"><a href="16" id="sort16">Days until keep ends</a></td>
-	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="17" id="sort17">Web</a></td>
-	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="18" id="sort18">Phone</a></td>
-	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="19" id="sort19">Portfolio</a></td>
-	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="20" id="sort20">Search</a></td>
-	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="21" id="sort21">Email</a></td>
-	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="22" id="sort22">Home/Dest</a></td>
+	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="3" id="sort3">Packages Live Today</a></td>
+	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="4" id="sort4">Packages Up Time</a></td>
+	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="5" id="sort5">Total Sold</a></td>
+	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="6" id="sort6">Total $$</a></td>
+	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="7" id="sort7">Auctions Live Today</a></td>
+	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="8" id="sort8">Auctions Close Rate</a></td>
+	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="9" id="sort9">FP Live Today</a></td>
+	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="10" id="sort10"># of FP Requests</a></td>
+	    <th class="blackBg dateRow" style="text-align: center"><a href="11" id="sort11">Exp. Date</a></td>
+	    <th class="blackBg dateRow" style="text-align: center"><a href="12" id="sort12">Renewed<br />(LOA Start)</a></td>
+	    <th class="blackBg" style="text-align: center"><a href="13" id="sort13">LOA Type</a></td>
+	    <th class="blackBg" style="text-align: center"><a href="14" id="sort14">Membership Fee</a></td>
+		<th class="blackBg" style="text-align: center"><a href="15" id="sort15">LOA Bal</a></td>
+		<th class="blackBg" style="text-align: center"><a href="16" id="sort16">Total Remitted</a></td>
+	    <th class="blackBg" style="text-align: center"><a href="17" id="sort17">Days until keep ends</a></td>
+	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="18" id="sort18">Web</a></td>
+	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="19" id="sort19">Phone</a></td>
+	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="20" id="sort20">Portfolio</a></td>
+	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="21" id="sort21">Search</a></td>
+	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="22" id="sort22">Email</a></td>
+	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="23" id="sort23">Home/Dest</a></td>
 	  </tr>
 	</thead>
 	<tbody>
-<?php foreach($clients as $k => $row): 
+<?php foreach($clients as $k => $row):
 	if ($k %2 == 0) {
 		$class = ' class="altrow"';
 	} else {
@@ -219,6 +220,7 @@ td.error div{
 	  <tr<?=$class?>>
 		<td><?=$k+1?></td>
 	    <td style="text-align: left;" class="textSort"><?=$html->link($row['Client']['name'], '/clients/edit/'.$row['Client']['clientId'])?></td>
+        <td><?php echo ucwords(implode(', ', $row['Client']['sites'])); ?></td>
 		<? if ($k == 0) echo "<div id='packageRevenue'>"?>
 	    <td <?if((int)$row['packagesLiveToday'] == 0) echo " class='error'"?>><div><?=(int)$row['packagesLiveToday']?></div></td>
 	    <td><?=(int)$row['packageUptime']?></td>
