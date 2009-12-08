@@ -65,5 +65,11 @@ class AppModel extends Model{
 
 		parent::__construct($id, $table, $ds);
 	}
+	
+	function getDbName($siteId) {
+		$dbMap = array(1 => 'luxurylink',
+					   2 => 'family');
+		return $dbMap[$siteId];
+	}
 }
 ?>
