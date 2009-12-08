@@ -234,6 +234,15 @@ class Client extends AppModel {
 	  $this->save();
    }
    
+   //populate the sites field for a client when running a custom query outside of a Cake $this->Client->find()
+   function get_sites($clientId) {
+	  $query = "SELECT sites FROM multiSite WHERE model = 'Client' AND modelId = {$clientId}";
+	  $sites = $this->query($query);
+	  if (!empty($sites)) {
+		 return explode(',', $sites[0]['multiSite']['sites']);
+	  }
+   }
+   
    function bindOnly($keep_assocs=array(), $reset=true) {
 	  $assocs = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
 	  foreach($assocs as $assoc) {
