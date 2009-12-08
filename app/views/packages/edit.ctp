@@ -87,7 +87,8 @@ function toggleGuestsVisibility() {
 </fieldset>
 <?php echo $this->renderElement('../packages/_add_step_1'); ?>
 <?php echo $this->renderElement('../packages/_setup'); ?>
-<?php echo $this->renderElement('../packages/_family_amenities'); ?>
+<?php //family amenities disabled for now ?>
+<?php //echo $this->renderElement('../packages/_family_amenities'); ?>
 <?php echo $this->renderElement('../packages/_merchandising'); ?>
 <?php echo $form->input('Package.packageId'); ?>
 <?php 
