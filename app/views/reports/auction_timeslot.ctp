@@ -18,6 +18,21 @@
 	<a href="#" onclick='javascript: $("condition1valueBetween0").value = "<?=date('Y-m-d', strtotime('-1 week'))?>"; $("condition1valueBetween1").value = "<?=date('Y-m-d')?>"'>This Week</a>
 </div>
 </div>
+<div class="fieldRow">
+    <label>Site</label>
+    <?php foreach($siteIds as $siteId => $site): ?>
+        <?php if (empty($data['condition2']['value']) && $siteId == 1): 
+                    $checked = ' checked';
+              elseif (!empty($data) && $siteId == $data['condition2']['value']):
+                    $checked = ' checked';
+              else:
+                    $checked = '';
+              endif;
+        ?>
+        <input type="hidden" id="Condition2Field" value="SchedulingMaster.siteId" name="data[condition2][field]" />
+        <input id="Condition2Value" type="radio" value="<?php echo $siteId; ?>" name="data[condition2][value]" <?php echo $checked; ?>/> <?php echo $site ?> 
+    <?php endforeach; ?>
+</div>
 
 </div>
 </fieldset>
