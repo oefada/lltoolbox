@@ -39,7 +39,6 @@ class LandingPagesController extends AppController {
 		if (empty($this->data)) {
 			$this->data = $this->LandingPage->read(null, $id);
 		}
-		$menus = $this->LandingPage->Menu->find('list');
 		$landingPageTypes = $this->LandingPage->LandingPageType->find('list');
 		$this->set(compact('menus'));
 		$this->set('landingPageTypeIds', $landingPageTypes);
