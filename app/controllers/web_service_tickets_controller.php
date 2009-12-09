@@ -293,7 +293,7 @@ class WebServiceTicketsController extends WebServicesController
 				$data_post = array();
 		        $data_post['userId']                 = $data['userId'];
 		        $data_post['ticketId']               = $ticketId;
-		        $data_post['paymentProcessorId']     = $data['billingPrice'] > 500 ? 1 : 4;
+		        $data_post['paymentProcessorId']     = 1;
 				if ($data['siteId'] == 2) {
 		        	$data_post['paymentProcessorId']     = 3; // FAMILY site uses PAYPAL
 				}
@@ -628,7 +628,7 @@ class WebServiceTicketsController extends WebServicesController
 				$siteEmail = 'familygetaway.com';
 				$siteUrl = 'http://www.familygetaway.com/';
 				$siteHeader = 'DE6F0A';
-				$headerLogo = 'http://www.luxurylink.com/images/shared/ppv_header_logo_test.jpg';
+				$headerLogo = 'http://www.luxurylink.com/images/family/logo.gif';
 				break;
 		}
 		$siteId = $ticketData['siteId'];
@@ -1052,9 +1052,6 @@ class WebServiceTicketsController extends WebServicesController
 				break;
 			case 3:
 				$paymentProcessorName = 'PAYPAL';
-				break;
-			case 4:
-				$paymentProcessorName = 'AIM';
 				break;
 			default:
 				break;
