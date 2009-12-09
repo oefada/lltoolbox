@@ -211,7 +211,7 @@ class PaymentDetailsController extends AppController {
 		if ($ticket['Ticket']['siteId'] == 2) {
 			$paymentProcessors = array(3 => 'PAYPAL');
 		} else {
-			unset($paymentProcessors[3]);
+			$paymentProcessors = array(1 => 'NOVA');
 		}
 
 		$this->set('ticket', $ticket);
