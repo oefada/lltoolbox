@@ -15,6 +15,10 @@ $this->searchController = 'Tickets';
 				<td><?php echo $ticket['Ticket']['ticketId']; ?></td>
 			</tr>
 			<tr>
+				<td width="200"><strong>Site</strong></td>
+				<td><strong><?php echo $siteIds[$ticket['Ticket']['siteId']]; ?></strong></td>
+			</tr>
+			<tr>
 				<td width="200"><strong>Created</strong></td>
 				<td><?php echo $ticket['Ticket']['created']; ?></td>
 			</tr>

@@ -31,6 +31,10 @@ function confirmSubmit()
 			<td><?php echo $ticket['Ticket']['ticketId'];?></td>
 		</tr>
 		<tr>
+			<td width="200"><strong>Site</strong></td>
+			<td><strong><?php echo $siteIds[$ticket['Ticket']['siteId']];?></strong></td>
+		</tr>
+		<tr>
 			<td><strong>User</strong></td>
 			<td><?php echo $ticket['Ticket']['userFirstName'] . ' ' . $ticket['Ticket']['userLastName'];?></td>
 		</tr>

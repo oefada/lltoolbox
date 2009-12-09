@@ -206,6 +206,13 @@ class PaymentDetailsController extends AppController {
 				}
 			}
 		}
+		
+		$paymentProcessors = $this->PaymentDetail->PaymentProcessor->find('list');
+		if ($ticket['Ticket']['siteId'] == 2) {
+			$paymentProcessors = array(3 => 'PAYPAL');
+		} else {
+			unset($paymentProcessors[3]);
+		}
 
 		$this->set('ticket', $ticket);
 		$this->set('countries', $this->Country->find('list'));
@@ -213,7 +220,7 @@ class PaymentDetailsController extends AppController {
 		$this->set('selectExpYear', $selectExpYear);
 		$this->set('userPaymentSetting', $ticket['User']['UserPaymentSetting']);
 		$this->set('paymentTypeIds', $this->PaymentDetail->PaymentType->find('list'));
-		$this->set('paymentProcessorIds', $this->PaymentDetail->PaymentProcessor->find('list'));		
+		$this->set('paymentProcessorIds', $paymentProcessors);		
 		$this->set('initials_user', $initials_user);
 	}
 	

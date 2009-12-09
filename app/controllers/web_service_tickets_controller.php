@@ -20,6 +20,7 @@ class WebServiceTicketsController extends WebServicesController
 	var $serviceUrlStage = 'http://stage-toolbox.luxurylink.com/web_service_tickets';
 	var $errorResponse = false;
 	var $errorMsg = false;
+	var $errorTitle = false;
 	var $api = array(
 					'processNewTicket' => array(
 						'doc' => 'ticket processor functionality for family and luxurylink',
@@ -52,9 +53,16 @@ class WebServiceTicketsController extends WebServicesController
 	
 	function processNewTicket($in0) {
 		$json_decoded = json_decode($in0, true);
-		$this->errorResponse = $this->errorMsg = false;
+		$this->errorResponse = $this->errorMsg = $this->errorTitle = false;
 		if (!$this->processTicket($json_decoded)) {			
-			@mail('devmail@luxurylink.com', 'WEBSERVICE (TICKETS): ERROR NO. ('. $this->errorResponse .')', $this->errorMsg . "<br /><br />\n\n" . print_r($json_decoded, true));
+			$server_type = '';
+			if (stristr($_SERVER['HTTP_HOST'], 'dev')) {
+				$server_type = '[DEV] --> ';
+			}
+			if (stristr($_SERVER['HTTP_HOST'], 'stage')) {
+				$server_type = '[STAGE] --> ';
+			} 
+			@mail('devmail@luxurylink.com', "$server_type" . 'WEBSERVICE (TICKETS): ERROR ('. $this->errorResponse . ')' . $this->errorTitle , $this->errorMsg . "<br /><br />\n\n" . print_r($json_decoded, true));
 			return 'FAIL';
 		}  else {
 			return 'SUCCESS';
@@ -100,21 +108,25 @@ class WebServiceTicketsController extends WebServicesController
 		// -------------------------------------------------------------------------------
 		if (empty($data) || !is_array($data)) {
 			$this->errorResponse = 1101;
+			$this->errorTitle = 'Invalid Data';
 			$this->errorMsg = 'Ticket processing was aborted due to receiving invalid data.';
 			return false;	
 		}
 		if (!isset($data['ticketId']) || empty($data['ticketId'])) {
 			$this->errorResponse = 1102;
+			$this->errorTitle = 'Invalid Data';
 			$this->errorMsg = 'Ticket processing was aborted because the required field ticketId was not supplied.';
 			return false;	
 		}
 		if (!isset($data['userId']) || empty($data['userId'])) {
 			$this->errorResponse = 1103;
+			$this->errorTitle = 'Invalid Data';
 			$this->errorMsg = 'Ticket processing was aborted because the required field userId was not supplied.';
 			return false;	
 		}
 		if (!isset($data['offerId']) || empty($data['offerId'])) {
 			$this->errorResponse = 1104;
+			$this->errorTitle = 'Invalid Data';
 			$this->errorMsg = 'Ticket processing was aborted because the required field offerId was not supplied.';
 			return false;	
 		}
@@ -142,18 +154,17 @@ class WebServiceTicketsController extends WebServicesController
 		// -------------------------------------------------------------------------------
 		$ticket_toolbox = $this->Ticket->read(null, $data['ticketId']);
 		if (empty($ticket_toolbox) || !$ticket_toolbox) {
-			$data[] = $_SERVER;
-			$data[] = $ticket_toolbox;
-			@mail('devmail@luxurylink.com', 'WEBSERVICE (TICKETS): Ticket data not replicated to Toolbox yet or TB DB is down', print_r($data, true));
+			$this->errorResponse = 187;
+			$this->errorTitle = 'Ticket Not Processsed [CHECK REPLICATION]';
+			$this->errorMsg = 'Ticket data not replicated to Toolbox yet or TB DB is down.  This ticket has been flagged for reprocessing and will finish the process when the systems come online.';
 			return false;
 		}
 
 		$ticket_payment = $this->PaymentDetail->query('SELECT * FROM paymentDetail WHERE ticketId = ' . $data['ticketId']);
 		if (!empty($ticket_payment)) {
-			$data[] = $_SERVER;
-			$data[] = $ticket_toolbox;
-			$data[] = $ticket_payment;
-			@mail('devmail@luxurylink.com', 'WEBSERVICE (TICKETS): Stopped Processing Ticket -- Existing Payment Detected', print_r($data, true));
+			$this->errorResponse = 188;
+			$this->errorTitle = 'Payment Already Detected for Ticket';
+			$this->errorMsg = 'Stopped processing this ticket.  An existing payment has been detected for this ticket id whether it was successful or not.  This ticket has been marked as processed successfully.';
 			return true;
 		}
 
@@ -283,6 +294,9 @@ class WebServiceTicketsController extends WebServicesController
 		        $data_post['userId']                 = $data['userId'];
 		        $data_post['ticketId']               = $ticketId;
 		        $data_post['paymentProcessorId']     = $data['billingPrice'] > 500 ? 1 : 4;
+				if ($data['siteId'] == 2) {
+		        	$data_post['paymentProcessorId']     = 3; // FAMILY site uses PAYPAL
+				}
 		        $data_post['paymentAmount']          = $data['billingPrice'];
 		        $data_post['initials']               = 'AUTOCHARGE';
 		        $data_post['autoCharge']             = 1;
@@ -603,14 +617,16 @@ class WebServiceTicketsController extends WebServicesController
 			case 1:
 				$siteName = 'Luxury Link';
 				$siteDisplay = 'LuxuryLink.com';
+				$siteEmail = 'luxurylink.com';
 				$siteUrl = 'http://www.luxurylink.com/';
 				$siteHeader = '990000';
 				$headerLogo = 'http://www.luxurylink.com/images/ll_logo_2009_2.gif';
 				break;
 			case 2:
-				$siteName = 'Family Travel';
-				$siteDisplay = 'FamilyTravel.com';
-				$siteUrl = 'http://www.familytravel.com/';
+				$siteName = 'Family Getaway';
+				$siteDisplay = 'FamilyGetaway.com';
+				$siteEmail = 'familygetaway.com';
+				$siteUrl = 'http://www.familygetaway.com/';
 				$siteHeader = 'DE6F0A';
 				$headerLogo = 'http://www.luxurylink.com/images/shared/ppv_header_logo_test.jpg';
 				break;
@@ -627,106 +643,106 @@ class WebServiceTicketsController extends WebServicesController
 				// send out res confirmation
 				include('../vendors/email_msgs/ppv/conf_ppv.html');
 				$emailSubject = "Your $siteName Booking is Confirmed - $clientNameP";
-				$emailFrom = ($isAuction) ? "Luxurylink.com<resconfirm@luxurylink.com>" : "LuxuryLink.com<reservations@luxurylink.com>";
-				$emailReplyTo = ($isAuction) ? "resconfirm@luxurylink.com" : "reservations@luxurylink.com";
+				$emailFrom = ($isAuction) ? "Luxurylink.com<resconfirm@$siteEmail>" : "LuxuryLink.com<reservations@$siteEmail>";
+				$emailReplyTo = ($isAuction) ? "resconfirm@$siteEmail" : "reservations@$siteEmail";
 				break;
 			case 2:
 				// send out res request
 				include('../vendors/email_msgs/ppv/res_ppv.html');
 				$emailSubject = "Please Confirm This $siteName Booking - $userFirstName $userLastName";
-				$emailFrom = ($isAuction) ? "Luxurylink.com<resrequests@luxurylink.com>" : "LuxuryLink.com<reservations@luxurylink.com>";
-				$emailReplyTo = ($isAuction) ? "resrequests@luxurylink.com" : "reservations@luxurylink.com";
+				$emailFrom = ($isAuction) ? "Luxurylink.com<resrequests@$siteEmail>" : "LuxuryLink.com<reservations@$siteEmail>";
+				$emailReplyTo = ($isAuction) ? "resrequests@$siteEmail" : "reservations@$siteEmail";
 				$userEmail = $clientPrimaryEmail;
 				$emailCc = $clientCcEmail;
 				break;
 			case 4: 
 				include('../vendors/email_msgs/ppv/client_ppv.html');
 				$emailSubject = "$siteName Auction Winner Notification - $userFirstName $userLastName";
-				$emailFrom = "LuxuryLink.com<auctions@luxurylink.com>";
-				$emailReplyTo = 'auctions@luxurylink.com';
+				$emailFrom = "LuxuryLink.com<auctions@$siteEmail>";
+				$emailReplyTo = 'auctions@$siteEmail';
 				$userEmail = $clientPrimaryEmail;
 				$emailCc = $clientCcEmail;
 				break;
 			case 5:
 				include('../vendors/email_msgs/notifications/winner_notification.html');
 				$emailSubject = "$siteName Auction Winner - $clientNameP";
-				$emailFrom = "LuxuryLink.com<auction@luxurylink.com>";
-				$emailReplyTo = "auction@luxurylink.com";
+				$emailFrom = "LuxuryLink.com<auction@$siteEmail>";
+				$emailReplyTo = "auction@$siteEmail";
 				break;
 			case 9:
 				include('../vendors/email_msgs/fixed_price/msg_fixedprice.html');
 				$emailSubject = "$siteName - Your Request Has Been Received";
-				$emailFrom = "LuxuryLink.com<exclusives@luxurylink.com>";
-				$emailReplyTo = "exclusives@luxurylink.com";
+				$emailFrom = "LuxuryLink.com<exclusives@$siteEmail>";
+				$emailReplyTo = "exclusives@$siteEmail";
 				break;
 			case 10:
 				include('../vendors/email_msgs/fixed_price/msg_client_fixedprice.html');
 				$emailSubject = "An Exclusive $siteName Booking Request Has Come In!";
-				$emailFrom = "LuxuryLink.com<exclusives@luxurylink.com>";
-				$emailReplyTo = "exclusives@luxurylink.com";
+				$emailFrom = "LuxuryLink.com<exclusives@$siteEmail>";
+				$emailReplyTo = "exclusives@$siteEmail";
 				$userEmail = $clientPrimaryEmail;
 				$emailCc = $clientCcEmail;
 				break;
 			case 11:
 				include('../vendors/email_msgs/fixed_price/msg_internal_fixedprice.html');
-				$emailSubject = "$fpRequestType Request Has Come In!";
-				$emailFrom = "LuxuryLink.com<exclusives@luxurylink.com>";
-				$emailReplyTo = "exclusives@luxurylink.com";
-				$userEmail = 'exclusives@luxurylink.com';
+				$emailSubject = "A $siteName $fpRequestType Request Has Come In!";
+				$emailFrom = "LuxuryLink.com<exclusives@$siteEmail>";
+				$emailReplyTo = "exclusives@$siteEmail";
+				$userEmail = 'exclusives@$siteEmail';
 				break;
 			case 12:
 				include('../vendors/email_msgs/fixed_price/notification_acknowledgement.html');
 				$emailSubject = "Your $siteName Travel Booking - $clientNameP";
-				$emailFrom = ($isAuction) ? "Luxurylink.com<auction@luxurylink.com>" : "LuxuryLink.com<exclusives@luxurylink.com>";
-				$emailReplyTo = ($isAuction) ? "auction@luxurylink.com" : "exclusives@luxurylink.com";
+				$emailFrom = ($isAuction) ? "Luxurylink.com<auction@$siteEmail>" : "LuxuryLink.com<exclusives@$siteEmail>";
+				$emailReplyTo = ($isAuction) ? "auction@$siteEmail" : "exclusives@$siteEmail";
 				break;
 			case 13:
 				include('../vendors/email_msgs/fixed_price/notification_dates_available.html');
 				$emailSubject = "Your $siteName Travel Booking - $clientNameP";
-				$emailFrom = ($isAuction) ? "Luxurylink.com<auction@luxurylink.com>" : "LuxuryLink.com<exclusives@luxurylink.com>";
-				$emailReplyTo = ($isAuction) ? "auction@luxurylink.com" : "exclusives@luxurylink.com";
+				$emailFrom = ($isAuction) ? "Luxurylink.com<auction@$siteEmail>" : "LuxuryLink.com<exclusives@$siteEmail>";
+				$emailReplyTo = ($isAuction) ? "auction@$siteEmail" : "exclusives@$siteEmail";
 				break;
 			case 14:
 				include('../vendors/email_msgs/fixed_price/notification_dates_not_available.html');
 				$emailSubject = "Your $siteName Travel Booking - $clientNameP";
-				$emailFrom = ($isAuction) ? "Luxurylink.com<auction@luxurylink.com>" : "LuxuryLink.com<exclusives@luxurylink.com>";
-				$emailReplyTo = ($isAuction) ? "auction@luxurylink.com" : "exclusives@luxurylink.com";
+				$emailFrom = ($isAuction) ? "Luxurylink.com<auction@$siteEmail>" : "LuxuryLink.com<exclusives@$siteEmail>";
+				$emailReplyTo = ($isAuction) ? "auction@$siteEmail" : "exclusives@$siteEmail";
 				break;
 			case 15:
 				include('../vendors/email_msgs/notifications/chase_money_notification.html');
 				$emailSubject = "$siteName Auction Winner - $clientNameP";
-				$emailFrom = "LuxuryLink.com<auction@luxurylink.com>";
-				$emailReplyTo = "auction@luxurylink.com";
+				$emailFrom = "LuxuryLink.com<auction@$siteEmail>";
+				$emailReplyTo = "auction@$siteEmail";
 				break;
 			case 16:
 				include('../vendors/email_msgs/notifications/first_offense_flake.html');
 				$emailSubject = "$siteName Auction Winner - $clientNameP";
-				$emailFrom = "LuxuryLink.com<auction@luxurylink.com>";
-				$emailReplyTo = "auction@luxurylink.com";
+				$emailFrom = "LuxuryLink.com<auction@$siteEmail>";
+				$emailReplyTo = "auction@$siteEmail";
 				break;
 			case 17:
 				include('../vendors/email_msgs/notifications/second_offense_flake.html');
 				$emailSubject = "$siteName Auction Winner - $clientNameP";
-				$emailFrom = "LuxuryLink.com<auction@luxurylink.com>";
-				$emailReplyTo = "auction@luxurylink.com";
+				$emailFrom = "LuxuryLink.com<auction@$siteEmail>";
+				$emailReplyTo = "auction@$siteEmail";
 				break;
 			case 18:
 				include('../vendors/email_msgs/notifications/18_auction_winner_ppv.html');
 				$emailSubject = "$siteName Auction Winner Receipt - $clientNameP";
-				$emailFrom = "LuxuryLink.com<auction@luxurylink.com>";
-				$emailReplyTo = "auction@luxurylink.com";
+				$emailFrom = "LuxuryLink.com<auction@$siteEmail>";
+				$emailReplyTo = "auction@$siteEmail";
 				break;
 			case 19:
 				include('../vendors/email_msgs/notifications/19_auction_winner_declined_expired.html');
 				$emailSubject = "$siteName Auction Winner Notification - $clientNameP";
-				$emailFrom = "LuxuryLink.com<auction@luxurylink.com>";
-				$emailReplyTo = "auction@luxurylink.com";
+				$emailFrom = "LuxuryLink.com<auction@$siteEmail>";
+				$emailReplyTo = "auction@$siteEmail";
 				break;
 			case 20:
 				include('../vendors/email_msgs/notifications/20_auction_your_dates_received.html');
-				$emailSubject = "Your Request has been Received - $clientNameP";
-				$emailFrom = ($isAuction) ? "Luxurylink.com<auction@luxurylink.com>" : "LuxuryLink.com<exclusives@luxurylink.com>";
-				$emailReplyTo = ($isAuction) ? "auction@luxurylink.com" : "exclusives@luxurylink.com";
+				$emailSubject = "Your $siteName Request has been Received - $clientNameP";
+				$emailFrom = ($isAuction) ? "Luxurylink.com<auction@$siteEmail>" : "LuxuryLink.com<exclusives@$siteEmail>";
+				$emailReplyTo = ($isAuction) ? "auction@$siteEmail" : "exclusives@$siteEmail";
 				break;
 			default:
 				break;
@@ -1021,6 +1037,12 @@ class WebServiceTicketsController extends WebServicesController
 		
 		$userPaymentSettingPost['UserPaymentSetting']['ccNumber'] = aesFullDecrypt($userPaymentSettingPost['UserPaymentSetting']['ccNumber']);
 		
+		// for FAMILY, payment is via PAYPAL only [override]
+		// ---------------------------------------------------------------------------
+		if ($ticket['Ticket']['siteId'] == 2) {
+			$data['paymentProcessorId'] = 3;
+		}
+
 		// set which processor to use
 		// ---------------------------------------------------------------------------
 		$paymentProcessorName = false;

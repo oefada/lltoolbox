@@ -90,6 +90,22 @@ $this->set('hideSidebar', true);
 			</tr>
 			<tr>
 				<td width="150">
+					Site
+				</td>
+				<td>
+					<select name="s_site_id"> 
+						<option value="0">All</option>
+						<?php 
+						foreach ($siteIds as $k=>$v) {  
+							$selected = ($k == $s_site_id) ? 'selected="selected"' : ''; 
+							echo "<option value=\"$k\" $selected>$v</option>\n"; 
+						}
+						?>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td width="150">
 					Format Type
 				</td>
 				<td>
@@ -272,6 +288,7 @@ $this->set('hideSidebar', true);
 <table cellpadding="0" cellspacing="0" class="tickets-view-td" style="font-size:11px;">
 <tr>
 	<th width="10"><?php echo $paginator->sort('Ticket Id', 'Ticket.ticketId');?></th>
+	<th width="10"><?php echo $paginator->sort('Site', 'Ticket.siteId');?></th>
 	<th width="10"><?php echo $paginator->sort('Ticket Created', 'Ticket.created');?></th>
 	<th width="10"><?php echo $paginator->sort('Offer Type', 'Ticket.offerTypeId');?></th>
 	<th width="220" style="color:#FFF;">Client</th>
@@ -296,6 +313,9 @@ foreach ($tickets as $ticket):
 	<tr<?php echo $class;?>>
 		<td>
 			<?php echo $ticket['Ticket']['ticketId']; ?>
+		</td>
+		<td>
+			<?php echo $siteIds[$ticket['Ticket']['siteId']]; ?>
 		</td>
 		<td>
 			<?php echo $ticket['Ticket']['created'];?>
