@@ -46,21 +46,27 @@ class LoaItemsController extends AppController {
 			$loaItemData['LoaItem'] = $this->data['LoaItem'];
 			$loaItemData['Fee'] = $this->data['Fee'];
 			
-			// handle group saves -- remove fees and prepare LoaItemGroup 
+			// handle group saves -- prepare LoaItemGroup 
 			// ---------------------------------------------------------
 			if ($this->isGroup) {
-				unset($loaItemData['Fee']);
 				foreach ($this->data['LoaItemGroup'] as $groupItemId => $quantity) {
 					$loaItemData['LoaItemGroup'][] = array('groupItemId' => $groupItemId, 'quantity' => $quantity);
 				}
-			} else {
-				foreach ($loaItemData['Fee'] as $k => $loa_item_fee) {
-					if (!trim($loa_item_fee['feeName']) && !trim($loa_item_fee['feePercent'])) {
-						unset($loaItemData['Fee'][$k]);	
-					}
+			} 
+
+			$fee_count = 0;
+			foreach ($loaItemData['Fee'] as $k => $loa_item_fee) {
+				$fee_count++;
+				if (!trim($loa_item_fee['feeName']) && !trim($loa_item_fee['feePercent'])) {
+					$fee_count--;
+					unset($loaItemData['Fee'][$k]);	
 				}
 			}
-			
+		
+			if ($fee_count < 1) {
+				unset($loaItemData['Fee']);
+			}
+
 			// save the loaitem and related models -- then do the rate periods
 			// ---------------------------------------------------------
 			if ($this->LoaItem->saveAll($loaItemData)) {
@@ -152,7 +158,6 @@ class LoaItemsController extends AppController {
 			// handle group saves -- remove fees and prepare LoaItemGroup 
 			// ---------------------------------------------------------
 			if ($this->isGroup) {
-				unset($loaItemData['Fee']);
 				foreach ($this->data['LoaItemGroup'] as $groupItemId => $quantity) {
 					$loaItemData['LoaItemGroup'][] = array('groupItemId' => $groupItemId, 'quantity' => $quantity);
 				}
@@ -161,17 +166,24 @@ class LoaItemsController extends AppController {
 				foreach ($loaItemGroupExisting as $k => $v) {
 					$loaItemGroupExistingIds[] = $v['LoaItemGroup']['loaItemGroupId'];
 				}
-			} else {
-				foreach ($loaItemData['Fee'] as $k => $loa_item_fee) {
-					if (!trim($loa_item_fee['feeName']) && !trim($loa_item_fee['feePercent'])) {
-						if (is_numeric($loa_item_fee['feeId'])) {
-							$this->Fee->del($loa_item_fee['feeId']);
-						}
-						unset($loaItemData['Fee'][$k]);	
+			} 
+			
+			$fee_count = 0;
+			foreach ($loaItemData['Fee'] as $k => $loa_item_fee) {
+				$fee_count++;
+				if (!trim($loa_item_fee['feeName']) && !trim($loa_item_fee['feePercent'])) {
+					if (is_numeric($loa_item_fee['feeId'])) {
+						$this->Fee->del($loa_item_fee['feeId']);
 					}
+					$fee_count--;
+					unset($loaItemData['Fee'][$k]);	
 				}
 			}
-
+		
+			if ($fee_count < 1) {
+				unset($loaItemData['Fee']);
+			}
+			
 			// save the loaitem and related models -- then do the rate periods
 			// ---------------------------------------------------------
 			if ($this->LoaItem->saveAll($loaItemData)) {	

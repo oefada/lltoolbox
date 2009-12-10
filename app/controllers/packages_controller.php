@@ -44,6 +44,18 @@ class PackagesController extends AppController {
 		}
 	}
 	
+	function getCarvedRatePeriods($clientId = null, $id = null) {
+		if(empty($this->data['Package']['CheckedLoaItems']))
+			return;
+		$this->Package->recursive = 2;
+		
+		$packageStartDate = $this->data['Package']['validityStartDate']['year'] . '-' . $this->data['Package']['validityStartDate']['month'] . '-' . $this->data['Package']['validityStartDate']['day'];
+		$packageEndDate = $this->data['Package']['validityEndDate']['year'] . '-' . $this->data['Package']['validityEndDate']['month'] . '-' . $this->data['Package']['validityEndDate']['day'];
+		
+		$carvedRatePeriods = $this->Package->PackageLoaItemRel->LoaItem->carveRatePeriods($this->data['Package']['CheckedLoaItems'], $this->data['PackageLoaItemRel'], $packageStartDate, $packageEndDate);
+		return $carvedRatePeriods;
+	}
+	
 	function carveRatePeriodsForDisplay() {
 		$this->autoRender = false;
 		
@@ -522,28 +534,16 @@ class PackagesController extends AppController {
 		$itemList = $this->Package->PackageLoaItemRel->LoaItem->find('list');
 		//$itemCurrencyIds = $this->Package->PackageLoaItemRel->LoaItem->Loa->find('list', array('fields' => array('currencyId'), 'conditions' => array('Loa.loaId' => $this->data['ClientLoaPackageRel'][0]['loaId'])));
 		
-		foreach($this->data['PackageRatePeriod'] as $ratePeriod):
-			//setup the arrays needed to draw the rate period table			
-			//the boundaries are used to draw all of the columns
-			$boundaries[$ratePeriod['startDate']]['rangeStart'] = $ratePeriod['startDate'];
-			$boundaries[$ratePeriod['startDate']]['rangeEnd'] = $ratePeriod['endDate'];
-			
-			if(!isset($boundaries[$ratePeriod['startDate']]['rangeSum'])) $boundaries[$ratePeriod['startDate']]['rangeSum'] = 0;
-			$boundaries[$ratePeriod['startDate']]['rangeSum'] += $ratePeriod['ratePeriodPrice']*$ratePeriod['quantity']+($ratePeriod['ratePeriodPrice']*$ratePeriod['quantity']*$ratePeriod['feePercent']/100);
-			
-			//setup an array that has itemId => array('startDate', 'endDate', 'price'), so we can draw each row
-			$itemRatePeriods['IncludedItems'][$ratePeriod['loaItemId']]['itemName'] = $itemList[$ratePeriod['loaItemId']];
-			$itemRatePeriods['IncludedItems'][$ratePeriod['loaItemId']]['currencyId'] = $this->data['Package']['currencyId'];
-			$itemRatePeriods['IncludedItems'][$ratePeriod['loaItemId']]['PackageRatePeriod'][] = $ratePeriod;
-		endforeach;
-		
-		if (isset($boundaries)):
+		$carvedRatePeriods = $this->getCarvedRatePeriods($clientId);
+
+		if (isset($carvedRatePeriods['Boundaries']) && !empty($carvedRatePeriods['Boundaries'])):
 		//sort and re-set keys for the boundaries array
-			sort($boundaries);
-			array_merge($boundaries, array());
+			sort($carvedRatePeriods['Boundaries']);
+			array_merge($carvedRatePeriods['Boundaries'], array());
 		
-			$packageRatePeriods = $itemRatePeriods;
-			$packageRatePeriods['Boundaries'] = $boundaries;
+			$packageRatePeriods = array();
+			$packageRatePeriods['IncludedItems'] = $carvedRatePeriods['IncludedItems'];
+			$packageRatePeriods['Boundaries'] = $carvedRatePeriods['Boundaries'];
 			$this->set('packageRatePeriods', $packageRatePeriods);
 		endif;
 		
