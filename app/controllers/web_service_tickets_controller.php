@@ -659,7 +659,7 @@ class WebServiceTicketsController extends WebServicesController
 				include('../vendors/email_msgs/ppv/client_ppv.html');
 				$emailSubject = "$siteName Auction Winner Notification - $userFirstName $userLastName";
 				$emailFrom = "LuxuryLink.com<auctions@$siteEmail>";
-				$emailReplyTo = 'auctions@$siteEmail';
+				$emailReplyTo = "auctions@$siteEmail";
 				$userEmail = $clientPrimaryEmail;
 				$emailCc = $clientCcEmail;
 				break;
@@ -688,7 +688,7 @@ class WebServiceTicketsController extends WebServicesController
 				$emailSubject = "A $siteName $fpRequestType Request Has Come In!";
 				$emailFrom = "LuxuryLink.com<exclusives@$siteEmail>";
 				$emailReplyTo = "exclusives@$siteEmail";
-				$userEmail = 'exclusives@$siteEmail';
+				$userEmail = "exclusives@$siteEmail";
 				break;
 			case 12:
 				include('../vendors/email_msgs/fixed_price/notification_acknowledgement.html');
