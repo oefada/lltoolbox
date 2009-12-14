@@ -133,6 +133,9 @@ class Client extends AppModel {
    }
 
    function beforeSave() {
+      if(empty($this->data['Client']['name'])) {
+        return false;
+      }
 	  if (empty($this->data['Client']['parentClientId'])) {
 		 $loaClient = $this->data['Client']['clientId'];
 	  }
