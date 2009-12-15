@@ -32,5 +32,15 @@ class LandingPage extends AppModel {
 	  }
 	}
 	
+	function getTravelIdeaSelectList() {
+	  $pages = $this->find('all', array('fields' => array('landingPageId', 'landingPageName', 'siteId')));
+	  $select = array();
+	  foreach ($pages as $page) {
+			$site = AppModel::getDbName($page['LandingPage']['siteId']);
+			$select[$page['LandingPage']['landingPageId']] = $page['LandingPage']['landingPageName'].' - '.$site;
+	  }
+	  return $select;
+	}
+	
 }
 ?>
