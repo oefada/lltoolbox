@@ -2,11 +2,6 @@
 <?php echo $form->create('TravelIdea', array('url' => 'edit/' . $this->data['TravelIdea']['travelIdeaId']));?>
 	<fieldset>
  		<legend><?php __('Edit Travel Idea');?></legend>
-		<div class="controlset4">
-		<?
-		echo $form->input('sites', array('multiple' => 'checkbox'));
-		?>
-		</div>
 	<?php
 		echo $form->input('travelIdeaId');
 		echo $form->input('landingPageId');
