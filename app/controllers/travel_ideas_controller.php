@@ -38,9 +38,10 @@ class TravelIdeasController extends AppController {
 		$this->set('travelIdea', $this->TravelIdea->read(null, $id));
 	}
 
-	function add($landingPageId = null) {
+	function add() {
 		if (!empty($this->data)) {
-			$this->TravelIdea->create();
+            $this->data['TravelIdea']['siteId'] = $this->TravelIdea->LandingPage->field('siteId', array('landingPageId' => $this->data['TravelIdea']['landingPageId']));
+            $this->TravelIdea->recursive = -1;
 			if ($this->TravelIdea->save($this->data)) {
 				$this->Session->setFlash(__('The Travel Idea has been saved', true));
 				$this->redirect(array('controller' => 'travel_ideas', 'action'=>'index', 'id' => $this->data['TravelIdea']['landingPageId']));
@@ -48,8 +49,8 @@ class TravelIdeasController extends AppController {
 				$this->Session->setFlash(__('The Travel Idea could not be saved. Please, try again.', true));
 			}
 		}
-		$this->data['TravelIdea']['landingPageId'] = $landingPageId;
-		$landingPages = $this->TravelIdea->LandingPage->find('list');
+		$this->data['TravelIdea']['landingPageId'] = $this->params['landingPageId'];
+		$landingPages = $this->TravelIdea->LandingPage->getTravelIdeaSelectList();
 		$this->set('landingPageIds', $landingPages);
 	}
 
@@ -58,6 +59,8 @@ class TravelIdeasController extends AppController {
 			$this->Session->setFlash(__('Invalid Travel Idea', true));
 		}
 		if (!empty($this->data)) {
+            $this->data['TravelIdea']['siteId'] = $this->TravelIdea->LandingPage->field('siteId', array('landingPageId' => $this->data['TravelIdea']['landingPageId']));
+            $this->TravelIdea->recursive = -1;
 			if ($this->TravelIdea->save($this->data)) {
 				$this->Session->setFlash(__('The Travel Idea has been saved', true));
 				$this->redirect(array('controller' => 'travel_ideas', 'action'=>'index', 'id' => $this->data['TravelIdea']['landingPageId']));
@@ -68,7 +71,7 @@ class TravelIdeasController extends AppController {
 		if (empty($this->data)) {
 			$this->data = $this->TravelIdea->read(null, $id);
 		}
-		$landingPages = $this->TravelIdea->LandingPage->find('list');
+		$landingPages = $this->TravelIdea->LandingPage->getTravelIdeaSelectList();
 		$this->set('landingPageIds', $landingPages);
 	}
 
@@ -78,6 +81,8 @@ class TravelIdeasController extends AppController {
 			$this->redirect(array('controller' => 'travel_ideas', 'action'=>'index', 'id' => $landingPageId));
 		}
 		if ($this->TravelIdea->del($id)) {
+            $siteId = $this->TravelIdea->LandingPage->field('siteId', array('LandingPage.landingPageId' => $landingPageId));
+            $this->TravelIdea->deleteFromFrontEnd($id, $siteId);
 			$this->Session->setFlash(__('Travel Idea deleted', true));
 			$this->redirect(array('controller' => 'travel_ideas', 'action'=>'index', 'id' => $landingPageId));
 		}
