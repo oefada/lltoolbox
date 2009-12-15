@@ -90,6 +90,7 @@
 	Router::connect('/travel_ideas/:travelIdeaId/:controller/:action/:id/:landingPageId', array(), array('travelIdeaId' => '[0-9]+', 'id' => '[0-9]+', 'landingPageId' => '[0-9]+', 'pass' => array('travelIdeaId', 'id', 'landingPageId')));
 	
 	Router::connect('/travel_idea_items/:travelIdeaItemId/:controller/:action/:id/:travelIdeaId/:landingPageId', array(), array('travelIdeaId' => '[0-9]+', 'id' => '[0-9]+', 'landingPageId' => '[0-9]+', 'pass' => array('travelIdeaId', 'id', 'landingPageId')));
-
-	
+    
+// ROUTE ADDED 12-14-09 to properly set the landing page id parameter when adding a travel idea
+    Router::connect('/travel_ideas/add/:landingPageId', array('controller' => 'travel_ideas', 'action' => 'add'), array('landingPageId' => '[0-9]+'));
 ?>
