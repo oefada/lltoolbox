@@ -313,13 +313,9 @@ class WebServiceTicketsController extends WebServicesController
 				}
 			}
 	
-			mail('devmail@luxurylink.com', 'test1', 'test3');
-
 			// send out winner notifications
 			// -------------------------------------------------------------------------------
 			$this->ppv(json_encode($ppv_settings));
-			
-			mail('devmail@luxurylink.com', 'test3', 'test3');
 			
 			// send out client and winner ppv if charge is successfully charged
 			// -------------------------------------------------------------------------------
@@ -1025,8 +1021,6 @@ class WebServiceTicketsController extends WebServicesController
 		// ---------------------------------------------------------------------------
 		$userPaymentSettingPost = array();
 			
-		mail('devmail@luxurylink.com', 'test2', 'test2');
-		
 		$usingUpsId = false;
 		if (isset($data['userPaymentSettingId']) && !empty($data['userPaymentSettingId']) && is_numeric($data['userPaymentSettingId'])) {
 			$tmp_result = $this->Ticket->query('SELECT * FROM userPaymentSetting WHERE userPaymentSettingId = ' . $data['userPaymentSettingId'] . ' LIMIT 1');
@@ -1042,8 +1036,6 @@ class WebServiceTicketsController extends WebServicesController
 		}
 		
 		$userPaymentSettingPost['UserPaymentSetting']['ccNumber'] = aesFullDecrypt($userPaymentSettingPost['UserPaymentSetting']['ccNumber']);
-		
-		mail('devmail@luxurylink.com', 'test4', 'test4');
 		
 		// for FAMILY, payment is via PAYPAL only [override]
 		// ---------------------------------------------------------------------------
@@ -1098,8 +1090,6 @@ class WebServiceTicketsController extends WebServicesController
 			}
 		}
 		
-		mail('devmail@luxurylink.com', 'test5', 'test5');
-		
 		// set total charge amount to send to processor
 		// ---------------------------------------------------------------------------
 		$ticket['Ticket']['billingPrice'] = $totalChargeAmount;
@@ -1110,8 +1100,6 @@ class WebServiceTicketsController extends WebServicesController
 		$processor->InitPayment($userPaymentSettingPost, $ticket);	
 		$processor->SubmitPost();  
 		
-		mail('devmail@luxurylink.com', 'test6', 'test6');
-
 		// save the response from the payment processor
 		// ---------------------------------------------------------------------------
 		$nameSplit 								= str_word_count($userPaymentSettingPost['UserPaymentSetting']['nameOnCard'], 1);
@@ -1147,8 +1135,6 @@ class WebServiceTicketsController extends WebServicesController
 			@mail('devmail@luxurylink.com', 'WEB SERVICE ERROR: PAYMENT PROCESSED BUT NOT SAVED', print_r($this->PaymentDetail->validationErrors,true)  . print_r($paymentDetail, true));
 		}
 		
-		mail('devmail@luxurylink.com', 'test7', 'test7');
-				
 		// return result whether success or denied
 		// ---------------------------------------------------------------------------
 		if ($processor->ChargeSuccess()) {
@@ -1162,11 +1148,8 @@ class WebServiceTicketsController extends WebServicesController
 
 		// allocate revenue to loa and tracks
 		// ---------------------------------------------------------------------------
-		mail('devmail@luxurylink.com', 'test66', 'test66');
 		$tracks = $this->TrackDetail->getTrackRecord($ticket['Ticket']['ticketId']);
-		mail('devmail@luxurylink.com', 'test77', 'test77');
 		if (!empty($tracks)) {
-		mail('devmail@luxurylink.com', 'test88', 'test88');
 			foreach ($tracks as $track) {
 
 				// decrement loa number of packages
@@ -1180,12 +1163,9 @@ class WebServiceTicketsController extends WebServicesController
 				// track detail stuff and allocation
 				// ---------------------------------------------------------------------------
 				$trackDetailExists = $this->TrackDetail->findExistingTrackTicket($track['trackId'], $ticket['Ticket']['ticketId']);	
-				mail('devmail@luxurylink.com', 'test100', 'test100');
 				if (!$trackDetailExists) {
 					$new_track_detail = $this->TrackDetail->getNewTrackDetailRecord($track, $ticket['Ticket']['ticketId']);
-					mail('devmail@luxurylink.com', 'test99', 'test99');
 					if ($new_track_detail) {
-						mail('devmail@luxurylink.com', 'test111', 'test111');
 						$this->TrackDetail->create();
 						if (!$this->TrackDetail->save($new_track_detail)) {
 							mail('devmail@luxurylink.com', $ticket['Ticket']['ticketId'] . ' ticket track detail not saved', print_r($ticket, true));
@@ -1194,7 +1174,6 @@ class WebServiceTicketsController extends WebServicesController
 				}
 			}
 		}
-		mail('devmail@luxurylink.com', 'test8', 'test8');
 			
 		// if saving new user card information
 		// ---------------------------------------------------------------------------
@@ -1254,7 +1233,6 @@ class WebServiceTicketsController extends WebServicesController
 				$this->sendPpvEmail($emailTo, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials);	
 			}
 		}
-		mail('devmail@luxurylink.com', 'test9', 'test9');
 
 		return 'CHARGE_SUCCESS';
 	}
