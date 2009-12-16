@@ -1164,7 +1164,9 @@ class WebServiceTicketsController extends WebServicesController
 		// ---------------------------------------------------------------------------
 		mail('devmail@luxurylink.com', 'test66', 'test66');
 		$tracks = $this->TrackDetail->getTrackRecord($ticket['Ticket']['ticketId']);
+		mail('devmail@luxurylink.com', 'test77', 'test77');
 		if (!empty($tracks)) {
+		mail('devmail@luxurylink.com', 'test88', 'test88');
 			foreach ($tracks as $track) {
 
 				// decrement loa number of packages
