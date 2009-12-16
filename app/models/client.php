@@ -187,7 +187,6 @@ class Client extends AppModel {
 			   $result = $this->query($sql);
 		   }
 	   }
-	   
 	   // for clientThemeLookup only on the frontend
 	   // -----------------------------------------------------------------
 	   if (isset($this->data['ClientThemeRel']) && !empty($this->data['ClientThemeRel'])) {
@@ -209,10 +208,8 @@ class Client extends AppModel {
 			   }
 			   $update_tmp = rtrim($tmp, ',');
 			   $sql = "INSERT DELAYED INTO clientThemeLookup (". implode(',',array_keys($insert_arr)) .") VALUES (". implode(',',array_values($insert_arr)) .") ON DUPLICATE KEY UPDATE $update_tmp";
-			   foreach ($this->data['Client']['sites'] as $site) {
-				   $this->useDbConfig = $site;
-				   $result = $this->query($sql);
-			   }
+			   $this->useDbConfig = $site;
+			   $result = $this->query($sql);
 		   }
 	   }
 	   $this->useDbConfig = 'default';
