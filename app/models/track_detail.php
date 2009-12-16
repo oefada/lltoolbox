@@ -247,7 +247,7 @@ class TrackDetail extends AppModel {
 			$loa['Loa']['membershipBalance'] += $trackDetail['TrackDetail']['amountKept'];
 		}
 
-		if (!$loaModel->save($loa)) {
+		if (!$loaModel->save($loa, array('callbacks' => false))) {
 			$errors++;	
 		}
 		return (!$errors) ? true : false;
@@ -286,7 +286,7 @@ class TrackDetail extends AppModel {
 			$loa['Loa']['membershipBalance'] -= $this->data['TrackDetail']['amountKept'];
 		}
 
-		$loaModel->save($loa);
+		$loaModel->save($loa, array('callbacks' => false));
 		return true;
 	}
 }
