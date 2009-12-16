@@ -112,7 +112,7 @@ foreach ($this->data['Client']['sites'] as $site) {
 		echo $form->input('checkRateUrl');
 		echo $form->input('numRooms');
 		echo $form->input('numRoomsText');
-		echo $form->input('starRating', array('type' => 'select', 'options' => array('3', '3.5', '4', '4.5', '5'), 'empty' => true));
+		echo $form->input('starRating', array('type' => 'select', 'options' => array('3' => '3', '3.5' => '3.5', '4' => '4', '4.5' => '4.5', '5' => '5'), 'empty' => true));
 	?>
 
 
