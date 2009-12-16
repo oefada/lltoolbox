@@ -454,6 +454,15 @@ class PackagesController extends AppController {
 		    $package = $this->data;
 		}
 		
+		switch($package['Package']['siteId']) {
+			case 2:
+			   $this->set('siteUrl', 'www.familygetaway.com');
+			   break;
+			case 1:
+			default:
+			   $this->set('siteUrl', 'www.luxurylink.com');
+		}
+		
 		$client_trackings = array();
 		
 		// map clientTracking: use clientTrackingTypeId as key
