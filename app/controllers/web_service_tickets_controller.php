@@ -1180,9 +1180,12 @@ class WebServiceTicketsController extends WebServicesController
 				// track detail stuff and allocation
 				// ---------------------------------------------------------------------------
 				$trackDetailExists = $this->TrackDetail->findExistingTrackTicket($track['trackId'], $ticket['Ticket']['ticketId']);	
+				mail('devmail@luxurylink.com', 'test100', 'test100');
 				if (!$trackDetailExists) {
 					$new_track_detail = $this->TrackDetail->getNewTrackDetailRecord($track, $ticket['Ticket']['ticketId']);
+					mail('devmail@luxurylink.com', 'test99', 'test99');
 					if ($new_track_detail) {
+						mail('devmail@luxurylink.com', 'test111', 'test111');
 						$this->TrackDetail->create();
 						if (!$this->TrackDetail->save($new_track_detail)) {
 							mail('devmail@luxurylink.com', $ticket['Ticket']['ticketId'] . ' ticket track detail not saved', print_r($ticket, true));
