@@ -209,9 +209,9 @@ class PaymentDetailsController extends AppController {
 		
 		$paymentProcessors = $this->PaymentDetail->PaymentProcessor->find('list');
 		if ($ticket['Ticket']['siteId'] == 2) {
-			$paymentProcessors = array(3 => 'PAYPAL');
+			$paymentProcessors = array(3 => 'PAYPAL', 5 => 'WIRE TRANSFER');
 		} else {
-			$paymentProcessors = array(1 => 'NOVA');
+			$paymentProcessors = array(1 => 'NOVA', 5 => 'WIRE TRANSFER');
 		}
 
 		$this->set('ticket', $ticket);
