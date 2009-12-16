@@ -1162,6 +1162,7 @@ class WebServiceTicketsController extends WebServicesController
 
 		// allocate revenue to loa and tracks
 		// ---------------------------------------------------------------------------
+		mail('devmail@luxurylink.com', 'test66', 'test66');
 		$tracks = $this->TrackDetail->getTrackRecord($ticket['Ticket']['ticketId']);
 		if (!empty($tracks)) {
 			foreach ($tracks as $track) {
@@ -1181,7 +1182,9 @@ class WebServiceTicketsController extends WebServicesController
 					$new_track_detail = $this->TrackDetail->getNewTrackDetailRecord($track, $ticket['Ticket']['ticketId']);
 					if ($new_track_detail) {
 						$this->TrackDetail->create();
-						$this->TrackDetail->save($new_track_detail);
+						if (!$this->TrackDetail->save($new_track_detail)) {
+							mail('devmail@luxurylink.com', $ticket['Ticket']['ticketId'] . ' ticket track detail not saved', print_r($ticket, true));
+						}
 					}
 				}
 			}
