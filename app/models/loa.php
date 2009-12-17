@@ -37,7 +37,7 @@ class Loa extends AppModel {
 	}
 	
 	function beforeSave($options) {
-		if ($this->data['Loa']['loaId']) {
+		if (isset($this->data['Loa']['loaId'])) {
 		    $orig = $this->find('Loa.loaId = '.$this->data['Loa']['loaId'], array('customerApprovalStatusId'));
 		    
 		    if (@$orig['Loa']['customerApprovalStatusId'] != 2 && @$this->data['Loa']['customerApprovalStatusId'] == 2) {
