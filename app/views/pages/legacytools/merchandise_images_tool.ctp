@@ -88,19 +88,21 @@ function daysInMonth(iMonth, iYear)
 	return 32 - new Date(iYear, iMonth, 32).getDate();
 }
 
-function changeDateRefresh() 
+function refreshOptions() 
 {
     var year = document.getElementById('s_year').value;
     var month = document.getElementById('s_month').value;
     var day = document.getElementById('s_day').value;
+    var siteId = document.getElementById('siteId').value;
 
  	if(year && month && day) {
-		window.location.replace('<?=$page;?>?year=' + year + '&month=' + month + '&day=' + day);
+        var url = '<?=$page;?>?year=' + year + '&month=' + month + '&day=' + day;
 	}
-}
 
-function changeSiteRefresh() {
-	window.location.replace('<?=$page;?>?siteId='+document.getElementById('siteId').value);
+    if (siteId) {
+        url += '&siteId='+siteId;
+    }
+    window.location.replace(url);
 }
 
 </script>
@@ -116,13 +118,13 @@ Use this tool to setup the merchandising images on the new homepage.  Double cli
 
 <div class="searchBox">
 Select Site: <br /><br />
-<select id="siteId" name="siteId" onchange="changeSiteRefresh()">
+<select id="siteId" name="siteId" onchange="refreshOptions()">
 	<option value="1" <?if($siteId == 1) echo " selected='selected'"?>>Luxury Link</option>
 	<option value="2" <?if($siteId == 2) echo " selected='selected'"?>>Family</option>
 </select><br /><br />
 Select Date: <br /><br />
 
-<select id="s_year" name="year" onchange="changeDateRefresh();">
+<select id="s_year" name="year" onchange="refreshOptions();">
 <?php
 for($i=2008; $i<2020; $i++) {
 	$selected = ($i==$year) ? 'selected="selected"' : '';
@@ -131,7 +133,7 @@ for($i=2008; $i<2020; $i++) {
 ?>
 </select>
 
-<select id="s_month" name="month" onchange="changeDateRefresh();">
+<select id="s_month" name="month" onchange="refreshOptions();">
 <?php
 for($i=1; $i<13; $i++) {
 	$selected = ($i==$month) ? 'selected="selected"' : '';
@@ -140,7 +142,7 @@ for($i=1; $i<13; $i++) {
 ?>
 </select>
 
-<select id="s_day" name="day" onchange="changeDateRefresh();">
+<select id="s_day" name="day" onchange="refreshOptions();">
 <?php
 
 $num_greg_days = $ndays = date("t", mktime(0, 0, 0, $month, 1, $year));
