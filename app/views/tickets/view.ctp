@@ -427,18 +427,22 @@ $this->searchController = 'Tickets';
 				<td><?php echo $ticket['TicketRefund']['ticketRefundId'];?></td>
 			</tr>
 			<tr>
+				<td width="200">Refund Type</td>
+				<td><?php echo $ticket['TicketRefund']['TicketRefundType']['ticketRefundTypeName'];?></td>
+			</tr>
+			<tr class="altrow">
 				<td width="200">Refund Reason</td>
 				<td><?php echo $ticket['TicketRefund']['RefundReason']['refundReasonName'];?></td>
 			</tr>
-			<tr class="altrow">
+			<tr>
 				<td width="200">Refund Date</td>
 				<td><?php echo $ticket['TicketRefund']['dateRequested'];?></td>
 			</tr>
-			<tr>
+			<tr class="altrow">
 				<td width="200">Refund Amount</td>
 				<td><?php echo $number->currency($ticket['TicketRefund']['amountRefunded']);?></td>
 			</tr>
-			<tr class="altrow">
+			<tr>
 				<td width="200">Refund Notes</td>
 				<td><?php echo $ticket['TicketRefund']['refundNotes'];?></td>
 			</tr>

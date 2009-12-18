@@ -4,6 +4,7 @@
  		<legend><?php __('Edit TicketRefund');?></legend>
 	<?php
 		echo $form->input('ticketRefundId');
+		echo $form->input('ticketRefundTypeId');
 		echo $form->input('refundReasonId');
 		echo $form->input('ticketId');
 		echo $form->input('dateRequested');

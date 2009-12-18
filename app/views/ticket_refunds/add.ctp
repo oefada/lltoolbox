@@ -3,7 +3,7 @@
 	<fieldset>
  		<legend><?php __('Add TicketRefund');?></legend>
 	<?php
-		echo $form->input('ticketRefundTypeIds');
+		echo $form->input('ticketRefundTypeId');
 		echo $form->input('refundReasonId');
 		echo $form->input('ticketId', array('readonly' => 'readonly'));
 		echo $form->input('dateRequested');
