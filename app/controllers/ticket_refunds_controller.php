@@ -58,7 +58,7 @@ class TicketRefundsController extends AppController {
 				@mail($emailTo, $emailSubject, $emailBody, $emailHeaders);
 				
 				// credit on file
-				if (($this->data['TicketRefund']['ticketRefundTypeIds'] == 1 || $this->data['TicketRefund']['ticketRefundTypeIds'] == 3) && $this->data['cofAmount'] > 0) {
+				if (($this->data['TicketRefund']['ticketRefundTypeId'] == 1 || $this->data['TicketRefund']['ticketRefundTypeId'] == 3) && $this->data['cofAmount'] > 0) {
 					$result = $this->Ticket->query('SELECT userId FROM ticket WHERE ticketId = ' . $this->data['TicketRefund']['ticketId']);
 					$ctdata['CreditTracking']['creditTrackingTypeId'] = 2;
 					$ctdata['CreditTracking']['userId'] = $result[0]['ticket']['userId'];
@@ -135,6 +135,8 @@ class TicketRefundsController extends AppController {
 		}
 		
 		$this->set('refundReasonIds', $this->TicketRefund->RefundReason->find('list'));
+		$refundTypes = $this->TicketRefund->TicketRefundType->find('list');
+		$this->set('ticketRefundTypeIds', $refundTypes);
 	}
 
 	function delete($id = null) {
