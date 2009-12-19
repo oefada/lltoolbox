@@ -19,8 +19,8 @@ $this->set('clientId', $this->data['Client']['clientId']);
 	<?php
 		echo $form->input('loaId');
 		
-		//only tmccord can edit loa level
-		if ($userDetails['username'] == 'tmccord' || $userDetails['username'] == 'kferson') {
+		//only Kristen, Daymora & Kat can edit loa level
+		if ($userDetails['username'] == 'dpen' || $userDetails['username'] == 'kferson' || $userDetails['username'] == 'kgathany') {
 			$disabled = false;
 		} else {
 			$disabled = true;
