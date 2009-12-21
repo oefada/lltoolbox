@@ -231,7 +231,9 @@ class Client extends AppModel {
 		 $this->unbindModel(array('hasMany' => array('ChildClient')), $reset=false);
 	  }
 	  $this->set($client);
-	  $this->save($client, array('callbacks' => false));
+      $query = "REPLACE INTO multiSite SET model = 'Client', modelId = {$client_id}, sites = '{$sites}'";
+      $this->query($query);
+	  //$this->save($client, array('callbacks' => false));
    }
    
    //populate the sites field for a client when running a custom query outside of a Cake $this->Client->find()
