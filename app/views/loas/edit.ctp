@@ -25,11 +25,16 @@ $this->set('clientId', $this->data['Client']['clientId']);
 		} else {
 			$disabled = true;
 		}
+		
+		// for editing membershipBalance, totalKept, totalRemitted, totalRevenue
+		// added Dec 22,2009 ALEE
+		$disable_advanced_edit = (in_array($userDetails['username'], array('alee','rhastings','mchoe','cyoung'))) ? false : true;
+
 		echo $form->input('clientId', array('type' => 'hidden'));
 		echo $form->input('loaLevelId', array('disabled' => $disabled, 'label' => 'LOA Level'));
 		echo $form->input('loaMembershipTypeId', array('label' => 'Membership Type', 'disabled' => true));
 		echo $form->input('numEmailInclusions');
-		echo $form->input('totalRevenue', array('disabled' => true, 'label' => 'Total Revenue'));
+		echo $form->input('totalRevenue', array('disabled' => $disable_advanced_edit, 'label' => 'Total Revenue'));
 		echo $form->input('Loa.currencyId', array('label' => 'Item Currency'));
 		echo $form->input('customerApprovalStatusId', array('label' => 'Client Approval Status'));
 		echo $form->input('customerApprovalDate', array('label' => 'Package in Date', 'disabled' => true, 'empty' => true));
@@ -53,8 +58,8 @@ $this->set('clientId', $this->data['Client']['clientId']);
 			echo $form->input('membershipFeeEstimated');	
 		}		
 		echo $form->input('membershipFee', array('disabled' => $disabled));
-		echo $form->input('membershipBalance', array('disabled' => true));
-		echo $form->input('totalRemitted', array('disabled' => true));
+		echo $form->input('membershipBalance', array('disabled' => $disable_advanced_edit));
+		echo $form->input('totalRemitted', array('disabled' => $disable_advanced_edit));
 		
 		if ($userDetails['username'] == 'cyoung') {
 			echo $form->input('cashPaid');
@@ -62,7 +67,7 @@ $this->set('clientId', $this->data['Client']['clientId']);
 			echo $form->input('cashPaid', array('disabled' => true));
 		}
 		
-		echo $form->input('totalKept', array('disabled' => true));
+		echo $form->input('totalKept', array('disabled' => $disable_advanced_edit));
 		echo $form->input('totalCommission', array('disabled' => true));
 	?>
 	</fieldset>
