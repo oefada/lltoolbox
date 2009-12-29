@@ -55,7 +55,6 @@ class LoaItem extends AppModel {
 		
 		$itemList = $this->find('list', array('conditions' => array('loaItemId' => $itemIds)));
 		//$currencyList = $this->find('list', array('fields' => array('currencyId'), 'conditions' => array('loaItemId' => $itemIds)));
-
 		$carvedBoundaries = array();
 		$periodPrices = array();
 		$items = array();
@@ -69,7 +68,7 @@ class LoaItem extends AppModel {
 				   $periodPrices[] = 0;
 				}
 				$items[$itemId]['itemName'] = $itemList[$itemId];
-				$items[$itemId]['currencyId'] = $currencyList[$itemId];			
+				//$items[$itemId]['currencyId'] = $currencyList[$itemId];			
 				
 				if (empty($this->loaItems[$itemId]['LoaItemRatePeriod'])):									//if item has no rate periods, we always use the item base price
 					$ratePeriodPrice = $this->loaItems[$itemId]['LoaItem']['itemBasePrice'];
