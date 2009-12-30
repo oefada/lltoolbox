@@ -2370,7 +2370,7 @@ class ReportsController extends AppController {
 		 avgSalePriceCollected as col7, avgSalePriceCollectedYoY as col8,
 		 revenuetarget
 		FROM reporting.weeklyScorecardTotal as data 
-		WHERE YEAR(weekBeginSunday) = YEAR(NOW())
+		WHERE YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
 		 AND QUARTER = QUARTER(NOW())
 		group by quarter, weekBeginSunday
 		ORDER BY weekBeginSunday
@@ -2379,7 +2379,7 @@ class ReportsController extends AppController {
 		$tmp = $this->OfferType->query("SELECT 
 		 SUM(revenuetarget) as quarterRevenueTarget
 		FROM reporting.weeklyScorecardTotal as data 
-		WHERE YEAR(weekBeginSunday) = YEAR(NOW())
+		WHERE YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
 		 AND QUARTER = QUARTER(NOW())
 		 AND weeknumber < WEEK(NOW()) + 1
 		group by quarter
@@ -2390,7 +2390,7 @@ class ReportsController extends AppController {
 		FROM reporting.weeklyScorecardTotal t
 		WHERE 
 		 QUARTER = QUARTER(NOW())
-		 AND YEAR(weekBeginSunday) = YEAR(now())
+		 AND YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
 		 AND weeknumber < WEEK(NOW()) + 1
 		;");
 		// QTR
@@ -2398,7 +2398,7 @@ class ReportsController extends AppController {
 		FROM reporting.weeklyScorecardTotal t
 		WHERE 
 		 QUARTER = QUARTER(NOW())
-		 AND YEAR(weekBeginSunday) = YEAR(NOW())
+		 AND YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
 		;");
 		$tot[0][0] = $tmp[0][0];
 		$this->set('tot', $tot);
@@ -2407,7 +2407,7 @@ class ReportsController extends AppController {
 		FROM reporting.weeklyScorecardTotal
 		WHERE
 		 QUARTER = QUARTER(NOW())
-		 AND YEAR(weekbeginsunday) = YEAR(NOW())
+		 AND YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
 		ORDER BY weekbeginsunday
 		;");
 		$this->set('qtr', $qtr);
@@ -2427,14 +2427,15 @@ class ReportsController extends AppController {
 			auctionticketscollected as col19, auctionticketscollectedyoy as col20,
 			avgsalepricecollected as col21, avgsalepricecollectedyoy as col22,
 			revenuetarget
-		from reporting.weeklyScorecardAuctions  as data WHERE year = DATE_FORMAT(CURDATE(), '%Y')
+		from reporting.weeklyScorecardAuctions  as data
+		WHERE YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
 		 AND QUARTER = QUARTER(NOW())
 		group by quarter, weekBeginSunday
 		order by year desc, weeknumber asc;");
 		$tmp = $this->OfferType->query("SELECT 
 		 SUM(revenuetarget) as quarterRevenueTarget
 		FROM reporting.weeklyScorecardAuctions as data 
-		WHERE YEAR(weekBeginSunday) = YEAR(NOW())
+		WHERE YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
 		 AND QUARTER = QUARTER(NOW())
 		 AND weeknumber < WEEK(NOW()) + 1
 		group by quarter
@@ -2447,7 +2448,7 @@ class ReportsController extends AppController {
 		FROM reporting.weeklyScorecardAuctions a
 		WHERE 
 		 QUARTER = QUARTER(NOW())
-		AND YEAR(weekbeginsunday) = YEAR(now())
+		AND YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
 		 AND weeknumber < WEEK(NOW()) + 1
 		;
 		");
@@ -2457,7 +2458,7 @@ class ReportsController extends AppController {
 		FROM reporting.weeklyScorecardAuctions a
 		WHERE 
 		 QUARTER = QUARTER(NOW())
-		 AND YEAR(weekBeginSunday) = YEAR(NOW())
+		 AND YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
 		;
 		");
 		
@@ -2466,7 +2467,7 @@ class ReportsController extends AppController {
 		FROM reporting.weeklyScorecardAuctions
 		WHERE
 		 QUARTER = QUARTER(NOW())
-		 AND YEAR(weekbeginsunday) = YEAR(NOW())
+		 AND YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
 		ORDER BY weekbeginsunday
 		;");
 		$this->set('aucqtr', $aucqtr);
@@ -2484,14 +2485,14 @@ class ReportsController extends AppController {
 		 revenuecollected as col11, revenuecollectedyoy as col12,
 		 avgsalepricecollected as col13, avgsalepricecollectedyoy as col14,
 		revenuetarget
-		from reporting.weeklyScorecardFixedPrice as data WHERE YEAR(weekbeginsunday) = DATE_FORMAT(CURDATE(), '%Y') AND QUARTER = QUARTER(NOW()) 
+		from reporting.weeklyScorecardFixedPrice as data WHERE YEAR(weekBeginSunday + INTERVAL 7 DAY) = DATE_FORMAT(CURDATE(), '%Y') AND QUARTER = QUARTER(NOW()) 
 		group by quarter, weekbeginsunday
 		order by weekbeginsunday
 		;");
 		$tmp = $this->OfferType->query("SELECT 
 		 SUM(revenuetarget) as quarterRevenueTarget
 		FROM reporting.weeklyScorecardFixedPrice as data 
-		WHERE YEAR(weekBeginSunday) = YEAR(NOW())
+		WHERE YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
 		 AND QUARTER = QUARTER(NOW())
 		 AND weeknumber < WEEK(NOW()) + 1
 		group by quarter
@@ -2503,7 +2504,7 @@ class ReportsController extends AppController {
 		FROM reporting.weeklyScorecardFixedPrice a
 		WHERE 
 		 QUARTER = QUARTER(NOW())
-		AND  YEAR(weekbeginsunday) = YEAR(now())
+		AND  YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
 		 AND weeknumber < WEEK(NOW()) + 1
 		;");
 		$tmp3 = $this->OfferType->query("SELECT SUM(a.buyNowOffersPrevious) as qtr_buyNowOffersPrevious, SUM(a.numberRequestsPrevious) as qtr_numberRequestsPrevious,
@@ -2511,7 +2512,7 @@ class ReportsController extends AppController {
 		FROM reporting.weeklyScorecardFixedPrice a
 		WHERE 
 		 QUARTER = QUARTER(NOW())
-		 AND YEAR(weekBeginSunday) = YEAR(NOW())
+		 AND YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
 		;");
 		
 		$fp[0][0] = $tmp[0][0];
@@ -2519,7 +2520,7 @@ class ReportsController extends AppController {
 		FROM reporting.weeklyScorecardFixedPrice
 		WHERE
 		 QUARTER = QUARTER(NOW())
-		 AND YEAR(weekbeginsunday) = YEAR(NOW())
+		 AND YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
 		ORDER BY weekbeginsunday
 		;");
 		$this->set('fpqtr', $fpqtr);
@@ -2537,7 +2538,7 @@ class ReportsController extends AppController {
 		 avgsalepricecollected as col13, avgsalepricecollectedyoy as col14,
 		 revenuetarget
 		from reporting.weeklyScorecardFixedPriceSponsor as data 
-		WHERE YEAR(weekBeginSunday) = YEAR(NOW())
+		WHERE YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
 		 AND QUARTER = QUARTER(NOW())
 		group by quarter, weekbeginsunday
 		order by weekbeginsunday
@@ -2545,7 +2546,7 @@ class ReportsController extends AppController {
 		$tmp = $this->OfferType->query("SELECT 
 		 SUM(revenuetarget) as quarterRevenueTarget
 		FROM reporting.weeklyScorecardFixedPriceSponsor as data 
-		WHERE YEAR(weekBeginSunday) = YEAR(NOW())
+		WHERE YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
 		 AND QUARTER = QUARTER(NOW())
 		 AND weeknumber < WEEK(NOW()) + 1
 		group by quarter
@@ -2557,7 +2558,7 @@ class ReportsController extends AppController {
 		FROM reporting.weeklyScorecardFixedPriceSponsor a
 		WHERE 
 		 QUARTER = QUARTER(NOW())
-		 AND YEAR(weekBeginSunday) = YEAR(now())
+		 AND YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
 		 AND weeknumber < WEEK(NOW()) + 1
 		;");
 		$tmp3 = $this->OfferType->query("SELECT SUM(a.buyNowOffersPrevious) as qtr_buyNowOffersPrevious, SUM(a.numberRequestsPrevious) as qtr_numberRequestsPrevious,
@@ -2565,7 +2566,7 @@ class ReportsController extends AppController {
 		FROM reporting.weeklyScorecardFixedPriceSponsor a
 		WHERE 
 		 QUARTER = QUARTER(NOW())
-		 AND YEAR(weekBeginSunday) = YEAR(NOW())
+		 AND YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
 		;");
 		
 		$fpSponsored[0][0] = $tmp[0][0];
@@ -2573,7 +2574,7 @@ class ReportsController extends AppController {
 		FROM reporting.weeklyScorecardFixedPriceSponsor
 		WHERE
 		 QUARTER = QUARTER(NOW())
-		 AND YEAR(weekbeginsunday) = YEAR(NOW())
+		 AND YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
 		ORDER BY weekbeginsunday
 		;");
 		$this->set('fpSponsoredQtr', $fpSponsoredQtr);
@@ -2592,7 +2593,7 @@ class ReportsController extends AppController {
 			 avgsalepricecollected as col13, avgsalepricecollectedyoy as col14,
 			 revenuetarget
 			from reporting.weeklyScorecardFixedPriceWholesale as data 
-			WHERE YEAR(weekBeginSunday) = YEAR(NOW())
+			WHERE YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
 			 AND QUARTER = QUARTER(NOW())
 			group by quarter, weekbeginsunday
 			order by weekbeginsunday
@@ -2600,7 +2601,7 @@ class ReportsController extends AppController {
 		$tmp = $this->OfferType->query("SELECT 
 		 SUM(revenuetarget) as quarterRevenueTarget
 		FROM reporting.weeklyScorecardFixedPriceWholesale as data 
-		WHERE YEAR(weekBeginSunday) = YEAR(NOW())
+		WHERE YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
 		 AND QUARTER = QUARTER(NOW())
 		 AND weeknumber < WEEK(NOW()) + 1
 		group by quarter
@@ -2612,7 +2613,7 @@ class ReportsController extends AppController {
 		FROM reporting.weeklyScorecardFixedPriceWholesale a
 		WHERE 
 		 QUARTER = QUARTER(NOW())
-		 AND YEAR(weekBeginSunday) = YEAR(now())
+		 AND YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
 		 AND weeknumber < WEEK(NOW()) + 1
 		 
 		;");
@@ -2621,7 +2622,7 @@ class ReportsController extends AppController {
 		FROM reporting.weeklyScorecardFixedPriceWholesale a
 		WHERE 
 		 QUARTER = QUARTER(NOW())
-		 AND YEAR(weekBeginSunday) = YEAR(NOW())
+		 AND YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
 		;");
 		
 		$fpWholesale[0][0] = $tmp[0][0];
@@ -2629,7 +2630,7 @@ class ReportsController extends AppController {
 		FROM reporting.weeklyScorecardFixedPriceWholesale
 		WHERE
 		 QUARTER = QUARTER(NOW())
-		 AND YEAR(weekbeginsunday) = YEAR(NOW())
+		 AND YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
 		ORDER BY weekbeginsunday
 		;");
 		$this->set('fpWholesaleQtr', $fpWholesaleQtr);
@@ -2646,7 +2647,7 @@ class ReportsController extends AppController {
 		avgSalePriceCollected as col8, avgSalePriceCollectedYoY as col9,
 		revenuetarget
 		from reporting.weeklyScorecardCruises as data 
-		WHERE YEAR(weekBeginSunday) = YEAR(NOW())
+		WHERE YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
 		 AND QUARTER = QUARTER(NOW()) 
 		group by quarter, weekbeginsunday
 		order by weekbeginsunday
@@ -2654,7 +2655,7 @@ class ReportsController extends AppController {
 		$tmp = $this->OfferType->query("SELECT 
 		 SUM(revenuetarget) as quarterRevenueTarget
 		FROM reporting.weeklyScorecardCruises as data 
-		WHERE YEAR(weekBeginSunday) = YEAR(NOW())
+		WHERE YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
 		 AND QUARTER = QUARTER(NOW())
 		 AND weeknumber < WEEK(NOW()) + 1
 		group by quarter
@@ -2666,7 +2667,7 @@ class ReportsController extends AppController {
 		FROM reporting.weeklyScorecardCruises a
 		WHERE 
 		 QUARTER = QUARTER(NOW())
-		 AND YEAR(weekBeginSunday) = YEAR(now())
+		 AND YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
 		 AND weeknumber < WEEK(NOW()) + 1
 		 
 		;");
@@ -2675,7 +2676,7 @@ class ReportsController extends AppController {
 		FROM reporting.weeklyScorecardCruises a
 		WHERE 
 		 QUARTER = QUARTER(NOW())
-		 AND YEAR(weekBeginSunday) = YEAR(NOW())
+		 AND YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
 		;");
 
 		$cruises[0][0] = $tmp[0][0];
@@ -2683,7 +2684,7 @@ class ReportsController extends AppController {
 		FROM reporting.weeklyScorecardCruises
 		WHERE
 		 QUARTER = QUARTER(NOW())
-		 AND YEAR(weekbeginsunday) = YEAR(NOW())
+		 AND YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
 		ORDER BY weekbeginsunday
 		;");
 		$this->set('cruisesQtr', $cruisesQtr);
@@ -2700,7 +2701,7 @@ class ReportsController extends AppController {
 		avgSalePriceCollected as col7, avgSalePriceCollectedYoY as col8,
 		revenuetarget
 		from reporting.weeklyScorecardSponsorship as data 
-		WHERE YEAR(weekBeginSunday) = YEAR(NOW())
+		WHERE YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
 		 AND QUARTER = QUARTER(NOW()) 
 		group by quarter, weekbeginsunday
 		order by weekbeginsunday
@@ -2708,7 +2709,7 @@ class ReportsController extends AppController {
 		$tmp = $this->OfferType->query("SELECT 
 		 SUM(revenuetarget) as quarterRevenueTarget
 		FROM reporting.weeklyScorecardSponsorship as data 
-		WHERE YEAR(weekBeginSunday) = YEAR(NOW())
+		WHERE YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
 		 AND QUARTER = QUARTER(NOW())
 		 AND weeknumber < WEEK(NOW()) + 1
 		group by quarter
@@ -2720,7 +2721,7 @@ class ReportsController extends AppController {
 		FROM reporting.weeklyScorecardSponsorship a
 		WHERE 
 		 QUARTER = QUARTER(NOW())
-		 AND YEAR(weekBeginSunday) = YEAR(now())
+		 AND YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
 		 AND weeknumber < WEEK(NOW()) + 1
 		;
 		");
@@ -2729,7 +2730,7 @@ class ReportsController extends AppController {
 		FROM reporting.weeklyScorecardSponsorship a
 		WHERE 
 		 QUARTER = QUARTER(NOW())
-		 AND YEAR(weekBeginSunday) = YEAR(NOW())
+		 AND YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
 		;
 		");
 
@@ -2738,7 +2739,7 @@ class ReportsController extends AppController {
 		FROM reporting.weeklyScorecardSponsorship
 		WHERE
 		 QUARTER = QUARTER(NOW())
-		 AND YEAR(weekbeginsunday) = YEAR(NOW())
+		 AND YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
 		ORDER BY weekbeginsunday
 		;");
 		$this->set('sponsorshipQtr', $sponsorshipQtr);
@@ -2756,7 +2757,7 @@ class ReportsController extends AppController {
 		 totalBuyerActivity as col7, totalbuyerYoY as col8,
 		 newBuyerTarget, returningBuyerTarget, totalBuyerTarget
 		from reporting.weeklyScorecardBuyers as data 
-		WHERE YEAR(weekBeginSunday) = YEAR(NOW())
+		WHERE YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
 		 AND QUARTER = QUARTER(NOW()) 
 		group by quarter, weekbeginsunday
 		order by weekbeginsunday
@@ -2764,10 +2765,10 @@ class ReportsController extends AppController {
 		$tmp = $this->OfferType->query("SELECT 
 		 SUM(newbuyertarget) quarterNewBuyerTarget, sum(returningbuyertarget) quarterReturningBuyerTarget, sum(totalbuyertarget) quarterTotalBuyerTarget
 		FROM reporting.weeklyScorecardBuyers as data 
-		WHERE YEAR(weekBeginSunday) = YEAR(NOW())
+		WHERE YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
 		 AND QUARTER = QUARTER(NOW())
 		 AND weeknumber < WEEK(NOW()) + 1
-		group by quarter, YEAR(weekbeginSunday)
+		group by quarter, YEAR(weekBeginSunday + INTERVAL 7 DAY)
 		ORDER BY weekBeginSunday
 		;");
 		
@@ -2776,7 +2777,7 @@ class ReportsController extends AppController {
 		FROM reporting.weeklyScorecardBuyers b
 		WHERE 
 		 QUARTER = QUARTER(NOW())
-		 AND YEAR(weekBeginSunday) = YEAR(now())
+		 AND YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
 		 AND weeknumber < WEEK(NOW()) + 1
 		 
 		;");
@@ -2785,7 +2786,7 @@ class ReportsController extends AppController {
 		FROM reporting.weeklyScorecardBuyers b
 		WHERE 
 		 QUARTER = QUARTER(NOW())
-		 AND YEAR(weekBeginSunday) = YEAR(NOW())
+		 AND YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
 		;");
 
 		$buyers[0][0] = $tmp[0][0];
@@ -2794,7 +2795,7 @@ class ReportsController extends AppController {
 		FROM reporting.weeklyScorecardBuyers
 		WHERE
 		 QUARTER = QUARTER(NOW())
-		 AND YEAR(weekbeginsunday) = YEAR(NOW())
+		 AND YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
 		ORDER BY weekbeginsunday
 		;");
 		$this->set('buyerQtr', $buyerQtr);
