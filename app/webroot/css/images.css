@@ -1,0 +1,252 @@
+div.organize {
+   margin:20px 0 20px 0;
+}
+
+
+ul.sortableSS, ul.sortableInactive {
+   min-height:100px;
+}
+
+ul.sortableInactive li.empty {
+   border:none;
+}
+
+div.duplicateTo {
+   float:right;
+   font-weight:bold;
+   font-size:12px;
+}
+
+.organize ul li {
+   float:left;
+   list-style-type:none;
+   display:inline;
+   padding: 0 0 0;
+   border:1px solid black;
+   margin-bottom:20px;
+   width:200px;
+}
+
+.organize h3 {
+   font-size: 14px;
+   padding:0 0 10px 0;
+}
+
+.organize ul li img {
+   display:block;
+   margin-left:auto;
+   margin-right:auto;
+}
+
+.inactive {
+   border:1px solid black;
+   width:950px;
+   background-color:#eee;
+   overflow:auto;
+}
+
+.sortableInactive div {
+   clear:both;
+   height:0;
+   margin:0;
+   padding:0;
+}
+
+div.large {
+   float:left;
+   width:410px;
+   padding:0;
+}
+
+.large ul, .thumbnails ul {
+   margin-left: 0;
+   padding-left: 0;
+}
+
+.large ul li {
+   width: 100px;
+   padding:0 15px 20px 15px;
+   margin:0;
+   border:none;
+}
+
+.thumbnails ul li {
+   width: 50px;
+   border:none;
+}
+
+div.thumbnails {
+   float:left;
+   margin-left:100px;
+   clear:none;
+}
+
+input.save_changes {
+   clear:both;
+   display:block;
+   margin-left:850px;
+   margin-bottom:20px;
+   width:100px;
+}
+
+form#captions input.save_changes {
+    float:right;
+    display:inline;
+    margin:0 0 20px 0;
+}
+
+form#captions h3 {
+    display:inline;
+    padding:0;
+    margin:0;
+}
+
+div.captionImage {
+   position:relative;
+}
+
+.captionImage img {
+    float:left;
+    margin-bottom:20px;
+}
+
+.captionImage input {
+    position:absolute;
+    left:300px;
+    width:600px;
+}
+
+div.slideshow {
+   width:950px;
+}
+
+div.slideshow input.save_changes {
+   margin-left:500px;
+}
+
+div.captionSlideshow {
+   width:600px;
+   height:500px;
+}
+
+div.captionSlideshow input.save_changes {
+   margin-left:500px;
+}
+
+ul#ssContainer-luxurylink li, ul#ssContainer-family li {
+   float:left;
+   list-style-type:none;
+   display:inline;
+   padding:10px 0 0 0;
+   margin-bottom:20px;
+   height:auto;
+   border:none;
+}
+
+
+ul#ssContainer-luxurylink li img, ul#ssContainer-luxurylink li input, ul#ssContainer-family li img, ul#ssContainer-family li input {
+    display:block;
+    margin-right:auto;
+    margin-left:auto;
+    margin-top:10px;
+    margin-bottom:10px;
+}
+
+ul#ssContainer-luxurylink li input, ul#ssContainer-family li input {
+    width:400px;
+}
+
+ul#ssContainer-luxurylink p, ul#ssContainer-family p {
+   text-align:center;
+}
+
+div.jcarousel-prev, div.jcarousel-prev-horizontal, div.jcarousel-next, div.jcarousel-next-horizontal {
+   cursor:pointer;
+   width:40px;
+}
+
+div.jcarousel-prev, div.jcarousel-prev-horizontal, div.jcarousel-prev-disabled, div.jcarousel-prev-disabled-horizontal {
+   position:absolute;
+   left:0;
+   bottom:97px;
+}
+
+div.jcarousel-next, div.jcarousel-next-horizontal, div.jcarousel-next-disabled, div.jcarousel-next-disabled-horizontal {
+   position:absolute;
+   right:0;
+   bottom:96px;
+}
+
+div.jcarousel-prev-disabled, div.jcarousel-prev-disabled-horizontal {
+   color:#e1e1e1;
+}
+
+ul.deleteImage li{
+   display:inline;
+   position:relative;
+   float:left;
+   list-style-type:none;
+   height:140px;
+}
+
+ul.deleteImage li input {
+   position:absolute;
+   top:0;
+   left:0;
+}
+
+ul.deleteImage li img {
+   position:absolute;
+   left:20px;
+}
+
+ul.deleteImage li, ul.deleteImage div {
+   width:150px !important;
+}
+
+ul.deleteImage div.siteStr {
+   position:absolute;
+   top:77px;
+   left:20px;
+}
+
+ul.deleteImage div {
+   position:relative;
+   margin:0;
+   padding:0;
+}
+
+div.deleteImages {
+   margin:10px 0 20px 710px;
+}
+
+div.sitesTab {
+   border-bottom:1px solid #000;
+   height:30px;
+}
+
+div.sitesTab div {
+   float:left;
+   padding:5px 10px 5px 10px;
+   margin:0 5px 20px 0;
+   font-size:14px;
+   font-weight:bold;
+   font-style:italic;
+   text-align:center;
+   width:100px;
+   border-left:1px solid #000;
+   border-top:1px solid #000;
+   border-right:1px solid #000;
+   cursor:pointer;
+}
+
+div.siteInactive {
+   background-color:#eee;
+   height:19px;
+}
+
+div.siteActive {
+   border-bottom:none;
+   background-color:#fff;
+   height:20px;
+}
