@@ -4,7 +4,7 @@
  		<legend><?php __('Add HomepageMerchandising');?></legend>
 		<div class="controlset4">
 		<?
-		echo $form->input('sites', array('multiple' => 'checkbox'));
+		echo $multisite->checkbox('HomepageMerchandising');
 		?>
 		</div>
 	<?php

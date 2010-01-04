@@ -29,7 +29,7 @@ foreach ($homepageMerchandisings as $homepageMerchandising):
 ?>
 	<tr<?php echo $class;?>>
 		<td>
-			<?php echo @$sites[$homepageMerchandising['HomepageMerchandising']['sites'][0]]; ?>
+			<?php echo implode(', ', $homepageMerchandising['HomepageMerchandising']['sites']); ?>
 		</td>
 		<td>
 			<?php echo $homepageMerchandising['HomepageMerchandising']['homepageMerchandisingId']; ?>
