@@ -39,7 +39,7 @@
 uses('sanitize');
 App::import('Model', 'MessageQueue');
 class AppController extends Controller {
-	var $helpers = array('Html2', 'Html', 'Form', 'Text', 'Pagination', 'Layout', 'Ajax', 'StrictAutocomplete', 'Number', 'DatePicker', 'Prototip', 'Session');
+	var $helpers = array('Html2', 'Html', 'Form', 'Text', 'Pagination', 'Layout', 'Ajax', 'StrictAutocomplete', 'Number', 'DatePicker', 'Prototip', 'Session', 'Multisite');
 	var $components = array('Acl', 'LdapAuth', 'RequestHandler');
 	var $publicControllers = array('sessions');
 	var $Sanitize;
@@ -92,6 +92,7 @@ class AppController extends Controller {
      	 endif;
 		 $this->set('sites', array('luxurylink' => 'Luxury Link', 'family' => 'Family'));
 		 $this->siteIds = array(1 => 'Luxury Link', 2 => 'Family');
+         $this->siteDbs = array(1 => 'luxurylink', 2 => 'family');
 		 $this->set('siteIds', $this->siteIds);
      	 $this->_defineConstants();
 	}
