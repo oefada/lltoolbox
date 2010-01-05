@@ -70,6 +70,7 @@ class AppModel extends Model{
 		parent::__construct($id, $table, $ds);
 	}
     
+    //convert sites field into a Cake-readable array if the sites column is a set field    
     function afterFind($results) {
         if (Model::hasField('sites') && $this->isMultisite()) {
             foreach($results as &$result) {
@@ -83,6 +84,7 @@ class AppModel extends Model{
         return $results;
     }
     
+    //convert sites array into a string that can be saved to a set field
     function beforeSave() {
         if (Model::hasField('sites') && $this->isMultisite()) {
             if (!empty($this->data[$this->name]['sites']) && is_array($this->data[$this->name]['sites'])) {
@@ -92,13 +94,17 @@ class AppModel extends Model{
         return true;
     }
     
+    //push this model and any defined associations to the front-end databases
     function afterSave($created) {
         if (Model::hasField(array('sites', 'siteId')) && $this->isMultisite()) {
+            //limit the returned associated models to those defined in the $containModels variable in the main model
             if (isset($this->containModels)) {
                 $this->contain($this->containModels);
             }
+            //retrieve model and associations from toolbox database
             $modelData = $this->find('first', array('conditions' => array($this->name.'.'.$this->primaryKey => $this->id)));
             $siteField = (Model::hasField('sites')) ? 'sites' : 'siteId';
+            //save model's sites to a variable before unsetting it from the array
             if (is_numeric($modelData[$this->name][$siteField])) {
                 $modelSites = array($this->sites[$modelData[$this->name][$siteField]]);
             }
@@ -109,6 +115,7 @@ class AppModel extends Model{
                 return;
             }
             unset($modelData[$this->name][$siteField]);
+            //loop through all sites and save to front-end if applicable
             foreach ($this->sites as $site) {
                 $this->saveToFrontEndDb($modelData, $site, $modelSites, $created);
             }
@@ -116,6 +123,7 @@ class AppModel extends Model{
         }
     }
     
+   //delete this model and any defined associations from front-end databases
    function afterDelete() {
         if (Model::hasField(array('sites', 'siteId')) && $this->isMultisite()) {
             if (isset($this->containModels)) {
@@ -135,6 +143,8 @@ class AppModel extends Model{
     
     function saveToFrontEndDb($modelData, $site, $modelSites, $created) {
         $this->useDbConfig = $site;
+        //this if-statement handles cases when a site has been removed from this record; 
+        //if the record exists in the front-end database it will delete it and associated models
         if (!$created) {
             $exists = $this->find('first', array('fields' => $this->primaryKey,
                                   'conditions' => array($this->primaryKey => $modelData[$this->name][$this->primaryKey])));
@@ -145,6 +155,7 @@ class AppModel extends Model{
                 }
             }
         }
+        //save record to the front-end database only if the $site is valid for the record
         if (in_array($site, $modelSites)) {
             $fields = $this->getFields($site);
             $this->create();
@@ -153,16 +164,6 @@ class AppModel extends Model{
                 $this->saveAssocModels($modelData, $site);
             }
         }
-    }
-    
-    function getFields($site) {
-        $query = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = '{$this->useTable}' AND table_schema = '{$site}'";
-        $fields = $this->query($query);
-        $f = array();
-        foreach($fields as $field) {
-            $f[] = $field['COLUMNS']['COLUMN_NAME'];
-        }
-        return $f;
     }
     
     function saveAssocModels($modelData, $site) {
@@ -190,6 +191,18 @@ class AppModel extends Model{
         }
     }
 	
+    //constructs a field list for saving models to the front end;
+    //handles cases where the table schema on the front end differs from toolbox
+    function getFields($site) {
+        $query = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = '{$this->useTable}' AND table_schema = '{$site}'";
+        $fields = $this->query($query);
+        $f = array();
+        foreach($fields as $field) {
+            $f[] = $field['COLUMNS']['COLUMN_NAME'];
+        }
+        return $f;
+    }
+    
     function getDbName($siteId) {
 	    return $this->sites[$siteId];
     }
