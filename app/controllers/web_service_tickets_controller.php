@@ -797,9 +797,7 @@ class WebServiceTicketsController extends WebServicesController
 					break;
 					}
 					$emailBody = ob_get_clean();
-					$userEmail = $clientPrimaryEmail;
-					$emailCc = $clientCcEmail;
-					$this->sendPpvEmail($userEmail, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials);	
+					$this->sendPpvEmail($clientPrimaryEmail, $emailFrom, $clientCcEmail, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials);	
 				}	
 			}
 		}
