@@ -401,6 +401,7 @@ class ReportsController extends AppController {
                         	OfferLive.roomNights,
                         	SchedulingInstance.endDate,
 							SchedulingMaster.siteId,
+							GROUP_CONCAT(DISTINCT Ticket.ticketId) as ticketIds, 
                         	COUNT(Bid.bidId) AS numBids,
                         	COUNT(DISTINCT Bid.userId) AS uniqueBids,
                         	COUNT(DISTINCT Ticket.ticketId) AS numTickets,
@@ -914,6 +915,72 @@ class ReportsController extends AppController {
             $this->set('data', $this->data);
 	        $this->set('results', $rows);
 	        $this->set('serializedFormInput', serialize($this->data));
+	    }
+	}
+	
+	function check_in_date() {
+	    if (!empty($this->data)) {
+	        $conditions = $this->_build_conditions($this->data);
+	        
+	        if (!empty($this->params['named']['sortBy'])) {
+	            $direction = (@$this->params['named']['sortDirection'] == 'DESC') ? 'DESC' : 'ASC';
+	            $order = $this->params['named']['sortBy'].' '.$direction;
+	            
+	            $this->set('sortBy', $this->params['named']['sortBy']);
+	            $this->set('sortDirection', $direction);
+	        } else {
+	            $order = 'Reservation.arrivalDate DESC';
+	            
+	            $this->set('sortBy', 'Reservation.arrivalDate');
+    	        $this->set('sortDirection', 'DESC');
+	        }
+            
+            if (empty($conditions)) {
+                $conditions = '1=1';
+            }
+            
+            $sql = "SELECT COUNT(DISTINCT Reservation.ticketId) as numRecords 
+						FROM reservation AS Reservation 
+						INNER JOIN ticket AS Ticket USING (ticketId) 
+						INNER JOIN user AS User ON User.userId = Ticket.userId 
+						INNER JOIN userSiteExtended AS UserSiteExtended ON UserSiteExtended.userId = User.userId 
+						INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Ticket.packageId)
+						INNER JOIN client AS Client ON(Client.clientId = ClientLoaPackageRel.clientId) 
+						LEFT JOIN ticketRefund AS TicketRefund ON TicketRefund.ticketId = Ticket.ticketId 
+						WHERE TicketRefund.ticketRefundId IS NULL AND $conditions";
+						
+    	    $results = $this->OfferType->query($sql);
+    	    $numRecords = $results[0][0]['numRecords'];
+            $numPages = ceil($numRecords / $this->perPage);
+           
+			$sql = "SELECT Reservation.*, 
+						GROUP_CONCAT(DISTINCT Client.clientId) as clientIds,
+						GROUP_CONCAT(DISTINCT Client.name) as clientNames,
+						UserSiteExtended.username,
+						Ticket.siteId,
+						Ticket.userFirstName, 
+						Ticket.userLastName,
+						Ticket.billingPrice
+					FROM reservation AS Reservation 
+					INNER JOIN ticket AS Ticket USING (ticketId) 
+					INNER JOIN user AS User ON User.userId = Ticket.userId 
+					INNER JOIN userSiteExtended AS UserSiteExtended ON UserSiteExtended.userId = User.userId 
+					INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Ticket.packageId)
+					INNER JOIN client AS Client ON(Client.clientId = ClientLoaPackageRel.clientId) 
+					LEFT JOIN ticketRefund AS TicketRefund ON TicketRefund.ticketId = Ticket.ticketId 
+	   				WHERE TicketRefund.ticketRefundId IS NULL AND $conditions
+                    GROUP BY Ticket.ticketId
+                    ORDER BY $order
+	                LIMIT $this->limit";
+
+	        $results = $this->OfferType->query($sql);
+            
+            $this->set('currentPage', $this->page);
+            $this->set('numRecords', $numRecords);
+            $this->set('numPages', $numPages);
+            $this->set('data', $this->data);
+	        $this->set('results', $results);
+		    $this->set('serializedFormInput', serialize($this->data));
 	    }
 	}
 	
@@ -1480,7 +1547,7 @@ class ReportsController extends AppController {
             
 			switch(@$this->params['named']['ql']):
 			case 1:
-				$qlconditions = "NOW() + INTERVAL 60 DAY >= Loa.endDate";
+				$qlconditions = "NOW() + INTERVAL 90 DAY >= Loa.endDate";
 			break;
 			case 2:
 				$clients = $this->Client->query("CALL clientsNoScheduledOffersLoa('$startDate2','$startDate2')");
