@@ -9,8 +9,8 @@ foreach ($results as $r):
 		str_replace(',', '', $r['Ticket']['userFirstName']),
 		str_replace(',', '', $r['Ticket']['userLastName']),
 		str_replace(',', '', $r['UserSiteExtended']['username']),
-		date('M d Y h:i:sA', strtotime($r['Reservation']['arrivalDate'])),
-		date('M d Y h:i:sA', strtotime($r['Reservation']['departureDate'])),
+		date('M d Y', strtotime($r['Reservation']['arrivalDate'])),
+		date('M d Y', strtotime($r['Reservation']['departureDate'])),
 		str_replace(',', '', $r['Reservation']['reservationConfirmNum']),
 		str_replace(',', '', $r['Ticket']['billingPrice'])
 	);
