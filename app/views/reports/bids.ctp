@@ -98,6 +98,7 @@ if (!empty($results)): ?>
 			<th><?=sortLink('numTicketsCollected', '# Collected', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('moneyPotential', '$ Potential', $currentPage, $serializedFormInput, $this, $html)?></th>
 			<th><?=sortLink('moneyCollected', '$ Collected', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=sortLink('ticketIds', 'Ticket Ids', $currentPage, $serializedFormInput, $this, $html)?></th>
 		</tr>
 		</thead>
 <?php
@@ -155,10 +156,11 @@ $moneyCollected += $r[0]['moneyCollected'];
 		<td><?=$r[0]['numTicketsCollected']?></td>
 		<td><?=$number->currency($r[0]['moneyPotential'], 'USD', array('places' => 0))?></td>
 		<td<?=$collectedStyle?>><?=$number->currency($r[0]['moneyCollected'], 'USD', array('places' => 0))?></td>
+		<td><?php foreach(explode(',', $r[0]['ticketIds']) as $ticketId) { echo "<a href='/tickets/view/$ticketId' target='_BLANK'>$ticketId</a><br />";  }  ?></td>
 	</tr>
 <?php endforeach; ?>
 	<tr class='related'>
-		<th colspan=12 rowspan=2 style="text-align:right;">Sheet Totals:</th>
+		<th colspan=13 rowspan=2 style="text-align:right;">Sheet Totals:</th>
 		<th># Of Bids</td>
 		<th># Of Unique Bids</td>
 		<th># Of Tickets</td>

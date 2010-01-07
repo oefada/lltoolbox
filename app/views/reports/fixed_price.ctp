@@ -101,7 +101,7 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 	<tr<?=$class?>>
 		<td><?= $siteIds[$r['Ticket']['siteId']]?></td>
 		<td><?=$r['Offer']['offerId']?></td>
-		<td><?=$r['Ticket']['ticketId']?></td>
+		<td><a href="/tickets/view/<?=$r['Ticket']['ticketId']?>" target="_BLANK" /><?=$r['Ticket']['ticketId']?></a></td>
 		<td><?=$r[0]['clientNames']?></td>
 		<td><?=$r['Ticket']['userFirstName'].' '.$r['Ticket']['userLastName']?></td>
 		<td><?

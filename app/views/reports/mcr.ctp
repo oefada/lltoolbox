@@ -141,7 +141,7 @@ td.error div{
 <div class="advancedSearch" style="margin-left: 20px; width: 430px; float: left; clear: none">
 	<h4>Quick Links</h4>
 	<?php
-	echo $html->link('LOAs expiring in less than 60 days', '/reports/mcr/ql:1', array('onclick' => 'document.theform.action = this.href; document.theform.submit(); return false'))."<br />";
+	echo $html->link('LOAs expiring in less than 90 days', '/reports/mcr/ql:1', array('onclick' => 'document.theform.action = this.href; document.theform.submit(); return false'))."<br />";
 	echo $html->link('Clients with zero packages live Today', '/reports/mcr/ql:2', array('onclick' => 'document.theform.action = this.href; document.theform.submit(); return false'))."<br />";
 	echo $html->link('Clients with packages expiring in less than 60 days', '/reports/mcr/ql:3', array('onclick' => 'document.theform.action = this.href; document.theform.submit(); return false'))."<br />";
 	echo $html->link('Clients with Zero phone calls in the last Month', '/reports/mcr/ql:4', array('onclick' => 'document.theform.action = this.href; document.theform.submit(); return false'))."<br />";
