@@ -12,6 +12,7 @@
 	<li><?=$html->link('Account Manager Client Report', 'mcr')?></li>
 	<li><?=$html->link('Merchandising Dashboard', 'merch')?></li>
 	<li><?=$html->link('Weekly Scorecard','weekly_scorecard')?></li>
+	<li><?=$html->link('Check-in Date','check_in_date')?></li>
 </ul>
 <h3>Other Tools</h3>
 <ul class="tree">
