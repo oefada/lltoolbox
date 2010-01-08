@@ -33,7 +33,8 @@ class Client extends AppModel {
 						'ClientThemeRel' => array('className' => 'ClientThemeRel', 'foreignKey' => 'clientId'),
 						'ClientTracking' => array('className' => 'ClientTracking', 'foreignKey' => 'clientId'),
 						'ClientReview' => array('className' => 'ClientReview', 'foreignKey' => 'clientId'),
-						'ImageClient' => array('className' => 'ImageClient', 'foreignKey' => 'clientId')
+						'ImageClient' => array('className' => 'ImageClient', 'foreignKey' => 'clientId'),
+                        'RoomGrade' => array('className' => 'RoomGrade', 'foreignKey' => 'clientId')
 					   );
    
    var $hasAndBelongsToMany = array('Tag' => array('className'    => 'Tag',
