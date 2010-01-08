@@ -1,0 +1,61 @@
+<?php
+class RoomGradesController extends AppController {
+
+   var $name = 'RoomGrades';
+   
+   function beforeFilter() {
+	  parent::beforeFilter();
+	  $this->set('currentTab', 'property');
+	  if (isset($this->params['clientId']) && empty($clientId)) {
+		 $this->RoomGrade->clientId = $this->params['clientId'];
+	  } else {
+		 $this->params['clientId'] = $this->RoomGrade->clientId;
+	  }
+	  $this->RoomGrade->client = $this->RoomGrade->Client->findByClientId($this->RoomGrade->clientId);
+	  $this->set('clientId', $this->RoomGrade->clientId);
+	  $this->set('client', $this->RoomGrade->client);
+   }
+   
+   function index() {
+        if (!empty($this->data)) {
+            $this->data['RoomGrade']['clientId'] = $this->RoomGrade->clientId;
+            if ($this->RoomGrade->save($this->data)) {
+                $this->Session->setFlash('Room Grade has been saved.');
+            }
+            else {
+                $this->Session->setFlash('Room Grade could not be saved.');
+            }
+        }
+        $this->RoomGrade->recursive = 2;
+        $roomGrades = $this->RoomGrade->find('all', array('conditions' => array('RoomGrade.clientId' => $this->RoomGrade->clientId),
+                                                           'order' => array('RoomGrade.roomGradeName'))
+                                            );
+        $this->set('roomGrades', $roomGrades);
+   }
+   
+   function edit($clientId, $roomGradeId) {
+        if (!empty($this->data)) {
+            if ($this->RoomGrade->save($this->data)) {
+                $this->Session->setFlash('Room Grade has been saved.');
+            }
+            else {
+                $this->Session->setFlash('Room Grade could not be saved.');
+            }
+        }
+        $this->recursive = -1;
+        $roomGrade = $this->RoomGrade->findByRoomGradeId($roomGradeId);
+        $this->set('roomGrade', $roomGrade);
+   }
+   
+   function delete($clientId, $roomGradeId) {
+        if ($this->RoomGrade->delete($roomGradeId)) {
+            $this->Session->setFlash('Room Grade has been deleted');
+        }
+        else {
+            $this->Session->setFlash('Room Grade could not be deleted');
+        }
+        $this->redirect($this->referer());
+   }
+   
+}
+?>
