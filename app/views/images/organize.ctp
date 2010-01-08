@@ -118,6 +118,9 @@
                         $('sortableInactive-<?php echo $site; ?>').adjacent('input.ss').each(function(hiddenField) {
                                                                   $(hiddenField).writeAttribute('value', 1);
                                                                  });
+                        $('sortableSlideshow-<?php echo $site; ?>').adjacent('input.ss').each(function(hiddenField) {
+                                                                  $(hiddenField).writeAttribute('value', 0);
+                                                                 });
       });
       
       Event.observe('<?php echo $site; ?>', 'click', function() {
