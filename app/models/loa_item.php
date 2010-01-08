@@ -17,7 +17,8 @@ class LoaItem extends AppModel {
 	*/
 	
 	var $belongsTo = array('LoaItemType' => array('foreignKey' => 'loaItemTypeId'),
-							'Loa' => array('foreignKey' => "loaId")
+							'Loa' => array('foreignKey' => "loaId"),
+							'RoomGrade' => array('foreignKey' => 'roomGradeId')
 							);
 
 	var $hasOne = array('PackageLoaItemRel' => array('foreignKey' => 'loaItemId', 'dependent' => true));

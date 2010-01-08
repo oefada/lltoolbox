@@ -123,6 +123,13 @@ class LoaItemsController extends AppController {
 			}
 		}
 		$this->set('loa', $loa);
+
+		$roomGrade = array();
+		foreach ($loa['Client']['RoomGrade'] as $rd) {
+			$roomGrade[$rd['roomGradeId']] = $rd['roomGradeName'];
+		}
+		$this->set('roomGradeIds', $roomGrade);
+
 		$this->set('day_map', array(0=>'Su', 1=>'M', 2=>'Tu', 3=>'W', 4=>'Th', 5=>'F', 6=>'Sa'));
 		
 		// currency stuff
@@ -245,6 +252,11 @@ class LoaItemsController extends AppController {
 				}
 			}
 			$this->set('loa', $loa);
+			$roomGrade = array();
+			foreach ($loa['Client']['RoomGrade'] as $rd) {
+				$roomGrade[$rd['roomGradeId']] = $rd['roomGradeName'];
+			}
+			$this->set('roomGradeIds', $roomGrade);
 			$this->set('day_map', array(0=>'Su', 1=>'M', 2=>'Tu', 3=>'W', 4=>'Th', 5=>'F', 6=>'Sa'));
 
 			$this->set('groupIds', $group_ids);

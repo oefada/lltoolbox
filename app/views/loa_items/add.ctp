@@ -43,6 +43,7 @@ if ($isGroup) {
 		
 		<!-- RATE PERIOD BLOCK -->
 		<div id="rate_periods" class="input text" style="margin-top:10px;margin-bottom:10px;display:none;">
+			<?php echo $form->input('roomGradeId', array('label'=>'Room Grade')); ?>
 			<label>Rate Periods</label>
 			<div style="margin-top:10px;margin-bottom:0px;padding:0px;border:4px solid #444444;">
 				<table id="loaRpTable" class="loaRp" cellspacing="0" cellpadding="0">

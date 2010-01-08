@@ -20,6 +20,7 @@ function toggle_price(event) {
 function toggle_price_on() {
 	Field.enable("LoaItemItemBasePrice");
 	Field.enable("LoaItemPerPerson");
+	Field.disable("LoaItemRoomGradeId");
 	
 	Effect.Fade($('rate_periods'), {queue: 'end', duration: 0.5});
 	Effect.Appear($('price'), {queue: 'end', duration: 0.5});
@@ -28,6 +29,7 @@ function toggle_price_on() {
 function toggle_rate_period_on() {
 	Field.disable("LoaItemItemBasePrice");
 	Field.disable("LoaItemPerPerson");
+	Field.enable("LoaItemRoomGradeId");
 	
 	Effect.Fade($('price'), {queue: 'end', duration: 0.5});
 	Effect.Appear($('rate_periods'), {queue: 'end', duration: 0.5});
