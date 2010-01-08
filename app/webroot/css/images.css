@@ -121,6 +121,7 @@ div.captionImage {
    float:right;
    margin-top:30px;
    clear:right;
+   border:none;
 }
 
 div.slideshow {
