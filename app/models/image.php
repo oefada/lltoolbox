@@ -7,7 +7,9 @@ class Image extends AppModel {
     
     var $actsAs = array('Containable');
     
-    var $hasMany = array('ImageClient' => array('className' => 'ImageClient', 'foreignKey' => 'imageId'));
+    var $hasMany = array('ImageClient' => array('className' => 'ImageClient', 'foreignKey' => 'imageId'),
+                         'ImageRoomGradeRel' => array('className' => 'ImageRoomGradeRel', 'foreignKey' => 'imageId')
+                         );
     
     function getFilenamesFromDb($clientId) {
         $filenameSql = "SELECT imagePath FROM image INNER JOIN imageClient USING (imageId) WHERE clientId = {$clientId}";
