@@ -124,9 +124,10 @@
       });
       
       Event.observe('<?php echo $site; ?>', 'click', function() {
-                        toggleSites('<?php echo $site; ?>');
+                        if ($('images-<?php echo $site; ?>').getStyle('display') == 'none') {
+                           toggleSites('<?php echo $site; ?>');
+                        }
       });
-      
    </script>
 <?php endforeach; ?>
 
