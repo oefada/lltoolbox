@@ -60,7 +60,7 @@
 
 <?php
 
-		echo $form->input('roomGrade');
+		echo $form->input('roomGradeName', array('disabled' => 'true', 'label' => 'Room Grade', 'value' => $roomGrade['RoomGrade']['roomGradeName']));
 		
 		if(count($clientLoaDetails) > 1):
 			echo $form->input('numNights', array('readonly' => true));
