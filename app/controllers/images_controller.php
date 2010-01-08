@@ -49,25 +49,35 @@ class ImagesController extends AppController {
    }
    
    function captions() {
-	  $this->Image->ImageClient->contain('Image');
+	  $this->Image->ImageClient->recursive = 2;
 	  if (!empty($this->data)) {
 		 $postImages = $this->data['Image'];
 		 $images = $this->Image->ImageClient->find('all', array('conditions' => array('ImageClient.clientId' => $this->Image->clientId,
-															   'ImageClient.inactive' => 0) 
+																				      'ImageClient.inactive' => 0) 
 												));
 		 foreach ($images as &$image) {
 			if (in_array($image['Image']['imageId'], array_keys($postImages))) {
 			   $this->Image->saveCaptions($postImages[$image['Image']['imageId']], $image, $this->Image->clientId);
+			   if (!empty($postImages[$image['Image']['imageId']]['RoomGradeId'])) {
+				  $this->Image->ImageRoomGradeRel->saveImageRoomGrade($postImages[$image['Image']['imageId']]['RoomGradeId'], $image);
+			   }
+			   elseif (empty($postImages[$image['Image']['imageId']]['RoomGradeId']) && !empty($image['Image']['ImageRoomGradeRel'][0]['roomGradeId'])) {
+				  $this->Image->ImageRoomGradeRel->delete($image['Image']['ImageRoomGradeRel'][0]['imageRoomGradeRelId']);
+			   }
 			   $image['Image']['caption'] = $postImages[$image['Image']['imageId']]['caption'];
 			}
 		 }
 	  }
 	  $images = $this->Image->ImageClient->find('all', array('conditions' => array('ImageClient.clientId' => $this->Image->clientId,
-   										   'ImageClient.inactive' => 0),
-								   'order' => array('Image.caption'),
-	    							   'group' => array('ImageClient.imageId')
+														 					       'ImageClient.inactive' => 0),
+															 'order' => array('Image.caption'),
+															 'group' => array('ImageClient.imageId')
 												));
+	  $this->Image->ImageRoomGradeRel->RoomGrade->recursive = -1;
+	  $roomGrades = $this->Image->ImageRoomGradeRel->RoomGrade->find('all', array('conditions' => array('RoomGrade.clientId' => $this->Image->clientId),
+																				   'order' => array('RoomGrade.roomGradeName')));
 	  $this->set('images', $images);
+	  $this->set('roomGrades', $roomGrades);
    }
    
    function slideshow() {
