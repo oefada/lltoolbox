@@ -689,6 +689,9 @@ class ReportsController extends AppController {
             	                        Loa.startDate,
             	                        MAX(Loa.endDate) AS loaEndDate,
             	                        Loa.membershipFee, Loa.membershipBalance, Loa.notes,
+										Loa.membershipTotalPackages,
+										Loa.membershipPackagesRemaining,
+										Loa.loaMembershipTypeId,
             	                        DATEDIFF(NOW(), Loa.startDate) as age,
 										Client.managerUsername, Client.locationDisplay,
 										(SELECT Ticket.billingPrice
@@ -707,8 +710,8 @@ class ReportsController extends AppController {
 										) as lastSellDate
                                 FROM client AS Client
                                 INNER JOIN loa AS Loa ON (Loa.clientId = Client.clientId)
-            					WHERE Loa.startDate BETWEEN DATE_ADD(NOW(), INTERVAL -31 DAY) AND NOW()
-            					        AND Loa.membershipBalance > 0 AND YEAR(Loa.endDate) >= YEAR(NOW() - INTERVAL 1 YEAR) AND Loa.loaLevelId = 2 $condition
+            					WHERE (Loa.membershipBalance > 0 OR Loa.membershipPackagesRemaining > 0) AND Loa.startDate BETWEEN DATE_ADD(NOW(), INTERVAL -31 DAY) AND NOW()
+									AND YEAR(Loa.endDate) >= YEAR(NOW() - INTERVAL 1 YEAR) AND Loa.loaLevelId = 2 $condition
                                 GROUP BY Client.clientId, Loa.loaId
                                 ORDER BY Loa.startDate ASC, Loa.membershipBalance DESC";
 
@@ -719,6 +722,9 @@ class ReportsController extends AppController {
             	                        Loa.startDate,
             	                        MAX(Loa.endDate) AS loaEndDate,
             	                        Loa.membershipFee, Loa.membershipBalance, Loa.notes,
+										Loa.membershipTotalPackages,
+										Loa.membershipPackagesRemaining,
+										Loa.loaMembershipTypeId,
             	                        DATEDIFF(NOW(), Loa.startDate) as age,
 										Client.managerUsername, Client.locationDisplay,
 									(SELECT Ticket.billingPrice
@@ -737,8 +743,8 @@ class ReportsController extends AppController {
 									) as lastSellDate
                                 FROM client AS Client
                                 INNER JOIN loa AS Loa ON (Loa.clientId = Client.clientId)
-            					WHERE Loa.startDate BETWEEN DATE_ADD(NOW(), INTERVAL -61 DAY) AND DATE_ADD(NOW(), INTERVAL -31 DAY)
-            					    AND Loa.membershipBalance > 0 AND YEAR(Loa.endDate) >= YEAR(NOW() - INTERVAL 1 YEAR) AND Loa.loaLevelId = 2 $condition
+            					WHERE (Loa.membershipBalance > 0 OR Loa.membershipPackagesRemaining > 0) AND Loa.startDate BETWEEN DATE_ADD(NOW(), INTERVAL -61 DAY) AND DATE_ADD(NOW(), INTERVAL -31 DAY)
+									AND YEAR(Loa.endDate) >= YEAR(NOW() - INTERVAL 1 YEAR) AND Loa.loaLevelId = 2 $condition
                                 GROUP BY Client.clientId, Loa.loaId
                                 ORDER BY Loa.startDate ASC, Loa.membershipBalance DESC";
 
@@ -749,6 +755,9 @@ class ReportsController extends AppController {
             	                        Loa.startDate,
             	                        MAX(Loa.endDate) AS loaEndDate,
             	                        Loa.membershipFee, Loa.membershipBalance, Loa.notes,
+										Loa.membershipTotalPackages,
+										Loa.membershipPackagesRemaining,
+										Loa.loaMembershipTypeId,
             	                        DATEDIFF(NOW(), Loa.startDate) as age,
 										Client.managerUsername, Client.locationDisplay,
 									(SELECT Ticket.billingPrice
@@ -767,8 +776,8 @@ class ReportsController extends AppController {
 									) as lastSellDate
                                 FROM client AS Client
                                 INNER JOIN loa AS Loa ON (Loa.clientId = Client.clientId)
-            					WHERE Loa.startDate BETWEEN DATE_ADD(NOW(), INTERVAL -91 DAY) AND DATE_ADD(NOW(), INTERVAL -61 DAY)
-            					    AND Loa.membershipBalance > 0 AND YEAR(Loa.endDate) >= YEAR(NOW() - INTERVAL 1 YEAR) AND Loa.loaLevelId = 2 $condition
+            					WHERE (Loa.membershipBalance > 0 OR Loa.membershipPackagesRemaining > 0) AND Loa.startDate BETWEEN DATE_ADD(NOW(), INTERVAL -91 DAY) AND DATE_ADD(NOW(), INTERVAL -61 DAY)
+									AND YEAR(Loa.endDate) >= YEAR(NOW() - INTERVAL 1 YEAR) AND Loa.loaLevelId = 2 $condition
                                 GROUP BY Client.clientId, Loa.loaId
                                 ORDER BY Loa.startDate ASC, Loa.membershipBalance DESC";
 
@@ -779,6 +788,9 @@ class ReportsController extends AppController {
             	                        Loa.startDate,
             	                        MAX(Loa.endDate) AS loaEndDate,
             	                        Loa.membershipFee, Loa.membershipBalance, Loa.notes,
+										Loa.membershipTotalPackages,
+										Loa.membershipPackagesRemaining,
+										Loa.loaMembershipTypeId,
             	                        DATEDIFF(NOW(), Loa.startDate) as age,
 										Client.managerUsername, Client.locationDisplay,
 									(SELECT Ticket.billingPrice
@@ -797,8 +809,8 @@ class ReportsController extends AppController {
 									) as lastSellDate
                                 FROM client AS Client
                                 INNER JOIN loa AS Loa ON (Loa.clientId = Client.clientId)
-            					WHERE Loa.startDate BETWEEN DATE_ADD(NOW(), INTERVAL -121 DAY) AND DATE_ADD(NOW(), INTERVAL -91 DAY)
-            					    AND Loa.membershipBalance > 0 AND YEAR(Loa.endDate) >= YEAR(NOW() - INTERVAL 1 YEAR) AND Loa.loaLevelId = 2 $condition
+            					WHERE (Loa.membershipBalance > 0 OR Loa.membershipPackagesRemaining > 0) AND Loa.startDate BETWEEN DATE_ADD(NOW(), INTERVAL -121 DAY) AND DATE_ADD(NOW(), INTERVAL -91 DAY)
+									AND YEAR(Loa.endDate) >= YEAR(NOW() - INTERVAL 1 YEAR) AND Loa.loaLevelId = 2 $condition
                                 GROUP BY Client.clientId, Loa.loaId
                                 ORDER BY Loa.startDate ASC, Loa.membershipBalance DESC";
 
@@ -809,6 +821,9 @@ class ReportsController extends AppController {
             	                        Loa.startDate,
             	                        MAX(Loa.endDate) AS loaEndDate,
             	                        Loa.membershipFee, Loa.membershipBalance, Loa.notes,
+										Loa.membershipTotalPackages,
+										Loa.membershipPackagesRemaining,
+										Loa.loaMembershipTypeId,
             	                        DATEDIFF(NOW(), Loa.startDate) as age,
 										Client.managerUsername, Client.locationDisplay,
 									(SELECT Ticket.billingPrice
@@ -827,8 +842,8 @@ class ReportsController extends AppController {
 									) as lastSellDate
                                 FROM client AS Client
                                 INNER JOIN loa AS Loa ON (Loa.clientId = Client.clientId)
-            					WHERE Loa.startDate BETWEEN DATE_ADD(NOW(), INTERVAL -181 DAY) AND DATE_ADD(NOW(), INTERVAL -121 DAY)
-            					    AND Loa.membershipBalance > 0 AND YEAR(Loa.endDate) >= YEAR(NOW() - INTERVAL 1 YEAR) AND Loa.loaLevelId = 2 $condition
+            					WHERE (Loa.membershipBalance > 0 OR Loa.membershipPackagesRemaining > 0) AND Loa.startDate BETWEEN DATE_ADD(NOW(), INTERVAL -181 DAY) AND DATE_ADD(NOW(), INTERVAL -121 DAY)
+									AND YEAR(Loa.endDate) >= YEAR(NOW() - INTERVAL 1 YEAR) AND Loa.loaLevelId = 2 $condition
                                 GROUP BY Client.clientId, Loa.loaId
                                 ORDER BY Loa.startDate ASC, Loa.membershipBalance DESC";
 
@@ -840,6 +855,9 @@ class ReportsController extends AppController {
             	                        Loa.startDate,
             	                        MAX(Loa.endDate) AS loaEndDate,
             	                        Loa.membershipFee, Loa.membershipBalance, Loa.notes,
+										Loa.membershipTotalPackages,
+										Loa.membershipPackagesRemaining,
+										Loa.loaMembershipTypeId,
             	                        DATEDIFF(NOW(), Loa.startDate) as age,
 										Client.managerUsername, Client.locationDisplay,
 									(SELECT Ticket.billingPrice
@@ -858,17 +876,19 @@ class ReportsController extends AppController {
 									) as lastSellDate
                                 FROM client AS Client
                                 INNER JOIN loa AS Loa ON (Loa.clientId = Client.clientId)
-            					WHERE Loa.startDate <= DATE_ADD(NOW(), INTERVAL - 181 DAY)
-            					    AND Loa.membershipBalance > 0 AND YEAR(Loa.endDate) >= YEAR(NOW() - INTERVAL 1 YEAR) AND Loa.loaLevelId = 2 $condition
+            					WHERE (Loa.membershipBalance > 0 OR Loa.membershipPackagesRemaining > 0) AND Loa.startDate <= DATE_ADD(NOW(), INTERVAL - 181 DAY)
+									AND Loa.endDate >= NOW() AND Loa.loaLevelId = 2 $condition
                                 GROUP BY Client.clientId, Loa.loaId
                                 ORDER BY Loa.startDate ASC, Loa.membershipBalance DESC";
 	        
 			$results['180 plus'] = $this->OfferType->query($sql);
-
+			
 			$results = array_reverse($results);
             
 			$this->set('showingOld', isset($_GET['showOld']) ? 1 : 0);
 	        $this->set('results', $results);
+			
+			//AND Loa.membershipBalance > 0 AND YEAR(Loa.endDate) >= YEAR(NOW() - INTERVAL 1 YEAR) AND Loa.loaLevelId = 2 $condition
 	}
 	
 	function auction_timeslot() {

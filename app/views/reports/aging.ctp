@@ -123,8 +123,14 @@ $subtotalMembershipBalance += (int)$r['Loa']['membershipBalance'];
 		<td><?=$html->link($r['Loa']['loaId'], '/loas/edit/'.$r['Loa']['loaId'])?></td>
 		<td><?=$r['Loa']['startDate']?></td>
 		<td><?=$r[0]['loaEndDate']?></td>
-		<td><?=$r['Loa']['membershipFee']?></td>
-		<td><?=$r['Loa']['membershipBalance']?></td>
+		<td>
+			<?php if ($r['Loa']['membershipBalance'] > 0) { echo $r['Loa']['membershipFee']; } ?>
+			<?php if ($r['Loa']['membershipPackagesRemaining'] > 0) { echo "<br />{$r['Loa']['membershipTotalPackages']} packages<br />";} ?>
+		</td>
+		<td>
+			<?php if ($r['Loa']['membershipBalance'] > 0) { echo $r['Loa']['membershipBalance']; } ?>
+			<?php if ($r['Loa']['membershipPackagesRemaining'] > 0) { echo "<br />{$r['Loa']['membershipPackagesRemaining']} packages<br />";} ?>
+		</td>
 		<td><?=$r[0]['lastSellPrice']?></td>
 		<td><?=$html->link($r[0]['lastSellDate'], '/loas/maintTracking/'.$r['Loa']['loaId'])?></td>
 		<td>
@@ -136,7 +142,7 @@ $subtotalMembershipBalance += (int)$r['Loa']['membershipBalance'];
 	</tr>
 <?php endforeach; //TODO: add totals ?>
 	<tr class="blackBg">
-		<th colspan=7 style="text-align: right">Subtotals:</th>
+		<th colspan=8 style="text-align: right">Subtotals:</th>
 		<th><?=$subtotalMembershipFee?></th>
 		<th><?=$subtotalMembershipBalance?></th>
 		<th colspan=4>
