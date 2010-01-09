@@ -13,6 +13,7 @@
    ?>
       <div id="images-<?php echo $site; ?>" class="organize" <?php if ($site != $clientSites[0]): ?> style="display:none"<?php endif; ?>>
          <form method="post" id="organizeImages-<?php echo $site; ?>">
+         <input type="submit" value="Save" class="save_changes" />
          <?php if (count($clientSites) > 1): ?>
             <div class="duplicateTo"><input type="checkbox" name="data[duplicateTo][<?php echo ($site == $clientSites[0]) ? $clientSites[1] : $clientSites[0] ?>]" /> Copy <?php echo ($site == $clientSites[0]) ? $sites[$clientSites[1]] : $sites[$clientSites[0]] ?></div>
          <?php endif; ?>
