@@ -220,8 +220,25 @@ class TicketsController extends AppController {
 			}
 		}
 	
+		// allow package/client/user to use date and status
+		if ($s_package_id || $s_client_id || $s_user_id) {
+			$single_search = false;
+			if ($s_ticket_status_id) {
+				$this->paginate['conditions']['Ticket.ticketStatusId'] = $s_ticket_status_id;	
+			}
+			if ($s_offer_type_id) {
+				$this->paginate['conditions']['Ticket.offerTypeId'] = $s_offer_type_id;	
+			}
+			if ($s_format_id) {
+				$this->paginate['conditions']['Ticket.formatId'] = $s_format_id;	
+			}
+			if ($s_site_id) {
+				$this->paginate['conditions']['Ticket.siteId'] = $s_site_id;	
+			}
+		}
+
 		if (!$single_search) {
-			$s_ticket_id = $s_offer_id = $s_user_id = $s_bid_id = $s_client_id = $s_package_id = $s_res_confirmation_num = null;
+			$s_ticket_id = $s_offer_id = $s_bid_id = $s_res_confirmation_num = null;
 		} else {
 			$s_res_check_in_date = $s_offer_type_id = $s_has_promo = null;
 			if (!$single_search_override) {
