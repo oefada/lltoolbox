@@ -53,6 +53,11 @@ class ImageClient extends AppModel {
 				  if (!empty($dupeImage)) {
 					 $imageClient['clientImageId'] = $dupeImage['ImageClient']['clientImageId'];
 				  }
+				  else {
+					 $originalImage = $this->find('first', array('conditions' => array('ImageClient.clientImageId' => $imageClientId),
+																 'fields' => array('ImageClient.caption')));
+					 $imageClient['caption'] = $originalImage['ImageClient']['caption'];
+				  }
 				  $imageClient['siteId'] = array_search($site, $sitesMap);
 				  $this->create();
 				  $this->data['ImageClient'] = $imageClient;
