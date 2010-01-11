@@ -28,7 +28,12 @@ class ImagesController extends AppController {
    
    function organize() {
 	  if (!empty($this->data)) {
-		 $this->Image->ImageClient->saveOrganizedImages($this->data, $this->Image->clientId, $this->siteDbs);
+		 if ($this->Image->ImageClient->saveOrganizedImages($this->data, $this->Image->clientId, $this->siteDbs)) {
+			$this->Session->setFlash('Images have been saved.');
+		 }
+		 else {
+			$this->Session->setFlash('Images could not be saved.');
+		 }
 	  }
 	  $this->findNewImages();
 	  foreach($this->Image->client['Client']['sites'] as $site) {
@@ -53,7 +58,8 @@ class ImagesController extends AppController {
 	  if (!empty($this->data)) {
 		 $postImages = $this->data['Image'];
 		 $images = $this->Image->ImageClient->find('all', array('conditions' => array('ImageClient.clientId' => $this->Image->clientId,
-																				      'ImageClient.inactive' => 0) 
+																				      'ImageClient.inactive' => 0),
+															     'group' => array('ImageClient.imageId')
 												));
 		 foreach ($images as &$image) {
 			if (in_array($image['Image']['imageId'], array_keys($postImages))) {
