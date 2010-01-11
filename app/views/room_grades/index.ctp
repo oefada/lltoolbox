@@ -11,9 +11,17 @@ $this->pageTitle = $client['Client']['name'].$html2->c($clientId, 'Client Id:');
         </div>
             <?php if (!empty($room['ImageRoomGradeRel'])): ?>
                 <div class="roomGradeImages">
-                    <p>Associated Photos:</p>
+                    <p><b>Associated Photos:</b></p>
                     <?php foreach($room['ImageRoomGradeRel'] as $image): ?>
                             <img src="http://www.luxurylink.com<?php echo $image['Image']['imagePath']; ?>" height="100" /><br />
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+            <?php if (!empty($room['LoaItem'])): ?>
+                <div>
+                    <p><b>Associated LOA Items:</b></p>
+                    <?php foreach($room['LoaItem'] as $loaItem): ?>
+                            <p><?php echo $loaItem['itemName'] ?></p>
                     <?php endforeach; ?>
                 </div>
             <?php endif; ?>
