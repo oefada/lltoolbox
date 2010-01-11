@@ -30,7 +30,7 @@ class ImageClient extends AppModel {
 		 elseif($image['inactive'] == 'on') {
 			$imageClient['inactive'] = 0;
 		 }
-		 if (isset($image['imageTypeId']) && $image['imageTypeId'] == 1 && !$image['inactive']) {
+		 if (isset($image['imageTypeId']) && $image['imageTypeId'] == 1 && $image['inactive'] == 0) {
 		   $imageClient['sortOrder'] = $i;
 		   $i++;
 		 }
@@ -39,27 +39,37 @@ class ImageClient extends AppModel {
 		 }
 		 $this->create();
 		 $this->data['ImageClient'] = $imageClient;
-		 $this->save($this->data);
-		 if (!empty($sitesToDuplicateTo)) {
-			foreach($sitesToDuplicateTo as $site) {
-			   unset($imageClient['clientImageId']);
-			   $dupeImage = $this->find('first', array('conditions' => array('ImageClient.imageId' => $imageClient['imageId'],
-																			 'ImageClient.clientId' => $clientId,
-																			 'ImageClient.siteId' => array_search($site, $sitesMap)
-																			 ),
-													   'fields' => array('ImageClient.clientImageId')
-													   )
-										);
-			   if (!empty($dupeImage)) {
-				  $imageClient['clientImageId'] = $dupeImage['ImageClient']['clientImageId'];
+		 if ($this->save($this->data)) { 
+			if (!empty($sitesToDuplicateTo)) {
+			   foreach($sitesToDuplicateTo as $site) {
+				  unset($imageClient['clientImageId']);
+				  $dupeImage = $this->find('first', array('conditions' => array('ImageClient.imageId' => $imageClient['imageId'],
+																				'ImageClient.clientId' => $clientId,
+																				'ImageClient.siteId' => array_search($site, $sitesMap)
+																				),
+														  'fields' => array('ImageClient.clientImageId')
+														  )
+										   );
+				  if (!empty($dupeImage)) {
+					 $imageClient['clientImageId'] = $dupeImage['ImageClient']['clientImageId'];
+				  }
+				  $imageClient['siteId'] = array_search($site, $sitesMap);
+				  $this->create();
+				  $this->data['ImageClient'] = $imageClient;
+				  if ($this->save($this->data)) {
+					 continue;
+				  }
+				  else {
+					 return false;
+				  }
 			   }
-			   $imageClient['siteId'] = array_search($site, $sitesMap);
-			   $this->create();
-			   $this->data['ImageClient'] = $imageClient;
-			   $this->save($this->data);
 			}
 		 }
+		 else {
+			return false;
+		 }
 	  }
+	  return true;
    }
 }
 ?>
