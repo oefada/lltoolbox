@@ -6,7 +6,8 @@ class RoomGrade extends AppModel {
     
     var $actsAs = array('Containable');
     
-    var $hasMany = array('ImageRoomGradeRel' => array('className' => 'ImageRoomGradeRel', 'foreignKey' => 'roomGradeId'));
+    var $hasMany = array('ImageRoomGradeRel' => array('className' => 'ImageRoomGradeRel', 'foreignKey' => 'roomGradeId'),
+                         'LoaItem' => array('className' => 'LoaItem', 'foreignKey' => 'roomGradeId'));
     
     var $belongsTo = array('Client' => array('className' => 'Client', 'foreignKey' => 'clientId'));
 }
