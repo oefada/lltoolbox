@@ -23,8 +23,8 @@ div.duplicateTo {
    display:inline;
    padding: 0 0 0;
    border:1px solid black;
-   margin-bottom:20px;
-   width:200px;
+   margin:0 16px 20px 16px;
+   width:178px;
 }
 
 .organize h3 {
@@ -292,6 +292,10 @@ div.roomGrade {
 
 div.roomGradeImages {
    margin-bottom:30px;
+}
+
+div.roomGradeImages img {
+   margin: 0 12px 0 12px;
 }
 
 div.roomGradeImages p {
