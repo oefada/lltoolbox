@@ -20,6 +20,12 @@ class ImageRoomGradeRel extends AppModel {
         $this->create();
         $this->data['ImageRoomGradeRel'] = $data;
         $this->save($this->data);
+        $clientSites = (is_array($image['Client']['sites'])) ? $image['Client']['sites'] : explode(',', $image['Client']['sites']);
+        foreach ($this->sites as $site) {
+            $this->recursive = -1;
+            $imageRoomGradeRel = $this->find('first', array('conditions' => array('ImageRoomGradeRel.imageRoomGradeRelId' => $this->id)));
+            AppModel::saveToFrontEndDb($imageRoomGradeRel, $site, $clientSites, false);
+        }
     }
     
 }
