@@ -164,7 +164,10 @@ class Client extends AppModel {
 	   if (!$clientId) {
 		   @mail('devmail@luxurylink.com', 'CLIENT AFTERSAVE ERROR: NO CLIENT ID', print_r($this->data));	
 	   }
-	   
+	   $clientSites = $this->find('first', array('conditions' => array('Client.clientId' => $this->data['Client']['clientId']),
+                                           'fields' => array('sites')));
+       $sites = $clientSites['Client']['sites'];
+       
 	   // for clientDestinationLookup only on the frontend
 	   // -----------------------------------------------------------------
 	   if (isset($this->data['Destination']['Destination']) && !empty($this->data['Destination']['Destination'])) {
@@ -183,7 +186,7 @@ class Client extends AppModel {
 		   }
 		   $update_tmp = rtrim($tmp, ',');
 		   $sql = "INSERT DELAYED INTO clientDestinationLookup (". implode(',',array_keys($insert_arr)) .") VALUES (". implode(',',array_values($insert_arr)) .") ON DUPLICATE KEY UPDATE $update_tmp";
-		   foreach ($this->data['Client']['sites'] as $site) {
+		   foreach ($sites as $site) {
 			   $this->useDbConfig = $site;
 			   $result = $this->query($sql);
 		   }
