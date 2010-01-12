@@ -24,6 +24,12 @@
                         if ($i > 0): ?>
                               </ul>
                             </div>
+                        <?php else: ?>
+                           <div class="organize slideshow">
+                              <h3>Slideshow</h3>
+                              <ul id="sortableSlideshow-<?php echo $site; ?>" class="sortableSS">
+                              </ul>
+                           </div>
                         <?php endif; ?>
                      <?php break;
                   elseif ($i == 0): ?>
