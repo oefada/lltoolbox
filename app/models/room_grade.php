@@ -10,5 +10,8 @@ class RoomGrade extends AppModel {
                          'LoaItem' => array('className' => 'LoaItem', 'foreignKey' => 'roomGradeId'));
     
     var $belongsTo = array('Client' => array('className' => 'Client', 'foreignKey' => 'clientId'));
+    
+    var $multisite = true;
+    var $inheritsFrom = array('modelName' => 'Client', 'siteField' => 'sites');
 }
 ?>
