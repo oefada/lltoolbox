@@ -154,9 +154,14 @@ class ImagesController extends AppController {
    
    function findNewImages() {
 	  $dbImages = $this->Image->getFilenamesFromDb($this->Image->clientId);
-	  $extractDir = explode('/', $dbImages[0]);
-	  array_pop($extractDir);
-	  $directory = implode('/', $extractDir);
+	  if (!empty($dbImages)) {
+		 $extractDir = explode('/', $dbImages[0]);
+		 array_pop($extractDir);
+		 $directory = implode('/', $extractDir);
+	  }
+	  else {
+		 $directory = '/images/por/'.$this->Image->client['Client']['oldProductId'];
+	  }
 	  $files = glob($this->fileRoot.$directory.'/*.jpg');
 	  if (!empty($files)) {
 		 $siteId = array_search($this->Image->client['Client']['sites'][0], $this->siteDbs);
