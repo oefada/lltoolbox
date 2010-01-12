@@ -96,14 +96,24 @@ class AppModel extends Model{
     
     //push this model and any defined associations to the front-end databases
     function afterSave($created) {
-        if (Model::hasField(array('sites', 'siteId')) && $this->isMultisite()) {
+        if ($this->isMultisite()) {            
             //limit the returned associated models to those defined in the $containModels variable in the main model
             if (isset($this->containModels)) {
                 $this->contain($this->containModels);
             }
             //retrieve model and associations from toolbox database
             $modelData = $this->find('first', array('conditions' => array($this->name.'.'.$this->primaryKey => $this->id)));
-            $siteField = (Model::hasField('sites')) ? 'sites' : 'siteId';
+            //if this model inherits its sites from another, get them here
+            if (isset($this->inheritsFrom)) {
+                $parentModel = new $this->inheritsFrom['modelName'];
+                $sites = $parentModel->find('first', array('conditions' => array($parentModel->name.'.'.$parentModel->primaryKey => $modelData[$this->name][$parentModel->primaryKey]),
+                                                           'fields' => array($this->inheritsFrom['siteField'])));
+                $modelData[$this->name][$this->inheritsFrom['siteField']] = $sites[$parentModel->name][$this->inheritsFrom['siteField']];
+                $siteField = $this->inheritsFrom['siteField'];
+            }
+            if (!isset($siteField)) {
+                $siteField = (Model::hasField('sites')) ? 'sites' : 'siteId';
+            }
             //save model's sites to a variable before unsetting it from the array
             if (is_numeric($modelData[$this->name][$siteField])) {
                 $modelSites = array($this->sites[$modelData[$this->name][$siteField]]);
@@ -125,7 +135,7 @@ class AppModel extends Model{
     
    //delete this model and any defined associations from front-end databases
    function afterDelete() {
-        if (Model::hasField(array('sites', 'siteId')) && $this->isMultisite()) {
+        if ($this->isMultisite()) {
             if (isset($this->containModels)) {
                 $this->contain($this->containModels);
             }
@@ -208,7 +218,7 @@ class AppModel extends Model{
     }
     
     function isMultisite() {
-        return (isset($this->multisite));
+        return (isset($this->multisite) && (Model::hasField(array('sites', 'siteId')) || isset($this->inheritsFrom)));
     }
 }
 ?>
