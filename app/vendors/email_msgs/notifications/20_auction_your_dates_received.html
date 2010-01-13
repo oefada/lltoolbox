@@ -97,7 +97,7 @@ you to assist with alternate arrangements.
 			
 <p>
 Our business hours are Monday through Friday, 7am - 5:30pm Pacific Standard Time.  Please feel free to contact our Travel Concierge Department 
-at 888-297-3299 (toll-free in the U.S.) or 310-215-8060, should you have any questions.
+at <?=$sitePhone;?> (toll-free in the U.S.) <?php if ($siteId == 1) { echo 'or 310-215-8060';}?>, should you have any questions.
 </p>
 			
 <?php include('../vendors/email_msgs/email_includes/footer.html');?>

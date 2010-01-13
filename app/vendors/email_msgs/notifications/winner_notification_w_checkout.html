@@ -91,7 +91,7 @@
 						<p>
 						If you are a first time auction winner or do not have current credit card details on file, please click above to submit 
 						your credit card information directly into our secure servers to expedite processing.  Or if you prefer, call us with 
-						your credit card information at 888-297-3299 or 310-215-8060.  Please note:  your purchase must be finalized within 
+						your credit card information at <?=$sitePhone;?> <?php if ($siteId == 1) { echo 'or 310-215-8060';}?>.  Please note:  your purchase must be finalized within 
 						24 hours of the closing date and time to secure the package in your name.
 						</p>
 
@@ -120,8 +120,8 @@
 Auction Department<br>
 <?=$siteDisplay;?><br>
 <?=$siteUrl;?><br>
-Toll Free in the U.S. 888-297-3299<br>
-Outside the U.S. 310-215-8060<br>
+Toll Free in the U.S. <?=$sitePhone;?><br>
+<?php if ($siteId == 1) { echo 'Outside the U.S. 310-215-8060<br>';}?>
 Facsimile 310-215-8279</p>
 </p>
 

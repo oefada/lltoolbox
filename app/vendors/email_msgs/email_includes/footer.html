@@ -11,7 +11,7 @@
 <?php endif; ?>
 
 	<div style="height:20px;margin-top:20px;border-top:1px solid #E4E4E4;">&nbsp;</div>
-	<div>Toll Free in the U.S. (888) 297-3299 | Outside the U.S. (310) 215-8060 | Facsimile (310) 215-8279</div>
+	<div>Toll Free in the U.S. <?=$sitePhone;?> <?php if ($siteId == 1) { echo '| Outside the U.S. (310) 215-8060';}?> | Facsimile (310) 215-8279</div>
 	<a href="<?=$siteUrl;?>" style="color:#336699;"><?=$siteUrl;?></a>
 	<?php if ($footer_sig) : ?>
 	<p>
