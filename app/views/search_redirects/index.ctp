@@ -27,7 +27,7 @@ foreach ($searchRedirects as $searchRedirect):
 ?>
 	<tr<?php echo $class;?>>
 		<td>
-			<?php echo $sites[$searchRedirect['SearchRedirect']['sites'][0]]; ?>
+			<?php echo $multisite->indexDisplay('SearchRedirect', $searchRedirect['SearchRedirect']['sites']); ?>
 		</td>
 		<td>
 			<?php echo $searchRedirect['SearchRedirect']['keyword']; ?>
