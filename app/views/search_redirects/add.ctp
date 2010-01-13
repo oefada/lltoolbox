@@ -12,7 +12,7 @@ $this->pageTitle = 'Keywords';
  		<legend><?php __('Add SearchRedirect');?></legend>
 		<div class="controlset4">
 		<?
-		echo $form->input('sites');
+		echo $multisite->checkbox('SearchRedirect');
 		?>
 		</div>
 	<?php
