@@ -620,6 +620,7 @@ class WebServiceTicketsController extends WebServicesController
 				$siteEmail = 'luxurylink.com';
 				$siteUrl = 'http://www.luxurylink.com/';
 				$siteHeader = '990000';
+				$sitePhone  = '(888) 297-3299';
 				$headerLogo = 'http://www.luxurylink.com/images/ll_logo_2009_2.gif';
 				break;
 			case 2:
@@ -628,6 +629,7 @@ class WebServiceTicketsController extends WebServicesController
 				$siteEmail = 'familygetaway.com';
 				$siteUrl = 'http://www.familygetaway.com/';
 				$siteHeader = 'DE6F0A';
+				$sitePhone  = '(877) 372-5877';
 				$headerLogo = 'http://www.luxurylink.com/images/family/logo.gif';
 				break;
 		}
