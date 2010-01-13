@@ -187,7 +187,7 @@ class AppModel extends Model{
     
     function deleteFromFrontEnd($modelData, $site) {
         $this->useDbConfig = $site;
-        $this->deleteAll($modelData[$this->name][$this->primaryKey], array('callbacks' => false));
+        $this->deleteAll(array($this->primaryKey => $modelData[$this->name][$this->primaryKey]), array('callbacks' => false));
         if (isset($this->containModels)) {
             $this->deleteAssocModels($modelData, $site);
         }
@@ -196,7 +196,7 @@ class AppModel extends Model{
     function deleteAssocModels($modelData, $site) {
         foreach($this->containModels as $assocModel) {
             $this->$assocModel->useDbConfig = $site;
-            $this->$assocModel->deleteAll($modelData[$this->$assocModel][$this->$assocModel->primaryKey], array('callbacks' => false));
+            $this->$assocModel->deleteAll(array($this->$assocModel->primaryKey => $modelData[$this->$assocModel][$this->$assocModel->primaryKey]), array('callbacks' => false));
             $this->$assocModel->useDbConfig = 'default';
         }
     }
