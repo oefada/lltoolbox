@@ -23,6 +23,16 @@ class MultisiteHelper extends AppHelper {
         }
         $out .= '</div>';
         return $out;
-    }    
+    }
+    
+    function indexDisplay($modelName, $modelSites) {
+        $out = '';
+        foreach($this->sites as $site) {
+            if (in_array($site['dbName'], $modelSites)) {
+                $out .= $site['displayName'].'<br />';
+            }
+        }
+        return $out;
+    }
 }
 ?>
