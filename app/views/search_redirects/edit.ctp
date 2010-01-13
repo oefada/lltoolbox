@@ -3,7 +3,7 @@ $this->pageTitle = 'Keywords';
 ?>
 <?=$layout->blockStart('toolbar');?>
 	<?php echo $html->link(__('<span><b class="icon"></b>Add New Keyword</span>', true), array('action'=>'add'), array('class' => 'button add'), false, false); ?>
-	<?php echo $html->link(__('<span><b class="icon"></b>Delete Keyword</span>', true), array('action'=>'add'), array('class' => 'button del'), "Are you sure you want to delete this keyword?", false); ?>
+	<?php echo $html->link(__('<span><b class="icon"></b>Delete Keyword</span>', true), array('action'=>'delete', 'id' => $this->data['SearchRedirect']['searchRedirectId']), array('class' => 'button del'), "Are you sure you want to delete this keyword?", false); ?>
 <?=$layout->blockEnd();?>
 
 
@@ -13,7 +13,7 @@ $this->pageTitle = 'Keywords';
  		<legend><?php __('Edit SearchRedirect');?></legend>
 		<div class="controlset4">
 		<?
-		echo $form->input('sites');
+		echo $multisite->checkbox('SearchRedirect');
 		?>
 		</div>
 	<?php
