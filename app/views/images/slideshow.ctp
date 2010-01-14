@@ -40,9 +40,9 @@
                 <?php foreach($images as $image): ?>
                         <li id="image-<?php echo $image['ImageClient']['clientImageId'] ?>">
                             <input type="hidden" name="data[ImageClient][<?php echo $i-1 ?>][clientImageId]" value="<?php echo $image['ImageClient']['clientImageId'] ?>" />
-                            <img src="http://www.luxurylink.com/<?php echo $image['Image']['imagePath'] ?>" height="250" />
+                            <img src="<?php echo $image['Image']['imagePath'] ?>" height="250" />
                             <p><?php echo $i ?> of <?php echo count($images); ?></p>
-                            <input type="text" name="data[ImageClient][<?php echo $i-1 ?>][caption]" value="<?php echo $image['ImageClient']['caption'] ?>" maxlength="55" />
+                            <input type="text" name="data[ImageClient][<?php echo $i-1 ?>][caption]" value="<?php echo $image['ImageClient']['caption'] ?>" />
                         </li>
                         <?php $i++; ?>
                 <?php endforeach; ?>

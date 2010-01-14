@@ -7,8 +7,8 @@
     
     <?php foreach($images as $image): ?>
             <div class="captionImage">
-                <img src="http://www.luxurylink.com<?php echo $image['Image']['imagePath'] ?>" height="100" />
-                <input type="text" name="data[Image][<?php echo $image['Image']['imageId'] ?>][caption]" length="55" value="<?php echo $image['Image']['caption']; ?>" />
+                <img src="<?php echo $image['Image']['imagePath'] ?>" height="100" />
+                <input type="text" name="data[Image][<?php echo $image['Image']['imageId'] ?>][caption]" value="<?php echo $image['Image']['caption']; ?>" />
                 <div class="roomGrade">
                     Room Grade:&nbsp;&nbsp;
                     <select id="ImageRoomGradeId" name="data[Image][<?php echo $image['Image']['imageId'] ?>][RoomGradeId]">

@@ -10,7 +10,7 @@
     <?php foreach($images as $image): ?>
             <li>
                 <input type="checkbox" name="data[ImageClient][<?php echo $i ?>][imageId]" value="<?php echo $image['ImageClient']['imageId'] ?>" />
-                <img src="http://www.luxurylink.com/<?php echo $image['Image']['imagePath'] ?>" height="75" />
+                <img src="<?php echo $image['Image']['imagePath'] ?>" height="75" />
                 <div class="siteStr">
                     <?php echo $image['ImageClient']['siteStr']; ?>
                 </div>

@@ -38,7 +38,7 @@
                         <ul id="sortableSlideshow-<?php echo $site; ?>" class="sortableSS">
                   <?php endif; ?>
                   <li id="item_<?php echo $ssImage['ImageClient']['clientImageId'] ?>-<?php echo $site; ?>">
-                     <img src="http://www.luxurylink.com<?php echo $ssImage['Image']['imagePath']; ?>" height="100" alt="<?php echo $ssImage['Image']['caption']; ?>" />
+                     <img src="<?php echo $ssImage['Image']['imagePath']; ?>" height="100" alt="<?php echo $ssImage['Image']['caption']; ?>" />
                      <input type="hidden" class="ss" name="data[ImageClient][<?php echo $ssImage['ImageClient']['clientImageId'] ?>][inactive]" value="<?php echo $ssImage['ImageClient']['inactive'] ?>" />
                      <input type="hidden" name="data[ImageClient][<?php echo $ssImage['ImageClient']['clientImageId'] ?>][imageId]" value="<?php echo $ssImage['ImageClient']['imageId'] ?>" />
                      <input type="hidden" name="data[ImageClient][<?php echo $ssImage['ImageClient']['clientImageId'] ?>][imageTypeId]" value="<?php echo $ssImage['ImageClient']['imageTypeId'] ?>" />
@@ -57,7 +57,7 @@
                <?php if (isset($start_inactive)): ?>
                   <?php for ($i=$start_inactive; $i < count($slideshowImages); $i++): ?>
                      <li id="item_<?php echo $slideshowImages[$i]['ImageClient']['clientImageId'] ?>-<?php echo $site; ?>">
-                          <img src="http://www.luxurylink.com<?php echo $slideshowImages[$i]['Image']['imagePath']; ?>" height="100" alt="<?php echo $slideshowImages[$i]['Image']['caption']; ?>" />
+                          <img src="<?php echo $slideshowImages[$i]['Image']['imagePath']; ?>" height="100" alt="<?php echo $slideshowImages[$i]['Image']['caption']; ?>" />
                           <input type="hidden" class="ss" name="data[ImageClient][<?php echo $slideshowImages[$i]['ImageClient']['clientImageId'] ?>][inactive]" value="<?php echo $slideshowImages[$i]['ImageClient']['inactive'] ?>" />
                           <input type="hidden" name="data[ImageClient][<?php echo $slideshowImages[$i]['ImageClient']['clientImageId'] ?>][imageId]" value="<?php echo $slideshowImages[$i]['ImageClient']['imageId'] ?>" />
                           <input type="hidden" name="data[ImageClient][<?php echo $slideshowImages[$i]['ImageClient']['clientImageId'] ?>][imageTypeId]" value="<?php echo $slideshowImages[$i]['ImageClient']['imageTypeId'] ?>" />
@@ -74,7 +74,7 @@
                   <ul id="largeImages">
                      <?php foreach($largeImages as $lImage): ?>
                         <li>
-                           <img src="http://www.luxurylink.com<?php echo $lImage['Image']['imagePath']; ?>" height="75" alt="<?php echo $lImage['Image']['caption']; ?>" />
+                           <img src="<?php echo $lImage['Image']['imagePath']; ?>" height="75" alt="<?php echo $lImage['Image']['caption']; ?>" />
                            <input type="radio" class="lImage" name="data[ImageClient][<?php echo $lImage['ImageClient']['clientImageId'] ?>][inactive]" onclick="toggleRadio(this, 'largeImages');" <?php if ($lImage['ImageClient']['inactive'] == 0) echo 'checked' ?> />
                            <input type="hidden" name="data[ImageClient][<?php echo $lImage['ImageClient']['clientImageId'] ?>][imageId]" value="<?php echo $lImage['ImageClient']['imageId'] ?>" />
                            <input type="hidden" name="data[ImageClient][<?php echo $lImage['ImageClient']['clientImageId'] ?>][imageTypeId]" value="<?php echo $lImage['ImageClient']['imageTypeId'] ?>" />
@@ -89,7 +89,7 @@
                   <ul id="thumbImages">
                      <?php foreach($thumbnailImages as $tImage): ?>
                         <li>
-                           <img src="http://www.luxurylink.com<?php echo $tImage['Image']['imagePath']; ?>" height="65" alt="<?php echo $tImage['Image']['caption']; ?>" />
+                           <img src="<?php echo $tImage['Image']['imagePath']; ?>" height="65" alt="<?php echo $tImage['Image']['caption']; ?>" />
                            <input type="radio" class="tImage" name="data[ImageClient][<?php echo $tImage['ImageClient']['clientImageId'] ?>][inactive]" onclick="toggleRadio(this, 'thumbImages');"  <?php if ($tImage['ImageClient']['inactive'] == 0) echo 'checked' ?> />
                            <input type="hidden" name="data[ImageClient][<?php echo $tImage['ImageClient']['clientImageId'] ?>][imageId]" value="<?php echo $tImage['ImageClient']['imageId'] ?>" />
                            <input type="hidden" name="data[ImageClient][<?php echo $tImage['ImageClient']['clientImageId'] ?>][imageTypeId]" value="<?php echo $tImage['ImageClient']['imageTypeId'] ?>" />
