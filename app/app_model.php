@@ -148,8 +148,8 @@ class AppModel extends Model{
                 }
             } 
         }
+        $this->useDbConfig = 'default';
    }
-    
     
     function saveToFrontEndDb($modelData, $site, $modelSites, $created) {
         $this->useDbConfig = $site;
@@ -167,6 +167,11 @@ class AppModel extends Model{
         }
         //save record to the front-end database only if the $site is valid for the record
         if (in_array($site, $modelSites)) {
+            if ($this->name == 'ImageRoomGradeRel') {
+                debug($site);
+                debug($modelData[$this->name]);
+                die();
+            }
             $fields = $this->getFields($site);
             $this->create();
             $this->save($modelData[$this->name], array('callbacks' => false, 'fieldList' => $fields));
@@ -174,6 +179,7 @@ class AppModel extends Model{
                 $this->saveAssocModels($modelData, $site);
             }
         }
+        $this->useDbConfig = 'default';
     }
     
     function saveAssocModels($modelData, $site) {
