@@ -24,15 +24,18 @@ class Image extends AppModel {
     }
     
     function createFromFile($data) {
-        $this->create();
-        $this->data['imagePath'] = $data['imagePath'];
-        $this->save($this->data);
-        $imageId = $this->getLastInsertID();
+        if (!isset($data['imageId'])) {
+            $this->create();
+            $this->data['imagePath'] = $data['imagePath'];
+            $this->save($this->data);
+            $imageId = $this->getLastInsertID();
+            $data['imageId'] = $imageId;
+        }
         unset($data['imagePath']);
         $this->ImageClient->create();
-        $data['imageId'] = $imageId;
         $this->ImageClient->set($data);
         $this->ImageClient->save();
+        return $data['imageId'];
     }
     
     function saveCaptions($postData, $image, $clientId) {
