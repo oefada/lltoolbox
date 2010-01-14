@@ -167,11 +167,6 @@ class AppModel extends Model{
         }
         //save record to the front-end database only if the $site is valid for the record
         if (in_array($site, $modelSites)) {
-            if ($this->name == 'ImageRoomGradeRel') {
-                debug($site);
-                debug($modelData[$this->name]);
-                die();
-            }
             $fields = $this->getFields($site);
             $this->create();
             $this->save($modelData[$this->name], array('callbacks' => false, 'fieldList' => $fields));
