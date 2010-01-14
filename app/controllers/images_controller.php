@@ -58,6 +58,7 @@ class ImagesController extends AppController {
 	  if (!empty($this->data)) {
 		 $postImages = $this->data['Image'];
 		 $images = $this->Image->ImageClient->find('all', array('conditions' => array('ImageClient.clientId' => $this->Image->clientId,
+																					  'ImageClient.imageTypeId' => 1,
 																				      'ImageClient.inactive' => 0),
 															     'group' => array('ImageClient.imageId')
 												));
@@ -74,6 +75,7 @@ class ImagesController extends AppController {
 		 }
 	  }
 	  $images = $this->Image->ImageClient->find('all', array('conditions' => array('ImageClient.clientId' => $this->Image->clientId,
+																				   'ImageClient.imageTypeId' => 1,
 														 					       'ImageClient.inactive' => 0),
 															 'order' => array('Image.caption'),
 															 'group' => array('ImageClient.imageId')
