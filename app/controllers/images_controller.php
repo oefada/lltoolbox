@@ -164,6 +164,10 @@ class ImagesController extends AppController {
 		 $directory = '/images/por/'.$this->Image->client['Client']['oldProductId'];
 	  }
 	  $files = glob($this->fileRoot.$directory.'/*.jpg');
+	  $useLrgForSlideshow = false;
+	  if (!in_array($this->fileRoot.$directory.'/'.$this->Image->client['Client']['oldProductId'].'-gal-xl-01.jpg', $files)) {
+		 $useLrgForSlideshow = true;
+	  }
 	  if (!empty($files)) {
 		 $siteId = array_search($this->Image->client['Client']['sites'][0], $this->siteDbs);
 		 foreach($files as $file) {
@@ -180,7 +184,11 @@ class ImagesController extends AppController {
 			   if ($imageTypeId > 0 ) {
 				  $clientId = $this->Image->clientId;
 				  $inactive = 1;
-				  $this->Image->createFromFile(compact('imagePath', 'clientId', 'imageTypeId', 'siteId', 'inactive'));
+				  $imageId = $this->Image->createFromFile(compact('imagePath', 'clientId', 'imageTypeId', 'siteId', 'inactive'));
+				  if ($imageTypeId == 2 && $useLrgForSlideshow) {
+					 $imageTypeId = 1;
+					 $this->Image->createFromFile(compact('imagePath', 'clientId', 'imageTypeId', 'siteId', 'inactive', 'imageId'));
+				  }
 			   }
 			}
 		 }
