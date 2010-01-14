@@ -20,7 +20,7 @@ class ImagesController extends AppController {
 
 	  $this->Image->imageTypes = array('gal-xl' => 1,		//slideshow
 									   'gal-lrg' => 2,	 	//large (listing)
-									   'list-small' => 3	//	thumbnail
+									   'list-sml' => 3	//	thumbnail
 									   );
 
 	  $this->fileRoot = dirname(dirname(dirname(dirname(__FILE__)))).'/luxurylink/php';
