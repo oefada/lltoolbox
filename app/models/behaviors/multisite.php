@@ -270,6 +270,10 @@ class MultisiteBehavior extends ModelBehavior {
 	 */
 	function prepareSiteSpecificData(&$model, $database) {
 	    foreach ($model->data[$model->alias] as $col => $data) {
+            if (strstr($col, $database.'_')) {
+                $colArr = explode('_', $col);
+                $col = $colArr[1];
+            }
 	        if(isset($model->data[$model->alias][$database."_".$col])) {
 	            $model->data[$model->alias][$col] = $model->data[$model->alias][$database."_".$col];
 	        }
