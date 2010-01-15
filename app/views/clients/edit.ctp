@@ -56,19 +56,28 @@ foreach ($this->data['Client']['sites'] as $site) {
 <div class="clients form">
 	<h2 class="title">Client Details</h2>
 	<div style="float: right">
-	<?php
-	echo $html->link('<span><b class="icon"></b>Add Child Client</span>',
-					"/clients/add/$clientId",
-					array(
-						'title' => 'Add Child Client',
-						'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
-						'complete' => 'closeModalbox()',
-						'class' => 'button add'
-						),
-					null,
-					false
-					);
-	?>
+    	<?php
+    	echo $html->link('<span><b class="icon"></b>Add Child Client</span>',
+    					"/clients/add/$clientId",
+    					array(
+    						'title' => 'Add Child Client',
+    						'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
+    						'complete' => 'closeModalbox()',
+    						'class' => 'button add'
+    						),
+    					null,
+    					false
+    					);
+    	?>
+        
+        <?php
+            if (in_array('luxurylink', $this->data['Client']['sites'])) {
+                echo $html->link('<span>Preview on LuxuryLink</span>', "http://www.luxurylink.com/luxury-hotels/preview.html?clid={$this->data['Client']['clientId']}&preview=client", array('target' => '_blank', 'class' => 'button'), null, false);
+            }
+            if (in_array('family', $this->data['Client']['sites'])) {
+                echo $html->link('<span>Preview on FamilyGetaway</span>', "http://www.familygetaway.com/luxury-hotels/preview.html?clid={$this->data['Client']['clientId']}&preview=client", array('target' => '_blank', 'class' => 'button'), null, false);
+            }
+        ?>    
 	</div>
 <?php echo $form->create('Client');?>
 	<fieldset>
