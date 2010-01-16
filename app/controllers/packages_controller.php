@@ -575,7 +575,7 @@ class PackagesController extends AppController {
 
         // get roomGradeName for this package
         $this->Package->PackageLoaItemRel->recursive = 2;
-        $loaItems = $this->Package->PackageLoaItemRel->find('first', array('conditions' => array('Package.packageId' => $id)));
+        $loaItems = $this->Package->PackageLoaItemRel->find('first', array('conditions' => array('Package.packageId' => $id, 'LoaItem.loaItemTypeId' => 1)));
         $roomGradeName = $loaItems['LoaItem']['RoomGrade']['roomGradeName'];
         
 		$this->set(compact('loaItemTypes', 'trackExpirationCriteriaIds', 'familyAmenities', 'roomGradeName'));
