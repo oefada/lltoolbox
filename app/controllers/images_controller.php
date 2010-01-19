@@ -28,12 +28,17 @@ class ImagesController extends AppController {
    
    function organize() {
 	  if (!empty($this->data)) {
+		 $this->set('displayTab', $this->data['saveSite']);
+		 unset($this->data['saveSite']);
 		 if ($this->Image->ImageClient->saveOrganizedImages($this->data, $this->Image->clientId, $this->siteDbs)) {
 			$this->Session->setFlash('Images have been saved.');
 		 }
 		 else {
 			$this->Session->setFlash('Images could not be saved.');
 		 }
+	  }
+	  else {
+		 $this->set('displayTab', 'luxurylink');
 	  }
 	  $this->findNewImages();
 	  foreach($this->Image->client['Client']['sites'] as $site) {
