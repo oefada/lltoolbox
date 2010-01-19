@@ -2,7 +2,7 @@
 <?php $this->pageTitle = $client['Client']['name'].$html2->c($client['Client']['clientId'], 'Client Id:'); ?>
 <div class="sitesTab">
    <?php foreach ($clientSites as $site): ?>
-         <div id="<?php echo $site; ?>" class="<?php echo ($site == $clientSites[0]) ? ' siteActive' :  ' siteInactive'; ?>"><?php __($sites[$site]); ?></div>
+         <div id="<?php echo $site; ?>" class="<?php echo ($site == $displayTab) ? ' siteActive' :  ' siteInactive'; ?>"><?php __($sites[$site]); ?></div>
    <?php endforeach; ?>
 </div>
 <?php foreach ($clientSites as $site): ?>
@@ -11,8 +11,9 @@
       $largeImages = ${'largeImages'.$site};
       $thumbnailImages = ${'thumbnailImages'.$site};
    ?>
-      <div id="images-<?php echo $site; ?>" class="organize" <?php if ($site != $clientSites[0]): ?> style="display:none"<?php endif; ?>>
+      <div id="images-<?php echo $site; ?>" class="organize" <?php if ($site != $displayTab): ?> style="display:none"<?php endif; ?>>
          <form method="post" id="organizeImages-<?php echo $site; ?>">
+         <input type="hidden" name="data[saveSite]" value="<?php echo $site; ?>" />
          <input type="submit" value="Save" class="save_changes" />
          <?php if (count($clientSites) > 1): ?>
             <div class="duplicateTo"><input type="checkbox" name="data[duplicateTo][<?php echo ($site == $clientSites[0]) ? $clientSites[1] : $clientSites[0] ?>]" /> Copy to <?php echo ($site == $clientSites[0]) ? $sites[$clientSites[1]] : $sites[$clientSites[0]] ?></div>
