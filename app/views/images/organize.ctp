@@ -72,11 +72,11 @@
          <?php if (!empty($largeImages)): ?>
                <div class="organize large">
                   <h3>Large (225x169)</h3>
-                  <ul id="largeImages">
+                  <ul id="largeImages-<?php echo $site ?>">
                      <?php foreach($largeImages as $lImage): ?>
                         <li>
                            <img src="<?php echo $lImage['Image']['imagePath']; ?>" height="75" alt="<?php echo $lImage['Image']['caption']; ?>" />
-                           <input type="radio" class="lImage" name="data[ImageClient][<?php echo $lImage['ImageClient']['clientImageId'] ?>][inactive]" onclick="toggleRadio(this, 'largeImages');" <?php if ($lImage['ImageClient']['inactive'] == 0) echo 'checked' ?> />
+                           <input type="radio" class="lImage" name="data[ImageClient][<?php echo $lImage['ImageClient']['clientImageId'] ?>][inactive]" onclick="toggleRadio(this, 'largeImages-<?php echo $site ?>');" <?php if ($lImage['ImageClient']['inactive'] == 0) echo 'checked' ?> />
                            <input type="hidden" name="data[ImageClient][<?php echo $lImage['ImageClient']['clientImageId'] ?>][imageId]" value="<?php echo $lImage['ImageClient']['imageId'] ?>" />
                            <input type="hidden" name="data[ImageClient][<?php echo $lImage['ImageClient']['clientImageId'] ?>][imageTypeId]" value="<?php echo $lImage['ImageClient']['imageTypeId'] ?>" />
                         </li>
@@ -87,11 +87,11 @@
          <?php if (!empty($thumbnailImages)): ?>
                <div class="organize thumbnails">
                   <h3>Thumbnail (70x64)</h3>
-                  <ul id="thumbImages">
+                  <ul id="thumbImages-<?php echo $site ?>">
                      <?php foreach($thumbnailImages as $tImage): ?>
                         <li>
                            <img src="<?php echo $tImage['Image']['imagePath']; ?>" height="65" alt="<?php echo $tImage['Image']['caption']; ?>" />
-                           <input type="radio" class="tImage" name="data[ImageClient][<?php echo $tImage['ImageClient']['clientImageId'] ?>][inactive]" onclick="toggleRadio(this, 'thumbImages');"  <?php if ($tImage['ImageClient']['inactive'] == 0) echo 'checked' ?> />
+                           <input type="radio" class="tImage" name="data[ImageClient][<?php echo $tImage['ImageClient']['clientImageId'] ?>][inactive]" onclick="toggleRadio(this, 'thumbImages-<?php echo $site ?>');"  <?php if ($tImage['ImageClient']['inactive'] == 0) echo 'checked' ?> />
                            <input type="hidden" name="data[ImageClient][<?php echo $tImage['ImageClient']['clientImageId'] ?>][imageId]" value="<?php echo $tImage['ImageClient']['imageId'] ?>" />
                            <input type="hidden" name="data[ImageClient][<?php echo $tImage['ImageClient']['clientImageId'] ?>][imageTypeId]" value="<?php echo $tImage['ImageClient']['imageTypeId'] ?>" />
                         </li>
