@@ -52,7 +52,8 @@ if ($_POST['data']['Package']['packageType'] == 1) {
 	}
 	
 	function toggleGuestsVisibility() {
-		['numGuests','numChildrenAdults','ageRangeValidity'].each(Element.toggle);
+        return;
+		['ageRangeValidity'].each(Element.toggle);
 		switch ($('PackageSiteId').getValue) {
 			case '2':	//Family
 				break;
