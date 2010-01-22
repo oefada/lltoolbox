@@ -52,8 +52,23 @@ class Loa extends AppModel {
 	      return;
 	}
 	
-	function get_current_loa($client_id) {
-	  return $this->field('loaId', array('Loa.clientId = '.$client_id.' AND now() BETWEEN Loa.startDate AND Loa.endDate'));
-	}
+    function get_current_loa($client_id) {
+         $currentLoaId = $this->field('loaId', array('Loa.clientId = '.$client_id.' AND now() BETWEEN Loa.startDate AND Loa.endDate'));
+         if (empty($currentLoaId)) {
+           $this->Client->recursive = -1;
+           $client = $this->Client->findByClientId($client_id);
+           if (empty($client['Client']['parentClientId'])) {
+               $currentLoaId = $this->field('loaId', array('Loa.clientId = '.$client_id.' AND Loa.loaLevelId = 0 AND now() < Loa.startDate'));
+           }
+           else {
+               $currentLoaId = $this->field('loaId', array('Loa.clientId ='.$client['Client']['parentClientId'].' AND now() BETWEEN Loa.startDate AND Loa.endDate'));
+           }
+           if (empty($currentLoaId)) {
+               $currentLoaId = 0;
+           }
+         }
+         return $currentLoaId;
+    } 
+
 }
 ?>
