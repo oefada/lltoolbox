@@ -1973,15 +1973,14 @@ class ReportsController extends AppController {
 
 		# END AUCTIONS CLOSING
 		
-		# AUCTIONS/FP CLOSING WITH BIDS
+		# AUCTIONS/FP CLOSING WITH FUNDED TICKETS
 		/* Today/Yesterday */
-		$tmp = $this->Client->query("SELECT COUNT(DISTINCT schedulingInstance.schedulingInstanceId) as numClosing, DATE_FORMAT(schedulingInstance.endDate, '%Y-%m-%d') as theDate FROM schedulingInstance 
-											INNER JOIN schedulingMaster USING(schedulingMasterId) 
-											INNER JOIN offer USING(schedulingInstanceId) 
-											INNER JOIN bid USING(offerId)
-											WHERE schedulingInstance.endDate BETWEEN '$date' - INTERVAL 1 DAY AND '$date' + INTERVAL 1 DAY
-											AND schedulingInstance.endDate <= NOW() AND $siteCondition
-											GROUP BY DATE_FORMAT(schedulingInstance.endDate, '%Y-%m-%d')");
+
+		// [ALEE] RECODED THIS SECTION JAN 22 2010 -- CHANGED TO AUCTIONS CLOSING WITH FUNDED TICKETS
+		$tmp = $this->Client->query("SELECT COUNT(DISTINCT Ticket.offerId) AS numClosing, DATE_FORMAT(Ticket.created, '%Y-%m-%d') as theDate FROM ticket AS Ticket 
+											WHERE Ticket.formatId = 1 AND Ticket.created BETWEEN '$date' - INTERVAL 1 DAY AND '$date' + INTERVAL 1 DAY AND $ticketSiteCondition AND Ticket.ticketStatusId IN (3,4,5,6) 
+											GROUP BY DATE_FORMAT(Ticket.created, '%Y-%m-%d')");
+
 		foreach ($tmp as $v) {
 			if ($v[0]['theDate'] == $date) {
 				$sales[2][1] = $v[0]['numClosing'];
@@ -1993,46 +1992,34 @@ class ReportsController extends AppController {
 		}
 		
 		/* Last 7 Days Avg */
-		$tmp = $this->Client->query("SELECT ROUND(COUNT(DISTINCT schedulingInstance.schedulingInstanceId)/7) as dailyAverage FROM schedulingInstance 
-											INNER JOIN schedulingMaster USING(schedulingMasterId) 
-											INNER JOIN offer USING(schedulingInstanceId) 
-											INNER JOIN bid USING(offerId)
-											WHERE schedulingInstance.endDate BETWEEN '$date' - INTERVAL 6 DAY AND '$date' + INTERVAL 1 DAY  AND $siteCondition");
+		$tmp = $this->Client->query("SELECT ROUND(COUNT(DISTINCT Ticket.offerId)/7) as dailyAverage FROM ticket AS Ticket
+											WHERE Ticket.formatId = 1 AND Ticket.created BETWEEN '$date' - INTERVAL 6 DAY AND '$date' + INTERVAL 1 DAY AND $ticketSiteCondition AND Ticket.ticketStatusId IN (3,4,5,6)");
 		$sales[2][3] = $tmp[0][0]['dailyAverage'];
 		$sales[3][3] = ROUND($sales[2][3]/$sales[1][3]*100,1);
 
 		/* Last 30 Days Avg */
-		$tmp = $this->Client->query("SELECT ROUND(COUNT(DISTINCT schedulingInstance.schedulingInstanceId)/30) as dailyAverage FROM schedulingInstance
-		 									INNER JOIN schedulingMaster USING(schedulingMasterId) 
-											INNER JOIN offer USING(schedulingInstanceId) 
-											INNER JOIN bid USING(offerId)
-											WHERE schedulingInstance.endDate BETWEEN '$date' - INTERVAL 29 DAY AND '$date' + INTERVAL 1 DAY  AND $siteCondition");
+		$tmp = $this->Client->query("SELECT ROUND(COUNT(DISTINCT Ticket.offerId)/30) as dailyAverage FROM ticket AS Ticket
+											WHERE Ticket.formatId = 1 AND Ticket.created BETWEEN '$date' - INTERVAL 29 DAY AND '$date' + INTERVAL 1 DAY AND $ticketSiteCondition AND Ticket.ticketStatusId IN (3,4,5,6)");
 		$sales[2][4] = $tmp[0][0]['dailyAverage'];
 		$sales[3][4] = ROUND($sales[2][4]/$sales[1][4]*100,1);
 		
 		/* Last 90 Days Avg */
-		$tmp = $this->Client->query("SELECT ROUND(COUNT(DISTINCT schedulingInstance.schedulingInstanceId)/90) as dailyAverage FROM schedulingInstance
-		 									INNER JOIN schedulingMaster USING(schedulingMasterId) 
-											INNER JOIN offer USING(schedulingInstanceId) 
-											INNER JOIN bid USING(offerId)
-											WHERE schedulingInstance.endDate BETWEEN '$date' - INTERVAL 89 DAY AND '$date' + INTERVAL 1 DAY  AND $siteCondition");
+		$tmp = $this->Client->query("SELECT ROUND(COUNT(DISTINCT Ticket.offerId)/90) as dailyAverage FROM ticket AS Ticket
+											WHERE Ticket.formatId = 1 AND Ticket.created BETWEEN '$date' - INTERVAL 89 DAY AND '$date' + INTERVAL 1 DAY AND $ticketSiteCondition AND Ticket.ticketStatusId IN (3,4,5,6)");
 		$sales[2][5] = $tmp[0][0]['dailyAverage'];
 		$sales[3][5] = ROUND($sales[2][5]/$sales[1][5]*100,1);
 		
 		/* Last 365 Days Avg */
-		$tmp = $this->Client->query("SELECT ROUND(COUNT(DISTINCT schedulingInstance.schedulingInstanceId)/365) as dailyAverage FROM schedulingInstance
-		 									INNER JOIN schedulingMaster USING(schedulingMasterId) 
-											INNER JOIN offer USING(schedulingInstanceId) 
-											INNER JOIN bid USING(offerId)
-											WHERE schedulingInstance.endDate BETWEEN '$date' - INTERVAL 364 DAY AND '$date' + INTERVAL 1 DAY  AND $siteCondition");
+		$tmp = $this->Client->query("SELECT ROUND(COUNT(DISTINCT Ticket.offerId)/365) as dailyAverage FROM ticket AS Ticket
+											WHERE Ticket.formatId = 1 AND Ticket.created BETWEEN '$date' - INTERVAL 364 DAY AND '$date' + INTERVAL 1 DAY AND $ticketSiteCondition AND Ticket.ticketStatusId IN (3,4,5,6)");
 		$sales[2][6] = $tmp[0][0]['dailyAverage'];
 		$sales[3][6] = ROUND($sales[2][6]/$sales[1][6]*100,1);
 		
-		# END AUCTIONS CLOSING WITH BIDS
+		# END AUCTIONS CLOSING WITH FUNDED TICKETS
 		
 		# AVG SELL PRICES
 		/* Today/Yesterday */
-		$tmp = $this->Client->query("SELECT GROUP_CONCAT(Ticket.ticketId) as ticketIds, GROUP_CONCAT(Ticket.billingPrice) as avgSalePrice, ROUND(SUM(Ticket.billingPrice)) as travelRevenue, offerTypeId, DATE_FORMAT(Ticket.created, '%Y-%m-%d') as theDate, Ticket.ticketStatusId FROM ticket AS Ticket 
+		$tmp = $this->Client->query("SELECT GROUP_CONCAT(Ticket.billingPrice) as avgSalePrice, offerTypeId, DATE_FORMAT(Ticket.created, '%Y-%m-%d') as theDate, Ticket.ticketStatusId FROM ticket AS Ticket 
 											WHERE Ticket.created BETWEEN '$date' - INTERVAL 1 DAY AND '$date' + INTERVAL 1 DAY AND Ticket.ticketStatusId IN(3,4,5,6)  AND $ticketSiteCondition
 											GROUP BY DATE_FORMAT(Ticket.created, '%Y-%m-%d'), offerTypeId, ticketStatusId");
 		$sales[8][1] = 0;	
@@ -2046,8 +2033,6 @@ class ReportsController extends AppController {
 			} else {
 				$col = '2';
 			}
-			
-			$sales[8][$col] += $v[0]['travelRevenue'];
 			
 			if (in_array($v['Ticket']['offerTypeId'], $auctions)) {
 				$row = '4';
@@ -2063,12 +2048,11 @@ class ReportsController extends AppController {
 		}									
 						
 		/* Last 7 Days Avg */
-		$tmp = $this->Client->query("SELECT GROUP_CONCAT(Ticket.billingPrice) as avgSalePrice, ROUND(SUM(Ticket.billingPrice)/7) as travelRevenue, offerTypeId, Ticket.ticketStatusId FROM ticket AS Ticket 
+		$tmp = $this->Client->query("SELECT GROUP_CONCAT(Ticket.billingPrice) as avgSalePrice, offerTypeId, Ticket.ticketStatusId FROM ticket AS Ticket 
 											WHERE Ticket.created BETWEEN '$date' - INTERVAL 6 DAY AND '$date' + INTERVAL 1 DAY  AND Ticket.ticketStatusId IN(3,4,5,6)  AND $ticketSiteCondition
 											GROUP BY offerTypeId, ticketStatusId");
 		$sales[8][3] = 0;
 		foreach($tmp as $v) {
-			$sales[8][3] += $v[0]['travelRevenue'];
 			if (in_array($v['Ticket']['offerTypeId'], $auctions)) {
 				$row = '4';
 			} else {
@@ -2081,13 +2065,12 @@ class ReportsController extends AppController {
 		}									
 
 		/* Last 30 Days Avg */
-		$tmp = $this->Client->query("SELECT GROUP_CONCAT(Ticket.billingPrice) as avgSalePrice, ROUND(SUM(Ticket.billingPrice)/30) as travelRevenue, offerTypeId, Ticket.ticketStatusId FROM ticket AS Ticket 
+		$tmp = $this->Client->query("SELECT GROUP_CONCAT(Ticket.billingPrice) as avgSalePrice, offerTypeId, Ticket.ticketStatusId FROM ticket AS Ticket 
 											WHERE Ticket.created BETWEEN '$date' - INTERVAL 29 DAY AND '$date' + INTERVAL 1 DAY  AND Ticket.ticketStatusId IN(3,4,5,6) AND $ticketSiteCondition
 											GROUP BY offerTypeId, ticketStatusId");
 		$sales[8][4] = 0;
 		foreach($tmp as $v) {
 			
-			$sales[8][4] += $v[0]['travelRevenue'];
 			if (in_array($v['Ticket']['offerTypeId'], $auctions)) {
 				$row = '4';
 			} else {
@@ -2102,13 +2085,12 @@ class ReportsController extends AppController {
 		}
 		
 		/* Last 90 Days Avg */
-		$tmp = $this->Client->query("SELECT GROUP_CONCAT(Ticket.billingPrice) as avgSalePrice, ROUND(SUM(Ticket.billingPrice)/90) as travelRevenue, offerTypeId, Ticket.ticketStatusId FROM ticket AS Ticket 
+		$tmp = $this->Client->query("SELECT GROUP_CONCAT(Ticket.billingPrice) as avgSalePrice, offerTypeId, Ticket.ticketStatusId FROM ticket AS Ticket 
 											WHERE Ticket.created BETWEEN '$date' - INTERVAL 89 DAY AND '$date' + INTERVAL 1 DAY  AND Ticket.ticketStatusId IN(3,4,5,6) AND $ticketSiteCondition
 											GROUP BY offerTypeId, ticketStatusId");
 		$sales[8][5] = 0;
 		foreach($tmp as $v) {
 			
-			$sales[8][5] += $v[0]['travelRevenue'];
 			if (in_array($v['Ticket']['offerTypeId'], $auctions)) {
 				$row = '4';
 			} else {				
@@ -2123,13 +2105,12 @@ class ReportsController extends AppController {
 		}									
 		
 		/* Last 365 Days Avg */
-		$tmp = $this->Client->query("SELECT GROUP_CONCAT(Ticket.billingPrice) as avgSalePrice, ROUND(SUM(Ticket.billingPrice)/365) as travelRevenue, offerTypeId, Ticket.ticketStatusId FROM ticket AS Ticket 
+		$tmp = $this->Client->query("SELECT GROUP_CONCAT(Ticket.billingPrice) as avgSalePrice, offerTypeId, Ticket.ticketStatusId FROM ticket AS Ticket 
 											WHERE Ticket.created BETWEEN '$date' - INTERVAL 364 DAY AND '$date' + INTERVAL 1 DAY AND Ticket.ticketStatusId IN(3,4,5,6) AND $ticketSiteCondition
 											GROUP BY offerTypeId, ticketStatusId");
 		$sales[8][6] = 0;
 		foreach($tmp as $v) {
 			
-			$sales[8][6] += $v[0]['travelRevenue'];
 			if (in_array($v['Ticket']['offerTypeId'], $auctions)) {
 				$row = '4';
 			} else {				
@@ -2154,7 +2135,7 @@ class ReportsController extends AppController {
 			}
 		}
 		# END AVG SELL PRICES
-		
+
 		# FP Requests and FP Funded
 		$tmp = $this->Client->query("SELECT COUNT(DISTINCT Ticket.ticketId) as fpRequests, SUM(IF(PaymentDetail.paymentDetailId IS NULL, 0, 1)) as fpFunded,
 											DATE_FORMAT(Ticket.created, '%Y-%m-%d') as theDate
@@ -2201,6 +2182,17 @@ class ReportsController extends AppController {
 		
 		
 		# END FP Requests and FP Funded
+	
+		# TRAVEL REVENUE [ALEE] CHANGED HOW THIS IS CALCULATED REQUEST BY MCHOE JAN 22-2010
+		
+		$sales[8][1] = ($sales[2][1] * $sales[4][1]) + ($sales[6][1] * $sales[7][1]);
+		$sales[8][2] = ($sales[2][2] * $sales[4][2]) + ($sales[6][2] * $sales[7][2]);
+		$sales[8][3] = ($sales[2][3] * $sales[4][3]) + ($sales[6][3] * $sales[7][3]);
+		$sales[8][4] = ($sales[2][4] * $sales[4][4]) + ($sales[6][4] * $sales[7][4]);
+		$sales[8][5] = ($sales[2][5] * $sales[4][5]) + ($sales[6][5] * $sales[7][5]);
+		$sales[8][6] = ($sales[2][6] * $sales[4][6]) + ($sales[6][6] * $sales[7][6]);
+
+		# END TRAVEL REVENUE
 		
 		$this->set('sales', $sales);
 		

@@ -49,8 +49,8 @@
 	</tr>
 	<?php
 	$cols = array(1 => 'Auctions Closing',
-					'Auctions Closed w/bid',
-					'% Auctions Close w/bid',
+					'Auctions Ticket Funded',
+					'% Auctions Ticket Funded',
 					'Avg. Sale Price for Auctions',
 					'Fixed Price Requests',
 					'FP Funded',
