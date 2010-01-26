@@ -2460,7 +2460,7 @@ class ReportsController extends AppController {
 		FROM reporting.weeklyScorecardTotal as data 
 		WHERE YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
 		 AND QUARTER = QUARTER(NOW())
-		 AND weeknumber < WEEK(NOW()) + 1
+		 AND weeknumber < WEEK(NOW()) 
 		group by quarter
 		ORDER BY weekBeginSunday
 		;");
@@ -2470,7 +2470,7 @@ class ReportsController extends AppController {
 		WHERE 
 		 QUARTER = QUARTER(NOW())
 		 AND YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
-		 AND weeknumber < WEEK(NOW()) + 1
+		 AND weeknumber < WEEK(NOW()) 
 		;");
 		// QTR
 		$tmp3 = $this->OfferType->query("SELECT SUM(t.packagesSoldPrevious) as qtr_packagesSoldPrevious, SUM(revenuecollectedprevious) as qtr_revenueCollectedPrevious
@@ -2516,7 +2516,7 @@ class ReportsController extends AppController {
 		FROM reporting.weeklyScorecardAuctions as data 
 		WHERE YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
 		 AND QUARTER = QUARTER(NOW())
-		 AND weeknumber < WEEK(NOW()) + 1
+		 AND weeknumber < WEEK(NOW()) 
 		group by quarter
 		ORDER BY weekBeginSunday
 		;");
@@ -2528,7 +2528,7 @@ class ReportsController extends AppController {
 		WHERE 
 		 QUARTER = QUARTER(NOW())
 		AND YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
-		 AND weeknumber < WEEK(NOW()) + 1
+		 AND weeknumber < WEEK(NOW()) 
 		;
 		");
 		$tmp3 = $this->OfferType->query("SELECT SUM(a.auctionsListedPrevious) as qtr_auctionsListedPrevious, SUM(a.successfulAuctionsPrevious) as qtr_successfulAuctionsPrevious,
@@ -2573,7 +2573,7 @@ class ReportsController extends AppController {
 		FROM reporting.weeklyScorecardFixedPrice as data 
 		WHERE YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
 		 AND QUARTER = QUARTER(NOW())
-		 AND weeknumber < WEEK(NOW()) + 1
+		 AND weeknumber < WEEK(NOW()) 
 		group by quarter
 		ORDER BY weekBeginSunday
 		;");
@@ -2584,7 +2584,7 @@ class ReportsController extends AppController {
 		WHERE 
 		 QUARTER = QUARTER(NOW())
 		AND  YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
-		 AND weeknumber < WEEK(NOW()) + 1
+		 AND weeknumber < WEEK(NOW()) 
 		;");
 		$tmp3 = $this->OfferType->query("SELECT SUM(a.buyNowOffersPrevious) as qtr_buyNowOffersPrevious, SUM(a.numberRequestsPrevious) as qtr_numberRequestsPrevious,
 		SUM(packagesSoldPrevious) as qtr_packagesSoldPrevious, SUM(revenuecollectedprevious) as qtr_revenueCollectedPrevious
@@ -2627,7 +2627,7 @@ class ReportsController extends AppController {
 		FROM reporting.weeklyScorecardFixedPriceSponsor as data 
 		WHERE YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
 		 AND QUARTER = QUARTER(NOW())
-		 AND weeknumber < WEEK(NOW()) + 1
+		 AND weeknumber < WEEK(NOW()) 
 		group by quarter
 		ORDER BY weekBeginSunday
 		;");
@@ -2638,7 +2638,7 @@ class ReportsController extends AppController {
 		WHERE 
 		 QUARTER = QUARTER(NOW())
 		 AND YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
-		 AND weeknumber < WEEK(NOW()) + 1
+		 AND weeknumber < WEEK(NOW()) 
 		;");
 		$tmp3 = $this->OfferType->query("SELECT SUM(a.buyNowOffersPrevious) as qtr_buyNowOffersPrevious, SUM(a.numberRequestsPrevious) as qtr_numberRequestsPrevious,
 		SUM(packagesSoldPrevious) as qtr_packagesSoldPrevious, SUM(revenuecollectedprevious) as qtr_revenueCollectedPrevious
@@ -2682,7 +2682,7 @@ class ReportsController extends AppController {
 		FROM reporting.weeklyScorecardFixedPriceWholesale as data 
 		WHERE YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
 		 AND QUARTER = QUARTER(NOW())
-		 AND weeknumber < WEEK(NOW()) + 1
+		 AND weeknumber < WEEK(NOW()) 
 		group by quarter
 		ORDER BY weekBeginSunday
 		;");
@@ -2693,7 +2693,7 @@ class ReportsController extends AppController {
 		WHERE 
 		 QUARTER = QUARTER(NOW())
 		 AND YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
-		 AND weeknumber < WEEK(NOW()) + 1
+		 AND weeknumber < WEEK(NOW()) 
 		 
 		;");
 		$tmp3 = $this->OfferType->query("SELECT SUM(a.buyNowOffersPrevious) as qtr_buyNowOffersPrevious, SUM(a.numberRequestsPrevious) as qtr_numberRequestsPrevious,
@@ -2736,7 +2736,7 @@ class ReportsController extends AppController {
 		FROM reporting.weeklyScorecardCruises as data 
 		WHERE YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
 		 AND QUARTER = QUARTER(NOW())
-		 AND weeknumber < WEEK(NOW()) + 1
+		 AND weeknumber < WEEK(NOW()) 
 		group by quarter
 		ORDER BY weekBeginSunday
 		;");
@@ -2747,7 +2747,7 @@ class ReportsController extends AppController {
 		WHERE 
 		 QUARTER = QUARTER(NOW())
 		 AND YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
-		 AND weeknumber < WEEK(NOW()) + 1
+		 AND weeknumber < WEEK(NOW()) 
 		 
 		;");
 		$tmp3 = $this->OfferType->query("SELECT 
@@ -2790,7 +2790,7 @@ class ReportsController extends AppController {
 		FROM reporting.weeklyScorecardSponsorship as data 
 		WHERE YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
 		 AND QUARTER = QUARTER(NOW())
-		 AND weeknumber < WEEK(NOW()) + 1
+		 AND weeknumber < WEEK(NOW()) 
 		group by quarter
 		ORDER BY weekBeginSunday
 		;");
@@ -2801,7 +2801,7 @@ class ReportsController extends AppController {
 		WHERE 
 		 QUARTER = QUARTER(NOW())
 		 AND YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
-		 AND weeknumber < WEEK(NOW()) + 1
+		 AND weeknumber < WEEK(NOW()) 
 		;
 		");
 		$tmp3 = $this->OfferType->query("SELECT 
@@ -2846,7 +2846,7 @@ class ReportsController extends AppController {
 		FROM reporting.weeklyScorecardBuyers as data 
 		WHERE YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
 		 AND QUARTER = QUARTER(NOW())
-		 AND weeknumber < WEEK(NOW()) + 1
+		 AND weeknumber < WEEK(NOW()) 
 		group by quarter, YEAR(weekBeginSunday + INTERVAL 7 DAY)
 		ORDER BY weekBeginSunday
 		;");
@@ -2857,7 +2857,7 @@ class ReportsController extends AppController {
 		WHERE 
 		 QUARTER = QUARTER(NOW())
 		 AND YEAR(weekBeginSunday + INTERVAL 7 DAY) = YEAR(NOW())
-		 AND weeknumber < WEEK(NOW()) + 1
+		 AND weeknumber < WEEK(NOW()) 
 		 
 		;");
 		$tmp3 = $this->OfferType->query("SELECT SUM(b.newBuyerActivityPrevious) as qtr_newBuyerActivityPrevious, SUM(b.returningBuyerActivityPrevious) as qtr_returningBuyerActivityPrevious,
