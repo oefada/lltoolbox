@@ -5,6 +5,7 @@
 	echo $form->input('packageTitle');
 	echo $form->input('shortBlurb');
 	echo $form->input('termsAndConditions', array('label' => 'Terms & Conditions'));
+    echo $form->input('taxesNotIncludedDesc', array('label' => 'Taxes Not Included Description', 'rows' => '2'));
 	echo $form->input('additionalDescription', array('label' => 'Additional Description'));
 	echo $form->input('packageIncludes', array('label' => 'Inclusions'));
 	echo $form->input('packageBlurb');
