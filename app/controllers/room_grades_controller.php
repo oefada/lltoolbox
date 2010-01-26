@@ -19,6 +19,9 @@ class RoomGradesController extends AppController {
    function index() {
         if (!empty($this->data)) {
             $this->data['RoomGrade']['clientId'] = $this->RoomGrade->clientId;
+            if (!isset($this->data['RoomGrade']['roomGradeId'])) {
+                $this->data['RoomGrade']['roomGradeId'] = null;
+            }
             if ($this->RoomGrade->save($this->data)) {
                 $this->Session->setFlash('Room Grade has been saved.');
             }
