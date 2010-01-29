@@ -586,13 +586,11 @@ class SchedulingMastersController extends AppController {
 	
 	function closeFixedPriceOffer($id = null) {
 		// NOTE:  there is a variation of this function inside web_service_tickets_controller to automatically stop offers if it hits the number of max num sales
-		
 	    if (!$id) {
 			$this->Session->setFlash(__('Invalid id for SchedulingMaster', true));
 			$this->set('closeModalbox', true);
 			die();
 		}
-		
 		$this->data = $this->SchedulingMaster->read(null, $id);
 		if($this->data['SchedulingMaster']['offerTypeId'] != 3 && $this->data['SchedulingMaster']['offerTypeId'] != 4 && $this->data['SchedulingMaster']['offerTypeId'] != 7) {
 		    $this->Session->setFlash(__('Cannot stop a non-fixed priced offer', true), 'default', array(), 'error');
@@ -601,22 +599,33 @@ class SchedulingMastersController extends AppController {
 		}
 
 		if(strtotime($this->data['SchedulingMaster']['startDate']) < time()) {
+            switch($this->data['Package']['siteId']) {
+                case 2:             //family
+                    $offerSiteField = 'OfferFamily';
+                    $offerSiteTable = 'offerFamily';
+                    break;
+                case 1:             //luxurylink
+                default:
+                    $offerSiteField = 'OfferLuxuryLink';
+                    $offerSiteTable = 'offerLuxuryLink';
+            }
+            
 		    $newEndDate = date('Y-m-d H:i:s');
             
             $schedulingInstanceId = $this->data['SchedulingInstance'][0]['schedulingInstanceId'];
-		    $offerLiveResults = $this->OfferLuxuryLink->query("SELECT OfferLuxuryLink.* FROM offerLuxuryLink as OfferLuxuryLink INNER JOIN  offer AS Offer USING(offerId) WHERE Offer.schedulingInstanceId = ".$schedulingInstanceId);
+		    $offerLiveResults = $this->$offerSiteField->query("SELECT {$offerSiteField}.* FROM {$offerSiteTable} as {$offerSiteField} INNER JOIN  offer AS Offer USING(offerId) WHERE Offer.schedulingInstanceId = ".$schedulingInstanceId);
 		    
             $schedulingMaster['SchedulingMaster']       = $this->data['SchedulingMaster'];
 		    $schedulingInstance['SchedulingInstance']   = $this->data['SchedulingInstance'][0];
-		    $offerLive['OfferLuxuryLink']                     = $offerLiveResults[0]['OfferLuxuryLink'];
+		    $offerLive[$offerSiteField]                     = $offerLiveResults[0][$offerSiteField];
 		    
 		    $schedulingMaster['SchedulingMaster']['endDate']        = $newEndDate;
 		    $schedulingInstance['SchedulingInstance']['endDate']    = $newEndDate;
-		    $offerLive['OfferLuxuryLink']['endDate']                      = $newEndDate;
+		    $offerLive[$offerSiteField]['endDate']                      = $newEndDate;
 
             if ($this->SchedulingMaster->save($schedulingMaster, false) &&
                 $this->SchedulingMaster->SchedulingInstance->save($schedulingInstance, false) &&
-                $this->OfferLuxuryLink->save($offerLive, false) )
+                $this->$offerSiteField->save($offerLive, false) )
             {
                     
                 $this->Session->setFlash(__('The offer has been stopped', true), 'default', array(), 'success');
