@@ -57,6 +57,12 @@ $this->set('clientId', $this->data['Client']['clientId']);
 		if ($loa['Loa']['loaMembershipTypeId'] == 3) {
 			echo $form->input('membershipFeeEstimated');	
 		}		
+
+		// RVC
+		$enable_rvc = ($loa['Loa']['loaMembershipTypeId'] ==5) ? true : false;
+		echo $form->input('retailValueBalance', array('disabled' => $enable_rvc));
+		echo $form->input('retailValueFee', array('disabled' => $enable_rvc));
+
 		echo $form->input('membershipFee', array('disabled' => $disabled));
 		echo $form->input('membershipBalance', array('disabled' => $disable_advanced_edit));
 		echo $form->input('totalRemitted', array('disabled' => $disable_advanced_edit));
@@ -210,4 +216,20 @@ $this->set('clientId', $this->data['Client']['clientId']);
 
 </div>
 </div>
+
+<script type="text/javascript">
+
+Event.observe('LoaLoaMembershipTypeId', 'change', toggle_fields);
+Event.observe(window, 'load', toggle_fields);
+function toggle_fields() {
+	if ($('LoaLoaMembershipTypeId').getValue() == 5) {
+		$('LoaRetailValueFee').enable();
+		$('LoaRetailValueBalance').enable();
+	} else {
+		$('LoaRetailValueFee').disable();
+		$('LoaRetailValueBalance').disable();
+	}
+}	
+
+</script>
 
