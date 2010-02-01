@@ -20,7 +20,7 @@ $this->set('clientId', $this->data['Client']['clientId']);
 		echo $form->input('loaId');
 		
 		//only Kristen, Daymora & Kat can edit loa level
-		if ($userDetails['username'] == 'dpen' || $userDetails['username'] == 'kferson' || $userDetails['username'] == 'kgathany') {
+		if (in_array($userDetails['username'], array('dpen','kferson','kgathany','mchoe'))) {
 			$disabled = false;
 		} else {
 			$disabled = true;
@@ -32,7 +32,7 @@ $this->set('clientId', $this->data['Client']['clientId']);
 
 		echo $form->input('clientId', array('type' => 'hidden'));
 		echo $form->input('loaLevelId', array('disabled' => $disabled, 'label' => 'LOA Level'));
-		echo $form->input('loaMembershipTypeId', array('label' => 'Membership Type', 'disabled' => true));
+		echo $form->input('loaMembershipTypeId', array('label' => 'Membership Type', 'disabled' => $disable_advanced_edit));
 		echo $form->input('numEmailInclusions');
 		echo $form->input('totalRevenue', array('disabled' => $disable_advanced_edit, 'label' => 'Total Revenue'));
 		echo $form->input('Loa.currencyId', array('label' => 'Item Currency'));
