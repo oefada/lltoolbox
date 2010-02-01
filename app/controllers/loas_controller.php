@@ -34,6 +34,10 @@ class LoasController extends AppController {
 			$this->data['Loa']['membershipBalance'] = $this->data['Loa']['membershipFee'];
 			$this->data['Loa']['membershipPackagesRemaining'] = $this->data['Loa']['membershipTotalPackages'];
 			$this->data['Loa']['numberPackagesRemaining'] = $this->data['Loa']['loaNumberPackages'];
+			if ($this->data['Loa']['loaMembershipTypeId'] == 5) {
+				// TEMP for booking credit
+				$this->data['Loa']['retailValueBalance'] = $this->data['Loa']['retailValueFee'];
+			}
 			$this->Loa->create();
 			if ($this->Loa->save($this->data)) {
 				$this->Session->setFlash(__('The Loa has been saved', true));

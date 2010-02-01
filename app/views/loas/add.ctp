@@ -18,6 +18,7 @@ $this->set('clientId', $this->data['Loa']['clientId']);
 		echo '<div id="_LoaMembershipFee" style="padding:0px;">' . $form->input('membershipFee') . '</div>';
 		echo '<div id="_LoaMembershipFeeEstimated" style="padding:0px;">' . $form->input('membershipFeeEstimated', array('label' => 'Estimated Fee')) . '</div>';
 		echo '<div id="_LoaMembershipTotalPackages" style="padding:0px;">' . $form->input('membershipTotalPackages') . '</div>';
+		echo '<div id="_LoaRetailValueFee" style="padding:0px;display:none;">' . $form->input('retailValueFee', array('label'=>'Retail Value Credit')) . '</div>';
 		echo $form->input('loaNumberPackages', array('label' => 'Commission-Free Packages'));
 		echo $form->input('numEmailInclusions');
 		echo $form->input('customerApprovalStatusId', array('label' => 'Client Approval Status'));
@@ -42,11 +43,17 @@ function toggle_fields() {
 		$('_LoaMembershipFee').hide();
 		$('_LoaMembershipTotalPackages').show();
 		$('_LoaMembershipFeeEstimated').show();
-		
+		$('_LoaRetailValueFee').hide();
+	} else if ($('LoaLoaMembershipTypeId').getValue() == 5) {
+		$('_LoaMembershipFeeEstimated').show();
+		$('_LoaRetailValueFee').show();
+		$('_LoaMembershipTotalPackages').hide();
+		$('_LoaMembershipFee').hide();
 	} else {
 		$('_LoaMembershipFee').show();
 		$('_LoaMembershipTotalPackages').hide();
 		$('_LoaMembershipFeeEstimated').hide();
+		$('_LoaRetailValueFee').hide();
 	}
 }	
 
