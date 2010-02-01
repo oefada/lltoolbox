@@ -145,10 +145,21 @@ $moneyCollected += $r[0]['moneyCollected'];
 		<td><?=$r[0]['country']?></td>
 		<td><?=$r[0]['state']?></td>
 		<td><?=$r[0]['city']?></td>
-		<td><?=$number->toPercentage($r[0]['percentMinBid'], 0)?></td>
-		<td><?=$number->toPercentage($r[0]['percentClose'], 0)?></td>
-		<td><?=$r['OfferLive']['retailValue']?></td>
-		<td><?=$r['OfferLive']['roomNights']?></td>
+        <?php switch ($r['SchedulingMaster']['siteId']) {
+                case 2: ?>
+                    <td><?=$number->toPercentage($r[0]['familyPercentMinBid'], 0)?></td>
+                    <td><?=$number->toPercentage($r[0]['familyPercentClose'], 0)?></td>
+                    <td><?=$r['OfferFamily']['familyRetailValue']?></td>
+                    <td><?=$r['OfferFamily']['familyRoomNights']?></td>
+                    <?php break;
+                case 1:
+                default: ?>
+                    <td><?=$number->toPercentage($r[0]['llPercentMinBid'], 0)?></td>
+                    <td><?=$number->toPercentage($r[0]['llPercentClose'], 0)?></td>
+                    <td><?=$r['OfferLuxuryLink']['llRetailValue']?></td>
+                    <td><?=$r['OfferLuxuryLink']['llRoomNights']?></td>
+                    <?php break;
+        } ?>
 		<td><?=$r['SchedulingInstance']['endDate']?></td>
 		<td><?=$r[0]['numBids']?></td>
 		<td><?=$r[0]['uniqueBids']?></td>
