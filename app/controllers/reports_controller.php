@@ -395,10 +395,14 @@ class ReportsController extends AppController {
             				(SELECT Country.countryName FROM country AS Country WHERE Country.countryId = Client.countryId) AS country,
             				(SELECT State.stateName FROM state AS State WHERE State.stateId = Client.stateId) AS state,
                         	(SELECT City.cityName FROM city AS City WHERE City.cityId = Client.cityId) AS city,
-                            (SchedulingMaster.openingBid / OfferLive.retailValue * 100) AS percentMinBid,
-                            (Ticket.billingPrice / OfferLive.retailValue * 100) AS percentClose,
-                        	OfferLive.retailValue,
-                        	OfferLive.roomNights,
+                            (SchedulingMaster.openingBid / OfferLuxuryLink.retailValue * 100) AS llPercentMinBid,
+                            (Ticket.billingPrice / OfferLuxuryLink.retailValue * 100) AS llPercentClose,
+                            (SchedulingMaster.openingBid / OfferFamily.retailValue * 100) AS familyPercentMinBid,
+                            (Ticket.billingPrice / OfferFamily.retailValue * 100) AS familyPercentClose,
+                        	OfferLuxuryLink.retailValue AS llRetailValue,
+                        	OfferLuxuryLink.roomNights AS llRoomNights,
+                            OfferFamily.retailValue AS familyRetailValue,
+                        	OfferFamily.roomNights AS familyRoomNights,
                         	SchedulingInstance.endDate,
 							SchedulingMaster.siteId,
 							GROUP_CONCAT(DISTINCT Ticket.ticketId) as ticketIds, 
@@ -412,7 +416,8 @@ class ReportsController extends AppController {
                     LEFT JOIN ticket AS Ticket ON (Ticket.offerId = Offer.offerId)
                     LEFT JOIN ticket AS Ticket2 ON (Ticket2.offerId = Offer.offerId AND Ticket2.ticketStatusId IN(3,4,5,6))
                     LEFT JOIN bid AS Bid ON (Bid.offerId = Offer.offerId)
-                    INNER JOIN offerLuxuryLink AS OfferLive ON (OfferLive.offerId = Offer.offerId)
+                    LEFT JOIN offerLuxuryLink AS OfferLuxuryLink ON (OfferLuxuryLink.offerId = Offer.offerId)
+                    LEFT JOIN offerFamily AS OfferFamily ON (OfferFamily.offerId = Offer.offerId)
                     INNER JOIN schedulingInstance AS SchedulingInstance ON (SchedulingInstance.schedulingInstanceId = Offer.schedulingInstanceId)
                     INNER JOIN schedulingMaster AS SchedulingMaster ON (SchedulingMaster.schedulingMasterId = SchedulingInstance.schedulingMasterId)
 					LEFT JOIN schedulingMasterTrackRel AS SchedulingMasterTrackRel ON (SchedulingMasterTrackRel.schedulingMasterId = SchedulingMaster.schedulingMasterId) 
