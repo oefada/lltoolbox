@@ -54,12 +54,13 @@ $this->set('clientId', $this->data['Client']['clientId']);
 		echo $form->input('loaNumberPackages', array('label' => 'Commission-Free Packages'));
 		echo $form->input('startDate');
 		echo $form->input('endDate');
-		if ($loa['Loa']['loaMembershipTypeId'] == 3) {
-			echo $form->input('membershipFeeEstimated');	
-		}		
+
+		// ESTIMATED
+		$enable_est = !$disable_advanced_edit && ($loa['Loa']['loaMembershipTypeId'] == 3) ? true : false;
+		echo $form->input('membershipFeeEstimated', array('disabled' => $enable_est));	
 
 		// RVC
-		$enable_rvc = ($loa['Loa']['loaMembershipTypeId'] ==5) ? true : false;
+		$enable_rvc = !$disable_advanced_edit && ($loa['Loa']['loaMembershipTypeId'] == 5) ? true : false;
 		echo $form->input('retailValueBalance', array('disabled' => $enable_rvc));
 		echo $form->input('retailValueFee', array('disabled' => $enable_rvc));
 
@@ -74,7 +75,7 @@ $this->set('clientId', $this->data['Client']['clientId']);
 		}
 		
 		echo $form->input('totalKept', array('disabled' => $disable_advanced_edit));
-		echo $form->input('totalCommission', array('disabled' => true));
+		echo $form->input('totalCommission', array('disabled' => $disable_advanced_edit));
 	?>
 	</fieldset>
 	<div class="buttonrow">
@@ -222,12 +223,23 @@ $this->set('clientId', $this->data['Client']['clientId']);
 Event.observe('LoaLoaMembershipTypeId', 'change', toggle_fields);
 Event.observe(window, 'load', toggle_fields);
 function toggle_fields() {
-	if ($('LoaLoaMembershipTypeId').getValue() == 5) {
-		$('LoaRetailValueFee').enable();
-		$('LoaRetailValueBalance').enable();
-	} else {
+	if ($('LoaLoaMembershipTypeId').getValue() == 3) {
+		// # packages
+		$('LoaMembershipTotalPackages').enable();
 		$('LoaRetailValueFee').disable();
 		$('LoaRetailValueBalance').disable();
+		$('LoaMembershipFeeEstimated').enable();
+	} else if ($('LoaLoaMembershipTypeId').getValue() == 5) {
+		// retail value credit
+		$('LoaMembershipTotalPackages').disable();
+		$('LoaRetailValueFee').enable();
+		$('LoaRetailValueBalance').enable();
+		$('LoaMembershipFeeEstimated').enable();
+	} else {
+		$('LoaMembershipTotalPackages').disable();
+		$('LoaRetailValueFee').disable();
+		$('LoaRetailValueBalance').disable();
+		$('LoaMembershipFeeEstimated').disable();
 	}
 }	
 
