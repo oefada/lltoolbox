@@ -467,7 +467,7 @@ class WebServiceTicketsController extends WebServicesController
 		$packageName 		= strip_tags($liveOfferData['offerName']);
 		$packageSubtitle	= $packageData['subtitle'];
 		
-		$packageIncludes 	= $liveOfferData['offerIncludes'];
+		$packageIncludes 	= $packageData['packageIncludes'];
 		$legalText			= $liveOfferData['termsAndConditions'];
 		$validityNote		= $liveOfferData['validityDisclaimer'];
 		$validityLeadIn     = $packageData['validityLeadInLine'];
