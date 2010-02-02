@@ -420,7 +420,15 @@ class WebServiceTicketsController extends WebServicesController
 		$this->Address->recursive = -1;
 		$this->ClientLoaPackageRel->recursive = 0;
 		$ticket = $this->Ticket->read(null, $ticketId);
-		$liveOffer	= $this->Ticket->query("select * from offerLuxuryLink as LiveOffer where offerId = " . $ticket['Ticket']['offerId'] . " limit 1");
+		switch ($ticket['Ticket']['siteId']) {
+			case 1:
+				$offerSite = 'offerLuxuryLink';
+				break;
+			case 2:
+				$offerSite = 'offerFamily';
+				break;
+		}
+		$liveOffer	= $this->Ticket->query("select * from $offerSite as LiveOffer where offerId = " . $ticket['Ticket']['offerId'] . " limit 1");
 	
 		// data arrays
 		// -------------------------------------------------------------------------------
@@ -481,7 +489,6 @@ class WebServiceTicketsController extends WebServicesController
 		
 		$checkoutHash		= md5($ticketId . $userId . $offerId . 'LL_L33T_KEY');
 		$checkoutKey		= base64_encode(serialize(array('ticketId' => $ticketId, 'userId' => $userId, 'offerId' => $offerId, 'zKey' => $checkoutHash)));
-		$checkoutLink		= "https://www.luxurylink.com/my/my_purchase.php?z=$checkoutKey";
 
 		if (stristr($_SERVER['HTTP_HOST'], 'dev')) {
 			$checkoutLink		= "https://alee-lldev.luxurylink.com/my/my_purchase.php?z=$checkoutKey";
@@ -530,15 +537,6 @@ class WebServiceTicketsController extends WebServicesController
 				$resArrivalDate = date('M d, Y', strtotime($resData[0]['reservation']['arrivalDate']));
 				$resDepartureDate = date('M d, Y', strtotime($resData[0]['reservation']['departureDate']));
 			}
-		}
-
-		// auction facilitator
-		// -------------------------------------------------------------------------------
-		$dateRequestLink = "https://www.luxurylink.com/my/my_date_request.php?tid=$ticketId";
-		if (stristr($_SERVER['HTTP_HOST'], 'dev')) {
-			$dateRequestLink = "https://alee-lldev.luxurylink.com/my/my_date_request.php?tid=$ticketId";
-		} elseif (stristr($_SERVER['HTTP_HOST'], 'stage')) {
-			$dateRequestLink = "https://stage-luxurylink.luxurylink.com/my/my_date_request.php?tid=$ticketId";
 		}
 
 		// for MasterCard sponsor only
@@ -633,6 +631,17 @@ class WebServiceTicketsController extends WebServicesController
 				$siteHeader = '990000';
 				$sitePhone  = '(888) 297-3299';
 				$headerLogo = 'http://www.luxurylink.com/images/ll_logo_2009_2.gif';
+				$checkoutLink		= "https://www.luxurylink.com/my/my_purchase.php?z=$checkoutKey";
+
+				// auction facilitator
+				// -------------------------------------------------------------------------------
+				$dateRequestLink = "https://www.luxurylink.com/my/my_date_request.php?tid=$ticketId";
+				if (stristr($_SERVER['HTTP_HOST'], 'dev')) {
+					$dateRequestLink = "https://alee-lldev.luxurylink.com/my/my_date_request.php?tid=$ticketId";
+				} elseif (stristr($_SERVER['HTTP_HOST'], 'stage')) {
+					$dateRequestLink = "https://stage-luxurylink.luxurylink.com/my/my_date_request.php?tid=$ticketId";
+				}
+
 				break;
 			case 2:
 				$siteName = 'Family Getaway';
@@ -642,11 +651,20 @@ class WebServiceTicketsController extends WebServicesController
 				$siteHeader = 'DE6F0A';
 				$sitePhone  = '(877) 372-5877';
 				$headerLogo = 'http://www.luxurylink.com/images/family/logo.gif';
+				$checkoutLink		= "https://www.familygetaway.com/my/my_purchase.php?z=$checkoutKey";
+
+				// auction facilitator
+				// -------------------------------------------------------------------------------
+				$dateRequestLink = "https://www.familygetaway.com/my/my_date_request.php?tid=$ticketId";
+				if (stristr($_SERVER['HTTP_HOST'], 'dev')) {
+					$dateRequestLink = "https://alee-familydev.luxurylink.com/my/my_date_request.php?tid=$ticketId";
+				} elseif (stristr($_SERVER['HTTP_HOST'], 'stage')) {
+					$dateRequestLink = "https://stage-family.luxurylink.com/my/my_date_request.php?tid=$ticketId";
+				}
+
 				break;
 		}
 		$siteId = $ticketData['siteId'];
-
-		// TODO:  change email address when live with new domain
 
 		// fetch template with the vars above
 		// -------------------------------------------------------------------------------
@@ -1216,9 +1234,13 @@ class WebServiceTicketsController extends WebServicesController
 		switch ($ticket['Ticket']['siteId']) {
 			case 1:
 				$siteName = 'Luxury Link';
+				$url = 'http://www.luxurylink.com';
+				$emailFrom = $emailReplyTo = 'referafriend@luxurylink.com';
 				break;
 			case 2:
 				$siteName = 'Family';
+				$url = 'http://www.familygetaway.com';
+				$emailFrom = $emailReplyTo = 'referafriend@familygetaway.com';
 				break;
 			default:
 				$siteName = '';
@@ -1231,13 +1253,11 @@ class WebServiceTicketsController extends WebServicesController
 			if (!empty($ticketReferFriend)) {
 				$rafData = $this->Promo->getRafData($promoGcCofData['Promo']['promoCodeId']);
 				$emailTo = $rafData['User']['email'];
-				$emailFrom = $emailReplyTo = 'referafriend@luxurylink.com';
 				$emailCc = $emailBcc = '';
 				$emailSubject = "Your Friend Has Made a $siteName Purchase";
 				$ppvNoticeTypeId = 21;
 				$ppvInitials = 'AUTO_RAF';
 				$ticketId = $ticket['Ticket']['ticketId'];
-				$url = 'http://www.luxurylink.com';
 				ob_start();
 				include('../vendors/email_msgs/notifications/21_raf_referrer_purchase_notification.html');
 				$emailBody = ob_get_clean();
