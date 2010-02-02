@@ -3,6 +3,7 @@ class ReservationsController extends AppController {
 
 	var $name = 'Reservations';
 	var $helpers = array('Html', 'Form');
+	var $uses = array('Reservation','TrackDetail','Ticket','Loa');
 
 	function index() {
 		$this->Reservation->recursive = 0;
@@ -21,6 +22,12 @@ class ReservationsController extends AppController {
 		if (!empty($this->data)) {
 			$this->Reservation->create();
 			if ($this->Reservation->save($this->data)) {
+				
+				// temp reverse and readd loa for retail value
+				if ($this->data['Reservation']['retailValue'] > 0) {
+					$this->TrackDetail->adjustForRetailValueTmp($this->data['Reservation']['ticketId'], $this->data['Reservation']['retailValue']);
+				}
+
 				$this->Session->setFlash(__('The Reservation has been added', true));
 				$this->redirect('/tickets/'. $this->data['Reservation']['ticketId']  .'/ppvNotices/add/1');
 			} else {
@@ -33,6 +40,7 @@ class ReservationsController extends AppController {
 			$this->redirect(array('controller' => 'tickets', 'action'=>'index'));
 		} 
 		$this->data['Reservation']['ticketId'] = $ticketId;
+		$this->set('track', $this->TrackDetail->getTrackRecord($ticketId));
 	}
 
 	function edit($id = null) {
@@ -42,6 +50,12 @@ class ReservationsController extends AppController {
 		}
 		if (!empty($this->data)) {
 			if ($this->Reservation->save($this->data)) {
+
+				// temp reverse and readd loa for retail value
+				if ($this->data['Reservation']['retailValue'] > 0) {
+					$this->TrackDetail->adjustForRetailValueTmp($this->data['Reservation']['ticketId'], $this->data['Reservation']['retailValue']);
+				}
+
 				$this->Session->setFlash(__('The Reservation has been updated', true));
 				$this->redirect('/tickets/'. $this->data['Reservation']['ticketId']  .'/ppvNotices/add/1');
 			} else {
@@ -50,6 +64,7 @@ class ReservationsController extends AppController {
 		}
 		if (empty($this->data)) {
 			$this->data = $this->Reservation->read(null, $id);
+			$this->set('track', $this->TrackDetail->getTrackRecord($ticketId));
 		}
 	}
 

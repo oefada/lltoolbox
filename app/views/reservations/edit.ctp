@@ -51,6 +51,11 @@
         }
     );
 	</script>
+	<?php 
+	if ($this->data['Reservation']['retailValue']) {
+		echo $form->input('retailValue');
+	}
+	?>
 	</fieldset>
 <?php echo $form->end('Submit');?>
 </div>

@@ -75,6 +75,23 @@ class TrackDetail extends AppModel {
 		}
 	}
 	
+	function adjustForRetailValueTmp($ticketId, $retailValue) {
+		$t = $this->query("SELECT * FROM trackDetail TrackDetail INNER JOIN track Track USING (trackId) WHERE ticketId = $ticketId AND expirationCriteriaId = 5");
+		$t = $t[0];
+		$t['Track']['trackId'] = $t['TrackDetail']['trackId'];
+
+		$new_t = $this->getNewTrackDetailRecord($t['Track'], $ticketId);
+
+		if ($this->reverseBalances($t['TrackDetail']['trackDetailId'])) {
+			$new_t = $this->getNewTrackDetailRecord($t['Track'], $ticketId);
+			if ($this->save($new_t)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	function getNewTrackDetailRecord($track, $ticketId) {		
 		// set some data vars
 		// ---------------------------------------------------------
@@ -86,10 +103,11 @@ class TrackDetail extends AppModel {
 		$allocated_amount = (($ticket_and_rev['clpr']['percentOfRevenue'] / 100) * $ticket_amount);
 		$result = $this->query("select p.reservePrice from ticket t inner join package p using (packageId) where t.ticketId = $ticketId");
 		$reserve_amount = (!empty($result) && isset($result[0]['p']['reservePrice']) && ($result[0]['p']['reservePrice'] > 0)) ? $result[0]['p']['reservePrice'] : false;
+
 		if ($reserve_amount && ($allocated_amount < $reserve_amount)) {
 			$allocated_amount = $reserve_amount;
 		}
-
+		
 		// set new track information
 		// ---------------------------------------------------------
 		$new_track_detail 							= array();
@@ -98,6 +116,19 @@ class TrackDetail extends AppModel {
 		$new_track_detail['ticketAmount']			= $ticket_amount;
 		$new_track_detail['allocatedAmount']		= $allocated_amount;
 		$new_track_detail['initials']				= isset($_SESSION['Auth']['AdminUser']['mailnickname']) ? $_SESSION['Auth']['AdminUser']['mailnickname'] : 'N/A';
+		
+		// for retail value - this will be deprecated once SOA is in place
+		if ($track['expirationCriteriaId'] == 5) {
+			$p = new Package();
+			$p->recursive = -1;
+			$package = $p->read(null, $ticket_and_rev['clpr']['packageId']);
+			$new_track_detail['allocatedAmount'] = $package['Package']['approvedRetailPrice'];
+
+			$r = $this->query("SELECT retailValue FROM reservation AS Reservation WHERE ticketId = $ticketId ORDER BY reservationId DESC LIMIT 1");
+			if ($r[0]['Reservation']['retailValue'] > 0) {
+				$new_track_detail['allocatedAmount'] = $r[0]['Reservation']['retailValue'];
+			}
+		}
 		
 		$is_y_iteration = false;
 
@@ -246,6 +277,11 @@ class TrackDetail extends AppModel {
 		if ($applyToMembershipBal) {
 			$loa['Loa']['membershipBalance'] += $trackDetail['TrackDetail']['amountKept'];
 		}
+		
+		// for RETAIL VALUE CREDIT -- this entire file is deprecated when SOA is in place
+		if ($track['expirationCriteriaId'] == 5) {
+			$loa['Loa']['retailValueBalance'] += $allocated_amount;
+		}
 
 		if (!$loaModel->save($loa, array('callbacks' => false))) {
 			$errors++;	
@@ -284,6 +320,11 @@ class TrackDetail extends AppModel {
 		$applyToMembershipBal = (($track['revenueModelId'] == 3 || $track['revenueModelId'] == 4) && ($this->data['TrackDetail']['iteration'] == $track['y'])) ? false : $applyToMembershipBal;
 		if ($applyToMembershipBal) {
 			$loa['Loa']['membershipBalance'] -= $this->data['TrackDetail']['amountKept'];
+		}
+
+		// for RETAIL VALUE CREDIT -- this entire file is deprecated when SOA is in place
+		if ($track['expirationCriteriaId'] == 5) {
+			$loa['Loa']['retailValueBalance'] -= $allocated_amount;
 		}
 
 		$loaModel->save($loa, array('callbacks' => false));

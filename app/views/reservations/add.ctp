@@ -48,7 +48,11 @@
         }
     );
 	</script>
-
+	<?php 
+	if ($track[0]['expirationCriteriaId'] == 5) {
+		echo $form->input('retailValue');
+	}
+	?>
 	</fieldset>
 <?php echo $form->end('Submit');?>
 </div>

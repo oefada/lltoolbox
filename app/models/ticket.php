@@ -274,8 +274,7 @@ class Ticket extends AppModel {
 		@mail('devmail@luxurylink.com',"SCHEDULING FLAGS DEBUG: $title", print_r($data, true));
 	}
 
-	function __runTakeDownLoaMemBal($packageId, $ticketId, $ticketAmount) {
-		// check to make sure LOA balance is fulfilled 
+	function getExpirationCriteria($ticketId) {
 		$check_exp_crit = "SELECT track.expirationCriteriaId FROM ticket INNER JOIN offer USING(offerId) 
 						   INNER JOIN schedulingInstance USING(schedulingInstanceId) 
 						   INNER JOIN schedulingMaster USING(schedulingMasterId) 
@@ -284,9 +283,43 @@ class Ticket extends AppModel {
 						   WHERE ticket.ticketId = $ticketId";
 
 		$result = $this->query($check_exp_crit);
-		if ($result[0]['track']['expirationCriteriaId'] != 1) {
+		return $result[0]['track']['expirationCriteriaId'];
+	}
+
+	function __runTakeDownRetailValue($clientId, $offerRetailValue, $ticketId) {
+		// THIS ONLY RUNS if THE TRACK IS expirationCriteriaId = 5!!!
+		// TODO:  this is temporary before SOA is in place
+
+		if (!$offerRetailValue || !$clientId) {
 			return false;
 		}
+
+		$sql = "SELECT loa.retailValueBalance, package.packageId, package.approvedRetailPrice, GROUP_CONCAT(schedulingMasterId) AS smids FROM loa 
+				INNER JOIN track USING (loaId) 
+				INNER JOIN schedulingMasterTrackRel USING (trackId) 
+				INNER JOIN schedulingMaster USING (schedulingMasterid) 
+				INNER JOIN package using (packageId) 
+				WHERE track.expirationCriteriaId = 5 AND loa.clientId = $clientId GROUP BY packageId;";
+		$result = $this->query($sql);
+	
+		$pids = array();
+		foreach ($result as $k => $v) {
+			if ($v['loa']['retailValueBalance'] - $offerRetailValue - $v['package']['approvedRetailPrice'] <= 0) {
+				// these packages will cause loa.retailValueBalance to be less or equal to 0
+				// kill them packages!
+				if ($this->__runTakeDown($v[0]['smids'])) {
+					$pids[] = $v['package']['packageId'];
+				}
+			}
+		}
+		if (!empty($pids)) {
+			$this->insertMessageQueuePackage($ticketId, 'RETAIL_VALUE', $pids);
+		}
+	}
+
+	function __runTakeDownLoaMemBal($packageId, $ticketId, $ticketAmount) {
+		// check to make sure LOA balance is fulfilled 
+		// THIS ONLY RUNS if THE TRACK IS expirationCriteriaId = 1!!!
 
 		$loas = $this->query("SELECT clpr.*, loa.*, track.* FROM clientLoaPackageRel clpr 
 							INNER JOIN loa ON clpr.loaId = loa.loaId 
@@ -295,7 +328,6 @@ class Ticket extends AppModel {
 							INNER JOIN track ON smtr.trackId = track.trackId AND track.expirationCriteriaId = 1 
 							WHERE clpr.packageId = $packageId 
 							GROUP BY clpr.loaId");
-
 
 		foreach ($loas as $loa) {
 
@@ -342,19 +374,8 @@ class Ticket extends AppModel {
 
 	function __runTakeDownLoaNumPackages($packageId, $ticketId) {
 		// check to make sure LOA membership num packages is fulfilled
+		// THIS ONLY RUNS if THE TRACK IS expirationCriteriaId = 4!!!
 	
-		$check_exp_crit = "SELECT track.expirationCriteriaId FROM ticket INNER JOIN offer USING(offerId) 
-						   INNER JOIN schedulingInstance USING(schedulingInstanceId) 
-						   INNER JOIN schedulingMaster USING(schedulingMasterId) 
-						   INNER JOIN schedulingMasterTrackRel USING(schedulingMasterId) 
-						   INNER JOIN track USING (trackId) 
-						   WHERE ticket.ticketId = $ticketId";
-
-		$result = $this->query($check_exp_crit);
-		if ($result[0]['track']['expirationCriteriaId'] != 4) {
-			return false;
-		}
-
 		$loas = $this->query("SELECT clpr.*, loa.*, track.* FROM clientLoaPackageRel clpr 
 							INNER JOIN loa ON clpr.loaId = loa.loaId 
 							INNER JOIN schedulingMaster sm ON clpr.packageId = sm.packageId 
@@ -544,7 +565,7 @@ class Ticket extends AppModel {
 		return ($this->getAffectedRows()) ? 1 : 0;
 	}
 
-	function insertMessageQueuePackage($ticketId, $type) {
+	function insertMessageQueuePackage($ticketId, $type, $extraData = null) {
 		$sql = "select clpr.loaId, clpr.packageId, clpr.clientId, c.name, c.managerUsername, p.packageName from ticket t ";
 		$sql.= "inner join clientLoaPackageRel clpr on t.packageId = clpr.packageId ";
 		$sql.= "inner join package p on p.packageId = clpr.packageId ";
@@ -605,6 +626,15 @@ class Ticket extends AppModel {
 					$model = 'Loa';
 					$modelId = $loaId;
 					break;	
+				case 'RETAIL_VALUE':
+					$title = "Retail Value Credit Balance for LOA [$clientName]";
+					$model = 'Loa';
+					$modelId = $loaId;
+					$description = "$clientName is nearing a 0 balance of Retail Value Credit for LOA ID (<a href='/loas/edit/$loaId'>$loaId</a>).  To prevent overselling, all live and future scheduled offers for the following package(s) have been cancelled: \n\n<br /><br />";
+					foreach ($extraData as $pId) {
+						$description.= "Package: <a href='/clients/$clientId/packages/edit/$pId'>$pId</a>\n<br />";
+					}
+					
 			}	
 			
 			$description = Sanitize::Escape($description);
