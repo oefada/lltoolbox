@@ -656,14 +656,14 @@ class WebServiceTicketsController extends WebServicesController
 				// send out res confirmation
 				include('../vendors/email_msgs/ppv/conf_ppv.html');
 				$emailSubject = "Your $siteName Booking is Confirmed - $clientNameP";
-				$emailFrom = ($isAuction) ? "Luxurylink.com<resconfirm@$siteEmail>" : "LuxuryLink.com<reservations@$siteEmail>";
+				$emailFrom = ($isAuction) ? "$siteDisplay<resconfirm@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
 				$emailReplyTo = ($isAuction) ? "resconfirm@$siteEmail" : "reservations@$siteEmail";
 				break;
 			case 2:
 				// send out res request
 				include('../vendors/email_msgs/ppv/res_ppv.html');
 				$emailSubject = "Please Confirm This $siteName Booking - $userFirstName $userLastName";
-				$emailFrom = ($isAuction) ? "Luxurylink.com<resrequests@$siteEmail>" : "LuxuryLink.com<reservations@$siteEmail>";
+				$emailFrom = ($isAuction) ? "$siteDisplay<resrequests@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
 				$emailReplyTo = ($isAuction) ? "resrequests@$siteEmail" : "reservations@$siteEmail";
 				$userEmail = $clientPrimaryEmail;
 				$emailCc = $clientCcEmail;
@@ -671,7 +671,7 @@ class WebServiceTicketsController extends WebServicesController
 			case 4: 
 				include('../vendors/email_msgs/ppv/client_ppv.html');
 				$emailSubject = "$siteName Auction Winner Notification - $userFirstName $userLastName";
-				$emailFrom = "LuxuryLink.com<auctions@$siteEmail>";
+				$emailFrom = "$siteDisplay<auctions@$siteEmail>";
 				$emailReplyTo = "auctions@$siteEmail";
 				$userEmail = $clientPrimaryEmail;
 				$emailCc = $clientCcEmail;
@@ -679,19 +679,19 @@ class WebServiceTicketsController extends WebServicesController
 			case 5:
 				include('../vendors/email_msgs/notifications/winner_notification.html');
 				$emailSubject = "$siteName Auction Winner - $clientNameP";
-				$emailFrom = "LuxuryLink.com<auction@$siteEmail>";
+				$emailFrom = "$siteDisplay<auction@$siteEmail>";
 				$emailReplyTo = "auction@$siteEmail";
 				break;
 			case 9:
 				include('../vendors/email_msgs/fixed_price/msg_fixedprice.html');
 				$emailSubject = "$siteName - Your Request Has Been Received";
-				$emailFrom = "LuxuryLink.com<exclusives@$siteEmail>";
+				$emailFrom = "$siteDisplay<exclusives@$siteEmail>";
 				$emailReplyTo = "exclusives@$siteEmail";
 				break;
 			case 10:
 				include('../vendors/email_msgs/fixed_price/msg_client_fixedprice.html');
 				$emailSubject = "An Exclusive $siteName Booking Request Has Come In!";
-				$emailFrom = "LuxuryLink.com<exclusives@$siteEmail>";
+				$emailFrom = "$siteDisplay<exclusives@$siteEmail>";
 				$emailReplyTo = "exclusives@$siteEmail";
 				$userEmail = $clientPrimaryEmail;
 				$emailCc = $clientCcEmail;
@@ -699,62 +699,62 @@ class WebServiceTicketsController extends WebServicesController
 			case 11:
 				include('../vendors/email_msgs/fixed_price/msg_internal_fixedprice.html');
 				$emailSubject = "A $siteName $fpRequestType Request Has Come In!";
-				$emailFrom = "LuxuryLink.com<exclusives@$siteEmail>";
+				$emailFrom = "$siteDisplay<exclusives@$siteEmail>";
 				$emailReplyTo = "exclusives@$siteEmail";
 				$userEmail = "exclusives@$siteEmail";
 				break;
 			case 12:
 				include('../vendors/email_msgs/fixed_price/notification_acknowledgement.html');
 				$emailSubject = "Your $siteName Travel Booking - $clientNameP";
-				$emailFrom = ($isAuction) ? "Luxurylink.com<auction@$siteEmail>" : "LuxuryLink.com<exclusives@$siteEmail>";
+				$emailFrom = ($isAuction) ? "$siteDisplay<auction@$siteEmail>" : "$siteDisplay<exclusives@$siteEmail>";
 				$emailReplyTo = ($isAuction) ? "auction@$siteEmail" : "exclusives@$siteEmail";
 				break;
 			case 13:
 				include('../vendors/email_msgs/fixed_price/notification_dates_available.html');
 				$emailSubject = "Your $siteName Travel Booking - $clientNameP";
-				$emailFrom = ($isAuction) ? "Luxurylink.com<auction@$siteEmail>" : "LuxuryLink.com<exclusives@$siteEmail>";
+				$emailFrom = ($isAuction) ? "$siteDisplay<auction@$siteEmail>" : "$siteDisplay<exclusives@$siteEmail>";
 				$emailReplyTo = ($isAuction) ? "auction@$siteEmail" : "exclusives@$siteEmail";
 				break;
 			case 14:
 				include('../vendors/email_msgs/fixed_price/notification_dates_not_available.html');
 				$emailSubject = "Your $siteName Travel Booking - $clientNameP";
-				$emailFrom = ($isAuction) ? "Luxurylink.com<auction@$siteEmail>" : "LuxuryLink.com<exclusives@$siteEmail>";
+				$emailFrom = ($isAuction) ? "$siteDisplay<auction@$siteEmail>" : "$siteDisplay<exclusives@$siteEmail>";
 				$emailReplyTo = ($isAuction) ? "auction@$siteEmail" : "exclusives@$siteEmail";
 				break;
 			case 15:
 				include('../vendors/email_msgs/notifications/chase_money_notification.html');
 				$emailSubject = "$siteName Auction Winner - $clientNameP";
-				$emailFrom = "LuxuryLink.com<auction@$siteEmail>";
+				$emailFrom = "$siteDisplay<auction@$siteEmail>";
 				$emailReplyTo = "auction@$siteEmail";
 				break;
 			case 16:
 				include('../vendors/email_msgs/notifications/first_offense_flake.html');
 				$emailSubject = "$siteName Auction Winner - $clientNameP";
-				$emailFrom = "LuxuryLink.com<auction@$siteEmail>";
+				$emailFrom = "$siteDisplay<auction@$siteEmail>";
 				$emailReplyTo = "auction@$siteEmail";
 				break;
 			case 17:
 				include('../vendors/email_msgs/notifications/second_offense_flake.html');
 				$emailSubject = "$siteName Auction Winner - $clientNameP";
-				$emailFrom = "LuxuryLink.com<auction@$siteEmail>";
+				$emailFrom = "$siteDisplay<auction@$siteEmail>";
 				$emailReplyTo = "auction@$siteEmail";
 				break;
 			case 18:
 				include('../vendors/email_msgs/notifications/18_auction_winner_ppv.html');
 				$emailSubject = "$siteName Auction Winner Receipt - $clientNameP";
-				$emailFrom = "LuxuryLink.com<auction@$siteEmail>";
+				$emailFrom = "$siteDisplay<auction@$siteEmail>";
 				$emailReplyTo = "auction@$siteEmail";
 				break;
 			case 19:
 				include('../vendors/email_msgs/notifications/19_auction_winner_declined_expired.html');
 				$emailSubject = "$siteName Auction Winner Notification - $clientNameP";
-				$emailFrom = "LuxuryLink.com<auction@$siteEmail>";
+				$emailFrom = "$siteDisplay<auction@$siteEmail>";
 				$emailReplyTo = "auction@$siteEmail";
 				break;
 			case 20:
 				include('../vendors/email_msgs/notifications/20_auction_your_dates_received.html');
 				$emailSubject = "Your $siteName Request has been Received - $clientNameP";
-				$emailFrom = ($isAuction) ? "Luxurylink.com<auction@$siteEmail>" : "LuxuryLink.com<exclusives@$siteEmail>";
+				$emailFrom = ($isAuction) ? "$siteDisplay<auction@$siteEmail>" : "$siteDisplay<exclusives@$siteEmail>";
 				$emailReplyTo = ($isAuction) ? "auction@$siteEmail" : "exclusives@$siteEmail";
 				break;
 			default:
