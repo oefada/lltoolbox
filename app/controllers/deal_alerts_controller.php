@@ -37,44 +37,67 @@ class DealAlertsController extends AppController {
 			
 			//this query just looks in live offer for any new auctions/buy nows
 			//the rules state that anything that hasn't been up for the last 30 days is considered 'new'
+
+			switch ($sub['DealAlert']['siteId']) {
+				case 1:
+					$offerSite = 'offerLuxuryLink';
+					$siteUrl = 'http://www.luxurylink.com';
+					$siteId = 1;
+					break;
+				case 2:
+					$offerSite = 'offerFamily';
+					$siteUrl = 'http://www.familygetaway.com';
+					$siteId = 2;
+					break;
+				default:
+					continue;
+			}
+
 			$tmpNew = $this->DealAlert->query("SELECT DISTINCT(OfferLive.packageId), Client.name, OfferLive.shortBlurb,
 													Client.clientId,
 													oldProductId,
 													seoName,
-													Client.locationDisplay
-														FROM offerLuxuryLink AS OfferLive 
-														INNER JOIN clientLoaPackageRel cl USING(packageId)
-														INNER JOIN client AS Client ON(Client.clientId = $clientId)
-													LEFT JOIN offerLuxuryLink AS OfferLivePrev ON (OfferLivePrev.startDate <= ('{$sub['DealAlert']['lastActionDate']}' - INTERVAL 5 MINUTE) AND OfferLivePrev.endDate >= ('{$sub['DealAlert']['lastActionDate']}' - INTERVAL 30 DAY) AND OfferLivePrev.endDate >= '{$sub['DealAlert']['subscribeDate']}' AND OfferLivePrev.packageId = OfferLive.packageId AND OfferLivePrev.isMystery = 0)
+					 								Client.locationDisplay
+													FROM $offerSite AS OfferLive 
+													INNER JOIN clientLoaPackageRel cl USING(packageId)
+													INNER JOIN client AS Client ON(Client.clientId = $clientId)
+													LEFT JOIN $offerSite AS OfferLivePrev ON (OfferLivePrev.startDate <= ('{$sub['DealAlert']['lastActionDate']}' - INTERVAL 5 MINUTE) 
+														AND OfferLivePrev.endDate >= ('{$sub['DealAlert']['lastActionDate']}' - INTERVAL 30 DAY) 
+														AND OfferLivePrev.endDate >= '{$sub['DealAlert']['subscribeDate']}' 
+														AND OfferLivePrev.packageId = OfferLive.packageId 
+														AND OfferLivePrev.isMystery = 0) 
 													WHERE cl.clientId = $clientId
-													AND OfferLivePrev.offerId IS NULL AND OfferLive.startDate BETWEEN ('{$sub['DealAlert']['lastActionDate']}' - INTERVAL 5 MINUTE) AND '{$sub['DealAlert']['lastActionDate']}' AND OfferLive.isMystery = 0
+														AND OfferLivePrev.offerId IS NULL 
+														AND OfferLive.startDate BETWEEN ('{$sub['DealAlert']['lastActionDate']}' - INTERVAL 5 MINUTE) 
+														AND '{$sub['DealAlert']['lastActionDate']}' 
+														AND OfferLive.isMystery = 0
 													GROUP BY OfferLive.packageId");
-
-				//create a nice array of all new packages
-				$tmp = array();
-				foreach ($tmpNew as $pkg) {
-					$tmp[] = array('packageId' => $pkg['OfferLive']['packageId'],
-									'clientName' => $pkg['Client']['name'],
-									'clientUrl' => "http://www.luxurylink.com/luxury-hotels/".$pkg['Client']['seoName']."?clid=".$pkg['Client']['clientId'],
-									'shortBlurb' => $pkg['OfferLive']['shortBlurb'],
-									'oldProductId' => $pkg['Client']['oldProductId'],
-									'seoName' => $pkg['Client']['seoName'],
-									'clientId' => $pkg['Client']['clientId'],
-									'locationDisplay' => $pkg['CLient']['locationDisplay']);
-				}
+				
+			//create a nice array of all new packages
+			$tmp = array();
+			foreach ($tmpNew as $pkg) {
+				$tmp[] = array('packageId' => $pkg['OfferLive']['packageId'],
+								'clientName' => $pkg['Client']['name'],
+								'clientUrl' => "$siteUrl/luxury-hotels/".$pkg['Client']['seoName']."?clid=".$pkg['Client']['clientId'],
+								'shortBlurb' => $pkg['OfferLive']['shortBlurb'],
+								'oldProductId' => $pkg['Client']['oldProductId'],
+								'seoName' => $pkg['Client']['seoName'],
+								'clientId' => $pkg['Client']['clientId'],
+								'siteId' => $siteId, 
+								'locationDisplay' => $pkg['CLient']['locationDisplay']);
+			}
 							
 			//if any new packages were found, it means we need to send the user an email
 			//store all of this in an easy array
 			if (!empty($tmp)) {
-			$emailsToSend[$sub['DealAlert']['userId']] = array('email' => $sub['User']['email'],
+				$this->DealAlert->query("UPDATE dealAlert SET lastActionDate = '$date', lastAction = 'EMAIL' WHERE dealAlertId = {$sub['DealAlert']['dealAlertId']} LIMIT 1");
+				$emailsToSend[$sub['DealAlert']['userId']] = array('email' => $sub['User']['email'],
 																	'firstName' => $sub['User']['firstName'],
 																	'lastName' => $sub['User']['lastName'],
 																	'userId' => $sub['User']['userId'],
 																	'packages' => array_merge((array)$emailsToSend[$sub['DealAlert']['userId']]['packages'], (array)$tmp));
 			}
 		}
-
-		$subs = $this->DealAlert->query("UPDATE dealAlert SET lastActionDate = '$date', lastAction = 'EMAIL'");
 		
 		//loop through all users and for each new package we send them an email with package details
 		foreach ($emailsToSend as $k => $v) {
@@ -106,18 +129,47 @@ class DealAlertsController extends AppController {
 			$package['lastName'] = $lastName;
 		}
 		
+		switch ($package['siteId']) {
+			case 1:
+				$template = 'deal_alert.html';
+				$emailFrom = "Luxurylink.com<no-reply@luxurylink.com>";
+				$emailReplyTo = "no-reply@luxurylink.com";
+
+				$siteName = 'Luxury Link';
+				$siteDisplay = 'LuxuryLink.com';
+				$siteEmail = 'luxurylink.com';
+				$siteUrl = 'http://www.luxurylink.com/';
+				$siteHeader = '990000';
+				$sitePhone  = '(888) 297-3299';
+				$headerLogo = 'http://www.luxurylink.com/images/ll_logo_2009_2.gif';
+				break;
+			case 2:
+				$template = 'deal_alert_family.html';
+				$emailFrom = "FamilyGetaway.com<no-reply@familygetaway.com>";
+				$emailReplyTo = "alerts@familygetaway.com";
+				
+				$siteName = 'Family Getaway';
+				$siteDisplay = 'FamilyGetaway.com';
+				$siteEmail = 'familygetaway.com';
+				$siteUrl = 'http://www.familygetaway.com/';
+				$siteHeader = 'DE6F0A';
+				$sitePhone  = '(877) 372-5877';
+				$headerLogo = 'http://www.luxurylink.com/images/family/logo.gif';
+				break;
+			default:
+				return false;
+		}
+
 		$package['userId'] = $userId;
 		// fetch template with the vars above
 		// -------------------------------------------------------------------------------
 		ob_start();
-		include(APP_PATH.'vendors/email_msgs/deal_alert.html');
+		include(APP_PATH . "vendors/email_msgs/$template");
 		$emailBody = ob_get_clean();								//output buffering trick
 		
 		
 		//setup and send the email...
 		$emailSubject = $package['clientName']." has a New Package";
-		$emailFrom = "Luxurylink.com<no-reply@luxurylink.com>";
-		$emailReplyTo = "no-reply@luxurylink.com";
 		$emailTo = $email;
 		
 		$emailHeaders = "From: $emailFrom\r\n";
@@ -125,6 +177,7 @@ class DealAlertsController extends AppController {
     	$emailHeaders.= "Content-type: text/html\r\n";
 		
 		@mail($emailTo, $emailSubject, $emailBody, $emailHeaders);
+		@mail('alee@luxurylink.com', $emailSubject, $emailBody, $emailHeaders); // TODO REMOVE ONLY A TEST FOR DEBUG
 	}
 }
 ?>
