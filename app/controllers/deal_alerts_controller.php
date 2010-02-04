@@ -90,7 +90,6 @@ class DealAlertsController extends AppController {
 			//if any new packages were found, it means we need to send the user an email
 			//store all of this in an easy array
 			if (!empty($tmp)) {
-				$this->DealAlert->query("UPDATE dealAlert SET lastActionDate = '$date', lastAction = 'EMAIL' WHERE dealAlertId = {$sub['DealAlert']['dealAlertId']} LIMIT 1");
 				$emailsToSend[$sub['DealAlert']['userId']] = array('email' => $sub['User']['email'],
 																	'firstName' => $sub['User']['firstName'],
 																	'lastName' => $sub['User']['lastName'],
@@ -99,6 +98,8 @@ class DealAlertsController extends AppController {
 			}
 		}
 		
+		$subs = $this->DealAlert->query("UPDATE dealAlert SET lastActionDate = '$date', lastAction = 'EMAIL'");
+
 		//loop through all users and for each new package we send them an email with package details
 		foreach ($emailsToSend as $k => $v) {
 			foreach ($v['packages'] as $k2 => $v2) {
