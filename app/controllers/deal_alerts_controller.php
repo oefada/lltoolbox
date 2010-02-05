@@ -178,7 +178,6 @@ class DealAlertsController extends AppController {
     	$emailHeaders.= "Content-type: text/html\r\n";
 		
 		@mail($emailTo, $emailSubject, $emailBody, $emailHeaders);
-		@mail('alee@luxurylink.com', $emailSubject, $emailBody, $emailHeaders); // TODO REMOVE ONLY A TEST FOR DEBUG
 	}
 }
 ?>
