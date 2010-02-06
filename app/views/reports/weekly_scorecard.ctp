@@ -10,6 +10,7 @@ th {
 	border: 1px solid black;
 	padding: 0 5px;
 	text-align: center;
+	font-size: 11pt;
 }
 td {
 	border-right: 1px solid #ccc;
