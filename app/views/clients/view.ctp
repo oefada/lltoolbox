@@ -119,9 +119,5 @@ Related Client Items
 		&nbsp;
 	</dd>
 	<dt><?php __('ZoomSat'); ?></dt>
-	<dd>
-		<?php echo $client['Client']['customMapZoomSat']; ?>
-		&nbsp;
-	</dd>
 </fieldset>
 </div>

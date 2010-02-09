@@ -209,8 +209,7 @@ foreach ($this->data['Client']['sites'] as $site) {
 		<?php
 		echo $form->input('customMapLat');
 		echo $form->input('customMapLong');
-		echo $form->input('customMapZoomMap');
-		echo $form->input('customMapZoomSat');
+		echo $form->input('customMapZoomMap', array('label' => 'Custom Map Zoom Level'));
 		?>
 		<br /><br />
 		<?
