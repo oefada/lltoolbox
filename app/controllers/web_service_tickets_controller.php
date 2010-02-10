@@ -1096,11 +1096,11 @@ class WebServiceTicketsController extends WebServicesController
 		$totalChargeAmount = $data['paymentAmount'];
 		
 		$promoGcCofData = array();
+		$promoGcCofData		= $this->Ticket->getPromoGcCofData($ticket['Ticket']['ticketId'], $totalChargeAmount);
 		if (!$toolboxManualCharge) {
 			// this is either autocharge or user checkout
 
 			// fee gets set in getPromoGcCofData
-			$promoGcCofData		= $this->Ticket->getPromoGcCofData($ticket['Ticket']['ticketId'], $totalChargeAmount);
 			$totalChargeAmount  = $promoGcCofData['final_price'];
 
 			// for MasterCard sponsor only - check if card is mc
