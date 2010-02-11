@@ -61,7 +61,7 @@
                   <?php for ($i=$start_inactive; $i < count($slideshowImages); $i++): ?>
                      <li id="item_<?php echo $slideshowImages[$i]['ImageClient']['clientImageId'] ?>-<?php echo $site; ?>">
                           <img src="<?php echo $slideshowImages[$i]['Image']['imagePath']; ?>" height="100" alt="<?php echo $slideshowImages[$i]['Image']['caption']; ?>" />
-                          <?php $fileArr = explode('/', $ssImage['Image']['imagePath']); ?>
+                          <?php $fileArr = explode('/', $slideshowImages[$i]['Image']['imagePath']); ?>
                           <div class="filename"><?php echo end($fileArr); ?></div>
                           <input type="hidden" class="ss" name="data[ImageClient][<?php echo $slideshowImages[$i]['ImageClient']['clientImageId'] ?>][inactive]" value="<?php echo $slideshowImages[$i]['ImageClient']['inactive'] ?>" />
                           <input type="hidden" name="data[ImageClient][<?php echo $slideshowImages[$i]['ImageClient']['clientImageId'] ?>][imageId]" value="<?php echo $slideshowImages[$i]['ImageClient']['imageId'] ?>" />
