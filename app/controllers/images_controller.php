@@ -38,23 +38,29 @@ class ImagesController extends AppController {
 		 }
 	  }
 	  else {
-		 $this->set('displayTab', 'luxurylink');
+        if (count($this->Image->client['Client']['sites']) > 1) {
+            $this->set('displayTab', 'luxurylink');
+        }
+        else {
+            $this->set('displayTab', $this->Image->client['Client']['sites'][0]);
+        }
 	  }
 	  $this->findNewImages();
-	  foreach($this->Image->client['Client']['sites'] as $site) {
+	  //foreach($this->Image->client['Client']['sites'] as $site) {
+      foreach($this->siteDbs as $siteId => $siteDb) {
 		 $this->Image->ImageClient->contain(array('Image', 'ImageType'));
-		 $slideshowImages = $this->Image->ImageClient->find('all', array('conditions' => array('ImageClient.clientId' => $this->Image->clientId, 'ImageClient.imageTypeId' => 1, 'ImageClient.isHidden' => 0,  'ImageClient.siteId' => array_search($site, $this->siteDbs)),
+		 $slideshowImages = $this->Image->ImageClient->find('all', array('conditions' => array('ImageClient.clientId' => $this->Image->clientId, 'ImageClient.imageTypeId' => 1, 'ImageClient.isHidden' => 0,  'ImageClient.siteId' => $siteId),
 																		   'order' => array('ImageClient.inactive', 'ImageClient.sortOrder'))
 															);
-		 $largeImages = $this->Image->ImageClient->find('all', array('conditions' => array('ImageClient.clientId' => $this->Image->clientId, 'ImageClient.imageTypeId' => 2, 'ImageClient.isHidden' => 0, 'ImageClient.siteId' => array_search($site, $this->siteDbs)),
+		 $largeImages = $this->Image->ImageClient->find('all', array('conditions' => array('ImageClient.clientId' => $this->Image->clientId, 'ImageClient.imageTypeId' => 2, 'ImageClient.isHidden' => 0, 'ImageClient.siteId' => $siteId),
 																	 'order' => array('ImageClient.inactive'))
 														 );
-		 $thumbnailImages = $this->Image->ImageClient->find('all', array('conditions' => array('ImageClient.clientId' => $this->Image->clientId, 'ImageClient.imageTypeId' => 3, 'ImageClient.isHidden' => 0, 'ImageClient.siteId' => array_search($site, $this->siteDbs)),
+		 $thumbnailImages = $this->Image->ImageClient->find('all', array('conditions' => array('ImageClient.clientId' => $this->Image->clientId, 'ImageClient.imageTypeId' => 3, 'ImageClient.isHidden' => 0, 'ImageClient.siteId' => $siteId),
 																		   'order' => array('ImageClient.inactive'))
 															);
-		 $this->set('slideshowImages'.$site, $slideshowImages);
-		 $this->set('largeImages'.$site, $largeImages);
-		 $this->set('thumbnailImages'.$site, $thumbnailImages);
+		 $this->set('slideshowImages'.$siteDb, $slideshowImages);
+		 $this->set('largeImages'.$siteDb, $largeImages);
+		 $this->set('thumbnailImages'.$siteDb, $thumbnailImages);
 	  }
    }
    
@@ -101,16 +107,17 @@ class ImagesController extends AppController {
 			$this->Session->setFlash('Your captions could not be saved');
 		 }
 	  }
-	  foreach($this->Image->client['Client']['sites'] as $site) {
+	  //foreach($this->Image->client['Client']['sites'] as $site) {
+      foreach($this->siteDbs as $siteId => $siteDb) {
 		 $this->Image->ImageClient->contain('Image');
 		 $images = $this->Image->ImageClient->find('all', array('conditions' => array('ImageClient.clientId' => $this->Image->clientId,
 																					   'ImageClient.imageTypeId' => 1,
 																					   'ImageClient.inactive' => 0,
-																					   'ImageClient.siteId' => array_search($site, $this->siteDbs)),
+																					   'ImageClient.siteId' => $siteId),
 																 'order' => array('ImageClient.sortOrder')
 																 )
 												   );
-		 $this->set('images'.$site, $images);
+		 $this->set('images'.$siteDb, $images);
 	  }
    }
    
@@ -120,13 +127,14 @@ class ImagesController extends AppController {
 			$data = $image;
 			$data['isHidden'] = 1;
 			$data['inactive'] = 1;
-			foreach($this->Image->client['Client']['sites'] as $site) {
+			//foreach($this->Image->client['Client']['sites'] as $site) {
+            foreach($this->siteDbs as $siteId => $siteDb) {
 			   if (isset($data['clientImageId'])) {
 				  unset($data['clientImageId']);
 			   }
 			   $siteImage = $this->Image->ImageClient->find('first', array('conditions' => array('ImageClient.imageId' => $image['imageId'],
 																								 'ImageClient.clientId' => $this->Image->clientId,
-																								 'ImageClient.siteId' => array_search($site, $this->siteDbs)),
+																								 'ImageClient.siteId' => $siteId),
 																		   'fields' => 'ImageClient.clientImageId'));
 			   $data['clientImageId'] = $siteImage['ImageClient']['clientImageId'];
 			   $this->Image->ImageClient->save($data);
@@ -174,7 +182,7 @@ class ImagesController extends AppController {
 		 $useLrgForSlideshow = true;
 	  }
 	  if (!empty($files)) {
-		 $siteId = array_search($this->Image->client['Client']['sites'][0], $this->siteDbs);
+		 //$siteId = array_search($this->Image->client['Client']['sites'][0], $this->siteDbs);
 		 foreach($files as $file) {
 			$image = split($this->fileRoot, $file);
 			$imagePath = $image[1];
@@ -189,11 +197,22 @@ class ImagesController extends AppController {
 			   if ($imageTypeId > 0 ) {
 				  $clientId = $this->Image->clientId;
 				  $inactive = 1;
-				  $imageId = $this->Image->createFromFile(compact('imagePath', 'clientId', 'imageTypeId', 'siteId', 'inactive'));
-				  if ($imageTypeId == 2 && $useLrgForSlideshow) {
-					 $imageTypeId = 1;
-					 $this->Image->createFromFile(compact('imagePath', 'clientId', 'imageTypeId', 'siteId', 'inactive', 'imageId'));
-				  }
+                  foreach($this->siteDbs as $siteId => $siteDb) {
+                    $this->Image->recursive = -1;
+                    $image = $this->Image->find('first', array('conditions' => array('imagePath' => $imagePath),
+                                                               'fields' => 'imageId'));
+                    if (empty($image)) {
+                        $imageId = $this->Image->createFromFile(compact('imagePath', 'clientId', 'imageTypeId', 'siteId', 'inactive'));
+                    }
+                    else {
+                        $imageId = $image['Image']['imageId'];
+                        $imageId = $this->Image->createFromFile(compact('imageId', 'imagePath', 'clientId', 'imageTypeId', 'siteId', 'inactive'));
+                    }
+                    if ($imageTypeId == 2 && $useLrgForSlideshow) {
+                       $imageTypeId = 1;
+                       $this->Image->createFromFile(compact('imagePath', 'clientId', 'imageTypeId', 'siteId', 'inactive', 'imageId'));
+                    }
+                  }
 			   }
 			}
 		 }
