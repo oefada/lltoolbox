@@ -14,10 +14,10 @@
       <div id="images-<?php echo $site; ?>" class="organize" <?php if ($site != $displayTab): ?> style="display:none"<?php endif; ?>>
          <form method="post" id="organizeImages-<?php echo $site; ?>">
          <input type="hidden" name="data[saveSite]" value="<?php echo $site; ?>" />
-         <input type="submit" value="Save" class="save_changes" />
          <?php if (count($clientSites) > 1): ?>
             <div class="duplicateTo"><input type="checkbox" name="data[duplicateTo][<?php echo ($site == $clientSites[0]) ? $clientSites[1] : $clientSites[0] ?>]" /> Copy to <?php echo ($site == $clientSites[0]) ? $sites[$clientSites[1]] : $sites[$clientSites[0]] ?></div>
          <?php endif; ?>
+          <input type="submit" value="Save" class="save_changes" />
          <?php $i=0; ?>
          <?php foreach ($slideshowImages as $ssImage):
                   if ($ssImage['ImageClient']['inactive'] == 1):
@@ -40,6 +40,8 @@
                   <?php endif; ?>
                   <li id="item_<?php echo $ssImage['ImageClient']['clientImageId'] ?>-<?php echo $site; ?>">
                      <img src="<?php echo $ssImage['Image']['imagePath']; ?>" height="100" alt="<?php echo $ssImage['Image']['caption']; ?>" />
+                     <?php $fileArr = explode('/', $ssImage['Image']['imagePath']); ?>
+                     <div class="filename"><?php echo end($fileArr); ?></div>
                      <input type="hidden" class="ss" name="data[ImageClient][<?php echo $ssImage['ImageClient']['clientImageId'] ?>][inactive]" value="<?php echo $ssImage['ImageClient']['inactive'] ?>" />
                      <input type="hidden" name="data[ImageClient][<?php echo $ssImage['ImageClient']['clientImageId'] ?>][imageId]" value="<?php echo $ssImage['ImageClient']['imageId'] ?>" />
                      <input type="hidden" name="data[ImageClient][<?php echo $ssImage['ImageClient']['clientImageId'] ?>][imageTypeId]" value="<?php echo $ssImage['ImageClient']['imageTypeId'] ?>" />
@@ -59,6 +61,8 @@
                   <?php for ($i=$start_inactive; $i < count($slideshowImages); $i++): ?>
                      <li id="item_<?php echo $slideshowImages[$i]['ImageClient']['clientImageId'] ?>-<?php echo $site; ?>">
                           <img src="<?php echo $slideshowImages[$i]['Image']['imagePath']; ?>" height="100" alt="<?php echo $slideshowImages[$i]['Image']['caption']; ?>" />
+                          <?php $fileArr = explode('/', $ssImage['Image']['imagePath']); ?>
+                          <div class="filename"><?php echo end($fileArr); ?></div>
                           <input type="hidden" class="ss" name="data[ImageClient][<?php echo $slideshowImages[$i]['ImageClient']['clientImageId'] ?>][inactive]" value="<?php echo $slideshowImages[$i]['ImageClient']['inactive'] ?>" />
                           <input type="hidden" name="data[ImageClient][<?php echo $slideshowImages[$i]['ImageClient']['clientImageId'] ?>][imageId]" value="<?php echo $slideshowImages[$i]['ImageClient']['imageId'] ?>" />
                           <input type="hidden" name="data[ImageClient][<?php echo $slideshowImages[$i]['ImageClient']['clientImageId'] ?>][imageTypeId]" value="<?php echo $slideshowImages[$i]['ImageClient']['imageTypeId'] ?>" />
@@ -77,6 +81,8 @@
                         <li>
                            <img src="<?php echo $lImage['Image']['imagePath']; ?>" height="75" alt="<?php echo $lImage['Image']['caption']; ?>" />
                            <input type="radio" class="lImage" name="data[ImageClient][<?php echo $lImage['ImageClient']['clientImageId'] ?>][inactive]" onclick="toggleRadio(this, 'largeImages-<?php echo $site ?>');" <?php if ($lImage['ImageClient']['inactive'] == 0) echo 'checked' ?> />
+                           <?php $fileArr = explode('/', $lImage['Image']['imagePath']); ?>
+                           <div class="filename large-filename"><?php echo end($fileArr); ?></div>
                            <input type="hidden" name="data[ImageClient][<?php echo $lImage['ImageClient']['clientImageId'] ?>][imageId]" value="<?php echo $lImage['ImageClient']['imageId'] ?>" />
                            <input type="hidden" name="data[ImageClient][<?php echo $lImage['ImageClient']['clientImageId'] ?>][imageTypeId]" value="<?php echo $lImage['ImageClient']['imageTypeId'] ?>" />
                         </li>
@@ -92,6 +98,8 @@
                         <li>
                            <img src="<?php echo $tImage['Image']['imagePath']; ?>" height="65" alt="<?php echo $tImage['Image']['caption']; ?>" />
                            <input type="radio" class="tImage" name="data[ImageClient][<?php echo $tImage['ImageClient']['clientImageId'] ?>][inactive]" onclick="toggleRadio(this, 'thumbImages-<?php echo $site ?>');"  <?php if ($tImage['ImageClient']['inactive'] == 0) echo 'checked' ?> />
+                           <?php $fileArr = explode('/', $tImage['Image']['imagePath']); ?>
+                           <div class="filename thumb-filename"><?php echo end($fileArr); ?></div>
                            <input type="hidden" name="data[ImageClient][<?php echo $tImage['ImageClient']['clientImageId'] ?>][imageId]" value="<?php echo $tImage['ImageClient']['imageId'] ?>" />
                            <input type="hidden" name="data[ImageClient][<?php echo $tImage['ImageClient']['clientImageId'] ?>][imageTypeId]" value="<?php echo $tImage['ImageClient']['imageTypeId'] ?>" />
                         </li>
