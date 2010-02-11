@@ -94,12 +94,12 @@ Thank you for your purchase of this special package from <?php echo $clientNameP
 		<td align="left" valign="top">
 			<div style="color:#<?=$siteHeader;?>;font-size:16px;font-weight:bold;"><?php echo $clientNameP;?></div>
 			<div style="color:#444444;font-size:12px;"><?php echo $locationDisplay;?></div><br />
-			<div style="color:#<?=$siteHeader;?>;font-size:12px;"><?php echo $packageName;?> <br /><br /><a style="color:#336699;" href="http://www.luxurylink.com/portfolio/por_offer_redirect.php?oid=<?=$offerId;?>">View Package Details</a></div>
+			<div style="color:#<?=$siteHeader;?>;font-size:12px;"><?php echo $packageName;?> <br /><br /><a style="color:#336699;" href="<?=$siteUrl;?>portfolio/por_offer_redirect.php?oid=<?=$offerId;?>">View Package Details</a></div>
 			<?php if ($is_auc_fac) :?>
 			<div style="height:15px;margin-top:15px;border-top:1px solid #B0B0B0;">&nbsp;</div>
 			<table cellspacing="0" cellpadding="5" border="0">
 			<tr>
-				<td style="color:#444444;font-size:12px;"><a href="https://www.luxurylink.com/my/my_date_request.php?tid=<?php echo $ticketId;?>"><img src="http://www.luxurylink.com/images/buttons/btn_email_preferred_dates.gif" alt="Submit Your Preferred Travel Dates" border="0" /></a></td>
+				<td style="color:#444444;font-size:12px;"><a href="<?=$siteUrl;?>my/my_date_request.php?tid=<?php echo $ticketId;?>"><img src="http://www.luxurylink.com/images/buttons/btn_email_preferred_dates.gif" alt="Submit Your Preferred Travel Dates" border="0" /></a></td>
 			</tr>
 			</table>
 			<?php endif; ?>
@@ -108,7 +108,7 @@ Thank you for your purchase of this special package from <?php echo $clientNameP
 	<?php if ($is_auc_fac) :?>
 	<tr>
 		<td colspan="2" style="color:#444444;font-size:12px;">
-		<a href="https://www.luxurylink.com/my/my_date_request.php?tid=<?php echo $ticketId;?>">Click here</a>
+		<a href="<?=$siteUrl;?>my/my_date_request.php?tid=<?php echo $ticketId;?>">Click here</a>
 			Once you submit our preferred travel dates, a <?=$siteName;?> Tarvel Concierge will assist you in securing those dates.  You can submit your dates online, or 
 			call us at <?=$sitePhone;?> <?php if ($siteId == 1) { echo '/ 1-310-215-8060';}?>.
 		</td>
