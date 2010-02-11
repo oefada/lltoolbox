@@ -12,9 +12,30 @@ ul.sortableInactive li.empty {
 }
 
 div.duplicateTo {
-   float:right;
    font-weight:bold;
    font-size:12px;
+}
+
+div.filename {
+    text-align:center;
+}
+
+div.large-filename {
+    float:right;
+    width:70px;
+    font-size:10px;
+}
+
+div.thumb-filename {
+    text-align:center;
+    font-size:10px;
+    width:45px;
+    margin-left:14px;
+    margin-top:-16px;
+}
+
+input.tImage[type="radio"] {
+
 }
 
 .organize ul li {
@@ -84,7 +105,6 @@ div.thumbnails {
 input.save_changes {
    clear:both;
    display:block;
-   margin-left:850px;
    margin-bottom:20px;
    width:100px;
 }
