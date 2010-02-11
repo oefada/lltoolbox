@@ -39,7 +39,7 @@ class ImageClient extends AppModel {
 		 }
 		 $this->create();
 		 $this->data['ImageClient'] = $imageClient;
-		 if ($this->save($this->data)) { 
+		 if ($this->save($this->data)) {
 			if (!empty($sitesToDuplicateTo)) {
 			   foreach($sitesToDuplicateTo as $site) {
 				  unset($imageClient['clientImageId']);
