@@ -2470,7 +2470,8 @@ class ReportsController extends AppController {
 		ORDER BY weekBeginSunday
 		;");
 		//QTD Last Year
-		$tmp2 = $this->OfferType->query("SELECT SUM(t.packagesSoldPrevious) as packagesSoldPrevious, SUM(revenuecollectedprevious) as revenueCollectedPrevious
+		$tmp2 = $this->OfferType->query("SELECT SUM(t.packagesSoldPrevious) as packagesSoldPrevious, SUM(revenuecollectedprevious) as revenueCollectedPrevious,
+		SUM(revenuecollectedprevious)/SUM(t.packagesSoldPrevious) AS aspCollectedPrevious
 		FROM reporting.weeklyScorecardTotal t
 		WHERE 
 		 QUARTER = QUARTER(NOW())
