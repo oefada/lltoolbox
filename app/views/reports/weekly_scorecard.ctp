@@ -159,7 +159,9 @@ if($row['col1'] == date('W')) {
 		}
 		$totals['col4'] = ($totals['col3'] / $totLastYear['packagesSoldPrevious'] - 1);
 		$totals['col6'] = ($totals['col5'] / $totLastYear['revenueCollectedPrevious'] - 1);
-		$skip = array(1,2,8);
+		$totals['col8'] = ($totals['col7'] / $totLastYear['aspCollectedPrevious'] - 1);
+		
+		$skip = array(1,2);
 	?>
 	<td><?in_array($i, $skip) ? print('&nbsp;') : $echo($totals['col'.$i])?></td>	
 	<?php endfor; ?>
@@ -198,7 +200,7 @@ if($row['col1'] == date('W')) {
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 	<td><?currency($qtr[0][0]['revenueTarget'])?></td>
-	<td>&nbsp;</td>
+	<td><?percentage($qtr[0][0]['revenueTarget'] / $totLastYear['qtr_revenueCollectedPrevious'] -1)?></td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 </tr>
