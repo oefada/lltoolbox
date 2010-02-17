@@ -2,7 +2,7 @@
 class SchedulingController extends AppController {
 
 	var $name = 'Scheduling';
-	var $uses = array('Package', 'SchedulingMaster', 'SchedulingInstance');		//we need to access more than the default model in here
+	var $uses = array('Package', 'SchedulingMaster', 'SchedulingInstance', 'Ticket', 'Client');		//we need to access more than the default model in here
 
 	function beforeFilter() {
 		parent::beforeFilter();
@@ -40,6 +40,43 @@ class SchedulingController extends AppController {
         $loaBalanceFlag = $this->_setLoaBalanceFlag($clientId, $currentLoa['Loa']);
         $this->set('packages', $packages);
 		$this->set(compact('clientId', 'month', 'year', 'monthDays', 'monthYearString', 'clientName', 'client', 'loaBalanceFlag'));
+	}
+
+	function close_offers($clientId = null) {
+		$clientId 	= @$this->params['named']['clientId'];		
+		if (!$clientId || !is_numeric($clientId) || !($clientId > 0)) {
+			die('INVALID OPERATION');
+		}
+
+		if (!empty($this->data)) {
+			if (!isset($this->data['closeIt']) || !$this->data['clientId'] || ($clientId != $this->data['clientId'])) {
+				die('INVALID OPERATION!  Something has gone wrong.  Please contact your local friendly developer.  Heard those tech guys are awesome.');
+			}
+			$this->Package->ClientLoaPackageRel->recursive = -1;
+			$packages = $this->Package->ClientLoaPackageRel->findAllByclientId($clientId);
+			$schedulingMasterIds = array();
+			foreach ($packages as $p) {
+				$schedulingMasterIds = array_merge($schedulingMasterIds, $this->Ticket->getSmIdsFromPackage($p['ClientLoaPackageRel']['packageId']));
+			}
+			$schedulingMasterIds = array_unique($schedulingMasterIds);
+
+			if (!empty($schedulingMasterIds)) {
+				if ($this->Ticket->__runTakeDown(implode(',', $schedulingMasterIds))) {
+					$this->Session->setFlash(__('Scheduling blocks have been taken down.  Have a nice day. :)', true), 'default', array(), 'success');				
+				} else {
+					$this->Session->setFlash(__('There were no scheduling blocks to pull down. Have a nice day.', true), 'default', array(), 'error');				
+				}
+			} else {
+				$this->Session->setFlash(__('There were no packages to take down.', true), 'default', array(), 'error');				
+			}
+			$this->set('closeModalbox', true);
+		}
+
+		$this->Client->recursive = -1;
+		$client = $this->Client->read(null, $clientId);
+		$this->set('client', $client);
+		$this->set('currentTab', false);
+		$this->set('searchController', false);
 	}
 
 	/**

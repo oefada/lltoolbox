@@ -116,7 +116,11 @@ div.sitesDropdown {
 	?>
 	<br />
 	<a href="/scheduling/index/clientId:<?=$clientId?>/month:<?=$prevMonth?>/year:<?=$prevYear?>">&lt; Prev Month</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="/scheduling/index/clientId:<?=$clientId?>/month:<?=$nextMonth?>/year:<?=$nextYear?>">Next Month &gt;</a>
-	
+	<br /><br />
+	</div>
+	<div style="text-align:right;position:absolute;right:0px;">
+		<?=$html->link('<span>Cancel ALL Offers</span>', "/scheduling/close_offers/clientId:{$client['Client']['clientId']}", array('onclick' => 'Modalbox.show(this.href, {title: this.title});return false','complete' => 'closeModalbox()','class' => 'button'), null, false)?>
+		<br /><br />
 	</div>
     <div id="monthPickerDiv" class='clearfix' style='display: none'>
 		<div style="clear: both; text-align: center; float: none" class='yearPickerDiv'>Year:
