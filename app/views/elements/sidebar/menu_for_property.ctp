@@ -2,6 +2,7 @@
 	<?php
 	$clientId = $this->viewVars['clientId'];
 	$currentLoaId = $client['Client']['currentLoaId'];
+    $validPhotoUsers = array('jpadilla', 'jpawlowska', 'kgathany');
 	?>
 	<li><?=$html->link('INFO/ATTRIBUTES', array("controller" => 'clients', 'action' => 'edit', $clientId), array('update' => 'content-area', 'indicator' => 'spinner'))?></li>
 	<li class="open">LOA <?=$html2->c($client['Client']['numLoas']);?>
@@ -20,14 +21,16 @@
 		</ul>
 	</li>
 	<li style="margin-bottom:3px;"><?=$html->link('ROOM GRADE', "/clients/$clientId/room_grades", array('update' => 'content-area', 'indicator' => 'spinner'))?></li>
-	<li class="open">PHOTOS
-						<ul>
-												<li style="margin-bottom:3px;"><?php echo $html->link('Organize', '/clients/'.$clientId.'/images/organize', array('update' => 'content-area', 'indicator' => 'spinner')); ?></li>
-												<li style="margin-bottom:3px;"><?php echo $html->link('Captions', '/clients/'.$clientId.'/images/captions', array('update' => 'content-area', 'indicator' => 'spinner')); ?></li>
-												<li style="margin-bottom:3px;"><?php echo $html->link('PDP Slideshow', '/clients/'.$clientId.'/images/slideshow', array('update' => 'content-area', 'indicator' => 'spinner')); ?></li>
-												<li style="margin-bottom:3px;"><?php echo $html->link('Delete', '/clients/'.$clientId.'/images/delete_images', array('update' => 'content-area', 'indicator' => 'spinner')); ?></li>
-						</ul>
-	</li>
+    <?php if (in_array($userDetails['samaccountname'], $validPhotoUsers) || in_array('Geeks', $userDetails['groups']) || in_array('creative', $userDetails['groups'])): ?>
+        <li class="open">PHOTOS
+            <ul>
+                <li style="margin-bottom:3px;"><?php echo $html->link('Organize', '/clients/'.$clientId.'/images/organize', array('update' => 'content-area', 'indicator' => 'spinner')); ?></li>
+                <li style="margin-bottom:3px;"><?php echo $html->link('Captions', '/clients/'.$clientId.'/images/captions', array('update' => 'content-area', 'indicator' => 'spinner')); ?></li>
+                <li style="margin-bottom:3px;"><?php echo $html->link('PDP Slideshow', '/clients/'.$clientId.'/images/slideshow', array('update' => 'content-area', 'indicator' => 'spinner')); ?></li>
+                <li style="margin-bottom:3px;"><?php echo $html->link('Delete', '/clients/'.$clientId.'/images/delete_images', array('update' => 'content-area', 'indicator' => 'spinner')); ?></li>
+            </ul>
+        </li>
+    <?php endif; ?>
 	<li>OFFERS</li>
 	<li>REPORTS</li>
 </ul>
