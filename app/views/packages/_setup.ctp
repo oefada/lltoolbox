@@ -29,33 +29,10 @@
 		echo $form->input('Package.packageName', array('label' => 'Working Name'));
 ?>
 
-	<?php switch ($this->data['Package']['siteId']) {
-			case 2: 	//Family
-				$display_all = '';
-				break;
-			case 1:	//Luxury Link
-			default:	//site is null
-				$display_all = 'style="display:none"';
-				break;				
-		}
-	?>
 	<div id="numGuests">
 	  <?php echo $form->input('numGuests', array('label' => 'Max # of Guests', 'style' => 'width: 50px;')); ?>
 	  <?php echo $form->input('minGuests', array('label' => 'Min # of Guests', 'style' => 'width: 50px;')); ?>
 	  <?php echo $form->input('maxAdults', array('label' => 'Max # of Adults', 'style' => 'width: 50px;')); ?> 
-	</div>
-	
-	<div class="input select" id="ageRangeValidity" <?php echo $display_all; ?>>
-		<label>Valid for children ages:</label>
-		<div style="float: left; clear:right;" class="clearfix">
-			<?php 
-				$i = 0;
-				do {
-					echo $this->renderElement('../packages/_age_range_row', array('row' => $i, 'data' => @$package['PackageAgeRange'][$i]));
-				} while(isset($package['PackageAgeRange'][++$i]));
-			?>
-			<a href="#" id="addAnotherAgeRange" onclick="return false;">+ Add another age range</a>
-		</div>
 	</div>
 
 <?php

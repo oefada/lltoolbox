@@ -59,19 +59,6 @@ function updateAllPerPersonPerNight() {
 	}
 }
 
-function toggleGuestsVisibility() {
-	['ageRangeValidity'].each(Element.toggle);
-	switch ($('PackageSiteId').getValue) {
-		case '2':	//Family
-			break;
-		case '1':	//Luxury  Link
-		default:
-			$('PackageNumChildren').setValue('');
-			$('PackageNumAdults').setValue('');
-			break;
-	}
-}
-
 </script>
 
 <div class="packages form">
