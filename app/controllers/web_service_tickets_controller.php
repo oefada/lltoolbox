@@ -630,6 +630,8 @@ class WebServiceTicketsController extends WebServicesController
 				$siteUrl = 'http://www.luxurylink.com/';
 				$siteHeader = '990000';
 				$sitePhone  = '(888) 297-3299';
+				$sitePhoneLocal = '(310) 215-8060';
+				$siteFax = '(310) 215-8279';
 				$headerLogo = 'http://www.luxurylink.com/images/ll_logo_2009_2.gif';
 				$checkoutLink		= "https://www.luxurylink.com/my/my_purchase.php?z=$checkoutKey";
 
@@ -650,6 +652,8 @@ class WebServiceTicketsController extends WebServicesController
 				$siteUrl = 'http://www.familygetaway.com/';
 				$siteHeader = 'DE6F0A';
 				$sitePhone  = '(877) 372-5877';
+				$sitePhoneLocal = '(310) 956-3703';
+				$siteFax = '(800) 440-3820';
 				$headerLogo = 'http://www.luxurylink.com/images/family/logo.gif';
 				$checkoutLink		= "https://www.familygetaway.com/my/my_purchase.php?z=$checkoutKey";
 
