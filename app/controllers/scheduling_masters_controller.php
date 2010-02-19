@@ -3,7 +3,7 @@ class SchedulingMastersController extends AppController {
 
 	var $name = 'SchedulingMasters';
 	var $helpers = array('Html', 'Form');
-	var $uses       = array('SchedulingMaster', 'OfferLuxuryLink', 'Loa');
+	var $uses       = array('SchedulingMaster', 'OfferLuxuryLink', 'Loa', 'OfferFamily');
 
 	function index() {
 		$this->SchedulingMaster->recursive = 0;
@@ -622,7 +622,7 @@ class SchedulingMastersController extends AppController {
 		    $schedulingMaster['SchedulingMaster']['endDate']        = $newEndDate;
 		    $schedulingInstance['SchedulingInstance']['endDate']    = $newEndDate;
 		    $offerLive[$offerSiteField]['endDate']                      = $newEndDate;
-
+            
             if ($this->SchedulingMaster->save($schedulingMaster, false) &&
                 $this->SchedulingMaster->SchedulingInstance->save($schedulingInstance, false) &&
                 $this->$offerSiteField->save($offerLive, false) )
