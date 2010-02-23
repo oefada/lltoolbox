@@ -1,11 +1,11 @@
 <?php echo $html->css('images.css'); ?>
 <?php $this->pageTitle = $client['Client']['name'].$html2->c($client['Client']['clientId'], 'Client Id:'); ?>
 <div class="sitesTab">
-   <?php foreach ($clientSites as $site): ?>
+   <?php foreach ($sites as $site => $siteName): ?>
          <div id="<?php echo $site; ?>" class="<?php echo ($site == $displayTab) ? ' siteActive' :  ' siteInactive'; ?>"><?php __($sites[$site]); ?></div>
    <?php endforeach; ?>
 </div>
-<?php foreach ($clientSites as $site): ?>
+<?php foreach ($sites as $site => $siteName): ?>
    <?php
       $slideshowImages = ${'slideshowImages'.$site};
       $largeImages = ${'largeImages'.$site};
@@ -14,8 +14,8 @@
       <div id="images-<?php echo $site; ?>" class="organize" <?php if ($site != $displayTab): ?> style="display:none"<?php endif; ?>>
          <form method="post" id="organizeImages-<?php echo $site; ?>">
          <input type="hidden" name="data[saveSite]" value="<?php echo $site; ?>" />
-         <?php if (count($clientSites) > 1): ?>
-            <div class="duplicateTo"><input type="checkbox" name="data[duplicateTo][<?php echo ($site == $clientSites[0]) ? $clientSites[1] : $clientSites[0] ?>]" /> Copy to <?php echo ($site == $clientSites[0]) ? $sites[$clientSites[1]] : $sites[$clientSites[0]] ?></div>
+         <?php if (count($sites) > 1): ?>
+            <div class="duplicateTo"><input type="checkbox" name="data[duplicateTo][<?php echo ($site == 'luxurylink') ? 'family' : 'luxurylink'; ?>]" /> Copy to <?php echo ($site == 'luxurylink') ? 'Family' : 'Luxury Link'; ?></div>
          <?php endif; ?>
           <input type="submit" value="Save" class="save_changes" />
          <?php $i=0; ?>
@@ -150,7 +150,7 @@
 <script type="text/javascript">
    function toggleSites(site) {
       var sitesArr = new Array();
-      <?php foreach ($clientSites as $site): ?>
+      <?php foreach ($sites as $site => $siteName): ?>
          <?php echo "sitesArr.push('".$site."');"; ?>
       <?php endforeach; ?>
       sitesArr.each(function(siteTab) {

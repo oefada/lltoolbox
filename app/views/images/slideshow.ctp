@@ -24,14 +24,14 @@
 <?php $this->pageTitle = $client['Client']['name'].$html2->c($client['Client']['clientId'], 'Client Id:'); ?>
 
 <div class="sitesTab">
-   <?php foreach ($clientSites as $site): ?>
-         <div id="<?php echo $site; ?>" class="<?php echo ($site == $clientSites[0]) ? ' siteActive' :  ' siteInactive'; ?>"><?php __($sites[$site]); ?></div>
+   <?php foreach ($sites as $site => $siteName): ?>
+         <div id="<?php echo $site; ?>" class="<?php echo ($site == 'luxurylink') ? ' siteActive' :  ' siteInactive'; ?>"><?php __($sites[$site]); ?></div>
    <?php endforeach; ?>
 </div>
 
-<?php foreach ($clientSites as $site): ?>
+<?php foreach ($sites as $site => $siteName): ?>
    <?php $images = ${'images'.$site}; ?>
-    <div id="images-<?php echo $site; ?>" class="organize" <?php if ($site != $clientSites[0]): ?> style="display:none"<?php endif; ?>>
+    <div id="images-<?php echo $site; ?>" class="organize" <?php if ($site != 'luxurylink'): ?> style="display:none"<?php endif; ?>>
         <form method="post">
             <h2><?php __('Slideshow');?></h2>
             <div class="captionSlideshow">
@@ -61,7 +61,7 @@
 <script type="text/javascript">
    function toggleSites(site) {
       var sitesArr = new Array();
-      <?php foreach ($clientSites as $site): ?>
+      <?php foreach ($sites as $site => $siteName): ?>
          <?php echo "sitesArr.push('".$site."');"; ?>
       <?php endforeach; ?>
       sitesArr.each(function(siteTab) {
@@ -70,7 +70,7 @@
       );
       
       jQuery.noConflict()(function() {
-            <?php foreach($clientSites as $site): ?>
+            <?php foreach($sites as $site => $siteName): ?>
                 jQuery('#ssContainer-<?php echo $site; ?>').jcarousel({scroll:1,
                                                                        start:0,
                                                                        visible:1,
