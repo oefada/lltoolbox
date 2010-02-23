@@ -1130,6 +1130,7 @@ margin-left: 0;
 }
 #amenitylist span.radio input{
     border: none;
+    margin:0 1px 0 0 !important;
     width: 15px;
 }
 
@@ -1226,4 +1227,16 @@ div.rpDates label {
 	margin: auto;
 	margin-bottom:10px;
 	text-align: center;
+}
+
+input.themeCheckbox {
+    margin:4px 35px 4px 35px;
+}
+
+span.siteName {
+    margin-right:8px;
+}
+
+span.themeName {
+    margin-left:30px;
 }
