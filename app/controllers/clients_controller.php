@@ -73,7 +73,9 @@ class ClientsController extends AppController {
 				parse_str($this->data['sortedAmenities'], $ordAmLst);
 				unset($this->data['sortedAmenities']);		    
 				foreach ($this->data['ClientAmenityRel'] as $k => $am) {
-					  $this->data['ClientAmenityRel'][$k]['weight'] = array_pop(array_keys($ordAmLst['ordAmLst'], $am['amenityId'], true));
+                    if (!isset($am['remove'])) {
+                        $this->data['ClientAmenityRel'][$k]['weight'] = array_pop(array_keys($ordAmLst['ordAmLst'], $am['amenityId'], true));
+                    }
 				}
 		    endif;
 	         /** END SORT **/   
@@ -85,40 +87,8 @@ class ClientsController extends AppController {
 			 else {
 				$this->data['Client']['ageRanges'] = null;
 			 }
+
 			if ($this->Client->save($this->data)) {
-				if (isset($this->data['ClientTracking'])) {
-					foreach($this->data['ClientTracking'] as $trackingRecord) {
-						$trackingRecord['clientId'] = $this->data['Client']['clientId'];
-						$this->Client->ClientTracking->create();
-						$this->Client->ClientTracking->set($trackingRecord);
-						$this->Client->ClientTracking->save();
-					}
-				}
-				if (isset($this->data['ClientAmenityRel']) && !empty($this->data['ClientAmenityRel'])) {
-					  $this->Client->ClientAmenityRel->deleteAll(array('ClientAmenityRel.clientId' => $this->data['Client']['clientId']));
-					  $this->Client->ClientAmenityRel->deleteAllFromFrontEnd($this->data['Client']['clientId'], $this->data['Client']['sites']);
-					  foreach ($this->data['ClientAmenityRel'] as $am) {
-						    $clientAmenityRelIds[] = @$am['clientAmenityRelId'];
-						    $this->Client->ClientAmenityRel->save_amenity($am, $this->data['Client']['sites']);
-					  }
-				}
-				
-				//delete all themes
-				$this->Client->ClientThemeRel->deleteAll(array('ClientThemeRel.clientId' => $this->data['Client']['clientId']), true, true);
-				$this->Client->ClientThemeRel->deleteAllFromFrontEnd($this->data['Client']['clientId'], $this->data['Client']['sites']);
-				if(!empty($this->data['ClientThemeRel'])):
-						$clientThemeRel = array();
-						foreach ($this->data['ClientThemeRel'] as $site => $themes) {
-							foreach ($themes as $theme):
-									if (isset($clientThemeRel[$theme])) {
-										$clientThemeRel[$theme]['ClientThemeRel']['sites'][] = $site;
-									} else {
-										$clientThemeRel[$theme]['ClientThemeRel'] = array('themeId' => $theme, 'clientId' => $this->data['Client']['clientId'],	'sites' => array($site));  
-									}
-							endforeach;
-						}
-						$this->Client->ClientThemeRel->saveThemes($clientThemeRel);
-				endif;
 				$this->Session->setFlash(__('The Client has been saved', true));
 				$this->redirect(array('action'=>'edit', 'id' => $id));
 			} else {
@@ -142,38 +112,31 @@ class ClientsController extends AppController {
 		}
 		$this->data['ClientTracking'] = $client_trackings;
 		
+        $this->Client->ClientType->recursive = -1;
 		$clientTypeIds = $this->Client->ClientType->find('list');
+        $this->Client->recursive = -1;
 		$clientCollectionIds = $this->Client->find('list', array('conditions' => 'Client.clientTypeId = 14'));
-		$themes = $this->Client->Theme->find('list', array('order' => 'themeName'));
-		$destinations = $this->Client->Destination->find('list', array('order' => array('destinationName')));
-
-        // SET UP Client Theme Rels
-		$this->Client->ClientThemeRel->recursive = -1;
-		$this->data['LuxurylinkClientThemeRel'] = array();
-		$this->data['FamilyClientThemeRel'] = array();
-		foreach (@$this->data['ClientThemeRel'] as $k => $v) {
-		    $clientThemeRel = $this->Client->ClientThemeRel->find('first', array('conditions' => array('ClientThemeRel.clientThemeRelId' => $v['clientThemeRelId'])));
-            
-		    if (@in_array('luxurylink', $clientThemeRel['ClientThemeRel']['sites'])) {
-		        $this->data['LuxurylinkClientThemeRel'][$v['themeId']] = $v['clientThemeRelId'];
-		    }
-		    
-		     if (@in_array('family', $clientThemeRel['ClientThemeRel']['sites'])) {
-    		    $this->data['FamilyClientThemeRel'][$v['themeId']] = $v['clientThemeRelId'];
-    		}
-		}
-		
+		$themes = $this->Client->ClientThemeRel->Theme->findClientThemes($id);
+        $themesCount = $this->Client->ClientThemeRel->countThemesSites($id);
+        $this->Client->Destination->recursive = -1;
+		$destinations = $this->Client->Destination->find('list', array('order' => array('destinationName')));		
+        $this->set('themes', $themes);
+        $this->set('themesCount', $themesCount);
 		if (!empty($this->data['Client']['ageRanges'])) {
 			$ranges = explode(',',$this->data['Client']['ageRanges']);
 			$this->data['Client']['ageRanges'] = $ranges;
 		}
 		$this->set('client', $this->data);
+        //debug($this->data);
+        //die();
 		//$this->set(compact('addresses', 'amenities','clientLevelIds','clientStatusIds','clientTypeIds','regions','clientAcquisitionSourceIds', 'loas', 'themes'));
 		$countryIds = $this->Country->find('list');
 		if (!empty($this->data['Client']['countryId'])) {
+            $this->Country->State->recursive = -1;
 		    $stateIds = $this->Country->State->find('list', array('conditions' => array('State.countryId' => $this->data['Client']['countryId'])));
 		}
 		if (!empty($this->data['Client']['stateId'])) {
+            $this->Country->State->City->recursive = -1;
 		    $cityIds = $this->Country->State->City->find('list', array('conditions' => array('City.stateId' => $this->data['Client']['stateId'])));
 		}
 		$this->set(compact('clientStatusIds','clientTypeIds','clientCollectionIds','regions','clientAcquisitionSourceIds', 'loas', 'themes', 'destinations', 'countryIds', 'stateIds', 'cityIds'));
