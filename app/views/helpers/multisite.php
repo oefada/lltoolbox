@@ -34,5 +34,13 @@ class MultisiteHelper extends AppHelper {
         }
         return $out;
     }
+    
+    function displayName($siteId) {
+        return $this->sites[$siteId]['displayName'];
+    }
+    
+    function dbName($siteId) {
+        return $this->sites[$siteId]['dbName'];
+    }
 }
 ?>
