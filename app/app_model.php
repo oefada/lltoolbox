@@ -74,9 +74,18 @@ class AppModel extends Model{
     function afterFind($results) {
         if (Model::hasField('sites') && $this->isMultisite()) {
             foreach($results as &$result) {
-                if (isset($result[$this->name]['sites'])) {
-                    if (in_array('sites', array_keys($result[$this->name])) && !is_array($result[$this->name]['sites'])) {
-                        $result[$this->name]['sites'] = explode(',', $result[$this->name]['sites']);
+                if (isset($result[$this->name])) {
+                    if (isset($result[$this->name]['sites'])) {
+                        if (in_array('sites', array_keys($result[$this->name])) && !is_array($result[$this->name]['sites'])) {
+                            $result[$this->name]['sites'] = explode(',', $result[$this->name]['sites']);
+                        }
+                    }
+                }
+                else {
+                    if (isset($result['sites'])) {
+                        if (in_array('sites', array_keys($result)) && !is_array($result['sites'])) {
+                            $result['sites'] = explode(',', $result['sites']);
+                        }
                     }
                 }
             }
@@ -188,16 +197,24 @@ class AppModel extends Model{
     
     function deleteFromFrontEnd($modelData, $site) {
         $this->useDbConfig = $site;
-        $this->deleteAll(array($this->primaryKey => $modelData[$this->name][$this->primaryKey]), array('callbacks' => false));
+        $delModel = $modelData;
+        $this->deleteAll(array($this->primaryKey => $delModel[$this->name][$this->primaryKey]), $cascade=false, $callbacks=false);
         if (isset($this->containModels)) {
-            $this->deleteAssocModels($modelData, $site);
+            $delAssocModel = $modelData;
+            $this->deleteAssocModels($delAssocModel, $site);
         }
     }
     
     function deleteAssocModels($modelData, $site) {
         foreach($this->containModels as $assocModel) {
+            $delModel = $modelData;
             $this->$assocModel->useDbConfig = $site;
-            $this->$assocModel->deleteAll(array($this->$assocModel->primaryKey => $modelData[$this->$assocModel][$this->$assocModel->primaryKey]), array('callbacks' => false));
+            if (is_array($delModel[$this->$assocModel->name][0])) {
+                $this->$assocModel->deleteAll(array($assocModel.'.'.$this->primaryKey => $this->id), $cascade=false, $callbacks=false);
+            }
+            else {
+                $this->$assocModel->deleteAll(array($this->$assocModel->primaryKey => $delModel[$this->$assocModel->name][$this->$assocModel->primaryKey]), $cascade=false, $callbacks=false);
+            }
             $this->$assocModel->useDbConfig = 'default';
         }
     }
@@ -209,7 +226,7 @@ class AppModel extends Model{
         $fields = $this->query($query);
         $f = array();
         foreach($fields as $field) {
-            $f[] = $field['COLUMNS']['COLUMN_NAME'];
+            array_push($f, $field['COLUMNS']['COLUMN_NAME']);
         }
         return $f;
     }
