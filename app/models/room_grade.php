@@ -12,6 +12,6 @@ class RoomGrade extends AppModel {
     var $belongsTo = array('Client' => array('className' => 'Client', 'foreignKey' => 'clientId'));
     
     var $multisite = true;
-    var $inheritsFrom = array('modelName' => 'Client', 'siteField' => 'sites');
+    var $containModels = array('ImageRoomGradeRel');
 }
 ?>

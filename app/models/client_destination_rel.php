@@ -8,7 +8,6 @@ class ClientDestinationRel extends AppModel {
 	var $belongsTo = array('Client' => array('foreignKey' => 'clientId'),
 				     'Destination' => array('foreignKey' => 'destinationId'));
 	
-	var $actsAs = array('Multisite');
 	var $deleteFirst = true;
 	
 }

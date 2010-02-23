@@ -5,8 +5,23 @@ class ClientThemeRel extends AppModel {
 	var $useTable = 'clientThemeRel';
 	var $primaryKey = 'clientThemeRelId';
 	
-	var $belongsTo = array('Theme' => array('foreignKey' => 'themeId'));
-	var $actsAs = array('Multisite');
+	var $belongsTo = array('Theme' => array('foreignKey' => 'themeId'),
+                           'Client' => array('foreignKey' => 'clientId'));
+    
+	var $actsAs = array('Containable');
+    
+    var $multisite = true;
+    
+    function countThemesSites($clientId) {
+        $i = 0;
+        $this->recursive = -1;
+        $themes = $this->find('all', array('conditions' => array('clientId' => $clientId),
+                                           'fields' => 'sites'));
+        foreach ($themes as $theme) {
+            $i += count($theme['ClientThemeRel']['sites']);
+        }
+        return $i;
+    }
 
 	function saveThemes($data) {
 		$this->useDbConfig = 'default';

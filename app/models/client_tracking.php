@@ -8,8 +8,6 @@ class ClientTracking extends AppModel {
 	
 	var $belongsTo = array('Client' => array('className' => 'Client', 'foreignKey' => 'clientId'));
 	
-	var $actsAs = array('Multisite');
-	
 	function beforeSave() {
 		if (empty($this->data['ClientTracking']['sites'])) {
 				$client = $this->Client->find('first', array('conditions' => array('Client.clientId' => $this->data['ClientTracking']['clientId'])));

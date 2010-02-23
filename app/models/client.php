@@ -7,11 +7,7 @@ class Client extends AppModel {
    var $displayField = 'name';
    var $order = array('Client.name');
    var $actsAs = array('Containable',
-					   'Logable',
-					   'Multisite' => array('propagatesTo' => array('ClientDestinationRel',
-																	'ClientTracking',
-																	'ClientAmenityRel'
-															   )));
+					   'Logable');
    
    var $validate = array('name' => array(
 						 'rule' => '/[a-zA-Z0-9]/',
@@ -30,6 +26,7 @@ class Client extends AppModel {
 						'ClientContact' => array('className' => 'ClientContact', 'foreignKey' => 'clientId'),
 						'ClientAmenityRel' => array('className' => 'ClientAmenityRel', 'foreignKey' => 'clientId'),
 						'ClientDestinationRel' => array('className' => 'ClientDestinationRel', 'foreignKey' => 'clientId'),
+                        'ClientSiteExtended' => array('className' => 'ClientSiteExtended', 'foreignKey' => 'clientId'),
 						'ClientThemeRel' => array('className' => 'ClientThemeRel', 'foreignKey' => 'clientId'),
 						'ClientTracking' => array('className' => 'ClientTracking', 'foreignKey' => 'clientId'),
 						'ClientReview' => array('className' => 'ClientReview', 'foreignKey' => 'clientId'),
@@ -42,18 +39,10 @@ class Client extends AppModel {
 												   'associationForeignKey'=> 'tagId',
 												   'with' => 'clientTag',
 												   'unique'       => true),
-									'Theme' => array('className' => 'Theme',
-												     'foreignKey' => 'clientId',
-												     'with' => 'ClientThemeRel',
-												     'associationForeignKey' => 'themeId'),
 									'Destination' => array('className' => 'Destination',
 														   'foreignKey' => 'clientId',
 														   'with' => 'ClientDestinationRel',
-														   'associationForeignKey' => 'destinationId'),
-									'Amenity' => array('className' => 'Amenity',
-													   'foreignKey' => 'clientId',
-													   'with' => 'ClientAmenityRel',
-													   'associationForeignKey' => 'amenityId')
+														   'associationForeignKey' => 'destinationId')
 									);
 			   
    //use this array to define any models => fields that need to go into the client frontend databases
@@ -61,62 +50,173 @@ class Client extends AppModel {
    var $frontend_fields = array('LoaLevel' => array('loaLevelId', 'loaLevelName'),
 								'ClientType' => array('clientTypeName'),
 								'Client' => array('oldProductId', 'city', 'state'));
+   
+   var $multisite = true;
+   var $containModels = array('ClientAmenityRel',
+                              'ClientDestinationRel',
+                              'ClientTracking');
+   
+   var $loaId;
+
+   function beforeSave() {
+      AppModel::beforeSave();
+      return true;
+   }
 			
-   function populate_frontend_fields() {
+   function afterSave($created) {
+	   // run some custom afterSaves for client.     
+       $client = $this->data;
+        if (is_array($client['Client']['sites'])) {
+            $clientSites = $client['Client']['sites'];
+        }
+        else {
+            $clientSites = explode(',', $client['Client']['sites']);
+        }
+	   //delete HABTM records from front end databases
+	   if (!empty($this->hasAndBelongsToMany)) {
+			foreach($this->hasAndBelongsToMany as $model => $habtm) {
+				//what is Tag for?
+				if ($model == 'Destination') {
+					$modelName = 'Client'.$model.'Rel';
+					foreach($clientSites as $site) {
+						$this->$modelName->useDbConfig = $site;
+						$this->$modelName->deleteAll(array('clientId' => $client['Client']['clientId']), $callbacks=false);
+						$this->$modelName->useDbConfig = 'default';
+					}
+				}
+			}
+	   }
+       //save amenities
+       if (!empty($this->data['ClientAmenityRel'])) {
+            $amenitiesData = array();
+            foreach($this->data['ClientAmenityRel'] as $amenity) {
+                 if (isset($amenity['remove'])) {
+                     $this->ClientAmenityRel->delete($amenity['clientAmenityRelId']);
+                     continue;
+                 }
+                 array_push($amenitiesData, $amenity);
+            }
+            $this->ClientAmenityRel->saveAll($amenitiesData);
+       }
+       //save tracking
+       if (!empty($this->data['ClientTracking'])) {
+            $trackingData = array();
+            foreach($this->data['ClientTracking'] as $trackingRecord) {
+                $trackingRecord['clientId'] = $this->data['Client']['clientId'];
+                array_push($trackingData, $trackingRecord);
+            }
+            $this->ClientTracking->saveAll($trackingData);
+        }
+       //save themes
+       if (!empty($this->data['Theme'])) {
+            $themeData = array();
+            foreach ($this->data['Theme'] as $themeId => $data) {
+                if (empty($data['sites']) && !empty($data['clientThemeRelId'])) {
+                    $this->ClientThemeRel->delete($data['clientThemeRelId']);
+                    continue;
+                }
+                $data['themeId'] = $themeId;
+                $data['clientId'] = $this->data['Client']['clientId'];
+                array_push($themeData, $data);
+            }
+            $this->ClientThemeRel->saveAll($themeData);
+       }
+
+       AppModel::afterSave($created);
+	   $this->loaId = $this->Loa->get_current_loa($client['Client']['clientId']);
+       $this->saveFrontEndFields($client, $clientSites);
+	   //save client site extended data
+       if (!empty($client['ClientSiteExtended'])) {
+            foreach($client['ClientSiteExtended'] as $clientSiteExtendedId => $siteData) {
+                $siteData['clientId'] = $client['Client']['clientId'];
+                $this->ClientSiteExtended->create();
+                $clientSiteExtended = $this->ClientSiteExtended->save($siteData);
+                $this->ClientSiteExtended->saveToFrontEnd($clientSiteExtended);
+            }
+       }
+	   return $this->saveDestThemeLookup($created, $client);
+   }
+   
+   function saveFrontEndFields($client, $sites) {
+		$data = $this->populate_frontend_fields($client);
+		foreach($sites as $site) {
+			$this->useDbConfig = $site;
+			$setFields = array();
+			foreach($this->frontend_fields as $model => $fields) {
+				foreach ($fields as $field) {
+					if (!empty($data['Client'][$field])) {
+						array_push($setFields, "{$field} = '{$data['Client'][$field]}'");
+					}
+				}
+			}
+			if (!empty($setFields)) {
+				$setStatement = implode(', ', $setFields);
+				$query = "UPDATE client SET {$setStatement}
+						  WHERE clientId = {$client['Client']['clientId']}";
+				$this->query($query);
+			}
+			$this->useDbConfig = 'default';
+		}
+   }
+
+			
+   function populate_frontend_fields($client) {
 	  $data = array();
 	  foreach ($this->frontend_fields as $model => $fields) {
-			switch ($model) {
-			   case 'LoaLevel':
-						   $loa = $this->Loa->findByLoaId($this->loaId);
-						   foreach ($fields as $field) {
-									   if (empty($this->data['Client'][$field]) && !empty($loa['LoaLevel'][$field])) {
-												   $data['Client'][$field] = $loa['LoaLevel'][$field];
-									   }
-						   }
-						   break;
-			   case 'ClientType':
-						   $client_type = $this->ClientType->findByClientTypeId($this->data['Client']['clientTypeId']);
-						   foreach ($fields as $field) {
-									   if (empty($this->data['Client'][$field]) && !empty($client_type['ClientType'][$field])) {
-												   $data['Client'][$field] = $client_type['ClientType'][$field];
-									   }
-						   }
-						   break;
-			   case 'Client':
-						   $client = $this->find('first', array('fields' => $fields, 'conditions' => array('Client.clientId' => $this->data['Client']['clientId'])));
-						   foreach($fields as $field) {
-									   if (empty($this->data['Client'][$field]) && !empty($client['Client'][$field])) {
-												   $data['Client'][$field] = $client['Client'][$field];
-									   }
-						   }
-						   break;
-			   default:
-						   break;
+        switch ($model) {
+           case 'LoaLevel':
+                $loa = $this->Loa->findByLoaId($this->loaId);
+                foreach ($fields as $field) {
+                            if (empty($client['Client'][$field]) && !empty($loa['LoaLevel'][$field])) {
+                                        $data['Client'][$field] = $loa['LoaLevel'][$field];
+                            }
+                }
+                break;
+           case 'ClientType':
+                $client_type = $this->ClientType->findByClientTypeId($client['Client']['clientTypeId']);
+                foreach ($fields as $field) {
+                            if (empty($client['Client'][$field]) && !empty($client_type['ClientType'][$field])) {
+                                        $data['Client'][$field] = $client_type['ClientType'][$field];
+                            }
+                }
+                break;
+           case 'Client':
+                $client = $this->find('first', array('fields' => $fields, 'conditions' => array('Client.clientId' => $client['Client']['clientId'])));
+                foreach($fields as $field) {
+                            if (empty($client['Client'][$field]) && !empty($client['Client'][$field])) {
+                                        $data['Client'][$field] = $client['Client'][$field];
+                            }
+                }
+                break;
+           default:
+                break;
 			}
 		 }
 		 return $data;	  
+   }
+   
+   function getSites($clientId) {
+		$this->recursive = -1;
+		$client = $this->find('first', array('conditions' => array('Client.clientId' => $clientId),
+											 'fields' => array('Client.sites')));
+		if ($client) {
+			return $client['Client']['sites'];
+		}
+		else {
+			return array();
+		}
    }
    
    function afterFind($results, $primary = false) {
 	  if ($primary == true && $this->recursive != -1):
 		 foreach ($results as $key => $val):
 			if (!empty($val['Client']) && is_int($key)):
-			   //TODO: Turn the following two queries into one
-			   $loas = $this->Loa->find('list', array('contain' => array(), 'fields' => array('loaId'), 'conditions' => array('Loa.clientId' => $val['Client']['clientId'])));
-			   $currentLoa = $this->Loa->find('first', array('contain' => array('LoaLevel'),
-															 'fields'=>array('Loa.loaId, Loa.loaLevelId, LoaLevel.loaLevelName'),
-															 'conditions' => array('Loa.clientId' => $val['Client']['clientId'],
-															 					   'NOW() BETWEEN Loa.startDate AND Loa.endDate', 'inactive' => 0),
-															 'order' => 'sponsorship DESC'));
-
-			   //look to the parent if there's no LOA for this client
-			   if (empty($currentLoa) && !empty($val['Client']['parentClientId'])) {
-							   $currentLoa = $this->Loa->find('first', array('contain' => array('LoaLevel'), 
-																		     'fields'=>array('Loa.loaId, Loa.loaLevelId, LoaLevel.loaLevelName'),
-																		     'conditions' => array('Loa.clientId' => $val['Client']['parentClientId'],
-																								    'NOW() BETWEEN Loa.startDate AND Loa.endDate', 'inactive' => 0),
-																			  'order' => 'sponsorship DESC'));
-			   }
+                $currentLoaId = $this->Loa->get_current_loa($val['Client']['clientId']);
+			    $loas = $this->Loa->findCount(array('Loa.clientId' => $val['Client']['clientId']));
+			    $currentLoa = $this->Loa->find('first', array('contain' => array('LoaLevel'),
+															  'fields'=>array('Loa.loaId, Loa.loaLevelId, LoaLevel.loaLevelName'),
+															  'conditions' => array('Loa.loaId' => $currentLoaId),
+															  'order' => 'sponsorship DESC'));
 			   if (empty($currentLoa)) {
 						   $results[$key]['Client']['currentLoaId'] = 0;
 						   $results[$key]['ClientLevel']['clientLevelId'] = 0;
@@ -130,123 +230,175 @@ class Client extends AppModel {
 			endif;
 		 endforeach;
 	  endif;
-	  return $results;
+      $r = AppModel::afterFind($results);
+	  return $r;
    }
-
-   function beforeSave() {
-      if(empty($this->data['Client']['name'])) {
-        return false;
-      }
-	  if (empty($this->data['Client']['parentClientId'])) {
-		 $loaClient = $this->data['Client']['clientId'];
-	  }
-	  else {
-		 $loaClient = $this->data['Client']['parentClientId'];
-	  }
-	  $data = $this->data;
-	  $this->loaId = $this->Loa->get_current_loa($loaClient);
-	  if (empty($this->data['Client']['sites'])) {
-		 $loa = $this->Loa->find('first', array('conditions' => array('Loa.loaId' => $this->loaId)));
-		 $data['Client']['sites'] = $loa['Loa']['sites'];
-	  }
-	  $frontend_data = $this->populate_frontend_fields();
-	  $this->data = array_merge_recursive($data, $frontend_data);
-	  return true;
-   }
-			
-   function afterSave($created) {
-	   // run some custom afterSaves for client.	
-	   return $this->saveDestThemeLookup($created);
-   }
-			
-   function saveDestThemeLookup($created) {
-	   $clientId = ($created && !isset($this->data['Client']['clientId'])) ? $this->getInsertId() : $this->id;
+	
+   function saveDestThemeLookup($created, $data) {
+	   $clientId = ($created && !isset($data['Client']['clientId'])) ? $this->getInsertId() : $this->id;
 	   if (!$clientId) {
-		   @mail('devmail@luxurylink.com', 'CLIENT AFTERSAVE ERROR: NO CLIENT ID', print_r($this->data));	
+		   @mail('devmail@luxurylink.com', 'CLIENT AFTERSAVE ERROR: NO CLIENT ID', print_r($this->data));
 	   }
-	   $clientSites = $this->find('first', array('conditions' => array('Client.clientId' => $this->data['Client']['clientId']),
+	   $clientSites = $this->find('first', array('conditions' => array('Client.clientId' => $data['Client']['clientId']),
                                            'fields' => array('sites')));
        $sites = $clientSites['Client']['sites'];
        
-	   // for clientDestinationLookup only on the frontend
-	   // -----------------------------------------------------------------
-	   if (isset($this->data['Destination']['Destination']) && !empty($this->data['Destination']['Destination'])) {
-		   $destinationIds = $this->data['Destination']['Destination'];
-		   sort($destinationIds);
-		   $tmp = '';
-		   $insert_arr = array();
-		   $insert_arr['clientId'] = $clientId;
-		   for ($i = 1; $i <= 150; $i++) {
-			   if (in_array($i, $destinationIds)) {
-				   $insert_arr["destination$i"] = 1;
-				   $tmp.= "destination$i=1,";	
-			   } else {
-				   $tmp.= "destination$i=0,";
-			   }
-		   }
-		   $update_tmp = rtrim($tmp, ',');
-		   $sql = "INSERT DELAYED INTO clientDestinationLookup (". implode(',',array_keys($insert_arr)) .") VALUES (". implode(',',array_values($insert_arr)) .") ON DUPLICATE KEY UPDATE $update_tmp";
-		   foreach ($sites as $site) {
-			   $this->useDbConfig = $site;
-			   $result = $this->query($sql);
-		   }
-	   }
-	   // for clientThemeLookup only on the frontend
-	   // -----------------------------------------------------------------
-	   if (isset($this->data['ClientThemeRel']) && !empty($this->data['ClientThemeRel'])) {
-		   foreach ($this->data['ClientThemeRel'] as $site => $themeIds) {
-			   if (empty($themeIds)) {
-				   continue;
-			   }
-			   sort($themeIds);
-			   $tmp = '';
-			   $insert_arr = array();
-			   $insert_arr['clientId'] = $clientId;
-			   for ($i = 1; $i <= 150; $i++) {
-				   if (in_array($i, $themeIds)) {
-					   $insert_arr["theme$i"] = 1;
-					   $tmp.= "theme$i=1,";	
-				   } else {
-					   $tmp.= "theme$i=0,";
-				   }
-			   }
-			   $update_tmp = rtrim($tmp, ',');
-			   $sql = "INSERT DELAYED INTO clientThemeLookup (". implode(',',array_keys($insert_arr)) .") VALUES (". implode(',',array_values($insert_arr)) .") ON DUPLICATE KEY UPDATE $update_tmp";
-			   $this->useDbConfig = $site;
-			   $result = $this->query($sql);
-		   }
-	   }
+       foreach ($sites as $site) {
+            // for clientDestinationLookup only on the frontend
+           // -----------------------------------------------------------------
+            if (isset($data['ClientDestinationRel']) && !empty($data['ClientDestinationRel'])) {
+               $destinationIds = array();
+               foreach($data['ClientDestinationRel'] as $destination) {
+                    $tmp = '';
+                    array_push($destinationIds, $destination['destinationId']);
+               }
+               sort($destinationIds);
+               $insert_arr = array();
+               $insert_arr['clientId'] = $clientId;
+               for ($i = 1; $i <= 150; $i++) {
+                   if (in_array($i, $destinationIds)) {
+                       $insert_arr["destination$i"] = 1;
+                       $tmp.= "destination$i=1,";	
+                   } else {
+                       $tmp.= "destination$i=0,";
+                   }
+               }
+               $update_tmp = rtrim($tmp, ',');
+               $sql = "INSERT DELAYED INTO clientDestinationLookup (". implode(',',array_keys($insert_arr)) .") VALUES (". implode(',',array_values($insert_arr)) .") ON DUPLICATE KEY UPDATE $update_tmp";
+               $this->useDbConfig = $site;
+               $result = $this->query($sql);
+            }
+            // for clientThemeLookup only on the frontend
+            // -----------------------------------------------------------------
+            if (isset($data['ClientThemeRel']) && !empty($data['ClientThemeRel'])) {
+                $themeIds = array();
+                foreach ($data['ClientThemeRel'] as $theme) {
+                    $tmp = '';
+                    
+                }
+                sort($themeIds);
+                $insert_arr = array();
+                $insert_arr['clientId'] = $clientId;
+                for ($i = 1; $i <= 150; $i++) {
+                   if (in_array($i, $themeIds)) {
+                       $insert_arr["theme$i"] = 1;
+                       $tmp.= "theme$i=1,";	
+                   } else {
+                       $tmp.= "theme$i=0,";
+                   }
+               }
+               $update_tmp = rtrim($tmp, ',');
+               $sql = "INSERT DELAYED INTO clientThemeLookup (". implode(',',array_keys($insert_arr)) .") VALUES (". implode(',',array_values($insert_arr)) .") ON DUPLICATE KEY UPDATE $update_tmp";
+               $this->useDbConfig = $site;
+               $result = $this->query($sql);
+            }
+       }
 	   $this->useDbConfig = 'default';
 	   return true;
    }
 			
-   //save client to multisite and push data to front-end dbs after an LOA has been saved
+   //save current LOA's sites to Client and push data to front-end dbs after an LOA has been saved
    function set_sites($client_id, $sites) {
 	  $this->id = $client_id;
 	  $client = $this->findByClientId($client_id);
-	  $client['Client']['sites'] = explode(',', $sites);
-	  //These if statements are necessary to prevent Cake from inserting blank Client records to the toolbox db
-	  if (empty($client['ParentClient']['clientId'])) {
-		 unset($client['ParentClient']);
-		 $this->unbindModel(array('belongsTo' => array('ParentClient')), $reset=false);
-	   }
-	  if (empty($client['ChildClient']['clientId'])) {
-		 unset($client['ChildClient']);
-		 $this->unbindModel(array('hasMany' => array('ChildClient')), $reset=false);
+	  $loaSites = explode(',', $sites);
+	  if (!empty($client['Client']['sites'])) {
+			$newSites = array_diff($loaSites, $client['Client']['sites']);
+            $removeSites = array_diff($client['Client']['sites'], $loaSites);
+            if (empty($newSites) && empty($removeSites)) {
+                return;
+            }
+			if (!empty($newSites)) {
+				if (empty($client['ClientSiteExtended'])) {
+					$client['ClientSiteExtended'] = array();
+				}
+				foreach($newSites as $site) {
+					$clientSiteExtended['clientId'] = $client_id;
+					$clientSiteExtended['siteId'] = array_search($site, $this->sites);
+					array_push($client['ClientSiteExtended'], $clientSiteExtended);
+                    
+                    //save room grades
+                    if (!empty($client['ImageClient'])) {
+                         $this->RoomGrade->contain($this->RoomGrade->containModels);
+                         $roomGrades = $this->RoomGrade->find('all', array('conditions' => array('RoomGrade.clientId' => $client['Client']['clientId'])));
+                         if (!empty($roomGrades)) {
+                             foreach($roomGrades as $roomGrade) {
+                                $this->RoomGrade->saveToFrontEndDb($roomGrade, $site, array($site), false);
+                             }
+                         }
+                    }
+                    
+				}
+			}
+			if (!empty($removeSites)) {
+                $extraModels = array('RoomGrade');
+                $this->containModels = array_merge($this->containModels, $extraModels);
+                $this->contain($this->containModels);
+                $delClient = $this->find('first', array('conditions' => array('Client.clientId' => $client['Client']['clientId']),
+                                                        'fields' => array('Client.clientId'),
+                                                        'callbacks' => 'before'));
+				foreach($removeSites as $site) {
+                    $delClientId = $delClient['Client']['clientId'];
+                    $siteId = array_search($site, $this->sites);
+                    $this->deleteFromFrontEnd($delClient, $site);
+                    $this->useDbConfig = 'default';
+                    $delQuery = "DELETE FROM clientSiteExtended WHERE clientId={$delClientId} AND siteId={$siteId};";
+                    $this->query($delQuery);
+                    $i = 0;
+                    foreach($client['ClientSiteExtended'] as $record) {
+                        if ($record['siteId'] == $siteId) {
+                            unset($client['ClientSiteExtended'][$i]);
+                            break;
+                        }
+                        $i++;
+                    }
+                    if (!empty($client['ClientThemeRel'])) {
+                        $i = 0;
+                        foreach($client['ClientThemeRel'] as &$theme) {
+                            if (in_array($site, $theme['sites'])) {
+                                if (count($theme['sites']) == 1) {
+                                    $this->ClientThemeRel->delete($theme['clientThemeRelId']);
+                                }
+                                elseif (count($theme['sites']) > 1) {
+                                    $key = array_search($site, $theme['sites']);
+                                    unset($theme['sites'][$key]);
+                                    $this->ClientThemeRel->save($theme);
+                                }
+                                unset($client['ClientThemeRel'][$i]);
+                            }
+                            $i++;
+                        }
+                    }
+                    $lookups = array('Destination', 'Theme');
+                    $this->useDbConfig = $site;
+                    foreach ($lookups as $lookup) {
+                        $query = "DELETE FROM client{$lookup}Lookup WHERE clientId = {$delClientId}";
+                        $this->query($query);
+                    }
+                    $this->useDbConfig = 'default';
+                }
+			}
 	  }
-	  $this->set($client);
-      $query = "REPLACE INTO multiSite SET model = 'Client', modelId = {$client_id}, sites = '{$sites}'";
-      $this->query($query);
-	  //$this->save($client, array('callbacks' => false));
-   }
-   
-   //populate the sites field for a client when running a custom query outside of a Cake $this->Client->find()
-   function get_sites($clientId) {
-	  $query = "SELECT sites FROM multiSite WHERE model = 'Client' AND modelId = {$clientId}";
-	  $sites = $this->query($query);
-	  if (!empty($sites)) {
-		 return explode(',', $sites[0]['multiSite']['sites']);
+	  else {
+			if (empty($client['ClientSiteExtended'])) {
+				  $client['ClientSiteExtended'] = array();
+				  foreach($loaSites as $site) {
+					  $clientSiteExtended['clientId'] = $client_id;
+					  $clientSiteExtended['siteId'] = array_search($site, $this->sites);
+					  array_push($client['ClientSiteExtended'], $clientSiteExtended);
+				  }
+			}
 	  }
+      if (!empty($extraModels)) {
+            $this->containModels = array_splice($this->containModels, 0, -count($extraModels));
+      }
+	  $client['Client']['sites'] = $sites;
+	  $this->save($client, array('callbacks' => 'after'));
+      if (!empty($client['ChildClient'])) {
+            foreach($client['ChildClient'] as $child) {
+                $this->set_sites($child['clientId'], $sites);
+            }
+      }
    }
    
    function bindOnly($keep_assocs=array(), $reset=true) {

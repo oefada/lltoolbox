@@ -12,7 +12,7 @@ class Loa extends AppModel {
 						   'LoaMembershipType' => array('foreignKey' => 'loaMembershipTypeId')
 						  );
 	var $validate = array('startDate' => array('rule' => array('validateEndStartDate'), 'message' => 'Start date must be less than end date'),
-							'endDate' => array('rule' => array('validateEndStartDate'), 'message' => 'Start date must be less than end date')
+						  'endDate' => array('rule' => array('validateEndStartDate'), 'message' => 'Start date must be less than end date')
 							);
 							
 	var $order = array("Loa.startDate DESC");
@@ -22,8 +22,9 @@ class Loa extends AppModel {
 						 'Track' => array('foreignKey' => 'loaId')
 						);
     
-    var $actsAs = array('Containable', 'Multisite' => array('disableWrite' => true));
-	  
+    var $actsAs = array('Containable');
+	
+    var $multisite = true;
 
 	function validateEndStartDate()
 	{
@@ -44,15 +45,24 @@ class Loa extends AppModel {
 		        $this->data['Loa']['customerApprovalDate'] = date('Y-m-d H:i:s');
 		    }			
 		}
+        AppModel::beforeSave();
 	    return true;
 	}
 	
 	function afterSave() {
-	      $this->Client->set_sites($this->data['Loa']['clientId'], implode(',', $this->data['Loa']['sites']));
+          if ($this->id == $this->get_current_loa($this->data['Loa']['clientId'])) {
+                $this->Client->set_sites($this->data['Loa']['clientId'], $this->data['Loa']['sites']);
+          }
 	      return;
 	}
+    
+    //override AppModel::afterDelete()
+    function afterDelete() {
+        return;
+    }
 	
     function get_current_loa($client_id) {
+        $this->Loa->recursive = -1;
          $currentLoaId = $this->field('loaId', array('Loa.clientId = '.$client_id.' AND now() BETWEEN Loa.startDate AND Loa.endDate'));
          if (empty($currentLoaId)) {
            $this->Client->recursive = -1;
@@ -69,6 +79,5 @@ class Loa extends AppModel {
          }
          return $currentLoaId;
     } 
-
 }
 ?>
