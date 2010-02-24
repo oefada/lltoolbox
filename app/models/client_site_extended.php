@@ -7,11 +7,10 @@ class ClientSiteExtended extends AppModel {
     
     var $belongsTo = array('Client' => array('className' => 'Client', 'foreignKey' => 'clientId'));
     
-    var $llFieldlist = array('clientId', 'siteId', 'longDesc', 'blurb', 'keywords', 'inactive');
-    var $familyFieldlist = array('clientId', 'siteId', 'longDesc', 'blurb', 'keywords', 'inactive', 'familiesShouldKnow');
+    var $llFieldlist = array('longDesc', 'blurb', 'keywords', 'inactive');
+    var $familyFieldlist = array('longDesc', 'blurb', 'keywords', 'inactive', 'familiesShouldKnow');
     
     function saveToFrontEnd($clientExtendedData) {
-        $this->recursive = -1;
         if (!empty($clientExtendedData)) {
             $this->Client->useDbConfig = AppModel::getDbName($clientExtendedData['ClientSiteExtended']['siteId']);
             switch($clientExtendedData['ClientSiteExtended']['siteId']) {
@@ -24,12 +23,15 @@ class ClientSiteExtended extends AppModel {
                 default:
                     return;
             }
-            $clientData = array();
-            $clientData['Client'] = $clientExtendedData['ClientSiteExtended'];
-            $clientData['Client']['modified'] = false;
-            $clientData['Client']['created'] = false;
-            $this->Client->create();
-            $this->Client->save($clientData, array('callbacks' => false, 'fieldList' => $useFields));
+            $setStatement = array();
+            foreach ($useFields as $field) {
+                $value = addslashes($clientExtendedData['ClientSiteExtended'][$field]);
+                $updateField = "{$field} = '{$value}'";
+                array_push($setStatement, $updateField);
+            }
+            $setStatement = implode(',', $setStatement);
+            $query = "UPDATE client SET {$setStatement} WHERE clientId = {$this->Client->id}";
+            $this->Client->query($query);
             $this->Client->useDbConfig = 'default';
         }
     }
