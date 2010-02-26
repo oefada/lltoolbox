@@ -10,6 +10,7 @@
       $slideshowImages = ${'slideshowImages'.$site};
       $largeImages = ${'largeImages'.$site};
       $thumbnailImages = ${'thumbnailImages'.$site};
+      $start_inactive = false;
    ?>
       <div id="images-<?php echo $site; ?>" class="organize" <?php if ($site != $displayTab): ?> style="display:none"<?php endif; ?>>
          <form method="post" id="organizeImages-<?php echo $site; ?>">
@@ -57,7 +58,7 @@
          <div class="organize slideshow inactive">
             <h3>Inactive</h3>
             <ul id="sortableInactive-<?php echo $site; ?>" class="sortableInactive">
-               <?php if (isset($start_inactive)): ?>
+               <?php if ($start_inactive !== false): ?>
                   <?php for ($i=$start_inactive; $i < count($slideshowImages); $i++): ?>
                      <li id="item_<?php echo $slideshowImages[$i]['ImageClient']['clientImageId'] ?>-<?php echo $site; ?>">
                           <img src="<?php echo $slideshowImages[$i]['Image']['imagePath']; ?>" height="100" alt="<?php echo $slideshowImages[$i]['Image']['caption']; ?>" />
