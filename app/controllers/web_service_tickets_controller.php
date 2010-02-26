@@ -654,7 +654,7 @@ class WebServiceTicketsController extends WebServicesController
 				$sitePhone  = '(877) 372-5877';
 				$sitePhoneLocal = '(310) 956-3703';
 				$siteFax = '(800) 440-3820';
-				$headerLogo = 'http://www.luxurylink.com/images/family/logo.gif';
+				$headerLogo = 'http://www.luxurylink.com/images/family/logo_emails.gif';
 				$checkoutLink		= "https://www.familygetaway.com/my/my_purchase.php?z=$checkoutKey";
 
 				// auction facilitator
