@@ -42,7 +42,7 @@
                             <input type="hidden" name="data[ImageClient][<?php echo $i-1 ?>][clientImageId]" value="<?php echo $image['ImageClient']['clientImageId'] ?>" />
                             <img src="<?php echo $image['Image']['imagePath'] ?>" height="250" />
                             <p><?php echo $i ?> of <?php echo count($images); ?></p>
-                            <input type="text" name="data[ImageClient][<?php echo $i-1 ?>][caption]" value="<?php echo $image['ImageClient']['caption'] ?>" />
+                            <input type="text" maxlength="60" name="data[ImageClient][<?php echo $i-1 ?>][caption]" value="<?php echo $image['ImageClient']['caption'] ?>" />
                         </li>
                         <?php $i++; ?>
                 <?php endforeach; ?>
