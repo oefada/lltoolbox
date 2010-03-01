@@ -1,12 +1,12 @@
 <?php
-/* SVN FILE: $Id$ */
+/* SVN FILE: $Id: default.ctp 1851 2009-08-15 00:20:34Z vgarcia $ */
 /**
  * Three column layout.
  *
  * @filesource
- * @version			$Revision$
- * @modifiedby		$LastChangedBy$
- * @lastmodified	$Date$
+ * @version			$Revision: 1851 $
+ * @modifiedby		$LastChangedBy: vgarcia $
+ * @lastmodified	$Date: 2009-08-14 17:20:34 -0700 (Fri, 14 Aug 2009) $
  */
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -21,67 +21,14 @@
 		echo $html->meta('icon');
 
 		echo $html->css('main');
-		echo $html->css('datepicker');
-		echo $html->css('prototip');
 		echo $html->css('print', null, array('media' => 'print'));
 		
 		if(isset($javascript)):
-            echo $javascript->link('prototype');
-            echo $javascript->link('scriptaculous/scriptaculous');
-			echo $javascript->link('modalbox');
-			echo $javascript->link('collapsible');
-			echo $javascript->link('datepicker');
-			echo $javascript->link('livepipe');
-			echo $javascript->link('tabs');
-			echo $javascript->link('prototip');
-			//echo $javascript->link('fixed_table_headers');
+            echo $javascript->link('jquery/jquery');
 		endif;
 
 		echo $scripts_for_layout;
 	?>
-	<script type="text/javascript">
-		var previousQueueCount = "";
-		
-		function closeModalbox()
-		{
-			if ($('closeModalbox')) {
-				// hide the modal box
-				Modalbox.hide();
-				// refresh the current page
-				location.reload(true);
-			} else if($('closeModalboxNoReload')) {
-				// only hide the modal box, no refreshing of the current page
-				Modalbox.hide();
-			} else {
-				// resize to content (in case of validation error messages)
-				Modalbox.resizeToContent()
-			}
-			return true;
-		}
-		
-		function startupEvents() {
-			/*var queueCountUpdater = new Ajax.PeriodicalUpdater('queueCounter', '/message_queues/ajax_get_totals', {
-			  method: 'get', frequency: 10, decay: 2, onSuccess: function(){flashQueueCounter()}
-			});*/
-		}
-		
-		function flashQueueCounter() {
-			if (previousQueueCount == "") {
-				previousQueueCount = $('queueCounter').innerHTML;
-				return true;
-			}
-
-			if (previousQueueCount != $('queueCounter').innerHTML) {
-				//new Effect.Shake('queueCounter');
-				previousQueueCount = $('queueCounter').innerHTML;
-			}
-		}
-		
-		Event.observe(window, 'load',
-			function() { if($('flashMessage')) { new Effect.Highlight($('flashMessage')) };
-			 				startupEvents();}
-		);
-	</script>
 	<script type="text/javascript"><?php /* Needed to avoid Flash of Unstyled Content in IE */ ?> </script>
 </head>
 <body>

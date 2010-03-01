@@ -93,4 +93,9 @@
     
 // ROUTE ADDED 12-14-09 to properly set the landing page id parameter when adding a travel idea
     Router::connect('/travel_ideas/add/:landingPageId', array('controller' => 'travel_ideas', 'action' => 'add'), array('landingPageId' => '[0-9]+'));
+    
+//ROUTES ADDED 02-09-10 to handle ajax requests for newsletter scheduling tool
+    Router::connect('/mailings/addVariationToSection/:mailingId/:sectionId', array('controller' => 'mailings', 'action' => 'addVariationToSection'), array('mailingId' => '[0-9]+', 'sectionId' => '[0-9]+',  'pass' => array('mailingId', 'sectionId')));
+    Router::connect('/mailings/deleteFromVariation/:mailingPackageSectionRelId', array('controller' => 'mailings', 'action' => 'deleteFromVariation'), array('mailingPackageSectionRelId' => '[0-9]+',  'pass' => array('mailingPackageSectionRelId')));
+    Router::connect('/mailings/suggestClients/:mailingId', array('controller' => 'mailings', 'action' => 'suggestClients'), array('mailingId' => '[0-9]+', 'pass' => array('mailingId')));
 ?>
