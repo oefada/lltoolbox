@@ -114,7 +114,7 @@ class AppModel extends Model{
             $modelData = $this->find('first', array('conditions' => array($this->name.'.'.$this->primaryKey => $this->id)));
             //if this model inherits its sites from another, get them here
             if (isset($this->inheritsFrom)) {
-                $parentModel = new $this->inheritsFrom['modelName'];
+                $parentModel = new $this->inheritsFrom['modelName']();
                 $sites = $parentModel->find('first', array('conditions' => array($parentModel->name.'.'.$parentModel->primaryKey => $modelData[$this->name][$parentModel->primaryKey]),
                                                            'fields' => array($this->inheritsFrom['siteField'])));
                 $modelData[$this->name][$this->inheritsFrom['siteField']] = $sites[$parentModel->name][$this->inheritsFrom['siteField']];
@@ -209,11 +209,13 @@ class AppModel extends Model{
         foreach($this->containModels as $assocModel) {
             $delModel = $modelData;
             $this->$assocModel->useDbConfig = $site;
-            if (is_array($delModel[$this->$assocModel->name][0])) {
-                $this->$assocModel->deleteAll(array($assocModel.'.'.$this->primaryKey => $this->id), $cascade=false, $callbacks=false);
-            }
-            else {
-                $this->$assocModel->deleteAll(array($this->$assocModel->primaryKey => $delModel[$this->$assocModel->name][$this->$assocModel->primaryKey]), $cascade=false, $callbacks=false);
+            if (!empty($delModel[$this->$assocModel->name])) {
+                if (isset($delModel[$this->$assocModel->name][0]) && is_array($delModel[$this->$assocModel->name][0])) {
+                    $this->$assocModel->deleteAll(array($assocModel.'.'.$this->primaryKey => $this->id), $cascade=false, $callbacks=false);
+                }
+                else {
+                    $this->$assocModel->deleteAll(array($this->$assocModel->primaryKey => $delModel[$this->$assocModel->name][$this->$assocModel->primaryKey]), $cascade=false, $callbacks=false);
+                }
             }
             $this->$assocModel->useDbConfig = 'default';
         }
