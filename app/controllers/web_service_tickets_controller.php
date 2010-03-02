@@ -93,6 +93,18 @@ class WebServiceTicketsController extends WebServicesController
 		} else {
 			$params['ppvNoticeTypeId'] = 2;     // Reservation Request
 		}
+
+		// check reservation checkin date - if 48 hrs send ppvid 10
+		$arrival_date_1 = @strtotime($ticketData['requestArrival']);
+		$arrival_date_2 = @strtotime($ticketData['requestArrival2']);	
+		$arrival_within_2_days = strtotime('+2 DAYS');     // 48 hrs from now
+		if ($arrival_date_1 > 0 && $arrival_date_1 <= $arrival_within_2_days) {
+			$params['ppvNoticeTypeId'] = 10;
+		} 
+		if ($arrival_date_2 > 0 && $arrival_date_2 <= $arrival_within_2_days) {
+			$params['ppvNoticeTypeId'] = 10;
+		}
+
 		$this->ppv(json_encode($params));	
 		
 		$params['ppvNoticeTypeId'] = 11;     // Fixed Price - Internal Exclusive Email
