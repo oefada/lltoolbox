@@ -388,7 +388,7 @@ class TicketsController extends AppController {
 		}
 		
 		// only ticket status edit only for CHRISTINE YOUNG
-		$allow_status_edit = in_array(trim($initials_user), array('cyoung','alee')) ? true : false;
+		$allow_status_edit = in_array(trim($initials_user), array('cyoung','alee','bly')) ? true : false;
 		
 		$this->set('allow_status_edit', $allow_status_edit);
 		$this->set('ticketStatusIds', $this->Ticket->TicketStatus->find('list'));
