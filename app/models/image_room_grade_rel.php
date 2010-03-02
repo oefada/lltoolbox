@@ -11,12 +11,14 @@ class ImageRoomGradeRel extends AppModel {
                            );
     
     function afterSave($created) {
-        $client = $this->RoomGrade->Client->find('first', array('conditions' => array('Client.clientId' => $this->data['RoomGrade']['clientId']),
+        $roomGrade = $this->RoomGrade->find('first', array('conditions' => array('RoomGrade.roomGradeId' => $this->data['ImageRoomGradeRel']['roomGradeId']),
+                                                           'fields' => array('RoomGrade.clientId')));
+        $client = $this->RoomGrade->Client->find('first', array('conditions' => array('Client.clientId' => $roomGrade['RoomGrade']['clientId']),
                                                                 'fields' => array('sites')));
         if (!empty($client)) {
             $clientSites = $client['Client']['sites'];
+            $data = $this->data;
             foreach ($clientSites as $site) {
-                $data = $this->data;
                 $this->saveToFrontEndDb($data, $site, $clientSites, false);
             }
             $this->useDbConfig = 'default';
