@@ -16,6 +16,7 @@ class MailingPackageSectionRel extends AppModel {
                     INNER JOIN loa AS Loa USING(clientId)
                     WHERE LOWER(Client.name) LIKE '{$conditions}%'
                     AND Loa.numEmailInclusions > 0
+                    AND Loa.numEmailInclusions > Loa.numEmailsSent
                     AND Loa.loaLevelId = 2
                     AND now() BETWEEN Loa.startDate AND Loa.endDate
                     AND Loa.inactive = 0
