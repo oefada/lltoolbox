@@ -42,7 +42,12 @@ class ImagesController extends AppController {
             $this->set('displayTab', 'luxurylink');
         }
         else {
-            $this->set('displayTab', $this->Image->client['Client']['sites'][0]);
+            if (isset($this->Image->client['Client']['sites'][0])) {
+                $this->set('displayTab', $this->Image->client['Client']['sites'][0]);
+            }
+            else {
+                $this->set('displayTab', 'luxurylink');
+            }
         }
 	  }
 	  $this->findNewImages();
