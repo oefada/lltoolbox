@@ -162,7 +162,7 @@ class ClientsController extends AppController {
 			$query = $this->Sanitize->escape($this->params['form']['query']);
 
 			$this->Client->recursive = -1;
-			
+            
 			$queryPieces = explode(" ", $query);
 			
 			$sqlquery = '';
@@ -176,9 +176,12 @@ class ClientsController extends AppController {
 			$conditions = array("(MATCH(Client.name) AGAINST('$sqlquery' IN BOOLEAN MODE) OR Client.clientId LIKE '%$query%' OR Client.name = '$query')");
 			
 			if (!$inactive) {
-			    $conditions['Client.inactive'] = 0;
+			    //$conditions['ClientSiteExtended.inactive'] = 0;
+                array_push($conditions, " Client.clientId IN (SELECT clientId FROM clientSiteExtended WHERE inactive = 0) ");
 			}
-			$results = $this->Client->find('all', array('conditions' => $conditions, 'limit' => 5));
+            
+			$results = $this->Client->find('all', array('conditions' => $conditions,
+                                                        'limit' => 5));
 
 			$this->set('query', $query);
 			$this->set('results', $results);
@@ -188,7 +191,6 @@ class ClientsController extends AppController {
 			} elseif(@$_GET['query'] || @ $this->params['named']['query']) {
 				$this->autoRender = false;
 				$this->Client->recursive = 0;
-
 				$this->paginate = array('conditions' => $conditions);
 				$this->set('query', $query);
 				$this->set('clients', $this->paginate());
