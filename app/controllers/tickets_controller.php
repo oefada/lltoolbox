@@ -12,7 +12,7 @@ class TicketsController extends AppController {
 	var $helpers = array('Html', 'Form', 'Ajax', 'Text', 'Layout', 'Number');
 
 	var $uses = array('Ticket','OfferType', 'Format', 'User', 'ClientLoaPackageRel', 
-					  'Track', 'TrackDetail','Offer','Loa','Client', 'OfferLuxuryLink', 
+					  'Track', 'TrackDetail','Offer','Loa','Client', 'OfferLuxuryLink', 'OfferFamily', 
 					  'Reservation', 'PromoTicketRel', 'Promo', 'PromoCode'
 					  );
 
@@ -402,11 +402,28 @@ class TicketsController extends AppController {
 				$this->Session->setFlash(__('The ticket was not created.  The userId cannot be blank and must be a number.', true), 'default', array(), 'error');
 			} elseif (!$this->data['Ticket']['billingPrice'] || !is_numeric($this->data['Ticket']['billingPrice'])) {
 				$this->Session->setFlash(__('The ticket was not created.  The billingPrice cannot be blank and must be a number.', true), 'default', array(), 'error');
+			} elseif (!$this->data['Ticket']['siteId'] || !is_numeric($this->data['Ticket']['siteId'])) {
+				$this->Session->setFlash(__('The ticket was not created.  You must select a site!', true), 'default', array(), 'error');
 			} else {
 				$this->User->recursive = 1;
-				$this->OfferLuxuryLink->recursive = -1;
 				$userData = $this->User->read(null, $this->data['Ticket']['userId']);
-				$offerData = $this->OfferLuxuryLink->read(null, $this->data['Ticket']['offerId']);
+
+				switch ($this->data['Ticket']['siteId']) {
+					case 1:
+						$this->OfferLuxuryLink->recursive = -1;
+						$tmp = $this->OfferLuxuryLink->read(null, $this->data['Ticket']['offerId']);
+						$offerData = $tmp['OfferLuxuryLink'];
+						break;
+					case 2:
+						$this->OfferFamily->recursive = -1;
+						$tmp = $this->OfferFamily->read(null, $this->data['Ticket']['offerId']);
+						$offerData = $tmp['OfferFamily'];
+						break;
+					default: 
+						die('INVALID SITE ID - Please contact your friendly local developer.');
+						break;
+				}
+
 				if (empty($userData)) {
 					$this->Session->setFlash(__('The ticket was not created.  Invalid User Id.', true), 'default', array(), 'error');
 				} elseif (empty($offerData)) {
@@ -414,9 +431,9 @@ class TicketsController extends AppController {
 				} else {
 					$manual_datetime = date('Y-m-d H:i:s');
 					$this->data['Ticket']['ticketStatusId'] 	= 1;
-					$this->data['Ticket']['packageId'] 			= $offerData['OfferLuxuryLink']['packageId'];
-					$this->data['Ticket']['formatId']			= in_array($offerData['OfferLuxuryLink']['offerTypeId'], array(1,2,6)) ? 1 : 2;
-					$this->data['Ticket']['offerTypeId']		= $offerData['OfferLuxuryLink']['offerTypeId'];
+					$this->data['Ticket']['packageId'] 			= $offerData['packageId'];
+					$this->data['Ticket']['formatId']			= in_array($offerData['offerTypeId'], array(1,2,6)) ? 1 : 2;
+					$this->data['Ticket']['offerTypeId']		= $offerData['offerTypeId'];
 					$this->data['Ticket']['userFirstName']		= $userData['User']['firstName'];
 					$this->data['Ticket']['userLastName']		= $userData['User']['lastName'];
 					$this->data['Ticket']['userEmail1']			= $userData['User']['email'];

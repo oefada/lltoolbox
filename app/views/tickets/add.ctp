@@ -6,6 +6,7 @@
 	<?php
 		echo $form->input('manualTicketInitials', array('readonly' => 'readonly'));
 		echo $form->input('ticketNotes');
+		echo $form->input('siteId');
 		echo $form->input('offerId');
 		echo $form->input('userId');
 		echo $form->input('bidId');
