@@ -95,8 +95,9 @@ class WebServiceTicketsController extends WebServicesController
 		}
 
 		// check reservation checkin date - if 48 hrs send ppvid 10
-		$arrival_date_1 = @strtotime($ticketData['requestArrival']);
-		$arrival_date_2 = @strtotime($ticketData['requestArrival2']);	
+		$arrival_date_1 = $ticketData['requestArrival'] && $ticketData['requestArrival'] != '0000-00-00' ? @strtotime($ticketData['requestArrival']) : false;
+		$arrival_date_2 = $ticketData['requestArrival2'] && $ticketData['requestArrival2'] != '0000-00-00' ? @strtotime($ticketData['requestArrival2']) : false;
+
 		$arrival_within_2_days = strtotime('+2 DAYS');     // 48 hrs from now
 		if ($arrival_date_1 > 0 && $arrival_date_1 <= $arrival_within_2_days) {
 			$params['ppvNoticeTypeId'] = 10;
