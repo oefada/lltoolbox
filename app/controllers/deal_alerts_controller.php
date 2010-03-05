@@ -33,6 +33,7 @@ class DealAlertsController extends AppController {
 		 * For each subscriber, we need to find the deals that pertain to them
 		 */
 		foreach ($subs as $sub) {
+
 			$clientId = $sub['DealAlert']['clientId'];
 			
 			//this query just looks in live offer for any new auctions/buy nows
@@ -72,7 +73,11 @@ class DealAlertsController extends AppController {
 														AND '{$sub['DealAlert']['lastActionDate']}' 
 														AND OfferLive.isMystery = 0
 													GROUP BY OfferLive.packageId");
-				
+			
+			if (empty($tmpNew) || !is_array($tmpNew)) {
+				continue;
+			}
+
 			//create a nice array of all new packages
 			$tmp = array();
 			foreach ($tmpNew as $pkg) {
@@ -95,10 +100,11 @@ class DealAlertsController extends AppController {
 																	'lastName' => $sub['User']['lastName'],
 																	'userId' => $sub['User']['userId'],
 																	'packages' => array_merge((array)$emailsToSend[$sub['DealAlert']['userId']]['packages'], (array)$tmp));
+
+				$this->DealAlert->query("UPDATE dealAlert SET lastActionDate = '$date', lastAction = 'EMAIL' WHERE clientId = {$clientId}");
 			}
 		}
 		
-		$subs = $this->DealAlert->query("UPDATE dealAlert SET lastActionDate = '$date', lastAction = 'EMAIL'");
 
 		//loop through all users and for each new package we send them an email with package details
 		foreach ($emailsToSend as $k => $v) {
@@ -175,6 +181,7 @@ class DealAlertsController extends AppController {
 		
 		$emailHeaders = "From: $emailFrom\r\n";
 		$emailHeaders.= "Reply-To: $emailReplyTo\r\n";
+		$emailHeaders.= "Bcc: devmail@luxurylink.com\r\n";
     	$emailHeaders.= "Content-type: text/html\r\n";
 		
 		@mail($emailTo, $emailSubject, $emailBody, $emailHeaders);
