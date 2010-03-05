@@ -181,7 +181,6 @@ class DealAlertsController extends AppController {
 		
 		$emailHeaders = "From: $emailFrom\r\n";
 		$emailHeaders.= "Reply-To: $emailReplyTo\r\n";
-		$emailHeaders.= "Bcc: devmail@luxurylink.com\r\n";
     	$emailHeaders.= "Content-type: text/html\r\n";
 		
 		@mail($emailTo, $emailSubject, $emailBody, $emailHeaders);
