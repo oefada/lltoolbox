@@ -237,13 +237,6 @@ class MailingsController extends AppController {
     function saveAd() {
         $this->autoRender = false;
         if (!empty($this->data)) {
-            if (!stristr($this->data['Mailing']['adImagePath'], 'http://www.luxurylink.com')) {
-                $path = "http://www.luxurylink.com";
-                if (strpos($this->data['Mailing']['adImagePath'], '/') != 0 || strpos($this->data['Mailing']['adImagePath'], '/') === false) {
-                    $path .= '/';
-                }
-                $this->data['Mailing']['adImagePath'] = $path.$this->data['Mailing']['adImagePath'];
-            }
             $imagePath = $this->data['Mailing']['adImagePath'];
             if ($this->Mailing->save($this->data)) {
                 $out = '<img src="'.$imagePath.'" />';
