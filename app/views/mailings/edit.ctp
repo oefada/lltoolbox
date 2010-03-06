@@ -307,7 +307,8 @@
         <div class="section">
             <form id="mailing-ad">
                <strong>Enter path to ad image:</strong> <input type="text" size="30" name="data[Mailing][adImagePath]" value="<?php echo $mailing['Mailing']['adImagePath'] ?>" /><br />
-               <strong>Alt Text:</strong> <input type="text" size="44" name="data[Mailing][adImageAlt]" value="<?php echo $mailing['Mailing']['adImageAlt'] ?>" />
+               <strong>Alt text:</strong> <input type="text" size="44" name="data[Mailing][adImageAlt]" value="<?php echo $mailing['Mailing']['adImageAlt'] ?>" /><br />
+               <strong>Image link:</strong> <input type="text" size="44" name="data[Mailing][adImageLink]" value="<?php echo $mailing['Mailing']['adImageLink'] ?>" />
                <input type="hidden" name="data[Mailing][mailingId]" value="<?php echo $mailing['Mailing']['mailingId']; ?>" /><br />
                <input type="button" id="save-ad" value="Save" />
             </form>
