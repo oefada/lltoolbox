@@ -1643,6 +1643,7 @@ class ReportsController extends AppController {
 			$clients = $this->Client->query("SELECT 
 							Client.clientId,
 	                        Client.name,
+                            Client.sites,
 							Loa.loaId,
 							Loa.startDate,
 							Loa.endDate,
@@ -1653,9 +1654,10 @@ class ReportsController extends AppController {
 							IF(Loa.totalKept = 0 OR Loa.totalKept IS NULL, 'N/A',ROUND(-Loa.membershipBalance / (Loa.totalKept / (DATEDIFF(Loa.startDate,NOW()))))) as daysUntilKeepEnd
 	                    FROM loa AS Loa
 	                    INNER JOIN client AS Client ON (Client.clientId = Loa.clientId AND curdate() BETWEEN Loa.startDate AND Loa.endDate AND Loa.inactive <> 1)
+                        INNER JOIN clientSiteExtended cse ON Client.clientId = cse.clientId
 						LEFT JOIN loa AS Loa2 ON (Loa2.clientId = Client.clientId AND Loa2.startDate > NOW() AND Loa2.inactive <> 1)
 						LEFT JOIN clientDestinationRel AS ClientDestinationRel ON(Client.clientId = ClientDestinationRel.clientId)
-	                    WHERE $conditions AND Client.inactive <> 1 AND Loa.inactive <> 1
+	                    WHERE $conditions AND cse.inactive <> 1 AND Loa.inactive <> 1
 	                    GROUP BY Loa.loaId
 	                    ORDER BY $order");
 			}
@@ -1704,9 +1706,9 @@ class ReportsController extends AppController {
 		
 		foreach($clients as $k => $client) {
 			$clientId = $client['Client']['clientId'];
-			
+            
 			//sites
-			$clients[$k]['Client']['sites'] = $this->Client->get_sites($clientId);
+			//$clients[$k]['Client']['sites'] = $this->Client->get_sites($clientId);
 			
 			if (isset($this->data['MCR'])) {
 				  if ($this->data['MCR']['pkgRevenueRange'] == 5) {
