@@ -542,6 +542,8 @@ class Ticket extends AppModel {
 	}
 
 	function __deleteLiveOffer($sm_ids_imp) {
+		$family = $this->__deleteLiveOfferFamily($sm_ids_imp);
+
 		$sql = 'DELETE offer o,offerLuxuryLink ol ';
 		$sql.= 'FROM schedulingInstance si ';
 		$sql.= 'INNER JOIN offer o USING(schedulingInstanceId) ';
@@ -549,14 +551,40 @@ class Ticket extends AppModel {
 		$sql.= "WHERE si.schedulingMasterId IN ($sm_ids_imp) ";
 		$sql.= 'AND si.startDate > NOW()';
 		$result = $this->query($sql);
-		return ($this->getAffectedRows()) ? 1 : 0;
+		return ($this->getAffectedRows() || $family) ? 1 : 0;
 	}
 
 	function __updateSchedulingOfferFixedPrice($sm_ids_imp) {
+		$family = $this->__updateSchedulingOfferFixedPriceFamily($sm_ids_imp);
+
 		$sql = 'UPDATE schedulingMaster sm ';
 		$sql.= 'INNER JOIN schedulingInstance si ON sm.schedulingMasterId = si.schedulingMasterId ';
 		$sql.= 'INNER JOIN offer o USING(schedulingInstanceId) ';
 		$sql.= 'INNER JOIN offerLuxuryLink ol USING(offerId) ';
+		$sql.= 'SET si.endDate = NOW(),ol.endDate = NOW(),sm.endDate = NOW() ';
+		$sql.= 'WHERE sm.offerTypeId IN(3,4) ';
+		$sql.= "AND sm.schedulingMasterId IN ($sm_ids_imp) ";
+		$sql.= 'AND ol.endDate > NOW()';
+		$result = $this->query($sql);
+		return ($this->getAffectedRows() || $family) ? 1 : 0;
+	}
+	
+	function __deleteLiveOfferFamily($sm_ids_imp) {
+		$sql = 'DELETE offer o,offerFamily ol ';
+		$sql.= 'FROM schedulingInstance si ';
+		$sql.= 'INNER JOIN offer o USING(schedulingInstanceId) ';
+		$sql.= 'INNER JOIN offerFamily ol USING(offerId) ';
+		$sql.= "WHERE si.schedulingMasterId IN ($sm_ids_imp) ";
+		$sql.= 'AND si.startDate > NOW()';
+		$result = $this->query($sql);
+		return ($this->getAffectedRows()) ? 1 : 0;
+	}
+	
+	function __updateSchedulingOfferFixedPriceFamily($sm_ids_imp) {
+		$sql = 'UPDATE schedulingMaster sm ';
+		$sql.= 'INNER JOIN schedulingInstance si ON sm.schedulingMasterId = si.schedulingMasterId ';
+		$sql.= 'INNER JOIN offer o USING(schedulingInstanceId) ';
+		$sql.= 'INNER JOIN offerFamily ol USING(offerId) ';
 		$sql.= 'SET si.endDate = NOW(),ol.endDate = NOW(),sm.endDate = NOW() ';
 		$sql.= 'WHERE sm.offerTypeId IN(3,4) ';
 		$sql.= "AND sm.schedulingMasterId IN ($sm_ids_imp) ";
