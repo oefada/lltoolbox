@@ -220,7 +220,7 @@ td.error div{
 	  <tr<?=$class?>>
 		<td><?=$k+1?></td>
 	    <td style="text-align: left;" class="textSort"><?=$html->link($row['Client']['name'], '/clients/edit/'.$row['Client']['clientId'])?></td>
-        <td><?php echo ucwords(implode(', ', $row['Client']['sites'])); ?></td>
+        <td><?php echo ucwords($row['Client']['sites']); ?></td>
 		<? if ($k == 0) echo "<div id='packageRevenue'>"?>
 	    <td <?if((int)$row['packagesLiveToday'] == 0) echo " class='error'"?>><div><?=(int)$row['packagesLiveToday']?></div></td>
 	    <td><?=(int)$row['packageUptime']?></td>
