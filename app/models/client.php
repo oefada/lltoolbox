@@ -301,7 +301,12 @@ class Client extends AppModel {
    function set_sites($client_id, $sites) {
 	  $this->id = $client_id;
 	  $client = $this->findByClientId($client_id);
-	  $loaSites = explode(',', $sites);
+      if (!is_array($sites)) {
+        $loaSites = explode(',', $sites);
+      }
+      else {
+        $loaSites = $sites;
+      }
 	  if (!empty($client['Client']['sites'])) {
 			$newSites = array_diff($loaSites, $client['Client']['sites']);
             $removeSites = array_diff($client['Client']['sites'], $loaSites);
@@ -392,7 +397,7 @@ class Client extends AppModel {
       if (!empty($extraModels)) {
             $this->containModels = array_splice($this->containModels, 0, -count($extraModels));
       }
-	  $client['Client']['sites'] = $sites;
+	  $client['Client']['sites'] = implode(',', $loaSites);
 	  $this->save($client, array('callbacks' => 'after'));
       if (!empty($client['ChildClient'])) {
             foreach($client['ChildClient'] as $child) {
