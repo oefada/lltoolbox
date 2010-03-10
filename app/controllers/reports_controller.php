@@ -1928,7 +1928,8 @@ class ReportsController extends AppController {
 		}
 		
 		$siteCondition = "schedulingMaster.siteId = $siteId";
-		$loaSiteCondition = "EXISTS(SELECT * FROM multiSite WHERE model = 'Loa' and modelId = Loa.loaId and sites LIKE '%$siteName%')";
+        $loaSiteCondition = "Loa.sites LIKE '%{$siteName}%'";
+		//$loaSiteCondition = "EXISTS(SELECT * FROM multiSite WHERE model = 'Loa' and modelId = Loa.loaId and sites LIKE '%$siteName%')";
 		$offerLive = "offer$siteName";
 		$ticketSiteCondition = "Ticket.siteId = $siteId";
 		
