@@ -8,7 +8,7 @@ $this->set('clientId', $this->data['Loa']['clientId']);
 	<fieldset>
 		<div class="controlset4">
 		<?
-		echo $form->input('sites', array('multiple' => 'checkbox'));
+		echo $multisite->checkbox('Loa');
 		?>
 		</div>
 	<?php
