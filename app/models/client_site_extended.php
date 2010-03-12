@@ -25,13 +25,13 @@ class ClientSiteExtended extends AppModel {
             }
             $setStatement = array();
             foreach ($useFields as $field) {
-                if (isset($clientExtendedData[$field])) {
+                if (isset($clientExtendedData['ClientSiteExtended'][$field])) {
                     $value = addslashes($clientExtendedData['ClientSiteExtended'][$field]);
                     $updateField = "{$field} = '{$value}'";
                     array_push($setStatement, $updateField);
                 }
             }
-            $setStatement = implode(',', $setStatement);
+            $setStatement = implode(',', $setStatement);            
             $query = "UPDATE client SET {$setStatement} WHERE clientId = {$this->Client->id}";
             $this->Client->query($query);
             $this->Client->useDbConfig = 'default';
