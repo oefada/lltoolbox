@@ -2532,7 +2532,7 @@ class ReportsController extends AppController {
 		
 		$tmp2 = $this->OfferType->query("SELECT SUM(a.auctionsListedPrevious) as auctionsListedPrevious, SUM(a.successfulAuctionsPrevious) as successfulAuctionsPrevious,
 		 SUM(a.auctionTicketsPotentialPrevious) as auctionTicketsPotentialPrevious, SUM(a.auctionRevenueCollectedPrevious) as auctionRevenueCollectedPrevious,
-		 SUM(a.auctionTicketsCollectedPrevious) as auctionTicketsCollectedPrevious
+		 SUM(a.auctionTicketsCollectedPrevious) as auctionTicketsCollectedPrevious, SUM(a.auctionRevenueCollectedPrevious) / SUM(a.auctionTicketsCollectedPrevious) AS aspPrevious
 		FROM reporting.weeklyScorecardAuctions a
 		WHERE 
 		 QUARTER = QUARTER(NOW())
