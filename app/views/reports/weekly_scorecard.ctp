@@ -346,8 +346,21 @@ if($row['col1'] == date('W')) {
 			$echo = 'efunc';
 		}
 		
+
+
+
+        $totals['col6'] = ($totals['col5'] / $aucLastYear['auctionsListedPrevious'] - 1);
+		$totals['col10'] = ($totals['col9'] / $aucLastYear['successfulAuctionsPrevious'] - 1);
+		$totals['col12'] = ($totals['col11'] / $aucLastYear['auctionTicketsPotentialPrevious'] - 1);
+        $totals['col20'] = ($totals['col19'] / $aucLastYear['auctionTicketsCollectedPrevious'] - 1);
+		$totals['col22'] = ($totals['col21'] / $aucLastYear['aspPrevious'] - 1);
+
+
+
+
+
 		$totals['col14'] = $totals['col13'] / $aucLastYear['auctionRevenueCollectedPrevious'] - 1;
-		$skip = array(4,6,8,10,12,15,16,18,20,22);
+		$skip = array(4,8,15,16,18);
 	?>
 	<td><?in_array($i, $skip) ? print('&nbsp;') : $echo($totals['col'.$i])?></td>	
 	<?php endfor; ?>
