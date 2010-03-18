@@ -216,6 +216,7 @@ class ImagesController extends AppController {
                     if ($imageTypeId == 2 && $useLrgForSlideshow) {
                        $imageTypeId = 1;
                        $this->Image->createFromFile(compact('imagePath', 'clientId', 'imageTypeId', 'siteId', 'inactive', 'imageId'));
+                       $imageTypeId = 2;
                     }
                   }
 			   }
