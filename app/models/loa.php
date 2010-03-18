@@ -22,7 +22,7 @@ class Loa extends AppModel {
 						 'Track' => array('foreignKey' => 'loaId')
 						);
     
-    var $actsAs = array('Containable');
+    var $actsAs = array('Containable', 'Logable');
 	
     var $multisite = true;
 

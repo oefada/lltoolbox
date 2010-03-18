@@ -283,7 +283,7 @@ class TrackDetail extends AppModel {
 			$loa['Loa']['retailValueBalance'] += $allocated_amount;
 		}
 
-		if (!$loaModel->save($loa, array('callbacks' => false))) {
+		if (!$loaModel->save($loa, array('callbacks' => 'before'))) {
 			$errors++;	
 		}
 		return (!$errors) ? true : false;
@@ -327,7 +327,7 @@ class TrackDetail extends AppModel {
 			$loa['Loa']['retailValueBalance'] -= $allocated_amount;
 		}
 
-		$loaModel->save($loa, array('callbacks' => false));
+		$loaModel->save($loa, array('callbacks' => 'before'));
 		return true;
 	}
 }
