@@ -20,7 +20,7 @@ $this->set('clientId', $this->data['Client']['clientId']);
 		echo $form->input('loaId');
 		
 		//only Kristen, Daymora & Kat can edit loa level
-		if (in_array($userDetails['username'], array('dpen','kferson','kgathany','mchoe'))) {
+		if (in_array($userDetails['username'], array('dpen','kferson','kgathany','mchoe','rfriedman'))) {
 			$disabled = false;
 		} else {
 			$disabled = true;
