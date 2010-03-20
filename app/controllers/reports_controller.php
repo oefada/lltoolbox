@@ -2588,7 +2588,8 @@ class ReportsController extends AppController {
 		;");
 		
 		$tmp2 = $this->OfferType->query("SELECT SUM(a.buyNowOffersPrevious) as buyNowOffersPrevious, SUM(a.numberRequestsPrevious) as numberRequestsPrevious,
-		SUM(packagesSoldPrevious) as packagesSoldPrevious, SUM(revenuecollectedprevious) as revenueCollectedPrevious
+		SUM(packagesSoldPrevious) as packagesSoldPrevious, SUM(revenuecollectedprevious) as revenueCollectedPrevious,
+		SUM(a.revenueCollectedPrevious) / SUM(a.packagesSoldPrevious) AS aspPrevious
 		FROM reporting.weeklyScorecardFixedPrice a
 		WHERE 
 		 QUARTER = QUARTER(NOW())
