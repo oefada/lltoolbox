@@ -615,9 +615,14 @@ if($row['col1'] == date('W')) {
 			$echo = 'efunc';
 		}
 
+        $totals['col4'] = ($totals['col3'] / $lastyear['buyNowOffersPrevious'] - 1);
+		$totals['col6'] = ($totals['col5'] / $lastyear['numberRequestsPrevious'] - 1);
+	    $totals['col14'] = ($totals['col13'] / $lastyear['aspPrevious'] - 1);
+
+
 		$totals['col8'] = $totals['col7'] / $lastyear['packagesSoldPrevious'] - 1;
 		$totals['col12'] = $totals['col11'] / $lastyear['revenueCollectedPrevious'] - 1;
-		$skip = array(4,6,10,14);
+		$skip = array(10);
 	?>
 	<td><?in_array($i, $skip) ? print('&nbsp;') : $echo($totals['col'.$i])?></td>	
 	<?php endfor; ?>
