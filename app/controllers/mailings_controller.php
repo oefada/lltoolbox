@@ -109,6 +109,7 @@ class MailingsController extends AppController {
     
     function add() {
         if (!empty($this->data)) {
+            $this->data['Mailing']['siteId'] = $this->Mailing->MailingType->field('siteId', array('mailingTypeId' => $this->data['Mailing']['mailingTypeId']));
             if ($mailing = $this->Mailing->save($this->data)) {
                 $this->redirect('/mailings/edit/'.$this->Mailing->getLastInsertId());
             }
