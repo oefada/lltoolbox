@@ -49,7 +49,6 @@ $product_id = array();
 $link_url = array();
 
 if ($_POST['submit_mei']) {
-	
 	$z=1;
 	for ($i=1; $i<10; $i++) {
 		if (!empty($_POST["mei_image_url_$i"])) {
@@ -57,6 +56,12 @@ if ($_POST['submit_mei']) {
 			$product_id[$z] = $_POST["mei_pid_$i"];
 			$offer_id[$z] = $_POST["mei_oid_$i"];
 			$link_url[$z] = $_POST["mei_link_url_$i"];
+            if (isset($_POST["mei_new_window_$i"])) {
+                $new_window[$z] = 1;
+            }
+            else {
+                $new_window[$z] = 0;
+            }
 			$z++;
 		}
 	}
@@ -68,7 +73,7 @@ if ($_POST['submit_mei']) {
 	} 
 
 	foreach ($image_url as $k=>$v) {
-		$insert = $connected->query("insert into merchandiseImage (dateLive,slotId,clientId,imageUrl,linkUrl,packageId) VALUES ('$date_string','$k','$product_id[$k]','$v', '$link_url[$k]','$offer_id[$k]')");
+		$insert = $connected->query("insert into merchandiseImage (dateLive,slotId,clientId,imageUrl,linkUrl,packageId,newWindow) VALUES ('$date_string','$k','$product_id[$k]','$v', '$link_url[$k]','$offer_id[$k]',$new_window[$k])");
 	}
 
 }
@@ -177,6 +182,7 @@ You are editing for: <strong><? echo date('F d, Y (l)', strtotime("$month/$day/$
 		<th width="50">Package Id</th>
 		<th>Image Url</th>
 		<th>Link Url</th>
+        <th style="width:100px;" >Open Link in New Window?</th>
 	</tr>
 	<?php
 	for ($i=1; $i<10; $i++) {
@@ -187,6 +193,10 @@ You are editing for: <strong><? echo date('F d, Y (l)', strtotime("$month/$day/$
 		<td><input type="text" style="width:100%;" name="mei_oid_<?=$i;?>" value="<?=@$data[$i]['packageId'];?>" /></td>
 		<td><input type="text" style="width:100%;" name="mei_image_url_<?=$i;?>" value="<?=@$data[$i]['imageUrl'];?>" /></td>
 		<td><input type="text" style="width:100%;" name="mei_link_url_<?=$i;?>" value="<?=@$data[$i]['linkUrl'];?>" /></td>
+        <td align="center">
+            <?php $checked = (@$data[$i]['newWindow'] == 1) ? ' checked' : ''; ?>
+            <input type="checkbox" name="mei_new_window_<?=$i;?>" <?php echo $checked; ?> />
+        </td>
 	</tr>
 		<?php
 	}
