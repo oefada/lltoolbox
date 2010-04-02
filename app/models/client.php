@@ -246,12 +246,13 @@ class Client extends AppModel {
        foreach ($sites as $site) {
             // for clientDestinationLookup only on the frontend
            // -----------------------------------------------------------------
-            if (isset($data['ClientDestinationRel']) && !empty($data['ClientDestinationRel'])) {
-               $destinationIds = array();
-               foreach($data['ClientDestinationRel'] as $destination) {
-                    $tmp = '';
-                    array_push($destinationIds, $destination['destinationId']);
-               }
+            if (isset($data['Destination']) && !empty($data['Destination'])) {
+               $destinationIds = $data['Destination']['Destination'];
+               //foreach($data['ClientDestinationRel'] as $destination) {
+               //     $tmp = '';
+               //     array_push($destinationIds, $destination['destinationId']);
+               //}
+               $tmp = '';
                sort($destinationIds);
                $insert_arr = array();
                $insert_arr['clientId'] = $clientId;
