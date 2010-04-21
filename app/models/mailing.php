@@ -15,7 +15,8 @@ class Mailing extends AppModel {
     
     var $belongsTo = array('MailingType' => array('className' => 'MailingType', 'foreignKey' => 'mailingTypeId'));
     var $hasMany = array('MailingPackageSectionRel' => array('className' => 'MailingPackageSectionRel', 'foreignKey' => 'mailingId'),
-                         'MailingAdvertising' => array('className' => 'MailingAdvertising', 'foreignKey' => 'mailingId'));
+                         'MailingAdvertising' => array('className' => 'MailingAdvertising', 'foreignKey' => 'mailingId')
+    );
     
     function validateDayOfWeek($date) {
         $mailingDate = strtotime($date['mailingDate']);
