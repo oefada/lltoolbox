@@ -19,6 +19,11 @@ class MailingAdvertising extends AppModel {
             return false;
         }
     }
+    
+    function getBigAds($mailingId) {
+        $this->recursive = -1;
+        return $this->find('all', array('conditions' => array('MailingAdvertising.mailingId' => $mailingId, 'mailingAdvertisingTypeId' => 1)));
+    }
 
 }
 ?>
