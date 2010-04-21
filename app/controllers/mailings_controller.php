@@ -104,6 +104,7 @@ class MailingsController extends AppController {
                 $section['Variations']['A'] = $content;
             }
         }
+        $mailing['Mailing']['300x250'] = $this->Mailing->MailingAdvertising->getBigAds($mailingId);
         $this->set('mailing', $mailing);
     }
     
@@ -238,10 +239,12 @@ class MailingsController extends AppController {
     function saveAd() {
         $this->autoRender = false;
         if (!empty($this->data)) {
-            $imagePath = $this->data['Mailing']['adImagePath'];
-            if ($this->Mailing->save($this->data)) {
+            $imagePath = $this->data['MailingAdvertising']['imageUrl'];
+            if ($this->Mailing->MailingAdvertising->save($this->data)) {
                 $out = '<img src="'.$imagePath.'" />';
-                echo $out;
+                $outArr = array('imagePath' => $out,
+                                'newAdId' => $this->Mailing->MailingAdvertising->getLastInsertId());
+                echo json_encode($outArr);
             }
         }
     }
