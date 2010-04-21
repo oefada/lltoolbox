@@ -1,6 +1,6 @@
 <?php   echo $html->css('jquery.autocomplete'); 
         echo $javascript->link('jquery/jquery-autocomplete/jquery.autocomplete');
-        echo $javascript->link('jquery/jquery-ui-1.7.1.custom.min');
+        //echo $javascript->link('jquery/jquery-ui-1.7.1.custom.min');
 ?>
 <script type="text/javascript">
     $().ready(function() {
@@ -30,12 +30,16 @@
                                             );
                                     }
                                 );
-        $('input#save-ad').click(function() {
+        $('input.save-ad').click(function() {
                                         $.post('/mailings/saveAd',
-                                               $(this).parent('form').serialize(),
-                                               function(data) {
-                                                    $('div#ad-image').html(data);
-                                               }
+                                               $(this).parent().parent('form').serialize(),
+                                               function(button) {
+                                                    return function(data) {
+                                                        response = $.parseJSON(data);
+                                                         $(button).next('div.ad-image').html(response['imagePath']);
+                                                         $(button).parent().parent('form').find('input.mailingAdvertisingId').attr('value', response['newAdId']);
+                                                    }
+                                               } (this)
                                         );
                                     }
                                 );     
@@ -162,6 +166,7 @@
     .section {
         border-bottom:1px dotted #666;
         padding-bottom:10px;
+        position:relative;
     }
     
     div.variations {
@@ -225,13 +230,14 @@
         cursor:pointer;
     }
     
-    div#ad-image {
-        float:left;
+    div.ad-image {
+        float:right;
         height:250px;
-        margin-left:100px;
+        margin-left:300px;
+        margin-top:-100px;
     }
     
-    form#mailing-ad {
+    div.mailing-ad {
         float:left;
     }
     
@@ -303,28 +309,38 @@
         <?php endforeach; 
 	?>
     <?php if (in_array($userDetails['samaccountname'], $adusers) || in_array('Geeks', $userDetails['groups'])): ?>
-        <h3>Ad Image</h3>
         <div class="section">
-            <form id="mailing-ad">
-               <strong>Enter path to ad image:</strong> <input type="text" size="30" name="data[Mailing][adImagePath]" value="<?php echo $mailing['Mailing']['adImagePath'] ?>" /><br />
-               <strong>Alt text:</strong> <input type="text" size="44" name="data[Mailing][adImageAlt]" value="<?php echo $mailing['Mailing']['adImageAlt'] ?>" /><br />
-               <strong>Image link:</strong> <input type="text" size="44" name="data[Mailing][adImageLink]" value="<?php echo $mailing['Mailing']['adImageLink'] ?>" />
-               <input type="hidden" name="data[Mailing][mailingId]" value="<?php echo $mailing['Mailing']['mailingId']; ?>" /><br />
-               <input type="button" id="save-ad" value="Save" />
-            </form>
-            <div id="ad-image">
-                <?php if (!empty($mailing['Mailing']['adImagePath'])): ?>
-                        <img src="<?php echo $mailing['Mailing']['adImagePath']; ?>" />
-                <?php else: ?>
-                        &nbsp;
-                <?php endif; ?>
-            </div>
-            <div style="clear:both">&nbsp;</div>
+                <?php for ($i = 0; $i < 2; $i++): ?>
+                        <h3>Ad Image &#150; Section <?php echo $i + 1; ?></h3>
+                        <form>
+                            <div class="mailing-ad">
+                                <strong>Enter path to ad image:</strong> <input type="text" size="30" name="data[MailingAdvertising][imageUrl]" value="<?php echo (!empty($mailing['Mailing']['300x250'][$i]['MailingAdvertising']['imageUrl'])) ? $mailing['Mailing']['300x250'][$i]['MailingAdvertising']['imageUrl'] : ''; ?>" /><br />
+                                <strong>Alt text:</strong> <input type="text" size="44" name="data[MailingAdvertising][imageAlt]" value="<?php echo (!empty($mailing['Mailing']['300x250'][$i]['MailingAdvertising']['imageAlt'])) ? $mailing['Mailing']['300x250'][$i]['MailingAdvertising']['imageAlt'] : ''; ?>" /><br />
+                                <strong>Image link:</strong> <input type="text" size="44" name="data[MailingAdvertising][linkUrl]" value="<?php echo (!empty($mailing['Mailing']['300x250'][$i]['MailingAdvertising']['linkUrl'])) ? $mailing['Mailing']['300x250'][$i]['MailingAdvertising']['linkUrl'] : ''; ?>" />
+                                <input type="hidden" name="data[MailingAdvertising][mailingId]" value="<?php echo $mailing['Mailing']['mailingId']?>" />
+                                <input type="hidden" name="data[MailingAdvertising][mailingAdvertisingTypeId]" value="1" />
+                                <input type="hidden" name="data[MailingAdvertising][mailingSectionId]" value="<?php echo $i + 1; ?>" />
+                                <input type="hidden" name="data[MailingAdvertising][mailingAdvertisingId]" class="mailingAdvertisingId" value="<?php echo (!empty($mailing['Mailing']['300x250'][$i]['MailingAdvertising']['mailingAdvertisingId'])) ? $mailing['Mailing']['300x250'][$i]['MailingAdvertising']['mailingAdvertisingId'] : ''; ?>" /><br />
+                                <input type="button" class="save-ad" value="Save Ad for Section <?php echo $i + 1; ?>" />
+                                <div class="ad-image">
+                                    <?php if (!empty($mailing['Mailing']['300x250'][$i]['MailingAdvertising']['imageUrl'])): ?>
+                                            <img src="<?php echo $mailing['Mailing']['300x250'][$i]['MailingAdvertising']['imageUrl']; ?>" />
+                                    <?php else: ?>
+                                            &nbsp;
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                            <div style="clear:both">&nbsp;</div>
+                        </form>
+                    <?php endfor; ?>
         </div>
         <h3>Marketplace</h3>
         <div class="section">
             <form id="mailingMarketplace" method="post" action="/mailings/saveMarketplace">
-                <?php for ($i = 0; $i < 3; $i++): ?>
+                <?php foreach($mailing['MailingAdvertising'] as $i => $ad): ?>
+                        <?php if (!empty($mailing['MailingAdvertising'][$i]) && $mailing['MailingAdvertising'][$i]['mailingAdvertisingTypeId'] != 2) {
+                                continue;
+                        } ?>
                         <?php if (empty($mailing['MailingAdvertising'][$i])) {
                                     $imageUrl = '';
                                     $imageAlt = '';
@@ -360,7 +376,7 @@
                             <div class="item-field"><div><strong>Link text:</strong></div> <input type="text" name="data[MailingAdvertising][<?php echo $i; ?>][linkText]" value="<?php echo $linkText; ?>" /></div>
                             <div class="item-field"><div><strong>Blurb:</strong></div> <textarea name="data[MailingAdvertising][<?php echo $i; ?>][blurb]" /><?php echo $blurb; ?></textarea></div>
                         </div>
-                <?php endfor; ?>
+                <?php endforeach; ?>
                 <div style="clear:both;">&nbsp;</div>
                 <input type="button" onclick="document.forms.mailingMarketplace.submit()" id="save-marketplace" value="Save Marketplace Items" />
             </form>
