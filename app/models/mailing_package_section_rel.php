@@ -37,6 +37,7 @@ class MailingPackageSectionRel extends AppModel {
         if (empty($sortOrder)) {
             $sortOrder = 1;
         }
+        $data['destinationId'] = $this->Client->ClientDestinationRel->getParentDestination($data['clientId']);
         $data['sortOrder'] = $sortOrder;
         $this->create();
         return $this->save($data);
