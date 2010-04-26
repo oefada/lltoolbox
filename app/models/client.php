@@ -247,11 +247,15 @@ class Client extends AppModel {
             // for clientDestinationLookup only on the frontend
            // -----------------------------------------------------------------
             if (isset($data['Destination']) && !empty($data['Destination'])) {
-               $destinationIds = $data['Destination']['Destination'];
-               //foreach($data['ClientDestinationRel'] as $destination) {
-               //     $tmp = '';
-               //     array_push($destinationIds, $destination['destinationId']);
-               //}
+                $destinationIds = array();
+                if (isset($data['Destination']['Destination']) && !empty($data['Destination']['Destination'])) {
+                    $destinationIds = $data['Destination']['Destination'];
+                }
+                else {
+                    foreach($data['Destination'] as $destination) {
+                         array_push($destinationIds, $destination['destinationId']);
+                    }
+                }
                $tmp = '';
                sort($destinationIds);
                $insert_arr = array();
@@ -301,6 +305,7 @@ class Client extends AppModel {
    //save current LOA's sites to Client and push data to front-end dbs after an LOA has been saved
    function set_sites($client_id, $sites) {
 	  $this->id = $client_id;
+      $this->recursive = 1;
 	  $client = $this->findByClientId($client_id);
       if (!is_array($sites)) {
         $loaSites = explode(',', $sites);
