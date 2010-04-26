@@ -22,9 +22,11 @@
 
 		echo $html->css('main');
 		echo $html->css('print', null, array('media' => 'print'));
+        echo $html->css('pepper-grinder/jquery-ui-1.7.2.custom');
 		
 		if(isset($javascript)):
             echo $javascript->link('jquery/jquery');
+            echo $javascript->link('jquery/jquery-ui-1.7.2.custom.min');
 		endif;
 
 		echo $scripts_for_layout;
