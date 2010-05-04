@@ -162,69 +162,7 @@
 
 <link href="/css/package.css" type="text/css" rel="stylesheet" />
 <script src="/js/package.js" type="text/javascript"></script>
-<input type="text" value="<?php echo $pricePoints[0]['name']; ?>" /><br /><br />
-<?php foreach($pricePoints[0]['ratePeriods'] as $period): ?>
-<table>
-        <tr>
-            <td><input type="checkbox" checked="checked" /></td>
-            <td>
-<table class="pricing-summary">
-            <?php
-               $totalWeeknights = (($period['weekdayRate'] + (($period['taxes']/100)*$period['weekdayRate']) + ($period['serviceCharges']/100)*$period['weekdayRate']) + $period['resortFees']) * $weekdayNights;
-               $totalWeekends = (($period['weekendRate'] + (($period['taxes']/100)*$period['weekendRate']) + ($period['serviceCharges']/100)*$period['weekendRate']) + $period['resortFees']) * $weekendNights;
-               $inclusions = 0;
-               foreach($loaItems as $loaItem) {
-                   if (isset($loaItem['itemBasePrice'])) {
-                       if ($loaItem['loaItemTypeId'] == 5) {
-                           $inclusions += $loaItem['itemBasePrice'] * $totalNights;
-                       }
-                       else {
-                           $inclusions += $loaItem['itemBasePrice'];
-                       }
-                   }
-               }
-               $retailValue = $totalWeeknights + $totalWeekends + $inclusions;
-               $usdRetailValue = $retailValue * $exchangeRate;
-               $percentRetail = $retailValue - ($retailValue * ($period['percentRetail']/100));
-               $usdPercentRetail = $percentRetail * $exchangeRate;
-           ?>
-           <tr>
-           <td>
-               <?php foreach($period['dateRanges'] as $range): ?>
-                   <?php echo date('M j, Y', strtotime($range['dateRangeStart'])); ?> &#150; <?php echo date('M j, Y', strtotime($range['dateRangeEnd'])); ?><br />
-               <?php endforeach; ?>
-           </td>
-           <td>
-               <table>
-                   <tr>
-                       <td>PACKAGE RETAIL VALUE</td>
-                       <td><?php echo $currencyCode; ?><?php echo number_format($retailValue, 2); ?></td>
-                   </tr>
-                   <tr>
-                       <td>Currency Conversion to USD</td>
-                       <td>$<?php echo number_format($usdRetailValue, 2); ?></td>
-                   </tr>
-                   <tr>
-                       <td><?php echo strtoupper($siteName); ?> STARTING PRICE</td>
-                       <td><?php echo $currencyCode; ?><?php echo number_format($percentRetail, 2); ?></td>
-                   </tr>
-                   <tr>
-                       <td>Currency Conversion to USD</td>
-                       <td>$<?php echo number_format($usdPercentRetail, 2); ?></td>
-                   </tr>
-                   <tr>
-                       <td>Percentage of Retail</td>
-                       <td><?php echo $period['percentRetail']; ?>%</td>
-                   </tr>
-               </table>
-           </td>
-        </tr>
-    
-</table>
-            </td>
-        </tr>
-        </table>
-<?php endforeach; ?>
+<input type="text" value="" /><br /><br />
 
 <table>
         <tr>
