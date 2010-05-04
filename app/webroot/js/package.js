@@ -1,6 +1,6 @@
 $().ready(function() {
         $('div.edit-link').click(function() {
-                                    $('iframe#dynamicForm').attr('src', 'http://acarney-toolboxdev.luxurylink.com/pages/package_proto/'+$(this).attr('name'));
+                                    $('iframe#dynamicForm').attr('src', '/pages/package_proto/'+$(this).attr('name'));
                                     $('div#formContainer').dialog({modal:true,
                                                                    autoOpen:false,
                                                                    height:700,
