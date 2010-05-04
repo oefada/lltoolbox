@@ -191,6 +191,14 @@
             </div>
         </td>
     </tr>
+    <tr>
+        <th>Notes</th>
+        <td>
+            <div class="history">
+                <textarea class="notes" rows="10"><?php foreach ($notes as $note): ?><?php echo "{$note}\n\n"; ?><?php endforeach; ?></textarea>
+            </div>
+        </td>
+    </tr>
 </table>
 
 <div class="section-header"><div class="section-title">Room Nights</div><div class="edit-link" name="edit_room_nights" title="Edit Room Nights">Edit Room Nights</div></div>
@@ -331,8 +339,6 @@
 <div class="booking-conditions">Booking Conditions: <?php echo $bookingConditions; ?></div>
 
 <div class="section-header"><div class="section-title">Pricing</div><div class="edit-link" name="edit_pricing" title="Edit Pricing">Edit Pricing</div></div>
-<div>Package Maximum Number of Sales (All Price Points): <?php echo $maxNumSales; ?></div>
-<br />
 <?php foreach($ratePeriods as $period): ?>
         <?php
             $totalWeeknights = (($period['weekdayRate'] + (($period['taxes']/100)*$period['weekdayRate']) + ($period['serviceCharges']/100)*$period['weekdayRate']) + $period['resortFees']) * $weekdayNights;
@@ -391,7 +397,7 @@
         </table>
 <?php endforeach; ?>
 
-<?php $pricePoints = array(array('name' => 'High Season',
+<?php  $pricePoints = array(array('name' => 'High Season',
                                  'ratePeriods' => array(array('dateRanges' => array(
                                                                                 array('dateRangeStart' => '2010-07-01',
                                                                                       'dateRangeEnd' => '2010-09-13'),
@@ -403,9 +409,11 @@
                                                                 'taxes' => 4.17,
                                                                 'serviceCharges' => 7.25,
                                                                 'resortFees' => 22.50,
-                                                                'percentRetail' => 40
+                                                                'auctionPercentRetail' => 40,
+                                                                'buyNowPercentRetail' => 45
                                                             )
-                                                        )
+                                                        ),
+                                 'maxNumSales' => 5
                                                 ),
                            array('name' => 'Low Season',
                                  'ratePeriods' => array(array('dateRanges' => array(
@@ -417,9 +425,11 @@
                                                                'taxes' => 4.17,
                                                                'serviceCharges' => 7.25,
                                                                'resortFees' => 22.50,
-                                                               'percentRetail' => 40
+                                                               'auctionPercentRetail' => 40,
+                                                               'buyNowPercentRetail' => 45,
                                                             )
-                                                        )
+                                                        ),
+                                 'maxNumSales' => 5
                                                 )
                                 ); ?>
 
@@ -449,7 +459,7 @@
                         }
                         $retailValue = $totalWeeknights + $totalWeekends + $inclusions;
                         $usdRetailValue = $retailValue * $exchangeRate;
-                        $percentRetail = $retailValue - ($retailValue * ($period['percentRetail']/100));
+                        $percentRetail = $retailValue - ($retailValue * ($period['auctionPercentRetail']/100));
                         $usdPercentRetail = $percentRetail * $exchangeRate;
                     ?>
                 <tr>
@@ -477,15 +487,22 @@
                                 <td>$<?php echo number_format($usdPercentRetail, 2); ?></td>
                             </tr>
                             <tr>
-                                <td>Percentage of Retail</td>
-                                <td><?php echo $period['percentRetail']; ?>%</td>
+                                <td>Auction Percentage of Retail</td>
+                                <td><?php echo $period['auctionPercentRetail']; ?>%</td>
+                            </tr>
+                            <tr>
+                                <td>Buy Now Percentage of Retail</td>
+                                <td><?php echo $period['buyNowPercentRetail']; ?>%</td>
                             </tr>
                         </table>
                     </td>
                 </tr>
             <?php endforeach; ?>
             <tr>
-                <td><?php echo $point['name']; ?> Max Retail Value: <?php echo $currencyCode; ?><?php echo number_format($retailValue); ?> = $<?php echo number_format(round($retailValue * $exchangeRate)); ?></td>
+                <td>
+                    <?php echo $point['name']; ?> Max Retail Value: <?php echo $currencyCode; ?><?php echo number_format($retailValue); ?> = $<?php echo number_format(round($retailValue * $exchangeRate)); ?><br />
+                    Max Number of Sales: <?php echo $point['maxNumSales'];?>
+                </td>
             </tr>
         </table>
 <?php endforeach; ?>

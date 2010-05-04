@@ -36,7 +36,7 @@
                               'taxes' => 4.17,
                               'serviceCharges' => 7.25,
                               'resortFees' => 22.50,
-                              'percentRetail' => 40,
+                              'auctionPercentRetail' => 40,
                               'buyNowPercentRetail' => 45
                               ),
                         array('roomType' => 'Deluxe Ocean View',
@@ -48,7 +48,7 @@
                               'taxes' => 4.17,
                               'serviceCharges' => 7.25,
                               'resortFees' => 22.50,
-                              'percentRetail' => 40,
+                              'auctionPercentRetail' => 40,
                               'buyNowPercentRetail' => 45
                               ),
                         array('roomType' => 'Deluxe Ocean View',
@@ -62,7 +62,7 @@
                               'taxes' => 4.17,
                               'serviceCharges' => 7.25,
                               'resortFees' => 22.50,
-                              'percentRetail' => 40,
+                              'auctionPercentRetail' => 40,
                               'buyNowPercentRetail' => 45
                               ),
                         );
@@ -139,9 +139,11 @@
                                                                 'taxes' => 4.17,
                                                                 'serviceCharges' => 7.25,
                                                                 'resortFees' => 22.50,
-                                                                'percentRetail' => 40
+                                                                'auctionPercentRetail' => 40,
+                                                                'buyNowPercentRetail' => 45
                                                             )
-                                                        )
+                                                        ),
+                                 'maxNumSales' => 5
                                                 ),
                            array('name' => 'Low Season',
                                  'ratePeriods' => array(array('dateRanges' => array(
@@ -153,9 +155,11 @@
                                                                'taxes' => 4.17,
                                                                'serviceCharges' => 7.25,
                                                                'resortFees' => 22.50,
-                                                               'percentRetail' => 40
+                                                               'auctionPercentRetail' => 40,
+                                                               'buyNowPercentRetail' => 45,
                                                             )
-                                                        )
+                                                        ),
+                                 'maxNumSales' => 5
                                                 )
                                 );
 ?>
@@ -163,6 +167,7 @@
 <link href="/css/package.css" type="text/css" rel="stylesheet" />
 <script src="/js/package.js" type="text/javascript"></script>
 <input type="text" value="<?php echo $pricePoints[0]['name']; ?>" /><br /><br />
+Max Number of Sales: <input type ="text" size="4" value="<?php echo $pricePoints[0]['maxNumSales']; ?>" /><br /><br />
 <?php foreach($pricePoints[0]['ratePeriods'] as $period): ?>
 <table>
         <tr>
@@ -185,7 +190,7 @@
                }
                $retailValue = $totalWeeknights + $totalWeekends + $inclusions;
                $usdRetailValue = $retailValue * $exchangeRate;
-               $percentRetail = $retailValue - ($retailValue * ($period['percentRetail']/100));
+               $percentRetail = $retailValue - ($retailValue * ($period['auctionPercentRetail']/100));
                $usdPercentRetail = $percentRetail * $exchangeRate;
            ?>
            <tr>
@@ -213,8 +218,12 @@
                        <td>$<?php echo number_format($usdPercentRetail, 2); ?></td>
                    </tr>
                    <tr>
-                       <td>Percentage of Retail</td>
-                       <td><?php echo $period['percentRetail']; ?>%</td>
+                       <td>Auction Percentage of Retail</td>
+                       <td><?php echo $period['auctionPercentRetail']; ?>%</td>
+                   </tr>
+                   <tr>
+                       <td>Buy Now Percentage of Retail</td>
+                       <td><?php echo $period['buyNowPercentRetail']; ?>%</td>
                    </tr>
                </table>
            </td>
@@ -247,7 +256,7 @@
                }
                $retailValue = $totalWeeknights + $totalWeekends + $inclusions;
                $usdRetailValue = $retailValue * $exchangeRate;
-               $percentRetail = $retailValue - ($retailValue * ($ratePeriods[2]['percentRetail']/100));
+               $percentRetail = $retailValue - ($retailValue * ($ratePeriods[2]['auctionPercentRetail']/100));
                $usdPercentRetail = $percentRetail * $exchangeRate;
            ?>
            <tr>
@@ -275,8 +284,12 @@
                        <td>$<?php echo number_format($usdPercentRetail, 2); ?></td>
                    </tr>
                    <tr>
-                       <td>Percentage of Retail</td>
-                       <td><?php echo $ratePeriods[2]['percentRetail']; ?>%</td>
+                       <td>Auction Percentage of Retail</td>
+                       <td><?php echo $ratePeriods[2]['auctionPercentRetail']; ?>%</td>
+                   </tr>
+                   <tr>
+                       <td>Auction Percentage of Retail</td>
+                       <td><?php echo $ratePeriods[2]['buyNowPercentRetail']; ?>%</td>
                    </tr>
                </table>
            </td>
@@ -298,15 +311,15 @@
         <td colspan="3">Auction Price:</td>
     </tr>
     <tr>
-        <td>% Retail <input type="text" size="5" value="40" /></td>
-        <td><?php echo $currencyName; ?> <input type="text" size="10" disabled="true" value="1,068.15" /></td>
-        <td>USD <input type="text" disabled="true" size="10" value="1,442.00" /></td>
+        <td>% Retail <input type="text" size="5" value="<?php echo $ratePeriods[0]['auctionPercentRetail']; ?>" /></td>
+        <td><?php echo $currencyName; ?> <input type="text" size="10" disabled="true" value="<?php echo number_format($percentRetail, 2); ?>" /></td>
+        <td>USD <input type="text" disabled="true" size="10" value="<?php echo number_format($usdPercentRetail, 2); ?>" /></td>
     </tr>
      <tr>
         <td colspan="3">Buy Now Price:</td>
     </tr>
     <tr>
-        <td>% Retail <input type="text" size="5" value="40" /></td>
+        <td>% Retail <input type="text" size="5" value="<?php echo $ratePeriods[0]['buyNowPercentRetail']; ?>" /></td>
         <td><?php echo $currencyName; ?> <input type="text" size="10" disabled="true" value="1,068.15" /></td>
         <td>USD <input type="text" size="10" disabled="true" value="1,442.00" /></td>
     </tr>

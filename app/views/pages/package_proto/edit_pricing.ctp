@@ -51,7 +51,21 @@
                               'resortFees' => 22.50,
                               'percentRetail' => 40,
                               'buyNowPercentRetail' => 45
-                              )
+                              ),
+                        array('roomType' => 'Deluxe Ocean View',
+                              'dateRanges' => array(array('dateRangeStart' => '2010-05-01',
+                                                          'dateRangeEnd' => '2010-05-21'),
+                                                    array('dateRangeStart' => '2010-07-01',
+                                                          'dateRangeEnd' => '2010-09-13')
+                                                   ),
+                              'weekdayRate' => 175.00,
+                              'weekendRate' => 250.00,
+                              'taxes' => 4.17,
+                              'serviceCharges' => 7.25,
+                              'resortFees' => 22.50,
+                              'percentRetail' => 40,
+                              'buyNowPercentRetail' => 45
+                              ),
                         );
     $loaItemTypes = array(1 => 'Room Night',
                           2 => 'Massage',
