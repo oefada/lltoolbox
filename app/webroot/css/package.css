@@ -1,0 +1,224 @@
+table, table td {
+    border:none !important;
+    padding:10px !important;
+}
+
+table th {
+    font-weight:bold;
+    color:#898989;
+}
+
+span.total-nights {
+    padding:0 12px 0 12px;
+}
+
+input[type="button"] {
+    margin:10px 0 10px 0;
+}
+
+h3 {
+    font-size:14px;
+}
+
+table.package-summary, table.package-summary td,
+table.room-night-summary, table.room-night-summary td {
+    padding:4px !important;
+}
+
+table.room-night-summary {
+    border: 1px solid #999 !important;
+    width:490px;
+    display:inline-table;
+}
+
+table.room-night-summary table.room-nights-col1 {
+    width:100%;
+}
+
+table.room-night-summary table.room-nights-col2 {
+    width:100%;
+}
+
+table.package-summary tr.odd, table.inclusions-summary tr.odd {
+    background-color:#eee;
+}
+
+table.room-night {
+    border: 1px solid #999 !important;
+    padding: 4px !important;
+}
+
+table.room-nights-col1  {
+    width:440px;
+}
+
+table.room-nights-col2 {
+    width: 350px;
+}
+
+table.room-nights-col1 table.td, table.room-nights-col2 td {
+    padding:8px !important;
+}
+
+table.room-night input[type="text"] {
+    margin:0 4px 0 4px;
+}
+
+table.roomNightTaxes {
+    width:300px;
+}
+
+tr.room-type {
+    background-color:#eee;
+}
+
+td.total-price {    
+    text-align:right;
+    padding:0 10px 10px 0 !important;
+}
+
+div.rate-period-button, div.new-inclusion-button {
+    text-align:right;
+}
+
+th.per-night {
+    width:150px;
+}
+
+span.per-night-checkbox {
+    margin:0;
+    text-align:center;
+}
+
+td.per-night-label {
+    text-align:left !important;
+}
+
+span.per-night-checkbox-label {
+    margin: 15px;
+}
+
+span.per-night-price-label {
+    margin-left:12px;
+}
+
+span.per-night-price {
+    text-align:center;
+    margin:0 0 0 4px;
+}
+
+table.inclusions th, table.inclusions td {
+    text-align:center;
+}
+
+table.inclusions td.item-name {
+    text-align:left;
+    width:150px;
+}
+
+table.validity {
+    width:600px;
+}
+
+table.validity th {
+    color:#666;
+    background-color:#eee;
+    padding:10px;
+    width:150px;
+}
+
+div.booking-conditions {
+    padding:10px 0 10px 0;
+}
+
+table.pricing-summary {
+    border-style: solid !important;
+    border-width:1px !important;
+    border-collapse: separate !important;
+    border-color:#999 !important;
+}
+
+table.pricing-summary td {
+    padding:4px !important;
+}
+
+table.pricing-summary table {
+    text-align:right;
+}
+
+div.maxNumSales {
+    padding:10px;
+}
+
+div.history {
+    padding:10px;
+}
+
+textarea.notes {
+    width:700px;
+}
+
+div.history-detail {
+    border: 1px solid #999;
+    width:700px;
+    text-align:left;
+    padding:4px;
+}
+
+span.link, span.x-remove {
+    cursor:pointer;
+    color:#336699;
+    padding-left:10px;
+}
+
+span.link {
+     text-decoration:underline;
+}
+
+div.age-range {
+    display:inline;
+    padding-left:20px;
+}
+
+div.section-header {
+    width:100%;
+    height:30px;
+    margin-top:20px;
+}
+
+div.section-title {
+    float:left;
+    color:#7F0000;
+    font-size:14px;
+    font-weight:bold;
+}
+
+div.edit-link {
+    float:right;
+    cursor:pointer;
+    text-decoration:underline;
+    color:#336699;
+    font-size:12px;
+}
+
+span.edit-link {
+    cursor:pointer;
+    text-decoration:underline;
+    color:#336699;
+}
+
+.right {
+    float:right;
+}
+
+span.rates-by-day {
+    margin-left:20px;
+}
+
+span#addBlackout {
+    margin-right:24px;
+}
+
+table.price-point-pricing {
+    width:500px !important;
+}
