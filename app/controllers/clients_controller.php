@@ -30,7 +30,7 @@ class ClientsController extends AppController {
 	        $this->Session->setFlash(__('Invalid Parent Client ID', true));
 			$this->redirect(array('action'=>'index'));
 	    }
-
+        
 	    if (!empty($this->data)) {
 	        $this->data['Client']['createdInToolbox'] = 1;
 
@@ -38,7 +38,9 @@ class ClientsController extends AppController {
 	        $this->data['Client']['seoName'] = $this->convertToSeoName($this->data['Client']['name']);
 
 	        $this->Client->create();
-	        if($this->Client->save($this->data)) {
+	        if($this->Client->save($this->data, array('callbacks' => false))) {
+                $parentClient = $this->Client->findByClientId($parentId);
+                $this->Client->set_sites($this->Client->id, $parentClient['Client']['sites']);
 	            $this->Session->setFlash(__('The Child Client has been saved, <a href="/clients/edit/'.$this->Client->id.'">click here to edit it</a>', true), 'default', array(), 'success');
 	            $this->set('closeModalbox', true);
 	        } else {
