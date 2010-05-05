@@ -396,6 +396,7 @@ class Client extends AppModel {
 				  foreach($loaSites as $site) {
 					  $clientSiteExtended['clientId'] = $client_id;
 					  $clientSiteExtended['siteId'] = array_search($site, $this->sites);
+                      $clientSiteExtended['inactive'] = 1;
 					  array_push($client['ClientSiteExtended'], $clientSiteExtended);
 				  }
 			}
