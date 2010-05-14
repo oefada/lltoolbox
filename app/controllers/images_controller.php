@@ -179,7 +179,12 @@ class ImagesController extends AppController {
 		 $directory = implode('/', $extractDir);
 	  }
 	  else {
-		 $directory = '/images/por/'.$this->Image->client['Client']['oldProductId'];
+        if (empty($this->Image->client['Client']['oldProductId'])) {
+            $directory = '/images/por/0-'.$this->Image->client['Client']['clientId'];
+        }
+        else {
+            $directory = '/images/por/'.$this->Image->client['Client']['oldProductId'];
+        }
 	  }
 	  $files = glob($this->fileRoot.$directory.'/*.jpg');
 	  $useLrgForSlideshow = false;
