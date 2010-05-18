@@ -2,7 +2,7 @@
 	<?php
 	$clientId = $this->viewVars['clientId'];
 	$currentLoaId = $client['Client']['currentLoaId'];
-    $validPhotoUsers = array('jpadilla', 'jpawlowska', 'kgathany');
+    $validPhotoUsers = array('jpadilla', 'jpawlowska', 'kgathany', 'dpen');
 	?>
 	<li><?=$html->link('INFO/ATTRIBUTES', array("controller" => 'clients', 'action' => 'edit', $clientId), array('update' => 'content-area', 'indicator' => 'spinner'))?></li>
 	<li class="open">LOA <?=$html2->c($client['Loa']);?>
