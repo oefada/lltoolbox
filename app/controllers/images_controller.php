@@ -180,15 +180,16 @@ class ImagesController extends AppController {
 	  }
 	  else {
         if (empty($this->Image->client['Client']['oldProductId'])) {
-            $directory = '/images/por/0-'.$this->Image->client['Client']['clientId'];
+            $oldProductId = $this->Image->client['Client']['clientId'];
         }
         else {
-            $directory = '/images/por/'.$this->Image->client['Client']['oldProductId'];
+            $oldProductId = $this->Image->client['Client']['oldProductId'];
         }
+        $directory = '/images/por/0-'.$oldProductId;
 	  }
 	  $files = glob($this->fileRoot.$directory.'/*.jpg');
 	  $useLrgForSlideshow = false;
-	  if (!in_array($this->fileRoot.$directory.'/'.$this->Image->client['Client']['oldProductId'].'-gal-xl-01.jpg', $files)) {
+	  if (!in_array($this->fileRoot.$directory.'/'.$oldProductId.'-gal-xl-01.jpg', $files)) {
 		 $useLrgForSlideshow = true;
 	  }
 	  if (!empty($files)) {
