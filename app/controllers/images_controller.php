@@ -181,11 +181,13 @@ class ImagesController extends AppController {
 	  else {
         if (empty($this->Image->client['Client']['oldProductId'])) {
             $oldProductId = $this->Image->client['Client']['clientId'];
+            $directory = '/images/por/0-'.$oldProductId;
         }
         else {
             $oldProductId = $this->Image->client['Client']['oldProductId'];
+            $directory = '/images/por/'.$oldProductId;
         }
-        $directory = '/images/por/0-'.$oldProductId;
+        
 	  }
 	  $files = glob($this->fileRoot.$directory.'/*.jpg');
 	  $useLrgForSlideshow = false;
