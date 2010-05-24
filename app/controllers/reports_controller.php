@@ -1437,6 +1437,24 @@ class ReportsController extends AppController {
         	                                        AND fp.clientid = '$clientId' 
         	                                        ORDER BY lastUpdate ");
             
+			$hotelOfferTotal = $this->OfferType->query("SELECT DATE_FORMAT(ho.snapShotDate, '%Y%m' ) as yearMonth, numberOffers
+        	                                        FROM reporting.carHotelOffer AS ho
+        	                                        WHERE CURDATE() - INTERVAL 14 MONTH <= snapShotDate 
+        	                                        AND ho.clientid = '$clientId' 
+        	                                        ORDER BY snapShotDate ");
+            
+			$hotelOfferClicksTotal = $this->OfferType->query("SELECT year2, month2, event12 
+			                                                    FROM reporting.carPortfolioReferral AS pr
+																WHERE CURDATE() - INTERVAL 14 MONTH <= STR_TO_DATE(CONCAT(year2,'-',month2), '%Y-%m')
+																AND pr.clientId = '$clientId' 
+					                                            ORDER BY year2, month2");
+			
+           	foreach ($hotelOfferClicksTotal as $k => $v) {
+				$hotelOfferClicksTotal[$k][0]['yearMonth'] = $v['pr']['year2'] . str_pad($v['pr']['month2'], 2, '0', STR_PAD_LEFT);
+				unset($hotelOfferClicksTotal[$k]['pr']['month2']);
+				unset($hotelOfferClicksTotal[$k]['pr']['year2']);
+			}
+
             //setup array of all months we are using in this view
             
             $today = strtotime(date('Y-m-01'));
@@ -1461,14 +1479,21 @@ class ReportsController extends AppController {
             foreach($fixedpriceTotal as $k => $v):
                 $fpTotKeyed[$v[0]['yearMonth']] = $v['fp'];           //set the key for each to the year and month so we can iterate through it easily
             endforeach;
+            
+			foreach($hotelOfferTotal as $k => $v):
+                $hotelOfferKeyed[$v[0]['yearMonth']] = $v['ho'];           //set the key for each to the year and month so we can iterate through it easily
+            endforeach;
+
+			foreach($hotelOfferClicksTotal as $k => $v):
+                $hotelOfferClicksKeyed[$v[0]['yearMonth']] = $v['pr'];           //set the key for each to the year and month so we can iterate through it easily
+            endforeach;
 
             //sum the totals for the last 12 months and put everything in an array we can easily reference later
             foreach($stats as $k => $v):
                 $keyedStats[$v[0]['yearMonth']] = array_merge($v['rs'], $v[0]);           //set the key for each to the year and month so we can iterate through it easily
             endforeach;
             
-            
-            
+
             $totals['phone'] = 0;
             $totals['webRefer'] = 0;
             $totals['productView'] = 0;
@@ -1481,13 +1506,18 @@ class ReportsController extends AppController {
             $totals['fpRevenue'] = 0;
             $totals['aucTotals'] = 0;
             $totals['fpTotals'] = 0;
+			$totals['hotelOfferTotal'] = 0;
+			$totals['hotelOfferClicksTotal'] = 0;
             
             foreach ($months as $k => $month):
                 $keyedResults[$month] = array_merge((array)@$keyedStats[$month],
                                                 (array)@$auctionsKeyed[$month],
                                                 (array)@$fpKeyed[$month],
                                                 (array)@$aucTotKeyed[$month],
-                                                (array)@$fpTotKeyed[$month]);
+                                                (array)@$fpTotKeyed[$month],
+												(array)@$hotelOfferKeyed[$month],
+												(array)@$hotelOfferClicksKeyed[$month]
+												);
                 
                 //only count the last 12 months in the totals, months array has 13 months
                 if ($k == 0) {
@@ -1505,6 +1535,8 @@ class ReportsController extends AppController {
                 $totals['fpRevenue'] += @$keyedResults[$month]['fpRevenue'];
                 $totals['aucTotals'] += @$keyedResults[$month]['numberAuctions'];
                 $totals['fpTotals'] += @$keyedResults[$month]['numberPackages'];
+				$totals['hotelOfferTotal'] += @$keyedResults[$month]['numberOffers'];
+				$totals['hotelOfferClicksTotal'] +=@$keyedResults[$month]['event12'];
             endforeach;
 
             $results = $keyedResults;
