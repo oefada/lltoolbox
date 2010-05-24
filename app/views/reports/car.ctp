@@ -214,5 +214,30 @@ td {
       <?=@$number->currency($totals['aucRevenue']+$totals['fpRevenue'], 'USD', array('places' => 0))?>
     </strong></td>
   </tr>
+  <tr>
+    <th>&nbsp;</th>
+    <?php for($i = 0; $i <= 12; $i++)
+			echo "<td>&nbsp;</td>";
+	?>
+    <td>&nbsp;</td>
+  </tr>
+  <tr class="altrow">
+    <td style="text-align:left"><strong>hotel offer</strong></td>
+    <?php for($i = 0; $i <= 12; $i++)
+			echo "<td>".@$number->format($results[$months[$i]]['numberOffers'])."</td>";
+	?>
+    <td><strong>
+      <?=@$number->format($totals['hotelOfferTotal'])?>
+    </strong></td>
+  </tr>
+  <tr>
+    <td style="text-align:left"><strong>hotel offer</strong></td>
+    <?php for($i = 0; $i <= 12; $i++)
+			echo "<td>".@$number->format($results[$months[$i]]['event12'])."</td>";
+	?>
+    <td><strong>
+      <?=@$number->format($totals['hotelOfferClicksTotal'])?>
+    </strong></td>
+  </tr>
 </table>
 <? endif; ?>
