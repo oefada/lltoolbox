@@ -30,6 +30,9 @@ $this->set('clientId', $this->data['Client']['clientId']);
 		// added Dec 22,2009 ALEE
 		$disable_advanced_edit = (in_array($userDetails['username'], array('alee','rhastings','mchoe','cyoung','dpen','kferson'))) ? false : true;
 
+		// for editing membershipPackagesRemaining
+		$disable_mp = (in_array($userDetails['username'], array('alee','mchoe','rhastings'))) ? false : true;
+
 		echo $form->input('clientId', array('type' => 'hidden'));
 		echo $form->input('loaLevelId', array('disabled' => $disabled, 'label' => 'LOA Level'));
 		echo $form->input('loaMembershipTypeId', array('label' => 'Membership Type', 'disabled' => $disable_advanced_edit));
@@ -50,7 +53,7 @@ $this->set('clientId', $this->data['Client']['clientId']);
 	</div>
 	<?
 		echo $form->input('membershipTotalPackages');
-		echo $form->input('membershipPackagesRemaining', array('disabled' => true));
+		echo $form->input('membershipPackagesRemaining', array('disabled' => $disable_mp));
 		echo $form->input('loaNumberPackages', array('label' => 'Commission-Free Packages'));
 		echo $form->input('startDate');
 		echo $form->input('endDate');
