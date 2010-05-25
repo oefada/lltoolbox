@@ -231,7 +231,7 @@ td {
     </strong></td>
   </tr>
   <tr>
-    <td style="text-align:left"><strong>hotel offer</strong></td>
+    <td style="text-align:left"><strong>hotel offer clicks</strong></td>
     <?php for($i = 0; $i <= 12; $i++)
 			echo "<td>".@$number->format($results[$months[$i]]['event12'])."</td>";
 	?>
