@@ -66,6 +66,7 @@ class Client extends AppModel {
    function afterSave($created) {
 	   // run some custom afterSaves for client.     
        $client = $this->data;
+      
         if (is_array($client['Client']['sites'])) {
             $clientSites = $client['Client']['sites'];
         }
@@ -275,25 +276,26 @@ class Client extends AppModel {
             }
             // for clientThemeLookup only on the frontend
             // -----------------------------------------------------------------
-            if (isset($data['ClientThemeRel']) && !empty($data['ClientThemeRel'])) {
-                $themeIds = array();
-                foreach ($data['ClientThemeRel'] as $theme) {
-                    $tmp = '';
-                    
-                }
-                sort($themeIds);
+            if (isset($data['Theme']) && !empty($data['Theme'])) {               
                 $insert_arr = array();
+                $update_arr = array();
                 $insert_arr['clientId'] = $clientId;
-                for ($i = 1; $i <= 150; $i++) {
-                   if (in_array($i, $themeIds)) {
-                       $insert_arr["theme$i"] = 1;
-                       $tmp.= "theme$i=1,";	
-                   } else {
-                       $tmp.= "theme$i=0,";
-                   }
-               }
+                foreach($data['Theme'] as $themeId => $clientThemeRel) {
+                    if (in_array($site, $clientThemeRel['sites'])) {
+                        $insert_arr['theme'.$themeId] = 1;
+                        $update_arr[] = 'theme'.$themeId.'=1';
+                    }
+                }
+                for ($i=1; $i <= 150; $i++) {
+                    if (!isset($insert_arr['theme'.$i])) {
+                        $insert_arr['theme'.$i] = 0;
+                        $update_arr[] = 'theme'.$i.'=0';
+                    }
+                }
                $update_tmp = rtrim($tmp, ',');
-               $sql = "INSERT DELAYED INTO clientThemeLookup (". implode(',',array_keys($insert_arr)) .") VALUES (". implode(',',array_values($insert_arr)) .") ON DUPLICATE KEY UPDATE $update_tmp";
+               $sql = "INSERT DELAYED INTO clientThemeLookup (". implode(',',array_keys($insert_arr)) .")
+                       VALUES (". implode(',',array_values($insert_arr)) .")
+                       ON DUPLICATE KEY UPDATE ".implode(',', $update_arr);
                $this->useDbConfig = $site;
                $result = $this->query($sql);
             }
