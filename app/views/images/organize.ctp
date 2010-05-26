@@ -15,9 +15,21 @@
       <div id="images-<?php echo $site; ?>" class="organize" <?php if ($site != $displayTab): ?> style="display:none"<?php endif; ?>>
          <form method="post" id="organizeImages-<?php echo $site; ?>">
          <input type="hidden" name="data[saveSite]" value="<?php echo $site; ?>" />
-         <?php if (count($sites) > 1): ?>
-            <div class="duplicateTo"><input type="checkbox" name="data[duplicateTo][<?php echo ($site == 'luxurylink') ? 'family' : 'luxurylink'; ?>]" /> Copy to <?php echo ($site == 'luxurylink') ? 'Family' : 'Luxury Link'; ?></div>
-         <?php endif; ?>
+            <div style="position:relative">
+            <?php if (count($sites) > 1): ?>
+               <span class="duplicateTo"><input type="checkbox" name="data[duplicateTo][<?php echo ($site == 'luxurylink') ? 'family' : 'luxurylink'; ?>]" /> Copy to <?php echo ($site == 'luxurylink') ? 'Family' : 'Luxury Link'; ?></span>
+            <?php endif; ?>
+            <span class="previewImages">
+               <?php
+                  if (in_array('luxurylink', $client['Client']['sites']) && $site == 'luxurylink') {
+                      echo $html->link('<span>Preview on LuxuryLink</span>', "http://www.luxurylink.com/luxury-hotels/preview.html?clid={$client['Client']['clientId']}&preview=client", array('target' => '_blank', 'class' => 'button'), null, false);
+                  }
+                  if (in_array('family', $client['Client']['sites']) && $site == 'family') {
+                      echo $html->link('<span>Preview on FamilyGetaway</span>', "http://www.familygetaway.com/luxury-hotels/preview.html?clid={$client['Client']['clientId']}&preview=client", array('target' => '_blank', 'class' => 'button'), null, false);
+                  }
+              ?>
+           </span>
+            </div>
           <input type="submit" value="Save" class="save_changes" />
          <?php $i=0; ?>
          <?php foreach ($slideshowImages as $ssImage):
