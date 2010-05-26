@@ -11,9 +11,14 @@ ul.sortableInactive li.empty {
    border:none;
 }
 
-div.duplicateTo {
+span.duplicateTo {
    font-weight:bold;
    font-size:12px;
+}
+
+span.previewImages {
+    position:absolute;
+    left:700px;
 }
 
 div.filename {
