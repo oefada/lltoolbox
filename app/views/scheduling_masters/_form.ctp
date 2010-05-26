@@ -15,6 +15,9 @@
 			if ($singleClientPackage) {
 				echo $form->input('Track', array('options' => $trackIds, 'empty' => true, 'multiple' => false, 'disabled' => ($masterState) ? true : false));
 			}
+            
+            echo $form->input('maxNumSales', array('value' => $package['Package']['maxNumSales'], 'disabled' => 'disabled'));
+            
 			//echo "<strong>For Fixed Price offer types, number of days to run, scheduling delay, and number of iterations will be ignored. You must choose an end date for fixed price offers.</strong>";		
 			echo $form->input('retailValue', array('disabled' => 'disabled'));
 			
