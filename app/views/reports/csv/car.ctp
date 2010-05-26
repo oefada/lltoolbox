@@ -86,4 +86,14 @@ total sold,<?php for($i = 0; $i <= 12; $i++)
 total $$,<?php for($i = 0; $i <= 12; $i++) 
 				echo '"'.@$number->currency($results[$months[$i]]['aucRevenue']+$results[$months[$i]]['fpRevenue'], 'USD', array('places' => 0)).'",';
 				echo '"'.@$number->currency($totals['aucRevenue']+$totals['fpRevenue'], 'USD', array('places' => 0)).'"'?>
+
+<?="\n"?>
+<?="\n"?>
+hotel offer,<?php for($i = 0; $i <= 12; $i++)
+			echo '"'.@$number->format($results[$months[$i]]['numberOffers']).'",';
+			echo '"'.@$number->format($totals['hotelOfferTotal']).'"'?>
+<?="\n"?>
+hotel offer clicks,<?php for($i = 0; $i <= 12; $i++)
+			echo '"'.@$number->format($results[$months[$i]]['event12']).'",';
+			echo '"'.@$number->format($totals['hotelOfferClicksTotal']).'"'?>
 <? endif; ?>
