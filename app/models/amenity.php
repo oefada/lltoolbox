@@ -9,6 +9,8 @@ class Amenity extends AppModel {
 	var $hasMany = array(
 	   'ClientAmenityRel' => array('className' => 'ClientAmenityRel', 'foreignKey' => 'amenityId')
 	   );
+       
+   var $belongsTo = array('amenityType' => array('foreignKey' => 'amenityTypeId'));
 
 }
 ?>
