@@ -5,7 +5,7 @@ App::import('Vendor', 'nusoap_client/lib/nusoap');
 class ClientsController extends AppController {
 
 	var $name = 'Clients';
-	var $uses = array('Client', 'ClientThemeRel', 'ClientDestinationRel');
+	var $uses = array('Client', 'ClientThemeRel', 'ClientDestinationRel', 'ClientAmenityTypeRel');
 
 	function beforeFilter() {
 		parent::beforeFilter();
@@ -113,7 +113,10 @@ class ClientsController extends AppController {
 		    }
 		}
 		$this->data['ClientTracking'] = $client_trackings;
-		
+        
+        // get amenities for each amenity type
+        $this->data['ClientAmenityTypeRel'] = $this->Client->getClientAmenityTypeRel($id);
+
         $this->Client->ClientType->recursive = -1;
 		$clientTypeIds = $this->Client->ClientType->find('list');
         $this->Client->recursive = -1;
