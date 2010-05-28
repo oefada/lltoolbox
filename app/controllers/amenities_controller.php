@@ -2,8 +2,11 @@
 class AmenitiesController extends AppController {
 
 	var $name = 'Amenities';
+    var $uses = array('Amenity', 'AmenityType');
 
 	function index() {
+        $this->Amenity->recursive = 0;
+		$this->paginate['limit'] = 100;
 		$this->set('amenities', $this->paginate());
 	}
 	
@@ -22,6 +25,7 @@ class AmenitiesController extends AppController {
 		}
 		if (empty($this->data)) {
 			$this->data = $this->Amenity->read(null, $id);
+            $this->set('amenityTypeNames', $this->AmenityType->find('list'));
 		}
 	}
 	
