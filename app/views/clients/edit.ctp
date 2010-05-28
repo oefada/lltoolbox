@@ -127,7 +127,8 @@ foreach ($this->data['Client']['sites'] as $site) {
     <?php foreach($this->data['ClientSiteExtended'] as $site): ?>
         <div style="float: left; <?php echo (count($this->data['ClientSiteExtended']) == 2) ? 'clear:right;width:47%;' : 'width:100%;'?>" class="multiSiteNarrow multiSiteSingle">
         <?php
-            echo "<span class='siteName'>{$multisite->displayName($site['siteId'])} - Long Desc</span>";
+            $longDescExtraTitle = ($site['siteId'] == 2) ? '(About)' : '';
+            echo "<span class='siteName'>{$multisite->displayName($site['siteId'])} - Long Desc $longDescExtraTitle</span>";
             echo $form->input('ClientSiteExtended.'.$site['clientSiteExtendedId'].'.longDesc', array('label'=>false, 'value' => $site['longDesc']));
             echo "<span class='siteName'>{$multisite->displayName($site['siteId'])} - Blurb</span>";
             echo $form->input('ClientSiteExtended.'.$site['clientSiteExtendedId'].'.blurb', array('label'=>false, 'value' => $site['blurb']));
@@ -236,95 +237,57 @@ foreach ($this->data['Client']['sites'] as $site) {
 		
 		
 	</fieldset>
+    
+
+
+<?php // CLIENT AMENITIES ========================================================================= ?>
+
+    <script type="text/javascript">
+        function refreshCurrentAmenities(amenityTypeId) {
+            var amenities = new Array();
+            $$('#amenityType' + amenityTypeId + ' input').find(function(e) {
+                if (e.checked) {
+                    amenities.push($('amenity-label-' + $(e).getValue()).innerHTML);
+                }
+            });
+            amenities = amenities.join(', ');
+            $('currentAmenities' + amenityTypeId).update(amenities);
+        }
+    </script>
+    
 	<fieldset class="collapsible">
 		<legend class="handle">Amenities <?=$html2->c($client['ClientAmenityRel']); ?></legend>
 		<div class="collapsibleContent">
-			<div id="amenitylist" style="float: left; clear: none">
-				<div class="columnLabels">&nbsp;</div>
-				<ul style="list-style: none; padding-left: 20px;">
-				<?php
-				$familyAmenities = array();
-				 foreach($client['ClientAmenityRel'] as $k => $amenity):
-				?>
-						<li id="amenity_<?=$amenity['amenityId']?>" style="padding: 3px 0 3px 0;">
-							<span class="radio"><input type="radio" name="data[ClientAmenityRel][<?=$k?>][amenityTypeId]" value='4'<? if($amenity['amenityTypeId'] == 4) echo ' checked="checked"'?> class="amenity_checkbox"/></span>
-                            <span class="radio"><input type="radio" name="data[ClientAmenityRel][<?=$k?>][amenityTypeId]" value='7'<? if($amenity['amenityTypeId'] == 7) echo ' checked="checked"'?> class="amenity_checkbox"/></span>
-                            <span class="radio"><input type="radio" name="data[ClientAmenityRel][<?=$k?>][amenityTypeId]" value='3'<? if($amenity['amenityTypeId'] == 3) {echo ' checked="checked"'; $familyAmenities[$k] = $amenity;}?> class="amenity_checkbox"/></span>
-                            <span class="radio"><input type="radio" name="data[ClientAmenityRel][<?=$k?>][amenityTypeId]" value='2'<? if($amenity['amenityTypeId'] == 2) echo ' checked="checked"'?> class="amenity_checkbox"/></span>
-                            <span class="radio"><input type="radio" name="data[ClientAmenityRel][<?=$k?>][amenityTypeId]" value='1'<? if($amenity['amenityTypeId'] == 1) echo ' checked="checked"'?> class="amenity_checkbox"/></span>
-                            <span class="radio"><input type="radio" name="data[ClientAmenityRel][<?=$k?>][amenityTypeId]" value='5' <? if(empty($amenity['amenityTypeId']) || $amenity['amenityTypeId'] == 5) echo 'checked="checked"'?>/></span>
-                            <span<? if($k %2 == 0) echo ' style="background: #f5f2e2; padding: 3px 0 3px 0"' ?> class="nameSpan">
-							<input type='hidden' name='data[ClientAmenityRel][<?=$k?>][clientAmenityRelId]' value="<?=$amenity['clientAmenityRelId']?>">
-							<input type='hidden' name='data[ClientAmenityRel][<?=$k?>][clientId]' value="<?=$amenity['clientId']?>" />
-							<input type='hidden' name='data[ClientAmenityRel][<?=$k?>][amenityId]' value="<?=$amenity['amenityId']?>"><span class="name"><?=$amenity['Amenity']['amenityName']?></span> <a href="javascript: return false;" onclick="removeAmenity('amenity_<?=$amenity['amenityId']?>','data[ClientAmenityRel][<?=$k?>]')">(remove)</a>
-						</span>
-						</li>
-				<?php endforeach?>
-				</ul>
-			</div>
-			<?php if ($is_family): ?>
-			<div style="position: absolute; right: 50px">
-				<strong>Order Family Amenities</strong>
-				<ul id="ordAmLst">
-					<?php 
-					function sortFamilyAmenitites($a, $b) {
-						if ($a['weight'] == $b['weight']) {
-							return 0;
-						}
-						
-						return ($a['weight'] < $b['weight']) ? -1 : 1;
-					}
+            <br />
+            <?php
+                $clientAmenityRelIdsChecked = array();            
+                foreach ($client['ClientAmenityTypeRel'] as $amenityTypeId => $amenityType) {
+                    if (isset($amenityType['amenities'])) {
+                        echo "<div style='clear:none; border:1px dotted silver; background:#FEFEFE; padding:10px; float:left; width:315px; height:300px; margin:0px 20px 20px 0px;'><div style='padding:0px; margin:0px 0px 10px 0px; font-weight:bold; font-size:1.2em;'>{$amenityType['amenityTypeName']}</div>";
 
-					usort($familyAmenities, 'sortFamilyAmenitites');
-					
-					foreach($familyAmenities as $k => $v):?>
-						<li id='ordAmLst_amenity_<?=$v['amenityId']?>'><div><?=$v['Amenity']['amenityName']?></div></li>
-					<?php endforeach;?>
-				</ul>
-				<input type="hidden" id="sortedAmenities" name="data[sortedAmenities]">
-			</div>
-			<script>
-			function createSortable() {
-				Sortable.create("ordAmLst",
-				{
-					onUpdate: function() {
-						$('sortedAmenities').value = Sortable.serialize("ordAmLst")
-					}
-				});
-			}
-			function checkboxEvent() {
-				$$(".amenity_checkbox").invoke('observe', 'click', function() {
-					if(this.value == 3) {
-						if(!$('ordAmLst_'+$(this).up().up().id)) {
-							$('ordAmLst').insert({bottom: "<li id='ordAmLst_"+$(this).up().up().id+"'><div>"+$(this).up().up().down('.nameSpan').down('.name').innerHTML+"</div></li>"});
-							new Effect.Highlight($("ordAmLst_"+$(this).up().up().id).down());
-							createSortable();
-						}
-					} else {
-						if($('ordAmLst_'+$(this).up().up().id)) {
-							var idToDelete = 'ordAmLst_'+$(this).up().up().id;
-							new Effect.DropOut($(idToDelete), {afterFinish: function() {$(idToDelete).remove();}});
-							createSortable();
-						}
-					}
-				});
-			}
-			Event.observe(window, 'load', function() {
-				createSortable();
-				$('sortedAmenities').value = Sortable.serialize("ordAmLst")
-				checkboxEvent();
-			});
-			</script>
-		    <?php endif; ?>
-		<div style="float: left; display: inline; width: 470px" >
-			<input type="button" value="Add" onclick="javascript: addAmenity(); checkboxEvent(); return false;" style="float: right; margin-top: 5px" />
-			<?php
-			echo $strictAutocomplete->autoComplete('amenity_select', '/amenities/auto_complete');
-			?>
-			<a href="/amenities">Manage Amenities</a>
+                        echo "<div id='amenityType$amenityTypeId' style='background:white; border:1px solid silver; width:300px; height:100px; margin:0px 0px 8px 0px; overflow:auto;'>";
+                        foreach ($amenityType['amenities'] as $key => $amenity) {
+                            $checked = ($amenity['checked']) ? 'checked' : '';
+                            echo "
+                                <input type='checkbox' id='amenity{$amenity['amenityId']}' name='data[ClientAmenityRel][{$amenity['amenityId']}]' value='{$amenity['amenityId']}' onclick='refreshCurrentAmenities($amenityTypeId);' $checked/>
+                                <label id='amenity-label-{$amenity['amenityId']}' for='amenity{$amenity['amenityId']}' style='display:inline; float:none; padding:0px; margin:0px; font-weight:normal; font-size:0.9em;'>{$amenity['amenityName']}</label><br/>
+                            ";                                
+                        }
+                        echo "</div>";
+
+                        echo "<div style='padding:0px; margin:0px 0px 15px 0px; height:65px; overflow:auto; font-size:0.9em;'><strong>Selected:</strong> <span id='currentAmenities$amenityTypeId'></span></div>";
+                        echo "<script>refreshCurrentAmenities($amenityTypeId);</script>";
+                        echo "<div style='padding:0px; margin:0px 0px 5px 0px; font-size:0.9em;'><strong>Description:</strong></div><textarea name='data[ClientAmenityTypeRel][$amenityTypeId]' style='width:308px; border:1px solid silver; font-size:50px;'>{$amenityType['description']}</textarea></div>";
+                    }
+                }
+            ?>
 		</div>
-		</div>
-		</fieldset>
+    </fieldset>    
+    
+<?php // END CLIENT AMENITIES ===================================================================== ?>
+       
+        
+        
 		<fieldset class="collapsible">
 			<legend class="handle">Themes (<?php echo $themesCount; ?>)</legend>
 			<div class="collapsibleContent">
