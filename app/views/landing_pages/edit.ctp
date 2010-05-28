@@ -11,6 +11,7 @@
 		echo $form->input('landingPageTypeId');
 		echo $form->input('referenceId');
 		echo '<div class="controlset">' . $form->input('isSponsored') . '</div>';
+        echo '<div class="controlset">' . $form->input('useHalfPageAd') . '</div>';
 		echo $form->input('pageTitle');
 		echo $form->input('metaDescription');
 		echo $form->input('textHeader');
