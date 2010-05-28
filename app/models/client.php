@@ -24,6 +24,7 @@ class Client extends AppModel {
 						'Audit' => array('foreignKey' => 'foreignId', 'conditions' => array('Audit.class' => 'Client'), 'limit' => 5, 'order' => 'Audit.created DESC'),
 						'ChildClient' => array('className' => 'Client', 'foreignKey' => 'parentClientId'),
 						'ClientContact' => array('className' => 'ClientContact', 'foreignKey' => 'clientId'),
+                        'ClientAmenityTypeRel' => array('className' => 'ClientAmenityTypeRel', 'foreignKey' => 'clientId'),
 						'ClientAmenityRel' => array('className' => 'ClientAmenityRel', 'foreignKey' => 'clientId'),
 						'ClientDestinationRel' => array('className' => 'ClientDestinationRel', 'foreignKey' => 'clientId'),
                         'ClientSiteExtended' => array('className' => 'ClientSiteExtended', 'foreignKey' => 'clientId'),
@@ -63,9 +64,9 @@ class Client extends AppModel {
       return true;
    }
 			
-   function afterSave($created) {
-	   // run some custom afterSaves for client.     
-       $client = $this->data;
+    function afterSave($created) {
+        // run some custom afterSaves for client.     
+        $client = $this->data;
       
         if (is_array($client['Client']['sites'])) {
             $clientSites = $client['Client']['sites'];
@@ -73,32 +74,58 @@ class Client extends AppModel {
         else {
             $clientSites = explode(',', $client['Client']['sites']);
         }
-	   //delete HABTM records from front end databases
-	   if (!empty($this->hasAndBelongsToMany)) {
-			foreach($this->hasAndBelongsToMany as $model => $habtm) {
-				//what is Tag for?
-				if ($model == 'Destination') {
-					$modelName = 'Client'.$model.'Rel';
-					foreach($clientSites as $site) {
-						$this->$modelName->useDbConfig = $site;
-						$this->$modelName->deleteAll(array('clientId' => $client['Client']['clientId']), $callbacks=false);
-						$this->$modelName->useDbConfig = 'default';
-					}
-				}
-			}
-	   }
-       //save amenities
-       if (!empty($this->data['ClientAmenityRel'])) {
+        
+        //delete HABTM records from front end databases
+        if (!empty($this->hasAndBelongsToMany)) {
+            foreach($this->hasAndBelongsToMany as $model => $habtm) {
+                //what is Tag for?
+                if ($model == 'Destination') {
+                    $modelName = 'Client'.$model.'Rel';
+                    foreach($clientSites as $site) {
+                        $this->$modelName->useDbConfig = $site;
+                        $this->$modelName->deleteAll(array('clientId' => $client['Client']['clientId']), $callbacks=false);
+                        $this->$modelName->useDbConfig = 'default';
+                    }
+                }
+            }
+        }
+
+        // AMENITIES
+        if (!empty($this->data['ClientAmenityRel'])) {
+
+            // select current amenities
+            $currentClientAmenities = array();
+            $clientAmenityRels = $this->query("SELECT * FROM clientAmenityRel WHERE clientId = {$client['Client']['clientId']}");
+            foreach ($clientAmenityRels as $key => $clientAmenityRel) {
+                $currentClientAmenities[$clientAmenityRel['clientAmenityRel']['amenityId']] = $clientAmenityRel['clientAmenityRel']['clientAmenityRelId']; 
+            }
+
+            // insert amenities
             $amenitiesData = array();
-            foreach($this->data['ClientAmenityRel'] as $amenity) {
-                 if (isset($amenity['remove'])) {
-                     $this->ClientAmenityRel->delete($amenity['clientAmenityRelId']);
-                     continue;
-                 }
-                 array_push($amenitiesData, $amenity);
+            $amenitiesToInsert = array_diff_key($this->data['ClientAmenityRel'], $currentClientAmenities);
+            foreach ($amenitiesToInsert as $amenityId => $amenityToInsert) {
+                $amenitiesData[] = array('clientId' => $client['Client']['clientId'], 'amenityId' => $amenityId);
             }
             $this->ClientAmenityRel->saveAll($amenitiesData);
-       }
+
+            // delete amenities
+            $amenitiesToDelete = array_diff_key($currentClientAmenities, $this->data['ClientAmenityRel']);
+            foreach ($amenitiesToDelete as $amenityId => $currentClientAmenityRelId) {
+                $this->ClientAmenityRel->delete($currentClientAmenityRelId);
+            }
+        }
+        
+        // AMENITY TYPES
+        if (!empty($this->data['ClientAmenityTypeRel'])) {
+            $amenityTypesData = array();
+            foreach ($this->data['ClientAmenityTypeRel'] as $amenityTypeId => $amenityTypeDescription) {
+                if ($amenityTypeDescription) {
+                    $amenityTypesData[] = array('clientId' => $client['Client']['clientId'], 'amenityTypeId' => $amenityTypeId, 'description' => $amenityTypeDescription);   
+                }
+            }
+            $this->ClientAmenityTypeRel->saveAll($amenityTypesData);
+        }
+
        //save tracking
        if (!empty($this->data['ClientTracking'])) {
             $trackingData = array();
@@ -207,6 +234,34 @@ class Client extends AppModel {
 			return array();
 		}
    }
+   
+    function getClientAmenityTypeRel($clientId) {
+        
+        $amenityTypes = array();
+                
+        // get amenity ids for this client
+        $clientAmenityRels = $this->query("SELECT GROUP_CONCAT(amenityId) AS amenities FROM clientAmenityRel WHERE clientId = $clientId GROUP BY clientId");
+        $clientAmenities = explode(',', $clientAmenityRels[0][0]['amenities']);
+
+        // get amenity type
+        $clientAmenityTypeRels = $this->query("
+            SELECT amenityType.amenityTypeId, amenityTypeName, description
+            FROM amenityType LEFT JOIN clientAmenityTypeRel ON amenityType.amenityTypeId = clientAmenityTypeRel.amenityTypeId AND clientId = $clientId
+        ");
+        $clientAmenityTypes = array();
+        foreach ($clientAmenityTypeRels as $key => $clientAmenityTypeRel) {
+            $amenityTypes[$clientAmenityTypeRel['amenityType']['amenityTypeId']] = array_merge($clientAmenityTypeRel['amenityType'], $clientAmenityTypeRel['clientAmenityTypeRel']);
+        }
+
+        // get all amenities        
+        $amenities = $this->query("SELECT amenityTypeId, amenityId, amenityName FROM amenity WHERE amenityTypeId IS NOT NULL AND amenity.inactive = 0");
+        foreach ($amenities as $key => $amenity) {
+            $amenity['amenity']['checked'] = in_array($amenity['amenity']['amenityId'], $clientAmenities); // determine if client has this amenity            
+            $amenityTypes[$amenity['amenity']['amenityTypeId']]['amenities'][] = $amenity['amenity']; // add to final array of amenities
+        }
+ 
+        return $amenityTypes;
+    }
    
    function afterFind($results, $primary = false) {
 	  if ($primary == true && $this->recursive != -1):
