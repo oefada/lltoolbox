@@ -19,6 +19,7 @@ $this->pageTitle = 'Amenities';
 <tr>
 	<th><?php echo $paginator->sort('amenityId');?></th>
 	<th><?php echo $paginator->sort('amenityName');?></th>
+    <th><?php echo $paginator->sort('amenityTypeName');?></th>
 	<th><?php echo $paginator->sort('inactive');?></th>
 	<th class="actions"><?php __('Actions');?></th>
 </tr>
@@ -36,6 +37,9 @@ foreach ($amenities as $amenity):
 			<?php echo $amenity['Amenity']['amenityName']; ?>
 		</td>
 		<td>
+			<?php echo $amenity['amenityType']['amenityTypeName']; ?>
+		</td>
+        <td>
 			<?php echo $amenity['Amenity']['inactive']; ?>
 		</td>
 		<td class="actions">
