@@ -281,6 +281,9 @@ foreach ($this->data['Client']['sites'] as $site) {
                     }
                 }
             ?>
+            
+            <div class="clear"><a href="/amenities">Manage Amenities</a></div>           
+            
 		</div>
     </fieldset>    
     
