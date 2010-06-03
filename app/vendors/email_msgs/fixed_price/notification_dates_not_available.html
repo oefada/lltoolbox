@@ -3,10 +3,14 @@
 <p>Dear <?=$userFirstName;?> <?=$userLastName;?>,</p>
 
 <p>
-<strong>The dates you requested are not available at this time.  Please <a style="color:#<?=$siteHeader;?>;font-weight:bold;" href="<?=$dateRequestLink;?>">submit alternate dates</a> or call our 
-Travel Concierge at <?=$sitePhone;?> or <?=$sitePhoneLocal;?> for assistance</strong>
+We're sorry, but the dates you requested are not available at this time.  Feel free to <a style="color:#<?=$siteHeader;?>;font-weight:bold;" href="<?=$dateRequestLink;?>">submit alternate dates</a> or call our 
+Travel Concierge at <?=$sitePhone;?> or <?=$sitePhoneLocal;?> for assistance.
 </p>
 
+<?php if (!empty($resData) && $resData[0]['reservation']['confirmationNotes']) :?>
+<p>Notes from the property:</p>
+<p style="color:gray;font-style:italic;"><?=$resData[0]['reservation']['confirmationNotes'];?><br /><br /></p>
+<?php endif;?>
 
 <p>You Requested:</p>
 
