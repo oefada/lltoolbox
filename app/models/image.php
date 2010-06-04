@@ -57,5 +57,31 @@ class Image extends AppModel {
             }            
         }
     }
+    
+    function getLrgSlideshow($clientId) {
+        if ($slideshow = $this->ImageClient->find('all', array('conditions' => array("ImageClient.clientId = {$clientId}",
+                                                                                     "ImageClient.imageTypeId = 1",
+                                                                                     "ImageClient.inactive = 0",
+                                                                                     "ImageClient.isHidden = 0",
+                                                                                     "Image.imagePath LIKE '%lrg%'"
+                                                                                    )
+                                                               )
+                                                  )) {
+            return $slideshow;
+        }
+        else {
+            return false;
+        }
+    }
+    
+    function inactivateLrgSlideshow($slideshow) {
+        foreach($slideshow as $slide) {
+            $slide['ImageClient']['inactive'] = 1;
+            $this->ImageClient->create();
+            $this->ImageClient->save($slide);
+        }
+    }
+    
+    
 }
 ?>

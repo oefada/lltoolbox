@@ -177,6 +177,7 @@ class ImagesController extends AppController {
 		 $extractDir = explode('/', $dbImages[0]);
 		 array_pop($extractDir);
 		 $directory = implode('/', $extractDir);
+         $oldProductId = (empty($this->Image->client['Client']['oldProductId'])) ? '0-'.$this->Image->client['Client']['clientId'] : $this->Image->client['Client']['oldProductId'];
 	  }
 	  else {
         if (empty($this->Image->client['Client']['oldProductId'])) {
@@ -194,6 +195,11 @@ class ImagesController extends AppController {
 	  if (!in_array($this->fileRoot.$directory.'/'.$oldProductId.'-gal-xl-01.jpg', $files)) {
 		 $useLrgForSlideshow = true;
 	  }
+      else {
+          if ($lrgSlideshowImages = $this->Image->getLrgSlideshow($this->Image->client['Client']['clientId'])) {
+                $this->Image->inactivateLrgSlideshow($lrgSlideshowImages);
+          }
+      }
 	  if (!empty($files)) {
 		 //$siteId = array_search($this->Image->client['Client']['sites'][0], $this->siteDbs);
 		 foreach($files as $file) {
