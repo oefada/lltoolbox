@@ -32,6 +32,11 @@ class WebServiceTicketsController extends WebServicesController
 						'input' => array('in0' => 'xsd:string'),
 						'output' => array('return' => 'xsd:string')
 						),
+					'sendResRequestReminder' => array(
+						'doc' => 'N/A',
+						'input' => array('in0' => 'xsd:string'),
+						'output' => array('return' => 'xsd:string')
+						),
 					'autoSendFromCheckout' => array(
 						'doc' => 'N/A',
 						'input' => array('in0' => 'xsd:string'),
@@ -435,6 +440,18 @@ class WebServiceTicketsController extends WebServicesController
 		$params['manualEmailBody']	= 0;
 		$params['initials']			= 'XNET_DATES_NOT_AVAIL';
 		$params['ppvNoticeTypeId'] = 14;    
+		$this->ppv(json_encode($params));	
+	}
+	
+	function sendResRequestReminder($in0) {
+		// from the XNET - dates are NOT available
+		// -------------------------------------------------------------------------------
+		$params = json_decode($in0, true);
+		$params['send'] 			= 1;
+		$params['returnString']		= 0;
+		$params['manualEmailBody']	= 0;
+		$params['initials']			= 'XNET_RES_REMINDER';
+		$params['ppvNoticeTypeId'] = 24;    
 		$this->ppv(json_encode($params));	
 	}
 	
