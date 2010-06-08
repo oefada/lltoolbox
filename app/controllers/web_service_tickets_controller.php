@@ -754,7 +754,7 @@ class WebServiceTicketsController extends WebServicesController
 				break;
 			case 2:
 				// send out res request
-				$extranet_link = $this->getExtranetLink($ticketId);
+				$extranet_link = $this->getExtranetLink($ticketId, $siteId);
 				include('../vendors/email_msgs/notifications/2_reservation_request.html');
 				$emailSubject = "Please Confirm This $siteName Booking - $offerTypeTxt - ACTION REQUIRED - $userFirstName $userLastName";
 				$emailFrom = ($isAuction) ? "$siteDisplay<resrequests@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
@@ -773,7 +773,7 @@ class WebServiceTicketsController extends WebServicesController
 				break;
 			case 24:
 				// send out res request
-				$extranet_link = $this->getExtranetLink($ticketId);
+				$extranet_link = $this->getExtranetLink($ticketId, $siteId);
 				include('../vendors/email_msgs/notifications/24_reservation_request_followup.html');
 				$emailSubject = "2nd Request, Please Confirm This $siteName Booking - $offerTypeTxt - ACTION REQUIRED - $userFirstName $userLastName";
 				$emailFrom = ($isAuction) ? "$siteDisplay<resrequests@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
@@ -935,7 +935,7 @@ class WebServiceTicketsController extends WebServicesController
 		}
 	}
 
-	function getExtranetLink($ticketId) {
+	function getExtranetLink($ticketId, $siteId) {
 
 		if (!$ticketId || !is_numeric($ticketId)) {
 			return null;
@@ -944,11 +944,20 @@ class WebServiceTicketsController extends WebServicesController
 		// generate the link so clients can handle res requests via extranet
 		$uri = '/xnet/services/rd.php';
 
-		$host = 'http://www.luxurylink.com';
-		if (stristr($_SERVER['HTTP_HOST'], 'dev')) {
-			$host = 'http://alee-lldev.luxurylink.com';
-		} elseif (stristr($_SERVER['HTTP_HOST'], 'stage')) {
-			$host = 'http://stage-luxurylink.luxurylink.com';
+		if ($siteId == 1) {
+			$host = 'http://www.luxurylink.com';
+			if (stristr($_SERVER['HTTP_HOST'], 'dev')) {
+				$host = 'http://alee-lldev.luxurylink.com';
+			} elseif (stristr($_SERVER['HTTP_HOST'], 'stage')) {
+				$host = 'http://stage-luxurylink.luxurylink.com';
+			}
+		} elseif ($siteId == 2) {
+			$host = 'http://www.familygetaway.com';
+			if (stristr($_SERVER['HTTP_HOST'], 'dev')) {
+				$host = 'http://alee-familydev.luxurylink.com';
+			} elseif (stristr($_SERVER['HTTP_HOST'], 'stage')) {
+				$host = 'http://stage-family.luxurylink.com';
+			}
 		}
 		
 		$ts = strtotime('NOW');
