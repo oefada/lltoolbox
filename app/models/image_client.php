@@ -45,6 +45,7 @@ class ImageClient extends AppModel {
 				  unset($imageClient['clientImageId']);
 				  $dupeImage = $this->find('first', array('conditions' => array('ImageClient.imageId' => $imageClient['imageId'],
 																				'ImageClient.clientId' => $clientId,
+                                                                                'ImageClient.imageTypeId' => $imageClient['imageTypeId'],
 																				'ImageClient.siteId' => array_search($site, $sitesMap)
 																				),
 														  'fields' => array('ImageClient.clientImageId')
