@@ -49,8 +49,8 @@ class ImagesController extends AppController {
                 $this->set('displayTab', 'luxurylink');
             }
         }
+        $this->findNewImages();
 	  }
-	  $this->findNewImages();
 	  //foreach($this->Image->client['Client']['sites'] as $site) {
       foreach($this->siteDbs as $siteId => $siteDb) {
 		 $this->Image->ImageClient->contain(array('Image', 'ImageType'));
@@ -192,13 +192,25 @@ class ImagesController extends AppController {
 	  }
 	  $files = glob($this->fileRoot.$directory.'/*.jpg');
 	  $useLrgForSlideshow = false;
-	  if (!in_array($this->fileRoot.$directory.'/'.$oldProductId.'-gal-xl-01.jpg', $files)) {
+      $useXlForSlideshow = false;
+      $activateLrg = false;
+      $activateXl = false;
+	  if (!in_array($this->fileRoot.$directory.'/'.$oldProductId.'-gal-xl-01.jpg', $files) &&
+          !$this->Image->getValidXls($this->Image->clientId)) {
 		 $useLrgForSlideshow = true;
 	  }
-      else {
-          if ($lrgSlideshowImages = $this->Image->getLrgSlideshow($this->Image->client['Client']['clientId'])) {
+      elseif (in_array($this->fileRoot.$directory.'/'.$oldProductId.'-gal-xl-01.jpg', $files) &&
+              !in_array($directory.'/'.$oldProductId.'-gal-xl-01.jpg', $dbImages)) {
+        $useXlForSlideshow = true;
+        if ($lrgSlideshowImages = $this->Image->getLrgSlideshow($this->Image->client['Client']['clientId'])) {
                 $this->Image->inactivateLrgSlideshow($lrgSlideshowImages);
+                $activateXl = true;
           }
+      }
+      elseif (in_array($this->fileRoot.$directory.'/'.$oldProductId.'-gal-xl-01.jpg', $files) &&
+              !$this->Image->getValidXls($this->Image->clientId)) {
+        $useLrgForSlideshow = true;
+        $activateLrg = true;
       }
 	  if (!empty($files)) {
 		 //$siteId = array_search($this->Image->client['Client']['sites'][0], $this->siteDbs);
@@ -215,7 +227,13 @@ class ImagesController extends AppController {
 			   }
 			   if ($imageTypeId > 0 ) {
 				  $clientId = $this->Image->clientId;
-				  $inactive = 1;
+                  $inactive = 1;
+                  if (stristr($file, 'xl') && $imageTypeId == 1 && $activateXl) {
+                        $inactive = 0;
+                  }
+                  elseif (stristr($file, 'lrg') && $imageTypeId == 1 && $activateLrg) {
+                        $inactive = 0;
+                  }
                   foreach($this->siteDbs as $siteId => $siteDb) {
                     $this->Image->recursive = -1;
                     $image = $this->Image->find('first', array('conditions' => array('imagePath' => $imagePath),
