@@ -74,6 +74,21 @@ class Image extends AppModel {
         }
     }
     
+    function getValidXls($clientId) {
+        if ($xls = $this->ImageClient->find('all', array('conditions' => array("ImageClient.clientId = {$clientId}",
+                                                                               "ImageClient.imageTypeId = 1",
+                                                                               "ImageClient.isHidden = 0",
+                                                                               "Image.imagePath LIKE '%xl%'"
+                                                                                )
+                                                         )
+                                            )) {
+            return $xls;
+        }
+        else {
+            return false;
+        }
+    }
+    
     function inactivateLrgSlideshow($slideshow) {
         foreach($slideshow as $slide) {
             $slide['ImageClient']['inactive'] = 1;
