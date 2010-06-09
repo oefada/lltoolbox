@@ -183,19 +183,19 @@ class TrackDetail extends AppModel {
 				if ($last_track_detail['iteration'] >= $track['y']) {
 					$new_track_detail['cycle']			= ++$last_track_detail['cycle'];
 					$new_track_detail['iteration']		= 1;
-					$new_track_detail['amountKept'] 	= 0;
-					$new_track_detail['amountRemitted'] = $allocated_amount;
+					$new_track_detail['amountKept'] 	= $allocated_amount;
+					$new_track_detail['amountRemitted'] = 0;
 				} elseif (($last_track_detail['iteration'] + 1) == $track['y']) {
 					$new_track_detail['cycle']			= $last_track_detail['cycle'];
 					$new_track_detail['iteration']		= ++$last_track_detail['iteration'];
-					$new_track_detail['amountKept'] 	= $allocated_amount;
-					$new_track_detail['amountRemitted'] = 0;
+					$new_track_detail['amountKept'] 	= 0;
+					$new_track_detail['amountRemitted'] = $allocated_amount;
 					$is_y_iteration = true;
 				} else {
 					$new_track_detail['cycle']			= $last_track_detail['cycle'];
 					$new_track_detail['iteration']		= ++$last_track_detail['iteration'];
-					$new_track_detail['amountKept'] 	= 0;
-					$new_track_detail['amountRemitted'] = $allocated_amount;
+					$new_track_detail['amountKept'] 	= $allocated_amount;
+					$new_track_detail['amountRemitted'] = 0;
 				}
 				break;
 			case 4:
