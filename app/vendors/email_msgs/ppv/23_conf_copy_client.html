@@ -52,7 +52,7 @@
 <?php if ($resData[0]['reservation']['confirmationNotes']) :?>
 <div style="padding:15px;background-color:#E4E4E4;margin-bottom:15px;">
 	<p><strong>Notes from the property</strong></p>
-	<p><?=$resData[0]['reservation']['confirmationNotes'];?></p>
+	<p><?=nl2br($resData[0]['reservation']['confirmationNotes']);?></p>
 </div>
 <?php endif;?>
 
@@ -67,7 +67,7 @@
 		<?php echo $client['contacts'][0]['ppv_name'];?><br />
 
 		Telephone: <?php echo $client['estaraPhoneLocal'];?><br />
-		Facsimile: <?php echo $client['contacts'][0]['ppv_fax'];?><br />
+		<?php if ($client['contacts'][0]['ppv_fax']):?>Facsimile: <?php echo $client['contacts'][0]['ppv_fax'];?><br /><?php endif;?>
 		Email: <?php echo $client['contacts'][0]['ppv_email_address'];?>
 		</div>
 	<?php endforeach; ?>
