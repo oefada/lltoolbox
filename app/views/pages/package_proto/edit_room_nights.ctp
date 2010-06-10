@@ -26,7 +26,7 @@
     $weekendNights = 2;
     $disclaimerDesc = 'something';
     $disclaimerDate = 'April 13, 2010';
-    $ratePeriods = array(array('roomType' => 'Deluxe Ocean View',
+    $ratePeriods = array(array('roomType' => 'Deluxe Ocean View Suite',
                               'dateRanges' => array(array('dateRangeStart' => '2010-07-01',
                                                           'dateRangeEnd' => '2010-09-13'),
                                                     array('dateRangeStart' => '2010-10-01',
@@ -40,7 +40,7 @@
                               'percentRetail' => 40,
                               'buyNowPercentRetail' => 45
                               ),
-                        array('roomType' => 'Deluxe Ocean View',
+                        array('roomType' => 'Deluxe Ocean View Suite',
                               'dateRanges' => array(array('dateRangeStart' => '2010-02-01',
                                                           'dateRangeEnd' => '2010-03-22')
                                                    ),
@@ -132,7 +132,7 @@
                                 <table id="roomType" class="roomTypeDetails">
                                     <tr class="room-type">
                                          <td width="135">Room Type</td>
-                                         <td><input type="text" size="25" id="roomTypeName" name="roomTypeName" value="<?php echo $period['roomType']; ?>" /></td>
+                                         <td><?php echo $period['roomType']; ?></td>
                                     </tr>
                                     <tr class="room-type">
                                          <td align="right">M/T/W/Th Rate</td>

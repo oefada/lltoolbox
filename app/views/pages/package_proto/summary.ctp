@@ -25,7 +25,7 @@
     $totalNights = 5;
     $weekdayNights = 3;
     $weekendNights = 2;
-    $ratePeriods = array(array('roomType' => 'Deluxe Ocean View',
+    $ratePeriods = array(array('roomType' => 'Deluxe Ocean View Suite',
                               'dateRanges' => array(array('dateRangeStart' => '2010-07-01',
                                                           'dateRangeEnd' => '2010-09-13'),
                                                     array('dateRangeStart' => '2010-10-01',
@@ -39,7 +39,7 @@
                               'percentRetail' => 40,
                               'buyNowPercentRetail' => 45
                               ),
-                        array('roomType' => 'Deluxe Ocean View',
+                        array('roomType' => 'Deluxe Ocean View Suite',
                               'dateRanges' => array(array('dateRangeStart' => '2010-02-01',
                                                           'dateRangeEnd' => '2010-03-22')
                                                    ),
@@ -51,7 +51,7 @@
                               'percentRetail' => 40,
                               'buyNowPercentRetail' => 45
                               ),
-                        array('roomType' => 'Deluxe Ocean View',
+                        array('roomType' => 'Deluxe Ocean View Suite',
                               'dateRanges' => array(array('dateRangeStart' => '2010-05-01',
                                                           'dateRangeEnd' => '2010-05-21'),
                                                     array('dateRangeStart' => '2010-07-01',
@@ -201,7 +201,7 @@
     </tr>
 </table>
 
-<div class="section-header"><div class="section-title">Room Nights</div><div class="edit-link" name="edit_room_nights" title="Edit Room Nights">Edit Room Nights</div></div>
+<div class="section-header"><div class="section-title">Room Nights</div><div class="edit-link" name="edit_room_loa_items" title="Edit Room Nights">Edit Room Nights</div></div>
 <table width="1000">
 <?php foreach ($ratePeriods as $i => $period): ?>    
     <?php if ($i % 2 == 0) {
