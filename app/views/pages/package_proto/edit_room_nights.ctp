@@ -119,9 +119,18 @@
 <link href="/css/package.css" type="text/css" rel="stylesheet" />
 <script src="/js/package.js" type="text/javascript"></script>
 
+<script>
+    $().ready(function() {
+        $('input#addRoomLoaItem').click(function() {
+                    document.location.href = '/pages/package_proto/edit_room_loa_items';
+                }            
+            );
+    });
+</script>
+
 <!-- no form tag because we're not submitting prototype -->
 
-<input type="button" id="addRoomNight" value="Add Additional Room" />
+<input type="button" id="addRoomLoaItem" value="Add/Change Room Type" />
 <?php foreach ($ratePeriods as $i => $period): ?>
         <table class="room-night">
             <tr>

@@ -201,7 +201,7 @@
     </tr>
 </table>
 
-<div class="section-header"><div class="section-title">Room Nights</div><div class="edit-link" name="edit_room_loa_items" title="Edit Room Nights">Edit Room Nights</div></div>
+<div class="section-header"><div class="section-title">Room Nights</div><div class="edit-link" name="<?php if (empty($ratePeriods)) { echo 'edit_room_loa_items'; } else { echo 'edit_room_nights'; } ?>" title="Edit Room Nights">Edit Room Nights</div></div>
 <table width="1000">
 <?php foreach ($ratePeriods as $i => $period): ?>    
     <?php if ($i % 2 == 0) {
