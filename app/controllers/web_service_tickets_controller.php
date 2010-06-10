@@ -245,6 +245,7 @@ class WebServiceTicketsController extends WebServicesController
 					$this->Ticket->__runTakeDownLoaNumPackages($data['packageId'], $ticketId);
 					break;
 				case 5:
+					$restrictedOfferByTrack = true;
 					$this->Ticket->__runTakeDownRetailValue($offerLive['clientId'], $offerLive['retailValue'], $ticketId);
 					break;
 			}
@@ -325,6 +326,9 @@ class WebServiceTicketsController extends WebServicesController
             if (stristr($offerLive['offerName'], 'AUCTION') && stristr($offerLive['offerName'],'DAY')) {
             	$restricted_auction = true;
             }
+			if (isset($restrictedOfferByTrack) && $restrictedOfferByTrack === true) {
+            	$restricted_auction = true;
+			}
              
  			// do no autocharge restricted auctions. send them old winner notification w/o checkout
  			// -------------------------------------------------------------------------------           
