@@ -1,6 +1,8 @@
 <?php include('../vendors/email_msgs/email_includes/header.html');?>
 
-<h1 style="color:#<?=$siteHeader;?>;font-size:16px;margin:0px;padding:0px;margin-bottom:30px;">THIS IS A FOLLOW UP TO OUR ORIGINAL REQUEST SENT ON <?=date('F d', strtotime($aucPreferDates[0]['rpd']['created']));?>.  PLEASE CONFIRM THE BOOKING REQUEST -- ACTION REQUIRED</span>.</h1>
+<h1 style="color:#<?=$siteHeader;?>;font-size:16px;margin:0px;padding:0px;margin-bottom:30px;">
+This is a follow up to our original request sent on <?=date('F d', strtotime($aucPreferDates[0]['rpd']['created']));?>.<br /><br />PLEASE CONFIRM THE BOOKING REQUEST -- 
+<span style="font-style:italic;text-decoration:underline;">ACTION REQUIRED</span></span>.</h1>
 
 <p>Dear <?php echo $clientName;?>,</p>
 
@@ -50,7 +52,7 @@
 			<table cellspacing="2" cellpadding="2">
 				<tr>
 					<td align="center"><a href="<?=$extranet_link;?>"><img src="http://www.luxurylink.com/images/toolbox/btn_view_req_dates.gif" alt="View Requested Dates" /></a><br /><a href="<?=$extranet_link;?>" style="font-size:12px;">(View Requested Dates)</a></td>
-					<td valign="top" style="color:#990000;font-weight:bold;">Please confirm or deny the requested dates upon receipt of this email.</td>
+					<td valign="top" style="color:#990000;font-weight:bold;font-size:10px;">Please confirm or deny the requested dates upon receipt of this email.</td>
 				</tr>
 			</table>
 		</td>
