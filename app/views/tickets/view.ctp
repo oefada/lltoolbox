@@ -355,6 +355,7 @@ $this->searchController = 'Tickets';
 		<tr><td style="border:0px;"><?php echo $html->link('Reservation Acknowledgement', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/12');?></td></tr>
 		<tr><td style="border:0px;"><?php echo $html->link('Reservation Dates Available', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/13');?></td></tr>
 		<tr><td style="border:0px;"><?php echo $html->link('Reservation Dates Not Available', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/14');?></td></tr>
+		<tr><td style="border:0px;"><?php echo $html->link('Reservation Request - Follow Up', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/24');?></td></tr>
 	</table>
 	</div>
 
