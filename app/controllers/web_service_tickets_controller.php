@@ -431,7 +431,14 @@ class WebServiceTicketsController extends WebServicesController
 		$params['ppvNoticeTypeId'] = 20;     // Your Dates Have Been Received
 		$this->ppv(json_encode($params));	
 		
+		// ppvNoticeTypeId 2 is the new res request with client res xtranet
 		$params['ppvNoticeTypeId'] = 2;    // Reservation Request
+
+		// if multi-product offer, then send old res request w/o client res xtranet
+		if ($this->Ticket->isMultiProductPackage($params['ticketId'])) {
+			$params['ppvNoticeTypeId'] = 10;    // old res request
+		}
+
 		$this->ppv(json_encode($params));	
 	}
 

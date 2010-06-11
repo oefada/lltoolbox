@@ -234,6 +234,16 @@ class Ticket extends AppModel {
 		return 40;
 	}
 
+	function isMultiProductPackage($ticketId) {
+		$sql = "SELECT COUNT(DISTINCT clientId) AS COUNT FROM clientLoaPackageRel INNER JOIN ticket using (packageId) WHERE ticketId = $ticketId";
+		$result = $this->query($sql);
+		if ($result[0][0]['COUNT'] > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	function getClientsFromPackageId($packageId) {
 		$sql = 'SELECT Client.clientId, Client.name, Client.clientTypeId FROM clientLoaPackageRel cr INNER JOIN client as Client ON Client.clientId = cr.clientId WHERE cr.packageId = ' . $packageId;
 		$clients = $this->query($sql);
