@@ -834,6 +834,10 @@ class WebServiceTicketsController extends WebServicesController
 				$emailSubject = "An Exclusive $siteName Booking Request Has Come In!";
 				$emailFrom = "$siteDisplay<exclusives@$siteEmail>";
 				$emailReplyTo = "exclusives@$siteEmail";
+				if ($this->Ticket->isMultiProductPackage($ticketId)) {
+					$emailFrom = "$siteDisplay<resrequest@$siteEmail>";
+					$emailReplyTo = "resrequest@$siteEmail";
+				}
 				$userEmail = $clientPrimaryEmail;
 				$emailCc = $clientCcEmail;
 				break;
