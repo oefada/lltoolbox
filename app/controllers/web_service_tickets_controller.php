@@ -245,7 +245,6 @@ class WebServiceTicketsController extends WebServicesController
 					$this->Ticket->__runTakeDownLoaNumPackages($data['packageId'], $ticketId);
 					break;
 				case 5:
-					$restrictedOfferByTrack = true;
 					$this->Ticket->__runTakeDownRetailValue($offerLive['clientId'], $offerLive['retailValue'], $ticketId);
 					break;
 			}
@@ -326,9 +325,6 @@ class WebServiceTicketsController extends WebServicesController
             if (stristr($offerLive['offerName'], 'AUCTION') && stristr($offerLive['offerName'],'DAY')) {
             	$restricted_auction = true;
             }
-			if (isset($restrictedOfferByTrack) && $restrictedOfferByTrack === true) {
-            	$restricted_auction = true;
-			}
              
  			// do no autocharge restricted auctions. send them old winner notification w/o checkout
  			// -------------------------------------------------------------------------------           
@@ -438,7 +434,11 @@ class WebServiceTicketsController extends WebServicesController
 		if ($this->Ticket->isMultiProductPackage($params['ticketId'])) {
 			$params['ppvNoticeTypeId'] = 10;    // old res request
 		}
-
+		$expirationCriteriaId = $this->Ticket->getExpirationCriteria($params['ticketId']);
+		if ($expirationCriteriaId == 5) {
+			// this is retail value
+			$params['ppvNoticeTypeId'] = 10;    // old res request
+		}
 		$this->ppv(json_encode($params));	
 	}
 
