@@ -816,6 +816,15 @@ class WebServiceTicketsController extends WebServicesController
 				$userEmail = $clientPrimaryEmail;
 				$emailCc = $clientCcEmail;
 				break;
+			case 28:
+				// general res request template
+				include('../vendors/email_msgs/notifications/28_general_res_request_template.html');
+				$emailSubject = "Please Confirm This $siteName Booking - $offerTypeTxt - ACTION REQUIRED - $userFirstName $userLastName";
+				$emailFrom = ($isAuction) ? "$siteDisplay<resrequests@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
+				$emailReplyTo = ($isAuction) ? "resrequests@$siteEmail" : "reservations@$siteEmail";
+				$userEmail = $clientPrimaryEmail;
+				$emailCc = $clientCcEmail;
+				break;
 			case 24:
 				// send out res request
 				$extranet_link = $this->getExtranetLink($ticketId, $siteId);

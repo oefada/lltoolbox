@@ -107,7 +107,7 @@ class PpvNoticesController extends AppController {
 
 		$this->set('promo', $this->Ticket->getTicketPromoData($ticketId));
 
-		if (in_array($id, array(2,4,10))) {
+		if (in_array($id, array(2,4,10,27,28))) {
 			$clientContacts = $this->Ticket->getClientContacts($ticketId);
 			$this->data['PpvNotice']['emailTo'] = $clientContacts['contact_to_string'];
 			$this->data['PpvNotice']['emailCc'] = $clientContacts['contact_cc_string'];
@@ -116,7 +116,7 @@ class PpvNoticesController extends AppController {
 			$this->data['PpvNotice']['emailTo'] = $ticket_user_email[0]['user']['email'];
 		}
 
-		if (in_array($id, array(26,27))) {
+		if (in_array($id, array(26,27,28))) {
 			$this->set('editSubject', 1);
 		}
 
