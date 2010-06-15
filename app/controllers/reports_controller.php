@@ -1634,7 +1634,8 @@ class ReportsController extends AppController {
 				$qlconditions = "Client.clientId IN (".implode(',', $clientIds).")";
 			break;
 			case 5:
-				$this->Client->query("CREATE TEMPORARY TABLE recentTickets SELECT clientLoaPackageRel.clientId FROM ticket AS Ticket INNER JOIN clientLoaPackageRel USING(packageId) WHERE Ticket.created >= (NOW() - INTERVAL 30 DAY)");
+				$this->Client->query("CREATE TEMPORARY TABLE recentTickets SELECT clientLoaPackageRel.clientId FROM ticket AS Ticket INNER JOIN clientLoaPackageRel USING(packageId) WHERE Ticket.created >= (NOW() - INTERVAL {$this->params['named']['days']} DAY)");
+                $this->Client->query("CREATE INDEX clientId ON recentTickets (clientId)");
 				$noSell = $this->Client->query("SELECT DISTINCT Client.clientId
 												FROM client AS Client
 												INNER JOIN loa AS Loa USING(clientId)

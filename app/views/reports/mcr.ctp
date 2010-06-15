@@ -145,7 +145,9 @@ td.error div{
 	echo $html->link('Clients with zero packages live Today', '/reports/mcr/ql:2', array('onclick' => 'document.theform.action = this.href; document.theform.submit(); return false'))."<br />";
 	echo $html->link('Clients with packages expiring in less than 60 days', '/reports/mcr/ql:3', array('onclick' => 'document.theform.action = this.href; document.theform.submit(); return false'))."<br />";
 	echo $html->link('Clients with Zero phone calls in the last Month', '/reports/mcr/ql:4', array('onclick' => 'document.theform.action = this.href; document.theform.submit(); return false'))."<br />";
-	echo $html->link('Clients with zero packages sold in last 30 days', '/reports/mcr/ql:5', array('onclick' => 'document.theform.action = this.href; document.theform.submit(); return false'))."<br />";
+	echo $html->link('Clients with zero packages sold in last 30 days', '/reports/mcr/ql:5/days:30', array('onclick' => 'document.theform.action = this.href; document.theform.submit(); return false'))."<br />";
+    echo $html->link('Clients with zero packages sold in last 60 days', '/reports/mcr/ql:5/days:60', array('onclick' => 'document.theform.action = this.href; document.theform.submit(); return false'))."<br />";
+    echo $html->link('Clients with zero packages sold in last 90 days', '/reports/mcr/ql:5/days:90', array('onclick' => 'document.theform.action = this.href; document.theform.submit(); return false'))."<br />";
 	echo $html->link('Clients with zero fixed price requests in last 60 days', '/reports/mcr/ql:6', array('onclick' => 'document.theform.action = this.href; document.theform.submit(); return false'))."<br />";
 	?>
 </div>
