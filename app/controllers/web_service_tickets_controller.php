@@ -1101,11 +1101,13 @@ class WebServiceTicketsController extends WebServicesController
 				$reservation['reservationConfirmToCustomer'] = date('Y:m:d H:i:s', strtotime('now'));
 				$this->Reservation->save($reservation);
 			}
-		} elseif ($ppvNoticeTypeId == 2) {
+		} elseif (in_array($ppvNoticeTypeId, array(2,10,25))) {
+			// send ticket status to RESERVATION REQUESTED
 			$newTicketStatus = 3;
 		} elseif ($ppvNoticeTypeId == 14) {
+			// DATES NOT AVAILABLE
 			$newTicketStatus = 11;
-		}
+		} 
 
 		if ($newTicketStatus) {
 			$this->updateTicketStatus($ticketId, $newTicketStatus);
