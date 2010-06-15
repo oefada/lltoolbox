@@ -358,6 +358,14 @@ $this->searchController = 'Tickets';
 		<tr><td style="border:0px;"><?php echo $html->link('Reservation Request - Follow Up', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/24');?></td></tr>
 	</table>
 	</div>
+	
+	<div style="float:left;">
+	<table width="340" cellspacing="3" cellpadding="3" border="0" style="border:0px;width:340px;">
+		<tr><td style="border:0px;"><h2>General Templates</h2></td></tr>
+		<tr><td style="border:0px;"><?php echo $html->link('Customer Email Template', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/26');?></td></tr>
+		<tr><td style="border:0px;"><?php echo $html->link('Client Email Template', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/27');?></td></tr>
+	</table>
+	</div>
 
 	<div style="clear:both;"></div>
 	</div>
