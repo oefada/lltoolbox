@@ -511,6 +511,7 @@ class WebServiceTicketsController extends WebServicesController
 		// -------------------------------------------------------------------------------
 		$override_email_to  = isset($params['override_email_to']) && !empty($params['override_email_to']) ? $params['override_email_to'] : false;
 		$override_email_cc  = isset($params['override_email_cc']) && !empty($params['override_email_cc']) ? $params['override_email_cc'] : false;
+		$override_email_subject  = isset($params['override_email_subject']) && !empty($params['override_email_subject']) ? $params['override_email_subject'] : false;
 
 		// TODO: error checking for params
 		
@@ -772,6 +773,13 @@ class WebServiceTicketsController extends WebServicesController
 				$emailFrom = ($isAuction) ? "$siteDisplay<resconfirm@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
 				$emailReplyTo = ($isAuction) ? "resconfirm@$siteEmail" : "reservations@$siteEmail";
 				break;
+			case 26:
+				// general customer template
+				include('../vendors/email_msgs/notifications/26_general_customer_template.html');
+				$emailSubject = "Your $siteName Booking is Confirmed - $clientNameP";
+				$emailFrom = ($isAuction) ? "$siteDisplay<resconfirm@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
+				$emailReplyTo = ($isAuction) ? "resconfirm@$siteEmail" : "reservations@$siteEmail";
+				break;
 			case 23:
 				// send out res confirmation to client also as copy
 				include('../vendors/email_msgs/ppv/23_conf_copy_client.html');
@@ -793,6 +801,15 @@ class WebServiceTicketsController extends WebServicesController
 			case 25:
 				// send out res request w/o xnet
 				include('../vendors/email_msgs/notifications/25_res_request_no_xnet.html');
+				$emailSubject = "Please Confirm This $siteName Booking - $offerTypeTxt - ACTION REQUIRED - $userFirstName $userLastName";
+				$emailFrom = ($isAuction) ? "$siteDisplay<resrequests@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
+				$emailReplyTo = ($isAuction) ? "resrequests@$siteEmail" : "reservations@$siteEmail";
+				$userEmail = $clientPrimaryEmail;
+				$emailCc = $clientCcEmail;
+				break;
+			case 27:
+				// general client template
+				include('../vendors/email_msgs/notifications/27_general_client_template.html');
 				$emailSubject = "Please Confirm This $siteName Booking - $offerTypeTxt - ACTION REQUIRED - $userFirstName $userLastName";
 				$emailFrom = ($isAuction) ? "$siteDisplay<resrequests@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
 				$emailReplyTo = ($isAuction) ? "resrequests@$siteEmail" : "reservations@$siteEmail";
@@ -925,6 +942,9 @@ class WebServiceTicketsController extends WebServicesController
 			}
 			if (trim($override_email_cc)) {
 				$emailCc = $override_email_cc;
+			}
+			if (trim($override_email_subject)) {
+				$emailSubject = $override_email_subject;
 			}
 			$this->sendPpvEmail($userEmail, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials);	
 			

@@ -52,6 +52,7 @@ class PpvNoticesController extends AppController {
 					$data['initials']			= $ppvInitials;
 					$data['override_email_to']  = $this->data['PpvNotice']['emailTo'];
 					$data['override_email_cc']  = $this->data['PpvNotice']['emailCc'];
+					$data['override_email_subject']  = $this->data['PpvNotice']['emailSubject'];
 	
 					if ($clientId) {
 						$data['clientId']		= $clientId;	
@@ -113,6 +114,10 @@ class PpvNoticesController extends AppController {
 		} else {
 			$ticket_user_email = $this->Ticket->query("SELECT user.email FROM ticket INNER JOIN user USING (userId) WHERE ticketId =  $ticketId LIMIT 1");
 			$this->data['PpvNotice']['emailTo'] = $ticket_user_email[0]['user']['email'];
+		}
+
+		if (in_array($id, array(26,27))) {
+			$this->set('editSubject', 1);
 		}
 
 		$this->set('clientIdParam', $clientIdParam);

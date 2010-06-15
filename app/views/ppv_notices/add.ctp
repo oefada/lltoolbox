@@ -24,6 +24,9 @@
 		echo $form->input('ticketId', array('readonly'=>'readonly'));
 		echo $form->input('emailTo');
 		echo $form->input('emailCc');
+		if (isset($editSubject) && $editSubject) {
+			echo $form->input('emailSubject', array('value'=>'FILL IN SUBJECT LINE HERE!!!!!!!!!!!'));
+		}
 		if (isset($isResConf) && $isResConf) {
 			echo "<br /><br />";
 			echo "<h2>Reservation Confirmation</h2>";
