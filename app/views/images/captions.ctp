@@ -1,5 +1,5 @@
 <?php echo $html->css('images.css'); ?>
-<?php $this->pageTitle = $client['Client']['name'].$html2->c($client['Client']['clientId'], 'Client Id:'); ?>
+<?php $this->pageTitle = $client['Client']['name'].$html2->c($client['Client']['clientId'], 'Client Id:').'<br />'.$html2->c('manager: '.$client['Client']['managerUsername']); ?>
 <form method="post" id="captions">
     <h2><?php __('All Active Photos');?></h2>
     <h3>Add Caption (limit 55 characters, including spaces)</h3>

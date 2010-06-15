@@ -10,7 +10,7 @@ if ($this->data['Package']['externalOfferUrl']) { // for hotel offers
 	
 } else {
 
-$this->pageTitle = $client['Client']['name'].$html2->c($client['Client']['clientId'], 'Client Id:');
+$this->pageTitle = $client['Client']['name'].$html2->c($client['Client']['clientId'], 'Client Id:').'<br />'.$html2->c('manager: '.$client['Client']['managerUsername']);
 ?>
 <script>
 Event.observe(window, 'load', function() {

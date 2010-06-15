@@ -1,5 +1,5 @@
 <?php
-$this->pageTitle = $client['Client']['name'].$html2->c($clientId, 'Client Id:');
+$this->pageTitle = $client['Client']['name'].$html2->c($clientId, 'Client Id:').'<br />'.$html2->c('manager: '.$client['Client']['managerUsername']);
 ?>
 <?php echo $html->css('images.css'); ?>
 <h2 class="title">Add/Edit Available Room Grades</h2>

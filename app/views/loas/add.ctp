@@ -1,5 +1,5 @@
 <?php
-$this->pageTitle = $clientName.$html2->c($this->data['Loa']['clientId'], 'Client Id:');
+$this->pageTitle = $clientName.$html2->c($this->data['Loa']['clientId'], 'Client Id:').'<br />'.$html2->c('manager: '.$client['Client']['managerUsername']);
 $this->set('clientId', $this->data['Loa']['clientId']);
 ?>
 <h2 class="title">New LOA</h2>

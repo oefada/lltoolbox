@@ -1,5 +1,5 @@
 <?php echo $html->css('images.css'); ?>
-<?php $this->pageTitle = $client['Client']['name'].$html2->c($client['Client']['clientId'], 'Client Id:'); ?>
+<?php $this->pageTitle = $client['Client']['name'].$html2->c($client['Client']['clientId'], 'Client Id:').'<br />'.$html2->c('manager: '.$client['Client']['managerUsername']); ?>
 <div class="sitesTab">
    <?php foreach ($sites as $site => $siteName): ?>
          <div id="<?php echo $site; ?>" class="<?php echo ($site == $displayTab) ? ' siteActive' :  ' siteInactive'; ?>"><?php __($sites[$site]); ?></div>

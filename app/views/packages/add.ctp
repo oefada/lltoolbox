@@ -7,7 +7,7 @@ if ($_POST['data']['Package']['packageType'] == 1) {
 	echo $form->end('Submit');
 	?></div><?php
 } else {
-	$this->pageTitle = $client['Client']['name'].$html2->c($client['Client']['clientId'], 'Client Id:');
+	$this->pageTitle = $client['Client']['name'].$html2->c($client['Client']['clientId'], 'Client Id:').'<br />'.$html2->c('manager: '.$client['Client']['managerUsername']);
 	?>
 	<script>
 	Event.observe(window, 'load', function() {

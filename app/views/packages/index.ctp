@@ -1,5 +1,5 @@
 <?php
-$this->pageTitle = $client['Client']['name'].$html2->c($client['Client']['clientId'], 'Client Id:');
+$this->pageTitle = $client['Client']['name'].$html2->c($client['Client']['clientId'], 'Client Id:').'<br />'.$html2->c('manager: '.$client['Client']['managerUsername']);
 ?>
 <?php if(count($packages) > 0): ?>
 <div id='packages-index' class="packages index">

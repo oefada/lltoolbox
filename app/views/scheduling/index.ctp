@@ -1,4 +1,4 @@
-<?php $this->pageTitle = $clientName.$html2->c($clientId, 'Client Id:');
+<?php $this->pageTitle = $clientName.$html2->c($clientId, 'Client Id:').'<br />'.$html2->c('manager: '.$client['Client']['managerUsername']);
       $siteNames = array('1' => 'LL',
                          '2' => 'Family');
 ?>

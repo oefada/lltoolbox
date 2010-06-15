@@ -3,7 +3,7 @@
 
 <?php
 $loa = $this->data;
-$this->pageTitle = $loa['Client']['name'].$html2->c($loa['Client']['clientId'], 'Client Id:');
+$this->pageTitle = $loa['Client']['name'].$html2->c($loa['Client']['clientId'], 'Client Id:').'<br />'.$html2->c('manager: '.$client['Client']['managerUsername']);
 $this->searchController = 'Clients';
 $this->set('clientId', $this->data['Client']['clientId']);
 ?>
