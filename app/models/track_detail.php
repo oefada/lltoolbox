@@ -219,6 +219,27 @@ class TrackDetail extends AppModel {
 					$new_track_detail['amountRemitted'] = 0;
 				}
 				break;
+			case 5:
+				// this is an y for x (reverse -- do keep first)
+				// ==============================================================
+				if ($last_track_detail['iteration'] >= $track['y']) {
+					$new_track_detail['cycle']			= ++$last_track_detail['cycle'];
+					$new_track_detail['iteration']		= 1;
+					$new_track_detail['amountKept'] 	= 0;
+					$new_track_detail['amountRemitted'] = $allocated_amount;
+				} elseif (($last_track_detail['iteration'] + 1) == $track['y']) {
+					$new_track_detail['cycle']			= $last_track_detail['cycle'];
+					$new_track_detail['iteration']		= ++$last_track_detail['iteration'];
+					$new_track_detail['amountKept'] 	= $allocated_amount;
+					$new_track_detail['amountRemitted'] = 0;
+					$is_y_iteration = true;
+				} else {
+					$new_track_detail['cycle']			= $last_track_detail['cycle'];
+					$new_track_detail['iteration']		= ++$last_track_detail['iteration'];
+					$new_track_detail['amountKept'] 	= 0;
+					$new_track_detail['amountRemitted'] = $allocated_amount;
+				}
+				break;
 			default: 
 				// some debug email will go out here
 				break;
@@ -229,7 +250,7 @@ class TrackDetail extends AppModel {
 		$new_track_detail['loaBalance'] = $loa_membership_balance;
 
 		// if membership balance met for keep -- disperse allocation to remit and keep
-		if ($track['expirationCriteriaId'] == 1 && !(($track['revenueModelId'] == 3 || $track['revenueModelId'] == 4) && $is_y_iteration)) {
+		if ($track['expirationCriteriaId'] == 1 && !(($track['revenueModelId'] == 3 || $track['revenueModelId'] == 4 || $track['revenueModelId'] == 5) && $is_y_iteration)) {
 			$loa_result = $this->query("SELECT membershipBalance FROM loa WHERE loaId = $track[loaId] LIMIT 1");
 			if (!empty($loa_result)) {
 				$loa_membership_balance = $loa_result[0]['loa']['membershipBalance'];
@@ -273,7 +294,7 @@ class TrackDetail extends AppModel {
 		$loa['Loa']['totalRemitted']	 -= $trackDetail['TrackDetail']['amountRemitted'];
 
 		$applyToMembershipBal = ($track['expirationCriteriaId'] == 1) ? true : false;
-		$applyToMembershipBal = (($track['revenueModelId'] == 3 || $track['revenueModelId'] == 4) && ($this->data['TrackDetail']['iteration'] == $track['y'])) ? false : $applyToMembershipBal;
+		$applyToMembershipBal = (($track['revenueModelId'] == 3 || $track['revenueModelId'] == 4 || $track['revenueModelId'] == 5) && ($this->data['TrackDetail']['iteration'] == $track['y'])) ? false : $applyToMembershipBal;
 		if ($applyToMembershipBal) {
 			$loa['Loa']['membershipBalance'] += $trackDetail['TrackDetail']['amountKept'];
 		}
@@ -317,7 +338,7 @@ class TrackDetail extends AppModel {
 		$loa['Loa']['totalRemitted']	 += $this->data['TrackDetail']['amountRemitted'];
 
 		$applyToMembershipBal = ($track['expirationCriteriaId'] == 1) ? true : false;
-		$applyToMembershipBal = (($track['revenueModelId'] == 3 || $track['revenueModelId'] == 4) && ($this->data['TrackDetail']['iteration'] == $track['y'])) ? false : $applyToMembershipBal;
+		$applyToMembershipBal = (($track['revenueModelId'] == 3 || $track['revenueModelId'] == 4 || $track['revenueModelId'] == 5) && ($this->data['TrackDetail']['iteration'] == $track['y'])) ? false : $applyToMembershipBal;
 		if ($applyToMembershipBal) {
 			$loa['Loa']['membershipBalance'] -= $this->data['TrackDetail']['amountKept'];
 		}
