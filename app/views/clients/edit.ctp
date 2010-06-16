@@ -277,6 +277,9 @@ foreach ($this->data['Client']['sites'] as $site) {
 
                         echo "<div style='padding:0px; margin:0px 0px 15px 0px; height:65px; overflow:auto; font-size:0.9em;'><strong>Selected:</strong> <span id='currentAmenities$amenityTypeId'></span></div>";
                         echo "<script>refreshCurrentAmenities($amenityTypeId);</script>";
+                        if ($amenityType['clientAmenityTypeRelId']) {
+                            echo "<input type='hidden' name='data[ClientAmenityTypeRelId][$amenityTypeId]' value='{$amenityType['clientAmenityTypeRelId']}'/>";   
+                        }
                         echo "<div style='padding:0px; margin:0px 0px 5px 0px; font-size:0.9em;'><strong>Description:</strong></div><textarea name='data[ClientAmenityTypeRel][$amenityTypeId]' style='width:308px; border:1px solid silver; font-size:50px;'>{$amenityType['description']}</textarea></div>";
                     }
                 }
