@@ -120,7 +120,8 @@ class Client extends AppModel {
             $amenityTypesData = array();
             foreach ($this->data['ClientAmenityTypeRel'] as $amenityTypeId => $amenityTypeDescription) {
                 if ($amenityTypeDescription) {
-                    $amenityTypesData[] = array('clientId' => $client['Client']['clientId'], 'amenityTypeId' => $amenityTypeId, 'description' => $amenityTypeDescription);   
+                    $amenityTypeRelId = (isset($this->data['ClientAmenityTypeRelId'][$amenityTypeId])) ? $this->data['ClientAmenityTypeRelId'][$amenityTypeId] : null;
+                    $amenityTypesData[] = array('clientAmenityTypeRelId' => $amenityTypeRelId, 'clientId' => $client['Client']['clientId'], 'amenityTypeId' => $amenityTypeId, 'description' => $amenityTypeDescription);   
                 }
             }
             $this->ClientAmenityTypeRel->saveAll($amenityTypesData);
@@ -245,7 +246,7 @@ class Client extends AppModel {
 
         // get amenity type
         $clientAmenityTypeRels = $this->query("
-            SELECT amenityType.amenityTypeId, amenityTypeName, description
+            SELECT amenityType.amenityTypeId, amenityTypeName, clientAmenityTypeRelId, description
             FROM amenityType LEFT JOIN clientAmenityTypeRel ON amenityType.amenityTypeId = clientAmenityTypeRel.amenityTypeId AND clientId = $clientId
         ");
         $clientAmenityTypes = array();
