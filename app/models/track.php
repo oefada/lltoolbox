@@ -80,12 +80,12 @@ class Track extends AppModel {
 			if (!is_numeric($value) || !($value >= 0 && $value <= 100)) {
 				$validPresets = false;	
 			}
-		} elseif (isset($data['x']) && ($revModelId == 2 || $revModelId == 3 || $revModelId == 4)) {
+		} elseif (isset($data['x']) && ($revModelId == 2 || $revModelId == 3 || $revModelId == 4 || $revModelId == 5)) {
 			$value = $data['x'];
 			if (!$value || !is_numeric($value) || floor($value) != $value) {
 				$validPresets = false;						
 			}
-		} elseif (isset($data['y']) && ($revModelId == 2 || $revModelId == 3 || $revModelId == 4)) {
+		} elseif (isset($data['y']) && ($revModelId == 2 || $revModelId == 3 || $revModelId == 4 || $revModelId == 5)) {
 			$value = $data['y'];
 			if (!$value || !is_numeric($value) || floor($value) != $value) {
 				$validPresets = false;						

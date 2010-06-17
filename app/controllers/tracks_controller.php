@@ -83,6 +83,7 @@ class TracksController extends AppController {
 			break;
 			case 2:
 			case 3:
+			case 5:
 				$fileToRender = '_xy_form';
 			break;
 			case 4:
