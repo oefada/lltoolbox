@@ -712,7 +712,17 @@ class WebServiceTicketsController extends WebServicesController
 		$clientPrimaryEmail = $clients[$client_index]['contact_to_string'];
 		$clientCcEmail 		= $clients[$client_index]['contact_cc_string'];
 		$clientAdjustedPrice = $this->numF(($clients[$client_index]['percentOfRevenue'] / 100) * $ticketData['billingPrice']);
-		
+
+		// added June 17 -- to allow copy for LL Auc Winner Email and Res Confirmed Email
+		if (in_array($ppvNoticeTypeId, array(1,18))) {
+			$primaryDest = $this->Ticket->getTicketDestStyleId($ticketId);
+			if ($primaryDest == 20) {
+				$rentalCarCopy = file_get_contents('../vendors/email_msgs/email_includes/rentalcarcopy_uki.html');
+			} elseif ($primaryDest == 4) {
+				$rentalCarCopy = file_get_contents('../vendors/email_msgs/email_includes/rentalcarcopy_europe.html');
+			}
+		}
+
 		// ********* SITE NAME **********
 		switch ($ticketData['siteId']) {
 			case 1:
