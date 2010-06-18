@@ -716,9 +716,9 @@ class WebServiceTicketsController extends WebServicesController
 		// added June 17 -- to allow copy for LL Auc Winner Email and Res Confirmed Email
 		if (in_array($ppvNoticeTypeId, array(1,18))) {
 			$primaryDest = $this->Ticket->getTicketDestStyleId($ticketId);
-			if ($primaryDest == 20) {
+			if (in_array(20, $primaryDest)) {
 				$rentalCarCopy = file_get_contents('../vendors/email_msgs/email_includes/rentalcarcopy_uki.html');
-			} elseif ($primaryDest == 4) {
+			} elseif (in_array(4, $primaryDest)) {
 				$rentalCarCopy = file_get_contents('../vendors/email_msgs/email_includes/rentalcarcopy_europe.html');
 			}
 		}

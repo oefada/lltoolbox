@@ -536,11 +536,15 @@ class Ticket extends AppModel {
 	function getTicketDestStyleId($ticketId) {
 		// europe 4
 		// uk and ireland 20
-		$dest = $this->query("SELECT destinationId FROM ticket INNER JOIN clientLoaPackageRel USING (packageId) INNER JOIN clientDestinationRel USING (clientId) WHERE ticketId = {$ticketId} and destinationId IN (4,20);");
+		$dest = $this->query("SELECT destinationId FROM ticket INNER JOIN clientLoaPackageRel USING (packageId) INNER JOIN clientDestinationRel USING (clientId) WHERE ticketId = {$ticketId}");
 		if (empty($dest) || !is_array($dest)) {
 			return false;
 		}
-		return $dest[0]['clientDestinationRel']['destinationId'];
+		$data = array();
+		foreach ($dest as $d) {
+			$data[] = $d['clientDestinationRel']['destinationId'];
+		}
+		return $data;
 	}
 
 	function __runTakeDown($sm_ids_imp) {
