@@ -1,13 +1,14 @@
 <?php
 
 echo ",Package Revenue,,,,,,,,LOA Information,,,,,,,Referrals/Impressions,,,,,,\r\n";
-echo "Client Name, Site(s), Packages Live Today, Packages Up Time, Total Sold, Total $$, Auctions Live Today, Auctions Close Rate, FP Live Today, # of FP Requests, Exp. Date, Renewed (LOA Start), LOA Type, Membership Fee, LOA Bal, Total Remitted, Days until keep ends, Web, Phone, Portfolio, Search, Email, Home/Dest\r\n";
+echo "Client Name, Site(s), LL Packages Live Today, FG Packages Live Today, Packages Up Time, Total Sold, Total $$, Auctions Live Today, Auctions Close Rate, FP Live Today, # of FP Requests, Exp. Date, Renewed (LOA Start), LOA Type, Membership Fee, LOA Bal, Total Remitted, Days until keep ends, Web, Phone, Portfolio, Search, Email, Home/Dest\r\n";
 
 foreach($clients as $k => $row): 
 
 	$line = array($row['Client']['clientId'].' - '.str_replace(array(',','"'),'',$row['Client']['name']),
                     implode(' | ', $row['Client']['sites']),
-	 				(int)$row['packagesLiveToday'],
+	 				(int)$row['packagesLiveTodayLL'],
+                    (int)$row['packagesLiveTodayFG'],
 					(int)$row['packageUptime'],
 					(int)$row['totalSold'],
 					(int)$row['totalRevenue'],

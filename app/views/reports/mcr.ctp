@@ -188,27 +188,28 @@ td.error div{
 	    <th colspan="6" class="darkBlackBg rowBorderWhite" style="border-top: 1px solid #000; text-align: center">Referrals/Impressions (<?=date('M y', strtotime($latestReferralDate))?>)</td>
 	  </tr>
 	  <tr>
-	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="3" id="sort3">Packages Live Today</a></td>
-	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="4" id="sort4">Packages Up Time</a></td>
-	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="5" id="sort5">Total Sold</a></td>
-	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="6" id="sort6">Total $$</a></td>
-	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="7" id="sort7">Auctions Live Today</a></td>
-	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="8" id="sort8">Auctions Close Rate</a></td>
-	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="9" id="sort9">FP Live Today</a></td>
-	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="10" id="sort10"># of FP Requests</a></td>
-	    <th class="blackBg dateRow" style="text-align: center"><a href="11" id="sort11">Exp. Date</a></td>
-	    <th class="blackBg dateRow" style="text-align: center"><a href="12" id="sort12">Renewed<br />(LOA Start)</a></td>
-	    <th class="blackBg" style="text-align: center"><a href="13" id="sort13">LOA Type</a></td>
-	    <th class="blackBg" style="text-align: center"><a href="14" id="sort14">Membership Fee</a></td>
-		<th class="blackBg" style="text-align: center"><a href="15" id="sort15">LOA Bal</a></td>
-		<th class="blackBg" style="text-align: center"><a href="16" id="sort16">Total Remitted</a></td>
-	    <th class="blackBg" style="text-align: center"><a href="17" id="sort17">Days until keep ends</a></td>
-	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="18" id="sort18">Web</a></td>
-	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="19" id="sort19">Phone</a></td>
-	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="20" id="sort20">Portfolio</a></td>
-	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="21" id="sort21">Search</a></td>
-	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="22" id="sort22">Email</a></td>
-	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="23" id="sort23">Home/Dest</a></td>
+	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="3" id="sort3">LL Packages Live Today</a></td>
+        <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="3" id="sort4">FG Packages Live Today</a></td>
+	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="4" id="sort5">Packages Up Time</a></td>
+	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="5" id="sort6">Total Sold</a></td>
+	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="6" id="sort7">Total $$</a></td>
+	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="7" id="sort8">Auctions Live Today</a></td>
+	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="8" id="sort9">Auctions Close Rate</a></td>
+	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="9" id="sort10">FP Live Today</a></td>
+	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="10" id="sort11"># of FP Requests</a></td>
+	    <th class="blackBg dateRow" style="text-align: center"><a href="11" id="sort12">Exp. Date</a></td>
+	    <th class="blackBg dateRow" style="text-align: center"><a href="12" id="sort13">Renewed<br />(LOA Start)</a></td>
+	    <th class="blackBg" style="text-align: center"><a href="13" id="sort14">LOA Type</a></td>
+	    <th class="blackBg" style="text-align: center"><a href="14" id="sort15">Membership Fee</a></td>
+		<th class="blackBg" style="text-align: center"><a href="15" id="sort16">LOA Bal</a></td>
+		<th class="blackBg" style="text-align: center"><a href="16" id="sort17">Total Remitted</a></td>
+	    <th class="blackBg" style="text-align: center"><a href="17" id="sort18">Days until keep ends</a></td>
+	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="18" id="sort19">Web</a></td>
+	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="19" id="sort20">Phone</a></td>
+	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="20" id="sort21">Portfolio</a></td>
+	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="21" id="sort22">Search</a></td>
+	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="22" id="sort23">Email</a></td>
+	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="23" id="sort24">Home/Dest</a></td>
 	  </tr>
 	</thead>
 	<tbody>
@@ -224,7 +225,8 @@ td.error div{
 	    <td style="text-align: left;" class="textSort"><?=$html->link($row['Client']['name'], '/clients/edit/'.$row['Client']['clientId'])?></td>
         <td><?php echo ucwords($row['Client']['sites']); ?></td>
 		<? if ($k == 0) echo "<div id='packageRevenue'>"?>
-	    <td <?if((int)$row['packagesLiveToday'] == 0) echo " class='error'"?>><div><?=(int)$row['packagesLiveToday']?></div></td>
+	    <td <?if((int)$row['packagesLiveTodayLL'] == 0 && stristr($row['Client']['sites'], 'luxurylink')) echo " class='error'"?>><div><?=(int)$row['packagesLiveTodayLL']?></div></td>
+        <td <?if((int)$row['packagesLiveTodayFG'] == 0 && stristr($row['Client']['sites'], 'family')) echo " class='error'"?>><div><?=(int)$row['packagesLiveTodayFG']?></div></td>
 	    <td><?=(int)$row['packageUptime']?></td>
 	    <td><?=(int)$row['totalSold']?></td>
 	    <td><?=(int)$row['totalRevenue']?></td>

@@ -1751,19 +1751,27 @@ class ReportsController extends AppController {
 			
 			#### Package Revenue ####
 			// Begin Packages Live Today
-			$packagesLive = $this->Client->query("SELECT COUNT(DISTINCT SchedulingMaster.packageId) as packagesLive, offerTypeId FROM schedulingInstance as SchedulingInstance
+			$packagesLive = $this->Client->query("SELECT COUNT(DISTINCT SchedulingMaster.packageId) as packagesLive, offerTypeId, siteId FROM schedulingInstance as SchedulingInstance
 												INNER JOIN schedulingMaster as SchedulingMaster USING (schedulingMasterId)
 												INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel USING(packageId)
 												WHERE (SchedulingInstance.startDate between '$startDate' and '$endDate' or SchedulingInstance.endDate between '$startDate' and '$endDate' or (SchedulingInstance.startDate < '$startDate' and SchedulingInstance.endDate > '$endDate')) 
 														AND clientId = $clientId
-												GROUP BY offerTypeId");
-
+												GROUP BY offerTypeId, siteId");
+            
 			$packageStats = array();
-			$packageStats['packagesLiveToday'] = $packageStats['auctionsLiveToday'] = $packageStats['fpLiveToday'] = 0;
+			$packageStats['packagesLiveTodayLL'] = $packageStats['packagesLiveTodayFG'] = $packageStats['auctionsLiveToday'] = $packageStats['fpLiveToday'] = 0;
 		
 			foreach ($packagesLive as $v) {
-				$packageStats['packagesLiveToday'] += $v[0]['packagesLive'];
-				
+                switch($v['SchedulingMaster']['siteId']) {
+                    case 1:         //LL
+                        $packageStats['packagesLiveTodayLL'] += $v[0]['packagesLive'];
+                        break;
+                    case 2:         //FG
+                        $packageStats['packagesLiveTodayFG'] += $v[0]['packagesLive'];
+                        break;
+                    default:
+                        break;
+                }
 				switch($v['SchedulingMaster']['offerTypeId']) {
 					case 1:
 					case 2:
