@@ -26,7 +26,9 @@ class OfferLuxuryLinksController extends AppController {
 	    $authorized_groups = array('Merchandising', 'Geeks');
 	    
 	    if (in_array('Geeks', $this->user['LdapUser']['groups']) ||
-	        in_array('Merchandising', $this->user['LdapUser']['groups'])) {
+	        in_array('Merchandising', $this->user['LdapUser']['groups']) ||
+	        in_array('publishing', $this->user['LdapUser']['groups'])
+		) {
 	        return true;
 	    }
 	    
