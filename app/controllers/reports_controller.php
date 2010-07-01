@@ -1081,7 +1081,9 @@ class ReportsController extends AppController {
                            ExpirationCriteria.expirationCriteriaId,
                            #Track.applyToMembershipBal,
                            Package.validityStartDate,
-                           Package.validityEndDate
+                           Package.validityEndDate,
+						   Promo.amountOff,
+						   PromoCode.promoCode 
                     FROM ticket AS Ticket
                            INNER JOIN offer AS Offer USING(offerId)
                            LEFT JOIN offerType AS OfferType ON (Ticket.offerTypeId = OfferType.offerTypeId)
@@ -1097,6 +1099,10 @@ class ReportsController extends AppController {
                            LEFT JOIN client as Client ON(Client.clientId = ClientLoaPackageRel.clientId)
                            LEFT JOIN expirationCriteria AS ExpirationCriteria USING(expirationCriteriaId)
        					   LEFT JOIN reservation r ON Ticket.ticketId = r.ticketId
+						   LEFT JOIN promoTicketRel ptr ON Ticket.ticketId = ptr.ticketId
+						   LEFT JOIN promoCode PromoCode ON ptr.promoCodeId = PromoCode.promoCodeId 
+						   LEFT JOIN promoCodeRel pcr ON PromoCode.promoCodeId = pcr.promoCodeId 
+						   LEFT JOIN promo Promo ON pcr.promoId = Promo.promoId 
 	   				WHERE $conditions
                     GROUP BY Ticket.ticketId
                     ORDER BY $order
