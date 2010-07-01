@@ -1,5 +1,5 @@
 <?php
-echo "Site,Booking Date,Payment Date,Booking,Vendor ID,Old Product Id,Vendor,Guest First Name,Guest Last Name,Address1,Address2,City,State,Zip,Country,Phone,Email,CC Type,CC Number,CC Exp,Type,Product Type,Revenue,Tax,COG,Profit,Room Nights,Confirmation Number,Arrival Date,Auction Type,Handling Fee,Percent,CC Processor,Remit Type,Adjust Amount,Validity Start Date,Validity End Date,Paid Search Id,Ref Url\n";
+echo "Site,Booking Date,Payment Date,Booking,Vendor ID,Old Product Id,Vendor,Guest First Name,Guest Last Name,Address1,Address2,City,State,Zip,Country,Phone,Email,CC Type,CC Number,CC Exp,Type,Product Type,Revenue,Tax,COG,Profit,Room Nights,Confirmation Number,Arrival Date,Auction Type,Handling Fee,Percent,CC Processor,Remit Type,Adjust Amount,Validity Start Date,Validity End Date,Paid Search Id,Ref Url,Promo Description\n";
 foreach ($results as $r):
 	switch($r['OfferType']['offerTypeName']) {
 		case 'Standard Auction':
@@ -62,11 +62,13 @@ foreach ($results as $r):
 	$r[0]['percentOfRetail'],
 	$r['PaymentProcessor']['paymentProcessorName'],
 	$remit,
-	0,
+	$r['Promo']['amountOff'],
 	date('M d Y h:i:sA', strtotime($r['Package']['validityStartDate'])),
 	date('M d Y h:i:sA', strtotime($r['Package']['validityEndDate'])),
 	'',
-	''); //TODO: Add Paid Search Id and Ref Url
+	'',
+	$r['PromoCode']['promoCode']
+	); //TODO: Add Paid Search Id and Ref Url
 	
 	echo implode(',', $line)."\r\n";
 endforeach; ?>
