@@ -23,6 +23,7 @@ $do_ajax2 = isset($_GET['do_ajax2']) ? true : false;
 $auto_fill = isset($_GET['auto_fill']) ? true : false;
 $pid = isset($_GET['pid']) && !empty($_GET['pid']) && is_numeric($_GET['pid']) ? $_GET['pid'] : false;
 $oid = isset($_GET['oid']) && !empty($_GET['oid']) && is_numeric($_GET['oid']) ? $_GET['oid'] : false;
+$col = isset($_GET['col']) && !empty($_GET['col']) && is_numeric($_GET['col']) ? $_GET['col'] : false;
 if ($do_ajax2 && !$pid) {
 	echo "<div class='redBox'>Product ID must be an integer.</div>";
 	die();
@@ -33,7 +34,7 @@ if ($do_ajax2) {
 	if (!$result) {
 		echo "<div class='redBox'>There has been a database problem.  Please contact your local developer. Werd.</div>";
 	} else {
-		echo $pid . '@@' . $oid . '@@' . $result[0]['client']['name'];
+		echo $pid . '@@' . $oid . '@@' . $result[0]['client']['name'] . '@@' . $col;
 	}
 	die();
 }

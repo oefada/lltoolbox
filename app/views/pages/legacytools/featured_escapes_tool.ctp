@@ -56,12 +56,14 @@ if(isset($_GET['do_ajax'])) {
 	$hdr_img = isset($_GET['hdr_img']) ? trim($_GET['hdr_img']) : false;
 	$offerTitle = isset($_GET['offerTitle']) ? trim($_GET['offerTitle']) : false;
 	$packageId = isset($_GET['packageId']) ? trim($_GET['packageId']) : false;
-
+    $column1HeaderHtml = isset($_GET['col1']) ? trim($_GET['col1']) : false;
+    $column2HeaderHtml = isset($_GET['col2']) ? trim($_GET['col2']) : false;
+    
 	$result = $connected->query("SELECT * FROM featuredEscape WHERE dateLive = '$date_string'");
 	if (!empty($result)) {
-		$sql = "UPDATE featuredEscape SET title = '$title', styles = '$styles', headerImgSrc = '$hdr_img', offerTitle = '$offerTitle', packageId = '$packageId' WHERE dateLive = '$date_string'";
+		$sql = "UPDATE featuredEscape SET title = '$title', styles = '$styles', headerImgSrc = '$hdr_img', offerTitle = '$offerTitle', packageId = '$packageId', column1HeaderHtml = '$column1HeaderHtml', column2HeaderHtml = '$column2HeaderHtml' WHERE dateLive = '$date_string'";    
 	} else {
-		$sql = "INSERT INTO featuredEscape (dateLive, title, styles, headerImgSrc, offerTitle, packageId) VALUES ('$date_string','$title','$styles','$hdr_img','$offerTitle','$packageId')";
+		$sql = "INSERT INTO featuredEscape (dateLive, title, styles, headerImgSrc, offerTitle, packageId, column1HeaderHtml, column2HeaderHtml) VALUES ('$date_string','$title','$styles','$hdr_img','$offerTitle','$packageId','$column1HeaderHtml','$column2HeaderHtml')";
 	}
 
 	$result = $connected->execute($sql);
@@ -78,11 +80,12 @@ if(isset($_GET['do_ajax'])) {
 
 			$pid = $tmp[0];
 			$oid = $tmp[1];
-			
+			$col = $tmp[2];
+            
 			if(!is_numeric($oid) || $oid <= 0) {
 				$oid = '';
 			}
-			$insert_rows = $connected->execute("INSERT INTO featuredEscapeClientOffer (dateLive,clientId,packageId,slotId) VALUES ('$date_string','$pid','$oid','$slot')");
+			$insert_rows = $connected->execute("INSERT INTO featuredEscapeClientOffer (dateLive,clientId,packageId,slotId,columnNum) VALUES ('$date_string','$pid','$oid','$slot','$col')");
 			if ($insert_rows) {
 				$slot++;
 			} else {
@@ -111,7 +114,7 @@ $data = $result[0]['featuredEscape'];
 
 if (!empty($result)) {
 	$result = $connected->query("SELECT fep.*, p.name FROM featuredEscapeClientOffer fep 
-							INNER JOIN client p ON fep.clientId = p.clientId 
+							INNER JOIN client p ON fep.clientId = p.clientId
 							WHERE fep.dateLive = '$date_string' ORDER BY fep.slotId");
 	foreach ($result as $row) {
 		$data_products[] = array_merge($row['fep'],$row['p']);
@@ -192,14 +195,22 @@ function addManualProduct() {
 	var pid = document.getElementById('addManualPID').value;
 	var oid = document.getElementById('addManualOID').value;
 	var siteId = document.getElementById('siteId').value;
+    var col = document.getElementById('columnNumber').value;
+ 
 	if (!pid) {
 		return false;
 	}
 	if(!oid) {
 		oid = '';
 	}
-	var link = "featured_escapes_popup?do_ajax2=1&pid=" + pid +"&oid=" + oid + "&siteId=" + siteId;
-	executeAjax(link, updateFeaturedEscapesAuto);
+    
+    if(!col) {
+		col = '';
+	}
+    
+	var link = "featured_escapes_popup?do_ajax2=1&pid=" + pid +"&oid=" + oid + "&siteId=" + siteId +"&col=" + col;
+
+    executeAjax(link, updateFeaturedEscapesAuto);
 }
 
 function updateFeaturedEscapesAuto() {
@@ -215,13 +226,13 @@ function updateFeaturedEscapesAuto() {
 		for (i=0; i < tmp_first.length; i++) {
 			if (tmp_first[i]) {
 				tmp_second = tmp_first[i].split('@@');
-				append_row_damnit('dest_table',tmp_second[0], tmp_second[1], tmp_second[2]);
+				append_row_damnit('dest_table',tmp_second[0], tmp_second[1], tmp_second[2], tmp_second[3]);
 			}
 		}
 	}
 }
 
-function append_row_damnit(tblId, packageId, oid, auctionName, d_open, d_close)
+function append_row_damnit(tblId, packageId, oid, auctionName, col, d_open, d_close)
 {
 	var tbl = document.getElementById(tblId);
 	var newRow = tbl.insertRow(tbl.rows.length);
@@ -239,6 +250,9 @@ function append_row_damnit(tblId, packageId, oid, auctionName, d_open, d_close)
 	var newCell = newRow.insertCell(3);
 	newCell.innerHTML = auctionName;
 	
+	var newCell = newRow.insertCell(4);
+	newCell.innerHTML = col;
+    
 	if(tblId == 'dest_table') {
 		initDrag(tblId);
 		return false;
@@ -280,6 +294,8 @@ function processUpdateFeaturedEscapes(year, month, day, tbl_id) {
 	var hdr_img_src = document.getElementById('fe_headerImgSrc').value;
 	var offerTitle = document.getElementById('fe_offerTitle').value;
 	var packageId = document.getElementById('fe_packageId').value;
+    var col1 = document.getElementById('fe_column1HeaderHtml').value;
+    var col2 = document.getElementById('fe_column2HeaderHtml').value;
 
 	var clientIds = '';
 	var rows = document.getElementById(tbl_id).tBodies[0].rows;
@@ -287,14 +303,22 @@ function processUpdateFeaturedEscapes(year, month, day, tbl_id) {
 	    var row = rows[i];
 	    var cell = row.cells[1];
 	    var oid = row.cells[2].firstChild;
-
+        var col = row.cells[4].firstChild; 
+        
 	if(!oid) {
 		oid = '';
 	} else {
 		oid = oid.nodeValue;
 	}
-
-		clientIds += cell.firstChild.nodeValue + ':' + oid + '-';
+    
+    if(!col) {
+		col = '';
+	} else {
+		col = col.nodeValue;
+	}
+         
+		clientIds += cell.firstChild.nodeValue + ':' + oid + ':' + col + '-';
+ 
 	}
 
 	if (!clientIds) {
@@ -317,6 +341,8 @@ function processUpdateFeaturedEscapes(year, month, day, tbl_id) {
 	link += "&packageId=" + escape(packageId);
 	link += "&product_str=" + clientIds;
 	link += "&siteId=" + <?=$siteId?>;
+    link += "&col1=" + col1;
+    link += "&col2=" + col2;
 	executeAjax(link, updateMsg);	
 
 	document.getElementById('submit_but').style.display = '';
@@ -433,6 +459,15 @@ You are editing for: <strong><? echo date('F d, Y (l)', strtotime("$month/$day/$
 		<td style="background-color: #CCEE88; font-weight: bold;" colspan="2"><input id="fe_offerTitle" type="text" style="width:100%;" value="<?=$data['offerTitle'];?>" /></td>
 		<td style="background-color: #CCEE88; font-weight: bold;" colspan="2"><input id="fe_packageId" type="text" style="width:100%;" value="<?=$data['packageId'];?>" /></td>
 	</tr>
+    
+    <tr> 
+		<td style="background-color: #CCEE88; font-weight: bold;" colspan="2">Left Header HTML</td>
+		<td style="background-color: #CCEE88; font-weight: bold;" colspan="2">Right Header HTML</td>
+	</tr>
+    <tr> 
+		<td style="background-color: #CCEE88; font-weight: bold;" colspan="2"><textarea id="fe_column1HeaderHtml" rows="2" cols="5"><?=$data['column1HeaderHtml'];?></textarea></td>
+		<td style="background-color: #CCEE88; font-weight: bold;" colspan="2"><textarea id="fe_column2HeaderHtml" rows="2" cols="5"><?=$data['column2HeaderHtml'];?></textarea></td>
+	</tr>
 	</table>				
 </div>
 
@@ -448,9 +483,10 @@ You are editing for: <strong><? echo date('F d, Y (l)', strtotime("$month/$day/$
 <table width="800" id="dest_table" class="werd" cellspacing="0" cellpadding="0" border="0">
 <tr NoDrag NoDrop>
 	<th width="30">Slot</th>
-	<th width="100">Product ID</th>
+	<th width="100">Client ID</th>
 	<th width="100">Package ID</th>
 	<th>Product Name</th>
+    <th width="200">Column Num</th>
 </tr>
 <?
 $i=0;
@@ -462,6 +498,7 @@ foreach($data_products as $k=>$v) {
 	<td><? echo $v['clientId']; ?></td>
 	<td><? echo $v['packageId']; ?></td>
 	<td><? echo $v['name']; ?></td>
+    <td><? echo $v['columnNum']; ?></td>
 </tr>
 <?
 }
@@ -479,10 +516,17 @@ function changeSiteRefresh() {
 }
 </script>
 
-<br /><br/ >
-Product ID: <input type="text" id="addManualPID" /> <br />
-Featured Package ID: <input type="text" id='addManualOID'>
-<input type="button" onclick="addManualProduct();" value="Add Product Id" />
+<br /><br />
+Client ID: <input type="text" id="addManualPID" /> <br />
+Featured Package ID: <input type="text" id='addManualOID' /> <br />
+Column Number:
+       <select id="columnNumber">
+            <option></option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+        </select>
+        <br />
+<input type="button" onclick="addManualProduct();" value="Add Client Id" />
 
 <div id="submit_but" style="display: '';text-align:right;">
 <input type="button" onclick="processUpdateFeaturedEscapes('<?=$year;?>','<?=$month;?>','<?=$day;?>','dest_table');" name="update_te" value="Save Changes" />
