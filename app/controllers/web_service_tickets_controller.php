@@ -234,7 +234,9 @@ class WebServiceTicketsController extends WebServicesController
 			
 			// take down future instances of offers if reached package.maxNumSales
 			// -------------------------------------------------------------------------------
-			$this->Ticket->__runTakeDownPackageNumPackages($data['packageId'], $ticketId);
+			if ($this->Ticket->__runTakeDownPackageNumPackages($data['packageId'], $ticketId)) {
+				$this->Ticket->__runTakeDownLoaMemBal($data['packageId'], $ticketId, $data['billingPrice']);
+			}
 
 			$expirationCriteriaId = $this->Ticket->getExpirationCriteria($ticketId);
 			switch ($expirationCriteriaId) {

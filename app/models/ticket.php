@@ -516,6 +516,7 @@ class Ticket extends AppModel {
 						$debug['DATA']['smids'] = $smids;
 						$this->sendDebugEmail('PACKAGE', $debug);
 						$this->insertMessageQueuePackage($ticketId, 'PACKAGE');
+						return true;
 					}
 				} elseif (($packageMaxNumSales - ($derivedPackageNumSales + 1) == 1)) {
 					if ($this->__updateSchedulingOfferFixedPrice($schedulingMasterIds)) {
@@ -527,10 +528,12 @@ class Ticket extends AppModel {
 						$debug['DATA']['smids'] = $smids;
 						$this->sendDebugEmail('PACKAGE_FP_ONLY', $debug);
 						$this->insertMessageQueuePackage($ticketId, 'PACKAGE_FP_ONLY');
+						return true;
 					}
 				}
 			}
 		}
+		return false;
 	}
 
 	function getTicketDestStyleId($ticketId) {
