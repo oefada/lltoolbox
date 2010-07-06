@@ -236,6 +236,7 @@ class WebServiceTicketsController extends WebServicesController
 			// -------------------------------------------------------------------------------
 			if ($this->Ticket->__runTakeDownPackageNumPackages($data['packageId'], $ticketId)) {
 				$this->Ticket->__runTakeDownLoaMemBal($data['packageId'], $ticketId, $data['billingPrice']);
+				$this->Ticket->__runTakeDownLoaNumPackages($data['packageId'], $ticketId);
 			}
 
 			$expirationCriteriaId = $this->Ticket->getExpirationCriteria($ticketId);
