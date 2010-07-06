@@ -103,7 +103,7 @@ class TicketsController extends AppController {
 						           				'table' => 'ppvNotice', 
 									            'alias' => 'PpvNotice', 
 									            'type' => 'left',  
-									            'conditions'=> array('PpvNotice.ticketId = Ticket.ticketId', 'PpvNotice.ppvNoticeTypeId IN (2,10)') 
+									            'conditions'=> array('PpvNotice.ticketId = Ticket.ticketId', 'PpvNotice.ppvNoticeTypeId IN (2,10,24,25)') 
 												),
 												array(
 						           				'table' => 'reservationPreferDate', 
