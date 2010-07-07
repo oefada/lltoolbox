@@ -91,7 +91,7 @@ class Client extends AppModel {
         }
 
         // AMENITIES
-        if (!empty($this->data['ClientAmenityRel'])) {
+        if (!empty($this->data['amenities'])) {
 
             // select current amenities
             $currentClientAmenities = array();
@@ -102,23 +102,23 @@ class Client extends AppModel {
 
             // insert amenities
             $amenitiesData = array();
-            $amenitiesToInsert = array_diff_key($this->data['ClientAmenityRel'], $currentClientAmenities);
+            $amenitiesToInsert = array_diff_key($this->data['amenities'], $currentClientAmenities);
             foreach ($amenitiesToInsert as $amenityId => $amenityToInsert) {
                 $amenitiesData[] = array('clientId' => $client['Client']['clientId'], 'amenityId' => $amenityId);
             }
             $this->ClientAmenityRel->saveAll($amenitiesData);
 
             // delete amenities
-            $amenitiesToDelete = array_diff_key($currentClientAmenities, $this->data['ClientAmenityRel']);
+            $amenitiesToDelete = array_diff_key($currentClientAmenities, $this->data['amenities']);
             foreach ($amenitiesToDelete as $amenityId => $currentClientAmenityRelId) {
                 $this->ClientAmenityRel->delete($currentClientAmenityRelId);
             }
         }
         
         // AMENITY TYPES
-        if (!empty($this->data['ClientAmenityTypeRel'])) {
+        if (!empty($this->data['amenityTypes'])) {
             $amenityTypesData = array();
-            foreach ($this->data['ClientAmenityTypeRel'] as $amenityTypeId => $amenityTypeDescription) {
+            foreach ($this->data['amenityTypes'] as $amenityTypeId => $amenityTypeDescription) {
                 if ($amenityTypeDescription) {
                     $amenityTypeRelId = (isset($this->data['ClientAmenityTypeRelId'][$amenityTypeId])) ? $this->data['ClientAmenityTypeRelId'][$amenityTypeId] : null;
                     $amenityTypesData[] = array('clientAmenityTypeRelId' => $amenityTypeRelId, 'clientId' => $client['Client']['clientId'], 'amenityTypeId' => $amenityTypeId, 'description' => $amenityTypeDescription);   

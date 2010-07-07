@@ -269,7 +269,7 @@ foreach ($this->data['Client']['sites'] as $site) {
                         foreach ($amenityType['amenities'] as $key => $amenity) {
                             $checked = ($amenity['checked']) ? 'checked' : '';
                             echo "
-                                <input type='checkbox' id='amenity{$amenity['amenityId']}' name='data[ClientAmenityRel][{$amenity['amenityId']}]' value='{$amenity['amenityId']}' onclick='refreshCurrentAmenities($amenityTypeId);' $checked/>
+                                <input type='checkbox' id='amenity{$amenity['amenityId']}' name='data[amenities][{$amenity['amenityId']}]' value='{$amenity['amenityId']}' onclick='refreshCurrentAmenities($amenityTypeId);' $checked/>
                                 <label id='amenity-label-{$amenity['amenityId']}' for='amenity{$amenity['amenityId']}' style='display:inline; float:none; padding:0px; margin:0px; font-weight:normal; font-size:0.9em;'>{$amenity['amenityName']}</label><br/>
                             ";                                
                         }
@@ -280,7 +280,7 @@ foreach ($this->data['Client']['sites'] as $site) {
                         if ($amenityType['clientAmenityTypeRelId']) {
                             echo "<input type='hidden' name='data[ClientAmenityTypeRelId][$amenityTypeId]' value='{$amenityType['clientAmenityTypeRelId']}'/>";   
                         }
-                        echo "<div style='padding:0px; margin:0px 0px 5px 0px; font-size:0.9em;'><strong>Description:</strong></div><textarea name='data[ClientAmenityTypeRel][$amenityTypeId]' style='width:308px; border:1px solid silver; font-size:50px;'>{$amenityType['description']}</textarea></div>";
+                        echo "<div style='padding:0px; margin:0px 0px 5px 0px; font-size:0.9em;'><strong>Description:</strong></div><textarea name='data[amenityTypes][$amenityTypeId]' style='width:308px; border:1px solid silver; font-size:50px;'>{$amenityType['description']}</textarea></div>";
                     }
                 }
             ?>
