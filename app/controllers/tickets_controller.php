@@ -91,6 +91,7 @@ class TicketsController extends AppController {
 									'Ticket.ticketId', 'Ticket.offerTypeId', 'Ticket.created', 'Ticket.bidId',  
 									'Ticket.offerId', 'Ticket.userId', 'TicketStatus.ticketStatusName', 'Ticket.packageId', 
 									'Ticket.userFirstName', 'Ticket.userLastName', 'Ticket.packageId', 'Ticket.billingPrice', 'Ticket.formatId', 'Ticket.ticketNotes','Ticket.siteId', 
+									'Ticket.requestArrival', 'Ticket.requestDeparture',
 									'PpvNotice.emailSentDatetime', 'ReservationPreferDate.arrivalDate', 'ReservationPreferDate.departureDate'
 									),
 		                        'contain' => array('TicketStatus'),
@@ -280,6 +281,10 @@ class TicketsController extends AppController {
 			if (in_array($v['Ticket']['offerTypeId'], array(1,2,6)) && !empty($v['ReservationPreferDate']['arrivalDate']) && !empty($v['ReservationPreferDate']['departureDate'])) {
 				$tickets_index[$k]['ResPreferDate']['arrival'] = $v['ReservationPreferDate']['arrivalDate'];
 				$tickets_index[$k]['ResPreferDate']['departure'] = $v['ReservationPreferDate']['departureDate'];
+				$tickets_index[$k]['ResPreferDate']['flagged'] =  (strtotime($tickets_index[$k]['ResPreferDate']['arrival']) - strtotime('NOW') <= 604800) ? 1 : 0;
+			} elseif ($v['Ticket']['formatId'] == 2) {
+				$tickets_index[$k]['ResPreferDate']['arrival'] = $v['Ticket']['requestArrival'];
+				$tickets_index[$k]['ResPreferDate']['departure'] = $v['Ticket']['requestDeparture'];
 				$tickets_index[$k]['ResPreferDate']['flagged'] =  (strtotime($tickets_index[$k]['ResPreferDate']['arrival']) - strtotime('NOW') <= 604800) ? 1 : 0;
 			}
 		}
