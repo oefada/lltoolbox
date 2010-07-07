@@ -241,7 +241,13 @@ class Client extends AppModel {
         $amenityTypes = array();
                 
         // get amenity ids for this client
-        $clientAmenityRels = $this->query("SELECT GROUP_CONCAT(amenityId) AS amenities FROM clientAmenityRel WHERE clientId = $clientId GROUP BY clientId");
+        $clientAmenityRels = $this->query("
+            SELECT GROUP_CONCAT(amenity.amenityId) AS amenities
+            FROM clientAmenityRel
+            INNER JOIN amenity ON clientAmenityRel.amenityId = amenity.amenityId AND amenity.inactive = 0
+            WHERE clientId = $clientId
+            GROUP BY clientId;
+        ");
         $clientAmenities = explode(',', $clientAmenityRels[0][0]['amenities']);
 
         // get amenity type
