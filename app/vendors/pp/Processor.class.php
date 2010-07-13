@@ -39,7 +39,7 @@ class Processor
 		$db_params['map_street2'] 					= substr(trim($ups['address2']), 0, 20);
 		$db_params['map_city'] 						= substr(trim($ups['city']), 0, 20);
 		$db_params['map_state'] 					= substr(trim($ups['state']), 0, 20);
-		$db_params['map_zip'] 						= substr(trim($ups['postalCode']),0, 9);
+		$db_params['map_zip'] 						= substr(trim(str_replace(' ', '',$ups['postalCode'])),0, 9);
 		$db_params['map_country'] 					= substr(trim($ups['country']),0,20);
 		$db_params['map_expiration'] 				= $ups['expMonth'] . $ups['expYear']; 
 		$db_params['map_card_num'] 					= trim($ups['ccNumber']);
