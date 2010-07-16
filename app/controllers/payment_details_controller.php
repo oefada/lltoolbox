@@ -198,7 +198,7 @@ class PaymentDetailsController extends AppController {
 			$initials_user = false;
 		}
 
-		if (in_array($initials_user, array('cyoung','alee','bscott'))) {
+		if (in_array($initials_user, array('alee','bscott','kferson'))) {
 			if (!empty($ticket['User']['UserPaymentSetting'])) {
 				foreach ($ticket['User']['UserPaymentSetting'] as $ups_key => $ups) {
 					$cc_full = $this->PaymentDetail->query('SELECT ccNumber FROM userPaymentSetting WHERE userPaymentSettingId = ' . $ups['userPaymentSettingId']);				
