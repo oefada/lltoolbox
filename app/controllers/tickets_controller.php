@@ -92,7 +92,7 @@ class TicketsController extends AppController {
 									'Ticket.offerId', 'Ticket.userId', 'TicketStatus.ticketStatusName', 'Ticket.packageId', 
 									'Ticket.userFirstName', 'Ticket.userLastName', 'Ticket.packageId', 'Ticket.billingPrice', 'Ticket.formatId', 'Ticket.ticketNotes','Ticket.siteId', 
 									'Ticket.requestArrival', 'Ticket.requestDeparture',
-									'PpvNotice.emailSentDatetime', 'ReservationPreferDate.arrivalDate', 'ReservationPreferDate.departureDate'
+									'PpvNotice.emailSentDatetime', 'ReservationPreferDate.arrivalDate', 'ReservationPreferDate.departureDate', 'COUNT(PpvNotice.ppvNoticeId) AS rescount'
 									),
 		                        'contain' => array('TicketStatus'),
 		                        'order' => array(
@@ -131,6 +131,16 @@ class TicketsController extends AppController {
 					$this->paginate['conditions']['Ticket.formatId'] = 1;
 					$this->paginate['conditions']['Ticket.ticketStatusId'] = 3;
 					$this->paginate['order'] = array('PpvNotice.emailSentDatetime' => 'desc');
+					break;
+				case 2:
+					$this->paginate['conditions']['Ticket.formatId'] = 1;
+					$this->paginate['conditions']['Ticket.ticketStatusId <> '] = 4;
+					$this->paginate['group'] = array('Ticket.ticketId HAVING rescount > 1');
+					break;
+				case 3:
+					$this->paginate['conditions']['Ticket.formatId'] = 2;
+					$this->paginate['conditions']['Ticket.ticketStatusId <> '] = 4;
+					$this->paginate['group'] = array('Ticket.ticketId HAVING rescount > 1');
 					break;
 			}
 			$single_search_override = true;

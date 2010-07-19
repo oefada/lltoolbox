@@ -262,6 +262,15 @@ $this->set('hideSidebar', true);
 			<tr>
 				<td><a href="<?=$csv_link_string;?>">Export to CSV</a></td>
 			</tr>
+			<tr>
+				<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td><a href="/tickets/index/?s_quick_link=2">Auctions with > 1 Res. request</a></td>
+			</tr>
+			<tr>
+				<td><a href="/tickets/index/?s_quick_link=3">Buy Now with > 1 Res. request</a></td>
+			</tr>
 			</table>
 		</td>
 		<td>&nbsp;</td>

@@ -49,9 +49,14 @@ class Ticket extends AppModel {
 			$params['fields'] = array('COUNT(distinct Ticket.ticketId) as count');
 			$params['contain'] = $extra['contain'];
 		}
+		if (isset($extra['group'])) {
+			$params['group'] = $extra['group'];
+			if (stristr($extra['group'][0], 'rescount')) {
+				$params['fields'][] = 'COUNT(PpvNotice.ppvNoticeId) AS rescount';
+			}
+		}
 		$result = $this->find('count', $params);
 		return $result;
-
 	}
 	
 	function getClientContacts($ticketId) {
