@@ -484,30 +484,13 @@ if($row['col1'] == date('W')) {
 </tr>
 </table>
 <p style="page-break-before: always"> </p>
-<? for($k=0; $k < 3; $k++):
-switch($k) {
-	case 0:
+<?
 		$rows = $fp;
-		$title = ' (total)';
 		$qtr = $fpqtr;
 		$lastyear = $fpLastYear;
-		break;
-	case 1:
-		$rows = $fpSponsored;
-		$title = ' Sponsor';
-		$qtr = $fpSponsoredQtr;
-		$lastyear = $fpSponsoredLastYear;
-		break;
-	case 2:
-		$rows = $fpWholesale;
-		$title = ' Wholesale';
-		$qtr = $fpWholesaleQtr;
-		$lastyear = $fpWholesaleLastYear;
-		break;
-}
 
 ?>
-<h2><?=$k+3?>. Fixed Price<?=$title?></h2>
+<h2>3. Fixed Price (total)</h2>
 <table>
 	<tr>
 		<th>week number</th>
@@ -705,11 +688,9 @@ if($row['col1'] == date('W')) {
 	<td>&nbsp;</td>
 </tr>
 </table>
-<p style="page-break-before: always"> </p>
-<? endfor; ?>
 
 <p style="page-break-before: always"> </p>
-<h2>8. Buyers</h2>
+<h2>4. Buyers</h2>
 <table>
 	<tr>
 		<th>week number</th>
