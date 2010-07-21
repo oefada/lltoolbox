@@ -3,7 +3,7 @@ if (!empty($tickets)):
 	$i = 1;
 	$ex = array(',', "\n", "\r");
 ?>
-COUNT,TICKET_ID,CLIENT,USER_FIRST_NAME,USER_LAST_NAME,USER_ID,OFFER_TYPE_ID,BID_ID,OFFER_ID,PACKAGE_ID,BILLING_PRICE,VALID_CARD,TICKET_STATUS,TICKET_NOTES<?php echo "\n";?>
+COUNT,TICKET_ID,CLIENT,USER_FIRST_NAME,USER_LAST_NAME,USER_ID,OFFER_TYPE_ID,BID_ID,OFFER_ID,PACKAGE_ID,BILLING_PRICE,VALID_CARD,TICKET_STATUS,PROMO,TICKET_NOTES<?php echo "\n";?>
 <?php 
 foreach($tickets as $ticket) {
 	echo $i++ . ",";
@@ -19,6 +19,7 @@ foreach($tickets as $ticket) {
 	echo $ticket['Ticket']['billingPrice'] . ",";
 	echo $ticket['Ticket']['validCard'] . ",";
 	echo $ticket['TicketStatus']['ticketStatusName'] . ",";
+	echo $ticket['Promo'][0]['pc']['promoCode'] . ",";
 	echo str_replace($ex, ' ', $ticket['Ticket']['ticketNotes']) . ",";
 	echo "\n";
 }

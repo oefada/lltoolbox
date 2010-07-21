@@ -308,6 +308,7 @@ $this->set('hideSidebar', true);
 	<th width="10" style="color:#FFF;">CC</th>	
 	<th width="140" style="color:#FFF;">Res. Preferred Date</th>	
 	<th width="220" style="color:#FFF;">Notes</th>
+	<th width="10" style="color:#FFF;">Promo</th>
 	<th class="actions" style="color:#FFF;"><?php __('Actions');?></th>
 </tr>
 <?php
@@ -381,6 +382,7 @@ foreach ($tickets as $ticket):
 			<?php endif; ?>
 			<?php echo $ticket['Ticket']['ticketNotes']; ?>
 		</td>
+		<td><?=$ticket['Promo'][0]['pc']['promoCode'];?></td>
 		<td class="actions">
 			<?php echo $html->link(__('View Details', true), array('controller' => 'tickets', 'action'=>'view', $ticket['Ticket']['ticketId'])); ?>
 		</td>
