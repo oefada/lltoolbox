@@ -50,9 +50,11 @@ class Ticket extends AppModel {
 			$params['contain'] = $extra['contain'];
 		}
 		if (isset($extra['group'])) {
-			$params['group'] = $extra['group'];
 			if (stristr($extra['group'][0], 'rescount')) {
 				$params['fields'][] = 'COUNT(PpvNotice.ppvNoticeId) AS rescount';
+				$params['group'] = $extra['group'];
+				$result = $this->find('all', $params);
+				return count($result);
 			}
 		}
 		$result = $this->find('count', $params);
