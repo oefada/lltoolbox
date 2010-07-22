@@ -2,7 +2,7 @@
 	<h3 class="handle">Setup</h3>
 	<div class="collapsibleContent disableAutoCollapse">
 		<?php
-		echo $form->input('siteId', array('label' => 'Package For'));
+		echo $form->input('siteId', array('label' => 'Package For', 'onchange' => 'toggleAgeRangeInput()'));
 		if ($this->data['Package']['internalApproval'] == 1) {
 			echo $form->input('packageStatusId', array('label' => 'Status'));
 		} else {
@@ -35,8 +35,33 @@
 	  <?php echo $form->input('maxAdults', array('label' => 'Max # of Adults', 'style' => 'width: 50px;')); ?> 
 	</div>
 
-<?php
+    <?php
+            switch ($this->data['Package']['siteId']) {
+                case 2: 	//Family
+                    $display_guests = 'style="display:none"';
+                    $display_all = '';
+                    break;
+                case 1:	//Luxury Link
+                default:	//site is null
+                    $display_guests = '';
+                    $display_all = 'style="display:none"';
+                    break;				
+            }
+    ?>
+    <div class="input select" id="ageRangeValidity" <?php echo $display_all; ?>
+		<label>Valid for children ages:</label>
+		<div style="float: left; clear:right;" class="clearfix">
+        <?php
+            $i = 0;
+            do {
+                echo $this->renderElement('../packages/_age_range_row', array('row' => $i, 'data' => @$package['PackageAgeRange'][$i]));
+            } while(isset($package['PackageAgeRange'][++$i]));
+        ?>
+		<a href="#" id="addAnotherAgeRange" onclick="return false;">+ Add another age range</a>
+		</div>
+	</div>
 
+<?php
 		echo $form->input('roomGradeName', array('disabled' => 'true', 'label' => 'Room Grade', 'value' => $roomGradeName));
 		
 		if(count($clientLoaDetails) > 1):
@@ -165,4 +190,8 @@
 		});
 	}
 	observeAgeRangeDel();
+    
+    function toggleAgeRangeInput() {
+        $('ageRangeValidity').toggle();
+    }
 </script>
