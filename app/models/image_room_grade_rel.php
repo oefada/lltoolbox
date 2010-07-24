@@ -18,6 +18,9 @@ class ImageRoomGradeRel extends AppModel {
         if (!empty($client)) {
             $clientSites = $client['Client']['sites'];
             $data = $this->data;
+            if (empty($data['ImageRoomGradeRel']['imageRoomGradeRelId'])) {
+                $data['ImageRoomGradeRel']['imageRoomGradeRelId'] = $this->id;
+            }
             foreach ($clientSites as $site) {
                 $this->saveToFrontEndDb($data, $site, $clientSites, false);
             }
@@ -40,12 +43,13 @@ class ImageRoomGradeRel extends AppModel {
     function deleteImageRoomGrade($imageRoomGradeRelId, $image) {
         $this->useDbConfig = 'default';
         $this->delete($imageRoomGradeRelId);
-        $client = $this->Client->find('first', array('conditions' => array('Client.clientId' => $image['ImageClient']['clientId']),
+        $client = $this->RoomGrade->Client->find('first', array('conditions' => array('Client.clientId' => $image['ImageClient']['clientId']),
                                                      'fields' => array('sites')));
         if (!empty($client)) {
             $clientSites = $client['Client']['sites'];
             foreach ($clientSites as $site) {
-                $this->deleteFromFrontEndDb($data, $site);
+                $data['ImageRoomGradeRel'] = $image['Image']['ImageRoomGradeRel'][0];
+                $this->deleteFromFrontEnd($data, $site);
             }
             $this->useDbConfig = 'default';
         }
