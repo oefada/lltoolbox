@@ -328,6 +328,11 @@ class WebServiceTicketsController extends WebServicesController
             if (stristr($offerLive['offerName'], 'AUCTION') && stristr($offerLive['offerName'],'DAY')) {
             	$restricted_auction = true;
             }
+			
+			// hack june 29 2010 
+			if ($clientData[0]['Client']['clientId'] == 378) {
+            	$restricted_auction = false;
+			}
              
  			// do no autocharge restricted auctions. send them old winner notification w/o checkout
  			// -------------------------------------------------------------------------------           
@@ -657,6 +662,9 @@ class WebServiceTicketsController extends WebServicesController
 			if ($ticketData['billingPrice'] < $packageData['reservePrice']) {
 				$guarantee = $this->numF($packageData['reservePrice']);
 			}
+		}
+		if ($offerLive['isMystery']) {
+			$guarantee = $this->numF($packageData['reservePrice']);
 		}
 		
 		// some unknowns
@@ -1114,7 +1122,7 @@ class WebServiceTicketsController extends WebServicesController
 				$reservation['reservationConfirmToCustomer'] = date('Y:m:d H:i:s', strtotime('now'));
 				$this->Reservation->save($reservation);
 			}
-		} elseif (in_array($ppvNoticeTypeId, array(2, 25))) {
+		} elseif (in_array($ppvNoticeTypeId, array(2, 10, 25))) {
 			// send ticket status to RESERVATION REQUESTED
 			$newTicketStatus = 3;
 		} elseif ($ppvNoticeTypeId == 10) {
@@ -1351,7 +1359,7 @@ class WebServiceTicketsController extends WebServicesController
 		$paymentDetail['ppBillingAddress1']		= $userPaymentSettingPost['UserPaymentSetting']['address1'];
 		$paymentDetail['ppBillingCity']			= $userPaymentSettingPost['UserPaymentSetting']['city'];
 		$paymentDetail['ppBillingState']		= $userPaymentSettingPost['UserPaymentSetting']['state'];
-		$paymentDetail['ppBillingZip']			= $userPaymentSettingPost['UserPaymentSetting']['postalCode'];
+		$paymentDetail['ppBillingZip']			= str_replace(' ', '', $userPaymentSettingPost['UserPaymentSetting']['postalCode']);
 		$paymentDetail['ppBillingCountry']		= str_replace(' ', '', $userPaymentSettingPost['UserPaymentSetting']['country']);
 		$paymentDetail['ppCardNumLastFour']		= substr($userPaymentSettingPost['UserPaymentSetting']['ccNumber'], -4, 4);
 		$paymentDetail['ppExpMonth']			= $userPaymentSettingPost['UserPaymentSetting']['expMonth'];

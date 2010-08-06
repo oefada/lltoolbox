@@ -50,7 +50,11 @@
 		<td style="color:#444444;font-size:12px; padding-top:15px;" valign="top" align="left">
 			<table cellspacing="2" cellpadding="2">
 				<tr>
+					<?php if ($siteId == 1 ):?>
 					<td align="center"><a href="<?=$extranet_link;?>"><img src="http://www.luxurylink.com/images/toolbox/btn_view_req_dates.gif" alt="View Requested Dates" style="border:0px;" /></a><br /><a href="<?=$extranet_link;?>" style="font-size:12px;border:0px;">(View Requested Dates)</a></td>
+					<?php else: ?>
+					<td align="center"><a href="<?=$extranet_link;?>"><img src="http://www.luxurylink.com/images/toolbox/btn_view_req_dates_family.gif" alt="View Requested Dates" style="border:0px;" /></a><br /><a href="<?=$extranet_link;?>" style="font-size:12px;border:0px;">(View Requested Dates)</a></td>
+					<?php endif;?>
 					<td valign="top" style="color:#990000;font-weight:bold;font-size:10px;">Please confirm or deny the requested dates upon receipt of this email.</td>
 				</tr>
 			</table>
@@ -69,12 +73,6 @@
 		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">Check-out:</td>
 		<td style="color:#444444;font-size:12px;" valign="top" align="left"><?=$fpDeparture;?></td>
 	</tr>
-	<?php if ($siteId != 2):?>
-	<tr>
-		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170"># Travelers:</td>
-		<td style="color:#444444;font-size:12px;" valign="top" align="left"><?=$fpNumGuests;?></td>
-	</tr>
-	<?php endif;?>
 	<tr>
 		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">Rate From:</td>
 		<td style="color:#444444;font-size:12px;" valign="top" align="left">$<?=$clientAdjustedPrice;?></td>
