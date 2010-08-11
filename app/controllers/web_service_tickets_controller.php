@@ -442,11 +442,25 @@ class WebServiceTicketsController extends WebServicesController
 		if ($this->Ticket->isMultiProductPackage($params['ticketId'])) {
 			$params['ppvNoticeTypeId'] = 10;    // old res request
 		}
+
 		$expirationCriteriaId = $this->Ticket->getExpirationCriteria($params['ticketId']);
 		if ($expirationCriteriaId == 5) {
 			// this is retail value
 			$params['ppvNoticeTypeId'] = 10;    // old res request
 		}
+
+		// check if preferred dates are two days - if so send availabilty request only
+		$aucPreferDates = $this->Ticket->query("SELECT arrivalDate FROM reservationPreferDate as rpd WHERE ticketId = $ticketId ORDER BY reservationPreferDateTypeId");	
+		if (!empty($aucPreferDates)) {
+			foreach ($aucPreferDates as $aucKey => $aucPreferDateRow) {
+				$arrival_ts = strtotime($aucPreferDateRow['rpd']['arrivalDate']);
+				$arrival_within_2_days = strtotime('+2 DAYS');     // 48 hrs from now
+				if ($arrival_ts > 0 && $arrival_ts <= $arrival_within_2_days) {
+					$params['ppvNoticeTypeId'] = 10;
+				} 
+			}
+		}
+
 		$this->ppv(json_encode($params));	
 	}
 
