@@ -430,6 +430,9 @@ class WebServiceTicketsController extends WebServicesController
 		$params['manualEmailBody']	= 0;
 		$params['initials']			= 'AUTO_USER_DATES';
 		
+		$aucPreferDates = $params['dates_json'];
+		unset($params['dates_json']);
+		
 		// send both the my dates have been received and reservation request
 		// -------------------------------------------------------------------------------
 		$params['ppvNoticeTypeId'] = 20;     // Your Dates Have Been Received
@@ -450,11 +453,10 @@ class WebServiceTicketsController extends WebServicesController
 		}
 
 		// check if preferred dates are two days - if so send availabilty request only
-		$aucPreferDates = $this->Ticket->query("SELECT arrivalDate FROM reservationPreferDate as rpd WHERE ticketId = $ticketId ORDER BY reservationPreferDateTypeId");	
 		if (!empty($aucPreferDates)) {
-			foreach ($aucPreferDates as $aucKey => $aucPreferDateRow) {
-				$arrival_ts = strtotime($aucPreferDateRow['rpd']['arrivalDate']);
-				$arrival_within_2_days = strtotime('+2 DAYS');     // 48 hrs from now
+			$arrival_within_2_days = strtotime('+2 DAYS');     // 48 hrs from now
+			foreach ($aucPreferDates as $aucPreferDateRow) {
+				$arrival_ts = strtotime($aucPreferDateRow['arrivalDate']);
 				if ($arrival_ts > 0 && $arrival_ts <= $arrival_within_2_days) {
 					$params['ppvNoticeTypeId'] = 10;
 				} 
