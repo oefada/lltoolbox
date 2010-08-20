@@ -356,6 +356,9 @@ $this->searchController = 'Tickets';
 		<tr><td style="border:0px;"><?php echo $html->link('Reservation Dates Available', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/13');?></td></tr>
 		<tr><td style="border:0px;"><?php echo $html->link('Reservation Dates Not Available', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/14');?></td></tr>
 		<tr><td style="border:0px;"><?php echo $html->link('Reservation Request - Follow Up', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/24');?></td></tr>
+		<tr><td style="border:0px;"><?php echo $html->link('Reservation Cancellation - Request', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/29');?></td></tr>
+		<tr><td style="border:0px;"><?php echo $html->link('Reservation Cancellation - Confirmation', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/30');?></td></tr>
+		<tr><td style="border:0px;"><?php echo $html->link('Reservation Cancellation - Client Reciept', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/31');?></td></tr>
 	</table>
 	</div>
 	
@@ -618,6 +621,45 @@ $this->searchController = 'Tickets';
 		);
 		?>
 	<?php endif; ?>
+	</div>
+</div>
+
+<div class="collapsible">
+	<?php
+	$can_count = 0;
+	if (isset($ticket['Cancellation']['cancellationId'])) {
+		if ($ticket['Cancellation']['cancellationId'] > 0) {
+			$can_count = 1;
+		}
+	} 
+	?>
+	<div class="handle"><?php __('Cancellation Info ('. $can_count  .')');?></div>
+	<div class="collapsibleContent related">
+	<br />
+	<?php if (!empty($ticket['Cancellation']['cancellationId'])):?>
+		<table cellpadding="0" cellspacing="0">
+			<tr class="altrow">
+				<td width="200">Cancellation Id</td>
+				<td><?php echo $ticket['Cancellation']['cancellationId'];?></td>
+			</tr>
+			<tr>
+				<td width="200">Cancellation #</td>
+				<td><?php echo $ticket['Cancellation']['cancellationNumber'];?></td>
+			</tr>
+			<tr class="altrow">
+				<td width="200">Cancellation Note</td>
+				<td><?php echo $ticket['Cancellation']['cancellationNotes'];?></td>
+			</tr>
+			<tr>
+				<td width="200">Confirmed By</td>
+				<td><?php echo $ticket['Cancellation']['confirmedBy'];?></td>
+			</tr>
+			<tr>
+				<td width="200">Respond Recieved On</td>
+				<td><?php echo $ticket['Cancellation']['created'];?></td>
+			</tr>			
+		</table>
+		<?php endif; ?>
 	</div>
 </div>
 

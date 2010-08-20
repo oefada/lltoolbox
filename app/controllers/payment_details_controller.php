@@ -157,10 +157,30 @@ class PaymentDetailsController extends AppController {
 				$soap_client = new nusoap_client($webservice_live_url, true);
         		$paymentResponse = $soap_client->call($webservice_live_method_name, array($webservice_live_method_param => $data_json_encoded));
 
-	        	if (trim($paymentResponse) == 'CHARGE_SUCCESS') {
+        		$this->Ticket->recursive = -1;
+				$ticketRead = $this->Ticket->read(null, $ticketId);
+	        	if (trim($paymentResponse) == 'CHARGE_SUCCESS') {	        		
+					if(in_array($ticketRead['Ticket']['offerId'], array(3,4)) ) {
+						$ticketData['ticketId'] = $ticketId;
+						$webservice_live_method_name = 'autoSendXnetDatesConfirmedOnlyProperty';
+						$webservice_live_method_param = 'in0';
+						$data_json_encoded = json_encode($ticketData);
+						$soap_client = new nusoap_client($webservice_live_url, true);
+						$soap_client->call($webservice_live_method_name, array($webservice_live_method_param => $data_json_encoded));
+					}	
+	        		
 	        		$this->Session->setFlash(__('Payment was successfully charged.', true), 'default', array(), 'success');
 	        		$this->redirect(array('controller' => 'tickets', 'action'=>'view', 'id' => $this->data['PaymentDetail']['ticketId']));
 	        	} else {
+	        		if(in_array($ticketRead['Ticket']['offerId'], array(3,4)) ) {
+	        			$ticketData['ticketId'] = $ticketId;
+						$webservice_live_method_name = 'autoSendXnetCCDeclined';
+						$webservice_live_method_param = 'in0';
+						$data_json_encoded = json_encode($ticketData);
+						$soap_client = new nusoap_client($webservice_live_url, true);
+						$soap_client->call($webservice_live_method_name, array($webservice_live_method_param => $data_json_encoded));
+	        		}
+	        		
 	        		$this->Session->setFlash(__('Payment Not Processed -- Error ' . $paymentResponse, true), 'default', array(), 'error');
 	        	}
 	        } else {

@@ -20,7 +20,8 @@ class Ticket extends AppModel {
 	
 	var $hasOne = array('TicketWriteoff' => array('foreignKey' => 'ticketId'),
 						'TicketRefund' => array('foreignKey' => 'ticketId'),
-						'Reservation' => array('foreignKey' => 'ticketId')
+						'Reservation' => array('foreignKey' => 'ticketId'),
+						'Cancellation' => array('foreignKey' => 'ticketId')
 						);
 				   		
 	function beforeFind($options) {

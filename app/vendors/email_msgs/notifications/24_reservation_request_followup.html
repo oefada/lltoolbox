@@ -5,16 +5,7 @@ This is a follow up to our original request sent on <?=date('F d', strtotime($au
 <span style="font-style:italic;">Action Required</span></span>.</h1>
 
 <p>Dear <?php echo $clientName;?>,</p>
-
-<?php if ($isAuction) : ?>
-	<p><strong>The following <?=$siteName;?> auction package has been paid in full.</strong> <a href="<?=$extranet_link;?>">Please view the reservation request.</a></p>
-<?php else:?>
-	<p>
-	Please reply to confirm the following reservation to <?=$siteName;?> and <strong>be sure to include the confirmation number</strong>. 
-	If the requested dates are not available, please advise alternate dates.
-	</p>
-<?php endif; ?>
-
+<p><strong>The following <?=$siteName;?> auction package has been paid in full.</strong> <a href="<?=$extranet_link;?>">Please view the reservation request.</a></p>
 
 <div style="padding:10px;background-color:#E0E0CD;margin-top:25px;margin-bottom:25px;">
 <table cellpadding="5" cellspacing="0" border="0" width="100%">
@@ -101,6 +92,17 @@ This is a follow up to our original request sent on <?=date('F d', strtotime($au
 	<tr>
 		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">Phone:</td>
 		<td style="color:#444444;font-size:12px;" valign="top" align="left"><?=$userPhone;?></td>
+	</tr>
+	<tr>
+		<td style="color:#000000;font-size:12px; padding-top:15px;font-weight:bold;text-decoration:underline;" valign="top" align="left" width="170">Requested Dates:</td>
+		<td style="color:#444444;font-size:12px; padding-top:15px;" valign="top" align="left">
+			<table cellspacing="2" cellpadding="2">
+				<tr>
+					<td align="center"><a href="<?=$extranet_link;?>"><img src="http://www.luxurylink.com/images/toolbox/btn_view_req_dates.gif" alt="View Requested Dates" style="border:0px;" /></a><br /><a href="<?=$extranet_link;?>" style="font-size:12px;border:0px;">(View Requested Dates)</a></td>
+					<td valign="top" style="color:#990000;font-weight:bold;font-size:10px;">Please confirm or deny the requested dates upon receipt of this email.</td>
+				</tr>
+			</table>
+		</td>
 	</tr>
 	<?php endif; ?>
 </table>

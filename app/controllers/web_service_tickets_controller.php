@@ -66,7 +66,42 @@ class WebServiceTicketsController extends WebServicesController
 						'doc' => 'N/A',
 						'input' => array('in0' => 'xsd:string'),
 						'output' => array('return' => 'xsd:string')
-						)
+						),
+					'autoSendXnetDatesConfirmedSeasonalPricing' => array(
+						'doc' => 'N/A',
+						'input' => array('in0' => 'xsd:string'),
+						'output' => array('return' => 'xsd:string')
+						),
+					'FixedPriceCardCharge' => array(
+						'doc' => 'N/A',
+						'input' => array('in0' => 'xsd:string'),
+						'output' => array('return' => 'xsd:string')
+						),
+					'autoSendXnetDateResRequested' => array(
+						'doc' => 'N/A',
+						'input' => array('in0' => 'xsd:string'),
+						'output' => array('return' => 'xsd:string')
+						),
+					'autoSendXnetDatesConfirmedOnlyProperty' => array(
+						'doc' => 'N/A',
+						'input' => array('in0' => 'xsd:string'),
+						'output' => array('return' => 'xsd:string')
+						),
+					'autoSendXnetCCDeclined' => array(
+						'doc' => 'N/A',
+						'input' => array('in0' => 'xsd:string'),
+						'output' => array('return' => 'xsd:string')
+						),
+					'autoSendXnetCancelConfirmation' => array(
+						'doc' => 'N/A',
+						'input' => array('in0' => 'xsd:string'),
+						'output' => array('return' => 'xsd:string')
+						),
+					'autoSendXnetResCancelled' => array(
+						'doc' => 'N/A',
+						'input' => array('in0' => 'xsd:string'),
+						'output' => array('return' => 'xsd:string')
+						)						
 					);
 					
 	function beforeFilter() { $this->LdapAuth->allow('*'); }
@@ -99,6 +134,9 @@ class WebServiceTicketsController extends WebServicesController
 
 	function processFixedPriceTicket($ticketData) {
 		if (!$ticketData['ticketId']) {
+			$this->errorResponse = 2001;
+			$this->errorTitle = 'Missing Ticket ID';
+			$this->errorMsg = 'Fixed Price Ticket processing was aborted due to receiving invalid data.';
 			return false;
 		}
 
@@ -116,10 +154,12 @@ class WebServiceTicketsController extends WebServicesController
 		$params['ppvNoticeTypeId'] = 9;     // Fixed Price - Winner Notification
 		$this->ppv(json_encode($params));	
 		
+		//special request
 		if (trim($ticketData['requestNotes'])) {
 			$params['ppvNoticeTypeId'] = 10;     // Fixed Price - Client Exclusive Email
 		} else {
-			$params['ppvNoticeTypeId'] = 25;     // Reservation Request w/ no xnet
+			#$params['ppvNoticeTypeId'] = 25;     // Reservation Request w/ no xnet (to be removed)
+			$params['ppvNoticeTypeId'] = 2;     // Reservation Request new one with xnet
 		}
 
 		// check reservation checkin date - if 48 hrs send ppvid 10
@@ -133,6 +173,33 @@ class WebServiceTicketsController extends WebServicesController
 		if ($arrival_date_2 > 0 && $arrival_date_2 <= $arrival_within_2_days) {
 			$params['ppvNoticeTypeId'] = 10;
 		}
+		//if multi-product offer, then send old res request w/o client res xtranet
+		if ($this->Ticket->isMultiProductPackage($params['ticketId'])) {
+			$params['ppvNoticeTypeId'] = 10;    // old res request
+		}
+		$expirationCriteriaId = $this->Ticket->getExpirationCriteria($params['ticketId']);
+		if ($expirationCriteriaId == 5) {
+			// this is retail value
+			$params['ppvNoticeTypeId'] = 10;    // old res request
+		}
+		//if request comes in for more than the package NumNights, same as special request
+		
+		$package = $this->Package->read(null, $ticketData['packageId']);	
+		$dtRequsetArr1 = new DateTime($ticketData['requestArrival']); 
+		$dtRequsetDep1 = new DateTime($ticketData['requestDeparture']);
+		$interval1 = $dtRequsetArr1->diff($dtRequsetDep1);
+		if($interval1->format('%d%') >= $package['Package']['numNights'] ){
+			$params['ppvNoticeTypeId'] = 10;    // old res request
+		}
+				
+		if($ticketData['requestArrival2'] && $ticketData['requestArrival2'] != '000-00-00') {
+			$dtRequsetArr2 = new DateTime($ticketData['requestArrival2']); 
+			$dtRequsetDep2 = new DateTime($ticketData['requestDeparture2']);
+			$interval2 = $dtRequsetArr2->diff($dtRequsetDep2);
+			if($interval2->format('%d%') >= $package['Package']['numNights'] ){
+				$params['ppvNoticeTypeId'] = 10;    // old res request
+			}
+		}		
 
 		$this->ppv(json_encode($params));	
 		
@@ -278,8 +345,7 @@ class WebServiceTicketsController extends WebServicesController
 			// if non-auction, just stop here as charging and ppv should not be auto
 			// -------------------------------------------------------------------------------
 			if (!in_array($data['offerTypeId'], array(1,2,6))) {
-				$this->processFixedPriceTicket($data);
-				return true;
+				return $this->processFixedPriceTicket($data);				
 			}
 			
 			// find out if there is a valid credit card to charge.  charge and send appropiate emails
@@ -503,7 +569,192 @@ class WebServiceTicketsController extends WebServicesController
 		$params['ppvNoticeTypeId'] = 23;   
 		$this->ppv(json_encode($params));	
 	}
+	function autoSendXnetDatesConfirmedOnlyProperty ($in0) {
+		// from the XNET - dates are CONFIRMED
+		// -------------------------------------------------------------------------------
+		$params = json_decode($in0, true);
+		$params['send'] 			= 1;
+		$params['returnString']		= 0;
+		$params['manualEmailBody']	= 0;
+		$params['initials']			= 'XNET_DATES_CONF_PROP';
+		$params['ppvNoticeTypeId'] = 23;   
+		$this->ppv(json_encode($params));	
+	}
+	
+	function autoSendXnetDatesConfirmedSeasonalPricing ($in0) {
+		// from the XNET - dates are CONFIRMED
+		// -------------------------------------------------------------------------------
+		$params = json_decode($in0, true);
+		$params['send'] 			= 1;
+		$params['returnString']		= 0;
+		$params['manualEmailBody']	= 0;
+		$params['initials']			= 'XNET_DATES_CONFIRMED';		
+		$params['ppvNoticeTypeId'] = 1;
+		$ticketId = $params['ticketId'];
+		$ticket = $this->Ticket->read(null, $ticketId);
+		$ticketData 		= $ticket['Ticket'];
+		switch ($ticketData['siteId'])
+		{
+			case 1:
+				$siteName = "luxurylink.com";
+				break;
+			case 2:
+				$siteName = "familygetaway.com";
+				break;				
+		} 
+		$params['override_email_to'] = 'reservations@'.$siteName;
+		$this->ppv(json_encode($params));	
+	}
 
+	function FixedPriceCardCharge($in0) {
+		$params = json_decode($in0, true);
+		
+		//check if valid ticket
+		if (empty($params['ticketId'])) {
+			$this->errorResponse = 2012;
+			$this->errorTitle = 'Invalid Data';
+			$this->errorMsg = 'Ticket processing was aborted due to receiving invalid data.';
+			return false;	
+		}
+		$ticketId = $params['ticketId'];
+		$ticketData = query_toolbox("SELECT * FROM ticket WHERE ticketId = $ticketId LIMIT 1");
+		
+		if(!$ticketData) {
+			$this->errorResponse = 2013;
+			$this->errorTitle = 'Invalid Data';
+			$this->errorMsg = 'Ticket processing was aborted due to receiving invalid ticket data.';
+			return false;	
+		}
+	
+		$isChargeSuccess = $this->CardCharge($ticketId);
+		
+		if(!$isChargeSuccess && $this->errorResponse) //critical error
+			return false;
+		else if (!$isChargeSuccess && !$this->errorResponse) { //charge declined			
+			$newTicketStatus = 15;
+			$this->updateTicketStatus($ticketId, $newTicketStatus);
+			
+			$paramEncoded = json_encode($params);
+			$this->autoSendXnetCCDeclined($paramEncoded);
+		}
+		else {
+			//successfully charged
+			$paramEncoded = json_encode($params);
+			$this->autoSendXnetDatesConfirmed(json_encode($paramEncoded));
+		}
+							
+			
+	}
+	
+	function autoSendXnetCCDeclined($in0) {
+		$params = json_decode($in0, true);
+		$params['send'] 			= 1;
+		$params['returnString']		= 0;
+		$params['manualEmailBody']	= 0;
+		$params['initials']			= 'XNET_CC_DECLINED';
+		$params['ppvNoticeTypeId'] = 19;    
+		$this->ppv(json_encode($params));	
+		
+	}
+	
+	function CardCharge($ticketId) {
+		
+		$ticketData = query_toolbox("SELECT * FROM ticket WHERE ticketId = $ticketId LIMIT 1");
+		$ticketData = $ticketData[0];
+		$userId = $ticketData['userId'];		
+		$offerTable = $ticketData['siteId'] == 1 ? 'offerLuxuryLink' : 'offerFamily'; 
+		$offerData = query("SELECT o.*,c.* FROM {$offerTable} o INNER JOIN client c ON o.clientId = c.clientId WHERE offerId = $offerId LIMIT 1");
+		$offerData = $offerData[0];
+		$offerId = $offerData['offerId'];
+		
+		// if valid successful charge exists, then return true
+		// =====================================================================
+		$paymentDetail = query_toolbox("SELECT * FROM paymentDetail WHERE isSuccessfulCharge = 1 AND userId = $userId AND ticketId = $ticketId");
+		if (is_array($paymentDetail) && !empty($paymentDetail)) {
+			return true;
+		}
+	
+		// ============================================================
+		// ======== [ start process post ] ============================
+		// ============================================================
+		
+		
+		$gUserPaymentSettingId = $ticketData['userPaymentSettingId'];
+		
+		if ($gUserPaymentSettingId) {
+			$data = array();
+			$data['userId'] 				= $userId;
+			$data['ticketId'] 				= $ticketId;
+			$data['paymentProcessorId']		= 1;
+			if ($ticketData['siteId'] == 2) { 
+				// for family, use PAYPAL processor
+				$data['paymentProcessorId']		= 3;
+			}
+			$data['paymentAmount']			= $ticketData['billingPrice'];
+			$data['initials']				= 'FPCARDCHARGE';
+			$data['autoCharge']				= 1; //if system charge set 1
+			$data['saveUps']				= 0;
+			$data['zAuthHashKey']			= md5('L33T_KEY_LL' . $data['userId'] . $data['ticketId'] . $data['paymentProcessorId'] . $data['paymentAmount'] . $data['initials']);
+			$data['userPaymentSetting']     = $ticketData['userPaymentSettingId'];
+			
+			$data_json_encoded = json_encode($data);
+			$response = $this->processPaymentTicket($data_json_encoded);
+			
+			if (trim($response) == 'CHARGE_SUCCESS') {
+				return true;
+			} else {
+				return false;
+			}
+		
+		}
+		else {
+			$this->errorResponse = 2014;
+			$this->errorTitle = 'Invalid PaymentSetting Id';
+			$this->errorMsg = 'Ticket does not contain the paymentSettingId';
+			return false;	
+		}
+		
+		
+		
+	}
+	
+	function autoSendXnetDateResRequested($in0) {
+		// from the XNET - dates are requested
+		// -------------------------------------------------------------------------------
+		$params = json_decode($in0, true);
+		$params['send'] 			= 1;
+		$params['returnString']		= 0;
+		$params['manualEmailBody']	= 0;
+		$params['initials']			= 'XNET_DATES_REQUESTED';
+		$params['ppvNoticeTypeId'] = 2;    
+		$this->ppv(json_encode($params));	
+	}
+	
+	function autoSendXnetCancelConfirmation($in0) {
+		// from the XNET - cancellation confirmation - confirmed
+		// -------------------------------------------------------------------------------
+		$params = json_decode($in0, true);
+		$params['send'] 			= 1;
+		$params['returnString']		= 0;
+		$params['manualEmailBody']	= 0;
+		$params['initials']			= 'XNET_CANCEL_CONFIRM';
+		$params['ppvNoticeTypeId'] = 30;    
+		$this->ppv(json_encode($params));	
+	}
+	
+	function autoSendXnetResCancelled($in0) {
+		// from the XNET - client receipt for confirmed cancellation
+		// -------------------------------------------------------------------------------
+		$params = json_decode($in0, true);
+		$params['send'] 			= 1;
+		$params['returnString']		= 0;
+		$params['manualEmailBody']	= 0;
+		$params['initials']			= 'XNET_CANCEL_RECIEPT';
+		$params['ppvNoticeTypeId'] = 31;    
+		$this->ppv(json_encode($params));	
+	}
+	
+	
 	function numF($str) {
 		// for commas thousand group separater
 		return number_format($str);
@@ -662,8 +913,24 @@ class WebServiceTicketsController extends WebServicesController
 			$resConfNum = $resData[0]['reservation']['reservationConfirmNum'];
 			$resArrivalDate = date('M d, Y', strtotime($resData[0]['reservation']['arrivalDate']));
 			$resDepartureDate = date('M d, Y', strtotime($resData[0]['reservation']['departureDate']));
+			$resConfToCustomer = $resData[0]['reservation']['reservationConfirmToCustomer'];
+			$resConfBy = $resData[0]['reservation']['confirmedBy'];
+			$resArrDate = $resData[0]['reservation']['arrivalDate'];
+			$resDepDate = $resData[0]['reservation']['departureDate'];
 		}
-
+		// cancellation info
+		$ppvNoticeData = $this->Ticket->query("SELECT * FROM ppvNotice WHERE ticketId = $ticketId and ppvNoticeTypeId = 29 ORDER BY created DESC LIMIT 1");
+		// you cannot send out cancellation confirmed email unless cancellation request email has been sent
+		if(!empty($ppvNoticeData)) {
+			$ppvNoticeCreatedDate = date('M d, Y', strtotime($ppvNoticeData[0]['ppvNotice']['created']));		
+			$canData = $this->Ticket->query("SELECT * FROM cancellation WHERE ticketId = $ticketId ORDER BY cancellationId DESC LIMIT 1");
+			if (!empty($canData)) {
+				$canConfNum = $canData[0]['cancellation']['cancellationNumber'];			
+				$canConfBy = $canData[0]['cancellation']['confirmedBy'];
+				$canNote = $canData[0]['cancellation']['cancellationNotes'];
+				$canConfDate = date('M d, Y', strtotime($canData[0]['cancellation']['created']));				 
+			}
+		}		
 		// cc variables
 		// -------------------------------------------------------------------------------
 		if (is_array($userPaymentData) && !empty($userPaymentData)) {
@@ -834,6 +1101,31 @@ class WebServiceTicketsController extends WebServicesController
 				$emailReplyTo = ($isAuction) ? "resrequests@$siteEmail" : "reservations@$siteEmail";
 				$userEmail = $clientPrimaryEmail;
 				$emailCc = $clientCcEmail;
+				break;
+			case 29:
+				// send out res cancellation request
+				$extranet_link = $this->getExtranetCancellationLink($ticketId, $siteId);
+				include('../vendors/email_msgs/notifications/29_reservation_cancel_request.html');
+				$emailSubject = "Please Cancel This $siteName Booking - $offerTypeTxt - $clientNameP";
+				$emailFrom = ($isAuction) ? "$siteDisplay<resrequests@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
+				$emailReplyTo = ($isAuction) ? "resrequests@$siteEmail" : "reservations@$siteEmail";
+				$userEmail = $clientPrimaryEmail;
+				$emailCc = $clientCcEmail;
+				break;
+			case 30:
+				// send out res cancellation confirmation				
+				include('../vendors/email_msgs/notifications/30_reservation_cancel_confirmation.html');
+				$emailSubject = "Your $siteName Booking was Cancelled. - $userFirstName $userLastName";
+				$emailFrom = ($isAuction) ? "$siteDisplay<resrequests@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
+				$emailReplyTo = ($isAuction) ? "resrequests@$siteEmail" : "reservations@$siteEmail";						
+				break;
+			case 31:
+				// send out res cancellation confirmation				
+				include('../vendors/email_msgs/ppv/cancel_ppv.html');
+				$emailSubject = "Your $siteName Booking was Cancelled. - $clientNameP";
+				$emailFrom = ($isAuction) ? "$siteDisplay<resrequests@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
+				$emailReplyTo = ($isAuction) ? "resrequests@$siteEmail" : "reservations@$siteEmail";
+				$userEmail = $clientPrimaryEmail;				
 				break;
 			case 25:
 				// send out res request w/o xnet
@@ -1066,6 +1358,40 @@ class WebServiceTicketsController extends WebServicesController
 
 		return $host . $uri . "?z=$hash&t=$ticketIdHash&ts=$tsHash";
 	}
+	
+	function getExtranetCancellationLink($ticketId, $siteId) {
+
+		if (!$ticketId || !is_numeric($ticketId)) {
+			return null;
+		}
+
+		// generate the link so clients can handle res requests via extranet
+		$uri = '/xnet/services/rcc.php';
+
+		if ($siteId == 1) {
+			$host = 'http://www.luxurylink.com';
+			if (stristr($_SERVER['HTTP_HOST'], 'dev')) {
+				$host = 'http://alee-lldev.luxurylink.com';
+			} elseif (stristr($_SERVER['HTTP_HOST'], 'stage')) {
+				$host = 'http://stage-luxurylink.luxurylink.com';
+			}
+		} elseif ($siteId == 2) {
+			$host = 'http://www.familygetaway.com';
+			if (stristr($_SERVER['HTTP_HOST'], 'dev')) {
+				$host = 'http://alee-familydev.luxurylink.com';
+			} elseif (stristr($_SERVER['HTTP_HOST'], 'stage')) {
+				$host = 'http://stage-family.luxurylink.com';
+			}
+		}
+		
+		$ts = strtotime('NOW');
+		$ticketIdHash = base64_encode($ticketId);
+		$tsHash = base64_encode($ts);
+
+		$hash = md5($ticketId . $ts . 'L33T-KEY-XTRANET');
+
+		return $host . $uri . "?z=$hash&t=$ticketIdHash&ts=$tsHash";
+	}
 
 	function sendPpvEmail($emailTo, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials) {
 		
@@ -1126,9 +1452,13 @@ class WebServiceTicketsController extends WebServicesController
 		// update ticket status if required
 		// -------------------------------------------------------------------------------
 		$newTicketStatus = false;
-		if ($ppvNoticeTypeId == 1) {  
-			// reservation confirmation
-			$newTicketStatus = 4;	
+		if ($ppvNoticeTypeId == 1 || $ppvNoticeTypeId == 123) {  
+			// reservation confirmation from buy now with seasonal pricing
+			if($emailTo == "reservations@luxurylink.com" || $emailTo == "reservations@familygetaway.com" )
+				$newTicketStatus = 14;
+			else
+				$newTicketStatus = 4; //auction or FP
+					
 			$resData = $this->Ticket->query("SELECT * FROM reservation WHERE ticketId = $ticketId ORDER BY reservationId DESC LIMIT 1");
 			if (!empty($resData)) {
 				$reservationId = $resData[0]['reservation']['reservationId'];
@@ -1142,10 +1472,17 @@ class WebServiceTicketsController extends WebServicesController
 			// send ticket status to RESERVATION REQUESTED
 			$newTicketStatus = 3;
 		} elseif ($ppvNoticeTypeId == 10) {
-			$newTicketStatus = 1;
+			#$newTicketStatus = 1;
+			$newTicketStatus = 12;
 		} elseif ($ppvNoticeTypeId == 14) {
 			// DATES NOT AVAILABLE
 			$newTicketStatus = 11;
+		}  elseif ($ppvNoticeTypeId == 29) {
+			// Ticket cancellation request
+			$newTicketStatus = 16;
+		} elseif ($ppvNoticeTypeId == 30) {
+			// Ticket cancellation confirmation
+			$newTicketStatus = 17;
 		} 
 
 		if ($newTicketStatus) {

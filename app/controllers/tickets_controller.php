@@ -309,7 +309,9 @@ class TicketsController extends AppController {
 		$this->set('tickets', $tickets_index);
 		$this->set('format', $this->Format->find('list'));
 		$this->set('offerType', $this->OfferType->find('list'));
-		$this->set('ticketStatus', $this->Ticket->TicketStatus->find('list'));
+		$ticketStatusIds = $this->Ticket->TicketStatus->find('list');
+		unset($ticketStatusIds[6]);		
+		$this->set('ticketStatus', $ticketStatusIds);
 	}
 
 	function getValidCcOnFile($userId, $bidId = null) {
@@ -408,7 +410,9 @@ class TicketsController extends AppController {
 		$allow_status_edit = true;
 
 		$this->set('allow_status_edit', $allow_status_edit);
-		$this->set('ticketStatusIds', $this->Ticket->TicketStatus->find('list'));
+		$ticketStatusIds = $this->Ticket->TicketStatus->find('list');
+		unset($ticketStatusIds[6]);		
+		$this->set('ticketStatusIds',$ticketStatusIds);
 	}
 
 	function add() {
