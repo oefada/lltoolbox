@@ -1066,6 +1066,12 @@ class WebServiceTicketsController extends WebServicesController
 		}
 		$siteId = $ticketData['siteId'];
 
+		// check if already sent out a reservation request
+		if (in_array($ppvNoticeTypeId, array(2,10))) {
+			$res_request = $this->Ticket->query("SELECT COUNT(*) AS count FROM ppvNotice where ticketId = {$ticketId} AND ppvNoticeTypeId IN (2,10);");
+			$res_request_count = $resrequest[0][0]['count'];
+		}
+
 		// fetch template with the vars above
 		// -------------------------------------------------------------------------------
 		ob_start();
@@ -1097,6 +1103,9 @@ class WebServiceTicketsController extends WebServicesController
 				$extranet_link = $this->getExtranetLink($ticketId, $siteId);
 				include('../vendors/email_msgs/notifications/2_reservation_request.html');
 				$emailSubject = "Please Confirm This $siteName Booking - $offerTypeTxt - ACTION REQUIRED - $userFirstName $userLastName";
+				if (isset($res_request_count) && $res_request_count > 0) {
+					$emailSubject = 'NEW DATES REQUESTED - ' . $emailSubject;
+				}
 				$emailFrom = ($isAuction) ? "$siteDisplay<resrequests@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
 				$emailReplyTo = ($isAuction) ? "resrequests@$siteEmail" : "reservations@$siteEmail";
 				$userEmail = $clientPrimaryEmail;
@@ -1187,6 +1196,10 @@ class WebServiceTicketsController extends WebServicesController
 			case 10:
 				include('../vendors/email_msgs/fixed_price/msg_client_fixedprice.html');
 				$emailSubject = "An Exclusive $siteName Booking Request Has Come In!";
+				$emailSubject = "Please Confirm This $siteName Booking - $offerTypeTxt - ACTION REQUIRED - $userFirstName $userLastName";
+				if (isset($res_request_count) && $res_request_count > 0) {
+					$emailSubject = 'NEW DATES REQUESTED - ' . $emailSubject;
+				}
 				$emailFrom = "$siteDisplay<exclusives@$siteEmail>";
 				$emailReplyTo = "exclusives@$siteEmail";
 				if ($this->Ticket->isMultiProductPackage($ticketId)) {
