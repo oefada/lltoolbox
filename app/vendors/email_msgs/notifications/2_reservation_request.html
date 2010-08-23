@@ -45,7 +45,11 @@
 	<?php else: ?>	
 	<tr>
 		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170"><?php if (trim($addtlDescription)) : ?>Rate From:<?php else : ?>Rate:<?php endif;?></td> 
-		<td style="color:#444444;font-size:12px;" valign="top" align="left">$<?=$clientAdjustedPrice;?></td>
+		<td style="color:#444444;font-size:12px;" valign="top" align="left">$<?=$clientAdjustedPrice;?>
+		<?php if ($addtlDescription) {
+			echo $addtlDescription;
+		}?>
+		</td>
 	</tr>
 	<tr>
 		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">Full Name:</td>
