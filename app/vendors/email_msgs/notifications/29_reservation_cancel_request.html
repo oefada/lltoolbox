@@ -1,7 +1,6 @@
 <?php include('../vendors/email_msgs/email_includes/header.html');?>
 
-<h1 style="color:#<?=$siteHeader;?>;font-size:16px;margin:0px;padding:0px;margin-bottom:30px;">PLEASE CANCEL THIS BOOKING, - 
-	<span style="color:#990000;font-style:italic;">ACTION REQUIRED</span>.</h1>
+<h1 style="color:#<?=$siteHeader;?>;font-size:16px;margin:0px;padding:0px;margin-bottom:30px;">PLEASE CANCEL THIS BOOKING.</h1>
 
 <p>Dear <?php echo $clientName;?>,</p>
 
@@ -36,14 +35,14 @@
 		<td style="color:#444444;font-size:12px;" valign="top" align="left"><?=$userFirstName;?><?php echo $resConfNum; ?></td>
 	</tr>
 	<tr>
-		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">Confirmed Dates:</td>
-		<td style="color:#444444;font-size:12px;" valign="top" align="left">Check-in: <?php echo date('F d, Y',strtotime($resArrDate));?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Check-out: <?php echo date('F d, Y',strtotime($resDepDate));?></td>
+		<td style="color:#000000;font-size:12px; font-weight:bold;padding-bottom:15px; border-bottom:1px solid silver;" valign="top" align="left" width="170">Confirmed Dates:</td>
+		<td style="color:#444444;font-size:12px;padding-bottom:15px; border-bottom:1px solid silver;" valign="top" align="left">Check-in: <?php echo date('F d, Y',strtotime($resArrDate));?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Check-out: <?php echo date('F d, Y',strtotime($resDepDate));?></td>
 	</tr>
 	<tr>
-		<td colspan="2" style="padding-bottom:15px; border-bottom:1px solid silver;">		
-		<div style="color:#444444;font-size:12px;">Please process cancellation upon receipt of this email:</div><br />
-		<center><a href="<?=$extranet_link;?>" style="text-decoration:none"><b><span style="background-color: red;text-decoration: none;color:white;font-size:14px; border: 0;">ACKNOWLEDGE CANCELLATION REQUEST</span></b></a></center><br />
-		<center><div><a href="<?=$extranet_link;?>">Acknowledge Cancellation Request</a></div></center><br />
+		<td colspan="2">		
+		<div style="color:#444444;font-size:12px;"><b>Please process cancellation upon receipt of this email:</b></div><br />
+		<div style="font-size: 15px;text-align: center"><a href="<?=$extranet_link;?>" style="text-decoration:none"><b><span style="background-color: red;text-decoration: none;color:white;font-size:14px; border: 0;">ACKNOWLEDGE CANCELLATION REQUEST</span></b></a><br /></div>
+		<div style="font-size: 12px;text-align: center"><a href="<?=$extranet_link;?>">(Acknowledge Cancellation Request)</a></div><br />
 		</td>
 	</tr>
 </table>

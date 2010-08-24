@@ -1115,7 +1115,7 @@ class WebServiceTicketsController extends WebServicesController
 				// send out res cancellation request
 				$extranet_link = $this->getExtranetCancellationLink($ticketId, $siteId);
 				include('../vendors/email_msgs/notifications/29_reservation_cancel_request.html');
-				$emailSubject = "Please Cancel This $siteName Booking - $offerTypeTxt - $clientNameP";
+				$emailSubject = "$siteName Cancellation Request - ACTION REQUIRED - $clientName";
 				$emailFrom = ($isAuction) ? "$siteDisplay<resrequests@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
 				$emailReplyTo = ($isAuction) ? "resrequests@$siteEmail" : "reservations@$siteEmail";
 				$userEmail = $clientPrimaryEmail;
@@ -1576,7 +1576,8 @@ class WebServiceTicketsController extends WebServicesController
 		// DEV NO CHARGE
 		// ---------------------------------------------------------------------------
 		$isDev = false;
-		if (stristr($_SERVER['HTTP_HOST'], 'dev') || stristr($_SERVER['HTTP_HOST'], 'stage')) {
+		if (stristr($_SERVER['HTTP_HOST'], 'dev') || stristr($_SERVER['HTTP_HOST'], 'stage') || 
+			stristr($_SERVER['HTTP_HOST'], 'alee') || stristr($_SERVER['HTTP_HOST'], 'alee')) {
 			$this->isDev = $isDev = true;
 		}
 
