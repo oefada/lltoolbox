@@ -31,6 +31,8 @@
 
 </div>
 </fieldset>
+
+Client ID <input type="text" name="data[Client][clientId]" /><br /><br />
 <?php echo $form->submit('Search') ?>
 </div>
 

@@ -946,7 +946,13 @@ class ReportsController extends AppController {
 	function check_in_date() {
 	    if (!empty($this->data)) {
 	        $conditions = $this->_build_conditions($this->data);
-	        
+	
+			$clientId = (isset($this->data['Client']['clientId']) && !empty($this->data['Client']['clientId'])) ? (int)$this->data['Client']['clientId'] : false;
+			$clientSql = '';
+			if ($clientId !== false) {
+				$clientSql = 'AND Client.clientId = ' . $clientId;
+			}
+
 	        if (!empty($this->params['named']['sortBy'])) {
 	            $direction = (@$this->params['named']['sortDirection'] == 'DESC') ? 'DESC' : 'ASC';
 	            $order = $this->params['named']['sortBy'].' '.$direction;
@@ -970,7 +976,7 @@ class ReportsController extends AppController {
 						INNER JOIN user AS User ON User.userId = Ticket.userId 
 						INNER JOIN userSiteExtended AS UserSiteExtended ON UserSiteExtended.userId = User.userId 
 						INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Ticket.packageId)
-						INNER JOIN client AS Client ON(Client.clientId = ClientLoaPackageRel.clientId) 
+						INNER JOIN client AS Client ON(Client.clientId = ClientLoaPackageRel.clientId) $clientSql 
 						LEFT JOIN ticketRefund AS TicketRefund ON TicketRefund.ticketId = Ticket.ticketId 
 						WHERE TicketRefund.ticketRefundId IS NULL AND $conditions";
 						
@@ -991,7 +997,7 @@ class ReportsController extends AppController {
 					INNER JOIN user AS User ON User.userId = Ticket.userId 
 					INNER JOIN userSiteExtended AS UserSiteExtended ON UserSiteExtended.userId = User.userId 
 					INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Ticket.packageId)
-					INNER JOIN client AS Client ON(Client.clientId = ClientLoaPackageRel.clientId) 
+					INNER JOIN client AS Client ON(Client.clientId = ClientLoaPackageRel.clientId) $clientSql 
 					LEFT JOIN ticketRefund AS TicketRefund ON TicketRefund.ticketId = Ticket.ticketId 
 	   				WHERE TicketRefund.ticketRefundId IS NULL AND $conditions
                     GROUP BY Ticket.ticketId
