@@ -628,7 +628,7 @@ class WebServiceTicketsController extends WebServicesController
 	
 		$isChargeSuccess = $this->CardCharge($ticketId);
 		
-		if(!$isChargeSuccess && $this->errorResponse) //critical error
+		/*if(!$isChargeSuccess && $this->errorResponse) //critical error
 			return false;
 		else if (!$isChargeSuccess && !$this->errorResponse) { //charge declined			
 			$newTicketStatus = 15;
@@ -640,9 +640,12 @@ class WebServiceTicketsController extends WebServicesController
 		else {
 			//successfully charged
 			$paramEncoded = json_encode($params);
-			$this->autoSendXnetDatesConfirmed(json_encode($paramEncoded));
-		}
+			$this->autoSendXnetDatesConfirmed($paramEncoded);
+		}*/
 							
+			//successfully charged
+			$paramEncoded = json_encode($params);
+			$this->autoSendXnetDatesConfirmed($paramEncoded);
 			
 	}
 	
@@ -1465,7 +1468,7 @@ class WebServiceTicketsController extends WebServicesController
 		// update ticket status if required
 		// -------------------------------------------------------------------------------
 		$newTicketStatus = false;
-		if ($ppvNoticeTypeId == 1 || $ppvNoticeTypeId == 123) {  
+		if ($ppvNoticeTypeId == 1 || $ppvNoticeTypeId == 23) {  
 			// reservation confirmation from buy now with seasonal pricing
 			if($emailTo == "reservations@luxurylink.com" || $emailTo == "reservations@familygetaway.com" )
 				$newTicketStatus = 14;
