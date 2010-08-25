@@ -617,7 +617,7 @@ class WebServiceTicketsController extends WebServicesController
 			return false;	
 		}
 		$ticketId = $params['ticketId'];
-		$ticketData = query_toolbox("SELECT * FROM ticket WHERE ticketId = $ticketId LIMIT 1");
+		$ticketData = $this->Ticket->query("SELECT * FROM ticket WHERE ticketId = $ticketId LIMIT 1");
 		
 		if(!$ticketData) {
 			$this->errorResponse = 2013;
@@ -661,19 +661,15 @@ class WebServiceTicketsController extends WebServicesController
 	}
 	
 	function CardCharge($ticketId) {
-		
-		$ticketData = query_toolbox("SELECT * FROM ticket WHERE ticketId = $ticketId LIMIT 1");
-		$ticketData = $ticketData[0];
+				
+		$ticketData = $this->Ticket->query("SELECT * FROM ticket WHERE ticketId = $ticketId LIMIT 1");
+		$ticketData = $ticketData[0]['Ticket'];
 		$userId = $ticketData['userId'];		
-		$offerTable = $ticketData['siteId'] == 1 ? 'offerLuxuryLink' : 'offerFamily'; 
-		$offerData = query("SELECT o.*,c.* FROM {$offerTable} o INNER JOIN client c ON o.clientId = c.clientId WHERE offerId = $offerId LIMIT 1");
-		$offerData = $offerData[0];
-		$offerId = $offerData['offerId'];
-		
+
 		// if valid successful charge exists, then return true
-		// =====================================================================
-		$paymentDetail = query_toolbox("SELECT * FROM paymentDetail WHERE isSuccessfulCharge = 1 AND userId = $userId AND ticketId = $ticketId");
-		if (is_array($paymentDetail) && !empty($paymentDetail)) {
+		// =====================================================================		
+		$checkExists = $this->PaymentDetail->query("SELECT * FROM paymentDetail WHERE ticketId = $ticketId AND userId = $userId");
+		if (isset($checkExists[0]['paymentDetail']) && !empty($checkExists[0]['paymentDetail'])) {
 			return true;
 		}
 	
@@ -711,10 +707,10 @@ class WebServiceTicketsController extends WebServicesController
 		
 		}
 		else {
-			$this->errorResponse = 2014;
-			$this->errorTitle = 'Invalid PaymentSetting Id';
-			$this->errorMsg = 'Ticket does not contain the paymentSettingId';
-			return false;	
+				$this->errorResponse = 2014;
+				$this->errorTitle = 'Invalid PaymentSetting Id';
+				$this->errorMsg = 'Ticket does not contain the paymentSettingId';
+				return false;	
 		}
 		
 		
