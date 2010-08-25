@@ -1466,7 +1466,7 @@ class WebServiceTicketsController extends WebServicesController
 		$newTicketStatus = false;
 		if ($ppvNoticeTypeId == 1 || $ppvNoticeTypeId == 23) {  
 			// reservation confirmation from buy now with seasonal pricing
-			if($emailTo == "reservations@luxurylink.com" || $emailTo == "reservations@familygetaway.com" )
+			if(preg_match("/reservations\@(luxurylink|familygetaway)\.com/i", $emailTo))			
 				$newTicketStatus = 14;
 			else
 				$newTicketStatus = 4; //auction or FP
