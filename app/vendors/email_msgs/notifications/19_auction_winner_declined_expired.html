@@ -83,7 +83,11 @@ Please <a style="font-weight:bold;" href="<?=$checkoutLink;?>">update your credi
 			<table cellspacing="0" cellpadding="5" border="0">
 			<tr>
 				<td style="color:#444444;font-size:12px;padding-top:20px;" align="center">
+				<?php if ($siteId == 1 ):?>
 				<a href="<?=$checkoutLink;?>"><img src="http://www.luxurylink.com/images/buttons/btn_email_update_cc.gif" alt="Update Credit Card Information" border="0" /></a>
+				<?php else: ?>
+				<a href="<?=$checkoutLink;?>"><img src="http://www.familygetaway.com/images/family/button/btn-update_cc.gif" alt="Update Credit Card Information" border="0" /></a>
+				<?php endif; ?>
 				</td>
 			</tr>
 			</table>
