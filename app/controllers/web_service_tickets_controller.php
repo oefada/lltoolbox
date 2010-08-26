@@ -603,7 +603,10 @@ class WebServiceTicketsController extends WebServicesController
 				break;				
 		} 
 		$params['override_email_to'] = 'reservations@'.$siteName;
-		$this->ppv(json_encode($params));	
+		$this->ppv(json_encode($params));
+		$newTicketStatus = 14; //seasonal pricing
+		$this->updateTicketStatus($ticketId, $newTicketStatus);
+				
 	}
 
 	function FixedPriceCardCharge($in0) {
@@ -1466,7 +1469,8 @@ class WebServiceTicketsController extends WebServicesController
 		$newTicketStatus = false;
 		if ($ppvNoticeTypeId == 1 || $ppvNoticeTypeId == 23) {  
 			// reservation confirmation from buy now with seasonal pricing
-			if(preg_match("/reservations\@(luxurylink|familygetaway)\.com/i", $emailTo))			
+			$currentTicketStatus = $this->Ticket->query("SELECT ticketStatusId as tsi FROM ticket WHERE ticketId = {$ticketId}");			
+			if($currentTicketStatus[0]['tsi'] == 14 )			
 				$newTicketStatus = 14;
 			else
 				$newTicketStatus = 4; //auction or FP

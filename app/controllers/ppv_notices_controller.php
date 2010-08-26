@@ -62,6 +62,13 @@ class PpvNoticesController extends AppController {
 					$soap_client = new nusoap_client($webservice_live_url, true);
 	        		$response = $soap_client->call($webservice_live_method_name, array($webservice_live_method_param => $data_json_encoded));
 					
+	        		if( in_array($id, array(1,23)) ) {
+	        			$updateTicket = array();
+						$updateTicket['ticketId'] = $ticketId;
+						$updateTicket['ticketStatusId'] = 4;
+						$this->Ticket->save($updateTicket);
+	        		}
+	        		
 					$this->Session->setFlash(__('The Ppv/Notice has been sent.', true));
 					$this->redirect(array('controller' => 'tickets', 'action'=>'view', 'id' => $this->data['PpvNotice']['ticketId']));
 				}
