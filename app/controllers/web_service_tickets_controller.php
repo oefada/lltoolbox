@@ -16,7 +16,7 @@ class WebServiceTicketsController extends WebServicesController
 					  );
 
 	var $serviceUrl = 'http://toolbox.luxurylink.com/web_service_tickets';
-	var $serviceUrlDev = 'http://local-toolboxdev.luxurylink.com/web_service_tickets';
+	var $serviceUrlDev = 'http://alee-toolboxdev.luxurylink.com/web_service_tickets';
 	var $serviceUrlStage = 'http://stage-toolbox.luxurylink.com/web_service_tickets';
 	var $errorResponse = false;
 	var $errorMsg = false;
@@ -869,7 +869,7 @@ class WebServiceTicketsController extends WebServicesController
 		$checkoutKey		= base64_encode(serialize(array('ticketId' => $ticketId, 'userId' => $userId, 'offerId' => $offerId, 'zKey' => $checkoutHash)));
 
 		if (stristr($_SERVER['HTTP_HOST'], 'dev')) {
-			$checkoutLink		= "https://local-lldev.luxurylink.com/my/my_purchase.php?z=$checkoutKey";
+			$checkoutLink		= "https://alee-lldev.luxurylink.com/my/my_purchase.php?z=$checkoutKey";
 		} elseif (stristr($_SERVER['HTTP_HOST'], 'stage')) {
 			$checkoutLink		= "https://stage-luxurylink.luxurylink.com/my/my_purchase.php?z=$checkoutKey";
 		}
@@ -1037,7 +1037,7 @@ class WebServiceTicketsController extends WebServicesController
 				// -------------------------------------------------------------------------------
 				$dateRequestLink = "https://www.luxurylink.com/my/my_date_request.php?tid=$ticketId";
 				if (stristr($_SERVER['HTTP_HOST'], 'dev')) {
-					$dateRequestLink = "https://local-lldev.luxurylink.com/my/my_date_request.php?tid=$ticketId";
+					$dateRequestLink = "https://alee-lldev.luxurylink.com/my/my_date_request.php?tid=$ticketId";
 				} elseif (stristr($_SERVER['HTTP_HOST'], 'stage')) {
 					$dateRequestLink = "https://stage-luxurylink.luxurylink.com/my/my_date_request.php?tid=$ticketId";
 				}
@@ -1059,7 +1059,7 @@ class WebServiceTicketsController extends WebServicesController
 				// -------------------------------------------------------------------------------
 				$dateRequestLink = "https://www.familygetaway.com/my/my_date_request.php?tid=$ticketId";
 				if (stristr($_SERVER['HTTP_HOST'], 'dev')) {
-					$dateRequestLink = "https://local-familydev.luxurylink.com/my/my_date_request.php?tid=$ticketId";
+					$dateRequestLink = "https://alee-familydev.luxurylink.com/my/my_date_request.php?tid=$ticketId";
 				} elseif (stristr($_SERVER['HTTP_HOST'], 'stage')) {
 					$dateRequestLink = "https://stage-family.luxurylink.com/my/my_date_request.php?tid=$ticketId";
 				}
@@ -1352,14 +1352,14 @@ class WebServiceTicketsController extends WebServicesController
 		if ($siteId == 1) {
 			$host = 'http://www.luxurylink.com';
 			if (stristr($_SERVER['HTTP_HOST'], 'dev')) {
-				$host = 'http://local-lldev.luxurylink.com';
+				$host = 'http://alee-lldev.luxurylink.com';
 			} elseif (stristr($_SERVER['HTTP_HOST'], 'stage')) {
 				$host = 'http://stage-luxurylink.luxurylink.com';
 			}
 		} elseif ($siteId == 2) {
 			$host = 'http://www.familygetaway.com';
 			if (stristr($_SERVER['HTTP_HOST'], 'dev')) {
-				$host = 'http://local-familydev.luxurylink.com';
+				$host = 'http://alee-familydev.luxurylink.com';
 			} elseif (stristr($_SERVER['HTTP_HOST'], 'stage')) {
 				$host = 'http://stage-family.luxurylink.com';
 			}
@@ -1386,14 +1386,14 @@ class WebServiceTicketsController extends WebServicesController
 		if ($siteId == 1) {
 			$host = 'http://www.luxurylink.com';
 			if (stristr($_SERVER['HTTP_HOST'], 'dev')) {
-				$host = 'http://local-lldev.luxurylink.com';
+				$host = 'http://alee-lldev.luxurylink.com';
 			} elseif (stristr($_SERVER['HTTP_HOST'], 'stage')) {
 				$host = 'http://stage-luxurylink.luxurylink.com';
 			}
 		} elseif ($siteId == 2) {
 			$host = 'http://www.familygetaway.com';
 			if (stristr($_SERVER['HTTP_HOST'], 'dev')) {
-				$host = 'http://local-familydev.luxurylink.com';
+				$host = 'http://alee-familydev.luxurylink.com';
 			} elseif (stristr($_SERVER['HTTP_HOST'], 'stage')) {
 				$host = 'http://stage-family.luxurylink.com';
 			}
