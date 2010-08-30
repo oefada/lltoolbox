@@ -27,17 +27,17 @@ Travel Concierge at <?=$sitePhone;?> or <?=$sitePhoneLocal;?> for assistance.
 			<table cellspacing="0" cellpadding="5" border="0">
 			<tr>
 				<td style="color:#000000;font-size:12px; border-bottom: 1px solid silver; padding-bottom:10px; font-weight:bold;" valign="top" align="left" width="200">Ticket ID:</td>
-				<td style="color:#444444;font-size:12px; border-bottom: 1px solid silver; padding-bottom:10px; padding-right:5px;" valign="top" align="right" width="30">&nbsp;</td>
-				<td style="color:#444444;font-size:12px; border-bottom: 1px solid silver; padding-bottom:10px;" valign="top" align="right"><?=$ticketId;?></td>
+				<td style="color:#444444;font-size:12px; border-bottom: 1px solid silver; padding-bottom:10px; padding-right:5px;" valign="top" align="left" width="30"><?=$ticketId;?></td>
+				<td style="color:#444444;font-size:12px; border-bottom: 1px solid silver; padding-bottom:10px;" valign="top" align="right">&nbsp;</td>
 			</tr>
 			<tr>
 				<td style="color:#000000;font-size:12px;padding-top:15px;font-weight:bold;" valign="top" align="left" width="200">Price:</td>
-				<td style="color:#444444;font-size:12px;padding-top:15px;padding-right:5px;" valign="top" align="right" width="30">US</td>
+				<td style="color:#444444;font-size:12px;padding-top:15px;padding-right:5px;" valign="top" align="left" width="30">US</td>
 				<td style="color:#444444;font-size:12px;padding-top:15px;" valign="top" align="right">$<?=$billingPrice;?></td>
 			</tr>
 			<tr>
 				<td style="color:#000000;font-size:12px;font-weight:bold;" valign="top" align="left" width="200">Handling Fee:</td>
-				<td style="color:#444444;font-size:12px;padding-right:5px;" valign="top" align="right" width="30">US</td>
+				<td style="color:#444444;font-size:12px;padding-right:5px;" valign="top" align="left" width="30">US</td>
 				<td style="color:#444444;font-size:12px;" valign="top" align="right">$<?=$llFee;?></td>
 			</tr>
 			<?php if ($promoGcCofData['Promo'] && $promoGcCofData['Promo']['applied']) :?>
