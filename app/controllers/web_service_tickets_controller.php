@@ -184,19 +184,15 @@ class WebServiceTicketsController extends WebServicesController
 		}
 		//if request comes in for more than the package NumNights, same as special request
 		
-		$package = $this->Package->read(null, $ticketData['packageId']);	
-		$dtRequsetArr1 = new DateTime($ticketData['requestArrival']); 
-		$dtRequsetDep1 = new DateTime($ticketData['requestDeparture']);
-		$interval1 = $dtRequsetArr1->diff($dtRequsetDep1);
-		if($interval1->format('%d%') >= $package['Package']['numNights'] ){
+		$package = $this->Package->read(null, $ticketData['packageId']);			
+		$interval1 = (strtotime($ticketData['requestDeparture']) - strtotime($ticketData['requestArrival'])) / 86400;
+		if($interval1 >= $package['Package']['numNights'] ){
 			$params['ppvNoticeTypeId'] = 10;    // old res request
 		}
 				
-		if($ticketData['requestArrival2'] && $ticketData['requestArrival2'] != '000-00-00') {
-			$dtRequsetArr2 = new DateTime($ticketData['requestArrival2']); 
-			$dtRequsetDep2 = new DateTime($ticketData['requestDeparture2']);
-			$interval2 = $dtRequsetArr2->diff($dtRequsetDep2);
-			if($interval2->format('%d%') >= $package['Package']['numNights'] ){
+		if($ticketData['requestArrival2'] && $ticketData['requestArrival2'] != '000-00-00') {			
+			$interval2 = (strtotime($ticketData['requestDeparture2']) - strtotime($ticketData['requestArrival2'])) / 86400;
+			if($interval2 >= $package['Package']['numNights'] ){
 				$params['ppvNoticeTypeId'] = 10;    // old res request
 			}
 		}		
