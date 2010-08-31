@@ -658,7 +658,7 @@ class WebServiceTicketsController extends WebServicesController
 	function CardCharge($ticketId) {
 				
 		$ticketData = $this->Ticket->query("SELECT * FROM ticket WHERE ticketId = $ticketId LIMIT 1");
-		$ticketData = $ticketData[0]['Ticket'];
+		$ticketData = $ticketData[0]['ticket'];
 		$userId = $ticketData['userId'];		
 
 		// if valid successful charge exists, then return true
@@ -693,7 +693,7 @@ class WebServiceTicketsController extends WebServicesController
 			
 			$data_json_encoded = json_encode($data);
 			$response = $this->processPaymentTicket($data_json_encoded);
-			mail("devmail@luxurylink.com", "debug creadit card",$response );
+			
 			if (trim($response) == 'CHARGE_SUCCESS') {
 				return true;
 			} else {
