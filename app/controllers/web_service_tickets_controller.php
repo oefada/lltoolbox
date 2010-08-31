@@ -627,7 +627,7 @@ class WebServiceTicketsController extends WebServicesController
 	
 		$isChargeSuccess = $this->CardCharge($ticketId);
 		
-		/*if(!$isChargeSuccess && $this->errorResponse) //critical error
+		if(!$isChargeSuccess && $this->errorResponse) //critical error
 			return false;
 		else if (!$isChargeSuccess && !$this->errorResponse) { //charge declined			
 			$newTicketStatus = 15;
@@ -640,11 +640,7 @@ class WebServiceTicketsController extends WebServicesController
 			//successfully charged
 			$paramEncoded = json_encode($params);
 			$this->autoSendXnetDatesConfirmed($paramEncoded);
-		}*/
-							
-			//successfully charged
-			$paramEncoded = json_encode($params);
-			$this->autoSendXnetDatesConfirmed($paramEncoded);
+		}
 			
 	}
 	
