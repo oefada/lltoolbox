@@ -152,7 +152,10 @@ class WebServiceTicketsController extends WebServicesController
 		// send out fixed price emails
 		// -------------------------------------------------------------------------------
 		$params['ppvNoticeTypeId'] = 9;     // Fixed Price - Winner Notification
+		mail('devmail@luxurylink.com','CRE - step before first ppv');
 		$this->ppv(json_encode($params));	
+			
+		mail('devmail@luxurylink.com','CRE - step after first ppv');
 		
 		//special request
 		if (trim($ticketData['requestNotes'])) {
@@ -344,9 +347,11 @@ class WebServiceTicketsController extends WebServicesController
 
 			// if non-auction, just stop here as charging and ppv should not be auto
 			// -------------------------------------------------------------------------------
+			mail('devmail@luxurylink.com','CRE - step 1');
 			if (!in_array($data['offerTypeId'], array(1,2,6))) {
 				return $this->processFixedPriceTicket($data);				
 			}
+			mail('devmail@luxurylink.com','CRE - NO GOOD');
 			
 			// find out if there is a valid credit card to charge.  charge and send appropiate emails
 			// -------------------------------------------------------------------------------
@@ -1434,11 +1439,15 @@ class WebServiceTicketsController extends WebServicesController
 		$emailSentDatetime = strtotime('now');
 		$emailBodyFileName = $ticketId . '_' . $ppvNoticeTypeId . '_' . $emailSentDatetime . '.html';
 		
+		mail('devmail@luxurylink.com','CRE - step pre write');
+		
 		// save the email as a flat file on /vendors/email_msgs/toolbox_sent_messages
 		// -------------------------------------------------------------------------------
 		$fh = fopen("../vendors/email_msgs/toolbox_sent_messages/$emailBodyFileName", 'w');
 		fwrite($fh, $emailBody);
 		fclose($fh);
+			
+		mail('devmail@luxurylink.com','CRE - step post write');
 		
 		// get initials
 		// -------------------------------------------------------------------------------
@@ -1500,10 +1509,12 @@ class WebServiceTicketsController extends WebServicesController
 			// Ticket cancellation confirmation
 			$newTicketStatus = 17;
 		} 
+		mail('devmail@luxurylink.com','CRE - step pre update ticket');
 
 		if ($newTicketStatus) {
 			$this->updateTicketStatus($ticketId, $newTicketStatus);
 		}
+		mail('devmail@luxurylink.com','CRE - step post ');
 	}
 		
 	function updateTicketStatus($ticketId, $newStatusId) {
