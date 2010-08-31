@@ -12,7 +12,7 @@ class WebServiceTicketsController extends WebServicesController
 	var $uses = array('Ticket', 'UserPaymentSetting','PaymentDetail', 'Client', 'User', 'Offer', 'Bid', 
 					  'ClientLoaPackageRel', 'Track', 'OfferType', 'Loa', 'TrackDetail', 'PpvNotice',
 					  'Address', 'OfferLuxuryLink', 'SchedulingMaster', 'SchedulingInstance', 'Reservation',
-					  'PromoTicketRel', 'Promo', 'TicketReferFriend'
+					  'PromoTicketRel', 'Promo', 'TicketReferFriend','Package'
 					  );
 
 	var $serviceUrl = 'http://toolbox.luxurylink.com/web_service_tickets';
