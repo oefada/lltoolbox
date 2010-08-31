@@ -924,7 +924,13 @@ class WebServiceTicketsController extends WebServicesController
 				$canNote = $canData[0]['cancellation']['cancellationNotes'];
 				$canConfDate = date('M d, Y', strtotime($canData[0]['cancellation']['created']));				 
 			}
-		}		
+		}
+
+		//follow up email sent
+		$ppvNoticeData = $this->Ticket->query("SELECT emailSentDatetime FROM ppvNotice WHERE ticketId = $ticketId and ppvNoticeTypeId = 2 ORDER BY created DESC LIMIT 1");
+		$emailSentDatetime = (!empty($ppvNoticeData[0]['ppvNotice']['emailSentDatetime'])) ?
+								date('M d, Y', strtotime($ppvNoticeData[0]['ppvNotice']['emailSentDatetime'])) : ""; 
+		
 		// cc variables
 		// -------------------------------------------------------------------------------
 		if (is_array($userPaymentData) && !empty($userPaymentData)) {
