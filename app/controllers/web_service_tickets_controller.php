@@ -693,7 +693,7 @@ class WebServiceTicketsController extends WebServicesController
 			
 			$data_json_encoded = json_encode($data);
 			$response = $this->processPaymentTicket($data_json_encoded);
-			
+			mail("devmail@luxurylink.com", "debug creadit card",$response );
 			if (trim($response) == 'CHARGE_SUCCESS') {
 				return true;
 			} else {
