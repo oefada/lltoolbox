@@ -747,7 +747,8 @@ class PackagesController extends AppController {
 	        $body .= $this->data['additionalMessage'];
 	        
 	        $headers = "Reply-To: {$this->user['LdapUser']['mail']}\n";
-	        $headers .= "From: {$this->user['LdapUser']['mail']}";
+	        $headers .= "From: {$this->user['LdapUser']['mail']}\n";
+            $headers .= "CC: {$this->user['LdapUser']['mail']}";
             
 			if (stristr($_SERVER['HTTP_HOST'], 'dev') || stristr($_SERVER['HTTP_HOST'], 'stage')) {
 				$emailTo = 'devmail@luxurylink.com';
