@@ -907,7 +907,9 @@ class WebServiceTicketsController extends WebServicesController
 			$resConfNum = $resData[0]['reservation']['reservationConfirmNum'];
 			$resArrivalDate = date('M d, Y', strtotime($resData[0]['reservation']['arrivalDate']));
 			$resDepartureDate = date('M d, Y', strtotime($resData[0]['reservation']['departureDate']));
-			$resConfToCustomer = $resData[0]['reservation']['reservationConfirmToCustomer'];
+			$resConfToCustomer = empty($resData[0]['reservation']['reservationConfirmToCustomer']) ?
+									 $resData[0]['reservation']['created'] 
+									: $resData[0]['reservation']['reservationConfirmToCustomer'];
 			$resConfBy = $resData[0]['reservation']['confirmedBy'];
 			$resArrDate = $resData[0]['reservation']['arrivalDate'];
 			$resDepDate = $resData[0]['reservation']['departureDate'];
