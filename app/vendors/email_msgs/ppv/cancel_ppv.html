@@ -63,10 +63,10 @@ This email serves as your reservation cancellation reciept.
 <p><?php echo $validityNote;?></p>
 <p><?php echo $legalText;?></p>
 
-<?php if ($resData[0]['reservation']['confirmationNotes']) :?>
+<?php if ($canNote) :?>
 <div style="padding:15px;background-color:#E4E4E4;margin-bottom:15px;">
 	<p><strong>Notes from the property</strong></p>
-	<p><?=nl2br($resData[0]['reservation']['confirmationNotes']);?></p>
+	<p><?=nl2br($canNote);?></p>
 </div>
 <?php endif;?>
 
