@@ -794,12 +794,14 @@ class PackagesController extends AppController {
         $client = $this->Client->find('first', array('conditions' => array('Client.clientId' => $clientId)));
         $this->set('client', $client);
         $package = $this->Package->getPackage($packageId);
-        $this->set('package', $package);
 	
         if (!empty($this->data)) {
            $package['Package']['notes'] = $this->data['Package']['notes'];
            $this->Package->save($package);
         }
+        
+        $this->set('package', $package);
+        
         //debug($package);
         $history = $this->Package->getHistory($packageId);
         $this->set('history', $history);
