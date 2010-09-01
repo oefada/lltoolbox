@@ -7,5 +7,9 @@ class PackageStatus extends AppModel {
 	var $displayField = 'packageStatusName';
 	
 	var $hasMany = array('Package' => array('foreignKey' => 'packageStatusId'));
+    
+    function getPackageStatus() {
+        return $this->query("SELECT * FROM packageStatus PackageStatus");
+    }
 }
 ?>

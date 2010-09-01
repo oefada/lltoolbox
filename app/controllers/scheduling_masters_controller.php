@@ -25,59 +25,81 @@ class SchedulingMastersController extends AppController {
 		$package 				= $this->SchedulingMaster->Package->findByPackageId($packageId);
 			    
 		if (!empty($this->data)) {
-			
-			$this->SchedulingMaster->create();
-			$package = $this->SchedulingMaster->Package->findByPackageId($this->data['SchedulingMaster']['packageId']);
-			$this->data['SchedulingMaster']['validityStartDate'] = $package['Package']['validityStartDate'];
-			$this->data['SchedulingMaster']['validityEndDate'] = $package['Package']['validityEndDate'];
-			$this->data['SchedulingMaster']['retailValue'] = $package['Package']['approvedRetailPrice'];
-			$this->data['SchedulingMaster']['siteId'] = $package['Package']['siteId'];
 
-			// startDate
-            $datePickerDate = explode('-', $this->data['SchedulingMaster']['startDatePicker']);
-            $this->data['SchedulingMaster']['startDate'] = "$datePickerDate[2]-$datePickerDate[0]-$datePickerDate[1] " . $this->data['SchedulingMaster']['startDateTime'];
-            
-            // endDate
-			$datePickerDate2 = explode('-', $this->data['SchedulingMaster']['endDatePicker2']);
-			if (in_array($this->data['SchedulingMaster']['offerTypeId'], array(3,4))) {
-				$this->data['SchedulingMaster']['endDate'] = "$datePickerDate2[2]-$datePickerDate2[0]-$datePickerDate2[1] 01:00:00";	
-			} else {
-				$this->data['SchedulingMaster']['endDate'] = "$datePickerDate2[2]-$datePickerDate2[0]-$datePickerDate2[1] 16:00:00";	
-			}            
+            // validation
+            if (!$this->data['isAuction'] && !$this->data['isBuyNow'] && !$this->data['isHotelOffer']) {
+                $this->Session->setFlash(__('You must schedule at least an auction or a buy now.', true), 'default', array(), 'error');
+            } elseif (!$this->data['SchedulingMaster']['pricePointId']) {
+                $this->Session->setFlash(__('You must choose a Price Point.', true), 'default', array(), 'error');
+            } elseif (!$this->data['Track']['Track'][0]) {
+                $this->Session->setFlash(__('Please select an LOA Track.', true), 'default', array(), 'error');
+            } else {
+                
+                // get validity start/end
+                $pricePointObj = new PricePoint();
+                $pricePointsValidities = $pricePointObj->getPricePointStartEnd($this->data['SchedulingMaster']['pricePointId']);
 
-			//if this is a mystery auction we override some fields
-			if (in_array(3, $this->data['MerchandisingFlag']['MerchandisingFlag'])) {
-			    $this->data['SchedulingMaster']['openingBid']   = $this->data['Mystery']['openingBid'];
-			    $this->data['SchedulingMaster']['bidIncrement'] = $this->data['Mystery']['bidIncrement'];
-			    $this->data['SchedulingMaster']['packageName']  = $this->data['Mystery']['packageName'];
-			    $this->data['SchedulingMaster']['subtitle']     = $this->data['Mystery']['subtitle'];
-			    $this->data['SchedulingMaster']['shortBlurb']   = $this->data['Mystery']['shortBlurb'];
-			}
-			
-			//associate the tracks from each client to this offer
-			//only if this is a multi client offer, single client comes from user selection
-			if (count($package['ClientLoaPackageRel']) > 1) {
-			    foreach ($package['ClientLoaPackageRel'] as $v) {
-    			    $this->data['Track']['Track'][] = $v['trackId'];
+    			$this->SchedulingMaster->create();
+    			$package = $this->SchedulingMaster->Package->findByPackageId($this->data['SchedulingMaster']['packageId']);
+    			$this->data['SchedulingMaster']['validityStartDate'] = $pricePointsValidities['startDate'];
+    			$this->data['SchedulingMaster']['validityEndDate'] = $pricePointsValidities['endDate'];
+    			$this->data['SchedulingMaster']['retailValue'] = $package['Package']['approvedRetailPrice'];
+    			$this->data['SchedulingMaster']['siteId'] = $package['Package']['siteId'];
+
+    			// startDate
+                $datePickerDate = explode('-', $this->data['SchedulingMaster']['startDatePicker']);
+                $this->data['SchedulingMaster']['startDate'] = "$datePickerDate[2]-$datePickerDate[0]-$datePickerDate[1] " . $this->data['SchedulingMaster']['startDateTime'];
+                
+                // endDate
+    			$datePickerDate2 = explode('-', $this->data['SchedulingMaster']['endDatePicker2']);
+    			if (in_array($this->data['SchedulingMaster']['offerTypeId'], array(3,4))) {
+    				$this->data['SchedulingMaster']['endDate'] = "$datePickerDate2[2]-$datePickerDate2[0]-$datePickerDate2[1] 01:00:00";	
+    			} else {
+    				$this->data['SchedulingMaster']['endDate'] = "$datePickerDate2[2]-$datePickerDate2[0]-$datePickerDate2[1] 16:00:00";	
+    			}            
+    
+    			//if this is a mystery auction we override some fields
+    			if (in_array(3, $this->data['MerchandisingFlag']['MerchandisingFlag'])) {
+    			    $this->data['SchedulingMaster']['openingBid']   = $this->data['Mystery']['openingBid'];
+    			    $this->data['SchedulingMaster']['bidIncrement'] = $this->data['Mystery']['bidIncrement'];
+    			    $this->data['SchedulingMaster']['packageName']  = $this->data['Mystery']['packageName'];
+    			    $this->data['SchedulingMaster']['subtitle']     = $this->data['Mystery']['subtitle'];
+    			    $this->data['SchedulingMaster']['shortBlurb']   = $this->data['Mystery']['shortBlurb'];
     			}
-			}
+    			
+    			//associate the tracks from each client to this offer
+    			//only if this is a multi client offer, single client comes from user selection
+    			if (count($package['ClientLoaPackageRel']) > 1) {
+    			    foreach ($package['ClientLoaPackageRel'] as $v) {
+        			    $this->data['Track']['Track'][] = $v['trackId'];
+        			}
+    			}
 
-			if ($this->SchedulingMaster->saveAll($this->data)) {
-				$this->createInstances();
-				
-				$numInstances = $this->SchedulingMaster->query("SELECT COUNT(*) as numInstances FROM schedulingInstance WHERE schedulingMasterId = ".$this->SchedulingMaster->id);
-				
-				//if no instances were created, delete this scheduling master
-				if($numInstances[0][0]['numInstances'] == 0) {
-					$this->SchedulingMaster->delete($this->SchedulingMaster->id);
-					$this->Session->setFlash(__('The Schedule could not be saved. The number of iterations could not fit within the Loa End Date', true), 'default', array(), 'error');
-				} else if ($this->RequestHandler->isAjax()) {
-					$this->Session->setFlash(__('The Schedule has been saved', true), 'default', array(), 'success');
-					$this->set('closeModalbox', true);
-				}
-			} else {
-				$this->Session->setFlash(__('The Schedule could not be saved. Please correct the errors below.', true), 'default', array(), 'error');
-			}
+                // create an auction
+                if ($this->data['isAuction']) {
+                    $this->data['SchedulingMaster']['offerTypeId'] = 1;
+                    $success = $this->addSave($this->data);
+                }
+                
+                // create a buy now
+                if ($this->data['isBuyNow']) {
+                    $this->data['SchedulingMaster']['offerTypeId'] = $this->data['buyNowOfferTypeId'];
+                    $success = $this->addSave($this->data);
+                }
+                
+                // create a hotel offer
+                if ($this->data['isHotelOffer']) {
+                    $success = $this->addSave($this->data);
+                }
+                
+                if ($success) {
+                    $this->Session->setFlash(__('The Schedule has been saved', true), 'default', array(), 'success');
+                    $this->set('closeModalbox', true);
+                }
+            }
+
+            // for save failure
+            $this->set('data', $this->data);
 		}
 		
 		$packageEndDate = explode('-', $package['Package']['endDate']);
@@ -98,16 +120,27 @@ class SchedulingMastersController extends AppController {
 		}
 		
 		//if no formats were selected for this package, we can't schedule it
+		// PKGR temp comment out so UAT can be done. no more formats - but price points now [alee]
+		/*
 		if (count($formatIds) == 0) {
 			echo '<h3>This package is not ready to be scheduled because no formats have been associated with it.</h3>';
 			die();
 		}
+		*/
+
 		//if package is not approved, do not allow scheduling
 		if ($package['Package']['packageStatusId'] != 4) {
 			echo '<h3>This package cannot be scheduled because it is not approved.</h3>';
 			die();
 		}
-		
+
+        // price points
+        $pricePointObj = new PricePoint();
+        $pricePoints = $pricePointObj->getPricePoint($packageId);
+        $pricePointsValidities = $pricePointObj->getPricePointValidities($packageId);
+        $this->set('pricePoints', $pricePoints);
+
+        // defaults		
 		if (empty($this->data) && isset($this->params['named']['date'])) {
 			$date = explode('-', $this->params['named']['date']);
             
@@ -115,11 +148,22 @@ class SchedulingMastersController extends AppController {
             $this->data['SchedulingMaster']['startDatePicker'] = date("m-d-Y", strtotime($this->params['named']['date']));
 			$this->data['SchedulingMaster']['startDateTime'] = date("H:00:00", strtotime("+2 hour"));
 			
-			// default endDate
+            // get default endDate from loa
 			$loa = $this->Loa->findByloaId($package['ClientLoaPackageRel'][0]['loaId']);
-			$end_dates = array($package['Package']['endDate'], date("Y-m-d", strtotime("-14 days", strtotime($package['Package']['validityEndDate']))), date("Y-m-d", strtotime($loa['Loa']['endDate'])));
-			sort($end_dates);
-			$this->data['SchedulingMaster']['endDatePicker2'] = date("m-d-Y", strtotime($end_dates[0]));
+            $loaEndDate = date("m-d-Y", strtotime($loa['Loa']['endDate']));
+            $this->data['SchedulingMaster']['endDatePicker2'] = $loaEndDate;
+
+            // get pricePoint endDates (14 days prior) if earlier than loa endDate
+            $pricePointDefaultEndDates = array();
+            foreach ($pricePointsValidities as $pricePointValidity) {
+                $pricePointEndDate = strtotime("-14 days", strtotime($pricePointValidity['LoaItemDate']['endDate']));
+                if ($pricePointEndDate < strtotime($loa['Loa']['endDate'])) {
+                    $pricePointDefaultEndDates[$pricePointValidity['PricePoint']['pricePointId']]['endDate'] =  date("m-d-Y", $pricePointEndDate);                    
+                } else {
+                    $pricePointDefaultEndDates[$pricePointValidity['PricePoint']['pricePointId']]['endDate'] = $loaEndDate;
+                }
+            }
+            $this->set('pricePointDefaultEndDates', $pricePointDefaultEndDates);
 			
 			// default numDaysToRun
 			$this->data['SchedulingMaster']['numDaysToRun'] = 2;
@@ -127,9 +171,9 @@ class SchedulingMastersController extends AppController {
 			// default iteration
 			$this->data['SchedulingMaster']['iterationSchedulingOption'] = 1;
 			
-			$this->data['SchedulingMaster']['packageName']              = trim($package['Package']['packageName']);
-			$this->data['SchedulingMaster']['mysteryIncludes']              = trim($package['Package']['packageIncludes']);
-			$this->data['SchedulingMaster']['retailValue']              = $package['Package']['approvedRetailPrice'];
+			$this->data['SchedulingMaster']['packageName']       = trim($package['Package']['packageName']);
+			$this->data['SchedulingMaster']['mysteryIncludes']   = trim($package['Package']['packageIncludes']);
+			$this->data['SchedulingMaster']['retailValue']       = $package['Package']['approvedRetailPrice'];
 		}
 	
 	    $this->setOfferTypeDefaultAndDropdown($packageId, $formatIds);
@@ -138,7 +182,7 @@ class SchedulingMastersController extends AppController {
 		$schedulingStatusIds 					= $this->SchedulingMaster->SchedulingStatus->find('list');
 		$schedulingDelayCtrlIds 				= $this->SchedulingMaster->SchedulingDelayCtrl->find('list');
 		$remittanceTypeIds 						= $this->SchedulingMaster->RemittanceType->find('list');
-    
+        
 		$this->set('package', 					$package);
 		$this->set('packageId', 				$packageId);
 		$this->set('merchandisingFlags', 		$merchandisingFlags);
@@ -146,6 +190,28 @@ class SchedulingMastersController extends AppController {
 		$this->set('schedulingDelayCtrlIds', 	$schedulingDelayCtrlIds);
 		$this->set('remittanceTypeIds', 		$remittanceTypeIds);
 	}
+    
+    function addSave($data) {
+        $this->data = $data;
+
+    	if ($this->SchedulingMaster->saveAll($this->data)) {
+    		$this->createInstances();
+    		
+    		$numInstances = $this->SchedulingMaster->query("SELECT COUNT(*) as numInstances FROM schedulingInstance WHERE schedulingMasterId = ".$this->SchedulingMaster->id);
+    		
+    		// if no instances were created, delete this scheduling master
+    		if ($numInstances[0][0]['numInstances'] == 0) {
+    			$this->SchedulingMaster->delete($this->SchedulingMaster->id);
+    			$this->Session->setFlash(__('The Schedule could not be saved. The number of iterations could not fit within the Loa End Date', true), 'default', array(), 'error');
+    		} else if ($this->RequestHandler->isAjax()) {
+    			return true;
+    		}
+    	} else {
+    		$this->Session->setFlash(__('The Schedule could not be saved. Please correct the errors below.', true), 'default', array(), 'error');
+    	}
+        
+        return false;
+    }
 	
 	function setOfferTypeDefaultAndDropdown($packageId, $formatIds, $schedulingMaster = false) {
 	    /* Get all Offer Types available for this package based on Format */
@@ -549,8 +615,12 @@ class SchedulingMastersController extends AppController {
 		    
 		    $trackIds = $this->SchedulingMaster->Package->ClientLoaPackageRel->Loa->Track->find('list', array('conditions' => array('loaId' => $package['ClientLoaPackageRel'][0]['loaId'])));
 		    $this->set('trackIds', $trackIds);
-		}		
-		
+		}
+        
+        // price points
+        $pricePoint = new PricePoint();
+        $this->set('pricePoints', $pricePoint->getPricePoint($packageId));
+
 		$this->set('masterState',				$masterState);
 		$this->set('package', 					$package);
 		$this->set('packageId', 				$packageId);

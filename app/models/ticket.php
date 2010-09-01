@@ -506,6 +506,61 @@ class Ticket extends AppModel {
 		return $smids;
 	}
 
+	function __runTakeDownPricePointNumPackages($pricePointId, $ticketId) {
+		$sql = "SELECT maxNumSales FROM pricePoint WHERE pricePointId = $pricePointId";
+		$result = $this->query($sql);
+		if(!empty($result) && isset($result[0]['pricePoint']['maxNumSales']) && is_numeric($result[0]['pricePoint']['maxNumSales']) && ($result[0]['pricePoint']['maxNumSales'] > 0)) {
+			$pricePointMaxNumSales = ($result[0]['pricePoint']['maxNumSales']);
+		} else {
+			$pricePointMaxNumSales = false;
+		}
+		
+		$sql = "SELECT count(*) AS COUNT FROM pricePoint 
+				INNER JOIN ticket USING(packageId) 
+				INNER JOIN paymentDetail pd ON pd.ticketId = ticket.ticketId AND pd.isSuccessfulCharge = 1                  
+				WHERE pricePointId = $pricePointId AND ticket.ticketStatusId NOT IN (7,8);";
+		$result = $this->query($sql);
+		if(!empty($result) && isset($result[0][0]['COUNT']) && is_numeric($result[0][0]['COUNT'])) {
+			$derived = $result[0][0]['COUNT'];	
+		} else {
+			$derived = false;
+		}
+		
+		if (($pricePointMaxNumSales !== false) && ($derived !== false)) {
+			$smids = array();
+			$data = $this->query("SELECT schedulingMasterId FROM schedulingMaster WHERE pricePointId = $pricePointId");
+			if (!empty($data)) {
+				foreach ($data as $k => $v) {
+					$smids[] = $v['schedulingMaster']['schedulingMasterId'];
+				}
+			}
+			if (!empty($smids)) {
+				$schedulingMasterIds = implode(',', $smids);
+				if (($derived + 1) >= $pricePointMaxNumSales) {
+					if ($this->__runTakeDown($schedulingMasterIds)) {
+						$debug = array();
+						$debug['INPUT']['pricePointId'] = $pricePointId;
+						$debug['INPUT']['ticketId'] = $ticketId;
+						$debug['DATA']['maxNumSales'] = $pricePointMaxNumSales;
+						$debug['DATA']['derived'] = $derived;
+						$debug['DATA']['smids'] = $smids;
+						$this->insertMessageQueuePackage($ticketId, 'PRICEPOINT');
+					}
+				} elseif (($pricePointMaxNumSales - ($derived + 1) == 1)) {
+					if ($this->__updateSchedulingOfferFixedPrice($schedulingMasterIds)) {
+						$debug = array();
+						$debug['INPUT']['pricePointId'] = $pricePointId;
+						$debug['INPUT']['ticketId'] = $ticketId;
+						$debug['DATA']['maxNumSales'] = $pricePointMaxNumSales;
+						$debug['DATA']['derived'] = $derived;
+						$debug['DATA']['smids'] = $smids;
+						$this->insertMessageQueuePackage($ticketId, 'PRICEPOINT_FP_ONLY');
+					}
+				}
+			}
+		}
+	}
+
 	function __runTakeDownPackageNumPackages($packageId, $ticketId) {
 		$packageMaxNumSales = $this->getPackageNumMaxSales($packageId);
 		$derivedPackageNumSales = $this->getDerivedPackageNumSales($packageId);
@@ -645,6 +700,23 @@ class Ticket extends AppModel {
 			$toUser = $result[0]['c']['managerUsername'];
 		
 			switch ($type) {
+				case 'PRICEPOINT':
+					$title = "[PRICE POINT] Maximum Number of Sales for Package [$packageName]";
+					$description = "A pending ticket (Ticket ID# <a href='/tickets/view/$ticketId'>$ticketId</a>) exists for that once funded will ";
+					$description.= "fulfill the Max Number of Sales for <a href='/clients/edit/$clientId'>$clientName</a> (Package ID# <a href='/clients/$clientId/packages/edit/$packageId'>$packageId</a>). ";
+					$description.= "All future auctions have been deleted and all fixed price offers have been closed for this package.";
+					$model = 'Package';
+					$modelId = $packageId;
+					break;
+				case 'PRICEPOINT_FP_ONLY':
+					$title = "[PRICE POINT] Fixed Price offers have been stopped to prevent overselling packages for [$clientName]";
+					$description = "Once Ticket ID# <a href='/tickets/view/$ticketId'>$ticketId</a> is funded, we will only need to sell one more package to ";
+					$description.= "fulfill the Max Number of Sales for Package [<a href='/clients/$clientId/packages/edit/$packageId'>$packageName</a>].  To prevent overselling, all Fixed Price ";
+					$description.= "offers running on this package have been taken down.<br /><br />";
+					$description.= "Client: <a href='/clients/edit/$clientId'>$clientName</a>";
+					$model = 'Package';
+					$modelId = $packageId;
+					break;
 				case 'PACKAGE':
 					$title = "Maximum Number of Sales for Package [$packageName]";
 					$description = "A pending ticket (Ticket ID# <a href='/tickets/view/$ticketId'>$ticketId</a>) exists for that once funded will ";

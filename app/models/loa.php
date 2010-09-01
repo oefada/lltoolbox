@@ -78,6 +78,11 @@ class Loa extends AppModel {
            }
          }
          return $currentLoaId;
-    } 
+    }
+    
+    function getClientLoas($clientId) {
+        return $this->query("SELECT * FROM loa Loa WHERE Loa.clientId = {$clientId} ORDER BY Loa.startDate DESC");
+    }
+    
 }
 ?>

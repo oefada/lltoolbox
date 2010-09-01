@@ -28,7 +28,7 @@ class OfferFamiliesController extends AppController {
 	    if (in_array('Geeks', $this->user['LdapUser']['groups']) ||
 	        in_array('Merchandising', $this->user['LdapUser']['groups']) ||
 	        in_array('publishing', $this->user['LdapUser']['groups'])
-		) {
+			) {
 	        return true;
 	    }
 	    

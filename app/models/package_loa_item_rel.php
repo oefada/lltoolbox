@@ -20,6 +20,20 @@ class PackageLoaItemRel extends AppModel {
 										  'associationForeignKey' => 'packageRatePeriodId'
 									)
 								);*/
+    
+    function updateInclusions($package) {
+        //update only Food and Beverage loa items
+        $query = "SELECT * FROM packageLoaItemRel PackageLoaItemRel
+                  INNER JOIN loaItem LoaItem ON LoaItem.loaItemId = PackageLoaItemRel.loaItemId
+                  WHERE PackageLoaItemRel.packageId = {$package['Package']['packageId']} AND LoaItem.loaItemTypeId = 5 AND quantity > 1";
+        if ($inclusions = $this->query($query)) {
+            foreach ($inclusions as $inclusion) {
+                $inclusion['PackageLoaItemRel']['quantity'] = $package['Package']['numNights'];
+                $this->create();
+                $this->save($inclusion);
+            }
+        }
+    }
 
 }
 ?>

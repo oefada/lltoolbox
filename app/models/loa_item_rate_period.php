@@ -61,5 +61,62 @@ class LoaItemRatePeriod extends AppModel {
 	    
 	    return true;
 	}
+    
+    /**
+     * Package revamp functions
+     **/
+    function getRatePeriods($roomNightId, $packageId=null) {
+        $query = "SELECT LoaItemRatePeriod.* FROM loaItemRatePeriod LoaItemRatePeriod
+                  WHERE loaItemId = {$roomNightId}
+                  ORDER BY LoaItemRatePeriod.loaItemRatePeriodId";
+        if ($ratePeriods = $this->query($query)) {
+            foreach ($ratePeriods as $i => &$ratePeriod) {
+                $query = "SELECT * FROM loaItemRate LoaItemRate ";
+                if ($packageId) {
+                    $query .= "LEFT JOIN loaItemRatePackageRel LoaItemRatePackageRel ON LoaItemRatePackageRel.loaItemRateId = LoaItemRate.loaItemRateId AND LoaItemRatePackageRel.packageId = {$packageId} ";
+                }
+                $query .= "WHERE LoaItemRate.loaItemRatePeriodId = {$ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId']}";
+                if ($rates = $this->query($query)) {
+                    $ratePeriod['LoaItemRate'] = $rates;
+                }
+                $query = "SELECT * FROM loaItemDate LoaItemDate
+                          WHERE LoaItemDate.loaItemRatePeriodId = {$ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId']}
+                          ORDER BY LoaItemDate.startDate";
+                if ($validity = $this->query($query)) {
+                    $ratePeriod['Validity'] = $validity;
+                }
+                else {
+                    $ratePeriod['Validity'] = array();
+                }
+            }
+            return $ratePeriods;
+        }
+    }
+    
+    function createFromPackage($loaItemId) {
+        $ratePeriod = array('loaItemId' => $loaItemId);
+        $this->create();
+        $this->save($ratePeriod);
+        return $this->getLastInsertID();
+    }
+    
+    function updateFromPackage($data, $packageId, $loaItemRatePeriodId) {
+        if ($this->save($data)) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    
+    function deleteFromPackage($data) {
+        foreach ($data as $ratePeriod) {
+            if (!empty($date['loaItemRatePeriodId'])) {
+                $this->delete($date['loaItemRatePeriodId']);
+            }
+        }
+    }
+    
+    
 }
 ?>

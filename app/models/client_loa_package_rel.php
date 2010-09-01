@@ -10,5 +10,9 @@ class ClientLoaPackageRel extends AppModel {
 						   'Client' => array('foreignKey' => 'clientId')
 						   );
 	var $actsAs = array('Logable');
+    
+    function getLoaId($packageId) {
+        return $this->field('loaId', array('packageId' => $packageId));
+    }
 }
 ?>

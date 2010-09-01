@@ -21,11 +21,12 @@ class LoaItem extends AppModel {
 							'RoomGrade' => array('foreignKey' => 'roomGradeId')
 							);
 
-	var $hasOne = array('PackageLoaItemRel' => array('foreignKey' => 'loaItemId', 'dependent' => true));
+	//var $hasOne = array('PackageLoaItemRel' => array('foreignKey' => 'loaItemId', 'dependent' => true));
 
 	var $hasMany = array('LoaItemRatePeriod' => array('foreignKey' => 'loaItemId', 'dependent'=> true),
 						 'Fee' => array('foreignKey' => 'loaItemId', 'dependent' => true),
-						 'LoaItemGroup' => array('foreignKey' => 'loaItemId', 'dependent' => true)
+						 'LoaItemGroup' => array('foreignKey' => 'loaItemId', 'dependent' => true),
+                         'PackageLoaItemRel' => array('foreignKey' => 'loaItemId')
 						);
 	
 	var $loaItems;	//used as storage for carving rate periods, stores the item details for all the items being carved
@@ -46,7 +47,7 @@ class LoaItem extends AppModel {
 	function carveRatePeriods($itemIds = array(), $quantities = array(), $startDate = null, $endDate = null) {
 		if(empty($itemIds)):
 			$itemIds = array($this->id);		//if no itemIds were passed, set the id to $this->id
-		elseif(is_int($itemIds)):
+		elseif(is_numeric($itemIds)):
 			$itemIds = array($itemIds);			//if only an integer was passed, set the id to the integer
 		elseif(!is_array($itemIds)):
 			return array();						//if no valid data was passed, return an empty array
@@ -137,7 +138,7 @@ class LoaItem extends AppModel {
 		$packageRatePeriods['Boundaries'] = $carvedBoundaries;
 		$packageRatePeriods['IncludedItems'] = $items;
 
-		return $packageRatePeriods;
+    	return $packageRatePeriods;
 
 		// legacy
 		/*
@@ -271,5 +272,326 @@ class LoaItem extends AppModel {
 
 		return $ratePeriodBoundaries;
 	}
+    
+    /**
+     * Package revamp functions
+     **/
+    
+    function getRoomTypesByPackage($packageId) {
+        $query = "SELECT * FROM loaItem LoaItem
+                  INNER JOIN packageLoaItemRel PackageLoaItemRel ON LoaItem.loaItemId = PackageLoaItemRel.loaItemId AND PackageLoaItemRel.packageId = {$packageId}
+                  WHERE LoaItem.loaItemTypeId = 21";
+        if ($group = $this->query($query)) {
+            $query = "SELECT * FROM loaItemGroup LoaItemGroup
+                      WHERE loaItemId = {$group[0]['LoaItem']['loaItemId']}";
+            $rooms = array();
+            if ($itemsInGroup = $this->query($query)) {
+                foreach($itemsInGroup as $groupItem) {
+                    $query = "SELECT * FROM loaItem LoaItem
+                              WHERE LoaItem.loaItemId = {$groupItem['LoaItemGroup']['groupItemId']}";
+                    if ($room = $this->query($query)) {
+                        $rooms[] = $room[0];
+                    }
+                }
+            }
+            return $rooms;
+        }
+        else {
+            $query = "SELECT * FROM loaItem LoaItem
+                      INNER JOIN packageLoaItemRel PackageLoaItemRel ON LoaItem.loaItemId = PackageLoaItemRel.loaItemId AND PackageLoaItemRel.packageId = {$packageId}
+                      WHERE LoaItem.loaItemTypeId IN (1, 12)";
+            if ($room = $this->query($query)) {
+                if ($room[0]['LoaItem']['loaItemTypeId'] == 12) {
+                    $query = "SELECT LoaItem.itemName FROM loaItem LoaItem
+                              INNER JOIN loaItemGroup LoaItemGroup ON LoaItemGroup.groupItemId = LoaItem.loaItemId
+                              WHERE LoaItemGroup.loaItemId = {$room[0]['LoaItem']['loaItemId']} AND LoaItem.loaItemTypeId = 1";
+                    if ($loaItem = $this->query($query)) {
+                        $room[0]['LoaItem']['itemName'] = $loaItem[0]['LoaItem']['itemName'];
+                        return $room;
+                    }
+                }
+                else {
+                    return $room;
+                }
+            }
+        }
+    }
+    
+    function getRoomTypesByLoa($packageId) {
+        if ($loaId = $this->getLoaId($packageId)) {
+            $query = "SELECT * FROM loaItem LoaItem
+		      INNER JOIN loaItemType LoaItemType USING (loaItemTypeId)
+                      LEFT JOIN packageLoaItemRel PackageLoaItemRel ON LoaItem.loaItemId = PackageLoaItemRel.loaItemId AND PackageLoaItemRel.packageId = {$packageId}
+                      WHERE LoaItem.loaId = {$loaId} AND LoaItem.loaItemTypeId IN (1, 12, 21) AND TRIM(LoaItem.itemName) <> 'Migrated Item'
+                      ORDER BY LoaItem.loaItemTypeId DESC";
+            if ($loaItems = $this->query($query)) {
+                $groupLoaItems = array();
+                foreach($loaItems as $i => &$loaItem) {
+                    if ($loaItem['LoaItem']['loaItemTypeId'] == 21) {
+                        if (!empty($loaItem['PackageLoaItemRel']['packageLoaItemRelId'])) {
+                            if ($groupItems = $this->query("SELECT * FROM loaItemGroup LoaItemGroup WHERE LoaItemGroup.loaItemId = {$loaItem['LoaItem']['loaItemId']}")) {
+                                foreach ($groupItems as $item) {
+                                    $groupLoaItems[$item['LoaItemGroup']['groupItemId']] = true;
+                                }
+                            }
+                        }
+                        unset($loaItems[$i]);
+                    }
+                    else {
+                        if (!empty($loaItem['PackageLoaItemRel']['packageLoaItemRelId'])) {
+                            $loaItem['LoaItem']['inPackage'] = 'true';
+                        }
+                        elseif (in_array($loaItem['LoaItem']['loaItemId'], array_keys($groupLoaItems))) {
+                            if ($groupLoaItems[$loaItem['LoaItem']['loaItemId']] === true) {
+                                $loaItem['LoaItem']['inPackage'] = 'true';
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        else {
+            $loaItems = array();
+        }
+        return $loaItems;
+    }
+    
+    function getPackageInclusions($packageId) {
+        $query = "SELECT * FROM loaItem LoaItem
+                  INNER JOIN packageLoaItemRel PackageLoaItemRel ON LoaItem.loaItemId = PackageLoaItemRel.loaItemId AND PackageLoaItemRel.packageId = {$packageId}
+                  INNER JOIN loaItemType LoaItemType USING (loaItemTypeId)
+                  WHERE LoaItem.loaItemTypeId NOT IN (1, 21)
+                  ORDER BY PackageLoaItemRel.weight";
+        $inclusions = $this->query($query);
+        foreach ($inclusions as &$inclusion) {
+            if (in_array($inclusion['LoaItem']['loaItemTypeId'], array(12,13,14))) {
+                $query = "SELECT * FROM loaItemGroup LoaItemGroup
+                          INNER JOIN loaItem LoaItem ON LoaItemGroup.groupItemId = LoaItem.loaItemId
+                          INNER JOIN loaItemType LoaItemType USING (loaItemTypeId)
+                          WHERE LoaItemGroup.loaItemId = {$inclusion['LoaItem']['loaItemId']}";
+                if ($packagedLoaItems = $this->query($query)) {
+                    foreach($packagedLoaItems as $i => $item) {
+                        $inclusion['LoaItem']['PackagedItems'][$i] = $item;
+                    }
+                }
+            }
+            $query = "SELECT * FROM fee Fee
+                      WHERE Fee.loaItemId = {$inclusion['LoaItem']['loaItemId']}";
+            if ($fees = $this->query($query)) {
+                foreach ($fees as $fee) {
+                    $taxes = 0;
+                    if ($fee['Fee']['feeTypeId'] == 1) {            //percentage
+                        $taxes += ($fee['Fee']['feePercent']/100)*$inclusion['LoaItem']['itemBasePrice'];
+                    }
+                    elseif ($fee['Fee']['feeTypeId'] == 2) {         //dollar amount
+                        $taxes += $fee['Fee']['feePercent'];
+                    }
+                }
+                $inclusion['LoaItem']['totalPrice'] = ($inclusion['LoaItem']['loaItemTypeId'] == 12) ? 0 : $inclusion['LoaItem']['itemBasePrice'] + $taxes;
+            }
+            else {
+                $inclusion['LoaItem']['totalPrice'] = $inclusion['LoaItem']['itemBasePrice'];
+            }
+        }
+        return $inclusions;
+    }
+    
+    function getAvailableInclusions($loaId, $packageId) {
+        $query = "SELECT * FROM loaItem LoaItem
+                  INNER JOIN loaItemType LoaItemType USING (loaItemTypeId)
+                  WHERE LoaItem.loaItemTypeId NOT IN (1, 12, 21) AND
+                        LoaItem.loaId = {$loaId} AND
+                        LoaItem.loaItemId NOT IN (
+                            SELECT loaItemId FROM loaItem
+                            INNER JOIN packageLoaItemRel USING (loaItemId)
+                            WHERE packageId = {$packageId} AND loaItemTypeId NOT IN (1, 12, 21)
+                        )
+                  ORDER BY LoaItem.merchandisingDescription";
+        if ($inclusions = $this->query($query)) {
+            foreach ($inclusions as &$inclusion) {
+                if (in_array($inclusion['LoaItem']['loaItemTypeId'], array(13,14))) {
+                    $query = "SELECT * FROM loaItemGroup LoaItemGroup
+                              INNER JOIN loaItem LoaItem ON LoaItemGroup.groupItemId = LoaItem.loaItemId
+                              INNER JOIN loaItemType LoaItemType USING (loaItemTypeId)
+                              WHERE LoaItemGroup.loaItemId = {$inclusion['LoaItem']['loaItemId']}";
+                    if ($packagedLoaItems = $this->query($query)) {
+                        foreach($packagedLoaItems as $i => $item) {
+                            $inclusion['LoaItem']['PackagedItems'][$i] = $item;
+                        }
+                    }
+                }
+                $query = "SELECT * FROM fee Fee
+                          WHERE Fee.loaItemId = {$inclusion['LoaItem']['loaItemId']}";
+                if ($fees = $this->query($query)) {
+                    foreach ($fees as $fee) {
+                        $taxes = 0;
+                        if ($fee['Fee']['feeTypeId'] == 1) {            //percentage
+                            $taxes += ($fee['Fee']['feePercent']/100)*$inclusion['LoaItem']['itemBasePrice'];
+                        }
+                        elseif ($fee['Fee']['feeTypeId'] == 2) {         //dollar amount
+                            $taxes += $fee['Fee']['feePercent'];
+                        }
+                    }
+                    $inclusion['LoaItem']['totalPrice'] = $inclusion['LoaItem']['itemBasePrice'] + $taxes;
+                }
+                else {
+                    $inclusion['LoaItem']['totalPrice'] = $inclusion['LoaItem']['itemBasePrice'];
+                }
+            }
+        }
+        else {
+            $inclusions = array();
+        }
+        return $inclusions;
+    }
+    
+    function getLoaId($packageId) {
+        $query = "SELECT loaId FROM clientLoaPackageRel ClientLoaPackageRel
+                  WHERE packageId = {$packageId}";
+        if ($loaId = $this->query($query)) {
+            return $loaId[0]['ClientLoaPackageRel']['loaId'];
+        }
+    }
+    
+    function getLoaItem($loaItemId) {
+        return $this->find('first', array('conditions' => array('LoaItem.loaItemId' => $loaItemId)));
+    }
+    
+    function savePackageRatePeriods($data, $packageId) {
+        
+    }
+    
+    function getRoomNights($packageId) {
+        if ($roomLoaItems = $this->getRoomTypesByPackage($packageId)) {
+            $this->bindModel(array('hasOne' =>  array('Package')));
+            $totalNights = $this->Package->field('numNights', array('packageId' => $packageId));
+            $this->unbindModel(array('hasOne' =>  array('Package')));
+            
+            $ratePeriods = array();
+            
+            if ($rates = $this->LoaItemRatePeriod->getRatePeriods($roomLoaItems[0]['LoaItem']['loaItemId'], $packageId)) {
+                foreach($rates as &$rate) {
+                    foreach ($roomLoaItems as &$loaItem) {
+                        if ($loaItemRates = $this->LoaItemRatePeriod->LoaItemRate->getRoomRates($loaItem['LoaItem']['loaItemId'], $packageId, $rate['LoaItemRatePeriod']['loaItemRatePeriodId'])) {
+                            $loaItem['LoaItemRate'] = $loaItemRates;
+                        }
+                        else {
+                            if ($secondRatePeriods = $this->LoaItemRatePeriod->getRatePeriods($loaItem['LoaItem']['loaItemId'], $packageId)) {
+                                foreach ($secondRatePeriods as $ratePeriod) {
+                                    if ($ratePeriod['Validity'][0]['LoaItemDate']['startDate'] == $rate['Validity'][0]['LoaItemDate']['startDate']) {
+                                        if ($loaItemRates = $this->LoaItemRatePeriod->LoaItemRate->getRoomRates($loaItem['LoaItem']['loaItemId'], $packageId, $ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId'])) {
+                                            $loaItem['LoaItemRate'] = $loaItemRates;
+                                            break 2;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    $thisRate = array();
+                    $thisRate['Validity'] = $rate['Validity'];
+                    unset($rate['Validity']);
+                    foreach ($roomLoaItems as $room) {
+                        $thisRate['LoaItems'][] = array_merge($rate, $room);
+                    }
+                    $fees = $this->Fee->getFeesForRoomType($roomLoaItems[0]['LoaItem']['loaItemId']);
+                    if (!empty($fees)) {
+                        $thisRate['Fees'] = $fees;
+                    }
+                    else {
+                        $thisRate['Fees'] = array();
+                    }
+                    $thisRate['Totals']['totalAccommodations'] = $this->calcTotalAccommodations($roomLoaItems, $fees, $totalNights);
+                    $ratePeriods[] = $thisRate;
+                }
+                
+            }
+            //debug($ratePeriods);
+            //die();
+            return $ratePeriods;
+        }
+    }
+    
+    function array_search_key($key, $array, $value) {
+        foreach($array as $a) {
+            if (isset($a[$key])) {
+                if ($a[$key] === $value) {
+                    return true;
+                }
+            }
+            else {
+                return $this->array_search_key($key, $a, $value);
+            }
+        }
+    }
+    
+    function calcTotalAccommodations($rate, $fees, $totalNights) {
+        $rates = array();
+        $i = 0;
+        foreach ($rate as $roomRate) {
+            foreach ($roomRate['LoaItemRate'] as $price) {
+                $taxes = 0;
+                if (!empty($fees)) {
+                    foreach ($fees as $fee) {
+                        if ($fee['Fee']['feeTypeId'] == 1) {            //percentage
+                            $taxes += ($fee['Fee']['feePercent']/100)*$price['LoaItemRate']['price'];
+                        }
+                        elseif ($fee['Fee']['feeTypeId'] == 2) {       //dollar amount
+                            $resortFee = ($roomRate['LoaItem']['loaItemTypeId'] == 12) ? $fee['Fee']['feePercent'] * $totalNights : $fee['Fee']['feePercent'];
+                            $taxes += $resortFee;
+                        }
+                    }
+                }
+                if (!empty($price['LoaItemRatePackageRel']['numNights'])) {
+                    $totalNights = $price['LoaItemRatePackageRel']['numNights'];
+                }
+                if ($roomRate['LoaItem']['loaItemTypeId'] == 12) {
+                    $rates[$i] = $price['LoaItemRate']['price'] + $taxes;
+                }
+                else {
+                    $rates[$i] = ($price['LoaItemRate']['price'] + $taxes) * ($totalNights);
+                }
+                $i++;
+            }
+        }
+        $total = 0;
+        foreach ($rates as $price) {
+            $total += $price;
+        }
+        return $total;
+    }
+    
+    function createRoomGroup($loaItemIds, $loaId, $packageId) {
+        $loaItems = array();
+        foreach ($loaItemIds as $loaItemId) {
+            $loaItems[] = $loaItemId['loaItemId'];
+        }
+        $ids = implode(',', $loaItems);
+        $query = "SELECT * FROM loaItemGroup LoaItemGroup
+                  INNER JOIN packageLoaItemRel PackageLoaItemRel ON LoaItemGroup.groupItemId = PackageLoaItemRel.loaItemId
+                  WHERE groupItemId IN ({$ids}) AND packageId = {$packageId}";
+        if ($group = $this->query($query)) {
+            return $group[0]['LoaItemGroup']['loaItemId'];
+        }
+        else {
+            $groupLoaItem = array('loaItemTypeId' => 21,
+                                  'loaId' => $loaId,
+                                  'itemName' => 'Multiple Room Package: '.$packageId
+                          );
+            $this->create();
+            $this->save($groupLoaItem);
+            $loaItemId = $this->getLastInsertID();
+            foreach($loaItemIds as $room) {
+                $data = array('groupItemId' => $room['loaItemId'],
+                              'loaItemId' => $loaItemId,
+                              'quantity' => 1
+                      );
+                $this->LoaItemGroup->create();
+                $this->LoaItemGroup->save($data);
+            }
+            return $loaItemId;
+        }
+    }
+    
 }
 ?>

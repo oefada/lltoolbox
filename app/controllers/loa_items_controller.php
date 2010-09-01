@@ -45,7 +45,12 @@ class LoaItemsController extends AppController {
 			$loaItemData = array();
 			$loaItemData['LoaItem'] = $this->data['LoaItem'];
 			$loaItemData['Fee'] = $this->data['Fee'];
-			
+
+			// get currency id from loa
+			$loa = $this->LoaItem->query('SELECT currencyId FROM loa WHERE loaId = ' . $loaItemData['LoaItem']['loaId']);
+			$currencyId = $loa[0]['loa']['currencyId'];
+			$loaItemData['LoaItem']['currencyId'] = $currencyId;
+
 			// handle group saves -- prepare LoaItemGroup 
 			// ---------------------------------------------------------
 			if ($this->isGroup) {

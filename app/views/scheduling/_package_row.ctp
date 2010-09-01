@@ -5,7 +5,7 @@
 <div class='handle'>&nbsp;</div>
 <div class='pkgTitle clearfix'>
 	<div class='title' id='packageTitle<?=$package['Package']['packageId']?>'>
-		<?=$html->link($text->truncate(trim($package['Package']['packageName']), 45), "/clients/$clientId/packages/edit/{$package['Package']['packageId']}")?> <?=$html2->c($package['Package']['packageId'], 'ID')?>
+		<?=$html->link($text->truncate(trim($package['Package']['packageName']), 45), "/clients/$clientId/packages/summary/{$package['Package']['packageId']}")?> <?=$html2->c($package['Package']['packageId'], 'ID')?>
 		<?=$html->link("View on {$site}", "http://www.".$urls[$site]."/luxury-hotels/{$package['Client']['seoName']}.html?clid={$package['Client']['clientId']}&pkid={$package['Package']['packageId']}", array('target' => '_blank'))?>
 	</div>
 	<div class='scheduleThisPackage'>

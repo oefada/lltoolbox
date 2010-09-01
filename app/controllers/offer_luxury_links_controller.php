@@ -23,12 +23,12 @@ class OfferLuxuryLinksController extends AppController {
 	
 	//Limit access to this controller
 	function isAuthorized() {
-	    $authorized_groups = array('Merchandising', 'Geeks');
+	    $authorized_groups = array('Merchandising', 'Geeks', 'publishing');
 	    
 	    if (in_array('Geeks', $this->user['LdapUser']['groups']) ||
-	        in_array('Merchandising', $this->user['LdapUser']['groups']) ||
+	        in_array('Merchandising', $this->user['LdapUser']['groups']) || 
 	        in_array('publishing', $this->user['LdapUser']['groups'])
-		) {
+			) {
 	        return true;
 	    }
 	    

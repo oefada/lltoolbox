@@ -1,3 +1,6 @@
+<?php if (isset($_GET['overlayForm'])) {
+        $this->layout = 'overlay_form';
+} ?>
 <div class="loaItems form">
 <?php
 if ($isGroup) {
@@ -139,7 +142,7 @@ if ($isGroup) {
 									<strong style="font-size:11px;"><?=$currencyCode;?></strong>
 									<input type="text" style="width:50px;" class="rp_price" id="<?=$rpid;?>_rpd_7" name="data[LoaItemRatePeriod][<?=$rpid;?>][LoaItemRate][0][price]" value="<?=$vv['LoaItemRate'][0]['price'];?>" />
 									<div style="margin-top:5px;padding:0px;">
-										<!--a href="javascript:void(0);" onclick="toggleF('<?=$rpid;?>', 's', 'm');">Different prices for weeknights/weekends</a-->
+										<a href="javascript:void(0);" onclick="toggleF('<?=$rpid;?>', 's', 'm');">Different prices for weeknights/weekends</a>
 									</div>
 
 									<?php if ($vv['LoaItemRate'][0]['loaItemRateId']) : ?>
@@ -179,11 +182,17 @@ if ($isGroup) {
 									<?php endif; ?>
 								</div>
 								<div style="margin-top:5px;padding:0px;">
-									<!--a href="javascript:void(0);" onclick="toggleF('<?=$rpid;?>', 'm','s');">One price for all nights</a-->
+									<a href="javascript:void(0);" onclick="toggleF('<?=$rpid;?>', 'm','s');">One price for all nights</a>
 								</div>
 							</div>
 						</div>
+						
+						<?php if (count($vv['LoaItemRate']) == 1) :?>
 						<script>toggleF('<?=$rpid;?>', 'm', 's');</script>
+						<?php else: ?>
+						<script>toggleF('<?=$rpid;?>', 's', 'm');</script>
+						<?php endif; ?>
+
 					</td>
 				</tr>
 				<?php endforeach;?>

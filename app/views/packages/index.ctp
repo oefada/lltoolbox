@@ -28,7 +28,7 @@ foreach ($packages as $package):
 			<?php echo $package['ClientLoaPackageRel']['loaId']; ?>
 		</td>
 		<td>
-			<?php echo $html->link($package['Package']['packageName'], "/clients/$clientId/packages/edit/{$package['Package']['packageId']}"); ?>
+			<?php echo $html->link($package['Package']['packageName'], "/clients/$clientId/packages/summary/{$package['Package']['packageId']}"); ?>
 		</td>
 		<td>
 			<?php echo $packageStatusIds[$package['Package']['packageStatusId']]; ?>
@@ -43,7 +43,7 @@ foreach ($packages as $package):
 			<?php echo $html2->date($package['Package']['created']); ?>
 		</td>
 		<td class="actions">
-			<?php echo $html->link(__('View Details', true), "/clients/$clientId/packages/edit/{$package['Package']['packageId']}"); ?>
+			<?php echo $html->link(__('View Details', true), "/clients/$clientId/packages/summary/{$package['Package']['packageId']}"); ?>
 		</td>
 	</tr>
 <?php endforeach; ?>

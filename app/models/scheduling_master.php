@@ -31,7 +31,7 @@ class SchedulingMaster extends AppModel {
 								          'foreignKey' => 'schedulingMasterId',
 								          'associationForeignKey' => 'trackId')
 								);
-	
+
 	var $validate = array('numDaysToRun' => array('rule' => 
 												array('comparison', '>=', 1),
 												'message' => 'Must be greater than or equal to 1'
@@ -50,14 +50,14 @@ class SchedulingMaster extends AppModel {
 													array('validateDateRanges'),
 													'message' => 'Must be greater than today and greater than the start date')
 												),
-						'openingBid' => array('rule' =>
+/*						'openingBid' => array('rule' =>
                         							array('validateOpeningBid'),
                         							'message' => 'Opening bid cannot be $0.00. Adjust the package and then return to schedule it.'
                         							),
                         'buyNowPrice' => array('rule' => 
                                                     array('validatebuyNowPrice'),
                                                     'message' => 'Buy Now Price cannot be $0.00. Adjust the package and then return to schedule it.'
-                                                    ),
+                                                    ),*/
                         'offerTypeId' => array('rule' => VALID_NOT_EMPTY,
                                                     'message' => 'Offer type is a required field.'
                                                     )

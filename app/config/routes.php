@@ -97,5 +97,5 @@
 //ROUTES ADDED 02-09-10 to handle ajax requests for newsletter scheduling tool
     Router::connect('/mailings/addVariationToSection/:mailingId/:sectionId', array('controller' => 'mailings', 'action' => 'addVariationToSection'), array('mailingId' => '[0-9]+', 'sectionId' => '[0-9]+',  'pass' => array('mailingId', 'sectionId')));
     Router::connect('/mailings/deleteFromVariation/:mailingPackageSectionRelId', array('controller' => 'mailings', 'action' => 'deleteFromVariation'), array('mailingPackageSectionRelId' => '[0-9]+',  'pass' => array('mailingPackageSectionRelId')));
-    Router::connect('/mailings/suggestClients/:mailingId', array('controller' => 'mailings', 'action' => 'suggestClients'), array('mailingId' => '[0-9]+', 'pass' => array('mailingId')));
+    Router::connect('/mailings/suggestClients/:mailingId', array('controller' => 'mailings', 'action' => 'suggestClients'), array('mailingId' => '[0-9]+', 'pass' => array('mailingId')));    
 ?>

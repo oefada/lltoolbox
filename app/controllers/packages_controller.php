@@ -11,6 +11,8 @@ class PackagesController extends AppController {
 		$this->set('searchController' ,'client');
 		$this->set('currentTab', 'property');
 		$this->set('searchController' ,'client');
+        $this->set('client', $this->Client->findByClientId($this->params['clientId']));
+		$this->set('clientId', $this->params['clientId']);
 	}
 
 	function index($clientId = null) {
@@ -76,6 +78,13 @@ class PackagesController extends AppController {
 	}
 	
 	function add($clientId = null) {
+        if (!empty($this->data)) {
+            if ($this->data[Package]['packageType'] == '0') {
+                $this->redirect('/clients/'.$clientId.'/packages/edit_package/0?loaId='.$this->data['ClientLoaPackageRel'][0]['loaId']);
+                return;
+            }
+        }
+        
 		$this->set('clientId', $clientId);
 		$this->set('currentTab', 'property');
 
@@ -733,15 +742,20 @@ class PackagesController extends AppController {
 	        $subject = $clientData['Client']['name'] . ' - Package awaiting approval';
 	        
 	        $body = "The following package was submitted for approval by ".$this->user['LdapUser']['displayname'].": ";
-	        $body .= "http://toolbox.luxurylink.com/clients/$clientId/packages/edit/$packageId";
+	        $body .= "http://toolbox.luxurylink.com/clients/$clientId/packages/summary/$packageId";
 	        $body .= "\n\nAdditional Message: ";
 	        $body .= $this->data['additionalMessage'];
 	        
 	        $headers = "Reply-To: {$this->user['LdapUser']['mail']}\n";
 	        $headers .= "From: {$this->user['LdapUser']['mail']}";
-                
-            if(mail('approval@luxurylink.com', $subject, $body, $headers)) {
-                $this->set('closeModalbox', true);
+            
+			if (stristr($_SERVER['HTTP_HOST'], 'dev') || stristr($_SERVER['HTTP_HOST'], 'stage')) {
+				$emailTo = 'devmail@luxurylink.com';
+			} else {
+				$emailTo = 'approval@luxurylink.com';
+			}
+
+            if (mail($emailTo, $subject, $body, $headers)) {
                 $this->Session->setFlash(__('The Package has been submitted for Merchandising approval', true), 'default', array(), 'success');
             } else {
                 $this->Session->setFlash(__('The Package could not be sent to merchandising for approval', true), 'default', array(), 'error');
@@ -769,6 +783,1350 @@ class PackagesController extends AppController {
 		$this->set('data', null);
 		$this->render('_age_range_row');
 	}
+    
+    /**
+     * Package revamp functions
+     **/
+    
+    function summary($clientId, $packageId) {
+        // client
+        $client = $this->Client->find('first', array('conditions' => array('Client.clientId' => $clientId)));
+        $this->set('client', $client);
+        $package = $this->Package->getPackage($packageId);
+        $this->set('package', $package);
+	
+        if (!empty($this->data)) {
+           $package['Package']['notes'] = $this->data['Package']['notes'];
+           $this->Package->save($package);
+        }
+        //debug($package);
+        $history = $this->Package->getHistory($packageId);
+        $this->set('history', $history);
+        if ($roomNights = $this->LoaItem->getRoomNights($packageId)) {
+            if (count($roomNights[0]['LoaItems'][0]['LoaItemRate']) > 1) {
+                $this->set('isDailyRates', true);
+                $dailyRatesMap = array('w0' => 'Su',
+                                       'w1' => 'M',
+                                       'w2' => 'T',
+                                       'w3' => 'W',
+                                       'w4' => 'Th',
+                                       'w5' => 'F',
+                                       'w6' => 'S');
+                for ($i=1; $i<=count($roomNights[0]['LoaItems'][0]['LoaItemRate']); $i++) {
+                    $labelArr = array();
+                    foreach($dailyRatesMap as $field => $label) {
+                        if ($roomNights[0]['LoaItems'][0]['LoaItemRate'][$i-1]['LoaItemRate'][$field] == 1) {
+                            $labelArr[] = $label;
+                        }
+                    }
+                    $roomNights[0]['LoaItems'][0]['LoaItemRate'][$i-1]['LoaItemRate']['rateLabel'] = implode('/', $labelArr);
+                }
+            }
+            if ($package['Package']['isTaxIncluded'] == 1) {
+                if ($taxes = $this->LoaItem->Fee->getFeesForRoomType($roomNights[0]['LoaItems'][0]['LoaItem']['loaItemId'])) {
+                    $taxArr = array();
+                    foreach ($taxes as $tax) {
+                        $taxArr[] = $tax['Fee']['feeName'];
+                    }
+                    $this->set('taxLabel', implode(' and ', $taxArr));
+                }
+            }
+        }
+		
+		// blackout validity
+		$pkgVbDates = $this->Package->getPkgVbDates($packageId);
+        if (!empty($pkgVbDates)) {
+			if (empty($pkgVbDates['BlackoutDays'])) {
+				$pkgVbDates['BlackoutDays'] = array();
+			}
+            $this->set('validity', $pkgVbDates['ValidRanges']);
+            $this->set('blackout', $pkgVbDates['BlackoutDays']);
+        }
+       
+		// blackout weekday
+		$bo_weekdays = $this->Package->getBlackoutWeekday($packageId);
+		$bo_weekdays_arr = array();
+		foreach (explode(',', $bo_weekdays) as $w) {
+			$bo_weekdays_arr[] = $this->Package->pluralize($w);
+		}
+		$this->set('bo_weekdays', implode('<br />', $bo_weekdays_arr));
 
+        $this->set('ratePeriods', $roomNights);
+        $inclusions = $this->LoaItem->getPackageInclusions($packageId);
+        $this->set('inclusions', $inclusions);
+
+        // low price guarantees
+        $lowPriceGuarantees = $this->getRatePeriodsInfo($packageId);
+        $this->set('lowPriceGuarantees', $lowPriceGuarantees);
+        
+        // price points
+        $pricePoints = $this->Package->PricePoint->find('all', array('conditions' => array('PricePoint.packageId' => $packageId)));
+        $this->set('pricePoints', $pricePoints);
+        
+		// currency
+		$currencyCodes = $this->Package->Currency->find('list', array('fields' => 'currencyCode'));
+		$this->set('currencyCodes', $currencyCodes);
+		
+		switch($package['Package']['siteId']) {
+			case 2:
+			   $this->set('siteUrl', 'www.familygetaway.com');
+			   break;
+			case 1:
+			default:
+			   $this->set('siteUrl', 'www.luxurylink.com');
+		}
+    }
+    
+    function edit_package($clientId, $packageId) {
+        if (!empty($this->data)) {
+            $package = $this->data;
+            if ($_POST['isAjax'] == 'true') {
+                $this->autoRender = false;
+            }
+            if ($errors = $this->validatePackage($package)) {
+                if ($_POST['isAjax'] == 'true') {
+                    echo json_encode($errors);
+                    return;
+                }
+                else {
+                    $this->Session->setFlash(implode('<br />', $errors));
+                    $this->set('package', $package);
+                    $this->set('packageId', $packageId);
+                    $clientLoas = $this->Client->Loa->getClientLoas($clientId);
+                    $statuses = $this->Package->PackageStatus->getPackageStatus();
+                    $currencyCodes = $this->Package->Currency->find('list', array('fields' => 'currencyCode'));
+                    $this->set('currencyCodes', $currencyCodes);
+                    $this->set('loas', $clientLoas);
+                    $this->set('statuses', $statuses);
+                    return;
+                }
+            }
+            if (empty($this->data['Package']['packageId'])) {
+                $this->data['Package']['packageId'] = $packageId;
+            }
+            if (!empty($this->data['Package']['rateDisclaimerDesc']) && !empty($this->data['Package']['rateDisclaimerDate'])) {
+                $this->data['Package']['rateDisclaimer'] = "Nightly rates based on {$this->data['Package']['rateDisclaimerDesc']}, as found through booking engine {$this->data['Package']['rateDisclaimerDate']}";
+            }
+            else {
+                $this->data['Package']['rateDisclaimer'] = $this->data['Package']['customRateDisclaimerText'];
+                $this->data['Package']['rateDisclaimerDesc'] = null;
+                $this->data['Package']['rateDisclaimerDate'] = null;
+            }
+            if (empty($this->data['PackageAgeRange']['packageAgeRangeId'])) {
+                unset($this->data['PackageAgeRange']['packageAgeRangeId']);
+            }
+            if (empty($this->data['PackageAgeRange']['rangeLow']) && empty($this->data['PackageAgeRange']['rangeHigh'])) {
+                unset($this->data['PackageAgeRange']['rangeLow']);
+                unset($this->data['PackageAgeRange']['rangeHigh']);
+            }
+            unset($this->data['Package']['customRateDisclaimerText']);
+            
+            if (!empty($this->data['Package']['siteId'])) {
+                switch ($this->data['Package']['siteId']) {
+                    case 1:
+                        $this->data['Package']['sites'] = array('luxurylink');
+                        break;
+                    case 2:
+                        $this->data['Package']['sites'] = array('family');
+                        break;
+                    default:
+                        break;
+                }
+            }
+            
+            if ($_POST['isAjax'] == 'true') {
+                if ($this->Package->saveAll($this->data)) {
+                    if (empty($package['Package']['packageId'])) {
+                        $packageId = $this->Package->getLastInsertId();
+                        $package['Package']['packageId'] = $packageId;
+                    }
+                    $this->Package->PackageLoaItemRel->updateInclusions($package);
+                    if (!empty($package['LoaItemRatePackageRel'])) {
+                        $this->Package->LoaItemRatePackageRel->setNumNights(&$package);
+                        $this->Package->LoaItemRatePackageRel->save($package);
+                    }
+                    echo 'ok';
+                }
+                else {
+                    echo json_encode($this->Package->validationErrors);
+                }
+            }
+            else {
+                if ($this->Package->saveAll($this->data)) {
+                    if (empty($package['Package']['packageId'])) {
+                        $packageId = $this->Package->getLastInsertId();
+                        $relData = array('packageId' => $packageId,
+                                         'clientId' => $clientId,
+                                         'loaId' => $package['Package']['loaId'],
+                                         'numNights' => $package['Package']['numNights']);
+                        $this->Package->ClientLoaPackageRel->create();
+                        $this->Package->ClientLoaPackageRel->save($relData);
+                        $package['Package']['packageId'] = $packageId;
+                    }
+                    if (!empty($package['LoaItemRatePackageRel'])) {
+                        $this->Package->LoaItemRatePackageRel->setNumNights(&$package);
+                        $this->Package->LoaItemRatePackageRel->save($package['LoaItemRatePackageRel']);
+                    }
+                    $this->redirect('/clients/'.$clientId.'/packages/summary/'.$packageId);
+                }
+                else {
+                    $this->Session->setFlash($this->Package->validationErrors);
+                    //$this->redirect('/clients/'.$clientId.'/packages/edit_package/0?loaId='.$this->data['ClientLoaPackageRel'][0]['loaId']);
+                }
+            }
+        }
+        else {
+            if ($packageId) {
+                $package = $this->Package->getPackage($packageId);
+            }
+            else {
+                $this->Package->ClientLoaPackageRel->Loa->recursive = -1;
+                $loa = $this->Package->ClientLoaPackageRel->Loa->find('first', array('conditions' => array('Loa.loaId' => $_GET['loaId'])));
+                $packageObj = new Package();
+                $package['Package'] = $packageObj->schema();
+                foreach ($package['Package'] as &$field) {
+                    $field = '';
+                }
+                $package['Package']['sites'] = array();
+                $package['Package']['packageStatusId'] = 1;
+                $package['Loa'] = $loa['Loa'];
+            }
+            $this->data = $package;
+            $this->set('package', $package);
+            $this->set('packageId', $packageId);
+            $clientLoas = $this->Client->Loa->getClientLoas($clientId);
+            $statuses = $this->Package->PackageStatus->getPackageStatus();
+            $this->set('loas', $clientLoas);
+            $this->set('statuses', $statuses);
+    
+            // PKGR - currency
+            $currencyCodes = $this->Package->Currency->find('list', array('fields' => 'currencyCode'));
+            $this->set('currencyCodes', $currencyCodes);
+        }
+    }
+    
+    function validatePackage($data) {
+        $fields = array('siteId' => 'Site',
+                        'loaId' => 'Loa',
+                        'isBarter' => 'Barter/Remit',
+                        'packageStatusId' => 'Status',
+                        'packageName' => 'Working Name',
+                        'numGuests' => 'Max Num Guests',
+                        'minGuests' => 'Min Num Guests',
+                        'maxAdults' => 'Max Num Adults',
+                        'numNights' => 'Total Nights',
+                        'currencyId' => 'Currency',
+                        'disclaimer' => 'Disclaimer');
+        $errors = array();
+        foreach ($fields as $fieldName => $displayName) {
+            if ($fieldName == 'siteId') {
+                if (empty($data['Package']['siteId'])) {
+                    $errors[] = 'Site is missing.';
+                }
+                elseif ($data['Package']['siteId'] == 2) {
+                    $ageRangeFields = array('rangeLow' => 'Minimum Age',
+                                            'rangeHigh' => 'Maximum Age');
+                    foreach ($ageRangeFields as $rangeField => $label) {
+                        if (empty($data['PackageAgeRange'][$rangeField]) && $data['PackageAgeRange'][$rangeField] != '0') {
+                            $errors[] = "{$label} is missing.";
+                        }
+                    }
+                }
+            }
+            elseif ($fieldName == 'disclaimer') {
+                if (empty($data['Package']['customRateDisclaimerText'])) {
+                    if (empty($data['Package']['rateDisclaimerDesc']) || empty($data['Package']['rateDisclaimerDate'])) {
+                        $errors[] = 'Disclaimer is missing or incomplete.';
+                    }
+                }
+            }
+            else {
+                if (empty($data['Package'][$fieldName]) && $data['Package'][$fieldName] != '0') {
+                    $errors[] = "{$displayName} is missing.";
+                }
+            }
+        }
+        return $errors;
+    }
+    
+    function edit_room_loa_items($clientId, $packageId) {
+        $packageCurrencyId = $this->Package->Currency->getPackageCurrencyId($packageId);
+        if (!empty($this->data)) {
+            //echo print_r($this->data);
+            //die();
+            $items = 0;
+            $packageLoaItemIds = array();
+            $groupItems = $this->LoaItem->LoaItemGroup->getLoaItemIds($packageId);
+            $loaId = $this->Package->ClientLoaPackageRel->field('loaId', array('ClientLoaPackageRel.packageId' => $packageId));
+            if (isset($this->data['NewLoaItem'])) {
+                $isNewItem = true;
+                foreach ($this->data['NewLoaItem'] as $newRoom) {
+                    $data = array('loaItemTypeId' => 1,
+                                  'loaId' => $loaId,
+                                  'itemName' => $newRoom['itemName'],
+                                  'currencyId' => $packageCurrencyId
+                                  );
+                    $this->LoaItem->create();
+                    $this->LoaItem->save($data);
+                    $loaItemId = $this->LoaItem->getLastInsertID();
+            
+                    $roomLoaItems = $this->LoaItem->getRoomTypesByPackage($packageId);
+                    if (empty($roomLoaItems)) {
+                        if (!empty($this->data['LoaItem'])) {
+                            foreach($this->data['LoaItem'] as $itemId => $item) {
+                            if (isset($item['checked'])) {
+                                $this->LoaItem->recursive = -1;
+                                $roomLoaItems = $this->LoaItem->find('all', array('conditions' => array('LoaItem.loaItemId' => $itemId)));
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (!empty($roomLoaItems)) {
+                    if ($ratePeriods = $this->LoaItem->LoaItemRatePeriod->getRatePeriods($roomLoaItems[0]['LoaItem']['loaItemId'], $packageId)) {
+                        foreach ($ratePeriods as $ratePeriod) {
+                            $rp = array('LoaItemRatePeriod' => array('loaItemId' => $loaItemId));
+                            $this->LoaItem->LoaItemRatePeriod->create();
+                            $this->LoaItem->LoaItemRatePeriod->save($rp);
+                            $ratePeriodId = $this->LoaItem->LoaItemRatePeriod->getLastInsertId();
+                            if (isset($ratePeriod['LoaItemRate'])) {
+                            foreach ($ratePeriod['LoaItemRate'] as $rate) {
+                                $numNights = $rate['LoaItemRatePackageRel']['numNights'];
+                                $newRate = array('LoaItemRate' => array('loaItemRatePeriodId' => $ratePeriodId));
+                                for ($i=0; $i<=6; $i++) {
+                                $newRate['LoaItemRate']['w'.$i] = $rate['LoaItemRate']['w'.$i];
+                                }
+                                $this->LoaItem->LoaItemRatePeriod->LoaItemRate->create();
+                                $this->LoaItem->LoaItemRatePeriod->LoaItemRate->save($newRate);
+                                $rateId = $this->LoaItem->LoaItemRatePeriod->LoaItemRate->getLastInsertId();
+                                $rateRel = array('LoaItemRatePackageRel' => array('loaItemRateId' => $rateId,
+                                                          'packageId' => $packageId,
+                                                          'numNights' => $numNights));
+                                $this->Package->LoaItemRatePackageRel->create();
+                                $this->Package->LoaItemRatePackageRel->save($rateRel);
+                            }
+                        }
+                        else {
+                            $newRate = array('LoaItemRate' => array('loaItemRatePeriodId' => $ratePeriodId));
+                            for ($i=0; $i<=6; $i++) {
+                                $newRate['LoaItemRate']['w'.$i] = 1;
+                            }
+                            $this->LoaItem->LoaItemRatePeriod->LoaItemRate->create();
+                            $this->LoaItem->LoaItemRatePeriod->LoaItemRate->save($newRate);
+                            $rateId = $this->LoaItem->LoaItemRatePeriod->LoaItemRate->getLastInsertId();
+                            $rateRel = array('LoaItemRatePackageRel' => array('loaItemRateId' => $rateId,
+                                                      'packageId' => $packageId,
+                                                      'numNights' => $this->Package->field('numNights', array('packageId' => $packageId))));
+                            $this->Package->LoaItemRatePackageRel->create();
+                            $this->Package->LoaItemRatePackageRel->save($rateRel);
+                            }
+                        if (!empty($ratePeriod['Validity'])) {
+                            foreach ($ratePeriod['Validity'] as $date) {
+                                unset($date['LoaItemDate']['loaItemDateId']);
+                                $date['LoaItemDate']['loaItemRatePeriodId'] = $ratePeriodId;
+                                $this->LoaItem->LoaItemRatePeriod->LoaItemDate->create();
+                                $this->LoaItem->LoaItemRatePeriod->LoaItemDate->save($date['LoaItemDate']);
+                            }
+                        }
+                    }
+			    }
+		    }
+                    
+            $rel = array('packageId' => $packageId,
+                         'loaItemId' => $loaItemId,
+                         'quantity' => $newRoom['quantity']);
+            $this->Package->PackageLoaItemRel->create();
+            $this->Package->PackageLoaItemRel->save($rel);
+            $packageLoaItemIds[] = array('loaItemId' => $loaItemId,
+                                         'isNew' => 1,
+                                         'isExistingAddition' => 0,
+                                         'quantity' => $newRoom['quantity']);
+            $items += $newRoom['quantity'];
+            }
+        }
+        foreach ($this->data['LoaItem'] as $loaItemId => $room) {
+            if (isset($room['checked'])) {
+                if ($room['quantity'] == 1 && count(array_keys($groupItems, $loaItemId)) > 1) {
+                    $this->deleteGroup($packageId, $loaItemId);
+                    foreach (array_keys($groupItems, $loaItemId) as $groupItem) {
+                        unset($groupItems[$groupItem]);
+                    }
+                }
+                $isNewItem = false;
+                if (isset($room['PackageLoaItemRel'])) {
+                    $masterLoaItemId = $loaItemId;
+                    $isMaster = 1;
+                }
+                else {
+                    $isMaster = 0;
+                }
+                $items += $room['quantity'];
+                $packageLoaItemIds[] = array('loaItemId' => $loaItemId,
+                                             'isNew' => 0,
+                                             'isMaster' => $isMaster,
+                                             'quantity' => $room['quantity']);
+            }
+            else {
+                if (isset($room['PackageLoaItemRel'])) {
+                    $this->Package->PackageLoaItemRel->delete($room['PackageLoaItemRel']['packageLoaItemRelId']);
+                    $this->Package->LoaItemRatePackageRel->deleteRatesFromPackage($packageId, $loaItemId);
+                    if (!empty($groupItems)) {
+                        if (in_array($loaItemId, $groupItems)) {
+                            if (count($groupItems) == 2) {
+                                $this->deleteGroup($packageId, $loaItemId);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        //if this package has more than one room; create loaItemGroup
+        if (count($packageLoaItemIds) > 1 || (count($packageLoaItemIds) == 1 && $items > 1)) {
+            if (count($packageLoaItemIds) == 1 && $items > 1) {
+                for ($i = 1; $i < $items; $i++) {
+                    $packageLoaItemIds[$i] = $packageLoaItemIds[0]; 
+                }
+            }
+            elseif (count($packageLoaItemIds) > 1) {
+                if (!isset($masterLoaItemId)) {
+                    $masterLoaItemId = $packageLoaItemIds[0]['loaItemId'];
+                }
+                $masterValidities = $this->LoaItem->LoaItemRatePeriod->LoaItemDate->getValidDates($masterLoaItemId);
+                foreach($packageLoaItemIds as $loaItem) {
+                    if ($loaItem['loaItemId'] == $masterLoaItemId) {
+                        $isValidLoaItem = true;
+                        continue;
+                    }
+                    elseif ($loaItem['isNew']) {
+                        $isValidLoaItem = true;
+                        break;
+                    }
+                    //validate that rooms have same start and end dates. return with error message if not
+                    if (!$loaItem['isNew'] && !$loaItem['isMaster']) {
+                        $isValidLoaItem = true;
+                        $thisValidities = $this->LoaItem->LoaItemRatePeriod->LoaItemDate->getValidDates($loaItem['loaItemId']);
+                        if (count($masterValidities) != count($thisValidities)) {
+                            $isValidLoaItem = false;
+                        }
+                        else {
+                            foreach($thisValidities as $validity) {
+                                if ($key = $this->array_search_key($validity['startDate'], $masterValidities, 'startDate')) {
+                                    $isValidLoaItem = true;
+                                    if ($validity['endDate'] != $masterValidities[$key]['endDate']) {
+                                        $isValidLoaItem = false;
+                                    }
+                                }
+                            }
+                        }
+                        if (!$isValidLoaItem) {
+                            $this->Session->setFlash('These room nights are not eligible to be included in the same package. They must have the same number of rate periods and their date ranges must match completely');
+                            $this->redirect('/clients/'.$clientId.'/packages/edit_room_loa_items/'.$packageId);
+                            return;
+                        }
+                    }
+                }
+            }
+            $loaItemId = $this->LoaItem->createRoomGroup($packageLoaItemIds, $loaId, $packageId);
+            $loaItemGroupId = $loaItemId;
+            $packageLoaItemIds[] = array('loaItemId' => $loaItemId,
+                                         'quantity' => 1,
+                                         'isGroupItem' => true
+                                         );
+            }
+            foreach ($packageLoaItemIds as $packageLoaItem) {
+                $loaItemId = $packageLoaItem['loaItemId'];
+                $query = "SELECT * FROM loaItem LoaItem
+                          WHERE LoaItem.loaItemId = {$packageLoaItem['loaItemId']}";
+                $loaItem = $this->Package->query($query);
+                //debug($loaItem);
+                //die();
+                if ($packageLoaItemRel = $this->Package->PackageLoaItemRel->find('first', array('conditions' => array('PackageLoaItemRel.packageId' => $packageId,
+                                                                                                                      'PackageLoaItemRel.loaItemId' => $loaItemId)))) {
+                    if ($packageLoaItem['quantity'] != $packageLoaItemRel['PackageLoaItemRel']['quantity']) {
+                        $packageLoaItemRel['PackageLoaItemRel']['quantity'] = $packageLoaItem['quantity'];
+                        $this->Package->PackageLoaItemRel->create();
+                        $this->Package->PackageLoaItemRel->save($packageLoaItemRel);
+                    }
+                }
+                else {
+                   $rel = array('packageId' => $packageId,
+                                 'loaItemId' => $loaItemId,
+                                 'quantity' => $packageLoaItem['quantity']);
+                   $this->Package->PackageLoaItemRel->create();
+                   $this->Package->PackageLoaItemRel->save($rel);
+                }
+                if ($ratePeriods = $this->LoaItem->LoaItemRatePeriod->getRatePeriods($loaItemId)) {
+                    foreach($ratePeriods as $ratePeriod) {
+                        if (isset($ratePeriod['LoaItemRate']) && !empty($ratePeriod['LoaItemRate'])) {
+                            foreach ($ratePeriod['LoaItemRate'] as $rate) {
+                                if (!$loaItemRatePackageRel = $this->Package->LoaItemRatePackageRel->find('all', array('conditions' => array('LoaItemRatePackageRel.packageId' => $packageId,
+                                                                                                                                             'LoaItemRatePackageRel.loaItemRateId' => $rate['LoaItemRate']['loaItemRateId'])))) {
+                                   $rel = array('packageId' => $packageId,
+                                                'loaItemRateId' => $rate['LoaItemRate']['loaItemRateId'],
+                                                'numNights' => $this->Package->field('numNights', array('Package.packageId' => $packageId)));
+                                   $this->Package->LoaItemRatePackageRel->create();
+                                   $this->Package->LoaItemRatePackageRel->save($rel);
+                                }
+                            }  
+                        }
+                        else {
+                            $newRate = array('loaItemRatePeriodId' => $ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId']);
+                            $this->LoaItem->LoaItemRatePeriod->LoaItemRate->create();
+                            $this->LoaItem->LoaItemRatePeriod->LoaItemRate->save($newRate);
+                            $rateId = $this->LoaItem->LoaItemRatePeriod->LoaItemRate->getLastInsertID();
+                            $rel = array('packageId' => $packageId,
+                                         'loaItemRateId' => $rateId,
+                                         'numNights' => $this->Package->field('numNights', array('Package.packageId' => $packageId)));
+                            $this->Package->LoaItemRatePackageRel->create();
+                            $this->Package->LoaItemRatePackageRel->save($rel);
+                        }
+                    }
+                }
+            }
+            $param = ($isNewItem) ? '?isNewItem=true' : '';
+            $this->redirect('/clients/'.$clientId.'/packages/edit_room_nights/'.$packageId.$param);
+        }
+        else {
+            $roomLoaItems = $this->LoaItem->getRoomTypesByLoa($packageId);
+            //echo print_r($roomLoaItems);
+            //die();
+            // PKGR - currency
+            foreach ($roomLoaItems as $k => $item) {
+                if ($item['LoaItem']['currencyId'] !== $packageCurrencyId) {
+                    unset($roomLoaItems[$k]);
+                } 
+            }
+            $this->set('roomLoaItems', $roomLoaItems);
+        }
+    }
+    
+    function edit_inclusions($clientId, $packageId) {
+        $loaId = $this->Package->ClientLoaPackageRel->getLoaId($packageId);
+        if (!empty($this->data)) {
+            //echo print_r($this->data);
+            //die();
+            $this->autoRender = false;
+            foreach ($this->data as $loaItem) {
+                if (!empty($loaItem['AddInclusion'])) {
+                    foreach ($loaItem['AddInclusion'] as $loaItemId => $inclusion) {
+                        $newInclusion = array('PackageLoaItemRel' => array('loaItemId' => $loaItemId,
+                                                                           'packageId' => $packageId,
+                                                                           'quantity' => 1));
+                        $this->Package->PackageLoaItemRel->create();
+                        $this->Package->PackageLoaItemRel->save($newInclusion);
+                    }
+                    continue;
+                }
+                if (!empty($loaItem['LoaItem'])) {
+                    if ($errors = $this->validateInclusions($loaItem['LoaItem'])) {
+                        echo json_encode($errors);
+                        return;
+                    }
+                    foreach($loaItem['LoaItem'] as $item) {
+                        $data['LoaItem'] = $item;
+                        $data['LoaItem']['loaId'] = $loaId;
+                        $data['LoaItem']['currencyId'] = $this->Package->Currency->getPackageCurrencyId($packageId);
+                        $this->LoaItem->create();
+                        if ($this->LoaItem->save($data)) {
+                            if (empty($loaItem['loaItemId'])) {
+                                $loaItemId = $this->LoaItem->getLastInsertId();
+                            }
+                            else {
+                                $loaItemId = $item['loaItemId'];
+                            }
+                            $item['PackageLoaItemRel']['loaItemId'] = $loaItemId;
+                            if (!empty($item['PackageLoaItemRel'])) {
+                                if (empty($item['PackageLoaItemRel']['perNight'])) {
+                                    $item['PackageLoaItemRel']['quantity'] = 1;
+                                }
+                                else {
+                                    $item['PackageLoaItemRel']['quantity'] = $this->Package->field('numNights', array('Package.packageId' => $packageId));
+                                }
+                                unset($item['PackageLoaItemRel']['perNight']); 
+                            }
+                            else {
+                                $item['PackageLoaItemRel']['quantity'] = 1;
+                            }
+                            $item['PackageLoaItemRel']['packageId'] = $packageId;
+                            $this->Package->PackageLoaItemRel->create();
+                            $this->Package->PackageLoaItemRel->save($item);
+                        }
+                    }
+                }
+                else {
+                    if (!empty($loaItem['PackageLoaItemRel'])) {
+                        if (empty($loaItem['PackageLoaItemRel']['perNight'])) {
+                            $loaItem['PackageLoaItemRel']['quantity'] = 1;
+                        }
+                        else {
+                            $loaItem['PackageLoaItemRel']['quantity'] = $this->Package->field('numNights', array('Package.packageId' => $packageId));
+                        }
+                        unset($loaItem['PackageLoaItemRel']['perNight']); 
+                    }
+                    else {
+                        $loaItem['PackageLoaItemRel']['quantity'] = 1;
+                    }
+                    $loaItem['PackageLoaItemRel']['packageId'] = $packageId;
+                    $this->Package->PackageLoaItemRel->create();
+                    $this->Package->PackageLoaItemRel->save($loaItem);
+                }
+            }
+            echo 'ok';
+        }
+        $existingInclusions = $this->LoaItem->getPackageInclusions($packageId);
+        $availableInclusions = $this->LoaItem->getAvailableInclusions($loaId, $packageId);
+
+        $itemTypes = $this->LoaItem->LoaItemType->getItemTypes();
+        $currencyCode = $this->Package->Currency->getPackageCurrencyCode($packageId);
+        $numNights = $this->Package->field('numNights', array('Package.packageId' => $packageId));
+        if ($roomNights = $this->LoaItem->getRoomTypesByPackage($packageId)) {
+            $roomLabel = array();
+            foreach($roomNights as $room) {
+                $roomLabel[] = $room['LoaItem']['itemName'];
+            }
+            $this->set('roomLabel', implode(' and ', $roomLabel));
+        }
+        $package = $this->Package->getPackage($packageId);
+        if ($package['Package']['isTaxIncluded'] == 1 && !empty($roomNights[0]['LoaItem']['loaItemId'])) {
+            if ($taxes = $this->LoaItem->Fee->getFeesForRoomType($roomNights[0]['LoaItem']['loaItemId'])) {
+                $taxArr = array();
+                foreach ($taxes as $tax) {
+                    $taxArr[] = $tax['Fee']['feeName'];
+                }
+                $this->set('taxLabel', implode(' and ', $taxArr));
+            }
+        }
+		
+		// PKGR - currency.  exclude inclusions if loa item currency does not match package currency
+		foreach ($availableInclusions as $k => $item) {
+			if ($item['LoaItem']['currencyId'] !== $package['Package']['currencyId']) {
+				unset($availableInclusions[$k]);
+			}
+		}
+		
+		// PKGR - currency
+		$currencyCodes = $this->Package->Currency->find('list', array('fields' => 'currencyCode'));
+		$this->set('currencyCodes', $currencyCodes);
+
+        $this->set('inclusions', $existingInclusions);
+        $this->set('availableInclusions', $availableInclusions);
+        $this->set('itemTypes', $itemTypes);
+        $this->set('currencyCode', $currencyCode);
+        $this->set('numNights', $numNights);
+        $this->set('clientId', $clientId);
+        $this->set('packageId', $packageId);
+    }
+    
+    function render_available_inclusions($clientId, $packageId) {
+        $package = $this->Package->getPackage($packageId);
+        $loaId = $this->Package->ClientLoaPackageRel->getLoaId($packageId);
+        $availableInclusions = $this->LoaItem->getAvailableInclusions($loaId, $packageId);
+        $itemTypes = $this->LoaItem->LoaItemType->getItemTypes();
+        // PKGR - currency.  exclude inclusions if loa item currency does not match package currency
+		foreach ($availableInclusions as $k => $item) {
+			if ($item['LoaItem']['currencyId'] !== $package['Package']['currencyId']) {
+				unset($availableInclusions[$k]);
+			}
+		}
+		// PKGR - currency
+		$currencyCodes = $this->Package->Currency->find('list', array('fields' => 'currencyCode'));
+		$this->set('currencyCodes', $currencyCodes);
+        $this->set('availableInclusions', $availableInclusions);
+        $this->set('itemTypes', $itemTypes);
+    }
+    
+    function validateInclusions($data) {
+        $errors = array();
+        foreach($data as $loaItem) {
+            if (empty($loaItem['itemName'])) {
+                $errors[] = 'Inclusion name is missing.';
+            }
+            if (empty($loaItem['loaItemTypeId'])) {
+                $errors[] = 'Inclusion type is missing.';
+            }
+            if (empty($loaItem['itemBasePrice']) && $loaItem['itemBasePrice'] != '0') {
+                $errors[] = 'Price is missing';
+            }
+        }
+        return $errors;
+    }
+    
+    function delete_inclusion_from_package($clientId, $packageId) {
+        $this->autoRender = false;
+        if ($this->Package->PackageLoaItemRel->delete($_GET['packageLoaItemRelId'])) {
+            echo 'ok';
+        }
+        else {
+            echo json_encode($this->Package->validationErrors);
+        }
+        return;
+    }
+    
+    function render_create_inclusion_form($clientId, $packageId) {
+        $loaItemTypes = $this->LoaItem->LoaItemType->getItemTypes();
+        $this->set('loaItemTypes', $loaItemTypes);
+        $this->set('currencyCode', $this->Package->Currency->getPackageCurrencyCode($packageId));
+        $this->set('i', $_GET['i']);
+        $this->set('j', $_GET['j']);
+    }
+    
+    function array_search_key($needle, $haystack, $field) {
+        foreach($haystack as $i => $item) {
+            if (is_array($item)) {
+                if (isset($item[$field])) {
+                    if ($item[$field] == $needle) {
+                        return $i;
+                    }
+                }
+                else {
+                    return array_search_key($needle, $item, $field);
+                }
+            }
+        }
+    }
+    
+    function deleteGroup($packageId, $loaItemId) {
+        if ($groups = $this->LoaItem->LoaItemGroup->getGroup($packageId, $loaItemId)) {
+            foreach ($groups as $group) {
+                if (!empty($group['PackageLoaItemRel'])) {
+                    $this->Package->PackageLoaItemRel->delete($group['PackageLoaItemRel']['packageLoaItemRelId']);	
+                }
+                $this->Package->LoaItemRatePackageRel->deleteRatesFromPackage($packageId, $group['LoaItemGroup']['loaItemId']);
+                $this->LoaItem->LoaItemGroup->delete($group['LoaItemGroup']['loaItemGroupId']);
+            }
+            $groupId = $groups[0]['LoaItemGroup']['loaItemId'];
+            $this->Package->PackageLoaItemRel->recursive = -1;
+            if ($packageLoaItemRel = $this->Package->PackageLoaItemRel->find('first', array('conditions' => array('PackageLoaItemRel.loaItemId' => $groupId)))) {
+                $this->Package->PackageLoaItemRel->delete($packageLoaItemRel['PackageLoaItemRel']['packageLoaItemRelId']);
+            }
+            $this->Package->LoaItemRatePackageRel->deleteRatesFromPackage($packageId, $groupId);
+            $this->LoaItem->delete($groups[0]['LoaItemGroup']['loaItemId']);
+        }
+    }
+    
+	function edit_blackout_dates($clientId, $packageId) {
+        if (!empty($this->data)) {
+			$this->autoRender = false;
+			$this->Package->saveBlackouts($packageId, $this->data);
+			$this->Package->updatePackagePricePointValidity($packageId);
+            echo 'ok';
+        } else {
+			$blackout_weekday = $this->Package->getBlackoutWeekday($packageId);
+			$blackout = $this->Package->getBlackout($packageId);
+			
+			$this->set('blackout', $blackout);
+			$this->set('blackout_weekday', $blackout_weekday);
+			$this->set('blackout_count', count($blackout));
+			$this->set('packageId', $packageId);
+			$this->set('clientId', $clientId);
+			$this->set('weekdays', array('Mon','Tue','Wed','Thu','Fri','Sat','Sun'));
+		
+			$pkgVbDates = $this->Package->getPkgVbDates($packageId);
+	        if (!empty($pkgVbDates)) {
+				if (empty($pkgVbDates['BlackoutDays'])) {
+					$pkgVbDates['BlackoutDays'] = array();
+				}
+	            $this->set('current_validity', $pkgVbDates['ValidRanges']);
+	            $this->set('current_blackout', $pkgVbDates['BlackoutDays']);
+	        }
+        }
+    }
+	
+	function edit_publishing($clientId, $packageId) {
+        if (!empty($this->data)) {
+			$this->autoRender = false;
+			$this->Package->save($this->data['Package']);
+			if (isset($this->data['Inclusions']['order']) && !empty($this->data['Inclusions']['order'])) {
+				$inclusions = explode(',', $this->data['Inclusions']['order']);
+				$inclusions = array_values($inclusions);
+				$this->Package->query("UPDATE packageLoaItemRel SET weight = 0 WHERE packageId = $packageId");
+				foreach ($inclusions as $k => $inc) {
+					if (!$inc) {
+						continue;
+					}
+					$inc_save = array(
+						'packageLoaItemRelId' => $inc,
+						'weight' => $k
+					);
+					$this->Package->PackageLoaItemRel->save($inc_save);
+				}
+			}
+            echo 'ok';
+        } else {
+            $package = $this->Package->getPackage($packageId);
+			$this->set('packageId', $packageId);
+			$this->set('clientId', $clientId);
+            $this->set('package', $package);
+			$inclusions = $this->Package->getInclusions($packageId);
+
+			if ($package['Package']['isTaxIncluded']) {
+            	$roomNights = $this->LoaItem->getRoomNights($packageId);
+				$taxes_fees = array();
+				$rn = $roomNights[0];
+				foreach ($rn['Fees'] as $fee) {
+					if (trim($fee['Fee']['feeName'])) {
+						$taxes_fees[] = $fee['Fee']['feeName'];
+					}
+				}
+				if (!empty($taxes_fees)) {
+					$inclusions[] = array('LoaItem' => array('merchandisingDescription' => $this->getTaxesText($taxes_fees)));
+				}
+			}
+        
+			// get roomGradeName for this package
+	        $this->Package->PackageLoaItemRel->recursive = 2;
+	        $loaItems = $this->Package->PackageLoaItemRel->find('first', array('conditions' => array('Package.packageId' => $packageId, 'LoaItem.loaItemTypeId' => 1)));
+	        $roomGradeName = $loaItems['LoaItem']['RoomGrade']['roomGradeName'];
+			$this->set('roomGrade', $roomGradeName);
+
+
+			$inc = $this->LoaItem->getPackageInclusions($packageId);
+
+			$roomNightDescription = isset($inc[0]['LoaItem']['PackagedItems']) ? $inc[0]['LoaItem']['PackagedItems'][0]['LoaItem']['merchandisingDescription'] : $inc[0]['LoaItem']['merchandisingDescription'];  
+			$roomNightDescription = str_replace("\n", '', $roomNightDescription);
+			$this->set('roomNightDescription', $roomNightDescription);
+
+			$this->set('items', $inclusions);
+        }
+    }
+    
+	function getTaxesText($taxes) {
+		$taxes_fees_text = '';
+		$count = count($taxes);
+		foreach ($taxes as $k => $f) {
+			$taxes_fees_text .= $f;
+			if (($k+2) == $count) {
+				$taxes_fees_text .= ' &amp; ';
+			} elseif (($k+1) < $count) {
+				$taxes_fees_text .= ', ';
+			}
+		}
+		return $taxes_fees_text;
+	}
+
+    function edit_room_nights($clientId, $packageId) {
+        $package = $this->Package->getPackage($packageId);
+        if (!empty($this->data)) {
+            $this->autoRender = false;
+            //echo print_r($this->data);
+            //die();
+            if ($errors = $this->validateRoomNights($this->data, $package['Package']['numNights'])) {
+                echo json_encode($errors);
+                return;
+            }
+            else {
+                $saveModels = array('LoaItemRate', 'Fee', 'LoaItemDate');
+                foreach ($this->data as $i=>$ratePeriod) {
+                    if (key($ratePeriod) == 'taxesIncluded') {
+                        $taxes = $package;
+                        $taxes['Package']['isTaxIncluded'] = $this->data['Package']['taxesIncluded'];
+                        $this->Package->create();
+                        $this->Package->save($taxes);
+                    }
+                    else {
+                        if ($ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId'] == '0') {
+                            foreach($ratePeriod['LoaItems'] as $item) {
+                                $loaItemId = $item['LoaItem']['loaItemId'];
+                                break;
+                            }
+                            $ratePeriodId = $this->LoaItem->LoaItemRatePeriod->createFromPackage($loaItemId);
+                        }
+                        else {
+                            $ratePeriodId = $ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId'];
+                        }
+			
+                    foreach($saveModels as $model) {
+                        if ($model == 'LoaItemRate') {
+                            $rateIds = array();
+                            $query = "SELECT LoaItemRate.loaItemRateId, LoaItemRatePackageRel.loaItemRatePackageRelId
+                                  FROM loaItemRate LoaItemRate
+                                  INNER JOIN loaItemRatePackageRel LoaItemRatePackageRel USING (loaItemRateId)
+                                  WHERE LoaItemRatePackageRel.packageId = {$packageId} AND LoaItemRate.loaItemRatePeriodId = {$ratePeriodId}";
+                            if ($rates = $this->Package->query($query)) {
+                                foreach ($rates as $rate) {
+                                    $rateIds[$rate['LoaItemRate']['loaItemRateId']] = $rate['LoaItemRatePackageRel']['loaItemRatePackageRelId'];
+                                }
+                            }
+                            $this->Package->bindModel(array('hasMany' => array('LoaItemRate')));
+                            foreach ($ratePeriod['LoaItems'] as $item) {
+                                if (isset($item['LoaItemRate'])) {
+                                    foreach($item['LoaItemRate'] as &$rate) {
+                                        if (isset($rate['loaItemRateId'])) {
+                                            if (in_array($rate['loaItemRateId'], array_keys($rateIds))) {
+                                                unset($rateIds[$rate['loaItemRateId']]);
+                                            }
+                                        }
+                                        if (empty($rate['loaItemRatePeriodId'])) {
+                                            $rate['loaItemRatePeriodId'] = $ratePeriodId;
+                                        }
+                                    }
+                                    if ($this->Package->LoaItemRate->updateFromPackage($item['LoaItemRate'], $packageId, null)) {
+                                        continue;
+                                    }
+                                    else {
+                                        echo json_encode($this->Package->validationErrors);
+                                        return;
+                                    }
+                                }
+                            }
+                            if (!empty($rateIds)) {
+                                foreach ($rateIds as $loaItemRateId => $loaItemRatePackageRelId) {
+                                    $this->LoaItem->LoaItemRate->delete($loaItemRateId);
+                                    $this->LoaItem->LoaItemRate->LoaItemRatePackageRel->delete($loaItemRatePackageRelId);
+                                }
+                            }
+                        }
+                        else {
+                            if (isset($ratePeriod[$model])) {
+                                $this->Package->bindModel(array('hasMany' => array($model)));
+                                if ($this->Package->$model->updateFromPackage($ratePeriod[$model], $packageId, $ratePeriodId)) {
+                                    continue;
+                                }
+                                else {
+                                    echo json_encode($this->Package->validationErrors);
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            $this->Package->updatePackagePricePointValidity($packageId);
+            echo 'ok';
+            }
+        }
+        else {
+            $this->set('package', $package);
+            if ($roomNights = $this->LoaItem->getRoomNights($packageId)) {
+                if (count($roomNights[0]['LoaItems'][0]['LoaItemRate']) > 1) {
+                    $this->set('isDailyRates', true);
+                }
+            }
+            else {
+                $roomNights = array();
+            }
+            //echo print_r($roomNights);
+            //die();
+            $this->set('ratePeriods', $roomNights);
+        }
+    }
+    
+    function validateRoomNights($data, $packageNumNights) {
+        $errors = array();
+        $dateRanges = array();
+        foreach ($data as $i => $night) {
+            if (key($night) == 'taxesIncluded') {
+                continue;
+            }
+            if (isset($night['isNewItem'])) {
+                if (count($night['LoaItemDate']) == 0) {
+                        $errors[] = 'Rate periods must have at least one date range.';
+                }
+                else {
+                    foreach ($night['LoaItemDate'] as $date) {
+                        if (empty($date['startDate']) || empty($date['endDate'])) {
+                            $errors[] = 'Date ranges must have both a start date and an end date.';
+                        }
+                        elseif (strtotime($date['startDate']) >= strtotime($date['endDate'])) {
+                            $errors[] = 'Start date cannot be later than the corresponding end date.';
+                        }
+                        $dateRanges[strtotime($date['startDate'])] = strtotime($date['endDate']);
+                    }
+                }
+            }
+            if ($i == 0) {
+                foreach ($night['LoaItems'] as $item) {
+                    $numNights = 0;
+                    foreach($item['LoaItemRate'] as $j => $rate) {
+                        if (isset($rate['isNew']) && (empty($rate['price']) || $rate['price'] == '')) {
+                            $errors[] = 'Each rate period must have a price.';
+                        }
+                        if (empty($rate['LoaItemRatePackageRel']['numNights'])) {
+                            $errors[] = 'Number of nights must be filled in for each rate period.';
+                        }
+                        $numNights += $rate['LoaItemRatePackageRel']['numNights'];
+                    }
+                }
+                if ($numNights != $packageNumNights) {
+                    $errors[] = 'The quantity of the room night item(s) associated to this package must match the Total Nights set for the package.';
+                }
+            }
+        }
+        if (!empty($dateRanges)) {
+            ksort($dateRanges);
+            foreach ($dateRanges as $startDate => $endDate) {
+                if (!empty($lastRange)) {
+                    if ($startDate <= $dateRanges[$lastRange]) {
+                        $errors[] = 'One or more of the date ranges you have selected overlap each other. Date ranges must be mutually exclusive.';
+                        break;
+                    }
+                }
+                $lastRange = $startDate;
+            }
+        }
+        if (count($errors) > 0) {
+            return $errors; 
+        }
+    }
+    
+    function edit_low_price_guarantees($clientId, $packageId) {
+        if (!empty($this->data)) {
+            $this->autoRender = false;
+            foreach ($this->data['LoaItemRatePackageRel'] as $loaItemRatePackageRelId => $guaranteePercentRetail) {
+                $loaItemRatePeriod = array(
+                    'loaItemRatePackageRelId' => $loaItemRatePackageRelId,
+                    'guaranteePercentRetail' => $guaranteePercentRetail
+                );
+                $this->Package->LoaItemRatePackageRel->save($loaItemRatePeriod);
+            }
+            echo 'ok';
+        } else {
+            $ratePeriods = $this->getRatePeriodsInfo($packageId);
+            $this->set('ratePeriods', $ratePeriods);
+        }
+    }
+    
+    function edit_price_points($clientId, $packageId) {
+        
+        // saving data
+        if (!empty($this->data)) {
+            $this->autoRender = false;
+
+            // validation
+            $errors = array();
+            if (!$this->data['PricePoint']['name']) {
+                $errors[] = 'The Name field is required.'; 
+            }            
+            if (empty($this->data['loaItemRatePeriodIds'])) {
+                $errors[] = 'You must choose at least one rate period.';
+            }            
+            if ((!$this->data['PricePoint']['percentRetailAuc'] && !$this->data['PricePoint']['percentRetailBuyNow'])
+                || (!$this->data['auctionOverride'] && $this->data['PricePoint']['percentRetailAuc'] && $this->data['PricePoint']['percentRetailAuc'] < $this->data['guaranteedPercent'])
+                || (!$this->data['buynowOverride'] && $this->data['PricePoint']['percentRetailBuyNow'] && $this->data['PricePoint']['percentRetailBuyNow'] < $this->data['guaranteedPercent'])) {
+        
+                $errors[] = 'Percent of retail must be greater than or equal to the guaranteed percent of retail.';
+            }            
+            if (!empty($errors)) {
+                echo json_encode($errors);
+                return;
+            }
+
+			$this->data['PricePoint']['validityDisclaimer'] = Sanitize::escape($this->data['PricePoint']['validityDisclaimer']);
+            
+            // handle percentReservePrice
+            if ($this->data['auctionOverride'] || $this->data['buynowOverride']) {
+                $this->data['PricePoint']['percentReservePrice'] = $this->data['guaranteedPercent'];
+            }
+
+            // edit pricePoint
+            $pricePointId = $this->data['PricePoint']['pricePointId'];
+            if ($pricePointId) {
+                // pricePoint
+                $this->Package->PricePoint->save($this->data['PricePoint']);
+                
+                // remove pricePointRatePeriodRels and add below
+                $this->Package->PricePoint->PricePointRatePeriodRel->deleteAll(array('PricePointRatePeriodRel.pricePointId' => $pricePointId), false);                
+            
+            // add pricePoint
+            } else {
+                $this->Package->PricePoint->create();
+                $this->Package->PricePoint->save($this->data['PricePoint']);
+                $pricePointId = $this->Package->PricePoint->id;
+            }
+            
+            // add pricePointRatePeriodRel
+            foreach ($this->data['loaItemRatePeriodIds'] as $loaItemRatePeriodId) {
+                $pricePointRatePeriodRel = array(
+                    'pricePointId' => $pricePointId,
+                    'loaItemRatePeriodId' => $loaItemRatePeriodId
+                );
+                $this->Package->PricePoint->PricePointRatePeriodRel->create();
+                $this->Package->PricePoint->PricePointRatePeriodRel->save($pricePointRatePeriodRel);
+            }
+			
+			// if override for package validity disclaimer, save this shiz
+			if (isset($this->data['Package']['overrideValidityDisclaimer']) && $this->data['Package']['overrideValidityDisclaimer'] == 1) {
+				$package = array();
+				$package['packageId'] = $packageId;
+				$package['overrideValidityDisclaimer'] = 1;
+				$this->Package->save($package);
+			} else {
+	            $this->Package->updatePackagePricePointValidity($packageId);
+			}
+            
+            echo 'ok';
+            
+        // view data
+        } else {
+            // edit state
+            $loaItemRatePeriodIds = array();
+            $pricePointId = isset($this->params['url']['pricePointId']) ? $this->params['url']['pricePointId'] : false;
+            if ($pricePointId) {
+                $pricePoint = $this->Package->PricePoint->find('first', array('conditions' => array('PricePoint.pricePointId' => $pricePointId)));
+                $this->set('pricePoint', $pricePoint['PricePoint']);
+                 
+                $pricePointRatePeriodRels = $this->Package->PricePoint->PricePointRatePeriodRel->find('all', array('conditions' => array('PricePointRatePeriodRel.pricePointId' => $pricePointId), 'fields' => array('PricePointRatePeriodRel.loaItemRatePeriodId')));
+                foreach ($pricePointRatePeriodRels as $pricePointRatePeriodRel) {
+                    $loaItemRatePeriodIds[] = $pricePointRatePeriodRel['PricePointRatePeriodRel']['loaItemRatePeriodId'];
+                }
+            }
+            $this->set('loaItemRatePeriodIds', $loaItemRatePeriodIds);
+            
+			$this->Package->recursive = -1;
+			$package = $this->Package->read(null, $packageId);
+
+			if (isset($package['Package']['overrideValidityDisclaimer']) && $package['Package']['overrideValidityDisclaimer'] == 1) {
+				$this->set('overrideValidityDisclaimer', 1);
+			} else { 
+				$this->set('overrideValidityDisclaimer', 0);
+			}
+			
+			$vd = isset($pricePoint['PricePoint']['validityDisclaimer']) ? $pricePoint['PricePoint']['validityDisclaimer'] : '';	
+			$this->set('vd', $vd);
+
+			$this->set('isEdit', $pricePointId);
+
+            $ratePeriods = $this->getRatePeriodsInfo($packageId);
+                        
+            // disable ratePeriods that have already been used
+            $pricePointRatePeriods = $this->Package->PricePoint->getLoaItemRatePeriod($packageId);
+            foreach ($ratePeriods as $key => $ratePeriod) {
+                foreach ($pricePointRatePeriods as $pricePointRatePeriod) {
+                    if ($ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId'] == $pricePointRatePeriod['PricePointRatePeriodRel']['loaItemRatePeriodId'] && !in_array($pricePointRatePeriod['PricePointRatePeriodRel']['loaItemRatePeriodId'], $loaItemRatePeriodIds)) {
+                        $ratePeriods[$key]['used'] = true;                    
+                    }
+                }
+            }
+            
+            $this->set('ratePeriods', $ratePeriods);            
+			$this->set('clientId', $clientId);
+			$this->set('packageId', $packageId);
+        }
+    }
+	
+	function ajaxGetPricePointValidityDisclaimer($clientId, $packageId) {
+        $this->autoRender = false;
+		$this->layout = false;
+		$loaItemRatePeriodIds = $_GET['ids'];
+		if (!$loaItemRatePeriodIds) {
+			die();
+		}
+		$ids = explode(',', $loaItemRatePeriodIds);
+		foreach ($ids as $k => $id) {
+			if (empty($id)) {
+				unset($ids[$k]);
+			}
+		}
+		$ids_string = implode(',', $ids);
+		//$dates = $this->Package->getPricePointDateRange($packageId, $ids_string);
+		//if (!$dates) {
+		//	die();
+		//}
+		echo $this->Package->getValidityDisclaimerText($packageId, $dates['minStartDate'], $dates['maxEndDate'], $ids_string);
+	}
+    
+    function getRoomTypes($packageId) {
+        $this->autoRender = false;
+        $roomLoaItems = $this->LoaItem->getRoomTypesByLoa($packageId);
+        $list = $this->prepList($roomLoaItems, 'LoaItem', 'itemName');
+        echo print_r($list, true);
+    }
+    
+    function prepList($data, $model, $labelName='name') {
+        $list = array();
+        if (!empty($data)) {
+            $idVar = strtolower($model{0}).substr($model, 1).'Id';
+            foreach($data as $d) {
+                $item = $d[$model][$labelName].'|'.$d[$model][$idVar];
+                array_push($list, $item);
+            }
+        }
+        return implode("\n", $list);
+    }
+	
+	function clone_package($clientId, $packageId) {
+		$this->layout = false;
+        $this->autoRender = false;
+		$newPackageId = $this->Package->clonePackage($packageId);
+		
+		if ($newPackageId && is_numeric($newPackageId)) {
+			$this->redirect('/clients/'.$clientId.'/packages/summary/' . $newPackageId);
+		} else {
+			die('ERROR(S) HAVE BEEN DETECTED.<br /><br />' . $newPackageId);	
+		}
+	}
+    
+	function export($clientId, $packageId) {
+		$this->layout = false;
+		$this->Client->recursive = -1;
+        $package = $this->Package->getPackage($packageId);
+		$client = $this->Client->read(null, $clientId);
+        $roomNights = $this->LoaItem->getRoomNights($packageId);
+		$days = array('Mon','Tue','Wed','Thu','Fri','Sat','Sun');
+		foreach ($roomNights as $r => $rn) {
+			foreach ($rn['Validity'] as $v => $vd) {
+				$roomNights[$r]['Validity'][$v]['LoaItemDate']['startDate'] = date('M d Y', strtotime($vd['LoaItemDate']['startDate']));
+				$roomNights[$r]['Validity'][$v]['LoaItemDate']['endDate'] = date('M d Y', strtotime($vd['LoaItemDate']['endDate']));
+			}
+			if (count($rn['LoaItems'][0]['LoaItemRate'] > 1)) {
+				foreach ($rn['LoaItems'][0]['LoaItemRate'] as $bb => $rate) {
+					$days_arr = array();
+					for ($i=0;$i<7;$i++) {
+						if ($rate['LoaItemRate']["w$i"] == 1) {
+							$days_arr[] = $days[$i];
+						}
+					}
+					$roomNights[$r]['LoaItems'][0]['LoaItemRate'][$bb]['LoaItemRate']['MultiDayPrice'] = implode(', ', $days_arr);
+				}
+			}
+		}
+		//$loaItems = $this->Package->getLoaItems($packageId);
+        $loaItems = $this->LoaItem->getPackageInclusions($packageId);
+        $lowPriceGuarantees = $this->getRatePeriodsInfo($packageId);
+		$this->set('package', $package);
+		$this->set('client', $client['Client']);
+		$this->set('roomNights', $roomNights);
+		$this->set('loaItems', $loaItems);
+		$this->set('vb', $this->Package->getPkgVbDates($packageId));
+		$this->set('lowPrice', $lowPriceGuarantees);
+		if ($package['Package']['siteId'] == 1) {
+			$this->render('export');	
+		} else {
+			$this->render('export_family');	
+		}
+	}
+
+    function render_rate_period($clientId, $packageId) {
+        $package = $this->Package->find('first', array('conditions' => array('Package.packageId' => $packageId)));
+        $loaItems['LoaItems'] = $this->Package->PackageLoaItemRel->LoaItem->getRoomTypesByPackage($packageId);
+        $rates = $this->LoaItem->getRoomNights($packageId);
+        if (count($rates[0]['LoaItems'][0]['LoaItemRate']) > 1) {
+            $this->set('isDailyRates', true);
+        }
+        foreach ($loaItems['LoaItems'] as $i => &$item) {
+            $item['LoaItemRatePeriod']['loaItemRatePeriodId'] = 0;
+            if (empty($rates)) {
+                $item['LoaItemRate'][0]['LoaItemRate'][0] = array('loaItemRateId' => '',
+                                                                    'price' => '');
+                for ($j=0; $j<=6; $j++) {
+                    $item['LoaItemRate'][0]['LoaItemRate'][0]['w'.$j] = 0;
+                }
+            }
+            else {
+                foreach ($rates[0]['LoaItems'][0]['LoaItemRate'] as $k => $rate) {
+                    $item['LoaItemRate'][$k]['LoaItemRate'] = array('loaItemRateId' => '',
+                                                                    'price' => '');
+                    for ($j=0; $j<=6; $j++) {
+                        $item['LoaItemRate'][$k]['LoaItemRate']['w'.$j] = $rate['LoaItemRate']['w'.$j];
+                    }
+                }
+            }
+        }
+        $this->Package->PackageLoaItemRel->LoaItem->Fee->recursive = -1;
+        $loaItems['Fees'] = $this->Package->PackageLoaItemRel->LoaItem->Fee->find('all', array('conditions' => array('Fee.loaItemId' => $loaItems['LoaItems'][0]['LoaItem']['loaItemId'])));
+        $loaItems['Totals']['totalAccommodations'] = '0';
+        $loaItems['Validity'] = array();
+       
+        $this->set('ratePeriods', $rates);
+        $this->set('loaItems', $loaItems);
+        $this->set('package', $package);
+        $this->set('i', $_GET['i']);
+    }
+    
+    function render_datepicker($clientId, $packageId) {
+        $range = array('LoaItemDate' => array('loaItemRatePeriodId' => $_GET['ratePeriodId'],
+                                              'loaItemDateId' => '',
+                                              'startDate' => '',
+                                              'endDate' => ''));
+        $this->set('range', $range);
+        $this->set('index', $_GET['index']);
+        $this->set('i', $_GET['i']);
+    }
+    
+    function delete_date_range($clientId, $packageId) {
+        $this->autoRender = false;
+        foreach($this->data as $ratePeriod) {
+            if (empty($ratePeriod['LoaItemRatePeriod'])) {
+                foreach ($this->data[0]['LoaItemDate'] as $date) {
+                    if (empty($date['loaItemDateId'])) {
+                        echo 'ok';
+                        return;
+                    }
+                    else {
+                        $this->Package->deleteDate($date['loaItemDateId']);
+                        echo 'ok';
+                    }
+                }
+            }
+            else {
+                $delModels = array('LoaItemRate', 'LoaItemDate', 'LoaItemRatePeriod');
+                foreach($delModels as $model) {
+                    if (isset($ratePeriod[$model])) {
+                        $this->Package->bindModel(array('hasMany' => array($model)));
+                        $this->Package->$model->deleteFromPackage($ratePeriod[$model]);
+                    }
+                }
+            }
+            
+        }
+        
+
+    }
+    
+    function getRatePeriodsInfo($packageId) {
+        // package
+        $package = $this->Package->getPackage($packageId);
+        
+        // currency
+        $currency = $this->Package->getCurrency($packageId);
+
+        // loaItems
+        $loaItems = $this->Package->getLoaItems($packageId);
+        $this->set('loaItems', $loaItems);
+        
+        // get total for inclusion
+        $inclusionTotal = 0;
+        foreach ($loaItems as $loaItem) {
+            if (isset($loaItem['LoaItem']['itemBasePrice'])) {
+                $taxes = $this->Package->getTaxes($loaItem['PackageLoaItemRel']['loaItemId']);
+                if ($loaItem['LoaItem']['loaItemTypeId'] == 5) {
+                    $total = $loaItem['LoaItem']['itemBasePrice'] * $package['Package']['numNights'];
+                    $inclusionTotal += $total + ($total * $taxes['percent'] / 100) + $taxes['fixed']; // add taxes
+                } elseif (!in_array($loaItem['LoaItem']['loaItemTypeId'], array(1, 12))) {
+                    $total = $loaItem['LoaItem']['itemBasePrice'] * $loaItem['PackageLoaItemRel']['quantity'];
+                    $inclusionTotal += $total + ($total * $taxes['percent'] / 100) + $taxes['fixed']; // add taxes
+                }
+            }
+        }
+        
+        // ratePeriod
+        $ratePeriods = $this->Package->getRatePeriods($packageId);
+        if (!empty($ratePeriods)) {
+            foreach ($ratePeriods as $key => $ratePeriod) {
+                // get dates
+                $loaItemDates = $this->Package->getLoaItemDates($ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId']);
+                $loaDates = array();
+                foreach ($loaItemDates as $loaItemDate) {
+                    $loaDates[] = date('M j, Y', strtotime($loaItemDate['LoaItemDate']['startDate'])) . ' - ' . date('M j, Y', strtotime($loaItemDate['LoaItemDate']['endDate']));
+                }
+                
+                // get room rate
+                $total = $this->Package->getRoomRate($ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId']);
+                $startPrice = ($total + $inclusionTotal) * $ratePeriod['LoaItemRatePackageRel']['guaranteePercentRetail'] / 100;
+                
+                // assign new fields
+                $ratePeriods[$key]['packageId'] = $packageId;
+                $ratePeriods[$key]['currencyCode'] = $currency['Currency']['currencyCode'];
+                $ratePeriods[$key]['dailyExchangeRateToDollar'] = $currency['CurrencyExchangeRate']['dailyExchangeRateToDollar'];
+                $ratePeriods[$key]['dateRanges'] = implode('<br/>', $loaDates);
+                $ratePeriods[$key]['startPrice'] = round($startPrice);
+                $ratePeriods[$key]['retailValue'] = round($total + $inclusionTotal);
+                $ratePeriods[$key]['usdStartPrice'] = ($currency['Currency']['currencyId'] == 1) ? '' : "$(" . round($startPrice * $currency['CurrencyExchangeRate']['monthlyExchangeRateToDollar']) . ")";
+                $ratePeriods[$key]['usdRetailValue'] = ($currency['Currency']['currencyId'] == 1) ? '' : "($" . round($total * $currency['CurrencyExchangeRate']['monthlyExchangeRateToDollar']) . ")";
+            }
+        }
+        return $ratePeriods;
+    }
+    
 }
 ?>

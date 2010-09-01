@@ -1,3 +1,223 @@
+<?php
+
+// ADD
+/*************************************************************************************************/
+
+if ($masterState != 1) {
+    
+    echo $form->input('packageId', array('value' => $packageId, 'type' => 'hidden'));
+            
+    ?>
+
+    <link href="/css/scheduling-master.css" type="text/css" rel="stylesheet" />
+    
+    <div id="schedulingmaster-add">            
+    
+        <!-- PRICE POINT -->
+        <h2>Choose a Price Point</h2>
+        <table id="data-table" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+                <th></th>
+                <th>Name</th>
+                <th>Validity</th>
+                <th>Maximum<br />Number Sales</th>
+                <th>Retail</th>
+                <th>% of Retail<br />(Auction)</th>
+                <th>% of Retail<br />(Buy Now)</th>
+            </tr>
+        <?php
+            foreach ($pricePoints as $key => $pricePoint) {
+                $checked = ($data['SchedulingMaster']['pricePointId'] == $pricePoint['PricePoint']['pricePointId']) ? 'checked' : '';
+                echo "
+                    <tr>
+                        <td>
+                            <input type='radio' class='price-point-options' id='price-point-{$pricePoint['PricePoint']['pricePointId']}' name='data[SchedulingMaster][pricePointId]' value='{$pricePoint['PricePoint']['pricePointId']}' $checked/>
+                        </td>
+                        <td><label for='price-point-{$pricePoint['PricePoint']['pricePointId']}'>{$pricePoint['PricePoint']['name']}</label></td>
+                        <td style='font-size:11px;'>{$pricePoint[0]['dateRanges']}</td>
+                        <td>{$pricePoint['PricePoint']['maxNumSales']}</td>
+                        <td>{$pricePoint['PricePoint']['retailValue']}</td>
+                        <td>{$pricePoint['PricePoint']['percentRetailAuc']}</td>
+                        <td>{$pricePoint['PricePoint']['percentRetailBuyNow']}</td>
+                    </tr>
+                ";
+            }
+        ?>
+        </table>
+    
+        <!-- SCHEDULING -->
+        <h2>Scheduling</h2>
+        <table id="data-table" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+                <th>Track</th>
+                <th>Schedule As</th>
+                <th>Start Date</th>
+                <th>Start Time</th>
+                <th>End Date</th>
+            </tr>
+            <tr>
+                <td><?php if ($singleClientPackage) { echo $form->input('Track', array('options' => $trackIds, 'empty' => true, 'multiple' => false, 'disabled' => ($masterState) ? true : false)); } ?></td>
+                <td>
+                    <?php if ($package['Format'][0]['formatId'] != 3) { // NOT HOTEL OFFER
+                        $isAuctionChecked = ($data['isAuction']) ? 'checked' : '';
+                        $isBuyNowChecked = ($data['isBuyNow']) ? 'checked' : '';
+                    ?>                        
+                        <input id="isAuction" type="checkbox" name="data[isAuction]" <?php echo $isAuctionChecked; ?>/> <label for="isAuction">Auction</label><br /><br />
+                        <input id="isBuyNow" type="checkbox" name="data[isBuyNow]" <?php echo $isBuyNowChecked; ?>/> <label for="isBuyNow">Buy Now</label>
+                    <?php
+                        } else {
+                            echo 'Hotel Offer';
+                            echo '<input type="hidden" name="data[isHotelOffer]" value="1"/>';
+                            echo $form->input('offerTypeId', array('value' => 7, 'type' => 'hidden'));
+                            echo $form->input('numDaysToRun', array('value' => 2, 'type' => 'hidden')); 
+                        } 
+                    ?>
+                </td>
+                <td><?php echo $form->input('startDatePicker', array('class' => 'format-m-d-y divider-dash highlight-days-06 no-transparency range-low-today fill-grid-no-select', 'label' => ' ', 'readonly' => 'readonly', 'style' => 'width:100px;')); ?></td>
+                <td>
+                    <?php
+                        echo $form->input('startDateTime', array('label' => ' ', 'disabled' => ($masterState) ? 'disabled' : false,
+                			'options' => array(
+                				'00:00:00' => '12 AM', '01:00:00' => '1 AM', '02:00:00' => '2 AM', '03:00:00' => '3 AM', '04:00:00' => '4 AM',
+                				'05:00:00' => '5 AM', '06:00:00' => '6 AM', '07:00:00' => '7 AM', '08:00:00' => '8 AM', '09:00:00' => '9 AM',
+                				'10:00:00' => '10 AM', '11:00:00' => '11 AM', '12:00:00' => '12 PM', '13:00:00' => '1 PM', '14:00:00' => '2 PM',
+                				'15:00:00' => '3 PM', '16:00:00' => '4 PM', '17:00:00' => '5 PM', '18:00:00' => '6 PM', '19:00:00' => '7 PM',
+                				'20:00:00' => '8 PM', '21:00:00' => '9 PM', '22:00:00' => '10 PM', '23:00:00' => '11 PM'
+                			)
+                		));
+                    ?>
+                </td>
+                <td><?php echo $form->input('endDatePicker2', array('class' => 'format-m-d-y divider-dash highlight-days-06 no-transparency range-low-today fill-grid-no-select', 'label' => ' ', 'readonly' => 'readonly', 'style' => 'width:100px;')); ?></td>
+            </tr>
+        </table>
+        
+        <?php if ($package['Format'][0]['formatId'] != 3) { // NOT HOTEL OFFER ?>
+
+            <!-- AUCTION OPTIONS -->
+            <div id="auction-options" style="padding:0px; margin:0px; <?php if (!$data['isAuction']) echo 'display:none;'; ?>">    
+                <h2>Auction Options</h2>
+                <table id="data-table" cellpadding="0" cellspacing="0" border="0">
+                    <tr>
+                        <th>Auction Length</th>
+                        <th>Scheduling Delay</th>
+                        <th>Number of Iterations</th>
+                    </tr>
+                    <tr>
+                        <td><?php echo $form->input('numDaysToRun', array('label' => ' ', 'type' => 'select', 'options' => array(2 => '2 Days', 3 => '3 Days', 7 => '7 Days'), 'disabled' => ($masterState) ? 'disabled' : false)); ?></td>
+                        <td><?php echo $form->input('schedulingDelayCtrlId', array('label' => ' ')); ?></td>
+                        <td>
+                            <input type='radio' id='by-end-date' name='data[SchedulingMaster][iterationSchedulingOption]' value='1' <?php echo ($data[SchedulingMaster][iterationSchedulingOption] != 0) ? 'checked' : ''; ?> /> <label for='by-end-date'>Determined By End Date</label><br />
+                            <input type='radio' id='by-iteration' name='data[SchedulingMaster][iterationSchedulingOption]' value='0' <?php echo ($data[SchedulingMaster][iterationSchedulingOption] == 0) ? 'checked' : ''; ?> /> <label for='by-iteration'>Or Enter Number of Iterations:</label> <input name="data[SchedulingMaster][iterations]" value="<?php echo ($data[SchedulingMaster][iterations]) ? $data[SchedulingMaster][iterations] : 1; ?>" size="2"/>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            
+            <!-- BUY NOW OPTIONS -->
+            <div id="buynow-options" style="padding:0px; margin:0px; <?php if (!$data['isBuyNow']) echo 'display:none;'; ?>">
+                <h2>Buy Now Options</h2>
+                <input type='radio' id='bonus-miles' name='data[buyNowOfferTypeId]' value='4' checked /> <label for='bonus-miles'>Includes Bonus Miles</label><br/>
+                <input type='radio' id='suppress-retail' name='data[buyNowOfferTypeId]' value='3' /> <label for='suppress-retail'>Suppress Retail Value</label>        
+            </div>
+        
+        <?php } ?>
+        
+        <!-- NOTES -->
+        <br />
+        <h2>Package Notes</h2>
+        <textarea name="data[Package][notes]" rows="5"><?php echo $package[Package][notes]; ?></textarea>
+
+    </div> <!-- END #schedulingmaster-add -->
+    
+
+
+    <!-- JS -->    
+    <script>
+        // startDate calendar
+		delete datePickerController.datePickers['SchedulingMasterStartDatePicker'];
+		datePickerController.addDatePicker('SchedulingMasterStartDatePicker',
+			{
+				'id':'SchedulingMasterStartDatePicker',
+				'highlightDays':'0,0,0,0,0,1,1',
+				'disableDays':'',
+				'divider':'-',
+				'format':'m-d-y',
+				'locale':true,
+				'splitDate':0,
+				'noTransparency':true,
+				'staticPos':false,
+				'hideInput':false,
+				'low':datePickerController.dateFormat((new Date().getMonth() + 1) + "/" + new Date().getDate() + "/" + new Date().getFullYear(), true)
+			}
+		);		
+    </script>
+    
+    <script>
+        // endDate calendar
+		delete datePickerController.datePickers['SchedulingMasterEndDatePicker2'];
+		datePickerController.addDatePicker('SchedulingMasterEndDatePicker2',
+			{
+				'id':'SchedulingMasterEndDatePicker2',
+				'highlightDays':'0,0,0,0,0,1,1',
+				'disableDays':'',
+				'divider':'-',
+				'format':'m-d-y',
+				'locale':true,
+				'splitDate':0,
+				'noTransparency':true,
+				'staticPos':false,
+				'hideInput':false,
+				'low':datePickerController.dateFormat((new Date().getMonth() + 1) + "/" + new Date().getDate() + "/" + new Date().getFullYear(), true)
+			}
+        );
+    </script>
+    
+    <script>
+        // change endDate according to price point selection
+        pricePointDefaultEndDates = new Array();
+        <?php
+            foreach ($pricePointDefaultEndDates as $key => $row) {
+                echo "pricePointDefaultEndDates[$key] = '" . $row['endDate'] . "';";
+            }
+        ?>
+        function setEndDate(event) {
+            var element = Event.element(event);
+            $('SchedulingMasterEndDatePicker2').value = pricePointDefaultEndDates[$('price-point-' + $(element).getValue()).getValue()];
+        }
+        $$('.price-point-options').each(function(item,index){
+            $(item).observe('change', setEndDate);
+        });
+    </script>
+
+    <script>
+        // toggle auction and buy now options
+        function respondToClick(event) {
+            var element = Event.element(event);
+            if (element.identify() == 'isAuction') {
+                //$('auction-options').toggle();
+                Effect.toggle('auction-options', 'appear');            
+            } else if (element.identify() == 'isBuyNow') {
+                //$('buynow-options').toggle();
+                Effect.toggle('buynow-options', 'appear');            
+                        
+            }
+        }   
+        $('isAuction').observe('change', respondToClick);
+        $('isBuyNow').observe('change', respondToClick);
+    </script>  
+  
+                
+<?php
+
+
+
+// EDIT
+/*************************************************************************************************/
+
+} else {
+
+?>
+
 	<fieldset>
 		<div id='one'>
 			<p class='clean-gray' style="margin-bottom:15px;">
@@ -41,8 +261,9 @@
 			echo $form->input('offerTypeId', array('value' => 7, 'type' => 'hidden'));
 			echo $form->input('numDaysToRun', array('value' => 2, 'type' => 'hidden'));
 		}
-
-
+        
+        
+        
 		// START DATE/TIME
 		echo $form->input('startDatePicker', array('class' => 'format-m-d-y divider-dash highlight-days-06 no-transparency range-low-today fill-grid-no-select', 'label' => 'Start Date', 'readonly' => 'readonly'));
 		if ($masterState != 1) {
@@ -209,3 +430,9 @@
 			<?php echo $form->input('previewDate'); ?>
 		</div>
 	</fieldset>
+
+<?php
+
+}
+
+?>

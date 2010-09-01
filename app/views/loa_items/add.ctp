@@ -1,3 +1,6 @@
+<?php if (isset($_GET['overlayForm'])) {
+        $this->layout = 'overlay_form';
+} ?>
 <div class="loaItems form" style="width:100%;height:500px;overflow:auto;">
 	<?php $session->flash(); ?>
 <?php 

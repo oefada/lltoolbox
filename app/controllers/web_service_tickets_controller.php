@@ -297,7 +297,7 @@ class WebServiceTicketsController extends WebServicesController
 			
 			// take down future instances of offers if reached package.maxNumSales
 			// -------------------------------------------------------------------------------
-			if ($this->Ticket->__runTakeDownPackageNumPackages($data['packageId'], $ticketId)) {
+			if ($this->Ticket->__runTakeDownPricePointNumPackages($offerLive['pricePointId'], $ticketId)) {
 				$this->Ticket->__runTakeDownLoaMemBal($data['packageId'], $ticketId, $data['billingPrice']);
 				$this->Ticket->__runTakeDownLoaNumPackages($data['packageId'], $ticketId);
 			}
@@ -390,12 +390,11 @@ class WebServiceTicketsController extends WebServicesController
             if (stristr($offerLive['offerName'], 'AUCTION') && stristr($offerLive['offerName'],'DAY')) {
             	$restricted_auction = true;
             }
-			
+            
 			// hack june 29 2010 
 			if ($clientData[0]['Client']['clientId'] == 378) {
             	$restricted_auction = false;
 			}
-             
  			// do no autocharge restricted auctions. send them old winner notification w/o checkout
  			// -------------------------------------------------------------------------------           
             if ($restricted_auction) {
@@ -494,7 +493,7 @@ class WebServiceTicketsController extends WebServicesController
 		
 		$aucPreferDates = $params['dates_json'];
 		unset($params['dates_json']);
-		
+
 		// send both the my dates have been received and reservation request
 		// -------------------------------------------------------------------------------
 		$params['ppvNoticeTypeId'] = 20;     // Your Dates Have Been Received
@@ -507,13 +506,12 @@ class WebServiceTicketsController extends WebServicesController
 		if ($this->Ticket->isMultiProductPackage($params['ticketId'])) {
 			$params['ppvNoticeTypeId'] = 10;    // old res request
 		}
-
 		$expirationCriteriaId = $this->Ticket->getExpirationCriteria($params['ticketId']);
 		if ($expirationCriteriaId == 5) {
 			// this is retail value
 			$params['ppvNoticeTypeId'] = 10;    // old res request
 		}
-
+		
 		// check if preferred dates are two days - if so send availabilty request only
 		if (!empty($aucPreferDates)) {
 			$arrival_within_2_days = strtotime('+2 DAYS');     // 48 hrs from now
@@ -747,7 +745,6 @@ class WebServiceTicketsController extends WebServicesController
 		$params['ppvNoticeTypeId'] = 31;    
 		$this->ppv(json_encode($params));	
 	}
-	
 	
 	function numF($str) {
 		// for commas thousand group separater
@@ -1108,6 +1105,7 @@ class WebServiceTicketsController extends WebServicesController
 				if (isset($res_request_count) && $res_request_count > 0) {
 					$emailSubject = 'NEW DATES REQUESTED - ' . $emailSubject;
 				}
+
 				$emailFrom = ($isAuction) ? "$siteDisplay<resrequests@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
 				$emailReplyTo = ($isAuction) ? "resrequests@$siteEmail" : "reservations@$siteEmail";
 				$userEmail = $clientPrimaryEmail;
@@ -1500,7 +1498,7 @@ class WebServiceTicketsController extends WebServicesController
 			// Ticket cancellation confirmation
 			$newTicketStatus = 17;
 		} 
-
+		
 		if ($newTicketStatus) {
 			$this->updateTicketStatus($ticketId, $newTicketStatus);
 		}

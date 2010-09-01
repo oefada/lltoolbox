@@ -10,7 +10,7 @@ $this->set('clientId', $this->data['Client']['clientId']);
 
 <script>var currencyCode = '<?=$loa['Currency']['currencyCode'];?>';</script>
 
-<h2 class="title"><?php __('Current LOA Items');?> <?=$html2->c($loa['Loa']['loaId'], 'LOA Id:')?></h2>
+<h2 class="title"><?php __('Current LOA Items (Inclusions)');?> <?=$html2->c($loa['Loa']['loaId'], 'LOA Id:')?></h2>
 <div><strong>Start Date:</strong> <?=date('Y-m-d', strtotime($loa['Loa']['startDate']));?></div>
 <div><strong>End Date:</strong> <?=date('Y-m-d', strtotime($loa['Loa']['endDate']));?></div>
 <div><strong>Selected Currency:  <?=$currencyCodes[$loa['Loa']['currencyId']];?></strong></div>
@@ -97,7 +97,7 @@ $this->set('clientId', $this->data['Client']['clientId']);
 			<td align="left">
 				<?php if(empty($loaItem['LoaItemRatePeriod'])): ?>
 						<span>
-							<span style="margin-right:5px;font-size:11px;"><strong><?=$currencyCodes[$loa['Loa']['currencyId']];?></strong></span>
+							<span style="margin-right:5px;font-size:11px;"><strong><?=$currencyCodes[$loaItem['currencyId']];?></strong></span>
 							<?php echo money_format('%i', $loaItem['itemBasePrice']); ?>
 						<?php if (!empty($loaItem['Fee'])) {
 							echo ' + fee(s)';
