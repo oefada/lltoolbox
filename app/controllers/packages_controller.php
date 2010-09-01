@@ -798,6 +798,7 @@ class PackagesController extends AppController {
         if (!empty($this->data)) {
            $package['Package']['notes'] = $this->data['Package']['notes'];
            $this->Package->save($package);
+           $this->redirect('/clients/'.$clientId.'/packages/summary/'.$packageId);
         }
         
         $this->set('package', $package);
