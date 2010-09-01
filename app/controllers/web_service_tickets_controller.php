@@ -689,7 +689,7 @@ class WebServiceTicketsController extends WebServicesController
 			$data['autoCharge']				= 1; //if system charge set 1
 			$data['saveUps']				= 0;
 			$data['zAuthHashKey']			= md5('L33T_KEY_LL' . $data['userId'] . $data['ticketId'] . $data['paymentProcessorId'] . $data['paymentAmount'] . $data['initials']);
-			$data['userPaymentSetting']     = $ticketData['userPaymentSettingId'];
+			$data['userPaymentSettingId']     = $ticketData['userPaymentSettingId'];
 			
 			$data_json_encoded = json_encode($data);
 			$response = $this->processPaymentTicket($data_json_encoded);
