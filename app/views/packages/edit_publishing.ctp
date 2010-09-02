@@ -41,13 +41,26 @@ echo $javascript->link('jquery/jquery-autocomplete/jquery.autocomplete'); ?>
 		<td>
 
 		<?php foreach ($items as $k => $i):?>
-			<span style="display:none;" id="merch-desc-<?=$k;?>-copy" rel="werd"><?=(!empty($i['LoaItem']['merchandisingDescription'])) ? $i['LoaItem']['merchandisingDescription']  : 'NO LIVE SITE DESCRIPTION'  ;?></span>
-			<input type="hidden" id="merch-desc-<?=$k;?>-id" value="<?=$i['PackageLoaItemRel']['packageLoaItemRelId'];?>" />
+			<?php if (isset($i['Group'])) :?>
+				<?php foreach ($i['LoaItem'] as $l => $j) :?>
+					<span style="display:none;" id="merch-desc-<?=$k.$l;?>-copy" rel="werd"><?=$j;?></span>
+					<input type="hidden" id="merch-desc-<?=$k.$l;?>-id" value="" />
+				<?php endforeach;?>
+			<?php else: ?>
+				<span style="display:none;" id="merch-desc-<?=$k;?>-copy" rel="werd"><?=(!empty($i['LoaItem']['merchandisingDescription'])) ? $i['LoaItem']['merchandisingDescription']  : 'NO LIVE SITE DESCRIPTION'  ;?></span>
+				<input type="hidden" id="merch-desc-<?=$k;?>-id" value="<?=$i['PackageLoaItemRel']['packageLoaItemRelId'];?>" />
+			<?php endif;?>
 		<?php endforeach;?>
 
 		<ul id="sortable">
 		<?php foreach ($items as $k => $i):?>
-			<li class="ui-state-default" id="merch-desc-<?=$k;?>"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span><?=(!empty($i['LoaItem']['merchandisingDescription'])) ? $i['LoaItem']['merchandisingDescription']  : 'NO LIVE SITE DESCRIPTION'  ;?></li>
+			<?php if (isset($i['Group'])) :?>
+				<?php foreach ($i['LoaItem'] as $l => $j) :?>
+				<li class="ui-state-default" id="merch-desc-<?=$k.$l;?>"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span><?=$j;?></li>
+				<?php endforeach;?>
+			<?php else: ?>
+				<li class="ui-state-default" id="merch-desc-<?=$k;?>"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span><?=(!empty($i['LoaItem']['merchandisingDescription'])) ? $i['LoaItem']['merchandisingDescription']  : 'NO LIVE SITE DESCRIPTION'  ;?></li>
+			<?php endif;?>
 		<?php endforeach;?>
 		</ul>
 		<input type="button" value="Update Inclusions" onclick="updateInclusions('sortable');" />
