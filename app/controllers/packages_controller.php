@@ -2110,7 +2110,7 @@ class PackagesController extends AppController {
             if (isset($loaItem['LoaItem']['itemBasePrice'])) {
                 $taxes = $this->Package->getTaxes($loaItem['PackageLoaItemRel']['loaItemId']);
                 if ($loaItem['LoaItem']['loaItemTypeId'] == 5) {
-                    $total = $loaItem['LoaItem']['itemBasePrice'] * $package['Package']['numNights'];
+                    $total = $loaItem['LoaItem']['itemBasePrice'] * $loaItem['PackageLoaItemRel']['quantity'];
                     $inclusionTotal += $total + ($total * $taxes['percent'] / 100) + $taxes['fixed']; // add taxes
                 } elseif (!in_array($loaItem['LoaItem']['loaItemTypeId'], array(1, 12))) {
                     $total = $loaItem['LoaItem']['itemBasePrice'] * $loaItem['PackageLoaItemRel']['quantity'];
