@@ -1586,22 +1586,25 @@ class PackagesController extends AppController {
 
 			$inc = $this->LoaItem->getPackageInclusions($packageId);
 
-			if (isset($inc[0]['LoaItem']['PackagedItems'])) {
-				$roomNightDescription = $inc[0]['LoaItem']['PackagedItems'][0]['LoaItem']['merchandisingDescription'];
-				$group_items = array();
-				foreach ($inc[0]['LoaItem']['PackagedItems'] as $gitems) {
-					if (!in_array($gitems['LoaItem']['loaItemTypeId'], array(1,12))) {
-						$group_items[] = $gitems['LoaItem']['merchandisingDescription'];
+			foreach ($inc as $i) {
+				if (isset($i['LoaItem']['PackagedItems'])) {
+					$roomNightDescription = $i['LoaItem']['PackagedItems'][0]['LoaItem']['merchandisingDescription'];
+					$group_items = array();
+					foreach ($i['LoaItem']['PackagedItems'] as $gitems) {
+						if (!in_array($gitems['LoaItem']['loaItemTypeId'], array(1,12))) {
+							$group_items[] = $gitems['LoaItem']['merchandisingDescription'];
+						}
 					}
+					$inclusions[] = array(
+							'Group' => 1,
+							'LoaItem' => $group_items,
+							'PackageLoaItemRel' => array('packageLoaItemRelId' => $i['PackageLoaItemRel']['packageLoaItemRelId'])
+					);
+				} else {
+					$roomNightDescription = $i['LoaItem']['merchandisingDescription'];  
 				}
-				$inclusions[] = array(
-						'Group' => 1,
-						'LoaItem' => $group_items,
-						'PackageLoaItemRel' => array('packageLoaItemRelId' => $inc[0]['PackageLoaItemRel']['packageLoaItemRelId'])
-				);
-			} else {
-				$roomNightDescription = $inc[0]['LoaItem']['merchandisingDescription'];  
 			}
+
 			$roomNightDescription = str_replace("\n", '', $roomNightDescription);
 			$this->set('roomNightDescription', $roomNightDescription);
 
