@@ -362,7 +362,7 @@ class Package extends AppModel {
             }
             else {
                 $price = $loaItemRate['LoaItemRate']['price'] * $loaItemRate['LoaItemRatePackageRel']['numNights'];
-                $total += $price + ($price * $taxes['percent'] / 100) + $taxes['fixed'];
+                $total += $price + ($price * $taxes['percent'] / 100) + ($taxes['fixed'] * $loaItemRate['LoaItemRatePackageRel']['numNights']);
             }
         }
         return $total;
