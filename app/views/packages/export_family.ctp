@@ -99,10 +99,10 @@ table.lp td {
 			<td colspan="3">
 				<?php if (count($rn['LoaItems'][0]['LoaItemRate']) > 1) :?>
 					<?php foreach ($rn['LoaItems'][0]['LoaItemRate'] as $rateday) :?>
-						<div><?=$rateday['LoaItemRate']['MultiDayPrice'];?> -- $<?=money_format('%i', $rateday['LoaItemRate']['price']);?></div>
+						<div><?=$rateday['LoaItemRate']['MultiDayPrice'];?> -- <?=$number->currency($rateday['LoaItemRate']['price'], $cc);?></div>
 					<?php endforeach;?>
 				<?php else :?>
-					$<?=money_format('%i', $rn['LoaItems'][0]['LoaItemRate'][0]['LoaItemRate']['price']);?>
+					<?=$number->currency($rn['LoaItems'][0]['LoaItemRate'][0]['LoaItemRate']['price'], $cc);?>
 				<?php endif;?>
 			</td>
 		</tr>
@@ -113,7 +113,7 @@ table.lp td {
 				<?php if ($fees['Fee']['feeTypeId'] == 1) :?>
 				<?=$fees['Fee']['feePercent'];?>%
 				<?php else: ?>
-				$<?=money_format('%i', $fees['Fee']['feePercent']);?>
+				<?=$number->currency($fees['Fee']['feePercent'], $cc);?>
 				<?php endif;?>
 			</td>
 		</tr>
@@ -121,7 +121,7 @@ table.lp td {
 		<tr>
 			<td colspan="2">&nbsp;</td>
 			<td align="right">Total Accommodations:</td>
-			<td align="right"><strong>$<?=money_format('%i',$rn['Totals']['totalAccommodations']);?></strong></td>
+			<td align="right"><strong><?=$number->currency($rn['Totals']['totalAccommodations'],$cc);?></strong></td>
 		</tr>
 		</table>
 	</td>
@@ -153,8 +153,8 @@ table.lp td {
                 </ul>
         <?php endif; ?>
     </td>
-	<td <?=$alt;?>><?=($item['PackageLoaItemRel']['quantity'] > 1) ? '$'. money_format('%i', $item['LoaItem']['itemBasePrice']) : '&nbsp;' ;?></td>
-	<td <?=$alt;?>><strong>$<?=money_format('%i', ($item['LoaItem']['itemBasePrice'] * $item['PackageLoaItemRel']['quantity']));?></strong></td>
+	<td <?=$alt;?>><?=($item['PackageLoaItemRel']['quantity'] > 1) ? '$'. $number->currency($item['LoaItem']['itemBasePrice'], $cc) : '&nbsp;' ;?></td>
+	<td <?=$alt;?>><strong><?=$number->currency( ($item['LoaItem']['itemBasePrice'] * $item['PackageLoaItemRel']['quantity']), $cc);?></strong></td>
 </tr>
 <?php endforeach;?>
 
@@ -183,11 +183,11 @@ table.lp td {
 		<tr>
 			<td class="bold align-r" valign="top" colspan="2">PACKAGE RETAIL VALUE:</td>
 			<td class="bold align-c" valign="top"><?=$lp['dateRanges'];?></td>
-			<td class="bold align-c" valign="top">$<?=money_format('%i', $lp['retailValue']);?></td>
+			<td class="bold align-c" valign="top"><?=$number->currency( $lp['retailValue'], $cc);?></td>
 		</tr>
 		<tr>
 			<td class="bold align-r" valign="top" colspan="3" style="padding-top:15px;">LUXURY LINK STARTING PRICE</td>
-			<td class="bold align-c" valign="top" style="padding-top:15px;">$<?=money_format('%i', $lp['startPrice']);?></td>
+			<td class="bold align-c" valign="top" style="padding-top:15px;"><?=$number->currency( $lp['startPrice'],$cc);?></td>
 		</tr>
 		<tr>
 			<td class="align-r" valign="top" colspan="3">Percentage of Retail</td>
