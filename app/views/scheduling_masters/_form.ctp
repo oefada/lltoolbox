@@ -125,6 +125,7 @@ if ($masterState != 1) {
         <!-- NOTES -->
         <br />
         <h2>Package Notes</h2>
+		<input name="data[Package][packageId]" value="<?php echo $packageId?>" type="hidden"/>
         <textarea name="data[Package][notes]" rows="5"><?php echo $package[Package][notes]; ?></textarea>
 
     </div> <!-- END #schedulingmaster-add -->
