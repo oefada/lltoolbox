@@ -150,13 +150,13 @@
                             <div><?php echo (isset($ratePeriods[0]['LoaItems'][0]['LoaItemRate'][$j]['LoaItemRate']['rateLabel'])) ? $ratePeriods[0]['LoaItems'][0]['LoaItemRate'][$j]['LoaItemRate']['rateLabel'].' Rate: ' : ''; ?> <?php echo $package['Currency']['currencyCode']; ?> <?php echo round($rate['LoaItemRate']['price'], 2); ?>
                             <?php if ($loaItem['LoaItem']['loaItemTypeId'] == 12) {
                                     $isPrepackagedRoom = true;
-                                    echo ' for ';
+                                    echo ' for '.$package['Package']['numNights'].' nights';
                             }
                             else {
                                     $isPrepackagedRoom = false;
-                                    echo ' x ';
-                            }
-                            echo $rate['LoaItemRatePackageRel']['numNights']; ?> nights</div>
+                                    echo ' x '.$rate['LoaItemRatePackageRel']['numNights']. ' nights';
+                            } ?>
+                            </div>
                         <?php endforeach; ?>
                         <?php if (count($ratePeriod['LoaItems'] > 1) && $loaItem !== $ratePeriod['LoaItems'][count($ratePeriod['LoaItems'])-1]): ?>
                             <br />
