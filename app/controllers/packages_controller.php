@@ -92,8 +92,6 @@ class PackagesController extends AppController {
 		if ($this->data['Package']['externalOfferUrl']) {
 			
 			$this->data['Package']['packageName'] = $this->data['Package']['packageTitle'];
-			$this->data['Package']['validityStartDate'] = $this->data['Package']['startDate'];
-			$this->data['Package']['validityEndDate'] = $this->data['Package']['endDate'];
 			$this->data['Package']['packageStatusId'] = 4;
 			if ($this->Package->saveAll($this->data, array('validate' => false)) && $this->Package->save($this->data, array('validate' => false))) {
 
@@ -411,9 +409,6 @@ class PackagesController extends AppController {
 			if (!empty($this->data['Package']['externalOfferUrl'])) { // for hotel offers
 			
 				$this->data['Package']['packageName'] = $this->data['Package']['packageTitle'];
-				$this->data['Package']['validityStartDate'] = $this->data['Package']['startDate'];
-				$this->data['Package']['validityEndDate'] = $this->data['Package']['endDate'];
-				
 				if ($this->Package->saveAll($this->data, array('validate' => false)) && $this->Package->save($this->data, array('validate' => false))) {
 					$this->Session->setFlash(__('The Package has been saved', true), 'default', array(), 'success');
 					$this->redirect("/clients/$clientId/packages/edit/".$this->Package->id);
@@ -1586,9 +1581,13 @@ class PackagesController extends AppController {
 
 			$inc = $this->LoaItem->getPackageInclusions($packageId);
 
+			$roomNightDescription = $loaItems['LoaItem']['merchandisingDescription'];
+
 			foreach ($inc as $i) {
 				if (isset($i['LoaItem']['PackagedItems'])) {
-					$roomNightDescription = $i['LoaItem']['PackagedItems'][0]['LoaItem']['merchandisingDescription'];
+					if (in_array($i['LoaItem']['PackagedItems'][0]['LoaItem']['loaItemTypeId'], array(1,12))) {
+						$roomNightDescription = $i['LoaItem']['PackagedItems'][0]['LoaItem']['merchandisingDescription'];
+					}
 					$group_items = array();
 					foreach ($i['LoaItem']['PackagedItems'] as $gitems) {
 						if (!in_array($gitems['LoaItem']['loaItemTypeId'], array(1,12))) {
@@ -1600,9 +1599,7 @@ class PackagesController extends AppController {
 							'LoaItem' => $group_items,
 							'PackageLoaItemRel' => array('packageLoaItemRelId' => $i['PackageLoaItemRel']['packageLoaItemRelId'])
 					);
-				} else {
-					$roomNightDescription = $i['LoaItem']['merchandisingDescription'];  
-				}
+				} 
 			}
 
 			$roomNightDescription = str_replace("\n", '', $roomNightDescription);
