@@ -46,6 +46,7 @@
             </td>
         </tr>
     <?php endif; ?>
+    <?php $i = 0; ?>
     <?php foreach ($inclusions as $i => $inclusion): ?>
             <?php $class = ($i % 2 > 0) ? ' class="odd"' : ''; ?>
             <tr<?php echo $class; ?>>
