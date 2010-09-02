@@ -20,6 +20,7 @@
                                        <input type="hidden" name="data[<?php echo $i; ?>][LoaItemRatePeriod][loaItemRatePeriodId]" value="<?php echo $item['LoaItemRatePeriod']['loaItemRatePeriodId']; ?>" />
                                        <span class="roomTypeReadOnly"><?php echo $item['LoaItem']['itemName']; ?></span>
                                        <input type="hidden" class="roomTypeId" name="data[<?php echo $i; ?>][LoaItems][<?php echo $item['LoaItem']['loaItemId']; ?>][LoaItem][loaItemId]" value="<?php echo $item['LoaItem']['loaItemId']; ?>" />
+                                       <input type="hidden" name="data[<?php echo $i; ?>][LoaItems][<?php echo $item['LoaItem']['loaItemId']; ?>][LoaItem][loaItemTypeId]" value="<?php echo $item['LoaItem']['loaItemTypeId']; ?>" />
                                        <?php if ($editItem): ?>
                                           <input type="hidden" name="data[<?php echo $i; ?>][isNewItem]" value="true" />
                                        <?php endif; ?>

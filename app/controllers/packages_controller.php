@@ -1078,14 +1078,14 @@ class PackagesController extends AppController {
                     if (empty($roomLoaItems)) {
                         if (!empty($this->data['LoaItem'])) {
                             foreach($this->data['LoaItem'] as $itemId => $item) {
-                            if (isset($item['checked'])) {
-                                $this->LoaItem->recursive = -1;
-                                $roomLoaItems = $this->LoaItem->find('all', array('conditions' => array('LoaItem.loaItemId' => $itemId)));
-                                break;
+                                if (isset($item['checked'])) {
+                                    $this->LoaItem->recursive = -1;
+                                    $roomLoaItems = $this->LoaItem->find('all', array('conditions' => array('LoaItem.loaItemId' => $itemId)));
+                                    break;
+                                }
                             }
                         }
                     }
-                }
                 if (!empty($roomLoaItems)) {
                     if ($ratePeriods = $this->LoaItem->LoaItemRatePeriod->getRatePeriods($roomLoaItems[0]['LoaItem']['loaItemId'], $packageId)) {
                         foreach ($ratePeriods as $ratePeriod) {
@@ -1094,58 +1094,58 @@ class PackagesController extends AppController {
                             $this->LoaItem->LoaItemRatePeriod->save($rp);
                             $ratePeriodId = $this->LoaItem->LoaItemRatePeriod->getLastInsertId();
                             if (isset($ratePeriod['LoaItemRate'])) {
-                            foreach ($ratePeriod['LoaItemRate'] as $rate) {
-                                $numNights = $rate['LoaItemRatePackageRel']['numNights'];
+                                foreach ($ratePeriod['LoaItemRate'] as $rate) {
+                                    $numNights = $rate['LoaItemRatePackageRel']['numNights'];
+                                    $newRate = array('LoaItemRate' => array('loaItemRatePeriodId' => $ratePeriodId));
+                                    for ($i=0; $i<=6; $i++) {
+                                    $newRate['LoaItemRate']['w'.$i] = $rate['LoaItemRate']['w'.$i];
+                                    }
+                                    $this->LoaItem->LoaItemRatePeriod->LoaItemRate->create();
+                                    $this->LoaItem->LoaItemRatePeriod->LoaItemRate->save($newRate);
+                                    $rateId = $this->LoaItem->LoaItemRatePeriod->LoaItemRate->getLastInsertId();
+                                    $rateRel = array('LoaItemRatePackageRel' => array('loaItemRateId' => $rateId,
+                                                              'packageId' => $packageId,
+                                                              'numNights' => $numNights));
+                                    $this->Package->LoaItemRatePackageRel->create();
+                                    $this->Package->LoaItemRatePackageRel->save($rateRel);
+                                }
+                            }
+                            else {
                                 $newRate = array('LoaItemRate' => array('loaItemRatePeriodId' => $ratePeriodId));
                                 for ($i=0; $i<=6; $i++) {
-                                $newRate['LoaItemRate']['w'.$i] = $rate['LoaItemRate']['w'.$i];
+                                    $newRate['LoaItemRate']['w'.$i] = 1;
                                 }
                                 $this->LoaItem->LoaItemRatePeriod->LoaItemRate->create();
                                 $this->LoaItem->LoaItemRatePeriod->LoaItemRate->save($newRate);
                                 $rateId = $this->LoaItem->LoaItemRatePeriod->LoaItemRate->getLastInsertId();
                                 $rateRel = array('LoaItemRatePackageRel' => array('loaItemRateId' => $rateId,
                                                           'packageId' => $packageId,
-                                                          'numNights' => $numNights));
+                                                          'numNights' => $this->Package->field('numNights', array('packageId' => $packageId))));
                                 $this->Package->LoaItemRatePackageRel->create();
                                 $this->Package->LoaItemRatePackageRel->save($rateRel);
                             }
-                        }
-                        else {
-                            $newRate = array('LoaItemRate' => array('loaItemRatePeriodId' => $ratePeriodId));
-                            for ($i=0; $i<=6; $i++) {
-                                $newRate['LoaItemRate']['w'.$i] = 1;
-                            }
-                            $this->LoaItem->LoaItemRatePeriod->LoaItemRate->create();
-                            $this->LoaItem->LoaItemRatePeriod->LoaItemRate->save($newRate);
-                            $rateId = $this->LoaItem->LoaItemRatePeriod->LoaItemRate->getLastInsertId();
-                            $rateRel = array('LoaItemRatePackageRel' => array('loaItemRateId' => $rateId,
-                                                      'packageId' => $packageId,
-                                                      'numNights' => $this->Package->field('numNights', array('packageId' => $packageId))));
-                            $this->Package->LoaItemRatePackageRel->create();
-                            $this->Package->LoaItemRatePackageRel->save($rateRel);
-                            }
-                        if (!empty($ratePeriod['Validity'])) {
-                            foreach ($ratePeriod['Validity'] as $date) {
-                                unset($date['LoaItemDate']['loaItemDateId']);
-                                $date['LoaItemDate']['loaItemRatePeriodId'] = $ratePeriodId;
-                                $this->LoaItem->LoaItemRatePeriod->LoaItemDate->create();
-                                $this->LoaItem->LoaItemRatePeriod->LoaItemDate->save($date['LoaItemDate']);
+                            if (!empty($ratePeriod['Validity'])) {
+                                foreach ($ratePeriod['Validity'] as $date) {
+                                    unset($date['LoaItemDate']['loaItemDateId']);
+                                    $date['LoaItemDate']['loaItemRatePeriodId'] = $ratePeriodId;
+                                    $this->LoaItem->LoaItemRatePeriod->LoaItemDate->create();
+                                    $this->LoaItem->LoaItemRatePeriod->LoaItemDate->save($date['LoaItemDate']);
+                                }
                             }
                         }
                     }
-			    }
-		    }
+                }
                     
-            $rel = array('packageId' => $packageId,
-                         'loaItemId' => $loaItemId,
-                         'quantity' => $newRoom['quantity']);
-            $this->Package->PackageLoaItemRel->create();
-            $this->Package->PackageLoaItemRel->save($rel);
-            $packageLoaItemIds[] = array('loaItemId' => $loaItemId,
-                                         'isNew' => 1,
-                                         'isExistingAddition' => 0,
-                                         'quantity' => $newRoom['quantity']);
-            $items += $newRoom['quantity'];
+                $rel = array('packageId' => $packageId,
+                             'loaItemId' => $loaItemId,
+                             'quantity' => $newRoom['quantity']);
+                $this->Package->PackageLoaItemRel->create();
+                $this->Package->PackageLoaItemRel->save($rel);
+                $packageLoaItemIds[] = array('loaItemId' => $loaItemId,
+                                             'isNew' => 1,
+                                             'isExistingAddition' => 0,
+                                             'quantity' => $newRoom['quantity']);
+                $items += $newRoom['quantity'];
             }
         }
         foreach ($this->data['LoaItem'] as $loaItemId => $room) {
@@ -1763,10 +1763,15 @@ class PackagesController extends AppController {
                         if (isset($rate['isNew']) && (empty($rate['price']) || $rate['price'] == '')) {
                             $errors[] = 'Each rate period must have a price.';
                         }
-                        if (empty($rate['LoaItemRatePackageRel']['numNights'])) {
-                            $errors[] = 'Number of nights must be filled in for each rate period.';
+                        if ($item['LoaItem']['loaItemTypeId'] == 1) {
+                            if (empty($rate['LoaItemRatePackageRel']['numNights'])) {
+                                $errors[] = 'Number of nights must be filled in for each rate period.';
+                            }
+                            $numNights += $rate['LoaItemRatePackageRel']['numNights'];
                         }
-                        $numNights += $rate['LoaItemRatePackageRel']['numNights'];
+                        elseif ($item['LoaItem']['loaItemTypeId'] == 12) {
+                            $numNights = $packageNumNights;
+                        }
                     }
                 }
                 if ($numNights != $packageNumNights) {
