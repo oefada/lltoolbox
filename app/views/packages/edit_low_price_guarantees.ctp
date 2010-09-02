@@ -26,7 +26,7 @@
                         <td>{$ratePeriod['dateRanges']}</td>
                         <td>" . number_format($ratePeriod['retailValue'], 0) . "</td>
                         <td><input id='starting-price{$ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId']}' type='text' value='" . number_format($ratePeriod['startPrice'], 0) . "' disabled/></td>
-                       <td><input id='percent-retail{$ratePeriod['LoaItemRatePackageRel']['loaItemRatePackageRelId']}' class='percent-retail' type='text' name='data[LoaItemRatePackageRel][{$ratePeriod['LoaItemRatePackageRel']['loaItemRatePackageRelId']}]' value='{$ratePeriod['LoaItemRatePackageRel']['guaranteePercentRetail']}' maxlength='3' style='width:30px;'/></td>
+                       <td><input id='percent-retail{$ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId']}' class='percent-retail' type='text' name='data[LoaItemRatePackageRel][{$ratePeriod['LoaItemRatePackageRel']['loaItemRatePackageRelId']}]' value='{$ratePeriod['LoaItemRatePackageRel']['guaranteePercentRetail']}' maxlength='3' style='width:30px;'/></td>
                     </tr>
                 ";
             }
