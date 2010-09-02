@@ -344,13 +344,13 @@ class Package extends AppModel {
         }
     }
     
-    function getRoomRate($loaItemRatePeriodId) {
+    function getRoomRate($loaItemRatePeriodId, $packageId) {
         $loaItemRates = $this->query("
             SELECT * FROM loaItemRate LoaItemRate
             INNER JOIN loaItemRatePackageRel LoaItemRatePackageRel USING(loaItemRateId)
             INNER JOIN loaItemRatePeriod LoaItemRatePeriod USING(loaItemRatePeriodId)
             INNER JOIN loaItem LoaItem USING (loaItemId)
-            WHERE loaItemRatePeriodId = $loaItemRatePeriodId
+            WHERE loaItemRatePeriodId = $loaItemRatePeriodId AND packageId = $packageId
         ");
         
         $total = 0;

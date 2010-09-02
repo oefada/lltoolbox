@@ -2131,7 +2131,7 @@ class PackagesController extends AppController {
                 }
                 
                 // get room rate
-                $total = $this->Package->getRoomRate($ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId']);
+                $total = $this->Package->getRoomRate($ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId'], $packageId);
                 $startPrice = ($total + $inclusionTotal) * $ratePeriod['LoaItemRatePackageRel']['guaranteePercentRetail'] / 100;
                 
                 // assign new fields
