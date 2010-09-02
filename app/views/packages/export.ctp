@@ -50,6 +50,7 @@ table.lp td {
 	font-style:italic;
 }
 </style>
+<!-- <pre><?=print_r($roomNights);?></pre>-->
 
 <table id="package-export" cellspacing="2" cellpadding="0">
 <tr><td colspan="4" class="m"><img src="http://www.luxurylink.com/images/ll_logo_2010.gif" /></td></tr>
@@ -88,7 +89,11 @@ table.lp td {
 		<table width="100%" >
 		<tr>
 			<th width="20%">Room Type:</th>
-			<td width="50%"><?=$rn['LoaItems'][0]['LoaItem']['itemName'];?></td>
+			<td width="50%">
+				<?php foreach ($rn['LoaItems'] as $roomItem):?>
+				<?=$roomItem['LoaItem']['itemName'];?><br />
+				<?php endforeach;?>
+			</td>
 			<td colspan="2">
 				<?php foreach ($rn['Validity'] as $v) { 
 					echo '<strong>' . $v['LoaItemDate']['startDate'] . ' to ' . $v['LoaItemDate']['endDate'] . '</strong><br />';
