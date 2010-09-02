@@ -2119,18 +2119,21 @@ class PackagesController extends AppController {
         }
         
         // ratePeriod
-        $ratePeriods = $this->Package->getRatePeriods($packageId);
+        //$ratePeriods = $this->Package->getRatePeriods($packageId);
+        $ratePeriods = $this->LoaItem->getRoomNights($packageId);
         if (!empty($ratePeriods)) {
             foreach ($ratePeriods as $key => $ratePeriod) {
                 // get dates
-                $loaItemDates = $this->Package->getLoaItemDates($ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId']);
+                //$loaItemDates = $this->Package->getLoaItemDates($ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId']);
+                $loaItemDates = $this->Package->getLoaItemDates($ratePeriod['LoaItems'][0]['LoaItemRatePeriod']['loaItemRatePeriodId']);
                 $loaDates = array();
                 foreach ($loaItemDates as $loaItemDate) {
                     $loaDates[] = date('M j, Y', strtotime($loaItemDate['LoaItemDate']['startDate'])) . ' - ' . date('M j, Y', strtotime($loaItemDate['LoaItemDate']['endDate']));
                 }
                 
                 // get room rate
-                $total = $this->Package->getRoomRate($ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId']);
+                //$total = $this->Package->getRoomRate($ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId']);
+                $total = $ratePeriod['Totals']['totalAccommodations'];
                 $startPrice = ($total + $inclusionTotal) * $ratePeriod['LoaItemRatePackageRel']['guaranteePercentRetail'] / 100;
                 
                 // assign new fields
