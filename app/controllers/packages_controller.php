@@ -2008,6 +2008,7 @@ class PackagesController extends AppController {
 		$this->set('loaItems', $loaItems);
 		$this->set('vb', $this->Package->getPkgVbDates($packageId));
 		$this->set('lowPrice', $lowPriceGuarantees);
+		$this->set('cc', $package['Currency']['currencyCode']);
 		if ($package['Package']['siteId'] == 1) {
 			$this->render('export');	
 		} else {
