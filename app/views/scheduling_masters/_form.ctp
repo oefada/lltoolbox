@@ -122,11 +122,36 @@ if ($masterState != 1) {
         
         <?php } ?>
         
+        <input type="checkbox" id="isMystery" name="data['MerchandisingFlag']['MerchandisingFlag']" value="3"/> <b>Mystery Auction</b>
+        
+        <!-- MYSTERY AUCTIONS -->
+        <div id="mystery-options" style="padding:0px; margin:0px; <?php if (!$data['isAuction']) echo 'display:none;'; ?>">
+            <br />
+            <h2>Mystery Auctions</h2>
+            <?php
+                $openingBid 	= (!empty($this->data['SchedulingMaster']['openingBid'])) 	? $this->data['SchedulingMaster']['openingBid'] 	: 1;
+                $bidIncrement 	= (!empty($this->data['SchedulingMaster']['bidIncrement'])) ? $this->data['SchedulingMaster']['bidIncrement'] 	: 1;
+                $packageName 	= (!empty($this->data['SchedulingMaster']['packageName'])) 	? $this->data['SchedulingMaster']['packageName'] 	: '';
+                $subtitle       = (!empty($this->data['SchedulingMaster']['subtitle'])) ? $this->data['SchedulingMaster']['subtitle'] 	: '';
+                $shortBlurb 	= (!empty($this->data['SchedulingMaster']['shortBlurb'])) 	? $this->data['SchedulingMaster']['shortBlurb'] 	: '';
+                echo $form->input('Mystery.openingBid', array('value' => $openingBid, 'size' => 2));
+                echo $form->input('Mystery.bidIncrement', array('value' => $bidIncrement, 'size' => 2));
+                echo $form->input('Mystery.packageName', array('value' => $packageName, 'size' => 2));
+                echo $form->input('Mystery.subtitle', array('value' => $subtitle, 'size' => 2));
+                echo $form->input('Mystery.shortBlurb', array('value' => $shortBlurb, 'rows' => 2));
+                echo $form->input('additionalDescription', array('rows' => 2));
+                echo $form->input('mysteryIncludes', array('rows' => 2));
+            ?>
+        </div>
+
+        
         <!-- NOTES -->
         <br />
         <h2>Package Notes</h2>
 		<input name="data[Package][packageId]" value="<?php echo $packageId?>" type="hidden"/>
         <textarea name="data[Package][notes]" rows="5"><?php echo $package[Package][notes]; ?></textarea>
+        
+        <br /><br /><br /><br /><br /><br />
 
     </div> <!-- END #schedulingmaster-add -->
     
@@ -195,19 +220,19 @@ if ($masterState != 1) {
         function respondToClick(event) {
             var element = Event.element(event);
             if (element.identify() == 'isAuction') {
-                //$('auction-options').toggle();
                 Effect.toggle('auction-options', 'appear');            
             } else if (element.identify() == 'isBuyNow') {
-                //$('buynow-options').toggle();
                 Effect.toggle('buynow-options', 'appear');            
+            } else if (element.identify() == 'isMystery') {
+                Effect.toggle('mystery-options', 'appear');            
                         
             }
         }   
         $('isAuction').observe('change', respondToClick);
         $('isBuyNow').observe('change', respondToClick);
-    </script>  
-  
-                
+        $('isMystery').observe('change', respondToClick);
+    </script>
+    
 <?php
 
 
