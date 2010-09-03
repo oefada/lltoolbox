@@ -34,7 +34,7 @@ class SchedulingMastersController extends AppController {
             } elseif (!$this->data['Track']['Track'][0]) {
                 $this->Session->setFlash(__('Please select an LOA Track.', true), 'default', array(), 'error');
             } else {
-                
+
                 // get validity start/end
                 $pricePointObj = new PricePoint();
                 $pricePointsValidities = $pricePointObj->getPricePointStartEnd($this->data['SchedulingMaster']['pricePointId']);
@@ -57,9 +57,9 @@ class SchedulingMastersController extends AppController {
     			} else {
     				$this->data['SchedulingMaster']['endDate'] = "$datePickerDate2[2]-$datePickerDate2[0]-$datePickerDate2[1] 16:00:00";	
     			}            
-    
+
     			//if this is a mystery auction we override some fields
-    			if (in_array(3, $this->data['MerchandisingFlag']['MerchandisingFlag'])) {
+    			if ($this->data['MerchandisingFlag']['MerchandisingFlag'] == 3) {
     			    $this->data['SchedulingMaster']['openingBid']   = $this->data['Mystery']['openingBid'];
     			    $this->data['SchedulingMaster']['bidIncrement'] = $this->data['Mystery']['bidIncrement'];
     			    $this->data['SchedulingMaster']['packageName']  = $this->data['Mystery']['packageName'];
