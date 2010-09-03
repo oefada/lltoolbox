@@ -20,7 +20,7 @@ $this->set('clientId', $this->data['Client']['clientId']);
 		echo $form->input('loaId');
 		
 		//only Kristen, Daymora & Kat can edit loa level
-		if (in_array($userDetails['username'], array('cyoung','alee','dpen','kferson','kgathany','mchoe','rfriedman'))) {
+		if (in_array($userDetails['username'], array('alee','dpen','kferson','kgathany','mchoe','rfriedman','acarney','jlagraff'))) {
 			$disabled = false;
 		} else {
 			$disabled = true;
@@ -28,10 +28,10 @@ $this->set('clientId', $this->data['Client']['clientId']);
 		
 		// for editing membershipBalance, totalKept, totalRemitted, totalRevenue
 		// added Dec 22,2009 ALEE
-		$disable_advanced_edit = (in_array($userDetails['username'], array('alee','rhastings','mchoe','cyoung','dpen','kferson'))) ? false : true;
+		$disable_advanced_edit = (in_array($userDetails['username'], array('alee','rhastings','mchoe','dpen','kferson','acarney'))) ? false : true;
 
 		// for editing membershipPackagesRemaining
-		$disable_mp = (in_array($userDetails['username'], array('alee','mchoe','rhastings'))) ? false : true;
+		$disable_mp = (in_array($userDetails['username'], array('alee','mchoe','rhastings','kferson','acarney'))) ? false : true;
 
 		echo $form->input('clientId', array('type' => 'hidden'));
 		echo $form->input('loaLevelId', array('disabled' => $disabled, 'label' => 'LOA Level'));
@@ -71,7 +71,7 @@ $this->set('clientId', $this->data['Client']['clientId']);
 		echo $form->input('membershipBalance', array('disabled' => $disable_advanced_edit));
 		echo $form->input('totalRemitted', array('disabled' => $disable_advanced_edit));
 		
-		if ($userDetails['username'] == 'cyoung') {
+		if ($userDetails['username'] == 'kferson') {
 			echo $form->input('cashPaid');
 		} else {
 			echo $form->input('cashPaid', array('disabled' => true));
