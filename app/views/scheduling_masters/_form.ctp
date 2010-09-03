@@ -122,7 +122,7 @@ if ($masterState != 1) {
         
         <?php } ?>
         
-        <input type="checkbox" id="isMystery" name="data['MerchandisingFlag']['MerchandisingFlag']" value="3"/> <b>Mystery Auction</b>
+        <input type="checkbox" id="isMystery" name="data[MerchandisingFlag][MerchandisingFlag]" value="3"/> <b>Mystery Auction</b>
         
         <!-- MYSTERY AUCTIONS -->
         <div id="mystery-options" style="padding:0px; margin:0px; <?php if (!$data['isAuction']) echo 'display:none;'; ?>">
