@@ -84,5 +84,17 @@ class Loa extends AppModel {
         return $this->query("SELECT * FROM loa Loa WHERE Loa.clientId = {$clientId} ORDER BY Loa.startDate DESC");
     }
     
+    function getLoaOptionList($clientId) {
+        $query = "SELECT loaId, startDate, endDate FROM loa Loa
+                  WHERE clientId = {$clientId} AND Loa.endDate > NOW()";
+        if ($loas = $this->query($query)) {
+            $list = array();
+            foreach ($loas as $loa) {
+                $list[$loa['Loa']['loaId']] = $loa['Loa']['loaId'] . ': ' . date('M j, Y', strtotime($loa['Loa']['startDate'])) . ' - ' . date('M j, Y', strtotime($loa['Loa']['endDate']));
+            }
+        }
+        return $list;
+    }
+    
 }
 ?>
