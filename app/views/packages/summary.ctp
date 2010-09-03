@@ -359,13 +359,17 @@ $linkTitle = 'Edit Blackout Dates';
         </tr>
     <?php
         
-        // get environment
+        // get environment and link for preview
         if (strstr($_SERVER['HTTP_HOST'], 'stage-toolbox')) {
             $previewHost = 'http://stage-luxurylink.luxurylink.com';
         } elseif (strstr($_SERVER['HTTP_HOST'], 'toolboxdev')) {
             $previewHost = 'http://' . str_replace('toolboxdev', 'lldev', $_SERVER['HTTP_HOST']);
         } else {
-            $previewHost = 'http://www.luxurylink.com';
+            if ($multisite->indexDisplay('Package', $package['Package']['sites']) == 'Family') {
+                $previewHost = 'http://www.familygetaway.com'; // TODO: need to make this work for other environments as well
+            } else {
+                $previewHost = 'http://www.luxurylink.com';    
+            }
         }
         
         foreach ($pricePoints as $key => $pricePoint) {
