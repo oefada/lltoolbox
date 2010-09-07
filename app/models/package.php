@@ -549,7 +549,7 @@ class Package extends AppModel {
 		//$r = $this->query("SELECT startDate,endDate,isBlackout FROM packageValidityDisclaimer pvd WHERE packageId = {$packageId} AND startDate >= '{$startDate}' AND endDate <= '{$endDate}' ORDER BY startDate");
 		$r = $this->query("SELECT pvd.startDate, pvd.endDate, pvd.isBlackout FROM loaItemDate date 
 								INNER JOIN packageValidityDisclaimer pvd ON pvd.packageId = {$packageId} AND date.startDate <= pvd.startDate AND pvd.endDate <= date.endDate 
-								WHERE date.loaItemRatePeriodId IN ($loaItemRatePeriodIds)");
+								WHERE date.loaItemRatePeriodId IN ($loaItemRatePeriodIds) ORDER BY pvd.startDate");
 		$data = array();
 		foreach ($r as $m => $arr) {
 			if ($arr['pvd']['isBlackout'] == 1) {
