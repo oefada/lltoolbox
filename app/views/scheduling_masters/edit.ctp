@@ -80,7 +80,7 @@ ul.subsection_tabs li.tab a.active {
 //}
 ?>
 <div style="margin: 0 auto; width: 400px">
-<a href="http://www.luxurylink.com/luxury-hotels/preview.html?clid=<?=$package['ClientLoaPackageRel'][0]['clientId']?>&oid=<?=$this->data['SchedulingMaster']['schedulingMasterId']?>&preview=master" class='button' target="_blank"><span>Preview offer on live site</span></a>
+<a href="http://www.luxurylink.com/luxury-hotels/preview.html?clid=<?=$package['ClientLoaPackageRel'][0]['clientId']?>&oid=<?=$this->data['SchedulingMaster']['schedulingMasterId']?>&preview=pricepoint" class='button' target="_blank"><span>Preview offer on live site</span></a>
 <?
 /*** Delete/Close Offer Link ***/
 $action = 'delete';
