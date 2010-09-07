@@ -176,11 +176,13 @@ class Package extends AppModel {
 	    }
 
 	   //set packageStatusId to Setup if new package
-	   if (!isset($this->data['Package']['packageStatusId'])) {
+	   if (!isset($this->data['Package']['packageStatusId']) && empty($this->data['Package']['packageId'])) {
 		$this->data['Package']['packageStatusId'] = 1;
 	   }
        
-       $this->data['Package']['sites'] = (is_array($this->data['Package']['sites'])) ? implode(',', $this->data['Package']['sites']) : $this->data['Package']['sites'];
+       $sites = (empty($this->data['Package']['sites']) && !empty($this->data['Package']['packageId'])) ? $this->field('sites', array('Package.packageId' => $this->data['Package']['packageId'])) : $this->data['Package']['sites'];
+
+       $this->data['Package']['sites'] = (is_array($sites)) ? implode(',', $sites) : $sites;
        
 	   return true;
 	}
