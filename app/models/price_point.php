@@ -11,7 +11,8 @@ class PricePoint extends AppModel {
     );
 
     var $hasMany = array(
-        'PricePointRatePeriodRel' => array('foreignKey' => 'pricePointId')
+        'PricePointRatePeriodRel' => array('foreignKey' => 'pricePointId'),
+        'SchedulingMaster' => array('foreignKey' => 'pricePointId')
     );
     
     function afterSave($created) {

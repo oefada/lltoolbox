@@ -1,5 +1,6 @@
 <?php $urls = array('LL' => 'luxurylink.com',
-                    'Family' => 'familygetaway.com'); ?>
+                    'Family' => 'familygetaway.com');
+?>
 
 <div id='package_<?=$package['Package']['packageId']?>' class="collapsible <?php echo $site; ?>">
 <div class='handle'>&nbsp;</div>
@@ -115,8 +116,13 @@ foreach($package['Scheduling'] as $k => $master):
 	if (substr($mstrStartDate, 0, 10) == substr($startDate, 0, 10)) {
 	?>
 		<div id='schedulingMaster<?=$master['SchedulingMaster']['schedulingMasterId']?>' style="width: <?=$width?>%; left: <?=$left?>%"<?=$class?> onclick="Modalbox.show('/scheduling_masters/edit/<?=$instance['schedulingMasterId']?>', {title: 'Edit Scheduling Master'});">	
-		<strong>Retail Value</strong><br /><?=$number->currency($master['SchedulingMaster']['retailValue'])?>
-		
+		<strong>Retail Value</strong><br />
+        <?php if (empty($master['SchedulingMaster']['pricePointId'])): ?>
+            <?=$number->currency($master['SchedulingMaster']['retailValue'])?>
+        <?php else: ?>
+            <?=$number->currency($master['PricePoint']['retailValue'])?><br />
+            <?php echo $master['PricePoint']['name']; ?>
+        <?php endif; ?>		
 		
 	<?php
 		$prototip->tooltip('schedulingMaster'.$master['SchedulingMaster']['schedulingMasterId'], array('ajax' =>

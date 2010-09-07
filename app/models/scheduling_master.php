@@ -9,7 +9,8 @@ class SchedulingMaster extends AppModel {
 						   'SchedulingDelayCtrl' => array('foreignKey' => 'schedulingDelayCtrlId'),
 						   'RemittanceType' => array('foreignKey' => 'remittanceTypeId'),
 						   'Package' => array('foreignKey' => 'packageId'),
-						   'OfferType' => array('foreignKey' => 'offerTypeId')
+						   'OfferType' => array('foreignKey' => 'offerTypeId'),
+                           'PricePoint' => array('foreignKey' => 'pricePointId')
 						  );
 	var $actsAs = array('Logable');
 	
