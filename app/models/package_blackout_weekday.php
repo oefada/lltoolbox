@@ -6,6 +6,8 @@ class PackageBlackoutWeekday extends AppModel {
 	var $primaryKey = 'packageBlackoutWeekdayId';
 	
 	var $belongsTo = array('Package' => array('foreignKey' => 'packageId'));
+    
+    var $actsAs = array('Logable');
 	
 }
 ?>

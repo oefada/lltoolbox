@@ -6,6 +6,8 @@ class PackageBlackout extends AppModel {
 	var $primaryKey = 'packageBlackoutId';
 	
 	var $belongsTo = array('Package' => array('foreignKey' => 'packageId'));
+    
+    var $actsAs = array('Logable');
 	
 }
 ?>

@@ -9,6 +9,8 @@ class LoaItemRatePackageRel extends AppModel {
                            'LoaItemRate' => array('foreignKey' => 'loaItemRateId')
 						);
     
+    var $actsAs = array('Logable');
+    
     var $dailyRatesMap = array('w0' => 'Su',
                                'w1' => 'M',
                                'w2' => 'T',

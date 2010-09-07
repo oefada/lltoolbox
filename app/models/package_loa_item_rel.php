@@ -10,6 +10,8 @@ class PackageLoaItemRel extends AppModel {
 	var $orderBy = array('LoaItemType.loaItemTypeName');
 		
 	var $validate = array('quantity' => array('rule' => 'numeric', 'message' => 'Must be a number'));
+    
+    var $actsAs = array('Logable');
 	
 	/*			
 	var $hasAndBelongsToMany = array(

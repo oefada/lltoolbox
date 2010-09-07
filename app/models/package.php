@@ -56,7 +56,7 @@ class Package extends AppModel {
 										  'associationForeignKey' => 'familyAmenityId'
 								   )
 								);
-    var $actsAs = array('Logable');
+    var $actsAs = array('Logable', 'Containable');
     
 	function validateGuests($data) {
 	  $numGuests = $this->data['Package']['numGuests'];
@@ -295,20 +295,40 @@ class Package extends AppModel {
     }
     
     function getHistory($packageId) {
-        $query = "SELECT History.description, History.action, History.samaccountname, History.change, History.created
-                  FROM logs History
-                  WHERE model ='Package' AND model_id = {$packageId}
-                  ORDER BY History.id DESC, History.created DESC";
+        $logableModels = array('LoaItemRatePackageRel' => 'loaItemRatePackageRel',
+                               'PackageLoaItemRel' => 'packageLoaItemRel',
+                               'PricePoint' => 'pricePoint',
+                               'PackageBlackout' => 'packageBlackout',
+                               'PackageBlackoutWeekday' => 'packageBlackoutWeekday');
+        $this->contain(array_keys($logableModels));
+        $package = $this->find('first', array('conditions' => array('Package.packageId' => $packageId)));
+        $queries = array();
+        $queries[0] = "(SELECT History.description, History.action, History.samaccountname, History.change, History.created AS historyCreated
+                       FROM logs History
+                       WHERE model ='Package' AND model_id = {$packageId})";
+        foreach ($logableModels as $modelName => $tableName) {
+            $ids = array();
+            foreach ($package[$modelName] as $record) {
+                $ids[] = $record[$this->$modelName->primaryKey];
+            }
+            $modelIds = implode(',', $ids);
+            $queries[] = "(SELECT History.description, History.action, History.samaccountname, History.change, History.created
+                          FROM logs History
+                          WHERE model ='{$modelName}' AND model_id IN ({$modelIds}))";
+        }
+        $query = implode(' UNION ', $queries);
+        $query .= ' ORDER BY historyCreated DESC';
+        
         $historyDesc = array();
         if ($history = $this->query($query)) {
             foreach($history as $update) {
-                $historyDate = date('M j Y g:i A', strtotime($update['History']['created']));
-                switch ($update['History']['action']) {
+                $historyDate = date('M j Y g:i A', strtotime($update[0]['historyCreated']));
+                switch ($update[0]['action']) {
                     case 'add':
-                        $historyStr = "{$historyDate} - {$update['History']['samaccountname']} -- Created";
+                        $historyStr = "{$historyDate} - {$update[0]['samaccountname']} -- Created";
                         break;
                     case 'edit':
-                        if (preg_match('/packageStatusId \([0-9]*\) => \(([0-9]+)\)/', $update['History']['change'], $matches)) {
+                        if (preg_match('/packageStatusId \([0-9]*\) => \(([0-9]+)\)/', $update[0]['change'], $matches)) {
                             $statusId = end($matches);
                             if ($statusId) {
                                 $statusName = $this->PackageStatus->field('packageStatusName', array('packageStatusId' => $statusId));
@@ -318,7 +338,7 @@ class Package extends AppModel {
                         else {
                             $updateStr = 'Updated';
                         }
-                        $historyStr = "{$historyDate} - {$update['History']['samaccountname']} -- {$updateStr}";
+                        $historyStr = "{$historyDate} - {$update[0]['samaccountname']} -- {$updateStr}";
                         break;
                     default:
                         $historyStr = '';
@@ -507,7 +527,10 @@ class Package extends AppModel {
 		$this->query("DELETE FROM packageBlackout WHERE packageId = {$packageId}");
 		$this->query("DELETE FROM packageBlackoutWeekday WHERE packageId = {$packageId}");
 		if ($weekdays = implode(',', $data['PackageBlackoutWeekday'])) {
-			$this->query("INSERT INTO packageBlackoutWeekday SET packageId = {$packageId}, weekday = '{$weekdays}'");
+			//$this->query("INSERT INTO packageBlackoutWeekday SET packageId = {$packageId}, weekday = '{$weekdays}'");
+            $pbw = array('packageId' => $packageId,
+                         'weekday' => $weekdays);
+            $this->PackageBlackoutWeekday->save($pbw);
 		}
 		if (!empty($data['PackageBlackout'])) {
 			foreach ($data['PackageBlackout'] as $k=>$pb) {
@@ -517,9 +540,12 @@ class Package extends AppModel {
 				$start = strtotime($pb['startDate']);
 				$end = strtotime($pb['endDate']);
 				if ($start && $end) {
-					$startDate = date('Y-m-d', $start);
-					$endDate = date('Y-m-d', $end);
-					$this->query("INSERT INTO packageBlackout SET packageId = {$packageId}, created = NOW(), startDate = '{$startDate}', endDate = '{$endDate}'");
+                    $pb['packageId'] = $packageId;
+					$pb['startDate'] = date('Y-m-d', $start);
+					$pb['endDate'] = date('Y-m-d', $end);
+                    $this->PackageBlackout->save($pb);
+					//$this->query("INSERT INTO packageBlackout SET packageId = {$packageId}, created = NOW(), startDate = '{$startDate}', endDate = '{$endDate}'");
+                    
 				}
 			}
 		}

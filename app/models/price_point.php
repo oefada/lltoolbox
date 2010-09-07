@@ -15,6 +15,8 @@ class PricePoint extends AppModel {
         'SchedulingMaster' => array('foreignKey' => 'pricePointId')
     );
     
+    var $actsAs = array('Logable');
+    
     function afterSave($created) {
         $pricePointId = $this->data['PricePoint']['pricePointId'];
         $packageId = $this->data['PricePoint']['packageId'];
