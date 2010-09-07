@@ -1497,7 +1497,10 @@ class WebServiceTicketsController extends WebServicesController
 		} elseif ($ppvNoticeTypeId == 30) {
 			// Ticket cancellation confirmation
 			$newTicketStatus = 17;
-		} 
+		} elseif ($ppvNoticeTypeId == 24) {
+			// Res follow up (for FP)
+			$newTicketStatus = 9;
+		}  
 		
 		if ($newTicketStatus) {
 			$this->updateTicketStatus($ticketId, $newTicketStatus);
