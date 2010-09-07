@@ -752,6 +752,11 @@ class PackagesController extends AppController {
 			}
 
             if (mail($emailTo, $subject, $body, $headers)) {
+                //set package status to Pending Publishing
+                $this->Package->recursive = -1;
+                $package = $this->Package->find('first', array('conditions' => array('Package.packageId' => $packageId)));
+                $package['Package']['packageStatusId'] = 6;
+                $this->Package->save($package);
                 $this->Session->setFlash(__('The Package has been submitted for Merchandising approval', true), 'default', array(), 'success');
             } else {
                 $this->Session->setFlash(__('The Package could not be sent to merchandising for approval', true), 'default', array(), 'error');

@@ -180,7 +180,7 @@ class Package extends AppModel {
 		$this->data['Package']['packageStatusId'] = 1;
 	   }
        
-       $this->data['Package']['sites'] = implode(',', $this->data['Package']['sites']);
+       $this->data['Package']['sites'] = (is_array($this->data['Package']['sites'])) ? implode(',', $this->data['Package']['sites']) : $this->data['Package']['sites'];
        
 	   return true;
 	}
