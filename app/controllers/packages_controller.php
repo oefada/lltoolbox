@@ -1875,7 +1875,7 @@ class PackagesController extends AppController {
 				$package['overrideValidityDisclaimer'] = 1;
 				$this->Package->save($package);
 			} else {
-	            $this->Package->updatePackagePricePointValidity($packageId);
+	            //$this->Package->updatePackagePricePointValidity($packageId);
 			}
             
             echo 'ok';
