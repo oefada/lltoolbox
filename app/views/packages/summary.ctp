@@ -365,7 +365,7 @@ $linkTitle = 'Edit Blackout Dates';
         } elseif (strstr($_SERVER['HTTP_HOST'], 'toolboxdev')) {
             $previewHost = 'http://' . str_replace('toolboxdev', 'lldev', $_SERVER['HTTP_HOST']);
         } else {
-            if ($multisite->indexDisplay('Package', $package['Package']['sites']) == 'Family') {
+            if (in_array('family', $package['Package']['sites'])) {
                 $previewHost = 'http://www.familygetaway.com'; // TODO: need to make this work for other environments as well
             } else {
                 $previewHost = 'http://www.luxurylink.com';    
