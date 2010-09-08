@@ -52,7 +52,7 @@
                 <th>Rate Periods</th>
                 <th>Package Retail (<?php echo $ratePeriods[0]['currencyCode']; ?>)</th>
                 <th>Guaranteed Percent of Retail</th>
-                <th>Guaranteed Starting Price (<?php echo $ratePeriods[0]['currencyCode']; ?>)</th>
+                <th>Low Price Guarantee (<?php echo $ratePeriods[0]['currencyCode']; ?>)</th>
             </tr>
         <?php
             foreach ($ratePeriods as $key => $ratePeriod) {

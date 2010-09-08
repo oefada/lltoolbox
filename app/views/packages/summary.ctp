@@ -298,11 +298,11 @@ $linkTitle = 'Edit Blackout Dates';
 
 <?php if (empty($lowPriceGuarantees)) {
             $linkName = 'edit_low_price_guarantees';
-            $linkTitle = 'Edit Low Price Gurantees';
+            $linkTitle = 'Edit Low Price Guarantees';
         }
         else {
             $linkName = 'edit_low_price_guarantees';
-            $linkTitle = 'Edit Low Price Gurantees';
+            $linkTitle = 'Edit Low Price Guarantees';
         }
 ?>
 <a name="form-low-price-guarantees"><div class="section-header"><div class="section-title">Low Price Guarantees</div><div class="edit-link" name="<?php echo $linkName; ?>" title="<?php echo $linkTitle; ?>"><?php echo $linkTitle; ?></div></div></a>
@@ -312,7 +312,7 @@ $linkTitle = 'Edit Blackout Dates';
         <tr>
             <th>Rate Periods</th>
             <th>Package Retail (<?php echo $lowPriceGuarantees[0]['currencyCode']; ?>)</th>
-            <th>Starting Price (<?php echo $lowPriceGuarantees[0]['currencyCode']; ?>)</th>
+            <th>Low Price Guarantee (<?php echo $lowPriceGuarantees[0]['currencyCode']; ?>)</th>
             <th>Guaranteed Min. Percent of Retail</th>
         </tr>
     <?php
