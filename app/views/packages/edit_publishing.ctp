@@ -138,7 +138,7 @@ echo $javascript->link('jquery/jquery-autocomplete/jquery.autocomplete'); ?>
 		}
 
 		inclusions += "<ul>\n";
-		inclusions += '    <li>'+ numNights  +' nights in a '+ roomNightDescription +"</li>\n";
+		inclusions += '    <li>'+ numNights  +' nights in '+ roomNightDescription +"</li>\n";
 		var lis = $("#sortable li").each(function(i) {
 			var merch = $('#' + this.id + '-copy').html();
 			if (merch) {
