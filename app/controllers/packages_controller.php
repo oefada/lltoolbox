@@ -1065,6 +1065,7 @@ class PackagesController extends AppController {
             if (isset($this->data['NewLoaItem'])) {
                 $isNewItem = true;
                 foreach ($this->data['NewLoaItem'] as $newRoom) {
+                    //create new loa item
                     $data = array('loaItemTypeId' => 1,
                                   'loaId' => $loaId,
                                   'itemName' => $newRoom['itemName'],
@@ -1073,9 +1074,11 @@ class PackagesController extends AppController {
                     $this->LoaItem->create();
                     $this->LoaItem->save($data);
                     $loaItemId = $this->LoaItem->getLastInsertID();
-            
+                    //get existing rooms for the package (if they exist) for cloning rate periods, rates, and dates.
                     $roomLoaItems = $this->LoaItem->getRoomTypesByPackage($packageId);
                     if (empty($roomLoaItems)) {
+                        //if there are no rooms associated to this package, check for existing loa items that the user checked off
+                        //that we can use to clone. If there are none, the user will be prompted to create rate periods on next page
                         if (!empty($this->data['LoaItem'])) {
                             foreach($this->data['LoaItem'] as $itemId => $item) {
                                 if (isset($item['checked'])) {
@@ -1086,157 +1089,166 @@ class PackagesController extends AppController {
                             }
                         }
                     }
-                if (!empty($roomLoaItems)) {
-                    if ($ratePeriods = $this->LoaItem->LoaItemRatePeriod->getRatePeriods($roomLoaItems[0]['LoaItem']['loaItemId'], $packageId)) {
-                        foreach ($ratePeriods as $ratePeriod) {
-                            $rp = array('LoaItemRatePeriod' => array('loaItemId' => $loaItemId));
-                            $this->LoaItem->LoaItemRatePeriod->create();
-                            $this->LoaItem->LoaItemRatePeriod->save($rp);
-                            $ratePeriodId = $this->LoaItem->LoaItemRatePeriod->getLastInsertId();
-                            if (isset($ratePeriod['LoaItemRate'])) {
-                                foreach ($ratePeriod['LoaItemRate'] as $rate) {
-                                    $numNights = $rate['LoaItemRatePackageRel']['numNights'];
+                    //clone 'em and create package rels
+                    if (!empty($roomLoaItems)) {
+                        if ($ratePeriods = $this->LoaItem->LoaItemRatePeriod->getRatePeriods($roomLoaItems[0]['LoaItem']['loaItemId'], $packageId)) {
+                            foreach ($ratePeriods as $ratePeriod) {
+                                $rp = array('LoaItemRatePeriod' => array('loaItemId' => $loaItemId));
+                                $this->LoaItem->LoaItemRatePeriod->create();
+                                $this->LoaItem->LoaItemRatePeriod->save($rp);
+                                $ratePeriodId = $this->LoaItem->LoaItemRatePeriod->getLastInsertId();
+                                if (isset($ratePeriod['LoaItemRate'])) {
+                                    foreach ($ratePeriod['LoaItemRate'] as $rate) {
+                                        $numNights = $rate['LoaItemRatePackageRel']['numNights'];
+                                        $newRate = array('LoaItemRate' => array('loaItemRatePeriodId' => $ratePeriodId));
+                                        for ($i=0; $i<=6; $i++) {
+                                            $newRate['LoaItemRate']['w'.$i] = $rate['LoaItemRate']['w'.$i];
+                                        }
+                                        $this->LoaItem->LoaItemRatePeriod->LoaItemRate->create();
+                                        $this->LoaItem->LoaItemRatePeriod->LoaItemRate->save($newRate);
+                                        $rateId = $this->LoaItem->LoaItemRatePeriod->LoaItemRate->getLastInsertId();
+                                        $rateRel = array('LoaItemRatePackageRel' => array('loaItemRateId' => $rateId,
+                                                                                          'packageId' => $packageId,
+                                                                                          'numNights' => $numNights));
+                                        $this->Package->LoaItemRatePackageRel->create();
+                                        $this->Package->LoaItemRatePackageRel->save($rateRel);
+                                    }
+                                }
+                                else {
                                     $newRate = array('LoaItemRate' => array('loaItemRatePeriodId' => $ratePeriodId));
                                     for ($i=0; $i<=6; $i++) {
-                                    $newRate['LoaItemRate']['w'.$i] = $rate['LoaItemRate']['w'.$i];
+                                        $newRate['LoaItemRate']['w'.$i] = 1;
                                     }
                                     $this->LoaItem->LoaItemRatePeriod->LoaItemRate->create();
                                     $this->LoaItem->LoaItemRatePeriod->LoaItemRate->save($newRate);
                                     $rateId = $this->LoaItem->LoaItemRatePeriod->LoaItemRate->getLastInsertId();
                                     $rateRel = array('LoaItemRatePackageRel' => array('loaItemRateId' => $rateId,
-                                                              'packageId' => $packageId,
-                                                              'numNights' => $numNights));
+                                                                                      'packageId' => $packageId,
+                                                                                      'numNights' => $this->Package->field('numNights', array('packageId' => $packageId))));
                                     $this->Package->LoaItemRatePackageRel->create();
                                     $this->Package->LoaItemRatePackageRel->save($rateRel);
                                 }
-                            }
-                            else {
-                                $newRate = array('LoaItemRate' => array('loaItemRatePeriodId' => $ratePeriodId));
-                                for ($i=0; $i<=6; $i++) {
-                                    $newRate['LoaItemRate']['w'.$i] = 1;
-                                }
-                                $this->LoaItem->LoaItemRatePeriod->LoaItemRate->create();
-                                $this->LoaItem->LoaItemRatePeriod->LoaItemRate->save($newRate);
-                                $rateId = $this->LoaItem->LoaItemRatePeriod->LoaItemRate->getLastInsertId();
-                                $rateRel = array('LoaItemRatePackageRel' => array('loaItemRateId' => $rateId,
-                                                          'packageId' => $packageId,
-                                                          'numNights' => $this->Package->field('numNights', array('packageId' => $packageId))));
-                                $this->Package->LoaItemRatePackageRel->create();
-                                $this->Package->LoaItemRatePackageRel->save($rateRel);
-                            }
-                            if (!empty($ratePeriod['Validity'])) {
-                                foreach ($ratePeriod['Validity'] as $date) {
-                                    unset($date['LoaItemDate']['loaItemDateId']);
-                                    $date['LoaItemDate']['loaItemRatePeriodId'] = $ratePeriodId;
-                                    $this->LoaItem->LoaItemRatePeriod->LoaItemDate->create();
-                                    $this->LoaItem->LoaItemRatePeriod->LoaItemDate->save($date['LoaItemDate']);
-                                }
-                            }
-                        }
-                    }
-                }
-                    
-                $rel = array('packageId' => $packageId,
-                             'loaItemId' => $loaItemId,
-                             'quantity' => $newRoom['quantity']);
-                $this->Package->PackageLoaItemRel->create();
-                $this->Package->PackageLoaItemRel->save($rel);
-                $packageLoaItemIds[] = array('loaItemId' => $loaItemId,
-                                             'isNew' => 1,
-                                             'isExistingAddition' => 0,
-                                             'quantity' => $newRoom['quantity']);
-                $items += $newRoom['quantity'];
-            }
-        }
-        foreach ($this->data['LoaItem'] as $loaItemId => $room) {
-            if (isset($room['checked'])) {
-                if ($room['quantity'] == 1 && count(array_keys($groupItems, $loaItemId)) > 1) {
-                    $this->deleteGroup($packageId, $loaItemId);
-                    foreach (array_keys($groupItems, $loaItemId) as $groupItem) {
-                        unset($groupItems[$groupItem]);
-                    }
-                }
-                $isNewItem = false;
-                if (isset($room['PackageLoaItemRel'])) {
-                    $masterLoaItemId = $loaItemId;
-                    $isMaster = 1;
-                }
-                else {
-                    $isMaster = 0;
-                }
-                $items += $room['quantity'];
-                $packageLoaItemIds[] = array('loaItemId' => $loaItemId,
-                                             'isNew' => 0,
-                                             'isMaster' => $isMaster,
-                                             'quantity' => $room['quantity']);
-            }
-            else {
-                if (isset($room['PackageLoaItemRel'])) {
-                    $this->Package->PackageLoaItemRel->delete($room['PackageLoaItemRel']['packageLoaItemRelId']);
-                    $this->Package->LoaItemRatePackageRel->deleteRatesFromPackage($packageId, $loaItemId);
-                    if (!empty($groupItems)) {
-                        if (in_array($loaItemId, $groupItems)) {
-                            if (count($groupItems) == 2) {
-                                $this->deleteGroup($packageId, $loaItemId);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        //if this package has more than one room; create loaItemGroup
-        if (count($packageLoaItemIds) > 1 || (count($packageLoaItemIds) == 1 && $items > 1)) {
-            if (count($packageLoaItemIds) == 1 && $items > 1) {
-                for ($i = 1; $i < $items; $i++) {
-                    $packageLoaItemIds[$i] = $packageLoaItemIds[0]; 
-                }
-            }
-            elseif (count($packageLoaItemIds) > 1) {
-                if (!isset($masterLoaItemId)) {
-                    $masterLoaItemId = $packageLoaItemIds[0]['loaItemId'];
-                }
-                $masterValidities = $this->LoaItem->LoaItemRatePeriod->LoaItemDate->getValidDates($masterLoaItemId);
-                foreach($packageLoaItemIds as $loaItem) {
-                    if ($loaItem['loaItemId'] == $masterLoaItemId) {
-                        $isValidLoaItem = true;
-                        continue;
-                    }
-                    elseif ($loaItem['isNew']) {
-                        $isValidLoaItem = true;
-                        break;
-                    }
-                    //validate that rooms have same start and end dates. return with error message if not
-                    if (!$loaItem['isNew'] && !$loaItem['isMaster']) {
-                        $isValidLoaItem = true;
-                        $thisValidities = $this->LoaItem->LoaItemRatePeriod->LoaItemDate->getValidDates($loaItem['loaItemId']);
-                        if (count($masterValidities) != count($thisValidities)) {
-                            $isValidLoaItem = false;
-                        }
-                        else {
-                            foreach($thisValidities as $validity) {
-                                if ($key = $this->array_search_key($validity['startDate'], $masterValidities, 'startDate')) {
-                                    $isValidLoaItem = true;
-                                    if ($validity['endDate'] != $masterValidities[$key]['endDate']) {
-                                        $isValidLoaItem = false;
+                                if (!empty($ratePeriod['Validity'])) {
+                                    foreach ($ratePeriod['Validity'] as $date) {
+                                        unset($date['LoaItemDate']['loaItemDateId']);
+                                        $date['LoaItemDate']['loaItemRatePeriodId'] = $ratePeriodId;
+                                        $this->LoaItem->LoaItemRatePeriod->LoaItemDate->create();
+                                        $this->LoaItem->LoaItemRatePeriod->LoaItemDate->save($date['LoaItemDate']);
                                     }
                                 }
                             }
                         }
-                        if (!$isValidLoaItem) {
-                            $this->Session->setFlash('These room nights are not eligible to be included in the same package. They must have the same number of rate periods and their date ranges must match completely');
-                            $this->redirect('/clients/'.$clientId.'/packages/edit_room_loa_items/'.$packageId);
-                            return;
+                    }
+                    
+                    $rel = array('packageId' => $packageId,
+                                 'loaItemId' => $loaItemId,
+                                 'quantity' => $newRoom['quantity']);
+                    $this->Package->PackageLoaItemRel->create();
+                    $this->Package->PackageLoaItemRel->save($rel);
+                    $packageLoaItemIds[] = array('loaItemId' => $loaItemId,
+                                                 'isNew' => 1,
+                                                 'isExistingAddition' => 0,
+                                                 'quantity' => $newRoom['quantity']);
+                    $items += $newRoom['quantity'];
+                }
+            }
+            //now loop through existing items posted in the form
+            foreach ($this->data['LoaItem'] as $loaItemId => $room) {
+                if (isset($room['checked'])) {
+                    //handle cases where the user changed the quantity a room from more than 1 to only 1
+                    if ($room['quantity'] == 1 && count(array_keys($groupItems, $loaItemId)) > 1) {
+                        $this->deleteGroup($packageId, $loaItemId);
+                        foreach (array_keys($groupItems, $loaItemId) as $groupItem) {
+                            unset($groupItems[$groupItem]);
+                        }
+                    }
+                    $isNewItem = false;
+                    //select a room to validate rate periods/validity against
+                    if (isset($room['PackageLoaItemRel'])) {
+                        $masterLoaItemId = $loaItemId;
+                        $isMaster = 1;
+                    }
+                    else {
+                        $isMaster = 0;
+                    }
+                    $items += $room['quantity'];
+                    $packageLoaItemIds[] = array('loaItemId' => $loaItemId,
+                                                 'isNew' => 0,
+                                                 'isMaster' => $isMaster,
+                                                 'quantity' => $room['quantity']);
+                }
+                else {
+                    //if this room had previously been related to this package, remove rels
+                    if (isset($room['PackageLoaItemRel'])) {
+                        $this->Package->PackageLoaItemRel->delete($room['PackageLoaItemRel']['packageLoaItemRelId']);
+                        $this->Package->LoaItemRatePackageRel->deleteRatesFromPackage($packageId, $loaItemId);
+                        //if this package has a group of rooms, delete the group
+                        if (!empty($groupItems)) {
+                            if (in_array($loaItemId, $groupItems)) {
+                                if (count($groupItems) >= 2) {
+                                    $this->deleteGroup($packageId, $loaItemId);
+                                }
+                            }
                         }
                     }
                 }
             }
-            $loaItemId = $this->LoaItem->createRoomGroup($packageLoaItemIds, $loaId, $packageId);
-            $loaItemGroupId = $loaItemId;
-            $packageLoaItemIds[] = array('loaItemId' => $loaItemId,
-                                         'quantity' => 1,
-                                         'isGroupItem' => true
-                                         );
+            //if this package has more than one room, create loaItemGroup
+            if (count($packageLoaItemIds) > 1 || (count($packageLoaItemIds) == 1 && $items > 1)) {
+                //if this is multiple quantities of the same room
+                if (count($packageLoaItemIds) == 1 && $items > 1) {
+                    for ($i = 1; $i < $items; $i++) {
+                        $packageLoaItemIds[$i] = $packageLoaItemIds[0]; 
+                    }
+                }
+                elseif (count($packageLoaItemIds) > 1) {
+                    if (!isset($masterLoaItemId)) {
+                        $masterLoaItemId = $packageLoaItemIds[0]['loaItemId'];
+                    }
+                    //validate that the rooms can be grouped together
+                    $masterValidities = $this->LoaItem->LoaItemRatePeriod->LoaItemDate->getValidDates($masterLoaItemId);
+                    foreach($packageLoaItemIds as $loaItem) {
+                        if ($loaItem['loaItemId'] == $masterLoaItemId) {
+                            $isValidLoaItem = true;
+                            continue;
+                        }
+                        elseif ($loaItem['isNew']) {
+                            $isValidLoaItem = true;
+                            break;
+                        }
+                        //validate that rooms have same start and end dates. return with error message if not
+                        if (!$loaItem['isNew'] && !$loaItem['isMaster']) {
+                            $isValidLoaItem = true;
+                            $thisValidities = $this->LoaItem->LoaItemRatePeriod->LoaItemDate->getValidDates($loaItem['loaItemId']);
+                            if (count($masterValidities) != count($thisValidities)) {
+                                $isValidLoaItem = false;
+                            }
+                            else {
+                                foreach($thisValidities as $validity) {
+                                    if ($key = $this->array_search_key($validity['startDate'], $masterValidities, 'startDate')) {
+                                        $isValidLoaItem = true;
+                                        if ($validity['endDate'] != $masterValidities[$key]['endDate']) {
+                                            $isValidLoaItem = false;
+                                        }
+                                    }
+                                }
+                            }
+                            if (!$isValidLoaItem) {
+                                $this->Session->setFlash('These room nights are not eligible to be included in the same package. They must have the same number of rate periods and their date ranges must match completely');
+                                $this->redirect('/clients/'.$clientId.'/packages/edit_room_loa_items/'.$packageId);
+                                return;
+                            }
+                        }
+                    }
+                }
+                $loaItemId = $this->LoaItem->createRoomGroup($packageLoaItemIds, $loaId, $packageId);
+                $loaItemGroupId = $loaItemId;
+                $packageLoaItemIds[] = array('loaItemId' => $loaItemId,
+                                             'quantity' => 1,
+                                             'isGroupItem' => true
+                                             );
             }
+            //finally, update room loa items and update rels
             foreach ($packageLoaItemIds as $packageLoaItem) {
                 $loaItemId = $packageLoaItem['loaItemId'];
                 $query = "SELECT * FROM loaItem LoaItem

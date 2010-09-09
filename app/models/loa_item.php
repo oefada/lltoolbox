@@ -457,8 +457,16 @@ class LoaItem extends AppModel {
         return $this->find('first', array('conditions' => array('LoaItem.loaItemId' => $loaItemId)));
     }
     
-    function savePackageRatePeriods($data, $packageId) {
-        
+
+    function getRatePeriodId($loaItemId, $packageId, $origValidity) {
+        if ($ratePeriods = $this->LoaItemRatePeriod->getRatePeriods($loaItemId, $packageId)) {
+            foreach ($ratePeriods as $ratePeriod) {
+                $diff = array_diff($origValidity, $ratePeriod['Validity']);
+                if (empty($diff)) {
+                    return $ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId'];
+                }
+            }
+        }
     }
     
     function getRoomNights($packageId) {
@@ -466,26 +474,13 @@ class LoaItem extends AppModel {
             $this->bindModel(array('hasOne' =>  array('Package')));
             $totalNights = $this->Package->field('numNights', array('packageId' => $packageId));
             $this->unbindModel(array('hasOne' =>  array('Package')));
-            
-            $ratePeriods = array();
-            
+
             if ($rates = $this->LoaItemRatePeriod->getRatePeriods($roomLoaItems[0]['LoaItem']['loaItemId'], $packageId)) {
                 foreach($rates as &$rate) {
-                    foreach ($roomLoaItems as &$loaItem) {
-                        if ($loaItemRates = $this->LoaItemRatePeriod->LoaItemRate->getRoomRates($loaItem['LoaItem']['loaItemId'], $packageId, $rate['LoaItemRatePeriod']['loaItemRatePeriodId'])) {
+                    foreach ($roomLoaItems as $i => &$loaItem) {
+                        $ratePeriodId = ($i == 0) ? $rate['LoaItemRatePeriod']['loaItemRatePeriodId'] : $this->getRatePeriodId($loaItem['LoaItem']['loaItemId'], $packageId, $rate['Validity']);
+                        if ($loaItemRates = $this->LoaItemRatePeriod->LoaItemRate->getRoomRates($loaItem['LoaItem']['loaItemId'], $packageId, $ratePeriodId)) {
                             $loaItem['LoaItemRate'] = $loaItemRates;
-                        }
-                        else {
-                            if ($secondRatePeriods = $this->LoaItemRatePeriod->getRatePeriods($loaItem['LoaItem']['loaItemId'], $packageId)) {
-                                foreach ($secondRatePeriods as $ratePeriod) {
-                                    if ($ratePeriod['Validity'][0]['LoaItemDate']['startDate'] == $rate['Validity'][0]['LoaItemDate']['startDate']) {
-                                        if ($loaItemRates = $this->LoaItemRatePeriod->LoaItemRate->getRoomRates($loaItem['LoaItem']['loaItemId'], $packageId, $ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId'])) {
-                                            $loaItem['LoaItemRate'] = $loaItemRates;
-                                            break 2;
-                                        }
-                                    }
-                                }
-                            }
                         }
                     }
                     $thisRate = array();
@@ -567,10 +562,32 @@ class LoaItem extends AppModel {
             $loaItems[] = $loaItemId['loaItemId'];
         }
         $ids = implode(',', $loaItems);
+        
         $query = "SELECT * FROM loaItemGroup LoaItemGroup
                   INNER JOIN packageLoaItemRel PackageLoaItemRel ON LoaItemGroup.groupItemId = PackageLoaItemRel.loaItemId
                   WHERE groupItemId IN ({$ids}) AND packageId = {$packageId}";
         if ($group = $this->query($query)) {
+            //if (count($group) != count($ids)) {
+            //    $groupIds = array();
+            //    foreach($group as $g) {
+            //        if (!in_array($g['LoaItemGroup']['groupItemId'], $loaItemIds)) {
+            //            $this->LoaItemGroup->delete($g['LoaItemGroup']['loaItemGroupId']);
+            //        }
+            //        else {
+            //            $groupIds[] = $g['LoaItemGroup']['groupItemId'];
+            //        }
+            //    }
+            //    foreach($loaItemIds as $id) {
+            //        if (!in_array($id, $groupIds)) {
+            //            $data = array('groupItemId' => $id,
+            //                          'loaItemId' => $g['LoaItemGroup']['loaItemId'],
+            //                          'quantity' => 1
+            //            );
+            //            $this->LoaItemGroup->create();
+            //            $this->LoaItemGroup->save($data);
+            //        }
+            //    }
+            //}
             return $group[0]['LoaItemGroup']['loaItemId'];
         }
         else {

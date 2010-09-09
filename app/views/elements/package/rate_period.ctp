@@ -29,9 +29,11 @@
                                 <?php foreach($item['LoaItemRate'] as $j => $rateItem):
                                         if (empty($rateItem['LoaItemRate']['price'])) {
                                             $newRate = true;
+                                            $existingRate = false;
                                         }
                                         else {
                                             $existingRate = true;
+                                            $newRate = false;
                                         }
                                         ?>
                                         <tr>
@@ -93,7 +95,7 @@
                                                         </td>
                                                         <td>
                                                             <?php if ($i == 0 || $editItem): ?>
-                                                            <?php $numNights = (isset($rateItem['LoaItemRatePackageRel']['numNights']) && $rateItem['LoaItem']['loaItemTypeId'] == 1) ? $rateItem['LoaItemRatePackageRel']['numNights'] : $package['Package']['numNights']; ?>
+                                                            <?php $numNights = (isset($rateItem['LoaItemRatePackageRel']['numNights']) && $item['LoaItem']['loaItemTypeId'] == 1) ? $rateItem['LoaItemRatePackageRel']['numNights'] : $package['Package']['numNights']; ?>
                                                                     <?php if (count($item['LoaItemRate']) > 1): ?>
                                                                         <span class="numNights-rate<?php echo $j+1; ?> numNights" style="display:none"><?php echo $numNights; ?></span>
                                                                         <input type="text" size="5" class="weekdaysInput numNights" id="input-numNights-rate<?php echo $j+1; ?>" name="data[<?php echo $i; ?>][LoaItems][<?php echo $item['LoaItem']['loaItemId'];?>][LoaItemRate][<?php echo $j; ?>][LoaItemRatePackageRel][numNights]" value="<?php echo $rateItem['LoaItemRatePackageRel']['numNights']; ?>" />
