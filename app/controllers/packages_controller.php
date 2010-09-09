@@ -1579,24 +1579,22 @@ class PackagesController extends AppController {
         
 			// get roomGradeName for this package
 	        $this->Package->PackageLoaItemRel->recursive = 2;
-	        $loaItems = $this->Package->PackageLoaItemRel->find('first', array('conditions' => array('Package.packageId' => $packageId, 'LoaItem.loaItemTypeId' => 1)));
+	        $loaItems = $this->Package->PackageLoaItemRel->find('first', array('conditions' => array('Package.packageId' => $packageId, 'LoaItem.loaItemTypeId' => array(1,12))));
 	        $roomGradeName = $loaItems['LoaItem']['RoomGrade']['roomGradeName'];
 			$this->set('roomGrade', $roomGradeName);
-
-
+			
 			$inc = $this->LoaItem->getPackageInclusions($packageId);
 
 			$roomNightDescription = $loaItems['LoaItem']['merchandisingDescription'];
 
 			foreach ($inc as $i) {
 				if (isset($i['LoaItem']['PackagedItems'])) {
-					if (in_array($i['LoaItem']['PackagedItems'][0]['LoaItem']['loaItemTypeId'], array(1,12))) {
-						$roomNightDescription = $i['LoaItem']['PackagedItems'][0]['LoaItem']['merchandisingDescription'];
-					}
 					$group_items = array();
 					foreach ($i['LoaItem']['PackagedItems'] as $gitems) {
 						if (!in_array($gitems['LoaItem']['loaItemTypeId'], array(1,12))) {
 							$group_items[] = $gitems['LoaItem']['merchandisingDescription'];
+						} else {
+							$roomNightDescription = $gitems['LoaItem']['merchandisingDescription'];
 						}
 					}
 					$inclusions[] = array(
