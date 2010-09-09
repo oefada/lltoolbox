@@ -547,6 +547,7 @@ class Package extends AppModel {
                     $pb['packageId'] = $packageId;
 					$pb['startDate'] = date('Y-m-d', $start);
 					$pb['endDate'] = date('Y-m-d', $end);
+                    $this->PackageBlackout->create();
                     $this->PackageBlackout->save($pb);
 					//$this->query("INSERT INTO packageBlackout SET packageId = {$packageId}, created = NOW(), startDate = '{$startDate}', endDate = '{$endDate}'");
                     
