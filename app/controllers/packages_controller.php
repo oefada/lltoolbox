@@ -1838,6 +1838,9 @@ class PackagesController extends AppController {
             }            
             if (empty($this->data['loaItemRatePeriodIds'])) {
                 $errors[] = 'You must choose at least one rate period.';
+            }
+            if ($this->data['PricePoint']['retailValue'] <= 0) {
+                $errors[] = 'Retail Value must be greater than 0.';
             }            
             if ((!$this->data['PricePoint']['percentRetailAuc'] && !$this->data['PricePoint']['percentRetailBuyNow'])
                 || (!$this->data['auctionOverride'] && $this->data['PricePoint']['percentRetailAuc'] && $this->data['PricePoint']['percentRetailAuc'] < $this->data['guaranteedPercent'])
@@ -1897,6 +1900,7 @@ class PackagesController extends AppController {
             
         // view data
         } else {
+            
             // edit state
             $loaItemRatePeriodIds = array();
             $pricePointId = isset($this->params['url']['pricePointId']) ? $this->params['url']['pricePointId'] : false;
