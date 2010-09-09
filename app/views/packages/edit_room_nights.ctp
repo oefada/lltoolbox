@@ -30,7 +30,7 @@ echo $javascript->link('jquery/jquery-autocomplete/jquery.autocomplete'); ?>
     <?php if (isset($_GET['isNewItem']) || empty($ratePeriods)): ?>
       <div class="rate-period-button"><input type="button" id="newRatePeriod" value="New Rate Period" /></div>
     <?php endif; ?>
-    <?php $taxesIncluded = ($package['Package']['isTaxIncluded']) ? true : false; ?>
-    <div>Taxes Included in this Package?  <input type="radio" value="1" name="data[Package][taxesIncluded]" <?php echo $taxesIncluded ? 'checked' : ''; ?>/> Yes  <input type="radio" value="0" name="data[Package][taxesIncluded]" <?php echo $taxesIncluded ? '' : 'checked'; ?>/> No </div>
+    <?php $taxesIncluded = ($package['Package']['isTaxIncluded'] || empty($ratePeriods)) ? true : false; ?>
+    <div class="taxes-included">Taxes Included in this Package?  <input type="radio" value="1" name="data[Package][taxesIncluded]" <?php echo $taxesIncluded ? 'checked' : ''; ?>/> Yes  <input type="radio" value="0" name="data[Package][taxesIncluded]" <?php echo $taxesIncluded ? '' : 'checked'; ?>/> No </div>
     <input type="button" value="Save Changes" onclick="submitForm('roomNightsForm');" />
 </form>

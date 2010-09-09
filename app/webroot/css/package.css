@@ -90,6 +90,10 @@ div.rate-period-button, div.new-inclusion-button {
     text-align:right;
 }
 
+div.taxes-included {
+    font-size:14px;
+}
+
 th.per-night {
     width:150px;
 }

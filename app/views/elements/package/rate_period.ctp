@@ -76,12 +76,12 @@
                                                     </tr>
                                                     <tr class="room-<?php echo $roomNum+1; ?> rate-<?php echo $j+1; ?> rate">
                                                         <td width="120">
-                                                            <?php echo $package['Currency']['currencyCode']; ?> 
+                                                            <b><?php echo $package['Currency']['currencyCode']; ?></b>
                                                             <?php if (empty($rateItem['LoaItemRate']['price'])): ?>
                                                                     <input type="text" size="5" class="weekdaysInput price" name="data[<?php echo $i; ?>][LoaItems][<?php echo $item['LoaItem']['loaItemId'];?>][LoaItemRate][<?php echo $j; ?>][price]" value="<?php echo $rateItem['LoaItemRate']['price']; ?>" />
                                                                     <input type="hidden" class="weekdaysInput" name="data[<?php echo $i; ?>][LoaItems][<?php echo $item['LoaItem']['loaItemId'];?>][LoaItemRate][<?php echo $j; ?>][isNew]" value="true" />
                                                             <?php else: ?>
-                                                                    <span class="price"><?php echo $rateItem['LoaItemRate']['price']; ?></span>
+                                                                    <span class="price"><b><?php echo $rateItem['LoaItemRate']['price']; ?></b></span>
                                                             <?php endif; ?>
                                                             <input type="hidden" class="weekdaysInput" name="data[<?php echo $i; ?>][LoaItems][<?php echo $item['LoaItem']['loaItemId'];?>][LoaItemRate][<?php echo $j; ?>][loaItemRateId]" value="<?php echo $rateItem['LoaItemRate']['loaItemRateId']; ?>" />
                                                             <input type="hidden" class="weekdaysInput" name="data[<?php echo $i; ?>][LoaItems][<?php echo $item['LoaItem']['loaItemId'];?>][LoaItemRate][<?php echo $j; ?>][loaItemRatePeriodId]" value="<?php echo $rateItem['LoaItemRate']['loaItemRatePeriodId']; ?>" />

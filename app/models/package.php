@@ -308,13 +308,15 @@ class Package extends AppModel {
                        WHERE model ='Package' AND model_id = {$packageId})";
         foreach ($logableModels as $modelName => $tableName) {
             $ids = array();
-            foreach ($package[$modelName] as $record) {
-                $ids[] = $record[$this->$modelName->primaryKey];
+            if (!empty($package[$modelName])) {
+                foreach ($package[$modelName] as $record) {
+                    $ids[] = $record[$this->$modelName->primaryKey];
+                }
+                $modelIds = implode(',', $ids);
+                $queries[] = "(SELECT History.description, History.action, History.samaccountname, History.change, History.created
+                              FROM logs History
+                              WHERE model ='{$modelName}' AND model_id IN ({$modelIds}))";
             }
-            $modelIds = implode(',', $ids);
-            $queries[] = "(SELECT History.description, History.action, History.samaccountname, History.change, History.created
-                          FROM logs History
-                          WHERE model ='{$modelName}' AND model_id IN ({$modelIds}))";
         }
         $query = implode(' UNION ', $queries);
         $query .= ' ORDER BY historyCreated DESC';
@@ -515,7 +517,9 @@ class Package extends AppModel {
 
 	function getBlackoutWeekday($packageId) {
 		$r = $this->query("SELECT weekday FROM packageBlackoutWeekday WHERE packageId = {$packageId}");
-		return $r[0]['packageBlackoutWeekday']['weekday'];
+        if (!empty($r)) {
+            return $r[0]['packageBlackoutWeekday']['weekday'];
+        }
 	}
 
 	function getBlackout($packageId) {
