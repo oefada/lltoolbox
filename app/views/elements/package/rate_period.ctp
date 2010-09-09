@@ -225,7 +225,7 @@
                        <td colspan="2" align="right"><span class="link" onclick="addDateRange(<?php echo $ratePeriod['LoaItems'][0]['LoaItemRatePeriod']['loaItemRatePeriodId']; ?>, <?php echo $i; ?>, <?php echo $index + 1; ?>, this)">Add Date Range</span></td>
                    </tr>
                 <?php else: ?>
-                  <th>Validities</th>
+                  <th>Validity</th>
                    <?php foreach ($ratePeriod['Validity'] as $range): ?>
                       <tr class="validity">
                          <td><?php echo date('M j Y', strtotime($range['LoaItemDate']['startDate'])); ?> &#150; <?php echo date('M j Y', strtotime($range['LoaItemDate']['endDate'])); ?></td>
