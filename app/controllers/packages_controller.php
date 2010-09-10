@@ -1841,7 +1841,13 @@ class PackagesController extends AppController {
             }
             if ($this->data['PricePoint']['retailValue'] <= 0) {
                 $errors[] = 'Retail Value must be greater than 0.';
-            }            
+            }
+            if (empty($this->data['PricePoint']['percentRetailAuc'])) {
+                $errors[] = 'Auction Price is a required field.';
+            }
+            if (empty($this->data['PricePoint']['percentRetailBuyNow'])) {
+                $errors[] = 'Buy Now Price is a required field.';
+            }
             if ((!$this->data['PricePoint']['percentRetailAuc'] && !$this->data['PricePoint']['percentRetailBuyNow'])
                 || (!$this->data['auctionOverride'] && $this->data['PricePoint']['percentRetailAuc'] && $this->data['PricePoint']['percentRetailAuc'] < $this->data['guaranteedPercent'])
                 || (!$this->data['buynowOverride'] && $this->data['PricePoint']['percentRetailBuyNow'] && $this->data['PricePoint']['percentRetailBuyNow'] < $this->data['guaranteedPercent'])) {
