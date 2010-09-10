@@ -703,7 +703,7 @@ class Ticket extends AppModel {
 				case 'PRICEPOINT':
 					$title = "[PRICE POINT] Maximum Number of Sales for Package [$packageName]";
 					$description = "A pending ticket (Ticket ID# <a href='/tickets/view/$ticketId'>$ticketId</a>) exists for that once funded will ";
-					$description.= "fulfill the Max Number of Sales for <a href='/clients/edit/$clientId'>$clientName</a> (Package ID# <a href='/clients/$clientId/packages/edit/$packageId'>$packageId</a>). ";
+					$description.= "fulfill the Max Number of Sales for <a href='/clients/edit/$clientId'>$clientName</a> (Package ID# <a href='/clients/$clientId/packages/summary/$packageId'>$packageId</a>). ";
 					$description.= "All future auctions have been deleted and all fixed price offers have been closed for this package.";
 					$model = 'Package';
 					$modelId = $packageId;
@@ -711,7 +711,7 @@ class Ticket extends AppModel {
 				case 'PRICEPOINT_FP_ONLY':
 					$title = "[PRICE POINT] Fixed Price offers have been stopped to prevent overselling packages for [$clientName]";
 					$description = "Once Ticket ID# <a href='/tickets/view/$ticketId'>$ticketId</a> is funded, we will only need to sell one more package to ";
-					$description.= "fulfill the Max Number of Sales for Package [<a href='/clients/$clientId/packages/edit/$packageId'>$packageName</a>].  To prevent overselling, all Fixed Price ";
+					$description.= "fulfill the Max Number of Sales for Package [<a href='/clients/$clientId/packages/summary/$packageId'>$packageName</a>].  To prevent overselling, all Fixed Price ";
 					$description.= "offers running on this package have been taken down.<br /><br />";
 					$description.= "Client: <a href='/clients/edit/$clientId'>$clientName</a>";
 					$model = 'Package';
@@ -720,7 +720,7 @@ class Ticket extends AppModel {
 				case 'PACKAGE':
 					$title = "Maximum Number of Sales for Package [$packageName]";
 					$description = "A pending ticket (Ticket ID# <a href='/tickets/view/$ticketId'>$ticketId</a>) exists for that once funded will ";
-					$description.= "fulfill the Max Number of Sales for <a href='/clients/edit/$clientId'>$clientName</a> (Package ID# <a href='/clients/$clientId/packages/edit/$packageId'>$packageId</a>). ";
+					$description.= "fulfill the Max Number of Sales for <a href='/clients/edit/$clientId'>$clientName</a> (Package ID# <a href='/clients/$clientId/packages/summary/$packageId'>$packageId</a>). ";
 					$description.= "All future auctions have been deleted and all fixed price offers have been closed for this package.";
 					$model = 'Package';
 					$modelId = $packageId;
@@ -728,7 +728,7 @@ class Ticket extends AppModel {
 				case 'PACKAGE_FP_ONLY':
 					$title = "Fixed Price offers have been stopped to prevent overselling packages for [$clientName]";
 					$description = "Once Ticket ID# <a href='/tickets/view/$ticketId'>$ticketId</a> is funded, we will only need to sell one more package to ";
-					$description.= "fulfill the Max Number of Sales for Package [<a href='/clients/$clientId/packages/edit/$packageId'>$packageName</a>].  To prevent overselling, all Fixed Price ";
+					$description.= "fulfill the Max Number of Sales for Package [<a href='/clients/$clientId/packages/summary/$packageId'>$packageName</a>].  To prevent overselling, all Fixed Price ";
 					$description.= "offers running on this package have been taken down.<br /><br />";
 					$description.= "Client: <a href='/clients/edit/$clientId'>$clientName</a>";
 					$model = 'Package';
@@ -748,7 +748,7 @@ class Ticket extends AppModel {
 					$description = "Once Ticket ID# <a href='/tickets/view/$ticketId'>$ticketId</a> is funded, we will only need to sell one more package to ";
 					$description.= "fulfill the Membership Total Packages for <a href='/clients/edit/$clientId'>$clientName</a>.  To prevent overselling, all Fixed Price ";
 					$description.= "offers running on Membership Total Packages track have been taken down.<br /><br />";
-					$description.= "Package: <a href='/clients/$clientId/packages/edit/$packageId'>$packageName</a>";
+					$description.= "Package: <a href='/clients/$clientId/packages/summary/$packageId'>$packageName</a>";
 					$model = 'Loa';
 					$modelId = $loaId;
 					break;
@@ -767,7 +767,7 @@ class Ticket extends AppModel {
 					$modelId = $loaId;
 					$description = "$clientName is nearing a 0 balance of Retail Value Credit for LOA ID (<a href='/loas/edit/$loaId'>$loaId</a>).  To prevent overselling, all live and future scheduled offers for the following package(s) have been cancelled: \n\n<br /><br />";
 					foreach ($extraData as $pId) {
-						$description.= "Package: <a href='/clients/$clientId/packages/edit/$pId'>$pId</a>\n<br />";
+						$description.= "Package: <a href='/clients/$clientId/packages/summary/$pId'>$pId</a>\n<br />";
 					}
 					
 			}	
