@@ -15,7 +15,7 @@
             <tr>
                 <th>Rate Periods</th>
                 <th>Package Retail (<?php echo $ratePeriods[0]['currencyCode']; ?>)</th>
-                <th>Starting Price (<?php echo $ratePeriods[0]['currencyCode']; ?>)</th>
+                <th>Low Price Guarantee (<?php echo $ratePeriods[0]['currencyCode']; ?>)</th>
                 <th>Percent of Retail</th>
             </tr>
         <?php
