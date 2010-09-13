@@ -460,6 +460,7 @@ class Package extends AppModel {
 		
 		// populate html with valid ranges
 		if (!empty($dates['ValidRanges'])) {
+			$this->connectValidDateRanges($dates['ValidRanges']);
 			foreach ($dates['ValidRanges'] as $r) {
 				$pvd_ts_start = strtotime($r['pvd']['startDate']);
 				$pvd_ts_end = strtotime($r['pvd']['endDate']);
@@ -493,6 +494,18 @@ class Package extends AppModel {
 		}
 			
 		return $html;
+	}
+
+	function connectValidDateRanges(&$dates) {
+		foreach ($dates as $i => $ranges) {
+			$prev_index = $i - 1;
+			if (date('Y-m-d', strtotime($dates[$prev_index]['pvd']['endDate'] . ' +1 DAY')) == $ranges['pvd']['startDate']) {
+				// if previous enddate is 1 day before current start date so [2010-01-05 -> 2010-01-09] AND [2010-01-10 -> 2010-01-15]
+				$dates[$i]['pvd']['startDate'] = $dates[$prev_index]['pvd']['startDate'];
+				$dates[$i]['pvd']['endDate'] = $ranges['pvd']['endDate'];
+				unset($dates[$prev_index]);
+			}
+		}
 	}
 
 	function pluralize($day) {
@@ -742,11 +755,11 @@ class Package extends AppModel {
 				} elseif ($ranges[$i]['t'] == 'blackout') {
 					$ranges[$prev_index]['e'] = date('Y-m-d', strtotime($ranges[$prev_index]['e'] . ' -1 day'));
 				}
-			} else if (date('Y-m-d', strtotime($ranges[$prev_index]['e'] . ' +1 DAY')) == $ranges[$i]['s']) {
+			}/* else if (date('Y-m-d', strtotime($ranges[$prev_index]['e'] . ' +1 DAY')) == $ranges[$i]['s']) {
 				// if previous enddate is 1 day before current start date so [2010-01-05 -> 2010-01-09] AND [2010-01-10 -> 2010-01-15]
 				$ranges[$i] = array('s' => $ranges[$prev_index]['s'], 'e' => $ranges[$i]['e'], 't' => $ranges[$i]['t']);
 				unset($ranges[$prev_index]);
-			}
+			}*/
 		}
 		return $ranges;
 	}

@@ -180,7 +180,8 @@ function updateRetail(autoFillPercentRetail) {
     if ('<?php echo $ratePeriods[0]['currencyCode']; ?>' != 'USD') {
         $('#retail-usd').html('= ' + (highestRetail * conversionRate) + ' USD');
     }	
-	if (checkedIds && $('#edit-this-validity-disclaimer').val() !== 1) {
+	if (checkedIds && !($('#edit-this-validity-disclaimer').val() == 1)) {
+		alert('asdgasdg');
 		updateValidityDisclaimer(checkedIds);
 	}
 }
