@@ -421,7 +421,7 @@ class Package extends AppModel {
 				$r['PricePoint']['validityStart'] = $r[0]['minStartDate'];
 				$r['PricePoint']['validityEnd'] = $r[0]['maxEndDate'];
 				$r['PricePoint']['validityDisclaimer'] = Sanitize::escape($validityDisclaimer);
-				$this->PricePoint->save($r['PricePoint']);
+				$this->PricePoint->save($r['PricePoint'], array('validate' => false, 'callbacks' => false));
 			}
 		}
 		return;

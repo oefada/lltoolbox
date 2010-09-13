@@ -1907,6 +1907,8 @@ class PackagesController extends AppController {
         // view data
         } else {
             
+			$this->Package->updatePackagePricePointValidity($packageId);
+
             // edit state
             $loaItemRatePeriodIds = array();
             $pricePointId = isset($this->params['url']['pricePointId']) ? $this->params['url']['pricePointId'] : false;
@@ -1950,6 +1952,7 @@ class PackagesController extends AppController {
             $this->set('ratePeriods', $ratePeriods);            
 			$this->set('clientId', $clientId);
 			$this->set('packageId', $packageId);
+			
         }
     }
 	
