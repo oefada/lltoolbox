@@ -376,16 +376,20 @@ class Package extends AppModel {
             INNER JOIN loaItem LoaItem USING (loaItemId)
             WHERE loaItemRatePeriodId = $loaItemRatePeriodId AND packageId = $packageId
         ");
-        
         $total = 0;
         foreach ($loaItemRates as $loaItemRate) {
+            $groupQuantity = "SELECT COUNT(*) AS quantity FROM loaItemGroup LoaItemGroup
+                              WHERE groupItemId = {$loaItemRate['LoaItemRatePeriod']['loaItemId']}";
+            if ($quantity = $this->query($groupQuantity)) {
+                $roomQuantity = ($quantity[0][0]['quantity'] == 0) ? 1 : $quantity[0][0]['quantity'];
+            }
             $taxes = $this->getTaxes($loaItemRate['LoaItemRatePeriod']['loaItemId']);
             if ($loaItemRate['LoaItem']['loaItemTypeId'] == 12) {
-                $price = $loaItemRate['LoaItemRate']['price'];
+                $price = $loaItemRate['LoaItemRate']['price'] * $roomQuantity;
                 $total += $price + ($price * $taxes['percent'] / 100) + ($taxes['fixed'] * $loaItemRate['LoaItemRatePackageRel']['numNights']);
             }
             else {
-                $price = $loaItemRate['LoaItemRate']['price'] * $loaItemRate['LoaItemRatePackageRel']['numNights'];
+                $price = ($loaItemRate['LoaItemRate']['price'] * $loaItemRate['LoaItemRatePackageRel']['numNights']) * $roomQuantity;
                 $total += $price + ($price * $taxes['percent'] / 100) + ($taxes['fixed'] * $loaItemRate['LoaItemRatePackageRel']['numNights']);
             }
         }
