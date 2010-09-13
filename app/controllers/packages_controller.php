@@ -1880,6 +1880,7 @@ class PackagesController extends AppController {
                 $this->Package->PricePoint->create();
                 $this->Package->PricePoint->save($this->data['PricePoint']);
                 $pricePointId = $this->Package->PricePoint->id;
+	            $this->Package->updatePackagePricePointValidity($packageId);
             }
             
             // add pricePointRatePeriodRel
