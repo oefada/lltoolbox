@@ -77,6 +77,13 @@
            </td>
         </tr>
         <tr>
+           <th>Is Private Package?</th>
+           <td>
+                <input type="radio" name="data[Package][isPrivatePackage]" value="1" <?php echo ($package['Package']['isPrivatePackage'] == 1) ? 'checked' : ''; ?>  /> Yes
+                <input type="radio" name="data[Package][isPrivatePackage]" value="0" <?php echo ($package['Package']['isPrivatePackage'] == 0 || empty($package['Package']['isPrivatePackage'])) ? 'checked' : ''; ?> /> No
+           </td>
+        </tr>
+        <tr>
             <th>Max Num Guests</th>
             <td>
                 <input type="text" size="5" id="maxGuests" name="data[Package][numGuests]" value="<?php echo $package['Package']['numGuests']; ?>" />

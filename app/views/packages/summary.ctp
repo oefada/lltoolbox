@@ -62,6 +62,10 @@
        <td><?php echo $package['Package']['packageName']; ?></td>
     </tr>
     <tr class="odd">
+        <th>Is Private Package?</th>
+        <td><?php echo ($package['Package']['isPrivatePackage'] == 1) ? 'Yes' : 'No'; ?></td>
+    </tr>
+    <tr>
         <th>Max Num Guests</th>
         <td>
             <?php echo $package['Package']['numGuests']; ?>
@@ -70,15 +74,15 @@
             <?php endif; ?>
         </td>
     </tr>
-    <tr>
+    <tr class="odd">
         <th>Min Num Guests</th>
         <td><?php echo $package['Package']['minGuests']; ?></td>
     </tr>
-    <tr class="odd">
+    <tr>
         <th>Max Num Adults</th>
         <td><?php echo $package['Package']['maxAdults']; ?></td>
     </tr>
-    <tr>
+    <tr class="odd">
         <th>Total Nights</th>
         <td>
             <?php echo $package['Package']['numNights']; ?>
@@ -89,15 +93,15 @@
             <?php endif; ?>
         </td>
     </tr>
-    <tr class="odd">
+    <tr>
         <th>Currency</th>
         <td><?php echo $currencyCodes[$package['Package']['currencyId']]; ?></td>
     </tr>
-    <tr>
+    <tr class="odd">
         <th>Rate Disclaimer</th>
         <td><?php echo $package['Package']['rateDisclaimer']; ?></td>
     </tr>
-    <tr class="odd">
+    <tr>
         <th>History</th>
         <td>
             <div class="history-detail">
@@ -107,7 +111,7 @@
             </div>
         </td>
     </tr>
-    <tr>
+    <tr class="odd">
         <th>Notes</th>
         <td>
             <div class="history">
