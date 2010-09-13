@@ -181,7 +181,6 @@ function updateRetail(autoFillPercentRetail) {
         $('#retail-usd').html('= ' + (highestRetail * conversionRate) + ' USD');
     }	
 	if (checkedIds && !($('#edit-this-validity-disclaimer').val() == 1)) {
-		alert('asdgasdg');
 		updateValidityDisclaimer(checkedIds);
 	}
 }
