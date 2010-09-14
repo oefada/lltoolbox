@@ -493,7 +493,7 @@ class Package extends AppModel {
 			}
 			$html.= 'May not be valid during holidays and special event periods.';
 		} else {
-			$html.= 'Reservations are subject to availability at time of booking.  May not be valid during holidays and special event periods.';
+			$html.= 'Reservations are subject to availability at time of booking. May not be valid during holidays and special event periods.';
 		}
 			
 		return $html;
