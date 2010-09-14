@@ -2170,12 +2170,12 @@ class PackagesController extends AppController {
                 // assign new fields
                 $ratePeriods[$key]['packageId'] = $packageId;
                 $ratePeriods[$key]['currencyCode'] = $currency['Currency']['currencyCode'];
-                $ratePeriods[$key]['dailyExchangeRateToDollar'] = $currency['CurrencyExchangeRate']['dailyExchangeRateToDollar'];
+                $ratePeriods[$key]['weeklyExchangeRateToDollar'] = $currency['CurrencyExchangeRate']['weeklyExchangeRateToDollar'];
                 $ratePeriods[$key]['dateRanges'] = implode('<br/>', $loaDates);
                 $ratePeriods[$key]['startPrice'] = round($startPrice);
                 $ratePeriods[$key]['retailValue'] = round($total + $inclusionTotal);
-                $ratePeriods[$key]['usdStartPrice'] = ($currency['Currency']['currencyId'] == 1) ? '' : "$(" . round($startPrice * $currency['CurrencyExchangeRate']['monthlyExchangeRateToDollar']) . ")";
-                $ratePeriods[$key]['usdRetailValue'] = ($currency['Currency']['currencyId'] == 1) ? '' : "($" . round($total * $currency['CurrencyExchangeRate']['monthlyExchangeRateToDollar']) . ")";
+                $ratePeriods[$key]['usdStartPrice'] = ($currency['Currency']['currencyId'] == 1) ? '' : "$(" . round($startPrice * $currency['CurrencyExchangeRate']['weeklyExchangeRateToDollar']) . ")";
+                $ratePeriods[$key]['usdRetailValue'] = ($currency['Currency']['currencyId'] == 1) ? '' : "($" . round($total * $currency['CurrencyExchangeRate']['weeklyExchangeRateToDollar']) . ")";
             }
         }
         return $ratePeriods;
