@@ -440,16 +440,16 @@ class Package extends AppModel {
 		if ($blackout_week) {
 			switch ($blackout_week) {
 				case 'Fri,Sat,Sun': 
-					$valid = "Valid for Travel Monday through Thursday";
+					$valid = "Monday through Thursday";
 					break;
 				case 'Fri,Sat':
-					$valid = "Valid for Travel Sunday through Thursday";
+					$valid = "Sunday through Thursday";
 					break;
 				case 'Sat':
-					$valid = "Valid for Travel Sunday through Friday";
+					$valid = "Sunday through Friday";
 					break;
 				case 'Mon,Tue,Wed,Thu':
-					$valid = "Valid for Travel Friday through Sunday";
+					$valid = "Friday through Sunday";
 					break;
 				default:
 					$valid = '';
