@@ -1899,7 +1899,7 @@ class PackagesController extends AppController {
 				$package['overrideValidityDisclaimer'] = 1;
 				$this->Package->save($package);
 			} else {
-	            //$this->Package->updatePackagePricePointValidity($packageId);
+	            $this->Package->updatePackagePricePointValidity($packageId);
 			}
             
             echo 'ok';
@@ -1918,6 +1918,8 @@ class PackagesController extends AppController {
                 foreach ($pricePointRatePeriodRels as $pricePointRatePeriodRel) {
                     $loaItemRatePeriodIds[] = $pricePointRatePeriodRel['PricePointRatePeriodRel']['loaItemRatePeriodId'];
                 }
+			
+				$this->Package->updatePackagePricePointValidity($packageId);
             }
             $this->set('loaItemRatePeriodIds', $loaItemRatePeriodIds);
             
@@ -1949,8 +1951,7 @@ class PackagesController extends AppController {
             
             $this->set('ratePeriods', $ratePeriods);            
 			$this->set('clientId', $clientId);
-			$this->set('packageId', $packageId);
-			
+			$this->set('packageId', $packageId);       
         }
     }
 	

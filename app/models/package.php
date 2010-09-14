@@ -622,7 +622,7 @@ class Package extends AppModel {
 	}
 
 	function getPricePointDateRangeByPackage($packageId) {
-		$r = $this->query("SELECT PricePoint.pricePointId, MIN(item.startDate) AS minStartDate, MAX(item.endDate) AS maxEndDate, CONCAT_WS(',', loaItemRatePeriodId) AS loaItemRatePeriodIds 
+		$r = $this->query("SELECT PricePoint.pricePointId, MIN(item.startDate) AS minStartDate, MAX(item.endDate) AS maxEndDate, GROUP_CONCAT(DISTINCT loaItemRatePeriodId) AS loaItemRatePeriodIds 
 							FROM pricePoint PricePoint INNER JOIN pricePointRatePeriodRel pr USING (pricePointId) INNER JOIN loaItemDate item USING (loaItemRatePeriodId) 
 							WHERE PricePoint.packageId = {$packageId} GROUP BY pricePointId;");
 		return $r;
