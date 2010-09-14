@@ -1880,7 +1880,6 @@ class PackagesController extends AppController {
                 $this->Package->PricePoint->create();
                 $this->Package->PricePoint->save($this->data['PricePoint']);
                 $pricePointId = $this->Package->PricePoint->id;
-	            $this->Package->updatePackagePricePointValidity($packageId);
             }
             
             // add pricePointRatePeriodRel
@@ -1908,8 +1907,6 @@ class PackagesController extends AppController {
         // view data
         } else {
             
-			$this->Package->updatePackagePricePointValidity($packageId);
-
             // edit state
             $loaItemRatePeriodIds = array();
             $pricePointId = isset($this->params['url']['pricePointId']) ? $this->params['url']['pricePointId'] : false;
