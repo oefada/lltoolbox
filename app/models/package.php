@@ -414,6 +414,9 @@ class Package extends AppModel {
 		$this->updateValidityDisclaimer($packageId); 
 		$this->recursive = -1;
 		$package = $this->read(null, $packageId);
+		if ($package['Package']['overrideValidityDisclaimer']) {
+			return;
+		}
 		$rp = $this->getPricePointDateRangeByPackage($packageId);
 		foreach ($rp as $r) {
 			$validityDisclaimer = $this->getValidityDisclaimerText($packageId, $r[0]['minStartDate'], $r[0]['maxEndDate'], $r[0]['loaItemRatePeriodIds']);
