@@ -30,7 +30,7 @@
             }
             
             // JS: exchange rates and retail
-            $conversionRate = ($ratePeriods[0]['dailyExchangeRateToDollar']) ? $ratePeriods[0]['dailyExchangeRateToDollar'] : 1;
+            $conversionRate = ($ratePeriods[0]['weeklyExchangeRateToDollar']) ? $ratePeriods[0]['weeklyExchangeRateToDollar'] : 1;
             echo "
                 <script>
                     retails = new Array();
