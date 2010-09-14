@@ -1859,6 +1859,7 @@ class PackagesController extends AppController {
                 return;
             }
 
+			$this->data['PricePoint']['validityDisclaimer'] = str_replace(array('\n','\r', "\n", "\r"), '', $this->data['PricePoint']['validityDisclaimer']);
 			$this->data['PricePoint']['validityDisclaimer'] = Sanitize::escape($this->data['PricePoint']['validityDisclaimer']);
             
             // handle percentReservePrice
