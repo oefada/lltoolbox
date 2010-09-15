@@ -34,8 +34,8 @@ echo $javascript->link('jquery/jquery-autocomplete/jquery.autocomplete'); ?>
 	<input type="hidden" name="data[Package][packageId]" value="<?=$package['Package']['packageId'];?>" />
 	<table id="tbl-publishing" class="package">
 	<tr><th>Package Title</th><td><input type="text" name="data[Package][packageTitle]" value="<?=$package['Package']['packageTitle'];?>" /></td></tr>
-	<tr><th>Short Blurb</th><td><input type="text" name="data[Package][shortBlurb]" value="<?=$package['Package']['shortBlurb'];?>" maxlength="65" /></td></tr>
-	<tr><th>Package Blurb</th><td><input type="text" name="data[Package][packageBlurb]" value="<?=$package['Package']['packageBlurb'];?>" maxlength="62" /></td></tr>
+	<tr><th>Short Blurb</th><td><input type="text" name="data[Package][shortBlurb]" value="<?=htmlentities($package['Package']['shortBlurb']);?>" maxlength="65" /></td></tr>
+	<tr><th>Package Blurb</th><td><input type="text" name="data[Package][packageBlurb]" value="<?=htmlentities($package['Package']['packageBlurb']);?>" maxlength="62" /></td></tr>
 	<tr><th>Room Grade</th><td><input type="text" name="data[Package][roomGrade]" value="<?=$roomGrade;?>" readonly="readonly" /></td></tr>
 	<tr><th>Order Inclusions</th>
 		<td>
@@ -47,7 +47,7 @@ echo $javascript->link('jquery/jquery-autocomplete/jquery.autocomplete'); ?>
 					<input type="hidden" id="merch-desc-<?=$k.$l;?>-id" value="" />
 				<?php endforeach;?>
 			<?php else: ?>
-				<span style="display:none;" id="merch-desc-<?=$k;?>-copy" rel="werd"><?=(!empty($i['LoaItem']['merchandisingDescription'])) ? $i['LoaItem']['merchandisingDescription']  : 'NO LIVE SITE DESCRIPTION'  ;?></span>
+				<span style="display:none;" id="merch-desc-<?=$k;?>-copy" rel="werd"><?=(!empty($i['LoaItem']['merchandisingDescription'])) ? htmlentities($i['LoaItem']['merchandisingDescription'])  : 'NO LIVE SITE DESCRIPTION'  ;?></span>
 				<input type="hidden" id="merch-desc-<?=$k;?>-id" value="<?=$i['PackageLoaItemRel']['packageLoaItemRelId'];?>" />
 			<?php endif;?>
 		<?php endforeach;?>
@@ -59,7 +59,7 @@ echo $javascript->link('jquery/jquery-autocomplete/jquery.autocomplete'); ?>
 				<li class="ui-state-default" id="merch-desc-<?=$k.$l;?>"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span><?=$j;?></li>
 				<?php endforeach;?>
 			<?php else: ?>
-				<li class="ui-state-default" id="merch-desc-<?=$k;?>"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span><?=(!empty($i['LoaItem']['merchandisingDescription'])) ? $i['LoaItem']['merchandisingDescription']  : 'NO LIVE SITE DESCRIPTION'  ;?></li>
+				<li class="ui-state-default" id="merch-desc-<?=$k;?>"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span><?=(!empty($i['LoaItem']['merchandisingDescription'])) ? htmlentities($i['LoaItem']['merchandisingDescription'])  : 'NO LIVE SITE DESCRIPTION'  ;?></li>
 			<?php endif;?>
 		<?php endforeach;?>
 		</ul>
@@ -67,7 +67,7 @@ echo $javascript->link('jquery/jquery-autocomplete/jquery.autocomplete'); ?>
 
 		</td></tr>
 	<tr><th>Inclusions</th><td>
-		<textarea name="data[Package][packageIncludes]" id="package-validity-includes" readonly="readonly"><?=$package['Package']['packageIncludes'];?></textarea>
+		<textarea name="data[Package][packageIncludes]" id="package-validity-includes" readonly="readonly"><?=htmlentities($package['Package']['packageIncludes']);?></textarea>
 		<div>
 			<input type="hidden" id="edit-this-validity-includes" name="data[Package][overridePackageIncludes]" value="0" />
 			<a href="javascript:void(0);" onclick="return editThis('validity-includes');">Make Changes</a>
