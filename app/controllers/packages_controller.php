@@ -1776,7 +1776,7 @@ class PackagesController extends AppController {
                             $errors[] = 'Each rate period must have a price.';
                         }
                         if ($item['LoaItem']['loaItemTypeId'] == 1) {
-                            if (empty($rate['LoaItemRatePackageRel']['numNights'])) {
+                            if (empty($rate['LoaItemRatePackageRel']['numNights']) && $rate['LoaItemRatePackageRel']['numNights'] != '0') {
                                 $errors[] = 'Number of nights must be filled in for each rate period.';
                             }
                             $numNights += $rate['LoaItemRatePackageRel']['numNights'];

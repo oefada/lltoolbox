@@ -537,7 +537,7 @@ class LoaItem extends AppModel {
                         }
                     }
                 }
-                if (!empty($price['LoaItemRatePackageRel']['numNights'])) {
+                if (isset($price['LoaItemRatePackageRel']['numNights'])) {
                     $totalNights = $price['LoaItemRatePackageRel']['numNights'];
                 }
                 if ($roomRate['LoaItem']['loaItemTypeId'] == 12) {
