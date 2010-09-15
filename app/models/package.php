@@ -528,7 +528,7 @@ class Package extends AppModel {
 		if (!$date1_ts || !$date2_ts) {
 			return false;
 		}
-		if (date('F', $date1_ts) === date('F', $date2_ts)) {
+		if (date('F Y', $date1_ts) === date('F Y', $date2_ts)) {
 			return true;
 		} else {
 			return false;
