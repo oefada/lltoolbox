@@ -80,7 +80,13 @@ ul.subsection_tabs li.tab a.active {
 //}
 ?>
 <div style="margin: 0 auto; width: 400px">
-<a href="http://www.luxurylink.com/luxury-hotels/preview.html?clid=<?=$package['ClientLoaPackageRel'][0]['clientId']?>&oid=<?=$this->data['PricePoint']['pricePointId']?>&preview=pricepoint" class='button' target="_blank"><span>Preview offer on live site</span></a>
+
+<?php if (strtotime($this->data['SchedulingMaster']['startDate']) > strtotime('NOW')) :?>
+	<a href="http://www.luxurylink.com/luxury-hotels/preview.html?clid=<?=$package['ClientLoaPackageRel'][0]['clientId']?>&oid=<?=$this->data['PricePoint']['pricePointId']?>&preview=pricepoint" class='button' target="_blank"><span>Preview offer on live site</span></a>
+<?php else: ?>
+	<a href="http://www.luxurylink.com/luxury-hotels/preview.html?clid=<?=$package['ClientLoaPackageRel'][0]['clientId']?>&oid=<?=$old_offer_id;?>&preview=old_offer" class='button' target="_blank"><span>Preview old offer on live site</span></a>
+<?php endif;?>
+
 <?
 /*** Delete/Close Offer Link ***/
 $action = 'delete';

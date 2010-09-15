@@ -130,7 +130,12 @@ class SchedulingMaster extends AppModel {
 	    
 	    $this->validationErrors['Track']['Track'] = 'Please select a track';
 	}
-	
+
+	function getOfferIdFromInstance($sid) {
+		$r = $this->query("SELECT offerId FROM offer WHERE schedulingInstanceId = $sid");
+		return $r[0]['offer']['offerId'];
+	}
+
 	function end() {
 	    $instnance = new SchedulingInstance;
 	    $test = $instnance->find('first');

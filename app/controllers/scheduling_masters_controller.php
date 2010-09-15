@@ -577,16 +577,22 @@ class SchedulingMastersController extends AppController {
 		}
 		
 		/* Check if there are any iterations left. If there are none, then we can't edit this */
+		$this->SchedulingMaster->SchedulingInstance->recursive = 2;
 		$remainingIterations = 0;
+		$old_offer_id = false;
 		foreach ($this->data['SchedulingInstance'] as $k => $instance):
+			$this->data['SchedulingInstance'][$k]['offerId'] = $this->SchedulingMaster->getOfferIdFromInstance($instance['schedulingInstanceId']);
+			if (!$old_offer_id && $this->data['SchedulingInstance'][$k]['offerId']) {
+				$old_offer_id = $this->data['SchedulingInstance'][$k]['offerId'];
+			}
 		    if (strtotime($instance['startDate']) > time()) {
 		        $remainingIterations++;
             }
 		endforeach;
-		
 		//echo $remainingIterations;die();
 		
-		
+		$this->set('old_offer_id', $old_offer_id);
+
 		$merchandisingFlags = $this->SchedulingMaster->MerchandisingFlag->find('list');
 		$schedulingStatusIds = $this->SchedulingMaster->SchedulingStatus->find('list');
 		$schedulingDelayCtrlIds = $this->SchedulingMaster->SchedulingDelayCtrl->find('list');
