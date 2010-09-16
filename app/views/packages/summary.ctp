@@ -26,7 +26,7 @@
 
 <!-- PACKAGE INFO ==============================================================================-->
 
-<a name="packageForm"><div class="section-header"><div class="section-title">Package Info</div><div class="edit-link" name="edit_package" title="Edit Package Info">Edit Package Info</div></div></a>
+<a name="packageForm"><div class="section-header"><div class="section-title">Package Info (<?php echo $package['Package']['packageId']; ?>)</div><div class="edit-link" name="edit_package" title="Edit Package Info">Edit Package Info</div></div></a>
 
 <table class="package-summary">
     <tr class="odd">
