@@ -15,7 +15,6 @@
         <div id="errors">&nbsp;</div>
     </ol>
 </div>
-
 <form id="packageForm" method="post">
     <input type="hidden" name="data[Package][packageId]" value="<?php echo $package['Package']['packageId']; ?>" />
     <table class="package">
@@ -59,7 +58,7 @@
                     <input type="hidden" name="data[Package][packageStatusId]" value="<?php echo $package['Package']['packageStatusId']; ?>" />
                 <?php else: ?>
                     <?php echo (in_array('barter', $userDetails['groups']) || in_array('publishing', $userDetails['groups']) || in_array('Geeks', $userDetails['groups'])) ? '' : '<input type="hidden" name="data[Package][packageStatusId]" value="'.$package['Package']['packageStatusId'].'" />'; ?>
-                    <select id="status" name="data[Package][packageStatusId]" <?php echo (in_array('publishing', $userDetails['groups']) || in_array('Geeks', $userDetails['groups'])) ? '' : 'disabled'; ?>>
+                    <select id="status" name="data[Package][packageStatusId]" <?php echo (in_array('barter', $userDetails['groups']) || in_array('publishing', $userDetails['groups']) || in_array('Geeks', $userDetails['groups'])) ? '' : 'disabled'; ?>>
                       <?php foreach ($statuses as $status): ?>
                                 <?php $selected = ($package['Package']['packageStatusId'] == $status['PackageStatus']['packageStatusId']) ? ' selected' : ''; ?>
                                 <option value="<?php echo $status['PackageStatus']['packageStatusId']; ?>"<?php echo $selected; ?>><?php echo $status['PackageStatus']['packageStatusName']; ?></option>
