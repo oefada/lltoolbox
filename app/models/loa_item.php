@@ -610,5 +610,9 @@ class LoaItem extends AppModel {
         }
     }
     
+    function deleteLoaItem($loaItemId) {
+        return $this->delete($loaItemId);
+    }
+    
 }
 ?>

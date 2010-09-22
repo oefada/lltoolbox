@@ -36,6 +36,10 @@ class PackageLoaItemRel extends AppModel {
             }
         }
     }
+    
+    function deletePackageLoaItemRel($packageLoaItemRelId) {
+        return $this->delete($packageLoaItemRelId);
+    }
 
 }
 ?>

@@ -1180,8 +1180,6 @@ class PackagesController extends AppController {
                 else {
                     //if this room had previously been related to this package, remove rels
                     if (isset($room['PackageLoaItemRel'])) {
-                        $this->Package->PackageLoaItemRel->delete($room['PackageLoaItemRel']['packageLoaItemRelId']);
-                        $this->Package->LoaItemRatePackageRel->deleteRatesFromPackage($packageId, $loaItemId);
                         //if this package has a group of rooms, delete the group
                         if (!empty($groupItems)) {
                             if (in_array($loaItemId, $groupItems)) {
@@ -1190,6 +1188,8 @@ class PackagesController extends AppController {
                                 }
                             }
                         }
+                        $this->Package->PackageLoaItemRel->delete($room['PackageLoaItemRel']['packageLoaItemRelId']);
+                        $this->Package->LoaItemRatePackageRel->deleteRatesFromPackage($packageId, $loaItemId);
                     }
                 }
             }
@@ -1505,18 +1505,18 @@ class PackagesController extends AppController {
         if ($groups = $this->LoaItem->LoaItemGroup->getGroup($packageId, $loaItemId)) {
             foreach ($groups as $group) {
                 if (!empty($group['PackageLoaItemRel'])) {
-                    $this->Package->PackageLoaItemRel->delete($group['PackageLoaItemRel']['packageLoaItemRelId']);	
+                    $this->Package->PackageLoaItemRel->deletePackageLoaItemRel($group['PackageLoaItemRel']['packageLoaItemRelId']);
                 }
                 $this->Package->LoaItemRatePackageRel->deleteRatesFromPackage($packageId, $group['LoaItemGroup']['loaItemId']);
-                $this->LoaItem->LoaItemGroup->delete($group['LoaItemGroup']['loaItemGroupId']);
+                $this->LoaItem->LoaItemGroup->deleteLoaItemGroup($group['LoaItemGroup']['loaItemGroupId']);
             }
             $groupId = $groups[0]['LoaItemGroup']['loaItemId'];
             $this->Package->PackageLoaItemRel->recursive = -1;
             if ($packageLoaItemRel = $this->Package->PackageLoaItemRel->find('first', array('conditions' => array('PackageLoaItemRel.loaItemId' => $groupId)))) {
-                $this->Package->PackageLoaItemRel->delete($packageLoaItemRel['PackageLoaItemRel']['packageLoaItemRelId']);
+                $this->Package->PackageLoaItemRel->deletePackageLoaItemRel($packageLoaItemRel['PackageLoaItemRel']['packageLoaItemRelId']);
             }
             $this->Package->LoaItemRatePackageRel->deleteRatesFromPackage($packageId, $groupId);
-            $this->LoaItem->delete($groups[0]['LoaItemGroup']['loaItemId']);
+            $this->LoaItem->deleteLoaItem($groups[0]['LoaItemGroup']['loaItemId']);
         }
     }
     

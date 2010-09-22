@@ -27,5 +27,9 @@ class LoaItemGroup extends AppModel {
 			  WHERE PackageLoaItemRel.packageId = {$packageId} AND LoaItem.loaItemTypeId = 21";
 		return $this->query($query);
 	}
+    
+    function deleteLoaItemGroup($loaItemGroupId) {
+        return $this->delete($loaItemGroupId);
+    }
 }
 ?>
