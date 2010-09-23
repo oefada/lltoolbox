@@ -281,8 +281,8 @@ class Package extends AppModel {
                     INNER JOIN clientLoaPackageRel ClientLoaPackageRel USING (packageId)
                     LEFT JOIN packageAgeRange PackageAgeRange USING (packageId)
                     INNER JOIN packageStatus PackageStatus USING (packageStatusId)
-                    INNER JOIN loa Loa ON ClientLoaPackageRel.loaId = Loa.loaId
-                    INNER JOIN currency Currency ON Package.currencyId  = Currency.currencyId
+                    LEFT JOIN loa Loa ON ClientLoaPackageRel.loaId = Loa.loaId
+                    LEFT JOIN currency Currency ON Package.currencyId  = Currency.currencyId
                     WHERE Package.packageId = {$packageId}";
         if ($package = $this->query($query)) {
             $package[0]['Package']['sites'] = explode(',', $package[0]['Package']['sites']);
