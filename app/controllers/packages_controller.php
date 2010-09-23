@@ -79,7 +79,7 @@ class PackagesController extends AppController {
 	
 	function add($clientId = null) {
         if (!empty($this->data)) {
-            if ($this->data[Package]['packageType'] == '0') {
+            if ($this->data['Package']['packageType'] == '0') {
                 $this->redirect('/clients/'.$clientId.'/packages/edit_package/0?loaId='.$this->data['ClientLoaPackageRel'][0]['loaId']);
                 return;
             }
@@ -794,6 +794,9 @@ class PackagesController extends AppController {
         $client = $this->Client->find('first', array('conditions' => array('Client.clientId' => $clientId)));
         $this->set('client', $client);
         $package = $this->Package->getPackage($packageId);
+        if (!empty($package['Package']['externalOfferUrl'])) {
+            $this->redirect('/clients/'.$clientId.'/packages/edit/'.$packageId);
+        }
 	
         if (!empty($this->data)) {
            $package['Package']['notes'] = $this->data['Package']['notes'];
