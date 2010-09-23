@@ -461,8 +461,8 @@ class LoaItem extends AppModel {
     function getRatePeriodId($loaItemId, $packageId, $origValidity) {
         if ($ratePeriods = $this->LoaItemRatePeriod->getRatePeriods($loaItemId, $packageId)) {
             foreach ($ratePeriods as $ratePeriod) {
-                $diff = array_diff($origValidity, $ratePeriod['Validity']);
-                if (empty($diff)) {
+                if ($ratePeriod['Validity'][0]['LoaItemDate']['startDate'] == $origValidity[0]['LoaItemDate']['startDate'] &&
+                    $ratePeriod['Validity'][0]['LoaItemDate']['endDate'] == $origValidity[0]['LoaItemDate']['endDate']) {
                     return $ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId'];
                 }
             }
