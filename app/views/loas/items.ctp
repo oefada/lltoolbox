@@ -120,7 +120,9 @@ $this->set('clientId', $this->data['Client']['clientId']);
 								null,
 								false
 								); ?>
-				<?php echo $html->link(__('Delete', true), array('controller'=> 'loa_items', 'action'=>'delete', $loaItem['loaItemId']), null, sprintf(__('Are you sure you want to delete this item?', true), $loaItem['loaItemId'])); ?>
+                <?php if (empty($loaItem['PackageLoaItemRel'])): ?>
+                    <?php echo $html->link(__('Delete', true), array('controller'=> 'loa_items', 'action'=>'delete', $loaItem['loaItemId']), null, sprintf(__('Are you sure you want to delete this item?', true), $loaItem['loaItemId'])); ?>
+                <?php endif; ?>
 			</td>
 		</tr>
 		<?php if(!empty($loaItem['LoaItemRatePeriod'])): ?>
