@@ -94,5 +94,37 @@ class PricePoint extends AppModel {
             WHERE packageId = $packageId
         ");
     }
+    
+    function createHotelOfferPricePoint($packageId) {
+        $packageQuery = "SELECT Package.validityStartDate, Package.validityEndDate
+                         FROM package Package
+                         WHERE Package.packageId = {$packageId}";
+        if ($packageValidity = $this->query($packageQuery)) {
+            $startDate = $packageValidity[0]['Package']['validityStartDate'];
+            $endDate = $packageValidity[0]['Package']['validityEndDate'];
+            $ppQuery = "SELECT pricePointId
+                        FROM pricePoint
+                        WHERE packageId = {$packageId} AND validityStart = '{$startDate}' AND validityEnd = '{$endDate}'";
+            if ($ppExists = $this->query($ppQuery)) {
+                return;
+            }
+            else {
+                $pricePoint = array('packageId' => $packageId,
+                                    'name' => 'Hotel Offer',
+                                    'validityStart' => $startDate,
+                                    'validityEnd' => $endDate);
+                if ($this->save($pricePoint)) {
+                    return $this->getLastInsertID();
+                }
+            }
+        }
+    }
+    
+    function getHotelOfferPricePoint($packageId) {
+        return ($this->query("SELECT * FROM pricePoint PricePoint
+                             WHERE PricePoint.packageId = {$packageId}
+                             ORDER BY PricePoint.pricePointId DESC
+                             LIMIT 1"));
+    }
 }
 ?>

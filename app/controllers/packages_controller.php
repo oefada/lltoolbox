@@ -94,10 +94,12 @@ class PackagesController extends AppController {
 			$this->data['Package']['packageName'] = $this->data['Package']['packageTitle'];
 			$this->data['Package']['packageStatusId'] = 4;
 			if ($this->Package->saveAll($this->data, array('validate' => false)) && $this->Package->save($this->data, array('validate' => false))) {
-
+                //create price point
+                $pricePointId = $this->Package->PricePoint->createHotelOfferPricePoint($this->Package->id);
 				// create schedulingMaster
 				$this->Package->SchedulingMaster->create();
 				$sched_master['SchedulingMaster']['packageId'] = $this->Package->id;
+                $sched_master['SchedulingMaster']['pricePointId'] = $pricePointId;
 				$sched_master['SchedulingMaster']['offerTypeId'] = 7;
 				$sched_master['SchedulingMaster']['iterationSchedulingOption'] = 1;
 				$sched_master['SchedulingMaster']['remittanceTypeId'] = 0;
@@ -115,7 +117,6 @@ class PackagesController extends AppController {
 				} else {
 					$this->Session->setFlash(__('The Schedule could not be saved. Please correct the errors below.', true), 'default', array(), 'error');
 				}			
-				
 				$this->Session->setFlash(__('The Package has been saved', true), 'default', array(), 'success');
 				$this->redirect("/clients/$clientId/packages/edit/{$this->Package->id}");
 			} else {

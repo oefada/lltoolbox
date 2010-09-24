@@ -176,6 +176,18 @@ class SchedulingMastersController extends AppController {
 			$this->data['SchedulingMaster']['retailValue']       = $package['Package']['approvedRetailPrice'];
 		}
 	
+        //set to true to hide price points if hotel offer
+        if (empty($package['Package']['externalOfferUrl'])) {
+            $this->set('isHotelOffer', false);
+        }
+        else {
+            $pricePoint = $this->SchedulingMaster->Package->PricePoint->getHotelOfferPricePoint($packageId);
+            if ($pricePoint) {
+                $this->set('pricePointId', $pricePoint[0]['PricePoint']['pricePointId']);
+                $this->set('isHotelOffer', true);
+            }
+        }
+    
 	    $this->setOfferTypeDefaultAndDropdown($packageId, $formatIds);
 		
 		$merchandisingFlags 					= $this->SchedulingMaster->MerchandisingFlag->find('list');
@@ -623,9 +635,20 @@ class SchedulingMastersController extends AppController {
 		    $this->set('trackIds', $trackIds);
 		}
         
-        // price points
-        $pricePoint = new PricePoint();
-        $this->set('pricePoints', $pricePoint->getPricePoint($packageId));
+        //set to true to hide price points if hotel offer
+        if (empty($package['Package']['externalOfferUrl'])) {
+            $this->set('isHotelOffer', false);
+            // price points
+            $pricePoint = new PricePoint();
+            $this->set('pricePoints', $pricePoint->getPricePoint($packageId));
+        }
+        else {
+            $pricePoint = $this->SchedulingMaster->Package->PricePoint->getHotelOfferPricePoint($packageId);
+            if ($pricePoint) {
+                $this->set('pricePointId', $pricePoint[0]['PricePoint']['pricePointId']);
+                $this->set('isHotelOffer', true);
+            }
+        }
 
 		$this->set('masterState',				$masterState);
 		$this->set('package', 					$package);

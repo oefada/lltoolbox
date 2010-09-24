@@ -12,39 +12,41 @@ if ($masterState != 1) {
     <link href="/css/scheduling-master.css" type="text/css" rel="stylesheet" />
     
     <div id="schedulingmaster-add">            
-    
-        <!-- PRICE POINT -->
-        <h2>Choose a Price Point</h2>
-        <table id="data-table" cellpadding="0" cellspacing="0" border="0">
-            <tr>
-                <th></th>
-                <th>Name</th>
-                <th>Validity</th>
-                <th>Maximum<br />Number Sales</th>
-                <th>Retail</th>
-                <th>% of Retail<br />(Auction)</th>
-                <th>% of Retail<br />(Buy Now)</th>
-            </tr>
-        <?php
-            foreach ($pricePoints as $key => $pricePoint) {
-                $checked = ($data['SchedulingMaster']['pricePointId'] == $pricePoint['PricePoint']['pricePointId']) ? 'checked' : '';
-                echo "
-                    <tr>
-                        <td>
-                            <input type='radio' class='price-point-options' id='price-point-{$pricePoint['PricePoint']['pricePointId']}' name='data[SchedulingMaster][pricePointId]' value='{$pricePoint['PricePoint']['pricePointId']}' $checked/>
-                        </td>
-                        <td><label for='price-point-{$pricePoint['PricePoint']['pricePointId']}'>{$pricePoint['PricePoint']['name']}</label></td>
-                        <td style='font-size:11px;'>{$pricePoint[0]['dateRanges']}</td>
-                        <td>{$pricePoint['PricePoint']['maxNumSales']}</td>
-                        <td>{$pricePoint['PricePoint']['retailValue']}</td>
-                        <td>{$pricePoint['PricePoint']['percentRetailAuc']}</td>
-                        <td>{$pricePoint['PricePoint']['percentRetailBuyNow']}</td>
-                    </tr>
-                ";
-            }
-        ?>
-        </table>
-    
+        <?php if ($isHotelOffer): ?>
+            <input type="hidden" name="data[SchedulingMaster][pricePointId]" value="<?php echo $pricePointId; ?>" />
+        <?php else: ?>
+            <!-- PRICE POINT -->
+            <h2>Choose a Price Point</h2>
+            <table id="data-table" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                    <th></th>
+                    <th>Name</th>
+                    <th>Validity</th>
+                    <th>Maximum<br />Number Sales</th>
+                    <th>Retail</th>
+                    <th>% of Retail<br />(Auction)</th>
+                    <th>% of Retail<br />(Buy Now)</th>
+                </tr>
+            <?php
+                foreach ($pricePoints as $key => $pricePoint) {
+                    $checked = ($data['SchedulingMaster']['pricePointId'] == $pricePoint['PricePoint']['pricePointId']) ? 'checked' : '';
+                    echo "
+                        <tr>
+                            <td>
+                                <input type='radio' class='price-point-options' id='price-point-{$pricePoint['PricePoint']['pricePointId']}' name='data[SchedulingMaster][pricePointId]' value='{$pricePoint['PricePoint']['pricePointId']}' $checked/>
+                            </td>
+                            <td><label for='price-point-{$pricePoint['PricePoint']['pricePointId']}'>{$pricePoint['PricePoint']['name']}</label></td>
+                            <td style='font-size:11px;'>{$pricePoint[0]['dateRanges']}</td>
+                            <td>{$pricePoint['PricePoint']['maxNumSales']}</td>
+                            <td>{$pricePoint['PricePoint']['retailValue']}</td>
+                            <td>{$pricePoint['PricePoint']['percentRetailAuc']}</td>
+                            <td>{$pricePoint['PricePoint']['percentRetailBuyNow']}</td>
+                        </tr>
+                    ";
+                }
+            ?>
+            </table>
+        <?php endif; ?>
         <!-- SCHEDULING -->
         <h2>Scheduling</h2>
         <table id="data-table" cellpadding="0" cellspacing="0" border="0">
