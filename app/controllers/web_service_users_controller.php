@@ -1,5 +1,20 @@
 <?php
 
+// THIS WEBSERVICE IS NO LONGER IN USE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+DIE('THIS WEBSERVICE IS NO LONGER IN USE!');
+
+
+
+
+
+
+
+
+
+
+
+
+
 App::import('Vendor', 'nusoap/web_services_controller');
 Configure::write('debug', 0);
 
