@@ -5,6 +5,10 @@ App::import('Vendor', 'nusoap/web_services_controller');
 App::import('Vendor', 'aes.php');
 require(APP.'/vendors/pp/Processor.class.php');  
 
+// FOR DEV WEB SERVICE SETTINGS! VERY IMPORTANT FOR DEV
+define('DEV_USER_TOOLBOX_HOST', 'http://' . $_SERVER['ENV_USER'] . '-toolboxdev.luxurylink.com/web_service_tickets');
+define('DEV_USER', $_SERVER['ENV_USER']);
+
 class WebServiceTicketsController extends WebServicesController
 {
 	var $name = 'WebServiceTickets';
@@ -16,8 +20,11 @@ class WebServiceTicketsController extends WebServicesController
 					  );
 
 	var $serviceUrl = 'http://toolbox.luxurylink.com/web_service_tickets';
-	var $serviceUrlDev = 'http://alee-toolboxdev.luxurylink.com/web_service_tickets';
 	var $serviceUrlStage = 'http://stage-toolbox.luxurylink.com/web_service_tickets';
+
+	// IF DEV, please make sure you use this path, or if using your own dev, then change this var
+	var $serviceUrlDev = DEV_USER_TOOLBOX_HOST;
+
 	var $errorResponse = false;
 	var $errorMsg = false;
 	var $errorTitle = false;
@@ -858,7 +865,7 @@ class WebServiceTicketsController extends WebServicesController
 		$checkoutKey		= base64_encode(serialize(array('ticketId' => $ticketId, 'userId' => $userId, 'offerId' => $offerId, 'zKey' => $checkoutHash)));
 
 		if (stristr($_SERVER['HTTP_HOST'], 'dev')) {
-			$checkoutLink		= "https://alee-lldev.luxurylink.com/my/my_purchase.php?z=$checkoutKey";
+			$checkoutLink		= "https://". DEV_USER ."-lldev.luxurylink.com/my/my_purchase.php?z=$checkoutKey";
 		} elseif (stristr($_SERVER['HTTP_HOST'], 'stage')) {
 			$checkoutLink		= "https://stage-luxurylink.luxurylink.com/my/my_purchase.php?z=$checkoutKey";
 		}
@@ -1028,13 +1035,15 @@ class WebServiceTicketsController extends WebServicesController
 				$sitePhoneLocal = '(310) 215-8060';
 				$siteFax = '(310) 215-8279';
 				$headerLogo = 'http://www.luxurylink.com/images/ll_logo_2009_2.gif';
-				$checkoutLink		= "https://www.luxurylink.com/my/my_purchase.php?z=$checkoutKey";
+				if (!$checkoutLink) {
+					$checkoutLink		= "https://www.luxurylink.com/my/my_purchase.php?z=$checkoutKey";
+				}
 
 				// auction facilitator
 				// -------------------------------------------------------------------------------
 				$dateRequestLink = "https://www.luxurylink.com/my/my_date_request.php?tid=$ticketId";
 				if (stristr($_SERVER['HTTP_HOST'], 'dev')) {
-					$dateRequestLink = "https://alee-lldev.luxurylink.com/my/my_date_request.php?tid=$ticketId";
+					$dateRequestLink = "https://". DEV_USER  ."-lldev.luxurylink.com/my/my_date_request.php?tid=$ticketId";
 				} elseif (stristr($_SERVER['HTTP_HOST'], 'stage')) {
 					$dateRequestLink = "https://stage-luxurylink.luxurylink.com/my/my_date_request.php?tid=$ticketId";
 				}
@@ -1050,13 +1059,15 @@ class WebServiceTicketsController extends WebServicesController
 				$sitePhoneLocal = '(310) 956-3703';
 				$siteFax = '(800) 440-3820';
 				$headerLogo = 'http://www.luxurylink.com/images/family/logo_emails.gif';
-				$checkoutLink		= "https://www.familygetaway.com/my/my_purchase.php?z=$checkoutKey";
+				if (!$checkoutLink) {
+					$checkoutLink		= "https://www.familygetaway.com/my/my_purchase.php?z=$checkoutKey";
+				}
 
 				// auction facilitator
 				// -------------------------------------------------------------------------------
 				$dateRequestLink = "https://www.familygetaway.com/my/my_date_request.php?tid=$ticketId";
 				if (stristr($_SERVER['HTTP_HOST'], 'dev')) {
-					$dateRequestLink = "https://alee-familydev.luxurylink.com/my/my_date_request.php?tid=$ticketId";
+					$dateRequestLink = "https://". DEV_USER  ."-familydev.luxurylink.com/my/my_date_request.php?tid=$ticketId";
 				} elseif (stristr($_SERVER['HTTP_HOST'], 'stage')) {
 					$dateRequestLink = "https://stage-family.luxurylink.com/my/my_date_request.php?tid=$ticketId";
 				}
@@ -1350,14 +1361,14 @@ class WebServiceTicketsController extends WebServicesController
 		if ($siteId == 1) {
 			$host = 'http://www.luxurylink.com';
 			if (stristr($_SERVER['HTTP_HOST'], 'dev')) {
-				$host = 'http://alee-lldev.luxurylink.com';
+				$host = 'http://'. DEV_USER .'-lldev.luxurylink.com';
 			} elseif (stristr($_SERVER['HTTP_HOST'], 'stage')) {
 				$host = 'http://stage-luxurylink.luxurylink.com';
 			}
 		} elseif ($siteId == 2) {
 			$host = 'http://www.familygetaway.com';
 			if (stristr($_SERVER['HTTP_HOST'], 'dev')) {
-				$host = 'http://alee-familydev.luxurylink.com';
+				$host = 'http://' . DEV_USER .  '-familydev.luxurylink.com';
 			} elseif (stristr($_SERVER['HTTP_HOST'], 'stage')) {
 				$host = 'http://stage-family.luxurylink.com';
 			}
@@ -1384,14 +1395,14 @@ class WebServiceTicketsController extends WebServicesController
 		if ($siteId == 1) {
 			$host = 'http://www.luxurylink.com';
 			if (stristr($_SERVER['HTTP_HOST'], 'dev')) {
-				$host = 'http://alee-lldev.luxurylink.com';
+				$host = 'http://'. DEV_USER .'-lldev.luxurylink.com';
 			} elseif (stristr($_SERVER['HTTP_HOST'], 'stage')) {
 				$host = 'http://stage-luxurylink.luxurylink.com';
 			}
 		} elseif ($siteId == 2) {
 			$host = 'http://www.familygetaway.com';
 			if (stristr($_SERVER['HTTP_HOST'], 'dev')) {
-				$host = 'http://alee-familydev.luxurylink.com';
+				$host = 'http://'. DEV_USER .'-familydev.luxurylink.com';
 			} elseif (stristr($_SERVER['HTTP_HOST'], 'stage')) {
 				$host = 'http://stage-family.luxurylink.com';
 			}
@@ -1582,6 +1593,11 @@ class WebServiceTicketsController extends WebServicesController
 		$isDev = false;
 		if (stristr($_SERVER['HTTP_HOST'], 'dev') || stristr($_SERVER['HTTP_HOST'], 'stage') || 
 			stristr($_SERVER['HTTP_HOST'], 'alee') || stristr($_SERVER['HTTP_HOST'], 'alee')) {
+			$this->isDev = $isDev = true;
+		}
+
+		// also check server env
+		if (in_array($_SERVER['ENV'], array('development','staging'))) {
 			$this->isDev = $isDev = true;
 		}
 
@@ -1848,7 +1864,7 @@ class WebServiceTicketsController extends WebServicesController
 				$this->sendPpvEmail($emailTo, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials);	
 			}
 		}
-
+		
 		return 'CHARGE_SUCCESS';
 	}
 }
