@@ -33,7 +33,7 @@ echo $javascript->link('jquery/jquery-autocomplete/jquery.autocomplete'); ?>
 	<h3 style="margin-bottom;15px;">Publishing</h3>
 	<input type="hidden" name="data[Package][packageId]" value="<?=$package['Package']['packageId'];?>" />
 	<table id="tbl-publishing" class="package">
-	<tr><th>Package Title</th><td><input type="text" name="data[Package][packageTitle]" value="<?=$package['Package']['packageTitle'];?>" /></td></tr>
+	<tr><th>Package Title</th><td><input type="text" name="data[Package][packageTitle]" value="<?=htmlentities($package['Package']['packageTitle']);?>" /></td></tr>
 	<tr><th>Short Blurb</th><td><input type="text" name="data[Package][shortBlurb]" value="<?=htmlentities($package['Package']['shortBlurb']);?>" maxlength="65" /></td></tr>
 	<tr><th>Package Blurb</th><td><input type="text" name="data[Package][packageBlurb]" value="<?=htmlentities($package['Package']['packageBlurb']);?>" maxlength="62" /></td></tr>
 	<tr><th>Room Grade</th><td><input type="text" name="data[Package][roomGrade]" value="<?=$roomGrade;?>" readonly="readonly" /></td></tr>
@@ -73,11 +73,11 @@ echo $javascript->link('jquery/jquery-autocomplete/jquery.autocomplete'); ?>
 			<a href="javascript:void(0);" onclick="return editThis('validity-includes');">Make Changes</a>
 		</div>
 		</td></tr>
-	<tr><th>Terms &amp; Conditions</th><td><textarea name="data[Package][termsAndConditions]"><?=$package['Package']['termsAndConditions'];?></textarea></td></tr>
+	<tr><th>Terms &amp; Conditions</th><td><textarea name="data[Package][termsAndConditions]"><?=htmlentities($package['Package']['termsAndConditions']);?></textarea></td></tr>
 	<?php if (!$package['Package']['isTaxIncluded']):?>
-	<tr><th>Taxes Not Included Text</th><td><input type="text" name="data[Package][taxesNotIncludedDesc]" value="<?=$package['Package']['taxesNotIncludedDesc'];?>" /></td></tr>
+	<tr><th>Taxes Not Included Text</th><td><input type="text" name="data[Package][taxesNotIncludedDesc]" value="<?=htmlentities($package['Package']['taxesNotIncludedDesc']);?>" /></td></tr>
 	<?php endif;?>
-	<tr><th>Seasonal Pricing (Buy Now Only)</th><td><textarea name="data[Package][additionalDescription]"><?=$package['Package']['additionalDescription'];?></textarea></td></tr>
+	<tr><th>Seasonal Pricing (Buy Now Only)</th><td><textarea name="data[Package][additionalDescription]"><?=htmlentities($package['Package']['additionalDescription']);?></textarea></td></tr>
 
 	<!--
 	<tr>
