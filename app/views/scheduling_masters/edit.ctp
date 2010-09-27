@@ -81,11 +81,11 @@ ul.subsection_tabs li.tab a.active {
 ?>
 <div style="margin: 0 auto; width: 400px">
 <?php if (strtotime($this->data['SchedulingMaster']['startDate']) > strtotime('NOW')) :?>
-    <?php $previewType = ($this->data['SchedulingMaster']['offerTypeId'] == 7) ? 'package' : 'pricepoint'; ?>
-	<a href="http://www.luxurylink.com/luxury-hotels/preview.html?clid=<?=$package['ClientLoaPackageRel'][0]['clientId']?>&oid=<?=$this->data['PricePoint']['pricePointId']?>&preview=<?php echo $previewType; ?>" class='button' target="_blank"><span>Preview offer on live site</span></a>
+    <?php $previewType = ($this->data['SchedulingMaster']['offerTypeId'] == 7) ? 'master' : 'pricepoint'; ?>
+    <?php $previewOfferId = ($this->data['SchedulingMaster']['offerTypeId'] == 7) ? $this->data['SchedulingMaster']['schedulingMasterId'] : $this->data['PricePoint']['pricePointId']; ?>
+	<a href="http://www.luxurylink.com/luxury-hotels/preview.html?clid=<?=$package['ClientLoaPackageRel'][0]['clientId']?>&oid=<?php echo $previewOfferId; ?>&preview=<?php echo $previewType; ?>" class='button' target="_blank"><span>Preview offer on live site</span></a>
 <?php else: ?>
-    <?php $previewType = ($this->data['SchedulingMaster']['offerTypeId'] == 7) ? 'package' : 'old_offer'; ?>
-	<a href="http://www.luxurylink.com/luxury-hotels/preview.html?clid=<?=$package['ClientLoaPackageRel'][0]['clientId']?>&oid=<?=$old_offer_id;?>&preview=<?php echo $previewType; ?>" class='button' target="_blank"><span>Preview old offer on live site</span></a>
+	<a href="http://www.luxurylink.com/luxury-hotels/preview.html?clid=<?=$package['ClientLoaPackageRel'][0]['clientId']?>&oid=<?=$old_offer_id;?>&preview=old_offer" class='button' target="_blank"><span>Preview old offer on live site</span></a>
 <?php endif;?>
 
 <?
