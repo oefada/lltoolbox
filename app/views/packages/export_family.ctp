@@ -190,11 +190,11 @@ table.lp td {
 			<td class="bold align-c" valign="top"><?=$lp['dateRanges'];?></td>
 			<td class="bold align-c" valign="top"><?=$number->currency( $lp['retailValue'], $cc);?></td>
 		</tr>
-		<tr>
+		<tr class="starting-price">
 			<td class="bold align-r" valign="top" colspan="3" style="padding-top:15px;">LUXURY LINK STARTING PRICE</td>
 			<td class="bold align-c" valign="top" style="padding-top:15px;"><?=$number->currency( $lp['startPrice'],$cc);?></td>
 		</tr>
-		<tr>
+		<tr class="starting-price">
 			<td class="align-r" valign="top" colspan="3">Percentage of Retail</td>
 			<td class="align-r" valign="top"><?=$lp['LoaItemRatePackageRel']['guaranteePercentRetail'];?>&nbsp;</td>
 		</tr>
@@ -204,3 +204,14 @@ table.lp td {
 <?php endforeach;?>
 
 </table>
+
+<script src="/js/jquery/jquery.js" type="text/javascript"></script>
+<script type="text/javascript"> //<![CDATA[
+    $().ready(function() {
+           var hideStartingPrice = confirm('Do you want to hide the LL Starting Price for export?');
+           if (hideStartingPrice) {
+                $('tr.starting-price').hide();
+            }
+        });
+    //]]>
+</script>
