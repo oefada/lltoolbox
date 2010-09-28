@@ -179,7 +179,6 @@ table.lp td {
 
 <tr><td colspan="4" class="spacer">&nbsp;</td></tr>
 <tr><td colspan="4" class="spacer">&nbsp;</td></tr>
-<tr><td colspan="4" class="m hdr"><strong>Lowest Price Guarantees</strong></td></tr>
 
 <?php foreach ($lowPrice as $lp) :?>
 <tr>
