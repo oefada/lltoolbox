@@ -265,8 +265,12 @@ class LoaItemsController extends AppController {
 			$this->set('day_map', array(0=>'Su', 1=>'M', 2=>'Tu', 3=>'W', 4=>'Th', 5=>'F', 6=>'Sa'));
 
 			$this->set('groupIds', $group_ids);
-			$this->set('currencyId', $this->data['Loa']['currencyId']);
-			$this->set('currencyCode', $this->data['Loa']['Currency']['currencyCode']);
+			//$this->set('currencyId', $this->data['Loa']['currencyId']);
+			//$this->set('currencyCode', $this->data['Loa']['Currency']['currencyCode']);
+            
+            $this->set('currencyId', $this->data['LoaItem']['currencyId']);
+            $this->LoaItem->bindModel(array('hasOne' => array('Currency' => array('foreignKey' => 'currencyId'))));
+			$this->set('currencyCode', $this->LoaItem->Currency->getLoaItemCurrencyCode($id));
 
 			// handle fees
 			if (count($this->data['Fee']) < 3) {

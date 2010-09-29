@@ -22,5 +22,17 @@ class Currency extends AppModel {
 		$result = $this->query("SELECT currencyId FROM package WHERE packageId = $packageId");
 		return $result[0]['package']['currencyId'];
 	}
+    
+    function getLoaItemCurrencyCode($loaItemId) {
+        $query = "SELECT currencyCode FROM currency Currency
+                  INNER JOIN loaItem LoaItem USING (currencyId)
+                  WHERE LoaItem.loaItemId = {$loaItemId}";
+        if ($currencyCode = $this->query($query)) {
+            return $currencyCode[0]['Currency']['currencyCode'];
+        }
+        else {
+            return false;
+        }
+    }
 }
 ?>
