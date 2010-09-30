@@ -1,7 +1,7 @@
 var rp_table = 'loaRpTable';
 
-function add_rate_period() {
-	append_row(rp_table);
+function add_rate_period(currencyType) {
+	append_row(rp_table, currencyType);
 }
 
 function toggle_price(event) {
@@ -78,7 +78,7 @@ function remove_date_range(rowId) {
 	$('rp_date_e_' + rowId).setStyle({ display: 'none' });
 }
 
-function append_row(tblId)
+function append_row(tblId, currencyType)
 {
 	var tbl = document.getElementById(tblId);
 	var numRows = tbl.rows.length;
@@ -91,8 +91,9 @@ function append_row(tblId)
 	var rowId = randomNum1 + '_' + randomNum2;
 	var rowIdText = "rp_" + rowId;
 	var newRow = tbl.insertRow(numRows);
-
-	newRow.setAttribute('id', rowIdText);
+    var currency = (currencyType == undefined) ? currencyCode : currencyType;
+    
+    newRow.setAttribute('id', rowIdText);
 	
 	var newCell = newRow.insertCell(0);
 	newCell.setAttribute('id', rowIdText + '_0');
@@ -131,7 +132,7 @@ function append_row(tblId)
 						<input type="hidden" id="'+ rowIdText +'_rpd_4" name="data[LoaItemRatePeriod]['+ rowId +'][LoaItemRate][0][w4]" value="1" />\
 						<input type="hidden" id="'+ rowIdText +'_rpd_5" name="data[LoaItemRatePeriod]['+ rowId +'][LoaItemRate][0][w5]" value="1" />\
 						<input type="hidden" id="'+ rowIdText +'_rpd_6" name="data[LoaItemRatePeriod]['+ rowId +'][LoaItemRate][0][w6]" value="1" />\
-						<strong style="font-size:11px;">'+ currencyCode +'</strong>\
+						<strong style="font-size:11px;">'+ currency +'</strong>\
 						<input type="text" style="width:50px;" id="'+ rowIdText +'_rpd_7" class="rp_price" name="data[LoaItemRatePeriod]['+ rowId +'][LoaItemRate][0][price]" />\
 						<div style="margin-top:5px;padding:0px;">\
 							<a href="javascript:void(0);" onclick="toggleF(\''+  rowIdText +'\', \'s\', \'m\');">Different prices for weeknights/weekends</a>\
@@ -147,7 +148,7 @@ function append_row(tblId)
 								<input type="checkbox" id="'+ rowIdText +'_rpd_4-0" name="data[LoaItemRatePeriod]['+ rowId +'][LoaItemRate][0][w4]" value="1" onclick="checkDays(this.id);" checked="checked" /> <label for="'+ rowIdText +'_rpd_4-0">Th</label>\
 								<input type="checkbox" id="'+ rowIdText +'_rpd_5-0" name="data[LoaItemRatePeriod]['+ rowId +'][LoaItemRate][0][w5]" value="1" onclick="checkDays(this.id);" checked="checked" /> <label for="'+ rowIdText +'_rpd_5-0">F</label>\
 								<input type="checkbox" id="'+ rowIdText +'_rpd_6-0" name="data[LoaItemRatePeriod]['+ rowId +'][LoaItemRate][0][w6]" value="1" onclick="checkDays(this.id);" checked="checked" /> <label for="'+ rowIdText +'_rpd_6-0">Sa</label>\
-								<strong style="font-size:11px;">'+ currencyCode +'</strong>\
+								<strong style="font-size:11px;">'+ currency +'</strong>\
 								<input type="text" id="'+ rowIdText +'_rpd_7_0" style="width:50px;" class="rp_price" name="data[LoaItemRatePeriod]['+ rowId +'][LoaItemRate][0][price]" />\
 							</div>\
 							<div id="'+ rowIdText +'_m_1" class="rpDates" style="margin-top:10px;">\
@@ -158,7 +159,7 @@ function append_row(tblId)
 								<input type="checkbox" id="'+ rowIdText +'_rpd_4-1" name="data[LoaItemRatePeriod]['+ rowId +'][LoaItemRate][1][w4]" value="1" onclick="checkDays(this.id);" /> <label for="'+ rowIdText +'_rpd_4-1">Th</label>\
 								<input type="checkbox" id="'+ rowIdText +'_rpd_5-1" name="data[LoaItemRatePeriod]['+ rowId +'][LoaItemRate][1][w5]" value="1" onclick="checkDays(this.id);" /> <label for="'+ rowIdText +'_rpd_5-1">F</label>\
 								<input type="checkbox" id="'+ rowIdText +'_rpd_6-1" name="data[LoaItemRatePeriod]['+ rowId +'][LoaItemRate][1][w6]" value="1" onclick="checkDays(this.id);" /> <label for="'+ rowIdText +'_rpd_6-1">Sa</label>\
-								<strong style="font-size:11px;">'+ currencyCode +'</strong>\
+								<strong style="font-size:11px;">'+ currency +'</strong>\
 								<input type="text" id="'+ rowIdText +'_rpd_7_1" style="width:50px;" class="rp_price" name="data[LoaItemRatePeriod]['+ rowId +'][LoaItemRate][1][price]" />\
 							</div>\
 							<div style="margin-top:5px;padding:0px;">\

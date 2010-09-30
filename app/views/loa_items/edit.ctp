@@ -59,7 +59,7 @@ if ($isGroup) {
 				</table>
 			</div>
 			<div style="margin:0px;padding:0px;background-color:#444444;border:4px solid #444444;padding:2px;">
-				<a href="javascript:void(0);" style="font-weight:bold;color:#FFFFFF;" onclick="add_rate_period();">Add Another Rate Period</a>
+				<a href="javascript:void(0);" style="font-weight:bold;color:#FFFFFF;" onclick="add_rate_period('<?php echo $currencyCode; ?>');">Add Another Rate Period</a>
 			</div>
 		</div>
 		<!-- END RATE PERIOD BLOCK -->
@@ -200,7 +200,7 @@ if ($isGroup) {
 				</table>
 			</div>
 			<div style="margin:0px;padding:0px;background-color:#444444;border:4px solid #444444;padding:2px;">
-				<a href="javascript:void(0);" style="font-weight:bold;color:#FFFFFF;" onclick="add_rate_period();">Add Another Rate Period</a>
+				<a href="javascript:void(0);" style="font-weight:bold;color:#FFFFFF;" onclick="add_rate_period('<?php echo $currencyCode; ?>');">Add Another Rate Period</a>
 			</div>
 		</div>
 		<!-- END RATE PERIOD BLOCK -->

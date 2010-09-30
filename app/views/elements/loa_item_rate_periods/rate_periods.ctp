@@ -1,4 +1,3 @@
-
 <?if($loaItem['LoaItemRatePeriod']): ?>
 	<table class="loaRpInner" cellpadding="0" cellspacing="0">
 	<tr>
@@ -39,7 +38,7 @@
 					&nbsp;
 				</td>
 				<td style="width:40%;text-align:left;border:0px;">
-					<span style="font-weight:bold;font-size:11px;margin-right:5px;"><?=$currencyCodes[$loaItem['Loa']['currencyId']];?></span> 
+					<span style="font-weight:bold;font-size:11px;margin-right:5px;"><?=$currencyCodes[$loaItem['currencyId']];?></span> 
 					<?php echo money_format('%i',$rate['price']);?> <?php if (!empty($loaItem['Fee'])) { echo ' + fee(s)';}?><br />
 				</td>
 			</tr>

@@ -269,9 +269,6 @@ class LoaItemsController extends AppController {
 			//$this->set('currencyCode', $this->data['Loa']['Currency']['currencyCode']);
             
             $this->set('currencyId', $this->data['LoaItem']['currencyId']);
-            $this->LoaItem->bindModel(array('hasOne' => array('Currency' => array('foreignKey' => 'currencyId'))));
-			$this->set('currencyCode', $this->LoaItem->Currency->getLoaItemCurrencyCode($id));
-
 			// handle fees
 			if (count($this->data['Fee']) < 3) {
 				$feeTypeId2 = false;
@@ -300,6 +297,8 @@ class LoaItemsController extends AppController {
 			}
 			usort($this->data['Fee'], array('LoaItemsController','usortFeeTypeId'));
 		}
+        $this->LoaItem->bindModel(array('hasOne' => array('Currency' => array('foreignKey' => 'currencyId'))));
+		$this->set('currencyCode', $this->LoaItem->Currency->getLoaItemCurrencyCode($id));
 	}
 
 	function usortFeeTypeId($a, $b) {
