@@ -963,10 +963,14 @@ class PackagesController extends AppController {
                 if ($this->Package->saveAll($this->data)) {
                     if (empty($package['Package']['packageId'])) {
                         $packageId = $this->Package->getLastInsertId();
+                        //this may vary with multiclient packages. need to add logic if using this function
+                        //single client packages -- percentOfRetail will always equal 100
+                        $percentOfRevenue = 100;
                         $relData = array('packageId' => $packageId,
                                          'clientId' => $clientId,
                                          'loaId' => $package['Package']['loaId'],
-                                         'numNights' => $package['Package']['numNights']);
+                                         'numNights' => $package['Package']['numNights'],
+                                         'percentOfRevenue' => $percentOfRevenue);
                         $this->Package->ClientLoaPackageRel->create();
                         $this->Package->ClientLoaPackageRel->save($relData);
                         $package['Package']['packageId'] = $packageId;
