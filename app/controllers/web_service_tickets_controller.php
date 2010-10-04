@@ -1020,6 +1020,8 @@ class WebServiceTicketsController extends WebServicesController
 				$rentalCarCopy = file_get_contents('../vendors/email_msgs/email_includes/rentalcarcopy_uki.html');
 			} elseif (in_array(4, $primaryDest)) {
 				$rentalCarCopy = file_get_contents('../vendors/email_msgs/email_includes/rentalcarcopy_europe.html');
+			} elseif (in_array(17,$primaryDest)){
+				$bookFlightCopy = file_get_contents('../vendors/email_msgs/email_includes/bookflightcopy_southamerica.html');
 			}
 		}
 
