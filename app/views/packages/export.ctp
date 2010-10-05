@@ -163,7 +163,7 @@
                             </ul>
                     <?php endif; ?>
                 </td>
-                <td <?=$alt;?>><?=($item['PackageLoaItemRel']['quantity'] > 1) ? '$'. $number->currency($item['LoaItem']['totalPrice'], $cc) : '&nbsp;' ;?></td>
+                <td <?=$alt;?>><?=($item['PackageLoaItemRel']['quantity'] > 1) ? $number->currency($item['LoaItem']['totalPrice'], $cc) : '&nbsp;' ;?></td>
                 <td <?=$alt;?>><strong><?=$number->currency( ($item['LoaItem']['totalPrice'] * $item['PackageLoaItemRel']['quantity']), $cc);?></strong></td>
             </tr>
             <?php endforeach;?>
