@@ -637,19 +637,56 @@ class SchedulingMastersController extends AppController {
         
         //set to true to hide price points if hotel offer
         if (empty($package['Package']['externalOfferUrl'])) {
+            $isHotelOffer = false;
             $this->set('isHotelOffer', false);
             // price points
             $pricePoint = new PricePoint();
             $this->set('pricePoints', $pricePoint->getPricePoint($packageId));
         }
         else {
+            $isHotelOffer = true;
             $pricePoint = $this->SchedulingMaster->Package->PricePoint->getHotelOfferPricePoint($packageId);
             if ($pricePoint) {
                 $this->set('pricePointId', $pricePoint[0]['PricePoint']['pricePointId']);
                 $this->set('isHotelOffer', true);
             }
         }
-
+           
+        if (isset($this->passedArgs['instanceId'])) {       //is auction or hotel offer
+            $this->SchedulingMaster->SchedulingInstance->recursive = -1;
+            if ($instance = $this->SchedulingMaster->SchedulingInstance->findBySchedulingInstanceId($this->passedArgs['instanceId'])) {
+                if ($isHotelOffer) {
+                        $offerId = $id;
+                        $previewType = 'master';
+                }
+                elseif ($instanceOfferId = $this->SchedulingMaster->getOfferIdFromInstance($this->passedArgs['instanceId'])) {
+                    if (strtotime($instance['SchedulingInstance']['startDate']) > time()) {
+                        $offerId = $this->SchedulingMaster->SchedulingInstance->Offer->getOfferPricePointId($instanceOfferId, $this->data['SchedulingMaster']['siteId']);
+                        $previewType = 'pricepoint';
+                    }
+                    else {
+                        $offerId = $instanceOfferId;
+                        $previewType = 'old_offer';
+                    }
+                }
+                else {
+                    $offerId = $this->SchedulingMaster->SchedulingInstance->getInstancePricePointId($instance, $packageId);
+                    $previewType = 'pricepoint';
+                }
+            }
+        }
+        else {          //is buy now
+            if ($offerId = $this->SchedulingMaster->SchedulingInstance->Offer->findOfferBySchedulingMasterId($id)) {
+                $previewType = 'old_offer';
+            }
+            else {
+                $offerId = $id;
+                $previewType = 'master';
+            }
+        }
+        
+        $this->set('offerId',                   $offerId);
+        $this->set('previewType',               $previewType);
 		$this->set('masterState',				$masterState);
 		$this->set('package', 					$package);
 		$this->set('packageId', 				$packageId);
@@ -657,6 +694,7 @@ class SchedulingMastersController extends AppController {
 		$this->set('merchandisingFlags',        $merchandisingFlags);
 		$this->set('schedulingStatusIds',       $schedulingStatusIds);
 		$this->set('schedulingDelayCtrlIds',    $schedulingDelayCtrlIds);
+        $this->set('schedulingInstance',        $instance);
 	}
 
 	function delete($id = null) {

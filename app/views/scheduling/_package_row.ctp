@@ -133,7 +133,7 @@ foreach($package['Scheduling'] as $k => $master):
 																				));
 	} else {
 	?>
-		<div id="schedulingInstance<?=$instance['schedulingInstanceId']?>"style="width: <?=$width?>%; left: <?=$left?>%"<?=$class?> onclick="Modalbox.show('/scheduling_masters/edit/<?=$instance['schedulingMasterId']?>', {title: 'Edit Scheduling Master'});">	
+		<div id="schedulingInstance<?=$instance['schedulingInstanceId']?>"style="width: <?=$width?>%; left: <?=$left?>%"<?=$class?> onclick="Modalbox.show('/scheduling_masters/edit/<?=$instance['schedulingMasterId']?>/instanceId:<?php echo $instance['schedulingInstanceId']; ?>', {title: 'Edit Scheduling Master'});">	
 		Iteration 
 	<?php
 		$prototip->tooltip('schedulingInstance'.$instance['schedulingInstanceId'], array('ajax' =>

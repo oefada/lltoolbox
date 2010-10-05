@@ -49,5 +49,14 @@ class SchedulingInstance extends AppModel {
     
         return false;
 	}
+    
+    function getInstancePricePointId($instance, $packageId) {
+        $query = "SELECT pricePointId from pricePoint PricePoint
+                  WHERE '{$instance['SchedulingInstance']['startDate']}' BETWEEN PricePoint.validityStart AND PricePoint.validityEnd
+                  AND PricePoint.packageId = {$packageId}";
+        if ($pricePoint = $this->query($query)) {
+            return ($pricePoint[0]['PricePoint']['pricePointId']);
+        }
+    }
 }
 ?>

@@ -132,8 +132,9 @@ class SchedulingMaster extends AppModel {
 	}
 
 	function getOfferIdFromInstance($sid) {
-		$r = $this->query("SELECT offerId FROM offer WHERE schedulingInstanceId = $sid");
-		return $r[0]['offer']['offerId'];
+		if ($r = $this->query("SELECT offerId FROM offer WHERE schedulingInstanceId = {$sid}")) {
+            return $r[0]['offer']['offerId'];
+        }
 	}
 
 	function end() {
