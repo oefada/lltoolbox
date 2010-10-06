@@ -6,7 +6,8 @@ class ClientTracking extends AppModel {
 	var $primaryKey = 'clientTrackingId';
 	var $displayField = 'clientTrackingId';
 	
-	var $belongsTo = array('Client' => array('className' => 'Client', 'foreignKey' => 'clientId'));
+	var $belongsTo = array('Client' => array('className' => 'Client', 'foreignKey' => 'clientId'),
+                           'Package' => array('className' => 'Package', 'foreignKey' => 'packageId'));
 	
 	function beforeSave() {
 		if (empty($this->data['ClientTracking']['sites'])) {
@@ -14,6 +15,11 @@ class ClientTracking extends AppModel {
 				if (!empty($client)) {
 						$this->data['ClientTracking']['sites'] = $client['Client']['sites'];
 				}
+                else {
+                    if ($package = $this->Package->find('first', array('conditions' => array('Package.packageId' => $this->data['ClientTracking']['packageId'])))) {
+                        $this->data['ClientTracking']['sites'] = $package['Package']['sites'];
+                    }
+                }
 		}
 		return true;
 	}

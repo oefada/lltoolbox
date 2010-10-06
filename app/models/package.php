@@ -227,20 +227,23 @@ class Package extends AppModel {
         if (!empty($validity_disclaimer)) {
             $setFields[] = "validityDisclaimer = '{$validity_disclaimer}'";
         }
-		*/
+        */
 
         foreach ($sites as $site) {
             switch ($site) {
                case 1:		//Luxury Link
                case 'luxurylink':
                   $table = 'offerLuxuryLink';
+                  $dbConfig = 'luxurylink';
                   break;
                case 2:		//Family
                case 'family':
                   $table = 'offerFamily';
+                  $dbConfig = 'family';
                   break;
                default:		//default to Luxury Link
                   $table = 'offerLuxuryLink';
+                  $dbConfig = 'luxurylink';
             }
             
             if (!empty($setFields)) {
@@ -249,6 +252,20 @@ class Package extends AppModel {
                           "WHERE packageId = {$this->id} AND isAuction = 0 AND now() < endDate";
                 $this->query($query);
             }
+            
+            //update clientTracking
+            if (!empty($this->data['ClientTracking'])) {
+                foreach ($this->data['ClientTracking'] as $tracking) {
+                    $data['ClientTracking'] = $tracking;
+                    $data['ClientTracking']['packageId'] = $packageId;
+                    $this->ClientTracking->useDbConfig = $dbConfig;
+                    $this->ClientTracking->create();
+                    $this->ClientTracking->save($data);
+                    $this->ClientTracking->useDbConfig = 'default';
+                }
+            }
+            
+            
         }
 	    
 	    // update offer details in offer for hotel offers type (7)
