@@ -14,7 +14,7 @@ if (!$package['Package']['siteId']) {
 	var numNights = <?=(int)$package['Package']['numNights'];?>;
 	var numGuests = <?=(int)$package['Package']['numGuests'];?>;
 	var roomGrade = '<?=$roomGrade;?>';
-	var roomNightDescription = '<?=$roomNightDescription;?>';
+	var roomNightDescription = '<?=htmlentities($roomNightDescription);?>';
 	var maxAdults = <?=(int)$package['Package']['maxAdults'];?>;
 	var siteId = <?=(int)$package['Package']['siteId'];?>;
 	
