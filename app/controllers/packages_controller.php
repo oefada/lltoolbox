@@ -116,7 +116,22 @@ class PackagesController extends AppController {
 					$this->Package->SchedulingMaster->SchedulingInstance->save($instanceData);
 				} else {
 					$this->Session->setFlash(__('The Schedule could not be saved. Please correct the errors below.', true), 'default', array(), 'error');
-				}			
+				}
+                //push tracking links out to front end databases
+                if (!empty($this->data['ClientTracking'])) {
+                    $sites = $this->Package->field('sites', array('Package.packageId' => $this->Package->id));
+                    $sites = explode(',', $sites);
+                    foreach($sites as $site) {
+                        foreach ($this->data['ClientTracking'] as $tracking) {
+                            $data['ClientTracking'] = $tracking;
+                            $data['ClientTracking']['packageId'] = $this->Package->id;
+                            $this->Package->ClientTracking->useDbConfig = $site;
+                            $this->Package->ClientTracking->create();
+                            $this->Package->ClientTracking->save($data);
+                            $this->Package->ClientTracking->useDbConfig = 'default';
+                        }
+                    }
+                }
 				$this->Session->setFlash(__('The Package has been saved', true), 'default', array(), 'success');
 				$this->redirect("/clients/$clientId/packages/edit/{$this->Package->id}");
 			} else {
@@ -408,7 +423,21 @@ class PackagesController extends AppController {
 
 		if (!empty($this->data)) {
 			if (!empty($this->data['Package']['externalOfferUrl'])) { // for hotel offers
-			
+			   //push tracking links out to front end databases
+                if (!empty($this->data['ClientTracking'])) {
+                    $sites = $this->Package->field('sites', array('Package.packageId' => $id));
+                    $sites = explode(',', $sites);
+                    foreach($sites as $site) {
+                        foreach ($this->data['ClientTracking'] as $tracking) {
+                            $data['ClientTracking'] = $tracking;
+                            $data['ClientTracking']['packageId'] = $id;
+                            $this->Package->ClientTracking->useDbConfig = $site;
+                            $this->Package->ClientTracking->create();
+                            $this->Package->ClientTracking->save($data);
+                            $this->Package->ClientTracking->useDbConfig = 'default';
+                        }
+                    }
+                }
 				$this->data['Package']['packageName'] = $this->data['Package']['packageTitle'];
 				if ($this->Package->saveAll($this->data, array('validate' => false)) && $this->Package->save($this->data, array('validate' => false))) {
 					$this->Session->setFlash(__('The Package has been saved', true), 'default', array(), 'success');

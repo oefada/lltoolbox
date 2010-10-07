@@ -181,6 +181,19 @@ class Package extends AppModel {
 	   }
        
        $sites = (empty($this->data['Package']['sites']) && !empty($this->data['Package']['packageId'])) ? $this->field('sites', array('Package.packageId' => $this->data['Package']['packageId'])) : $this->data['Package']['sites'];
+       
+       if (empty($sites) && !empty($this->data['Package']['siteId'])) {
+            switch ($this->data['Package']['siteId']) {
+                case 1:
+                    $sites = 'luxurylink';
+                    break;
+                case 2:
+                    $sites = 'family';
+                    break;
+                default:
+                    break;
+            }
+       }
 
        $this->data['Package']['sites'] = (is_array($sites)) ? implode(',', $sites) : $sites;
        
@@ -234,16 +247,13 @@ class Package extends AppModel {
                case 1:		//Luxury Link
                case 'luxurylink':
                   $table = 'offerLuxuryLink';
-                  $dbConfig = 'luxurylink';
                   break;
                case 2:		//Family
                case 'family':
                   $table = 'offerFamily';
-                  $dbConfig = 'family';
                   break;
                default:		//default to Luxury Link
                   $table = 'offerLuxuryLink';
-                  $dbConfig = 'luxurylink';
             }
             
             if (!empty($setFields)) {
@@ -251,20 +261,7 @@ class Package extends AppModel {
                           SET " . implode(', ', $setFields) .
                           "WHERE packageId = {$this->id} AND isAuction = 0 AND now() < endDate";
                 $this->query($query);
-            }
-            
-            //update clientTracking
-            if (!empty($this->data['ClientTracking'])) {
-                foreach ($this->data['ClientTracking'] as $tracking) {
-                    $data['ClientTracking'] = $tracking;
-                    $data['ClientTracking']['packageId'] = $packageId;
-                    $this->ClientTracking->useDbConfig = $dbConfig;
-                    $this->ClientTracking->create();
-                    $this->ClientTracking->save($data);
-                    $this->ClientTracking->useDbConfig = 'default';
-                }
-            }
-            
+            }            
             
         }
 	    
