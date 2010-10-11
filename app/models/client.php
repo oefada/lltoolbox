@@ -309,7 +309,7 @@ class Client extends AppModel {
        foreach ($sites as $site) {
             // for clientDestinationLookup only on the frontend
            // -----------------------------------------------------------------
-            if (isset($data['Destination']) && !empty($data['Destination'])) {
+            if (isset($data['Destination']) && !empty($data['Destination']['Destination'])) {
                 $destinationIds = array();
                 if (isset($data['Destination']['Destination']) && !empty($data['Destination']['Destination'])) {
                     $destinationIds = $data['Destination']['Destination'];
