@@ -18,7 +18,7 @@ class PricePoint extends AppModel {
     var $actsAs = array('Logable');
     
     function afterSave($created) {
-        $pricePointId = $this->data['PricePoint']['pricePointId'];
+        $pricePointId = (isset($this->data['PricePoint']['pricePointId'])) ? isset($this->data['PricePoint']['pricePointId']) : $this->id;
         $packageId = $this->data['PricePoint']['packageId'];
         
         // get the site and offer table for the package first

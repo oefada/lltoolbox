@@ -655,11 +655,7 @@ class SchedulingMastersController extends AppController {
         if (isset($this->passedArgs['instanceId'])) {       //is auction or hotel offer
             $this->SchedulingMaster->SchedulingInstance->recursive = -1;
             if ($instance = $this->SchedulingMaster->SchedulingInstance->findBySchedulingInstanceId($this->passedArgs['instanceId'])) {
-                if ($isHotelOffer) {
-                        $offerId = $id;
-                        $previewType = 'master';
-                }
-                elseif ($instanceOfferId = $this->SchedulingMaster->getOfferIdFromInstance($this->passedArgs['instanceId'])) {
+                if ($instanceOfferId = $this->SchedulingMaster->getOfferIdFromInstance($this->passedArgs['instanceId'])) {
                     if (strtotime($instance['SchedulingInstance']['startDate']) > time()) {
                         $offerId = $this->SchedulingMaster->SchedulingInstance->Offer->getOfferPricePointId($instanceOfferId, $this->data['SchedulingMaster']['siteId']);
                         $previewType = 'pricepoint';

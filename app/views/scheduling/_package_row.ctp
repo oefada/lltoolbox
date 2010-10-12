@@ -115,7 +115,7 @@ foreach($package['Scheduling'] as $k => $master):
 	<?php 
 	if (substr($mstrStartDate, 0, 10) == substr($startDate, 0, 10)) {
 	?>
-		<div id='schedulingMaster<?=$master['SchedulingMaster']['schedulingMasterId']?>' style="width: <?=$width?>%; left: <?=$left?>%"<?=$class?> onclick="Modalbox.show('/scheduling_masters/edit/<?=$instance['schedulingMasterId']?>', {title: 'Edit Scheduling Master'});">	
+		<div id='schedulingMaster<?=$master['SchedulingMaster']['schedulingMasterId']?>' style="width: <?=$width?>%; left: <?=$left?>%"<?=$class?> onclick="Modalbox.show('/scheduling_masters/edit/<?=$instance['schedulingMasterId']?>/instanceId:<?php echo $instance['schedulingInstanceId']; ?>', {title: 'Edit Scheduling Master'});">	
 		<strong>Retail Value</strong><br />
         <?php if (empty($master['SchedulingMaster']['pricePointId'])): ?>
             <?=$number->currency($master['SchedulingMaster']['retailValue'])?>
