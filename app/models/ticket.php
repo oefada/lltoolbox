@@ -253,7 +253,7 @@ class Ticket extends AppModel {
 	}
 
 	function getClientsFromPackageId($packageId) {
-		$sql = 'SELECT Client.clientId, Client.name, Client.clientTypeId FROM clientLoaPackageRel cr INNER JOIN client as Client ON Client.clientId = cr.clientId WHERE cr.packageId = ' . $packageId;
+		$sql = 'SELECT Client.clientId, Client.name, Client.clientTypeId, Client.parentClientId FROM clientLoaPackageRel cr INNER JOIN client as Client ON Client.clientId = cr.clientId WHERE cr.packageId = ' . $packageId;
 		$clients = $this->query($sql);
 		return $clients;
 	}

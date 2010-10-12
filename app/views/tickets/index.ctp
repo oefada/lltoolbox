@@ -322,7 +322,22 @@ foreach ($tickets as $ticket):
 ?>
 	<tr<?php echo $class;?>>
 		<td>
-			<?php echo $ticket['Ticket']['ticketId']; ?>
+			<?php //echo $ticket['Ticket']['ticketId']; 
+            
+                //hotel beds hack get parent clientid; if hotel beds, display HB 
+                $clientTicket = '';
+                if ($ticket['Client']) {                       
+                    foreach ($ticket['Client'] as $client) {
+                        $clientTicket = $client['Client']['parentClientId'];
+                    }               
+                }
+                
+                if ($clientTicket == 11080) {
+                    echo $ticket['Ticket']['ticketId'].'HB'; 
+                } else {
+                    echo $ticket['Ticket']['ticketId'];                              
+                }
+            ?>
 		</td>
 		<td>
 			<?php echo $siteIds[$ticket['Ticket']['siteId']]; ?>

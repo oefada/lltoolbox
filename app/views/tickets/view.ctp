@@ -12,7 +12,24 @@ $this->searchController = 'Tickets';
 		<table width="100%" cellpadding="0" cellspacing="0" border="0">
 			<tr>
 				<td width="200"><strong>Ticket Id</strong></td>
-				<td><?php echo $ticket['Ticket']['ticketId']; ?></td>
+				<td>
+                    <?php 
+                         
+                        //hotel beds hack get clientid; if hotel beds, display HB 
+                        $clientTicket = '';
+                        if ($ticket['Client']) {                       
+                            foreach ($ticket['Client'] as $client) {
+                                $clientTicket = $client['Client']['parentClientId'];
+                            }               
+                        }
+                        
+                        if ($clientTicket == 11080) {
+                            echo $ticket['Ticket']['ticketId'].'HB'; 
+                        } else {
+                            echo $ticket['Ticket']['ticketId'];                              
+                        }
+                    ?>
+                </td>
 			</tr>
 			<tr>
 				<td width="200"><strong>Site</strong></td>
@@ -141,7 +158,8 @@ $this->searchController = 'Tickets';
 				<?php if (!empty($ticket['Promo'])) :?>
 				<?php foreach ($ticket['Promo'] as $t_promo) : ?>
 
-					<h3 style="margin:0px;padding:0px;padding-bottom:5px;">** Promo Code [<?=$t_promo['pc']['promoCode'];?>] **</h3>
+					<h3 style="margin:0px;padding:0px;padding-bottom:5px;">** Promo Code [<?=$t_promo['pc']['promoCode'];?>] **</h3>
+
 					<h3 style="margin:0px;padding:0px;padding-bottom:5px;">
 						<?php if ($t_promo['p']['amountOff']) : ?>
 						Amount Off: <?php echo $number->currency($t_promo['p']['amountOff']);?>
@@ -149,7 +167,8 @@ $this->searchController = 'Tickets';
 						<?php if ($t_promo['p']['percentOff']) : ?>
 						Percent Off: <?php echo $number->currency($t_promo['p']['percentOff']);?>
 						<?php endif; ?>
-					</h3>
+					</h3>
+
 
 				<?php endforeach; ?>
 				<?php endif; ?>
