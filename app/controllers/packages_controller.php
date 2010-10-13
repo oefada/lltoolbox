@@ -2051,7 +2051,7 @@ class PackagesController extends AppController {
         $package = $this->Package->getPackage($packageId);
 		$client = $this->Client->read(null, $clientId);
         $roomNights = $this->LoaItem->getRoomNights($packageId);
-		$days = array('Mon','Tue','Wed','Thu','Fri','Sat','Sun');
+		$days = array('Sun','Mon','Tue','Wed','Thu','Fri','Sat');
 		foreach ($roomNights as $r => $rn) {
 			foreach ($rn['Validity'] as $v => $vd) {
 				$roomNights[$r]['Validity'][$v]['LoaItemDate']['startDate'] = date('M d Y', strtotime($vd['LoaItemDate']['startDate']));
