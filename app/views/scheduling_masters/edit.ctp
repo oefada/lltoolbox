@@ -85,7 +85,7 @@ ul.subsection_tabs li.tab a.active {
     <?php //$previewOfferId = ($this->data['SchedulingMaster']['offerTypeId'] == 7) ? $this->data['SchedulingMaster']['schedulingMasterId'] : $this->data['PricePoint']['pricePointId']; ?>
 	<!-- <a href="http://www.luxurylink.com/luxury-hotels/preview.html?clid=<?php //echo $package['ClientLoaPackageRel'][0]['clientId']?>&oid=<?php //echo $previewOfferId; ?>&preview=<?php //echo $previewType; ?>" class='button' target="_blank"><span>Preview offer on live site</span></a> --> 
 <?php //else: ?>
-	<a href="http://www.luxurylink.com/luxury-hotels/preview.html?clid=<?=$package['ClientLoaPackageRel'][0]['clientId']?>&oid=<?=$offerId;?>&preview=<?php echo $previewType; ?>" class='button' target="_blank"><span>Preview offer on live site</span></a>
+	<a href="http://<?php echo $previewUrl; ?>/luxury-hotels/preview.html?clid=<?=$package['ClientLoaPackageRel'][0]['clientId']?>&oid=<?=$offerId;?>&preview=<?php echo $previewType; ?>" class='button' target="_blank"><span>Preview offer on live site</span></a>
 <?php //endif;?>
 
 <?

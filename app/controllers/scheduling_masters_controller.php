@@ -681,6 +681,42 @@ class SchedulingMastersController extends AppController {
             }
         }
         
+        if (isset($_SERVER['ENV']) && $_SERVER['ENV'] == 'development') {
+            $subdomain = $_SERVER['ENV_USER'].'-';
+            if ($this->data['SchedulingMaster']['siteId'] == 1) {
+                $subdomain .= 'lldev';
+            }
+            elseif ($this->data['SchedulingMaster']['siteId'] == 2) {
+                $subdomain .= 'familydev';
+            }
+        }
+        elseif (isset($_SERVER['ENV']) && $_SERVER['ENV'] == 'staging') {
+            $subdomain = 'stage-';
+            if ($this->data['SchedulingMaster']['siteId'] == 1) {
+                $subdomain .= 'luxurylink';
+            }
+            elseif ($this->data['SchedulingMaster']['siteId'] == 2) {
+                $subdomain .= 'family';
+            }
+        }
+        else {
+            $subdomain = 'www';
+        }
+        
+        switch($this->data['SchedulingMaster']['siteId']) {
+            case 2:
+                if (isset($_SERVER['ENV']) && in_array($_SERVER['ENV'], array('development', 'staging'))) {
+                    $previewUrl = $subdomain.'.luxurylink.com';
+                }
+                else {
+                    $previewUrl = $subdomain.'.familygetaway.com';
+                }
+                break;
+            case 1:
+            default:
+                $previewUrl = $subdomain.'.luxurylink.com';
+        }
+        
         $this->set('offerId',                   $offerId);
         $this->set('previewType',               $previewType);
 		$this->set('masterState',				$masterState);
@@ -691,6 +727,7 @@ class SchedulingMastersController extends AppController {
 		$this->set('schedulingStatusIds',       $schedulingStatusIds);
 		$this->set('schedulingDelayCtrlIds',    $schedulingDelayCtrlIds);
         $this->set('schedulingInstance',        $instance);
+        $this->set('previewUrl',                $previewUrl);
 	}
 
 	function delete($id = null) {
