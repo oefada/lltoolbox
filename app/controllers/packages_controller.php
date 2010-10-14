@@ -2069,6 +2069,14 @@ class PackagesController extends AppController {
 				}
 			}
 		}
+        
+        $bo_weekdays = $this->Package->getBlackoutWeekday($packageId);
+		$bo_weekdays_arr = array();
+		foreach (explode(',', $bo_weekdays) as $w) {
+			$bo_weekdays_arr[] = $this->Package->pluralize($w);
+		}
+		$this->set('bo_weekdays', implode('<br />', $bo_weekdays_arr));
+        
 		//$loaItems = $this->Package->getLoaItems($packageId);
         $loaItems = $this->LoaItem->getPackageInclusions($packageId);
         $lowPriceGuarantees = $this->getRatePeriodsInfo($packageId);

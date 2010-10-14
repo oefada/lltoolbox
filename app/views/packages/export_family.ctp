@@ -176,6 +176,13 @@ table.lp td {
 	<td><?php foreach ($vb['BlackoutDays'] as $bo) echo $bo . '<br />'?></td>
 	<td colspan="2">&nbsp;</td>
 </tr>
+<?php if (!empty($bo_weekdays)): ?>
+        <tr>
+            <th>Blackout Weekdays</th>
+            <td><?php echo $bo_weekdays; ?></td>
+            <td colspan="2">&nbsp;</td>
+        </tr>
+<?php endif; ?>
 
 <tr><td colspan="4" class="spacer">&nbsp;</td></tr>
 <tr><td colspan="4" class="spacer">&nbsp;</td></tr>
