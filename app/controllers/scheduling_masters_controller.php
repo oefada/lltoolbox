@@ -676,8 +676,8 @@ class SchedulingMastersController extends AppController {
                 $previewType = 'old_offer';
             }
             else {
-                $offerId = $id;
-                $previewType = 'master';
+                $offerId = $this->data['PricePoint']['pricePointId'];
+                $previewType = 'pricepoint';
             }
         }
         
