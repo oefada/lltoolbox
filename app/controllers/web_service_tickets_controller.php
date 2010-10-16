@@ -1427,11 +1427,10 @@ class WebServiceTicketsController extends WebServicesController
 	function sendPpvEmail($emailTo, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials, $email_attachment) {
                 
 		if (stristr($_SERVER['HTTP_HOST'], 'dev') || stristr($_SERVER['HTTP_HOST'], 'stage')) {
-			//$appendDevMessage = "---- DEV MAIL ---- \n<br />ORIGINAL TO:  $emailTo\n<br />ORIGINAL CC: $emailCc\n<br />ORIGINAL BCC: $emailBcc";
-			//$emailTo = $emailCc = $emailBcc = 'devmail@luxurylink.com, ronald.ayson1@gmail.com, ronaldayson@hotmail.com, ronronayson@yahoo.com, ronronayson@aol.com';
-            $emailTo = $emailCc = $emailBcc = 'devmail@luxurylink.com';	
-//			$emailBody = $appendDevMessage . $emailBody;
-//			$emailBody.= print_r($_SERVER, true);
+			$appendDevMessage = "---- DEV MAIL ---- \n<br />ORIGINAL TO:  $emailTo\n<br />ORIGINAL CC: $emailCc\n<br />ORIGINAL BCC: $emailBcc";
+			$emailTo = $emailCc = $emailBcc = 'devmail@luxurylink.com';	
+			$emailBody = $appendDevMessage . $emailBody;
+			$emailBody.= print_r($_SERVER, true);
 			$emailSubject = "DEV - " . $emailSubject . $fname;
 		}
 		
@@ -1468,24 +1467,24 @@ class WebServiceTicketsController extends WebServicesController
         
         //get attachments and loop thru process to create headers for each file, open file read binary
         $fname = $email_attachment;    
-        
-        foreach ($fname as $value)
-        {            
-            $filename = $_SERVER{'DOCUMENT_ROOT'} . '/attachments/' . $value;
-            $fp = fopen($filename, "rb");
-            $file = fread($fp, filesize($filename));          
-            $file = chunk_split(base64_encode($file));                   
-            fclose($fp);
-            
-            $emailHeaders .= "--".$num."\n";             
-            $emailHeaders .= "Content-Type:image/tif; ";
-            $emailHeaders .= "name=\"".$value."\"\n";
-            $emailHeaders .= "Content-Transfer-Encoding: base64\n";
-            $emailHeaders .= "Content-Disposition: attachment; ";
-            $emailHeaders .= "filename=\"".$value."\"\n\n";
-            $emailHeaders .= $file."\n";
-        }
-          
+        if ($fname) {
+            foreach ($fname as $value)
+            {            
+                $filename = $_SERVER{'DOCUMENT_ROOT'} . '/attachments/' . $value;
+                $fp = fopen($filename, "rb");
+                $file = fread($fp, filesize($filename));          
+                $file = chunk_split(base64_encode($file));                   
+                fclose($fp);
+                
+                $emailHeaders .= "--".$num."\n";             
+                $emailHeaders .= "Content-Type:image/tif; ";
+                $emailHeaders .= "name=\"".$value."\"\n";
+                $emailHeaders .= "Content-Transfer-Encoding: base64\n";
+                $emailHeaders .= "Content-Disposition: attachment; ";
+                $emailHeaders .= "filename=\"".$value."\"\n\n";
+                $emailHeaders .= $file."\n";
+            }
+        }  
         //testing code
         //$fname = "popup.jpg";
 //        $fname2 = "tipsbanner.jpg";   
