@@ -1428,7 +1428,7 @@ class WebServiceTicketsController extends WebServicesController
                 
 		if (stristr($_SERVER['HTTP_HOST'], 'dev') || stristr($_SERVER['HTTP_HOST'], 'stage')) {
 			$appendDevMessage = "---- DEV MAIL ---- \n<br />ORIGINAL TO:  $emailTo\n<br />ORIGINAL CC: $emailCc\n<br />ORIGINAL BCC: $emailBcc";
-			$emailTo = $emailCc = $emailBcc = 'devmail@luxurylink.com';	
+			$emailTo = $emailCc = $emailBcc = 'devmail@luxurylink.com, rachelspague@yahoo.com';	
 			$emailBody = $appendDevMessage . $emailBody;
 			$emailBody.= print_r($_SERVER, true);
 			$emailSubject = "DEV - " . $emailSubject . $fname;
@@ -1445,6 +1445,10 @@ class WebServiceTicketsController extends WebServicesController
     	//$emailHeaders.= "Content-type: text/html\r\n";       
         
         //boundary variable
+        
+        $fname = $email_attachment;    
+        if ($fname) {
+        
         $num = md5(time());
        
         $emailHeaders = "From: $emailFrom\n";
@@ -1466,8 +1470,7 @@ class WebServiceTicketsController extends WebServicesController
         $emailHeaders .= $emailBody."\n\n";   
         
         //get attachments and loop thru process to create headers for each file, open file read binary
-        $fname = $email_attachment;    
-        if ($fname) {
+       
             foreach ($fname as $value)
             {            
                 $filename = $_SERVER{'DOCUMENT_ROOT'} . '/attachments/' . $value;
@@ -1484,7 +1487,14 @@ class WebServiceTicketsController extends WebServicesController
                 $emailHeaders .= "filename=\"".$value."\"\n\n";
                 $emailHeaders .= $file."\n";
             }
-        }  
+        } else {            
+            //original before hb updates      
+            $emailHeaders = "From: $emailFrom\r\n";
+    		$emailHeaders.= "Cc: $emailCc\r\n";
+    		$emailHeaders.= "Reply-To: $emailReplyTo\r\n";
+    		$emailHeaders.= "Bcc: $emailBcc\r\n";
+        	$emailHeaders.= "Content-type: text/html\r\n";    
+        } 
         //testing code
         //$fname = "popup.jpg";
 //        $fname2 = "tipsbanner.jpg";   
