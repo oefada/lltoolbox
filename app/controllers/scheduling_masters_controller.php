@@ -657,7 +657,7 @@ class SchedulingMastersController extends AppController {
             if ($instance = $this->SchedulingMaster->SchedulingInstance->findBySchedulingInstanceId($this->passedArgs['instanceId'])) {
                 if ($instanceOfferId = $this->SchedulingMaster->getOfferIdFromInstance($this->passedArgs['instanceId'])) {
                     if (strtotime($instance['SchedulingInstance']['startDate']) > time()) {
-                        $offerId = $this->SchedulingMaster->SchedulingInstance->Offer->getOfferPricePointId($instanceOfferId, $this->data['SchedulingMaster']['siteId']);
+                        $offerId = $this->data['PricePoint']['pricePointId'];
                         $previewType = 'pricepoint';
                     }
                     else {
@@ -666,7 +666,7 @@ class SchedulingMastersController extends AppController {
                     }
                 }
                 else {
-                    $offerId = $this->SchedulingMaster->SchedulingInstance->getInstancePricePointId($instance, $packageId);
+                    $offerId = $this->data['PricePoint']['pricePointId'];
                     $previewType = 'pricepoint';
                 }
             }
