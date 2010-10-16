@@ -43,6 +43,7 @@ class PpvNoticesController extends AppController {
 					} else {
 						$ppvInitials = 'TOOLBOX';	
 					}
+                    
 					$data = array();
 					$data['ticketId'] 			= $this->data['PpvNotice']['ticketId'];
 					$data['send'] 				= 1;
@@ -52,16 +53,61 @@ class PpvNoticesController extends AppController {
 					$data['initials']			= $ppvInitials;
 					$data['override_email_to']  = $this->data['PpvNotice']['emailTo'];
 					$data['override_email_cc']  = $this->data['PpvNotice']['emailCc'];
-					$data['override_email_subject']  = $this->data['PpvNotice']['emailSubject'];
-	
-					if ($clientId) {
+					$data['override_email_subject']  = $this->data['PpvNotice']['emailSubject'];                  
+                                        
+                    //for hotel beds, will make it more dynamic
+                    if ($_FILES) {
+                        
+                        $fileAttachArray = array();
+                        
+                        if($_FILES['attach1']['tmp_name']) {                               
+                            if (move_uploaded_file($_FILES['attach1']['tmp_name'],  $_SERVER{'DOCUMENT_ROOT'} . '/attachments/' . $_FILES['attach1']['name'])) {                         
+                                $fileAttachArray[0] = $_FILES['attach1']['name'];
+                                echo "<br />file uploaded: ";
+                            } else {
+                                echo "<br />file not uploaded: ";
+                            }
+                        }
+                        
+                        if($_FILES['attach2']['tmp_name']) {   
+                            if (move_uploaded_file($_FILES['attach2']['tmp_name'],  $_SERVER{'DOCUMENT_ROOT'} . '/attachments/' . $_FILES['attach2']['name'])) {                    
+                                
+                                $fileAttachArray[1] = $_FILES['attach1']['name'];
+                                echo "<br />file uploaded: ";
+                            } else {
+                                echo "<br />file not uploaded: ";
+                            }
+                        }
+                        
+                        if($_FILES['attach3']['tmp_name']) {   
+                            if (move_uploaded_file($_FILES['attach3']['tmp_name'],  $_SERVER{'DOCUMENT_ROOT'} . '/attachments/' . $_FILES['attach3']['name'])) {
+                                $fileAttachArray[2] = $_FILES['attach1']['name'];
+                                echo "<br />file uploaded: ";
+                            } else {
+                                echo "<br />file not uploaded: ";
+                            }
+                        }
+                        
+                        if($_FILES['attach4']['tmp_name']) {   
+                            if (move_uploaded_file($_FILES['attach4']['tmp_name'],  $_SERVER{'DOCUMENT_ROOT'} . '/attachments/' . $_FILES['attach4']['name'])) {
+                                $fileAttachArray[3] = $_FILES['attach1']['name'];
+                                echo "<br />file uploaded: ";
+                            } else {
+                                echo "<br />file not uploaded: ";
+                            }
+                        }
+                                            
+                        $data['emailAttachment'] = $fileAttachArray;
+                    
+                    }
+                    
+                    if ($clientId) {
 						$data['clientId']		= $clientId;	
 					}
 					
 					$data_json_encoded = json_encode($data);
 					$soap_client = new nusoap_client($webservice_live_url, true);
 	        		$response = $soap_client->call($webservice_live_method_name, array($webservice_live_method_param => $data_json_encoded));
-
 					
 	        		if( in_array($id, array(1,23)) ) {
 	        			$updateTicket = array();
@@ -87,8 +133,9 @@ class PpvNoticesController extends AppController {
 		if ($clientId) {
 			$data['clientId']		= $clientId;	
 			$clientIdParam = "/$clientId";
+            
 		} else {
-			$clientIdParam = '';	
+			$clientIdParam = '';            	
 		}
 	
 		if (isset($_SESSION['Auth']['AdminUser']['username'])) {

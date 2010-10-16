@@ -1,5 +1,12 @@
 <?php include('../vendors/email_msgs/email_includes/header.html');?>
-
+<?php
+    //hb hack, to display HB text right after ticket number 
+    if ($parentClientId == 11080) {
+        $ticketId = $ticketId."HB";
+    } else {
+        $ticketId = $ticketId;
+    }
+?>
 <h1 style="color:#<?=$siteHeader;?>;font-size:16px;margin:0px;padding:0px;margin-bottom:30px;">YOUR RESERVATION HAS BEEN CANCELLED.</h1>
 
 <p>Dear <?php echo $userFirstName." ".$userLastName;?>,</p>

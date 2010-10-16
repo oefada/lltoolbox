@@ -785,7 +785,11 @@ class WebServiceTicketsController extends WebServicesController
 		$override_email_to  = isset($params['override_email_to']) && !empty($params['override_email_to']) ? $params['override_email_to'] : false;
 		$override_email_cc  = isset($params['override_email_cc']) && !empty($params['override_email_cc']) ? $params['override_email_cc'] : false;
 		$override_email_subject  = isset($params['override_email_subject']) && !empty($params['override_email_subject']) ? $params['override_email_subject'] : false;
-
+        
+        //added hb for attachment
+        // -------------------------------------------------------------------------------
+        $email_attachment = isset($params['emailAttachment']) && !empty($params['emailAttachment']) ? $params['emailAttachment'] : false;
+   
 		// TODO: error checking for params
 		
 		// retrieve data to fill out the email templates
@@ -1005,6 +1009,7 @@ class WebServiceTicketsController extends WebServicesController
 		$client_index = ($multi_client_map_override !== false) ? $multi_client_map_override : 0;
 		
 		$clientId			= $clients[$client_index]['clientId'];
+        $parentClientId 	= $clients[$client_index]['parentClientId'];
 		$clientNameP 		= $clients[$client_index]['name'];
 		$clientName 		= $clients[$client_index]['contacts'][0]['ppv_name'];
 		$oldProductId		= $clients[$client_index]['oldProductId'];
@@ -1310,7 +1315,7 @@ class WebServiceTicketsController extends WebServicesController
 			if (trim($override_email_subject)) {
 				$emailSubject = $override_email_subject;
 			}
-			$this->sendPpvEmail($userEmail, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials);	
+			$this->sendPpvEmail($userEmail, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials, $email_attachment);	
 			
 			// AUTO SECTION FOR MULTI CLIENT PPV for multi-client packages send client emails [CLIENT PPV]
 			// -------------------------------------------------------------------------------
@@ -1339,7 +1344,7 @@ class WebServiceTicketsController extends WebServicesController
 					break;
 					}
 					$emailBody = ob_get_clean();
-					$this->sendPpvEmail($clientPrimaryEmail, $emailFrom, $clientCcEmail, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials);	
+					$this->sendPpvEmail($clientPrimaryEmail, $emailFrom, $clientCcEmail, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId);	
 				}	
 			}
 		}
@@ -1419,26 +1424,156 @@ class WebServiceTicketsController extends WebServicesController
 		return $host . $uri . "?z=$hash&t=$ticketIdHash&ts=$tsHash";
 	}
 
-	function sendPpvEmail($emailTo, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials) {
-		
+	function sendPpvEmail($emailTo, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials, $email_attachment) {
+                
 		if (stristr($_SERVER['HTTP_HOST'], 'dev') || stristr($_SERVER['HTTP_HOST'], 'stage')) {
-			$appendDevMessage = "---- DEV MAIL ---- \n<br />ORIGINAL TO:  $emailTo\n<br />ORIGINAL CC: $emailCc\n<br />ORIGINAL BCC: $emailBcc";
-			$emailTo = $emailCc = $emailBcc = 'devmail@luxurylink.com';	
-			$emailBody = $appendDevMessage . $emailBody;
-			$emailBody.= print_r($_SERVER, true);
-			$emailSubject = "DEV - " . $emailSubject;
+			//$appendDevMessage = "---- DEV MAIL ---- \n<br />ORIGINAL TO:  $emailTo\n<br />ORIGINAL CC: $emailCc\n<br />ORIGINAL BCC: $emailBcc";
+			//$emailTo = $emailCc = $emailBcc = 'devmail@luxurylink.com, ronald.ayson1@gmail.com, ronaldayson@hotmail.com, ronronayson@yahoo.com, ronronayson@aol.com';
+            $emailTo = $emailCc = $emailBcc = 'devmail@luxurylink.com';	
+//			$emailBody = $appendDevMessage . $emailBody;
+//			$emailBody.= print_r($_SERVER, true);
+			$emailSubject = "DEV - " . $emailSubject . $fname;
 		}
 		
 		// send out ppv and winner notification emails
 		// -------------------------------------------------------------------------------
-		$emailHeaders = "From: $emailFrom\r\n";
-		$emailHeaders.= "Cc: $emailCc\r\n";
-		$emailHeaders.= "Reply-To: $emailReplyTo\r\n";
-		$emailHeaders.= "Bcc: $emailBcc\r\n";
-    	$emailHeaders.= "Content-type: text/html\r\n";
 		
-		@mail($emailTo, $emailSubject, $emailBody, $emailHeaders);
-		
+        //original before hb updates      
+        //$emailHeaders = "From: $emailFrom\r\n";
+		//$emailHeaders.= "Cc: $emailCc\r\n";
+		//$emailHeaders.= "Reply-To: $emailReplyTo\r\n";
+		//$emailHeaders.= "Bcc: $emailBcc\r\n";
+    	//$emailHeaders.= "Content-type: text/html\r\n";       
+        
+        //boundary variable
+        $num = md5(time());
+       
+        $emailHeaders = "From: $emailFrom\n";
+		$emailHeaders .= "Cc: $emailCc\n";
+		$emailHeaders .= "Reply-To: $emailReplyTo\n";
+		$emailHeaders .= "Bcc: $emailBcc\n";
+        $emailHeaders .= "MIME-Version: 1.0\n";
+        $emailHeaders .= "Content-Type: multipart/mixed; ";
+        $emailHeaders .= "boundary=".$num."\n";      
+        
+        // This two steps to help avoid spam       
+        $emailHeaders .= "--".$num."\n";
+        $emailHeaders .= "Message-ID: <".$now." TheSystem@".$_SERVER['SERVER_NAME'].">\n";
+        $emailHeaders .= "X-Mailer: PHP v".phpversion()."\n";         
+        
+        // With message      
+        $emailHeaders .= "Content-Type: text/html;\n";
+        $emailHeaders .= "Content-Transfer-Encoding: 8bit \n";
+        $emailHeaders .= $emailBody."\n\n";   
+        
+        //get attachments and loop thru process to create headers for each file, open file read binary
+        $fname = $email_attachment;    
+        
+        foreach ($fname as $value)
+        {            
+            $filename = $_SERVER{'DOCUMENT_ROOT'} . '/attachments/' . $value;
+            $fp = fopen($filename, "rb");
+            $file = fread($fp, filesize($filename));          
+            $file = chunk_split(base64_encode($file));                   
+            fclose($fp);
+            
+            $emailHeaders .= "--".$num."\n";             
+            $emailHeaders .= "Content-Type:image/tif; ";
+            $emailHeaders .= "name=\"".$value."\"\n";
+            $emailHeaders .= "Content-Transfer-Encoding: base64\n";
+            $emailHeaders .= "Content-Disposition: attachment; ";
+            $emailHeaders .= "filename=\"".$value."\"\n\n";
+            $emailHeaders .= $file."\n";
+        }
+          
+        //testing code
+        //$fname = "popup.jpg";
+//        $fname2 = "tipsbanner.jpg";   
+//        $fname3 = "emailpictures.jpg";
+//        $fname4 = "emailpictures2.jpg";
+       
+        //$filename = $_SERVER{'DOCUMENT_ROOT'} . '/attachments/' . $fname;
+//        $filename2 = $_SERVER{'DOCUMENT_ROOT'} . '/attachments/' . $fname2;
+//        $filename3 = $_SERVER{'DOCUMENT_ROOT'} . '/attachments/' . $fname3;
+//        $filename4 = $_SERVER{'DOCUMENT_ROOT'} . '/attachments/' . $fname4;
+                     
+   
+        //open read binary                 
+//        $fp = fopen($filename, "rb");
+//        $file = fread($fp, filesize($filename));          
+//        $file = chunk_split(base64_encode($file));                   
+//        fclose($fp);    
+//        
+//        $fp2 = fopen($filename2, "rb");
+//        $file2 = fread($fp2, filesize($filename2));          
+//        $file2 = chunk_split(base64_encode($file2));                
+//        fclose($fp2);
+//        
+//        $fp3 = fopen($filename3, "rb");
+//        $file3 = fread($fp3, filesize($filename3));          
+//        $file3 = chunk_split(base64_encode($file3));                
+//        fclose($fp3);
+//        
+//        $fp4 = fopen($filename4, "rb");
+//        $file4 = fread($fp4, filesize($filename4));          
+//        $file4 = chunk_split(base64_encode($file4));                
+//        fclose($fp4);
+//        
+//        $num = md5(time());
+                
+        //$emailHeaders = "From: $emailFrom\n";
+//		$emailHeaders .= "Cc: $emailCc\n";
+//		$emailHeaders .= "Reply-To: $emailReplyTo\n";
+//		$emailHeaders .= "Bcc: $emailBcc\n";
+//        $emailHeaders .= "MIME-Version: 1.0\n";
+//        $emailHeaders .= "Content-Type: multipart/mixed; ";
+//        $emailHeaders .= "boundary=".$num."\n";      
+//        
+//        // This two steps to help avoid spam       
+//        $emailHeaders .= "--".$num."\n";
+//        $emailHeaders .= "Message-ID: <".$now." TheSystem@".$_SERVER['SERVER_NAME'].">\n";
+//        $emailHeaders .= "X-Mailer: PHP v".phpversion()."\n";         
+//        
+//        // With message      
+//        $emailHeaders .= "Content-Type: text/html;\n";
+//        $emailHeaders .= "Content-Transfer-Encoding: 8bit \n";
+//        $emailHeaders .= $emailBody."\n\n";                
+        
+        // Attachment headers
+       // $emailHeaders .= "--".$num."\n";             
+//        $emailHeaders .= "Content-Type:image/jpg; ";
+//        $emailHeaders .= "name=\"".$fname."\"\n";
+//        $emailHeaders .= "Content-Transfer-Encoding: base64\n";
+//        $emailHeaders .= "Content-Disposition: attachment; ";
+//        $emailHeaders .= "filename=\"".$fname."\"\n\n";
+//        $emailHeaders .= $file."\n";
+//
+//        $emailHeaders .= "--".$num."\n";  
+//        $emailHeaders .= "Content-Type:image/jpg; ";
+//        $emailHeaders .= "name=\"".$fname2."\"\n";
+//        $emailHeaders .= "Content-Transfer-Encoding: base64\n";
+//        $emailHeaders .= "Content-Disposition: attachment; ";
+//        $emailHeaders .= "filename=\"".$fname2."\"\n\n";
+//        $emailHeaders .= $file2."\n";        
+//        
+//        $emailHeaders .= "--".$num."\n";  
+//        $emailHeaders .= "Content-Type:image/jpg; ";
+//        $emailHeaders .= "name=\"".$fname3."\"\n";
+//        $emailHeaders .= "Content-Transfer-Encoding: base64\n";
+//        $emailHeaders .= "Content-Disposition: attachment; ";
+//        $emailHeaders .= "filename=\"".$fname3."\"\n\n";
+//        $emailHeaders .= $file3."\n";
+//
+//        $emailHeaders .= "--".$num."\n";  
+//        $emailHeaders .= "Content-Type:image/jpg; ";
+//        $emailHeaders .= "name=\"".$fname4."\"\n";
+//        $emailHeaders .= "Content-Transfer-Encoding: base64\n";
+//        $emailHeaders .= "Content-Disposition: attachment; ";
+//        $emailHeaders .= "filename=\"".$fname4."\"\n\n";
+//        $emailHeaders .= $file4."\n";
+
+        @mail($emailTo, $emailSubject, $emailBody, $emailHeaders);
+        
 		// below is for logging the email and updating the ticket
 		// -------------------------------------------------------------------------------
 		

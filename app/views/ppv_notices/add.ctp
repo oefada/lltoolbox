@@ -1,5 +1,5 @@
 <div class="ppvNotices form">
-<?php echo $form->create(null, array('url' => array('controller' => 'tickets/' . $this->params['ticketId'], 'action' => 'ppvNotices/add/' . $this->params['id'] . $clientIdParam  ))); ?>
+<?php echo $form->create(null, array('url' => array('controller' => 'tickets/' . $this->params['ticketId'], 'action' => 'ppvNotices/add/' . $this->params['id'] . $clientIdParam  ), 'enctype' => 'multipart/form-data' )); ?>
 <?php echo $javascript->link('tiny_mce/tiny_mce.js');?>
 
 <script type="text/javascript">
@@ -14,6 +14,33 @@
         theme_advanced_text_colors : "CC0000,1d54e1",
 		theme_advanced_buttons3_add : "fullpage, forecolor"
     });
+    
+    //for hotel beds, will make it more dynamic
+    //function insertAfter( referenceNode, newNode )
+//		{
+//			referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+//		}
+//		
+//	function addNewIF(obj,num)
+//    	{
+//    		
+//            var $i = parseInt(num) + 1;
+//            
+//            var newIF = document.createElement('input');
+//            newIF.type = 'file';
+//            newIF.name = 'attachFile[]';
+//            newIF.size = '75';
+//    		insertAfter( obj, newIF );
+//    	}
+//    
+//    function getFileName(val,obj,num) {
+//
+//        var attachedFiles = document.getElementById('listAttachedFiles').innerHTML;
+//        var attachFile = val;
+//        document.getElementById('listAttachedFiles').innerHTML = (attachedFiles)? attachedFiles+'<br />'+attachFile : attachFile;
+//        addNewIF(obj,num);                 
+//    }
+    
 </script> 
 
 	<fieldset>
@@ -27,6 +54,22 @@
 		if (isset($editSubject) && $editSubject) {
 			echo $form->input('emailSubject', array('value'=>'FILL IN SUBJECT LINE HERE!!!!!!!!!!!'));
 		}
+        
+        //hb attachments, will make it more dynamic     
+        
+        echo $form->input('emailAttachments', array('type' => 'file', 'name' => 'attach1', 'size' => '75'));
+        echo $form->input('emailAttachments', array('type' => 'file', 'name' => 'attach2', 'size' => '75'));
+        echo $form->input('emailAttachments', array('type' => 'file', 'name' => 'attach3', 'size' => '75'));
+        echo $form->input('emailAttachments', array('type' => 'file', 'name' => 'attach4', 'size' => '75'));
+        
+       	//echo $form->input('emailAttachments', array('type' => 'hidden', 'readonly'=>'readonly'));
+        //echo '<div class="input text"><div style="border: 1px solid #898989; width: 380px; padding: 10px; float: right; margin-right: 217px;" id="listAttachedFiles"></div><label for="PpvNoticeEmailTo">Email Attachment(s)</label> </div>';
+//        echo $form->input('attachFile', array('type' => 'file', 'onchange' => 'javascript:getFileName(this.value,this,0);', 'size' => '75', 'name' => 'attachFile[]'));
+//        echo '<div id="attachBorder"></div>';
+//        //echo $form->input('emailAttachments', array('type' => 'file', 'name' => 'attach'));
+////        echo $form->input('emailAttachments', array('type' => 'file', 'name' => 'attach'));
+////        echo $form->input('emailAttachments', array('type' => 'file', 'name' => 'attach'));
+        
 		if (isset($isResConf) && $isResConf) {
 			echo "<br /><br />";
 			echo "<h2>Reservation Confirmation</h2>";
@@ -41,7 +84,8 @@
 
 				<?php foreach ($promo as $t_promo) : ?>
 
-					<h3 style="margin:0px;padding:0px;padding-bottom:5px;">** Promo Code [<?=$t_promo['pc']['promoCode'];?>] **</h3>
+					<h3 style="margin:0px;padding:0px;padding-bottom:5px;">** Promo Code [<?=$t_promo['pc']['promoCode'];?>] **</h3>
+
 					<h3 style="margin:0px;padding:0px;padding-bottom:5px;">
 						<?php if ($t_promo['p']['amountOff']) : ?>
 						Amount Off: <?php echo $number->currency($t_promo['p']['amountOff']);?>
@@ -49,7 +93,8 @@
 						<?php if ($t_promo['p']['percentOff']) : ?>
 						Percent Off: <?php echo $number->currency($t_promo['p']['percentOff']);?>
 						<?php endif; ?>
-					</h3>
+					</h3>
+
 
 				<?php endforeach; ?>
 
