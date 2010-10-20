@@ -84,6 +84,13 @@ class Loa extends AppModel {
         return $this->query("SELECT * FROM loa Loa WHERE Loa.clientId = {$clientId} ORDER BY Loa.startDate DESC");
     }
     
+    function getLoaClientId($loaId) {
+        $query = "SELECT clientId FROM loa Loa WHERE Loa.loaId = {$loaId}";
+        if ($clientId = $this->query($query)) {
+            return $clientId[0]['Loa']['clientId'];
+        }
+    }
+    
     function getLoaOptionList($clientId) {
         $query = "SELECT loaId, startDate, endDate FROM loa Loa
                   WHERE clientId = {$clientId} AND Loa.endDate > NOW()";
@@ -94,7 +101,6 @@ class Loa extends AppModel {
             }
         }
         return $list;
-    }
-    
+    }    
 }
 ?>

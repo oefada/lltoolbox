@@ -1240,3 +1240,27 @@ span.siteName {
 span.themeName {
     margin-left:30px;
 }
+
+/* clone loa item overlay styles */
+table.clone-items-options, table.clone-items-options th, table.clone-items-options td {
+    border:none;
+    padding:10px;
+}
+table.clone-items-options th {
+    width:15%;
+}
+table.clone-items {
+    width:95%;
+    margin-left:auto;
+    margin-right:auto;
+}
+table.clone-items td.clone-me {
+    text-align:center;
+}
+table.clone-items td.price {
+    width:12%;
+}
+table.clone-items td.price span.currency-code {
+    font-weight:bold;
+    font-size:11px;
+}

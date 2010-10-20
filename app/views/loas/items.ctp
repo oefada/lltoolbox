@@ -28,7 +28,7 @@ $this->set('clientId', $this->data['Client']['clientId']);
 </div>
 
 <div style="margin-top:5px;margin-bottom:10px;text-align:right;">
-	<div style="float:right;">
+    <div style="float:right;">
 	<?php
 	echo $html->link('<span><b class="icon"></b>Add New Item Group</span>',
 					'/loas/'.$loa['Loa']['loaId'].'/loa_items/add_group',
@@ -43,8 +43,24 @@ $this->set('clientId', $this->data['Client']['clientId']);
 					);
 
 	?>
+    </div>
+    <div style="float:right;">
+	<?php
+	echo $html->link('<span><b class="icon"></b>Clone Existing LOA Item(s)</span>',
+					'/loas/'.$loa['Loa']['loaId'].'/loa_items/clone_items',
+					array(
+						'title' => 'Clone Existing LOA Item(s)',
+						'onclick' => 'Modalbox.show(this.href, {title: this.title, width:900, height:659});return false',
+						'complete' => 'closeModalbox()',
+						'class' => 'button add'
+						),
+					null,
+					false
+					);
+
+	?>
 	</div>
-	<div style="float:right;margin-right:20px;">
+    <div style="float:right;">
 	<?php
 	echo $html->link('<span><b class="icon"></b>Add New Item</span>',
 					'/loas/'.$loa['Loa']['loaId'].'/loa_items/add',
