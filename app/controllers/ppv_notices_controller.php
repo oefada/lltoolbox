@@ -72,7 +72,7 @@ class PpvNoticesController extends AppController {
                         if($_FILES['attach2']['tmp_name']) {   
                             if (move_uploaded_file($_FILES['attach2']['tmp_name'],  $_SERVER{'DOCUMENT_ROOT'} . '/attachments/' . $_FILES['attach2']['name'])) {                    
                                 
-                                $fileAttachArray[1] = $_FILES['attach1']['name'];
+                                $fileAttachArray[1] = $_FILES['attach2']['name'];
                                 echo "<br />file uploaded: ";
                             } else {
                                 echo "<br />file not uploaded: ";
@@ -81,7 +81,7 @@ class PpvNoticesController extends AppController {
                         
                         if($_FILES['attach3']['tmp_name']) {   
                             if (move_uploaded_file($_FILES['attach3']['tmp_name'],  $_SERVER{'DOCUMENT_ROOT'} . '/attachments/' . $_FILES['attach3']['name'])) {
-                                $fileAttachArray[2] = $_FILES['attach1']['name'];
+                                $fileAttachArray[2] = $_FILES['attach3']['name'];
                                 echo "<br />file uploaded: ";
                             } else {
                                 echo "<br />file not uploaded: ";
@@ -90,7 +90,7 @@ class PpvNoticesController extends AppController {
                         
                         if($_FILES['attach4']['tmp_name']) {   
                             if (move_uploaded_file($_FILES['attach4']['tmp_name'],  $_SERVER{'DOCUMENT_ROOT'} . '/attachments/' . $_FILES['attach4']['name'])) {
-                                $fileAttachArray[3] = $_FILES['attach1']['name'];
+                                $fileAttachArray[3] = $_FILES['attach4']['name'];
                                 echo "<br />file uploaded: ";
                             } else {
                                 echo "<br />file not uploaded: ";

@@ -1428,7 +1428,7 @@ class WebServiceTicketsController extends WebServicesController
                 
 		if (stristr($_SERVER['HTTP_HOST'], 'dev') || stristr($_SERVER['HTTP_HOST'], 'stage')) {
 			$appendDevMessage = "---- DEV MAIL ---- \n<br />ORIGINAL TO:  $emailTo\n<br />ORIGINAL CC: $emailCc\n<br />ORIGINAL BCC: $emailBcc";
-			$emailTo = $emailCc = $emailBcc = 'devmail@luxurylink.com, rachelspague@yahoo.com';	
+			$emailTo = $emailCc = $emailBcc = 'devmail@luxurylink.com';	
 			$emailBody = $appendDevMessage . $emailBody;
 			$emailBody.= print_r($_SERVER, true);
 			$emailSubject = "DEV - " . $emailSubject . $fname;
