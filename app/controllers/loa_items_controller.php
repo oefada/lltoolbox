@@ -348,7 +348,8 @@ class LoaItemsController extends AppController {
         }
         $this->LoaItem->recursive = 1;
         $this->set('closeModalbox', true);
-        if ($loaItems = $this->LoaItem->find('all', array('conditions' => array('LoaItem.loaId' => $loaId)))) {
+        if ($loaItems = $this->LoaItem->find('all', array('conditions' => array('LoaItem.loaId = '.$loaId,
+                                                                                'LoaItem.loaItemTypeId NOT IN (12, 13, 14, 20, 21)')))) {
             $this->set('loaItems', $loaItems);
             $this->Loa->Currency->recursive = -1;
             $currencies = $this->Loa->Currency->find('list');
