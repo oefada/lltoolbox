@@ -17,8 +17,27 @@
 
 <p>Dear <?php echo $userFirstName;?> <?php echo $userLastName;?>, </p>
 
+<p>
+<?php
+    //hb hack, dipslay HB message
+    if ($parentClientId == 11080) {
+?>
+    This email contains your reservation confirmation and receipt of payment in full for the package listed below.
+    <br /><br />
+    This reservation is made in partnership with Hotel Beds Accommodation and Destination Services and your travel vouchers are attached.  <strong>You are required to present these travel voucher(s) for hotel check-in and in order to redeem your tour tickets (redemption information is included on your tour voucher(s)).</strong> 
+<?php
+    } else {
+?>    
+    <strong>
+    This email serves as your reservation confirmation and receipt of payment in full for the following package.
+    </strong>  
+<?php
+    }
+?>
+</p>
+
 <p><strong>
-[FILL IN YOUR MESSAGE HERE]
+
 </strong>
 </p>
 			
