@@ -143,12 +143,12 @@ class PpvNoticesController extends AppController {
 			$data['sender_sig']         = 1;
 			switch ($_SESSION['Auth']['AdminUser']['username']) {
 				case 'jsanchez':
-					$sender_ext = 149;
+					$sender_ext = "424.835.3642";
 					$sender_title = 'Travel Concierge';
 					break;
 				case 'dvojdany':
-					$sender_ext = 147;
-					$sender_title = 'Customer Care Concierge';
+					$sender_ext = "424.835.3649";
+					$sender_title = 'Travel Concierge';
 					break;
 				default:
 					$data['sender_sig'] = 0;
@@ -157,7 +157,7 @@ class PpvNoticesController extends AppController {
 
 			$data['sender_sig_line']    = $_SESSION['Auth']['AdminUser']['displayname'] . ', ' . $sender_title;
 			$data['sender_email']		= $_SESSION['Auth']['AdminUser']['mail'];
-			$data['sender_ext']			= 'Ext ' . $sender_ext;
+			$data['sender_ext']			= $sender_ext;
 		}
 
 		$this->set('promo', $this->Ticket->getTicketPromoData($ticketId));
