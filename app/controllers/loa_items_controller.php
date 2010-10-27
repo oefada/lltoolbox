@@ -309,6 +309,20 @@ class LoaItemsController extends AppController {
 	}
     
     function clone_items($loaId) {
+        $this->LoaItem->recursive = 1;
+        if ($loaItems = $this->LoaItem->find('all', array('conditions' => array('LoaItem.loaId = '.$loaId,
+                                                                                'LoaItem.loaItemTypeId NOT IN (12, 13, 14, 20, 21)')))) {
+            $this->set('loaItems', $loaItems);
+            $this->Loa->Currency->recursive = -1;
+            $currencies = $this->Loa->Currency->find('list');
+            $this->set('currencies', $currencies);
+            $loas = $this->Loa->getClientLoas($this->clientId);
+            $this->set('loas', $loas);
+            $this->set('currentLoa', $loaId);
+        }
+        else {
+            $this->Session->setFlash('No LOA Items available to clone.');
+        }
         if (!empty($this->data)) {           
             if (isset($this->data['CloneItems'])) {
                 foreach (array_keys($this->data['CloneItems']) as $itemId) {
@@ -325,15 +339,14 @@ class LoaItemsController extends AppController {
                         if ($loaItem['LoaItem']['loaId'] == $this->data['LoaItem']['loaId'] &&
                             $loaItem['LoaItem']['currencyId'] == $this->data['LoaItem']['currencyId']) {
                             $this->Session->setFlash('You cannot clone an LOA item with the same currency as the original for the same LOA. Please select a different currency or a different LOA');
+                            return;
                         }
                         else {
-                            //what about loaItemGroup?
                             $newItem = $loaItem;
                             $newItem['LoaItem']['createdFromItemId'] = $itemId;
                             $newItem['LoaItem']['loaId'] = $this->data['LoaItem']['loaId'];
                             $newItem['LoaItem']['currencyId'] = $this->data['LoaItem']['currencyId'];
                             if ($loaItem['LoaItem']['currencyId'] != $this->data['LoaItem']['currencyId']) {
-                                //do exchange rate conversion based on most recent?
                                 $newItem['LoaItem']['itemBasePrice'] = 0.00;
                             }
                             $this->LoaItem->create();
@@ -341,25 +354,12 @@ class LoaItemsController extends AppController {
                         }
                     }
                 }
+                $this->set('closeModalbox', true);
+                $this->Session->setFlash(__('LOA items have been successfully cloned.', true), 'default', array(), 'success');
             }
             else {
                 $this->Session->setFlash('You must select at least one LOA item to clone.');
             }
-        }
-        $this->LoaItem->recursive = 1;
-        $this->set('closeModalbox', true);
-        if ($loaItems = $this->LoaItem->find('all', array('conditions' => array('LoaItem.loaId = '.$loaId,
-                                                                                'LoaItem.loaItemTypeId NOT IN (12, 13, 14, 20, 21)')))) {
-            $this->set('loaItems', $loaItems);
-            $this->Loa->Currency->recursive = -1;
-            $currencies = $this->Loa->Currency->find('list');
-            $this->set('currencies', $currencies);
-            $loas = $this->Loa->getClientLoas($this->clientId);
-            $this->set('loas', $loas);
-            $this->set('currentLoa', $loaId);
-        }
-        else {
-            $this->Session->setFlash('No LOA Items available to clone.');
         }
     }
 

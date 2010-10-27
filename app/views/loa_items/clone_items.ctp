@@ -13,7 +13,7 @@
                 <select name="data[LoaItem][loaId]">
                     <?php foreach($loas as $loa): ?>
                             <?php $selected = ($loa['Loa']['loaId'] == $currentLoa) ? ' selected' : ''; ?>
-                            <option value="<?php echo $loa['Loa']['loaId']; ?>"<?php echo $selected; ?>>[<?php echo $loa['Loa']['loaId']; ?>] <?php echo date('Y-m-d', strtotime($loa['Loa']['startDate'])); ?> to <?php echo date('Y-m-d', strtotime($loa['Loa']['endDate'])); ?></option>
+                            <option value="<?php echo $loa['Loa']['loaId']; ?>"<?php echo $selected; ?>>[<?php echo $loa['Loa']['loaId']; ?>] <?php echo date('M j, Y', strtotime($loa['Loa']['startDate'])); ?> to <?php echo date('M j, Y', strtotime($loa['Loa']['endDate'])); ?></option>
                     <?php endforeach; ?>
                 </select>
             </td>
