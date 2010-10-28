@@ -393,7 +393,8 @@ class Package extends AppModel {
         $total = 0;
         foreach ($loaItemRates as $loaItemRate) {
             $groupQuantity = "SELECT COUNT(*) AS quantity FROM loaItemGroup LoaItemGroup
-                              WHERE groupItemId = {$loaItemRate['LoaItemRatePeriod']['loaItemId']}";
+                              INNER JOIN packageLoaItemRel USING (loaItemId)
+                              WHERE groupItemId = {$loaItemRate['LoaItemRatePeriod']['loaItemId']} AND packageId = {$packageId}";
             if ($quantity = $this->query($groupQuantity)) {
                 $roomQuantity = ($quantity[0][0]['quantity'] == 0) ? 1 : $quantity[0][0]['quantity'];
             }
