@@ -16,30 +16,19 @@
     });
     
     //for hotel beds, will make it more dynamic
-    //function insertAfter( referenceNode, newNode )
-//		{
-//			referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
-//		}
-//		
-//	function addNewIF(obj,num)
-//    	{
-//    		
-//            var $i = parseInt(num) + 1;
-//            
-//            var newIF = document.createElement('input');
-//            newIF.type = 'file';
-//            newIF.name = 'attachFile[]';
-//            newIF.size = '75';
-//    		insertAfter( obj, newIF );
-//    	}
-//    
-//    function getFileName(val,obj,num) {
-//
-//        var attachedFiles = document.getElementById('listAttachedFiles').innerHTML;
-//        var attachFile = val;
-//        document.getElementById('listAttachedFiles').innerHTML = (attachedFiles)? attachedFiles+'<br />'+attachFile : attachFile;
-//        addNewIF(obj,num);                 
-//    }
+    
+    function addFile() {  
+        var $cn = document.getElementById('noa').value;  
+        addNewDiv('aaf',$cn);
+        document.getElementById('noa').value = parseFloat($cn) + 1;
+        return false;
+    }
+    
+    function addNewDiv(obj,num) {    	
+        var newdiv = document.createElement('div');
+        newdiv.innerHTML = '<label for="PpvNoticeEmailAttachments">Email Attachment '+num+'</label><input type="file" name="attach'+num+'" size="75" value="" id="PpvNoticeEmailAttachments" />';
+        document.getElementById(obj).appendChild(newdiv);
+    }
     
 </script> 
 
@@ -56,19 +45,15 @@
 		}
         
         //hb attachments, will make it more dynamic     
+       
+        echo $form->input('emailAttachment 1', array('type' => 'file', 'name' => 'attach1', 'size' => '75'));
+        echo $form->input('emailAttachment 2', array('type' => 'file', 'name' => 'attach2', 'size' => '75'));
+        echo $form->input('emailAttachment 3', array('type' => 'file', 'name' => 'attach3', 'size' => '75'));
         
-        echo $form->input('emailAttachments', array('type' => 'file', 'name' => 'attach1', 'size' => '75'));
-        echo $form->input('emailAttachments', array('type' => 'file', 'name' => 'attach2', 'size' => '75'));
-        echo $form->input('emailAttachments', array('type' => 'file', 'name' => 'attach3', 'size' => '75'));
-        echo $form->input('emailAttachments', array('type' => 'file', 'name' => 'attach4', 'size' => '75'));
+        echo '<div id="aaf" style="position: relative; left: -6px;"></div>';
+        echo '<a href="#" onclick="javascript:addFile(); return false;" id="addFile" style="float: right; margin-right: 195px;">add more attachment</a>';
+        echo $form->input(' ', array('type' => 'hidden', 'name' => 'noa', 'size' => '75', 'value' => '4', 'id' => 'noa'));
         
-       	//echo $form->input('emailAttachments', array('type' => 'hidden', 'readonly'=>'readonly'));
-        //echo '<div class="input text"><div style="border: 1px solid #898989; width: 380px; padding: 10px; float: right; margin-right: 217px;" id="listAttachedFiles"></div><label for="PpvNoticeEmailTo">Email Attachment(s)</label> </div>';
-//        echo $form->input('attachFile', array('type' => 'file', 'onchange' => 'javascript:getFileName(this.value,this,0);', 'size' => '75', 'name' => 'attachFile[]'));
-//        echo '<div id="attachBorder"></div>';
-//        //echo $form->input('emailAttachments', array('type' => 'file', 'name' => 'attach'));
-////        echo $form->input('emailAttachments', array('type' => 'file', 'name' => 'attach'));
-////        echo $form->input('emailAttachments', array('type' => 'file', 'name' => 'attach'));
         
 		if (isset($isResConf) && $isResConf) {
 			echo "<br /><br />";

@@ -789,6 +789,7 @@ class WebServiceTicketsController extends WebServicesController
         //added hb for attachment
         // -------------------------------------------------------------------------------
         $email_attachment = isset($params['emailAttachment']) && !empty($params['emailAttachment']) ? $params['emailAttachment'] : false;
+        $email_attachment_type = isset($params['emailAttachmentType']) && !empty($params['emailAttachmentType']) ? $params['emailAttachmentType'] : false;
    
 		// TODO: error checking for params
 		
@@ -1315,7 +1316,7 @@ class WebServiceTicketsController extends WebServicesController
 			if (trim($override_email_subject)) {
 				$emailSubject = $override_email_subject;
 			}
-			$this->sendPpvEmail($userEmail, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials, $email_attachment);	
+			$this->sendPpvEmail($userEmail, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials, $email_attachment, $email_attachment_type);	
 			
 			// AUTO SECTION FOR MULTI CLIENT PPV for multi-client packages send client emails [CLIENT PPV]
 			// -------------------------------------------------------------------------------
@@ -1424,11 +1425,11 @@ class WebServiceTicketsController extends WebServicesController
 		return $host . $uri . "?z=$hash&t=$ticketIdHash&ts=$tsHash";
 	}
 
-	function sendPpvEmail($emailTo, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials, $email_attachment) {
+	function sendPpvEmail($emailTo, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials, $email_attachment, $email_attachment_type) {
                 
 		if (stristr($_SERVER['HTTP_HOST'], 'dev') || stristr($_SERVER['HTTP_HOST'], 'stage')) {
 			$appendDevMessage = "---- DEV MAIL ---- \n<br />ORIGINAL TO:  $emailTo\n<br />ORIGINAL CC: $emailCc\n<br />ORIGINAL BCC: $emailBcc";
-			$emailTo = $emailCc = $emailBcc = 'devmail@luxurylink.com';	
+			$emailTo = $emailCc = $emailBcc = 'devmail@luxurylink.com, ronald.ayson1@gmail.com, ronronayson@yahoo.com, ronaldayson@hotmail.com';	
 			$emailBody = $appendDevMessage . $emailBody;
 			$emailBody.= print_r($_SERVER, true);
 			$emailSubject = "DEV - " . $emailSubject . $fname;
@@ -1446,7 +1447,8 @@ class WebServiceTicketsController extends WebServicesController
         
         //boundary variable
         
-        $fname = $email_attachment;    
+        $fname = $email_attachment; 
+        $ftype = $email_attachment_type;   
         if ($fname) {
         
         $num = md5(time());
@@ -1471,7 +1473,7 @@ class WebServiceTicketsController extends WebServicesController
         
         //get attachments and loop thru process to create headers for each file, open file read binary
        
-            foreach ($fname as $value)
+            foreach ($fname as $key => $value)
             {            
                 $filename = $_SERVER{'DOCUMENT_ROOT'} . '/attachments/' . $value;
                 $fp = fopen($filename, "rb");
@@ -1480,7 +1482,7 @@ class WebServiceTicketsController extends WebServicesController
                 fclose($fp);
                 
                 $emailHeaders .= "--".$num."\n";             
-                $emailHeaders .= "Content-Type:image/tif; ";
+                $emailHeaders .= "Content-Type:".$ftype[$key]."; ";
                 $emailHeaders .= "name=\"".$value."\"\n";
                 $emailHeaders .= "Content-Transfer-Encoding: base64\n";
                 $emailHeaders .= "Content-Disposition: attachment; ";
