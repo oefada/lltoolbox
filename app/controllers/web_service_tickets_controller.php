@@ -1429,7 +1429,7 @@ class WebServiceTicketsController extends WebServicesController
                 
 		if (stristr($_SERVER['HTTP_HOST'], 'dev') || stristr($_SERVER['HTTP_HOST'], 'stage')) {
 			$appendDevMessage = "---- DEV MAIL ---- \n<br />ORIGINAL TO:  $emailTo\n<br />ORIGINAL CC: $emailCc\n<br />ORIGINAL BCC: $emailBcc";
-			$emailTo = $emailCc = $emailBcc = 'devmail@luxurylink.com, ronald.ayson1@gmail.com, ronronayson@yahoo.com, ronaldayson@hotmail.com';	
+			$emailTo = $emailCc = $emailBcc = 'devmail@luxurylink.com';	
 			$emailBody = $appendDevMessage . $emailBody;
 			$emailBody.= print_r($_SERVER, true);
 			$emailSubject = "DEV - " . $emailSubject . $fname;
@@ -1497,91 +1497,7 @@ class WebServiceTicketsController extends WebServicesController
     		$emailHeaders.= "Bcc: $emailBcc\r\n";
         	$emailHeaders.= "Content-type: text/html\r\n";    
         } 
-        //testing code
-        //$fname = "popup.jpg";
-//        $fname2 = "tipsbanner.jpg";   
-//        $fname3 = "emailpictures.jpg";
-//        $fname4 = "emailpictures2.jpg";
-       
-        //$filename = $_SERVER{'DOCUMENT_ROOT'} . '/attachments/' . $fname;
-//        $filename2 = $_SERVER{'DOCUMENT_ROOT'} . '/attachments/' . $fname2;
-//        $filename3 = $_SERVER{'DOCUMENT_ROOT'} . '/attachments/' . $fname3;
-//        $filename4 = $_SERVER{'DOCUMENT_ROOT'} . '/attachments/' . $fname4;
-                     
-   
-        //open read binary                 
-//        $fp = fopen($filename, "rb");
-//        $file = fread($fp, filesize($filename));          
-//        $file = chunk_split(base64_encode($file));                   
-//        fclose($fp);    
-//        
-//        $fp2 = fopen($filename2, "rb");
-//        $file2 = fread($fp2, filesize($filename2));          
-//        $file2 = chunk_split(base64_encode($file2));                
-//        fclose($fp2);
-//        
-//        $fp3 = fopen($filename3, "rb");
-//        $file3 = fread($fp3, filesize($filename3));          
-//        $file3 = chunk_split(base64_encode($file3));                
-//        fclose($fp3);
-//        
-//        $fp4 = fopen($filename4, "rb");
-//        $file4 = fread($fp4, filesize($filename4));          
-//        $file4 = chunk_split(base64_encode($file4));                
-//        fclose($fp4);
-//        
-//        $num = md5(time());
-                
-        //$emailHeaders = "From: $emailFrom\n";
-//		$emailHeaders .= "Cc: $emailCc\n";
-//		$emailHeaders .= "Reply-To: $emailReplyTo\n";
-//		$emailHeaders .= "Bcc: $emailBcc\n";
-//        $emailHeaders .= "MIME-Version: 1.0\n";
-//        $emailHeaders .= "Content-Type: multipart/mixed; ";
-//        $emailHeaders .= "boundary=".$num."\n";      
-//        
-//        // This two steps to help avoid spam       
-//        $emailHeaders .= "--".$num."\n";
-//        $emailHeaders .= "Message-ID: <".$now." TheSystem@".$_SERVER['SERVER_NAME'].">\n";
-//        $emailHeaders .= "X-Mailer: PHP v".phpversion()."\n";         
-//        
-//        // With message      
-//        $emailHeaders .= "Content-Type: text/html;\n";
-//        $emailHeaders .= "Content-Transfer-Encoding: 8bit \n";
-//        $emailHeaders .= $emailBody."\n\n";                
         
-        // Attachment headers
-       // $emailHeaders .= "--".$num."\n";             
-//        $emailHeaders .= "Content-Type:image/jpg; ";
-//        $emailHeaders .= "name=\"".$fname."\"\n";
-//        $emailHeaders .= "Content-Transfer-Encoding: base64\n";
-//        $emailHeaders .= "Content-Disposition: attachment; ";
-//        $emailHeaders .= "filename=\"".$fname."\"\n\n";
-//        $emailHeaders .= $file."\n";
-//
-//        $emailHeaders .= "--".$num."\n";  
-//        $emailHeaders .= "Content-Type:image/jpg; ";
-//        $emailHeaders .= "name=\"".$fname2."\"\n";
-//        $emailHeaders .= "Content-Transfer-Encoding: base64\n";
-//        $emailHeaders .= "Content-Disposition: attachment; ";
-//        $emailHeaders .= "filename=\"".$fname2."\"\n\n";
-//        $emailHeaders .= $file2."\n";        
-//        
-//        $emailHeaders .= "--".$num."\n";  
-//        $emailHeaders .= "Content-Type:image/jpg; ";
-//        $emailHeaders .= "name=\"".$fname3."\"\n";
-//        $emailHeaders .= "Content-Transfer-Encoding: base64\n";
-//        $emailHeaders .= "Content-Disposition: attachment; ";
-//        $emailHeaders .= "filename=\"".$fname3."\"\n\n";
-//        $emailHeaders .= $file3."\n";
-//
-//        $emailHeaders .= "--".$num."\n";  
-//        $emailHeaders .= "Content-Type:image/jpg; ";
-//        $emailHeaders .= "name=\"".$fname4."\"\n";
-//        $emailHeaders .= "Content-Transfer-Encoding: base64\n";
-//        $emailHeaders .= "Content-Disposition: attachment; ";
-//        $emailHeaders .= "filename=\"".$fname4."\"\n\n";
-//        $emailHeaders .= $file4."\n";
 
         @mail($emailTo, $emailSubject, $emailBody, $emailHeaders);
         
