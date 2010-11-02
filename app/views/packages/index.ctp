@@ -7,11 +7,10 @@ $this->pageTitle = $client['Client']['name'].$html2->c($client['Client']['client
 <?= $this->renderElement('ajax_paginator', array('showCount' => true))?>
 <table cellpadding="0" cellspacing="0">
 <tr>
+    <th><?php echo $paginator->sort('Package ID', 'Package.packageId', array('url' => array('clientId' => $clientId))); ?></th>
 	<th><?php echo $paginator->sort('LOA ID', 'ClientLoaPackageRel.loaId', array('url' => array('clientId' => $clientId)));?></th>
 	<th><?php echo $paginator->sort('Package Name', 'Package.packageName', array('url' => array('clientId' => $clientId)));?></th>
 	<th><?php echo $paginator->sort('Package Status', 'Package.packageStatusId', array('url' => array('clientId' => $clientId)));?></th>
-	<th><?php echo $paginator->sort('Start Date', 'Package.startDate', array('url' => array('clientId' => $clientId)));?></th>
-	<th><?php echo $paginator->sort('End Date', 'Package.endDate', array('url' => array('clientId' => $clientId)));?></th>
 	<th><?php echo $paginator->sort('Created', 'Package.created', array('url' => array('clientId' => $clientId)));?></th>
 	<th class="actions"><?php __('Actions');?></th>
 </tr>
@@ -24,6 +23,9 @@ foreach ($packages as $package):
 	}
 ?>
 	<tr<?php echo $class;?>>
+        <td>
+            <?php echo $package['Package']['packageId']; ?>
+        </td>
 		<td>
 			<?php echo $package['ClientLoaPackageRel']['loaId']; ?>
 		</td>
@@ -32,12 +34,6 @@ foreach ($packages as $package):
 		</td>
 		<td>
 			<?php echo $packageStatusIds[$package['Package']['packageStatusId']]; ?>
-		</td>
-		<td>
-			<?php echo $html2->date($package['Package']['startDate']); ?>
-		</td>
-		<td>
-			<?php echo $html2->date($package['Package']['endDate']); ?>
 		</td>
 		<td>
 			<?php echo $html2->date($package['Package']['created']); ?>
