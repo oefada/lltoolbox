@@ -71,7 +71,7 @@ if ($masterState != 1) {
                             echo 'Hotel Offer';
                             echo '<input type="hidden" name="data[isHotelOffer]" value="1"/>';
                             echo $form->input('offerTypeId', array('value' => 7, 'type' => 'hidden'));
-                            echo $form->input('numDaysToRun', array('value' => 2, 'type' => 'hidden')); 
+                            echo $form->input('numDaysToRun', array('value' => 1, 'type' => 'hidden')); 
                         } 
                     ?>
                 </td>
@@ -105,7 +105,7 @@ if ($masterState != 1) {
                         <th>Number of Iterations</th>
                     </tr>
                     <tr>
-                        <td><?php echo $form->input('numDaysToRun', array('label' => ' ', 'type' => 'select', 'options' => array(2 => '2 Days', 3 => '3 Days', 7 => '7 Days'), 'disabled' => ($masterState) ? 'disabled' : false)); ?></td>
+                        <td><?php echo $form->input('numDaysToRun', array('label' => ' ', 'type' => 'select', 'options' => array(1 => '1 Day', 2 => '2 Days', 3 => '3 Days', 7 => '7 Days'), 'disabled' => ($masterState) ? 'disabled' : false)); ?></td>
                         <td><?php echo $form->input('schedulingDelayCtrlId', array('label' => ' ')); ?></td>
                         <td>
                             <input type='radio' id='by-end-date' name='data[SchedulingMaster][iterationSchedulingOption]' value='1' checked="checked" /> <label for='by-end-date'>Determined By End Date</label><br />
@@ -118,7 +118,7 @@ if ($masterState != 1) {
             <!-- BUY NOW OPTIONS -->
             <div id="buynow-options" style="padding:0px; margin:0px; <?php if (!$data['isBuyNow']) echo 'display:none;'; ?>">
                 <h2>Buy Now Options</h2>
-                <input type='radio' id='bonus-miles' name='data[buyNowOfferTypeId]' value='4' checked /> <label for='bonus-miles'>Includes Bonus Miles</label><br/>
+                <input type='radio' id='bonus-miles' name='data[buyNowOfferTypeId]' value='4' checked="checked" /> <label for='bonus-miles'>Includes Bonus Miles</label><br/>
                 <input type='radio' id='suppress-retail' name='data[buyNowOfferTypeId]' value='3' /> <label for='suppress-retail'>Suppress Retail Value</label>        
             </div>
         
@@ -279,7 +279,7 @@ if ($masterState != 1) {
 	
 			echo '<span id="numDays"';
 				/* TODO: Marketing/Judy need to be able to se num days to an arbitrary #, and unlock scheduling delay */
-				echo $form->input('numDaysToRun', array('type' => 'select',  'empty' => true, 'options' => array(2 => '2', 3 => '3', 7 => '7'), 'disabled' => ($masterState) ? 'disabled' : false));
+				echo $form->input('numDaysToRun', array('type' => 'select',  'empty' => true, 'options' => array(1 => '1 Day', 2 => '2', 3 => '3', 7 => '7'), 'disabled' => ($masterState) ? 'disabled' : false));
 				
 					echo $form->input('schedulingDelayCtrlId', array('label' => 'Scheduling Delay'));
 
@@ -287,7 +287,7 @@ if ($masterState != 1) {
 		} else {
 			echo $form->input('Track', array('options' => $trackIds, 'empty' => true, 'multiple' => false, 'disabled' => ($masterState) ? true : false));
 			echo $form->input('offerTypeId', array('value' => 7, 'type' => 'hidden'));
-			echo $form->input('numDaysToRun', array('value' => 2, 'type' => 'hidden'));
+			echo $form->input('numDaysToRun', array('value' => 1, 'type' => 'hidden'));
 		}
         
         
@@ -369,8 +369,6 @@ if ($masterState != 1) {
 				));
 			}
 		echo '<br/></span>';
-		
-
 
 		// END DATE / ITERATIONS
 		$iterationsStyle = $endDateStyle = ' style="padding: 0; margin: 0"';
@@ -416,18 +414,16 @@ if ($masterState != 1) {
 			}
 		);
 		</script>
-		<?
-
-
+        <?
 
 		echo $form->input('packageId', array('value' => $packageId, 'type' => 'hidden'));
 		
 		echo $ajax->observeField('SchedulingMasterOfferTypeId', array(
 																'url' => '/scheduling_masters/getOfferTypeDefaults/packageId:'.$packageId,
 																'frequency' => 0.2,
-																'update' => 'defaults',
+			 													'update' => 'defaults',
 																'complete' => 'new Effect.Highlight("defaults")'));
-	?>
+        ?>
 		<script>
 			Event.observe("SchedulingMasterOfferTypeId", "change", toggle_offertype);			
 			function toggle_offertype(event) {
