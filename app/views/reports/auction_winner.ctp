@@ -145,8 +145,8 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 		}
 		?>
 		</td>
-		<td><?=$r['Package']['validityStartDate']?></td>
-		<td><?=$r['Package']['validityEndDate']?></td>
+		<td><?=$r['PricePoint']['validityStart']?></td>
+		<td><?=$r['PricePoint']['validityEnd']?></td>
 	</tr>
 <?php endforeach; //TODO: add totals ?>
 </table>
