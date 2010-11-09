@@ -63,8 +63,8 @@ foreach ($results as $r):
 	$r['PaymentProcessor']['paymentProcessorName'],
 	$remit,
 	$r['Promo']['amountOff'],
-	date('M d Y h:i:sA', strtotime($r['Package']['validityStartDate'])),
-	date('M d Y h:i:sA', strtotime($r['Package']['validityEndDate'])),
+	date('M d Y h:i:sA', strtotime($r['PricePoint']['validityStart'])),
+	date('M d Y h:i:sA', strtotime($r['PricePoint']['validityEnd'])),
 	'',
 	'',
 	$r['PromoCode']['promoCode']
