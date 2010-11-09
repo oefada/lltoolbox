@@ -1124,8 +1124,8 @@ class ReportsController extends AppController {
 	        $this->set('results', $results);
 		    $this->set('serializedFormInput', serialize($this->data));
 	    }
-	}
-	
+	}  
+    	
 	function cmr() {
 	    if (!empty($this->data) || !empty($this->params['named']['clientIds'])) {
 	        if ($this->data['condition2']['value'] == 'keep') {
@@ -2818,14 +2818,74 @@ class ReportsController extends AppController {
 	        return $chartdata;
 	}
 
-	
-
-	//TODO: A lot of duplication of code, use this method as a template for all the others and cut down on the number of times the following code is repeated
+    //invoice added by ronayson 11/08/10
+    function invoice() {
+    
+       if (!empty($this->data)) {          
+	     
+	        if (!empty($this->params['named']['sortBy'])) {              
+	            $direction = (@$this->params['named']['sortDirection'] == 'DESC') ? 'DESC' : 'ASC';
+	            $order = $this->params['named']['sortBy'].' '.$direction;
+	            $this->set('sortBy', $this->params['named']['sortBy']);
+	            $this->set('sortDirection', $direction);                
+	        } else {
+	            $order = 'Invoice.submittedByDate DESC';	            
+	            $this->set('sortBy', 'Invoice.accountingInvoiceId');
+    	        $this->set('sortDirection', 'DESC');
+	        }
+           
+           $where = "";
+                              
+           if ($this->params['data']['condition1']['value']['between'][0] && $this->params['data']['condition1']['value']['between'][1]) {
+                $date1 = $this->params['data']['condition1']['value']['between'][0];
+                $date2 = $this->params['data']['condition1']['value']['between'][1];            
+                $seachBy = $this->params['data']['OfferType']['searchBy'];               
+            } else {               
+                $date1 = $this->data['condition1']['value']['between'][0];
+                $date2 = $this->data['condition1']['value']['between'][1];            
+                $seachBy = $this->data['OfferType']['searchBy'];
+            }
+            
+            switch ($seachBy) {
+                    case 0:                  
+                        $where = " WHERE Invoice.submittedByDate >= DATE('$date1') AND Invoice.submittedByDate <= DATE('$date2')";
+                        break;
+                    case 1:                     
+                        $where = " WHERE Invoice.checkinDate >= DATE('$date1') AND Invoice.checkinDate <= DATE('$date2')";
+                        break;
+                    default:                    
+                        $where = " WHERE Invoice.submittedByDate >= DATE('$date1') AND Invoice.submittedByDate <= DATE('$date2')";                                      
+                }
+                
+            $sql = "SELECT COUNT(accountingInvoiceId) as numRecords FROM accountingInvoice as Invoice $where";
+            
+       	    $results = $this->OfferType->query($sql);         
+         
+            $numRecords = $results[0][0]['numRecords'];
+            $numPages = ceil($numRecords / $this->perPage);                 
+           
+            $sql = "SELECT * FROM accountingInvoice as Invoice $where ORDER BY $order LIMIT $this->limit";
+           
+	        $results = $this->OfferType->query($sql);
+      
+            $this->set('currentPage', $this->page);
+            $this->set('numRecords', $numRecords);
+            $this->set('numPages', $numPages);
+            $this->set('data', $this->data);
+	        $this->set('results', $results);            
+		    $this->set('serializedFormInput', serialize($this->data));
+            
+	    }
+	}
+    
+    //TODO: A lot of duplication of code, use this method as a template for all the others and cut down on the number of times the following code is repeated
 	function _build_conditions($data) {
 	    $conditions = array();
+        
 		if (empty($data)) {
 			return false;
 		}
+        
 	    foreach ($data as $k => $ca) {
 	        if (isset($ca['value']['between'])) {
                 $betweenCondition = $ca['value']['between'];
@@ -2897,6 +2957,7 @@ class ReportsController extends AppController {
 	    }
 	    
 	    return implode($conditions, ' AND ');
+        
 	}
 }
 ?>
