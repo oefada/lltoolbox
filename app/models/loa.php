@@ -81,7 +81,17 @@ class Loa extends AppModel {
     }
     
     function getClientLoas($clientId) {
-        return $this->query("SELECT * FROM loa Loa WHERE Loa.clientId = {$clientId} ORDER BY Loa.startDate DESC");
+        if ($loas = $this->query("SELECT * FROM loa Loa WHERE Loa.clientId = {$clientId} ORDER BY Loa.startDate DESC")) {
+            return $loas;
+        }
+        else {
+            if ($client = $this->query("SELECT Client.parentClientId FROM client Client WHERE Client.clientId = {$clientId}")) {
+                if ($loas = $this->query("SELECT * FROM loa Loa WHERE Loa.clientId = {$client[0]['Client']['parentClientId']} ORDER BY Loa.startDate DESC")) {
+                    return $loas;
+                }
+            }
+        }
+        return array();
     }
     
     function getLoaClientId($loaId) {
