@@ -23,10 +23,12 @@ echo $javascript->link('jquery/jquery-autocomplete/jquery.autocomplete'); ?>
 </div>
 
 <form id="roomNightsForm" method="post">
-    <input type="button" id="addRoomLoaItem" value="Add/Change Room Type" /><span class="room-night-header">For <?php echo $package['Package']['numNights']; ?>-Night Package</span> 
-    <?php foreach ($ratePeriods as $i => $ratePeriod): ?>
-            <?php echo $this->element('package/rate_period', array('ratePeriod' => $ratePeriod, 'i' => $i, 'package' => $package)); ?>
-    <?php endforeach; ?>
+    <input type="button" id="addRoomLoaItem" value="Add/Change Room Type" /><span class="room-night-header">For <?php echo $package['Package']['numNights']; ?>-Night Package</span>
+    <?php if (!empty($ratePeriods)): ?>
+        <?php foreach ($ratePeriods as $i => $ratePeriod): ?>
+                <?php echo $this->element('package/rate_period', array('ratePeriod' => $ratePeriod, 'i' => $i, 'package' => $package)); ?>
+        <?php endforeach; ?>
+    <?php endif; ?>
     <?php if (isset($_GET['isNewItem']) || empty($ratePeriods)): ?>
       <div class="rate-period-button"><input type="button" id="newRatePeriod" value="New Rate Period" /></div>
     <?php endif; ?>

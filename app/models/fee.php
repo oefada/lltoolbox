@@ -19,28 +19,20 @@ class Fee extends AppModel {
         return $this->query($query);
     }
     
-    function updateFromPackage($data, $packageId, $loaItemRatePeriodId) {
-        $query = "SELECT loaItemId FROM loaItemRatePeriod LoaItemRatePeriod
-                  WHERE LoaItemRatePeriod.loaItemRatePeriodId = {$loaItemRatePeriodId}";
-        if ($loaItem = $this->query($query)) {
-            $loaItemId = $loaItem[0]['LoaItemRatePeriod']['loaItemId'];
-        }
-        else {
-            return false;
-        }
-        foreach ($data as $fee) {
-            if (!empty($fee['feePercent'])) {
-                $fee['loaItemId'] = $loaItemId;
-                $this->create();
-                if ($this->save($fee)) {
-                    continue;
+    function updateFromPackage($data, $loaItems, $packageId) {
+        foreach($loaItems as $item) {
+            foreach ($data as $fee) {
+                if (!empty($fee['feePercent'])) {
+                    $fee['loaItemId'] = $item['LoaItem']['loaItemId'];
+                    $this->create();
+                    $saved = $this->save($fee);
+                    if (!$saved) {
+                        return false;
+                    }
                 }
-                else {
-                    return false;
+                elseif (empty($fee['feePercent']) && empty($fee['feeName'])) {
+                    $this->delete($fee['feeId']);
                 }
-            }
-            elseif (empty($fee['feePercent']) && empty($fee['feeName'])) {
-                $this->delete($fee['feeId']);
             }
         }
         return true;

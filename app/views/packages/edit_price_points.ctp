@@ -49,38 +49,42 @@
         <table cellpadding="0" cellspacing="0">
             <tr>
                 <th></th>
+                <?php if ($isMultiClientPackage): ?>
+                    <th>Client Name</th>
+                <?php endif; ?>
                 <th>Rate Periods</th>
                 <th>Package Retail (<?php echo $ratePeriods[0]['currencyCode']; ?>)</th>
                 <th>Guaranteed Percent of Retail</th>
                 <th>Low Price Guarantee (<?php echo $ratePeriods[0]['currencyCode']; ?>)</th>
             </tr>
         <?php
-            foreach ($ratePeriods as $key => $ratePeriod) {
-                $alt = ($key % 2 == 0) ? 'class="alt"' : '';
-                $checked = in_array($ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId'], $loaItemRatePeriodIds) ? 'checked' : '';
-                $disabled = (isset($ratePeriod['used']) && $ratePeriod['used'] == true) ? 'disabled' : '';
-
-				//if (!$ratePeriod['LoaItemRatePackageRel']['guaranteePercentRetail']) {
-					//$ratePeriod['LoaItemRatePackageRel']['guaranteePercentRetail'] = 0;
-				//}
-
-                echo "
-                    <tr $alt>
+            foreach ($ratePeriods as $key => $ratePeriod): ?>
+                <?php
+                    $alt = ($key % 2 == 0) ? 'class="alt"' : '';
+                    $checked = in_array($ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId'], $loaItemRatePeriodIds) ? 'checked' : '';
+                    $disabled = (isset($ratePeriod['used']) && $ratePeriod['used'] == true) ? 'disabled' : '';
+                    //dunno why this is still here -- delete after QA -- acarney 2010-11-19
+                    //if (!$ratePeriod['LoaItemRatePackageRel']['guaranteePercentRetail']) {
+                    	//$ratePeriod['LoaItemRatePackageRel']['guaranteePercentRetail'] = 0;
+                    //}
+                ?>
+                    <tr <?php echo $alt; ?>>
                         <td>
                             <script>
-                                retails[{$ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId']}] = {$ratePeriod['retailValue']};
-                                guaranteedPercents[{$ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId']}] = {$ratePeriod['LoaItemRatePackageRel']['guaranteePercentRetail']};
+                                retails[<?php echo $ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId']; ?>] = <?php echo $ratePeriod['retailValue']; ?>;
+                                guaranteedPercents[<?php echo $ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId']; ?>] = <?php echo $ratePeriod['LoaItemRatePackageRel']['guaranteePercentRetail']; ?>;
                             </script>
-                            <input class='check-rate-period' type='checkbox' name='data[loaItemRatePeriodIds][]' value='{$ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId']}' $checked $disabled/>
+                            <input class="check-rate-period" type="checkbox" name="data[loaItemRatePeriodIds][]" value="<?php echo $ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId']; ?>" <?php echo $checked; echo $disabled; ?>/>
                         </td>
-                        <td>{$ratePeriod['dateRanges']}</td>
-                        <td>" . number_format($ratePeriod['retailValue'], 0) . "</td>
-                        <td>{$ratePeriod['LoaItemRatePackageRel']['guaranteePercentRetail']}</td>
-                        <td>" . number_format($ratePeriod['startPrice'], 0) . "</td>
+                        <?php if ($isMultiClientPackage): ?>
+                            <td><?php echo $ratePeriod['clientName']; ?></td>
+                        <?php endif; ?>
+                        <td><?php echo $ratePeriod['dateRanges']; ?></td>
+                        <td><?php echo number_format($ratePeriod['retailValue'], 0); ?></td>
+                        <td><?php echo $ratePeriod['LoaItemRatePackageRel']['guaranteePercentRetail']; ?></td>
+                        <td><?php echo number_format($ratePeriod['startPrice'], 0); ?></td>
                     </tr>
-                ";
-            }
-        ?>
+           <?php endforeach; ?>
         </table>
 
         <!-- MAX NUMBER OF SALES -->

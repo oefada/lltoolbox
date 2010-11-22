@@ -1,3 +1,3 @@
 <?php $this->layout = '';
-      echo $this->element('package/available_inclusions', array('availableInclusions' => $availableInclusions, 'i' => 1));
+      echo $this->element('package/available_inclusions', array('packageClients' => $package['ClientLoaPackageRel'], 'i' => 1));
 ?>

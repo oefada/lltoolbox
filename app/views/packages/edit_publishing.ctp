@@ -37,40 +37,44 @@ echo $javascript->link('jquery/jquery-autocomplete/jquery.autocomplete'); ?>
 	<tr><th>Short Blurb</th><td><input type="text" name="data[Package][shortBlurb]" value="<?=htmlentities($package['Package']['shortBlurb']);?>" maxlength="65" /></td></tr>
 	<tr><th>Package Blurb</th><td><input type="text" name="data[Package][packageBlurb]" value="<?=htmlentities($package['Package']['packageBlurb']);?>" maxlength="62" /></td></tr>
 	<tr><th>Room Grade</th><td><input type="text" name="data[Package][roomGrade]" value="<?=$roomGrade;?>" readonly="readonly" /></td></tr>
-	<tr><th>Order Inclusions</th>
-		<td>
-
-		<?php foreach ($items as $k => $i):?>
-			<?php if (isset($i['Group'])) :?>
-				<?php foreach ($i['LoaItem'] as $l => $j) :?>
-					<span style="display:none;" id="merch-desc-<?=$k.$l;?>-copy" rel="werd"><?=$j;?></span>
-					<input type="hidden" id="merch-desc-<?=$k.$l;?>-id" value="" />
-				<?php endforeach;?>
-			<?php else: ?>
-				<span style="display:none;" id="merch-desc-<?=$k;?>-copy" rel="werd"><?=(!empty($i['LoaItem']['merchandisingDescription'])) ? htmlentities($i['LoaItem']['merchandisingDescription'])  : 'NO LIVE SITE DESCRIPTION'  ;?></span>
-				<input type="hidden" id="merch-desc-<?=$k;?>-id" value="<?=$i['PackageLoaItemRel']['packageLoaItemRelId'];?>" />
-			<?php endif;?>
-		<?php endforeach;?>
-
-		<ul id="sortable">
-		<?php foreach ($items as $k => $i):?>
-			<?php if (isset($i['Group'])) :?>
-				<?php foreach ($i['LoaItem'] as $l => $j) :?>
-				<li class="ui-state-default" id="merch-desc-<?=$k.$l;?>"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span><?=$j;?></li>
-				<?php endforeach;?>
-			<?php else: ?>
-				<li class="ui-state-default" id="merch-desc-<?=$k;?>"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span><?=(!empty($i['LoaItem']['merchandisingDescription'])) ? htmlentities($i['LoaItem']['merchandisingDescription'])  : 'NO LIVE SITE DESCRIPTION'  ;?></li>
-			<?php endif;?>
-		<?php endforeach;?>
-		</ul>
-		<input type="button" value="Update Inclusions" onclick="updateInclusions('sortable');" />
-
-		</td></tr>
+    <?php if (!$isMultiClientPackage): ?>
+        <tr><th>Order Inclusions</th>
+            <td>
+    
+            <?php foreach ($items as $k => $i):?>
+                <?php if (isset($i['Group'])) :?>
+                    <?php foreach ($i['LoaItem'] as $l => $j) :?>
+                        <span style="display:none;" id="merch-desc-<?=$k.$l;?>-copy" rel="werd"><?=$j;?></span>
+                        <input type="hidden" id="merch-desc-<?=$k.$l;?>-id" value="" />
+                    <?php endforeach;?>
+                <?php else: ?>
+                    <span style="display:none;" id="merch-desc-<?=$k;?>-copy" rel="werd"><?=(!empty($i['LoaItem']['merchandisingDescription'])) ? htmlentities($i['LoaItem']['merchandisingDescription'])  : 'NO LIVE SITE DESCRIPTION'  ;?></span>
+                    <input type="hidden" id="merch-desc-<?=$k;?>-id" value="<?=$i['PackageLoaItemRel']['packageLoaItemRelId'];?>" />
+                <?php endif;?>
+            <?php endforeach;?>
+    
+            <ul id="sortable">
+            <?php foreach ($items as $k => $i):?>
+                <?php if (isset($i['Group'])) :?>
+                    <?php foreach ($i['LoaItem'] as $l => $j) :?>
+                    <li class="ui-state-default" id="merch-desc-<?=$k.$l;?>"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span><?=$j;?></li>
+                    <?php endforeach;?>
+                <?php else: ?>
+                    <li class="ui-state-default" id="merch-desc-<?=$k;?>"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span><?=(!empty($i['LoaItem']['merchandisingDescription'])) ? htmlentities($i['LoaItem']['merchandisingDescription'])  : 'NO LIVE SITE DESCRIPTION'  ;?></li>
+                <?php endif;?>
+            <?php endforeach;?>
+            </ul>
+            <input type="button" value="Update Inclusions" onclick="updateInclusions('sortable');" />
+    
+            </td></tr>
+    <?php endif; ?>
 	<tr><th>Inclusions</th><td>
-		<textarea name="data[Package][packageIncludes]" id="package-validity-includes" readonly="readonly"><?=htmlentities($package['Package']['packageIncludes']);?></textarea>
+		<textarea name="data[Package][packageIncludes]" id="package-validity-includes" <?php if (!$isMultiClientPackage): ?>readonly="readonly"<?php endif; ?>><?=htmlentities($package['Package']['packageIncludes']);?></textarea>
 		<div>
 			<input type="hidden" id="edit-this-validity-includes" name="data[Package][overridePackageIncludes]" value="0" />
-			<a href="javascript:void(0);" onclick="return editThis('validity-includes');">Make Changes</a>
+            <?php if (!$isMultiClientPackage): ?>
+                <a href="javascript:void(0);" onclick="return editThis('validity-includes');">Make Changes</a>
+            <?php endif; ?>
 		</div>
 		</td></tr>
 	<tr><th>Terms &amp; Conditions</th><td><textarea name="data[Package][termsAndConditions]"><?=htmlentities($package['Package']['termsAndConditions']);?></textarea></td></tr>

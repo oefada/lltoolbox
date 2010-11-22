@@ -7,20 +7,19 @@ class LoaItemDate extends AppModel {
 	
 	var $belongsTo = array('LoaItemRatePeriod' => array('foreignKey' => 'loaItemRatePeriodId'));
     
-    function updateFromPackage($data, $packageId, $loaItemRatePeriodId) {
-        foreach($data as &$d) {
-            $d['loaItemRatePeriodId'] = $loaItemRatePeriodId;
-            $d['startDate'] = date('Y-m-d', strtotime($d['startDate']));
-            $d['endDate'] = date('Y-m-d', strtotime($d['endDate']));
+    function updateFromPackage($data, $loaItems, $packageId) {
+        foreach($loaItems as $item) {
+            foreach($data as $itemDate) {
+                $loaItemDate = array('loaItemRatePeriodId' => $item['LoaItemRate'][0]['loaItemRatePeriodId'],
+                                     'startDate' => date('Y-m-d', strtotime($itemDate['startDate'])),
+                                     'endDate' => date('Y-m-d', strtotime($itemDate['endDate']))
+                                    );
+                $this->create();
+                $saved = $this->save($loaItemDate);
+                if (!$saved) return false;
+            }
         }
-        //debug($data);
-        //die();
-        if ($this->saveAll($data)) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        return true;
     }
     
     function getValidDates($loaItemId) {

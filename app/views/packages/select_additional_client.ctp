@@ -6,14 +6,21 @@
 <?php echo $form->submit('Search');?>
 </form>
 
-<?php echo $this->renderElement('ajax_paginator', array('divToPaginate' => 'client-index', 'showCount' => true)); ?>
+<?php if ($showPagination) echo $this->renderElement('ajax_paginator', array('divToPaginate' => 'client-index', 'showCount' => true)); ?>
 <div class="clients index">
 <table cellpadding="0" cellspacing="0">
 <tr>
-	<th><?php echo $paginator->sort('name');?></th>
-	<th><?php echo $paginator->sort('Type', 'clientTypeId');?></th>
-	<th><?php echo $paginator->sort('Level', 'clientLevelId');?></th>
-	<th><?php echo $paginator->sort('Status','clientStatusId');?></th>
+    <?php if ($showPagination): ?>
+        <th><?php echo $paginator->sort('name');?></th>
+        <th><?php echo $paginator->sort('Type', 'clientTypeId');?></th>
+        <th><?php echo $paginator->sort('Level', 'clientLevelId');?></th>
+        <th><?php echo $paginator->sort('Status','clientStatusId');?></th>
+    <?php else: ?>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Level</th>
+        <th>Status</th>
+    <?php endif; ?>
 	<th class="actions"><?php __('Actions');?></th>
 </tr>
 <?php
@@ -37,7 +44,7 @@ foreach ($clients as $client):
 			<?php echo $client['ClientLevel']['clientLevelName']; ?>
 		</td>
 		<td>
-			<?php echo $client['ClientStatus']['clientStatusName']; ?>
+			<?php //echo $client['ClientStatus']['clientStatusName']; ?>
 		</td>
 		<td class="actions">
 			<?php echo $ajax->link(__('Select', true),
@@ -52,6 +59,6 @@ foreach ($clients as $client):
 <?php endforeach; ?>
 </table>
 
-<?php echo $this->renderElement('ajax_paginator', array('divToPaginate' => 'client-index')); ?>
+<?php if ($showPagination) echo $this->renderElement('ajax_paginator', array('divToPaginate' => 'client-index')); ?>
 </div>
 </div>

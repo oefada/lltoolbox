@@ -4,6 +4,7 @@ class PackagesController extends AppController {
 	var $name = 'Packages';
 	var $helpers = array('Html', 'Form');
 	var $uses = array('Package', 'Client', 'PackageRatePeriod', 'LoaItem');
+    var $paginate = array('order' => array('Package.packageId' => 'desc'));
 	
 	function beforeFilter() {
 		parent::beforeFilter();
@@ -79,9 +80,33 @@ class PackagesController extends AppController {
 	
 	function add($clientId = null) {
         if (!empty($this->data)) {
+            //debug($this->data);
+            //die();
             if ($this->data['Package']['packageType'] == '0') {
-                $this->redirect('/clients/'.$clientId.'/packages/edit_package/0?loaId='.$this->data['ClientLoaPackageRel'][0]['loaId']);
+                $this->redirect('/clients/'.$clientId.'/packages/edit_package/0?loaId='.$this->data['ClientLoaPackageRel'][0]['loaId']).'&packageType=standard';
                 return;
+            }
+            elseif ($this->data['Package']['packageType'] == '2') {
+                if (!empty($this->data['Package']['siteId'])) {
+                    switch ($this->data['Package']['siteId']) {
+                        case 1:
+                            $this->data['Package']['sites'] = array('luxurylink');
+                            break;
+                        case 2:
+                            $this->data['Package']['sites'] = array('family');
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                $this->Package->create();
+                if ($this->Package->saveAll($this->data)) {
+                    $packageId = $this->Package->getLastInsertID();
+                    $this->redirect('/clients/'.$clientId.'/packages/summary/'.$packageId);
+                }
+                else {
+                    $this->Session->setFlash('This multi-client package could not be saved.');
+                }
             }
         }
         
@@ -320,9 +345,13 @@ class PackagesController extends AppController {
 		$client = $this->Client->findByClientId($clientId);
 		$this->set('client', $client);
 		
-		$loaIds = $this->Client->Loa->find('list', array('conditions' => array('Loa.clientId' => $clientId)));
-		$this->set(compact('loaIds'));
-		
+		$loaIds = $this->Package->ClientLoaPackageRel->Loa->getLoaOptionList($clientId);
+        if(empty($loaIds) && !empty($clients[0]['Client']['parentClientId'])) {
+            $loaIds = $this->Package->ClientLoaPackageRel->Loa->getLoaOptionList($clients[0]['Client']['parentClientId']);
+        }
+        $loaIds = array($loaIds);
+		$this->set('loaIds', $loaIds);
+        $this->set('additionalClient', 1);		
 		$this->render('_add_step_1_fields');
 	}
 	
@@ -334,9 +363,17 @@ class PackagesController extends AppController {
 	function selectAdditionalClient() {
 		$this->set('data', $this->data);
 		if (isset($this->data['search'])):
-			$this->set('clients', $this->paginate('Client', array('Client.name LIKE' => "%{$this->data['search']}%")));
+            $searchTerm = strtolower($this->data['search']);
+            if ($clients = $this->Client->searchClients($searchTerm)) {
+                $this->set('clients', $clients);
+            }
+            else {
+                $this->set('clients', array());
+            }
+            $this->set('showPagination', 0);
 		else:
 			$this->set('clients', $this->paginate('Client'));
+            $this->set('showPagination', 1);
 		endif;
 	}
 	
@@ -824,6 +861,9 @@ class PackagesController extends AppController {
         $client = $this->Client->find('first', array('conditions' => array('Client.clientId' => $clientId)));
         $this->set('client', $client);
         $package = $this->Package->getPackage($packageId);
+        $isMultiClientPackage = (count($package['ClientLoaPackageRel']) > 1) ? true : false;
+        $this->set('isMultiClientPackage', $isMultiClientPackage);
+       
         if (!empty($package['Package']['externalOfferUrl'])) {
             $this->redirect('/clients/'.$clientId.'/packages/edit/'.$packageId);
         }
@@ -832,14 +872,11 @@ class PackagesController extends AppController {
            $package['Package']['notes'] = $this->data['Package']['notes'];
            $this->Package->save($package);
            $this->redirect('/clients/'.$clientId.'/packages/summary/'.$packageId);
-        }
-        
-        $this->set('package', $package);
-        
+        }        
         //debug($package);
         $history = $this->Package->getHistory($packageId);
         $this->set('history', $history);
-        if ($roomNights = $this->LoaItem->getRoomNights($packageId)) {
+        if ($roomNights = $this->LoaItem->getRoomNights($packageId, $isMultiClientPackage)) {
             if (count($roomNights[0]['LoaItems'][0]['LoaItemRate']) > 1) {
                 $this->set('isDailyRates', true);
                 $dailyRatesMap = array('w0' => 'Su',
@@ -889,8 +926,9 @@ class PackagesController extends AppController {
 		$this->set('bo_weekdays', implode('<br />', $bo_weekdays_arr));
 
         $this->set('ratePeriods', $roomNights);
-        $inclusions = $this->LoaItem->getPackageInclusions($packageId);
-        $this->set('inclusions', $inclusions);
+        foreach($package['ClientLoaPackageRel'] as &$packageClient) {
+            $packageClient['Inclusions'] = $this->LoaItem->getPackageInclusions($packageId, $packageClient['ClientLoaPackageRel']['loaId']);
+        }
 
         // low price guarantees
         $lowPriceGuarantees = $this->getRatePeriodsInfo($packageId);
@@ -912,6 +950,7 @@ class PackagesController extends AppController {
 			default:
 			   $this->set('siteUrl', 'www.luxurylink.com');
 		}
+        $this->set('package', $package);        
     }
     
     function edit_package($clientId, $packageId) {
@@ -1091,20 +1130,22 @@ class PackagesController extends AppController {
     }
     
     function edit_room_loa_items($clientId, $packageId) {
-        $packageCurrencyId = $this->Package->Currency->getPackageCurrencyId($packageId);
+        $package = $this->Package->getPackage($packageId);
+        $packageCurrencyId = $package['Package']['currencyId'];
+        $isMultiClientPackage = (count($package['ClientLoaPackageRel']) > 1) ? true : false;
         if (!empty($this->data)) {
-            //echo print_r($this->data);
+            //debug($this->data);
             //die();
             $items = 0;
             $packageLoaItemIds = array();
             $groupItems = $this->LoaItem->LoaItemGroup->getLoaItemIds($packageId);
-            $loaId = $this->Package->ClientLoaPackageRel->field('loaId', array('ClientLoaPackageRel.packageId' => $packageId));
+            $isNewItem = false;
             if (isset($this->data['NewLoaItem'])) {
                 $isNewItem = true;
                 foreach ($this->data['NewLoaItem'] as $newRoom) {
-                    //create new loa item
+                    //create new loa item. disabled for multi-client packages.
                     $data = array('loaItemTypeId' => 1,
-                                  'loaId' => $loaId,
+                                  'loaId' => $package['Loa']['loaId'],
                                   'itemName' => $newRoom['itemName'],
                                   'currencyId' => $packageCurrencyId
                                   );
@@ -1191,6 +1232,20 @@ class PackagesController extends AppController {
             }
             //now loop through existing items posted in the form
             foreach ($this->data['LoaItem'] as $loaItemId => $room) {
+                if ($isMultiClientPackage) {
+                    if ($itemExists = $this->LoaItem->getMultiClientRoomId($loaItemId, $packageId)) {
+                        $loaItemId = $itemExists;
+                    }
+                    else {
+                        if (isset($room['checked'])) {
+                            if (!$loaItemId = $this->LoaItem->createMultiClientRoom($loaItemId, $packageId)) {
+                                $this->Session->setFlash('An error occurred saving this package.');
+                                $this->redirect('/clients/'.$clientId.'/packages/edit_room_loa_items/'.$packageId);
+                                return;
+                            }
+                        }
+                    }
+                }
                 if (isset($room['checked'])) {
                     //handle cases where the user changed the quantity a room from more than 1 to only 1
                     if ($room['quantity'] == 1 && count(array_keys($groupItems, $loaItemId)) > 1) {
@@ -1201,7 +1256,7 @@ class PackagesController extends AppController {
                     }
                     $isNewItem = false;
                     //select a room to validate rate periods/validity against
-                    if (isset($room['PackageLoaItemRel'])) {
+                    if (isset($room['PackageLoaItemRel']) && !$isMultiClientPackage) {
                         $masterLoaItemId = $loaItemId;
                         $isMaster = 1;
                     }
@@ -1238,7 +1293,8 @@ class PackagesController extends AppController {
                         $packageLoaItemIds[$i] = $packageLoaItemIds[0]; 
                     }
                 }
-                elseif (count($packageLoaItemIds) > 1) {
+                //skip validation if this is a multi-client package. package-specific rate periods are created in the next step
+                elseif (count($packageLoaItemIds) > 1 && !$isMultiClientPackage) {
                     if (!isset($masterLoaItemId)) {
                         $masterLoaItemId = $packageLoaItemIds[0]['loaItemId'];
                     }
@@ -1278,7 +1334,8 @@ class PackagesController extends AppController {
                         }
                     }
                 }
-                $loaItemId = $this->LoaItem->createRoomGroup($packageLoaItemIds, $loaId, $packageId);
+                //using the primary client loaId to create the room group item
+                $loaItemId = $this->LoaItem->createRoomGroup($packageLoaItemIds, $package['Loa']['loaId'], $packageId);
                 $loaItemGroupId = $loaItemId;
                 $packageLoaItemIds[] = array('loaItemId' => $loaItemId,
                                              'quantity' => 1,
@@ -1340,23 +1397,29 @@ class PackagesController extends AppController {
             $this->redirect('/clients/'.$clientId.'/packages/edit_room_nights/'.$packageId.$param);
         }
         else {
-            $roomLoaItems = $this->LoaItem->getRoomTypesByLoa($packageId);
-            //echo print_r($roomLoaItems);
-            //die();
-            // PKGR - currency
-            foreach ($roomLoaItems as $k => $item) {
-                if ($item['LoaItem']['currencyId'] !== $packageCurrencyId) {
-                    unset($roomLoaItems[$k]);
-                } 
+            foreach ($package['ClientLoaPackageRel'] as &$packageClient) {
+                $roomLoaItems = $this->LoaItem->getRoomTypesByLoa($packageClient['ClientLoaPackageRel']['loaId'], $packageCurrencyId, $packageId, $isMultiClientPackage);
+                $packageClient['ClientLoaPackageRel']['Rooms'] = $roomLoaItems;
             }
-            $this->set('roomLoaItems', $roomLoaItems);
+            //debug($package);
+            //die();
+            
+            //acarney 2010-11-08 -- moving this logic to sql statement
+            // PKGR - currency
+            //foreach ($roomLoaItems as $k => $item) {
+            //    if ($item['LoaItem']['currencyId'] !== $packageCurrencyId) {
+            //        unset($roomLoaItems[$k]);
+            //    } 
+            //}
+	    
+            $this->set('package', $package);
         }
     }
     
     function edit_inclusions($clientId, $packageId) {
         $loaId = $this->Package->ClientLoaPackageRel->getLoaId($packageId);
         if (!empty($this->data)) {
-            //echo print_r($this->data);
+            //debug($this->data);
             //die();
             $this->autoRender = false;
             foreach ($this->data as $loaItem) {
@@ -1426,20 +1489,41 @@ class PackagesController extends AppController {
             }
             echo 'ok';
         }
-        $existingInclusions = $this->LoaItem->getPackageInclusions($packageId);
-        $availableInclusions = $this->LoaItem->getAvailableInclusions($loaId, $packageId);
-
+        $package = $this->Package->getPackage($packageId);
+        $isMultiClientPackage = (count($package['ClientLoaPackageRel']) > 1) ? true : false;
+        $this->set('isMultiClientPackage', $isMultiClientPackage);
+        $numNights = $this->Package->field('numNights', array('Package.packageId' => $packageId));
+        foreach($package['ClientLoaPackageRel'] as &$packageClient) {
+            $packageClient['ExistingInclusions'] = $this->LoaItem->getPackageInclusions($packageId, $packageClient['ClientLoaPackageRel']['loaId']);
+            $packageClient['AvailableLoaItems'] = $this->LoaItem->getAvailableInclusions($packageClient['ClientLoaPackageRel']['loaId'], $packageId, $package['Package']['currencyId']);
+            if ($roomNights = $this->LoaItem->getRoomTypesByPackage($packageId)) {
+                $roomLabel = array();
+                foreach($roomNights as $room) {
+                    if ($room['LoaItem']['loaId'] == $packageClient['ClientLoaPackageRel']['loaId']) {
+                        if ($isMultiClientPackage) {
+                            if ($roomNumNights = $this->Package->LoaItemRatePackageRel->getNumNights($room['LoaItem']['loaItemId'], $packageId)) {
+                                $roomLabel[] = $roomNumNights . ' nights in a ' . $room['LoaItem']['itemName'];
+                            }
+                            else {
+                                $roomLabel[] = $room['LoaItem']['itemName'];
+                            }
+                        }
+                        else {
+                            $roomLabel[] = $room['LoaItem']['itemName'];
+                        }
+                    }
+                }
+                if ($isMultiClientPackage) {
+                    $packageClient['roomLabel'] = implode('<br />', $roomLabel);
+                }
+                else {
+                    $packageClient['roomLabel'] = $numNights.' nights in '.implode(' and ', $roomLabel);
+                }
+            }
+        }
         $itemTypes = $this->LoaItem->LoaItemType->getItemTypes();
         $currencyCode = $this->Package->Currency->getPackageCurrencyCode($packageId);
-        $numNights = $this->Package->field('numNights', array('Package.packageId' => $packageId));
-        if ($roomNights = $this->LoaItem->getRoomTypesByPackage($packageId)) {
-            $roomLabel = array();
-            foreach($roomNights as $room) {
-                $roomLabel[] = $room['LoaItem']['itemName'];
-            }
-            $this->set('roomLabel', implode(' and ', $roomLabel));
-        }
-        $package = $this->Package->getPackage($packageId);
+        
         if ($package['Package']['isTaxIncluded'] == 1 && !empty($roomNights[0]['LoaItem']['loaItemId'])) {
             if ($taxes = $this->LoaItem->Fee->getFeesForRoomType($roomNights[0]['LoaItem']['loaItemId'])) {
                 $taxArr = array();
@@ -1449,42 +1533,31 @@ class PackagesController extends AppController {
                 $this->set('taxLabel', implode(' and ', $taxArr));
             }
         }
-		
-		// PKGR - currency.  exclude inclusions if loa item currency does not match package currency
-		foreach ($availableInclusions as $k => $item) {
-			if ($item['LoaItem']['currencyId'] !== $package['Package']['currencyId']) {
-				unset($availableInclusions[$k]);
-			}
-		}
-		
+        
 		// PKGR - currency
 		$currencyCodes = $this->Package->Currency->find('list', array('fields' => 'currencyCode'));
 		$this->set('currencyCodes', $currencyCodes);
-
-        $this->set('inclusions', $existingInclusions);
-        $this->set('availableInclusions', $availableInclusions);
+        //$this->set('inclusions', $existingInclusions);
         $this->set('itemTypes', $itemTypes);
         $this->set('currencyCode', $currencyCode);
         $this->set('numNights', $numNights);
         $this->set('clientId', $clientId);
         $this->set('packageId', $packageId);
+        $this->set('package', $package);
     }
     
     function render_available_inclusions($clientId, $packageId) {
         $package = $this->Package->getPackage($packageId);
         $loaId = $this->Package->ClientLoaPackageRel->getLoaId($packageId);
-        $availableInclusions = $this->LoaItem->getAvailableInclusions($loaId, $packageId);
+        foreach($package['ClientLoaPackageRel'] as &$packageClient) {
+            $packageClient['LoaItems'] = $this->LoaItem->getAvailableInclusions($packageClient['ClientLoaPackageRel']['loaId'], $packageId, $package['Package']['currencyId']);
+        }
         $itemTypes = $this->LoaItem->LoaItemType->getItemTypes();
-        // PKGR - currency.  exclude inclusions if loa item currency does not match package currency
-		foreach ($availableInclusions as $k => $item) {
-			if ($item['LoaItem']['currencyId'] !== $package['Package']['currencyId']) {
-				unset($availableInclusions[$k]);
-			}
-		}
+        
 		// PKGR - currency
 		$currencyCodes = $this->Package->Currency->find('list', array('fields' => 'currencyCode'));
 		$this->set('currencyCodes', $currencyCodes);
-        $this->set('availableInclusions', $availableInclusions);
+        $this->set('package', $package);
         $this->set('itemTypes', $itemTypes);
     }
     
@@ -1607,6 +1680,8 @@ class PackagesController extends AppController {
             echo 'ok';
         } else {
             $package = $this->Package->getPackage($packageId);
+            $isMultiClientPackage = (count($package['ClientLoaPackageRel']) > 1) ? true : false;
+            $this->set('isMultiClientPackage', $isMultiClientPackage);
 			$this->set('packageId', $packageId);
 			$this->set('clientId', $clientId);
             $this->set('package', $package);
@@ -1628,36 +1703,42 @@ class PackagesController extends AppController {
         
 			// get roomGradeName for this package
 	        $this->Package->PackageLoaItemRel->recursive = 2;
-	        $loaItems = $this->Package->PackageLoaItemRel->find('first', array('conditions' => array('Package.packageId' => $packageId, 'LoaItem.loaItemTypeId' => array(1,12))));
-	        $roomGradeName = $loaItems['LoaItem']['RoomGrade']['roomGradeName'];
+	        $loaItems = $this->Package->PackageLoaItemRel->find('all', array('conditions' => array('Package.packageId' => $packageId, 'LoaItem.loaItemTypeId' => array(1,12,22))));
+            $roomGrades = array();
+            foreach($loaItems as $loaItem) {
+                $roomGrades[] = $loaItem['LoaItem']['RoomGrade']['roomGradeName'];
+            }
+	        $roomGradeName = implode(', ', $roomGrades);
 			$this->set('roomGrade', $roomGradeName);
-			
-			$inc = $this->LoaItem->getPackageInclusions($packageId);
-
-			$roomNightDescription = $loaItems['LoaItem']['merchandisingDescription'];
-
-			foreach ($inc as $i) {
-				if (isset($i['LoaItem']['PackagedItems'])) {
-					$group_items = array();
-					foreach ($i['LoaItem']['PackagedItems'] as $gitems) {
-						if (!in_array($gitems['LoaItem']['loaItemTypeId'], array(1,12))) {
-							$group_items[] = $gitems['LoaItem']['merchandisingDescription'];
-						} else {
-							$roomNightDescription = $gitems['LoaItem']['merchandisingDescription'];
-						}
-					}
-					$inclusions[] = array(
-							'Group' => 1,
-							'LoaItem' => $group_items,
-							'PackageLoaItemRel' => array('packageLoaItemRelId' => $i['PackageLoaItemRel']['packageLoaItemRelId'])
-					);
-				} 
-			}
-
-			$roomNightDescription = str_replace("\n", '', $roomNightDescription);
-			$this->set('roomNightDescription', $roomNightDescription);
-
-			$this->set('items', $inclusions);
+            
+            if (!$isMultiClientPackage) {
+                $inc = $this->LoaItem->getPackageInclusions($packageId, $package['ClientLoaPackageRel'][0]['ClientLoaPackageRel']['loaId']);
+    
+                $roomNightDescription = $loaItems['LoaItem']['merchandisingDescription'];
+    
+                foreach ($inc as $i) {
+                    if (isset($i['LoaItem']['PackagedItems'])) {
+                        $group_items = array();
+                        foreach ($i['LoaItem']['PackagedItems'] as $gitems) {
+                            if (!in_array($gitems['LoaItem']['loaItemTypeId'], array(1,12))) {
+                                $group_items[] = $gitems['LoaItem']['merchandisingDescription'];
+                            } else {
+                                $roomNightDescription = $gitems['LoaItem']['merchandisingDescription'];
+                            }
+                        }
+                        $inclusions[] = array(
+                                'Group' => 1,
+                                'LoaItem' => $group_items,
+                                'PackageLoaItemRel' => array('packageLoaItemRelId' => $i['PackageLoaItemRel']['packageLoaItemRelId'])
+                        );
+                    } 
+                }
+    
+                $roomNightDescription = str_replace("\n", '', $roomNightDescription);
+                $this->set('roomNightDescription', $roomNightDescription);
+                
+                $this->set('items', $inclusions);
+            }
         }
     }
     
@@ -1677,17 +1758,19 @@ class PackagesController extends AppController {
 
     function edit_room_nights($clientId, $packageId) {
         $package = $this->Package->getPackage($packageId);
+        $isMultiClientPackage = (count($package['ClientLoaPackageRel']) > 1)  ? true : false;
         if (!empty($this->data)) {
             $this->autoRender = false;
             //echo print_r($this->data);
             //die();
-            if ($errors = $this->validateRoomNights($this->data, $package['Package']['numNights'])) {
+            if ($errors = $this->validateRoomNights($this->data, $package['Package']['numNights'], $isMultiClientPackage)) {
                 echo json_encode($errors);
                 return;
             }
             else {
                 $saveModels = array('LoaItemRate', 'Fee', 'LoaItemDate');
                 foreach ($this->data as $i=>$ratePeriod) {
+                    $loaItems[] = $ratePeriod['LoaItems'];
                     if (key($ratePeriod) == 'taxesIncluded') {
                         $taxes = $package;
                         $taxes['Package']['isTaxIncluded'] = $this->data['Package']['taxesIncluded'];
@@ -1695,94 +1778,94 @@ class PackagesController extends AppController {
                         $this->Package->save($taxes);
                     }
                     else {
-                        if ($ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId'] == '0') {
-                            foreach($ratePeriod['LoaItems'] as $item) {
-                                $loaItemId = $item['LoaItem']['loaItemId'];
-                                break;
-                            }
-                            $ratePeriodId = $this->LoaItem->LoaItemRatePeriod->createFromPackage($loaItemId);
-                        }
-                        else {
-                            $ratePeriodId = $ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId'];
-                        }
-			
-                    foreach($saveModels as $model) {
-                        if ($model == 'LoaItemRate') {
-                            $rateIds = array();
-                            $query = "SELECT LoaItemRate.loaItemRateId, LoaItemRatePackageRel.loaItemRatePackageRelId
-                                  FROM loaItemRate LoaItemRate
-                                  INNER JOIN loaItemRatePackageRel LoaItemRatePackageRel USING (loaItemRateId)
-                                  WHERE LoaItemRatePackageRel.packageId = {$packageId} AND LoaItemRate.loaItemRatePeriodId = {$ratePeriodId}";
-                            if ($rates = $this->Package->query($query)) {
-                                foreach ($rates as $rate) {
-                                    $rateIds[$rate['LoaItemRate']['loaItemRateId']] = $rate['LoaItemRatePackageRel']['loaItemRatePackageRelId'];
-                                }
-                            }
-                            $this->Package->bindModel(array('hasMany' => array('LoaItemRate')));
-                            foreach ($ratePeriod['LoaItems'] as $item) {
-                                if (isset($item['LoaItemRate'])) {
-                                    foreach($item['LoaItemRate'] as &$rate) {
-                                        if (isset($rate['loaItemRateId'])) {
-                                            if (in_array($rate['loaItemRateId'], array_keys($rateIds))) {
-                                                unset($rateIds[$rate['loaItemRateId']]);
-                                            }
-                                        }
-                                        if (empty($rate['loaItemRatePeriodId'])) {
-                                            $rate['loaItemRatePeriodId'] = $ratePeriodId;
-                                        }
-                                    }
-                                    if ($this->Package->LoaItemRate->updateFromPackage($item['LoaItemRate'], $packageId, null)) {
-                                        continue;
+                        foreach($saveModels as $model) {
+                            if ($model == 'LoaItemRate') {
+                                $rateIds = array();
+                                $this->Package->bindModel(array('hasMany' => array('LoaItemRate')));
+                                foreach ($ratePeriod['LoaItems'] as $itemId => &$item) {
+                                    if ($ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId'] == '0') {
+                                        $loaItemId = $item['LoaItem']['loaItemId'];
+                                        $ratePeriodId = $this->LoaItem->LoaItemRatePeriod->createFromPackage($loaItemId);
                                     }
                                     else {
+                                        $ratePeriodId = $ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId'];
+                                    }
+                                    $query = "SELECT LoaItemRate.loaItemRateId, LoaItemRatePackageRel.loaItemRatePackageRelId
+                                              FROM loaItemRate LoaItemRate
+                                              INNER JOIN loaItemRatePackageRel LoaItemRatePackageRel USING (loaItemRateId)
+                                              WHERE LoaItemRatePackageRel.packageId = {$packageId} AND LoaItemRate.loaItemRatePeriodId = {$ratePeriodId}";
+                                    if ($rates = $this->Package->query($query)) {
+                                        foreach ($rates as $rate) {
+                                            $rateIds[$rate['LoaItemRate']['loaItemRateId']] = $rate['LoaItemRatePackageRel']['loaItemRatePackageRelId'];
+                                        }
+                                    }
+                                    if (isset($item['LoaItemRate'])) {
+                                        foreach($item['LoaItemRate'] as $j => &$rate) {
+                                            if (isset($rate['loaItemRateId'])) {
+                                                if (in_array($rate['loaItemRateId'], array_keys($rateIds))) {
+                                                    unset($rateIds[$rate['loaItemRateId']]);
+                                                }
+                                            }
+                                            if (empty($rate['loaItemRatePeriodId'])) {
+                                                $rate['loaItemRatePeriodId'] = $ratePeriodId;
+                                                $loaItems[0][$itemId]['LoaItemRate'][$j]['loaItemRatePeriodId'] = $ratePeriodId;
+                                            }
+                                        }
+                                        if (!$this->Package->LoaItemRate->updateFromPackage($item['LoaItemRate'], $packageId, null)) {
+                                            echo json_encode($this->Package->validationErrors);
+                                            return;
+                                        }
+                                    }
+                                }
+                                if (!empty($rateIds)) {
+                                    foreach ($rateIds as $loaItemRateId => $loaItemRatePackageRelId) {
+                                        $this->LoaItem->LoaItemRate->delete($loaItemRateId);
+                                        $this->LoaItem->LoaItemRate->LoaItemRatePackageRel->delete($loaItemRatePackageRelId);
+                                    }
+                                }
+                            }
+                            else {
+                                if (isset($ratePeriod[$model])) {
+                                    $this->Package->bindModel(array('hasMany' => array($model)));
+                                    $saved = $this->Package->$model->updateFromPackage($ratePeriod[$model], $loaItems[0], $packageId);
+                                    if (!$saved) {
                                         echo json_encode($this->Package->validationErrors);
                                         return;
                                     }
                                 }
                             }
-                            if (!empty($rateIds)) {
-                                foreach ($rateIds as $loaItemRateId => $loaItemRatePackageRelId) {
-                                    $this->LoaItem->LoaItemRate->delete($loaItemRateId);
-                                    $this->LoaItem->LoaItemRate->LoaItemRatePackageRel->delete($loaItemRatePackageRelId);
-                                }
-                            }
                         }
-                        else {
-                            if (isset($ratePeriod[$model])) {
-                                $this->Package->bindModel(array('hasMany' => array($model)));
-                                if ($this->Package->$model->updateFromPackage($ratePeriod[$model], $packageId, $ratePeriodId)) {
-                                    continue;
-                                }
-                                else {
-                                    echo json_encode($this->Package->validationErrors);
-                                    return;
-                                }
+                    }
+                }
+                $this->Package->updatePackagePricePointValidity($packageId);
+                echo 'ok';
+                }
+            }
+            else {
+                $this->set('package', $package);
+                $this->set('isMultiClientPackage', $isMultiClientPackage);
+                if ($roomNights = $this->LoaItem->getRoomNights($packageId)) {
+                    if (count($roomNights[0]['LoaItems'][0]['LoaItemRate']) > 1) {
+                        $this->set('isDailyRates', true);
+                    }
+                    if ($isMultiClientPackage) {
+                        foreach($roomNights as &$night) {
+                            foreach ($night['LoaItems'] as &$item) {
+                                $item['Client']['name'] = $this->LoaItem->getClientName($item['LoaItem']['loaItemId'], $packageId);
                             }
                         }
                     }
                 }
-            }
-            $this->Package->updatePackagePricePointValidity($packageId);
-            echo 'ok';
-            }
-        }
-        else {
-            $this->set('package', $package);
-            if ($roomNights = $this->LoaItem->getRoomNights($packageId)) {
-                if (count($roomNights[0]['LoaItems'][0]['LoaItemRate']) > 1) {
-                    $this->set('isDailyRates', true);
+                else {
+                    $roomNights = array();
                 }
+                //debug($roomNights);
+                //die();
+                $this->set('ratePeriods', $roomNights);
             }
-            else {
-                $roomNights = array();
-            }
-            //echo print_r($roomNights);
-            //die();
-            $this->set('ratePeriods', $roomNights);
-        }
     }
     
-    function validateRoomNights($data, $packageNumNights) {
+    function validateRoomNights($data, $packageNumNights, $isMultiClientPackage) {
         $errors = array();
         $dateRanges = array();
         foreach ($data as $i => $night) {
@@ -1805,14 +1888,14 @@ class PackagesController extends AppController {
                     }
                 }
             }
-            if ($i == 0) {
+            if ($i == 0 || $isMultiClientPackage) {
+                $numNights = 0;
                 foreach ($night['LoaItems'] as $item) {
-                    $numNights = 0;
                     foreach($item['LoaItemRate'] as $j => $rate) {
                         if (isset($rate['isNew']) && (empty($rate['price']) || $rate['price'] == '')) {
                             $errors[] = 'Each rate period must have a price.';
                         }
-                        if ($item['LoaItem']['loaItemTypeId'] == 1) {
+                        if ($item['LoaItem']['loaItemTypeId'] == 1 || $isMultiClientPackage) {
                             if (empty($rate['LoaItemRatePackageRel']['numNights']) && $rate['LoaItemRatePackageRel']['numNights'] != '0') {
                                 $errors[] = 'Number of nights must be filled in for each rate period.';
                             }
@@ -1823,9 +1906,9 @@ class PackagesController extends AppController {
                         }
                     }
                 }
-                if ($numNights != $packageNumNights) {
+            }
+            if (($i == 0 || $isMultiClientPackage) && $numNights != $packageNumNights) {
                     $errors[] = 'The quantity of the room night item(s) associated to this package must match the Total Nights set for the package.';
-                }
             }
         }
         if (!empty($dateRanges)) {
@@ -1846,6 +1929,8 @@ class PackagesController extends AppController {
     }
     
     function edit_low_price_guarantees($clientId, $packageId) {
+        $package = $this->Package->getPackage($packageId);
+        $isMultiClientPackage = (count($package['ClientLoaPackageRel']) > 1) ? true : false;
         if (!empty($this->data)) {
             $this->autoRender = false;
             foreach ($this->data['LoaItemRatePackageRel'] as $loaItemRatePackageRelId => $guaranteePercentRetail) {
@@ -1859,6 +1944,7 @@ class PackagesController extends AppController {
         } else {
             $ratePeriods = $this->getRatePeriodsInfo($packageId);
             $this->set('ratePeriods', $ratePeriods);
+            $this->set('isMultiClientPackage', $isMultiClientPackage);
         }
     }
     
@@ -1961,8 +2047,12 @@ class PackagesController extends AppController {
             }
             $this->set('loaItemRatePeriodIds', $loaItemRatePeriodIds);
             
-			$this->Package->recursive = -1;
-			$package = $this->Package->read(null, $packageId);
+			//$this->Package->recursive = -1;
+			//$package = $this->Package->read(null, $packageId);
+            
+            $package = $this->Package->getPackage($packageId);
+            $isMultiClientPackage = (count($package['ClientLoaPackageRel']) > 1) ? true : false;
+            $this->set('isMultiClientPackage', $isMultiClientPackage);
 
 			if (isset($package['Package']['overrideValidityDisclaimer']) && $package['Package']['overrideValidityDisclaimer'] == 1) {
 				$this->set('overrideValidityDisclaimer', 1);
@@ -1976,7 +2066,7 @@ class PackagesController extends AppController {
 			$this->set('isEdit', $pricePointId);
 
             $ratePeriods = $this->getRatePeriodsInfo($packageId);
-                        
+            
             // disable ratePeriods that have already been used
             $pricePointRatePeriods = $this->Package->PricePoint->getLoaItemRatePeriod($packageId);
             foreach ($ratePeriods as $key => $ratePeriod) {
@@ -2014,6 +2104,7 @@ class PackagesController extends AppController {
 		echo $this->Package->getValidityDisclaimerText($packageId, $dates['minStartDate'], $dates['maxEndDate'], $ids_string);
 	}
     
+    //acarney 2010-11-08 -- may be deprecated... does not appear to be called anywhere
     function getRoomTypes($packageId) {
         $this->autoRender = false;
         $roomLoaItems = $this->LoaItem->getRoomTypesByLoa($packageId);
@@ -2174,33 +2265,57 @@ class PackagesController extends AppController {
     function getRatePeriodsInfo($packageId) {
         // package
         $package = $this->Package->getPackage($packageId);
+        $isMultiClientPackage = (count($package['ClientLoaPackageRel']) > 1) ? true : false;
         
         // currency
         $currency = $this->Package->getCurrency($packageId);
 
-        // loaItems
-        $loaItems = $this->Package->getLoaItems($packageId);
-        $this->set('loaItems', $loaItems);
-        
-        // get total for inclusion
-        $inclusionTotal = 0;
-        foreach ($loaItems as $loaItem) {
-            if (isset($loaItem['LoaItem']['itemBasePrice'])) {
-                $taxes = $this->Package->getTaxes($loaItem['PackageLoaItemRel']['loaItemId']);
-                if ($loaItem['LoaItem']['loaItemTypeId'] == 5) {
-                    $total = $loaItem['LoaItem']['itemBasePrice'] * $loaItem['PackageLoaItemRel']['quantity'];
-                    $inclusionTotal += $total + ($total * $taxes['percent'] / 100) + $taxes['fixed']; // add taxes
-                } elseif (!in_array($loaItem['LoaItem']['loaItemTypeId'], array(1, 12))) {
-                    $total = $loaItem['LoaItem']['itemBasePrice'] * $loaItem['PackageLoaItemRel']['quantity'];
-                    $inclusionTotal += $total + ($total * $taxes['percent'] / 100) + $taxes['fixed']; // add taxes
+        $totals = array();
+        foreach ($package['ClientLoaPackageRel'] as $packageClient) {
+            $loaItems = $this->Package->getLoaItems($packageId, $packageClient['ClientLoaPackageRel']['clientId']);
+            // get total for inclusion
+            $inclusionTotal = 0;
+            $total = 0;
+            foreach ($loaItems as $loaItem) {
+                if (isset($loaItem['LoaItem']['itemBasePrice'])) {
+                    $taxes = $this->Package->getTaxes($loaItem['PackageLoaItemRel']['loaItemId']);
+                    if ($loaItem['LoaItem']['loaItemTypeId'] == 5) {
+                        $total = $loaItem['LoaItem']['itemBasePrice'] * $loaItem['PackageLoaItemRel']['quantity'];
+                        $inclusionTotal += $total + ($total * $taxes['percent'] / 100) + $taxes['fixed']; // add taxes
+                    } elseif (!in_array($loaItem['LoaItem']['loaItemTypeId'], array(1, 12, 22))) {
+                        $total = $loaItem['LoaItem']['itemBasePrice'] * $loaItem['PackageLoaItemRel']['quantity'];
+                        $inclusionTotal += $total + ($total * $taxes['percent'] / 100) + $taxes['fixed']; // add taxes
+                    }
                 }
             }
+            $totals[$packageClient['Client']['name']] = array('inclusionTotal' => $inclusionTotal);
         }
+
+        //delete following code after QA -- acarney 2010-11-19
+        // loaItems -- why are we setting loaItems here???
+        //$loaItems = $this->Package->getLoaItems($packageId);
+        //$this->set('loaItems', $loaItems);
         
+        // get total for inclusion
+        //$inclusionTotal = 0;
+        //foreach ($loaItems as $loaItem) {
+        //    if (isset($loaItem['LoaItem']['itemBasePrice'])) {
+        //        $taxes = $this->Package->getTaxes($loaItem['PackageLoaItemRel']['loaItemId']);
+        //        if ($loaItem['LoaItem']['loaItemTypeId'] == 5) {
+        //            $total = $loaItem['LoaItem']['itemBasePrice'] * $loaItem['PackageLoaItemRel']['quantity'];
+        //            $inclusionTotal += $total + ($total * $taxes['percent'] / 100) + $taxes['fixed']; // add taxes
+        //        } elseif (!in_array($loaItem['LoaItem']['loaItemTypeId'], array(1, 12, 22))) {
+        //            $total = $loaItem['LoaItem']['itemBasePrice'] * $loaItem['PackageLoaItemRel']['quantity'];
+        //            $inclusionTotal += $total + ($total * $taxes['percent'] / 100) + $taxes['fixed']; // add taxes
+        //        }
+        //    }
+        //}
+
         // ratePeriod
         $ratePeriods = $this->Package->getRatePeriods($packageId);
         if (!empty($ratePeriods)) {
             foreach ($ratePeriods as $key => $ratePeriod) {
+                $clientName = $this->LoaItem->getClientName($ratePeriod['LoaItemRatePeriod']['loaItemId'], $packageId);
                 // get dates
                 $loaItemDates = $this->Package->getLoaItemDates($ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId']);
                 $loaDates = array();
@@ -2210,7 +2325,7 @@ class PackagesController extends AppController {
                 
                 // get room rate
                 $total = $this->Package->getRoomRate($ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId'], $packageId);
-                $startPrice = ($total + $inclusionTotal) * $ratePeriod['LoaItemRatePackageRel']['guaranteePercentRetail'] / 100;
+                $startPrice = ($total + $totals[$clientName]['inclusionTotal']) * $ratePeriod['LoaItemRatePackageRel']['guaranteePercentRetail'] / 100;
                 
                 // assign new fields
                 $ratePeriods[$key]['packageId'] = $packageId;
@@ -2218,9 +2333,10 @@ class PackagesController extends AppController {
                 $ratePeriods[$key]['weeklyExchangeRateToDollar'] = $currency['CurrencyExchangeRate']['weeklyExchangeRateToDollar'];
                 $ratePeriods[$key]['dateRanges'] = implode('<br/>', $loaDates);
                 $ratePeriods[$key]['startPrice'] = round($startPrice);
-                $ratePeriods[$key]['retailValue'] = round($total + $inclusionTotal);
+                $ratePeriods[$key]['retailValue'] = round($total + $totals[$clientName]['inclusionTotal']);
                 $ratePeriods[$key]['usdStartPrice'] = ($currency['Currency']['currencyId'] == 1) ? '' : "$(" . round($startPrice * $currency['CurrencyExchangeRate']['weeklyExchangeRateToDollar']) . ")";
                 $ratePeriods[$key]['usdRetailValue'] = ($currency['Currency']['currencyId'] == 1) ? '' : "($" . round($total * $currency['CurrencyExchangeRate']['weeklyExchangeRateToDollar']) . ")";
+                $ratePeriods[$key]['clientName'] = $clientName;
             }
         }
         return $ratePeriods;

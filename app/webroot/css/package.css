@@ -384,3 +384,9 @@ span.room-night-header {
 #price-points tr.alt {
     background: #FAFAFA !important;
 }
+
+div.combo-client-name {
+    margin-top:14px;
+    color:#7F0000;
+    font-weight: bold;
+}

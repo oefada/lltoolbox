@@ -292,13 +292,18 @@ class Package extends AppModel {
     
     function getPackage($packageId) {
         $query = "SELECT * FROM package Package
-                    INNER JOIN clientLoaPackageRel ClientLoaPackageRel USING (packageId)
+                    INNER JOIN clientLoaPackageRel ClientLoaPackageRel using (packageId)
                     LEFT JOIN packageAgeRange PackageAgeRange USING (packageId)
                     INNER JOIN packageStatus PackageStatus USING (packageStatusId)
                     LEFT JOIN loa Loa ON ClientLoaPackageRel.loaId = Loa.loaId
                     LEFT JOIN currency Currency ON Package.currencyId  = Currency.currencyId
                     WHERE Package.packageId = {$packageId}";
         if ($package = $this->query($query)) {
+            $clientsQuery = "SELECT *, Client.name FROM clientLoaPackageRel ClientLoaPackageRel
+                             INNER JOIN client Client USING (clientId)
+                             WHERE ClientLoaPackageRel.packageId = {$packageId}";
+            $packageClients = $this->query($clientsQuery);
+            $package[0]['ClientLoaPackageRel'] = $packageClients;
             $package[0]['Package']['sites'] = explode(',', $package[0]['Package']['sites']);
             $package[0]['Loa']['sites'] = explode(',', $package[0]['Loa']['sites']);
             return $package[0];
@@ -317,9 +322,9 @@ class Package extends AppModel {
         $this->contain(array_keys($logableModels));
         $package = $this->find('first', array('conditions' => array('Package.packageId' => $packageId)));
         $queries = array();
-        $queries[0] = "(SELECT History.description, History.action, History.samaccountname, History.change, History.created AS historyCreated
-                       FROM logs History
-                       WHERE model ='Package' AND model_id = {$packageId})";
+        $queries[0] = "(SELECT `description`, `action`, `samaccountname`, `change`, `created` AS historyCreated
+                       FROM `logs` 
+                       WHERE `model` ='Package' AND `model_id` = {$packageId})";
         foreach ($logableModels as $modelName => $tableName) {
             $ids = array();
             if (!empty($package[$modelName])) {
@@ -327,24 +332,24 @@ class Package extends AppModel {
                     $ids[] = $record[$this->$modelName->primaryKey];
                 }
                 $modelIds = implode(',', $ids);
-                $queries[] = "(SELECT History.description, History.action, History.samaccountname, History.change, History.created
-                              FROM logs History
-                              WHERE model ='{$modelName}' AND model_id IN ({$modelIds}))";
+                $queries[] = "(SELECT `description`, `action`, `samaccountname`, `change`, `created`
+                              FROM `logs` 
+                              WHERE `model` ='{$modelName}' AND `model_id` IN ({$modelIds}))";
             }
         }
         $query = implode(' UNION ', $queries);
         $query .= ' ORDER BY historyCreated DESC';
-        
+
         $historyDesc = array();
         if ($history = $this->query($query)) {
             foreach($history as $update) {
-                $historyDate = date('M j Y g:i A', strtotime($update[0]['historyCreated']));
-                switch ($update[0]['action']) {
+                $historyDate = date('M j Y g:i A', strtotime($update[key($update)]['historyCreated']));
+                switch ($update[key($update)]['action']) {
                     case 'add':
-                        $historyStr = "{$historyDate} - {$update[0]['samaccountname']} -- Created";
+                        $historyStr = "{$historyDate} - {$update[key($update)]['samaccountname']} -- Created";
                         break;
                     case 'edit':
-                        if (preg_match('/packageStatusId \([0-9]*\) => \(([0-9]+)\)/', $update[0]['change'], $matches)) {
+                        if (preg_match('/packageStatusId \([0-9]*\) => \(([0-9]+)\)/', $update[key($update)]['change'], $matches)) {
                             $statusId = end($matches);
                             if ($statusId) {
                                 $statusName = $this->PackageStatus->field('packageStatusName', array('packageStatusId' => $statusId));
@@ -354,7 +359,7 @@ class Package extends AppModel {
                         else {
                             $updateStr = 'Updated';
                         }
-                        $historyStr = "{$historyDate} - {$update[0]['samaccountname']} -- {$updateStr}";
+                        $historyStr = "{$historyDate} - {$update[key($update)]['samaccountname']} -- {$updateStr}";
                         break;
                     default:
                         $historyStr = '';
@@ -475,7 +480,7 @@ class Package extends AppModel {
 		} else {
 			$html = "<b>This package is valid for travel:</b><br><br>";
 		}
-		
+        
 		// populate html with valid ranges
 		if (!empty($dates['ValidRanges'])) {
 			$this->connectValidDateRanges($dates['ValidRanges']);
@@ -787,12 +792,18 @@ class Package extends AppModel {
 	//  =====================================================================
     
 
-	function getLoaItems($packageId) {
-        return $this->query("
+	function getLoaItems($packageId, $clientId=null) {
+        $query = "
             SELECT * FROM packageLoaItemRel PackageLoaItemRel
             INNER JOIN loaItem LoaItem USING(loaItemId)
-            WHERE packageId = $packageId;
-        ");
+        ";
+        $where = "PackageLoaItemRel.packageId = {$packageId}";
+        if ($clientId) {
+            $query .= "INNER JOIN clientLoaPackageRel ClientLoaPackageRel USING (packageId)";
+            $where .= " AND ClientLoaPackageRel.clientId = {$clientId}";
+        }
+        $query .= " WHERE {$where}";
+        return $this->query($query);
     }
 	
 	function getInclusions($packageId) {
@@ -804,7 +815,7 @@ class Package extends AppModel {
     }
 
     function getCurrency($packageId) {
-        $currency = $this->query("
+        if ($currency = $this->query("
             SELECT Currency.*, CurrencyExchangeRate.*
             FROM package
             INNER JOIN currency Currency USING(currencyId)
@@ -812,8 +823,9 @@ class Package extends AppModel {
             WHERE packageId = $packageId
             ORDER BY asOfDateTime DESC
             LIMIT 1
-        ");
-        return $currency[0];
+            ")) {
+            return $currency[0];
+        }
     }
     
     function getTaxes($loaItemId) {

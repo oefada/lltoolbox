@@ -3,7 +3,8 @@
       $feeDefaults = array('Taxes' => 1, 'Service Charges' => 1, 'Resort Fees' => 2);
       
       $newRate = false;
-      $editItem = (isset($_GET['isNewItem']));
+      $isMultiClientPackage = (count($package['ClientLoaPackageRel']) > 1) ? true : false;
+      $editItem = (isset($_GET['isNewItem']) || $isMultiClientPackage);
 ?>
 
 <table class="room-night">
@@ -18,7 +19,7 @@
                                     <td width="135">Room Type</td>
                                     <td colspan="2">
                                        <input type="hidden" name="data[<?php echo $i; ?>][LoaItemRatePeriod][loaItemRatePeriodId]" value="<?php echo $item['LoaItemRatePeriod']['loaItemRatePeriodId']; ?>" />
-                                       <span class="roomTypeReadOnly"><?php echo $item['LoaItem']['itemName']; ?></span>
+                                       <span class="roomTypeReadOnly"><?php if ($isMultiClientPackage) echo $item['Client']['name'].'<br />'; ?><?php echo $item['LoaItem']['itemName']; ?></span>
                                        <input type="hidden" class="roomTypeId" name="data[<?php echo $i; ?>][LoaItems][<?php echo $item['LoaItem']['loaItemId']; ?>][LoaItem][loaItemId]" value="<?php echo $item['LoaItem']['loaItemId']; ?>" />
                                        <input type="hidden" name="data[<?php echo $i; ?>][LoaItems][<?php echo $item['LoaItem']['loaItemId']; ?>][LoaItem][loaItemTypeId]" value="<?php echo $item['LoaItem']['loaItemTypeId']; ?>" />
                                        <?php if ($editItem): ?>
@@ -96,7 +97,7 @@
                                                         <td>
                                                             <?php if ($i == 0 || $editItem): ?>
                                                             <?php $numNights = (isset($rateItem['LoaItemRatePackageRel']['numNights']) && $item['LoaItem']['loaItemTypeId'] == 1) ? $rateItem['LoaItemRatePackageRel']['numNights'] : $package['Package']['numNights']; ?>
-                                                                    <?php if (count($item['LoaItemRate']) > 1): ?>
+                                                                    <?php if (count($item['LoaItemRate']) > 1 || $isMultiClientPackage): ?>
                                                                         <span class="numNights-rate<?php echo $j+1; ?> numNights" style="display:none"><?php echo $numNights; ?></span>
                                                                         <input type="text" size="5" class="weekdaysInput numNights" id="input-numNights-rate<?php echo $j+1; ?>" name="data[<?php echo $i; ?>][LoaItems][<?php echo $item['LoaItem']['loaItemId'];?>][LoaItemRate][<?php echo $j; ?>][LoaItemRatePackageRel][numNights]" value="<?php echo $rateItem['LoaItemRatePackageRel']['numNights']; ?>" />
                                                                     <?php else: ?>
@@ -152,7 +153,7 @@
                                     </tr>
                                 <?php endif; ?>
                             <?php endforeach; ?>
-                            <?php if ($editItem && !$existingRate): ?>
+                            <?php if ($editItem && !$isMultiClientPackage && !$existingRate): ?>
                                 <tr>
                                     <td colspan="3" class="rateOption">
                                         <?php if (isset($isDailyRates)): ?>

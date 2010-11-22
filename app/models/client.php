@@ -488,6 +488,22 @@ class Client extends AppModel {
 		 }
 	  }
    }
+   
+   function searchClients($searchTerm) {
+        $query = "SELECT Client.clientId,
+                         Client.name,
+                         ClientLevel.loaLevelName AS clientLevelName,
+                         ClientType.clientTypeName
+                  FROM client Client
+                  LEFT JOIN clientLoaPackageRel ClientLoaPackageRel ON Client.clientId = ClientLoaPackageRel.clientId
+                  INNER JOIN loa Loa USING (loaId) 
+                  INNER JOIN loaLevel AS ClientLevel USING (loaLevelId)  
+                  INNER JOIN clientType ClientType ON Client.clientTypeId = ClientType.clientTypeId
+                  WHERE LOWER(Client.name) LIKE '%{$searchTerm}%'
+                  AND ClientLoaPackageRel.clientLoaPackageRelId IS NOT NULL
+                  GROUP BY ClientLoaPackageRel.clientId";
+        return $this->query($query);
+   }
 
 }
 ?>

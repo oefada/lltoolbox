@@ -1,5 +1,7 @@
 <?php
     $this->layout = 'default_jquery';
+    //debug($package);
+    //die();
 ?>
 <script type="text/javascript">
     var clientId = <?php echo $clientId; ?>;
@@ -10,16 +12,23 @@
 
 
 
-<h1><?php echo $client['Client']['name'] . ' (' . $client['Client']['clientId'] . ')'; ?></h1><br /><br />
+<?php foreach ($package['ClientLoaPackageRel'] as $c) {
+        echo '<h2>'.$c['Client']['name'] . ' (' . $c['ClientLoaPackageRel']['clientId'] . ')</h2>';
+        if (count($package['ClientLoaPackageRel']) > 1) { 
+            echo '<strong>Client LOA:</strong> <a href="/loas/edit/'.$c['ClientLoaPackageRel']['loaId'].'" target="_blank">'.$c['ClientLoaPackageRel']['loaId'].'</a><br />';
+            echo '<strong>Percent of Revenue:</strong> '.$c['ClientLoaPackageRel']['percentOfRevenue'].'<br /><br />';
+        }
+    }?>
+<br /><br />
 <h2>Summary for Package: <?php echo $package['Package']['packageName']; ?></h2>
 <div class="summary-navigation">Jump to: <a href="#packageForm">Package Info</a> | <a href="#roomNightsForm">Room Nights</a> | <a href="#edit_blackout">Validity</a> | <a href="#inclusionsForm">LOA Items</a> | <a href="#form-low-price-guarantees">Low Price Guarantees</a> | <a href="#form-price-points">Price Points</a> | <a href="#edit_publishing">Publishing</a></div>
 
 <!-- SOME BUTTONS ====================================================================-->
 <div class="section-header">
 <div style="text-align:right;position:absolute;right:0px;">
-	<?=$html->link('<span>Export</span>', "/clients/{$package['ClientLoaPackageRel']['clientId']}/packages/export/{$package['Package']['packageId']}", array('target' => '_blank', 'class' => 'button'), null, false)?>
-	<?=$html->link('<span>Clone</span>', "/clients/{$package['ClientLoaPackageRel']['clientId']}/packages/clone_package/{$package['Package']['packageId']}", array('target' => '_blank', 'class' => 'button'), null, false)?>
-	<?=$html->link('<span>Send for Publishing</span>', "/clients/{$package['ClientLoaPackageRel']['clientId']}/packages/send_for_merch_approval/{$package['Package']['packageId']}", array('target' => '_blank', 'class' => 'button'), null, false)?>
+	<?=$html->link('<span>Export</span>', "/clients/{$package['Loa']['clientId']}/packages/export/{$package['Package']['packageId']}", array('target' => '_blank', 'class' => 'button'), null, false)?>
+	<?=$html->link('<span>Clone</span>', "/clients/{$package['Loa']['clientId']}/packages/clone_package/{$package['Package']['packageId']}", array('target' => '_blank', 'class' => 'button'), null, false)?>
+	<?=$html->link('<span>Send for Publishing</span>', "/clients/{$package['Loa']['clientId']}/packages/send_for_merch_approval/{$package['Package']['packageId']}", array('target' => '_blank', 'class' => 'button'), null, false)?>
 	<div style="clear:both;"></div>
 </div>
 </div>
@@ -35,7 +44,7 @@
     </tr>
     <tr>
        <th>LOA</th>
-       <td>LOA ID <?php echo $package['ClientLoaPackageRel']['loaId'] ?>, <?php echo date('M j, Y', strtotime($package['Loa']['startDate'])); ?> - <?php echo date('M j, Y', strtotime($package['Loa']['endDate'])); ?></td>
+       <td>LOA ID <?php echo $package['Loa']['loaId'] ?>, <?php echo date('M j, Y', strtotime($package['Loa']['startDate'])); ?> - <?php echo date('M j, Y', strtotime($package['Loa']['endDate'])); ?></td>
     </tr>
     <tr class="odd">
        <th>LOA Sites</th>
@@ -95,7 +104,7 @@
     </tr>
     <tr>
         <th>Currency</th>
-        <td><?php echo $currencyCodes[$package['Package']['currencyId']]; ?></td>
+        <td><?php if (!empty($package['Package']['currencyId'])) echo $currencyCodes[$package['Package']['currencyId']]; ?></td>
     </tr>
     <tr class="odd">
         <th>Rate Disclaimer</th>
@@ -139,65 +148,66 @@
         $roomLabel = array();
 ?>
 <a name="roomNightsForm"><div class="section-header"><div class="section-title">Room Nights</div><div class="edit-link" name="<?php echo $linkName; ?>" title="<?php echo $linkTitle; ?>"><?php echo $linkTitle; ?></div></div></a>
-
-<?php foreach ($ratePeriods as $i => $ratePeriod): ?>
-    <table class="package-summary room-night">
-        <tr class="odd">
-                <th>Room Type</th>
-                <td><?php foreach ($ratePeriod['LoaItems'] as $loaItem): ?>
-                        <?php if (!in_array($loaItem['LoaItem']['itemName'], $roomLabel)) {
-                                $roomLabel[] = $loaItem['LoaItem']['itemName'];
+<?php if (!empty($ratePeriods)): ?>
+    <?php foreach ($ratePeriods as $i => $ratePeriod): ?>
+        <table class="package-summary room-night">
+            <tr class="odd">
+                    <th>Room Type</th>
+                    <td><?php foreach ($ratePeriod['LoaItems'] as $loaItem): ?>
+                            <?php if (!in_array($loaItem['LoaItem']['itemName'], $roomLabel)) {
+                                    $roomLabel[] = $loaItem['LoaItem']['itemName'];
+                                    }
+                            ?>
+                            <b><?php echo $loaItem['LoaItem']['itemName']; ?></b>:
+                            <?php foreach ($loaItem['LoaItemRate'] as $j => $rate): ?>
+                                <div><?php echo (isset($ratePeriods[0]['LoaItems'][0]['LoaItemRate'][$j]['LoaItemRate']['rateLabel'])) ? $ratePeriods[0]['LoaItems'][0]['LoaItemRate'][$j]['LoaItemRate']['rateLabel'].' Rate: ' : ''; ?> <?php echo $package['Currency']['currencyCode']; ?> <?php echo round($rate['LoaItemRate']['price'], 2); ?>
+                                <?php if ($loaItem['LoaItem']['loaItemTypeId'] == 12) {
+                                        $isPrepackagedRoom = true;
+                                        echo ' for '.$package['Package']['numNights'].' nights';
                                 }
-                        ?>
-                        <b><?php echo $loaItem['LoaItem']['itemName']; ?></b>:
-                        <?php foreach ($loaItem['LoaItemRate'] as $j => $rate): ?>
-                            <div><?php echo (isset($ratePeriods[0]['LoaItems'][0]['LoaItemRate'][$j]['LoaItemRate']['rateLabel'])) ? $ratePeriods[0]['LoaItems'][0]['LoaItemRate'][$j]['LoaItemRate']['rateLabel'].' Rate: ' : ''; ?> <?php echo $package['Currency']['currencyCode']; ?> <?php echo round($rate['LoaItemRate']['price'], 2); ?>
-                            <?php if ($loaItem['LoaItem']['loaItemTypeId'] == 12) {
-                                    $isPrepackagedRoom = true;
-                                    echo ' for '.$package['Package']['numNights'].' nights';
-                            }
-                            else {
-                                    $isPrepackagedRoom = false;
-                                    echo ' x '.$rate['LoaItemRatePackageRel']['numNights']. ' nights';
-                            } ?>
-                            </div>
+                                else {
+                                        $isPrepackagedRoom = false;
+                                        echo ' x '.$rate['LoaItemRatePackageRel']['numNights']. ' nights';
+                                } ?>
+                                </div>
+                            <?php endforeach; ?>
+                            <?php if (count($ratePeriod['LoaItems'] > 1) && $loaItem !== $ratePeriod['LoaItems'][count($ratePeriod['LoaItems'])-1]): ?>
+                                <br />
+                            <?php endif; ?>
                         <?php endforeach; ?>
-                        <?php if (count($ratePeriod['LoaItems'] > 1) && $loaItem !== $ratePeriod['LoaItems'][count($ratePeriod['LoaItems'])-1]): ?>
-                            <br />
-                        <?php endif; ?>
+                    </td>
+            </tr>
+            <?php foreach($ratePeriod['Fees'] as $j => $fee): ?>
+                    <?php $class = ($j % 2 > 0) ? ' class="odd"' : ''; ?>
+                    <?php if ($fee['Fee']['feeTypeId'] == 1) {
+                                $feeDisplay = $fee['Fee']['feePercent'].'%';
+                            }
+                            elseif ($fee['Fee']['feeTypeId'] == 2) {
+                                $feeDisplay = $package['Currency']['currencyCode'].' '.$fee['Fee']['feePercent'];
+                            } ?>
+                    <tr<?php echo $class; ?>>
+                        <th><?php echo $fee['Fee']['feeName']; ?></th>
+                        <td><?php echo $feeDisplay; ?></td>
+                    </tr>
+            <?php endforeach; ?>
+            <?php $class = (empty($class)) ? ' class="odd"' : ''; ?>
+            <tr<?php echo $class; ?>>
+                <th>Validity</th>
+                <td>
+                    <?php foreach($ratePeriod['Validity'] as $index => $range): ?>
+                            <?php echo date('M j Y', strtotime($range['LoaItemDate']['startDate'])); ?> - 
+                            <?php echo date('M j Y', strtotime($range['LoaItemDate']['endDate'])); ?><br />
                     <?php endforeach; ?>
                 </td>
-        </tr>
-        <?php foreach($ratePeriod['Fees'] as $j => $fee): ?>
-                <?php $class = ($j % 2 > 0) ? ' class="odd"' : ''; ?>
-                <?php if ($fee['Fee']['feeTypeId'] == 1) {
-                            $feeDisplay = $fee['Fee']['feePercent'].'%';
-                        }
-                        elseif ($fee['Fee']['feeTypeId'] == 2) {
-                            $feeDisplay = $package['Currency']['currencyCode'].' '.$fee['Fee']['feePercent'];
-                        } ?>
-                <tr<?php echo $class; ?>>
-                    <th><?php echo $fee['Fee']['feeName']; ?></th>
-                    <td><?php echo $feeDisplay; ?></td>
-                </tr>
-        <?php endforeach; ?>
-        <?php $class = (empty($class)) ? ' class="odd"' : ''; ?>
-        <tr<?php echo $class; ?>>
-            <th>Validity</th>
-            <td>
-                <?php foreach($ratePeriod['Validity'] as $index => $range): ?>
-                        <?php echo date('M j Y', strtotime($range['LoaItemDate']['startDate'])); ?> - 
-                        <?php echo date('M j Y', strtotime($range['LoaItemDate']['endDate'])); ?><br />
-                <?php endforeach; ?>
-            </td>
-        </tr>
-        <?php $class = (empty($class)) ? ' class="odd"' : ''; ?>
-        <tr<?php echo $class; ?>>
-            <th>Total Accommodations</th>
-            <td><b><?php echo $package['Currency']['currencyCode']; ?> <?php echo number_format($ratePeriod['Totals']['totalAccommodations'], 2); ?></b></td>
-        </tr>
-    </table>
-<?php endforeach; ?>
+            </tr>
+            <?php $class = (empty($class)) ? ' class="odd"' : ''; ?>
+            <tr<?php echo $class; ?>>
+                <th>Total Accommodations</th>
+                <td><b><?php echo $package['Currency']['currencyCode']; ?> <?php echo number_format($ratePeriod['Totals']['totalAccommodations'], 2); ?></b></td>
+            </tr>
+        </table>
+    <?php endforeach; ?>
+<?php endif; ?>
 
 <!-- VALIDITY ==============================================================================-->
 <?php
@@ -238,64 +248,79 @@ $linkTitle = 'Edit Blackout Dates';
 
 <!-- INCLUSIONS ==============================================================================-->
 <a name="inclusionsForm"><div class="section-header"><div class="section-title">LOA Items (Inclusions)</div><div class="edit-link" name="edit_inclusions" title="Edit Inclusions">Edit Inclusions</div></div></a>
-<table class="inclusions-summary">
-    <tr>
-        <th width="500">&nbsp;</th>
-        <th>Inclusion Type</th>
-        <th class="per-night">Price Per Night</th>
-        <th>Total</th>
-    </tr>
-    <?php if (!empty($roomLabel) && !($isPrepackagedRoom)): ?>
-        <tr class="odd">
-            <td class="item-name" colspan="4">
-                <?php echo $package['Package']['numNights']; ?> nights in <?php echo implode(' and ', $roomLabel); ?>
-            </td>
-        </tr>
-    <?php endif; ?>
-    <?php foreach ($inclusions as $i => $inclusion): ?>
-            <?php $class = ($i % 2 > 0) ? ' class="odd"' : ''; ?>
-            <tr<?php echo $class; ?>>
-                <td class="item-name">
-                <?php if (in_array($inclusion['LoaItem']['loaItemTypeId'], array(12,13,14)) && !empty($inclusion['LoaItem']['PackagedItems'])): ?>
-                    <b><?php echo $inclusion['LoaItem']['itemName']; ?></b>
+<?php foreach($package['ClientLoaPackageRel'] as $packageClient): ?>
+    <table class="inclusions-summary">
+        <tr>
+            <th width="500">
+                <?php if (count($package['ClientLoaPackageRel']) > 1): ?>
+                        <div class="combo-client-name"><?php echo $packageClient['Client']['name']; ?></div>
                 <?php else: ?>
-                    <?php echo $inclusion['LoaItem']['itemName']; ?>
+                    &nbsp;
                 <?php endif; ?>
-                </td>
-                <td><?php echo $inclusion['LoaItemType']['loaItemTypeName']; ?></td>
-                <td class="per-night">
-                    <span class="per-night-price"><?php echo ($inclusion['LoaItem']['loaItemTypeId'] == 5) ? $currencyCodes[$inclusion['LoaItem']['currencyId']].' '.$inclusion['LoaItem']['itemBasePrice'].'  <span id="per-night-multiplier"> x '.$inclusion['PackageLoaItemRel']['quantity'].'</span>' : '&nbsp;'; ?></span>
-                </td>
-                <td><?php echo $currencyCodes[$inclusion['LoaItem']['currencyId']]; ?>
-                    <?php echo ($inclusion['LoaItem']['loaItemTypeId'] == 5) ? round($inclusion['LoaItem']['totalPrice'] * $inclusion['PackageLoaItemRel']['quantity'], 2) : round($inclusion['LoaItem']['totalPrice'], 2); ?>
-                    <?php if ($inclusion['LoaItem']['totalPrice'] > $inclusion['LoaItem']['itemBasePrice']): ?>
-                            <br />(Taxes Incl.)
+            </th>
+            <th>Inclusion Type</th>
+            <th class="per-night">Price Per Night</th>
+            <th>Total</th>
+        </tr>
+        <?php if (!empty($roomLabel) && !($isPrepackagedRoom)): ?>
+            <tr class="odd">
+                <td class="item-name" colspan="4">
+                    <?php if ($isMultiClientPackage): ?>
+                        <?php foreach ($ratePeriods[0]['LoaItems'] as $item): ?>
+                            <?php if ($item['LoaItem']['loaId'] == $packageClient['ClientLoaPackageRel']['loaId']): ?>
+                                    <?php echo $item['LoaItemRate'][0]['LoaItemRatePackageRel']['numNights']; ?> nights in <?php echo $item['LoaItem']['itemName']; ?>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <?php echo $package['Package']['numNights']; ?> nights in <?php echo implode(' and ', $roomLabel); ?>
                     <?php endif; ?>
                 </td>
             </tr>
-            <?php if (in_array($inclusion['LoaItem']['loaItemTypeId'], array(12,13,14)) && !empty($inclusion['LoaItem']['PackagedItems'])): ?>
-                    <?php foreach ($inclusion['LoaItem']['PackagedItems'] as $item): ?>
-                            <tr<?php echo $class; ?>>
-                                <td class="item-name prepackaged">
-                                    <ul>
-                                        <li><?php echo $item['LoaItem']['itemName']; ?></li>
-                                    </ul>
-                                </td>
-                                <td><?php echo $item['LoaItemType']['loaItemTypeName']; ?></td>
-                                <td>&nbsp;</td>
-                                <td><?php echo $currencyCodes[$inclusion['LoaItem']['currencyId']]; ?> 0</td>
-                            </tr>
-                    <?php endforeach; ?>
-            <?php endif; ?>
-    <?php endforeach; ?>
-    <?php if (isset($taxLabel)): ?>
-        <?php $class = (($i+1) % 2 > 0) ? ' class="odd"' : ''; ?>
-            <tr<?php echo $class; ?>>
-                <td colspan="5"><?php echo $taxLabel; ?></td>
-            </tr>
-    <?php endif; ?>
-</table>
-
+        <?php endif; ?>
+        <?php foreach ($packageClient['Inclusions'] as $i => $inclusion): ?>
+                <?php $class = ($i % 2 > 0) ? ' class="odd"' : ''; ?>
+                <tr<?php echo $class; ?>>
+                    <td class="item-name">
+                    <?php if (in_array($inclusion['LoaItem']['loaItemTypeId'], array(12,13,14)) && !empty($inclusion['LoaItem']['PackagedItems'])): ?>
+                        <b><?php echo $inclusion['LoaItem']['itemName']; ?></b>
+                    <?php else: ?>
+                        <?php echo $inclusion['LoaItem']['itemName']; ?>
+                    <?php endif; ?>
+                    </td>
+                    <td><?php echo $inclusion['LoaItemType']['loaItemTypeName']; ?></td>
+                    <td class="per-night">
+                        <span class="per-night-price"><?php echo ($inclusion['LoaItem']['loaItemTypeId'] == 5) ? $currencyCodes[$inclusion['LoaItem']['currencyId']].' '.$inclusion['LoaItem']['itemBasePrice'].'  <span id="per-night-multiplier"> x '.$inclusion['PackageLoaItemRel']['quantity'].'</span>' : '&nbsp;'; ?></span>
+                    </td>
+                    <td><?php echo $currencyCodes[$inclusion['LoaItem']['currencyId']]; ?>
+                        <?php echo ($inclusion['LoaItem']['loaItemTypeId'] == 5) ? round($inclusion['LoaItem']['totalPrice'] * $inclusion['PackageLoaItemRel']['quantity'], 2) : round($inclusion['LoaItem']['totalPrice'], 2); ?>
+                        <?php if ($inclusion['LoaItem']['totalPrice'] > $inclusion['LoaItem']['itemBasePrice']): ?>
+                                <br />(Taxes Incl.)
+                        <?php endif; ?>
+                    </td>
+                </tr>
+                <?php if (in_array($inclusion['LoaItem']['loaItemTypeId'], array(12,13,14)) && !empty($inclusion['LoaItem']['PackagedItems'])): ?>
+                        <?php foreach ($inclusion['LoaItem']['PackagedItems'] as $item): ?>
+                                <tr<?php echo $class; ?>>
+                                    <td class="item-name prepackaged">
+                                        <ul>
+                                            <li><?php echo $item['LoaItem']['itemName']; ?></li>
+                                        </ul>
+                                    </td>
+                                    <td><?php echo $item['LoaItemType']['loaItemTypeName']; ?></td>
+                                    <td>&nbsp;</td>
+                                    <td><?php echo $currencyCodes[$inclusion['LoaItem']['currencyId']]; ?> 0</td>
+                                </tr>
+                        <?php endforeach; ?>
+                <?php endif; ?>
+        <?php endforeach; ?>
+        <?php if (isset($taxLabel)): ?>
+            <?php $class = (($i+1) % 2 > 0) ? ' class="odd"' : ''; ?>
+                <tr<?php echo $class; ?>>
+                    <td colspan="5"><?php echo $taxLabel; ?></td>
+                </tr>
+        <?php endif; ?>
+    </table>
+<?php endforeach; ?>
 
 
 <!-- LOW PRICE GUARANTEES ======================================================================-->
@@ -319,7 +344,7 @@ $linkTitle = 'Edit Blackout Dates';
             <th>Low Price Guarantee (<?php echo $lowPriceGuarantees[0]['currencyCode']; ?>)</th>
             <th>Guaranteed Min. Percent of Retail</th>
         </tr>
-    <?php
+    <?php if (!empty($lowPriceGuarantees)):
         foreach ($lowPriceGuarantees as $key => $ratePeriod) {
             $alt = ($key % 2 == 0) ? 'class="alt"' : '';
             echo "
@@ -331,7 +356,7 @@ $linkTitle = 'Edit Blackout Dates';
                 </tr>
             ";
         }
-    ?>
+    endif; ?>
     </table>
 </div>
 

@@ -318,50 +318,58 @@ class LoaItem extends AppModel {
         }
     }
     
-    function getRoomTypesByLoa($packageId) {
-        if ($loaId = $this->getLoaId($packageId)) {
-            $query = "SELECT * FROM loaItem LoaItem
-		      INNER JOIN loaItemType LoaItemType USING (loaItemTypeId)
-                      LEFT JOIN packageLoaItemRel PackageLoaItemRel ON LoaItem.loaItemId = PackageLoaItemRel.loaItemId AND PackageLoaItemRel.packageId = {$packageId}
-                      WHERE LoaItem.loaId = {$loaId} AND LoaItem.loaItemTypeId IN (1, 12, 21) AND TRIM(LoaItem.itemName) <> 'Migrated Item'
-                      ORDER BY LoaItem.loaItemTypeId DESC";
-            if ($loaItems = $this->query($query)) {
-                $groupLoaItems = array();
-                foreach($loaItems as $i => &$loaItem) {
-                    if ($loaItem['LoaItem']['loaItemTypeId'] == 21) {
-                        if (!empty($loaItem['PackageLoaItemRel']['packageLoaItemRelId'])) {
-                            if ($groupItems = $this->query("SELECT * FROM loaItemGroup LoaItemGroup WHERE LoaItemGroup.loaItemId = {$loaItem['LoaItem']['loaItemId']}")) {
-                                foreach ($groupItems as $item) {
-                                    $groupLoaItems[$item['LoaItemGroup']['groupItemId']] = true;
-                                }
-                            }
-                        }
-                        unset($loaItems[$i]);
-                    }
-                    else {
-                        if (!empty($loaItem['PackageLoaItemRel']['packageLoaItemRelId'])) {
-                            $loaItem['LoaItem']['inPackage'] = 'true';
-                        }
-                        elseif (in_array($loaItem['LoaItem']['loaItemId'], array_keys($groupLoaItems))) {
-                            if ($groupLoaItems[$loaItem['LoaItem']['loaItemId']] === true) {
-                                $loaItem['LoaItem']['inPackage'] = 'true';
+    function getRoomTypesByLoa($loaId, $currencyId, $packageId, $isMultiClientPackage) {
+        $loaItems = array();
+        $query = "SELECT * FROM loaItem LoaItem
+                  INNER JOIN loaItemType LoaItemType USING (loaItemTypeId)
+                  LEFT JOIN packageLoaItemRel PackageLoaItemRel ON LoaItem.loaItemId = PackageLoaItemRel.loaItemId AND PackageLoaItemRel.packageId = {$loaId}
+                  WHERE LoaItem.loaId = {$loaId} AND LoaItem.loaItemTypeId IN (1, 12, 21) AND TRIM(LoaItem.itemName) <> 'Migrated Item' AND LoaItem.currencyId = {$currencyId}
+                  ORDER BY LoaItem.loaItemTypeId DESC";
+        if ($loaItems = $this->query($query)) {
+            $groupLoaItems = array();
+            foreach($loaItems as $i => &$loaItem) {
+                if ($loaItem['LoaItem']['loaItemTypeId'] == 21) {
+                    if (!empty($loaItem['PackageLoaItemRel']['packageLoaItemRelId'])) {
+                        if ($groupItems = $this->query("SELECT * FROM loaItemGroup LoaItemGroup WHERE LoaItemGroup.loaItemId = {$loaItem['LoaItem']['loaItemId']}")) {
+                            foreach ($groupItems as $item) {
+                                $groupLoaItems[$item['LoaItemGroup']['groupItemId']] = true;
                             }
                         }
                     }
+                    unset($loaItems[$i]);
+                }
+                else {
+		    if ($isMultiClientPackage) {
+			$pkgLoaItemQuery = "SELECT LoaItem.loaItemId FROM loaItem LoaItem
+					     INNER JOIN packageLoaItemRel PackageLoaItemRel USING (loaItemId)
+					     WHERE LoaItem.createdFromItemId = {$loaItem['LoaItem']['loaItemId']}
+					           AND PackageLoaItemRel.packageId = {$packageId}";
+			if ($pkgLoaItem = $this->query($pkgLoaItemQuery)) {
+				$loaItem['LoaItem']['inPackage'] = true;
+			}
+		    }
+		    else {
+			if (!empty($loaItem['PackageLoaItemRel']['packageLoaItemRelId'])) {
+			    $loaItem['LoaItem']['inPackage'] = 'true';
+			}
+			elseif (in_array($loaItem['LoaItem']['loaItemId'], array_keys($groupLoaItems))) {
+			    if ($groupLoaItems[$loaItem['LoaItem']['loaItemId']] === true) {
+				$loaItem['LoaItem']['inPackage'] = 'true';
+			    }
+			}
+		    }
                 }
             }
-        }
-        else {
-            $loaItems = array();
         }
         return $loaItems;
     }
     
-    function getPackageInclusions($packageId) {
+    function getPackageInclusions($packageId, $loaId) {
         $query = "SELECT * FROM loaItem LoaItem
                   INNER JOIN packageLoaItemRel PackageLoaItemRel ON LoaItem.loaItemId = PackageLoaItemRel.loaItemId AND PackageLoaItemRel.packageId = {$packageId}
                   INNER JOIN loaItemType LoaItemType USING (loaItemTypeId)
-                  WHERE LoaItem.loaItemTypeId NOT IN (1, 21)
+                  WHERE LoaItem.loaItemTypeId NOT IN (1, 21, 22)
+                  AND LoaItem.loaId = {$loaId}
                   ORDER BY PackageLoaItemRel.weight";
         $inclusions = $this->query($query);
         foreach ($inclusions as &$inclusion) {
@@ -397,15 +405,18 @@ class LoaItem extends AppModel {
         return $inclusions;
     }
     
-    function getAvailableInclusions($loaId, $packageId) {
+    function getAvailableInclusions($loaId, $packageId, $currencyId) {
         $query = "SELECT * FROM loaItem LoaItem
                   INNER JOIN loaItemType LoaItemType USING (loaItemTypeId)
-                  WHERE LoaItem.loaItemTypeId NOT IN (1, 12, 21) AND
+                  WHERE LoaItem.loaItemTypeId NOT IN (1, 12, 21, 22) AND
                         LoaItem.loaId = {$loaId} AND
+                        LoaItem.currencyId = {$currencyId} AND
                         LoaItem.loaItemId NOT IN (
                             SELECT loaItemId FROM loaItem
                             INNER JOIN packageLoaItemRel USING (loaItemId)
-                            WHERE packageId = {$packageId} AND loaItemTypeId NOT IN (1, 12, 21)
+                            WHERE packageId = {$packageId}
+                                  AND loaItemTypeId NOT IN (1, 12, 21, 22)
+                                  AND LoaItem.currencyId = {$currencyId}
                         )
                   ORDER BY LoaItem.merchandisingDescription";
         if ($inclusions = $this->query($query)) {
@@ -414,7 +425,8 @@ class LoaItem extends AppModel {
                     $query = "SELECT * FROM loaItemGroup LoaItemGroup
                               INNER JOIN loaItem LoaItem ON LoaItemGroup.groupItemId = LoaItem.loaItemId
                               INNER JOIN loaItemType LoaItemType USING (loaItemTypeId)
-                              WHERE LoaItemGroup.loaItemId = {$inclusion['LoaItem']['loaItemId']}";
+                              WHERE LoaItemGroup.loaItemId = {$inclusion['LoaItem']['loaItemId']}
+                                    AND LoaItem.currencyId = {$currencyId}";
                     if ($packagedLoaItems = $this->query($query)) {
                         foreach($packagedLoaItems as $i => $item) {
                             $inclusion['LoaItem']['PackagedItems'][$i] = $item;
@@ -470,16 +482,16 @@ class LoaItem extends AppModel {
         }
     }
     
-    function getRoomNights($packageId) {
+    function getRoomNights($packageId, $isMultiClientPackage=false) {
         if ($roomLoaItems = $this->getRoomTypesByPackage($packageId)) {
             $this->bindModel(array('hasOne' =>  array('Package')));
             $totalNights = $this->Package->field('numNights', array('packageId' => $packageId));
             $this->unbindModel(array('hasOne' =>  array('Package')));
-
+            $ratePeriods = array();
             if ($rates = $this->LoaItemRatePeriod->getRatePeriods($roomLoaItems[0]['LoaItem']['loaItemId'], $packageId)) {
                 foreach($rates as &$rate) {
                     foreach ($roomLoaItems as $i => &$loaItem) {
-                        $ratePeriodId = ($i == 0) ? $rate['LoaItemRatePeriod']['loaItemRatePeriodId'] : $this->getRatePeriodId($loaItem['LoaItem']['loaItemId'], $packageId, $rate['Validity']);
+                        $ratePeriodId = ($i == 0) ? $rates[0]['LoaItemRatePeriod']['loaItemRatePeriodId'] : $this->getRatePeriodId($loaItem['LoaItem']['loaItemId'], $packageId, $rate['Validity']);
                         if ($loaItemRates = $this->LoaItemRatePeriod->LoaItemRate->getRoomRates($loaItem['LoaItem']['loaItemId'], $packageId, $ratePeriodId)) {
                             $loaItem['LoaItemRate'] = $loaItemRates;
                         }
@@ -568,27 +580,6 @@ class LoaItem extends AppModel {
                   INNER JOIN packageLoaItemRel PackageLoaItemRel ON LoaItemGroup.groupItemId = PackageLoaItemRel.loaItemId
                   WHERE groupItemId IN ({$ids}) AND packageId = {$packageId}";
         if ($group = $this->query($query)) {
-            //if (count($group) != count($ids)) {
-            //    $groupIds = array();
-            //    foreach($group as $g) {
-            //        if (!in_array($g['LoaItemGroup']['groupItemId'], $loaItemIds)) {
-            //            $this->LoaItemGroup->delete($g['LoaItemGroup']['loaItemGroupId']);
-            //        }
-            //        else {
-            //            $groupIds[] = $g['LoaItemGroup']['groupItemId'];
-            //        }
-            //    }
-            //    foreach($loaItemIds as $id) {
-            //        if (!in_array($id, $groupIds)) {
-            //            $data = array('groupItemId' => $id,
-            //                          'loaItemId' => $g['LoaItemGroup']['loaItemId'],
-            //                          'quantity' => 1
-            //            );
-            //            $this->LoaItemGroup->create();
-            //            $this->LoaItemGroup->save($data);
-            //        }
-            //    }
-            //}
             return $group[0]['LoaItemGroup']['loaItemId'];
         }
         else {
@@ -615,5 +606,75 @@ class LoaItem extends AppModel {
         return $this->delete($loaItemId);
     }
     
+    /** acarney 2010-11-08
+     * For multi-client packages, retrieve the unique loa item room record id for the package
+     * $originalLoaItemId is the createdFromItemId in the loa item table
+     * $packageId is used to join to packageLoaItemRel so that we only get the loa item for the particular package
+     * Called by packages_controller.php in: edit_room_loa_items()
+     */
+    function getMultiClientRoomId($originalLoaItemId, $packageId) {
+        $query = "SELECT LoaItem.loaItemId
+                  FROM loaItem LoaItem
+                  INNER JOIN packageLoaItemRel PackageLoaItemRel USING (loaItemId)
+                  WHERE LoaItem.createdFromItemId = {$originalLoaItemId} AND PackageLoaItemRel.packageId = {$packageId}";
+        if ($loaItem = $this->query($query)) {
+            return $loaItem[0]['LoaItem']['loaItemId'];
+        }
+    }
+    
+    /** acarney 2010-11-08
+     * For multi-client packages, creates unique loa item room for the package so that we can create package-specific rate periods
+     * $originalLoaItemId will be saved to the createdFromItemId in the loa item table
+     * $packageId is the package we're relating the newly created loaItem to
+     * loaItemTypeId is 22 to identify it as a room in a multi-client package
+     * Called by packages_controller.php in: edit_room_loa_items()
+     */
+    function createMultiClientRoom($originalLoaItemId, $packageId) {
+        $query = "SELECT loaId,
+                         roomGradeId,
+                         itemName,
+                         itemBasePrice,
+                         perPerson,
+                         merchandisingDescription,
+                         currencyId
+                  FROM loaItem LoaItem WHERE LoaItem.loaItemId = {$originalLoaItemId}";
+        if ($loaItem = $this->query($query)) {
+            $loaItem[0]['LoaItem']['createdFromItemId'] = $originalLoaItemId;
+            $loaItem[0]['LoaItem']['loaItemTypeId'] = 22;
+            $this->create();
+            if ($this->save($loaItem[0])) {
+                $newItemId = $this->getLastInsertID();
+                $packageLoaItemRel = array('packageId' => $packageId,
+                                           'loaItemId' => $newItemId);
+                $this->PackageLoaItemRel->create();
+                if ($this->PackageLoaItemRel->save($packageLoaItemRel)) {
+                    return $newItemId;
+                }
+                else {
+                    return false;
+                }
+            }
+            else {
+                return false;
+            }
+        }
+    }
+
+    /** acarney 2010-11-19
+     * Return the client name for an loa item in a package
+     * $loaItemId is the item we need the client's name for
+     * $packageId is the package that we're editing
+     * Called by packages_controller.php in: edit_room_nights(), getRatePeriodsInfo()
+     */
+    function getClientName($loaItemId, $packageId) {
+        $query = "SELECT Client.name FROM client Client
+                  INNER JOIN clientLoaPackageRel ClientLoaPackageRel USING (clientId)
+                  INNER JOIN loaItem LoaItem USING (loaId)
+                  WHERE ClientLoaPackageRel.packageId = {$packageId} AND LoaItem.loaItemId = {$loaItemId}";
+        if ($client = $this->query($query)) {
+            return $client[0]['Client']['name'];
+        }
+    }
+
 }
 ?>

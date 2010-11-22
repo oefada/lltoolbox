@@ -79,6 +79,16 @@ class LoaItemRatePackageRel extends AppModel {
         return $rateData;
         }
     }
+    
+    function getNumNights($loaItemId, $packageId) {
+        $query = "SELECT numNights FROM loaItemRatePackageRel LoaItemRatePackageRel
+                  INNER JOIN loaItemRate LoaItemRate USING (loaItemRateId)
+                  INNER JOIN loaItemRatePeriod LoaItemRatePeriod USING (loaItemRatePeriodId)
+                  WHERE LoaItemRatePeriod.loaItemId = {$loaItemId} AND LoaItemRatePackageRel.packageId = {$packageId}";
+        if ($numNights = $this->query($query)) {
+            return $numNights[0]['LoaItemRatePackageRel']['numNights'];
+        }
+    }
 
 }
 ?>
