@@ -520,11 +520,13 @@ class WebServiceTicketsController extends WebServicesController
 		}
 		
 		// check if preferred dates are two days - if so send availabilty request only
-		if (!empty($aucPreferDates)) {
+        if (!empty($aucPreferDates)) {
 			$arrival_within_2_days = strtotime('+2 DAYS');     // 48 hrs from now
 			foreach ($aucPreferDates as $aucPreferDateRow) {
 				$arrival_ts = strtotime($aucPreferDateRow['arrivalDate']);
-				if ($arrival_ts > 0 && $arrival_ts <= $arrival_within_2_days) {
+                //added if auction/ppv is not 2 and less than 48 hours - ticket 1315 toolbox
+   	            //if ($arrival_ts > 0 && $arrival_ts <= $arrival_within_2_days) {
+				if ($arrival_ts > 0 && $arrival_ts <= $arrival_within_2_days && $params['ppvNoticeTypeId'] != 2) {
 					$params['ppvNoticeTypeId'] = 10;
 				} 
 			}
