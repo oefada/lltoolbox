@@ -1866,6 +1866,9 @@ class WebServiceTicketsController extends WebServicesController
 							mail('devmail@luxurylink.com', $ticket['Ticket']['ticketId'] . ' ticket track detail not saved', print_r($ticket, true));
 						}
 					}
+                    else {
+                        mail('devmail@luxurylink.com', $ticket['Ticket']['ticketId'] . ' ticket track detail not saved: missing site id', print_r($ticket, true));
+                    }
 				}
 			}
 		}
