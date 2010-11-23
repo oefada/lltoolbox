@@ -98,11 +98,29 @@ class TrackDetail extends AppModel {
 		$last_track_detail = $this->__getLastTrackDetailRecord($track['trackId']);
 		$ticket_and_rev = $this->__getTicketAmount($ticketId, $track['loaId']);
 
+        $query = "SELECT t.siteId FROM ticket t WHERE t.ticketId = {$ticketId}";
+        if ($site = $this->query($query)) {
+            $siteId = $site[0]['t']['siteId'];
+        }
+        else {
+            $siteId = 0;
+        }
+        
+        switch ($siteId) {
+            case 1:
+                $offerTable = 'offerLuxuryLink';
+                break;
+            case 2:
+                $offerTable = 'offerFamily';
+                break;
+            default:
+                return false;
+        }
 		
 		$ticket_amount = $ticket_and_rev['t']['billingPrice'];
 		$allocated_amount = (($ticket_and_rev['clpr']['percentOfRevenue'] / 100) * $ticket_amount);
-		$result = $this->query("select p.reservePrice from ticket t inner join package p using (packageId) where t.ticketId = $ticketId");
-		$reserve_amount = (!empty($result) && isset($result[0]['p']['reservePrice']) && ($result[0]['p']['reservePrice'] > 0)) ? $result[0]['p']['reservePrice'] : false;
+		$result = $this->query("select o.reserveAmt from {$offerTable} o inner join ticket t using (offerId) where t.ticketId = {$ticketId}");
+		$reserve_amount = (!empty($result) && isset($result[0]['o']['reserveAmt']) && ($result[0]['o']['reserveAmt'] > 0)) ? $result[0]['o']['reserveAmt'] : false;
 
 		if ($reserve_amount && ($allocated_amount < $reserve_amount)) {
 			$allocated_amount = $reserve_amount;
