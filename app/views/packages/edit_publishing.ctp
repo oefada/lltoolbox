@@ -13,7 +13,7 @@ if (!$package['Package']['siteId']) {
     var clientId = <?=$clientId;?>;
 	var numNights = <?=(int)$package['Package']['numNights'];?>;
 	var numGuests = <?=(int)$package['Package']['numGuests'];?>;
-	var roomGrade = '<?=$roomGrade;?>';
+	var roomGrade = '<?=htmlentities($roomGrade);?>';
 	var roomNightDescription = '<?=htmlentities($roomNightDescription);?>';
 	var maxAdults = <?=(int)$package['Package']['maxAdults'];?>;
 	var siteId = <?=(int)$package['Package']['siteId'];?>;
@@ -36,7 +36,7 @@ echo $javascript->link('jquery/jquery-autocomplete/jquery.autocomplete'); ?>
 	<tr><th>Package Title</th><td><input type="text" name="data[Package][packageTitle]" value="<?=htmlentities($package['Package']['packageTitle']);?>" /></td></tr>
 	<tr><th>Short Blurb</th><td><input type="text" name="data[Package][shortBlurb]" value="<?=htmlentities($package['Package']['shortBlurb']);?>" maxlength="65" /></td></tr>
 	<tr><th>Package Blurb</th><td><input type="text" name="data[Package][packageBlurb]" value="<?=htmlentities($package['Package']['packageBlurb']);?>" maxlength="62" /></td></tr>
-	<tr><th>Room Grade</th><td><input type="text" name="data[Package][roomGrade]" value="<?=$roomGrade;?>" readonly="readonly" /></td></tr>
+	<tr><th>Room Grade</th><td><input type="text" name="data[Package][roomGrade]" value="<?=htmlentities($roomGrade);?>" readonly="readonly" /></td></tr>
     <?php if (!$isMultiClientPackage): ?>
         <tr><th>Order Inclusions</th>
             <td>
