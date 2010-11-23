@@ -954,13 +954,13 @@ class WebServiceTicketsController extends WebServicesController
 		// guarantee amount
 		// -------------------------------------------------------------------------------
 		$guarantee = false;
-		if ($packageData['reservePrice'] && is_numeric($packageData['reservePrice']) && ($packageData['reservePrice'] > 0)) {
-			if ($ticketData['billingPrice'] < $packageData['reservePrice']) {
-				$guarantee = $this->numF($packageData['reservePrice']);
+		if ($liveOfferData['reserveAmt'] && is_numeric($liveOfferData['reserveAmt']) && ($liveOfferData['reserveAmt'] > 0)) {
+			if ($ticketData['billingPrice'] < $liveOfferData['reserveAmt']) {
+				$guarantee = $this->numF($liveOfferData['reserveAmt']);
 			}
 		}
 		if ($offerLive['isMystery']) {
-			$guarantee = $this->numF($packageData['reservePrice']);
+			$guarantee = $this->numF($liveOfferData['reserveAmt']);
 		}
 		
 		// some unknowns
