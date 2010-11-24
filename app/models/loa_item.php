@@ -491,7 +491,7 @@ class LoaItem extends AppModel {
             if ($rates = $this->LoaItemRatePeriod->getRatePeriods($roomLoaItems[0]['LoaItem']['loaItemId'], $packageId)) {
                 foreach($rates as &$rate) {
                     foreach ($roomLoaItems as $i => &$loaItem) {
-                        $ratePeriodId = ($i == 0) ? $rates[0]['LoaItemRatePeriod']['loaItemRatePeriodId'] : $this->getRatePeriodId($loaItem['LoaItem']['loaItemId'], $packageId, $rate['Validity']);
+                        $ratePeriodId = $this->getRatePeriodId($loaItem['LoaItem']['loaItemId'], $packageId, $rate['Validity']);
                         if ($loaItemRates = $this->LoaItemRatePeriod->LoaItemRate->getRoomRates($loaItem['LoaItem']['loaItemId'], $packageId, $ratePeriodId)) {
                             $loaItem['LoaItemRate'] = $loaItemRates;
                         }

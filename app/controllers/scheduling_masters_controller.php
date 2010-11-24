@@ -25,7 +25,6 @@ class SchedulingMastersController extends AppController {
 		$package 				= $this->SchedulingMaster->Package->findByPackageId($packageId);
 			    
 		if (!empty($this->data)) {
-
             // validation
             if (!$this->data['isAuction'] && !$this->data['isBuyNow'] && !$this->data['isHotelOffer']) {
                 $this->Session->setFlash(__('You must schedule at least an auction or a buy now.', true), 'default', array(), 'error');
@@ -69,10 +68,11 @@ class SchedulingMastersController extends AppController {
     			
     			//associate the tracks from each client to this offer
     			//only if this is a multi client offer, single client comes from user selection
+                // acarney 2010-11-22 -- dunno what that comment above means, so commenting out for now
     			if (count($package['ClientLoaPackageRel']) > 1) {
-    			    foreach ($package['ClientLoaPackageRel'] as $v) {
-        			    $this->data['Track']['Track'][] = $v['trackId'];
-        			}
+    			    //foreach ($package['ClientLoaPackageRel'] as $v) {
+        			//    $this->data['Track']['Track'][] = $v['trackId'];
+        			//}
     			}
 
                 // create an auction
@@ -112,6 +112,10 @@ class SchedulingMastersController extends AppController {
 		
 		if (count($package['ClientLoaPackageRel']) > 1) {
 		    $this->set('singleClientPackage', false);
+            foreach ($package['ClientLoaPackageRel'] as &$packageClient) {
+                $packageClient['clientName'] = $this->SchedulingMaster->Package->ClientLoaPackageRel->Client->field('name', array('Client.clientId' => $packageClient['clientId']));
+                $packageClient['trackIds'] = $this->SchedulingMaster->Package->ClientLoaPackageRel->Loa->Track->find('list', array('conditions' => array('loaId' => $packageClient['loaId'])));
+            }
 		} else {
 		    $this->set('singleClientPackage', true);
 		    
@@ -205,7 +209,6 @@ class SchedulingMastersController extends AppController {
     
     function addSave($data) {
         $this->data = $data;
-
     	if ($this->SchedulingMaster->saveAll($this->data)) {
     		$this->createInstances();
     		

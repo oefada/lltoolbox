@@ -2187,6 +2187,7 @@ class PackagesController extends AppController {
 
     function render_rate_period($clientId, $packageId) {
         $package = $this->Package->find('first', array('conditions' => array('Package.packageId' => $packageId)));
+        $isMultiClientPackage = (count($package['ClientLoaPackageRel']) > 1)  ? true : false;
         $loaItems['LoaItems'] = $this->Package->PackageLoaItemRel->LoaItem->getRoomTypesByPackage($packageId);
         $rates = $this->LoaItem->getRoomNights($packageId);
         if (count($rates[0]['LoaItems'][0]['LoaItemRate']) > 1) {
@@ -2209,6 +2210,9 @@ class PackagesController extends AppController {
                         $item['LoaItemRate'][$k]['LoaItemRate']['w'.$j] = $rate['LoaItemRate']['w'.$j];
                     }
                 }
+            }
+            if ($isMultiClientPackage) {
+                $item['Client']['name'] = $this->LoaItem->getClientName($item['LoaItem']['loaItemId'], $packageId);
             }
         }
         $this->Package->PackageLoaItemRel->LoaItem->Fee->recursive = -1;

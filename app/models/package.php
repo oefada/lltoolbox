@@ -410,7 +410,7 @@ class Package extends AppModel {
             }
             else {
                 $price = ($loaItemRate['LoaItemRate']['price'] * $loaItemRate['LoaItemRatePackageRel']['numNights']) * $roomQuantity;
-                $total += $price + ($price * $taxes['percent'] / 100) + ($taxes['fixed'] * $loaItemRate['LoaItemRatePackageRel']['numNights']);
+                $total += $price + ($price * $taxes['percent'] / 100) + ($taxes['fixed'] * ($loaItemRate['LoaItemRatePackageRel']['numNights']) * $roomQuantity);
             }
         }
         return $total;
@@ -799,8 +799,8 @@ class Package extends AppModel {
         ";
         $where = "PackageLoaItemRel.packageId = {$packageId}";
         if ($clientId) {
-            $query .= "INNER JOIN clientLoaPackageRel ClientLoaPackageRel USING (packageId)";
-            $where .= " AND ClientLoaPackageRel.clientId = {$clientId}";
+            $query .= "INNER JOIN loa Loa USING (loaId)";
+            $where .= " AND Loa.clientId = {$clientId}";
         }
         $query .= " WHERE {$where}";
         return $this->query($query);

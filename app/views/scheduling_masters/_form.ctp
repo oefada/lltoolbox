@@ -47,18 +47,31 @@ if ($masterState != 1) {
             ?>
             </table>
         <?php endif; ?>
+        <!-- TRACK SELECTION (MULTICLIENT PACKAGES ONLY) -->
+        <?php if (!$singleClientPackage): ?>
+            <h2>Choose a Track for Each Client</h2>
+            <table id="data-table" cellpadding="0" cellspacing="0" border="0">
+                <?php foreach($package['ClientLoaPackageRel'] as $packageClient): ?>
+                    <tr>
+                        <td><?php echo $packageClient['clientName']; ?></td>
+                        <td><?php echo $form->input('Track', array('options' => $packageClient['trackIds'], 'empty' => true, 'multiple' => false, 'disabled' => ($masterState) ? true : false)); ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </table>
+        <?php endif; ?>
+        
         <!-- SCHEDULING -->
         <h2>Scheduling</h2>
         <table id="data-table" cellpadding="0" cellspacing="0" border="0">
             <tr>
-                <th>Track</th>
+                <?php if ($singleClientPackage): ?><th>Track</th><?php endif; ?>
                 <th>Schedule As</th>
                 <th>Start Date</th>
                 <th>Start Time</th>
                 <th>End Date</th>
             </tr>
             <tr>
-                <td><?php if ($singleClientPackage) { echo $form->input('Track', array('options' => $trackIds, 'empty' => true, 'multiple' => false, 'disabled' => ($masterState) ? true : false)); } ?></td>
+                <?php if ($singleClientPackage): ?><td><?php echo $form->input('Track', array('options' => $trackIds, 'empty' => true, 'multiple' => false, 'disabled' => ($masterState) ? true : false)); ?></td><?php endif;  ?>
                 <td>
                     <?php if ($package['Format'][0]['formatId'] != 3) { // NOT HOTEL OFFER
                         $isAuctionChecked = ($data['isAuction']) ? 'checked' : '';
