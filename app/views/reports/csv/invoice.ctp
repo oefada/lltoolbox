@@ -1,5 +1,5 @@
 <?php
-echo "ID,Client Name,Ticket ID,Hotel Conf. #,Guest Name,Check-in Date,Amount,Client Comments,Submitted By - Name,Submitted By - Email,Submission Date\n";
+echo "invoiceID,Client Name,Ticket ID,Hotel Conf. #,Guest Name,Check-in Date,Amount,Client Comments,Submitted By - Name,Submitted By - Email,Submission Date\n";
 
 foreach ($results as $r):
 	$line = array(
