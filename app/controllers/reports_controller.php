@@ -1050,8 +1050,8 @@ class ReportsController extends AppController {
                                INNER JOIN package AS Package ON Package.packageId = Ticket.packageId 
                                INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Ticket.packageId)
                                INNER JOIN client as Client ON(Client.clientId = ClientLoaPackageRel.clientId)
-                        WHERE $conditions";
-
+                        WHERE $conditions";           
+            
     	    $results = $this->OfferType->query($sql);
     	    $numRecords = $results[0][0]['numRecords'];
             $numPages = ceil($numRecords / $this->perPage);
@@ -2848,13 +2848,13 @@ class ReportsController extends AppController {
             
             switch ($seachBy) {
                     case 0:                  
-                        $where = " WHERE Invoice.submittedByDate >= DATE('$date1') AND Invoice.submittedByDate <= DATE('$date2')";
+                        $where = " WHERE Invoice.submittedByDate BETWEEN DATE('$date1') AND DATE('$date2')";
                         break;
                     case 1:                     
-                        $where = " WHERE Invoice.checkinDate >= DATE('$date1') AND Invoice.checkinDate <= DATE('$date2')";
+                        $where = " WHERE Invoice.checkinDate BETWEEN DATE('$date1') AND DATE('$date2')";
                         break;
                     default:                    
-                        $where = " WHERE Invoice.submittedByDate >= DATE('$date1') AND Invoice.submittedByDate <= DATE('$date2')";                                      
+                        $where = " WHERE Invoice.submittedByDate BETWEEN DATE('$date1') AND DATE('$date2')";                                      
                 }
                 
             $sql = "SELECT COUNT(accountingInvoiceId) as numRecords FROM accountingInvoice as Invoice $where";
