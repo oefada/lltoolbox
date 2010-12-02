@@ -51,8 +51,8 @@
                     </td>
                 </tr>
             <?php endif; ?>
-            <?php $i = 0; ?>
-            <?php foreach($packageClient['ExistingInclusions'] as $i => $inclusion): ?>
+            <?php $i = (isset($i)) ? $i : 0; ?>
+            <?php foreach($packageClient['ExistingInclusions'] as $inclusion): ?>
                 <?php $class = ($i % 2 > 0) ? ' class="odd"' : ''; ?>
                 <tr<?php echo $class; ?>>
                     <td class="item-name">
@@ -71,9 +71,11 @@
                     <td class="per-night">
                         <?php if ($inclusion['LoaItem']['loaItemTypeId'] == 5): ?>
                             <div>
-                                <?php $checked = ($inclusion['PackageLoaItemRel']['quantity'] == $numNights) ? ' checked ' : ''; ?>
-                                <input class="food" type="checkbox" onclick="javascript:perNightCheckbox(this);" name="data[<?php echo $i; ?>][PackageLoaItemRel][perNight]" <?php echo $checked; ?>/>
+                                <?php $checked = ($inclusion['PackageLoaItemRel']['quantity'] == $packageClient['numNights']) ? ' checked ' : ''; ?>
+                                <input class="food" type="checkbox" onclick="javascript:perNightCheckbox(this, <?php echo $packageClient['numNights']; ?>);" name="data[<?php echo $i; ?>][PackageLoaItemRel][perNight]" <?php echo $checked; ?>/>
                                 <input  type="hidden" name="data[<?php echo $i; ?>][PackageLoaItemRel][packageLoaItemRelId]" value="<?php echo $inclusion['PackageLoaItemRel']['packageLoaItemRelId']; ?>" />
+                                <input  type="hidden" name="data[<?php echo $i; ?>][PackageLoaItemRel][clientNumNights]" value="<?php echo $packageClient['numNights']; ?>" />
+
                             </div>
                             <div><?php echo $currencyCodes[$inclusion['LoaItem']['currencyId']]; ?> <?php echo round($inclusion['LoaItem']['itemBasePrice'], 2); ?> <span class="per-night-multiplier"> x <?php echo $inclusion['PackageLoaItemRel']['quantity']; ?></span></div>
                         <?php else: ?>
@@ -89,6 +91,8 @@
                         </span>
                     </td>
                     <td class="edit-link remove-inclusion" id="<?php echo $inclusion['PackageLoaItemRel']['packageLoaItemRelId'] ?>">[x]</td>
+                </tr>
+                <?php $i++; ?>
             <?php endforeach; ?>
         </table>
     <?php endforeach; ?>
