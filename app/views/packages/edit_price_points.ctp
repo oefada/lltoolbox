@@ -166,7 +166,7 @@ function updateRetail(autoFillPercentRetail) {
 	var checkedIds = '';
     $('.check-rate-period:checked').each(function() {
         if (retails[$(this).val()] > highestRetail) {
-            highestRetail = retails[$(this).val()];
+            highestRetail += retails[$(this).val()];
             defaultPercent = guaranteedPercents[$(this).val()];
         }
 		checkedIds += ',' + $(this).val();
