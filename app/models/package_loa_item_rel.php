@@ -13,24 +13,21 @@ class PackageLoaItemRel extends AppModel {
     
     var $actsAs = array('Logable');
 	
-	/*			
-	var $hasAndBelongsToMany = array(
-								'packageRatePeriod' => 
-									array('className' => 'packageRatePeriod',
-										  'joinTable' => 'packageRatePeriodItemRel',
-										  'foreignKey' => 'packageLoaItemRelId',
-										  'associationForeignKey' => 'packageRatePeriodId'
-									)
-								);*/
-    
-    function updateInclusions($package) {
+    function updateInclusions($package, $isMultiClientPackage) {
         //update only Food and Beverage loa items
         $query = "SELECT * FROM packageLoaItemRel PackageLoaItemRel
                   INNER JOIN loaItem LoaItem ON LoaItem.loaItemId = PackageLoaItemRel.loaItemId
+                  INNER JOIN loa Loa ON Loa.loaId = LoaItem.loaId
                   WHERE PackageLoaItemRel.packageId = {$package['Package']['packageId']} AND LoaItem.loaItemTypeId = 5 AND quantity > 1";
         if ($inclusions = $this->query($query)) {
             foreach ($inclusions as $inclusion) {
-                $inclusion['PackageLoaItemRel']['quantity'] = $package['Package']['numNights'];
+                if ($isMultiClientPackage) {
+                   $quantity = $this->getPackageClientQuantity($loa['Loa']['clientId'], $package['Package']['packageId']);
+                }
+                else {
+                    $quantity = $package['Package']['numNights'];
+                }
+                $inclusion['PackageLoaItemRel']['quantity'] = $quantity;
                 $this->create();
                 $this->save($inclusion);
             }
@@ -40,6 +37,19 @@ class PackageLoaItemRel extends AppModel {
     function deletePackageLoaItemRel($packageLoaItemRelId) {
         return $this->delete($packageLoaItemRelId);
     }
+    
+    function getPackageClientQuantity($clientId, $packageId) {
+        $query = "SELECT numNights from loaItemRatePackageRel LoaItemRatePackageRel
+                    INNER JOIN loaItemRate LoaItemRate USING (loaItemRateId)
+                    INNER JOIN loaItemRatePeriod USING (loaItemRatePeriodId)
+                    INNER JOIN loaItem LoaItem USING (loaItemId)
+                    INNER JOIN loa Loa USING (loaId)
+                    WHERE LoaItem.loaItemTypeId = 22 AND LoaItemRatePackageRel.packageId = {$packageId} AND Loa.clientId = {$clientId};";
+        if ($numNights = $this->query($query)) {
+            return $numNights[0]['LoaItemRatePackageRel']['numNights'];
+        }
+    }
+
 
 }
 ?>
