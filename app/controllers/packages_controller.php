@@ -1016,7 +1016,8 @@ class PackagesController extends AppController {
                         $packageId = $this->Package->getLastInsertId();
                         $package['Package']['packageId'] = $packageId;
                     }
-                    $this->Package->PackageLoaItemRel->updateInclusions($package);
+                    $isMultiClientPackage = $this->Package->ClientLoaPackageRel->isMultiClientPackage($packageId);
+                    $this->Package->PackageLoaItemRel->updateInclusions($package, $isMultiClientPackage);
                     if (!empty($package['LoaItemRatePackageRel'])) {
                         $this->Package->LoaItemRatePackageRel->setNumNights(&$package);
                         $this->Package->LoaItemRatePackageRel->save($package);
@@ -1418,9 +1419,9 @@ class PackagesController extends AppController {
     
     function edit_inclusions($clientId, $packageId) {
         $loaId = $this->Package->ClientLoaPackageRel->getLoaId($packageId);
+        $package = $this->Package->getPackage($packageId);
+        $isMultiClientPackage = (count($package['ClientLoaPackageRel']) > 1) ? true : false;
         if (!empty($this->data)) {
-            //debug($this->data);
-            //die();
             $this->autoRender = false;
             foreach ($this->data as $loaItem) {
                 if (!empty($loaItem['AddInclusion'])) {
@@ -1456,7 +1457,7 @@ class PackagesController extends AppController {
                                     $item['PackageLoaItemRel']['quantity'] = 1;
                                 }
                                 else {
-                                    $item['PackageLoaItemRel']['quantity'] = $this->Package->field('numNights', array('Package.packageId' => $packageId));
+                                    $item['PackageLoaItemRel']['quantity'] = $item['PackageLoaItemRel']['clientNumNights'];
                                 }
                                 unset($item['PackageLoaItemRel']['perNight']); 
                             }
@@ -1475,7 +1476,7 @@ class PackagesController extends AppController {
                             $loaItem['PackageLoaItemRel']['quantity'] = 1;
                         }
                         else {
-                            $loaItem['PackageLoaItemRel']['quantity'] = $this->Package->field('numNights', array('Package.packageId' => $packageId));
+                            $loaItem['PackageLoaItemRel']['quantity'] = $loaItem['PackageLoaItemRel']['clientNumNights'];
                         }
                         unset($loaItem['PackageLoaItemRel']['perNight']); 
                     }
@@ -1489,8 +1490,6 @@ class PackagesController extends AppController {
             }
             echo 'ok';
         }
-        $package = $this->Package->getPackage($packageId);
-        $isMultiClientPackage = (count($package['ClientLoaPackageRel']) > 1) ? true : false;
         $this->set('isMultiClientPackage', $isMultiClientPackage);
         $numNights = $this->Package->field('numNights', array('Package.packageId' => $packageId));
         foreach($package['ClientLoaPackageRel'] as &$packageClient) {
@@ -1515,9 +1514,11 @@ class PackagesController extends AppController {
                 }
                 if ($isMultiClientPackage) {
                     $packageClient['roomLabel'] = implode('<br />', $roomLabel);
+                    $packageClient['numNights'] = $roomNumNights;
                 }
                 else {
                     $packageClient['roomLabel'] = $numNights.' nights in '.implode(' and ', $roomLabel);
+                    $packageClient['numNights'] = $roomNumNights;
                 }
             }
         }
