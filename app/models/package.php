@@ -511,9 +511,8 @@ class Package extends AppModel {
 			if (isset($add_to_blackout)) {
 				$html.= $this->pluralize($blackout_week) . "<br>";
 			}
-			$html.= 'May not be valid during holidays and special event periods.';
 		} else {
-			$html.= 'Reservations are subject to availability at time of booking. May not be valid during holidays and special event periods.';
+            $html.= 'Reservations are subject to availability at time of booking.';
 		}
 			
 		return $html;
