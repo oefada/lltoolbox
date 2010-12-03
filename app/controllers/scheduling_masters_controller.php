@@ -23,6 +23,7 @@ class SchedulingMastersController extends AppController {
 	function add() {
 	    $packageId 				= $this->params['named']['packageId'];
 		$package 				= $this->SchedulingMaster->Package->findByPackageId($packageId);
+        $clientId               = $this->params['named']['clientId'];
 			    
 		if (!empty($this->data)) {
             // validation
@@ -115,10 +116,13 @@ class SchedulingMastersController extends AppController {
             foreach ($package['ClientLoaPackageRel'] as &$packageClient) {
                 $packageClient['clientName'] = $this->SchedulingMaster->Package->ClientLoaPackageRel->Client->field('name', array('Client.clientId' => $packageClient['clientId']));
                 $packageClient['trackIds'] = $this->SchedulingMaster->Package->ClientLoaPackageRel->Loa->Track->find('list', array('conditions' => array('loaId' => $packageClient['loaId'])));
+                if ($packageClient['ClientLoaPackageRel']['clientid'] == $clientId) {
+                    $masterClient = $packageClient;
+                }
             }
 		} else {
 		    $this->set('singleClientPackage', true);
-		    
+		    $masterClient = $package['ClientLoaPackageRel'][0];
 		    $trackIds = $this->SchedulingMaster->Package->ClientLoaPackageRel->Loa->Track->find('list', array('conditions' => array('loaId' => $package['ClientLoaPackageRel'][0]['loaId'])));
 		    $this->set('trackIds', $trackIds);
 		}
@@ -143,6 +147,10 @@ class SchedulingMastersController extends AppController {
         $pricePoints = $pricePointObj->getPricePoint($packageId);
         $pricePointsValidities = $pricePointObj->getPricePointValidities($packageId);
         $this->set('pricePoints', $pricePoints);
+        
+        //get loa
+        $loa = $this->Loa->findByloaId($masterClient['loaId']);
+        $this->set('loa', $loa);
 
         // defaults		
 		if (empty($this->data) && isset($this->params['named']['date'])) {
@@ -153,7 +161,6 @@ class SchedulingMastersController extends AppController {
 			$this->data['SchedulingMaster']['startDateTime'] = date("H:00:00", strtotime("+2 hour"));
 			
             // get default endDate from loa
-			$loa = $this->Loa->findByloaId($package['ClientLoaPackageRel'][0]['loaId']);
             $loaEndDate = date("m-d-Y", strtotime($loa['Loa']['endDate']));
             $this->data['SchedulingMaster']['endDatePicker2'] = $loaEndDate;
 
@@ -222,7 +229,7 @@ class SchedulingMastersController extends AppController {
     			return true;
     		}
     	} else {
-    		$this->Session->setFlash(__('The Schedule could not be saved. Please correct the errors below.', true), 'default', array(), 'error');
+    		$this->Session->setFlash(__('The Schedule could not be saved. Please correct the errors below.<br />'.implode('<br />', $this->SchedulingMaster->validationErrors), true), 'default', array(), 'error');
     	}
         
         return false;
