@@ -64,6 +64,9 @@ if ($masterState != 1) {
         <h2>Scheduling</h2>
         <table id="data-table" cellpadding="0" cellspacing="0" border="0">
             <tr>
+                <td colspan="5">This LOA is valid from <?php echo date('M d, Y', strtotime($loa['Loa']['startDate'])); ?> to <?php echo date('M d, Y', strtotime($loa['Loa']['endDate'])); ?><br /><br /></td>
+            </tr>
+            <tr>
                 <?php if ($singleClientPackage): ?><th>Track</th><?php endif; ?>
                 <th>Schedule As</th>
                 <th>Start Date</th>
