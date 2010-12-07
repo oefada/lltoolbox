@@ -116,7 +116,7 @@ class SchedulingMastersController extends AppController {
             foreach ($package['ClientLoaPackageRel'] as &$packageClient) {
                 $packageClient['clientName'] = $this->SchedulingMaster->Package->ClientLoaPackageRel->Client->field('name', array('Client.clientId' => $packageClient['clientId']));
                 $packageClient['trackIds'] = $this->SchedulingMaster->Package->ClientLoaPackageRel->Loa->Track->find('list', array('conditions' => array('loaId' => $packageClient['loaId'])));
-                if ($packageClient['ClientLoaPackageRel']['clientid'] == $clientId) {
+                if ($packageClient['clientId'] == $clientId) {
                     $masterClient = $packageClient;
                 }
             }
