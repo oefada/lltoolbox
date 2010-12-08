@@ -51,6 +51,15 @@ class TrackDetail extends AppModel {
 			return false;	
 		}
 	}
+    
+    function getAllTrackDetailsForTicket($ticketId) {
+        $result = $this->query("SELECT * FROM trackDetail WHERE ticketId = {$ticketId} ORDER BY trackDetailId DESC");
+		if (!empty($result)) {
+			return $result;
+		} else {
+			return false;	
+		}
+    }
 	
 	function findExistingTrackTicket($trackId, $ticketId) {
 		$result = $this->query("SELECT * FROM trackDetail WHERE trackId = $trackId and ticketId = $ticketId");
