@@ -369,7 +369,8 @@ class TicketsController extends AppController {
 		$trackDetailExists = false;
 		if ($track) {
 			$trackDetailExists = $this->TrackDetail->findExistingTrackTicket($track['trackId'], $id);			
-			$this->set('trackDetails', $this->TrackDetail->getAllTrackDetails($track['trackId']));	
+			//$this->set('trackDetails', $this->TrackDetail->getAllTrackDetails($track['trackId']));
+            $this->set('trackDetails', $this->TrackDetail->getAllTrackDetailsForTicket($id));
 		}
 		$this->set('trackExistsCount', $trackDetailExists ? 1 : 0);
 		$this->set('trackDetailExists', $trackDetailExists);
