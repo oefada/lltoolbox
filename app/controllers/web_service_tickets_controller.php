@@ -1010,16 +1010,38 @@ class WebServiceTicketsController extends WebServicesController
 		}
 		
 		$client_index = ($multi_client_map_override !== false) ? $multi_client_map_override : 0;
-		
-		$clientId			= $clients[$client_index]['clientId'];
-        $parentClientId 	= $clients[$client_index]['parentClientId'];
-		$clientNameP 		= $clients[$client_index]['name'];
-		$clientName 		= $clients[$client_index]['contacts'][0]['ppv_name'];
-		$oldProductId		= $clients[$client_index]['oldProductId'];
-		$locationDisplay	= $clients[$client_index]['locationDisplay'];
-		$clientPrimaryEmail = $clients[$client_index]['contact_to_string'];
-		$clientCcEmail 		= $clients[$client_index]['contact_cc_string'];
-		$clientAdjustedPrice = $this->numF(($clients[$client_index]['percentOfRevenue'] / 100) * $ticketData['billingPrice']);
+        
+        // acarney 2010-12-08
+        // Making it so that confirmation template is multi-client aware
+        // TODO: investigate impact of using array for client variables in other templates
+        // to avoid duplication of code
+        if (count($clients) > 1 && !$multi_client_map_override) {
+            $clientVars = array();
+            $isMultiClientPackage = true;
+            foreach ($clients as $i => $client) {
+                $clientVars[$i]['clientId']		        = $client['clientId'];
+                $clientVars[$i]['parentClientId'] 	    = $client['parentClientId'];
+                $clientVars[$i]['clientNameP'] 		    = $client['name'];
+                $clientVars[$i]['clientName'] 		    = $client['contacts'][0]['ppv_name'];
+                $clientVars[$i]['oldProductId']		    = $client['oldProductId'];
+                $clientVars[$i]['locationDisplay']	    = $client['locationDisplay'];
+                $clientVars[$i]['clientPrimaryEmail']   = $client['contact_to_string'];
+                $clientVars[$i]['clientCcEmail'] 		= $client['contact_cc_string'];
+                $clientVars[$i]['clientAdjustedPrice']  = $this->numF(($client['percentOfRevenue'] / 100) * $ticketData['billingPrice']);
+            }
+        }
+        else {
+            $isMultiClientPackage   = false;
+            $clientId			    = $clients[$client_index]['clientId'];
+            $parentClientId 	    = $clients[$client_index]['parentClientId'];
+            $clientNameP 		    = $clients[$client_index]['name'];
+            $clientName 		    = $clients[$client_index]['contacts'][0]['ppv_name'];
+            $oldProductId		    = $clients[$client_index]['oldProductId'];
+            $locationDisplay	    = $clients[$client_index]['locationDisplay'];
+            $clientPrimaryEmail     = $clients[$client_index]['contact_to_string'];
+            $clientCcEmail 		    = $clients[$client_index]['contact_cc_string'];
+            $clientAdjustedPrice    = $this->numF(($clients[$client_index]['percentOfRevenue'] / 100) * $ticketData['billingPrice']);
+        }
 
 		// added June 17 -- to allow copy for LL Auc Winner Email and Res Confirmed Email
 		if (in_array($ppvNoticeTypeId, array(1,18))) {
