@@ -93,40 +93,79 @@
 			</tr>
 			</table>
 
-<table cellpadding="10" cellspacing="0" border="0" style="width:100%;background-color:#E0E0CD;margin-top:15px;margin-bottom:15px;">
-	<tr>
-		<td width="245" align="left" valign="top">
-			<div style="width: 245px; height: 189px; padding: 8px 12px 12px 8px; background: url(http://www.luxurylink.com/images/shared/shadow-gal-lrg-light-olive.gif) no-repeat top left; overflow: hidden;"><img src="http://www.luxurylink.com/images/por/<?php echo $oldProductId;?>/<?php echo $oldProductId;?>-gal-lrg-01.jpg" alt="<?php echo $packageName;?>" border="0" /></div>
-		</td>
-		<td width="100%" align="left" valign="top">
-			<div style="color:#<?=$siteHeader;?>;font-size:16px;font-weight:bold;"><?php echo $clientNameP;?></div>
-			<div style="color:#444444;font-size:12px;"><?php echo $locationDisplay;?></div><br />
-			<div style="color:#<?=$siteHeader;?>;font-size:12px;"><?php echo $packageName;?></div>
-			<div style="height:15px;margin-top:15px;border-top:1px solid #B0B0B0;">&nbsp;</div>
-			<div style="color:#<?=$siteHeader;?>;font-weight:bold;font-size:12px;margin-bottom:15px;">Reservation Details:</div>
-			<table cellspacing="0" cellpadding="5" border="0">
-			<tr>
-				<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="160">Confirmation #:</td>
-				<td style="color:#444444;font-size:12px;" valign="top" align="left"><?php echo $resConfNum;?></td>
-			</tr>
-			<tr>
-				<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="160">Check-in:</td>
-				<td style="color:#444444;font-size:12px;" valign="top" align="left"><?php echo $resArrivalDate;?></td>
-			</tr>
-			<tr>
-				<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="160">Check-out:</td>
-				<td style="color:#444444;font-size:12px;" valign="top" align="left"><?php echo $resDepartureDate;?></td>
-			</tr>
-			<?php if (!$isAuction) : ?>
-			<tr>
-				<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="160">Special Requests:</td>
-				<td style="color:#444444;font-size:12px;" valign="top" align="left"><?=$fpNotes;?></td>
-			</tr>
-			<?php endif; ?>
-			</table>
-		</td>
-	</tr>
-</table>
+<?php if ($isMultiClientPackage): ?>
+    <?php foreach ($clientVars as $var): ?>
+        <table cellpadding="10" cellspacing="0" border="0" style="width:100%;background-color:#E0E0CD;margin-top:15px;margin-bottom:15px;">
+            <tr>
+                <td width="245" align="left" valign="top">
+                    <div style="width: 245px; height: 189px; padding: 8px 12px 12px 8px; background: url(http://www.luxurylink.com/images/shared/shadow-gal-lrg-light-olive.gif) no-repeat top left; overflow: hidden;"><img src="http://www.luxurylink.com/images/por/<?php echo $var['oldProductId'];?>/<?php echo $var['oldProductId'];?>-gal-lrg-01.jpg" alt="<?php echo $packageName;?>" border="0" /></div>
+                </td>
+                <td width="100%" align="left" valign="top">
+                    <div style="color:#<?=$siteHeader;?>;font-size:16px;font-weight:bold;"><?php echo $var['clientNameP'];?></div>
+                    <div style="color:#444444;font-size:12px;"><?php echo $var['locationDisplay'];?></div><br />
+                    <div style="color:#<?=$siteHeader;?>;font-size:12px;"><?php echo $packageName;?></div>
+                    <div style="height:15px;margin-top:15px;border-top:1px solid #B0B0B0;">&nbsp;</div>
+                    <div style="color:#<?=$siteHeader;?>;font-weight:bold;font-size:12px;margin-bottom:15px;">Reservation Details:</div>
+                    <table cellspacing="0" cellpadding="5" border="0">
+                    <tr>
+                        <td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="160">Confirmation #:</td>
+                        <td style="color:#444444;font-size:12px;" valign="top" align="left"><?php echo $resConfNum;?></td>
+                    </tr>
+                    <tr>
+                        <td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="160">Check-in:</td>
+                        <td style="color:#444444;font-size:12px;" valign="top" align="left"><?php echo $resArrivalDate;?></td>
+                    </tr>
+                    <tr>
+                        <td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="160">Check-out:</td>
+                        <td style="color:#444444;font-size:12px;" valign="top" align="left"><?php echo $resDepartureDate;?></td>
+                    </tr>
+                    <?php if (!$isAuction) : ?>
+                    <tr>
+                        <td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="160">Special Requests:</td>
+                        <td style="color:#444444;font-size:12px;" valign="top" align="left"><?=$fpNotes;?></td>
+                    </tr>
+                    <?php endif; ?>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    <?php endforeach; ?>
+<?php else: ?>
+    <table cellpadding="10" cellspacing="0" border="0" style="width:100%;background-color:#E0E0CD;margin-top:15px;margin-bottom:15px;">
+        <tr>
+            <td width="245" align="left" valign="top">
+                <div style="width: 245px; height: 189px; padding: 8px 12px 12px 8px; background: url(http://www.luxurylink.com/images/shared/shadow-gal-lrg-light-olive.gif) no-repeat top left; overflow: hidden;"><img src="http://www.luxurylink.com/images/por/<?php echo $oldProductId;?>/<?php echo $oldProductId;?>-gal-lrg-01.jpg" alt="<?php echo $packageName;?>" border="0" /></div>
+            </td>
+            <td width="100%" align="left" valign="top">
+                <div style="color:#<?=$siteHeader;?>;font-size:16px;font-weight:bold;"><?php echo $clientNameP;?></div>
+                <div style="color:#444444;font-size:12px;"><?php echo $locationDisplay;?></div><br />
+                <div style="color:#<?=$siteHeader;?>;font-size:12px;"><?php echo $packageName;?></div>
+                <div style="height:15px;margin-top:15px;border-top:1px solid #B0B0B0;">&nbsp;</div>
+                <div style="color:#<?=$siteHeader;?>;font-weight:bold;font-size:12px;margin-bottom:15px;">Reservation Details:</div>
+                <table cellspacing="0" cellpadding="5" border="0">
+                <tr>
+                    <td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="160">Confirmation #:</td>
+                    <td style="color:#444444;font-size:12px;" valign="top" align="left"><?php echo $resConfNum;?></td>
+                </tr>
+                <tr>
+                    <td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="160">Check-in:</td>
+                    <td style="color:#444444;font-size:12px;" valign="top" align="left"><?php echo $resArrivalDate;?></td>
+                </tr>
+                <tr>
+                    <td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="160">Check-out:</td>
+                    <td style="color:#444444;font-size:12px;" valign="top" align="left"><?php echo $resDepartureDate;?></td>
+                </tr>
+                <?php if (!$isAuction) : ?>
+                <tr>
+                    <td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="160">Special Requests:</td>
+                    <td style="color:#444444;font-size:12px;" valign="top" align="left"><?=$fpNotes;?></td>
+                </tr>
+                <?php endif; ?>
+                </table>
+            </td>
+        </tr>
+    </table>
+<?php endif; ?>
 
 <p><?php echo $packageIncludes;?></p>
 <p><?php echo $validityNote;?></p>
