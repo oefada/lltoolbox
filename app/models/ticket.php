@@ -62,12 +62,15 @@ class Ticket extends AppModel {
 		return $result;
 	}
 	
-	function getClientContacts($ticketId) {
+	function getClientContacts($ticketId, $clientId=null) {
 		$contacts = array();
 		$sql = "SELECT c.clientId, c.parentClientId FROM ticket t ";
 		$sql.= "INNER JOIN clientLoaPackageRel clpr USING (packageId) ";
 		$sql.= "INNER JOIN client c ON clpr.clientId = c.clientId ";
-		$sql.= "WHERE t.ticketId = $ticketId";
+		$sql.= "WHERE t.ticketId = $ticketId ";
+        if ($clientId) {
+            $sql .= "AND clpr.clientId = {$clientId}";
+        }
 		$result = $this->query($sql);
 		if (!empty($result)) {
 			$client = $result[0]['c'];
