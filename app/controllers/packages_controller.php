@@ -1714,8 +1714,7 @@ class PackagesController extends AppController {
             
             if (!$isMultiClientPackage) {
                 $inc = $this->LoaItem->getPackageInclusions($packageId, $package['ClientLoaPackageRel'][0]['ClientLoaPackageRel']['loaId']);
-    
-                $roomNightDescription = $loaItems['LoaItem']['merchandisingDescription'];
+                $roomNightDescription = $loaItems[0]['LoaItem']['merchandisingDescription'];
     
                 foreach ($inc as $i) {
                     if (isset($i['LoaItem']['PackagedItems'])) {
