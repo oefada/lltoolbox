@@ -390,3 +390,8 @@ div.combo-client-name {
     color:#7F0000;
     font-weight: bold;
 }
+
+div.instructions {
+    margin-bottom:12px;
+    font-weight: bold;
+}

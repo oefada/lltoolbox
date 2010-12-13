@@ -53,7 +53,6 @@
             font-style:italic;
         }
         </style>
-        <!-- <pre><?=print_r($roomNights);?></pre>-->
     </head>
     <body>
         <table id="package-export" cellspacing="2" cellpadding="0">
@@ -145,28 +144,30 @@
                 <th>Price Per Night</th>
                 <th>Total</th>
             </tr>
-            <?php foreach ($loaItems as $ik => $item):?>
-            <?php 
-                $alt = ($alt ==	'') ? 'style="background-color:#f3f3f3;"' : '';
-            ?>
-            <tr>
-                <td>&nbsp;</td>
-                <td <?=$alt;?>>
-                    <?=$item['LoaItem']['itemName'];?>
-                    <?php if ($item['LoaItem']['loaItemTypeId'] == 12 && isset($item['LoaItem']['PackagedItems'])): ?>
-                            <ul>
-                            <?php foreach($item['LoaItem']['PackagedItems'] as $inclusion): ?>
-                                    <?php if ($inclusion['LoaItem']['loaItemTypeId'] > 1): ?>
-                                        <li><?php echo $inclusion['LoaItem']['itemName']; ?></li>
-                                    <?php endif; ?>
-                            <?php endforeach; ?>
-                            </ul>
-                    <?php endif; ?>
-                </td>
-                <td <?=$alt;?>><?=($item['PackageLoaItemRel']['quantity'] > 1) ? $number->currency($item['LoaItem']['totalPrice'], $cc) : '&nbsp;' ;?></td>
-                <td <?=$alt;?>><strong><?=$number->currency( ($item['LoaItem']['totalPrice'] * $item['PackageLoaItemRel']['quantity']), $cc);?></strong></td>
-            </tr>
-            <?php endforeach;?>
+            <?php foreach($package['ClientLoaPackageRel'] as $packageClient): ?>
+                <?php foreach ($packageClient['Inclusions'] as $ik => $item):?>
+                <?php 
+                    $alt = ($alt ==	'') ? 'style="background-color:#f3f3f3;"' : '';
+                ?>
+                <tr>
+                    <td <?=$alt;?>><?php echo ($isMultiClientPackage) ? $packageClient['Client']['name'] : '&nbsp'; ?></td>
+                    <td <?=$alt;?>>
+                        <?=$item['LoaItem']['itemName'];?>
+                        <?php if ($item['LoaItem']['loaItemTypeId'] == 12 && isset($item['LoaItem']['PackagedItems'])): ?>
+                                <ul>
+                                <?php foreach($item['LoaItem']['PackagedItems'] as $inclusion): ?>
+                                        <?php if ($inclusion['LoaItem']['loaItemTypeId'] > 1): ?>
+                                            <li><?php echo $inclusion['LoaItem']['itemName']; ?></li>
+                                        <?php endif; ?>
+                                <?php endforeach; ?>
+                                </ul>
+                        <?php endif; ?>
+                    </td>
+                    <td <?=$alt;?>><?=($item['PackageLoaItemRel']['quantity'] > 1) ? $number->currency($item['LoaItem']['totalPrice'], $cc) : '&nbsp;' ;?></td>
+                    <td <?=$alt;?>><strong><?=$number->currency( ($item['LoaItem']['totalPrice'] * $item['PackageLoaItemRel']['quantity']), $cc);?></strong></td>
+                </tr>
+                <?php endforeach;?>
+            <?php endforeach; ?>
             
             <tr><td colspan="4" class="spacer">&nbsp;</td></tr>
             <tr>
@@ -199,13 +200,26 @@
                     <table class="lp" cellspacing="0" cellpadding="10">
                     <tr>
                         <td class="bold align-r" valign="top" colspan="2">PACKAGE RETAIL VALUE:</td>
-                        <td class="bold align-c" valign="top"><?=$lp['dateRanges'];?></td>
+                        <td class="bold align-r" valign="top"><?=$lp['dateRanges'];?></td>
                         <td class="bold align-c" valign="top"><?=$number->currency( $lp['retailValue'], $cc);?></td>
                     </tr>
                     <tr class="starting-price">
-                        <td class="bold align-r" valign="top" colspan="3" style="padding-top:15px;">LUXURY LINK STARTING PRICE</td>
+                        <td class="bold align-r" valign="top" colspan="2" style="padding-top:15px;">LUXURY LINK STARTING PRICE</td>
+                        <td class="bold align-r" valign="top" style="padding-top:15px;">Auction</td>
                         <td class="bold align-c" valign="top" style="padding-top:15px;"><?=$number->currency( $lp['startPrice'], $cc);?></td>
                     </tr>
+                    <tr class="starting-price">
+                        <td class="bold align-r" valign="top" colspan="3" style="border-top:none">Buy Now</td>
+                        <td class="bold align-c" valign="top" style="border-top:none"><?=$number->currency( $lp['startPrice'], $cc);?></td>
+                    </tr>
+                    <?php if ($package['Package']['isFlexPackage'] == '1'): ?>
+                        <tr class="starting-price">
+                            <td class="bold align-r" valign="top" colspan="3" style="border-top:none">
+                                Rate Per Extra Night<?php echo ($package['Package']['numNights'] > $package['Package']['flexNumNightsMin']) ? '*' : ''; ?>
+                            </td>
+                            <td class="bold align-c" valign="top" style="border-top:none"><?=$number->currency( $lp['startPrice'], $cc);?></td>
+                        </tr>
+                    <?php endif; ?>
                     <tr class="starting-price">
                         <td class="align-r" valign="top" colspan="3">Percentage of Retail</td>
                         <td class="align-r" valign="top"><?=$lp['LoaItemRatePackageRel']['guaranteePercentRetail'];?>&nbsp;</td>
@@ -214,6 +228,11 @@
                 </td>
             </tr>
             <?php endforeach;?>
+            <?php if ($package['Package']['numNights'] > $package['Package']['flexNumNightsMin']): ?>
+                    <tr>
+                        <td class="align-r" colspan="4">* <i>This rate will be subtracted from the Buy Now rate when reducing the number of nights</i></td>
+                    </tr>
+            <?php endif; ?>
         </table>
         
         <script src="/js/jquery/jquery.js" type="text/javascript"></script>

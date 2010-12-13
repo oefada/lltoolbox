@@ -1930,7 +1930,7 @@ class PackagesController extends AppController {
     
     function edit_low_price_guarantees($clientId, $packageId) {
         $package = $this->Package->getPackage($packageId);
-        $isMultiClientPackage = (count($package['ClientLoaPackageRel']) > 1) ? true : false;
+        $isMultiClientPackage = (count($package['ClientLoaPackageRel']) > 1) ? 1 : 0;
         if (!empty($this->data)) {
             $this->autoRender = false;
             foreach ($this->data['LoaItemRatePackageRel'] as $loaItemRatePackageRelId => $guaranteePercentRetail) {
@@ -1949,6 +1949,8 @@ class PackagesController extends AppController {
     }
     
     function edit_price_points($clientId, $packageId) {
+        $package = $this->Package->getPackage($packageId);
+        $isMultiClientPackage = (count($package['ClientLoaPackageRel']) > 1) ? true : false;
         
         // saving data
         if (!empty($this->data)) {
@@ -1971,12 +1973,14 @@ class PackagesController extends AppController {
             if (empty($this->data['PricePoint']['percentRetailBuyNow'])) {
                 $errors[] = 'Buy Now Price is a required field.';
             }
-            if ((!$this->data['PricePoint']['percentRetailAuc'] && !$this->data['PricePoint']['percentRetailBuyNow'])
-                || (!$this->data['auctionOverride'] && $this->data['PricePoint']['percentRetailAuc'] && $this->data['PricePoint']['percentRetailAuc'] < $this->data['guaranteedPercent'])
-                || (!$this->data['buynowOverride'] && $this->data['PricePoint']['percentRetailBuyNow'] && $this->data['PricePoint']['percentRetailBuyNow'] < $this->data['guaranteedPercent'])) {
-        
-                $errors[] = 'Percent of retail must be greater than or equal to the guaranteed percent of retail.';
-            }            
+            if (!$isMultiClientPackage) {
+                if ((!$this->data['PricePoint']['percentRetailAuc'] && !$this->data['PricePoint']['percentRetailBuyNow'])
+                    || (!$this->data['auctionOverride'] && $this->data['PricePoint']['percentRetailAuc'] && $this->data['PricePoint']['percentRetailAuc'] < $this->data['guaranteedPercent'])
+                    || (!$this->data['buynowOverride'] && $this->data['PricePoint']['percentRetailBuyNow'] && $this->data['PricePoint']['percentRetailBuyNow'] < $this->data['guaranteedPercent'])) {
+            
+                    $errors[] = 'Percent of retail must be greater than or equal to the guaranteed percent of retail.';
+                }
+            }
             if (!empty($errors)) {
                 echo json_encode($errors);
                 return;
@@ -2049,9 +2053,7 @@ class PackagesController extends AppController {
             
 			//$this->Package->recursive = -1;
 			//$package = $this->Package->read(null, $packageId);
-            
-            $package = $this->Package->getPackage($packageId);
-            $isMultiClientPackage = (count($package['ClientLoaPackageRel']) > 1) ? true : false;
+        
             $this->set('isMultiClientPackage', $isMultiClientPackage);
 
 			if (isset($package['Package']['overrideValidityDisclaimer']) && $package['Package']['overrideValidityDisclaimer'] == 1) {
@@ -2140,6 +2142,7 @@ class PackagesController extends AppController {
 		$this->layout = false;
 		$this->Client->recursive = -1;
         $package = $this->Package->getPackage($packageId);
+        $isMultiClientPackage = (count($package['ClientLoaPackageRel']) > 1) ? true : false;
 		$client = $this->Client->read(null, $clientId);
         $roomNights = $this->LoaItem->getRoomNights($packageId);
 		$days = array('Sun','Mon','Tue','Wed','Thu','Fri','Sat');
@@ -2169,12 +2172,14 @@ class PackagesController extends AppController {
 		$this->set('bo_weekdays', implode('<br />', $bo_weekdays_arr));
         
 		//$loaItems = $this->Package->getLoaItems($packageId);
-        $loaItems = $this->LoaItem->getPackageInclusions($packageId);
+        foreach($package['ClientLoaPackageRel'] as &$packageClient) {
+            $packageClient['Inclusions'] = $this->LoaItem->getPackageInclusions($packageId, $packageClient['ClientLoaPackageRel']['loaId']);
+        }
         $lowPriceGuarantees = $this->getRatePeriodsInfo($packageId);
 		$this->set('package', $package);
+        $this->set('isMultiClientPackage', $isMultiClientPackage);
 		$this->set('client', $client['Client']);
 		$this->set('roomNights', $roomNights);
-		$this->set('loaItems', $loaItems);
 		$this->set('vb', $this->Package->getPkgVbDates($packageId));
 		$this->set('lowPrice', $lowPriceGuarantees);
 		$this->set('cc', $package['Currency']['currencyCode']);

@@ -15,6 +15,7 @@
 <script>
 	var clientId = <?=$clientId;?>;
 	var packageId = <?=$packageId;?>;
+    var isMultiClientPackage = <?php echo ($isMultiClientPackage) ? 'true' : 'false'; ?>;
 </script>
 
 <div id="price-points">
@@ -40,7 +41,10 @@
             ";
         ?>
         
-        <h2>Choose One or More Rate Periods</h2>
+        <h2>Choose One <?php if (!$isMultiClientPackage): ?>or More <?php endif; ?>Rate Period<?php if (!$isMultiClientPackage): ?>s<?php endif; ?></h2>
+        <?php if ($isMultiClientPackage): ?>
+            <div class="instructions">* You can only select one rate period per client for each price point in multiclient packages.</div>
+        <?php endif; ?>
         
         <!-- NAME -->
         <dl><dt>Name:</dt><dd><input type="text" name="data[PricePoint][name]" value="<?php if (isset($pricePoint['name'])) { echo $pricePoint['name']; } ?>" style="width:300px;" /></dd></dl><br />
@@ -60,6 +64,14 @@
         <?php
             foreach ($ratePeriods as $key => $ratePeriod): ?>
                 <?php
+                    // acarney 2010-12-10
+                    // We only allow users to pick one rate period per price point in multiclient packages. 
+                    // If editing price point, hide unselected rate periods to prevent users from checking them
+                    // If adding a new price point, still show available rate periods
+                    $skipRatePeriod = ($isMultiClientPackage && !empty($loaItemRatePeriodIds) && !in_array($ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId'], $loaItemRatePeriodIds));
+                    if ($skipRatePeriod) {
+                        continue;
+                    }
                     $alt = ($key % 2 == 0) ? 'class="alt"' : '';
                     $checked = in_array($ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId'], $loaItemRatePeriodIds) ? 'checked' : '';
                     $disabled = (isset($ratePeriod['used']) && $ratePeriod['used'] == true) ? 'disabled' : '';
@@ -165,8 +177,12 @@ function updateRetail(autoFillPercentRetail) {
     defaultPercent = 0;
 	var checkedIds = '';
     $('.check-rate-period:checked').each(function() {
-        if (retails[$(this).val()] > highestRetail) {
+        if (isMultiClientPackage) {
             highestRetail += retails[$(this).val()];
+            defaultPercent = guaranteedPercents[$(this).val()];
+        }
+        else if (retails[$(this).val()] > highestRetail) {
+            highestRetail = retails[$(this).val()];
             defaultPercent = guaranteedPercents[$(this).val()];
         }
 		checkedIds += ',' + $(this).val();

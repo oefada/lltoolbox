@@ -133,6 +133,7 @@ table.lp td {
 </tr>
 <?php endforeach;?>
 <tr><td colspan="4" class="spacer">&nbsp;</td></tr>
+
 <?php $alt = '';?>
 <tr>
 	<th>Inclusions</th>
@@ -140,28 +141,30 @@ table.lp td {
 	<th>Price Per Night</th>
 	<th>Total</th>
 </tr>
-<?php foreach ($loaItems as $ik => $item):?>
-<?php 
-	$alt = ($alt ==	'') ? 'style="background-color:#f3f3f3;"' : '';
-?>
-<tr>
-	<td>&nbsp;</td>
-	<td <?=$alt;?>>
-        <?=$item['LoaItem']['itemName'];?>
-        <?php if ($item['LoaItem']['loaItemTypeId'] == 12 && isset($item['LoaItem']['PackagedItems'])): ?>
-                <ul>
-                <?php foreach($item['LoaItem']['PackagedItems'] as $inclusion): ?>
-                        <?php if ($inclusion['LoaItem']['loaItemTypeId'] > 1): ?>
-                            <li><?php echo $inclusion['LoaItem']['itemName']; ?></li>
-                        <?php endif; ?>
-                <?php endforeach; ?>
-                </ul>
-        <?php endif; ?>
-    </td>
-	<td <?=$alt;?>><?=($item['PackageLoaItemRel']['quantity'] > 1) ? $number->currency($item['LoaItem']['totalPrice'], $cc) : '&nbsp;' ;?></td>
-	<td <?=$alt;?>><strong><?=$number->currency( ($item['LoaItem']['totalPrice'] * $item['PackageLoaItemRel']['quantity']), $cc);?></strong></td>
-</tr>
-<?php endforeach;?>
+<?php foreach($package['ClientLoaPackageRel'] as $packageClient): ?>
+    <?php foreach ($packageClient['Inclusions'] as $ik => $item):?>
+    <?php 
+        $alt = ($alt ==	'') ? 'style="background-color:#f3f3f3;"' : '';
+    ?>
+    <tr>
+        <td <?=$alt;?>><?php echo ($isMultiClientPackage) ? $packageClient['Client']['name'] : '&nbsp'; ?></td>
+        <td <?=$alt;?>>
+            <?=$item['LoaItem']['itemName'];?>
+            <?php if ($item['LoaItem']['loaItemTypeId'] == 12 && isset($item['LoaItem']['PackagedItems'])): ?>
+                    <ul>
+                    <?php foreach($item['LoaItem']['PackagedItems'] as $inclusion): ?>
+                            <?php if ($inclusion['LoaItem']['loaItemTypeId'] > 1): ?>
+                                <li><?php echo $inclusion['LoaItem']['itemName']; ?></li>
+                            <?php endif; ?>
+                    <?php endforeach; ?>
+                    </ul>
+            <?php endif; ?>
+        </td>
+        <td <?=$alt;?>><?=($item['PackageLoaItemRel']['quantity'] > 1) ? $number->currency($item['LoaItem']['totalPrice'], $cc) : '&nbsp;' ;?></td>
+        <td <?=$alt;?>><strong><?=$number->currency( ($item['LoaItem']['totalPrice'] * $item['PackageLoaItemRel']['quantity']), $cc);?></strong></td>
+    </tr>
+    <?php endforeach;?>
+<?php endforeach; ?>
 
 <tr><td colspan="4" class="spacer">&nbsp;</td></tr>
 <tr>
