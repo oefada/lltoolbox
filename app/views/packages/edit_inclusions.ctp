@@ -20,7 +20,8 @@
 
 <div class="section-title">Included in this Package</div>
 <form id="inclusionsForm">
-    <?php foreach ($package['ClientLoaPackageRel'] as $packageClient): ?>    
+    <?php foreach ($package['ClientLoaPackageRel'] as $packageClient): ?>
+        <?php $itemNumNights = ($isMultiClientPackage) ? $packageClient['numNights'] : $numNights; ?>
         <table class="inclusions-summary">
             <tr>
                 <th width="400">
@@ -71,8 +72,8 @@
                     <td class="per-night">
                         <?php if ($inclusion['LoaItem']['loaItemTypeId'] == 5): ?>
                             <div>
-                                <?php $checked = ($inclusion['PackageLoaItemRel']['quantity'] == $packageClient['numNights']) ? ' checked ' : ''; ?>
-                                <input class="food" type="checkbox" onclick="javascript:perNightCheckbox(this, <?php echo $packageClient['numNights']; ?>);" name="data[<?php echo $i; ?>][PackageLoaItemRel][perNight]" <?php echo $checked; ?>/>
+                                <?php $checked = ($inclusion['PackageLoaItemRel']['quantity'] == $itemNumNights) ? ' checked ' : ''; ?>
+                                <input class="food" type="checkbox" onclick="javascript:perNightCheckbox(this, <?php echo $itemNumNights; ?>);" name="data[<?php echo $i; ?>][PackageLoaItemRel][perNight]" <?php echo $checked; ?>/>
                                 <input  type="hidden" name="data[<?php echo $i; ?>][PackageLoaItemRel][packageLoaItemRelId]" value="<?php echo $inclusion['PackageLoaItemRel']['packageLoaItemRelId']; ?>" />
                                 <input  type="hidden" name="data[<?php echo $i; ?>][PackageLoaItemRel][clientNumNights]" value="<?php echo $packageClient['numNights']; ?>" />
 

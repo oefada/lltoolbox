@@ -204,14 +204,18 @@
                         <td class="bold align-c" valign="top"><?=$number->currency( $lp['retailValue'], $cc);?></td>
                     </tr>
                     <tr class="starting-price">
-                        <td class="bold align-r" valign="top" colspan="2" style="padding-top:15px;">LUXURY LINK STARTING PRICE</td>
-                        <td class="bold align-r" valign="top" style="padding-top:15px;">Auction</td>
+                        <td class="bold align-r" valign="top" colspan="3" style="padding-top:15px;">LUXURY LINK STARTING PRICE</td>
+                        <?php if (0): ?>
+                            <td class="bold align-r" valign="top" style="padding-top:15px;">Auction</td>
+                        <?php endif; ?>
                         <td class="bold align-c" valign="top" style="padding-top:15px;"><?=$number->currency( $lp['startPrice'], $cc);?></td>
                     </tr>
-                    <tr class="starting-price">
-                        <td class="bold align-r" valign="top" colspan="3" style="border-top:none">Buy Now</td>
-                        <td class="bold align-c" valign="top" style="border-top:none"><?=$number->currency( $lp['startPrice'], $cc);?></td>
-                    </tr>
+                    <?php if (0): ?>
+                        <tr class="starting-price">
+                            <td class="bold align-r" valign="top" colspan="3" style="border-top:none">Buy Now</td>
+                            <td class="bold align-c" valign="top" style="border-top:none"><?=$number->currency( $lp['startPrice'], $cc);?></td>
+                        </tr>
+                    <?php endif; ?>
                     <?php if ($package['Package']['isFlexPackage'] == '1'): ?>
                         <tr class="starting-price">
                             <td class="bold align-r" valign="top" colspan="3" style="border-top:none">
@@ -228,7 +232,7 @@
                 </td>
             </tr>
             <?php endforeach;?>
-            <?php if ($package['Package']['numNights'] > $package['Package']['flexNumNightsMin']): ?>
+            <?php if ($package['Package']['isFlexPackage'] == '1' && $package['Package']['numNights'] > $package['Package']['flexNumNightsMin']): ?>
                     <tr>
                         <td class="align-r" colspan="4">* <i>This rate will be subtracted from the Buy Now rate when reducing the number of nights</i></td>
                     </tr>
