@@ -15,6 +15,7 @@
         <span class="new-food-item" style="display:none">
             <div>
                 PN: <input class="food" type="checkbox" onclick="javascript:perNightCheckbox(this, <?php echo $numNights; ?>);" name="data[<?php echo $i; ?>][LoaItem][<?php echo $j; ?>][PackageLoaItemRel][perNight]" disabled="true" />
+                <input  type="hidden" name="data[<?php echo $i; ?>][LoaItem][<?php echo $j; ?>][PackageLoaItemRel][clientNumNights]" value="<?php echo $numNights; ?>" />
             </div>
             <div>
                 <input type="text" size="3" class="base-price" onblur="newFoodInclusionPrice(this)" name="data[<?php echo $i; ?>][LoaItem][<?php echo $j; ?>][itemBasePrice]" disabled="true"> <span class="per-night-multiplier"> x 1</span>

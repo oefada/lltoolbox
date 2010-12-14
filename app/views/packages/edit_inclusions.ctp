@@ -75,7 +75,7 @@
                                 <?php $checked = ($inclusion['PackageLoaItemRel']['quantity'] == $itemNumNights) ? ' checked ' : ''; ?>
                                 <input class="food" type="checkbox" onclick="javascript:perNightCheckbox(this, <?php echo $itemNumNights; ?>);" name="data[<?php echo $i; ?>][PackageLoaItemRel][perNight]" <?php echo $checked; ?>/>
                                 <input  type="hidden" name="data[<?php echo $i; ?>][PackageLoaItemRel][packageLoaItemRelId]" value="<?php echo $inclusion['PackageLoaItemRel']['packageLoaItemRelId']; ?>" />
-                                <input  type="hidden" name="data[<?php echo $i; ?>][PackageLoaItemRel][clientNumNights]" value="<?php echo $packageClient['numNights']; ?>" />
+                                <input  type="hidden" name="data[<?php echo $i; ?>][PackageLoaItemRel][clientNumNights]" value="<?php echo ($isMultiClientPackage) ? $packageClient['numNights'] : $numNights; ?>" />
 
                             </div>
                             <div><?php echo $currencyCodes[$inclusion['LoaItem']['currencyId']]; ?> <?php echo round($inclusion['LoaItem']['itemBasePrice'], 2); ?> <span class="per-night-multiplier"> x <?php echo $inclusion['PackageLoaItemRel']['quantity']; ?></span></div>
