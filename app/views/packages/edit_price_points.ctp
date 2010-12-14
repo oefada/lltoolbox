@@ -115,14 +115,14 @@
                 <td>% Retail <input id="auction-percent" name="data[PricePoint][percentRetailAuc]" type="text" size="5" value="<?php if (isset($pricePoint['percentRetailAuc'])) { echo $pricePoint['percentRetailAuc']; } ?>" /></td>
                 <td><?php echo $ratePeriods[0]['currencyCode']; ?> <input id="auction-retail" type="text" size="10" disabled="true" value="" /></td>
                 <td>USD <input id="auction-us-retail" type="text" disabled="true" size="10" value="" /></td>
-                <td><input name="data[auctionOverride]" type="checkbox" value="1" /> Override Price</td>
+                <td><?php if ($isMultiClientPackage): ?>&nbsp;<?php else: ?><input name="data[auctionOverride]" type="checkbox" value="1" /> Override Price<?php endif; ?></td>
             </tr>
             <tr>
                 <td><strong>Buy Now Price:</strong></td>
                 <td>% Retail <input id="buynow-percent" name="data[PricePoint][percentRetailBuyNow]" type="text" size="5" value="<?php if (isset($pricePoint['percentRetailBuyNow'])) { echo $pricePoint['percentRetailBuyNow']; } ?>" /></td>
                 <td><?php echo $ratePeriods[0]['currencyCode']; ?> <input id="buynow-retail" type="text" size="10" disabled="true" value="" /></td>
                 <td>USD <input id="buynow-us-retail" type="text" size="10" disabled="true" value="" /></td>
-                <td><input name="data[buynowOverride]" type="checkbox" value="1" /> Override Price</td>
+                <td><?php if ($isMultiClientPackage): ?>&nbsp;<?php else: ?><input name="data[buynowOverride]" type="checkbox" value="1" /> Override Price<?php endif; ?></td>
             </tr>
         </table>
         

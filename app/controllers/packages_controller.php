@@ -1591,6 +1591,9 @@ class PackagesController extends AppController {
     
     function render_create_inclusion_form($clientId, $packageId) {
         $loaItemTypes = $this->LoaItem->LoaItemType->getItemTypes();
+        $this->Package->recursive = -1;
+        $numNights = $this->Package->field('numNights', array('Package.PackageId' => $packageId));
+        $this->set('numNights', $numNights);
         $this->set('loaItemTypes', $loaItemTypes);
         $this->set('currencyCode', $this->Package->Currency->getPackageCurrencyCode($packageId));
         $this->set('i', $_GET['i']);

@@ -549,7 +549,6 @@ function perNightCheckbox(inclusion, itemNumNights) {
     $(inclusion).parents('td.per-night').next('td').children().children('span.total-price').html(price);
 }
 
-/* deprecated? acarney 2010-12-01 */
 function newFoodInclusionPrice(priceElem) {
     var isChecked = $(priceElem).parent('div').siblings('div').children('input.food').is(':checked');
     var multiplier = (isChecked) ? numNights : 1;
