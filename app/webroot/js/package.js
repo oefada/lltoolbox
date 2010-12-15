@@ -137,7 +137,6 @@ $().ready(function() {
                                     $('tr#create-inclusions-header').show();
                                 }
                                 $('input.create-inclusion').parent('td').parent('tr').before(data);
-                                init_itemTypeDropdown(data);
                                 init_removeInclusions();
                             }
                         });
@@ -214,7 +213,6 @@ $().ready(function() {
         //datepicker
         init_datepickers();
         init_rateOptions();
-        init_itemTypeDropdown();
         init_removeInclusions();
         init_numNights();
         init_calcAccommodations();
@@ -473,6 +471,8 @@ function init_numNights() {
         });
 }
 
+// acarney 2010-12-14
+// deprecated: we're allowing users to select the per-night option for any item type
 function init_itemTypeDropdown(newInclusion) {
     $('select.new-loa-item-type').change(function() {
                 if ($(this).attr('value') == 5) {
@@ -541,23 +541,23 @@ function init_calcAccommodations() {
 
 function perNightCheckbox(inclusion, itemNumNights) {
     if ($(inclusion).is(':checked')) {
-        var price = calculateFoodInclusionPrice(inclusion, itemNumNights, true, itemNumNights);
+        var price = calculateInclusionPrice(inclusion, itemNumNights, true, itemNumNights);
     }
     else {
-        var price = calculateFoodInclusionPrice(inclusion, 1, false, itemNumNights);
+        var price = calculateInclusionPrice(inclusion, 1, false, itemNumNights);
     }
     $(inclusion).parents('td.per-night').next('td').children().children('span.total-price').html(price);
 }
 
-function newFoodInclusionPrice(priceElem) {
-    var isChecked = $(priceElem).parent('div').siblings('div').children('input.food').is(':checked');
+function newInclusionPrice(priceElem) {
+    var isChecked = $(priceElem).parent('div').siblings('div').children('input.inclusion-per-night').is(':checked');
     var multiplier = (isChecked) ? numNights : 1;
     var price = $(priceElem).attr('value');
-    var totalPrice = calculateFoodInclusionPrice(priceElem, multiplier, isChecked, numNights, price);
+    var totalPrice = calculateInclusionPrice(priceElem, multiplier, isChecked, numNights, price);
     $(priceElem).parents('td.per-night').next('td').children().children('span.total-price').html(totalPrice);
 }
 
-function calculateFoodInclusionPrice(inclusionElem, multiplier, isChecked, itemNumNights, newPrice) {
+function calculateInclusionPrice(inclusionElem, multiplier, isChecked, itemNumNights, newPrice) {
     var price = (newPrice == undefined) ? $(inclusionElem).parents('td.per-night').next('td').children().children('span.total-price').html() : newPrice;
     $(inclusionElem).parent('div').siblings('div').children('span.per-night-multiplier').html(' x '+multiplier);
     var totalPrice = (isChecked) ? price * multiplier : (newPrice == undefined) ? price / itemNumNights : newPrice;

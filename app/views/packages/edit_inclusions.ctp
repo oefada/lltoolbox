@@ -70,22 +70,17 @@
                     </td>
                     <td><?php echo $inclusion['LoaItemType']['loaItemTypeName']; ?></td>
                     <td class="per-night">
-                        <?php if ($inclusion['LoaItem']['loaItemTypeId'] == 5): ?>
                             <div>
                                 <?php $checked = ($inclusion['PackageLoaItemRel']['quantity'] == $itemNumNights) ? ' checked ' : ''; ?>
-                                <input class="food" type="checkbox" onclick="javascript:perNightCheckbox(this, <?php echo $itemNumNights; ?>);" name="data[<?php echo $i; ?>][PackageLoaItemRel][perNight]" <?php echo $checked; ?>/>
+                                <input class="inclusion-per-night" type="checkbox" onclick="javascript:perNightCheckbox(this, <?php echo $itemNumNights; ?>);" name="data[<?php echo $i; ?>][PackageLoaItemRel][perNight]" <?php echo $checked; ?>/>
                                 <input  type="hidden" name="data[<?php echo $i; ?>][PackageLoaItemRel][packageLoaItemRelId]" value="<?php echo $inclusion['PackageLoaItemRel']['packageLoaItemRelId']; ?>" />
                                 <input  type="hidden" name="data[<?php echo $i; ?>][PackageLoaItemRel][clientNumNights]" value="<?php echo ($isMultiClientPackage) ? $packageClient['numNights'] : $numNights; ?>" />
-
                             </div>
                             <div><?php echo $currencyCodes[$inclusion['LoaItem']['currencyId']]; ?> <?php echo round($inclusion['LoaItem']['itemBasePrice'], 2); ?> <span class="per-night-multiplier"> x <?php echo $inclusion['PackageLoaItemRel']['quantity']; ?></span></div>
-                        <?php else: ?>
-                            &nbsp;
-                        <?php endif; ?>
                     </td>
                     <td>
                         <span class="inclusion-price">
-                            <?php echo $currencyCodes[$inclusion['LoaItem']['currencyId']]; ?> <span class="total-price"><?php echo ($inclusion['LoaItem']['loaItemTypeId'] == 5) ? round($inclusion['LoaItem']['totalPrice'] * $inclusion['PackageLoaItemRel']['quantity'], 2) : round($inclusion['LoaItem']['totalPrice'], 2); ?></span>
+                            <?php echo $currencyCodes[$inclusion['LoaItem']['currencyId']]; ?> <span class="total-price"><?php echo round($inclusion['LoaItem']['totalPrice'] * $inclusion['PackageLoaItemRel']['quantity'], 2); ?></span>
                             <?php if ($inclusion['LoaItem']['totalPrice'] > $inclusion['LoaItem']['itemBasePrice']): ?>
                                 <br />(Taxes Incl.)
                             <?php endif; ?>

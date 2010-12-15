@@ -289,10 +289,10 @@ $linkTitle = 'Edit Blackout Dates';
                     </td>
                     <td><?php echo $inclusion['LoaItemType']['loaItemTypeName']; ?></td>
                     <td class="per-night">
-                        <span class="per-night-price"><?php echo ($inclusion['LoaItem']['loaItemTypeId'] == 5) ? $currencyCodes[$inclusion['LoaItem']['currencyId']].' '.$inclusion['LoaItem']['itemBasePrice'].'  <span id="per-night-multiplier"> x '.$inclusion['PackageLoaItemRel']['quantity'].'</span>' : '&nbsp;'; ?></span>
+                        <span class="per-night-price"><?php echo $currencyCodes[$inclusion['LoaItem']['currencyId']].' '.$inclusion['LoaItem']['itemBasePrice'].'  <span id="per-night-multiplier"> x '.$inclusion['PackageLoaItemRel']['quantity'].'</span>'; ?></span>
                     </td>
                     <td><?php echo $currencyCodes[$inclusion['LoaItem']['currencyId']]; ?>
-                        <?php echo ($inclusion['LoaItem']['loaItemTypeId'] == 5) ? round($inclusion['LoaItem']['totalPrice'] * $inclusion['PackageLoaItemRel']['quantity'], 2) : round($inclusion['LoaItem']['totalPrice'], 2); ?>
+                        <?php echo round($inclusion['LoaItem']['totalPrice'] * $inclusion['PackageLoaItemRel']['quantity'], 2); ?>
                         <?php if ($inclusion['LoaItem']['totalPrice'] > $inclusion['LoaItem']['itemBasePrice']): ?>
                                 <br />(Taxes Incl.)
                         <?php endif; ?>
