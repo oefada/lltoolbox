@@ -322,7 +322,7 @@ class LoaItem extends AppModel {
         $loaItems = array();
         $query = "SELECT * FROM loaItem LoaItem
                   INNER JOIN loaItemType LoaItemType USING (loaItemTypeId)
-                  LEFT JOIN packageLoaItemRel PackageLoaItemRel ON LoaItem.loaItemId = PackageLoaItemRel.loaItemId AND PackageLoaItemRel.packageId = {$loaId}
+                  LEFT JOIN packageLoaItemRel PackageLoaItemRel ON LoaItem.loaItemId = PackageLoaItemRel.loaItemId AND PackageLoaItemRel.packageId = {$packageId}
                   WHERE LoaItem.loaId = {$loaId} AND LoaItem.loaItemTypeId IN (1, 12, 21) AND TRIM(LoaItem.itemName) <> 'Migrated Item' AND LoaItem.currencyId = {$currencyId}
                   ORDER BY LoaItem.loaItemTypeId DESC";
         if ($loaItems = $this->query($query)) {
@@ -339,25 +339,25 @@ class LoaItem extends AppModel {
                     unset($loaItems[$i]);
                 }
                 else {
-		    if ($isMultiClientPackage) {
-			$pkgLoaItemQuery = "SELECT LoaItem.loaItemId FROM loaItem LoaItem
-					     INNER JOIN packageLoaItemRel PackageLoaItemRel USING (loaItemId)
-					     WHERE LoaItem.createdFromItemId = {$loaItem['LoaItem']['loaItemId']}
-					           AND PackageLoaItemRel.packageId = {$packageId}";
-			if ($pkgLoaItem = $this->query($pkgLoaItemQuery)) {
-				$loaItem['LoaItem']['inPackage'] = true;
-			}
-		    }
-		    else {
-			if (!empty($loaItem['PackageLoaItemRel']['packageLoaItemRelId'])) {
-			    $loaItem['LoaItem']['inPackage'] = 'true';
-			}
-			elseif (in_array($loaItem['LoaItem']['loaItemId'], array_keys($groupLoaItems))) {
-			    if ($groupLoaItems[$loaItem['LoaItem']['loaItemId']] === true) {
-				$loaItem['LoaItem']['inPackage'] = 'true';
-			    }
-			}
-		    }
+                    if ($isMultiClientPackage) {
+                        $pkgLoaItemQuery = "SELECT LoaItem.loaItemId FROM loaItem LoaItem
+                                            INNER JOIN packageLoaItemRel PackageLoaItemRel USING (loaItemId)
+                                            WHERE LoaItem.createdFromItemId = {$loaItem['LoaItem']['loaItemId']}
+                                            AND PackageLoaItemRel.packageId = {$packageId}";
+                        if ($pkgLoaItem = $this->query($pkgLoaItemQuery)) {
+                            $loaItem['LoaItem']['inPackage'] = true;
+                        }
+                    }
+                    else {
+                        if (!empty($loaItem['PackageLoaItemRel']['packageLoaItemRelId'])) {
+                            $loaItem['LoaItem']['inPackage'] = 'true';
+                        }
+                        elseif (in_array($loaItem['LoaItem']['loaItemId'], array_keys($groupLoaItems))) {
+                            if ($groupLoaItems[$loaItem['LoaItem']['loaItemId']] === true) {
+                                $loaItem['LoaItem']['inPackage'] = 'true';
+                            }
+                        }
+                    }
                 }
             }
         }
