@@ -52,6 +52,9 @@ class WebServiceNewClientsController extends WebServicesController
 		if ($client_id) {
 			$client = $this->Client->findByClientId($client_id);
 			$client_data_save = $client['Client'];
+            if (!empty($client_data_save['sites']) && is_array($client_data_save['sites'])) {
+                $client_data_save['sites'] = implode(',', $client_data_save['sites']);
+            }
 		}
 		else {
 			$client_data_save = array();
