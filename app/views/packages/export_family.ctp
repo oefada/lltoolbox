@@ -66,7 +66,7 @@ table.lp td {
 	<td>Date Created:</td>
 	<td colspan="3"><?=$package['Package']['created'];?></td>
 </tr>
-<tr><td colspan="4" class="m hdr"><strong>LUXURY LINK SUGGESTED PACKAGE</strong></td></tr>
+<tr><td colspan="4" class="m hdr"><strong>FAMILYGETAWAY.COM SUGGESTED PACKAGE</strong></td></tr>
 <tr><td colspan="4" class="m ital">ALL PRICES IN <?=$package['Currency']['currencyName'];?></td></tr>
 <tr>
 	<th>Working Title:</th>
@@ -200,7 +200,7 @@ table.lp td {
 			<td class="bold align-c" valign="top"><?=$number->currency( $lp['retailValue'], $cc);?></td>
 		</tr>
 		<tr class="starting-price">
-			<td class="bold align-r" valign="top" colspan="3" style="padding-top:15px;">LUXURY LINK STARTING PRICE</td>
+			<td class="bold align-r" valign="top" colspan="3" style="padding-top:15px;">FAMILYGETAWAY.COM STARTING PRICE</td>
 			<td class="bold align-c" valign="top" style="padding-top:15px;"><?=$number->currency( $lp['startPrice'],$cc);?></td>
 		</tr>
 		<tr class="starting-price">
