@@ -15,6 +15,32 @@ $this->set('clientId', $this->data['Loa']['clientId']);
 		echo $form->input('clientId', array('type' => 'hidden'));
 		echo $form->input('loaLevelId', array('label' => 'LOA Level'));
 		echo $form->input('loaMembershipTypeId', array('label' => 'Membership Type'));
+		
+		// ts echo $_SERVER['DOCUMENT_ROOT']; echo "<br />";
+		// ts echo $form->input('date');
+				
+		// orig echo $form->input('startDate');
+		// orig echo $form->input('endDate');
+		
+		// to try echo $form->input('startHour');
+		// to try echo $form->input('endHour');
+		
+		// to try echo $form->input('startMinute');
+		// to try echo $form->input('endMinute');
+		
+		echo $form->input('startDate', array('selected' => array('month' => 'now',
+																 'day' => 'now',
+																 'year' => 'now',
+															'hour' => '12',
+                                                            'minute' => '00',
+                                                            'meridian' => 'am')
+                                 )
+                );
+      
+				
+		echo $form->input('endDate', array('selected' => '23:59:59' ));
+		
+			
 		echo '<div id="_LoaMembershipFee" style="padding:0px;">' . $form->input('membershipFee') . '</div>';
 		echo '<div id="_LoaMembershipFeeEstimated" style="padding:0px;">' . $form->input('membershipFeeEstimated', array('label' => 'Estimated Fee')) . '</div>';
 		echo '<div id="_LoaMembershipTotalPackages" style="padding:0px;">' . $form->input('membershipTotalPackages') . '</div>';
@@ -24,8 +50,7 @@ $this->set('clientId', $this->data['Loa']['clientId']);
 		echo $form->input('customerApprovalStatusId', array('label' => 'Client Approval Status'));
 		echo '<div class="controlset">'.$form->input('moneyBackGuarantee')."</div>";
 		echo '<div class="controlset">'.$form->input('upgraded')."</div>";
-		echo $form->input('startDate');
-		echo $form->input('endDate');
+		
 		echo $form->input('currencyId');
 	?>
 	</fieldset>
