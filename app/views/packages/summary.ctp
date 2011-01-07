@@ -382,6 +382,7 @@ $linkTitle = 'Edit Blackout Dates';
             <th>Retail Value</th>
             <th>Percent of Retail (Auction)</th>
             <th>Percent of Retail (Buy Now)</th>
+			<th>Guarantee % of Retail</th>
             <th>Max Num Sales</th>
             <th>Preview</th>
             <th></th>
@@ -409,6 +410,7 @@ $linkTitle = 'Edit Blackout Dates';
                     <td>" . number_format($pricePoint['PricePoint']['retailValue'], 0) . "</td>
                     <td>{$pricePoint['PricePoint']['percentRetailAuc']}</td>
                     <td>{$pricePoint['PricePoint']['percentRetailBuyNow']}</td>
+					<td>{$pricePoint['PricePoint']['percentReservePrice']}</td>
                     <td>{$pricePoint['PricePoint']['maxNumSales']}</td>
                     <td><a href='{$previewHost}/luxury-hotels/preview.html?clid={$clientId}&oid={$pricePoint['PricePoint']['pricePointId']}&preview=pricepoint' target='_blank'>Preview</a></td>
                     <td><div qs=\"pricePointId={$pricePoint['PricePoint']['pricePointId']}\" class=\"edit-link\" name=\"$linkName\" title=\"$linkTitle\">Edit</div></td>
