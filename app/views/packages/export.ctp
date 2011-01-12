@@ -87,7 +87,6 @@
             <tr><td colspan="4" class="spacer">&nbsp;</td></tr>
             
             <?php foreach ($roomNights as $rn): ?>
-                <?php if (isset($rn['LoaItems'][0]['PricePoint'])): ?>
                     <tr>
                         <td colspan="4" style="margin:0px;padding:15px 0 15px 0;border-top:1px solid silver;">
                             <table width="100%" >
@@ -136,7 +135,6 @@
                             </table>
                         </td>
                     </tr>
-                <?php endif; ?>
             <?php endforeach;?>
             <tr><td colspan="4" class="spacer">&nbsp;</td></tr>
             <?php $alt = '';?>
@@ -228,6 +226,7 @@
                                 <?php endif; ?>
                             </table>
                         </td>
+                    </tr>
                 <?php endif; ?>
             <?php endforeach;?>
         </table>
