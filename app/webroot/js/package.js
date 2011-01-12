@@ -587,13 +587,17 @@ function editThis() {
 	}
 }
 
-function updateRetail(autoFillPercentRetail, autoFillSuggestedFlexPrice, numNights, currencyCode, isFlexPackage) {
+function updateRetail(autoFillPercentRetail, autoFillSuggestedFlexPrice, numNights, currencyCode, isMultiClientPackage, isFlexPackage) {
     highestRetail = 0;
     defaultPercent = 0;
     var highestFlex = 0;
 	var checkedIds = '';
     $('.check-rate-period:checked').each(function() {
-        if (retails[$(this).val()] > highestRetail) {
+        if (isMultiClientPackage) {
+            highestRetail += retails[$(this).val()];
+            defaultPercent = guaranteedPercents[$(this).val()];
+        }
+        else if (retails[$(this).val()] > highestRetail) {
             highestRetail = retails[$(this).val()];
             defaultPercent = guaranteedPercents[$(this).val()];
         }
