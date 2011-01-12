@@ -675,6 +675,65 @@ class LoaItem extends AppModel {
             return $client[0]['Client']['name'];
         }
     }
-
+    
+    /** acarney 2011-01-06
+     * For flex packs: return the per-night inclusions for a package
+     * Called by loa_item.php in: calcFlexPricePerNight()
+     */
+    function getPerNightInclusions($packageId) {
+        $query = "SELECT LoaItem.loaItemId, LoaItem.itemBasePrice FROM loaItem LoaItem
+                  INNER JOIN packageLoaItemRel PackageLoaItemRel USING (loaItemId)
+                  INNER JOIN package Package USING (packageId)
+                  WHERE PackageLoaItemRel.packageId = {$packageId} AND PackageLoaItemRel.quantity = Package.numNights";
+        if ($inclusions = $this->query($query)) {
+            return $inclusions;
+        }
+    }
+    
+    function calcFlexPricePerNight($roomNightId, $packageId, $ratePeriodId) {
+        $package = $this->PackageLoaItemRel->Package->getPackage($packageId);
+        $priceQuery = "SELECT price FROM loaItemRate LoaItemRate
+                        WHERE LoaItemRate.loaItemRatePeriodId = {$ratePeriodId}";
+        $pricePerNight = 0;
+        if ($roomPrice = $this->query($priceQuery)) {
+            $roomBasePrice = $roomPrice[0]['LoaItemRate']['price'];
+            $inclusions = $this->getPerNightInclusions($packageId);
+            $perNightInclusionTotal = 0;
+            if ($package['Package']['isTaxIncluded']) {
+                $roomBasePrice = $this->Fee->addFees($roomNightId, $roomBasePrice);
+                if ($inclusions) {
+                    foreach($inclusions as $inclusion) {
+                        $perNightInclusionTotal += $this->Fee->addFees($inclusion['LoaItem']['loaItemId'], $inclusion['LoaItem']['itemBasePrice']);
+                    }
+                }
+            }
+            else {
+                if ($inclusions) {
+                    foreach($inclusions as $inclusion) {
+                        $perNightInclusionTotal += $inclusion['LoaItem']['itemBasePrice'];
+                    }
+                }
+            }
+            $pricePerNight = $roomBasePrice + $perNightInclusionTotal;
+        }
+        return $pricePerNight;
+    }
+    
+     /** acarney 2011-01-07
+     * Retrieve the loaItemId for a room
+     * Used mainly for multiclient packages where we need to get the number of nights
+     * for a particular client when adding a per-night inclusion, and we don't
+     * have immediate access to the room loaItemId
+     * Called by packages_controller.php in: edit_inclusions()
+     */
+    function getClientRoomId($loaId, $packageId) {
+        $query = "SELECT LoaItem.loaItemId
+                  FROM loaItem LoaItem
+                  INNER JOIN packageLoaItemRel PackageLoaItemRel USING (loaItemId)
+                  WHERE PackageLoaItemRel.packageId = {$packageId} AND LoaItem.loaId = {$loaId} AND LoaItem.loaItemTypeId = 22";
+        if ($room = $this->query($query)) {
+            return $room[0]['LoaItem']['loaItemId'];
+        }
+    }
 }
 ?>

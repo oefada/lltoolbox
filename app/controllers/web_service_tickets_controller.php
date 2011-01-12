@@ -826,9 +826,9 @@ class WebServiceTicketsController extends WebServicesController
 
 		$promoGcCofData		= $this->Ticket->getPromoGcCofData($ticketId, $ticket['Ticket']['billingPrice']);
 		
-		// ***************************************************************************************************************
-		// ALL VARIABLES ARE SET HERE -- THIS WAY WE DONT HAVE TO CHANGE A MILLION TEMPLATES IF CHANGE IS MADE TO DB FIELD
-		// ***************************************************************************************************************
+		// ********************************************************************************************************
+		// ALL VARIABLES ARE SET HERE -- WE DONT HAVE TO CHANGE A MILLION TEMPLATES IF CHANGE IS MADE TO DB FIELD
+		// *********************************************************************************************************
 
 		$userId 			= $userData['userId'];
 		$userFirstName		= ucwords(strtolower($userData['firstName']));
@@ -853,8 +853,15 @@ class WebServiceTicketsController extends WebServicesController
 		$validityNote		= $liveOfferData['validityDisclaimer'];
 		//$validityLeadIn     = $packageData['validityLeadInLine'];
 		$addtlDescription   = $liveOfferData['additionalDescription'];
+
+		//2011-01-10 mbyrnes
+		$numGuests			= $liveOfferData['numGuests'];
+		$roomGrade			= $liveOfferData['roomGrade'];
+		$packageBlurb		= ucfirst($liveOfferData['packageBlurb']);
 		
 		$packageId			= $ticketData['packageId'];
+		// 2011-01-05
+		$numNights			= $ticketData['numNights'];
 
 		$offerTypeId		= $ticketData['offerTypeId'];
 		$offerTypeName		= str_replace('Standard ', '', $offerType[$offerTypeId]);

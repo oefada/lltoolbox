@@ -104,8 +104,8 @@ class Loa extends AppModel {
     function getLoaOptionList($clientId) {
         $query = "SELECT loaId, startDate, endDate FROM loa Loa
                   WHERE clientId = {$clientId} AND Loa.endDate > NOW()";
+        $list = array();
         if ($loas = $this->query($query)) {
-            $list = array();
             foreach ($loas as $loa) {
                 $list[$loa['Loa']['loaId']] = $loa['Loa']['loaId'] . ': ' . date('M j, Y', strtotime($loa['Loa']['startDate'])) . ' - ' . date('M j, Y', strtotime($loa['Loa']['endDate']));
             }

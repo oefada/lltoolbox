@@ -3,8 +3,6 @@
 <link href="/css/package.css" type="text/css" rel="stylesheet" />
 <script src="/js/package.js" type="text/javascript"></script>
 
-
-
 <div id="errorsContainer" style="display:none;">
     Please fix the following errors:<br />
     <ol>
@@ -36,6 +34,7 @@
                 <script>
                     retails = new Array();
                     guaranteedPercents = new Array();
+                    flexRoomPricePerNight = new Array();
                     conversionRate = $conversionRate;
                 </script>
             ";
@@ -85,6 +84,9 @@
                             <script>
                                 retails[<?php echo $ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId']; ?>] = <?php echo $ratePeriod['retailValue']; ?>;
                                 guaranteedPercents[<?php echo $ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId']; ?>] = <?php echo $ratePeriod['LoaItemRatePackageRel']['guaranteePercentRetail']; ?>;
+                                <?php if ($package['Package']['isFlexPackage']): ?>
+                                    flexRoomPricePerNight[<?php echo $ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId']; ?>] = <?php echo $ratePeriod['roomRetailPricePerNight']; ?>;
+                                <?php endif; ?>
                             </script>
                             <input class="check-rate-period" type="checkbox" name="data[loaItemRatePeriodIds][]" value="<?php echo $ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId']; ?>" <?php echo $checked; echo $disabled; ?>/>
                         </td>
@@ -106,7 +108,7 @@
         
         <!-- PACKAGE RETAIL VALUE -->
         <h2>Package Retail Value:</h2>
-        <p><strong><span id="retail" style="color:maroon; font-size:15px;">0</span></strong> <?php echo $ratePeriods[0]['currencyCode']; ?> <span id="retail-usd"></span></p>
+        <p><span id="retail" class="price-points-price">0</span> <?php echo $ratePeriods[0]['currencyCode']; ?> <span id="retail-usd"></span></p>
         <input id="retail-value" name="data[PricePoint][retailValue]" type="hidden" size="5" value=""/>
         <table>
             <tr><td colspan="5"></td></tr>
@@ -115,14 +117,26 @@
                 <td>% Retail <input id="auction-percent" name="data[PricePoint][percentRetailAuc]" type="text" size="5" value="<?php if (isset($pricePoint['percentRetailAuc'])) { echo $pricePoint['percentRetailAuc']; } ?>" /></td>
                 <td><?php echo $ratePeriods[0]['currencyCode']; ?> <input id="auction-retail" type="text" size="10" disabled="true" value="" /></td>
                 <td>USD <input id="auction-us-retail" type="text" disabled="true" size="10" value="" /></td>
-                <td><?php if ($isMultiClientPackage): ?>&nbsp;<?php else: ?><input name="data[auctionOverride]" type="checkbox" value="1" /> Override Price<?php endif; ?></td>
+                <td>
+                    <?php if ($package['Package']['isFlexPackage'] || $isMultiClientPackage): ?>
+                        &nbsp;
+                    <?php else: ?>
+                        <input name="data[auctionOverride]" type="checkbox" value="1" /> Override Price
+                    <?php endif; ?>
+                </td>
             </tr>
             <tr>
                 <td><strong>Buy Now Price:</strong></td>
                 <td>% Retail <input id="buynow-percent" name="data[PricePoint][percentRetailBuyNow]" type="text" size="5" value="<?php if (isset($pricePoint['percentRetailBuyNow'])) { echo $pricePoint['percentRetailBuyNow']; } ?>" /></td>
                 <td><?php echo $ratePeriods[0]['currencyCode']; ?> <input id="buynow-retail" type="text" size="10" disabled="true" value="" /></td>
                 <td>USD <input id="buynow-us-retail" type="text" size="10" disabled="true" value="" /></td>
-                <td><?php if ($isMultiClientPackage): ?>&nbsp;<?php else: ?><input name="data[buynowOverride]" type="checkbox" value="1" /> Override Price<?php endif; ?></td>
+                <td>
+                    <?php if ($package['Package']['isFlexPackage'] || $isMultiClientPackage): ?>
+                        &nbsp;
+                    <?php else: ?>
+                        <input name="data[buynowOverride]" type="checkbox" value="1" /> Override Price
+                    <?php endif; ?>
+                </td>
             </tr>
         </table>
         
@@ -130,6 +144,91 @@
         <input type="hidden" id="guaranteed-percent" name="data[guaranteedPercent]"/>
         
 		<br /><br /><br />
+        
+        <!-- FLEX PACKS: SHOW INCLUSIONS AND PRICE PER NIGHT CALCULATOR -->
+        <?php if ($package['Package']['isFlexPackage']): ?>
+            <h2>Flex Per Night Pricing:</h2>
+            <?php foreach ($package['ClientLoaPackageRel'] as $packageClient): ?>    
+                <table class="inclusions-summary">
+                    <tr>
+                        <th width="400">
+                            <?php if ($isMultiClientPackage): ?>
+                                <div class="combo-client-name"><?php echo $packageClient['Client']['name']; ?></div>
+                            <?php else: ?>
+                                &nbsp;
+                            <?php endif; ?>
+                        </th>
+                        <th>Inclusion Type</th>
+                        <th class="per-night">Price Per Night<?php if ($package['Package']['isTaxIncluded']): ?><br />(inc. taxes/fees)<?php endif; ?></th>
+                    </tr>
+                    <?php if (!empty($packageClient['roomLabel'])): ?>
+                        <tr class="odd">
+                            <td class="item-name" colspan="2">
+                                <?php echo $packageClient['roomLabel']; ?>
+                            </td>
+                            <td>
+                                <?php echo $package['Currency']['currencyCode']; ?> <span id="flexDefaultRetailPrice"><?php echo $ratePeriod['roomRetailPricePerNight']; ?></span></strong>
+                            </td>
+                        </tr>
+                    <?php endif; ?>
+                    <?php $inclusionsTotal = 0; ?>
+                    <?php $i = 0; ?>
+                    <?php foreach($packageClient['ExistingInclusions'] as $i => $inclusion): ?>
+                        <?php $class = ($i % 2 > 0) ? ' class="odd"' : ''; ?>
+                        <tr<?php echo $class; ?>>
+                            <td class="item-name">
+                                <?php if (in_array($inclusion['LoaItem']['loaItemTypeId'], array(12,13,14)) && !empty($inclusion['LoaItem']['PackagedItems'])): ?>
+                                        <?php echo $inclusion['LoaItem']['itemName']; ?>
+                                        <ul>
+                                        <?php foreach ($inclusion['LoaItem']['PackagedItems'] as $item): ?>
+                                            <li><?php echo $item['LoaItem']['itemName']; ?></li>
+                                        <?php endforeach; ?>
+                                        </ul>
+                                <?php else: ?>
+                                    <?php echo $inclusion['LoaItem']['itemName']; ?>
+                                <?php endif; ?>
+                            </td>
+                            <td><?php echo $inclusion['LoaItemType']['loaItemTypeName']; ?></td>
+                            <td>
+                                <?php if ($inclusion['PackageLoaItemRel']['quantity'] == $package['Package']['numNights']): ?>
+                                    <span>
+                                        <?php echo $package['Currency']['currencyCode']; ?> <span class="total-price"><?php echo round($inclusion['LoaItem']['totalPrice'], 2); ?></span>
+                                    </span>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </table>
+            <?php endforeach; ?>
+            <table style="width:90%">
+                <tr>
+                    <td align="right" width="80%">Flex Per Night Retail</td>
+                    <td align="right">
+                        <?php if (!isset($pricePoint) || empty($pricePoint['flexRetailPricePerNight'])): ?>
+                            <input type="text" size="5" id="flexSuggestedRetail" name="data[PricePoint][flexRetailPricePerNight]" value="0" />
+                        <?php else: ?>
+                            <input type="text" size="5" id="flexSuggestedRetail" name="data[PricePoint][flexRetailPricePerNight]" value="<?php echo $pricePoint['flexRetailPricePerNight']; ?>" />
+                        <?php endif; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="right">Suggested Flex Price/Night = <span id="suggestedFlexCalc"> </span> x .<span class="flexBuyNowCalc"><?php echo (isset($pricePoint)) ? $pricePoint['percentRetailBuyNow'] : ''; ?></span></td>
+                    <td align="right"><span id="suggestedFlexPrice" class="price-points-price"></span> <?php echo $package['Currency']['currencyCode']; ?></td>
+                </tr>
+                <tr>
+                    <td align="right" width="80%">Flex Per Night Price</td>
+                    <td align="right">
+                        <?php if (!isset($pricePoint) || empty($pricePoint['pricePerExtraNight'])): ?>
+                            <input type="text" size="5" id="flexPricePerNight" name="data[PricePoint][pricePerExtraNight]" value="0" />
+                        <?php else: ?>
+                            <input type="text" size="5" id="flexPricePerNight" name="data[PricePoint][pricePerExtraNight]" value="<?php echo $pricePoint['pricePerExtraNight']; ?>" />
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            </table>
+        <?php endif; ?>
+        
+        <br /><br /><br />
         
 		<?php if ($isEdit) :?>
 		<!-- VALIDITY DISCLAIMER -->
@@ -162,69 +261,27 @@
 
 <script>
 
-function editThis() {
-	var prompt_da_user = confirm('Are you sure you want to make changes? This will prevent the auto-updating of validity disclaimer for all price points for this package.');
-	if (prompt_da_user) {
-		$('#validity-disclaimer').removeAttr('readonly');
-		$('#edit-this-validity-disclaimer').val(1);
-	} else {
-		return false;
-	}
-}
+updateRetail(true, false, <?php echo $package['Package']['numNights']; ?>, '<?php echo $ratePeriods[0]['currencyCode']; ?>', <?php echo $package['Package']['isFlexPackage']; ?>);
 
-function updateRetail(autoFillPercentRetail) {
-    highestRetail = 0;
-    defaultPercent = 0;
-	var checkedIds = '';
-    $('.check-rate-period:checked').each(function() {
-        if (isMultiClientPackage) {
-            highestRetail += retails[$(this).val()];
-            defaultPercent = guaranteedPercents[$(this).val()];
-        }
-        else if (retails[$(this).val()] > highestRetail) {
-            highestRetail = retails[$(this).val()];
-            defaultPercent = guaranteedPercents[$(this).val()];
-        }
-		checkedIds += ',' + $(this).val();
-    });
-    $('#retail').html(highestRetail);
-    if (($('#auction-percent').val() == 0 || $('#auction-percent').val() == '') && autoFillPercentRetail) {
-        $('#auction-percent').val(defaultPercent);
+$('#auction-percent, #buynow-percent').change(function() {
+    var autoFillFlexPerNightPrice = true;
+    var flexPercentRetail = ($('#flexPricePerNight').val() / $('#flexSuggestedRetail').val()) * 100;
+    var oldBuyNowPercent = $('.flexBuyNowCalc').text();
+    if (flexPercentRetail != oldBuyNowPercent && oldBuyNowPercent > 0) {
+        autoFillFlexPerNightPrice = false;
     }
-    $('#guaranteed-percent').val(defaultPercent);
-    $('#auction-retail').val(Math.round($('#auction-percent').val() * highestRetail / 100));
-    $('#auction-us-retail').val(Math.round($('#auction-percent').val() * highestRetail / 100 * conversionRate));
-    $('#buynow-retail').val(Math.round($('#buynow-percent').val() * highestRetail / 100));
-    $('#buynow-us-retail').val(Math.round($('#buynow-percent').val() * highestRetail / 100 * conversionRate));    
-    $('#retail-value').val(highestRetail);
-    if ('<?php echo $ratePeriods[0]['currencyCode']; ?>' != 'USD') {
-        $('#retail-usd').html('= ' + (highestRetail * conversionRate) + ' USD');
-    }	
-	if (checkedIds && !($('#edit-this-validity-disclaimer').val() == 1)) {
-		updateValidityDisclaimer(checkedIds);
-	}
-}
-
-function updateValidityDisclaimer(ids) {
-	if (!ids) {
-		return false;
-	}
-	$.ajax({
-		url: '/clients/' + clientId + '/packages/ajaxGetPricePointValidityDisclaimer/' + packageId + '/?ids=' + ids,
-		success: function(data) {
-			$('#validity-disclaimer').html(data);
-		}
-	});
-}
-
-updateRetail(true);
-
-$('#auction-percent, #buynow-percent').keyup(function() {
-    updateRetail(false);
+    updateRetail(false, autoFillFlexPerNightPrice, <?php echo $package['Package']['numNights']; ?>, '<?php echo $ratePeriods[0]['currencyCode']; ?>', <?php echo $package['Package']['isFlexPackage']; ?>);
+    $('.flexBuyNowCalc').html($('#buynow-percent').val());
+    updatePerNightPrice(autoFillFlexPerNightPrice);
 });
 
 $('.check-rate-period').change(function() {
-    updateRetail(true);
+    $('#flexSuggestedRetail').val('0');
+    updateRetail(true, true, <?php echo $package['Package']['numNights']; ?>, '<?php echo $ratePeriods[0]['currencyCode']; ?>', <?php echo $package['Package']['isFlexPackage']; ?>);
+});
+
+$('input#flexSuggestedRetail').change(function() {
+    updatePerNightPrice(true);
 });
 
 </script>

@@ -5,9 +5,13 @@
     else {
         $this->layout = 'default_jquery';
     }
+    
+    $restrictions = 'Flex Packs are incompatible with the following:<ul><li>Barter - Set Number of Packages LOA track types</li><li>Multi-client (combo) Packages</li><li>Weekend/Weekday Rates</li></ul>';
 ?>
 <link href="/css/package.css" type="text/css" rel="stylesheet" />
+<link href="/css/jquery.tooltip.css" type="text/css" rel="stylesheet" />
 <script src="/js/package.js" type="text/javascript"></script>
+<script src="/js/jquery/jquery-tooltip/jquery.tooltip.pack.js" type="text/javascript"></script>
 
 <div id="errorsContainer" style="display:none;">
     Please fix the following errors:<br />
@@ -76,11 +80,51 @@
            </td>
         </tr>
         <tr>
+            <th>Total/Default Nights</th>
+            <td>
+                <input type="text" size="5" id="totalNights" name="data[Package][numNights]" value="<?php echo $package['Package']['numNights']; ?>" />
+            </td>
+        </tr>
+        <tr>
            <th>Is Private Package?</th>
            <td>
                 <input type="radio" name="data[Package][isPrivatePackage]" value="1" <?php echo ($package['Package']['isPrivatePackage'] == 1) ? 'checked' : ''; ?>  /> Yes
                 <input type="radio" name="data[Package][isPrivatePackage]" value="0" <?php echo ($package['Package']['isPrivatePackage'] == 0 || empty($package['Package']['isPrivatePackage'])) ? 'checked' : ''; ?> /> No
            </td>
+        </tr>
+        <?php $showFlex = ($package['Package']['siteId'] == '1') ? '' : ' style="display:none"'; ?>
+        <tr<?php echo $showFlex; ?> id="showFlex">
+           <th>Is Flex Package?</th>
+           <td>
+                <input type="radio" name="data[Package][isFlexPackage]" id="isFlexPackage" value="1" <?php echo ($package['Package']['isFlexPackage'] == 1) ? 'checked' : ''; ?>  /> Yes
+                <input type="radio" name="data[Package][isFlexPackage]" id="notFlexPackage" value="0" <?php echo ($package['Package']['isFlexPackage'] == 0 || empty($package['Package']['isFlexPackage'])) ? 'checked' : ''; ?> /> No
+                &nbsp;&nbsp;<a id="restrictions" class="edit-link">Restrictions</a>
+           </td>
+        </tr>
+        <?php $style = ($package['Package']['isFlexPackage'] == '0' || empty($package['Package']['isFlexPackage'])) ? 'style="display:none"' : ''; ?>
+        <tr class="flexOptions"<?php echo $style; ?>>
+            <th>Choose Min/Max for<br /> this Package</th>
+            <td>Min Nights: &nbsp;&nbsp;
+                <select id="flexNumNightsMin" name="data[Package][flexNumNightsMin]">
+                    <?php for($i=2; $i <= 14; $i++): ?>
+                            <?php $selected = ($i == $package['Package']['flexNumNightsMin']) ? ' selected' : ''; ?>
+                            <option value="<?php echo $i; ?>"<?php echo $selected; ?>><?php echo $i; ?>
+                    <?php endfor; ?>
+                </select>
+                Max Nights: &nbsp;&nbsp;
+                <select id="flexNumNightsMax" name="data[Package][flexNumNightsMax]">
+                    <?php for($i=2; $i <= 14; $i++): ?>
+                            <?php $selected = ($i == $package['Package']['flexNumNightsMax']) ? ' selected' : ''; ?>
+                            <option value="<?php echo $i; ?>"<?php echo $selected; ?>><?php echo $i; ?>
+                    <?php endfor; ?>
+                </select>
+            </td>
+        </tr>
+        <tr class="flexOptions"<?php echo $style; ?>>
+            <th>Flex Package Notes</th>
+            <td>
+                <textarea name="data[Package][flexNotes]" rows="8" cols="15"><?php echo "{$package['Package']['flexNotes']}\n"; ?></textarea>
+            </td>
         </tr>
         <tr>
             <th>Max Num Guests</th>
@@ -116,12 +160,6 @@
             <th>Max Num Adults</th>
             <td>
                 <input type="text" size="5" id="maxAdults" name="data[Package][maxAdults]" value="<?php echo $package['Package']['maxAdults']; ?>" />
-            </td>
-        </tr>
-        <tr>
-            <th>Total Nights</th>
-            <td>
-                <input type="text" size="5" id="totalNights" name="data[Package][numNights]" value="<?php echo $package['Package']['numNights']; ?>" />
             </td>
         </tr>
         <tr>
@@ -164,3 +202,26 @@
     <?php endif; ?>
 </form>
 <br />
+
+<script type="text/javascript">
+    $('a#restrictions').tooltip({track:true,
+                                 bodyHandler: function() {
+                                        return restrictionText();
+                                    }
+                                 });
+    
+    function restrictionText() {
+        var restriction = '';
+        restriction += 'Flex Packs will not work with the following:<br />';
+        restriction += '<ul class="restrictions-tooltip">';
+        restriction += '<li>Barter "Set Number of Packages" track type</li>';
+        restriction += '<li>Multi-Client (Combo) Packages</li>';
+        restriction += '</ul>';
+        restriction += 'Flex Pricing section in Price Point will not accurately calculate:<br />';
+        restriction += '<ul>';
+        restriction += '<li>Weekday/Midweek Rates</li>';
+        restriction += '<li>Pre-packaged Groups</li>';
+        restriction += '</ul>';
+        return restriction;
+    }
+</script>

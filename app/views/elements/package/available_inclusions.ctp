@@ -7,6 +7,7 @@
             <th class="add-checkbox">Add to Package</th>
             <th width="400">LOA Item Name</th>
             <th>LOA Item Type</th>
+            <th>Per-Night Item?</th>
             <th>Price</th>
         </tr>
         <?php foreach ($client['AvailableLoaItems'] as $availableInclusion): ?>
@@ -16,7 +17,7 @@
                 $quantity = (isset($availableInclusion['PackageLoaItemRel']['quantity'])) ? $availableInclusion['PackageLoaItemRel']['quantity'] : 1; 
             ?>
             <tr class="item-type-<?php echo $availableInclusion['LoaItem']['loaItemTypeId']; ?><?php echo $class; ?>">
-                <td class="add-checkbox"><input type="checkbox" name="data[<?php echo $i; ?>][AddInclusion][<?php echo $availableInclusion['LoaItem']['loaItemId']; ?>]" /></td>
+                <td class="add-checkbox"><input type="checkbox" name="data[<?php echo $i; ?>][AddInclusion][<?php echo $availableInclusion['LoaItem']['loaItemId']; ?>][loaItemId]" /></td>
                 <td>
                     <?php if (in_array($availableInclusion['LoaItem']['loaItemTypeId'], array(12,13,14)) && !empty($availableInclusion['LoaItem']['PackagedItems'])): ?>
                         <b><?php echo $availableInclusion['LoaItem']['itemName']; ?></b>
@@ -25,6 +26,7 @@
                     <?php endif; ?>
                 </td>
                 <td><?php echo $availableInclusion['LoaItemType']['loaItemTypeName']; ?></td>
+                <td><input type="checkbox" name="data[<?php echo $i; ?>][AddInclusion][<?php echo $availableInclusion['LoaItem']['loaItemId']; ?>][perNight]" /></td>
                 <td>
                     <?php echo $currencyCodes[$availableInclusion['LoaItem']['currencyId']]; ?> <?php echo round($availableInclusion['LoaItem']['totalPrice'], 2); ?></span>
                     <?php if ($availableInclusion['LoaItem']['totalPrice'] > $availableInclusion['LoaItem']['itemBasePrice']): ?>

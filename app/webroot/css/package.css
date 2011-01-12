@@ -228,7 +228,7 @@ div.edit-link {
     font-size:12px;
 }
 
-span.edit-link, td.edit-link {
+span.edit-link, td.edit-link, a.edit-link {
     cursor:pointer;
     text-decoration:underline;
     color:#336699;
@@ -385,6 +385,12 @@ span.room-night-header {
     background: #FAFAFA !important;
 }
 
+.price-points-price {
+    color:#7F0000;
+    font-size:15px;
+    font-weight:bold;
+}
+
 div.combo-client-name {
     margin-top:14px;
     color:#7F0000;
@@ -394,4 +400,8 @@ div.combo-client-name {
 div.instructions {
     margin-bottom:12px;
     font-weight: bold;
+}
+
+ul.restrictions-tooltip {
+    margin-bottom:8px;
 }

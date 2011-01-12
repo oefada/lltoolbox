@@ -30,10 +30,17 @@
 		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">Guest Name:</td> 
 		<td style="color:#444444;font-size:12px;" valign="top" align="left"><?php echo $emailName;?></td>
 	</tr>
+
 	<tr>
 		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">Confirmation Number</td>
 		<td style="color:#444444;font-size:12px;" valign="top" align="left"><?=$userFirstName;?><?php echo $resConfNum; ?></td>
 	</tr>
+
+	<tr>
+		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">No. of Nights</td>
+		<td style="color:#444444;font-size:12px;" valign="top" align="left"><?=$numNights;?></td>
+	</tr>
+
 	<tr>
 		<td style="color:#000000;font-size:12px; font-weight:bold;padding-bottom:15px; border-bottom:1px solid silver;" valign="top" align="left" width="170">Confirmed Dates:</td>
 		<td style="color:#444444;font-size:12px;padding-bottom:15px; border-bottom:1px solid silver;" valign="top" align="left">Check-in: <?php echo date('F d, Y',strtotime($resArrDate));?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Check-out: <?php echo date('F d, Y',strtotime($resDepDate));?></td>

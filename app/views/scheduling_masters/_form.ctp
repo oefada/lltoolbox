@@ -22,29 +22,34 @@ if ($masterState != 1) {
                     <th></th>
                     <th>Name</th>
                     <th>Validity</th>
-                    <th>Maximum<br />Number Sales</th>
+                    <th width="50">Max Num Sales</th>
                     <th>Retail</th>
-                    <th>% of Retail<br />(Auction)</th>
-                    <th>% of Retail<br />(Buy Now)</th>
+                    <th>% of <br />Retail<br />(Auction)</th>
+                    <th>% of <br />Retail<br />(Buy Now)</th>
+                    <?php if ($package['Package']['isFlexPackage']): ?>
+                        <th>Retail Price/<br />Extra Night</th>
+                        <th>Price/<br />Extra Night</th>
+                    <?php endif; ?>
                 </tr>
             <?php
-                foreach ($pricePoints as $key => $pricePoint) {
-                    $checked = ($data['SchedulingMaster']['pricePointId'] == $pricePoint['PricePoint']['pricePointId']) ? 'checked' : '';
-                    echo "
+                foreach ($pricePoints as $key => $pricePoint):  
+                    $checked = ($data['SchedulingMaster']['pricePointId'] == $pricePoint['PricePoint']['pricePointId']) ? 'checked' : ''; ?>
                         <tr>
                             <td>
-                                <input type='radio' class='price-point-options' id='price-point-{$pricePoint['PricePoint']['pricePointId']}' name='data[SchedulingMaster][pricePointId]' value='{$pricePoint['PricePoint']['pricePointId']}' $checked/>
+                                <input type="radio" class="price-point-options" id="price-point-<?php echo $pricePoint['PricePoint']['pricePointId']; ?>" name="data[SchedulingMaster][pricePointId]" value="<?php echo $pricePoint['PricePoint']['pricePointId']; ?>" <?php echo $checked; ?>/>
                             </td>
-                            <td><label for='price-point-{$pricePoint['PricePoint']['pricePointId']}'>{$pricePoint['PricePoint']['name']}</label></td>
-                            <td style='font-size:11px;'>{$pricePoint[0]['dateRanges']}</td>
-                            <td>{$pricePoint['PricePoint']['maxNumSales']}</td>
-                            <td>{$pricePoint['PricePoint']['retailValue']}</td>
-                            <td>{$pricePoint['PricePoint']['percentRetailAuc']}</td>
-                            <td>{$pricePoint['PricePoint']['percentRetailBuyNow']}</td>
+                            <td><label for="price-point-<?php echo $pricePoint['PricePoint']['pricePointId']; ?>"><?php echo $pricePoint['PricePoint']['name']; ?></label></td>
+                            <td style='font-size:11px;'><?php echo $pricePoint[0]['dateRanges']; ?></td>
+                            <td><?php echo $pricePoint['PricePoint']['maxNumSales']; ?></td>
+                            <td><?php echo $pricePoint['PricePoint']['retailValue']; ?></td>
+                            <td><?php echo $pricePoint['PricePoint']['percentRetailAuc']; ?></td>
+                            <td><?php echo $pricePoint['PricePoint']['percentRetailBuyNow']; ?></td>
+                            <?php if ($package['Package']['isFlexPackage']): ?>
+                                <td><?php echo $pricePoint['PricePoint']['flexRetailPricePerNight']; ?></td>
+                                <td><?php echo $pricePoint['PricePoint']['pricePerExtraNight']; ?></td>
+                            <?php endif; ?>
                         </tr>
-                    ";
-                }
-            ?>
+                <?php endforeach; ?>
             </table>
         <?php endif; ?>
         <!-- TRACK SELECTION (MULTICLIENT PACKAGES ONLY) -->
@@ -132,10 +137,23 @@ if ($masterState != 1) {
             </div>
             
             <!-- BUY NOW OPTIONS -->
-            <div id="buynow-options" style="padding:0px; margin:0px; <?php if (!$data['isBuyNow']) echo 'display:none;'; ?>">
+            <div id="buynow-options" style="<?php if (!$data['isBuyNow']) echo 'display:none;'; ?>">
                 <h2>Buy Now Options</h2>
                 <input type='radio' id='bonus-miles' name='data[buyNowOfferTypeId]' value='4' checked="checked" /> <label for='bonus-miles'>Includes Bonus Miles</label><br/>
-                <input type='radio' id='suppress-retail' name='data[buyNowOfferTypeId]' value='3' /> <label for='suppress-retail'>Suppress Retail Value</label>        
+                <input type='radio' id='suppress-retail' name='data[buyNowOfferTypeId]' value='3' /> <label for='suppress-retail'>Suppress Retail Value</label>
+                <?php if ($package['Package']['isFlexPackage']): ?>
+                    <h3>Flex Package Info (Buy Now)</h3>
+                    <table class="flex-info">
+                        <tr>
+                            <th>Range of Nights:</th>
+                            <td><?php echo $package['Package']['flexNumNightsMin']; ?> - <?php echo $package['Package']['flexNumNightsMax']; ?> Nights</td>
+                        </tr>
+                        <tr>
+                            <th>Notes:</th>
+                            <td><?php echo htmlentities($package['Package']['flexNotes']); ?></td>
+                        </tr>
+                    </table>
+                <?php endif; ?>
             </div>
         
         <?php } ?>

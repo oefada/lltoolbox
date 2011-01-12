@@ -123,7 +123,12 @@ class SchedulingMastersController extends AppController {
 		} else {
 		    $this->set('singleClientPackage', true);
 		    $masterClient = $package['ClientLoaPackageRel'][0];
-		    $trackIds = $this->SchedulingMaster->Package->ClientLoaPackageRel->Loa->Track->find('list', array('conditions' => array('loaId' => $package['ClientLoaPackageRel'][0]['loaId'])));
+            $conditions = array('Track.loaId = ' . $package['ClientLoaPackageRel'][0]['loaId']);
+            //filter out 'Barter - Set Number of Packages' track type for flex packs
+            if ($package['Package']['isFlexPackage']) {
+                $conditions[] = 'Track.expirationCriteriaId NOT IN (4)';
+            }
+		    $trackIds = $this->SchedulingMaster->Package->ClientLoaPackageRel->Loa->Track->find('list', array('conditions' => $conditions));
 		    $this->set('trackIds', $trackIds);
 		}
 		
@@ -164,10 +169,10 @@ class SchedulingMastersController extends AppController {
             $loaEndDate = date("m-d-Y", strtotime($loa['Loa']['endDate']));
             $this->data['SchedulingMaster']['endDatePicker2'] = $loaEndDate;
 
-            // get pricePoint endDates (14 days prior) if earlier than loa endDate
+            // get pricePoint endDates (7 days prior) if earlier than loa endDate
             $pricePointDefaultEndDates = array();
             foreach ($pricePointsValidities as $pricePointValidity) {
-                $pricePointEndDate = strtotime("-14 days", strtotime($pricePointValidity['LoaItemDate']['endDate']));
+                $pricePointEndDate = strtotime("-7 days", strtotime($pricePointValidity['LoaItemDate']['endDate']));
                 if ($pricePointEndDate < strtotime($loa['Loa']['endDate'])) {
                     $pricePointDefaultEndDates[$pricePointValidity['PricePoint']['pricePointId']]['endDate'] =  date("m-d-Y", $pricePointEndDate);                    
                 } else {

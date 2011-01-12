@@ -26,11 +26,24 @@ $().ready(function() {
         
         $('select#sites').change(function() {
                 $('div#familyAgeRanges').toggle();
+                $('#showFlex').toggle();
+                if ($(this).val() == 2 && $('.flexOptions').not(':hidden')) {
+                    $('.flexOptions').hide();
+                }
+                else if ($(this).val() == 1 && $('#isFlexPackage').is(':checked') && $('.flexOptions').is(':hidden')) {
+                    $('.flexOptions').show();
+                }
             });
     
         if ($('input#PackageSitesFamily').is(':checked')) {
             $('div#familyAgeRanges').show();
         }
+        
+        $.each(['input#isFlexPackage', 'input#notFlexPackage'], function(i, item) {
+            $(item).bind('click', function() {
+                $('tr.flexOptions').toggle();
+            });
+        });
         
         //show/hide age ranges
         $('input#PackageSitesFamily').change(function() {
@@ -564,6 +577,93 @@ function calculateInclusionPrice(inclusionElem, multiplier, isChecked, itemNumNi
     return totalPrice;
 }
 
+function editThis() {
+	var prompt_da_user = confirm('Are you sure you want to make changes? This will prevent the auto-updating of validity disclaimer for all price points for this package.');
+	if (prompt_da_user) {
+		$('#validity-disclaimer').removeAttr('readonly');
+		$('#edit-this-validity-disclaimer').val(1);
+	} else {
+		return false;
+	}
+}
+
+function updateRetail(autoFillPercentRetail, autoFillSuggestedFlexPrice, numNights, currencyCode, isFlexPackage) {
+    highestRetail = 0;
+    defaultPercent = 0;
+    var highestFlex = 0;
+	var checkedIds = '';
+    $('.check-rate-period:checked').each(function() {
+        if (retails[$(this).val()] > highestRetail) {
+            highestRetail = retails[$(this).val()];
+            defaultPercent = guaranteedPercents[$(this).val()];
+        }
+        if (isFlexPackage) {
+            if (flexRoomPricePerNight[$(this).val()] > highestFlex) {
+                highestFlex = flexRoomPricePerNight[$(this).val()];
+            }
+        }
+		checkedIds += ',' + $(this).val();
+    });
+    $('#retail').html(highestRetail);
+    if (isFlexPackage) {
+        var pricePerNight = 0;
+        var inclusionTotal = 0;
+        if ($('#flexSuggestedRetail').val() == 0) { 
+            $('span.total-price').each(function(i, item) {
+                    inclusionTotal += parseInt($(item).text());
+                });            
+            $('#flexDefaultRetailPrice').html(highestFlex);
+            $('#flexSuggestedRetail').val(highestFlex + inclusionTotal);
+        }
+        $('span#suggestedFlexCalc').html($('#flexSuggestedRetail').val());
+        if ($('#buynow-percent').val() > 0) {
+            var calcPercent = $('#buynow-percent').val();
+        }
+        else {
+            var calcPercent = defaultPercent;
+        }
+        $('span#suggestedFlexPrice').html(Math.round($('#flexSuggestedRetail').val() * (calcPercent / 100)));
+        if (autoFillSuggestedFlexPrice) {
+            $('input#flexPricePerNight').val(Math.round($('#flexSuggestedRetail').val() * (calcPercent / 100)));
+        }
+    }
+    if (autoFillPercentRetail) {
+        $('#auction-percent').val(defaultPercent);
+    }
+    $('#guaranteed-percent').val(defaultPercent);
+    $('#auction-retail').val(Math.round($('#auction-percent').val() * highestRetail / 100));
+    $('#auction-us-retail').val(Math.round($('#auction-percent').val() * highestRetail / 100 * conversionRate));
+    $('#buynow-retail').val(Math.round($('#buynow-percent').val() * highestRetail / 100));
+    $('#buynow-us-retail').val(Math.round($('#buynow-percent').val() * highestRetail / 100 * conversionRate));    
+    $('#retail-value').val(highestRetail);
+    if (currencyCode != 'USD') {
+        $('#retail-usd').html('= ' + (highestRetail * conversionRate) + ' USD');
+    }	
+	if (checkedIds && !($('#edit-this-validity-disclaimer').val() == 1)) {
+		updateValidityDisclaimer(checkedIds);
+	}
+}
+
+function updateValidityDisclaimer(ids) {
+	if (!ids) {
+		return false;
+	}
+	$.ajax({
+		url: '/clients/' + clientId + '/packages/ajaxGetPricePointValidityDisclaimer/' + packageId + '/?ids=' + ids,
+		success: function(data) {
+			$('#validity-disclaimer').html(data);
+		}
+	});
+}
+
+function updatePerNightPrice(autoFillFlexPerNightPrice) {
+    $('span#suggestedFlexCalc').html($('#flexSuggestedRetail').val());
+    $('span#suggestedFlexPrice').html(Math.round($('#flexSuggestedRetail').val() * ($('#buynow-percent').val() / 100)));
+    if (autoFillFlexPerNightPrice) {
+        $('input#flexPricePerNight').val(Math.round($('#flexSuggestedRetail').val() * ($('#buynow-percent').val() / 100)));
+    }
+}
+
 function closeForm(anchor) {
     $('div#formContainer').dialog('close');
     $('div#formContainer').dialog('destroy');
@@ -590,3 +690,4 @@ function submitForm(thisId) {
                 }
         });
 }
+

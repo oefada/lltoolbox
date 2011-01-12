@@ -86,55 +86,57 @@
             </tr>
             <tr><td colspan="4" class="spacer">&nbsp;</td></tr>
             
-            <?php foreach ($roomNights as $rn):?>
-            <tr>
-                <td colspan="4" style="margin:0px;padding:15px 0 15px 0;border-top:1px solid silver;">
-                    <table width="100%" >
-                        <tr>
-                            <th width="20%">Room Type:</th>
-                            <td width="50%">
-                                <?php foreach ($rn['LoaItems'] as $roomItem):?>
-                                    <?=$roomItem['LoaItem']['itemName'];?><br />
+            <?php foreach ($roomNights as $rn): ?>
+                <?php if (isset($rn['LoaItems'][0]['PricePoint'])): ?>
+                    <tr>
+                        <td colspan="4" style="margin:0px;padding:15px 0 15px 0;border-top:1px solid silver;">
+                            <table width="100%" >
+                                <tr>
+                                    <th width="20%">Room Type:</th>
+                                    <td width="50%">
+                                        <?php foreach ($rn['LoaItems'] as $roomItem):?>
+                                            <?=$roomItem['LoaItem']['itemName'];?><br />
+                                        <?php endforeach;?>
+                                    </td>
+                                    <td colspan="2">
+                                        <?php foreach ($rn['Validity'] as $v) { 
+                                            echo '<strong>' . $v['LoaItemDate']['startDate'] . ' to ' . $v['LoaItemDate']['endDate'] . '</strong><br />';
+                                        }?>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Rate Per Night</th>
+                                    <td colspan="3">
+                                        <?php if (count($rn['LoaItems'][0]['LoaItemRate']) > 1) :?>
+                                            <?php foreach ($rn['LoaItems'][0]['LoaItemRate'] as $rateday) :?>
+                                                <div><?=$rateday['LoaItemRate']['MultiDayPrice'];?> -- <?=$number->currency( $rateday['LoaItemRate']['price'], $cc);?></div>
+                                            <?php endforeach;?>
+                                        <?php else :?>
+                                            <?=$number->currency( $rn['LoaItems'][0]['LoaItemRate'][0]['LoaItemRate']['price'], $cc);?>
+                                        <?php endif;?>
+                                    </td>
+                                </tr>
+                                <?php foreach ($rn['Fees'] as $fees):?>
+                                <tr>
+                                    <td><?=$fees['Fee']['feeName'];?></td>
+                                    <td colspan="3">
+                                        <?php if ($fees['Fee']['feeTypeId'] == 1) :?>
+                                        <?=$fees['Fee']['feePercent'];?>%
+                                        <?php else: ?>
+                                        <?=$number->currency( $fees['Fee']['feePercent'], $cc);?>
+                                        <?php endif;?>
+                                    </td>
+                                </tr>
                                 <?php endforeach;?>
-                            </td>
-                            <td colspan="2">
-                                <?php foreach ($rn['Validity'] as $v) { 
-                                    echo '<strong>' . $v['LoaItemDate']['startDate'] . ' to ' . $v['LoaItemDate']['endDate'] . '</strong><br />';
-                                }?>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>Rate Per Night</th>
-                            <td colspan="3">
-                                <?php if (count($rn['LoaItems'][0]['LoaItemRate']) > 1) :?>
-                                    <?php foreach ($rn['LoaItems'][0]['LoaItemRate'] as $rateday) :?>
-                                        <div><?=$rateday['LoaItemRate']['MultiDayPrice'];?> -- <?=$number->currency( $rateday['LoaItemRate']['price'], $cc);?></div>
-                                    <?php endforeach;?>
-                                <?php else :?>
-                                    <?=$number->currency( $rn['LoaItems'][0]['LoaItemRate'][0]['LoaItemRate']['price'], $cc);?>
-                                <?php endif;?>
-                            </td>
-                        </tr>
-                        <?php foreach ($rn['Fees'] as $fees):?>
-                        <tr>
-                            <td><?=$fees['Fee']['feeName'];?></td>
-                            <td colspan="3">
-                                <?php if ($fees['Fee']['feeTypeId'] == 1) :?>
-                                <?=$fees['Fee']['feePercent'];?>%
-                                <?php else: ?>
-                                <?=$number->currency( $fees['Fee']['feePercent'], $cc);?>
-                                <?php endif;?>
-                            </td>
-                        </tr>
-                        <?php endforeach;?>
-                        <tr>
-                            <td colspan="2">&nbsp;</td>
-                            <td align="right">Total Accommodations:</td>
-                            <td align="right"><strong><?=$number->currency($rn['Totals']['totalAccommodations'], $cc);?></strong></td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
+                                <tr>
+                                    <td colspan="2">&nbsp;</td>
+                                    <td align="right">Total Accommodations:</td>
+                                    <td align="right"><strong><?=$number->currency($rn['Totals']['totalAccommodations'], $cc);?></strong></td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                <?php endif; ?>
             <?php endforeach;?>
             <tr><td colspan="4" class="spacer">&nbsp;</td></tr>
             <?php $alt = '';?>
@@ -146,29 +148,28 @@
             </tr>
             <?php foreach($package['ClientLoaPackageRel'] as $packageClient): ?>
                 <?php foreach ($packageClient['Inclusions'] as $ik => $item):?>
-                <?php 
-                    $alt = ($alt ==	'') ? 'style="background-color:#f3f3f3;"' : '';
-                ?>
-                <tr>
-                    <td <?=$alt;?>><?php echo ($isMultiClientPackage) ? $packageClient['Client']['name'] : '&nbsp'; ?></td>
-                    <td <?=$alt;?>>
-                        <?=$item['LoaItem']['itemName'];?>
-                        <?php if ($item['LoaItem']['loaItemTypeId'] == 12 && isset($item['LoaItem']['PackagedItems'])): ?>
-                                <ul>
-                                <?php foreach($item['LoaItem']['PackagedItems'] as $inclusion): ?>
-                                        <?php if ($inclusion['LoaItem']['loaItemTypeId'] > 1): ?>
-                                            <li><?php echo $inclusion['LoaItem']['itemName']; ?></li>
-                                        <?php endif; ?>
-                                <?php endforeach; ?>
-                                </ul>
-                        <?php endif; ?>
-                    </td>
-                    <td <?=$alt;?>><?=$number->currency($item['LoaItem']['totalPrice'], $cc);?></td>
-                    <td <?=$alt;?>><strong><?=$number->currency( ($item['LoaItem']['totalPrice'] * $item['PackageLoaItemRel']['quantity']), $cc);?></strong></td>
-                </tr>
+                    <?php 
+                        $alt = ($alt ==	'') ? 'style="background-color:#f3f3f3;"' : '';
+                    ?>
+                    <tr>
+                        <td <?=$alt;?>><?php echo ($isMultiClientPackage) ? $packageClient['Client']['name'] : '&nbsp'; ?></td>
+                        <td <?=$alt;?>>
+                            <?=$item['LoaItem']['itemName'];?>
+                            <?php if ($item['LoaItem']['loaItemTypeId'] == 12 && isset($item['LoaItem']['PackagedItems'])): ?>
+                                    <ul>
+                                    <?php foreach($item['LoaItem']['PackagedItems'] as $inclusion): ?>
+                                            <?php if ($inclusion['LoaItem']['loaItemTypeId'] > 1): ?>
+                                                <li><?php echo $inclusion['LoaItem']['itemName']; ?></li>
+                                            <?php endif; ?>
+                                    <?php endforeach; ?>
+                                    </ul>
+                            <?php endif; ?>
+                        </td>
+                        <td <?=$alt;?>><?=$number->currency($item['LoaItem']['totalPrice'], $cc);?></td>
+                        <td <?=$alt;?>><strong><?=$number->currency( ($item['LoaItem']['totalPrice'] * $item['PackageLoaItemRel']['quantity']), $cc);?></strong></td>
+                    </tr>
                 <?php endforeach;?>
-            <?php endforeach; ?>
-            
+            <?php endforeach; ?>           
             <tr><td colspan="4" class="spacer">&nbsp;</td></tr>
             <tr>
                 <th>Valid for Travel</th>
@@ -194,49 +195,41 @@
             <tr><td colspan="4" class="spacer">&nbsp;</td></tr>
             <tr><td colspan="4" class="spacer">&nbsp;</td></tr>
             
-            <?php foreach ($lowPrice as $lp) :?>
-            <tr>
-                <td colspan="4" class="align-r" style="padding:25px;border:1px solid #707070;background-color:#ececec;">
-                    <table class="lp" cellspacing="0" cellpadding="10">
+            <?php foreach ($lowPrice as $lp): ?>
+                <?php if (isset($lp['PricePoint'])): ?>
                     <tr>
-                        <td class="bold align-r" valign="top" colspan="2">PACKAGE RETAIL VALUE:</td>
-                        <td class="bold align-r" valign="top"><?=$lp['dateRanges'];?></td>
-                        <td class="bold align-c" valign="top"><?=$number->currency( $lp['retailValue'], $cc);?></td>
-                    </tr>
-                    <tr class="starting-price">
-                        <td class="bold align-r" valign="top" colspan="3" style="padding-top:15px;">LUXURY LINK STARTING PRICE</td>
-                        <?php if (0): ?>
-                            <td class="bold align-r" valign="top" style="padding-top:15px;">Auction</td>
-                        <?php endif; ?>
-                        <td class="bold align-c" valign="top" style="padding-top:15px;"><?=$number->currency( $lp['startPrice'], $cc);?></td>
-                    </tr>
-                    <?php if (0): ?>
-                        <tr class="starting-price">
-                            <td class="bold align-r" valign="top" colspan="3" style="border-top:none">Buy Now</td>
-                            <td class="bold align-c" valign="top" style="border-top:none"><?=$number->currency( $lp['startPrice'], $cc);?></td>
-                        </tr>
-                    <?php endif; ?>
-                    <?php if ($package['Package']['isFlexPackage'] == '1'): ?>
-                        <tr class="starting-price">
-                            <td class="bold align-r" valign="top" colspan="3" style="border-top:none">
-                                Rate Per Extra Night<?php echo ($package['Package']['numNights'] > $package['Package']['flexNumNightsMin']) ? '*' : ''; ?>
-                            </td>
-                            <td class="bold align-c" valign="top" style="border-top:none"><?=$number->currency( $lp['startPrice'], $cc);?></td>
-                        </tr>
-                    <?php endif; ?>
-                    <tr class="starting-price">
-                        <td class="align-r" valign="top" colspan="3">Percentage of Retail</td>
-                        <td class="align-r" valign="top"><?=$lp['LoaItemRatePackageRel']['guaranteePercentRetail'];?>&nbsp;</td>
-                    </tr>
-                    </table>
-                </td>
-            </tr>
+                        <td colspan="4" class="align-r" style="padding:25px;border:1px solid #707070;background-color:#ececec;">
+                            <table class="lp" cellspacing="0" cellpadding="10">
+                                <tr>
+                                    <td class="bold align-r" valign="top"><?php echo $package['Package']['numNights']; ?>-NIGHT PACKAGE RETAIL VALUE:</td>
+                                    <td class="bold align-r" valign="top"><?=$lp['dateRanges'];?></td>
+                                    <td class="bold align-c" valign="top"><?=$number->currency( $lp['retailValue'], $cc);?></td>
+                                    <td>&nbsp;</td>
+                                </tr>
+                                <tr class="starting-price" style="padding-top:15px;">
+                                    <td class="bold align-r" valign="top">LUXURY LINK PRICING</td>
+                                    <td class="bold align-r" valign="top">Auction Opening Bid</td>
+                                    <td class="bold align-c" valign="top"><?=$number->currency( $lp['auctionPrice'], $cc);?></td>
+                                    <td class="align-c">(<?php echo $lp['percentRetailAuc']; ?>% of Retail)</td>
+                                </tr>
+                                <tr class="starting-price">
+                                    <td class="bold align-r" valign="top" colspan="2" style="border-top:none">Buy Now</td>
+                                    <td class="bold align-c" valign="top" style="border-top:none"><?=$number->currency( $lp['buyNowPrice'], $cc);?></td>
+                                    <td class="align-c" style="border-top:none">(<?php echo $lp['percentRetailBuyNow']; ?>% of Retail)</td>
+                                </tr>
+                                <?php if ($package['Package']['isFlexPackage'] == '1'): ?>
+                                    <tr class="starting-price">
+                                        <td class="bold align-r" valign="top" colspan="2" style="border-top:none">
+                                            Nightly Rate When Adding/Reducing Nights
+                                        </td>
+                                        <td class="bold align-c" valign="top" style="border-top:none"><?=$number->currency( $lp['flexPricePerNight'], $cc);?></td>
+                                        <td class="align-c" style="border-top:none"><?php echo $package['Package']['flexNumNightsMin']; ?> - <?php echo $package['Package']['flexNumNightsMax']; ?> Nights</td>
+                                    </tr>
+                                <?php endif; ?>
+                            </table>
+                        </td>
+                <?php endif; ?>
             <?php endforeach;?>
-            <?php if ($package['Package']['isFlexPackage'] == '1' && $package['Package']['numNights'] > $package['Package']['flexNumNightsMin']): ?>
-                    <tr>
-                        <td class="align-r" colspan="4">* <i>This rate will be subtracted from the Buy Now rate when reducing the number of nights</i></td>
-                    </tr>
-            <?php endif; ?>
         </table>
         
         <script src="/js/jquery/jquery.js" type="text/javascript"></script>

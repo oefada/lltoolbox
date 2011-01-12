@@ -8,7 +8,8 @@ class LoaItemRatePeriod extends AppModel {
 	var $belongsTo = array('LoaItem' => array('foreignKey' => 'loaItemId'));
 	
 	var $hasMany = array('LoaItemRate' => array('foreignKey' => 'loaItemRatePeriodId', 'dependent' => true),
-						 'LoaItemDate' => array('foreignKey' => 'loaItemRatePeriodId', 'dependent' => true)
+						 'LoaItemDate' => array('foreignKey' => 'loaItemRatePeriodId', 'dependent' => true),
+                         'PricePointRatePeriodRel' => array('foreignKey' => 'loaItemRatePeriodId')
 						 );
 	
 	/*
@@ -87,6 +88,13 @@ class LoaItemRatePeriod extends AppModel {
                 }
                 else {
                     $ratePeriod['Validity'] = array();
+                }
+                $query = "SELECT * FROM pricePointRatePeriodRel PricePointRatePeriodRel  
+                          INNER JOIN pricePoint PricePoint USING (pricePointId)
+                          WHERE PricePointRatePeriodRel.loaItemRatePeriodId = {$ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId']} AND
+                                PricePoint.packageId = {$packageId}";
+                if ($pricePoint = $this->query($query)) {
+                    $ratePeriod['PricePoint'] = $pricePoint;
                 }
             }
             return $ratePeriods;

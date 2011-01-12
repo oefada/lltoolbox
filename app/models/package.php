@@ -372,13 +372,22 @@ class Package extends AppModel {
     }
     
     function getRatePeriods($packageId) {
+        //$query = "SELECT * FROM loaItemRatePeriod LoaItemRatePeriod
+        //          INNER JOIN loaItemRate LoaItemRate USING (loaItemRatePeriodId) 
+        //          INNER JOIN loaItemRatePackageRel LoaItemRatePackageRel USING (loaItemRateId) 
+        //          LEFT JOIN pricePoint PricePoint ON LoaItemRatePackageRel.packageId = PricePoint.packageId 
+        //          LEFT JOIN pricePointRatePeriodRel PricePointRatePeriodRel ON LoaItemRatePeriod.loaItemRatePeriodId = PricePointRatePeriodRel.loaItemRatePeriodId AND PricePoint.pricePointId = PricePointRatePeriodRel.pricePointId
+        //          WHERE LoaItemRatePackageRel.packageId = {$packageId}
+        //";
+        
         $query = "SELECT * FROM loaItemRatePeriod LoaItemRatePeriod
                   INNER JOIN loaItemRate LoaItemRate USING (loaItemRatePeriodId)
                   INNER JOIN loaItemRatePackageRel LoaItemRatePackageRel USING (loaItemRateId) 
                   WHERE LoaItemRatePackageRel.packageId = {$packageId}
-                  GROUP BY LoaItemRatePeriod.loaItemRatePeriodId
-        ";
-        $ratePeriods = $this->query($query);
+                  GROUP BY LoaItemRatePeriod.loaItemRatePeriodId";
+        
+        //print_r($query);
+        //die();
         if ($ratePeriods = $this->query($query)) {
             return $ratePeriods;
         }
@@ -520,13 +529,15 @@ class Package extends AppModel {
 
 	function connectValidDateRanges(&$dates) {
 		foreach ($dates as $i => $ranges) {
-			$prev_index = $i - 1;
-			if (date('Y-m-d', strtotime($dates[$prev_index]['pvd']['endDate'] . ' +1 DAY')) == $ranges['pvd']['startDate']) {
-				// if previous enddate is 1 day before current start date so [2010-01-05 -> 2010-01-09] AND [2010-01-10 -> 2010-01-15]
-				$dates[$i]['pvd']['startDate'] = $dates[$prev_index]['pvd']['startDate'];
-				$dates[$i]['pvd']['endDate'] = $ranges['pvd']['endDate'];
-				unset($dates[$prev_index]);
-			}
+            if ($i > 0) {
+                $prev_index = $i - 1;
+                if (date('Y-m-d', strtotime($dates[$prev_index]['pvd']['endDate'] . ' +1 DAY')) == $ranges['pvd']['startDate']) {
+                    // if previous enddate is 1 day before current start date so [2010-01-05 -> 2010-01-09] AND [2010-01-10 -> 2010-01-15]
+                    $dates[$i]['pvd']['startDate'] = $dates[$prev_index]['pvd']['startDate'];
+                    $dates[$i]['pvd']['endDate'] = $ranges['pvd']['endDate'];
+                    unset($dates[$prev_index]);
+                }
+            }
 		}
 	}
 
@@ -764,24 +775,26 @@ class Package extends AppModel {
 
 		$count = count($ranges);
 		for ($i = 0 ; $i < $count; $i++) {
-			$prev_index = $i - 1;
-			// if current start is the same as previous end so [2010-01-05 -> 2010-01-09]  AND [2010-01-09 -> 2010-01-15]
-			if ($ranges[$i]['s'] == $ranges[$prev_index]['e']) {
-				if ($ranges[$i]['t'] == $ranges[$prev_index]['t']) {
-					// two date ranges are actually one  -- so combine them and remove old range
-					// both either validity or both blackout -- either way, combine that shiz
-					$ranges[$i] = array('s' => $ranges[$prev_index]['s'], 'e' => $ranges[$i]['e'], 't' => $ranges[$i]['t']);
-					unset($ranges[$prev_index]);
-				} elseif ($ranges[$i]['t'] == 'validity') {
-					$ranges[$i]['s'] = date('Y-m-d', strtotime($ranges[$i]['s'] . ' +1 day'));
-				} elseif ($ranges[$i]['t'] == 'blackout') {
-					$ranges[$prev_index]['e'] = date('Y-m-d', strtotime($ranges[$prev_index]['e'] . ' -1 day'));
-				}
-			}/* else if (date('Y-m-d', strtotime($ranges[$prev_index]['e'] . ' +1 DAY')) == $ranges[$i]['s']) {
-				// if previous enddate is 1 day before current start date so [2010-01-05 -> 2010-01-09] AND [2010-01-10 -> 2010-01-15]
-				$ranges[$i] = array('s' => $ranges[$prev_index]['s'], 'e' => $ranges[$i]['e'], 't' => $ranges[$i]['t']);
-				unset($ranges[$prev_index]);
-			}*/
+            if ($i > 0) {
+                $prev_index = $i - 1;
+                // if current start is the same as previous end so [2010-01-05 -> 2010-01-09]  AND [2010-01-09 -> 2010-01-15]
+                if ($ranges[$i]['s'] == $ranges[$prev_index]['e']) {
+                    if ($ranges[$i]['t'] == $ranges[$prev_index]['t']) {
+                        // two date ranges are actually one  -- so combine them and remove old range
+                        // both either validity or both blackout -- either way, combine that shiz
+                        $ranges[$i] = array('s' => $ranges[$prev_index]['s'], 'e' => $ranges[$i]['e'], 't' => $ranges[$i]['t']);
+                        unset($ranges[$prev_index]);
+                    } elseif ($ranges[$i]['t'] == 'validity') {
+                        $ranges[$i]['s'] = date('Y-m-d', strtotime($ranges[$i]['s'] . ' +1 day'));
+                    } elseif ($ranges[$i]['t'] == 'blackout') {
+                        $ranges[$prev_index]['e'] = date('Y-m-d', strtotime($ranges[$prev_index]['e'] . ' -1 day'));
+                    }
+                }/* else if (date('Y-m-d', strtotime($ranges[$prev_index]['e'] . ' +1 DAY')) == $ranges[$i]['s']) {
+                    // if previous enddate is 1 day before current start date so [2010-01-05 -> 2010-01-09] AND [2010-01-10 -> 2010-01-15]
+                    $ranges[$i] = array('s' => $ranges[$prev_index]['s'], 'e' => $ranges[$i]['e'], 't' => $ranges[$i]['t']);
+                    unset($ranges[$prev_index]);
+                }*/
+            }
 		}
 		return $ranges;
 	}

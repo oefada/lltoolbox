@@ -1,0 +1,36 @@
+update ticket.numNights
+from ticket
+inner join offerLuxuryLink ol using (offerId)
+set ticket.numNights = ol.roomNights
+where ticket.created >= '2009-03-01 00:00:00';
+
+
+updating inclusions:
+
+need to update package.packageIncludes, offerLuxuryLink.offerIncludes where overridePackageIncludes = 0
+php script?
+
+//get all valid packages
+select packageId, numGuests, packageIncludes, merchandisingDescription from package 
+inner join packageLoaItemRel using (packageId)
+inner join loaItem using (loaItemId)
+where overridePackageIncludes = 0 and loaItemTypeId in (1) and merchandisingDescription is not null
+order by packageId;
+
+foreach ($packages as $package) {
+    $packageIncludes = $package['packageIncludes'];
+    $leadIn = 'Package for ' . $package['numNights'] . ' includes:';
+    $replacement = $leadIn . '<ul><li>' . $package['merchandisingDescription'] . '</li>';
+    $packageIncludes = explode('</li>', $packageIncludes);
+    unset($packageIncludes[0]);
+    $packageIncludes = implode('</li>', $packageIncludes);
+    $packageIncludes = $replacement . $packageIncludes;
+    echo "$packageIncludes\n";
+    //update package
+}
+
+
+
+update package
+set package.packageBlurb = concat(upper(left(packageBlurb, 1)), substring(packageBlurb, 2))
+where package.siteId = 1;

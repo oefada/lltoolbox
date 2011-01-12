@@ -192,25 +192,27 @@ table.lp td {
 <tr><td colspan="4" class="spacer">&nbsp;</td></tr>
 
 <?php foreach ($lowPrice as $lp) :?>
-<tr>
-	<td colspan="4" class="align-r" style="padding:25px;border:1px solid #707070;background-color:#ececec;">
-		<table class="lp" cellspacing="0" cellpadding="10">
-		<tr>
-			<td class="bold align-r" valign="top" colspan="2">PACKAGE RETAIL VALUE:</td>
-			<td class="bold align-c" valign="top"><?=$lp['dateRanges'];?></td>
-			<td class="bold align-c" valign="top"><?=$number->currency( $lp['retailValue'], $cc);?></td>
-		</tr>
-		<tr class="starting-price">
-			<td class="bold align-r" valign="top" colspan="3" style="padding-top:15px;">FAMILYGETAWAY.COM STARTING PRICE</td>
-			<td class="bold align-c" valign="top" style="padding-top:15px;"><?=$number->currency( $lp['startPrice'],$cc);?></td>
-		</tr>
-		<tr class="starting-price">
-			<td class="align-r" valign="top" colspan="3">Percentage of Retail</td>
-			<td class="align-r" valign="top"><?=$lp['LoaItemRatePackageRel']['guaranteePercentRetail'];?>&nbsp;</td>
-		</tr>
-		</table>
-	</td>
-</tr>
+    <?php if (!empty($lp['pricePointId'])): ?>
+            <tr>
+                <td colspan="4" class="align-r" style="padding:25px;border:1px solid #707070;background-color:#ececec;">
+                    <table class="lp" cellspacing="0" cellpadding="10">
+                    <tr>
+                        <td class="bold align-r" valign="top" colspan="2">PACKAGE RETAIL VALUE:</td>
+                        <td class="bold align-c" valign="top"><?=$lp['dateRanges'];?></td>
+                        <td class="bold align-c" valign="top"><?=$number->currency( $lp['retailValue'], $cc);?></td>
+                    </tr>
+                    <tr class="starting-price">
+                        <td class="bold align-r" valign="top" colspan="3" style="padding-top:15px;">FAMILYGETAWAY.COM STARTING PRICE</td>
+                        <td class="bold align-c" valign="top" style="padding-top:15px;"><?=$number->currency( $lp['startPrice'],$cc);?></td>
+                    </tr>
+                    <tr class="starting-price">
+                        <td class="align-r" valign="top" colspan="3">Percentage of Retail</td>
+                        <td class="align-r" valign="top"><?=$lp['LoaItemRatePackageRel']['guaranteePercentRetail'];?>&nbsp;</td>
+                    </tr>
+                    </table>
+                </td>
+            </tr>
+    <?php endif; ?>
 <?php endforeach;?>
 
 </table>

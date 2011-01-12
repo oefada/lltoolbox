@@ -71,9 +71,39 @@
        <td><?php echo $package['Package']['packageName']; ?></td>
     </tr>
     <tr class="odd">
+        <th><?php if ($package['Package']['isFlexPackage'] == 1): ?>
+                Default Number of Nights
+            <?php else: ?>
+                Total Nights
+            <?php endif; ?>
+        </th>
+        <td>
+            <?php echo $package['Package']['numNights']; ?>
+            <?php if (isset($isDailyRates)): ?>
+                    <?php foreach ($ratePeriods[0]['LoaItems'][0]['LoaItemRate'] as $rate): ?>
+                            <span style="margin-left:30px;"><?php echo $rate['LoaItemRate']['rateLabel']; ?>: <?php echo $rate['LoaItemRatePackageRel']['numNights']; ?></span>
+                    <?php endforeach; ?>
+            <?php endif; ?>
+        </td>
+    </tr>
+    <tr>
         <th>Is Private Package?</th>
         <td><?php echo ($package['Package']['isPrivatePackage'] == 1) ? 'Yes' : 'No'; ?></td>
     </tr>
+    <tr class="odd">
+        <th>Is Flex Package?</th>
+        <td><?php echo ($package['Package']['isFlexPackage'] == 1) ? 'Yes' : 'No'; ?></td>
+    </tr>
+    <?php if ($package['Package']['isFlexPackage']): ?>
+        <tr class="odd">
+            <th>Range</th>
+            <td>Valid for <?php echo $package['Package']['flexNumNightsMin']; ?> to <?php echo $package['Package']['flexNumNightsMax']; ?> nights</td>            
+        </tr>
+        <tr class="odd">
+            <th>Flex Notes</th>
+            <td><textarea class="notes" rows="10" readonly><?php echo "{$package['Package']['flexNotes']}\n"; ?></textarea></td>
+        </tr>
+    <?php endif; ?>
     <tr>
         <th>Max Num Guests</th>
         <td>
@@ -92,25 +122,14 @@
         <td><?php echo $package['Package']['maxAdults']; ?></td>
     </tr>
     <tr class="odd">
-        <th>Total Nights</th>
-        <td>
-            <?php echo $package['Package']['numNights']; ?>
-            <?php if (isset($isDailyRates)): ?>
-                    <?php foreach ($ratePeriods[0]['LoaItems'][0]['LoaItemRate'] as $rate): ?>
-                            <span style="margin-left:30px;"><?php echo $rate['LoaItemRate']['rateLabel']; ?>: <?php echo $rate['LoaItemRatePackageRel']['numNights']; ?></span>
-                    <?php endforeach; ?>
-            <?php endif; ?>
-        </td>
-    </tr>
-    <tr>
         <th>Currency</th>
         <td><?php if (!empty($package['Package']['currencyId'])) echo $currencyCodes[$package['Package']['currencyId']]; ?></td>
     </tr>
-    <tr class="odd">
+    <tr>
         <th>Rate Disclaimer</th>
         <td><?php echo $package['Package']['rateDisclaimer']; ?></td>
     </tr>
-    <tr>
+    <tr class="odd">
         <th>History</th>
         <td>
             <div class="history-detail">
@@ -120,7 +139,7 @@
             </div>
         </td>
     </tr>
-    <tr class="odd">
+    <tr>
         <th>Notes</th>
         <td>
             <div class="history">

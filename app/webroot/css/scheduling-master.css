@@ -27,3 +27,13 @@
 #schedulingmaster-add input {
     vertical-align: bottom;
 }
+
+#buynow-options {
+    padding-bottom:20px;
+}
+
+.flex-info, .flex-info tr th td {
+    border:hidden;
+    width:400px;
+    font-size:11px;
+}

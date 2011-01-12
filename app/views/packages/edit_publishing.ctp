@@ -33,7 +33,7 @@ echo $javascript->link('jquery/jquery-autocomplete/jquery.autocomplete'); ?>
 	<h3 style="margin-bottom;15px;">Publishing</h3>
 	<input type="hidden" name="data[Package][packageId]" value="<?=$package['Package']['packageId'];?>" />
 	<table id="tbl-publishing" class="package">
-	<tr><th>Package Title</th><td><input type="text" name="data[Package][packageTitle]" value="<?=htmlentities($package['Package']['packageTitle']);?>" /></td></tr>
+	<tr><th>Package Title</th><td><input type="text" name="data[Package][packageTitle]" value="<?=htmlentities($packageTitle);?>" /></td></tr>
 	<tr><th>Short Blurb</th><td><input type="text" name="data[Package][shortBlurb]" value="<?=htmlentities($package['Package']['shortBlurb']);?>" maxlength="65" /></td></tr>
 	<tr><th>Package Blurb</th><td><input type="text" name="data[Package][packageBlurb]" value="<?=htmlentities($package['Package']['packageBlurb']);?>" maxlength="62" /></td></tr>
 	<tr><th>Room Grade</th><td><input type="text" name="data[Package][roomGrade]" value="<?=htmlentities($roomGrade);?>" readonly="readonly" /></td></tr>
@@ -119,7 +119,10 @@ echo $javascript->link('jquery/jquery-autocomplete/jquery.autocomplete'); ?>
 			return false;
 		}
 	}
-	function updateInclusions(id) {
+    
+    //acarney 2011-01-12 -- remove this function after flexpacks launch and rename updateInclusionsNew to updateInclusions
+    //updateInclusionsNew applies the new flexpacks autotext rules
+    function updateInclusions(id) {
 		var inclusions = '';
 		var inclusion_ids = '';
 		if (siteId == 1) {
@@ -143,6 +146,41 @@ echo $javascript->link('jquery/jquery-autocomplete/jquery.autocomplete'); ?>
 
 		inclusions += "<ul>\n";
 		inclusions += '    <li>'+ numNights  +' nights in '+ roomNightDescription +"</li>\n";
+		var lis = $("#sortable li").each(function(i) {
+			var merch = $('#' + this.id + '-copy').html();
+			if (merch) {
+				inclusions += '    <li>'+ merch +"</li>\n";
+				inclusion_ids += $('#' + this.id + '-id').val() + ',';
+			}
+		});
+		inclusions += '</ul>';
+
+		
+		$('#inclusion_id_order').val(inclusion_ids);
+		$('#package-validity-includes').html(inclusions);
+	}
+        
+	function updateInclusionsNew(id) {
+		var inclusions = '';
+		var inclusion_ids = '';
+		if (siteId == 1) {
+            inclusions += "<p>Package for " + numGuests + " includes:</p>\n";
+            inclusions += "<ul>\n";
+            inclusions += '    <li>'+ roomNightDescription +"</li>\n";
+		} else if (siteId == 2) {
+			inclusions += "<p><b>This "+ numNights  +"-night package sleeps up to "+ numGuests +":</b></p>\n";
+			inclusions += "<ul>\n";
+			if (maxAdults == numGuests) {
+				inclusions += "    <li>Valid for all ages</li>\n";
+			} else {
+				inclusions += "    <li>Maximum "+ maxAdults +" adults</li>\n";
+				inclusions += "    <li>Children ages "+ rangeLow +"-"+ rangeHigh +"</li>\n";
+			}
+			inclusions += "</ul><br>\n";
+			inclusions += "<p><b>This package includes:</b></p>\n";
+            inclusions += "<ul>\n";
+            inclusions += '    <li>'+ numNights  +' nights in '+ roomNightDescription +"</li>\n";
+		}
 		var lis = $("#sortable li").each(function(i) {
 			var merch = $('#' + this.id + '-copy').html();
 			if (merch) {
