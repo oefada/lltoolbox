@@ -1372,7 +1372,7 @@ class PackagesController extends AppController {
                    $this->Package->PackageLoaItemRel->create();
                    $this->Package->PackageLoaItemRel->save($rel);
                 }
-                if ($ratePeriods = $this->LoaItem->LoaItemRatePeriod->getRatePeriods($loaItemId)) {
+                if ($ratePeriods = $this->LoaItem->LoaItemRatePeriod->getRatePeriods($loaItemId, $packageId)) {
                     foreach($ratePeriods as $ratePeriod) {
                         if (isset($ratePeriod['LoaItemRate']) && !empty($ratePeriod['LoaItemRate'])) {
                             foreach ($ratePeriod['LoaItemRate'] as $rate) {

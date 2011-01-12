@@ -89,12 +89,14 @@ class LoaItemRatePeriod extends AppModel {
                 else {
                     $ratePeriod['Validity'] = array();
                 }
-                $query = "SELECT * FROM pricePointRatePeriodRel PricePointRatePeriodRel  
-                          INNER JOIN pricePoint PricePoint USING (pricePointId)
-                          WHERE PricePointRatePeriodRel.loaItemRatePeriodId = {$ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId']} AND
-                                PricePoint.packageId = {$packageId}";
-                if ($pricePoint = $this->query($query)) {
-                    $ratePeriod['PricePoint'] = $pricePoint;
+                if ($packageId) {
+                    $query = "SELECT * FROM pricePointRatePeriodRel PricePointRatePeriodRel  
+                              INNER JOIN pricePoint PricePoint USING (pricePointId)
+                              WHERE PricePointRatePeriodRel.loaItemRatePeriodId = {$ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId']} AND
+                                    PricePoint.packageId = {$packageId}";
+                    if ($pricePoint = $this->query($query)) {
+                        $ratePeriod['PricePoint'] = $pricePoint;
+                    }
                 }
             }
             return $ratePeriods;
