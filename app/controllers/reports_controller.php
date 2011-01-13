@@ -1089,7 +1089,8 @@ class ReportsController extends AppController {
                            PricePoint.validityStart,
                            PricePoint.validityEnd,
 						   Promo.amountOff,
-						   PromoCode.promoCode 
+						   PromoCode.promoCode,
+                           Package.numNights
                     FROM ticket AS Ticket
                            INNER JOIN offer AS Offer USING(offerId)
                            LEFT JOIN offerType AS OfferType ON (Ticket.offerTypeId = OfferType.offerTypeId)
