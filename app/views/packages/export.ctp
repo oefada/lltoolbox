@@ -194,7 +194,7 @@
             <tr><td colspan="4" class="spacer">&nbsp;</td></tr>
             
             <?php foreach ($lowPrice as $lp): ?>
-                <?php if (isset($lp['PricePoint'])): ?>
+                <?php //if (isset($lp['PricePoint'])): ?>
                     <tr>
                         <td colspan="4" class="align-r" style="padding:25px;border:1px solid #707070;background-color:#ececec;">
                             <table class="lp" cellspacing="0" cellpadding="10">
@@ -227,7 +227,7 @@
                             </table>
                         </td>
                     </tr>
-                <?php endif; ?>
+                <?php //endif; ?>
             <?php endforeach;?>
         </table>
         
