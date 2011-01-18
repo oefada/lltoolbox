@@ -14,9 +14,9 @@ We have received your booking request for the <?=$clientNameP;?>.
 		</td>
 		<td align="left" valign="top">
 			<div style="color:#<?=$siteHeader;?>;font-size:16px;font-weight:bold;"><?php echo $clientNameP;?></div>
-			<div style="color:#444444;font-size:12px;"><?php echo $locationDisplay;?></div>
+			<div style="color:#444444;font-size:12px;margin-bottom:4px;"><?php echo $locationDisplay;?></div>
 			<div style='font-size:12px;color:#444444;line-height:20px;'> 
-			Package for <?=$numGuests;?> travelers, <?=$roomGrade;?>		
+			Package for <?=$numGuests;?> travelers, <span style='font-style:italic;'><?=$roomGrade;?></span>
 			<br>
 			<?=$packageBlurb;?>
 			<div style='margin-top:3px;'><a style="color:#336699;" href="<?=$siteUrl;?>portfolio/por_offer_redirect.php?oid=<?=$offerId;?>">View Package Details</a></div></div>
@@ -24,8 +24,8 @@ We have received your booking request for the <?=$clientNameP;?>.
 			<table cellspacing="0" cellpadding="5" border="0">
 			<tr>
 				<td style="color:#000000;font-size:12px; border-bottom: 1px solid silver; padding-bottom:10px; font-weight:bold;" valign="top" align="left" width="200">Ticket ID:</td>
-				<td style="color:#444444;font-size:12px; border-bottom: 1px solid silver; padding-bottom:10px; padding-right:5px;" valign="top" align="right" width="30">&nbsp;</td>
-				<td style="color:#444444;font-size:12px; border-bottom: 1px solid silver; padding-bottom:10px;" valign="top" align="right"><?=$ticketId;?></td>
+				<td style="color:#444444;font-size:12px; border-bottom: 1px solid silver; padding-bottom:10px; padding-right:5px;" valign="top" align="right" width="30"><?=$ticketId;?></td>
+				<td style="color:#444444;font-size:12px; border-bottom: 1px solid silver; padding-bottom:10px;" valign="top" align="right"></td>
 			</tr>
 			<tr>
 				<td style="color:#000000;font-size:12px;padding-top:10px;" valign="top" align="left" width="200">Package Price:</td>
@@ -74,17 +74,17 @@ We have received your booking request for the <?=$clientNameP;?>.
 				<td style="color:#990000;font-size:12px; font-weight:bold; border-top:1px solid silver; padding-bottom:20px;padding-top:15px;padding-right:5px;" valign="top" align="right" width="30">US</td>
 				<td style="color:#990000;font-size:12px; font-weight:bold; border-top:1px solid silver; padding-bottom:20px;padding-top:15px;" valign="top" align="right">
 					<?php if ($promoGcCofData['applied']) : ?>
-					$<?=$promoGcCofData['final_price']; ?>	
+					$<?=number_format($promoGcCofData['final_price']); ?>	
 					<?php else: ?>
-					$<?=$totalPrice;?>
+					$<?=($totalPrice);?>
 					<?php endif; ?>
 				</td>
 			</tr>
 
 			<tr>
-				<td style="color:#000000;font-size:12px;font-weight:bold;" width='200'>No. of Nights:</td>
-				<td style="color:#000000;font-size:12px;font-weight:bold;" valign="top" align="right"><?=$numNights;?></td>
 				<td> &nbsp; </td>
+				<td colspan='2' style="color:#000000;font-size:12px;font-weight:bold;">No. of Nights:
+				<?=$numNights;?></td>
 			</tr>
 
 
@@ -99,7 +99,8 @@ We have received your booking request for the <?=$clientNameP;?>.
 
 
 			<tr>
-				<td colspan='3' style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="200">Special Requests: <?=$fpNotes;?></td>
+				<td colspan='1' style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="200">Special Requests:</td>
+				<td colspan='2'><?=$fpNotes;?></td>
 			</tr>
 			</table>
 		</td>

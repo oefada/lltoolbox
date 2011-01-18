@@ -5,11 +5,11 @@
 
 <p>Dear <?php echo $clientName;?>,</p>
 
-<?php if ($isAuction) : ?>
+<? if ($isAuction){ ?>
 	<p><strong>The following <?=$siteName;?> auction package has been paid in full.</strong> <a href="<?=$extranet_link;?>">Please view the reservation request.</a></p>
-<?php else:?>
+<? }else{ ?>
 	<p><strong>The following <?=$siteName;?> "Buy Now" package has been Requested.</strong> <a href="<?=$extranet_link;?>">Please view the reservation request.</a></p>	
-<?php endif; ?>
+<? } ?>
 
 
 <div style="padding:10px;background-color:#E0E0CD;margin-top:25px;margin-bottom:25px;">
@@ -18,18 +18,19 @@
 		<td colspan="2" style="padding-bottom:15px; border-bottom:1px solid silver;">
 		<div style="color:#<?=$siteHeader;?>;font-size:16px;font-weight:bold;"><?php echo $clientNameP;?></div>
 		<div style="color:#444444;font-size:12px;"><?php echo $locationDisplay;?></div><br />
-		<div style="color:#<?=$siteHeader;?>;font-size:12px;"><?php echo $packageName;?></div>
+		<!--<div style="color:#<?=$siteHeader;?>;font-size:12px;"><?php echo $packageName;?></div>-->
 		</td>
 	</tr>
 	<tr>
-		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">Ticket Reference ID:</td>
-		<td style="color:#444444;font-size:12px;" valign="top" align="left"><?=$ticketId;?></td>
+		<td style="color:#000000;font-size:12px; font-weight:bold;border-bottom:1px solid silver;" valign="top" align="left" width="170">Ticket Reference ID:</td>
+		<td style="color:#444444;font-size:12px;border-bottom:1px solid silver;" valign="top" align="left"><?=$ticketId;?></td>
 	</tr>
+
 	<tr>
 		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">No. of Nights:</td>
 		<td style="color:#444444;font-size:12px;" valign="top" align="left"><?=$numNights?></td>
 	</tr>
-	<?php if ($isAuction) : ?>
+	<? if ($isAuction){ ?>
 	<tr>
 		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">Auction Close Date:</td>
 		<td style="color:#444444;font-size:12px;" valign="top" align="left"><?=$offerEndDate;?></td>
@@ -42,11 +43,11 @@
 		<td style="color:#000000;font-size:12px; padding-bottom:10px;font-weight:bold; border-bottom:1px solid silver;" valign="top" align="left" width="170">Winning Bidder:</td>
 		<td style="color:#444444;font-size:12px; padding-bottom:10px;border-bottom:1px solid silver;" valign="top" align="left"><?php echo $userFirstName;?> <?php echo $userLastName;?>&nbsp;</td>
 	</tr>	
-	<?php else: ?>	
+	<? }else{ ?>	
 	<tr>
 		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170"><?php if (trim($addtlDescription)) : ?>Rate From:<?php else : ?>Rate:<?php endif;?></td> 
 		<td style="color:#444444;font-size:12px;" valign="top" align="left">$<?=$clientAdjustedPrice;?>
-		<?php if ($addtlDescription) {
+		<? if ($addtlDescription) {
 			echo $addtlDescription;
 		}?>
 		</td>
@@ -59,17 +60,17 @@
 		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">Phone:</td>
 		<td style="color:#444444;font-size:12px;" valign="top" align="left"><?=$userPhone;?></td>
 	</tr>
-	<?php endif; ?>
+	<? } ?>
 	<tr>
 		<td style="color:#000000;font-size:12px; padding-top:15px;font-weight:bold;text-decoration:underline;" valign="top" align="left" width="170">Requested Dates:</td>
 		<td style="color:#444444;font-size:12px; padding-top:15px;" valign="top" align="left">
 			<table cellspacing="2" cellpadding="2">
 				<tr>					
-					<?php if ($siteId == 1 ):?>
+					<? if ($siteId == 1 ){?>
 					<td align="center"><a href="<?=$extranet_link;?>"><img src="http://www.luxurylink.com/images/toolbox/btn_view_req_dates.gif" alt="View Requested Dates" style="border:0px;" /></a><br /><a href="<?=$extranet_link;?>" style="font-size:12px;border:0px;">(View Requested Dates)</a></td>
-					<?php else: ?>
+					<? }else{ ?>
 					<td align="center"><a href="<?=$extranet_link;?>"><img src="http://www.luxurylink.com/images/toolbox/btn_view_req_dates_family.gif" alt="View Requested Dates" style="border:0px;" /></a><br /><a href="<?=$extranet_link;?>" style="font-size:12px;border:0px;">(View Requested Dates)</a></td>
-					<?php endif;?>
+					<? } ?>
 					<td valign="top" style="color:#990000;font-weight:bold;font-size:10px;">Please confirm or deny the requested dates upon receipt of this email.</td>
 				</tr>
 			</table>
