@@ -164,7 +164,7 @@ echo $javascript->link('jquery/jquery-autocomplete/jquery.autocomplete'); ?>
 		var inclusions = '';
 		var inclusion_ids = '';
 		if (siteId == 1) {
-            inclusions += "<p>Package for " + numGuests + " includes:</p>\n";
+            inclusions += "<p><b>Package for " + numGuests + " includes:</b></p>\n";
             inclusions += "<ul>\n";
             inclusions += '    <li>'+ roomNightDescription +"</li>\n";
 		} else if (siteId == 2) {
