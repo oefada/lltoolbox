@@ -1,7 +1,7 @@
 <?
 include('../vendors/email_msgs/email_includes/header.html');
 
-set_include_path(get_include_path() . PATH_SEPARATOR . '/home/mbyrnes/luxurylink/php/includes/php' . PATH_SEPARATOR . 'includes/php' . PATH_SEPARATOR . '/var/www/luxurylink/php/includes/php');
+set_include_path(get_include_path() . PATH_SEPARATOR . '/home/'.$_SERVER['ENV_USER'].'/luxurylink/php/includes/php' . PATH_SEPARATOR . 'includes/php' . PATH_SEPARATOR . '/var/www/luxurylink/php/includes/php');
 include("flex_functions.php");
 ?>
 
@@ -48,26 +48,20 @@ include("flex_functions.php");
 					$arr=getFlexPricing($liveOfferData,$ticketData); ?>
 
 					<tr>
-					<td valign="top" align="left" style="font-weight:bold;font-size:12px;" nowrap>
-					<?= $arr['orig_num_nights'];?>-Night Package Price:
-					</td>
-					<td valign="top" align="left" style="width:10px;"></td>
-					<td style='font-size:12px;'>
-					<?= $arr['orig_price'];?>
-					</td>
+						<td style='font-weight:bold;font-size:12px;'>
+						<!--Total <?= $arr['num_nights'];?>-Night<br>-->Package Price:
+						</td>
+						<td style='font-size:12px;'>
+						$<?= number_format($ticketData['billingPrice']);?>
+						</td>
 					</tr>
 					<tr>
-					<td valign="top" align="left" style="font-size:12px;font-weight:bold;" colspan=3>
-					<?= $arr['price_expl'];?>
-					</td>
-					</tr>
-					<tr>
-					<td colspan='2' style='font-weight:bold;font-size:12px;'>
-					Total <?= $arr['num_nights'];?>-Night<br>Package Price:
-					</td>
-					<td style='font-size:12px;'>
-					$<?= number_format($ticketData['billingPrice']);?>
-					</td>
+						<td> &nbsp; </td>
+						<td valign="top" align="left" style="font-weight:normal;font-size:12px;">
+						(<?= $arr['orig_num_nights'];?>-Night Package Price: <?= $arr['orig_price'];?>
+						<br>
+						<?= $arr['price_expl'];?>)
+						</td>
 					</tr>
 				<?}else{?>
 					<tr>
