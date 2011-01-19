@@ -25,7 +25,7 @@
         <?php
             // for edit
             if (isset($pricePoint['pricePointId'])) {
-                echo '<input type="hidden" name="data[PricePoint][pricePointId]" value="' . $pricePoint['pricePointId'] . '"/>';
+                echo '<input type="hidden" id="pricePointId" name="data[PricePoint][pricePointId]" value="' . $pricePoint['pricePointId'] . '"/>';
             }
             
             // JS: exchange rates and retail

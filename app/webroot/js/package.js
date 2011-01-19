@@ -631,7 +631,7 @@ function updateRetail(autoFillPercentRetail, autoFillSuggestedFlexPrice, numNigh
             $('input#flexPricePerNight').val(Math.round($('#flexSuggestedRetail').val() * (calcPercent / 100)));
         }
     }
-    if (($('#auction-percent').val() == 0 || $('#auction-percent').val() == '') && autoFillPercentRetail) {
+    if (($('input#pricePointId').val() == undefined) && autoFillPercentRetail) {
         $('#auction-percent').val(defaultPercent);
     }
     $('#guaranteed-percent').val(defaultPercent);
