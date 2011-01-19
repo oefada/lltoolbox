@@ -178,7 +178,7 @@ class LoasController extends AppController {
 			$tracks[$track['track']['trackId']]['offers'] = $offers;
 		}
 		if (!empty($tracks)) {
-			$track_details_result = $this->Loa->query('SELECT trackDetail.*, ticket.offerId FROM trackDetail 
+			$track_details_result = $this->Loa->query('SELECT trackDetail.*, ticket.offerId, ticket.numNights FROM trackDetail 
 													INNER JOIN ticket USING (ticketId) 
 													WHERE trackId IN (' . implode(',', array_keys($tracks)) . ') ORDER BY trackId ASC');
 			foreach ($track_details_result as $track_detail) {
