@@ -106,6 +106,7 @@
             <th>Choose Min/Max for<br /> this Package</th>
             <td>Min Nights: &nbsp;&nbsp;
                 <select id="flexNumNightsMin" name="data[Package][flexNumNightsMin]">
+                    <option></option>
                     <?php for($i=2; $i <= 14; $i++): ?>
                             <?php $selected = ($i == $package['Package']['flexNumNightsMin']) ? ' selected' : ''; ?>
                             <option value="<?php echo $i; ?>"<?php echo $selected; ?>><?php echo $i; ?>
@@ -113,6 +114,7 @@
                 </select>
                 Max Nights: &nbsp;&nbsp;
                 <select id="flexNumNightsMax" name="data[Package][flexNumNightsMax]">
+                    <option></option>
                     <?php for($i=2; $i <= 14; $i++): ?>
                             <?php $selected = ($i == $package['Package']['flexNumNightsMax']) ? ' selected' : ''; ?>
                             <option value="<?php echo $i; ?>"<?php echo $selected; ?>><?php echo $i; ?>
