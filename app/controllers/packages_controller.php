@@ -1127,6 +1127,13 @@ class PackagesController extends AppController {
                     }
                 }
             }
+            elseif ($fieldName == 'numNights') {
+                if (isset($data['Package']['isFlexPackage'])) {
+                    if ($data['Package']['numNights'] < $data['Package']['flexNumNightsMin'] || $data['Package']['numNights'] > $data['Package']['flexNumNightsMax']) {
+                        $errors[] = 'Total/Default Nights must be within the Min/Max range for the Flex Package.';
+                    }
+                }
+            }
             else {
                 if (empty($data['Package'][$fieldName]) && $data['Package'][$fieldName] != '0') {
                     $errors[] = "{$displayName} is missing.";
