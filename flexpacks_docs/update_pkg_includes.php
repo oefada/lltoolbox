@@ -5,8 +5,10 @@ switch ($argv[1]) {
         $includePath = '/home/acarney/luxurylink/smarty/templates/includes/php/setup_cli.php';
         break;
     case 'stage':
+        $includePath = '/var/www/luxurylink/smarty/templates/includes/php/setup_cli.php';
+        break;
     case 'prod':
-        $includePath = '/home/html/shell/includes/setup.php';
+        $includePath = '/var/www/luxurylink/smarty/templates/includes/php/setup_cli.php';
         break;
 }
 

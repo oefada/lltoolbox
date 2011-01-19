@@ -23,10 +23,23 @@ ALTER TABLE `offerFamily` ADD `flexRetailPricePerNight` double NULL DEFAULT NULL
 
 ALTER TABLE `ticket` ADD `numNights` int(11) NULL DEFAULT NULL  AFTER `requestNotes`;
 
+DELIMITER $$
+
+USE `toolbox`$$
+
+DROP VIEW IF EXISTS `pricePointOfferPreview`$$
+
+CREATE ALGORITHM=TEMPTABLE DEFINER=`root`@`%` SQL SECURITY DEFINER VIEW `pricePointOfferPreview` AS 
+SELECT `PricePoint`.`pricePointId` AS `offerId`,0 AS `rowNum`,`Package`.`packageId` AS `packageId`,`Client`.`clientId` AS `clientId`,`PricePoint`.`pricePointId` AS `pricePointId`,1 AS `offerTypeId`,1 AS `offerStatusId`,'Open' AS `offerStatusName`,`Package`.`subtitle` AS `offerSubtitle`,`Package`.`packageTitle` AS `offerName`,0 AS `isCLosed`,`Package`.`startDate` AS `startDate`,`Package`.`endDate` AS `endDate`,`PricePoint`.`retailValue` AS `retailValue`,ROUND(((`PricePoint`.`percentRetailAuc` * `PricePoint`.`retailValue`) / 100),0) AS `openingBid`,1000 AS `maxBid`,ROUND(((`PricePoint`.`percentRetailBuyNow` * `PricePoint`.`retailValue`) / 100),0) AS `buyNowPrice`,0 AS `isMystery`,NULL AS `mysteryName`,NULL AS `mysteryLocationDisplay`,NULL AS `mysteryLongDesc`,NULL AS `isPreview`,NULL AS `suppressRetail`,`Package`.`shortBlurb` AS `shortBlurb`,`Package`.`numNights` AS `roomNights`,0 AS `numBids`,0 AS `numBidders`,1 AS `isProxy`,1 AS `isAuction`,0 AS `inactive`,`Package`.`packageIncludes` AS `offerIncludes`,`Package`.`termsAndConditions` AS `termsAndConditions`,`PricePoint`.`validityDisclaimer` AS `validityDisclaimer`,`Package`.`additionalDescription` AS `additionalDescription`,20 AS `offerBidIncrement`,`Package`.`validityStartDate` AS `validityStart`,`Package`.`validityEndDate` AS `validityEnd`,NULL AS `airOffered`,0 AS `airIncluded`,`Package`.`numGuests` AS `numGuests`,NULL AS `numAdults`,NULL AS `numChildren`,`Package`.`isPrivatePackage` AS `isPrivatePackage`,`Package`.`externalOfferUrl` AS `externalOfferUrl`,`Package`.`isTaxIncluded` AS `isTaxIncluded`,`Package`.`currencyId` AS `currencyId`,`Package`.`isFlexPackage` AS `isFlexPackage`,`Package`.`flexNumNightsMin` AS `flexNumNightsMin`,`Package`.`flexNumNightsMax` AS `flexNumNightsMax`,`PricePoint`.`pricePerExtraNight` AS `pricePerExtraNight`,`PricePoint`.`flexRetailPricePerNight` AS `flexRetailPricePerNight` FROM (((`package` `Package` JOIN `pricePoint` `PricePoint` ON((`Package`.`packageId` = `PricePoint`.`packageId`))) LEFT JOIN `clientLoaPackageRel` `cl` ON((`Package`.`packageId` = `cl`.`packageId`))) LEFT JOIN `client` `Client` ON((`cl`.`clientId` = `Client`.`clientId`)))$$
+
+DELIMITER ;
+
 Shared:
 ALTER TABLE `ticket` ADD `numNights` int(11) NULL DEFAULT NULL  AFTER `requestNotes`;
 
 Luxurylink:
+ALTER TABLE `ticket` ADD `numNights` int(11) NULL DEFAULT NULL  AFTER `requestNotes`;
+
 DELIMITER $$
 
 USE `luxurylink`$$

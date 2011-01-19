@@ -122,7 +122,8 @@ echo $javascript->link('jquery/jquery-autocomplete/jquery.autocomplete'); ?>
     
     //acarney 2011-01-12 -- remove this function after flexpacks launch and rename updateInclusionsNew to updateInclusions
     //updateInclusionsNew applies the new flexpacks autotext rules
-    function updateInclusions(id) {
+    //acarney 2011-01-18 -- will remove this function post-launch
+    function updateInclusionsOld(id) {
 		var inclusions = '';
 		var inclusion_ids = '';
 		if (siteId == 1) {
@@ -160,7 +161,7 @@ echo $javascript->link('jquery/jquery-autocomplete/jquery.autocomplete'); ?>
 		$('#package-validity-includes').html(inclusions);
 	}
         
-	function updateInclusionsNew(id) {
+	function updateInclusions(id) {
 		var inclusions = '';
 		var inclusion_ids = '';
 		if (siteId == 1) {
