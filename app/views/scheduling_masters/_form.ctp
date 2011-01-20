@@ -46,7 +46,9 @@ if ($masterState != 1) {
                             <td><?php echo $pricePoint['PricePoint']['percentRetailBuyNow']; ?></td>
                             <?php if ($package['Package']['isFlexPackage']): ?>
                                 <td><?php echo $pricePoint['PricePoint']['flexRetailPricePerNight']; ?></td>
-                                <td><?php echo $pricePoint['PricePoint']['pricePerExtraNight']; ?></td>
+                                <td><?php echo $pricePoint['PricePoint']['pricePerExtraNight']; ?>
+                                    <span>(<?php echo (round($pricePoint['PricePoint']['pricePerExtraNight'] / $pricePoint['PricePoint']['flexRetailPricePerNight'], 2) * 100); ?>% of retail)</span>
+                                </td>
                             <?php endif; ?>
                         </tr>
                 <?php endforeach; ?>
