@@ -1128,7 +1128,7 @@ class PackagesController extends AppController {
                 }
             }
             elseif ($fieldName == 'numNights') {
-                if (isset($data['Package']['isFlexPackage'])) {
+                if ($data['Package']['isFlexPackage'] == 1) {
                     if ($data['Package']['numNights'] < $data['Package']['flexNumNightsMin'] || $data['Package']['numNights'] > $data['Package']['flexNumNightsMax']) {
                         $errors[] = 'Total/Default Nights must be within the Min/Max range for the Flex Package.';
                     }
