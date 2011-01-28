@@ -167,7 +167,7 @@
                                 <?php echo $packageClient['roomLabel']; ?>
                             </td>
                             <td>
-                                <?php echo $package['Currency']['currencyCode']; ?> <span id="flexDefaultRetailPrice"><?php echo $ratePeriod['roomRetailPricePerNight']; ?></span></strong>
+                                <?php echo $package['Currency']['currencyCode']; ?> <span id="flexDefaultRetailPrice"> </span></strong>
                             </td>
                         </tr>
                     <?php endif; ?>
