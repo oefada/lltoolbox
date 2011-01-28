@@ -612,11 +612,11 @@ function updateRetail(autoFillPercentRetail, autoFillSuggestedFlexPrice, numNigh
     if (isFlexPackage) {
         var pricePerNight = 0;
         var inclusionTotal = 0;
+        $('#flexDefaultRetailPrice').html(highestFlex);
         if ($('#flexSuggestedRetail').val() == 0) { 
             $('span.total-price').each(function(i, item) {
                     inclusionTotal += parseInt($(item).text());
                 });            
-            $('#flexDefaultRetailPrice').html(highestFlex);
             $('#flexSuggestedRetail').val(highestFlex + inclusionTotal);
         }
         $('span#suggestedFlexCalc').html($('#flexSuggestedRetail').val());
