@@ -36,6 +36,7 @@ class ClientsController extends AppController {
 
 			// alee 03-17-2009 - add SEO NAME for child clients	        
 	        $this->data['Client']['seoName'] = $this->convertToSeoName($this->data['Client']['name']);
+            $this->data['Client']['seoLocation'] = $this->convertToSeoName($this->data['Client']['locationDisplay']);
 
 	        $this->Client->create();
 	        if($this->Client->save($this->data, array('callbacks' => false))) {
@@ -83,6 +84,7 @@ class ClientsController extends AppController {
 	         /** END SORT **/   
 		   
 	         $this->data['Client']['seoName'] = $this->convertToSeoName($this->data['Client']['name']);
+             $this->data['Client']['seoLocation'] = $this->convertToSeoName($this->data['Client']['locationDisplay']);
 			 if (!empty($this->data['Client']['ageRanges'])) {
 				$this->data['Client']['ageRanges'] = implode(',',$this->data['Client']['ageRanges']);
 			 }
