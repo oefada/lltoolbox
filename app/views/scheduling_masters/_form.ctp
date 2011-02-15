@@ -11,49 +11,49 @@ if ($masterState != 1) {
 
     <link href="/css/scheduling-master.css" type="text/css" rel="stylesheet" />
     
-    <div id="schedulingmaster-add">            
-        <?php if ($isHotelOffer): ?>
-            <input type="hidden" name="data[SchedulingMaster][pricePointId]" value="<?php echo $pricePointId; ?>" />
-        <?php else: ?>
-            <!-- PRICE POINT -->
-            <h2>Choose a Price Point</h2>
-            <table id="data-table" cellpadding="0" cellspacing="0" border="0">
-                <tr>
-                    <th></th>
-                    <th>Name</th>
-                    <th>Validity</th>
-                    <th width="50">Max Num Sales</th>
-                    <th>Retail</th>
-                    <th>% of <br />Retail<br />(Auction)</th>
-                    <th>% of <br />Retail<br />(Buy Now)</th>
-                    <?php if ($package['Package']['isFlexPackage']): ?>
-                        <th>Retail Price/<br />Extra Night</th>
-                        <th>Price/<br />Extra Night</th>
-                    <?php endif; ?>
-                </tr>
-            <?php
-                foreach ($pricePoints as $key => $pricePoint):  
-                    $checked = ($data['SchedulingMaster']['pricePointId'] == $pricePoint['PricePoint']['pricePointId']) ? 'checked' : ''; ?>
-                        <tr>
-                            <td>
-                                <input type="radio" class="price-point-options" id="price-point-<?php echo $pricePoint['PricePoint']['pricePointId']; ?>" name="data[SchedulingMaster][pricePointId]" value="<?php echo $pricePoint['PricePoint']['pricePointId']; ?>" <?php echo $checked; ?>/>
-                            </td>
-                            <td><label for="price-point-<?php echo $pricePoint['PricePoint']['pricePointId']; ?>"><?php echo $pricePoint['PricePoint']['name']; ?></label></td>
-                            <td style='font-size:11px;'><?php echo $pricePoint[0]['dateRanges']; ?></td>
-                            <td><?php echo $pricePoint['PricePoint']['maxNumSales']; ?></td>
-                            <td><?php echo $pricePoint['PricePoint']['retailValue']; ?></td>
-                            <td><?php echo $pricePoint['PricePoint']['percentRetailAuc']; ?></td>
-                            <td><?php echo $pricePoint['PricePoint']['percentRetailBuyNow']; ?></td>
-                            <?php if ($package['Package']['isFlexPackage']): ?>
-                                <td><?php echo $pricePoint['PricePoint']['flexRetailPricePerNight']; ?></td>
-                                <td><?php echo $pricePoint['PricePoint']['pricePerExtraNight']; ?>
-                                    <span>(<?php echo (round($pricePoint['PricePoint']['pricePerExtraNight'] / $pricePoint['PricePoint']['flexRetailPricePerNight'], 2) * 100); ?>% of retail)</span>
-                                </td>
-                            <?php endif; ?>
-                        </tr>
-                <?php endforeach; ?>
-            </table>
-        <?php endif; ?>
+    <div id="schedulingmaster-add"> 
+    <?php if ($isHotelOffer): ?>
+      <input type="hidden" name="data[SchedulingMaster][pricePointId]" value="<?php echo $pricePointId; ?>" />
+    <?php else: ?>
+		<!-- PRICE POINT -->
+		<h2>Choose a Price Point</h2>
+		<table id="data-table" cellpadding="0" cellspacing="0" border="0">
+			<tr>
+				<th></th>
+				<th>Name</th>
+				<th>Validity</th>
+				<th width="50">Max Num Sales</th>
+				<th>Retail</th>
+				<th>% of <br />Retail<br />(Auction)</th>
+				<th>% of <br />Retail<br />(Buy Now)</th>
+				<?php if ($package['Package']['isFlexPackage']): ?>
+					<th>Retail Price/<br />Extra Night</th>
+					<th>Price/<br />Extra Night</th>
+				<?php endif; ?>
+			</tr>
+		<?php
+    foreach ($pricePoints as $key => $pricePoint):  
+      $checked = ($data['SchedulingMaster']['pricePointId'] == $pricePoint['PricePoint']['pricePointId']) ? 'checked' : ''; ?>
+      <tr>
+      <td>
+      <input type="checkbox" class="price-point-options" id="price-point-<?php echo $pricePoint['PricePoint']['pricePointId']; ?>" name="data[SchedulingMaster][pricePointId][<?=$key?>]" value="<?php echo $pricePoint['PricePoint']['pricePointId']; ?>" <?php echo $checked; ?>/>
+      </td>
+      <td><label for="price-point-<?php echo $pricePoint['PricePoint']['pricePointId']; ?>"><?php echo $pricePoint['PricePoint']['name']; ?></label></td>
+      <td style='font-size:11px;'><?php echo $pricePoint[0]['dateRanges']; ?></td>
+			<td><?php echo $pricePoint['PricePoint']['maxNumSales']; ?></td>
+			<td><?php echo $pricePoint['PricePoint']['retailValue']; ?></td>
+			<td><?php echo $pricePoint['PricePoint']['percentRetailAuc']; ?></td>
+			<td><?php echo $pricePoint['PricePoint']['percentRetailBuyNow']; ?></td>
+			<?php if ($package['Package']['isFlexPackage']): ?>
+				<td><?php echo $pricePoint['PricePoint']['flexRetailPricePerNight']; ?></td>
+				<td><?php echo $pricePoint['PricePoint']['pricePerExtraNight']; ?>
+				<span>(<?php echo (round($pricePoint['PricePoint']['pricePerExtraNight'] / $pricePoint['PricePoint']['flexRetailPricePerNight'], 2) * 100); ?>% of retail)</span>
+				</td>
+			<?php endif; ?>
+			</tr>
+      <?php endforeach; ?>
+    </table>
+  <?php endif; ?>
         <!-- TRACK SELECTION (MULTICLIENT PACKAGES ONLY) -->
         <?php if (!$singleClientPackage): ?>
             <h2>Choose a Track for Each Client</h2>

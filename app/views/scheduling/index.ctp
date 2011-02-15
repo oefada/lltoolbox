@@ -48,6 +48,18 @@ Event.observe(window, 'load', function() {
 
 </script>
 <style>
+
+a.del_package_offers:visited{
+	color:#ffffff;
+}
+a.del_package_offers:link{
+	color:#ffffff;
+}
+.del_package_offers{
+	color:#ffffff;
+	float:left;
+	margin-left:20px;
+}
 #monthPickerDiv {
 	width: 200px;
 }
@@ -119,7 +131,7 @@ div.sitesDropdown {
 	<br /><br />
 	</div>
 	<div style="text-align:right;position:absolute;right:0px;">
-		<?=$html->link('<span>Cancel ALL Offers</span>', "/scheduling/close_offers/clientId:{$client['Client']['clientId']}", array('onclick' => 'Modalbox.show(this.href, {title: this.title});return false','complete' => 'closeModalbox()','class' => 'button'), null, false)?>
+		<?=$html->link('<span>Cancel ALL Offers for this Client</span>', "/scheduling/close_offers/clientId:{$client['Client']['clientId']}", array('onclick' => 'Modalbox.show(this.href, {title: this.title});return false','complete' => 'closeModalbox()','class' => 'button'), null, false)?>
 		<br /><br />
 	</div>
     <div id="monthPickerDiv" class='clearfix' style='display: none'>

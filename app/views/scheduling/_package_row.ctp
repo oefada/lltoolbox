@@ -9,6 +9,23 @@
 		<?=$html->link($text->truncate(trim($package['Package']['packageName']), 45), "/clients/$clientId/packages/summary/{$package['Package']['packageId']}")?> <?=$html2->c($package['Package']['packageId'], 'ID')?>
 		<?=$html->link("View on {$site}", "http://www.".$urls[$site]."/luxury-hotels/{$package['Client']['seoName']}.html?clid={$package['Client']['clientId']}&pkid={$package['Package']['packageId']}", array('target' => '_blank'))?>
 	</div>
+
+		<? 
+
+		$link_arr=array(
+			"controller"=>"scheduling", 
+			"action"=>"delPackageOffers",
+			$package['Client']['clientId'],
+			$package['Package']['packageId']
+		);
+
+		echo "<div class='del_package_offers' style='color:#FFFFFF;margin-left:10px;font-weight:bold;float:left;'>";
+		echo $html->link('Delete offers under this package',$link_arr,array(),"Are you sure?");
+		echo "<div style='clear:both;'></div>";
+		echo "</div>";
+
+		?>
+
 	<div class='scheduleThisPackage'>
 		<span class="masterListTarget" id="masterListTarget<?=$package['Package']['packageId']?>"><a href="javascript: void(0);" style="color: #fff"><?= count($package['Package']['masterList']) ?> Masters</a></span>
 		<div class="masterList" id="masterList<?=$package['Package']['packageId']?>" style="display: none">

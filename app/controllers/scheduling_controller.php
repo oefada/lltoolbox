@@ -8,7 +8,9 @@ class SchedulingController extends AppController {
 		parent::beforeFilter();
 		$this->set('currentTab', 'property');
 		$this->set('searchController' ,'client');
-		$this->set('clientId', $this->params['named']['clientId']);
+		$cid=0;
+		if (isset($this->params['named']['clientId']))$cid=$this->params['named']['clientId'];
+		$this->set('clientId', $cid);
 	}
 	
 	/**
@@ -42,6 +44,55 @@ class SchedulingController extends AppController {
 		$this->set(compact('clientId', 'month', 'year', 'monthDays', 'monthYearString', 'clientName', 'client', 'loaBalanceFlag'));
 	}
 
+	function delPackageOffers(){
+
+		$clientId=(int)$this->params['pass'][0];
+		$packageId=(int)$this->params['pass'][1];
+
+		if ($clientId<=0 || $packageId<=0){
+			exit("Missing clientId or packageId. cid:$clientId|pid:$packageId|");
+		}
+	
+		$schedulingMasterIds=$this->mngSMIDs($clientId,$packageId);
+
+		$this->mngTakeDown($schedulingMasterIds);
+
+		$this->redirect("/scheduling/index/clientId:".$clientId);
+
+	}
+
+	// have close_offers use this as well
+	private function mngTakedown($schedulingMasterIds){
+
+		if (!empty($schedulingMasterIds)) {
+			if ($this->Ticket->__runTakeDown(implode(',', $schedulingMasterIds))) {
+				$this->Session->setFlash(__('Scheduling blocks taken down.', true), 'default', array(), 'success');	
+			} else {
+				$this->Session->setFlash(__('No scheduling blocks to pull down.', true), 'default', array(), 'error');
+			}
+		}else{
+			$this->Session->setFlash(__('No packages to take down.', true), 'default', array(), 'error');				
+		}
+
+	}
+
+	private function mngSMIDs($clientId,$packageId=''){
+
+		$packages = $this->Package->ClientLoaPackageRel->findAllByclientId($clientId);
+		$schedulingMasterIds = array();
+		foreach ($packages as $p) {
+			// if packageId is empty, all offers for client will be taken down
+			// if packageId is specified, only offers for that packageId will be taken down
+			if ($packageId=='' || $packageId==$p['ClientLoaPackageRel']['packageId']){
+				$arr=$this->Ticket->getSmIdsFromPackage($p['ClientLoaPackageRel']['packageId']);
+				$schedulingMasterIds = array_merge($schedulingMasterIds, $arr);
+			}
+		}
+		$schedulingMasterIds = array_unique($schedulingMasterIds);
+		return $schedulingMasterIds;
+
+	}
+
 	function close_offers($clientId = null) {
 		$clientId 	= @$this->params['named']['clientId'];		
 		if (!$clientId || !is_numeric($clientId) || !($clientId > 0)) {
@@ -50,16 +101,21 @@ class SchedulingController extends AppController {
 
 		if (!empty($this->data)) {
 			if (!isset($this->data['closeIt']) || !$this->data['clientId'] || ($clientId != $this->data['clientId'])) {
-				die('INVALID OPERATION!  Something has gone wrong.  Please contact your local friendly developer.  Heard those tech guys are awesome.');
+				die('Something has gone wrong.  Please contact your local friendly developer.');
 			}
 			$this->Package->ClientLoaPackageRel->recursive = -1;
+
+			$schedulingMasterIds=$this->mngSMIDs($clientId);
+/*
 			$packages = $this->Package->ClientLoaPackageRel->findAllByclientId($clientId);
 			$schedulingMasterIds = array();
 			foreach ($packages as $p) {
 				$schedulingMasterIds = array_merge($schedulingMasterIds, $this->Ticket->getSmIdsFromPackage($p['ClientLoaPackageRel']['packageId']));
 			}
 			$schedulingMasterIds = array_unique($schedulingMasterIds);
-
+*/
+			$this->mngTakeDown($schedulingMasterIds);
+/*
 			if (!empty($schedulingMasterIds)) {
 				if ($this->Ticket->__runTakeDown(implode(',', $schedulingMasterIds))) {
 					$this->Session->setFlash(__('Scheduling blocks have been taken down.  Have a nice day. :)', true), 'default', array(), 'success');				
@@ -69,6 +125,7 @@ class SchedulingController extends AppController {
 			} else {
 				$this->Session->setFlash(__('There were no packages to take down.', true), 'default', array(), 'error');				
 			}
+*/
 			$this->set('closeModalbox', true);
 		}
 

@@ -12,8 +12,10 @@ class PackagesController extends AppController {
 		$this->set('searchController' ,'client');
 		$this->set('currentTab', 'property');
 		$this->set('searchController' ,'client');
-        $this->set('client', $this->Client->findByClientId($this->params['clientId']));
-		$this->set('clientId', $this->params['clientId']);
+    if (isset($this->params['clientId'])){
+			$this->set('client', $this->Client->findByClientId($this->params['clientId']));
+			$this->set('clientId', $this->params['clientId']);
+		}
 	}
 
 	function index($clientId = null) {
@@ -743,6 +745,19 @@ class PackagesController extends AppController {
 		return in_array($b['loaItemId'], $this->data['Package']['CheckedLoaItems']);
 	}
 
+	// pacakge is actually set to inactive=1 and not deleted
+	// 2011-02-15 mbyrnes
+	function deletePackage(){
+	
+		$ppid=$this->params['pass'][1];
+		$cid=$this->params['pass'][3];
+		$pid=$this->params['pass'][5];
+		$this->Package->PricePoint->setInactive(1,$ppid);
+		$this->Session->setFlash(__('Deleted!', true));
+		$this->redirect("/clients/$cid/packages/summary/$pid");
+
+	}
+
 	function delete($id = null) {
 		if (!$id) {
 			$this->Session->setFlash(__('Invalid id for Package', true));
@@ -835,7 +850,7 @@ class PackagesController extends AppController {
 
 		$this->set('metrics', $metrics['PackagePerformance']);
 	}
-	
+
 	function tooltipNotes($id) {
 	    $this->Package->recursive = -1;
 		$notes = $this->Package->find('first', array('fields' => 'notes', 'conditions' => array('Package.packageId' => $id)));
@@ -933,9 +948,9 @@ class PackagesController extends AppController {
         $this->set('lowPriceGuarantees', $lowPriceGuarantees);
         
         // price points
-        $pricePoints = $this->Package->PricePoint->find('all', array('conditions' => array('PricePoint.packageId' => $packageId)));
+        $pricePoints = $this->Package->PricePoint->find('all', array('conditions' => array('PricePoint.packageId' => $packageId,'inactive'=>0)));
         $this->set('pricePoints', $pricePoints);
-        
+
 		// currency
 		$currencyCodes = $this->Package->Currency->find('list', array('fields' => 'currencyCode'));
 		$this->set('currencyCodes', $currencyCodes);
@@ -952,6 +967,7 @@ class PackagesController extends AppController {
     }
     
     function edit_package($clientId, $packageId) {
+
         if (!empty($this->data)) {
             $package = $this->data;
             if ($_POST['isAjax'] == 'true') {
@@ -1009,9 +1025,9 @@ class PackagesController extends AppController {
             }
             
             if ($this->data['Package']['isFlexPackage'] == 0) {
-                unset($this->data['Package']['flexNumNightsMin']);
-                unset($this->data['Package']['flexNumNightsMax']);
-                unset($this->data['Package']['flexNotes']);
+                $this->data['Package']['flexNumNightsMin']=0;
+                $this->data['Package']['flexNumNightsMax']=0;
+                $this->data['Package']['flexNotes']='';
             }
             
             if ($_POST['isAjax'] == 'true') {
