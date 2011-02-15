@@ -57,7 +57,8 @@ class Package extends AppModel {
 								   )
 								);
     var $actsAs = array('Logable', 'Containable');
-    
+
+
 	function validateGuests($data) {
 	  $numGuests = $this->data['Package']['numGuests'];
 	  $guestsValue = array_values($data);
