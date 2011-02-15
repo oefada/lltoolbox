@@ -40,7 +40,11 @@
  * In production mode, flash messages redirect after a time interval.
  * In development mode, you need to click the flash message to continue.
  */
-	Configure::write('debug', 0);
+ // 2010-02-09 mbyrnes
+	$debug=0;
+	if ($_SERVER['ENV']=='development')$debug=1;
+	Configure::write('debug', $debug);
+	//Configure::write('log',E_ALL);
 /**
  * Application wide charset encoding
  */
@@ -91,8 +95,7 @@
 /**
  * The preferred session handling method. Valid values:
  *
- * 'php'	 		Uses settings defined in your php.ini.
- * 'cake'		Saves session files in CakePHP's /tmp directory.
+ * 'php'	 		Uses settings defined in your php.ini.  * 'cake'		Saves session files in CakePHP's /tmp directory.
  * 'database'	Uses CakePHP's database sessions.
  *
  * To define a custom session handler, save it at /app/config/<name>.php.
