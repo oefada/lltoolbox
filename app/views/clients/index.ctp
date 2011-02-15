@@ -58,7 +58,7 @@ foreach ($clients as $client):
 		</td>
 	</tr>
 	<? 
-		$numChildren = count($client['ChildClient']);
+		$numChildren = isset($client['ChildClient'])?count($client['ChildClient']):0;
 	if ($numChildren): ?>
 	<tr<?php echo $class;?>>
 		<td colspan=5 class='collapsible' style='padding: 0 10px; border: 0'>
