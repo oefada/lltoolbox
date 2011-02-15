@@ -5,7 +5,7 @@
     $validPhotoUsers = array('jpawlowska', 'kgathany', 'dpen', 'jkramer');
 	?>
 	<li><?=$html->link('INFO/ATTRIBUTES', array("controller" => 'clients', 'action' => 'edit', $clientId), array('update' => 'content-area', 'indicator' => 'spinner'))?></li>
-	<li class="open">LOA <?=$html2->c($client['Loa']);?>
+	<li class="open">LOA <?=(isset($client['Loa'])?$html2->c($client['Loa']):'');?>
 		<ul>
 			<li style="margin-bottom:3px;"><?=$html->link('View All', "/clients/$clientId/loas", array('update' => 'content-area', 'indicator' => 'spinner') )?></li>
 			<li style="margin-bottom:3px;"><?=$html->link('Current LOA Details', "/loas/edit/$currentLoaId", array('update' => 'content-area', 'indicator' => 'spinner'))?></li>
