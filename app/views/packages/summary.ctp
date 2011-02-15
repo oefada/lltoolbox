@@ -395,7 +395,7 @@ $linkTitle = 'Edit Blackout Dates';
 <a name="form-price-points"><div class="section-header"><div class="section-title">Price Points</div><div class="edit-link" name="<?php echo $linkName; ?>" title="<?php echo $linkTitle; ?>"><?php echo $linkTitle; ?></div></div></a>
 
 <div id="low-price-guarantees">
-    <table cellpadding="0" cellspacing="0">
+    <table cellpadding="0" cellspacing="0" border='0'>
         <tr>
             <th>Name</th>
             <th>Retail Value</th>
@@ -404,37 +404,43 @@ $linkTitle = 'Edit Blackout Dates';
 			<th>Guarantee % of Retail</th>
             <th>Max Num Sales</th>
             <th>Preview</th>
-            <th></th>
+						<th>Edit</th>
+            <th>Delete</th>
         </tr>
+
     <?php
-        
+
         // get environment and link for preview
-        if (strstr($_SERVER['HTTP_HOST'], 'stage-toolbox')) {
-            $previewHost = 'http://stage-luxurylink.luxurylink.com';
-        } elseif (strstr($_SERVER['HTTP_HOST'], 'toolboxdev')) {
-            $previewHost = 'http://' . str_replace('toolboxdev', 'lldev', $_SERVER['HTTP_HOST']);
-        } else {
-            if (in_array('family', $package['Package']['sites'])) {
-                $previewHost = 'http://www.familygetaway.com'; // TODO: need to make this work for other environments as well
-            } else {
-                $previewHost = 'http://www.luxurylink.com';    
-            }
+				if ($_SERVER['ENV']=="staging"){
+        //if (strstr($_SERVER['HTTP_HOST'], 'stage-toolbox')) {
+          $previewHost = 'http://stage-luxurylink.luxurylink.com';
+				}else if ($_SERVER['ENV']=="development"){
+        //} elseif (strstr($_SERVER['HTTP_HOST'], 'toolboxdev')) {
+          $previewHost = 'http://' . str_replace('toolboxdev', 'lldev', $_SERVER['HTTP_HOST']);
+        }else {
+          if (in_array('family', $package['Package']['sites'])) {
+					// TODO: need to make this work for other environments as well
+            $previewHost = 'http://www.familygetaway.com'; 
+          }else {
+            $previewHost = 'http://www.luxurylink.com';    
+          }
         }
         
         foreach ($pricePoints as $key => $pricePoint) {
-            $alt = ($key % 2 == 0) ? 'class="alt"' : '';
-            echo "
-                <tr $alt>
-                    <td>{$pricePoint['PricePoint']['name']}</td>
-                    <td>" . number_format($pricePoint['PricePoint']['retailValue'], 0) . "</td>
-                    <td>{$pricePoint['PricePoint']['percentRetailAuc']}</td>
-                    <td>{$pricePoint['PricePoint']['percentRetailBuyNow']}</td>
-					<td>{$pricePoint['PricePoint']['percentReservePrice']}</td>
-                    <td>{$pricePoint['PricePoint']['maxNumSales']}</td>
-                    <td><a href='{$previewHost}/luxury-hotels/preview.html?clid={$clientId}&oid={$pricePoint['PricePoint']['pricePointId']}&preview=pricepoint' target='_blank'>Preview</a></td>
-                    <td><div qs=\"pricePointId={$pricePoint['PricePoint']['pricePointId']}\" class=\"edit-link\" name=\"$linkName\" title=\"$linkTitle\">Edit</div></td>
-                </tr>
-            ";
+					$alt = ($key % 2 == 0) ? 'class="alt"' : '';
+					echo "<tr $alt>
+									<td>{$pricePoint['PricePoint']['name']}</td>
+									<td>" . number_format($pricePoint['PricePoint']['retailValue'], 0) . "</td>
+									<td>{$pricePoint['PricePoint']['percentRetailAuc']}</td>
+									<td>{$pricePoint['PricePoint']['percentRetailBuyNow']}</td>
+				<td>{$pricePoint['PricePoint']['percentReservePrice']}</td>
+									<td>{$pricePoint['PricePoint']['maxNumSales']}</td>
+									<td><a href='{$previewHost}/luxury-hotels/preview.html?clid={$clientId}&oid={$pricePoint['PricePoint']['pricePointId']}&preview=pricepoint' target='_blank'>Preview</a></td>
+									<td><div style='float:left;' qs=\"pricePointId={$pricePoint['PricePoint']['pricePointId']}\" class=\"edit-link\" name=\"$linkName\" title=\"$linkTitle\">Edit</div></td>";
+					echo "<td>";
+					echo $html->link('Delete', "/packages/deletePackage/pricepointid/".$pricePoint['PricePoint']['pricePointId']."/clientId/".$clientId."/packageId/".$pricePoint['Package']['packageId'], array(), 'Are you sure?');
+					echo "</td>";
+					echo "</tr>";
         }
     ?>
     </table>
