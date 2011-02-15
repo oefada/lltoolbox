@@ -16,6 +16,13 @@ class PricePoint extends AppModel {
     );
     
     var $actsAs = array('Logable');
+
+		function setInactive($val,$ppid){
+
+			$q="UPDATE pricePoint SET inactive=$val WHERE pricePointId=$ppid";
+			$this->query($q);
+
+		}
     
     function afterSave($created) {
         $pricePointId = (isset($this->data['PricePoint']['pricePointId'])) ? isset($this->data['PricePoint']['pricePointId']) : $this->id;
