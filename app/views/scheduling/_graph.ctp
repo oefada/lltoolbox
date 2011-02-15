@@ -23,7 +23,8 @@
 			$balancePaid = $currentLoa['Loa']['totalRevenue'] - $currentLoa['Loa']['membershipBalance'];
 			
 			$divisor = ($ts_endDate-$ts_startDate)/300;
-			$left = ($ts_today-$ts_startDate)/$divisor;
+			if ($divisor==0)$left=0;
+			else $left = ($ts_today-$ts_startDate)/$divisor;
 			
 			if ($left < 0) $left = 0;
 			if ($left > 300) $left = 300;
