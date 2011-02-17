@@ -49,7 +49,16 @@ class Track extends AppModel {
 								),
 						);
 						
-						
+					
+	function getLoaEndDate($loaId){
+
+		$q="SELECT endDate FROM loa WHERE loaId=$loaId";
+		$row=$this->query($q);
+		return ($row[0]['loa']['endDate']);
+
+
+	}
+
 	function checkExp($data) {
 		$validPresets = true;
 		$expCriteriaId = $this->data['Track']['expirationCriteriaId'];

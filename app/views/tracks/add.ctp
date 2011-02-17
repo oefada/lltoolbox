@@ -26,7 +26,8 @@
 		} else {
 			$expCriteriaIdForm = 1;
 		}
-			echo $this->render('_exp_criteria_'.$expCriteriaIdForm); ?>
+
+		echo $this->render('_exp_criteria_'.$expCriteriaIdForm); ?>
 	</fieldset>
 	</fieldset>
 <?php echo $form->end('Submit');?>

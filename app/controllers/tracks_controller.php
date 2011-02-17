@@ -18,6 +18,8 @@ class TracksController extends AppController {
 	}
 
 	function add($loaId) {
+
+
 		if (!empty($this->data)) {
 			$this->data['Track']['loaId'] = $loaId;
 			$this->Track->create();
@@ -32,7 +34,11 @@ class TracksController extends AppController {
 				$this->Session->setFlash(__('The Track could not be saved. Please, try again.', true));
 			}
 		}
-		
+
+
+		// so that Exp Date may have the same expiration date as the previous loa viewed
+		$this->data['Track']['endDate']=($this->Track->getLoaEndDate($loaId));
+
 		$this->data['Track']['loaId'] = $loaId;
 		$expirationCriteriaIds = $this->Track->ExpirationCriterium->find('list');
 		$revenueModelIds = $this->Track->RevenueModel->find('list');

@@ -30,13 +30,15 @@ class SchedulingMastersController extends AppController {
 			    
 		if (!empty($this->data)){
 
-//print "<pre>"; print_r($this->data);print"</pre>"; exit;
-
+			// enabling checkboxes and multiple submissions with different pricepoints but the same data
+			// mbyrnes 2011-02-16
 			foreach($this->data['SchedulingMaster']['pricePointId'] as $key=>$ppid){
 				$ppid_arr[]=$ppid;
 			}
 
 			foreach($ppid_arr as $key=>$ppid){
+
+				$this->data['SchedulingMaster']['pricePointId']=$ppid;
 
 				// validation
 				if (!$this->data['isAuction'] && !$this->data['isBuyNow'] && !$this->data['isHotelOffer']) {
@@ -113,7 +115,11 @@ class SchedulingMastersController extends AppController {
 					}
 
 				}
-
+				echo "asdf";
+				print "<pre>";
+print_r($this->data);
+print "</pre>";
+echo "<hr>";
 				// for save failure
 				$this->set('data', $this->data);
 

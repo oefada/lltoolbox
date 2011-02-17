@@ -165,8 +165,9 @@ $this->set('clientId', $this->data['Client']['clientId']);
 
 				<li>
 				<?php
+
 				echo $html->link('Add new LOA track',
-								'/loas/'.$loa['Loa']['loaId'].'/tracks/add',
+								'/loas/'.$loa['Loa']['loaId'].'/tracks/add/',
 								array(
 									'title' => 'Add LOA Track',
 									'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
