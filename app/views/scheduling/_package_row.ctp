@@ -12,15 +12,26 @@
 
 		<? 
 
+		// ticket 1566
+		// mbyrnes 2011-02-17
 		$link_arr=array(
 			"controller"=>"scheduling", 
 			"action"=>"delPackageOffers",
 			$package['Client']['clientId'],
 			$package['Package']['packageId']
 		);
-
+		// can't geth $html->link() working with styles
+		echo "<style>dumb_link{
+			color:#ffffff;
+			}
+			a.dumb_link:link{color:#FFFFFF}
+			a.dumb_link:hover{color:#7F0000}
+			a.dumb_link:visited{color:#ffffff;text-decoration:underline;}
+			";
+		echo "</style>";
 		echo "<div class='del_package_offers' style='color:#FFFFFF;margin-left:10px;font-weight:bold;float:left;'>";
-		echo $html->link('Delete offers under this package',$link_arr,array(),"Are you sure?");
+		//echo $html->link('Delete offers under this package',$link_arr,array(),"Are you sure?");
+		echo "<a class='dumb_link' href='/scheduling/delPackageOffers/".$package['Client']['clientId']."/".$package['Package']['packageId']."'>Delete offers under this package</a>";
 		echo "<div style='clear:both;'></div>";
 		echo "</div>";
 
