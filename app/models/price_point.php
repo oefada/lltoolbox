@@ -56,15 +56,15 @@ class PricePoint extends AppModel {
     }
 
     function getPricePoint($packageId) {
-        return $this->query("
-            SELECT *, GROUP_CONCAT(CONCAT(DATE_FORMAT(startDate, '%b %e, %Y'), ' - ', DATE_FORMAT(endDate, '%b %e, %Y')) SEPARATOR '<br/>') dateRanges
+      $q="SELECT *, GROUP_CONCAT(CONCAT(DATE_FORMAT(startDate, '%b %e, %Y'), ' - ', DATE_FORMAT(endDate, '%b %e, %Y')) SEPARATOR '<br/>') dateRanges
             FROM pricePoint PricePoint
             INNER JOIN pricePointRatePeriodRel PricePointRatePeriodRel USING(pricePointId)
             INNER JOIN loaItemRatePeriod LoaItemRatePeriod USING(loaItemRatePeriodId)
             INNER JOIN loaItemDate LoaItemDate USING(loaItemRatePeriodId)
-            WHERE packageId = $packageId
-            GROUP BY pricePointId
-        ");
+            WHERE packageId = $packageId  
+						AND PricePoint.inactive=0  
+            GROUP BY pricePointId";
+        return $this->query("$q");
     }
     
     function getPricePointValidities($packageId) {

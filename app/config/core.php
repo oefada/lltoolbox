@@ -42,7 +42,7 @@
  */
  // 2010-02-09 mbyrnes
 	$debug=0;
-	if ($_SERVER['ENV']=='development')$debug=1;
+	if ($_SERVER['ENV']=='development')$debug=2;
 	Configure::write('debug', $debug);
 	//Configure::write('log',E_ALL);
 /**
@@ -149,7 +149,9 @@
  * CakePHP session IDs are also regenerated between requests if
  * 'Security.level' is set to 'high'.
  */
-	Configure::write('Security.level', 'medium');
+	$level="medium";
+	if ($_SERVER['ENV']=='development')$level="low";
+	Configure::write('Security.level', $level);
 /**
  * A random string used in security hashing methods.
  */
