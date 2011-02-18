@@ -22,6 +22,9 @@ class PricePoint extends AppModel {
 			$q="UPDATE pricePoint SET inactive=$val WHERE pricePointId=$ppid";
 			$this->query($q);
 
+			$q="DELETE FROM pricePointRatePeriodRel WHERE pricePointId=$ppid";
+			$this->query($q);
+
 		}
     
     function afterSave($created) {

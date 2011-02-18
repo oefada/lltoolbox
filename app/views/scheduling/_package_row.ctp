@@ -31,7 +31,7 @@
 		echo "</style>";
 		echo "<div class='del_package_offers' style='color:#FFFFFF;margin-left:10px;font-weight:bold;float:left;'>";
 		//echo $html->link('Delete offers under this package',$link_arr,array(),"Are you sure?");
-		echo "<a class='dumb_link' href='/scheduling/delPackageOffers/".$package['Client']['clientId']."/".$package['Package']['packageId']."'>Delete offers under this package</a>";
+		echo "<a onclick='return confirm(\"Are you sure?\");' class='dumb_link' href='/scheduling/delPackageOffers/".$package['Client']['clientId']."/".$package['Package']['packageId']."'>Delete offers under this package</a>";
 		echo "<div style='clear:both;'></div>";
 		echo "</div>";
 
