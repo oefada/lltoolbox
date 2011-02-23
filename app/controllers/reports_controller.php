@@ -1054,9 +1054,16 @@ class ReportsController extends AppController {
             
     	    $results = $this->OfferType->query($sql);
     	    $numRecords = $results[0][0]['numRecords'];
-            $numPages = ceil($numRecords / $this->perPage);
-            
-            $sql = "SELECT if(Ticket.offerTypeId IN(3,4),PaymentDetail.ppResponseDate,SchedulingInstance.endDate) endDate,
+          $numPages = ceil($numRecords / $this->perPage);
+          
+					// query modified
+					// mbyrnes 2011-02-22
+					// The join on pricePoint caused problems because there is no ticketId in the pricePoint table
+					// The result was multiple rows incorrectly selected and SUM-med 
+					// before the GROUP BY ticketId was enforced
+					// Too much redundant data in the tables and not enough correlated keys to get it right easily, 
+					// so php solution implemented
+          $sql = "SELECT if(Ticket.offerTypeId IN(3,4),PaymentDetail.ppResponseDate,SchedulingInstance.endDate) endDate,
                            PaymentDetail.ppResponseDate, 
                            Ticket.ticketId,
                            GROUP_CONCAT(DISTINCT Client.clientId) as clientIds,
@@ -1086,8 +1093,10 @@ class ReportsController extends AppController {
                            PaymentProcessor.paymentProcessorName,
                            ExpirationCriteria.expirationCriteriaId,
                            #Track.applyToMembershipBal,
-                           PricePoint.validityStart,
-                           PricePoint.validityEnd,
+                           /*PricePoint.validityStart,
+                           PricePoint.validityEnd,*/
+													 SchedulingMaster.pricePointId, 
+													 SchedulingMaster.packageId,
 						   Promo.amountOff,
 						   PromoCode.promoCode,
                            Package.numNights
@@ -1102,7 +1111,7 @@ class ReportsController extends AppController {
                            LEFT JOIN paymentProcessor AS PaymentProcessor USING (paymentProcessorId)
                            LEFT JOIN userPaymentSetting AS UserPaymentSetting ON (UserPaymentSetting.userPaymentSettingId = PaymentDetail.userPaymentSettingId)
                            LEFT JOIN package AS Package ON Package.packageId = Ticket.packageId
-                           LEFT JOIN pricePoint PricePoint ON PricePoint.packageId = Package.packageId
+            /*               LEFT JOIN pricePoint PricePoint ON PricePoint.packageId = Package.packageId*/
                            LEFT JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Ticket.packageId)
                            LEFT JOIN client as Client ON(Client.clientId = ClientLoaPackageRel.clientId)
                            LEFT JOIN expirationCriteria AS ExpirationCriteria USING(expirationCriteriaId)
@@ -1115,15 +1124,45 @@ class ReportsController extends AppController {
                     GROUP BY Ticket.ticketId
                     ORDER BY $order
 	                LIMIT $this->limit";
-	        
+
 	        $results = $this->OfferType->query($sql);
+
+					// This extracts pricePointId and PackageId from the result set and queries
+					// pricePoint table to get the validity dates and then inserts them into the $results array
+					// 2011-02-22 mbyrnes
+					foreach($results as $key=>$arr){
+						$ticketId=$arr['Ticket']['ticketId'];
+						$pricePointId_arr[$ticketId]=$arr['SchedulingMaster']['pricePointId'];
+						$packageId_arr[$ticketId]=$arr['SchedulingMaster']['packageId'];
+					}	
+					
+					$q="SELECT validityStart,validityEnd,pricePointId,packageId ";
+					$q.="FROM pricePoint WHERE pricePointId IN (".implode(",",$pricePointId_arr).") AND ";
+					$q.="packageId IN (".implode(",",$packageId_arr).")";
+					$pp_results=$this->OfferType->query($q);
+					foreach($pp_results as $i=>$pp_arr){
+
+						foreach($results as $j=>$r_arr){
+
+							if ($pp_arr['pricePoint']['pricePointId']==$r_arr['SchedulingMaster']['pricePointId'] 
+							&& $pp_arr['pricePoint']['packageId']==$r_arr['SchedulingMaster']['packageId']){
+
+								$results[$j]['pricePoint']['validityStart']=$pp_arr['pricePoint']['validityStart'];
+								$results[$j]['pricePoint']['validityEnd']=$pp_arr['pricePoint']['validityEnd'];
+
+							}
+
+						}
+
+					}
             
-            $this->set('currentPage', $this->page);
-            $this->set('numRecords', $numRecords);
-            $this->set('numPages', $numPages);
-            $this->set('data', $this->data);
-	        $this->set('results', $results);
-		    $this->set('serializedFormInput', serialize($this->data));
+				$this->set('currentPage', $this->page);
+				$this->set('numRecords', $numRecords);
+				$this->set('numPages', $numPages);
+				$this->set('data', $this->data);
+				$this->set('results', $results);
+				$this->set('serializedFormInput', serialize($this->data));
+
 	    }
 	}  
     	
