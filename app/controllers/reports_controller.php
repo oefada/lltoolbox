@@ -1059,8 +1059,8 @@ class ReportsController extends AppController {
 					// query modified
 					// mbyrnes 2011-02-22
 					// The join on pricePoint caused problems because there is no ticketId in the pricePoint table
-					// The result was multiple rows incorrectly selected and SUM-med 
-					// before the GROUP BY ticketId was enforced
+					// The result was multiple rows incorrectly selected and SUM-med before the GROUP BY ticketId 
+					// was enforced
 					// Too much redundant data in the tables and not enough correlated keys to get it right easily, 
 					// so php solution implemented
           $sql = "SELECT if(Ticket.offerTypeId IN(3,4),PaymentDetail.ppResponseDate,SchedulingInstance.endDate) endDate,
@@ -1146,9 +1146,8 @@ class ReportsController extends AppController {
 
 							if ($pp_arr['pricePoint']['pricePointId']==$r_arr['SchedulingMaster']['pricePointId'] 
 							&& $pp_arr['pricePoint']['packageId']==$r_arr['SchedulingMaster']['packageId']){
-
-								$results[$j]['pricePoint']['validityStart']=$pp_arr['pricePoint']['validityStart'];
-								$results[$j]['pricePoint']['validityEnd']=$pp_arr['pricePoint']['validityEnd'];
+								$results[$j]['PricePoint']['validityStart']=$pp_arr['pricePoint']['validityStart'];
+								$results[$j]['PricePoint']['validityEnd']=$pp_arr['pricePoint']['validityEnd'];
 
 							}
 
