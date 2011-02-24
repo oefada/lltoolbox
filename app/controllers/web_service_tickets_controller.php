@@ -1935,11 +1935,13 @@ class WebServiceTicketsController extends WebServicesController
 				$siteName = 'Luxury Link';
 				$url = 'http://www.luxurylink.com';
 				$emailFrom = $emailReplyTo = 'referafriend@luxurylink.com';
+				$headerLogo = 'http://www.luxurylink.com/images/ll_logo_2009_2.gif';
 				break;
 			case 2:
 				$siteName = 'Family';
 				$url = 'http://www.familygetaway.com';
 				$emailFrom = $emailReplyTo = 'referafriend@familygetaway.com';
+				$headerLogo = 'http://www.luxurylink.com/images/family/logo.gif';
 				break;
 			default:
 				$siteName = '';
