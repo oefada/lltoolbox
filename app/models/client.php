@@ -27,7 +27,7 @@ class Client extends AppModel {
                         'ClientAmenityTypeRel' => array('className' => 'ClientAmenityTypeRel', 'foreignKey' => 'clientId'),
 						'ClientAmenityRel' => array('className' => 'ClientAmenityRel', 'foreignKey' => 'clientId'),
 						'ClientDestinationRel' => array('className' => 'ClientDestinationRel', 'foreignKey' => 'clientId'),
-                        'ClientSiteExtended' => array('className' => 'ClientSiteExtended', 'foreignKey' => 'clientId'),
+                        'ClientSiteExtended' => array('className' => 'ClientSiteExtended', 'foreignKey' => 'clientId', 'conditions' => array('ClientSiteExtended.isCurrentLoaSite' => 1)),
 						'ClientThemeRel' => array('className' => 'ClientThemeRel', 'foreignKey' => 'clientId'),
 						'ClientTracking' => array('className' => 'ClientTracking', 'foreignKey' => 'clientId'),
 						'ClientReview' => array('className' => 'ClientReview', 'foreignKey' => 'clientId'),
@@ -210,10 +210,10 @@ class Client extends AppModel {
                 }
                 break;
            case 'Client':
-                $client = $this->find('first', array('fields' => $fields, 'conditions' => array('Client.clientId' => $client['Client']['clientId'])));
+                $clientData = $this->find('first', array('fields' => $fields, 'conditions' => array('Client.clientId' => $client['Client']['clientId'])));
                 foreach($fields as $field) {
-                            if (empty($client['Client'][$field]) && !empty($client['Client'][$field])) {
-                                        $data['Client'][$field] = $client['Client'][$field];
+                            if (empty($client['Client'][$field]) && !empty($clientData['Client'][$field])) {
+                                        $data['Client'][$field] = $clientData['Client'][$field];
                             }
                 }
                 break;
@@ -388,8 +388,12 @@ class Client extends AppModel {
 					$client['ClientSiteExtended'] = array();
 				}
 				foreach($newSites as $site) {
+                    if ($oldClientSiteExtended = $this->ClientSiteExtended->find('first', array('conditions' => array('ClientSiteExtended.siteId' => array_search($site, $this->sites), 'ClientSiteExtended.clientId' => $client['Client']['clientId'])))) {
+                        $clientSiteExtended = $oldClientSiteExtended['ClientSiteExtended'];
+                    }
 					$clientSiteExtended['clientId'] = $client_id;
 					$clientSiteExtended['siteId'] = array_search($site, $this->sites);
+                    $clientSiteExtended['isCurrentLoaSite'] = 1;
 					array_push($client['ClientSiteExtended'], $clientSiteExtended);
                     
                     //save room grades
@@ -417,7 +421,7 @@ class Client extends AppModel {
                     $siteId = array_search($site, $this->sites);
                     $this->deleteFromFrontEnd($delClient, $site);
                     $this->useDbConfig = 'default';
-                    $delQuery = "DELETE FROM clientSiteExtended WHERE clientId={$delClientId} AND siteId={$siteId};";
+                    $delQuery = 'UPDATE clientSiteExtended SET isCurrentLoaSite = 0 WHERE clientId='. $delClientId . ' AND siteId=' . $siteId;
                     $this->query($delQuery);
                     $i = 0;
                     foreach($client['ClientSiteExtended'] as $record) {
