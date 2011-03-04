@@ -82,9 +82,11 @@ class ClientsController extends AppController {
 				}
 		    endif;
 	         /** END SORT **/   
-		   
+		    
 	         $this->data['Client']['seoName'] = $this->convertToSeoName($this->data['Client']['name']);
              $this->data['Client']['seoLocation'] = $this->convertToSeoName($this->data['Client']['locationDisplay']);
+             $this->Client->ClientType->recursive = -1;
+             $this->data['Client']['clientTypeSeoName'] = $this->Client->ClientType->field('clientTypeSeoName', array('ClientType.clientTypeId' => $this->data['Client']['clientTypeId']));
 			 if (!empty($this->data['Client']['ageRanges'])) {
 				$this->data['Client']['ageRanges'] = implode(',',$this->data['Client']['ageRanges']);
 			 }

@@ -354,7 +354,7 @@ class Client extends AppModel {
                         $update_arr[] = 'theme'.$i.'=0';
                     }
                 }
-               $update_tmp = rtrim($tmp, ',');
+               //$update_tmp = rtrim($tmp, ',');
                $sql = "INSERT DELAYED INTO clientThemeLookup (". implode(',',array_keys($insert_arr)) .")
                        VALUES (". implode(',',array_values($insert_arr)) .")
                        ON DUPLICATE KEY UPDATE ".implode(',', $update_arr);
