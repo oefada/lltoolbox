@@ -1,5 +1,5 @@
 <div class="tracks form">
-	<?php echo $ajax->form('add', 'post', array('url' => "/tracks/edit/{$this->data['Track']['trackId']}", 'update' => 'MB_content', 'model' => 'Track', 	'complete' => 'closeModalbox()'));?>
+	<?php echo $ajax->form('add', 'post', array('url' => "/tracks/edit/{$this->data['Track']['trackId']}", 'update' => 'MB_content', 'model' => 'Track', 	'complete' => 'closeModalbox()', 'id' => 'formLoasEditTrack'));?>
 	<fieldset>
 	<?php
 		echo $form->input('trackId', array('type' => 'hidden'));
@@ -47,6 +47,7 @@
                "TrackExpirationCriteriaId",
                array(
                   "update"=>"expirationCriteria",
+                  "with"=>"Form.serialize($('formLoasEditTrack'))",
                   "url"=>"/tracks/expiration_criteria_form",
 				 'complete' => 'closeModalbox()'
                )

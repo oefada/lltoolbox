@@ -18,8 +18,6 @@ class TracksController extends AppController {
 	}
 
 	function add($loaId) {
-
-
 		if (!empty($this->data)) {
 			$this->data['Track']['loaId'] = $loaId;
 			$this->Track->create();
@@ -35,16 +33,12 @@ class TracksController extends AppController {
 			}
 		}
 
-
-		// so that Exp Date may have the same expiration date as the previous loa viewed
-		$this->data['Track']['endDate']=($this->Track->getLoaEndDate($loaId));
-
 		$this->data['Track']['loaId'] = $loaId;
 		$expirationCriteriaIds = $this->Track->ExpirationCriterium->find('list');
 		$revenueModelIds = $this->Track->RevenueModel->find('list');
 		$this->set(compact('expirationCriteriaIds', 'revenueModelIds'));
 	}
-	
+
 	function edit($id = null) {
 		if (!$id && empty($this->data)) {
 			$this->Session->setFlash(__('Invalid Track', true));
@@ -65,7 +59,7 @@ class TracksController extends AppController {
 		if (empty($this->data)) {
 			$this->data = $this->Track->read(null, $id);
 		}
-		
+
 		$expirationCriteriaIds = $this->Track->ExpirationCriterium->find('list');
 		$revenueModelIds = $this->Track->RevenueModel->find('list');
 		$this->set(compact('expirationCriteriaIds', 'revenueModelIds'));
@@ -98,12 +92,18 @@ class TracksController extends AppController {
 			default:
 				$fileToRender = '';
 		endswitch;
-		
+
 		$this->render(null, false, $fileToRender);
 	}
-	
+
 	function expiration_criteria_form() {
 		if(is_numeric($this->data['Track']['expirationCriteriaId'])) {
+
+			// set Exp Date from loaId in form
+			if (!isset($this->data['Track']['expDate'])) {
+				$this->data['Track']['expDate']=($this->Track->getLoaEndDate($this->data['Track']['loaId']));
+			}
+
 			$this->render(null, false, '_exp_criteria_'.$this->data['Track']['expirationCriteriaId']);
 		}
 	}
