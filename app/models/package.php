@@ -522,7 +522,7 @@ class Package extends AppModel {
 				$html.= $this->pluralize($blackout_week) . "<br>";
 			}
 		} else {
-            $html.= 'Reservations are subject to availability at time of booking.';
+            $html.= 'Reservations are subject to availability at time of booking. May not be valid during holidays and special event periods.';
 		}
 			
 		return $html;
