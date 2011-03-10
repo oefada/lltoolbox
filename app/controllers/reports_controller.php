@@ -2778,7 +2778,7 @@ class ReportsController extends AppController {
 
 			$mime_boundary = "==Multipart_Boundary_x{$semi_rand}x";
 
-		    $headers = "From: <no-reply@luxurylink.com>\n";
+		    $headers = "From: <no-reply@toolbox.luxurylink.com>\n";
 		    $headers .= "MIME-Version: 1.0\n";
 		    $headers .= "Content-Type: multipart/related; type=\"multipart/alternative\"; boundary=\"----=MIME_BOUNDRY_main_message\"\n"; 
 		    $headers .= "This is a multi-part message in MIME format.\n";
