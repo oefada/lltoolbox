@@ -1638,6 +1638,7 @@ class ReportsController extends AppController {
 				case 3:
 				case 5:
 				case 6:
+				case 7:
 				$order = "Loa.membershipBalance DESC";
 				break;
 				case 4:
@@ -1712,6 +1713,14 @@ class ReportsController extends AppController {
 				foreach($noSell as $c) {
 					$clientIds[] = $c['Client']['clientId'];
 				}
+				$qlconditions = "Client.clientId IN (".implode(',', $clientIds).")";
+			break;
+			case 7:
+				$clients = $this->Client->query("CALL clientsNoScheduledOffersLoaFlex('$startDate2','$startDate2', true)");
+				foreach($clients as $c) {
+					$clientIds[] = $c['c']['clientId'];
+				}
+
 				$qlconditions = "Client.clientId IN (".implode(',', $clientIds).")";
 			break;
 			default:
@@ -1810,6 +1819,19 @@ class ReportsController extends AppController {
 														AND clientId = $clientId
 												GROUP BY offerTypeId, siteId");
 
+            // if (@$this->params['named']['ql'] == 7) {
+			if (true) {
+				$packagesLiveFlex = $this->Client->query("SELECT COUNT(DISTINCT SchedulingMaster.packageId) as packagesLive, offerTypeId, SchedulingMaster.siteId
+													FROM schedulingInstance as SchedulingInstance
+													INNER JOIN schedulingMaster as SchedulingMaster USING (schedulingMasterId)
+													INNER JOIN package USING (packageId)
+													INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel USING(packageId)
+													WHERE (SchedulingInstance.startDate between '$startDate' and '$endDate' or SchedulingInstance.endDate between '$startDate' and '$endDate' or (SchedulingInstance.startDate < '$startDate' and SchedulingInstance.endDate > '$endDate'))
+													AND clientId = $clientId
+													AND package.isFlexPackage = 1
+													GROUP BY offerTypeId, SchedulingMaster.siteId");
+			}
+
 			$packageStats = array();
 			$packageStats['packagesLiveTodayLL'] = $packageStats['packagesLiveTodayFG'] = $packageStats['auctionsLiveToday'] = $packageStats['fpLiveToday'] = 0;
 
@@ -1835,6 +1857,35 @@ class ReportsController extends AppController {
 						$packageStats['fpLiveToday'] += $v[0]['packagesLive'];
 				}
 			}
+
+            // if (@$this->params['named']['ql'] == 7) {
+			if (true) {
+                $packageStats['packagesLiveTodayLLFlex'] = $packageStats['packagesLiveTodayFGFlex'] = $packageStats['auctionsLiveTodayFlex'] = $packageStats['fpLiveTodayFlex'] = 0;
+				foreach ($packagesLiveFlex as $v) {
+					switch($v['SchedulingMaster']['siteId']) {
+						case 1:         //LL
+							$packageStats['packagesLiveTodayLLFlex'] += $v[0]['packagesLive'];
+							break;
+						case 2:         //FG
+							$packageStats['packagesLiveTodayFGFlex'] += $v[0]['packagesLive'];
+							break;
+						default:
+							break;
+					}
+					switch($v['SchedulingMaster']['offerTypeId']) {
+						case 1:
+						case 2:
+						case 6:
+							$packageStats['auctionsLiveTodayFlex'] += $v[0]['packagesLive'];
+						break;
+						case 3:
+						case 4:
+							$packageStats['fpLiveTodayFlex'] += $v[0]['packagesLive'];
+					}
+				}
+			}
+
+
 			// End Packages Live Today
 			// Packages Uptime
 			$packageUptime = $this->Client->query("CALL clientPackagesUptime($clientId, '$pkgRevenueStart', '$pkgRevenueEnd' )");

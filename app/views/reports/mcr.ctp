@@ -149,6 +149,7 @@ td.error div{
     echo $html->link('Clients with zero packages sold in last 60 days', '/reports/mcr/ql:5/days:60', array('onclick' => 'document.theform.action = this.href; document.theform.submit(); return false'))."<br />";
     echo $html->link('Clients with zero packages sold in last 90 days', '/reports/mcr/ql:5/days:90', array('onclick' => 'document.theform.action = this.href; document.theform.submit(); return false'))."<br />";
 	echo $html->link('Clients with zero fixed price requests in last 60 days', '/reports/mcr/ql:6', array('onclick' => 'document.theform.action = this.href; document.theform.submit(); return false'))."<br />";
+	echo $html->link('Clients with zero FLEX packages live Today', '/reports/mcr/ql:7', array('onclick' => 'document.theform.action = this.href; document.theform.submit(); return false'))."<br />";
 	?>
 </div>
 </div>
@@ -166,7 +167,7 @@ td.error div{
 		<th rowspan="2">&nbsp;</th>
 	    <th rowspan="2" class="blackBg" style="text-align: center"><a href="1" id="sort1">Client Name</a></td>
         <th rowspan="2" class="blackBg" style="text-align: center"><a href="2" id="sort2">Site(s)</a></th>
-	    <th colspan="8" class="darkBlackBg rowBorderWhite" style="border-top: 1px solid #000; text-align: center; padding: 5px 0">
+	    <th colspan="11" class="darkBlackBg rowBorderWhite" style="border-top: 1px solid #000; text-align: center; padding: 5px 0">
 			Package Revenue
 			<div style="position: relative; float: right; clear: none">
 				<?php echo $form->create('', array('url' => $_SERVER['REQUEST_URI']))?>
@@ -197,6 +198,10 @@ td.error div{
 	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="8" id="sort9">Auctions Close Rate</a></td>
 	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="9" id="sort10">FP Live Today</a></td>
 	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="10" id="sort11"># of FP Requests</a></td>
+	    
+	    <th class="darkBlackBg rowBorderWhite" style="text-align: center">LL Flex Live Today</td>
+	    <th class="darkBlackBg rowBorderWhite" style="text-align: center">FG Flex Live Today</td>
+	    
 	    <th class="blackBg dateRow" style="text-align: center"><a href="11" id="sort12">Exp. Date</a></td>
 	    <th class="blackBg dateRow" style="text-align: center"><a href="12" id="sort13">Renewed<br />(LOA Start)</a></td>
 	    <th class="blackBg" style="text-align: center"><a href="13" id="sort14">LOA Type</a></td>
@@ -234,6 +239,11 @@ td.error div{
 	    <td><?=(int)$row['auctionCloseRate']?></td>
 	    <td><?=(int)$row['fpLiveToday']?></td>
 	    <td><?=(int)$row['fpRequests']?></td>
+	    
+	    <td><?=(int)$row['packagesLiveTodayLLFlex']?></td>
+	    <td><?=(int)$row['packagesLiveTodayFGFlex']?></td>
+	    
+	    
 		<? if ($k == count($clients) - 1) echo "</div>"?>
 	    <td  class="dateRow<?if(strtotime("+60 days") >= strtotime($row['Loa']['endDate'])) echo " error"?>"><div><?=date('m/d/Y', strtotime($row['Loa']['endDate']))?></div></td>
 	    <td class="dateRow"><?=($row['Loa2']['startDate']) ? date('m/d/Y', strtotime($row['Loa2']['startDate'])) : ''; ?></td>
