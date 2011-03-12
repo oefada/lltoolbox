@@ -14,7 +14,6 @@ class ClientNewsletterNotifierController extends AppController {
 	    if (!empty($this->data)) {
 	        $this->ClientNewsletterNotifier->data = $this->data;
             $clients = $this->ClientNewsletterNotifier->prepareContactDetails();
-            
             if (@$this->data['ClientNewsletterNotifier']['approve']) {
                 $this->_send($clients, $this->data);
                 $this->set('emailSent', true);
@@ -29,7 +28,7 @@ class ClientNewsletterNotifierController extends AppController {
 	        $this->Email->reset();
 	        $this->Email->from = 'Client Marketing <clientmarketing@luxurylink.com >';
 	            
-            if (!empty($client['Client']['managerUsername'])) {
+            if (!empty($client['Client']['managerUsername']) && empty($_SERVER['ENV'])) {
                $this->Email->cc[] = $client['Client']['managerUsername'].' <'.$client['Client']['managerUsername'].'@luxurylink.com>';
             }
                 
@@ -49,13 +48,18 @@ class ClientNewsletterNotifierController extends AppController {
             $this->set('url', $data['ClientNewsletterNotifier']['url']);
 	        
 	        $mainContact = array_shift($client['ClientContact']);                       //first contact is primary, relies on order by clause in model
-	        $this->Email->to = $mainContact['name'].' <'.$mainContact['emailAddress'].'>';
-	        
+            if ($_SERVER['ENV'] == 'development' || $_SERVER['ENV'] == 'staging') {
+                $this->Email->to = 'livedevmail@luxurylink.com';
+            }
+            else {
+                $this->Email->to = $mainContact['name'].' <'.$mainContact['emailAddress'].'>';
+            }
 	        // iterate through all remaining contacts, array_shift takes care of the first one for us
 	        foreach ($client['ClientContact'] as $contact) { //$contact['emailAddress']
-                $this->Email->cc[] = $contact['name'].' <'.$contact['emailAddress'].'>';
+                if (empty($_SERVER['ENV'])) {
+                    $this->Email->cc[] = $contact['name'].' <'.$contact['emailAddress'].'>';
+                }
 	        }
-	        
 	        $this->Email->send();
 	    }
 	}

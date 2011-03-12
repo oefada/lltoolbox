@@ -508,6 +508,18 @@ class Client extends AppModel {
                   GROUP BY ClientLoaPackageRel.clientId";
         return $this->query($query);
    }
+   
+   function getClientBySeoUrl($url) {
+        list($clientTypeSeoName, $seoLocation, $seoName) = explode('/', $url);
+        $this->recursive = -1;        
+        if ($client = $this->find('first', array('conditions' => array('lower(Client.seoName)' => $seoName,
+                                                                       'lower(Client.seoLocation)' => $seoLocation,
+                                                                       'lower(Client.clientTypeSeoName)' => $clientTypeSeoName
+                                                                       ),
+                                                 'fields' => 'Client.clientId'))) {
+            return $client;
+        }
+   }
 
 }
 ?>

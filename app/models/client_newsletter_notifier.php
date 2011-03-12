@@ -18,7 +18,7 @@ class ClientNewsletterNotifier extends AppModel {
           $contents .= fread($handle, 8192);
         }
         fclose($handle);
-        
+
         $clients = $this->getClientsFromHtml($contents);
         
         $client = new Client;
@@ -41,10 +41,20 @@ class ClientNewsletterNotifier extends AppModel {
 	}
 	
 	function getClientsFromHtml($data) {
-	    preg_match_all("/luxurylink\.com\/luxury-hotels\/.*\?clid=([0-9]+)/", $data, $clients);
-
-	    $clientIds = array_merge(array_unique($clients[1]), array());
-	    
+	    //preg_match_all("/luxurylink\.com\/luxury-hotels\/.*\?clid=([0-9]+)/", $data, $clients);
+        //$clientIds = array_merge(array_unique($clients[1]), array());
+        
+        preg_match_all('/luxurylink\.com\/fivestar\/((hotels|inns|tour-packages|luxury-cruises|all-inclusive-resorts|lodges|estates-villas)\/[A-Za-z0-9-]+\/[A-Za-z0-9-\'&\+]+)/', $data, $clients);
+        
+        $clientIds = array();
+        $clientModel = new Client();
+        foreach ($clients[1] as $clientUrl) {
+            if ($client = $clientModel->getClientBySeoUrl($clientUrl)) {
+                if (!in_array($client['Client']['clientId'], $clientIds)) {
+                    $clientIds[] = $client['Client']['clientId'];
+                }
+            }
+        }
 	    return $clientIds;
 	}
 }
