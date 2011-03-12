@@ -2039,7 +2039,7 @@ class ReportsController extends AppController {
 	    return round( abs( $a_new - $b_new ) / 86400 );
 	}
 
-	function merch() {
+	function merch_031111() {
 		$this->Client = new Client();
 
 		if(!empty($this->data['datePicker'])){
@@ -3031,7 +3031,7 @@ class ReportsController extends AppController {
 
 	}
 
-	function merch_new() {
+	function merch() {
 		$this->Client = new Client();
 
 		if(!empty($this->data['datePicker'])){
