@@ -1,0 +1,57 @@
+<?php include('../vendors/email_msgs/email_includes/header.html');?>
+
+<p>Dear <?=$userFirstName;?> <?=$userLastName;?>,</p>
+
+<p><strong>Thank you for submitting your preferred travel dates!</strong>
+<br/>We're in the process of confirming them with the hotel.</p>
+
+<div style="padding:10px;background-color:#E0E0CD;margin-top:25px;margin-bottom:25px;">
+			<strong>Your Reservation Request:</strong>
+			<br/>Ticket ID: <?=$ticketId;?>
+			<br/><?=$clientNameP;?>
+			<br/>
+
+			<?php if ($isAuction) : ?>
+				<table cellspacing="0" cellpadding="5" border="0" style="margin-top:15px;">
+				<tr>
+					<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="120">Preferred Dates:</td>
+					<td style="color:#444444;font-size:12px;" valign="top" align="left">Check-in: <?php echo ($aucPreferDates[0]['rpd']['in']) ? $aucPreferDates[0]['rpd']['in'] : 'N/A';?></td>
+					<td style="color:#444444;font-size:12px;padding-left:15px;" valign="top" align="left">Check-out: <?php echo ($aucPreferDates[0]['rpd']['out']) ? $aucPreferDates[0]['rpd']['out'] : 'N/A';?></td>
+				</tr>
+				<?php if ($aucPreferDates[1]['rpd']['in']) : ?>
+				<tr>
+					<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="120">Alternate Dates:</td>
+					<td style="color:#444444;font-size:12px;" valign="top" align="left">Check-in: <?php echo ($aucPreferDates[1]['rpd']['in']) ? $aucPreferDates[1]['rpd']['in'] : 'N/A';?></td>
+					<td style="color:#444444;font-size:12px;padding-left:15px;" valign="top" align="left">Check-out: <?php echo ($aucPreferDates[1]['rpd']['out']) ? $aucPreferDates[1]['rpd']['out'] : 'N/A';?></td>
+				</tr>
+				<?php endif; ?>
+				<?php if ($aucPreferDates[2]['rpd']['in']) : ?>
+				<tr>
+					<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="120">Alternate Dates:</td>
+					<td style="color:#444444;font-size:12px;" valign="top" align="left">Check-in: <?php echo ($aucPreferDates[2]['rpd']['in']) ? $aucPreferDates[2]['rpd']['in'] : 'N/A';?></td>
+					<td style="color:#444444;font-size:12px;padding-left:15px;" valign="top" align="left">Check-out: <?php echo ($aucPreferDates[2]['rpd']['out']) ? $aucPreferDates[2]['rpd']['out'] : 'N/A';?></td>
+				</tr>
+				<?php endif; ?>
+				</table>
+			<?php else: ?>
+				<table cellspacing="0" cellpadding="5" border="0" style="margin-top:15px;">
+				<tr>
+					<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">Preferred Travel Dates:</td>
+					<td style="color:#444444;font-size:12px;" valign="top" align="left">Check-in: <?php echo $fpArrival;?></td>
+					<td style="color:#444444;font-size:12px;padding-left:15px;" valign="top" align="left">Check-out: <?php echo $fpDeparture;?></td>
+				</tr>
+				<tr>
+					<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">Alternate Travel Dates:</td>
+					<td style="color:#444444;font-size:12px;" valign="top" align="left">Check-in: <?php echo $fpArrival2;?></td>
+					<td style="color:#444444;font-size:12px;padding-left:15px;" valign="top" align="left">Check-out: <?php echo $fpDeparture2;?></td>
+				</tr>
+				</table>
+			<?php endif; ?>
+
+</div>
+
+<p>We'll send you an email confirmation as soon as we secure you reservation. This may take up to one or two more business days - so please bear with us! In the mean time, we'd like to remind you that you can always check the status of your purchase online at <?=$siteDisplay;?> in the <span style="font-weight:bold;">"My Account"</span> section.</p>
+
+<p>We'll be in touch soon.</p>
+
+<?php include('../vendors/email_msgs/email_includes/footer.html');?>

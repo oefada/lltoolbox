@@ -3,7 +3,7 @@
 Configure::write('debug', 0);
 App::import('Vendor', 'nusoap/web_services_controller');
 App::import('Vendor', 'aes.php');
-require(APP.'/vendors/pp/Processor.class.php');  
+require(APP.'/vendors/pp/Processor.class.php');
 
 // FOR DEV WEB SERVICE SETTINGS! VERY IMPORTANT FOR DEV
 define('DEV_USER_TOOLBOX_HOST', 'http://' . $_SERVER['ENV_USER'] . '-toolboxdev.luxurylink.com/web_service_tickets');
@@ -13,7 +13,7 @@ class WebServiceTicketsController extends WebServicesController
 {
 	var $name = 'WebServiceTickets';
 
-	var $uses = array('Ticket', 'UserPaymentSetting','PaymentDetail', 'Client', 'User', 'Offer', 'Bid', 
+	var $uses = array('Ticket', 'UserPaymentSetting','PaymentDetail', 'Client', 'User', 'Offer', 'Bid',
 					  'ClientLoaPackageRel', 'Track', 'OfferType', 'Loa', 'TrackDetail', 'PpvNotice',
 					  'Address', 'OfferLuxuryLink', 'SchedulingMaster', 'SchedulingInstance', 'Reservation',
 					  'PromoTicketRel', 'Promo', 'TicketReferFriend','Package'
@@ -108,22 +108,22 @@ class WebServiceTicketsController extends WebServicesController
 						'doc' => 'N/A',
 						'input' => array('in0' => 'xsd:string'),
 						'output' => array('return' => 'xsd:string')
-						)						
+						)
 					);
-					
+
 	function beforeFilter() { $this->LdapAuth->allow('*'); }
-	
+
 	function processNewTicket($in0) {
 		$json_decoded = json_decode($in0, true);
 		$this->errorResponse = $this->errorMsg = $this->errorTitle = false;
-		if (!$this->processTicket($json_decoded)) {			
+		if (!$this->processTicket($json_decoded)) {
 			$server_type = '';
 			if (stristr($_SERVER['HTTP_HOST'], 'dev')) {
 				$server_type = '[DEV] --> ';
 			}
 			if (stristr($_SERVER['HTTP_HOST'], 'stage')) {
 				$server_type = '[STAGE] --> ';
-			} 
+			}
 			@mail('devmail@luxurylink.com', "$server_type" . 'WEBSERVICE (TICKETS): ERROR ('. $this->errorResponse . ')' . $this->errorTitle , $this->errorMsg . "<br /><br />\n\n" . print_r($json_decoded, true));
 			return 'FAIL';
 		}  else {
@@ -155,12 +155,12 @@ class WebServiceTicketsController extends WebServicesController
 		$params['returnString']		= 0;
 		$params['manualEmailBody']	= 0;
 		$params['initials']			= 'AUTO';
-		
+
 		// send out fixed price emails
 		// -------------------------------------------------------------------------------
 		$params['ppvNoticeTypeId'] = 9;     // Fixed Price - Winner Notification
-		$this->ppv(json_encode($params));	
-		
+		$this->ppv(json_encode($params));
+
 		//special request
 		if (trim($ticketData['requestNotes'])) {
 			$params['ppvNoticeTypeId'] = 10;     // Fixed Price - Client Exclusive Email
@@ -176,7 +176,7 @@ class WebServiceTicketsController extends WebServicesController
 		$arrival_within_2_days = strtotime('+2 DAYS');     // 48 hrs from now
 		if ($arrival_date_1 > 0 && $arrival_date_1 <= $arrival_within_2_days) {
 			$params['ppvNoticeTypeId'] = 10;
-		} 
+		}
 		if ($arrival_date_2 > 0 && $arrival_date_2 <= $arrival_within_2_days) {
 			$params['ppvNoticeTypeId'] = 10;
 		}
@@ -192,15 +192,15 @@ class WebServiceTicketsController extends WebServicesController
 		//if request comes in for more than the package NumNights, same as special request
         //acarney 2011-01-18 -- disabling the following block of code because we do not allow
         //users to enter their own departure dates anymore
-		
+
 		$package = $this->Package->read(null, $ticketData['packageId']);
         if (0) {
             $interval1 = (strtotime($ticketData['requestDeparture']) - strtotime($ticketData['requestArrival'])) / 86400;
             if($interval1 > $package['Package']['numNights'] ){
                 $params['ppvNoticeTypeId'] = 10;    // old res request
             }
-                    
-            if($ticketData['requestArrival2'] && $ticketData['requestArrival2'] != '000-00-00') {			
+
+            if($ticketData['requestArrival2'] && $ticketData['requestArrival2'] != '000-00-00') {
                 $interval2 = (strtotime($ticketData['requestDeparture2']) - strtotime($ticketData['requestArrival2'])) / 86400;
                 if($interval2 > $package['Package']['numNights'] ){
                     $params['ppvNoticeTypeId'] = 10;    // old res request
@@ -208,11 +208,11 @@ class WebServiceTicketsController extends WebServicesController
             }
         }
 
-		$this->ppv(json_encode($params));	
-		
+		$this->ppv(json_encode($params));
+
 		$params['ppvNoticeTypeId'] = 11;     // Fixed Price - Internal Exclusive Email
 		$this->ppv(json_encode($params));
-		
+
 		// return ticket id to the frontend live site
 		// -------------------------------------------------------------------------------
 		return true;
@@ -228,31 +228,31 @@ class WebServiceTicketsController extends WebServicesController
 			$this->errorResponse = 1101;
 			$this->errorTitle = 'Invalid Data';
 			$this->errorMsg = 'Ticket processing was aborted due to receiving invalid data.';
-			return false;	
+			return false;
 		}
 		if (!isset($data['ticketId']) || empty($data['ticketId'])) {
 			$this->errorResponse = 1102;
 			$this->errorTitle = 'Invalid Data';
 			$this->errorMsg = 'Ticket processing was aborted because the required field ticketId was not supplied.';
-			return false;	
+			return false;
 		}
 		if (!isset($data['userId']) || empty($data['userId'])) {
 			$this->errorResponse = 1103;
 			$this->errorTitle = 'Invalid Data';
 			$this->errorMsg = 'Ticket processing was aborted because the required field userId was not supplied.';
-			return false;	
+			return false;
 		}
 		if (!isset($data['offerId']) || empty($data['offerId'])) {
 			$this->errorResponse = 1104;
 			$this->errorTitle = 'Invalid Data';
 			$this->errorMsg = 'Ticket processing was aborted because the required field offerId was not supplied.';
-			return false;	
+			return false;
 		}
-		
+
 		$this->Offer->recursive = 2;
 		$offerData = $this->Offer->read(null, $data['offerId']);
 		$clientData = $this->Ticket->getClientsFromPackageId($data['packageId']);
-		
+
 		// gather all data that is necessary
 		// -------------------------------------------------------------------------------
 		switch ($data['siteId']) {
@@ -265,7 +265,7 @@ class WebServiceTicketsController extends WebServicesController
 		}
 		if ($ticketSite) {
 			$offerLive = $this->Offer->query("SELECT * FROM $ticketSite WHERE offerId = " . $data['offerId']);
-			$offerLive = $offerLive[0][$ticketSite];	
+			$offerLive = $offerLive[0][$ticketSite];
 		} else {
 			$this->errorTitle = 'Invalid Site';
 			$this->errorMsg = 'Ticket processing was aborted because site was not supplied.';
@@ -305,7 +305,7 @@ class WebServiceTicketsController extends WebServicesController
 			if (!empty($smid)) {
 				$this->addTrackPending($smid, $data['billingPrice']);
 			}
-			
+
 			// take down future instances of offers if reached package.maxNumSales
 			// -------------------------------------------------------------------------------
 			if ($this->Ticket->__runTakeDownPricePointNumPackages($offerLive['pricePointId'], $ticketId)) {
@@ -352,13 +352,13 @@ class WebServiceTicketsController extends WebServicesController
 			// if non-auction, just stop here as charging and ppv should not be auto
 			// -------------------------------------------------------------------------------
 			if (!in_array($data['offerTypeId'], array(1,2,6))) {
-				return $this->processFixedPriceTicket($data);				
+				return $this->processFixedPriceTicket($data);
 			}
-			
+
 			// find out if there is a valid credit card to charge.  charge and send appropiate emails
 			// -------------------------------------------------------------------------------
 			$user_payment_setting = $this->findValidUserPaymentSetting($data['userId'], $data['userPaymentSettingId']);
-			
+
 			// set ppv params
 			// -------------------------------------------------------------------------------
 			$ppv_settings = array();
@@ -367,7 +367,7 @@ class WebServiceTicketsController extends WebServicesController
 			$ppv_settings['manualEmailBody']	= 0;
 			$ppv_settings['returnString']		= 0;
 			$ppv_settings['initials']			= 'AUTO';
-			
+
 			$auto_charge_card = false;
 			if (is_array($user_payment_setting) && !empty($user_payment_setting)) {
 				// has valid cc card to charge
@@ -377,20 +377,20 @@ class WebServiceTicketsController extends WebServicesController
 			} else {
 				// has no valid cc on file
 				// -------------------------------------------
-				$ppv_settings['ppvNoticeTypeId'] 	= 19;     // Auction Winner Email (Declined / Expired CC) 
+				$ppv_settings['ppvNoticeTypeId'] 	= 19;     // Auction Winner Email (Declined / Expired CC)
 			}
 
 			// set restricted auctions so no autocharging happens
 			// -------------------------------------------------------------------------------
 			$restricted_auction = false;
-			
+
 			foreach ($clientData as $client) {
-				if ($client['Client']['clientTypeId'] == 3 || stristr($client['Client']['name'], 'CRUISE')) { 
+				if ($client['Client']['clientTypeId'] == 3 || stristr($client['Client']['name'], 'CRUISE')) {
             		$restricted_auction = true;
-            	}	
+            	}
 			}
 			if ($offerLive['isMystery'] || $offerLive['retailValue'] == 1 || $offerLive['openingBid'] == 1) {
-				$restricted_auction = true;	
+				$restricted_auction = true;
 			}
             if (stristr($offerLive['offerName'], 'RED') && stristr($offerLive['offerName'],'HOT')) {
             	$restricted_auction = true;
@@ -401,13 +401,13 @@ class WebServiceTicketsController extends WebServicesController
             if (stristr($offerLive['offerName'], 'AUCTION') && stristr($offerLive['offerName'],'DAY')) {
             	$restricted_auction = true;
             }
-            
-			// hack june 29 2010 
+
+			// hack june 29 2010
 			if ($clientData[0]['Client']['clientId'] == 378) {
             	$restricted_auction = false;
 			}
  			// do no autocharge restricted auctions. send them old winner notification w/o checkout
- 			// -------------------------------------------------------------------------------           
+ 			// -------------------------------------------------------------------------------
             if ($restricted_auction) {
             	$ppv_settings['ppvNoticeTypeId'] = 5;     // Winner Notification (Old one)
             	$auto_charge_card = false;
@@ -421,7 +421,7 @@ class WebServiceTicketsController extends WebServicesController
 				$ppv_settings['ppvNoticeTypeId'] = 18;     // Auction Winner Email (PPV)
 				return true;
 			}
-		
+
 			if (stristr($_SERVER['HTTP_HOST'], 'dev') || stristr($_SERVER['HTTP_HOST'], 'stage')) {
 				$auto_charge_card = false;
 			}
@@ -443,32 +443,32 @@ class WebServiceTicketsController extends WebServicesController
 		        $data_post['saveUps']                = 0;
 		        $data_post['zAuthHashKey']           = md5('L33T_KEY_LL' . $data_post['userId'] . $data_post['ticketId'] . $data_post['paymentProcessorId'] . $data_post['paymentAmount'] . $data_post['initials']);
 				$data_post['userPaymentSettingId']	 = $user_payment_setting['UserPaymentSetting']['userPaymentSettingId'];
-				
+
 				$data_post_result = $this->processPaymentTicket(json_encode($data_post));
 				if ($data_post_result == 'CHARGE_SUCCESS') {
 					$ppv_settings['ppvNoticeTypeId'] = 18;     // Auction Winner Email (PPV)
 					$autoSendClientWinnerPpv = true;
 				} else {
-					$ppv_settings['ppvNoticeTypeId'] = 19;     // Auction Winner Email (Declined / Expired CC) 
+					$ppv_settings['ppvNoticeTypeId'] = 19;     // Auction Winner Email (Declined / Expired CC)
 				}
 			}
-	
+
 			// send out winner notifications
 			// -------------------------------------------------------------------------------
 			$this->ppv(json_encode($ppv_settings));
-			
+
 			// send out client and winner ppv if charge is successfully charged
 			// -------------------------------------------------------------------------------
 			if ($autoSendClientWinnerPpv) {
 				$ppv_settings['ppvNoticeTypeId'] = 4;    // client PPV
-				$this->ppv(json_encode($ppv_settings));	
+				$this->ppv(json_encode($ppv_settings));
 			}
-			
+
 			// finally, return back
 			// -------------------------------------------------------------------------------
-			return true;	
-			
-		} else {			
+			return true;
+
+		} else {
 			$this->errorResponse = 1105;
 			$this->errorMsg = "Detected re-processing of ticket.";
 			return false;
@@ -483,14 +483,14 @@ class WebServiceTicketsController extends WebServicesController
 		$params['returnString']		= 0;
 		$params['manualEmailBody']	= 0;
 		$params['initials']			= 'AUTO_USER_CHECKOUT';
-		
+
 		// send both the client and winner ppvs
 		// -------------------------------------------------------------------------------
 		$params['ppvNoticeTypeId'] = 4;    // client PPV
-		$this->ppv(json_encode($params));	
-		
+		$this->ppv(json_encode($params));
+
 		$params['ppvNoticeTypeId'] = 18;    // Auction Winner Email (PPV)
-		$this->ppv(json_encode($params));	
+		$this->ppv(json_encode($params));
 	}
 
 	function autoSendPreferredDates($in0) {
@@ -501,15 +501,15 @@ class WebServiceTicketsController extends WebServicesController
 		$params['returnString']		= 0;
 		$params['manualEmailBody']	= 0;
 		$params['initials']			= 'AUTO_USER_DATES';
-		
+
 		$aucPreferDates = $params['dates_json'];
 		unset($params['dates_json']);
 
 		// send both the my dates have been received and reservation request
 		// -------------------------------------------------------------------------------
 		$params['ppvNoticeTypeId'] = 20;     // Your Dates Have Been Received
-		$this->ppv(json_encode($params));	
-		
+		$this->ppv(json_encode($params));
+
 		// ppvNoticeTypeId 2 is the new res request with client res xtranet
 		$params['ppvNoticeTypeId'] = 2;    // Reservation Request
 
@@ -522,7 +522,7 @@ class WebServiceTicketsController extends WebServicesController
 			// this is retail value
 			$params['ppvNoticeTypeId'] = 10;    // old res request
 		}
-		
+
 		// check if preferred dates are two days - if so send availabilty request only
         if (!empty($aucPreferDates)) {
 			$arrival_within_2_days = strtotime('+2 DAYS');     // 48 hrs from now
@@ -532,11 +532,11 @@ class WebServiceTicketsController extends WebServicesController
    	            //if ($arrival_ts > 0 && $arrival_ts <= $arrival_within_2_days) {
 				if ($arrival_ts > 0 && $arrival_ts <= $arrival_within_2_days && $params['ppvNoticeTypeId'] != 2) {
 					$params['ppvNoticeTypeId'] = 10;
-				} 
+				}
 			}
 		}
 
-		$this->ppv(json_encode($params));	
+		$this->ppv(json_encode($params));
 	}
 
 	function autoSendXnetDatesNotAvail($in0) {
@@ -547,10 +547,10 @@ class WebServiceTicketsController extends WebServicesController
 		$params['returnString']		= 0;
 		$params['manualEmailBody']	= 0;
 		$params['initials']			= 'XNET_DATES_NOT_AVAIL';
-		$params['ppvNoticeTypeId'] = 14;    
-		$this->ppv(json_encode($params));	
+		$params['ppvNoticeTypeId'] = 14;
+		$this->ppv(json_encode($params));
 	}
-	
+
 	function sendResRequestReminder($in0) {
 		// from the XNET - dates are NOT available
 		// -------------------------------------------------------------------------------
@@ -559,10 +559,15 @@ class WebServiceTicketsController extends WebServicesController
 		$params['returnString']		= 0;
 		$params['manualEmailBody']	= 0;
 		$params['initials']			= 'XNET_RES_REMINDER';
-		$params['ppvNoticeTypeId'] = 24;    
-		$this->ppv(json_encode($params));	
+		$params['ppvNoticeTypeId'] = 24;
+		$this->ppv(json_encode($params));
+
+		// jw 3/11/11 - also notify customer
+		$params['ppvNoticeTypeId'] = 32;
+		$params['initials']			= 'XNET_RES_REMIND_CUST';
+		$this->ppv(json_encode($params));
 	}
-	
+
 	function autoSendXnetDatesConfirmed ($in0) {
 		// from the XNET - dates are CONFIRMED
 		// -------------------------------------------------------------------------------
@@ -571,10 +576,10 @@ class WebServiceTicketsController extends WebServicesController
 		$params['returnString']		= 0;
 		$params['manualEmailBody']	= 0;
 		$params['initials']			= 'XNET_DATES_CONFIRMED';
-		$params['ppvNoticeTypeId'] = 1;   
-		$this->ppv(json_encode($params));	
-		$params['ppvNoticeTypeId'] = 23;   
-		$this->ppv(json_encode($params));	
+		$params['ppvNoticeTypeId'] = 1;
+		$this->ppv(json_encode($params));
+		$params['ppvNoticeTypeId'] = 23;
+		$this->ppv(json_encode($params));
 	}
 	function autoSendXnetDatesConfirmedOnlyProperty ($in0) {
 		// from the XNET - dates are CONFIRMED
@@ -584,10 +589,10 @@ class WebServiceTicketsController extends WebServicesController
 		$params['returnString']		= 0;
 		$params['manualEmailBody']	= 0;
 		$params['initials']			= 'XNET_DATES_CONF_PROP';
-		$params['ppvNoticeTypeId'] = 23;   
-		$this->ppv(json_encode($params));	
+		$params['ppvNoticeTypeId'] = 23;
+		$this->ppv(json_encode($params));
 	}
-	
+
 	function autoSendXnetDatesConfirmedSeasonalPricing ($in0) {
 		// from the XNET - dates are CONFIRMED
 		// -------------------------------------------------------------------------------
@@ -595,7 +600,7 @@ class WebServiceTicketsController extends WebServicesController
 		$params['send'] 			= 1;
 		$params['returnString']		= 0;
 		$params['manualEmailBody']	= 0;
-		$params['initials']			= 'XNET_DATES_CONFIRMED';		
+		$params['initials']			= 'XNET_DATES_CONFIRMED';
 		$params['ppvNoticeTypeId'] = 1;
 		$ticketId = $params['ticketId'];
 		$ticket = $this->Ticket->read(null, $ticketId);
@@ -607,43 +612,43 @@ class WebServiceTicketsController extends WebServicesController
 				break;
 			case 2:
 				$siteName = "familygetaway.com";
-				break;				
-		} 
+				break;
+		}
 		$params['override_email_to'] = 'reservations@'.$siteName;
 		$this->ppv(json_encode($params));
 		$newTicketStatus = 14; //seasonal pricing
 		$this->updateTicketStatus($ticketId, $newTicketStatus);
-				
+
 	}
 
 	function FixedPriceCardCharge($in0) {
 		$params = json_decode($in0, true);
-		
+
 		//check if valid ticket
 		if (empty($params['ticketId'])) {
 			$this->errorResponse = 2012;
 			$this->errorTitle = 'Invalid Data';
 			$this->errorMsg = 'Ticket processing was aborted due to receiving invalid data.';
-			return false;	
+			return false;
 		}
 		$ticketId = $params['ticketId'];
 		$ticketData = $this->Ticket->query("SELECT * FROM ticket WHERE ticketId = $ticketId LIMIT 1");
-		
+
 		if(!$ticketData) {
 			$this->errorResponse = 2013;
 			$this->errorTitle = 'Invalid Data';
 			$this->errorMsg = 'Ticket processing was aborted due to receiving invalid ticket data.';
-			return false;	
+			return false;
 		}
-	
+
 		$isChargeSuccess = $this->CardCharge($ticketId);
-		
+
 		if(!$isChargeSuccess && $this->errorResponse) //critical error
 			return false;
-		else if (!$isChargeSuccess && !$this->errorResponse) { //charge declined			
+		else if (!$isChargeSuccess && !$this->errorResponse) { //charge declined
 			$newTicketStatus = 15;
 			$this->updateTicketStatus($ticketId, $newTicketStatus);
-			
+
 			$paramEncoded = json_encode($params);
 			$this->autoSendXnetCCDeclined($paramEncoded);
 		}
@@ -652,46 +657,46 @@ class WebServiceTicketsController extends WebServicesController
 			$paramEncoded = json_encode($params);
 			$this->autoSendXnetDatesConfirmed($paramEncoded);
 		}
-			
+
 	}
-	
+
 	function autoSendXnetCCDeclined($in0) {
 		$params = json_decode($in0, true);
 		$params['send'] 			= 1;
 		$params['returnString']		= 0;
 		$params['manualEmailBody']	= 0;
 		$params['initials']			= 'XNET_CC_DECLINED';
-		$params['ppvNoticeTypeId'] = 19;    
-		$this->ppv(json_encode($params));	
-		
+		$params['ppvNoticeTypeId'] = 19;
+		$this->ppv(json_encode($params));
+
 	}
-	
+
 	function CardCharge($ticketId) {
-				
+
 		$ticketData = $this->Ticket->query("SELECT * FROM ticket WHERE ticketId = $ticketId LIMIT 1");
 		$ticketData = $ticketData[0]['ticket'];
-		$userId = $ticketData['userId'];		
+		$userId = $ticketData['userId'];
 
 		// if valid successful charge exists, then return true
-		// =====================================================================		
+		// =====================================================================
 		$checkExists = $this->PaymentDetail->query("SELECT * FROM paymentDetail WHERE ticketId = $ticketId AND userId = $userId");
 		if (isset($checkExists[0]['paymentDetail']) && !empty($checkExists[0]['paymentDetail'])) {
 			return true;
 		}
-	
+
 		// ============================================================
 		// ======== [ start process post ] ============================
 		// ============================================================
-		
-		
+
+
 		$gUserPaymentSettingId = $ticketData['userPaymentSettingId'];
-		
+
 		if ($gUserPaymentSettingId) {
 			$data = array();
 			$data['userId'] 				= $userId;
 			$data['ticketId'] 				= $ticketId;
 			$data['paymentProcessorId']		= 1;
-			if ($ticketData['siteId'] == 2) { 
+			if ($ticketData['siteId'] == 2) {
 				// for family, use PAYPAL processor
 				$data['paymentProcessorId']		= 3;
 			}
@@ -701,28 +706,28 @@ class WebServiceTicketsController extends WebServicesController
 			$data['saveUps']				= 0;
 			$data['zAuthHashKey']			= md5('L33T_KEY_LL' . $data['userId'] . $data['ticketId'] . $data['paymentProcessorId'] . $data['paymentAmount'] . $data['initials']);
 			$data['userPaymentSettingId']     = $ticketData['userPaymentSettingId'];
-			
+
 			$data_json_encoded = json_encode($data);
 			$response = $this->processPaymentTicket($data_json_encoded);
-			
+
 			if (trim($response) == 'CHARGE_SUCCESS') {
 				return true;
 			} else {
 				return false;
 			}
-		
+
 		}
 		else {
 				$this->errorResponse = 2014;
 				$this->errorTitle = 'Invalid PaymentSetting Id';
 				$this->errorMsg = 'Ticket does not contain the paymentSettingId';
-				return false;	
+				return false;
 		}
-		
-		
-		
+
+
+
 	}
-	
+
 	function autoSendXnetDateResRequested($in0) {
 		// from the XNET - dates are requested
 		// -------------------------------------------------------------------------------
@@ -731,10 +736,10 @@ class WebServiceTicketsController extends WebServicesController
 		$params['returnString']		= 0;
 		$params['manualEmailBody']	= 0;
 		$params['initials']			= 'XNET_DATES_REQUESTED';
-		$params['ppvNoticeTypeId'] = 2;    
-		$this->ppv(json_encode($params));	
+		$params['ppvNoticeTypeId'] = 2;
+		$this->ppv(json_encode($params));
 	}
-	
+
 	function autoSendXnetCancelConfirmation($in0) {
 		// from the XNET - cancellation confirmation - confirmed
 		// -------------------------------------------------------------------------------
@@ -743,10 +748,10 @@ class WebServiceTicketsController extends WebServicesController
 		$params['returnString']		= 0;
 		$params['manualEmailBody']	= 0;
 		$params['initials']			= 'XNET_CANCEL_CONFIRM';
-		$params['ppvNoticeTypeId'] = 30;    
-		$this->ppv(json_encode($params));	
+		$params['ppvNoticeTypeId'] = 30;
+		$this->ppv(json_encode($params));
 	}
-	
+
 	function autoSendXnetResCancelled($in0) {
 		// from the XNET - client receipt for confirmed cancellation
 		// -------------------------------------------------------------------------------
@@ -755,10 +760,10 @@ class WebServiceTicketsController extends WebServicesController
 		$params['returnString']		= 0;
 		$params['manualEmailBody']	= 0;
 		$params['initials']			= 'XNET_CANCEL_RECIEPT';
-		$params['ppvNoticeTypeId'] = 31;    
-		$this->ppv(json_encode($params));	
+		$params['ppvNoticeTypeId'] = 31;
+		$this->ppv(json_encode($params));
 	}
-	
+
 	function numF($str) {
 		// for commas thousand group separater
 		return number_format($str);
@@ -778,7 +783,7 @@ class WebServiceTicketsController extends WebServicesController
 		$ppvNoticeTypeId	= isset($params['ppvNoticeTypeId']) ? $params['ppvNoticeTypeId'] : null;
 		$ppvInitials		= isset($params['initials']) ? $params['initials'] : null;
 		$clientIdParam		= isset($params['clientId']) ? $params['clientId'] : false;
-		
+
 		// sender signature (mainly for manual emails sent from toolbox)
 		// -------------------------------------------------------------------------------
 		$sender_sig 		= isset($params['sender_sig']) ? $params['sender_sig'] : 0;
@@ -791,14 +796,14 @@ class WebServiceTicketsController extends WebServicesController
 		$override_email_to  = isset($params['override_email_to']) && !empty($params['override_email_to']) ? $params['override_email_to'] : false;
 		$override_email_cc  = isset($params['override_email_cc']) && !empty($params['override_email_cc']) ? $params['override_email_cc'] : false;
 		$override_email_subject  = isset($params['override_email_subject']) && !empty($params['override_email_subject']) ? $params['override_email_subject'] : false;
-        
+
         //added hb for attachment
         // -------------------------------------------------------------------------------
         $email_attachment = isset($params['emailAttachment']) && !empty($params['emailAttachment']) ? $params['emailAttachment'] : false;
         $email_attachment_type = isset($params['emailAttachmentType']) && !empty($params['emailAttachmentType']) ? $params['emailAttachmentType'] : false;
-   
+
 		// TODO: error checking for params
-		
+
 		// retrieve data to fill out the email templates
 		// -------------------------------------------------------------------------------
 		$this->Ticket->recursive = 0;
@@ -814,7 +819,7 @@ class WebServiceTicketsController extends WebServicesController
 				break;
 		}
 		$liveOffer	= $this->Ticket->query("select * from $offerSite as LiveOffer where offerId = " . $ticket['Ticket']['offerId'] . " limit 1");
-	
+
 		// data arrays
 		// -------------------------------------------------------------------------------
 		$ticketData 		= $ticket['Ticket'];
@@ -829,7 +834,7 @@ class WebServiceTicketsController extends WebServicesController
 		$userPaymentData	= $this->findValidUserPaymentSetting($ticketData['userId']);
 
 		$promoGcCofData		= $this->Ticket->getPromoGcCofData($ticketId, $ticket['Ticket']['billingPrice']);
-		
+
 		// ********************************************************************************************************
 		// ALL VARIABLES ARE SET HERE -- WE DONT HAVE TO CHANGE A MILLION TEMPLATES IF CHANGE IS MADE TO DB FIELD
 		// *********************************************************************************************************
@@ -843,15 +848,15 @@ class WebServiceTicketsController extends WebServicesController
 		$userWorkPhone		= $userData['workPhone'];
 		$userMobilePhone	= $userData['mobilePhone'];
 		$userHomePhone		= $userData['homePhone'];
-		
+
 		$userPhone			= $userHomePhone;
 		$userPhone			= !$userPhone && $userMobilePhone ? $userMobilePhone : $userPhone;
 		$userPhone			= !$userPhone && $userWorkPhone ? $userWorkPhone : $userPhone;
-		
+
 		$offerId			= $offerData['offerId'];
 		$packageName 		= strip_tags($liveOfferData['offerName']);
 		$packageSubtitle	= $packageData['subtitle'];
-		
+
 		$packageIncludes 	= $liveOfferData['offerIncludes'];
 		$legalText			= $liveOfferData['termsAndConditions'];
 		$validityNote		= $liveOfferData['validityDisclaimer'];
@@ -862,7 +867,7 @@ class WebServiceTicketsController extends WebServicesController
 		$numGuests			= $liveOfferData['numGuests'];
 		$roomGrade			= $liveOfferData['roomGrade'];
 		$packageBlurb		= ucfirst($liveOfferData['packageBlurb']);
-		
+
 		$packageId			= $ticketData['packageId'];
 		// 2011-01-05
 		$numNights			= $ticketData['numNights'];
@@ -878,7 +883,7 @@ class WebServiceTicketsController extends WebServicesController
 		$llFee				= $llFeeAmount;
 		$totalPrice			= $this->numF($ticketData['billingPrice'] + $llFeeAmount);
 		$maxNumWinners		= $liveOfferData['numWinners'];
-		
+
 		$checkoutHash		= md5($ticketId . $userId . $offerId . 'LL_L33T_KEY');
 		$checkoutKey		= base64_encode(serialize(array('ticketId' => $ticketId, 'userId' => $userId, 'offerId' => $offerId, 'zKey' => $checkoutHash)));
 
@@ -887,9 +892,9 @@ class WebServiceTicketsController extends WebServicesController
 		} elseif (stristr($_SERVER['HTTP_HOST'], 'stage')) {
 			$checkoutLink		= "https://stage-luxurylink.luxurylink.com/my/my_purchase.php?z=$checkoutKey";
 		}
-		
+
 		$loaLevelId			= isset($clientData[0]['Loa']['loaLevelId']) ? $clientData[0]['Loa']['loaLevelId'] : false;
-		
+
 		$offerTypeArticle	= in_array(strtolower($offerType[$offerTypeId]{0}), array('a','e','i','o','u')) ? 'an' : 'a';
 
 		// fixed price variables
@@ -901,16 +906,16 @@ class WebServiceTicketsController extends WebServicesController
 		$fpDeparture2		= isset($ticketData['requestDeparture2']) && ($ticketData['requestDeparture2'] != '0000-00-00') ? date('M d, Y', strtotime($ticketData['requestDeparture2'])) : 'N/A';
 		$fpNumGuests		= $ticketData['requestNumGuests'];
 		$fpNotes			= $ticketData['requestNotes'];
-		
+
 		$offerTypeTxt = $isAuction ? 'Auction' : 'Buy Now';
 
 		// auction preferred dates
 		// -------------------------------------------------------------------------------
-		$aucPreferDates = $this->Ticket->query("SELECT * FROM reservationPreferDate as rpd WHERE ticketId = $ticketId ORDER BY reservationPreferDateTypeId");	
+		$aucPreferDates = $this->Ticket->query("SELECT * FROM reservationPreferDate as rpd WHERE ticketId = $ticketId ORDER BY reservationPreferDateTypeId");
 		if (!empty($aucPreferDates)) {
 			foreach ($aucPreferDates as $aucKey => $aucPreferDateRow) {
-				$aucPreferDates[$aucKey]['rpd']['in'] = date('M d, Y', strtotime($aucPreferDateRow['rpd']['arrivalDate'])); 		
-				$aucPreferDates[$aucKey]['rpd']['out'] = date('M d, Y', strtotime($aucPreferDateRow['rpd']['departureDate'])); 		
+				$aucPreferDates[$aucKey]['rpd']['in'] = date('M d, Y', strtotime($aucPreferDateRow['rpd']['arrivalDate']));
+				$aucPreferDates[$aucKey]['rpd']['out'] = date('M d, Y', strtotime($aucPreferDateRow['rpd']['departureDate']));
 			}
 		}
 
@@ -930,7 +935,7 @@ class WebServiceTicketsController extends WebServicesController
 			$resArrivalDate = date('M d, Y', strtotime($resData[0]['reservation']['arrivalDate']));
 			$resDepartureDate = date('M d, Y', strtotime($resData[0]['reservation']['departureDate']));
 			$resConfToCustomer = empty($resData[0]['reservation']['reservationConfirmToCustomer']) ?
-									 $resData[0]['reservation']['created'] 
+									 $resData[0]['reservation']['created']
 									: $resData[0]['reservation']['reservationConfirmToCustomer'];
 			$resConfBy = $resData[0]['reservation']['confirmedBy'];
 			$resArrDate = $resData[0]['reservation']['arrivalDate'];
@@ -940,28 +945,28 @@ class WebServiceTicketsController extends WebServicesController
 		$ppvNoticeData = $this->Ticket->query("SELECT * FROM ppvNotice WHERE ticketId = $ticketId and ppvNoticeTypeId = 29 ORDER BY created DESC LIMIT 1");
 		// you cannot send out cancellation confirmed email unless cancellation request email has been sent
 		if(!empty($ppvNoticeData)) {
-			$ppvNoticeCreatedDate = date('M d, Y', strtotime($ppvNoticeData[0]['ppvNotice']['created']));		
+			$ppvNoticeCreatedDate = date('M d, Y', strtotime($ppvNoticeData[0]['ppvNotice']['created']));
 			$canData = $this->Ticket->query("SELECT * FROM cancellation WHERE ticketId = $ticketId ORDER BY cancellationId DESC LIMIT 1");
 			if (!empty($canData)) {
-				$canConfNum = $canData[0]['cancellation']['cancellationNumber'];			
+				$canConfNum = $canData[0]['cancellation']['cancellationNumber'];
 				$canConfBy = $canData[0]['cancellation']['confirmedBy'];
 				$canNote = $canData[0]['cancellation']['cancellationNotes'];
-				$canConfDate = date('M d, Y', strtotime($canData[0]['cancellation']['created']));				 
+				$canConfDate = date('M d, Y', strtotime($canData[0]['cancellation']['created']));
 			}
 		}
 
 		//follow up email sent
 		$ppvNoticeData = $this->Ticket->query("SELECT emailSentDatetime FROM ppvNotice WHERE ticketId = $ticketId and ppvNoticeTypeId = 2 ORDER BY created DESC LIMIT 1");
 		$emailSentDatetime = (!empty($ppvNoticeData[0]['ppvNotice']['emailSentDatetime'])) ?
-								date('M d, Y', strtotime($ppvNoticeData[0]['ppvNotice']['emailSentDatetime'])) : ""; 
-		
+								date('M d, Y', strtotime($ppvNoticeData[0]['ppvNotice']['emailSentDatetime'])) : "";
+
 		// cc variables
 		// -------------------------------------------------------------------------------
 		if (is_array($userPaymentData) && !empty($userPaymentData)) {
 			$ccFour				= substr(aesDecrypt($userPaymentData['UserPaymentSetting']['ccNumber']), -4, 4);
 			$ccType				= $userPaymentData['UserPaymentSetting']['ccType'];
 		}
-		
+
 		// guarantee amount
 		// -------------------------------------------------------------------------------
 		$guarantee = false;
@@ -973,7 +978,7 @@ class WebServiceTicketsController extends WebServicesController
 		if ($offerLive['isMystery']) {
 			$guarantee = $this->numF($liveOfferData['reserveAmt']);
 		}
-		
+
 		// some unknowns
 		// -------------------------------------------------------------------------------
 		$wholesale			= false;
@@ -990,7 +995,7 @@ class WebServiceTicketsController extends WebServicesController
 			if (!empty($v['Client']['parentClientId']) && is_numeric($v['Client']['parentClientId']) && ($v['Client']['parentClientId'] > 0) && ($v['Client']['clientId'] != $v['Client']['parentClientId'])) {
 				$add_parent_client_sql = "OR clientId = " . $v['Client']['parentClientId'];
 			} else {
-				$add_parent_client_sql = '';	
+				$add_parent_client_sql = '';
 			}
 			$tmp_result = $this->Ticket->query("SELECT * FROM clientContact WHERE clientContactTypeId in (1,3) AND (clientId = " . $v['Client']['clientId'] . " $add_parent_client_sql) ORDER BY clientContactTypeId, primaryContact DESC");
 			$contact_cc_string = array();
@@ -999,7 +1004,7 @@ class WebServiceTicketsController extends WebServicesController
 				$contacts = array();
 				$contacts['ppv_name'] 			= $b['clientContact']['name'];
 				$contacts['ppv_title'] 			= $b['clientContact']['businessTitle'];
-				$contacts['ppv_email_address'] 	= $b['clientContact']['emailAddress']; 
+				$contacts['ppv_email_address'] 	= $b['clientContact']['emailAddress'];
 				$contacts['ppv_phone'] 			= $b['clientContact']['phone'];
 				$contacts['ppv_fax'] 			= $b['clientContact']['fax'];
 				if ($b['clientContact']['clientContactTypeId'] == 1) {
@@ -1019,9 +1024,9 @@ class WebServiceTicketsController extends WebServicesController
 			$tmp['percentOfRevenue'] = $v['ClientLoaPackageRel']['percentOfRevenue'];
 			$clients[$k] = $tmp;
 		}
-		
+
 		$client_index = ($multi_client_map_override !== false) ? $multi_client_map_override : 0;
-        
+
         // acarney 2010-12-08
         // Making it so that confirmation template is multi-client aware
         // TODO: investigate impact of using array for client variables in other templates
@@ -1173,19 +1178,19 @@ class WebServiceTicketsController extends WebServicesController
 				$emailCc = $clientCcEmail;
 				break;
 			case 30:
-				// send out res cancellation confirmation				
+				// send out res cancellation confirmation
 				include('../vendors/email_msgs/notifications/30_reservation_cancel_confirmation.html');
 				$emailSubject = "Your $siteName Booking was Cancelled. - $userFirstName $userLastName";
 				$emailFrom = ($isAuction) ? "$siteDisplay<resrequests@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
-				$emailReplyTo = ($isAuction) ? "resrequests@$siteEmail" : "reservations@$siteEmail";						
+				$emailReplyTo = ($isAuction) ? "resrequests@$siteEmail" : "reservations@$siteEmail";
 				break;
 			case 31:
-				// send out res cancellation confirmation				
+				// send out res cancellation confirmation
 				include('../vendors/email_msgs/ppv/cancel_ppv.html');
 				$emailSubject = "Your $siteName Booking was Cancelled. - $clientNameP";
 				$emailFrom = ($isAuction) ? "$siteDisplay<resrequests@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
 				$emailReplyTo = ($isAuction) ? "resrequests@$siteEmail" : "reservations@$siteEmail";
-				$userEmail = $clientPrimaryEmail;				
+				$userEmail = $clientPrimaryEmail;
 				break;
 			case 25:
 				// send out res request w/o xnet
@@ -1224,7 +1229,17 @@ class WebServiceTicketsController extends WebServicesController
 				$userEmail = $clientPrimaryEmail;
 				$emailCc = $clientCcEmail;
 				break;
-			case 4: 
+			case 32:
+				// this goes out with 24, info to customer
+				$extranet_link = $this->getExtranetLink($ticketId, $siteId);
+				include('../vendors/email_msgs/notifications/32_reservation_request_followup_customer.html');
+				$emailSubject = "Your Pending Reservation";
+				$emailFrom = ($isAuction) ? "$siteDisplay<resrequests@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
+				$emailReplyTo = ($isAuction) ? "resrequests@$siteEmail" : "reservations@$siteEmail";
+				$userEmail = $clientPrimaryEmail;
+				$emailCc = $clientCcEmail;
+				break;
+			case 4:
 				include('../vendors/email_msgs/ppv/client_ppv.html');
 				$emailSubject = "$siteName Auction Winner Notification - $userFirstName $userLastName";
 				$emailFrom = "$siteDisplay<auctions@$siteEmail>";
@@ -1329,7 +1344,7 @@ class WebServiceTicketsController extends WebServicesController
 		if (in_array($ppvNoticeTypeId, array(5,18,19)) && $liveOfferData['isMystery']) {
 			$emailSubject = "$siteName Mystery Auction Winner";
 		}
-		
+
 		// if sending from toolbox tool ppvNotice add screen (manual edit and send)
 		// -------------------------------------------------------------------------------
 		if ($manualEmailBody) {
@@ -1348,8 +1363,8 @@ class WebServiceTicketsController extends WebServicesController
 			if (trim($override_email_subject)) {
 				$emailSubject = $override_email_subject;
 			}
-			$this->sendPpvEmail($userEmail, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials, $email_attachment, $email_attachment_type);	
-			
+			$this->sendPpvEmail($userEmail, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials, $email_attachment, $email_attachment_type);
+
 			// AUTO SECTION FOR MULTI CLIENT PPV for multi-client packages send client emails [CLIENT PPV]
 			// -------------------------------------------------------------------------------
 			$count_clients = count($clients);
@@ -1361,7 +1376,7 @@ class WebServiceTicketsController extends WebServicesController
 					$oldProductId		= $clients[$i]['oldProductId'];
 					$locationDisplay	= $clients[$i]['locationDisplay'];
 					$clientPrimaryEmail = $clients[$i]['contact_to_string'];
-					$clientCcEmail 		= $clients[$i]['contact_cc_string'];	
+					$clientCcEmail 		= $clients[$i]['contact_cc_string'];
 					$clientAdjustedPrice = $this->numF(($clients[$i]['percentOfRevenue'] / 100) * $ticketData['billingPrice']);
 					ob_start();
 					switch ($ppvNoticeTypeId) {
@@ -1373,19 +1388,19 @@ class WebServiceTicketsController extends WebServicesController
 							break;
 						case 10:
 							include('../vendors/email_msgs/fixed_price/msg_client_fixedprice.html');
-					
+
 					break;
 					}
 					$emailBody = ob_get_clean();
-					$this->sendPpvEmail($clientPrimaryEmail, $emailFrom, $clientCcEmail, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId);	
-				}	
+					$this->sendPpvEmail($clientPrimaryEmail, $emailFrom, $clientCcEmail, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId);
+				}
 			}
 		}
-		
+
 		// return the string for toolbox ppvNotice add screen (manual edit and send)
 		// -------------------------------------------------------------------------------
 		if ($returnString) {
-			return $emailBody;	
+			return $emailBody;
 		}
 	}
 
@@ -1413,7 +1428,7 @@ class WebServiceTicketsController extends WebServicesController
 				$host = 'http://stage-family.luxurylink.com';
 			}
 		}
-		
+
 		$ts = strtotime('NOW');
 		$ticketIdHash = base64_encode($ticketId);
 		$tsHash = base64_encode($ts);
@@ -1422,7 +1437,7 @@ class WebServiceTicketsController extends WebServicesController
 
 		return $host . $uri . "?z=$hash&t=$ticketIdHash&ts=$tsHash";
 	}
-	
+
 	function getExtranetCancellationLink($ticketId, $siteId) {
 
 		if (!$ticketId || !is_numeric($ticketId)) {
@@ -1447,7 +1462,7 @@ class WebServiceTicketsController extends WebServicesController
 				$host = 'http://stage-family.luxurylink.com';
 			}
 		}
-		
+
 		$ts = strtotime('NOW');
 		$ticketIdHash = base64_encode($ticketId);
 		$tsHash = base64_encode($ts);
@@ -1458,62 +1473,62 @@ class WebServiceTicketsController extends WebServicesController
 	}
 
 	function sendPpvEmail($emailTo, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials, $email_attachment, $email_attachment_type) {
-                
+
 		if (stristr($_SERVER['HTTP_HOST'], 'dev') || stristr($_SERVER['HTTP_HOST'], 'stage')) {
 			$appendDevMessage = "---- DEV MAIL ---- \n<br />ORIGINAL TO:  $emailTo\n<br />ORIGINAL CC: $emailCc\n<br />ORIGINAL BCC: $emailBcc";
-			$emailTo = $emailCc = $emailBcc = 'devmail@luxurylink.com';	
+			$emailTo = $emailCc = $emailBcc = 'devmail@luxurylink.com';
 			$emailBody = $appendDevMessage . $emailBody;
 			$emailBody.= print_r($_SERVER, true);
 			$emailSubject = "DEV - " . $emailSubject . $fname;
 		}
-		
+
 		// send out ppv and winner notification emails
 		// -------------------------------------------------------------------------------
-		
-        //original before hb updates      
+
+        //original before hb updates
         //$emailHeaders = "From: $emailFrom\r\n";
 		//$emailHeaders.= "Cc: $emailCc\r\n";
 		//$emailHeaders.= "Reply-To: $emailReplyTo\r\n";
 		//$emailHeaders.= "Bcc: $emailBcc\r\n";
-    	//$emailHeaders.= "Content-type: text/html\r\n";       
-        
+    	//$emailHeaders.= "Content-type: text/html\r\n";
+
         //boundary variable
-        
-        $fname = $email_attachment; 
-        $ftype = $email_attachment_type;   
+
+        $fname = $email_attachment;
+        $ftype = $email_attachment_type;
         if ($fname) {
-        
+
         $num = md5(time());
-       
+
         $emailHeaders = "From: $emailFrom\n";
 		$emailHeaders .= "Cc: $emailCc\n";
 		$emailHeaders .= "Reply-To: $emailReplyTo\n";
 		$emailHeaders .= "Bcc: $emailBcc\n";
         $emailHeaders .= "MIME-Version: 1.0\n";
         $emailHeaders .= "Content-Type: multipart/mixed; ";
-        $emailHeaders .= "boundary=".$num."\n";      
-        
-        // This two steps to help avoid spam       
+        $emailHeaders .= "boundary=".$num."\n";
+
+        // This two steps to help avoid spam
         $emailHeaders .= "--".$num."\n";
         $emailHeaders .= "Message-ID: <".$now." TheSystem@".$_SERVER['SERVER_NAME'].">\n";
-        $emailHeaders .= "X-Mailer: PHP v".phpversion()."\n";         
-        
-        // With message      
+        $emailHeaders .= "X-Mailer: PHP v".phpversion()."\n";
+
+        // With message
         $emailHeaders .= "Content-Type: text/html;\n";
         $emailHeaders .= "Content-Transfer-Encoding: 8bit \n";
-        $emailHeaders .= $emailBody."\n\n";   
-        
+        $emailHeaders .= $emailBody."\n\n";
+
         //get attachments and loop thru process to create headers for each file, open file read binary
-       
+
             foreach ($fname as $key => $value)
-            {            
+            {
                 $filename = $_SERVER{'DOCUMENT_ROOT'} . '/attachments/' . $value;
                 $fp = fopen($filename, "rb");
-                $file = fread($fp, filesize($filename));          
-                $file = chunk_split(base64_encode($file));                   
+                $file = fread($fp, filesize($filename));
+                $file = chunk_split(base64_encode($file));
                 fclose($fp);
-                
-                $emailHeaders .= "--".$num."\n";             
+
+                $emailHeaders .= "--".$num."\n";
                 $emailHeaders .= "Content-Type:".$ftype[$key]."; ";
                 $emailHeaders .= "name=\"".$value."\"\n";
                 $emailHeaders .= "Content-Transfer-Encoding: base64\n";
@@ -1521,38 +1536,38 @@ class WebServiceTicketsController extends WebServicesController
                 $emailHeaders .= "filename=\"".$value."\"\n\n";
                 $emailHeaders .= $file."\n";
             }
-        } else {            
-            //original before hb updates      
+        } else {
+            //original before hb updates
             $emailHeaders = "From: $emailFrom\r\n";
     		$emailHeaders.= "Cc: $emailCc\r\n";
     		$emailHeaders.= "Reply-To: $emailReplyTo\r\n";
     		$emailHeaders.= "Bcc: $emailBcc\r\n";
-        	$emailHeaders.= "Content-type: text/html\r\n";    
-        } 
-        
+        	$emailHeaders.= "Content-type: text/html\r\n";
+        }
+
 
         @mail($emailTo, $emailSubject, $emailBody, $emailHeaders);
-        
+
 		// below is for logging the email and updating the ticket
 		// -------------------------------------------------------------------------------
-		
+
 		$emailSentDatetime = strtotime('now');
 		$emailBodyFileName = $ticketId . '_' . $ppvNoticeTypeId . '_' . $emailSentDatetime . '.html';
-		
+
 		// save the email as a flat file on /vendors/email_msgs/toolbox_sent_messages
 		// -------------------------------------------------------------------------------
 		$fh = fopen("../vendors/email_msgs/toolbox_sent_messages/$emailBodyFileName", 'w');
 		fwrite($fh, $emailBody);
 		fclose($fh);
-		
+
 		// get initials
 		// -------------------------------------------------------------------------------
 		if (!$ppvInitials) {
-			$ppvInitials = 'N/A';	
+			$ppvInitials = 'N/A';
 		}
-		
+
 		$ppvNoticeSave = array();
-		$ppvNoticeSave['ppvNoticeTypeId']	= $ppvNoticeTypeId; 
+		$ppvNoticeSave['ppvNoticeTypeId']	= $ppvNoticeTypeId;
 		$ppvNoticeSave['ticketId'] 			= $ticketId;
 		$ppvNoticeSave['emailTo']			= $emailTo;
 		$ppvNoticeSave['emailFrom']			= $emailFrom;
@@ -1566,20 +1581,20 @@ class WebServiceTicketsController extends WebServicesController
 		// -------------------------------------------------------------------------------
 		$this->PpvNotice->create();
 		if (!$this->PpvNotice->save($ppvNoticeSave)) {
-			@mail('devmail@luxurylink.com', 'WEB SERVICE TICKETS: ppv record not saved', print_r($ppvNoticeSave, true));	
+			@mail('devmail@luxurylink.com', 'WEB SERVICE TICKETS: ppv record not saved', print_r($ppvNoticeSave, true));
 		}
-		
+
 		// update ticket status if required
 		// -------------------------------------------------------------------------------
 		$newTicketStatus = false;
-		if ($ppvNoticeTypeId == 1 || $ppvNoticeTypeId == 23) {  
+		if ($ppvNoticeTypeId == 1 || $ppvNoticeTypeId == 23) {
 			// reservation confirmation from buy now with seasonal pricing
-			$currentTicketStatus = $this->Ticket->query("SELECT ticketStatusId as tsi FROM ticket WHERE ticketId = {$ticketId}");			
-			if($currentTicketStatus[0]['tsi'] == 14 )			
+			$currentTicketStatus = $this->Ticket->query("SELECT ticketStatusId as tsi FROM ticket WHERE ticketId = {$ticketId}");
+			if($currentTicketStatus[0]['tsi'] == 14 )
 				$newTicketStatus = 14;
 			else
 				$newTicketStatus = 4; //auction or FP
-					
+
 			$resData = $this->Ticket->query("SELECT * FROM reservation WHERE ticketId = $ticketId ORDER BY reservationId DESC LIMIT 1");
 			if (!empty($resData)) {
 				$reservationId = $resData[0]['reservation']['reservationId'];
@@ -1607,25 +1622,25 @@ class WebServiceTicketsController extends WebServicesController
 		} elseif ($ppvNoticeTypeId == 24) {
 			// Res follow up (for FP)
 			$newTicketStatus = 9;
-		}  
-		
+		}
+
 		if ($newTicketStatus) {
 			$this->updateTicketStatus($ticketId, $newTicketStatus);
 		}
 	}
-		
+
 	function updateTicketStatus($ticketId, $newStatusId) {
-		
+
 		$updateTicket = array();
 		$updateTicket['ticketId'] = $ticketId;
 		$updateTicket['ticketStatusId'] = $newStatusId;
-		if ($this->Ticket->save($updateTicket)) { 
-			return 1;	
+		if ($this->Ticket->save($updateTicket)) {
+			return 1;
 		} else {
-			return 0;	
+			return 0;
 		}
 	}
-		
+
 	function findValidUserPaymentSetting($userId, $upsId = null) {
 		if ($upsId && is_numeric($upsId)) {
 			$ups = $this->User->query("SELECT * FROM userPaymentSetting AS UserPaymentSetting WHERE userId = $userId AND userPaymentSettingId = $upsId");
@@ -1641,7 +1656,7 @@ class WebServiceTicketsController extends WebServicesController
 		$found_valid_cc = false;
 		foreach ($ups as $k => $v) {
 			if (($v['UserPaymentSetting']['expYear'] < $year_now) || ($v['UserPaymentSetting']['expYear'] == $year_now && $v['UserPaymentSetting']['expMonth'] < $month_now)) {
-				continue;	
+				continue;
 			} else {
 				$found_valid_cc = true;
 				break;
@@ -1651,20 +1666,20 @@ class WebServiceTicketsController extends WebServicesController
 	}
 
 	function addTrackPending($trackId, $pendingAmount) {
-		
-		$track = $this->Track->read(null, $trackId);		
+
+		$track = $this->Track->read(null, $trackId);
 		if (!empty($track)) {
 			$track['Track']['pending'] += $pendingAmount;
 			if ($this->Track->save($track['Track'])) {
-				return true;	
+				return true;
 			}
 		}
 		return false;
 	}
-	
+
 	function processPaymentTicket($in0) {
 		// ---------------------------------------------------------------------------
-		// SUBMIT PAYMENT VIA PROCESSOR 
+		// SUBMIT PAYMENT VIA PROCESSOR
 		// ---------------------------------------------------------------------------
 		// REQUIRED: (1) userId
 		//           (2) ticketId
@@ -1679,7 +1694,7 @@ class WebServiceTicketsController extends WebServicesController
 		//
 		// SEND TO PAYMENT PROCESSOR: $userPaymentSettingPost
 		// ---------------------------------------------------------------------------
-		
+
 		// good o' error checking my friends.  make this as strict as possible
 		// ---------------------------------------------------------------------------
 		$data = json_decode($in0, true);
@@ -1687,7 +1702,7 @@ class WebServiceTicketsController extends WebServicesController
 		// DEV NO CHARGE
 		// ---------------------------------------------------------------------------
 		$isDev = false;
-		if (stristr($_SERVER['HTTP_HOST'], 'dev') || stristr($_SERVER['HTTP_HOST'], 'stage') || 
+		if (stristr($_SERVER['HTTP_HOST'], 'dev') || stristr($_SERVER['HTTP_HOST'], 'stage') ||
 			stristr($_SERVER['HTTP_HOST'], 'alee') || stristr($_SERVER['HTTP_HOST'], 'alee')) {
 			$this->isDev = $isDev = true;
 		}
@@ -1704,52 +1719,52 @@ class WebServiceTicketsController extends WebServicesController
 			return '102';
 		}
 		if (!isset($data['paymentProcessorId']) || !$data['paymentProcessorId']) {
-			return '103';	
+			return '103';
 		}
 		if (!isset($data['paymentAmount']) || !$data['paymentAmount']) {
-			return '104';	
+			return '104';
 		}
 		if (!isset($data['initials']) || empty($data['initials'])) {
-			return '105';	
+			return '105';
 		}
 		if (!isset($data['autoCharge'])) {
-			return '106';	
+			return '106';
 		}
-		if (!isset($data['saveUps'])) { 
-			return '107';	
+		if (!isset($data['saveUps'])) {
+			return '107';
 		}
 		if (!isset($data['zAuthHashKey']) || !$data['zAuthHashKey']) {
-			return '108';	
+			return '108';
 		}
 		if (isset($data['toolboxManualCharge']) && ($data['toolboxManualCharge'] == 'toolbox')) {
 			$toolboxManualCharge = true;
 		} else {
-			$toolboxManualCharge = false;	
+			$toolboxManualCharge = false;
 		}
-		
+
 		// also check the hash for more security
 		// ---------------------------------------------------------------------------
 		$hashCheck = md5('L33T_KEY_LL' . $data['userId'] . $data['ticketId'] . $data['paymentProcessorId'] . $data['paymentAmount'] . $data['initials']);
 		if (trim($hashCheck) !== trim($data['zAuthHashKey'])) {
-			return '109';	
+			return '109';
 		}
 		unset($hashCheck);
-		
+
 		// and even some more error checking.
 		// ---------------------------------------------------------------------------
 		$this->Ticket->recursive = -1;
 		$ticket = $this->Ticket->read(null, $data['ticketId']);
 		if (!$ticket) {
 			return '110';
-		} 
+		}
 		if ($ticket['Ticket']['userId'] != $data['userId']) {
 			return '111';
 		}
-		
+
 		// use either the data sent over or retrieve from the db with the id
 		// ---------------------------------------------------------------------------
 		$userPaymentSettingPost = array();
-			
+
 		$usingUpsId = false;
 		if (isset($data['userPaymentSettingId']) && !empty($data['userPaymentSettingId']) && is_numeric($data['userPaymentSettingId'])) {
 			$tmp_result = $this->Ticket->query('SELECT * FROM userPaymentSetting WHERE userPaymentSettingId = ' . $data['userPaymentSettingId'] . ' LIMIT 1');
@@ -1757,15 +1772,15 @@ class WebServiceTicketsController extends WebServicesController
 			unset($tmp_result);
 			$usingUpsId = true;
 		} else {
-			$userPaymentSettingPost['UserPaymentSetting'] = $data['userPaymentSetting'];	
+			$userPaymentSettingPost['UserPaymentSetting'] = $data['userPaymentSetting'];
 		}
-		
+
 		if (!$userPaymentSettingPost || empty($userPaymentSettingPost)) {
 				return '113';
 		}
-		
+
 		$userPaymentSettingPost['UserPaymentSetting']['ccNumber'] = aesFullDecrypt($userPaymentSettingPost['UserPaymentSetting']['ccNumber']);
-		
+
 		// for FAMILY, payment is via PAYPAL only [override]
 		// ---------------------------------------------------------------------------
 		if ($ticket['Ticket']['siteId'] == 2) {
@@ -1785,16 +1800,16 @@ class WebServiceTicketsController extends WebServicesController
 			default:
 				break;
 		}
-		
+
 		if (!$paymentProcessorName) {
-			return '114';	
+			return '114';
 		}
-		
+
 		// handle fees, promo discounts, etc
 		// ---------------------------------------------------------------------------
 		$fee = $this->Ticket->getFeeByTicket($data['ticketId']);
 		$totalChargeAmount = $data['paymentAmount'];
-		
+
 		$promoGcCofData = array();
 		$promoGcCofData		= $this->Ticket->getPromoGcCofData($ticket['Ticket']['ticketId'], $totalChargeAmount);
 		if (!$toolboxManualCharge) {
@@ -1809,18 +1824,18 @@ class WebServiceTicketsController extends WebServicesController
 				return $this->runPostChargeSuccess($ticket, $data, $usingUpsId, $userPaymentSettingPost, $promoGcCofData, $toolboxManualCharge);
 			}
 		}
-		
+
 		// set total charge amount to send to processor
 		// ---------------------------------------------------------------------------
 		$ticket['Ticket']['billingPrice'] = $totalChargeAmount;
-		
+
 		// init payment processing and submit payment
 		// ---------------------------------------------------------------------------
 		$processor = new Processor($paymentProcessorName);
-		$processor->InitPayment($userPaymentSettingPost, $ticket);	
+		$processor->InitPayment($userPaymentSettingPost, $ticket);
 		if (!$isDev) {
 			// do not charge on dev or stage. For Production - charge away!
-			$processor->SubmitPost();  
+			$processor->SubmitPost();
 		}
 		// save the response from the payment processor
 		// ---------------------------------------------------------------------------
@@ -1828,10 +1843,10 @@ class WebServiceTicketsController extends WebServicesController
 		$firstName 								= trim($nameSplit[0]);
 		$lastName 								= trim(array_pop($nameSplit));
 		$userPaymentSettingPost['UserPaymentSetting']['expMonth'] = str_pad($userPaymentSettingPost['UserPaymentSetting']['expMonth'], 2, '0', STR_PAD_LEFT);
-		
+
 		$paymentDetail 							= array();
 		$paymentDetail 							= $processor->GetMappedResponse();
-		$paymentDetail['paymentTypeId'] 		= 1; 
+		$paymentDetail['paymentTypeId'] 		= 1;
 		$paymentDetail['paymentAmount']			= $data['paymentAmount'];
 		$paymentDetail['ticketId']				= $ticket['Ticket']['ticketId'];
 		$paymentDetail['userId']				= $ticket['Ticket']['userId'];
@@ -1859,7 +1874,7 @@ class WebServiceTicketsController extends WebServicesController
 		if (!$this->PaymentDetail->save($paymentDetail)) {
 			@mail('devmail@luxurylink.com', 'WEB SERVICE ERROR: PAYMENT PROCESSED BUT NOT SAVED', print_r($this->PaymentDetail->validationErrors,true)  . print_r($paymentDetail, true));
 		}
-		
+
 		// return result whether success or denied
 		// ---------------------------------------------------------------------------
 		if ($processor->ChargeSuccess() || $isDev) {
@@ -1884,10 +1899,10 @@ class WebServiceTicketsController extends WebServicesController
 				} elseif ($track['expirationCriteriaId'] == 4) {
 					$this->Ticket->query('UPDATE loa SET membershipPackagesRemaining = membershipPackagesRemaining - 1 WHERE loaId = ' . $track['loaId'] . ' LIMIT 1');
 				}
-				
+
 				// track detail stuff and allocation
 				// ---------------------------------------------------------------------------
-				$trackDetailExists = $this->TrackDetail->findExistingTrackTicket($track['trackId'], $ticket['Ticket']['ticketId']);	
+				$trackDetailExists = $this->TrackDetail->findExistingTrackTicket($track['trackId'], $ticket['Ticket']['ticketId']);
 				if (!$trackDetailExists) {
 					$new_track_detail = $this->TrackDetail->getNewTrackDetailRecord($track, $ticket['Ticket']['ticketId']);
 					if ($new_track_detail) {
@@ -1902,20 +1917,20 @@ class WebServiceTicketsController extends WebServicesController
 				}
 			}
 		}
-			
+
 		// if saving new user card information
 		// ---------------------------------------------------------------------------
 		if ($data['saveUps'] && !$usingUpsId && !empty($userPaymentSettingPost['UserPaymentSetting'])) {
 			$this->UserPaymentSetting->create();
 			$this->UserPaymentSetting->save($userPaymentSettingPost['UserPaymentSetting']);
 		}
-		
+
 		// update ticket status to FUNDED
 		// ---------------------------------------------------------------------------
 		$ticketStatusChange = array();
 		$ticketStatusChange['ticketId'] = $ticket['Ticket']['ticketId'];
 		$ticketStatusChange['ticketStatusId'] = 5;
-		
+
 		// if gift cert or cof, create additional payment detail records
 		// ---------------------------------------------------------------------------
 		if (!$toolboxManualCharge) {
@@ -1926,9 +1941,9 @@ class WebServiceTicketsController extends WebServicesController
 				$this->PaymentDetail->saveCof($ticket['Ticket']['ticketId'], $promoGcCofData['Cof'], $ticket['Ticket']['userId'], $data['autoCharge'], $data['initials']);
 			}
 		}
-		
+
 		$this->Ticket->save($ticketStatusChange);
-		
+
 		// ********* SITE NAME **********
 		switch ($ticket['Ticket']['siteId']) {
 			case 1:
@@ -1962,11 +1977,27 @@ class WebServiceTicketsController extends WebServicesController
 				ob_start();
 				include('../vendors/email_msgs/notifications/21_raf_referrer_purchase_notification.html');
 				$emailBody = ob_get_clean();
-				$this->sendPpvEmail($emailTo, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials);	
+				$this->sendPpvEmail($emailTo, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials);
 			}
 		}
-		
+
 		return 'CHARGE_SUCCESS';
 	}
+
+	function testEmail32() {
+	    $ticket = substr($_GET['url'], strrpos($_GET['url'], '/')+1);
+		$params 					= array();
+		$params['ticketId']			= $ticket;
+		$params['send'] 			= 1;
+		$params['returnString']		= 0;
+		$params['manualEmailBody']	= 0;
+		$params['initials']			= 'XNET_RES_REMIND_CUST';
+		$params['ppvNoticeTypeId'] = 32;
+		$this->ppv(json_encode($params));
+	    echo 'done';
+	    exit;
+	}
+
+
 }
 ?>
