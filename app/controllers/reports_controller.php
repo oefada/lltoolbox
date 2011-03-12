@@ -3030,5 +3030,470 @@ class ReportsController extends AppController {
 	    return implode($conditions, ' AND ');
 
 	}
+
+	function merch_new() {
+		$this->Client = new Client();
+
+		if(!empty($this->data['datePicker'])){
+			$date = $this->data['datePicker'];
+		} else {
+			$date = date('Y-m-d');
+		}
+		$this->set('date', $date);
+		$dateTs = strtotime($date);
+
+		$lastMonth = date('Y-m-01', strtotime('-1 month', $dateTs));
+		$twoMonthsAgo = date('Y-m-01', strtotime('-2 month', $dateTs));
+		$lastMonthLastYear = date('Y-m-01', strtotime('-13 months', $dateTs));
+
+		$yesterday = date('Y-m-01', strtotime('-1 day', $dateTs));
+
+		$lastMonthEnd = date('Y-m-t', strtotime('-1 month', $dateTs));
+		$twoMonthsAgoEnd = date('Y-m-t', strtotime('-2 month', $dateTs));
+		$lastMonthLastYearEnd = date('Y-m-t', strtotime('-13 months', $dateTs));
+
+		$this->set(compact('lastMonthDisplay', 'twoMonthsAgoDisplay', 'lastMonthLastYearDisplay'));
+
+		$auctions = array(1,2,6);
+
+		if (isset($this->data['site']) && $this->params['data']['site'] == 'family') {
+			$siteId = 2;
+			$siteName = 'Family';
+		} else {
+			$siteId = 1;
+			$siteName = 'LuxuryLink';
+		}
+
+		$siteCondition = "schedulingMaster.siteId = $siteId";
+        $loaSiteCondition = "Loa.sites LIKE '%{$siteName}%'";
+		//$loaSiteCondition = "EXISTS(SELECT * FROM multiSite WHERE model = 'Loa' and modelId = Loa.loaId and sites LIKE '%$siteName%')";
+		$offerLive = "offer$siteName";
+		$ticketSiteCondition = "Ticket.siteId = $siteId";
+
+ 		$sqlFunctions = new ReportsControllerFunctions();
+
+		# AUCTIONS/FP CLOSING
+		/* Auctions/Fp Closing Today */
+		$sql = $sqlFunctions->sqlAuctionsClosing($siteId, $date, 1);
+		$tmp = $this->Client->query($sql);
+		$sales[1][1] = $tmp[0][0]['auctionsClosingCount'];
+
+		/* Auctions/Fp Closing Yesterday */
+		$sql = $sqlFunctions->sqlAuctionsClosing($siteId, $yesterday, 1);
+		$tmp = $this->Client->query($sql);
+		$sales[1][2] = $tmp[0][0]['auctionsClosingCount'];
+
+		/* Auctions/Fp Closing Last 7 Daily Average */
+		$sql = $sqlFunctions->sqlAuctionsClosing($siteId, $date, 7);
+		$tmp = $this->Client->query($sql);
+		$sales[1][3] = $tmp[0][0]['auctionsClosingCount'];
+
+		/* Auctions/Fp Closing Last 30 Daily Average */
+		$sql = $sqlFunctions->sqlAuctionsClosing($siteId, $date, 30);
+		$tmp = $this->Client->query($sql);
+		$sales[1][4] = $tmp[0][0]['auctionsClosingCount'];
+
+		/* Auctions/Fp Closing Last 90 Daily Average */
+		$sql = $sqlFunctions->sqlAuctionsClosing($siteId, $date, 90);
+		$tmp = $this->Client->query($sql);
+		$sales[1][5] = $tmp[0][0]['auctionsClosingCount'];
+
+		/* Auctions/Fp Closing Last 365 Daily Average */
+		$sql = $sqlFunctions->sqlAuctionsClosing($siteId, $date, 365);
+		$tmp = $this->Client->query($sql);
+		$sales[1][6] = $tmp[0][0]['auctionsClosingCount'];
+		# END AUCTIONS CLOSING
+
+
+
+		# AUCTIONS/FP CLOSING WITH FUNDED TICKETS
+		/* Today */
+		$sql = $sqlFunctions->sqlAuctionsFunded($siteId, $date, 1);
+		$tmp = $this->Client->query($sql);
+		$sales[2][1] = $tmp[0][0]['auctionsFundedCount'];
+		$sales[3][1] = ROUND($sales[2][1]/$sales[1][1]*100,1);
+		$sales[4][1] = $tmp[0][0]['auctionsFundedAveragePrice'];
+
+		/* Yesterday */
+		$sql = $sqlFunctions->sqlAuctionsFunded($siteId, $yesterday, 1);
+		$tmp = $this->Client->query($sql);
+		$sales[2][2] = $tmp[0][0]['auctionsFundedCount'];
+		$sales[3][2] = ROUND($sales[2][2]/$sales[1][2]*100,1);
+		$sales[4][2] = $tmp[0][0]['auctionsFundedAveragePrice'];
+
+		/* Last 7 Days Avg */
+		$sql = $sqlFunctions->sqlAuctionsFunded($siteId, $date, 7);
+		$tmp = $this->Client->query($sql);
+		$sales[2][3] = $tmp[0][0]['auctionsFundedCount'];
+		$sales[3][3] = ROUND($sales[2][3]/$sales[1][3]*100,1);
+		$sales[4][3] = $tmp[0][0]['auctionsFundedAveragePrice'];
+
+		/* Last 30 Days Avg */
+		$sql = $sqlFunctions->sqlAuctionsFunded($siteId, $date, 30);
+		$tmp = $this->Client->query($sql);
+		$sales[2][4] = $tmp[0][0]['auctionsFundedCount'];
+		$sales[3][4] = ROUND($sales[2][4]/$sales[1][4]*100,1);
+		$sales[4][4] = $tmp[0][0]['auctionsFundedAveragePrice'];
+
+		/* Last 90 Days Avg */
+		$sql = $sqlFunctions->sqlAuctionsFunded($siteId, $date, 90);
+		$tmp = $this->Client->query($sql);
+		$sales[2][5] = $tmp[0][0]['auctionsFundedCount'];
+		$sales[3][5] = ROUND($sales[2][5]/$sales[1][5]*100,1);
+		$sales[4][5] = $tmp[0][0]['auctionsFundedAveragePrice'];
+
+		/* Last 365 Days Avg */
+		$sql = $sqlFunctions->sqlAuctionsFunded($siteId, $date, 365);
+		$tmp = $this->Client->query($sql);
+		$sales[2][6] = $tmp[0][0]['auctionsFundedCount'];
+		$sales[3][6] = ROUND($sales[2][6]/$sales[1][6]*100,1);
+		$sales[4][6] = $tmp[0][0]['auctionsFundedAveragePrice'];
+		# END AUCTIONS CLOSING WITH FUNDED TICKETS
+
+
+
+		# FP Requests and FP Funded
+		// today
+		$sql = $sqlFunctions->sqlFixedPriceRequestAndFunded($siteId, $date, 1);
+		$tmp = $this->Client->query($sql);
+		$sales[5][1] = ROUND($tmp[0]['Requests']['fpRequestCount']);
+		$sales[6][1] = ROUND($tmp[0]['Funded']['fpFundedCount']);
+		$sales[7][1] = ROUND($tmp[0]['Funded']['fpFundedAveragePrice']);
+
+		// yesterday
+		$sql = $sqlFunctions->sqlFixedPriceRequestAndFunded($siteId, $yesterday, 1);
+		$tmp = $this->Client->query($sql);
+		$sales[5][2] = ROUND($tmp[0]['Requests']['fpRequestCount']);
+		$sales[6][2] = ROUND($tmp[0]['Funded']['fpFundedCount']);
+		$sales[7][2] = ROUND($tmp[0]['Funded']['fpFundedAveragePrice']);
+
+		// 7 days
+		$sql = $sqlFunctions->sqlFixedPriceRequestAndFunded($siteId, $date, 7);
+		$tmp = $this->Client->query($sql);
+		$sales[5][3] = ROUND($tmp[0]['Requests']['fpRequestCount']);
+		$sales[6][3] = ROUND($tmp[0]['Funded']['fpFundedCount']);
+		$sales[7][3] = ROUND($tmp[0]['Funded']['fpFundedAveragePrice']);
+
+		// 30 days
+		$sql = $sqlFunctions->sqlFixedPriceRequestAndFunded($siteId, $date, 30);
+		$tmp = $this->Client->query($sql);
+		$sales[5][4] = ROUND($tmp[0]['Requests']['fpRequestCount']);
+		$sales[6][4] = ROUND($tmp[0]['Funded']['fpFundedCount']);
+		$sales[7][4] = ROUND($tmp[0]['Funded']['fpFundedAveragePrice']);
+
+		// 90 days
+		$sql = $sqlFunctions->sqlFixedPriceRequestAndFunded($siteId, $date, 90);
+		$tmp = $this->Client->query($sql);
+		$sales[5][5] = ROUND($tmp[0]['Requests']['fpRequestCount']);
+		$sales[6][5] = ROUND($tmp[0]['Funded']['fpFundedCount']);
+		$sales[7][5] = ROUND($tmp[0]['Funded']['fpFundedAveragePrice']);
+
+		// 365 days
+		$sql = $sqlFunctions->sqlFixedPriceRequestAndFunded($siteId, $date, 365);
+		$tmp = $this->Client->query($sql);
+		$sales[5][6] = ROUND($tmp[0]['Requests']['fpRequestCount']);
+		$sales[6][6] = ROUND($tmp[0]['Funded']['fpFundedCount']);
+		$sales[7][6] = ROUND($tmp[0]['Funded']['fpFundedAveragePrice']);
+		# END FP Requests and FP Funded
+
+		# TRAVEL REVENUE [ALEE] CHANGED HOW THIS IS CALCULATED REQUEST BY MCHOE JAN 22-2010
+		$sales[8][1] = ($sales[2][1] * $sales[4][1]) + ($sales[6][1] * $sales[7][1]);
+		$sales[8][2] = ($sales[2][2] * $sales[4][2]) + ($sales[6][2] * $sales[7][2]);
+		$sales[8][3] = ($sales[2][3] * $sales[4][3]) + ($sales[6][3] * $sales[7][3]);
+		$sales[8][4] = ($sales[2][4] * $sales[4][4]) + ($sales[6][4] * $sales[7][4]);
+		$sales[8][5] = ($sales[2][5] * $sales[4][5]) + ($sales[6][5] * $sales[7][5]);
+		$sales[8][6] = ($sales[2][6] * $sales[4][6]) + ($sales[6][6] * $sales[7][6]);
+		# END TRAVEL REVENUE
+
+		$this->set('sales', $sales);
+
+		#### END SALES ####
+
+
+		#### Revenue ####
+		$mtdStart = date('Y-m-01', strtotime($date));
+		if (date('Y-m-d', strtotime($date)) < date('Y-04-01', strtotime($date))) {
+			$qtdStart = date('Y-01-01', strtotime($date));
+		} else if (date('Y-m-d', strtotime($date)) < date('Y-07-01', strtotime($date))) {
+			$qtdStart = date('Y-04-01', strtotime($date));
+		} else if (date('Y-m-d', strtotime($date)) < date('Y-10-01', strtotime($date))) {
+			$qtdStart = date('Y-07-01', strtotime($date));
+		} else {
+			$qtdStart = date('Y-10-01', strtotime($date));
+		}
+		$ytdStart = date('Y-01-01', strtotime($date));
+
+		$revenueMtd = $this->Client->query("SELECT SUM(Ticket.billingPrice) as revenue FROM ticket as Ticket WHERE Ticket.created >= '$mtdStart' AND Ticket.created <= '$date' AND $ticketSiteCondition AND Ticket.ticketStatusId NOT IN (7,8,17) AND Ticket.ticketId IN (SELECT ticketId FROM paymentDetail WHERE isSuccessfulCharge = 1)");
+		$revenueQtd = $this->Client->query("SELECT SUM(Ticket.billingPrice) as revenue FROM ticket as Ticket WHERE Ticket.created >= '$qtdStart' AND Ticket.created <= '$date' AND $ticketSiteCondition AND Ticket.ticketStatusId NOT IN (7,8,17) AND Ticket.ticketId IN (SELECT ticketId FROM paymentDetail WHERE isSuccessfulCharge = 1)");
+		$revenueYtd = $this->Client->query("SELECT SUM(Ticket.billingPrice) as revenue FROM ticket as Ticket WHERE Ticket.created >= '$ytdStart' AND Ticket.created <= '$date' AND $ticketSiteCondition AND Ticket.ticketStatusId NOT IN (7,8,17) AND Ticket.ticketId IN (SELECT ticketId FROM paymentDetail WHERE isSuccessfulCharge = 1)");
+		$this->set(compact('revenueMtd', 'revenueQtd', 'revenueYtd'));
+		#### End Revenue ####
+	#### BEGIN AGING ####
+		$tmp = $this->Client->query("SELECT GROUP_CONCAT(DISTINCT clientId) as clients, COUNT(DISTINCT clientId) as numClients,
+										IF(DATEDIFF(NOW(), startDate) > 121, 3, IF(DATEDIFF(NOW(), startDate) > 91, 2, 1)) as severity
+										FROM loa AS Loa
+										WHERE Loa.startDate < NOW() - INTERVAL 60 DAY
+												AND Loa.inactive <> 1 AND Loa.endDate >= NOW()
+												AND Loa.membershipBalance > 0 AND $loaSiteCondition
+										GROUP BY severity");
+		$tmp2 = $this->Client->query("SELECT COUNT(DISTINCT clientId) as numClients,
+										IF(DATEDIFF(NOW(), startDate) > 121, 3, IF(DATEDIFF(NOW(), startDate) > 91, 2, 1)) as severity
+										FROM loa AS Loa
+										WHERE Loa.startDate < NOW() - INTERVAL 60 DAY
+												AND Loa.inactive <> 1 AND Loa.endDate >= NOW() AND $loaSiteCondition
+										GROUP BY severity");
+
+		foreach ($tmp as $v) {
+			$aging[$v[0]['severity']] = @$v[0];
+		}
+		foreach ($tmp2 as $v) {
+			@$aging[$v[0]['severity']]['totalClients'] += @$v[0]['numClients'];
+		}
+
+		$this->set('aging', $aging);
+
+	#### END AGING ####
+
+
+	#### Inventory Management ####
+		/* Distressed Auctions */
+		$tmp = $this->Client->query("SELECT GROUP_CONCAT(DISTINCT schedulingMaster.schedulingMasterId) as ids,
+								COUNT(DISTINCT schedulingMaster.schedulingMasterId) as numOffers,
+								IF(numOffersNoBid >10, 2, 1) as severity,
+								expirationCriteriaId FROM schedulingMasterPerformance
+								INNER JOIN schedulingMaster USING(schedulingMasterId)
+								INNER JOIN schedulingInstance ON(schedulingInstance.schedulingMasterId = schedulingMaster.schedulingMasterId AND schedulingInstance.endDate >= NOW())
+								LEFT JOIN schedulingMasterTrackRel ON(schedulingMasterTrackRel.schedulingMasterId = schedulingMaster.schedulingMasterId)
+								LEFT JOIN track USING(trackId)
+								WHERE numOffersNoBid >= 5 AND $siteCondition
+								GROUP BY severity, expirationCriteriaId");
+		$tmp2 = $this->Client->query("SELECT COUNT(DISTINCT schedulingMaster.schedulingMasterId) as totalNumOffers,
+											expirationCriteriaId FROM schedulingMasterPerformance
+											INNER JOIN schedulingMaster USING(schedulingMasterId)
+											INNER JOIN schedulingInstance ON(schedulingInstance.schedulingMasterId = schedulingMaster.schedulingMasterId AND schedulingInstance.endDate >= NOW())
+											LEFT JOIN schedulingMasterTrackRel ON(schedulingMasterTrackRel.schedulingMasterId = schedulingMaster.schedulingMasterId)
+											LEFT JOIN track USING(trackId)
+											WHERE $siteCondition
+											GROUP BY expirationCriteriaId");
+
+		foreach ($tmp as $v) {
+			if($v['track']['expirationCriteriaId'] == 1 || $v['track']['expirationCriteriaId'] == 4) {
+				$row = 1;
+			} else {
+				$row = 2;
+			}
+
+			$col = $v[0]['severity'];
+
+			@$distressedAuctions[$row][$col]['numOffers'] += $v[0]['numOffers'];
+			@$distressedAuctions[$row][$col]['ids'][] = $v[0]['ids'];
+		}
+
+		foreach ($tmp2 as $v) {
+			if($v['track']['expirationCriteriaId'] == 1 || $v['track']['expirationCriteriaId'] == 4) {
+				$row = 1;
+			} else {
+				$row = 2;
+			}
+
+			@$distressedAuctions[$row]['totalNumOffers'] += $v[0]['totalNumOffers'];
+		}
+
+		$this->set('distressedAuctions', $distressedAuctions);
+
+		/* Distressed Buy Nows */
+		$tmp = $this->Client->query("SELECT
+								GROUP_CONCAT(DISTINCT schedulingInstance.schedulingMasterId) as ids,
+								COUNT(DISTINCT OfferLive.offerId) numOffers,
+								IF(
+									DATEDIFF('$date', Ticket.created) >= 43,
+									2,
+										IF(DATEDIFF('$date', Ticket.created) >= 21,
+										1,
+										0)
+									) as severity,
+								expirationCriteriaId
+								FROM $offerLive AS OfferLive
+								INNER JOIN offer USING(offerId)
+								INNER JOIN schedulingInstance USING(schedulingInstanceId)
+								LEFT JOIN ticket AS Ticket USING(offerId)
+								LEFT JOIN schedulingMasterTrackRel ON(schedulingMasterTrackRel.schedulingMasterId = schedulingInstance.schedulingMasterId)
+								LEFT JOIN track USING(trackId)
+								WHERE OfferLive.offerTypeId IN(3,4) AND OfferLive.endDate >= NOW()
+								GROUP BY severity, expirationCriteriaId");
+
+		foreach ($tmp as $v) {
+			if($v['track']['expirationCriteriaId'] == 1 || $v['track']['expirationCriteriaId'] == 4) {
+				$row = 1;
+			} else {
+				$row = 2;
+			}
+
+			$col = $v[0]['severity'];
+
+			@$distressedBuyNows[$row][$col]['numOffers'] += $v[0]['numOffers'];
+			@$distressedBuyNows[$row][$col]['ids'][] = $v[0]['ids'];
+		}
+
+		$this->set('distressedBuyNows', $distressedBuyNows);
+
+		/* Packages with x days Validity Left */
+		$tmp = $this->Client->query("SELECT
+										GROUP_CONCAT(DISTINCT Package.packageId) as ids,
+										COUNT(*) as numPackages,
+										IF(DATEDIFF(Package.validityEndDate, '$date') < 30, 3, IF(DATEDIFF(Package.validityEndDate, '$date') < 45, 2, 1)) as severity,
+		 								expirationCriteriaId
+										FROM package AS Package
+										INNER JOIN clientLoaPackageRel USING(packageId)
+										INNER JOIN loa AS Loa USING(loaId)
+										INNER JOIN track USING(trackId)
+										WHERE Package.validityEndDate <= '$date' + INTERVAL 60 DAY
+												AND Package.validityEndDate >= NOW()
+												AND Loa.endDate >= NOW() AND $loaSiteCondition
+										GROUP BY severity, expirationCriteriaId");
+		foreach ($tmp as $v) {
+			if($v['track']['expirationCriteriaId'] == 1 || $v['track']['expirationCriteriaId'] == 4) {
+				$row = 1;
+			} else {
+				$row = 2;
+			}
+
+			$col = $v[0]['severity'];
+
+			@$expiringPackages[$row][$col]['numPackages'] += $v[0]['numPackages'];
+			@$expiringPackages[$row][$col]['ids'][] = $v[0]['ids'];
+		}
+
+		$this->set('expiringPackages', $expiringPackages);
+
+		/* Auctions w/o buy now */
+		$tmp = $this->Client->query("SELECT GROUP_CONCAT(DISTINCT Package.packageId) AS ids, COUNT(DISTINCT Package.packageId) AS numPackages,
+		 								expirationCriteriaId
+										FROM package AS Package
+										INNER JOIN $offerLive AS OfferLive2 ON(OfferLive2.packageId = Package.packageId AND OfferLive2.isClosed <> 1 AND OfferLive2.offerTypeId IN(1,2,6))
+										LEFT JOIN $offerLive AS OfferLive ON(OfferLive.packageId = Package.packageId AND OfferLive.isClosed <> 1 AND OfferLive.offerTypeId IN(3,4))
+										INNER JOIN clientLoaPackageRel cl ON(cl.packageid = Package.packageId)
+										INNER JOIN loa AS Loa USING(loaId)
+										INNER JOIN track USING(trackId)
+										WHERE Package.endDate >= '$date' AND OfferLive.offerId IS NULL
+										GROUP BY expirationCriteriaId
+										");
+		foreach ($tmp as $v) {
+			if($v['track']['expirationCriteriaId'] == 1 || $v['track']['expirationCriteriaId'] == 4) {
+				$row = 1;
+			} else {
+				$row = 2;
+			}
+
+			@$noBuyNows[$row][1]['numPackages'] += $v[0]['numPackages'];
+			@$noBuyNows[$row][1]['ids'][] = $v[0]['ids'];
+		}
+
+		$this->set('noBuyNows', $noBuyNows);
+
+		/* Clients with No Packages */
+		//get all clients without packages
+		$tmp = $this->Client->query("CALL clientsNoScheduledOffersLOA('$date','$date')");
+		$tmp2 = $this->Client->query("SELECT COUNT(DISTINCT Loa.clientId) as totalClients FROM loa AS Loa WHERE Loa.inactive <> 1
+									 		AND Loa.endDate >= '$date' AND $loaSiteCondition");
+
+		//get the date of the last live package
+		$clientsNoPackages[1][1]['numClients'] = 0;
+		$clientsNoPackages[1][2]['numClients'] = 0;
+		$clientsNoPackages[1][3]['numClients'] = 0;
+		$clientsNoPackages[1][4]['numClients'] = 0;
+		$clientsNoPackages[2][1]['numClients'] = 0;
+		$clientsNoPackages[2][2]['numClients'] = 0;
+		$clientsNoPackages[2][3]['numClients'] = 0;
+		$clientsNoPackages[2][4]['numClients'] = 0;
+		foreach ($tmp as $v) {
+			$clientId = $v['c']['clientId'];
+			$loaId = $v['l']['loaId'];
+
+			if ($clientId && $loaId) {
+				$lastLiveDate = $this->Client->query("SELECT DATEDIFF('$date',MAX(OfferLive.endDate)) as numDays, loaLevelId, membershipPackagesRemaining, membershipBalance
+									FROM $offerLive as OfferLive
+									INNER JOIN clientLoaPackageRel USING(packageId)
+									INNER JOIN loa as Loa USING(loaId)
+									WHERE clientLoaPackageRel.clientId = {$clientId} AND loaId = {$loaId} AND OfferLive.endDate <= '$date'
+									GROUP BY clientLoaPackageRel.clientId");
+				/* if membershipnumpackages has value, remaining > 0 = keep */
+				if (empty($lastLiveDate)) {
+					continue;
+				}
+				if ($lastLiveDate[0]['Loa']['loaLevelId'] == 2
+					&& ($lastLiveDate[0]['Loa']['membershipPackagesRemaining'] > 0 OR $lastLiveDate[0]['Loa']['membershipBalance'] > 0)) {
+					$row = 1;
+				} else {
+					$row = 2;
+				}
+				$numDays = @$lastLiveDate[0][0]['numDays'];
+				if ($numDays >= 7 AND $numDays <= 13) {
+					$col = 1;
+				} else if ($numDays >= 14 AND $numDays <= 20) {
+					$col = 2;
+				} else if ($numDays >= 21 AND $numDays <= 27) {
+					$col = 3;
+				} else if ($numDays >= 28) {
+					$col = 4;
+				} else {
+					continue;
+				}
+
+				$clientsNoPackages[$row][$col]['numClients'] += 1;
+				$clientsNoPackages[$row][$col]['clientIds'][] = $clientId;
+			}
+		}
+
+		$clientsNoPackages['totalClients'] = $tmp2[0][0]['totalClients'];
+
+		$this->set('clientsNoPackages', $clientsNoPackages);
+	#### END Inventory Management ####
+	}
+
 }
+
+
+class ReportsControllerFunctions {
+
+	function sqlAuctionsClosing($siteId, $date, $days) {
+		$tableName = ($siteId == 1) ? 'offerLuxuryLink' : 'offerFamily';
+		$sql = "SELECT ROUND(COUNT(*)/$days) as auctionsClosingCount
+				FROM $tableName
+				WHERE endDate BETWEEN '$date' - INTERVAL $days-1 DAY AND '$date' + INTERVAL 1 DAY
+				AND offerTypeId IN (1,2,6)";
+		return $sql;
+	}
+
+	function sqlAuctionsFunded($siteId, $date, $days) {
+		$sql = "SELECT COUNT(ticketId)/$days as auctionsFundedCount, AVG(billingPrice) as auctionsFundedAveragePrice
+				FROM ticket AS Ticket
+				WHERE siteId = $siteId
+				AND ticketStatusId NOT IN (7,8,17)
+				AND created BETWEEN '$date' - INTERVAL $days-1 DAY AND '$date' + INTERVAL 1 DAY
+				AND ticketId IN (SELECT ticketId FROM paymentDetail WHERE isSuccessfulCharge = 1)";
+		return $sql;
+	}
+
+	function sqlFixedPriceRequestAndFunded($siteId, $date, $days) {
+		$sql = "SELECT Requests.*, Funded.fpFundedCount, Funded.fpFundedAveragePrice FROM (
+					SELECT COUNT(ticketId)/$days AS fpRequestCount
+					FROM ticket
+					WHERE offerTypeId IN (3, 4)
+					AND siteId = $siteId
+					AND created BETWEEN '$date' - INTERVAL $days-1 DAY AND '$date' + INTERVAL 1 DAY
+				) Requests,
+					(SELECT COUNT(ticketId)/$days AS fpFundedCount, AVG(billingPrice) as fpFundedAveragePrice
+					FROM ticket
+					WHERE offerTypeId IN (3, 4)
+					AND siteId = $siteId
+					AND ticketStatusId NOT IN (7,8,17)
+					AND created BETWEEN '$date' - INTERVAL $days-1 DAY AND '$date' + INTERVAL 1 DAY
+					AND ticketId IN (SELECT ticketId FROM paymentDetail WHERE isSuccessfulCharge = 1)
+				) Funded";
+		return $sql;
+	}
+
+}
+
 ?>
