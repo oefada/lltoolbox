@@ -1236,8 +1236,6 @@ class WebServiceTicketsController extends WebServicesController
 				$emailSubject = "Your Pending Reservation";
 				$emailFrom = ($isAuction) ? "$siteDisplay<resrequests@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
 				$emailReplyTo = ($isAuction) ? "resrequests@$siteEmail" : "reservations@$siteEmail";
-				$userEmail = $clientPrimaryEmail;
-				$emailCc = $clientCcEmail;
 				break;
 			case 4:
 				include('../vendors/email_msgs/ppv/client_ppv.html');
@@ -1363,6 +1361,7 @@ class WebServiceTicketsController extends WebServicesController
 			if (trim($override_email_subject)) {
 				$emailSubject = $override_email_subject;
 			}
+
 			$this->sendPpvEmail($userEmail, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials, $email_attachment, $email_attachment_type);
 
 			// AUTO SECTION FOR MULTI CLIENT PPV for multi-client packages send client emails [CLIENT PPV]
@@ -1989,12 +1988,11 @@ class WebServiceTicketsController extends WebServicesController
 		$params 					= array();
 		$params['ticketId']			= $ticket;
 		$params['send'] 			= 1;
-		$params['returnString']		= 0;
+		$params['returnString']		= 1;
 		$params['manualEmailBody']	= 0;
 		$params['initials']			= 'XNET_RES_REMIND_CUST';
 		$params['ppvNoticeTypeId'] = 32;
-		$this->ppv(json_encode($params));
-	    echo 'done';
+		echo $this->ppv(json_encode($params));
 	    exit;
 	}
 
