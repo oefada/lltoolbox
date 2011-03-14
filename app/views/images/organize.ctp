@@ -90,6 +90,30 @@
                <div class="organize large">
                   <h3>Large (225x169)</h3>
                   <ul id="largeImages-<?php echo $site ?>">
+					 <?php
+					     //loop through images and make sure only 1 is checked
+						 $numChecked = 0;
+						 foreach ($largeImages AS $i) {
+						     if ($i['ImageClient']['inactive'] == 0) {
+							     $numChecked++;
+							 }
+						 }
+						 
+						 // check first image and set rest to unchecked
+						 if ($numChecked == 0 || $numChecked > 1) {
+							 $c = 0;
+						     foreach ($largeImages AS &$i) {
+							     if ($c == 0) {
+									$i['ImageClient']['inactive'] = 0;
+									$c = 1;
+								 } else {
+									$i['ImageClient']['inactive'] = 1;
+								 }
+							 }
+						 }
+					 ?>
+				  
+				  
                      <?php foreach($largeImages as $lImage): ?>
                         <li>
                            <img src="<?php echo $lImage['Image']['imagePath']; ?>" height="75" alt="<?php echo $lImage['Image']['caption']; ?>" />
@@ -107,6 +131,29 @@
                <div class="organize thumbnails">
                   <h3>Thumbnail (70x64)</h3>
                   <ul id="thumbImages-<?php echo $site ?>">
+					 <?php
+					     //loop through images and make sure only 1 is checked
+						 $numChecked = 0;
+						 foreach ($thumbnailImages AS $i) {
+						     if ($i['ImageClient']['inactive'] == 0) {
+							     $numChecked++;
+							 }
+						 }
+						 
+						 // check first image and set rest to unchecked
+						 if ($numChecked == 0 || $numChecked > 1) {
+							 $c = 0;
+						     foreach ($thumbnailImages AS &$i) {
+							     if ($c == 0) {
+									$i['ImageClient']['inactive'] = 0;
+									$c = 1;
+								 } else {
+									$i['ImageClient']['inactive'] = 1;
+								 }
+							 }
+						 }
+					 ?>
+					 
                      <?php foreach($thumbnailImages as $tImage): ?>
                         <li>
                            <img src="<?php echo $tImage['Image']['imagePath']; ?>" height="65" alt="<?php echo $tImage['Image']['caption']; ?>" />
