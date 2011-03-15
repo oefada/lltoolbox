@@ -44,6 +44,11 @@ class WebServiceTicketsController extends WebServicesController
 						'input' => array('in0' => 'xsd:string'),
 						'output' => array('return' => 'xsd:string')
 						),
+					'sendResRequestReminderCustomer' => array(
+						'doc' => 'N/A',
+						'input' => array('in0' => 'xsd:string'),
+						'output' => array('return' => 'xsd:string')
+						),
 					'autoSendFromCheckout' => array(
 						'doc' => 'N/A',
 						'input' => array('in0' => 'xsd:string'),
@@ -561,10 +566,17 @@ class WebServiceTicketsController extends WebServicesController
 		$params['initials']			= 'XNET_RES_REMINDER';
 		$params['ppvNoticeTypeId'] = 24;
 		$this->ppv(json_encode($params));
+	}
 
-		// jw 3/11/11 - also notify customer
-		$params['ppvNoticeTypeId'] = 32;
+	function sendResRequestReminderCustomer($in0) {
+		// from the XNET - dates are NOT available
+		// -------------------------------------------------------------------------------
+		$params = json_decode($in0, true);
+		$params['send'] 			= 1;
+		$params['returnString']		= 0;
+		$params['manualEmailBody']	= 0;
 		$params['initials']			= 'XNET_RES_REMIND_CUST';
+		$params['ppvNoticeTypeId'] = 32;
 		$this->ppv(json_encode($params));
 	}
 
@@ -1982,20 +1994,5 @@ class WebServiceTicketsController extends WebServicesController
 
 		return 'CHARGE_SUCCESS';
 	}
-
-	function testEmail32() {
-	    $ticket = substr($_GET['url'], strrpos($_GET['url'], '/')+1);
-		$params 					= array();
-		$params['ticketId']			= $ticket;
-		$params['send'] 			= 1;
-		$params['returnString']		= 1;
-		$params['manualEmailBody']	= 0;
-		$params['initials']			= 'XNET_RES_REMIND_CUST';
-		$params['ppvNoticeTypeId'] = 32;
-		echo $this->ppv(json_encode($params));
-	    exit;
-	}
-
-
 }
 ?>

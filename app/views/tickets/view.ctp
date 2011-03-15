@@ -375,6 +375,7 @@ $this->searchController = 'Tickets';
 		<tr><td style="border:0px;"><?php echo $html->link('Reservation Dates Available', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/13');?></td></tr>
 		<tr><td style="border:0px;"><?php echo $html->link('Reservation Dates Not Available', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/14');?></td></tr>
 		<tr><td style="border:0px;"><?php echo $html->link('Reservation Request - Follow Up', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/24');?></td></tr>
+		<tr><td style="border:0px;"><?php echo $html->link('Reservation Request - Follow Up to Customer', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/32');?></td></tr>
 		<tr><td style="border:0px;"><?php echo $html->link('Reservation Cancellation - Request', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/29');?></td></tr>
 		<tr><td style="border:0px;"><?php echo $html->link('Reservation Cancellation - Confirmation', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/30');?></td></tr>
 		<tr><td style="border:0px;"><?php echo $html->link('Reservation Cancellation - Client Reciept', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/31');?></td></tr>
