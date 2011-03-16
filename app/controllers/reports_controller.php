@@ -2816,7 +2816,7 @@ class ReportsController extends AppController {
 		$this->set('buyers', $buyers);
 		$this->set('buyersLastYear', array_merge($tmp2[0][0], $tmp3[0][0]));
 
-		if (isset($this->params['named']['cron']) || isset($_GET['forceEmail'])) {
+		if (isset($this->params['named']['cron'])) {
 
 			Configure::write('debug', 0);
 			$this->autoRender = false;
@@ -2830,8 +2830,7 @@ class ReportsController extends AppController {
 			$mail = new PHPMailer();
 			$mail->From = 'no-reply@toolbox.luxurylink.com';
 			$mail->FromName = 'no-reply@toolbox.luxurylink.com';
-			$mail->AddAddress('jwoods@luxurylink.com', 'jwoods@luxurylink.com');
-			$mail->AddAddress('rsprague@luxurylink.com', 'rsprague@luxurylink.com');
+			$mail->AddAddress('scorecard@luxurylink.com', 'scorecard@luxurylink.com');
 			$mail->Subject = 'Weekly Scorecard Report';
 			$mail->Body = 'Weekly scorecard report enclosed' . "\n";
 			$mail->AddStringAttachment($this->output, 'weekly_scorecard.html', 'base64', 'text/html');
