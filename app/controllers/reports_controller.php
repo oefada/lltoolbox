@@ -2039,7 +2039,7 @@ class ReportsController extends AppController {
 	    return round( abs( $a_new - $b_new ) / 86400 );
 	}
 
-	function merch_031111() {
+	function merch() {
 		$this->Client = new Client();
 
 		if(!empty($this->data['datePicker'])){
@@ -3030,7 +3030,8 @@ class ReportsController extends AppController {
 
 	}
 
-	function merch() {
+	function merch_new() {
+
 		$this->Client = new Client();
 
 		if(!empty($this->data['datePicker'])){
@@ -3045,7 +3046,7 @@ class ReportsController extends AppController {
 		$twoMonthsAgo = date('Y-m-01', strtotime('-2 month', $dateTs));
 		$lastMonthLastYear = date('Y-m-01', strtotime('-13 months', $dateTs));
 
-		$yesterday = date('Y-m-01', strtotime('-1 day', $dateTs));
+		$yesterday = date('Y-m-d', strtotime('yesterday', $dateTs));
 
 		$lastMonthEnd = date('Y-m-t', strtotime('-1 month', $dateTs));
 		$twoMonthsAgoEnd = date('Y-m-t', strtotime('-2 month', $dateTs));
