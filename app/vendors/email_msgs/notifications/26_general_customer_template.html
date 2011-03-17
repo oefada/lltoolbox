@@ -1,6 +1,6 @@
 <?php include('../vendors/email_msgs/email_includes/header.html');?>
 <?php
-    //hb hack, to display HB text right after ticket number 
+    //hb hack, to display HB text right after ticket number
     if ($parentClientId == 11080) {
         $ticketId = $ticketId."HB";
     } else {
@@ -24,13 +24,13 @@
 ?>
     This email contains your reservation confirmation and receipt of payment in full for the package listed below.
     <br /><br />
-    This reservation is made in partnership with Hotel Beds Accommodation and Destination Services and your travel vouchers are attached.  <strong>You are required to present these travel voucher(s) for hotel check-in and in order to redeem your tour tickets (redemption information is included on your tour voucher(s)).</strong> 
+    This reservation is made in partnership with Hotel Beds Accommodation and Destination Services and your travel vouchers are attached.  <strong>You are required to present these travel voucher(s) for hotel check-in and in order to redeem your tour tickets (redemption information is included on your tour voucher(s)).</strong>
 <?php
     } else {
-?>    
+?>
     <strong>
     This email serves as your reservation confirmation and receipt of payment in full for the following package.
-    </strong>  
+    </strong>
 <?php
     }
 ?>
@@ -40,12 +40,13 @@
 
 </strong>
 </p>
-			
+
 			<table cellspacing="0" cellpadding="5" border="0">
 			<tr>
 				<td style="color:#000000;font-size:12px;" valign="top" align="left" width="200">Your Price:</td>
 				<td style="color:#444444;font-size:12px;padding-right:5px;" valign="top" align="right" width="30">US</td>
 				<td style="color:#444444;font-size:12px;" valign="top" align="right">$<?=$billingPrice;?></td>
+				<?php if ($addtlDescription):?><td style="font-size:10px; border=0px;"><?php echo $addtlDescription;?></td><?php endif ;?>
 			</tr>
 			<tr>
 				<td style="color:#000000;font-size:12px;" valign="top" align="left" width="200">Handling Fee:</td>
@@ -59,7 +60,7 @@
 					Exclusive Offer with &nbsp;&nbsp;&nbsp;<a href="http://clk.atdmt.com/AST/go/154171765/direct;wi.1;hi.1/01/" target="_blank"><img src="http://www.luxurylink.com/images/shared/mc_small_logo.png" border="0" /></a>
 					<img src="http://view.atdmt.com/AST/view/154171765/direct;wi.1;hi.1/01/" width="1" height="1" border="0" />
 					<?php else: ?>
-					Promotion Applied: 
+					Promotion Applied:
 					<?php endif; ?>
 				</td>
 				<td style="color:#990000;font-size:12px;padding-right:5px;" valign="top" align="right" width="30">- US</td>
@@ -69,7 +70,7 @@
 			<?php if ($promoGcCofData['GiftCert'] && $promoGcCofData['GiftCert']['applied']) :?>
 			<tr>
 				<td style="color:#000000;font-size:12px;" valign="top" align="left" width="200">
-					Gift Certificate Applied: 
+					Gift Certificate Applied:
 				</td>
 				<td style="color:#990000;font-size:12px;padding-right:5px;" valign="top" align="right" width="30">- US</td>
 				<td style="color:#990000;font-size:12px;" valign="top" align="right">$<?=$promoGcCofData['GiftCert']['totalAmountOff'];?></td>
@@ -78,7 +79,7 @@
 			<?php if ($promoGcCofData['Cof'] && $promoGcCofData['Cof']['applied']) :?>
 			<tr>
 				<td style="color:#000000;font-size:12px;" valign="top" align="left" width="200">
-					Credit On File Applied: 
+					Credit On File Applied:
 				</td>
 				<td style="color:#990000;font-size:12px;padding-right:5px;" valign="top" align="right" width="30">- US</td>
 				<td style="color:#990000;font-size:12px;" valign="top" align="right">$<?=$promoGcCofData['Cof']['totalAmountOff'];?></td>
@@ -89,7 +90,7 @@
 				<td style="color:#990000;font-size:12px; font-weight:bold; border-top:1px solid silver; padding-bottom:20px;padding-top:10px;padding-right:5px;" valign="top" align="right" width="30">US</td>
 				<td style="color:#990000;font-size:12px; font-weight:bold; border-top:1px solid silver; padding-bottom:20px;padding-top:10px;" valign="top" align="right">
 					<?php if ($promoGcCofData['applied']) : ?>
-					$<?=$promoGcCofData['final_price']; ?>	
+					$<?=$promoGcCofData['final_price']; ?>
 					<?php else: ?>
 					$<?=$totalPrice;?>
 					<?php endif; ?>
@@ -167,7 +168,7 @@
 	<?php endforeach; ?>
 </div>
 
-<?php if (!$isAuction) : ?>	
+<?php if (!$isAuction) : ?>
 	<p>
 	<?=$siteName;?> 'Buy Now' Cancellation Policy
 	<ul>
