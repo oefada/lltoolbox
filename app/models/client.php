@@ -92,7 +92,21 @@ class Client extends AppModel {
 
         // AMENITIES
         if (!empty($this->data['ClientAmenityRel'])) {
-
+            $amenityKeys = array_keys($this->data['ClientAmenityRel']);
+            // if this is a client aftersave from set_sites(), the amenities array will be different
+            // from what it is when we submit the edit form.
+            // we need to transform it to what the rest of the script expects,
+            // so that we can save the data properly and push it out to the front end.
+            if (is_array($this->data['ClientAmenityRel'][$amenityKeys[0]])) {
+                $postAmenities = array();
+                foreach ($this->data['ClientAmenityRel'] as $amenity) {
+                    $postAmenities[$amenity['amenityId']] = $amenity['amenityId'];
+                }
+            }
+            else {
+                $postAmenities = $this->data['ClientAmenityRel'];
+            }
+            
             // select current amenities
             $currentClientAmenities = array();
             $clientAmenityRels = $this->query("SELECT * FROM clientAmenityRel WHERE clientId = {$client['Client']['clientId']}");
@@ -102,14 +116,14 @@ class Client extends AppModel {
 
             // insert amenities
             $amenitiesData = array();
-            $amenitiesToInsert = array_diff_key($this->data['ClientAmenityRel'], $currentClientAmenities);
+            $amenitiesToInsert = array_diff_key($postAmenities, $currentClientAmenities);
             foreach ($amenitiesToInsert as $amenityId => $amenityToInsert) {
                 $amenitiesData[] = array('clientId' => $client['Client']['clientId'], 'amenityId' => $amenityId);
             }
             $this->ClientAmenityRel->saveAll($amenitiesData);
 
             // delete amenities
-            $amenitiesToDelete = array_diff_key($currentClientAmenities, $this->data['ClientAmenityRel']);
+            $amenitiesToDelete = array_diff_key($currentClientAmenities, $postAmenities);
             foreach ($amenitiesToDelete as $amenityId => $currentClientAmenityRelId) {
                 $this->ClientAmenityRel->delete($currentClientAmenityRelId);
             }
