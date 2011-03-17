@@ -25,7 +25,7 @@
 </style>
 
 <div class="dateChooser clearfix">
-	<form action="/reports/merch" method="post">
+	<form action="/reports/merch_new" method="post">
 	<? echo $form->input('datePicker', array('class' => 'format-y-m-d divider-dash highlight-days-06 no-transparency range-high-today fill-grid-no-select',
 											'label' => 'Select another date:',
 											'readonly' => 'readonly',
