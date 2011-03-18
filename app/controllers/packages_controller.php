@@ -828,7 +828,7 @@ class PackagesController extends AppController {
 			if (stristr($_SERVER['HTTP_HOST'], 'dev') || stristr($_SERVER['HTTP_HOST'], 'stage')) {
 				$emailTo = 'devmail@luxurylink.com';
 			} else {
-				$emailTo = 'approval@luxurylink.com';
+				$emailTo = 'production@luxurylink.com';
 			}
 
             if (mail($emailTo, $subject, $body, $headers)) {
@@ -837,9 +837,9 @@ class PackagesController extends AppController {
                 $package = $this->Package->find('first', array('conditions' => array('Package.packageId' => $packageId)));
                 $package['Package']['packageStatusId'] = 6;
                 $this->Package->save($package);
-                $this->Session->setFlash(__('The Package has been submitted for Merchandising approval', true), 'default', array(), 'success');
+                $this->Session->setFlash(__('The Package has been submitted for production approval', true), 'default', array(), 'success');
             } else {
-                $this->Session->setFlash(__('The Package could not be sent to merchandising for approval', true), 'default', array(), 'error');
+                $this->Session->setFlash(__('The Package could not be sent to production for approval', true), 'default', array(), 'error');
             }
 	    }
     }
