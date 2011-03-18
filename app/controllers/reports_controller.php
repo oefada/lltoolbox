@@ -3151,50 +3151,78 @@ class ReportsController extends AppController {
 		# END AUCTIONS CLOSING WITH FUNDED TICKETS
 
 
-
-		# FP Requests and FP Funded
+		# FP Requests
 		// today
-		$sql = $sqlFunctions->sqlFixedPriceRequestAndFunded($siteId, $date, 1);
+		$sql = $sqlFunctions->sqlFixedPriceRequest($siteId, $date, 1);
 		$tmp = $this->Client->query($sql);
-		$sales[5][1] = ROUND($tmp[0]['Requests']['fpRequestCount']);
-		$sales[6][1] = ROUND($tmp[0]['Funded']['fpFundedCount']);
-		$sales[7][1] = ROUND($tmp[0]['Funded']['fpFundedAveragePrice']);
+		$sales[5][1] = ROUND($tmp[0][0]['fpRequestCount']);
 
 		// yesterday
-		$sql = $sqlFunctions->sqlFixedPriceRequestAndFunded($siteId, $yesterday, 1);
+		$sql = $sqlFunctions->sqlFixedPriceRequest($siteId, $yesterday, 1);
 		$tmp = $this->Client->query($sql);
-		$sales[5][2] = ROUND($tmp[0]['Requests']['fpRequestCount']);
-		$sales[6][2] = ROUND($tmp[0]['Funded']['fpFundedCount']);
-		$sales[7][2] = ROUND($tmp[0]['Funded']['fpFundedAveragePrice']);
+		$sales[5][2] = ROUND($tmp[0][0]['fpRequestCount']);
 
 		// 7 days
-		$sql = $sqlFunctions->sqlFixedPriceRequestAndFunded($siteId, $date, 7);
+		$sql = $sqlFunctions->sqlFixedPriceRequest($siteId, $date, 7);
 		$tmp = $this->Client->query($sql);
-		$sales[5][3] = ROUND($tmp[0]['Requests']['fpRequestCount']);
-		$sales[6][3] = ROUND($tmp[0]['Funded']['fpFundedCount']);
-		$sales[7][3] = ROUND($tmp[0]['Funded']['fpFundedAveragePrice']);
+		$sales[5][3] = ROUND($tmp[0][0]['fpRequestCount']);
 
 		// 30 days
-		$sql = $sqlFunctions->sqlFixedPriceRequestAndFunded($siteId, $date, 30);
+		$sql = $sqlFunctions->sqlFixedPriceRequest($siteId, $date, 30);
 		$tmp = $this->Client->query($sql);
-		$sales[5][4] = ROUND($tmp[0]['Requests']['fpRequestCount']);
-		$sales[6][4] = ROUND($tmp[0]['Funded']['fpFundedCount']);
-		$sales[7][4] = ROUND($tmp[0]['Funded']['fpFundedAveragePrice']);
+		$sales[5][4] = ROUND($tmp[0][0]['fpRequestCount']);
 
 		// 90 days
-		$sql = $sqlFunctions->sqlFixedPriceRequestAndFunded($siteId, $date, 90);
+		$sql = $sqlFunctions->sqlFixedPriceRequest($siteId, $date, 90);
 		$tmp = $this->Client->query($sql);
-		$sales[5][5] = ROUND($tmp[0]['Requests']['fpRequestCount']);
-		$sales[6][5] = ROUND($tmp[0]['Funded']['fpFundedCount']);
-		$sales[7][5] = ROUND($tmp[0]['Funded']['fpFundedAveragePrice']);
+		$sales[5][5] = ROUND($tmp[0][0]['fpRequestCount']);
 
 		// 365 days
-		$sql = $sqlFunctions->sqlFixedPriceRequestAndFunded($siteId, $date, 365);
+		$sql = $sqlFunctions->sqlFixedPriceRequest($siteId, $date, 365);
 		$tmp = $this->Client->query($sql);
-		$sales[5][6] = ROUND($tmp[0]['Requests']['fpRequestCount']);
-		$sales[6][6] = ROUND($tmp[0]['Funded']['fpFundedCount']);
-		$sales[7][6] = ROUND($tmp[0]['Funded']['fpFundedAveragePrice']);
-		# END FP Requests and FP Funded
+		$sales[5][6] = ROUND($tmp[0][0]['fpRequestCount']);
+		# END FP Requests
+
+
+		# FP Funded
+		// today
+		$sql = $sqlFunctions->sqlFixedPriceFunded($siteId, $date, 1);
+		$tmp = $this->Client->query($sql);
+		$sales[6][1] = ROUND($tmp[0][0]['fpFundedCount']);
+		$sales[7][1] = ROUND($tmp[0][0]['fpFundedAveragePrice']);
+
+		// yesterday
+		$sql = $sqlFunctions->sqlFixedPriceFunded($siteId, $yesterday, 1);
+		$tmp = $this->Client->query($sql);
+		$sales[6][2] = ROUND($tmp[0][0]['fpFundedCount']);
+		$sales[7][2] = ROUND($tmp[0][0]['fpFundedAveragePrice']);
+
+		// 7 days
+		$sql = $sqlFunctions->sqlFixedPriceFunded($siteId, $date, 7);
+		$tmp = $this->Client->query($sql);
+		$sales[6][3] = ROUND($tmp[0][0]['fpFundedCount']);
+		$sales[7][3] = ROUND($tmp[0][0]['fpFundedAveragePrice']);
+
+		// 30 days
+		$sql = $sqlFunctions->sqlFixedPriceFunded($siteId, $date, 30);
+		$tmp = $this->Client->query($sql);
+		$sales[6][4] = ROUND($tmp[0][0]['fpFundedCount']);
+		$sales[7][4] = ROUND($tmp[0][0]['fpFundedAveragePrice']);
+
+		// 90 days
+		$sql = $sqlFunctions->sqlFixedPriceFunded($siteId, $date, 90);
+		$tmp = $this->Client->query($sql);
+		$sales[6][5] = ROUND($tmp[0][0]['fpFundedCount']);
+		$sales[7][5] = ROUND($tmp[0][0]['fpFundedAveragePrice']);
+
+		// 365 days
+		$sql = $sqlFunctions->sqlFixedPriceFunded($siteId, $date, 365);
+		$tmp = $this->Client->query($sql);
+		$sales[6][6] = ROUND($tmp[0][0]['fpFundedCount']);
+		$sales[7][6] = ROUND($tmp[0][0]['fpFundedAveragePrice']);
+		# END FP Requests
+
+
 
 		# TRAVEL REVENUE [ALEE] CHANGED HOW THIS IS CALCULATED REQUEST BY MCHOE JAN 22-2010
 		$sales[8][1] = ($sales[2][1] * $sales[4][1]) + ($sales[6][1] * $sales[7][1]);
@@ -3457,40 +3485,46 @@ class ReportsController extends AppController {
 class ReportsControllerFunctions {
 
 	function sqlAuctionsClosing($siteId, $date, $days) {
+		$interval = $days - 1;
 		$tableName = ($siteId == 1) ? 'offerLuxuryLink' : 'offerFamily';
 		$sql = "SELECT ROUND(COUNT(*)/$days) as auctionsClosingCount
 				FROM $tableName
-				WHERE endDate BETWEEN '$date' - INTERVAL $days-1 DAY AND '$date' + INTERVAL 1 DAY
+				WHERE endDate BETWEEN '$date' - INTERVAL $interval DAY AND '$date' + INTERVAL 1 DAY
 				AND offerTypeId IN (1,2,6)";
 		return $sql;
 	}
 
 	function sqlAuctionsFunded($siteId, $date, $days) {
+		$interval = $days - 1;
 		$sql = "SELECT COUNT(ticketId)/$days as auctionsFundedCount, AVG(billingPrice) as auctionsFundedAveragePrice
-				FROM ticket AS Ticket
+				FROM ticket
 				WHERE siteId = $siteId
 				AND ticketStatusId NOT IN (7,8,17)
-				AND created BETWEEN '$date' - INTERVAL $days-1 DAY AND '$date' + INTERVAL 1 DAY
+				AND offerTypeId in (1,2,6)
+				AND created BETWEEN '$date' - INTERVAL $interval DAY AND '$date' + INTERVAL 1 DAY
 				AND ticketId IN (SELECT ticketId FROM paymentDetail WHERE isSuccessfulCharge = 1)";
 		return $sql;
 	}
 
-	function sqlFixedPriceRequestAndFunded($siteId, $date, $days) {
-		$sql = "SELECT Requests.*, Funded.fpFundedCount, Funded.fpFundedAveragePrice FROM (
-					SELECT COUNT(ticketId)/$days AS fpRequestCount
+	function sqlFixedPriceRequest($siteId, $date, $days) {
+		$interval = $days - 1;
+		$sql = "SELECT COUNT(ticketId)/$days AS fpRequestCount
 					FROM ticket
 					WHERE offerTypeId IN (3, 4)
 					AND siteId = $siteId
-					AND created BETWEEN '$date' - INTERVAL $days-1 DAY AND '$date' + INTERVAL 1 DAY
-				) Requests,
-					(SELECT COUNT(ticketId)/$days AS fpFundedCount, AVG(billingPrice) as fpFundedAveragePrice
+					AND created BETWEEN '$date' - INTERVAL $interval DAY AND '$date' + INTERVAL 1 DAY";
+		return $sql;
+	}
+
+	function sqlFixedPriceFunded($siteId, $date, $days) {
+		$interval = $days - 1;
+		$sql = "SELECT COUNT(ticketId)/$days AS fpFundedCount, AVG(billingPrice) as fpFundedAveragePrice
 					FROM ticket
 					WHERE offerTypeId IN (3, 4)
 					AND siteId = $siteId
 					AND ticketStatusId NOT IN (7,8,17)
-					AND created BETWEEN '$date' - INTERVAL $days-1 DAY AND '$date' + INTERVAL 1 DAY
-					AND ticketId IN (SELECT ticketId FROM paymentDetail WHERE isSuccessfulCharge = 1)
-				) Funded";
+					AND created BETWEEN '$date' - INTERVAL $interval DAY AND '$date' + INTERVAL 1 DAY
+					AND ticketId IN (SELECT ticketId FROM paymentDetail WHERE isSuccessfulCharge = 1)";
 		return $sql;
 	}
 
