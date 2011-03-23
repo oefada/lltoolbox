@@ -63,7 +63,18 @@ class SchedulingMaster extends AppModel {
                                                     'message' => 'Offer type is a required field.'
                                                     )
 						);
-	
+
+	// mbyrnes
+	// ticket 1628
+	function hasRow($pricePointId,$offerTypeId){
+
+		$q="SELECT * FROM schedulingMaster ";
+		$q.="WHERE pricePointId='$pricePointId' AND offerTypeId='$offerTypeId' ";
+		$q.="AND endDate>NOW() ";
+		$row=$this->query($q);
+		return count($row);
+
+	}
 	function validateDateRanges($data) {
 		$packageStartDate = $this->data['SchedulingMaster']['startDate'];
 		$packageEndDate = $this->data['SchedulingMaster']['endDate'];
