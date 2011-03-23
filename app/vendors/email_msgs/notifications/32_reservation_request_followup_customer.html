@@ -2,14 +2,14 @@
 
 <p>Dear <?=$userFirstName;?> <?=$userLastName;?>,</p>
 
-<p><strong>Thank you for submitting your preferred travel dates!</strong>
-<br/>We're in the process of confirming them with the hotel.</p>
+<div>Thank you for submitting your preferred travel dates!</div>
+<div style="color:#<?=$siteHeader;?>;font-size:16px;margin:0px;padding:0px;margin-top:2px;margin-bottom:30px;font-weight:bold;">We're in the process of confirming them with the hotel.</div>
 
-<div style="padding:10px;background-color:#E0E0CD;margin-top:25px;margin-bottom:25px;">
-			<strong>Your Reservation Request:</strong>
-			<br/>Ticket ID: <?=$ticketId;?>
-			<br/><?=$clientNameP;?>
-			<br/>
+<div style="font-size:14px;">Ticket ID: <?=$ticketId;?></div>
+<div style="padding:10px;background-color:#E0E0CD;margin-top:8px;margin-bottom:25px;">
+
+			<div style="color:#<?=$siteHeader;?>;font-size:16px;font-weight:bold;margin-bottom:2px;"><?=$clientNameP;?></div>
+			<div style="font-size:14px;"><?=$locationDisplay;?></div>
 
 			<?php if ($isAuction) : ?>
 				<table cellspacing="0" cellpadding="5" border="0" style="margin-top:15px;">
@@ -40,11 +40,13 @@
 					<td style="color:#444444;font-size:12px;" valign="top" align="left">Check-in Date: <?php echo $fpArrival;?></td>
 					<td style="color:#444444;font-size:12px;padding-left:15px;" valign="top" align="left">Check-out Date: <?php echo $fpDeparture;?></td>
 				</tr>
+				<?php if (strlen($fpArrival2) > 5) : ?>
 				<tr>
 					<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170"><strong>Alternate Travel Dates:</strong></td>
 					<td style="color:#444444;font-size:12px;" valign="top" align="left">Check-in Date: <?php echo $fpArrival2;?></td>
 					<td style="color:#444444;font-size:12px;padding-left:15px;" valign="top" align="left">Check-out Date: <?php echo $fpDeparture2;?></td>
 				</tr>
+				<?php endif; ?>
 				</table>
 			<?php endif; ?>
 
