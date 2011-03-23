@@ -425,8 +425,11 @@ $linkTitle = 'Edit Blackout Dates';
             $previewHost = 'http://www.luxurylink.com';    
           }
         }
-        
+		
+	
         foreach ($pricePoints as $key => $pricePoint) {
+					$ppid=$pricePoint['PricePoint']['pricePointId'];
+					$otid=$pricePoint['SchedulingMaster'][0]['offerTypeId'];
 					$alt = ($key % 2 == 0) ? 'class="alt"' : '';
 					echo "<tr $alt>
 									<td>{$pricePoint['PricePoint']['name']}</td>
@@ -435,8 +438,8 @@ $linkTitle = 'Edit Blackout Dates';
 									<td>{$pricePoint['PricePoint']['percentRetailBuyNow']}</td>
 				<td>{$pricePoint['PricePoint']['percentReservePrice']}</td>
 									<td>{$pricePoint['PricePoint']['maxNumSales']}</td>
-									<td><a href='{$previewHost}/luxury-hotels/preview.html?clid={$clientId}&oid={$pricePoint['PricePoint']['pricePointId']}&preview=pricepoint' target='_blank'>Preview</a></td>
-									<td><div style='float:left;' qs=\"pricePointId={$pricePoint['PricePoint']['pricePointId']}\" class=\"edit-link\" name=\"$linkName\" title=\"$linkTitle\">Edit</div></td>";
+									<td><a href='{$previewHost}/luxury-hotels/preview.html?clid={$clientId}&oid={$ppid}&preview=pricepoint' target='_blank'>Preview</a></td>
+									<td><div style='float:left;' qs=\"pricePointId={$ppid}&otid=$otid\" class=\"edit-link\" name=\"$linkName\" title=\"$linkTitle\">Edit</div></td>";
 					echo "<td>";
 					echo $html->link('Delete', "/packages/deletePackage/pricepointid/".$pricePoint['PricePoint']['pricePointId']."/clientId/".$clientId."/packageId/".$pricePoint['Package']['packageId'], array(), 'Are you sure?');
 					echo "</td>";
