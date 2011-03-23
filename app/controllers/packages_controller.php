@@ -1995,11 +1995,13 @@ class PackagesController extends AppController {
     }
     
     function edit_price_points($clientId, $packageId) {
+
+
         $package = $this->Package->getPackage($packageId);
         $isMultiClientPackage = (count($package['ClientLoaPackageRel']) > 1) ? true : false;
         
         // saving data
-        if (!empty($this->data)) {
+        if (!empty($this->data)){
             $this->autoRender = false;
 
             // validation
@@ -2010,15 +2012,46 @@ class PackagesController extends AppController {
             if (empty($this->data['loaItemRatePeriodIds'])) {
                 $errors[] = 'You must choose at least one rate period.';
             }
+
             if ($this->data['PricePoint']['retailValue'] <= 0) {
                 $errors[] = 'Retail Value must be greater than 0.';
             }
+
+						$hasAuctionPrice=true;
+						$hasBuyNowPrice=true;
+            if (empty($this->data['PricePoint']['percentRetailAuc']))$hasAuctionPrice=false;
+            if (empty($this->data['PricePoint']['percentRetailBuyNow']))$hasBuyNowPrice=false;
+				
+						// ticket1628
+						// mbyrnes
+						if ($hasAuctionPrice==false && $hasBuyNowPrice==false){
+							$errors[]="Either an auction price OR a buy now price must be entered";	
+						}
+						// If either field is NULL then check to see if there are existing scheduling masters 
+						// for this price point and corresponding offer type ID.  If there are, then prompt 
+						if ($hasAuctionPrice==false || $hasBuyNowPrice==false){
+				
+							$ppid=$this->data['PricePoint']['pricePointId'];
+							if ($hasAuctionPrice==false && $this->Package->SchedulingMaster->hasRow($ppid,1)==false){
+								$msg="You must specify a percent retail amount because ";
+								$msg.="offers have been scheduled for that auction.";
+								$errors[]=$msg;
+							}
+							if ($hasBuyNowPrice==false && $this->Package->SchedulingMaster->hasRow($ppid,4)==false){
+								$msg="You must specify a percent retail amount because ";
+								$msg.="offers have been scheduled for that buy now.";
+								$errors[]=$msg;
+							}
+						}
+						/*
             if (empty($this->data['PricePoint']['percentRetailAuc'])) {
                 $errors[] = 'Auction Price is a required field.';
             }
             if (empty($this->data['PricePoint']['percentRetailBuyNow'])) {
                 $errors[] = 'Buy Now Price is a required field.';
             }
+						*/
+
             if ($package['Package']['isFlexPackage'] == 1) { 
                 if (empty($this->data['PricePoint']['flexRetailPricePerNight']) || $this->data['PricePoint']['flexRetailPricePerNight'] <= 0) {
                     $errors[] = 'Flex Per Night Retail must be greater than 0.';
@@ -2028,7 +2061,7 @@ class PackagesController extends AppController {
                 }
             }
             if (!$isMultiClientPackage) {
-                if ((!$this->data['PricePoint']['percentRetailAuc'] && !$this->data['PricePoint']['percentRetailBuyNow'])
+              if ((!$this->data['PricePoint']['percentRetailAuc'] && !$this->data['PricePoint']['percentRetailBuyNow'])
                     || (!$this->data['auctionOverride'] && $this->data['PricePoint']['percentRetailAuc'] && $this->data['PricePoint']['percentRetailAuc'] < $this->data['guaranteedPercent'])
                     || (!$this->data['buynowOverride'] && $this->data['PricePoint']['percentRetailBuyNow'] && $this->data['PricePoint']['percentRetailBuyNow'] < $this->data['guaranteedPercent'])) {
             
@@ -2080,101 +2113,104 @@ class PackagesController extends AppController {
 				$package['packageId'] = $packageId;
 				$package['overrideValidityDisclaimer'] = 1;
 				$this->Package->save($package);
-			} else {
-	            $this->Package->updatePackagePricePointValidity($packageId);
+			}else {
+	      $this->Package->updatePackagePricePointValidity($packageId);
 			}
             
             echo 'ok';
             
-        // view data
-        } else {
-            
-            // edit state
-            $loaItemRatePeriodIds = array();
-            $pricePointId = isset($this->params['url']['pricePointId']) ? $this->params['url']['pricePointId'] : false;
-            if ($pricePointId) {
-                $pricePoint = $this->Package->PricePoint->find('first', array('conditions' => array('PricePoint.pricePointId' => $pricePointId)));
-                $this->set('pricePoint', $pricePoint['PricePoint']);
-                 
-                $pricePointRatePeriodRels = $this->Package->PricePoint->PricePointRatePeriodRel->find('all', array('conditions' => array('PricePointRatePeriodRel.pricePointId' => $pricePointId), 'fields' => array('PricePointRatePeriodRel.loaItemRatePeriodId')));
-                foreach ($pricePointRatePeriodRels as $pricePointRatePeriodRel) {
-                    $loaItemRatePeriodIds[] = $pricePointRatePeriodRel['PricePointRatePeriodRel']['loaItemRatePeriodId'];
-                }
-			
-				$this->Package->updatePackagePricePointValidity($packageId);
-            }
-            $this->set('loaItemRatePeriodIds', $loaItemRatePeriodIds);
-            
-			//$this->Package->recursive = -1;
-			//$package = $this->Package->read(null, $packageId);
-        
-            $this->set('isMultiClientPackage', $isMultiClientPackage);
-            if (isset($package['Package']['overrideValidityDisclaimer']) && $package['Package']['overrideValidityDisclaimer'] == 1) {
-				$this->set('overrideValidityDisclaimer', 1);
-			} else { 
-				$this->set('overrideValidityDisclaimer', 0);
-			}
-			
-			$vd = isset($pricePoint['PricePoint']['validityDisclaimer']) ? $pricePoint['PricePoint']['validityDisclaimer'] : '';	
-			$this->set('vd', $vd);
+			// view data
+			} else {
+					
+				// edit state
+				$loaItemRatePeriodIds = array();
+				$pricePointId = isset($this->params['url']['pricePointId']) ? $this->params['url']['pricePointId'] : 0;
+				if ($pricePointId) {
+					$pricePoint = $this->Package->PricePoint->find('first', array('conditions' => array('PricePoint.pricePointId' => $pricePointId)));
+					$this->set('pricePoint', $pricePoint['PricePoint']);
+						 
+					$pricePointRatePeriodRels = $this->Package->PricePoint->PricePointRatePeriodRel->find('all', array('conditions' => array('PricePointRatePeriodRel.pricePointId' => $pricePointId), 'fields' => array('PricePointRatePeriodRel.loaItemRatePeriodId')));
+					foreach ($pricePointRatePeriodRels as $pricePointRatePeriodRel) {
+						$loaItemRatePeriodIds[]=$pricePointRatePeriodRel['PricePointRatePeriodRel']['loaItemRatePeriodId'];
+					}
+	
+					$this->Package->updatePackagePricePointValidity($packageId);
+				}
 
-			$this->set('isEdit', $pricePointId);
+				$this->set('loaItemRatePeriodIds', $loaItemRatePeriodIds);
+			
+				$this->set('isMultiClientPackage', $isMultiClientPackage);
+				if (isset($package['Package']['overrideValidityDisclaimer']) && $package['Package']['overrideValidityDisclaimer'] == 1) {
+					$this->set('overrideValidityDisclaimer', 1);
+				} else { 
+					$this->set('overrideValidityDisclaimer', 0);
+				}
+		
+				$vd='';
+				if (isset($pricePoint['PricePoint']['validityDisclaimer'])){
+					$vd=$pricePoint['PricePoint']['validityDisclaimer']; 
+				}
+				$this->set('vd', $vd);
 
-            $ratePeriods = $this->getRatePeriodsInfo($packageId);
-            
-            // disable ratePeriods that have already been used
-            $pricePointRatePeriods = $this->Package->PricePoint->getLoaItemRatePeriod($packageId);
-            foreach ($ratePeriods as $key => $ratePeriod) {
-                foreach ($pricePointRatePeriods as $pricePointRatePeriod) {
-                    if ($ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId'] == $pricePointRatePeriod['PricePointRatePeriodRel']['loaItemRatePeriodId'] && !in_array($pricePointRatePeriod['PricePointRatePeriodRel']['loaItemRatePeriodId'], $loaItemRatePeriodIds)) {
-                        $ratePeriods[$key]['used'] = true;                    
-                    }
-                }
-            }
-            
-            foreach($package['ClientLoaPackageRel'] as &$packageClient) {
-                $packageClient['ExistingInclusions'] = $this->LoaItem->getPackageInclusions($packageId, $packageClient['ClientLoaPackageRel']['loaId']);
-                if ($roomNights = $this->LoaItem->getRoomTypesByPackage($packageId)) {
-                    $roomLabel = array();
-                    foreach($roomNights as $room) {
-                        if ($room['LoaItem']['loaId'] == $packageClient['ClientLoaPackageRel']['loaId']) {
-                            if ($isMultiClientPackage) {
-                                if ($roomNumNights = $this->Package->LoaItemRatePackageRel->getNumNights($room['LoaItem']['loaItemId'], $packageId)) {
-                                    $roomLabel[] = $roomNumNights . ' nights in a ' . $room['LoaItem']['itemName'];
-                                }
-                                else {
-                                    $roomLabel[] = $room['LoaItem']['itemName'];
-                                }
-                            }
-                            else {
-                                $roomLabel[] = $room['LoaItem']['itemName'];
-                            }
-                        }
-                    }
-                    if ($isMultiClientPackage) {
-                        $packageClient['roomLabel'] = implode('<br />', $roomLabel);
-                    }
-                    else {
-                        $packageClient['roomLabel'] = $package['Package']['numNights'].' nights in '.implode(' and ', $roomLabel);
-                    }
-                }
-            }
-            
-            if ($package['Package']['isTaxIncluded'] == 1 && !empty($roomNights[0]['LoaItem']['loaItemId'])) {
-                if ($taxes = $this->LoaItem->Fee->getFeesForRoomType($roomNights[0]['LoaItem']['loaItemId'])) {
-                    $taxArr = array();
-                    foreach ($taxes as $tax) {
-                        $taxArr[] = $tax['Fee']['feeName'];
-                    }
-                    $this->set('taxLabel', implode(' and ', $taxArr));
-                }
-            }
-           
-            $this->set('ratePeriods', $ratePeriods);            
-			$this->set('clientId', $clientId);
-			$this->set('packageId', $packageId);
-            $this->set('package', $package);
-        }
+				$this->set('isEdit', $pricePointId);
+
+				$ratePeriods = $this->getRatePeriodsInfo($packageId);
+					
+				// disable ratePeriods that have already been used
+				$pricePointRatePeriods = $this->Package->PricePoint->getLoaItemRatePeriod($packageId);
+				foreach ($ratePeriods as $key => $ratePeriod) {
+					foreach ($pricePointRatePeriods as $pricePointRatePeriod) {
+						if ($ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId'] == $pricePointRatePeriod['PricePointRatePeriodRel']['loaItemRatePeriodId'] && !in_array($pricePointRatePeriod['PricePointRatePeriodRel']['loaItemRatePeriodId'], $loaItemRatePeriodIds)) {
+							$ratePeriods[$key]['used'] = true;                    
+						}
+					}
+				}
+					
+				foreach($package['ClientLoaPackageRel'] as &$packageClient) {
+					$loaId=$packageClient['ClientLoaPackageRel']['loaId'];
+					$packageClient['ExistingInclusions'] = $this->LoaItem->getPackageInclusions($packageId, $loaId);
+					if ($roomNights = $this->LoaItem->getRoomTypesByPackage($packageId)) {
+						$roomLabel = array();
+						foreach($roomNights as $room) {
+							if ($room['LoaItem']['loaId'] == $packageClient['ClientLoaPackageRel']['loaId']) {
+								if ($isMultiClientPackage) {
+									$loaItemId=$room['LoaItem']['loaItemId'];
+									if ($roomNumNights=$this->Package->LoaItemRatePackageRel->getNumNights($loaItemId,$packageId)){
+										$roomLabel[] = $roomNumNights . ' nights in a ' . $room['LoaItem']['itemName'];
+									}else {
+										$roomLabel[] = $room['LoaItem']['itemName'];
+									}
+								}else {
+									$roomLabel[] = $room['LoaItem']['itemName'];
+								}
+							}
+						}
+						if ($isMultiClientPackage) {
+							$packageClient['roomLabel'] = implode('<br />', $roomLabel);
+						}else {
+							$numNights=$package['Package']['numNights'];
+							$packageClient['roomLabel']=$numNights.' nights in '.implode(' and ',$roomLabel);
+						}
+					}
+				}
+					
+				if ($package['Package']['isTaxIncluded'] == 1 && !empty($roomNights[0]['LoaItem']['loaItemId'])) {
+					if ($taxes = $this->LoaItem->Fee->getFeesForRoomType($roomNights[0]['LoaItem']['loaItemId'])) {
+						$taxArr = array();
+						foreach ($taxes as $tax) {
+							$taxArr[] = $tax['Fee']['feeName'];
+						}
+						$this->set('taxLabel', implode(' and ', $taxArr));
+					}
+				}
+				 
+				$this->set('ratePeriods', $ratePeriods);            
+				$this->set('clientId', $clientId);
+				$this->set('packageId', $packageId);
+				$this->set('package', $package);
+
+			}//end else for view data
+
     }
 	
 	function ajaxGetPricePointValidityDisclaimer($clientId, $packageId) {
