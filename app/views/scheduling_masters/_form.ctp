@@ -3,10 +3,11 @@
 // ADD
 /*************************************************************************************************/
 
-if ($masterState != 1) {
+if (!isset($masterState) || $masterState != 1) {
     
     echo $form->input('packageId', array('value' => $packageId, 'type' => 'hidden'));
-            
+
+
     ?>
 
     <link href="/css/scheduling-master.css" type="text/css" rel="stylesheet" />
@@ -32,8 +33,13 @@ if ($masterState != 1) {
 				<?php endif; ?>
 			</tr>
 		<?php
-    foreach ($pricePoints as $key => $pricePoint):  
-      $checked = ($data['SchedulingMaster']['pricePointId'] == $pricePoint['PricePoint']['pricePointId']) ? 'checked' : ''; ?>
+
+    foreach ($pricePoints as $key => $pricePoint){
+			$data_ppid=0;
+			if (isset($data['SchedulingMaster']['pricePointId'])){
+				$data_ppid=$data['SchedulingMaster']['pricePointId'];
+			}
+      $checked = ($data_ppid== $pricePoint['PricePoint']['pricePointId']) ? 'checked' : ''; ?>
       <tr>
       <td>
       <input type="checkbox" class="price-point-options" id="price-point-<?php echo $pricePoint['PricePoint']['pricePointId']; ?>" name="data[SchedulingMaster][pricePointId][<?=$key?>]" value="<?php echo $pricePoint['PricePoint']['pricePointId']; ?>" <?php echo $checked; ?>/>
@@ -42,8 +48,15 @@ if ($masterState != 1) {
       <td style='font-size:11px;'><?php echo $pricePoint[0]['dateRanges']; ?></td>
 			<td><?php echo $pricePoint['PricePoint']['maxNumSales']; ?></td>
 			<td><?php echo $pricePoint['PricePoint']['retailValue']; ?></td>
-			<td><?php echo $pricePoint['PricePoint']['percentRetailAuc']; ?></td>
-			<td><?php echo $pricePoint['PricePoint']['percentRetailBuyNow']; ?></td>
+				
+			<td>
+				<?php echo $pricePoint['PricePoint']['percentRetailAuc']; ?>
+				<input type='hidden' name='auction_arr[<?=$pricePoint['PricePoint']['pricePointId'];?>]' value='<?=$pricePoint['PricePoint']['percentRetailAuc'];?>'>
+			</td>
+			<td>
+				<?php echo $pricePoint['PricePoint']['percentRetailBuyNow']; ?>
+				<input type='hidden' name='buynow_arr[<?=$pricePoint['PricePoint']['pricePointId'];?>]' value='<?=$pricePoint['PricePoint']['percentRetailBuyNow'];?>'>
+			</td>
 			<?php if ($package['Package']['isFlexPackage']): ?>
 				<td><?php echo $pricePoint['PricePoint']['flexRetailPricePerNight']; ?></td>
 				<td><?php echo $pricePoint['PricePoint']['pricePerExtraNight']; ?>
@@ -51,7 +64,7 @@ if ($masterState != 1) {
 				</td>
 			<?php endif; ?>
 			</tr>
-      <?php endforeach; ?>
+      <?php } ?>
     </table>
   <?php endif; ?>
         <!-- TRACK SELECTION (MULTICLIENT PACKAGES ONLY) -->
@@ -87,8 +100,8 @@ if ($masterState != 1) {
                         $isAuctionChecked = ($data['isAuction']) ? 'checked' : '';
                         $isBuyNowChecked = ($data['isBuyNow']) ? 'checked' : '';
                     ?>                        
-                        <input id="isAuction" type="checkbox" name="data[isAuction]" <?php echo $isAuctionChecked; ?>/> <label for="isAuction">Auction</label><br /><br />
-                        <input id="isBuyNow" type="checkbox" name="data[isBuyNow]" <?php echo $isBuyNowChecked; ?>/> <label for="isBuyNow">Buy Now</label>
+                    <input value='<?=$pricePoint['PricePoint']['pricePointId'];?>' id="isAuction" type="checkbox" name="data[isAuction]" <?php echo $isAuctionChecked; ?>/> <label for="isAuction">Auction</label><br /><br />
+                    <input value='<?=$pricePoint['PricePoint']['pricePointId'];?>' id="isBuyNow" type="checkbox" name="data[isBuyNow]" <?php echo $isBuyNowChecked; ?>/> <label for="isBuyNow">Buy Now</label>
                     <?php
                         } else {
                             echo 'Hotel Offer';
@@ -193,7 +206,6 @@ if ($masterState != 1) {
 
     </div> <!-- END #schedulingmaster-add -->
     
-
 
     <!-- JS -->    
     <script>
