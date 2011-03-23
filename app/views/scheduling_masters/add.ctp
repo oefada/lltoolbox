@@ -44,14 +44,20 @@ ul.subsection_tabs li.tab a.active {
 </style>
 <?php
 
-echo $ajax->form('add', 'post', array('url' => "/scheduling_masters/add/packageId:{$packageId}", 'update' => 'MB_content', 'model' => 'SchedulingMaster', 'complete' => 'Modalbox.activate(); closeModalbox()', 'before' => 'Modalbox.deactivate();', 'indicator' => 'spinner'));?>
+echo $ajax->form('add', 'post', array('url' => "/scheduling_masters/add/packageId:{$packageId}", 'update' => 'MB_content', 'model' => 'SchedulingMaster', 'complete' => 'Modalbox.activate(); closeModalbox()', 'before' => 'Modalbox.deactivate();', 'indicator' => 'spinner','id'=>"form_$packageId"));?>
 <ul id="tabs_example_one" class="subsection_tabs">
 	<li class="tab"><a class="active" href="#one">Setup</a></li>
 	<li class="tab"><a class="" href="#two">Merchandising</a></li>
 	<?php
 	//only hide the mystery setup if the mystery flag is not set
 	$style = ' style="display: none"';
-	if (in_array(3, $this->data['MerchandisingFlag']['MerchandisingFlag'])) {
+	if (isset($this->data['MerchandisingFlag']['MerchandisingFlag'])){
+		$arr=$this->data['MerchandisingFlag']['MerchandisingFlag'];
+	}else{
+		$arr=array();
+	}
+
+	if (in_array(3,$arr)) {
 			$style = '';
 	}
 	?>
@@ -59,8 +65,8 @@ echo $ajax->form('add', 'post', array('url' => "/scheduling_masters/add/packageI
 	<?php
 	//only hide the mystery setup if the mystery flag is not set
 	$style = ' style="display: none"';
-	if (in_array(1, $this->data['MerchandisingFlag']['MerchandisingFlag'])) {
-			$style = '';
+	if (in_array(1, $arr)) {
+		$style = '';
 	}
 	?>
 	<li class="tab" id='previewTab'<?=$style?>><a class="" href="#four">Preview Setup</a></li>
