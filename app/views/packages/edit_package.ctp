@@ -61,8 +61,8 @@
                     Setup
                     <input type="hidden" name="data[Package][packageStatusId]" value="<?php echo $package['Package']['packageStatusId']; ?>" />
                 <?php else: ?>
-                    <?php echo (in_array('production', $userDetails['groups']) || in_array('Geeks', $userDetails['groups'])) ? '' : '<input type="hidden" name="data[Package][packageStatusId]" value="'.$package['Package']['packageStatusId'].'" />'; ?>
-                    <select id="status" name="data[Package][packageStatusId]" <?php echo (in_array('production', $userDetails['groups']) ||  in_array('Geeks', $userDetails['groups'])) ? '' : 'disabled'; ?>>
+                    <?php echo (in_array('Production', $userDetails['groups']) || in_array('Geeks', $userDetails['groups'])) ? '' : '<input type="hidden" name="data[Package][packageStatusId]" value="'.$package['Package']['packageStatusId'].'" />'; ?>
+                    <select id="status" name="data[Package][packageStatusId]" <?php echo (in_array('Production', $userDetails['groups']) ||  in_array('Geeks', $userDetails['groups'])) ? '' : 'disabled'; ?>>
                       <?php foreach ($statuses as $status): ?>
                                 <?php $selected = ($package['Package']['packageStatusId'] == $status['PackageStatus']['packageStatusId']) ? ' selected' : ''; ?>
                                 <option value="<?php echo $status['PackageStatus']['packageStatusId']; ?>"<?php echo $selected; ?>><?php echo $status['PackageStatus']['packageStatusName']; ?></option>
