@@ -3,6 +3,7 @@ class ReportsController extends AppController {
 	var $name = 'Reports';
 	var $uses = array('OfferType');
 	var $helpers = array('Pagination');
+	var $components = array('CarDataImporter');
 	//TODO: Add sorting, speed up the sql by adding indexes or a loading splash page, double check accuracy of data
 
 	var $page;
@@ -3479,6 +3480,226 @@ class ReportsController extends AppController {
 	#### END Inventory Management ####
 	}
 
+
+
+
+
+
+	function car_new() {
+	    if (!empty($this->data) || !empty($this->params['named']['clientId'])) {
+
+	        $clientId = (!empty($this->params['named']['clientId'])) ? $this->params['named']['clientId'] : $this->data['Client']['clientName_id'];
+			$versionArray = ($this->data['Client']['site'] == 'combined') ? array('luxurylink', 'family') : array($this->data['Client']['site']);
+
+	        // 03/22/11 jw - put the entire process in a loop so it can be run for multiple sites if necessary
+			foreach ($versionArray as $version) {
+
+				$tableConsolidatedView = ($version == 'family') ? 'carConsolidatedViewFg' : 'carConsolidatedView';
+				$stats = $this->OfferType->query("SELECT DATE_FORMAT(activityStart, '%Y%m' ) as yearMonth,
+															phone, webRefer, productView, searchView, destinationView, email, event12
+													FROM reporting.$tableConsolidatedView AS rs
+													WHERE CURDATE() - INTERVAL 14 MONTH <= activityStart
+													AND rs.clientId = '$clientId'
+													ORDER BY activityStart ");
+
+				$tableAuctionSold = ($version == 'family') ? 'carAuctionSoldFg' : 'carAuctionSold';
+				$auctions = $this->OfferType->query("SELECT DATE_FORMAT(auc.firstTicketDate, '%Y%m' ) as yearMonth, tickets as aucTickets, revenue as aucRevenue, roomNights as aucNights
+														FROM reporting.$tableAuctionSold AS auc
+														WHERE CURDATE() - INTERVAL 14 MONTH <= firstTicketDate
+														AND auc.clientid = '$clientId'
+														ORDER BY firstTicketDate ");
+
+				$tableFixedPriceSold = ($version == 'family') ? 'carFixedPriceSoldFg' : 'carFixedPriceSold';
+				$fixedprice = $this->OfferType->query("SELECT DATE_FORMAT(fp.firstTicketDate, '%Y%m' ) as yearMonth, tickets as fpTickets, revenue as fpRevenue, roomNights as fpNights
+														FROM reporting.$tableFixedPriceSold AS fp
+														WHERE CURDATE() - INTERVAL 14 MONTH <= firstTicketDate
+														AND fp.clientid = '$clientId'
+														ORDER BY firstTicketDate ");
+
+				$tableAuction = ($version == 'family') ? 'carAuctionFg' : 'carAuction';
+				$auctionsTotal = $this->OfferType->query("SELECT DATE_FORMAT(auc.minStartDate, '%Y%m' ) as yearMonth, numberAuctions
+														FROM reporting.$tableAuction AS auc
+														WHERE CURDATE() - INTERVAL 14 MONTH <= minStartDate
+														AND auc.clientid = '$clientId'
+														ORDER BY minStartDate ");
+
+				$tableFixedPricePackage = ($version == 'family') ? 'carFixedPricePackageFg' : 'carFixedPricePackage';
+				$fixedpriceTotal = $this->OfferType->query("SELECT DATE_FORMAT(fp.lastUpdate, '%Y%m' ) as yearMonth, numberPackages
+														FROM reporting.$tableFixedPricePackage AS fp
+														WHERE CURDATE() - INTERVAL 14 MONTH <= lastUpdate
+														AND fp.clientid = '$clientId'
+														ORDER BY lastUpdate ");
+
+				$tableHotelOffer = ($version == 'family') ? 'carHotelOfferFg' : 'carHotelOffer';
+				$hotelOfferTotal = $this->OfferType->query("SELECT DATE_FORMAT(ho.snapShotDate, '%Y%m' ) as yearMonth, numberOffers
+														FROM reporting.$tableHotelOffer AS ho
+														WHERE CURDATE() - INTERVAL 14 MONTH <= snapShotDate
+														AND ho.clientid = '$clientId'
+														ORDER BY snapShotDate ");
+
+				//setup array of all months we are using in this view
+	            //03/22/11 jw - removed 13th month back / added current month
+				$today = strtotime(date('Y-m-01'));
+				for ($i = 0; $i <= 12; $i++) {
+					$ts = strtotime("-".(12-($i))." months", $today);
+
+					$months[$i] = date('Ym', $ts);
+					if ($i == 12) {
+						$monthNames[$i] = 'Current Month';
+					} else {
+						$monthNames[$i] = date('M Y', $ts);
+					}
+				}
+
+
+				//03/22/11 jw - initialize arrays in case we loop
+				$auctionsKeyed = array();
+				$fpKeyed = array();
+				$aucTotKeyed = array();
+				$fpTotKeyed = array();
+				$hotelOfferKeyed = array();
+				$keyedStats = array();
+
+				foreach($auctions as $k => $v):
+					$auctionsKeyed[$v[0]['yearMonth']] = $v['auc'];     //set the key for each to the year and month so we can iterate through it easily
+				endforeach;
+
+				foreach($fixedprice as $k => $v):
+					$fpKeyed[$v[0]['yearMonth']] = $v['fp'];           //set the key for each to the year and month so we can iterate through it easily
+				endforeach;
+
+				foreach($auctionsTotal as $k => $v):
+					$aucTotKeyed[$v[0]['yearMonth']] = $v['auc'];           //set the key for each to the year and month so we can iterate through it easily
+				endforeach;
+
+				foreach($fixedpriceTotal as $k => $v):
+					$fpTotKeyed[$v[0]['yearMonth']] = $v['fp'];           //set the key for each to the year and month so we can iterate through it easily
+				endforeach;
+
+				foreach($hotelOfferTotal as $k => $v):
+					$hotelOfferKeyed[$v[0]['yearMonth']] = $v['ho'];           //set the key for each to the year and month so we can iterate through it easily
+				endforeach;
+
+				//sum the totals for the last 12 months and put everything in an array we can easily reference later
+				foreach($stats as $k => $v):
+					$keyedStats[$v[0]['yearMonth']] = array_merge($v['rs'], $v[0]);           //set the key for each to the year and month so we can iterate through it easily
+				endforeach;
+
+				$totals['phone'] = 0;
+				$totals['webRefer'] = 0;
+				$totals['productView'] = 0;
+				$totals['searchView'] = 0;
+				$totals['destinationView'] = 0;
+				$totals['email'] = 0;
+				$totals['event12'] = 0;
+				$totals['aucTickets'] = 0;
+				$totals['aucRevenue'] = 0;
+				$totals['aucNights'] = 0;
+				$totals['fpTickets'] = 0;
+				$totals['fpRevenue'] = 0;
+				$totals['fpNights'] = 0;
+				$totals['aucTotals'] = 0;
+				$totals['fpTotals'] = 0;
+				$totals['hotelOfferTotal'] = 0;
+
+				foreach ($months as $k => $month):
+					$keyedResults[$month] = array_merge((array)@$keyedStats[$month],
+													(array)@$auctionsKeyed[$month],
+													(array)@$fpKeyed[$month],
+													(array)@$aucTotKeyed[$month],
+													(array)@$fpTotKeyed[$month],
+													(array)@$hotelOfferKeyed[$month]
+													);
+
+					//only count the last 12 months in the totals
+					//03/22/11 jw - switched k check from 0 to 12 to account adding current month / removing 13 months back
+					if ($k == 12) {
+						continue;
+					}
+					$totals['phone'] += @$keyedResults[$month]['phone'];
+					$totals['webRefer'] += @$keyedResults[$month]['webRefer'];
+					$totals['productView'] += @$keyedResults[$month]['productView'];
+					$totals['searchView'] += @$keyedResults[$month]['searchView'];
+					$totals['destinationView'] += @$keyedResults[$month]['destinationView'];
+					$totals['email'] += @$keyedResults[$month]['email'];
+					$totals['event12'] += @$keyedResults[$month]['event12'];
+					$totals['aucTickets'] += @$keyedResults[$month]['aucTickets'];
+					$totals['aucRevenue'] += @$keyedResults[$month]['aucRevenue'];
+					$totals['aucNights'] += @$keyedResults[$month]['aucNights'];
+					$totals['fpTickets'] += @$keyedResults[$month]['fpTickets'];
+					$totals['fpRevenue'] += @$keyedResults[$month]['fpRevenue'];
+					$totals['fpNights'] += @$keyedResults[$month]['fpNights'];
+					$totals['aucTotals'] += @$keyedResults[$month]['numberAuctions'];
+					$totals['fpTotals'] += @$keyedResults[$month]['numberPackages'];
+					$totals['hotelOfferTotal'] += @$keyedResults[$month]['numberOffers'];
+				endforeach;
+
+				$results = $keyedResults;
+
+				$versionResults[] = $results;
+				$versionTotals[] = $totals;
+			}
+
+			//03/22/11 jw - do we need to combine data?
+			if (sizeof($versionResults) > 1) {
+
+				$sumResults = array();
+				foreach ($versionResults as $k=>$subArray) {
+					foreach ($months as $kMonth => $month) {
+						if(!isset($sumResults[$month])) { $sumResults[$month] = array(); }
+						foreach ($subArray[$month] as $id=>$value) {
+							if(!isset($sumResults[$month][$id])) { $sumResults[$month][$id] = 0; }
+							$sumResults[$month][$id]+=$value;
+						}
+					}
+				}
+				$results = $sumResults;
+
+				$sumTotals = array();
+				foreach ($versionTotals as $k=>$subArray) {
+					foreach ($subArray as $id=>$value) {
+						if(!isset($sumTotals[$id])) { $sumTotals[$id] = 0; }
+						$sumTotals[$id]+=$value;
+					}
+				}
+				$totals = $sumTotals;
+
+			}
+			// end combining data
+
+            $client = new Client;
+            $client->recursive = -1;
+            $clientDetails = $client->read(null, $clientId);
+
+            $client->Loa->recursive = -1;
+            $loa = $client->Loa->find('first', array('conditions' => array('Loa.clientId' => $client->id)));
+
+            $clientDetails['Loa'] = $loa['Loa'];
+
+            $this->set(compact('results', 'totals', 'months', 'monthNames', 'clients', 'clientDetails'));
+	    }
+	}
+
+	function car_import() {
+		$action = isset($this->params['url']['|GO|']) ? $this->params['url']['|GO|'] : '';
+		if ($action == 'download') {
+			$this->CarDataImporter->downloadNewFiles();
+		}
+		if ($action == 'import') {
+			$this->CarDataImporter->importPendingFiles();
+		}
+		$pending = $this->CarDataImporter->getPendingInfo();
+		$pendingFiles = array();
+		foreach ($pending['files'] as $fn) {
+		    if (strlen($fn) > 10) {
+		        $pendingFiles[] = $fn;
+		    }
+		}
+
+		$this->set('pendingFiles', $pendingFiles);
+		$this->set('pendingRecords', $pending['pendingRecords']);
+		$this->set('messages', $this->CarDataImporter->getMessages());
+	}
 }
 
 
@@ -3527,7 +3748,6 @@ class ReportsControllerFunctions {
 					AND ticketId IN (SELECT ticketId FROM paymentDetail WHERE isSuccessfulCharge = 1)";
 		return $sql;
 	}
-
 }
 
 ?>
