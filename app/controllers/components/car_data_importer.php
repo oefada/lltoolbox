@@ -2,7 +2,7 @@
 
 
 class CarDataImporterComponent extends Object {
-    private $localdir = '/home/jwoods/toolbox-datafeed/';
+    private $localdir = '/var/www/data/client-activity-report/';
     private $fileDownloadDaysBack = 10;
     private $conn;
     private $feedTypes = array('clientid47', 'destinationlist21', 'homelist49', 'searchlist50');
@@ -14,12 +14,6 @@ class CarDataImporterComponent extends Object {
     function startup(&$controller) {
         $db = ConnectionManager::getInstance();
         $this->conn = $db->getDataSource('default');
-
-        if ($_SERVER['ENV'] == 'staging') {
-            $localdir = '/home/fill-this-in/';
-        } elseif ($_SERVER['ENV'] == '') {
-            $localdir = '/home/fill-this-in/';
-        }
     }
 
     // -------------------------
@@ -43,9 +37,7 @@ class CarDataImporterComponent extends Object {
 			}
 
         }
-
         $this->addMessage($count . ' files processed');
-
     }
 
     public function downloadNewFiles() {
