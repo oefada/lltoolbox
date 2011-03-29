@@ -3481,10 +3481,6 @@ class ReportsController extends AppController {
 	}
 
 
-
-
-
-
 	function car_new() {
 	    if (!empty($this->data) || !empty($this->params['named']['clientId'])) {
 
@@ -3495,12 +3491,12 @@ class ReportsController extends AppController {
 			foreach ($versionArray as $version) {
 
 				$tableConsolidatedView = ($version == 'family') ? 'carConsolidatedViewFg' : 'carConsolidatedView';
-				$stats = $this->OfferType->query("SELECT DATE_FORMAT(activityStart, '%Y%m' ) as yearMonth,
+				$stats = $this->OfferType->query("SELECT DATE_FORMAT(CONCAT(year2,'-',month2,'-1'), '%Y%m' ) as yearMonth,
 															phone, webRefer, productView, searchView, destinationView, email, event12
 													FROM reporting.$tableConsolidatedView AS rs
-													WHERE CURDATE() - INTERVAL 14 MONTH <= activityStart
+													WHERE CURDATE() - INTERVAL 14 MONTH <= DATE_FORMAT(CONCAT(year2,'-',month2,'-1'), '%Y-%m-%d')
 													AND rs.clientId = '$clientId'
-													ORDER BY activityStart ");
+													ORDER BY DATE_FORMAT(CONCAT(year2,'-',month2,'-1'), '%Y-%m-%d') ");
 
 				$tableAuctionSold = ($version == 'family') ? 'carAuctionSoldFg' : 'carAuctionSold';
 				$auctions = $this->OfferType->query("SELECT DATE_FORMAT(auc.firstTicketDate, '%Y%m' ) as yearMonth, tickets as aucTickets, revenue as aucRevenue, roomNights as aucNights
