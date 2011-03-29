@@ -2017,6 +2017,9 @@ class PackagesController extends AppController {
                 $errors[] = 'Retail Value must be greater than 0.';
             }
 
+						$isNew=true;
+						if (isset($this->data['pricePoint']['pricePointId']))$isNew=false;
+
 						$hasAuctionPrice=true;
 						$hasBuyNowPrice=true;
             if (empty($this->data['PricePoint']['percentRetailAuc']))$hasAuctionPrice=false;
@@ -2029,7 +2032,7 @@ class PackagesController extends AppController {
 						}
 						// If either field is NULL then check to see if there are existing scheduling masters 
 						// for this price point and corresponding offer type ID.  If there are, then prompt 
-						if ($hasAuctionPrice==false || $hasBuyNowPrice==false){
+						if ($isNew==false && ($hasAuctionPrice==false || $hasBuyNowPrice==false)){
 				
 							$ppid=$this->data['PricePoint']['pricePointId'];
 							if ($hasAuctionPrice==false && $this->Package->SchedulingMaster->hasRow($ppid,1)==false){
@@ -2214,9 +2217,11 @@ class PackagesController extends AppController {
     }
 	
 	function ajaxGetPricePointValidityDisclaimer($clientId, $packageId) {
-        $this->autoRender = false;
+
+    $this->autoRender = false;
 		$this->layout = false;
-		$loaItemRatePeriodIds = $_GET['ids'];
+		$loaItemRatePeriodIds = $this->params['url']['ids'];
+		//$loaItemRatePeriodIds = $_GET['ids'];
 		if (!$loaItemRatePeriodIds) {
 			die();
 		}
