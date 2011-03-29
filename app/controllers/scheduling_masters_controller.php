@@ -25,7 +25,7 @@ class SchedulingMastersController extends AppController {
 	  $packageId 		= $this->params['named']['packageId'];
 		$package 			= $this->SchedulingMaster->Package->findByPackageId($packageId);
 		$clientId     = $this->params['named']['clientId'];
-			    
+
 		if (isset($this->data) && !empty($this->data)){
 
 			//echo "<pre>"; print_r($this->params); exit;
@@ -39,7 +39,7 @@ class SchedulingMastersController extends AppController {
 				foreach ($this->params['form']['auction_arr'] as $key=>$val){
 					$val=(int)$val;
 					if ($val==0){
-						$err_msg.="You've declared $key an auction, but auction retail value is $val.<br>";
+						$err_msg.="You've chosen to schedule an auction, but the Auction Retail value is 0.<br>";
 					}	
 				}
 
@@ -49,7 +49,7 @@ class SchedulingMastersController extends AppController {
 				foreach ($this->params['form']['buynow_arr'] as $key=>$val){
 					$val=(int)$val;
 					if ($val==0){
-						$err_msg.="You've declared $key a buynow, but buynow retail value is $val.<br>";
+						$err_msg.="You've chosen to schedule a buynow, but buynow retail value is 0.<br>";
 					}	
 				}
 			}
