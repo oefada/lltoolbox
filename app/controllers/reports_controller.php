@@ -51,6 +51,7 @@ class ReportsController extends AppController {
         //None of these reports need absolutely fresh data, so perform all queries during this session in
         //no lock mode, to improve performance and not lock tables
         $this->OfferType->query('SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;');
+
 	}
 
 	function index() {
@@ -3682,18 +3683,14 @@ class ReportsController extends AppController {
 			$this->CarDataImporter->downloadNewFiles();
 		}
 		if ($action == 'import') {
+		    if (isset($this->params['url']['del'])) {
+		        $this->CarDataImporter->setDeleteSkippedFlag();
+		    }
 			$this->CarDataImporter->importPendingFiles();
 		}
 		$pending = $this->CarDataImporter->getPendingInfo();
-		$pendingFiles = array();
-		foreach ($pending['files'] as $fn) {
-		    if (strlen($fn) > 10) {
-		        $pendingFiles[] = $fn;
-		    }
-		}
-
-		$this->set('pendingFiles', $pendingFiles);
-		$this->set('pendingRecords', $pending['pendingRecords']);
+		$this->set('pendingFileCount', $pending['pendingFileCount']);
+		$this->set('pendingRecordCount', $pending['pendingRecordCount']);
 		$this->set('messages', $this->CarDataImporter->getMessages());
 	}
 }

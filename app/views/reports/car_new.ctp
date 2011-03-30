@@ -13,10 +13,46 @@ td {
 	text-align: right;
 }
 </style>
-<div class='advancedSearch' style="width: 900px">
-	<?php echo $form->create('Client', array('url' => '/reports/car_new'))?>
+<div class='advancedSearch' style="width: 900px; position:relative;">
+
+
+
+
+<script type="text/javascript">
+
+Event.observe(window, 'load', function() { 
+	$('download-csv-link').observe('click', csvClick);
+	$('ClientSite').observe('change', dropdownChange);
+
+	function csvClick(event) {
+		var form = $('formCAR');
+		var csv = form['downloadCsv'];
+		$(csv).value = 1;
+		$(form).submit();
+		$(csv).value = 0;
+	}
+
+	function dropdownChange(event) {
+		var form = $('formCAR');
+		var name = form['ClientName'];
+		if ($(name).getValue() != '') {
+			$(form).submit();
+		}
+	}
+});
+</script>
+
+
+<?php echo $form->create('Client', array('url' => '/reports/car_new', 'id' => 'formCAR'))?>
+
 <fieldset>
 <h3 class='title'>GENERATE CLIENT ACTIVITY REPORT BY:</h3>
+
+
+<div style="position:absolute; bottom:10px; right:25px;">
+<a id="download-csv-link" href="javascript:void(0)">Download as CSV</a>
+<input type="hidden" name="data[download][csv]" id="downloadCsv" value="0" />
+</div>
 
 <div class="fieldRow">
 	<div style="float: left; clear: none;">
@@ -46,9 +82,8 @@ td {
 </div>
 <?php endif; ?>
 </fieldset>
-<div class="controlset fieldRow">
-	<?php echo $form->checkbox('download.csv');
-			echo $form->label('download.csv', 'Download as CSV');?></div>
+
+<div>&nbsp;</div>
 <?php echo $form->submit('Search') ?>
 </div>
 

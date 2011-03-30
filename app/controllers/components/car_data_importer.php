@@ -3,10 +3,11 @@
 
 class CarDataImporterComponent extends Object {
     private $localdir = '/var/www/data/client-activity-report/';
-    private $fileDownloadDaysBack = 10;
+    private $fileDownloadDaysBack = 35;
     private $conn;
     private $feedTypes = array('clientid47', 'destinationlist21', 'homelist49', 'searchlist50');
     private $echoMessages = false;
+    private $deleteSkippedFiles = false;
 
     private $messages = array();
     private $errors = array();
@@ -79,15 +80,23 @@ class CarDataImporterComponent extends Object {
     }
 
     public function getPendingInfo() {
-		$files = scandir($this->localdir);
-		$pendingRecords = $this->pendingRecords();
-		return array('files'=>$files, 'pendingRecords'=>$pendingRecords);
+        $files = scandir($this->localdir);
+		$pendingFileCount = 0;
+		foreach ($files as $fn) {
+		    if (strlen($fn) > 10) {
+		        $pendingFileCount++;
+		    }
+		}
+		return array('pendingFileCount'=>$pendingFileCount, 'pendingRecordCount'=>$this->pendingRecordCount());
     }
 
     public function getMessages() {
         return $this->messages;
     }
 
+    public function setDeleteSkippedFlag() {
+        $this->deleteSkippedFiles = true;
+    }
 
 
 
@@ -101,13 +110,19 @@ class CarDataImporterComponent extends Object {
         $results = $this->conn->query("SELECT COUNT(*) AS nbr FROM " . $tablename . " WHERE reportingDate = '" . $feedinfo['date'] . "'");
         $nbr = $results[0][0]['nbr'];
 
+        $localfile = $this->localdir . $feedinfo['filename'];
+
         if ($nbr > 0) {
             $this->addMessage('skipping file : ' . $feedinfo['carDataFileId'] . ' : ' . $feedinfo['filename'] . ' : '  . $nbr . ' records found');
+            if ($this->deleteSkippedFiles) {
+                unlink($localfile);
+                $this->conn->query("UPDATE reporting.carDataFile SET imported = 9 WHERE filename = '" . $feedinfo['filename'] . "'");
+                $this->addMessage('file removed : ' . $feedinfo['carDataFileId'] . ' : ' . $feedinfo['filename']);
+            }
             return false;
         }
 
         // 2.  file to array
-        $localfile = $this->localdir . $feedinfo['filename'];
         $lines = array();
         if (!file_exists($localfile)) {
             $this->addMessage('skipping file : ' . $feedinfo['carDataFileId'] . ' : ' . $feedinfo['filename'] . ' : file not found');
@@ -222,6 +237,11 @@ class CarDataImporterComponent extends Object {
 
     private function pendingRecords() {
         return $this->conn->query("SELECT * FROM reporting.carDataFile WHERE imported = 0");
+    }
+
+    private function pendingRecordCount() {
+        $result = $this->conn->query("SELECT COUNT(*) as nbr FROM reporting.carDataFile WHERE imported = 0");
+        return $result[0][0]['nbr'];
     }
 
     private function isFileDownloaded($filename) {
