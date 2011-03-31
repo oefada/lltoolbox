@@ -3,7 +3,7 @@ class SchedulingMastersController extends AppController {
 
 	var $name = 'SchedulingMasters';
 	var $helpers = array('Html', 'Form');
-	var $uses       = array('SchedulingMaster', 'OfferLuxuryLink', 'Loa', 'OfferFamily');
+	var $uses = array('SchedulingMaster', 'OfferLuxuryLink', 'Loa', 'OfferFamily');
 
 	function index() {
 		$this->SchedulingMaster->recursive = 0;
@@ -21,10 +21,9 @@ class SchedulingMastersController extends AppController {
 	}
 
 	function add() {
-
-	  $packageId 		= $this->params['named']['packageId'];
-		$package 			= $this->SchedulingMaster->Package->findByPackageId($packageId);
-		$clientId     = $this->params['named']['clientId'];
+        $packageId 		= $this->params['named']['packageId'];
+		$package 		= $this->SchedulingMaster->Package->findByPackageId($packageId);
+		$clientId       = $this->params['named']['clientId'];
 
 		if (isset($this->data) && !empty($this->data)){
 
@@ -65,7 +64,6 @@ class SchedulingMastersController extends AppController {
 				}
 
 				foreach($ppid_arr as $key=>$ppid){
-
 					$this->data['SchedulingMaster']['pricePointId']=$ppid;
 
 					// validation
@@ -115,20 +113,37 @@ class SchedulingMastersController extends AppController {
 						//only if this is a multi client offer, single client comes from user selection
 						// acarney 2010-11-22 -- dunno what that comment above means, so commenting out for now
 						if (count($package['ClientLoaPackageRel']) > 1) {
-								//foreach ($package['ClientLoaPackageRel'] as $v) {
-								//    $this->data['Track']['Track'][] = $v['trackId'];
-								//}
+                            //foreach ($package['ClientLoaPackageRel'] as $v) {
+                            //    $this->data['Track']['Track'][] = $v['trackId'];
+                            //}
 						}
+
+                        // price point fields
+                        $pricePointObj->recursive = -1;
+                        if ($pp = $pricePointObj->find('first', array('conditions' => array('PricePoint.pricePointId' => $ppid),
+                                                                      'fields' => array('retailValue', 'percentRetailAuc', 'percentRetailBuyNow')))) {
+                            $this->data['SchedulingMaster']['pricePointRetailValue'] = $pp['PricePoint']['retailValue'];
+                        }
+                        
 
 						// create an auction
 						if ($this->data['isAuction']) {
 							$this->data['SchedulingMaster']['offerTypeId'] = 1;
+                            if ($pp) {
+                                $this->data['SchedulingMaster']['pricePointPercentRetailAuc'] = $pp['PricePoint']['percentRetailAuc'];
+                            }
 							$success = $this->addSave($this->data);
 						}
 						
 						// create a buy now
 						if ($this->data['isBuyNow']) {
 							$this->data['SchedulingMaster']['offerTypeId'] = $this->data['buyNowOfferTypeId'];
+                            if ($pp) {
+                                if (isset($this->data['SchedulingMaster']['pricePointPercentRetailAuc'])) {
+                                    unset($this->data['SchedulingMaster']['pricePointPercentRetailAuc']);
+                                }
+                                $this->data['SchedulingMaster']['pricePointPercentRetailBuyNow'] = $pp['PricePoint']['percentRetailBuyNow'];
+                            }
 							$success = $this->addSave($this->data);
 						}
 						
@@ -166,24 +181,24 @@ class SchedulingMastersController extends AppController {
 		endforeach;
 		
 		if (count($package['ClientLoaPackageRel']) > 1) {
-		  $this->set('singleClientPackage', false);
-      foreach ($package['ClientLoaPackageRel'] as &$packageClient) {
-        $packageClient['clientName'] = $this->SchedulingMaster->Package->ClientLoaPackageRel->Client->field('name', array('Client.clientId' => $packageClient['clientId']));
-        $packageClient['trackIds'] = $this->SchedulingMaster->Package->ClientLoaPackageRel->Loa->Track->find('list', array('conditions' => array('loaId' => $packageClient['loaId'])));
-        if ($packageClient['clientId'] == $clientId) {
-          $masterClient = $packageClient;
-        }
-      }
+            $this->set('singleClientPackage', false);
+            foreach ($package['ClientLoaPackageRel'] as &$packageClient) {
+                $packageClient['clientName'] = $this->SchedulingMaster->Package->ClientLoaPackageRel->Client->field('name', array('Client.clientId' => $packageClient['clientId']));
+                $packageClient['trackIds'] = $this->SchedulingMaster->Package->ClientLoaPackageRel->Loa->Track->find('list', array('conditions' => array('loaId' => $packageClient['loaId'])));
+                if ($packageClient['clientId'] == $clientId) {
+                    $masterClient = $packageClient;
+                }
+            }
 		} else {
-		  $this->set('singleClientPackage', true);
-		  $masterClient = $package['ClientLoaPackageRel'][0];
-      $conditions = array('Track.loaId = ' . $package['ClientLoaPackageRel'][0]['loaId']);
-      //filter out 'Barter - Set Number of Packages' track type for flex packs
-      if ($package['Package']['isFlexPackage']) {
-        $conditions[] = 'Track.expirationCriteriaId NOT IN (4)';
-      }
-		  $trackIds = $this->SchedulingMaster->Package->ClientLoaPackageRel->Loa->Track->find('list', array('conditions' => $conditions));
-		  $this->set('trackIds', $trackIds);
+            $this->set('singleClientPackage', true);
+            $masterClient = $package['ClientLoaPackageRel'][0];
+            $conditions = array('Track.loaId = ' . $package['ClientLoaPackageRel'][0]['loaId']);
+            //filter out 'Barter - Set Number of Packages' track type for flex packs
+            if ($package['Package']['isFlexPackage']) {
+                $conditions[] = 'Track.expirationCriteriaId NOT IN (4)';
+            }
+            $trackIds = $this->SchedulingMaster->Package->ClientLoaPackageRel->Loa->Track->find('list', array('conditions' => $conditions));
+            $this->set('trackIds', $trackIds);
 		}
 		
 		//if no formats were selected for this package, we can't schedule it
@@ -213,16 +228,14 @@ class SchedulingMastersController extends AppController {
 
         // defaults		
 		if (empty($this->data) && isset($this->params['named']['date'])) {
-
 			$date = explode('-', $this->params['named']['date']);
-            
-      // default startDate
-      $this->data['SchedulingMaster']['startDatePicker'] = date("m-d-Y", strtotime($this->params['named']['date']));
+            // default startDate
+            $this->data['SchedulingMaster']['startDatePicker'] = date("m-d-Y", strtotime($this->params['named']['date']));
 			$this->data['SchedulingMaster']['startDateTime'] = date("H:00:00", strtotime("+2 hour"));
 			
-      // get default endDate from loa
-      $loaEndDate = date("m-d-Y", strtotime($loa['Loa']['endDate']));
-      $this->data['SchedulingMaster']['endDatePicker2'] = $loaEndDate;
+            // get default endDate from loa
+            $loaEndDate = date("m-d-Y", strtotime($loa['Loa']['endDate']));
+            $this->data['SchedulingMaster']['endDatePicker2'] = $loaEndDate;
 
 			// get pricePoint endDates (7 days prior) if earlier than loa endDate
 			$pricePointDefaultEndDates = array();
@@ -245,34 +258,32 @@ class SchedulingMastersController extends AppController {
 			$this->data['SchedulingMaster']['packageName']       = trim($package['Package']['packageName']);
 			$this->data['SchedulingMaster']['mysteryIncludes']   = trim($package['Package']['packageIncludes']);
 			$this->data['SchedulingMaster']['retailValue']       = $package['Package']['approvedRetailPrice'];
-
 		}
 	
-    //set to true to hide price points if hotel offer
-    if (empty($package['Package']['externalOfferUrl'])) {
-      $this->set('isHotelOffer', false);
-    }else{
-      $pricePoint = $this->SchedulingMaster->Package->PricePoint->getHotelOfferPricePoint($packageId);
-      if ($pricePoint) {
-        $this->set('pricePointId', $pricePoint[0]['PricePoint']['pricePointId']);
-        $this->set('isHotelOffer', true);
-      }
-    }
+        //set to true to hide price points if hotel offer
+        if (empty($package['Package']['externalOfferUrl'])) {
+            $this->set('isHotelOffer', false);
+        }else{
+            $pricePoint = $this->SchedulingMaster->Package->PricePoint->getHotelOfferPricePoint($packageId);
+            if ($pricePoint) {
+                $this->set('pricePointId', $pricePoint[0]['PricePoint']['pricePointId']);
+                $this->set('isHotelOffer', true);
+            }
+        }
     
-	  $this->setOfferTypeDefaultAndDropdown($packageId, $formatIds);
-		
-		$merchandisingFlags 					= $this->SchedulingMaster->MerchandisingFlag->find('list');
-		$schedulingStatusIds 					= $this->SchedulingMaster->SchedulingStatus->find('list');
-		$schedulingDelayCtrlIds 				= $this->SchedulingMaster->SchedulingDelayCtrl->find('list');
-		$remittanceTypeIds 						= $this->SchedulingMaster->RemittanceType->find('list');
+        $this->setOfferTypeDefaultAndDropdown($packageId, $formatIds);
+            
+        $merchandisingFlags 					= $this->SchedulingMaster->MerchandisingFlag->find('list');
+        $schedulingStatusIds 					= $this->SchedulingMaster->SchedulingStatus->find('list');
+        $schedulingDelayCtrlIds 				= $this->SchedulingMaster->SchedulingDelayCtrl->find('list');
+        $remittanceTypeIds 						= $this->SchedulingMaster->RemittanceType->find('list');
         
-		$this->set('package', 					$package);
-		$this->set('packageId', 				$packageId);
-		$this->set('merchandisingFlags', 		$merchandisingFlags);
-		$this->set('schedulingStatusIds', 		$schedulingStatusIds);
-		$this->set('schedulingDelayCtrlIds', 	$schedulingDelayCtrlIds);
-		$this->set('remittanceTypeIds', 		$remittanceTypeIds);
-
+        $this->set('package', 					$package);
+        $this->set('packageId', 				$packageId);
+        $this->set('merchandisingFlags', 		$merchandisingFlags);
+        $this->set('schedulingStatusIds', 		$schedulingStatusIds);
+        $this->set('schedulingDelayCtrlIds', 	$schedulingDelayCtrlIds);
+        $this->set('remittanceTypeIds', 		$remittanceTypeIds);
 	}
     
     function addSave($data) {

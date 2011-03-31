@@ -534,6 +534,149 @@ class Client extends AppModel {
             return $client;
         }
    }
+   
+   function getClientSchedulingMasters($clientId, $startDate, $endDate) {
+        $query = "SELECT SchedulingMaster.packageId,
+                        ClientLoaPackageRel.loaId,
+                        Package.packageName, 
+                        PricePoint.name,  
+                        Track.trackName,
+                        OfferType.offerTypeName,
+                        SchedulingMaster.siteId,
+                        IF (Package.isFlexPackage, CONCAT(Package.flexNumNightsMin, '-', Package.flexNumNightsMax), Package.numNights) AS roomNights,
+                        SchedulingMaster.pricePointRetailValue,
+                        IF (SchedulingMaster.offerTypeId = 4, CONCAT(ROUND(SchedulingMaster.pricePointRetailValue * (SchedulingMaster.pricePointPercentRetailBuyNow/100)), ' (', SchedulingMaster.pricePointPercentRetailBuyNow , '%)'),
+                                                              CONCAT(ROUND(SchedulingMaster.pricePointRetailValue * (SchedulingMaster.pricePointPercentRetailAuc/100)), ' (', SchedulingMaster.pricePointPercentRetailAuc, '%)'))
+                            AS price,
+                        SchedulingMaster.startDate,
+                        SchedulingMaster.endDate,
+                        PricePoint.validityStart,
+                        PricePoint.validityEnd,
+                        PackageStatus.packageStatusName,
+                        Currency.currencyCode,
+                        Package.packageStatusId,
+                        SchedulingMaster.schedulingMasterId,
+                        SchedulingMaster.offerTypeId,
+                        SchedulingMaster.pricePointId
+                        FROM schedulingMaster SchedulingMaster
+                        INNER JOIN package Package USING (packageId)
+                        INNER JOIN clientLoaPackageRel ClientLoaPackageRel USING (packageId)
+                        INNER JOIN packageStatus PackageStatus USING (packageStatusId)
+                        INNER JOIN pricePoint PricePoint USING (pricePointId)
+                        INNER JOIN offerType OfferType USING (offerTypeId)
+                        INNER JOIN schedulingMasterTrackRel SchedulingMasterTrackRel USING (schedulingMasterId)
+                        INNER JOIN track Track ON SchedulingMasterTrackRel.trackId = Track.trackId
+                        INNER JOIN currency Currency USING (currencyId)
+                        WHERE ClientLoaPackageRel.clientId = " . $clientId
+                        . " AND (SchedulingMaster.startDate >= '" . $startDate . "' AND SchedulingMaster.endDate <= '". $endDate . "')
+                        AND SchedulingMaster.offerTypeId <> 7
+                        ORDER BY SchedulingMaster.packageId DESC, SchedulingMaster.startDate DESC";
+        if ($schedulingMasters = $this->query($query)) {
+            $extraInfoArr = array();
+            foreach($schedulingMasters as $index => $master) {
+                $schedulingMasters[$index]['SchedulingMaster'] = Set::merge($master[0], $master['SchedulingMaster']);
+                unset($schedulingMasters[$index][0]);
+                // store validity in array keyed by price point so that we're not hitting the db everytime we have a scheduling master with the same price point
+                if (!isset($extraInfoArr[$master['SchedulingMaster']['pricePointId']]['validity'])) {
+                    if ($validity = $this->Loa->ClientLoaPackageRel->Package->PricePoint->getPricePointValidities($master['SchedulingMaster']['packageId'], $master['SchedulingMaster']['pricePointId'])) {
+                        $extraInfoArr[$master['SchedulingMaster']['pricePointId']]['validity'] = $validity;
+                    }
+                    else {
+                        $extraInfoArr[$master['SchedulingMaster']['pricePointId']]['validity'] = array();
+                    }
+                }
+                $schedulingMasters[$index]['SchedulingMaster']['validityDates'] = $extraInfoArr[$master['SchedulingMaster']['pricePointId']]['validity'];
+                if ($offers = $this->getSchedulingMasterOffers($clientId, $master)) {
+                    $schedulingMasters[$index]['Offers'] = $offers;
+                    $offerStatuses = array_keys($offers);
+                    if (in_array('Live', $offerStatuses)) {
+                        $schedulingMasters[$index]['SchedulingMaster']['offerStatus'] = 'Live';
+                    }
+                    elseif (in_array('Scheduled', $offerStatuses) && !in_array('Live', $offerStatuses)) {
+                        $schedulingMasters[$index]['SchedulingMaster']['offerStatus'] = 'Scheduled';
+                    }
+                    else {
+                        $schedulingMasters[$index]['SchedulingMaster']['offerStatus'] = 'Closed';
+                    }
+                }
+            }
+            //debug($schedulingMasters); die();
+            return $schedulingMasters;
+        }
+   }
+   
+   function getSchedulingMasterOffers($clientId, $schedulingMaster) {
+        $auctionsClosed = 0;
+        $auctionsWithWinner = 0;
+        $buyNowRequests = 0;
+        $buyNowConfirmedRequests = 0;
+        $conversionRate = 0;
+        $isOpen = false;
+        $instances = array();
+        $offerTable = ($schedulingMaster['SchedulingMaster']['siteId'] == 1) ? 'offerLuxuryLink' : 'offerFamily';
+        $query = "SELECT Offer.offerTypeId, Offer.endDate, Offer.retailValue, Offer.isClosed, Offer.offerId
+                  FROM " . $offerTable . " Offer 
+                  INNER JOIN offer USING (offerId)
+                  INNER JOIN schedulingInstance SchedulingInstance USING (schedulingInstanceId)
+                  WHERE Offer.clientId = " . $clientId . " AND SchedulingInstance.schedulingMasterId = " . $schedulingMaster['SchedulingMaster']['schedulingMasterId'] . "
+                  ORDER BY Offer.endDate";
+        if ($offers = $this->query($query)) {
+            if ($schedulingMaster['SchedulingMaster']['offerTypeId'] == 4) {
+                foreach ($offers as $index=>$offer) { 
+                    $offers[$index]['Offer']['retailValue'] = round($offer['Offer']['retailValue']);
+                    $requestsQuery = "SELECT COUNT(*) AS requests FROM ticket WHERE offerId = " . $offer['Offer']['offerId'];
+                    $confirmedQuery = "SELECT COUNT(*) AS confirmedRequests FROM ticket WHERE offerId = " . $offer['Offer']['offerId'] . " AND ticketStatusId = 4";
+                    if ($requests = $this->query($requestsQuery)) {
+                        $buyNowRequests += $requests[0][0]['requests'];
+                    }
+                    if ($confirmed = $this->query($confirmedQuery)) {
+                        $buyNowConfirmedRequests += $confirmed[0][0]['confirmedRequests'];
+                    }
+                    if ($offer['Offer']['isClosed'] == 0) {
+                        $isOpen = true;
+                    }
+                }
+                if ($buyNowRequests > 0 && $buyNowConfirmedRequests > 0) {
+                    $conversionRate = round(($buyNowConfirmedRequests/$buyNowRequests) * 100);
+                }
+            }
+            else {
+                foreach($offers as $index => $offer) {
+                    $offers[$index]['Offer']['retailValue'] = round($offer['Offer']['retailValue']);
+                    if ($bids = $this->Loa->ClientLoaPackageRel->Package->SchedulingMaster->SchedulingInstance->Offer->Bid->getBidStatsForOffer($offer['Offer']['offerId'])) {
+                        $offers[$index]['Offer']['bidCount'] = $bids[0][0]['bidCount'];
+                        $offers[$index]['Offer']['winningBidAmount'] = $bids[0][0]['winner'];
+                        if ($offer['Offer']['isClosed'] == 1) {
+                            $auctionsClosed += 1;
+                        }
+                        if ($bids[0][0]['bidCount'] > 0 && !empty($bids[0][0]['winner'])) {
+                            $auctionsWithWinner += 1;
+                        }
+                    }
+                    if ($offer['Offer']['isClosed'] == 0) {
+                        $isOpen = true;
+                    }
+                }
+                if ($auctionsClosed > 0 && $auctionsWithWinner > 0) {
+                    $conversionRate = round(($auctionsWithWinner/$auctionsClosed) * 100);
+                }
+            }
+        }
+        $instances['conversionRate'] = $conversionRate;
+        $instances['buyNowRequests'] = $buyNowRequests;
+        $instances['buyNowConfirmedRequests'] = $buyNowConfirmedRequests;
+        $instances['isScheduled'] = $this->Loa->ClientLoaPackageRel->Package->SchedulingMaster->SchedulingInstance->isScheduled($schedulingMaster['SchedulingMaster']['schedulingMasterId'], $schedulingMaster['SchedulingMaster']['endDate']);
+        if ($isOpen) {
+            $instances['Live'] = $offers;
+        }
+        elseif ($instances['isScheduled']) {
+            $instances['Scheduled'] = $offers;
+        }
+        else {
+            $instances['Closed'] = $offers;
+        }
+        return $instances;
+   }
 
 }
 ?>

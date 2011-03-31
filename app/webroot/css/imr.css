@@ -1,0 +1,22 @@
+th.header {
+    cursor: pointer;
+}
+table.index tbody tr.odd td {
+    background-color: #F5F2E2;
+}
+div.datepickers {
+    float:right;
+}
+div.datepickers span form input[type='text'] {
+    height:14px;
+    margin-right:4px;
+}
+div.datepickers span form input[type='submit'] {
+    height:25px;
+    padding:0 4px 0 4px;
+    vertical-align:top;
+}
+img.ui-datepicker-trigger {
+    vertical-align: middle;
+    margin-right: 10px;
+}

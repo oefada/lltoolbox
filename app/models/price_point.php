@@ -70,16 +70,19 @@ class PricePoint extends AppModel {
         return $this->query("$q");
     }
     
-    function getPricePointValidities($packageId) {
-        return $this->query("
+    function getPricePointValidities($packageId, $pricePointId=null) {
+        $query = "
             SELECT pricePointId, startDate, endDate
             FROM pricePoint PricePoint
             INNER JOIN pricePointRatePeriodRel PricePointRatePeriodRel USING(pricePointId)
             INNER JOIN loaItemRatePeriod LoaItemRatePeriod USING(loaItemRatePeriodId)
             INNER JOIN loaItemDate LoaItemDate USING(loaItemRatePeriodId)
-            WHERE packageId = $packageId
-            ORDER BY endDate
-        ");
+            WHERE packageId = $packageId ";
+        if ($pricePointId) {
+            $query .= " AND pricePointId = " . $pricePointId;
+        }
+        $query .= " ORDER BY endDate";
+        return $this->query($query);
     }
     
     function getPricePointStartEnd($pricePointId) {

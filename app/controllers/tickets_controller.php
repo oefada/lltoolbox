@@ -41,6 +41,7 @@ class TicketsController extends AppController {
 		$s_bid_id = isset($form['s_bid_id']) ? $form['s_bid_id'] : '';
 		$s_quick_link = isset($form['s_quick_link']) ? $form['s_quick_link'] : '';
 		$s_package_id = isset($form['s_package_id']) ? $form['s_package_id'] : '';
+        $s_price_point_id = isset($form['s_price_point_id']) ? $form['s_price_point_id'] : '';
 		$s_promo_code = isset($form['s_promo_code']) ? $form['s_promo_code'] : '';
 		$s_offer_type_id = isset($form['s_offer_type_id']) ? $form['s_offer_type_id'] : 0;
 		$s_ticket_status_id = isset($form['s_ticket_status_id']) ? $form['s_ticket_status_id'] : 0;
@@ -197,6 +198,15 @@ class TicketsController extends AppController {
 			if ($s_site_id) {
 				$this->paginate['conditions']['Ticket.siteId'] = $s_site_id;	
 			}
+            if ($s_price_point_id) {
+                $this->paginate['conditions']['PricePoint.pricePointId'] = $s_price_point_id;
+                $this->paginate['joins'][] = array(
+                                                    'table' => 'pricePoint',
+                                                    'alias' => 'PricePoint',
+                                                    'type' => 'left',
+                                                    'conditions' => 'Ticket.packageId = PricePoint.packageId'
+                                                    );
+            }
 			if ($s_ticket_status_id) {
 				$this->paginate['conditions']['Ticket.ticketStatusId'] = $s_ticket_status_id;	
 				if ($s_ticket_status_id == 3) {
@@ -231,8 +241,8 @@ class TicketsController extends AppController {
 			}
 		}
 	
-		// allow package/client/user to use date and status
-		if ($s_package_id || $s_client_id || $s_user_id) {
+		// allow package/client/user/pricePoint to use date and status
+		if ($s_package_id || $s_client_id || $s_user_id || $s_price_point_id) {
 			$single_search = false;
 			if ($s_ticket_status_id) {
 				$this->paginate['conditions']['Ticket.ticketStatusId'] = $s_ticket_status_id;	

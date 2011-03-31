@@ -11,6 +11,7 @@ class ClientsController extends AppController {
 		parent::beforeFilter();
 		$this->set('currentTab', 'property');
 		$this->set('clientId', @$this->params['pass'][0]);
+        $this->set('client', $this->Client->findByClientId(@$this->params['pass'][0]));
 		$this->Country = new Country;
 	}
 
@@ -270,5 +271,54 @@ class ClientsController extends AppController {
 
 		return $client['Client']['name'];
   	}
+    
+    // 2011-03-21: New Inventory Management Report. Use this instead of the one
+    // in the reports controller.
+    function imr($clientId) {
+        $this->layout = 'default_jquery';
+        $schedulingMasters = array();
+        if (!empty($this->data)) {
+            Sanitize::clean($this->data);
+            $searchStartDate = date('Y-m-d', strtotime($this->data['searchStartDate']));
+            $searchEndDate = date('Y-m-d', strtotime($this->data['searchEndDate']));
+        }
+        if (!isset($searchStartDate) && !isset($searchEndDate)) {
+            $this->Client->Loa->recursive = -1;
+            if ($loaDates = $this->Client->Loa->find('first', array('conditions' => array('Loa.loaId' => $this->Client->Loa->get_current_loa($clientId)),
+                                                                    'fields' => array('Loa.startDate', 'Loa.endDate')))) {
+                $searchStartDate = $loaDates['Loa']['startDate'];
+                $searchEndDate = $loaDates['Loa']['endDate'];
+            }
+            else {
+                // find most recent loa
+                if ($loas = $this->Client->Loa->getClientLoas($clientId)) {
+                    $searchStartDate = $loas[0]['Loa']['startDate'];
+                    $searchEndDate = $loas[0]['Loa']['endDate'];
+                }
+                else {
+                    $this->set('schedulingMasters', array());
+                    return;
+                }
+            }
+        }
+        if ($schedulingMasters = $this->Client->getClientSchedulingMasters($clientId, $searchStartDate, $searchEndDate)) {
+            $statusKey = array('Live' => 1,
+                               'Scheduled' => 2,
+                               'Closed' => 3);
+            $offerStatus = array();
+            $packageId = array();
+            $startDate = array();
+            foreach ($schedulingMasters as $i => $master) {
+                $offerStatus[$i] = $statusKey[$master['SchedulingMaster']['offerStatus']];
+                $packageId[$i] = $master['SchedulingMaster']['packageId'];
+                $startDate[$i] = $master['SchedulingMaster']['startDate'];
+            }
+            array_multisort($offerStatus, SORT_ASC, $packageId, SORT_DESC, $startDate, SORT_DESC, $schedulingMasters);
+            //debug($schedulingMasters); die();
+        }
+        $this->set('searchStartDate', $searchStartDate);
+        $this->set('searchEndDate', $searchEndDate);
+        $this->set('schedulingMasters', $schedulingMasters);
+    }
 }
 ?>

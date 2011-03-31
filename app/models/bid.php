@@ -25,5 +25,14 @@ class Bid extends AppModel {
 	function beforeDelete() {
 		return false;
 	}
+    
+    function getBidStatsForOffer($offerId) {
+        $query = "SELECT COUNT(*) AS bidCount, MAX(bidAmount) AS winner
+                  FROM bid 
+                  WHERE offerId = " . $offerId;
+        if ($bidStats = $this->query($query)) {
+            return $bidStats;
+        }
+    }
 }
 ?>

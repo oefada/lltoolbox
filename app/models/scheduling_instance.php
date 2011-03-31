@@ -58,5 +58,17 @@ class SchedulingInstance extends AppModel {
             return ($pricePoint[0]['PricePoint']['pricePointId']);
         }
     }
+    
+    function isScheduled($schedulingMasterId, $endDate) {
+        $query = "SELECT 1 FROM schedulingInstance
+                  WHERE schedulingMasterId = " . $schedulingMasterId . " AND
+                  offerCreated = 0 AND endDate <= '" . $endDate . "'";
+        if ($scheduled = $this->query($query)) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
 }
 ?>

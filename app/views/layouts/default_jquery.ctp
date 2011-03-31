@@ -27,6 +27,8 @@
 		if(isset($javascript)):
             echo $javascript->link('jquery/jquery');
             echo $javascript->link('jquery/jquery-ui-1.7.2.custom.min');
+            echo $javascript->link('jquery/jquery.dimensions.min');
+            echo $javascript->link('jquery/jquery.wtooltip');
 		endif;
 
 		echo $scripts_for_layout;
