@@ -17,6 +17,9 @@ ul.optionList li input {
 		width:20px;
 }
 
+div.checkbox input[type='checkbox'] {
+    width:20px;
+}
 
 </style>
 
@@ -148,6 +151,9 @@ foreach ($this->data['Client']['sites'] as $site) {
 		echo $form->input('fax');
 		echo $form->input('estaraPhoneLocal');
 		echo $form->input('estaraPhoneIntl');
+        echo $form->input('contactLL', array('type' => 'checkbox',
+                                             'label' => 'Use LL/FG contact info instead of client\'s on PDP',
+                                             'class' => 'contactLL-align'));
 		?>
 		<? if(isset($client['Address'])): ?>
 		<h4>Addresses</h4>
