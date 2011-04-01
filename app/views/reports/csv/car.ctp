@@ -1,7 +1,10 @@
 <?php if(isset($clientDetails)):
+	echo '"Site",';
+	echo '"'.$this->data['Client']['site'].'"';
+	echo "\n";
+	
 	echo '"Client",';
 	echo '"'.$this->data['Client']['clientName'].'"';
-	
 	echo "\n";
 	
 	echo '"Country, State, City",';
@@ -17,83 +20,128 @@
 	echo '"'.$clientDetails['Client']['managerUsername']."\"\n\n";
 
 	echo ",";
-	for($i = 0; $i <= 12; $i++)
-			echo $monthNames[$i].",";
+	for($i = 0; $i <= 12; $i++) {
+		if ($i == 12) { echo 'Last 12 Months,'; }
+		echo $monthNames[$i].",";
+	}
 
-	echo "Last 12 Months\n";
+	echo "\n";
 ?>
-phone,<?php for($i = 0; $i <= 12; $i++)
+calls,<?php for($i = 0; $i <= 12; $i++) {
+			if ($i == 12) { echo @'"'.$number->format($totals['phone']).'",'; }
 			echo '"'.@$number->format($results[$months[$i]]['phone']).'",';	
-			echo @'"'.$number->format($totals['phone']).'"';
+	    }
 ?>
 <?="\n"; ?>
-web,<?php for($i = 0; $i <= 12; $i++)
+clicks,<?php for($i = 0; $i <= 12; $i++) {
+			if ($i == 12) { echo '"'.@$number->format($totals['webRefer']).'",'; }
 			echo '"'.@$number->format($results[$months[$i]]['webRefer']).'",';
-			
-			echo '"'.@$number->format($totals['webRefer']).'"';
-	?> 
+	    }
+?>
 <?="\n"?>
-portfolio,<?php for($i = 0; $i <= 12; $i++)
-			echo '"'.@$number->format($results[$months[$i]]['productView']).'",';
-			
-			echo '"'.@$number->format($totals['productView']).'"';
-			?>
+portfolio,<?php for($i = 0; $i <= 12; $i++) {
+			if ($i == 12) { echo '"'.@$number->format($totals['productView']).'",'; }
+			echo '"'.@$number->format($results[$months[$i]]['productView']).'",';	
+	    }
+?>
 <?="\n"?>
-search,<?php for($i = 0; $i <= 12; $i++)
+search,<?php for($i = 0; $i <= 12; $i++) {
+			if ($i == 12) { echo '"'.@$number->format($totals['searchView']).'",'; }
 			echo '"'.@$number->format($results[$months[$i]]['searchView']).'",';
-			echo '"'.@$number->format($totals['searchView']).'"'?>
-    
+	    }
+?>  
 <?="\n"?>
-home/destination,<?php for($i = 0; $i <= 12; $i++)
-			echo '"'.@$number->format($results[$months[$i]]['destinationView']).'",';
-			echo '"'.@$number->format($totals['destinationView']).'"'?> 
+home/destination,<?php for($i = 0; $i <= 12; $i++) {
+			if ($i == 12) { echo '"'.@$number->format($totals['destinationView']).'",'; }
+			echo '"'.@$number->format($results[$months[$i]]['destinationView']).'",';	
+	    }
+?>
 <?="\n"?>
-email,<?php for($i = 0; $i <= 12; $i++)
-			echo '"'.@$number->format($results[$months[$i]]['email']).'",';
-			echo '"'.@$number->format($totals['email']).'"'?>
+email,<?php for($i = 0; $i <= 12; $i++) {
+			if ($i == 12) { echo '"'.@$number->format($totals['email']).'",'; }
+			echo '"'.@$number->format($results[$months[$i]]['email']).'",';	
+	    }
+?>
 <?="\n"?>
 <?="\n"?>
-auctions live,<?php for($i = 0; $i <= 12; $i++)
-			echo '"'.@$number->format($results[$months[$i]]['numberAuctions']).'",';
-			echo '"'.@$number->format($totals['aucTotals']).'"'?>
+auctions live,<?php for($i = 0; $i <= 12; $i++) {
+			if ($i == 12) { echo ','; }
+			echo '"'.@$number->format($results[$months[$i]]['numberAuctions']).'",';	
+	    }
+?>
 <?="\n"?>
-auctions sold,<?php for($i = 0; $i <= 12; $i++)
+auctions sold,<?php for($i = 0; $i <= 12; $i++) {
+			if ($i == 12) { echo '"'.@$number->format($totals['aucTickets']).'",'; }
 			echo '"'.@$number->format($results[$months[$i]]['aucTickets']).'",';
-			echo '"'.@$number->format($totals['aucTickets']).'"'?>
+	    }
+?>
 <?="\n"?>
-auctions $$,<?php for($i = 0; $i <= 12; $i++)
-			echo '"'.@$number->currency($results[$months[$i]]['aucRevenue'], 'USD', array('places' => 0)).'",';
-			echo '"'.@$number->currency($totals['aucRevenue'], 'USD', array('places' => 0)).'"'?>
+auctions $$,<?php for($i = 0; $i <= 12; $i++) {
+			if ($i == 12) { echo '"'.@$number->currency($totals['aucRevenue'], 'USD', array('places' => 0)).'",'; }
+			echo '"'.@$number->currency($results[$months[$i]]['aucRevenue'], 'USD', array('places' => 0)).'",';	
+	    }
+?>
+<?="\n"?>
+auctions nights,<?php for($i = 0; $i <= 12; $i++) {
+			if ($i == 12) { echo '"'.@$number->format($totals['aucNights']).'",'; }
+			echo '"'.@$number->format($results[$months[$i]]['aucNights']).'",';
+	    }
+?>
 <?="\n"?>
 <?="\n"?>
-fixed price live,<?php for($i = 0; $i <= 12; $i++)
+fixed price live,<?php for($i = 0; $i <= 12; $i++) {
+			if ($i == 12) { echo ','; }
 			echo '"'.@$number->format($results[$months[$i]]['numberPackages']).'",';
-			echo '"'.@$number->format($totals['fpTotals']).'"'?>
+	    }
+?>
 <?="\n"?>
-fixed price sold,<?php for($i = 0; $i <= 12; $i++)
+fixed price sold,<?php for($i = 0; $i <= 12; $i++) {
+			if ($i == 12) { echo '"'.@$number->format($totals['fpTickets']).'",'; }
 			echo '"'.@$number->format($results[$months[$i]]['fpTickets']).'",';
-			echo '"'.@$number->format($totals['fpTickets']).'"'?>
+	    }
+?>
 <?="\n"?>
-fixed price $$,<?php for($i = 0; $i <= 12; $i++)
-			echo '"'.@$number->currency($results[$months[$i]]['fpRevenue'], 'USD', array('places' => 0)).'",';
-			echo '"'.@$number->currency($totals['fpRevenue'], 'USD', array('places' => 0)).'"'?>
+fixed price $$,<?php for($i = 0; $i <= 12; $i++) {
+			if ($i == 12) { echo '"'.@$number->currency($totals['fpRevenue'], 'USD', array('places' => 0)).'",'; }
+			echo '"'.@$number->currency($results[$months[$i]]['fpRevenue'], 'USD', array('places' => 0)).'",';	
+	    }
+?>
+<?="\n"?>
+fixed price nights,<?php for($i = 0; $i <= 12; $i++) {
+			if ($i == 12) { echo '"'.@$number->format($totals['fpNights']).'",'; }
+			echo '"'.@$number->format($results[$months[$i]]['fpNights']).'",';
+	    }
+?>
 <?="\n"?>
 <?="\n"?>
-total sold,<?php for($i = 0; $i <= 12; $i++) 
-				echo '"'.@$number->format($results[$months[$i]]['aucTickets']+$results[$months[$i]]['fpTickets']).'",';
-				echo '"'.@$number->format($totals['aucTickets']+$totals['fpTickets']).'"';?>
+total sold,<?php for($i = 0; $i <= 12; $i++) {
+			if ($i == 12) { echo '"'.@$number->format($totals['aucTickets']+$totals['fpTickets']).'",'; }
+				echo '"'.@$number->format($results[$months[$i]]['aucTickets']+$results[$months[$i]]['fpTickets']).'",';		
+	    }
+?>
 <?="\n"?>
-total $$,<?php for($i = 0; $i <= 12; $i++) 
-				echo '"'.@$number->currency($results[$months[$i]]['aucRevenue']+$results[$months[$i]]['fpRevenue'], 'USD', array('places' => 0)).'",';
-				echo '"'.@$number->currency($totals['aucRevenue']+$totals['fpRevenue'], 'USD', array('places' => 0)).'"'?>
-
+total $$,<?php for($i = 0; $i <= 12; $i++) {
+			if ($i == 12) { echo '"'.@$number->currency($totals['aucRevenue']+$totals['fpRevenue'], 'USD', array('places' => 0)).'",'; } 
+				echo '"'.@$number->currency($results[$months[$i]]['aucRevenue']+$results[$months[$i]]['fpRevenue'], 'USD', array('places' => 0)).'",';		
+	    }
+?>
+<?="\n"?>
+total nights,<?php for($i = 0; $i <= 12; $i++) {
+			if ($i == 12) { echo '"'.@$number->format($totals['aucNights']+$totals['fpNights']).'",'; }
+				echo '"'.@$number->format($results[$months[$i]]['aucNights']+$results[$months[$i]]['fpNights']).'",';		
+	    }
+?>
 <?="\n"?>
 <?="\n"?>
-hotel offer,<?php for($i = 0; $i <= 12; $i++)
+hotel offer,<?php for($i = 0; $i <= 12; $i++) {
+			if ($i == 12) { echo ','; }
 			echo '"'.@$number->format($results[$months[$i]]['numberOffers']).'",';
-			echo '"'.@$number->format($totals['hotelOfferTotal']).'"'?>
+	    }
+?>
 <?="\n"?>
-hotel offer clicks,<?php for($i = 0; $i <= 12; $i++)
+hotel offer clicks,<?php for($i = 0; $i <= 12; $i++) {
+			if ($i == 12) { echo '"'.@$number->format($totals['event12']).'",'; }
 			echo '"'.@$number->format($results[$months[$i]]['event12']).'",';
-			echo '"'.@$number->format($totals['hotelOfferClicksTotal']).'"'?>
+	    }
+?>
 <? endif; ?>

@@ -51,7 +51,6 @@ class ReportsController extends AppController {
         //None of these reports need absolutely fresh data, so perform all queries during this session in
         //no lock mode, to improve performance and not lock tables
         $this->OfferType->query('SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;');
-
 	}
 
 	function index() {
@@ -1456,7 +1455,7 @@ class ReportsController extends AppController {
             $this->set('packageStatusIds', $packageStatus->find('list'));
 	}
 
-	function car() {
+	function car_033111() {
 	    if (!empty($this->data) || !empty($this->params['named']['clientId'])) {
 	        $clientId = (!empty($this->params['named']['clientId'])) ? $this->params['named']['clientId'] : $this->data['Client']['clientName_id'];
 
@@ -3482,7 +3481,7 @@ class ReportsController extends AppController {
 	}
 
 
-	function car_new() {
+	function car() {
 	    if (!empty($this->data) || !empty($this->params['named']['clientId'])) {
 
 	        $clientId = (!empty($this->params['named']['clientId'])) ? $this->params['named']['clientId'] : $this->data['Client']['clientName_id'];

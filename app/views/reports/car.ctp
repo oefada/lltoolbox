@@ -13,10 +13,46 @@ td {
 	text-align: right;
 }
 </style>
-<div class='advancedSearch' style="width: 800px">
-	<?php echo $form->create('Client', array('url' => '/reports/car'))?>
+<div class='advancedSearch' style="width: 900px; position:relative;">
+
+
+
+
+<script type="text/javascript">
+
+Event.observe(window, 'load', function() { 
+	$('download-csv-link').observe('click', csvClick);
+	$('ClientSite').observe('change', dropdownChange);
+
+	function csvClick(event) {
+		var form = $('formCAR');
+		var csv = form['downloadCsv'];
+		$(csv).value = 1;
+		$(form).submit();
+		$(csv).value = 0;
+	}
+
+	function dropdownChange(event) {
+		var form = $('formCAR');
+		var name = form['ClientName'];
+		if ($(name).getValue() != '') {
+			$(form).submit();
+		}
+	}
+});
+</script>
+
+
+<?php echo $form->create('Client', array('url' => '/reports/car', 'id' => 'formCAR'))?>
+
 <fieldset>
 <h3 class='title'>GENERATE CLIENT ACTIVITY REPORT BY:</h3>
+
+
+<div style="position:absolute; bottom:10px; right:25px;">
+<a id="download-csv-link" href="javascript:void(0)">Download as CSV</a>
+<input type="hidden" name="data[download][csv]" id="downloadCsv" value="0" />
+</div>
 
 <div class="fieldRow">
 	<div style="float: left; clear: none;">
@@ -25,6 +61,7 @@ td {
 	?>
 	</div>
 	<div style="float: left; clear: none; display: none" id="clientSearchSpinner"><img src="/img/spinner_small.gif"></div>
+	<div style="float: right; clear: none;" id="siteSelect"><? echo $form->select('site', array_merge($sites, array('combined'=>'Combined')), null, null, false); ?></div>
 </div>
 
 <?php if(isset($clientDetails)):?>
@@ -45,9 +82,8 @@ td {
 </div>
 <?php endif; ?>
 </fieldset>
-<div class="controlset fieldRow">
-	<?php echo $form->checkbox('download.csv');
-			echo $form->label('download.csv', 'Download as CSV');?></div>
+
+<div>&nbsp;</div>
 <?php echo $form->submit('Search') ?>
 </div>
 
@@ -56,75 +92,70 @@ td {
 <table border="1">
   <tr>
     <td>&nbsp;</td>
-	<?php for($i = 0; $i <= 12; $i++)
-			echo "<th class='blackBg'>".$monthNames[$i]."</th>";
+	<?php for($i = 0; $i <= 12; $i++) { 
+		if ($i == 12) { echo "<th class='blackBg'>Last 12 Months</th>"; }
+		echo "<th class='blackBg'>".$monthNames[$i]."</th>";
+	      }
 	?>
-    <th class="blackBg">Last 12 Months</td>
   </tr>
   <tr>
-    <td style="text-align:left"><strong>call</strong></td>
-    <?php for($i = 0; $i <= 12; $i++)
-			echo "<td>".@$number->format($results[$months[$i]]['phone'])."</td>";
+    <td style="text-align:left"><strong>calls</strong></td>
+    <?php for($i = 0; $i <= 12; $i++) {
+		if ($i == 12) { echo "<td><strong>".@$number->format($totals['phone'])."</strong></td>"; }
+		echo "<td>".@$number->format($results[$months[$i]]['phone'])."</td>";
+	  }
 	?>
-    <td><strong>
-      <?=@$number->format($totals['phone'])?>
-    </strong></td>
   </tr>
   <tr class="altrow">
-    <td style="text-align:left"><strong>click</strong></td>
-    <?php for($i = 0; $i <= 12; $i++)
-			echo "<td>".@$number->format($results[$months[$i]]['webRefer'])."</td>";
+    <td style="text-align:left"><strong>clicks</strong></td>
+    <?php for($i = 0; $i <= 12; $i++) {
+    		if ($i == 12) { echo "<td><strong>".@$number->format($totals['webRefer'])."</strong></td>"; }
+		echo "<td>".@$number->format($results[$months[$i]]['webRefer'])."</td>";
+	  }
 	?>
-    <td><strong>
-      <?=@$number->format($totals['webRefer'])?>
-    </strong></td>
   </tr>
   <tr>
     <td style="text-align:left"><strong>portfolio</strong></td>
-    <?php for($i = 0; $i <= 12; $i++)
-			echo "<td>".@$number->format($results[$months[$i]]['productView'])."</td>";
+    <?php for($i = 0; $i <= 12; $i++) {
+    		if ($i == 12) { echo "<td><strong>".@$number->format($totals['productView'])."</strong></td>"; }
+		echo "<td>".@$number->format($results[$months[$i]]['productView'])."</td>";
+	  }
 	?>
-    <td><strong>
-      <?=@$number->format($totals['productView'])?>
-    </strong></td>
   </tr>
   <tr class="altrow">
     <td style="text-align:left"><strong>search</strong></td>
-    <?php for($i = 0; $i <= 12; $i++)
-			echo "<td>".@$number->format($results[$months[$i]]['searchView'])."</td>";
+    <?php for($i = 0; $i <= 12; $i++) {
+    		if ($i == 12) { echo "<td><strong>".@$number->format($totals['searchView'])."</strong></td>"; }
+		echo "<td>".@$number->format($results[$months[$i]]['searchView'])."</td>";
+	  }
 	?>
-    <td><strong>
-      <?=@$number->format($totals['searchView'])?>
-    </strong></td>
   </tr>
   <tr>
     <td style="text-align:left"><strong>home/destination</strong></td>
-    <?php for($i = 0; $i <= 12; $i++)
-			echo "<td>".@$number->format($results[$months[$i]]['destinationView'])."</td>";
+    <?php for($i = 0; $i <= 12; $i++) {
+		if ($i == 12) { echo "<td><strong>".@$number->format($totals['destinationView'])."</strong></td>"; }
+		echo "<td>".@$number->format($results[$months[$i]]['destinationView'])."</td>";
+	  }
 	?>
-    <td><strong>
-      <?=@$number->format($totals['destinationView'])?>
-    </strong></td>
   </tr>
   <tr class="altrow">
     <td style="text-align:left"><strong>email</strong></td>
-    <?php for($i = 0; $i <= 12; $i++)
-			echo "<td>".@$number->format($results[$months[$i]]['email'])."</td>";
+    <?php for($i = 0; $i <= 12; $i++) {
+		if ($i == 12) { echo "<td><strong>".@$number->format($totals['email'])."</strong></td>"; }
+		echo "<td>".@$number->format($results[$months[$i]]['email'])."</td>";
+	  }
 	?>
-    <td><strong>
-      <?=@$number->format($totals['email'])?>
-    </strong></td>
   </tr>
   <tr>
-    <th>&nbsp;</th>
-    <?php for($i = 0; $i <= 12; $i++)
+    <td>&nbsp;</td>
+    <?php for($i = 0; $i <= 13; $i++)
 			echo "<td>&nbsp;</td>";
 	?>
-    <td>&nbsp;</td>
   </tr>
   <tr>
     <td style="text-align:left"><strong>auctions live</strong></td>
     <?php for($i = 0; $i <= 12; $i++) {
+			if ($i == 12) { echo "<td><strong></strong></td>"; }
 			$style = '';
 				if(!@$results[$months[$i]]['numberAuctions']) {
 					$style = " style='background-color: red; color: #fff'";
@@ -132,112 +163,125 @@ td {
 			echo "<td$style>".@$number->format($results[$months[$i]]['numberAuctions'])."</td>";
 		}
 	?>
-    <td>&nbsp;</td>
+    
   </tr>
   <tr class="altrow">
     <td style="text-align:left"><strong>auctions sold</strong></td>
-    <?php for($i = 0; $i <= 12; $i++)
-			echo "<td>".@$number->format($results[$months[$i]]['aucTickets'])."</td>";
+    <?php for($i = 0; $i <= 12; $i++) {
+    		if ($i == 12) { echo "<td><strong>".@$number->format($totals['aucTickets'])."</strong></td>"; }
+		echo "<td>".@$number->format($results[$months[$i]]['aucTickets'])."</td>";
+	  }
 	?>
-    <td><strong>
-      <?=@$number->format($totals['aucTickets'])?>
-    </strong></td>
   </tr>
   <tr>
     <td style="text-align:left"><strong>auctions $$</strong></td>
-    <?php for($i = 0; $i <= 12; $i++)
-			echo "<td>".@$number->currency($results[$months[$i]]['aucRevenue'], 'USD', array('places' => 0))."</td>";
+    <?php for($i = 0; $i <= 12; $i++) {
+    		if ($i == 12) { echo "<td><strong>".@$number->currency($totals['aucRevenue'], 'USD', array('places' => 0))."</strong></td>"; }
+		echo "<td>".@$number->currency($results[$months[$i]]['aucRevenue'], 'USD', array('places' => 0))."</td>";
+	  }
 	?>
-    <td><strong>
-      <?=@$number->currency($totals['aucRevenue'], 'USD', array('places' => 0))?>
-    </strong></td>
+  </tr>
+  <tr class="altrow">
+    <td style="text-align:left"><strong>auctions nights</strong></td>
+    <?php for($i = 0; $i <= 12; $i++) {
+		if ($i == 12) { echo "<td><strong>".@$number->format($totals['aucNights'])."</strong></td>"; }
+		echo "<td>".@$number->format($results[$months[$i]]['aucNights'])."</td>";
+	  }
+	?>
   </tr>
   <tr>
-    <th>&nbsp;</th>
-    <?php for($i = 0; $i <= 12; $i++)
+    <td>&nbsp;</td>
+    <?php for($i = 0; $i <= 13; $i++)
 			echo "<td>&nbsp;</td>";
 	?>
-    <td>&nbsp;</td>
   </tr>
   <tr>
     <td style="text-align:left"><strong>fixed price live</strong></td>
     <?php for($i = 0; $i <= 12; $i++) {
+			if ($i == 12) { echo "<td><strong></strong></td>"; }
 			$style = '';
 			if(!@$results[$months[$i]]['numberPackages']) {
 				$style = " style='background-color: red; color: #fff'";
 			}
-				echo "<td$style>".@$number->format($results[$months[$i]]['numberPackages'])."</td>";
-			}
+			echo "<td$style>".@$number->format($results[$months[$i]]['numberPackages'])."</td>";
+	  }
 	?>
-    <td>&nbsp;</td>
   </tr>
   <tr class="altrow">
     <td style="text-align:left"><strong>fixed price sold</strong></td>
-    <?php for($i = 0; $i <= 12; $i++)
-			echo "<td>".@$number->format($results[$months[$i]]['fpTickets'])."</td>";
+    <?php for($i = 0; $i <= 12; $i++) {
+    		if ($i == 12) { echo "<td><strong>".@$number->format($totals['fpTickets'])."</strong></td>"; }
+		echo "<td>".@$number->format($results[$months[$i]]['fpTickets'])."</td>";
+	  }
 	?>
-    <td><strong>
-      <?=@$number->format($totals['fpTickets'])?>
-    </strong></td>
   </tr>
   <tr>
     <td style="text-align:left"><strong>fixed price $$</strong></td>
-    <?php for($i = 0; $i <= 12; $i++)
-			echo "<td>".@$number->currency($results[$months[$i]]['fpRevenue'], 'USD', array('places' => 0))."</td>";
+    <?php for($i = 0; $i <= 12; $i++) {
+		if ($i == 12) { echo "<td><strong>".@$number->currency($totals['fpRevenue'], 'USD', array('places' => 0))."</strong></td>"; }
+		echo "<td>".@$number->currency($results[$months[$i]]['fpRevenue'], 'USD', array('places' => 0))."</td>";
+	  }
 	?>
-    <td><strong>
-      <?=@$number->currency($totals['fpRevenue'], 'USD', array('places' => 0))?>
-    </strong></td>
+  </tr>
+  <tr class="altrow">
+    <td style="text-align:left"><strong>fixed price nights</strong></td>
+    <?php for($i = 0; $i <= 12; $i++) {
+		if ($i == 12) { echo "<td><strong>".@$number->format($totals['fpNights'])."</strong></td>"; }
+		echo "<td>".@$number->format($results[$months[$i]]['fpNights'])."</td>";
+	  }
+	?>
   </tr>
   <tr>
-    <th>&nbsp;</th>
-    <?php for($i = 0; $i <= 12; $i++)
+    <td>&nbsp;</td>
+    <?php for($i = 0; $i <= 13; $i++)
 			echo "<td>&nbsp;</td>";
 	?>
-    <td>&nbsp;</td>
   </tr>
   <tr class="altrow">
     <td style="text-align:left"><strong>total sold</strong></td>
-    <?php for($i = 0; $i <= 12; $i++)
-			echo "<td>".@$number->format($results[$months[$i]]['aucTickets']+$results[$months[$i]]['fpTickets'])."</td>";
+    <?php for($i = 0; $i <= 12; $i++) {
+    		if ($i == 12) { echo "<td><strong>".@$number->format($totals['aucTickets']+$totals['fpTickets'])."</strong></td>"; }
+		echo "<td>".@$number->format($results[$months[$i]]['aucTickets']+$results[$months[$i]]['fpTickets'])."</td>";
+	  }
 	?>
-    <td><strong>
-      <?=@$number->format($totals['aucTickets']+$totals['fpTickets'])?>
-    </strong></td>
   </tr>
   <tr>
     <td style="text-align:left"><strong>total $$</strong></td>
-    <?php for($i = 0; $i <= 12; $i++)
-			echo "<td>".@$number->currency($results[$months[$i]]['aucRevenue']+$results[$months[$i]]['fpRevenue'], 'USD', array('places' => 0))."</td>";
+    <?php for($i = 0; $i <= 12; $i++) {
+		if ($i == 12) { echo "<td><strong>".@$number->currency($totals['aucRevenue']+$totals['fpRevenue'], 'USD', array('places' => 0))."</strong></td>"; }
+		echo "<td>".@$number->currency($results[$months[$i]]['aucRevenue']+$results[$months[$i]]['fpRevenue'], 'USD', array('places' => 0))."</td>";
+	  }
 	?>
-    <td><strong>
-      <?=@$number->currency($totals['aucRevenue']+$totals['fpRevenue'], 'USD', array('places' => 0))?>
-    </strong></td>
+  </tr>
+  <tr class="altrow">
+    <td style="text-align:left"><strong>total nights</strong></td>
+    <?php for($i = 0; $i <= 12; $i++) {
+    		if ($i == 12) { echo "<td><strong>".@$number->format($totals['aucNights']+$totals['fpNights'])."</strong></td>"; }
+		echo "<td>".@$number->format($results[$months[$i]]['aucNights']+$results[$months[$i]]['fpNights'])."</td>";
+	  }
+	?>
   </tr>
   <tr>
-    <th>&nbsp;</th>
-    <?php for($i = 0; $i <= 12; $i++)
+    <td>&nbsp;</td>
+    <?php for($i = 0; $i <= 13; $i++)
 			echo "<td>&nbsp;</td>";
 	?>
-    <td>&nbsp;</td>
   </tr>
   <tr class="altrow">
     <td style="text-align:left"><strong>hotel offer</strong></td>
-    <?php for($i = 0; $i <= 12; $i++)
-			echo "<td>".@$number->format($results[$months[$i]]['numberOffers'])."</td>";
+    <?php for($i = 0; $i <= 12; $i++) {
+		if ($i == 12) { echo "<td><strong></strong></td>"; }
+		echo "<td>".@$number->format($results[$months[$i]]['numberOffers'])."</td>";
+	  }
 	?>
-    <td><strong>
-      <?=@$number->format($totals['hotelOfferTotal'])?>
-    </strong></td>
   </tr>
   <tr>
     <td style="text-align:left"><strong>hotel offer clicks</strong></td>
-    <?php for($i = 0; $i <= 12; $i++)
-			echo "<td>".@$number->format($results[$months[$i]]['event12'])."</td>";
+    <?php for($i = 0; $i <= 12; $i++) {
+		if ($i == 12) { echo "<td><strong>".@$number->format($totals['event12'])."</strong></td>"; }
+		echo "<td>".@$number->format($results[$months[$i]]['event12'])."</td>";
+	  }
 	?>
-    <td><strong>
-      <?=@$number->format($totals['hotelOfferClicksTotal'])?>
-    </strong></td>
   </tr>
 </table>
 <? endif; ?>
