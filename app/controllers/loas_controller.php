@@ -57,7 +57,7 @@ class LoasController extends AppController {
 		$this->Loa->Client->recursive = 1;
 		$client = $this->Loa->Client->find('Client.clientId = '.$clientId, 'name');
 		$currencyIds = $this->Loa->Currency->find('list');
-		$loaLevelIds = $this->Loa->LoaLevel->find('list');
+		$loaLevelIds = $this->Loa->LoaLevel->find('list', array('order' => array('LoaLevel.dropdownSortOrder')));
 		$loaMembershipTypeIds = $this->Loa->LoaMembershipType->find('list');
 		$this->set('clientName', $client['Client']['name']);
 		$this->set('client', $this->Loa->Client->findByClientId($clientId));
@@ -138,7 +138,7 @@ class LoasController extends AppController {
 		}
 		$customerApprovalStatusIds = $this->Loa->LoaCustomerApprovalStatus->find('list');
 		$currencyIds = $this->Loa->Currency->find('list');
-		$loaLevelIds = $this->Loa->LoaLevel->find('list');
+		$loaLevelIds = $this->Loa->LoaLevel->find('list', array('order' => array('LoaLevel.dropdownSortOrder')));
 		$loaMembershipTypeIds = $this->Loa->LoaMembershipType->find('list');
 		$this->set(compact('customerApprovalStatusIds', 'currencyIds', 'loaLevelIds', 'loaMembershipTypeIds'));
 		$this->set('client', $this->Loa->Client->findByClientId($this->data['Loa']['clientId']));
