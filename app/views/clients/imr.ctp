@@ -1,5 +1,6 @@
 <?php
-    $labelArray = array('Package Name',
+    $labelArray = array('Pkg. ID',
+                        'Package Name',
                         'Price Point Name',
                         'Track Name',
                         'Offer Type',
@@ -45,6 +46,7 @@
         <tbody>
         <?php foreach ($schedulingMasters as $i => $master): ?>
             <tr>
+                <td width="50"><?php echo $master['SchedulingMaster']['packageId']; ?></td>
                 <td><a href="/clients/<?php echo $clientId; ?>/packages/summary/<?php echo $master['SchedulingMaster']['packageId']; ?>"><?php echo $master['Package']['packageName']; ?></a></td>
                 <td><?php echo $master['PricePoint']['name']; ?></td>
                 <td><a href="/loas/edit/<?php echo $master['ClientLoaPackageRel']['loaId']; ?>"><?php echo $master['Track']['trackName']; ?></a></td>
@@ -52,15 +54,15 @@
                 <td align="center"><?php echo ($master['SchedulingMaster']['siteId'] == 1) ? 'LL' : 'FG'; ?></td>
                 <td align="center"><?php echo $master['SchedulingMaster']['roomNights']; ?></td>
                 <td align="center"><?php echo $master['Currency']['currencyCode']; ?></td>
-                <td align="right" width="65"><?php echo $master['SchedulingMaster']['pricePointRetailValue']; ?></td>
-                <td align="right" width="65" class="price"><?php echo $master['SchedulingMaster']['price']; ?></td>
-                <td width="175"><?php if (!empty($master['SchedulingMaster']['validityDates'])): ?>
+                <td align="right" width="50"><?php echo $master['SchedulingMaster']['pricePointRetailValue']; ?></td>
+                <td align="right" width="50" class="price"><?php echo $master['SchedulingMaster']['price']; ?> (<b><?php echo $master['SchedulingMaster']['percentRetail']; ?>%</b>)</td>
+                <td width="200"><?php if (!empty($master['SchedulingMaster']['validityDates'])): ?>
                                     <?php foreach($master['SchedulingMaster']['validityDates'] as $date): ?>
-                                        <?php echo $date['LoaItemDate']['startDate']; ?> - <?php echo $date['LoaItemDate']['endDate']; ?>
+                                        <?php echo date('M d, Y', strtotime($date['LoaItemDate']['startDate'])); ?> - <?php echo date('M d, Y', strtotime($date['LoaItemDate']['endDate'])); ?><br />
                                     <?php endforeach; ?>
                                 <?php else: ?>
                                     <?php if ($master['PricePoint']['name'] == 'Legacy'): ?>
-                                        <?php echo $master['PricePoint']['validityStart']; ?> - <?php echo $master['PricePoint']['validityEnd']; ?>
+                                        <?php echo date('M d, Y', strtotime($master['PricePoint']['validityStart'])); ?> - <?php echo date('M d, Y', strtotime($master['PricePoint']['validityEnd'])); ?><br />
                                     <?php endif; ?>
                                 <?php endif; ?>
                 </td>
@@ -70,7 +72,7 @@
                             <?php // link to ticket results for the scheduling master if there have been buy now requests ?>
                             <?php if ($master['Offers']['buyNowRequests'] > 0): ?>
                                 <?php $searchStr = 's_offer_type_id:4' .
-                                                    '/s_price_point_id:' . $master['SchedulingMaster']['pricePointId'] .
+                                                    '/s_offer_id:' . $master['Offers'][$master['SchedulingMaster']['offerStatus']][0]['Offer']['offerId'] .
                                                     '/s_start_y:'. date('Y', strtotime($master['SchedulingMaster']['startDate'])) .
                                                     '/s_start_m:' . date('m', strtotime($master['SchedulingMaster']['startDate'])) .
                                                     '/s_start_d:' . date('d', strtotime($master['SchedulingMaster']['startDate'])) .
@@ -87,7 +89,7 @@
                                 <?php if ($offer['Offer']['bidCount'] > 0): ?>
                                     <span class="retail" style="display:none;"><?php echo $offer['Offer']['retailValue']; ?></span>
                                     <span class="winningBid" style="display:none;"><?php echo $offer['Offer']['winningBidAmount']; ?></span>
-                                    <span class="endDate" style="display:none;"><?php echo $offer['Offer']['endDate']; ?></span>
+                                    <span class="endDate" style="display:none;"><?php echo date('M d, Y h:i a', strtotime($offer['Offer']['endDate'])); ?></span>
                                 <?php endif; ?>
                             <?php endforeach; ?>
                             <?php if ($master['SchedulingMaster']['offerStatus'] == 'Live'): ?>
@@ -99,14 +101,20 @@
                         <?php endif; ?>
                     <?php endif; ?>
                 </td>
-                <td align="right"><?php echo $master['Offers']['conversionRate']; ?>%</td>
-                <td><?php echo $master['SchedulingMaster']['startDate']; ?></td>
-                <td><?php echo $master['SchedulingMaster']['endDate']; ?></td>
+                <td width="40" align="right"><?php echo $master['Offers']['conversionRate']; ?>%</td>
+                <td width="90"><?php echo date('M d, Y h:i a', strtotime($master['SchedulingMaster']['startDate'])); ?></td>
+                <td width="90"><?php echo date('M d, Y h:i a', strtotime($master['SchedulingMaster']['endDate'])); ?></td>
                 <td><?php echo $master['SchedulingMaster']['offerStatus']; ?></td>
                 <td>
                     <?php //only link to scheduling if package has been approved for scheduling ?>
                     <?php if ($master['Package']['packageStatusId'] == 4): ?>
-                        <a href="/scheduling/index/clientId:<?php echo $clientId; ?>">
+                        <?php  //if the scheduling master end date is in the past, link to the scheduling page for the month of the end date
+                            $url = '/scheduling/index/clientId:'. $clientId;
+                            if (strtotime($master['SchedulingMaster']['endDate']) < time()) {
+                                $url .= '/month:' . date('m', strtotime($master['SchedulingMaster']['endDate'])) . '/year:' . date('Y', strtotime($master['SchedulingMaster']['endDate'])) ;
+                            }
+                        ?>
+                        <a href="<?php echo $url; ?>">
                     <?php endif; ?>
                     <?php echo $master['PackageStatus']['packageStatusName']; ?>
                     <?php if ($master['Package']['packageStatusId'] == 4): ?>
@@ -117,7 +125,6 @@
         <?php endforeach; ?>
         </tbody>
     </table>
-
-    <script type="text/javascript" src="/js/jquery/jquery.tablesorter.min.js"></script>
 <?php endif; ?>
+<script type="text/javascript" src="/js/jquery/jquery.tablesorter.min.js"></script>
 <script type="text/javascript" src="/js/imr.js"></script>

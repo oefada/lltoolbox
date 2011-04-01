@@ -543,11 +543,12 @@ class Client extends AppModel {
                         Track.trackName,
                         OfferType.offerTypeName,
                         SchedulingMaster.siteId,
-                        IF (Package.isFlexPackage, CONCAT(Package.flexNumNightsMin, '-', Package.flexNumNightsMax), Package.numNights) AS roomNights,
+                        IF (Package.isFlexPackage AND SchedulingMaster.offerTypeId = 4, CONCAT(Package.flexNumNightsMin, '-', Package.flexNumNightsMax), Package.numNights) AS roomNights,
                         SchedulingMaster.pricePointRetailValue,
-                        IF (SchedulingMaster.offerTypeId = 4, CONCAT(ROUND(SchedulingMaster.pricePointRetailValue * (SchedulingMaster.pricePointPercentRetailBuyNow/100)), ' (', SchedulingMaster.pricePointPercentRetailBuyNow , '%)'),
-                                                              CONCAT(ROUND(SchedulingMaster.pricePointRetailValue * (SchedulingMaster.pricePointPercentRetailAuc/100)), ' (', SchedulingMaster.pricePointPercentRetailAuc, '%)'))
+                        IF (SchedulingMaster.offerTypeId = 4, ROUND(SchedulingMaster.pricePointRetailValue * (SchedulingMaster.pricePointPercentRetailBuyNow/100)),
+                                                              ROUND(SchedulingMaster.pricePointRetailValue * (SchedulingMaster.pricePointPercentRetailAuc/100)))
                             AS price,
+                        IF (SchedulingMaster.offerTypeId = 4, SchedulingMaster.pricePointPercentRetailBuyNow, SchedulingMaster.pricePointPercentRetailAuc) AS percentRetail,
                         SchedulingMaster.startDate,
                         SchedulingMaster.endDate,
                         PricePoint.validityStart,

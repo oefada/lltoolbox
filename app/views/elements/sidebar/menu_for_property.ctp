@@ -31,6 +31,8 @@
             </ul>
         </li>
     <?php endif; ?>
-	<li>OFFERS</li>
-	<li>REPORTS</li>
+	<li class="open">REPORTS</li>
+        <ul>
+            <li style="margin-bottom:3px;"><a href="/clients/imr/<?php echo $clientId; ?>">Inventory Management</a></li>
+        </ul>
 </ul>

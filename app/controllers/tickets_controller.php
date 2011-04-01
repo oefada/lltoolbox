@@ -91,7 +91,7 @@ class TicketsController extends AppController {
 		$this->paginate = array('fields' => array(
 									'Ticket.ticketId', 'Ticket.offerTypeId', 'Ticket.created', 'Ticket.bidId',  
 									'Ticket.offerId', 'Ticket.userId', 'TicketStatus.ticketStatusName', 'Ticket.packageId', 
-									'Ticket.userFirstName', 'Ticket.userLastName', 'Ticket.packageId', 'Ticket.billingPrice', 'Ticket.formatId', 'Ticket.ticketNotes','Ticket.siteId', 
+									'Ticket.userFirstName', 'Ticket.userLastName', 'Ticket.packageId', 'Ticket.billingPrice', 'Ticket.numNights', 'Ticket.formatId', 'Ticket.ticketNotes','Ticket.siteId', 
 									'Ticket.requestArrival', 'Ticket.requestDeparture',
 									'PpvNotice.emailSentDatetime', 'ReservationPreferDate.arrivalDate', 'ReservationPreferDate.departureDate', 'COUNT(PpvNotice.ppvNoticeId) AS rescount'
 									),
@@ -145,9 +145,7 @@ class TicketsController extends AppController {
 					break;
 			}
 			$single_search_override = true;
-		} elseif ($s_offer_id) {
-			$this->paginate['conditions']['Ticket.offerId'] = $s_offer_id;    
-		} elseif ($s_user_id) {
+		}  elseif ($s_user_id) {
 			$this->paginate['conditions']['Ticket.userId'] = $s_user_id;       
 		} elseif ($s_bid_id) {
 			$this->paginate['conditions']['Ticket.bidId'] = $s_bid_id;       
@@ -198,6 +196,9 @@ class TicketsController extends AppController {
 			if ($s_site_id) {
 				$this->paginate['conditions']['Ticket.siteId'] = $s_site_id;	
 			}
+            if ($s_offer_id) {
+                $this->paginate['conditions']['Ticket.offerId'] = $s_offer_id;    
+            }
             if ($s_price_point_id) {
                 $this->paginate['conditions']['PricePoint.pricePointId'] = $s_price_point_id;
                 $this->paginate['joins'][] = array(

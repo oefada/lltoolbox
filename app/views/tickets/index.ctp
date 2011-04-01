@@ -303,6 +303,7 @@ $this->set('hideSidebar', true);
 	<th width="220" style="color:#FFF;">Client</th>
 	<th width="220" style="color:#FFF;">User</th>
 	<th width="10"><?php echo $paginator->sort('Sale Price', 'Ticket.billingPrice');?></th>
+    <th width="10"><?php echo $paginator->sort('# Nights', 'Ticket.numNights');?></th>
 	<th width="10"><?php echo $paginator->sort('Status', 'Ticket.ticketStatusId');?></th>
 	<th width="10"><?php echo $paginator->sort('Res. Request Date', 'PpvNotice.emailSentDatetime');?></th>
 	<th width="10" style="color:#FFF;">CC</th>	
@@ -363,6 +364,9 @@ foreach ($tickets as $ticket):
 		</td>
 		<td>
 			<?php echo $number->currency($ticket['Ticket']['billingPrice']);?>
+		</td>
+        <td>
+			<?php echo $ticket['Ticket']['numNights'];?>
 		</td>
 		<td style="font-weight:bold;">
 			<?php echo $ticket['TicketStatus']['ticketStatusName']; ?>
