@@ -28,7 +28,9 @@ $this->pageTitle = $client['Client']['name'].$html2->c($clientId, 'Client Id:').
     <?php endforeach; ?>
     
     <form method="post">
-        <?php echo $form->input('RoomGrade.roomGradeName', array('label' => false)); ?>&nbsp;&nbsp;<input type="submit" value="Add" />
+		<h2>New Room Grade</h2><br />
+        Room Grade Name:&nbsp;&nbsp;<?php echo $form->input('RoomGrade.roomGradeName', array('label' => false)); ?><br />
+		Room Link URL:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?php echo $form->input('RoomGrade.roomLink', array('label' => false)); ?>&nbsp;&nbsp;<input type="submit" value="Add" />
     </form>
     
 </div>
