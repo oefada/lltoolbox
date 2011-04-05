@@ -59,9 +59,12 @@ class LoasController extends AppController {
 		$currencyIds = $this->Loa->Currency->find('list');
 		$loaLevelIds = $this->Loa->LoaLevel->find('list', array('order' => array('LoaLevel.dropdownSortOrder')));
 		$loaMembershipTypeIds = $this->Loa->LoaMembershipType->find('list');
+        $this->Loa->LoaPublishingStatusRel->PublishingStatus->recursive = -1;
+        $publishingStatus = $this->Loa->LoaPublishingStatusRel->PublishingStatus->find('list');
+        debug($publishingStatus); die();
 		$this->set('clientName', $client['Client']['name']);
 		$this->set('client', $this->Loa->Client->findByClientId($clientId));
-		$this->set(compact('customerApprovalStatusIds', 'currencyIds', 'loaLevelIds', 'loaMembershipTypeIds'));
+		$this->set(compact('customerApprovalStatusIds', 'currencyIds', 'loaLevelIds', 'loaMembershipTypeIds', 'publishingStatus'));
 		
 	}
 
@@ -140,7 +143,15 @@ class LoasController extends AppController {
 		$currencyIds = $this->Loa->Currency->find('list');
 		$loaLevelIds = $this->Loa->LoaLevel->find('list', array('order' => array('LoaLevel.dropdownSortOrder')));
 		$loaMembershipTypeIds = $this->Loa->LoaMembershipType->find('list');
-		$this->set(compact('customerApprovalStatusIds', 'currencyIds', 'loaLevelIds', 'loaMembershipTypeIds'));
+        $this->Loa->LoaPublishingStatusRel->PublishingStatus->recursive = -1;
+        $publishingStatus = $this->Loa->LoaPublishingStatusRel->PublishingStatus->find('list');
+        $completedStatus = array();
+        if (!empty($this->data['LoaPublishingStatusRel'])) {
+            foreach ($this->data['LoaPublishingStatusRel'] as $pStatus) {
+                $completedStatus[$pStatus['publishingStatusId']] = $pStatus['completedDate'];
+            }
+        }
+		$this->set(compact('customerApprovalStatusIds', 'currencyIds', 'loaLevelIds', 'loaMembershipTypeIds', 'publishingStatus', 'completedStatus'));
 		$this->set('client', $this->Loa->Client->findByClientId($this->data['Loa']['clientId']));
 		$this->set('currencyCodes', $this->Loa->Currency->find('list', array('fields' => array('currencyCode'))));
 	}

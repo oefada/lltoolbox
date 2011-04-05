@@ -19,8 +19,15 @@ class Loa extends AppModel {
 
 	var $hasMany = array('LoaItem' => array('foreignKey' => 'loaId'), 
 						 'ClientLoaPackageRel' => array('foreignKey' => 'loaId'),
-						 'Track' => array('foreignKey' => 'loaId')
+						 'Track' => array('foreignKey' => 'loaId'),
+                         'LoaPublishingStatusRel' => array('foreignKey' => 'loaId')
 						);
+    
+    //var $hasAndBelongsToMany = array('PublishingStatus' => array('className' => 'PublishingStatus',
+    //                                                             'joinTable' => 'LoaPublishingStatusRel',
+    //                                                             'foreignKey' => 'loaId',
+    //                                                             'associationForeignKey' => 'publishingStatusId',
+    //                                                             'with' => 'LoaPublishingStatusRel'));
     
     var $actsAs = array('Containable', 'Logable');
 	
@@ -45,6 +52,20 @@ class Loa extends AppModel {
 		        $this->data['Loa']['customerApprovalDate'] = date('Y-m-d H:i:s');
 		    }			
 		}
+        if (!empty($this->data['Loa']['PublishingStatus']) && isset($this->data['Loa']['loaId'])) {
+            foreach ($this->data['Loa']['PublishingStatus'] as $i => $pStatus) {
+                if ($thisStatus = $this->LoaPublishingStatusRel->find('first', array('conditions' => array('LoaPublishingStatusRel.loaId' => $this->data['Loa']['loaId'],
+                                                                                                           'LoaPublishingStatusRel.publishingStatusId' => $pStatus)))) {
+                    $this->data['LoaPublishingStatusRel'][$i] = $thisStatus;
+                }
+                else {
+                    $this->data['LoaPublishingStatusRel'][$i]['loaId'] = $this->data['Loa']['loaId'];
+                    $this->data['LoaPublishingStatusRel'][$i]['publishingStatusId'] = $pStatus;
+                    $this->data['LoaPublishingStatusRel'][$i]['completedDate'] = date('Y-m-d H:i:s');
+                }
+            }
+        }
+        unset($this->data['Loa']['PublishingStatus'][$i]);
         AppModel::beforeSave();
 	    return true;
 	}
@@ -52,6 +73,12 @@ class Loa extends AppModel {
 	function afterSave() {
           if ($this->id == $this->get_current_loa($this->data['Loa']['clientId'])) {
                 $this->Client->set_sites($this->data['Loa']['clientId'], $this->data['Loa']['sites']);
+          }
+          if (!empty($this->data['LoaPublishingStatusRel'])) {
+            foreach($this->data['LoaPublishingStatusRel'] as $pStatus) {
+                $this->LoaPublishingStatusRel->create();
+                $this->LoaPublishingStatusRel->save($pStatus);
+            }
           }
 	      return;
 	}

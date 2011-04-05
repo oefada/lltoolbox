@@ -7,6 +7,11 @@ $this->set('clientId', $this->data['Client']['clientId']);
 <?=$layout->blockStart('header');?>
 <?= $html->link('<span><b class="icon"></b>Delete LOA</span>', array('action'=>'delete', $form->value('Loa.loaId')), array('class' => 'button del'), sprintf(__('Are you sure you want to delete # %s?', true), $form->value('Loa.loaId')), false); ?>
 <?=$layout->blockEnd();?>
+<style>
+    div.pub-status div.checkbox input[type="checkbox"] {
+        width:20px;
+    }
+</style>
 <h2 class="title"><?php __('Edit Loa');?> <?=$html2->c($loa['Loa']['loaId'], 'LOA Id:')?></h2>
 <div class="loas form">
 <?php echo $form->create('Loa');?>
@@ -35,14 +40,35 @@ $this->set('clientId', $this->data['Client']['clientId']);
             in_array('Production', $userDetails['groups'])) ? false : true;
 
 		echo $form->input('clientId', array('type' => 'hidden'));
-		echo $form->input('loaLevelId', array('disabled' => $disabled, 'label' => 'LOA Level'));
-		echo $form->input('loaMembershipTypeId', array('label' => 'Membership Type', 'disabled' => $disable_advanced_edit));
-		echo $form->input('numEmailInclusions');
-		echo $form->input('totalRevenue', array('disabled' => $disable_advanced_edit, 'label' => 'Total Revenue'));
-		echo $form->input('Loa.currencyId', array('label' => 'Item Currency'));
-		echo $form->input('customerApprovalStatusId', array('label' => 'Client Approval Status'));
-		echo $form->input('customerApprovalDate', array('label' => 'Package in Date', 'disabled' => true, 'empty' => true));
-	?>
+		echo $form->input('loaLevelId', array('disabled' => $disabled, 'label' => 'LOA Level')); ?>
+        
+        <div class="pub-status">
+            <div class="input select">
+                <label for="LoaPublishingStatus">Publishing Status</label>
+                <input type="hidden" value="" name="data[Loa][PublishingStatus]" />
+                <?php foreach ($publishingStatus as $pStatusId => $pStatus): ?>
+                    <?php if (in_array($pStatusId, array_keys($completedStatus))): ?>
+                        <div>
+                            Completed <?php echo date('M d, Y h:i a', strtotime($completedStatus[$pStatusId])); ?>
+                            <label for="LoaPublishingStatus<?php echo $pStatusId; ?>"><?php echo $pStatus; ?></label>
+                        </div>
+                    <?php else: ?>
+                        <div class="checkbox">
+                            <input type="checkbox" id="LoaPublishingStatus<?php echo $pStatusId; ?>" value="<?php echo $pStatusId; ?>" name="data[Loa][PublishingStatus][]" />
+                            <label for="LoaPublishingStatus<?php echo $pStatusId; ?>"><?php echo $pStatus; ?></label>
+                        </div>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <?php	echo $form->input('loaMembershipTypeId', array('label' => 'Membership Type', 'disabled' => $disable_advanced_edit));
+                echo $form->input('numEmailInclusions');
+                echo $form->input('totalRevenue', array('disabled' => $disable_advanced_edit, 'label' => 'Total Revenue'));
+                echo $form->input('Loa.currencyId', array('label' => 'Item Currency'));
+                echo $form->input('customerApprovalStatusId', array('label' => 'Client Approval Status'));
+                echo $form->input('customerApprovalDate', array('label' => 'Package in Date', 'disabled' => true, 'empty' => true));
+        ?>
+    
 	<div class="controlset">
 		<span class='label'>&nbsp;</span>
 		<? echo $form->input('upgraded');
