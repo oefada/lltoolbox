@@ -26,7 +26,8 @@
               <form method="post">
                 Start: <input type="text" size="12" class="datepicker startDate" name="data[searchStartDate]" value="<?php echo date('M j Y', strtotime($searchStartDate)); ?>" />
                 End: <input type="text" size="12" class="datepicker endDate" name="data[searchEndDate]" value="<?php echo date('M j Y', strtotime($searchEndDate)); ?>" />
-                <input type="submit" value="Search by Date" />
+                <input type="checkbox" name="data[download]" /> Export to CSV &nbsp;
+                <input type="submit" value="Search" />
               </form>
         </span>
     </div>
@@ -47,9 +48,9 @@
         <?php foreach ($schedulingMasters as $i => $master): ?>
             <tr>
                 <td width="50"><?php echo $master['SchedulingMaster']['packageId']; ?></td>
-                <td><a href="/clients/<?php echo $clientId; ?>/packages/summary/<?php echo $master['SchedulingMaster']['packageId']; ?>"><?php echo $master['Package']['packageName']; ?></a></td>
+                <td><a href="/clients/<?php echo $clientId; ?>/packages/summary/<?php echo $master['SchedulingMaster']['packageId']; ?>" target="_blank"><?php echo $master['Package']['packageName']; ?></a></td>
                 <td><?php echo $master['PricePoint']['name']; ?></td>
-                <td><a href="/loas/edit/<?php echo $master['ClientLoaPackageRel']['loaId']; ?>"><?php echo $master['Track']['trackName']; ?></a></td>
+                <td><a href="/loas/edit/<?php echo $master['ClientLoaPackageRel']['loaId']; ?>" target="_blank"><?php echo $master['Track']['trackName']; ?></a></td>
                 <td><?php echo $master['OfferType']['offerTypeName']; ?></td>
                 <td align="center"><?php echo ($master['SchedulingMaster']['siteId'] == 1) ? 'LL' : 'FG'; ?></td>
                 <td align="center"><?php echo $master['SchedulingMaster']['roomNights']; ?></td>
@@ -80,7 +81,7 @@
                                                     '/s_end_m:' . date('m', strtotime($master['SchedulingMaster']['endDate'])) .
                                                     '/s_end_d:' . date('d', strtotime($master['SchedulingMaster']['endDate']));
                                 ?>
-                                <a href="/tickets/index/<?php echo $searchStr; ?>">
+                                <a href="/tickets/index/<?php echo $searchStr; ?>" target="_blank">
                             <?php endif; ?>
                             <?php echo $master['Offers']['buyNowRequests']; ?> requests<?php if ($master['Offers']['buyNowRequests'] > 0): ?></a><?php endif; ?>, <?php echo $master['Offers']['buyNowConfirmedRequests']; ?> confirmed
                         <?php else: ?>
@@ -114,7 +115,7 @@
                                 $url .= '/month:' . date('m', strtotime($master['SchedulingMaster']['endDate'])) . '/year:' . date('Y', strtotime($master['SchedulingMaster']['endDate'])) ;
                             }
                         ?>
-                        <a href="<?php echo $url; ?>">
+                        <a href="<?php echo $url; ?>" target="_blank">
                     <?php endif; ?>
                     <?php echo $master['PackageStatus']['packageStatusName']; ?>
                     <?php if ($master['Package']['packageStatusId'] == 4): ?>

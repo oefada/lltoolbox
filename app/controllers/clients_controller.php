@@ -275,12 +275,22 @@ class ClientsController extends AppController {
     // 2011-03-21: New Inventory Management Report. Use this instead of the one
     // in the reports controller.
     function imr($clientId) {
-        $this->layout = 'default_jquery';
         $schedulingMasters = array();
         if (!empty($this->data)) {
             Sanitize::clean($this->data);
+            if (isset($this->data['download'])) {
+                Configure::write('debug', 0);
+                $this->viewPath .= '/csv';
+                $this->layoutPath = 'csv';
+            }
+            else {
+                $this->layout = 'default_jquery';
+            }
             $searchStartDate = date('Y-m-d', strtotime($this->data['searchStartDate']));
             $searchEndDate = date('Y-m-d', strtotime($this->data['searchEndDate']));
+        }
+        else {
+            $this->layout = 'default_jquery';
         }
         if (!isset($searchStartDate) && !isset($searchEndDate)) {
             $this->Client->Loa->recursive = -1;
