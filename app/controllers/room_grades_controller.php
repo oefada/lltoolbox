@@ -22,6 +22,17 @@ class RoomGradesController extends AppController {
             if (!isset($this->data['RoomGrade']['roomGradeId'])) {
                 $this->data['RoomGrade']['roomGradeId'] = null;
             }
+			
+			// check and make sure link has http://
+			if (isset($this->data['RoomGrade']['roomLink']) && !empty($this->data['RoomGrade']['roomLink'])) {
+				$link = $this->data['RoomGrade']['roomLink'];
+				if (strtolower(substr($link, 0, 7)) != 'http://') {
+					$link = 'http://' . $link;
+					$this->data['RoomGrade']['roomLink'] = $link;
+				}
+			}
+			
+			
             if ($this->RoomGrade->save($this->data)) {
                 $this->Session->setFlash('Room Grade has been saved.');
             }
@@ -38,6 +49,16 @@ class RoomGradesController extends AppController {
    
    function edit($clientId, $roomGradeId) {
         if (!empty($this->data)) {
+			print_r($this->data);
+			// check and make sure link has http://
+			if (isset($this->data['RoomGrade']['roomLink']) && !empty($this->data['RoomGrade']['roomLink'])) {
+				$link = $this->data['RoomGrade']['roomLink'];
+				if (strtolower(substr($link, 0, 7)) != 'http://') {
+					$link = 'http://' . $link;
+					$this->data['RoomGrade']['roomLink'] = $link;
+				}
+			}
+			
             if ($this->RoomGrade->save($this->data)) {
                 $this->Session->setFlash('Room Grade has been saved.');
             }
