@@ -460,6 +460,68 @@ class Package extends AppModel {
 		return;
 	}
 
+	// mbyrnes 2011-03-29
+	function insertValidityGroup($vg_id,$arr){
+
+		$q="INSERT INTO validityGroup SET ";
+		$q.="validityGroupId=$vg_id, ";
+		$q.="startDate='".$arr['startDate']."', ";
+		$q.="endDate='".$arr['endDate']."', ";
+		$q.="created='".date("Y-m-d H:i:s")."', ";
+		$q.="isBlackout='".$arr['isBlackout']."'";
+		$this->query($q);
+	
+	}
+
+	function getValidityGroupId($ppid){
+
+		$q="SELECT validityGroupId FROM pricePoint WHERE pricePointId=$ppid";
+		$res=$this->query($q); 
+		$id=$res[0]['pricePoint']['validityGroupId'];
+		return $id;
+
+	}
+
+	function updatePricePointValidityGroupId($ppid_arr,$vg_id){
+
+		if (!is_array($ppid_arr))$ppid_arr=(array)$ppid_arr;
+
+		$q="UPDATE pricePoint SET validityGroupId=$vg_id ";
+		$q.="WHERE pricePointId IN (".implode(",",$ppid_arr).")";
+		$this->query($q);
+
+	}
+
+	function getValidityGroup($vg_id){
+
+		$q="SELECT * FROM validityGroup WHERE validityGroupId=$vg_id ORDER BY startDate ASC";
+		return $this->query($q); 
+
+	}
+
+	function insertValidityDates($vg_id,$startDate,$endDate,$isBlackout){
+
+		$q="INSERT INTO validityGroup SET ";
+		$q.="startDate='$startDate', ";
+		$q.="endDate='$endDate', ";
+		$q.="isBlackout=$isBlackout, ";
+		$q.="validityGroupId=$vg_id, ";
+		$q.="created='".date("Y-m-d H:i:s")."'";
+		$this->query($q);
+
+	}
+
+	function updateOfferWithGroupId($pricePointId,$vg_id,$siteId){
+
+		$table="offerFamily";
+		if ($siteId==1)$table="offerLuxuryLink";
+		$q="UPDATE $table SET validityGroupId=$vg_id WHERE pricePointId=$pricePointId";
+		echo $q."<br>";
+		flush();
+		$this->query($q);
+
+	}
+
 	function getValidityDisclaimerText($packageId, $startDate, $endDate, $loaItemRatePeriodIds) {
 
 		// RETURNS : (STRING) html of validity disclaimer for a given price point range
@@ -490,7 +552,7 @@ class Package extends AppModel {
 		} else {
 			$html = "<b>This package is valid for travel:</b><br><br>";
 		}
-        
+
 		// populate html with valid ranges
 		if (!empty($dates['ValidRanges'])) {
 			$this->connectValidDateRanges($dates['ValidRanges']);
@@ -629,9 +691,10 @@ class Package extends AppModel {
 	function getPackageValidityDisclaimerByItem($packageId, $loaItemRatePeriodIds, $startDate, $endDate) {
 		
 		//$r = $this->query("SELECT startDate,endDate,isBlackout FROM packageValidityDisclaimer pvd WHERE packageId = {$packageId} AND startDate >= '{$startDate}' AND endDate <= '{$endDate}' ORDER BY startDate");
-		$r = $this->query("SELECT pvd.startDate, pvd.endDate, pvd.isBlackout FROM loaItemDate date 
-								INNER JOIN packageValidityDisclaimer pvd ON pvd.packageId = {$packageId} AND date.startDate <= pvd.startDate AND pvd.endDate <= date.endDate 
-								WHERE date.loaItemRatePeriodId IN ($loaItemRatePeriodIds) ORDER BY pvd.startDate");
+		$q="SELECT pvd.startDate, pvd.endDate, pvd.isBlackout FROM loaItemDate date INNER JOIN packageValidityDisclaimer pvd ON pvd.packageId = {$packageId} AND date.startDate <= pvd.startDate AND pvd.endDate <= date.endDate WHERE date.loaItemRatePeriodId IN ($loaItemRatePeriodIds) ORDER BY pvd.startDate";
+		echo "<p>$q</p>";
+		$r = $this->query($q);
+		//if (count($r)==0)echo $q."<br>";
 		$data = array();
 		foreach ($r as $m => $arr) {
 			if ($arr['pvd']['isBlackout'] == 1) {
