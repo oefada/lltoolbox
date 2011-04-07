@@ -65,7 +65,7 @@ class Loa extends AppModel {
                 }
             }
         }
-        unset($this->data['Loa']['PublishingStatus'][$i]);
+        unset($this->data['Loa']['PublishingStatus']);
         AppModel::beforeSave();
 	    return true;
 	}
