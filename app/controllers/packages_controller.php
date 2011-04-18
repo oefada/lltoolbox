@@ -3,8 +3,8 @@ class PackagesController extends AppController {
 
 	var $name = 'Packages';
 	var $helpers = array('Html', 'Form');
-	var $uses = array('Package', 'Client', 'PackageRatePeriod', 'LoaItem');
-    var $paginate = array('order' => array('Package.packageId' => 'desc'));
+	var $uses = array('Package', 'Client', 'PackageRatePeriod', 'LoaItem', 'IdCreator');
+  var $paginate = array('order' => array('Package.packageId' => 'desc'));
 	
 	function beforeFilter() {
 		parent::beforeFilter();
@@ -17,6 +17,7 @@ class PackagesController extends AppController {
 			$this->set('clientId', $this->params['clientId']);
 		}
 	}
+
 
 	function index($clientId = null) {
 		if (!isset($clientId) && !isset($this->params['named']['clientId'])) {
@@ -1994,14 +1995,14 @@ class PackagesController extends AppController {
         }
     }
     
-    function edit_price_points($clientId, $packageId) {
-
+    function edit_price_points($clientId, $packageId){
 
         $package = $this->Package->getPackage($packageId);
         $isMultiClientPackage = (count($package['ClientLoaPackageRel']) > 1) ? true : false;
-        
+
         // saving data
         if (!empty($this->data)){
+	
             $this->autoRender = false;
 
             // validation
@@ -2018,7 +2019,7 @@ class PackagesController extends AppController {
             }
 
 						$isNew=true;
-						if (isset($this->data['pricePoint']['pricePointId']))$isNew=false;
+						if (isset($this->data['PricePoint']['pricePointId']))$isNew=false;
 
 						$hasAuctionPrice=true;
 						$hasBuyNowPrice=true;
@@ -2056,24 +2057,23 @@ class PackagesController extends AppController {
 						*/
 
             if ($package['Package']['isFlexPackage'] == 1) { 
-                if (empty($this->data['PricePoint']['flexRetailPricePerNight']) || $this->data['PricePoint']['flexRetailPricePerNight'] <= 0) {
-                    $errors[] = 'Flex Per Night Retail must be greater than 0.';
-                }
-                if (empty($this->data['PricePoint']['pricePerExtraNight']) || $this->data['PricePoint']['pricePerExtraNight'] <= 0) {
-                    $errors[] = 'Flex Per Night Price must be greater than 0.';
-                }
+              if (empty($this->data['PricePoint']['flexRetailPricePerNight']) || $this->data['PricePoint']['flexRetailPricePerNight'] <= 0) {
+                $errors[] = 'Flex Per Night Retail must be greater than 0.';
+              }
+              if (empty($this->data['PricePoint']['pricePerExtraNight']) || $this->data['PricePoint']['pricePerExtraNight'] <= 0) {
+                $errors[] = 'Flex Per Night Price must be greater than 0.';
+              }
             }
             if (!$isMultiClientPackage) {
-              if ((!$this->data['PricePoint']['percentRetailAuc'] && !$this->data['PricePoint']['percentRetailBuyNow'])
-                    || (!$this->data['auctionOverride'] && $this->data['PricePoint']['percentRetailAuc'] && $this->data['PricePoint']['percentRetailAuc'] < $this->data['guaranteedPercent'])
+              if ((!$this->data['PricePoint']['percentRetailAuc'] && !$this->data['PricePoint']['percentRetailBuyNow']) || (!$this->data['auctionOverride'] && $this->data['PricePoint']['percentRetailAuc'] && $this->data['PricePoint']['percentRetailAuc'] < $this->data['guaranteedPercent'])
                     || (!$this->data['buynowOverride'] && $this->data['PricePoint']['percentRetailBuyNow'] && $this->data['PricePoint']['percentRetailBuyNow'] < $this->data['guaranteedPercent'])) {
             
                     $errors[] = 'Percent of retail must be greater than or equal to the guaranteed percent of retail.';
                 }
             }
             if (!empty($errors)) {
-                echo json_encode($errors);
-                return;
+              echo json_encode($errors);
+              return;
             }
 
 			$this->data['PricePoint']['validityDisclaimer'] = str_replace(array('\n','\r', "\n", "\r"), '', $this->data['PricePoint']['validityDisclaimer']);
@@ -2081,37 +2081,41 @@ class PackagesController extends AppController {
             
             // handle percentReservePrice
             if ($this->data['auctionOverride'] || $this->data['buynowOverride']) {
-                $this->data['PricePoint']['percentReservePrice'] = $this->data['guaranteedPercent'];
+              $this->data['PricePoint']['percentReservePrice'] = $this->data['guaranteedPercent'];
             }
 
             // edit pricePoint
             $pricePointId = $this->data['PricePoint']['pricePointId'];
             if ($pricePointId) {
-                // pricePoint
-                $this->Package->PricePoint->save($this->data['PricePoint']);
+              // pricePoint
+              $this->Package->PricePoint->save($this->data['PricePoint']);
                 
-                // remove pricePointRatePeriodRels and add below
-                $this->Package->PricePoint->PricePointRatePeriodRel->deleteAll(array('PricePointRatePeriodRel.pricePointId' => $pricePointId), false);                
+              // remove pricePointRatePeriodRels and add below
+              $this->Package->PricePoint->PricePointRatePeriodRel->deleteAll(array('PricePointRatePeriodRel.pricePointId' => $pricePointId), false);                
             
             // add pricePoint
             } else {
-                $this->Package->PricePoint->create();
-                $this->Package->PricePoint->save($this->data['PricePoint']);
-                $pricePointId = $this->Package->PricePoint->id;
+              $this->Package->PricePoint->create();
+              $this->Package->PricePoint->save($this->data['PricePoint']);
+              $pricePointId = $this->Package->PricePoint->id;
             }
             
             // add pricePointRatePeriodRel
             foreach ($this->data['loaItemRatePeriodIds'] as $loaItemRatePeriodId) {
-                $pricePointRatePeriodRel = array(
-                    'pricePointId' => $pricePointId,
-                    'loaItemRatePeriodId' => $loaItemRatePeriodId
-                );
-                $this->Package->PricePoint->PricePointRatePeriodRel->create();
-                $this->Package->PricePoint->PricePointRatePeriodRel->save($pricePointRatePeriodRel);
+              $pricePointRatePeriodRel = array(
+                  'pricePointId' => $pricePointId,
+                  'loaItemRatePeriodId' => $loaItemRatePeriodId
+              );
+              $this->Package->PricePoint->PricePointRatePeriodRel->create();
+              $this->Package->PricePoint->PricePointRatePeriodRel->save($pricePointRatePeriodRel);
             }
 			
 			// if override for package validity disclaimer, save this shiz
-			if (isset($this->data['Package']['overrideValidityDisclaimer']) && $this->data['Package']['overrideValidityDisclaimer'] == 1) {
+			$overrideVD=0;
+			if (isset($this->data['Package']['overrideValidityDisclaimer'])){
+				$overrideVD=$this->data['Package']['overrideValidityDisclaimer'];
+			}
+			if ($overrideVD==1) {
 				$package = array();
 				$package['packageId'] = $packageId;
 				$package['overrideValidityDisclaimer'] = 1;
@@ -2119,8 +2123,59 @@ class PackagesController extends AppController {
 			}else {
 	      $this->Package->updatePackagePricePointValidity($packageId);
 			}
+
+
+			// get validityGroupId - mbyrnes
+			$match_arr=array();
+			$ppid=$this->Package->PricePoint->id;
+			$loaItemRatePeriodIds=implode(",",$this->data['loaItemRatePeriodIds']);
+			$rows_db=$this->Package->getPackageValidityDisclaimerByItem($packageId, $loaItemRatePeriodIds, '','' ); 
+			if ($isNew==false){
+				$vg_id=$this->Package->getValidityGroupId($ppid);
+				// compare to what is currently in validityGroup table to what has been posted
+				$vg_rows=$this->Package->getValidityGroup($vg_id);
+				// compare validity dates from getPackageValidityDisclaimerByItem() to 
+				// validityGroup dates 
+				foreach($rows_db['ValidRanges'] as $key=>$arr){
+					// key pvd 
+					foreach($arr as $key2=>$validity_arr){
+						// from getValidityGroup
+						foreach($vg_rows as $key3=>$vg_arr){
+							$vg_row_id=$vg_arr['validityGroup']['id'];
+							$vg_group_id=$vg_arr['validityGroup']['validityGroupId'];
+							$vg_startDate=$vg_arr['validityGroup']['startDate'];
+							$vg_endDate=$vg_arr['validityGroup']['endDate'];
+							$validity_endDate=$validity_arr['endDate'];
+							$validity_startDate=$validity_arr['startDate'];
+							if ($vg_startDate==$validity_startDate && $vg_endDate==$validity_endDate){
+								$match_arr[$validity_startDate]=1;
+								//echo "match $vg_startDate==$validity_startDate|$vg_endDate==$validity_endDate|\n";
+							}else{
+								if (!isset($match_arr[$validity_startDate]))$match_arr[$validity_startDate]=0;
+								//echo "no match $vg_startDate!=$validity_startDate|$vg_endDate!=$validity_endDate|\n";
+							}
+						}
+					}
+				}
+			}
+
+			// if the number of elements in the match array doesn't match the number of matches, 
+			// a no match occured or is new - so create a new row in validityGroup table
+			if (count($match_arr)!=array_sum($match_arr) || $isNew){
+				$vg_id=$this->Package->genValidityGroupId();
+				foreach($rows_db['ValidRanges'] as $key=>$arr){
+					foreach($arr as $key2=>$validity_arr){
+						$this->Package->insertValidityGroup($vg_id,$validity_arr);
+					}
+				}
+				$this->Package->updateOffer($packageId,$ppid,$vg_id);
+				$this->Package->updatePricePointValidityGroupId($ppid,$vg_id);		
+			}
+
+				
+			// generate 
             
-            echo 'ok';
+      echo 'ok';
             
 			// view data
 			} else {
@@ -2476,6 +2531,96 @@ class PackagesController extends AppController {
         }
         return $ratePeriods;
     }
+
+	// for assigning all offers an id that correlates to a set of validity date ranges
+	// these date ranges will then be searchable by users
+	// see updateOfferWithGroupId()
+	function migrateValidityDates(){
+
+		$q="DELETE FROM validityGroup";
+		$this->Package->query($q);
+		$q="UPDATE offerFamily SET validityGroupId=0";
+		$this->Package->query($q);
+		$q="UPDATE pricePoint SET validityGroupId=0";	
+		$this->Package->query($q);
+
+		$siteId=2;//fg - change as needed
+
+		$q="SELECT packageId, pp.pricePointId, loaItemRatePeriodId FROM pricePoint pp ";
+		$q.="INNER JOIN pricePointRatePeriodRel USING (pricePointId) ";
+		$q.="INNER JOIN package USING (packageId) ";
+		$q.="WHERE package.siteId=$siteId ";
+		//$q.="AND package.packageId=260262 ";//for testing 
+		$q.="ORDER BY packageId,pricePointId ASC";
+		echo "<hr>$q<br>";
+		flush();
+		$res=$this->Package->query($q);
+		$validity_arr=array();
+		foreach($res as $key=>$arr){
+			$packageId=$arr['pp']['packageId'];
+			$pricePointId=$arr['pp']['pricePointId'];
+			$loa_id=$arr['pricePointRatePeriodRel']['loaItemRatePeriodId'];
+			if (isset($validity_arr[$packageId][$pricePointId]['loa_ids'])){
+				$validity_arr[$packageId][$pricePointId]['loa_ids'].=",".$loa_id;
+			}else{
+				$validity_arr[$packageId][$pricePointId]['loa_ids']=$loa_id;
+			}
+		}
+
+		foreach($validity_arr as $packageId=>$arr){
+
+			$loa_ids='';
+			foreach($arr as $pricePointId=>$loa_arr){
+				$loa_ids=$loa_arr['loa_ids'];
+echo "<br>packageId: $packageId<br>";
+echo "loa_ids: $loa_ids<br>";
+
+				$dates = $this->Package->getPackageValidityDisclaimerByItem($packageId, $loa_ids,0,0);
+				$vg_id=$this->IdCreator->genId();
+
+				$hasValidDate=false;
+				if (isset($dates['ValidRanges'])){
+					foreach($dates['ValidRanges'] as $arr){
+						foreach($arr as $key=>$pvd_arr){
+							if ($pvd_arr['endDate']<date("Y-m-d"))continue;//don't bother with validity end dates in the past
+							$hasValidDate=true;
+							//$startDate=$pvd_arr['startDate'];
+							//$endDate=$pvd_arr['endDate'];
+							//$isBlackout=$pvd_arr['isBlackout'];
+							//$this->Package->insertValidityDates($vg_id,$startDate,$endDate,$isBlackout);
+							$this->Package->insertValidityGroup($vg_id,$pvd_arr);
+						}
+					}
+				}
+
+				if (isset($dates['BlackoutDays'])){
+					foreach($dates['BlackoutDays'] as $arr){
+						foreach($arr as $key=>$pvd_arr){
+							if ($pvd_arr['endDate']<date("Y-m-d"))continue;//don't bother with validity end dates in the past
+							$hasValidDate=true;
+							//$startDate=$pvd_arr['startDate'];
+							//$isBlackout=$pvd_arr['isBlackout'];
+							//$this->Package->insertValidityDates($vg_id,$startDate,$endDate,$isBlackout);
+							$this->Package->insertValidityGroup($vg_id,$pvd_arr);
+						}
+					}
+				}
+
+				if ($hasValidDate){
+					$this->Package->updatePricePointValidityGroupId($pricePointId,$vg_id);
+					$this->Package->updateOfferWithGroupId($pricePointId,$vg_id,$siteId);
+				}
+
+			}
+
+		echo "<hr>";
+
+		}
+
+		$this->set("validity_arr",$validity_arr);
+		
+	}
+
     
 }
 ?>
