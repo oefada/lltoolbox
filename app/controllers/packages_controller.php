@@ -2124,58 +2124,25 @@ class PackagesController extends AppController {
 	      $this->Package->updatePackagePricePointValidity($packageId);
 			}
 
-
-			// get validityGroupId - mbyrnes
-			$match_arr=array();
+			// validityGroup stuff - by mbyrnes
 			$ppid=$this->Package->PricePoint->id;
 			$loaItemRatePeriodIds=implode(",",$this->data['loaItemRatePeriodIds']);
 			$rows_db=$this->Package->getPackageValidityDisclaimerByItem($packageId, $loaItemRatePeriodIds, '','' ); 
-			if ($isNew==false){
-				$vg_id=$this->Package->getValidityGroupId($ppid);
-				// compare to what is currently in validityGroup table to what has been posted
-				$vg_rows=$this->Package->getValidityGroup($vg_id);
-				// compare validity dates from getPackageValidityDisclaimerByItem() to 
-				// validityGroup dates 
-				foreach($rows_db['ValidRanges'] as $key=>$arr){
-					// key pvd 
-					foreach($arr as $key2=>$validity_arr){
-						// from getValidityGroup
-						foreach($vg_rows as $key3=>$vg_arr){
-							$vg_row_id=$vg_arr['validityGroup']['id'];
-							$vg_group_id=$vg_arr['validityGroup']['validityGroupId'];
-							$vg_startDate=$vg_arr['validityGroup']['startDate'];
-							$vg_endDate=$vg_arr['validityGroup']['endDate'];
-							$validity_endDate=$validity_arr['endDate'];
-							$validity_startDate=$validity_arr['startDate'];
-							if ($vg_startDate==$validity_startDate && $vg_endDate==$validity_endDate){
-								$match_arr[$validity_startDate]=1;
-								//echo "match $vg_startDate==$validity_startDate|$vg_endDate==$validity_endDate|\n";
-							}else{
-								if (!isset($match_arr[$validity_startDate]))$match_arr[$validity_startDate]=0;
-								//echo "no match $vg_startDate!=$validity_startDate|$vg_endDate!=$validity_endDate|\n";
-							}
-						}
-					}
-				}
-			}
 
-			// if the number of elements in the match array doesn't match the number of matches, 
-			// a no match occured or is new - so create a new row in validityGroup table
-			if (count($match_arr)!=array_sum($match_arr) || $isNew){
-				$vg_id=$this->Package->genValidityGroupId();
-				foreach($rows_db['ValidRanges'] as $key=>$arr){
-					foreach($arr as $key2=>$validity_arr){
-						$this->Package->insertValidityGroup($vg_id,$validity_arr);
-					}
-				}
-				$this->Package->updateOffer($packageId,$ppid,$vg_id);
-				$this->Package->updatePricePointValidityGroupId($ppid,$vg_id);		
-			}
+			$vg_id=$this->IdCreator->genId();
+			if ($vg_id=='')exit("vg_id not generated");
+			foreach($rows_db['ValidRanges'] as $key=>$arr){
 
-				
-			// generate 
+				foreach($arr as $key2=>$validity_arr){
+
+					$this->Package->insertValidityGroup($vg_id,$validity_arr);
+
+				}
+
+			}
+			$this->Package->updatePricePointValidityGroupId($ppid,$vg_id);		
             
-      echo 'ok';
+      echo "ok";// ppid:$ppid|vg_id:$vg_id";
             
 			// view data
 			} else {
