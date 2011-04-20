@@ -1,6 +1,8 @@
 <?php
 class PackagesController extends AppController {
 
+	var $debug_q=false;
+
 	var $name = 'Packages';
 	var $helpers = array('Html', 'Form');
 	var $uses = array('Package', 'Client', 'PackageRatePeriod', 'LoaItem', 'IdCreator');
@@ -2504,20 +2506,14 @@ class PackagesController extends AppController {
 	// see updateOfferWithGroupId()
 	function migrateValidityDates(){
 
-		$q="DELETE FROM validityGroup";
-		$this->Package->query($q);
-		$q="UPDATE offerFamily SET validityGroupId=0";
-		$this->Package->query($q);
-		$q="UPDATE pricePoint SET validityGroupId=0";	
-		$this->Package->query($q);
-
 		$siteId=2;//fg - change as needed
 
 		$q="SELECT packageId, pp.pricePointId, loaItemRatePeriodId FROM pricePoint pp ";
 		$q.="INNER JOIN pricePointRatePeriodRel USING (pricePointId) ";
 		$q.="INNER JOIN package USING (packageId) ";
 		$q.="WHERE package.siteId=$siteId ";
-		//$q.="AND package.packageId=255944 ";//for testing $q.="ORDER BY packageId,pricePointId ASC"; echo "<hr>$q<br>"; flush(); 
+		//$q.="AND package.packageId=255944 ";//for testing 
+		$q.="ORDER BY packageId,pricePointId ASC"; 
 		$res=$this->Package->query($q);
 		if ($this->debug_q){
 			echo "<p>$q</p>";
