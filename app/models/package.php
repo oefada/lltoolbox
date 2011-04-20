@@ -469,7 +469,7 @@ class Package extends AppModel {
 		$q.="endDate='".$arr['endDate']."', ";
 		$q.="created='".date("Y-m-d H:i:s")."', ";
 		$q.="isBlackout='".$arr['isBlackout']."'";
-		echo "<p>$q</p>";
+		//echo "<p>$q</p>";
 		$result=$this->query($q);
 		if (is_null($result))echo "is null";
 		else if ($result===false)echo "is false";
@@ -483,7 +483,7 @@ class Package extends AppModel {
 	function getValidityGroupId($ppid){
 
 		$q="SELECT validityGroupId FROM pricePoint WHERE pricePointId=$ppid";
-echo "<p>$q</p>";	
+		//echo "<p>$q</p>";	
 		flush();
 		$res=$this->query($q); 
 		$id=$res[0]['pricePoint']['validityGroupId'];
@@ -497,7 +497,7 @@ echo "<p>$q</p>";
 
 		$q="UPDATE pricePoint SET validityGroupId=$vg_id ";
 		$q.="WHERE pricePointId IN (".implode(",",$ppid_arr).")";
-echo "<p>$q</p>";	
+		//echo "<p>$q</p>";	
 		flush();
 		$this->query($q);
 
@@ -506,7 +506,7 @@ echo "<p>$q</p>";
 	function getValidityGroup($vg_id){
 
 		$q="SELECT * FROM validityGroup WHERE validityGroupId=$vg_id ORDER BY startDate ASC";
-echo "<p>$q</p>";	
+		//echo "<p>$q</p>";	
 		flush();
 		return $this->query($q); 
 
@@ -518,7 +518,7 @@ echo "<p>$q</p>";
 		if ($siteId==1)$table="offerLuxuryLink";
 		$q="UPDATE $table SET validityGroupId=$vg_id WHERE pricePointId=$pricePointId";
 		$this->query($q);
-		echo "<p>$q</p>";
+		//echo "<p>$q</p>";
 
 	}
 

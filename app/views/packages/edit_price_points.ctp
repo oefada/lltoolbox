@@ -79,15 +79,25 @@
                     	//$ratePeriod['LoaItemRatePackageRel']['guaranteePercentRetail'] = 0;
                     //}
                 ?>
-                    <tr <?php echo $alt; ?>>
-                        <td>
-                            <script>
-                                retails[<?php echo $ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId']; ?>] = <?php echo $ratePeriod['retailValue']; ?>;
-                                guaranteedPercents[<?php echo $ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId']; ?>] = <?php echo $ratePeriod['LoaItemRatePackageRel']['guaranteePercentRetail']; ?>;
-                                <?php if ($package['Package']['isFlexPackage']): ?>
-                                    flexRoomPricePerNight[<?php echo $ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId']; ?>] = <?php echo $ratePeriod['roomRetailPricePerNight']; ?>;
-                                <?php endif; ?>
-                            </script>
+                <tr <?php echo $alt; ?>>
+                <td>
+                <script>
+                  retails[<?php echo $ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId']; ?>] = <?php echo $ratePeriod['retailValue']; ?>;
+									<? 
+									if ($ratePeriod['LoaItemRatePackageRel']['guaranteePercentRetail']==''){
+										$guarPerRet=0;
+									}else{
+										$guarPerRet=$ratePeriod['LoaItemRatePackageRel']['guaranteePercentRetail'];
+									}
+									$loaIRPI=$ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId']; 
+									?>
+									guaranteedPercents[<?=$loaIRPI?>] = <?=($guarPerRet);?>;
+
+                  <?php if ($package['Package']['isFlexPackage']): ?>
+                    flexRoomPricePerNight[<?php echo $ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId']; ?>] = <?php echo $ratePeriod['roomRetailPricePerNight']; ?>;
+                  <?php endif; ?>
+                </script>
+
                             <input class="check-rate-period" type="checkbox" name="data[loaItemRatePeriodIds][]" value="<?php echo $ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId']; ?>" <?php echo $checked; echo $disabled; ?>/>
                         </td>
                         <?php if ($isMultiClientPackage): ?>

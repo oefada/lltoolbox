@@ -2550,11 +2550,9 @@ class PackagesController extends AppController {
 		$q.="INNER JOIN pricePointRatePeriodRel USING (pricePointId) ";
 		$q.="INNER JOIN package USING (packageId) ";
 		$q.="WHERE package.siteId=$siteId ";
-		//$q.="AND package.packageId=260262 ";//for testing 
-		$q.="ORDER BY packageId,pricePointId ASC";
-		echo "<hr>$q<br>";
-		flush();
+		//$q.="AND package.packageId=255944 ";//for testing $q.="ORDER BY packageId,pricePointId ASC"; echo "<hr>$q<br>"; flush(); 
 		$res=$this->Package->query($q);
+		echo "<br>num rows:".count($res)."<br>";
 		$validity_arr=array();
 		foreach($res as $key=>$arr){
 			$packageId=$arr['pp']['packageId'];
@@ -2572,22 +2570,30 @@ class PackagesController extends AppController {
 			$loa_ids='';
 			foreach($arr as $pricePointId=>$loa_arr){
 				$loa_ids=$loa_arr['loa_ids'];
-echo "<br>packageId: $packageId<br>";
-echo "loa_ids: $loa_ids<br>";
+
+				echo "<br>packageId: $packageId<br>";
+				echo "loa_ids: $loa_ids<br>";
 
 				$dates = $this->Package->getPackageValidityDisclaimerByItem($packageId, $loa_ids,0,0);
+				//print_r($dates);
 				$vg_id=$this->IdCreator->genId();
+				if ($vg_id==0){
+					echo "<p style='color:red;'>Failed to gen a vg_id for</p>";
+					echo "<pre>";
+					print_r($arr);
+					echo "</pre>";
+					exit;
+				}
 
 				$hasValidDate=false;
 				if (isset($dates['ValidRanges'])){
 					foreach($dates['ValidRanges'] as $arr){
 						foreach($arr as $key=>$pvd_arr){
-							if ($pvd_arr['endDate']<date("Y-m-d"))continue;//don't bother with validity end dates in the past
+							if ($pvd_arr['endDate']<date("Y-m-d")){
+								echo "<p>endDate:".$pvd_arr['endDate']." is in the past. Skipping</p>";
+								continue;//don't bother with validity end dates in the past
+							}
 							$hasValidDate=true;
-							//$startDate=$pvd_arr['startDate'];
-							//$endDate=$pvd_arr['endDate'];
-							//$isBlackout=$pvd_arr['isBlackout'];
-							//$this->Package->insertValidityDates($vg_id,$startDate,$endDate,$isBlackout);
 							$this->Package->insertValidityGroup($vg_id,$pvd_arr);
 						}
 					}
@@ -2598,9 +2604,6 @@ echo "loa_ids: $loa_ids<br>";
 						foreach($arr as $key=>$pvd_arr){
 							if ($pvd_arr['endDate']<date("Y-m-d"))continue;//don't bother with validity end dates in the past
 							$hasValidDate=true;
-							//$startDate=$pvd_arr['startDate'];
-							//$isBlackout=$pvd_arr['isBlackout'];
-							//$this->Package->insertValidityDates($vg_id,$startDate,$endDate,$isBlackout);
 							$this->Package->insertValidityGroup($vg_id,$pvd_arr);
 						}
 					}
