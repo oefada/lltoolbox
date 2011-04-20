@@ -1,6 +1,9 @@
 <?php
 class Package extends AppModel {
 
+	// for display of validityGroup queries 
+	var $debug_q=false;
+
 	var $name = 'Package';
 	var $useTable = 'package';
 	var $primaryKey = 'packageId';
@@ -469,23 +472,21 @@ class Package extends AppModel {
 		$q.="endDate='".$arr['endDate']."', ";
 		$q.="created='".date("Y-m-d H:i:s")."', ";
 		$q.="isBlackout='".$arr['isBlackout']."'";
-		//echo "<p>$q</p>";
-		$result=$this->query($q);
-		if (is_null($result))echo "is null";
-		else if ($result===false)echo "is false";
-		else if ($result===true)echo "is true";
-		else if (is_resource($result))echo "is resource";
-		else if (is_object($result))echo "is object";
-		else if (is_string($result))echo "is string";
-		else if (is_scalar($result))echo "is scalar";
+		$this->query($q);
+		if ($this->debug_q){
+			echo "<p>$q</p>";
+			echo "<p>Affected Rows: ".$this->getAffectedRows()."</p>";
+		}
 	}
 
 	function getValidityGroupId($ppid){
 
 		$q="SELECT validityGroupId FROM pricePoint WHERE pricePointId=$ppid";
-		//echo "<p>$q</p>";	
-		flush();
 		$res=$this->query($q); 
+		if ($this->debug_q){
+			echo "<p>$q</p>";
+			echo "<p>Num Rows: ".count($res)."</p>";
+		}
 		$id=$res[0]['pricePoint']['validityGroupId'];
 		return $id;
 
@@ -497,18 +498,24 @@ class Package extends AppModel {
 
 		$q="UPDATE pricePoint SET validityGroupId=$vg_id ";
 		$q.="WHERE pricePointId IN (".implode(",",$ppid_arr).")";
-		//echo "<p>$q</p>";	
 		flush();
 		$this->query($q);
+		if ($this->debug_q){
+			echo "<p>$q</p>";
+			echo "<p>Affected Rows: ".$this->getAffectedRows()."</p>";
+		}
 
 	}
 
 	function getValidityGroup($vg_id){
 
 		$q="SELECT * FROM validityGroup WHERE validityGroupId=$vg_id ORDER BY startDate ASC";
-		//echo "<p>$q</p>";	
-		flush();
-		return $this->query($q); 
+		$res=$this->query($q); 
+		if ($this->debug_q){
+			echo "<p>$q</p>";
+			echo "<p>Num Rows: ".count($res)."</p>";
+		}
+		return $res;
 
 	}
 
@@ -518,7 +525,10 @@ class Package extends AppModel {
 		if ($siteId==1)$table="offerLuxuryLink";
 		$q="UPDATE $table SET validityGroupId=$vg_id WHERE pricePointId=$pricePointId";
 		$this->query($q);
-		//echo "<p>$q</p>";
+		if ($this->debug_q){
+			echo "<p>$q</p>";
+			echo "<p>Affected Rows: ".$this->getAffectedRows()."</p>";
+		}
 
 	}
 

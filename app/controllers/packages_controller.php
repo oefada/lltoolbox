@@ -2552,7 +2552,10 @@ class PackagesController extends AppController {
 		$q.="WHERE package.siteId=$siteId ";
 		//$q.="AND package.packageId=255944 ";//for testing $q.="ORDER BY packageId,pricePointId ASC"; echo "<hr>$q<br>"; flush(); 
 		$res=$this->Package->query($q);
-		echo "<br>num rows:".count($res)."<br>";
+		if ($this->debug_q){
+			echo "<p>$q</p>";
+			echo "<br>num rows:".count($res)."<br>";
+		}
 		$validity_arr=array();
 		foreach($res as $key=>$arr){
 			$packageId=$arr['pp']['packageId'];
