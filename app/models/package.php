@@ -469,9 +469,15 @@ class Package extends AppModel {
 		$q.="endDate='".$arr['endDate']."', ";
 		$q.="created='".date("Y-m-d H:i:s")."', ";
 		$q.="isBlackout='".$arr['isBlackout']."'";
-		$this->query($q);
-echo "<p>$q</p>";	
-		flush();
+		echo "<p>$q</p>";
+		$result=$this->query($q);
+		if (is_null($result))echo "is null";
+		else if ($result===false)echo "is false";
+		else if ($result===true)echo "is true";
+		else if (is_resource($result))echo "is resource";
+		else if (is_object($result))echo "is object";
+		else if (is_string($result))echo "is string";
+		else if (is_scalar($result))echo "is scalar";
 	}
 
 	function getValidityGroupId($ppid){
@@ -505,27 +511,14 @@ echo "<p>$q</p>";
 		return $this->query($q); 
 
 	}
-/*
-	function insertValidityDates($vg_id,$startDate,$endDate,$isBlackout){
 
-		$q="INSERT INTO validityGroup SET ";
-		$q.="startDate='$startDate', ";
-		$q.="endDate='$endDate', ";
-		$q.="isBlackout=$isBlackout, ";
-		$q.="validityGroupId=$vg_id, ";
-		$q.="created='".date("Y-m-d H:i:s")."'";
-		$this->query($q);
-
-	}
-*/
 	function updateOfferWithGroupId($pricePointId,$vg_id,$siteId){
 
 		$table="offerFamily";
 		if ($siteId==1)$table="offerLuxuryLink";
 		$q="UPDATE $table SET validityGroupId=$vg_id WHERE pricePointId=$pricePointId";
-echo "<p>$q</p>";	
-		flush();
 		$this->query($q);
+		echo "<p>$q</p>";
 
 	}
 
@@ -699,8 +692,11 @@ echo "<p>$q</p>";
 		
 		//$r = $this->query("SELECT startDate,endDate,isBlackout FROM packageValidityDisclaimer pvd WHERE packageId = {$packageId} AND startDate >= '{$startDate}' AND endDate <= '{$endDate}' ORDER BY startDate");
 		$q="SELECT pvd.startDate, pvd.endDate, pvd.isBlackout FROM loaItemDate date INNER JOIN packageValidityDisclaimer pvd ON pvd.packageId = {$packageId} AND date.startDate <= pvd.startDate AND pvd.endDate <= date.endDate WHERE date.loaItemRatePeriodId IN ($loaItemRatePeriodIds) ORDER BY pvd.startDate";
-		echo "<p>$q</p>";
 		$r = $this->query($q);
+		//echo "<pre>";
+		//print_r($r);
+		//echo "</pre>";
+
 		//if (count($r)==0)echo $q."<br>";
 		$data = array();
 		foreach ($r as $m => $arr) {
