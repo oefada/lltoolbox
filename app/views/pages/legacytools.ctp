@@ -21,6 +21,7 @@
 <li><?=$html->link("Menu Tool", '/menus')?></li>
 <li><?=$html->link("Client Scores", '/client_scores')?></li>
 <li><?=$html->link("Articles", '/articles')?></li>
+<li><?=$html->link("Deal of the Day", '/deal_of_the_days')?></li>
 </ul>
 
 <br />
