@@ -17,7 +17,7 @@
  *
  * @filesource
  * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
- * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+  @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.app.config
  * @since			CakePHP(tm) v 0.2.9

@@ -2127,7 +2127,11 @@ class PackagesController extends AppController {
 			}
 
 			// validityGroup stuff - by mbyrnes
-			$ppid=$this->Package->PricePoint->id;
+			if (isset($this->data['PricePoint']['pricePointId']) && trim($this->data['PricePoint']['pricePointId'])!=''){
+				$ppid=$this->data['PricePoint']['pricePointId'];
+			}else{
+				$ppid=$this->Package->PricePoint->id;
+			}
 			$loaItemRatePeriodIds=implode(",",$this->data['loaItemRatePeriodIds']);
 			$rows_db=$this->Package->getPackageValidityDisclaimerByItem($packageId, $loaItemRatePeriodIds, '','' ); 
 
