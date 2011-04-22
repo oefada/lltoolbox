@@ -464,14 +464,15 @@ class Package extends AppModel {
 	}
 
 	// mbyrnes 2011-03-29
-	function insertValidityGroup($vg_id,$arr){
+	function insertValidityGroup($vg_id,$arr,$siteId){
 
 		$q="INSERT INTO validityGroup SET ";
 		$q.="validityGroupId=$vg_id, ";
 		$q.="startDate='".$arr['startDate']."', ";
 		$q.="endDate='".$arr['endDate']."', ";
 		$q.="created='".date("Y-m-d H:i:s")."', ";
-		$q.="isBlackout='".$arr['isBlackout']."'";
+		$q.="isBlackout='".$arr['isBlackout']."', ";
+		$q.="siteId='$siteId'";
 		$this->query($q);
 		if ($this->debug_q){
 			echo "<p>$q</p>";
