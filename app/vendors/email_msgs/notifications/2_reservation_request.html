@@ -1,6 +1,6 @@
 <?php include('../vendors/email_msgs/email_includes/header.html');?>
 
-<h1 style="color:#<?=$siteHeader;?>;font-size:16px;margin:0px;padding:0px;margin-bottom:30px;">PLEASE CONFIRM THIS BOOKING REQUEST - 
+<h1 style="color:#<?=$siteHeader;?>;font-size:16px;margin:0px;padding:0px;margin-bottom:30px;">PLEASE CONFIRM THIS BOOKING REQUEST -
 	<span style="color:#990000;font-style:italic;">ACTION REQUIRED</span>.</h1>
 
 <p>Dear <?php echo $clientName;?>,</p>
@@ -8,7 +8,12 @@
 <? if ($isAuction){ ?>
 	<p><strong>The following <?=$siteName;?> auction package has been paid in full.</strong> <a href="<?=$extranet_link;?>">Please view the reservation request.</a></p>
 <? }else{ ?>
-	<p><strong>The following <?=$siteName;?> "Buy Now" package has been Requested.</strong> <a href="<?=$extranet_link;?>">Please view the reservation request.</a></p>	
+	<p><strong>The following <?=$siteName;?> "Buy Now" package has been Requested.</strong> <a href="<?=$extranet_link;?>">Please view the reservation request.</a></p>
+
+	<?php if ($guarantee) : ?>
+		<p>On this occasion <?=$siteName;?> will subsidize the price to <span style="font-weight:bold; color:#990000;">guarantee $<?=$guarantee;?></span>; this amount will be reflected on your month end statement.</p>
+	<?php endif ;?>
+
 <? } ?>
 
 
@@ -42,10 +47,10 @@
 	<tr>
 		<td style="color:#000000;font-size:12px; padding-bottom:10px;font-weight:bold; border-bottom:1px solid silver;" valign="top" align="left" width="170">Winning Bidder:</td>
 		<td style="color:#444444;font-size:12px; padding-bottom:10px;border-bottom:1px solid silver;" valign="top" align="left"><?php echo $userFirstName;?> <?php echo $userLastName;?>&nbsp;</td>
-	</tr>	
-	<? }else{ ?>	
+	</tr>
+	<? }else{ ?>
 	<tr>
-		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170"><?php if (trim($addtlDescription)) : ?>Package Price From:<?php else : ?>Package Price From:<?php endif;?></td> 
+		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170"><?php if (trim($addtlDescription)) : ?>Package Price From:<?php else : ?>Package Price From:<?php endif;?></td>
 		<td style="color:#444444;font-size:12px;" valign="top" align="left">$<?=$clientAdjustedPrice;?>
 		<? if ($addtlDescription) {
 			echo $addtlDescription;
@@ -65,7 +70,7 @@
 		<td style="color:#000000;font-size:12px; padding-top:15px;font-weight:bold;text-decoration:underline;" valign="top" align="left" width="170">Requested Dates:</td>
 		<td style="color:#444444;font-size:12px; padding-top:15px;" valign="top" align="left">
 			<table cellspacing="2" cellpadding="2">
-				<tr>					
+				<tr>
 					<? if ($siteId == 1 ){?>
 					<td align="center"><a href="<?=$extranet_link;?>"><img src="http://www.luxurylink.com/images/toolbox/btn_view_req_dates.gif" alt="View Requested Dates" style="border:0px;" /></a><br /><a href="<?=$extranet_link;?>" style="font-size:12px;border:0px;">(View Requested Dates)</a></td>
 					<? }else{ ?>
