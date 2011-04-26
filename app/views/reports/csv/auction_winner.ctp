@@ -26,7 +26,10 @@ foreach ($results as $r):
 				$remit = '';
 				break;
 	}
-
+	
+	$promoCode = $r['PromoCode']['promoCode'];
+	if (($r['OfferLookup']['reserveAmt'] > 0) && ($r['Ticket']['billingPrice '] < $r['OfferLookup']['reserveAmt'])) { $promoCode = 'Guarantee ' . $promoCode; }
+	
 	$line = array(
 	$siteIds[$r['Ticket']['siteId']],
 	date('M d Y h:i:sA', strtotime($r[0]['endDate'])),
@@ -67,7 +70,7 @@ foreach ($results as $r):
 	date('M d Y h:i:sA', strtotime($r['PricePoint']['validityEnd'])),
 	'',
 	'',
-	$r['PromoCode']['promoCode']
+	$promoCode
 	); //TODO: Add Paid Search Id and Ref Url
 	
 	echo implode(',', $line)."\r\n";

@@ -1100,7 +1100,9 @@ class ReportsController extends AppController {
 													 SchedulingMaster.packageId,
 						   Promo.amountOff,
 						   PromoCode.promoCode,
-                           Package.numNights
+                           Package.numNights,
+                           Ticket.offerId,
+                           Ticket.billingPrice
                     FROM ticket AS Ticket
                            INNER JOIN offer AS Offer USING(offerId)
                            LEFT JOIN offerType AS OfferType ON (Ticket.offerTypeId = OfferType.offerTypeId)
@@ -1155,6 +1157,18 @@ class ReportsController extends AppController {
 						}
 
 					}
+
+					// 2011-04-25 jwoods - need reserveAmt for "guarantee" ticket 1917
+					foreach($results as $key=>$arr) {
+						$guaranteeTable = ($arr['Ticket']['siteId'] == 1) ? 'offerLuxuryLink' : 'offerFamily';
+						$q="SELECT reserveAmt FROM " . $guaranteeTable . " WHERE offerId = " . $arr['Ticket']['offerId'];
+						$guar_results=$this->OfferType->query($q);
+						$results[$key]['OfferLookup']['reserveAmt']=$guar_results[0][$guaranteeTable]['reserveAmt'];
+
+					}
+
+
+
 
 				$this->set('currentPage', $this->page);
 				$this->set('numRecords', $numRecords);
