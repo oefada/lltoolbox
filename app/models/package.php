@@ -447,7 +447,9 @@ class Package extends AppModel {
 		$this->updateValidityDisclaimer($packageId); 
 		$this->recursive = -1;
 		$package = $this->read(null, $packageId);
-		if ($package['Package']['overrideValidityDisclaimer']) {
+		// ticket1870 - we still need to set validityStart and validityEnd in the pricePoint table
+		$ovd=$package['Package']['overrideValidityDisclaimer'];
+		if (false && $package['Package']['overrideValidityDisclaimer']) {
 			return;
 		}
 		$rp = $this->getPricePointDateRangeByPackage($packageId);
@@ -456,10 +458,11 @@ class Package extends AppModel {
 			if ($validityDisclaimer) {
 				$r['PricePoint']['validityStart'] = $r[0]['minStartDate'];
 				$r['PricePoint']['validityEnd'] = $r[0]['maxEndDate'];
-				$r['PricePoint']['validityDisclaimer'] = Sanitize::escape($validityDisclaimer);
+				if ($ovd==false)$r['PricePoint']['validityDisclaimer'] = Sanitize::escape($validityDisclaimer);
 				$this->PricePoint->save($r['PricePoint'], array('validate' => false, 'callbacks' => false));
 			}
 		}
+
 		return;
 	}
 
