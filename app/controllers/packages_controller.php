@@ -873,6 +873,7 @@ class PackagesController extends AppController {
      **/
     
     function summary($clientId, $packageId) {
+
         // client
         $client = $this->Client->find('first', array('conditions' => array('Client.clientId' => $clientId)));
         $this->set('client', $client);
@@ -2122,9 +2123,10 @@ class PackagesController extends AppController {
 				$package['packageId'] = $packageId;
 				$package['overrideValidityDisclaimer'] = 1;
 				$this->Package->save($package);
-			}else {
-	      $this->Package->updatePackagePricePointValidity($packageId);
 			}
+
+			// ticket1870 - we still need to set validityStart and validityEnd in the pricePoint table
+	    $this->Package->updatePackagePricePointValidity($packageId);
 
 			// validityGroup stuff - by mbyrnes
 			if (isset($this->data['PricePoint']['pricePointId']) && trim($this->data['PricePoint']['pricePointId'])!=''){
