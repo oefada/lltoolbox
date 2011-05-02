@@ -3,11 +3,14 @@ class AccoladesController extends AppController {
 
 	var $name = 'Accolades';
 	var $helpers = array('Html', 'Form');
-    function beforeFilter() {
-        parent::beforeFilter();
+
+	var $uses=array("Accolade");
+
+  function beforeFilter() {
+    parent::beforeFilter();
 		$this->set('currentTab', 'siteMerchandising');
 		$this->pageTitle = 'Accolades Tool';
-    }
+  }
     
 	function index() {
 		$this->Accolade->recursive = 0;
@@ -106,5 +109,42 @@ class AccoladesController extends AppController {
 			}
 		endif;
 	}
+
+	// 
+	function migrate(){
+
+		$rows=$this->Accolade->getAccolades();
+
+		$ll_arr=array();
+		$fg_arr=array();
+		foreach($rows as $key=>$row){
+			$acc_arr=$row['accolade'];
+			$sites_arr=explode(",",$acc_arr['sites']);
+			foreach($sites_arr as $j=>$site){
+				if ($site=="luxurylink"){
+					$ll_arr[]=$acc_arr;
+				}elseif($site=="familygetaway" || $site=="family"){
+					$fg_arr[]=$acc_arr;
+				}
+			}
+
+		}
+
+		foreach($ll_arr as $key=>$row){
+			$this->Accolade->insertIntoAccolade($row,"luxurylink","accolade");
+			echo "...<br>";
+			flush();
+		}
+
+		foreach($fg_arr as $key=>$row){
+			$this->Accolade->insertIntoAccolade($row,"family","accolade");
+			echo "...<br>";
+			flush();
+		}
+
+ }
+
+
 }
+
 ?>

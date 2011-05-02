@@ -4,7 +4,7 @@
  		<legend><?php __('Edit Accolade');?></legend>
 		<div class="controlset4">
 		<?
-		echo $form->input('sites', array('multiple' => 'checkbox'));
+		echo $multisite->checkbox('Accolade');
 		?>
 		</div>
 	<?php
