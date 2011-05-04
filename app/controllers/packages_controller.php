@@ -1,7 +1,7 @@
 <?php
 class PackagesController extends AppController {
 
-	var $debug_q=false;
+	var $debug_q=true;
 
 	var $name = 'Packages';
 	var $helpers = array('Html', 'Form');
@@ -2513,12 +2513,13 @@ class PackagesController extends AppController {
 	function migrateValidityDates(){
 
 		$siteId=2;//fg - change as needed
+		$siteId=1;//LL - change as needed
 
 		$q="SELECT packageId, pp.pricePointId, loaItemRatePeriodId FROM pricePoint pp ";
 		$q.="INNER JOIN pricePointRatePeriodRel USING (pricePointId) ";
 		$q.="INNER JOIN package USING (packageId) ";
 		$q.="WHERE package.siteId=$siteId ";
-		//$q.="AND package.packageId=255944 ";//for testing 
+		//$q.="AND package.packageId=261365 ";//for testing 
 		$q.="ORDER BY packageId,pricePointId ASC"; 
 		$res=$this->Package->query($q);
 		if ($this->debug_q){
@@ -2566,7 +2567,7 @@ class PackagesController extends AppController {
 								continue;//don't bother with validity end dates in the past
 							}
 							$hasValidDate=true;
-							$this->Package->insertValidityGroup($vg_id,$pvd_arr);
+							$this->Package->insertValidityGroup($vg_id,$pvd_arr,$siteId);
 						}
 					}
 				}
