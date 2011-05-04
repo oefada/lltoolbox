@@ -2515,81 +2515,94 @@ class PackagesController extends AppController {
 		$siteId=2;//fg - change as needed
 		$siteId=1;//LL - change as needed
 
-		$q="SELECT packageId, pp.pricePointId, loaItemRatePeriodId FROM pricePoint pp ";
-		$q.="INNER JOIN pricePointRatePeriodRel USING (pricePointId) ";
-		$q.="INNER JOIN package USING (packageId) ";
-		$q.="WHERE package.siteId=$siteId ";
-		//$q.="AND package.packageId=261365 ";//for testing 
-		$q.="ORDER BY packageId,pricePointId ASC"; 
-		$res=$this->Package->query($q);
-		if ($this->debug_q){
-			echo "<p>$q</p>";
-			echo "<br>num rows:".count($res)."<br>";
-		}
-		$validity_arr=array();
-		foreach($res as $key=>$arr){
-			$packageId=$arr['pp']['packageId'];
-			$pricePointId=$arr['pp']['pricePointId'];
-			$loa_id=$arr['pricePointRatePeriodRel']['loaItemRatePeriodId'];
-			if (isset($validity_arr[$packageId][$pricePointId]['loa_ids'])){
-				$validity_arr[$packageId][$pricePointId]['loa_ids'].=",".$loa_id;
-			}else{
-				$validity_arr[$packageId][$pricePointId]['loa_ids']=$loa_id;
+		$start_point=0;
+		$offset=100;
+		$num_rows=1;
+		while($num_rows){
+
+			$q="SELECT packageId, pp.pricePointId, loaItemRatePeriodId FROM pricePoint pp ";
+			$q.="INNER JOIN pricePointRatePeriodRel USING (pricePointId) ";
+			$q.="INNER JOIN package USING (packageId) ";
+			$q.="WHERE package.siteId=$siteId ";
+			//$q.="AND package.packageId=261365 ";//for testing 
+			$q.="ORDER BY packageId,pricePointId ASC "; 
+			$q.="LIMIT $start_point, $offset";
+			$res=$this->Package->query($q);
+			$num_rows=count($res);
+			echo "<br><b>num_rows: $num_rows</b><br>";
+			if ($this->debug_q){
+				echo "<p>$q</p>";
+				//echo "<br>num rows:".count($res)."<br>";
 			}
-		}
-
-		foreach($validity_arr as $packageId=>$arr){
-
-			$loa_ids='';
-			foreach($arr as $pricePointId=>$loa_arr){
-				$loa_ids=$loa_arr['loa_ids'];
-
-				echo "<br>packageId: $packageId<br>";
-				echo "loa_ids: $loa_ids<br>";
-
-				$dates = $this->Package->getPackageValidityDisclaimerByItem($packageId, $loa_ids,0,0);
-				//print_r($dates);
-				$vg_id=$this->IdCreator->genId();
-				if ($vg_id==0){
-					echo "<p style='color:red;'>Failed to gen a vg_id for</p>";
-					echo "<pre>";
-					print_r($arr);
-					echo "</pre>";
-					exit;
+			flush();
+			$validity_arr=array();
+			foreach($res as $key=>$arr){
+				$packageId=$arr['pp']['packageId'];
+				$pricePointId=$arr['pp']['pricePointId'];
+				$loa_id=$arr['pricePointRatePeriodRel']['loaItemRatePeriodId'];
+				if (isset($validity_arr[$packageId][$pricePointId]['loa_ids'])){
+					$validity_arr[$packageId][$pricePointId]['loa_ids'].=",".$loa_id;
+				}else{
+					$validity_arr[$packageId][$pricePointId]['loa_ids']=$loa_id;
 				}
+			}
 
-				$hasValidDate=false;
-				if (isset($dates['ValidRanges'])){
-					foreach($dates['ValidRanges'] as $arr){
-						foreach($arr as $key=>$pvd_arr){
-							if ($pvd_arr['endDate']<date("Y-m-d")){
-								echo "<p>endDate:".$pvd_arr['endDate']." is in the past. Skipping</p>";
-								continue;//don't bother with validity end dates in the past
+			foreach($validity_arr as $packageId=>$arr){
+
+				$loa_ids='';
+				foreach($arr as $pricePointId=>$loa_arr){
+					$loa_ids=$loa_arr['loa_ids'];
+
+					echo "<br>packageId: $packageId<br>";
+					echo "loa_ids: $loa_ids<br>";
+
+					$dates = $this->Package->getPackageValidityDisclaimerByItem($packageId, $loa_ids,0,0);
+					//print_r($dates);
+					$vg_id=$this->IdCreator->genId();
+					if ($vg_id==0){
+						echo "<p style='color:red;'>Failed to gen a vg_id for</p>";
+						echo "<pre>";
+						print_r($arr);
+						echo "</pre>";
+						exit;
+					}
+
+					$hasValidDate=false;
+					if (isset($dates['ValidRanges'])){
+						foreach($dates['ValidRanges'] as $arr){
+							foreach($arr as $key=>$pvd_arr){
+								if ($pvd_arr['endDate']<date("Y-m-d")){
+									echo "<p>endDate:".$pvd_arr['endDate']." is in the past. Skipping</p>";
+									continue;//don't bother with validity end dates in the past
+								}
+								$hasValidDate=true;
+								$this->Package->insertValidityGroup($vg_id,$pvd_arr,$siteId);
 							}
-							$hasValidDate=true;
-							$this->Package->insertValidityGroup($vg_id,$pvd_arr,$siteId);
 						}
 					}
-				}
 
-				if (isset($dates['BlackoutDays'])){
-					foreach($dates['BlackoutDays'] as $arr){
-						foreach($arr as $key=>$pvd_arr){
-							if ($pvd_arr['endDate']<date("Y-m-d"))continue;//don't bother with validity end dates in the past
-							$hasValidDate=true;
-							$this->Package->insertValidityGroup($vg_id,$pvd_arr,$siteId);
+					if (isset($dates['BlackoutDays'])){
+						foreach($dates['BlackoutDays'] as $arr){
+							foreach($arr as $key=>$pvd_arr){
+								if ($pvd_arr['endDate']<date("Y-m-d"))continue;//don't bother with validity end dates in the past
+								$hasValidDate=true;
+								$this->Package->insertValidityGroup($vg_id,$pvd_arr,$siteId);
+							}
 						}
 					}
+
+					if ($hasValidDate){
+						$this->Package->updatePricePointValidityGroupId($pricePointId,$vg_id);
+						$this->Package->updateOfferWithGroupId($pricePointId,$vg_id,$siteId);
+					}
+
 				}
 
-				if ($hasValidDate){
-					$this->Package->updatePricePointValidityGroupId($pricePointId,$vg_id);
-					$this->Package->updateOfferWithGroupId($pricePointId,$vg_id,$siteId);
-				}
+			echo "<hr>";
 
 			}
 
-		echo "<hr>";
+			$start_point+=$offset;
 
 		}
 
