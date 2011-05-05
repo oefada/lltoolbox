@@ -1,8 +1,7 @@
 <?php
 class PackagesController extends AppController {
 
-	var $debug_q=true;
-
+	var $debug_q=false;
 	var $name = 'Packages';
 	var $helpers = array('Html', 'Form');
 	var $uses = array('Package', 'Client', 'PackageRatePeriod', 'LoaItem', 'IdCreator');

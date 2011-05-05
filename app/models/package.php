@@ -2,7 +2,7 @@
 class Package extends AppModel {
 
 	// for display of validityGroup queries 
-	var $debug_q=true;
+	var $debug_q=false;
 
 	var $name = 'Package';
 	var $useTable = 'package';
