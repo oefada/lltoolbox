@@ -86,9 +86,11 @@
 </head>
 <body>
   <div id="page"><div id="page-inner">
+	<!--
 	<div id="history-bar"><div id="history-bar-inner" class="clear-block">
 		<strong>Last Viewed:</strong> <?=$html->link('Test 1', '#');?> | <?=$html->link('Test 2', '#');?> | <?=$html->link('Test 3', '#');?>
 	</div></div>
+    -->
     <div id="header"><div id="header-inner" class="clear-block">
 
         <div id="logo-title">
