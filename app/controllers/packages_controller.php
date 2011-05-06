@@ -1,7 +1,6 @@
 <?php
 class PackagesController extends AppController {
 
-	var $debug_q=false;
 	var $name = 'Packages';
 	var $helpers = array('Html', 'Form');
 	var $uses = array('Package', 'Client', 'PackageRatePeriod', 'LoaItem', 'IdCreator');
@@ -2511,28 +2510,47 @@ class PackagesController extends AppController {
 	// see updateOfferWithGroupId()
 	function migrateValidityDates(){
 
-		$siteId=2;//fg - change as needed
+		$debug_q=true;// display queries that execute
+
+		//$siteId=2;//fg - change as needed
+		//$table="offerFamily";
 		$siteId=1;//LL - change as needed
+		$table="offerLuxuryLink";
 
 		$start_point=0;
 		$offset=100;
 		$num_rows=1;
 		while($num_rows){
 
+			$q="SELECT packageId FROM $table ";
+			$q.="WHERE validityGroupId=0 AND startDate<NOW() AND endDate>NOW() AND ISCLOSED=0 ";
+			$q.="AND validityGroupId=0";
+			$rows=$this->Package->query($q);
+			$pkid_arr=array();
+			while(list($key,$arr)=each($rows)){
+				$pkid_arr[]=$arr['offerLuxuryLink']['packageId'];
+			}
+			if (count($pkid_arr)==0){
+				exit("no rows found in $table with validityGroupId as 0");
+			}
+			echo "<p>".count($pkid_arr)." packageIds with validityGroupId as 0</p>";
+			flush();
+
 			$q="SELECT packageId, pp.pricePointId, loaItemRatePeriodId FROM pricePoint pp ";
 			$q.="INNER JOIN pricePointRatePeriodRel USING (pricePointId) ";
 			$q.="INNER JOIN package USING (packageId) ";
 			$q.="WHERE package.siteId=$siteId ";
-			//$q.="AND package.packageId=261365 ";//for testing 
+			if (count($pkid_arr)>0)$q.="AND package.packageId IN (".implode(", ",$pkid_arr).") ";
 			$q.="ORDER BY packageId,pricePointId ASC "; 
 			$q.="LIMIT $start_point, $offset";
 			$res=$this->Package->query($q);
 			$num_rows=count($res);
 			echo "<br><b>num_rows: $num_rows</b><br>";
-			if ($this->debug_q){
+			if ($debug_q){
 				echo "<p>$q</p>";
 				//echo "<br>num rows:".count($res)."<br>";
 			}
+
 			flush();
 			$validity_arr=array();
 			foreach($res as $key=>$arr){
@@ -2555,7 +2573,7 @@ class PackagesController extends AppController {
 					echo "<br>packageId: $packageId<br>";
 					echo "loa_ids: $loa_ids<br>";
 
-					$dates = $this->Package->getPackageValidityDisclaimerByItem($packageId, $loa_ids,0,0);
+					$dates = $this->Package->getPackageValidityDisclaimerByItem($packageId, $loa_ids,0,0,$debug_q);
 					//print_r($dates);
 					$vg_id=$this->IdCreator->genId();
 					if ($vg_id==0){
@@ -2575,7 +2593,7 @@ class PackagesController extends AppController {
 									continue;//don't bother with validity end dates in the past
 								}
 								$hasValidDate=true;
-								$this->Package->insertValidityGroup($vg_id,$pvd_arr,$siteId);
+								$this->Package->insertValidityGroup($vg_id,$pvd_arr,$siteId,$debug_q);
 							}
 						}
 					}
@@ -2585,14 +2603,14 @@ class PackagesController extends AppController {
 							foreach($arr as $key=>$pvd_arr){
 								if ($pvd_arr['endDate']<date("Y-m-d"))continue;//don't bother with validity end dates in the past
 								$hasValidDate=true;
-								$this->Package->insertValidityGroup($vg_id,$pvd_arr,$siteId);
+								$this->Package->insertValidityGroup($vg_id,$pvd_arr,$siteId,$debug_q);
 							}
 						}
 					}
 
 					if ($hasValidDate){
-						$this->Package->updatePricePointValidityGroupId($pricePointId,$vg_id);
-						$this->Package->updateOfferWithGroupId($pricePointId,$vg_id,$siteId);
+						$this->Package->updatePricePointValidityGroupId($pricePointId,$vg_id,$debug_q);
+						$this->Package->updateOfferWithGroupId($pricePointId,$vg_id,$siteId,$debug_q);
 					}
 
 				}

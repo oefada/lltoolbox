@@ -1,9 +1,6 @@
 <?php
 class Package extends AppModel {
 
-	// for display of validityGroup queries 
-	var $debug_q=false;
-
 	var $name = 'Package';
 	var $useTable = 'package';
 	var $primaryKey = 'packageId';
@@ -467,7 +464,7 @@ class Package extends AppModel {
 	}
 
 	// mbyrnes 2011-03-29
-	function insertValidityGroup($vg_id,$arr,$siteId){
+	function insertValidityGroup($vg_id,$arr,$siteId,$debug_q=false){
 
 		$q="INSERT INTO validityGroup SET ";
 		$q.="validityGroupId=$vg_id, ";
@@ -477,17 +474,17 @@ class Package extends AppModel {
 		$q.="isBlackout='".$arr['isBlackout']."', ";
 		$q.="siteId='$siteId'";
 		$this->query($q);
-		if ($this->debug_q){
+		if ($debug_q){
 			echo "<p>$q</p>";
 			echo "<p>Affected Rows: ".$this->getAffectedRows()."</p>";
 		}
 	}
 
-	function getValidityGroupId($ppid){
+	function getValidityGroupId($ppid,$debug_q=false){
 
 		$q="SELECT validityGroupId FROM pricePoint WHERE pricePointId=$ppid";
 		$res=$this->query($q); 
-		if ($this->debug_q){
+		if ($debug_q){
 			echo "<p>$q</p>";
 			echo "<p>Num Rows: ".count($res)."</p>";
 		}
@@ -496,7 +493,7 @@ class Package extends AppModel {
 
 	}
 
-	function updatePricePointValidityGroupId($ppid_arr,$vg_id){
+	function updatePricePointValidityGroupId($ppid_arr,$vg_id,$debug_q=false){
 
 		if (!is_array($ppid_arr))$ppid_arr=(array)$ppid_arr;
 
@@ -504,18 +501,18 @@ class Package extends AppModel {
 		$q.="WHERE pricePointId IN (".implode(",",$ppid_arr).")";
 		flush();
 		$this->query($q);
-		if ($this->debug_q){
+		if ($debug_q){
 			echo "<p>$q</p>";
 			echo "<p>Affected Rows: ".$this->getAffectedRows()."</p>";
 		}
 
 	}
 
-	function getValidityGroup($vg_id){
+	function getValidityGroup($vg_id,$debug_q=false){
 
 		$q="SELECT * FROM validityGroup WHERE validityGroupId=$vg_id ORDER BY startDate ASC";
 		$res=$this->query($q); 
-		if ($this->debug_q){
+		if ($debug_q){
 			echo "<p>$q</p>";
 			echo "<p>Num Rows: ".count($res)."</p>";
 		}
@@ -523,20 +520,20 @@ class Package extends AppModel {
 
 	}
 
-	function updateOfferWithGroupId($pricePointId,$vg_id,$siteId){
+	function updateOfferWithGroupId($pricePointId,$vg_id,$siteId,$debug_q=false){
 
 		$table="offerFamily";
 		if ($siteId==1)$table="offerLuxuryLink";
 		$q="UPDATE $table SET validityGroupId=$vg_id WHERE pricePointId=$pricePointId";
 		$this->query($q);
-		if ($this->debug_q){
+		if ($debug_q){
 			echo "<p>$q</p>";
 			echo "<p>Affected Rows: ".$this->getAffectedRows()."</p>";
 		}
 
 	}
 
-	function getValidityDisclaimerText($packageId, $startDate, $endDate, $loaItemRatePeriodIds) {
+	function getValidityDisclaimerText($packageId, $startDate, $endDate, $loaItemRatePeriodIds){
 
 		// RETURNS : (STRING) html of validity disclaimer for a given price point range
 		// pulls data from toolbox.packageValidityDisclaimer
@@ -702,14 +699,14 @@ class Package extends AppModel {
 		return $data;
 	}
 	
-	function getPackageValidityDisclaimerByItem($packageId, $loaItemRatePeriodIds, $startDate, $endDate) {
+	function getPackageValidityDisclaimerByItem($packageId,$loaItemRatePeriodIds,$startDate,$endDate,$debug_q=false){
 		
 		//$r = $this->query("SELECT startDate,endDate,isBlackout FROM packageValidityDisclaimer pvd WHERE packageId = {$packageId} AND startDate >= '{$startDate}' AND endDate <= '{$endDate}' ORDER BY startDate");
 		$q="SELECT pvd.startDate, pvd.endDate, pvd.isBlackout FROM loaItemDate date INNER JOIN packageValidityDisclaimer pvd ON pvd.packageId = {$packageId} AND date.startDate <= pvd.startDate AND pvd.endDate <= date.endDate WHERE date.loaItemRatePeriodId IN ($loaItemRatePeriodIds) ORDER BY pvd.startDate";
 		$r = $this->query($q);
-		//echo "<pre>";
-		//print_r($r);
-		//echo "</pre>";
+		if ($debug_q){
+			echo "<p>$q</p>";
+		}
 
 		//if (count($r)==0)echo $q."<br>";
 		$data = array();
