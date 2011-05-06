@@ -2525,6 +2525,7 @@ class PackagesController extends AppController {
 			$q="SELECT packageId FROM $table ";
 			$q.="WHERE validityGroupId=0 AND startDate<NOW() AND endDate>NOW() AND ISCLOSED=0 ";
 			$q.="AND validityGroupId=0";
+			echo "<p>$q</p>";
 			$rows=$this->Package->query($q);
 			$pkid_arr=array();
 			while(list($key,$arr)=each($rows)){
