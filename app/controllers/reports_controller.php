@@ -1102,6 +1102,7 @@ class ReportsController extends AppController {
 						   PromoCode.promoCode,
                            Package.numNights,
                            Ticket.offerId,
+                           Ticket.guaranteeAmt,
                            Ticket.billingPrice
                     FROM ticket AS Ticket
                            INNER JOIN offer AS Offer USING(offerId)
@@ -1164,10 +1165,21 @@ class ReportsController extends AppController {
 						$q="SELECT reserveAmt FROM " . $guaranteeTable . " WHERE offerId = " . $arr['Ticket']['offerId'];
 						$guar_results=$this->OfferType->query($q);
 						$results[$key]['OfferLookup']['reserveAmt']=$guar_results[0][$guaranteeTable]['reserveAmt'];
-
 					}
 
 
+					// populate guarantee amount
+					foreach($results as $key=>$arr) {
+					    $guaranteeAmount = 0;
+					    $guaranteeTicket = $arr['Ticket']['guaranteeAmt'];
+					    $guaranteeReserveAmt = $arr['OfferLookup']['reserveAmt'];
+					    if ((intval($guaranteeTicket) > 0) && ($arr['Ticket']['billingPrice'] < $guaranteeTicket)) {
+					        $guaranteeAmount = $guaranteeTicket;
+					    } elseif ((intval($guaranteeReserveAmt) > 0) && ($arr['Ticket']['billingPrice'] < $guaranteeReserveAmt)) {
+					        $guaranteeAmount = $guaranteeReserveAmt;
+					    }
+					    $results[$key]['OfferLookup']['guaranteeAmount'] = $guaranteeAmount;
+					}
 
 
 				$this->set('currentPage', $this->page);

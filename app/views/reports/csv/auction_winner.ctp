@@ -28,7 +28,7 @@ foreach ($results as $r):
 	}
 	
 	$promoCode = $r['PromoCode']['promoCode'];
-	if (($r['OfferLookup']['reserveAmt'] > 0) && ($r['Ticket']['billingPrice'] < $r['OfferLookup']['reserveAmt'])) { $promoCode = 'Guarantee ' . $promoCode; }
+	if ($r['OfferLookup']['guaranteeAmount'] > 0) { $promoCode = 'Guarantee ' . $promoCode; }
 	
 	$line = array(
 	$siteIds[$r['Ticket']['siteId']],

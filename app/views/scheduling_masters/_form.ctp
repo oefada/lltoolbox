@@ -67,6 +67,13 @@ if (!isset($masterState) || $masterState != 1) {
       <?php } ?>
     </table>
   <?php endif; ?>
+  
+  <!-- DISCOUNTABLE -->
+  <br/><input type="checkbox" id="scheduling-master-discountable" name="data[SchedulingMaster][isDiscountedOffer]" value="1" <? if ($data['SchedulingMaster']['isDiscountedOffer'] == 1) { echo 'checked'; } ?> />&nbsp;&nbsp;Apply Discount to Buy Now
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  Discount % <input type="text" id="scheduling-master-percent-discount" name="data[SchedulingMaster][percentDiscount]" value="<?= $data['SchedulingMaster']['percentDiscount'];?>" style="width:20px;" maxlength="2" />
+  
+  
         <!-- TRACK SELECTION (MULTICLIENT PACKAGES ONLY) -->
         <?php if (!$singleClientPackage): ?>
             <h2>Choose a Track for Each Client</h2>

@@ -4,10 +4,10 @@ class TrackDetail extends AppModel {
 	var $name = 'TrackDetail';
 	var $useTable = 'trackDetail';
 	var $primaryKey = 'trackDetailId';
-	
+
 	var $belongsTo = array('Track' => array('foreignKey' => 'trackId'));
 	var $actsAs = array('Logable');
-	
+
 	function getTrackRecord($ticketId) {
 		$sql = "SELECT t.* FROM ticket tt ";
 		$sql.= "INNER JOIN offer o ON o.offerId = tt.offerId ";
@@ -17,7 +17,7 @@ class TrackDetail extends AppModel {
 		$sql.= "INNER JOIN track t ON t.trackId = smtr.trackId ";
 		$sql.= "WHERE tt.ticketId = $ticketId";
 		$result = $this->query($sql);
-		
+
 		if (!empty($result)) {
 			$tracks = array();
 			foreach ($result as $k => $v) {
@@ -25,10 +25,10 @@ class TrackDetail extends AppModel {
 			}
 			return $tracks;
 		} else {
-			return false;	
+			return false;
 		}
 	}
-	
+
 	function __getLastTrackDetailRecord($trackId) {
 		$last_record = array();
 		$result = $this->query("SELECT * FROM trackDetail WHERE trackId = $trackId ORDER BY trackDetailId DESC LIMIT 1");
@@ -36,45 +36,45 @@ class TrackDetail extends AppModel {
 			$last_record = $result[0]['trackDetail'];
 		} else {
 			$last_record['cycle'] = 1;
-			$last_record['iteration'] = 0;	
+			$last_record['iteration'] = 0;
 			$last_record['keepBalDue'] = 0;
 			$last_record['xyRunningTotal'] = 0;
 		}
 		return $last_record;
 	}
-	
+
 	function getAllTrackDetails($trackId) {
 		$result = $this->query("SELECT * FROM trackDetail WHERE trackId = $trackId ORDER BY trackDetailId DESC");
 		if (!empty($result)) {
 			return $result;
 		} else {
-			return false;	
+			return false;
 		}
 	}
-    
+
     function getAllTrackDetailsForTicket($ticketId) {
         $result = $this->query("SELECT * FROM trackDetail WHERE ticketId = {$ticketId} ORDER BY trackDetailId DESC");
 		if (!empty($result)) {
 			return $result;
 		} else {
-			return false;	
+			return false;
 		}
     }
-	
+
 	function findExistingTrackTicket($trackId, $ticketId) {
 		$result = $this->query("SELECT * FROM trackDetail WHERE trackId = $trackId and ticketId = $ticketId");
 		return (!empty($result)) ? true : false;
 	}
-	
+
 	function getExistingTrackTicket($trackId, $ticketId) {
 		$result = $this->query("SELECT * FROM trackDetail WHERE trackId = $trackId and ticketId = $ticketId");
 		if (!empty($result)) {
 			return $result[0]['trackDetail'];
 		} else {
-			return false;	
+			return false;
 		}
 	}
-	
+
 	function __getTicketAmount($ticketId, $loaId) {
 		$result = $this->query("SELECT t.billingPrice, clpr.*  FROM ticket t INNER JOIN clientLoaPackageRel clpr on clpr.packageId = t.packageId AND clpr.loaId = $loaId WHERE t.ticketId = $ticketId");
 		if (!empty($result)) {
@@ -83,7 +83,7 @@ class TrackDetail extends AppModel {
 			return false;
 		}
 	}
-	
+
 	function adjustForRetailValueTmp($ticketId, $retailValue) {
 		$t = $this->query("SELECT * FROM trackDetail TrackDetail INNER JOIN track Track USING (trackId) WHERE ticketId = $ticketId AND expirationCriteriaId = 5");
 		$t = $t[0];
@@ -101,20 +101,21 @@ class TrackDetail extends AppModel {
 		return false;
 	}
 
-	function getNewTrackDetailRecord($track, $ticketId) {		
+	function getNewTrackDetailRecord($track, $ticketId) {
 		// set some data vars
 		// ---------------------------------------------------------
 		$last_track_detail = $this->__getLastTrackDetailRecord($track['trackId']);
 		$ticket_and_rev = $this->__getTicketAmount($ticketId, $track['loaId']);
 
-        $query = "SELECT t.siteId FROM ticket t WHERE t.ticketId = {$ticketId}";
+        $query = "SELECT t.siteId, t.guaranteeAmt FROM ticket t WHERE t.ticketId = {$ticketId}";
         if ($site = $this->query($query)) {
             $siteId = $site[0]['t']['siteId'];
+            $guaranteeAmt = $site[0]['t']['guaranteeAmt'];
         }
         else {
             $siteId = 0;
         }
-        
+
         switch ($siteId) {
             case 1:
                 $offerTable = 'offerLuxuryLink';
@@ -125,16 +126,23 @@ class TrackDetail extends AppModel {
             default:
                 return false;
         }
-		
+
 		$ticket_amount = $ticket_and_rev['t']['billingPrice'];
 		$allocated_amount = (($ticket_and_rev['clpr']['percentOfRevenue'] / 100) * $ticket_amount);
 		$result = $this->query("select o.reserveAmt from {$offerTable} o inner join ticket t using (offerId) where t.ticketId = {$ticketId}");
 		$reserve_amount = (!empty($result) && isset($result[0]['o']['reserveAmt']) && ($result[0]['o']['reserveAmt'] > 0)) ? $result[0]['o']['reserveAmt'] : false;
 
-		if ($reserve_amount && ($allocated_amount < $reserve_amount)) {
-			$allocated_amount = $reserve_amount;
+		// 2011-05-03 jwoods - guarantee check
+		$guarantee_amount = (!empty($guaranteeAmt) && (intval($guaranteeAmt) > 0)) ? $guaranteeAmt : false;
+		if ($guarantee_amount && ($allocated_amount < $guarantee_amount)) {
+			$allocated_amount = $guarantee_amount;
+		} else {
+            // allocation check prior to 2011-05-03 changes
+			if ($reserve_amount && ($allocated_amount < $reserve_amount)) {
+				$allocated_amount = $reserve_amount;
+			}
 		}
-		
+
 		// set new track information
 		// ---------------------------------------------------------
 		$new_track_detail 							= array();
@@ -143,7 +151,7 @@ class TrackDetail extends AppModel {
 		$new_track_detail['ticketAmount']			= $ticket_amount;
 		$new_track_detail['allocatedAmount']		= $allocated_amount;
 		$new_track_detail['initials']				= isset($_SESSION['Auth']['AdminUser']['mailnickname']) ? $_SESSION['Auth']['AdminUser']['mailnickname'] : 'N/A';
-		
+
 		// for retail value - this will be deprecated once SOA is in place
 		if ($track['expirationCriteriaId'] == 5) {
 			$p = new Package();
@@ -156,10 +164,10 @@ class TrackDetail extends AppModel {
 				$new_track_detail['allocatedAmount'] = $r[0]['Reservation']['retailValue'];
 			}
 		}
-		
+
 		$is_y_iteration = false;
 
-		// track detail calculations	
+		// track detail calculations
 		// ---------------------------------------------------------
 		switch ($track['revenueModelId']) {
 			case 1:
@@ -267,7 +275,7 @@ class TrackDetail extends AppModel {
 					$new_track_detail['amountRemitted'] = 0;
 				}
 				break;
-			default: 
+			default:
 				// some debug email will go out here
 				break;
 		}
@@ -295,26 +303,26 @@ class TrackDetail extends AppModel {
 
 		return $new_track_detail;
 	}
-	
+
 	function reverseBalances($trackDetailId) {
 		$errors = 0;
 		$trackModel = new Track();
 		$loaModel = new Loa();
 		$loaModel->recursive = -1;
-		
+
 		$trackDetail = $this->read(null, $trackDetailId);
 		$allocated_amount = $trackDetail['TrackDetail']['allocatedAmount'];
 		$loa = $loaModel->read(null, $trackDetail['Track']['loaId']);
 
 		$track = $trackDetail['Track'];
-		
+
 		$track['pending'] += $allocated_amount;
 		$track['collected'] -= $allocated_amount;
 		$track['modified'] = date('Y-m-d H:i:s', strtotime('now'));
 		if (!$trackModel->save($track)) {
 			$errors++;
 		}
-		
+
 		$loa['Loa']['modified']			  = date('Y-m-d H:i:s', strtotime('now'));
 		$loa['Loa']['totalRevenue']		 -= $allocated_amount;
 		$loa['Loa']['totalKept']		 -= $trackDetail['TrackDetail']['amountKept'];
@@ -325,38 +333,38 @@ class TrackDetail extends AppModel {
 		if ($applyToMembershipBal) {
 			$loa['Loa']['membershipBalance'] += $trackDetail['TrackDetail']['amountKept'];
 		}
-		
+
 		// for RETAIL VALUE CREDIT -- this entire file is deprecated when SOA is in place
 		if ($track['expirationCriteriaId'] == 5) {
 			$loa['Loa']['retailValueBalance'] += $allocated_amount;
 		}
 
 		if (!$loaModel->save($loa, array('callbacks' => 'before'))) {
-			$errors++;	
+			$errors++;
 		}
 		return (!$errors) ? true : false;
 	}
-	
+
 	function afterSave() {
 		$trackModel = new Track();
 		$loaModel = new Loa();
 		$loaModel->recursive = -1;
-		
+
 		$allocated_amount = $this->data['TrackDetail']['allocatedAmount'];
 		$tracks = $this->getTrackRecord($this->data['TrackDetail']['ticketId']);
 		$track = $tracks[0];
-		
+
 		// retrieve LOA data
 		// ---------------------------------------------------------
 		$loa = $loaModel->read(null, $track['loaId']);
-		
+
 		// update the track record (track)
 		// ---------------------------------------------------------
 		$track['pending']   -= $allocated_amount;
 		$track['collected'] += $allocated_amount;
 		$track['modified']	 = date('Y-m-d H:i:s', strtotime('now'));
 		$trackModel->save($track);
-		
+
 		// update the loa record
 		// ---------------------------------------------------------
 		$loa['Loa']['modified']			  = date('Y-m-d H:i:s', strtotime('now'));

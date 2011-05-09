@@ -302,6 +302,36 @@ class WebServiceTicketsController extends WebServicesController
 
 			$ticketId = $data['ticketId'];
 
+
+			// 2011-05-04 jwoods - fill in ticket.guaranteeAmt if necessary
+			// -------------------------------------------------------------------------------
+			$guaranteeAmount = 0;
+			$sql = "SELECT *
+					FROM offer o
+					INNER JOIN schedulingInstance i ON o.schedulingInstanceId = i.schedulingInstanceId
+					INNER JOIN schedulingMaster m ON i.schedulingMasterId = m.schedulingMasterId
+					WHERE o.offerId = ?
+					AND m.offerTypeId IN (3,4)
+					AND m.isDiscountedOffer = 1
+					AND m.percentDiscount > 0 LIMIT 1";
+			$resultsDiscount = $this->Ticket->query($sql, array($offerLive['offerId']));
+
+			// was original buy now price discounted?
+			if (!empty($resultsDiscount)) {
+				$guaranteeAmount = round($data['billingPrice'] / ((100 - $resultsDiscount[0]['m']['percentDiscount']) / 100));
+
+			// else, was a reserve amount set?
+			} elseif (intval($offerLive['reserveAmt']) > 0) {
+                $guaranteeAmount = $offerLive['reserveAmt'];
+			}
+
+            if ($guaranteeAmount > 0) {
+                $this->Ticket->query("UPDATE ticket SET guaranteeAmt = ? WHERE ticketId = ?", array($guaranteeAmount, $ticketId));
+            }
+
+
+
+
 			// update the tracks
 			// -------------------------------------------------------------------------------
 			$schedulingMasterId = $offerData['SchedulingInstance']['SchedulingMaster']['schedulingMasterId'];
@@ -982,14 +1012,27 @@ class WebServiceTicketsController extends WebServicesController
 		// guarantee amount
 		// -------------------------------------------------------------------------------
 		$guarantee = false;
-		if ($liveOfferData['reserveAmt'] && is_numeric($liveOfferData['reserveAmt']) && ($liveOfferData['reserveAmt'] > 0)) {
-			if ($ticketData['billingPrice'] < $liveOfferData['reserveAmt']) {
+
+		// 2011-05-03 jwoods - guarantee check
+		if ($ticketData['guaranteeAmt'] && is_numeric($ticketData['guaranteeAmt']) && ($ticketData['guaranteeAmt'] > 0)) {
+			if ($ticketData['billingPrice'] < $ticketData['guaranteeAmt']) {
+			    $guarantee = $this->numF($ticketData['guaranteeAmt']);
+			}
+		}
+
+        // guarantee check prior to 2011-05-03 changes
+        if (!$guarantee) {
+			if ($liveOfferData['reserveAmt'] && is_numeric($liveOfferData['reserveAmt']) && ($liveOfferData['reserveAmt'] > 0)) {
+				if ($ticketData['billingPrice'] < $liveOfferData['reserveAmt']) {
+					$guarantee = $this->numF($liveOfferData['reserveAmt']);
+				}
+			}
+			if ($offerLive['isMystery']) {
 				$guarantee = $this->numF($liveOfferData['reserveAmt']);
 			}
 		}
-		if ($offerLive['isMystery']) {
-			$guarantee = $this->numF($liveOfferData['reserveAmt']);
-		}
+
+
 
 		// some unknowns
 		// -------------------------------------------------------------------------------
