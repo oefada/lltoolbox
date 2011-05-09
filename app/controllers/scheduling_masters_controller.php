@@ -63,6 +63,10 @@ class SchedulingMastersController extends AppController {
 					$ppid_arr[]=$ppid;
 				}
 
+
+                // initialize Discountable
+                $this->data['SchedulingMaster']['isDiscountedOffer'] = intval($this->data['SchedulingMaster']['isDiscountedOffer']);
+
 				foreach($ppid_arr as $key=>$ppid){
 					$this->data['SchedulingMaster']['pricePointId']=$ppid;
 
