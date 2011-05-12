@@ -13,7 +13,7 @@ $this->pageTitle = $client['Client']['name'].$html2->c($client['Client']['client
 <?php echo $this->renderElement('ajax_paginator', array('divToPaginate' => 'loa-index', 'showCount' => true))?>
 <table cellpadding="0" cellspacing="0">
 <tr>
-	<th><?php echo $paginator->sort('Approval Status', 'customerApprovalStatusId');?></th>
+	<th><?php echo $paginator->sort('LOA Level', 'loaLevelId');?></th>
 	<th><?php echo $paginator->sort('Start Date', 'startDate');?></th>
 	<th><?php echo $paginator->sort('End Date', 'endDate');?></th>
 	<th><?php echo $paginator->sort('Total Revenue', 'totalRevenue');?></th>
@@ -36,7 +36,7 @@ foreach ($loas as $loa):
 ?>
 
 	<tr<?php echo $class;?>>
-		<td><?php echo $loa['LoaCustomerApprovalStatus']['customerApprovalStatusName'];?></td>
+		<td><?php echo $loa['LoaLevel']['loaLevelName'];?></td>
 		<td><?php echo $html2->date($loa['Loa']['startDate']);?></td>
 		<td><?php echo $html2->date($loa['Loa']['endDate']);?></td>
 		<td><?php echo $loa['Loa']['totalRevenue'];?></td>
