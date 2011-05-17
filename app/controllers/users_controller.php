@@ -128,17 +128,22 @@ class UsersController extends AppController {
 	 */
 	function resetPassword($id = null) {
 		if(!empty($this->data)) {
-		    $this->User->setDataSource("live");
-		    $this->User->UserSiteExtended->setDataSource("live");
+		
+			// unknown why we are calling setDataSource (seems to cause crash)
+			// $this->User->setDataSource("live");
+		    // $this->User->UserSiteExtended->setDataSource("live");
 		    
 			$newPassword = $this->generatePassword();
-			$this->User->UserSiteExtended->id = $id;
-			$this->User->UserSiteExtended->saveField('passwordHash', $newPassword);
 			$this->set('newPassword', $newPassword);
+
+			// password is hashed in saveField call
+			$this->User->UserSiteExtended->id = $this->data['User']['userId'];
+			$this->User->UserSiteExtended->saveField('passwordHash', $newPassword);
 			
 			$userSiteExtended = $this->User->UserSiteExtended->read(null, $id);
 			$this->User->id = $userSiteExtended['UserSiteExtended']['userId'];
 			$this->User->saveField('transmitted', 0);
+		
 		} else {
 			$this->data = $this->User->read(null, $id);
 		}
