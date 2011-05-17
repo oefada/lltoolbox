@@ -144,13 +144,19 @@ class LoasController extends AppController {
 		$loaMembershipTypeIds = $this->Loa->LoaMembershipType->find('list');
         $this->Loa->LoaPublishingStatusRel->PublishingStatus->recursive = -1;
         $publishingStatus = $this->Loa->LoaPublishingStatusRel->PublishingStatus->find('list');
-        $completedStatus = array();
+        
+        $completedStatusLL = array();
+        $completedStatusFG = array();
         if (!empty($this->data['LoaPublishingStatusRel'])) {
             foreach ($this->data['LoaPublishingStatusRel'] as $pStatus) {
-                $completedStatus[$pStatus['publishingStatusId']] = $pStatus['completedDate'];
+            	if($pStatus['site'] == 'luxurylink') {
+                	$completedStatusLL[$pStatus['publishingStatusId']] = $pStatus['completedDate'];
+            	} else {
+            		$completedStatusFG[$pStatus['publishingStatusId']] = $pStatus['completedDate'];
+            	}
             }
         }
-		$this->set(compact('customerApprovalStatusIds', 'currencyIds', 'loaLevelIds', 'loaMembershipTypeIds', 'publishingStatus', 'completedStatus'));
+		$this->set(compact('customerApprovalStatusIds', 'currencyIds', 'loaLevelIds', 'loaMembershipTypeIds', 'publishingStatus', 'completedStatusLL', 'completedStatusFG'));
 		$this->set('client', $this->Loa->Client->findByClientId($this->data['Loa']['clientId']));
 		$this->set('currencyCodes', $this->Loa->Currency->find('list', array('fields' => array('currencyCode'))));
 	}

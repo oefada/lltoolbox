@@ -45,42 +45,62 @@ class Loa extends AppModel {
 	}
 	
 	function beforeSave($options) {
-		if (isset($this->data['Loa']['loaId'])) {
-		    $orig = $this->find('Loa.loaId = '.$this->data['Loa']['loaId'], array('customerApprovalStatusId'));
-		    
-		    if (@$orig['Loa']['customerApprovalStatusId'] != 2 && @$this->data['Loa']['customerApprovalStatusId'] == 2) {
-		        $this->data['Loa']['customerApprovalDate'] = date('Y-m-d H:i:s');
-		    }			
+
+		if(isset($this->data['Loa']['loaId'])) {
+			$this->LoaPublishingStatusRel->deleteAll(array('LoaPublishingStatusRel.loaId' => $this->data['Loa']['loaId']));
+			if (!empty($this->data['Loa']['PublishingStatusLL'])) {
+	            foreach ($this->data['Loa']['PublishingStatusLL'] as $i => $pStatus) {
+	                if ($thisStatus = $this->LoaPublishingStatusRel->find('first', array('conditions' => array('LoaPublishingStatusRel.loaId' => $this->data['Loa']['loaId'],
+	                                                                                                           'LoaPublishingStatusRel.publishingStatusId' => $pStatus)))) {
+	                    $this->data['LoaPublishingStatusRelLL'][$i] = $thisStatus;
+	                }
+	                else {
+	                    $this->data['LoaPublishingStatusRelLL'][$i]['loaId'] = $this->data['Loa']['loaId'];
+	                    $this->data['LoaPublishingStatusRelLL'][$i]['publishingStatusId'] = $pStatus;
+	                    $this->data['LoaPublishingStatusRelLL'][$i]['completedDate'] = date('Y-m-d H:i:s');
+	                    $this->data['LoaPublishingStatusRelLL'][$i]['site'] = 'luxurylink';
+	                }
+	            }
+	        }
+			if (!empty($this->data['Loa']['PublishingStatusFG'])) {
+	            foreach ($this->data['Loa']['PublishingStatusFG'] as $i => $pStatus) {
+	                if ($thisStatus = $this->LoaPublishingStatusRel->find('first', array('conditions' => array('LoaPublishingStatusRel.loaId' => $this->data['Loa']['loaId'],
+	                                                                                                           'LoaPublishingStatusRel.publishingStatusId' => $pStatus)))) {
+	                    $this->data['LoaPublishingStatusRelFG'][$i] = $thisStatus;
+	                }
+	                else {
+	                    $this->data['LoaPublishingStatusRelFG'][$i]['loaId'] = $this->data['Loa']['loaId'];
+	                    $this->data['LoaPublishingStatusRelFG'][$i]['publishingStatusId'] = $pStatus;
+	                    $this->data['LoaPublishingStatusRelFG'][$i]['completedDate'] = date('Y-m-d H:i:s');
+	                    $this->data['LoaPublishingStatusRelFG'][$i]['site'] = 'family';
+	                }
+	            }
+	        }
 		}
-        if (!empty($this->data['Loa']['PublishingStatus']) && isset($this->data['Loa']['loaId'])) {
-            foreach ($this->data['Loa']['PublishingStatus'] as $i => $pStatus) {
-                if ($thisStatus = $this->LoaPublishingStatusRel->find('first', array('conditions' => array('LoaPublishingStatusRel.loaId' => $this->data['Loa']['loaId'],
-                                                                                                           'LoaPublishingStatusRel.publishingStatusId' => $pStatus)))) {
-                    $this->data['LoaPublishingStatusRel'][$i] = $thisStatus;
-                }
-                else {
-                    $this->data['LoaPublishingStatusRel'][$i]['loaId'] = $this->data['Loa']['loaId'];
-                    $this->data['LoaPublishingStatusRel'][$i]['publishingStatusId'] = $pStatus;
-                    $this->data['LoaPublishingStatusRel'][$i]['completedDate'] = date('Y-m-d H:i:s');
-                }
-            }
-        }
         unset($this->data['Loa']['PublishingStatus']);
         AppModel::beforeSave();
 	    return true;
 	}
 	
 	function afterSave() {
-          if ($this->id == $this->get_current_loa($this->data['Loa']['clientId'])) {
-                $this->Client->set_sites($this->data['Loa']['clientId'], $this->data['Loa']['sites']);
-          }
-          if (!empty($this->data['LoaPublishingStatusRel'])) {
-            foreach($this->data['LoaPublishingStatusRel'] as $pStatus) {
-                $this->LoaPublishingStatusRel->create();
-                $this->LoaPublishingStatusRel->save($pStatus);
-            }
-          }
-	      return;
+		if ($this->id == $this->get_current_loa($this->data['Loa']['clientId'])) {
+//			$this->Client->set_sites($this->data['Loa']['clientId'], $this->data['Loa']['sites']);
+		}
+		if(isset($this->data['Loa']['loaId'])) {
+			if (!empty($this->data['LoaPublishingStatusRelLL'])) {
+				foreach($this->data['LoaPublishingStatusRelLL'] as $pStatus) {
+					$this->LoaPublishingStatusRel->create();
+					$this->LoaPublishingStatusRel->save($pStatus);
+				}
+			}
+			if (!empty($this->data['LoaPublishingStatusRelFG'])) {
+				foreach($this->data['LoaPublishingStatusRelFG'] as $pStatus) {
+					$this->LoaPublishingStatusRel->create();
+					$this->LoaPublishingStatusRel->save($pStatus);
+				}
+			}
+		}
+		return;
 	}
     
     //override AppModel::afterDelete()
