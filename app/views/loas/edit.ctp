@@ -41,23 +41,23 @@ $this->set('clientId', $this->data['Client']['clientId']);
 
 		echo $form->input('clientId', array('type' => 'hidden'));
 		echo $form->input('loaLevelId', array('disabled' => $disabled, 'label' => 'LOA Level')); ?>
-        <div class="pub-status">
-         <label for="LoaPublishingStatus">Publishing Status</label>
-         <input type="hidden" value="" name="data[Loa][PublishingStatusLL]" />
-            <div class="input select">
+		<div style="clear:both;"></div>
+		<label for="LoaPublishingStatus">Publishing Status</label>
+		<input type="hidden" value="" name="data[Loa][PublishingStatusLL]" />
+		<br />
+        <div class="pub-status" style="width:950px; clear:none; float: left;">
+            <div class="input select" style="width: 450px; float:left; clear:none;">
 				<label for="LoaPublishingStatusLL">Luxury Link</label>
                 <input type="hidden" value="" name="data[Loa][PublishingStatusLL]" />
                 <?php foreach ($publishingStatus as $pStatusId => $pStatus	): ?>
 					<div class="checkbox">
 						<input type="checkbox" id="LoaPublishingStatusLL<?php echo $pStatusId; ?>" value="<?php echo $pStatusId; ?>" name="data[Loa][PublishingStatusLL][]" <?php if (in_array($pStatusId, array_keys($completedStatusLL))) echo "checked"?>/>
 						<label for="LoaPublishingStatusLL<?php echo $pStatusId; ?>"><?php echo $pStatus; ?></label>
-						<?php if (in_array($pStatusId, array_keys($completedStatusLL))) echo 'Completed '.date('M d, Y h:i a', strtotime($completedStatusLL[$pStatusId])); ?>
+						<?php if (in_array($pStatusId, array_keys($completedStatusLL))) echo '<span>Completed '.date('M d, Y h:i a', strtotime($completedStatusLL[$pStatusId])).'</span>'; ?>
 					</div>
                 <?php endforeach; ?>
             </div>
-        </div>
-        <div class="pub-status">
-            <div class="input select">
+            <div class="input select" style="width: 450px; float:right; clear:none;">
                 <label for="LoaPublishingStatusFG">Family Getaway</label>
                 <input type="hidden" value="" name="data[Loa][PublishingStatusFG]" />
                 <?php foreach ($publishingStatus as $pStatusId => $pStatus): ?>
