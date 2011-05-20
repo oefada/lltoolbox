@@ -42,29 +42,29 @@ $this->set('clientId', $this->data['Client']['clientId']);
 		echo $form->input('clientId', array('type' => 'hidden'));
 		echo $form->input('loaLevelId', array('disabled' => $disabled, 'label' => 'LOA Level')); ?>
 		<div style="clear:both;"></div>
-		<label for="LoaPublishingStatus">Publishing Status</label>
+        <div class="pub-status" style="width:950px; clear:none; float: left; border: #CCCCCC solid 1px;">
+        <label for="LoaPublishingStatus">Publishing Status</label>
 		<input type="hidden" value="" name="data[Loa][PublishingStatusLL]" />
 		<br />
-        <div class="pub-status" style="width:950px; clear:none; float: left;">
             <div class="input select" style="width: 450px; float:left; clear:none;">
-				<label for="LoaPublishingStatusLL">Luxury Link</label>
+				<label for="LoaPublishingStatusLL" style="padding-left:70px; padding-bottom:10px;">Luxury Link</label>
                 <input type="hidden" value="" name="data[Loa][PublishingStatusLL]" />
                 <?php foreach ($publishingStatus as $pStatusId => $pStatus	): ?>
 					<div class="checkbox">
 						<input type="checkbox" id="LoaPublishingStatusLL<?php echo $pStatusId; ?>" value="<?php echo $pStatusId; ?>" name="data[Loa][PublishingStatusLL][]" <?php if (in_array($pStatusId, array_keys($completedStatusLL))) echo "checked"?>/>
 						<label for="LoaPublishingStatusLL<?php echo $pStatusId; ?>"><?php echo $pStatus; ?></label>
-						<?php if (in_array($pStatusId, array_keys($completedStatusLL))) echo '<span>Completed '.date('M d, Y h:i a', strtotime($completedStatusLL[$pStatusId])).'</span>'; ?>
+						<?php if (in_array($pStatusId, array_keys($completedStatusLL))) echo '<span>'.date('M d, Y h:i a', strtotime($completedStatusLL[$pStatusId])).'</span>'; ?>
 					</div>
                 <?php endforeach; ?>
             </div>
             <div class="input select" style="width: 450px; float:right; clear:none;">
-                <label for="LoaPublishingStatusFG">Family Getaway</label>
+                <label for="LoaPublishingStatusFG" style="padding-left:70px; padding-bottom:10px;">Family Getaway</label>
                 <input type="hidden" value="" name="data[Loa][PublishingStatusFG]" />
                 <?php foreach ($publishingStatus as $pStatusId => $pStatus): ?>
 					<div class="checkbox">
 						<input type="checkbox" id="LoaPublishingStatusFG<?php echo $pStatusId; ?>" value="<?php echo $pStatusId; ?>" name="data[Loa][PublishingStatusFG][]" <?php if (in_array($pStatusId, array_keys($completedStatusFG))) echo "checked"; ?> />
 						<label for="LoaPublishingStatusFG<?php echo $pStatusId; ?>"><?php echo $pStatus; ?></label>
-						<?php if (in_array($pStatusId, array_keys($completedStatusFG))) echo 'Completed '.date('M d, Y h:i a', strtotime($completedStatusFG[$pStatusId])); ?>
+						<?php if (in_array($pStatusId, array_keys($completedStatusFG))) echo '<span>'.date('M d, Y h:i a', strtotime($completedStatusFG[$pStatusId])).'</span>'; ?>
 					</div>
                 <?php endforeach; ?>
             </div>
