@@ -6,6 +6,7 @@ class ClientNewsletterNotifier extends AppModel {
 	var $useTable = false;
 	
 	function prepareContactDetails() {
+		$site = $this->data[$this->name]['site'];
 	    $url = $this->data[$this->name]['url'];
 	    
 	    // toolbox can't communicate using www. so we need to direct the connection to one of the servers
@@ -19,7 +20,7 @@ class ClientNewsletterNotifier extends AppModel {
         }
         fclose($handle);
 
-        $clients = $this->getClientsFromHtml($contents);
+        $clients = $this->getClientsFromHtml($contents, $site);
         
         $client = new Client;
 
@@ -37,15 +38,29 @@ class ClientNewsletterNotifier extends AppModel {
 		    }
 		}
 
-	    return $sponsorshipClients;
+		return $sponsorshipClients;
 	}
 	
-	function getClientsFromHtml($data) {
+	function getClientsFromHtml($data, $site) {
 	    //preg_match_all("/luxurylink\.com\/luxury-hotels\/.*\?clid=([0-9]+)/", $data, $clients);
         //$clientIds = array_merge(array_unique($clients[1]), array());
+        $match_str = '';
         
-        preg_match_all('/luxurylink\.com\/fivestar\/((hotels|inns|tour-packages|luxury-cruises|all-inclusive-resorts|lodges|estates-villas)\/[A-Za-z0-9-]+\/[A-Za-z0-9-\'&\+]+)/', $data, $clients);
-        
+        // Right now the $match_str looks similar for both luxurylink and familygetaway (only the URL is different)
+        // This may not be the case long term so they are broken out here.
+        switch($site) {
+			case 'luxurylink':
+				$match_str = '/luxurylink\.com\/fivestar\/((hotels|inns|tour-packages|luxury-cruises|all-inclusive-resorts|lodges|estates-villas)\/[A-Za-z0-9-]+\/[A-Za-z0-9-\'&\+]+)/';
+				break;
+			case 'family':
+				$match_str = '/familygetaway\.com\/vacation\/((hotels|inns|tour-packages|luxury-cruises|all-inclusive-resorts|lodges|estates-villas)\/[A-Za-z0-9-]+\/[A-Za-z0-9-\'&\+]+)/';
+				break;
+			default:
+				break; 
+        }
+        preg_match_all($match_str, $data, $clients);
+		
+		$clients[1] = array_unique($clients[1]);
         $clientIds = array();
         $clientModel = new Client();
         foreach ($clients[1] as $clientUrl) {

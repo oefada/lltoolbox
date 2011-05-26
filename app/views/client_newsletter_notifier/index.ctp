@@ -3,6 +3,7 @@
 <?php echo $form->create(null, array('action' => 'index'));?>
 	<fieldset>
 	<?php
+		echo $form->input('site');
 		echo $form->input('themeName');
 		echo $form->input('url');
 	?>
@@ -36,6 +37,7 @@
 <?php echo $form->create(null, array('action' => 'index'));?>
 	<fieldset>
 	<?php
+		echo $form->input('site', array('type' => 'hidden'));
 		echo $form->input('themeName', array('type' => 'hidden'));
 		echo $form->input('url', array('type' => 'hidden'));
 		echo $form->input('approve', array('type' => 'hidden', 'value' => true));
