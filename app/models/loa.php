@@ -47,35 +47,8 @@ class Loa extends AppModel {
 	function beforeSave($options) {
 
 		if(isset($this->data['Loa']['loaId'])) {
-			$this->LoaPublishingStatusRel->deleteAll(array('LoaPublishingStatusRel.loaId' => $this->data['Loa']['loaId']));
-			if (!empty($this->data['Loa']['PublishingStatusLL'])) {
-	            foreach ($this->data['Loa']['PublishingStatusLL'] as $i => $pStatus) {
-	                if ($thisStatus = $this->LoaPublishingStatusRel->find('first', array('conditions' => array('LoaPublishingStatusRel.loaId' => $this->data['Loa']['loaId'],
-	                                                                                                           'LoaPublishingStatusRel.publishingStatusId' => $pStatus)))) {
-	                    $this->data['LoaPublishingStatusRelLL'][$i] = $thisStatus;
-	                }
-	                else {
-	                    $this->data['LoaPublishingStatusRelLL'][$i]['loaId'] = $this->data['Loa']['loaId'];
-	                    $this->data['LoaPublishingStatusRelLL'][$i]['publishingStatusId'] = $pStatus;
-	                    $this->data['LoaPublishingStatusRelLL'][$i]['completedDate'] = date('Y-m-d H:i:s');
-	                    $this->data['LoaPublishingStatusRelLL'][$i]['site'] = 'luxurylink';
-	                }
-	            }
-	        }
-			if (!empty($this->data['Loa']['PublishingStatusFG'])) {
-	            foreach ($this->data['Loa']['PublishingStatusFG'] as $i => $pStatus) {
-	                if ($thisStatus = $this->LoaPublishingStatusRel->find('first', array('conditions' => array('LoaPublishingStatusRel.loaId' => $this->data['Loa']['loaId'],
-	                                                                                                           'LoaPublishingStatusRel.publishingStatusId' => $pStatus)))) {
-	                    $this->data['LoaPublishingStatusRelFG'][$i] = $thisStatus;
-	                }
-	                else {
-	                    $this->data['LoaPublishingStatusRelFG'][$i]['loaId'] = $this->data['Loa']['loaId'];
-	                    $this->data['LoaPublishingStatusRelFG'][$i]['publishingStatusId'] = $pStatus;
-	                    $this->data['LoaPublishingStatusRelFG'][$i]['completedDate'] = date('Y-m-d H:i:s');
-	                    $this->data['LoaPublishingStatusRelFG'][$i]['site'] = 'family';
-	                }
-	            }
-	        }
+			$this->saveLoaStatuses('PublishingStatusLL', 'LoaPublishingStatusRelLL', 'luxurylink');
+			$this->saveLoaStatuses('PublishingStatusFG', 'LoaPublishingStatusRelFG', 'family');
 		}
         unset($this->data['Loa']['PublishingStatus']);
         AppModel::beforeSave();
@@ -158,6 +131,46 @@ class Loa extends AppModel {
             }
         }
         return $list;
-    }    
+    }
+
+    private function saveLoaStatuses($siteArrayIndex, $siteSaveArrayIndex, $site) {
+    	if (!empty($this->data['Loa'][$siteArrayIndex])) {
+			for ($i = 0; $i < 5; $i++) {
+				$pStatus = $i + 1;
+				// Let's see if we have a status already set in the database
+				$thisStatus = $this->LoaPublishingStatusRel->find
+	                		('first', array(
+	                			'conditions' => array(
+									'LoaPublishingStatusRel.loaId' => $this->data['Loa']['loaId'],
+									'LoaPublishingStatusRel.publishingStatusId' => $pStatus, 
+	                				'LoaPublishingStatusRel.site' => $site)));
+				// If this status was saved before and is still selected by user just remember the selection
+				if ($thisStatus && in_array($pStatus, $this->data['Loa'][$siteArrayIndex])) {
+					// Remember what was saved in the database
+					$this->data[$siteSaveArrayIndex][$i] = $thisStatus;
+				}
+				// If this status was not saved before but selected by user this time create new status
+				else if(in_array($pStatus, $this->data['Loa'][$siteArrayIndex])) {
+					$this->data[$siteSaveArrayIndex][$i]['loaId'] = $this->data['Loa']['loaId'];
+					$this->data[$siteSaveArrayIndex][$i]['publishingStatusId'] = $pStatus;
+					$this->data[$siteSaveArrayIndex][$i]['completedDate'] = date('Y-m-d H:i:s');
+					$this->data[$siteSaveArrayIndex][$i]['site'] = $site;
+				}
+				// Otherwise clear the status
+				else {
+					$this->LoaPublishingStatusRel->deleteAll(array(
+	                    						'LoaPublishingStatusRel.loaId' => $this->data['Loa']['loaId'], 
+	                    						'LoaPublishingStatusRel.site' => $site,
+	                    						'LoaPublishingStatusRel.publishingStatusId' => $thisStatus['LoaPublishingStatusRel']['publishingStatusId'])
+					);
+				}
+			}
+		} else {
+			// Clear the statues
+			$this->LoaPublishingStatusRel->deleteAll(array(
+	                    						'LoaPublishingStatusRel.loaId' => $this->data['Loa']['loaId'], 
+	                    						'LoaPublishingStatusRel.site' => $site));
+		}
+    }
 }
 ?>
