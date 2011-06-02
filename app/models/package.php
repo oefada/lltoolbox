@@ -478,6 +478,11 @@ class Package extends AppModel {
 			echo "<p>$q</p>";
 			echo "<p>Affected Rows: ".$this->getAffectedRows()."</p>";
 		}
+		if ($this->getAffectedRows()<=0){
+			return false;
+		}else{
+			return true;
+		}
 	}
 
 	function getValidityGroupId($ppid,$debug_q=false){
@@ -529,6 +534,9 @@ class Package extends AppModel {
 		if ($debug_q){
 			echo "<p>$q</p>";
 			echo "<p>Affected Rows: ".$this->getAffectedRows()."</p>";
+		}
+		if ($this->getAffectedRows()<=0){
+			return false;
 		}
 
 	}

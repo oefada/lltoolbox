@@ -2141,7 +2141,10 @@ class PackagesController extends AppController {
 
 				foreach($arr as $key2=>$validity_arr){
 
-					$this->Package->insertValidityGroup($vg_id,$validity_arr);
+					if ($this->Package->insertValidityGroup($vg_id,$validity_arr,$siteId)===false){
+						$err_msg='Failed to insert int validityGroup, please try again.';
+						$this->Session->setFlash(__($err_msg, true), 'default', array(), 'error');
+					}
 
 				}
 
@@ -2586,6 +2589,7 @@ class PackagesController extends AppController {
 					}
 
 					$hasValidDate=false;
+					$doUpdate=false;
 					if (isset($dates['ValidRanges'])){
 						foreach($dates['ValidRanges'] as $arr){
 							foreach($arr as $key=>$pvd_arr){
@@ -2594,7 +2598,7 @@ class PackagesController extends AppController {
 									continue;//don't bother with validity end dates in the past
 								}
 								$hasValidDate=true;
-								$this->Package->insertValidityGroup($vg_id,$pvd_arr,$siteId,$debug_q);
+								$doUpdate=$this->Package->insertValidityGroup($vg_id,$pvd_arr,$siteId,$debug_q);
 							}
 						}
 					}
@@ -2604,14 +2608,16 @@ class PackagesController extends AppController {
 							foreach($arr as $key=>$pvd_arr){
 								if ($pvd_arr['endDate']<date("Y-m-d"))continue;//don't bother with validity end dates in the past
 								$hasValidDate=true;
-								$this->Package->insertValidityGroup($vg_id,$pvd_arr,$siteId,$debug_q);
+								$doUpdate=$this->Package->insertValidityGroup($vg_id,$pvd_arr,$siteId,$debug_q);
 							}
 						}
 					}
 
-					if ($hasValidDate){
+					if ($hasValidDate && $doUpdate){
 						$this->Package->updatePricePointValidityGroupId($pricePointId,$vg_id,$debug_q);
-						$this->Package->updateOfferWithGroupId($pricePointId,$vg_id,$siteId,$debug_q);
+						if ($this->Package->updateOfferWithGroupId($pricePointId,$vg_id,$siteId,$debug_q)===false){
+
+						}
 					}
 
 				}
