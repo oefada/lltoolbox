@@ -92,7 +92,8 @@
                 <input type="radio" name="data[Package][isPrivatePackage]" value="0" <?php echo ($package['Package']['isPrivatePackage'] == 0 || empty($package['Package']['isPrivatePackage'])) ? 'checked' : ''; ?> /> No
            </td>
         </tr>
-        <?php $showFlex = ($package['Package']['siteId'] == '1') ? '' : ' style="display:none"'; ?>
+        <?php //$showFlex = ($package['Package']['siteId'] == '1') ? '' : ' style="display:none"'; ?>
+        <?php $showFlex = ''; // 20110606 mc - TICKET2021 - Allow Flex Packages to be built for FG ?>
         <tr<?php echo $showFlex; ?> id="showFlex">
            <th>Is Flex Package?</th>
            <td>
