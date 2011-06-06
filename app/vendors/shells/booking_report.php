@@ -23,7 +23,7 @@ class BookingReportShell extends Shell {
 	
 	public function initialize() {
 		$this->log('Process Started.', $this->logfile);
-		$this->db =& ConnectionManager::getDataSource('shared');		
+		$this->db =& ConnectionManager::getDataSource('shared');
 	}
 
 	public function __destruct() {
@@ -31,6 +31,10 @@ class BookingReportShell extends Shell {
 	}
 	
 	public function main() {
+		$this->s3_accessKey = isset($this->params['a']) ? $this->params['a'] : null;
+		$this->s3_secretKey = isset($this->params['p']) ? $this->params['p'] : null;
+		$this->s3_bucket = isset($this->params['b']) ? $this->params['b'] : null;
+		
 		$daysBack = (isset($this->params['n']) AND intval($this->params['n']) !==0) ? intval($this->params['n']) : 1;
 		$offerEndDate = date('Y-m-d', strtotime("-$daysBack days"));
 		$reportData = '';
@@ -59,7 +63,7 @@ class BookingReportShell extends Shell {
 				if ($status !== FALSE) {
 					$this->log("Uploading {$this->filepath}$filename to S3 bucket {$this->s3_bucket}.", $this->logfile);
 					$s3 = new S3($this->s3_accessKey, $this->s3_secretKey);
-					$status = $s3->putObjectFile($this->filepath . $filename, $this->s3_bucket, 'luxurylink/' . $filename, S3::ACL_PUBLIC_READ);
+					$status = $s3->putObjectFile($this->filepath . $filename, $this->s3_bucket, $filename, S3::ACL_PUBLIC_READ);
 				
 					if ($status !== TRUE) {
 						$message = "Error uploading tsv file to S3 bucket {$this->s3_bucket}";
