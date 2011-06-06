@@ -40,6 +40,13 @@
  * In production mode, flash messages redirect after a time interval.
  * In development mode, you need to click the flash message to continue.
  */
+
+ // cron jobs don't have these set and flood error logging with notices
+ // if they aren't set, simply set them to empty
+ // mbyrnes
+ if (!isset($_SERVER['ENV']))$_SERVER['ENV']='';
+ if (!isset($_SERVER['ENV_USER']))$_SERVER['ENV_USER']='';
+
  // 2010-02-09 mbyrnes
 	$debug=0;
 	if (isset($_SERVER['ENV']) && $_SERVER['ENV']=='development')$debug=2;
