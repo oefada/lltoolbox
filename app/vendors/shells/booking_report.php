@@ -48,32 +48,36 @@ class BookingReportShell extends Shell {
 			$this->log('Building tsv data.', $this->logfile);
 			$reportData = $this->buildTsvFile($winningBids);
 			
-			$this->log("Writing tsv file to {$this->filepath}$filename.", $this->logfile);
-			$fp = fopen($this->filepath . $filename, 'w');
-			$status = fwrite($fp, $reportData); 
-			fclose($fp);
-			
-			if ($status !== FALSE) {
-				$this->log("Uploading {$this->filepath}$filename to S3 bucket {$this->s3_bucket}.", $this->logfile);
-				$s3 = new S3($this->s3_accessKey, $this->s3_secretKey);
-				$status = $s3->putObjectFile($this->filepath . $filename, $this->s3_bucket, 'luxurylink/' . $filename, S3::ACL_PUBLIC_READ);
-				
-				if ($status !== TRUE) {
-					$message = "Error uploading tsv file to S3 bucket {$this->s3_bucket}";
-					$this->errors[] = $message;
-					$this->log($message, $this->logfile);
-				}
-
-				$this->log("Deleting file {$this->filepath}$filename", $this->logfile);
-				$status = unlink($this->filepath . $filename);
+			if (isset($this->params['dryrun'])) {
+				$this->out($reportData);
 			} else {
-				$message = "Error writing tsv file to {$this->filepath}$filename.";
-				$this->errors[] = $message;
-				$this->log($message, $this->logfile);				
-			}		
-		}
-		if (!empty($this->errors)) {
-			$this->sendEmailNotification($this->errors);
+				$this->log("Writing tsv file to {$this->filepath}$filename.", $this->logfile);
+				$fp = fopen($this->filepath . $filename, 'w');
+				$status = fwrite($fp, $reportData); 
+				fclose($fp);
+			
+				if ($status !== FALSE) {
+					$this->log("Uploading {$this->filepath}$filename to S3 bucket {$this->s3_bucket}.", $this->logfile);
+					$s3 = new S3($this->s3_accessKey, $this->s3_secretKey);
+					$status = $s3->putObjectFile($this->filepath . $filename, $this->s3_bucket, 'luxurylink/' . $filename, S3::ACL_PUBLIC_READ);
+				
+					if ($status !== TRUE) {
+						$message = "Error uploading tsv file to S3 bucket {$this->s3_bucket}";
+						$this->errors[] = $message;
+						$this->log($message, $this->logfile);
+					}
+
+					$this->log("Deleting file {$this->filepath}$filename", $this->logfile);
+					$status = unlink($this->filepath . $filename);
+				} else {
+					$message = "Error writing tsv file to {$this->filepath}$filename.";
+					$this->errors[] = $message;
+					$this->log($message, $this->logfile);				
+				}
+				if (!empty($this->errors)) {
+					$this->sendEmailNotification($this->errors);
+				}				
+			}			
 		}
 	}
 	
@@ -99,6 +103,7 @@ class BookingReportShell extends Shell {
 				AND b.offerId = o.offerId
 				AND o.endDate >= '$date 00:00:00'
 				AND o.endDate <= '$date 23:59:59'
+			ORDER BY b.bidDateTime
 		";
 		
 		$results = $this->db->query($sql);
@@ -112,7 +117,7 @@ class BookingReportShell extends Shell {
 					'event_type' => $data[0]['event_type'],
 					'event_value' => $data['b']['event_value'],
 					'member_id' => $data['b']['member_id'],
-					);
+				);
 			}
 		}
 		
