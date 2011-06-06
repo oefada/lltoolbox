@@ -96,7 +96,8 @@ if (Configure::read() === 0) {
 		case E_WARNING:
 		case E_USER_WARNING:
 		case E_COMPILE_WARNING:
-		case E_RECOVERABLE_ERROR:
+		//case E_RECOVERABLE_ERROR:
+		// PHP Notice:  Use of undefined constant E_RECOVERABLE_ERROR - assumed 'E_RECOVERABLE_ERROR'
 		$error = 'Warning';
 		$level = LOG_WARNING;
 	break;
