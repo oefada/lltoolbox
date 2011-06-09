@@ -178,21 +178,28 @@ class LoasController extends AppController {
 		$tracks_result = $this->Loa->query('SELECT * FROM track WHERE loaId = ' . $loa['Loa']['loaId']);
 		foreach ($tracks_result as $track) {
 			$tracks[$track['track']['trackId']] = $track['track'];
-			$offer_result = $this->Loa->query('SELECT offerLive.offerId, offerLive.packageId, offerLive.offerTypeName, offerLive.offerSubtitle, 
-								  offerLive.startDate, offerLive.endDate, offerLive.retailValue, offerLive.openingBid 
-								  FROM schedulingMasterTrackRel smtr 
-								  INNER JOIN schedulingMaster sm USING (schedulingMasterId) 
-								  INNER JOIN schedulingInstance si USING (schedulingMasterId) 
-								  INNER JOIN offer o USING (schedulingInstanceId) 
-								  INNER JOIN offerLuxuryLink as offerLive USING (offerId) 
-								  WHERE smtr.trackId = ' . $track['track']['trackId'] 						   
-							   );			
+			
 			$offers = array();
-			foreach ($offer_result as $offer) {
-				$offers[$offer['offerLive']['offerId']] = $offer['offerLive'];	
+			foreach($loa['Loa']['sites'] as $site) {
+				$join_table = ($site == 'luxurylink') ? 'offerLuxuryLink' : 'offerFamily';
+			
+				$offer_result = $this->Loa->query('SELECT offerLive.offerId, offerLive.packageId, offerLive.offerTypeName, offerLive.offerSubtitle, 
+									  offerLive.startDate, offerLive.endDate, offerLive.retailValue, offerLive.openingBid 
+									  FROM schedulingMasterTrackRel smtr 
+									  INNER JOIN schedulingMaster sm USING (schedulingMasterId) 
+									  INNER JOIN schedulingInstance si USING (schedulingMasterId) 
+									  INNER JOIN offer o USING (schedulingInstanceId) 
+									  INNER JOIN ' . $join_table . ' as offerLive USING (offerId) 
+									  WHERE smtr.trackId = ' . $track['track']['trackId'] 						   
+								);
+
+				foreach ($offer_result as $offer) {
+					$offers[$offer['offerLive']['offerId']] = $offer['offerLive'];	
+				}
 			}
 			$tracks[$track['track']['trackId']]['offers'] = $offers;
 		}
+
 		if (!empty($tracks)) {
 			$track_details_result = $this->Loa->query('SELECT trackDetail.*, ticket.offerId, ticket.numNights FROM trackDetail 
 													INNER JOIN ticket USING (ticketId) 

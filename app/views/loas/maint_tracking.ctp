@@ -99,7 +99,7 @@ $this->set('clientId', $this->data['Client']['clientId']);
 					<td style="text-align:center;"><?php echo $number->currency($offer['openingBid']);?></td>
 					<td style="text-align:center;"><?php echo $number->toPercentage($offer['openingBid'] / $offer['retailValue'] * 100);?></td>
 					<td style="text-align:center;"><?php echo $number->toPercentage($trackDetail['ticketAmount'] / $offer['retailValue'] * 100);?></td>
-                    <td style="text-align:center;"><?php echo $trackDetail['numNights']; ?></td>
+                    <td style="text-align:center;"><?php echo isset($trackDetail['numNights']) ? $trackDetail['numNights'] : '-'; ?></td>
 					<td style="text-align:center;"><a href="/tickets/<?php echo $trackDetail['ticketId'];?>/trackDetails/edit/<?php echo $trackDetail['trackDetailId'];?>" target="_BLANK"><?php echo $trackDetail['trackDetailId'];?></a></td>
 					<td style="text-align:center;"><a href="/tickets/view/<?php echo $trackDetail['ticketId'];?>" target="_BLANK"><?php echo $trackDetail['ticketId'];?></a></td>
 					<td style="text-align:center;"><?php echo $number->currency($trackDetail['ticketAmount']);?></td>
