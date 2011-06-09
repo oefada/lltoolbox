@@ -105,11 +105,22 @@ class SchedulingMastersController extends AppController {
 						$this->data['SchedulingMaster']['startDate'] = "$datePickerDate[2]-$datePickerDate[0]-$datePickerDate[1] " . $this->data['SchedulingMaster']['startDateTime'];
 
 						// endDate
-						$datePickerDate2 = explode('-', $this->data['SchedulingMaster']['endDatePicker2']);
-						if (in_array($this->data['SchedulingMaster']['offerTypeId'], array(3,4))) {
-							$this->data['SchedulingMaster']['endDate'] = "$datePickerDate2[2]-$datePickerDate2[0]-$datePickerDate2[1] 01:00:00";
+					    // ticket 1852 - end date is master end date minus 7 days when there are multiple price points
+					    if (sizeof($ppid_arr) > 1) {
+					        $endDateFromValidity = date('Y-m-d', strtotime($this->data['SchedulingMaster']['validityEndDate'] . ' -7 days'));
+							if (in_array($this->data['SchedulingMaster']['offerTypeId'], array(3,4))) {
+								$this->data['SchedulingMaster']['endDate'] = "$endDateFromValidity 01:00:00";
+							} else {
+								$this->data['SchedulingMaster']['endDate'] = "$endDateFromValidity 16:00:00";
+							}
+						// end date prior to ticket 1852
 						} else {
-							$this->data['SchedulingMaster']['endDate'] = "$datePickerDate2[2]-$datePickerDate2[0]-$datePickerDate2[1] 16:00:00";
+							$datePickerDate2 = explode('-', $this->data['SchedulingMaster']['endDatePicker2']);
+							if (in_array($this->data['SchedulingMaster']['offerTypeId'], array(3,4))) {
+								$this->data['SchedulingMaster']['endDate'] = "$datePickerDate2[2]-$datePickerDate2[0]-$datePickerDate2[1] 01:00:00";
+							} else {
+								$this->data['SchedulingMaster']['endDate'] = "$datePickerDate2[2]-$datePickerDate2[0]-$datePickerDate2[1] 16:00:00";
+							}
 						}
 
 						//if this is a mystery auction we override some fields
@@ -145,7 +156,7 @@ class SchedulingMastersController extends AppController {
                                 $this->data['SchedulingMaster']['pricePointPercentRetailAuc'] = $pp['PricePoint']['percentRetailAuc'];
                             }
 
-							// workaround so that discounts are not set for auctions
+							// jwoods - workaround so that discounts are not set for auctions
 							$tempIsDiscountedOffer = $this->data['SchedulingMaster']['isDiscountedOffer'];
 							$tempPercentDiscount = $this->data['SchedulingMaster']['percentDiscount'];
 							$this->data['SchedulingMaster']['isDiscountedOffer'] = 0;
@@ -153,7 +164,7 @@ class SchedulingMastersController extends AppController {
 
 							$success = $this->addSave($this->data);
 
-                            // reset discount values
+                            // second part of discount workaround - reset discount values
 							$this->data['SchedulingMaster']['isDiscountedOffer'] = $tempIsDiscountedOffer;
 							$this->data['SchedulingMaster']['percentDiscount'] = $tempPercentDiscount;
 
