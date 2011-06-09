@@ -2,15 +2,13 @@
 class ClientSyncShell extends Shell {
 	public $uses = array('Client');
 	public $logfile = 'client_loa_sync';
-	public $numdays = 1;
 	public $errors = array();
 
     function main() {
     	$this->log('Process Started.', $this->logfile);
-		
-    	$this->numdays = (isset($this->params['n']) AND intval($this->params['n']) !== 0) ? intval($this->params['n']) : 1;
-		$clients = $this->getActiveLoasForPeriod($this->numdays);
-		$this->log('Proceeding to synchronize ' . sizeof($clients) . ' client LOA\'s.', $this->logfile);
+
+		$clients = $this->getActiveLoasForPeriod();
+		$this->log('Proceeding to synchronize ' . sizeof($clients) . ' client LOAs.', $this->logfile);
 
 		// iterate through each client
 		foreach($clients as $client) {
@@ -19,8 +17,8 @@ class ClientSyncShell extends Shell {
 				$this->log('Synchronizing LOA for clientId: ' . $client['Client']['clientId'], $this->logfile);
 
 				// trigger a Client->save() to update frontend fields
-				$this->Client->id = $client['Client']['clientId'];
-				$this->Client->save($client);
+				$this->Client->recursive = 2;
+				$this->Client->save($this->Client->read(null, $client['Client']['clientId']));
 			}
 			else {
 				$message = 'Client ID "' . $client['Client']['clientId'] . '" contains an invalid site.';
@@ -34,10 +32,10 @@ class ClientSyncShell extends Shell {
 		$this->log('Process Completed.', $this->logfile);
 	}
 
-	function getActiveLoasForPeriod($period = 1) {
-		// Current date and last $period day(s)
-		$current_date = date('Y-m-d H:i:s');
-		$date_window = date('Y-m-d H:i:s', strtotime($current_date)-($period*24*60*60));
+	function getActiveLoasForPeriod() {
+		$currentDate = date('Y-m-d');
+		$startDate = $currentDate . ' 00:00:00';
+		$endDate = $currentDate . ' 23:59:59';
 
 		$sql = "
 			SELECT
@@ -48,14 +46,15 @@ class ClientSyncShell extends Shell {
 			WHERE
 				Loa.inactive = 0
 				AND (
-					((Loa.startDate >= '$date_window' AND Loa.startDate <= '$current_date'))
-					OR ((Loa.endDate >= '$date_window' AND Loa.endDate <= '$current_date'))
+					((Loa.startDate >= '$startDate' AND Loa.startDate <= '$endDate'))
+					OR ((Loa.endDate >= '$startDate' AND Loa.endDate <= '$endDate'))
 				)
-		";
-		
+		";		
+
 		$client_ids = Set::extract('/Client/clientId', $this->Client->query($sql));
 		$params = array(
-			'recursive' => 2,
+			'recursive' => -1,
+			'fields' => array('Client.clientId', 'Client.sites'),
 			'conditions' => array(
 				'Client.clientId' => $client_ids
 			),
@@ -65,7 +64,7 @@ class ClientSyncShell extends Shell {
 
 	function validSites($sites) {
 		$validSites = array('family', 'luxurylink');
-		
+
 		foreach($sites as $site) {
 			if (!in_array($site, $validSites)) {
 				return false;
