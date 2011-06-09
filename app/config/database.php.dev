@@ -109,5 +109,15 @@ class DATABASE_CONFIG {
 		'database' => 'family',
 		'prefix' => '',
 	);
+	
+	var $shared = array(
+		'driver' => 'mysqli',
+		'persistent' => false,
+		'host' => 'dev-db2',
+		'login' => 'root',
+		'password' => 'traveler',
+		'database' => 'shared',
+		'prefix' => '',
+	);
 }
 ?>
