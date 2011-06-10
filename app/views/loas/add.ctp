@@ -28,18 +28,8 @@ $this->set('clientId', $this->data['Loa']['clientId']);
 		// to try echo $form->input('startMinute');
 		// to try echo $form->input('endMinute');
 		
-		echo $form->input('startDate', array('selected' => array('month' => 'now',
-																 'day' => 'now',
-																 'year' => 'now',
-															'hour' => '12',
-                                                            'minute' => '00',
-                                                            'meridian' => 'am')
-                                 )
-                );
-      
-				
-		echo $form->input('endDate', array('selected' => '23:59:59' ));
-		
+		echo $form->input('startDate',array('minYear' => date('Y'), 'maxYear' => date('Y', strtotime('+5 year')), 'timeFormat' => ''));
+		echo $form->input('endDate', array('minYear' => date('Y'), 'maxYear' => date('Y', strtotime('+5 year')), 'timeFormat' => ''));
 			
 		echo '<div id="_LoaMembershipFee" style="padding:0px;">' . $form->input('membershipFee') . '</div>';
 		echo '<div id="_LoaMembershipFeeEstimated" style="padding:0px;">' . $form->input('membershipFeeEstimated', array('label' => 'Estimated Fee')) . '</div>';
@@ -52,6 +42,18 @@ $this->set('clientId', $this->data['Loa']['clientId']);
 		echo '<div class="controlset">'.$form->input('upgraded')."</div>";
 		
 		echo $form->input('currencyId');
+		
+		echo $form->input('accountExecutive');
+		echo $form->input('accountManager');
+		echo $form->input('accountTypeId', array('label' => 'Account Type'));
+		echo $form->input('emailNewsletterDates');
+		echo $form->input('homepageDates');
+		echo $form->input('additionalMarketing');
+		echo $form->input('commissionStructure');
+		echo $form->input('commissionFreeYield');
+		echo $form->input('luxuryLinkFee');
+		echo $form->input('familiyGetawayFee');
+		echo $form->input('advertisingFee');
 	?>
 	</fieldset>
 <?php echo $form->end('Submit');?>

@@ -69,12 +69,12 @@ $this->set('clientId', $this->data['Client']['clientId']);
                 <?php endforeach; ?>
             </div>
         </div>
-        <?php	echo $form->input('loaMembershipTypeId', array('label' => 'Membership Type', 'disabled' => $disable_advanced_edit));
+        <?php   echo $form->input('customerApprovalDate', array('label' => 'Package in Date', 'timeFormat' => ''));
+        		echo $form->input('loaMembershipTypeId', array('label' => 'Membership Type', 'disabled' => $disable_advanced_edit));
                 echo $form->input('numEmailInclusions');
                 echo $form->input('totalRevenue', array('disabled' => $disable_advanced_edit, 'label' => 'Total Revenue'));
                 echo $form->input('Loa.currencyId', array('label' => 'Item Currency'));
                 echo $form->input('customerApprovalStatusId', array('label' => 'Client Approval Status'));
-                echo $form->input('customerApprovalDate', array('label' => 'Package in Date', 'disabled' => true, 'empty' => true));
         ?>
     
 	<div class="controlset">
@@ -90,8 +90,8 @@ $this->set('clientId', $this->data['Client']['clientId']);
 		echo $form->input('membershipTotalPackages');
 		echo $form->input('membershipPackagesRemaining', array('disabled' => $disable_mp));
 		echo $form->input('loaNumberPackages', array('label' => 'Commission-Free Packages'));
-		echo $form->input('startDate');
-		echo $form->input('endDate');
+		echo $form->input('startDate', array('minYear' => date('Y'), 'maxYear' => date('Y', strtotime('+5 year')), 'timeFormat' => ''));
+		echo $form->input('endDate',  array('minYear' => date('Y'), 'maxYear' => date('Y', strtotime('+5 year')), 'timeFormat' => ''));
 
 		// ESTIMATED
 		$enable_est = !$disable_advanced_edit && ($loa['Loa']['loaMembershipTypeId'] == 3) ? true : false;
@@ -114,6 +114,20 @@ $this->set('clientId', $this->data['Client']['clientId']);
 		
 		echo $form->input('totalKept', array('disabled' => $disable_advanced_edit));
 		echo $form->input('totalCommission', array('disabled' => $disable_advanced_edit));
+		
+		echo $form->input('accountExecutive');
+		echo $form->input('accountManager');
+		
+		echo $form->input('accountTypeId', array('label' => 'Account Type'));
+		
+		echo $form->input('emailNewsletterDates');
+		echo $form->input('homepageDates');
+		echo $form->input('additionalMarketing');
+		echo $form->input('commissionStructure');
+		echo $form->input('commissionFreeYield');
+		echo $form->input('luxuryLinkFee');
+		echo $form->input('familiyGetawayFee');
+		echo $form->input('advertisingFee');
 	?>
 	</fieldset>
 	<div class="buttonrow">

@@ -20,7 +20,12 @@ class MultisiteHelper extends AppHelper {
                 }
             }
             if (!empty($this->data)) {
-                $checked = (in_array($site['dbName'], $this->data[$modelName]['sites'])) ? ' checked' : '';
+                $checked = (isset($this->data[$modelName]['sites']) && 
+                			is_array($this->data[$modelName]['sites']) && 
+                			in_array($site['dbName'], $this->data[$modelName]['sites'])) ? 
+                																		 ' checked' 
+                																		 : 
+                																		 '';
             }
             else {
                 $checked = '';

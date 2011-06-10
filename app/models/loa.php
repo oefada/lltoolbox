@@ -9,7 +9,8 @@ class Loa extends AppModel {
 						   'Client' => array('foreignKey' => 'clientId'),
 						   'Currency' => array('foreignKey' => 'currencyId'),
 						   'LoaLevel' => array('foreignKey' => 'loaLevelId'),
-						   'LoaMembershipType' => array('foreignKey' => 'loaMembershipTypeId')
+						   'LoaMembershipType' => array('foreignKey' => 'loaMembershipTypeId'),
+						   'AccountType' => array('foreignKey' => 'accountTypeId')
 						  );
 	var $validate = array('startDate' => array('rule' => array('validateEndStartDate'), 'message' => 'Start date must be less than end date'),
 						  'endDate' => array('rule' => array('validateEndStartDate'), 'message' => 'Start date must be less than end date')

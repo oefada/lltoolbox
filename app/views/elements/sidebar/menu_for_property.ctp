@@ -1,7 +1,7 @@
 <ul class="tree">
 	<?php
 	$clientId = $this->viewVars['clientId'];
-	$currentLoaId = $client['Client']['currentLoaId'];
+	$currentLoaId = (isset($client['Client']['currentLoaId'])) ? $client['Client']['currentLoaId'] : '';
     $validPhotoUsers = array('jpawlowska', 'kgathany', 'dpen', 'jkramer');
 	?>
 	<li><?=$html->link('INFO/ATTRIBUTES', array("controller" => 'clients', 'action' => 'edit', $clientId), array('update' => 'content-area', 'indicator' => 'spinner'))?></li>
