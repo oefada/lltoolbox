@@ -403,7 +403,8 @@ $linkTitle = 'Edit Blackout Dates';
             <th>Percent of Retail (Buy Now)</th>
 			<th>Guarantee % of Retail</th>
             <th>Max Num Sales</th>
-            <th>Preview</th>
+            <th>Preview Price Point</th>
+            <th>Preview Package</th>
 						<th>Edit</th>
             <th>Delete</th>
         </tr>
@@ -439,6 +440,7 @@ $linkTitle = 'Edit Blackout Dates';
 				<td>{$pricePoint['PricePoint']['percentReservePrice']}</td>
 									<td>{$pricePoint['PricePoint']['maxNumSales']}</td>
 									<td><a href='{$previewHost}/luxury-hotels/preview.html?clid={$clientId}&oid={$ppid}&preview=pricepoint' target='_blank'>Preview</a></td>
+									<td><a href='{$previewHost}/luxury-hotels/preview.html?packageId=".$pricePoint['Package']['packageId']."&clid={$clientId}&oid={$ppid}&preview=package' target='_blank'>Preview Package</a></td>
 									<td><div style='float:left;' qs=\"pricePointId={$ppid}&otid=$otid\" class=\"edit-link\" name=\"$linkName\" title=\"$linkTitle\">Edit</div></td>";
 					echo "<td>";
 					echo $html->link('Delete', "/packages/deletePackage/pricepointid/".$pricePoint['PricePoint']['pricePointId']."/clientId/".$clientId."/packageId/".$pricePoint['Package']['packageId'], array(), 'Are you sure?');
