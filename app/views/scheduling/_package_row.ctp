@@ -41,32 +41,47 @@
 		<span class="masterListTarget" id="masterListTarget<?=$package['Package']['packageId']?>"><a href="javascript: void(0);" style="color: #fff"><?= count($package['Package']['masterList']) ?> Masters</a></span>
 		<div class="masterList" id="masterList<?=$package['Package']['packageId']?>" style="display: none">
 		<ul>
-		<?php foreach($package['Package']['masterList'] as $m):
+		<?php 
+		      // 06/13/2011 jwoods - ticket 1872 - unique display for Hotel Offers 
+		      $packageIsHotelOffer = false;
+		      foreach($package['Package']['masterList'] as $m):
 			$offerTypeName = $m['OfferType']['offerTypeName'];
+			$offerTypeId = $m['OfferType']['offerTypeId'];
 			$m = $m['SchedulingMaster'];
-		?>
+			if ($offerTypeId == 7) { $packageIsHotelOffer = true; } ?>
+			
 			<li style="margin-bottom:5px;"><b><?=$offerTypeName?></b><br/><a href="javascript: void(0);" onclick="Modalbox.show('/scheduling_masters/edit/<?=$m['schedulingMasterId']?>', {title: 'Edit Scheduling Master'});">Master Id #<?=$m['schedulingMasterId']?><br/><?=date('M d, Y', strtotime($m['startDate']))?> - <?=date('M d, Y', strtotime($m['endDate']))?></a></li>
-		<?php endforeach; ?>
+
+		     <?php endforeach; ?>
 		</ul>	
 		</div>
-		<strong>Schedule This Package</strong> - Start Date
-		<input type="hidden" class="format-y-m-d divider-dash range-low-today fill-grid-no-select opacity-99" id="dp-package-<?=$package['Package']['packageId']?>" name="dp-normal-<?=$package['Package']['packageId']?>" value="<?=$year.'-'.$month.'-01'?>" maxlength="10"/>
-		<script>
-			Event.observe(window,'load', function() {
-				$("fd-dp-package-<?=$package['Package']['packageId']?>").getElementsBySelector('td').each(function(obj, index){
-						obj.onclick = null;
+		
+		<? 	
+		if ($packageIsHotelOffer) { ?>
+			<strong><< Edit Hotel Offer Dates</strong>
+		<? } else { ?>
+		
+			<strong>Schedule This Package</strong> - Start Date
+			<input type="hidden" class="format-y-m-d divider-dash range-low-today fill-grid-no-select opacity-99" id="dp-package-<?=$package['Package']['packageId']?>" name="dp-normal-<?=$package['Package']['packageId']?>" value="<?=$year.'-'.$month.'-01'?>" maxlength="10"/>
+			<script>
+				Event.observe(window,'load', function() {
+					$("fd-dp-package-<?=$package['Package']['packageId']?>").getElementsBySelector('td').each(function(obj, index){
+							obj.onclick = null;
+					});
+					$("fd-dp-package-<?=$package['Package']['packageId']?>").observe('click', function(event) {
+						arr = event.element().className.match(/dmy-(.*)-(.*)-(.*)\s/);
+
+						if(arr[1]) {
+							$("fd-dp-package-<?=$package['Package']['packageId']?>").fade();
+							openSchedulingOverlay(arr[3]+'-'+arr[2]+'-'+arr[1], <?=$package['Package']['packageId']?>, <?="'",str_replace("'","\'",htmlentities($package['Package']['packageName'])),"'"?>);
+						}
+						return false;});
 				});
-				$("fd-dp-package-<?=$package['Package']['packageId']?>").observe('click', function(event) {
-					arr = event.element().className.match(/dmy-(.*)-(.*)-(.*)\s/);
-					
-					if(arr[1]) {
-						$("fd-dp-package-<?=$package['Package']['packageId']?>").fade();
-						openSchedulingOverlay(arr[3]+'-'+arr[2]+'-'+arr[1], <?=$package['Package']['packageId']?>, <?="'",str_replace("'","\'",htmlentities($package['Package']['packageName'])),"'"?>);
-					}
-					return false;});
-			});
-			/*new Form.Element.Observer($("dp-package-<?=$package['Package']['packageId']?>"), 0.2, function() { if($F("dp-package-<?=$package['Package']['packageId']?>") == '') { return; } openSchedulingOverlay("dp-package-<?=$package['Package']['packageId']?>", <?=$package['Package']['packageId']?>, <?="'",str_replace("'","\'",htmlentities($package['Package']['packageName'])),"'"?>); $("dp-package-<?=$package['Package']['packageId']?>").value = ''});*/
-		</script>
+				/*new Form.Element.Observer($("dp-package-<?=$package['Package']['packageId']?>"), 0.2, function() { if($F("dp-package-<?=$package['Package']['packageId']?>") == '') { return; } openSchedulingOverlay("dp-package-<?=$package['Package']['packageId']?>", <?=$package['Package']['packageId']?>, <?="'",str_replace("'","\'",htmlentities($package['Package']['packageName'])),"'"?>); $("dp-package-<?=$package['Package']['packageId']?>").value = ''});*/
+			</script>
+		
+		<? } ?>
+		
 	</div>
 </div>
 <div class='sGrid collapsibleContent disableAutoCollapse'>
