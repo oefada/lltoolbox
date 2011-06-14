@@ -34,16 +34,16 @@ class PpvNoticesController extends AppController {
 		$webservice_live_method_param = 'in0';
 
 		if (!empty($this->data)) {
-				
+
 				if (empty($this->data['PpvNotice']['emailTo'])) {
 					$this->Session->setFlash(__('The Email To field cannot be empty', true));
 				} else {
 					if (isset($_SESSION['Auth']['AdminUser']['username'])) {
 						$ppvInitials = $_SESSION['Auth']['AdminUser']['username'];
 					} else {
-						$ppvInitials = 'TOOLBOX';	
+						$ppvInitials = 'TOOLBOX';
 					}
-                    
+
 					$data = array();
 					$data['ticketId'] 			= $this->data['PpvNotice']['ticketId'];
 					$data['send'] 				= 1;
@@ -53,45 +53,46 @@ class PpvNoticesController extends AppController {
 					$data['initials']			= $ppvInitials;
 					$data['override_email_to']  = $this->data['PpvNotice']['emailTo'];
 					$data['override_email_cc']  = $this->data['PpvNotice']['emailCc'];
-					$data['override_email_subject']  = $this->data['PpvNotice']['emailSubject'];                  
-                                        
-                    //for hotel beds originally but will work for any client, get attachments                    
+					$data['override_email_subject']  = $this->data['PpvNotice']['emailSubject'];
+
+                    //for hotel beds originally but will work for any client, get attachments
                     if ($_FILES) {
-                                                                      
+
                         $fileAttachArray = array();
                         $fileAttachArrayName = array();
-                        
-                        foreach ($_FILES as $key => $value) {                                                        
-                            if (move_uploaded_file($_FILES[$key]['tmp_name'],  $_SERVER{'DOCUMENT_ROOT'} . '/attachments/' . $_FILES[$key]['name'])) {                         
+                        $fileTypeAttachArray = array();
+
+                        foreach ($_FILES as $key => $value) {
+                            if (move_uploaded_file($_FILES[$key]['tmp_name'],  $_SERVER{'DOCUMENT_ROOT'} . '/attachments/' . $_FILES[$key]['name'])) {
                                 $fileAttachArray[] = $_FILES[$key]['name'];
                                 $fileTypeAttachArray[] = $_FILES[$key]['type'];
                                 //echo "<br />file uploaded: ";
                             } else {
                                 //echo "<br />file not uploaded: ";
                             }
-                            
+
                         }
-                       
+
                         $data['emailAttachment'] = $fileAttachArray;
                         $data['emailAttachmentType'] = $fileTypeAttachArray;
 
                     }
-                    
+
                     if ($clientId) {
-						$data['clientId']		= $clientId;	
+						$data['clientId']		= $clientId;
 					}
-					
+
 					$data_json_encoded = json_encode($data);
 					$soap_client = new nusoap_client($webservice_live_url, true);
 	        		$response = $soap_client->call($webservice_live_method_name, array($webservice_live_method_param => $data_json_encoded));
-					
+
 	        		if( in_array($id, array(1,23)) ) {
 	        			$updateTicket = array();
 						$updateTicket['ticketId'] = $ticketId;
 						$updateTicket['ticketStatusId'] = 4;
 						$this->Ticket->save($updateTicket);
 	        		}
-	        		
+
 					$this->Session->setFlash(__('The Ppv/Notice has been sent.', true));
 					$this->redirect(array('controller' => 'tickets', 'action'=>'view', 'id' => $this->data['PpvNotice']['ticketId']));
 				}
@@ -107,13 +108,13 @@ class PpvNoticesController extends AppController {
 		$data['returnString'] 		= 1;
 		$data['ppvNoticeTypeId'] 	= $id;
 		if ($clientId) {
-			$data['clientId']		= $clientId;	
+			$data['clientId']		= $clientId;
 			$clientIdParam = "/$clientId";
-            
+
 		} else {
-			$clientIdParam = '';            	
+			$clientIdParam = '';
 		}
-	
+
 		if (isset($_SESSION['Auth']['AdminUser']['username'])) {
 			$sender_ext = $sender_title = '';
 			$data['sender_sig']         = 1;
@@ -159,7 +160,7 @@ class PpvNoticesController extends AppController {
      	$this->set('ppv_body_text', $response);
 		$this->set('ticketId', $ticketId);
 		if ($id == 1) {
-			// reservation confirmation 
+			// reservation confirmation
 			$reservation = $this->Ticket->query("SELECT * FROM reservation WHERE ticketId = $ticketId");
 			if (!empty($reservation)) {
 				$this->set('hasResData', 1);
@@ -192,7 +193,7 @@ class PpvNoticesController extends AppController {
 		}
 		$tickets = $this->PpvNotice->Ticket->find('list');
 		$this->set(compact('tickets'));
-		
+
 		$this->set('ppvNoticeTypeIds', $this->PpvNotice->PpvNoticeType->find('list'));
 	}
 
@@ -206,7 +207,7 @@ class PpvNoticesController extends AppController {
 			$this->redirect(array('action'=>'index'));
 		}
 	}
-	
+
 	*/
 
 }
