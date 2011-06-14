@@ -59,11 +59,12 @@ class LoasController extends AppController {
 		$currencyIds = $this->Loa->Currency->find('list');
 		$loaLevelIds = $this->Loa->LoaLevel->find('list', array('order' => array('LoaLevel.dropdownSortOrder')));
 		$loaMembershipTypeIds = $this->Loa->LoaMembershipType->find('list');
+		$accountTypeIds = $this->Loa->AccountType->find('list');
         $this->Loa->LoaPublishingStatusRel->PublishingStatus->recursive = -1;
         $publishingStatus = $this->Loa->LoaPublishingStatusRel->PublishingStatus->find('list');
 		$this->set('clientName', $client['Client']['name']);
 		$this->set('client', $this->Loa->Client->findByClientId($clientId));
-		$this->set(compact('customerApprovalStatusIds', 'currencyIds', 'loaLevelIds', 'loaMembershipTypeIds', 'publishingStatus'));
+		$this->set(compact('customerApprovalStatusIds', 'currencyIds', 'loaLevelIds', 'loaMembershipTypeIds', 'publishingStatus', 'accountTypeIds'));
 		
 	}
 

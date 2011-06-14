@@ -99,3 +99,11 @@ function showFlatCalendar(id, holder, format, selectedHandler) {
   cal.parseDate(element.value);
   cal.show();
 }
+
+function limitText(limitFieldName, limitNum) {
+	var limitField = $(limitFieldName);
+	var text = limitField.value;
+	if (text.length > limitNum) {
+		limitField.value= text.substring(0, limitNum);
+	}
+}

@@ -14,6 +14,7 @@ $this->set('clientId', $this->data['Loa']['clientId']);
 	<?php
 		echo $form->input('clientId', array('type' => 'hidden'));
 		echo $form->input('loaLevelId', array('label' => 'LOA Level'));
+		echo $form->input('customerApprovalDate', array('label' => 'Package in Date', 'timeFormat' => '', 'minYear' => date('Y'), 'maxYear' => date('Y', strtotime('+5 year'))));
 		echo $form->input('loaMembershipTypeId', array('label' => 'Membership Type'));
 		
 		// ts echo $_SERVER['DOCUMENT_ROOT']; echo "<br />";
@@ -46,10 +47,13 @@ $this->set('clientId', $this->data['Loa']['clientId']);
 		echo $form->input('accountExecutive');
 		echo $form->input('accountManager');
 		echo $form->input('accountTypeId', array('label' => 'Account Type'));
-		echo $form->input('emailNewsletterDates');
-		echo $form->input('homepageDates');
-		echo $form->input('additionalMarketing');
-		echo $form->input('commissionStructure');
+		
+		echo $form->input('notes', array('label'=>'LOA Notes', 'id' => 'loaNotes', 'onKeyDown'=>'limitText(loaNotes, 300)', 'onKeyUp'=>'limitText(loaNotes, 300)'));
+		echo $form->input('emailNewsletterDates', array('id' => 'emailNewsletterDates', 'onKeyDown'=>'limitText(emailNewsletterDates, 300)', 'onKeyUp'=>'limitText(emailNewsletterDates, 300)'));
+		echo $form->input('homepageDates', array('id' => 'homepageDates', 'onKeyDown'=>'limitText(homepageDates, 300)', 'onKeyUp'=>'limitText(homepageDates, 300)'));
+		echo $form->input('additionalMarketing', array('id' => 'additionalMarketing', 'onKeyDown'=>'limitText(additionalMarketing, 300)', 'onKeyUp'=>'limitText(additionalMarketing, 300)'));
+		echo $form->input('commissionStructure', array('id' => 'commissionStructure', 'onKeyDown'=>'limitText(commissionStructure, 300)', 'onKeyUp'=>'limitText(commissionStructure, 300)'));
+		
 		echo $form->input('commissionFreeYield');
 		echo $form->input('luxuryLinkFee');
 		echo $form->input('familiyGetawayFee');

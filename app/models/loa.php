@@ -47,6 +47,7 @@ class Loa extends AppModel {
 	
 	function beforeSave($options) {
 
+		$this->data['Loa']['modified'] = date('Y-m-d h:i:s');
 		if(isset($this->data['Loa']['loaId'])) {
 			$this->saveLoaStatuses('PublishingStatusLL', 'LoaPublishingStatusRelLL', 'luxurylink');
 			$this->saveLoaStatuses('PublishingStatusFG', 'LoaPublishingStatusRelFG', 'family');

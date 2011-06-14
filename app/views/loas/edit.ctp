@@ -69,7 +69,7 @@ $this->set('clientId', $this->data['Client']['clientId']);
                 <?php endforeach; ?>
             </div>
         </div>
-        <?php   echo $form->input('customerApprovalDate', array('label' => 'Package in Date', 'timeFormat' => ''));
+        <?php   echo $form->input('customerApprovalDate', array('label' => 'Package in Date', 'minYear' => date('Y'), 'maxYear' => date('Y', strtotime('+5 year')), 'timeFormat' => ''));
         		echo $form->input('loaMembershipTypeId', array('label' => 'Membership Type', 'disabled' => $disable_advanced_edit));
                 echo $form->input('numEmailInclusions');
                 echo $form->input('totalRevenue', array('disabled' => $disable_advanced_edit, 'label' => 'Total Revenue'));
@@ -120,14 +120,20 @@ $this->set('clientId', $this->data['Client']['clientId']);
 		
 		echo $form->input('accountTypeId', array('label' => 'Account Type'));
 		
-		echo $form->input('emailNewsletterDates');
-		echo $form->input('homepageDates');
-		echo $form->input('additionalMarketing');
-		echo $form->input('commissionStructure');
+		echo $form->input('notes', array('label'=>'LOA Notes', 'id' => 'loaNotes', 'onKeyDown'=>'limitText(loaNotes, 300)', 'onKeyUp'=>'limitText(loaNotes, 300)'));
+		echo $form->input('emailNewsletterDates', array('id' => 'emailNewsletterDates', 'onKeyDown'=>'limitText(emailNewsletterDates, 300)', 'onKeyUp'=>'limitText(emailNewsletterDates, 300)'));
+		echo $form->input('homepageDates', array('id' => 'homepageDates', 'onKeyDown'=>'limitText(homepageDates, 300)', 'onKeyUp'=>'limitText(homepageDates, 300)'));
+		echo $form->input('additionalMarketing', array('id' => 'additionalMarketing', 'onKeyDown'=>'limitText(additionalMarketing, 300)', 'onKeyUp'=>'limitText(additionalMarketing, 300)'));
+		echo $form->input('commissionStructure', array('id' => 'commissionStructure', 'onKeyDown'=>'limitText(commissionStructure, 300)', 'onKeyUp'=>'limitText(commissionStructure, 300)'));
+		
 		echo $form->input('commissionFreeYield');
 		echo $form->input('luxuryLinkFee');
 		echo $form->input('familiyGetawayFee');
 		echo $form->input('advertisingFee');
+		
+		echo '<div><label>Created</label><span>'.$loa['Loa']['created'].'</span></div>';
+		echo '<div><label>Modified</label><span>'.$loa['Loa']['modified'].'</span></div>';
+		
 	?>
 	</fieldset>
 	<div class="buttonrow">
