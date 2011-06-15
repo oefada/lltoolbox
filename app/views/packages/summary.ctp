@@ -28,7 +28,7 @@
 <div style="text-align:right;position:absolute;right:0px;">
 	<?=$html->link('<span>Export</span>', "/clients/{$package['Loa']['clientId']}/packages/export/{$package['Package']['packageId']}", array('target' => '_blank', 'class' => 'button'), null, false)?>
 	<?=$html->link('<span>Clone</span>', "/clients/{$package['Loa']['clientId']}/packages/clone_package/{$package['Package']['packageId']}", array('target' => '_blank', 'class' => 'button'), null, false)?>
-	<!-- <?=$html->link('<span>Clone Across LOAs</span>', "/clients/{$package['Loa']['clientId']}/packages/clonePackageAcrossLoas/{$package['Package']['packageId']}", array('target' => '_blank', 'class' => 'button'), null, false)?> -->
+	<?// =$html->link('<span>Clone Across LOAs</span>', "/clients/{$package['Loa']['clientId']}/packages/clonePackageAcrossLoas/{$package['Package']['packageId']}", array('target' => '_blank', 'class' => 'button'), null, false)?>
 	<?=$html->link('<span>Send to Production</span>', "/clients/{$package['Loa']['clientId']}/packages/send_for_merch_approval/{$package['Package']['packageId']}", array('target' => '_blank', 'class' => 'button'), null, false)?>
 	<div style="clear:both;"></div>
 </div>
