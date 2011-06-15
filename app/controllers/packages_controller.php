@@ -2167,20 +2167,24 @@ class PackagesController extends AppController {
 			$vg_id=$this->IdCreator->genId();
 			if ($vg_id=='')exit("vg_id not generated");
 			foreach($rows_db['ValidRanges'] as $key=>$arr){
-
 				foreach($arr as $key2=>$validity_arr){
-
 					if ($this->Package->insertValidityGroup($vg_id,$validity_arr,$siteId)===false){
 						$err_msg='Failed to insert int validityGroup, please try again.';
 						$this->Session->setFlash(__($err_msg, true), 'default', array(), 'error');
 					}
-
 				}
-
+			}
+			foreach($rows_db['BlackoutDays'] as $key=>$arr){
+				foreach($arr as $key2=>$validity_arr){
+					if ($this->Package->insertValidityGroup($vg_id,$validity_arr,$siteId)===false){
+						$err_msg='Failed to insert int validityGroup, please try again.';
+						$this->Session->setFlash(__($err_msg, true), 'default', array(), 'error');
+					}
+				}
 			}
 			$this->Package->updatePricePointValidityGroupId($ppid,$vg_id);
 
-      echo "ok";// ppid:$ppid|vg_id:$vg_id";
+      echo "ok $str";// ppid:$ppid|vg_id:$vg_id";
 
 			// view data
 			} else {
