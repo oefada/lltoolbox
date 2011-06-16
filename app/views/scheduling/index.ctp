@@ -104,8 +104,23 @@ div.sitesDropdown {
             </select>
         </div>
 <?php endif; ?>
+<!-- DISABLING SCHEDLING GRAPH: TICKET 2044
 <div id='schedulingGraphs' style="float: left; clear: both">
-	<?php echo $this->renderElement('../scheduling/_graph')?>
+	<?php 
+		// Disabling scheduling graph: ticket 2044
+		//echo $this->renderElement('../scheduling/_graph')
+	?>
+</div>
+ -->
+<div class="loas form">
+	<?php //echo $form->create('Scheduling', array('action' => 'someaction'));?>
+	<form id="scheduling" method="POST">
+	<fieldset>
+	<?php echo $form->input('client.notes') ?>
+	</fieldset>
+	<div class="buttonrow">
+		<?php echo $form->end('Update');?>
+	</div>
 </div>
 <div id='sContainer'>
 	<div style="text-align: right" class='oKeys'><strong>KEY:</strong> <div class='oType1 oKey1'></div>Standard Auction <div class='oType2 oKey2'></div>Best Shot <div class='oType3 oKey3'></div>Exclusive <div class='oType4 oKey4'></div>Best Buy <div class='oType6 oKey6'></div>Dutch Auction<strong class='textRed'>Go To:</strong>

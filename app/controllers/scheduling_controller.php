@@ -3,6 +3,7 @@ class SchedulingController extends AppController {
 
 	var $name = 'Scheduling';
 	var $uses = array('Package', 'SchedulingMaster', 'SchedulingInstance', 'Ticket', 'Client');		//we need to access more than the default model in here
+	var $helpers = array('Form');
 
 	function beforeFilter() {
 		parent::beforeFilter();
@@ -21,6 +22,13 @@ class SchedulingController extends AppController {
 	 */
 	function index($clientId = null)
 	{
+		// User posts some data
+		if(!empty($this->data) && isset($this->data['client']['notes'])) {
+			$this->data['client']['clientId'] = $clientId;
+			$this->Package->ClientLoaPackageRel->Client->save($this->data['client'], array('callbacks' => false));
+			$this->Session->setFlash(__('Changes have been saved', true));
+		}
+		
 		/* Grab all necessary parameters from the URL */
 		$clientId 	= @$this->params['named']['clientId'];						//client id is used to fetch all packages for this client
 		$month 		= empty($this->params['named']['month']) ? date('m') : $this->params['named']['month'];
