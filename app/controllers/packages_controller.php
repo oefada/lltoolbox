@@ -2184,7 +2184,7 @@ class PackagesController extends AppController {
 			}
 			$this->Package->updatePricePointValidityGroupId($ppid,$vg_id);
 
-      echo "ok $str";// ppid:$ppid|vg_id:$vg_id";
+      echo "ok";// ppid:$ppid|vg_id:$vg_id";
 
 			// view data
 			} else {
