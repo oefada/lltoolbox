@@ -2548,8 +2548,8 @@ class PackagesController extends AppController {
 
 		$debug_q=true;// display queries that execute
 
-		//$siteId=2;//fg - change as needed
-		//$table="offerFamily";
+		$siteId=2;//fg - change as needed
+		$table="offerFamily";
 		$siteId=1;//LL - change as needed
 		$table="offerLuxuryLink";
 
@@ -2560,7 +2560,7 @@ class PackagesController extends AppController {
 
 			$q="SELECT * FROM package p
 					INNER JOIN packageValidityDisclaimer pv USING (packageId)
-					WHERE p.modified > '2011-05-25' AND pv.isBlackout = 1
+					WHERE p.modified > '2011-05-01' AND p.modified<'2011-05-25' AND pv.isBlackout = 1
 					GROUP BY pv.packageId";
 
 
@@ -2632,17 +2632,17 @@ class PackagesController extends AppController {
 					}
 */
 // get existing validityGroupId for packageId
-$q="SELECT validityGroupId FROM offerLuxuryLink WHERE packageId=$packageId AND pricePointId=$pricePointId";
+$q="SELECT validityGroupId FROM $table WHERE packageId=$packageId AND pricePointId=$pricePointId";
 $q.=" AND endDate>NOW()";
 $q.=" GROUP BY validityGroupId";
 $q_r=$this->Package->query($q);
 echo "<p>$q</p>";
-echo "<p style='color:red;'>Nothing found in offerLuxuryLink for packageId: $packageId and ppid: $pricePointId</p>";
+echo "<p style='color:red;'>Nothing found in $table for packageId: $packageId and ppid: $pricePointId</p>";
 if (count($q_r)==0)continue;
 echo "<pre>";
 print_r($q_r);
 echo "</pre>";
-$vg_id=$q_r[0]['offerLuxuryLink']['validityGroupId'];
+$vg_id=$q_r[0][$table]['validityGroupId'];
 
 echo $vg_id."|";
 if ($vg_id==0){
@@ -2669,6 +2669,7 @@ if (isset($dates['ValidRanges']) && count($dates['ValidRanges'])>0){
 }
 if ($argh==2){
 	echo "<p style='color:red;'>No valid ranges or black out days</p>";
+	continue;
 }
 
 					$hasValidDate=false;
@@ -2692,7 +2693,17 @@ if ($argh==2){
 							foreach($arr as $key=>$pvd_arr){
 								if ($pvd_arr['endDate']<date("Y-m-d"))continue;//don't bother with validity end dates in the past
 								$hasValidDate=true;
-								$doUpdate=$this->Package->insertValidityGroup($vg_id,$pvd_arr,$siteId,$debug_q);
+								$q="SELECT * FROM validityGroup WHERE validityGroupId=$vg_id ";
+								$q.="AND startDate='".$pvd_arr['startDate']."' AND endDate='".$pvd_arr['endDate']."' ";
+								$q.="AND isBlackout=1";
+								echo "<p>".htmlspecialchars($q)."</p>";
+								if ($this->Package->query($q)==0){
+									echo "<br>No rows found. Inserting<br>";
+									//$doUpdate=$this->Package->insertValidityGroup($vg_id,$pvd_arr,$siteId,$debug_q);
+								}else{
+									echo "<p style='color:green;'>Row already exists. Skipping insert.</p>";
+								}
+
 							}
 						}
 					}
