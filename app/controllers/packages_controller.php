@@ -2691,7 +2691,7 @@ if ($argh==2){
 							foreach($arr as $key=>$pvd_arr){
 								if ($pvd_arr['endDate']<date("Y-m-d"))continue;//don't bother with validity end dates in the past
 								$hasValidDate=true;
-								$doUpdate=$this->Package->insertValidityGroup($vg_id,$pvd_arr,$siteId,$debug_q);
+								//$doUpdate=$this->Package->insertValidityGroup($vg_id,$pvd_arr,$siteId,$debug_q);
 							}
 						}
 					}
