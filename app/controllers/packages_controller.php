@@ -2636,8 +2636,9 @@ $q="SELECT validityGroupId FROM offerLuxuryLink WHERE packageId=$packageId AND p
 $q.=" AND endDate>NOW()";
 $q.=" GROUP BY validityGroupId";
 $q_r=$this->Package->query($q);
-if (count($q_r)==0)continue;
 echo "<p>$q</p>";
+echo "<p style='color:red;'>Nothing found in offerLuxuryLink for packageId: $packageId and ppid: $pricePointId</p>";
+if (count($q_r)==0)continue;
 echo "<pre>";
 print_r($q_r);
 echo "</pre>";
@@ -2651,6 +2652,7 @@ if ($vg_id==0){
 $argh=0;
 if (isset($dates['BlackoutDays']) && count($dates['BlackoutDays'])>0){
 	echo "<p>BlackoutDays</p>";
+	print "<pre>";
 	print_r($dates['BlackoutDays']);
 }else{
 	echo "<p>No blackout days for vg_id: $vg_id pkid: $packageId ppid: $pricePointId</p>";
@@ -2658,9 +2660,8 @@ if (isset($dates['BlackoutDays']) && count($dates['BlackoutDays'])>0){
 }
 if (isset($dates['ValidRanges']) && count($dates['ValidRanges'])>0){
 	echo "ValidRanges";
+	print "<pre>";
 	print_r($dates['ValidRanges']);
-	echo "<hr>";
-	continue;
 }else{
 	echo "<p>No valid dates for vg_id: $vg_id pkid: $packageId ppid: $pricePointId</p>";
 	$argh++;
