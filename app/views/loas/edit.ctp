@@ -69,7 +69,7 @@ $this->set('clientId', $this->data['Client']['clientId']);
                 <?php endforeach; ?>
             </div>
         </div>
-        <?php   echo $form->input('customerApprovalDate', array('label' => 'Package in Date', 'minYear' => date('Y'), 'maxYear' => date('Y', strtotime('+5 year')), 'timeFormat' => ''));
+        <?php   echo $form->input('customerApprovalDate', array('empty' => true, 'label' => 'Package in Date', 'minYear' => date('Y', strtotime('January 01, 2000')), 'maxYear' => date('Y', strtotime('+5 year')), 'timeFormat' => ''));
         		echo $form->input('loaMembershipTypeId', array('label' => 'Membership Type', 'disabled' => $disable_advanced_edit));
                 echo $form->input('numEmailInclusions');
                 echo $form->input('totalRevenue', array('disabled' => $disable_advanced_edit, 'label' => 'Total Revenue'));
@@ -90,8 +90,8 @@ $this->set('clientId', $this->data['Client']['clientId']);
 		echo $form->input('membershipTotalPackages');
 		echo $form->input('membershipPackagesRemaining', array('disabled' => $disable_mp));
 		echo $form->input('loaNumberPackages', array('label' => 'Commission-Free Packages'));
-		echo $form->input('startDate', array('minYear' => date('Y'), 'maxYear' => date('Y', strtotime('+5 year')), 'timeFormat' => ''));
-		echo $form->input('endDate',  array('minYear' => date('Y'), 'maxYear' => date('Y', strtotime('+5 year')), 'timeFormat' => ''));
+		echo $form->input('startDate', array('minYear' => date('Y', strtotime('January 01, 2000')), 'maxYear' => date('Y', strtotime('+5 year')), 'timeFormat' => ''));
+		echo $form->input('endDate',  array('minYear' => date('Y', strtotime('January 01, 2000')), 'maxYear' => date('Y', strtotime('+5 year')), 'timeFormat' => ''));
 
 		// ESTIMATED
 		$enable_est = !$disable_advanced_edit && ($loa['Loa']['loaMembershipTypeId'] == 3) ? true : false;

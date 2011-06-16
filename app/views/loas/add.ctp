@@ -14,7 +14,7 @@ $this->set('clientId', $this->data['Loa']['clientId']);
 	<?php
 		echo $form->input('clientId', array('type' => 'hidden'));
 		echo $form->input('loaLevelId', array('label' => 'LOA Level'));
-		echo $form->input('customerApprovalDate', array('label' => 'Package in Date', 'timeFormat' => '', 'minYear' => date('Y'), 'maxYear' => date('Y', strtotime('+5 year'))));
+		echo $form->input('customerApprovalDate', array('empty' => true, 'label' => 'Package in Date', 'timeFormat' => '', 'minYear' => date('Y', strtotime('January 01, 2000')), 'maxYear' => date('Y', strtotime('+5 year'))));
 		echo $form->input('loaMembershipTypeId', array('label' => 'Membership Type'));
 		
 		// ts echo $_SERVER['DOCUMENT_ROOT']; echo "<br />";
@@ -29,8 +29,8 @@ $this->set('clientId', $this->data['Loa']['clientId']);
 		// to try echo $form->input('startMinute');
 		// to try echo $form->input('endMinute');
 		
-		echo $form->input('startDate',array('minYear' => date('Y'), 'maxYear' => date('Y', strtotime('+5 year')), 'timeFormat' => ''));
-		echo $form->input('endDate', array('minYear' => date('Y'), 'maxYear' => date('Y', strtotime('+5 year')), 'timeFormat' => ''));
+		echo $form->input('startDate',array('minYear' => date('Y', strtotime('January 01, 2000')), 'maxYear' => date('Y', strtotime('+5 year')), 'timeFormat' => ''));
+		echo $form->input('endDate', array('minYear' => date('Y', strtotime('January 01, 2000')), 'maxYear' => date('Y', strtotime('+5 year')), 'timeFormat' => ''));
 			
 		echo '<div id="_LoaMembershipFee" style="padding:0px;">' . $form->input('membershipFee') . '</div>';
 		echo '<div id="_LoaMembershipFeeEstimated" style="padding:0px;">' . $form->input('membershipFeeEstimated', array('label' => 'Estimated Fee')) . '</div>';
