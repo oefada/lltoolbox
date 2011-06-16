@@ -2699,7 +2699,7 @@ if ($argh==2){
 								echo "<p>".htmlspecialchars($q)."</p>";
 								if ($this->Package->query($q)==0){
 									echo "<br>No rows found. Inserting<br>";
-									//$doUpdate=$this->Package->insertValidityGroup($vg_id,$pvd_arr,$siteId,$debug_q);
+									$doUpdate=$this->Package->insertValidityGroup($vg_id,$pvd_arr,$siteId,$debug_q);
 								}else{
 									echo "<p style='color:green;'>Row already exists. Skipping insert.</p>";
 								}
