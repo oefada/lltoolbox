@@ -2558,19 +2558,28 @@ class PackagesController extends AppController {
 		$num_rows=1;
 		while($num_rows){
 
+			$q="SELECT * FROM package p
+					INNER JOIN packageValidityDisclaimer pv USING (packageId)
+					WHERE p.modified > '2011-05-25' AND pv.isBlackout = 1
+					GROUP BY pv.packageId";
+
+
+/*
 			$q="SELECT packageId FROM $table ";
 			$q.="WHERE validityGroupId=0 AND startDate<NOW() AND endDate>NOW() AND ISCLOSED=0 ";
 			$q.="AND validityGroupId=0";
+*/
 			echo "<p>$q</p>";
 			$rows=$this->Package->query($q);
 			$pkid_arr=array();
 			while(list($key,$arr)=each($rows)){
-				$pkid_arr[]=$arr['offerLuxuryLink']['packageId'];
+				//$pkid_arr[]=$arr['offerLuxuryLink']['packageId'];
+				$pkid_arr[]=$arr['p']['packageId'];
 			}
 			if (count($pkid_arr)==0){
 				exit("no rows found in $table with validityGroupId as 0");
 			}
-			echo "<p>".count($pkid_arr)." packageIds with validityGroupId as 0</p>";
+			echo "<p>".count($pkid_arr)." rows found</p>";
 			flush();
 
 			$q="SELECT packageId, pp.pricePointId, loaItemRatePeriodId FROM pricePoint pp ";
@@ -2612,6 +2621,7 @@ class PackagesController extends AppController {
 
 					$dates = $this->Package->getPackageValidityDisclaimerByItem($packageId, $loa_ids,0,0,$debug_q);
 					//print_r($dates);
+/*
 					$vg_id=$this->IdCreator->genId();
 					if ($vg_id==0){
 						echo "<p style='color:red;'>Failed to gen a vg_id for</p>";
@@ -2620,9 +2630,49 @@ class PackagesController extends AppController {
 						echo "</pre>";
 						exit;
 					}
+*/
+// get existing validityGroupId for packageId
+$q="SELECT validityGroupId FROM offerLuxuryLink WHERE packageId=$packageId AND pricePointId=$pricePointId";
+$q.=" AND endDate>NOW()";
+$q.=" GROUP BY validityGroupId";
+$q_r=$this->Package->query($q);
+if (count($q_r)==0)continue;
+echo "<p>$q</p>";
+echo "<pre>";
+print_r($q_r);
+echo "</pre>";
+$vg_id=$q_r[0]['offerLuxuryLink']['validityGroupId'];
+
+echo $vg_id."|";
+if ($vg_id==0){
+	echo "<p style='color:red;'>0 vg_id pkid: $packageId ppid: $pricePointId</p>";
+	continue;
+}
+$argh=0;
+if (isset($dates['BlackoutDays']) && count($dates['BlackoutDays'])>0){
+	echo "<p>BlackoutDays</p>";
+	print_r($dates['BlackoutDays']);
+}else{
+	echo "<p>No blackout days for vg_id: $vg_id pkid: $packageId ppid: $pricePointId</p>";
+	$argh++;
+}
+if (isset($dates['ValidRanges']) && count($dates['ValidRanges'])>0){
+	echo "ValidRanges";
+	print_r($dates['ValidRanges']);
+	echo "<hr>";
+	continue;
+}else{
+	echo "<p>No valid dates for vg_id: $vg_id pkid: $packageId ppid: $pricePointId</p>";
+	$argh++;
+
+}
+if ($argh==2){
+	echo "<p style='color:red;'>No valid ranges or black out days</p>";
+}
 
 					$hasValidDate=false;
 					$doUpdate=false;
+/*
 					if (isset($dates['ValidRanges'])){
 						foreach($dates['ValidRanges'] as $arr){
 							foreach($arr as $key=>$pvd_arr){
@@ -2635,7 +2685,7 @@ class PackagesController extends AppController {
 							}
 						}
 					}
-
+*/
 					if (isset($dates['BlackoutDays'])){
 						foreach($dates['BlackoutDays'] as $arr){
 							foreach($arr as $key=>$pvd_arr){
@@ -2645,8 +2695,8 @@ class PackagesController extends AppController {
 							}
 						}
 					}
-
-					if ($hasValidDate && $doUpdate){
+// DO I NEED TO UPDATE THIS?
+					if (false && $hasValidDate && $doUpdate){
 						$this->Package->updatePricePointValidityGroupId($pricePointId,$vg_id,$debug_q);
 						if ($this->Package->updateOfferWithGroupId($pricePointId,$vg_id,$siteId,$debug_q)===false){
 
