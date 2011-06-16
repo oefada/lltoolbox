@@ -1072,11 +1072,6 @@ class Package extends AppModel {
 				                                                , 'NOT' => array('LoaItemRate.loaItemRateId' => $newRatePeriodsMatched)
 				                                                )));
 
-				    print_r($modelData);
-				    echo '-------';
-				    print_r($newItemRate);
-
-
 				    $modelData['loaItemRateId'] = $newItemRate['LoaItemRate']['loaItemRateId'];
 				    $newRatePeriodsMatched[] = $newItemRate['LoaItemRate']['loaItemRateId'];
 				}
@@ -1098,11 +1093,6 @@ class Package extends AppModel {
 			// instead of save
 			$data[$model] = $origData[$model];
 		}
-
-
-
-		//print_r($data);
-		//exit;
 
 
 		// the "validateNumNightsAddsUp" validation seems outdated
@@ -1129,6 +1119,7 @@ class Package extends AppModel {
 		$LoaItem = ClassRegistry::init('LoaItem');
 		$LoaItemRatePeriod = ClassRegistry::init('LoaItemRatePeriod');
 		$Fee = ClassRegistry::init('Fee');
+		$LoaItemGroup = ClassRegistry::init('LoaItemGroup');
 
 		$LoaItem->recursive = 1;
 		$item = $LoaItem->find('first', array('conditions' => array('LoaItem.loaId'=>$newLoaId, 'LoaItem.createdFromItemIdCrossLoa'=>$itemId)));
@@ -1165,6 +1156,23 @@ class Package extends AppModel {
 		        $errors = 'ERRORS:<BR /><BR />' . implode("\n\n<br /><br />", $LoaItem->validationErrors);
 		        echo $errors;
 		        exit;
+		    }
+
+		    // new item groups
+		    $LoaItemGroup->recursive = -1;
+		    $groups = $LoaItemGroup->find('all', array('conditions' => array('LoaItemGroup.loaItemId'=>$itemId)));
+		    foreach($groups as $group) {
+		        $newgrp = array();
+		        $newgrp['loaItemId'] = $newItemId;
+		        $newgrp['quantity'] = $group['LoaItemGroup']['quantity'];
+
+		        // lookup groupItemId
+		        $LoaItem->recursive = -1;
+		        $grpitem = $LoaItem->find('first', array('conditions' => array('LoaItem.createdFromItemIdCrossLoa'=>$group['LoaItemGroup']['groupItemId'])));
+		        $newgrp['groupItemId'] = $grpitem['LoaItem']['loaItemId'];
+
+		        $LoaItemGroup->create();
+		        $LoaItemGroup->saveAll($newgrp);
 		    }
 
 		    // new item rate periods
