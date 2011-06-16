@@ -2545,7 +2545,7 @@ class PackagesController extends AppController {
 	// these date ranges will then be searchable by users
 	// see updateOfferWithGroupId()
 	function migrateValidityDates(){
-
+//exit("set to fg or ll and uncomment insert into validityGroup table");
 		$debug_q=true;// display queries that execute
 
 		$siteId=2;//fg - change as needed
@@ -2637,8 +2637,10 @@ $q.=" AND endDate>NOW()";
 $q.=" GROUP BY validityGroupId";
 $q_r=$this->Package->query($q);
 echo "<p>$q</p>";
-echo "<p style='color:red;'>Nothing found in $table for packageId: $packageId and ppid: $pricePointId</p>";
-if (count($q_r)==0)continue;
+if (count($q_r)==0){
+	echo "<p style='color:red;'>Nothing found in $table for packageId: $packageId and ppid: $pricePointId</p>";
+	continue;
+}
 echo "<pre>";
 print_r($q_r);
 echo "</pre>";
@@ -2697,8 +2699,8 @@ if ($argh==2){
 								$q.="AND startDate='".$pvd_arr['startDate']."' AND endDate='".$pvd_arr['endDate']."' ";
 								$q.="AND isBlackout=1";
 								echo "<p>".htmlspecialchars($q)."</p>";
-								if ($this->Package->query($q)==0){
-									echo "<br>No rows found. Inserting<br>";
+								if (count($this->Package->query($q))==0){
+									echo "<p style='color:blue;'>Blackout date not found. Inserting</p>";
 									$doUpdate=$this->Package->insertValidityGroup($vg_id,$pvd_arr,$siteId,$debug_q);
 								}else{
 									echo "<p style='color:green;'>Row already exists. Skipping insert.</p>";
