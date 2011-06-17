@@ -1077,6 +1077,7 @@ class ReportsController extends AppController {
                            PaymentDetail.ppBillingState,
                            PaymentDetail.ppBillingCountry,
                            PaymentDetail.ppBillingZip,
+                           PaymentType.paymentTypeName,
                            Ticket.userWorkPhone,
                            Ticket.userHomePhone,
                            Ticket.userMobilePhone,
@@ -1112,6 +1113,7 @@ class ReportsController extends AppController {
 						   INNER JOIN schedulingMasterTrackRel as SchedulingMasterTrackRel ON SchedulingMasterTrackRel.schedulingMasterId = SchedulingMaster.schedulingMasterId
                            LEFT JOIN track AS Track ON Track.trackId = SchedulingMasterTrackRel.trackId
                            LEFT JOIN paymentDetail AS PaymentDetail ON (PaymentDetail.ticketId = Ticket.ticketId AND PaymentDetail.isSuccessfulCharge <> 0)
+                           LEFT JOIN paymentType AS PaymentType ON PaymentType.paymentTypeId = PaymentDetail.paymentTypeId
                            LEFT JOIN paymentProcessor AS PaymentProcessor USING (paymentProcessorId)
                            LEFT JOIN userPaymentSetting AS UserPaymentSetting ON (UserPaymentSetting.userPaymentSettingId = PaymentDetail.userPaymentSettingId)
                            LEFT JOIN package AS Package ON Package.packageId = Ticket.packageId
