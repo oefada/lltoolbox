@@ -925,6 +925,7 @@ class WebServiceTicketsController extends WebServicesController
 		$llFee				= $llFeeAmount;
 		$totalPrice			= $this->numF($ticketData['billingPrice'] + $llFeeAmount);
 		$maxNumWinners		= $liveOfferData['numWinners'];
+		$isTaxIncluded      = $ticketData['isTaxIncluded'];
 
 		$checkoutHash		= md5($ticketId . $userId . $offerId . 'LL_L33T_KEY');
 		$checkoutKey		= base64_encode(serialize(array('ticketId' => $ticketId, 'userId' => $userId, 'offerId' => $offerId, 'zKey' => $checkoutHash)));
