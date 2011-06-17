@@ -1599,8 +1599,12 @@ class WebServiceTicketsController extends WebServicesController
         	$emailHeaders.= "Content-type: text/html\r\n";
         }
 
-
-        @mail($emailTo, $emailSubject, $emailBody, $emailHeaders);
+		// 06/16/11 jwoods - relay through Silverpop
+		if ($ppvNoticeTypeId == 18) {
+			$this->sendSilverpopRelay('ppv_auction_winner', $emailFrom, $emailReplyTo, $emailTo, $emailSubject, $emailBody);
+		} else {
+			@mail($emailTo, $emailSubject, $emailBody, $emailHeaders);
+		}
 
 		// below is for logging the email and updating the ticket
 		// -------------------------------------------------------------------------------
@@ -1681,6 +1685,37 @@ class WebServiceTicketsController extends WebServicesController
 		if ($newTicketStatus) {
 			$this->updateTicketStatus($ticketId, $newTicketStatus);
 		}
+	}
+
+	function sendSilverpopRelay($xheader, $fromAddr, $fromReplyTo, $toAddr, $subj, $msgBody) {
+			App::import('Vendor', 'PHPMailerNew', array('file' => 'phpmailernew'.DS.'phpmailer.inc.php'));
+			$mail = new PHPMailer();
+
+			$fromArray = explode('<', $fromAddr);
+
+			$mail->IsSMTP();
+			$mail->Host = "transact2.silverpop.com";
+			$mail->From = str_replace('>', '', $fromArray[1]);
+			$mail->FromName = $fromArray[0];
+			$mail->AddAddress($toAddr);
+			$mail->AddAddress('jwoods@luxurylink.com');
+			$mail->AddReplyTo($fromReplyTo, $fromReplyTo);
+			$mail->WordWrap = 50;    // set word wrap
+			$mail->IsHTML(true);    // set email format to HTML
+			$mail->xheader = $xheader;
+			$mail->Subject = $subj;
+			$mail->Body = $msgBody;
+
+			try {
+				$result = $mail->Send(); // send message
+				$mailinfo = print_r($mail,true);
+				$emailHeaders = "From: jwoods@luxurylink.com\n";
+				@mail('jwoods@luxurylink.com', 'ppv silverpop success', $mailinfo, $emailHeaders);
+			}
+			catch (Exception $e) {
+				$emailHeaders = "From: jwoods@luxurylink.com\n";
+				@mail('jwoods@luxurylink.com', 'ppv silverpop error', $e->getMessage(), $emailHeaders);
+			}
 	}
 
 	function updateTicketStatus($ticketId, $newStatusId) {
