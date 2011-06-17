@@ -2,6 +2,21 @@
 <?php echo $form->create('ClientReview');?>
 	<fieldset>
  		<legend><?php __('Edit ClientReview');?></legend>
+
+		<div class="controlset4">
+			<div class="input select">
+				<label for="ClientReviewSites">Sites</label>
+				<div class="checkbox">
+					<input type="checkbox" name="data[ClientReview][sites][]" value="luxurylink" id="ClientReviewSitesLuxuryLink" <?php if ($sites['luxurylink']): ?>checked<?php endif; ?>>
+					<label for="ClientReviewSitesLuxuryLink">Luxury Link</label>
+				</div>
+				<div class="checkbox">
+					<input type="checkbox" name="data[ClientReview][sites][]" value="family" id="ClientReviewSitesFamily" <?php if ($sites['family']): ?>checked<?php endif; ?>>
+					<label for="ClientReviewSitesFamily">Family Getaway</label>
+				</div>
+			</div>
+		</div>
+		
 	<?php
 		echo $form->input('clientReviewId');
 		echo $form->input('clientId');

@@ -45,6 +45,9 @@ class ClientReviewsController extends AppController {
 		}
 		if (empty($this->data)) {
 			$this->data = $this->ClientReview->read(null, $id);
+			$sites['luxurylink'] = (isset($this->data['ClientReview']['sites']) && in_array('luxurylink', $this->data['ClientReview']['sites'])) ? true : false;
+			$sites['family'] = (isset($this->data['ClientReview']['sites']) && in_array('family', $this->data['ClientReview']['sites'])) ? true : false;
+			$this->set('sites', $sites);
 		}
 	}
 

@@ -6,5 +6,7 @@ class ClientReview extends AppModel {
 	var $primaryKey = 'clientReviewId';
 	
 	var $belongsTo = array('Client' => array('foreignKey' => 'clientId'), 'User' => array('foreignKey' => 'authorUserId'));
+	
+	public $multisite = true;
 }
 ?>
