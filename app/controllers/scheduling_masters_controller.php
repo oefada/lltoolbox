@@ -67,6 +67,10 @@ class SchedulingMastersController extends AppController {
                 // initialize Discountable
                 $this->data['SchedulingMaster']['isDiscountedOffer'] = intval($this->data['SchedulingMaster']['isDiscountedOffer']);
 
+                // date check for ticket 1852 fix below
+                $loaDateCheckClient = $package['ClientLoaPackageRel'][0];
+				$loaDateCheckLoa = $this->Loa->findByloaId($loaDateCheckClient['loaId']);
+
 				foreach($ppid_arr as $key=>$ppid){
 					$this->data['SchedulingMaster']['pricePointId']=$ppid;
 
@@ -113,6 +117,12 @@ class SchedulingMastersController extends AppController {
 							} else {
 								$this->data['SchedulingMaster']['endDate'] = "$endDateFromValidity 16:00:00";
 							}
+
+							// end date can not be greater than loa end date
+							if (strtotime($this->data['SchedulingMaster']['endDate']) > strtotime($loaDateCheckLoa['Loa']['endDate'])) {
+								$this->data['SchedulingMaster']['endDate'] = $loaDateCheckLoa['Loa']['endDate'];
+							}
+
 						// end date prior to ticket 1852
 						} else {
 							$datePickerDate2 = explode('-', $this->data['SchedulingMaster']['endDatePicker2']);
