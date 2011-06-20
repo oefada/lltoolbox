@@ -94,7 +94,7 @@ You've just won the auction for <span style="color:#336699; text-decoration:none
 <?php echo $packageName;?> - <?php echo $numNights;?> nights
 <br /><br />
 <br /><br />
-<a href="<?=$dateRequestLink;?>&utm_source=ll&utm_medium=xa&utm_campaign=auction_winner"><img src="http://www.luxurylink.com/images/ppv/btn-traveldates.gif" alt="Submit my travel dates now!" border="0" style="display:block" /></a>
+<a href="<?=$dateRequestLink;?>&utm_source=ll&utm_medium=xa&utm_campaign=auction_winner"><img src="http://www.luxurylink.com/images/ppv/<?= ($siteId == 2) ? 'btn-traveldates-fg.jpg' : 'btn-traveldates.gif'; ?> " alt="Submit my travel dates now!" border="0" style="display:block" /></a>
 </td>
 </tr>
 </table><!--HOTEL-->
