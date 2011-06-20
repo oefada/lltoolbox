@@ -1,22 +1,49 @@
-<?php include('../vendors/email_msgs/email_includes/header.html');?>
-<p><b>Dear <?=$userFirstName;?>,</b>
-<p>
+<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">
+<html>
+<head>
+<style>
+body, p {
+	background-color: #f6f6f6;
+	font-size:13px;
+	color:#000000;
+	line-height: 20px;
+}
+
+div.center-content {
+	background-color: #FFFFFF;
+	border:1px solid #CCCCCC;
+}
+
+div.center-content#div {
+	background-color: #FFFFFF;
+}
+
+table tr td {
+	background-color: #FFFFFF;
+}
+</style>
+</head>
+<body>
+<div style="width:770px;padding:20px;border:1px solid #B0B0B0;color:#444444;font-size:12px;line-height:17px;font-family: Verdana, Arial;">
+	<div><span><a href="<?=$siteUrl;?>"><img src="<?=$siteUrl;?>images/ll_logo_grey_bg.gif" border="0"></span></a><span style="float:right;"><?php echo date('F d, Y'); ?></span></div>
+	<div style="height:20px;margin-top:15px;border-top:1px solid #E4E4E4;">&nbsp;</div>
+<p>Dear <?=$userFirstName;?>,<p>
 
 My name is Grace and I’m here to help you with your reservation. 
 Unfortunately, the dates you requested for this package at <?php echo $clientNameP ?> aren't available. 
 However, <?php echo $clientNameP ?> is a close partner with Luxury Link, and I'd be happy to check alternative dates for you. 
-Use the link <a style="color:#<?=$siteHeader;?>;font-weight:bold;" href="<?=$dateRequestLink;?>">here</a> to submit different travel dates for this package.
+Use the link here to <a style="color:#369;font-weight:bold;" href="<?=$dateRequestLink;?>"> submit different travel dates</a> for this package.
 </p>
 
-<div style="border:1px solid #CCCCCC;">
-<table cellpadding="10" cellspacing="0" style="width:100%;margin-top:15px;margin-bottom:15px;">
+<div class="center-content">
+<table cellpadding="10" cellspacing="0" style="width:100%;margin-top:15px;margin-bottom:15px; border:0px;">
 <tr>
 	<td width="245" align="left" valign="top">
-		<div style="width: 245px; height: 189px; padding: 8px 12px 12px 8px; background: url(http://www.luxurylink.com/images/shared/shadow-gal-lrg-light-olive.gif) no-repeat top left; overflow: hidden;">
+		<div style="width: 245px; height: 189px; padding: 8px 12px 12px 8px; overflow: hidden; border:0px;">
 			<img src="http://www.luxurylink.com/images/por/<?php echo $oldProductId;?>/<?php echo $oldProductId;?>-gal-lrg-01.jpg" alt="<?php echo $packageName;?>" border="0" />
 		</div>
 	</td>
-	<td align="left" valign="top">
+	<td align="left" valign="top" width="100px;">
 		<div style="font-weight:bold; font-size:12px; padding-top:8px;"><?php echo $clientNameP;?></div>
 		<div style="font-size:12px;"><?php echo $locationDisplay;?></div>
 		<div style="font-size:12px; padding-top:10px;"><?php echo $packageName.' - '.$numNights.' nights' ?></div>
@@ -26,11 +53,11 @@ Use the link <a style="color:#<?=$siteHeader;?>;font-weight:bold;" href="<?=$dat
 		</div>
 		<div style="font-size:12px; padding-top:15px;">
 			<a href="<?=$dateRequestLink;?>">
-				<img src="http://www.luxurylink.com/images/buttons/btn_submit_different_travel_dates.gif">
+				<img src="http://www.luxurylink.com/images/buttons/btn_submit_different_travel_dates.gif" style="border:0px;">
 			</a>
 		</div>
 	</td>
-	<td align="left" valign="top">
+	<td align="left" valign="top" style="border-left:1px solid silver;">
 		<?php if($fpArrival != 'N/A') { ?>
 			<div style="font-weight:bold; font-size:12px;">Dates Requested:</div>
 			<div style="font-size:12px; padding-bottom:15px;"><?php echo $fpArrival.' - '.$fpDeparture ?></div>
@@ -45,43 +72,31 @@ Use the link <a style="color:#<?=$siteHeader;?>;font-weight:bold;" href="<?=$dat
 		<?php } ?>
 		<div>
 			<span style="font-weight:bold; font-size:12px;">Price: </span>
-			<span style="font-size:12px; padding-bottom:15px;">US $<?php echo $billingPrice ?></span>
+			<span style="font-size:12px; padding-bottom:15px;">US $<?php echo $billingPrice ?>*</span>
 		</div>
-		<?php if(!empty($isTaxIncluded)) { ?>
+		<?php if(empty($isTaxIncluded)) { ?>
 			<div style="color:#444444; font-size:10px; padding-left:40px;">Taxes Included</div>
 		<?php } ?>
 	</td>																																														
 </tr>
 </table>
-<p>
 
+</div>
+
+<p>
 If your travel dates aren’t flexible, I may be able to accommodate you at <?php echo $clientNameP ?> with a different package or a different hotel in <?php echo $locationDisplay ?>. 
 I can often help Luxury Link customers get a special rate. Let me know if you would like to discuss these options by calling 888-297-3299. Please reference ticket id # <?php echo $ticketId ?> when you call.
 <br /><br />
 I’m here to help, and look forward to hearing back from you soon. 
-
 </p>
-
-<br />
 <p>Warm Regards,</p>
 <p>Grace</p>
-
-<?php if ($sender_sig) : ?>
-<p>
-<?=$sender_sig_line;?><br />
-<?=$sender_email;?><br />
-<?=$sender_ext;?>
-</p>
-<?php endif; ?>
-
+<div style="padding-top:25px;">Luxury Link Concierge Team</div>
+<div>(888) 297-3299 or (310) 215-8060</div>
+<p>*Price does not include $40 handling fee</p>
 	<div style="height:20px;margin-top:20px;border-top:1px solid #E4E4E4;">&nbsp;</div>
-	<div>Toll Free in the U.S. <?=$sitePhone;?> | Outside the U.S. <?=$sitePhoneLocal;?> | Facsimile <?=$siteFax;?></div>
-	<a href="<?=$siteUrl;?>" style="color:#336699;"><?=$siteUrl;?></a>
-	<?php if ($footer_sig) : ?>
-	<p>
-	<?=$footer_sig;?>
-	</p>
-	<?php endif; ?>
-</div>
+	<div style="font-size: 11px; color: #333333;">Luxury Link</div>
+	<div style="font-size: 11px; color: #333333;">5570 Lincoln Blvd., Suite 100, Los Angeles, CA 90094</div>
+	<div style="font-size: 11px; color: #333333;">&#169; 2011 Luxury Link. All Rights Reserved</div>
 </body>
 </html>
