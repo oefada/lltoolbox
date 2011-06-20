@@ -1701,6 +1701,7 @@ class WebServiceTicketsController extends WebServicesController
 			$fromArray = explode('<', $fromAddr);
 
 			$mail->IsSMTP();
+
 			$mail->Host = "transact2.silverpop.com";
 			$mail->From = str_replace('>', '', $fromArray[1]);
 			$mail->FromName = $fromArray[0];
@@ -1712,6 +1713,7 @@ class WebServiceTicketsController extends WebServicesController
 			$mail->xheader = $xheader;
 			$mail->Subject = $subj;
 			$mail->Body = $msgBody;
+			$mail->SMTPDebug = 0;
 
 			try {
 				$result = $mail->Send(); // send message
