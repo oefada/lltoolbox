@@ -504,6 +504,13 @@ class WebServiceTicketsController extends WebServicesController
 				$this->ppv(json_encode($ppv_settings));
 			}
 
+
+                $jwHeaders = "From: jwoods@luxurylink.com\n";
+				@mail('jwoods@luxurylink.com', 'processTicket success', 'processTicket success', $jwHeaders);
+
+
+
+
 			// finally, return back
 			// -------------------------------------------------------------------------------
 			return true;
