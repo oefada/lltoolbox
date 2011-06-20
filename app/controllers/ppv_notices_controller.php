@@ -148,18 +148,18 @@ class PpvNoticesController extends AppController {
 			$this->data['PpvNotice']['emailTo'] = $ticket_user_email[0]['user']['email'];
 		}
 
-		if (in_array($id, array(26,27,28))) {
-			$this->set('editSubject', 1);
-		}
+		if (in_array($id, array(26,27,28,33))) {
+			$this->set('editSubject', 'FILL IN SUBJECT LINE HERE!!!!!!!!!!!');
+			if($id == 33) {
+				$this->Ticket->recursive = 0;
+				$ticket = $this->Ticket->read(null, $ticketId);
+				$this->set('editSubject', 'Please Confirm this Luxury Link Booking - CHANGE OF DATE - ACTION REQUIRED - '.$ticket['Ticket']['userFirstName'].' '.$ticket['Ticket']['userLastName']);
+			}
+		} 
 
 		$this->set('clientIdParam', $clientIdParam);
-		$data_json_encoded = json_encode($data);
-		$soap_client = new nusoap_client($webservice_live_url, true);
-        $response = $soap_client->call($webservice_live_method_name, array($webservice_live_method_param => $data_json_encoded));
-
-     	$this->set('ppv_body_text', $response);
-		$this->set('ticketId', $ticketId);
-		if ($id == 1) {
+		
+		if ($id == 1 || $id == 33) {
 			// reservation confirmation
 			$reservation = $this->Ticket->query("SELECT * FROM reservation WHERE ticketId = $ticketId");
 			if (!empty($reservation)) {
@@ -170,6 +170,13 @@ class PpvNoticesController extends AppController {
 			}
 			$this->set('isResConf', 1);
 		}
+		
+		$data_json_encoded = json_encode($data);
+		$soap_client = new nusoap_client($webservice_live_url, true);
+        $response = $soap_client->call($webservice_live_method_name, array($webservice_live_method_param => $data_json_encoded));
+
+     	$this->set('ppv_body_text', $response);
+		$this->set('ticketId', $ticketId);
 	}
 
 	/*

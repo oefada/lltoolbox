@@ -1390,6 +1390,12 @@ class WebServiceTicketsController extends WebServicesController
 				$emailFrom = ($isAuction) ? "$siteDisplay<auction@$siteEmail>" : "$siteDisplay<exclusives@$siteEmail>";
 				$emailReplyTo = ($isAuction) ? "auction@$siteEmail" : "exclusives@$siteEmail";
 				break;
+			case 33:
+				include('../vendors/email_msgs/notifications/33_change_dates_request_template.html');
+				$emailSubject = "Your $siteName Request has been Received - $clientNameP";
+				$emailFrom = ($isAuction) ? "$siteDisplay<auction@$siteEmail>" : "$siteDisplay<exclusives@$siteEmail>";
+				$emailReplyTo = ($isAuction) ? "auction@$siteEmail" : "exclusives@$siteEmail";
+				break;
 			default:
 				break;
 		}
@@ -1663,7 +1669,7 @@ class WebServiceTicketsController extends WebServicesController
 				$reservation['reservationConfirmToCustomer'] = date('Y:m:d H:i:s', strtotime('now'));
 				$this->Reservation->save($reservation);
 			}
-		} elseif (in_array($ppvNoticeTypeId, array(2,25))) {
+		} elseif (in_array($ppvNoticeTypeId, array(2,25,33))) {
 			// send ticket status to RESERVATION REQUESTED
 			$newTicketStatus = 3;
 		} elseif ($ppvNoticeTypeId == 10) {

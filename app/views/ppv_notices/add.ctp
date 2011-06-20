@@ -40,8 +40,8 @@
 		echo $form->input('ticketId', array('readonly'=>'readonly'));
 		echo $form->input('emailTo');
 		echo $form->input('emailCc');
-		if (isset($editSubject) && $editSubject) {
-			echo $form->input('emailSubject', array('value'=>'FILL IN SUBJECT LINE HERE!!!!!!!!!!!'));
+		if (isset($editSubject)) {
+			echo $form->input('emailSubject', array('value'=>$editSubject));
 		}
         
         //hb attachments, will make it more dynamic     

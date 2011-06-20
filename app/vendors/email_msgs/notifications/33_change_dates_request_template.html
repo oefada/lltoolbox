@@ -1,0 +1,91 @@
+<?php include('../vendors/email_msgs/email_includes/header.html');?>
+
+<h1 style="color:#<?=$siteHeader;?>;font-size:16px;margin:0px;padding:0px;margin-bottom:30px;">PLEASE CONFIRM THIS CHANGE OF DATE BOOKING REQUEST -
+	<span style="color:#990000;font-style:italic;">Action Required</span>.
+		<?php if(isset($resConfNum)) { ?>
+			Confirmed under <?php echo $resConfNum; ?> and would like to CONFIRM to below. Please send confirmation.
+		<?php } ?>
+	
+	</h1>
+
+<p>Dear <?php echo $clientName;?>,</p>
+
+	<p>
+	Please reply to confirm the following reservation to <?=$siteName;?> and <strong>be sure to include the confirmation number</strong>.
+	If the requested dates are not available, please advise alternate dates.
+	</p>
+
+
+<div style="padding:10px;background-color:#E0E0CD;margin-top:25px;margin-bottom:25px;">
+<table cellpadding="5" cellspacing="0" border="0" width="100%">
+	<tr>
+		<td colspan="2" style="padding-bottom:15px; border-bottom:1px solid silver;">
+		<div style="color:#<?=$siteHeader;?>;font-size:16px;font-weight:bold;"><?php echo $clientNameP;?></div>
+		<div style="color:#444444;font-size:12px;"><?php echo $locationDisplay;?></div><br />
+		<div style="color:#<?=$siteHeader;?>;font-size:12px;"><?php echo $packageName;?></div>
+		</td>
+	</tr>
+	<tr>
+		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">Ticket Reference ID:</td>
+		<td style="color:#444444;font-size:12px;" valign="top" align="left"><?=$ticketId;?></td>
+	</tr>
+	<tr>
+		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">&nbsp;</td>
+		<td style="color:#444444;font-size:12px;" valign="top" align="left">&nbsp;</td>
+	</tr>
+	<tr>
+		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">Full Name:</td>
+		<td style="color:#444444;font-size:12px;" valign="top" align="left"><?=$userFirstName;?> <?=$userLastName;?></td>
+	</tr>
+	<tr>
+		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">Check-in:</td>
+		<td style="color:#444444;font-size:12px;" valign="top" align="left"><?=$fpArrival;?></td>
+	</tr>
+	<tr>
+		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">Check-out:</td>
+		<td style="color:#444444;font-size:12px;" valign="top" align="left"><?=$fpDeparture;?></td>
+	</tr>
+	<tr>
+		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170"># Travelers:</td>
+		<td style="color:#444444;font-size:12px;" valign="top" align="left"><?=$fpNumGuests;?></td>
+	</tr>
+	<tr>
+		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">Winning Amount:</td>
+		<?php if ($addtlDescription):?>
+			<td style="color:#444444;font-size:12px;" valign="top" align="left"><table cellpadding="5" cellspacing="0" border="0"><tr><td style="color:#444444;font-size:12px;" valign="top" align="left">$<?=$clientAdjustedPrice;?></td><td style="color:#444444;font-size:10px;" valign="top" align="left"><?php echo $addtlDescription;?></td></tr></table></td>
+		<?php else: ?>
+			<td style="color:#444444;font-size:12px;" valign="top" align="left">$<?=$clientAdjustedPrice;?></td>
+		<?php endif; ?>
+	</tr>
+	<tr>
+		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">Offer ID:</td>
+		<td style="color:#444444;font-size:12px;" valign="top" align="left"><?=$offerId;?></td>
+	</tr>
+	<tr>
+		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">Alternate Check-in</td>
+		<td style="color:#444444;font-size:12px;" valign="top" align="left"><?=$fpArrival2;?></td>
+	</tr>
+	<tr>
+		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">Alternate Check-out:</td>
+		<td style="color:#444444;font-size:12px;" valign="top" align="left"><?=$fpDeparture2;?></td>
+	</tr>
+	<tr>
+		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">&nbsp;</td>
+		<td style="color:#444444;font-size:12px;" valign="top" align="left">&nbsp;</td>
+	</tr>
+	<tr>
+		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">Phone:</td>
+		<td style="color:#444444;font-size:12px;" valign="top" align="left"><?=$userPhone;?></td>
+	</tr>
+	<tr>
+		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170"># Nights:</td>
+		<td style="color:#444444;font-size:12px;" valign="top" align="left"><?=$numNights;?></td>
+	</tr>
+</table>
+</div>
+
+<p><?php echo $packageIncludes;?></p>
+<p><?php echo $validityNote;?></p>
+<p><?php echo $legalText;?></p>
+
+<?php include('../vendors/email_msgs/email_includes/footer.html');?>
