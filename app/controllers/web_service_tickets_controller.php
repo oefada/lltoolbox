@@ -132,11 +132,6 @@ class WebServiceTicketsController extends WebServicesController
 			@mail('devmail@luxurylink.com', "$server_type" . 'WEBSERVICE (TICKETS): ERROR ('. $this->errorResponse . ')' . $this->errorTitle , $this->errorMsg . "<br /><br />\n\n" . print_r($json_decoded, true));
 			return 'FAIL';
 		}  else {
-
-
-                $jwHeaders = "From: jwoods@luxurylink.com\n";
-				@mail('jwoods@luxurylink.com', 'ticket success', 'ticket success', $jwHeaders);
-
 			return 'SUCCESS';
 		}
 	}
@@ -503,13 +498,6 @@ class WebServiceTicketsController extends WebServicesController
 				$ppv_settings['ppvNoticeTypeId'] = 4;    // client PPV
 				$this->ppv(json_encode($ppv_settings));
 			}
-
-
-                $jwHeaders = "From: jwoods@luxurylink.com\n";
-				@mail('jwoods@luxurylink.com', 'processTicket success', 'processTicket success', $jwHeaders);
-
-
-
 
 			// finally, return back
 			// -------------------------------------------------------------------------------
