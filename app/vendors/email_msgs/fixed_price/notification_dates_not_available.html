@@ -1,32 +1,4 @@
-<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">
-<html>
-<head>
-<style>
-body, p {
-	background-color: #f6f6f6;
-	font-size:13px;
-	color:#000000;
-	line-height: 20px;
-}
-
-div.center-content {
-	background-color: #FFFFFF;
-	border:1px solid #CCCCCC;
-}
-
-div.center-content#div {
-	background-color: #FFFFFF;
-}
-
-table tr td {
-	background-color: #FFFFFF;
-}
-</style>
-</head>
-<body>
-<div style="width:770px;padding:20px;border:1px solid #B0B0B0;color:#444444;font-size:12px;line-height:17px;font-family: Verdana, Arial;">
-	<div><span><a href="<?=$siteUrl;?>"><img src="<?=$siteUrl;?>images/ll_logo_grey_bg.gif" border="0"></span></a><span style="float:right;"><?php echo date('F d, Y'); ?></span></div>
-	<div style="height:20px;margin-top:15px;border-top:1px solid #E4E4E4;">&nbsp;</div>
+<?php include('../vendors/email_msgs/email_includes/header.html');?>
 <p>Dear <?=$userFirstName;?>,<p>
 
 My name is Grace and I’m here to help you with your reservation. 
@@ -89,14 +61,27 @@ I can often help Luxury Link customers get a special rate. Let me know if you wo
 <br /><br />
 I’m here to help, and look forward to hearing back from you soon. 
 </p>
+
+<br />
 <p>Warm Regards,</p>
 <p>Grace</p>
-<div style="padding-top:25px;">Luxury Link Concierge Team</div>
-<div>(888) 297-3299 or (310) 215-8060</div>
-<p>*Price does not include $40 handling fee</p>
+
+<?php if ($sender_sig) : ?>
+<p>
+<?=$sender_sig_line;?><br />
+<?=$sender_email;?><br />
+<?=$sender_ext;?>
+</p>
+<?php endif; ?>
+
 	<div style="height:20px;margin-top:20px;border-top:1px solid #E4E4E4;">&nbsp;</div>
-	<div style="font-size: 11px; color: #333333;">Luxury Link</div>
-	<div style="font-size: 11px; color: #333333;">5570 Lincoln Blvd., Suite 100, Los Angeles, CA 90094</div>
-	<div style="font-size: 11px; color: #333333;">&#169; 2011 Luxury Link. All Rights Reserved</div>
+	<div>Toll Free in the U.S. <?=$sitePhone;?> | Outside the U.S. <?=$sitePhoneLocal;?> | Facsimile <?=$siteFax;?></div>
+	<a href="<?=$siteUrl;?>" style="color:#336699;"><?=$siteUrl;?></a>
+	<?php if ($footer_sig) : ?>
+	<p>
+	<?=$footer_sig;?>
+	</p>
+	<?php endif; ?>
+</div>
 </body>
 </html>
