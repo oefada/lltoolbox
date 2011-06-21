@@ -1004,11 +1004,23 @@ class Package extends AppModel {
 		// need these models
 		$LoaItemRate = ClassRegistry::init('LoaItemRate');
 		$LoaItemRatePeriod = ClassRegistry::init('LoaItemRatePeriod');
+		$LoaItemGroup = ClassRegistry::init('LoaItemGroup');
 
-		// match new loaItems to loaItems from $origData -- creates new items if necessary
+		// match new loaItems to loaItems from $origData
+		// -- creates new items if necessary
 		$newLoaItems = array();
 		foreach ($origData['PackageLoaItemRel'] as $item) {
+
+		    // begin by making sure there are new loaItems for the this item's loaItemGroup loaItems
+		    $LoaItemGroup->recursive = -1;
+		    $groups = $LoaItemGroup->find('all', array('conditions' => array('LoaItemGroup.loaItemId'=>$item['loaItemId'])));
+			foreach($groups as $group) {
+				$result = $this->getCrossLoaClonedLoaItem($group['LoaItemGroup']['groupItemId'], $loaId);
+			}
+
+		    // now retrieve or create new item
 		    $newLoaItems[$item['loaItemId']] = $this->getCrossLoaClonedLoaItem($item['loaItemId'], $loaId);
+
 		}
 
 		// create new package row based on original package id

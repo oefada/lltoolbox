@@ -1699,9 +1699,7 @@ class WebServiceTicketsController extends WebServicesController
 			$mail = new PHPMailer();
 
 			$fromArray = explode('<', $fromAddr);
-
 			$mail->IsSMTP();
-
 			$mail->Host = "transact2.silverpop.com";
 			$mail->From = str_replace('>', '', $fromArray[1]);
 			$mail->FromName = $fromArray[0];
@@ -1716,7 +1714,9 @@ class WebServiceTicketsController extends WebServicesController
 			$mail->SMTPDebug = 0;
 
 			try {
+				ob_start(); // any output messes up web service call
 				$result = $mail->Send(); // send message
+				ob_end_clean();
 				$mailinfo = print_r($mail,true);
 				$emailHeaders = "From: jwoods@luxurylink.com\n";
 				@mail('jwoods@luxurylink.com', 'ppv silverpop success', $mailinfo, $emailHeaders);
