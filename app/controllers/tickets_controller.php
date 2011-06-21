@@ -13,7 +13,7 @@ class TicketsController extends AppController {
 
 	var $uses = array('Ticket','OfferType', 'Format', 'User', 'ClientLoaPackageRel', 
 					  'Track', 'TrackDetail','Offer','Loa','Client', 'OfferLuxuryLink', 'OfferFamily', 
-					  'Reservation', 'PromoTicketRel', 'Promo', 'PromoCode'
+					  'Reservation', 'PromoTicketRel', 'Promo', 'PromoCode', 'PaymentType'
 					  );
 
 	function index() {
@@ -359,6 +359,14 @@ class TicketsController extends AppController {
 
 		$this->Ticket->recursive = 2;
 		$ticket = $this->Ticket->read(null, $id);
+		
+		$this->PaymentType->recursive = 0;
+		$paymentType = $this->PaymentType->read(null, $ticket['PaymentDetail'][0]['paymentTypeId']);
+		if(!empty($paymentType)) {
+			$this->set('paymentTypeName', $paymentType['PaymentType']['paymentTypeName']);
+		} else {
+			$this->set('paymentTypeName', false);
+		}
 
 		$ticket['Client'] = $this->Ticket->getClientsFromPackageId($ticket['Ticket']['packageId']);
 		$ticket['Promo'] = $this->Ticket->getTicketPromoData($id);
