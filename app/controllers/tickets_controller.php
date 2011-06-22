@@ -361,11 +361,9 @@ class TicketsController extends AppController {
 		$ticket = $this->Ticket->read(null, $id);
 		
 		$this->PaymentType->recursive = 0;
-		$paymentType = $this->PaymentType->read(null, $ticket['PaymentDetail'][0]['paymentTypeId']);
-		if(!empty($paymentType)) {
-			$this->set('paymentTypeName', $paymentType['PaymentType']['paymentTypeName']);
-		} else {
-			$this->set('paymentTypeName', false);
+		foreach($ticket['PaymentDetail'] as $k => $v) {
+			$paymentType = $this->PaymentType->read(null, $v['paymentTypeId']);
+			$ticket['PaymentDetail'][$k]['paymentTypeName'] = $paymentType['PaymentType']['paymentTypeName'];
 		}
 
 		$ticket['Client'] = $this->Ticket->getClientsFromPackageId($ticket['Ticket']['packageId']);
