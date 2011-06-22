@@ -225,13 +225,35 @@ td.error div{
 		$class = '';
 	}
 ?>
+
+<?
+
+// workaround to get report to properly display properties with zero offers today - see notes in controller
+// mbyrnes
+$ll_class_error='';
+if ((int)$row['packagesLiveTodayLL'] == 0 && stristr($row['Client']['sites'], 'luxurylink')){
+	$ll_class_error='class="error"';
+}
+$fg_class_error='';
+if((int)$row['packagesLiveTodayFG'] == 0 && stristr($row['Client']['sites'], 'family')){
+	$fg_class_error='class="error"';
+}
+
+if (isset($zero_offers_only) && $zero_offers_only){
+	if ($ll_class_error=='' && $fg_class_error=='')continue;
+}
+
+?>
+
 	  <tr<?=$class?>>
 		<td><?=$k+1?></td>
-	    <td style="text-align: left;" class="textSort"><?=$html->link($row['Client']['name'], '/clients/edit/'.$row['Client']['clientId'])?></td>
-        <td><?php echo ucwords($row['Client']['sites']); ?></td>
-		<? if ($k == 0) echo "<div id='packageRevenue'>"?>
-	    <td <?if((int)$row['packagesLiveTodayLL'] == 0 && stristr($row['Client']['sites'], 'luxurylink')) echo " class='error'"?>><div><?=(int)$row['packagesLiveTodayLL']?></div></td>
-        <td <?if((int)$row['packagesLiveTodayFG'] == 0 && stristr($row['Client']['sites'], 'family')) echo " class='error'"?>><div><?=(int)$row['packagesLiveTodayFG']?></div></td>
+	    <td style="text-align: left;" class="textSort">
+			<?=$html->link($row['Client']['name'], '/clients/edit/'.$row['Client']['clientId'])?>
+			</td>
+      <td><?php echo ucwords($row['Client']['sites']); ?></td>
+			<? if ($k == 0) echo "<div id='packageRevenue'>"?>
+	    <td <?=$ll_class_error?>><div><?=(int)$row['packagesLiveTodayLL']?></div></td>
+      <td <?=$fg_class_error?>><div><?=(int)$row['packagesLiveTodayFG']?></div></td>
 	    <td><?=(int)$row['packageUptime']?></td>
 	    <td><?=(int)$row['totalSold']?></td>
 	    <td><?=(int)$row['totalRevenue']?></td>

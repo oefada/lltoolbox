@@ -1636,6 +1636,7 @@ class ReportsController extends AppController {
 	}
 
 	function mcr() {
+
 		$this->Client = new Client;
 		$startDate = date("Y-m-d 00:00:00");
 		$endDate = date("Y-m-d 23:59:59");
@@ -1645,42 +1646,58 @@ class ReportsController extends AppController {
 			Configure::write('debug', 0);
 			$this->set('clients', unserialize(stripslashes( htmlspecialchars_decode($_POST['clients']))));
 			$this->viewPath .= '/csv';
-	        $this->layoutPath = 'csv';
+	    $this->layoutPath = 'csv';
 		} else {
-		if (!empty($this->data) || isset($this->params['named']['ql'])) {
-			$conditions = $this->_build_conditions($this->data);
 
-	        if (!empty($this->params['named']['sortBy'])) {
-	            $direction = (@$this->params['named']['sortDirection'] == 'DESC') ? 'DESC' : 'ASC';
-	            $order = $this->params['named']['sortBy'].' '.$direction;
+			if (!empty($this->data) || isset($this->params['named']['ql'])) {
 
-	            $this->set('sortBy', $this->params['named']['sortBy']);
-	            $this->set('sortDirection', $direction);
-	        } else {
+				// work around to get report to properly display properties with zero offers
+				// in short, properties with zero offers are properly highlighted when displaying 
+				// full report, but when link is clicked (
+				// to display only properties with zero offers today, 
+				// results are mangled. So instead of working through this slop of code, just display the
+				// the full report and set the view to only display those properties with zero offers
+				// mbyrnes
+
+				if (isset($this->params['named']['ql'])==2 && $this->params['named']['ql']==2){
+					$this->params['named']['ql']='';
+					$this->set("zero_offers_only",1);
+				}
+
+				$conditions = $this->_build_conditions($this->data);
+
+				if (!empty($this->params['named']['sortBy'])) {
+
+					$direction = (@$this->params['named']['sortDirection'] == 'DESC') ? 'DESC' : 'ASC';
+					$order = $this->params['named']['sortBy'].' '.$direction;
+					$this->set('sortBy', $this->params['named']['sortBy']);
+					$this->set('sortDirection', $direction);
+
+				} else {
 
 
-				switch(@$this->params['named']['ql']):
-				case 1:
-				$order = "Loa2.endDate";
-				break;
-				case 2:
-				case 3:
-				case 5:
-				case 6:
-				case 7:
-				$order = "Loa.membershipBalance DESC";
-				break;
-				case 4:
-				$order = "Loa.endDate";
-				break;
-				default:
-				$order = 'Loa.endDate';
-				break;
-				endswitch;
+					switch(@$this->params['named']['ql']):
+					case 1:
+					$order = "Loa2.endDate";
+					break;
+					case 2:
+					case 3:
+					case 5:
+					case 6:
+					case 7:
+					$order = "Loa.membershipBalance DESC";
+					break;
+					case 4:
+					$order = "Loa.endDate";
+					break;
+					default:
+					$order = 'Loa.endDate';
+					break;
+					endswitch;
 
-				$this->set('sortBy', $order);
-    	        $this->set('sortDirection', 'DESC');
-	        }
+					$this->set('sortBy', $order);
+					$this->set('sortDirection', 'DESC');
+        }
 
             if (!empty($conditions) || isset($this->params['named']['ql'])) {
 
@@ -1848,7 +1865,6 @@ class ReportsController extends AppController {
 														AND clientId = $clientId
 												GROUP BY offerTypeId, siteId");
 
-            // if (@$this->params['named']['ql'] == 7) {
 			if (true) {
 				$packagesLiveFlex = $this->Client->query("SELECT COUNT(DISTINCT SchedulingMaster.packageId) as packagesLive, offerTypeId, SchedulingMaster.siteId
 													FROM schedulingInstance as SchedulingInstance
