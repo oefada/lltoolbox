@@ -5,6 +5,12 @@ class ClientSyncShell extends Shell {
 	public $errors = array();
 
     function main() {
+		// Set debug to 0 and log to false to suppress logging
+		// to app/tmp/error.log as that file was growing quickly
+		// and it being too large would cause this script to fail
+		// mc 2011-06-22
+		Configure::write('debug', 0);
+		Configure::write('log', false);
     	$this->log('Process Started.', $this->logfile);
 
 		$clients = $this->getActiveLoasForPeriod();
