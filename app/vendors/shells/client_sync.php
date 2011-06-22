@@ -45,17 +45,17 @@ class ClientSyncShell extends Shell {
 
 		$sql = "
 			SELECT
-				Client.clientId
+				DISTINCT Client.clientId
 			FROM
 				client Client
 			LEFT JOIN loa Loa on Loa.clientId = Client.clientId
-			WHERE
-				Loa.inactive = 0
-				AND (
-					((Loa.startDate >= '$startDate' AND Loa.startDate <= '$endDate'))
-					OR ((Loa.endDate >= '$startDate' AND Loa.endDate <= '$endDate'))
-				)
-		";		
+			WHERE Loa.inactive = 0 AND ";
+
+		if (isset($this->params['client_ids'])) {
+			$sql .= "Client.clientId in ({$this->params['client_ids']})";
+		} else {
+			$sql .= "(((Loa.startDate >= '$startDate' AND Loa.startDate <= '$endDate')) OR ((Loa.endDate >= '$startDate' AND Loa.endDate <= '$endDate')))";
+		}
 
 		$client_ids = Set::extract('/Client/clientId', $this->Client->query($sql));
 		$params = array(
