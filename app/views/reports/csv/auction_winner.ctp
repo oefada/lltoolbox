@@ -29,8 +29,16 @@ foreach ($results as $r):
 	
 	$promoCode = $r['PromoCode']['promoCode'];
 	if ($r['OfferLookup']['guaranteeAmount'] > 0) { $promoCode = 'Guarantee ' . $promoCode; }
-	$paymentType = isset($r['PaymentType']['paymentTypeName']) ? $r['PaymentType']['paymentTypeName'] : '';
-	if(!empty($promoCode)) { $promoCode .= ' - '.$paymentType; } else { $promoCode .= $paymentType; }
+	
+	foreach($r['PaymentDetailFull'] as $k => $v) {
+		if($v['pt']['paymentTypeName'] != 'Charge') {
+			if(empty($promoCode)) {
+				$promoCode = $v['pt']['paymentTypeName'];
+			} else {
+				$promoCode .= ' - '.$v['pt']['paymentTypeName'];
+			}
+		}
+	}
 	
 	$line = array(
 	$siteIds[$r['Ticket']['siteId']],

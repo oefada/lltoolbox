@@ -1,7 +1,7 @@
 <?php
 class ReportsController extends AppController {
 	var $name = 'Reports';
-	var $uses = array('OfferType');
+	var $uses = array('OfferType', 'PaymentDetail', 'PaymentType');
 	var $helpers = array('Pagination');
 	var $components = array('CarDataImporter');
 	//TODO: Add sorting, speed up the sql by adding indexes or a loading splash page, double check accuracy of data
@@ -1077,7 +1077,6 @@ class ReportsController extends AppController {
                            PaymentDetail.ppBillingState,
                            PaymentDetail.ppBillingCountry,
                            PaymentDetail.ppBillingZip,
-                           PaymentType.paymentTypeName,
                            Ticket.userWorkPhone,
                            Ticket.userHomePhone,
                            Ticket.userMobilePhone,
@@ -1113,7 +1112,6 @@ class ReportsController extends AppController {
 						   INNER JOIN schedulingMasterTrackRel as SchedulingMasterTrackRel ON SchedulingMasterTrackRel.schedulingMasterId = SchedulingMaster.schedulingMasterId
                            LEFT JOIN track AS Track ON Track.trackId = SchedulingMasterTrackRel.trackId
                            LEFT JOIN paymentDetail AS PaymentDetail ON (PaymentDetail.ticketId = Ticket.ticketId AND PaymentDetail.isSuccessfulCharge <> 0)
-                           LEFT JOIN paymentType AS PaymentType ON PaymentType.paymentTypeId = PaymentDetail.paymentTypeId
                            LEFT JOIN paymentProcessor AS PaymentProcessor USING (paymentProcessorId)
                            LEFT JOIN userPaymentSetting AS UserPaymentSetting ON (UserPaymentSetting.userPaymentSettingId = PaymentDetail.userPaymentSettingId)
                            LEFT JOIN package AS Package ON Package.packageId = Ticket.packageId
@@ -1132,7 +1130,21 @@ class ReportsController extends AppController {
 	                LIMIT $this->limit";
 
 	        $results = $this->OfferType->query($sql);
-
+	        
+	        $this->PaymentDetail->recursive = 0;
+	        $ids = null;
+	        foreach($results as $k => $v) {
+	        	if(!$ids) {
+	        		$ids = $v['Ticket']['ticketId'];
+	        	} else {
+	        		$ids .= ','.$v['Ticket']['ticketId'];
+	        	}
+	        	$paymentDetail = $this->PaymentDetail->query('
+	        		SELECT pd.*, pt.paymentTypeName FROM paymentDetail AS pd
+	        		INNER JOIN paymentType AS pt ON pt.paymentTypeId = pd.paymentTypeId 
+	        		WHERE ticketId = '.$v['Ticket']['ticketId']);
+	        	$results[$k]['PaymentDetailFull'] = $paymentDetail;
+	        }
 					// This extracts pricePointId and PackageId from the result set and queries
 					// pricePoint table to get the validity dates and then inserts them into the $results array
 					// 2011-02-22 mbyrnes
