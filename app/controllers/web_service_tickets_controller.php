@@ -1607,7 +1607,7 @@ class WebServiceTicketsController extends WebServicesController
         }
 
 		// 06/16/11 jwoods - relay through Silverpop
-		if ($ppvNoticeTypeId == 18) {
+		if ($ppvNoticeTypeId == 18 && (strpos($emailBody, 'Testerosa') > 0)) {
 			$this->sendSilverpopRelay('ppv_auction_winner', $emailFrom, $emailReplyTo, $emailTo, $emailSubject, $emailBody);
 		} else {
 			@mail($emailTo, $emailSubject, $emailBody, $emailHeaders);
