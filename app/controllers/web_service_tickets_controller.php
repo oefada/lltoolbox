@@ -1607,7 +1607,8 @@ class WebServiceTicketsController extends WebServicesController
         }
 
 		// 06/16/11 jwoods - relay through Silverpop
-		if ($ppvNoticeTypeId == 18 && (strpos($emailBody, 'Testerosa') > 0)) {
+		// if ($ppvNoticeTypeId == 18 && (strpos($emailBody, 'Testerosa') > 0)) {
+		if ($ppvNoticeTypeId == 18) {
 			$this->sendSilverpopRelay('ppv_auction_winner', $emailFrom, $emailReplyTo, $emailTo, $emailSubject, $emailBody);
 		} else {
 			@mail($emailTo, $emailSubject, $emailBody, $emailHeaders);
@@ -1704,7 +1705,6 @@ class WebServiceTicketsController extends WebServicesController
 			$mail->From = str_replace('>', '', $fromArray[1]);
 			$mail->FromName = $fromArray[0];
 			$mail->AddAddress($toAddr);
-			$mail->AddAddress('jwoods@luxurylink.com');
 			$mail->AddReplyTo($fromReplyTo, $fromReplyTo);
 			$mail->WordWrap = 50;    // set word wrap
 			$mail->IsHTML(true);    // set email format to HTML
