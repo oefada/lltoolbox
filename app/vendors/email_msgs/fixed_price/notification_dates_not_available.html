@@ -1,10 +1,9 @@
 <?php include('../vendors/email_msgs/email_includes/header.html');?>
 <p>Dear <?=$userFirstName;?>,<p>
 
-My name is Grace and I’m here to help you with your reservation. 
-Unfortunately, the dates you requested for this package at <?php echo $clientNameP ?> aren't available. 
-However, <?php echo $clientNameP ?> is a close partner with Luxury Link, and I'd be happy to check alternative dates for you. 
-Use the link here to <a style="color:#369;font-weight:bold;" href="<?=$dateRequestLink;?>"> submit different travel dates</a> for this package.
+Unfortunately, the dates you requested for this package at <?php echo $clientNameP ?> aren't available.
+However, <?php echo $clientNameP ?> is a close partner with Luxury Link, and we'll be happy to check alternative dates for you.
+Please <a style="color:#369;font-weight:bold;" href="<?=$dateRequestLink;?>"> submit different travel dates</a>.
 </p>
 
 <div class="center-content">
@@ -49,22 +48,20 @@ Use the link here to <a style="color:#369;font-weight:bold;" href="<?=$dateReque
 		<?php if(empty($isTaxIncluded)) { ?>
 			<div style="color:#444444; font-size:10px; padding-left:40px;">Taxes Included</div>
 		<?php } ?>
-	</td>																																														
+	</td>
 </tr>
 </table>
 
 </div>
 
 <p>
-If your travel dates aren’t flexible, I may be able to accommodate you at <?php echo $clientNameP ?> with a different package or a different hotel in <?php echo $locationDisplay ?>. 
-I can often help Luxury Link customers get a special rate. Let me know if you would like to discuss these options by calling 888-297-3299. Please reference ticket id # <?php echo $ticketId ?> when you call.
-<br /><br />
-I’m here to help, and look forward to hearing back from you soon. 
+Should you have any questions, please contact our Travel Concierge at <?=$sitePhone;?>.
+Please reference ticket id # <?php echo $ticketId ?> when you call.
 </p>
 
 <br />
 <p>Warm Regards,</p>
-<p>Grace</p>
+<p><?=$siteName;?></p>
 
 <?php if ($sender_sig) : ?>
 <p>
