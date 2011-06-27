@@ -15,36 +15,36 @@ class Loa extends AppModel {
 	var $validate = array('startDate' => array('rule' => array('validateEndStartDate'), 'message' => 'Start date must be less than end date'),
 						  'endDate' => array('rule' => array('validateEndStartDate'), 'message' => 'Start date must be less than end date')
 							);
-							
+
 	var $order = array("Loa.startDate DESC");
 
-	var $hasMany = array('LoaItem' => array('foreignKey' => 'loaId'), 
+	var $hasMany = array('LoaItem' => array('foreignKey' => 'loaId'),
 						 'ClientLoaPackageRel' => array('foreignKey' => 'loaId'),
 						 'Track' => array('foreignKey' => 'loaId'),
                          'LoaPublishingStatusRel' => array('foreignKey' => 'loaId')
 						);
-    
+
     //var $hasAndBelongsToMany = array('PublishingStatus' => array('className' => 'PublishingStatus',
     //                                                             'joinTable' => 'LoaPublishingStatusRel',
     //                                                             'foreignKey' => 'loaId',
     //                                                             'associationForeignKey' => 'publishingStatusId',
     //                                                             'with' => 'LoaPublishingStatusRel'));
-    
+
     var $actsAs = array('Containable', 'Logable');
-	
+
     var $multisite = true;
 
 	function validateEndStartDate()
 	{
 		$startDate = $this->data[$this->name]['startDate'];
 		$endDate = $this->data[$this->name]['endDate'];
-		
+
 		if($startDate >= $endDate) {
 			return false;
 		}
 		return true;
 	}
-	
+
 	function beforeSave($options) {
 
 		$this->data['Loa']['modified'] = date('Y-m-d h:i:s');
@@ -56,10 +56,10 @@ class Loa extends AppModel {
         AppModel::beforeSave();
 	    return true;
 	}
-	
+
 	function afterSave() {
 		if ($this->id == $this->get_current_loa($this->data['Loa']['clientId'])) {
-//			$this->Client->set_sites($this->data['Loa']['clientId'], $this->data['Loa']['sites']);
+			$this->Client->set_sites($this->data['Loa']['clientId'], $this->data['Loa']['sites']);
 		}
 		if(isset($this->data['Loa']['loaId'])) {
 			if (!empty($this->data['LoaPublishingStatusRelLL'])) {
@@ -77,12 +77,12 @@ class Loa extends AppModel {
 		}
 		return;
 	}
-    
+
     //override AppModel::afterDelete()
     function afterDelete() {
         return;
     }
-	
+
     function get_current_loa($client_id) {
         $this->Loa->recursive = -1;
          $currentLoaId = $this->field('loaId', array('Loa.clientId = '.$client_id.' AND now() BETWEEN Loa.startDate AND Loa.endDate'));
@@ -101,7 +101,7 @@ class Loa extends AppModel {
          }
          return $currentLoaId;
     }
-    
+
     function getClientLoas($clientId) {
         if ($loas = $this->query("SELECT * FROM loa Loa WHERE Loa.clientId = {$clientId} ORDER BY Loa.startDate DESC")) {
             return $loas;
@@ -115,14 +115,14 @@ class Loa extends AppModel {
         }
         return array();
     }
-    
+
     function getLoaClientId($loaId) {
         $query = "SELECT clientId FROM loa Loa WHERE Loa.loaId = {$loaId}";
         if ($clientId = $this->query($query)) {
             return $clientId[0]['Loa']['clientId'];
         }
     }
-    
+
     function getLoaOptionList($clientId) {
         $query = "SELECT loaId, startDate, endDate FROM loa Loa
                   WHERE clientId = {$clientId} AND Loa.endDate > NOW()";
@@ -144,7 +144,7 @@ class Loa extends AppModel {
 	                		('first', array(
 	                			'conditions' => array(
 									'LoaPublishingStatusRel.loaId' => $this->data['Loa']['loaId'],
-									'LoaPublishingStatusRel.publishingStatusId' => $pStatus, 
+									'LoaPublishingStatusRel.publishingStatusId' => $pStatus,
 	                				'LoaPublishingStatusRel.site' => $site)));
 				// If this status was saved before and is still selected by user just remember the selection
 				if ($thisStatus && in_array($pStatus, $this->data['Loa'][$siteArrayIndex])) {
@@ -161,7 +161,7 @@ class Loa extends AppModel {
 				// Otherwise clear the status
 				else {
 					$this->LoaPublishingStatusRel->deleteAll(array(
-	                    						'LoaPublishingStatusRel.loaId' => $this->data['Loa']['loaId'], 
+	                    						'LoaPublishingStatusRel.loaId' => $this->data['Loa']['loaId'],
 	                    						'LoaPublishingStatusRel.site' => $site,
 	                    						'LoaPublishingStatusRel.publishingStatusId' => $thisStatus['LoaPublishingStatusRel']['publishingStatusId'])
 					);
@@ -170,7 +170,7 @@ class Loa extends AppModel {
 		} else {
 			// Clear the statues
 			$this->LoaPublishingStatusRel->deleteAll(array(
-	                    						'LoaPublishingStatusRel.loaId' => $this->data['Loa']['loaId'], 
+	                    						'LoaPublishingStatusRel.loaId' => $this->data['Loa']['loaId'],
 	                    						'LoaPublishingStatusRel.site' => $site));
 		}
     }
