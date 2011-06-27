@@ -12,6 +12,7 @@ $this->set('clientId', $this->data['Loa']['clientId']);
 		?>
 		</div>
 	<?php
+		echo $form->input('modifiedBy', array('type' => 'hidden', 'value' => $userDetails['username']));
 		echo $form->input('clientId', array('type' => 'hidden'));
 		echo $form->input('loaLevelId', array('label' => 'LOA Level'));
 		echo $form->input('customerApprovalDate', array('empty' => true, 'label' => 'Package in Date', 'timeFormat' => '', 'minYear' => date('Y', strtotime('January 01, 2000')), 'maxYear' => date('Y', strtotime('+5 year'))));

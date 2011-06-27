@@ -48,6 +48,7 @@ $this->set('clientId', $this->data['Client']['clientId']);
 		<br />
             <div class="input select" style="width: 450px; float:left; clear:none;">
 				<label for="LoaPublishingStatusLL" style="padding-left:70px; padding-bottom:10px;">Luxury Link</label>
+				<input type="hidden" name="data[Loa][modifiedBy]" value="<?=$userDetails['username'];?>" />
                 <input type="hidden" value="" name="data[Loa][PublishingStatusLL]" />
                 <?php foreach ($publishingStatus as $pStatusId => $pStatus	): ?>
 					<div class="checkbox">
@@ -60,6 +61,7 @@ $this->set('clientId', $this->data['Client']['clientId']);
             <div class="input select" style="width: 450px; float:right; clear:none;">
                 <label for="LoaPublishingStatusFG" style="padding-left:70px; padding-bottom:10px;">Family Getaway</label>
                 <input type="hidden" value="" name="data[Loa][PublishingStatusFG]" />
+				<input type="hidden" name="data[Loa][modifiedBy]" value="<?=$userDetails['username'];?>" />
                 <?php foreach ($publishingStatus as $pStatusId => $pStatus): ?>
 					<div class="checkbox">
 						<input type="checkbox" id="LoaPublishingStatusFG<?php echo $pStatusId; ?>" value="<?php echo $pStatusId; ?>" name="data[Loa][PublishingStatusFG][]" <?php if (in_array($pStatusId, array_keys($completedStatusFG))) echo "checked"; ?> />
@@ -133,6 +135,7 @@ $this->set('clientId', $this->data['Client']['clientId']);
 		
 		echo '<div><label>Created</label><span>'.$loa['Loa']['created'].'</span></div>';
 		echo '<div><label>Modified</label><span>'.$loa['Loa']['modified'].'</span></div>';
+		echo '<div><label>Modified By</label><span>'.$loa['Loa']['modifiedBy'].'</span></div>';
 		
 	?>
 	</fieldset>

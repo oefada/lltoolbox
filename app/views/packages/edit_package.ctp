@@ -22,6 +22,12 @@
 <form id="packageForm" method="post">
     <input type="hidden" name="data[Package][packageId]" value="<?php echo $package['Package']['packageId']; ?>" />
     <table class="package">
+		<tr>
+			<th>Package Promo</th>
+			<td>
+				asdf
+			</td>
+		</tr>
         <tr>
             <th>Package For</th>
             <td>
