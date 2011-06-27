@@ -176,8 +176,17 @@
             <td>
 				<select id="currencyId" name="data[Package][currencyId]">
 					<option></option>
-					<?php foreach ($currencyCodes as $k => $cc):?>
-                        <?php $selected = ($k == $package['Package']['currencyId']) ? ' selected' : (empty($package['Package']['currencyId']) && $k == 1) ? ' selected' : ''; ?>
+					<?php 
+						if(!empty($package['Package']['currencyId'])) {
+							$defaultCurrId = $package['Package']['currencyId'];
+						} else if (!empty($package['Loa']['currencyId'])) {
+							$defaultCurrId = $package['Loa']['currencyId'];
+						} else {
+							$defaultCurrId = 1;
+						}
+						foreach ($currencyCodes as $k => $cc):
+					?>
+                        <?php $selected = ($k == $defaultCurrId) ? ' selected' : ''; ?>
                         <option value="<?php echo $k; ?>" <?php echo $selected;?>><?php echo $cc; ?></option>
 					<?php endforeach;?>
 				</select>
