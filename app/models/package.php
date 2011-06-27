@@ -578,7 +578,9 @@ class Package extends AppModel {
 			foreach ($dates['ValidRanges'] as $r) {
 				$pvd_ts_start = strtotime($r['pvd']['startDate']);
 				$pvd_ts_end = strtotime($r['pvd']['endDate']);
-				if ($this->isSameMonth($pvd_ts_start, $pvd_ts_end)) {
+				if($this->isSameDate($pvd_ts_start, $pvd_ts_end)) {
+					$html.= date('F d, Y', $pvd_ts_start)  .'<br>';
+				} else if ($this->isSameMonth($pvd_ts_start, $pvd_ts_end)) {
 					$html.= date('F', $pvd_ts_start) . ' ' . date('j', $pvd_ts_start) . '-' . date('j', $pvd_ts_end) . ', ' . date('Y', $pvd_ts_start)  .'<br>';
 				} else {
 					$html.= date('F j, Y', $pvd_ts_start) . ' - ' . date('F j, Y', $pvd_ts_end) . "<br>";
@@ -593,7 +595,9 @@ class Package extends AppModel {
 			foreach ($dates['BlackoutDays'] as $r) {
 				$pvd_ts_start = strtotime($r['pvd']['startDate']);
 				$pvd_ts_end = strtotime($r['pvd']['endDate']);
-				if ($this->isSameMonth($pvd_ts_start, $pvd_ts_end)) {
+				if($this->isSameDate($pvd_ts_start, $pvd_ts_end)) {
+					$html.= date('F d, Y', $pvd_ts_start)  .'<br>';
+				} else if ($this->isSameMonth($pvd_ts_start, $pvd_ts_end)) {
 					$html.= date('F', $pvd_ts_start) . ' ' . date('j', $pvd_ts_start) . '-' . date('j', $pvd_ts_end) . ', ' . date('Y', $pvd_ts_start)  .'<br>';
 				} else {
 					$html.= date('F j, Y', $pvd_ts_start) . ' - ' . date('F j, Y', $pvd_ts_end) . "<br>";
@@ -641,6 +645,17 @@ class Package extends AppModel {
 			return false;
 		}
 		if (date('F Y', $date1_ts) === date('F Y', $date2_ts)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	function isSameDate($date1_ts, $date2_ts) {
+		if (!$date1_ts || !$date2_ts) {
+			return false;
+		}
+		if (date('F d Y', $date1_ts) === date('F d Y', $date2_ts)) {
 			return true;
 		} else {
 			return false;
