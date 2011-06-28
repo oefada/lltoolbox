@@ -19,6 +19,8 @@
 		?></div><div style="float: left; clear: none"><?
 			echo $form->input('validityEndDate', array('label' => 'Validity End Date'));
 		?></div><?
+
+
 		
 		echo $form->input('PackageOfferTypeDefField.7.offerTypeId', array('value' => 7, 'type' => 'hidden'));
 		echo $form->input('PackageOfferTypeDefField.7.buyNowPrice', array('value' => 1, 'type' => 'hidden'));
@@ -29,10 +31,6 @@
 		} else {
 			echo $form->input('externalOfferUrl', array('label' => 'Offer URL', 'value' => 'http://'));
 		}
-		
-		// promo code specific to package
-		echo '<label for="promoCodeId">Promo Code</label>';
-		echo $form->select('promoCodeId', $codes);
 		
 		echo $form->input('Format', array('value' => 3, 'type' => 'hidden'));
 		echo $form->input('packageStatusId', array('value' => 4, 'type' => 'hidden'));
