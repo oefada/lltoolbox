@@ -49,7 +49,7 @@
 
  // 2010-02-09 mbyrnes
 	$debug=0;
-	if (isset($_SERVER['ENV']) && $_SERVER['ENV']=='development')$debug=0;
+	if (isset($_SERVER['ENV']) && $_SERVER['ENV']=='development')$debug=2;
 	Configure::write('debug', $debug);
 	//Configure::write('log',E_ALL);
 /**
