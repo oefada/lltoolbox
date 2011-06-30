@@ -148,7 +148,7 @@ if (!isset($masterState) || $masterState != 1) {
                         <th>Number of Iterations</th>
                     </tr>
                     <tr>
-                        <td><?php echo $form->input('numDaysToRun', array('label' => ' ', 'type' => 'select', 'options' => array(1 => '1 Day', 2 => '2 Days', 3 => '3 Days', 7 => '7 Days'), 'disabled' => ($masterState) ? 'disabled' : false)); ?></td>
+                        <td><?php echo $form->input('numDaysToRun', array('label' => ' ', 'type' => 'select', 'options' => array(1 => '1 Day', 2 => '2 Days', 3 => '3 Days', 5 => '5 Days', 7 => '7 Days'), 'disabled' => ($masterState) ? 'disabled' : false)); ?></td>
                         <td><?php echo $form->input('schedulingDelayCtrlId', array('label' => ' ')); ?></td>
                         <td>
                             <input type='radio' id='by-end-date' name='data[SchedulingMaster][iterationSchedulingOption]' value='1' checked="checked" /> <label for='by-end-date'>Determined By End Date</label><br />
