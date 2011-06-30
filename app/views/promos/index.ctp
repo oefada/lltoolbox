@@ -12,6 +12,7 @@
    	<th>Start Date</th>
    	<th>End Date</th>
    	<th># of Codes</th>
+   	<th>Site</th>
 	<th class="actions"><?php __('Actions');?></th>
 </tr>
 <?php
@@ -50,6 +51,16 @@ foreach ($promos as $promo):
 		</td>
 		<td>
 			<?php echo $promo[0]['numPromoCode']; ?>
+		</td>
+		<td>
+			<?php $promoSite = intval($promo['Promo']['siteId']);
+			      if ($promoSite == 1) {
+			          echo 'LL';
+			      } elseif ($promoSite == 2) {
+			          echo 'FG';
+			      } elseif ($promoSite == 0) {
+			          echo 'All';
+			      } ?>
 		</td>
 		<td class="actions">
 	        <?php echo $html->link(__('Report', true), array('action'=>'report', $promo['Promo']['promoId'])); ?>

@@ -5,7 +5,7 @@ class PromosController extends AppController {
 	var $helpers = array('Html', 'Form');
 
 	function index() {
-		$results = $this->Promo->query("SELECT promoId, promoName, promoCode, percentOff, amountOff, minPurchaseAmount, startDate, endDate, count(*) AS numPromoCode" .
+		$results = $this->Promo->query("SELECT promoId, promoName, promoCode, percentOff, amountOff, minPurchaseAmount, startDate, endDate, siteId, count(*) AS numPromoCode" .
 				" FROM promo Promo INNER JOIN promoCodeRel USING (promoId) INNER JOIN promoCode PromoCode USING(promoCodeId)" .
 				" GROUP BY promoId ORDER BY promoName");
 		$this->set('promos', $results);
@@ -17,7 +17,7 @@ class PromosController extends AppController {
 			$this->redirect(array('action'=>'index'));
 		}
 	}
-	
+
 	function report($id = null) {
 		$results = $this->Promo->query("
 			SELECT count(*) AS numPackages, SUM(billingPrice) AS totalSales
@@ -26,21 +26,21 @@ class PromosController extends AppController {
 		");
 		$this->set('num_packages', $results[0][0]['numPackages']);
 		$this->set('total_sales', $results[0][0]['totalSales']);
-		
+
 		$results = $this->Promo->query("
 			SELECT count(*) AS numAuctions
 			FROM ticket INNER JOIN offerLuxuryLink as offerLive USING(offerId) INNER JOIN promoOfferTracking USING(offerId) INNER JOIN promoCode USING(promoCodeId) INNER JOIN promoCodeRel USING(promoCodeId)
 			WHERE promoId = $id AND isAuction = 1"
 		);
 		$this->set('num_auctions', $results[0][0]['numAuctions']);
-		
+
 		$results = $this->Promo->query("
 			SELECT count(*) AS numBuyNows
 			FROM ticket INNER JOIN offerLuxuryLink as offerLive USING(offerId) INNER JOIN promoOfferTracking USING(offerId) INNER JOIN promoCode USING(promoCodeId) INNER JOIN promoCodeRel USING(promoCodeId)
 			WHERE promoId = $id AND isAuction = 0
 		");
 		$this->set('num_buynows', $results[0][0]['numBuyNows']);
-		
+
 		if (!$id) {
 			$this->Session->setFlash(__('Invalid Promo.', true));
 			$this->redirect(array('action'=>'index'));

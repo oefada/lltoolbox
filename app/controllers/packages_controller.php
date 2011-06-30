@@ -904,10 +904,6 @@ class PackagesController extends AppController {
         $isMultiClientPackage = (count($package['ClientLoaPackageRel']) > 1) ? true : false;
         $this->set('isMultiClientPackage', $isMultiClientPackage);
 
-        //print_r($package);
-        //exit;
-
-
         if (!empty($package['Package']['externalOfferUrl'])) {
             $this->redirect('/clients/'.$clientId.'/packages/edit/'.$packageId);
         }

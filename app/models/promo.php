@@ -18,6 +18,12 @@ class Promo extends AppModel {
 		   )
 	);
 
+	//var $hasMany = array('PromoRestrictionClient' => array('foreignKey' => 'promoId'),
+	//					'PromoRestrictionClientType' => array('foreignKey' => 'promoId'),
+	//					'PromoRestrictionDestination' => array('foreignKey' => 'promoId'),
+    //                    'PromoRestrictionTheme' => array('foreignKey' => 'promoId')
+	//				   );
+
 	function checkInsertRaf($promoCodeId) {
 		if (!$promoCodeId) {
 			return false;
@@ -35,13 +41,13 @@ class Promo extends AppModel {
 		if (!$promoCodeId) {
 			return false;
 		}
-	
+
 		$sql = "SELECT User.firstName, User.email, Charity.charityName FROM promoCodeOwner as PromoCodeOwner ";
 		$sql.= "INNER JOIN user as User USING (userId) ";
 		$sql.= "LEFT JOIN charity as Charity USING (charityId) ";
 		$sql.= "WHERE PromoCodeOwner.promoCodeId = $promoCodeId";
 		$result = $this->query($sql);
-		
+
 		return (!empty($result)) ? $result[0] : false;
 	}
 
@@ -49,14 +55,14 @@ class Promo extends AppModel {
 		if (!$ticketId) {
 			return false;
 		}
-		
+
 		$sql = "SELECT User.firstName, User.email, Charity.charityName FROM ticketReferFriend as TicketReferFriend ";
 		$sql.= "INNER JOIN promoCodeOwner as PromoCodeOwner ON TicketReferFriend.referrerUserId = PromoCodeOwner.userId ";
 		$sql.= "INNER JOIN user as User ON PromoCodeOwner.userId = User.userId ";
 		$sql.= "LEFT JOIN charity as Charity ON PromoCodeOwner.charityId = Charity.charityId ";
 		$sql.= "WHERE TicketReferFriend.ticketId = $ticketId";
 		$result = $this->query($sql);
-		
+
 		return (!empty($result)) ? $result[0] : false;
 	}
 }

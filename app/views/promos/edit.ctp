@@ -3,12 +3,6 @@
 	<fieldset>
  		<legend><?php __('Edit Promo');?></legend>
 	<?php
-/*		echo $form->input('promoId');
-		echo $form->input('promoName');
-		echo $form->input('percentOff');
-		echo $form->input('amountOff');
-		echo $form->input('minPurchaseAmount');
-		echo $form->input('maxNumUsage');*/
 		echo $form->input('promoName');
 		echo $form->input('percentOff');
 		echo $form->input('amountOff');
@@ -18,6 +12,7 @@
 		echo '<div class="controlset">' . $form->input('newBuyersOnly') . '</div>';
 		echo $form->input('startDate');
 		echo $form->input('endDate');
+		echo $form->input('siteId', array('options'=> array('0'=>'All', '1'=>'LuxuryLink', '2'=>'Family')));
 	?>
 	</fieldset>
 <?php echo $form->end('Submit');?>

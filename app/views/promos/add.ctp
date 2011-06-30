@@ -12,6 +12,7 @@
 		echo '<div class="controlset">' . $form->input('newBuyersOnly') . '</div>';
 		echo $form->input('startDate');
 		echo $form->input('endDate');
+		echo $form->input('siteId', array('options'=> array('0'=>'All', '1'=>'LuxuryLink', '2'=>'Family')));
 	?>
 	</fieldset>
 <?php echo $form->end('Submit');?>
