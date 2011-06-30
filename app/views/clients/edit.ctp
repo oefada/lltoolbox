@@ -381,18 +381,8 @@ foreach ($this->data['Client']['sites'] as $site) {
 				</div>
 			</div>
 		</fieldset>
-		<fieldset class="collapsible">
-			<legend class="handle">Images</legend>
-			<div class="collapsibleContent">
-					<?php
-					echo $form->input('numGalImgs');
-					echo $form->input('capImg1');
-					echo $form->input('capImg2');
-					echo $form->input('capImg3');
-					echo $form->input('capImg4');
-					?>
-			</div>
-		</fieldset>
+		
+		<?  // jwoods 06/29/11 - removed IMAGES section; ?>
 		
 		<fieldset class="collapsible">
 			<legend class="handle">Tracking Links</legend>

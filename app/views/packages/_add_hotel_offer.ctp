@@ -41,12 +41,6 @@
 	<div class="collapsibleContent disableAutoCollapse">
 		<p style="font-size:11px; line-height:15px; margin:10px 0px; font-style:italic;"><b>Offer URL</b> above is the actual and default URL for all hotel offer links. It will also be used to display with "Available on:".<br/>Specifying the tracking links below will replace the Offer URL link for that element (e.g. logo, button, or "available on").</p>
 	<?
-		echo $form->input('ClientTracking.2.linkUrl', array('label' => 'Link URL<br/><span style="font-weight:normal;">Small Logo</span>'));
-		echo $form->input('ClientTracking.2.impressionImageUrl', array('label' => 'Image Tracking URL<br/><span style="font-weight:normal;">Small Logo</span>'));
-		echo $form->input('ClientTracking.2.clientTrackingTypeId', array('value' => 2, 'type' => 'hidden'));
-		echo $form->input('ClientTracking.2.clientTrackingId', array('type' => 'hidden'));
-		
-		?><br/><?
 		
 		echo $form->input('ClientTracking.5.linkUrl', array('label' => 'Link URL<br/><span style="font-weight:normal;">&quot;Go To Offer&quot; Button</span>'));
 		echo $form->input('ClientTracking.5.impressionImageUrl', array('label' => 'Image Tracking URL<br/><span style="font-weight:normal;">&quot;Go To Offer&quot; Button</span>'));

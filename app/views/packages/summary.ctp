@@ -412,14 +412,17 @@ if ($_SERVER['ENV']=="staging"){
 
 ?>
 
-
-<a name="form-price-points"><div class="section-header"><div class="section-title">Price Points</div>
-
-<div class="edit-link" name="<?php echo $linkName; ?>" title="<?php echo $linkTitle; ?>">
-<?php echo $linkTitle; ?>
+<div style="position:relative; padding-bottom:20px;">
+<div style="position:absolute;right:0px;"><?=$html->link('<span>Preview Package</span>', "{$previewHost}/luxury-hotels/preview.html?packageId={$package['Package']['packageId']}&clid={$clientId}&preview=package", array('target' => '_blank', 'class' => 'button'), null, false); ?></div>
 </div>
-</div></a>
-<a style='float:right;' href='<?=$previewHost?>/luxury-hotels/preview.html?packageId=<?=$package['Package']['packageId']?>&clid=<?=$clientId?>&preview=package' target='_blank'>Preview Package</a> 
+
+<a name="form-price-points">
+<div class="section-header">
+    <div class="section-title">Price Points</div>
+    <div class="edit-link" name="<?php echo $linkName; ?>" title="<?php echo $linkTitle; ?>"><?php echo $linkTitle; ?></div>
+</div>
+</a>
+
 
 <div id="low-price-guarantees">
     <table cellpadding="0" cellspacing="0" border='0'>
@@ -489,21 +492,10 @@ $linkTitle = 'Edit Publishing';
 	<td><?=$package['Package']['packageIncludes'];?></td>
 </tr>
 <tr>
-	<th>Terms &amp; Conditions;</th>
+	<th>Terms &amp; Conditions</th>
 	<td><?=$package['Package']['termsAndConditions'];?></td>
 </tr>
-<tr class="odd">
-	<th>Taxes Not Included Text</th>
-	<td><?=$package['Package']['taxesNotIncludedDesc'];?></td>
-</tr>
-<tr>
-	<th>Seasonal Pricing (Buy Now Only)</th>
-	<td><?=$package['Package']['additionalDescription'];?></td>
-</tr>
-<tr class="odd">
-	<th>Old Validity Disclaimer<br /><span style="font-size:10px;color:#ff0000;font-weight:normal;">*Validity Disclaimer has moved to Price Points section</span></th>
-	<td><?=$package['Package']['validityDisclaimer'];?></td>
-</tr>
+
 </table>
 
 
