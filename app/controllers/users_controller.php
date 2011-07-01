@@ -6,9 +6,15 @@ class UsersController extends AppController {
 	var $user;
 
 	function index() {
-		$this->User->Behaviors->attach('Containable');
-		$this->User->contain(array('UserSiteExtended'));
-		$this->set('users', $this->paginate());
+
+		// 07/01/11 jwoods - index page is still paginating all users but not displaying anything
+		// remove everything for now
+
+		// $this->User->Behaviors->attach('Containable');
+		// $this->User->contain(array('UserSiteExtended'));
+
+		// $this->set('users', $this->paginate());
+		$this->set('users', array());
 	}
 
 	function add() {
@@ -17,16 +23,16 @@ class UsersController extends AppController {
 			if ($this->User->save($this->data)) {
 				$this->flash(__('User saved.', true), array('action'=>'index'));
 			} else {
-				
+
 			}
 		}
-		
+
 		$contests = $this->User->Contest->find('list');
 		$clients = $this->User->Client->find('list');
 		$salutationIds = $this->User->Salutation->find('list');
 		$this->set(compact('contests', 'clients', 'salutationIds'));
 	}
-	
+
 	function view($id = null) {
 		$this->redirect(array("action" => 'edit', $id));
 	}
@@ -41,9 +47,9 @@ class UsersController extends AppController {
 			    $this->User->setDataSource("live");
 
         		$this->User->save($this->data);
-        		
+
 				$this->Session->setFlash(__('The User has been saved.', true));
-				
+
 				$this->redirect("/users/".$this->data['User']['userId']);
 			} else {
 			}
@@ -68,7 +74,7 @@ class UsersController extends AppController {
 			$this->flash(__('User deleted', true), array('action'=>'index'));
 		}
 	}
-	
+
 	function search()
 	{
 		if(!empty($_GET['query'])) {
@@ -83,7 +89,7 @@ class UsersController extends AppController {
 			$query = $this->Sanitize->escape($this->params['form']['query']);
 			$origQuery = $query;
 			$parts = explode(' ', $query);
-			
+
 			$query = '';
 			foreach ($parts as $part) {
 			    if (strlen($part) > 2) {
@@ -91,7 +97,7 @@ class UsersController extends AppController {
 			    }
 			    $query .= $part.' ';
 			}
-			
+
 			if (strpos(strtolower($origQuery), 'userid:') !== false) {
 			    $origQuery = substr_replace(strtolower($origQuery), "", 0, 7);
 			    $conditions = array('OR' => array('User.userId' => $origQuery));
@@ -99,7 +105,7 @@ class UsersController extends AppController {
 			    $origQuery = substr_replace(strtolower($origQuery), "", 0, 9);
 			    $conditions = array('OR' => array('UserSiteExtended.username LIKE' => "%$origQuery%"));
 			} else {
-			    $conditions = array('OR' => array("MATCH(User.lastName,User.firstName,User.email) AGAINST('$query' IN BOOLEAN MODE)"));                
+			    $conditions = array('OR' => array("MATCH(User.lastName,User.firstName,User.email) AGAINST('$query' IN BOOLEAN MODE)"));
 			}
 
 			if($_GET['query'] ||  $this->params['named']['query']) {
@@ -120,7 +126,7 @@ class UsersController extends AppController {
 			}
 		endif;
 	}
-	
+
 	/**
 	 * Method resets a user's password in the UserSiteExtended model. Needs to update directly on live, hence the setDataSource
 	 * @params $id the id of the row in the UserSiteExtended table NOT the id of the main user account
@@ -128,27 +134,27 @@ class UsersController extends AppController {
 	 */
 	function resetPassword($id = null) {
 		if(!empty($this->data)) {
-		
+
 			// unknown why we are calling setDataSource (seems to cause crash)
 			// $this->User->setDataSource("live");
 		    // $this->User->UserSiteExtended->setDataSource("live");
-		    
+
 			$newPassword = $this->generatePassword();
 			$this->set('newPassword', $newPassword);
 
 			// password is hashed in saveField call
 			$this->User->UserSiteExtended->id = $this->data['User']['userId'];
 			$this->User->UserSiteExtended->saveField('passwordHash', $newPassword);
-			
+
 			$userSiteExtended = $this->User->UserSiteExtended->read(null, $id);
 			$this->User->id = $userSiteExtended['UserSiteExtended']['userId'];
 			$this->User->saveField('transmitted', 0);
-		
+
 		} else {
 			$this->data = $this->User->read(null, $id);
 		}
 	}
-	
+
 	function generatePassword($length=9, $strength=4) {
 	    $vowels = 'aeuy';
 	    $consonants = 'bdghjmnpqrstvz';
@@ -178,14 +184,14 @@ class UsersController extends AppController {
 	    }
 	    return $password;
 	}
-	
+
 	function tickets($id) {
 		$this->autoRender = false;
 		$userTickets = $this->paginate('Ticket', array('Ticket.userId' => $id));
 		$this->set('tickets', $userTickets);
 		$this->render('../tickets/index');
 	}
-	
+
 	function bids($id) {
 		$this->autoRender = false;
 		$this->set('bids', $this->paginate('Bid', array('Bid.userId' => $id)));
@@ -195,12 +201,15 @@ class UsersController extends AppController {
 	function beforeFilter() {
 		parent::beforeFilter();
 		$this->set('currentTab', 'customers');
-		
+
 		$userId = $this->User->id;
 
 		if(!isset($id) && isset($this->params['pass'][0])){
 			$userId = $this->params['pass'][0];
 		}
+
+		// 07/01/11 jwoods - don't pull User info without id
+		if (intval($userId) == 0) { return; }
 
 		$this->User->recursive = 1;
 		$this->user = $this->User->findByUserId($this->User->id);
