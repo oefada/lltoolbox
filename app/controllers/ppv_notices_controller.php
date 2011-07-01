@@ -24,6 +24,8 @@ class PpvNoticesController extends AppController {
 	function add($ticketId, $id, $clientId = null) {
 
 		// web service for tickets for getting/sending ppv
+		$ticket = $this->Ticket->read(null, $ticketId);
+		
 		$webservice_live_url = 'http://toolbox.luxurylink.com/web_service_tickets?wsdl';
 		if (stristr($_SERVER['HTTP_HOST'], 'dev') || $_SERVER['ENV'] == 'development') {
 			$webservice_live_url = 'http://'. $_SERVER['ENV_USER'] .'-toolboxdev.luxurylink.com/web_service_tickets?wsdl';
@@ -143,6 +145,24 @@ class PpvNoticesController extends AppController {
 			$clientContacts = $this->Ticket->getClientContacts($ticketId, $clientId);
 			$this->data['PpvNotice']['emailTo'] = $clientContacts['contact_to_string'];
 			$this->data['PpvNotice']['emailCc'] = $clientContacts['contact_cc_string'];
+			
+			// if sending Cancelation Request PPV (id=29), add cancellations@luxurylink|familygetaway.com to CC
+			if ($id == 29) {
+				if ($this->data['PpvNotice']['emailCc'] == '') {
+					if ($ticket['Ticket']['siteId'] == 1) {
+						$this->data['PpvNotice']['emailCc'] = 'cancellations@luxurylink.com';
+					} else if ($ticket['Ticket']['siteId'] == 2) {
+						$this->data['PpvNotice']['emailCc'] = 'cancellations@familygetaway.com';
+					}
+				} else {
+					if ($ticket['Ticket']['siteId'] == 1) {
+						$this->data['PpvNotice']['emailCc'] .= ', cancellations@luxurylink.com';
+					} else if ($ticket['Ticket']['siteId'] == 2) {
+						$this->data['PpvNotice']['emailCc'] .= ', cancellations@familygetaway.com';
+					}
+				}
+			}
+			
 		} else {
 			$ticket_user_email = $this->Ticket->query("SELECT user.email FROM ticket INNER JOIN user USING (userId) WHERE ticketId =  $ticketId LIMIT 1");
 			$this->data['PpvNotice']['emailTo'] = $ticket_user_email[0]['user']['email'];
