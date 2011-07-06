@@ -39,9 +39,8 @@ class ClientSyncShell extends Shell {
 	}
 
 	function getActiveLoasForPeriod() {
-		$currentDate = date('Y-m-d');
-		$startDate = $currentDate . ' 00:00:00';
-		$endDate = $currentDate . ' 23:59:59';
+		$today = date('Y-m-d');
+		$yesterday = date('Y-m-d', strtotime('yesterday'));
 
 		$sql = "
 			SELECT
@@ -54,7 +53,7 @@ class ClientSyncShell extends Shell {
 		if (isset($this->params['client_ids'])) {
 			$sql .= "Client.clientId in ({$this->params['client_ids']})";
 		} else {
-			$sql .= "(((Loa.startDate >= '$startDate' AND Loa.startDate <= '$endDate')) OR ((Loa.endDate >= '$startDate' AND Loa.endDate <= '$endDate')))";
+			$sql .= "((Loa.startDate BETWEEN '$today 00:00:00' AND '$today 23:59:59') OR (Loa.endDate BETWEEN '$yesterday 00:00:00' AND '$yesterday 23:59:59'))";
 		}
 
 		$client_ids = Set::extract('/Client/clientId', $this->Client->query($sql));
