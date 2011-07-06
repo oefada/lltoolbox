@@ -983,6 +983,8 @@ class WebServiceTicketsController extends WebServicesController
 			$resConfBy = $resData[0]['reservation']['confirmedBy'];
 			$resArrDate = $resData[0]['reservation']['arrivalDate'];
 			$resDepDate = $resData[0]['reservation']['departureDate'];
+			// 07/06/11 - jwoods added
+			$resConfirmationNotes = $resData[0]['reservation']['confirmationNotes'];
 		}
 		// cancellation info
 		$ppvNoticeData = $this->Ticket->query("SELECT * FROM ppvNotice WHERE ticketId = $ticketId and ppvNoticeTypeId = 29 ORDER BY created DESC LIMIT 1");
