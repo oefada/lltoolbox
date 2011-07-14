@@ -1779,7 +1779,9 @@ class PackagesController extends AppController {
 	        $loaItems = $this->Package->PackageLoaItemRel->find('all', array('conditions' => array('Package.packageId' => $packageId, 'LoaItem.loaItemTypeId' => array(1,12,22))));
             $roomGrades = array();
             foreach($loaItems as $loaItem) {
-                $roomGrades[] = $loaItem['LoaItem']['RoomGrade']['roomGradeName'];
+            	if ($loaItem['LoaItem']['RoomGrade']['roomGradeName'] != '') {
+                	$roomGrades[] = $loaItem['LoaItem']['RoomGrade']['roomGradeName'];
+                }
             }
 	        $roomGradeName = implode(', ', $roomGrades);
 			$this->set('roomGrade', $roomGradeName);
