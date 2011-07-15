@@ -1090,7 +1090,7 @@ class ReportsController extends AppController {
                            PaymentDetail.ppExpYear,
                            SUM(PaymentDetail.ppBillingAmount) as revenue,
                            OfferType.offerTypeName,
-                           ROUND((SUM(PaymentDetail.ppBillingAmount) / Package.approvedRetailPrice * 100)) as percentOfRetail,
+                           IF(Ticket.siteId = 2, ROUND((SUM(PaymentDetail.ppBillingAmount) / offerFamily.retailValue * 100)), ROUND((SUM(PaymentDetail.ppBillingAmount) / offerLuxuryLink.retailValue * 100))) as percentOfRetail,
                            PaymentProcessor.paymentProcessorName,
                            ExpirationCriteria.expirationCriteriaId,
                            #Track.applyToMembershipBal,
@@ -1124,13 +1124,15 @@ class ReportsController extends AppController {
 						   LEFT JOIN promoCode PromoCode ON ptr.promoCodeId = PromoCode.promoCodeId
 						   LEFT JOIN promoCodeRel pcr ON PromoCode.promoCodeId = pcr.promoCodeId
 						   LEFT JOIN promo Promo ON pcr.promoId = Promo.promoId
+						   LEFT JOIN offerLuxuryLink USING(offerId)
+						   LEFT JOIN offerFamily USING(offerId)
 	   				WHERE $conditions
                     GROUP BY Ticket.ticketId
                     ORDER BY $order
 	                LIMIT $this->limit";
 
 	        $results = $this->OfferType->query($sql);
-	        
+
 	        $this->PaymentDetail->recursive = 0;
 	        $ids = null;
 	        foreach($results as $k => $v) {
@@ -1141,7 +1143,7 @@ class ReportsController extends AppController {
 	        	}
 	        	$paymentDetail = $this->PaymentDetail->query('
 	        		SELECT pd.*, pt.paymentTypeName FROM paymentDetail AS pd
-	        		INNER JOIN paymentType AS pt ON pt.paymentTypeId = pd.paymentTypeId 
+	        		INNER JOIN paymentType AS pt ON pt.paymentTypeId = pd.paymentTypeId
 	        		WHERE ticketId = '.$v['Ticket']['ticketId']);
 	        	$results[$k]['PaymentDetailFull'] = $paymentDetail;
 	        }
@@ -1664,9 +1666,9 @@ class ReportsController extends AppController {
 			if (!empty($this->data) || isset($this->params['named']['ql'])) {
 
 				// work around to get report to properly display properties with zero offers
-				// in short, properties with zero offers are properly highlighted when displaying 
+				// in short, properties with zero offers are properly highlighted when displaying
 				// full report, but when link is clicked (
-				// to display only properties with zero offers today, 
+				// to display only properties with zero offers today,
 				// results are mangled. So instead of working through this slop of code, just display the
 				// the full report and set the view to only display those properties with zero offers
 				// mbyrnes
