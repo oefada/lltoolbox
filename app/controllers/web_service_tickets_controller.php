@@ -1117,13 +1117,14 @@ class WebServiceTicketsController extends WebServicesController
 		// added June 17 -- to allow copy for LL Auc Winner Email and Res Confirmed Email
 		if (in_array($ppvNoticeTypeId, array(1,18))) {
 			$primaryDest = $this->Ticket->getTicketDestStyleId($ticketId);
-			if (in_array(20, $primaryDest)) {
-				$rentalCarCopy = file_get_contents('../vendors/email_msgs/email_includes/rentalcarcopy_uki.html');
-			} elseif (in_array(4, $primaryDest)) {
-				$rentalCarCopy = file_get_contents('../vendors/email_msgs/email_includes/rentalcarcopy_europe.html');
-			} elseif (in_array(17,$primaryDest)){
-				$bookFlightCopy = file_get_contents('../vendors/email_msgs/email_includes/bookflightcopy_southamerica.html');
-			}
+			// ticket 1459 jwoods - $removed rentalCarCopy and $bookFlightCopy
+			// if (in_array(20, $primaryDest)) {
+			//	$rentalCarCopy = file_get_contents('../vendors/email_msgs/email_includes/rentalcarcopy_uki.html');
+			// } elseif (in_array(4, $primaryDest)) {
+			// 	$rentalCarCopy = file_get_contents('../vendors/email_msgs/email_includes/rentalcarcopy_europe.html');
+			// } elseif (in_array(17,$primaryDest)){
+			//	$bookFlightCopy = file_get_contents('../vendors/email_msgs/email_includes/bookflightcopy_southamerica.html');
+			// }
 		}
 
 		// ********* SITE NAME **********
