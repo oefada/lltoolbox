@@ -424,9 +424,11 @@ class WebServiceTicketsController extends WebServicesController
             		$restricted_auction = true;
             	}
 			}
-			if ($offerLive['isMystery'] || $offerLive['retailValue'] == 1 || $offerLive['openingBid'] == 1) {
-				$restricted_auction = true;
-			}
+
+			// 07/20/11 jwoods - ticket 581 - treat Mystery like other auctions
+			// if ($offerLive['isMystery'] || $offerLive['retailValue'] == 1 || $offerLive['openingBid'] == 1) {
+			// 	$restricted_auction = true;
+			// }
             if (stristr($offerLive['offerName'], 'RED') && stristr($offerLive['offerName'],'HOT')) {
             	$restricted_auction = true;
             }
