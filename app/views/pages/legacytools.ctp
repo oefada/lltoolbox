@@ -22,7 +22,7 @@
 <li><?=$html->link("Client Scores", '/client_scores')?></li>
 <li><?=$html->link("Articles", '/articles')?></li>
 <li><?=$html->link("Deal of the Day", '/deal_of_the_days')?></li>
-<li><?=$html->link("PPV Client Images", 'legacytools/ppv_client_images')?></li>
+<li><?=$html->link("Missing PPV Images", 'legacytools/ppv_client_images')?></li>
 </ul>
 
 <br />

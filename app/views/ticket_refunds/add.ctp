@@ -1,5 +1,11 @@
 <div class="ticketRefunds form">
-<?php echo $form->create(null, array('url' => array('controller' => 'tickets/' . $this->params['ticketId'], 'action' => 'ticket_refunds/add'))); ?>
+    <?php $session->flash();
+	$session->flash('error');
+	?>
+<?php // echo $form->create(null, array('url' => array('controller' => 'tickets/' . $this->params['ticketId'], 'action' => 'ticket_refunds/add'))); ?>
+<?php echo $ajax->form('add', 'post', array('url' => "/tickets/{$this->params['ticketId']}/ticket_refunds/add", 'update' => 'MB_content', 'model' => 'TicketRefund', 'complete' => 'Modalbox.activate(); closeModalbox()', 'before' => 'Modalbox.deactivate();', 'indicator' => 'spinner'));?>
+
+
 	<fieldset>
  		<legend><?php __('Add TicketRefund');?></legend>
 	<?php
@@ -14,3 +20,7 @@
 	</fieldset>
 <?php echo $form->end('Submit');?>
 </div>
+
+<?php
+if (isset($closeModalbox) && $closeModalbox) echo "<div id='closeModalbox'></div>";
+?>
