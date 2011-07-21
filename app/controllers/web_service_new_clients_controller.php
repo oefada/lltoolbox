@@ -11,10 +11,10 @@ class WebServiceNewClientsController extends WebServicesController
 	var $name = 'WebServiceNewClients';
 	var $uses = array('Client','ClientContact');
 	var $serviceUrl = 'http://toolbox.luxurylink.com/web_service_new_clients';
-	
+
 	// IF DEV, please make sure you use this path, or if using your own dev, then change this var
 	var $serviceUrlDev = DEV_USER_TOOLBOX_HOST;
-	
+
 	var $errorResponse = false;
 	var $api = array(
 					'save_client' => array(
@@ -31,13 +31,13 @@ class WebServiceNewClientsController extends WebServicesController
 	{
 	    $response_value = '';
 	    $sm_sproc_response = array();
-	
+
 	    // JOSN decoded the request into an assoc. array
 	    $decoded_request = json_decode($sm_request, true);
 
 	    // look for a client id but no error check
 	    $client_id = trim($decoded_request['client']['client_id']);
-	
+
 	    // respond with DB operation mode
 	    if (!$client_id || empty($client_id)) {
 	        $response_value = '1';  // client insert will occur
@@ -46,9 +46,9 @@ class WebServiceNewClientsController extends WebServicesController
 	    } else {
 	        $response_value = '-1';
 	    }
-		
+
 		$date_now = date('Y-m-d H:i:s', strtotime('now'));
-		
+
 		if ($client_id) {
 			$client = $this->Client->findByClientId($client_id);
 			$client_data_save = $client['Client'];
@@ -58,8 +58,9 @@ class WebServiceNewClientsController extends WebServicesController
 		}
 		else {
 			$client_data_save = array();
+			$client_data_save['sites'] = 'luxurylink';
 		}
-		
+
 		// map data from Sugar to toolbox client table structure
 		//$client_data_save = array();
         $client_data_save['name']				= str_replace('&#039;', "'", $decoded_request['client']['client_name']);
@@ -68,7 +69,7 @@ class WebServiceNewClientsController extends WebServicesController
 		$client_data_save['teamName']			= $decoded_request['client']['team_name'];
         $client_data_save['modified']			= $date_now;
         $client_data_save['seoName']			= $this->convertToSeoName($client_data_save['name']);
-        
+
 		// unbind assoc
 		$this->Client->bindOnly(array(), false);
 
@@ -94,21 +95,21 @@ class WebServiceNewClientsController extends WebServicesController
 			// ======= NEW CLIENT INSERT =============
 			$next_auto_inc_result = $this->Client->query("SHOW TABLE STATUS WHERE Name = 'client'");
 			$next_client_auto_id = $next_auto_inc_result[0]['TABLES']['Auto_increment'];
-			
+
 			$client_data_save['inactive'] 				= 1; // set new clients from sugar to inactive
 			$client_data_save['created'] 				= $date_now;
 			$client_data_save['oldProductId']			= "0-$next_client_auto_id";
-			
+
 			$this->Client->create();
 			if (!$this->Client->save($client_data_save, array('callbacks' => false))) {
 				@mail('devmail@luxurylink.com', 'SUGAR BUS -- NEW CLIENT NOT SAVED ('.$client_id.')', print_r($client_data_save, true) . print_r($this->Client->validationErrors, true) . print_r($decoded_request, true) . print_r($this->Client->validationErrors, true));
 			}
-			
+
 			// get new client id and send back to Sugar
 			$client_id = $decoded_request['client']['client_id'] = $this->Client->getLastInsertId();
-			
+
 		}
-		
+
 	    $decoded_request['request']['response'] = $response_value;
 	    $decoded_request['request']['response_time'] = time();
 
@@ -118,12 +119,12 @@ class WebServiceNewClientsController extends WebServicesController
 		// look in Sugar : /var/www/html/soap/SoapSugarUsers.php for the web service 'update_client'
 		// look in Sugar : /var/www/html/custom/modules/Accounts/SiteManagerAgent.php for the after hook Sugar logic.
 	    $this->sendToSugar($encoded_response);
-	    
+
 	    // update client contacts
 	    // ----------------------------------------------------------------------
 	    // clientContactTypeId = 1 is reservation SUGAR -> (AUC, CCALL, ALL_AUC)
 	    // clientContactTypeId = 2 is homepage notification SUGAR ->(MKT, CCALL, ALL, ALL_AUC)
-	    
+
 	  	$reservationContacts = array('AUC', 'ALL_AUC', 'ALL.AUC');
 	  	$homepageContacts = array('MKT', 'MKT_ALL', 'ALL');
 		$reservationCopy = array('ALL');
@@ -158,7 +159,7 @@ class WebServiceNewClientsController extends WebServicesController
 		    	$newClientContact['phone']					= $contact['phone_work'];
 		    	$newClientContact['fax']					= $contact['phone_fax'];
 		    	$newClientContact['sugarContactId']			= $contact_id;
-				
+
 		    	if (in_array($recipient_type, $reservationContacts)) {
 		    		$newClientContact['clientContactTypeId'] = 1;
 		    		$this->ClientContact->create();
@@ -176,11 +177,11 @@ class WebServiceNewClientsController extends WebServicesController
 		    	}
 		    }
 		}
-	      
+
 	    // this tests to see if we were getting correct response from the request
 	    return $encoded_response;
 	}
-	
+
 	function utf8dec ( $s_String ) {
 		$s_String = html_entity_decode(htmlentities($s_String." ", ENT_COMPAT, 'UTF-8'));
 		return substr($s_String, 0, strlen($s_String)-1);
@@ -190,9 +191,9 @@ class WebServiceNewClientsController extends WebServicesController
 		// had to use this custom native soap class and functions because couldn't run both cakephp nusoap server and client
 		// this soap call to made to sugar in order to give Sugar the new clientId from toolbox so it's recorded in Sugar
 		if (stristr($_SERVER['HTTP_HOST'], 'dev')) {
-			$client = new SoapClient('http://sugardev.luxurylink.com:8888/services2/ClientReceiver2?wsdl'); 
+			$client = new SoapClient('http://sugardev.luxurylink.com:8888/services2/ClientReceiver2?wsdl');
 		} else {
-			$client = new SoapClient('http://sugarprod.luxurylink.com:8888/services2/ClientReceiver2?wsdl'); 
+			$client = new SoapClient('http://sugarprod.luxurylink.com:8888/services2/ClientReceiver2?wsdl');
 		}
 		try {
 			$client->soap_call($data);
@@ -201,7 +202,7 @@ class WebServiceNewClientsController extends WebServicesController
 		}
 		return true;
 	}
-	
+
 	function convertToSeoName($str) {
 	    $str = strtolower(html_entity_decode($str, ENT_QUOTES, "ISO-8859-1"));  // convert everything to lower string
 	    $search_accent = explode(",","ç,æ,~\,á,é,í,ó,ú,à,è,ì,ò,ù,ä,ë,ï,ö,ü,ÿ,â,ê,î,ô,û,å,e,i,ø,u,ñ");
