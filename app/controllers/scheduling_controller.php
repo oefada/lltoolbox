@@ -1,4 +1,5 @@
 <?php
+
 class SchedulingController extends AppController {
 
 	var $name = 'Scheduling';
@@ -22,15 +23,16 @@ class SchedulingController extends AppController {
 	 */
 	function index($clientId = null)
 	{
+		$clientId 	= @$this->params['named']['clientId'];						//client id is used to fetch all packages for this client
+		
 		// User posts some data
-		if(!empty($this->data) && isset($this->data['client']['notes'])) {
+		if(!empty($this->data) && isset($this->data['client']['notes'])) {			
 			$this->data['client']['clientId'] = $clientId;
 			$this->Package->ClientLoaPackageRel->Client->save($this->data['client'], array('callbacks' => false));
 			$this->Session->setFlash(__('Changes have been saved', true));
 		}
 		
 		/* Grab all necessary parameters from the URL */
-		$clientId 	= @$this->params['named']['clientId'];						//client id is used to fetch all packages for this client
 		$month 		= empty($this->params['named']['month']) ? date('m') : $this->params['named']['month'];
 		$year 		= empty($this->params['named']['year']) ? date('Y') : $this->params['named']['year'];
 		$monthDays 	= $this->_monthDays($month, $year);							// we need to know how many days are in this month

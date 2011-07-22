@@ -114,9 +114,9 @@ div.sitesDropdown {
  -->
 <div class="loas form">
 	<?php //echo $form->create('Scheduling', array('action' => 'someaction'));?>
-	<form id="scheduling" method="POST">
+	<?php echo $form->create('client', array('type' => 'post', 'url' => "?clientId=$clientId")); ?>
 	<fieldset>
-	<?php echo $form->input('client.notes') ?>
+	<?php echo $form->input('client.notes', array('default' => $client['Client']['notes'])) ?>
 	</fieldset>
 	<div class="buttonrow">
 		<?php echo $form->end('Update');?>
