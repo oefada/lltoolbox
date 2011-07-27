@@ -245,10 +245,15 @@ function confirmSubmit()
 			<td style="padding-top:10px;padding-bottom:10px;"><strong>Payment Amount</strong></td>
 			<td style="padding-top:10px;padding-bottom:10px;"><input type="text" name="data[PaymentDetail][paymentAmount]" id="PaymentDetailPaymentAmount" value="<?php echo $ticket['Ticket']['totalBillingAmount'];?>" /><?php echo $form->error('paymentAmount') ?>
 			( Includes Auction Fee 
-			<?php if ($ticket['UserPromo']['Promo'] && $ticket['UserPromo']['Promo']['applied']): ?>
+			<?php if (!empty($ticket['UserPromo']['Promo']) && $ticket['UserPromo']['Promo']['applied']): ?>
 			+  Promo Code Discount 
 			<?php endif; ?>
 			)
+			<?php if (!empty($credit['CreditTracking']['balance'])): ?>
+			<span style="color: red">
+				( Customer has credit on file of $<?= number_format($credit['CreditTracking']['balance'],2) ?> )
+			</span>
+			<?php endif; ?>
 			</td>
 		</tr>
 	</table>

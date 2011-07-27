@@ -8,7 +8,7 @@ class PaymentDetailsController extends AppController {
 
 	var $name = 'PaymentDetails';
 	var $helpers = array('Html', 'Form', 'Ajax', 'Text', 'Layout', 'Number');
-	var $uses = array('PaymentDetail', 'Ticket', 'UserPaymentSetting', 'PpvNotice', 'Country', 'Track', 'TrackDetail', 'User');
+	var $uses = array('PaymentDetail', 'Ticket', 'UserPaymentSetting', 'PpvNotice', 'Country', 'Track', 'TrackDetail', 'User','creditTracking');
 
 	function index() {
 		$this->PaymentDetail->recursive = 0;
@@ -24,7 +24,6 @@ class PaymentDetailsController extends AppController {
 
 	function add() {
 		if (!empty($this->data)) {
-			
 			if ($this->data['PaymentDetail']['paymentProcessorId'] == 5) {
 				// for wire transfers only
 				// --------------------------------------------------------
@@ -195,7 +194,7 @@ class PaymentDetailsController extends AppController {
 		$ticket['Ticket']['totalBillingAmount'] = $ticket['Ticket']['billingPrice'];
 
 		$ticket['UserPromo'] = $this->Ticket->getPromoGcCofData($ticket['Ticket']['ticketId'], $ticket['Ticket']['billingPrice']);
-		if ($ticket['UserPromo']['Promo'] && $ticket['UserPromo']['Promo']['applied']) {
+		if (!empty($ticket['UserPromo']['Promo']) && !empty($ticket['UserPromo']['Promo']['applied'])) {
 			$ticket['Ticket']['totalBillingAmount'] -= $ticket['UserPromo']['Promo']['totalAmountOff'];
 		}
 		$fee = $this->Ticket->getFeeByTicket($ticket['Ticket']['ticketId']);
@@ -234,7 +233,10 @@ class PaymentDetailsController extends AppController {
 			$paymentProcessors = array(1 => 'NOVA', 5 => 'WIRE TRANSFER');
 		}
 
+		$credit = $this->creditTracking->find('first', array('conditions' => array('CreditTracking.userId' => $ticket['Ticket']['userId'])));
+		
 		$this->set('ticket', $ticket);
+		$this->set('credit',$credit);
 		$this->set('countries', $this->Country->find('list'));
 		$this->set('selectExpMonth', $selectExpMonth);
 		$this->set('selectExpYear', $selectExpYear);

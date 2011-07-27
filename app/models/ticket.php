@@ -23,7 +23,11 @@ class Ticket extends AppModel {
 						'Reservation' => array('foreignKey' => 'ticketId'),
 						'Cancellation' => array('foreignKey' => 'ticketId')
 						);
-				   		
+
+	var $validate = array(
+		'totalBillingAmount' => array('rule'=> array('money','left'))
+	);	
+	
 	function beforeFind($options) {
 	    if (!is_array($options['fields']) && strpos($options['fields'], 'COUNT(*)') !== false) {
 	        $options['recursive'] = -1;
@@ -227,7 +231,7 @@ class Ticket extends AppModel {
 			}
 		}
 
-		$data['applied'] = ($data['Promo']['applied'] || $data['GiftCert']['applied'] || $data['Cof']['applied']) ? 1 : 0;
+		$data['applied'] = (!empty($data['Promo']['applied']) || !empty($data['GiftCert']['applied']) || $data['Cof']['applied']) ? 1 : 0;
 		$data['final_price'] = $ticketPrice;
 		return $data;
 	}
