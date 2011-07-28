@@ -233,7 +233,7 @@ class PaymentDetailsController extends AppController {
 			$paymentProcessors = array(1 => 'NOVA', 5 => 'WIRE TRANSFER');
 		}
 
-		$credit = $this->creditTracking->find('first', array('conditions' => array('CreditTracking.userId' => $ticket['Ticket']['userId'])));
+		$credit = $this->creditTracking->find('first', array('order' => array('CreditTracking.creditTrackingId DESC'), 'conditions' => array('CreditTracking.userId' => $ticket['Ticket']['userId'])));
 		
 		$this->set('ticket', $ticket);
 		$this->set('credit',$credit);
