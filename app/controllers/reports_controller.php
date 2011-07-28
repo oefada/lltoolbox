@@ -1090,12 +1090,14 @@ class ReportsController extends AppController {
                            PaymentDetail.ppExpYear,
                            SUM(PaymentDetail.ppBillingAmount) as revenue,
                            OfferType.offerTypeName,
-                           IF(Ticket.siteId = 2, ROUND((SUM(PaymentDetail.ppBillingAmount) / offerFamily.retailValue * 100)), ROUND((SUM(PaymentDetail.ppBillingAmount) / offerLuxuryLink.retailValue * 100))) as percentOfRetail,
+
+						   IF(Ticket.siteId = 2, ROUND((SUM(PaymentDetail.ppBillingAmount) / (offerFamily.retailValue + IF(offerFamily.isFlexPackage = 1, (Ticket.numNights - offerFamily.roomNights) * offerFamily.flexRetailPricePerNight, 0)) * 100))
+						                       , ROUND((SUM(PaymentDetail.ppBillingAmount) / (offerLuxuryLink.retailValue + IF(offerLuxuryLink.isFlexPackage = 1, (Ticket.numNights - offerLuxuryLink.roomNights) * offerLuxuryLink.flexRetailPricePerNight, 0)) * 100))
+						   ) AS percentOfRetail,
+
+
                            PaymentProcessor.paymentProcessorName,
                            ExpirationCriteria.expirationCriteriaId,
-                           #Track.applyToMembershipBal,
-                           /*PricePoint.validityStart,
-                           PricePoint.validityEnd,*/
 													 SchedulingMaster.pricePointId,
 													 SchedulingMaster.packageId,
 						   Promo.amountOff,
@@ -1115,7 +1117,6 @@ class ReportsController extends AppController {
                            LEFT JOIN paymentProcessor AS PaymentProcessor USING (paymentProcessorId)
                            LEFT JOIN userPaymentSetting AS UserPaymentSetting ON (UserPaymentSetting.userPaymentSettingId = PaymentDetail.userPaymentSettingId)
                            LEFT JOIN package AS Package ON Package.packageId = Ticket.packageId
-            /*               LEFT JOIN pricePoint PricePoint ON PricePoint.packageId = Package.packageId*/
                            LEFT JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Ticket.packageId)
                            LEFT JOIN client as Client ON(Client.clientId = ClientLoaPackageRel.clientId)
                            LEFT JOIN expirationCriteria AS ExpirationCriteria USING(expirationCriteriaId)
