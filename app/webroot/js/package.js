@@ -26,9 +26,11 @@ $().ready(function() {
         
         $('select#sites').change(function() {
                 $('div#familyAgeRanges').toggle();
-                $('#showFlex').toggle();
+								// flex packs enabled for fg
+                //$('#showFlex').toggle();
                 if ($(this).val() == 2 && $('.flexOptions').not(':hidden')) {
-                    $('.flexOptions').hide();
+                    //$('.flexOptions').hide();
+
                 }
                 else if ($(this).val() == 1 && $('#isFlexPackage').is(':checked') && $('.flexOptions').is(':hidden')) {
                     $('.flexOptions').show();
@@ -44,7 +46,7 @@ $().ready(function() {
                 $('tr.flexOptions').toggle();
             });
         });
-        
+
         //show/hide age ranges
         $('input#PackageSitesFamily').change(function() {
                 $('div#familyAgeRanges').toggle();
