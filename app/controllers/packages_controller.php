@@ -897,100 +897,103 @@ class PackagesController extends AppController {
 
     function summary($clientId, $packageId) {
 
-        // client
-        $client = $this->Client->find('first', array('conditions' => array('Client.clientId' => $clientId)));
-        $this->set('client', $client);
-        $package = $this->Package->getPackage($packageId);
-        $isMultiClientPackage = (count($package['ClientLoaPackageRel']) > 1) ? true : false;
-        $this->set('isMultiClientPackage', $isMultiClientPackage);
+			// client
+			$client = $this->Client->find('first', array('conditions' => array('Client.clientId' => $clientId)));
+			$this->set('client', $client);
+			$package = $this->Package->getPackage($packageId);
+			$isMultiClientPackage = (count($package['ClientLoaPackageRel']) > 1) ? true : false;
+			$this->set('isMultiClientPackage', $isMultiClientPackage);
 
-        if (!empty($package['Package']['externalOfferUrl'])) {
-            $this->redirect('/clients/'.$clientId.'/packages/edit/'.$packageId);
-        }
-
-        if (!empty($this->data)) {
-           $package['Package']['notes'] = $this->data['Package']['notes'];
-           $this->Package->save($package);
-           $this->redirect('/clients/'.$clientId.'/packages/summary/'.$packageId);
-        }
-        //debug($package);
-        $history = $this->Package->getHistory($packageId);
-        $this->set('history', $history);
-        if ($roomNights = $this->LoaItem->getRoomNights($packageId, $isMultiClientPackage)) {
-            if (count($roomNights[0]['LoaItems'][0]['LoaItemRate']) > 1) {
-                $this->set('isDailyRates', true);
-                $dailyRatesMap = array('w0' => 'Su',
-                                       'w1' => 'M',
-                                       'w2' => 'T',
-                                       'w3' => 'W',
-                                       'w4' => 'Th',
-                                       'w5' => 'F',
-                                       'w6' => 'S');
-                for ($i=1; $i<=count($roomNights[0]['LoaItems'][0]['LoaItemRate']); $i++) {
-                    $labelArr = array();
-                    foreach($dailyRatesMap as $field => $label) {
-                        if ($roomNights[0]['LoaItems'][0]['LoaItemRate'][$i-1]['LoaItemRate'][$field] == 1) {
-                            $labelArr[] = $label;
-                        }
-                    }
-                    $roomNights[0]['LoaItems'][0]['LoaItemRate'][$i-1]['LoaItemRate']['rateLabel'] = implode('/', $labelArr);
-                }
-            }
-            if ($package['Package']['isTaxIncluded'] == 1) {
-                if ($taxes = $this->LoaItem->Fee->getFeesForRoomType($roomNights[0]['LoaItems'][0]['LoaItem']['loaItemId'])) {
-                    $taxArr = array();
-                    foreach ($taxes as $tax) {
-                        $taxArr[] = $tax['Fee']['feeName'];
-                    }
-                    $this->set('taxLabel', implode(' and ', $taxArr));
-                }
-            }
-        }
-
-		// blackout validity
-		$pkgVbDates = $this->Package->getPkgVbDates($packageId);
-        if (!empty($pkgVbDates)) {
-			if (empty($pkgVbDates['BlackoutDays'])) {
-				$pkgVbDates['BlackoutDays'] = array();
+			if (!empty($package['Package']['externalOfferUrl'])) {
+				$this->redirect('/clients/'.$clientId.'/packages/edit/'.$packageId);
 			}
-            $this->set('validity', $pkgVbDates['ValidRanges']);
-            $this->set('blackout', $pkgVbDates['BlackoutDays']);
+
+			if (!empty($this->data)) {
+				 $package['Package']['notes'] = $this->data['Package']['notes'];
+				 $this->Package->save($package);
+				 $this->redirect('/clients/'.$clientId.'/packages/summary/'.$packageId);
+			}
+
+			//debug($package);
+			$history = $this->Package->getHistory($packageId);
+			$this->set('history', $history);
+			if ($roomNights = $this->LoaItem->getRoomNights($packageId, $isMultiClientPackage)) {
+					if (count($roomNights[0]['LoaItems'][0]['LoaItemRate']) > 1) {
+							$this->set('isDailyRates', true);
+							$dailyRatesMap = array('w0' => 'Su',
+																		 'w1' => 'M',
+																		 'w2' => 'T',
+																		 'w3' => 'W',
+																		 'w4' => 'Th',
+																		 'w5' => 'F',
+																		 'w6' => 'S');
+							for ($i=1; $i<=count($roomNights[0]['LoaItems'][0]['LoaItemRate']); $i++) {
+									$labelArr = array();
+									foreach($dailyRatesMap as $field => $label) {
+											if ($roomNights[0]['LoaItems'][0]['LoaItemRate'][$i-1]['LoaItemRate'][$field] == 1) {
+													$labelArr[] = $label;
+											}
+									}
+									$roomNights[0]['LoaItems'][0]['LoaItemRate'][$i-1]['LoaItemRate']['rateLabel'] = implode('/', $labelArr);
+							}
+					}
+					if ($package['Package']['isTaxIncluded'] == 1) {
+							if ($taxes = $this->LoaItem->Fee->getFeesForRoomType($roomNights[0]['LoaItems'][0]['LoaItem']['loaItemId'])) {
+									$taxArr = array();
+									foreach ($taxes as $tax) {
+											$taxArr[] = $tax['Fee']['feeName'];
+									}
+									$this->set('taxLabel', implode(' and ', $taxArr));
+							}
+					}
         }
 
-		// blackout weekday
-		$bo_weekdays = $this->Package->getBlackoutWeekday($packageId);
-		$bo_weekdays_arr = array();
-		foreach (explode(',', $bo_weekdays) as $w) {
-			$bo_weekdays_arr[] = $this->Package->pluralize($w);
-		}
-		$this->set('bo_weekdays', implode('<br />', $bo_weekdays_arr));
+			// blackout validity
+			$pkgVbDates = $this->Package->getPkgVbDates($packageId);
+			if (!empty($pkgVbDates)) {
+				if (empty($pkgVbDates['BlackoutDays'])) {
+					$pkgVbDates['BlackoutDays'] = array();
+				}
+				$this->set('validity', $pkgVbDates['ValidRanges']);
+				$this->set('blackout', $pkgVbDates['BlackoutDays']);
+			}
 
-        $this->set('ratePeriods', $roomNights);
-        foreach($package['ClientLoaPackageRel'] as &$packageClient) {
-            $packageClient['Inclusions'] = $this->LoaItem->getPackageInclusions($packageId, $packageClient['ClientLoaPackageRel']['loaId']);
-        }
+			// blackout weekday
+			$bo_weekdays = $this->Package->getBlackoutWeekday($packageId);
+			$bo_weekdays_arr = array();
+			foreach (explode(',', $bo_weekdays) as $w) {
+				$bo_weekdays_arr[] = $this->Package->pluralize($w);
+			}
+			$this->set('bo_weekdays', implode('<br />', $bo_weekdays_arr));
 
-        // low price guarantees
-        $lowPriceGuarantees = $this->getRatePeriodsInfo($packageId);
-        $this->set('lowPriceGuarantees', $lowPriceGuarantees);
+			$this->set('ratePeriods', $roomNights);
+			foreach($package['ClientLoaPackageRel'] as &$packageClient) {
+					$packageClient['Inclusions'] = $this->LoaItem->getPackageInclusions($packageId, $packageClient['ClientLoaPackageRel']['loaId']);
+			}
 
-        // price points
-        $pricePoints = $this->Package->PricePoint->find('all', array('conditions' => array('PricePoint.packageId' => $packageId,'inactive'=>0)));
-        $this->set('pricePoints', $pricePoints);
+			// low price guarantees
+			$lowPriceGuarantees = $this->getRatePeriodsInfo($packageId);
+			$this->set('lowPriceGuarantees', $lowPriceGuarantees);
 
-		// currency
-		$currencyCodes = $this->Package->Currency->find('list', array('fields' => 'currencyCode'));
-		$this->set('currencyCodes', $currencyCodes);
+      // price points
+      $pricePoints = $this->Package->PricePoint->find('all', array('conditions' => array('PricePoint.packageId' => $packageId,'inactive'=>0)));
+      $this->set('pricePoints', $pricePoints);
 
-		switch($package['Package']['siteId']) {
-			case 2:
-			   $this->set('siteUrl', 'www.familygetaway.com');
-			   break;
-			case 1:
-			default:
-			   $this->set('siteUrl', 'www.luxurylink.com');
-		}
-        $this->set('package', $package);
+			// currency
+			$currencyCodes = $this->Package->Currency->find('list', array('fields' => 'currencyCode'));
+			$this->set('currencyCodes', $currencyCodes);
+
+			switch($package['Package']['siteId']) {
+				case 2:
+					 $this->set('siteUrl', 'www.familygetaway.com');
+					 break;
+				case 1:
+				default:
+					 $this->set('siteUrl', 'www.luxurylink.com');
+			}
+
+      $this->set('package', $package);
+
     }
 
     function edit_package($clientId, $packageId) {
@@ -1732,7 +1735,8 @@ class PackagesController extends AppController {
     }
 
 	function edit_publishing($clientId, $packageId) {
-        if (!empty($this->data)) {
+
+		if (!empty($this->data)){
 			$this->autoRender = false;
 			$this->Package->save($this->data['Package']);
 			if (isset($this->data['Inclusions']['order']) && !empty($this->data['Inclusions']['order'])) {
@@ -1750,18 +1754,21 @@ class PackagesController extends AppController {
 					$this->Package->PackageLoaItemRel->save($inc_save);
 				}
 			}
-            echo 'ok';
-        } else {
-            $package = $this->Package->getPackage($packageId);
-            $isMultiClientPackage = (count($package['ClientLoaPackageRel']) > 1) ? true : false;
-            $this->set('isMultiClientPackage', $isMultiClientPackage);
+
+      echo 'ok';
+
+    } else {
+
+			$package = $this->Package->getPackage($packageId);
+			$isMultiClientPackage = (count($package['ClientLoaPackageRel']) > 1) ? true : false;
+			$this->set('isMultiClientPackage', $isMultiClientPackage);
 			$this->set('packageId', $packageId);
 			$this->set('clientId', $clientId);
-            $this->set('package', $package);
+      $this->set('package', $package);
 			$inclusions = $this->Package->getInclusions($packageId);
 
 			if ($package['Package']['isTaxIncluded']) {
-            	$roomNights = $this->LoaItem->getRoomNights($packageId);
+       	$roomNights = $this->LoaItem->getRoomNights($packageId);
 				$taxes_fees = array();
 				$rn = $roomNights[0];
 				foreach ($rn['Fees'] as $fee) {
@@ -1775,47 +1782,50 @@ class PackagesController extends AppController {
 			}
 
 			// get roomGradeName for this package
-	        $this->Package->PackageLoaItemRel->recursive = 2;
-	        $loaItems = $this->Package->PackageLoaItemRel->find('all', array('conditions' => array('Package.packageId' => $packageId, 'LoaItem.loaItemTypeId' => array(1,12,22))));
-            $roomGrades = array();
-            foreach($loaItems as $loaItem) {
-            	if ($loaItem['LoaItem']['RoomGrade']['roomGradeName'] != '') {
-                	$roomGrades[] = $loaItem['LoaItem']['RoomGrade']['roomGradeName'];
-                }
-            }
-	        $roomGradeName = implode(', ', $roomGrades);
+	    $this->Package->PackageLoaItemRel->recursive = 2;
+	    $loaItems = $this->Package->PackageLoaItemRel->find('all', array('conditions' => array('Package.packageId' => $packageId, 'LoaItem.loaItemTypeId' => array(1,12,22))));
+      $roomGrades = array();
+			foreach($loaItems as $loaItem) {
+				if ($loaItem['LoaItem']['RoomGrade']['roomGradeName'] != '') {
+					$roomGrades[] = $loaItem['LoaItem']['RoomGrade']['roomGradeName'];
+				}
+			}
+			$roomGradeName = implode(', ', $roomGrades);
 			$this->set('roomGrade', $roomGradeName);
 
-            if (!$isMultiClientPackage) {
-                $inc = $this->LoaItem->getPackageInclusions($packageId, $package['ClientLoaPackageRel'][0]['ClientLoaPackageRel']['loaId']);
-                $roomNightDescription = $loaItems[0]['LoaItem']['merchandisingDescription'];
+			if (!$isMultiClientPackage) {
+				$inc = $this->LoaItem->getPackageInclusions($packageId, $package['ClientLoaPackageRel'][0]['ClientLoaPackageRel']['loaId']);
+				$roomNightDescription = $loaItems[0]['LoaItem']['merchandisingDescription'];
 
-                foreach ($inc as $i) {
-                    if (isset($i['LoaItem']['PackagedItems'])) {
-                        $group_items = array();
-                        foreach ($i['LoaItem']['PackagedItems'] as $gitems) {
-                            if (!in_array($gitems['LoaItem']['loaItemTypeId'], array(1,12))) {
-                                $group_items[] = $gitems['LoaItem']['merchandisingDescription'];
-                            } else {
-                                $roomNightDescription = $gitems['LoaItem']['merchandisingDescription'];
-                            }
-                        }
-                        $inclusions[] = array(
-                                'Group' => 1,
-                                'LoaItem' => $group_items,
-                                'PackageLoaItemRel' => array('packageLoaItemRelId' => $i['PackageLoaItemRel']['packageLoaItemRelId'])
-                        );
-                    }
-                }
+				foreach ($inc as $i) {
+					if (isset($i['LoaItem']['PackagedItems'])) {
+						$group_items = array();
+						foreach ($i['LoaItem']['PackagedItems'] as $gitems) {
+							if (!in_array($gitems['LoaItem']['loaItemTypeId'], array(1,12))) {
+								$group_items[] = $gitems['LoaItem']['merchandisingDescription'];
+							} else {
+								$roomNightDescription = $gitems['LoaItem']['merchandisingDescription'];
+							}
+						}
+						$inclusions[] = array(
+							'Group' => 1,
+							'LoaItem' => $group_items,
+							'PackageLoaItemRel'=>array('packageLoaItemRelId' => $i['PackageLoaItemRel']['packageLoaItemRelId'])
+						);
+					}
+				}
 
-                $roomNightDescription = str_replace("\n", '', $roomNightDescription);
-                $this->set('roomNightDescription', $roomNightDescription);
-                $this->set('items', $inclusions);
-                $packageTitle = ($package['Package']['siteId'] == 1 && empty($package['Package']['packageTitle'])) ? $roomGradeName . ' Package for ' . $package['Package']['numGuests'] . ' Travelers' : $package['Package']['packageTitle'];
-                $this->set('packageTitle', $packageTitle);
-            }
-        }
+				$roomNightDescription = str_replace("\n", '', $roomNightDescription);
+				$this->set('roomNightDescription', $roomNightDescription);
+				$this->set('items', $inclusions);
+				//$packageTitle = ($package['Package']['siteId'] == 1 && empty($package['Package']['packageTitle'])) ? $roomGradeName . ' Package for ' . $package['Package']['numGuests'] . ' Travelers' : $package['Package']['packageTitle'];
+				$packageTitle = (empty($package['Package']['packageTitle'])) ? $roomGradeName . ' Package for ' . $package['Package']['numGuests'] . ' Travelers' : $package['Package']['packageTitle'];
+				$this->set('packageTitle', $packageTitle);
+      }
+
     }
+
+  }
 
 	function getTaxesText($taxes) {
 		$taxes_fees_text = '';
