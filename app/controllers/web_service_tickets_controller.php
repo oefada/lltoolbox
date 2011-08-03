@@ -1203,7 +1203,8 @@ class WebServiceTicketsController extends WebServicesController
 				// general customer template
 				include('../vendors/email_msgs/notifications/26_general_customer_template.html');
 				$emailSubject = "Your $siteName Booking is Confirmed - $clientNameP";
-				$emailFrom = ($isAuction) ? "$siteDisplay<resconfirm@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";dfksadjfkjkj$emailReplyTo = ($isAuction) ? "resconfirm@$siteEmail" : "reservations@$siteEmail";
+				$emailFrom=($isAuction)?"$siteDisplay<resconfirm@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
+				$emailReplyTo = ($isAuction) ? "resconfirm@$siteEmail" : "reservations@$siteEmail";
 				break;
 			case 23:
 				// send out res confirmation to client also as copy
