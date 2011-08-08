@@ -397,7 +397,14 @@ if (empty($pricePoints)) {
 // get environment and link for preview
 if ($_SERVER['ENV']=="staging"){
 //if (strstr($_SERVER['HTTP_HOST'], 'stage-toolbox')) {
-	$previewHost = 'http://stage-luxurylink.luxurylink.com';
+
+	if (in_array('family', $package['Package']['sites'])) {
+	// TODO: need to make this work for other environments as well
+		$previewHost = 'http://stage-family.luxurylink.com'; 
+	}else {
+		$previewHost = 'http://stage-luxurylink.luxurylink.com';
+	}
+
 }else if ($_SERVER['ENV']=="development"){
 //} elseif (strstr($_SERVER['HTTP_HOST'], 'toolboxdev')) {
 	$previewHost = 'http://' . str_replace('toolboxdev', 'lldev', $_SERVER['HTTP_HOST']);
@@ -413,7 +420,7 @@ if ($_SERVER['ENV']=="staging"){
 ?>
 
 <div style="position:relative; padding-bottom:20px;">
-<div style="position:absolute;right:0px;"><?=$html->link('<span>Preview Package</span>', "{$previewHost}/luxury-hotels/preview.html?packageId={$package['Package']['packageId']}&clid={$clientId}&preview=package", array('target' => '_blank', 'class' => 'button'), null, false); ?></div>
+<div style="position:absolute;right:0px;"><?=$html->link('<span>Previe Package</span>', "{$previewHost}/luxury-hotels/preview.html?packageId={$package['Package']['packageId']}&clid={$clientId}&preview=package", array('target' => '_blank', 'class' => 'button'), null, false); ?></div>
 </div>
 
 <a name="form-price-points">
