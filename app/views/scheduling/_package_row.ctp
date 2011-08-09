@@ -118,7 +118,8 @@ foreach($package['Scheduling'] as $k => $master):
 ?>
 <div class='masterRow'>
 <?= $this->renderElement('../scheduling/_days', array('grid' => true)) ?>
-<? foreach($master['SchedulingInstance'] as $instance):
+<?  $firstInstanceDisplayed = false;
+    foreach($master['SchedulingInstance'] as $instance):
 
 	$startDate = $instance['startDate'];
 	$startDateOnly = explode(' ', $startDate);
@@ -165,7 +166,8 @@ foreach($package['Scheduling'] as $k => $master):
             <?=$number->currency($master['SchedulingMaster']['retailValue'])?>
         <?php else: ?>
             <?=$number->currency($master['PricePoint']['retailValue'])?><br />
-            <?php echo $master['PricePoint']['name']; ?>
+            <?php echo $master['PricePoint']['name']; ?><br />
+            Price Point ID: <?php echo $master['PricePoint']['pricePointId']; ?>
         <?php endif; ?>		
 		
 	<?php
@@ -179,6 +181,23 @@ foreach($package['Scheduling'] as $k => $master):
 	?>
 		<div id="schedulingInstance<?=$instance['schedulingInstanceId']?>"style="width: <?=$width?>%; left: <?=$left?>%"<?=$class?> onclick="Modalbox.show('/scheduling_masters/edit/<?=$instance['schedulingMasterId']?>/instanceId:<?php echo $instance['schedulingInstanceId']; ?>', {title: 'Edit Scheduling Master'});">	
 		Iteration 
+
+	<? // 08/03/11 jwoods - added info to Auction cells 
+	   // day of month is needed to skip partial cells from previous month
+	   if (!$firstInstanceDisplayed && date('j', strtotime($startDate)) < 20) {
+	   	$firstInstanceDisplayed = true;
+	?>
+		<br />
+		<?php if (empty($master['SchedulingMaster']['pricePointId'])): ?>
+		    <?=$number->currency($master['SchedulingMaster']['retailValue'])?>
+		<?php else: ?>
+		    <?=$number->currency($master['PricePoint']['retailValue'])?><br />
+		    <?php echo $master['PricePoint']['name']; ?><br />
+		    Price Point ID: <?php echo $master['PricePoint']['pricePointId']; ?>
+		<?php endif; ?>	
+        <? } ?>
+
+
 	<?php
 		$prototip->tooltip('schedulingInstance'.$instance['schedulingInstanceId'], array('ajax' =>
 		 																		array('url' => '/scheduling_instances/performanceTooltip/'.$instance['schedulingInstanceId'], 
