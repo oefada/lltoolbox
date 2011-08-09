@@ -259,6 +259,10 @@ class PackagesController extends AppController {
 			$clientLoaDetails[$key] = $loa;
 			$clientLoaDetails[$key]['ClientLoaPackageRel'] = $clientLoaPackageRel;
 			$clientLoaDetails[$key]['ClientLoaPackageRel']['Track'] = $track['Track'];
+
+			// ticket 2263
+			$this->data['Package']['endDate'] = $loa['Loa']['endDate'];
+
 		endforeach;
 
 		$this->set('clientLoaDetails', $clientLoaDetails);
@@ -1174,7 +1178,9 @@ class PackagesController extends AppController {
                 }
             }
             elseif ($fieldName == 'numNights') {
-                if ($data['Package']['isFlexPackage'] == 1) {
+                if (intval($data['Package']['numNights']) == 0) {
+					$errors[] = 'Total/Default Nights must be greater than 0.';
+				} elseif ($data['Package']['isFlexPackage'] == 1) {
                     if ($data['Package']['numNights'] < $data['Package']['flexNumNightsMin'] || $data['Package']['numNights'] > $data['Package']['flexNumNightsMax']) {
                         $errors[] = 'Total/Default Nights must be within the Min/Max range for the Flex Package.';
                     }
@@ -2118,9 +2124,18 @@ class PackagesController extends AppController {
 			$this->data['PricePoint']['validityDisclaimer'] = Sanitize::escape($this->data['PricePoint']['validityDisclaimer']);
 
             // handle percentReservePrice
-            if ($this->data['auctionOverride'] || $this->data['buynowOverride']) {
-              $this->data['PricePoint']['percentReservePrice'] = $this->data['guaranteedPercent'];
+            // 08/03/11 jwoods - ticket 2257 - switched to highest "Guaranteed Percent of Retail"
+            // if ($this->data['auctionOverride'] || $this->data['buynowOverride']) {
+            //   $this->data['PricePoint']['percentReservePrice'] = $this->data['guaranteedPercent'];
+            // }
+            $maxGuaranteedPercent = 0;
+            foreach ($this->data['loaItemRatePeriodIds'] as $loaItemRatePeriodId) {
+				$checkPercent = $this->data['gpr-' . $loaItemRatePeriodId];
+				if ($checkPercent > $maxGuaranteedPercent) {
+					$maxGuaranteedPercent = $checkPercent;
+				}
             }
+            $this->data['PricePoint']['percentReservePrice'] = $maxGuaranteedPercent;
 
             // edit pricePoint
             $pricePointId = $this->data['PricePoint']['pricePointId'];
