@@ -165,12 +165,12 @@ echo $javascript->link('jquery/jquery-autocomplete/jquery.autocomplete'); ?>
 		var inclusions = '';
 		var inclusion_ids = '';
 		// 
-		if (true || siteId == 1) {
+		if (siteId == 1) {
 			inclusions += "<p><b>Package for " + numGuests + " includes:</b></p>\n";
 			inclusions += "<ul>\n";
 			inclusions += '    <li>'+ roomNightDescription +"</li>\n";
 		} else if (siteId == 2) {
-			inclusions += "<p><b>This "+ numNights  +"-night package sleeps up to "+ numGuests +":</b></p>\n";
+			inclusions += "<p><b>Package sleeps up to "+ numGuests +":</b></p>\n";
 			inclusions += "<ul>\n";
 			if (maxAdults == numGuests) {
 				inclusions += "    <li>Valid for all ages</li>\n";
