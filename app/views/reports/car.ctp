@@ -61,7 +61,7 @@ Event.observe(window, 'load', function() {
 	?>
 	</div>
 	<div style="float: left; clear: none; display: none" id="clientSearchSpinner"><img src="/img/spinner_small.gif"></div>
-	<div style="float: right; clear: none;" id="siteSelect"><? echo $form->select('site', array_merge($sites, array('combined'=>'Combined')), null, null, false); ?></div>
+	<div style="float: right; clear: none;" id="siteSelect"><? echo $form->select('site', array_merge(array('combined'=>'Combined'), $sites), null, null, false); ?></div>
 </div>
 
 <?php if(isset($clientDetails)):?>
