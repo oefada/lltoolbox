@@ -8,9 +8,9 @@ class PaymentDetail extends AppModel {
 	var $useTable = 'paymentDetail';
 	var $primaryKey = 'paymentDetailId';
 	var $actsAs = array('Logable');
-	var $validate = array(
+	/*var $validate = array(
 		'paymentAmount' => array('rule'=> array('money','left'))
-	);	
+	);*/	
 	
 	var $belongsTo = array('Ticket' => array('foreignKey' => 'ticketId'),
 						   'PaymentType' => array('foreignKey' => 'paymentTypeId'),
