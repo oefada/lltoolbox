@@ -399,7 +399,6 @@ if ($_SERVER['ENV']=="staging"){
 //if (strstr($_SERVER['HTTP_HOST'], 'stage-toolbox')) {
 
 	if (in_array('family', $package['Package']['sites'])) {
-	// TODO: need to make this work for other environments as well
 		$previewHost = 'http://stage-family.luxurylink.com'; 
 	}else {
 		$previewHost = 'http://stage-luxurylink.luxurylink.com';
