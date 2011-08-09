@@ -3751,6 +3751,24 @@ class ReportsController extends AppController {
 		$this->set('pendingRecordCount', $pending['pendingRecordCount']);
 		$this->set('messages', $this->CarDataImporter->getMessages());
 	}
+	
+	/**
+	 * 
+	 */
+	function experiments($experiment_id = null)
+	{
+		$site_id = (isset($_POST['site_id']) AND $_POST['site_id'] > 0) ? $_POST['site_id'] : null; 
+		$experiments = array();
+		$this->loadModel('Experiment');
+
+		if (is_null($experiment_id)) { // list all experiments
+			$experiments = $this->Experiment->listExperiments($site_id);
+			$this->set('experiments', $experiments);
+		} else { // display experiment results
+			$results = $this->Experiment->getResults((int) $experiment_id);
+			$this->set('results', $results);
+		}
+	}
 }
 
 

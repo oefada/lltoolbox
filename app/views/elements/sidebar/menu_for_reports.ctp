@@ -5,6 +5,7 @@
 	<li><?=$html->link('Bids', 'bids')?></li>
 	<li><?=$html->link('Client Activity Report (internal use)', 'car')?></li>
 	<li><?=$html->link('Client Management', 'cmr')?></li>
+	<li><?=$html->link('Experiments', 'experiments')?></li>
 	<li><?=$html->link('Fixed Price', 'fixed_price')?></li>
 	<li><?=$html->link('Inventory Management', 'imr')?></li>
 	<li><?=$html->link('Offer Search', 'offer_search')?></li>
