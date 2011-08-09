@@ -241,6 +241,8 @@
         <br /><br /><br />
         
 		<?php if ($isEdit) :?>
+
+		
 		<!-- VALIDITY DISCLAIMER -->
         <h2>Validity Disclaimer:</h2>
 		<table>
@@ -259,6 +261,23 @@
 			</tr>
     	</table>
 		<?php endif;?>
+
+		<? 
+		
+		if (false && $package['Package']['isFlexPackage'] == 1){
+			echo "<div style='color:red;'>This is a Flex pack. If Flex Per Night Retail or Per Night Price is not set, you will not be able to save.</div>";
+		}
+
+		?>
+
+		<div id="errorsContainer_repeat" style="display:none;color:red;">
+				Please fix the following errors:<br />
+				<ol>
+						<div id="errors_repeat">&nbsp;</div>
+				</ol>
+		</div>
+
+
 
         <!-- SUBMIT BUTTON -->
         <input type="button" value="Save Changes" onclick="submitForm('form-price-points');" />
