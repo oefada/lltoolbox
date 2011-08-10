@@ -3769,6 +3769,20 @@ class ReportsController extends AppController {
 			$this->set('results', $results);
 		}
 	}
+	
+	/**
+	 * Ajax method to enable/disable an experiment
+	 * 
+	 * @access	public
+	 * @param	int
+	 * @param	string 
+	 */
+	function toggle_experiment($experiment_id, $status)
+	{
+		$this->autoRender = false;
+		$this->loadModel('Experiment');
+		$this->Experiment->toggle($experiment_id, $status);
+	}
 }
 
 

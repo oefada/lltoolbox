@@ -6,6 +6,13 @@ class Experiment extends AppModel
 	public $useTable = 'experiments';
 	public $displayField = 'name';
 
+	/**
+	 * Get a list of existing experiments
+	 * 
+	 * @access	public
+	 * @param	int
+	 * @return	array
+	 */
 	public function listExperiments($site_id = null)
 	{
 		$params = array(
@@ -27,7 +34,10 @@ class Experiment extends AppModel
 				'Experiment.id',
 				'Experiment.name',
 				'Site.siteId',
-				'Site.siteName'
+				'Site.siteName',
+				'SitesExperiments.enabled',
+				'SitesExperiments.created',
+				'SitesExperiments.last_test'
 			),
 			'order' => array('Experiment.id')
 		);
@@ -38,6 +48,27 @@ class Experiment extends AppModel
 		return $this->find('all', $params);
 	}
 	
+	/**
+	 * Enables or disables a running experiment
+	 * 
+	 * @access	public
+	 * @param	int
+	 * @param	string
+	 */
+	public function toggle($experiment_id, $status)
+	{
+		$enabled = ($status == 'false') ? '0' : '1';
+		$sql = "UPDATE sites_experiments SET enabled = $enabled WHERE experiment_id = $experiment_id";
+		$this->query($sql);
+	}
+	
+	/**
+	 * Builds a nice results array with calculations
+	 * 
+	 * @access	public
+	 * @param	int
+	 * @return	array
+	 */
 	public function getResults($experiment_id)
 	{
 		$results = array();
@@ -70,6 +101,13 @@ class Experiment extends AppModel
 		return $results;
 	}
 
+	/**
+	 * Gets the total number of tests run for an experiment
+	 * 
+	 * @access	public
+	 * @param	int
+	 * @return	int
+	 */
 	private function getTotalTestsForExperimentId($experiment_id)
 	{
 		$sql = "SELECT COUNT(1) AS TOTAL_TESTS FROM users_treatments WHERE experiment_id = $experiment_id";
@@ -77,6 +115,13 @@ class Experiment extends AppModel
 		return (int) $total_tests[0][0]['TOTAL_TESTS'];
 	}
 	
+	/**
+	 * Gets the total number of conversions for an experiment
+	 * 
+	 * @access	public
+	 * @param	int
+	 * @return	int
+	 */
 	private function getTotalConversionsForExperimentId($experiment_id)
 	{
 		$sql = "SELECT COUNT(1) AS TOTAL_CONVERSIONS FROM users_treatments WHERE experiment_id = $experiment_id AND completed = 1";
@@ -84,6 +129,13 @@ class Experiment extends AppModel
 		return (int) $total_conversions[0][0]['TOTAL_CONVERSIONS'];		
 	}
 	
+	/**
+	 * Gets the total number of default (control) treatments for an experiment
+	 * 
+	 * @access	public
+	 * @param	int
+	 * @return	int
+	 */
 	private function getDefaultTreatmentsTestedForExperimentId($experiment_id)
 	{
 		$sql = "
@@ -98,6 +150,14 @@ class Experiment extends AppModel
 		return (int) $default_treatments_tested[0][0]['DEFAULT_TREATMENTS'];
 	}
 	
+	/**
+	 * Gets the total number of default (control) treatments completed
+	 * for an experiment
+	 * 
+	 * @access	public
+	 * @param	int
+	 * @return	int
+	 */
 	private function getDefaultTreatmentsCompletedForExperimentId($experiment_id)
 	{
 		$sql = "
@@ -113,6 +173,13 @@ class Experiment extends AppModel
 		return (int) $default_treatments_completed[0][0]['DEFAULT_TREATMENTS_COMPLETED'];
 	}
 	
+	/**
+	 * Gets the total number of alternate treatments for an experiment
+	 * 
+	 * @access	public
+	 * @param	int
+	 * @return	int
+	 */
 	private function getAlternateTreatmentsTestedForExperimentId($experiment_id)
 	{
 		$sql = "
@@ -127,6 +194,14 @@ class Experiment extends AppModel
 		return (int) $alternate_treatments_tested[0][0]['ALTERNATE_TREATMENTS'];
 	}
 	
+	/**
+	 * Gets the total number of alternate treatments completed for an 
+	 * experiment
+	 * 
+	 * @access	public
+	 * @param	int
+	 * @return	int 
+	 */
 	private function getAlternateTreatmentsCompletedForExperimentId($experiment_id)
 	{
 		$sql = "
@@ -142,6 +217,17 @@ class Experiment extends AppModel
 		return (int) $alternate_treatments_completed[0][0]['ALTERNATE_TREATMENTS_COMPLETED'];
 	}
 	
+	/**
+	 * Calculates the z-score (standard-deviation like) of an alternate
+	 * experiment. Negative number is bad, positive number is good
+	 * 
+	 * @access	public
+	 * @param	float
+	 * @param	float
+	 * @param	int
+	 * @param	int
+	 * @return	float
+	 */
 	private function calculateZscore($alt_conversion_rate, $default_conversion_rate, $alt_treatments_tested, $total_conversions)
 	{
 		return ($alt_conversion_rate - $default_conversion_rate) / sqrt( ( ($alt_conversion_rate * (1.0 - $alt_conversion_rate)) / floatval($alt_treatments_tested)) + ( ($default_conversion_rate * (1.0 - $default_conversion_rate)) / floatval($total_conversions)) );

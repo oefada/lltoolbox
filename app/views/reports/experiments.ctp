@@ -1,3 +1,7 @@
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+<script type="text/javascript">
+	$.noConflict();
+</script>
 <div class="index">
 	<?php if (isset($experiments)): ?>
 	<h1>Site Experiments</h1>
@@ -8,18 +12,41 @@
 			<option value="2" <?php if (isset($_POST['site_id']) AND $_POST['site_id'] == 2): ?>selected<?php endif ?>>Family Getaway</option>
 		</select>
 	</form>
-	<table style="width: 500px; margin: 20px 0 20px 0;">
+	<table style="width: 800px; margin: 20px 0 20px 0;">
 		<tr>
-			<th>Experiment Name</th>
+			<th>Enabled</th>
 			<th>Site</th>
+			<th>Experiment Name</th>
+			<th>Created</th>
+			<th>Last Test</th>
 		</tr>
 		<?php foreach($experiments as $key => $experiment): ?>
 		<tr>
-			<td><a href="experiments/<?php echo $experiment['Experiment']['id'] ?>"><?php echo $experiment['Experiment']['name']?></a></td>
+			<td align="center"><input class="experiment_enabled" value="<?php echo $experiment['Experiment']['id'] ?>" type="checkbox" <?php if ($experiment['SitesExperiments']['enabled']): ?>checked<?php endif; ?>></td>
 			<td><?php echo $experiment['Site']['siteName']?></td>
+			<td><a href="experiments/<?php echo $experiment['Experiment']['id'] ?>"><?php echo $experiment['Experiment']['name']?></a></td>
+			<td><?php echo $experiment['SitesExperiments']['created']?></td>
+			<td><?php echo $experiment['SitesExperiments']['last_test']?></td>			
 		</tr>
 		<?php endforeach; ?>
 	</table>
+	<script type="text/javascript">
+		jQuery(document).ready(function() {
+			jQuery("input.experiment_enabled").click(function(e) {
+				var experiment_id = jQuery(this).val();
+				var status = jQuery(this).is(':checked');
+				jQuery.ajax({
+					url: "<?php echo $this->webroot ?>reports/toggle_experiment/" + experiment_id + "/" + status, 
+					success: function() {
+						
+					},
+					error: function() {
+						alert('There was an error enabling/disabling an experiment. Please reload this page and notify tech.');
+					}
+				});	
+			});			
+		});		
+	</script>
 	<?php elseif (isset($results)): ?>
 	<h1>Test Results</h1>
 	<h3>Experiment "<?php echo $results['experiment_name']; ?>"</h3>
@@ -34,7 +61,7 @@
 		<tr>
 			<th>Treatment</th>
 			<th>Tested</th>
-			<th>Completed</th>
+			<th>Converted</th>
 			<th>Conversion Rate</th>
 			<th>Z-Score</th>
 		</tr>
