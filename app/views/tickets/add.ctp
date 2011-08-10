@@ -12,8 +12,8 @@
 		echo $form->input('bidId');
 		echo $form->input('billingPrice');
 		echo $form->input('numNights');
-		// echo $form->input('requestArrival');
-		// echo $form->input('requestDeparture');
+		echo $form->input('requestArrival');
+		echo $form->input('requestDeparture');
 		echo $form->input('requestNumGuests');
 		echo $form->input('requestNotes');
 	?>
