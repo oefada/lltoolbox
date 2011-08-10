@@ -60,8 +60,12 @@ class Client extends AppModel {
    var $loaId;
 
    function beforeSave() {
-      AppModel::beforeSave();
-      return true;
+	AppModel::beforeSave();
+
+	$this->data['Client']['locationNormalized'] = $this->normalize($this->data['Client']['locationDisplay'],1);
+	$this->data['Client']['nameNormalized'] = $this->normalize($this->data['Client']['name'],1);
+	
+	return true;
    }
 
     function afterSave($created) {
@@ -691,5 +695,56 @@ class Client extends AppModel {
         return $instances;
    }
 
+	function normalize($keywords,$atozonly) {
+		$normChars = array(
+			192 => 'A', 193 => 'A', 194 => 'A', 195=> 'A', 196=> 'A', 197=> 'A', 198=> 'A',
+			199 => 'C',
+			200 => 'E', 201 => 'E', 202 => 'E', 203 => 'E',
+			204 => 'I', 205 => 'I', 206 => 'I', 207 => 'I',
+			208 => 'D',
+			209 => 'N',
+			210 => 'O', 211 => 'O', 212 => 'O', 213 => 'O', 214 => 'O', 216 => 'O',
+			215 => 'x',
+			217 => 'U', 218 => 'U', 219 => 'U', 220 => 'U',
+			221 => 'Y',
+			222 => 'B',
+			223 => 'B',
+			224 => 'a', 225 => 'a', 226 => 'a', 227 => 'a', 228 => 'a', 229 => 'a', 230 => 'a',
+			231 => 'c',
+			232 => 'e', 233 => 'e', 234 => 'e', 235 => 'e',
+			236 => 'i', 237 => 'i', 238 => 'i', 239 => 'i',
+			241 => 'n',
+			242 => 'o', 243 => 'o', 244 => 'o', 245 => 'o', 246 => 'o',
+			248 => 'o',
+			249 => 'u', 250 => 'u', 251 => 'u', 252 => 'u',
+			255 => 'y', 253 => 'y',
+			254 => 'b', "&" => 'and', 'ft. ' => 'fort ', 'ft ' => 'fort '
+		);
+
+		$keywords = html_entity_decode(strip_tags($keywords),ENT_QUOTES);
+		
+		foreach ($normChars as $nm=>$val) {
+			if (is_integer($nm)) {
+				$normChars[chr($nm)] = $val;
+				unset($normChars[$nm]);
+			}
+		}
+		
+		$keywords = strtr($keywords,$normChars);
+		
+		if ($atozonly > 0) {
+			$patt = "/[^A-Za-z0-9\s";
+			if ($atozonly == 2) {
+				$patt .= "\+";
+			}
+			
+			$patt .= "]/";
+			
+			$keywords = preg_replace("/\s{2,}?/"," ",$keywords);
+			$keywords = preg_replace($patt,"",$keywords);
+		}
+		
+		return $keywords;
+	}
 }
 ?>
