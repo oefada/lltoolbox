@@ -437,7 +437,7 @@ if ($_SERVER['ENV']=="staging"){
             <th>Retail Value</th>
             <th>Percent of Retail (Auction)</th>
             <th>Percent of Retail (Buy Now)</th>
-			<th>Guarantee % of Retail</th>
+			<th>Flex Per Night Price</th>
             <th>Max Num Sales</th>
             <th>Preview Price Point</th>
 						<th>Edit</th>
