@@ -104,6 +104,20 @@ div.sitesDropdown {
             </select>
         </div>
 <?php endif; ?>
+<div style="margin-bottom:20px;">
+<strong>LOA valid:</strong> <?= date('F j, Y', strtotime($currentLoa['Loa']['startDate'])); ?> - <?= date('F j, Y', strtotime($currentLoa['Loa']['endDate'])); ?>
+<br/> 
+<? if (in_array($currentLoa['Loa']['loaMembershipTypeId'], array(1,2,4))) { 
+       echo '<strong>Membership Balance:</strong> $' . number_format($currentLoa['Loa']['membershipBalance '], 2);
+   } elseif ($currentLoa['Loa']['loaMembershipTypeId'] == 3) {
+       echo '<strong>LOA Packages Remaining:</strong> ' . $currentLoa['Loa']['membershipPackagesRemaining '];
+   } elseif ($currentLoa['Loa']['loaMembershipTypeId'] == 5) {
+       echo '<strong>LOA Balance:</strong> Retail Value Credit (Barter)';
+   } elseif ($currentLoa['Loa']['loaMembershipTypeId'] == 6) {
+       echo '<strong>LOA Balance:</strong> Wholesale';
+   } 
+?>
+</div>
 <!-- DISABLING SCHEDLING GRAPH: TICKET 2044
 <div id='schedulingGraphs' style="float: left; clear: both">
 	<?php 
