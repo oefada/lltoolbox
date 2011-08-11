@@ -475,8 +475,9 @@ class Package extends AppModel {
 		$q.="siteId='$siteId'";
 		$this->query($q);
 		if ($debug_q){
-			echo "<p>$q</p>";
-			echo "<p>Affected Rows: ".$this->getAffectedRows()."</p>";
+			require('/usr/lib/php/FirePHPCore/fb.php'); 
+			FB::log("<p>$q</p>");
+			FB::log("<p>Affected Rows: ".$this->getAffectedRows()."</p>");
 		}
 		if ($this->getAffectedRows()<=0){
 			return false;
@@ -504,11 +505,11 @@ class Package extends AppModel {
 
 		$q="UPDATE pricePoint SET validityGroupId=$vg_id ";
 		$q.="WHERE pricePointId IN (".implode(",",$ppid_arr).")";
-		flush();
 		$this->query($q);
 		if ($debug_q){
-			echo "<p>$q</p>";
-			echo "<p>Affected Rows: ".$this->getAffectedRows()."</p>";
+			require('/usr/lib/php/FirePHPCore/fb.php'); 
+			FB::log("<p>$q</p>");
+			FB::log("<p>Affected Rows: ".$this->getAffectedRows()."</p>");
 		}
 
 	}

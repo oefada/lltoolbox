@@ -693,6 +693,8 @@ function submitForm(thisId) {
                     });
                     $('div#errors').html(errorStr);
                     $('div#errorsContainer').show();
+                    $('div#errors_repeat').html(errorStr);
+                    $('div#errorsContainer_repeat').show();
                 }
         });
 }

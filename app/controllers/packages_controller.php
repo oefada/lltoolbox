@@ -2115,7 +2115,9 @@ class PackagesController extends AppController {
                     $errors[] = 'Percent of retail must be greater than or equal to the guaranteed percent of retail.';
                 }
             }
+
             if (!empty($errors)) {
+
               echo json_encode($errors);
               return;
             }
@@ -2188,7 +2190,11 @@ class PackagesController extends AppController {
 			$rows_db=$this->Package->getPackageValidityDisclaimerByItem($packageId, $loaItemRatePeriodIds, '','' );
 
 			$vg_id=$this->IdCreator->genId();
-			if ($vg_id=='')exit("vg_id not generated");
+
+			if ($vg_id==''){
+				exit("vg_id not generated");
+			}
+
 			foreach($rows_db['ValidRanges'] as $key=>$arr){
 				foreach($arr as $key2=>$validity_arr){
 					if ($this->Package->insertValidityGroup($vg_id,$validity_arr,$siteId)===false){
@@ -2197,6 +2203,7 @@ class PackagesController extends AppController {
 					}
 				}
 			}
+
 			foreach($rows_db['BlackoutDays'] as $key=>$arr){
 				foreach($arr as $key2=>$validity_arr){
 					if ($this->Package->insertValidityGroup($vg_id,$validity_arr,$siteId)===false){
@@ -2205,6 +2212,7 @@ class PackagesController extends AppController {
 					}
 				}
 			}
+
 			$this->Package->updatePricePointValidityGroupId($ppid,$vg_id);
 
       echo "ok";// ppid:$ppid|vg_id:$vg_id";
@@ -2568,30 +2576,34 @@ class PackagesController extends AppController {
 	// these date ranges will then be searchable by users
 	// see updateOfferWithGroupId()
 	function migrateValidityDates(){
+
+	xdebug_disable();
 //exit("set to fg or ll and uncomment insert into validityGroup table");
 		$debug_q=true;// display queries that execute
+		$debug_q=false;// display queries that execute
 
 		$siteId=2;//fg - change as needed
 		$table="offerFamily";
-		$siteId=1;//LL - change as needed
-		$table="offerLuxuryLink";
+		//$siteId=1;//LL - change as needed
+		//$table="offerLuxuryLink";
 
 		$start_point=0;
 		$offset=100;
 		$num_rows=1;
 		while($num_rows){
-
+/*
 			$q="SELECT * FROM package p
 					INNER JOIN packageValidityDisclaimer pv USING (packageId)
 					WHERE p.modified > '2011-05-01' AND p.modified<'2011-05-25' AND pv.isBlackout = 1
 					GROUP BY pv.packageId";
-
+*/
 
 /*
-			$q="SELECT packageId FROM $table ";
+			$q="SELECT packageId FROM $table p ";
 			$q.="WHERE validityGroupId=0 AND startDate<NOW() AND endDate>NOW() AND ISCLOSED=0 ";
-			$q.="AND validityGroupId=0";
 */
+			$q="SELECT packageId FROM $table p WHERE packageId IN (260660,261581,261745,261919,260727,260005,260006)";
+
 			echo "<p>$q</p>";
 			$rows=$this->Package->query($q);
 			$pkid_arr=array();
@@ -2602,6 +2614,7 @@ class PackagesController extends AppController {
 			if (count($pkid_arr)==0){
 				exit("no rows found in $table with validityGroupId as 0");
 			}
+			$pkid_arr=array_unique($pkid_arr);
 			echo "<p>".count($pkid_arr)." rows found</p>";
 			flush();
 
@@ -2643,7 +2656,7 @@ class PackagesController extends AppController {
 					echo "loa_ids: $loa_ids<br>";
 
 					$dates = $this->Package->getPackageValidityDisclaimerByItem($packageId, $loa_ids,0,0,$debug_q);
-					//print_r($dates);
+					print_r($dates);
 /*
 					$vg_id=$this->IdCreator->genId();
 					if ($vg_id==0){
@@ -2699,7 +2712,7 @@ if ($argh==2){
 
 					$hasValidDate=false;
 					$doUpdate=false;
-/*
+
 					if (isset($dates['ValidRanges'])){
 						foreach($dates['ValidRanges'] as $arr){
 							foreach($arr as $key=>$pvd_arr){
@@ -2712,7 +2725,7 @@ if ($argh==2){
 							}
 						}
 					}
-*/
+
 					if (isset($dates['BlackoutDays'])){
 						foreach($dates['BlackoutDays'] as $arr){
 							foreach($arr as $key=>$pvd_arr){
@@ -2732,8 +2745,9 @@ if ($argh==2){
 							}
 						}
 					}
-// DO I NEED TO UPDATE THIS?
-					if (false && $hasValidDate && $doUpdate){
+
+
+					if ($hasValidDate && $doUpdate){
 						$this->Package->updatePricePointValidityGroupId($pricePointId,$vg_id,$debug_q);
 						if ($this->Package->updateOfferWithGroupId($pricePointId,$vg_id,$siteId,$debug_q)===false){
 
