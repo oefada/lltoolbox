@@ -1693,6 +1693,9 @@ class WebServiceTicketsController extends WebServicesController
 		} elseif ($ppvNoticeTypeId == 24) {
 			// Res follow up (for FP)
 			$newTicketStatus = 9;
+		} elseif ($ppvNoticeTypeId == 28) {
+			// ticket #2243
+			$newTicketStatus = 19;
 		}
 
 		if ($newTicketStatus) {
