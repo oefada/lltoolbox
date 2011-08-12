@@ -14,7 +14,7 @@
 	</form>
 	<table style="width: 800px; margin: 20px 0 20px 0;">
 		<tr>
-			<th>Enabled</th>
+			<th>Status</th>
 			<th>Site</th>
 			<th>Experiment Name</th>
 			<th>Created</th>
@@ -22,7 +22,13 @@
 		</tr>
 		<?php foreach($experiments as $key => $experiment): ?>
 		<tr>
-			<td align="center"><input class="experiment_enabled" value="<?php echo $experiment['Experiment']['id'] ?>" type="checkbox" <?php if ($experiment['SitesExperiments']['enabled']): ?>checked<?php endif; ?>></td>
+			<td align="center">
+				<select class="experiment_status">
+					<option class="experiment_status_for_id_<?php echo $experiment['Experiment']['id'] ?>" value="1" <?php if ($experiment['SitesExperiments']['status'] == 1): ?>selected<?php endif; ?>>Enabled</option>
+					<option class="experiment_status_for_id_<?php echo $experiment['Experiment']['id'] ?>" value="2" <?php if ($experiment['SitesExperiments']['status'] == 2): ?>selected<?php endif; ?>>Control</option>
+					<option class="experiment_status_for_id_<?php echo $experiment['Experiment']['id'] ?>" value="3" <?php if ($experiment['SitesExperiments']['status'] == 3): ?>selected<?php endif; ?>>Alternate</option>
+				</select>
+			</td>
 			<td><?php echo $experiment['Site']['siteName']?></td>
 			<td><a href="experiments/<?php echo $experiment['Experiment']['id'] ?>"><?php echo $experiment['Experiment']['name']?></a></td>
 			<td><?php echo $experiment['SitesExperiments']['created']?></td>
@@ -32,19 +38,23 @@
 	</table>
 	<script type="text/javascript">
 		jQuery(document).ready(function() {
-			jQuery("input.experiment_enabled").click(function(e) {
-				var experiment_id = jQuery(this).val();
-				var status = jQuery(this).is(':checked');
+			jQuery("select.experiment_status").change(function(e) {
+				var selectbox = jQuery(this);
+				var option = selectbox.find("option:selected");
+				var experiment_id = option.attr("class").substring(25);
+				var experiment_status = option.val();
+				var url = "<?php echo $this->webroot ?>reports/experiment_status/" + experiment_id + "/" + experiment_status;
+				selectbox.attr('disabled', 'disabled');
 				jQuery.ajax({
-					url: "<?php echo $this->webroot ?>reports/toggle_experiment/" + experiment_id + "/" + status, 
+					url: url,
 					success: function() {
-						
+						selectbox.removeAttr('disabled');
 					},
 					error: function() {
-						alert('There was an error enabling/disabling an experiment. Please reload this page and notify tech.');
+						alert('There was an error changing the experiment status. Please reload this page and notify tech.');
 					}
-				});	
-			});			
+				});				
+			});
 		});		
 	</script>
 	<?php elseif (isset($results)): ?>

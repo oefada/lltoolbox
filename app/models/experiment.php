@@ -35,7 +35,7 @@ class Experiment extends AppModel
 				'Experiment.name',
 				'Site.siteId',
 				'Site.siteName',
-				'SitesExperiments.enabled',
+				'SitesExperiments.status',
 				'SitesExperiments.created',
 				'SitesExperiments.last_test'
 			),
@@ -49,16 +49,15 @@ class Experiment extends AppModel
 	}
 	
 	/**
-	 * Enables or disables a running experiment
+	 * Updates an experiments status
 	 * 
 	 * @access	public
 	 * @param	int
-	 * @param	string
+	 * @param	int
 	 */
-	public function toggle($experiment_id, $status)
+	public function updateStatus($experiment_id, $status_id)
 	{
-		$enabled = ($status == 'false') ? '0' : '1';
-		$sql = "UPDATE sites_experiments SET enabled = $enabled WHERE experiment_id = $experiment_id";
+		$sql = "UPDATE sites_experiments SET status = $status_id WHERE experiment_id = $experiment_id";
 		$this->query($sql);
 	}
 	

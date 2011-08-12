@@ -3771,17 +3771,17 @@ class ReportsController extends AppController {
 	}
 	
 	/**
-	 * Ajax method to enable/disable an experiment
+	 * Ajax method to update experiment status
 	 * 
 	 * @access	public
 	 * @param	int
-	 * @param	string 
+	 * @param	int
 	 */
-	function toggle_experiment($experiment_id, $status)
+	public function experiment_status($experiment_id, $status_id)
 	{
 		$this->autoRender = false;
 		$this->loadModel('Experiment');
-		$this->Experiment->toggle($experiment_id, $status);
+		$this->Experiment->updateStatus($experiment_id, $status_id);
 	}
 }
 
