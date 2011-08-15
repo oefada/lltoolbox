@@ -1725,9 +1725,11 @@ class WebServiceTicketsController extends WebServicesController
 				ob_start(); // any output messes up web service call
 				$result = $mail->Send(); // send message
 				ob_end_clean();
-				$mailinfo = print_r($mail,true);
-				$emailHeaders = "From: jwoods@luxurylink.com\n";
-				@mail('jwoods@luxurylink.com', 'ppv silverpop success', $mailinfo, $emailHeaders);
+				// removed 08/15/11
+				// possibly add receipt to shared folder if we need to keep tabs on Silverpop
+				// $mailinfo = print_r($mail,true);
+				// $emailHeaders = "From: jwoods@luxurylink.com\n";
+				// @mail('jwoods@luxurylink.com', 'ppv silverpop success', $mailinfo, $emailHeaders);
 			}
 			catch (Exception $e) {
 				$emailHeaders = "From: jwoods@luxurylink.com\n";
