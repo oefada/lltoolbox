@@ -64,7 +64,7 @@ class Client extends AppModel {
 
 	$this->data['Client']['locationNormalized'] = $this->normalize($this->data['Client']['locationDisplay'],1);
 	$this->data['Client']['nameNormalized'] = $this->normalize($this->data['Client']['name'],1);
-	
+
 	return true;
    }
 
@@ -396,8 +396,9 @@ class Client extends AppModel {
 	   return true;
    }
 
-   //save current LOA's sites to Client and push data to front-end dbs after an LOA has been saved
-   function set_sites($client_id, $sites) {
+   // save current LOA's sites to Client and push data to front-end dbs after an LOA has been saved
+   // 08/17/11 jwoods - added $parentSiteExtended to update child clients
+   function set_sites($client_id, $sites, $parentSiteExtended = array()) {
 	  $this->id = $client_id;
       $this->recursive = 1;
 	  $client = $this->findByClientId($client_id);
@@ -413,6 +414,14 @@ class Client extends AppModel {
             if (empty($newSites) && empty($removeSites)) {
                 return;
             }
+
+            // ticket 288 - if this is a child client without it's own LOA, it should inherit some ClientSiteExtended info
+            $needsParentInfo = false;
+			if (sizeof($parentSiteExtended) > 0) {
+				$childLoas = $this->Loa->getClientLoasWithoutParentInfo($client['Client']['clientId']);
+				if (sizeof($childLoas) == 0) { $needsParentInfo = true; }
+			}
+
 			if (!empty($newSites)) {
 				if (empty($client['ClientSiteExtended'])) {
 					$client['ClientSiteExtended'] = array();
@@ -424,6 +433,17 @@ class Client extends AppModel {
 					$clientSiteExtended['clientId'] = $client_id;
 					$clientSiteExtended['siteId'] = array_search($site, $this->sites);
                     $clientSiteExtended['isCurrentLoaSite'] = 1;
+
+					// ticket 288 - inherit ClientSiteExtended info
+					if ($needsParentInfo) {
+						foreach ($parentSiteExtended as $pse) {
+							if ($pse['siteId'] == $clientSiteExtended['siteId']) {
+								$clientSiteExtended['inactive'] = $pse['inactive'];
+								$clientSiteExtended['isCurrentLoaSite'] = $pse['isCurrentLoaSite'];
+							}
+						}
+					}
+
 					array_push($client['ClientSiteExtended'], $clientSiteExtended);
 
                     //save room grades
@@ -506,7 +526,7 @@ class Client extends AppModel {
 	  $this->save($client, array('callbacks' => 'after'));
       if (!empty($client['ChildClient'])) {
             foreach($client['ChildClient'] as $child) {
-                $this->set_sites($child['clientId'], $sites);
+                $this->set_sites($child['clientId'], $sites, $client['ClientSiteExtended']);
             }
       }
    }
@@ -722,29 +742,29 @@ class Client extends AppModel {
 		);
 
 		$keywords = html_entity_decode(strip_tags($keywords),ENT_QUOTES);
-		
+
 		foreach ($normChars as $nm=>$val) {
 			if (is_integer($nm)) {
 				$normChars[chr($nm)] = $val;
 				unset($normChars[$nm]);
 			}
 		}
-		
+
 		$keywords = strtr($keywords,$normChars);
-		
+
 		if ($atozonly > 0) {
 			$patt = "/[^A-Za-z0-9\s";
 			if ($atozonly == 2) {
 				$patt .= "\+";
 			}
-			
+
 			$patt .= "]/";
-			
+
 			$keywords = str_replace("-"," ",$keywords);
 			$keywords = preg_replace("/\s{2,}?/"," ",$keywords);
 			$keywords = preg_replace($patt,"",$keywords);
 		}
-		
+
 		return $keywords;
 	}
 }
