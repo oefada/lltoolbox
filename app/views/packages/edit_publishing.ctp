@@ -181,7 +181,7 @@ echo $javascript->link('jquery/jquery-autocomplete/jquery.autocomplete'); ?>
 			inclusions += "</ul><br>\n";
 			inclusions += "<p><b>This package includes:</b></p>\n";
       inclusions += "<ul>\n";
-      inclusions += '    <li>'+ numNights  +' nights in '+ roomNightDescription +"</li>\n";
+      inclusions += '    <li>'+ roomNightDescription +"</li>\n";
 		}
 		var lis = $("#sortable li").each(function(i) {
 			var merch = $('#' + this.id + '-copy').html();
