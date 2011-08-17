@@ -405,8 +405,12 @@ if ($_SERVER['ENV']=="staging"){
 	}
 
 }else if ($_SERVER['ENV']=="development"){
-//} elseif (strstr($_SERVER['HTTP_HOST'], 'toolboxdev')) {
-	$previewHost = 'http://' . str_replace('toolboxdev', 'lldev', $_SERVER['HTTP_HOST']);
+
+	if (in_array('family', $package['Package']['sites'])) {
+		$previewHost = 'http://' . str_replace('toolboxdev',"familydev", $_SERVER['HTTP_HOST']);
+	}else{
+		$previewHost = 'http://' . str_replace('toolboxdev', 'lldev', $_SERVER['HTTP_HOST']);
+	}
 }else {
 	if (in_array('family', $package['Package']['sites'])) {
 	// TODO: need to make this work for other environments as well
@@ -437,7 +441,7 @@ if ($_SERVER['ENV']=="staging"){
             <th>Retail Value</th>
             <th>Percent of Retail (Auction)</th>
             <th>Percent of Retail (Buy Now)</th>
-			<th>Flex Per Night Price</th>
+						<th>Flex Per Night Price</th>
             <th>Max Num Sales</th>
             <th>Preview Price Point</th>
 						<th>Edit</th>
@@ -446,6 +450,7 @@ if ($_SERVER['ENV']=="staging"){
 
     <?php
 
+		//echo "<pre>"; print_r($pricePoints); exit;
 		
 	
         foreach ($pricePoints as $key => $pricePoint) {
@@ -457,7 +462,7 @@ if ($_SERVER['ENV']=="staging"){
 									<td>" . number_format($pricePoint['PricePoint']['retailValue'], 0) . "</td>
 									<td>{$pricePoint['PricePoint']['percentRetailAuc']}</td>
 									<td>{$pricePoint['PricePoint']['percentRetailBuyNow']}</td>
-				<td>{$pricePoint['PricePoint']['percentReservePrice']}</td>
+									<td>{$pricePoint['PricePoint']['pricePerExtraNight']}</td>
 									<td>{$pricePoint['PricePoint']['maxNumSales']}</td>
 									<td><a href='{$previewHost}/luxury-hotels/preview.html?clid={$clientId}&oid={$ppid}&preview=pricepoint&toolbox-display-package-id-{$pricePoint['Package']['packageId']}' target='_blank'>Preview</a></td>
 									<td><div style='float:left;' qs=\"pricePointId={$ppid}&otid=$otid\" class=\"edit-link\" name=\"$linkName\" title=\"$linkTitle\">Edit</div></td>";
