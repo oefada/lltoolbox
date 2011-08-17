@@ -28,7 +28,7 @@ class PaymentDetailsController extends AppController {
 				$this->data['PaymentDetail']['paymentProcessorId'] = 6;
 			}
 			
-        	$webservice_live_url = 'http://rvella-toolboxdev.luxurylink.com/web_service_tickets?wsdl';
+        	$webservice_live_url = 'http://toolbox.luxurylink.com/web_service_tickets?wsdl';
 			$webservice_live_method_name = 'processPaymentTicket';
 			$webservice_live_method_param = 'in0';
 			
