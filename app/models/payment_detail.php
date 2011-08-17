@@ -39,7 +39,7 @@ class PaymentDetail extends AppModel {
 		}
 	}
 
-	function saveCof($ticketId, $cofData, $userId, $auto = 0, $initials = 'NA') {
+	function saveCof($ticketId, $cofData, $userId, $auto = 0, $initials = 'NA',$savePayment = true) {
 		$paymentDetail = array();
 		$paymentDetail['paymentTypeId'] 		= 3;
 		$paymentDetail['paymentAmount'] 		= $cofData['totalAmountOff'];
@@ -50,16 +50,18 @@ class PaymentDetail extends AppModel {
 		$paymentDetail['initials']				= $initials;
 		$paymentDetail['ppResponseDate']		= date('Y-m-d H:i:s');
 		
-		$this->create();
-		if ($this->save($paymentDetail)) {
-			$CreditTracking = new CreditTracking();
-			$data = array();
-			$data['CreditTracking']['userId'] = $cofData['userId'];
-			$data['CreditTracking']['amount']	= -$cofData['totalAmountOff'];
-			$data['CreditTracking']['creditTrackingTypeId'] = $cofData['creditTrackingTypeId'];
-			$CreditTracking->create();
-			$CreditTracking->save($data);
+		if ($savePayment) {
+			$this->create();
+			$this->save($paymentDetail);
 		}
+
+		$CreditTracking = new CreditTracking();
+		$data = array();
+		$data['CreditTracking']['userId'] = $cofData['userId'];
+		$data['CreditTracking']['amount']	= -$cofData['totalAmountOff'];
+		$data['CreditTracking']['creditTrackingTypeId'] = $cofData['creditTrackingTypeId'];
+		$CreditTracking->create();
+		$CreditTracking->save($data);
 	}
 }
 ?>

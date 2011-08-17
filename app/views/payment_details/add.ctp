@@ -1,19 +1,23 @@
 <?php  $this->pageTitle = 'Payment Processor ' . $html2->c($ticket['Ticket']['ticketId'], 'Ticket Id:');?>
 <?php $session->flash();
 	$session->flash('error');
+	echo $javascript->link('jquery/jquery');
 ?>
 
 <script language="javascript">
 <!--
+
+jQuery.noConflict();
 function confirmSubmit()
 {
 	var agree = confirm("Are you sure you want to continue?  Clicking 'Ok' will submit this payment.");
 	if (agree)
-		return true ;
+		return true;
 	else
-		return false ;
-	}
+		return false;
+}
 // -->
+
 </script>
 
 <div class="paymentDetails form">
@@ -21,7 +25,6 @@ function confirmSubmit()
 	
 	<?php echo $form->input('ticketId', array('type' => 'hidden', 'value' => $ticket['Ticket']['ticketId']));?>
 	<?php echo $form->input('userId', array('type' => 'hidden', 'value' => $ticket['Ticket']['userId']));?>
-	<?php echo $form->input('paymentTypeId', array('type' => 'hidden', 'value' => '1'));?>
 	
 	<h2>Process payment for:</h2>
 	<br />
@@ -67,10 +70,15 @@ function confirmSubmit()
 	<h2>Payment Settings:</h2>
 	<br />
 	<table cellspacing="0" cellpadding="0" border="1">
-		<tr>
-			<td width="200"><strong>Payment Type</strong></td>
-			<td>Charge</td>
-		</tr>
+			<td><strong>Payment Type</strong></td>
+			<td>
+				<select name="data[PaymentDetail][paymentTypeId]" id="PaymentDetailPaymentTypeId">
+					<?php foreach ($paymentTypeIds as $ppId => $ppValue): ?>
+					<?php if ($ppId == 3 && $credit['CreditTracking']['balance'] == 0) continue; ?>
+						<option value="<?php echo $ppId;?>"><?php echo $ppValue;?></option>
+					<?php endforeach;?>
+				</select>	
+			</td>
 		<tr>
 			<td><strong>Payment Processor</strong></td>
 			<td>
@@ -81,7 +89,7 @@ function confirmSubmit()
 				</select>	
 			</td>
 		</tr>
-		<tr id="showPaymentSetting">
+		<tr id="showPaymentSetting" style="display: none;">
 			<td colspan="2">
 				<strong>User Payment Setting (choose one):</strong><br /><br />
 				
@@ -102,14 +110,15 @@ function confirmSubmit()
 							<td><i>Inactive</i></td>
 							<td><i>Card Added</i></td>
 						</tr>
-						<?php 				
-						$counter = 0;
-						foreach ($userPaymentSetting as $upsId => $upsValue) { 
-							if ($upsValue['inactive']) {
-								//continue;
-							}	
-							$selectPrimaryCC = $upsValue['primaryCC'] && !$upsValue['inactive'] ? 'checked' : '';
-							$cardInactiveColor = $upsValue['inactive'] ? '#CC0000;' : '#009900;';
+						<?php 		
+						if (count($userPaymentSetting)) {		
+							$counter = 0;
+							foreach ($userPaymentSetting as $upsId => $upsValue) { 
+								if ($upsValue['inactive']) {
+									//continue;
+								}	
+								$selectPrimaryCC = $upsValue['primaryCC'] && !$upsValue['inactive'] ? 'checked' : '';
+								$cardInactiveColor = $upsValue['inactive'] ? '#CC0000;' : '#009900;';
 							?>
 							<tr style="color: <?php echo $cardInactiveColor;?>">
 								<td>
@@ -129,7 +138,7 @@ function confirmSubmit()
 								<td><?php echo ($upsValue['inactive']) ? '<strong>Yes</strong>' : 'No';?></td>
 								<td><?php echo $upsValue['created'];?></td>
 							</tr>
-						<?php } ?>
+						<?php } } ?>
 						</table>
 				
 					</div>
@@ -229,7 +238,7 @@ function confirmSubmit()
 		</tr>
 		<tr id="showWire" style="display:none;">
 			<td colspan="2">
-				<strong>Reference ID:</strong><br /><br />
+				<strong><span id="wireRefId" style="display: none">Reference ID</span><span id="promoRefId" style="display: none">Promo Code:</span></strong><br /><br />
 				<input type="text" name="data[PaymentDetail][ppTransactionId]" />
 			</td>
 		</tr>
@@ -264,17 +273,56 @@ function confirmSubmit()
 //if (isset($closeModalbox) && $closeModalbox) echo "<div id='closeModalbox'></div>";
 ?>
 <script>
-$('PaymentDetailPaymentProcessorId').observe('change', function(event){
-	var ppValue = $('PaymentDetailPaymentProcessorId').value;
-	switch (ppValue) {
-		case '5':
-			Effect.Fade($('showPaymentSetting'), {queue: 'end', duration: 0.5});
-		    Effect.Appear($('showWire'), {queue: 'end', duration: 0.5});
-			break;
-		default:
-			Effect.Fade($('showWire'), {queue: 'end', duration: 0.5});
-		    Effect.Appear($('showPaymentSetting'), {queue: 'end', duration: 0.5});
-			break;
-	}
+var credit_on_file = <?= $credit['CreditTracking']['balance'] ?>;
+var payment_amt    = <?= $ticket['Ticket']['totalBillingAmount']; ?>;
+
+jQuery(document).ready(function($) {
+	$('#PaymentDetailPaymentTypeId').change(function() {
+		if ($(this).val() == 3 || $(this).val() == 2) {
+			$("#PaymentDetailPaymentProcessorId").val(6);
+			$('#PaymentDetailPaymentProcessorId').attr('disabled', '1');
+			$('#showPaymentSetting').hide();
+			if ($(this).val() == 2) {
+				$('#wireRefId').hide();
+				$('#promoRefId').show();
+				$('#showWire').show();
+				$('#showPaymentSetting').hide();
+			} else if ($(this).val() == 3) {
+				$('#showWire').hide();
+				$('#showPaymentSetting').hide();
+				$("#PaymentDetailPaymentAmount").val(credit_on_file);
+			}
+		} else {
+			$('#PaymentDetailPaymentProcessorId').removeAttr('disabled');
+			$("#PaymentDetailPaymentProcessorId").val(1);
+			$('#showPaymentSetting').show();
+			$('#showWire').hide();
+		}
+		
+		if ($(this).val() != 3) {
+			$("#PaymentDetailPaymentAmount").val(payment_amt);
+		}
+	});
+
+	$('#PaymentDetailPaymentProcessorId').change(function(){
+		switch ($(this).val()) {
+			case '5':
+				$('#wireRefId').show();
+				$('#promoRefId').hide();
+				$('#showPaymentSetting').hide();
+		    	$('#showWire').show();
+				break;
+			default:
+				$('#wireRefId').hide();
+				$('#promoRefId').hide();
+				$('#showWire').hide();
+		    	$('#showPaymentSetting').show();
+				break;
+		}
+	});
+
+	$('#PaymentDetailPaymentProcessorId').change();
+	$('#PaymentDetailPaymentTypeId').change();
 });
+	
 </script>

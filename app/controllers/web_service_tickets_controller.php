@@ -16,7 +16,7 @@ class WebServiceTicketsController extends WebServicesController
 	var $uses = array('Ticket', 'UserPaymentSetting','PaymentDetail', 'Client', 'User', 'Offer', 'Bid',
 					  'ClientLoaPackageRel', 'Track', 'OfferType', 'Loa', 'TrackDetail', 'PpvNotice',
 					  'Address', 'OfferLuxuryLink', 'SchedulingMaster', 'SchedulingInstance', 'Reservation',
-					  'PromoTicketRel', 'Promo', 'TicketReferFriend','Package'
+					  'PromoTicketRel', 'Promo', 'TicketReferFriend','Package','PaymentProcessor'
 					  );
 
 	var $serviceUrl = 'http://toolbox.luxurylink.com/web_service_tickets';
@@ -1898,17 +1898,10 @@ class WebServiceTicketsController extends WebServicesController
 		// set which processor to use
 		// ---------------------------------------------------------------------------
 		$paymentProcessorName = false;
-		switch($data['paymentProcessorId']) {
-			case 1:
-				$paymentProcessorName = 'NOVA';
-				break;
-			case 3:
-				$paymentProcessorName = 'PAYPAL';
-				break;
-			default:
-				break;
-		}
 
+		$paymentProcessorName = $this->PaymentProcessor->find('first', array('conditions' => array('PaymentProcessor.paymentProcessorId' => $data['paymentProcessorId'])));
+		$paymentProcessorName = $paymentProcessorName['PaymentProcessor']['paymentProcessorName'];
+		
 		if (!$paymentProcessorName) {
 			return '114';
 		}
@@ -1920,6 +1913,7 @@ class WebServiceTicketsController extends WebServicesController
 
 		$promoGcCofData = array();
 		$promoGcCofData		= $this->Ticket->getPromoGcCofData($ticket['Ticket']['ticketId'], $totalChargeAmount);
+
 		if (!$toolboxManualCharge) {
 			// this is either autocharge or user checkout
 
@@ -1933,67 +1927,108 @@ class WebServiceTicketsController extends WebServicesController
 			}
 		}
 
-		// set total charge amount to send to processor
-		// ---------------------------------------------------------------------------
-		$ticket['Ticket']['billingPrice'] = $totalChargeAmount;
-
-		// init payment processing and submit payment
-		// ---------------------------------------------------------------------------
-		$processor = new Processor($paymentProcessorName);
-		$processor->InitPayment($userPaymentSettingPost, $ticket);
-		if (!$isDev) {
-			// do not charge on dev or stage. For Production - charge away!
-			$processor->SubmitPost();
-		}
-		// save the response from the payment processor
-		// ---------------------------------------------------------------------------
-		$nameSplit 								= str_word_count($userPaymentSettingPost['UserPaymentSetting']['nameOnCard'], 1);
-		$firstName 								= trim($nameSplit[0]);
-		$lastName 								= trim(array_pop($nameSplit));
-		$userPaymentSettingPost['UserPaymentSetting']['expMonth'] = str_pad($userPaymentSettingPost['UserPaymentSetting']['expMonth'], 2, '0', STR_PAD_LEFT);
-
-		$paymentDetail 							= array();
-		$paymentDetail 							= $processor->GetMappedResponse();
-		$paymentDetail['paymentTypeId'] 		= 1;
-		$paymentDetail['paymentAmount']			= $data['paymentAmount'];
+		$paymentDetail = array();
+		
 		$paymentDetail['ticketId']				= $ticket['Ticket']['ticketId'];
 		$paymentDetail['userId']				= $ticket['Ticket']['userId'];
-		$paymentDetail['userPaymentSettingId']	= ($usingUpsId) ? $data['userPaymentSettingId'] : '';
-		$paymentDetail['paymentProcessorId']	= $data['paymentProcessorId'];
-		$paymentDetail['ppFirstName']			= $firstName;
-		$paymentDetail['ppLastName']			= $lastName;
-		$paymentDetail['ppBillingAddress1']		= $userPaymentSettingPost['UserPaymentSetting']['address1'];
-		$paymentDetail['ppBillingCity']			= $userPaymentSettingPost['UserPaymentSetting']['city'];
-		$paymentDetail['ppBillingState']		= $userPaymentSettingPost['UserPaymentSetting']['state'];
-		$paymentDetail['ppBillingZip']			= str_replace(' ', '', $userPaymentSettingPost['UserPaymentSetting']['postalCode']);
-		$paymentDetail['ppBillingCountry']		= str_replace(' ', '', $userPaymentSettingPost['UserPaymentSetting']['country']);
-		$paymentDetail['ppCardNumLastFour']		= substr($userPaymentSettingPost['UserPaymentSetting']['ccNumber'], -4, 4);
-		$paymentDetail['ppExpMonth']			= $userPaymentSettingPost['UserPaymentSetting']['expMonth'];
-		$paymentDetail['ppExpYear']				= $userPaymentSettingPost['UserPaymentSetting']['expYear'];
-		$paymentDetail['ppBillingAmount']		= $totalChargeAmount;
 		$paymentDetail['autoProcessed']			= $data['autoCharge'];
 		$paymentDetail['initials']				= $data['initials'];
-		$paymentDetail['ccType']				= $userPaymentSettingPost['UserPaymentSetting']['ccType'];
-		if ($isDev) {
-			$paymentDetail['isSuccessfulCharge']				= 1;
+		$paymentDetail['ppBillingAmount']		= $totalChargeAmount;
+		$paymentDetail['paymentProcessorId']	= $data['paymentProcessorId'];
+		$paymentDetail['paymentTypeId']			= $data['paymentTypeId'];
+		$paymentDetail['paymentAmount']			= $data['paymentAmount'];
+		$paymentDetail['userPaymentSettingId']	= ($usingUpsId) ? $data['userPaymentSettingId'] : '';
+		$ticket['Ticket']['billingPrice'] 		= $totalChargeAmount;
+		
+		$otherCharge = 0;
+		
+		if ($data['paymentTypeId'] == 1) {
+			// set total charge amount to send to processor
+			// ---------------------------------------------------------------------------
+			// init payment processing and submit payment
+			// ---------------------------------------------------------------------------
+			$processor = new Processor($paymentProcessorName);
+			$processor->InitPayment($userPaymentSettingPost, $ticket);
+			if (!$isDev) {
+				// do not charge on dev or stage. For Production - charge away!
+				$processor->SubmitPost();
+			}
+			
+			$nameSplit 								= str_word_count($userPaymentSettingPost['UserPaymentSetting']['nameOnCard'], 1);
+			$firstName 								= trim($nameSplit[0]);
+			$lastName 								= trim(array_pop($nameSplit));
+			$userPaymentSettingPost['UserPaymentSetting']['expMonth'] = str_pad($userPaymentSettingPost['UserPaymentSetting']['expMonth'], 2, '0', STR_PAD_LEFT);
+
+			$paymentDetail 							= $processor->GetMappedResponse();
+			$paymentDetail['paymentTypeId'] 		= 1;
+			$paymentDetail['ppFirstName']			= $firstName;
+			$paymentDetail['ppLastName']			= $lastName;
+			$paymentDetail['ppBillingAddress1']		= $userPaymentSettingPost['UserPaymentSetting']['address1'];
+			$paymentDetail['ppBillingCity']			= $userPaymentSettingPost['UserPaymentSetting']['city'];
+			$paymentDetail['ppBillingState']		= $userPaymentSettingPost['UserPaymentSetting']['state'];
+			$paymentDetail['ppBillingZip']			= str_replace(' ', '', $userPaymentSettingPost['UserPaymentSetting']['postalCode']);
+			$paymentDetail['ppBillingCountry']		= str_replace(' ', '', $userPaymentSettingPost['UserPaymentSetting']['country']);
+			$paymentDetail['ppCardNumLastFour']		= substr($userPaymentSettingPost['UserPaymentSetting']['ccNumber'], -4, 4);
+			$paymentDetail['ppExpMonth']			= $userPaymentSettingPost['UserPaymentSetting']['expMonth'];
+			$paymentDetail['ppExpYear']				= $userPaymentSettingPost['UserPaymentSetting']['expYear'];
+			$paymentDetail['ccType']				= $userPaymentSettingPost['UserPaymentSetting']['ccType'];
+			if ($isDev) {
+				$paymentDetail['isSuccessfulCharge']				= 1;
+			}
+		} else {
+			$otherCharge = 1;
+			if ($data['paymentTypeId'] == 2) {
+				// Gift cert
+				$longWord = "GIFT CERT";
+				$medWord  = "GIFT";
+				$shortWord = "GC";
+			} elseif ($data['paymentTypeId'] == 3) {
+				// Credit on file
+				$longWord = "CREDIT ON FILE";
+				$medWord  = "CRED";
+				$shortWord = "CR";
+			} else {
+				return '115';
+			}
+
+			$paymentDetail['ccType'] 		 		= $shortWord;
+			$paymentDetail['userPaymentSettingId'] 	= '';
+			$paymentDetail['isSuccessfulCharge']	= 1;
+			$paymentDetail['autoProcessed']			= 0;
+			$paymentDetail['ppFirstName']			= $data['firstName'];
+			$paymentDetail['ppLastName']			= $data['lastName'];
+			$paymentDetail['ppResponseDate']		= date('Y-m-d H:i:s', strtotime('now'));
+			$paymentDetail['ppCardNumLastFour']		= $medWord;
+			$paymentDetail['ppExpMonth']			= $shortWord;
+			$paymentDetail['ppExpYear']				= $medWord;
+			$paymentDetail['ppBillingAddress1']		= $longWord;
+			$paymentDetail['ppBillingCity']			= $longWord;
+			$paymentDetail['ppBillingState']		= $longWord;
+			$paymentDetail['ppBillingZip']			= $longWord;
+			$paymentDetail['ppBillingCountry']		= $longWord;
 		}
 
+		// save the response from the payment processor
+		// ---------------------------------------------------------------------------
 		$this->PaymentDetail->create();
 		if (!$this->PaymentDetail->save($paymentDetail)) {
-			@mail('devmail@luxurylink.com', 'WEB SERVICE ERROR: PAYMENT PROCESSED BUT NOT SAVED', print_r($this->PaymentDetail->validationErrors,true)  . print_r($paymentDetail, true));
+			@mail('devmail@luxurylink.com,rvella@luxurylink.com', 'WEB SERVICE ERROR: PAYMENT PROCESSED BUT NOT SAVED', print_r($this->PaymentDetail->validationErrors,true)  . print_r($paymentDetail, true));
 		}
 
 		// return result whether success or denied
 		// ---------------------------------------------------------------------------
-		if ($processor->ChargeSuccess() || $isDev) {
+		if ((isset($processor) && $processor->ChargeSuccess()) || $isDev || $otherCharge) {
 			return $this->runPostChargeSuccess($ticket, $data, $usingUpsId, $userPaymentSettingPost, $promoGcCofData, $toolboxManualCharge);
 		} else {
-			return $processor->GetResponseTxt();
+			if ($data['paymentProcessorId'] == 1) {
+				return $processor->GetResponseTxt();
+			} else {
+				return false;
+			}
 		}
 	}
 
 	function runPostChargeSuccess($ticket, $data, $usingUpsId, $userPaymentSettingPost, $promoGcCofData, $toolboxManualCharge) {
-
 		// allocate revenue to loa and tracks
 		// ---------------------------------------------------------------------------
 		$tracks = $this->TrackDetail->getTrackRecord($ticket['Ticket']['ticketId']);
@@ -2041,15 +2076,12 @@ class WebServiceTicketsController extends WebServicesController
 
 		// if gift cert or cof, create additional payment detail records
 		// ---------------------------------------------------------------------------
-		if (!$toolboxManualCharge) {
-			if (isset($promoGcCofData['GiftCert']) && $promoGcCofData['GiftCert'] && $promoGcCofData['GiftCert']['applied']) {
-				$this->PaymentDetail->saveGiftCert($ticket['Ticket']['ticketId'], $promoGcCofData['GiftCert'], $ticket['Ticket']['userId'], $data['autoCharge'], $data['initials']);
-			}
-			if (isset($promoGcCofData['Cof']) && $promoGcCofData['Cof'] && $promoGcCofData['Cof']['applied']) {
-				$this->PaymentDetail->saveCof($ticket['Ticket']['ticketId'], $promoGcCofData['Cof'], $ticket['Ticket']['userId'], $data['autoCharge'], $data['initials']);
-			}
+		if (isset($promoGcCofData['GiftCert']) && $promoGcCofData['GiftCert'] && $promoGcCofData['GiftCert']['applied']) {
+			$this->PaymentDetail->saveGiftCert($ticket['Ticket']['ticketId'], $promoGcCofData['GiftCert'], $ticket['Ticket']['userId'], $data['autoCharge'], $data['initials']);
+		} elseif (isset($promoGcCofData['Cof']) && $promoGcCofData['Cof'] && $promoGcCofData['Cof']['applied']) {
+			$this->PaymentDetail->saveCof($ticket['Ticket']['ticketId'], $promoGcCofData['Cof'], $ticket['Ticket']['userId'], $data['autoCharge'], $data['initials'],false);
 		}
-
+		
 		$this->Ticket->save($ticketStatusChange);
 
 		// ********* SITE NAME **********

@@ -164,7 +164,6 @@ class Ticket extends AppModel {
 		if ($ticketPrice > 0) {
 			$ticketPrice += $this->getFeeByTicket($ticketId);
 		}
-		
 		if (isset($data['GiftCert']) && $data['GiftCert'] && ($ticketPrice > 0)) {
 			$new_price = $ticketPrice - $data['GiftCert']['balance'];					
 			if ($new_price < 0) {
@@ -201,6 +200,8 @@ class Ticket extends AppModel {
 			$data['Cof']['applied'] = ($data['Cof']['totalAmountOff'] > 0) ? 1 : 0;
 		}
 
+		$tp0 = $ticketPrice;
+		
 		$paymentRecordSql = 'SELECT paymentTypeId, paymentAmount FROM paymentDetail ';
 		$paymentRecordSql.= "WHERE paymentTypeId = 2 AND ticketId = $ticketId AND isSuccessfulCharge = 1";
 		$paymentRecordResult = $this->query($paymentRecordSql);
@@ -215,12 +216,13 @@ class Ticket extends AppModel {
 				break;
 			}
 		}
-		
+
+		$tp = $ticketPrice;
 		$paymentRecordSql = 'SELECT paymentTypeId, paymentAmount FROM paymentDetail ';
 		$paymentRecordSql.= "WHERE paymentTypeId = 3 AND ticketId = $ticketId AND isSuccessfulCharge = 1";
 		$paymentRecordResult = $this->query($paymentRecordSql);
 		if (!empty($paymentRecordResult)) {
-			if ($data['Cof']['applied']) {
+			if (isset($data['Cof']['applied'])) {
 				$ticketPrice += $data['Cof']['totalAmountOff'];
 			}
 			foreach ($paymentRecordResult as $payment) {
@@ -233,6 +235,7 @@ class Ticket extends AppModel {
 
 		$data['applied'] = (!empty($data['Promo']['applied']) || !empty($data['GiftCert']['applied']) || $data['Cof']['applied']) ? 1 : 0;
 		$data['final_price'] = $ticketPrice;
+		
 		return $data;
 	}
 
