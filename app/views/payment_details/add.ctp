@@ -273,8 +273,8 @@ function confirmSubmit()
 //if (isset($closeModalbox) && $closeModalbox) echo "<div id='closeModalbox'></div>";
 ?>
 <script>
-var credit_on_file = <?= $credit['CreditTracking']['balance'] ?>;
-var payment_amt    = <?= $ticket['Ticket']['totalBillingAmount']; ?>;
+var credit_on_file = <?= (empty($credit['CreditTracking']['balance'])    ? 0 : $credit['CreditTracking']['balance']) ?>;
+var payment_amt    = <?= (empty($ticket['Ticket']['totalBillingAmount']) ? 0 : $ticket['Ticket']['totalBillingAmount']) ?>;
 
 jQuery(document).ready(function($) {
 	$('#PaymentDetailPaymentTypeId').change(function() {
