@@ -474,7 +474,7 @@ class Package extends AppModel {
 		$q.="isBlackout='".$arr['isBlackout']."', ";
 		$q.="siteId='$siteId'";
 		$this->query($q);
-		if ($debug_q){
+		if ($debug_q && $_SERVER['ENV']=='development'){
 			require('/usr/lib/php/FirePHPCore/fb.php'); 
 			FB::log("<p>$q</p>");
 			FB::log("<p>Affected Rows: ".$this->getAffectedRows()."</p>");
@@ -506,7 +506,7 @@ class Package extends AppModel {
 		$q="UPDATE pricePoint SET validityGroupId=$vg_id ";
 		$q.="WHERE pricePointId IN (".implode(",",$ppid_arr).")";
 		$this->query($q);
-		if ($debug_q){
+		if ($debug_q && $_SERVER['ENV']=='development'){
 			require('/usr/lib/php/FirePHPCore/fb.php'); 
 			FB::log("<p>$q</p>");
 			FB::log("<p>Affected Rows: ".$this->getAffectedRows()."</p>");

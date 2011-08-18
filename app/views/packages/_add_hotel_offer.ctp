@@ -46,6 +46,8 @@
 		echo $form->input('ClientTracking.5.impressionImageUrl', array('label' => 'Image Tracking URL<br/><span style="font-weight:normal;">&quot;Go To Offer&quot; Button</span>'));
 		echo $form->input('ClientTracking.5.clientTrackingTypeId', array('value' => 5, 'type' => 'hidden'));
 		echo $form->input('ClientTracking.5.clientTrackingId', array('type' => 'hidden'));
+		echo $form->input('ClientTracking.5.clientId', array('type' => 'hidden','value'=>$clientId));
+		echo $form->input('ClientTracking.5.packageId', array('type' => 'hidden','value'=>$packageId));
 		
 		?><br/><?
 		
@@ -53,6 +55,9 @@
 		echo $form->input('ClientTracking.6.impressionImageUrl', array('label' => 'Image Tracking URL<br/><span style="font-weight:normal;">&quot;Available on&quot;</span>'));
 		echo $form->input('ClientTracking.6.clientTrackingTypeId', array('value' => 6, 'type' => 'hidden'));
 		echo $form->input('ClientTracking.6.clientTrackingId', array('type' => 'hidden'));
+		echo $form->input('ClientTracking.6.clientId', array('type' => 'hidden','value'=>$clientId));
+		echo $form->input('ClientTracking.6.packageId', array('type' => 'hidden','value'=>$packageId));
+
 	?>
 	</div>
 

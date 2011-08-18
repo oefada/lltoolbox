@@ -489,30 +489,42 @@ class PackagesController extends AppController {
 		}
 
 		if (!empty($this->data)) {
+
 			if (!empty($this->data['Package']['externalOfferUrl'])) { // for hotel offers
-			   //push tracking links out to front end databases
-                if (!empty($this->data['ClientTracking'])) {
-                    $sites = $this->Package->field('sites', array('Package.packageId' => $id));
-                    $sites = explode(',', $sites);
-                    foreach($sites as $site) {
-                        foreach ($this->data['ClientTracking'] as $tracking) {
-                            $data['ClientTracking'] = $tracking;
-                            $data['ClientTracking']['packageId'] = $id;
-                            $this->Package->ClientTracking->useDbConfig = $site;
-                            $this->Package->ClientTracking->create();
-                            $this->Package->ClientTracking->save($data);
-                            $this->Package->ClientTracking->useDbConfig = 'default';
-                        }
-                    }
-                }
+
+				//push tracking links out to front end databases
+				if (!empty($this->data['ClientTracking'])){
+
+					$sites = $this->Package->field('sites', array('Package.packageId' => $id));
+					$sites = explode(',', $sites);
+					foreach($sites as $site) {
+						foreach ($this->data['ClientTracking'] as $key=>$tracking) {
+							$data['ClientTracking'] = $tracking;
+							$data['ClientTracking']['packageId'] = $id;
+							$this->Package->ClientTracking->useDbConfig = $site;
+							$this->Package->ClientTracking->create();
+							$this->Package->ClientTracking->save($tracking);
+							$this->Package->ClientTracking->useDbConfig = 'default';
+						}
+					}
+				}
+
 				$this->data['Package']['packageName'] = $this->data['Package']['packageTitle'];
-				if ($this->Package->saveAll($this->data, array('validate' => false)) && $this->Package->save($this->data, array('validate' => false))) {
+
+				$arr=array('validate' => false);
+				if ($this->Package->saveAll($this->data, $arr) && $this->Package->save($this->data, $arr)) {
 					$this->Session->setFlash(__('The Package has been saved', true), 'default', array(), 'success');
 					$this->redirect("/clients/$clientId/packages/edit/".$this->Package->id);
+
 				} else {
-					$this->Session->setFlash(__('The Package could not be saved. Please correct the errors below and try again.', true), 'default', array(), 'error');
+
+					$msg='The Package could not be saved. Please correct the errors below and try again.';
+					$this->Session->setFlash(__($msg, true), 'default', array(), 'error');
+
 				}
+
 				return;
+
 			}
 
 			if (@$this->data['clone'] == 'clone') {
@@ -583,6 +595,7 @@ class PackagesController extends AppController {
 		$this->LoaItem->recursive = 2;
 		$this->LoaItem->Behaviors->attach('Containable');
 
+		$clientLoaDetails=array();
 		foreach($this->data['ClientLoaPackageRel'] as $key => $clientLoaPackageRel):
 			$clientLoaDetails[$key] = $this->Client->Loa->findByLoaId($clientLoaPackageRel['loaId']);
 
@@ -639,6 +652,7 @@ class PackagesController extends AppController {
 		$this->set('client', $client);
 
 		$this->set('clientId', $clientId);
+		$this->set('packageId', $this->Package->id);
 
 		$this->setUpPackageLoaItemRelArray();
 		$itemList = $this->Package->PackageLoaItemRel->LoaItem->find('list');
@@ -680,7 +694,6 @@ class PackagesController extends AppController {
         $roomGradeName = $loaItems['LoaItem']['RoomGrade']['roomGradeName'];
 
 		$this->set(compact('loaItemTypes', 'trackExpirationCriteriaIds', 'familyAmenities', 'roomGradeName'));
-
 	}
 
 	function preview($clientId = null, $id = null) {

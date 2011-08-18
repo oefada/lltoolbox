@@ -10,18 +10,44 @@ class ClientTracking extends AppModel {
                            'Package' => array('className' => 'Package', 'foreignKey' => 'packageId'));
 	
 	function beforeSave() {
+
 		if (empty($this->data['ClientTracking']['sites'])) {
-				$client = $this->Client->find('first', array('conditions' => array('Client.clientId' => $this->data['ClientTracking']['clientId'])));
+
+			$key=0;
+			if (isset($this->data['ClientTracking'][5]))$key=5;
+			else if (isset($this->data['ClientTracking'][6]))$key=6;
+
+			if ($key>0){
+
+				$arr=array('conditions' => array('Client.clientId' => $this->data['ClientTracking'][$key]['clientId']));
+
+			}else{
+
+				$arr=array('conditions' => array('Client.clientId' => $this->data['ClientTracking']['clientId']));
+
+			}
+
+
+			$client = $this->Client->find('first', $arr);
+
 				if (!empty($client)) {
-						$this->data['ClientTracking']['sites'] = $client['Client']['sites'];
+
+					$this->data['ClientTracking']['sites'] = $client['Client']['sites'];
+
+				}else {
+
+					$arr=array('conditions' => array('Package.packageId' => $this->data['ClientTracking']['packageId']));
+					if ($package = $this->Package->find('first', $arr)) {
+						$this->data['ClientTracking']['sites'] = $package['Package']['sites'];
+					}
+
 				}
-                else {
-                    if ($package = $this->Package->find('first', array('conditions' => array('Package.packageId' => $this->data['ClientTracking']['packageId'])))) {
-                        $this->data['ClientTracking']['sites'] = $package['Package']['sites'];
-                    }
-                }
+
+
 		}
+
 		return true;
+
 	}
 	
 }
