@@ -28,11 +28,12 @@ class PaymentDetailsController extends AppController {
 				$this->data['PaymentDetail']['paymentProcessorId'] = 6;
 			}
 			
-        	$webservice_live_url = 'http://toolbox.luxurylink.com/web_service_tickets?wsdl';
+        	$webservice_live_url = 'http://rvella-toolboxdev.luxurylink.com/web_service_tickets?wsdl';
 			$webservice_live_method_name = 'processPaymentTicket';
 			$webservice_live_method_param = 'in0';
 			
 			$userData = $this->User->read(null, $this->data['PaymentDetail']['userId']);
+			$ticketId = $this->data['PaymentDetail']['ticketId'];
 			
 			$data = array();
 	        $data['userId']                 = $this->data['PaymentDetail']['userId'];
@@ -165,6 +166,7 @@ class PaymentDetailsController extends AppController {
 		        			$ccType = '';
 		        			break;
 		        	}
+					
 					$data['userPaymentSetting']['ccType']			= $ccType;
 		        	$data['userPaymentSetting']['ccNumber'] 		= aesEncrypt($data['userPaymentSetting']['ccNumber']);
 		        } elseif ($this->data['PaymentDetail']['userPaymentSettingId']) {

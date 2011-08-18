@@ -1949,20 +1949,18 @@ class WebServiceTicketsController extends WebServicesController
 			// ---------------------------------------------------------------------------
 			$processor = new Processor($paymentProcessorName);
 			$processor->InitPayment($userPaymentSettingPost, $ticket);
+			
 			if (!$isDev) {
 				// do not charge on dev or stage. For Production - charge away!
 				$processor->SubmitPost();
 			}
 			
-			$nameSplit 								= str_word_count($userPaymentSettingPost['UserPaymentSetting']['nameOnCard'], 1);
-			$firstName 								= trim($nameSplit[0]);
-			$lastName 								= trim(array_pop($nameSplit));
 			$userPaymentSettingPost['UserPaymentSetting']['expMonth'] = str_pad($userPaymentSettingPost['UserPaymentSetting']['expMonth'], 2, '0', STR_PAD_LEFT);
 
-			$paymentDetail 							= $processor->GetMappedResponse();
+			$paymentDetail 							= array_merge($paymentDetail,$processor->GetMappedResponse());
 			$paymentDetail['paymentTypeId'] 		= 1;
-			$paymentDetail['ppFirstName']			= $firstName;
-			$paymentDetail['ppLastName']			= $lastName;
+			$paymentDetail['ppFirstName']			= $data['firstName'];
+			$paymentDetail['ppLastName']			= $data['lastName'];
 			$paymentDetail['ppBillingAddress1']		= $userPaymentSettingPost['UserPaymentSetting']['address1'];
 			$paymentDetail['ppBillingCity']			= $userPaymentSettingPost['UserPaymentSetting']['city'];
 			$paymentDetail['ppBillingState']		= $userPaymentSettingPost['UserPaymentSetting']['state'];

@@ -93,7 +93,7 @@ class TicketsController extends AppController {
 									'Ticket.offerId', 'Ticket.userId', 'TicketStatus.ticketStatusName', 'Ticket.packageId',
 									'Ticket.userFirstName', 'Ticket.userLastName', 'Ticket.packageId', 'Ticket.billingPrice', 'Ticket.numNights', 'Ticket.formatId', 'Ticket.ticketNotes','Ticket.siteId',
 									'Ticket.requestArrival', 'Ticket.requestDeparture',
-									'PpvNotice.emailSentDatetime', 'ReservationPreferDate.arrivalDate', 'ReservationPreferDate.departureDate', 'COUNT(PpvNotice.ppvNoticeId) AS rescount'
+									'MAX(PpvNotice.emailSentDatetime) as emailSentDatetime', 'MAX(ReservationPreferDate.arrivalDate) as arrivalDate', 'MAX(ReservationPreferDate.departureDate) as departureDate', 'COUNT(PpvNotice.ppvNoticeId) AS rescount'
 									),
 		                        'contain' => array('TicketStatus'),
 		                        'order' => array(
@@ -131,7 +131,7 @@ class TicketsController extends AppController {
 				case 1:
 					$this->paginate['conditions']['Ticket.formatId'] = 1;
 					$this->paginate['conditions']['Ticket.ticketStatusId'] = 3;
-					$this->paginate['order'] = array('PpvNotice.emailSentDatetime' => 'desc');
+					$this->paginate['order'] = array('emailSentDatetime' => 'desc');
 					break;
 				case 2:
 					$this->paginate['conditions']['Ticket.formatId'] = 1;
@@ -211,7 +211,7 @@ class TicketsController extends AppController {
 			if ($s_ticket_status_id) {
 				$this->paginate['conditions']['Ticket.ticketStatusId'] = $s_ticket_status_id;
 				if ($s_ticket_status_id == 3) {
-		        	$this->paginate['order'] = array('PpvNotice.emailSentDatetime' => 'desc');
+		        	$this->paginate['order'] = array('emailSentDatetime' => 'desc');
 				}
 			}
 			if ($s_has_reservation) {
@@ -224,7 +224,7 @@ class TicketsController extends AppController {
 					unset($this->paginate['conditions']['Ticket.created BETWEEN ? AND ?']);
 				}
 				if ($s_res_check_in_date) {
-					$this->paginate['conditions']['Reservation.arrivalDate BETWEEN ? AND ?'] = array($s_start_date, $s_end_date);
+					$this->paginate['conditions']['arrivalDate BETWEEN ? AND ?'] = array($s_start_date, $s_end_date);
 					unset($this->paginate['conditions']['Ticket.created BETWEEN ? AND ?']);
 				}
 			}
@@ -299,9 +299,9 @@ class TicketsController extends AppController {
 			$tickets_index[$k]['Promo'] = $this->Ticket->getTicketPromoData($v['Ticket']['ticketId']);
 			$tickets_index[$k]['Client'] = $clients;
 			$tickets_index[$k]['ResPreferDate'] = array();
-			if (in_array($v['Ticket']['offerTypeId'], array(1,2,6)) && !empty($v['ReservationPreferDate']['arrivalDate']) && !empty($v['ReservationPreferDate']['departureDate'])) {
-				$tickets_index[$k]['ResPreferDate']['arrival'] = $v['ReservationPreferDate']['arrivalDate'];
-				$tickets_index[$k]['ResPreferDate']['departure'] = $v['ReservationPreferDate']['departureDate'];
+			if (in_array($v['Ticket']['offerTypeId'], array(1,2,6)) && !empty($v[0]['arrivalDate']) && !empty($v[0]['departureDate'])) {
+				$tickets_index[$k]['ResPreferDate']['arrival'] = $v[0]['arrivalDate'];
+				$tickets_index[$k]['ResPreferDate']['departure'] = $v[0]['departureDate'];
 				$tickets_index[$k]['ResPreferDate']['flagged'] =  (strtotime($tickets_index[$k]['ResPreferDate']['arrival']) - strtotime('NOW') <= 604800) ? 1 : 0;
 			} elseif ($v['Ticket']['formatId'] == 2) {
 				$tickets_index[$k]['ResPreferDate']['arrival'] = $v['Ticket']['requestArrival'];
@@ -316,6 +316,7 @@ class TicketsController extends AppController {
 		}
 		$csv_link_string .= '.csv';
 
+		var_dump($tickets_index);
 		$this->set('csv_link_string', $csv_link_string);
 		$this->set('tickets', $tickets_index);
 		$this->set('format', $this->Format->find('list'));

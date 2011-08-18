@@ -372,7 +372,7 @@ foreach ($tickets as $ticket):
 			<?php echo $ticket['TicketStatus']['ticketStatusName']; ?>
 		</td>
 		<td>
-			<?php echo isset($ticket['PpvNotice']['emailSentDatetime']) ? $ticket['PpvNotice']['emailSentDatetime'] : ''; ?>
+			<?php echo isset($ticket[0]['emailSentDatetime']) ? $ticket[0]['emailSentDatetime'] : ''; ?>
 		</td>
 		<td>
 			<?php echo $ticket['Ticket']['validCard']; ?>
