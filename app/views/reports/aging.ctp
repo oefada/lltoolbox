@@ -53,9 +53,12 @@ Ajax.InPlaceEditorWithEmptyText = Class.create(Ajax.InPlaceEditor, {
 </script>
 <div class='index'>
 <?php
+
 //TODO: put this in a helper
 function sortLink($field, $title, $view, $html) {
-	$url = "/reports/bids/filter:";
+
+	//$url = "/reports/bids/filter:";
+	$url = "/reports/aging";
 	$url .= "/sortBy:$field";
 
 	if (isset($view->params['named']['sortBy']) && $view->params['named']['sortBy'] == $field) {
@@ -69,6 +72,7 @@ function sortLink($field, $title, $view, $html) {
 	$url .= "/sortDirection:$dir";
 	
 	return $html->link($title, $url);
+
 }
 
 if (!empty($results)): 
@@ -93,17 +97,19 @@ $grandTotalMembershipBalance = 0;
 	<table style="margin-top: 20px">
 		<tr>
 			<th>&nbsp;</th>
-			<th><?=sortLink('Offer.offerId', 'Age (Days)', $this, $html)?></th>
-			<th><?=sortLink('Offer.offerId', 'Client ID', $this, $html)?></th>
+			<th><?=sortLink('age', 'Age (Days)', $this, $html)?></th>
+			<th><?=sortLink('Client.clientId', 'Client ID', $this, $html)?></th>
 			<th><?=sortLink('Client.name', 'Client Name', $this, $html)?></th>
 			<th><?=sortLink('Client.managerUsername', 'Account Manager', $this, $html)?></th>
-			<th><?=sortLink('Track.applyToMembershipBal', 'LOA ID', $this, $html)?></th>
-			<th><?=sortLink('Offer.offerTypeName', 'Start Date', $this, $html)?></th>
-			<th><?=sortLink('country', 'End Date', $this, $html)?></th>
-			<th><?=sortLink('state', 'Membership Fee', $this, $html)?></th>
-			<th><?=sortLink('city', 'Remaining Balance', $this, $html)?></th>
+			<th><?=sortLink('Loa.loaId', 'LOA ID', $this, $html)?></th>
+			<th><?=sortLink('Loa.startDate', 'Start Date', $this, $html)?></th>
+			<th><?=sortLink('loaEndDate', 'End Date', $this, $html)?></th>
+			<th><?=sortLink('membershipFee', 'Membership Fee', $this, $html)?></th>
+			<th><?=sortLink('membershipBalance', 'Remaining Balance', $this, $html)?></th>
 			<th><?=sortLink('lastSellPrice', 'Last Ticket Price', $this, $html)?></th>
 			<th><?=sortLink('lastSellDate', 'Last Ticket Date', $this, $html)?></th>
+			<th><?=sortLink('sites', 'Sites', $this, $html)?></th>
+			<th>Packages Live</th>
 			<th><?=sortLink('Loa.notes', 'Notes', $this, $html)?></th>
 		</tr>
 <?php
@@ -133,6 +139,11 @@ $subtotalMembershipBalance += (int)$r['Loa']['membershipBalance'];
 		</td>
 		<td><?=$r[0]['lastSellPrice']?></td>
 		<td><?=$html->link($r[0]['lastSellDate'], '/loas/maintTracking/'.$r['Loa']['loaId'])?></td>
+
+		<td><?=($r['Client']['sites'])?></td>
+		<td> <?=isset($r['Client']['numOffers'])?$r['Client']['numOffers']:''?> </td>
+
+
 		<td>
 			<p id="notes-<?=$r['Loa']['loaId']?>"><?=$r['Loa']['notes']?></p>
 			<script type="text/javascript">
@@ -145,7 +156,7 @@ $subtotalMembershipBalance += (int)$r['Loa']['membershipBalance'];
 		<th colspan=8 style="text-align: right">Subtotals:</th>
 		<th><?=$subtotalMembershipFee?></th>
 		<th><?=$subtotalMembershipBalance?></th>
-		<th colspan=4>
+		<th colspan=6>
 			&nbsp;
 		</th>
 	</tr>

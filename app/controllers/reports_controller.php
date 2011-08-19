@@ -684,46 +684,165 @@ class ReportsController extends AppController {
 	    return implode($conditions, ' AND ');
 	}
 
-	function aging() {
-			if (isset($_GET['showOld'])) {
-				$condition = '';
-			} else {
-				$condition = " AND Loa.endDate >= NOW() - INTERVAL 30 DAY";
+
+	private function getOrderBy($sortBy){
+
+		$orderBy='';
+		if ($sortBy=="membershipFee")$orderBy.="ORDER BY Loa.membershipFee ";
+		else if ($sortBy=="loaEndDate")$orderBy.="ORDER BY loaEndDate ";
+		else if ($sortBy=="Loa.startDate")$orderBy.="ORDER BY Loa.startDate ";
+		else if ($sortBy=="age")$orderBy.="ORDER BY age ";
+		else if ($sortBy=="Client.clientId")$orderBy.="ORDER BY Client.clientId ";
+		else if ($sortBy=="Client.name")$orderBy.="ORDER BY Client.name ";
+		else if ($sortBy=="Client.managerUsername")$orderBy.="ORDER BY Client.managerUsername ";
+		else if ($sortBy=="Loa.loaId")$orderBy.="ORDER BY Loa.loaId ";
+		else if ($sortBy=="membershipBalance")$orderBy.="ORDER BY membershipBalance ";
+		else if ($sortBy=="lastSellPrice")$orderBy.="ORDER BY lastSellPrice ";
+		else if ($sortBy=="lastSellDate")$orderBy.="ORDER BY lastSellDate ";
+		else if ($sortBy=="Loa.notes")$orderBy.="ORDER BY Loa.notes ";
+
+		return $orderBy;
+
+	}
+
+	private function getNumOffers($results,$sortBy,$sortDirection){
+
+		$clientId_arr=array();
+		foreach($results as $key=>$arr){
+			$sites_arr=explode(",",$arr['Client']['sites']);
+			foreach($sites_arr as $site){
+				$clientId_arr[$site][]=$arr['Client']['clientId'];
 			}
-	        $sql = "SELECT Client.clientId, Client.name,
-            	                        Loa.loaId,
-            	                        Loa.startDate,
-            	                        MAX(Loa.endDate) AS loaEndDate,
-            	                        Loa.membershipFee, Loa.membershipBalance, Loa.notes,
-										Loa.membershipTotalPackages,
-										Loa.membershipPackagesRemaining,
-										Loa.loaMembershipTypeId,
-            	                        DATEDIFF(NOW(), Loa.startDate) as age,
-										Client.managerUsername, Client.locationDisplay,
-										(SELECT Ticket.billingPrice
-											FROM ticket as Ticket
-											INNER JOIN clientLoaPackageRel clp ON(clp.packageId = Ticket.packageId)
-											WHERE clp.clientId = Client.clientId AND clp.LoaId = Loa.loaId
-											ORDER BY Ticket.created DESC
-											LIMIT 1
-										) as lastSellPrice,
-										(SELECT Ticket.created
-											FROM ticket as Ticket
-											INNER JOIN clientLoaPackageRel clp ON(clp.packageId = Ticket.packageId)
-											WHERE clp.clientId = Client.clientId AND clp.LoaId = Loa.loaId
-											ORDER BY Ticket.created DESC
-											LIMIT 1
-										) as lastSellDate
-                                FROM client AS Client
-                                INNER JOIN loa AS Loa ON (Loa.clientId = Client.clientId)
-            					WHERE (Loa.membershipBalance > 0 OR Loa.membershipPackagesRemaining > 0) AND Loa.startDate BETWEEN DATE_ADD(NOW(), INTERVAL -31 DAY) AND NOW()
-									AND YEAR(Loa.endDate) >= YEAR(NOW() - INTERVAL 1 YEAR) AND Loa.loaLevelId = 2 $condition
-                                GROUP BY Client.clientId, Loa.loaId
-                                ORDER BY Loa.startDate ASC, Loa.membershipBalance DESC";
+		}
+// TODO: move these queries to a model in the way the rest of this controller didn't
+		$ll_num_arr=array();
+		$q="SELECT clientId,count(*) as num FROM offerLuxuryLink ";
+		$q.="WHERE clientId IN (".implode(",",$clientId_arr['luxurylink']).") ";
+		$q.="AND endDate>NOW() ";
+		$q.="AND isClosed=0 ";
+		$q.="GROUP BY clientId";
+		$rows=$this->OfferType->query($q);
+		foreach($rows as $key=>$arr){
+			$clientId=$arr['offerLuxuryLink']['clientId'];
+			$num=$arr[0]['num'];
+			$ll_num_arr[$clientId]=$num;
+		}
+		$fg_num_arr=array();
+		$q="SELECT clientId,count(*) as num FROM offerLuxuryLink ";
+		$q.="WHERE clientId IN (".implode(",",$clientId_arr['family']).") ";
+		$q.="AND endDate>NOW() ";
+		$q.="AND isClosed=0 ";
+		$q.="GROUP BY clientId";
+		$rows=$this->OfferType->query($q);
+		foreach($rows as $key=>$arr){
+			$clientId=$arr['offerLuxuryLink']['clientId'];
+			$num=$arr[0]['num'];
+			$fg_num_arr[$clientId]=$num;
+		}
 
-	        $results['0 to 30'] = $this->OfferType->query($sql);
+		foreach($results as $key=>$arr){
 
-	        $sql = "SELECT Client.clientId, Client.name,
+			$sites_arr=explode(",",$arr['Client']['sites']);
+			foreach($ll_num_arr as $clientId=>$numOffers){
+				if ($clientId==$results[$key]['Client']['clientId'] && in_array("luxurylink",$sites_arr)){
+					$results[$key]['Client']['numOffers']=$numOffers;
+					$ll_clientId_numOffers_arr[$clientId]=$numOffers;
+				}
+			}
+			foreach($fg_num_arr as $clientId=>$numOffers){
+				if ($clientId==$results[$key]['Client']['clientId'] && in_array("family",$sites_arr)){
+					$results[$key]['Client']['numOffers']=$numOffers;
+					$fg_clientId_numOffers_arr[$clientId]=$numOffers;
+				}
+			}
+
+		}
+
+		//if ($sortBy=="numOffers"){
+
+			$new_arr=array();
+			asort($ll_clientId_numOffers_arr);
+			foreach($ll_clientId_numOffers_arr as $clientId=>$num){
+				foreach($results as $key=>$arr){
+					if ($arr['Client']['clientId']==$clientId){
+						$arr['Client']['numOffers']=" LL ";
+						$new_arr[$clientId]=$arr;
+					}
+				}
+			}
+			$index=0;
+			asort($fg_clientId_numOffers_arr);
+			foreach($fg_clientId_numOffers_arr as $clientId=>$num){
+				foreach($results as $key=>$arr){
+					if ($arr['Client']['clientId']==$clientId){
+						if (isset($new_arr[$clientId])){
+							$arr['Client']['numOffers']="LL FG";
+							$new_arr[$clientId]=$arr;
+						}else{
+							$arr['Client']['numOffers']=" FG ";
+							$new_arr[$clientId]=$arr;
+						}
+					}
+				}
+		//	}
+
+			$results=$new_arr;
+
+		}	
+
+		return $results;
+
+	}
+
+	function aging() {
+
+		$sortBy=isset($this->params['named']['sortBy'])?$this->params['named']['sortBy']:false;
+		$sortDirection=isset($this->params['named']['sortDirection'])?$this->params['named']['sortDirection']:"DESC";
+
+		if (isset($_GET['showOld'])) {
+			$condition = '';
+		} else {
+			$condition = " AND Loa.endDate >= NOW() - INTERVAL 30 DAY";
+		}
+
+		$sql = "SELECT Client.clientId, Client.name, Client.sites as sites,
+																Loa.loaId,
+																Loa.startDate,
+																MAX(Loa.endDate) AS loaEndDate,
+																Loa.membershipFee, Loa.membershipBalance, Loa.notes,
+							Loa.membershipTotalPackages,
+							Loa.membershipPackagesRemaining,
+							Loa.loaMembershipTypeId,
+																DATEDIFF(NOW(), Loa.startDate) as age,
+							Client.managerUsername, Client.locationDisplay,
+							(SELECT Ticket.billingPrice
+								FROM ticket as Ticket
+								INNER JOIN clientLoaPackageRel clp ON(clp.packageId = Ticket.packageId)
+								WHERE clp.clientId = Client.clientId AND clp.LoaId = Loa.loaId
+								ORDER BY Ticket.created DESC
+								LIMIT 1
+							) as lastSellPrice,
+							(SELECT Ticket.created
+								FROM ticket as Ticket
+								INNER JOIN clientLoaPackageRel clp ON(clp.packageId = Ticket.packageId)
+								WHERE clp.clientId = Client.clientId AND clp.LoaId = Loa.loaId
+								ORDER BY Ticket.created DESC
+								LIMIT 1
+							) as lastSellDate
+													FROM client AS Client
+													INNER JOIN loa AS Loa ON (Loa.clientId = Client.clientId)
+								WHERE (Loa.membershipBalance > 0 OR Loa.membershipPackagesRemaining > 0) AND Loa.startDate BETWEEN DATE_ADD(NOW(), INTERVAL -31 DAY) AND NOW()
+						AND YEAR(Loa.endDate) >= YEAR(NOW() - INTERVAL 1 YEAR) AND Loa.loaLevelId = 2 $condition
+													GROUP BY Client.clientId, Loa.loaId ";
+		//													ORDER BY Loa.startDate ASC, Loa.membershipBalance DESC";
+		$sql.=$this->getOrderBy($sortBy);
+		$sql.=$sortDirection;
+	  $results['0 to 30'] = $this->OfferType->query($sql);
+		$results['0 to 30'] = $this->getNumOffers($results['0 to 30'],$sortBy,$sortDirection);
+
+
+
+    $sql = "SELECT Client.clientId, Client.name, Client.sites as sites,
             	                        Loa.loaId,
             	                        Loa.startDate,
             	                        MAX(Loa.endDate) AS loaEndDate,
@@ -751,12 +870,15 @@ class ReportsController extends AppController {
                                 INNER JOIN loa AS Loa ON (Loa.clientId = Client.clientId)
             					WHERE (Loa.membershipBalance > 0 OR Loa.membershipPackagesRemaining > 0) AND Loa.startDate BETWEEN DATE_ADD(NOW(), INTERVAL -61 DAY) AND DATE_ADD(NOW(), INTERVAL -31 DAY)
 									AND YEAR(Loa.endDate) >= YEAR(NOW() - INTERVAL 1 YEAR) AND Loa.loaLevelId = 2 $condition
-                                GROUP BY Client.clientId, Loa.loaId
-                                ORDER BY Loa.startDate ASC, Loa.membershipBalance DESC";
+                                GROUP BY Client.clientId, Loa.loaId ";
+    //                            ORDER BY Loa.startDate ASC, Loa.membershipBalance DESC";
 
-	        $results['31 to 60'] = $this->OfferType->query($sql);
+		$sql.=$this->getOrderBy($sortBy);
+		$sql.=$sortDirection;
+		$results['31 to 60'] = $this->OfferType->query($sql);
+		$results['31 to 60'] = $this->getNumOffers($results['31 to 60'],$sortBy,$sortDirection);
 
-	        $sql = "SELECT Client.clientId, Client.name,
+		$sql = "SELECT Client.clientId, Client.name, Client.sites as sites,
             	                        Loa.loaId,
             	                        Loa.startDate,
             	                        MAX(Loa.endDate) AS loaEndDate,
@@ -784,12 +906,14 @@ class ReportsController extends AppController {
                                 INNER JOIN loa AS Loa ON (Loa.clientId = Client.clientId)
             					WHERE (Loa.membershipBalance > 0 OR Loa.membershipPackagesRemaining > 0) AND Loa.startDate BETWEEN DATE_ADD(NOW(), INTERVAL -91 DAY) AND DATE_ADD(NOW(), INTERVAL -61 DAY)
 									AND YEAR(Loa.endDate) >= YEAR(NOW() - INTERVAL 1 YEAR) AND Loa.loaLevelId = 2 $condition
-                                GROUP BY Client.clientId, Loa.loaId
-                                ORDER BY Loa.startDate ASC, Loa.membershipBalance DESC";
+                                GROUP BY Client.clientId, Loa.loaId ";
+    //                            ORDER BY Loa.startDate ASC, Loa.membershipBalance DESC";
+		$sql.=$this->getOrderBy($sortBy);
+		$sql.=$sortDirection;
+		$results['61 to 90'] = $this->OfferType->query($sql);
+		$results['61 to 90'] = $this->getNumOffers($results['61 to 90'],$sortBy,$sortDirection);
 
-	        $results['61 to 90'] = $this->OfferType->query($sql);
-
-	        $sql = "SELECT Client.clientId, Client.name,
+		$sql = "SELECT Client.clientId, Client.name, Client.sites as sites,
             	                        Loa.loaId,
             	                        Loa.startDate,
             	                        MAX(Loa.endDate) AS loaEndDate,
@@ -817,12 +941,14 @@ class ReportsController extends AppController {
                                 INNER JOIN loa AS Loa ON (Loa.clientId = Client.clientId)
             					WHERE (Loa.membershipBalance > 0 OR Loa.membershipPackagesRemaining > 0) AND Loa.startDate BETWEEN DATE_ADD(NOW(), INTERVAL -121 DAY) AND DATE_ADD(NOW(), INTERVAL -91 DAY)
 									AND YEAR(Loa.endDate) >= YEAR(NOW() - INTERVAL 1 YEAR) AND Loa.loaLevelId = 2 $condition
-                                GROUP BY Client.clientId, Loa.loaId
-                                ORDER BY Loa.startDate ASC, Loa.membershipBalance DESC";
+                                GROUP BY Client.clientId, Loa.loaId ";
+    //                            ORDER BY Loa.startDate ASC, Loa.membershipBalance DESC";
+		$sql.=$this->getOrderBy($sortBy);
+		$sql.=$sortDirection;
+		$results['91 to 120'] = $this->OfferType->query($sql);
+		$results['91 to 120'] = $this->getNumOffers($results['91 to 120'],$sortBy,$sortDirection);
 
-	        $results['91 to 120'] = $this->OfferType->query($sql);
-
-			$sql = "SELECT Client.clientId, Client.name,
+		$sql = "SELECT Client.clientId, Client.name, Client.sites as sites,
             	                        Loa.loaId,
             	                        Loa.startDate,
             	                        MAX(Loa.endDate) AS loaEndDate,
@@ -850,13 +976,15 @@ class ReportsController extends AppController {
                                 INNER JOIN loa AS Loa ON (Loa.clientId = Client.clientId)
             					WHERE (Loa.membershipBalance > 0 OR Loa.membershipPackagesRemaining > 0) AND Loa.startDate BETWEEN DATE_ADD(NOW(), INTERVAL -181 DAY) AND DATE_ADD(NOW(), INTERVAL -121 DAY)
 									AND YEAR(Loa.endDate) >= YEAR(NOW() - INTERVAL 1 YEAR) AND Loa.loaLevelId = 2 $condition
-                                GROUP BY Client.clientId, Loa.loaId
-                                ORDER BY Loa.startDate ASC, Loa.membershipBalance DESC";
+                                GROUP BY Client.clientId, Loa.loaId ";
+    //                            ORDER BY Loa.startDate ASC, Loa.membershipBalance DESC";
 
-	        $results['121 to 180'] = $this->OfferType->query($sql);
+		$sql.=$this->getOrderBy($sortBy);
+		$sql.=$sortDirection;
+		$results['121 to 180'] = $this->OfferType->query($sql);
+		$results['121 to 180'] = $this->getNumOffers($results['121 to 180'],$sortBy,$sortDirection);
 
-
-			$sql = "SELECT Client.clientId, Client.name,
+		$sql = "SELECT Client.clientId, Client.name, Client.sites as sites,
             	                        Loa.loaId,
             	                        Loa.startDate,
             	                        MAX(Loa.endDate) AS loaEndDate,
@@ -884,17 +1012,17 @@ class ReportsController extends AppController {
                                 INNER JOIN loa AS Loa ON (Loa.clientId = Client.clientId)
             					WHERE (Loa.membershipBalance > 0 OR Loa.membershipPackagesRemaining > 0) AND Loa.startDate <= DATE_ADD(NOW(), INTERVAL - 181 DAY)
 									AND Loa.endDate >= NOW() AND Loa.loaLevelId = 2 $condition
-                                GROUP BY Client.clientId, Loa.loaId
-                                ORDER BY Loa.startDate ASC, Loa.membershipBalance DESC";
+                                GROUP BY Client.clientId, Loa.loaId ";
+    //                            ORDER BY Loa.startDate ASC, Loa.membershipBalance DESC";
+		$sql.=$this->getOrderBy($sortBy);
+		$sql.=$sortDirection;
 
-			$results['180 plus'] = $this->OfferType->query($sql);
+		$results['180 plus'] = $this->OfferType->query($sql);
+		$results['180 plus'] = $this->getNumOffers($results['180 plus'],$sortBy,$sortDirection);
 
-			$results = array_reverse($results);
+		$this->set('showingOld', isset($_GET['showOld']) ? 1 : 0);
+	  $this->set('results', $results);
 
-			$this->set('showingOld', isset($_GET['showOld']) ? 1 : 0);
-	        $this->set('results', $results);
-
-			//AND Loa.membershipBalance > 0 AND YEAR(Loa.endDate) >= YEAR(NOW() - INTERVAL 1 YEAR) AND Loa.loaLevelId = 2 $condition
 	}
 
 	function auction_timeslot() {
