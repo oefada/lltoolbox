@@ -1,18 +1,69 @@
 <?php
-if (!empty($results)): 
-$i = 1;
-?>
-<?php foreach($results as $periodName => $timeperiod): ?>
-Accounts aged <?=$periodName?> days<?php echo "\n"?><?=count($timeperiod)?> records found
-<?php echo "\n"?>
-,Age (Days),Client ID,Client Name,Manager Username,LOA ID,Start Date,End Date,Membership Fee,Remaining Balance,Last Sell Price,Last Sell Date,Notes<?php echo "\n"?>
-<?php foreach ($timeperiod as $k => $r):?>
-<?=$i++?>,<?=$r[0]['age']?>,<?=$r['Client']['clientId']?>,<?='"'.str_replace('"', '\"', $r['Client']['name']).'"'?>,<?=$r['Client']['managerUsername']?>,<?=$r['Loa']['loaId']?>,<?=$r['Loa']['startDate']?>,<?=$r[0]['loaEndDate']?>,<?=$r['Loa']['membershipFee']?> <?php if ($r['Loa']['membershipPackagesRemaining']) {echo $r['Loa']['membershipTotalPackages'] . ' packages'; }?>,<?=$r['Loa']['membershipBalance']?> <?php if ($r['Loa']['membershipPackagesRemaining']) {echo $r['Loa']['membershipPackagesRemaining'] . ' packages'; }?>,<?=$r[0]['lastSellPrice']?>,<?=$r[0]['lastSellDate']?>,<?='"'.str_replace('"', '\"', $r['Loa']['notes']).'"'?>
-<?php echo "\n"?>
-<?php endforeach; //TODO: add totals ?>
-<?php echo "\n"?>
-<?php endforeach; //end periods?>
 
-<?php else: ?>
-No results found
-<?php endif; ?>
+if (!empty($results)){
+
+	$i = 1;
+
+	foreach($results as $periodName => $timeperiod){
+
+		echo "Accounts aged $periodName days\n";
+		echo count($timeperiod);
+		echo "records found \n";
+		echo ",Age (Days),Client ID,Client Name,Manager Username,LOA ID,Start Date,End Date,";
+		echo "Membership Fee,Remaining Balance,Last Sell Price,Last Sell Date,";
+		echo "Sites,";
+		echo "Packages Live,";	
+		echo "Notes\n";
+
+		foreach ($timeperiod as $k => $r){
+
+			echo ($i++).",".$r[0]['age'];
+			echo ",";
+			echo $r['Client']['clientId'];
+			echo ",";
+			echo '"';
+			echo str_replace('"', '\"', $r['Client']['name']);
+			echo '"';
+			echo ",";
+			echo $r['Client']['managerUsername'];
+			echo ",";
+			echo $r['Loa']['loaId'];
+			echo ",";
+			echo $r['Loa']['startDate'];
+			echo ",";
+			echo $r[0]['loaEndDate'];
+			echo ",";
+			echo $r['Loa']['membershipFee'];
+
+			if ($r['Loa']['membershipPackagesRemaining']){
+				echo $r['Loa']['membershipTotalPackages'] . ' packages'; 
+			}
+			echo ",";
+			echo $r['Loa']['membershipBalance'];
+			if ($r['Loa']['membershipPackagesRemaining']){
+				echo $r['Loa']['membershipPackagesRemaining'] . ' packages'; 
+			}
+			echo ",";
+			echo $r[0]['lastSellPrice'];
+			echo ",";
+			echo $r[0]['lastSellDate'];
+			echo ",";
+
+			echo isset($r['Client']['sites'])?str_replace(",","/",$r['Client']['sites']).",":',';
+
+			echo isset($r['Client']['numOffers'])?$r['Client']['numOffers'].",":',';
+
+			echo '"'.str_replace('"', '\"', $r['Loa']['notes']).'"';
+			echo "\n";
+
+		}
+
+		echo "\n";
+
+	}
+
+}else{
+
+	echo "No results found";
+
+}
