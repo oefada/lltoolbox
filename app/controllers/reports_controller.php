@@ -758,7 +758,8 @@ class ReportsController extends AppController {
 
 		}
 
-		//if ($sortBy=="numOffers"){
+		// not sorting by number of offers, but might as well leave this here for now
+		if (false && $sortBy=="numOffers"){
 
 			$new_arr=array();
 			asort($ll_clientId_numOffers_arr);
@@ -784,7 +785,7 @@ class ReportsController extends AppController {
 						}
 					}
 				}
-		//	}
+		}
 
 			$results=$new_arr;
 
