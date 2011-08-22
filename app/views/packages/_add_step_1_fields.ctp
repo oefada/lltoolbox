@@ -6,16 +6,16 @@
 <?php
 		echo $form->input('ClientLoaPackageRel.'.$rowId.'.clientId', array('value' => $clientId, 'type' => 'hidden'));
 		echo $form->input('ClientLoaPackageRel.'.$rowId.'.loaId', array('options' => $loaIds));
+
         if (!isset($additionalClient)) {
         	// TICKET634: package creation - FG/LL choice does not reflect LOA data
         	$cSiteIds = array();
-        	foreach ($siteIds as $s) {
+        	foreach ($siteIds as $key=>$s) {
         		if (in_array(strtolower(preg_replace("/[^A-Za-z0-9]/","", $s)),$client['Client']['sites'])) {
-        			$cSiteIds[] = $s;
+        			$cSiteIds[$key] = $s;
         		}	
         	}
-			
-            echo $form->input('Package.siteId', array('options' => $cSiteIds, 'label' => 'Package Site'));
+          echo $form->input('Package.siteId', array('options' => $cSiteIds, 'label' => 'Package Site'));
         }
 ?>
 	<!-- <div class="input text"><label>LOA Expiration Date:</label><div id="loaExpirationDate<?=$rowId?>" style="display: inline"></div></div> -->
