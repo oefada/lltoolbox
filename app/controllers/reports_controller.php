@@ -745,51 +745,18 @@ class ReportsController extends AppController {
 			$sites_arr=explode(",",$arr['Client']['sites']);
 			foreach($ll_num_arr as $clientId=>$numOffers){
 				if ($clientId==$results[$key]['Client']['clientId'] && in_array("luxurylink",$sites_arr)){
-					$results[$key]['Client']['numOffers']=$numOffers;
+					$results[$key]['Client']['numOffers']=" LL($numOffers)";
 					$ll_clientId_numOffers_arr[$clientId]=$numOffers;
 				}
 			}
 			foreach($fg_num_arr as $clientId=>$numOffers){
 				if ($clientId==$results[$key]['Client']['clientId'] && in_array("family",$sites_arr)){
-					$results[$key]['Client']['numOffers']=$numOffers;
+					$results[$key]['Client']['numOffers']="FG($numOffers)";
 					$fg_clientId_numOffers_arr[$clientId]=$numOffers;
 				}
 			}
 
 		}
-
-		// not sorting by number of offers, but might as well leave this here for now
-		if (false && $sortBy=="numOffers"){
-
-			$new_arr=array();
-			asort($ll_clientId_numOffers_arr);
-			foreach($ll_clientId_numOffers_arr as $clientId=>$num){
-				foreach($results as $key=>$arr){
-					if ($arr['Client']['clientId']==$clientId){
-						$arr['Client']['numOffers']=" LL ";
-						$new_arr[$clientId]=$arr;
-					}
-				}
-			}
-			$index=0;
-			asort($fg_clientId_numOffers_arr);
-			foreach($fg_clientId_numOffers_arr as $clientId=>$num){
-				foreach($results as $key=>$arr){
-					if ($arr['Client']['clientId']==$clientId){
-						if (isset($new_arr[$clientId])){
-							$arr['Client']['numOffers']="LL FG";
-							$new_arr[$clientId]=$arr;
-						}else{
-							$arr['Client']['numOffers']=" FG ";
-							$new_arr[$clientId]=$arr;
-						}
-					}
-				}
-		}
-
-			$results=$new_arr;
-
-		}	
 
 		return $results;
 
