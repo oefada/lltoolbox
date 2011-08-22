@@ -751,7 +751,11 @@ class ReportsController extends AppController {
 			}
 			foreach($fg_num_arr as $clientId=>$numOffers){
 				if ($clientId==$results[$key]['Client']['clientId'] && in_array("family",$sites_arr)){
-					$results[$key]['Client']['numOffers']="FG($numOffers)";
+					if (isset($results[$key]['Client']['numOffers'])){
+						$results[$key]['Client']['numOffers'].=" FG($numOffers)";
+					}else{
+						$results[$key]['Client']['numOffers']="FG($numOffers)";
+					}
 					$fg_clientId_numOffers_arr[$clientId]=$numOffers;
 				}
 			}
