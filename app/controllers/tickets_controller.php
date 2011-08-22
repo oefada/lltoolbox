@@ -316,7 +316,6 @@ class TicketsController extends AppController {
 		}
 		$csv_link_string .= '.csv';
 
-		var_dump($tickets_index);
 		$this->set('csv_link_string', $csv_link_string);
 		$this->set('tickets', $tickets_index);
 		$this->set('format', $this->Format->find('list'));
