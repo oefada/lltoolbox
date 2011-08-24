@@ -123,24 +123,30 @@ class Ticket extends AppModel {
 	}
 
 	function getPromoGcCofData($ticketId, $ticketPrice) {
+
 		$data = array();
 		$data['original_ticket_price'] = $ticketPrice;
 
-		$result = $this->query("SELECT PromoCode.*, Promo.*
+		// get the promo code that is applied to this ticket
+		$q="SELECT PromoCode.*, Promo.*
 								FROM promoTicketRel as PromoTicketRel 
 								LEFT JOIN promoCode AS PromoCode ON PromoTicketRel.promoCodeId = PromoCode.promoCodeId 
 								LEFT JOIN promoCodeRel AS PromoCodeRel ON PromoCode.promocodeId = PromoCodeRel.promoCodeId 
 								LEFT JOIN promo AS Promo ON PromoCodeRel.promoId = Promo.promoId 
 								WHERE PromoTicketRel.ticketId = $ticketId 
-								GROUP BY PromoTicketRel.promoCodeId
-								");
+								GROUP BY PromoTicketRel.promoCodeId";
+		$result = $this->query($q);
 
+		// loop over the result set
+		// and overwrite 'Promo' if it is a promo with an array of the last result set
+		// if it is a 'GiftCert', overwrite 'GiftCert' with the last result set that contains the balance 
 		foreach ($result as $k => $row) {
 			if ($row['PromoCode']['promoCodeId'] && $row['Promo']['promoId']) {
 				$data['Promo'] = array_merge($row['PromoCode'], $row['Promo']);	
 			} else {
 				$gcSql = 'SELECT * FROM giftCertBalance ';
-				$gcSql.= 'WHERE promoCodeId = ' . $row['PromoCode']['promoCodeId'] . ' ORDER BY giftCertBalanceId DESC LIMIT 1';
+				$gcSql.= 'WHERE promoCodeId = ' . $row['PromoCode']['promoCodeId'] . ' ';
+				$gcSql.= 'ORDER BY giftCertBalanceId DESC LIMIT 1';
 				$gcResult = $this->query($gcSql);
 				if (!empty($gcResult) && ($gcResult[0]['giftCertBalance']['balance'] > 0)) {
 					$data['GiftCert'] = $gcResult[0]['giftCertBalance'];
@@ -148,6 +154,7 @@ class Ticket extends AppModel {
 			}
 		}
 
+		// if there is a promo and a ticket price... 
 		if (isset($data['Promo']) && $data['Promo'] && ($ticketPrice > 0)) {
 			// get the amount off for the ticket
 			if ($data['Promo']['percentOff'] && !$data['Promo']['amountOff']) {
@@ -160,10 +167,15 @@ class Ticket extends AppModel {
 			$ticketPrice = $ticketPrice - $data['Promo']['totalAmountOff'];
 			$data['Promo']['applied'] = ($data['Promo']['totalAmountOff'] > 0) ? 1 : 0;
 		}	
-		
+
+		// get the handling fee
 		if ($ticketPrice > 0) {
 			$ticketPrice += $this->getFeeByTicket($ticketId);
 		}
+
+		// if it is a GiftCert and ticketPrice is greater than 0
+		// make sure the deduction doesn't bring it lower than 0
+		// set the remaining balance after use of the gift cert
 		if (isset($data['GiftCert']) && $data['GiftCert'] && ($ticketPrice > 0)) {
 			$new_price = $ticketPrice - $data['GiftCert']['balance'];					
 			if ($new_price < 0) {
@@ -178,14 +190,25 @@ class Ticket extends AppModel {
 			$data['GiftCert']['applied'] = ($data['GiftCert']['totalAmountOff'] > 0) ? 1 : 0;
 		}
 
+		/*
+		// This is commented out because CreditTracking does not determine if the credit
+		// was used against the ticket, paymentDetail with paymentTypeId of 3 determines
+		// if the credit was applied to the ticket
+		// 
+		// see if the user has any credit on file
+		// the last row in the table will be the sum total of the credit they have
+		// may be multiple rows per user with debits and credits
 		$cofSql = 'SELECT CreditTracking.* FROM ticket AS Ticket ';
 		$cofSql.= 'INNER JOIN creditTracking AS CreditTracking USING (userId) ';
-		$cofSql.= "WHERE Ticket.ticketId = $ticketId ORDER BY CreditTracking.creditTrackingId DESC LIMIT 1";
+		$cofSql.= "WHERE Ticket.ticketId = $ticketId ";
+		$cofSql.= "ORDER BY CreditTracking.creditTrackingId DESC LIMIT 1";
 		$cofResult = $this->query($cofSql);
 		if (!empty($cofResult) && ($cofResult[0]['CreditTracking']['balance'] > 0)) {
 			$data['Cof'] = $cofResult[0]['CreditTracking'];	
 		}
-		
+
+		// if there is a credit on file and a ticketPrice
+		// deduct the credit from the ticketPrice
 		if (isset($data['Cof']) && $data['Cof'] && ($ticketPrice > 0)) {
 			$new_price = $ticketPrice - $data['Cof']['balance'];					
 			if ($new_price < 0) {
@@ -199,16 +222,22 @@ class Ticket extends AppModel {
 			$ticketPrice = $new_price;
 			$data['Cof']['applied'] = ($data['Cof']['totalAmountOff'] > 0) ? 1 : 0;
 		}
-
+*/
 		$tp0 = $ticketPrice;
 		
+		// see if they used a gift certificate on this ticket 
 		$paymentRecordSql = 'SELECT paymentTypeId, paymentAmount FROM paymentDetail ';
 		$paymentRecordSql.= "WHERE paymentTypeId = 2 AND ticketId = $ticketId AND isSuccessfulCharge = 1";
 		$paymentRecordResult = $this->query($paymentRecordSql);
 		if (!empty($paymentRecordResult)) {
+			// if there is a GiftCert, add the 'totalAmountOff' to the ticketPrice
 			if ($data['GiftCert']['applied']) {
 				$ticketPrice += $data['GiftCert']['totalAmountOff'];
 			}
+			// loop over the result set from payementDetail with the gift cert data
+			// set GiftCert applied to 1 
+			// set totalAmountOff to paymentAmount retrieved from the db
+			// deduct paymentAmount from the ticketPrice
 			foreach ($paymentRecordResult as $payment) {
 				$data['GiftCert']['applied'] = 1;
 				$data['GiftCert']['totalAmountOff'] = $payment['paymentDetail']['paymentAmount'];
@@ -217,14 +246,19 @@ class Ticket extends AppModel {
 			}
 		}
 
+		// see if credit on file was used for this ticket
 		$tp = $ticketPrice;
 		$paymentRecordSql = 'SELECT paymentTypeId, paymentAmount FROM paymentDetail ';
 		$paymentRecordSql.= "WHERE paymentTypeId = 3 AND ticketId = $ticketId AND isSuccessfulCharge = 1";
 		$paymentRecordResult = $this->query($paymentRecordSql);
+		// if there is a result set and the CoF was set to applied, add the CoF totalAmountOff to the ticketPrice
 		if (!empty($paymentRecordResult)) {
 			if (isset($data['Cof']['applied'])) {
 				$ticketPrice += $data['Cof']['totalAmountOff'];
 			}
+			// loop over the result set and set the CoF as applied
+			// set the credit on file totalAmountOff to paymentAmount from paymentDetail
+			// decrement the paymentAmount from the ticketPrice
 			foreach ($paymentRecordResult as $payment) {
 				$data['Cof']['applied'] = 1;
 				$data['Cof']['totalAmountOff'] = $payment['paymentDetail']['paymentAmount'];
@@ -233,23 +267,28 @@ class Ticket extends AppModel {
 			}
 		}
 
+
 		$data['applied'] = (!empty($data['Promo']['applied']) || !empty($data['GiftCert']['applied']) || $data['Cof']['applied']) ? 1 : 0;
 		$data['final_price'] = $ticketPrice;
 		
 		return $data;
+
 	}
 
 	function getFeeByTicket($ticketId) {
+
+		return 40;
+
 		// fees are 40 for both auction and fp -- if any change -- then query offer 
 
 		// TODO:  fees for auctions after 6/10/2009 are 40 remove check after wards
-		$result = $this->query("SELECT offerLive.startDate, offerLive.isAuction FROM ticket INNER JOIN offerLuxuryLink as offerLive USING (offerId) WHERE ticket.ticketId = $ticketId LIMIT 1");
-		if (!empty($result)) {
-			if ($result[0]['offerLive']['isAuction'] && ($result[0]['offerLive']['startDate'] < '2009-06-10')) {
-				return 30;
-			}
-		} 
-		return 40;
+		//$result = $this->query("SELECT offerLive.startDate, offerLive.isAuction FROM ticket INNER JOIN offerLuxuryLink as offerLive USING (offerId) WHERE ticket.ticketId = $ticketId LIMIT 1");
+		//if (!empty($result)) {
+			//if ($result[0]['offerLive']['isAuction'] && ($result[0]['offerLive']['startDate'] < '2009-06-10')) {
+				//return 30;
+			//}
+		//} 
+		//return 40;
 	}
 
 	function isMultiProductPackage($ticketId) {
