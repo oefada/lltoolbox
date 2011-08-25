@@ -933,9 +933,17 @@ class WebServiceTicketsController extends WebServicesController
 		$checkoutKey		= base64_encode(serialize(array('ticketId' => $ticketId, 'userId' => $userId, 'offerId' => $offerId, 'zKey' => $checkoutHash)));
 
 		if (stristr($_SERVER['HTTP_HOST'], 'dev')) {
-			$checkoutLink		= "https://". DEV_USER ."-lldev.luxurylink.com/my/my_purchase.php?z=$checkoutKey";
+			if ($ticket['Ticket']['siteId'] == 1) {
+				$checkoutLink		= "https://". DEV_USER ."-lldev.luxurylink.com/my/my_purchase.php?z=$checkoutKey";
+			} else if ($ticket['Ticket']['siteId'] == 2) {
+				$checkoutLink		= "https://". DEV_USER ."-familydev.luxurylink.com/my/my_purchase.php?z=$checkoutKey";
+			}
 		} elseif (stristr($_SERVER['HTTP_HOST'], 'stage')) {
-			$checkoutLink		= "https://stage-luxurylink.luxurylink.com/my/my_purchase.php?z=$checkoutKey";
+			if ($ticket['Ticket']['siteId'] == 1) {
+				$checkoutLink		= "https://stage-luxurylink.luxurylink.com/my/my_purchase.php?z=$checkoutKey";
+			} else if ($ticket['Ticket']['siteId'] == 2) {
+				$checkoutLink		= "https://stage-family.luxurylink.com/my/my_purchase.php?z=$checkoutKey";
+			}
 		}
 
 		$loaLevelId			= isset($clientData[0]['Loa']['loaLevelId']) ? $clientData[0]['Loa']['loaLevelId'] : false;
