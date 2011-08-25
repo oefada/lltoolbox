@@ -211,7 +211,8 @@ class TicketsController extends AppController {
 			if ($s_ticket_status_id) {
 				$this->paginate['conditions']['Ticket.ticketStatusId'] = $s_ticket_status_id;
 				if ($s_ticket_status_id == 3) {
-		        	$this->paginate['order'] = array('emailSentDatetime' => 'desc');
+		        	// jwoods - Jim asked that the tickets remain sorted by ticketId
+		        	// $this->paginate['order'] = array('emailSentDatetime' => 'desc');
 				}
 			}
 			if ($s_has_reservation) {
