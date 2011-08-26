@@ -408,9 +408,17 @@ class Client extends AppModel {
       else {
         $loaSites = $sites;
       }
+
 	  if (!empty($client['Client']['sites'])) {
 			$newSites = array_diff($loaSites, $client['Client']['sites']);
             $removeSites = array_diff($client['Client']['sites'], $loaSites);
+
+            // 08/23/11 jwoods - if ClientSiteExtended record is missing, treat that as newSite
+            foreach ($client['Client']['sites'] as $cseToCheck) {
+   				$cseExisting = $this->ClientSiteExtended->find('first', array('conditions' => array('ClientSiteExtended.siteId' => array_search($cseToCheck, $this->sites), 'ClientSiteExtended.clientId' => $client['Client']['clientId'])));
+   				if (!$cseExisting) { $newSites[] = $cseToCheck; }
+            }
+
             if (empty($newSites) && empty($removeSites)) {
                 return;
             }
@@ -519,6 +527,7 @@ class Client extends AppModel {
 				  }
 			}
 	  }
+
       if (!empty($extraModels)) {
             $this->containModels = array_splice($this->containModels, 0, -count($extraModels));
       }
