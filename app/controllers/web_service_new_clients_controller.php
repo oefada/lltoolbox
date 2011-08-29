@@ -4,7 +4,7 @@ Configure::write('debug', 0);
 App::import('Vendor', 'nusoap/web_services_controller');
 
 // FOR DEV WEB SERVICE SETTINGS! VERY IMPORTANT FOR DEV
-define('DEV_USER_TOOLBOX_HOST', 'http://' . $_SERVER['ENV_USER'] . '-toolboxdev.luxurylink.com/web_service_tickets');
+define('DEV_USER_TOOLBOX_HOST', 'http://' . $_SERVER['ENV_USER'] . '-toolboxdev.luxurylink.com/web_service_new_clients');
 
 class WebServiceNewClientsController extends WebServicesController
 {
