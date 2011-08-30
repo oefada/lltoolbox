@@ -83,56 +83,6 @@
 	</div>
 </div>
 <div class="related">
-	<h3 class="collapsible"><b class="handle"></b><span class="handle"><?php __('Related User Referrals');?>  (<?=count($user['UserReferral'])?>)</span></h3>
-	<div class="collapsibleContent">
-	<?php if (!empty($user['UserReferral'])):?>
-	<table cellpadding = "0" cellspacing = "0">
-	<tr>
-		<th><?php __('UserReferralId'); ?></th>
-		<th><?php __('ReferredFirstName'); ?></th>
-		<th><?php __('ReferredLastName'); ?></th>
-		<th><?php __('ReferredEmailAddress'); ?></th>
-		<th><?php __('UserId'); ?></th>
-		<th><?php __('UserEmail'); ?></th>
-		<th><?php __('ContestId'); ?></th>
-		<th><?php __('ReferralDate'); ?></th>
-		<th class="actions"><?php __('Actions');?></th>
-	</tr>
-	<?php
-		$i = 0;
-		foreach ($user['UserReferral'] as $userReferral):
-			$class = null;
-			if ($i++ % 2 == 0) {
-				$class = ' class="altrow"';
-			}
-		?>
-		<tr<?php echo $class;?>>
-			<td><?php echo $userReferral['userReferralId'];?></td>
-			<td><?php echo $userReferral['referredFirstName'];?></td>
-			<td><?php echo $userReferral['referredLastName'];?></td>
-			<td><?php echo $userReferral['referredEmailAddress'];?></td>
-			<td><?php echo $userReferral['userId'];?></td>
-			<td><?php echo $userReferral['userEmail'];?></td>
-			<td><?php echo $userReferral['contestId'];?></td>
-			<td><?php echo $userReferral['referralDate'];?></td>
-			<td class="actions">
-				<?php echo $html->link(__('View', true), array('controller'=> 'user_referrals', 'action'=>'view', $userReferral['userReferralId'])); ?>
-				<?php echo $html->link(__('Edit', true), array('controller'=> 'user_referrals', 'action'=>'edit', $userReferral['userReferralId'])); ?>
-				<?php echo $html->link(__('Delete', true), array('controller'=> 'user_referrals', 'action'=>'delete', $userReferral['userReferralId']), null, sprintf(__('Are you sure you want to delete # %s?', true), $userReferral['userReferralId'])); ?>
-			</td>
-		</tr>
-	<?php endforeach; ?>
-	</table>
-<?php endif; ?>
-
-	<div class="actions">
-		<ul>
-			<li><?php echo $html->link(__('New User Referral', true), array('controller'=> 'user_referrals', 'action'=>'add'));?> </li>
-		</ul>
-	</div>
-	</div>
-</div>
-<div class="related">
 	<h3 class="collapsible"><b class="handle"></b><span class="handle"><?php __('Related User Site Extendeds');?>  (<?=count($user['UserSiteExtended'])?>)</span></h3>
 	<div class="collapsibleContent">
 	<?php if (!empty($user['UserSiteExtended'])):?>

@@ -17,7 +17,6 @@ class User extends AppModel {
 	var $hasOne = array('UserSiteExtended' => array('foreignKey' => 'userId'));
 
 	var $hasMany = array('UserMailOptin' => array('foreignKey' => 'userId'),
-						 'UserReferral' => array('foreignKey' => 'userId'),
 						 'UserPaymentSetting' => array('foreignKey' => 'userId'),
 						 'UserPreference' => array('foreignKey' => 'userId'),
 						 'Bid' => array('foreignKey' => 'userId'),
