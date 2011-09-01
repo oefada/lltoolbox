@@ -518,12 +518,14 @@ function init_removeInclusions() {
                     $.ajax({type: 'get',
                             url: '/clients/'+clientId+'/packages/delete_inclusion_from_package/'+packageId+'?packageLoaItemRelId='+packageLoaItemRelId,
                             success: function(data) {
+									/*	no need to refresh available inclusions
                                         $.ajax({type: 'get',
                                                 url: '/clients/'+clientId+'/packages/render_available_inclusions/'+packageId,
                                                 success: function(inclusions) {
                                                     $('td#available-inclusions').html(inclusions);
                                                 }
                                          });
+									*/
                                     }
                             });
                     var inclusionsRows = $(this).parent('tr').nextUntil('tr#create-inclusion-row');
