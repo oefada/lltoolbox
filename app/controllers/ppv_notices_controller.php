@@ -122,7 +122,7 @@ class PpvNoticesController extends AppController {
 			$data['sender_sig']         = 1;
 			switch ($_SESSION['Auth']['AdminUser']['username']) {
 				case 'jsanchez':
-					$sender_ext = "424.835.3649";
+					$sender_ext = "424.835.3620";
 					$sender_title = 'Travel Concierge';
 					break;
 				case 'dvojdany':
