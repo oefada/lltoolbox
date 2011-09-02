@@ -21,7 +21,7 @@
 	<fieldset id="expirationCriteria">
 		<?php
 		$this->hasRendered = false;
-		if(is_numeric($this->data['Track']['expirationCriteriaId'])) {
+		if(isset($this->data['Track']['expirationCriteriaId'])) {
 			$expCriteriaIdForm = $this->data['Track']['expirationCriteriaId'];
 		} else {
 			$expCriteriaIdForm = 1;
