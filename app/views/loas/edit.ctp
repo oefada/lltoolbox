@@ -89,6 +89,10 @@ $this->set('clientId', $this->data['Client']['clientId']);
 		 ?>
 	</div>
 	<?
+
+		echo $form->input('membershipTotalNights');
+		echo $form->input('membershipNightsRemaining');
+
 		echo $form->input('membershipTotalPackages');
 		echo $form->input('membershipPackagesRemaining', array('disabled' => $disable_mp));
 		echo $form->input('loaNumberPackages', array('label' => 'Commission-Free Packages'));
