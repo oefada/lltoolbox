@@ -87,16 +87,23 @@
             <?php endif; ?>
         </td>
     </tr>
-    <tr>
+
+		<tr>
+		<th>Num Rooms</th>
+		<td><?=$package['Package']['numRooms'];?></td>
+		</tr>
+
+
+    <tr class='odd'>
         <th>Is Private Package?</th>
         <td><?php echo ($package['Package']['isPrivatePackage'] == 1) ? 'Yes' : 'No'; ?></td>
     </tr>
-    <tr class="odd">
+    <tr>
         <th>Is Flex Package?</th>
         <td><?php echo ($package['Package']['isFlexPackage'] == 1) ? 'Yes' : 'No'; ?></td>
     </tr>
     <?php if ($package['Package']['isFlexPackage']): ?>
-        <tr class="odd">
+        <tr>
             <th>Range</th>
             <td>Valid for <?php echo $package['Package']['flexNumNightsMin']; ?> to <?php echo $package['Package']['flexNumNightsMax']; ?> nights</td>            
         </tr>
@@ -105,7 +112,7 @@
             <td><textarea class="notes" rows="10" readonly><?php echo "{$package['Package']['flexNotes']}\n"; ?></textarea></td>
         </tr>
     <?php endif; ?>
-    <tr>
+    <tr class="odd">
         <th>Max Num Guests</th>
         <td>
             <?php echo $package['Package']['numGuests']; ?>
@@ -114,15 +121,15 @@
             <?php endif; ?>
         </td>
     </tr>
-    <tr class="odd">
+    <tr>
         <th>Min Num Guests</th>
         <td><?php echo $package['Package']['minGuests']; ?></td>
     </tr>
-    <tr>
+    <tr class="odd">
         <th>Max Num Adults</th>
         <td><?php echo $package['Package']['maxAdults']; ?></td>
     </tr>
-    <tr class="odd">
+    <tr>
         <th>Currency</th>
         <td><?php if (!empty($package['Package']['currencyId'])) echo $currencyCodes[$package['Package']['currencyId']]; ?></td>
     </tr>
