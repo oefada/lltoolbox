@@ -1,4 +1,10 @@
 <?php
+
+// a 'track' stores all the rules for revenue allocation
+// eg. expirationCriteriaId of 1 means they pay a membership fee
+// track detail is the record of each time we actually allocate the revenue
+// see 'track' and 'trackDetail' tables
+
 class TrackDetail extends AppModel {
 
 	var $name = 'TrackDetail';
