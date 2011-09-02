@@ -1,5 +1,23 @@
 <?php
 
+/*
+
+NOTES
+
+To debug this, use 
+
+CakeWrite::log("debug", "debug data to write here");
+
+this will write to toolbox/development/app/tmp/logs
+
+
+
+
+
+
+
+*/
+
 Configure::write('debug', 0);
 App::import('Vendor', 'nusoap/web_services_controller');
 App::import('Vendor', 'aes.php');
@@ -16,7 +34,7 @@ class WebServiceTicketsController extends WebServicesController
 	var $uses = array('Ticket', 'UserPaymentSetting','PaymentDetail', 'Client', 'User', 'Offer', 'Bid',
 					  'ClientLoaPackageRel', 'Track', 'OfferType', 'Loa', 'TrackDetail', 'PpvNotice',
 					  'Address', 'OfferLuxuryLink', 'SchedulingMaster', 'SchedulingInstance', 'Reservation',
-					  'PromoTicketRel', 'Promo', 'TicketReferFriend','Package','PaymentProcessor'
+					  'PromoTicketRel', 'Promo', 'TicketReferFriend','Package','PaymentProcessor','DebugData'
 					  );
 
 	var $serviceUrl = 'http://toolbox.luxurylink.com/web_service_tickets';
@@ -28,6 +46,8 @@ class WebServiceTicketsController extends WebServicesController
 	var $errorResponse = false;
 	var $errorMsg = false;
 	var $errorTitle = false;
+
+  // nusoap.php needs this
 	var $api = array(
 					'processNewTicket' => array(
 						'doc' => 'ticket processor functionality for family and luxurylink',
@@ -116,17 +136,21 @@ class WebServiceTicketsController extends WebServicesController
 						)
 					);
 
+
 	function beforeFilter() { $this->LdapAuth->allow('*'); }
 
+	// see processTicket()
 	function processNewTicket($in0) {
+
+
 		$json_decoded = json_decode($in0, true);
 		$this->errorResponse = $this->errorMsg = $this->errorTitle = false;
 		if (!$this->processTicket($json_decoded)) {
+
 			$server_type = '';
-			if (stristr($_SERVER['HTTP_HOST'], 'dev')) {
+			if (isset($_SERVER['HTTP_HOST']) && stristr($_SERVER['HTTP_HOST'], 'dev')) {
 				$server_type = '[DEV] --> ';
-			}
-			if (stristr($_SERVER['HTTP_HOST'], 'stage')) {
+			}else if (isset($_SERVER['HTTP_HOST']) && stristr($_SERVER['HTTP_HOST'], 'stage')) {
 				$server_type = '[STAGE] --> ';
 			}
 			@mail('devmail@luxurylink.com', "$server_type" . 'WEBSERVICE (TICKETS): ERROR ('. $this->errorResponse . ')' . $this->errorTitle , $this->errorMsg . "<br /><br />\n\n" . print_r($json_decoded, true));
@@ -134,6 +158,7 @@ class WebServiceTicketsController extends WebServicesController
 		}  else {
 			return 'SUCCESS';
 		}
+
 	}
 
 	function getPromoGcCofData($in0) {
@@ -143,6 +168,7 @@ class WebServiceTicketsController extends WebServicesController
 		}
 		return '0';
 	}
+
 
 	function processFixedPriceTicket($ticketData) {
 		if (!$ticketData['ticketId']) {
@@ -223,8 +249,10 @@ class WebServiceTicketsController extends WebServicesController
 		return true;
 	}
 
-	function processTicket($data) {
 
+
+	// see processNewTicket() - it calls this method
+	function processTicket($data){
 		// TODO optimize and implement error handler class
 
 		// if we do not have these values then void
@@ -254,9 +282,14 @@ class WebServiceTicketsController extends WebServicesController
 			return false;
 		}
 
+		// fetches a Group, its domain, its associated Users, and the Users' associated Articles
 		$this->Offer->recursive = 2;
+		// schedulingMaster info will be contained in $offerData
 		$offerData = $this->Offer->read(null, $data['offerId']);
+
+		// joins on client table and clientLoaPackageRel 
 		$clientData = $this->Ticket->getClientsFromPackageId($data['packageId']);
+
 
 		// gather all data that is necessary
 		// -------------------------------------------------------------------------------
@@ -269,6 +302,8 @@ class WebServiceTicketsController extends WebServicesController
 				break;
 		}
 		if ($ticketSite) {
+			// offerId will be unique, however, it is not defined as unique in offerLuxuryLink or offerFamily.
+			// offerId is defined as unique in 'offer' table where it is generated, thus, it is unique
 			$offerLive = $this->Offer->query("SELECT * FROM $ticketSite WHERE offerId = " . $data['offerId']);
 			$offerLive = $offerLive[0][$ticketSite];
 		} else {
@@ -277,9 +312,11 @@ class WebServiceTicketsController extends WebServicesController
 			return false;
 		}
 
-		// lets do some checking! in case of dup tickets or if ticket was already processed
-		// -------------------------------------------------------------------------------
+
+		// $ticket_toolbox contains data specific to the the purchase as contained in 'ticket' table. eg. user data, departure times, packageId etc
 		$ticket_toolbox = $this->Ticket->read(null, $data['ticketId']);
+
+		// in case of dup tickets or if ticket was already processed, error out
 		if (empty($ticket_toolbox) || !$ticket_toolbox) {
 			$this->errorResponse = 187;
 			$this->errorTitle = 'Ticket Not Processsed [CHECK REPLICATION]';
@@ -289,6 +326,7 @@ class WebServiceTicketsController extends WebServicesController
 
 		// if record exists in paymentDetail, this ticket got processed already.
 		$ticket_payment = $this->PaymentDetail->query('SELECT * FROM paymentDetail WHERE ticketId = ' . $data['ticketId']);
+
 		if (!empty($ticket_payment)) {
 			$this->errorResponse = 188;
 			$this->errorTitle = 'Payment Already Detected for Ticket';
@@ -297,13 +335,13 @@ class WebServiceTicketsController extends WebServicesController
 		}
 
 		// all ticket processing happens in here
-		// -------------------------------------------------------------------------------
+		// the auction closing cron job sets the the ticket to transmitted=1 when it finishes with it to prevent concurrency issues
 		if ($ticket_toolbox['Ticket']['transmitted'] == 0) {
 
 			$ticketId = $data['ticketId'];
 
-
 			// 2011-05-04 jwoods - fill in ticket.guaranteeAmt if necessary
+			// if the purchase price is less than what we agreed to pay the property, calc the difference and store it 
 			// -------------------------------------------------------------------------------
 			$guaranteeAmount = 0;
 			$sql = "SELECT *
@@ -322,26 +360,30 @@ class WebServiceTicketsController extends WebServicesController
 
 			// else, was a reserve amount set?
 			} elseif (intval($offerLive['reserveAmt']) > 0) {
-                $guaranteeAmount = $offerLive['reserveAmt'];
+        $guaranteeAmount = $offerLive['reserveAmt'];
 			}
 
-            if ($guaranteeAmount > 0) {
-                $this->Ticket->query("UPDATE ticket SET guaranteeAmt = ? WHERE ticketId = ?", array($guaranteeAmount, $ticketId));
-            }
-
-
+			if ($guaranteeAmount > 0) {
+				$this->Ticket->query("UPDATE ticket SET guaranteeAmt = ? WHERE ticketId = ?", array($guaranteeAmount, $ticketId));
+			}
 
 
 			// update the tracks
-			// -------------------------------------------------------------------------------
+			// 'track' table contains info on what should be done with the money coming in with regards to the client
+			// eg. is this a 'barter' or 'remitt', how much balance is left unpaid etc.
 			$schedulingMasterId = $offerData['SchedulingInstance']['SchedulingMaster']['schedulingMasterId'];
 			$smid = $this->Track->query("SELECT trackId FROM schedulingMasterTrackRel WHERE schedulingMasterId = $schedulingMasterId LIMIT 1");
 			$smid = $smid[0]['schedulingMasterTrackRel']['trackId'];
 			if (!empty($smid)) {
+// Why?
 				$this->addTrackPending($smid, $data['billingPrice']);
 			}
 
 			// take down future instances of offers if reached package.maxNumSales
+			// this exists independent of expirationCriteriaId and may run concurrent with a takedown
+			// based on expirationCriteriaId
+			// This a take down specific to a pricePointId and the max sales for that pricePointId as 
+			// opposed to a larger barter/remitt agreement for a client
 			// -------------------------------------------------------------------------------
 			if ($this->Ticket->__runTakeDownPricePointNumPackages($offerLive['pricePointId'], $ticketId)) {
 				$this->Ticket->__runTakeDownLoaMemBal($data['packageId'], $ticketId, $data['billingPrice']);
@@ -349,6 +391,9 @@ class WebServiceTicketsController extends WebServicesController
 			}
 
 			$expirationCriteriaId = $this->Ticket->getExpirationCriteria($ticketId);
+
+CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
+
 			switch ($expirationCriteriaId) {
 				case 1:
 					$this->Ticket->__runTakeDownLoaMemBal($data['packageId'], $ticketId, $data['billingPrice']);
@@ -359,6 +404,10 @@ class WebServiceTicketsController extends WebServicesController
 				case 5:
 					$this->Ticket->__runTakeDownRetailValue($offerLive['clientId'], $offerLive['retailValue'], $ticketId);
 					break;
+				case 6://mbyrnes
+					$this->Ticket->__runTakeDownNumRooms($offerLive,$ticketId,$ticketSite);
+					break;
+
 			}
 
 			// find and set promos for this new ticket + refer friend relationship setup
@@ -397,6 +446,7 @@ class WebServiceTicketsController extends WebServicesController
 			// set ppv params
 			// -------------------------------------------------------------------------------
 			$ppv_settings = array();
+			if (isset($_SERVER['HTTP_HOST']) && stristr($_SERVER['HTTP_HOST'],"dev"))$ppv_settings['override_email_to']='devmail@luxurylink.com';//mbyrnes
 			$ppv_settings['ticketId'] 			= $ticketId;
 			$ppv_settings['send'] 				= 1;
 			$ppv_settings['manualEmailBody']	= 0;
@@ -421,34 +471,34 @@ class WebServiceTicketsController extends WebServicesController
 
 			foreach ($clientData as $client) {
 				if ($client['Client']['clientTypeId'] == 3 || stristr($client['Client']['name'], 'CRUISE')) {
-            		$restricted_auction = true;
-            	}
+					$restricted_auction = true;
+        }
 			}
 
 			// 07/20/11 jwoods - ticket 581 - treat Mystery like other auctions
 			// if ($offerLive['isMystery'] || $offerLive['retailValue'] == 1 || $offerLive['openingBid'] == 1) {
 			// 	$restricted_auction = true;
 			// }
-            if (stristr($offerLive['offerName'], 'RED') && stristr($offerLive['offerName'],'HOT')) {
-            	$restricted_auction = true;
-            }
-            if (stristr($offerLive['offerName'], 'FEATURED') && stristr($offerLive['offerName'],'AUCTION')) {
-            	$restricted_auction = true;
-            }
-            if (stristr($offerLive['offerName'], 'AUCTION') && stristr($offerLive['offerName'],'DAY')) {
-            	$restricted_auction = true;
-            }
+			if (stristr($offerLive['offerName'], 'RED') && stristr($offerLive['offerName'],'HOT')) {
+				$restricted_auction = true;
+			}
+			if (stristr($offerLive['offerName'], 'FEATURED') && stristr($offerLive['offerName'],'AUCTION')) {
+				$restricted_auction = true;
+			}
+			if (stristr($offerLive['offerName'], 'AUCTION') && stristr($offerLive['offerName'],'DAY')) {
+				$restricted_auction = true;
+			}
 
 			// hack june 29 2010
 			if ($clientData[0]['Client']['clientId'] == 378) {
-            	$restricted_auction = false;
+				$restricted_auction = false;
 			}
  			// do no autocharge restricted auctions. send them old winner notification w/o checkout
  			// -------------------------------------------------------------------------------
-            if ($restricted_auction) {
-            	$ppv_settings['ppvNoticeTypeId'] = 5;     // Winner Notification (Old one)
-            	$auto_charge_card = false;
-            }
+			if ($restricted_auction) {
+				$ppv_settings['ppvNoticeTypeId'] = 5;     // Winner Notification (Old one)
+				$auto_charge_card = false;
+			}
 
 			// check if user has already paid for this ticket
 			// -------------------------------------------------------------------------------
@@ -459,7 +509,7 @@ class WebServiceTicketsController extends WebServicesController
 				return true;
 			}
 
-			if (stristr($_SERVER['HTTP_HOST'], 'dev') || stristr($_SERVER['HTTP_HOST'], 'stage')) {
+			if (isset($_SERVER['HTTP_HOST']) && (stristr($_SERVER['HTTP_HOST'], 'dev') || stristr($_SERVER['HTTP_HOST'], 'stage'))) {
 				$auto_charge_card = false;
 			}
 
@@ -468,17 +518,17 @@ class WebServiceTicketsController extends WebServicesController
 			// -------------------------------------------------------------------------------
 			if (!$restricted_auction && $auto_charge_card) {
 				$data_post = array();
-		        $data_post['userId']                 = $data['userId'];
-		        $data_post['ticketId']               = $ticketId;
-		        $data_post['paymentProcessorId']     = 1;
+		    $data_post['userId']                 = $data['userId'];
+		    $data_post['ticketId']               = $ticketId;
+		    $data_post['paymentProcessorId']     = 1;
 				if ($data['siteId'] == 2) {
-		        	$data_post['paymentProcessorId']     = 3; // FAMILY site uses PAYPAL
+		     	$data_post['paymentProcessorId']     = 3; // FAMILY site uses PAYPAL
 				}
-		        $data_post['paymentAmount']          = $data['billingPrice'];
-		        $data_post['initials']               = 'AUTOCHARGE';
-		        $data_post['autoCharge']             = 1;
-		        $data_post['saveUps']                = 0;
-		        $data_post['zAuthHashKey']           = md5('L33T_KEY_LL' . $data_post['userId'] . $data_post['ticketId'] . $data_post['paymentProcessorId'] . $data_post['paymentAmount'] . $data_post['initials']);
+				$data_post['paymentAmount']          = $data['billingPrice'];
+				$data_post['initials']               = 'AUTOCHARGE';
+				$data_post['autoCharge']             = 1;
+				$data_post['saveUps']                = 0;
+				$data_post['zAuthHashKey']           = md5('L33T_KEY_LL' . $data_post['userId'] . $data_post['ticketId'] . $data_post['paymentProcessorId'] . $data_post['paymentAmount'] . $data_post['initials']);
 				$data_post['userPaymentSettingId']	 = $user_payment_setting['UserPaymentSetting']['userPaymentSettingId'];
 
 				$data_post_result = $this->processPaymentTicket(json_encode($data_post));
@@ -491,6 +541,7 @@ class WebServiceTicketsController extends WebServicesController
 			}
 
 			// send out winner notifications
+			// located in ../vendors/email_msgs in toolbox, not on specific site
 			// -------------------------------------------------------------------------------
 			$this->ppv(json_encode($ppv_settings));
 
@@ -841,10 +892,10 @@ class WebServiceTicketsController extends WebServicesController
 		$override_email_cc  = isset($params['override_email_cc']) && !empty($params['override_email_cc']) ? $params['override_email_cc'] : false;
 		$override_email_subject  = isset($params['override_email_subject']) && !empty($params['override_email_subject']) ? $params['override_email_subject'] : false;
 
-        //added hb for attachment
-        // -------------------------------------------------------------------------------
-        $email_attachment = isset($params['emailAttachment']) && !empty($params['emailAttachment']) ? $params['emailAttachment'] : false;
-        $email_attachment_type = isset($params['emailAttachmentType']) && !empty($params['emailAttachmentType']) ? $params['emailAttachmentType'] : false;
+		//added hb for attachment
+		// -------------------------------------------------------------------------------
+		$email_attachment = isset($params['emailAttachment']) && !empty($params['emailAttachment']) ? $params['emailAttachment'] : false;
+		$email_attachment_type = isset($params['emailAttachmentType']) && !empty($params['emailAttachmentType']) ? $params['emailAttachmentType'] : false;
 
 		// TODO: error checking for params
 
@@ -932,13 +983,13 @@ class WebServiceTicketsController extends WebServicesController
 		$checkoutHash		= md5($ticketId . $userId . $offerId . 'LL_L33T_KEY');
 		$checkoutKey		= base64_encode(serialize(array('ticketId' => $ticketId, 'userId' => $userId, 'offerId' => $offerId, 'zKey' => $checkoutHash)));
 
-		if (stristr($_SERVER['HTTP_HOST'], 'dev')) {
+		if (isset($_SERVER['HTTP_HOST']) && stristr($_SERVER['HTTP_HOST'], 'dev')) {
 			if ($ticket['Ticket']['siteId'] == 1) {
 				$checkoutLink		= "https://". DEV_USER ."-lldev.luxurylink.com/my/my_purchase.php?z=$checkoutKey";
 			} else if ($ticket['Ticket']['siteId'] == 2) {
 				$checkoutLink		= "https://". DEV_USER ."-familydev.luxurylink.com/my/my_purchase.php?z=$checkoutKey";
 			}
-		} elseif (stristr($_SERVER['HTTP_HOST'], 'stage')) {
+		} elseif (isset($_SERVER['HTTP_HOST']) && stristr($_SERVER['HTTP_HOST'], 'stage')) {
 			if ($ticket['Ticket']['siteId'] == 1) {
 				$checkoutLink		= "https://stage-luxurylink.luxurylink.com/my/my_purchase.php?z=$checkoutKey";
 			} else if ($ticket['Ticket']['siteId'] == 2) {
@@ -1095,34 +1146,34 @@ class WebServiceTicketsController extends WebServicesController
 
 		$client_index = ($multi_client_map_override !== false) ? $multi_client_map_override : 0;
 
-        // acarney 2010-12-08
-        // Making it so that confirmation template is multi-client aware
-        // TODO: investigate impact of using array for client variables in other templates
-        // to avoid duplication of code
-        $isMultiClientPackage = (count($clients) > 1) ? true : false;
-        if ($isMultiClientPackage) {
-            $clientVars = array();
-            foreach ($clients as $i => $client) {
-                $clientVars[$i]['clientId']		        = $client['clientId'];
-                $clientVars[$i]['parentClientId'] 	    = $client['parentClientId'];
-                $clientVars[$i]['clientNameP'] 		    = $client['name'];
-                $clientVars[$i]['clientName'] 		    = $client['contacts'][0]['ppv_name'];
-                $clientVars[$i]['oldProductId']		    = $client['oldProductId'];
-                $clientVars[$i]['locationDisplay']	    = $client['locationDisplay'];
-                $clientVars[$i]['clientPrimaryEmail']   = $client['contact_to_string'];
-                $clientVars[$i]['clientCcEmail'] 		= $client['contact_cc_string'];
-                $clientVars[$i]['clientAdjustedPrice']  = $this->numF(($client['percentOfRevenue'] / 100) * $ticketData['billingPrice']);
-            }
-        }
-        $clientId			    = $clients[$client_index]['clientId'];
-        $parentClientId 	    = $clients[$client_index]['parentClientId'];
-        $clientNameP 		    = $clients[$client_index]['name'];
-        $clientName 		    = $clients[$client_index]['contacts'][0]['ppv_name'];
-        $oldProductId		    = $clients[$client_index]['oldProductId'];
-        $locationDisplay	    = $clients[$client_index]['locationDisplay'];
-        $clientPrimaryEmail     = $clients[$client_index]['contact_to_string'];
-        $clientCcEmail 		    = $clients[$client_index]['contact_cc_string'];
-        $clientAdjustedPrice    = $this->numF(($clients[$client_index]['percentOfRevenue'] / 100) * $ticketData['billingPrice']);
+		// acarney 2010-12-08
+		// Making it so that confirmation template is multi-client aware
+		// TODO: investigate impact of using array for client variables in other templates
+		// to avoid duplication of code
+		$isMultiClientPackage = (count($clients) > 1) ? true : false;
+		if ($isMultiClientPackage) {
+			$clientVars = array();
+			foreach ($clients as $i => $client) {
+				$clientVars[$i]['clientId']		        = $client['clientId'];
+				$clientVars[$i]['parentClientId'] 	    = $client['parentClientId'];
+				$clientVars[$i]['clientNameP'] 		    = $client['name'];
+				$clientVars[$i]['clientName'] 		    = $client['contacts'][0]['ppv_name'];
+				$clientVars[$i]['oldProductId']		    = $client['oldProductId'];
+				$clientVars[$i]['locationDisplay']	    = $client['locationDisplay'];
+				$clientVars[$i]['clientPrimaryEmail']   = $client['contact_to_string'];
+				$clientVars[$i]['clientCcEmail'] 		= $client['contact_cc_string'];
+				$clientVars[$i]['clientAdjustedPrice']  = $this->numF(($client['percentOfRevenue'] / 100) * $ticketData['billingPrice']);
+			}
+		}
+		$clientId			    = $clients[$client_index]['clientId'];
+		$parentClientId 	    = $clients[$client_index]['parentClientId'];
+		$clientNameP 		    = $clients[$client_index]['name'];
+		$clientName 		    = $clients[$client_index]['contacts'][0]['ppv_name'];
+		$oldProductId		    = $clients[$client_index]['oldProductId'];
+		$locationDisplay	    = $clients[$client_index]['locationDisplay'];
+		$clientPrimaryEmail     = $clients[$client_index]['contact_to_string'];
+		$clientCcEmail 		    = $clients[$client_index]['contact_cc_string'];
+		$clientAdjustedPrice    = $this->numF(($clients[$client_index]['percentOfRevenue'] / 100) * $ticketData['billingPrice']);
 
 		// added June 17 -- to allow copy for LL Auc Winner Email and Res Confirmed Email
 		if (in_array($ppvNoticeTypeId, array(1,18))) {
@@ -1620,7 +1671,6 @@ class WebServiceTicketsController extends WebServicesController
         }
 
 		// 06/16/11 jwoods - relay through Silverpop
-		// if ($ppvNoticeTypeId == 18 && (strpos($emailBody, 'Testerosa') > 0)) {
 		if ($ppvNoticeTypeId == 18) {
 			$this->sendSilverpopRelay('ppv_auction_winner', $emailFrom, $emailReplyTo, $emailTo, $emailSubject, $emailBody);
 		} else {
