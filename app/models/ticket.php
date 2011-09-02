@@ -341,6 +341,7 @@ class Ticket extends AppModel {
 		@mail('devmail@luxurylink.com',"SCHEDULING FLAGS DEBUG: $title", print_r($data, true));
 	}
 
+  // get expiration criteria with only the ticketId
 	function getExpirationCriteria($ticketId) {
 		$check_exp_crit = "SELECT track.expirationCriteriaId FROM ticket INNER JOIN offer USING(offerId) 
 						   INNER JOIN schedulingInstance USING(schedulingInstanceId) 
@@ -348,7 +349,7 @@ class Ticket extends AppModel {
 						   INNER JOIN schedulingMasterTrackRel USING(schedulingMasterId) 
 						   INNER JOIN track USING (trackId) 
 						   WHERE ticket.ticketId = $ticketId";
-
+CakeLog::write("debug","expCritId query $check_exp_crit");
 		$result = $this->query($check_exp_crit);
 		return $result[0]['track']['expirationCriteriaId'];
 	}
@@ -648,6 +649,76 @@ class Ticket extends AppModel {
 		return false;
 	}
 
+
+	// get the scheduleingMasterIds for a givent clientId, packageId and expirationId
+	private function getSmids($clientId,$packageId,$expirationId){
+
+		$q="SELECT loa.membershipNightsRemaining as nightsRemaining, loa.membershipTotalNights as totalNights, ";
+		$q.="loa.loaId as loaId, ";
+		$q.="GROUP_CONCAT(schedulingMasterId) AS smids FROM loa  ";
+		$q.="INNER JOIN track USING (loaId) "; 
+		$q.="INNER JOIN schedulingMasterTrackRel USING (trackId)  ";
+		$q.="INNER JOIN schedulingMaster USING (schedulingMasterid) "; 
+		$q.="INNER JOIN package using (packageId) ";
+		$q.="WHERE track.expirationCriteriaId =$expirationId ";
+		$q.="AND loa.clientId = $clientId ";
+		$q.="AND package.packageId=$packageId ";
+		$q.="GROUP BY packageId";
+		$result = $this->query($q);
+		return $result;
+
+	}
+
+
+  // mbyrnes
+	// if the number of rooms and number of nights multiplied is less than or = to the number of rooms 
+	// in inventory, take package down
+	function __runTakeDownNumRooms($offer,$ticketId,$siteOfferTable){
+
+		$offerNumNights=$offer['roomNights']*$offer['numRooms'];
+
+CakeLog::write("debug","offerNumNights:$offerNumNights");
+
+		$result=$this->getSmids($offer['clientId'],$offer['packageId'],6);
+
+CakeLog::write("debug","num results retrieved:".count($result));
+
+		$pids = array();
+		foreach ($result as $k => $v) {
+
+			$nightsRemaining=$v['loa']['nightsRemaining'];
+			$totalNights=$v['loa']['totalNights'];
+			$loaId=$v['loa']['loaId'];
+			$smids=$v[0]['smids'];
+
+CakeLog::write("debug","nightsRemaining:$nightsRemaining-offerNumNights:$offerNumNights|totalNights:$totalNights|loaId:$loaId|smids:$smids");
+
+			if ($nightsRemaining-$offerNumNights<=0){	
+
+				// close all live Fixed Price offers and delete all future schedulingInstances / schedulingMasters
+				if ($this->__runTakeDown($smids)){
+					$this->insertMessageQueuePackage($ticketId, 'NUM_ROOMS');
+					$q="UPDATE loa SET membershipNightsRemaining=0 WHERE loaId=$loaId";
+CakeLog::write("debug","takedown run $q");
+					$this->query($q);
+				}else{
+CakeLog::write("debug","did not takedown smids: $smids");
+				}
+			}else{
+				
+				$q="UPDATE loa SET membershipNightsRemaining=membershipNightsRemaining-$offerNumNights ";
+				$q.="WHERE loaId=$loaId";
+				$this->query($q);
+
+CakeLog::write("debug","loa decremented $q");
+
+			}
+
+		}
+
+	}
+
+
 	function getTicketDestStyleId($ticketId) {
 		// europe 4
 		// uk and ireland 20
@@ -668,7 +739,7 @@ class Ticket extends AppModel {
 		}
 		$affected_rows = 0;
 		$affected_rows += $this->__deleteLiveOffer($sm_ids_imp);
-		
+
 		$this->query("DELETE FROM schedulingInstance WHERE schedulingMasterId IN ($sm_ids_imp) AND startDate > NOW()");
 		$affected_rows += ($this->getAffectedRows()) ? 1 : 0;
 		
@@ -679,6 +750,8 @@ class Ticket extends AppModel {
 
 		return ($affected_rows) ? true : false;
 	}
+
+
 
 	function __deleteLiveOffer($sm_ids_imp) {
 		$family = $this->__deleteLiveOfferFamily($sm_ids_imp);
@@ -693,6 +766,8 @@ class Ticket extends AppModel {
 		return ($this->getAffectedRows() || $family) ? 1 : 0;
 	}
 
+	// update schedulingMasterInstance with an endDate of now
+	// it also updates the corresponding live offer
 	function __updateSchedulingOfferFixedPrice($sm_ids_imp) {
 		$family = $this->__updateSchedulingOfferFixedPriceFamily($sm_ids_imp);
 
@@ -733,13 +808,15 @@ class Ticket extends AppModel {
 	}
 
 	function insertMessageQueuePackage($ticketId, $type, $extraData = null) {
-		$sql = "select clpr.loaId, clpr.packageId, clpr.clientId, c.name, c.managerUsername, p.packageName from ticket t ";
+
+		$sql = "select clpr.loaId, clpr.packageId, clpr.clientId, c.name, c.managerUsername, ";
+		$sql.= "p.packageName from ticket t ";
 		$sql.= "inner join clientLoaPackageRel clpr on t.packageId = clpr.packageId ";
 		$sql.= "inner join package p on p.packageId = clpr.packageId ";
 		$sql.= "inner join client c on c.clientId = clpr.clientId ";
 		$sql.= "where t.ticketId = $ticketId";
 		$result = $this->query($sql);
-		
+CakeLog::write("debug","insertMessageQueuePackage results: ".count($result));
 		if (!empty($result)) {
 			$loaId = $result[0]['clpr']['loaId'];
 			$clientId = $result[0]['clpr']['clientId'];
@@ -748,7 +825,20 @@ class Ticket extends AppModel {
 			$clientName = $result[0]['c']['name'];
 			$toUser = $result[0]['c']['managerUsername'];
 		
-			switch ($type) {
+			switch ($type){
+
+				case 'NUM_ROOMS'://mbyrnes
+
+					$title="Membership Number of Nights $clientName";
+					$description='';
+					$description.="<a href='/loas/edit/$loaId'>$clientName</a> ";
+					$description.="once Ticket ID <a href='/tickets/view/$ticketId'>$ticketId</a> ";
+					$description.="is funded, it will fulfill the Membership Number of Nights Barter agreement.  ";
+					$description.="All Fixed Price offers have been closed and all future offers have been cancelled.";
+					$modelId=$packageId;
+					$model='Package';
+					break;
+
 				case 'PRICEPOINT':
 					$title = "[PRICE POINT] Maximum Number of Sales for Package [$packageName]";
 					$description = "A pending ticket (Ticket ID# <a href='/tickets/view/$ticketId'>$ticketId</a>) exists for that once funded will ";
@@ -820,26 +910,11 @@ class Ticket extends AppModel {
 					}
 					
 			}	
-			
+
 			$description = Sanitize::Escape($description);
-			
 			$sql = "CALL insertQueueMessage('$toUser', '$title', '$description', '$model', $modelId, 3)";
 			$this->query($sql);
-		
-			// send to Kat Ferson
-			$clients_for_kat = array(207,439,2423,1615,1617,2803,1631,1616,42,2794,7778);
-			if (in_array($clientId, $clients_for_kat)) {
-				$sql = "CALL insertQueueMessage('kferson', '$title', '$description', '$model', $modelId, 3)";
-				$this->query($sql);
-			}
 
-			// send one to Christine Young and Judy LaGraff also for membership
-			if ($type == 'LOA_BALANCE') {
-				$sql = "CALL insertQueueMessage('cyoung', '$title', '$description', '$model', $modelId, 3)";
-				$this->query($sql);
-				$sql = "CALL insertQueueMessage('jlagraff', '$title', '$description', '$model', $modelId, 3)";
-				$this->query($sql);
-			}
 		}
 	}
 }
