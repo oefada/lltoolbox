@@ -1,4 +1,26 @@
 <?php
+/*
+this script is called nowhere
+in toolbox:
+[mbyrnes@dev controllers]$ sgrep web_service_new_clients_controller.php
+Case sensitive search for: 'web_service_new_clients_controller.php'
+returns nothing
+in luxurylink:
+[mbyrnes@dev controllers]$ luxdev
+[mbyrnes@dev development]$ sgrep web_service_new_clients_controller.php
+Case sensitive search for: 'web_service_new_clients_controller.php'
+returns nothing
+in familygetaway:
+[mbyrnes@dev development]$ famdev
+[mbyrnes@dev development]$ sgrep web_service_new_clients_controller.php
+Case sensitive search for: 'web_service_new_clients_controller.php'
+returns nothing
+in vacationist
+[mbyrnes@dev development]$ cd /home/mbyrnes/vacationist/
+[mbyrnes@dev vacationist]$ sgrep web_service_new_clients_controller.php
+Case sensitive search for: 'web_service_new_clients_controller.php'
+returns nothing
+*/
 
 Configure::write('debug', 0);
 App::import('Vendor', 'nusoap/web_services_controller');
