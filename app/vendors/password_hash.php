@@ -205,9 +205,13 @@ class PasswordHash {
 		$random = '';
 		
 		/* vgarcia - added this if statement so we make sure to always use bcrypt */
+		/* ado - disabled because stage and prod servers not setting constant CRYPT_BLOWFISH, 
+			even though library is installed. If passwords generated from reset dont work, 
+			look into this issue
 		if (CRYPT_BLOWFISH == 0 || $this->portable_hashes) {
 			die("INSTALL CRYPT_BLOWFISH AND DISABLE PORTABLE HASHES");
 		}
+		*/
 
 		if (CRYPT_BLOWFISH == 1 && !$this->portable_hashes) {
 			$random = $this->get_random_bytes(16);
