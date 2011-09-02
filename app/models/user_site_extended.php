@@ -13,6 +13,7 @@ class UserSiteExtended extends AppModel {
 	 * This method runs before a user account is created or saved. For now it just creates a hash from the password field if it is found
 	 */
 	function beforeSave() {
+		/* SEE COMMENTS IN vendors/password_hash.php */
 		$hasher = new PasswordHash(10, false);
 		
 		//we'll take a new password for the password field, hash it and put it in the passwordHash field
