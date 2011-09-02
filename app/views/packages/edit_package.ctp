@@ -10,8 +10,8 @@
 ?>
 <link href="/css/package.css" type="text/css" rel="stylesheet" />
 <link href="/css/jquery.tooltip.css" type="text/css" rel="stylesheet" />
-<script src="/js/package.js" type="text/javascript"></script>
 <script src="/js/jquery/jquery-tooltip/jquery.tooltip.pack.js" type="text/javascript"></script>
+<script src="/js/package.js" type="text/javascript"></script>
 
 <div id="errorsContainer" style="display:none;">
     Please fix the following errors:<br />
@@ -92,21 +92,35 @@
                 <input type="text" size="5" id="totalNights" name="data[Package][numNights]" value="<?php echo $package['Package']['numNights']; ?>" />
             </td>
         </tr>
+
+				<tr>
+				<th>Num Rooms</th>
+				<td>
+				<?
+				$numRooms=(isset($package['Package']['numRooms']) && $package['Package']['numRooms']>0)?$package['Package']['numRooms']:1;
+				
+				?>
+				<input type='text' size='5' id='numRooms' name='data[Package][numRooms]' value="<?=$numRooms?>">
+				</td>
+				</tr>
+
         <tr>
            <th>Is Private Package?</th>
            <td>
-                <input type="radio" name="data[Package][isPrivatePackage]" value="1" <?php echo ($package['Package']['isPrivatePackage'] == 1) ? 'checked' : ''; ?>  /> Yes
-                <input type="radio" name="data[Package][isPrivatePackage]" value="0" <?php echo ($package['Package']['isPrivatePackage'] == 0 || empty($package['Package']['isPrivatePackage'])) ? 'checked' : ''; ?> /> No
+						<input type="radio" name="data[Package][isPrivatePackage]" value="1" <?php echo ($package['Package']['isPrivatePackage'] == 1) ? 'checked' : ''; ?>  /> Yes
+						<input type="radio" name="data[Package][isPrivatePackage]" value="0" <?php echo ($package['Package']['isPrivatePackage'] == 0 || empty($package['Package']['isPrivatePackage'])) ? 'checked' : ''; ?> /> No
            </td>
         </tr>
-        <?php //$showFlex = ($package['Package']['siteId'] == '1') ? '' : ' style="display:none"'; ?>
-        <?php $showFlex = ''; // 20110606 mc - TICKET2021 - Allow Flex Packages to be built for FG ?>
-        <tr<?php echo $showFlex; ?> id="showFlex">
+        <tr id="showFlex">
            <th>Is Flex Package?</th>
            <td>
+					 When editing, the flex pack cannot be changed at the package level and must be changed at the pricepoint level
+					 <!-- flex pack status can only be created at creation or by editing the pricepoint, not by 
+					 editing here mbyrnes
                 <input type="radio" name="data[Package][isFlexPackage]" id="isFlexPackage" value="1" <?php echo ($package['Package']['isFlexPackage'] == 1) ? 'checked' : ''; ?>  /> Yes
                 <input type="radio" name="data[Package][isFlexPackage]" id="notFlexPackage" value="0" <?php echo ($package['Package']['isFlexPackage'] == 0 || empty($package['Package']['isFlexPackage'])) ? 'checked' : ''; ?> /> No
                 &nbsp;&nbsp;<a id="restrictions" class="edit-link">Restrictions</a>
+								-->
            </td>
         </tr>
         <?php $style = ($package['Package']['isFlexPackage'] == '0' || empty($package['Package']['isFlexPackage'])) ? 'style="display:none"' : ''; ?>
