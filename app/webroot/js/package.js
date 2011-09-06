@@ -1,4 +1,16 @@
 $().ready(function() {
+
+	// add/edit a package packages/edit_package
+	// listen for submit and check that numGuests is appropriate for the number of rooms
+	$('#packageForm').submit(function() {
+		if ($('#maxGuests').val()>4 && $("#numRooms").val()==1){
+			confirm("You have selected more than 4 guests but only 1 room. To proceed, click OK or click cancel to fix things.");
+			return false;
+		}else{
+			return true;
+		}
+	});
+
         $('div.edit-link').click(function() {
                                     if ($(this).attr('href') == undefined) {
                                         var url = '/clients/'+clientId+'/packages/'+$(this).attr('name')+'/'+packageId;
