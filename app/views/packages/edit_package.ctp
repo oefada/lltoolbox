@@ -114,13 +114,18 @@
         <tr id="showFlex">
            <th>Is Flex Package?</th>
            <td>
-					 When editing, the flex pack cannot be changed at the package level and must be changed at the pricepoint level
+
 					 <!-- flex pack status can only be created at creation or by editing the pricepoint, not by 
-					 editing here mbyrnes
-                <input type="radio" name="data[Package][isFlexPackage]" id="isFlexPackage" value="1" <?php echo ($package['Package']['isFlexPackage'] == 1) ? 'checked' : ''; ?>  /> Yes
-                <input type="radio" name="data[Package][isFlexPackage]" id="notFlexPackage" value="0" <?php echo ($package['Package']['isFlexPackage'] == 0 || empty($package['Package']['isFlexPackage'])) ? 'checked' : ''; ?> /> No
+					 editing here mbyrnes-->
+					 <? if ($package['Package']['packageId']>0){ ?>
+					 When editing, the flex pack cannot be changed at the package level and must be changed at the pricepoint level
+					 <? }else{ 
+							$isFlex=intval($package['Package']['isFlexPackage']);
+							?>
+             <input type="radio" name="data[Package][isFlexPackage]" id="isFlexPackage" value="1" <?=(($isFlex==1) ? 'checked' : ''); ?>  /> Yes
+             <input type="radio" name="data[Package][isFlexPackage]" id="notFlexPackage" value="0" <?=(($isFlex == 0) ? 'checked' : ''); ?> /> No
                 &nbsp;&nbsp;<a id="restrictions" class="edit-link">Restrictions</a>
-								-->
+					 <? } ?>
            </td>
         </tr>
         <?php $style = ($package['Package']['isFlexPackage'] == '0' || empty($package['Package']['isFlexPackage'])) ? 'style="display:none"' : ''; ?>
