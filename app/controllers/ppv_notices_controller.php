@@ -165,7 +165,11 @@ class PpvNoticesController extends AppController {
 			
 		} else {
 			$ticket_user_email = $this->Ticket->query("SELECT user.email FROM ticket INNER JOIN user USING (userId) WHERE ticketId =  $ticketId LIMIT 1");
-			$this->data['PpvNotice']['emailTo'] = $ticket_user_email[0]['user']['email'];
+			if (!isset($ticket_user_email[0]['user']['email'])){
+				$this->data['PpvNotice']['emailTo']='devmail@luxurylink.com';
+			}else{
+				$this->data['PpvNotice']['emailTo'] = $ticket_user_email[0]['user']['email'];
+			}
 		}
 
 		if (in_array($id, array(26,27,28,33))) {
