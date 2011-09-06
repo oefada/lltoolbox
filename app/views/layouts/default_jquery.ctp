@@ -35,6 +35,8 @@
 	?>
 	<script type="text/javascript"><?php /* Needed to avoid Flash of Unstyled Content in IE */ ?> </script>
 </head>
+<div id='loader' style='display: none; text-align: center;'><?=$html->image('ajax-loader.gif')?></div>
+<div id='spinner' style='display: none;'><?=$html->image('spinner_small.gif', array('align' => 'top'))?> Loading...</div>
 <body>
   <div id="page"><div id="page-inner">
 	<!--
@@ -98,8 +100,6 @@
 
       <div id="content"><div id="content-inner">
           <div id="content-header">
-			<div id='loader' style='display: none; text-align: center;'><?=$html->image('ajax-loader.gif')?></div>
-			<div id='spinner' style='display: none;'><?=$html->image('spinner_small.gif', array('align' => 'top'))?> Loading...</div>
 			<?php if(false)://$html->getCrumbs()): ?>
 			<div id="breadcrumbs"><?= $html->getCrumbs("<span></span>", "Dashboard"); ?></div>
 			<?php endif; ?>
