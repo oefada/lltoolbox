@@ -107,6 +107,7 @@ class PackagesController extends AppController {
 	}
 
 	function add($clientId = null) {
+
         if (!empty($this->data)) {
             if ($this->data['Package']['packageType'] == '0') {
                 $this->redirect('/clients/'.$clientId.'/packages/edit_package/0?loaId='.$this->data['ClientLoaPackageRel'][0]['loaId'].'&packageType=standard&siteId='.$this->data['Package']['siteId']);
@@ -169,6 +170,7 @@ class PackagesController extends AppController {
 					$this->Session->setFlash(__('The Schedule could not be saved. Please correct the errors below.', true), 'default', array(), 'error');
 				}
                 //push tracking links out to front end databases
+								// does this work? I think save() should get $tracking passed to it and not $data
                 if (!empty($this->data['ClientTracking'])) {
                     $sites = $this->Package->field('sites', array('Package.packageId' => $this->Package->id));
                     $sites = explode(',', $sites);
@@ -2145,10 +2147,10 @@ class PackagesController extends AppController {
             // }
             $maxGuaranteedPercent = 0;
             foreach ($this->data['loaItemRatePeriodIds'] as $loaItemRatePeriodId) {
-				$checkPercent = $this->data['gpr-' . $loaItemRatePeriodId];
-				if ($checkPercent > $maxGuaranteedPercent) {
-					$maxGuaranteedPercent = $checkPercent;
-				}
+							$checkPercent = $this->data['gpr-' . $loaItemRatePeriodId];
+							if ($checkPercent > $maxGuaranteedPercent) {
+								$maxGuaranteedPercent = $checkPercent;
+							}
             }
             $this->data['PricePoint']['percentReservePrice'] = $maxGuaranteedPercent;
 
@@ -2188,6 +2190,12 @@ class PackagesController extends AppController {
 				$package['packageId'] = $packageId;
 				$package['overrideValidityDisclaimer'] = 1;
 				$this->Package->save($package);
+			}
+
+			// mbyrnes
+			if (isset($this->data['Package']['isFlexPackage'])){
+				$this->data['Package']['packageId']=$packageId;
+				$this->Package->save($this->data['Package']);
 			}
 
 			// ticket1870 - we still need to set validityStart and validityEnd in the pricePoint table
@@ -2266,6 +2274,7 @@ class PackagesController extends AppController {
 				$this->set('isEdit', $pricePointId);
 
 				$ratePeriods = $this->getRatePeriodsInfo($packageId);
+				$ratePeriods=is_array($ratePeriods)?$ratePeriods:array();
 
 				// disable ratePeriods that have already been used
 				$pricePointRatePeriods = $this->Package->PricePoint->getLoaItemRatePeriod($packageId);
