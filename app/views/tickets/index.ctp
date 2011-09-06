@@ -401,7 +401,11 @@ foreach ($tickets as $ticket):
 			<?php endif; ?>
 			<?php echo $ticket['Ticket']['ticketNotes']; ?>
 		</td>
-		<td><?=$ticket['Promo'][0]['pc']['promoCode'];?></td>
+		<td>
+		<?
+		if (isset($ticket['Promo'][0]['pc']['promoCode'])) echo $ticket['Promo'][0]['pc']['promoCode'];
+		?>
+		</td>
 		<td class="actions">
 			<?php echo $html->link(__('View Details', true), array('controller' => 'tickets', 'action'=>'view', $ticket['Ticket']['ticketId'])); ?>
 		</td>
