@@ -36,7 +36,7 @@ class ReportsController extends AppController {
 	        $this->layoutPath = 'csv';
         }
 
-	     if(@$this->data['paging']['disablePagination'] == 1) {
+		if(@$this->data['paging']['disablePagination'] == 1) {
             $this->page = 1;
             $this->perPage = 9999;
             $this->limit = 9999;
@@ -381,7 +381,7 @@ class ReportsController extends AppController {
                         INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Package.packageId)
                         INNER JOIN client AS Client ON (Client.clientId = ClientLoaPackageRel.clientId)
                     WHERE $conditions
-                    GROUP BY Offer.offerId, Client.clientId";
+                    GROUP BY Offer.offerId, Client.clientId LIMIT ".$this->limit;
 
 	        $results = $this->OfferType->query($count);
 	        $numRecords = count($results);
@@ -716,7 +716,7 @@ class ReportsController extends AppController {
 		}
 // TODO: move these queries to a model in the way the rest of this controller didn't
 		$ll_num_arr=array();
-		$q="SELECT clientId,count(*) as num FROM offerLuxuryLink ";
+		$q="SELECT clientId,count(clientId) as num FROM offerLuxuryLink ";
 		$q.="WHERE clientId IN (".implode(",",$clientId_arr['luxurylink']).") ";
 		$q.="AND endDate>NOW() ";
 		$q.="AND isClosed=0 ";
@@ -728,7 +728,7 @@ class ReportsController extends AppController {
 			$ll_num_arr[$clientId]=$num;
 		}
 		$fg_num_arr=array();
-		$q="SELECT clientId,count(*) as num FROM offerLuxuryLink ";
+		$q="SELECT clientId,count(clientId) as num FROM offerLuxuryLink ";
 		$q.="WHERE clientId IN (".implode(",",$clientId_arr['family']).") ";
 		$q.="AND endDate>NOW() ";
 		$q.="AND isClosed=0 ";
@@ -2578,7 +2578,7 @@ class ReportsController extends AppController {
 											GROUP BY expirationCriteriaId");
 
 		foreach ($tmp as $v) {
-			if($v['track']['expirationCriteriaId'] == 1 || $v['track']['expirationCriteriaId'] == 4) {
+			if($v['track']['expirationCriteriaId'] == 1 || $v['track']['expirationCriteriaId'] == 4 || $v['track']['expirationCriteriaId'] == 6) {
 				$row = 1;
 			} else {
 				$row = 2;
@@ -2591,7 +2591,7 @@ class ReportsController extends AppController {
 		}
 
 		foreach ($tmp2 as $v) {
-			if($v['track']['expirationCriteriaId'] == 1 || $v['track']['expirationCriteriaId'] == 4) {
+			if($v['track']['expirationCriteriaId'] == 1 || $v['track']['expirationCriteriaId'] == 4 || $v['track']['expirationCriteriaId'] == 6) {
 				$row = 1;
 			} else {
 				$row = 2;
@@ -2624,7 +2624,7 @@ class ReportsController extends AppController {
 								GROUP BY severity, expirationCriteriaId");
 
 		foreach ($tmp as $v) {
-			if($v['track']['expirationCriteriaId'] == 1 || $v['track']['expirationCriteriaId'] == 4) {
+			if($v['track']['expirationCriteriaId'] == 1 || $v['track']['expirationCriteriaId'] == 4 || $v['track']['expirationCriteriaId'] == 6) {
 				$row = 1;
 			} else {
 				$row = 2;
@@ -2639,21 +2639,11 @@ class ReportsController extends AppController {
 		$this->set('distressedBuyNows', $distressedBuyNows);
 
 		/* Packages with x days Validity Left */
-		$tmp = $this->Client->query("SELECT
-										GROUP_CONCAT(DISTINCT Package.packageId) as ids,
-										COUNT(*) as numPackages,
-										IF(DATEDIFF(Package.validityEndDate, '$date') < 30, 3, IF(DATEDIFF(Package.validityEndDate, '$date') < 45, 2, 1)) as severity,
-		 								expirationCriteriaId
-										FROM package AS Package
-										INNER JOIN clientLoaPackageRel USING(packageId)
-										INNER JOIN loa AS Loa USING(loaId)
-										INNER JOIN track USING(trackId)
-										WHERE Package.validityEndDate <= '$date' + INTERVAL 60 DAY
-												AND Package.validityEndDate >= NOW()
-												AND Loa.endDate >= NOW() AND $loaSiteCondition
-										GROUP BY severity, expirationCriteriaId");
+		$tmp = $this->Client->query("SELECT GROUP_CONCAT(DISTINCT Package.packageId) AS ids, COUNT(*) AS numPackages, IF(DATEDIFF(pricePoint.validityEnd, '$date') < 30, 3, IF(DATEDIFF(pricePoint.validityEnd, '$date') < 45, 2, 1)) AS severity, expirationCriteriaId FROM package AS Package INNER JOIN pricePoint USING (packageId) INNER JOIN clientLoaPackageRel USING(packageId) INNER JOIN loa AS Loa USING(loaId) INNER JOIN track USING(trackId) WHERE (pricePoint.validityStart <= '$date' + INTERVAL 60 DAY) AND pricePoint.validityEnd >= NOW() AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
+
 		foreach ($tmp as $v) {
-			if($v['track']['expirationCriteriaId'] == 1 || $v['track']['expirationCriteriaId'] == 4) {
+			
+			if($v['track']['expirationCriteriaId'] == 1 || $v['track']['expirationCriteriaId'] == 4 || $v['track']['expirationCriteriaId'] == 6) {
 				$row = 1;
 			} else {
 				$row = 2;
@@ -2680,7 +2670,7 @@ class ReportsController extends AppController {
 										GROUP BY expirationCriteriaId
 										");
 		foreach ($tmp as $v) {
-			if($v['track']['expirationCriteriaId'] == 1 || $v['track']['expirationCriteriaId'] == 4) {
+			if($v['track']['expirationCriteriaId'] == 1 || $v['track']['expirationCriteriaId'] == 4 || $v['track']['expirationCriteriaId'] == 6) {
 				$row = 1;
 			} else {
 				$row = 2;
@@ -3465,7 +3455,7 @@ class ReportsController extends AppController {
 											GROUP BY expirationCriteriaId");
 
 		foreach ($tmp as $v) {
-			if($v['track']['expirationCriteriaId'] == 1 || $v['track']['expirationCriteriaId'] == 4) {
+			if($v['track']['expirationCriteriaId'] == 1 || $v['track']['expirationCriteriaId'] == 4 || $v['track']['expirationCriteriaId'] == 6) {
 				$row = 1;
 			} else {
 				$row = 2;
@@ -3478,7 +3468,7 @@ class ReportsController extends AppController {
 		}
 
 		foreach ($tmp2 as $v) {
-			if($v['track']['expirationCriteriaId'] == 1 || $v['track']['expirationCriteriaId'] == 4) {
+			if($v['track']['expirationCriteriaId'] == 1 || $v['track']['expirationCriteriaId'] == 4 || $v['track']['expirationCriteriaId'] == 6) {
 				$row = 1;
 			} else {
 				$row = 2;
@@ -3511,7 +3501,7 @@ class ReportsController extends AppController {
 								GROUP BY severity, expirationCriteriaId");
 
 		foreach ($tmp as $v) {
-			if($v['track']['expirationCriteriaId'] == 1 || $v['track']['expirationCriteriaId'] == 4) {
+			if($v['track']['expirationCriteriaId'] == 1 || $v['track']['expirationCriteriaId'] == 4 || $v['track']['expirationCriteriaId'] == 6) {
 				$row = 1;
 			} else {
 				$row = 2;
@@ -3526,33 +3516,31 @@ class ReportsController extends AppController {
 		$this->set('distressedBuyNows', $distressedBuyNows);
 
 		/* Packages with x days Validity Left */
-		$tmp = $this->Client->query("SELECT
-										GROUP_CONCAT(DISTINCT Package.packageId) as ids,
-										COUNT(*) as numPackages,
-										IF(DATEDIFF(Package.validityEndDate, '$date') < 30, 3, IF(DATEDIFF(Package.validityEndDate, '$date') < 45, 2, 1)) as severity,
-		 								expirationCriteriaId
-										FROM package AS Package
-										INNER JOIN clientLoaPackageRel USING(packageId)
-										INNER JOIN loa AS Loa USING(loaId)
-										INNER JOIN track USING(trackId)
-										WHERE Package.validityEndDate <= '$date' + INTERVAL 60 DAY
-												AND Package.validityEndDate >= NOW()
-												AND Loa.endDate >= NOW() AND $loaSiteCondition
-										GROUP BY severity, expirationCriteriaId");
+		$tmp = $this->Client->query("SELECT 
+GROUP_CONCAT(Package.packageId) AS ids, 
+COUNT(Package.packageId) AS numPackages,
+IF(DATEDIFF(pricePoint.validityEnd, '$date') < 30, 3, IF(DATEDIFF(pricePoint.validityEnd, '$date') < 45, 2, 1)) AS severity, expirationCriteriaId
+FROM package AS Package 
+INNER JOIN pricePoint USING (packageId)
+INNER JOIN clientLoaPackageRel USING(packageId) 
+INNER JOIN loa AS Loa USING(loaId) 
+INNER JOIN track USING(loaId) 
+WHERE (pricePoint.validityEnd BETWEEN NOW() AND NOW() + INTERVAL 60 DAY)
+AND (NOW() BETWEEN Loa.startDate AND Loa.endDate) AND Loa.loaLevelId IN (1,2) AND Loa.inactive = 0
+AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		foreach ($tmp as $v) {
-			if($v['track']['expirationCriteriaId'] == 1 || $v['track']['expirationCriteriaId'] == 4) {
+			if($v['track']['expirationCriteriaId'] == 1 || $v['track']['expirationCriteriaId'] == 4 || $v['track']['expirationCriteriaId'] == 6) {
 				$row = 1;
 			} else {
 				$row = 2;
 			}
 
 			$col = $v[0]['severity'];
-
 			@$expiringPackages[$row][$col]['numPackages'] += $v[0]['numPackages'];
 			@$expiringPackages[$row][$col]['ids'][] = $v[0]['ids'];
 		}
 
-		$this->set('expiringPackages', $expiringPackages);
+		$this->set('expiringPackages', @$expiringPackages);
 
 		/* Auctions w/o buy now */
 		$tmp = $this->Client->query("SELECT GROUP_CONCAT(DISTINCT Package.packageId) AS ids, COUNT(DISTINCT Package.packageId) AS numPackages,
@@ -3567,7 +3555,7 @@ class ReportsController extends AppController {
 										GROUP BY expirationCriteriaId
 										");
 		foreach ($tmp as $v) {
-			if($v['track']['expirationCriteriaId'] == 1 || $v['track']['expirationCriteriaId'] == 4) {
+			if($v['track']['expirationCriteriaId'] == 1 || $v['track']['expirationCriteriaId'] == 4 || $v['track']['expirationCriteriaId'] == 6) {
 				$row = 1;
 			} else {
 				$row = 2;
