@@ -1,5 +1,47 @@
 <?php
 
+/**
+ * To add search to a controller, create a search() method with the following code:
+ * 	function search() {
+		$this->redirect(array('action'=>'index','query' => $this->params['url']['query']));
+	}
+ * 
+ * This will pass the query to the index, which then contains the conditions for the DB query. 
+ * Example:
+ * 
+ * 	function index() {
+		$this->City->recursive = 0;
+		
+		if (isset($this->params['named']['query'])) {
+			$query = $this->Sanitize->escape($this->params['named']['query']);
+			$conditions = array(
+				'OR' => array(
+					'cityName LIKE' => '%'.$query.'%',
+				),
+			);
+			
+			$this->set('query',$query);
+		} else {
+			$conditions = array();
+		}
+		
+		$this->paginate = array(
+			'conditions' => $conditions,
+		);
+		
+		$this->set('cities', $this->paginate());
+	}
+ * 
+ * For this controller, create a section in the if statement in the index method below matching the controller name. 
+ * Re-create the conditions above, but instead of using the normal model name, use AjaxSearch as the model name. This is a bit messy,
+ * but I'll improve it in the future. 
+ * 
+ * The goal of this was to speed up the ajax search by creating a simple model that didn't require a bunch of other models to operate.
+ * Speed for search on the clients controller, for example, went from 1.8s down to 250ms.
+ * 
+ * TODO: Unify search conditions for both controller and ajax_search_controller without compromising too much speed.
+ * 
+ */
 class AjaxSearchController extends AppController {
 	function index() {
 		$this->layout = "ajax";
