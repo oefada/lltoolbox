@@ -1,4 +1,7 @@
 <?php
+
+//App::import('Vendor', '');
+
 class MailingsController extends AppController {
 
 	var $name = 'Mailings';
@@ -15,8 +18,40 @@ class MailingsController extends AppController {
 		$this->set('currentTab', 'newsletters');
         $this->set('hideSidebar', true);
 	}
+
+  function index() {
+
+		
+
+	}
+
+	function generator(){
+
+
+	}
+
+	function generated(){
+
+		if (!empty($this->params['form']['clientId_arr'])){
+			$month=$this->params['form']['month'];
+			$day=$this->params['form']['day'];
+			$year=$this->params['form']['year'];
+			if (strlen($year)==2)$year="20".$year;
+			$date_ymd=$year.$month.$day;
+			$this->set("date_ymd",$date_ymd);
+
+			$this->layout=false;
+			$rows=$this->Mailing->generator($this->params['form']['clientId_arr']);	
+			if (count($rows)<15)exit("You must submit 15 clients");
+			$this->set('rows',$rows);
+
+		}
+
+
+	}
+
+	function mailings(){
     
-    function index() {
         $this->paginate();
         $conditions = array('conditions' => array());
         if (!empty($this->data)) {

@@ -62,8 +62,10 @@ class AjaxSearchController extends AppController {
 			    }
 			    $sqlquery .= $piece.'* ';
 			}
+
+
 			
-			if ($searchtype == "clients") { 			
+			if ($searchtype == "clients" || $searchtype=='generator') {
 				$this->AjaxSearch->table = 'clientNames';
 				$this->AjaxSearch->primaryKey = 'clientId';				
 				$this->AjaxSearch->cacheClientNames();
