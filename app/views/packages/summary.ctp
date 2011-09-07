@@ -430,7 +430,7 @@ if ($_SERVER['ENV']=="staging"){
 ?>
 
 <div style="position:relative; padding-bottom:20px;">
-<div style="position:absolute;right:0px;"><?=$html->link('<span>Previe Package</span>', "{$previewHost}/luxury-hotels/preview.html?packageId={$package['Package']['packageId']}&clid={$clientId}&preview=package", array('target' => '_blank', 'class' => 'button'), null, false); ?></div>
+<div style="position:absolute;right:0px;"><?=$html->link('<span>Preview Package</span>', "{$previewHost}/luxury-hotels/preview.html?packageId={$package['Package']['packageId']}&clid={$clientId}&preview=package", array('target' => '_blank', 'class' => 'button'), null, false); ?></div>
 </div>
 
 <a name="form-price-points">
