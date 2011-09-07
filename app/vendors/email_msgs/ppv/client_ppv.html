@@ -55,7 +55,11 @@ The following <?=$siteName;?> auction package has been paid in full.  We will be
 	</tr>
 </table>
 	
-<p><?php echo $packageIncludes;?></p>
+<p><?
+
+echo $this->cleanUpPackageIncludes($packageIncludes);
+
+?></p>
 <p><?php echo $validityNote;?></p>
 <p><?php echo $legalText;?></p>
 

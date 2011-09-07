@@ -93,7 +93,7 @@ contact you to confirm the booking.  Thank you.
 </table>
 </div>
 
-<p><?php echo $packageIncludes;?></p>
+<p><?php echo $this->cleanUpPackageIncludes($packageIncludes);?></p>
 <p><?php echo $validityNote;?></p>
 <p><?php echo $legalText;?></p>
 <?php if ($addtlDescription):?><p><?php echo $addtlDescription;?></p><?php endif ;?>
