@@ -139,6 +139,18 @@ class WebServiceTicketsController extends WebServicesController
 
 	function beforeFilter() { $this->LdapAuth->allow('*'); }
 
+	// for client specific tweaks of text before sending to client.
+	// eg http://comindwork/web2.aspx/ROADMAP/PROC/TICKET#keeperMatt:2351
+	// We're surroungind client specific text with the html comments so the customer doesn't see it
+	// and we strip the tags out before sending to the client
+	function cleanUpPackageIncludes($packageIncludes){
+
+		$packageIncludes=str_replace("<!--clientonlystart ","",$packageIncludes);
+		$packageIncludes=str_replace(" clientonlyend-->","",$packageIncludes);
+		return $packageIncludes;
+
+	}
+
 	// see processTicket()
 	function processNewTicket($in0) {
 
