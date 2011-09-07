@@ -3875,7 +3875,7 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 	/**
 	 * 
 	 */
-	public function statement_of_account()
+	public function statement_of_account($report_data = null)
 	{
 		$service_base = 'http://192.168.100.179/query/';
 		$service_url = '';
@@ -3893,24 +3893,12 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 			} else {
 				foreach($this->data['Properties'] as $property_code) {
 					$service_url = $service_base . 'index/' . "$property_code/$start_date/$end_date";
-					$service_urls[] = $service_url;				
+					$service_urls[] = array(
+						'html' => $service_url,
+						'pdf' => $this->webroot . 'reports/soa_pdf/' . base64_encode($service_url)
+					);				
 				}
-				$this->set('report_links', $service_urls);
-				//$service_url = $service_base . 'index/' . "$property_code/$start_date/$end_date";
-				//$json_data = file_get_contents($service_url . '/json');
-				//$html_data = file_get_contents($service_url);
-				//$this->set('json_data', $json_data);
-				//$this->set('html_data', $html_data);
-	
-				/*
-				App::import('Vendor','dompdf', array('file' => 'dompdf_config.inc.php'));
-				$dompdf = new DOMPDF();
-				$dompdf->load_html($html_data);
-				$dompdf->set_paper('8.5x11', 'landscape');
-				$dompdf->render();
-				$dompdf->stream('sample.pdf');
-				die;
-				*/
+				$this->set('report_links', $service_urls);	
 			}
 		} else {
 			$cur_day = date('j');
@@ -3926,6 +3914,23 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		
 		$this->set('start_date', $start_date);
 		$this->set('end_date', $end_date);
+	}
+
+	/**
+	 * 
+	 */
+	public function soa_pdf($data_hash)
+	{
+		App::import('Vendor', 'DOMPDF', array('file' => 'dompdf-0.6b2' . DS . 'dompdf_config.inc.php'));
+		$this->layout = 'ajax';
+		$this->autoRender = false;
+		$service_url = base64_decode($data_hash);
+		$html_data = file_get_contents($service_url);
+		$dompdf = new DOMPDF();
+		$dompdf->load_html($html_data);
+		$dompdf->set_paper('8.5x11', 'landscape');
+		$dompdf->render();
+		$dompdf->stream('sample.pdf');
 	}
 }
 

@@ -61,6 +61,6 @@
 <?php else: ?>
 	<strong>Report Links for QA:</strong><br/>
 	<?php foreach($report_links as $report_link): ?>
-	<a href="<?php echo $report_link ?>" target="_blank"><?php echo $report_link ?></a><br/>
+	 [<a href="<?php echo $report_link['pdf'] ?>">download pdf</a>] - <a href="<?php echo $report_link['html']; ?>" target="_blank"><?php echo $report_link['html'] ?></a><br/>
 	<?php endforeach; ?>
 <?php endif; ?>
