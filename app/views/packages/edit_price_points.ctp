@@ -293,8 +293,6 @@
 		</div> 
 
     <br /><br /><br />
-        
-		<? if ($isEdit){?>
 
 		<!-- VALIDITY DISCLAIMER -->
     <h2>Validity Disclaimer:</h2>
@@ -313,8 +311,6 @@
 				</td>
 			</tr>
     	</table>
-		<? } ?>
-
 
 		<div id="errorsContainer_repeat" style="display:none;color:red;">
 				Please fix the following errors:<br />
