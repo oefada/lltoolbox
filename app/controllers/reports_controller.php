@@ -3871,6 +3871,62 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		$this->loadModel('Experiment');
 		$this->Experiment->updateStatus($experiment_id, $status_id);
 	}
+	
+	/**
+	 * 
+	 */
+	public function statement_of_account()
+	{
+		$service_base = 'http://192.168.100.179/query/';
+		$service_url = '';
+		$service_urls = array();
+		$properties = '';
+		
+		if ($this->data) {
+			$start_date = $this->data['start_date'];
+			$end_date = $this->data['end_date'];
+			
+			if (!isset($this->data['Properties'])) {
+				$service_url = $service_base . "properties/$start_date/$end_date";
+				$properties = json_decode(file_get_contents($service_url));
+				$this->set('properties', $properties);
+			} else {
+				foreach($this->data['Properties'] as $property_code) {
+					$service_url = $service_base . 'index/' . "$property_code/$start_date/$end_date";
+					$service_urls[] = $service_url;				
+				}
+				$this->set('report_links', $service_urls);
+				//$service_url = $service_base . 'index/' . "$property_code/$start_date/$end_date";
+				//$json_data = file_get_contents($service_url . '/json');
+				//$html_data = file_get_contents($service_url);
+				//$this->set('json_data', $json_data);
+				//$this->set('html_data', $html_data);
+	
+				/*
+				App::import('Vendor','dompdf', array('file' => 'dompdf_config.inc.php'));
+				$dompdf = new DOMPDF();
+				$dompdf->load_html($html_data);
+				$dompdf->set_paper('8.5x11', 'landscape');
+				$dompdf->render();
+				$dompdf->stream('sample.pdf');
+				die;
+				*/
+			}
+		} else {
+			$cur_day = date('j');
+			$cur_month = date('m');
+			$cur_year = date('Y');
+			$start_date = $cur_month . '-1-' . $cur_year;
+			$end_date = $cur_month . '-' . $cur_day . '-' . $cur_year;
+
+			$service_url = $service_base . "properties/$start_date/$end_date";
+			$properties = json_decode(file_get_contents($service_url));
+			$this->set('properties', $properties);
+		}
+		
+		$this->set('start_date', $start_date);
+		$this->set('end_date', $end_date);
+	}
 }
 
 
