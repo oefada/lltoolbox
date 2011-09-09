@@ -25,7 +25,7 @@
 </ul>
 <br>
 <form method='post' id='generator_form' action='generated'>
-<? echo $this->renderElement("input_search",array('class' => 'generator-live-search', 'name' => 'query','label'=>'Client Search','controller' => 'generator')); ?>
+<? echo $this->renderElement("input_search",array('name' => 'query','label'=>'Client Search','controller' => 'generator')); ?>
 <div style='clear:both;'></div>
 <br>
 <?
