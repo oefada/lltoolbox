@@ -2147,14 +2147,22 @@ CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
 		}
 		// update ticket status to FUNDED
 		// ---------------------------------------------------------------------------
-		$ticketStatusChange = array();
-		$ticketStatusChange['ticketId'] = $ticket['Ticket']['ticketId'];
-		$ticketStatusChange['ticketStatusId'] = 5;
 		
+		if ($toolboxManualCharge) {
+			if ($data['paymentAmount'] >= $promoGcCofData['final_price_actual']) {
+				$fundTicket = true;
+			} 
+		}
+
+		if (!$toolboxManualCharge || $fundTicket) {
+			$ticketStatusChange = array();
+			$ticketStatusChange['ticketId'] = $ticket['Ticket']['ticketId'];
+			$ticketStatusChange['ticketStatusId'] = 5;
+		}
+				
 		// if gift cert or cof, create additional payment detail records
 		// ---------------------------------------------------------------------------
 		$promoGcCofData['Cof']['creditTrackingTypeId'] = 1;
-		
 		
 		if (isset($promoGcCofData['GiftCert']) && $promoGcCofData['GiftCert']['applied']) {
 			$this->PaymentDetail->saveGiftCert($ticket['Ticket']['ticketId'], $promoGcCofData['GiftCert'], $ticket['Ticket']['userId'], $data['autoCharge'], $data['initials'],$toolboxManualCharge);
