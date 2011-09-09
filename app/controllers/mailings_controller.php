@@ -21,8 +21,6 @@ class MailingsController extends AppController {
 
   function index() {
 
-		
-
 	}
 
 	function generator(){

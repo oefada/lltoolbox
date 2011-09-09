@@ -1,31 +1,9 @@
 <?php  $this->pageTitle = 'Payment Processor ' . $html2->c($ticket['Ticket']['ticketId'], 'Ticket Id:');?>
+<?php $this->set('hideSidebar', true); ?>
 <?php $session->flash();
 	$session->flash('error');
-	echo $javascript->link('jquery/jquery');
 ?>
-
-<script language="javascript">
-<!--
-
-jQuery.noConflict();
-function confirmSubmit()
-{
-	var agree = confirm("Are you sure you want to continue?  Clicking 'Ok' will submit this payment.");
-	if (agree)
-		return true;
-	else
-		return false;
-}
-// -->
-
-</script>
-
 <div class="paymentDetails form">
-<?php echo $form->create('PaymentDetail', array('url' => "/tickets/{$ticket['Ticket']['ticketId']}/paymentDetails/add", 'onsubmit' => "return confirmSubmit()"));?>
-	
-	<?php echo $form->input('ticketId', array('type' => 'hidden', 'value' => $ticket['Ticket']['ticketId']));?>
-	<?php echo $form->input('userId', array('type' => 'hidden', 'value' => $ticket['Ticket']['userId']));?>
-	
 	<h2>Process payment for:</h2>
 	<br />
 	<table cellspacing="0" cellpadding="0" border="1">
@@ -51,7 +29,7 @@ function confirmSubmit()
 		</tr>
 		<tr>
 			<td><strong>Ticket Amount</strong></td>
-			<td><?php echo $number->currency($ticket['Ticket']['billingPrice']);?></td>
+			<td><?php echo $number->currency($ticket['Ticket']['billingPrice']);?> + $40.00 Auction Fee</td>
 		</tr>
 		<?php if (!empty($ticket['UserPromo']['Promo'])) :?>
 		<tr>
@@ -65,264 +43,491 @@ function confirmSubmit()
 		</tr>	
 		<?php endif; ?>
 	</table>
-
 	<br />
-	<h2>Payment Settings:</h2>
-	<br />
-	<table cellspacing="0" cellpadding="0" border="1">
-			<td><strong>Payment Type</strong></td>
-			<td>
-				<select name="data[PaymentDetail][paymentTypeId]" id="PaymentDetailPaymentTypeId">
-					<?php foreach ($paymentTypeIds as $ppId => $ppValue): ?>
-					<?php if ($ppId == 3 && $credit['CreditTracking']['balance'] == 0) continue; ?>
-						<option value="<?php echo $ppId;?>"><?php echo $ppValue;?></option>
-					<?php endforeach;?>
-				</select>	
-			</td>
-		<tr>
-			<td><strong>Payment Processor</strong></td>
-			<td>
-				<select name="data[PaymentDetail][paymentProcessorId]" id="PaymentDetailPaymentProcessorId">
-					<?php foreach ($paymentProcessorIds as $ppId => $ppValue): ?>
-					<option value="<?php echo $ppId;?>"><?php echo $ppValue;?></option>
-					<?php endforeach;?>
-				</select>	
-			</td>
-		</tr>
-		<tr id="showPaymentSetting" style="display: none;">
-			<td colspan="2">
-				<strong>User Payment Setting (choose one):</strong><br /><br />
-				
-				<fieldset class="collapsible">
-					<legend class="handle" style="font-size:12px;">Existing Cards (<?php echo count($userPaymentSetting);?>)</legend>
-					<div class="collapsibleContent">
+	<form onSubmit="return false;" id="paymentForm">
+	<?php echo $form->input('ticketId', array('type' => 'hidden', 'value' => $ticket['Ticket']['ticketId']));?>
+	<?php echo $form->input('userId', array('type' => 'hidden', 'value' => $ticket['Ticket']['userId']));?>
+	<div class="paymentsDebug"></div>
+	<div class="paymentColumns">
+		<div class="col1">
+			<h2>Payment Settings:</h2>
+			<table cellspacing="0" cellpadding="0" border="1" id="paymentSettings">
+				<?php if (isset($ticket['UserPromo']['Cof']['balance'])): ?>
+				<tr id="applyCof">
+					<td><strong>Apply Credit on File:</strong></td>
+					<td><input id="applyCofCheck" type="checkbox" name="data['CreditTracking']['applyCoF']" value="1"> (Customer has credit on file of $<?= number_format($ticket['UserPromo']['Cof']['balance'],2) ?>)</td>
+				</tr>
+				<?php endif; ?>
+				<tr>
+					<td style="width: 200px;"><strong>Payment Type</strong></td>
+					<td>
+						<select name="data[PaymentDetail][paymentTypeId]" id="PaymentDetailPaymentTypeId">
+							<?php foreach ($paymentTypeIds as $ppId => $ppValue): ?>
+							<?php if ($ppId == 3 && !isset($ticket['UserPromo']['Cof']['balance']) && $ticket['UserPromo']['Cof']['balance'] == 0) continue; ?>
+							<?php if ($ppId == 2 && isset($ticket['UserPromo']['GiftCert']['applied'])) continue; ?>
+								<option value="<?php echo $ppId;?>"><?php echo $ppValue;?></option>
+							<?php endforeach;?>
+						</select>	
+					</td>
+				</tr>
+				<tr>
+					<td><strong>Payment Processor</strong></td>
+					<td>
+						<select name="data[PaymentDetail][paymentProcessorId]" id="PaymentDetailPaymentProcessorId">
+							<?php foreach ($paymentProcessorIds as $ppId => $ppValue): ?>
+							<option value="<?php echo $ppId;?>"><?php echo $ppValue;?></option>
+							<?php endforeach;?>
+						</select>	
+					</td>
+				</tr>
+				<tr id="showPaymentSetting" style="display: none;">
+					<td colspan="2">
+						<strong>User Payment Setting (choose one):</strong><br /><br />
+						
+						<fieldset class="collapsible" id="existingCards">
+<?php include("existing_cards.ctp") ?>
+						</fieldset>
+						<br />
 					
-						<table style="background:whitesmoke;margin:0px;padding:0px;" cellspacing="0" cellpadding="0" border="1">
-						<tr>
-							<td>&nbsp;</td>
-							<td><i>Card Id</i></td>
-							<td><i>Name on Card</i></td>
-							<td><i>Address</i></td>
-							<td><i>CC Type</i></td>
-							<td><i>Card Number</i></td>
-							<td><i>Exp</i></td>
-							<td><i>Primary</i></td>
-							<td><i>Inactive</i></td>
-							<td><i>Card Added</i></td>
-						</tr>
-						<?php 		
-						if (count($userPaymentSetting)) {		
-							$counter = 0;
-							foreach ($userPaymentSetting as $upsId => $upsValue) { 
-								if ($upsValue['inactive']) {
-									//continue;
-								}	
-								$selectPrimaryCC = $upsValue['primaryCC'] && !$upsValue['inactive'] ? 'checked' : '';
-								$cardInactiveColor = $upsValue['inactive'] ? '#CC0000;' : '#009900;';
-							?>
-							<tr style="color: <?php echo $cardInactiveColor;?>">
-								<td>
-									<input <?php echo $selectPrimaryCC;?> type="radio" name="data[PaymentDetail][userPaymentSettingId]" id="PaymentDetailUserPaymentSettingId" value="<?php echo $upsValue['userPaymentSettingId'];?>" />
-								</td>
-								<td><?php echo $upsValue['userPaymentSettingId'];?></td>
-								<td><?php echo $upsValue['nameOnCard'];?></td>
-								<td>
-									<?php echo $upsValue['address1'];?><br />
-									<?php if ($upsValue['address2']) { echo $upsValue['address2'] . '<br />'; } ?>
-									<?php echo $upsValue['city'] . ', ' . $upsValue['state'] . ' ' . $upsValue['postalCode'];?>
-								</td>
-								<td><?php echo $upsValue['ccType'];?></td>
-								<td><?php echo $upsValue['ccNumber'];?></td>
-								<td><?php echo $upsValue['expMonth'] . '/' . $upsValue['expYear'];?></td>
-								<td><?php echo ($upsValue['primaryCC']) ? 'Yes' : 'No';?></td>
-								<td><?php echo ($upsValue['inactive']) ? '<strong>Yes</strong>' : 'No';?></td>
-								<td><?php echo $upsValue['created'];?></td>
-							</tr>
-						<?php } } ?>
-						</table>
-				
-					</div>
-				</fieldset>
-			
-				<br />
-			
-				<fieldset class="collapsible">
-					<legend class="handle" style="font-size:12px;">Add New Card</legend>
-					<div class="collapsibleContent">
-						
-						<table style="background:whitesmoke;margin:0px;padding:0px;" cellspacing="0" cellpadding="0" border="0">
-							<tr>
-								<td width="150"><br /><strong>Use New Card</strong><br /><br /></td>
-								<td><br /><input type="checkbox" name="data[UserPaymentSetting][useNewCard]" id="UserPaymentSettingUseNewCard" /><br /><br /></td>
-							</tr>
-							<tr>
-								<td width="150">Name on Card</td>
-								<td><input type="text" name="data[UserPaymentSetting][nameOnCard]" id="UserPaymentSettingNameOnCard" size="30" /></td>
-							</tr>
-							<tr>
-								<td>Address 1</td>
-								<td><input type="text" name="data[UserPaymentSetting][address1]" id="UserPaymentSettingAddress1" size="50" /></td>
-							</tr>
-							<tr>
-								<td>Address 2</td>
-								<td><input type="text" name="data[UserPaymentSetting][address2]" id="UserPaymentSettingAddress2" size="50" /></td>
-							</tr>
-							<tr>
-								<td>City</td>
-								<td><input type="text" name="data[UserPaymentSetting][city]" id="UserPaymentSettingCity" size="20" /></td>
-							</tr>
-							<tr>
-								<td>State</td>
-								<td><input type="text" name="data[UserPaymentSetting][state]" id="UserPaymentSettingState" size="20" /></td>
-							</tr>
-							<tr>
-								<td>Country</td>
-								<td>
-									<select name="data[UserPaymentSetting][country]" id="UserPaymentSettingCountry">
-										<option value="US">US</option>
-										<?php
-										foreach ($countries as $ckey => $country) {
-											echo "<option value=\"$country\">$country</option>\n";
-										}
-										?>
-									</select>
-								</td>
-							</tr>
-							<tr>
-								<td>Postal/Zip Code</td>
-								<td><input type="text" name="data[UserPaymentSetting][postalCode]" id="UserPaymentSettingPostalCode" size="10" /></td>
-							</tr>
-							<tr>
-								<td>Card Number</td>
-								<td><input type="text" name="data[UserPaymentSetting][ccNumber]" id="UserPaymentSettingCcNumber" size="50" /></td>
-							</tr>
-							<tr>
-								<td>Expiration Month</td>
-								<td>
-									<select name="data[UserPaymentSetting][expMonth]" id="UserPaymentSettingExpMonth">
-										<?php
-										foreach ($selectExpMonth as $mkey => $eMonth) {
-											echo "<option value=\"$eMonth\">$eMonth</option>\n";
-										}
-										?>
-									</select>
-								</td>
-							</tr>
-							<tr>
-								<td>Expiration Year</td>
-								<td>
-									<select name="data[UserPaymentSetting][expYear]" id="UserPaymentSettingExpYear">
-										<?php
-										foreach ($selectExpYear as $ykey => $eYear) {
-											echo "<option value=\"$eYear\">$eYear</option>\n";
-										}
-										?>
-									</select>
-								</td>
-							</tr>
-							<tr>
-								<td>&nbsp;</td>
-								<td>
-									<br />
-									<input type="checkbox" name="data[UserPaymentSetting][save]" id="UserPaymentSettingSave" />&nbsp;
-									Save this record for this user 
-								</td>
-							</tr>
-						</table>
-						
-					</div>
-				</fieldset>
-				
-				<?php echo $form->error('userPaymentSettingId') ?>
-			</td>
+						<fieldset class="collapsible">
+							<legend class="handle" style="font-size:12px;" id="addNewCard">Add New Card</legend>
+							<div class="collapsibleContent">
+								
+								<table style="background:whitesmoke;margin:0px;padding:0px;" cellspacing="0" cellpadding="0" border="0">
+									<tr>
+										<td width="150"><br /><strong>Use New Card</strong><br /><br /></td>
+										<td><br /><input type="checkbox" name="data[UserPaymentSetting][useNewCard]" id="UserPaymentSettingUseNewCard" /><br /><br /></td>
+									</tr>
+									<tr>
+										<td width="150">Name on Card</td>
+										<td><input type="text" name="data[UserPaymentSetting][nameOnCard]" id="UserPaymentSettingNameOnCard" size="30" /></td>
+									</tr>
+									<tr>
+										<td>Address 1</td>
+										<td><input type="text" name="data[UserPaymentSetting][address1]" id="UserPaymentSettingAddress1" size="50" /></td>
+									</tr>
+									<tr>
+										<td>Address 2</td>
+										<td><input type="text" name="data[UserPaymentSetting][address2]" id="UserPaymentSettingAddress2" size="50" /></td>
+									</tr>
+									<tr>
+										<td>City</td>
+										<td><input type="text" name="data[UserPaymentSetting][city]" id="UserPaymentSettingCity" size="20" /></td>
+									</tr>
+									<tr>
+										<td>State</td>
+										<td><input type="text" name="data[UserPaymentSetting][state]" id="UserPaymentSettingState" size="20" /></td>
+									</tr>
+									<tr>
+										<td>Country</td>
+										<td>
+											<select name="data[UserPaymentSetting][country]" id="UserPaymentSettingCountry">
+												<option value="US">US</option>
+												<?php
+												foreach ($countries as $ckey => $country) {
+													echo "<option value=\"$country\">$country</option>\n";
+												}
+												?>
+											</select>
+										</td>
+									</tr>
+									<tr>
+										<td>Postal/Zip Code</td>
+										<td><input type="text" name="data[UserPaymentSetting][postalCode]" id="UserPaymentSettingPostalCode" size="10" /></td>
+									</tr>
+									<tr>
+										<td>Card Number</td>
+										<td><input type="text" name="data[UserPaymentSetting][ccNumber]" id="UserPaymentSettingCcNumber" size="50" /></td>
+									</tr>
+									<tr>
+										<td>Expiration Month</td>
+										<td>
+											<select name="data[UserPaymentSetting][expMonth]" id="UserPaymentSettingExpMonth">
+												<?php
+												foreach ($selectExpMonth as $mkey => $eMonth) {
+													echo "<option value=\"$eMonth\">$eMonth</option>\n";
+												}
+												?>
+											</select>
+										</td>
+									</tr>
+									<tr>
+										<td>Expiration Year</td>
+										<td>
+											<select name="data[UserPaymentSetting][expYear]" id="UserPaymentSettingExpYear">
+												<?php
+												foreach ($selectExpYear as $ykey => $eYear) {
+													echo "<option value=\"$eYear\">$eYear</option>\n";
+												}
+												?>
+											</select>
+										</td>
+									</tr>
+									<tr>
+										<td>&nbsp;</td>
+										<td>
+											<br />
+											<input type="checkbox" name="data[UserPaymentSetting][save]" id="UserPaymentSettingSave" />&nbsp;
+											Save this record for this user 
+										</td>
+									</tr>
+								</table>
+								
+							</div>
+						</fieldset>
+						<?php echo $form->error('userPaymentSettingId') ?>
+					</td>
+				</tr>
+				<tr id="showWire" style="display:none;">
+					<td colspan="2">
+						<strong>Reference ID:</strong><br /><br />
+						<input type="text" name="data[PaymentDetail][ppTransactionId]" />
+					</td>
+				</tr>
+				<tr id="showPromo" style="display:none;">
+					<td colspan="2">
+						<strong>Promo Code:</strong><br /><br />
+						<input type="text" name="data[PaymentDetail][ppTransactionId]" id="promoCode" /> <a href="#" id="lookupPromo">Lookup Promo</a>
+						<div id="giftBalance" style="display: none">
+							<strong>Valid Code<br>
+							Balance:</strong> $<span id="giftBalanceBalance"></span>.00
+						</div>
+						<div id="promoOff" style="display: none">
+							<strong>Valid Code<br>
+							Amount Off:</strong> <span id="amountOff"></span>
+						</div>
+						<div id="promoInvalid" style="display: none"><strong><span class="textDarkRed">Invalid Promo Code</span></strong></div>
+					</td>
+				</tr>
+				<tr>
+					<td style="padding-top:10px;padding-bottom:10px;"><strong>Initials</strong></td>
+					<?php if ($initials_user) : ?>
+						<td style="padding-top:10px;padding-bottom:10px;"><input type="text" name="data[PaymentDetail][initials]" id="PaymentDetailInitials" maxlength="15" size="15" readonly="readonly" value="<?=$initials_user;?>" /></td>
+					<?php else : ?>
+						<td style="padding-top:10px;padding-bottom:10px;"><input type="text" name="data[PaymentDetail][initials]" id="PaymentDetailInitials" maxlength="15" size="15" /><?php echo $form->error('initials') ?></td>
+					<?php endif; ?>
+				</tr>
+				<tr style="background-color: #CCEEBB;">
+					<td style="padding-top:10px;padding-bottom:10px;"><strong>Payment Amount</strong></td>
+					<td style="padding-top:10px;padding-bottom:10px;">$<input type="text" name="data[PaymentDetail][paymentAmount]" id="PaymentDetailPaymentAmount" value="<?= $ticket['UserPromo']['final_price_actual'] ?>" /><?php echo $form->error('paymentAmount') ?>
+					<?php if (!empty($ticket['UserPromo']['Promo']) && $ticket['UserPromo']['Promo']['applied']): ?>(Includes Promo Code Discount)<?php endif; ?>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2"><input type="submit" id="paymentAdd" value="Add New Payment"> (You will be redirected when balance has reached $0.00)</td>
+				</tr>
+			</table>
+		</div>
+		<div class="col2">
+			<h2>Payments Applied:</h2>
+			<div id="paymentsApplied">
+				<?php include "payments_applied.ctp"; ?>
+			</div>
+		</div>
+	</div>
+	<div style="margin-top: 10px;margin-bottom:10px;">
+		<h2>Payments Summary:</h2>
+	</div>
+	<table id="paymentsSummary">
+		<tr style="background-color: #FF8888;" id="paymentsSummaryPayments">
+			<td style="width: 300px; padding-top:10px;padding-bottom:10px;"><strong>Total Promos</strong></td>
+			<td style="padding-top:10px;padding-bottom:10px;">(<?php if (isset($ticket['UserPromo']['Promo']['totalAmountOff'])) { echo $number->currency($ticket['UserPromo']['Promo']['totalAmountOff']); } else { echo "\$0.00"; } ?>)</td> 
 		</tr>
-		<tr id="showWire" style="display:none;">
-			<td colspan="2">
-				<strong><span id="wireRefId" style="display: none">Reference ID</span><span id="promoRefId" style="display: none">Promo Code:</span></strong><br /><br />
-				<input type="text" name="data[PaymentDetail][ppTransactionId]" />
-			</td>
-		</tr>
-		<tr>
-			<td style="padding-top:10px;padding-bottom:10px;"><strong>Initials</strong></td>
-			<?php if ($initials_user) : ?>
-				<td style="padding-top:10px;padding-bottom:10px;"><input type="text" name="data[PaymentDetail][initials]" id="PaymentDetailInitials" maxlength="15" size="15" readonly="readonly" value="<?=$initials_user;?>" /></td>
-			<?php else : ?>
-				<td style="padding-top:10px;padding-bottom:10px;"><input type="text" name="data[PaymentDetail][initials]" id="PaymentDetailInitials" maxlength="15" size="15" /><?php echo $form->error('initials') ?></td>
-			<?php endif; ?>
+		<tr style="background-color: #FF8888;" id="paymentsSummaryPayments">
+			<td style="width: 300px; padding-top:10px;padding-bottom:10px;"><strong>Total Payments</strong></td>
+			<td style="padding-top:10px;padding-bottom:10px;">($<span id="totalPayments"><?= $ticket['UserPromo']['payments'] ?></span>.00)</td>
 		</tr>
 		<tr style="background-color: #CCEEBB;">
-			<td style="padding-top:10px;padding-bottom:10px;"><strong>Payment Amount</strong></td>
-			<td style="padding-top:10px;padding-bottom:10px;"><input type="text" name="data[PaymentDetail][paymentAmount]" id="PaymentDetailPaymentAmount" value="<?php echo $ticket['Ticket']['totalBillingAmount'];?>" /><?php echo $form->error('paymentAmount') ?>
-			( Includes Auction Fee 
-			<?php if (!empty($ticket['UserPromo']['Promo']) && $ticket['UserPromo']['Promo']['applied']): ?>
-			+  Promo Code Discount 
-			<?php endif; ?>
-			)
-			<?php if (!empty($credit['CreditTracking']['balance'])): ?>
-			<span style="color: red">
-				( Customer has credit on file of $<?= number_format($credit['CreditTracking']['balance'],2) ?> )
-			</span>
-			<?php endif; ?>
-			</td>
+			<td style="padding-top:10px;padding-bottom:10px;"><strong>Balance Remaining</strong></td>
+			<td style="padding-top:10px;padding-bottom:10px;">$<span id="balanceRemaining"><?= $ticket['UserPromo']['final_price_actual'] ?></span>.00</td>
 		</tr>
 	</table>
-
-<?php echo $form->end('Submit Payment');?>
+<?php echo $form->end();?>
 </div>
 <?php
 //if (isset($closeModalbox) && $closeModalbox) echo "<div id='closeModalbox'></div>";
 ?>
 <script>
-var credit_on_file = <?= (empty($credit['CreditTracking']['balance'])    ? 0 : $credit['CreditTracking']['balance']) ?>;
-var payment_amt    = <?= (empty($ticket['Ticket']['totalBillingAmount']) ? 0 : $ticket['Ticket']['totalBillingAmount']) ?>;
+var credit_on_file = <?= (empty($ticket['UserPromo']['Cof']['balance'])    ? 0 : $ticket['UserPromo']['Cof']['balance']) ?>;
+var payment_amt    = "<?= $ticket['UserPromo']['final_price_actual'] ?>";
+var ticketId 	   = <?= $ticket['Ticket']['ticketId'] ?>;
+var payment_get    = "";
+var xhr;
+var expression = true;
+var thisUrl = "/tickets/"+ticketId+"/payment_details/add";
+var async = true;
 
 jQuery(document).ready(function($) {
-	$('#PaymentDetailPaymentTypeId').change(function() {
-		if ($(this).val() == 3 || $(this).val() == 2) {
-			$("#PaymentDetailPaymentProcessorId").val(6);
-			$('#PaymentDetailPaymentProcessorId').attr('disabled', '1');
-			$('#showPaymentSetting').hide();
-			if ($(this).val() == 2) {
-				$('#wireRefId').hide();
-				$('#promoRefId').show();
-				$('#showWire').show();
-				$('#showPaymentSetting').hide();
-			} else if ($(this).val() == 3) {
-				$('#showWire').hide();
-				$('#showPaymentSetting').hide();
-				$("#PaymentDetailPaymentAmount").val(credit_on_file);
-			}
-		} else {
-			$('#PaymentDetailPaymentProcessorId').removeAttr('disabled');
-			$("#PaymentDetailPaymentProcessorId").val(1);
-			$('#showPaymentSetting').show();
-			$('#showWire').hide();
-		}
+	var ppId = $("#PaymentDetailPaymentProcessorId");
+	var ptId = $("#PaymentDetailPaymentTypeId");
+	var ps = $("#paymentSettings");
+	
+	setCollapse();
 		
-		if ($(this).val() != 3) {
-			$("#PaymentDetailPaymentAmount").val(payment_amt);
+	$(".collapsible legend").live('click', function() {
+		var cC = $(this).parent().children('.collapsibleContent');
+		if (cC.hasClass('closed')) {
+			// Closed
+			cC.animate({
+			    opacity: 1,
+			    height: 'toggle'
+			}, 500);
+		} else if (cC.hasClass('open')) {
+			// Open
+			cC.animate({
+			    opacity: 0.25,
+			    height: 'toggle'
+			}, 500);
 		}
 	});
+	
+	$("#applyCofCheck").click(function() {
+		if ($(this).is(":checked")) {
+			
+			ptId.val(3).change();
+			
+			async = false;
+			getPaymentAmt("Cof");
+			async = true;
+			
+			$("#paymentAdd").click();
+			clearCof();
+		}
+	});
+	
+	function clearCof() {
+		$("#applyCof").hide();
+		ptId.find('option[value=3]').remove();
+	}
+	
+	$("#paymentAdd").click(function() {
+		//$(this).attr('disabled','disabled');
+		
+		if (parseInt($("#PaymentDetailPaymentAmount").val()) == 0) {
+			alert("You cannot apply a $0.00 payment.");
+			return false;
+		} else if (payment_amt == "0") {
+			var answer = confirm("This ticket has been paid in full. Are you sure you want to apply a payment?");
+			
+			if (!answer) {
+				return false;
+			}
+		}
+		
+		if (ptId.val() == 4) {
+			$("#paymentForm")[0].action = thisUrl;
+			$("#paymentForm")[0].method = "POST";
+			$("#paymentForm").submit();
+			return false;
+		}
+		
+		showSpinner();
+		
+		// Process payment via Ajax
+		
+		var data = { };
+		//alert(data.toSource());
+		$.post(thisUrl, $("#paymentForm").serialize(), function(data) {
+			$(".paymentsDebug").show().html(data);
+			refreshPayments();
+			
+			if (ptId.val() == 3) {
+				clearCof();
+			}
+			
+			getPaymentAmt(payment_get,1);
+		});
+	});
+	
+	$("#lookupPromo").click(function() {
+		$("#giftBalance").hide();
+		$("#promoOff").hide();
+		$("#promoInvalid").hide();
+		
+		$.get("/promo_codes/ajax_valid_promo/"+$("#promoCode").val(), function(data) {
+			var obj = $.parseJSON(data);
+			if (obj == null) {
+				$("#promoInvalid").show();
+			} else if (obj.giftCertBalance.balance != null) {
+				// Gift certificate
+				if (ptId.val() != 2) {
+					alert("The promo you have entered is for a gift certificate, not a promo. Please re-enter.");
+					return false;
+				} 
+				
+				payment_amt = obj.giftCertBalance.balance;
+				$("#giftBalance #giftBalanceBalance").html(payment_amt);
+				$("#giftBalance").show();
+				
+				setPaymentAmt({payment_amt:payment_amt});
+			} else if (obj.promoCodeRel.promoCodeRelId != null) {
+				// Normal promo code
+				if (ptId.val() == 2) {
+					alert("The promo you have entered is for a promo, not a gift certificate. Please re-enter.");
+					return false;
+				}
+				
+				if (obj.promo.amountOff != null && obj.promo.amountOff > 0) {
+					var amountOff = "$" + obj.promo.amountOff;
+					payment_amt = obj.promo.amountOff;
+				} else {
+					payment_amt = Math.round(payment_amt * (obj.promo.percentOff / 100));
+					var amountOff = obj.promo.percentOff + "% / $"+payment_amt;
+				}
 
-	$('#PaymentDetailPaymentProcessorId').change(function(){
+				setPaymentAmt({payment_amt:payment_amt});
+				$("#promoOff #amountOff").html(amountOff);
+				$("#promoOff").show();
+			}
+		});
+		
+		return false;
+	});
+	
+	ptId.change(function() {
+		var val = $(this).val();
+
+		if (val != 1) {
+			$('#showPaymentSetting').hide();
+			if (val == 2 || val == 4) {
+				// Gift cert
+				$('#showPromo').show();
+				$('#showWire').hide();
+				$('#showPaymentSetting').hide();
+					
+				if (val == 2) {
+					payment_get = "GiftCert";
+				} else {
+					ppId.val(7);
+				}
+			} else if (val == 3) {
+				// Credit on File
+				$('#showWire').hide();
+				$('#showPromo').hide();
+				$('#showPaymentSetting').hide();
+				payment_get = "Cof";
+			}
+			
+			ppId.attr('disabled','disabled');
+		} else {
+			payment_get = "";
+			ppId.val(1);
+			$('#showPaymentSetting').show();
+			$('#showWire').hide();
+			$('#showPromo').hide();
+			ppId.removeAttr('disabled');
+		}
+		
+		showSpinner();
+		async = false;
+		getPaymentAmt(payment_get);
+		async = true;
+		hideSpinner();
+	});
+
+	ppId.change(function(){
 		switch ($(this).val()) {
 			case '5':
-				$('#wireRefId').show();
-				$('#promoRefId').hide();
+				$('#showWire').show();
+				$('#showPromo').hide();
 				$('#showPaymentSetting').hide();
-		    	$('#showWire').show();
 				break;
 			default:
-				$('#wireRefId').hide();
-				$('#promoRefId').hide();
+				$('#showPromo').hide();
 				$('#showWire').hide();
 		    	$('#showPaymentSetting').show();
 				break;
 		}
 	});
 
-	$('#PaymentDetailPaymentProcessorId').change();
-	$('#PaymentDetailPaymentTypeId').change();
+	function showSpinner() {
+		$("#paymentAdd").attr("disabled","disabled");
+		ps.attr('disabled','disabled').fadeTo(500,0.5);
+		
+		var psp = ps.position();
+		
+		x = psp.left + ((ps.width()/2) - $("#spinner").width());
+		y = psp.top + ((ps.height()/2) + $("#spinner").height());
+	
+		$("#spinner").css({
+			position: 'absolute',
+			left: x,
+			top: y,
+		}).show();
+	}
+	
+	function hideSpinner() {
+		$("#paymentAdd").removeAttr("disabled");
+		ps.removeAttr('disabled').fadeTo(500,1);
+		$("#spinner").hide();				
+	}
+	
+	function getPaymentAmt(payment_type,payment_added) {
+		if (payment_type != "") {
+			payment_type = "=" + payment_type;
+		}
+		
+		if (xhr) {
+			xhr.abort();
+		}
+		
+		xhr = $.ajax({
+			url : thisUrl+"?get_payment"+payment_type,
+			type : "GET",
+			async: async,
+			complete: function(data) {
+				if (payment_added == 1) {
+					if (ptId.val() == 1) {
+						async = false;
+						refreshCards();
+						async = true;
+					}
+
+					ptId.val(1);
+					ppId.val(1).change();
+					
+					setPaymentAmt($.parseJSON(data.responseText));
+					hideSpinner();
+				}
+			}
+		});
+	}
+	
+	function setPaymentAmt(obj) {
+		payment_amt = obj.payment_amt;
+		
+		$("#balanceRemaining").html(obj.payment_amt);
+		$("#PaymentDetailPaymentAmount").val(obj.payment_amt);
+		$("#totalPayments").html(obj.total_payments);
+	}
+	
+	function refreshPayments() {
+		$.get(thisUrl+"?payments_applied",function(data) {
+			$("#paymentsApplied").hide().html(data).fadeIn('slow');
+		});	
+	}
+	
+	function refreshCards() {
+		$.ajax({
+			url : thisUrl+"?existing_cards",
+			method : "GET",
+			async : async,
+			complete : function(data) {
+				$("#existingCards").hide().html(data.responseText).fadeIn('slow');
+				setCollapse();
+				$('#paymentForm')[0].reset();
+			}
+		});			
+	}
+	
+	function setCollapse() {
+		$(".collapsible").each(function() {
+			$(this).find('.collapsibleContent').hide().addClass('closed').removeClass('open');
+		});
+	}
+	
+	ppId.change();
+	ptId.change();
 });
 	
 </script>

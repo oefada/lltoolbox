@@ -10,6 +10,17 @@ class PaymentDetailsController extends AppController {
 	var $helpers = array('Html', 'Form', 'Ajax', 'Text', 'Layout', 'Number');
 	var $uses = array('PaymentDetail', 'Ticket', 'UserPaymentSetting', 'PpvNotice', 'Country', 'Track', 'TrackDetail', 'User','creditTracking');
 
+	function beforeFilter() {
+		parent::beforeFilter();
+		
+		$currentUser = $this->LdapAuth->user();		
+		if (in_array('Accounting',$currentUser['LdapUser']['groups']) || in_array('Geeks',$currentUser['LdapUser']['groups'])) {
+			$this->canSave = true;
+		}
+		
+		$this->set('canSave',$this->canSave);
+	}
+
 	function index() {
 		$this->PaymentDetail->recursive = 0;
 		$this->set('paymentDetails', $this->paginate());
@@ -24,24 +35,36 @@ class PaymentDetailsController extends AppController {
 
 	function add() {
 		if (!empty($this->data)) {
-			if (!isset($this->data['PaymentDetail']['paymentProcessorId']) && $this->data['PaymentDetail']['paymentTypeId'] > 1) {
-				$this->data['PaymentDetail']['paymentProcessorId'] = 6;
+			switch ($this->data['PaymentDetail']['paymentTypeId']) {
+				case "2":
+					$this->data['PaymentDetail']['paymentProcessorId'] = 6;
+					break;
+				case "3":
+					$this->data['PaymentDetail']['paymentProcessorId'] = 6; 
+					break;
+				case "4":
+					$this->data['PaymentDetail']['paymentProcessorId'] = 7;
+					break;
+				default:
+					break;
 			}
 			
         	$webservice_live_url = 'http://rvella-toolboxdev.luxurylink.com/web_service_tickets?wsdl';
 			$webservice_live_method_name = 'processPaymentTicket';
 			$webservice_live_method_param = 'in0';
 			
-			$userData = $this->User->read(null, $this->data['PaymentDetail']['userId']);
-			$ticketId = $this->data['PaymentDetail']['ticketId'];
+			$this->User->recursive = -1;
+			$userData = @$this->User->read(null, $this->data['PaymentDetail']['userId']);
+			$ticketId = @$this->data['PaymentDetail']['ticketId'];
 			
 			$data = array();
-	        $data['userId']                 = $this->data['PaymentDetail']['userId'];
-	        $data['ticketId']               = $this->data['PaymentDetail']['ticketId'];
+	        $data['userId']                 = $this->data['userId'];
+	        $data['ticketId']               = $this->data['ticketId'];
 	        $data['paymentProcessorId']     = $this->data['PaymentDetail']['paymentProcessorId'];
 			$data['paymentTypeId']     		= $this->data['PaymentDetail']['paymentTypeId'];
-	        $data['paymentAmount']          = ($this->data['PaymentDetail']['paymentProcessorId'] == 6 ? ($this->data['PaymentDetail']['paymentAmount'] - $this->Ticket->getFeeByTicket($this->data['PaymentDetail']['ticketId'])) : $this->data['PaymentDetail']['paymentAmount']);
+	        $data['paymentAmount']          = $this->data['PaymentDetail']['paymentAmount'];
 	        $data['initials']               = $this->data['PaymentDetail']['initials'];
+			$data['ppTransactionId']		= $this->data['PaymentDetail']['ppTransactionId'];
 			$data['firstName']				= $userData['User']['firstName'];
 			$data['lastName']				= $userData['User']['lastName'];
 
@@ -112,26 +135,29 @@ class PaymentDetailsController extends AppController {
 							}
 						}
 					}
-	        		$this->Session->setFlash(__('Payment was successfully recorded (wire transfer)', true), 'default', array(), 'success');
-				} else {
-	        		$this->Session->setFlash(__('Payment was not recorded (wire transfer)', true), 'default', array(), 'error');
 				}
 	        	$this->redirect(array('controller' => 'tickets', 'action'=>'view', 'id' => $ticketId));
 				die();
 				// --------------------------------------------------------
 			} elseif ($this->data['PaymentDetail']['paymentProcessorId'] == 6) {
 				// Credit on file or gift
-
 				$paymentResponse = $soap_client->call($webservice_live_method_name, array($webservice_live_method_param => $data_json_encoded));
-
-				if ($paymentResponse == "CHARGE_SUCCESS") {
-					$this->Session->setFlash(__('Payment was successfully charged.', true), 'default', array(), 'success');
-				} else {
-					$this->Session->setFlash(__('Payment Not Processed -- Error ' . $paymentResponse, true), 'default', array(), 'error');
-				}
+			} elseif ($this->data['PaymentDetail']['paymentProcessorId'] == 7) {
+				// Promo codes
+				
+				$this->loadModel('PromoCode');
+				$code = $this->PromoCode->findBypromoCode($this->data['PaymentDetail']['ppTransactionId']);
+				
+				$this->PaymentDetail->Ticket->PromoTicketRel->create();
+				$this->PaymentDetail->Ticket->PromoTicketRel->save(array(
+						'ticketId' => $this->data['ticketId'],
+						'userId'   => $this->data['userId'],
+						'promoCodeId' => $code['PromoCode']['promoCodeId']
+				));
+				
+				$this->redirect("/tickets/".$this->data['ticketId']."/payment_details/add");
 			} elseif ($this->data['PaymentDetail']['paymentProcessorId'] == 1) {
 				// Credit card
-
 				$usingNewCard = 0;
 				$saveNewCard = 0;
 				
@@ -169,8 +195,10 @@ class PaymentDetailsController extends AppController {
 					
 					$data['userPaymentSetting']['ccType']			= $ccType;
 		        	$data['userPaymentSetting']['ccNumber'] 		= aesEncrypt($data['userPaymentSetting']['ccNumber']);
+					$data_json_encoded = json_encode($data);
 		        } elseif ($this->data['PaymentDetail']['userPaymentSettingId']) {
 		        	$data['userPaymentSettingId'] = $this->data['PaymentDetail']['userPaymentSettingId'];
+					$data_json_encoded = json_encode($data);
 		        } else {
 			        $badPaymentRequest = true;
 			    }
@@ -189,9 +217,8 @@ class PaymentDetailsController extends AppController {
 							$soap_client = new nusoap_client($webservice_live_url, true);
 							$soap_client->call($webservice_live_method_name, array($webservice_live_method_param => $data_json_encoded));
 						}	
-		        		
-		        		$this->Session->setFlash(__('Payment was successfully charged.', true), 'default', array(), 'success');
-		        		$this->redirect(array('controller' => 'tickets', 'action'=>'view', 'id' => $this->data['PaymentDetail']['ticketId']));
+						
+						$error = $paymentResponse;
 		        	} else {
 		        		if(in_array($ticketRead['Ticket']['offerId'], array(3,4)) ) {
 		        			$ticketData['ticketId'] = $ticketId;
@@ -201,28 +228,61 @@ class PaymentDetailsController extends AppController {
 							$soap_client = new nusoap_client($webservice_live_url, true);
 							$soap_client->call($webservice_live_method_name, array($webservice_live_method_param => $data_json_encoded));
 		        		}
-		        		
-		        		$this->Session->setFlash(__('Payment Not Processed -- Error ' . $paymentResponse, true), 'default', array(), 'error');
 		        	}
+		        } else {
+		        	$error = "BAD_PAYMENT";
 		        }
 	        } else {
-	        	$this->Session->setFlash(__('No payment account selected. If using new card, must select the Use New Card checkbox', true), 'default', array(), 'error');
+	        	$error = "NO_ACCT";
 	        }
+			
+			if ($error) {
+				echo $error;
+			} elseif ($paymentResponse != "CHARGE_SUCCESS") {
+				echo $paymentResponse;
+			}
+			
+			exit;
 		}
 
 		// NO POST BELOW -- GRAB DATA 
 
-		$this->PaymentDetail->Ticket->recursive = 2;
-		$ticket = $this->PaymentDetail->Ticket->read(null, $this->params['ticketId']);
-		$ticket['Ticket']['totalBillingAmount'] = $ticket['Ticket']['billingPrice'];
+		//$this->PaymentDetail->Ticket->recursive = 0;
+		
+		$params = array(
+			'conditions' => array(
+				'Ticket.ticketId' => $this->params['ticketId'],
+			),
+			'contain' => array(
+				'Package',
+				'PaymentDetail',
+				'User' => array(
+					'UserPaymentSetting'
+				),
+			),
+		);
+		
+		$ticket = $this->PaymentDetail->Ticket->find('first',$params);
 
 		$ticket['UserPromo'] = $this->Ticket->getPromoGcCofData($ticket['Ticket']['ticketId'], $ticket['Ticket']['billingPrice']);
-		if (!empty($ticket['UserPromo']['Promo']) && !empty($ticket['UserPromo']['Promo']['applied'])) {
-			$ticket['Ticket']['totalBillingAmount'] -= $ticket['UserPromo']['Promo']['totalAmountOff'];
-		}
+		
+		$paymentProcessors = $this->PaymentDetail->PaymentProcessor->find('list', array('conditions' => array('sites LIKE' => '%'.$ticket['Ticket']['siteId'].'%')));
+		$paymentTypeIds = $this->PaymentDetail->PaymentType->find('list');
+		
 		$fee = $this->Ticket->getFeeByTicket($ticket['Ticket']['ticketId']);
-		$ticket['Ticket']['totalBillingAmount'] += $fee;
-	
+		
+		// Ajax to get payment in add.ctp
+		if (isset($this->params['url']['get_payment']) && $this->params['url']['get_payment'] != "" && isset($ticket['UserPromo'][$this->params['url']['get_payment']]['totalAmountOff'])) {
+			$payment_amt = $ticket['UserPromo'][$this->params['url']['get_payment']]['totalAmountOff'];
+		} else {
+			$payment_amt = $ticket['UserPromo']['final_price_actual'];
+		}
+
+		if (isset($this->params['url']['get_payment'])) {
+			echo json_encode(array('payment_amt' => $payment_amt,'total_payments' => $ticket['UserPromo']['payments']));
+			exit;
+		} 
+		
 		$selectExpMonth = array();
 		for ($i = 1; $i < 13; $i++) {
 			$se_m = str_pad($i, 2, '0', STR_PAD_LEFT);
@@ -239,8 +299,13 @@ class PaymentDetailsController extends AppController {
 		} else {
 			$initials_user = false;
 		}
-
-		if (in_array($initials_user, array('alee','bscott','kferson','mtrinh'))) {
+		
+		if (!in_array($initials_user, array('rvella','cholland','bjensen','kferson'))) {
+			$this->Session->setFlash("Only accounting and tech can access this page. Please contact Chris or Rob.");
+			$this->redirect($_SERVER['HTTP_REFERER']);
+		}
+					
+		if (false == true) {
 			if (!empty($ticket['User']['UserPaymentSetting'])) {
 				foreach ($ticket['User']['UserPaymentSetting'] as $ups_key => $ups) {
 					$cc_full = $this->PaymentDetail->query('SELECT ccNumber FROM userPaymentSetting WHERE userPaymentSettingId = ' . $ups['userPaymentSettingId']);				
@@ -249,19 +314,25 @@ class PaymentDetailsController extends AppController {
 			}
 		}
 		
-		$paymentProcessors = $this->PaymentDetail->PaymentProcessor->find('list', array('conditions' => array('sites LIKE' => '%'.$ticket['Ticket']['siteId'].'%')));
-
-		$credit = $this->creditTracking->find('first', array('order' => array('CreditTracking.creditTrackingId DESC'), 'conditions' => array('CreditTracking.userId' => $ticket['Ticket']['userId'])));
+		if (isset($ticket['UserPromo']['Promo']) && $ticket['UserPromo']['Promo']['applied'] == 1) {
+			unset($paymentTypeIds[4]);
+		}
 		
 		$this->set('ticket', $ticket);
-		$this->set('credit',$credit);
 		$this->set('countries', $this->Country->find('list'));
 		$this->set('selectExpMonth', $selectExpMonth);
 		$this->set('selectExpYear', $selectExpYear);
 		$this->set('userPaymentSetting', (isset($ticket['User']['UserPaymentSetting']) ? $ticket['User']['UserPaymentSetting'] : array()));
-		$this->set('paymentTypeIds', $this->PaymentDetail->PaymentType->find('list'));
+		$this->set('paymentTypeIds', $paymentTypeIds);
 		$this->set('paymentProcessorIds', $paymentProcessors);		
 		$this->set('initials_user', $initials_user);
+		$this->set('nocollapse',1);
+		
+		if (isset($this->params['url']['payments_applied'])) {
+			$this->render("payments_applied","ajax");
+		} elseif (isset($this->params['url']['existing_cards'])) {
+			$this->render("existing_cards","ajax");
+		}
 	}
 }
 

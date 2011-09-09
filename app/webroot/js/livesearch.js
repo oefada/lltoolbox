@@ -36,35 +36,31 @@
 	        // Re calculates live search's position
 	        var repositionLiveSearch = function () {
 	            var tmpOffset    = input.offset();
+	            
 	            var inputDim    = {
 	                left:        tmpOffset.left, 
-	                top:        tmpOffset.top, 
+	                top:		 tmpOffset.top,
 	                width:        input.outerWidth(), 
 	                height:        input.outerHeight()
 	            };
-	
-	            inputDim.topPos        = inputDim.top + inputDim.height;
+		
+				inputDim.topPos        = inputDim.top + inputDim.height;
 	            inputDim.totalWidth    = inputDim.width - liveSearchPaddingBorderHoriz;
 	
 	            liveSearch.css({
-	                position:    'absolute', 
-	                left:        inputDim.left + 'px', 
-	                top:        inputDim.topPos + 'px',
-	                width:        inputDim.totalWidth + 'px'
+	                width:        (inputDim.totalWidth - 2) + 'px'
+	            });
+	            
+	            liveSearch.offset({
+	                left:        inputDim.left, 
+	                top:         inputDim.topPos
 	            });
 	        };
 	
+			repositionLiveSearch();
+			
 	        // Shows live-search for this input
 	        var showLiveSearch = function () {
-	            // Always reposition the live-search every time it is shown
-	            // in case user has resized browser-window or zoomed in or whatever
-	            //repositionLiveSearch();
-	
-	            // We need to bind a resize-event every time live search is shown
-	            // so it resizes based on the correct input element
-	            //jQuery(window).unbind('resize', repositionLiveSearch);
-	            //jQuery(window).bind('resize', repositionLiveSearch);
-	
 	            liveSearch.show();
 	        };
 	
@@ -77,7 +73,6 @@
 			
 			liveSearch.click(function() {
 				setTimeout(hideLiveSearch,1)
-				loadingId.show();
 			});
 			
 			if (config.placeInput == true) {
@@ -146,7 +141,7 @@
 	                            // Show live-search if results and search-term aren't empty
 	                            if (data.length && q.length) {
 	                                liveSearch.html(data);
-	                                showLiveSearch();
+	                                setTimeout(showLiveSearch, 1);
 	                            }
 	                        });
 	                    }, config.typeDelay);

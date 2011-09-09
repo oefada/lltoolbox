@@ -1,9 +1,5 @@
-<script src='/js/autosuggest.js'></script>
-
 <script type='text/javascript'>
-
 	function generator(clientId,clientName){
-
 		var counter=0;
 		var elem=document.getElementById('generator_form').elements;
 		for (var i = 0; i < elem.length; i++ ) {
@@ -15,11 +11,10 @@
 				counter++;
 			}
 		}
-
 	}
-
 </script>
 
+<div id="diag" style="position: fixed; right: 10px; top: 10px; background-color: #fff"></div>
 <div style='margin-bottom:40px;'>
 
 <ul>
@@ -29,20 +24,13 @@
 <li>The order they appear here will be the order they apear in the newsletter.
 </ul>
 <br>
-
 <form method='post' id='generator_form' action='generated'>
-
-	<div on="" class="search-input-with-livesearch">
-		<label>
-			Client Search:<input type="text" value="" name="query" maxlength="2147483647" autocomplete="off">
-			<div class="auto_complete" id="search-input-with-livesearch"><!-- Results will load here --></div>
-		</label>
-		</div>
+<? echo $this->renderElement("input_search",array('class' => 'generator-live-search', 'name' => 'query','label'=>'Client Search','controller' => 'generator')); ?>
 <div style='clear:both;'></div>
 <br>
 <?
 
-// test data. to have it populate the fiels, append ?test to url
+// test data. to have it populate the fields, append ?test to url
 $client_arr=array(
 31=>'Orient-Express, Botswana',
 70=>'Charleston Place',

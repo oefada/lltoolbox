@@ -7,7 +7,6 @@ if (!isset($name) || !isset($controller)) {
 	exit;
 }
 
-@$ar['class'] = $class;
 $ar['autocomplete'] = "off";
 
 if (isset($label)) {

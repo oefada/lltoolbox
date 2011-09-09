@@ -568,12 +568,6 @@ div.auto_complete {
 	top: 22px;
 }
 
-div.auto_complete_input {
-	margin-left: 170px; 
-	top: 30px; 
-	width: 400px;
-}
-
 div.auto_complete ul {
 	border: 1px solid #d5d5d5;
 	border-top: none;
