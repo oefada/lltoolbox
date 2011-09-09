@@ -1,19 +1,37 @@
 <div class="cities form">
+<?php $this->set('hideSidebar', true); ?>
 <?php echo $form->create('City');?>
 	<fieldset>
  		<legend><?php __('Edit City');?></legend>
 	<?php
 		echo $form->input('cityId');
 		echo $form->input('cityName');
-		echo $form->input('stateId');
-		echo $form->input('countryId');
+	?>
+		<div class="input">
+			<label for="CityStateId">State (optional)</label>
+			<select id="CityStateId" name="data[City][stateId]">
+				<option value="">Loading states..</option>
+			</select>
+		</div>
+		<div class="input">
+			<label for="CityCountryId">Country</label>
+			<select id="CityCountryId" name="data[City][countryId]">
+				<?php foreach ($countries as $k=>$r): ?>
+				<option value="<?= $k ?>"<?php if ($k == $this->data['City']['countryId']): ?> selected<?php endif; ?>><?= $r ?></option>
+				<?php endforeach; ?>
+			</select>
+		</div>
+		<?php echo $this->element('statecountryajax', array('countryId' => $this->data['City']['countryId'], 'stateId' => $this->data['City']['stateId'])) ?>
+	<?php
+
 		echo $form->input('latitude');
 		echo $form->input('longitude');
-		echo $form->input('cityCode');
-		echo $form->input('Tag');
+		echo $form->input('cityAlias');
+		echo $form->input('isDisabled');
 	?>
 	</fieldset>
-<?php echo $form->end('Submit');?>
+<?php echo $form->submit('Submit');?>
+<?php echo $form->end() ?>
 </div>
 <div class="actions">
 	<ul>
@@ -23,7 +41,5 @@
 		<li><?php echo $html->link(__('New State', true), array('controller'=> 'states', 'action'=>'add')); ?> </li>
 		<li><?php echo $html->link(__('List Countries', true), array('controller'=> 'countries', 'action'=>'index')); ?> </li>
 		<li><?php echo $html->link(__('New Country', true), array('controller'=> 'countries', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Tags', true), array('controller'=> 'tags', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Tag', true), array('controller'=> 'tags', 'action'=>'add')); ?> </li>
 	</ul>
 </div>

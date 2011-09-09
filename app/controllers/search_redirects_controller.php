@@ -6,6 +6,24 @@ class SearchRedirectsController extends AppController {
 
 	function index() {
 		$this->SearchRedirect->recursive = 0;
+		
+		if (isset($this->params['named']['query'])) {
+			$query = $this->Sanitize->escape($this->params['named']['query']);
+			$conditions = array(
+				'OR' => array(
+					'keyword LIKE' => '%'.$query.'%',
+				),
+			);
+			
+			$this->set('query',$query);
+		} else {
+			$conditions = array();
+		}
+		
+		$this->paginate = array(
+			'conditions' => $conditions,
+		);
+
 		$this->set('searchRedirects', $this->paginate());
 	}
 	
@@ -52,34 +70,7 @@ class SearchRedirectsController extends AppController {
 	
 	function search()
 	{
-		if(!empty($_GET['query'])) {
-			$this->params['form']['query'] = $_GET['query'];
-			$inactive = @$_GET['inactive'];
- 		} elseif(!empty($this->params['named']['query'])) {
-			$this->params['form']['query'] = $this->params['named']['query'];
-		}
-		if(!empty($this->params['form']['query'])):
-			$query = $this->Sanitize->escape($this->params['form']['query']);
-						
-			$conditions = array("keyword LIKE '$query%' OR redirectUrl LIKE '%$query%'");
-			
-			$results = $this->SearchRedirect->find('all', array('conditions' => $conditions, 'limit' => 5));
-
-			$this->set('query', $query);
-			$this->set('results', $results);
-			
-			if (isset($this->params['requested'])) {
-				return $results;
-			} elseif(@$_GET['query'] || @ $this->params['named']['query']) {
-				$this->autoRender = false;
-				$this->SearchRedirect->recursive = 0;
-
-				$this->paginate = array('conditions' => $conditions);
-				$this->set('query', $query);
-				$this->set('searchRedirects', $this->paginate());
-				$this->render('index');
-			}
-		endif;
+		$this->redirect(array('action'=>'index','query' => $this->params['url']['query']));
 	}
 
 

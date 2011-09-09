@@ -22,7 +22,9 @@ class AccoladesController extends AppController {
 			$this->Session->setFlash(__('Invalid Accolade.', true));
 			$this->redirect(array('action'=>'index'));
 		}
-		$this->set('accolade', $this->Accolade->read(null, $id));
+		$this->set('accolade', $this->Accolade->find('first',array(
+			'conditions' => array('accoladeId' => $id),
+		)));
 	}
 
 	function add() {

@@ -2,7 +2,7 @@
 class Country extends AppModel {
 
 	var $name = 'Country';
-	var $useTable = 'country';
+	var $useTable = 'countryNew';
 	var $primaryKey = 'countryId';
 	var $displayField = 'countryName';
 	

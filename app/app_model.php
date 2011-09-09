@@ -103,6 +103,13 @@ class AppModel extends Model{
         return true;
     }
     
+	function beforeFind($queryData) {
+		if (isset($this->containModels)) {
+			$this->contain($this->containModels);
+		}
+		
+		return $queryData;
+	}
     //push this model and any defined associations to the front-end databases
     function afterSave($created) {
         if ($this->isMultisite()) {            

@@ -102,6 +102,44 @@ class Loa extends AppModel {
          return $currentLoaId;
     }
 
+	function get_current_loa_loalevel($client_id) {
+	    $this->recursive = -1;
+		$params = array(
+			'fields' => array(
+				'Loa.loaId',
+				'Loa.loaLevelId'
+			),
+	     	'conditions' => array(
+	     		'AND' => array(
+	     			'now() BETWEEN Loa.startDate AND Loa.endDate',
+	     			'Loa.clientId' => $client_id,
+	     		),
+	     	)
+		);
+		
+		$currentLoaId = $this->find('first',$params);
+
+		if (empty($currentLoaId)) {
+			$this->Client->recursive = -1;
+			$client = $this->Client->findByClientId($client_id);
+			
+			if (!empty($client['Client']['parentClientId'])) {
+				$params['conditions']['AND']['Loa.clientId'] = $client['Client']['parentClientId'];
+				$currentLoaId = $this->find('first',$params);
+			}
+		}
+	
+		return (empty($currentLoaId) ? false : $currentLoaId);		
+	}
+	
+	function get_loa_names() {
+	    $currentLoa = $this->LoaLevel->find('list', array(
+		'fields'=>array('loaLevelId', 'loaLevelName'),
+		'order' => 'sponsorship DESC'));
+
+		return $currentLoa;
+	}
+	
     function getClientLoas($clientId) {
         if ($loas = $this->query("SELECT * FROM loa Loa WHERE Loa.clientId = {$clientId} ORDER BY Loa.startDate DESC")) {
             return $loas;

@@ -4,6 +4,11 @@ class PromosController extends AppController {
 	var $name = 'Promos';
 	var $helpers = array('Html', 'Form');
 
+	function __construct() {
+		parent::__construct();
+		$this->set('hideSidebar',true);
+	}
+	
 	function index() {
 		$results = $this->Promo->query("SELECT promoId, promoName, promoCode, percentOff, amountOff, minPurchaseAmount, startDate, endDate, siteId, count(*) AS numPromoCode" .
 				" FROM promo Promo INNER JOIN promoCodeRel USING (promoId) INNER JOIN promoCode PromoCode USING(promoCodeId)" .

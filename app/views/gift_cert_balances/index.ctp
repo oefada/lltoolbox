@@ -1,6 +1,11 @@
 <div class="giftCertBalances index">
 <h2><?php __('Gift Certificates');?></h2>
-
+<div class="actions">
+	<ul>
+		<li><?php echo $html->link(__('New Gift Certificate', true), array('action'=>'add')); ?></li>
+		<li><?php echo $html->link(__('List Promo Codes', true), array('controller'=> 'promo_codes', 'action'=>'index')); ?> </li>
+	</ul>
+</div>
 <table cellpadding="0" cellspacing="0">
 <tr>
 	<th>Purchaser User Id</th>
@@ -40,10 +45,4 @@ foreach ($giftCertBalances as $giftCertBalance):
 	</tr>
 <?php endforeach; ?>
 </table>
-</div>
-
-<div class="actions">
-	<ul>
-		<li><?php echo $html->link(__('New Gift Certificate', true), array('action'=>'add')); ?></li>
-	</ul>
 </div>

@@ -4,21 +4,36 @@ class LandingPagesController extends AppController {
 	var $name = 'LandingPages';
 	var $helpers = array('Html', 'Javascript', 'Ajax');
 	
-	function search() {
-		if (!empty($this->params['form']['query'])) {
-			$query = $this -> Sanitize -> paranoid($this->params['form']['query']);
-	
-			if (strlen($query) > 0) {
-				$result = $this->LandingPage->findAll("styleName LIKE '%".$query."%' OR styleId LIKE '%".$query."%'");
-				$this->set('result', $result);
-			}
-		}
-		$this->layout = 'ajax';
+	function __construct() {
+		parent::__construct();
+		$this->set('hideSidebar',true);
 	}
-
+	
+	function search() {
+		$this->redirect(array('action'=>'index','query' => $this->params['url']['query']));
+	}
+	
 	function index() {
 		$this->LandingPage->recursive = 0;
 		$this->paginate['limit'] = 100;
+
+		if (isset($this->params['named']['query'])) {
+			$query = $this->Sanitize->escape($this->params['named']['query']);
+			$conditions = array(
+				'OR' => array(
+					'landingPageName LIKE' => '%'.$query.'%',
+				),
+			);
+			
+			$this->set('query',$query);
+		} else {
+			$conditions = array();
+		}
+		
+		$this->paginate = array(
+			'conditions' => $conditions,
+		);
+		
 		$this->set('landingPages', $this->paginate());
 	}
 

@@ -17,7 +17,7 @@ class PaymentDetail extends AppModel {
 						   'PaymentProcessor' => array('foreignKey' => 'paymentProcessorId')
 						  );
 
-	function saveGiftCert($ticketId, $gcData, $userId, $auto = 0, $initials = 'NA') {
+	function saveGiftCert($ticketId, $gcData, $userId, $auto = 0, $initials = 'NA',$dontSavePayment = false) {
 		$paymentDetail = array();
 		$paymentDetail['paymentTypeId'] 		= 2;
 		$paymentDetail['paymentAmount'] 		= $gcData['totalAmountOff'];
@@ -28,18 +28,20 @@ class PaymentDetail extends AppModel {
 		$paymentDetail['initials']				= $initials;
 		$paymentDetail['ppResponseDate']		= date('Y-m-d H:i:s');
 
-		$this->create();
-		if ($this->save($paymentDetail)) {
-			$GiftCertBalance = new GiftCertBalance();
-			$data = array();
-			$data['GiftCertBalance']['promoCodeId'] = $gcData['promoCodeId'];
-			$data['GiftCertBalance']['amount']	= -$gcData['totalAmountOff'];
-			$GiftCertBalance->create();
-			$GiftCertBalance->save($data);
+		if (!$dontSavePayment) {
+			$this->create();
+			$this->save($paymentDetail);
 		}
+		
+		$GiftCertBalance = new GiftCertBalance();
+		$data = array();
+		$data['GiftCertBalance']['promoCodeId'] = $gcData['promoCodeId'];
+		$data['GiftCertBalance']['amount']	= -$gcData['totalAmountOff'];
+		$GiftCertBalance->create();
+		$GiftCertBalance->save($data);
 	}
 
-	function saveCof($ticketId, $cofData, $userId, $auto = 0, $initials = 'NA',$savePayment = true) {
+	function saveCof($ticketId, $cofData, $userId, $auto = 0, $initials = 'NA',$dontSavePayment = false) {
 		$paymentDetail = array();
 		$paymentDetail['paymentTypeId'] 		= 3;
 		$paymentDetail['paymentAmount'] 		= $cofData['totalAmountOff'];
@@ -50,14 +52,14 @@ class PaymentDetail extends AppModel {
 		$paymentDetail['initials']				= $initials;
 		$paymentDetail['ppResponseDate']		= date('Y-m-d H:i:s');
 		
-		if ($savePayment) {
+		if (!$dontSavePayment) {
 			$this->create();
 			$this->save($paymentDetail);
 		}
 
 		$CreditTracking = new CreditTracking();
 		$data = array();
-		$data['CreditTracking']['userId'] = $cofData['userId'];
+		$data['CreditTracking']['userId'] = $userId;
 		$data['CreditTracking']['amount']	= -$cofData['totalAmountOff'];
 		$data['CreditTracking']['creditTrackingTypeId'] = $cofData['creditTrackingTypeId'];
 		$CreditTracking->create();

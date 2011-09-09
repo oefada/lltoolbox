@@ -28,7 +28,7 @@
             echo $javascript->link('prototype');
             echo $javascript->link('scriptaculous/scriptaculous');
 			echo $javascript->link('modalbox');
-			echo $javascript->link('collapsible');
+			if (!isset($nocollapse)) echo $javascript->link('collapsible');
 			echo $javascript->link('datepicker');
 			echo $javascript->link('livepipe');
 			echo $javascript->link('tabs');

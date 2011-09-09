@@ -9,16 +9,75 @@ class ClientsController extends AppController {
 
 	function beforeFilter() {
 		parent::beforeFilter();
-		$this->set('currentTab', 'property');
-		$this->set('clientId', @$this->params['pass'][0]);
-        $this->set('client', $this->Client->findByClientId(@$this->params['pass'][0]));
-		$this->Country = new Country;
+		
+		if ($this->action != "index") {
+			$this->set('currentTab', 'property');
+			$this->set('clientId', @$this->params['pass'][0]);
+	        $this->set('client', $this->Client->findByClientId(@$this->params['pass'][0]));
+			$this->Country = new Country;
+		}
 	}
 
-	function index() {
-		$this->Client->recursive = 1;
-		$this->paginate = array('contain' => array('ChildClient', 'ClientType'), 'fields' => array('Client.name, Client.clientTypeId, ClientType.clientTypeName'), 'conditions' => array('OR' => array('parentClientId IS NULL')));
-
+	function index($query = "") {
+		$order = '';
+		if (empty($query)) {
+			if (isset($this->params['url']['query'])) {
+				$this->params['form']['query'] = $this->params['url']['query'];
+			}
+			
+			if (isset($this->params['form']['query'])) {
+				$query = $this->Sanitize->escape($this->params['form']['query']);
+			} 
+		}
+		
+		$conditions['OR'][] = 'parentClientId IS NULL';
+				
+		if(!empty($query)) {
+			$queryPieces = explode(" ", $query);
+			$sqlquery = '';
+			foreach($queryPieces as $piece) {
+			    if (strlen($piece) > 3) {
+			        $sqlquery .= '+';
+			    }
+			    $sqlquery .= $piece.'* ';
+			}
+			
+			$conditions['AND'][] = "(MATCH(Client.name) AGAINST('$sqlquery' IN BOOLEAN MODE) OR Client.clientId LIKE '%$query%' OR Client.name = '$query')";
+			
+			if (!isset($inactive)) {
+	            $conditions['AND'][] = " Client.clientId IN (SELECT clientId FROM clientSiteExtended WHERE inactive = 0)";
+			}
+		} else {
+			$order = 'clientId DESC';
+		}
+		
+		//$this->Client->recursive = -1;
+		$this->paginate = array(
+		'contain' => array(
+			'ChildClient',
+			'ClientType' => array(
+				'fields' => array(
+					'ClientType.clientTypeName'
+				)
+			),
+			'Loa' => array(
+				'fields' => array(
+					'Loa.loaId',
+					'Loa.loaLevelId'
+				),
+				'conditions' => array(
+					'Loa.clientId' => 'Client.clientId'
+				),
+			),
+		), 
+		'fields' => array(
+			'Client.name',
+			'Client.clientTypeId',
+		), 
+		'conditions' => $conditions,
+		'order' => $order);
+		
+		$this->Client->containable = false;
 		$this->set('clients', $this->paginate());
 	}
 	
@@ -60,6 +119,7 @@ class ClientsController extends AppController {
 			$this->Session->setFlash(__('Invalid Client', true));
 			$this->redirect(array('action'=>'index'));
 		}
+		
 		if (!empty($this->data)) {
 			$clientCollectionIds = $this->Client->find('list', array('conditions' => 'Client.clientTypeId = 14'));
 			
@@ -86,8 +146,10 @@ class ClientsController extends AppController {
 		    
 	         $this->data['Client']['seoName'] = $this->convertToSeoName($this->data['Client']['name']);
              $this->data['Client']['seoLocation'] = $this->convertToSeoName($this->data['Client']['locationDisplay']);
+			 
              $this->Client->ClientType->recursive = -1;
              $this->data['Client']['clientTypeSeoName'] = $this->Client->ClientType->field('clientTypeSeoName', array('ClientType.clientTypeId' => $this->data['Client']['clientTypeId']));
+			 
 			 if (!empty($this->data['Client']['ageRanges'])) {
 				$this->data['Client']['ageRanges'] = implode(',',$this->data['Client']['ageRanges']);
 			 }
@@ -105,8 +167,24 @@ class ClientsController extends AppController {
 		}
 		//set up our data, if it's a form post, we still need all related data
 		if (empty($this->data)) {
+			$this->Client->containModels[] = "ClientSiteExtended";
 		    $this->Client->recursive = 2;
-			$this->data = $this->Client->read(null, $id);
+			$this->data = $this->Client->find('first',array(
+				'conditions' => array(
+					'Client.clientId' => $id
+				),
+				'contain' => 
+					array(
+						'ClientSiteExtended' => array(
+							'conditions' => array(
+								'ClientSiteExtended.clientId' => $id 
+							)
+						),
+						'ClientDestinationRel',
+						'ClientContact'
+					)
+			));
+			
 			$this->data['Client']['clientCollectionId'] = $this->data['Client']['parentClientId'];
 		}
 		
@@ -124,6 +202,7 @@ class ClientsController extends AppController {
 
         $this->Client->ClientType->recursive = -1;
 		$clientTypeIds = $this->Client->ClientType->find('list');
+		
         $this->Client->recursive = -1;
 		$clientCollectionIds = $this->Client->find('list', array('conditions' => 'Client.clientTypeId = 14'));
 		$themes = $this->Client->ClientThemeRel->Theme->findClientThemes($id);
@@ -136,10 +215,12 @@ class ClientsController extends AppController {
 			$ranges = explode(',',$this->data['Client']['ageRanges']);
 			$this->data['Client']['ageRanges'] = $ranges;
 		}
+
+		foreach ($this->data['ClientDestinationRel'] as $v) {
+			$destSelected[] = $v['destinationId'];
+		}
+		
 		$this->set('client', $this->data);
-        //debug($this->data);
-        //die();
-		//$this->set(compact('addresses', 'amenities','clientLevelIds','clientStatusIds','clientTypeIds','regions','clientAcquisitionSourceIds', 'loas', 'themes'));
 		$countryIds = $this->Country->find('list');
 		if (!empty($this->data['Client']['countryId'])) {
             $this->Country->State->recursive = -1;
@@ -149,64 +230,17 @@ class ClientsController extends AppController {
             $this->Country->State->City->recursive = -1;
 		    $cityIds = $this->Country->State->City->find('list', array('conditions' => array('City.stateId' => $this->data['Client']['stateId'])));
 		}
-		$this->set(compact('clientStatusIds','clientTypeIds','clientCollectionIds','regions','clientAcquisitionSourceIds', 'loas', 'themes', 'destinations', 'countryIds', 'stateIds', 'cityIds'));
+		
+		$this->set(compact('clientStatusIds','clientTypeIds','clientCollectionIds','regions','clientAcquisitionSourceIds', 'loas', 'themes', 'destinations', 'destSelected', 'countryIds', 'stateIds', 'cityIds'));
 	}
 		
 	function search()
 	{
-	    $inactive = 0;
-		if(!empty($_GET['query'])) {
-			$this->params['form']['query'] = $_GET['query'];
-			$inactive = @$_GET['inactive'];
-			$this->params['form']['inactive'] = $inactive;
- 		} elseif(!empty($this->params['named']['query'])) {
-			$this->params['form']['query'] = $this->params['named']['query'];
-			$inactive = @$this->params['named']['inactive'];
-			$this->params['form']['inactive'] = $inactive;
+		if (isset($this->params['url']['query'])) {
+			$this->params['form']['query'] = $this->params['url']['query'];
 		}
-		
-		$this->set('inactive', $inactive);
-		
 
-		if(!empty($this->params['form']['query'])):
-			$query = $this->Sanitize->escape($this->params['form']['query']);
-
-			$this->Client->recursive = -1;
-            
-			$queryPieces = explode(" ", $query);
-			
-			$sqlquery = '';
-			foreach($queryPieces as $piece) {
-			    if (strlen($piece) > 3) {
-			        $sqlquery .= '+';
-			    }
-			    $sqlquery .= $piece.'* ';
-			}
-			
-			$conditions = array("(MATCH(Client.name) AGAINST('$sqlquery' IN BOOLEAN MODE) OR Client.clientId LIKE '%$query%' OR Client.name = '$query')");
-			
-			if (!$inactive) {
-			    //$conditions['ClientSiteExtended.inactive'] = 0;
-                array_push($conditions, " Client.clientId IN (SELECT clientId FROM clientSiteExtended WHERE inactive = 0) ");
-			}
-            
-			$results = $this->Client->find('all', array('conditions' => $conditions,
-                                                        'limit' => 5));
-
-			$this->set('query', $query);
-			$this->set('results', $results);
-			
-			if (isset($this->params['requested'])) {
-				return $results;
-			} elseif(@$_GET['query'] || @ $this->params['named']['query']) {
-				$this->autoRender = false;
-				$this->Client->recursive = 0;
-				$this->paginate = array('conditions' => $conditions);
-				$this->set('query', $query);
-				$this->set('clients', $this->paginate());
-				$this->render('index');
-			}
-		endif;
+		$this->redirect(array('action'=>'index', $this->params['form']['query']));
 	}
 	
 	function rollback($revisionId) {
@@ -218,7 +252,7 @@ class ClientsController extends AppController {
 	
 	function convertToSeoName($str) {
 	    $str = strtolower(html_entity_decode($str, ENT_QUOTES, "ISO-8859-1"));  // convert everything to lower string
-	    $search_accent = explode(",","ç,æ,~\,á,é,í,ó,ú,à,è,ì,ò,ù,ä,ë,ï,ö,ü,ÿ,â,ê,î,ô,û,å,e,i,ø,u,ñ");
+	    $search_accent = explode(",","ï¿½,ï¿½,~\,ï¿½,ï¿½,ï¿½,ï¿½,ï¿½,ï¿½,ï¿½,ï¿½,ï¿½,ï¿½,ï¿½,ï¿½,ï¿½,ï¿½,ï¿½,ï¿½,ï¿½,ï¿½,ï¿½,ï¿½,ï¿½,ï¿½,e,i,ï¿½,u,ï¿½");
 	    $replace_accent = explode(",","c,ae,oe,a,e,i,o,u,a,e,i,o,u,a,e,i,o,u,y,a,e,i,o,u,a,e,i,o,u,n");
 	    $search_accent[] = '&';
 	    $replace_accent[] = ' and ';
@@ -248,6 +282,7 @@ class ClientsController extends AppController {
 	}
 	
 	function auto_complete() {
+		$this->Client->recursive = -1;
 		$clients = $this->Client->find('all', array(
    		'conditions' => array(
    			'Client.name LIKE' => '%'.$this->data['Client']['clientName'].'%',

@@ -8,14 +8,10 @@ class Accolade extends AppModel {
 
 	var $belongsTo = array('AccoladeSource' => array('foreignKey' => 'accoladeSourceId'),
 	                        'Client' => array('foreignKey' => 'clientId'));
-	var $containModels = array('AccoladeSource');
-
 
 	function getAccolades(){
-
 		$q="SELECT * FROM accolade WHERE clientId is not null";
 		return $this->query($q);
-
 	}
 
 	function insertIntoAccolade($row,$site,$tablename){

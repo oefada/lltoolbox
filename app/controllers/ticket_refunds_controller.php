@@ -24,21 +24,24 @@ class TicketRefundsController extends AppController {
 	function add() {
 		$refundReasons = $this->TicketRefund->RefundReason->find('list');
 		if (!empty($this->data) && $this->data['TicketRefund']['ticketId']) {
-
 			// 07/19/11 jwoods - ticket 2067 for error handling
 			if (is_numeric($this->data['cofAmount']) && $this->data['cofAmount'] > 20000) {
 				$this->Session->setFlash(__('$20,000 is the maximum refund.', true));
-
 			} elseif (is_numeric($this->data['TicketRefund']['amountRefunded']) && $this->data['TicketRefund']['amountRefunded'] > 20000) {
 				$this->Session->setFlash(__('$20,000 is the maximum refund.', true));
-
 			} else {
-
 				$ticket = array();
 				$ticket['Ticket']['ticketId'] = $this->data['TicketRefund']['ticketId'];
-				$ticket['Ticket']['ticketStatusId'] = 8;
+
 				$this->TicketRefund->create();
-				if ($this->TicketRefund->save($this->data) && $this->TicketRefund->Ticket->save($ticket)) {
+				if ($this->TicketRefund->save($this->data)) {
+					if ($this->data['TicketRefund']['refundEntire'] == 1) {
+						$ticket['Ticket']['ticketStatusId'] = 8;
+						if (!$this->TicketRefund->Ticket->save($ticket)) {
+							$this->Session->setFlash("Could not save ticket. Please contact tech.");
+						}
+					}
+					
 					$this->Session->setFlash(__('The refund note has been added to this ticket', true));
 
 					// mail this info to accounting@luxurylink.com
@@ -70,8 +73,9 @@ class TicketRefundsController extends AppController {
 					// credit on file
 					if (($this->data['TicketRefund']['ticketRefundTypeId'] == 1 || $this->data['TicketRefund']['ticketRefundTypeId'] == 3) && $this->data['cofAmount'] > 0) {
 						$result = $this->Ticket->query('SELECT userId FROM ticket WHERE ticketId = ' . $this->data['TicketRefund']['ticketId']);
+						$userId = $result[0]['ticket']['userId'];
 						$ctdata['CreditTracking']['creditTrackingTypeId'] = 2;
-						$ctdata['CreditTracking']['userId'] = $result[0]['ticket']['userId'];
+						$ctdata['CreditTracking']['userId'] = $userId;
 						$ctdata['CreditTracking']['amount'] = $this->data['cofAmount'];
 						$ctdata['CreditTracking']['notes'] = $this->data['TicketRefund']['refundNotes'];
 						$this->CreditTracking->create();
@@ -109,6 +113,9 @@ class TicketRefundsController extends AppController {
 					}
 					// $this->redirect(array('controller' => 'tickets', 'action' => 'view', 'id' => $this->data['TicketRefund']['ticketId']));
 					$this->Session->setFlash(__('The Refund has been saved', true), 'default', array(), 'success');
+					if (isset($this->params['url']['cof'])) {
+						$this->redirect(array('controller' => 'credit_trackings','action' => 'view', $userId));
+					}
 					$this->set('closeModalbox', true);
 				} else {
 					$this->Session->setFlash(__('The ticket refund could not be saved. Please, try again.', true));
@@ -125,6 +132,8 @@ class TicketRefundsController extends AppController {
 
 		$refundTypes = $this->TicketRefund->TicketRefundType->find('list');
 
+		$refundTypes = array($refundTypes[1]);
+		
 		$this->set('refundReasonIds', $refundReasons);
 		$this->set('ticketRefundTypeIds', $refundTypes);
 		$this->data['TicketRefund']['ticketId'] = $ticketId;

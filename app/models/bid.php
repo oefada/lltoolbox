@@ -27,7 +27,7 @@ class Bid extends AppModel {
 	}
     
     function getBidStatsForOffer($offerId) {
-        $query = "SELECT COUNT(*) AS bidCount, MAX(bidAmount) AS winner
+        $query = "SELECT COUNT(bidId) AS bidCount, MAX(bidAmount) AS winner
                   FROM bid 
                   WHERE offerId = " . $offerId;
         if ($bidStats = $this->query($query)) {

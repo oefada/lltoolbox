@@ -4,6 +4,11 @@ class PromoCodeRelsController extends AppController {
 	var $name = 'PromoCodeRels';
 	var $helpers = array('Html', 'Form');
 
+	function __construct() {
+		parent::__construct();
+		$this->set('hideSidebar',true);
+	}
+	
 	function index($id = null) {
 		$this->PromoCodeRel->recursive = 0;
 		

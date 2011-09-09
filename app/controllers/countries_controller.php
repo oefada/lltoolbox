@@ -6,18 +6,31 @@ class CountriesController extends AppController {
 
 	function index() {
 		$this->Country->recursive = 0;
+		
+		if (isset($this->params['named']['query'])) {
+			$query = $this->Sanitize->escape($this->params['named']['query']);
+			$conditions = array(
+				'OR' => array(
+					'countryName LIKE' => '%'.$query.'%',
+					'countryId LIKE' => '%'.$query.'%',
+				),
+			);
+			
+			$this->set('query',$query);
+		} else {
+			$conditions = array();
+		}
+
+		$this->paginate = array(
+			'order' => 'countryId ASC',
+			'conditions' => $conditions,
+		);
+
 		$this->set('countries', $this->paginate());
 	}
 
-	function view($id = null) {
-		if (!$id) {
-			$this->Session->setFlash(__('Invalid Country.', true));
-			$this->redirect(array('action'=>'index'));
-		}
-		$this->set('country', $this->Country->read(null, $id));
-	}
-
 	function add() {
+		$this->redirect(array('action'=>'index'));
 		if (!empty($this->data)) {
 			$this->Country->create();
 			if ($this->Country->save($this->data)) {
@@ -52,6 +65,7 @@ class CountriesController extends AppController {
 	}
 
 	function delete($id = null) {
+		$this->redirect(array('action'=>'index'));
 		if (!$id) {
 			$this->Session->setFlash(__('Invalid id for Country', true));
 			$this->redirect(array('action'=>'index'));
@@ -62,8 +76,19 @@ class CountriesController extends AppController {
 		}
 	}
 	
+	function search() {
+		$this->redirect(array('action'=>'index','query' => $this->params['url']['query']));
+	}
+	
+	function get_countries_json() {
+		$this->Country->recursive = -1;
+		$countryList = $this->Country->find('list');
+		$this->set(compact('countryList'));
+		$this->layout = 'ajax';
+	}
+	
 	function get_states() {
-	    $stateIds = $this->Country->State->find('list', array('conditions' => array('State.countryId' => $this->data['Client']['countryId'] ) ) );
+	    $stateIds = $this->Country->State->find('list', array('conditions' => array('State.countryId' => $this->data['Client']['countryId'])));
 		$this->set(compact('stateIds'));
 		$this->layout = 'ajax';
 	}

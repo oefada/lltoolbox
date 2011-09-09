@@ -58,7 +58,9 @@ class Client extends AppModel {
                               'ClientTracking');
 
    var $loaId;
-
+   var $cacheQueries = true;
+   var $containable  = false; 
+   
    function beforeSave() {
 	AppModel::beforeSave();
 
@@ -267,7 +269,6 @@ class Client extends AppModel {
    }
 
     function getClientAmenityTypeRel($clientId) {
-
         $amenityTypes = array();
 
         // get amenity ids for this client
@@ -278,7 +279,9 @@ class Client extends AppModel {
             WHERE clientId = $clientId
             GROUP BY clientId;
         ");
-        $clientAmenities = explode(',', $clientAmenityRels[0][0]['amenities']);
+
+		$clientAmenities = isset($clientAmenityRels[0][0]['amenities']) ? $clientAmenityRels[0][0]['amenities'] : false;
+        $clientAmenities = explode(',', $clientAmenities);
 
         // get amenity type
         $clientAmenityTypeRels = $this->query("
@@ -291,7 +294,11 @@ class Client extends AppModel {
         }
 
         // get all amenities
-        $amenities = $this->query("SELECT amenityTypeId, amenityId, amenityName FROM amenity WHERE amenityTypeId IS NOT NULL AND amenity.inactive = 0");
+        if (($amenities = Cache::read("clientAmenities")) === FALSE) {
+        	$amenities = $this->query("SELECT amenityTypeId, amenityId, amenityName FROM amenity WHERE amenityTypeId IS NOT NULL AND amenity.inactive = 0");
+        	Cache::write("clientAmenities",$amenities);
+        }
+        
         foreach ($amenities as $key => $amenity) {
             $amenity['amenity']['checked'] = in_array($amenity['amenity']['amenityId'], $clientAmenities); // determine if client has this amenity
             $amenityTypes[$amenity['amenity']['amenityTypeId']]['amenities'][] = $amenity['amenity']; // add to final array of amenities
@@ -301,30 +308,41 @@ class Client extends AppModel {
     }
 
    function afterFind($results, $primary = false) {
-	  if ($primary == true && $this->recursive != -1):
-		 foreach ($results as $key => $val):
-			if (!empty($val['Client']) && is_int($key)):
-                $currentLoaId = $this->Loa->get_current_loa($val['Client']['clientId']);
-			    $loas = $this->Loa->findCount(array('Loa.clientId' => $val['Client']['clientId']));
-			    $currentLoa = $this->Loa->find('first', array('contain' => array('LoaLevel'),
-															  'fields'=>array('Loa.loaId, Loa.loaLevelId, LoaLevel.loaLevelName'),
-															  'conditions' => array('Loa.loaId' => $currentLoaId),
-															  'order' => 'sponsorship DESC'));
-			   if (empty($currentLoa)) {
-						   $results[$key]['Client']['currentLoaId'] = 0;
-						   $results[$key]['ClientLevel']['clientLevelId'] = 0;
-						   $results[$key]['ClientLevel']['clientLevelName'] = 'Non-Client';
-			   } else {
-						   $results[$key]['Client']['currentLoaId'] = $currentLoa['Loa']['loaId'];
-						   $results[$key]['ClientLevel']['clientLevelId'] = $currentLoa['LoaLevel']['loaLevelId'];
-						   $results[$key]['ClientLevel']['clientLevelName'] = $currentLoa['LoaLevel']['loaLevelName'];
+	  if ($primary == true && $this->recursive != -1 && $this->containable == false) {
+		 foreach ($results as $key => $val) {
+			if (!empty($val['Client']) && is_int($key)) {
+                $currentLoaId = $this->Loa->get_current_loa_loalevel($val['Client']['clientId']);
+				$this->Loa->recursive = -1;
+			    $loas = $this->Loa->find('count',array('conditions' => array('Loa.clientId' => $val['Client']['clientId'])));
+				$this->Loa->recursive = 0;
+				
+				if (($loaLevelNames = Cache::read("loaLevelNames")) === FALSE) {
+					$loaLevelNames = $this->Loa->get_loa_names();
+					Cache::write("loaLevelNames",$loaLevelNames);
+				}
+			
+				$currentLoaLevelId = $currentLoaId['Loa']['loaLevelId'];
+				$currentLoaId = $currentLoaId['Loa']['loaId'];
+				
+				if (empty($currentLoaId)) {
+					$results[$key]['Client']['currentLoaId'] = 0;
+					$results[$key]['ClientLevel']['clientLevelId'] = 0;
+					$results[$key]['ClientLevel']['clientLevelName'] = 'Non-Client';
+				} else {
+					$results[$key]['Client']['currentLoaId'] = $currentLoaId;
+					$results[$key]['ClientLevel']['clientLevelId'] = $currentLoaLevelId;
+					$results[$key]['ClientLevel']['clientLevelName'] = $loaLevelNames[$currentLoaLevelId];
 			   }
-			   $results[$key]['Client']['numLoas'] = count($loas);
-			endif;
-		 endforeach;
-	  endif;
-      $r = AppModel::afterFind($results);
-	  return $r;
+
+			   $results[$key]['Client']['numLoas'] = $loas;
+			}
+		}
+	} elseif ($this->containable == true) {
+		
+	}
+	
+	$r = AppModel::afterFind($results);
+	return $r;
    }
 
    function saveDestThemeLookup($created, $data) {

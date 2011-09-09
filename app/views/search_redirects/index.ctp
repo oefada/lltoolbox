@@ -14,7 +14,8 @@ $this->pageTitle = 'Keywords';
 <tr>
 	<th><?php echo $paginator->sort('site');?></th>
 	<th><?php echo $paginator->sort('keyword');?></th>
-	<th><?php echo $paginator->sort('redirectUrl');?></th>
+	<th><?php echo $paginator->sort('Redirect URL','redirectUrl');?></th>
+	<th><?php echo $paginator->sort('Display Blurb?','displayBlurb');?></th>
 	<th class="actions"><?php __('Actions');?></th>
 </tr>
 <?php
@@ -34,6 +35,9 @@ foreach ($searchRedirects as $searchRedirect):
 		</td>
 		<td>
 			<?php echo $searchRedirect['SearchRedirect']['redirectUrl']; ?>
+		</td>
+		<td>
+			<?php echo $searchRedirect['SearchRedirect']['displayBlurb']; ?>
 		</td>
 		<td class="actions">
 			<?php echo $html->link(__('Edit', true), array('action'=>'edit', $searchRedirect['SearchRedirect']['searchRedirectId'])); ?>

@@ -521,7 +521,7 @@ legend.collapsible-closed  {
 	height: 30px;
 }
 
-.search-input-with-livesearch {
+.search-input-with-livesearch, .input-with-livesearch {
 	position: relative;
 	float: left;
 	display: inline;
@@ -557,14 +557,21 @@ legend.collapsible-closed  {
 	height: 19px;
 	width: 70px;
 }
+
 div.auto_complete {
 	position: absolute;
 	background-color: white;
-	top: 22px;
 	margin: 0px;
 	padding: 0px;
 	z-index: 99;
 	width: 100%;
+	top: 22px;
+}
+
+div.auto_complete_input {
+	margin-left: 170px; 
+	top: 30px; 
+	width: 400px;
 }
 
 div.auto_complete ul {
@@ -613,6 +620,10 @@ div.auto_complete li.showAll {
 .input input, .text input, textarea {
 	border: 1px solid #898989;
 	width: 400px;
+}
+
+input[type=checkbox] {
+	width: auto;
 }
 
 input[type=submit] {
@@ -1263,4 +1274,62 @@ table.clone-items td.price {
 table.clone-items td.price span.currency-code {
     font-weight:bold;
     font-size:11px;
+}
+
+/* Users / index.ctp */
+
+.userTools {
+	margin-bottom: 30px;
+}
+
+.userTools .file, .userTools .lastfile {
+	font-size: 16px;
+	margin: 10px 0px 10px 0px;
+}
+
+#paymentsApplied {
+	padding-top: 0px;
+	margin-top: 0px;
+	padding: 0;
+}
+
+.paymentsApplied {
+	margin-bottom: 5px !important;
+}
+
+.paymentsApplied tr td:first-child {
+	font-weight: bold;
+	width: 120px;
+}
+
+.paymentsDebug {
+	position: fixed;
+	right: 20px;
+	top: 20px;
+	border: 1px solid black;
+	padding: 10px;
+	width: 450px;
+	background-color: #ffffff;
+}
+
+.paymentColumns {
+	width: 100%;
+	padding: 0;
+	margin: 0;
+}
+
+.paymentColumns .col1 {
+	width: 70%;
+	float: left;
+	clear: none;
+}
+
+.paymentColumns .col2 {
+	float: left;
+	width: 28%;
+	clear: none;
+}
+
+.smallText {
+	font-size: 10px;
 }

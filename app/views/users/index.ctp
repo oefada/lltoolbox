@@ -13,7 +13,7 @@ $this->pageTitle = __('Users', true);
 <table cellpadding="0" cellspacing="0">
 <tr>
 	<th><?php echo $paginator->sort('userId');?></th>
-	<th><?php echo $paginator->sort('UserSiteExtended.username');?></th>
+	<th><?php echo $paginator->sort('Username','UserSiteExtended.username');?></th>
 	<th><?php echo $paginator->sort('# Tickets');?></th>
 	<th><?php echo $paginator->sort('firstName');?></th>
 	<th><?php echo $paginator->sort('lastName');?></th>
@@ -62,20 +62,13 @@ foreach ($users as $user):
 
 
 <?php else: ?>
-
-<b>User Search</b> (type in criteria at the top left of the page)
-<ul>
-	<li><a href="/tickets">Search Tickets</a></li>
-	<li><a href="/bids">Search Bids</a></li>
-</ul>
-
-<br/>
-<br/>
-
-<b>Others</b>
-<ul>
-	<li><a href="/credit_trackings">Credit On File</a></li>
-	<li><a href="/gift_cert_balances">Gift Certificates</a></li>
-</ul>
-
+<?php $this->pageTitle = 'Users' ?>
+<div class="userTools">
+	<ul class="treed">
+		<li class="file"><a href="/tickets">Search Tickets</a></li>
+		<li class="file"><a href="/bids">Search Bids</a></li>
+		<li class="file"><a href="/credit_trackings">Credit On File</a></li>
+		<li class="file"><a href="/gift_cert_balances">Gift Certificates</a></li>
+	</ul>
+</div>
 <?php endif; ?>

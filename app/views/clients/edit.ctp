@@ -224,7 +224,9 @@ foreach ($this->data['Client']['sites'] as $site) {
 		          );
 		?>
 		</div>
-		<div id='cityChooser' style="padding: 0; margin:0"><?	echo $form->input('Client.cityId', array('type' => 'select', 'label' => 'City', 'empty' => true)); ?></div>
+		<div id='cityChooser' style="padding: 0; margin:0">
+			<?	echo $form->input('Client.cityId', array('type' => 'select', 'label' => 'City', 'empty' => '')); ?>
+		</div>
 
 		<?php echo $ajax->observeField(
 		               "ClientCountryId",
@@ -234,9 +236,31 @@ foreach ($this->data['Client']['sites'] as $site) {
 						  'indicator' => 'spinner'
 		               )
 		          );
+			echo $javascript->link('jquery/jquery',true);
+			echo $javascript->link('jquery/jquery-noconflict',true);				  
 		?>
+		<script>
+			jQuery(function($) {
+				$("#CopyLoc").click(function() {
+					var country = $("#ClientCountryId option:selected").text();
+					var state   = $("#ClientStateId option:selected").text()
+					var city    = $("#ClientCityId option:selected").text()
+
+					var copyLoc = city;
+					if (country != "United States" && country != "Canada") {
+						copyLoc = copyLoc + ", " + country;
+					} else {
+						copyLoc = copyLoc + ", " + state;
+					}
+					
+					$("#ClientLocationDisplay").val(copyLoc);
+					return false;
+				});
+			});
+		</script>
 		<?
-			echo $form->input('locationDisplay');
+			echo $form->input('locationDisplay',array('after' => '<button id="CopyLoc">Copy Location</button>'));
+		?><?php
 			echo $form->input('airportCode');
 			echo $form->input('timeZone', array('options'=> array(''=>'--', 
 			                              'UTC-12'=>'UTC-12','UTC-11'=>'UTC-11',
@@ -388,10 +412,10 @@ foreach ($this->data['Client']['sites'] as $site) {
 				</fieldset>
 		<?php endif; ?>
 		<fieldset class="collapsible">
-			<legend class="handle">Destinations <?=$html2->c($client['Destination']); ?></legend>
+			<legend class="handle">Destinations <?=$html2->c($client['ClientDestinationRel']); ?></legend>
 			<div class="collapsibleContent">
 				<div class='controlset2'>
-					<?php echo $form->input('Destination', array('multiple' => 'checkbox', 'label' => false)); ?>
+					<?php echo $form->input('Destination', array('multiple' => 'checkbox', 'label' => false, 'selected' => $destSelected)); ?>
 				</div>
 			</div>
 		</fieldset>

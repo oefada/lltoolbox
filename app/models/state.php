@@ -2,22 +2,24 @@
 class State extends AppModel {
 
 	var $name           = 'State';
-	var $useTable       = 'state';
+	var $useTable       = 'stateNew';
 	var $primaryKey     = 'stateId';
 	var $displayField   = 'stateName';
 	var $order          = 'stateName';
 	
 	var $belongsTo = array('Country' => array('foreignKey' => 'countryId'));
-	
 	var $hasMany = array('City' => array('foreignKey' => 'stateId'));
 	
-    var $hasAndBelongsToMany = array('Tag' =>
-	                               array('className'    => 'Tag',
-	                                     'joinTable'    => 'stateTag',
-	                                     'foreignKey'   => 'stateId',
-	                                     'associationForeignKey'=> 'tagId',
-	                                     'unique'       => true,
-	                               )
-                               ); 
+	var $validate = array(
+		'stateName' => array(
+			VALID_NOT_EMPTY,
+		),
+		'stateCode' => array(
+			VALID_NOT_EMPTY,
+		),
+		'countryId' => array(
+			VALID_NOT_EMPTY,
+		)
+	);
 }
 ?>

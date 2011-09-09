@@ -3,20 +3,66 @@ class CreditTrackingsController extends AppController {
 
 	var $name = 'CreditTrackings';
 	var $helpers = array('Html', 'Form');
-
-	function index() {
-		$this->CreditTracking->recursive = 0;
-		$this->paginate['order'] = array('creditTrackingId' => 'desc');
-
-		$results = $this->CreditTracking->query("
-			SELECT creditTracking.creditTrackingId, userId, email, username, balance, datetime
-			FROM (SELECT max(creditTrackingId) AS creditTrackingId FROM creditTracking GROUP BY userId) ct
-				INNER JOIN creditTracking USING(creditTrackingId)
-				INNER JOIN user USING(userId)
-				LEFT JOIN userSiteExtended USING(userId)
-		");
+	var $canSave = false;
+	
+	function beforeFilter() {
+		parent::beforeFilter();
 		
-		$this->set('creditTrackings', $results);
+		$currentUser = $this->LdapAuth->user();		
+		if (in_array('Accounting',$currentUser['LdapUser']['groups']) || in_array('Geeks',$currentUser['LdapUser']['groups'])) {
+			$this->canSave = true;
+		}
+		
+		$this->set('canSave',$this->canSave);
+	}
+	
+	function index() {
+		//$this->CreditTracking->recursive = -1;
+
+		$this->UserSiteExtended->primaryKey = 'userId';
+		$conditions = array();
+		
+		if (isset($this->params['named']['query'])) {
+			$query = $this->params['named']['query'];
+			$conditions = array(
+				'OR' => array(
+					'CreditTracking.userId LIKE' => '%'.$query.'%',
+					'CreditTracking.userId' => $query,
+					'UserSiteExtended.username LIKE' => '%'.$query.'%',
+				),
+			);
+			
+			$this->set('query',$query);
+		}
+		$this->paginate = array(
+			'fields' => array(
+				'creditTrackingId',
+				'balance',
+				'userId',
+				'datetime'
+			),
+			'conditions' => $conditions,
+			'limit' => 50,
+			'order' => array(
+				'creditTrackingId' => 'desc',
+			),
+			'contain' => array(
+				'UserSiteExtended' => array(
+					'fields' => array(
+						'UserSiteExtended.userId',
+						'UserSiteExtended.username'
+					),
+				),
+				'User' => array(
+					'fields' => array (
+						'User.userId',
+						'User.email'
+					),
+				),
+			),
+		);
+		
+		$this->set('creditTrackings', $this->paginate());		
 	}
 
 	function view($id = null) {
@@ -30,9 +76,10 @@ class CreditTrackingsController extends AppController {
 	}
 
 	function add() {
+		$this->canSave();
 		if (!empty($this->data)) {
-			$this->CreditTracking->create();
-			if ($this->CreditTracking->save($this->data)) {
+			//$this->CreditTracking->create();
+			if ($this->CreditTracking->saveAll($this->data)) {
 				$this->Session->setFlash(__('The CreditTracking has been saved', true));
 				$this->redirect(array('action'=>'index'));
 			} else {
@@ -45,6 +92,7 @@ class CreditTrackingsController extends AppController {
 	}
 
 	function edit($id = null) {
+		$this->canSave();
 		if (!$id && empty($this->data)) {
 			$this->Session->setFlash(__('Invalid CreditTracking', true));
 			$this->redirect(array('action'=>'index'));
@@ -65,15 +113,36 @@ class CreditTrackingsController extends AppController {
 	}
 
 	function delete($id = null) {
+		$this->canSave();
+		
 		if (!$id) {
 			$this->Session->setFlash(__('Invalid id for CreditTracking', true));
 			$this->redirect(array('action'=>'index'));
 		}
 		if ($this->CreditTracking->del($id)) {
-			$this->Session->setFlash(__('CreditTracking deleted', true));
-			$this->redirect(array('action'=>'index'));
+			$this->Session->setFlash(__('Entry deleted', true));
+			
+			$userId = "";
+			$action = "index";
+			
+			if (isset($this->params['named']['userId'])) {
+				$action = "view";
+				$userId = $this->params['named']['userId'];
+			}
+			
+			$this->redirect(array('action'=>$action, $userId));
 		}
 	}
 
+	function search() {
+		$this->redirect(array('action'=>'index','query' => $this->params['url']['query']));
+	}
+
+	function canSave() {
+		if ($this->canSave == false) {
+			$this->Session->setFlash('You are not authorized to view this page');
+			$this->redirect("/credit_trackings/");
+		}
+	}	
 }
 ?>

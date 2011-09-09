@@ -126,7 +126,8 @@ class Ticket extends AppModel {
 
 		$data = array();
 		$data['original_ticket_price'] = $ticketPrice;
-
+		$data['payments'] = 0;
+		
 		// get the promo code that is applied to this ticket
 		$q="SELECT PromoCode.*, Promo.*
 								FROM promoTicketRel as PromoTicketRel 
@@ -137,7 +138,7 @@ class Ticket extends AppModel {
 								GROUP BY PromoTicketRel.promoCodeId";
 		$result = $this->query($q);
 
-		// loop over the result set
+				// loop over the result set
 		// and overwrite 'Promo' if it is a promo with an array of the last result set
 		// if it is a 'GiftCert', overwrite 'GiftCert' with the last result set that contains the balance 
 		foreach ($result as $k => $row) {
@@ -164,9 +165,8 @@ class Ticket extends AppModel {
 				// for amount off
 				$data['Promo']['totalAmountOff'] = $data['Promo']['amountOff'];
 			} 
-			$ticketPrice = $ticketPrice - $data['Promo']['totalAmountOff'];
 			$data['Promo']['applied'] = ($data['Promo']['totalAmountOff'] > 0) ? 1 : 0;
-		}	
+		}
 
 		// get the handling fee
 		if ($ticketPrice > 0) {
@@ -188,9 +188,12 @@ class Ticket extends AppModel {
 			}
 			$ticketPrice = $new_price;
 			$data['GiftCert']['applied'] = ($data['GiftCert']['totalAmountOff'] > 0) ? 1 : 0;
+			
+			$data['totalAmountOff'] += $data['GiftCert']['totalAmountOff'];
+		} else {
+			$data['GiftCert']['totalAmountOff'] = 0;
 		}
 
-		/*
 		// This is commented out because CreditTracking does not determine if the credit
 		// was used against the ticket, paymentDetail with paymentTypeId of 3 determines
 		// if the credit was applied to the ticket
@@ -198,19 +201,21 @@ class Ticket extends AppModel {
 		// see if the user has any credit on file
 		// the last row in the table will be the sum total of the credit they have
 		// may be multiple rows per user with debits and credits
-		$cofSql = 'SELECT CreditTracking.* FROM ticket AS Ticket ';
+		
+		$cofSql = 'SELECT CreditTracking.balance FROM ticket AS Ticket ';
 		$cofSql.= 'INNER JOIN creditTracking AS CreditTracking USING (userId) ';
 		$cofSql.= "WHERE Ticket.ticketId = $ticketId ";
 		$cofSql.= "ORDER BY CreditTracking.creditTrackingId DESC LIMIT 1";
 		$cofResult = $this->query($cofSql);
+		
 		if (!empty($cofResult) && ($cofResult[0]['CreditTracking']['balance'] > 0)) {
 			$data['Cof'] = $cofResult[0]['CreditTracking'];	
 		}
 
 		// if there is a credit on file and a ticketPrice
 		// deduct the credit from the ticketPrice
-		if (isset($data['Cof']) && $data['Cof'] && ($ticketPrice > 0)) {
-			$new_price = $ticketPrice - $data['Cof']['balance'];					
+		if (isset($data['Cof']) && ($ticketPrice > 0)) {
+			$new_price = $ticketPrice - $data['Cof']['balance'];
 			if ($new_price < 0) {
 				$data['Cof']['totalAmountOff'] = $ticketPrice;
 				$data['Cof']['remainingBalance'] = abs($new_price);
@@ -219,56 +224,59 @@ class Ticket extends AppModel {
 				$data['Cof']['totalAmountOff'] = $data['Cof']['balance'];
 				$data['Cof']['remainingBalance'] = false;
 			}
+			
 			$ticketPrice = $new_price;
 			$data['Cof']['applied'] = ($data['Cof']['totalAmountOff'] > 0) ? 1 : 0;
+		} else {
+			$data['Cof']['totalAmountOff'] = 0;
+			$data['Cof']['remainingBalance'] = false;
 		}
-*/
+		
 		$tp0 = $ticketPrice;
 		
 		// see if they used a gift certificate on this ticket 
 		$paymentRecordSql = 'SELECT paymentTypeId, paymentAmount FROM paymentDetail ';
-		$paymentRecordSql.= "WHERE paymentTypeId = 2 AND ticketId = $ticketId AND isSuccessfulCharge = 1";
+		$paymentRecordSql.= "WHERE ticketId = $ticketId AND isSuccessfulCharge = 1";
 		$paymentRecordResult = $this->query($paymentRecordSql);
 		if (!empty($paymentRecordResult)) {
 			// if there is a GiftCert, add the 'totalAmountOff' to the ticketPrice
-			if ($data['GiftCert']['applied']) {
+			if (isset($data['GiftCert']['applied'])) {
 				$ticketPrice += $data['GiftCert']['totalAmountOff'];
 			}
+			if (isset($data['Cof']['applied'])) {
+				$ticketPrice += $data['Cof']['totalAmountOff'];
+			}
+
 			// loop over the result set from payementDetail with the gift cert data
 			// set GiftCert applied to 1 
 			// set totalAmountOff to paymentAmount retrieved from the db
 			// deduct paymentAmount from the ticketPrice
+			$noMoreGift = 0;
 			foreach ($paymentRecordResult as $payment) {
-				$data['GiftCert']['applied'] = 1;
-				$data['GiftCert']['totalAmountOff'] = $payment['paymentDetail']['paymentAmount'];
-				$ticketPrice -= $payment['paymentDetail']['paymentAmount'];
-				break;
+				if ($payment['paymentDetail']['paymentTypeId'] == 2 && $noMoreGift == 0) {
+					$data['GiftCert']['applied'] = 1;
+					$data['GiftCert']['totalAmountOff'] = $payment['paymentDetail']['paymentAmount'];
+					$noMoreGift = 1;
+				} elseif ($payment['paymentDetail']['paymentTypeId'] == 3) {
+					$data['Cof']['applied'] = 1;
+					$data['Cof']['totalAmountOff'] -= $payment['paymentDetail']['paymentAmount'];
+					$data['Cof']['remainingBalance'] += $payment['paymentDetail']['paymentAmount'];
+				}
+
+				$data['payments'] += $payment['paymentDetail']['paymentAmount'];
 			}
 		}
 
-		// see if credit on file was used for this ticket
-		$tp = $ticketPrice;
-		$paymentRecordSql = 'SELECT paymentTypeId, paymentAmount FROM paymentDetail ';
-		$paymentRecordSql.= "WHERE paymentTypeId = 3 AND ticketId = $ticketId AND isSuccessfulCharge = 1";
-		$paymentRecordResult = $this->query($paymentRecordSql);
-		// if there is a result set and the CoF was set to applied, add the CoF totalAmountOff to the ticketPrice
-		if (!empty($paymentRecordResult)) {
-			if (isset($data['Cof']['applied'])) {
-				$ticketPrice += $data['Cof']['totalAmountOff'];
-			}
-			// loop over the result set and set the CoF as applied
-			// set the credit on file totalAmountOff to paymentAmount from paymentDetail
-			// decrement the paymentAmount from the ticketPrice
-			foreach ($paymentRecordResult as $payment) {
-				$data['Cof']['applied'] = 1;
-				$data['Cof']['totalAmountOff'] = $payment['paymentDetail']['paymentAmount'];
-				$ticketPrice -= $payment['paymentDetail']['paymentAmount'];
-				break;
-			}
-		}
-
-
-		$data['applied'] = (!empty($data['Promo']['applied']) || !empty($data['GiftCert']['applied']) || $data['Cof']['applied']) ? 1 : 0;
+		$data['final_price'] = $ticketPrice;
+		// This is the final price WITHOUT CoF applied and Gift applied, and payments deducted
+		// rvella 
+		$data['final_price_actual'] = $ticketPrice - (isset($data['Promo']['totalAmountOff']) ? $data['Promo']['totalAmountOff'] : 0) - $data['payments'];	
+			
+		$ticketPrice -= (isset($data['Promo']['totalAmountOff']) ? $data['Promo']['totalAmountOff'] : 0);
+		$ticketPrice -= $data['GiftCert']['totalAmountOff'];
+		$ticketPrice -= $data['Cof']['totalAmountOff'];
+		
+		$data['applied'] = (!empty($data['Promo']['applied']) || !empty($data['GiftCert']['applied']) || isset($data['Cof']['applied'])) ? 1 : 0;
 		$data['final_price'] = $ticketPrice;
 		
 		return $data;

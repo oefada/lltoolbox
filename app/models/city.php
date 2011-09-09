@@ -2,7 +2,7 @@
 class City extends AppModel {
 
 	var $name           = 'City';
-	var $useTable       = 'city';
+	var $useTable       = 'cityNew';
 	var $primaryKey     = 'cityId';
 	var $displayField   = 'cityName';
 	var $order          = 'cityName';
@@ -10,14 +10,21 @@ class City extends AppModel {
 	var $belongsTo = array('State' => array('foreignKey' => 'stateId'),
 						   'Country' => array('foreignKey' => 'countryId')
 						  );
-						  
-    var $hasAndBelongsToMany = array('Tag' =>
-	                               array('className'    => 'Tag',
-	                                     'joinTable'    => 'cityTag',
-	                                     'foreignKey'   => 'cityId',
-	                                     'associationForeignKey'=> 'tagId',
-	                                     'unique'       => true,
-	                               )
-                               ); 
+
+	var $validate = array(
+		'cityName' => array(
+			VALID_NOT_EMPTY,
+		),
+		'latitude' => array(
+			VALID_NOT_EMPTY,
+		),
+		'longitude' => array(
+			VALID_NOT_EMPTY,
+		),
+		'countryId' => array(
+			VALID_NOT_EMPTY,
+		)
+	);
+
 }
 ?>

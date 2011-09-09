@@ -35,6 +35,7 @@ class UsersController extends AppController {
 
 	function view($id = null) {
 		$this->redirect(array("action" => 'edit', $id));
+		exit;
 	}
 
 	function edit($id = null) {
@@ -52,12 +53,13 @@ class UsersController extends AppController {
 
 				$this->redirect("/users/".$this->data['User']['userId']);
 			} else {
+				
 			}
 		}
 		if (empty($this->data)) {
 			$this->data = $this->user;
 		}
-
+	
 		$salutationIds = $this->User->Salutation->find('list');
 		$paymentTypes = $this->User->UserPaymentSetting->PaymentType->find('list');
 		$addressTypes = $this->User->Address->AddressType->find('list');
@@ -212,10 +214,10 @@ class UsersController extends AppController {
 		if (intval($userId) == 0) { return; }
 
 		$this->User->recursive = 1;
-		$this->user = $this->User->findByUserId($this->User->id);
+		$this->user = $this->User->find('first',array('conditions' => array('User.userId' => $userId)));
 
 		$this->set('user', $this->user);
-		$this->set('userId', $this->User->id);
+		$this->set('userId', $userId);
 		$this->set('numUserTickets', $this->User->Ticket->find('count', array('conditions' => array('Ticket.userId' => $userId))));
 		$this->set('numUserBids', $this->User->Bid->find('count', array('conditions' => array('Bid.userId' => $userId))));
 	}

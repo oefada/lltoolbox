@@ -15,20 +15,13 @@ if(!isset($this->viewVars['searchController']) &&class_exists($fullControllerNam
 }
 
 if (@$this->viewVars['searchController'] || method_exists($controller , 'search') || isset($this->searchController)):
- ?>
+
+?>
 <div id='search-bar' class="clearfix">
 <div id='search-bar-inner' class="clearfix">
 <?php $defSearchValue = "Search {$controllerName}"; ?>
 <form accept-charset="UNKNOWN" enctype="application/x-www-form-urlencoded" method="get" action="/<?= $controllerUrl ?>/search">
 	<div class="clearfix">
-		<?php
-		/*
-		<div class="search-input-with-livesearch" on>
-			
-			<input id="query" autocomplete='off' maxlength="2147483647" name="query" type="text" value="<?=$defSearchValue?>" onfocus="if($F(this) == '<?=$defSearchValue?>') { $(this).value = '';} else { $('livesearch').show(); }" onblur="Element.hide.delay(0.2, 'livesearch'); if($F(this) == '') { $(this).value = '<?=$defSearchValue?>' }" />
-		</div>
-		 */
-		?>
 		<div class="search-input-with-livesearch" on>
 		<label>
 			<input autocomplete='off' maxlength="2147483647" name="query" type="text" value="<?=$defSearchValue?>" />
@@ -38,8 +31,8 @@ if (@$this->viewVars['searchController'] || method_exists($controller , 'search'
 		</div>
 	</div>
 </form>
-<script src='/js/autosuggest.js'></script>
-<script>jQuery('.search-input-with-livesearch input[name="query"]').liveSearch({url: "/ajax_search?searchtype=<?= $controllerUrl ?>"});</script>
+<?= $javascript->link('livesearch'); ?>
+<script>jQuery('.search-input-with-livesearch input[name="query"]').liveSearch({id: "search-input-with-livesearch", url: "/ajax_search?searchtype=<?= $controllerUrl ?>"});</script>
 </div>
 </div>
 <?php endif; //end method exists check ?>

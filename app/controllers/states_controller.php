@@ -1,20 +1,36 @@
 <?php
 class StatesController extends AppController {
-
 	var $name = 'States';
 	var $helpers = array('Html', 'Form');
 
-	function index() {
-		$this->State->recursive = 0;
-		$this->set('states', $this->paginate());
+	function __construct() {
+		parent::__construct();
+		$this->set('hideSidebar',true);
 	}
 
-	function view($id = null) {
-		if (!$id) {
-			$this->Session->setFlash(__('Invalid State.', true));
-			$this->redirect(array('action'=>'index'));
+	function index() {
+		$this->State->recursive = 0;
+		
+		if (isset($this->params['named']['query'])) {
+			$query = $this->Sanitize->escape($this->params['named']['query']);
+			$conditions = array(
+				'OR' => array(
+					'stateName LIKE' => '%'.$query.'%',
+					'stateId LIKE' => '%'.$query.'%',
+				),
+			);
+			
+			$this->set('query',$query);
+		} else {
+			$conditions = array();
 		}
-		$this->set('state', $this->State->read(null, $id));
+		
+		$this->paginate = array(
+			'order' => 'State.countryId ASC, State.stateId ASC',
+			'conditions' => $conditions,
+		);
+		
+		$this->set('states', $this->paginate());
 	}
 
 	function add() {
@@ -27,7 +43,7 @@ class StatesController extends AppController {
 				$this->Session->setFlash(__('The State could not be saved. Please, try again.', true));
 			}
 		}
-		$tags = $this->State->Tag->find('list');
+
 		$countries = $this->State->Country->find('list');
 		$this->set(compact('tags', 'countries'));
 	}
@@ -38,7 +54,21 @@ class StatesController extends AppController {
 			$this->redirect(array('action'=>'index'));
 		}
 		if (!empty($this->data)) {
+			$this->State->recursive = -1;
+			$stateOld = $this->State->read(null,$id);
+			
 			if ($this->State->save($this->data)) {
+				$this->State->City->updateAll(
+					array(
+						'State.stateId' => "'".$this->data['State']['stateId']."'",
+						'State.countryId' => "'".$this->data['State']['countryId']."'"
+					),
+					array(
+						'City.stateId' => $stateOld['State']['stateId'],
+						'City.countryId' => $stateOld['State']['countryId']
+					)
+				);
+
 				$this->Session->setFlash(__('The State has been saved', true));
 				$this->redirect(array('action'=>'index'));
 			} else {
@@ -48,7 +78,7 @@ class StatesController extends AppController {
 		if (empty($this->data)) {
 			$this->data = $this->State->read(null, $id);
 		}
-		$tags = $this->State->Tag->find('list');
+
 		$countries = $this->State->Country->find('list');
 		$this->set(compact('tags','countries'));
 	}
@@ -64,6 +94,22 @@ class StatesController extends AppController {
 		}
 	}
 	
+	function ajax_states() {
+		$countryId = $this->params['named']['countryId'];
+		
+		if (trim($countryId)) {
+			$this->State->recursive = -1;
+			$this->set('stateId', $this->State->find('list',array(
+				'fields' => 'stateId,stateName',
+				'conditions' => array(
+					'countryId' => $countryId,
+				)
+			)));
+		} else {
+			exit;
+		}
+	}
+	
 	function get_cities($stateId = null) {
 	    if ($stateId == null) {
 	        $stateId = $this->data['Client']['stateId'];
@@ -73,5 +119,8 @@ class StatesController extends AppController {
 		$this->layout = 'ajax';
 	}
 
+	function search() {
+		$this->redirect(array('action'=>'index','query' => $this->params['url']['query']));
+	}
 }
 ?>

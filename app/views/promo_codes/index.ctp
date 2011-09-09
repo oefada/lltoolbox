@@ -1,11 +1,13 @@
 <div class="promoCodes index">
 <h2><?php __('PromoCodes');?></h2>
-<p>
-<?php
-echo $paginator->counter(array(
-'format' => __('Page %page% of %pages%, showing %current% records out of %count% total, starting on record %start%, ending on %end%', true)
-));
-?></p>
+<div class="actions">
+	<ul>
+		<li><?php echo $html->link(__('New PromoCode', true), array('action'=>'add')); ?></li>
+		<li><?php echo $html->link(__('List Promos', true), array('controller'=> 'promos', 'action'=>'index')); ?> </li>
+		<li><?php echo $html->link(__('New Promo', true), array('controller'=> 'promos', 'action'=>'add')); ?> </li>
+	</ul>
+</div>
+<?php echo $this->renderElement('ajax_paginator', array('showCount' => true)); ?>
 <table cellpadding="0" cellspacing="0">
 <tr>
 	<th><?php echo $paginator->sort('promoCodeId');?></th>
@@ -30,15 +32,4 @@ foreach ($promoCodes as $promoCode):
 <?php endforeach; ?>
 </table>
 </div>
-<div class="paging">
-	<?php echo $paginator->prev('<< '.__('previous', true), array(), null, array('class'=>'disabled'));?>
- | 	<?php echo $paginator->numbers();?>
-	<?php echo $paginator->next(__('next', true).' >>', array(), null, array('class'=>'disabled'));?>
-</div>
-<div class="actions">
-	<ul>
-		<li><?php echo $html->link(__('New PromoCode', true), array('action'=>'add')); ?></li>
-		<li><?php echo $html->link(__('List Promos', true), array('controller'=> 'promos', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Promo', true), array('controller'=> 'promos', 'action'=>'add')); ?> </li>
-	</ul>
-</div>
+<?php echo $this->renderElement('ajax_paginator', array('showCount' => true)); ?>

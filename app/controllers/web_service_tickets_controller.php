@@ -6,15 +6,9 @@ NOTES
 
 To debug this, use 
 
-CakeWrite::log("debug", "debug data to write here");
+
 
 this will write to toolbox/development/app/tmp/logs
-
-
-
-
-
-
 
 */
 
@@ -34,7 +28,7 @@ class WebServiceTicketsController extends WebServicesController
 	var $uses = array('Ticket', 'UserPaymentSetting','PaymentDetail', 'Client', 'User', 'Offer', 'Bid',
 					  'ClientLoaPackageRel', 'Track', 'OfferType', 'Loa', 'TrackDetail', 'PpvNotice',
 					  'Address', 'OfferLuxuryLink', 'SchedulingMaster', 'SchedulingInstance', 'Reservation',
-					  'PromoTicketRel', 'Promo', 'TicketReferFriend','Package','PaymentProcessor','DebugData'
+					  'PromoTicketRel', 'Promo', 'TicketReferFriend','Package','PaymentProcessor','CakeLog'
 					  );
 
 	var $serviceUrl = 'http://toolbox.luxurylink.com/web_service_tickets';
@@ -533,7 +527,7 @@ CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
 		    $data_post['userId']                 = $data['userId'];
 		    $data_post['ticketId']               = $ticketId;
 		    $data_post['paymentProcessorId']     = 1;
-				if ($data['siteId'] == 2) {
+			if ($data['siteId'] == 2) {
 		     	$data_post['paymentProcessorId']     = 3; // FAMILY site uses PAYPAL
 				}
 				$data_post['paymentAmount']          = $data['billingPrice'];
@@ -1899,7 +1893,7 @@ CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
 		if (!isset($data['paymentProcessorId']) || !$data['paymentProcessorId']) {
 			return '103';
 		}
-		if (!isset($data['paymentAmount']) || !$data['paymentAmount']) {
+		if (!isset($data['paymentAmount']) || $data['paymentAmount'] < 0) {
 			return '104';
 		}
 		if (!isset($data['initials']) || empty($data['initials'])) {
@@ -1914,6 +1908,7 @@ CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
 		if (!isset($data['zAuthHashKey']) || !$data['zAuthHashKey']) {
 			return '108';
 		}
+		
 		if (isset($data['toolboxManualCharge']) && ($data['toolboxManualCharge'] == 'toolbox')) {
 			$toolboxManualCharge = true;
 		} else {
@@ -1979,11 +1974,28 @@ CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
 		// handle fees, promo discounts, etc
 		// ---------------------------------------------------------------------------
 		$fee = $this->Ticket->getFeeByTicket($data['ticketId']);
+
+		// Links GiftCert to this ticket
+		if ($toolboxManualCharge && $data['paymentTypeId'] == 2) {
+			$this->loadModel('PromoCode');
+			$code = $this->PromoCode->findBypromoCode($data['ppTransactionId']);
+			
+			$this->Ticket->PromoTicketRel->create();
+			$this->Ticket->PromoTicketRel->save(array(
+					'ticketId' => $ticket['Ticket']['ticketId'],
+					'userId'   => $ticket['Ticket']['userId'],
+					'promoCodeId' => $code['PromoCode']['promoCodeId']
+			));					
+		}
+		
+		// Leave legacy functionality
+		$tbmC = $toolboxManualCharge;
+		$toolboxManualCharge = true;
 		$totalChargeAmount = $data['paymentAmount'];
-
 		$promoGcCofData = array();
-		$promoGcCofData		= $this->Ticket->getPromoGcCofData($ticket['Ticket']['ticketId'], $totalChargeAmount);
-
+		$promoGcCofData		= $this->Ticket->getPromoGcCofData($ticket['Ticket']['ticketId'], ($toolboxManualCharge ? $ticket['Ticket']['billingPrice'] : $data['paymentAmount']));
+		$toolboxManualCharge = $tbmC;
+		
 		if (!$toolboxManualCharge) {
 			// this is either autocharge or user checkout
 
@@ -2003,12 +2015,13 @@ CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
 		$paymentDetail['userId']				= $ticket['Ticket']['userId'];
 		$paymentDetail['autoProcessed']			= $data['autoCharge'];
 		$paymentDetail['initials']				= $data['initials'];
-		$paymentDetail['ppBillingAmount']		= $totalChargeAmount;
 		$paymentDetail['paymentProcessorId']	= $data['paymentProcessorId'];
 		$paymentDetail['paymentTypeId']			= $data['paymentTypeId'];
 		$paymentDetail['paymentAmount']			= $data['paymentAmount'];
 		$paymentDetail['userPaymentSettingId']	= ($usingUpsId) ? $data['userPaymentSettingId'] : '';
-		$ticket['Ticket']['billingPrice'] 		= $totalChargeAmount;
+		$paymentDetail['ppBillingAmount']		= $totalChargeAmount;
+		//rvella
+		//$ticket['Ticket']['billingPrice'] 		= $totalChargeAmount;
 		
 		$otherCharge = 0;
 		
@@ -2059,6 +2072,7 @@ CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
 				return '115';
 			}
 
+			$paymentDetail['paymentProcessorId']	= 6;
 			$paymentDetail['ccType'] 		 		= $shortWord;
 			$paymentDetail['userPaymentSettingId'] 	= '';
 			$paymentDetail['isSuccessfulCharge']	= 1;
@@ -2078,11 +2092,12 @@ CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
 
 		// save the response from the payment processor
 		// ---------------------------------------------------------------------------
+
 		$this->PaymentDetail->create();
 		if (!$this->PaymentDetail->save($paymentDetail)) {
 			@mail('devmail@luxurylink.com,rvella@luxurylink.com', 'WEB SERVICE ERROR: PAYMENT PROCESSED BUT NOT SAVED', print_r($this->PaymentDetail->validationErrors,true)  . print_r($paymentDetail, true));
 		}
-
+		
 		// return result whether success or denied
 		// ---------------------------------------------------------------------------
 		if ((isset($processor) && $processor->ChargeSuccess()) || $isDev || $otherCharge) {
@@ -2102,7 +2117,6 @@ CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
 		$tracks = $this->TrackDetail->getTrackRecord($ticket['Ticket']['ticketId']);
 		if (!empty($tracks)) {
 			foreach ($tracks as $track) {
-
 				// decrement loa number of packages
 				// ---------------------------------------------------------------------------
 				if ($track['expirationCriteriaId'] == 2) {
@@ -2132,22 +2146,32 @@ CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
 		// if saving new user card information
 		// ---------------------------------------------------------------------------
 		if ($data['saveUps'] && !$usingUpsId && !empty($userPaymentSettingPost['UserPaymentSetting'])) {
+			$userPaymentSettingPost['UserPaymentSetting']['userId'] = $ticket['Ticket']['userId'];
+
 			$this->UserPaymentSetting->create();
 			$this->UserPaymentSetting->save($userPaymentSettingPost['UserPaymentSetting']);
 		}
-
 		// update ticket status to FUNDED
 		// ---------------------------------------------------------------------------
-		$ticketStatusChange = array();
-		$ticketStatusChange['ticketId'] = $ticket['Ticket']['ticketId'];
-		$ticketStatusChange['ticketStatusId'] = 5;
-
+		$toolboxManualCharge = false;
+		
+		if (!$toolboxManualCharge) { 
+			$ticketStatusChange = array();
+			$ticketStatusChange['ticketId'] = $ticket['Ticket']['ticketId'];
+			$ticketStatusChange['ticketStatusId'] = 5;
+		}
+		
 		// if gift cert or cof, create additional payment detail records
 		// ---------------------------------------------------------------------------
-		if (isset($promoGcCofData['GiftCert']) && $promoGcCofData['GiftCert'] && $promoGcCofData['GiftCert']['applied']) {
-			$this->PaymentDetail->saveGiftCert($ticket['Ticket']['ticketId'], $promoGcCofData['GiftCert'], $ticket['Ticket']['userId'], $data['autoCharge'], $data['initials']);
-		} elseif (isset($promoGcCofData['Cof']) && $promoGcCofData['Cof'] && $promoGcCofData['Cof']['applied']) {
-			$this->PaymentDetail->saveCof($ticket['Ticket']['ticketId'], $promoGcCofData['Cof'], $ticket['Ticket']['userId'], $data['autoCharge'], $data['initials'],false);
+		$promoGcCofData['Cof']['creditTrackingTypeId'] = 1;
+		
+		// Leave legacy functionality
+		// rvella
+		
+		if (isset($promoGcCofData['GiftCert']) && $promoGcCofData['GiftCert']['applied']) {
+			$this->PaymentDetail->saveGiftCert($ticket['Ticket']['ticketId'], $promoGcCofData['GiftCert'], $ticket['Ticket']['userId'], $data['autoCharge'], $data['initials'],$toolboxManualCharge);
+		} elseif (isset($promoGcCofData['Cof']) && $promoGcCofData['Cof']['applied']) {
+			$this->PaymentDetail->saveCof($ticket['Ticket']['ticketId'], $promoGcCofData['Cof'], $ticket['Ticket']['userId'], $data['autoCharge'], $data['initials'],$toolboxManualCharge);
 		}
 		
 		$this->Ticket->save($ticketStatusChange);

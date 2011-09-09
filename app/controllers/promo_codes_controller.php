@@ -4,18 +4,38 @@ class PromoCodesController extends AppController {
 	var $name = 'PromoCodes';
 	var $helpers = array('Html', 'Form');
 
+	function __construct() {
+		parent::__construct();
+		$this->set('hideSidebar',true);
+	}
+
 	function index() {
 		$this->PromoCode->recursive = 2;
-		$this->paginate['order'] = array('promoCode' => 'asc');
+		$this->paginate['order'] = array('promoCodeId' => 'DESC');
 		$this->paginate['limit'] = 100;
 		$this->set('promoCodes', $this->paginate());
 	}
 
+	function ajax_valid_promo($promoCode) {
+		$query = "SELECT promoCode.promoCodeId,giftCertBalance.balance,giftCertBalance.userId,promoCodeRel.promoCodeRelId,promo.amountOff,promo.percentOff FROM promoCode 
+			LEFT JOIN giftCertBalance USING (promoCodeId) 
+			LEFT JOIN promoCodeRel USING (promoCodeId) 
+			LEFT JOIN promo USING (promoId) 
+			WHERE promoCode = '".$promoCode."' 
+			AND IF(promo.promoId IS NOT NULL,promo.endDate > NOW(),1) = 1 
+			ORDER BY giftCertBalance.giftCertBalanceId DESC LIMIT 1";
+		
+		$promo = $this->PromoCode->query($query);
+		echo json_encode($promo[0]);
+		exit;
+	}
+	
 	function view($id = null) {
 		if (!$id) {
 			$this->Session->setFlash(__('Invalid PromoCode.', true));
 			$this->redirect(array('action'=>'index'));
 		}
+		
 		$this->set('promoCode', $this->PromoCode->read(null, $id));
 	}
 

@@ -15,19 +15,21 @@ class GiftCertBalance extends AppModel {
     );
     
 	function beforeSave() {
-		// get number of trackings for promoCodeId and the balance
-		$results = $this->query("SELECT balance, userId FROM giftCertBalance WHERE promoCodeId = " . $this->data['GiftCertBalance']['promoCodeId'] . " ORDER BY giftCertBalanceId DESC LIMIT 1");
-
-		// balance
-		if (!empty($results)) {
-			$this->data['GiftCertBalance']['balance'] = $results[0]['giftCertBalance']['balance'] + $this->data['GiftCertBalance']['amount'];
-			$this->data['GiftCertBalance']['userId'] = $results[0]['giftCertBalance']['userId'];
-		} else {
-			$this->data['GiftCertBalance']['balance'] = $this->data['GiftCertBalance']['amount'];
+		if (isset($this->data['GiftCertBalance']['promoCodeId'])) {
+			// get number of trackings for promoCodeId and the balance
+			$results = $this->query("SELECT balance, userId FROM giftCertBalance WHERE promoCodeId = " . $this->data['GiftCertBalance']['promoCodeId'] . " ORDER BY giftCertBalanceId DESC LIMIT 1");
+	
+			// balance
+			if (!empty($results)) {
+				$this->data['GiftCertBalance']['balance'] = $results[0]['giftCertBalance']['balance'] + $this->data['GiftCertBalance']['amount'];
+				$this->data['GiftCertBalance']['userId'] = $results[0]['giftCertBalance']['userId'];
+			} else {
+				$this->data['GiftCertBalance']['balance'] = $this->data['GiftCertBalance']['amount'];
+			}
+			
+			// datetime
+			$this->data['GiftCertBalance']['datetime'] = date("Y-m-d H:i:s", time());
 		}
-		
-		// datetime
-		$this->data['GiftCertBalance']['datetime'] = date("Y-m-d H:i:s", time());
 		
 		return true;
 	}

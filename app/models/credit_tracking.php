@@ -4,12 +4,33 @@ class CreditTracking extends AppModel {
 	var $name = 'CreditTracking';
 	var $useTable = 'creditTracking';
 	var $primaryKey = 'creditTrackingId';
-
+	var $actsAs = array('Containable');
+	
 	var $belongsTo = array(
-		'CreditTrackingType' => array('foreignKey' => 'creditTrackingTypeId'), 'User' => array('foreignKey' => 'userId'),
-		'UserSiteExtended' => array('foreignKey' => 'userId'),
-		'CreditTrackingOfferRel' => array('foreignKey' => 'creditTrackingId'),
-		'CreditTrackingTicketRel' => array('foreignKey' => 'creditTrackingId')
+		'CreditTrackingType' => array('foreignKey' => 'creditTrackingTypeId'), 
+		'User' => array('foreignKey' => 'userId'),
+	);
+	
+	var $hasOne = array(
+		'UserSiteExtended' => array('foreignKey' => false, 'conditions' => 'UserSiteExtended.userId = CreditTracking.userId'),
+		//'CreditTrackingTicketRel' => array('foreignKey' => 'creditTrackingId'),
+	);
+	
+	var $validate = array(
+		'userId' => array(
+			VALID_NOT_EMPTY,
+			'rule' => 'numeric',
+			'message' => 'Please provide a valid user ID'
+		),
+		'amount' => array(
+			VALID_NOT_EMPTY,
+			'rule' => 'numeric',
+			'message' => 'Please enter a valid amount'
+		),
+		'ticketId' => array(
+			VALID_NOT_EMPTY,
+			'rule' => 'numeric'
+		),
 	);
 	
 	function beforeSave() {

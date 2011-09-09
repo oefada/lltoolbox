@@ -3,19 +3,11 @@
 	<fieldset>
  		<legend><?php __('Add Gift Certificate');?></legend>
 	<?php
-		echo $form->input('userId', array('label' => 'Purchaser UserId (optional)'));
-		echo '
-			<div class="input text"><label>Recipient Name (optional)</label><input id="recipientName" name="data[recipientName]" type="text" maxlength="50" value=""/></div>
-		';
-		echo '
-			<div class="input text"><label>Recipient Email (optional)</label><input id="recipientEmail" name="data[recipientEmail]" type="text" maxlength="50" value=""/></div>
-		';
+		echo $this->renderElement("input_search",array('name' => 'userId','label'=>'Purchaser User ID (optional)','controller' => 'users'));
 		echo '
 			<div class="input text"><label>Promo Code</label><input id="promoCode" name="data[promoCode]" type="text" maxlength="50" value=""/></div>
 		';
 		echo $form->input('amount');
-		//echo $form->input('balance');
-		//echo $form->input('datetime');
 	?>
 	</fieldset>
 <?php echo $form->end('Submit');?>

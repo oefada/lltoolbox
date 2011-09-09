@@ -4,6 +4,11 @@ class BidsController extends AppController {
 	var $name = 'Bids';
 	var $helpers = array('Html', 'Form');
 
+	function __construct() {
+		parent::__construct();
+		$this->set('hideSidebar',true);
+	}
+	
 	function index() {
 		$this->Bid->recursive = 0;
 		$this->set('bids', $this->paginate());

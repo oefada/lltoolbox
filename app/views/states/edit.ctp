@@ -1,14 +1,24 @@
 <div class="states form">
+<?php $this->set('hideSidebar', true); ?>
 <?php echo $form->create('State');?>
 	<fieldset>
  		<legend><?php __('Edit State');?></legend>
 	<?php
 		echo $form->input('stateId');
-		echo $form->input('countryId');
 		echo $form->input('stateCode');
+	?>
+ 		<div class="input">
+ 			<label for="StateCountryId">Country</label>
+				<select name="data[State][countryId]" id="StateCountryId">
+					<option value="">Select a Country</option>
+					<?php foreach($countries as $k=>$v): ?>
+					<option value="<?= $k ?>"<? if ($k == $this->data['State']['countryId']): ?> selected="selected"<?php endif; ?>><?= $v ?></option>
+					<?php endforeach; ?>
+				</select>
+			</label>
+		</div>
+	<?php
 		echo $form->input('stateName');
-		echo $form->input('ADM1Code');
-		echo $form->input('Tag');
 	?>
 	</fieldset>
 <?php echo $form->end('Submit');?>
@@ -21,7 +31,5 @@
 		<li><?php echo $html->link(__('New Country', true), array('controller'=> 'countries', 'action'=>'add')); ?> </li>
 		<li><?php echo $html->link(__('List Cities', true), array('controller'=> 'cities', 'action'=>'index')); ?> </li>
 		<li><?php echo $html->link(__('New City', true), array('controller'=> 'cities', 'action'=>'add')); ?> </li>
-		<li><?php echo $html->link(__('List Tags', true), array('controller'=> 'tags', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Tag', true), array('controller'=> 'tags', 'action'=>'add')); ?> </li>
 	</ul>
 </div>
