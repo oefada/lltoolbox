@@ -1988,13 +1988,9 @@ CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
 			));					
 		}
 		
-		// Leave legacy functionality
-		$tbmC = $toolboxManualCharge;
-		$toolboxManualCharge = true;
 		$totalChargeAmount = $data['paymentAmount'];
 		$promoGcCofData = array();
 		$promoGcCofData		= $this->Ticket->getPromoGcCofData($ticket['Ticket']['ticketId'], ($toolboxManualCharge ? $ticket['Ticket']['billingPrice'] : $data['paymentAmount']));
-		$toolboxManualCharge = $tbmC;
 		
 		if (!$toolboxManualCharge) {
 			// this is either autocharge or user checkout
@@ -2020,8 +2016,6 @@ CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
 		$paymentDetail['paymentAmount']			= $data['paymentAmount'];
 		$paymentDetail['userPaymentSettingId']	= ($usingUpsId) ? $data['userPaymentSettingId'] : '';
 		$paymentDetail['ppBillingAmount']		= $totalChargeAmount;
-		//rvella
-		//$ticket['Ticket']['billingPrice'] 		= $totalChargeAmount;
 		
 		$otherCharge = 0;
 		
@@ -2095,7 +2089,7 @@ CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
 
 		$this->PaymentDetail->create();
 		if (!$this->PaymentDetail->save($paymentDetail)) {
-			@mail('devmail@luxurylink.com,rvella@luxurylink.com', 'WEB SERVICE ERROR: PAYMENT PROCESSED BUT NOT SAVED', print_r($this->PaymentDetail->validationErrors,true)  . print_r($paymentDetail, true));
+			@mail('devmail@luxurylink.com', 'WEB SERVICE ERROR: PAYMENT PROCESSED BUT NOT SAVED', print_r($this->PaymentDetail->validationErrors,true)  . print_r($paymentDetail, true));
 		}
 		
 		// return result whether success or denied
@@ -2153,20 +2147,14 @@ CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
 		}
 		// update ticket status to FUNDED
 		// ---------------------------------------------------------------------------
-		$toolboxManualCharge = false;
-		
-		if (!$toolboxManualCharge) { 
-			$ticketStatusChange = array();
-			$ticketStatusChange['ticketId'] = $ticket['Ticket']['ticketId'];
-			$ticketStatusChange['ticketStatusId'] = 5;
-		}
+		$ticketStatusChange = array();
+		$ticketStatusChange['ticketId'] = $ticket['Ticket']['ticketId'];
+		$ticketStatusChange['ticketStatusId'] = 5;
 		
 		// if gift cert or cof, create additional payment detail records
 		// ---------------------------------------------------------------------------
 		$promoGcCofData['Cof']['creditTrackingTypeId'] = 1;
 		
-		// Leave legacy functionality
-		// rvella
 		
 		if (isset($promoGcCofData['GiftCert']) && $promoGcCofData['GiftCert']['applied']) {
 			$this->PaymentDetail->saveGiftCert($ticket['Ticket']['ticketId'], $promoGcCofData['GiftCert'], $ticket['Ticket']['userId'], $data['autoCharge'], $data['initials'],$toolboxManualCharge);
