@@ -6,7 +6,7 @@ class TicketRefundsController extends AppController {
 
 	var $name = 'TicketRefunds';
 	var $helpers = array('Html', 'Form');
-	var $uses = array('TicketRefund', 'Ticket', 'CreditTracking', 'CreditTrackingType', 'CreditTrackingTicketRel', 'TicketReferFriend', 'Promo');
+	var $uses = array('TicketRefund', 'Ticket', 'CreditTracking', 'CreditTrackingType', 'TicketReferFriend', 'Promo'); //'CreditTrackingTicketRel',);
 
 	function index() {
 		$this->TicketRefund->recursive = 0;
@@ -82,10 +82,10 @@ class TicketRefundsController extends AppController {
 						$this->CreditTracking->save($ctdata);
 						$creditTrackingId = $this->CreditTracking->getLastInsertId();
 
-						$cttrdata['CreditTrackingTicketRel']['ticketId'] = $ticket['Ticket']['ticketId'];
-						$cttrdata['CreditTrackingTicketRel']['creditTrackingId'] = $creditTrackingId;
-						$this->CreditTrackingTicketRel->create();
-						$this->CreditTrackingTicketRel->save($cttrdata);
+						//$cttrdata['CreditTrackingTicketRel']['ticketId'] = $ticket['Ticket']['ticketId'];
+						//$cttrdata['CreditTrackingTicketRel']['creditTrackingId'] = $creditTrackingId;
+						//$this->CreditTrackingTicketRel->create();
+						//$this->CreditTrackingTicketRel->save($cttrdata);
 					}
 
 					// raf adjustments

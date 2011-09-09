@@ -15,7 +15,7 @@ class Ticket extends AppModel {
 	var $hasMany = array('PaymentDetail' => array('foreignKey' => 'ticketId'),
 						 'PpvNotice' => array('foreignKey' => 'ticketId'),
 						 'PromoTicketRel' => array('foreignKey' => 'ticketId'),
-						 'CreditTrackingTicketRel' => array('foreignKey' => 'ticketId')
+						 //'CreditTrackingTicketRel' => array('foreignKey' => 'ticketId')
 						);
 	
 	var $hasOne = array('TicketWriteoff' => array('foreignKey' => 'ticketId'),
