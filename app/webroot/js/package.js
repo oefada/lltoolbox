@@ -1,15 +1,5 @@
 $().ready(function() {
 
-	// add/edit a package packages/edit_package
-	// listen for submit and check that numGuests is appropriate for the number of rooms
-	$('#packageForm').submit(function() {
-		if ($('#maxGuests').val()>4 && $("#numRooms").val()==1){
-			confirm("You have selected more than 4 guests but only 1 room. To proceed, click OK or click cancel to fix things.");
-			return false;
-		}else{
-			return true;
-		}
-	});
 
         $('div.edit-link').click(function() {
                                     if ($(this).attr('href') == undefined) {
@@ -693,23 +683,34 @@ function closeForm(anchor) {
 }
 
 function submitForm(thisId) {
-    $.post(window.location.href,
-           $('#'+thisId).serialize(),
-           function(data) {
-                if (data == 'ok') {
-                    parent.closeForm(thisId);
-                }
-                else {
-                    var errors = $.parseJSON(data);
-                    var errorStr = '';
-                    $.each(errors, function(i, error) {
-                        errorStr += '<li>' + error + '</li>';
-                    });
-                    $('div#errors').html(errorStr);
-                    $('div#errorsContainer').show();
-                    $('div#errors_repeat').html(errorStr);
-                    $('div#errorsContainer_repeat').show();
-                }
-        });
+
+	// add/edit a package packages/edit_package
+	// check that numGuests is appropriate for the number of rooms
+	if ($('#numRooms').val()==0){
+		alert("You must set a 'Num Rooms' value greater than 0");
+		return false;
+	}else if ($('#maxGuests').val()>4 && $("#numRooms").val()==1){
+		if (false==confirm("You have selected more than 4 guests but only 1 room. To proceed, click OK or click cancel to fix things.")){
+			return false;
+		}
+	}
+
+  $.post(window.location.href,
+		$('#'+thisId).serialize(),
+			function(data) {
+				if (data == 'ok') {
+					parent.closeForm(thisId);
+				} else {
+					var errors = $.parseJSON(data);
+					var errorStr = '';
+					$.each(errors, function(i, error) {
+						errorStr += '<li>' + error + '</li>';
+					});
+					$('div#errors').html(errorStr);
+					$('div#errorsContainer').show();
+					$('div#errors_repeat').html(errorStr);
+					$('div#errorsContainer_repeat').show();
+				}
+		});
 }
 

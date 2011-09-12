@@ -2115,6 +2115,7 @@ class PackagesController extends AppController {
             }
 						*/
 
+
             if ($package['Package']['isFlexPackage'] == 1) {
               if (empty($this->data['PricePoint']['flexRetailPricePerNight']) || $this->data['PricePoint']['flexRetailPricePerNight'] <= 0) {
                 $errors[] = 'Flex Per Night Retail must be greater than 0.';
@@ -2132,7 +2133,6 @@ class PackagesController extends AppController {
             }
 
             if (!empty($errors)) {
-
               echo json_encode($errors);
               return;
             }
@@ -2236,6 +2236,7 @@ class PackagesController extends AppController {
 
 			$this->Package->updatePricePointValidityGroupId($ppid,$vg_id);
 
+CakeLog::write('debug', 'C');
       echo "ok";// ppid:$ppid|vg_id:$vg_id";
 
 			// view data

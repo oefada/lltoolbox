@@ -462,7 +462,7 @@ if ($_SERVER['ENV']=="staging"){
 	
         foreach ($pricePoints as $key => $pricePoint) {
 					$ppid=$pricePoint['PricePoint']['pricePointId'];
-					$otid=$pricePoint['SchedulingMaster'][0]['offerTypeId'];
+					$otid=isset($pricePoint['SchedulingMaster'][0])?$pricePoint['SchedulingMaster'][0]['offerTypeId']:0;
 					$alt = ($key % 2 == 0) ? 'class="alt"' : '';
 					echo "<tr $alt>
 									<td>{$pricePoint['PricePoint']['name']}</td>

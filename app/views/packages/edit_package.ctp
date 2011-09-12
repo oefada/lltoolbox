@@ -117,10 +117,19 @@
 
 					 <!-- flex pack status can only be created at creation or by editing the pricepoint, not by 
 					 editing here mbyrnes-->
-					 <? if ($package['Package']['packageId']>0){ ?>
-					 When editing, the flex pack cannot be changed at the package level and must be changed at the pricepoint level
+					 <? 
+					 
+					 $isFlex=intval($package['Package']['isFlexPackage']);
+
+					 if ($package['Package']['packageId']>0){ ?>
+						When editing, the flex pack cannot be changed at the package level and must be changed at the pricepoint level
+
+             <input type="hidden" name="data[Package][isFlexPackage]" value="<?=($isFlex==1);?>" /> 
+             <input type="hidden" name="data[Package][flexNumNightsMin]" value="<?=$package['Package']['flexNumNightsMin'];?>">
+						 <input type="hidden" name="data[Package][flexNumNightsMax]" value="<?=$package['Package']['flexNumNightsMax'];?>">
+						 <input type="hidden" name="data[Package][flexNotes" value="<?=$package['Package']['flexNotes'];?>">
+
 					 <? }else{ 
-							$isFlex=intval($package['Package']['isFlexPackage']);
 							?>
              <input type="radio" name="data[Package][isFlexPackage]" id="isFlexPackage" value="1" <?=(($isFlex==1) ? 'checked' : ''); ?>  /> Yes
              <input type="radio" name="data[Package][isFlexPackage]" id="notFlexPackage" value="0" <?=(($isFlex == 0) ? 'checked' : ''); ?> /> No

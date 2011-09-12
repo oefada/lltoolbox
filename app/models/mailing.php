@@ -21,11 +21,22 @@ class Mailing extends AppModel {
 		function generator($clientId_arr){
 
 			foreach($clientId_arr as $key=>$id)if ($id!='')$arr[$key]=$id;
+
+			$q="SELECT * FROM client WHERE client.clientId IN (".implode(",",$arr).")";
+			$rows=$this->query($q);
+
+			if (count($rows)!=count($arr)){
+				exit("The number of clients found (".count($rows).") does not match the number of client id's submitted (".count($arr).")");
+			}
+
+
+/*
 			$q="SELECT * FROM client, offerLuxuryLink WHERE client.clientId IN (".implode(",",$arr).")";
 			$q.=" AND client.clientId=offerLuxuryLink.clientId ";
-			$q.="AND isClosed=0 ";
+			//$q.="AND isClosed=0 ";
 			$q.="GROUP BY client.clientId";
 			$rows=$this->query($q);
+*/
 //print "<pre>"; 
 //print_r($clientId_arr); 
 //print_r($arr);	
