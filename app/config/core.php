@@ -135,7 +135,7 @@ $cacheAction = true;
  * Session time out time (in seconds).
  * Actual value depends on 'Security.level' setting.
  */
-	Configure::write('Session.timeout', '120');
+	Configure::write('Session.timeout', '7200');
 /**
  * If set to false, sessions are not automatically started.
  */
@@ -144,7 +144,7 @@ $cacheAction = true;
  * When set to false, HTTP_USER_AGENT will not be checked
  * in the session
  */
-	Configure::write('Session.checkAgent', true);
+	Configure::write('Session.checkAgent', false);
 /**
  * The level of CakePHP security. The session timeout time defined
  * in 'Session.timeout' is multiplied according to the settings here.
@@ -157,9 +157,7 @@ $cacheAction = true;
  * CakePHP session IDs are also regenerated between requests if
  * 'Security.level' is set to 'high'.
  */
-	$level="medium";
-	if ($_SERVER['ENV']=='development')$level="low";
-	Configure::write('Security.level', $level);
+	Configure::write('Security.level', 'low');
 /**
  * A random string used in security hashing methods.
  */
