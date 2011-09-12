@@ -17,7 +17,5 @@
 	<ul>
 		<li><?php echo $html->link(__('Delete', true), array('action'=>'delete', $form->value('CreditTracking.creditTrackingId')), null, sprintf(__('Are you sure you want to delete # %s?', true), $form->value('CreditTracking.creditTrackingId'))); ?></li>
 		<li><?php echo $html->link(__('List CreditTrackings', true), array('action'=>'index'));?></li>
-		<li><?php echo $html->link(__('List Credit Tracking Types', true), array('controller'=> 'credit_tracking_types', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Credit Tracking Type', true), array('controller'=> 'credit_tracking_types', 'action'=>'add')); ?> </li>
 	</ul>
 </div>
