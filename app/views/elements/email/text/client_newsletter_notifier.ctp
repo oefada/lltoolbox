@@ -13,9 +13,7 @@ It is certainly our pleasure to promote <?=$client['name']?>.
 
 Warm Regards,
 
-Luxury Link Client Services
-P 888.297.3299 | 310.215.8060 | F 310.215.8279 | www.luxurylink.com
-Luxury Link  | The World's Leading Luxury Travel Website
+Luxury Link
 
-"Best of the Net - In the Lap of Luxury" --Inc. Magazine
-"Upscale travel packages and other travel information geared toward the well-heeled" --The Wall Street Journal
+Luxury Link is a part of the Luxury Link Travel Group
+P 424.835.3620 | F 424.835.3621 | www.luxurylink.com

@@ -17,16 +17,10 @@
 <p>
 	It is certainly our pleasure to promote <?=$client['name']?>.
 </p>
-<div style="font-family: Verdana; font-size: 10px; font-weight: bold; color: #777777;">
-	<strong>
-		<div style="color: #990000">
-			LUXURY LINK CLIENT SERVICES
-		</div>
-		P 888.297.3299 | 310.215.8060 | F 310.215.8279 | www.luxurylink.com
-		<br />
-		<br /><span style="color: #990000; font-weight: bold">Luxury Link</span> | The World's Leading Luxury Travel Website
-		<br />
-		<br />"Best of the Net - In the Lap of Luxury" --Inc. Magazine
-		<br />"Upscale travel packages and other travel information geared toward the well-heeled" --The Wall Street Journal
-	</strong>
-</div>
+<p>Warm Regards,<br />
+Luxury Link<br />
+</p>
+<p>
+Luxury Link is a part of the Luxury Link Travel Group<br />
+P 424.835.3620 | F 424.835.3621 | <a href="http://www.luxurylink.com">www.luxurylink.com</a>
+</p>
