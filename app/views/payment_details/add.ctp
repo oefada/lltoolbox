@@ -263,7 +263,7 @@ jQuery(document).ready(function($) {
 	var ps = $("#paymentSettings");
 	
 	setCollapse();
-		
+
 	$(".collapsible legend").live('click', function() {
 		var cC = $(this).parent().children('.collapsibleContent');
 		if (cC.hasClass('closed')) {
@@ -326,7 +326,6 @@ jQuery(document).ready(function($) {
 		// Process payment via Ajax
 		
 		var data = { };
-		//alert(data.toSource());
 		$.post(thisUrl, $("#paymentForm").serialize(), function(data) {
 			$(".paymentsDebug").show().html(data);
 			refreshPayments();
@@ -386,7 +385,6 @@ jQuery(document).ready(function($) {
 	
 	ptId.change(function() {
 		var val = $(this).val();
-
 		if (val != 1) {
 			$('#showPaymentSetting').hide();
 			if (val == 2 || val == 4) {
@@ -485,17 +483,18 @@ jQuery(document).ready(function($) {
 
 					ptId.val(1);
 					ppId.val(1).change();
-					
-					setPaymentAmt($.parseJSON(data.responseText));
+
 					hideSpinner();
 				}
+				
+				setPaymentAmt($.parseJSON(data.responseText));
 			}
 		});
 	}
 	
 	function setPaymentAmt(obj) {
 		payment_amt = obj.payment_amt;
-		
+
 		$("#balanceRemaining").html(obj.payment_amt);
 		$("#PaymentDetailPaymentAmount").val(obj.payment_amt);
 		$("#totalPayments").html(obj.total_payments);

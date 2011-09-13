@@ -186,6 +186,7 @@ class Ticket extends AppModel {
 				$data['GiftCert']['totalAmountOff'] = $data['GiftCert']['balance'];
 				$data['GiftCert']['remainingBalance'] = false;
 			}
+			
 			$ticketPrice = $new_price;
 			$data['GiftCert']['applied'] = ($data['GiftCert']['totalAmountOff'] > 0) ? 1 : 0;
 			
@@ -225,7 +226,6 @@ class Ticket extends AppModel {
 				$data['Cof']['remainingBalance'] = false;
 			}
 			
-			$ticketPrice = $new_price;
 			$data['Cof']['applied'] = ($data['Cof']['totalAmountOff'] > 0) ? 1 : 0;
 		} else {
 			$data['Cof']['totalAmountOff'] = 0;
@@ -239,14 +239,6 @@ class Ticket extends AppModel {
 		$paymentRecordSql.= "WHERE ticketId = $ticketId AND isSuccessfulCharge = 1";
 		$paymentRecordResult = $this->query($paymentRecordSql);
 		if (!empty($paymentRecordResult)) {
-			// if there is a GiftCert, add the 'totalAmountOff' to the ticketPrice
-			if (isset($data['GiftCert']['applied'])) {
-				$ticketPrice += $data['GiftCert']['totalAmountOff'];
-			}
-			if (isset($data['Cof']['applied'])) {
-				$ticketPrice += $data['Cof']['totalAmountOff'];
-			}
-
 			// loop over the result set from payementDetail with the gift cert data
 			// set GiftCert applied to 1 
 			// set totalAmountOff to paymentAmount retrieved from the db

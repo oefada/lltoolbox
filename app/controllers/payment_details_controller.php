@@ -274,12 +274,15 @@ class PaymentDetailsController extends AppController {
 		// Ajax to get payment in add.ctp
 		if (isset($this->params['url']['get_payment']) && $this->params['url']['get_payment'] != "" && isset($ticket['UserPromo'][$this->params['url']['get_payment']]['totalAmountOff'])) {
 			$payment_amt = $ticket['UserPromo'][$this->params['url']['get_payment']]['totalAmountOff'];
+			if ($payment_amt < 0) {
+				$payment_amt = $ticket['UserPromo']['final_price_actual'];	
+			}
 		} else {
 			$payment_amt = $ticket['UserPromo']['final_price_actual'];
 		}
 
 		if (isset($this->params['url']['get_payment'])) {
-			echo json_encode(array('payment_amt' => $payment_amt,'total_payments' => $ticket['UserPromo']['payments']));
+			echo json_encode(array('payment_amt' => $payment_amt,'total_payments' => $ticket['UserPromo']['payments'], 'balance' => $ticket['UserPromo']['final_price_actual']));
 			exit;
 		} 
 		
@@ -317,7 +320,7 @@ class PaymentDetailsController extends AppController {
 		if (isset($ticket['UserPromo']['Promo']) && $ticket['UserPromo']['Promo']['applied'] == 1) {
 			unset($paymentTypeIds[4]);
 		}
-		
+
 		$this->set('ticket', $ticket);
 		$this->set('countries', $this->Country->find('list'));
 		$this->set('selectExpMonth', $selectExpMonth);
