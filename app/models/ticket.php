@@ -673,9 +673,9 @@ CakeLog::write("debug","expCritId query $check_exp_crit");
   // mbyrnes
 	// if the number of rooms and number of nights multiplied is less than or = to the number of rooms 
 	// in inventory, take package down
-	function __runTakeDownNumRooms($offer,$ticketId,$siteOfferTable){
+	function __runTakeDownNumRooms($offer,$ticketId,$siteOfferTable,$numNights){
 
-		$offerNumNights=$offer['roomNights']*$offer['numRooms'];
+		$offerNumNights=$numNights*$offer['numRooms'];
 
 CakeLog::write("debug","offerNumNights:$offerNumNights");
 
