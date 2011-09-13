@@ -411,7 +411,7 @@ CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
 					$this->Ticket->__runTakeDownRetailValue($offerLive['clientId'], $offerLive['retailValue'], $ticketId);
 					break;
 				case 6://mbyrnes
-					$this->Ticket->__runTakeDownNumRooms($offerLive,$ticketId,$ticketSite);
+					$this->Ticket->__runTakeDownNumRooms($offerLive,$ticketId,$ticketSite,$data['numNights']);
 					break;
 
 			}
