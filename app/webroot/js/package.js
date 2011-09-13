@@ -686,6 +686,7 @@ function submitForm(thisId) {
 
 	// add/edit a package packages/edit_package
 	// check that numGuests is appropriate for the number of rooms
+
 	if ($('#numRooms').val()==0){
 		alert("You must set a 'Num Rooms' value greater than 0");
 		return false;
@@ -698,6 +699,7 @@ function submitForm(thisId) {
   $.post(window.location.href,
 		$('#'+thisId).serialize(),
 			function(data) {
+
 				if (data == 'ok') {
 					parent.closeForm(thisId);
 				} else {
