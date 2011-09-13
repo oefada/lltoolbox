@@ -7,6 +7,7 @@ class PackagesController extends AppController {
   var $paginate = array('order' => array('Package.packageId' => 'desc'));
 
 	function beforeFilter() {
+
 		parent::beforeFilter();
 		$this->set('currentTab', 'property');
 		$this->set('searchController' ,'client');
@@ -1018,7 +1019,9 @@ class PackagesController extends AppController {
     function edit_package($clientId, $packageId) {
 
         if (!empty($this->data)) {
+
             $package = $this->data;
+
             if ($_POST['isAjax'] == 'true') {
                 $this->autoRender = false;
             }
