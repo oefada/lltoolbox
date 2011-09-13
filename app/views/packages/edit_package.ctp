@@ -127,7 +127,7 @@
              <input type="hidden" name="data[Package][isFlexPackage]" value="<?=($isFlex==1);?>" /> 
              <input type="hidden" name="data[Package][flexNumNightsMin]" value="<?=$package['Package']['flexNumNightsMin'];?>">
 						 <input type="hidden" name="data[Package][flexNumNightsMax]" value="<?=$package['Package']['flexNumNightsMax'];?>">
-						 <input type="hidden" name="data[Package][flexNotes" value="<?=$package['Package']['flexNotes'];?>">
+						 <input type="hidden" name="data[Package][flexNotes]" value="<?=$package['Package']['flexNotes'];?>">
 
 					 <? }else{ 
 							?>
@@ -137,7 +137,7 @@
 					 <? } ?>
            </td>
         </tr>
-        <?php $style = ($package['Package']['isFlexPackage'] == '0' || empty($package['Package']['isFlexPackage'])) ? 'style="display:none"' : ''; ?>
+        <?php $style = ( $package['Package']['packageId']>0 || $package['Package']['isFlexPackage'] == '0' || empty($package['Package']['isFlexPackage'])) ? 'style="display:none"' : ''; ?>
         <tr class="flexOptions"<?php echo $style; ?>>
             <th>Choose Min/Max for<br /> this Package</th>
             <td>Min Nights: &nbsp;&nbsp;
