@@ -3932,6 +3932,72 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		$dompdf->render();
 		$dompdf->stream('sample.pdf');
 	}
+	
+	/**
+	 * 
+	 */
+	public function consolidated_report($client_id = null)
+	{
+		$this->layout = 'ajax';
+		$this->autoRender = false;
+		$phpExcelVersion = '1.7.6';
+		
+		App::import('Vendor', 'PHPExcel', array('file' => "PHPExcel-$phpExcelVersion" . DS . 'PHPExcel.php'));
+		App::import('Vendor', 'PHPExcel', array('file' => "PHPExcel-$phpExcelVersion" . DS . 'Reader' . DS . 'Excel2007.php'));
+		App::import('Vendor', 'PHPExcel', array('file' => "PHPExcel-$phpExcelVersion" . DS . 'Writer' . DS . 'Excel2007.php'));
+		
+		$template = '../vendors/consolidated_report/template.xlsx';
+		$newFile = '../tmp/consolidated_report.xlsx';
+		$outputFile = '../tmp/consolidated_report_output.xlsx';
+		file_put_contents($outputFile, file_get_contents($template));
+
+		$objReader = PHPExcel_IOFactory::createReader('Excel2007');
+		$objPHPExcel = $objReader->load($template);
+		//$objPHPExcel->setActiveSheetIndex(3);
+		//$objPHPExcel->getActiveSheet()->setCellValue('E18', '50');
+		//$objPHPExcel->getActiveSheet()->setCellValue('E19', '55');
+		//$objPHPExcel->getActiveSheet()->setCellValue('E20', '60');
+		$objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
+		$objWriter->save($newFile);
+		$this->updateOriginalFile($outputFile, $newFile);
+	}
+
+	/**
+	 * 
+	 */
+	private function updateOriginalFile($originalFile, $updatedFile, $updateSheetData = false)
+	{
+		$zipUpdated= new ZipArchive();
+		$zipUpdated->open($updatedFile);
+		$zipOriginal = new ZipArchive();
+		$zipOriginal->open($originalFile);		
+		$xmlWorkbook = simplexml_load_string($zipUpdated->getFromName("xl/_rels/workbook.xml.rels"));
+		foreach($xmlWorkbook->Relationship as $ele) {
+			if ($ele["Type"] == "http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet") {
+				$currentSheetName = "xl/". $ele["Target"];
+				$updatedSheet = simplexml_load_string($zipUpdated->getFromName($currentSheetName));
+				$origSheet = simplexml_load_string($zipOriginal->getFromName($currentSheetName));
+				$origSheet->sheetData ="";
+				$str = str_replace("<sheetData></sheetData>", $updatedSheet->sheetData->asXml(), $origSheet->asXml());
+				$zipOriginal->addFromString($currentSheetName, $str);
+			}
+		}
+
+		if ($updateSheetData) {
+			$workbookXML = "xl/workbook.xml";
+  			$origNames = simplexml_load_string($zipOriginal->getFromName($workbookXML));
+  			$updatedNames = simplexml_load_string($zipUpdated->getFromName($workbookXML));
+
+	  		$origNames->definedNames = "";
+  			$nRanges = str_replace("<definedNames></definedNames>", $updatedNames->definedNames->asXML(), $origNames->asXML());
+  			$zipOriginal->addFromString($workbookXML, $nRanges);
+		}
+		
+		$updatedStrings = simplexml_load_string($zipUpdated->getFromName( "xl/sharedStrings.xml"));
+		$zipOriginal->addFromString("xl/sharedStrings.xml", $updatedStrings->asXML());
+		$zipOriginal->close();
+		$zipUpdated->close();
+	}
 }
 
 
