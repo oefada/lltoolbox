@@ -3938,9 +3938,11 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 	 */
 	public function consolidated_report($client_id = null)
 	{
-		$this->layout = 'ajax';
-		$this->autoRender = false;
+		//$this->layout = 'ajax';
+		//$this->autoRender = false;
+		$this->layout = 'excel';
 		$phpExcelVersion = '1.7.6';
+		Configure::write('debug', 0);
 		
 		App::import('Vendor', 'PHPExcel', array('file' => "PHPExcel-$phpExcelVersion" . DS . 'PHPExcel.php'));
 		App::import('Vendor', 'PHPExcel', array('file' => "PHPExcel-$phpExcelVersion" . DS . 'Reader' . DS . 'Excel2007.php'));
@@ -3960,6 +3962,8 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		$objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
 		$objWriter->save($newFile);
 		$this->updateOriginalFile($outputFile, $newFile);
+		$spreadsheet = file_get_contents($outputFile);
+		$this->set('spreadsheet', $spreadsheet);
 	}
 
 	/**
