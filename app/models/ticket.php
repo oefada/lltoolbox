@@ -654,7 +654,7 @@ CakeLog::write("debug","expCritId query $check_exp_crit");
 	private function getSmids($clientId,$packageId,$expirationId){
 
 		$q="SELECT loa.membershipNightsRemaining as nightsRemaining, loa.membershipTotalNights as totalNights, ";
-		$q.="loa.loaId as loaId, ";
+		$q.="loa.loaId as loaId, track.trackId, ";
 		$q.="GROUP_CONCAT(schedulingMasterId) AS smids FROM loa  ";
 		$q.="INNER JOIN track USING (loaId) "; 
 		$q.="INNER JOIN schedulingMasterTrackRel USING (trackId)  ";
@@ -684,19 +684,24 @@ CakeLog::write("debug","offerNumNights:$offerNumNights");
 CakeLog::write("debug","num results retrieved:".count($result));
 
 		$pids = array();
+		$trackIdTakeDown_arr=array();
 		foreach ($result as $k => $v) {
 
 			$nightsRemaining=$v['loa']['nightsRemaining'];
 			$totalNights=$v['loa']['totalNights'];
 			$loaId=$v['loa']['loaId'];
 			$smids=$v[0]['smids'];
+			$trackId=$v['track']['trackId'];//123
 
 CakeLog::write("debug","nightsRemaining:$nightsRemaining-offerNumNights:$offerNumNights|totalNights:$totalNights|loaId:$loaId|smids:$smids");
 
-			if ($nightsRemaining-$offerNumNights<=0){	
+			if ($nightsRemaining-$offerNumNights<=0 || in_array($trackId,$trackIdTakeDown_arr)){	
 
 				// close all live Fixed Price offers and delete all future schedulingInstances / schedulingMasters
 				if ($this->__runTakeDown($smids)){
+
+					$trackIdTakeDown_arr[]=$trackId;
+
 					$this->insertMessageQueuePackage($ticketId, 'NUM_ROOMS');
 					$q="UPDATE loa SET membershipNightsRemaining=0 WHERE loaId=$loaId";
 CakeLog::write("debug","takedown run $q");
