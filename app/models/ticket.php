@@ -695,8 +695,9 @@ CakeLog::write("debug","num results retrieved:".count($result));
 
 CakeLog::write("debug","nightsRemaining:$nightsRemaining-offerNumNights:$offerNumNights|totalNights:$totalNights|loaId:$loaId|smids:$smids|trackId:$trackId");
 
-			// if the nightsRemaining is less than 0 or there is the same trackId/loaId that was taken down 
-			if ($nightsRemaining-$offerNumNights<=0 || (isset($trackIdTakeDown_arr[$trackId]) && $trackIdTakeDown_arr[$trackId]==$loaId)){
+			// if the nightsRemaining is less than 0 
+			// on hold: or there is the same trackId/loaId that was taken down 
+			if ($nightsRemaining-$offerNumNights<=0){// || (isset($trackIdTakeDown_arr[$trackId]) && $trackIdTakeDown_arr[$trackId]==$loaId)){
 
 				// close all live Fixed Price offers and delete all future schedulingInstances / schedulingMasters
 				if ($this->__runTakeDown($smids)){
