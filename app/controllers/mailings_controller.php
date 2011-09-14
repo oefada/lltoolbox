@@ -38,9 +38,21 @@ class MailingsController extends AppController {
 			$date_ymd=$year.$month.$day;
 			$this->set("date_ymd",$date_ymd);
 
+			$clientId_arr=$this->params['form']['clientId_arr'];
+			$clientName_arr=$this->params['form']['clientName'];
+			$error=false;
+			foreach($clientId_arr as $key=>$id){
+				if (trim($id)=='')$error=true;	
+			}
+			if ($error){
+				echo "<p>The following clientId's were submitted:</p>";
+				foreach($clientId_arr as $key=>$id){
+					echo ($key+1).".) clientId: $id clientName: ".$clientName_arr[$key]."<br>";
+				}
+				exit("<p style='color:red;'>You must submit 15 clients.</p>");
+			}
 			$this->layout=false;
-			$rows=$this->Mailing->generator($this->params['form']['clientId_arr']);	
-			if (count($rows)<15)exit("You must submit 15 clients");
+			$rows=$this->Mailing->generator($clientId_arr);	
 			$this->set('rows',$rows);
 
 		}

@@ -25,8 +25,25 @@ class Mailing extends AppModel {
 			$q="SELECT * FROM client WHERE client.clientId IN (".implode(",",$arr).")";
 			$rows=$this->query($q);
 
+			$error=false;
 			if (count($rows)!=count($arr)){
-				exit("The number of clients found (".count($rows).") does not match the number of client id's submitted (".count($arr).")");
+				foreach($arr as $key=>$clientId){
+					$match=false;
+					foreach($rows as $row){
+						$db_clientId=$row['client']['clientId'];
+						if ($db_clientId==$clientId){
+							$match=true;
+							break;
+						}
+					}
+					if ($match==false){
+						$error=true;
+						echo "<p>Not finding clientId ".$clientId." in client table.<p>";
+					}
+				}
+				if ($error){
+					exit("The number of clients found (".count($rows).") does not match the number of client id's submitted (".count($arr).")");
+				}
 			}
 
 
