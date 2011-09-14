@@ -47,7 +47,7 @@
 	<form onSubmit="return false;" id="paymentForm">
 	<?php echo $form->input('ticketId', array('type' => 'hidden', 'value' => $ticket['Ticket']['ticketId']));?>
 	<?php echo $form->input('userId', array('type' => 'hidden', 'value' => $ticket['Ticket']['userId']));?>
-	<div class="paymentsDebug"></div>
+	<div class="paymentsDebug" style="display: none"></div>
 	<div class="paymentColumns">
 		<div class="col1">
 			<h2>Payment Settings:</h2>
@@ -327,7 +327,17 @@ jQuery(document).ready(function($) {
 		
 		var data = { };
 		$.post(thisUrl, $("#paymentForm").serialize(), function(data) {
-			$(".paymentsDebug").show().html(data);
+			//$(".paymentsDebug").show().html(data);
+			if (data != "CHARGE_SUCCESS") {
+				if (data == "NO_ACCT") {
+					alert("You did not select a credit card to charge.");
+				} else {
+					alert("Payment declined or an error occurred. Please verify information.");
+				}
+			} else {
+				alert("Payment charged successfully");
+			}
+			
 			refreshPayments();
 			
 			if (ptId.val() == 3) {
