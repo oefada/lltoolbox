@@ -282,6 +282,10 @@ class PaymentDetailsController extends AppController {
 			$payment_amt = $ticket['UserPromo']['final_price_actual'];
 		}
 
+		if ($payment_amt < 0) {
+			$payment_amt = 0;
+		}
+		
 		if (isset($this->params['url']['get_payment'])) {
 			echo json_encode(array('payment_amt' => $payment_amt,'total_payments' => $ticket['UserPromo']['payments'], 'balance' => $ticket['UserPromo']['final_price_actual']));
 			exit;
