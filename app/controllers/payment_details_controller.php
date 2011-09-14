@@ -14,7 +14,7 @@ class PaymentDetailsController extends AppController {
 		parent::beforeFilter();
 		
 		$currentUser = $this->LdapAuth->user();		
-		if (in_array('Accounting',$currentUser['LdapUser']['groups']) || in_array('Geeks',$currentUser['LdapUser']['groups'])) {
+		if (in_array('Accounting',$currentUser['LdapUser']['groups']) || in_array('concierge',$currentUser['LdapUser']['groups']) || in_array('Geeks',$currentUser['LdapUser']['groups'])) {
 			$this->canSave = true;
 		}
 		
@@ -49,7 +49,8 @@ class PaymentDetailsController extends AppController {
 					break;
 			}
 			
-        	$webservice_live_url = 'http://toolbox.luxurylink.com/web_service_tickets?wsdl';
+        	//$webservice_live_url = Configure::read("Url.Ws").'/web_service_tickets?wsdl';
+			$webservice_live_url = 'http://toolbox.luxurylink.com/web_service_tickets?wsdl';
 			$webservice_live_method_name = 'processPaymentTicket';
 			$webservice_live_method_param = 'in0';
 			
@@ -310,7 +311,7 @@ class PaymentDetailsController extends AppController {
 		}
 		*/
 					
-		if (false == true) {
+		if (in_array($initials_user, array('rvella','cholland','bjensen','kferson'))) {
 			if (!empty($ticket['User']['UserPaymentSetting'])) {
 				foreach ($ticket['User']['UserPaymentSetting'] as $ups_key => $ups) {
 					$cc_full = $this->PaymentDetail->query('SELECT ccNumber FROM userPaymentSetting WHERE userPaymentSettingId = ' . $ups['userPaymentSettingId']);				
