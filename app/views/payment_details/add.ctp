@@ -474,6 +474,8 @@ jQuery(document).ready(function($) {
 			type : "GET",
 			async: async,
 			complete: function(data) {
+				var obj = $.parseJSON(data.responseText);
+				
 				if (payment_added == 1) {
 					if (ptId.val() == 1) {
 						async = false;
@@ -481,13 +483,17 @@ jQuery(document).ready(function($) {
 						async = true;
 					}
 
+					if (parseInt(obj.balance) <= 0) {
+						window.location.href = "/tickets/view/"+ticketId;
+					}
+					
 					ptId.val(1);
 					ppId.val(1).change();
 
 					hideSpinner();
 				}
 				
-				setPaymentAmt($.parseJSON(data.responseText));
+				setPaymentAmt(obj);
 			}
 		});
 	}
@@ -495,7 +501,7 @@ jQuery(document).ready(function($) {
 	function setPaymentAmt(obj) {
 		payment_amt = obj.payment_amt;
 
-		$("#balanceRemaining").html(obj.payment_amt);
+		$("#balanceRemaining").html(obj.balance);
 		$("#PaymentDetailPaymentAmount").val(obj.payment_amt);
 		$("#totalPayments").html(obj.total_payments);
 	}
