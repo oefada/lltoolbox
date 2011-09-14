@@ -303,10 +303,12 @@ class PaymentDetailsController extends AppController {
 			$initials_user = false;
 		}
 		
+		/*
 		if (!in_array($initials_user, array('rvella','cholland','bjensen','kferson'))) {
 			$this->Session->setFlash("Only accounting and tech can access this page. Please contact Chris or Rob.");
 			$this->redirect($_SERVER['HTTP_REFERER']);
 		}
+		*/
 					
 		if (false == true) {
 			if (!empty($ticket['User']['UserPaymentSetting'])) {
