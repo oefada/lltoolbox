@@ -11,15 +11,7 @@ class ConsolidatedReport
 	 * @access	private
 	 * @param	array
 	 */
-	private $worksheets = array(
-		1 => 'Dashboard',
-		2 => 'Activity Summary',
-		3 => 'Bookings',
-		4 => 'Impressions',
-		5 => 'Leads By Geo',
-		6 => 'Contact Details',
-		7 => 'Key - Legend'
-	);
+	private $worksheets;
 	
 	/**
 	 * Path to the spreadsheet template
@@ -66,6 +58,7 @@ class ConsolidatedReport
 	 */
 	private $writer;	
 	
+
 	/**
 	 * Class constructer
 	 */
@@ -76,20 +69,41 @@ class ConsolidatedReport
 		$this->outputFile = $outputFile_path;
 		$this->filename = $filename;
 		
+		// Create the phpExcel object from a Reader loading a template
 		$this->phpExcel = PHPExcel_IOFactory::createReader('Excel2007')->load($this->template);
 		
-		// Create file that will contain new data and charts
-		file_put_contents($this->outputFile, file_get_contents($this->template));
+		// Get the worksheet names
+		$this->worksheets = $this->get()->getSheetNames();
+	}
+
+	/**
+	 * Return the phpExcel object in case the object needs to be used directly
+	 * 
+	 * @access	public
+	 * @return	object
+	 */
+	public function get()
+	{
+		return $this->phpExcel;
 	}
 	
 	/**
+	 * Get the worksheets in the loaded template
 	 * 
+	 * @access	public
+	 * @return	array worksheet names
 	 */
-	public function __destruct()
+	public function getWorkSheets()
 	{
-		
+		return $this->worksheets;
 	}
-	
+
+	/**
+	 * Set the active worksheet by name or index
+	 * 
+	 * @access	public
+	 * @param	int or string worksheet name
+	 */
 	public function setActiveWorksheet($worksheet)
 	{
 		$worksheet_index = null;
@@ -101,47 +115,56 @@ class ConsolidatedReport
  
 		if ($worksheet_index && isset($this->worksheets[$worksheet_index])) {
 			$this->phpExcel->setActiveSheetIndex($worksheet_index);
+			return $this;
 		} else {
 			throw new Exception('Invalid Worksheet');
 		}
 	}
 	
 	/**
+	 * Set the value of a given cell
 	 * 
+	 * @access	public
+	 * @param	string cell
+	 * @param	mixed value
+	 * @return	object this
 	 */
 	public function setCellValue($cell, $value)
 	{
 		$this->phpExcel->getActiveSheet()->setCellValue($cell, $value);
+		return $this;
 	}
-	
+
 	/**
+	 * Writes the spreadsheet object from memory to a new file
 	 * 
+	 * @access	public
+	 * @param	boolean inject_into_chart
 	 */
-	public function getWorkSheets()
+	public function writeSpreadsheetObjectToFile($inject_into_chart = true)
 	{
-		return $this->worksheets;
-	}
-	
-	public function test()
-	{
-		$this->setActiveWorksheet('Bookings');
-		$this->setCellValue('E18', '1');
-		$this->setCellValue('E19', '5');
-		$this->setCellValue('E20', '10');
-	}	
-	
-	/**
-	 * 
-	 */
-	public function writeSpreadsheetObjectToFile()
-	{
+		$file_data = null;
 		$this->writer = new PHPExcel_Writer_Excel2007($this->phpExcel);
 		$this->writer->save($this->newFile);
-		$this->injectDataIntoChartFile($this->outputFile, $this->newFile);
+		if ($inject_into_chart) {
+			// Output file will contain chart data from template
+			$file_data = file_get_contents($this->template);
+			
+			// Inject modified cell data into file with charts
+			$this->injectDataIntoChartFile($this->outputFile, $this->newFile);
+		} else {
+			// Output file will not contain chart data
+			$file_data = file_get_contents($this->newFile);
+		}
+		
+		file_put_contents($this->outputFile, $file_data);
 	}
-	
+
 	/**
+	 * Returns the file contents of output file on disk
 	 * 
+	 * @access	public
+	 * @return	mixed file data 
 	 */
 	public function getSpreadsheetData()
 	{
@@ -149,7 +172,28 @@ class ConsolidatedReport
 	}
 	
 	/**
+	 * Test function
+	 * TODO: Remove before release
+	 */
+	public function test()
+	{
+		$this->setActiveWorksheet('Bookings')
+			 ->setCellValue('E18', '1')
+			 ->setCellValue('E19', '2')
+			 ->setCellValue('E20', '3');
+	}
+
+	/**
+	 * Chart support is non-existant as of PHPExcel-1.7.6
 	 * 
+	 * Workaround: After the template is read, object is manipulated, and the
+	 * the object is saved to disk, the newly created but chartless spreadsheet
+	 * cell data is 'injected' into a spreadsheet containing the charts.
+	 * 
+	 * @access	public
+	 * @param	string filepath of the spreadsheet with charts
+	 * @param	string filepath of the spreadsheet sans charts / with updated data
+	 * @param	boolean updateSheetData flag
 	 */
 	private function injectDataIntoChartFile($originalFile, $updatedFile, $updateSheetData = false)
 	{
