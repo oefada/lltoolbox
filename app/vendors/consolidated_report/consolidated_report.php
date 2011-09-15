@@ -37,15 +37,7 @@ class ConsolidatedReport
 	 * @param	string
 	 */
 	private $outputFile;
-	
-	/**
-	 * Filename that will be generated for downloads
-	 * 
-	 * @access	private
-	 * @param	string
-	 */
-	private $filename;
-	
+
 	/**
 	 * @access	private
 	 * @param	object
@@ -61,13 +53,17 @@ class ConsolidatedReport
 
 	/**
 	 * Class constructer
+	 * 
+	 * @access	public
+	 * @param	string $template_path
+	 * @param	string $newFile_path
+	 * @param	string $outputFile_path
 	 */
-	public function __construct($template_path, $newFile_path, $outputFile_path, $filename)
+	public function __construct($template_path, $newFile_path, $outputFile_path)
 	{
 		$this->template = $template_path;
 		$this->newFile = $newFile_path;
 		$this->outputFile = $outputFile_path;
-		$this->filename = $filename;
 		
 		// Create the phpExcel object from a Reader loading a template
 		$this->phpExcel = PHPExcel_IOFactory::createReader('Excel2007')->load($this->template);
