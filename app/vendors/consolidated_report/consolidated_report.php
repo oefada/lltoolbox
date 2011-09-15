@@ -215,18 +215,6 @@ class ConsolidatedReport
 	}
 	
 	/**
-	 * Test function
-	 * TODO: Remove before release
-	 */
-	public function test()
-	{
-		$this->setActiveWorksheet('Bookings')
-			 ->setCellValue('E18', '1')
-			 ->setCellValue('E19', '2')
-			 ->setCellValue('E20', '3');
-	}
-
-	/**
 	 * Chart support is non-existant as of PHPExcel-1.7.6
 	 * 
 	 * Workaround: After the template is read, object is manipulated, and the
