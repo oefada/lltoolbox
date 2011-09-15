@@ -64,7 +64,7 @@
         <tr>
             <th>Status</th>
             <td>
-                <?php if ($packageId == 0): ?>
+                <?php if (!isset($packageId) || $packageId == 0): ?>
                     Setup
                     <input type="hidden" name="data[Package][packageStatusId]" value="<?php echo $package['Package']['packageStatusId']; ?>" />
                 <?php else: ?>
@@ -107,8 +107,12 @@
         <tr>
            <th>Is Private Package?</th>
            <td>
-						<input type="radio" name="data[Package][isPrivatePackage]" value="1" <?php echo ($package['Package']['isPrivatePackage'] == 1) ? 'checked' : ''; ?>  /> Yes
-						<input type="radio" name="data[Package][isPrivatePackage]" value="0" <?php echo ($package['Package']['isPrivatePackage'] == 0 || empty($package['Package']['isPrivatePackage'])) ? 'checked' : ''; ?> /> No
+						<?
+						$isPriv=0;
+						if (isset($package['Package']['isPrivatePackage']))$isPriv=(int)$package['Package']['isPrivatePackage'];
+						?>
+						<input type="radio" name="data[Package][isPrivatePackage]" value="1" <?=($isPriv==1) ? 'checked' : ''; ?>  /> Yes
+						<input type="radio" name="data[Package][isPrivatePackage]" value="0" <?=($isPriv == 0) ? 'checked' : ''; ?> /> No
            </td>
         </tr>
         <tr id="showFlex">

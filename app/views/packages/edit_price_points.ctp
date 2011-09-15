@@ -94,7 +94,7 @@
 									?>
 									guaranteedPercents[<?=$loaIRPI?>] = <?=($guarPerRet);?>;
 
-                  <? if ($package['Package']['isFlexPackage']): ?>
+                  <? if (true  || $package['Package']['isFlexPackage']): ?>
                     flexRoomPricePerNight[<? echo $ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId']; ?>] = <?php echo $ratePeriod['roomRetailPricePerNight']; ?>;
                   <? endif; ?>
                 </script>
@@ -348,7 +348,8 @@ $('#auction-percent, #buynow-percent').change(function() {
 
 $('.check-rate-period').change(function() {
     $('#flexSuggestedRetail').val('0');
-    updateRetail(true, true, <? echo $package['Package']['numNights']; ?>, '<?php echo $ratePeriods[0]['currencyCode']; ?>', isMultiClientPackage, <?php echo $package['Package']['isFlexPackage']; ?>);
+    //updateRetail(true, true, <? echo $package['Package']['numNights']; ?>, '<?php echo $ratePeriods[0]['currencyCode']; ?>', isMultiClientPackage, <?php echo $package['Package']['isFlexPackage']; ?>);
+    updateRetail(true, true, <? echo $package['Package']['numNights']; ?>, '<?php echo $ratePeriods[0]['currencyCode']; ?>', isMultiClientPackage, 1);
 });
 
 $('input#flexSuggestedRetail').change(function() {

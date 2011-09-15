@@ -148,11 +148,11 @@ class PackagesController extends AppController {
 			$this->data['Package']['packageStatusId'] = 4;
 			if ($this->Package->saveAll($this->data, array('validate' => false)) && $this->Package->save($this->data, array('validate' => false))) {
                 //create price point
-                $pricePointId = $this->Package->PricePoint->createHotelOfferPricePoint($this->Package->id);
+        $pricePointId = $this->Package->PricePoint->createHotelOfferPricePoint($this->Package->id);
 				// create schedulingMaster
 				$this->Package->SchedulingMaster->create();
 				$sched_master['SchedulingMaster']['packageId'] = $this->Package->id;
-                $sched_master['SchedulingMaster']['pricePointId'] = $pricePointId;
+        $sched_master['SchedulingMaster']['pricePointId'] = $pricePointId;
 				$sched_master['SchedulingMaster']['offerTypeId'] = 7;
 				$sched_master['SchedulingMaster']['iterationSchedulingOption'] = 1;
 				$sched_master['SchedulingMaster']['remittanceTypeId'] = 0;
@@ -1076,7 +1076,7 @@ class PackagesController extends AppController {
                 }
             }
 
-            if ($this->data['Package']['isFlexPackage'] == 0) {
+            if (false && $this->data['Package']['isFlexPackage'] == 0) {
                 $this->data['Package']['flexNumNightsMin']=0;
                 $this->data['Package']['flexNumNightsMax']=0;
                 $this->data['Package']['flexNotes']='';
@@ -1123,12 +1123,17 @@ class PackagesController extends AppController {
                     $this->redirect('/clients/'.$clientId.'/packages/summary/'.$packageId);
                 }
                 else {
-                    $this->Session->setFlash($this->Package->validationErrors);
+								//print_r($this->Package->validationErrors);exit;
+										$errors=implode("<br>",$this->Package->validationErrors);
+                    $this->Session->setFlash($errors);
                     //$this->redirect('/clients/'.$clientId.'/packages/edit_package/0?loaId='.$this->data['ClientLoaPackageRel'][0]['loaId']);
                 }
             }
-        }
-        else {
+						if (!isset($packageId)){
+							$this->set("packageId",0);
+						}
+						$this->set("package",$package);
+        } else {
             if ($packageId) {
                 $package = $this->Package->getPackage($packageId);
             }
@@ -2589,7 +2594,7 @@ CakeLog::write('debug', 'C');
                 $ratePeriods[$key]['usdStartPrice'] = ($currency['Currency']['currencyId'] == 1) ? '' : "$(" . round($startPrice * $currency['CurrencyExchangeRate']['weeklyExchangeRateToDollar']) . ")";
                 $ratePeriods[$key]['usdRetailValue'] = ($currency['Currency']['currencyId'] == 1) ? '' : "($" . round($total * $currency['CurrencyExchangeRate']['weeklyExchangeRateToDollar']) . ")";
                 $ratePeriods[$key]['clientName'] = $clientName;
-                if ($package['Package']['isFlexPackage']) {
+                if (true || $package['Package']['isFlexPackage']) {
                     $ratePeriods[$key]['roomRetailPricePerNight'] = $total/$package['Package']['numNights'];
                     $ratePeriods[$key]['flexPricePerNight'] = (!empty($ratePeriod['PricePoint']['pricePerExtraNight'])) ? $ratePeriod['PricePoint']['pricePerExtraNight'] : $this->LoaItem->calcFlexPricePerNight($ratePeriod['LoaItemRatePeriod']['loaItemId'], $packageId, $ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId']);
                 }
