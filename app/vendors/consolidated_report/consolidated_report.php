@@ -48,7 +48,13 @@ class ConsolidatedReport
 	 * @access	private
 	 * @param	object
 	 */
-	private $writer;	
+	private $writer;
+	
+	/**
+	 * @access	private
+	 * @param	array
+	 */
+	private $dataToPopulate;
 	
 
 	/**
@@ -118,6 +124,34 @@ class ConsolidatedReport
 	}
 	
 	/**
+	 * Set data in the dataToPopulate array
+	 * 
+	 * @access	public
+	 * @param	string $worksheet_name
+	 * @param	string $label
+	 * @param	string $cell
+	 * @param	string $value
+	 */
+	public function setDataToPopulate($worksheet_name, $label, $cell, $value)
+	{
+		$this->dataToPopulate[$worksheet_name][$label] = array(
+			'cell' => $cell,
+			'value' => $value
+		);
+	}
+	
+	/**
+	 * Get the dataToPopulate array
+	 * 
+	 * @access	public
+	 * @return	array
+	 */
+	public function getDataToPopulate()
+	{
+		return $this->dataToPopulate;
+	}
+	
+	/**
 	 * Set the value of a given cell
 	 * 
 	 * @access	public
@@ -130,6 +164,22 @@ class ConsolidatedReport
 		$this->phpExcel->getActiveSheet()->setCellValue($cell, $value);
 		return $this;
 	}
+	
+	/**
+	 * Utility method to set worksheet/cell data
+	 *  
+	 * @access	public
+	 * @param	array $spreadsheet_data
+	 */
+	public function populateFromArray($spreadsheet_data)
+	{
+		foreach($spreadsheet_data as $worksheet_name => $worksheet_data) {
+			$this->setActiveWorksheet($worksheet_name);
+			foreach($worksheet_data as $cell_data) {
+				$this->setCellValue($cell_data['cell'], $cell_data['value']);
+			}
+		}
+	}
 
 	/**
 	 * Writes the spreadsheet object from memory to a new file
@@ -139,21 +189,18 @@ class ConsolidatedReport
 	 */
 	public function writeSpreadsheetObjectToFile($inject_into_chart = true)
 	{
-		$file_data = null;
 		$this->writer = new PHPExcel_Writer_Excel2007($this->phpExcel);
 		$this->writer->save($this->newFile);
 		if ($inject_into_chart) {
 			// Output file will contain chart data from template
-			$file_data = file_get_contents($this->template);
+			file_put_contents($this->outputFile, file_get_contents($this->template));
 			
 			// Inject modified cell data into file with charts
 			$this->injectDataIntoChartFile($this->outputFile, $this->newFile);
 		} else {
 			// Output file will not contain chart data
-			$file_data = file_get_contents($this->newFile);
+			file_put_contents($this->outputFile, file_get_contents($this->newFile));
 		}
-		
-		file_put_contents($this->outputFile, $file_data);
 	}
 
 	/**
