@@ -2,13 +2,14 @@
 
 Configure::write('debug', '0');
 
+echo "|$date_ymd|";
+
 // These functions wrap up the html
-function displayEditorsPicksImg($arr){ 
+function displayEditorsPicksImg($arr,$date_ymd){ 
 
 	$name=$arr['client']['name'];
 	$locationDisplay=$arr['client']['locationDisplay'];
 	$seoLink='http://www.luxurylink.com/portfolio/client.php?clid='.$arr['client']['clientId'];
-	$date_ymd=date("ymd");
 	$seoName=$arr['client']['seoName'];
 	$img="http://www.luxurylink.com".$arr['client']['imagePath'];//http://www.luxurylink.com/images/por/0-8358/0-8358-gal-xl-08.jpg
 
@@ -18,13 +19,12 @@ function displayEditorsPicksImg($arr){
 
 <? }
 
-function displayEditorsPicksText($arr){ 
+function displayEditorsPicksText($arr,$date_ymd){ 
 
 	$name=$arr['client']['name'];
 	$locationDisplay=$arr['client']['locationDisplay'];
 	$shortBlurb=($arr['client']['longDesc']);
 	$seoLink='http://www.luxurylink.com/portfolio/client.php?clid='.$arr['client']['clientId'];
-	$date_ymd=date("ymd");
 	$seoName='';
 	$seoName=$arr['client']['seoName'];
 	$img="http://www.luxurylink.com".$arr['client']['imagePath'];//http://www.luxurylink.com/images/por/0-8358/0-8358-gal-xl-08.jpg
@@ -45,14 +45,13 @@ function displayEditorsPicksText($arr){
 
 }
 
-function displayBox2($arr){ 
+function displayBox2($arr,$date_ymd){ 
 
 	$name=$arr['client']['name'];
 	$locationDisplay=$arr['client']['locationDisplay'];
 	$shortBlurb=$arr['client']['longDesc'];
 	$seoLink='';
 	$seoLink='http://www.luxurylink.com/portfolio/client.php?clid='.$arr['client']['clientId'];
-	$date_ymd=date("ymd");
 	$seoName='';
 	$seoName=$arr['client']['seoName'];
 	$img="http://www.luxurylink.com".$arr['client']['imagePath'];//http://www.luxurylink.com/images/por/0-8358/0-8358-gal-xl-08.jpg
@@ -70,14 +69,13 @@ function displayBox2($arr){
 
 }
 
-function displayBox($arr){
+function displayBox($arr,$date_ymd){
 
 	$name=$arr['client']['name'];
 	$locationDisplay=$arr['client']['locationDisplay'];
 	$shortBlurb=$arr['client']['longDesc'];
 	$seoLink='';
 	$seoLink='http://www.luxurylink.com/portfolio/client.php?clid='.$arr['client']['clientId'];
-	$date_ymd=date("ymd");
 	$seoName=$arr['client']['seoName'];
 	$img="http://www.luxurylink.com".$arr['client']['imagePath'];//http://www.luxurylink.com/images/por/0-8358/0-8358-gal-xl-08.jpg
 
@@ -226,14 +224,14 @@ You come to Luxury Link to find the travel experiences you dream of: <i>the worl
 
 <td width="239" style="font-size:11px" valign="top">
 
-<?  displayBox($rows[0]); ?>
+<?  displayBox($rows[0],$date_ymd); ?>
 
 </td>
 <td width="33"></td>
 
 <td width="239" style="font-size:11px" valign="top">
 
-<? displayBox($rows[1]); ?>
+<? displayBox($rows[1],$date_ymd); ?>
 
 </td>
 </tr>
@@ -244,13 +242,13 @@ You come to Luxury Link to find the travel experiences you dream of: <i>the worl
 <tr>
 <td width="239" style="font-size:11px" valign="top">
 
-<? displayBox($rows[2]); ?>
+<? displayBox($rows[2],$date_ymd); ?>
 
 </td>
 <td width="33"></td>
 <td width="239" style="font-size:11px" valign="top">
 
-<? displayBox($rows[3]); ?>
+<? displayBox($rows[3],$date_ymd); ?>
 
 </td>
 </tr>
@@ -332,14 +330,14 @@ Pacific time at<br />
 
 <td width="325" style="font-size:11px" valign="top">
 
-<? displayBox2($rows[4]);?>
+<? displayBox2($rows[4],$date_ymd);?>
 
 </td>
 <td width="40"></td>
 
 <td width="325" style="font-size:11px" valign="top">
 
-<? displayBox2($rows[5]);?>
+<? displayBox2($rows[5],$date_ymd);?>
 
 </td>
 </tr>
@@ -350,13 +348,13 @@ Pacific time at<br />
 <tr>
 <td width="325" style="font-size:11px" valign="top">
 
-<? displayBox2($rows[6]);?>
+<? displayBox2($rows[6],$date_ymd);?>
 
 </td>
 <td width="40"></td>
 <td width="325" style="font-size:11px" valign="top">
 
-<? displayBox2($rows[7]);?>
+<? displayBox2($rows[7],$date_ymd);?>
 
 </td>
 </tr>
@@ -410,13 +408,13 @@ Pacific time at<br />
 <tr>
 <td width="325" style="font-size:11px" valign="top">
 
-<? displayBox2($rows[8]);?>
+<? displayBox2($rows[8],$date_ymd);?>
 
 </td>
 <td width="40"></td>
 <td width="325" style="font-size:11px" valign="top">
 
-<? displayBox2($rows[9]);?>
+<? displayBox2($rows[9],$date_ymd);?>
 
 </td>
 </tr>
@@ -427,14 +425,14 @@ Pacific time at<br />
 
 <td width="325" style="font-size:11px" valign="top">
 
-<? displayBox2($rows[10]);?>
+<? displayBox2($rows[10],$date_ymd);?>
 
 </td>
 <td width="40"></td>
 
 <td width="325" style="font-size:11px" valign="top">
 
-<? displayBox2($rows[11]);?>
+<? displayBox2($rows[11],$date_ymd);?>
 
 </td>
 </tr>
@@ -489,14 +487,14 @@ Pacific time at<br />
 <td width="325" style="font-size:11px" valign="top">
 
 
-<? displayEditorsPicksImg($rows[12])?>
+<? displayEditorsPicksImg($rows[12],$date_ymd)?>
 
 </td>
 
 <td width="25"></td>
 <td width="340" style="font-size:12px;line-height:16px" valign="top">
 
-<? displayEditorsPicksText($rows[12])?>
+<? displayEditorsPicksText($rows[12],$date_ymd)?>
 
 </td>
 </tr>
@@ -506,14 +504,14 @@ Pacific time at<br />
 <tr>
 <td width="325" style="font-size:11px" valign="top">
 
-<? displayEditorsPicksImg($rows[13])?>
+<? displayEditorsPicksImg($rows[13],$date_ymd)?>
 
 </td>
 <td width="25"></td>
 
 <td width="340" style="font-size:12px;line-height:16px" valign="top">
 
-<? displayEditorsPicksText($rows[13])?>
+<? displayEditorsPicksText($rows[13],$date_ymd)?>
 
 </td>
 
@@ -524,13 +522,13 @@ Pacific time at<br />
 <tr>
 <td width="325" style="font-size:11px" valign="top">
 
-<? displayEditorsPicksImg($rows[14])?>
+<? displayEditorsPicksImg($rows[14],$date_ymd)?>
 
 </td>
 <td width="25"></td>
 <td width="340" style="font-size:12px;line-height:16px" valign="top">
 
-<? displayEditorsPicksText($rows[14])?>
+<? displayEditorsPicksText($rows[14],$date_ymd)?>
 
 </td>
 </tr>
