@@ -22,21 +22,14 @@ class PpvNoticesController extends AppController {
 	}
 
 	function add($ticketId, $id, $clientId = null) {
-
 		// web service for tickets for getting/sending ppv
 		$ticket = $this->Ticket->read(null, $ticketId);
 		
-		$webservice_live_url = 'http://toolbox.luxurylink.com/web_service_tickets?wsdl';
-		if (stristr($_SERVER['HTTP_HOST'], 'dev') || $_SERVER['ENV'] == 'development') {
-			$webservice_live_url = 'http://'. $_SERVER['ENV_USER'] .'-toolboxdev.luxurylink.com/web_service_tickets?wsdl';
-		} elseif (stristr($_SERVER['HTTP_HOST'], 'stage') || $_SERVER['ENV'] == 'staging') {
-			$webservice_live_url = 'http://stage-toolbox.luxurylink.com/web_service_tickets?wsdl';
-		}
+		$webservice_live_url = Configure::read("Url.Ws"). "/web_service_tickets?wsdl";
 		$webservice_live_method_name = 'ppv';
 		$webservice_live_method_param = 'in0';
-
+		
 		if (!empty($this->data)) {
-
 				if (empty($this->data['PpvNotice']['emailTo'])) {
 					$this->Session->setFlash(__('The Email To field cannot be empty', true));
 				} else {
@@ -55,11 +48,10 @@ class PpvNoticesController extends AppController {
 					$data['initials']			= $ppvInitials;
 					$data['override_email_to']  = $this->data['PpvNotice']['emailTo'];
 					$data['override_email_cc']  = $this->data['PpvNotice']['emailCc'];
-					$data['override_email_subject']  = $this->data['PpvNotice']['emailSubject'];
+					$data['override_email_subject']  = (isset($this->data['PpvNotice']['emailSubject']) ? $this->data['PpvNotice']['emailSubject'] : "");
 
                     //for hotel beds originally but will work for any client, get attachments
                     if ($_FILES) {
-
                         $fileAttachArray = array();
                         $fileAttachArrayName = array();
                         $fileTypeAttachArray = array();
@@ -99,6 +91,7 @@ class PpvNoticesController extends AppController {
 					$this->redirect(array('controller' => 'tickets', 'action'=>'view', 'id' => $this->data['PpvNotice']['ticketId']));
 				}
 		}
+		
 		$this->set('ppvNoticeTypeIds', $this->PpvNotice->PpvNoticeType->find('list'));
 		$this->data['PpvNotice']['ticketId'] = $ticketId;
 		$this->data['PpvNotice']['ppvNoticeTypeId'] = $id;

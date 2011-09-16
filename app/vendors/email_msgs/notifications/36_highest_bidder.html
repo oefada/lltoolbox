@@ -1,19 +1,17 @@
 																				<tr>
-																				  <td style="line-height:22px;"><font face="Arial, Helvetica, sans-serif" size="3" style="font-size:18px; line-height:22px" color="#9c9a68"><strong>Your reservation has been cancelled</strong></font></td></tr>
+																				  <td style="line-height:22px;"><font face="Arial, Helvetica, sans-serif" size="3" style="font-size:18px; line-height:22px" color="#9c9a68"><strong>Highest Bidder</strong></font></td></tr>
 
 																				<tr><td style="font-size:0; line-height:0;"><img src="blank.gif" width="1" height="25"></td></tr>
 																				<tr>
 																				  <td style="line-height:20px;"><p><font face="Arial, Helvetica, sans-serif" size="2" style="font-size:14px; line-height:20px" color="#474747">
-																				    <strong>Dear %%First Name%%,</strong><br><br>
-																				    Your reservation for [Hotel Name] has been cancelled. Please remember that a $35 cancellation fee applies. 
-
+																				    <strong>Dear <?= $userFirstName ?></strong><br><br>
+																				    Thank you for your bid on <?php echo $clientNameP;?>. You are currently the highest bidder. If you are outbid by another user, we will let you know by email.
 </font></p>
-																				    <p><font face="Arial, Helvetica, sans-serif" size="2" style="font-size:14px; line-height:20px" color="#474747">If you have any questions, free to contact us at 1 (888) 297-3299 or +1 (310) 215-8060 from 7AM to 5PM Pacific Standard Time, or send us an email anytime to <a style="text-decoration:underline; color:#036dfc;" href="mailto:Concierge@LuxuryLink.com">Concierge@LuxuryLink.com</a>. </font></p>
-
-																				    <p><font face="Arial, Helvetica, sans-serif" size="2" style="font-size:14px; line-height:20px" color="#474747">As always, we wish you happy days filled with remarkable travel experiences. </font></p>
+																				    <p><font face="Arial, Helvetica, sans-serif" size="2" style="font-size:14px; line-height:20px" color="#474747">Good luck! </font></p>
 																		    <p><font face="Arial, Helvetica, sans-serif" size="2" style="font-size:14px; line-height:20px" color="#474747">Most Sincerely,<br>
+
 Luxury Link Concierge </font></p></td></tr>
-%%package_details%%
+%%package_details%%																																							
 																			</table>
 																		</td>
 																		<td width="20"></td>
@@ -21,6 +19,7 @@ Luxury Link Concierge </font></p></td></tr>
 																</table>
 															</td>
 														</tr>
+
 													</table>
 												</td>
 												<td width="1" bgcolor="#86878a" style="font-size:0; line-height:0;"><img src="blank.gif" align="left" vspace="0" hspace="0" width="1" height="1"></td>

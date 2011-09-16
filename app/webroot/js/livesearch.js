@@ -2,7 +2,7 @@
 	jQuery.fn.liveSearch = function (conf) {
 	    var config = jQuery.extend({
 	        duration:        0, 
-	        typeDelay:        10,
+	        typeDelay:        175,
 	        loadingId:    'spinner', 
 	        onSlideUp:        function () {}, 
 	        uptadePosition:    false

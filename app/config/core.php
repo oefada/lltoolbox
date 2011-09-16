@@ -235,4 +235,31 @@ $cacheAction = true;
  *
  */
 	Cache::config('default', array('engine' => 'File'));
+	
+	$webservice_live_url = 'http://toolbox.luxurylink.com';
+	$ll_url = 'www.luxurylink.com';
+	$fg_url = 'www.familygetaway.com';
+
+	if (stristr($_SERVER['HTTP_HOST'], 'dev') || $_SERVER['ENV'] == 'development') {
+		$ll_url = $_SERVER['ENV_USER'] .'-lldev.luxurylink.com';
+		$fg_url = $_SERVER['ENV_USER'] .'-familydev.luxurylink.com';
+		$webservice_live_url = 'http://'. $_SERVER['ENV_USER'] .'-toolboxdev.luxurylink.com';
+	} elseif (stristr($_SERVER['HTTP_HOST'], 'stage') || $_SERVER['ENV'] == 'staging') {
+		$ll_url = 'stage-luxurylink.luxurylink.com';
+		$fg_url = 'stage-family.luxurylink.com';
+		$webservice_live_url = 'http://stage-toolbox.luxurylink.com';
+	}
+
+	$ll_urls = 'https://'.$ll_url;
+	$ll_url = 'http://'.$ll_url; 
+	$fg_urls = 'https://'.$fg_url;
+	$fg_url = 'http://'.$fg_url; 
+	
+	Configure::write("Url.Ws",$webservice_live_url);
+	Configure::write("Url.LL",$ll_url);
+	Configure::write("Url.FG",$fg_url);
+	Configure::write("UrlS.LL",$ll_urls);
+	Configure::write("UrlS.FG",$fg_urls);
+	
+
 ?>

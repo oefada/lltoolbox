@@ -21,8 +21,8 @@ class ClientsController extends AppController {
 	function index($query = "") {
 		$order = '';
 		if (empty($query)) {
-			if (isset($this->params['url']['query'])) {
-				$this->params['form']['query'] = $this->params['url']['query'];
+			if (isset($this->params['named']['query'])) {
+				$this->params['form']['query'] = $this->params['named']['query'];
 			}
 			
 			if (isset($this->params['form']['query'])) {
@@ -30,19 +30,21 @@ class ClientsController extends AppController {
 			} 
 		}
 		
-		$conditions['OR'][] = 'parentClientId IS NULL';
-				
+		$conditions = array();
+		
 		if(!empty($query)) {
 			$queryPieces = explode(" ", $query);
 			$sqlquery = '';
 			foreach($queryPieces as $piece) {
-			    if (strlen($piece) > 3) {
+			    if (strlen($piece) > 2) {
 			        $sqlquery .= '+';
 			    }
 			    $sqlquery .= $piece.'* ';
 			}
 			
-			$conditions['AND'][] = "(MATCH(Client.name) AGAINST('$sqlquery' IN BOOLEAN MODE) OR Client.clientId LIKE '%$query%' OR Client.name = '$query')";
+			$conditions['OR']['clientId LIKE'] = '%'.$query.'%';
+			$conditions['OR']['name'] = $query; 
+			$conditions['OR'][] = 'MATCH(name) AGAINST("'.$sqlquery.'" IN BOOLEAN MODE)';
 			
 			if (!isset($inactive)) {
 	            $conditions['AND'][] = " Client.clientId IN (SELECT clientId FROM clientSiteExtended WHERE inactive = 0)";
@@ -50,7 +52,9 @@ class ClientsController extends AppController {
 		} else {
 			$order = 'clientId DESC';
 		}
-		
+
+		//$conditions['OR'][] = 'parentClientId IS NULL';
+				
 		//$this->Client->recursive = -1;
 		$this->paginate = array(
 		'contain' => array(
@@ -77,8 +81,14 @@ class ClientsController extends AppController {
 		'conditions' => $conditions,
 		'order' => $order);
 		
+		$clients = $this->paginate();
+		
+		if (count($clients) == 1) {
+			$this->redirect(array('action' => 'edit',$clients[0]['Client']['clientId']));
+		}
+		
 		$this->Client->containable = false;
-		$this->set('clients', $this->paginate());
+		$this->set('clients', $clients);
 	}
 	
 	function view($id = null) {
@@ -240,7 +250,7 @@ class ClientsController extends AppController {
 			$this->params['form']['query'] = $this->params['url']['query'];
 		}
 
-		$this->redirect(array('action'=>'index', $this->params['form']['query']));
+		$this->redirect(array('action'=>'index', 'query' => $this->params['form']['query']));
 	}
 	
 	function rollback($revisionId) {

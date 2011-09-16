@@ -9,7 +9,8 @@ class ClientDestinationRel extends AppModel {
 				     'Destination' => array('foreignKey' => 'destinationId'));
 	
 	var $deleteFirst = true;
-    
+	var $actsAs = array('Containable');
+	    
     function getParentDestination($clientId, $destinationId=null) {
         $this->contain('Destination');
         $conditions = array('Destination.parentId IS NULL');

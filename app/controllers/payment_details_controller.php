@@ -137,8 +137,6 @@ class PaymentDetailsController extends AppController {
 						}
 					}
 				}
-	        	$this->redirect(array('controller' => 'tickets', 'action'=>'view', 'id' => $ticketId));
-				die();
 				// --------------------------------------------------------
 			} elseif ($this->data['PaymentDetail']['paymentProcessorId'] == 6) {
 				// Credit on file or gift
@@ -157,7 +155,8 @@ class PaymentDetailsController extends AppController {
 				));
 				
 				$this->redirect("/tickets/".$this->data['ticketId']."/payment_details/add");
-			} elseif ($this->data['PaymentDetail']['paymentProcessorId'] == 1) {
+				$paymentResponse = "CHARGE_SUCCESS";
+			} elseif ($this->data['PaymentDetail']['paymentProcessorId'] == 1 || $this->data['PaymentDetail']['paymentProcessorId'] == 3) {
 				// Credit card
 				$usingNewCard = 0;
 				$saveNewCard = 0;
@@ -238,8 +237,9 @@ class PaymentDetailsController extends AppController {
 	        }
 			
 			if ($error) {
+				CakeLog::write("debug",var_export(array("WEB SERVICE TICKETS: ",$error),1));
 				echo $error;
-			} elseif ($paymentResponse != "CHARGE_SUCCESS") {
+			} else {
 				echo $paymentResponse;
 			}
 			
@@ -275,9 +275,6 @@ class PaymentDetailsController extends AppController {
 		// Ajax to get payment in add.ctp
 		if (isset($this->params['url']['get_payment']) && $this->params['url']['get_payment'] != "" && isset($ticket['UserPromo'][$this->params['url']['get_payment']]['totalAmountOff'])) {
 			$payment_amt = $ticket['UserPromo'][$this->params['url']['get_payment']]['totalAmountOff'];
-			if ($payment_amt < 0) {
-				$payment_amt = $ticket['UserPromo']['final_price_actual'];	
-			}
 		} else {
 			$payment_amt = $ticket['UserPromo']['final_price_actual'];
 		}
@@ -315,7 +312,7 @@ class PaymentDetailsController extends AppController {
 		}
 		*/
 					
-		if (in_array($initials_user, array('rvella','cholland','bjensen','kferson'))) {
+		if (in_array($initials_user, array('rvella','cholland','bjensen','kferson','mtrinh'))) {
 			if (!empty($ticket['User']['UserPaymentSetting'])) {
 				foreach ($ticket['User']['UserPaymentSetting'] as $ups_key => $ups) {
 					$cc_full = $this->PaymentDetail->query('SELECT ccNumber FROM userPaymentSetting WHERE userPaymentSettingId = ' . $ups['userPaymentSettingId']);				

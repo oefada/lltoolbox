@@ -122,10 +122,11 @@ class Ticket extends AppModel {
 		return $result;
 	}
 
-	function getPromoGcCofData($ticketId, $ticketPrice) {
+	function getPromoGcCofData($ticketId, $ticketPrice, $payment_amt = 0) {
 
 		$data = array();
 		$data['original_ticket_price'] = $ticketPrice;
+		$data['payment_amt'] = $payment_amt;
 		$data['payments'] = 0;
 		
 		// get the promo code that is applied to this ticket
@@ -163,14 +164,15 @@ class Ticket extends AppModel {
 				$data['Promo']['totalAmountOff'] = ($ticketPrice * ($data['Promo']['percentOff'] / 100));
 			} elseif (!$data['Promo']['percentOff'] && $data['Promo']['amountOff']) {
 				// for amount off
-				$data['Promo']['totalAmountOff'] = $data['Promo']['amountOff'];
+				$data['Promo']['totalAmountOff'] = intval($data['Promo']['amountOff']);
 			} 
 			$data['Promo']['applied'] = ($data['Promo']['totalAmountOff'] > 0) ? 1 : 0;
 		}
 
 		// get the handling fee
 		if ($ticketPrice > 0) {
-			$ticketPrice += $this->getFeeByTicket($ticketId);
+			$fee = $this->getFeeByTicket($ticketId);
+			$ticketPrice += $fee;
 		}
 
 		// if it is a GiftCert and ticketPrice is greater than 0
@@ -187,10 +189,7 @@ class Ticket extends AppModel {
 				$data['GiftCert']['remainingBalance'] = false;
 			}
 			
-			$ticketPrice = $new_price;
 			$data['GiftCert']['applied'] = ($data['GiftCert']['totalAmountOff'] > 0) ? 1 : 0;
-			
-			$data['totalAmountOff'] += $data['GiftCert']['totalAmountOff'];
 		} else {
 			$data['GiftCert']['totalAmountOff'] = 0;
 		}
@@ -262,8 +261,9 @@ class Ticket extends AppModel {
 		$data['final_price'] = $ticketPrice;
 		// This is the final price WITHOUT CoF applied and Gift applied, and payments deducted
 		// rvella 
-		$data['final_price_actual'] = $ticketPrice - (isset($data['Promo']['totalAmountOff']) ? $data['Promo']['totalAmountOff'] : 0) - $data['payments'];	
-			
+		$data['final_price_actual'] = $data['original_ticket_price'] - (isset($data['Promo']['totalAmountOff']) ? $data['Promo']['totalAmountOff'] : 0) - $payment_amt - $data['payments'] + $fee;	
+		$data['final_price_actual'] = $data['final_price_actual'] < 0 ? 0 : $data['final_price_actual'];
+		
 		$ticketPrice -= (isset($data['Promo']['totalAmountOff']) ? $data['Promo']['totalAmountOff'] : 0);
 		$ticketPrice -= $data['GiftCert']['totalAmountOff'];
 		$ticketPrice -= $data['Cof']['totalAmountOff'];

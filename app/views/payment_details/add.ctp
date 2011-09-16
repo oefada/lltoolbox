@@ -64,7 +64,7 @@
 						<select name="data[PaymentDetail][paymentTypeId]" id="PaymentDetailPaymentTypeId">
 							<?php foreach ($paymentTypeIds as $ppId => $ppValue): ?>
 							<?php if ($ppId == 3 && !isset($ticket['UserPromo']['Cof']['balance']) && $ticket['UserPromo']['Cof']['balance'] == 0) continue; ?>
-							<?php if ($ppId == 2 && isset($ticket['UserPromo']['GiftCert']['applied'])) continue; ?>
+							<?php if ($ppId == 2 && isset($ticket['UserPromo']['GiftCert']['balance']) && $ticket['UserPromo']['GiftCert']['balance'] <= 0) continue; ?>
 								<option value="<?php echo $ppId;?>"><?php echo $ppValue;?></option>
 							<?php endforeach;?>
 						</select>	
@@ -367,6 +367,12 @@ jQuery(document).ready(function($) {
 				payment_amt = obj.giftCertBalance.balance;
 				$("#giftBalance #giftBalanceBalance").html(payment_amt);
 				$("#giftBalance").show();
+				
+				var total_bal = parseInt($("#balanceRemaining").html());
+				
+				if (payment_amt > total_bal) {
+					payment_amt = total_bal;
+				}
 				
 				setPaymentAmt({payment_amt:payment_amt});
 			} else if (obj.promoCodeRel.promoCodeRelId != null) {

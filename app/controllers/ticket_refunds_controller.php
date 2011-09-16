@@ -8,6 +8,18 @@ class TicketRefundsController extends AppController {
 	var $helpers = array('Html', 'Form');
 	var $uses = array('TicketRefund', 'Ticket', 'CreditTracking', 'CreditTrackingType', 'TicketReferFriend', 'Promo'); //'CreditTrackingTicketRel',);
 
+	function beforeFilter() {
+		parent::beforeFilter();
+		
+		$currentUser = $this->LdapAuth->user();
+		
+		//if (in_array('Accounting',$currentUser['LdapUser']['groups']) || in_array('Geeks',$currentUser['LdapUser']['groups'])) {
+			$this->canSave = false;
+		//}
+		
+		$this->set('canSave',$this->canSave);
+	}
+	
 	function index() {
 		$this->TicketRefund->recursive = 0;
 		$this->set('ticketRefunds', $this->paginate());
@@ -22,6 +34,11 @@ class TicketRefundsController extends AppController {
 	}
 
 	function add() {
+		if (!$this->canSave) {
+			$this->Session->setFlash(__('You do not have permission to refund this ticket.', true));
+			$this->render();
+		} 
+		
 		$refundReasons = $this->TicketRefund->RefundReason->find('list');
 		if (!empty($this->data) && $this->data['TicketRefund']['ticketId']) {
 			// 07/19/11 jwoods - ticket 2067 for error handling
@@ -52,7 +69,9 @@ class TicketRefundsController extends AppController {
 					$dateRequested.= ' ' . $this->data['TicketRefund']['dateRequested']['hour'];
 					$dateRequested.= ':' . $this->data['TicketRefund']['dateRequested']['min'];
 					$dateRequested.= ' ' . $this->data['TicketRefund']['dateRequested']['meridian'];
-
+					
+					$this->data['TicketRefund']['refundedBy'] = $_SESSION['Auth']['AdminUser']['mailnickname'];
+					
 					$emailTo = 'accounting@luxurylink.com';
 					$emailFrom = 'LuxuryLink.com Accounting<accounting@luxurylink.com>';
 					$emailHeaders = "From: $emailFrom\r\n";
@@ -132,7 +151,7 @@ class TicketRefundsController extends AppController {
 
 		$refundTypes = $this->TicketRefund->TicketRefundType->find('list');
 
-		$refundTypes = array($refundTypes[1]);
+		//$refundTypes = array($refundTypes[1]);
 		
 		$this->set('refundReasonIds', $refundReasons);
 		$this->set('ticketRefundTypeIds', $refundTypes);
