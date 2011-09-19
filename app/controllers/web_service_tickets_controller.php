@@ -413,7 +413,7 @@ CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
 					$this->Ticket->__runTakeDownRetailValue($offerLive['clientId'], $offerLive['retailValue'], $ticketId);
 					break;
 				case 6://mbyrnes
-					$this->Ticket->__runTakeDownNumRooms($offerLive,$ticketId,$ticketSite,$data['numNights']);
+					$this->Ticket->__runTakeDownNumRooms($offerLive,$ticketId,$ticketSite);
 					break;
 
 			}
@@ -1212,6 +1212,34 @@ CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
 			$dateRequestLink = $prefixUrl . "/my/my_date_request.php?tid=$ticketId";
 			
 			// ********* SITE NAME **********
+			switch ($ticketData['siteId']) {
+				case 1:
+					$siteName = 'Luxury Link';
+					$siteDisplay = 'LuxuryLink.com';
+					$siteEmail = 'luxurylink.com';
+					$siteUrl = 'http://www.luxurylink.com/';
+					$siteHeader = '990000';
+					$sitePhone  = '(888) 297-3299';
+					$sitePhoneLocal = '(310) 215-8060';
+					$siteFax = '(310) 215-8279';
+					$headerLogo = 'http://www.luxurylink.com/images/ll_logo_2009_2.gif';
+					$append = "LL";
+
+					break;
+				case 2:
+					$siteName = 'FamilyGetaway.com';
+					$siteDisplay = 'FamilyGetaway.com';
+					$siteEmail = 'familygetaway.com';
+					$siteUrl = 'http://www.familygetaway.com/';
+					$siteHeader = 'DE6F0A';
+					$sitePhone  = '(877) 372-5877';
+					$sitePhoneLocal = '(310) 956-3703';
+					$siteFax = '(800) 440-3820';
+					$headerLogo = 'http://www.luxurylink.com/images/family/logo_emails.gif';
+					$append = "FG";
+					
+					break;
+			}
 			$siteId = $ticketData['siteId'];
 	
 			// check if already sent out a reservation request
@@ -1223,37 +1251,6 @@ CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
 		
 		// Click tracking for templates
 		
-		if (!isset($siteId) && isset($params['siteId'])) {
-			$siteId = $params['siteId'];
-		}
-		
-		switch ($siteId) {
-			case 1:
-				$siteName = 'Luxury Link';
-				$siteDisplay = 'LuxuryLink.com';
-				$siteEmail = 'luxurylink.com';
-				$siteUrl = 'http://www.luxurylink.com/';
-				$siteHeader = '990000';
-				$sitePhone  = '(888) 297-3299';
-				$sitePhoneLocal = '(310) 215-8060';
-				$siteFax = '(310) 215-8279';
-				$headerLogo = 'http://www.luxurylink.com/images/ll_logo_2009_2.gif';
-
-				break;
-			case 2:
-				$siteName = 'FamilyGetaway.com';
-				$siteDisplay = 'FamilyGetaway.com';
-				$siteEmail = 'familygetaway.com';
-				$siteUrl = 'http://www.familygetaway.com/';
-				$siteHeader = 'DE6F0A';
-				$sitePhone  = '(877) 372-5877';
-				$sitePhoneLocal = '(310) 956-3703';
-				$siteFax = '(800) 440-3820';
-				$headerLogo = 'http://www.luxurylink.com/images/family/logo_emails.gif';
-				
-				break;
-		}
-		
 		$emailFrom = "$siteDisplay <no-reply@$siteEmail>";
 		$emailReplyTo = "no-reply@$siteEmail";
 		
@@ -1263,21 +1260,22 @@ CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
 		switch ($ppvNoticeTypeId) {
 			case 1:
 				// send out res confirmation
-				$templateFile = "1_reservation_confirmation.html";
+				$templateFile = "1_reservation_confirmation";
+				$templateTitle = "Your reservation is confirmed";
 				$emailSubject = "Your $siteName Booking is Confirmed - $clientNameP";
-				$emailFrom = ($isAuction) ? "$siteDisplay<resconfirm@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
+				$emailFrom = ($isAuction) ? "$siteDisplay <resconfirm@$siteEmail>" : "$siteDisplay <reservations@$siteEmail>";
 				$emailReplyTo = ($isAuction) ? "resconfirm@$siteEmail" : "reservations@$siteEmail";
 				break;
 			case 2:
 				// send out res request
 				$extranet_link = $this->getExtranetLink($ticketId, $siteId);
-				include('./vendors/email_msgs/notifications/2_reservation_request.html');
+				include('../vendors/email_msgs/notifications/2_reservation_request.html');
 				$emailSubject = "Please Confirm This $siteName Booking - $offerTypeTxt - ACTION REQUIRED - $userFirstName $userLastName";
 				if (isset($res_request_count) && $res_request_count > 0) {
 					$emailSubject = 'NEW DATES REQUESTED - ' . $emailSubject;
 				}
 
-				$emailFrom = ($isAuction) ? "$siteDisplay<resrequests@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
+				$emailFrom = ($isAuction) ? "$siteDisplay <resrequests@$siteEmail>" : "$siteDisplay <reservations@$siteEmail>";
 				$emailReplyTo = ($isAuction) ? "resrequests@$siteEmail" : "reservations@$siteEmail";
 				$userEmail = $clientPrimaryEmail;
 				$emailCc = $clientCcEmail;
@@ -1285,7 +1283,7 @@ CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
 			case 4:
 				include('../vendors/email_msgs/ppv/client_ppv.html');
 				$emailSubject = "$siteName Auction Winner Notification - $userFirstName $userLastName";
-				$emailFrom = "$siteDisplay<auctions@$siteEmail>";
+				$emailFrom = "$siteDisplay <auctions@$siteEmail>";
 				$emailReplyTo = "auctions@$siteEmail";
 				$userEmail = $clientPrimaryEmail;
 				$emailCc = $clientCcEmail;
@@ -1293,13 +1291,13 @@ CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
 			case 5:
 				include('../vendors/email_msgs/notifications/winner_notification.html');
 				$emailSubject = "$siteName Auction Winner - $clientNameP";
-				$emailFrom = "$siteDisplay<auction@$siteEmail>";
+				$emailFrom = "$siteDisplay <auction@$siteEmail>";
 				$emailReplyTo = "auction@$siteEmail";
 				break;
 			case 9:
 				include('../vendors/email_msgs/fixed_price/msg_fixedprice.html');
 				$emailSubject = "$siteName - Your Request Has Been Received";
-				$emailFrom = "$siteDisplay<exclusives@$siteEmail>";
+				$emailFrom = "$siteDisplay <exclusives@$siteEmail>";
 				$emailReplyTo = "exclusives@$siteEmail";
 				break;
 			case 10:
@@ -1309,10 +1307,10 @@ CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
 				if (isset($res_request_count) && $res_request_count > 0) {
 					$emailSubject = 'NEW DATES REQUESTED - ' . $emailSubject;
 				}
-				$emailFrom = "$siteDisplay<exclusives@$siteEmail>";
+				$emailFrom = "$siteDisplay <exclusives@$siteEmail>";
 				$emailReplyTo = "exclusives@$siteEmail";
 				if ($this->Ticket->isMultiProductPackage($ticketId)) {
-					$emailFrom = "$siteDisplay<resrequest@$siteEmail>";
+					$emailFrom = "$siteDisplay <resrequest@$siteEmail>";
 					$emailReplyTo = "resrequest@$siteEmail";
 				}
 				$userEmail = $clientPrimaryEmail;
@@ -1321,69 +1319,74 @@ CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
 			case 11:
 				include('../vendors/email_msgs/fixed_price/msg_internal_fixedprice.html');
 				$emailSubject = "A $siteName $fpRequestType Request Has Come In!";
-				$emailFrom = "$siteDisplay<exclusives@$siteEmail>";
+				$emailFrom = "$siteDisplay <exclusives@$siteEmail>";
 				$emailReplyTo = "exclusives@$siteEmail";
 				$userEmail = "exclusives@$siteEmail";
 				break;
 			case 12:
 				$templateFile = '12_reservation_ack';
+				$templateTitle = "We have received your reservation request";
 				$emailSubject = "Your $siteName Travel Booking - $clientNameP";
-				$emailFrom = ($isAuction) ? "$siteDisplay<auction@$siteEmail>" : "$siteDisplay<exclusives@$siteEmail>";
+				$emailFrom = ($isAuction) ? "$siteDisplay <auction@$siteEmail>" : "$siteDisplay <exclusives@$siteEmail>";
 				$emailReplyTo = ($isAuction) ? "auction@$siteEmail" : "exclusives@$siteEmail";
 				break;
 			case 13:
 				include('../vendors/email_msgs/fixed_price/notification_dates_available.html');
 				$emailSubject = "Your $siteName Travel Booking - $clientNameP";
-				$emailFrom = ($isAuction) ? "$siteDisplay<auction@$siteEmail>" : "$siteDisplay<exclusives@$siteEmail>";
+				$emailFrom = ($isAuction) ? "$siteDisplay <auction@$siteEmail>" : "$siteDisplay <exclusives@$siteEmail>";
 				$emailReplyTo = ($isAuction) ? "auction@$siteEmail" : "exclusives@$siteEmail";
 				break;
 			case 14:
-				include('../vendors/email_msgs/fixed_price/notification_dates_not_available.html');
+				$templateFile = "14_dates_not_available";
+				$templateTitle = "Update &ndash; Your Luxury Link Reservation";
 				$emailSubject = "Your Dates Were Not Available - $clientNameP";
-				$emailFrom = ($isAuction) ? "$siteDisplay<auction@$siteEmail>" : "$siteDisplay<exclusives@$siteEmail>";
+				$emailFrom = ($isAuction) ? "$siteDisplay <auction@$siteEmail>" : "$siteDisplay <exclusives@$siteEmail>";
 				$emailReplyTo = ($isAuction) ? "auction@$siteEmail" : "exclusives@$siteEmail";
 				break;
 			case 15:
 				include('../vendors/email_msgs/notifications/chase_money_notification.html');
 				$emailSubject = "$siteName Auction Winner - $clientNameP";
-				$emailFrom = "$siteDisplay<auction@$siteEmail>";
+				$emailFrom = "$siteDisplay <auction@$siteEmail>";
 				$emailReplyTo = "auction@$siteEmail";
 				break;
 			case 16:
 				include('../vendors/email_msgs/notifications/first_offense_flake.html');
 				$emailSubject = "$siteName Auction Winner - $clientNameP";
-				$emailFrom = "$siteDisplay<auction@$siteEmail>";
+				$emailFrom = "$siteDisplay <auction@$siteEmail>";
 				$emailReplyTo = "auction@$siteEmail";
 				break;
 			case 17:
-				$templateFile = '17_second_offense_flake';
+				$templateFile = "17_second_offense_flake";
+				$templateTitle = "Your bidding privileges on $siteName";
 				$emailSubject = "$siteName Auction Winner - $clientNameP";
-				$emailFrom = "$siteDisplay<auction@$siteEmail>";
+				$emailFrom = "$siteDisplay <auction@$siteEmail>";
 				$emailReplyTo = "auction@$siteEmail";
 				break;
 			case 18:
 				$templateFile = '18_auction_winner_ppv';
+				$templateTitle = "You have won your Luxury Link auction!";
 				$emailSubject = "$siteName Auction Winner Receipt - $clientNameP";
-				$emailFrom = "$siteDisplay<auction@$siteEmail>";
+				$emailFrom = "$siteDisplay <auction@$siteEmail>";
 				$emailReplyTo = "auction@$siteEmail";
 				break;
 			case 19:
 				$templateFile = "19_auction_winner_declined_expired";
+				$templateTitle = "PLEASE RESPOND - Your $siteName Purchase";
 				$emailSubject = "Your $siteName Purchase is Not Complete - Action Required - $clientNameP";
-				$emailFrom = "$siteDisplay<auction@$siteEmail>";
+				$emailFrom = "$siteDisplay <auction@$siteEmail>";
 				$emailReplyTo = "auction@$siteEmail";
 				break;
 			case 20:
 				include('../vendors/email_msgs/notifications/20_auction_your_dates_received.html');
 				$emailSubject = "Your $siteName Request has been Received - $clientNameP";
-				$emailFrom = ($isAuction) ? "$siteDisplay<auction@$siteEmail>" : "$siteDisplay<exclusives@$siteEmail>";
+				$emailFrom = ($isAuction) ? "$siteDisplay <auction@$siteEmail>" : "$siteDisplay <exclusives@$siteEmail>";
 				$emailReplyTo = ($isAuction) ? "auction@$siteEmail" : "exclusives@$siteEmail";
 				break;
 			case 23:
 				// send out res confirmation to client also as copy
 				include('../vendors/email_msgs/ppv/23_conf_copy_client.html');
 				$emailSubject = "$siteName Booking Confirmed for $userFirstName $userLastName - $clientNameP";
-				$emailFrom = ($isAuction) ? "$siteDisplay<resconfirm@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
+				$emailFrom = ($isAuction) ? "$siteDisplay <resconfirm@$siteEmail>" : "$siteDisplay <reservations@$siteEmail>";
 				$emailReplyTo = ($isAuction) ? "resconfirm@$siteEmail" : "reservations@$siteEmail";
 				$userEmail = $clientPrimaryEmail;
 				break;
@@ -1392,7 +1395,7 @@ CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
 				$extranet_link = $this->getExtranetLink($ticketId, $siteId);
 				include('../vendors/email_msgs/notifications/24_reservation_request_followup.html');
 				$emailSubject = "2nd Request, Please Confirm This $siteName Booking - $offerTypeTxt - ACTION REQUIRED - $userFirstName $userLastName";
-				$emailFrom = ($isAuction) ? "$siteDisplay<resrequests@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
+				$emailFrom = ($isAuction) ? "$siteDisplay <resrequests@$siteEmail>" : "$siteDisplay <reservations@$siteEmail>";
 				$emailReplyTo = ($isAuction) ? "resrequests@$siteEmail" : "reservations@$siteEmail";
 				$userEmail = $clientPrimaryEmail;
 				$emailCc = $clientCcEmail;
@@ -1401,7 +1404,7 @@ CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
 				// send out res request w/o xnet
 				include('../vendors/email_msgs/notifications/25_res_request_no_xnet.html');
 				$emailSubject = "Please Confirm This $siteName Booking - $offerTypeTxt - ACTION REQUIRED - $userFirstName $userLastName";
-				$emailFrom = ($isAuction) ? "$siteDisplay<resrequests@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
+				$emailFrom = ($isAuction) ? "$siteDisplay <resrequests@$siteEmail>" : "$siteDisplay <reservations@$siteEmail>";
 				$emailReplyTo = ($isAuction) ? "resrequests@$siteEmail" : "reservations@$siteEmail";
 				$userEmail = $clientPrimaryEmail;
 				$emailCc = $clientCcEmail;
@@ -1410,14 +1413,14 @@ CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
 				// general customer template
 				include('../vendors/email_msgs/notifications/26_general_customer_template.html');
 				$emailSubject = "Your $siteName Booking is Confirmed - $clientNameP";
-				$emailFrom=($isAuction)?"$siteDisplay<resconfirm@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
+				$emailFrom=($isAuction)?"$siteDisplay <resconfirm@$siteEmail>" : "$siteDisplay <reservations@$siteEmail>";
 				$emailReplyTo = ($isAuction) ? "resconfirm@$siteEmail" : "reservations@$siteEmail";
 				break;
 			case 27:
 				// general client template
 				include('../vendors/email_msgs/notifications/27_general_client_template.html');
 				$emailSubject = "Please Confirm This $siteName Booking - $offerTypeTxt - ACTION REQUIRED - $userFirstName $userLastName";
-				$emailFrom = ($isAuction) ? "$siteDisplay<resrequests@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
+				$emailFrom = ($isAuction) ? "$siteDisplay <resrequests@$siteEmail>" : "$siteDisplay <reservations@$siteEmail>";
 				$emailReplyTo = ($isAuction) ? "resrequests@$siteEmail" : "reservations@$siteEmail";
 				$userEmail = $clientPrimaryEmail;
 				$emailCc = $clientCcEmail;
@@ -1426,7 +1429,7 @@ CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
 				// general res request template
 				include('../vendors/email_msgs/notifications/28_general_res_request_template.html');
 				$emailSubject = "Please Confirm This $siteName Booking - $offerTypeTxt - ACTION REQUIRED - $userFirstName $userLastName";
-				$emailFrom = ($isAuction) ? "$siteDisplay<resrequests@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
+				$emailFrom = ($isAuction) ? "$siteDisplay <resrequests@$siteEmail>" : "$siteDisplay <reservations@$siteEmail>";
 				$emailReplyTo = ($isAuction) ? "resrequests@$siteEmail" : "reservations@$siteEmail";
 				$userEmail = $clientPrimaryEmail;
 				$emailCc = $clientCcEmail;
@@ -1436,23 +1439,24 @@ CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
 				$extranet_link = $this->getExtranetCancellationLink($ticketId, $siteId);
 				include('../vendors/email_msgs/notifications/29_reservation_cancel_request.html');
 				$emailSubject = "$siteName Cancellation Request - ACTION REQUIRED - $clientName";
-				$emailFrom = ($isAuction) ? "$siteDisplay<resrequests@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
+				$emailFrom = ($isAuction) ? "$siteDisplay <resrequests@$siteEmail>" : "$siteDisplay <reservations@$siteEmail>";
 				$emailReplyTo = ($isAuction) ? "resrequests@$siteEmail" : "reservations@$siteEmail";
 				$userEmail = $clientPrimaryEmail;
 				$emailCc = $clientCcEmail;
 				break;
 			case 30:
 				// send out res cancellation confirmation
-				include('../vendors/email_msgs/notifications/30_reservation_cancel_confirmation.html');
+				$templateFile = "30_reservation_cancel_confirmation";
+				$templateTitle = "Your reservation has been cancelled";
 				$emailSubject = "Your $siteName Booking was Cancelled. - $userFirstName $userLastName";
-				$emailFrom = ($isAuction) ? "$siteDisplay<resrequests@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
+				$emailFrom = ($isAuction) ? "$siteDisplay <resrequests@$siteEmail>" : "$siteDisplay <reservations@$siteEmail>";
 				$emailReplyTo = ($isAuction) ? "resrequests@$siteEmail" : "reservations@$siteEmail";
 				break;
 			case 31:
 				// send out res cancellation confirmation
 				include('../vendors/email_msgs/ppv/cancel_ppv.html');
 				$emailSubject = "Your $siteName Booking was Cancelled. - $clientNameP";
-				$emailFrom = ($isAuction) ? "$siteDisplay<resrequests@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
+				$emailFrom = ($isAuction) ? "$siteDisplay <resrequests@$siteEmail>" : "$siteDisplay <reservations@$siteEmail>";
 				$emailReplyTo = ($isAuction) ? "resrequests@$siteEmail" : "reservations@$siteEmail";
 				$userEmail = $clientPrimaryEmail;
 				break;
@@ -1461,25 +1465,26 @@ CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
 				$extranet_link = $this->getExtranetLink($ticketId, $siteId);
 				include('../vendors/email_msgs/notifications/32_reservation_request_followup_customer.html');
 				$emailSubject = "Your Pending Reservation";
-				$emailFrom = ($isAuction) ? "$siteDisplay<resrequests@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
+				$emailFrom = ($isAuction) ? "$siteDisplay <resrequests@$siteEmail>" : "$siteDisplay <reservations@$siteEmail>";
 				$emailReplyTo = ($isAuction) ? "resrequests@$siteEmail" : "reservations@$siteEmail";
 				break;
 			case 33:
 				include('../vendors/email_msgs/notifications/33_change_dates_request_template.html');
 				$emailSubject = "Your $siteName Request has been Received - $clientNameP";
-				$emailFrom = ($isAuction) ? "$siteDisplay<auction@$siteEmail>" : "$siteDisplay<exclusives@$siteEmail>";
+				$emailFrom = ($isAuction) ? "$siteDisplay <auction@$siteEmail>" : "$siteDisplay <exclusives@$siteEmail>";
 				$emailReplyTo = ($isAuction) ? "auction@$siteEmail" : "exclusives@$siteEmail";
 				break;
 			case 34: 
 				$templateFile = "34_forgot_password";
-				$emailSubject = "Your $siteName Password";
+				$emailSubject = $templateTitle = "Your $siteName Password";
 				break; 
 			case 35: 
 				$templateFile = "35_forgot_username";
-				$emailSubject = "Your $siteName Username";
+				$emailSubject = $templateTitle = "Your $siteName Username";
 				break; 
 			case 36: 
 				$templateFile = "36_highest_bidder";
+				$templateTitle = "Highest Bidder";
 				$emailSubject = "$siteName: Your bid has been received!";
 				break; 
 			default:
@@ -1487,10 +1492,10 @@ CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
 		}
 
 		if ($templateFile) {
-			if (($template = $this->utmLinks($templateFile,$ppvNoticeTypeId)) !== FALSE) {
+			if (($template = $this->utmLinks($templateFile,$ppvNoticeTypeId,$append)) !== FALSE) {
 				$rand = rand(100,1000);
 				$file = "/tmp/template-".$rand;
-				
+
 				file_put_contents($file,$template);
 				include($file);
 				unlink($file);
@@ -1502,7 +1507,7 @@ CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
 		}
 		
 		$emailBody = ob_get_clean();
-
+		
 		if (in_array($ppvNoticeTypeId, array(5,18,19)) && $liveOfferData['isMystery']) {
 			$emailSubject = "$siteName Mystery Auction Winner";
 		}
@@ -1526,7 +1531,7 @@ CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
 				$emailSubject = $override_email_subject;
 			}
 
-			$this->sendPpvEmail($userEmail, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials, $email_attachment, $email_attachment_type);
+			$this->sendPpvEmail($userEmail, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials);
 
 			// AUTO SECTION FOR MULTI CLIENT PPV for multi-client packages send client emails [CLIENT PPV]
 			// -------------------------------------------------------------------------------
@@ -1567,21 +1572,22 @@ CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
 		}
 	}
 
-	function utmLinks($templateFile,$ppvNoticeTypeId) {
+	function utmLinks($templateFile,$ppvNoticeTypeId,$append = "LL") {
 		// Add UTM links
 		$this->PpvNotice->PpvNoticeType->PpvNoticeClickTrack->recursive = -1;
 		$utm = $this->PpvNotice->PpvNoticeType->PpvNoticeClickTrack->findByppvNoticeTypeId($ppvNoticeTypeId);
 		$utm = $utm['PpvNoticeClickTrack'];
 
-		$template  = file_get_contents("../vendors/email_msgs/includes/header.html");
+		$template  = file_get_contents("../vendors/email_msgs/includes/header_".$append.".html");
 		$template .= file_get_contents("../vendors/email_msgs/notifications/".$templateFile.".html");
 		
 		if (strstr($template,"%%package_details%%") !== FALSE) {
 			$pD = file_get_contents("../vendors/email_msgs/includes/package_details.html");
+			$pD .= "<?php \$packageDetails = 1; ?>";
 			$template = str_replace("%%package_details%%",$pD,$template);
 		}
 		
-		$template .= file_get_contents("../vendors/email_msgs/includes/footer.html");
+		$template .= file_get_contents("../vendors/email_msgs/includes/footer_".$append.".html");
 		
 		if (!$template) {
 			return false;
@@ -1637,19 +1643,9 @@ CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
 		$uri = '/xnet/services/rd.php';
 
 		if ($siteId == 1) {
-			$host = 'http://www.luxurylink.com';
-			if (stristr($_SERVER['HTTP_HOST'], 'dev')) {
-				$host = 'http://'. DEV_USER .'-lldev.luxurylink.com';
-			} elseif (stristr($_SERVER['HTTP_HOST'], 'stage')) {
-				$host = 'http://stage-luxurylink.luxurylink.com';
-			}
+			$host = Configure::read("Url.LL");
 		} elseif ($siteId == 2) {
-			$host = 'http://www.familygetaway.com';
-			if (stristr($_SERVER['HTTP_HOST'], 'dev')) {
-				$host = 'http://' . DEV_USER .  '-familydev.luxurylink.com';
-			} elseif (stristr($_SERVER['HTTP_HOST'], 'stage')) {
-				$host = 'http://stage-family.luxurylink.com';
-			}
+			$host = Configure::read("Url.FG");
 		}
 
 		$ts = strtotime('NOW');
@@ -1671,19 +1667,9 @@ CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
 		$uri = '/xnet/services/rcc.php';
 
 		if ($siteId == 1) {
-			$host = 'http://www.luxurylink.com';
-			if (stristr($_SERVER['HTTP_HOST'], 'dev')) {
-				$host = 'http://'. DEV_USER .'-lldev.luxurylink.com';
-			} elseif (stristr($_SERVER['HTTP_HOST'], 'stage')) {
-				$host = 'http://stage-luxurylink.luxurylink.com';
-			}
+			$host = Configure::read("Url.LL");
 		} elseif ($siteId == 2) {
-			$host = 'http://www.familygetaway.com';
-			if (stristr($_SERVER['HTTP_HOST'], 'dev')) {
-				$host = 'http://'. DEV_USER .'-familydev.luxurylink.com';
-			} elseif (stristr($_SERVER['HTTP_HOST'], 'stage')) {
-				$host = 'http://stage-family.luxurylink.com';
-			}
+			$host = Configure::read("Url.FG");
 		}
 
 		$ts = strtotime('NOW');
@@ -1695,86 +1681,33 @@ CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
 		return $host . $uri . "?z=$hash&t=$ticketIdHash&ts=$tsHash";
 	}
 
-	function sendPpvEmail($emailTo, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials, $email_attachment, $email_attachment_type) {
-		/*
+	function sendPpvEmail($emailTo, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials) {
 		if (stristr($_SERVER['HTTP_HOST'], 'dev') || stristr($_SERVER['HTTP_HOST'], 'stage')) {
-			$appendDevMessage = "---- DEV MAIL ---- \n<br />ORIGINAL TO:  $emailTo\n<br />ORIGINAL CC: $emailCc\n<br />ORIGINAL BCC: $emailBcc";
+			//$appendDevMessage = "---- DEV MAIL ---- \n<br />ORIGINAL TO:  $emailTo\n<br />ORIGINAL CC: $emailCc\n<br />ORIGINAL BCC: $emailBcc";
 			$emailTo = $emailCc = $emailBcc = 'devmail@luxurylink.com';
-			$emailBody = $appendDevMessage . $emailBody;
-			$emailBody.= print_r($_SERVER, true);
-			$emailSubject = "DEV - " . $emailSubject . $fname;
+			//$emailBody = $appendDevMessage . $emailBody;
+			//$emailBody.= print_r($_SERVER, true);
+			$emailSubject = "DEV - " . $emailSubject;
 		}
-*/
 		// send out ppv and winner notification emails
 		// -------------------------------------------------------------------------------
 
-        //original before hb updates
-        //$emailHeaders = "From: $emailFrom\r\n";
-		//$emailHeaders.= "Cc: $emailCc\r\n";
-		//$emailHeaders.= "Reply-To: $emailReplyTo\r\n";
-		//$emailHeaders.= "Bcc: $emailBcc\r\n";
-    	//$emailHeaders.= "Content-type: text/html\r\n";
-
-        //boundary variable
-
-        $fname = $email_attachment;
-        $ftype = $email_attachment_type;
-        if ($fname) {
-
-        $num = md5(time());
-
-        $emailHeaders = "From: $emailFrom\n";
-		$emailHeaders .= "Cc: $emailCc\n";
-		$emailHeaders .= "Reply-To: $emailReplyTo\n";
-		$emailHeaders .= "Bcc: $emailBcc\n";
-        $emailHeaders .= "MIME-Version: 1.0\n";
-        $emailHeaders .= "Content-Type: multipart/mixed; ";
-        $emailHeaders .= "boundary=".$num."\n";
-
-        // This two steps to help avoid spam
-        $emailHeaders .= "--".$num."\n";
-        $emailHeaders .= "Message-ID: <".$now." TheSystem@".$_SERVER['SERVER_NAME'].">\n";
-        $emailHeaders .= "X-Mailer: PHP v".phpversion()."\n";
-
-        // With message
-        $emailHeaders .= "Content-Type: text/html;\n";
-        $emailHeaders .= "Content-Transfer-Encoding: 8bit \n";
-        $emailHeaders .= $emailBody."\n\n";
-
-        //get attachments and loop thru process to create headers for each file, open file read binary
-
-            foreach ($fname as $key => $value)
-            {
-                $filename = $_SERVER{'DOCUMENT_ROOT'} . '/attachments/' . $value;
-                $fp = fopen($filename, "rb");
-                $file = fread($fp, filesize($filename));
-                $file = chunk_split(base64_encode($file));
-                fclose($fp);
-
-                $emailHeaders .= "--".$num."\n";
-                $emailHeaders .= "Content-Type:".$ftype[$key]."; ";
-                $emailHeaders .= "name=\"".$value."\"\n";
-                $emailHeaders .= "Content-Transfer-Encoding: base64\n";
-                $emailHeaders .= "Content-Disposition: attachment; ";
-                $emailHeaders .= "filename=\"".$value."\"\n\n";
-                $emailHeaders .= $file."\n";
-            }
-        } else {
-            //original before hb updates
-            $emailHeaders = "From: $emailFrom\r\n";
-    		$emailHeaders.= "Cc: $emailCc\r\n";
-    		$emailHeaders.= "Reply-To: $emailReplyTo\r\n";
-    		$emailHeaders.= "Bcc: $emailBcc\r\n";
-        	$emailHeaders.= "Content-type: text/html\r\n";
-        }
-
+        $emailHeaders['From'] = "$emailFrom";
+		if ($emailCc) $emailHeaders['Cc'] = $emailCc;
+		if ($emailReplyTo) $emailHeaders['Reply-To'] = $emailReplyTo;
+		if ($emailBcc) $emailHeaders['Bcc'] = $emailBcc;
+		$emailHeaders['Subject'] = $emailSubject;
+        $emailHeaders['Content-Type'] = "text/html";
+        $emailHeaders['Content-Transfer-Encoding'] = "8bit";
+		
 		App::import('Vendor','appshared/init');
 		new AppShared();
-		include Configure::read("Appshared.Path")."../vendors/PHPMailer/phpmailer.php";
-		$spRelay = new SilverpopRelay;
+		$modulePath = Configure::read("Appshared.Path")."../vendors/Mail/SilverpopRelay.php";
+		include $modulePath;
+		$spRelay = new SilverpopRelay($modulePath);
 		
 		// 06/16/11 jwoods // 9/12/2011 rvella - relay through Silverpop
-		$spRelay->send('ppv_'.$ppvNoticeTypeId, $emailFrom, $emailReplyTo, $emailTo, $emailSubject, $emailBody);
+		$spRelay->send($ppvNoticeTypeId, $emailHeaders, $emailTo, $emailBody);
 
 		// below is for logging the email and updating the ticket
 		// -------------------------------------------------------------------------------
@@ -1784,9 +1717,7 @@ CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
 
 		// save the email as a flat file on /vendors/email_msgs/toolbox_sent_messages
 		// -------------------------------------------------------------------------------
-		$fh = fopen("../vendors/email_msgs/toolbox_sent_messages/$emailBodyFileName", 'w');
-		fwrite($fh, $emailBody);
-		fclose($fh);
+		file_put_contents("../vendors/email_msgs/toolbox_sent_messages/$emailBodyFileName", $emailBody);
 
 		// get initials
 		// -------------------------------------------------------------------------------
@@ -1832,10 +1763,10 @@ CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
 				$reservation['reservationConfirmToCustomer'] = date('Y:m:d H:i:s', strtotime('now'));
 				$this->Reservation->save($reservation);
 			}
-		} elseif (in_array($ppvNoticeTypeId, array(2,25))) {
+		} elseif (in_array($ppvNoticeTypeId, array(2,25,33))) {
 			// send ticket status to RESERVATION REQUESTED
 			$newTicketStatus = 3;
-		} elseif (in_array($ppvNoticeTypeId, array(10,33))){
+		} elseif ($ppvNoticeTypeId == 10) {
 			#$newTicketStatus = 1;
 			$newTicketStatus = 12;
 		} elseif ($ppvNoticeTypeId == 14) {
@@ -2034,13 +1965,10 @@ CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
 		// Links GiftCert to this ticket
 		
 		$totalChargeAmount = $data['paymentAmount'];
-		$payment_amt = 0;
-		
 		if ($toolboxManualCharge) {
 			$fee = $this->Ticket->getFeeByTicket($ticketId);
 			
-			$totalChargeAmount = $ticket['Ticket']['billingPrice'];
-			$payment_amt = $data['paymentAmount'];
+			$totalChargeAmount -= $fee;
 			
 			if ($data['paymentTypeId'] == 2) {
 				$this->loadModel('PromoCode');
@@ -2055,20 +1983,17 @@ CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
 			}
 		}
 		
-		$promoGcCofData	= $this->Ticket->getPromoGcCofData($ticket['Ticket']['ticketId'], $totalChargeAmount, $payment_amt);
+		$promoGcCofData	= $this->Ticket->getPromoGcCofData($ticket['Ticket']['ticketId'], $totalChargeAmount);
+		$totalChargeAmount = $promoGcCofData['final_price'];
 
 		if (!$toolboxManualCharge) {
 			// this is either autocharge or user checkout
 
-			$totalChargeAmount = $promoGcCofData['final_price'];
-			
 			// used promo or gc or cof that resulted in complete ticket price coverage -- no cc charge needed
 			// -------------------------------------------------------------------------------
 			if ($promoGcCofData['applied'] && ($promoGcCofData['final_price'] == 0)) {
 				return $this->runPostChargeSuccess($ticket, $data, $usingUpsId, $userPaymentSettingPost, $promoGcCofData, $toolboxManualCharge);
 			}
-		} else {
-			$totalChargeAmount = $payment_amt;
 		}
 
 		$paymentDetail = array();
@@ -2090,9 +2015,6 @@ CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
 			// ---------------------------------------------------------------------------
 			// init payment processing and submit payment
 			// ---------------------------------------------------------------------------
-			
-			$ticket['Ticket']['billingPrice'] = $totalChargeAmount;
-			CakeLog::write("debug",array("PAYMENT INFO",$ticket));
 			$processor = new Processor($paymentProcessorName);
 			$processor->InitPayment($userPaymentSettingPost, $ticket);
 			
@@ -2162,8 +2084,6 @@ CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
 		if (!$this->PaymentDetail->save($paymentDetail)) {
 			@mail('devmail@luxurylink.com', 'WEB SERVICE ERROR: PAYMENT PROCESSED BUT NOT SAVED', print_r($this->PaymentDetail->validationErrors,true)  . print_r($paymentDetail, true));
 		}
-		
-		CakeLog::write("debug",var_export(array("WEB SERVICE TICKETS: ",$paymentDetail,$promoGcCofData),1));
 		
 		// return result whether success or denied
 		// ---------------------------------------------------------------------------
