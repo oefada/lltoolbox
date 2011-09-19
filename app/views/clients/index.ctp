@@ -13,14 +13,15 @@ $this->set('hideSidebar', true);
 	Tools: <a href="/accolades">Accolades</a> | <a href="/presses">Press/Reviews</a>
 	<?php echo $this->renderElement('ajax_paginator', array('showCount' => true)); ?>
 <div class="clients index">
+<?php if (isset($inactive) && $inactive == 1): ?>
+	<a href="/clients/index/query:<?= (isset($query) ? $query : "") ?>">Hide inactive Clients</a>
+<?php else: ?>
+	<a href="/clients/index/query:<?= (isset($query) ? $query : "") ?>?inactive=1">Show inactive Clients</a>
+<?php endif; ?>
+
 	<?php if (isset($query) && !empty($query)): ?>
 		<div style="clear: both">
 		<strong>Search Criteria:</strong> <?php echo $query; ?> 
-		<?php if($inactive == 1): ?>
-			<a href="/clients/search?query=<?=$query?>">(hide inactive)</a>
-		<?php else: ?>
-			<a href="/clients/search?query=<?=$query?>&inactive=1">(show inactive)</a>
-		<?php endif; ?>
 		</div>
 	<?php endif ?>
 <table cellpadding="0" cellspacing="0">
