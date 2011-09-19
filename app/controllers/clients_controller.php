@@ -20,6 +20,10 @@ class ClientsController extends AppController {
 
 	function index($query = "") {
 		$order = '';
+		
+		$inactive = (isset($this->params['url']['inactive']) ? 1 : 0);
+		$this->set('inactive',$inactive);
+		
 		if (empty($query)) {
 			if (isset($this->params['named']['query'])) {
 				$this->params['form']['query'] = $this->params['named']['query'];
@@ -45,16 +49,16 @@ class ClientsController extends AppController {
 			$conditions['OR']['clientId LIKE'] = '%'.$query.'%';
 			$conditions['OR']['name'] = $query; 
 			$conditions['OR'][] = 'MATCH(name) AGAINST("'.$sqlquery.'" IN BOOLEAN MODE)';
-			
-			if (!isset($inactive)) {
-	            $conditions['AND'][] = " Client.clientId IN (SELECT clientId FROM clientSiteExtended WHERE inactive = 0)";
-			}
 		} else {
 			$order = 'clientId DESC';
 		}
 
+		if ($inactive == 0) {
+            $conditions['AND'][] = " Client.clientId IN (SELECT clientId FROM clientSiteExtended WHERE inactive = 0)";
+		}
+
 		//$conditions['OR'][] = 'parentClientId IS NULL';
-				
+		
 		//$this->Client->recursive = -1;
 		$this->paginate = array(
 		'contain' => array(
