@@ -103,11 +103,21 @@
 					<a href="/sessions/masquerade/revert" style="color: #ddad00">Unmasquerade</a>
 					</strong>
 				<?php else: ?>
-					<?=$userDetails['displayname']?><?=$html2->c($userDetails['samaccountname'])?>
+					<? 
+					if (isset($userDetails['displayName'])){
+						echo $userDetails['displayname'];
+						echo $html2->c($userDetails['samaccountname']);
+					}
+					?>
 				<?php endif; ?>
 			</div>
         </div> <!-- /#logo-title -->
     </div></div> <!-- /#header-inner, /#header -->
+
+		<?
+			if (!isset($queueCountUnread))$queueCountUnread='';
+			if (!isset($queueCountSeverity))$queueCountSeverity='';
+		?>
 
     <div id="main">
 	<div id="main-inner" class="clear-block<?php if(!isset($this->viewVars['hideSidebar']) || $this->viewVars['hideSidebar'] === false) { echo ' sidebar-left';}?>">
