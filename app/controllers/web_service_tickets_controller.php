@@ -1700,10 +1700,7 @@ CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
         $emailHeaders['Content-Type'] = "text/html";
         $emailHeaders['Content-Transfer-Encoding'] = "8bit";
 		
-		App::import('Vendor','InitAppshared');
-		new AppShared();
-		$modulePath = Configure::read("Appshared.Path")."../vendors/Mail/SilverpopRelay.php";
-		include $modulePath;
+		App::import("Vendor","appshared/vendors/Mail/SilverpopRelay",array('file' => "SilverpopRelay.php"));
 		$spRelay = new SilverpopRelay($modulePath);
 		
 		// 06/16/11 jwoods // 9/12/2011 rvella - relay through Silverpop
