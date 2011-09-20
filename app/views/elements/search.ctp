@@ -19,7 +19,7 @@ if (@$this->viewVars['searchController'] || method_exists($controller , 'search'
 <div id='search-bar' class="clearfix">
 <div id='search-bar-inner' class="clearfix">
 <?php $defSearchValue = "Search {$controllerName}"; ?>
-<form accept-charset="UNKNOWN" enctype="application/x-www-form-urlencoded" method="get" action="/<?= $controllerUrl ?>/search">
+<form accept-charset="UNKNOWN" enctype="application/x-www-form-urlencoded" method="get" id="search-form" action="/<?= $controllerUrl ?>/search">
 	<div class="clearfix">
 		<div class="search-input-with-livesearch" on>
 		<label>

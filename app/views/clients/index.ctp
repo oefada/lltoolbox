@@ -24,6 +24,11 @@ $this->set('hideSidebar', true);
 		<strong>Search Criteria:</strong> <?php echo $query; ?> 
 		</div>
 	<?php endif ?>
+<script language="JavaScript">
+	jQuery(document).ready(function($) {
+		<?= isset($inactive) ? "jQuery('#search-form').append('<input type=\"hidden\" name=\"inactive\" value=\"".$inactive."\">');" : "" ?>
+	});
+</script>
 <table cellpadding="0" cellspacing="0">
 <tr>
 	<th><?php echo $paginator->sort('name');?></th>

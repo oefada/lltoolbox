@@ -21,7 +21,7 @@ class ClientsController extends AppController {
 	function index($query = "") {
 		$order = '';
 		
-		$inactive = (isset($this->params['url']['inactive']) ? 1 : 0);
+		$inactive = (isset($this->params['url']['inactive']) && $this->params['url']['inactive'] == 1 ? 1 : 0);
 		$this->set('inactive',$inactive);
 		
 		if (empty($query)) {
@@ -33,6 +33,8 @@ class ClientsController extends AppController {
 				$query = $this->Sanitize->escape($this->params['form']['query']);
 			} 
 		}
+		
+		$this->set('query',$query);
 		
 		$conditions = array();
 		
@@ -86,10 +88,6 @@ class ClientsController extends AppController {
 		'order' => $order);
 		
 		$clients = $this->paginate();
-		
-		if (count($clients) == 1) {
-			$this->redirect(array('action' => 'edit',$clients[0]['Client']['clientId']));
-		}
 		
 		$this->Client->containable = false;
 		$this->set('clients', $clients);
@@ -254,7 +252,7 @@ class ClientsController extends AppController {
 			$this->params['form']['query'] = $this->params['url']['query'];
 		}
 
-		$this->redirect(array('action'=>'index', 'query' => $this->params['form']['query']));
+		$this->redirect("/clients/index/query:".$this->params['form']['query'].(isset($this->params['url']['inactive']) ? "?inactive=".$this->params['url']['inactive'] : ""));
 	}
 	
 	function rollback($revisionId) {
