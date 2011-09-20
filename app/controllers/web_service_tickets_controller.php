@@ -1598,7 +1598,7 @@ CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
 		
 		foreach ($matches as $m) {
 			// Does URL already have question mark?
-			if (preg_match("/luxurylink\.com|familygetaway\.com|prefixUrl|dateRequestLink/", $m)) {
+			if (preg_match("/luxurylink\.com|familygetaway\.com|prefixUrl|siteUrl|dateRequestLink/", $m)) {
 				$mOrig = $m;
 				
 				$whichQuote = substr($m,-1);
@@ -1612,9 +1612,7 @@ CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
 					}
 				}
 				
-				if ($utm['utmSource']) {
-					$m .= "utm_source=".strtolower($append)."&";
-				} 
+				$m .= "utm_source=".strtolower($append)."&";
 				
 				if ($utm['medium']) {
 					$m .= "medium=".$utm['medium']."&";
