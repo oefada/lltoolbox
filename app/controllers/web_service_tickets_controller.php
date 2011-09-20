@@ -1613,7 +1613,7 @@ CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
 				}
 				
 				if ($utm['utmSource']) {
-					$m .= "utm_source=".$utm['utmSource']."&";
+					$m .= "utm_source=".strtolower($append)."&";
 				} 
 				
 				if ($utm['medium']) {
@@ -1700,8 +1700,8 @@ CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
         $emailHeaders['Content-Type'] = "text/html";
         $emailHeaders['Content-Transfer-Encoding'] = "8bit";
 		
-		App::import("Vendor","appshared/vendors/Mail/SilverpopRelay",array('file' => "SilverpopRelay.php"));
-		$spRelay = new SilverpopRelay($modulePath);
+		App::import("Vendor","SilverpopRelay",array('file' => "appshared".DS."vendors".DS."Mail".DS."SilverpopRelay.php"));
+		$spRelay = new SilverpopRelay();
 		
 		// 06/16/11 jwoods // 9/12/2011 rvella - relay through Silverpop
 		$spRelay->send($ppvNoticeTypeId, $emailHeaders, $emailTo, $emailBody);
