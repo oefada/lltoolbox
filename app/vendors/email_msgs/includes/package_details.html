@@ -31,7 +31,7 @@
 																																<tr><td colspan="3" bgcolor="#86878a" style="font-size:0; line-height:0;"><img src="blank.gif" align="left" vspace="0" hspace="0" width="1" height="1"></td></tr>
 																																<tr>
 																																	<td width="1" bgcolor="#86878a" style="font-size:0; line-height:0;"><img src="blank.gif" align="left" vspace="0" hspace="0" width="1" height="1"></td>
-																																	<td align="center" style="font-size:0; line-height:0;"><img width="225" height="169" src="http://www.luxurylink.com/images/por/<?php echo $oldProductId;?>/<?php echo $oldProductId;?>-gal-lrg-01.jpg" alt="<?php echo $packageName;?>" border="0" />
+																																	<td align="center" style="font-size:0; line-height:0;"><img width="225" height="169" src="<?= $siteUrl ?>images/por/<?php echo $oldProductId;?>/<?php echo $oldProductId;?>-gal-lrg-01.jpg" alt="<?php echo $packageName;?>" border="0" />
 																																	</td>
 																																	<td width="1" bgcolor="#86878a" style="font-size:0; line-height:0;"><img src="blank.gif" align="left" vspace="0" hspace="0" width="1" height="1"></td>
 																																</tr>
@@ -45,7 +45,12 @@
 																																<tr><td style="line-height:17px;"><font face="Arial, Helvetica, sans-serif" size="2" style="font-size:14px; line-height:17px" color="#474747"><?php echo $locationDisplay;?></font></td></tr>
 																																<tr><td style="font-size:0; line-height:0;"><img src="blank.gif" width="1" height="14"></td></tr>
 																																<tr><td style="line-height:17px;"><font face="Arial, Helvetica, sans-serif" size="2" style="font-size:12px; line-height:17px" color="#474747"><?= $roomGrade ?> for <?= $numGuests ?> Travelers - <?php echo $numNights;?> nights </font></td></tr>
-																																<tr><td style="font-size:0; line-height:0;"><img src="blank.gif" width="1" height="23"></td></tr>
+																																<tr><td style="font-size:0; line-height:0;"><img src="blank.gif" width="1" height="14"></td></tr>
+																																<tr><td style="font-size:0; line-height:17px;"><font face="Arial, Helvetica, sans-serif" size="2" style="font-size:12px; line-height:17px" color="#474747"><strong>Address:</strong><br><?= $clients[0]['address1'] ?><br><?= ($clients[0]['address2'] != "" ? $clients[0]['address2']."<br>" : "") ?><?= $locationDisplay ?></font></td></tr>
+																																<tr><td style="font-size:0; line-height:0;"><img src="blank.gif" width="1" height="14"></td></tr>
+																																<tr><td style="font-size:0; line-height:17px;"><font face="Arial, Helvetica, sans-serif" size="2" style="font-size:12px; line-height:17px" color="#474747"><?= $packageIncludes ?></font></td></tr>
+																																<tr><td style="font-size:0; line-height:0;"><img src="blank.gif" width="1" height="14"></td></tr>
+																																<? if ($legalText != ""): ?><tr><td style="font-size:0; line-height:17px;"><font face="Arial, Helvetica, sans-serif" size="2" style="font-size:12px; line-height:17px" color="#474747">Fine Print:<br><?= $legalText ?></font></td></tr><?php endif; ?>
 																															</table>
 																														</td>
 																													</tr>
