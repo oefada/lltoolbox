@@ -3938,23 +3938,34 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 	 */
 	public function consolidated_report($client_id = null)
 	{
-		Configure::write('debug', 1);
+		$this->loadModel('Client');
+		Configure::write('debug', 0); 
+		App::import('Vendor', 'ConsolidatedReport', array('file' => 'consolidated_report' . DS . 'consolidated_report.php'));
 		$this->layout = 'excel';
 
-		$template = APP . 'vendors/consolidated_report/template.xlsx';
+		$template = APP . 'vendors/consolidated_report/templates/consolidated_report_revision-1.xlsx';
 		$newFile = TMP . 'consolidated_report.xlsx';
 		$outputFile = TMP . 'consolidated_report_output.xlsx';
 		$filename = 'consolidated_report_' . date('YmdHis') . '.xlsx';
+		
+		$client_data = $this->Client->find('first', array('order' => 'Client.clientId desc'));
 
-		$phpExcelVersion = '1.7.6';
-		//App::import('Vendor', 'PHPExcel', array('file' => "PHPExcel-$phpExcelVersion" . DS . 'PHPExcel.php'));
-		//App::import('Vendor', 'PHPExcel', array('file' => "PHPExcel-$phpExcelVersion" . DS . 'Reader' . DS . 'Excel2007.php'));
-		//App::import('Vendor', 'PHPExcel', array('file' => "PHPExcel-$phpExcelVersion" . DS . 'Writer' . DS . 'Excel2007.php'));
-		App::import('Vendor', 'ConsolidatedReport', array('file' => 'consolidated_report' . DS . 'consolidated_report.php'));
+		// Create the report object
+		$report = new ConsolidatedReport($template, $newFile, $outputFile);
+		
+		// Manipulate spreadsheet object by building array
+		// Start with client info
+		$report->setDataToPopulate('Dashboard', 'client_name', 'J4', $client_data['Client']['name']);
+		$report->setDataToPopulate('Dashboard', 'date_range', 'J5', 'Jan 1, 2011 - May 31, 2011');
+		$report->setDataToPopulate('Dashboard', 'marketing_fee', 'J7', $client_data['Loa'][0]['membershipFee']);
+		$report->setDataToPopulate('Activity Summary', 'loa_start_date', 'A4', date('M j, Y', strtotime($client_data['Loa'][0]['startDate'])));
 
-		$report = new ConsolidatedReport($template, $newFile, $outputFile, $filename);
-		$report->test();
+		// Save array to spreadsheet object
+		$report->populateFromArray($report->getDataToPopulate());
+		
+		// Write the report object to disk
 		$report->writeSpreadsheetObjectToFile();
+		
 		
 		// Set our view data
 		$this->set('spreadsheet', $report->getSpreadsheetData());

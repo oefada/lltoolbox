@@ -31,8 +31,15 @@
             </ul>
         </li>
     <?php endif; ?>
-	<li class="open">REPORTS</li>
+	<li class="open">REPORTS
         <ul>
             <li style="margin-bottom:3px;"><a href="/clients/imr/<?php echo $clientId; ?>">Inventory Management</a></li>
         </ul>
+	</li>
+	<li class="open">IMPRESSIONS
+		<ul>
+			<li style="margin-bottom:3px"><a href="<?php echo $this->webroot; ?>clients/newsletter_impressions/<?php echo $clientId; ?>">Newsletter</a></li>
+			<li style="margin-bottom:3px"><a href="<?php echo $this->webroot; ?>clients/social_impressions/<?php echo $clientId; ?>">Social Media</a></li>
+		</ul>
+	</li>
 </ul>

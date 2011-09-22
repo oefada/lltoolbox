@@ -377,5 +377,111 @@ class ClientsController extends AppController {
         $this->set('searchEndDate', $searchEndDate);
         $this->set('schedulingMasters', $schedulingMasters);
     }
+
+	/**
+	 * 
+	 */
+	public function newsletter_impressions($client_id)
+	{
+		$this->loadModel('ClientImpressions');
+
+		if (isset($this->data)) {
+			$this->data['client_id'] = $client_id;
+			$this->data['impression_source_id'] = 1;
+			if (isset($this->data['startDate'])) {
+				$this->data['startDate'] = $this->data['startDate'] . " 00:00:00"; 
+			}
+			if (isset($this->data['endDate'])) {
+				$this->data['endDate'] = $this->data['endDate'] . " 23:59:59"; 
+			}
+			if (isset($this->data['impressions'])) {
+				$this->data['impressions'] = ereg_replace("[^0-9]" , '', $this->data['impressions']);
+			}
+			if ($this->ClientImpressions->save($this->data) !== false) {
+				$this->Session->setFlash('Impressions added successfully');
+			} else {
+				$this->Session->setFlash('There was a problem adding the impressions');
+			}
+		}
+
+		$this->set('impressions_year_to_date', $this->ClientImpressions->getThisYearsImpressions($client_id, 1));
+		$this->set('impressions_month_to_date', $this->ClientImpressions->getThisMonthsImpressions($client_id, 1));
+		$this->set('impressions_last_month', $this->ClientImpressions->getLastMonthsImpressions($client_id, 1));
+	}
+	
+	/**
+	 * 
+	 */
+	public function social_impressions($client_id)
+	{
+		$this->loadModel('ClientImpressions');
+
+		if (isset($this->data)) {
+			$this->data['client_id'] = $client_id;
+			$this->data['impression_source_id'] = 2;
+			if (isset($this->data['startDate'])) {
+				$this->data['startDate'] = $this->data['startDate'] . " 00:00:00"; 
+			}
+			if (isset($this->data['endDate'])) {
+				$this->data['endDate'] = $this->data['endDate'] . " 23:59:59"; 
+			}
+			if (isset($this->data['impressions'])) {
+				$this->data['impressions'] = ereg_replace("[^0-9]" , '', $this->data['impressions']);
+			}
+			if ($this->ClientImpressions->save($this->data) !== false) {
+				$this->Session->setFlash('Impressions added successfully');
+			} else {
+				$this->Session->setFlash('There was a problem adding the impressions');
+			}
+		}
+
+		$this->set('impressions_year_to_date', $this->ClientImpressions->getThisYearsImpressions($client_id, 2));
+		$this->set('impressions_month_to_date', $this->ClientImpressions->getThisMonthsImpressions($client_id, 2));
+		$this->set('impressions_last_month', $this->ClientImpressions->getLastMonthsImpressions($client_id, 2));
+	}
+	
+	/**
+	 * 
+	 */
+	public function estara_import()
+	{
+		$this->loadModel('ClientPhoneLead');
+		$csv_data;
+		if (isset($this->data)) {
+			if (isset($this->data['estara_csv_data']) && $this->eStaraUploadIsValid($this->data['estara_csv_data'])) {
+				if (($handle = fopen($this->data['estara_csv_data']['tmp_name'], 'r')) !== false) {
+					while (($data = fgetcsv($handle, 1000, ',')) !== false) {
+						$csv_data[] = $data;
+					}
+					$data_to_save = $this->ClientPhoneLead->buildArrayFromCSVData($csv_data);
+					if ($this->ClientPhoneLead->saveAll($data_to_save) === true) {
+						$this->Session->setFlash('Import successful');
+					} else {
+						$this->Session->setFlash('There was a problem with your import');
+					}
+				}
+			}
+		}
+	}
+	
+	/**
+	 * 
+	 */
+	private function eStaraUploadIsValid($upload_data)
+	{
+		// Assume data is valid
+		$data_is_valid = true;
+		
+		// Check for data that makes the data invalid
+		if ($upload_data['type'] != 'text/csv') {
+			$data_is_invalid = false;
+		} else if ($upload_data['error'] != 0) {
+			$data_is_invalid = false;
+		} else if (!($upload_data['size'] > 0)) {
+			$data_is_invalid = false;
+		}
+
+		return $data_is_valid;
+	}
 }
 ?>
