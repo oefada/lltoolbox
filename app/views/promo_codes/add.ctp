@@ -1,9 +1,9 @@
 <div class="promoCodes form">
 <?php echo $form->create('PromoCode');?>
 	<fieldset>
- 		<legend><?php __('Add PromoCode');?></legend>
+ 		<legend><?php __('Add Promo Codes');?></legend>
 	<?php
-		echo $form->input('Promo', array('type' => 'select'));
+		echo $form->input('Promo', array('type' => 'select', 'empty'=> '-- Select Promo'));
 		echo $form->input('promoCode', array('label' => 'One Promo Code'));
 		echo '
 			<br/><br/>
@@ -14,10 +14,4 @@
 	</fieldset>
 <?php echo $form->end('Submit');?>
 </div>
-<div class="actions">
-	<ul>
-		<li><?php echo $html->link(__('List PromoCodes', true), array('action'=>'index'));?></li>
-		<li><?php echo $html->link(__('List Promos', true), array('controller'=> 'promos', 'action'=>'index')); ?> </li>
-		<li><?php echo $html->link(__('New Promo', true), array('controller'=> 'promos', 'action'=>'add')); ?> </li>
-	</ul>
-</div>
+

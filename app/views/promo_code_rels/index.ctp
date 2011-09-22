@@ -1,5 +1,5 @@
 <div class="promoCodeRels index">
-<h2><?php __('PromoCodeRels');?></h2>
+<h2><?php __('Promo Codes for ' . $promo['Promo']['promoName']);?></h2>
 <p>
 <?php
 
@@ -39,8 +39,3 @@ foreach ($promoCodeRels as $promoCodeRel):
 	<?php echo $paginator->next(__('next', true).' >>', array(), null, array('class'=>'disabled'));?>
 </div>
 
-<div class="actions">
-	<ul>
-		<li><?php echo $html->link(__('List Promos', true), array('controller'=> 'promos', 'action'=>'index')); ?> </li>
-	</ul>
-</div>

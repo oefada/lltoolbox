@@ -38,13 +38,15 @@ class DatePickerHelper extends FormHelper {
      *
      * @param string $field Name of the database field. Possible usage with Model.
      * @param array $options Optional Array. Options are the same as in the usual text input field.
-     */   
+     */
     function picker($fieldName, $options = array()) {
         $this->_setup();
         $htmlAttributes['id'] = $this->domId($fieldName);
         $divOptions['class'] = 'date';
         $options['type'] = 'text';
-        $options['div']['class'] = 'date';
+        if (!isset($options['div']) || $options['div'] !== false) {
+            $options['div']['class'] = 'date';
+        }
         $time='';
         if(isset($options['showstime'])){
             if($options['showstime']===true) {
@@ -62,7 +64,7 @@ class DatePickerHelper extends FormHelper {
 
     function flat($fieldName, $options = array()){
         $this->_setup();
-        $htmlAttributes = $this->domId($options);       
+        $htmlAttributes = $this->domId($options);
         $divOptions['class'] = 'date';
         $options['type'] = 'hidden';
         $options['div']['class'] = 'date';
