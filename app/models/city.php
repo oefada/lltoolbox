@@ -6,11 +6,11 @@ class City extends AppModel {
 	var $primaryKey     = 'cityId';
 	var $displayField   = 'cityName';
 	var $order          = 'cityName';
+	var $actsAs = array('Containable');
 	
-	var $belongsTo = array('State' => array('foreignKey' => 'stateId'),
-						   'Country' => array('foreignKey' => 'countryId')
-						  );
-
+	var $belongsTo = array('State' => array('foreignKey' => false, 'conditions' => 'City.stateId = State.stateId AND City.countryId = State.countryId'),
+				'Country' => array('foreignKey' => 'countryId'));
+	
 	var $validate = array(
 		'cityName' => array(
 			VALID_NOT_EMPTY,

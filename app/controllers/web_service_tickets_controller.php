@@ -14,10 +14,12 @@ this will write to toolbox/development/app/tmp/logs
 
 Configure::write('debug', 0);
 App::import('Vendor', 'nusoap/web_services_controller');
-App::import('Vendor', 'aes.php');
+
+require_once "../vendors/aes.php";
 require(APP.'/vendors/pp/Processor.class.php');
 
 set_error_handler("wstErrorHandler");
+register_shutdown_function('wstErrorShutdown');
 
 // FOR DEV WEB SERVICE SETTINGS! VERY IMPORTANT FOR DEV
 define('DEV_USER_TOOLBOX_HOST', 'http://' . $_SERVER['ENV_USER'] . '-toolboxdev.luxurylink.com/web_service_tickets');
@@ -399,8 +401,6 @@ class WebServiceTicketsController extends WebServicesController
 			}
 
 			$expirationCriteriaId = $this->Ticket->getExpirationCriteria($ticketId);
-
-CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
 
 			switch ($expirationCriteriaId) {
 				case 1:
@@ -1524,9 +1524,10 @@ CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
 			if (trim($override_email_to)) {
 				$userEmail = $override_email_to;
 			}
-			if (trim($override_email_cc)) {
-				$emailCc = $override_email_cc;
-			}
+			
+			$emailCc = trim($override_email_cc) ? $override_email_cc : false;
+			$emailBcc = isset($emailBcc) ? $emailBcc : false;
+						
 			if (trim($override_email_subject)) {
 				$emailSubject = $override_email_subject;
 			}
@@ -1697,13 +1698,11 @@ CakeLog::write("debug","ticketId:$ticketId expCritId:$expirationCriteriaId");
 		$emailHeaders['Subject'] = $emailSubject;
         $emailHeaders['Content-Type'] = "text/html";
         $emailHeaders['Content-Transfer-Encoding'] = "8bit";
-		
+
 		App::import("Vendor","SilverpopRelay",array('file' => "appshared".DS."vendors".DS."Mail".DS."SilverpopRelay.php"));
 		$spRelay = new SilverpopRelay();
-		
 		// 06/16/11 jwoods // 9/12/2011 rvella - relay through Silverpop
 		$spRelay->send($ppvNoticeTypeId, $emailHeaders, $emailTo, $emailBody);
-
 		// below is for logging the email and updating the ticket
 		// -------------------------------------------------------------------------------
 
@@ -2223,18 +2222,17 @@ function wstErrorHandler($errno, $errstr, $errfile, $errline) {
 	        $eMsg .= ", PHP " . PHP_VERSION . " (" . PHP_OS . ")\n";
 			break;
 		case E_STRICT:
-			//$eMsg = "STRICT";
+//			$eMsg = "STRICT";
 			break;
 		default:
-			$errno = E_WARNING;
+			$eMsg = "CATCHALL";
 			break;
 	}
 
 	if ($errno != E_WARNING && isset($eMsg)) {
 		$eMsg .= " [$errno] $errstr\n";
-	    $eMsg .= "  Error on line $errline in file $errfile";
+	    $eMsg .= "  Line $errline in file $errfile";
 	    $eMsg .= ", PHP " . PHP_VERSION . " (" . PHP_OS . ")\n";
-	    $eMsg .= "Aborting...\n";	
 	}
 	
 	if (isset($eMsg)) {
@@ -2243,6 +2241,17 @@ function wstErrorHandler($errno, $errstr, $errfile, $errline) {
 	
     /* Don't execute PHP internal error handler */
     return true;	
+}
+
+function wstErrorShutdown() {
+	$error = error_get_last();
+	
+	if ($error['type'] != 2048) {
+		CakeLog::write("debug","SCRIPT ABORTED: ".var_export($error,1));
+		die();
+	} else {
+		CakeLog::write("debug","STRICT FATAL: ".var_export($error,1));
+	}
 }
 
 ?>

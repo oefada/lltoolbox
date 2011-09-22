@@ -10,7 +10,8 @@ class CitiesController extends AppController {
 	}
 	
 	function index() {
-		$this->City->recursive = 0;
+		//$this->City->recursive = -1;
+		
 		
 		if (isset($this->params['named']['query'])) {
 			$query = $this->Sanitize->escape($this->params['named']['query']);
@@ -24,11 +25,18 @@ class CitiesController extends AppController {
 		} else {
 			$conditions = array();
 		}
-		
+
+	
 		$this->paginate = array(
+/*			'contain' => array(
+				'City',
+				'State',
+				'Country'
+			),*/
 			'conditions' => $conditions,
 		);
 		
+		//$results = $this->query("SELECT * FROM cityNew as City, stateNew as State, countryNew as Country WHERE City.stateId = State.stateId AND City.countryId = State.countryId AND City.countryId = Country.countryId");
 		$this->set('cities', $this->paginate());
 	}
 

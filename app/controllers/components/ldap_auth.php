@@ -52,8 +52,8 @@ class LdapAuthComponent extends AuthComponent {
 		 */
         function preauthUser($username, $password) {
                 //TODO: un-hard-code the other database model fields.
-                $ldap =& $this->getLdapModel();
-                $model =& $this->getModel();
+                $ldap = $this->getLdapModel();
+                $model = $this->getModel();
 
                 $res = $ldap->auth($username, $password);
  
@@ -90,7 +90,7 @@ class LdapAuthComponent extends AuthComponent {
                 if (PHP5) {
                         $model = ClassRegistry::init($name);
                 } else {
-                        $model =& ClassRegistry::init($name);
+                        $model = ClassRegistry::init($name);
                 }
 
                 if (empty($model)) {
@@ -109,7 +109,7 @@ class LdapAuthComponent extends AuthComponent {
  	 * @access public
  	 */
 	function user($key = null) {
-	    $ldap =& $this->getLdapModel();
+	    $ldap = $this->getLdapModel();
 	    
 		$this->__setDefaults();
 		

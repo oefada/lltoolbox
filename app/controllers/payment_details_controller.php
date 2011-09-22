@@ -1,8 +1,8 @@
 <?php
 
-App::import('Vendor', 'aes.php');
 App::import('Vendor', 'nusoap_client/lib/nusoap');
 require(APP.'/vendors/pp/Processor.class.php');  
+require_once "../vendors/aes.php";
 
 class PaymentDetailsController extends AppController {
 

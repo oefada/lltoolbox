@@ -38,7 +38,9 @@
  * @package		cake
  * @subpackage	cake.app
  */
-class AppModel extends Model{
+
+App::import('Lib', 'LazyModel.LazyModel');
+class AppModel extends LazyModel {
     
     var $sites = array(1 => 'luxurylink',
                        2 => 'family');
@@ -110,6 +112,7 @@ class AppModel extends Model{
 		
 		return $queryData;
 	}
+	
     //push this model and any defined associations to the front-end databases
     function afterSave($created) {
         if ($this->isMultisite()) {            
@@ -248,4 +251,5 @@ class AppModel extends Model{
         return (isset($this->multisite) && (Model::hasField(array('sites', 'siteId')) || isset($this->inheritsFrom)));
     }
 }
+
 ?>

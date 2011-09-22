@@ -15,34 +15,30 @@ class LdapUser extends AppModel
 
     var $ds;
 
-    function __construct()
-    {
-        parent::__construct();
-		
-		$this->ds = ldap_connect($this->host, $this->port);
-        
+	function ldapConnect() {
+		$ldapCon = LdapConnect::getI();
+		$this->ds = $ldapCon->getDs($this->host,$this->port);
+	
 		ldap_set_option($this->ds, LDAP_OPT_PROTOCOL_VERSION, 3);
+		
         if ($this->user) {
             ldap_bind($this->ds, $this->user, $this->pass);
         } else {
             //Do an anonymous bind.
             ldap_bind($this->ds);
         }
-    }
-
-    function __destruct()
-    {
-        ldap_close($this->ds);
-    }
-
-    function findAll($attribute = 'samaccountname', $value = '*', $baseDn = '')
-    {
+	}
+	
+    function findAll($attribute = 'samaccountname', $value = '*', $baseDn = '') {
+		$this->ldapConnect();
+		
         if (!$baseDn) {
             $baseDn = $this->userBaseDn;
         }
+		
         $r = ldap_search($this->ds, $baseDn, $attribute . '=' . $value);
-        if ($r)
-        {
+		
+        if ($r) {
             ldap_sort($this->ds, $r, "sn");
             
             $result = ldap_get_entries($this->ds, $r);
@@ -52,8 +48,9 @@ class LdapUser extends AppModel
         return null;
     }
 
-    function read($fields=null, $samaccountname)
-    {
+    function read($fields=null, $samaccountname) {
+    	$this->ldapConnect();
+		
         $r = ldap_search($this->ds, $this->userBaseDn, 'samaccountname='. $samaccountname);
         if ($r)
         {
@@ -64,8 +61,7 @@ class LdapUser extends AppModel
         }
     }
 
-    function auth($samaccountname, $password)
-    {
+    function auth($samaccountname, $password) {
         if (trim($password) == '') {
             return false;
         }
@@ -88,35 +84,40 @@ class LdapUser extends AppModel
         }
     }
 
-    private function convert_from_ldap($data)
-    {
-        $final = false;
-      foreach ($data as $key => $row):
-         if($key === 'count') continue;
-
-         foreach($row as $key1 => $param):
-            if(!is_numeric($key1)) {
-                if (!is_array($param)) {
-                    $final[$key]['LdapUser'][$key1] = $param;
-                }
-                continue;
-           }
-            if($row[$param]['count'] === 1)
-               $final[$key]['LdapUser'][$param] = $row[$param][0];
-            else
-            {
-               if (!is_array($row[$param])) {
-                   $final[$key1] = $param;
-               }
-               foreach($row[$param] as $key2 => $item):
-                  if($key2 === 'count') continue;
-                  $final[$key]['LdapUser'][$param][] = $item;
-               endforeach;
-            }
-         endforeach;
-      endforeach;
-      return $final;
-     }
+    private function convert_from_ldap($data) {
+		$final = false;
+		
+		if (count($data)) {
+			foreach ($data as $key => $row) {
+				if ($key === 'count')
+					continue;
+			
+				foreach ($row as $key1 => $param) {
+					if (!is_numeric($key1)) {
+						if (!is_array($param)) {
+							$final[$key]['LdapUser'][$key1] = $param;
+						}
+						continue;
+					}
+					
+					if ($row[$param]['count'] === 1)
+						$final[$key]['LdapUser'][$param] = $row[$param][0];
+					else {
+						if (!is_array($row[$param])) {
+							$final[$key1] = $param;
+						}
+						
+						foreach ($row[$param] as $key2 => $item) {
+							if ($key2 === 'count')
+								continue;
+							$final[$key]['LdapUser'][$param][] = $item;
+						}
+					}
+				}
+			}
+		}
+		return $final;
+	}
      
      function afterFind($data) {
          if (is_array($data)) {
@@ -136,5 +137,28 @@ class LdapUser extends AppModel
         
         return $data;
      }
+}
+
+class LdapConnect {
+	private static $instance;
+	private $ds;
+	
+	public static function getI() {
+		if (!self::$instance) {
+			self::$instance = new LdapConnect();
+		}
+		
+		return self::$instance;
+	}
+	
+	public function getDs($host,$port) {
+		if (!$this->ds || get_resource_type($this->ds) != "ldap link") {
+			$this->ds = ldap_connect($host,$port);
+		}
+		
+		return $this->ds;
+	}
+	
+	
 }
 ?>

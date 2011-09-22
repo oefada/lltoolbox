@@ -3,7 +3,7 @@
 App::import('Vendor', 'nusoap/web_services_controller');
 
 require(APP.'/vendors/pp/Processor.class.php');  
-App::Import('Vendor', 'aes.php');
+require_once "../vendors/aes.php";
 
 Configure::write('debug', 0);
 

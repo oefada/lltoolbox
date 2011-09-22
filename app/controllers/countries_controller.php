@@ -40,8 +40,6 @@ class CountriesController extends AppController {
 				$this->Session->setFlash(__('The Country could not be saved. Please, try again.', true));
 			}
 		}
-		$tags = $this->Country->Tag->find('list');
-		$this->set(compact('tags'));
 	}
 
 	function edit($id = null) {
@@ -60,8 +58,6 @@ class CountriesController extends AppController {
 		if (empty($this->data)) {
 			$this->data = $this->Country->read(null, $id);
 		}
-		$tags = $this->Country->Tag->find('list');
-		$this->set(compact('tags'));
 	}
 
 	function delete($id = null) {
