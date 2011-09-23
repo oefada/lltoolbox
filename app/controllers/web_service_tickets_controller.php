@@ -2419,6 +2419,7 @@ class WebServiceTicketsController extends WebServicesController
 		}
 
 		return 'CHARGE_SUCCESS';
+		
 	}
 }
 
