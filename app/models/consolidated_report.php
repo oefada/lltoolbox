@@ -34,6 +34,65 @@ class ConsolidatedReport extends AppModel
 	public $useTable = false;
 	
 	/**
+	 * client id
+	 * 
+	 * @access	private
+	 * @param	int
+	 */
+	private $client_id;
+	
+	/**
+	 * start date
+	 * 
+	 * @access	private
+	 * @param	int
+	 */
+	private $start_date;
+	
+	/**
+	 * end date
+	 * 
+	 * @access	private
+	 * @param	int
+	 */
+	private $end_date;
+	
+	/**
+	 * Initialize private variables required to build a report and do some
+	 * basic validation / sanity checks
+	 * 
+	 * @access	public
+	 * @param	int client id
+	 * @param	string start date
+	 * @param	string end date
+	 * @return	boolean
+	 */
+	public function create($client_id, $start_date, $end_date)
+	{
+		$this->client_id = $client_id;
+		$this->start_date = $start_date;
+		$this->end_date = $end_date;
+		
+		return $this->validates();
+	}
+	
+	/**
+	 * Determine if required variables are valid before generating report
+	 * 
+	 * @access	public
+	 * @return	boolean
+	 */
+	public function validates()
+	{
+		$isValid = true;
+		if ($this->start_date >= $this->end_date) {
+			$isValid = false;
+		}
+		
+		return $isValid;
+	}
+	
+	/**
 	 * 
 	 */
 	public function getBookingInformation($client_id)
