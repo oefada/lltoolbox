@@ -160,9 +160,9 @@ class TrackDetail extends AppModel {
 
 		// for retail value - this will be deprecated once SOA is in place
 		if ($track['expirationCriteriaId'] == 5) {
-			$p = new Package();
-			$p->recursive = -1;
-			$package = $p->read(null, $ticket_and_rev['clpr']['packageId']);
+			$this->loadModel("Package");
+			$this->Package->recursive = -1;
+			$package = $this->Package->read(null, $ticket_and_rev['clpr']['packageId']);
 			$new_track_detail['allocatedAmount'] = $package['Package']['approvedRetailPrice'];
 
 			$r = $this->query("SELECT retailValue FROM reservation AS Reservation WHERE ticketId = $ticketId ORDER BY reservationId DESC LIMIT 1");
@@ -312,20 +312,22 @@ class TrackDetail extends AppModel {
 
 	function reverseBalances($trackDetailId) {
 		$errors = 0;
-		$trackModel = new Track();
-		$loaModel = new Loa();
-		$loaModel->recursive = -1;
+		
+		$this->loadModel("Track");
+		$this->loadModel("Loa");
+		
+		$this->Loa->recursive = -1;
 
 		$trackDetail = $this->read(null, $trackDetailId);
 		$allocated_amount = $trackDetail['TrackDetail']['allocatedAmount'];
-		$loa = $loaModel->read(null, $trackDetail['Track']['loaId']);
+		$loa = $this->Loa->read(null, $trackDetail['Track']['loaId']);
 
 		$track = $trackDetail['Track'];
 
 		$track['pending'] += $allocated_amount;
 		$track['collected'] -= $allocated_amount;
 		$track['modified'] = date('Y-m-d H:i:s', strtotime('now'));
-		if (!$trackModel->save($track)) {
+		if (!$this->Track->save($track)) {
 			$errors++;
 		}
 
@@ -345,16 +347,17 @@ class TrackDetail extends AppModel {
 			$loa['Loa']['retailValueBalance'] += $allocated_amount;
 		}
 
-		if (!$loaModel->save($loa, array('callbacks' => 'before'))) {
+		if (!$this->Loa->save($loa, array('callbacks' => 'before'))) {
 			$errors++;
 		}
 		return (!$errors) ? true : false;
 	}
 
 	function afterSave() {
-		$trackModel = new Track();
-		$loaModel = new Loa();
-		$loaModel->recursive = -1;
+		$this->loadModel("Track");
+		$this->loadModel("Loa");
+		
+		$this->Loa->recursive = -1;
 
 		$allocated_amount = $this->data['TrackDetail']['allocatedAmount'];
 		$tracks = $this->getTrackRecord($this->data['TrackDetail']['ticketId']);
@@ -362,14 +365,14 @@ class TrackDetail extends AppModel {
 
 		// retrieve LOA data
 		// ---------------------------------------------------------
-		$loa = $loaModel->read(null, $track['loaId']);
+		$loa = $this->Loa->read(null, $track['loaId']);
 
 		// update the track record (track)
 		// ---------------------------------------------------------
 		$track['pending']   -= $allocated_amount;
 		$track['collected'] += $allocated_amount;
 		$track['modified']	 = date('Y-m-d H:i:s', strtotime('now'));
-		$trackModel->save($track);
+		$this->Track->save($track);
 
 		// update the loa record
 		// ---------------------------------------------------------
@@ -389,7 +392,7 @@ class TrackDetail extends AppModel {
 			$loa['Loa']['retailValueBalance'] -= $allocated_amount;
 		}
 
-		$loaModel->save($loa, array('callbacks' => 'before'));
+		$this->Loa->save($loa, array('callbacks' => 'before'));
 		return true;
 	}
 }

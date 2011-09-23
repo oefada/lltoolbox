@@ -1258,6 +1258,7 @@ class WebServiceTicketsController extends WebServicesController
 		// -------------------------------------------------------------------------------
 		ob_start();
 		switch ($ppvNoticeTypeId) {
+			/* NEW TEMPLATES
 			case 1:
 				// send out res confirmation
 				$templateFile = "1_reservation_confirmation";
@@ -1486,7 +1487,228 @@ class WebServiceTicketsController extends WebServicesController
 				$templateFile = "36_highest_bidder";
 				$templateTitle = "Highest Bidder";
 				$emailSubject = "$siteName: Your bid has been received!";
+				break;
+			*/
+			///* OLD TEMPLATES 
+			case 1:
+				// send out res confirmation
+				include('../vendors/email_msgs/ppv/conf_ppv.html');
+				$emailSubject = "Your $siteName Booking is Confirmed - $clientNameP";
+				$emailFrom = ($isAuction) ? "$siteDisplay<resconfirm@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
+				$emailReplyTo = ($isAuction) ? "resconfirm@$siteEmail" : "reservations@$siteEmail";
+				break;
+			case 26:
+				// general customer template
+				include('../vendors/email_msgs/notifications/26_general_customer_template.html');
+				$emailSubject = "Your $siteName Booking is Confirmed - $clientNameP";
+				$emailFrom=($isAuction)?"$siteDisplay<resconfirm@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
+				$emailReplyTo = ($isAuction) ? "resconfirm@$siteEmail" : "reservations@$siteEmail";
+				break;
+			case 23:
+				// send out res confirmation to client also as copy
+				include('../vendors/email_msgs/ppv/23_conf_copy_client.html');
+				$emailSubject = "$siteName Booking Confirmed for $userFirstName $userLastName - $clientNameP";
+				$emailFrom = ($isAuction) ? "$siteDisplay<resconfirm@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
+				$emailReplyTo = ($isAuction) ? "resconfirm@$siteEmail" : "reservations@$siteEmail";
+				$userEmail = $clientPrimaryEmail;
+				break;
+			case 2:
+				// send out res request
+				$extranet_link = $this->getExtranetLink($ticketId, $siteId);
+				include('../vendors/email_msgs/notifications/2_reservation_request.html');
+				$emailSubject = "Please Confirm This $siteName Booking - $offerTypeTxt - ACTION REQUIRED - $userFirstName $userLastName";
+				if (isset($res_request_count) && $res_request_count > 0) {
+					$emailSubject = 'NEW DATES REQUESTED - ' . $emailSubject;
+				}
+
+				$emailFrom = ($isAuction) ? "$siteDisplay<resrequests@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
+				$emailReplyTo = ($isAuction) ? "resrequests@$siteEmail" : "reservations@$siteEmail";
+				$userEmail = $clientPrimaryEmail;
+				$emailCc = $clientCcEmail;
+				break;
+			case 29:
+				// send out res cancellation request
+				$extranet_link = $this->getExtranetCancellationLink($ticketId, $siteId);
+				include('../vendors/email_msgs/notifications/29_reservation_cancel_request.html');
+				$emailSubject = "$siteName Cancellation Request - ACTION REQUIRED - $clientName";
+				$emailFrom = ($isAuction) ? "$siteDisplay<resrequests@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
+				$emailReplyTo = ($isAuction) ? "resrequests@$siteEmail" : "reservations@$siteEmail";
+				$userEmail = $clientPrimaryEmail;
+				$emailCc = $clientCcEmail;
+				break;
+			case 30:
+				// send out res cancellation confirmation
+				include('../vendors/email_msgs/notifications/30_reservation_cancel_confirmation.html');
+				$emailSubject = "Your $siteName Booking was Cancelled. - $userFirstName $userLastName";
+				$emailFrom = ($isAuction) ? "$siteDisplay<resrequests@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
+				$emailReplyTo = ($isAuction) ? "resrequests@$siteEmail" : "reservations@$siteEmail";
+				break;
+			case 31:
+				// send out res cancellation confirmation
+				include('../vendors/email_msgs/ppv/cancel_ppv.html');
+				$emailSubject = "Your $siteName Booking was Cancelled. - $clientNameP";
+				$emailFrom = ($isAuction) ? "$siteDisplay<resrequests@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
+				$emailReplyTo = ($isAuction) ? "resrequests@$siteEmail" : "reservations@$siteEmail";
+				$userEmail = $clientPrimaryEmail;
+				break;
+			case 25:
+				// send out res request w/o xnet
+				include('../vendors/email_msgs/notifications/25_res_request_no_xnet.html');
+				$emailSubject = "Please Confirm This $siteName Booking - $offerTypeTxt - ACTION REQUIRED - $userFirstName $userLastName";
+				$emailFrom = ($isAuction) ? "$siteDisplay<resrequests@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
+				$emailReplyTo = ($isAuction) ? "resrequests@$siteEmail" : "reservations@$siteEmail";
+				$userEmail = $clientPrimaryEmail;
+				$emailCc = $clientCcEmail;
+				break;
+			case 27:
+				// general client template
+				include('../vendors/email_msgs/notifications/27_general_client_template.html');
+				$emailSubject = "Please Confirm This $siteName Booking - $offerTypeTxt - ACTION REQUIRED - $userFirstName $userLastName";
+				$emailFrom = ($isAuction) ? "$siteDisplay<resrequests@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
+				$emailReplyTo = ($isAuction) ? "resrequests@$siteEmail" : "reservations@$siteEmail";
+				$userEmail = $clientPrimaryEmail;
+				$emailCc = $clientCcEmail;
+				break;
+			case 28:
+				// general res request template
+				include('../vendors/email_msgs/notifications/28_general_res_request_template.html');
+				$emailSubject = "Please Confirm This $siteName Booking - $offerTypeTxt - ACTION REQUIRED - $userFirstName $userLastName";
+				$emailFrom = ($isAuction) ? "$siteDisplay<resrequests@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
+				$emailReplyTo = ($isAuction) ? "resrequests@$siteEmail" : "reservations@$siteEmail";
+				$userEmail = $clientPrimaryEmail;
+				$emailCc = $clientCcEmail;
+				break;
+			case 24:
+				// send out res request
+				$extranet_link = $this->getExtranetLink($ticketId, $siteId);
+				include('../vendors/email_msgs/notifications/24_reservation_request_followup.html');
+				$emailSubject = "2nd Request, Please Confirm This $siteName Booking - $offerTypeTxt - ACTION REQUIRED - $userFirstName $userLastName";
+				$emailFrom = ($isAuction) ? "$siteDisplay<resrequests@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
+				$emailReplyTo = ($isAuction) ? "resrequests@$siteEmail" : "reservations@$siteEmail";
+				$userEmail = $clientPrimaryEmail;
+				$emailCc = $clientCcEmail;
+				break;
+			case 32:
+				// this goes out with 24, info to customer
+				$extranet_link = $this->getExtranetLink($ticketId, $siteId);
+				include('../vendors/email_msgs/notifications/32_reservation_request_followup_customer.html');
+				$emailSubject = "Your Pending Reservation";
+				$emailFrom = ($isAuction) ? "$siteDisplay<resrequests@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
+				$emailReplyTo = ($isAuction) ? "resrequests@$siteEmail" : "reservations@$siteEmail";
+				break;
+			case 4:
+				include('../vendors/email_msgs/ppv/client_ppv.html');
+				$emailSubject = "$siteName Auction Winner Notification - $userFirstName $userLastName";
+				$emailFrom = "$siteDisplay<auctions@$siteEmail>";
+				$emailReplyTo = "auctions@$siteEmail";
+				$userEmail = $clientPrimaryEmail;
+				$emailCc = $clientCcEmail;
+				break;
+			case 5:
+				include('../vendors/email_msgs/notifications/winner_notification.html');
+				$emailSubject = "$siteName Auction Winner - $clientNameP";
+				$emailFrom = "$siteDisplay<auction@$siteEmail>";
+				$emailReplyTo = "auction@$siteEmail";
+				break;
+			case 9:
+				include('../vendors/email_msgs/fixed_price/msg_fixedprice.html');
+				$emailSubject = "$siteName - Your Request Has Been Received";
+				$emailFrom = "$siteDisplay<exclusives@$siteEmail>";
+				$emailReplyTo = "exclusives@$siteEmail";
+				break;
+			case 10:
+				include('../vendors/email_msgs/fixed_price/msg_client_fixedprice.html');
+				$emailSubject = "An Exclusive $siteName Booking Request Has Come In!";
+				$emailSubject = "Please Confirm This $siteName Booking - $offerTypeTxt - ACTION REQUIRED - $userFirstName $userLastName";
+				if (isset($res_request_count) && $res_request_count > 0) {
+					$emailSubject = 'NEW DATES REQUESTED - ' . $emailSubject;
+				}
+				$emailFrom = "$siteDisplay<exclusives@$siteEmail>";
+				$emailReplyTo = "exclusives@$siteEmail";
+				if ($this->Ticket->isMultiProductPackage($ticketId)) {
+					$emailFrom = "$siteDisplay<resrequest@$siteEmail>";
+					$emailReplyTo = "resrequest@$siteEmail";
+				}
+				$userEmail = $clientPrimaryEmail;
+				$emailCc = $clientCcEmail;
+				break;
+			case 11:
+				include('../vendors/email_msgs/fixed_price/msg_internal_fixedprice.html');
+				$emailSubject = "A $siteName $fpRequestType Request Has Come In!";
+				$emailFrom = "$siteDisplay<exclusives@$siteEmail>";
+				$emailReplyTo = "exclusives@$siteEmail";
+				$userEmail = "exclusives@$siteEmail";
+				break;
+			case 12:
+				include('../vendors/email_msgs/fixed_price/notification_acknowledgement.html');
+				$emailSubject = "Your $siteName Travel Booking - $clientNameP";
+				$emailFrom = ($isAuction) ? "$siteDisplay<auction@$siteEmail>" : "$siteDisplay<exclusives@$siteEmail>";
+				$emailReplyTo = ($isAuction) ? "auction@$siteEmail" : "exclusives@$siteEmail";
+				break;
+			case 13:
+				include('../vendors/email_msgs/fixed_price/notification_dates_available.html');
+				$emailSubject = "Your $siteName Travel Booking - $clientNameP";
+				$emailFrom = ($isAuction) ? "$siteDisplay<auction@$siteEmail>" : "$siteDisplay<exclusives@$siteEmail>";
+				$emailReplyTo = ($isAuction) ? "auction@$siteEmail" : "exclusives@$siteEmail";
+				break;
+			case 14:
+				include('../vendors/email_msgs/fixed_price/notification_dates_not_available.html');
+				$emailSubject = "Your Dates Were Not Available - $clientNameP";
+				$emailFrom = ($isAuction) ? "$siteDisplay<auction@$siteEmail>" : "$siteDisplay<exclusives@$siteEmail>";
+				$emailReplyTo = ($isAuction) ? "auction@$siteEmail" : "exclusives@$siteEmail";
+				break;
+			case 15:
+				include('../vendors/email_msgs/notifications/chase_money_notification.html');
+				$emailSubject = "$siteName Auction Winner - $clientNameP";
+				$emailFrom = "$siteDisplay<auction@$siteEmail>";
+				$emailReplyTo = "auction@$siteEmail";
+				break;
+			case 16:
+				include('../vendors/email_msgs/notifications/first_offense_flake.html');
+				$emailSubject = "$siteName Auction Winner - $clientNameP";
+				$emailFrom = "$siteDisplay<auction@$siteEmail>";
+				$emailReplyTo = "auction@$siteEmail";
+				break;
+			case 17:
+				include('../vendors/email_msgs/notifications/second_offense_flake.html');
+				$emailSubject = "$siteName Auction Winner - $clientNameP";
+				$emailFrom = "$siteDisplay<auction@$siteEmail>";
+				$emailReplyTo = "auction@$siteEmail";
+				break;
+			case 18:
+				include('../vendors/email_msgs/notifications/18_auction_winner_ppv.html');
+				$emailSubject = "$siteName Auction Winner Receipt - $clientNameP";
+				$emailFrom = "$siteDisplay<auction@$siteEmail>";
+				$emailReplyTo = "auction@$siteEmail";
+				break;
+			case 19:
+				include('../vendors/email_msgs/notifications/19_auction_winner_declined_expired.html');
+				$emailSubject = "Your $siteName Purchase is Not Complete - Action Required - $clientNameP";
+				$emailFrom = "$siteDisplay<auction@$siteEmail>";
+				$emailReplyTo = "auction@$siteEmail";
+				break;
+			case 20:
+				include('../vendors/email_msgs/notifications/20_auction_your_dates_received.html');
+				$emailSubject = "Your $siteName Request has been Received - $clientNameP";
+				$emailFrom = ($isAuction) ? "$siteDisplay<auction@$siteEmail>" : "$siteDisplay<exclusives@$siteEmail>";
+				$emailReplyTo = ($isAuction) ? "auction@$siteEmail" : "exclusives@$siteEmail";
+				break;
+			case 33:
+				include('../vendors/email_msgs/notifications/33_change_dates_request_template.html');
+				$emailSubject = "Your $siteName Request has been Received - $clientNameP";
+				$emailFrom = ($isAuction) ? "$siteDisplay<auction@$siteEmail>" : "$siteDisplay<exclusives@$siteEmail>";
+				$emailReplyTo = ($isAuction) ? "auction@$siteEmail" : "exclusives@$siteEmail";
+				break;
+			// New logic depends on these -- keeping for now
+			case 34: 
+				$templateFile = "34_forgot_password";
+				$emailSubject = $templateTitle = "Your $siteName Password";
 				break; 
+			case 35: 
+				$templateFile = "35_forgot_username";
+				$emailSubject = $templateTitle = "Your $siteName Username";
+				break;
+			//*/
 			default:
 				break;
 		}

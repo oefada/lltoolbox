@@ -33,12 +33,12 @@ class PaymentDetail extends AppModel {
 			$this->save($paymentDetail);
 		}
 		
-		$GiftCertBalance = new GiftCertBalance();
+		$this->loadModel("GiftCertBalance");
 		$data = array();
 		$data['GiftCertBalance']['promoCodeId'] = $gcData['promoCodeId'];
 		$data['GiftCertBalance']['amount']	= -$gcData['totalAmountOff'];
-		$GiftCertBalance->create();
-		$GiftCertBalance->save($data);
+		$this->GiftCertBalance->create();
+		$this->GiftCertBalance->save($data);
 	}
 
 	function saveCof($ticketId, $cofData, $userId, $auto = 0, $initials = 'NA',$dontSavePayment = false) {
@@ -57,13 +57,13 @@ class PaymentDetail extends AppModel {
 			$this->save($paymentDetail);
 		}
 
-		$CreditTracking = new CreditTracking();
+		$this->loadModel("CreditTracking");
 		$data = array();
 		$data['CreditTracking']['userId'] = $userId;
 		$data['CreditTracking']['amount']	= -$cofData['totalAmountOff'];
 		$data['CreditTracking']['creditTrackingTypeId'] = $cofData['creditTrackingTypeId'];
-		$CreditTracking->create();
-		$CreditTracking->save($data);
+		$this->CreditTracking->create();
+		$this->CreditTracking->save($data);
 	}
 }
 ?>

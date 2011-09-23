@@ -78,7 +78,6 @@ class PopularTravelIdeasController extends AppController {
 	
 	function beforeFilter() {
 	    parent::beforeFilter();
-		$this->Sanitize = new Sanitize();
 	}
 }
 ?>

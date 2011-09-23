@@ -122,7 +122,7 @@ class Configure extends Object {
  * @return Configure instance
  * @access public
  */
-	function &getInstance($boot = true) {
+	public static function &getInstance($boot = true) {
 		static $instance = array();
 		if (!$instance) {
 			$instance[0] =& new Configure();
@@ -315,7 +315,7 @@ class Configure extends Object {
  * @return string value of Configure::$var
  * @access public
  */
-	function read($var = 'debug') {
+	public static function read($var = 'debug') {
 		$_this =& Configure::getInstance();
 
 		if ($var === 'debug') {
@@ -424,7 +424,7 @@ class Configure extends Object {
  * @return string Current version of CakePHP
  * @access public
  */
-	function version() {
+	public static function version() {
 		$_this =& Configure::getInstance();
 
 		if (!isset($_this->Cake['version'])) {

@@ -1,8 +1,8 @@
 <?
 include('../vendors/email_msgs/email_includes/header.html');
 
-set_include_path(get_include_path() . PATH_SEPARATOR . '/home/'.$_SERVER['ENV_USER'].'/luxurylink/php/includes/php' . PATH_SEPARATOR . 'includes/php' . PATH_SEPARATOR . '/var/www/luxurylink/php/includes/php');
-include("flex_functions.php");
+//set_include_path(get_include_path() . PATH_SEPARATOR . '/home/'.$_SERVER['ENV_USER'].'/luxurylink/php/includes/php' . PATH_SEPARATOR . 'includes/php' . PATH_SEPARATOR . '/var/www/luxurylink/php/includes/php');
+//include("flex_functions.php");
 ?>
 
 <h1 style="color:#<?=$siteHeader;?>;font-size:16px;margin:0px;padding:0px;margin-bottom:30px;">Reservation Confirmed</h1>
@@ -45,8 +45,8 @@ include("flex_functions.php");
 
 				if ($liveOfferData['isFlexPackage']==1){
 
-					$arr=getFlexPricing($liveOfferData,$ticketData); ?>
-
+					//$arr=getFlexPricing($liveOfferData,$ticketData); ?>
+					$arr = array();
 					<tr>
 						<td style='font-weight:bold;font-size:12px;'>
 						<!--Total <?= $arr['num_nights'];?>-Night<br>-->Package Price:

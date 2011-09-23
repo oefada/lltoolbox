@@ -1,10 +1,124 @@
-																			      Congratulations! You have won the auction for <?php echo $clientNameP;?>.
+<?php include('../vendors/email_msgs/email_includes/header_new.html');?>
 
-</font></p>
-																				    <p><font face="Arial, Helvetica, sans-serif" size="2" style="font-size:14px; line-height:20px" color="#474747">Next step? <a style="text-decoration:underline; color:#036dfc;" href="<?= $dateRequestLink ?>&" target="_blank">Submit your preferred travel dates</a>. We will contact you by email as soon as your reservation has been confirmed. You may also check the status of your purchase at any time through <a style="text-decoration:underline; color:#036dfc;" href="<?= $prefixUrl ?>/my/my_activity.php" target="_blank">My Account</a>. </font></p>
+<table width="780" align="center" cellpadding="0" cellspacing="0">
+<tr><td style="color:#336699; font-family:Verdana, Arial, Helvetica, sans-serif; font-size:15px; text-align:center; padding:20px 0;"><strong>- CONGRATULATIONS! -</strong></td></tr>
+</table>
 
-																				    <?php if ($destData): ?><p><font face="Arial, Helvetica, sans-serif" size="2" style="font-size:14px; line-height:20px" color="#474747">As you begin planning your trip, get inspired with some great ideas about <a style="text-decoration:underline; color:#036dfc;" href="<?= $prefixUrl ?>/fivestar/<?= $destData['Destination']['destinationSeoName'] ?>/hotel-guide" target="_blank"><?= $locationDisplay ?></a>. </font></p><?php endif; ?>
-																				    <p><font face="Arial, Helvetica, sans-serif" size="2" style="font-size:14px; line-height:20px" color="#474747">Please submit your preferred travel dates, and we will be in touch shortly! </font></p>
-																			  <p><font face="Arial, Helvetica, sans-serif" size="2" style="font-size:14px" color="#474747">Most Sincerely</font><font face="Arial, Helvetica, sans-serif" size="2" style="font-size:14px" color="#474747">,<br>
-																			    <?= $siteName ?></font><img src="blank.gif" width="1" height="37"></p>
-																			  <p>&nbsp;</p>
+<table width="780" align="center" cellpadding="0" cellspacing="0">
+
+<tr>
+<td style="color:#333333; font-family:Verdana, Arial, Helvetica, sans-serif; font-size:15px; padding:0 20px;">
+Dear <?php echo $userFirstName;?>,
+<br /><br />
+You've just won the auction for <span style="color:#336699; text-decoration:none;"><?=$clientNameP;?></span>, congratulations!
+</td></tr>
+
+<tr>
+<td style="color:#000000; font-family:Verdana, Arial, Helvetica, sans-serif; font-size:14px; padding:20px 20px 5px 20px;">
+
+        <p>
+        <span style="font-weight:bold;">User Account ID:</span>  <?php echo $userId;?><br />
+        <span style="font-weight:bold;">Ticket Reference ID:</span>  <?php echo $ticketId;?>
+        <br /><br />
+        </p>
+
+        <!-- totals -->
+        <table width="240" cellpadding="4" cellspacing="0" style="font-size:12px; color:#333333; font-family:Verdana, Arial, Helvetica, sans-serif;">
+        <tr>
+                <td style="color:#336699; border:1px solid #cccccc;">Your Winning Bid:</td>
+                <td align="right" style="border-top:1px solid #cccccc;border-right:1px solid #cccccc;border-bottom:1px solid #cccccc;">US $<?=$billingPrice;?></td>
+        </tr>
+        <tr>
+                <td style="color:#336699; border-bottom:1px solid #cccccc;border-left:1px solid #cccccc;border-right:1px solid #cccccc;">Handling Fee:</td>
+                <td align="right" style="border-bottom:1px solid #cccccc;border-right:1px solid #cccccc;">US $<?=$llFee;?></td>
+        </tr>
+
+
+        <?php if ($promoGcCofData['Promo'] && $promoGcCofData['Promo']['applied']) :?>
+        <tr>
+        <td style="color:#336699; border-bottom:1px solid #cccccc;border-left:1px solid #cccccc;border-right:1px solid #cccccc;">
+                <?php if ($mcPromo) : ?>
+                Exclusive Offer with &nbsp;&nbsp;&nbsp;<a href="http://clk.atdmt.com/AST/go/154171765/direct;wi.1;hi.1/01/" target="_blank"><img src="http://www.luxurylink.com/images/shared/mc_small_logo.png" border="0" /></a>
+                <img src="http://view.atdmt.com/AST/view/154171765/direct;wi.1;hi.1/01/" width="1" height="1" border="0" />
+                <?php else: ?>
+                Promotion Applied:
+                <?php endif; ?>
+        </td>
+        <td align="right" style="border-bottom:1px solid #cccccc;border-right:1px solid #cccccc;">- US $<?=$promoGcCofData['Promo']['totalAmountOff'];?></td>
+        </tr>
+        <?php endif; ?>
+
+        <?php if ($promoGcCofData['GiftCert'] && $promoGcCofData['GiftCert']['applied']) :?>
+        <tr>
+        <td style="color:#336699; border-bottom:1px solid #cccccc;border-left:1px solid #cccccc;border-right:1px solid #cccccc;">
+                Gift Certificate Applied:
+        </td>
+        <td align="right" style="border-bottom:1px solid #cccccc;border-right:1px solid #cccccc;">- US $<?=$promoGcCofData['GiftCert']['totalAmountOff'];?></td>
+        </tr>
+        <?php endif; ?>
+
+        <?php if ($promoGcCofData['Cof'] && $promoGcCofData['Cof']['applied']) :?>
+        <tr>
+        <td style="color:#336699; border-bottom:1px solid #cccccc;border-left:1px solid #cccccc;border-right:1px solid #cccccc;">
+                Credit On File Applied:
+        </td>
+        <td align="right" style="border-bottom:1px solid #cccccc;border-right:1px solid #cccccc;">- US $<?=$promoGcCofData['Cof']['totalAmountOff'];?></td>
+        </tr>
+        <?php endif; ?>
+
+        <tr>
+                <td align="right" style="color:#ff3333; font-weight:bold;">Total Paid:</td>
+                <td align="right" style="color:#ff3333; font-weight:bold;"> US
+                        <?php if ($promoGcCofData['applied']) : ?>
+                        $<?=$promoGcCofData['final_price']; ?>
+                        <?php else: ?>
+                        $<?=$totalPrice;?>
+                        <?php endif; ?>
+                </td>
+        </tr>
+        </table>
+        <!-- end totals -->
+
+</td>
+</tr>
+
+<tr><td valign="top" style="color:#333333; background-color:#ffffff; font-family:Verdana, Arial, Helvetica, sans-serif; font-size:14px; padding:20px; border:1px solid #cccccc;">
+<!--HOTEL-->
+<table width="740" align="center" cellpadding="0" cellspacing="0">
+<tr>
+<td valign="top" width="267"><img src="http://www.luxurylink.com/images/por/<?php echo $oldProductId;?>/<?php echo $oldProductId;?>-gal-lrg-01.jpg" alt="<?php echo $packageName;?>" border="0" width="267" align="left" style="display:block" /></td>
+<td valign="top" width="15"></td>
+<td width="458" valign="top" style="font-family:Verdana, Arial, Helvetica, sans-serif;"><strong style="color:#336699; font-size:14px;"><?=$clientNameP;?></strong><br />
+<?php echo $locationDisplay;?>
+<br /><br />
+<?php echo $packageName;?> - <?php echo $numNights;?> nights
+<br /><br />
+<br /><br />
+<a href="<?=$dateRequestLink;?>&utm_source=ll&utm_medium=xa&utm_campaign=auction_winner"><img src="http://www.luxurylink.com/images/ppv/<?= ($siteId == 2) ? 'btn-traveldates-fg.jpg' : 'btn-traveldates.gif'; ?> " alt="Submit my travel dates now!" border="0" style="display:block" /></a>
+</td>
+</tr>
+</table><!--HOTEL-->
+</td>
+</tr>
+<tr><td height="30">&nbsp;</td></tr>
+<tr><td style="color:#333333; font-family:Verdana, Arial, Helvetica, sans-serif; font-size:15px; padding:0 20px;">
+
+<p><?php echo $packageIncludes;?></p>
+<p><?php echo $validityNote;?></p>
+
+The next step is to <a href="<?=$dateRequestLink;?>&utm_source=ll&utm_medium=xa&utm_campaign=auction_winner" style="color:#336699; text-decoration:underline;">click here to submit your preferred travel dates</a>.
+<br /><br />
+An email confirmation will be sent as soon as the dates of your reservation are secured. You may also check the status of your purchase at any time through <a href="<?=$siteUrl;?>my/my_acct.php?utm_source=ll&utm_medium=xa&utm_campaign=auction_winner" style="color:#336699; text-decoration:underline;">My Account</a>.
+<br /><br />
+Have a fantastic trip,<br /><br /><?=$siteName;?>
+<br /><br />
+</tr>
+</table>
+
+<?php include('../vendors/email_msgs/email_includes/footer_social.html');?>
+
+<table width="780" align="center" cellpadding="0" cellspacing="0">
+<tr><td style="font-family:Verdana, Arial, Helvetica, sans-serif; font-style:italic; font-size:12px; color:#333333;padding-top:10px;">Please remember that upon winning this auction your credit card was charged, and that this package is nonrefundable.<br />Should you have any questions, please contact our Travel Concierge at <?=$sitePhone;?>.</td></tr>
+</table>
+
+<?php include('../vendors/email_msgs/email_includes/footer_new.html');?>

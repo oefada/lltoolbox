@@ -11,7 +11,8 @@ class PackagePromoRelsController extends AppController {
 		$packages = $this->PackagePromoRel->find('all', array('conditions' => array('packagePromoId' => 1)));
 		$inactivePackages = array();
 		$activePackages = array();
-		$this->Ticket = new Ticket();
+		$this->loadModel("Ticket");
+		
 		$MCPROMOCODE = $this->PackagePromoRel->query("SELECT offerPromoCodeId FROM offerPromoCode as OfferPromoCode WHERE promoCode = 'LLMCWORLD09'");
 		$MCPROMOCODE = $MCPROMOCODE[0]['OfferPromoCode']['offerPromoCodeId'];
 

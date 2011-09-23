@@ -63,7 +63,7 @@ class CakeLog {
  * @access public
  * @static
  */
-	function write($type, $msg) {
+	public static function write($type, $msg) {
 		if (!defined('LOG_ERROR')) {
 			define('LOG_ERROR', 2);
 		}

@@ -1140,8 +1140,8 @@ class PackagesController extends AppController {
             else {
                 $this->Package->ClientLoaPackageRel->Loa->recursive = -1;
                 $loa = $this->Package->ClientLoaPackageRel->Loa->find('first', array('conditions' => array('Loa.loaId' => $_GET['loaId'])));
-                $packageObj = new Package();
-                $package['Package'] = $packageObj->schema();
+
+                $package['Package'] = $this->Package->schema();
                 foreach ($package['Package'] as &$field) {
                     $field = '';
                 }

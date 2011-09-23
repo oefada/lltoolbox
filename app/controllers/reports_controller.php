@@ -1516,12 +1516,13 @@ class ReportsController extends AppController {
         }
 
 
-	        $country = new Country;
-	        $state = new State;
-	        $offerType = new OfferType;
-	        $this->set('countries', $country->find('list'));
-	        $this->set('states', $state->find('list'));
-	        $this->set('offerTypeIds', $offerType->find('list'));
+		$this->loadModel("Country");
+		$this->loadModel("State");
+		$this->loadModel("OfferType");
+		
+		$this->set('countries', $this->Country->find('list'));
+		$this->set('states', $this->State->find('list'));
+	    $this->set('offerTypeIds', $this->OfferType->find('list'));
 	}
 
 	function packages() {
@@ -1591,11 +1592,13 @@ class ReportsController extends AppController {
 
             $condition1Options = array('MATCH=Client.name' => 'Client Name',
                                         'MATCH=Client.managerUsername' => 'Manager Username');
-            $revenueModel = new RevenueModel;
-            $packageStatus = new PackageStatus;
-            $this->set('condition1Options', $condition1Options);
-            $this->set('revenueModelIds', $revenueModel->find('list'));
-            $this->set('packageStatusIds', $packageStatus->find('list'));
+                                        
+			$this->loadModel("RevenueModel");
+			$this->loadModel("PackageStatus");
+
+			$this->set('condition1Options', $condition1Options);
+            $this->set('revenueModelIds', $this->RevenueModel->find('list'));
+            $this->set('packageStatusIds', $this->PackageStatus->find('list'));
 	}
 
 	function car_033111() {
@@ -1737,12 +1740,12 @@ class ReportsController extends AppController {
 
             $results = $keyedResults;
 
-            $client = new Client;
-            $client->recursive = -1;
-            $clientDetails = $client->read(null, $clientId);
+			$this->loadModel("Client");
+            $this->Client->recursive = -1;
+            $clientDetails = $this->Client->read(null, $clientId);
 
-            $client->Loa->recursive = -1;
-            $loa = $client->Loa->find('first', array('conditions' => array('Loa.clientId' => $client->id)));
+            $this->Client->Loa->recursive = -1;
+            $loa = $this->Client->Loa->find('first', array('conditions' => array('Loa.clientId' => $this->Client->id)));
 
             $clientDetails['Loa'] = $loa['Loa'];
 
@@ -1752,7 +1755,7 @@ class ReportsController extends AppController {
 
 	function mcr() {
 
-		$this->Client = new Client;
+		$this->loadModel("Client");
 		$startDate = date("Y-m-d 00:00:00");
 		$endDate = date("Y-m-d 23:59:59");
 		$startDate2 = date("Y-m-d");
@@ -2200,7 +2203,7 @@ class ReportsController extends AppController {
 	}
 
 	function merch_031811() {
-		$this->Client = new Client();
+		$this->loadModel("Client");
 
 		if(!empty($this->data['datePicker'])){
 			$date = $this->data['datePicker'];
@@ -3182,7 +3185,7 @@ class ReportsController extends AppController {
 
 	function merch() {
 
-		$this->Client = new Client();
+		$this->loadModel("Client");
 
 		if(!empty($this->data['datePicker'])){
 			$date = $this->data['datePicker'];
@@ -3810,12 +3813,12 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 			}
 			// end combining data
 
-            $client = new Client;
-            $client->recursive = -1;
-            $clientDetails = $client->read(null, $clientId);
+            $this->loadModel("Client");
+            $this->Client->recursive = -1;
+            $clientDetails = $this->Client->read(null, $clientId);
 
-            $client->Loa->recursive = -1;
-            $loa = $client->Loa->find('first', array('conditions' => array('Loa.clientId' => $client->id)));
+            $this->Client->Loa->recursive = -1;
+            $loa = $this->Client->Loa->find('first', array('conditions' => array('Loa.clientId' => $this->Client->id)));
 
             $clientDetails['Loa'] = $loa['Loa'];
 

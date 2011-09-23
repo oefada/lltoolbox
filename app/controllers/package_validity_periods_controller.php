@@ -59,8 +59,7 @@ class PackageValidityPeriodsController extends AppController {
 		}
 		
 		// retrieve all package info
-		$package = new Package();
-		$packageData = $package->read(null, $packageId);
+		$packageData = $this->Package->read(null, $packageId);
 		$packageValidityStartDate = strtotime($packageData['Package']['validityStartDate']);
 		$packageValidityEndDate = strtotime($packageData['Package']['validityEndDate']);
 		$pvpData = $packageData['PackageValidityPeriod'];

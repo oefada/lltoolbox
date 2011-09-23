@@ -14,7 +14,7 @@ class ClientsController extends AppController {
 			$this->set('currentTab', 'property');
 			$this->set('clientId', @$this->params['pass'][0]);
 	        $this->set('client', $this->Client->findByClientId(@$this->params['pass'][0]));
-			$this->Country = new Country;
+			$this->loadModel("Country");
 		}
 	}
 
