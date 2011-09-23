@@ -439,6 +439,17 @@ class ClientsController extends AppController {
 		$this->set('impressions_month_to_date', $this->ClientImpressions->getThisMonthsImpressions($client_id, 2));
 		$this->set('impressions_last_month', $this->ClientImpressions->getLastMonthsImpressions($client_id, 2));
 	}
+
+	/**
+	 * 
+	 */
+	public function test()
+	{
+		$this->layout = 'ajax';
+		$this->autoRender = false;
+		
+		$this->loadModel('ConsolidatedReport');
+	}
 	
 	/**
 	 * 
@@ -448,7 +459,7 @@ class ClientsController extends AppController {
 		$this->loadModel('ClientPhoneLead');
 		$csv_data;
 		if (isset($this->data)) {
-			if (isset($this->data['estara_csv_data']) && $this->eStaraUploadIsValid($this->data['estara_csv_data'])) {
+			if (isset($this->data['estara_csv_data']) && $this->ClientPhoneLead->uploadIsValid($this->data['estara_csv_data'])) {
 				if (($handle = fopen($this->data['estara_csv_data']['tmp_name'], 'r')) !== false) {
 					while (($data = fgetcsv($handle, 1000, ',')) !== false) {
 						$csv_data[] = $data;
@@ -462,26 +473,6 @@ class ClientsController extends AppController {
 				}
 			}
 		}
-	}
-	
-	/**
-	 * 
-	 */
-	private function eStaraUploadIsValid($upload_data)
-	{
-		// Assume data is valid
-		$data_is_valid = true;
-		
-		// Check for data that makes the data invalid
-		if ($upload_data['type'] != 'text/csv') {
-			$data_is_invalid = false;
-		} else if ($upload_data['error'] != 0) {
-			$data_is_invalid = false;
-		} else if (!($upload_data['size'] > 0)) {
-			$data_is_invalid = false;
-		}
-
-		return $data_is_valid;
 	}
 }
 ?>

@@ -1,8 +1,20 @@
 <?php
 class ClientPhoneLead extends AppModel
 {
+	/**
+	 * Database table this model will use
+	 * 
+	 * @access	public
+	 * @param	string
+	 */
 	public $useTable = 'client_phone_leads';
 
+	/**
+	 * Array of CSV File Headers mapped to a db table column
+	 * 
+	 * @access	public
+	 * @param	string
+	 */
 	public $tableColums = array(
 		'Client ID' => 'client_id',
 		'Site' => 'site',
@@ -21,7 +33,11 @@ class ClientPhoneLead extends AppModel
 	
 	
 	/**
+	 * Build an array to later be saved from CSV data
 	 * 
+	 * @access	public
+	 * @param	string csv data
+	 * @return	array
 	 */
 	public function buildArrayFromCSVData($data)
 	{
@@ -43,6 +59,30 @@ class ClientPhoneLead extends AppModel
 			$client_phone_lead_record[$row_number]['date'] = date('Y-m-d H:i:s', strtotime($client_phone_lead_record[$row_number]['date']));
 		}
 		return $client_phone_lead_record;
+	}
+	
+	/**
+	 * Check that the upload data is valid
+	 * 
+	 * @access	public
+	 * @param	array upload_data
+	 * @return	boolean
+	 */
+	public function uploadIsValid($upload_data)
+	{
+		// Assume data is valid
+		$data_is_valid = true;
+		
+		// Check for data that makes the data invalid
+		if ($upload_data['type'] != 'text/csv') {
+			$data_is_invalid = false;
+		} else if ($upload_data['error'] != 0) {
+			$data_is_invalid = false;
+		} else if (!($upload_data['size'] > 0)) {
+			$data_is_invalid = false;
+		}
+
+		return $data_is_valid;
 	}
 }
 ?>

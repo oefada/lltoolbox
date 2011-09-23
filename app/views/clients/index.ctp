@@ -10,7 +10,7 @@ $this->set('hideSidebar', true);
 ?>
 
 <div id="client-index">
-	Tools: <a href="/accolades">Accolades</a> | <a href="/presses">Press/Reviews</a>
+	Tools: <a href="/accolades">Accolades</a> | <a href="/presses">Press/Reviews</a> | <a href="<?php echo $this->webroot; ?>clients/estara_import">eStara Importer</a>
 	<?php echo $this->renderElement('ajax_paginator', array('showCount' => true)); ?>
 <div class="clients index">
 <?php if (isset($inactive) && $inactive == 1): ?>
