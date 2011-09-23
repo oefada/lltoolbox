@@ -89,7 +89,7 @@ class ConsolidatedReport extends AppModel
 			$isValid = false;
 		} else if (!isset($this->start_date)) {
 			$isValid = false;
-		} else if (!isset($This->end_date)) {
+		} else if (!isset($this->end_date)) {
 			$isValid = false;
 		} else if ($this->start_date >= $this->end_date) {
 			$isValid = false;
@@ -136,7 +136,33 @@ class ConsolidatedReport extends AppModel
 	 */
 	public function getContactDetails()
 	{
+		
+		$call_details = array();
+		$bookin_details = array();
+		$contact_details = array();
+		
+		$call_details_query = "
+			SELECT *
+			FROM client_phone_leads
+			WHERE
+				client_id = {$this->client_id}
+				AND date BETWEEN '{$this->start_date}' AND '{$this->end_date}'
+		";
+		
+		$booking_details_query = "
+			SELECT oll.clientId, t.*
+			FROM ticket t, paymentDetail pd, offerLuxuryLink oll
+			WHERE
+				pd.ticketID = t.ticketId
+				AND t.offerId = oll.offerId
+				AND pd.isSuccessfulCharge = 1
+				AND t.siteId = 1
+				AND t.created between '2011-08-01' AND '2011-08-31' 
+				AND oll.clientId = 10006
+		";
+		
 		if ($this->validates()) {
+			return $this->query($call_details_query);
 			
 		}
 	}

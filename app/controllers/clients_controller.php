@@ -449,6 +449,8 @@ class ClientsController extends AppController {
 		$this->autoRender = false;
 		
 		$this->loadModel('ConsolidatedReport');
+		var_dump($this->ConsolidatedReport->create(10006, '2011-08-01', '2011-08-31'));
+		var_dump($this->ConsolidatedReport->getContactDetails());
 	}
 	
 	/**
