@@ -85,7 +85,13 @@ class ConsolidatedReport extends AppModel
 	public function validates()
 	{
 		$isValid = true;
-		if ($this->start_date >= $this->end_date) {
+		if (!isset($this->client_id)) {
+			$isValid = false;
+		} else if (!isset($this->start_date)) {
+			$isValid = false;
+		} else if (!isset($This->end_date)) {
+			$isValid = false;
+		} else if ($this->start_date >= $this->end_date) {
 			$isValid = false;
 		}
 		
@@ -95,7 +101,7 @@ class ConsolidatedReport extends AppModel
 	/**
 	 * 
 	 */
-	public function getBookingInformation($client_id)
+	public function getBookingInformation()
 	{
 		
 	}
@@ -103,7 +109,7 @@ class ConsolidatedReport extends AppModel
 	/**
 	 * 
 	 */
-	public function getImpressions($client_id)
+	public function getImpressions()
 	{
 		
 	}
@@ -111,7 +117,7 @@ class ConsolidatedReport extends AppModel
 	/**
 	 * 
 	 */
-	public function getLeadsByGeo($client_id)
+	public function getLeadsByGeo()
 	{
 		
 	}
@@ -126,14 +132,13 @@ class ConsolidatedReport extends AppModel
 	 * 4. Lead
 	 * 
 	 * @access	public
-	 * @param	int client_id
-	 * @param	string start_date
-	 * @param	string end_date
 	 * @return	array 
 	 */
-	public function getContactDetails($client_id, $start_date, $end_date)
+	public function getContactDetails()
 	{
-		
+		if ($this->validates()) {
+			
+		}
 	}
 }
 ?>
