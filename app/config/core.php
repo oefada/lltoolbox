@@ -241,13 +241,17 @@ $cacheAction = true;
 	$fg_url = 'www.familygetaway.com';
 
 	if (stristr($_SERVER['HTTP_HOST'], 'dev') || $_SERVER['ENV'] == 'development') {
+		define("ISDEV",true);
 		$ll_url = $_SERVER['ENV_USER'] .'-lldev.luxurylink.com';
 		$fg_url = $_SERVER['ENV_USER'] .'-familydev.luxurylink.com';
 		$webservice_live_url = 'http://'. $_SERVER['ENV_USER'] .'-toolboxdev.luxurylink.com';
 	} elseif (stristr($_SERVER['HTTP_HOST'], 'stage') || $_SERVER['ENV'] == 'staging') {
+		define("ISDEV",true);
 		$ll_url = 'stage-luxurylink.luxurylink.com';
 		$fg_url = 'stage-family.luxurylink.com';
 		$webservice_live_url = 'http://stage-toolbox.luxurylink.com';
+	} else {
+		define("ISDEV",false);
 	}
 
 	$ll_urls = 'https://'.$ll_url;
@@ -260,6 +264,5 @@ $cacheAction = true;
 	Configure::write("Url.FG",$fg_url);
 	Configure::write("UrlS.LL",$ll_urls);
 	Configure::write("UrlS.FG",$fg_urls);
-	
 
 ?>
