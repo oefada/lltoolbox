@@ -43,6 +43,13 @@
 	                width:        input.outerWidth(), 
 	                height:        input.outerHeight()
 	            };
+	            
+	            // jwoods - hack to position auto complete correctly in collapsible div
+	            // TODO - remove this from javascript
+	            if (this.document.title == 'LL Toolbox: Promos') {
+	                inputDim.top = 26;
+	                inputDim.left = 175;
+	            }
 		
 				inputDim.topPos        = inputDim.top + inputDim.height;
 	            inputDim.totalWidth    = inputDim.width - liveSearchPaddingBorderHoriz;

@@ -12,6 +12,9 @@ $ar['autocomplete'] = "off";
 if (isset($label)) {
 	$ar['label'] = $label;
 }
+if (isset($style)) {
+	$ar['style'] = $style;
+}
 
 $ar['after'] = '<div id="'.$randClass.'" class="auto_complete_input auto_complete"></div>'; 
 ?>

@@ -6,7 +6,5 @@ class PromoRestrictionDestination extends AppModel {
 	var $primaryKey = 'promoRestrictionDestinationId';
 	var $displayField = 'promoRestrictionDestinationId';
 
-
-
 }
 ?>

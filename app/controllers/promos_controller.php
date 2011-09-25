@@ -70,19 +70,25 @@ class PromosController extends AppController {
 	}
 
 	function edit($id = null) {
-
 		$isNewPromo = (intval($id) > 0) ? false : true;
 		if (!empty($this->data)) {
-
 			$formData = $this->data['Promo'];
-			$errors = $this->Promo->validatePromoForm($formData, $boolNewPromo);
+			$errors = $this->Promo->validatePromoForm($formData, $isNewPromo);
 
 			$formattedData = $this->Promo->formatPromoFormData($formData);
 			$this->data['Promo'] = $formattedData['Promo'];
-			$this->data['PromoRestrictionDestination'] = $formattedData['PromoRestrictionDestination'];
-			$this->data['PromoRestrictionTheme'] = $formattedData['PromoRestrictionTheme'];
-			$this->data['PromoRestrictionClientType'] = $formattedData['PromoRestrictionClientType'];
-			$this->data['PromoRestrictionClient'] = $formattedData['PromoRestrictionClient'];
+			if ($formattedData['PromoRestrictionDestination']) {
+			    $this->data['PromoRestrictionDestination'] = $formattedData['PromoRestrictionDestination'];
+			}
+			if ($formattedData['PromoRestrictionTheme']) {
+			    $this->data['PromoRestrictionTheme'] = $formattedData['PromoRestrictionTheme'];
+			}
+			if ($formattedData['PromoRestrictionClientType']) {
+			    $this->data['PromoRestrictionClientType'] = $formattedData['PromoRestrictionClientType'];
+			}
+			if ($formattedData['PromoRestrictionClient']) {
+			    $this->data['PromoRestrictionClient'] = $formattedData['PromoRestrictionClient'];
+			}
 
 			if (sizeof($errors) > 0) {
 				$this->Session->setFlash(__('There were errors saving the Promo.', true));
@@ -92,8 +98,20 @@ class PromosController extends AppController {
 				// ------------------------------
 				// save
 				// ------------------------------
-				$this->Promo->recursive = -1;
-				if ($isNewPromo) { $this->Promo->create(); }
+				// $this->Promo->recursive = -1;
+				if ($isNewPromo) {
+				    $this->Promo->create();
+				} else {
+				    // jwoods 09/23/11
+				    // clear relations so they're not entered multiple times
+				    // TODO - find a better way to do this
+				    $this->Promo->query("DELETE FROM promoRestrictionDestination WHERE promoId = ?", array($id));
+				    $this->Promo->query("DELETE FROM promoRestrictionTheme WHERE promoId = ?", array($id));
+				    $this->Promo->query("DELETE FROM promoRestrictionClientType WHERE promoId = ?", array($id));
+				    $this->Promo->query("DELETE FROM promoRestrictionClient WHERE promoId = ?", array($id));
+					$promoId = $id;
+				}
+
 				if ($this->Promo->saveAll($this->data)) {
 
 					// ------------------------------
@@ -112,8 +130,8 @@ class PromosController extends AppController {
 						}
 					}
 
-					$this->Session->setFlash(__('The Promo has been saved', true));
-					// $this->redirect(array('action'=>'index'));
+					$this->Session->setFlash(__('"' . $this->data['Promo']['promoName'] . '" has been saved', true));
+					$this->redirect(array('action'=>'edit', $promoId));
 				} else {
 					$this->Session->setFlash(__('The Promo could not be saved. Please, try again.', true));
 				}
@@ -134,6 +152,7 @@ class PromosController extends AppController {
 		$this->set('clientTypes', $this->ClientType->find('all', array('recursive'=>-1, 'order'=>array('clientTypeName'))));
 		$this->set('displayRestrictedClients', $this->Promo->getClientListByIdArray($this->data['Promo']['restrictClient']));
 	}
+
 
 	function edit_092211($id = null) {
 		$this->Promo->recursive = -1;
@@ -196,6 +215,11 @@ class PromosController extends AppController {
 		// promo code search
 		} elseif ($this->data['s_promo_code'] != '') {
 			$this->paginate['conditions']['PromoCode.promoCode LIKE'] = '%' . $this->data['s_promo_code'] . '%';
+
+		// update redirect
+		} elseif (isset($this->params['named']['n'])) {
+			$this->data['s_name'] = $this->params['named']['n'];
+			$this->paginate['conditions']['Promo.promoName LIKE'] = '%' . $this->data['s_name'] . '%';
 
 		// main form search
 		} else {

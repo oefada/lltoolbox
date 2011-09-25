@@ -70,18 +70,18 @@ class PromoCode extends AppModel {
 		}
 	}
 
-	function generateMultipleCodes($prefix, $count, $promoId, $length = 6) {
+	function generateMultipleCodes($prefix, $count, $promoId, $length = 5) {
 		$created = 0;
-		for ($i=0; $i < $count; $i++) {
+		for ($i=0; $i<$count; $i++) {
 			$codeIsDuplicate = true;
 			while ($codeIsDuplicate) {
 				$thisCode = $prefix . $this->__generateCode($length);
-				$codeIsDuplicate =  $this->__isDuplicatePromoCode($thisCode);
+				$codeIsDuplicate = $this->checkDuplicatePromoCode($thisCode);
 			}
 			$data = array();
 			$data['Promo'] = array('promoId'=>$promoId);
 			$data['PromoCode'] = array('promoCode'=>$thisCode);
-			if ($this->save($data)) {
+			if ($this->saveAll($data)) {
 				$created++;
 			}
 		}

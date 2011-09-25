@@ -54,7 +54,6 @@
     padding: 0px; 
     margin: 0px 0 8px 0px;
 }
-
 </style>
 
 <script type="text/javascript">
@@ -117,6 +116,15 @@
         clientListRemove(index);
         clientListDisplay();
     }
+
+    function addClientRestriction() {
+        var client = $('PromoAddClient').value;
+        if (!isNaN(client) && client > 0) {
+            clientListAdd(client, '** name lookup pending **');
+        }
+        clientListDisplay();
+        $('PromoAddClient').value = '';
+    } 
     
     function addClientRestrictionList() {
         var clients = $('addClientByList').value.split("\n");
@@ -148,10 +156,9 @@ if (isset($formErrors)) {
 ?>
 
 <div class="promos form">
-<?php echo $form->create('Promo', array('action' => 'edit'));?>
+<?php echo $form->create('Promo', array('action'=>'edit'));?>
 	<fieldset>
-
-		<input type="hidden" name="id" value="<?= $id; ?>">
+		<?= $form->input('promoId', array('type'=>'hidden')); ?>
 		<?= $form->input('promoName'); ?>
 		<?= $form->input('siteId', array('options'=> array('0'=>'All', '1'=>'LuxuryLink', '2'=>'Family'))); ?>
 		<?= $form->input('promoCategoryTypeId', array('label'=>'Category', 'options'=> $promoCategoryTypeIds, 'empty'=> '-- Select Category')); ?>
@@ -286,21 +293,18 @@ if (isset($formErrors)) {
 		
 		<div style="padding:0px; margin:0px;"></div>
 		<hr class="hr-promo"/>
+		<?= $form->input('listRestrictedClients', array('type'=>'hidden')); ?>
 		<?= displayContainerHeader('client', 'Client Restrictions', $this->data['Promo']['restrictClient']); ?>
-		    <div class="restrictionContainer" style="margin-top:10px; margin-left:35px;">
-		    <?= $form->input('listRestrictedClients', array('type'=>'hidden')); ?>
-			    <div style="float:left; clear: none;">
-				    <span class="localLabelNoLeftMargin">Client Name / ID</span>
-				    <input type="text" id="addClient" name="addClient" style="width:200px;">
-			    </div>
-			    <div style="float:left; clear: none; font-weight: bold; color: #990000; margin: 0 20px 0 10px;">-- OR --</div>
+
+			     <?= $this->renderElement("input_search",array('name'=>'addClient', 'controller'=>'selectclients', 'label'=>'Client Name /ID', 'style'=>'width:200px')); ?>
+			    <div style="float:left; clear: none;"><a href="javascript:void(0);" onClick="addClientRestriction();">ADD</a></div>
+			    <div style="float:left; clear: none; font-weight: bold; color: #990000; margin: 0 20px 0 20px;">-- OR --</div>
 			    <div style="float:left; clear: none;"><span class="localLabelNoLeftMargin">List IDs</span><br/><span style="font-size:10px;">(one per line)</span></div>
 			    <div style="float:left; clear: none;">
 				    <textarea id="addClientByList" name="addClientByList" style="width:100px; height:50px;"></textarea>
 				    &nbsp;&nbsp;<a href="javascript:void(0);" onClick="addClientRestrictionList();">ADD</a>
 			    </div>
 			    <div style="padding-top:0px;" id="clientListContainer"></div>
-		    </div>
 		</div>
 	</fieldset>
 <?= $form->end('Submit'); ?>
