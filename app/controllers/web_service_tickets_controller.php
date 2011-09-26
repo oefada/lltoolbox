@@ -1979,10 +1979,10 @@ class WebServiceTicketsController extends WebServicesController
 				$reservation['reservationConfirmToCustomer'] = date('Y:m:d H:i:s', strtotime('now'));
 				$this->Reservation->save($reservation);
 			}
-		} elseif (in_array($ppvNoticeTypeId, array(2,25,33))) {
+		} elseif (in_array($ppvNoticeTypeId, array(2,25))) {
 			// send ticket status to RESERVATION REQUESTED
 			$newTicketStatus = 3;
-		} elseif ($ppvNoticeTypeId == 10) {
+		} elseif (in_array($ppvNoticeTypeId, array(10, 33))) {
 			#$newTicketStatus = 1;
 			$newTicketStatus = 12;
 		} elseif ($ppvNoticeTypeId == 14) {
