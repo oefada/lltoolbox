@@ -440,21 +440,9 @@ class ClientsController extends AppController {
 		$this->set('impressions_last_month', $this->ClientImpressions->getLastMonthsImpressions($client_id, 2));
 	}
 
+
 	/**
-	 * 
-	 */
-	public function test()
-	{
-		$this->layout = 'ajax';
-		$this->autoRender = false;
-		
-		$this->loadModel('ConsolidatedReport');
-		var_dump($this->ConsolidatedReport->create(10006, '2011-08-01', '2011-08-31'));
-		var_dump($this->ConsolidatedReport->getContactDetails());
-	}
-	
-	/**
-	 * 
+	 * Action used to import eStara phone records  
 	 */
 	public function estara_import()
 	{
@@ -475,6 +463,19 @@ class ClientsController extends AppController {
 				}
 			}
 		}
+	}
+	
+	/**
+	 * 
+	 */
+	public function test()
+	{
+		$this->layout = 'ajax';
+		$this->autoRender = false;
+		
+		$this->loadModel('ConsolidatedReport');
+		var_dump($this->ConsolidatedReport->create(10006, '2011-08-01', '2011-08-31'));
+		var_dump($this->ConsolidatedReport->getContactDetails());
 	}
 }
 ?>
