@@ -46,6 +46,18 @@ class Mailing extends AppModel {
 				}
 			}
 
+			// build seo friendly urls
+			foreach($rows as $key=>$row){
+
+				$url="http://www.luxurylink.com/";
+				$url.="fivestar/";
+				$url.=$row['client']['clientTypeSeoName']."/";
+				$url.=$row['client']['seoLocation']."/";
+				$url.=$row['client']['seoName'];
+				$rows[$key]['client']['seoUrl']=$url;
+
+			}
+
 
 /*
 			$q="SELECT * FROM client, offerLuxuryLink WHERE client.clientId IN (".implode(",",$arr).")";
