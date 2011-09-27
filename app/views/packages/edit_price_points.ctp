@@ -332,16 +332,18 @@
 
 <script>
 
-updateRetail(true, false, <? echo $package['Package']['numNights']; ?>, '<?php echo $ratePeriods[0]['currencyCode']; ?>', isMultiClientPackage, <?php echo $package['Package']['isFlexPackage']; ?>);
+//updateRetail(true, false, <? echo $package['Package']['numNights']; ?>, '<?php echo $ratePeriods[0]['currencyCode']; ?>', isMultiClientPackage, <?php echo $package['Package']['isFlexPackage']; ?>);
+updateRetail(true, false, <? echo $package['Package']['numNights']; ?>, '<?php echo $ratePeriods[0]['currencyCode']; ?>', isMultiClientPackage, 1);
 
-$('#auction-percent, #buynow-percent').change(function() {
+$('#isFlexPackage','#auction-percent, #buynow-percent').change(function() {
     var autoFillFlexPerNightPrice = true;
     var flexPercentRetail = ($('#flexPricePerNight').val() / $('#flexSuggestedRetail').val()) * 100;
     var oldBuyNowPercent = $('.flexBuyNowCalc').text();
     if (flexPercentRetail != oldBuyNowPercent && oldBuyNowPercent > 0) {
         autoFillFlexPerNightPrice = false;
     }
-    updateRetail(false, autoFillFlexPerNightPrice, <? echo $package['Package']['numNights']; ?>, '<?php echo $ratePeriods[0]['currencyCode']; ?>', isMultiClientPackage, <?php echo $package['Package']['isFlexPackage']; ?>);
+    //updateRetail(false, autoFillFlexPerNightPrice, <? echo $package['Package']['numNights']; ?>, '<?php echo $ratePeriods[0]['currencyCode']; ?>', isMultiClientPackage, <?php echo $package['Package']['isFlexPackage']; ?>);
+    updateRetail(false, autoFillFlexPerNightPrice, <? echo $package['Package']['numNights']; ?>, '<?php echo $ratePeriods[0]['currencyCode']; ?>', isMultiClientPackage, 1);
     $('.flexBuyNowCalc').html($('#buynow-percent').val());
     updatePerNightPrice(autoFillFlexPerNightPrice);
 });
