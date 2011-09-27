@@ -652,6 +652,7 @@ function updateRetail(autoFillPercentRetail, autoFillSuggestedFlexPrice, numNigh
 	if (checkedIds && !($('#edit-this-validity-disclaimer').val() == 1)) {
 		updateValidityDisclaimer(checkedIds);
 	}
+	updatePerNightPrice(true);
 }
 
 function updateValidityDisclaimer(ids) {
@@ -669,7 +670,8 @@ function updateValidityDisclaimer(ids) {
 function updatePerNightPrice(autoFillFlexPerNightPrice) {
     $('span#suggestedFlexCalc').html($('#flexSuggestedRetail').val());
     $('span#suggestedFlexPrice').html(Math.round($('#flexSuggestedRetail').val() * ($('#buynow-percent').val() / 100)));
-    if (autoFillFlexPerNightPrice) {
+    if (true || autoFillFlexPerNightPrice) {
+		console.log("HERE");
         $('input#flexPricePerNight').val(Math.round($('#flexSuggestedRetail').val() * ($('#buynow-percent').val() / 100)));
     }
 }
