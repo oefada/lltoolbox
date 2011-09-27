@@ -2,56 +2,53 @@
 
 Configure::write('debug', '0');
 
-echo "|$date_ymd|";
-
 // These functions wrap up the html
-function displayEditorsPicksImg($arr,$date_ymd){ 
+function displayEditorsPicksImg($arr,$date_ymd,$version){ 
 
 	$name=$arr['client']['name'];
 	$locationDisplay=$arr['client']['locationDisplay'];
-	$seoLink='http://www.luxurylink.com/portfolio/client.php?clid='.$arr['client']['clientId'];
+	$seoLink=$arr['client']['seoUrl'];
 	$seoName=$arr['client']['seoName'];
 	$img="http://www.luxurylink.com".$arr['client']['imagePath'];//http://www.luxurylink.com/images/por/0-8358/0-8358-gal-xl-08.jpg
 
 ?>
 
-<a xt="SPCLICK" name="www_luxurylink_com_fivest_17" target="_blank" href="<?=$seoLink?>?utm_medium=news&utm_term=b&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=<?=$seoName?>"><img name="Cont_32" width="325" height="160" style="display:block" alt="<?=$name?>" border="0" src="<?=$img?>" /></a>
+<a xt="SPCLICK" name="www_luxurylink_com_fivest_17" target="_blank" href="<?=$seoLink?>?utm_medium=news&utm_term=<?=$version?>&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=<?=$seoName?>"><img name="Cont_32" width="325" height="182" style="display:block" alt="<?=$name?>" border="0" src="<?=$img?>" /></a>
 
 <? }
 
-function displayEditorsPicksText($arr,$date_ymd){ 
+function displayEditorsPicksText($arr,$date_ymd,$version){ 
 
 	$name=$arr['client']['name'];
 	$locationDisplay=$arr['client']['locationDisplay'];
 	$shortBlurb=($arr['client']['longDesc']);
-	$seoLink='http://www.luxurylink.com/portfolio/client.php?clid='.$arr['client']['clientId'];
-	$seoName='';
+	$seoLink=$arr['client']['seoUrl'];
 	$seoName=$arr['client']['seoName'];
-	$img="http://www.luxurylink.com".$arr['client']['imagePath'];//http://www.luxurylink.com/images/por/0-8358/0-8358-gal-xl-08.jpg
+	$img="http://www.luxurylink.com".$arr['client']['imagePath'];
+	//http://www.luxurylink.com/images/por/0-8358/0-8358-gal-xl-08.jpg
 
 ?> 
 
 <strong style="font-size:13px"><?=$locationDisplay?><br />
-<a xt="SPCLICK" name="www_luxurylink_com_fivest_18" style="color:#33669a" target="_blank" href="<?=$seoLink?>?utm_medium=news&utm_term=b&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=<?=$seoName?>"><?=$name?></a></strong><br />
+<a xt="SPCLICK" name="www_luxurylink_com_fivest_18" style="color:#33669a" target="_blank" href="<?=$seoLink?>?utm_medium=news&utm_term=<?=$version?>&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=<?=$seoName?>"><?=$name?></a></strong><br />
 <br />
 <?=$shortBlurb?>
 <br />
 <br />
 <br />
 
-<a xt="SPCLICK" name="www_luxurylink_com_fivest_19" style="color:#33669a" target="_blank" href="<?=$seoLink?>?utm_medium=news&utm_term=b&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=<?=$seoName?>"><img name="Cont_8" align="right" border="0" alt="" src="http://www.luxurylink.com/images/insider/images1/btn-viewpackage.gif" /></a>
+<a xt="SPCLICK" name="www_luxurylink_com_fivest_19" style="color:#33669a" target="_blank" href="<?=$seoLink?>?utm_medium=news&utm_term=<?=$version?>&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=<?=$seoName?>"><img name="Cont_8" align="right" border="0" alt="" src="http://www.luxurylink.com/images/insider/images1/btn-viewpackage.gif" /></a>
 
 <?
 
 }
 
-function displayBox2($arr,$date_ymd){ 
+function displayBox2($arr,$date_ymd,$version){ 
 
 	$name=$arr['client']['name'];
 	$locationDisplay=$arr['client']['locationDisplay'];
 	$shortBlurb=$arr['client']['longDesc'];
-	$seoLink='';
-	$seoLink='http://www.luxurylink.com/portfolio/client.php?clid='.$arr['client']['clientId'];
+	$seoLink=$arr['client']['seoUrl'];
 	$seoName='';
 	$seoName=$arr['client']['seoName'];
 	$img="http://www.luxurylink.com".$arr['client']['imagePath'];//http://www.luxurylink.com/images/por/0-8358/0-8358-gal-xl-08.jpg
@@ -60,32 +57,31 @@ function displayBox2($arr,$date_ymd){
 ?>
 
 <p style="background:#86878a;border-bottom:2px solid #86878a;padding:0;vertical-align:middle;color:#ffffff;height:16px;margin:0 0 2px 0;font-size:12px;line-height:18px">&nbsp;<?=$locationDisplay?></p>
-<a xt="SPCLICK" name="www_luxurylink_com_fivest_6" target="_blank" href="<?=$seoLink?>?utm_medium=news&utm_term=b&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=<?=$seoName?>"><img name="Cont_26" style="display:block;margin-bottom:5px" alt="<?=$name?>" width="325" height="175" border="0" src="<?=$img?>" /></a>     <a xt="SPCLICK" name="www_luxurylink_com_fivest_7" style="color:#33669a;font-size:12px;line-height:16px" target="_blank" href="<?=$seoLink?>?utm_medium=news&utm_term=b&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=<?=$seoName?>"><?=$name?></a><br />
+<a xt="SPCLICK" name="www_luxurylink_com_fivest_6" target="_blank" href="<?=$seoLink?>?utm_medium=news&utm_term=<?=$version?>&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=<?=$seoName?>"><img name="Cont_26" style="display:block;margin-bottom:5px" alt="<?=$name?>" width="325" height="175" border="0" src="<?=$img?>" /></a>     <a xt="SPCLICK" name="www_luxurylink_com_fivest_7" style="color:#33669a;font-size:12px;line-height:16px" target="_blank" href="<?=$seoLink?>?utm_medium=news&utm_term=<?=$version?>&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=<?=$seoName?>"><?=$name?></a><br />
 <?=$shortBlurb;?>
 <br />
-<a xt="SPCLICK" name="www_luxurylink_com_fivest_8" target="_blank" href="<?=$seoLink?>?utm_medium=news&utm_term=b&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=<?=$seoName?>"><img name="Cont_8" align="right" border="0" alt="" src="http://www.luxurylink.com/images/insider/images1/btn-viewpackage.gif" /></a>
+<a xt="SPCLICK" name="www_luxurylink_com_fivest_8" target="_blank" href="<?=$seoLink?>?utm_medium=news&utm_term=<?=$version?>&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=<?=$seoName?>"><img name="Cont_8" align="right" border="0" alt="" src="http://www.luxurylink.com/images/insider/images1/btn-viewpackage.gif" /></a>
 
 <?
 
 }
 
-function displayBox($arr,$date_ymd){
+function displayBox($arr,$date_ymd,$version){
 
 	$name=$arr['client']['name'];
 	$locationDisplay=$arr['client']['locationDisplay'];
 	$shortBlurb=$arr['client']['longDesc'];
-	$seoLink='';
-	$seoLink='http://www.luxurylink.com/portfolio/client.php?clid='.$arr['client']['clientId'];
+	$seoLink=$arr['client']['seoUrl'];
 	$seoName=$arr['client']['seoName'];
 	$img="http://www.luxurylink.com".$arr['client']['imagePath'];//http://www.luxurylink.com/images/por/0-8358/0-8358-gal-xl-08.jpg
 
 ?>
 
 <p style="background:#86878a;border-bottom:2px solid #86878a;padding:0;vertical-align:middle;color:#ffffff;height:16px;margin:0 0 2px 0;font-size:12px;line-height:18px">&nbsp;<?=$locationDisplay?></p>
-<a name="0.1_www_luxurylink_com_fi_2" target="_blank" xt="SPCLICK" href="<?=$seoLink?>?utm_medium=news&utm_term=b&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=<?=$seoName?>"><img name="Cont_9" alt="<?=$name?>" width="239" height="148" border="0" style="display:block;margin-bottom:5px" src="<?=$img?>" /></a>     <a xt="SPCLICK" name="0.1_www_luxurylink_com_fi_2" style="color:#33669a;font-size:12px;line-height:16px" target="_blank" href="<?=$seoLink?>?utm_medium=news&utm_term=b&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=<?=$seoName?>"><?=$name?></a><br />
+<a name="0.1_www_luxurylink_com_fi_2" target="_blank" xt="SPCLICK" href="<?=$seoLink?>?utm_medium=news&utm_term=<?=$version?>&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=<?=$seoName?>"><img name="Cont_9" alt="<?=$name?>" width="239" height="148" border="0" style="display:block;margin-bottom:5px" src="<?=$img?>" /></a>     <a xt="SPCLICK" name="0.1_www_luxurylink_com_fi_2" style="color:#33669a;font-size:12px;line-height:16px" target="_blank" href="<?=$seoLink?>?utm_medium=news&utm_term=<?=$version?>&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=<?=$seoName?>"><?=$name?></a><br />
 <?=$shortBlurb;?>
 <br />
-<a name="0.1_www_luxurylink_com_fi_3" target="_blank" xt="SPCLICK" href="<?=$seoLink?>?utm_medium=news&utm_term=b&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=<?=$seoName?>"><img name="Cont_8" align="right" border="0" alt="" src="http://www.luxurylink.com/images/insider/images1/btn-viewpackage.gif" /></a>
+<a name="0.1_www_luxurylink_com_fi_3" target="_blank" xt="SPCLICK" href="<?=$seoLink?>?utm_medium=news&utm_term=<?=$version?>&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=<?=$seoName?>"><img name="Cont_8" align="right" border="0" alt="" src="http://www.luxurylink.com/images/insider/images1/btn-viewpackage.gif" /></a>
 
 <? } ?>
 
@@ -114,7 +110,7 @@ To ensure delivery to your inbox, please add <a xt="SPEMAIL" name="insider_e_lux
 <tbody>
 <tr>
 <td width="20" rowspan="3"></td>
-<td width="465"><a name="0.1_logo" target="_blank" xt="SPCLICK" href="http://www.luxurylink.com/?utm_medium=news&utm_term=b&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=logo"><img name="Cont_2" alt="Luxury Link" border="0" src="http://www.luxurylink.com/images/insider/images1/logo-luxurylink.gif" /><img name="Cont_3" alt="INSIDER" border="0" src="http://www.luxurylink.com/images/insider/images1/txt-insider.gif" /></a></td>
+<td width="465"><a name="0.1_logo" target="_blank" xt="SPCLICK" href="http://www.luxurylink.com/?utm_medium=news&utm_term=<?=$version?>&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=logo"><img name="Cont_2" alt="Luxury Link" border="0" src="http://www.luxurylink.com/images/insider/images1/logo-luxurylink.gif" /><img name="Cont_3" alt="INSIDER" border="0" src="http://www.luxurylink.com/images/insider/images1/txt-insider.gif" /></a></td>
 <td width="225" valign="top" style="font-family:Verdana, Arial, sans-serif;font-size:11px;color:#333333;text-align:right">
 
 <table cellpadding="0" cellspacing="0" border="0" width="207" align="right">
@@ -140,7 +136,7 @@ To ensure delivery to your inbox, please add <a xt="SPEMAIL" name="insider_e_lux
 <tr>
 <td width="465" valign="top" style="font-family:Verdana, Arial, sans-serif;font-size:13px;line-height:16px">
 <h2 style="font-family:Georgia, Times New Roman, serif;font-size:24px;margin:0;font-weight:normal;color:#666666;line-height:35px">Travel Experiences You Dream Of</h2>
-You come to Luxury Link to find the travel experiences you dream of: <i>the world's finest hotels, at unthinkable prices</i>. We are passionate about continuing to discover new and incredible experiences that put the next 'check' on your bucket list. <a name="0.1_www_luxurylink_com_80_1" style="color:#336699" target="_blank" xt="SPCLICK" href="http://www.luxurylink.com/fivestar/hotel-deals/staff_picks?kw=staff_picks&pp=10&did=0&guest=0&len=0&offerAuc=1&offerFp=1&x=62&y=9&sortb=bestselling&pg=1&utm_medium=news&utm_term=b&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=text">Explore what Luxury Link has to offer</a>.</td>
+You come to Luxury Link to find the travel experiences you dream of: <i>the world's finest hotels, at unthinkable prices</i>. We are passionate about continuing to discover new and incredible experiences that put the next 'check' on your bucket list. <a name="0.1_www_luxurylink_com_80_1" style="color:#336699" target="_blank" xt="SPCLICK" href="http://www.luxurylink.com/fivestar/hotel-deals/staff_picks?kw=staff_picks&pp=10&did=0&guest=0&len=0&offerAuc=1&offerFp=1&x=62&y=9&sortb=bestselling&pg=1&utm_medium=news&utm_term=<?=$version?>&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=text">Explore what Luxury Link has to offer</a>.</td>
 <td width="225" valign="top" style="font-family:Verdana, Arial, sans-serif;font-size:12px;color:#336699;line-height:24px;padding-left:10px">
 
 <div style="border-bottom:1px solid #cccccc;font-size:15px;color:#336699">In this Issue</div>
@@ -164,21 +160,21 @@ You come to Luxury Link to find the travel experiences you dream of: <i>the worl
 </tr>
 <tr>
 <td width="10"></td>
-<td valign="middle" width="90"><a name="0.1_www_luxurylink_com_fivestar_ut" style="color:#666666;text-decoration:none" target="_blank" xt="SPCLICK" href="http://www.luxurylink.com/fivestar?utm_medium=news&utm_term=b&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=destinations">DESTINATIONS</a></td>
+<td valign="middle" width="90"><a name="0.1_www_luxurylink_com_fivestar_ut" style="color:#666666;text-decoration:none" target="_blank" xt="SPCLICK" href="http://www.luxurylink.com/fivestar?utm_medium=news&utm_term=<?=$version?>&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=destinations">DESTINATIONS</a></td>
 <td valign="middle" width="12">|</td>
-<td valign="middle" width="114"><a name="0.1_www_luxurylink_com_last_m_1" style="color:#666666;text-decoration:none" target="_blank" xt="SPCLICK" href="http://www.luxurylink.com/last-minute-travel-deals/limited-time?utm_medium=news&utm_term=b&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=last-minute-deal">LAST MINUTE DEALS</a></td>
+<td valign="middle" width="114"><a name="0.1_www_luxurylink_com_last_m_1" style="color:#666666;text-decoration:none" target="_blank" xt="SPCLICK" href="http://www.luxurylink.com/last-minute-travel-deals/limited-time?utm_medium=news&utm_term=<?=$version?>&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=last-minute-deal">LAST MINUTE DEALS</a></td>
 
 <td valign="middle" width="12">|</td>
-<td valign="middle" width="90"><a name="0.1_www_luxurylink_com_fivestar_al" style="color:#666666;text-decoration:none" target="_blank" xt="SPCLICK" href="http://www.luxurylink.com/fivestar/all-inclusive-resorts/deals?utm_medium=news&utm_term=b&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=all-inclusive">ALL-INCLUSIVE</a></td>
+<td valign="middle" width="90"><a name="0.1_www_luxurylink_com_fivestar_al" style="color:#666666;text-decoration:none" target="_blank" xt="SPCLICK" href="http://www.luxurylink.com/fivestar/all-inclusive-resorts/deals?utm_medium=news&utm_term=<?=$version?>&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=all-inclusive">ALL-INCLUSIVE</a></td>
 <td valign="middle" width="12">|</td>
-<td valign="middle" width="75"><a name="0.1_www_luxurylink_com_last_minute" style="color:#666666;text-decoration:none" target="_blank" xt="SPCLICK" href="http://www.luxurylink.com/fivestar/estates-villas/deals?utm_medium=news&utm_term=b&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=villas">VILLAS</a></td>
+<td valign="middle" width="75"><a name="0.1_www_luxurylink_com_last_minute" style="color:#666666;text-decoration:none" target="_blank" xt="SPCLICK" href="http://www.luxurylink.com/fivestar/estates-villas/deals?utm_medium=news&utm_term=<?=$version?>&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=villas">VILLAS</a></td>
 <td valign="middle" width="12">|</td>
-<td valign="middle" width="60"><a name="0.1_www_luxurylink_com_la_1" style="color:#666666;text-decoration:none" target="_blank" xt="SPCLICK" href="http://www.luxurylink.com/fivestar/europe/hotels?utm_medium=news&utm_term=b&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=europe">EUROPE</a></td>
+<td valign="middle" width="60"><a name="0.1_www_luxurylink_com_la_1" style="color:#666666;text-decoration:none" target="_blank" xt="SPCLICK" href="http://www.luxurylink.com/fivestar/europe/hotels?utm_medium=news&utm_term=<?=$version?>&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=europe">EUROPE</a></td>
 
 <td valign="middle" width="12">|</td>
-<td valign="middle" width="85"><a name="0.1_www_luxurylink_com_fivest_1" style="color:#666666;text-decoration:none" target="_blank" xt="SPCLICK" href="http://www.luxurylink.com/fivestar/travel-deals/california?utm_medium=news&utm_term=b&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=california">CALIFORNIA</a></td>
+<td valign="middle" width="85"><a name="0.1_www_luxurylink_com_fivest_1" style="color:#666666;text-decoration:none" target="_blank" xt="SPCLICK" href="http://www.luxurylink.com/fivestar/travel-deals/california?utm_medium=news&utm_term=<?=$version?>&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=california">CALIFORNIA</a></td>
 <td valign="middle" width="12">|</td>
-<td valign="middle" width="85"><a name="0.1_www_luxurylink_com_fi_1" style="color:#666666;text-decoration:none" target="_blank" xt="SPCLICK" href="http://www.luxurylink.com/fivestar/caribbean-and-bermuda/hotels?utm_medium=news&utm_term=b&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=caribbean">CARIBBEAN</a></td>
+<td valign="middle" width="85"><a name="0.1_www_luxurylink_com_fi_1" style="color:#666666;text-decoration:none" target="_blank" xt="SPCLICK" href="http://www.luxurylink.com/fivestar/caribbean-and-bermuda/hotels?utm_medium=news&utm_term=<?=$version?>&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=caribbean">CARIBBEAN</a></td>
 <td width="10"></td>
 </tr>
 <tr>
@@ -206,8 +202,8 @@ You come to Luxury Link to find the travel experiences you dream of: <i>the worl
 <table border="0" width="100%" valign="top" cellpadding="0" cellspacing="0">
 <tbody>
 <tr>
-<td valign="top"><a name="0.1_section_NEW" target="_blank" xt="SPCLICK" href="http://www.luxurylink.com/last-minute-travel-deals/new-offer?offerAuc=1&offerFp=1&sortb=bestselling&utm_medium=news&utm_term=b&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=new">     <img name="Cont_5" alt="New Offers" border="0" src="http://www.luxurylink.com/images/insider/images1/title-newoffers.gif" /></a></td>
-<td align="right" valign="bottom" style="font-family:Arial, Verdana, sans-serif;font-size:13px;background-color: #ffffff;padding: 0px 20px 0px 0px;"><a xt="SPCLICK" name="0.1_section_NEW" style="color:#33669a;" target="_blank" href="http://www.luxurylink.com/last-minute-travel-deals/new-offer?offerAuc=1&offerFp=1&sortb=bestselling&utm_medium=news&utm_term=b&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=new">View All New Offers</a></td>
+<td valign="top"><a name="0.1_section_NEW" target="_blank" xt="SPCLICK" href="http://www.luxurylink.com/last-minute-travel-deals/new-offer?offerAuc=1&offerFp=1&sortb=bestselling&utm_medium=news&utm_term=<?=$version?>&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=new">     <img name="Cont_5" alt="New Offers" border="0" src="http://www.luxurylink.com/images/insider/images1/title-newoffers.gif" /></a></td>
+<td align="right" valign="bottom" style="font-family:Arial, Verdana, sans-serif;font-size:13px;background-color: #ffffff;padding: 0px 20px 0px 0px;"><a xt="SPCLICK" name="0.1_section_NEW" style="color:#33669a;" target="_blank" href="http://www.luxurylink.com/last-minute-travel-deals/new-offer?offerAuc=1&offerFp=1&sortb=bestselling&utm_medium=news&utm_term=<?=$version?>&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=new">View All New Offers</a></td>
 </tr>
 </tbody>
 </table>
@@ -224,14 +220,14 @@ You come to Luxury Link to find the travel experiences you dream of: <i>the worl
 
 <td width="239" style="font-size:11px" valign="top">
 
-<?  displayBox($rows[0],$date_ymd); ?>
+<?  displayBox($rows[0],$date_ymd,$version); ?>
 
 </td>
 <td width="33"></td>
 
 <td width="239" style="font-size:11px" valign="top">
 
-<? displayBox($rows[1],$date_ymd); ?>
+<? displayBox($rows[1],$date_ymd,$version); ?>
 
 </td>
 </tr>
@@ -242,13 +238,13 @@ You come to Luxury Link to find the travel experiences you dream of: <i>the worl
 <tr>
 <td width="239" style="font-size:11px" valign="top">
 
-<? displayBox($rows[2],$date_ymd); ?>
+<? displayBox($rows[2],$date_ymd,$version); ?>
 
 </td>
 <td width="33"></td>
 <td width="239" style="font-size:11px" valign="top">
 
-<? displayBox($rows[3],$date_ymd); ?>
+<? displayBox($rows[3],$date_ymd,$version); ?>
 
 </td>
 </tr>
@@ -269,14 +265,14 @@ You come to Luxury Link to find the travel experiences you dream of: <i>the worl
 </tr>
 
 <tr>
-<td align="center" style="padding:10px 15px;text-align:left;border:1px solid #9c9da0;font-size:11px"><a xt="SPCLICK" name="www_luxurylink_com_my_my_newsl" target="_blank" href="https://www.luxurylink.com/my/my_newsletters.php?utm_medium=news&utm_term=b&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=myaccount">     <img name="Cont_13" style="display:block" border="0" alt="" src="http://www.luxurylink.com/images/ads/insertions/myaccount.jpg" /></a>     To edit or change your account settings including email preferences please go to &quot;My Account&quot;</td>
+<td align="center" style="padding:10px 15px;text-align:left;border:1px solid #9c9da0;font-size:11px"><a xt="SPCLICK" name="www_luxurylink_com_my_my_newsl" target="_blank" href="https://www.luxurylink.com/my/my_newsletters.php?utm_medium=news&utm_term=<?=$version?>&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=myaccount">     <img name="Cont_13" style="display:block" border="0" alt="" src="http://www.luxurylink.com/images/ads/insertions/myaccount.jpg" /></a>     To edit or change your account settings including email preferences please go to &quot;My Account&quot;</td>
 </tr>
 <tr>
 <td><img name="Cont_1" height="15" style="display:block" border="0" alt="" src="http://www.luxurylink.com/images/insider/images1/spacer.gif" /></td>
 </tr>
 <tr>
 
-<td align="center" style="padding:10px 12px 10px 13px;text-align:left;border:1px solid #9c9da0;font-size:12px"><a xt="SPCLICK" name="0.1_logo" target="_blank" href="http://www.luxurylink.com/?utm_medium=news&utm_term=b&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=logo">     <img name="Cont_14" style="display:block" border="0" alt="" src="http://www.luxurylink.com/images/insider/images1/logo-small-luxurylink.gif" /></a>     We pride ourselves on hand-selecting the world's finest luxury     hotels &amp; resorts, offering them to you at an incredible value.      <img width="135" height="1" name="Cont_15" style="display:block;margin-top:10px" border="0" alt="" src="http://www.luxurylink.com/images/insider/images1/hr-135.gif" /><br />
+<td align="center" style="padding:10px 12px 10px 13px;text-align:left;border:1px solid #9c9da0;font-size:12px"><a xt="SPCLICK" name="0.1_logo" target="_blank" href="http://www.luxurylink.com/?utm_medium=news&utm_term=<?=$version?>&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=logo">     <img name="Cont_14" style="display:block" border="0" alt="" src="http://www.luxurylink.com/images/insider/images1/logo-small-luxurylink.gif" /></a>     We pride ourselves on hand-selecting the world's finest luxury     hotels &amp; resorts, offering them to you at an incredible value.      <img width="135" height="1" name="Cont_15" style="display:block;margin-top:10px" border="0" alt="" src="http://www.luxurylink.com/images/insider/images1/hr-135.gif" /><br />
 <strong style="line-height:14px">Have a question?<br />
 We'd love to help!</strong><br />
 Our expert concierges 	are all experienced 	travel agents, and 	would love to assist 	you in planning your next luxury vacation. <br />
@@ -305,7 +301,7 @@ Pacific time at<br />
 <table width="730" align="center" cellpadding="0" cellspacing="0" style="font-family:Arial, Verdana, sans-serif;font-size:13px;background-color: #ffffff;">
 <tbody>
 <tr>
-<td><a xt="SPCLICK" name="www_luxurylink_com_fivestar_tr" target="_blank" href="http://www.luxurylink.com/last-minute-travel-deals/biggest-discount-offer?sortb=bestselling&offerFp=1&offerAuc=1&utm_medium=news&utm_term=b&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=all-top-deals"><img name="Cont_16" style="display:block" border="0" alt="" src="http://www.luxurylink.com/images/insider/images1/title-topdeals-top.gif" /></a></td>
+<td><a xt="SPCLICK" name="www_luxurylink_com_fivestar_tr" target="_blank" href="http://www.luxurylink.com/last-minute-travel-deals/biggest-discount-offer?sortb=bestselling&offerFp=1&offerAuc=1&utm_medium=news&utm_term=<?=$version?>&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=all-top-deals"><img name="Cont_16" style="display:block" border="0" alt="" src="http://www.luxurylink.com/images/insider/images1/title-topdeals-top.gif" /></a></td>
 </tr>
 <tr>
 
@@ -313,8 +309,8 @@ Pacific time at<br />
 <table border="0" width="100%" valign="top" cellpadding="0" cellspacing="0">
 <tbody>
 <tr>
-<td valign="top"><a name="0.1_section_TOP" target="_blank" xt="SPCLICK" href="http://www.luxurylink.com/last-minute-travel-deals/biggest-discount-offer?sortb=bestselling&offerFp=1&offerAuc=1&utm_medium=news&utm_term=b&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=all-top-deals"><img name="Cont_17" alt="Top Deals" border="0" src="http://www.luxurylink.com/images/insider/images1/title-topdeals.gif" /></a></td>
-<td align="right" valign="bottom" style="font-family:Arial, Verdana, sans-serif;font-size:13px;background-color: #ffffff;padding: 0px 20px 0px 0px;"><a xt="SPCLICK" name="www_luxurylink_com_fivestar_tr" style="color:#33669a; padding: 0px 0px 0px 450px;" target="_blank" href="http://www.luxurylink.com/last-minute-travel-deals/biggest-discount-offer?sortb=bestselling&offerFp=1&offerAuc=1&utm_medium=news&utm_term=b&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=all-top-deals">View All Top Deals</a></td>
+<td valign="top"><a name="0.1_section_TOP" target="_blank" xt="SPCLICK" href="http://www.luxurylink.com/last-minute-travel-deals/biggest-discount-offer?sortb=bestselling&offerFp=1&offerAuc=1&utm_medium=news&utm_term=<?=$version?>&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=all-top-deals"><img name="Cont_17" alt="Top Deals" border="0" src="http://www.luxurylink.com/images/insider/images1/title-topdeals.gif" /></a></td>
+<td align="right" valign="bottom" style="font-family:Arial, Verdana, sans-serif;font-size:13px;background-color: #ffffff;padding: 0px 20px 0px 0px;"><a xt="SPCLICK" name="www_luxurylink_com_fivestar_tr" style="color:#33669a; padding: 0px 0px 0px 450px;" target="_blank" href="http://www.luxurylink.com/last-minute-travel-deals/biggest-discount-offer?sortb=bestselling&offerFp=1&offerAuc=1&utm_medium=news&utm_term=<?=$version?>&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=all-top-deals">View All Top Deals</a></td>
 </tr>
 </tbody>
 
@@ -330,14 +326,14 @@ Pacific time at<br />
 
 <td width="325" style="font-size:11px" valign="top">
 
-<? displayBox2($rows[4],$date_ymd);?>
+<? displayBox2($rows[4],$date_ymd,$version);?>
 
 </td>
 <td width="40"></td>
 
 <td width="325" style="font-size:11px" valign="top">
 
-<? displayBox2($rows[5],$date_ymd);?>
+<? displayBox2($rows[5],$date_ymd,$version);?>
 
 </td>
 </tr>
@@ -348,13 +344,13 @@ Pacific time at<br />
 <tr>
 <td width="325" style="font-size:11px" valign="top">
 
-<? displayBox2($rows[6],$date_ymd);?>
+<? displayBox2($rows[6],$date_ymd,$version);?>
 
 </td>
 <td width="40"></td>
 <td width="325" style="font-size:11px" valign="top">
 
-<? displayBox2($rows[7],$date_ymd);?>
+<? displayBox2($rows[7],$date_ymd,$version);?>
 
 </td>
 </tr>
@@ -391,9 +387,9 @@ Pacific time at<br />
 <table border="0" width="100%" valign="top" cellpadding="0" cellspacing="0">
 <tbody>
 <tr>
-<td valign="top"><a name="0.1_section_NEW_1" target="_blank" xt="SPCLICK" href="http://www.luxurylink.com/last-minute-travel-deals/biggest-discount-offer?sortb=bestselling&offerFp=1&offerAuc=1&utm_medium=news&utm_term=b&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=all-top-deals">      <img name="Cont_25" alt="More Top Deals" border="0" src="http://www.luxurylink.com/images/insider/images1/title-moretopdeals.gif" /></a></td>
+<td valign="top"><a name="0.1_section_NEW_1" target="_blank" xt="SPCLICK" href="http://www.luxurylink.com/last-minute-travel-deals/biggest-discount-offer?sortb=bestselling&offerFp=1&offerAuc=1&utm_medium=news&utm_term=<?=$version?>&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=all-top-deals">      <img name="Cont_25" alt="More Top Deals" border="0" src="http://www.luxurylink.com/images/insider/images1/title-moretopdeals.gif" /></a></td>
 
-<td align="right" valign="bottom" style="font-family:Arial, Verdana, sans-serif;font-size:13px;background-color: #ffffff;padding: 0px 20px 0px 0px;"><a xt="SPCLICK" name="www_luxurylink_com_fivestar_tr" style="color:#33669a; padding: 0px 0px 0px 385px;" target="_blank" href="http://www.luxurylink.com/last-minute-travel-deals/biggest-discount-offer?sortb=bestselling&offerFp=1&offerAuc=1&utm_medium=news&utm_term=b&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=all-top-deals">View All Top Deals</a></td>
+<td align="right" valign="bottom" style="font-family:Arial, Verdana, sans-serif;font-size:13px;background-color: #ffffff;padding: 0px 20px 0px 0px;"><a xt="SPCLICK" name="www_luxurylink_com_fivestar_tr" style="color:#33669a; padding: 0px 0px 0px 385px;" target="_blank" href="http://www.luxurylink.com/last-minute-travel-deals/biggest-discount-offer?sortb=bestselling&offerFp=1&offerAuc=1&utm_medium=news&utm_term=<?=$version?>&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=all-top-deals">View All Top Deals</a></td>
 </tr>
 </tbody>
 </table>
@@ -408,13 +404,13 @@ Pacific time at<br />
 <tr>
 <td width="325" style="font-size:11px" valign="top">
 
-<? displayBox2($rows[8],$date_ymd);?>
+<? displayBox2($rows[8],$date_ymd,$version);?>
 
 </td>
 <td width="40"></td>
 <td width="325" style="font-size:11px" valign="top">
 
-<? displayBox2($rows[9],$date_ymd);?>
+<? displayBox2($rows[9],$date_ymd,$version);?>
 
 </td>
 </tr>
@@ -425,14 +421,14 @@ Pacific time at<br />
 
 <td width="325" style="font-size:11px" valign="top">
 
-<? displayBox2($rows[10],$date_ymd);?>
+<? displayBox2($rows[10],$date_ymd,$version);?>
 
 </td>
 <td width="40"></td>
 
 <td width="325" style="font-size:11px" valign="top">
 
-<? displayBox2($rows[11],$date_ymd);?>
+<? displayBox2($rows[11],$date_ymd,$version);?>
 
 </td>
 </tr>
@@ -462,7 +458,7 @@ Pacific time at<br />
 <table width="730" align="center" cellpadding="0" cellspacing="0" style="font-family:Arial, Verdana, sans-serif;font-size:13px;background-color: #ffffff;">
 <tbody>
 <tr>
-<td><a xt="SPCLICK" name="www_luxurylink_com_fivest_15" target="_blank" href="http://www.luxurylink.com/fivestar/hotel-deals/Editor_Choice?sortb=bestselling&pg=1&utm_medium=news&utm_term=b&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=all-editors-picks"><img name="Cont_30" style="display:block" border="0" alt="" src="http://www.luxurylink.com/images/insider/images1/title-editorspicks-top.gif" /></a></td>
+<td><a xt="SPCLICK" name="www_luxurylink_com_fivest_15" target="_blank" href="http://www.luxurylink.com/fivestar/hotel-deals/Editor_Choice?sortb=bestselling&pg=1&utm_medium=news&utm_term=<?=$version?>&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=all-editors-picks"><img name="Cont_30" style="display:block" border="0" alt="" src="http://www.luxurylink.com/images/insider/images1/title-editorspicks-top.gif" /></a></td>
 </tr>
 <tr>
 <td style="border-bottom:1px solid #9c9da0;border-left:1px solid #9c9da0;border-right:1px solid #9c9da0;color:#333333">
@@ -470,8 +466,8 @@ Pacific time at<br />
 <table border="0" width="100%" valign="top" cellpadding="0" cellspacing="0">
 <tbody>
 <tr>
-<td valign="top"><a name="0.1_section_EDITORS" target="_blank" xt="SPCLICK" href="http://www.luxurylink.com/fivestar/hotel-deals/Editor_Choice?utm_medium=news&utm_term=b&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=all-editors-picks"><img name="Cont_31" alt="Top Deals" border="0" src="http://www.luxurylink.com/images/insider/images1/title-editorspicks.gif" /></a></td>
-<td align="right" valign="bottom" style="font-family:Arial, Verdana, sans-serif;font-size:13px;background-color: #ffffff;padding: 0px 20px 0px 0px;"><a xt="SPCLICK" name="www_luxurylink_com_fivest_16" style="color:#33669a; padding: 0px 0px 0px 401px;" target="_blank" href="http://www.luxurylink.com/fivestar/hotel-deals/Editor_Choice?sortb=bestselling&pg=1&utm_medium=news&utm_term=b&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=all-editors-picks">View Editor's Picks</a></td>
+<td valign="top"><a name="0.1_section_EDITORS" target="_blank" xt="SPCLICK" href="http://www.luxurylink.com/fivestar/hotel-deals/Editor_Choice?utm_medium=news&utm_term=<?=$version?>&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=all-editors-picks"><img name="Cont_31" alt="Top Deals" border="0" src="http://www.luxurylink.com/images/insider/images1/title-editorspicks.gif" /></a></td>
+<td align="right" valign="bottom" style="font-family:Arial, Verdana, sans-serif;font-size:13px;background-color: #ffffff;padding: 0px 20px 0px 0px;"><a xt="SPCLICK" name="www_luxurylink_com_fivest_16" style="color:#33669a; padding: 0px 0px 0px 401px;" target="_blank" href="http://www.luxurylink.com/fivestar/hotel-deals/Editor_Choice?sortb=bestselling&pg=1&utm_medium=news&utm_term=<?=$version?>&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=all-editors-picks">View Editor's Picks</a></td>
 </tr>
 </tbody>
 </table>
@@ -487,14 +483,14 @@ Pacific time at<br />
 <td width="325" style="font-size:11px" valign="top">
 
 
-<? displayEditorsPicksImg($rows[12],$date_ymd)?>
+<? displayEditorsPicksImg($rows[12],$date_ymd,$version)?>
 
 </td>
 
 <td width="25"></td>
 <td width="340" style="font-size:12px;line-height:16px" valign="top">
 
-<? displayEditorsPicksText($rows[12],$date_ymd)?>
+<? displayEditorsPicksText($rows[12],$date_ymd,$version)?>
 
 </td>
 </tr>
@@ -504,14 +500,14 @@ Pacific time at<br />
 <tr>
 <td width="325" style="font-size:11px" valign="top">
 
-<? displayEditorsPicksImg($rows[13],$date_ymd)?>
+<? displayEditorsPicksImg($rows[13],$date_ymd,$version)?>
 
 </td>
 <td width="25"></td>
 
 <td width="340" style="font-size:12px;line-height:16px" valign="top">
 
-<? displayEditorsPicksText($rows[13],$date_ymd)?>
+<? displayEditorsPicksText($rows[13],$date_ymd,$version)?>
 
 </td>
 
@@ -522,13 +518,13 @@ Pacific time at<br />
 <tr>
 <td width="325" style="font-size:11px" valign="top">
 
-<? displayEditorsPicksImg($rows[14],$date_ymd)?>
+<? displayEditorsPicksImg($rows[14],$date_ymd,$version)?>
 
 </td>
 <td width="25"></td>
 <td width="340" style="font-size:12px;line-height:16px" valign="top">
 
-<? displayEditorsPicksText($rows[14],$date_ymd)?>
+<? displayEditorsPicksText($rows[14],$date_ymd,$version)?>
 
 </td>
 </tr>
@@ -554,10 +550,10 @@ Pacific time at<br />
 <tbody>
 
 <tr>
-<td><a name="0.1__section_MYSTERY_1" target="_blank" xt="SPCLICK" href="http://www.luxurylink.com/fivestar/hotel-deals/Editor_Choice?utm_medium=news&utm_term=b&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=mystery"><img name="Cont_35" style="display:block" border="0" alt="" src="http://www.luxurylink.com/images/ads/insertions/mystery4.jpg" /></a></td>
+<td><a name="0.1__section_MYSTERY_1" target="_blank" xt="SPCLICK" href="http://www.luxurylink.com/fivestar/hotel-deals/Editor_Choice?utm_medium=news&utm_term=<?=$version?>&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=mystery"><img name="Cont_35" style="display:block" border="0" alt="" src="http://www.luxurylink.com/images/ads/insertions/mystery4.jpg" /></a></td>
 </tr>
 <tr>
-<td style="border-bottom:1px solid #9c9da0;border-left:1px solid #9c9da0;border-right:1px solid #9c9da0;color:#333333"><a name="0.1_section_MYSTERY" target="_blank" xt="SPCLICK" href="http://www.luxurylink.com/last-minute-travel-deals/mystery-offer?utm_medium=news&utm_term=b&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=mystery"><img name="Cont_36" alt="Top Deals" style="margin-right:395px" border="0" src="http://www.luxurylink.com/images/ads/insertions/mystery1.jpg" /></a>
+<td style="border-bottom:1px solid #9c9da0;border-left:1px solid #9c9da0;border-right:1px solid #9c9da0;color:#333333"><a name="0.1_section_MYSTERY" target="_blank" xt="SPCLICK" href="http://www.luxurylink.com/last-minute-travel-deals/mystery-offer?utm_medium=news&utm_term=<?=$version?>&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=mystery"><img name="Cont_36" alt="Top Deals" style="margin-right:395px" border="0" src="http://www.luxurylink.com/images/ads/insertions/mystery1.jpg" /></a>
 <table align="center" cellpadding="0" cellspacing="0" style="font-family:Arial, Verdana, sans-serif">
 <tbody>
 <tr>
@@ -567,10 +563,10 @@ Pacific time at<br />
 <td width="20" rowspan="8"></td>
 </tr>
 <tr>
-<td width="325" style="font-size:11px" valign="top"><a xt="SPCLICK" name="www_luxurylink_com_luxury_hote" target="_blank" href="http://www.luxurylink.com/luxury-hotels/mystery-hotel?isMystery=1&oid=948942&utm_medium=news&utm_term=b&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=mystery">     <img name="Cont_37" width="325" height="160" style="display:block" alt="Mystery Auction" border="0" src="http://www.luxurylink.com/images/ads/insertions/mystery3.jpg" /></a></td>
+<td width="325" style="font-size:11px" valign="top"><a xt="SPCLICK" name="www_luxurylink_com_luxury_hote" target="_blank" href="http://www.luxurylink.com/luxury-hotels/mystery-hotel?isMystery=1&oid=948942&utm_medium=news&utm_term=<?=$version?>&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=mystery">     <img name="Cont_37" width="325" height="182" style="display:block" alt="Mystery Auction" border="0" src="http://www.luxurylink.com/images/ads/insertions/mystery3.jpg" /></a></td>
 <td width="25"></td>
 <td width="340" style="font-size:12px;line-height:16px" valign="top"><strong style="font-size:13px">England - $1 Starting Bid<br />
-<a xt="SPCLICK" name="www_luxurylink_com_luxury_hote" style="color:#33669a" target="_blank" href="http://www.luxurylink.com/luxury-hotels/mystery-hotel?isMystery=1&oid=948942&utm_medium=news&utm_term=b&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=mystery">Mystery Auction</a></strong><br />
+<a xt="SPCLICK" name="www_luxurylink_com_luxury_hote" style="color:#33669a" target="_blank" href="http://www.luxurylink.com/luxury-hotels/mystery-hotel?isMystery=1&oid=948942&utm_medium=news&utm_term=<?=$version?>&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=mystery">Mystery Auction</a></strong><br />
 
 <br />
 Hint: This city has the largest urban zone in the European Union.
@@ -578,7 +574,7 @@ Hint: This city has the largest urban zone in the European Union.
 <br />
 The property name for this Mystery Auction will remain a secret, and for the moment so will the location...but only for the moment. We will be revealing clues throughout the course of the auction in our online Community.     <br />
 <br />
-<a xt="SPCLICK" name="www_luxurylink_com_luxury_hote" style="color:#33669a" target="_blank" href="http://www.luxurylink.com/luxury-hotels/mystery-hotel?isMystery=1&oid=948942&utm_medium=news&utm_term=b&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=mystery">     <img name="Cont_8" align="right" border="0" alt="" src="http://www.luxurylink.com/images/insider/images1/btn-viewpackage.gif" /></a></td>
+<a xt="SPCLICK" name="www_luxurylink_com_luxury_hote" style="color:#33669a" target="_blank" href="http://www.luxurylink.com/luxury-hotels/mystery-hotel?isMystery=1&oid=948942&utm_medium=news&utm_term=<?=$version?>&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=mystery">     <img name="Cont_8" align="right" border="0" alt="" src="http://www.luxurylink.com/images/insider/images1/btn-viewpackage.gif" /></a></td>
 </tr>
 
 <tr>
@@ -615,7 +611,7 @@ The property name for this Mystery Auction will remain a secret, and for the mom
 Facebook</a></td>
 <td width="160" height="40" valign="middle"><a xt="SPCLICK" name="twitter_com____LuxuryLink" style="color:#336699;text-decoration:none" target="_blank" href="http://twitter.com/#!/LuxuryLink">     <img name="Cont_39" align="left" border="0" alt="" src="http://www.luxurylink.com/images/insider/images1/icon-footer-twitter.gif" /> Luxury Link<br />
 on Twitter</a></td>
-<td width="160" height="40" valign="middle"><a xt="SPCLICK" name="www_luxurylink_com_community_f" style="color:#336699;text-decoration:none" target="_blank" href="http://www.luxurylink.com/community/forum.php?utm_medium=news&utm_term=b&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=community">     <img name="Cont_40" align="left" border="0" alt="" src="http://www.luxurylink.com/images/insider/images1/icon-footer-luxurylink.gif" /> Visit our<br />
+<td width="160" height="40" valign="middle"><a xt="SPCLICK" name="www_luxurylink_com_community_f" style="color:#336699;text-decoration:none" target="_blank" href="http://www.luxurylink.com/community/forum.php?utm_medium=news&utm_term=<?=$version?>&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=community">     <img name="Cont_40" align="left" border="0" alt="" src="http://www.luxurylink.com/images/insider/images1/icon-footer-luxurylink.gif" /> Visit our<br />
 
 Community</a></td>
 <td width="180" height="40" valign="middle"><a xt="SPEMAIL" name="feedback_luxurylink_com_subjec" target="_blank" style="text-decoration: none;color:#336699;" href="mailto:feedback@luxurylink.com?subject=Feedback">     <img name="Cont_41" align="left" border="0" alt="" src="http://www.luxurylink.com/images/insider/images1/icon-footer-feedback.gif" /><span style="text-decoration: none;color:#336699;"> Send Us<br />

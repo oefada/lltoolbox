@@ -24,7 +24,7 @@
 <li>The order they appear here will be the order they apear in the newsletter.
 </ul>
 <br>
-<form method='post' id='generator_form' action='generated'>
+<form method='post' id='generator_form' action='generated' onsubmit='return validateJunkAndStuff();'>
 <? echo $this->renderElement("input_search",array('name' => 'query','label'=>'Client Search','controller' => 'generator')); ?>
 <div style='clear:both;'></div>
 <br>
@@ -73,11 +73,13 @@ foreach($client_arr as $clientId=>$name){
 
 ?>
 
-Month (mm):<input type='text' name='month' size=3>
-Day (dd):<input type='text' name='day' size=3>
-Year (yyyy):<input type='text' name='year' size=3>
+Month (mm):<input type='text' name='month' size='2' id='mm_two_digit'>
+Day (dd):<input type='text' name='day' size='2' id='dd_two_digit'>
+Year (yy):<input type='text' name='year' size='2' id='yy_two_digit'>
 <br>
-
+<br>
+Version: <input type='text' name='version' size='2'>
+<br><br>
 <input type='submit' value='submit'>
 </form>
 
@@ -85,3 +87,32 @@ Year (yyyy):<input type='text' name='year' size=3>
 </div>
 
 <script>jQuery('.search-input-with-livesearch input[name="query"]').liveSearch({url: "/ajax_search?searchtype=generator"});</script>
+
+<script>
+
+function validateJunkAndStuff(){
+
+	var mm=document.getElementById("mm_two_digit").value;
+	var dd=document.getElementById("dd_two_digit").value;
+	var yy=document.getElementById("yy_two_digit").value;
+
+	if (mm.length!=2){
+		alert("Months must be 2 digits long");
+		return false;
+	}
+	if (dd.length!=2){
+		alert("Day of month must be 2 digits long");
+		return false;
+	}
+	if (yy.length!=2){
+		alert("Years must be 2 digits long");
+		return false;
+	}
+
+	return true;
+
+
+}
+
+</script>
+
