@@ -31,12 +31,15 @@ class MailingsController extends AppController {
 	function generated(){
 
 		if (!empty($this->params['form']['clientId_arr'])){
+
 			$month=$this->params['form']['month'];
 			$day=$this->params['form']['day'];
 			$year=$this->params['form']['year'];
-			if (strlen($year)==2)$year="20".$year;
 			$date_ymd=$year.$month.$day;
 			$this->set("date_ymd",$date_ymd);
+
+			$version=$this->params['form']['version'];
+			$this->set("version",$version);
 
 			$clientId_arr=$this->params['form']['clientId_arr'];
 			$clientName_arr=$this->params['form']['clientName'];
