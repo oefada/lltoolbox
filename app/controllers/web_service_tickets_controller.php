@@ -413,7 +413,7 @@ class WebServiceTicketsController extends WebServicesController
 					$this->Ticket->__runTakeDownRetailValue($offerLive['clientId'], $offerLive['retailValue'], $ticketId);
 					break;
 				case 6://mbyrnes
-					$this->Ticket->__runTakeDownNumRooms($offerLive,$ticketId,$ticketSite);
+					$this->Ticket->__runTakeDownNumRooms($offerLive,$ticketId,$ticketSite,$data['numNights']);
 					break;
 
 			}
@@ -2181,10 +2181,13 @@ class WebServiceTicketsController extends WebServicesController
 		// Links GiftCert to this ticket
 		
 		$totalChargeAmount = $data['paymentAmount'];
+		$payment_amt = 0;
+		
 		if ($toolboxManualCharge) {
 			$fee = $this->Ticket->getFeeByTicket($ticketId);
 			
-			$totalChargeAmount -= $fee;
+			$totalChargeAmount = $ticket['Ticket']['billingPrice'];
+			$payment_amt = $data['paymentAmount'];
 			
 			if ($data['paymentTypeId'] == 2) {
 				$this->loadModel('PromoCode');
@@ -2199,17 +2202,20 @@ class WebServiceTicketsController extends WebServicesController
 			}
 		}
 		
-		$promoGcCofData	= $this->Ticket->getPromoGcCofData($ticket['Ticket']['ticketId'], $totalChargeAmount);
-		$totalChargeAmount = $promoGcCofData['final_price'];
+		$promoGcCofData	= $this->Ticket->getPromoGcCofData($ticket['Ticket']['ticketId'], $totalChargeAmount, $payment_amt);
 
 		if (!$toolboxManualCharge) {
 			// this is either autocharge or user checkout
 
+			$totalChargeAmount = $promoGcCofData['final_price'];
+			
 			// used promo or gc or cof that resulted in complete ticket price coverage -- no cc charge needed
 			// -------------------------------------------------------------------------------
 			if ($promoGcCofData['applied'] && ($promoGcCofData['final_price'] == 0)) {
 				return $this->runPostChargeSuccess($ticket, $data, $usingUpsId, $userPaymentSettingPost, $promoGcCofData, $toolboxManualCharge);
 			}
+		} else {
+			$totalChargeAmount = $payment_amt;
 		}
 
 		$paymentDetail = array();
@@ -2231,6 +2237,9 @@ class WebServiceTicketsController extends WebServicesController
 			// ---------------------------------------------------------------------------
 			// init payment processing and submit payment
 			// ---------------------------------------------------------------------------
+			
+			$ticket['Ticket']['billingPrice'] = $totalChargeAmount;
+			CakeLog::write("debug",array("PAYMENT INFO",$ticket));
 			$processor = new Processor($paymentProcessorName);
 			$processor->InitPayment($userPaymentSettingPost, $ticket);
 			
@@ -2300,6 +2309,8 @@ class WebServiceTicketsController extends WebServicesController
 		if (!$this->PaymentDetail->save($paymentDetail)) {
 			@mail('devmail@luxurylink.com', 'WEB SERVICE ERROR: PAYMENT PROCESSED BUT NOT SAVED', print_r($this->PaymentDetail->validationErrors,true)  . print_r($paymentDetail, true));
 		}
+		
+		CakeLog::write("debug",var_export(array("WEB SERVICE TICKETS: ",$paymentDetail,$promoGcCofData),1));
 		
 		// return result whether success or denied
 		// ---------------------------------------------------------------------------
@@ -2419,7 +2430,6 @@ class WebServiceTicketsController extends WebServicesController
 		}
 
 		return 'CHARGE_SUCCESS';
-		
 	}
 }
 
