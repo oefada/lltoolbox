@@ -136,7 +136,6 @@ class ConsolidatedReport extends AppModel
 	 */
 	public function getContactDetails()
 	{
-		
 		$call_details = array();
 		$booking_details = array();
 		$contact_details = array();
@@ -339,28 +338,28 @@ class ConsolidatedReport extends AppModel
 	private static function buildContactDetails($lead_type, $site, $activity_date, $arrival, $departure, $room_nights, $booking_amount, $call_duration, $booking_type, $phone, $firstname, $lastname, $email, $optin, $address, $city, $state, $zip, $country, $median_household_income, $per_capita_income, $median_earnings)
 	{
 		return array(
-			'Lead Type' => $lead_type,
-			'Site' => $site,
-			'Activity Date' => $activity_date,
-			'Arrival' => $arrival,
-			'Departure' => $departure,
-			'Room Nights' => $room_nights,
-			'Booking Amount' => $booking_amount,
-			'Call Duration' => $call_duration,
-			'Booking Type' => $booking_type,
-			'Phone' => $phone,
-			'Firstname' => $firstname,
-			'Lastname' => $lastname,
-			'Email' => $email,
-			'Opt-in' => $optin,
-			'Address' => $address,
-			'City' => $city,
-			'State' => $state,
-			'Zip' => $zip,
-			'Country' => $country,
-			'Median Household Income' => $median_household_income,
-			'Per Capita Income' => $per_capita_income,
-			'Median Earnings' => $median_earnings
+			'Lead Type'					=> trim($lead_type),
+			'Site'						=> trim($site),
+			'Activity Date'				=> trim($activity_date),
+			'Arrival'					=> trim($arrival),
+			'Departure'					=> trim($departure),
+			'Room Nights'				=> trim($room_nights),
+			'Booking Amount'			=> trim($booking_amount),
+			'Call Duration'				=> trim($call_duration),
+			'Booking Type'				=> trim($booking_type),
+			'Phone'						=> trim($phone),
+			'Firstname'					=> trim($firstname),
+			'Lastname'					=> trim($lastname),
+			'Email'						=> trim($email),
+			'Opt-in'					=> trim($optin),
+			'Address'					=> trim($address),
+			'City'						=> trim($city),
+			'State'						=> trim($state),
+			'Zip'						=> trim($zip),
+			'Country'					=> trim($country),
+			'Median Household Income'	=> trim($median_household_income),
+			'Per Capita Income'			=> trim($per_capita_income),
+			'Median Earnings'			=> trim($median_earnings)
 		);
 	}
 	

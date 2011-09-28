@@ -132,9 +132,9 @@ class ConsolidatedReportHelper
 	 * @param	string $cell
 	 * @param	string $value
 	 */
-	public function setDataToPopulate($worksheet_name, $label, $cell, $value)
+	public function setDataToPopulate($worksheet_name, $cell, $value)
 	{
-		$this->dataToPopulate[$worksheet_name][$label] = array(
+		$this->dataToPopulate[$worksheet_name][] = array(
 			'cell' => $cell,
 			'value' => $value
 		);
