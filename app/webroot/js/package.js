@@ -671,7 +671,6 @@ function updatePerNightPrice(autoFillFlexPerNightPrice) {
     $('span#suggestedFlexCalc').html($('#flexSuggestedRetail').val());
     $('span#suggestedFlexPrice').html(Math.round($('#flexSuggestedRetail').val() * ($('#buynow-percent').val() / 100)));
     if (true || autoFillFlexPerNightPrice) {
-		console.log("HERE");
         $('input#flexPricePerNight').val(Math.round($('#flexSuggestedRetail').val() * ($('#buynow-percent').val() / 100)));
     }
 }
