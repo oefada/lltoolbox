@@ -19,7 +19,7 @@ require_once "../vendors/aes.php";
 require(APP.'/vendors/pp/Processor.class.php');
 
 set_error_handler("wstErrorHandler");
-register_shutdown_function('wstErrorShutdown');
+//register_shutdown_function('wstErrorShutdown');
 
 // FOR DEV WEB SERVICE SETTINGS! VERY IMPORTANT FOR DEV
 define('DEV_USER_TOOLBOX_HOST', 'http://' . $_SERVER['ENV_USER'] . '-toolboxdev.luxurylink.com/web_service_tickets');
@@ -874,7 +874,6 @@ class WebServiceTicketsController extends WebServicesController
 	}
 
 	function ppv($in0) {
-		CakeLog::write("debug",$in0);
 		$params = json_decode($in0, true);
 
 		// TODO THIS METHOD NEEDS SOME MAJOR REVAMP
@@ -1026,6 +1025,8 @@ class WebServiceTicketsController extends WebServicesController
 			} elseif ($ticket['Ticket']['siteId'] == 2) {
 				$prefixUrl = Configure::read("UrlS.FG");
 			}
+			
+			$siteId = $ticket['Ticket']['siteId'];
 	
 			$checkoutLink		= $prefixUrl . "/my/my_purchase.php?z=$checkoutKey";
 	
@@ -1213,8 +1214,6 @@ class WebServiceTicketsController extends WebServicesController
 			// Auction facilitator
 			$dateRequestLink = $prefixUrl . "/my/my_date_request.php?tid=$ticketId";
 			
-			$siteId = $ticketData['siteId'];
-	
 			// check if already sent out a reservation request
 			if (in_array($ppvNoticeTypeId, array(2,10))) {
 				$res_request = $this->Ticket->query("SELECT COUNT(*) AS count FROM ppvNotice where ticketId = {$ticketId} AND ppvNoticeTypeId IN (2,10);");
@@ -2092,28 +2091,37 @@ class WebServiceTicketsController extends WebServicesController
 		}
 
 		if (!isset($data['userId']) || empty($data['userId'])) {
-			return '101';
+			$this->errorResponse = 101;
+			return $this->returnError(__METHOD__);
 		}
 		if (!isset($data['ticketId']) || empty($data['ticketId'])) {
-			return '102';
+			$this->errorResponse = 102;
+			return $this->returnError(__METHOD__);
 		}
 		if (!isset($data['paymentProcessorId']) || !$data['paymentProcessorId']) {
-			return '103';
+			$this->errorResponse = 103;
+			return $this->returnError(__METHOD__);
 		}
 		if (!isset($data['paymentAmount']) || $data['paymentAmount'] < 0) {
-			return '104';
+			$this->errorResponse = 104;
+			return $this->returnError(__METHOD__);
 		}
+		
 		if (!isset($data['initials']) || empty($data['initials'])) {
-			return '105';
+			$this->errorResponse = 105;
+			return $this->returnError(__METHOD__);
 		}
 		if (!isset($data['autoCharge'])) {
-			return '106';
+			$this->errorResponse = 106;
+			return $this->returnError(__METHOD__);
 		}
 		if (!isset($data['saveUps'])) {
-			return '107';
+			$this->errorResponse = 107;
+			return $this->returnError(__METHOD__);
 		}
 		if (!isset($data['zAuthHashKey']) || !$data['zAuthHashKey']) {
-			return '108';
+			$this->errorResponse = 108;
+			return $this->returnError(__METHOD__);
 		}
 		
 		if (isset($data['toolboxManualCharge']) && ($data['toolboxManualCharge'] == 'toolbox')) {
@@ -2126,8 +2134,10 @@ class WebServiceTicketsController extends WebServicesController
 		// ---------------------------------------------------------------------------
 		$hashCheck = md5('L33T_KEY_LL' . $data['userId'] . $data['ticketId'] . $data['paymentProcessorId'] . $data['paymentAmount'] . $data['initials']);
 		if (trim($hashCheck) !== trim($data['zAuthHashKey'])) {
-			return '109';
+			$this->errorResponse = 109;
+			return $this->returnError(__METHOD__);
 		}
+		
 		unset($hashCheck);
 
 		// and even some more error checking.
@@ -2135,10 +2145,12 @@ class WebServiceTicketsController extends WebServicesController
 		$this->Ticket->recursive = -1;
 		$ticket = $this->Ticket->read(null, $data['ticketId']);
 		if (!$ticket) {
-			return '110';
+			$this->errorResponse = 110;
+			return $this->returnError(__METHOD__);
 		}
 		if ($ticket['Ticket']['userId'] != $data['userId']) {
-			return '111';
+			$this->errorResponse = 111;
+			return $this->returnError(__METHOD__);
 		}
 
 		// use either the data sent over or retrieve from the db with the id
@@ -2156,7 +2168,8 @@ class WebServiceTicketsController extends WebServicesController
 		}
 
 		if (!$userPaymentSettingPost || empty($userPaymentSettingPost)) {
-				return '113';
+			$this->errorResponse = 113;
+			return $this->returnError(__METHOD__);
 		}
 
 		$userPaymentSettingPost['UserPaymentSetting']['ccNumber'] = aesFullDecrypt($userPaymentSettingPost['UserPaymentSetting']['ccNumber']);
@@ -2175,7 +2188,8 @@ class WebServiceTicketsController extends WebServicesController
 		$paymentProcessorName = $paymentProcessorName['PaymentProcessor']['paymentProcessorName'];
 		
 		if (!$paymentProcessorName) {
-			return '114';
+			$this->errorResponse = 114;
+			return $this->returnError(__METHOD__);
 		}
 
 		// handle fees, promo discounts, etc
@@ -2241,7 +2255,8 @@ class WebServiceTicketsController extends WebServicesController
 			// ---------------------------------------------------------------------------
 			
 			$ticket['Ticket']['billingPrice'] = $totalChargeAmount;
-			CakeLog::write("debug",array("PAYMENT INFO",$ticket));
+			$this->logError(array("PAYMENT INFO",$ticket));
+			
 			$processor = new Processor($paymentProcessorName);
 			$processor->InitPayment($userPaymentSettingPost, $ticket);
 			
@@ -2433,9 +2448,25 @@ class WebServiceTicketsController extends WebServicesController
 
 		return 'CHARGE_SUCCESS';
 	}
+
+	function logError($method,$msg = "") {
+		if ($msg == "") {
+			$msg = $this->errorMsg;
+		}
+		
+		CakeLog::write("debug",var_export($method.": ".$msg,1));
+	}
+
+	function returnError($method) {
+		$this->logError($method,$this->errorResponse);
+		return $this->errorResponse;
+		exit;
+	}
 }
 
 function wstErrorHandler($errno, $errstr, $errfile, $errline) {
+	$log = "debug";
+	
     switch ($errno) {
 		case E_RECOVERABLE_ERROR:
 			$eMsg = "RECOVERABLE ERROR";
@@ -2452,26 +2483,27 @@ function wstErrorHandler($errno, $errstr, $errfile, $errline) {
 	        break;
 		case E_WARNING:
 			// Add to daily digest
-	        $eMsg = "WARNING [$errno] $errstr\n";
-	        $eMsg .= "  Warning on line $errline in file $errfile";
-	        $eMsg .= ", PHP " . PHP_VERSION . " (" . PHP_OS . ")\n";
+			$log = "notices";
+	        $eMsg = "WARNING";
+			break;
+		case E_NOTICE:
+			$log = "notices";
+			$eMsg = "NOTICE";
 			break;
 		case E_STRICT:
-//			$eMsg = "STRICT";
+			//$eMsg = "STRICT";
+			//$log = "strict";
 			break;
 		default:
 			$eMsg = "CATCHALL";
 			break;
 	}
 
-	if ($errno != E_WARNING && isset($eMsg)) {
+	if (isset($eMsg)) {
 		$eMsg .= " [$errno] $errstr\n";
 	    $eMsg .= "  Line $errline in file $errfile";
 	    $eMsg .= ", PHP " . PHP_VERSION . " (" . PHP_OS . ")\n";
-	}
-	
-	if (isset($eMsg)) {
-		CakeLog::write("debug",$eMsg);
+		CakeLog::write($log,$eMsg);
 	}
 	
     /* Don't execute PHP internal error handler */
@@ -2483,10 +2515,11 @@ function wstErrorShutdown() {
 	
 	if ($error['type'] != 2048) {
 		CakeLog::write("debug","SCRIPT ABORTED: ".var_export($error,1));
-		die();
 	} else {
 		CakeLog::write("debug","STRICT FATAL: ".var_export($error,1));
 	}
+	
+	die();
 }
 
 ?>
