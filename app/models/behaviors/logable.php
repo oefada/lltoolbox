@@ -277,7 +277,7 @@ class LogableBehavior extends ModelBehavior
 		if (isset($this->Log->_schema['model_id']) && is_numeric($id)) {
 			$logData['Log']['model_id'] = $id;
 		}
-		$title = NULL;
+		$title = "";
 		if (isset($values['title'])) {
     		$title = $values['title']; 
     		unset($logData['Log']['title']);
@@ -420,7 +420,7 @@ class LogableBehavior extends ModelBehavior
      * @param Object $Model
      * @param array $logData
      */
-    function _saveLog(&$Model, $logData, $title = null) {  
+    function _saveLog(&$Model, $logData, $title = "") {  
     	if ($title !== NULL) {
     		$logData['Log']['title'] = $title;
     	} elseif ($Model->displayField == $Model->primaryKey) {

@@ -313,8 +313,7 @@ class TrackDetail extends AppModel {
 	function reverseBalances($trackDetailId) {
 		$errors = 0;
 		
-		$this->loadModel("Track");
-		$this->loadModel("Loa");
+		$this->Loa = ClassRegistry::init("Loa");
 		
 		$this->Loa->recursive = -1;
 
@@ -354,11 +353,9 @@ class TrackDetail extends AppModel {
 	}
 
 	function afterSave() {
-		$this->loadModel("Track");
-		$this->loadModel("Loa");
+		ClassRegistry::init("Loa");
 		
 		$this->Loa->recursive = -1;
-
 		$allocated_amount = $this->data['TrackDetail']['allocatedAmount'];
 		$tracks = $this->getTrackRecord($this->data['TrackDetail']['ticketId']);
 		$track = $tracks[0];
