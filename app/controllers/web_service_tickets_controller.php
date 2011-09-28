@@ -874,6 +874,7 @@ class WebServiceTicketsController extends WebServicesController
 	}
 
 	function ppv($in0) {
+		CakeLog::write("debug",$in0);
 		$params = json_decode($in0, true);
 
 		// TODO THIS METHOD NEEDS SOME MAJOR REVAMP
@@ -888,7 +889,8 @@ class WebServiceTicketsController extends WebServicesController
 		$ppvNoticeTypeId	= isset($params['ppvNoticeTypeId']) ? $params['ppvNoticeTypeId'] : null;
 		$ppvInitials		= isset($params['initials']) ? $params['initials'] : null;
 		$clientIdParam		= isset($params['clientId']) ? $params['clientId'] : false;
-
+		$siteId				= isset($params['siteId']) ? $params['siteId'] : false;
+		
 		// sender signature (mainly for manual emails sent from toolbox)
 		// -------------------------------------------------------------------------------
 		$sender_sig 		= isset($params['sender_sig']) ? $params['sender_sig'] : 0;
@@ -1211,35 +1213,6 @@ class WebServiceTicketsController extends WebServicesController
 			// Auction facilitator
 			$dateRequestLink = $prefixUrl . "/my/my_date_request.php?tid=$ticketId";
 			
-			// ********* SITE NAME **********
-			switch ($ticketData['siteId']) {
-				case 1:
-					$siteName = 'Luxury Link';
-					$siteDisplay = 'LuxuryLink.com';
-					$siteEmail = 'luxurylink.com';
-					$siteUrl = 'http://www.luxurylink.com/';
-					$siteHeader = '990000';
-					$sitePhone  = '(888) 297-3299';
-					$sitePhoneLocal = '(310) 215-8060';
-					$siteFax = '(310) 215-8279';
-					$headerLogo = 'http://www.luxurylink.com/images/ll_logo_2009_2.gif';
-					$append = "LL";
-
-					break;
-				case 2:
-					$siteName = 'FamilyGetaway.com';
-					$siteDisplay = 'FamilyGetaway.com';
-					$siteEmail = 'familygetaway.com';
-					$siteUrl = 'http://www.familygetaway.com/';
-					$siteHeader = 'DE6F0A';
-					$sitePhone  = '(877) 372-5877';
-					$sitePhoneLocal = '(310) 956-3703';
-					$siteFax = '(800) 440-3820';
-					$headerLogo = 'http://www.luxurylink.com/images/family/logo_emails.gif';
-					$append = "FG";
-					
-					break;
-			}
 			$siteId = $ticketData['siteId'];
 	
 			// check if already sent out a reservation request
@@ -1249,8 +1222,37 @@ class WebServiceTicketsController extends WebServicesController
 			}
 		} //End IF for $ticketId
 		
-		// Click tracking for templates
+		// ********* SITE NAME **********
+		switch ($siteId) {
+			case 1:
+				$siteName = 'Luxury Link';
+				$siteDisplay = 'LuxuryLink.com';
+				$siteEmail = 'luxurylink.com';
+				$siteUrl = 'http://www.luxurylink.com/';
+				$siteHeader = '990000';
+				$sitePhone  = '(888) 297-3299';
+				$sitePhoneLocal = '(310) 215-8060';
+				$siteFax = '(310) 215-8279';
+				$headerLogo = 'http://www.luxurylink.com/images/ll_logo_2009_2.gif';
+				$append = "LL";
+
+				break;
+			case 2:
+				$siteName = 'FamilyGetaway.com';
+				$siteDisplay = 'FamilyGetaway.com';
+				$siteEmail = 'familygetaway.com';
+				$siteUrl = 'http://www.familygetaway.com/';
+				$siteHeader = 'DE6F0A';
+				$sitePhone  = '(877) 372-5877';
+				$sitePhoneLocal = '(310) 956-3703';
+				$siteFax = '(800) 440-3820';
+				$headerLogo = 'http://www.luxurylink.com/images/family/logo_emails.gif';
+				$append = "FG";
+				
+				break;
+		}
 		
+		// Click tracking for templates
 		$emailFrom = "$siteDisplay <no-reply@$siteEmail>";
 		$emailReplyTo = "no-reply@$siteEmail";
 		
