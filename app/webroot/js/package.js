@@ -633,8 +633,9 @@ function updateRetail(autoFillPercentRetail, autoFillSuggestedFlexPrice, numNigh
             var calcPercent = defaultPercent;
         }
         $('span#suggestedFlexPrice').html(Math.round($('#flexSuggestedRetail').val() * (calcPercent / 100)));
-        if (autoFillSuggestedFlexPrice) {
-            $('input#flexPricePerNight').val(Math.round($('#flexSuggestedRetail').val() * (calcPercent / 100)));
+        if (false && autoFillSuggestedFlexPrice) {
+				console.log("hereasdf");
+            //$('input#flexPricePerNight').val(Math.round($('#flexSuggestedRetail').val() * (calcPercent / 100)));
         }
     }
     if (($('input#pricePointId').val() == undefined) && autoFillPercentRetail) {
@@ -652,7 +653,7 @@ function updateRetail(autoFillPercentRetail, autoFillSuggestedFlexPrice, numNigh
 	if (checkedIds && !($('#edit-this-validity-disclaimer').val() == 1)) {
 		updateValidityDisclaimer(checkedIds);
 	}
-	updatePerNightPrice(true);
+	//updatePerNightPrice(true);
 }
 
 function updateValidityDisclaimer(ids) {
@@ -671,7 +672,7 @@ function updatePerNightPrice(autoFillFlexPerNightPrice) {
     $('span#suggestedFlexCalc').html($('#flexSuggestedRetail').val());
     $('span#suggestedFlexPrice').html(Math.round($('#flexSuggestedRetail').val() * ($('#buynow-percent').val() / 100)));
     if (true || autoFillFlexPerNightPrice) {
-        $('input#flexPricePerNight').val(Math.round($('#flexSuggestedRetail').val() * ($('#buynow-percent').val() / 100)));
+			$('input#flexPricePerNight').val(Math.round($('#flexSuggestedRetail').val() * ($('#buynow-percent').val() / 100)));
     }
 }
 
