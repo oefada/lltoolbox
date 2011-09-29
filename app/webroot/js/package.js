@@ -634,7 +634,6 @@ function updateRetail(autoFillPercentRetail, autoFillSuggestedFlexPrice, numNigh
         }
         $('span#suggestedFlexPrice').html(Math.round($('#flexSuggestedRetail').val() * (calcPercent / 100)));
         if (false && autoFillSuggestedFlexPrice) {
-				console.log("hereasdf");
             //$('input#flexPricePerNight').val(Math.round($('#flexSuggestedRetail').val() * (calcPercent / 100)));
         }
     }
