@@ -279,7 +279,10 @@
 		<td align="right"><span id="suggestedFlexPrice" class="price-points-price"></span> <? echo $package['Currency']['currencyCode']; ?></td>
 		</tr>
 		<tr>
-		<td align="right" width="80%">Flex Per Night Price</td>
+		<td align="right" width="80%">
+		Flex Per Night Price<br>
+		(Click to <a href='javascript:void(0);' onclick="updatePerNightPrice(true);">calculate</a>)
+		</td>
 		<td align="right">
 		<? if (!isset($pricePoint) || empty($pricePoint['pricePerExtraNight'])){ ?>
 			<input type="text" size="5" id="flexPricePerNight" name="data[PricePoint][pricePerExtraNight]" value="0" />
@@ -336,16 +339,22 @@
 updateRetail(true, false, <? echo $package['Package']['numNights']; ?>, '<?php echo $ratePeriods[0]['currencyCode']; ?>', isMultiClientPackage, 1);
 
 $('#isFlexPackage, #auction-percent, #buynow-percent').change(function() {
-    var autoFillFlexPerNightPrice = true;
+
+    //var autoFillFlexPerNightPrice = true;
     var flexPercentRetail = ($('#flexPricePerNight').val() / $('#flexSuggestedRetail').val()) * 100;
     var oldBuyNowPercent = $('.flexBuyNowCalc').text();
     if (flexPercentRetail != oldBuyNowPercent && oldBuyNowPercent > 0) {
-        autoFillFlexPerNightPrice = false;
+        //autoFillFlexPerNightPrice = false;
     }
+
+		// require admin to click link to calculate flex per night price
+		// this enables admin to manually enter the price if they want 
+    var autoFillFlexPerNightPrice = false;
+
     //updateRetail(false, autoFillFlexPerNightPrice, <? echo $package['Package']['numNights']; ?>, '<?php echo $ratePeriods[0]['currencyCode']; ?>', isMultiClientPackage, <?php echo $package['Package']['isFlexPackage']; ?>);
     updateRetail(false, autoFillFlexPerNightPrice, <? echo $package['Package']['numNights']; ?>, '<?php echo $ratePeriods[0]['currencyCode']; ?>', isMultiClientPackage, 1);
     $('.flexBuyNowCalc').html($('#buynow-percent').val());
-    updatePerNightPrice(autoFillFlexPerNightPrice);
+    //updatePerNightPrice(autoFillFlexPerNightPrice);
 });
 
 $('.check-rate-period').change(function() {
@@ -355,7 +364,7 @@ $('.check-rate-period').change(function() {
 });
 
 $('input#flexSuggestedRetail').change(function() {
-    updatePerNightPrice(true);
+    //updatePerNightPrice(true);
 });
 
 </script>
