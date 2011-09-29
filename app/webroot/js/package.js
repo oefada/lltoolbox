@@ -14,8 +14,8 @@ $().ready(function() {
                                     $('iframe#dynamicForm').attr('src', url);
                                     $('div#formContainer').dialog({modal:true,
                                                                    autoOpen:false,
-                                                                   height:700,
-                                                                   width:1000,
+                                                                   height:800,
+                                                                   width:1100,
                                                                    title:'Edit'
                                                                   });
                                     $('div#formContainer').dialog('open');
