@@ -18,8 +18,9 @@ App::import('Vendor', 'nusoap/web_services_controller');
 require_once "../vendors/aes.php";
 require(APP.'/vendors/pp/Processor.class.php');
 
+error_reporting(E_ALL);
 set_error_handler("wstErrorHandler");
-//register_shutdown_function('wstErrorShutdown');
+register_shutdown_function('wstErrorShutdown');
 
 // FOR DEV WEB SERVICE SETTINGS! VERY IMPORTANT FOR DEV
 define('DEV_USER_TOOLBOX_HOST', 'http://' . $_SERVER['ENV_USER'] . '-toolboxdev.luxurylink.com/web_service_tickets');
@@ -2076,7 +2077,7 @@ class WebServiceTicketsController extends WebServicesController
 		// good o' error checking my friends.  make this as strict as possible
 		// ---------------------------------------------------------------------------
 		$data = json_decode($in0, true);
-
+		
 		// DEV NO CHARGE
 		// ---------------------------------------------------------------------------
 		$isDev = false;
@@ -2144,6 +2145,8 @@ class WebServiceTicketsController extends WebServicesController
 		// ---------------------------------------------------------------------------
 		$this->Ticket->recursive = -1;
 		$ticket = $this->Ticket->read(null, $data['ticketId']);
+		$ticketId = $data['ticketId'];
+		
 		if (!$ticket) {
 			$this->errorResponse = 110;
 			return $this->returnError(__METHOD__);
@@ -2343,6 +2346,9 @@ class WebServiceTicketsController extends WebServicesController
 	}
 
 	function runPostChargeSuccess($ticket, $data, $usingUpsId, $userPaymentSettingPost, $promoGcCofData, $toolboxManualCharge) {
+		$this->errorMsg = "Start";
+		$this->logError(__METHOD__);
+		
 		// allocate revenue to loa and tracks
 		// ---------------------------------------------------------------------------
 		$tracks = $this->TrackDetail->getTrackRecord($ticket['Ticket']['ticketId']);
@@ -2401,9 +2407,9 @@ class WebServiceTicketsController extends WebServicesController
 		// ---------------------------------------------------------------------------
 		$promoGcCofData['Cof']['creditTrackingTypeId'] = 1;
 		
-		if (isset($promoGcCofData['GiftCert']) && $promoGcCofData['GiftCert']['applied']) {
+		if (isset($promoGcCofData['GiftCert']) && isset($promoGcCofData['GiftCert']['applied']) && $promoGcCofData['GiftCert']['applied'] == 1) {
 			$this->PaymentDetail->saveGiftCert($ticket['Ticket']['ticketId'], $promoGcCofData['GiftCert'], $ticket['Ticket']['userId'], $data['autoCharge'], $data['initials'],$toolboxManualCharge);
-		} elseif (isset($promoGcCofData['Cof']) && $promoGcCofData['Cof']['applied']) {
+		} elseif (isset($promoGcCofData['Cof']) && $promoGcCofData['Cof']['applied'] == 1) {
 			$this->PaymentDetail->saveCof($ticket['Ticket']['ticketId'], $promoGcCofData['Cof'], $ticket['Ticket']['userId'], $data['autoCharge'], $data['initials'],$toolboxManualCharge);
 		}
 		
@@ -2446,6 +2452,8 @@ class WebServiceTicketsController extends WebServicesController
 			}
 		}
 
+		$this->errorMsg = "End CHARGE_SUCCESS";
+		$this->logError(__METHOD__);
 		return 'CHARGE_SUCCESS';
 	}
 
@@ -2515,11 +2523,10 @@ function wstErrorShutdown() {
 	
 	if ($error['type'] != 2048) {
 		CakeLog::write("debug","SCRIPT ABORTED: ".var_export($error,1));
+		die();
 	} else {
-		CakeLog::write("debug","STRICT FATAL: ".var_export($error,1));
+		//CakeLog::write("debug","STRICT: ".var_export($error,1));
 	}
-	
-	die();
 }
 
 ?>

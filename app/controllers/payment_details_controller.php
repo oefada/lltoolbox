@@ -50,7 +50,6 @@ class PaymentDetailsController extends AppController {
 			}
 			
         	$webservice_live_url = Configure::read("Url.Ws").'/web_service_tickets?wsdl';
-			//$webservice_live_url = 'http://toolbox.luxurylink.com/web_service_tickets?wsdl';
 			$webservice_live_method_name = 'processPaymentTicket';
 			$webservice_live_method_param = 'in0';
 			

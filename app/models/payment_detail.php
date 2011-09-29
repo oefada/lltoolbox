@@ -33,11 +33,11 @@ class PaymentDetail extends AppModel {
 			$this->save($paymentDetail);
 		}
 		
-		$this->loadModel("GiftCertBalance");
+		$this->GiftCertBalance = ClassRegistry::init("GiftCertBalance");
+		
 		$data = array();
 		$data['GiftCertBalance']['promoCodeId'] = $gcData['promoCodeId'];
 		$data['GiftCertBalance']['amount']	= -$gcData['totalAmountOff'];
-		$this->GiftCertBalance->create();
 		$this->GiftCertBalance->save($data);
 	}
 
@@ -57,13 +57,16 @@ class PaymentDetail extends AppModel {
 			$this->save($paymentDetail);
 		}
 
-		$this->loadModel("CreditTracking");
+		$this->CreditTracking = ClassRegistry::init("CreditTracking");
+		
 		$data = array();
 		$data['CreditTracking']['userId'] = $userId;
 		$data['CreditTracking']['amount']	= -$cofData['totalAmountOff'];
 		$data['CreditTracking']['creditTrackingTypeId'] = $cofData['creditTrackingTypeId'];
-		$this->CreditTracking->create();
-		$this->CreditTracking->save($data);
+
+		if (!$this->CreditTracking->save($data)) {
+			CakeLog::write("debug",__METHOD__." CANNOT SAVE COF");
+		}
 	}
 }
 ?>
