@@ -335,7 +335,7 @@
 //updateRetail(true, false, <? echo $package['Package']['numNights']; ?>, '<?php echo $ratePeriods[0]['currencyCode']; ?>', isMultiClientPackage, <?php echo $package['Package']['isFlexPackage']; ?>);
 updateRetail(true, false, <? echo $package['Package']['numNights']; ?>, '<?php echo $ratePeriods[0]['currencyCode']; ?>', isMultiClientPackage, 1);
 
-$('#isFlexPackage','#auction-percent, #buynow-percent').change(function() {
+$('#isFlexPackage, #auction-percent, #buynow-percent').change(function() {
     var autoFillFlexPerNightPrice = true;
     var flexPercentRetail = ($('#flexPricePerNight').val() / $('#flexSuggestedRetail').val()) * 100;
     var oldBuyNowPercent = $('.flexBuyNowCalc').text();
