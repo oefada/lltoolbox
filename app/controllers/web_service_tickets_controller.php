@@ -1021,12 +1021,6 @@ class WebServiceTicketsController extends WebServicesController
 			$checkoutHash		= md5($ticketId . $userId . $offerId . 'LL_L33T_KEY');
 			$checkoutKey		= base64_encode(serialize(array('ticketId' => $ticketId, 'userId' => $userId, 'offerId' => $offerId, 'zKey' => $checkoutHash)));
 
-			if ($ticket['Ticket']['siteId'] == 1) {
-				$prefixUrl = Configure::read("UrlS.LL");
-			} elseif ($ticket['Ticket']['siteId'] == 2) {
-				$prefixUrl = Configure::read("UrlS.FG");
-			}
-			
 			$siteId = $ticket['Ticket']['siteId'];
 	
 			$checkoutLink		= $prefixUrl . "/my/my_purchase.php?z=$checkoutKey";
@@ -1235,6 +1229,7 @@ class WebServiceTicketsController extends WebServicesController
 				$siteFax = '(310) 215-8279';
 				$headerLogo = 'http://www.luxurylink.com/images/ll_logo_2009_2.gif';
 				$append = "LL";
+				$prefixUrl = Configure::read("UrlS.LL");
 
 				break;
 			case 2:
@@ -1248,6 +1243,7 @@ class WebServiceTicketsController extends WebServicesController
 				$siteFax = '(800) 440-3820';
 				$headerLogo = 'http://www.luxurylink.com/images/family/logo_emails.gif';
 				$append = "FG";
+				$prefixUrl = Configure::read("UrlS.FG");
 				
 				break;
 		}
