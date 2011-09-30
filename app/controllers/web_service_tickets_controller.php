@@ -954,6 +954,8 @@ class WebServiceTicketsController extends WebServicesController
 			$userPaymentData	= $this->findValidUserPaymentSetting($ticketData['userId']);
 	
 			$promoGcCofData		= $this->Ticket->getPromoGcCofData($ticketId, $ticket['Ticket']['billingPrice']);
+			
+			$siteId 			= $ticket['Ticket']['siteId'];
 		} elseif ($username) {
 			$this->User->UserSiteExtended->recursive = 0;
 			$userId = $this->User->UserSiteExtended->findByusername($username);
@@ -969,6 +971,40 @@ class WebServiceTicketsController extends WebServicesController
 		// ********************************************************************************************************
 		// ALL VARIABLES ARE SET HERE -- WE DONT HAVE TO CHANGE A MILLION TEMPLATES IF CHANGE IS MADE TO DB FIELD
 		// *********************************************************************************************************
+
+		// ********* SITE NAME **********
+		switch ($siteId) {
+			case 1:
+				$siteName = 'Luxury Link';
+				$siteDisplay = 'LuxuryLink.com';
+				$siteEmail = 'luxurylink.com';
+				$siteUrl = 'http://www.luxurylink.com/';
+				$siteHeader = '990000';
+				$sitePhone  = '(888) 297-3299';
+				$sitePhoneLocal = '(310) 215-8060';
+				$siteFax = '(310) 215-8279';
+				$headerLogo = 'http://www.luxurylink.com/images/ll_logo_2009_2.gif';
+				$append = "LL";
+				$prefixUrl = Configure::read("UrlS.LL");
+
+				break;
+			case 2:
+				$siteName = 'FamilyGetaway.com';
+				$siteDisplay = 'FamilyGetaway.com';
+				$siteEmail = 'familygetaway.com';
+				$siteUrl = 'http://www.familygetaway.com/';
+				$siteHeader = 'DE6F0A';
+				$sitePhone  = '(877) 372-5877';
+				$sitePhoneLocal = '(310) 956-3703';
+				$siteFax = '(800) 440-3820';
+				$headerLogo = 'http://www.luxurylink.com/images/family/logo_emails.gif';
+				$append = "FG";
+				$prefixUrl = Configure::read("UrlS.FG");
+				
+				break;
+		}
+		
+		// Auction facilitator
 
 		$userId 			= $userData['userId'];
 		$userFirstName		= ucwords(strtolower($userData['firstName']));
@@ -1022,10 +1058,9 @@ class WebServiceTicketsController extends WebServicesController
 			$checkoutHash		= md5($ticketId . $userId . $offerId . 'LL_L33T_KEY');
 			$checkoutKey		= base64_encode(serialize(array('ticketId' => $ticketId, 'userId' => $userId, 'offerId' => $offerId, 'zKey' => $checkoutHash)));
 
-			$siteId = $ticket['Ticket']['siteId'];
-	
 			$checkoutLink		= $prefixUrl . "/my/my_purchase.php?z=$checkoutKey";
-	
+			$dateRequestLink 	= $prefixUrl . "/my/my_date_request.php?tid=$ticketId";
+			
 			$loaLevelId			= isset($clientData[0]['Loa']['loaLevelId']) ? $clientData[0]['Loa']['loaLevelId'] : false;
 	
 			$offerTypeArticle	= in_array(strtolower($offerType[$offerTypeId]{0}), array('a','e','i','o','u')) ? 'an' : 'a';
@@ -1207,47 +1242,12 @@ class WebServiceTicketsController extends WebServicesController
 				$primaryDest = $this->Ticket->getTicketDestStyleId($ticketId);
 			}
 	
-			// Auction facilitator
-			$dateRequestLink = $prefixUrl . "/my/my_date_request.php?tid=$ticketId";
-			
 			// check if already sent out a reservation request
 			if (in_array($ppvNoticeTypeId, array(2,10))) {
 				$res_request = $this->Ticket->query("SELECT COUNT(*) AS count FROM ppvNotice where ticketId = {$ticketId} AND ppvNoticeTypeId IN (2,10);");
 				$res_request_count = $resrequest[0][0]['count'];
 			}
 		} //End IF for $ticketId
-		
-		// ********* SITE NAME **********
-		switch ($siteId) {
-			case 1:
-				$siteName = 'Luxury Link';
-				$siteDisplay = 'LuxuryLink.com';
-				$siteEmail = 'luxurylink.com';
-				$siteUrl = 'http://www.luxurylink.com/';
-				$siteHeader = '990000';
-				$sitePhone  = '(888) 297-3299';
-				$sitePhoneLocal = '(310) 215-8060';
-				$siteFax = '(310) 215-8279';
-				$headerLogo = 'http://www.luxurylink.com/images/ll_logo_2009_2.gif';
-				$append = "LL";
-				$prefixUrl = Configure::read("UrlS.LL");
-
-				break;
-			case 2:
-				$siteName = 'FamilyGetaway.com';
-				$siteDisplay = 'FamilyGetaway.com';
-				$siteEmail = 'familygetaway.com';
-				$siteUrl = 'http://www.familygetaway.com/';
-				$siteHeader = 'DE6F0A';
-				$sitePhone  = '(877) 372-5877';
-				$sitePhoneLocal = '(310) 956-3703';
-				$siteFax = '(800) 440-3820';
-				$headerLogo = 'http://www.luxurylink.com/images/family/logo_emails.gif';
-				$append = "FG";
-				$prefixUrl = Configure::read("UrlS.FG");
-				
-				break;
-		}
 		
 		// Click tracking for templates
 		$emailFrom = "$siteDisplay <no-reply@$siteEmail>";

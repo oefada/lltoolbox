@@ -72,10 +72,9 @@ class Processor
 		curl_setopt($ch, CURLOPT_TIMEOUT, 30);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $post_string);
 
-		$response = curl_exec($ch);
-		curl_close($ch);		
-		
 		if (!$this->test_card) {
+			$response = curl_exec($ch);
+			curl_close($ch);	
 			$this->response_data = $this->module->ProcessResponse($response);	
 		}
 		
