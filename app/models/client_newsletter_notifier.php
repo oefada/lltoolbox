@@ -22,7 +22,7 @@ class ClientNewsletterNotifier extends AppModel {
 
         $clients = $this->getClientsFromHtml($contents, $site);
         
-        $this->loadModel("Client");
+		$this->Client = ClassRegistry::init("Client");
 
 	    $cl = $this->Client->find('all', array(
 	                                    'fields' => array('name', 'managerUsername'),
@@ -62,7 +62,8 @@ class ClientNewsletterNotifier extends AppModel {
 		
 		$clients[1] = array_unique($clients[1]);
         $clientIds = array();
-        $this->loadModel("Client");
+        $this->Client = ClassRegistry::init("Client");
+		
         foreach ($clients[1] as $clientUrl) {
             if ($client = $this->Client->getClientBySeoUrl($clientUrl)) {
                 if (!in_array($client['Client']['clientId'], $clientIds)) {

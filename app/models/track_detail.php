@@ -160,7 +160,8 @@ class TrackDetail extends AppModel {
 
 		// for retail value - this will be deprecated once SOA is in place
 		if ($track['expirationCriteriaId'] == 5) {
-			$this->loadModel("Package");
+			$this->Package = ClassRegistry::init("Package");
+			
 			$this->Package->recursive = -1;
 			$package = $this->Package->read(null, $ticket_and_rev['clpr']['packageId']);
 			$new_track_detail['allocatedAmount'] = $package['Package']['approvedRetailPrice'];
