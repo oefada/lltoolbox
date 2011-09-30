@@ -271,7 +271,7 @@ class Ticket extends AppModel {
 		$ticketPrice -= $data['Cof']['totalAmountOff'];
 		
 		$data['applied'] = (!empty($data['Promo']['applied']) || !empty($data['GiftCert']['applied']) || isset($data['Cof']['applied'])) ? 1 : 0;
-		$data['final_price'] = $ticketPrice;
+		$data['final_price'] = ($ticketPrice < 0 ? 0 : $ticketPrice);
 		
 		return $data;
 
