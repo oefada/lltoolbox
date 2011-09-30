@@ -86,7 +86,11 @@ class Processor
 	}
 
 	function ChargeSuccess() {
-		return $this->module->ChargeSuccess($this->response_data);
+		if ($this->test_card) {
+			return true;
+		} else {
+			return $this->module->ChargeSuccess($this->response_data);
+		}
 	}
 
 	function GetResponseTxt() {
