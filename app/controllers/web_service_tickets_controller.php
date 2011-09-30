@@ -2340,6 +2340,17 @@ class WebServiceTicketsController extends WebServicesController
 			}
 		}
 
+		// CoF & Gift being saved even if it wasn't used
+		if ($data['paymentTypeId'] < 2 && $toolboxManualCharge) {
+			if (isset($promoGcCofData['Cof']['applied'])) {
+				$promoGcCofData['Cof']['applied'] = 0;
+			}
+			
+			if (isset($promoGcCofData['GiftCert']['applied'])) {
+				$promoGcCofData['GiftCert']['applied'] = 0;
+			}
+		} 
+		
 		// save the response from the payment processor
 		// ---------------------------------------------------------------------------
 
