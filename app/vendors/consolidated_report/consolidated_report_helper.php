@@ -61,9 +61,9 @@ class ConsolidatedReportHelper
 	 * Class constructer
 	 * 
 	 * @access	public
-	 * @param	string $template_path
-	 * @param	string $newFile_path
-	 * @param	string $outputFile_path
+	 * @param	string template_path
+	 * @param	string newFile_path
+	 * @param	string outputFile_path
 	 */
 	public function __construct($template_path, $newFile_path, $outputFile_path)
 	{
@@ -127,16 +127,18 @@ class ConsolidatedReportHelper
 	 * Set data in the dataToPopulate array
 	 * 
 	 * @access	public
-	 * @param	string $worksheet_name
-	 * @param	string $label
-	 * @param	string $cell
-	 * @param	string $value
+	 * @param	string worksheet_name
+	 * @param	string label
+	 * @param	string cell
+	 * @param	string value
+	 * @param	string format
 	 */
-	public function setDataToPopulate($worksheet_name, $cell, $value)
+	public function setDataToPopulate($worksheet_name, $cell, $value, $format = null)
 	{
 		$this->dataToPopulate[$worksheet_name][] = array(
 			'cell' => $cell,
-			'value' => $value
+			'value' => $value,
+			'format' => $format
 		);
 	}
 	
@@ -166,6 +168,18 @@ class ConsolidatedReportHelper
 	}
 	
 	/**
+	 * @access	public
+	 * @param	string cell
+	 * @param	string format
+	 * @return	object this
+	 */
+	public function setCellFormat($cell, $format)
+	{
+		$this->phpExcel->getActiveSheet()->getStyle($cell)->getNumberFormat()->setFormatCode($format);
+		return $this;
+	}
+	
+	/**
 	 * Utility method to set worksheet/cell data
 	 *  
 	 * @access	public
@@ -176,6 +190,9 @@ class ConsolidatedReportHelper
 		foreach($spreadsheet_data as $worksheet_name => $worksheet_data) {
 			$this->setActiveWorksheet($worksheet_name);
 			foreach($worksheet_data as $cell_data) {
+				if (!is_null($cell_data['format'])) {
+					$this->setCellFormat($cell_data['cell'], $cell_data['format']);
+				}
 				$this->setCellValue($cell_data['cell'], $cell_data['value']);
 			}
 		}
