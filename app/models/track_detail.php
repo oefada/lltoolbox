@@ -354,7 +354,7 @@ class TrackDetail extends AppModel {
 	}
 
 	function afterSave() {
-		ClassRegistry::init("Loa");
+		$this->Loa = ClassRegistry::init("Loa");
 		
 		$this->Loa->recursive = -1;
 		$allocated_amount = $this->data['TrackDetail']['allocatedAmount'];

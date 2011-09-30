@@ -9,6 +9,8 @@ class Processor
 	var $module;
 	var $module_list = array('AIM','NOVA','PAYPAL');
 	var $processor_name;
+	var $test_card = false;
+	
 	private $response_data = array();
 	private $post_data = array();
 	
@@ -44,6 +46,10 @@ class Processor
 		$db_params['map_expiration'] 				= $ups['expMonth'] . $ups['expYear']; 
 		$db_params['map_card_num'] 					= trim($ups['ccNumber']);
 		
+		if ($ticket['Ticket']['testCard']) {
+			$this->test_card = true;
+		}
+		
 		$this->post_data = $this->MapParams($db_params);
 	}
 
@@ -69,7 +75,9 @@ class Processor
 		$response = curl_exec($ch);
 		curl_close($ch);		
 		
-		$this->response_data = $this->module->ProcessResponse($response);
+		if (!$this->test_card) {
+			$this->response_data = $this->module->ProcessResponse($response);	
+		}
 		
 		$this->post_data = array();
 		unset($post_string);
@@ -86,13 +94,32 @@ class Processor
 	}
 	
 	function GetMappedResponse() {
-		return $this->module->GetMappedResponse($this->response_data);
+		if ($this->test_card) {
+			return $this->dummyMappedResponse();
+		} else {
+			return $this->module->GetMappedResponse($this->response_data);
+		}
+		
 	}
 
 	function IsValidResponse($ticket_id) {
 		return $this->module->IsValidResponse($this->response_data, $ticket_id);
 	}
 
+	function dummyMappedResponse() {
+		$paymentDetail['ppResponseDate']		= date('Y-m-d H:i:s', strtotime('now'));
+		$paymentDetail['ppTransactionId']		= "DUMMY-TEST";
+		$paymentDetail['ppApprovalText']		= "APPROVAL";
+		$paymentDetail['ppApprovalCode']		= "0";
+		$paymentDetail['ppAvsCode']				= "Y";
+		$paymentDetail['ppResponseText']		= '';
+		$paymentDetail['ppResponseSubCode']		= '';
+		$paymentDetail['ppReasonCode']			= '';
+		$paymentDetail['isSuccessfulCharge']	= 1;
+		
+		return $paymentDetail;
+	}
+	
 	private function MapParams($params) {
 		if (!is_array($params)) {
 			return false;

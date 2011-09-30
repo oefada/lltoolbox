@@ -180,7 +180,7 @@ class Ticket extends AppModel {
 		// set the remaining balance after use of the gift cert
 		if (isset($data['GiftCert']) && $data['GiftCert'] && ($ticketPrice > 0)) {
 			$new_price = $ticketPrice - $data['GiftCert']['balance'];					
-			if ($new_price < 0) {
+			if ($new_price <= 0) {
 				$data['GiftCert']['totalAmountOff'] = $ticketPrice;
 				$data['GiftCert']['remainingBalance'] = abs($new_price);
 				$new_price = 0;
@@ -216,7 +216,7 @@ class Ticket extends AppModel {
 		// deduct the credit from the ticketPrice
 		if (isset($data['Cof']) && ($ticketPrice > 0)) {
 			$new_price = $ticketPrice - $data['Cof']['balance'];
-			if ($new_price < 0) {
+			if ($new_price <= 0) {
 				$data['Cof']['totalAmountOff'] = $ticketPrice;
 				$data['Cof']['remainingBalance'] = abs($new_price);
 				$new_price = 0;
@@ -231,12 +231,11 @@ class Ticket extends AppModel {
 			$data['Cof']['remainingBalance'] = false;
 		}
 		
-		$tp0 = $ticketPrice;
-		
 		// see if they used a gift certificate on this ticket 
 		$paymentRecordSql = 'SELECT paymentTypeId, paymentAmount FROM paymentDetail ';
 		$paymentRecordSql.= "WHERE ticketId = $ticketId AND isSuccessfulCharge = 1";
 		$paymentRecordResult = $this->query($paymentRecordSql);
+		
 		if (!empty($paymentRecordResult)) {
 			// loop over the result set from payementDetail with the gift cert data
 			// set GiftCert applied to 1 
@@ -247,6 +246,8 @@ class Ticket extends AppModel {
 				if ($payment['paymentDetail']['paymentTypeId'] == 2 && $noMoreGift == 0) {
 					$data['GiftCert']['applied'] = 1;
 					$data['GiftCert']['totalAmountOff'] = $payment['paymentDetail']['paymentAmount'];
+					
+					// Only one gift cert per ticket
 					$noMoreGift = 1;
 				} elseif ($payment['paymentDetail']['paymentTypeId'] == 3) {
 					$data['Cof']['applied'] = 1;
@@ -258,7 +259,8 @@ class Ticket extends AppModel {
 			}
 		}
 
-		$data['final_price'] = $ticketPrice;
+		$data['final_price'] = ($ticketPrice < 0 ? 0 : $ticketPrice);
+		
 		// This is the final price WITHOUT CoF applied and Gift applied, and payments deducted
 		// rvella 
 		$data['final_price_actual'] = $data['original_ticket_price'] - (isset($data['Promo']['totalAmountOff']) ? $data['Promo']['totalAmountOff'] : 0) - $payment_amt - $data['payments'] + $fee;	

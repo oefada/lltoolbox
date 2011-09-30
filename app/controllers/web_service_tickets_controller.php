@@ -312,6 +312,7 @@ class WebServiceTicketsController extends WebServicesController
 				$ticketSite = 'offerFamily';
 				break;
 		}
+		
 		if ($ticketSite) {
 			// offerId will be unique, however, it is not defined as unique in offerLuxuryLink or offerFamily.
 			// offerId is defined as unique in 'offer' table where it is generated, thus, it is unique
@@ -2256,6 +2257,27 @@ class WebServiceTicketsController extends WebServicesController
 			$ticket['Ticket']['billingPrice'] = $totalChargeAmount;
 			$this->logError(array("PAYMENT INFO",$ticket));
 			
+			// Allows 4111111111111111 on Hotel Testerosa on LIVE/DEV
+			
+			$ticket['Ticket']['testCard'] = false;
+			
+			if ($userPaymentSettingPost['UserPaymentSetting']['ccNumber'] == "4111111111111111") {
+				switch ($ticket['Ticket']['siteId']) {
+					case 1:
+						$ticketSite = 'offerLuxuryLink';
+						break;
+					case 2:
+						$ticketSite = 'offerFamily';
+						break;
+				}
+
+				$clientId = $this->Ticket->query("SELECT clientId FROM ".$ticketSite." WHERE offerId = '".$ticket['Ticket']['offerId']."' AND clientId = 8455");
+				
+				if (count($clientId)) {
+					$ticket['Ticket']['testCard'] = true;
+				}
+			}
+				
 			$processor = new Processor($paymentProcessorName);
 			$processor->InitPayment($userPaymentSettingPost, $ticket);
 			
@@ -2374,6 +2396,9 @@ class WebServiceTicketsController extends WebServicesController
                     }
 				}
 			}
+
+			$this->errorMsg = "Track Data Saved";
+			$this->logError(__METHOD__);
 		}
 
 		// if saving new user card information
@@ -2391,25 +2416,37 @@ class WebServiceTicketsController extends WebServicesController
 			if ($data['paymentAmount'] >= $promoGcCofData['final_price_actual']) {
 				$fundTicket = true;
 			} 
+		} else {
+			$fundTicket = false;
 		}
 
 		if (!$toolboxManualCharge || $fundTicket) {
 			$ticketStatusChange = array();
 			$ticketStatusChange['ticketId'] = $ticket['Ticket']['ticketId'];
 			$ticketStatusChange['ticketStatusId'] = 5;
+			
+			$this->errorMsg = "Ticket Status 5";
+			$this->logError(__METHOD__);
 		}
 				
 		// if gift cert or cof, create additional payment detail records
 		// ---------------------------------------------------------------------------
-		$promoGcCofData['Cof']['creditTrackingTypeId'] = 1;
-		
 		if (isset($promoGcCofData['GiftCert']) && isset($promoGcCofData['GiftCert']['applied']) && $promoGcCofData['GiftCert']['applied'] == 1) {
 			$this->PaymentDetail->saveGiftCert($ticket['Ticket']['ticketId'], $promoGcCofData['GiftCert'], $ticket['Ticket']['userId'], $data['autoCharge'], $data['initials'],$toolboxManualCharge);
-		} elseif (isset($promoGcCofData['Cof']) && $promoGcCofData['Cof']['applied'] == 1) {
-			$this->PaymentDetail->saveCof($ticket['Ticket']['ticketId'], $promoGcCofData['Cof'], $ticket['Ticket']['userId'], $data['autoCharge'], $data['initials'],$toolboxManualCharge);
+			$this->errorMsg = "Gift Saved";
+			$this->logError(__METHOD__);
 		}
 		
+		if (isset($promoGcCofData['Cof']) && $promoGcCofData['Cof']['applied'] == 1) {
+			$promoGcCofData['Cof']['creditTrackingTypeId'] = 1;
+			$this->PaymentDetail->saveCof($ticket['Ticket']['ticketId'], $promoGcCofData['Cof'], $ticket['Ticket']['userId'], $data['autoCharge'], $data['initials'],$toolboxManualCharge);
+			$this->errorMsg = "CoF Saved";
+			$this->logError(__METHOD__);
+		}
+
 		$this->Ticket->save($ticketStatusChange);
+		$this->errorMsg = "Ticket Status Changed";
+		$this->logError(__METHOD__);
 
 		// ********* SITE NAME **********
 		switch ($ticket['Ticket']['siteId']) {
