@@ -220,20 +220,30 @@ class Promo extends AppModel {
 		return $displayClients;
 	}
 
+	function prepDestinationDisplay($destinations, $llInfo = array(), $fgInfo = array()) {
+		$rtn = array();
+		foreach ($destinations as $d) {
+			$sites = array();
+			if (array_key_exists($d['Destination']['destinationId'], $llInfo)) { $sites[] = 'LL'; }
+			if (array_key_exists($d['Destination']['destinationId'], $fgInfo)) { $sites[] = 'FG'; }
+		    $d['Destination']['destinationName'] = $d['Destination']['destinationName'] . '  (' . implode(',', $sites) . ')';
+		    $rtn[] = $d;
+		}
+		return $rtn;
+	}
 
+	function paginateCount($conditions = null, $recursive = 0, $extra = array()) {
+		$parameters = compact('conditions');
+		$this->recursive = $recursive;
 
-       function paginateCount($conditions = null, $recursive = 0, $extra = array()) {
-           $parameters = compact('conditions');
-           $this->recursive = $recursive;
+		$count = $this->find('count', array_merge($parameters, $extra));
 
-           $count = $this->find('count', array_merge($parameters, $extra));
+		if (isset($extra['group'])) {
+		   $count = $this->getAffectedRows();
+		}
 
-           if (isset($extra['group'])) {
-               $count = $this->getAffectedRows();
-           }
-
-           return $count;
-       }
+		return $count;
+	}
 
 
 

@@ -138,16 +138,23 @@ class PromosController extends AppController {
 			}
 		}
 
-		if (empty($this->data) && !$isNewPromo) {
-			$this->data['Promo'] = $this->Promo->setupPromoFormData($id);
+		if (empty($this->data)) {
+			if ($isNewPromo) {
+				$this->data['Promo']['startDate'] = date('Y-m-d');
+			} else {
+				$this->data['Promo'] = $this->Promo->setupPromoFormData($id);
+			}
 		}
+
+		$destinations = $this->Destination->find('all', array('recursive'=>-1, 'order'=>array('destinationName')));
+		$destinations = $this->addSiteInfoToDestinations($destinations);
 
 		$this->set('id', $id);
 		$this->set('menuPromoIdAddCodes', $id);
 		$this->set('menuPromoIdViewCodes', $id);
 		$this->set('isNewPromo', $isNewPromo);
 		$this->set('promoCategoryTypeIds', $this->PromoCategoryType->find('list', array('order'=>array('rank'))));
-		$this->set('destinations', $this->Destination->find('all', array('recursive'=>-1, 'order'=>array('destinationName'))));
+		$this->set('destinations', $destinations);
 		$this->set('themes', $this->Theme->find('all', array('recursive'=>-1, 'order'=>array('themeName'))));
 		$this->set('clientTypes', $this->ClientType->find('all', array('recursive'=>-1, 'order'=>array('clientTypeName'))));
 		$this->set('displayRestrictedClients', $this->Promo->getClientListByIdArray($this->data['Promo']['restrictClient']));
@@ -233,14 +240,14 @@ class PromosController extends AppController {
 			}
 
 			if ($this->data['s_start_date'] != '') {
-				$this->paginate['conditions']['Promo.startDate >'] = $this->data['s_start_date'];
+				$this->paginate['conditions']['Promo.endDate >='] = $this->data['s_start_date'];
 			}
 
 			if ($this->data['s_end_date'] != '') {
-				$this->paginate['conditions']['Promo.endDate <'] = $this->data['s_end_date'] . ' 23:59:59';
+				$this->paginate['conditions']['Promo.startDate <='] = $this->data['s_end_date'];
 			}
 
-			if ($this->data['s_categories'] != '') {
+			if (is_array($this->data['s_categories']) && $this->data['s_categories'][0] != '') {
 				$this->paginate['conditions']['Promo.promoCategoryTypeId '] = $this->data['s_categories'];
 			}
 
@@ -279,16 +286,51 @@ class PromosController extends AppController {
 		$this->Promo->recursive = -1;
 		$promos = $this->paginate();
 
+		$destinations = $this->Destination->find('all', array('recursive'=>-1, 'order'=>array('destinationName')));
+		$destinations = $this->addSiteInfoToDestinations($destinations);
+
+		$finalDestinations = array();
+		foreach ($destinations as $parent) {
+		    if (intval($parent['Destination']['parentId']) == 0) {
+		       $finalDestinations[$parent['Destination']['destinationId']] = $parent['Destination']['destinationName'];
+		       foreach ($destinations as $child) {
+		           if ($child['Destination']['parentId'] == $parent['Destination']['destinationId']) {
+		               $finalDestinations[$child['Destination']['destinationId']] = '---- ' . $child['Destination']['destinationName'];
+		               foreach ($destinations as $childSub) {
+						   if ($childSub['Destination']['parentId'] == $child['Destination']['destinationId']) {
+							   $finalDestinations[$childSub['Destination']['destinationId']] = '---- ---- ' . $childSub['Destination']['destinationName'];
+                           }
+		               }
+		           }
+		       }
+		    }
+		}
+
 
 
 		// $this->Promo->containable = false;
 		// $this->set('csv_link_string', $csv_link_string);
 		$this->set('promos', $promos);
 		$this->set('promoCategoryTypeIds', $this->PromoCategoryType->find('list', array('order'=>array('rank'))));
-		$this->set('destinations', $this->Destination->find('list', array('order'=>array('destinationName'))));
+		$this->set('destinations', $finalDestinations);
 		$this->set('themes', $this->Theme->find('list', array('order'=>array('themeName'))));
 		$this->set('clientTypes', $this->ClientType->find('list', array('order'=>array('clientTypeName'))));
 	}
+
+
+	function addSiteInfoToDestinations($destinations) {
+
+		$this->Destination->useDbConfig = 'luxurylink';
+		$llDestinations = $this->Destination->find('list', array('recursive'=>-1, 'conditions' => array('inactive'=>0), 'order'=>array('destinationName')));
+
+		$this->Destination->useDbConfig = 'family';
+		$fgDestinations = $this->Destination->find('list', array('recursive'=>-1, 'conditions' => array('inactive'=>0), 'order'=>array('destinationName')));
+
+		$this->Destination->useDbConfig = 'default';
+
+		return $this->Promo->prepDestinationDisplay($destinations, $llDestinations, $fgDestinations);
+	}
+
 
 }
 ?>

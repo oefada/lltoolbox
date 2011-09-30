@@ -43,7 +43,7 @@
 					<table cellpadding="0" cellspacing="0"> 
 					<tr>
 					    <td class="leftFilterLabel">Category</td>
-					    <td><?= $form->input('s_categories', array('type'=>'select', 'multiple'=>true, 'label'=>false, 'div'=>false, 'style'=>'height:132px','options'=> $promoCategoryTypeIds)); ?></td>
+					    <td><?= $form->input('s_categories', array('type'=>'select', 'multiple'=>true, 'label'=>false, 'div'=>false, 'style'=>'height:132px','options'=> $promoCategoryTypeIds, 'empty'=> 'All')); ?></td>
 					</tr>
 					</table>
 				</td>

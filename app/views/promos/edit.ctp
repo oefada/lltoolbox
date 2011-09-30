@@ -22,7 +22,7 @@
 
 .destinationGroupParentColumn {
     float: left;
-    width: 200px;
+    width: 250px;
     clear: none;
     margin: 0 0 0 40px;
 }
@@ -78,6 +78,18 @@
     function selectChildDestinations(chk, id) {
         if (chk.checked) {
             var prefix = 'childDestination-' + id + '-';     	
+            $$('[id^=' + prefix + ']').each(function(item) {
+            	var childId = item.id.split('-')[2];
+                var child = 'PromoRestrictDestination' + childId;
+                $(child).checked = true;
+                selectChildSubDestinations($(child), childId);
+            });
+        }
+    }
+
+    function selectChildSubDestinations(chk, id) {
+        if (chk.checked) {
+            var prefix = 'childDestinationSub-' + id + '-';     	
             $$('[id^=' + prefix + ']').each(function(item) {
                 var child = 'PromoRestrictDestination' + item.id.split('-')[2];
                 $(child).checked = true;
@@ -209,7 +221,7 @@ if (isset($formErrors)) {
 		<?= displayContainerHeader('destination', 'Destination Restrictions', $this->data['Promo']['restrictDestination']); ?>
 	<?php	$parentCount = 0;
 	        $parentColumnOpen = false;
-	        $parentBreakArray = array(0, 4, 6, 8);
+	        $parentBreakArray = array(0, 5, 6, 8);
 		foreach ($destinations as $parent) {
 		    if (intval($parent['Destination']['parentId']) == 0) { 
 		       if (in_array($parentCount, $parentBreakArray)) { 
@@ -224,7 +236,7 @@ if (isset($formErrors)) {
 		                                   , 'onClick' => 'selectChildDestinations(this, ' . $parent['Destination']['destinationId'] . ')'
 		                                   , 'div' => false
 		                             )); 
-		       echo ' <span class="">' . $parent['Destination']['destinationName'] . '</span>';
+		       echo ' <span style="font-weight: bold;">' . $parent['Destination']['destinationName'] . '</span>';
 		       echo '<div class="destinationGroupChildren">';
 		                             
 		       foreach ($destinations as $child) {
@@ -235,10 +247,27 @@ if (isset($formErrors)) {
 						     array('type'=>'checkbox' 
 							   , 'label'=>false
 							   , 'value'=>$child['Destination']['destinationId']
+							   , 'onClick' => 'selectChildSubDestinations(this, ' . $child['Destination']['destinationId'] . ')'
 							   , 'div' => false
 						     )); 
 				echo ' ' . $child['Destination']['destinationName'];
 				echo '</div>';
+				
+				foreach ($destinations as $childSub) {
+				    if ($childSub['Destination']['parentId'] == $child['Destination']['destinationId']) { 
+					echo '<div class="destinationChild">';
+					echo '<input type="hidden" id="childDestinationSub-' . $child['Destination']['destinationId'] . '-' . $childSub['Destination']['destinationId'] . '" value="">';
+					echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . $form->input('Promo.restrictDestination.'.$childSub['Destination']['destinationId'], 
+							     array('type'=>'checkbox' 
+								   , 'label'=>false
+								   , 'value'=>$childSub['Destination']['destinationId']
+								   , 'div' => false
+							     )); 
+					echo ' ' . $childSub['Destination']['destinationName'];
+					echo '</div>';
+				    }
+				}
+				
 		            }
 		        }
 		        echo '</div></div>';
