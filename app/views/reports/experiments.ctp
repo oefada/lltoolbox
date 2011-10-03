@@ -10,6 +10,7 @@
 			<option value="0">Select a Site</option>
 			<option value="1" <?php if (isset($_POST['site_id']) AND $_POST['site_id'] == 1): ?>selected<?php endif ?>>Luxury Link</option>
 			<option value="2" <?php if (isset($_POST['site_id']) AND $_POST['site_id'] == 2): ?>selected<?php endif ?>>Family Getaway</option>
+			<option value="3" <?php if (isset($_POST['site_id']) AND $_POST['site_id'] == 3): ?>selected<?php endif ?>>Vacationist</option>
 		</select>
 	</form>
 	<table style="width: 800px; margin: 20px 0 20px 0;">
