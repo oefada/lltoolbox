@@ -4,7 +4,7 @@
 
 NOTES
 
-To debug this, use 
+To debug this, use
 
 
 
@@ -298,7 +298,7 @@ class WebServiceTicketsController extends WebServicesController
 		// schedulingMaster info will be contained in $offerData
 		$offerData = $this->Offer->read(null, $data['offerId']);
 
-		// joins on client table and clientLoaPackageRel 
+		// joins on client table and clientLoaPackageRel
 		$clientData = $this->Ticket->getClientsFromPackageId($data['packageId']);
 
 
@@ -312,7 +312,7 @@ class WebServiceTicketsController extends WebServicesController
 				$ticketSite = 'offerFamily';
 				break;
 		}
-		
+
 		if ($ticketSite) {
 			// offerId will be unique, however, it is not defined as unique in offerLuxuryLink or offerFamily.
 			// offerId is defined as unique in 'offer' table where it is generated, thus, it is unique
@@ -353,7 +353,7 @@ class WebServiceTicketsController extends WebServicesController
 			$ticketId = $data['ticketId'];
 
 			// 2011-05-04 jwoods - fill in ticket.guaranteeAmt if necessary
-			// if the purchase price is less than what we agreed to pay the property, calc the difference and store it 
+			// if the purchase price is less than what we agreed to pay the property, calc the difference and store it
 			// -------------------------------------------------------------------------------
 			$guaranteeAmount = 0;
 			$sql = "SELECT *
@@ -394,7 +394,7 @@ class WebServiceTicketsController extends WebServicesController
 			// take down future instances of offers if reached package.maxNumSales
 			// this exists independent of expirationCriteriaId and may run concurrent with a takedown
 			// based on expirationCriteriaId
-			// This a take down specific to a pricePointId and the max sales for that pricePointId as 
+			// This a take down specific to a pricePointId and the max sales for that pricePointId as
 			// opposed to a larger barter/remitt agreement for a client
 			// -------------------------------------------------------------------------------
 			if ($this->Ticket->__runTakeDownPricePointNumPackages($offerLive['pricePointId'], $ticketId)) {
@@ -891,7 +891,7 @@ class WebServiceTicketsController extends WebServicesController
 		$ppvInitials		= isset($params['initials']) ? $params['initials'] : null;
 		$clientIdParam		= isset($params['clientId']) ? $params['clientId'] : false;
 		$siteId				= isset($params['siteId']) ? $params['siteId'] : false;
-		
+
 		// sender signature (mainly for manual emails sent from toolbox)
 		// -------------------------------------------------------------------------------
 		$sender_sig 		= isset($params['sender_sig']) ? $params['sender_sig'] : 0;
@@ -916,7 +916,7 @@ class WebServiceTicketsController extends WebServicesController
 			return 'Invalid input';
 			exit;
 		}
-		
+
 		if ($ticketId) {
 			// retrieve data to fill out the email templates
 			// -------------------------------------------------------------------------------
@@ -924,7 +924,7 @@ class WebServiceTicketsController extends WebServicesController
 			$this->Address->recursive = -1;
 			$this->ClientLoaPackageRel->recursive = 0;
 			$ticket = $this->Ticket->read(null, $ticketId);
-			
+
 			switch ($ticket['Ticket']['siteId']) {
 				case 1:
 					$offerSite = 'offerLuxuryLink';
@@ -934,7 +934,7 @@ class WebServiceTicketsController extends WebServicesController
 					break;
 			}
 			$liveOffer	= $this->Ticket->query("select * from $offerSite as LiveOffer where offerId = " . $ticket['Ticket']['offerId'] . " limit 1");
-	
+
 			// data arrays
 			// -------------------------------------------------------------------------------
 			$ticketData 		= $ticket['Ticket'];
@@ -945,16 +945,16 @@ class WebServiceTicketsController extends WebServicesController
 			$userAddressData	= $userAddressData['Address'];
 
 			$clientData			= $this->ClientLoaPackageRel->findAllBypackageid($ticket['Ticket']['packageId']);
-			
+
 			$this->ClientLoaPackageRel->Client->ClientDestinationRel->contain('Destination');
 			$destData			= $this->ClientLoaPackageRel->Client->ClientDestinationRel->findByclientId($clientData[0]['Client']['clientId']);
 
 			$liveOfferData 		= $liveOffer[0]['LiveOffer'];
 			$offerType			= $this->OfferType->find('list');
 			$userPaymentData	= $this->findValidUserPaymentSetting($ticketData['userId']);
-	
+
 			$promoGcCofData		= $this->Ticket->getPromoGcCofData($ticketId, $ticket['Ticket']['billingPrice']);
-			
+
 			$siteId 			= $ticket['Ticket']['siteId'];
 		} elseif ($username) {
 			$this->User->UserSiteExtended->recursive = 0;
@@ -1000,10 +1000,10 @@ class WebServiceTicketsController extends WebServicesController
 				$headerLogo = 'http://www.luxurylink.com/images/family/logo_emails.gif';
 				$append = "FG";
 				$prefixUrl = Configure::read("UrlS.FG");
-				
+
 				break;
 		}
-		
+
 		// Auction facilitator
 
 		$userId 			= $userData['userId'];
@@ -1019,52 +1019,52 @@ class WebServiceTicketsController extends WebServicesController
 		$userPhone			= $userHomePhone;
 		$userPhone			= !$userPhone && $userMobilePhone ? $userMobilePhone : $userPhone;
 		$userPhone			= !$userPhone && $userWorkPhone ? $userWorkPhone : $userPhone;
-		
+
 		$dateNow = date("M d, Y");
-		
+
 		if ($ticketId) {
 			$offerId			= $offerData['offerId'];
 			$packageName 		= strip_tags($liveOfferData['offerName']);
 			$packageSubtitle	= $packageData['subtitle'];
-	
+
 			$packageIncludes 	= $liveOfferData['offerIncludes'];
 			$legalText			= $liveOfferData['termsAndConditions'];
 			$validityNote		= $liveOfferData['validityDisclaimer'];
 			//$validityLeadIn     = $packageData['validityLeadInLine'];
 			$addtlDescription   = $liveOfferData['additionalDescription'];
-	
+
 			//2011-01-10 mbyrnes
 			$numGuests			= $liveOfferData['numGuests'];
 			$roomGrade			= $liveOfferData['roomGrade'];
 			$packageBlurb		= ucfirst($liveOfferData['packageBlurb']);
-	
+
 			$packageId			= $ticketData['packageId'];
 			// 2011-01-05
 			$numNights			= $ticketData['numNights'];
-	
+
 			$offerTypeId		= $ticketData['offerTypeId'];
 			$offerTypeName		= str_replace('Standard ', '', $offerType[$offerTypeId]);
 			$offerTypeBidder	= ($offerTypeId == 1) ? 'Winner' : 'Winning Bidder';
 			$offerEndDate		= date('M d Y H:i A', strtotime($liveOfferData['endDate']));
 			$isAuction			= in_array($offerTypeId, array(1,2,6)) ? true : false;
-	
+
 			$billingPrice		= $this->numF($ticketData['billingPrice']);
 			$llFeeAmount		= 40;
 			$llFee				= $llFeeAmount;
 			$totalPrice			= $this->numF($ticketData['billingPrice'] + $llFeeAmount);
 			$maxNumWinners		= $liveOfferData['numWinners'];
 			$isTaxIncluded      = $ticketData['isTaxIncluded'];
-	
+
 			$checkoutHash		= md5($ticketId . $userId . $offerId . 'LL_L33T_KEY');
 			$checkoutKey		= base64_encode(serialize(array('ticketId' => $ticketId, 'userId' => $userId, 'offerId' => $offerId, 'zKey' => $checkoutHash)));
 
 			$checkoutLink		= $prefixUrl . "/my/my_purchase.php?z=$checkoutKey";
 			$dateRequestLink 	= $prefixUrl . "/my/my_date_request.php?tid=$ticketId";
-			
+
 			$loaLevelId			= isset($clientData[0]['Loa']['loaLevelId']) ? $clientData[0]['Loa']['loaLevelId'] : false;
-	
+
 			$offerTypeArticle	= in_array(strtolower($offerType[$offerTypeId]{0}), array('a','e','i','o','u')) ? 'an' : 'a';
-	
+
 			// fixed price variables
 			// -------------------------------------------------------------------------------
 			$fpRequestType		= ($wholesale) ? 'A Wholesale Exclusive' : 'An Exclusive';
@@ -1074,9 +1074,9 @@ class WebServiceTicketsController extends WebServicesController
 			$fpDeparture2		= isset($ticketData['requestDeparture2']) && ($ticketData['requestDeparture2'] != '0000-00-00') ? date('M d, Y', strtotime($ticketData['requestDeparture2'])) : 'N/A';
 			$fpNumGuests		= $ticketData['requestNumGuests'];
 			$fpNotes			= $ticketData['requestNotes'];
-	
+
 			$offerTypeTxt = $isAuction ? 'Auction' : 'Buy Now';
-	
+
 			// auction preferred dates
 			// -------------------------------------------------------------------------------
 			$aucPreferDates = $this->Ticket->query("SELECT * FROM reservationPreferDate as rpd WHERE ticketId = $ticketId ORDER BY reservationPreferDateTypeId");
@@ -1086,7 +1086,7 @@ class WebServiceTicketsController extends WebServicesController
 					$aucPreferDates[$aucKey]['rpd']['out'] = date('M d, Y', strtotime($aucPreferDateRow['rpd']['departureDate']));
 				}
 			}
-	
+
 			if (!$isAuction && !empty($aucPreferDates)) {
 				$fpArrival			= ($aucPreferDates[0]['rpd']['in']) ? $aucPreferDates[0]['rpd']['in'] : 'N/A';
 				$fpDeparture		= ($aucPreferDates[0]['rpd']['out']) ? $aucPreferDates[0]['rpd']['out'] : 'N/A';
@@ -1095,7 +1095,7 @@ class WebServiceTicketsController extends WebServicesController
 				$fpArrival3			= ($aucPreferDates[2]['rpd']['in']) ? $aucPreferDates[2]['rpd']['in'] : 'N/A';
 				$fpDeparture3		= ($aucPreferDates[2]['rpd']['out']) ? $aucPreferDates[2]['rpd']['out'] : 'N/A';
 			}
-	
+
 			// reservation info
 			$resData = $this->Ticket->query("SELECT * FROM reservation WHERE ticketId = $ticketId ORDER BY reservationId DESC LIMIT 1");
 			if (!empty($resData)) {
@@ -1124,30 +1124,30 @@ class WebServiceTicketsController extends WebServicesController
 					$canConfDate = date('M d, Y', strtotime($canData[0]['cancellation']['created']));
 				}
 			}
-	
+
 			//follow up email sent
 			$ppvNoticeData = $this->Ticket->query("SELECT emailSentDatetime FROM ppvNotice WHERE ticketId = $ticketId and ppvNoticeTypeId = 2 ORDER BY created DESC LIMIT 1");
 			$emailSentDatetime = (!empty($ppvNoticeData[0]['ppvNotice']['emailSentDatetime'])) ?
 									date('M d, Y', strtotime($ppvNoticeData[0]['ppvNotice']['emailSentDatetime'])) : "";
-			
+
 			// cc variables
 			// -------------------------------------------------------------------------------
 			if (is_array($userPaymentData) && !empty($userPaymentData)) {
 				$ccFour				= substr(aesDecrypt($userPaymentData['UserPaymentSetting']['ccNumber']), -4, 4);
 				$ccType				= $userPaymentData['UserPaymentSetting']['ccType'];
 			}
-	
+
 			// guarantee amount
 			// -------------------------------------------------------------------------------
 			$guarantee = false;
-	
+
 			// 2011-05-03 jwoods - guarantee check
 			if ($ticketData['guaranteeAmt'] && is_numeric($ticketData['guaranteeAmt']) && ($ticketData['guaranteeAmt'] > 0)) {
 				if ($ticketData['billingPrice'] < $ticketData['guaranteeAmt']) {
 				    $guarantee = $this->numF($ticketData['guaranteeAmt']);
 				}
 			}
-	
+
 	        // guarantee check prior to 2011-05-03 changes
 	        if (!$guarantee) {
 				if ($liveOfferData['reserveAmt'] && is_numeric($liveOfferData['reserveAmt']) && ($liveOfferData['reserveAmt'] > 0)) {
@@ -1159,11 +1159,11 @@ class WebServiceTicketsController extends WebServicesController
 					$guarantee = $this->numF($liveOfferData['reserveAmt']);
 				}
 			}
-	
+
 			// some unknowns
 			// -------------------------------------------------------------------------------
 			$wholesale			= false;
-	
+
 			// fetch client contacts
 			// -------------------------------------------------------------------------------
 			$clients		 	= array();
@@ -1205,9 +1205,9 @@ class WebServiceTicketsController extends WebServicesController
 				$tmp['percentOfRevenue'] = $v['ClientLoaPackageRel']['percentOfRevenue'];
 				$clients[$k] = $tmp;
 			}
-	
+
 			$client_index = ($multi_client_map_override !== false) ? $multi_client_map_override : 0;
-	
+
 			// acarney 2010-12-08
 			// Making it so that confirmation template is multi-client aware
 			// TODO: investigate impact of using array for client variables in other templates
@@ -1236,23 +1236,23 @@ class WebServiceTicketsController extends WebServicesController
 			$clientPrimaryEmail     = $clients[$client_index]['contact_to_string'];
 			$clientCcEmail 		    = $clients[$client_index]['contact_cc_string'];
 			$clientAdjustedPrice    = $this->numF(($clients[$client_index]['percentOfRevenue'] / 100) * $ticketData['billingPrice']);
-	
+
 			// added June 17 -- to allow copy for LL Auc Winner Email and Res Confirmed Email
 			if (in_array($ppvNoticeTypeId, array(1,18))) {
 				$primaryDest = $this->Ticket->getTicketDestStyleId($ticketId);
 			}
-	
+
 			// check if already sent out a reservation request
 			if (in_array($ppvNoticeTypeId, array(2,10))) {
 				$res_request = $this->Ticket->query("SELECT COUNT(*) AS count FROM ppvNotice where ticketId = {$ticketId} AND ppvNoticeTypeId IN (2,10);");
 				$res_request_count = $resrequest[0][0]['count'];
 			}
 		} //End IF for $ticketId
-		
+
 		// Click tracking for templates
 		$emailFrom = "$siteDisplay <no-reply@$siteEmail>";
 		$emailReplyTo = "no-reply@$siteEmail";
-		
+
 		// fetch template with the vars above
 		// -------------------------------------------------------------------------------
 		ob_start();
@@ -1474,21 +1474,21 @@ class WebServiceTicketsController extends WebServicesController
 				$emailFrom = ($isAuction) ? "$siteDisplay <auction@$siteEmail>" : "$siteDisplay <exclusives@$siteEmail>";
 				$emailReplyTo = ($isAuction) ? "auction@$siteEmail" : "exclusives@$siteEmail";
 				break;
-			case 34: 
+			case 34:
 				$templateFile = "34_forgot_password";
 				$emailSubject = $templateTitle = "Your $siteName Password";
-				break; 
-			case 35: 
+				break;
+			case 35:
 				$templateFile = "35_forgot_username";
 				$emailSubject = $templateTitle = "Your $siteName Username";
-				break; 
-			case 36: 
+				break;
+			case 36:
 				$templateFile = "36_highest_bidder";
 				$templateTitle = "Highest Bidder";
 				$emailSubject = "$siteName: Your bid has been received!";
 				break;
 			*/
-			///* OLD TEMPLATES 
+			///* OLD TEMPLATES
 			case 1:
 				// send out res confirmation
 				include('../vendors/email_msgs/ppv/conf_ppv.html');
@@ -1699,11 +1699,11 @@ class WebServiceTicketsController extends WebServicesController
 				$emailReplyTo = ($isAuction) ? "auction@$siteEmail" : "exclusives@$siteEmail";
 				break;
 			// New logic depends on these -- keeping for now
-			case 34: 
+			case 34:
 				$templateFile = "34_forgot_password";
 				$emailSubject = $templateTitle = "Your $siteName Password";
-				break; 
-			case 35: 
+				break;
+			case 35:
 				$templateFile = "35_forgot_username";
 				$emailSubject = $templateTitle = "Your $siteName Username";
 				break;
@@ -1726,9 +1726,9 @@ class WebServiceTicketsController extends WebServicesController
 				exit;
 			}
 		}
-		
+
 		$emailBody = ob_get_clean();
-		
+
 		if (in_array($ppvNoticeTypeId, array(5,18,19)) && $liveOfferData['isMystery']) {
 			$emailSubject = "$siteName Mystery Auction Winner";
 		}
@@ -1745,10 +1745,10 @@ class WebServiceTicketsController extends WebServicesController
 			if (trim($override_email_to)) {
 				$userEmail = $override_email_to;
 			}
-			
+
 			$emailCc = trim($override_email_cc) ? $override_email_cc : false;
 			$emailBcc = isset($emailBcc) ? $emailBcc : false;
-						
+
 			if (trim($override_email_subject)) {
 				$emailSubject = $override_email_subject;
 			}
@@ -1802,30 +1802,30 @@ class WebServiceTicketsController extends WebServicesController
 
 		$template  = file_get_contents("../vendors/email_msgs/includes/header_".$append.".html");
 		$template .= file_get_contents("../vendors/email_msgs/notifications/".$templateFile.".html");
-		
+
 		if (strstr($template,"%%package_details%%") !== FALSE) {
 			$pD = file_get_contents("../vendors/email_msgs/includes/package_details.html");
 			$pD .= "<?php \$packageDetails = 1; ?>";
 			$template = str_replace("%%package_details%%",$pD,$template);
 		}
-		
+
 		$template .= file_get_contents("../vendors/email_msgs/includes/footer_".$append.".html");
-		
+
 		if (!$template) {
 			return false;
 		}
-			
+
 		preg_match_all("/(href\s?=\s?[\"|'](?!#|mailto)(.*?)[\"|\'])[\s|>]/",$template,$matches);
 		$matches = $matches[1];
-		
+
 		foreach ($matches as $m) {
 			// Does URL already have question mark?
 			if (preg_match("/luxurylink\.com|familygetaway\.com|prefixUrl|siteUrl|dateRequestLink/", $m)) {
 				$mOrig = $m;
-				
+
 				$whichQuote = substr($m,-1);
 				$m = substr($m,0,strlen($m)-1);
-				
+
 				if (substr($m, -1) != "&") {
 					if (preg_match("/[^<]+\?[^>]+/",$m)) {
 						$m .= "&";
@@ -1833,23 +1833,23 @@ class WebServiceTicketsController extends WebServicesController
 						$m .= "?";
 					}
 				}
-				
+
 				$m .= "utm_source=".strtolower($append)."&";
-				
+
 				if ($utm['medium']) {
 					$m .= "medium=".$utm['medium']."&";
 				}
-				
+
 				if ($utm['campaign']) {
 					$m .= "campaign=".$utm['campaign'];
 				}
-				
+
 				$m .= $whichQuote;
-				
+
 				$template = str_replace($mOrig,$m,$template);
 			}
 		}
-		
+
 		return $template;
 	}
 
@@ -1947,6 +1947,8 @@ class WebServiceTicketsController extends WebServicesController
 		$ppvNoticeSave['emailFrom']			= $emailFrom;
 		$ppvNoticeSave['emailCc']			= $emailCc;
 		$ppvNoticeSave['emailSubject']		= $emailSubject;
+		// 10/01/2011 - jwoods added body text to db
+		$ppvNoticeSave['emailBody']	= $emailBody;
 		$ppvNoticeSave['emailBodyFileName']	= $emailBodyFileName;
 		$ppvNoticeSave['emailSentDatetime']	= date('Y-m-d H:i:s', $emailSentDatetime);
 		$ppvNoticeSave['initials']			= $ppvInitials;
@@ -2005,7 +2007,7 @@ class WebServiceTicketsController extends WebServicesController
 			$this->updateTicketStatus($ticketId, $newTicketStatus);
 		}
 	}
-	
+
 	function updateTicketStatus($ticketId, $newStatusId) {
 		$updateTicket = array();
 		$updateTicket['ticketId'] = $ticketId;
@@ -2074,7 +2076,7 @@ class WebServiceTicketsController extends WebServicesController
 		// good o' error checking my friends.  make this as strict as possible
 		// ---------------------------------------------------------------------------
 		$data = json_decode($in0, true);
-		
+
 		// DEV NO CHARGE
 		// ---------------------------------------------------------------------------
 		$isDev = false;
@@ -2104,7 +2106,7 @@ class WebServiceTicketsController extends WebServicesController
 			$this->errorResponse = 104;
 			return $this->returnError(__METHOD__);
 		}
-		
+
 		if (!isset($data['initials']) || empty($data['initials'])) {
 			$this->errorResponse = 105;
 			return $this->returnError(__METHOD__);
@@ -2121,7 +2123,7 @@ class WebServiceTicketsController extends WebServicesController
 			$this->errorResponse = 108;
 			return $this->returnError(__METHOD__);
 		}
-		
+
 		if (isset($data['toolboxManualCharge']) && ($data['toolboxManualCharge'] == 'toolbox')) {
 			$toolboxManualCharge = true;
 		} else {
@@ -2135,7 +2137,7 @@ class WebServiceTicketsController extends WebServicesController
 			$this->errorResponse = 109;
 			return $this->returnError(__METHOD__);
 		}
-		
+
 		unset($hashCheck);
 
 		// and even some more error checking.
@@ -2143,7 +2145,7 @@ class WebServiceTicketsController extends WebServicesController
 		$this->Ticket->recursive = -1;
 		$ticket = $this->Ticket->read(null, $data['ticketId']);
 		$ticketId = $data['ticketId'];
-		
+
 		if (!$ticket) {
 			$this->errorResponse = 110;
 			return $this->returnError(__METHOD__);
@@ -2186,7 +2188,7 @@ class WebServiceTicketsController extends WebServicesController
 
 		$paymentProcessorName = $this->PaymentProcessor->find('first', array('conditions' => array('PaymentProcessor.paymentProcessorId' => $data['paymentProcessorId'])));
 		$paymentProcessorName = $paymentProcessorName['PaymentProcessor']['paymentProcessorName'];
-		
+
 		if (!$paymentProcessorName) {
 			$this->errorResponse = 114;
 			return $this->returnError(__METHOD__);
@@ -2195,36 +2197,36 @@ class WebServiceTicketsController extends WebServicesController
 		// handle fees, promo discounts, etc
 		// ---------------------------------------------------------------------------
 		// Links GiftCert to this ticket
-		
+
 		$totalChargeAmount = $data['paymentAmount'];
 		$payment_amt = 0;
-		
+
 		if ($toolboxManualCharge) {
 			$fee = $this->Ticket->getFeeByTicket($ticketId);
-			
+
 			$totalChargeAmount = $ticket['Ticket']['billingPrice'];
 			$payment_amt = $data['paymentAmount'];
-			
+
 			if ($data['paymentTypeId'] == 2) {
 				$this->loadModel('PromoCode');
 				$code = $this->PromoCode->findBypromoCode($data['ppTransactionId']);
-				
+
 				$this->Ticket->PromoTicketRel->create();
 				$this->Ticket->PromoTicketRel->save(array(
 						'ticketId' => $ticket['Ticket']['ticketId'],
 						'userId' => $ticket['Ticket']['userId'],
 						'promoCodeId' => $code['PromoCode']['promoCodeId']
-				));	
+				));
 			}
 		}
-		
+
 		$promoGcCofData	= $this->Ticket->getPromoGcCofData($ticket['Ticket']['ticketId'], $totalChargeAmount, $payment_amt);
 
 		if (!$toolboxManualCharge) {
 			// this is either autocharge or user checkout
 
 			$totalChargeAmount = $promoGcCofData['final_price'];
-			
+
 			// used promo or gc or cof that resulted in complete ticket price coverage -- no cc charge needed
 			// -------------------------------------------------------------------------------
 			if ($promoGcCofData['applied'] && ($promoGcCofData['final_price'] == 0)) {
@@ -2235,7 +2237,7 @@ class WebServiceTicketsController extends WebServicesController
 		}
 
 		$paymentDetail = array();
-		
+
 		$paymentDetail['ticketId']				= $ticket['Ticket']['ticketId'];
 		$paymentDetail['userId']				= $ticket['Ticket']['userId'];
 		$paymentDetail['autoProcessed']			= $data['autoCharge'];
@@ -2245,22 +2247,22 @@ class WebServiceTicketsController extends WebServicesController
 		$paymentDetail['paymentAmount']			= $totalChargeAmount;
 		$paymentDetail['userPaymentSettingId']	= ($usingUpsId) ? $data['userPaymentSettingId'] : '';
 		$paymentDetail['ppBillingAmount']		= $totalChargeAmount;
-		
+
 		$otherCharge = 0;
-		
+
 		if ($data['paymentTypeId'] == 1 || !$toolboxManualCharge) {
 			// set total charge amount to send to processor
 			// ---------------------------------------------------------------------------
 			// init payment processing and submit payment
 			// ---------------------------------------------------------------------------
-			
+
 			$ticket['Ticket']['billingPrice'] = $totalChargeAmount;
 			$this->logError(array("PAYMENT INFO",$ticket));
-			
+
 			// Allows 4111111111111111 on Hotel Testerosa on LIVE/DEV
-			
+
 			$ticket['Ticket']['testCard'] = false;
-			
+
 			if ($userPaymentSettingPost['UserPaymentSetting']['ccNumber'] == "4111111111111111") {
 				switch ($ticket['Ticket']['siteId']) {
 					case 1:
@@ -2272,20 +2274,20 @@ class WebServiceTicketsController extends WebServicesController
 				}
 
 				$clientId = $this->Ticket->query("SELECT clientId FROM ".$ticketSite." WHERE offerId = '".$ticket['Ticket']['offerId']."' AND clientId = 8455");
-				
+
 				if (count($clientId)) {
 					$ticket['Ticket']['testCard'] = true;
 				}
 			}
-				
+
 			$processor = new Processor($paymentProcessorName);
 			$processor->InitPayment($userPaymentSettingPost, $ticket);
-			
+
 			if (!$isDev) {
 				// do not charge on dev or stage. For Production - charge away!
 				$processor->SubmitPost();
 			}
-			
+
 			$userPaymentSettingPost['UserPaymentSetting']['expMonth'] = str_pad($userPaymentSettingPost['UserPaymentSetting']['expMonth'], 2, '0', STR_PAD_LEFT);
 
 			$paymentDetail 							= array_merge($paymentDetail,$processor->GetMappedResponse());
@@ -2301,7 +2303,7 @@ class WebServiceTicketsController extends WebServicesController
 			$paymentDetail['ppExpMonth']			= $userPaymentSettingPost['UserPaymentSetting']['expMonth'];
 			$paymentDetail['ppExpYear']				= $userPaymentSettingPost['UserPaymentSetting']['expYear'];
 			$paymentDetail['ccType']				= $userPaymentSettingPost['UserPaymentSetting']['ccType'];
-			
+
 			if ($isDev) {
 				$paymentDetail['isSuccessfulCharge']				= 1;
 			}
@@ -2320,7 +2322,7 @@ class WebServiceTicketsController extends WebServicesController
 
 			if ($longWord) {
 				$otherCharge = 1;
-				
+
 				$paymentDetail['paymentProcessorId']	= 6;
 				$paymentDetail['ccType'] 		 		= $shortWord;
 				$paymentDetail['userPaymentSettingId'] 	= '';
@@ -2345,12 +2347,12 @@ class WebServiceTicketsController extends WebServicesController
 			if (isset($promoGcCofData['Cof']['applied'])) {
 				$promoGcCofData['Cof']['applied'] = 0;
 			}
-			
+
 			if (isset($promoGcCofData['GiftCert']['applied'])) {
 				$promoGcCofData['GiftCert']['applied'] = 0;
 			}
-		} 
-		
+		}
+
 		// save the response from the payment processor
 		// ---------------------------------------------------------------------------
 
@@ -2358,9 +2360,9 @@ class WebServiceTicketsController extends WebServicesController
 		if (!$this->PaymentDetail->save($paymentDetail)) {
 			@mail('devmail@luxurylink.com', 'WEB SERVICE ERROR: PAYMENT PROCESSED BUT NOT SAVED', print_r($this->PaymentDetail->validationErrors,true)  . print_r($paymentDetail, true));
 		}
-		
+
 		CakeLog::write("debug",var_export(array("WEB SERVICE TICKETS: ",$paymentDetail,$promoGcCofData),1));
-		
+
 		// return result whether success or denied
 		// ---------------------------------------------------------------------------
 		if ((isset($processor) && $processor->ChargeSuccess()) || $isDev || $otherCharge) {
@@ -2377,7 +2379,7 @@ class WebServiceTicketsController extends WebServicesController
 	function runPostChargeSuccess($ticket, $data, $usingUpsId, $userPaymentSettingPost, $promoGcCofData, $toolboxManualCharge) {
 		$this->errorMsg = "Start";
 		$this->logError(__METHOD__);
-		
+
 		// allocate revenue to loa and tracks
 		// ---------------------------------------------------------------------------
 		$tracks = $this->TrackDetail->getTrackRecord($ticket['Ticket']['ticketId']);
@@ -2422,11 +2424,11 @@ class WebServiceTicketsController extends WebServicesController
 		}
 		// update ticket status to FUNDED
 		// ---------------------------------------------------------------------------
-		
+
 		if ($toolboxManualCharge) {
 			if ($data['paymentAmount'] >= $promoGcCofData['final_price_actual']) {
 				$fundTicket = true;
-			} 
+			}
 		} else {
 			$fundTicket = false;
 		}
@@ -2435,11 +2437,11 @@ class WebServiceTicketsController extends WebServicesController
 			$ticketStatusChange = array();
 			$ticketStatusChange['ticketId'] = $ticket['Ticket']['ticketId'];
 			$ticketStatusChange['ticketStatusId'] = 5;
-			
+
 			$this->errorMsg = "Ticket Status 5";
 			$this->logError(__METHOD__);
 		}
-				
+
 		// if gift cert or cof, create additional payment detail records
 		// ---------------------------------------------------------------------------
 		if (isset($promoGcCofData['GiftCert']) && isset($promoGcCofData['GiftCert']['applied']) && $promoGcCofData['GiftCert']['applied'] == 1) {
@@ -2447,7 +2449,7 @@ class WebServiceTicketsController extends WebServicesController
 			$this->errorMsg = "Gift Saved";
 			$this->logError(__METHOD__);
 		}
-		
+
 		if (isset($promoGcCofData['Cof']) && $promoGcCofData['Cof']['applied'] == 1) {
 			$promoGcCofData['Cof']['creditTrackingTypeId'] = 1;
 			$this->PaymentDetail->saveCof($ticket['Ticket']['ticketId'], $promoGcCofData['Cof'], $ticket['Ticket']['userId'], $data['autoCharge'], $data['initials'],$toolboxManualCharge);
@@ -2505,7 +2507,7 @@ class WebServiceTicketsController extends WebServicesController
 		if ($msg == "") {
 			$msg = $this->errorMsg;
 		}
-		
+
 		CakeLog::write("debug",var_export($method.": ".$msg,1));
 	}
 
@@ -2518,7 +2520,7 @@ class WebServiceTicketsController extends WebServicesController
 
 function wstErrorHandler($errno, $errstr, $errfile, $errline) {
 	$log = "debug";
-	
+
     switch ($errno) {
 		case E_RECOVERABLE_ERROR:
 			$eMsg = "RECOVERABLE ERROR";
@@ -2557,14 +2559,14 @@ function wstErrorHandler($errno, $errstr, $errfile, $errline) {
 	    $eMsg .= ", PHP " . PHP_VERSION . " (" . PHP_OS . ")\n";
 		CakeLog::write($log,$eMsg);
 	}
-	
+
     /* Don't execute PHP internal error handler */
-    return true;	
+    return true;
 }
 
 function wstErrorShutdown() {
 	$error = error_get_last();
-	
+
 	if ($error['type'] != 2048) {
 		CakeLog::write("debug","SCRIPT ABORTED: ".var_export($error,1));
 		die();
