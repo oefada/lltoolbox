@@ -26,13 +26,26 @@ class Bid extends AppModel {
 		return false;
 	}
     
-    function getBidStatsForOffer($offerId) {
-        $query = "SELECT COUNT(bidId) AS bidCount, MAX(bidAmount) AS winner
-                  FROM bid 
-                  WHERE offerId = " . $offerId;
-        if ($bidStats = $this->query($query)) {
-            return $bidStats;
-        }
-    }
+	function getBidStatsForOffer($offerId) {
+		$query = "SELECT COUNT(bidId) AS bidCount, MAX(bidAmount) AS winner
+							FROM bid 
+							WHERE offerId = " . $offerId;
+		if ($bidStats = $this->query($query)) {
+			return $bidStats;
+		}
+	}
+
+	function getBidStatsForPackageId($packageId) {
+
+		$q="SELECT COUNT(bidId) AS bidCount ";
+		$q.="FROM bid ";
+		$q.="INNER JOIN offerLuxuryLink as ot on (ot.offerId=bid.offerId) ";
+		$q.="WHERE packageId= " . $packageId;
+		$bidStats = $this->query($q);
+		return $bidStats[0][0]['bidCount'];
+
+	}
+
+
 }
 ?>
