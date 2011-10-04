@@ -126,6 +126,19 @@ class SchedulingMaster extends AppModel {
 	    return true;
 	}
 
+	function isMystery($packageId){
+
+		$q="select * FROM schedulingMasterMerchFlagRel mf  ";
+		$q.="INNER JOIN schedulingMaster m USING(schedulingMasterId)  ";
+		$q.="INNER JOIN schedulingInstance i USING (schedulingMasterId) ";
+		$q.="INNER JOIN offer o USING(schedulingInstanceId) ";
+		$q.="WHERE merchandisingFlagId = 3 and packageId=$packageId";
+		$num=count($this->query($q));
+
+		return $num;
+
+	}
+
 	function validatebuyNowPrice() {
 	    $buyNowTypes = array(3,4);
 
