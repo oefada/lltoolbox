@@ -7,7 +7,6 @@ if (!isset($masterState) || $masterState != 1) {
     
     echo $form->input('packageId', array('value' => $packageId, 'type' => 'hidden'));
 
-
     ?>
 
     <link href="/css/scheduling-master.css" type="text/css" rel="stylesheet" />
@@ -46,8 +45,9 @@ if (!isset($masterState) || $masterState != 1) {
       </td>
       <td><label for="price-point-<?php echo $pricePoint['PricePoint']['pricePointId']; ?>"><?php echo $pricePoint['PricePoint']['name']; ?></label></td>
       <td style='font-size:11px;'><?php echo $pricePoint[0]['dateRanges']; ?></td>
-			<td><?php echo $pricePoint['PricePoint']['maxNumSales']; ?></td>
-			<td><?php echo $pricePoint['PricePoint']['retailValue']; ?></td>
+			<td><?php echo (int)$pricePoint['PricePoint']['maxNumSales']; ?></td>
+			<td><?php 
+			echo $pricePoint['PricePoint']['retailValue']; ?></td>
 				
 			<td>
 				<?php echo $pricePoint['PricePoint']['percentRetailAuc']; ?>
@@ -297,7 +297,7 @@ if (!isset($masterState) || $masterState != 1) {
 // EDIT
 /*************************************************************************************************/
 
-} else {
+} else { 
 
 ?>
 
@@ -309,36 +309,37 @@ if (!isset($masterState) || $masterState != 1) {
 				<strong>Scheduling Master Id:</strong> <?php echo $this->data['SchedulingMaster']['schedulingMasterId'] ?><br />
 				<? endif; ?>
 			<?php echo $package['Package']['shortBlurb'] ?><br />
-			<?php echo 'Package Validity: '.date('M j, Y', strtotime($package['Package']['validityStartDate'])).' to '.date('M j, Y', strtotime($package['Package']['validityEndDate'])) ?>
+			<?php echo 'Package Validity: '.date('M j, Y', strtotime($this->data['SchedulingMaster']['validityStartDate'])).' to '.date('M j, Y', strtotime($this->data['SchedulingMaster']['validityEndDate'])) ?>
 			</p>
 	<?php
-	
+//print "<pre>";print_r($package);exit;
 		if ($package['Format'][0]['formatId'] != 3) {
-			echo $form->input('offerTypeId', array('label' => 'Offer Type', 'empty' => true, 'disabled' => ($masterState) ? true : false));		
+			$value='';
+			//echo $form->input('offerTypeId', array('value'=>$value,'label' => 'Offer Type', 'empty' => true, 'disabled' => ($masterState) ? true : false));		
 			if ($singleClientPackage) {
 				echo $form->input('Track', array('options' => $trackIds, 'empty' => true, 'multiple' => false, 'disabled' => ($masterState) ? true : false));
 			}
-            
-            echo $form->input('maxNumSales', array('value' => $package['Package']['maxNumSales'], 'disabled' => 'disabled'));
-            
-			//echo "<strong>For Fixed Price offer types, number of days to run, scheduling delay, and number of iterations will be ignored. You must choose an end date for fixed price offers.</strong>";		
-			echo $form->input('retailValue', array('disabled' => 'disabled'));
-			
+      echo $form->input('maxNumSales', array('value' => (int)$pricePoints['PricePoint']['maxNumSales'], 'disabled' => 'disabled'));
+
+			$rv=(int)$this->data['SchedulingMaster']['pricePointRetailValue'];
+			echo $form->input('retailValue', array("value"=>$rv ,'disabled' => 'disabled'));
+
 			/* TODO: Marketing/Judy needs to be able to override the defaults*/
 			echo '<div id="defaults" style="margin: 0; padding: 0">';
 			if (isset($defaultFile)) {
 				echo $this->renderElement('../scheduling_masters/'.$defaultFile);
 			}
 			echo '</div>';
-			echo $form->input('reserveAmt', array('value' => $package['Package']['reservePrice'], 'disabled' => 'disabled'));
+			echo $form->input('reserveAmt', array('value' => (int)$package['Package']['reservePrice'], 'disabled' => 'disabled'));
 	
 			echo '<span id="numDays"';
-				/* TODO: Marketing/Judy need to be able to se num days to an arbitrary #, and unlock scheduling delay */
-				echo $form->input('numDaysToRun', array('type' => 'select',  'empty' => true, 'options' => array(1 => '1 Day', 2 => '2', 3 => '3', 7 => '7'), 'disabled' => ($masterState) ? 'disabled' : false));
-				
-					echo $form->input('schedulingDelayCtrlId', array('label' => 'Scheduling Delay'));
+			/* TODO: Marketing/Judy need to be able to se num days to an arbitrary #, and unlock scheduling delay */
+			echo $form->input('numDaysToRun', array('type' => 'select',  'empty' => true, 'options' => array(1 => '1 Day', 2 => '2', 3 => '3', 7 => '7'), 'disabled' => ($masterState) ? 'disabled' : false));
+
+			echo $form->input('schedulingDelayCtrlId', array('label' => 'Scheduling Delay'));
 
 			echo '</span>';
+
 		} else {
 			echo $form->input('Track', array('options' => $trackIds, 'empty' => true, 'multiple' => false, 'disabled' => ($masterState) ? true : false));
 			echo $form->input('offerTypeId', array('value' => 7, 'type' => 'hidden'));
@@ -450,7 +451,15 @@ if (!isset($masterState) || $masterState != 1) {
 			)
 		);
 		echo '</div>';
+
+		echo "<div>";
+		echo $form->input("isMystery",array("value"=>$package['packageIsMystery'],"disabled"=>true));
+		echo "</div>";
+
+
+
 		?>
+
 		<script>
 		delete datePickerController.datePickers['SchedulingMasterEndDatePicker2'];
 		datePickerController.addDatePicker('SchedulingMasterEndDatePicker2',
@@ -472,7 +481,7 @@ if (!isset($masterState) || $masterState != 1) {
         <?
 
 		echo $form->input('packageId', array('value' => $packageId, 'type' => 'hidden'));
-		
+
 		echo $ajax->observeField('SchedulingMasterOfferTypeId', array(
 																'url' => '/scheduling_masters/getOfferTypeDefaults/packageId:'.$packageId,
 																'frequency' => 0.2,
