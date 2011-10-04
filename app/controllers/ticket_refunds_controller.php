@@ -14,7 +14,7 @@ class TicketRefundsController extends AppController {
 		$currentUser = $this->LdapAuth->user();
 		
 		//if (in_array('Accounting',$currentUser['LdapUser']['groups']) || in_array('Geeks',$currentUser['LdapUser']['groups'])) {
-			$this->canSave = false;
+			//$this->canSave = false;
 		//}
 		
 		$this->set('canSave',$this->canSave);
