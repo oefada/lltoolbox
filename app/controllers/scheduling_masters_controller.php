@@ -1,9 +1,21 @@
 <?php
+function printR($arr){
+ echo "<pre>";
+ print_r($arr);
+ echo "</pre>";
+}
 class SchedulingMastersController extends AppController {
 
 	var $name = 'SchedulingMasters';
 	var $helpers = array('Html', 'Form');
-	var $uses = array('SchedulingMaster', 'OfferLuxuryLink', 'Loa', 'OfferFamily');
+	var $uses = array(
+		'SchedulingMaster', 
+		'OfferLuxuryLink', 
+		'Loa', 
+		'OfferFamily',
+		'Ticket',
+		'Bid',
+	);
 
 	function index() {
 		$this->SchedulingMaster->recursive = 0;
@@ -64,11 +76,11 @@ class SchedulingMastersController extends AppController {
 				}
 
 
-                // initialize Discountable
-                $this->data['SchedulingMaster']['isDiscountedOffer'] = intval($this->data['SchedulingMaster']['isDiscountedOffer']);
+        // initialize Discountable
+        $this->data['SchedulingMaster']['isDiscountedOffer'] = intval($this->data['SchedulingMaster']['isDiscountedOffer']);
 
-                // date check for ticket 1852 fix below
-                $loaDateCheckClient = $package['ClientLoaPackageRel'][0];
+				// date check for ticket 1852 fix below
+				$loaDateCheckClient = $package['ClientLoaPackageRel'][0];
 				$loaDateCheckLoa = $this->Loa->findByloaId($loaDateCheckClient['loaId']);
 
 				foreach($ppid_arr as $key=>$ppid){
@@ -142,29 +154,18 @@ class SchedulingMastersController extends AppController {
 							$this->data['SchedulingMaster']['shortBlurb']   = $this->data['Mystery']['shortBlurb'];
 						}
 
-						//associate the tracks from each client to this offer
-						//only if this is a multi client offer, single client comes from user selection
-						// acarney 2010-11-22 -- dunno what that comment above means, so commenting out for now
-						if (count($package['ClientLoaPackageRel']) > 1) {
-                            //foreach ($package['ClientLoaPackageRel'] as $v) {
-                            //    $this->data['Track']['Track'][] = $v['trackId'];
-                            //}
-						}
-
-                        // price point fields
-                        $pricePointObj->recursive = -1;
-                        if ($pp = $pricePointObj->find('first', array('conditions' => array('PricePoint.pricePointId' => $ppid),
-                                                                      'fields' => array('retailValue', 'percentRetailAuc', 'percentRetailBuyNow')))) {
-                            $this->data['SchedulingMaster']['pricePointRetailValue'] = $pp['PricePoint']['retailValue'];
-                        }
-
+						// price point fields
+						$pricePointObj->recursive = -1;
+						if ($pp = $pricePointObj->find('first', array('conditions' => array('PricePoint.pricePointId' => $ppid), 'fields' => array('retailValue', 'percentRetailAuc', 'percentRetailBuyNow')))) {
+               $this->data['SchedulingMaster']['pricePointRetailValue'] = $pp['PricePoint']['retailValue'];
+            }
 
 						// create an auction
 						if ($this->data['isAuction']) {
 							$this->data['SchedulingMaster']['offerTypeId'] = 1;
-                            if ($pp) {
-                                $this->data['SchedulingMaster']['pricePointPercentRetailAuc'] = $pp['PricePoint']['percentRetailAuc'];
-                            }
+							if ($pp) {
+								$this->data['SchedulingMaster']['pricePointPercentRetailAuc'] = $pp['PricePoint']['percentRetailAuc'];
+							}
 
 							// jwoods - workaround so that discounts are not set for auctions
 							$tempIsDiscountedOffer = $this->data['SchedulingMaster']['isDiscountedOffer'];
@@ -174,7 +175,7 @@ class SchedulingMastersController extends AppController {
 
 							$success = $this->addSave($this->data);
 
-                            // second part of discount workaround - reset discount values
+              // second part of discount workaround - reset discount values
 							$this->data['SchedulingMaster']['isDiscountedOffer'] = $tempIsDiscountedOffer;
 							$this->data['SchedulingMaster']['percentDiscount'] = $tempPercentDiscount;
 
@@ -183,12 +184,12 @@ class SchedulingMastersController extends AppController {
 						// create a buy now
 						if ($this->data['isBuyNow']) {
 							$this->data['SchedulingMaster']['offerTypeId'] = $this->data['buyNowOfferTypeId'];
-                            if ($pp) {
-                                if (isset($this->data['SchedulingMaster']['pricePointPercentRetailAuc'])) {
-                                    unset($this->data['SchedulingMaster']['pricePointPercentRetailAuc']);
-                                }
-                                $this->data['SchedulingMaster']['pricePointPercentRetailBuyNow'] = $pp['PricePoint']['percentRetailBuyNow'];
-                            }
+							if ($pp) {
+								if (isset($this->data['SchedulingMaster']['pricePointPercentRetailAuc'])) {
+									unset($this->data['SchedulingMaster']['pricePointPercentRetailAuc']);
+								}
+								$this->data['SchedulingMaster']['pricePointPercentRetailBuyNow'] = $pp['PricePoint']['percentRetailBuyNow'];
+              }
 							$success = $this->addSave($this->data);
 						}
 
@@ -274,13 +275,13 @@ class SchedulingMastersController extends AppController {
         // defaults
 		if (empty($this->data) && isset($this->params['named']['date'])) {
 			$date = explode('-', $this->params['named']['date']);
-            // default startDate
-            $this->data['SchedulingMaster']['startDatePicker'] = date("m-d-Y", strtotime($this->params['named']['date']));
+			// default startDate
+			$this->data['SchedulingMaster']['startDatePicker'] = date("m-d-Y", strtotime($this->params['named']['date']));
 			$this->data['SchedulingMaster']['startDateTime'] = date("H:00:00", strtotime("+2 hour"));
 
-            // get default endDate from loa
-            $loaEndDate = date("m-d-Y", strtotime($loa['Loa']['endDate']));
-            $this->data['SchedulingMaster']['endDatePicker2'] = $loaEndDate;
+			// get default endDate from loa
+			$loaEndDate = date("m-d-Y", strtotime($loa['Loa']['endDate']));
+			$this->data['SchedulingMaster']['endDatePicker2'] = $loaEndDate;
 
 			// get pricePoint endDates (7 days prior) if earlier than loa endDate
 			$pricePointDefaultEndDates = array();
@@ -353,6 +354,7 @@ class SchedulingMastersController extends AppController {
     }
 
 	function setOfferTypeDefaultAndDropdown($packageId, $formatIds, $schedulingMaster = false) {
+
 	    /* Get all Offer Types available for this package based on Format */
 		$this->SchedulingMaster->Package->Format->Behaviors->attach('Containable');
 		$formats = $this->SchedulingMaster->Package->Format->find('all', array('conditions' => array('formatId' => $formatIds), 'contain' => array('OfferType')));
@@ -360,11 +362,11 @@ class SchedulingMastersController extends AppController {
 		$offerTypeIds=array();
 		foreach ($formats as $format) {
 			foreach ($format['OfferType'] as $k => $v) {
-			    //set the firstOffer Id to the first one in the array, so we have something to pull during initial form loading
-			    if (!isset($firstOfferId) ) {
-			        $firstOfferId = $v['offerTypeId'];
-			    }
-			    $offerTypeIds[$v['offerTypeId']] = $v['offerTypeName'];
+		    //set the firstOffer Id to the first one in the array, so we have something to pull during initial form loading
+		    if (!isset($firstOfferId) ) {
+	        $firstOfferId = $v['offerTypeId'];
+		    }
+		    $offerTypeIds[$v['offerTypeId']] = $v['offerTypeName'];
 			}
 		}
 
@@ -374,12 +376,26 @@ class SchedulingMastersController extends AppController {
 		$offerTypeId = (isset($this->data['SchedulingMaster']['offerTypeId'])) ? $this->data['SchedulingMaster']['offerTypeId'] : $firstOfferId;
 		$this->SchedulingMaster->Package->PackageOfferTypeDefField->recursive = -1;
 		if ($schedulingMaster) {
-		    $defaults['PackageOfferTypeDefField'] = $schedulingMaster['SchedulingMaster'];
-		    $defaults['PackageOfferTypeDefField']['buyNowPrice'] = $schedulingMaster['SchedulingMaster']['buyNowPrice'];
-		    $defaults['PackageOfferTypeDefField']['openingBid'] = $schedulingMaster['SchedulingMaster']['openingBid'];
+			
+			$defaults['PackageOfferTypeDefField'] = $schedulingMaster['SchedulingMaster'];
+			$defaults['PackageOfferTypeDefField']['buyNowPrice']=$schedulingMaster['SchedulingMaster']['buyNowPrice'];
+			$defaults['PackageOfferTypeDefField']['openingBid'] = $schedulingMaster['SchedulingMaster']['openingBid'];
+
 		} else {
-		    $defaults = $this->SchedulingMaster->Package->PackageOfferTypeDefField->find('first', array('conditions' => array('PackageOfferTypeDefField.packageId' => $packageId, 'PackageOfferTypeDefField.offerTypeId' => $offerTypeId)));
+
+			$arr=array(
+				'conditions' => array(
+					'PackageOfferTypeDefField.packageId' => $packageId, 
+					'PackageOfferTypeDefField.offerTypeId' => $offerTypeId
+				),
+			);
+
+		  $defaults = $this->SchedulingMaster->Package->PackageOfferTypeDefField->find('first', $arr);
+
 		}
+
+		$defaults['PackageOfferTypeDefField']['numWinners'] = $this->Ticket->getNumAuctionWinners($packageId);
+
 		$this->set(compact('defaults'));    //send defaults to the view for the drop down
 
 		switch ($offerTypeId):
@@ -598,51 +614,60 @@ class SchedulingMastersController extends AppController {
 	}
 
 	function edit($id = null) {
+
 		if (!$id && empty($this->data)) {
 			$this->Session->setFlash(__('Invalid SchedulingMaster', true));
 			$this->redirect(array('action'=>'index'));
 		}
+
 		if (!empty($this->data)) {
+
 			$this->data['SchedulingMaster']['schedulingMasterId'] = $id;
 			$originalData = $this->SchedulingMaster->read(null, $id);
 
 			$remainingIterations = 0;
-			foreach ($originalData['SchedulingInstance'] as $k => $instance):
-    		    if (strtotime($instance['startDate']) > time()) {
-    		        $remainingIterations++;
-                }
-    		endforeach;
+			foreach ($originalData['SchedulingInstance'] as $k => $instance){
+				if (strtotime($instance['startDate']) > time()) {
+					$remainingIterations++;
+				}
+			}
 
-    		/* If no iterations have gone live yet, we can do whatever we want to this */
-    		if ($remainingIterations == count($originalData['SchedulingInstance'])) {
-		    	$this->SchedulingMaster->SchedulingInstance->deleteAll(array('SchedulingInstance.schedulingMasterId' => $id));
+			/* If no iterations have gone live yet, we can do whatever we want to this */
+			if ($remainingIterations == count($originalData['SchedulingInstance'])) {
 
-    			//if this is a mystery auction we override some fields
-    			if (in_array(3, $this->data['MerchandisingFlag']['MerchandisingFlag'])) {
-    			    $this->data['SchedulingMaster']['openingBid']   = $this->data['Mystery']['openingBid'];
-    			    $this->data['SchedulingMaster']['bidIncrement'] = $this->data['Mystery']['bidIncrement'];
-    			    $this->data['SchedulingMaster']['packageName']  = $this->data['Mystery']['packageName'];
-    			    $this->data['SchedulingMaster']['subtitle']     = $this->data['Mystery']['subtitle'];
-    			    $this->data['SchedulingMaster']['shortBlurb']   = $this->data['Mystery']['shortBlurb'];
-    			}
+				$arr=array('SchedulingInstance.schedulingMasterId' => $id);
+				$this->SchedulingMaster->SchedulingInstance->deleteAll($arr);
+
+				//if this is a mystery auction we override some fields
+				if (in_array(3, $this->data['MerchandisingFlag']['MerchandisingFlag'])) {
+					$this->data['SchedulingMaster']['openingBid']   = $this->data['Mystery']['openingBid'];
+					$this->data['SchedulingMaster']['bidIncrement'] = $this->data['Mystery']['bidIncrement'];
+					$this->data['SchedulingMaster']['packageName']  = $this->data['Mystery']['packageName'];
+					$this->data['SchedulingMaster']['subtitle']     = $this->data['Mystery']['subtitle'];
+					$this->data['SchedulingMaster']['shortBlurb']   = $this->data['Mystery']['shortBlurb'];
+				}
 
 				// startDate
-	            $datePickerDate = explode('-', $this->data['SchedulingMaster']['startDatePicker']);
-	            $this->data['SchedulingMaster']['startDate'] = "$datePickerDate[2]-$datePickerDate[0]-$datePickerDate[1] " . $this->data['SchedulingMaster']['startDateTime'];
+	      $datePickerDate = explode('-', $this->data['SchedulingMaster']['startDatePicker']);
+	      $this->data['SchedulingMaster']['startDate'] = "$datePickerDate[2]-$datePickerDate[0]-$datePickerDate[1] " . $this->data['SchedulingMaster']['startDateTime'];
 
-	            // endDate
+	      // endDate
 				$datePickerDate2 = explode('-', $this->data['SchedulingMaster']['endDatePicker2']);
-	            $this->data['SchedulingMaster']['endDate'] = "$datePickerDate2[2]-$datePickerDate2[0]-$datePickerDate2[1] 16:00:00";
+	      $this->data['SchedulingMaster']['endDate'] = "$datePickerDate2[2]-$datePickerDate2[0]-$datePickerDate2[1] 16:00:00";
 
-    			if ($this->SchedulingMaster->save($this->data)) {
-    				$this->createInstances();
-    				if ($this->RequestHandler->isAjax()) {
-    					$this->Session->setFlash(__('The Schedule has been saved', true), 'default', array(), 'success');
-    					$this->set('closeModalbox', true);
-    				}
-    			} else {
-    				$this->Session->setFlash(__('The Schedule could not be saved. Please correct the errors below.', true), 'default', array(), 'error');
+    		if ($this->SchedulingMaster->save($this->data)) {
+
+    			$this->createInstances();
+    			if ($this->RequestHandler->isAjax()) {
+    				$this->Session->setFlash(__('The Schedule has been saved', true), 'default', array(), 'success');
+    				$this->set('closeModalbox', true);
     			}
+
+    		} else {
+
+					$this->Session->setFlash(__('The Schedule could not be saved. Please correct the errors below.', true), 'default', array(), 'error');
+
+    		}
 
 			// save after offer is live: for fixedprices and hotel offers
  			} elseif (in_array($originalData['SchedulingMaster']['offerTypeId'], array(3, 4, 7))) {
@@ -703,9 +728,13 @@ class SchedulingMastersController extends AppController {
     			}
 
     		}
-		}
-		if (empty($this->data)) {
+
+		}else if (empty($this->data)) {
+
 			$this->data = $this->SchedulingMaster->read(null, $id);
+
+			$searchStartDate = $this->data['SchedulingMaster']['startDate'];
+			$searchEndDate = $this->data['SchedulingMaster']['endDate'];
 
 			$date       = explode(' ', $this->data['SchedulingMaster']['startDate']);
 			$date2       = explode(' ', $this->data['SchedulingMaster']['endDate']);
@@ -715,22 +744,22 @@ class SchedulingMastersController extends AppController {
 			$this->data['SchedulingMaster']['startDatePicker']     =   date('m-d-Y', strtotime($date[0]));
 			$this->data['SchedulingMaster']['startDateTime']     =   date('H:i:s', strtotime($date[1]));
 			$this->data['SchedulingMaster']['endDatePicker2']     =   date('m-d-Y', strtotime($date2[0]));
+
 		}
 
 		/* Check if there are any iterations left. If there are none, then we can't edit this */
 		$this->SchedulingMaster->SchedulingInstance->recursive = 2;
 		$remainingIterations = 0;
 		$old_offer_id = false;
-		foreach ($this->data['SchedulingInstance'] as $k => $instance):
+		foreach ($this->data['SchedulingInstance'] as $k => $instance){
 			$this->data['SchedulingInstance'][$k]['offerId'] = $this->SchedulingMaster->getOfferIdFromInstance($instance['schedulingInstanceId']);
 			if (!$old_offer_id && $this->data['SchedulingInstance'][$k]['offerId']) {
 				$old_offer_id = $this->data['SchedulingInstance'][$k]['offerId'];
 			}
-		    if (strtotime($instance['startDate']) > time()) {
-		        $remainingIterations++;
-            }
-		endforeach;
-		//echo $remainingIterations;die();
+		  if (strtotime($instance['startDate']) > time()) {
+				$remainingIterations++;
+      }
+		}
 
 		$this->set('old_offer_id', $old_offer_id);
 
@@ -741,10 +770,11 @@ class SchedulingMastersController extends AppController {
 
 		$packageId 				= $this->data['SchedulingMaster']['packageId'];
 		$package 				= $this->SchedulingMaster->Package->findByPackageId($packageId);
+		$package['packageIsMystery']=$this->SchedulingMaster->isMystery($packageId);
 
-		foreach ($package['Format'] as $format):
+		foreach ($package['Format'] as $format){
 			$formatIds[] = $format['formatId'];
-		endforeach;
+		}
 
 		$this->setOfferTypeDefaultAndDropdown($packageId, $formatIds, $this->data);
 
@@ -764,41 +794,40 @@ class SchedulingMastersController extends AppController {
 		    $this->set('trackIds', $trackIds);
 		}
 
-        //set to true to hide price points if hotel offer
-        if (empty($package['Package']['externalOfferUrl'])) {
-            $isHotelOffer = false;
-            $this->set('isHotelOffer', false);
-            // price points
-            $pricePoint = new PricePoint();
-            $this->set('pricePoints', $pricePoint->getPricePoint($packageId));
-        }
-        else {
-            $isHotelOffer = true;
-            $pricePoint = $this->SchedulingMaster->Package->PricePoint->getHotelOfferPricePoint($packageId);
-            if ($pricePoint) {
-                $this->set('pricePointId', $pricePoint[0]['PricePoint']['pricePointId']);
-                $this->set('isHotelOffer', true);
-            }
-        }
+		//set to true to hide price points if hotel offer
+		if (empty($package['Package']['externalOfferUrl'])) {
+			$isHotelOffer = false;
+			$this->set('isHotelOffer', false);
+			// price points
+			$pricePoint = new PricePoint();
+			$this->set('pricePoints', $pricePoint->getPricePoint($packageId));
+		}else {
+			$isHotelOffer = true;
+			$pricePoint = $this->SchedulingMaster->Package->PricePoint->getHotelOfferPricePoint($packageId);
+			if ($pricePoint) {
+				$this->set('pricePointId', $pricePoint[0]['PricePoint']['pricePointId']);
+				$this->set('isHotelOffer', true);
+			}
+		}
 
-        if (isset($this->passedArgs['instanceId'])) {       //is auction or hotel offer
-            $this->SchedulingMaster->SchedulingInstance->recursive = -1;
-            if ($instance = $this->SchedulingMaster->SchedulingInstance->findBySchedulingInstanceId($this->passedArgs['instanceId'])) {
-                if ($instanceOfferId = $this->SchedulingMaster->getOfferIdFromInstance($this->passedArgs['instanceId'])) {
-                    if (strtotime($instance['SchedulingInstance']['startDate']) > time()) {
-                        $offerId = $this->data['PricePoint']['pricePointId'];
-                        $previewType = 'pricepoint';
-                    }
-                    else {
-                        $offerId = $instanceOfferId;
-                        $previewType = 'old_offer';
-                    }
-                }
-                else {
-                    $offerId = $this->data['PricePoint']['pricePointId'];
-                    $previewType = 'pricepoint';
-                }
-            }
+    if (isset($this->passedArgs['instanceId'])) {       //is auction or hotel offer
+      $this->SchedulingMaster->SchedulingInstance->recursive = -1;
+      if ($instance = $this->SchedulingMaster->SchedulingInstance->findBySchedulingInstanceId($this->passedArgs['instanceId'])) {
+        if ($instanceOfferId=$this->SchedulingMaster->getOfferIdFromInstance($this->passedArgs['instanceId'])) {
+							if (strtotime($instance['SchedulingInstance']['startDate']) > time()) {
+									$offerId = $this->data['PricePoint']['pricePointId'];
+									$previewType = 'pricepoint';
+							}
+							else {
+									$offerId = $instanceOfferId;
+									$previewType = 'old_offer';
+							}
+						}
+						else {
+								$offerId = $this->data['PricePoint']['pricePointId'];
+								$previewType = 'pricepoint';
+						}
+					}
         }
         else {          //is buy now
             if ($offerId = $this->SchedulingMaster->SchedulingInstance->Offer->findOfferBySchedulingMasterId($id)) {
@@ -846,17 +875,26 @@ class SchedulingMastersController extends AppController {
                 $previewUrl = $subdomain.'.luxurylink.com';
         }
 
-        $this->set('offerId',                   $offerId);
-        $this->set('previewType',               $previewType);
-		$this->set('masterState',				$masterState);
-		$this->set('package', 					$package);
-		$this->set('packageId', 				$packageId);
-		$this->set('remainingIterations',       $remainingIterations);
-		$this->set('merchandisingFlags',        $merchandisingFlags);
-		$this->set('schedulingStatusIds',       $schedulingStatusIds);
-		$this->set('schedulingDelayCtrlIds',    $schedulingDelayCtrlIds);
+				// get the number of bids against an auction packageId regardless if successful 
+				$numBids=$this->Bid->getBidStatsForPackageId($packageId);
+
+				// get the number of buynow requests against buynow packageId regardless if successful 
+				$numRequests=$this->Ticket->getNumBuyNowRequests($packageId);
+
+				$this->set("numBids", $numBids);
+				$this->set("numRequests", $numRequests);
+        $this->set('offerId',           $offerId);
+        $this->set('previewType',       $previewType);
+				$this->set('masterState',				$masterState);
+				$this->set('package', 					$package);
+				$this->set('packageId', 				$packageId);
+				$this->set('remainingIterations',       $remainingIterations);
+				$this->set('merchandisingFlags',        $merchandisingFlags);
+				$this->set('schedulingStatusIds',       $schedulingStatusIds);
+				$this->set('schedulingDelayCtrlIds',    $schedulingDelayCtrlIds);
         $this->set('schedulingInstance',        $instance);
         $this->set('previewUrl',                $previewUrl);
+
 	}
 
 	function delete($id = null) {
@@ -949,6 +987,7 @@ class SchedulingMastersController extends AppController {
 		$offerTypeId = $this->data['SchedulingMaster']['offerTypeId'];
 		$this->SchedulingMaster->Package->PackageOfferTypeDefField->recursive = -1;
 		$defaults = $this->SchedulingMaster->Package->PackageOfferTypeDefField->find('first', array('conditions' => array('PackageOfferTypeDefField.packageId' => $packageId, 'PackageOfferTypeDefField.offerTypeId' => $offerTypeId)));
+
 		$package = $this->SchedulingMaster->Package->findByPackageId($packageId);
 		$defaults['PackageOfferTypeDefField']['retailValue'] = $package['Package']['approvedRetailPrice'];
 		$this->set(compact('defaults'));
