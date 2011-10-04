@@ -319,6 +319,20 @@ class Ticket extends AppModel {
 			return false;	
 		}
 	}
+
+	function getNumBuyNowRequests($packageId){
+
+		// ticketStatusId 3	= Reservation Requested
+		$q="SELECT COUNT(*) as numRequests ";
+		$q.="FROM ticket WHERE packageId=$packageId AND offerTypeId=1 AND ticketStatusId=3";
+		$rows=$this->query($q);
+		if (count($rows)>0){
+			return $rows[0][0]['numRequests'];
+		}else{
+			return 0;
+		}
+
+	}
 	
 	function __isValidPackagePromo($packagePromoId, $packageId) {	
 		$result = $this->query("SELECT count(*) as C FROM packagePromoRel WHERE packagePromoId = $packagePromoId AND packageId = $packageId");
@@ -351,7 +365,7 @@ class Ticket extends AppModel {
 						   INNER JOIN schedulingMasterTrackRel USING(schedulingMasterId) 
 						   INNER JOIN track USING (trackId) 
 						   WHERE ticket.ticketId = $ticketId";
-CakeLog::write("debug","expCritId query $check_exp_crit");
+		//CakeLog::write("debug","expCritId query $check_exp_crit");
 		$result = $this->query($check_exp_crit);
 		return $result[0]['track']['expirationCriteriaId'];
 	}
