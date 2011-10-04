@@ -11,18 +11,26 @@ class ClientLoaPackageRel extends AppModel {
 						   );
 	var $actsAs = array('Logable');
     
-    function getLoaId($packageId) {
-        return $this->field('loaId', array('packageId' => $packageId));
-    }
-    
-    function isMultiClientPackage($packageId) {
-        $query = "SELECT COUNT(*) AS clientCount
-                  FROM clientLoaPackageRel ClientLoaPackageRel
-                  WHERE ClientLoaPackageRel.packageId = {$packageId}";
-        $count = $this->query($query);
-        if ($count[0][0]['clientCount'] > 1) {
-            return true;
-        }
-    }
+	function getLoaId($packageId) {
+		return $this->field('loaId', array('packageId' => $packageId));
+	}
+
+	function getClientId($packageId){
+		return $this->field('clientId', array('packageId' => $packageId));
+	}
+	
+	function isMultiClientPackage($packageId) {
+
+		$query = "SELECT COUNT(*) AS clientCount
+							FROM clientLoaPackageRel ClientLoaPackageRel
+							WHERE ClientLoaPackageRel.packageId = {$packageId}";
+		$count = $this->query($query);
+		if ($count[0][0]['clientCount'] > 1) {
+			return true;
+		}
+
+	}
+
 }
+
 ?>
