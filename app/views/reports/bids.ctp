@@ -53,52 +53,41 @@
 
 <div class='index'>
 <?php
-//TODO: put this in a helper
-function sortLink($field, $title, $currentPage, $serializedFormInput, $view, $html) {
+
+if (!empty($results)): 
+
 	$url = "/reports/bids/filter:";
 	$url .= urlencode($serializedFormInput);
 	$url .= "/page:$currentPage";
-	$url .= "/sortBy:$field";
+	$url .= "/sortBy:";
 
-	if (isset($view->params['named']['sortBy']) && $view->params['named']['sortBy'] == $field) {
-		$dir = ($view->params['named']['sortDirection'] == 'ASC') ? 'DESC' : 'ASC';
-	} elseif(isset($view->params['named']['sortBy'])  && $view->params['named']['sortBy'] == $field) {
-		$dir = 'DESC';
-	} else {
-		$dir = 'ASC';
-	}
-	
-	$url .= "/sortDirection:$dir";
-	
-	return $html->link($title, $url);
-}
+	?>
 
-if (!empty($results)): ?>
 	<div style='float: right'><?=$numRecords?> records found</div>
 	<?=$pagination->Paginate("/reports/bids/filter:".urlencode($serializedFormInput)."/sortBy:$sortBy/sortDirection:$sortDirection/page:", $currentPage, $numPages)?>
 	<table style="margin-top: 20px">
 		<thead class='fixedHeader'>
 		<tr>
-			<th><?=sortLink('Ticket.siteId', 'Site', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Offer.offerId', 'Offer Id', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Client.name', 'Client Name', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Track.applyToMembershipBal', 'Remit Type', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Offer.offerTypeName', 'Offer Type', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('country', 'Country', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('state', 'State/Prov', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('city', 'City', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('percentMinBid', '% Min Bid', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('percentClose', '% Close', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Package.approvedRetailPrice', 'Retail', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Package.numNights', '# Room Nights', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('SchedulingInstance.endDate', 'Date Close', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('numBids', '# Bids', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('uniqueBids', 'Unique Bids', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('numTickets', '# Tickets', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('numTicketsCollected', '# Collected', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('moneyPotential', '$ Potential', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('moneyCollected', '$ Collected', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('ticketIds', 'Ticket Ids', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=$utilities->sortLink('Ticket.siteId', 'Site', $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('Offer.offerId', 'Offer Id', $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('Client.name', 'Client Name', $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('Track.applyToMembershipBal', 'Remit Type', $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('Offer.offerTypeName', 'Offer Type', $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('country', 'Country', $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('state', 'State/Prov', $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('city', 'City', $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('percentMinBid', '% Min Bid', $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('percentClose', '% Close', $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('Package.approvedRetailPrice', 'Retail', $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('Package.numNights', '# Room Nights', $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('SchedulingInstance.endDate', 'Date Close', $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('numBids', '# Bids', $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('uniqueBids', 'Unique Bids', $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('numTickets', '# Tickets', $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('numTicketsCollected', '# Collected', $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('moneyPotential', '$ Potential', $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('moneyCollected', '$ Collected', $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('ticketIds', 'Ticket Ids', $this, $html,$url)?></th>
 		</tr>
 		</thead>
 <?php

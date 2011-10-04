@@ -1,4 +1,4 @@
-<?php $this->pageTitle = "LOA Quarterly Aging Report" ?>
+<?// var_dump($this);exit;?><?php $this->pageTitle = "LOA Quarterly Aging Report" ?>
 <style>
 th {
 	font-size: 11px;
@@ -53,9 +53,9 @@ Ajax.InPlaceEditorWithEmptyText = Class.create(Ajax.InPlaceEditor, {
 </script>
 <div class='index'>
 <?php
-
+/*
 //TODO: put this in a helper
-function sortLink($field, $title, $view, $html) {
+function $utilities->sortLink($field, $title, $view, $html) {
 
 	//$url = "/reports/bids/filter:";
 	$url = "/reports/aging";
@@ -74,6 +74,7 @@ function sortLink($field, $title, $view, $html) {
 	return $html->link($title, $url);
 
 }
+*/
 
 if (!empty($results)): 
 $i = 1;
@@ -81,6 +82,7 @@ $j = 1;
 
 $grandTotalMembershipFee = 0;
 $grandTotalMembershipBalance = 0;
+
 ?>
 <?php foreach($results as $periodName => $timeperiod): ?>
 	<a name="section-<?=$j?>"></a>
@@ -97,20 +99,20 @@ $grandTotalMembershipBalance = 0;
 	<table style="margin-top: 20px">
 		<tr>
 			<th>&nbsp;</th>
-			<th><?=sortLink('age', 'Age (Days)', $this, $html)?></th>
-			<th><?=sortLink('Client.clientId', 'Client ID', $this, $html)?></th>
-			<th><?=sortLink('Client.name', 'Client Name', $this, $html)?></th>
-			<th><?=sortLink('Client.managerUsername', 'Account Manager', $this, $html)?></th>
-			<th><?=sortLink('Loa.loaId', 'LOA ID', $this, $html)?></th>
-			<th><?=sortLink('Loa.startDate', 'Start Date', $this, $html)?></th>
-			<th><?=sortLink('loaEndDate', 'End Date', $this, $html)?></th>
-			<th><?=sortLink('membershipFee', 'Membership Fee', $this, $html)?></th>
-			<th><?=sortLink('membershipBalance', 'Remaining Balance', $this, $html)?></th>
-			<th><?=sortLink('lastSellPrice', 'Last Ticket Price', $this, $html)?></th>
-			<th><?=sortLink('lastSellDate', 'Last Ticket Date', $this, $html)?></th>
-			<th><?=sortLink('sites', 'Sites', $this, $html)?></th>
+			<th><?=$utilities->sortLink('age', 'Age (Days)', $this, $html)?></th>
+			<th><?="Destination";?></th>
+			<th><?=$utilities->sortLink('Client.clientId', 'Client ID', $this, $html)?></th>
+			<th><?=$utilities->sortLink('Client.name', 'Client Name', $this, $html)?></th>
+			<th><?=$utilities->sortLink('Client.managerUsername', 'Account Manager', $this, $html)?></th>
+			<th><?=$utilities->sortLink('Loa.startDate', 'Start Date', $this, $html)?></th>
+			<th><?=$utilities->sortLink('loaEndDate', 'End Date', $this, $html)?></th>
+			<th><?=$utilities->sortLink('membershipFee', 'Membership Fee', $this, $html)?></th>
+			<th><?=$utilities->sortLink('membershipBalance', 'Remaining Balance', $this, $html)?></th>
+			<th><?=$utilities->sortLink('lastSellPrice', 'Last Ticket Price', $this, $html)?></th>
+			<th><?=$utilities->sortLink('lastSellDate', 'Last Ticket Date', $this, $html)?></th>
+			<th><?=$utilities->sortLink('sites', 'Sites', $this, $html)?></th>
 			<th>Packages Live</th>
-			<th><?=sortLink('Loa.notes', 'Notes', $this, $html)?></th>
+			<th><?=$utilities->sortLink('Loa.notes', 'Notes', $this, $html)?></th>
 		</tr>
 <?php
 $subtotalMembershipFee = 0;
@@ -123,10 +125,10 @@ $subtotalMembershipBalance += (int)$r['Loa']['membershipBalance'];
 	<tr<?=$class?>>
 		<td><?=$i++?></td>
 		<td><?=$r[0]['age']?></td>
+		<td><?=isset($r['Client']['destinationName'])?$r['Client']['destinationName']:'';?></td>
 		<td><?=$r['Client']['clientId']?></td>
 		<td><?=$r['Client']['name']?></td>
 		<td><?=$r['Client']['managerUsername']?></td>
-		<td><?=$html->link($r['Loa']['loaId'], '/loas/edit/'.$r['Loa']['loaId'])?></td>
 		<td><?=$r['Loa']['startDate']?></td>
 		<td><?=$r[0]['loaEndDate']?></td>
 		<td>

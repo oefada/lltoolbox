@@ -36,59 +36,47 @@
 
 <div class='index'>
 <?php
-//TODO: put this in a helper
-function sortLink($field, $title, $currentPage, $serializedFormInput, $view, $html) {
+
+if (!empty($results) && isset($serializedFormInput)): 
+
 	$url = "/reports/auction_winner/filter:";
 	$url .= urlencode($serializedFormInput);
 	$url .= "/page:$currentPage";
-	$url .= "/sortBy:$field";
+	$url .= "/sortBy:";//$field";
 
-	if (isset($view->params['named']['sortBy']) && $view->params['named']['sortBy'] == $field) {
-		$dir = ($view->params['named']['sortDirection'] == 'ASC') ? 'DESC' : 'ASC';
-	} elseif(isset($view->params['named']['sortBy'])  && $view->params['named']['sortBy'] == $field) {
-		$dir = 'DESC';
-	} else {
-		$dir = 'ASC';
-	}
-	
-	$url .= "/sortDirection:$dir";
-	
-	return $html->link($title, $url);
-}
-
-if (!empty($results)): ?>
+	?>
 	<div style='float: right'><?=$numRecords?> records found</div>
-	<?=$pagination->Paginate("/reports/auction_winner/filter:".urlencode($serializedFormInput)."/sortBy:$sortBy/sortDirection:$sortDirection/page:", $currentPage, $numPages)?>
+	<?=$pagination->Paginate("/reports/auction_winner/filter:".urlencode($serializedFormInput)."/sortBy:$sortBy/sortDirection:$sortDirection/page:",$currentPage,$numPages)?>
 	<table style="margin-top: 20px">
 		<thead class='fixedHeader'>
 		<tr>
-			<th><?=sortLink('Ticket.siteId', 'Site', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Offer.offerId', 'Booking Date', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Client.name', 'Payment Date', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Track.applyToMembershipBal', 'Ticket ID', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Offer.offerTypeName', 'Vendor ID', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('country', 'Vendor', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('state', 'Guest First Name', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('city', 'Guest Last Name', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('percentMinBid', 'Address1', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('percentClose', 'Address2', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Package.approvedRetailPrice', 'City', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Package.numNights', 'State', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('SchedulingInstance.endDate', 'Zip', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('numBids', 'Country', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('numBids', 'Phone', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('numBids', 'Email', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('numBids', 'CC Type', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('numBids', 'CC Number', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('numBids', 'CC Exp', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('numBids', 'Revenue', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('numBids', 'Room Nights', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('numBids', 'Auction Type', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('numBids', 'Handling Fee', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('numBids', 'Percent', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('numBids', 'Remit Type', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('numBids', 'Validity Start Date', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('numBids', 'Validity End Date', $currentPage, $serializedFormInput, $this, $html)?></th>
+		<th><?=$utilities->sortLink('Ticket.siteId', 'Site',$this, $html,$url)?></th>
+		<th><?=$utilities->sortLink('Offer.offerId', 'Booking Date',$this, $html,$url)?></th>
+		<th><?=$utilities->sortLink('Client.name', 'Payment Date',$this, $html,$url)?></th>
+		<th><?=$utilities->sortLink('Track.applyToMembershipBal', 'Ticket ID',$this, $html,$url)?></th>
+		<th><?=$utilities->sortLink('Offer.offerTypeName', 'Vendor ID',$this, $html,$url)?></th>
+		<th><?=$utilities->sortLink('country', 'Vendor',$this, $html,$url)?></th>
+		<th><?=$utilities->sortLink('state', 'Guest First Name',$this, $html,$url)?></th>
+		<th><?=$utilities->sortLink('city', 'Guest Last Name',$this, $html,$url)?></th>
+		<th><?=$utilities->sortLink('percentMinBid', 'Address1',$this, $html,$url)?></th>
+		<th><?=$utilities->sortLink('percentClose', 'Address2',$this, $html,$url)?></th>
+		<th><?=$utilities->sortLink('Package.approvedRetailPrice', 'City',$this, $html,$url)?></th>
+		<th><?=$utilities->sortLink('Package.numNights', 'State',$this, $html,$url)?></th>
+		<th><?=$utilities->sortLink('SchedulingInstance.endDate', 'Zip',$this, $html,$url)?></th>
+		<th><?=$utilities->sortLink('numBids', 'Country',$this, $html,$url)?></th>
+		<th><?=$utilities->sortLink('numBids', 'Phone',$this, $html,$url)?></th>
+		<th><?=$utilities->sortLink('numBids', 'Email',$this, $html,$url)?></th>
+		<th><?=$utilities->sortLink('numBids', 'CC Type',$this, $html,$url)?></th>
+		<th><?=$utilities->sortLink('numBids', 'CC Number',$this, $html,$url)?></th>
+		<th><?=$utilities->sortLink('numBids', 'CC Exp',$this, $html,$url)?></th>
+		<th><?=$utilities->sortLink('numBids', 'Revenue',$this, $html,$url)?></th>
+		<th><?=$utilities->sortLink('numBids', 'Room Nights',$this, $html,$url)?></th>
+		<th><?=$utilities->sortLink('numBids', 'Auction Type',$this, $html,$url)?></th>
+		<th><?=$utilities->sortLink('numBids', 'Handling Fee',$this, $html,$url)?></th>
+		<th><?=$utilities->sortLink('numBids', 'Percent',$this, $html,$url)?></th>
+		<th><?=$utilities->sortLink('numBids', 'Remit Type',$this, $html,$url)?></th>
+		<th><?=$utilities->sortLink('numBids', 'Validity Start Date',$this, $html,$url)?></th>
+		<th><?=$utilities->sortLink('numBids', 'Validity End Date',$this, $html,$url)?></th>
 		</tr>
 		</thead>
 <?php foreach ($results as $k => $r):
@@ -150,7 +138,7 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 	</tr>
 <?php endforeach; //TODO: add totals ?>
 </table>
-<?=$pagination->Paginate("/reports/auction_winner/filter:".urlencode($serializedFormInput)."/sortBy:$sortBy/sortDirection:$sortDirection/page:", $currentPage, $numPages)?>
+<?=$pagination->Paginate("/reports/auction_winner/filter:".urlencode($serializedFormInput)."/sortBy:$sortBy/sortDirection:$sortDirection/page:",$currentPage, $numPages)?>
 <?php elseif (!empty($data)): ?>
 <p>No results were found for the entered filters.</p>
 <p><strong>Tips:</strong> If searching by client or package name, enter four or more characters.

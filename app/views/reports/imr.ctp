@@ -82,13 +82,14 @@
 
 <div class='index'>
 <?php
+if (!empty($results) && isset($serializedFormInput)): 
 //TODO: put this in a helper
-function sortLink($field, $title, $currentPage, $serializedFormInput, $view, $html) {
+//function $utilities->sortLink($field, $title,$view,$html,$url) {
 	$url = "/reports/imr/filter:";
 	$url .= urlencode($serializedFormInput);
 	$url .= "/page:$currentPage";
 	$url .= "/sortBy:$field";
-
+/*
 	if (isset($view->params['named']['sortBy']) && $view->params['named']['sortBy'] == $field) {
 		$dir = ($view->params['named']['sortDirection'] == 'ASC') ? 'DESC' : 'ASC';
 	} elseif(isset($view->params['named']['sortBy'])  && $view->params['named']['sortBy'] == $field) {
@@ -101,40 +102,40 @@ function sortLink($field, $title, $currentPage, $serializedFormInput, $view, $ht
 	
 	return $html->link($title, $url);
 }
-
-if (!empty($results)): ?>
+*/
+?>
 	<div style='float: right'><?=$numRecords?> records found</div>
 	<?=$pagination->Paginate("/reports/imr/filter:".urlencode($serializedFormInput)."/sortBy:$sortBy/sortDirection:$sortDirection/page:", $currentPage, $numPages)?>
 	<table style="margin-top: 20px">
 		<thead class='fixedHeader'>
 		<tr>
 			<th>&nbsp;</th>
-			<th><?=sortLink('siteId', 'Site', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('name', 'Client Name', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('managerUsername', 'Manager', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('packageName', 'Package Title', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('offerTypeName', 'Offer Type', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('numDaysToRun', 'Offer Length', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('numNights', 'Room Nights', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('openingBid', 'Starting Bid', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=$utilities->sortLink('siteId', 'Site',$this,$html,$url)?></th>
+			<th><?=$utilities->sortLink('name', 'Client Name',$this,$html,$url)?></th>
+			<th><?=$utilities->sortLink('managerUsername', 'Manager',$this,$html,$url)?></th>
+			<th><?=$utilities->sortLink('packageName', 'Package Title',$this,$html,$url)?></th>
+			<th><?=$utilities->sortLink('offerTypeName', 'Offer Type',$this,$html,$url)?></th>
+			<th><?=$utilities->sortLink('numDaysToRun', 'Offer Length',$this,$html,$url)?></th>
+			<th><?=$utilities->sortLink('numNights', 'Room Nights',$this,$html,$url)?></th>
+			<th><?=$utilities->sortLink('openingBid', 'Starting Bid',$this,$html,$url)?></th>
 			
-			<th><?=sortLink('startingBidPercentOfRetail', 'Starting Bid - % retail', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=$utilities->sortLink('startingBidPercentOfRetail', 'Starting Bid - % retail',$this,$html,$url)?></th>
 			
-			<th><?=sortLink('retailValue', 'Retail', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=$utilities->sortLink('retailValue', 'Retail',$this,$html,$url)?></th>
 			
-			<th><?=sortLink('status', 'Status', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('bidHistory', 'Bid History', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('startDate', 'Master Start', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('endDate', 'Master End', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('liveStartDate', 'Current Offer Open', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('liveEndDate', 'Current Offer Close', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=$utilities->sortLink('status', 'Status',$this,$html,$url)?></th>
+			<th><?=$utilities->sortLink('bidHistory', 'Bid History',$this,$html,$url)?></th>
+			<th><?=$utilities->sortLink('startDate', 'Master Start',$this,$html,$url)?></th>
+			<th><?=$utilities->sortLink('endDate', 'Master End',$this,$html,$url)?></th>
+			<th><?=$utilities->sortLink('liveStartDate', 'Current Offer Open',$this,$html,$url)?></th>
+			<th><?=$utilities->sortLink('liveEndDate', 'Current Offer Close',$this,$html,$url)?></th>
 			
-			<th><?=sortLink('validityEnd', 'Validity End', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('loaTermEnd', 'LOA Term End', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('notes', 'Package Notes', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('city', 'City', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('state', 'State', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('country', 'Country', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=$utilities->sortLink('validityEnd', 'Validity End',$this,$html,$url)?></th>
+			<th><?=$utilities->sortLink('loaTermEnd', 'LOA Term End',$this,$html,$url)?></th>
+			<th><?=$utilities->sortLink('notes', 'Package Notes',$this,$html,$url)?></th>
+			<th><?=$utilities->sortLink('city', 'City',$this,$html,$url)?></th>
+			<th><?=$utilities->sortLink('state', 'State',$this,$html,$url)?></th>
+			<th><?=$utilities->sortLink('country', 'Country',$this,$html,$url)?></th>
 		</tr>
 		</thead>
 <?php foreach ($results as $k => $r):

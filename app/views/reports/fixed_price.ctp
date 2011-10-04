@@ -55,45 +55,46 @@
 
 <div class='index'>
 <?php
-//TODO: put this in a helper
-function sortLink($field, $title, $currentPage, $serializedFormInput, $view, $html) {
+if (!empty($results) && isset($serializedFormInput)): 
+
+//function $utilities->sortLink($field, $title, $view, $html,$url) {
 	$url = "/reports/fixed_price/filter:";
 	$url .= urlencode($serializedFormInput);
 	$url .= "/page:$currentPage";
-	$url .= "/sortBy:$field";
+	$url .= "/sortBy:";
 
-	if (isset($view->params['named']['sortBy']) && $view->params['named']['sortBy'] == $field) {
+/*	if (isset($view->params['named']['sortBy']) && $view->params['named']['sortBy'] == $field) {
 		$dir = ($view->params['named']['sortDirection'] == 'ASC') ? 'DESC' : 'ASC';
 	} elseif(isset($view->params['named']['sortBy'])  && $view->params['named']['sortBy'] == $field) {
 		$dir = 'DESC';
 	} else {
 		$dir = 'ASC';
 	}
+*/	
+	//$url .= "/sortDirection:$dir";
 	
-	$url .= "/sortDirection:$dir";
-	
-	return $html->link($title, $url);
-}
+	//return $html->link($title, $url);
+//}
 
-if (!empty($results)): ?>
+?>
 	<div style='float: right'><?=$numRecords?> records found</div>
 	<?=$pagination->Paginate("/reports/fixed_price/filter:".urlencode($serializedFormInput)."/sortBy:$sortBy/sortDirection:$sortDirection/page:", $currentPage, $numPages)?>
 	<table style="margin-top: 20px">
 		<tr>
-			<th><?=sortLink('Ticket.siteId', 'Transaction Site', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Offer.offerId', 'Offer ID', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Client.name', 'Ticket ID', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Track.applyToMembershipBal', 'Client Name', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Offer.offerTypeName', 'Public User', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('country', 'Remit Type', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('state', 'Offer Type', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('city', 'Country', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('percentMinBid', 'State/Prov', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('percentClose', 'City', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Package.approvedRetailPrice', 'Request Date', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Package.numNights', 'Collection Date', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('SchedulingInstance.endDate', '$ Potential', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('numBids', '$ Collected', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=$utilities->sortLink('Ticket.siteId', 'Transaction Site', $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('Offer.offerId', 'Offer ID', $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('Client.name', 'Ticket ID', $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('Track.applyToMembershipBal', 'Client Name', $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('Offer.offerTypeName', 'Public User', $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('country', 'Remit Type', $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('state', 'Offer Type', $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('city', 'Country', $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('percentMinBid', 'State/Prov', $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('percentClose', 'City', $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('Package.approvedRetailPrice', 'Request Date', $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('Package.numNights', 'Collection Date', $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('SchedulingInstance.endDate', '$ Potential', $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('numBids', '$ Collected', $this, $html,$url)?></th>
 		</tr>
 <?php foreach ($results as $k => $r):
 $class = ($k % 2) ? ' class="altrow"' : '';

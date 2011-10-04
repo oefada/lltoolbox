@@ -42,26 +42,6 @@
 
 <div class='index related'> <?//related class to make the headers lighter?>
 <?php
-//TODO: put this in a helper
-function sortLink($field, $title, $currentPage, $serializedFormInput, $view, $html) {
-	$url = "/reports/bids/filter:";
-	$url .= urlencode($serializedFormInput);
-	$url .= "/page:$currentPage";
-	$url .= "/sortBy:$field";
-
-	if (isset($view->params['named']['sortBy']) && $view->params['named']['sortBy'] == $field) {
-		$dir = ($view->params['named']['sortDirection'] == 'ASC') ? 'DESC' : 'ASC';
-	} elseif(isset($view->params['named']['sortBy'])  && $view->params['named']['sortBy'] == $field) {
-		$dir = 'DESC';
-	} else {
-		$dir = 'ASC';
-	}
-	
-	$url .= "/sortDirection:$dir";
-	
-	return $html->link($title, $url);
-}
-
 if (!empty($results)): ?>
 <?php foreach ($results as $dateKey => $dateRow): //loop through all dates selected ?>
 <table>

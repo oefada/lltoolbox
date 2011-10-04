@@ -38,43 +38,32 @@ Client ID <input type="text" name="data[Client][clientId]" /><br /><br />
 
 <div class='index'>
 <?php
-//TODO: put this in a helper
-function sortLink($field, $title, $currentPage, $serializedFormInput, $view, $html) {
+
+if (!empty($results) && isset($serializedFormInput)):
+
 	$url = "/reports/check_in_date/filter:";
 	$url .= urlencode($serializedFormInput);
 	$url .= "/page:$currentPage";
-	$url .= "/sortBy:$field";
+	$url .= "/sortBy:";
 
-	if (isset($view->params['named']['sortBy']) && $view->params['named']['sortBy'] == $field) {
-		$dir = ($view->params['named']['sortDirection'] == 'ASC') ? 'DESC' : 'ASC';
-	} elseif(isset($view->params['named']['sortBy'])  && $view->params['named']['sortBy'] == $field) {
-		$dir = 'DESC';
-	} else {
-		$dir = 'ASC';
-	}
-	
-	$url .= "/sortDirection:$dir";
-	
-	return $html->link($title, $url);
-}
 
-if (!empty($results)): ?>
+?>
 	<div style='float: right'><?=$numRecords?> records found</div>
 	<?=$pagination->Paginate("/reports/check_in_date/filter:".urlencode($serializedFormInput)."/sortBy:$sortBy/sortDirection:$sortDirection/page:", $currentPage, $numPages)?>
 	<table style="margin-top: 20px">
 		<thead class='fixedHeader'>
 		<tr>
-			<th><?=sortLink('Ticket.siteId', 'Site', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('clientNames', 'Client Name', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('clientIds', 'Client ID', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Reservation.ticketId', 'Ticket ID', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Ticket.userFirstName', 'First Name', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Ticket.userLastName', 'Last Name', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('UserSiteExtended.username', 'Username', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Reservation.arrivalDate', 'Arrival Date', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Reservation.departureDate', 'Departure Date', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Reservation.reservationConfirmNum', 'Confirmation #', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Ticket.billingPrice', 'Ticket Price', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=$utilities->sortLink('Ticket.siteId', 'Site',  $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('clientNames', 'Client Name',  $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('clientIds', 'Client ID',  $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('Reservation.ticketId', 'Ticket ID',  $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('Ticket.userFirstName', 'First Name',  $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('Ticket.userLastName', 'Last Name',  $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('UserSiteExtended.username', 'Username',  $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('Reservation.arrivalDate', 'Arrival Date',  $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('Reservation.departureDate', 'Departure Date',  $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('Reservation.reservationConfirmNum', 'Confirmation #',  $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('Ticket.billingPrice', 'Ticket Price',  $this, $html,$url)?></th>
 		</tr>
 		</thead>
 <?php foreach ($results as $k => $r):

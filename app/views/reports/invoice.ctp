@@ -36,45 +36,33 @@
 
 <div class='index'>
 <?php
-//TODO: put this in a helper
-function sortLink($field, $title, $currentPage, $serializedFormInput, $view, $html) {
+
+if (!empty($results) && isset($serializedFormInput)): 
+
 	$url = "/reports/invoice/filter:";
 	$url .= urlencode($serializedFormInput);
 	$url .= "/page:$currentPage";
-	$url .= "/sortBy:$field";
-        
-	if (isset($view->params['named']['sortBy']) && $view->params['named']['sortBy'] == $field) {
-		$dir = ($view->params['named']['sortDirection'] == 'ASC') ? 'DESC' : 'ASC';
-	} else if(isset($view->params['named']['sortBy'])  && $view->params['named']['sortBy'] == $field) {
-		$dir = 'DESC';
-	} else {
-		$dir = 'ASC';
-	}
-	
-	$url .= "/sortDirection:$dir";
-       
-	return $html->link($title, $url);
-}
+	$url .= "/sortBy:";
 
-if (!empty($results)): ?>
+?>
 	<div style='float: right'><?=$numRecords?> records found</div>
 	<?=$pagination->Paginate("/reports/invoice/filter:".urlencode($serializedFormInput)."/sortBy:$sortBy/sortDirection:$sortDirection/page:", $currentPage, $numPages)?>
 	<table style="margin-top: 20px">
 		<thead class='fixedHeader'>
 		
-            <tr>
-                <th><?=sortLink('Invoice.accountingInvoiceId', 'ID', $currentPage, $serializedFormInput, $this, $html)?></th>
-    			<th><?=sortLink('Invoice.hotelName', 'Client Name', $currentPage, $serializedFormInput, $this, $html)?></th>
-                <th><?=sortLink('Invoice.ticketId', 'Ticket Id', $currentPage, $serializedFormInput, $this, $html)?></th>
-                <th><?=sortLink('Invoice.confirmationNumber', 'Hotel Conf. #', $currentPage, $serializedFormInput, $this, $html)?></th>
-                <th><?=sortLink('Invoice.guestName', 'Guest Name', $currentPage, $serializedFormInput, $this, $html)?></th>
-    	        <th><?=sortLink('Invoice.checkinDate', 'Check-in Date', $currentPage, $serializedFormInput, $this, $html)?></th>
-                <th><?=sortLink('Invoice.amount', 'Amount', $currentPage, $serializedFormInput, $this, $html)?></th>
-                <th><?=sortLink('Invoice.clientComments', 'Comments', $currentPage, $serializedFormInput, $this, $html)?></th>
-                <th><?=sortLink('Invoice.submittedByName', 'Submitted By - Name', $currentPage, $serializedFormInput, $this, $html)?></th>
-                <th><?=sortLink('Invoice.submittedByEmail', 'Submitted By - Email', $currentPage, $serializedFormInput, $this, $html)?></th>
-                <th><?=sortLink('Invoice.submittedByDate', 'Submission Date', $currentPage, $serializedFormInput, $this, $html)?></th>            
-            </tr> 
+		<tr>
+		<th><?=$utilities->sortLink('Invoice.accountingInvoiceId', 'ID', $this, $html,$url)?></th>
+		<th><?=$utilities->sortLink('Invoice.hotelName', 'Client Name', $this, $html,$url)?></th>
+		<th><?=$utilities->sortLink('Invoice.ticketId', 'Ticket Id', $this, $html,$url)?></th>
+		<th><?=$utilities->sortLink('Invoice.confirmationNumber', 'Hotel Conf. #', $this, $html,$url)?></th>
+		<th><?=$utilities->sortLink('Invoice.guestName', 'Guest Name', $this, $html,$url)?></th>
+		<th><?=$utilities->sortLink('Invoice.checkinDate', 'Check-in Date', $this, $html,$url)?></th>
+		<th><?=$utilities->sortLink('Invoice.amount', 'Amount', $this, $html,$url)?></th>
+		<th><?=$utilities->sortLink('Invoice.clientComments', 'Comments', $this, $html,$url)?></th>
+		<th><?=$utilities->sortLink('Invoice.submittedByName', 'Submitted By - Name', $this, $html,$url)?></th>
+		<th><?=$utilities->sortLink('Invoice.submittedByEmail', 'Submitted By - Email', $this, $html,$url)?></th>
+		<th><?=$utilities->sortLink('Invoice.submittedByDate', 'Submission Date', $this, $html,$url)?></th>            
+		</tr> 
         
 		</thead>
 <?php foreach ($results as $k => $r):

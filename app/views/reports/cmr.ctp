@@ -51,53 +51,41 @@
 
 <div class='index'>
 <?php
-//TODO: put this in a helper
-function sortLink($field, $title, $currentPage, $serializedFormInput, $view, $html) {
+
+if (!empty($results)): 
+
 	$url = "/reports/cmr/filter:";
 	$url .= urlencode($serializedFormInput);
 	$url .= "/page:$currentPage";
-	$url .= "/sortBy:$field";
+	$url .= "/sortBy:";
 
-	if (isset($view->params['named']['sortBy']) && $view->params['named']['sortBy'] == $field) {
-		$dir = ($view->params['named']['sortDirection'] == 'ASC') ? 'DESC' : 'ASC';
-	} elseif(isset($view->params['named']['sortBy'])  && $view->params['named']['sortBy'] == $field) {
-		$dir = 'DESC';
-	} else {
-		$dir = 'ASC';
-	}
-	
-	$url .= "/sortDirection:$dir";
-	
-	return $html->link($title, $url);
-}
-
-if (!empty($results)): ?>
+	?>
 	<div style='float: right'><?=$numRecords?> records found</div>
 	<?=$pagination->Paginate("/reports/cmr/filter:".urlencode($serializedFormInput)."/sortBy:$sortBy/sortDirection:$sortDirection/page:", $currentPage, $numPages)?>
 	<table style="margin-top: 20px">
 		<thead class='fixedHeader'>
 		<tr>
 			<th>&nbsp;</th>
-			<th><?=sortLink('MultiSite.sites', 'Sites', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Client.name', 'Client Name', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Client.managerUsername', 'Manager', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Loa.loaTypeId', 'LOA Type', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Loa.startDate', 'LOA Term Start', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Loa.endDate', 'LOA Term End', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Loa.membershipFee', 'Membership Fee', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Loa.membershipBalance', 'Balance', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Loa.upgraded', 'Upgraded', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Loa.loaNumberPackages', 'Remit Packages', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Loa.loaNumberPackages', 'Remit Packages Sold Current', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Loa.numberPackagesRemaining', 'Remit Packages Left', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('loaNumberOfDaysActive', 'Number of Days Active', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('dailyMembershipFee', 'Daily Membership Rate', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('numDaysPaid', '# Days Paid', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('paidThru', 'Paid Thru', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('daysBehindSchedule', 'Days Behind Schedule', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('city', 'City', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('state', 'State', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('country', 'Country', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=$utilities->sortLink('MultiSite.sites', 'Sites',  $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('Client.name', 'Client Name',  $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('Client.managerUsername', 'Manager',  $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('Loa.loaTypeId', 'LOA Type',  $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('Loa.startDate', 'LOA Term Start',  $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('Loa.endDate', 'LOA Term End',  $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('Loa.membershipFee', 'Membership Fee',  $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('Loa.membershipBalance', 'Balance',  $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('Loa.upgraded', 'Upgraded',  $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('Loa.loaNumberPackages', 'Remit Packages',  $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('Loa.loaNumberPackages', 'Remit Packages Sold Current',  $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('Loa.numberPackagesRemaining', 'Remit Packages Left',  $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('loaNumberOfDaysActive', 'Number of Days Active',  $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('dailyMembershipFee', 'Daily Membership Rate',  $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('numDaysPaid', '# Days Paid',  $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('paidThru', 'Paid Thru',  $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('daysBehindSchedule', 'Days Behind Schedule',  $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('city', 'City',  $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('state', 'State',  $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('country', 'Country',  $this, $html,$url)?></th>
 		</tr>
 		</thead>
 <?php foreach ($results as $k => $r):

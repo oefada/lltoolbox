@@ -38,37 +38,26 @@
 
 <div class='index'>
 <?php
-//TODO: put this in a helper
-function sortLink($field, $title, $currentPage, $serializedFormInput, $view, $html) {
+
+if (!empty($results)): 
+
 	$url = "/reports/packages/filter:";
 	$url .= urlencode($serializedFormInput);
 	$url .= "/page:$currentPage";
-	$url .= "/sortBy:$field";
+	$url .= "/sortBy:";
 
-	if (isset($view->params['named']['sortBy']) && $view->params['named']['sortBy'] == $field) {
-		$dir = ($view->params['named']['sortDirection'] == 'ASC') ? 'DESC' : 'ASC';
-	} elseif(isset($view->params['named']['sortBy'])  && $view->params['named']['sortBy'] == $field) {
-		$dir = 'DESC';
-	} else {
-		$dir = 'ASC';
-	}
-	
-	$url .= "/sortDirection:$dir";
-	
-	return $html->link($title, $url);
-}
+	?>
 
-if (!empty($results)): ?>
 	<div style='float: right'><?=$numRecords?> records found</div>
 	<?=$pagination->Paginate("/reports/packages/filter:".urlencode($serializedFormInput)."/sortBy:$sortBy/sortDirection:$sortDirection/page:", $currentPage, $numPages)?>
 	<table style="margin-top: 20px">
 		<thead class='fixedHeader'>
 		<tr>
-			<th><?=sortLink('Client.name', 'Client Name', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Package.packageName', 'Package Name', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('PackageStatus.packageStatusName', 'Package Status', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('RevenueModel.revenueModelName', 'Track', $currentPage, $serializedFormInput, $this, $html)?></th>
-			<th><?=sortLink('Client.managerUsername', 'Manager Username', $currentPage, $serializedFormInput, $this, $html)?></th>
+			<th><?=$utilities->sortLink('Client.name', 'Client Name',  $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('Package.packageName', 'Package Name',  $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('PackageStatus.packageStatusName', 'Package Status',  $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('RevenueModel.revenueModelName', 'Track',  $this, $html,$url)?></th>
+			<th><?=$utilities->sortLink('Client.managerUsername', 'Manager Username',  $this, $html,$url)?></th>
 		</tr>
 		</thead>
 <?php foreach ($results as $k => $r):
