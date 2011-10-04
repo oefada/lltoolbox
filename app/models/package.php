@@ -68,21 +68,6 @@ class Package extends AppModel {
 	  return true;
 	}
 
-	function logHistory($clientId,$packageId,$user,$note,$pre_data='',$post_data=''){
-
-		$data=array(
-			'clientId'=>$clientId, 
-			'packageId'=>$packageId, 
-			'username'=>$user['Ldap']['username'],
-			'note'=>$note,
-			'pre_data'=>$pre_data,
-			'post_data'=>$post_data,
-			'unixtime'=>time()
-		);
-
-		$this->save($data);
-
-	}
 
 	function validateDateRanges($data) {
 		$packageStartDate = $this->data['Package']['startDate'];
