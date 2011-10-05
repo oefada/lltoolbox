@@ -314,8 +314,9 @@ if (!isset($masterState) || $masterState != 1) {
 	<?php
 //print "<pre>";print_r($package);exit;
 		if ($package['Format'][0]['formatId'] != 3) {
-			$value='';
-			//echo $form->input('offerTypeId', array('value'=>$value,'label' => 'Offer Type', 'empty' => true, 'disabled' => ($masterState) ? true : false));		
+			echo "<div style='display:none;'>";
+			echo $form->input('offerTypeId', array('value'=>$value,'label' => 'Offer Type', 'empty' => true, 'disabled' => ($masterState) ? true : false));		
+			echo "</div>";
 			if ($singleClientPackage) {
 				echo $form->input('Track', array('options' => $trackIds, 'empty' => true, 'multiple' => false, 'disabled' => ($masterState) ? true : false));
 			}
