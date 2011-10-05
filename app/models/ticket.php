@@ -178,7 +178,7 @@ class Ticket extends AppModel {
 		// if it is a GiftCert and ticketPrice is greater than 0
 		// make sure the deduction doesn't bring it lower than 0
 		// set the remaining balance after use of the gift cert
-		if (isset($data['GiftCert']) && $data['GiftCert'] && ($ticketPrice > 0)) {
+		if (isset($data['GiftCert']) && $data['GiftCert'] && $ticketPrice > 0) {
 			$new_price = $ticketPrice - $data['GiftCert']['balance'];					
 			if ($new_price <= 0) {
 				$data['GiftCert']['totalAmountOff'] = $ticketPrice;
@@ -207,14 +207,14 @@ class Ticket extends AppModel {
 		$cofSql.= "WHERE Ticket.ticketId = $ticketId ";
 		$cofSql.= "ORDER BY CreditTracking.creditTrackingId DESC LIMIT 1";
 		$cofResult = $this->query($cofSql);
-		
+
 		if (!empty($cofResult) && ($cofResult[0]['CreditTracking']['balance'] > 0)) {
 			$data['Cof'] = $cofResult[0]['CreditTracking'];	
 		}
 
 		// if there is a credit on file and a ticketPrice
 		// deduct the credit from the ticketPrice
-		if (isset($data['Cof']) && ($ticketPrice > 0)) {
+		if (isset($data['Cof']) && $ticketPrice > 0) {
 			$new_price = $ticketPrice - $data['Cof']['balance'];
 			if ($new_price <= 0) {
 				$data['Cof']['totalAmountOff'] = $ticketPrice;
@@ -251,14 +251,20 @@ class Ticket extends AppModel {
 					$noMoreGift = 1;
 				} elseif ($payment['paymentDetail']['paymentTypeId'] == 3) {
 					$data['Cof']['applied'] = 1;
-					$data['Cof']['totalAmountOff'] -= $payment['paymentDetail']['paymentAmount'];
-					$data['Cof']['remainingBalance'] += $payment['paymentDetail']['paymentAmount'];
+					$data['Cof']['totalAmountOff'] += $payment['paymentDetail']['paymentAmount'];
+					$data['Cof']['remainingBalance'] -= $payment['paymentDetail']['paymentAmount'];
 				}
 
 				$data['payments'] += $payment['paymentDetail']['paymentAmount'];
 			}
 		}
 
+		$data['Cof']['totalAmountOff'] = abs($data['Cof']['totalAmountOff']);
+		$data['GiftCert']['totalAmountOff'] = abs($data['GiftCert']['totalAmountOff']);
+		
+		$data['Cof']['remainingBalance'] = ($data['Cof']['remainingBalance'] < 0 ? 0 : $data['Cof']['remainingBalance']);
+		$data['GiftCert']['remainingBalance'] = ($data['GiftCert']['remainingBalance'] < 0 ? 0 : $data['GiftCert']['remainingBalance']);
+		
 		$data['final_price'] = ($ticketPrice < 0 ? 0 : $ticketPrice);
 		
 		// This is the final price WITHOUT CoF applied and Gift applied, and payments deducted
