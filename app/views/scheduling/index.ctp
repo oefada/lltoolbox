@@ -3,11 +3,16 @@
                          '2' => 'Family');
 ?>
 <script>
+//function openSchedulingOverlay(date, packageId, packageName) {
+//  var url="/scheduling_masters/add/clientId:"+<?php echo $clientId; ?>+"/packageId:"+packageId+"/date:"+date;
+//	// console.log(url);
+//	Modalbox.show("/scheduling_masters/add/clientId:"+<?php echo $clientId; ?>+"/packageId:"+packageId+"/date:"+date, {title: 'Scheduling <a href="/clients/<?=$clientId?>/packages/edit/'+packageId+'" target="_blank">'+packageName+'</a>',width:1000});
+//}
+
 function openSchedulingOverlay(date, packageId, packageName) {
-  var url="/scheduling_masters/add/clientId:"+<?php echo $clientId; ?>+"/packageId:"+packageId+"/date:"+date;
-	// console.log(url);
-	Modalbox.show("/scheduling_masters/add/clientId:"+<?php echo $clientId; ?>+"/packageId:"+packageId+"/date:"+date, {title: 'Scheduling <a href="/clients/<?=$clientId?>/packages/edit/'+packageId+'" target="_blank">'+packageName+'</a>',width:1000});
+	Modalbox.show("/scheduling_masters/add/clientId:"+<?php echo $clientId; ?>+"/packageId:"+packageId+"/date:"+date, {title: 'Scheduling <a href="/clients/<?=$clientId?>/packages/edit/'+packageId+'" target="_blank">'+packageName+'</a>'});
 }
+
 var dp = datePickerController.datePickers["dp-normal-1"];
 function gotoMonth(theLink, month)
 {
