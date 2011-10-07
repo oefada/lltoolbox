@@ -200,6 +200,70 @@ class UsersController extends AppController {
 		$this->render('../bids/index');
 	}
 
+	function referralsSent($id) {
+		$this->autoRender = false;
+
+		$this->params['form'] = $id . '/';
+		
+		// referrals sent by user
+		$this->paginate = Array(
+			'conditions' => Array('UserReferrals.referrerUserId' => $id),
+			'order' => Array('UserReferrals.statusTypeId' => 'desc',
+							 'UserReferrals.referredEmail' => 'asc'),
+			'limit' => 20
+		);
+		$referralsSent = $this->paginate('UserReferrals');
+
+		// check for registered users that were referred, with status 1
+		foreach ($referralsSent AS &$r) {
+			if ($r['UserReferrals']['statusTypeId'] == 1) {
+				$params = Array('conditions' => Array('email' => $r['UserReferrals']['referredEmail']));
+				$x = $this->User->find('first', $params);
+				
+				if (is_array($x) && count($x) > 0) {
+					$r['UserReferrals']['isRegistered'] = 1;
+					if (isset($x['Ticket']) && is_array($x['Ticket']) && count($x['Ticket']) > 0) {
+						$r['UserReferrals']['hasPurchase'] = 1;
+					} else {
+						$r['UserReferrals']['hasPurchase'] = 0;
+					}
+				} else {
+					$r['UserReferrals']['isRegistered'] = 0;
+					$r['UserReferrals']['hasPurchase'] = 0;
+				}
+			} else {
+				$r['UserReferrals']['isRegistered'] = 0;
+				$r['UserReferrals']['hasPurchase'] = 0;
+			}
+		}
+	
+		$this->set('referralsSent', $referralsSent);
+		$this->set('user', $this->user);
+		$this->render('../user_referrals/sent');
+	}
+	
+	function referralsRecvd($id) {
+		$this->autoRender = false;
+
+		$this->params['form'] = $id . '/';
+		
+		// referrals sent to user's email address
+		$this->paginate = Array(
+			'conditions' => Array('UserReferrals.referredEmail' => $this->user['User']['email']),
+			'order' => Array('User.email' => 'asc',
+							 'UserReferrals.statusTypeId' => 'desc',
+							 'UserReferrals.referredEmail' => 'asc'),
+			'limit' => 20
+		);
+		$referralsRecvd = $this->paginate('UserReferrals');
+		
+		//var_dump($referralsRecvd); die();
+
+		$this->set('referralsRecvd', $referralsRecvd);
+		$this->set('user', $this->user);
+		$this->render('../user_referrals/received');
+	}
+
 	function beforeFilter() {
 		parent::beforeFilter();
 		$this->set('currentTab', 'customers');
