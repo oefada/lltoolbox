@@ -9,7 +9,7 @@ class ReportsController extends AppController {
 	var $name = 'Reports';
 	var $uses = array('OfferType', 'PaymentDetail', 'PaymentType');
 	var $helpers = array('Pagination',"Utilities");
-	var $components = array('CarDataImporter');
+	var $components = array('CarDataImporter', 'ArraySorter');
 	//TODO: Add sorting, speed up the sql by adding indexes or a loading splash page, double check accuracy of data
 
 	var $page;
@@ -64,174 +64,180 @@ class ReportsController extends AppController {
 	function index() {
 	}
 
-	//mbyrnes
-	function active_loa_and_packages_check(){
+
+    function active_loa_and_packages_check() {
+
+        // LL no package clients
+        $llsql = "SELECT results.* FROM (SELECT clientInfo.*, IFNULL(MAX(o.endDate), 0) AS llLastOffer
+                  FROM (
+                      SELECT loaClients.*
+                      FROM (
+                          SELECT l.loaId, l.clientId, c.name AS clientName, c.managerUsername, c.sites, l.startDate, l.endDate, l.loaMembershipTypeId, l.membershipBalance, l.membershipPackagesRemaining
+                          FROM loa l
+                          INNER JOIN `client` c USING(clientId)
+                          WHERE l.loaLevelId = 2
+                          AND l.inactive = 0
+                          AND l.endDate > NOW()
+                          AND (c.sites = 'luxurylink' OR c.sites = 'luxurylink,family')
+                      ) loaClients
+                      LEFT JOIN (SELECT clientId FROM offerLuxuryLink WHERE ISCLOSED = 0 AND startDate < NOW() AND endDate > NOW()) offerClients USING (clientId)
+                      WHERE offerClients.clientId IS NULL
+                  ) clientInfo
+                  LEFT JOIN offerLuxuryLink o USING(clientId)
+                  GROUP BY clientInfo.loaId, clientInfo.clientId) results";
+        $llResults = $this->OfferType->query($llsql);
+
+        // FG no package clients
+        $fgsql = "SELECT results.* FROM (SELECT clientInfo.*, IFNULL(MAX(o.endDate), 0) AS fgLastOffer
+                  FROM (
+                      SELECT loaClients.*
+                      FROM (
+                          SELECT l.loaId, l.clientId, c.name AS clientName, c.managerUsername, c.sites, l.startDate, l.endDate, l.loaMembershipTypeId, l.membershipBalance, l.membershipPackagesRemaining
+                          FROM loa l
+                          INNER JOIN `client` c USING(clientId)
+                          WHERE l.loaLevelId = 2
+                          AND l.inactive = 0
+                          AND l.endDate > NOW()
+                          AND (c.sites = 'family' OR c.sites = 'luxurylink,family')
+                      ) loaClients
+                      LEFT JOIN (SELECT clientId FROM offerFamily WHERE ISCLOSED = 0 AND startDate < NOW() AND endDate > NOW()) offerClients USING (clientId)
+                      WHERE offerClients.clientId IS NULL
+                  ) clientInfo
+                  LEFT JOIN offerFamily o USING(clientId)
+                  GROUP BY clientInfo.loaId, clientInfo.clientId) results";
+        $fgResults = $this->OfferType->query($fgsql);
+
+        // combine LL and FG
+        $loas = array();
+        $clients = array();
+        foreach ($llResults as $r) {
+            $loas[$r['results']['loaId']] = $r['results'];
+            $clients[] = $r['results']['clientId'];
+        }
+        foreach ($fgResults as $k=>$r) {
+            if (array_key_exists($r['results']['loaId'], $loas)) {
+            	$loas[$r['results']['loaId']]['fgLastOffer'] = $r['results']['fgLastOffer'];
+            } else {
+                $loas[$r['results']['loaId']] = $r['results'];
+            }
+            $clients[] = $r['results']['clientId'];
+        }
+
+        // add destinations
+        $destsql = "SELECT results.* FROM (SELECT c.clientId, GROUP_CONCAT(d.destinationName SEPARATOR ' - ') AS destinations
+                    FROM clientDestinationRel c
+                    INNER JOIN destination d USING(destinationId)
+                    WHERE c.clientId IN (" . implode(',', $clients) . ")
+                    GROUP BY c.clientId) results";
+        $destResults = $this->OfferType->query($destsql);
+        $clientDestinations = array();
+        foreach ($destResults as $d) {
+            $clientDestinations[$d['results']['clientId']] = $d['results']['destinations'];
+        }
 
 
+        // add ticket info
+        $ticketsql = "SELECT results.* FROM (SELECT loas.loaId, COUNT(*) AS ticketCount, SUM(billingPrice) AS grossRevenue
+                      FROM ticket t
+                      INNER JOIN (SELECT DISTINCT loaId, packageId
+                          FROM clientLoaPackageRel
+                          WHERE loaId IN (" . implode(',', array_keys($loas)) . ")) loas USING(packageId)
+                      WHERE t.ticketStatusId IN (3,4,5,6)
+                      GROUP BY loas.loaId) results";
+        $ticketResults = $this->OfferType->query($ticketsql);
+        $loaTickets = array();
+        foreach ($ticketResults as $t) {
+            $loaTickets[$t['results']['loaId']] = $t['results'];
+        }
 
-		$q="SELECT * FROM loa ";
-		$q.="WHERE loaLevelId IN (2) ";
-		$q.="AND endDate>NOW() ";// they may be loaLevelId of 2, but the endDate is in the past
-		$q.="AND find_in_set(sites,'$find_site_in_set') ";
-		$q.="GROUP BY clientId ORDER BY endDate DESC";
-		$rows=$this->OfferType->query($q);
-		$cid_arr=array();
-		while(list($key,$row)=each($rows)){
-			$cid=$row['loa']['clientId'];
-			$loaLevelId=$row['loa']['loaLevelId'];
-			$cid_arr[]=$cid;
-			$start_date_arr[$cid]=$row['loa']['startDate'];	
-			$end_date_arr[$cid]=$row['loa']['endDate'];	
-			$total_kept_arr[$cid]=$row['loa']['totalKept'];
-			$loa_balance_arr[$cid]=(int)$row['loa']['membershipBalance'];
+		// loop through to set all required fields
+		foreach ($loas as $k=>$l) {
+            $loas[$k]['destinations'] = (isset($clientDestinations[$l['clientId']])) ? $clientDestinations[$l['clientId']] : '';;
+            $loas[$k]['startDate'] = date('m/d/Y', strtotime($l['startDate']));
+            $loas[$k]['endDate'] = date('m/d/Y', strtotime($l['endDate']));
+            $loas[$k]['startDateSort'] = date('Ymd', strtotime($l['startDate']));
+            $loas[$k]['endDateSort'] = date('Ymd', strtotime($l['endDate']));
 
+            // ll last package info
+            if (isset($l['llLastOffer'])) {
+            	if ($l['llLastOffer'] == '0' || strtotime($l['llLastOffer']) < strtotime($l['startDate'])) {
+                    $loas[$k]['llLastOffer'] = 'None Found';
+                    $loas[$k]['llLastOfferDays'] = 0;
+                    $loas[$k]['llLastOfferDaysSort'] = -1;
+            	} else {
+                    $loas[$k]['llLastOffer'] = date('m/d/Y', strtotime($l['llLastOffer']));
+                    $diff = abs(time() - strtotime($l['llLastOffer']));
+                    $loas[$k]['llLastOfferDays'] = intval($diff/86400);
+                    $loas[$k]['llLastOfferDaysSort'] = $loas[$k]['llLastOfferDays'];
+            	}
+            } else {
+                $loas[$k]['llLastOfferDays'] = null;
+                $loas[$k]['llLastOffer'] = null;
+                $loas[$k]['llLastOfferDaysSort'] = -2;
+            }
+
+            // fg last package info
+            if (isset($l['fgLastOffer'])) {
+            	if ($l['fgLastOffer'] == '0' || strtotime($l['fgLastOffer']) < strtotime($l['startDate'])) {
+                    $loas[$k]['fgLastOffer'] = 'None Found';
+                    $loas[$k]['fgLastOfferDays'] = '-';
+                    $loas[$k]['fgLastOfferDaysSort'] = -1;
+            	} else {
+                    $loas[$k]['fgLastOffer'] = date('m/d/Y', strtotime($l['fgLastOffer']));
+                    $diff = abs(time() - strtotime($l['fgLastOffer']));
+                    $loas[$k]['fgLastOfferDays'] = intval($diff/86400);
+                    $loas[$k]['fgLastOfferDaysSort'] = $loas[$k]['fgLastOfferDays'];
+            	}
+            } else {
+                $loas[$k]['fgLastOffer'] = null;
+                $loas[$k]['fgLastOfferDays'] = null;
+                $loas[$k]['fgLastOfferDaysSort'] = -2;
+            }
+
+            // ticket info
+            if (isset($loaTickets[$l['loaId']])) {
+                $loas[$k]['ticketCount'] = $loaTickets[$l['loaId']]['ticketCount'];
+                $loas[$k]['grossRevenue'] = $loaTickets[$l['loaId']]['grossRevenue'];
+            } else {
+                $loas[$k]['ticketCount'] = 0;
+                $loas[$k]['grossRevenue'] = 0;
+            }
+
+            // balance
+            if (in_array($l['loaMembershipTypeId'], array(1,2,4))) {
+                $loas[$k]['balance'] = '$' . number_format($l['membershipBalance'], 2);
+                $loas[$k]['balanceSort'] = intval($l['membershipBalance']);
+            } elseif ($l['loaMembershipTypeId'] == 3) {
+                $loas[$k]['balance'] = $l['membershipPackagesRemaining'] . ' pkg';
+                $loas[$k]['balanceSort'] = $l['membershipPackagesRemaining'] + 1000000;
+            } elseif ($l['loaMembershipTypeId'] == 5) {
+                $loas[$k]['balance'] = 'Barter';
+                $loas[$k]['balanceSort'] = -1;
+            } elseif ($l['loaMembershipTypeId'] == 6) {
+                $loas[$k]['balance'] = 'Wholesale';
+                $loas[$k]['balanceSort'] = -1;
+            }
 		}
 
-		$q="SELECT c.clientId,c.managerUsername,c.name, ";
-		$q.="dest.destinationName ";
-		$q.="FROM `client` as c ";
-		$q.="LEFT JOIN clientDestinationRel as cdr ON (cdr.clientId=c.clientId) ";
-		$q.="LEFT JOIN destination as dest ON (cdr.destinationId=dest.destinationId) ";
-		$q.="WHERE c.clientId IN (".implode(", ",$cid_arr).") ";
-		$q.="GROUP BY c.clientId";
-		$rows=$this->OfferType->query($q);
-		//print "<pre>";print_r($rows);exit;
-		while(list($key,$row)=each($rows)){	
-			$cid=$row['c']['clientId'];
-			$acct_mgr_arr[$cid]=$row['c']['managerUsername'];
-			$offer_name_arr[$cid]=$row['c']['name'];
-			$no_offer_dest_arr[$cid]=$row['dest']['destinationName'];
-		}
+		// sorting
+		$sortKey = (isset($this->params['url']['sort'])) ? $this->params['url']['sort'] : 'llLastOfferDaysSort';
+        $reverseKeys = array('llLastOfferDaysSort', 'fgLastOfferDaysSort', 'ticketCount', 'grossRevenue', 'balanceSort');
+        if (in_array($sortKey, $reverseKeys)) {
+             $this->ArraySorter->aarsort($loas, $sortKey);
+        } else {
+             $this->ArraySorter->aasort($loas, $sortKey);
+        }
+        $this->set('results', $loas);
+        $this->set('sortKey', $sortKey);
 
-		while(list($key,$cid)=each($cid_arr)){
-			if (!isset($offer_name_arr[$cid])){
-				unset($offer_name_arr[$cid]);
-				unset($cid_arr[$key]);
-				unset($offer_name_arr[$cid]);
-				unset($acct_mgr_arr[$cid]);
-				unset($start_date_arr[$cid]);
-				unset($end_date_arr[$cid]);
-				unset($total_kept_arr[$cid]);
-				unset($loa_balance_arr[$cid]);
-			}
-		}
+        // csv version
+        if (isset($this->params['url']['csv'])) {
+            $this->viewPath .= '/csv';
+            $this->layoutPath = 'csv';
+        }
 
+    }
 
-		$site_arr['luxurylink']="offerLuxuryLink";
-		$site_arr['family']="offerFamily";
-
-		foreach($site_arr as $key=>$offerTable){
-			foreach($start_date_arr as $cid=>$startDate){
-				$q="SELECT clientId,count(*) as num, packageId ";
-				$q.="FROM $offerTable as ot WHERE clientId=$cid ";
-				$q.="AND startDate>='$startDate' ";
-				$q.="GROUP BY clientId ";// HAVING num=0"; 
-				$q.="ORDER BY endDate DESC ";
-				$rows=$this->OfferType->query($q);
-				if (count($rows)>0){
-					list($key,$row)=each($rows);
-					$cid=$row['ot']['clientId'];
-					$pkid=$row['ot']['packageId'];
-					$packageId_arr[$pkid]=$cid;
-				}
-			}
-		}
-		$packageId_arr=array_unique($packageId_arr);
-
-		// count # packages sold
-		$ll_num_sold_arr=array();
-		$last_package_end_date_arr=array();
-		foreach($start_date_arr as $cid=>$startDate){
-			$q="SELECT count(*) as num, sum(billingPrice) as billingPrice, o.clientId FROM ticket as t ";
-			$q.="LEFT JOIN $offerTable as o ON (o.packageId=t.packageId) ";
-			$q.="WHERE o.clientId=$cid ";
-			$q.="AND t.ticketStatusId=5 ";
-			$q.="AND siteId=$siteId ";
-			$q.="AND o.startDate>='".$startDate."' ";
-			$q.="GROUP BY o.clientId";
-			$rows=$this->OfferType->query($q);
-			if (count($rows)>0){
-				list($key,$row)=each($rows);
-				$ll_num_sold_arr[$cid]=$row[0]['num'];
-				$ll_billing_price_arr[$cid]=$row[0]['billingPrice'];
-			}else{
-				$ll_num_sold_arr[$cid]=0;
-				$ll_billing_price_arr[$cid]=0;
-				$last_package_end_date_arr[$cid]="new";
-			}
-		}
-
-		// get date package went down
-		$q="SELECT * FROM schedulingMaster AS sm ";
-		$q.="INNER JOIN schedulingInstance AS si ON (sm.schedulingMasterId=si.schedulingMasterId) ";
-		//$q.="INNER JOIN $offerTable as ot ON (ot.packageId=sm.packageId) ";
-		$q.="WHERE packageId IN (".implode(", ",array_keys($packageId_arr)).") ";
-		$q.="GROUP BY sm.packageId ";
-		$q.="ORDER BY si.endDate DESC ";
-		$rows=$this->OfferType->query($q);
-		foreach($rows as $key=>$row){
-
-			// get clientId to use as the key
-			$pkid=$row['sm']['packageId'];
-			$cid=$packageId_arr[$pkid];
-
-			$last_package_end_date_arr[$cid]=$row['si']['endDate'];	
-
-		}
-
-		$report_arr=array();
-		foreach($offer_name_arr as $cid=>$name){
-
-
-			$numPackagesSold=isset($ll_num_sold_arr[$cid])?$ll_num_sold_arr[$cid]:0;
-			$num_sold_arr[$cid]=$numPackagesSold;
-			$sales=isset($ll_billing_price_arr[$cid])?$ll_billing_price_arr[$cid]:0;
-
-			$last_package_end_date=isset($last_package_end_date_arr[$cid])?$last_package_end_date_arr[$cid]:"--";
-
-			$acct_mgr=isset($acct_mgr_arr[$cid])?$acct_mgr_arr[$cid]:'';
-
-			$report_arr[$cid]=array(
-				"clientId"=>$cid,
-				"name"=>$offer_name_arr[$cid],
-				"site"=>"$site",
-				"loaStartDate"=>$start_date_arr[$cid],
-				"loaEndDate"=>$end_date_arr[$cid],
-				"loaStartDate"=>$start_date_arr[$cid],
-				"accountManager"=>$acct_mgr,
-				"destination"=>$no_offer_dest_arr[$cid],
-				"numPackagesSold"=>$numPackagesSold,
-				"sales"=>$sales,
-				"loaBalance"=>$loa_balance_arr[$cid],
-				"lastPackageEndDate"=>$last_package_end_date
-			);
-
-		}
-
-		asort($num_sold_arr);
-		reset($num_sold_arr);
-		while(list($cid,$num)=each($num_sold_arr)){
-			$new_report_arr[$cid]=$report_arr[$cid];	
-		}
-
-
-		$this->set("report_arr",$new_report_arr);
-
-// date package went down?
-/*
-1. Client Name
-2. Site Designation (LL/FG)
-3. LOA start/end date
-4. Date package went down.  If client is new and has not yet added a package enter New.
-5. AM name
-1. Destination name
-2. # of packages sold
-3. Sales ($)
-4. LOA Balance - remit packages will show 0
-5. # of days since package went down
-*/
-
-	}
 
 	function offer_search() {
 	    if (isset($this->params['named']['offerId'])) {
@@ -957,8 +963,8 @@ class ReportsController extends AppController {
 		}
 
 		$index_arr=array(
-			'0 to 30', 
-			'31 to 60', 
+			'0 to 30',
+			'31 to 60',
 			'91 to 120',
 			'121 to 150',
 			'151 to 180',
@@ -1005,9 +1011,9 @@ class ReportsController extends AppController {
 							) as lastSellDate
 							FROM client AS Client
 							INNER JOIN loa AS Loa ON (Loa.clientId = Client.clientId)
-							WHERE (Loa.membershipBalance > 0 OR Loa.membershipPackagesRemaining > 0) AND Loa.startDate 
+							WHERE (Loa.membershipBalance > 0 OR Loa.membershipPackagesRemaining > 0) AND Loa.startDate
 							BETWEEN DATE_ADD(NOW(), INTERVAL ".$interval." DAY) AND NOW()
-							AND YEAR(Loa.endDate) >= YEAR(NOW() - INTERVAL 1 YEAR) AND Loa.loaLevelId = 2 $condition  
+							AND YEAR(Loa.endDate) >= YEAR(NOW() - INTERVAL 1 YEAR) AND Loa.loaLevelId = 2 $condition
 							GROUP BY Client.clientId, Loa.loaId ";
 			$sql.=$this->getOrderBy($sortBy);
 			$sql.=$sortDirection;
@@ -1016,19 +1022,19 @@ class ReportsController extends AppController {
 
 		}
 
-		// get rid of hh:mm:ss	
+		// get rid of hh:mm:ss
 		// build clientId array
 		$clientId_arr=array();
 		foreach($results as $key=>$result){
 			foreach($result as $index=>$arr){
 				$cid=$arr['Client']['clientId'];
 				$clientId_arr[$cid]=$cid;
-				$results[$key][$index]['Loa']['startDate']=str_replace(" 00:00:00","",$arr['Loa']['startDate']);	
-				$results[$key][$index][0]['loaEndDate']=str_replace(" 00:00:00","",$arr[0]['loaEndDate']);	
+				$results[$key][$index]['Loa']['startDate']=str_replace(" 00:00:00","",$arr['Loa']['startDate']);
+				$results[$key][$index][0]['loaEndDate']=str_replace(" 00:00:00","",$arr[0]['loaEndDate']);
 			}
 		}
 
-		// get destination names 
+		// get destination names
 		$q="SELECT c.clientId,dest.destinationName FROM clientDestinationRel as cdr ";
 		$q.="INNER JOIN client as c ON (cdr.clientId=c.clientId) ";
 		$q.="INNER JOIN destination as dest ON (cdr.destinationId=dest.destinationId) ";
@@ -1063,14 +1069,14 @@ class ReportsController extends AppController {
 			foreach($sort_arr as $key=>$arr){
 				$sort_flag="SORT_".$sortDirection;
 				array_multisort(
-					$sort_arr[$key]['age'], ($sortDirection=="ASC")?SORT_ASC:SORT_DESC, SORT_NUMERIC, 
+					$sort_arr[$key]['age'], ($sortDirection=="ASC")?SORT_ASC:SORT_DESC, SORT_NUMERIC,
 					$sort_arr[$key]['destinationName'], ($sortDirection=="ASC")?SORT_ASC:SORT_DESC, SORT_STRING,
 					$results[$key]
 				);
 			}
 
 		}
-		
+
 	  $this->set('results', $results);
 
 	}
@@ -1597,7 +1603,7 @@ class ReportsController extends AppController {
 		$this->loadModel("Country");
 		$this->loadModel("State");
 		$this->loadModel("OfferType");
-		
+
 		$this->set('countries', $this->Country->find('list'));
 		$this->set('states', $this->State->find('list'));
 	    $this->set('offerTypeIds', $this->OfferType->find('list'));
@@ -1670,7 +1676,7 @@ class ReportsController extends AppController {
 
             $condition1Options = array('MATCH=Client.name' => 'Client Name',
                                         'MATCH=Client.managerUsername' => 'Manager Username');
-                                        
+
 			$this->loadModel("RevenueModel");
 			$this->loadModel("PackageStatus");
 
@@ -2233,7 +2239,7 @@ class ReportsController extends AppController {
 			}
 
 			$this->set('managerUsernames', $managerUsernames);
-			
+
 
 			//Setup Regions
 			$q="SELECT destinationId, parentId, destinationName ";
@@ -2771,7 +2777,7 @@ class ReportsController extends AppController {
 		$tmp = $this->Client->query("SELECT GROUP_CONCAT(DISTINCT Package.packageId) AS ids, COUNT(*) AS numPackages, IF(DATEDIFF(pricePoint.validityEnd, '$date') < 30, 3, IF(DATEDIFF(pricePoint.validityEnd, '$date') < 45, 2, 1)) AS severity, expirationCriteriaId FROM package AS Package INNER JOIN pricePoint USING (packageId) INNER JOIN clientLoaPackageRel USING(packageId) INNER JOIN loa AS Loa USING(loaId) INNER JOIN track USING(trackId) WHERE (pricePoint.validityStart <= '$date' + INTERVAL 60 DAY) AND pricePoint.validityEnd >= NOW() AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 
 		foreach ($tmp as $v) {
-			
+
 			if($v['track']['expirationCriteriaId'] == 1 || $v['track']['expirationCriteriaId'] == 4 || $v['track']['expirationCriteriaId'] == 6) {
 				$row = 1;
 			} else {
@@ -3645,15 +3651,15 @@ class ReportsController extends AppController {
 		$this->set('distressedBuyNows', $distressedBuyNows);
 
 		/* Packages with x days Validity Left */
-		$tmp = $this->Client->query("SELECT 
-GROUP_CONCAT(Package.packageId) AS ids, 
+		$tmp = $this->Client->query("SELECT
+GROUP_CONCAT(Package.packageId) AS ids,
 COUNT(Package.packageId) AS numPackages,
 IF(DATEDIFF(pricePoint.validityEnd, '$date') < 30, 3, IF(DATEDIFF(pricePoint.validityEnd, '$date') < 45, 2, 1)) AS severity, expirationCriteriaId
-FROM package AS Package 
+FROM package AS Package
 INNER JOIN pricePoint USING (packageId)
-INNER JOIN clientLoaPackageRel USING(packageId) 
-INNER JOIN loa AS Loa USING(loaId) 
-INNER JOIN track USING(loaId) 
+INNER JOIN clientLoaPackageRel USING(packageId)
+INNER JOIN loa AS Loa USING(loaId)
+INNER JOIN track USING(loaId)
 WHERE (pricePoint.validityEnd BETWEEN NOW() AND NOW() + INTERVAL 60 DAY)
 AND (NOW() BETWEEN Loa.startDate AND Loa.endDate) AND Loa.loaLevelId IN (1,2) AND Loa.inactive = 0
 AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
@@ -3968,13 +3974,13 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		$this->set('pendingRecordCount', $pending['pendingRecordCount']);
 		$this->set('messages', $this->CarDataImporter->getMessages());
 	}
-	
+
 	/**
-	 * 
+	 *
 	 */
 	function experiments($experiment_id = null)
 	{
-		$site_id = (isset($_POST['site_id']) AND $_POST['site_id'] > 0) ? $_POST['site_id'] : null; 
+		$site_id = (isset($_POST['site_id']) AND $_POST['site_id'] > 0) ? $_POST['site_id'] : null;
 		$experiments = array();
 		$this->loadModel('Experiment');
 
@@ -3986,10 +3992,10 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 			$this->set('results', $results);
 		}
 	}
-	
+
 	/**
 	 * Ajax method to update experiment status
-	 * 
+	 *
 	 * @access	public
 	 * @param	int
 	 * @param	int
@@ -4000,9 +4006,9 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		$this->loadModel('Experiment');
 		$this->Experiment->updateStatus($experiment_id, $status_id);
 	}
-	
+
 	/**
-	 * 
+	 *
 	 */
 	public function statement_of_account($report_data = null)
 	{
@@ -4010,11 +4016,11 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		$service_url = '';
 		$service_urls = array();
 		$properties = '';
-		
+
 		if ($this->data) {
 			$start_date = $this->data['start_date'];
 			$end_date = $this->data['end_date'];
-			
+
 			if (!isset($this->data['Properties'])) {
 				$service_url = $service_base . "properties/$start_date/$end_date";
 				$properties = json_decode(file_get_contents($service_url));
@@ -4025,9 +4031,9 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 					$service_urls[] = array(
 						'html' => $service_url,
 						'pdf' => $this->webroot . 'reports/soa_pdf/' . base64_encode($service_url)
-					);				
+					);
 				}
-				$this->set('report_links', $service_urls);	
+				$this->set('report_links', $service_urls);
 			}
 		} else {
 			$cur_day = date('j');
@@ -4040,13 +4046,13 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 			$properties = json_decode(file_get_contents($service_url));
 			$this->set('properties', $properties);
 		}
-		
+
 		$this->set('start_date', $start_date);
 		$this->set('end_date', $end_date);
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public function soa_pdf($data_hash)
 	{
@@ -4061,14 +4067,14 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		$dompdf->render();
 		$dompdf->stream('sample.pdf');
 	}
-	
+
 	/**
-	 * 
+	 *
 	 */
 	public function consolidated_report($client_id = null)
 	{
 		$this->loadModel('Client');
-		Configure::write('debug', 0); 
+		Configure::write('debug', 0);
 		App::import('Vendor', 'ConsolidatedReport', array('file' => 'consolidated_report' . DS . 'consolidated_report_helper.php'));
 		$this->layout = 'excel';
 
@@ -4076,12 +4082,12 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		$newFile = TMP . 'consolidated_report.xlsx';
 		$outputFile = TMP . 'consolidated_report_output.xlsx';
 		$filename = 'consolidated_report_' . date('YmdHis') . '.xlsx';
-		
+
 		$client_data = $this->Client->find('first', array('order' => 'Client.clientId desc'));
 
 		// Create the report object
 		$report = new ConsolidatedReportHelper($template, $newFile, $outputFile);
-		
+
 		// Manipulate spreadsheet object by building array
 		// Start with client info
 		/*$report->setDataToPopulate('Dashboard', 'client_name', 'J4', $client_data['Client']['name']);
@@ -4091,7 +4097,7 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		$this->loadModel('ConsolidatedReport');
 		$this->ConsolidatedReport->create(10006, '2011-08-01', '2011-08-31');
 		$contact_details = $this->ConsolidatedReport->getContactDetails();
-		
+
 		foreach($contact_details as $key => $contact_detail) {
 			$spreadsheet_row = $key + 10;
 			$report->setDataToPopulate('Contact Details', "A$spreadsheet_row", $contact_detail['Lead Type']);
@@ -4120,11 +4126,11 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 
 		// Save array to spreadsheet object
 		$report->populateFromArray($report->getDataToPopulate());
-		
+
 		// Write the report object to disk
 		$report->writeSpreadsheetObjectToFile();
-		
-		
+
+
 		// Set our view data
 		$this->set('spreadsheet', $report->getSpreadsheetData());
 		$this->set('filename', $filename);
