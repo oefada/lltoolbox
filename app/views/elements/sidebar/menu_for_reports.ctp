@@ -10,6 +10,7 @@
 	<li><?=$html->link('Inventory Management', 'imr')?></li>
 	<li><?=$html->link('Offer Search', 'offer_search')?></li>
 	<li><?=$html->link('Package Search', 'packages')?></li>
+	<li><?=$html->link('Promotions Report','promotions')?></li>
 	<li><?=$html->link('Account Manager Client Report', 'mcr')?></li>
 	<li><?=$html->link('Merchandising Dashboard', 'merch')?></li>
 	<li><?=$html->link('Weekly Scorecard','weekly_scorecard')?></li>

@@ -4135,6 +4135,39 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		$this->set('spreadsheet', $report->getSpreadsheetData());
 		$this->set('filename', $filename);
 	}
+	
+	
+	function promotions($promotionId=null) {
+		$this->loadModel('Promotions');
+		$params = Array(
+			'recursive' => 0,
+			'order' => Array('promotionName' => 'asc')
+		);
+		$this->set('promotions', $this->Promotions->find('all', $params));
+		
+		if (isset($_POST['promotions']) && !empty($_POST['promotions'])) {
+			$displayId = intval($_POST['promotions']);
+			
+			// lookup promotionEntries data
+			$this->loadModel('PromotionEntries');
+			$params = Array(
+				'recursive' => 0,
+				'order' => Array('createdDt' => 'asc'),
+				'conditions' => Array('promotionId' => $displayId)
+			);
+			
+			$this->set('promotionEntries', $this->PromotionEntries->find('all', $params));
+			$this->set('displayId', $displayId);
+			
+			// check for csv export
+			if (isset($_POST['csv']) && $_POST['csv'] == 1) {
+				$this->viewPath .= '/csv';
+				$this->layoutPath = 'csv';
+			}
+		}
+		
+	}
+	
 }
 
 
