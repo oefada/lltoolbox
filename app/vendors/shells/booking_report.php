@@ -46,7 +46,7 @@ class BookingReportShell extends Shell {
 		}
 
 		$reportData = '';
-		$filename = date('Ymd-His') . '.tsv';
+		$filename = 'luxurylink.winning-bids.1.' . date('Ymd-His') . '.tsv';
 		$fp = '';
 		$status = FALSE;
 		$s3 = '';
