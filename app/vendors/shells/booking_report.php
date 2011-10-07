@@ -9,15 +9,18 @@ class BookingReportShell extends Shell {
 	private $s3_accessKey = 'AWS_ACCESS_KEY';
 	private $s3_secretKey = 'AWS_SECRET_KEY';
 	private $s3_bucket = 'AWS_S3_BUCKET';
+	private $start_date = '';
+	private $end_date = '';
 	private $filepath = '/tmp/';
 	
 	private $reportHeaders = array(
 		'account_id',
-		'site_id',
 		'event_timestamp',
+		'site_id',
 		'event_id',
 		'event_type',
 		'event_value',
+		'currency',
 		'member_id'
 	);
 	
@@ -34,20 +37,25 @@ class BookingReportShell extends Shell {
 		$this->s3_accessKey = isset($this->params['a']) ? $this->params['a'] : null;
 		$this->s3_secretKey = isset($this->params['p']) ? $this->params['p'] : null;
 		$this->s3_bucket = isset($this->params['b']) ? $this->params['b'] : null;
+		$this->start_date = isset($this->params['s']) ? $this->params['s'] : null;
+		$this->end_date = isset($this->params['e']) ? $this->params['e'] : null;
 		
-		$daysBack = (isset($this->params['n']) AND intval($this->params['n']) !==0) ? intval($this->params['n']) : 1;
-		$offerEndDate = date('Y-m-d', strtotime("-$daysBack days"));
+		if (is_null($this->start_date) || is_null($this->end_date)) {
+			$daysBack = (isset($this->params['n']) AND intval($this->params['n']) !==0) ? intval($this->params['n']) : 1;
+			$this->start_date = $this->end_date = date('Y-m-d', strtotime("-$daysBack days")); 
+		}
+
 		$reportData = '';
 		$filename = date('Ymd-His') . '.tsv';
 		$fp = '';
 		$status = FALSE;
 		$s3 = '';
 		$winningBids = array_merge(
-			$this->getWinningBids('luxurylink', $offerEndDate),
-			$this->getWinningBids('familygetaway', $offerEndDate)
+			$this->getWinningBids('luxurylink', $this->start_date, $this->end_date),
+			$this->getWinningBids('familygetaway', $this->start_date, $this->end_date)
 		);
 		
-		$this->log(sizeof($winningBids) . ' total winning bids for ' . $offerEndDate . '.', $this->logfile);
+		$this->log(sizeof($winningBids) . ' total winning bids for ' . $this->start_date . ' - ' . $this->end_date . '.', $this->logfile);
 		if (sizeof($winningBids) > 0) {
 			$this->log('Building tsv data.', $this->logfile);
 			$reportData = $this->buildTsvFile($winningBids);
@@ -63,6 +71,7 @@ class BookingReportShell extends Shell {
 				if ($status !== FALSE) {
 					$this->log("Uploading {$this->filepath}$filename to S3 bucket {$this->s3_bucket}.", $this->logfile);
 					$s3 = new S3($this->s3_accessKey, $this->s3_secretKey);
+
 					$status = $s3->putObjectFile($this->filepath . $filename, $this->s3_bucket, $filename, S3::ACL_PUBLIC_READ);
 				
 					if ($status !== TRUE) {
@@ -85,7 +94,7 @@ class BookingReportShell extends Shell {
 		}
 	}
 	
-	private function getWinningBids($site, $date) {
+	private function getWinningBids($site, $start_date, $end_date) {
 		$data_to_return = array();
 		$siteId = ($site == 'luxurylink') ? 1 : 2;
 		$offerTable = ($siteId == 1) ? 'offerLuxuryLink' : 'offerFamily';
@@ -95,7 +104,7 @@ class BookingReportShell extends Shell {
 				b.siteId as site_id,
 				UNIX_TIMESTAMP(b.bidDateTime) as event_timestamp,
 				b.offerId as event_id,
-				'conversion' as event_type,
+				'winning_bid' as event_type,
 				b.bidAmount as event_value,	
 				b.userId as member_id	
 			FROM
@@ -105,8 +114,8 @@ class BookingReportShell extends Shell {
 				b.winningBid = 1
 				AND b.siteId = $siteId
 				AND b.offerId = o.offerId
-				AND o.endDate >= '$date 00:00:00'
-				AND o.endDate <= '$date 23:59:59'
+				AND o.endDate >= '$start_date 00:00:00'
+				AND o.endDate <= '$end_date 23:59:59'
 			ORDER BY b.bidDateTime
 		";
 		
@@ -115,11 +124,12 @@ class BookingReportShell extends Shell {
 			foreach($this->db->query($sql) as $data) {
 				$data_to_return[] = array(
 					'account_id' => $data[0]['account_id'],
-					'site_id' => $data['b']['site_id'],
-					'event_timestamp' => $data[0]['event_timestamp'],
+					'event_timestamp' => date('n/j/Y H:i', $data[0]['event_timestamp']),
+					'site_id' => $data['b']['site_id'],					
 					'event_id' => $data['b']['event_id'],
 					'event_type' => $data[0]['event_type'],
 					'event_value' => $data['b']['event_value'],
+					'currency' => 'USD',
 					'member_id' => $data['b']['member_id'],
 				);
 			}
