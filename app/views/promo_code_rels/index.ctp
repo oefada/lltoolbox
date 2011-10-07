@@ -13,6 +13,7 @@ echo $paginator->counter(array(
 <tr>
 	<th><?php echo $paginator->sort('promoCodeId');?></th>
 	<th>Promo Code</th>
+	<th></th>
 </tr>
 <?php
 $i = 0;
@@ -28,6 +29,13 @@ foreach ($promoCodeRels as $promoCodeRel):
 		</td>
 		<td>
 			<?php echo $promoCodeRel['PromoCode']['promoCode']; ?>
+		</td>
+		<td align="center">
+			<? if ($promoCodeRel['PromoCode']['inactive'] == 1) { ?>
+			    INACTIVE  :: <a href="/promo_code_rels/index/<?= $id; ?>?pc_inactive=0&pc_id=<?= $promoCodeRel['PromoCodeRel']['promoCodeId']; ?>">TURN ON</a>
+			<? } else { ?>
+			    <a href="/promo_code_rels/index/<?= $id; ?>?pc_inactive=1&pc_id=<?= $promoCodeRel['PromoCodeRel']['promoCodeId']; ?>">TURN OFF</a>
+			<? } ?>
 		</td>
 	</tr>
 <?php endforeach; ?>

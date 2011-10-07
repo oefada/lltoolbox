@@ -193,6 +193,8 @@ class PromosController extends AppController {
 
 	function index() {
 
+        $csv_export = (isset($this->params['form']['s_submit_csv'])) ? true : false;
+
 		$this->paginate = array('fields'=>array('Promo.promoId', 'Promo.promoName', 'PromoCode.promoCode', 'Promo.percentOff', 'Promo.amountOff', 'Promo.minPurchaseAmount', 'Promo.startDate', 'Promo.endDate', 'Promo.siteId', 'PromoCategoryType.promoCategoryTypeName', 'count(*) AS numPromoCode'),
 								'order' => array('Promo.promoName' => 'asc'),
 								'limit' => 50,
@@ -274,17 +276,62 @@ class PromosController extends AppController {
 		}
 
 		// take out limit for export
-		$csv_export = isset($this->params['named']['csv_export']) ? $this->params['named']['csv_export'] : false;
 		if ($csv_export) { $this->paginate['limit'] = 10000; }
-
-		$csv_link_string = '/promos/search/csv_export:1/';
-		foreach ($this->params['form'] as $kk=>$vv) {
-			$csv_link_string .= "$kk:$vv/";
-		}
-		$csv_link_string .= '.csv';
 
 		$this->Promo->recursive = -1;
 		$promos = $this->paginate();
+
+		// add reporting
+		if (true) {
+			$promoList = array();
+			$reporting = array();
+			foreach ($promos as $p) {
+				$promoList[] = $p['Promo']['promoId'];
+			}
+			if ($promoList) {
+				$q = "SELECT Promo.promoId, COUNT(*) AS ticketCount, SUM(Ticket.billingPrice) AS grossRevenue
+				FROM promo Promo
+				INNER JOIN promoCodeRel PromoCodeRel USING (promoId)
+				INNER JOIN promoTicketRel PromoTicketRel USING (promoCodeId)
+				INNER JOIN ticket Ticket USING(ticketId)
+				WHERE Promo.promoId IN (" . implode(',', $promoList) . ")
+				AND Ticket.ticketStatusId IN (3,4,5,6)
+				GROUP BY Promo.promoId";
+				$result = $this->Promo->query($q);
+				foreach ($result as $r) {
+					$reporting[$r['Promo']['promoId']] = $r;
+				}
+
+				foreach ($promos as $key=>$val) {
+					$thisId = $val['Promo']['promoId'];
+					if (isset($reporting[$thisId])) {
+						$promos[$key]['Reporting']['ticketCount'] = $reporting[$thisId][0]['ticketCount'];
+						$promos[$key]['Reporting']['grossRevenue'] = $reporting[$thisId][0]['grossRevenue'];
+					} else {
+						$promos[$key]['Reporting']['ticketCount'] = 0;
+						$promos[$key]['Reporting']['grossRevenue'] = 0;
+					}
+				}
+			}
+		}
+
+		foreach ($promos as $key=>$val) {
+			$promoSite = intval($val['Promo']['siteId']);
+			if ($promoSite == 1) {
+				$promos[$key]['Promo']['siteLabel'] = 'LL';
+			} elseif ($promoSite == 2) {
+				$promos[$key]['Promo']['siteLabel'] = 'FG';
+			} elseif ($promoSite == 0) {
+				$promos[$key]['Promo']['siteLabel'] = 'All';
+			}
+
+			if (strtotime($val['Promo']['startDate']) < time() && strtotime($val['Promo']['endDate']) > time()) {
+				$promos[$key]['Promo']['isActive'] = 'Y';
+			} else {
+				$promos[$key]['Promo']['isActive'] = '';
+			}
+
+		}
 
 		$destinations = $this->Destination->find('all', array('recursive'=>-1, 'order'=>array('destinationName')));
 		$destinations = $this->addSiteInfoToDestinations($destinations);
@@ -306,7 +353,11 @@ class PromosController extends AppController {
 		    }
 		}
 
-
+        // csv version
+        if ($csv_export) {
+            $this->viewPath .= '/csv';
+            $this->layoutPath = 'csv';
+        }
 
 		// $this->Promo->containable = false;
 		// $this->set('csv_link_string', $csv_link_string);

@@ -66,7 +66,7 @@
 		</td>
 		<td style="width:30%; border-left:1px solid silver; padding-left:10px; padding-top:10px;">
 		<input type="submit" name="s_submit" value="Search" />
-		<? if (false) { ?>
+		<? if ($promos) { ?>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 		<input type="submit" name="s_submit_csv" value="Export to CSV" style="width:120px;"/>
 		<? } ?>
@@ -85,12 +85,15 @@
 	<th>Internal Promotion Name</th>
 	<th>Category</th>
 	<th>Promotion Code</th>
+	<th>Live</th>
 	<th>% Off</th>
 	<th>$ Off</th>
 	<th>Min $</th>
    	<th>Start Date</th>
    	<th>End Date</th>
    	<th>Site</th>
+   	<th>Tickets</th>
+   	<th>Revenue</th>
 	<th class="actions"><?php __('Actions');?></th>
 </tr>
 <? } ?>
@@ -114,21 +117,15 @@ foreach ($promos as $promo):
 		   }
 		?>
 		</td>
+		<td align="center"><?php echo $promo['Promo']['isActive']; ?></td>
 		<td align="right"><?php echo $promo['Promo']['percentOff']; ?></td>
 		<td align="right"><?php echo $promo['Promo']['amountOff']; ?></td>
 		<td align="right"><?php echo $promo['Promo']['minPurchaseAmount']; ?></td>
 		<td><?php echo $promo['Promo']['startDate']; ?></td>
 		<td><?php echo $promo['Promo']['endDate']; ?></td>
-		<td>
-			<?php $promoSite = intval($promo['Promo']['siteId']);
-			      if ($promoSite == 1) {
-			          echo 'LL';
-			      } elseif ($promoSite == 2) {
-			          echo 'FG';
-			      } elseif ($promoSite == 0) {
-			          echo 'All';
-			      } ?>
-		</td>
+		<td><?php echo $promo['Promo']['siteLabel']; ?></td>
+		<td align="right"><?php echo $promo['Reporting']['ticketCount']; ?></td>
+		<td align="right">$<?php echo number_format($promo['Reporting']['grossRevenue']); ?></td>
 		<td class="actions">
 	        <?php echo $html->link(__('Report', true), array('action'=>'report', $promo['Promo']['promoId'])); ?>
             <?php echo $html->link(__('Add Codes', true), array('controller'=>'promo_codes', 'action'=>'add', $promo['Promo']['promoId'])); ?>
@@ -137,3 +134,5 @@ foreach ($promos as $promo):
 <?php endforeach; ?>
 </table>
 </div>
+
+
