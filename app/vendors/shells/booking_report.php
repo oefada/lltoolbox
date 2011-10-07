@@ -100,7 +100,7 @@ class BookingReportShell extends Shell {
 		$offerTable = ($siteId == 1) ? 'offerLuxuryLink' : 'offerFamily';
 		$sql = "
 			SELECT 
-				'$site' as account_id,
+				'luxurylink' as account_id,
 				b.siteId as site_id,
 				UNIX_TIMESTAMP(b.bidDateTime) as event_timestamp,
 				b.offerId as event_id,
@@ -125,7 +125,7 @@ class BookingReportShell extends Shell {
 				$data_to_return[] = array(
 					'account_id' => $data[0]['account_id'],
 					'event_timestamp' => date('n/j/Y H:i', $data[0]['event_timestamp']),
-					'site_id' => $data['b']['site_id'],					
+					'site_id' => ($data['b']['site_id'] - 1),
 					'event_id' => $data['b']['event_id'],
 					'event_type' => $data[0]['event_type'],
 					'event_value' => $data['b']['event_value'],
