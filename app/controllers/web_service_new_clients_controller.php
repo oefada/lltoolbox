@@ -63,6 +63,20 @@ class WebServiceNewClientsController extends WebServicesController
 	    // respond with DB operation mode
 	    if (!$client_id || empty($client_id)) {
 	        $response_value = '1';  // client insert will occur
+
+			// 10/7/2011 jwoods - duplicate name check
+			$dupClient = $this->Client->query("SELECT * FROM client WHERE name = ?", array($decoded_request['client']['client_name']));
+			if (isset($dupClient[0]) && isset($dupClient[0]['clientId'])) {
+				@mail('jwoods@luxurylink.com', 'SUGAR BUS -- DUPLICATE CLIENT NAME', print_r($dupClient, true) . print_r($decoded_request, true));
+				$response_value = '-1';
+				$decoded_request['request']['response'] = $response_value;
+				$decoded_request['request']['response_time'] = time();
+				$encoded_response = json_encode($decoded_request);
+				$this->sendToSugar($encoded_response);
+				return $encoded_response;
+			}
+			// end duplicate name check
+
 	    } elseif (is_numeric($client_id) && $client_id > 0) {
 	        $response_value = '2';  // client update will occur
 	    } else {
