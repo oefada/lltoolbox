@@ -16,7 +16,7 @@ foreach ($results as $r):
 	$r['fgLastOffer'],
 	$r['ticketCount'],
 	$r['grossRevenue'],
-	$r['balance']
+	str_replace(',', '', $r['balance'])
 	); 
 	
 	echo implode(',', $line)."\r\n";
