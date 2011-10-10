@@ -162,7 +162,7 @@ class ReportsController extends AppController {
             if (isset($l['llLastOffer'])) {
             	if ($l['llLastOffer'] == '0' || strtotime($l['llLastOffer']) < strtotime($l['startDate'])) {
                     $loas[$k]['llLastOffer'] = 'None Found';
-                    $loas[$k]['llLastOfferDays'] = 0;
+                    $loas[$k]['llLastOfferDays'] = '-';
                     $loas[$k]['llLastOfferDaysSort'] = -1;
             	} else {
                     $loas[$k]['llLastOffer'] = date('m/d/Y', strtotime($l['llLastOffer']));
@@ -4135,8 +4135,8 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		$this->set('spreadsheet', $report->getSpreadsheetData());
 		$this->set('filename', $filename);
 	}
-	
-	
+
+
 	function promotions($promotionId=null) {
 		$this->loadModel('Promotions');
 		$params = Array(
@@ -4144,10 +4144,10 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 			'order' => Array('promotionName' => 'asc')
 		);
 		$this->set('promotions', $this->Promotions->find('all', $params));
-		
+
 		if (isset($_POST['promotions']) && !empty($_POST['promotions'])) {
 			$displayId = intval($_POST['promotions']);
-			
+
 			// lookup promotionEntries data
 			$this->loadModel('PromotionEntries');
 			$params = Array(
@@ -4155,19 +4155,19 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 				'order' => Array('createdDt' => 'asc'),
 				'conditions' => Array('promotionId' => $displayId)
 			);
-			
+
 			$this->set('promotionEntries', $this->PromotionEntries->find('all', $params));
 			$this->set('displayId', $displayId);
-			
+
 			// check for csv export
 			if (isset($_POST['csv']) && $_POST['csv'] == 1) {
 				$this->viewPath .= '/csv';
 				$this->layoutPath = 'csv';
 			}
 		}
-		
+
 	}
-	
+
 }
 
 
