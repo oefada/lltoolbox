@@ -30,7 +30,13 @@
                     <?php endif; ?>
                     <td><?php echo number_format($ratePeriod['retailValue'], 0); ?></td>
                     <td><input id="starting-price<?php echo $ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId']; ?>" type="text" value="<?php echo number_format($ratePeriod['startPrice'], 0); ?>" disabled/></td>
-                    <td><input id="percent-retail<?php echo $ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId']; ?>" class="percent-retail" type="text" name="data[LoaItemRatePackageRel][<?php echo $ratePeriod['LoaItemRatePackageRel']['loaItemRatePackageRelId']; ?>]" value="<?php echo $ratePeriod['LoaItemRatePackageRel']['guaranteePercentRetail']; ?>" style="width:90px;"/></td>
+                    <td>
+                    	<input id="percent-retail<?php echo $ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId']; ?>" class="percent-retail" type="text" name="data[LoaItemRatePackageRel][<?php echo $ratePeriod['LoaItemRatePackageRel']['loaItemRatePackageRelId']; ?>]" value="<?php echo $ratePeriod['LoaItemRatePackageRel']['guaranteePercentRetail']; ?>" style="width:90px;"/>
+						<? echo $html->image('calculator.png',array('onclick'=>
+						'calculatePercentOfRetail(\''.$ratePeriod['retailValue'].'\',
+						\'percent-retail'.$ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId'].'\');'
+						,'title'=>'Calculate percentage of Package Retail Value','style'=>'max-width: 20px; max-height: 20px; vertical-align: bottom; cursor: pointer;')); ?>
+					</td>
                 </tr>
         <?php endforeach; ?>
         </table>
@@ -42,15 +48,26 @@
     
 </div>
 
-
-
 <script>
+
+
+	function calculatePercentOfRetail(packageRetail,lowPriceGuarantee) {
+		// var message The message to be displayed to user
+		// var destination HTML id where the result should be entered
+		var requestedPrice = prompt('Enter desired Low Price Guarantee price',packageRetail);
+		var target = $('#'+lowPriceGuarantee);
+		target.val( requestedPrice*100/packageRetail );
+		target.change();
+	}
+
+
     var retail = new Array();
     <?php foreach ($ratePeriods as $key => $ratePeriod) {
         echo "retail[{$ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId']}] = $ratePeriod[retailValue];\n";    
     }
     ?>
-    $('.percent-retail').keyup(function() {
+    $('.percent-retail').keyup(function() {$('.percent-retail').change();});
+    $('.percent-retail').change(function() {
         elementId = $(this).attr('id');
         ratePeriodId = elementId.replace('percent-retail', '');
         startingPriceElementId = 'starting-price' + ratePeriodId;

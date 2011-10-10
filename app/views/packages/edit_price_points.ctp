@@ -125,7 +125,10 @@
             <tr><td colspan="5"></td></tr>
             <tr>
                 <td><strong>Auction Price:</strong></td>
-                <td>% Retail <input id="auction-percent" name="data[PricePoint][percentRetailAuc]" type="text" size="5" value="<? if (isset($pricePoint['percentRetailAuc'])) { echo $pricePoint['percentRetailAuc']; } ?>" /></td>
+                <td>
+                	% Retail <input id="auction-percent" name="data[PricePoint][percentRetailAuc]" type="text" size="5" value="<? if (isset($pricePoint['percentRetailAuc'])) { echo $pricePoint['percentRetailAuc']; } ?>" />
+                	<? echo $html->image('calculator.png',array('onclick'=>'calculatePercentOfRetail(\'Enter Auction Price\',\'auction-percent\');','title'=>'Calculate percentage of Package Retail Value','style'=>'max-width: 20px; max-height: 20px; vertical-align: bottom; cursor: pointer;')); ?>
+                </td>
                 <td><?=isset($ratePeriods[0]['currencyCode'])?$ratePeriods[0]['currencyCode']:0; ?> <input id="auction-retail" type="text" size="10" disabled="true" value="" /></td>
                 <td>USD <input id="auction-us-retail" type="text" disabled="true" size="10" value="" /></td>
                 <td>
@@ -138,7 +141,10 @@
             </tr>
             <tr>
                 <td><strong>Buy Now Price:</strong></td>
-                <td>% Retail <input id="buynow-percent" name="data[PricePoint][percentRetailBuyNow]" type="text" size="5" value="<? if (isset($pricePoint['percentRetailBuyNow'])) { echo $pricePoint['percentRetailBuyNow']; } ?>" /></td>
+                <td>
+                	% Retail <input id="buynow-percent" name="data[PricePoint][percentRetailBuyNow]" type="text" size="5" value="<? if (isset($pricePoint['percentRetailBuyNow'])) { echo $pricePoint['percentRetailBuyNow']; } ?>" />
+                	<? echo $html->image('calculator.png',array('onclick'=>'calculatePercentOfRetail(\'Enter Buy Now Price\',\'buynow-percent\');','title'=>'Calculate percentage of Package Retail Value','style'=>'max-width: 20px; max-height: 20px; vertical-align: bottom; cursor: pointer;')); ?>
+                	</td>
                 <td><?=isset($ratePeriods[0]['currencyCode'])?$ratePeriods[0]['currencyCode']:0; ?> <input id="buynow-retail" type="text" size="10" disabled="true" value="" /></td>
                 <td>USD <input id="buynow-us-retail" type="text" size="10" disabled="true" value="" /></td>
                 <td>
@@ -369,6 +375,15 @@ $('input#flexSuggestedRetail').change(function() {
 
 </script>
 <script type="text/javascript">
+
+	function calculatePercentOfRetail(message,destination) {
+		// var message The message to be displayed to user
+		// var destination HTML id where the result should be entered
+		var requestedPrice = prompt(message,$('#retail').text());
+		var target = $('#'+destination);
+		target.val( requestedPrice*100/$('#retail').text() );
+		target.change();
+	}
 
 	$('a#restrictions_pp').tooltip({track:true, bodyHandler: function() { return restrictionText(); } });
 		
