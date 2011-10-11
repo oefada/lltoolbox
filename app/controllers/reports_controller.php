@@ -4073,9 +4073,10 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 	 */
 	public function consolidated_report($client_id = null)
 	{
-		$this->loadModel('Client');
-		Configure::write('debug', 0);
-		App::import('Vendor', 'ConsolidatedReport', array('file' => 'consolidated_report' . DS . 'consolidated_report_helper.php'));
+		$this->loadModel('ConsolidatedReport');
+		Configure::write('debug', 0); 
+		App::import('Vendor', 'ConsolidatedReportHelper', array('file' => 'consolidated_report' . DS . 'consolidated_report_helper.php'));
+
 		$this->layout = 'excel';
 
 		$template = APP . 'vendors/consolidated_report/templates/consolidated_report_revision-1.xlsx';
@@ -4083,45 +4084,42 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		$outputFile = TMP . 'consolidated_report_output.xlsx';
 		$filename = 'consolidated_report_' . date('YmdHis') . '.xlsx';
 
-		$client_data = $this->Client->find('first', array('order' => 'Client.clientId desc'));
-
 		// Create the report object
 		$report = new ConsolidatedReportHelper($template, $newFile, $outputFile);
-
-		// Manipulate spreadsheet object by building array
-		// Start with client info
-		/*$report->setDataToPopulate('Dashboard', 'client_name', 'J4', $client_data['Client']['name']);
-		$report->setDataToPopulate('Dashboard', 'date_range', 'J5', 'Jan 1, 2011 - May 31, 2011');
-		$report->setDataToPopulate('Dashboard', 'marketing_fee', 'J7', $client_data['Loa'][0]['membershipFee']);
-		$report->setDataToPopulate('Activity Summary', 'loa_start_date', 'A4', date('M j, Y', strtotime($client_data['Loa'][0]['startDate'])));*/
-		$this->loadModel('ConsolidatedReport');
 		$this->ConsolidatedReport->create(10006, '2011-08-01', '2011-08-31');
-		$contact_details = $this->ConsolidatedReport->getContactDetails();
+		// Manipulate spreadsheet object by building array
+		/*$client_details = $this->ConsolidatedReport->getClientDetails();		
+		$report->setDataToPopulate('Dashboard', 'client_name', 'J4', $client_details['Client']['name']);
+		$report->setDataToPopulate('Dashboard', 'date_range', 'J5', 'Jan 1, 2011 - May 31, 2011');
+		$report->setDataToPopulate('Dashboard', 'marketing_fee', 'J7', $client_details['Loa'][0]['membershipFee']);
+		$report->setDataToPopulate('Activity Summary', 'loa_start_date', 'A4', date('M j, Y', strtotime($client_details['Loa'][0]['startDate'])));*/
 
+		$contact_details = $this->ConsolidatedReport->getContactDetails();
 		foreach($contact_details as $key => $contact_detail) {
 			$spreadsheet_row = $key + 10;
-			$report->setDataToPopulate('Contact Details', "A$spreadsheet_row", $contact_detail['Lead Type']);
-			$report->setDataToPopulate('Contact Details', "B$spreadsheet_row", $contact_detail['Site']);
-			$report->setDataToPopulate('Contact Details', "C$spreadsheet_row", $contact_detail['Activity Date']);
-			$report->setDataToPopulate('Contact Details', "D$spreadsheet_row", $contact_detail['Arrival']);
-			$report->setDataToPopulate('Contact Details', "E$spreadsheet_row", $contact_detail['Departure']);
-			$report->setDataToPopulate('Contact Details', "F$spreadsheet_row", $contact_detail['Room Nights']);
-			$report->setDataToPopulate('Contact Details', "G$spreadsheet_row", $contact_detail['Booking Amount']);
-			$report->setDataToPopulate('Contact Details', "H$spreadsheet_row", $contact_detail['Call Duration']);
-			$report->setDataToPopulate('Contact Details', "I$spreadsheet_row", $contact_detail['Booking Type']);
-			$report->setDataToPopulate('Contact Details', "J$spreadsheet_row", $contact_detail['Phone']);
-			$report->setDataToPopulate('Contact Details', "K$spreadsheet_row", $contact_detail['Firstname']);
-			$report->setDataToPopulate('Contact Details', "L$spreadsheet_row", $contact_detail['Lastname']);
-			$report->setDataToPopulate('Contact Details', "M$spreadsheet_row", $contact_detail['Email']);
-			$report->setDataToPopulate('Contact Details', "N$spreadsheet_row", $contact_detail['Opt-in']);
-			$report->setDataToPopulate('Contact Details', "O$spreadsheet_row", $contact_detail['Address']);
-			$report->setDataToPopulate('Contact Details', "P$spreadsheet_row", $contact_detail['City']);
-			$report->setDataToPopulate('Contact Details', "Q$spreadsheet_row", $contact_detail['State']);
-			$report->setDataToPopulate('Contact Details', "R$spreadsheet_row", $contact_detail['Zip']);
-			$report->setDataToPopulate('Contact Details', "S$spreadsheet_row", $contact_detail['Country']);
-			$report->setDataToPopulate('Contact Details', "T$spreadsheet_row", $contact_detail['Median Household Income']);
-			$report->setDataToPopulate('Contact Details', "U$spreadsheet_row", $contact_detail['Per Capita Income']);
-			$report->setDataToPopulate('Contact Details', "V$spreadsheet_row", $contact_detail['Median Earnings']);
+			$sheet_name = 'Contact Details';
+			$report->setDataToPopulate($sheet_name, "A$spreadsheet_row", $contact_detail['Lead Type']);
+			$report->setDataToPopulate($sheet_name, "B$spreadsheet_row", $contact_detail['Site']);
+			$report->setDataToPopulate($sheet_name, "C$spreadsheet_row", $contact_detail['Activity Date']);
+			$report->setDataToPopulate($sheet_name, "D$spreadsheet_row", $contact_detail['Arrival']);
+			$report->setDataToPopulate($sheet_name, "E$spreadsheet_row", $contact_detail['Departure']);
+			$report->setDataToPopulate($sheet_name, "F$spreadsheet_row", $contact_detail['Room Nights']);
+			$report->setDataToPopulate($sheet_name, "G$spreadsheet_row", $contact_detail['Booking Amount']);
+			$report->setDataToPopulate($sheet_name, "H$spreadsheet_row", $contact_detail['Call Duration']);
+			$report->setDataToPopulate($sheet_name, "I$spreadsheet_row", $contact_detail['Booking Type']);
+			$report->setDataToPopulate($sheet_name, "J$spreadsheet_row", $contact_detail['Phone']);
+			$report->setDataToPopulate($sheet_name, "K$spreadsheet_row", $contact_detail['Firstname']);
+			$report->setDataToPopulate($sheet_name, "L$spreadsheet_row", $contact_detail['Lastname']);
+			$report->setDataToPopulate($sheet_name, "M$spreadsheet_row", $contact_detail['Email']);
+			$report->setDataToPopulate($sheet_name, "N$spreadsheet_row", $contact_detail['Opt-in']);
+			$report->setDataToPopulate($sheet_name, "O$spreadsheet_row", $contact_detail['Address']);
+			$report->setDataToPopulate($sheet_name, "P$spreadsheet_row", $contact_detail['City']);
+			$report->setDataToPopulate($sheet_name, "Q$spreadsheet_row", $contact_detail['State']);
+			$report->setDataToPopulate($sheet_name, "R$spreadsheet_row", $contact_detail['Zip']);
+			$report->setDataToPopulate($sheet_name, "S$spreadsheet_row", $contact_detail['Country']);
+			$report->setDataToPopulate($sheet_name, "T$spreadsheet_row", $contact_detail['Median Household Income']);
+			$report->setDataToPopulate($sheet_name, "U$spreadsheet_row", $contact_detail['Per Capita Income']);
+			$report->setDataToPopulate($sheet_name, "V$spreadsheet_row", $contact_detail['Median Earnings']);
 		}
 
 		// Save array to spreadsheet object
