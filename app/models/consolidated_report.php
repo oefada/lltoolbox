@@ -101,6 +101,14 @@ class ConsolidatedReport extends AppModel
 	/**
 	 * 
 	 */
+	public function getClientDetails()
+	{
+		
+	}
+	
+	/**
+	 * 
+	 */
 	public function getBookingInformation()
 	{
 		
@@ -302,6 +310,21 @@ class ConsolidatedReport extends AppModel
 				null
 			);
 		}
+
+		// Switch to vacationist database for vacationist ticket info
+		$this->setDataSource('vacationist');
+ 		$sql = "
+ 			SELECT
+ 				Ticket.id,
+ 				Ticket.created,
+ 				Ticket.checkIn,
+ 				Ticket.checkOut,
+ 				Ticket.numNights,
+ 				Ticket.salePrice
+ 		";
+		
+		// Switch back to default database
+		$this->setDataSource('default');
 
 		return $booking_details;
 	}

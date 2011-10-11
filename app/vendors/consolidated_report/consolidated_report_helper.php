@@ -168,6 +168,8 @@ class ConsolidatedReportHelper
 	}
 	
 	/**
+	 * Utility method to set the formatting of a cell
+	 *  
 	 * @access	public
 	 * @param	string cell
 	 * @param	string format
