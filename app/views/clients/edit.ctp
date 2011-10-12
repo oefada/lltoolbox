@@ -94,7 +94,7 @@ foreach ($this->data['Client']['sites'] as $site) {
 ?>
 	<fieldset>
 		<? echo $form->input('clientTypeId', array('label' => 'Client Type', 'empty' => true)); ?>
-		<? echo $form->input('clientCollectionId', array('label' => 'Collection', 'empty' => true)); ?>
+		<? echo $form->input('clientCollectionName', array('label' => 'Collection')); ?>
 		<div class="input text"><label>LOA Level</label><?=$this->data['ClientLevel']['clientLevelName']?></div>
 		<div class="controlset4">
 			<label>Hide on</label>
