@@ -66,7 +66,7 @@ class WebServiceNewClientsController extends WebServicesController
 
 			// 10/7/2011 jwoods - duplicate name check
 			$dupClient = $this->Client->query("SELECT * FROM client WHERE name = ?", array($decoded_request['client']['client_name']));
-			if (isset($dupClient[0]) && isset($dupClient[0]['clientId'])) {
+			if (isset($dupClient[0]) && isset($dupClient[0]['client']['clientId'])) {
 				@mail('jwoods@luxurylink.com', 'SUGAR BUS -- DUPLICATE CLIENT NAME', print_r($dupClient, true) . print_r($decoded_request, true));
 				$response_value = '-1';
 				$decoded_request['request']['response'] = $response_value;
