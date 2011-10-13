@@ -4074,6 +4074,7 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 	public function consolidated_report($client_id = null)
 	{
 		$this->loadModel('ConsolidatedReport');
+		$this->loadModel('Client');
 		Configure::write('debug', 0); 
 		App::import('Vendor', 'ConsolidatedReportHelper', array('file' => 'consolidated_report' . DS . 'consolidated_report_helper.php'));
 
@@ -4086,13 +4087,18 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 
 		// Create the report object
 		$report = new ConsolidatedReportHelper($template, $newFile, $outputFile);
-		$this->ConsolidatedReport->create(10006, '2011-08-01', '2011-08-31');
-		// Manipulate spreadsheet object by building array
-		/*$client_details = $this->ConsolidatedReport->getClientDetails();		
-		$report->setDataToPopulate('Dashboard', 'client_name', 'J4', $client_details['Client']['name']);
-		$report->setDataToPopulate('Dashboard', 'date_range', 'J5', 'Jan 1, 2011 - May 31, 2011');
-		$report->setDataToPopulate('Dashboard', 'marketing_fee', 'J7', $client_details['Loa'][0]['membershipFee']);
-		$report->setDataToPopulate('Activity Summary', 'loa_start_date', 'A4', date('M j, Y', strtotime($client_details['Loa'][0]['startDate'])));*/
+		
+		// Test report, Terranea Jan 1st, 2011 to Jan 31st, 2011
+		$this->ConsolidatedReport->create(3418, '2011-01-01', '2011-01-31');
+		
+		// Client Details
+		$this->Client->id = $this->ConsolidatedReport->getClientId();
+		$client_details = $this->Client->find('first', array('order' => 'Client.clientId desc'));
+				
+		$report->setDataToPopulate('Dashboard', 'J4', $client_details['Client']['name']);
+		$report->setDataToPopulate('Dashboard', 'J5', date('M j, Y', strtotime($this->ConsolidatedReport->getStartDate())) . ' - ' . date('M j, Y', strtotime($this->ConsolidatedReport->getStartDate())));
+		$report->setDataToPopulate('Dashboard', 'J7', $client_details['Loa'][0]['membershipFee']);
+		$report->setDataToPopulate('Activity Summary', 'A4', date('M j, Y', strtotime($client_details['Loa'][0]['startDate'])));
 
 		// Contact Details
 		$contact_details = $this->ConsolidatedReport->getContactDetails();

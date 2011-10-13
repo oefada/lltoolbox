@@ -99,11 +99,45 @@ class ConsolidatedReport extends AppModel
 	}
 	
 	/**
+	 * Return the client id
+	 * 
+	 * @access	public
+	 * @return	int
+	 */
+	public function getClientId()
+	{
+		return $this->client_id;
+	}
+	
+	
+	/**
+	 * Return the report start date
+	 * 
+	 * @access	public
+	 * @return	string
+	 */
+	public function getStartDate()
+	{
+		return $this->start_date . ' 00:00:00';
+	}
+	
+	/**
+	 * Return the report end date
+	 * 
+	 * @access	public
+	 * @return	string
+	 */
+	public function getEndDate()
+	{
+		return $this->end_date . ' 23:59:59';
+	}
+	
+	/**
 	 * 
 	 */
 	public function getClientDetails()
 	{
-		
+
 	}
 	
 	/**
@@ -143,27 +177,7 @@ class ConsolidatedReport extends AppModel
 				FROM $table
 				WHERE
 					clientid = {$this->client_id}
-					AND activityStart >= '{$start_date}'
-					AND activityEnd < '{$this->end_date}'
-				ORDER BY year2, month2
-			";
-			
-			// TODO: Remove after testing
-			$sql = "
-				SELECT
-					year2,
-					month2,
-					clientid,
-					phone,
-					webrefer,
-					productview,
-					searchview,
-					destinationview,
-					email,
-					totalimpressions
-				FROM $table
-				WHERE
-					clientid = {$this->client_id}
+					
 				ORDER BY year2, month2
 			";
 
@@ -213,7 +227,7 @@ class ConsolidatedReport extends AppModel
 		$contact_details = array();
 		
 		$call_details = $this->getCallDetails();
-		$booking_details = array_merge($this->getBookingDetails(1), $this->getBookingDetails(2));
+		$booking_details = array_merge($this->getBookingDetails(1), $this->getBookingDetails(2), $this->getVacationistBookingDetails());
 		$contact_details = array_merge($call_details, $booking_details);
 		unset($call_details, $booking_details);
 		usort($contact_details, array('self', 'cmp_booking_dates'));
@@ -332,7 +346,7 @@ class ConsolidatedReport extends AppModel
 				ticket Ticket,
 				paymentDetail PaymentDetail,
 				$offer_join_table Offer,
-				site Site,
+				sites Site,
 				reservation Reservation,
 				`user` `User`
 			WHERE
@@ -375,21 +389,76 @@ class ConsolidatedReport extends AppModel
 			);
 		}
 
+		return $booking_details;
+	}
+
+	/**
+	 * Get booking details for Vacationist
+	 * 
+	 * @access	private
+	 * @return	array
+	 */
+	private function getVacationistBookingDetails()
+	{
+		$booking_details_raw = array();
+		$booking_details = array();
+		
 		// Switch to vacationist database for vacationist ticket info
 		$this->setDataSource('vacationist');
- 		$sql = "
- 			SELECT
- 				Ticket.id,
- 				Ticket.created,
- 				Ticket.checkIn,
- 				Ticket.checkOut,
- 				Ticket.numNights,
- 				Ticket.salePrice
- 		";
 		
+		$sql = "
+			SELECT
+				Ticket.id,
+				Ticket.created,
+				Ticket.checkIn,
+				Ticket.checkOut,
+				Ticket.numNights,
+				Ticket.salePrice,
+				`User`.firstName,
+				`User`.lastName,
+				`User`.zip,
+				`User`.email
+			FROM
+				ticket Ticket,
+				client Client,
+				`user` `User`
+			WHERE
+				Client.id = Ticket.clientId
+				AND User.id = Ticket.userId
+				AND Client.toolboxClientId = {$this->client_id}
+				AND Ticket.created BETWEEN '{$this->start_date}' AND '{$this->end_date}'
+		";
+		
+		$booking_details_raw = $this->query($sql);
+		foreach($booking_details_raw as $key => $booking_detail) {
+			$booking_details[] = self::buildContactDetails(
+				'Booking',
+				'Vacationist',
+				date('Y-m-d', strtotime($booking_detail['Ticket']['created'])),
+				$booking_detail['Ticket']['checkIn'],
+				$booking_detail['Ticket']['checkOut'],
+				$booking_detail['Ticket']['numNights'],
+				$booking_detail['Ticket']['salePrice'],
+				null,
+				'Room Only',
+				null,
+				$booking_detail['User']['firstName'],
+				$booking_detail['User']['lastName'],
+				$booking_detail['User']['email'],
+				null,
+				null,
+				null,
+				null,
+				$booking_detail['User']['zip'],
+				null,
+				null,
+				null,
+				null
+			);
+		}
+
 		// Switch back to default database
 		$this->setDataSource('default');
-
 		return $booking_details;
 	}
 
