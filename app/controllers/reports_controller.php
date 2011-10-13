@@ -4094,10 +4094,11 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		$report->setDataToPopulate('Dashboard', 'marketing_fee', 'J7', $client_details['Loa'][0]['membershipFee']);
 		$report->setDataToPopulate('Activity Summary', 'loa_start_date', 'A4', date('M j, Y', strtotime($client_details['Loa'][0]['startDate'])));*/
 
+		// Contact Details
 		$contact_details = $this->ConsolidatedReport->getContactDetails();
+		$sheet_name = 'Contact Details';
 		foreach($contact_details as $key => $contact_detail) {
 			$spreadsheet_row = $key + 10;
-			$sheet_name = 'Contact Details';
 			$report->setDataToPopulate($sheet_name, "A$spreadsheet_row", $contact_detail['Lead Type']);
 			$report->setDataToPopulate($sheet_name, "B$spreadsheet_row", $contact_detail['Site']);
 			$report->setDataToPopulate($sheet_name, "C$spreadsheet_row", $contact_detail['Activity Date']);
@@ -4121,6 +4122,71 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 			$report->setDataToPopulate($sheet_name, "U$spreadsheet_row", $contact_detail['Per Capita Income']);
 			$report->setDataToPopulate($sheet_name, "V$spreadsheet_row", $contact_detail['Median Earnings']);
 		}
+		// End of Contact Details
+		
+		// Impression Details
+		$impression_details = $this->ConsolidatedReport->getImpressions();
+		$current_year = date('y');
+		$month_column_map = array(
+			1 => 'B',
+			2 => 'C',
+			3 => 'D',
+			4 => 'E',
+			5 => 'F',
+			6 => 'G',
+			7 => 'H',
+			8 => 'I',
+			9 => 'J',
+			10 => 'K',
+			11 => 'M',
+			12 => 'N'
+		);
+		$sheet_name = 'Impressions';
+		
+		// Populate the Mon-Year header
+		$report->setDataToPopulate($sheet_name, "B7", "Jan-$current_year");
+		$report->setDataToPopulate($sheet_name, "C7", "Feb-$current_year");
+		$report->setDataToPopulate($sheet_name, "D7", "Mar-$current_year");
+		$report->setDataToPopulate($sheet_name, "E7", "Apr-$current_year");
+		$report->setDataToPopulate($sheet_name, "F7", "May-$current_year");
+		$report->setDataToPopulate($sheet_name, "G7", "Jun-$current_year");
+		$report->setDataToPopulate($sheet_name, "H7", "Jul-$current_year");
+		$report->setDataToPopulate($sheet_name, "I7", "Aug-$current_year");
+		$report->setDataToPopulate($sheet_name, "J7", "Sep-$current_year");
+		$report->setDataToPopulate($sheet_name, "K7", "Oct-$current_year");
+		$report->setDataToPopulate($sheet_name, "L7", "Nov-$current_year");
+		$report->setDataToPopulate($sheet_name, "M7", "Dec-$current_year");
+
+		// Populate Impressions by Site
+		foreach($impression_details as $key => $impression_detail) {
+			if ($key == 'Luxury Link') {
+				$spreadsheet_row = 8;
+			} else if ($key == 'Family Getaway') {
+				$spreadsheet_row = 9;
+			} else {
+				$spreadsheet_row = 10;
+			}
+			foreach($impression_detail as $key => $impression_data) {
+				$cell = $month_column_map[$key] . $spreadsheet_row;
+				$impressions_by_type[$key]['portfolio_microsite'] += $impression_data['productview'];
+				$impressions_by_type[$key]['destination'] += $impression_data['destinationview'];
+				$impressions_by_type[$key]['search'] += $impression_data['searchview'];
+				$impressions_by_type[$key]['email'] += $impression_data['email'];
+				
+				$report->setDataToPopulate($sheet_name, $cell, $impression_data['total_impressions']);
+			}
+		}
+		
+		//Populate Impressions by Type
+		foreach($impressions_by_type as $key => $value) {
+			$row = $month_column_map[$key];
+			$report->setDataToPopulate($sheet_name, $row . 19, $value['portfolio_microsite']);
+			$report->setDataToPopulate($sheet_name, $row . 20, $value['destination']);
+			$report->setDataToPopulate($sheet_name, $row . 21, $value['search']);
+			$report->setDataToPopulate($sheet_name, $row . 22, $value['email']);
+		}
+
+		// End of Impression Details
 
 		// Save array to spreadsheet object
 		$report->populateFromArray($report->getDataToPopulate());

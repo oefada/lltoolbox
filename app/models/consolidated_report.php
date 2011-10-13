@@ -115,11 +115,75 @@ class ConsolidatedReport extends AppModel
 	}
 	
 	/**
-	 * 
+	 *  
 	 */
 	public function getImpressions()
 	{
-		
+		$this->setDataSource('reporting');
+		$impressions = array();
+		$tables = array(
+			'Luxury Link' => 'carConsolidatedView',
+			'Family Getaway' => 'carConsolidatedViewFg'
+		);
+		$start_date = date('Y', strtotime($this->start_date)) . '-01-01';
+
+		foreach($tables as $site => $table) {
+			$sql = "
+				SELECT
+					year2,
+					month2,
+					clientid,
+					phone,
+					webrefer,
+					productview,
+					searchview,
+					destinationview,
+					email,
+					totalimpressions
+				FROM $table
+				WHERE
+					clientid = {$this->client_id}
+					AND activityStart >= '{$start_date}'
+					AND activityEnd < '{$this->end_date}'
+				ORDER BY year2, month2
+			";
+			
+			// TODO: Remove after testing
+			$sql = "
+				SELECT
+					year2,
+					month2,
+					clientid,
+					phone,
+					webrefer,
+					productview,
+					searchview,
+					destinationview,
+					email,
+					totalimpressions
+				FROM $table
+				WHERE
+					clientid = {$this->client_id}
+				ORDER BY year2, month2
+			";
+
+			$rows = $this->query($sql);
+			foreach($rows as $row) {
+				$impressions[$site][$row[$table]['month2']] = array(
+					'year' => $row['carConsolidatedView']['year2'],
+					'month' => $row['carConsolidatedView']['month2'],
+					'phonecalls' => $row['carConsolidatedView']['phone'],
+					'webrefer' => $row['carConsolidatedView']['webrefer'],
+					'productview' => $row['carConsolidatedView']['productview'],
+					'searchview' => $row['carConsolidatedView']['searchview'],
+					'destinationview' => $row['carConsolidatedView']['destinationview'],
+					'email' => $row['carConsolidatedView']['email'],
+					'total_impressions' => $row['carConsolidatedView']['totalimpressions']
+				);
+			}
+		}
+		$this->setDataSource('default');
+		return $impressions;
 	}
 	
 	/**
