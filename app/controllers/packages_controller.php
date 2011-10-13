@@ -17,6 +17,8 @@ class PackagesController extends AppController {
 			$this->set('client', $this->Client->findByClientId($this->params['clientId']));
 			$this->set('clientId', $this->params['clientId']);
 		}
+
+
 	}
 
 	function clonePackageAcrossLoas($clientId, $packageId) {
@@ -1083,46 +1085,55 @@ class PackagesController extends AppController {
             }
 
             if ($_POST['isAjax'] == 'true') {
+							
                 if ($this->Package->saveAll($this->data)) {
                     if (empty($package['Package']['packageId'])) {
                         $packageId = $this->Package->getLastInsertId();
                         $package['Package']['packageId'] = $packageId;
                     }
-                    $isMultiClientPackage = $this->Package->ClientLoaPackageRel->isMultiClientPackage($packageId);
+                    $isMultiClientPackage=$this->Package->ClientLoaPackageRel->isMultiClientPackage($packageId);
                     $this->Package->PackageLoaItemRel->updateInclusions($package, $isMultiClientPackage);
                     if (!empty($package['LoaItemRatePackageRel'])) {
                         $this->Package->LoaItemRatePackageRel->setNumNights(&$package);
                         $this->Package->LoaItemRatePackageRel->save($package);
                     }
                     echo 'ok';
+                }else {
+                  echo json_encode($this->Package->validationErrors);
                 }
-                else {
-                    echo json_encode($this->Package->validationErrors);
+
+            } else {
+
+              if ($this->Package->saveAll($this->data)) {
+
+                if (empty($package['Package']['packageId'])) {
+
+									$packageId = $this->Package->getLastInsertId();
+									//this may vary with multiclient packages. need to add logic if using this function
+									//single client packages -- percentOfRetail will always equal 100
+									$percentOfRevenue = 100;
+									$relData = array('packageId' => $packageId,
+																	 'clientId' => $clientId,
+																	 'loaId' => $package['Package']['loaId'],
+																	 'numNights' => $package['Package']['numNights'],
+																	 'percentOfRevenue' => $percentOfRevenue);
+									$this->Package->ClientLoaPackageRel->create();
+									$this->Package->ClientLoaPackageRel->save($relData);
+									$package['Package']['packageId'] = $packageId;
+
+									$this->Package->logHistory($clientId,$packageId,"Created");
+
                 }
-            }
-            else {
-                if ($this->Package->saveAll($this->data)) {
-                    if (empty($package['Package']['packageId'])) {
-                        $packageId = $this->Package->getLastInsertId();
-                        //this may vary with multiclient packages. need to add logic if using this function
-                        //single client packages -- percentOfRetail will always equal 100
-                        $percentOfRevenue = 100;
-                        $relData = array('packageId' => $packageId,
-                                         'clientId' => $clientId,
-                                         'loaId' => $package['Package']['loaId'],
-                                         'numNights' => $package['Package']['numNights'],
-                                         'percentOfRevenue' => $percentOfRevenue);
-                        $this->Package->ClientLoaPackageRel->create();
-                        $this->Package->ClientLoaPackageRel->save($relData);
-                        $package['Package']['packageId'] = $packageId;
-                    }
-                    if (!empty($package['LoaItemRatePackageRel'])) {
-                        $this->Package->LoaItemRatePackageRel->setNumNights(&$package);
-                        $this->Package->LoaItemRatePackageRel->save($package['LoaItemRatePackageRel']);
-                    }
-                    $this->redirect('/clients/'.$clientId.'/packages/summary/'.$packageId);
+
+                if (!empty($package['LoaItemRatePackageRel'])) {
+                  $this->Package->LoaItemRatePackageRel->setNumNights(&$package);
+                  $this->Package->LoaItemRatePackageRel->save($package['LoaItemRatePackageRel']);
                 }
-                else {
+
+                $this->redirect('/clients/'.$clientId.'/packages/summary/'.$packageId);
+
+             }else {
+
 								//print_r($this->Package->validationErrors);exit;
 										$errors=implode("<br>",$this->Package->validationErrors);
                     $this->Session->setFlash($errors);
@@ -2561,6 +2572,7 @@ CakeLog::write('debug', 'C');
         if (!empty($ratePeriods)) {
             foreach ($ratePeriods as $key => &$ratePeriod) {
                 $clientName = $this->LoaItem->getClientName($ratePeriod['LoaItemRatePeriod']['loaItemId'], $packageId);
+
                 // get dates
                 $loaItemDates = $this->Package->getLoaItemDates($ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId']);
                 $loaDates = array();

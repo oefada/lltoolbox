@@ -50,7 +50,7 @@
 			$m = $m['SchedulingMaster'];
 			if ($offerTypeId == 7) { $packageIsHotelOffer = true; } ?>
 			
-			<li style="margin-bottom:5px;"><b><?=$offerTypeName?></b><br/><a href="javascript: void(0);" onclick="Modalbox.show('/scheduling_masters/edit/<?=$m['schedulingMasterId']?>', {title: 'Edit Scheduling Master'});">Master Id #<?=$m['schedulingMasterId']?><br/><?=date('M d, Y', strtotime($m['startDate']))?> - <?=date('M d, Y', strtotime($m['endDate']))?></a></li>
+			<li style="margin-bottom:5px;"><b><?=$offerTypeName?></b><br/><a href="javascript: void(0);" onclick="Modalbox.show('/scheduling_masters/edit/<?=$m['schedulingMasterId']?>', {title: 'Edit Scheduling Master'},height:900);">Master Id #<?=$m['schedulingMasterId']?><br/><?=date('M d, Y', strtotime($m['startDate']))?> - <?=date('M d, Y', strtotime($m['endDate']))?></a></li>
 
 		     <?php endforeach; ?>
 		</ul>	
@@ -160,7 +160,7 @@ foreach($package['Scheduling'] as $k => $master):
     $param = (in_array($master['SchedulingMaster']['offerTypeId'], array(1,2,3,6,7))) ? 'instanceId:'.$instance['schedulingInstanceId'] : '';
 	if (substr($mstrStartDate, 0, 10) == substr($startDate, 0, 10)) {
 	?>
-		<div id='schedulingMaster<?=$master['SchedulingMaster']['schedulingMasterId']?>' style="width: <?=$width?>%; left: <?=$left?>%"<?=$class?> onclick="Modalbox.show('/scheduling_masters/edit/<?=$instance['schedulingMasterId']?>/<?php echo $param; ?>', {title: 'Edit Scheduling Master'});">	
+		<div id='schedulingMaster<?=$master['SchedulingMaster']['schedulingMasterId']?>' style="width: <?=$width?>%; left: <?=$left?>%"<?=$class?> onclick="Modalbox.show('/scheduling_masters/edit/<?=$instance['schedulingMasterId']?>/<?php echo $param; ?>', {title: 'Edit Scheduling Master',height:900});">	
 		<strong>Retail Value</strong><br />
         <?php if (empty($master['SchedulingMaster']['pricePointId'])): ?>
             <?=$number->currency($master['SchedulingMaster']['retailValue'])?>
@@ -179,7 +179,7 @@ foreach($package['Scheduling'] as $k => $master):
 																				));
 	} else {
 	?>
-		<div id="schedulingInstance<?=$instance['schedulingInstanceId']?>"style="width: <?=$width?>%; left: <?=$left?>%"<?=$class?> onclick="Modalbox.show('/scheduling_masters/edit/<?=$instance['schedulingMasterId']?>/instanceId:<?php echo $instance['schedulingInstanceId']; ?>', {title: 'Edit Scheduling Master'});">	
+		<div id="schedulingInstance<?=$instance['schedulingInstanceId']?>"style="width:<?=$width?>%; left: <?=$left?>%"<?=$class?> onclick="Modalbox.show('/scheduling_masters/edit/<?=$instance['schedulingMasterId']?>/instanceId:<?=$instance['schedulingInstanceId']; ?>', {title: 'Edit Scheduling Master',height:900});">	
 		Iteration 
 
 	<? // 08/03/11 jwoods - added info to Auction cells 
