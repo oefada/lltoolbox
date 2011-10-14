@@ -4084,12 +4084,27 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		$newFile = TMP . 'consolidated_report.xlsx';
 		$outputFile = TMP . 'consolidated_report_output.xlsx';
 		$filename = 'consolidated_report_' . date('YmdHis') . '.xlsx';
+		
+		$month_column_map = array(
+			1 => 'B',
+			2 => 'C',
+			3 => 'D',
+			4 => 'E',
+			5 => 'F',
+			6 => 'G',
+			7 => 'H',
+			8 => 'I',
+			9 => 'J',
+			10 => 'K',
+			11 => 'M',
+			12 => 'N'
+		);
 
 		// Create the report object
 		$report = new ConsolidatedReportHelper($template, $newFile, $outputFile);
 		
 		// Test report, Terranea Jan 1st, 2011 to Jan 31st, 2011
-		$this->ConsolidatedReport->create(3418, '2011-01-01', '2011-01-31');
+		$this->ConsolidatedReport->create(3418, '2011-05-01', '2011-05-31');
 		
 		// Client Details
 		$this->Client->id = $this->ConsolidatedReport->getClientId();
@@ -4100,9 +4115,12 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		$report->setDataToPopulate('Dashboard', 'J7', $client_details['Loa'][0]['membershipFee']);
 		$report->setDataToPopulate('Activity Summary', 'A4', date('M j, Y', strtotime($client_details['Loa'][0]['startDate'])));
 		
-		// Fill in date cells
+		// Fill in date/data reference cells
 		$report->setDataToPopulate('Activity Summary', 'A10', date('M-y', strtotime($this->ConsolidatedReport->getStartDate())));
 		$report->setDataToPopulate('Activity Summary', 'A25', 'Jan - ' . date('M-y', strtotime('-1 month')));
+		$report->setDataToPopulate('Activity Summary', 'B11', '=Impressions!' . $month_column_map[date('n', strtotime($this->ConsolidatedReport->getStartDate()))] . 8);
+		$report->setDataToPopulate('Activity Summary', 'D11', '=Impressions!' . $month_column_map[date('n', strtotime($this->ConsolidatedReport->getStartDate()))] . 9);
+		$report->setDataToPopulate('Activity Summary', 'F11', '=Impressions!' . $month_column_map[date('n', strtotime($this->ConsolidatedReport->getStartDate()))] . 10);
 
 		$report->setDataToPopulate('Bookings', 'B3', "='Activity Summary'!A10");
 		$report->setDataToPopulate('Bookings', 'A6', "='Activity Summary'!A10");
@@ -4144,20 +4162,6 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		// Impression Details
 		$impression_details = $this->ConsolidatedReport->getImpressions();
 		$current_year = date('y');
-		$month_column_map = array(
-			1 => 'B',
-			2 => 'C',
-			3 => 'D',
-			4 => 'E',
-			5 => 'F',
-			6 => 'G',
-			7 => 'H',
-			8 => 'I',
-			9 => 'J',
-			10 => 'K',
-			11 => 'M',
-			12 => 'N'
-		);
 		$sheet_name = 'Impressions';
 		
 		// Populate the Mon-Year header
@@ -4204,6 +4208,20 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		}
 
 		// End of Impression Details
+		
+		// Booking Details
+		$booking_information = $this->ConsolidatedReport->getBookingInformation();
+		$sheet_name = 'Bookings';
+		$report->setDataToPopulate($sheet_name, 'B7', $booking_information['Luxury Link']['year_to_date']['auctions'] / date('n'));
+		$report->setDataToPopulate($sheet_name, 'C7', $booking_information['Luxury Link']['year_to_date']['buy_nows'] / date('n'));
+		$report->setDataToPopulate($sheet_name, 'B8', $booking_information['Family Getaway']['year_to_date']['auctions'] / date('n'));
+		$report->setDataToPopulate($sheet_name, 'C8', $booking_information['Family Getaway']['year_to_date']['buy_nows'] / date('n'));
+		
+		$report->setDataToPopulate($sheet_name, 'B18', $booking_information['Luxury Link']['year_to_date']['auctions']);
+		$report->setDataToPopulate($sheet_name, 'C18', $booking_information['Luxury Link']['year_to_date']['buy_nows']);
+		$report->setDataToPopulate($sheet_name, 'B19', $booking_information['Family Getaway']['year_to_date']['auctions']);
+		$report->setDataToPopulate($sheet_name, 'C19', $booking_information['Family Getaway']['year_to_date']['buy_nows']);
+		// End Booking Details
 
 		// Save array to spreadsheet object
 		$report->populateFromArray($report->getDataToPopulate());

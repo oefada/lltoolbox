@@ -145,7 +145,62 @@ class ConsolidatedReport extends AppModel
 	 */
 	public function getBookingInformation()
 	{
+		$booking_information = array();
+		$tables = array(
+			'Luxury Link' => 'offerLuxuryLink',
+			'Family Getaway' => 'offerFamily'
+		);
+		$start_date = date('Y', strtotime($this->start_date)) . '-01-01';
+		$end_date = date('Y-m-d');
 		
+		foreach($tables as $site => $table) {
+			$sql = "
+				SELECT
+					CASE
+						WHEN offerTypeId = 1 THEN 'auctions'
+						ELSE 'buy_nows'
+					END as offer_type,
+					count(1) as total_live
+				FROM
+					$table
+				WHERE
+					clientId = {$this->client_id}
+					AND offerTypeId in (1, 4)
+					AND (
+						( startDate BETWEEN '{$this->start_date}' AND '{$this->end_date}'
+						OR endDate BETWEEN '{$this->start_date}' AND '{$this->end_date}' )
+						OR (startDate <= '{$this->start_date}' AND endDate >= '{$this->end_date}')
+					)
+				GROUP BY offerTypeId
+			";
+			$rows = $this->query($sql);
+			$booking_information[$site]['current_range']['auctions'] = $rows[0][0]['total_live'];
+			$booking_information[$site]['current_range']['buy_nows'] = $rows[1][0]['total_live'];
+			
+			$sql = "
+				SELECT
+					CASE
+						WHEN offerTypeId = 1 THEN 'auctions'
+						ELSE 'buy_nows'
+					END as offer_type,
+					count(1) as total_live
+				FROM
+					$table
+				WHERE
+					clientId = {$this->client_id}
+					AND offerTypeId in (1, 4)
+					AND (
+						( startDate BETWEEN '{$start_date}' AND '{$end_date}'
+						OR endDate BETWEEN '{$start_date}' AND '{$end_date}' )
+						OR (startDate <= '{$start_date}' AND endDate >= '{$end_date}')
+					)
+				GROUP BY offerTypeId
+			";
+			$rows = $this->query($sql);
+			$booking_information[$site]['year_to_date']['auctions'] = $rows[0][0]['total_live'];
+			$booking_information[$site]['year_to_date']['buy_nows'] = $rows[1][0]['total_live'];
+		}
+		return $booking_information;
 	}
 	
 	/**
@@ -177,7 +232,7 @@ class ConsolidatedReport extends AppModel
 					totalimpressions
 				FROM $table
 				WHERE
-					activityStart BETWEEN '{$start_date}' AND '{$end_date}'
+					activityStart BETWEEN '{$start_date}' AND '" . date('Y-m-d') . "'
 					AND clientid = {$this->client_id}					
 				ORDER BY year2, month2
 			";
