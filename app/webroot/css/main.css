@@ -1327,3 +1327,7 @@ table.clone-items td.price span.currency-code {
 .smallText {
 	font-size: 10px;
 }
+
+.cityDisabled {
+	background-color: #ff5544;
+}

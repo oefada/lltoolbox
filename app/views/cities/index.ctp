@@ -26,7 +26,10 @@ $this->set('hideSidebar', true);
 $i = 0;
 foreach ($cities as $city):
 	$class = null;
-	if ($i++ % 2 == 0) {
+	
+	if ($city['City']['isDisabled'] == 1) {
+		$class = ' class="cityDisabled"';
+	} elseif ($i++ % 2 == 0) {
 		$class = ' class="altrow"';
 	}
 ?>
@@ -54,7 +57,10 @@ foreach ($cities as $city):
 		</td>
 		<td class="actions">
 			<?php echo $html->link(__('Edit', true), array('action'=>'edit', $city['City']['cityId'])); ?>
-			<?php echo $html->link(__('Disable', true), array('action'=>'disable', $city['City']['cityId']), null, sprintf(__('Are you sure you want to disable city %s?', true), $city['City']['cityId'])); ?>
+			<?php 
+			if ($city['City']['isDisabled'] == 1) { $word = "enable"; } else { $word = "disable"; }
+			
+			echo $html->link(__(ucfirst($word), true), array('action'=>$word, $city['City']['cityId']), null, sprintf(__('Are you sure you want to '.$word.' %s?', true), $city['City']['cityId'])); ?>
 		</td>
 	</tr>
 <?php endforeach; ?>

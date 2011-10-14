@@ -101,8 +101,32 @@ class CitiesController extends AppController {
 		}
 	}
 	
-	function disable($id) {
+	function enable($id) {
+		$this->disable($id,true);
+	}
+
+	function disable($id,$enable = false) {
+		if (!$id) {
+			$this->Session->setFlash(__('Invalid id for City', true));
+			$this->redirect(array('action'=>'index'));
+		}
+
+		$word = "disabled";
+		$isDisabled = 1;
 		
+		if ($enable) {
+			$word = "enabled";
+			$isDisabled = 0;
+		}
+		
+		$this->data = array('City'=>array('cityId' => $id, 'isDisabled' => $isDisabled));
+		if ($this->City->save($this->data)) {
+			$this->Session->setFlash(__('City '.$word.'!', true));
+		} else {
+			$this->Session->setFlash(__('Error saving city!', true));
+		}
+		
+		$this->redirect(array('action'=>'index'));
 	}
 	
 	function search() {
