@@ -4267,6 +4267,57 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 
 	}
 
+	
+	function remit() {
+		if (!empty($this->params['named']['sortBy'])) {
+			$sortDirection = (@$this->params['named']['sortDirection'] == 'DESC') ? 'DESC' : 'ASC';
+			$sortBy = $this->params['named']['sortBy'];
+		} else {
+			$sortBy = 'lastSold';
+			$sortDirection = 'ASC';
+		}
+		$this->set('sortBy', $sortBy);
+		$this->set('sortDirection', $sortDirection);
+		
+		$resultsPerPage = 20;
+		if (!empty($this->params['named']['page'])) {
+			$currentPage = $this->params['named']['page'];
+		} else {
+			$currentPage = 1;
+		}
+		
+		$this->loadModel('Client');
+		$q = "SELECT *, IF(trackDetail.amountRemitted IS NULL, 0, SUM(trackDetail.amountRemitted)) AS remitted, IF(ticket.created IS NULL, DATEDIFF(NOW(), loa.startDate) , DATEDIFF(NOW(), ticket.created)) AS lastSold, 
+					DATE_FORMAT(MIN(loa.startDate), '%c/%e/%y') AS loaStart, DATE_FORMAT(MAX(loa.endDate), '%c/%e/%y') AS loaEnd,
+					NOW() BETWEEN package.startDate AND package.endDate AS isLive 
+				FROM client 
+				INNER JOIN loa ON (client.clientId = loa.clientId)
+				INNER JOIN track USING (loaId)
+				LEFT JOIN trackDetail USING (trackId)
+				LEFT JOIN ticket USING (ticketId)
+				INNER JOIN package ON (ticket.packageId = package.packageId AND package.isBarter = 0)
+				GROUP BY ticket.packageId, loa.loaId
+				HAVING ticket.created = MAX(ticket.created) OR ticket.created IS NULL
+				ORDER BY $sortBy $sortDirection";
+
+		$result = $this->Client->query($q);
+
+		$numResults = count($result);
+		$numPages = ceil($numResults/$resultsPerPage);
+		
+		$this->set('numResults', $numResults);
+		$this->set('numPages', $numPages);
+		$this->set('currentPage', $currentPage);
+		
+		if (isset($_POST['csv']) && $_POST['csv'] == 'y') {
+			$this->viewPath .= '/csv';
+			$this->layoutPath = 'csv';
+			$this->set('packages', $result);
+		} else {
+			$this->set('packages', array_slice($result, ($currentPage - 1) * $resultsPerPage, $resultsPerPage, true));
+		}
+	}
+	
 }
 
 
