@@ -160,6 +160,7 @@ class ConsolidatedReport extends AppModel
 			'Family Getaway' => 'carConsolidatedViewFg'
 		);
 		$start_date = date('Y', strtotime($this->start_date)) . '-01-01';
+		$end_date = date('Y-m-d', strtotime($this->end_date));
 
 		foreach($tables as $site => $table) {
 			$sql = "
@@ -176,8 +177,8 @@ class ConsolidatedReport extends AppModel
 					totalimpressions
 				FROM $table
 				WHERE
-					clientid = {$this->client_id}
-					
+					activityStart BETWEEN '{$start_date}' AND '{$end_date}'
+					AND clientid = {$this->client_id}					
 				ORDER BY year2, month2
 			";
 

@@ -4096,9 +4096,20 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		$client_details = $this->Client->find('first', array('order' => 'Client.clientId desc'));
 				
 		$report->setDataToPopulate('Dashboard', 'J4', $client_details['Client']['name']);
-		$report->setDataToPopulate('Dashboard', 'J5', date('M j, Y', strtotime($this->ConsolidatedReport->getStartDate())) . ' - ' . date('M j, Y', strtotime($this->ConsolidatedReport->getStartDate())));
+		$report->setDataToPopulate('Dashboard', 'J5', date('M j, Y', strtotime($this->ConsolidatedReport->getStartDate())) . ' - ' . date('M j, Y', strtotime($this->ConsolidatedReport->getEndDate())));
 		$report->setDataToPopulate('Dashboard', 'J7', $client_details['Loa'][0]['membershipFee']);
 		$report->setDataToPopulate('Activity Summary', 'A4', date('M j, Y', strtotime($client_details['Loa'][0]['startDate'])));
+		
+		// Fill in date cells
+		$report->setDataToPopulate('Activity Summary', 'A10', date('M-y', strtotime($this->ConsolidatedReport->getStartDate())));
+		$report->setDataToPopulate('Activity Summary', 'A25', 'Jan - ' . date('M-y', strtotime('-1 month')));
+
+		$report->setDataToPopulate('Bookings', 'B3', "='Activity Summary'!A10");
+		$report->setDataToPopulate('Bookings', 'A6', "='Activity Summary'!A10");
+
+		$report->setDataToPopulate('Leads By Geo', 'A5', date('M-y', strtotime($this->ConsolidatedReport->getStartDate())));
+
+		$report->setDataToPopulate('Contact Details', 'A5', date('M-y', strtotime($this->ConsolidatedReport->getStartDate())));
 
 		// Contact Details
 		$contact_details = $this->ConsolidatedReport->getContactDetails();
