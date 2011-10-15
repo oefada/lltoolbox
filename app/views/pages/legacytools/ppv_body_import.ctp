@@ -8,7 +8,7 @@ if ($_REQUEST['GO'] != '') {
 	$limit = intval($_REQUEST['nbr']);
 	
 	$sql = "SELECT * FROM ppvNotice WHERE emailBody IS NULL AND bodyImported IS NULL AND emailBodyFileName IS NOT NULL LIMIT " . $limit;
-	// $sql = "SELECT * FROM ppvNotice WHERE ppvNoticeId = 387060";
+	// $sql = "SELECT * FROM ppvNotice WHERE ppvNoticeId = 315036";
 
 	$results = $connected->query($sql);
 		
@@ -18,7 +18,9 @@ if ($_REQUEST['GO'] != '') {
 	    $f = "../vendors/email_msgs/toolbox_sent_messages/" . $r['ppvNotice']['emailBodyFileName'];
 	    if (file_exists($f)) {
 		    $body = file_get_contents($f);
-		    $sql = "UPDATE ppvNotice SET bodyImported = NOW(), emailBody = '" . str_replace("'", "''", $body) . "' WHERE ppvNoticeId = " . $r['ppvNotice']['ppvNoticeId'];
+		    $body = stripslashes($body);
+		    $body = str_replace("'", "''", $body);
+		    $sql = "UPDATE ppvNotice SET bodyImported = NOW(), emailBody = '" . $body . "' WHERE ppvNoticeId = " . $r['ppvNotice']['ppvNoticeId'];
 		    $q = $connected->query($sql);
 		    // echo $sql;
 		    $updateCount++;
