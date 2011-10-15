@@ -6,5 +6,8 @@ class AccoladeSource extends AppModel {
 	var $primaryKey = 'accoladeSourceId';
 	var $displayField = 'accoladeSourceName';
 	var $order = 'accoladeSourceName';
+
+   	var $multisite=true;
+
 }
 ?>
