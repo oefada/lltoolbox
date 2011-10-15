@@ -5,12 +5,14 @@ class Amenity extends AppModel {
 	var $useTable = 'amenity';
 	var $primaryKey = 'amenityId';
 	var $displayField = 'amenityName';
-	
+
 	var $hasMany = array(
 	   'ClientAmenityRel' => array('className' => 'ClientAmenityRel', 'foreignKey' => 'amenityId')
 	   );
-       
-   var $belongsTo = array('amenityType' => array('foreignKey' => 'amenityTypeId'));
+
+    var $belongsTo = array('amenityType' => array('foreignKey' => 'amenityTypeId'));
+
+   	var $multisite=true;
 
 }
 ?>

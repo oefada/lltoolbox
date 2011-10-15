@@ -58,9 +58,9 @@ class Client extends AppModel {
                               'ClientTracking');
 
    var $loaId;
-   var $cacheQueries = true;
-   var $containable  = false; 
-   
+   var $cacheQueries = false;
+   var $containable  = false;
+
    function beforeSave() {
 	AppModel::beforeSave();
 
@@ -298,7 +298,7 @@ class Client extends AppModel {
         	$amenities = $this->query("SELECT amenityTypeId, amenityId, amenityName FROM amenity WHERE amenityTypeId IS NOT NULL AND amenity.inactive = 0");
         	Cache::write("clientAmenities",$amenities);
         }
-        
+
         foreach ($amenities as $key => $amenity) {
             $amenity['amenity']['checked'] = in_array($amenity['amenity']['amenityId'], $clientAmenities); // determine if client has this amenity
             $amenityTypes[$amenity['amenity']['amenityTypeId']]['amenities'][] = $amenity['amenity']; // add to final array of amenities
@@ -315,15 +315,15 @@ class Client extends AppModel {
 				$this->Loa->recursive = -1;
 			    $loas = $this->Loa->find('count',array('conditions' => array('Loa.clientId' => $val['Client']['clientId'])));
 				$this->Loa->recursive = 0;
-				
+
 				if (($loaLevelNames = Cache::read("loaLevelNames")) === FALSE) {
 					$loaLevelNames = $this->Loa->get_loa_names();
 					Cache::write("loaLevelNames",$loaLevelNames);
 				}
-			
+
 				$currentLoaLevelId = $currentLoaId['Loa']['loaLevelId'];
 				$currentLoaId = $currentLoaId['Loa']['loaId'];
-				
+
 				if (empty($currentLoaId)) {
 					$results[$key]['Client']['currentLoaId'] = 0;
 					$results[$key]['ClientLevel']['clientLevelId'] = 0;
@@ -338,9 +338,9 @@ class Client extends AppModel {
 			}
 		}
 	} elseif ($this->containable == true) {
-		
+
 	}
-	
+
 	$r = AppModel::afterFind($results);
 	return $r;
    }
