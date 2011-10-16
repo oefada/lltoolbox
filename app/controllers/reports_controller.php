@@ -4216,7 +4216,7 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		// Booking Details
 		$booking_information = $this->ConsolidatedReport->getBookingInformation();
 		$sheet_name = 'Bookings';
-		$report->setDataToPopulate($sheet_name, 'B7', $booking_information['Luxury Link']['year_to_date']['auctions'] / date('n'));
+		/*$report->setDataToPopulate($sheet_name, 'B7', $booking_information['Luxury Link']['year_to_date']['auctions'] / date('n'));
 		$report->setDataToPopulate($sheet_name, 'C7', $booking_information['Luxury Link']['year_to_date']['buy_nows'] / date('n'));
 		$report->setDataToPopulate($sheet_name, 'B8', $booking_information['Family Getaway']['year_to_date']['auctions'] / date('n'));
 		$report->setDataToPopulate($sheet_name, 'C8', $booking_information['Family Getaway']['year_to_date']['buy_nows'] / date('n'));
@@ -4224,7 +4224,7 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		$report->setDataToPopulate($sheet_name, 'B18', $booking_information['Luxury Link']['year_to_date']['auctions']);
 		$report->setDataToPopulate($sheet_name, 'C18', $booking_information['Luxury Link']['year_to_date']['buy_nows']);
 		$report->setDataToPopulate($sheet_name, 'B19', $booking_information['Family Getaway']['year_to_date']['auctions']);
-		$report->setDataToPopulate($sheet_name, 'C19', $booking_information['Family Getaway']['year_to_date']['buy_nows']);
+		$report->setDataToPopulate($sheet_name, 'C19', $booking_information['Family Getaway']['year_to_date']['buy_nows']);*/
 		// End Booking Details
 
 		// Save array to spreadsheet object
