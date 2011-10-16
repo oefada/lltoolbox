@@ -4071,8 +4071,12 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 	/**
 	 *
 	 */
-	public function consolidated_report($client_id = null)
+	public function consolidated_report($client_id = null, $start_date = null, $end_date = null)
 	{
+		if (is_null($client_id)) {
+			var_dump('Debug Mode');
+			die;
+		}
 		$this->loadModel('ConsolidatedReport');
 		$this->loadModel('Client');
 		Configure::write('debug', 0); 
@@ -4104,7 +4108,7 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		$report = new ConsolidatedReportHelper($template, $newFile, $outputFile);
 		
 		// Test report, Terranea Jan 1st, 2011 to Jan 31st, 2011
-		$this->ConsolidatedReport->create(3418, '2011-05-01', '2011-05-31');
+		$this->ConsolidatedReport->create($client_id, $start_date, $end_date);
 		
 		// Client Details
 		$this->Client->id = $this->ConsolidatedReport->getClientId();
