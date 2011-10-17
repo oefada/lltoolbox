@@ -239,13 +239,13 @@ $cacheAction = true;
 	$webservice_live_url = 'http://toolbox.luxurylink.com';
 	$ll_url = 'www.luxurylink.com';
 	$fg_url = 'www.familygetaway.com';
-
-	if (stristr($_SERVER['HTTP_HOST'], 'dev') || $_SERVER['ENV'] == 'development') {
+	
+	if (stristr($_SERVER['HTTP_HOST'], 'dev') || $_SERVER['ENV'] == 'development' || strpos($_ENV['HOSTNAME'],'dev')!==FALSE) {
 		define("ISDEV",true);
 		$ll_url = $_SERVER['ENV_USER'] .'-lldev.luxurylink.com';
 		$fg_url = $_SERVER['ENV_USER'] .'-familydev.luxurylink.com';
 		$webservice_live_url = 'http://'. $_SERVER['ENV_USER'] .'-toolboxdev.luxurylink.com';
-	} elseif (stristr($_SERVER['HTTP_HOST'], 'stage') || $_SERVER['ENV'] == 'staging') {
+	} elseif (stristr($_SERVER['HTTP_HOST'], 'stage') || $_SERVER['ENV'] == 'staging' || strpos($_ENV['HOSTNAME'],'stage')!==FALSE) {
 		define("ISDEV",true);
 		$ll_url = 'stage-luxurylink.luxurylink.com';
 		$fg_url = 'stage-family.luxurylink.com';
