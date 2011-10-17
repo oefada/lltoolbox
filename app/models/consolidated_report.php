@@ -141,6 +141,134 @@ class ConsolidatedReport extends AppModel
 	}
 	
 	/**
+	 * Get the number of calls from a site for a given client for the current month
+	 *
+	 * @access	public
+	 * @param	int site_id
+	 * @return	int
+	 */
+	public function getCallCountBySiteForCurrentMonth($site_id)
+	{
+		return $this->getCallCountBySiteForPeriod($site_id, $this->start_date, $this->end_date);
+	}
+	
+	/**
+	 *
+	 */
+	public function getCallCountForCurrentMonth()
+	{
+		return $this->getCallCountForPeriod($this->start_date, $this->end_date);
+	}
+	
+	/**
+	 * Get the number of calls from a site for a given client year-to-date
+	 *
+	 * @access	public
+	 * @param	int site_id
+	 * @return	int
+	 */
+	public function getCallCountBySiteForYearToDate($site_id)
+	{
+		return $this->getCallCountBySiteForPeriod($site_id, date('Y', strtotime($this->start_date)) . '-01-01', $this->end_date);
+	}
+	
+	/**
+	 *
+	 */
+	public function getCallCountForYearToDate()
+	{
+		return $this->getCallCountForPeriod(date('Y', strtotime($this->start_date)) . '-01-01', $this->end_date);
+	}
+	
+	/**
+	 * Get the number of calls from a site for a given client in a given period
+	 * 
+	 * @access	private
+	 * @param	int site_id
+	 * @param	string start_date
+	 * @param	string end_date
+	 * @return	int
+	 */
+	private function getCallCountBySiteForPeriod($site_id, $start_date, $end_date)
+	{
+		$sql = "
+			SELECT
+				count(1) as num_calls
+			FROM
+				client_phone_leads
+			WHERE
+				client_id = {$this->client_id}
+				AND site_id = {$site_id}
+				AND date BETWEEN '{$start_date}' AND '{$end_date}'
+		";
+
+		$num_calls = $this->query($sql);
+		return $num_calls[0][0]['num_calls'];
+	}
+	
+	/**
+	 *
+	 */
+	private function getCallCountForPeriod($start_date, $end_date)
+	{
+		$sql = "
+			SELECT
+				count(1) as num_calls
+			FROM
+				client_phone_leads
+			WHERE
+				client_id = {$this->client_id}
+				AND date BETWEEN '{$start_date}' AND '{$end_date}'
+		";
+		
+		$num_calls = $this->query($sql);
+		return $num_calls[0][0]['num_calls'];
+	}
+	
+	/**
+	 *
+	 */
+	public function getEmailCountBySiteForCurrentMonth($site_id)
+	{
+		return $this->getEmailCountBySiteForPeriod($site_id, $this->start_date, $this->end_date);
+	}
+	
+	/**
+	 *
+	 */
+	public function getEmailCountBySiteForYearToDate($site_id)
+	{
+		return $this->getEmailCountBySiteForPeriod($site_id, date('Y', strtotime($this->start_date)) . '-01-01', $this->end_date);
+	}
+	
+	/**
+	 *
+	 */
+	private function getEmailCountBySiteForPeriod($site_id, $start_date, $end_date)
+	{
+		$table = '';
+		switch($site_id) {
+			case 1: $table = 'carConsolidatedView'; break;
+			case 2: $table = 'carConsolidatedViewFG'; break;
+		}
+
+		$this->setDataSource('reporting');
+		$sql = "
+			SELECT
+				sum(email) as num_emails
+			FROM
+				$table
+			WHERE
+				clientid = {$this->client_id}
+				AND activityStart BETWEEN '{$start_date}' AND '{$end_date}'
+		";
+		$num_emails = $this->query($sql);
+
+		$this->setDataSource('default');
+		return $num_emails[0][0]['num_emails'];
+	}
+	
+	/**
 	 * 
 	 */
 	public function getBookingInformation()
@@ -151,55 +279,59 @@ class ConsolidatedReport extends AppModel
 			'Family Getaway' => 'offerFamily'
 		);
 		$start_date = date('Y', strtotime($this->start_date)) . '-01-01';
-		$end_date = date('Y-m-d');
 		
 		foreach($tables as $site => $table) {
+			// Get current month data
 			$sql = "
 				SELECT
-					CASE
-						WHEN offerTypeId = 1 THEN 'auctions'
-						ELSE 'buy_nows'
-					END as offer_type,
-					count(1) as total_live
+					count(distinct Ticket.ticketId) as bookings,
+					sum(Offer.roomNights) as room_nights,
+					sum(Ticket.billingPrice) as gross_bookings
 				FROM
-					$table
+					ticket Ticket,
+					paymentDetail PaymentDetail,
+					{$table} Offer
 				WHERE
-					clientId = {$this->client_id}
-					AND offerTypeId in (1, 4)
-					AND (
-						( startDate BETWEEN '{$this->start_date}' AND '{$this->end_date}'
-						OR endDate BETWEEN '{$this->start_date}' AND '{$this->end_date}' )
-						OR (startDate <= '{$this->start_date}' AND endDate >= '{$this->end_date}')
-					)
-				GROUP BY offerTypeId
+					Offer.clientId = {$this->client_id}
+					AND Ticket.offerId = Offer.offerId
+					AND PaymentDetail.ticketId = Ticket.ticketId
+					AND PaymentDetail.isSuccessfulCharge = 1
+					AND Ticket.created BETWEEN '{$this->start_date}' AND '{$this->end_date}'
 			";
-			$rows = $this->query($sql);
-			$booking_information[$site]['current_range']['auctions'] = $rows[0][0]['total_live'];
-			$booking_information[$site]['current_range']['buy_nows'] = $rows[1][0]['total_live'];
 			
+			$booking_data = $this->query($sql); 
+			$booking_information[$site]['current_month'] = array(
+				'bookings' => $booking_data[0][0]['bookings'],
+				'room_nights' => $booking_data[0][0]['room_nights'],
+				'gross_bookings' => $booking_data[0][0]['gross_bookings']
+			);
+			
+			// Get year-to-date data
 			$sql = "
 				SELECT
-					CASE
-						WHEN offerTypeId = 1 THEN 'auctions'
-						ELSE 'buy_nows'
-					END as offer_type,
-					count(1) as total_live
+					count(distinct Ticket.ticketId) as bookings,
+					sum(Offer.roomNights) as room_nights,
+					sum(Ticket.billingPrice) as gross_bookings
 				FROM
-					$table
+					ticket Ticket,
+					paymentDetail PaymentDetail,
+					{$table} Offer
 				WHERE
-					clientId = {$this->client_id}
-					AND offerTypeId in (1, 4)
-					AND (
-						( startDate BETWEEN '{$start_date}' AND '{$end_date}'
-						OR endDate BETWEEN '{$start_date}' AND '{$end_date}' )
-						OR (startDate <= '{$start_date}' AND endDate >= '{$end_date}')
-					)
-				GROUP BY offerTypeId
+					Offer.clientId = {$this->client_id}
+					AND Ticket.offerId = Offer.offerId
+					AND PaymentDetail.ticketId = Ticket.ticketId
+					AND PaymentDetail.isSuccessfulCharge = 1
+					AND Ticket.created BETWEEN '{$start_date}' AND '{$this->end_date}'
 			";
-			$rows = $this->query($sql);
-			$booking_information[$site]['year_to_date']['auctions'] = $rows[0][0]['total_live'];
-			$booking_information[$site]['year_to_date']['buy_nows'] = $rows[1][0]['total_live'];
+
+			$booking_data = $this->query($sql);
+			$booking_information[$site]['year_to_date'] = array(
+				'bookings' => $booking_data[0][0]['bookings'],
+				'room_nights' => $booking_data[0][0]['room_nights'],
+				'gross_bookings' => $booking_data[0][0]['gross_bookings']
+			);
 		}
+
 		return $booking_information;
 	}
 	
@@ -235,8 +367,8 @@ class ConsolidatedReport extends AppModel
 					AND clientid = {$this->client_id}					
 				ORDER BY year2, month2
 			";
-
 			$rows = $this->query($sql);
+
 			foreach($rows as $row) {
 				$impressions[$site][$row[$table]['month2']] = array(
 					'year' => $row['carConsolidatedView']['year2'],

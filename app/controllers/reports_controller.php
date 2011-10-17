@@ -4082,7 +4082,7 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		// Otherwise, generating a report redirects you to the last page you had loaded
 		// in toolbox and you have to re-enter the URL
 		if (is_null($client_id)) {
-			echo "<a href='consolidated_report/3418/2011-01-01/2011-02-28'>Generate Report</a>";
+			echo "<a href='/reports/consolidated_report/3418/2011-01-01/2011-01-31'>Generate Report</a>";
 			die;
 		}
 		
@@ -4139,6 +4139,22 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 
 
 		$report->setDataToPopulate('Contact Details', 'A5', date('M-y', strtotime($this->ConsolidatedReport->getStartDate())));
+		
+		// Activity Summary
+		$sheet_name = 'Activity Summary';
+		$report->setDataToPopulate($sheet_name, 'B15', $this->ConsolidatedReport->getCallCountBySiteForCurrentMonth(1));
+		$report->setDataToPopulate($sheet_name, 'B13', $this->ConsolidatedReport->getEmailCountBySiteForCurrentMonth(1));
+		$report->setDataToPopulate($sheet_name, 'B30', $this->ConsolidatedReport->getCallCountBySiteForYearToDate(1));
+		$report->setDataToPopulate($sheet_name, 'B28', $this->ConsolidatedReport->getEmailCountBySiteForYearToDate(1));
+		
+		$report->setDataToPopulate($sheet_name, 'D15', $this->ConsolidatedReport->getCallCountBySiteForCurrentMonth(2));
+		$report->setDataToPopulate($sheet_name, 'D13', $this->ConsolidatedReport->getEmailCountBySiteForCurrentMonth(2));
+		$report->setDataToPopulate($sheet_name, 'D30', $this->ConsolidatedReport->getCallCountBySiteForYearToDate(2));
+		$report->setDataToPopulate($sheet_name, 'D28', $this->ConsolidatedReport->getEmailCountBySiteForYearToDate(2));
+		
+		$report->setDataToPopulate($sheet_name, 'F15', $this->ConsolidatedReport->getCallCountBySiteForCurrentMonth(3));
+		$report->setDataToPopulate($sheet_name, 'F30', $this->ConsolidatedReport->getCallCountBySiteForYearToDate(3));
+		// Activity Summary
 
 		// Contact Details
 		$contact_details = $this->ConsolidatedReport->getContactDetails();
@@ -4212,26 +4228,41 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		//Populate Impressions by Type
 		foreach($impressions_by_type as $key => $value) {
 			$row = $month_column_map[$key];
-			$report->setDataToPopulate($sheet_name, $row . 19, $value['portfolio_microsite']);
-			$report->setDataToPopulate($sheet_name, $row . 20, $value['destination']);
-			$report->setDataToPopulate($sheet_name, $row . 21, $value['search']);
-			$report->setDataToPopulate($sheet_name, $row . 22, $value['email']);
+			$report->setDataToPopulate($sheet_name, $row . 18, $value['portfolio_microsite']);
+			$report->setDataToPopulate($sheet_name, $row . 19, $value['destination']);
+			$report->setDataToPopulate($sheet_name, $row . 20, $value['search']);
+			$report->setDataToPopulate($sheet_name, $row . 21, $value['email']);
 		}
 
 		// End of Impression Details
 		
 		// Booking Details
-		$booking_information = $this->ConsolidatedReport->getBookingInformation();
 		$sheet_name = 'Bookings';
-		/*$report->setDataToPopulate($sheet_name, 'B7', $booking_information['Luxury Link']['year_to_date']['auctions'] / date('n'));
-		$report->setDataToPopulate($sheet_name, 'C7', $booking_information['Luxury Link']['year_to_date']['buy_nows'] / date('n'));
-		$report->setDataToPopulate($sheet_name, 'B8', $booking_information['Family Getaway']['year_to_date']['auctions'] / date('n'));
-		$report->setDataToPopulate($sheet_name, 'C8', $booking_information['Family Getaway']['year_to_date']['buy_nows'] / date('n'));
+		$booking_information = $this->ConsolidatedReport->getBookingInformation();
 		
-		$report->setDataToPopulate($sheet_name, 'B18', $booking_information['Luxury Link']['year_to_date']['auctions']);
-		$report->setDataToPopulate($sheet_name, 'C18', $booking_information['Luxury Link']['year_to_date']['buy_nows']);
-		$report->setDataToPopulate($sheet_name, 'B19', $booking_information['Family Getaway']['year_to_date']['auctions']);
-		$report->setDataToPopulate($sheet_name, 'C19', $booking_information['Family Getaway']['year_to_date']['buy_nows']);*/
+		// Luxury Link, current month
+		$report->setDataToPopulate($sheet_name, 'C7', $booking_information['Luxury Link']['current_month']['bookings']);
+		$report->setDataToPopulate($sheet_name, 'D7', $booking_information['Luxury Link']['current_month']['room_nights']);
+		$report->setDataToPopulate($sheet_name, 'E7', $booking_information['Luxury Link']['current_month']['gross_bookings']);
+		
+		// Family Getaway, current month
+		$report->setDataToPopulate($sheet_name, 'C8', $booking_information['Family Getaway']['current_month']['bookings']);
+		$report->setDataToPopulate($sheet_name, 'D8', $booking_information['Family Getaway']['current_month']['room_nights']);
+		$report->setDataToPopulate($sheet_name, 'E8', $booking_information['Family Getaway']['current_month']['gross_bookings']);
+		
+		// Luxury Link, YTD
+		$report->setDataToPopulate($sheet_name, 'C18', $booking_information['Luxury Link']['year_to_date']['bookings']);
+		$report->setDataToPopulate($sheet_name, 'D18', $booking_information['Luxury Link']['year_to_date']['room_nights']);
+		$report->setDataToPopulate($sheet_name, 'E18', $booking_information['Luxury Link']['year_to_date']['gross_bookings']);
+		
+		// Family Getaway, YTD
+		$report->setDataToPopulate($sheet_name, 'C19', $booking_information['Family Getaway']['year_to_date']['bookings']);
+		$report->setDataToPopulate($sheet_name, 'D19', $booking_information['Family Getaway']['year_to_date']['room_nights']);
+		$report->setDataToPopulate($sheet_name, 'E19', $booking_information['Family Getaway']['year_to_date']['gross_bookings']);
+		
+
+		$sheet_name = 'Bookings';
+		
 		// End Booking Details
 
 		// Save array to spreadsheet object
