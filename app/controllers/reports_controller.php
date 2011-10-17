@@ -4073,21 +4073,32 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 	 */
 	public function consolidated_report($client_id = null, $start_date = null, $end_date = null)
 	{
+		$this->layout = 'excel';
+		
+		// Cake's debug output can cause issues with the spreadsheet generation
+		Configure::write('debug', 0); 
+	
+		// For testing, just output a string
+		// Otherwise, generating a report redirects you to the last page you had loaded
+		// in toolbox and you have to re-enter the URL
 		if (is_null($client_id)) {
-			var_dump('Debug Mode');
+			echo "<a href='consolidated_report/3418/2011-01-01/2011-02-28'>Generate Report</a>";
 			die;
 		}
+		
+		// Load required models and helper
 		$this->loadModel('ConsolidatedReport');
 		$this->loadModel('Client');
-		Configure::write('debug', 0); 
 		App::import('Vendor', 'ConsolidatedReportHelper', array('file' => 'consolidated_report' . DS . 'consolidated_report_helper.php'));
-
-		$this->layout = 'excel';
-
-		$template = APP . 'vendors/consolidated_report/templates/consolidated_report_revision-1.xlsx';
+		
+		// Report initialization variables
+		$template = APP . 'vendors/consolidated_report/templates/consolidated_report_revision-2.xlsx';
 		$newFile = TMP . 'consolidated_report.xlsx';
 		$outputFile = TMP . 'consolidated_report_output.xlsx';
 		$filename = 'consolidated_report_' . date('YmdHis') . '.xlsx';
+		
+		// Create the report object
+		$report = new ConsolidatedReportHelper($template, $newFile, $outputFile);
 		
 		$month_column_map = array(
 			1 => 'B',
@@ -4102,12 +4113,9 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 			10 => 'K',
 			11 => 'M',
 			12 => 'N'
-		);
-
-		// Create the report object
-		$report = new ConsolidatedReportHelper($template, $newFile, $outputFile);
+		);		
 		
-		// Test report, Terranea Jan 1st, 2011 to Jan 31st, 2011
+		// Initialize the report Model
 		$this->ConsolidatedReport->create($client_id, $start_date, $end_date);
 		
 		// Client Details
@@ -4121,15 +4129,14 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		
 		// Fill in date/data reference cells
 		$report->setDataToPopulate('Activity Summary', 'A10', date('M-y', strtotime($this->ConsolidatedReport->getStartDate())));
-		$report->setDataToPopulate('Activity Summary', 'A25', 'Jan - ' . date('M-y', strtotime('-1 month')));
+		$report->setDataToPopulate('Activity Summary', 'A25', 'Jan - ' . date('M-y', strtotime($this->ConsolidatedReport->getEndDate())));
 		$report->setDataToPopulate('Activity Summary', 'B11', '=Impressions!' . $month_column_map[date('n', strtotime($this->ConsolidatedReport->getStartDate()))] . 8);
 		$report->setDataToPopulate('Activity Summary', 'D11', '=Impressions!' . $month_column_map[date('n', strtotime($this->ConsolidatedReport->getStartDate()))] . 9);
 		$report->setDataToPopulate('Activity Summary', 'F11', '=Impressions!' . $month_column_map[date('n', strtotime($this->ConsolidatedReport->getStartDate()))] . 10);
 
 		$report->setDataToPopulate('Bookings', 'B3', "='Activity Summary'!A10");
-		$report->setDataToPopulate('Bookings', 'A6', "='Activity Summary'!A10");
+		//$report->setDataToPopulate('Bookings', 'A6', "='Activity Summary'!A10");
 
-		$report->setDataToPopulate('Leads By Geo', 'A5', date('M-y', strtotime($this->ConsolidatedReport->getStartDate())));
 
 		$report->setDataToPopulate('Contact Details', 'A5', date('M-y', strtotime($this->ConsolidatedReport->getStartDate())));
 
