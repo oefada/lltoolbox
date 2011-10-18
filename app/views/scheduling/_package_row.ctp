@@ -50,7 +50,7 @@
 			$m = $m['SchedulingMaster'];
 			if ($offerTypeId == 7) { $packageIsHotelOffer = true; } ?>
 			
-			<li style="margin-bottom:5px;"><b><?=$offerTypeName?></b><br/><a href="javascript: void(0);" onclick="Modalbox.show('/scheduling_masters/edit/<?=$m['schedulingMasterId']?>', {title: 'Edit Scheduling Master'},height:900);">Master Id #<?=$m['schedulingMasterId']?><br/><?=date('M d, Y', strtotime($m['startDate']))?> - <?=date('M d, Y', strtotime($m['endDate']))?></a></li>
+			<li style="margin-bottom:5px;"><b><?=$offerTypeName?></b><br/><a href="javascript: void(0);" onclick="Modalbox.show('/scheduling_masters/edit/<?=$m['schedulingMasterId']?>', {title: 'Edit Scheduling Master',height:900});">Master Id #<?=$m['schedulingMasterId']?><br/><?=date('M d, Y', strtotime($m['startDate']))?> - <?=date('M d, Y', strtotime($m['endDate']))?></a></li>
 
 		     <?php endforeach; ?>
 		</ul>	
