@@ -133,6 +133,17 @@ class ConsolidatedReport extends AppModel
 	}
 	
 	/**
+	 * Return the month of the current report
+	 * 
+	 * @access	public
+	 * @return	string
+	 */
+	public function getMonth()
+	{
+		return date('n', strtotime($this->end_date));
+	}
+	
+	/**
 	 * 
 	 */
 	public function getClientDetails()

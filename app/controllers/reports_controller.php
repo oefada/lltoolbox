@@ -4082,7 +4082,7 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		// Otherwise, generating a report redirects you to the last page you had loaded
 		// in toolbox and you have to re-enter the URL
 		if (is_null($client_id)) {
-			echo "<a href='/reports/consolidated_report/3418/2011-01-01/2011-01-31'>Generate Report</a>";
+			echo "<a href='/reports/consolidated_report/3418/2011-05-01/2011-05-31'>Generate Report</a>";
 			die;
 		}
 		
@@ -4100,6 +4100,11 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		// Create the report object
 		$report = new ConsolidatedReportHelper($template, $newFile, $outputFile);
 		
+		// Define calculation constants
+		// TODO: Move into a control panel
+		$email_cpm = 2;
+		$call_cpm = 15;
+		
 		$month_column_map = array(
 			1 => 'B',
 			2 => 'C',
@@ -4113,7 +4118,7 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 			10 => 'K',
 			11 => 'M',
 			12 => 'N'
-		);		
+		);
 		
 		// Initialize the report Model
 		$this->ConsolidatedReport->create($client_id, $start_date, $end_date);
@@ -4143,17 +4148,34 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		// Activity Summary
 		$sheet_name = 'Activity Summary';
 		$report->setDataToPopulate($sheet_name, 'B15', $this->ConsolidatedReport->getCallCountBySiteForCurrentMonth(1));
+		$report->setDataToPopulate($sheet_name, 'C15', "=(B15*$call_cpm)");
+
 		$report->setDataToPopulate($sheet_name, 'B13', $this->ConsolidatedReport->getEmailCountBySiteForCurrentMonth(1));
+		$report->setDataToPopulate($sheet_name, 'C13', "=((B13/1000)*$email_cpm)");
+
 		$report->setDataToPopulate($sheet_name, 'B30', $this->ConsolidatedReport->getCallCountBySiteForYearToDate(1));
+		$report->setDataToPopulate($sheet_name, 'C30', "=(B30*$call_cpm)");
+
 		$report->setDataToPopulate($sheet_name, 'B28', $this->ConsolidatedReport->getEmailCountBySiteForYearToDate(1));
-		
+		$report->setDataToPopulate($sheet_name, 'C28', "=((B28/1000)*$email_cpm)");
+
 		$report->setDataToPopulate($sheet_name, 'D15', $this->ConsolidatedReport->getCallCountBySiteForCurrentMonth(2));
+		$report->setDataToPopulate($sheet_name, 'E15', "=(D15*$call_cpm)");
+
 		$report->setDataToPopulate($sheet_name, 'D13', $this->ConsolidatedReport->getEmailCountBySiteForCurrentMonth(2));
+		$report->setDataToPopulate($sheet_name, 'E13', "=(D13*$email_cpm)");
+
 		$report->setDataToPopulate($sheet_name, 'D30', $this->ConsolidatedReport->getCallCountBySiteForYearToDate(2));
+		$report->setDataToPopulate($sheet_name, 'E30', "=(D30*$call_cpm)");
+
 		$report->setDataToPopulate($sheet_name, 'D28', $this->ConsolidatedReport->getEmailCountBySiteForYearToDate(2));
-		
+		$report->setDataToPopulate($sheet_name, 'E28', "=(D28*$email_cpm)");
+
 		$report->setDataToPopulate($sheet_name, 'F15', $this->ConsolidatedReport->getCallCountBySiteForCurrentMonth(3));
+		$report->setDataToPopulate($sheet_name, 'G15', "=(F15*$call_cpm)");
+
 		$report->setDataToPopulate($sheet_name, 'F30', $this->ConsolidatedReport->getCallCountBySiteForYearToDate(3));
+		$report->setDataToPopulate($sheet_name, 'G30', "=(F30*$call_cpm)");
 		// Activity Summary
 
 		// Contact Details
