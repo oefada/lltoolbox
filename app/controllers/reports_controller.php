@@ -4082,7 +4082,7 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		// Otherwise, generating a report redirects you to the last page you had loaded
 		// in toolbox and you have to re-enter the URL
 		if (is_null($client_id)) {
-			echo "<a href='/reports/consolidated_report/3418/2011-05-01/2011-05-31'>Generate Report</a>";
+			echo "<a href='/reports/consolidated_report/3418/2011-09-01/2011-09-30'>Generate Report</a>";
 			die;
 		}
 		
