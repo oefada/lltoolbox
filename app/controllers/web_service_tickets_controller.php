@@ -15,8 +15,8 @@ this will write to toolbox/development/app/tmp/logs
 Configure::write('debug', 0);
 App::import('Vendor', 'nusoap/web_services_controller');
 
-require_once "../vendors/aes.php";
-require(APP.'/vendors/pp/Processor.class.php');
+require_once(APP."/vendors/aes.php");
+require_once(APP.'/vendors/pp/Processor.class.php');
 
 error_reporting(E_ALL);
 set_error_handler("wstErrorHandler");
@@ -1707,6 +1707,10 @@ class WebServiceTicketsController extends WebServicesController
 				$templateFile = "35_forgot_username";
 				$emailSubject = $templateTitle = "Your $siteName Username";
 				break;
+			case 37:
+				$ppvNoticeTypeId = 35; //TODO REMOVE THIS LINE ONCE IT WORKS RIGHT WITH SILVERPOP
+				$templateFile = "37_post_trip_email";
+				$emailSubject = $templateTitle = "Rate your $siteName experience";
 			//*/
 			default:
 				break;
@@ -1902,7 +1906,7 @@ class WebServiceTicketsController extends WebServicesController
 	}
 
 	function sendPpvEmail($emailTo, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials) {
-		if (stristr($_SERVER['HTTP_HOST'], 'dev') || stristr($_SERVER['HTTP_HOST'], 'stage')) {
+		if (stristr($_SERVER['HTTP_HOST'], 'dev') || stristr($_SERVER['HTTP_HOST'], 'stage') || ISDEV) {
 			//$appendDevMessage = "---- DEV MAIL ---- \n<br />ORIGINAL TO:  $emailTo\n<br />ORIGINAL CC: $emailCc\n<br />ORIGINAL BCC: $emailBcc";
 			$emailTo = $emailCc = $emailBcc = 'devmail@luxurylink.com';
 			//$emailBody = $appendDevMessage . $emailBody;
