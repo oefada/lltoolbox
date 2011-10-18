@@ -4142,9 +4142,8 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		$report->setDataToPopulate('Bookings', 'B3', "='Activity Summary'!A10");
 		//$report->setDataToPopulate('Bookings', 'A6', "='Activity Summary'!A10");
 
-
 		$report->setDataToPopulate('Contact Details', 'A5', date('M-y', strtotime($this->ConsolidatedReport->getStartDate())));
-		
+
 		// Activity Summary
 		$sheet_name = 'Activity Summary';
 		$report->setDataToPopulate($sheet_name, 'B15', $this->ConsolidatedReport->getCallCountBySiteForCurrentMonth(1));

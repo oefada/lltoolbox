@@ -429,18 +429,19 @@ class ConsolidatedReport extends AppModel
 
 			foreach($rows as $row) {
 				$impressions[$site][$row[$table]['month2']] = array(
-					'year' => $row['carConsolidatedView']['year2'],
-					'month' => $row['carConsolidatedView']['month2'],
-					'phonecalls' => $row['carConsolidatedView']['phone'],
-					'webrefer' => $row['carConsolidatedView']['webrefer'],
-					'productview' => $row['carConsolidatedView']['productview'],
-					'searchview' => $row['carConsolidatedView']['searchview'],
-					'destinationview' => $row['carConsolidatedView']['destinationview'],
-					'email' => $row['carConsolidatedView']['email'],
-					'total_impressions' => $row['carConsolidatedView']['totalimpressions']
+					'year' => $row[$table]['year2'],
+					'month' => $row[$table]['month2'],
+					'phonecalls' => $row[$table]['phone'],
+					'webrefer' => $row[$table]['webrefer'],
+					'productview' => $row[$table]['productview'],
+					'searchview' => $row[$table]['searchview'],
+					'destinationview' => $row[$table]['destinationview'],
+					'email' => $row[$table]['email'],
+					'total_impressions' => $row[$table]['totalimpressions']
 				);
 			}
 		}
+
 		$this->setDataSource('default');
 		return $impressions;
 	}
