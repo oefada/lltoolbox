@@ -35,8 +35,6 @@ class PostTripEmailShell extends Shell {
 		$this->Reservation = new Reservation();
 		$this->WebServiceTicketsController = new WebServiceTicketsController();
 		@$this->WebServiceTicketsController->constructClasses();
-		$this->out('11,24,37,53 8-17 * * * toolbox/cake/console/cake post_trip_email >> /dev/null');
-		$this->hr();
 		$this->out($this->header);
 		$this->hr();
 		$this->out('Updating reservations:');
