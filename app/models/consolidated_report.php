@@ -342,6 +342,53 @@ class ConsolidatedReport extends AppModel
 				'gross_bookings' => $booking_data[0][0]['gross_bookings']
 			);
 		}
+		
+		// Get Vacationist Bookings
+		$this->setDataSource('vacationist');
+		// Get current month data
+		$sql = "
+			SELECT
+				count(distinct Ticket.id) as bookings,
+				sum(Ticket.numNights) as room_nights,
+				sum(Ticket.salePrice) as gross_bookings
+			FROM
+				ticket Ticket,
+				client Client
+			WHERE
+				Ticket.clientId = Client.id
+				AND Ticket.ticketStatusTypeId = 2
+				AND Client.toolboxClientId = {$this->client_id}
+				AND Ticket.created between '{$this->start_date}' AND '{$this->end_date}'
+		";
+		$booking_data = $this->query($sql);
+		$booking_information['Vacationist']['current_month'] = array(
+			'bookings' => $booking_data[0][0]['bookings'],
+			'room_nights' => $booking_data[0][0]['room_nights'],
+			'gross_bookings' => $booking_data[0][0]['gross_bookings']
+		);
+		
+		// Get year-to-date data
+		$sql = "
+			SELECT
+				count(distinct Ticket.id) as bookings,
+				sum(Ticket.numNights) as room_nights,
+				sum(Ticket.salePrice) as gross_bookings
+			FROM
+				ticket Ticket,
+				client Client
+			WHERE
+				Ticket.clientId = Client.id
+				AND Ticket.ticketStatusTypeId = 2
+				AND Client.toolboxClientId = {$this->client_id}
+				AND Ticket.created between '{$start_date}' AND '{$this->end_date}'
+		";
+		$booking_data = $this->query($sql);
+		$booking_information['Vacationist']['year_to_date'] = array(
+			'bookings' => $booking_data[0][0]['bookings'],
+			'room_nights' => $booking_data[0][0]['room_nights'],
+			'gross_bookings' => $booking_data[0][0]['gross_bookings']
+		);		
+		$this->setDataSource('default');
 
 		return $booking_information;
 	}

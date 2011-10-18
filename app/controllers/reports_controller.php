@@ -4272,6 +4272,11 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		$report->setDataToPopulate($sheet_name, 'D8', $booking_information['Family Getaway']['current_month']['room_nights']);
 		$report->setDataToPopulate($sheet_name, 'E8', $booking_information['Family Getaway']['current_month']['gross_bookings']);
 		
+		// Vacationist, current month
+		$report->setDataToPopulate($sheet_name, 'C9', $booking_information['Vacationist']['current_month']['bookings']);
+		$report->setDataToPopulate($sheet_name, 'D9', $booking_information['Vacationist']['current_month']['room_nights']);
+		$report->setDataToPopulate($sheet_name, 'E9', $booking_information['Vacationist']['current_month']['gross_bookings']);		
+		
 		// Luxury Link, YTD
 		$report->setDataToPopulate($sheet_name, 'C18', $booking_information['Luxury Link']['year_to_date']['bookings']);
 		$report->setDataToPopulate($sheet_name, 'D18', $booking_information['Luxury Link']['year_to_date']['room_nights']);
@@ -4282,9 +4287,10 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		$report->setDataToPopulate($sheet_name, 'D19', $booking_information['Family Getaway']['year_to_date']['room_nights']);
 		$report->setDataToPopulate($sheet_name, 'E19', $booking_information['Family Getaway']['year_to_date']['gross_bookings']);
 		
-
-		$sheet_name = 'Bookings';
-		
+		// Vacationist, YTD
+		$report->setDataToPopulate($sheet_name, 'C20', $booking_information['Vacationist']['year_to_date']['bookings']);
+		$report->setDataToPopulate($sheet_name, 'D20', $booking_information['Vacationist']['year_to_date']['room_nights']);
+		$report->setDataToPopulate($sheet_name, 'E20', $booking_information['Vacationist']['year_to_date']['gross_bookings']);		
 		// End Booking Details
 
 		// Save array to spreadsheet object
