@@ -8,6 +8,7 @@
 	<th><?php echo $paginator->sort('clientId');?></th>
 	<th><?php echo $paginator->sort('Source', 'accoladeSourceId');?></th>
 	<th><?php echo $paginator->sort('description');?></th>
+	<th>Sites</th>
 	<th><?php echo $paginator->sort('Active', 'inactive');?></th>
 	<th class="actions"><?php __('Actions');?></th>
 </tr>
@@ -18,6 +19,8 @@ foreach ($accolades as $accolade):
 	if ($i++ % 2 == 0) {
 		$class = ' class="altrow"';
 	}
+	$sites = (is_array($accolade['Accolade']['sites'])) ? implode(',', $accolade['Accolade']['sites']) : '';
+	
 ?>
 	<tr<?php echo $class;?>>
 		<td>
@@ -29,7 +32,7 @@ foreach ($accolades as $accolade):
 		<td>
 			<?php echo $accolade['Accolade']['description']; ?>
 		</td>
-
+		<td><?= $sites; ?></td>
 		<td>
 			<?php echo $html->image($accolade['Accolade']['inactive'] ? 'cross.png' : 'tick.png'); ?>
 		</td>

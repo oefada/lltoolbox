@@ -1,13 +1,14 @@
 <?php
 class Accolade extends AppModel {
 
-	var $multisite=true;
 	var $name = 'Accolade';
 	var $useTable = 'accolade';
 	var $primaryKey = 'accoladeId';
 
 	var $belongsTo = array('AccoladeSource' => array('foreignKey' => 'accoladeSourceId'),
 	                        'Client' => array('foreignKey' => 'clientId'));
+
+	var $multisite = true;
 
 	function getAccolades(){
 		$q="SELECT * FROM accolade WHERE clientId is not null";
