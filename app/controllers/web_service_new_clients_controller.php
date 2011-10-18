@@ -61,7 +61,7 @@ class WebServiceNewClientsController extends WebServicesController
 	    $client_id = trim($decoded_request['client']['client_id']);
 
 	    // respond with DB operation mode
-	    if (!$client_id || empty($client_id)) {
+	    if (!isset($client_id) || empty($client_id)) {
 	        $response_value = '1';  // client insert will occur
 	    } elseif (is_numeric($client_id) && $client_id > 0) {
 	        $response_value = '2';  // client update will occur
@@ -129,7 +129,6 @@ class WebServiceNewClientsController extends WebServicesController
 
 			// get new client id and send back to Sugar
 			$client_id = $decoded_request['client']['client_id'] = $this->Client->getLastInsertId();
-
 		}
 
 	    $decoded_request['request']['response'] = $response_value;
@@ -140,7 +139,8 @@ class WebServiceNewClientsController extends WebServicesController
 		// send info back to sugar -- should only go back to Sugar webservice on new clients so we can give Sugar back new client id.
 		// look in Sugar : /var/www/html/soap/SoapSugarUsers.php for the web service 'update_client'
 		// look in Sugar : /var/www/html/custom/modules/Accounts/SiteManagerAgent.php for the after hook Sugar logic.
-	    $this->sendToSugar($encoded_response);
+		// no need to send new client id back to sugar, it is sent in the intial response.
+	    //$this->sendToSugar($encoded_response);
 
 	    // update client contacts
 	    // ----------------------------------------------------------------------
@@ -213,12 +213,17 @@ class WebServiceNewClientsController extends WebServicesController
 		// had to use this custom native soap class and functions because couldn't run both cakephp nusoap server and client
 		// this soap call to made to sugar in order to give Sugar the new clientId from toolbox so it's recorded in Sugar
 		if (stristr($_SERVER['HTTP_HOST'], 'dev')) {
-			$client = new SoapClient('http://sugardev.luxurylink.com:8888/services2/ClientReceiver2?wsdl');
+			//$client = new SoapClient('http://sugardev.luxurylink.com:8888/services2/ClientReceiver2?wsdl'); //this is the old mule web service
+			$client = new SoapClient('http://devwest.levementumhosting.com/wendell/luxurylink/post_upgrade/custom/soap.php?wsdl'); //this is the new dev sugar
+			
 		} else {
-			$client = new SoapClient('http://sugarprod.luxurylink.com:8888/services2/ClientReceiver2?wsdl');
+			//$client = new SoapClient('http://sugarprod.luxurylink.com:8888/services2/ClientReceiver2?wsdl'); //this is the old mule web service
+			$client = new SoapClient('http://devwest.levementumhosting.com/wendell/luxurylink/post_upgrade/custom/soap.php?wsdl'); //this is the new dev sugar
+			
 		}
 		try {
-			$client->soap_call($data);
+			//$client->soap_call($data);
+			$client->update_client($data); //changed method to update client
 		} catch (SoapFault $exception) {
 			// do nothing
 		}
