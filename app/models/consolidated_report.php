@@ -260,7 +260,7 @@ class ConsolidatedReport extends AppModel
 		$table = '';
 		switch($site_id) {
 			case 1: $table = 'carConsolidatedView'; break;
-			case 2: $table = 'carConsolidatedViewFG'; break;
+			case 2: $table = 'carConsolidatedViewFg'; break;
 		}
 
 		$this->setDataSource('reporting');
@@ -277,6 +277,53 @@ class ConsolidatedReport extends AppModel
 
 		$this->setDataSource('default');
 		return $num_emails[0][0]['num_emails'];
+	}
+	
+	/**
+	 *
+	 */
+	public function getImpressionDataBySiteForCurrentMonth($site_id)
+	{
+		return $this->getImpressionsBySiteForPeriod($site_id, $this->start_date, $this->end_date);
+	}
+	
+	/**
+	 *
+	 */
+	public function getImpressionDataBySiteForYearToDate($site_id)
+	{
+		return $this->getImpressionsBySiteForPeriod($site_id, date('Y', strtotime($this->start_date)) . '-01-01', $this->end_date);
+	}
+	
+	/**
+	 *
+	 */
+	private function getImpressionsBySiteForPeriod($site_id, $start_date, $end_date)
+	{
+		$table = '';
+		switch($site_id) {
+			case 1: $table = 'carConsolidatedView'; break;
+			case 2: $table = 'carConsolidatedViewFg'; break;
+		}
+		
+		$this->setDataSource('reporting');
+		$sql = "
+			SELECT
+				sum(totalImpressions) as impressions,
+				sum(webrefer) as clicks
+			FROM
+				$table
+			WHERE
+				clientid = {$this->client_id}
+				AND activityStart BETWEEN '{$start_date}' AND '{$end_date}'
+		";
+		$data = $this->query($sql);
+		
+		$this->setDataSource('default');
+		return array(
+			'impressions' => $data[0][0]['impressions'],
+			'clicks' => $data[0][0]['clicks']
+		);
 	}
 	
 	/**
