@@ -144,14 +144,6 @@ class ConsolidatedReport extends AppModel
 	}
 	
 	/**
-	 * 
-	 */
-	public function getClientDetails()
-	{
-
-	}
-	
-	/**
 	 * Get the number of calls from a site for a given client for the current month
 	 *
 	 * @access	public
@@ -340,57 +332,54 @@ class ConsolidatedReport extends AppModel
 		
 		foreach($tables as $site => $table) {
 			// Get current month data
-			$sql = "
-				SELECT
-					count(distinct Ticket.ticketId) as bookings,
-					sum(Offer.roomNights) as room_nights,
-					sum(Ticket.billingPrice) as gross_bookings
-				FROM
-					ticket Ticket,
-					paymentDetail PaymentDetail,
-					{$table} Offer
-				WHERE
-					Offer.clientId = {$this->client_id}
-					AND Ticket.offerId = Offer.offerId
-					AND PaymentDetail.ticketId = Ticket.ticketId
-					AND PaymentDetail.isSuccessfulCharge = 1
-					AND Ticket.created BETWEEN '{$this->start_date}' AND '{$this->end_date}'
-			";
-			
-			$booking_data = $this->query($sql); 
-			$booking_information[$site]['current_month'] = array(
-				'bookings' => $booking_data[0][0]['bookings'],
-				'room_nights' => $booking_data[0][0]['room_nights'],
-				'gross_bookings' => $booking_data[0][0]['gross_bookings']
-			);
+			$booking_data = $this->getBookingInformationForPeriod($table, $this->start_date, $this->end_date);
+			$booking_information[$site]['current_month'] = self::buildBookingInformationArray($booking_data[0][0]['bookings'], $booking_data[0][0]['room_nights'], $booking_data[0][0]['gross_bookings']);
 			
 			// Get year-to-date data
-			$sql = "
-				SELECT
-					count(distinct Ticket.ticketId) as bookings,
-					sum(Offer.roomNights) as room_nights,
-					sum(Ticket.billingPrice) as gross_bookings
-				FROM
-					ticket Ticket,
-					paymentDetail PaymentDetail,
-					{$table} Offer
-				WHERE
-					Offer.clientId = {$this->client_id}
-					AND Ticket.offerId = Offer.offerId
-					AND PaymentDetail.ticketId = Ticket.ticketId
-					AND PaymentDetail.isSuccessfulCharge = 1
-					AND Ticket.created BETWEEN '{$start_date}' AND '{$this->end_date}'
-			";
-
-			$booking_data = $this->query($sql);
-			$booking_information[$site]['year_to_date'] = array(
-				'bookings' => $booking_data[0][0]['bookings'],
-				'room_nights' => $booking_data[0][0]['room_nights'],
-				'gross_bookings' => $booking_data[0][0]['gross_bookings']
-			);
+			$booking_data = $this->getBookingInformationForPeriod($table, $start_date, $this->end_date);
+			$booking_information[$site]['year_to_date'] = self::buildBookingInformationArray($booking_data[0][0]['bookings'], $booking_data[0][0]['room_nights'], $booking_data[0][0]['gross_bookings']);
 		}
 		
 		// Get Vacationist Bookings
+		// Get current month data
+		$booking_data = $this->getVacationistBookingInformationForPeriod($this->start_date, $this->end_date);
+		$booking_information['Vacationist']['current_month'] = self::buildBookingInformationArray($booking_data[0][0]['bookings'], $booking_data[0][0]['room_nights'], $booking_data[0][0]['gross_bookings']);
+		
+		// Get year-to-date data
+		$booking_data = $this->getVacationistBookingInformationForPeriod($start_date, $this->end_date);
+		$booking_information['Vacationist']['year_to_date'] = self::buildBookingInformationArray($booking_data[0][0]['bookings'], $booking_data[0][0]['room_nights'], $booking_data[0][0]['gross_bookings']);
+
+		return $booking_information;
+	}
+	
+	/**
+	 *
+	 */
+	private function getBookingInformationForPeriod($table, $start_date, $end_date)
+	{
+		$sql = "
+			SELECT
+				count(distinct Ticket.ticketId) as bookings,
+				sum(Offer.roomNights) as room_nights,
+				sum(Ticket.billingPrice) as gross_bookings
+			FROM
+				ticket Ticket,
+				paymentDetail PaymentDetail,
+				{$table} Offer
+			WHERE
+				Offer.clientId = {$this->client_id}
+				AND Ticket.offerId = Offer.offerId
+				AND Ticket.ticketStatusId != 8
+				AND PaymentDetail.ticketId = Ticket.ticketId
+				AND PaymentDetail.isSuccessfulCharge = 1
+				AND Ticket.created BETWEEN '{$start_date}' AND '{$end_date}'
+		";
+			
+		return $this->query($sql); 
+	}
+	
+	private function getVacationistBookingInformationForPeriod($start_date, $end_date)
+	{
 		$this->setDataSource('vacationist');
 		// Get current month data
 		$sql = "
@@ -405,39 +394,24 @@ class ConsolidatedReport extends AppModel
 				Ticket.clientId = Client.id
 				AND Ticket.ticketStatusTypeId = 2
 				AND Client.toolboxClientId = {$this->client_id}
-				AND Ticket.created between '{$this->start_date}' AND '{$this->end_date}'
+				AND Ticket.created between '{$start_date}' AND '{$end_date}'
 		";
 		$booking_data = $this->query($sql);
-		$booking_information['Vacationist']['current_month'] = array(
-			'bookings' => $booking_data[0][0]['bookings'],
-			'room_nights' => $booking_data[0][0]['room_nights'],
-			'gross_bookings' => $booking_data[0][0]['gross_bookings']
-		);
-		
-		// Get year-to-date data
-		$sql = "
-			SELECT
-				count(distinct Ticket.id) as bookings,
-				sum(Ticket.numNights) as room_nights,
-				sum(Ticket.salePrice) as gross_bookings
-			FROM
-				ticket Ticket,
-				client Client
-			WHERE
-				Ticket.clientId = Client.id
-				AND Ticket.ticketStatusTypeId = 2
-				AND Client.toolboxClientId = {$this->client_id}
-				AND Ticket.created between '{$start_date}' AND '{$this->end_date}'
-		";
-		$booking_data = $this->query($sql);
-		$booking_information['Vacationist']['year_to_date'] = array(
-			'bookings' => $booking_data[0][0]['bookings'],
-			'room_nights' => $booking_data[0][0]['room_nights'],
-			'gross_bookings' => $booking_data[0][0]['gross_bookings']
-		);		
 		$this->setDataSource('default');
-
-		return $booking_information;
+		
+		return $booking_data;	
+	}
+	
+	/**
+	 *
+	 */
+	private static function buildBookingInformationArray($bookings, $room_nights, $gross_bookings)
+	{
+		return array(
+			'bookings' => (is_null($bookings)) ? 0 : $bookings,
+			'room_nights' => (is_null($room_nights)) ? 0 : $room_nights,
+			'gross_bookings' => (is_null($gross_bookings)) ? 0 : $gross_bookings,
+		);		
 	}
 	
 	/**
@@ -491,14 +465,6 @@ class ConsolidatedReport extends AppModel
 
 		$this->setDataSource('default');
 		return $impressions;
-	}
-	
-	/**
-	 * 
-	 */
-	public function getLeadsByGeo()
-	{
-		
 	}
 	
 	/**

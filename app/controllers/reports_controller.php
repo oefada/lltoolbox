@@ -4073,8 +4073,6 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 	 */
 	public function consolidated_report($client_id = null, $start_date = null, $end_date = null)
 	{
-		$this->layout = 'excel';
-		
 		// Cake's debug output can cause issues with the spreadsheet generation
 		Configure::write('debug', 0); 
 	
@@ -4082,7 +4080,28 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		// Otherwise, generating a report redirects you to the last page you had loaded
 		// in toolbox and you have to re-enter the URL
 		if (is_null($client_id)) {
-			echo "<a href='/reports/consolidated_report/3418/2011-09-01/2011-09-30'>Generate Report</a>";
+			echo "<a href='/reports/consolidated_report/2192/2011-03-01/2011-03-31'>Generate Report</a><br/>";
+			echo "<a href='/reports/consolidated_report/1178/2011-03-01/2011-03-31'>Generate Report</a><br/>";
+			echo "<a href='/reports/consolidated_report/2183/2011-03-01/2011-03-31'>Generate Report</a><br/>";
+			echo "<a href='/reports/consolidated_report/2384/2011-03-01/2011-03-31'>Generate Report</a><br/>";
+			echo "<a href='/reports/consolidated_report/2795/2011-03-01/2011-03-31'>Generate Report</a><br/>";
+			echo "<a href='/reports/consolidated_report/10883/2011-03-01/2011-03-31'>Generate Report</a><br/>";
+			echo "<a href='/reports/consolidated_report/9463/2011-03-01/2011-03-31'>Generate Report</a><br/>";
+			echo "<a href='/reports/consolidated_report/11100/2011-03-01/2011-03-31'>Generate Report</a><br/>";
+			echo "<a href='/reports/consolidated_report/6343/2011-03-01/2011-03-31'>Generate Report</a><br/>";
+			echo "<a href='/reports/consolidated_report/49/2011-03-01/2011-03-31'>Generate Report</a><br/>";
+			echo "<a href='/reports/consolidated_report/512/2011-03-01/2011-03-31'>Generate Report</a><br/>";
+			echo "<a href='/reports/consolidated_report/925/2011-03-01/2011-03-31'>Generate Report</a><br/>";
+			echo "<a href='/reports/consolidated_report/951/2011-03-01/2011-03-31'>Generate Report</a><br/>";
+			echo "<a href='/reports/consolidated_report/2733/2011-03-01/2011-03-31'>Generate Report</a><br/>";
+			echo "<a href='/reports/consolidated_report/11356/2011-03-01/2011-03-31'>Generate Report</a><br/>";
+			echo "<a href='/reports/consolidated_report/8456/2011-03-01/2011-03-31'>Generate Report</a><br/>";
+			echo "<a href='/reports/consolidated_report/10801/2011-03-01/2011-03-31'>Generate Report</a><br/>";
+			echo "<a href='/reports/consolidated_report/272/2011-03-01/2011-03-31'>Generate Report</a><br/>";
+			echo "<a href='/reports/consolidated_report/2273/2011-03-01/2011-03-31'>Generate Report</a><br/>";
+			echo "<a href='/reports/consolidated_report/8684/2011-03-01/2011-03-31'>Generate Report</a><br/>";
+			echo "<a href='/reports/consolidated_report/3510/2011-03-01/2011-03-31'>Generate Report</a><br/>";
+			
 			die;
 		}
 		
@@ -4090,12 +4109,14 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		$this->loadModel('ConsolidatedReport');
 		$this->loadModel('Client');
 		App::import('Vendor', 'ConsolidatedReportHelper', array('file' => 'consolidated_report' . DS . 'consolidated_report_helper.php'));
+
+		// Set layout to excel		
+		$this->layout = 'excel';
 		
 		// Report initialization variables
 		$template = APP . 'vendors/consolidated_report/templates/consolidated_report_revision-3.xlsx';
 		$newFile = TMP . 'consolidated_report.xlsx';
 		$outputFile = TMP . 'consolidated_report_output.xlsx';
-		$filename = 'consolidated_report_' . date('YmdHis') . '.xlsx';
 		
 		// Create the report object
 		$report = new ConsolidatedReportHelper($template, $newFile, $outputFile);
@@ -4126,22 +4147,22 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		// Client Details
 		$this->Client->id = $this->ConsolidatedReport->getClientId();
 		$client_details = $this->Client->find('first', array('order' => 'Client.clientId desc'));
-				
-		$report->setDataToPopulate('Dashboard', 'J4', $client_details['Client']['name']);
-		$report->setDataToPopulate('Dashboard', 'J5', date('M j, Y', strtotime($this->ConsolidatedReport->getStartDate())) . ' - ' . date('M j, Y', strtotime($this->ConsolidatedReport->getEndDate())));
-		$report->setDataToPopulate('Dashboard', 'J7', $client_details['Loa'][0]['membershipFee']);
-		$report->setDataToPopulate('Activity Summary', 'A4', date('M j, Y', strtotime($client_details['Loa'][0]['startDate'])));
+		$filename = 'consolidated_report_' . $client_details['Client']['seoName'] . '_' . substr($start_date, 0, 7);
 		
-		// Fill in date/data reference cells
-		$report->setDataToPopulate('Activity Summary', 'A10', date('M-y', strtotime($this->ConsolidatedReport->getStartDate())));
-		$report->setDataToPopulate('Activity Summary', 'A25', 'Jan - ' . date('M-y', strtotime($this->ConsolidatedReport->getEndDate())));
+		// Dashboard
+		$sheet_name = 'Dashboard';
+		$report->setDataToPopulate($sheet_name, 'J4', $client_details['Client']['name']);
+		$report->setDataToPopulate($sheet_name, 'J5', date('M j, Y', strtotime($this->ConsolidatedReport->getStartDate())) . ' - ' . date('M j, Y', strtotime($this->ConsolidatedReport->getEndDate())));
+		$report->setDataToPopulate($sheet_name, 'J7', $client_details['Loa'][0]['membershipFee']);
+		// End of Dashboard
 		
-		//$report->setDataToPopulate('Activity Summary', 'B11', '=Impressions!' . $month_column_map[date('n', strtotime($this->ConsolidatedReport->getStartDate()))] . 8);
-		//$report->setDataToPopulate('Activity Summary', 'D11', '=Impressions!' . $month_column_map[date('n', strtotime($this->ConsolidatedReport->getStartDate()))] . 9);
-		//$report->setDataToPopulate('Activity Summary', 'F11', '=Impressions!' . $month_column_map[date('n', strtotime($this->ConsolidatedReport->getStartDate()))] . 10);
-
 		// Activity Summary
 		$sheet_name = 'Activity Summary';		
+		
+		// Fill in Data values
+		$report->setDataToPopulate($sheet_name, 'A4', date('M j, Y', strtotime($client_details['Loa'][0]['startDate'])));
+		$report->setDataToPopulate($sheet_name, 'A10', date('M-y', strtotime($this->ConsolidatedReport->getStartDate())));
+		$report->setDataToPopulate($sheet_name, 'A25', 'Jan - ' . date('M-y', strtotime($this->ConsolidatedReport->getEndDate())));
 		
 		// Impression & Click Data
 		$ll_impression_data = $this->ConsolidatedReport->getImpressionDataBySiteForCurrentMonth(1);
@@ -4175,7 +4196,6 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		$report->setDataToPopulate($sheet_name, 'E30', "=(D30*$call_cpm)");
 		$report->setDataToPopulate($sheet_name, 'F30', $this->ConsolidatedReport->getCallCountBySiteForYearToDate(3));
 		$report->setDataToPopulate($sheet_name, 'G30', "=(F30*$call_cpm)");
-		
 
 		// Email Data
 		$report->setDataToPopulate($sheet_name, 'B13', $this->ConsolidatedReport->getEmailCountBySiteForCurrentMonth(1));
@@ -4186,7 +4206,7 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		$report->setDataToPopulate($sheet_name, 'E13', "=(D13*$email_cpm)");
 		$report->setDataToPopulate($sheet_name, 'D28', $this->ConsolidatedReport->getEmailCountBySiteForYearToDate(2));
 		$report->setDataToPopulate($sheet_name, 'E28', "=(D28*$email_cpm)");		
-		// Activity Summary
+		// End of Activity Summary
 
 		// Contact Details
 		$contact_details = $this->ConsolidatedReport->getContactDetails();
@@ -4301,6 +4321,12 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		$report->setDataToPopulate($sheet_name, 'C20', $booking_information['Vacationist']['year_to_date']['bookings']);
 		$report->setDataToPopulate($sheet_name, 'D20', $booking_information['Vacationist']['year_to_date']['room_nights']);
 		$report->setDataToPopulate($sheet_name, 'E20', $booking_information['Vacationist']['year_to_date']['gross_bookings']);		
+		
+		// Refunds, current month
+		$report->setDataToPopulate($sheet_name, 'G12', 0);
+		
+		// Refunds, YTD
+		$report->setDataToPopulate($sheet_name, 'G23', 0);		
 		// End Booking Details
 
 		// Save array to spreadsheet object
