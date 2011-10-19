@@ -37,6 +37,12 @@ class ConsolidatedReportHelper
 	 * @param	string
 	 */
 	private $outputFile;
+	
+	/**
+	 * @access	private
+	 * @param	object
+	 */
+	private $ConsolidatedReport;
 
 	/**
 	 * @access	private
@@ -65,11 +71,12 @@ class ConsolidatedReportHelper
 	 * @param	string newFile_path
 	 * @param	string outputFile_path
 	 */
-	public function __construct($template_path, $newFile_path, $outputFile_path)
+	public function __construct($template_path, $newFile_path, $outputFile_path, &$consolidated_report_model)
 	{
 		$this->template = $template_path;
 		$this->newFile = $newFile_path;
 		$this->outputFile = $outputFile_path;
+		$this->ConsolidatedReport = $consolidated_report_model;
 		
 		// Create the phpExcel object from a Reader loading a template
 		$this->phpExcel = PHPExcel_IOFactory::createReader('Excel2007')->load($this->template);
@@ -277,6 +284,226 @@ class ConsolidatedReportHelper
 		$zipOriginal->addFromString("xl/sharedStrings.xml", $updatedStrings->asXML());
 		$zipOriginal->close();
 		$zipUpdated->close();
+	}
+	
+	/*
+	 * Methods used to actually populate report
+	 */
+	
+	/**
+	 *
+	 */
+	public function populateDashboard($client_name, $membership_fee)
+	{
+		$sheet_name = 'Dashboard';
+		
+		$this->setDataToPopulate($sheet_name, 'J4', $client_name);
+		$this->setDataToPopulate($sheet_name, 'J5', date('M j, Y', strtotime($this->ConsolidatedReport->getStartDate())) . ' - ' . date('M j, Y', strtotime($this->ConsolidatedReport->getEndDate())));
+		$this->setDataToPopulate($sheet_name, 'J7', $membership_fee);
+	}
+	
+	/**
+	 *
+	 */
+	public function populateActivitySummary($loa_start_date, $call_cpm, $email_cpm)
+	{
+		$sheet_name = 'Activity Summary';		
+		
+		// Fill in Data values
+		$this->setDataToPopulate($sheet_name, 'A4', date('M j, Y', $loa_start_date));
+		$this->setDataToPopulate($sheet_name, 'A10', date('M-y', strtotime($this->ConsolidatedReport->getStartDate())));
+		$this->setDataToPopulate($sheet_name, 'A25', 'Jan - ' . date('M-y', strtotime($this->ConsolidatedReport->getEndDate())));
+		
+		// Impression & Click Data
+		$ll_impression_data = $this->ConsolidatedReport->getImpressionDataBySiteForCurrentMonth(1);
+		$fg_impression_data = $this->ConsolidatedReport->getImpressionDataBySiteForCurrentMonth(2);
+		$this->setDataToPopulate($sheet_name, 'B11', $ll_impression_data['impressions']);
+		$this->setDataToPopulate($sheet_name, 'D11', $fg_impression_data['impressions']);
+		$this->setDataToPopulate($sheet_name, 'F11', '0');
+		$this->setDataToPopulate($sheet_name, 'B12', $ll_impression_data['clicks']);
+		$this->setDataToPopulate($sheet_name, 'D12', $fg_impression_data['clicks']);
+		$this->setDataToPopulate($sheet_name, 'F12', '0');
+		
+		$ll_impression_data = $this->ConsolidatedReport->getImpressionDataBySiteForYearToDate(1);
+		$fg_impression_data = $this->ConsolidatedReport->getImpressionDataBySiteForYearToDate(2);		
+		$this->setDataToPopulate($sheet_name, 'B26', $ll_impression_data['impressions']);
+		$this->setDataToPopulate($sheet_name, 'D26', $fg_impression_data['impressions']);
+		$this->setDataToPopulate($sheet_name, 'F26', '0');
+		$this->setDataToPopulate($sheet_name, 'B27', $ll_impression_data['clicks']);
+		$this->setDataToPopulate($sheet_name, 'D27', $fg_impression_data['clicks']);
+		$this->setDataToPopulate($sheet_name, 'F27', '0');			
+		
+		// Call Data
+		$this->setDataToPopulate($sheet_name, 'B15', $this->ConsolidatedReport->getCallCountBySiteForCurrentMonth(1));
+		$this->setDataToPopulate($sheet_name, 'C15', "=(B15*$call_cpm)");
+		$this->setDataToPopulate($sheet_name, 'D15', $this->ConsolidatedReport->getCallCountBySiteForCurrentMonth(2));
+		$this->setDataToPopulate($sheet_name, 'E15', "=(D15*$call_cpm)");
+		$this->setDataToPopulate($sheet_name, 'F15', $this->ConsolidatedReport->getCallCountBySiteForCurrentMonth(3));
+		$this->setDataToPopulate($sheet_name, 'G15', "=(F15*$call_cpm)");
+		$this->setDataToPopulate($sheet_name, 'B30', $this->ConsolidatedReport->getCallCountBySiteForYearToDate(1));
+		$this->setDataToPopulate($sheet_name, 'C30', "=(B30*$call_cpm)");
+		$this->setDataToPopulate($sheet_name, 'D30', $this->ConsolidatedReport->getCallCountBySiteForYearToDate(2));
+		$this->setDataToPopulate($sheet_name, 'E30', "=(D30*$call_cpm)");
+		$this->setDataToPopulate($sheet_name, 'F30', $this->ConsolidatedReport->getCallCountBySiteForYearToDate(3));
+		$this->setDataToPopulate($sheet_name, 'G30', "=(F30*$call_cpm)");
+
+		// Email Data
+		$this->setDataToPopulate($sheet_name, 'B13', $this->ConsolidatedReport->getEmailCountBySiteForCurrentMonth(1));
+		$this->setDataToPopulate($sheet_name, 'C13', "=((B13/1000)*$email_cpm)");
+		$this->setDataToPopulate($sheet_name, 'B28', $this->ConsolidatedReport->getEmailCountBySiteForYearToDate(1));
+		$this->setDataToPopulate($sheet_name, 'C28', "=((B28/1000)*$email_cpm)");
+		$this->setDataToPopulate($sheet_name, 'D13', $this->ConsolidatedReport->getEmailCountBySiteForCurrentMonth(2));
+		$this->setDataToPopulate($sheet_name, 'E13', "=(D13*$email_cpm)");
+		$this->setDataToPopulate($sheet_name, 'D28', $this->ConsolidatedReport->getEmailCountBySiteForYearToDate(2));
+		$this->setDataToPopulate($sheet_name, 'E28', "=(D28*$email_cpm)");		
+	}
+	
+	/**
+	 *
+	 */
+	public function populateBookings()
+	{
+		$sheet_name = 'Bookings';
+		$booking_information = $this->ConsolidatedReport->getBookingInformation();
+		
+		// Luxury Link, current month
+		$this->setDataToPopulate($sheet_name, 'C7', $booking_information['Luxury Link']['current_month']['bookings']);
+		$this->setDataToPopulate($sheet_name, 'D7', $booking_information['Luxury Link']['current_month']['room_nights']);
+		$this->setDataToPopulate($sheet_name, 'E7', $booking_information['Luxury Link']['current_month']['gross_bookings']);
+		
+		// Family Getaway, current month
+		$this->setDataToPopulate($sheet_name, 'C8', $booking_information['Family Getaway']['current_month']['bookings']);
+		$this->setDataToPopulate($sheet_name, 'D8', $booking_information['Family Getaway']['current_month']['room_nights']);
+		$this->setDataToPopulate($sheet_name, 'E8', $booking_information['Family Getaway']['current_month']['gross_bookings']);
+		
+		// Vacationist, current month
+		$this->setDataToPopulate($sheet_name, 'C9', $booking_information['Vacationist']['current_month']['bookings']);
+		$this->setDataToPopulate($sheet_name, 'D9', $booking_information['Vacationist']['current_month']['room_nights']);
+		$this->setDataToPopulate($sheet_name, 'E9', $booking_information['Vacationist']['current_month']['gross_bookings']);		
+		
+		// Luxury Link, YTD
+		$this->setDataToPopulate($sheet_name, 'C18', $booking_information['Luxury Link']['year_to_date']['bookings']);
+		$this->setDataToPopulate($sheet_name, 'D18', $booking_information['Luxury Link']['year_to_date']['room_nights']);
+		$this->setDataToPopulate($sheet_name, 'E18', $booking_information['Luxury Link']['year_to_date']['gross_bookings']);
+		
+		// Family Getaway, YTD
+		$this->setDataToPopulate($sheet_name, 'C19', $booking_information['Family Getaway']['year_to_date']['bookings']);
+		$this->setDataToPopulate($sheet_name, 'D19', $booking_information['Family Getaway']['year_to_date']['room_nights']);
+		$this->setDataToPopulate($sheet_name, 'E19', $booking_information['Family Getaway']['year_to_date']['gross_bookings']);
+		
+		// Vacationist, YTD
+		$this->setDataToPopulate($sheet_name, 'C20', $booking_information['Vacationist']['year_to_date']['bookings']);
+		$this->setDataToPopulate($sheet_name, 'D20', $booking_information['Vacationist']['year_to_date']['room_nights']);
+		$this->setDataToPopulate($sheet_name, 'E20', $booking_information['Vacationist']['year_to_date']['gross_bookings']);		
+		
+		// Refunds, current month
+		$this->setDataToPopulate($sheet_name, 'G12', 0);
+		
+		// Refunds, YTD
+		$this->setDataToPopulate($sheet_name, 'G23', 0);	
+	}
+	
+	/**
+	 *
+	 */
+	public function populateImpressions()
+	{
+		$sheet_name = 'Impressions';
+		$impression_details = $this->ConsolidatedReport->getImpressions();
+		$current_year = date('y');
+		$month_column_map = array(
+			1 => 'B',
+			2 => 'C',
+			3 => 'D',
+			4 => 'E',
+			5 => 'F',
+			6 => 'G',
+			7 => 'H',
+			8 => 'I',
+			9 => 'J',
+			10 => 'K',
+			11 => 'M',
+			12 => 'N'
+		);		
+		
+		// Populate the Mon-Year header
+		$this->setDataToPopulate($sheet_name, "B7", "Jan-$current_year");
+		$this->setDataToPopulate($sheet_name, "C7", "Feb-$current_year");
+		$this->setDataToPopulate($sheet_name, "D7", "Mar-$current_year");
+		$this->setDataToPopulate($sheet_name, "E7", "Apr-$current_year");
+		$this->setDataToPopulate($sheet_name, "F7", "May-$current_year");
+		$this->setDataToPopulate($sheet_name, "G7", "Jun-$current_year");
+		$this->setDataToPopulate($sheet_name, "H7", "Jul-$current_year");
+		$this->setDataToPopulate($sheet_name, "I7", "Aug-$current_year");
+		$this->setDataToPopulate($sheet_name, "J7", "Sep-$current_year");
+		$this->setDataToPopulate($sheet_name, "K7", "Oct-$current_year");
+		$this->setDataToPopulate($sheet_name, "L7", "Nov-$current_year");
+		$this->setDataToPopulate($sheet_name, "M7", "Dec-$current_year");
+
+		// Populate Impressions by Site
+		foreach($impression_details as $key => $impression_detail) {
+			if ($key == 'Luxury Link') {
+				$spreadsheet_row = 8;
+			} else if ($key == 'Family Getaway') {
+				$spreadsheet_row = 9;
+			} else {
+				$spreadsheet_row = 10;
+			}
+			foreach($impression_detail as $key => $impression_data) {
+				$cell = $month_column_map[$key] . $spreadsheet_row;
+				$impressions_by_type[$key]['portfolio_microsite'] += $impression_data['productview'];
+				$impressions_by_type[$key]['destination'] += $impression_data['destinationview'];
+				$impressions_by_type[$key]['search'] += $impression_data['searchview'];
+				$impressions_by_type[$key]['email'] += $impression_data['email'];
+				
+				$this->setDataToPopulate($sheet_name, $cell, $impression_data['total_impressions']);
+			}
+		}
+		
+		//Populate Impressions by Type
+		foreach($impressions_by_type as $key => $value) {
+			$row = $month_column_map[$key];
+			$this->setDataToPopulate($sheet_name, $row . 18, $value['portfolio_microsite']);
+			$this->setDataToPopulate($sheet_name, $row . 19, $value['destination']);
+			$this->setDataToPopulate($sheet_name, $row . 20, $value['search']);
+			$this->setDataToPopulate($sheet_name, $row . 21, $value['email']);
+		}
+	}
+	 
+	
+	/**
+	 *
+	 */
+	public function populateContactDetails()
+	{
+		$sheet_name = 'Contact Details';
+		$contact_details = $this->ConsolidatedReport->getContactDetails();
+		
+		foreach($contact_details as $key => $contact_detail) {
+			$spreadsheet_row = $key + 10;
+			$this->setDataToPopulate($sheet_name, "A$spreadsheet_row", $contact_detail['Lead Type']);
+			$this->setDataToPopulate($sheet_name, "B$spreadsheet_row", $contact_detail['Site']);
+			$this->setDataToPopulate($sheet_name, "C$spreadsheet_row", $contact_detail['Activity Date']);
+			$this->setDataToPopulate($sheet_name, "D$spreadsheet_row", $contact_detail['Arrival']);
+			$this->setDataToPopulate($sheet_name, "E$spreadsheet_row", $contact_detail['Departure']);
+			$this->setDataToPopulate($sheet_name, "F$spreadsheet_row", $contact_detail['Room Nights']);
+			$this->setDataToPopulate($sheet_name, "G$spreadsheet_row", $contact_detail['Booking Amount']);
+			$this->setDataToPopulate($sheet_name, "H$spreadsheet_row", $contact_detail['Call Duration']);
+			$this->setDataToPopulate($sheet_name, "I$spreadsheet_row", $contact_detail['Booking Type']);
+			$this->setDataToPopulate($sheet_name, "J$spreadsheet_row", $contact_detail['Phone']);
+			$this->setDataToPopulate($sheet_name, "K$spreadsheet_row", $contact_detail['Firstname']);
+			$this->setDataToPopulate($sheet_name, "L$spreadsheet_row", $contact_detail['Lastname']);
+			$this->setDataToPopulate($sheet_name, "M$spreadsheet_row", $contact_detail['Email']);
+			$this->setDataToPopulate($sheet_name, "N$spreadsheet_row", $contact_detail['Opt-in']);
+			$this->setDataToPopulate($sheet_name, "O$spreadsheet_row", $contact_detail['Address']);
+			$this->setDataToPopulate($sheet_name, "P$spreadsheet_row", $contact_detail['City']);
+			$this->setDataToPopulate($sheet_name, "Q$spreadsheet_row", $contact_detail['State']);
+			$this->setDataToPopulate($sheet_name, "R$spreadsheet_row", $contact_detail['Zip']);
+			$this->setDataToPopulate($sheet_name, "S$spreadsheet_row", $contact_detail['Country']);
+			$this->setDataToPopulate($sheet_name, "T$spreadsheet_row", $contact_detail['Median Household Income']);
+			$this->setDataToPopulate($sheet_name, "U$spreadsheet_row", $contact_detail['Per Capita Income']);
+			$this->setDataToPopulate($sheet_name, "V$spreadsheet_row", $contact_detail['Median Earnings']);
+		}
 	}
 }
 ?>

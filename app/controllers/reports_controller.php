@@ -4118,223 +4118,28 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		$newFile = TMP . 'consolidated_report.xlsx';
 		$outputFile = TMP . 'consolidated_report_output.xlsx';
 		
-		// Create the report object
-		$report = new ConsolidatedReportHelper($template, $newFile, $outputFile);
-		
-		// Define calculation constants
-		// TODO: Move into a control panel
-		$email_cpm = 2;
-		$call_cpm = 15;
-		
-		$month_column_map = array(
-			1 => 'B',
-			2 => 'C',
-			3 => 'D',
-			4 => 'E',
-			5 => 'F',
-			6 => 'G',
-			7 => 'H',
-			8 => 'I',
-			9 => 'J',
-			10 => 'K',
-			11 => 'M',
-			12 => 'N'
-		);
-		
 		// Initialize the report Model
 		$this->ConsolidatedReport->create($client_id, $start_date, $end_date);
+		
+		// Create the report object
+		$report = new ConsolidatedReportHelper($template, $newFile, $outputFile, $this->ConsolidatedReport);
 		
 		// Client Details
 		$this->Client->id = $this->ConsolidatedReport->getClientId();
 		$client_details = $this->Client->find('first', array('order' => 'Client.clientId desc'));
 		$filename = 'consolidated_report_' . $client_details['Client']['seoName'] . '_' . substr($start_date, 0, 7);
 		
-		// Dashboard
-		$sheet_name = 'Dashboard';
-		$report->setDataToPopulate($sheet_name, 'J4', $client_details['Client']['name']);
-		$report->setDataToPopulate($sheet_name, 'J5', date('M j, Y', strtotime($this->ConsolidatedReport->getStartDate())) . ' - ' . date('M j, Y', strtotime($this->ConsolidatedReport->getEndDate())));
-		$report->setDataToPopulate($sheet_name, 'J7', $client_details['Loa'][0]['membershipFee']);
-		// End of Dashboard
-		
-		// Activity Summary
-		$sheet_name = 'Activity Summary';		
-		
-		// Fill in Data values
-		$report->setDataToPopulate($sheet_name, 'A4', date('M j, Y', strtotime($client_details['Loa'][0]['startDate'])));
-		$report->setDataToPopulate($sheet_name, 'A10', date('M-y', strtotime($this->ConsolidatedReport->getStartDate())));
-		$report->setDataToPopulate($sheet_name, 'A25', 'Jan - ' . date('M-y', strtotime($this->ConsolidatedReport->getEndDate())));
-		
-		// Impression & Click Data
-		$ll_impression_data = $this->ConsolidatedReport->getImpressionDataBySiteForCurrentMonth(1);
-		$fg_impression_data = $this->ConsolidatedReport->getImpressionDataBySiteForCurrentMonth(2);
-		$report->setDataToPopulate($sheet_name, 'B11', $ll_impression_data['impressions']);
-		$report->setDataToPopulate($sheet_name, 'D11', $fg_impression_data['impressions']);
-		$report->setDataToPopulate($sheet_name, 'F11', '0');
-		$report->setDataToPopulate($sheet_name, 'B12', $ll_impression_data['clicks']);
-		$report->setDataToPopulate($sheet_name, 'D12', $fg_impression_data['clicks']);
-		$report->setDataToPopulate($sheet_name, 'F12', '0');
-		
-		$ll_impression_data = $this->ConsolidatedReport->getImpressionDataBySiteForYearToDate(1);
-		$fg_impression_data = $this->ConsolidatedReport->getImpressionDataBySiteForYearToDate(2);		
-		$report->setDataToPopulate($sheet_name, 'B26', $ll_impression_data['impressions']);
-		$report->setDataToPopulate($sheet_name, 'D26', $fg_impression_data['impressions']);
-		$report->setDataToPopulate($sheet_name, 'F26', '0');
-		$report->setDataToPopulate($sheet_name, 'B27', $ll_impression_data['clicks']);
-		$report->setDataToPopulate($sheet_name, 'D27', $fg_impression_data['clicks']);
-		$report->setDataToPopulate($sheet_name, 'F27', '0');			
-		
-		// Call Data
-		$report->setDataToPopulate($sheet_name, 'B15', $this->ConsolidatedReport->getCallCountBySiteForCurrentMonth(1));
-		$report->setDataToPopulate($sheet_name, 'C15', "=(B15*$call_cpm)");
-		$report->setDataToPopulate($sheet_name, 'D15', $this->ConsolidatedReport->getCallCountBySiteForCurrentMonth(2));
-		$report->setDataToPopulate($sheet_name, 'E15', "=(D15*$call_cpm)");
-		$report->setDataToPopulate($sheet_name, 'F15', $this->ConsolidatedReport->getCallCountBySiteForCurrentMonth(3));
-		$report->setDataToPopulate($sheet_name, 'G15', "=(F15*$call_cpm)");
-		$report->setDataToPopulate($sheet_name, 'B30', $this->ConsolidatedReport->getCallCountBySiteForYearToDate(1));
-		$report->setDataToPopulate($sheet_name, 'C30', "=(B30*$call_cpm)");
-		$report->setDataToPopulate($sheet_name, 'D30', $this->ConsolidatedReport->getCallCountBySiteForYearToDate(2));
-		$report->setDataToPopulate($sheet_name, 'E30', "=(D30*$call_cpm)");
-		$report->setDataToPopulate($sheet_name, 'F30', $this->ConsolidatedReport->getCallCountBySiteForYearToDate(3));
-		$report->setDataToPopulate($sheet_name, 'G30', "=(F30*$call_cpm)");
-
-		// Email Data
-		$report->setDataToPopulate($sheet_name, 'B13', $this->ConsolidatedReport->getEmailCountBySiteForCurrentMonth(1));
-		$report->setDataToPopulate($sheet_name, 'C13', "=((B13/1000)*$email_cpm)");
-		$report->setDataToPopulate($sheet_name, 'B28', $this->ConsolidatedReport->getEmailCountBySiteForYearToDate(1));
-		$report->setDataToPopulate($sheet_name, 'C28', "=((B28/1000)*$email_cpm)");
-		$report->setDataToPopulate($sheet_name, 'D13', $this->ConsolidatedReport->getEmailCountBySiteForCurrentMonth(2));
-		$report->setDataToPopulate($sheet_name, 'E13', "=(D13*$email_cpm)");
-		$report->setDataToPopulate($sheet_name, 'D28', $this->ConsolidatedReport->getEmailCountBySiteForYearToDate(2));
-		$report->setDataToPopulate($sheet_name, 'E28', "=(D28*$email_cpm)");		
-		// End of Activity Summary
-
-		// Contact Details
-		$contact_details = $this->ConsolidatedReport->getContactDetails();
-		$sheet_name = 'Contact Details';
-		foreach($contact_details as $key => $contact_detail) {
-			$spreadsheet_row = $key + 10;
-			$report->setDataToPopulate($sheet_name, "A$spreadsheet_row", $contact_detail['Lead Type']);
-			$report->setDataToPopulate($sheet_name, "B$spreadsheet_row", $contact_detail['Site']);
-			$report->setDataToPopulate($sheet_name, "C$spreadsheet_row", $contact_detail['Activity Date']);
-			$report->setDataToPopulate($sheet_name, "D$spreadsheet_row", $contact_detail['Arrival']);
-			$report->setDataToPopulate($sheet_name, "E$spreadsheet_row", $contact_detail['Departure']);
-			$report->setDataToPopulate($sheet_name, "F$spreadsheet_row", $contact_detail['Room Nights']);
-			$report->setDataToPopulate($sheet_name, "G$spreadsheet_row", $contact_detail['Booking Amount']);
-			$report->setDataToPopulate($sheet_name, "H$spreadsheet_row", $contact_detail['Call Duration']);
-			$report->setDataToPopulate($sheet_name, "I$spreadsheet_row", $contact_detail['Booking Type']);
-			$report->setDataToPopulate($sheet_name, "J$spreadsheet_row", $contact_detail['Phone']);
-			$report->setDataToPopulate($sheet_name, "K$spreadsheet_row", $contact_detail['Firstname']);
-			$report->setDataToPopulate($sheet_name, "L$spreadsheet_row", $contact_detail['Lastname']);
-			$report->setDataToPopulate($sheet_name, "M$spreadsheet_row", $contact_detail['Email']);
-			$report->setDataToPopulate($sheet_name, "N$spreadsheet_row", $contact_detail['Opt-in']);
-			$report->setDataToPopulate($sheet_name, "O$spreadsheet_row", $contact_detail['Address']);
-			$report->setDataToPopulate($sheet_name, "P$spreadsheet_row", $contact_detail['City']);
-			$report->setDataToPopulate($sheet_name, "Q$spreadsheet_row", $contact_detail['State']);
-			$report->setDataToPopulate($sheet_name, "R$spreadsheet_row", $contact_detail['Zip']);
-			$report->setDataToPopulate($sheet_name, "S$spreadsheet_row", $contact_detail['Country']);
-			$report->setDataToPopulate($sheet_name, "T$spreadsheet_row", $contact_detail['Median Household Income']);
-			$report->setDataToPopulate($sheet_name, "U$spreadsheet_row", $contact_detail['Per Capita Income']);
-			$report->setDataToPopulate($sheet_name, "V$spreadsheet_row", $contact_detail['Median Earnings']);
-		}
-		// End of Contact Details
-		
-		// Impression Details
-		$impression_details = $this->ConsolidatedReport->getImpressions();
-		$current_year = date('y');
-		$sheet_name = 'Impressions';
-		
-		// Populate the Mon-Year header
-		$report->setDataToPopulate($sheet_name, "B7", "Jan-$current_year");
-		$report->setDataToPopulate($sheet_name, "C7", "Feb-$current_year");
-		$report->setDataToPopulate($sheet_name, "D7", "Mar-$current_year");
-		$report->setDataToPopulate($sheet_name, "E7", "Apr-$current_year");
-		$report->setDataToPopulate($sheet_name, "F7", "May-$current_year");
-		$report->setDataToPopulate($sheet_name, "G7", "Jun-$current_year");
-		$report->setDataToPopulate($sheet_name, "H7", "Jul-$current_year");
-		$report->setDataToPopulate($sheet_name, "I7", "Aug-$current_year");
-		$report->setDataToPopulate($sheet_name, "J7", "Sep-$current_year");
-		$report->setDataToPopulate($sheet_name, "K7", "Oct-$current_year");
-		$report->setDataToPopulate($sheet_name, "L7", "Nov-$current_year");
-		$report->setDataToPopulate($sheet_name, "M7", "Dec-$current_year");
-
-		// Populate Impressions by Site
-		foreach($impression_details as $key => $impression_detail) {
-			if ($key == 'Luxury Link') {
-				$spreadsheet_row = 8;
-			} else if ($key == 'Family Getaway') {
-				$spreadsheet_row = 9;
-			} else {
-				$spreadsheet_row = 10;
-			}
-			foreach($impression_detail as $key => $impression_data) {
-				$cell = $month_column_map[$key] . $spreadsheet_row;
-				$impressions_by_type[$key]['portfolio_microsite'] += $impression_data['productview'];
-				$impressions_by_type[$key]['destination'] += $impression_data['destinationview'];
-				$impressions_by_type[$key]['search'] += $impression_data['searchview'];
-				$impressions_by_type[$key]['email'] += $impression_data['email'];
-				
-				$report->setDataToPopulate($sheet_name, $cell, $impression_data['total_impressions']);
-			}
-		}
-		
-		//Populate Impressions by Type
-		foreach($impressions_by_type as $key => $value) {
-			$row = $month_column_map[$key];
-			$report->setDataToPopulate($sheet_name, $row . 18, $value['portfolio_microsite']);
-			$report->setDataToPopulate($sheet_name, $row . 19, $value['destination']);
-			$report->setDataToPopulate($sheet_name, $row . 20, $value['search']);
-			$report->setDataToPopulate($sheet_name, $row . 21, $value['email']);
-		}
-
-		// End of Impression Details
-		
-		// Booking Details
-		$sheet_name = 'Bookings';
-		$booking_information = $this->ConsolidatedReport->getBookingInformation();
-		
-		// Luxury Link, current month
-		$report->setDataToPopulate($sheet_name, 'C7', $booking_information['Luxury Link']['current_month']['bookings']);
-		$report->setDataToPopulate($sheet_name, 'D7', $booking_information['Luxury Link']['current_month']['room_nights']);
-		$report->setDataToPopulate($sheet_name, 'E7', $booking_information['Luxury Link']['current_month']['gross_bookings']);
-		
-		// Family Getaway, current month
-		$report->setDataToPopulate($sheet_name, 'C8', $booking_information['Family Getaway']['current_month']['bookings']);
-		$report->setDataToPopulate($sheet_name, 'D8', $booking_information['Family Getaway']['current_month']['room_nights']);
-		$report->setDataToPopulate($sheet_name, 'E8', $booking_information['Family Getaway']['current_month']['gross_bookings']);
-		
-		// Vacationist, current month
-		$report->setDataToPopulate($sheet_name, 'C9', $booking_information['Vacationist']['current_month']['bookings']);
-		$report->setDataToPopulate($sheet_name, 'D9', $booking_information['Vacationist']['current_month']['room_nights']);
-		$report->setDataToPopulate($sheet_name, 'E9', $booking_information['Vacationist']['current_month']['gross_bookings']);		
-		
-		// Luxury Link, YTD
-		$report->setDataToPopulate($sheet_name, 'C18', $booking_information['Luxury Link']['year_to_date']['bookings']);
-		$report->setDataToPopulate($sheet_name, 'D18', $booking_information['Luxury Link']['year_to_date']['room_nights']);
-		$report->setDataToPopulate($sheet_name, 'E18', $booking_information['Luxury Link']['year_to_date']['gross_bookings']);
-		
-		// Family Getaway, YTD
-		$report->setDataToPopulate($sheet_name, 'C19', $booking_information['Family Getaway']['year_to_date']['bookings']);
-		$report->setDataToPopulate($sheet_name, 'D19', $booking_information['Family Getaway']['year_to_date']['room_nights']);
-		$report->setDataToPopulate($sheet_name, 'E19', $booking_information['Family Getaway']['year_to_date']['gross_bookings']);
-		
-		// Vacationist, YTD
-		$report->setDataToPopulate($sheet_name, 'C20', $booking_information['Vacationist']['year_to_date']['bookings']);
-		$report->setDataToPopulate($sheet_name, 'D20', $booking_information['Vacationist']['year_to_date']['room_nights']);
-		$report->setDataToPopulate($sheet_name, 'E20', $booking_information['Vacationist']['year_to_date']['gross_bookings']);		
-		
-		// Refunds, current month
-		$report->setDataToPopulate($sheet_name, 'G12', 0);
-		
-		// Refunds, YTD
-		$report->setDataToPopulate($sheet_name, 'G23', 0);		
-		// End Booking Details
+		$report->populateDashboard($client_details['Client']['name'], $client_details['Loa'][0]['membershipFee']);		
+		$report->populateActivitySummary($client_details['Loa'][0]['startDate'], 15, 2);
+		$report->populateBookings();	
+		$report->populateImpressions();
+		$report->populateContactDetails();
 
 		// Save array to spreadsheet object
 		$report->populateFromArray($report->getDataToPopulate());
 
 		// Write the report object to disk
 		$report->writeSpreadsheetObjectToFile();
-
 
 		// Set our view data
 		$this->set('spreadsheet', $report->getSpreadsheetData());
