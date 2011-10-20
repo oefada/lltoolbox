@@ -18,7 +18,7 @@ if ($_REQUEST['GO'] != '') {
 	    $f = "../vendors/email_msgs/toolbox_sent_messages/" . $r['ppvNotice']['emailBodyFileName'];
 	    if (file_exists($f)) {
 		    $body = file_get_contents($f);
-		    $body = stripslashes($body);
+		    $body = str_replace("\\", "", $body);
 		    $body = str_replace("'", "''", $body);
 		    $sql = "UPDATE ppvNotice SET bodyImported = NOW(), emailBody = '" . $body . "' WHERE ppvNoticeId = " . $r['ppvNotice']['ppvNoticeId'];
 		    $q = $connected->query($sql);
