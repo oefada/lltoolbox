@@ -4110,7 +4110,7 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		$this->layout = 'excel';
 		
 		// Report initialization variables
-		$template = APP . 'vendors/consolidated_report/templates/consolidated_report_revision-4.xlsx';
+		$template = APP . 'vendors/consolidated_report/templates/consolidated_report_revision-6.xlsx';
 		$newFile = TMP . 'consolidated_report.xlsx';
 		$outputFile = TMP . 'consolidated_report_output.xlsx';
 		

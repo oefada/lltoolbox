@@ -97,7 +97,7 @@ class ConsolidatedReport extends AppModel
 		$this->report_date = $report_date;
 		$this->loa_start_date = $loa_start_date;
 		$this->loa_end_date = $loa_end_date;
-		
+
 		return $this->validates();
 	}
 	
@@ -264,7 +264,7 @@ class ConsolidatedReport extends AppModel
 		";
 		
 		$num_calls = $this->query($sql);
-		return $num_calls[0][0]['num_calls'];
+		return (is_null($num_calls[0][0]['num_calls'])) ? 0 : $num_calls[0][0]['num_calls'];
 	}
 	
 	/**
@@ -307,7 +307,7 @@ class ConsolidatedReport extends AppModel
 		$num_emails = $this->query($sql);
 
 		$this->setDataSource('default');
-		return $num_emails[0][0]['num_emails'];
+		return (is_null($num_emails[0][0]['num_emails'])) ? 0 : $num_emails[0][0]['num_emails'];
 	}
 	
 	/**
@@ -352,8 +352,8 @@ class ConsolidatedReport extends AppModel
 		
 		$this->setDataSource('default');
 		return array(
-			'impressions' => $data[0][0]['impressions'],
-			'clicks' => $data[0][0]['clicks']
+			'impressions' => (is_null($data[0][0]['impressions'])) ? 0 : $data[0][0]['impressions'],
+			'clicks' => (is_null($data[0][0]['clicks'])) ? 0 : $data[0][0]['clicks']
 		);
 	}
 	
@@ -481,23 +481,24 @@ class ConsolidatedReport extends AppModel
 				WHERE
 					clientid = {$this->client_id}					
 					AND (
-						activityEnd BETWEEN '{$this->loa_start_date}' AND '{$this->month_end_date}'
+						activityStart BETWEEN '{$this->loa_start_date}' AND '{$this->month_end_date}'
+						OR activityEnd BETWEEN '{$this->loa_start_date}' AND '{$this->month_end_date}'
 					)
-				ORDER BY year2, month2
+				ORDER BY activityStart, year2, month2
 			";
 			$rows = $this->query($sql);
 
 			foreach($rows as $row) {
-				$impressions[$site][$row[$table]['month2']] = array(
+				$impressions[$site][][$row[$table]['month2']] = array(
 					'year' => $row[$table]['year2'],
 					'month' => $row[$table]['month2'],
-					'phonecalls' => $row[$table]['phone'],
-					'webrefer' => $row[$table]['webrefer'],
-					'productview' => $row[$table]['productview'],
-					'searchview' => $row[$table]['searchview'],
-					'destinationview' => $row[$table]['destinationview'],
-					'email' => $row[$table]['email'],
-					'total_impressions' => $row[$table]['totalimpressions']
+					'phonecalls' => (is_null($row[$table]['phone'])) ? 0 : $row[$table]['phone'],
+					'webrefer' => (is_null($row[$table]['webrefer'])) ? 0 : $row[$table]['webrefer'],
+					'productview' => (is_null($row[$table]['productview'])) ? 0 : $row[$table]['productview'],
+					'searchview' => (is_null($row[$table]['searchview'])) ? 0 : $row[$table]['searchview'],
+					'destinationview' => (is_null($row[$table]['destinationview'])) ? 0 : $row[$table]['destinationview'],
+					'email' => (is_null($row[$table]['email'])) ? 0 : $row[$table]['email'],
+					'total_impressions' => (is_null($row[$table]['totalimpressions'])) ? 0 : $row[$table]['totalimpressions'] 
 				);
 			}
 		}
@@ -791,6 +792,10 @@ class ConsolidatedReport extends AppModel
 	 */
 	private static function buildContactDetails($lead_type, $site, $activity_date, $arrival, $departure, $room_nights, $booking_amount, $call_duration, $booking_type, $phone, $firstname, $lastname, $email, $optin, $address, $city, $state, $zip, $country, $median_household_income, $per_capita_income, $median_earnings)
 	{
+		$phone = preg_replace('[\D]', '', $phone);
+		if ($phone[0] == 1) {
+			$phone = substr($phone, 1);
+		}
 		return array(
 			'Lead Type'					=> trim($lead_type),
 			'Site'						=> trim($site),
@@ -801,7 +806,7 @@ class ConsolidatedReport extends AppModel
 			'Booking Amount'			=> trim($booking_amount),
 			'Call Duration'				=> trim($call_duration),
 			'Booking Type'				=> trim($booking_type),
-			'Phone'						=> trim($phone),
+			'Phone'						=> $phone,
 			'Firstname'					=> trim($firstname),
 			'Lastname'					=> trim($lastname),
 			'Email'						=> trim($email),

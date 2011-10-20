@@ -307,8 +307,12 @@ class ConsolidatedReportHelper
 	 */
 	public function populateActivitySummary($start_date, $end_date, $call_cpm, $email_cpm)
 	{
-		$sheet_name = 'Activity Summary';		
+		$sheet_name = 'Activity Summary';
 		
+		// Fill in CPM Values
+		$this->setDataToPopulate('Key - Legend', 'C8', $email_cpm);
+		$this->setDataToPopulate('Key - Legend', 'C10', $call_cpm);
+
 		// Fill in Data values
 		$this->setDataToPopulate($sheet_name, 'A4', date('M j, Y', strtotime($start_date)));
 		$this->setDataToPopulate($sheet_name, 'A10', date('F-y', strtotime($this->ConsolidatedReport->getMonthStartDate())));
@@ -335,27 +339,17 @@ class ConsolidatedReportHelper
 		
 		// Call Data
 		$this->setDataToPopulate($sheet_name, 'B15', $this->ConsolidatedReport->getCallCountBySiteForCurrentMonth(1));
-		$this->setDataToPopulate($sheet_name, 'C15', "=(B15*$call_cpm)");
 		$this->setDataToPopulate($sheet_name, 'D15', $this->ConsolidatedReport->getCallCountBySiteForCurrentMonth(2));
-		$this->setDataToPopulate($sheet_name, 'E15', "=(D15*$call_cpm)");
 		$this->setDataToPopulate($sheet_name, 'F15', $this->ConsolidatedReport->getCallCountBySiteForCurrentMonth(3));
-		$this->setDataToPopulate($sheet_name, 'G15', "=(F15*$call_cpm)");
 		$this->setDataToPopulate($sheet_name, 'B30', $this->ConsolidatedReport->getCallCountBySiteForYearToDate(1));
-		$this->setDataToPopulate($sheet_name, 'C30', "=(B30*$call_cpm)");
 		$this->setDataToPopulate($sheet_name, 'D30', $this->ConsolidatedReport->getCallCountBySiteForYearToDate(2));
-		$this->setDataToPopulate($sheet_name, 'E30', "=(D30*$call_cpm)");
 		$this->setDataToPopulate($sheet_name, 'F30', $this->ConsolidatedReport->getCallCountBySiteForYearToDate(3));
-		$this->setDataToPopulate($sheet_name, 'G30', "=(F30*$call_cpm)");
 
 		// Email Data
 		$this->setDataToPopulate($sheet_name, 'B13', $this->ConsolidatedReport->getEmailCountBySiteForCurrentMonth(1));
-		$this->setDataToPopulate($sheet_name, 'C13', "=((B13/1000)*$email_cpm)");
 		$this->setDataToPopulate($sheet_name, 'B28', $this->ConsolidatedReport->getEmailCountBySiteForYearToDate(1));
-		$this->setDataToPopulate($sheet_name, 'C28', "=((B28/1000)*$email_cpm)");
 		$this->setDataToPopulate($sheet_name, 'D13', $this->ConsolidatedReport->getEmailCountBySiteForCurrentMonth(2));
-		$this->setDataToPopulate($sheet_name, 'E13', "=(D13*$email_cpm)");
 		$this->setDataToPopulate($sheet_name, 'D28', $this->ConsolidatedReport->getEmailCountBySiteForYearToDate(2));
-		$this->setDataToPopulate($sheet_name, 'E28', "=(D28*$email_cpm)");		
 	}
 	
 	/**
@@ -422,7 +416,9 @@ class ConsolidatedReportHelper
 			9 => 'J',
 			10 => 'K',
 			11 => 'L',
-			12 => 'M'
+			12 => 'M',
+			13 => 'N'
+			
 		);
 		
 		$month_name_map = array(
@@ -444,7 +440,7 @@ class ConsolidatedReportHelper
 		$start_month = (int) date('n', strtotime($this->ConsolidatedReport->getLoaStartDate()));
 		$end_month = date('n', strtotime($this->ConsolidatedReport->getMonthEndDate()));
 		
-		for($i = 1; $i <= 12; $i++) {
+		for($i = 1; $i <= 13; $i++) {
 			$this->setDataToPopulate($sheet_name, $month_column_map[$i] . '7', $month_name_map[$start_month] . '-' . substr($current_year, 2, 4));
 			$new_month_column_map[$start_month] = $month_column_map[$i];
 			$column_map[$current_year . '-' . $start_month] = $month_column_map[$i];
@@ -467,24 +463,30 @@ class ConsolidatedReportHelper
 				$spreadsheet_row = 10;
 			}
 			foreach($impression_detail as $impression_data) {
+				$impression_data = array_shift($impression_data);
 				$key = $impression_data['year'] . '-' . $impression_data['month'];
-				$cell = $column_map[$key]  . $spreadsheet_row;
+				$cell = $column_map[$key] . $spreadsheet_row;
+
 				$impressions_by_type[$key]['portfolio_microsite'] += $impression_data['productview'];
 				$impressions_by_type[$key]['destination'] += $impression_data['destinationview'];
 				$impressions_by_type[$key]['search'] += $impression_data['searchview'];
 				$impressions_by_type[$key]['email'] += $impression_data['email'];
 				
-				$this->setDataToPopulate($sheet_name, $cell, $impression_data['total_impressions']);
+				if (isset($column_map[$key])) {
+					$this->setDataToPopulate($sheet_name, $cell, $impression_data['total_impressions']);
+				}
 			}
 		}
 
 		//Populate Impressions by Type
 		foreach($impressions_by_type as $key => $impression_data) {
 			$row = $column_map[$key];
-			$this->setDataToPopulate($sheet_name, $row . 18, $impression_data['portfolio_microsite']);
-			$this->setDataToPopulate($sheet_name, $row . 19, $impression_data['destination']);
-			$this->setDataToPopulate($sheet_name, $row . 20, $impression_data['search']);
-			$this->setDataToPopulate($sheet_name, $row . 21, $impression_data['email']);
+			if (isset($column_map[$key])) {
+				$this->setDataToPopulate($sheet_name, $row . 18, $impression_data['portfolio_microsite']);
+				$this->setDataToPopulate($sheet_name, $row . 19, $impression_data['destination']);
+				$this->setDataToPopulate($sheet_name, $row . 20, $impression_data['search']);
+				$this->setDataToPopulate($sheet_name, $row . 21, $impression_data['email']);
+			}
 		}
 	}
 
