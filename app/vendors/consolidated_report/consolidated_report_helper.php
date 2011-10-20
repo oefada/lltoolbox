@@ -293,26 +293,26 @@ class ConsolidatedReportHelper
 	/**
 	 *
 	 */
-	public function populateDashboard($client_name, $membership_fee)
+	public function populateDashboard($client_name, $membership_fee, $start_date, $end_date)
 	{
 		$sheet_name = 'Dashboard';
 		
 		$this->setDataToPopulate($sheet_name, 'J4', $client_name);
-		$this->setDataToPopulate($sheet_name, 'J5', date('M j, Y', strtotime($this->ConsolidatedReport->getStartDate())) . ' - ' . date('M j, Y', strtotime($this->ConsolidatedReport->getEndDate())));
+		$this->setDataToPopulate($sheet_name, 'J5', date('M j, Y', strtotime($start_date)) . ' - ' . date('M j, Y', strtotime($end_date)));
 		$this->setDataToPopulate($sheet_name, 'J7', $membership_fee);
 	}
 	
 	/**
 	 *
 	 */
-	public function populateActivitySummary($loa_start_date, $call_cpm, $email_cpm)
+	public function populateActivitySummary($start_date, $end_date, $call_cpm, $email_cpm)
 	{
 		$sheet_name = 'Activity Summary';		
 		
 		// Fill in Data values
-		$this->setDataToPopulate($sheet_name, 'A4', date('M j, Y', $loa_start_date));
-		$this->setDataToPopulate($sheet_name, 'A10', date('M-y', strtotime($this->ConsolidatedReport->getStartDate())));
-		$this->setDataToPopulate($sheet_name, 'A25', 'Jan - ' . date('M-y', strtotime($this->ConsolidatedReport->getEndDate())));
+		$this->setDataToPopulate($sheet_name, 'A4', date('M j, Y', strtotime($start_date)));
+		$this->setDataToPopulate($sheet_name, 'A10', date('F-y', strtotime($this->ConsolidatedReport->getMonthStartDate())));
+		$this->setDataToPopulate($sheet_name, 'A25', date('M Y', strtotime($start_date)) . ' - ' . date('M Y', strtotime($end_date)));
 		
 		// Impression & Click Data
 		$ll_impression_data = $this->ConsolidatedReport->getImpressionDataBySiteForCurrentMonth(1);
@@ -409,8 +409,7 @@ class ConsolidatedReportHelper
 	public function populateImpressions()
 	{
 		$sheet_name = 'Impressions';
-		$impression_details = $this->ConsolidatedReport->getImpressions();
-		$current_year = date('y');
+
 		$month_column_map = array(
 			1 => 'B',
 			2 => 'C',
@@ -422,23 +421,41 @@ class ConsolidatedReportHelper
 			8 => 'I',
 			9 => 'J',
 			10 => 'K',
-			11 => 'M',
-			12 => 'N'
-		);		
+			11 => 'L',
+			12 => 'M'
+		);
 		
-		// Populate the Mon-Year header
-		$this->setDataToPopulate($sheet_name, "B7", "Jan-$current_year");
-		$this->setDataToPopulate($sheet_name, "C7", "Feb-$current_year");
-		$this->setDataToPopulate($sheet_name, "D7", "Mar-$current_year");
-		$this->setDataToPopulate($sheet_name, "E7", "Apr-$current_year");
-		$this->setDataToPopulate($sheet_name, "F7", "May-$current_year");
-		$this->setDataToPopulate($sheet_name, "G7", "Jun-$current_year");
-		$this->setDataToPopulate($sheet_name, "H7", "Jul-$current_year");
-		$this->setDataToPopulate($sheet_name, "I7", "Aug-$current_year");
-		$this->setDataToPopulate($sheet_name, "J7", "Sep-$current_year");
-		$this->setDataToPopulate($sheet_name, "K7", "Oct-$current_year");
-		$this->setDataToPopulate($sheet_name, "L7", "Nov-$current_year");
-		$this->setDataToPopulate($sheet_name, "M7", "Dec-$current_year");
+		$month_name_map = array(
+			'1' => 'Jan',
+			'2' => 'Feb',
+			'3' => 'Mar',
+			'4' => 'Apr',
+			'5' => 'May',
+			'6' => 'Jun',
+			'7' => 'Jul',
+			'8' => 'Aug',
+			'9' => 'Sep',
+			'10' => 'Oct',
+			'11' => 'Nov',
+			'12' => 'Dec'			
+		);
+		
+		$current_year = $start_year = date('Y', strtotime($this->ConsolidatedReport->getLoaStartDate()));
+		$start_month = (int) date('n', strtotime($this->ConsolidatedReport->getLoaStartDate()));
+		$end_month = date('n', strtotime($this->ConsolidatedReport->getMonthEndDate()));
+		
+		for($i = 1; $i <= 12; $i++) {
+			$this->setDataToPopulate($sheet_name, $month_column_map[$i] . '7', $month_name_map[$start_month] . '-' . substr($current_year, 2, 4));
+			$new_month_column_map[$start_month] = $month_column_map[$i];
+			$column_map[$current_year . '-' . $start_month] = $month_column_map[$i];
+			$start_month++;
+			if($start_month > 12) {
+				$start_month = 1;
+				$current_year++;
+			}			
+		}
+
+		$impression_details = $this->ConsolidatedReport->getImpressions();
 
 		// Populate Impressions by Site
 		foreach($impression_details as $key => $impression_detail) {
@@ -449,8 +466,9 @@ class ConsolidatedReportHelper
 			} else {
 				$spreadsheet_row = 10;
 			}
-			foreach($impression_detail as $key => $impression_data) {
-				$cell = $month_column_map[$key] . $spreadsheet_row;
+			foreach($impression_detail as $impression_data) {
+				$key = $impression_data['year'] . '-' . $impression_data['month'];
+				$cell = $column_map[$key]  . $spreadsheet_row;
 				$impressions_by_type[$key]['portfolio_microsite'] += $impression_data['productview'];
 				$impressions_by_type[$key]['destination'] += $impression_data['destinationview'];
 				$impressions_by_type[$key]['search'] += $impression_data['searchview'];
@@ -459,24 +477,23 @@ class ConsolidatedReportHelper
 				$this->setDataToPopulate($sheet_name, $cell, $impression_data['total_impressions']);
 			}
 		}
-		
+
 		//Populate Impressions by Type
-		foreach($impressions_by_type as $key => $value) {
-			$row = $month_column_map[$key];
-			$this->setDataToPopulate($sheet_name, $row . 18, $value['portfolio_microsite']);
-			$this->setDataToPopulate($sheet_name, $row . 19, $value['destination']);
-			$this->setDataToPopulate($sheet_name, $row . 20, $value['search']);
-			$this->setDataToPopulate($sheet_name, $row . 21, $value['email']);
+		foreach($impressions_by_type as $key => $impression_data) {
+			$row = $column_map[$key];
+			$this->setDataToPopulate($sheet_name, $row . 18, $impression_data['portfolio_microsite']);
+			$this->setDataToPopulate($sheet_name, $row . 19, $impression_data['destination']);
+			$this->setDataToPopulate($sheet_name, $row . 20, $impression_data['search']);
+			$this->setDataToPopulate($sheet_name, $row . 21, $impression_data['email']);
 		}
 	}
-	 
-	
+
 	/**
 	 *
 	 */
 	public function populateContactDetails()
 	{
-		$sheet_name = 'Contact Details';
+		$sheet_name = 'Traveler Details';
 		$contact_details = $this->ConsolidatedReport->getContactDetails();
 		
 		foreach($contact_details as $key => $contact_detail) {

@@ -42,20 +42,44 @@ class ConsolidatedReport extends AppModel
 	private $client_id;
 	
 	/**
-	 * start date
-	 * 
+	 * report date
+	 *
 	 * @access	private
-	 * @param	int
+	 * @param	string
 	 */
-	private $start_date;
+	private $report_date;
 	
 	/**
-	 * end date
+	 * loa start date
 	 * 
 	 * @access	private
-	 * @param	int
+	 * @param	string
 	 */
-	private $end_date;
+	private $loa_start_date;
+	
+	/**
+	 * loa end date
+	 * 
+	 * @access	private
+	 * @param	string
+	 */
+	private $loa_end_date;
+	
+	/**
+	 * month start date
+	 *
+	 * @access	private
+	 * @param	string
+	 */
+	private $month_start_date;
+	
+	/**
+	 * month end date
+	 *
+	 * @access	private
+	 * @param	string
+	 */
+	private $month_end_date;
 	
 	/**
 	 * Initialize private variables required to build a report and do some
@@ -67,11 +91,12 @@ class ConsolidatedReport extends AppModel
 	 * @param	string end date
 	 * @return	boolean
 	 */
-	public function create($client_id, $start_date, $end_date)
+	public function create($client_id, $report_date, $loa_start_date, $loa_end_date)
 	{
 		$this->client_id = $client_id;
-		$this->start_date = $start_date;
-		$this->end_date = $end_date;
+		$this->report_date = $report_date;
+		$this->loa_start_date = $loa_start_date;
+		$this->loa_end_date = $loa_end_date;
 		
 		return $this->validates();
 	}
@@ -87,14 +112,29 @@ class ConsolidatedReport extends AppModel
 		$isValid = true;
 		if (!isset($this->client_id)) {
 			$isValid = false;
-		} else if (!isset($this->start_date)) {
+		} else if (!isset($this->report_date)) {
 			$isValid = false;
-		} else if (!isset($this->end_date)) {
+		} else if (!isset($this->loa_start_date)) {
 			$isValid = false;
-		} else if ($this->start_date >= $this->end_date) {
+		} else if (!isset($this->loa_end_date)) {
+			$isValid = false;
+		} else if ($this->loa_start_date >= $this->loa_end_date) {
 			$isValid = false;
 		}
 		
+		if ($isValid) {
+			if (substr($this->report_date, 0, 7) === substr($this->loa_start_date, 0, 7)) {
+				$this->month_start_date = $this->loa_start_date;
+			} else {
+				$this->month_start_date = substr($this->report_date, 0, 7) . '-01';
+			}
+			
+			$this->month_end_date = substr($this->report_date, 0, 7) . '-' . cal_days_in_month(CAL_GREGORIAN, date('n', strtotime($this->report_date)), date('Y', strtotime($this->report_date)));
+			if (substr($this->month_end_date, 0, 7) === substr($this->loa_end_date, 0, 7)) {
+				$this->month_end_date = $this->loa_end_date;
+			}
+		}
+
 		return $isValid;
 	}
 	
@@ -109,38 +149,37 @@ class ConsolidatedReport extends AppModel
 		return $this->client_id;
 	}
 	
-	
 	/**
-	 * Return the report start date
+	 * Return the report loa start date
 	 * 
 	 * @access	public
 	 * @return	string
 	 */
-	public function getStartDate()
+	public function getLoaStartDate()
 	{
-		return $this->start_date . ' 00:00:00';
+		return $this->loa_start_date . ' 00:00:00';
 	}
 	
 	/**
-	 * Return the report end date
+	 * Return the report month start date
 	 * 
 	 * @access	public
 	 * @return	string
 	 */
-	public function getEndDate()
+	public function getMonthStartDate()
 	{
-		return $this->end_date . ' 23:59:59';
+		return $this->month_start_date . ' 23:59:59';
 	}
 	
 	/**
-	 * Return the month of the current report
+	 * Return the report month end date
 	 * 
 	 * @access	public
 	 * @return	string
 	 */
-	public function getMonth()
+	public function getMonthEndDate()
 	{
-		return date('n', strtotime($this->end_date));
+		return $this->month_end_date . ' 23:59:59';
 	}
 	
 	/**
@@ -152,7 +191,7 @@ class ConsolidatedReport extends AppModel
 	 */
 	public function getCallCountBySiteForCurrentMonth($site_id)
 	{
-		return $this->getCallCountBySiteForPeriod($site_id, $this->start_date, $this->end_date);
+		return $this->getCallCountBySiteForPeriod($site_id, $this->month_start_date, $this->month_end_date);
 	}
 	
 	/**
@@ -160,7 +199,7 @@ class ConsolidatedReport extends AppModel
 	 */
 	public function getCallCountForCurrentMonth()
 	{
-		return $this->getCallCountForPeriod($this->start_date, $this->end_date);
+		return $this->getCallCountForPeriod($this->month_start_date, $this->month_end_date);
 	}
 	
 	/**
@@ -172,7 +211,7 @@ class ConsolidatedReport extends AppModel
 	 */
 	public function getCallCountBySiteForYearToDate($site_id)
 	{
-		return $this->getCallCountBySiteForPeriod($site_id, date('Y', strtotime($this->start_date)) . '-01-01', $this->end_date);
+		return $this->getCallCountBySiteForPeriod($site_id, $this->loa_start_date, $this->month_end_date);
 	}
 	
 	/**
@@ -180,7 +219,7 @@ class ConsolidatedReport extends AppModel
 	 */
 	public function getCallCountForYearToDate()
 	{
-		return $this->getCallCountForPeriod(date('Y', strtotime($this->start_date)) . '-01-01', $this->end_date);
+		return $this->getCallCountForPeriod($this->loa_start_date, $this->month_end_date);
 	}
 	
 	/**
@@ -233,7 +272,7 @@ class ConsolidatedReport extends AppModel
 	 */
 	public function getEmailCountBySiteForCurrentMonth($site_id)
 	{
-		return $this->getEmailCountBySiteForPeriod($site_id, $this->start_date, $this->end_date);
+		return $this->getEmailCountBySiteForPeriod($site_id, $this->month_start_date, $this->month_end_date);
 	}
 	
 	/**
@@ -241,7 +280,7 @@ class ConsolidatedReport extends AppModel
 	 */
 	public function getEmailCountBySiteForYearToDate($site_id)
 	{
-		return $this->getEmailCountBySiteForPeriod($site_id, date('Y', strtotime($this->start_date)) . '-01-01', $this->end_date);
+		return $this->getEmailCountBySiteForPeriod($site_id, $this->loa_start_date, $this-month_>end_date);
 	}
 	
 	/**
@@ -276,7 +315,7 @@ class ConsolidatedReport extends AppModel
 	 */
 	public function getImpressionDataBySiteForCurrentMonth($site_id)
 	{
-		return $this->getImpressionsBySiteForPeriod($site_id, $this->start_date, $this->end_date);
+		return $this->getImpressionsBySiteForPeriod($site_id, $this->month_start_date, $this->month_end_date);
 	}
 	
 	/**
@@ -284,7 +323,7 @@ class ConsolidatedReport extends AppModel
 	 */
 	public function getImpressionDataBySiteForYearToDate($site_id)
 	{
-		return $this->getImpressionsBySiteForPeriod($site_id, date('Y', strtotime($this->start_date)) . '-01-01', $this->end_date);
+		return $this->getImpressionsBySiteForPeriod($site_id, $this->loa_start_date, $this->month_end_date);
 	}
 	
 	/**
@@ -328,25 +367,24 @@ class ConsolidatedReport extends AppModel
 			'Luxury Link' => 'offerLuxuryLink',
 			'Family Getaway' => 'offerFamily'
 		);
-		$start_date = date('Y', strtotime($this->start_date)) . '-01-01';
-		
+
 		foreach($tables as $site => $table) {
 			// Get current month data
-			$booking_data = $this->getBookingInformationForPeriod($table, $this->start_date, $this->end_date);
+			$booking_data = $this->getBookingInformationForPeriod($table, $this->month_start_date, $this->month_end_date);
 			$booking_information[$site]['current_month'] = self::buildBookingInformationArray($booking_data[0][0]['bookings'], $booking_data[0][0]['room_nights'], $booking_data[0][0]['gross_bookings']);
 			
 			// Get year-to-date data
-			$booking_data = $this->getBookingInformationForPeriod($table, $start_date, $this->end_date);
+			$booking_data = $this->getBookingInformationForPeriod($table, $this->loa_start_date, $this->month_end_date);
 			$booking_information[$site]['year_to_date'] = self::buildBookingInformationArray($booking_data[0][0]['bookings'], $booking_data[0][0]['room_nights'], $booking_data[0][0]['gross_bookings']);
 		}
 		
 		// Get Vacationist Bookings
 		// Get current month data
-		$booking_data = $this->getVacationistBookingInformationForPeriod($this->start_date, $this->end_date);
+		$booking_data = $this->getVacationistBookingInformationForPeriod($this->month_start_date, $this->month_end_date);
 		$booking_information['Vacationist']['current_month'] = self::buildBookingInformationArray($booking_data[0][0]['bookings'], $booking_data[0][0]['room_nights'], $booking_data[0][0]['gross_bookings']);
 		
 		// Get year-to-date data
-		$booking_data = $this->getVacationistBookingInformationForPeriod($start_date, $this->end_date);
+		$booking_data = $this->getVacationistBookingInformationForPeriod($this->loa_start_date, $this->month_end_date);
 		$booking_information['Vacationist']['year_to_date'] = self::buildBookingInformationArray($booking_data[0][0]['bookings'], $booking_data[0][0]['room_nights'], $booking_data[0][0]['gross_bookings']);
 
 		return $booking_information;
@@ -425,7 +463,6 @@ class ConsolidatedReport extends AppModel
 			'Luxury Link' => 'carConsolidatedView',
 			'Family Getaway' => 'carConsolidatedViewFg'
 		);
-		$start_date = date('Y', strtotime($this->start_date)) . '-01-01';
 
 		foreach($tables as $site => $table) {
 			$sql = "
@@ -442,8 +479,10 @@ class ConsolidatedReport extends AppModel
 					totalimpressions
 				FROM $table
 				WHERE
-					activityStart BETWEEN '{$start_date}' AND '{$this->end_date}'
-					AND clientid = {$this->client_id}					
+					clientid = {$this->client_id}					
+					AND (
+						activityEnd BETWEEN '{$this->loa_start_date}' AND '{$this->month_end_date}'
+					)
 				ORDER BY year2, month2
 			";
 			$rows = $this->query($sql);
@@ -516,7 +555,7 @@ class ConsolidatedReport extends AppModel
 			FROM client_phone_leads ClientPhoneLead
 			WHERE
 				client_id = {$this->client_id}
-				AND date BETWEEN '{$this->start_date}' AND '{$this->end_date}'
+				AND date BETWEEN '{$this->loa_start_date}' AND '{$this->month_end_date}'
 		";
 		
 		$call_details_raw = $this->query($sql);
@@ -617,7 +656,7 @@ class ConsolidatedReport extends AppModel
 				AND PaymentDetail.isSuccessfulCharge = 1
 				AND Ticket.siteId = $site_id
 				AND Offer.clientId = {$this->client_id}
-				AND Ticket.created between '{$this->start_date}' AND '{$this->end_date}'
+				AND Ticket.created between '{$this->loa_start_date}' AND '{$this->month_end_date}'
 		";
 		
 		$booking_details_raw = $this->query($sql);
@@ -685,7 +724,7 @@ class ConsolidatedReport extends AppModel
 				Client.id = Ticket.clientId
 				AND User.id = Ticket.userId
 				AND Client.toolboxClientId = {$this->client_id}
-				AND Ticket.created BETWEEN '{$this->start_date}' AND '{$this->end_date}'
+				AND Ticket.created BETWEEN '{$this->loa_start_date}' AND '{$this->month_end_date}'
 		";
 		
 		$booking_details_raw = $this->query($sql);

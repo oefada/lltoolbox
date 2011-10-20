@@ -4071,7 +4071,7 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 	/**
 	 *
 	 */
-	public function consolidated_report($client_id = null, $start_date = null, $end_date = null)
+	public function consolidated_report($client_id = null, $report_date = null)
 	{
 		// Cake's debug output can cause issues with the spreadsheet generation
 		Configure::write('debug', 0); 
@@ -4080,57 +4080,76 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		// Otherwise, generating a report redirects you to the last page you had loaded
 		// in toolbox and you have to re-enter the URL
 		if (is_null($client_id)) {
-			echo "<a href='/reports/consolidated_report/2192/2011-03-01/2011-03-31'>Generate Report</a><br/>";
-			echo "<a href='/reports/consolidated_report/1178/2011-03-01/2011-03-31'>Generate Report</a><br/>";
-			echo "<a href='/reports/consolidated_report/2183/2011-03-01/2011-03-31'>Generate Report</a><br/>";
-			echo "<a href='/reports/consolidated_report/2384/2011-03-01/2011-03-31'>Generate Report</a><br/>";
-			echo "<a href='/reports/consolidated_report/2795/2011-03-01/2011-03-31'>Generate Report</a><br/>";
-			echo "<a href='/reports/consolidated_report/10883/2011-03-01/2011-03-31'>Generate Report</a><br/>";
-			echo "<a href='/reports/consolidated_report/9463/2011-03-01/2011-03-31'>Generate Report</a><br/>";
-			echo "<a href='/reports/consolidated_report/11100/2011-03-01/2011-03-31'>Generate Report</a><br/>";
-			echo "<a href='/reports/consolidated_report/6343/2011-03-01/2011-03-31'>Generate Report</a><br/>";
-			echo "<a href='/reports/consolidated_report/49/2011-03-01/2011-03-31'>Generate Report</a><br/>";
-			echo "<a href='/reports/consolidated_report/512/2011-03-01/2011-03-31'>Generate Report</a><br/>";
-			echo "<a href='/reports/consolidated_report/925/2011-03-01/2011-03-31'>Generate Report</a><br/>";
-			echo "<a href='/reports/consolidated_report/951/2011-03-01/2011-03-31'>Generate Report</a><br/>";
-			echo "<a href='/reports/consolidated_report/2733/2011-03-01/2011-03-31'>Generate Report</a><br/>";
-			echo "<a href='/reports/consolidated_report/11356/2011-03-01/2011-03-31'>Generate Report</a><br/>";
-			echo "<a href='/reports/consolidated_report/8456/2011-03-01/2011-03-31'>Generate Report</a><br/>";
-			echo "<a href='/reports/consolidated_report/10801/2011-03-01/2011-03-31'>Generate Report</a><br/>";
-			echo "<a href='/reports/consolidated_report/272/2011-03-01/2011-03-31'>Generate Report</a><br/>";
-			echo "<a href='/reports/consolidated_report/2273/2011-03-01/2011-03-31'>Generate Report</a><br/>";
-			echo "<a href='/reports/consolidated_report/8684/2011-03-01/2011-03-31'>Generate Report</a><br/>";
-			echo "<a href='/reports/consolidated_report/3510/2011-03-01/2011-03-31'>Generate Report</a><br/>";
+			$report_date = '2011-03-01';
+			echo "<a href='/reports/consolidated_report/2192/$report_date'>Generate Report</a><br/>";
+			echo "<a href='/reports/consolidated_report/1178/$report_date'>Generate Report</a><br/>";
+			echo "<a href='/reports/consolidated_report/2183/$report_date'>Generate Report</a><br/>";
+			echo "<a href='/reports/consolidated_report/2384/$report_date'>Generate Report</a><br/>";
+			echo "<a href='/reports/consolidated_report/2795/$report_date'>Generate Report</a><br/>";
+			echo "<a href='/reports/consolidated_report/10883/$report_date'>Generate Report</a><br/>";
+			echo "<a href='/reports/consolidated_report/9463/$report_date'>Generate Report</a><br/>";
+			echo "<a href='/reports/consolidated_report/11100/$report_date'>Generate Report</a><br/>";
+			echo "<a href='/reports/consolidated_report/6343/$report_date'>Generate Report</a><br/>";
+			echo "<a href='/reports/consolidated_report/49/$report_date'>Generate Report</a><br/>";
+			echo "<a href='/reports/consolidated_report/512/$report_date'>Generate Report</a><br/>";
+			echo "<a href='/reports/consolidated_report/925/$report_date'>Generate Report</a><br/>";
+			echo "<a href='/reports/consolidated_report/951/$report_date'>Generate Report</a><br/>";
+			echo "<a href='/reports/consolidated_report/2733/$report_date'>Generate Report</a><br/>";
+			echo "<a href='/reports/consolidated_report/11356/$report_date'>Generate Report</a><br/>";
+			echo "<a href='/reports/consolidated_report/8456/$report_date'>Generate Report</a><br/>";
+			echo "<a href='/reports/consolidated_report/10801/$report_date'>Generate Report</a><br/>";
+			echo "<a href='/reports/consolidated_report/272/$report_date'>Generate Report</a><br/>";
+			echo "<a href='/reports/consolidated_report/2273/$report_date'>Generate Report</a><br/>";
+			echo "<a href='/reports/consolidated_report/8684/$report_date'>Generate Report</a><br/>";
+			echo "<a href='/reports/consolidated_report/3510/$report_date'>Generate Report</a><br/>";
 			
 			die;
 		}
-		
-		// Load required models and helper
-		$this->loadModel('ConsolidatedReport');
-		$this->loadModel('Client');
-		App::import('Vendor', 'ConsolidatedReportHelper', array('file' => 'consolidated_report' . DS . 'consolidated_report_helper.php'));
 
 		// Set layout to excel		
 		$this->layout = 'excel';
 		
 		// Report initialization variables
-		$template = APP . 'vendors/consolidated_report/templates/consolidated_report_revision-3.xlsx';
+		$template = APP . 'vendors/consolidated_report/templates/consolidated_report_revision-4.xlsx';
 		$newFile = TMP . 'consolidated_report.xlsx';
 		$outputFile = TMP . 'consolidated_report_output.xlsx';
 		
+		// Client Details
+		$this->loadModel('Client');
+		$this->Client->id = $client_id;
+		$client_details = $this->Client->find('first', array('recursive' => -1));
+		unset($this->Client);
+		
+		$this->loadModel('Loa');
+		$loa_details = $this->Loa->find(
+			'first',
+			array(
+				'recursive' => -1,
+				'fields' => array('clientId', 'loaId', 'startDate', 'endDate', 'membershipFee'),
+				'conditions' => array(
+					"'$report_date' BETWEEN startDate AND endDate",
+					"clientId = $client_id"
+				)
+			)
+		);
+		unset($this->Loa);
+
+		$loa_start_date = date('Y-m-d', strtotime($loa_details['Loa']['startDate']));
+		$loa_end_date = date('Y-m-d', strtotime($loa_details['Loa']['endDate']));
+		$membership_fee = $loa_details['Loa']['membershipFee'];
+		$filename = 'consolidated_report_' . $client_details['Client']['seoName'] . '_' . $loa_start_date . '_to_' . $report_date;
+
 		// Initialize the report Model
-		$this->ConsolidatedReport->create($client_id, $start_date, $end_date);
+		$this->loadModel('ConsolidatedReport');
+		$this->ConsolidatedReport->create($client_id, $report_date, $loa_start_date, $loa_end_date);
 		
 		// Create the report object
+		App::import('Vendor', 'ConsolidatedReportHelper', array('file' => 'consolidated_report' . DS . 'consolidated_report_helper.php'));
 		$report = new ConsolidatedReportHelper($template, $newFile, $outputFile, $this->ConsolidatedReport);
 		
-		// Client Details
-		$this->Client->id = $this->ConsolidatedReport->getClientId();
-		$client_details = $this->Client->find('first', array('order' => 'Client.clientId desc'));
-		$filename = 'consolidated_report_' . $client_details['Client']['seoName'] . '_' . substr($start_date, 0, 7);
-		
-		$report->populateDashboard($client_details['Client']['name'], $client_details['Loa'][0]['membershipFee']);		
-		$report->populateActivitySummary($client_details['Loa'][0]['startDate'], 15, 2);
+		// Populate the report
+		$report->populateDashboard($client_details['Client']['name'], $membership_fee, $loa_start_date, $this->ConsolidatedReport->getMonthEndDate());		
+		$report->populateActivitySummary($loa_start_date, $this->ConsolidatedReport->getMonthEndDate(), 15, 2);
 		$report->populateBookings();	
 		$report->populateImpressions();
 		$report->populateContactDetails();
