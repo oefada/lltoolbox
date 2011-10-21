@@ -49,9 +49,8 @@ class ConsolidatedReportShell extends Shell {
 		// Client & LOA Details
 		$client_details = $this->getClientDetails();
 		$loa_details = $this->getLoaDetails();
-		// $outputFile = TMP . 'consolidated_report_output.xlsx';
 
-		// Set date parameters
+		// Set date, fee, and output file parameters
 		$loa_start_date = date('Y-m-d', strtotime($loa_details['Loa']['startDate']));
 		$loa_end_date = date('Y-m-d', strtotime($loa_details['Loa']['endDate']));
 		$membership_fee = $loa_details['Loa']['membershipFee'];
@@ -77,6 +76,7 @@ class ConsolidatedReportShell extends Shell {
 		$report->populateBookings();
 		$report->populateImpressions();
 		$report->populateContactDetails();
+		self::log("The report data array was built successfully.");
 
 		// Save array to spreadsheet object
 		try {
@@ -98,7 +98,9 @@ class ConsolidatedReportShell extends Shell {
 	}
 	
 	/**
-	 *
+	 * Get client details
+	 * 
+	 * @access	private
 	 */
 	private function getClientDetails()
 	{
@@ -111,7 +113,9 @@ class ConsolidatedReportShell extends Shell {
 	}
 	
 	/**
+	 * Get the LOA details for a given client
 	 *
+	 * @access	private
 	 */
 	private function getLoaDetails()
 	{
