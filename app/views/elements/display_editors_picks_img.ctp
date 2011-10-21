@@ -1,0 +1,1 @@
+<a xt="SPCLICK" name="www_luxurylink_com_fivest_17" target="_blank" href="<?=$seoUrl?>?utm_medium=news&utm_term=<?=$version?>&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=<?=$seoName?>"><img name="Cont_32" width="325" height="182" style="display:block" alt="<?=$name?>" border="0" src="<?=$img?>" /></a>

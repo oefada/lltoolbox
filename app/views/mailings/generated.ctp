@@ -1,7 +1,7 @@
 <?
 
-Configure::write('debug', '0');
-
+Configure::write('debug', '2');
+/*
 // These functions wrap up the html
 function displayEditorsPicksImg($arr,$date_ymd,$version){ 
 
@@ -78,12 +78,15 @@ function displayBox($arr,$date_ymd,$version){
 ?>
 
 <p style="background:#86878a;border-bottom:2px solid #86878a;padding:0;vertical-align:middle;color:#ffffff;height:16px;margin:0 0 2px 0;font-size:12px;line-height:18px">&nbsp;<?=$locationDisplay?></p>
-<a name="0.1_www_luxurylink_com_fi_2" target="_blank" xt="SPCLICK" href="<?=$seoLink?>?utm_medium=news&utm_term=<?=$version?>&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=<?=$seoName?>"><img name="Cont_9" alt="<?=$name?>" width="239" height="148" border="0" style="display:block;margin-bottom:5px" src="<?=$img?>" /></a>     <a xt="SPCLICK" name="0.1_www_luxurylink_com_fi_2" style="color:#33669a;font-size:12px;line-height:16px" target="_blank" href="<?=$seoLink?>?utm_medium=news&utm_term=<?=$version?>&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=<?=$seoName?>"><?=$name?></a><br />
+<a name="0.1_www_luxurylink_com_fi_2" target="_blank" xt="SPCLICK" href="<?=$seoLink?>?utm_medium=news&utm_term=<?=$version?>&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=<?=$seoName?>"><img name="Cont_9" alt="<?=$name?>" width="239" height="148" border="0" style="display:block;margin-bottom:5px" src="<?=$img?>" /></a>     <a xt="SPCLICK" name="0.1_www_luxurylink_com_fi_2" style="color:#33669a;font-size:12px;line-height:16px" target="_blank" href="<?=$seoLink?>?utm_medium=news&utm_term=<?=$version?>&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=<?=$seoName?>"><?=$name?></a><br /><br>
 <?=$shortBlurb;?>
 <br />
 <a name="0.1_www_luxurylink_com_fi_3" target="_blank" xt="SPCLICK" href="<?=$seoLink?>?utm_medium=news&utm_term=<?=$version?>&utm_source=insider&utm_campaign=llinsider_<?=$date_ymd?>&utm_content=<?=$seoName?>"><img name="Cont_8" align="right" border="0" alt="" src="http://www.luxurylink.com/images/insider/images1/btn-viewpackage.gif" /></a>
 
-<? } ?>
+<? } 
+*/
+
+?>
 
 <div style="margin:0;padding:0">
 <table width="100%" bgcolor="#f6f6f6" cellpadding="0" cellspacing="0">
@@ -220,14 +223,44 @@ You come to Luxury Link to find the travel experiences you dream of: <i>the worl
 
 <td width="239" style="font-size:11px" valign="top">
 
-<?  displayBox($rows[0],$date_ymd,$version); ?>
+<?  
+
+$arr=$rows[0];
+echo $this->element("display_box", array(
+	"name"=>$arr['client']['name'],
+	"locationDisplay"=>$arr['client']['locationDisplay'],
+	"longDesc"=>$arr['client']['longDesc'],
+	"seoUrl"=>$arr['client']['seoUrl'],
+	"seoName"=>$arr['client']['seoName'],
+	"img"=>"http://www.luxurylink.com".$arr['client']['imagePath'],
+	"date_ymd"=>$date_ymd,
+	"version"=>$version
+	)
+);
+
+//displayBox($rows[0],$date_ymd,$version); ?>
 
 </td>
 <td width="33"></td>
 
 <td width="239" style="font-size:11px" valign="top">
 
-<? displayBox($rows[1],$date_ymd,$version); ?>
+<? 
+
+$arr=$rows[1];
+echo $this->element("display_box", array(
+	"name"=>$arr['client']['name'],
+	"locationDisplay"=>$arr['client']['locationDisplay'],
+	"longDesc"=>$arr['client']['longDesc'],
+	"seoUrl"=>$arr['client']['seoUrl'],
+	"seoName"=>$arr['client']['seoName'],
+	"img"=>"http://www.luxurylink.com".$arr['client']['imagePath'],
+	"date_ymd"=>$date_ymd,
+	"version"=>$version
+	)
+);
+
+//displayBox($rows[1],$date_ymd,$version); ?>
 
 </td>
 </tr>
@@ -238,13 +271,43 @@ You come to Luxury Link to find the travel experiences you dream of: <i>the worl
 <tr>
 <td width="239" style="font-size:11px" valign="top">
 
-<? displayBox($rows[2],$date_ymd,$version); ?>
+<? 
+
+$arr=$rows[2];
+echo $this->element("display_box", array(
+	"name"=>$arr['client']['name'],
+	"locationDisplay"=>$arr['client']['locationDisplay'],
+	"longDesc"=>$arr['client']['longDesc'],
+	"seoUrl"=>$arr['client']['seoUrl'],
+	"seoName"=>$arr['client']['seoName'],
+	"img"=>"http://www.luxurylink.com".$arr['client']['imagePath'],
+	"date_ymd"=>$date_ymd,
+	"version"=>$version
+	)
+);
+
+//displayBox($rows[2],$date_ymd,$version); ?>
 
 </td>
 <td width="33"></td>
 <td width="239" style="font-size:11px" valign="top">
 
-<? displayBox($rows[3],$date_ymd,$version); ?>
+<? 
+
+$arr=$rows[3];
+echo $this->element("display_box", array(
+	"name"=>$arr['client']['name'],
+	"locationDisplay"=>$arr['client']['locationDisplay'],
+	"longDesc"=>$arr['client']['longDesc'],
+	"seoUrl"=>$arr['client']['seoUrl'],
+	"seoName"=>$arr['client']['seoName'],
+	"img"=>"http://www.luxurylink.com".$arr['client']['imagePath'],
+	"date_ymd"=>$date_ymd,
+	"version"=>$version
+	)
+);
+
+//displayBox($rows[3],$date_ymd,$version); ?>
 
 </td>
 </tr>
@@ -326,14 +389,44 @@ Pacific time at<br />
 
 <td width="325" style="font-size:11px" valign="top">
 
-<? displayBox2($rows[4],$date_ymd,$version);?>
+<? 
+
+$arr=$rows[4];
+echo $this->element("display_box_2", array(
+	"name"=>$arr['client']['name'],
+	"locationDisplay"=>$arr['client']['locationDisplay'],
+	"longDesc"=>$arr['client']['longDesc'],
+	"seoUrl"=>$arr['client']['seoUrl'],
+	"seoName"=>$arr['client']['seoName'],
+	"img"=>"http://www.luxurylink.com".$arr['client']['imagePath'],
+	"date_ymd"=>$date_ymd,
+	"version"=>$version
+	)
+);
+//displayBox2($rows[4],$date_ymd,$version);
+
+?>
 
 </td>
 <td width="40"></td>
 
 <td width="325" style="font-size:11px" valign="top">
 
-<? displayBox2($rows[5],$date_ymd,$version);?>
+<? 
+
+$arr=$rows[5];
+echo $this->element("display_box_2", array(
+	"name"=>$arr['client']['name'],
+	"locationDisplay"=>$arr['client']['locationDisplay'],
+	"longDesc"=>$arr['client']['longDesc'],
+	"seoUrl"=>$arr['client']['seoUrl'],
+	"seoName"=>$arr['client']['seoName'],
+	"img"=>"http://www.luxurylink.com".$arr['client']['imagePath'],
+	"date_ymd"=>$date_ymd,
+	"version"=>$version
+	)
+);
+//displayBox2($rows[5],$date_ymd,$version);?>
 
 </td>
 </tr>
@@ -344,13 +437,43 @@ Pacific time at<br />
 <tr>
 <td width="325" style="font-size:11px" valign="top">
 
-<? displayBox2($rows[6],$date_ymd,$version);?>
+<? 
+
+$arr=$rows[6];
+echo $this->element("display_box_2", array(
+	"name"=>$arr['client']['name'],
+	"locationDisplay"=>$arr['client']['locationDisplay'],
+	"longDesc"=>$arr['client']['longDesc'],
+	"seoUrl"=>$arr['client']['seoUrl'],
+	"seoName"=>$arr['client']['seoName'],
+	"img"=>"http://www.luxurylink.com".$arr['client']['imagePath'],
+	"date_ymd"=>$date_ymd,
+	"version"=>$version
+	)
+);
+
+//displayBox2($rows[6],$date_ymd,$version);?>
 
 </td>
 <td width="40"></td>
 <td width="325" style="font-size:11px" valign="top">
 
-<? displayBox2($rows[7],$date_ymd,$version);?>
+<? 
+
+$arr=$rows[7];
+echo $this->element("display_box_2", array(
+	"name"=>$arr['client']['name'],
+	"locationDisplay"=>$arr['client']['locationDisplay'],
+	"longDesc"=>$arr['client']['longDesc'],
+	"seoUrl"=>$arr['client']['seoUrl'],
+	"seoName"=>$arr['client']['seoName'],
+	"img"=>"http://www.luxurylink.com".$arr['client']['imagePath'],
+	"date_ymd"=>$date_ymd,
+	"version"=>$version
+	)
+);
+
+//displayBox2($rows[7],$date_ymd,$version);?>
 
 </td>
 </tr>
@@ -376,6 +499,10 @@ Pacific time at<br />
 </tr>
 </tbody>
 </table>
+
+<div style='border:1px solid black;margin:0px auto;width:728px;height:90px;'>YOUR AD HERE</div>
+<div style='clear:both;'></div><br>
+
 <table width="730" align="center" cellpadding="0" cellspacing="0" style="font-family:Arial, Verdana, sans-serif;font-size:13px;background-color: #ffffff;">
 <tbody>
 
@@ -384,6 +511,7 @@ Pacific time at<br />
 </tr>
 <tr>
 <td style="border-bottom:1px solid #9c9da0;border-left:1px solid #9c9da0;border-right:1px solid #9c9da0;color:#333333">
+
 <table border="0" width="100%" valign="top" cellpadding="0" cellspacing="0">
 <tbody>
 <tr>
@@ -404,13 +532,44 @@ Pacific time at<br />
 <tr>
 <td width="325" style="font-size:11px" valign="top">
 
-<? displayBox2($rows[8],$date_ymd,$version);?>
+<? 
+
+$arr=$rows[8];
+echo $this->element("display_box_2", array(
+	"name"=>$arr['client']['name'],
+	"locationDisplay"=>$arr['client']['locationDisplay'],
+	"longDesc"=>$arr['client']['longDesc'],
+	"seoUrl"=>$arr['client']['seoUrl'],
+	"seoName"=>$arr['client']['seoName'],
+	"img"=>"http://www.luxurylink.com".$arr['client']['imagePath'],
+	"date_ymd"=>$date_ymd,
+	"version"=>$version
+	)
+);
+
+
+//displayBox2($rows[8],$date_ymd,$version);?>
 
 </td>
 <td width="40"></td>
 <td width="325" style="font-size:11px" valign="top">
 
-<? displayBox2($rows[9],$date_ymd,$version);?>
+<? 
+
+$arr=$rows[9];
+echo $this->element("display_box_2", array(
+	"name"=>$arr['client']['name'],
+	"locationDisplay"=>$arr['client']['locationDisplay'],
+	"longDesc"=>$arr['client']['longDesc'],
+	"seoUrl"=>$arr['client']['seoUrl'],
+	"seoName"=>$arr['client']['seoName'],
+	"img"=>"http://www.luxurylink.com".$arr['client']['imagePath'],
+	"date_ymd"=>$date_ymd,
+	"version"=>$version
+	)
+);
+
+//displayBox2($rows[9],$date_ymd,$version);?>
 
 </td>
 </tr>
@@ -421,14 +580,45 @@ Pacific time at<br />
 
 <td width="325" style="font-size:11px" valign="top">
 
-<? displayBox2($rows[10],$date_ymd,$version);?>
+<? 
+
+$arr=$rows[10];
+echo $this->element("display_box_2", array(
+	"name"=>$arr['client']['name'],
+	"locationDisplay"=>$arr['client']['locationDisplay'],
+	"longDesc"=>$arr['client']['longDesc'],
+	"seoUrl"=>$arr['client']['seoUrl'],
+	"seoName"=>$arr['client']['seoName'],
+	"img"=>"http://www.luxurylink.com".$arr['client']['imagePath'],
+	"date_ymd"=>$date_ymd,
+	"version"=>$version
+	)
+);
+
+
+//displayBox2($rows[10],$date_ymd,$version);?>
 
 </td>
 <td width="40"></td>
 
 <td width="325" style="font-size:11px" valign="top">
 
-<? displayBox2($rows[11],$date_ymd,$version);?>
+<? 
+$arr=$rows[11];
+echo $this->element("display_box_2", array(
+	"name"=>$arr['client']['name'],
+	"locationDisplay"=>$arr['client']['locationDisplay'],
+	"longDesc"=>$arr['client']['longDesc'],
+	"seoUrl"=>$arr['client']['seoUrl'],
+	"seoName"=>$arr['client']['seoName'],
+	"img"=>"http://www.luxurylink.com".$arr['client']['imagePath'],
+	"date_ymd"=>$date_ymd,
+	"version"=>$version
+	)
+);
+
+
+//displayBox2($rows[11],$date_ymd,$version);?>
 
 </td>
 </tr>
@@ -483,14 +673,48 @@ Pacific time at<br />
 <td width="325" style="font-size:11px" valign="top">
 
 
-<? displayEditorsPicksImg($rows[12],$date_ymd,$version)?>
+<? 
+
+$arr=$rows[12];
+echo $this->element("display_editors_picks_img", 
+	array(
+		"name"=>$arr['client']['name'],
+		"locationDisplay"=>$arr['client']['locationDisplay'],
+		"seoUrl"=>$arr['client']['seoUrl'],
+		"seoName"=>$arr['client']['seoName'],
+		"img"=>"http://www.luxurylink.com".$arr['client']['imagePath'],
+		"version"=>$version,
+		"date_ymd",$date_ymd
+	)
+);
+
+?>
+<? //displayEditorsPicksImg($rows[12],$date_ymd,$version)?>
 
 </td>
 
 <td width="25"></td>
 <td width="340" style="font-size:12px;line-height:16px" valign="top">
 
-<? displayEditorsPicksText($rows[12],$date_ymd,$version)?>
+<? 
+
+$arr=$rows[12];
+echo $this->element("display_editors_picks_text", 
+	array(
+		"name"=>$arr['client']['name'],
+		"locationDisplay"=>$arr['client']['locationDisplay'],
+		"seoName"=>$arr['client']['seoName'],
+		"img"=>"http://www.luxurylink.com".$arr['client']['imagePath'],
+		"longDesc"=>$arr['client']['longDesc'],
+		"version"=>$version,
+		"seoUrl"=>$arr['client']['seoUrl'],
+		"date_ymd"=>$date_ymd
+	)
+);
+
+//displayEditorsPicksText($rows[12],$date_ymd,$version);
+
+?>
 
 </td>
 </tr>
@@ -500,14 +724,45 @@ Pacific time at<br />
 <tr>
 <td width="325" style="font-size:11px" valign="top">
 
-<? displayEditorsPicksImg($rows[13],$date_ymd,$version)?>
+<? 
+
+$arr=$rows[13];
+echo $this->element("display_editors_picks_img", 
+	array(
+		"name"=>$arr['client']['name'],
+		"locationDisplay"=>$arr['client']['locationDisplay'],
+		"seoUrl"=>$arr['client']['seoUrl'],
+		"seoName"=>$arr['client']['seoName'],
+		"img"=>"http://www.luxurylink.com".$arr['client']['imagePath'],
+		"version"=>$version,
+		"date_ymd"=>$date_ymd
+	)
+);
+
+//displayEditorsPicksImg($rows[13],$date_ymd,$version)?>
 
 </td>
 <td width="25"></td>
 
 <td width="340" style="font-size:12px;line-height:16px" valign="top">
 
-<? displayEditorsPicksText($rows[13],$date_ymd,$version)?>
+<? 
+
+$arr=$rows[13];
+echo $this->element("display_editors_picks_text", 
+	array(
+		"name"=>$arr['client']['name'],
+		"locationDisplay"=>$arr['client']['locationDisplay'],
+		"seoName"=>$arr['client']['seoName'],
+		"img"=>"http://www.luxurylink.com".$arr['client']['imagePath'],
+		"longDesc"=>$arr['client']['longDesc'],
+		"version"=>$version,
+		"seoUrl"=>$arr['client']['seoUrl'],
+		"date_ymd"=>$date_ymd
+	)
+);
+
+//displayEditorsPicksText($rows[13],$date_ymd,$version)?>
 
 </td>
 
@@ -518,13 +773,44 @@ Pacific time at<br />
 <tr>
 <td width="325" style="font-size:11px" valign="top">
 
-<? displayEditorsPicksImg($rows[14],$date_ymd,$version)?>
+<? 
+
+$arr=$rows[14];
+echo $this->element("display_editors_picks_img", 
+	array(
+		"name"=>$arr['client']['name'],
+		"locationDisplay"=>$arr['client']['locationDisplay'],
+		"seoUrl"=>$arr['client']['seoUrl'],
+		"seoName"=>$arr['client']['seoName'],
+		"img"=>"http://www.luxurylink.com".$arr['client']['imagePath'],
+		"version"=>$version,
+		"date_ymd"=>$date_ymd
+	)
+);
+
+//displayEditorsPicksImg($rows[14],$date_ymd,$version)?>
 
 </td>
 <td width="25"></td>
 <td width="340" style="font-size:12px;line-height:16px" valign="top">
 
-<? displayEditorsPicksText($rows[14],$date_ymd,$version)?>
+<? 
+
+$arr=$rows[14];
+//displayEditorsPicksText($rows[14],$date_ymd,$version)
+echo $this->element("display_editors_picks_text", 
+	array(
+		"name"=>$arr['client']['name'],
+		"locationDisplay"=>$arr['client']['locationDisplay'],
+		"seoName"=>$arr['client']['seoName'],
+		"img"=>"http://www.luxurylink.com".$arr['client']['imagePath'],
+		"longDesc"=>$arr['client']['longDesc'],
+		"version"=>$version,
+		"seoUrl"=>$arr['client']['seoUrl'],
+		"date_ymd"=>$date_ymd
+	)
+);
+?>
 
 </td>
 </tr>
