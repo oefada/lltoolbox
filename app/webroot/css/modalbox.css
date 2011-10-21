@@ -22,7 +22,8 @@
 #MB_frame {
 	position: relative;
 	background-color: #fff;
-	height: 100%;
+	height: 75%:
+	overflow:auto;
 }
 
 #MB_header {
@@ -31,7 +32,7 @@
 }
 
 #MB_content {
-    max-height: 800px;
+    max-height: 600px;
 	padding: 6px .75em;
 	overflow: auto;
 }
