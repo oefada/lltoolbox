@@ -55,7 +55,7 @@
 				<?php if (isset($ticket['UserPromo']['Cof']['balance'])): ?>
 				<tr id="applyCof">
 					<td><strong>Apply Credit on File:</strong></td>
-					<td><input id="applyCofCheck" type="checkbox" name="data['CreditTracking']['applyCoF']" value="1"> (Customer has credit on file of $<?= number_format($ticket['UserPromo']['Cof']['balance'],2) ?>)</td>
+					<td><input id="applyCofCheck" type="checkbox" name="data['CreditTracking']['applyCoF']" value="1"> <span style="color: #ff0000;">(Customer has credit on file of $<?= number_format($ticket['UserPromo']['Cof']['balance'],2) ?>)</span></td>
 				</tr>
 				<?php endif; ?>
 				<tr>
