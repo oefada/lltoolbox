@@ -13,7 +13,8 @@ class CurrencyShell extends Shell {
 
         $newRates = $this->update_exchange_rates($result);
         // email when no new entries made
-        if ($newRates == 0) { $this->sendEmailNoEntries(); }
+        $dayOfWeek = date('w');
+        if ($newRates == 0 && $dayOfWeek != 0 && $dayOfWeek != 6) { $this->sendEmailNoEntries(); }
     }
 
     function prepare_api_url() {
@@ -48,9 +49,10 @@ class CurrencyShell extends Shell {
 
     function update_exchange_rates($result) {
 
+        $dayOfWeek = date('w');
         $sqlCountToday = "SELECT COUNT(*) as nbr FROM currencyExchangeRate WHERE DATE_FORMAT(created, '%Y-%m-%d') = '" . date('Y-m-d') . "'";
-		$countToday = array_pop(array_pop(array_pop($this->CurrencyExchangeRate->query($sqlCountToday))));
-		if ($countToday == 0) { $this->sendEmailNoneToday($sqlCountToday); }
+	$countToday = array_pop(array_pop(array_pop($this->CurrencyExchangeRate->query($sqlCountToday))));
+	if ($countToday == 0 && $dayOfWeek != 0 && $dayOfWeek != 6) { $this->sendEmailNoneToday($sqlCountToday); }
 
         $recordCount = 0;
 
@@ -71,7 +73,8 @@ class CurrencyShell extends Shell {
 
             $phpdate = strtotime( str_replace('"', '', $date).' '.str_replace('"', '', $time) );
             $mysqldate = date( 'Y-m-d H:i:s', $phpdate);
-
+	    
+		
             $data = array('currencyId' => $currencyId,
                                                 'dailyExchangeRateToDollar' => $exchangeRate,
                                                 'asOfDateTime' => $mysqldate);
