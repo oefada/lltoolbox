@@ -109,7 +109,8 @@ $grandTotalMembershipBalance = 0;
 			<th><?=$utilities->sortLink('membershipBalance', 'Remaining Balance', $this, $html)?></th>
 			<th><?=$utilities->sortLink('lastSellPrice', 'Last Ticket Price', $this, $html)?></th>
 			<th><?=$utilities->sortLink('lastSellDate', 'Last Ticket Date', $this, $html)?></th>
-			<th><?=$utilities->sortLink('sites', 'Sites', $this, $html)?></th>
+			<th>LL</th>
+			<th>FG</th>
 			<th>Packages Live</th>
 			<th><?=$utilities->sortLink('Loa.notes', 'Notes', $this, $html)?></th>
 		</tr>
@@ -117,6 +118,7 @@ $grandTotalMembershipBalance = 0;
 $subtotalMembershipFee = 0;
 $subtotalMembershipBalance = 0;
 foreach ($timeperiod as $k => $r):
+	//die(var_dump($r,true));
 $class = ($k % 2) ? ' class="altrow"' : '';
 $subtotalMembershipFee += (int)$r['Loa']['membershipFee'];
 $subtotalMembershipBalance += (int)$r['Loa']['membershipBalance'];
@@ -130,20 +132,19 @@ $subtotalMembershipBalance += (int)$r['Loa']['membershipBalance'];
 		<td><?=$r['Loa']['startDate']?></td>
 		<td><?=$r[0]['loaEndDate']?></td>
 		<td>
-			<?php if ($r['Loa']['membershipBalance'] > 0) { echo $r['Loa']['membershipFee']; } ?>
+			<?php if ($r['Loa']['membershipBalance'] > 0) { echo number_format($r['Loa']['membershipFee']); } ?>
 			<?php if ($r['Loa']['membershipPackagesRemaining'] > 0) { echo "<br />{$r['Loa']['membershipTotalPackages']} packages<br />";} ?>
 		</td>
 		<td>
-			<?php if ($r['Loa']['membershipBalance'] > 0) { echo $r['Loa']['membershipBalance']; } ?>
+			<?php if ($r['Loa']['membershipBalance'] > 0) { echo number_format($r['Loa']['membershipBalance']); } ?>
 			<?php if ($r['Loa']['membershipPackagesRemaining'] > 0) { echo "<br />{$r['Loa']['membershipPackagesRemaining']} packages<br />";} ?>
 		</td>
-		<td><?=$r[0]['lastSellPrice']?></td>
+		<td><?=number_format($r[0]['lastSellPrice'])?></td>
 		<td><?=$html->link($r[0]['lastSellDate'], '/loas/maintTracking/'.$r['Loa']['loaId'])?></td>
 
-		<td><?=($r['Client']['sites'])?></td>
+		<td><?=(strpos($r['Client']['sites'],'luxurylink')===FALSE)?'':'LL'?></td>
+		<td><?=(strpos($r['Client']['sites'],'family')===FALSE)?'':'FG'?></td>
 		<td> <?=isset($r['Client']['numOffers'])?$r['Client']['numOffers']:''?> </td>
-
-
 		<td>
 			<p id="notes-<?=$r['Loa']['loaId']?>"><?=$r['Loa']['notes']?></p>
 			<script type="text/javascript">
@@ -153,9 +154,9 @@ $subtotalMembershipBalance += (int)$r['Loa']['membershipBalance'];
 	</tr>
 <?php endforeach; //TODO: add totals ?>
 	<tr class="blackBg">
-		<th colspan=8 style="text-align: right">Subtotals:</th>
-		<th><?=$subtotalMembershipFee?></th>
-		<th><?=$subtotalMembershipBalance?></th>
+		<th colspan=6 style="text-align: right">Subtotals:</th>
+		<th><?=number_format($subtotalMembershipFee)?></th>
+		<th><?=number_format($subtotalMembershipBalance)?></th>
 		<th colspan=6>
 			&nbsp;
 		</th>
@@ -171,12 +172,12 @@ $grandTotalMembershipBalance += $subtotalMembershipBalance;
 endforeach; //end periods
 ?>
 	<tr>
-		<th colspan=13>&nbsp;</th>
+		<th colspan=14>&nbsp;</th>
 	</tr>
 	<tr class="blackBg">
-		<th colspan=7 style="text-align: right">Grand Total:</th>
-		<th><?=$grandTotalMembershipFee?></th>
-		<th><?=$grandTotalMembershipBalance?></th>
+		<th colspan=6 style="text-align: right">Grand Total:</th>
+		<th><?=number_format($grandTotalMembershipFee)?></th>
+		<th><?=number_format($grandTotalMembershipBalance)?></th>
 		<th colspan=4>
 			&nbsp;
 		</th>
