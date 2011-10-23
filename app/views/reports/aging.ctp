@@ -98,10 +98,9 @@ $grandTotalMembershipBalance = 0;
 	<?=count($timeperiod)?> records found</div>
 	<table style="margin-top: 20px">
 		<tr>
-			<th>&nbsp;</th>
+			<!--<th>&nbsp;</th>-->
 			<th><?=$utilities->sortLink('age', 'Age (Days)', $this, $html)?></th>
 			<th><?="Destination";?></th>
-			<th><?=$utilities->sortLink('Client.clientId', 'Client ID', $this, $html)?></th>
 			<th><?=$utilities->sortLink('Client.name', 'Client Name', $this, $html)?></th>
 			<th><?=$utilities->sortLink('Client.managerUsername', 'Account Manager', $this, $html)?></th>
 			<th><?=$utilities->sortLink('Loa.startDate', 'Start Date', $this, $html)?></th>
@@ -123,11 +122,10 @@ $subtotalMembershipFee += (int)$r['Loa']['membershipFee'];
 $subtotalMembershipBalance += (int)$r['Loa']['membershipBalance'];
 ?>
 	<tr<?=$class?>>
-		<td><?=$i++?></td>
+		<!--<td><?=$i++?></td>-->
 		<td><?=$r[0]['age']?></td>
 		<td><?=isset($r['Client']['destinationName'])?$r['Client']['destinationName']:'';?></td>
-		<td><?=$r['Client']['clientId']?></td>
-		<td><?=$r['Client']['name']?></td>
+		<td><?php echo $html->link($r['Client']['name'],array('controller'=>'clients','action'=>'edit','id'=>$r['Client']['clientId'])); ?></td>
 		<td><?=$r['Client']['managerUsername']?></td>
 		<td><?=$r['Loa']['startDate']?></td>
 		<td><?=$r[0]['loaEndDate']?></td>
