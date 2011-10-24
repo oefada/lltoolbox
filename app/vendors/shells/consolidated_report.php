@@ -76,9 +76,8 @@ class ConsolidatedReportShell extends Shell {
 		
 			// Log date and filename parameters
 			self::log("Generating Report for client_id: {$this->client_id}, report_date: {$this->report_date}");
-			self::log("LOA Start: $loa_start_date");
-			self::log("LOA End: $loa_end_date");
-			self::log("Filename: $outputFile");
+			self::log("LOA Period: $loa_start_date - $loa_end_date");
+			self::log("Filepath: $outputFile");
 		
 			// Initialize the report Model
 			$this->ConsolidatedReport = new ConsolidatedReport();
