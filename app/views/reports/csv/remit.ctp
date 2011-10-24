@@ -10,6 +10,7 @@ if (isset($packages) && is_array($packages) && count($packages) > 0) {
 		'LOA Start Date',
 		'LOA End Date',
 		'Is Live',
+		'Site',
 		'Account Manager'
 	);
 	echo implode(',', $fields)."\r\n";
@@ -24,6 +25,7 @@ if (isset($packages) && is_array($packages) && count($packages) > 0) {
 			$p[0]['loaStart'],
 			$p[0]['loaEnd'],
 			$p[0]['isLive'] ? 'Yes' : 'No',
+			($p['package']['siteId'] == 1) ? 'LL' : 'FG',
 			$p['client']['managerUsername']
 		);
 		

@@ -23,6 +23,7 @@
 		<th><?=$utilities->sortLink('loaStart', 'LOA Start Date', $this, $html, $sortUrl)?></th>
 		<th><?=$utilities->sortLink('loaEnd', 'LOA End Date', $this, $html, $sortUrl)?></th>
 		<th><?=$utilities->sortLink('isLive', 'Is Live', $this, $html, $sortUrl)?></th>
+		<th><?=$utilities->sortLink('package.siteId', 'Site', $this, $html, $sortUrl)?></th>
 		<th><?=$utilities->sortLink('client.managerUsername', 'Account Manager', $this, $html, $sortUrl)?></th>
 	</tr>
 	
@@ -46,6 +47,7 @@
 		<td><?=$p[0]['loaStart'];?></td>
 		<td><?=$p[0]['loaEnd'];?></td>
 		<td><?=$p[0]['isLive'] ? 'Yes' : 'No';?></td>
+		<td><?=($p['package']['siteId'] == 1) ? 'LL' : 'FG';?></td>
 		<td><?=$p['client']['managerUsername'];?></td>
 	</tr>
 	
