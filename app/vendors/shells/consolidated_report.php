@@ -57,60 +57,66 @@ class ConsolidatedReportShell extends Shell {
 		$client_details = $this->getClientDetails();
 		$loa_details = $this->getLoaDetails();
 		
-		if (!$this->isProduction) {
-			self::log("This is not a production run. Reports will not be sent to the client.");
-			$send_report_to = 'mclifford@luxurylink.com';
-		} else {
-			self::log("This is a production run. Reports will be sent to the client.");
-			$send_report_to = $client_details['Client']['email'];
-		}
-
-		// Set date, fee, and output file parameters
-		$loa_start_date = date('Y-m-d', strtotime($loa_details['Loa']['startDate']));
-		$loa_end_date = date('Y-m-d', strtotime($loa_details['Loa']['endDate']));
-		$membership_fee = $loa_details['Loa']['membershipFee'];
-		$outputFile = TMP .'consolidated_report_' . $client_details['Client']['seoName'] . '_' . $loa_start_date . '_to_' . $this->report_date . '.xlsx';
+		if ($loa_details !== false) {
+			// The client has a current LOA around the report date, generate the report
 		
-		// Log date and filename parameters
-		self::log("Generating Report for client_id: {$this->client_id}, report_date: {$this->report_date}");
-		self::log("LOA Start: $loa_start_date");
-		self::log("LOA End: $loa_end_date");
-		self::log("Filename: $outputFile");
-		
-		// Initialize the report Model
-		$this->ConsolidatedReport = new ConsolidatedReport();
-		$this->ConsolidatedReport->create($this->client_id, $this->report_date, $loa_start_date, $loa_end_date);
-		
-		// Create the report object
-		$report = new ConsolidatedReportHelper($template, $newFile, $outputFile, $this->ConsolidatedReport);
-		
-		// Populate the report
-		self::log('Building the report data array.');
-		$report->populateDashboard($client_details['Client']['name'], $membership_fee, $loa_start_date, $this->ConsolidatedReport->getMonthEndDate());		
-		$report->populateActivitySummary($loa_start_date, $this->ConsolidatedReport->getMonthEndDate(), 15, 2);
-		$report->populateBookings();
-		$report->populateImpressions();
-		$report->populateContactDetails();
-		self::log('The report data array was built successfully.');
-
-		// Save array to spreadsheet object
-		try {
-			self::log('Saving the report data array to the report object.');
-			$report->populateFromArray($report->getDataToPopulate());
-			self::log('The save was successful.');
-
-			// Write the report object to disk
-			try {
-				self::log('Writing the report object to disk.');
-				$report->writeSpreadsheetObjectToFile();
-				self::log('The write was successful.');
-				self::log("Emailing report to $send_report_to");
-				$this->emailReport($send_report_to, $outputFile);				
-			} catch (Exception $e) {
-				self::log("Error - There was an issue saving the report object to disk. Message: '" . $e->getMessage() . "'");
+			if (!$this->isProduction) {
+				self::log("This is not a production run. Reports will not be sent to the client.");
+				$send_report_to = 'mclifford@luxurylink.com';
+			} else {
+				self::log("This is a production run. Reports will be sent to the client.");
+				$send_report_to = $client_details['Client']['email'];
 			}
-		} catch (Exception $e) {
-			self::log("Error - There was an issue saving the array to the spreadsheet object. Message: '" . $e->getMessage() . "'");		
+
+			// Set date, fee, and output file parameters
+			$loa_start_date = date('Y-m-d', strtotime($loa_details['Loa']['startDate']));
+			$loa_end_date = date('Y-m-d', strtotime($loa_details['Loa']['endDate']));
+			$membership_fee = $loa_details['Loa']['membershipFee'];
+			$outputFile = TMP .'consolidated_report_' . $client_details['Client']['seoName'] . '_' . $loa_start_date . '_to_' . $this->report_date . '.xlsx';
+		
+			// Log date and filename parameters
+			self::log("Generating Report for client_id: {$this->client_id}, report_date: {$this->report_date}");
+			self::log("LOA Start: $loa_start_date");
+			self::log("LOA End: $loa_end_date");
+			self::log("Filename: $outputFile");
+		
+			// Initialize the report Model
+			$this->ConsolidatedReport = new ConsolidatedReport();
+			$this->ConsolidatedReport->create($this->client_id, $this->report_date, $loa_start_date, $loa_end_date);
+		
+			// Create the report object
+			$report = new ConsolidatedReportHelper($template, $newFile, $outputFile, $this->ConsolidatedReport);
+		
+			// Populate the report
+			self::log('Building the report data array.');
+			$report->populateDashboard($client_details['Client']['name'], $membership_fee, $loa_start_date, $this->ConsolidatedReport->getMonthEndDate());		
+			$report->populateActivitySummary($loa_start_date, $this->ConsolidatedReport->getMonthEndDate(), 15, 2);
+			$report->populateBookings();
+			$report->populateImpressions();
+			$report->populateContactDetails();
+			self::log('The report data array was built successfully.');
+
+			// Save array to spreadsheet object
+			try {
+				self::log('Saving the report data array to the report object.');
+				$report->populateFromArray($report->getDataToPopulate());
+				self::log('The save was successful.');
+
+				// Write the report object to disk
+				try {
+					self::log('Writing the report object to disk.');
+					$report->writeSpreadsheetObjectToFile();
+					self::log('The write was successful.');
+					self::log("Emailing report to $send_report_to");
+					$this->emailReport($send_report_to, $outputFile);				
+				} catch (Exception $e) {
+					self::log("Error - There was an issue saving the report object to disk. Message: '" . $e->getMessage() . "'");
+				}
+			} catch (Exception $e) {
+				self::log("Error - There was an issue saving the array to the spreadsheet object. Message: '" . $e->getMessage() . "'");		
+			}
+		} else {
+			self::log("This client doesn't have a current LOA within the report period.");
 		}
 	}
 	
