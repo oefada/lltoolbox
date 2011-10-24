@@ -8,6 +8,7 @@ App::import('Vendor', 'ConsolidatedReportHelper', array('file' => 'consolidated_
 class ConsolidatedReportShell extends Shell {
 	private $client_id = '';
 	private $report_date = '';
+	private $isProduction = false;
 	
 	private $Controller;
 	private $Email;
@@ -17,8 +18,6 @@ class ConsolidatedReportShell extends Shell {
 	
 	private static $logfile = 'consolidated_report';
 	private $errors = array();
-	
-	private $filepath = '/tmp/';
 	
 	/**
 	 *

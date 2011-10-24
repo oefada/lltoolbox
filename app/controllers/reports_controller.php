@@ -4071,40 +4071,13 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 	/**
 	 *
 	 */
-	public function consolidated_report($client_id = null, $report_date = null)
+	public function download_consolidated_report($client_id)
 	{
 		// Cake's debug output can cause issues with the spreadsheet generation
-		Configure::write('debug', 0); 
-	
-		// For testing, just output a string
-		// Otherwise, generating a report redirects you to the last page you had loaded
-		// in toolbox and you have to re-enter the URL
-		if (is_null($client_id)) {
-			$report_date = '2011-03-01';
-			echo "<a href='/reports/consolidated_report/2192/$report_date'>Generate Report</a><br/>";
-			echo "<a href='/reports/consolidated_report/1178/$report_date'>Generate Report</a><br/>";
-			echo "<a href='/reports/consolidated_report/2183/$report_date'>Generate Report</a><br/>";
-			echo "<a href='/reports/consolidated_report/2384/$report_date'>Generate Report</a><br/>";
-			echo "<a href='/reports/consolidated_report/2795/$report_date'>Generate Report</a><br/>";
-			echo "<a href='/reports/consolidated_report/10883/$report_date'>Generate Report</a><br/>";
-			echo "<a href='/reports/consolidated_report/9463/$report_date'>Generate Report</a><br/>";
-			echo "<a href='/reports/consolidated_report/11100/$report_date'>Generate Report</a><br/>";
-			echo "<a href='/reports/consolidated_report/6343/$report_date'>Generate Report</a><br/>";
-			echo "<a href='/reports/consolidated_report/49/$report_date'>Generate Report</a><br/>";
-			echo "<a href='/reports/consolidated_report/512/$report_date'>Generate Report</a><br/>";
-			echo "<a href='/reports/consolidated_report/925/$report_date'>Generate Report</a><br/>";
-			echo "<a href='/reports/consolidated_report/951/$report_date'>Generate Report</a><br/>";
-			echo "<a href='/reports/consolidated_report/2733/$report_date'>Generate Report</a><br/>";
-			echo "<a href='/reports/consolidated_report/11356/$report_date'>Generate Report</a><br/>";
-			echo "<a href='/reports/consolidated_report/8456/$report_date'>Generate Report</a><br/>";
-			echo "<a href='/reports/consolidated_report/10801/$report_date'>Generate Report</a><br/>";
-			echo "<a href='/reports/consolidated_report/272/$report_date'>Generate Report</a><br/>";
-			echo "<a href='/reports/consolidated_report/2273/$report_date'>Generate Report</a><br/>";
-			echo "<a href='/reports/consolidated_report/8684/$report_date'>Generate Report</a><br/>";
-			echo "<a href='/reports/consolidated_report/3510/$report_date'>Generate Report</a><br/>";
-			
-			die;
-		}
+		Configure::write('debug', 0);
+		
+		// Set the report ceiling to last month
+		$report_date = date('Y-m-t', strtotime('-1 month'));
 
 		// Set layout to excel		
 		$this->layout = 'excel';
@@ -4120,6 +4093,7 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		$client_details = $this->Client->find('first', array('recursive' => -1));
 		unset($this->Client);
 		
+		// LOA Details
 		$this->loadModel('Loa');
 		$loa_details = $this->Loa->find(
 			'first',
@@ -4133,6 +4107,12 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 			)
 		);
 		unset($this->Loa);
+		
+		if ($loa_details === false) {
+			// This client doesn't have a current LOA, don't generate the report
+			$this->Session->setFlash(__("This client doesn't have a current LOA within the report period.", true));
+			$this->redirect("/clients/edit/$client_id");
+		}
 
 		$loa_start_date = date('Y-m-d', strtotime($loa_details['Loa']['startDate']));
 		$loa_end_date = date('Y-m-d', strtotime($loa_details['Loa']['endDate']));

@@ -34,6 +34,7 @@
 	<li class="open">REPORTS
         <ul>
             <li style="margin-bottom:3px;"><a href="/clients/imr/<?php echo $clientId; ?>">Inventory Management</a></li>
+            <li style="margin-bottom:3px;"><a href="<?php echo $this->webroot; ?>reports/download_consolidated_report/<?php echo $clientId; ?>">Download Current Report</a></li>
         </ul>
 	</li>
 	<li class="open">IMPRESSIONS
