@@ -70,7 +70,7 @@
 																			<strong>Dear %%User.FirstName%%,</strong>
 																		</p>
 																		<p>
-																			Welcome home! We hope you had a remarkable experience on your Luxury Link vacation at %%ClientNames%%%%ClientLocationIn%%.
+																			Welcome home! We hope you had a remarkable experience on your Luxury Link vacation at %%ClientNames%%.
 																		</p>
 																		<p>
 																			With your help, we can make each Luxury Link experience even better than the last &ndash; please tell us about your trip.
