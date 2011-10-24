@@ -3,10 +3,11 @@ App::import('Core', 'Controller');
 App::import('Component', 'Email');
 App::import('Core', 'ConnectionManager');
 App::Import('Model', 'Client');
+App::Import('Model', 'Loa');
+App::Import('Model', 'User');
 App::Import('Model', 'ConsolidatedReport');
 App::import('Vendor', 'ConsolidatedReportHelper', array('file' => 'consolidated_report' . DS . 'consolidated_report_helper.php'));
 class ConsolidatedReportShell extends Shell {
-	private $client_id = '';
 	private $report_date = '';
 	private $isProduction = false;
 	
@@ -14,6 +15,7 @@ class ConsolidatedReportShell extends Shell {
 	private $Email;
 	private $Client;
 	private $Loa;
+	private $User;
 	private $ConsolidatedReport;
 	
 	private static $logfile = 'consolidated_report';
@@ -25,6 +27,9 @@ class ConsolidatedReportShell extends Shell {
 	public function initialize()
 	{
 		self::log('Process Started.');
+		$this->Client = new Client();
+		$this->Loa = new Loa();
+		$this->User = new User();
 		$this->Controller = new Controller();
 		$this->Email = new EmailComponent(null);
 		$this->Email->startup($this->Controller);
@@ -45,17 +50,17 @@ class ConsolidatedReportShell extends Shell {
 	 */
 	public function main()
 	{
-		$this->client_id = isset($this->params['client_id']) ? $this->params['client_id'] : null;
 		$this->report_date = isset($this->params['report_date']) ? $this->params['report_date'] : null;
 		$this->isProduction = isset($this->params['production']) ? true : false;
+		$client_id = isset($this->params['client_id']) ? $this->params['client_id'] : null;
 		
 		// Report initialization variables
-		$template = APP . 'vendors/consolidated_report/templates/consolidated_report_revision-6.xlsx';
+		$template = APP . 'vendors/consolidated_report/templates/consolidated_report_revision-7.xlsx';
 		$newFile = TMP . 'consolidated_report.xlsx';
 		
 		// Client & LOA Details
-		$client_details = $this->getClientDetails();
-		$loa_details = $this->getLoaDetails();
+		$client_details = $this->getClientDetails($client_id);
+		$loa_details = $this->getLoaDetails($client_id);
 		
 		if ($loa_details !== false) {
 			// The client has a current LOA around the report date, generate the report
@@ -75,13 +80,13 @@ class ConsolidatedReportShell extends Shell {
 			$outputFile = TMP .'consolidated_report_' . $client_details['Client']['seoName'] . '_' . $loa_start_date . '_to_' . $this->report_date . '.xlsx';
 		
 			// Log date and filename parameters
-			self::log("Generating Report for client_id: {$this->client_id}, report_date: {$this->report_date}");
+			self::log("Generating Report for client_id: $client_id, report_date: {$this->report_date}");
 			self::log("LOA Period: $loa_start_date - $loa_end_date");
 			self::log("Filepath: $outputFile");
 		
 			// Initialize the report Model
 			$this->ConsolidatedReport = new ConsolidatedReport();
-			$this->ConsolidatedReport->create($this->client_id, $this->report_date, $loa_start_date, $loa_end_date);
+			$this->ConsolidatedReport->create($client_id, $this->report_date, $loa_start_date, $loa_end_date);
 		
 			// Create the report object
 			$report = new ConsolidatedReportHelper($template, $newFile, $outputFile, $this->ConsolidatedReport);
@@ -89,7 +94,7 @@ class ConsolidatedReportShell extends Shell {
 			// Populate the report
 			self::log('Building the report data array.');
 			$report->populateDashboard($client_details['Client']['name'], $membership_fee, $loa_start_date, $this->ConsolidatedReport->getMonthEndDate());		
-			$report->populateActivitySummary($loa_start_date, $this->ConsolidatedReport->getMonthEndDate(), 15, 2);
+			$report->populateActivitySummary($loa_start_date, $this->ConsolidatedReport->getMonthEndDate(), $client_details['AccountManager']['name'], $client_details['AccountManager']['email'], 15, 2);
 			$report->populateBookings();
 			$report->populateImpressions();
 			$report->populateContactDetails();
@@ -107,7 +112,7 @@ class ConsolidatedReportShell extends Shell {
 					$report->writeSpreadsheetObjectToFile();
 					self::log('The write was successful.');
 					self::log("Emailing report to $send_report_to");
-					$this->emailReport($send_report_to, $outputFile);				
+					$this->emailReport($send_report_to, $client_details['Client']['name'], $outputFile);				
 				} catch (Exception $e) {
 					self::log("Error - There was an issue saving the report object to disk. Message: '" . $e->getMessage() . "'");
 				}
@@ -124,12 +129,24 @@ class ConsolidatedReportShell extends Shell {
 	 * 
 	 * @access	private
 	 */
-	private function getClientDetails()
+	private function getClientDetails($client_id)
 	{
-		$client = new Client();
-		$client->id = $this->client_id;
-		$client_details = $client->find('first', array('recursive' => -1));
-		unset($client);
+		$this->Client->id = $client_id;
+		$client_details = $this->Client->find('first', array('recursive' => -1));
+		
+		$account_manager = $this->User->find(
+			'first',
+			array(
+				'recursive' => -1,
+				'fields' => array('firstname', 'lastname', 'email'),
+				'conditions' => array(
+					'email' => $client_details['Client']['managerUsername'] . '@luxurylink.com'
+				)
+			)
+		);
+
+		$client_details['AccountManager']['name'] = $account_manager['User']['firstname'] . ' ' . $account_manager['User']['lastname'];
+		$client_details['AccountManager']['email'] = $account_manager['User']['email'];
 		
 		return $client_details;
 	}
@@ -139,21 +156,20 @@ class ConsolidatedReportShell extends Shell {
 	 *
 	 * @access	private
 	 */
-	private function getLoaDetails()
+	private function getLoaDetails($client_id)
 	{
-		$loa = new Loa();
-		$loa_details = $loa->find(
+		$loa_details = $this->Loa->find(
 			'first',
 			array(
 				'recursive' => -1,
 				'fields' => array('clientId', 'loaId', 'startDate', 'endDate', 'membershipFee'),
 				'conditions' => array(
 					"'{$this->report_date}' BETWEEN startDate AND endDate",
-					"clientId = {$this->client_id}"
+					"clientId = $client_id"
 				)
 			)
 		);
-		unset($loa);
+
 		return $loa_details;
 	}
 	
@@ -173,16 +189,17 @@ class ConsolidatedReportShell extends Shell {
 	 *
 	 * @access	private
 	 * @param	string to address
+	 * @param	string client name
 	 * @param	string path to file to attach
 	 */
-	private function emailReport($recipient, $file)
+	private function emailReport($recipient, $client_name, $file)
 	{
 		$this->Email->reset();
 		$this->Email->from = 'noreply@luxurylink.com';
 		$this->Email->to = 'mclifford@luxurylink.com';
-		$this->Email->subject = 'Consolidated Report';
+		$this->Email->subject = "Consolidated Report for $client_name, {$this->report_date}";
 		$this->Email->attachments = array($file);
-		$this->Email->send('Here is your Consolidated Report');
+		$this->Email->send();
 	}
 }
 ?>

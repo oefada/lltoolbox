@@ -299,13 +299,12 @@ class ConsolidatedReportHelper
 		
 		$this->setDataToPopulate($sheet_name, 'J4', $client_name);
 		$this->setDataToPopulate($sheet_name, 'J5', date('M j, Y', strtotime($start_date)) . ' - ' . date('M j, Y', strtotime($end_date)));
-		$this->setDataToPopulate($sheet_name, 'J7', $membership_fee);
 	}
 	
 	/**
 	 *
 	 */
-	public function populateActivitySummary($start_date, $end_date, $call_cpm, $email_cpm)
+	public function populateActivitySummary($start_date, $end_date, $account_manager_name, $account_manager_email, $call_cpm, $email_cpm)
 	{
 		$sheet_name = 'Activity Summary';
 		
@@ -314,42 +313,46 @@ class ConsolidatedReportHelper
 		$this->setDataToPopulate('Key - Legend', 'C10', $call_cpm);
 
 		// Fill in Data values
-		$this->setDataToPopulate($sheet_name, 'A4', date('M j, Y', strtotime($start_date)));
-		$this->setDataToPopulate($sheet_name, 'A10', date('F-y', strtotime($this->ConsolidatedReport->getMonthStartDate())));
-		$this->setDataToPopulate($sheet_name, 'A25', date('M Y', strtotime($start_date)) . ' - ' . date('M Y', strtotime($end_date)));
+		$this->setDataToPopulate($sheet_name, 'B4', date('M j, Y', strtotime($start_date)));
+		$this->setDataToPopulate($sheet_name, 'A9', date('F-y', strtotime($this->ConsolidatedReport->getMonthStartDate())));
+		$this->setDataToPopulate($sheet_name, 'A24', date('M Y', strtotime($start_date)) . ' - ' . date('M Y', strtotime($end_date)));
+		
+		// Fill in Account Manager values
+		$this->setDataToPopulate($sheet_name, 'B5', $account_manager_name);
+		$this->setDataToPopulate($sheet_name, 'B6', $account_manager_email);
 		
 		// Impression & Click Data
 		$ll_impression_data = $this->ConsolidatedReport->getImpressionDataBySiteForCurrentMonth(1);
 		$fg_impression_data = $this->ConsolidatedReport->getImpressionDataBySiteForCurrentMonth(2);
-		$this->setDataToPopulate($sheet_name, 'B11', $ll_impression_data['impressions']);
-		$this->setDataToPopulate($sheet_name, 'D11', $fg_impression_data['impressions']);
+		$this->setDataToPopulate($sheet_name, 'B10', $ll_impression_data['impressions']);
+		$this->setDataToPopulate($sheet_name, 'D10', $fg_impression_data['impressions']);
+		$this->setDataToPopulate($sheet_name, 'F10', '0');
+		$this->setDataToPopulate($sheet_name, 'B11', $ll_impression_data['clicks']);
+		$this->setDataToPopulate($sheet_name, 'D11', $fg_impression_data['clicks']);
 		$this->setDataToPopulate($sheet_name, 'F11', '0');
-		$this->setDataToPopulate($sheet_name, 'B12', $ll_impression_data['clicks']);
-		$this->setDataToPopulate($sheet_name, 'D12', $fg_impression_data['clicks']);
-		$this->setDataToPopulate($sheet_name, 'F12', '0');
 		
 		$ll_impression_data = $this->ConsolidatedReport->getImpressionDataBySiteForYearToDate(1);
 		$fg_impression_data = $this->ConsolidatedReport->getImpressionDataBySiteForYearToDate(2);		
-		$this->setDataToPopulate($sheet_name, 'B26', $ll_impression_data['impressions']);
-		$this->setDataToPopulate($sheet_name, 'D26', $fg_impression_data['impressions']);
-		$this->setDataToPopulate($sheet_name, 'F26', '0');
-		$this->setDataToPopulate($sheet_name, 'B27', $ll_impression_data['clicks']);
-		$this->setDataToPopulate($sheet_name, 'D27', $fg_impression_data['clicks']);
-		$this->setDataToPopulate($sheet_name, 'F27', '0');			
+		$this->setDataToPopulate($sheet_name, 'B25', $ll_impression_data['impressions']);
+		$this->setDataToPopulate($sheet_name, 'D25', $fg_impression_data['impressions']);
+		$this->setDataToPopulate($sheet_name, 'F25', '0');
+		$this->setDataToPopulate($sheet_name, 'B26', $ll_impression_data['clicks']);
+		$this->setDataToPopulate($sheet_name, 'D26', $fg_impression_data['clicks']);
+		$this->setDataToPopulate($sheet_name, 'F26', '0');			
 		
 		// Call Data
-		$this->setDataToPopulate($sheet_name, 'B15', $this->ConsolidatedReport->getCallCountBySiteForCurrentMonth(1));
-		$this->setDataToPopulate($sheet_name, 'D15', $this->ConsolidatedReport->getCallCountBySiteForCurrentMonth(2));
-		$this->setDataToPopulate($sheet_name, 'F15', $this->ConsolidatedReport->getCallCountBySiteForCurrentMonth(3));
-		$this->setDataToPopulate($sheet_name, 'B30', $this->ConsolidatedReport->getCallCountBySiteForYearToDate(1));
-		$this->setDataToPopulate($sheet_name, 'D30', $this->ConsolidatedReport->getCallCountBySiteForYearToDate(2));
-		$this->setDataToPopulate($sheet_name, 'F30', $this->ConsolidatedReport->getCallCountBySiteForYearToDate(3));
+		$this->setDataToPopulate($sheet_name, 'B14', $this->ConsolidatedReport->getCallCountBySiteForCurrentMonth(1));
+		$this->setDataToPopulate($sheet_name, 'D14', $this->ConsolidatedReport->getCallCountBySiteForCurrentMonth(2));
+		$this->setDataToPopulate($sheet_name, 'F14', $this->ConsolidatedReport->getCallCountBySiteForCurrentMonth(3));
+		$this->setDataToPopulate($sheet_name, 'B29', $this->ConsolidatedReport->getCallCountBySiteForYearToDate(1));
+		$this->setDataToPopulate($sheet_name, 'D29', $this->ConsolidatedReport->getCallCountBySiteForYearToDate(2));
+		$this->setDataToPopulate($sheet_name, 'F29', $this->ConsolidatedReport->getCallCountBySiteForYearToDate(3));
 
 		// Email Data
-		$this->setDataToPopulate($sheet_name, 'B13', $this->ConsolidatedReport->getEmailCountBySiteForCurrentMonth(1));
-		$this->setDataToPopulate($sheet_name, 'B28', $this->ConsolidatedReport->getEmailCountBySiteForYearToDate(1));
-		$this->setDataToPopulate($sheet_name, 'D13', $this->ConsolidatedReport->getEmailCountBySiteForCurrentMonth(2));
-		$this->setDataToPopulate($sheet_name, 'D28', $this->ConsolidatedReport->getEmailCountBySiteForYearToDate(2));
+		$this->setDataToPopulate($sheet_name, 'B12', $this->ConsolidatedReport->getEmailCountBySiteForCurrentMonth(1));
+		$this->setDataToPopulate($sheet_name, 'B27', $this->ConsolidatedReport->getEmailCountBySiteForYearToDate(1));
+		$this->setDataToPopulate($sheet_name, 'D12', $this->ConsolidatedReport->getEmailCountBySiteForCurrentMonth(2));
+		$this->setDataToPopulate($sheet_name, 'D27', $this->ConsolidatedReport->getEmailCountBySiteForYearToDate(2));
 	}
 	
 	/**
@@ -497,31 +500,32 @@ class ConsolidatedReportHelper
 	{
 		$sheet_name = 'Traveler Details';
 		$contact_details = $this->ConsolidatedReport->getContactDetails();
-		
+
 		foreach($contact_details as $key => $contact_detail) {
 			$spreadsheet_row = $key + 10;
 			$this->setDataToPopulate($sheet_name, "A$spreadsheet_row", $contact_detail['Lead Type']);
 			$this->setDataToPopulate($sheet_name, "B$spreadsheet_row", $contact_detail['Site']);
 			$this->setDataToPopulate($sheet_name, "C$spreadsheet_row", $contact_detail['Activity Date']);
-			$this->setDataToPopulate($sheet_name, "D$spreadsheet_row", $contact_detail['Arrival']);
-			$this->setDataToPopulate($sheet_name, "E$spreadsheet_row", $contact_detail['Departure']);
-			$this->setDataToPopulate($sheet_name, "F$spreadsheet_row", $contact_detail['Room Nights']);
-			$this->setDataToPopulate($sheet_name, "G$spreadsheet_row", $contact_detail['Booking Amount']);
-			$this->setDataToPopulate($sheet_name, "H$spreadsheet_row", $contact_detail['Call Duration']);
-			$this->setDataToPopulate($sheet_name, "I$spreadsheet_row", $contact_detail['Booking Type']);
-			$this->setDataToPopulate($sheet_name, "J$spreadsheet_row", $contact_detail['Phone']);
-			$this->setDataToPopulate($sheet_name, "K$spreadsheet_row", $contact_detail['Firstname']);
-			$this->setDataToPopulate($sheet_name, "L$spreadsheet_row", $contact_detail['Lastname']);
-			$this->setDataToPopulate($sheet_name, "M$spreadsheet_row", $contact_detail['Email']);
-			$this->setDataToPopulate($sheet_name, "N$spreadsheet_row", $contact_detail['Opt-in']);
-			$this->setDataToPopulate($sheet_name, "O$spreadsheet_row", $contact_detail['Address']);
-			$this->setDataToPopulate($sheet_name, "P$spreadsheet_row", $contact_detail['City']);
-			$this->setDataToPopulate($sheet_name, "Q$spreadsheet_row", $contact_detail['State']);
-			$this->setDataToPopulate($sheet_name, "R$spreadsheet_row", $contact_detail['Zip']);
-			$this->setDataToPopulate($sheet_name, "S$spreadsheet_row", $contact_detail['Country']);
-			$this->setDataToPopulate($sheet_name, "T$spreadsheet_row", $contact_detail['Median Household Income']);
-			$this->setDataToPopulate($sheet_name, "U$spreadsheet_row", $contact_detail['Per Capita Income']);
-			$this->setDataToPopulate($sheet_name, "V$spreadsheet_row", $contact_detail['Median Earnings']);
+			$this->setDataToPopulate($sheet_name, "D$spreadsheet_row", $contact_detail['This Month']);
+			$this->setDataToPopulate($sheet_name, "E$spreadsheet_row", $contact_detail['Arrival']);
+			$this->setDataToPopulate($sheet_name, "F$spreadsheet_row", $contact_detail['Departure']);
+			$this->setDataToPopulate($sheet_name, "G$spreadsheet_row", $contact_detail['Room Nights']);
+			$this->setDataToPopulate($sheet_name, "H$spreadsheet_row", $contact_detail['Booking Amount']);
+			$this->setDataToPopulate($sheet_name, "I$spreadsheet_row", $contact_detail['Call Duration']);
+			$this->setDataToPopulate($sheet_name, "J$spreadsheet_row", $contact_detail['Booking Type']);
+			$this->setDataToPopulate($sheet_name, "K$spreadsheet_row", $contact_detail['Phone']);
+			$this->setDataToPopulate($sheet_name, "L$spreadsheet_row", $contact_detail['Firstname']);
+			$this->setDataToPopulate($sheet_name, "M$spreadsheet_row", $contact_detail['Lastname']);
+			$this->setDataToPopulate($sheet_name, "N$spreadsheet_row", $contact_detail['Email']);
+			$this->setDataToPopulate($sheet_name, "O$spreadsheet_row", $contact_detail['Opt-in']);
+			$this->setDataToPopulate($sheet_name, "P$spreadsheet_row", $contact_detail['Address']);
+			$this->setDataToPopulate($sheet_name, "Q$spreadsheet_row", $contact_detail['City']);
+			$this->setDataToPopulate($sheet_name, "R$spreadsheet_row", $contact_detail['State']);
+			$this->setDataToPopulate($sheet_name, "S$spreadsheet_row", $contact_detail['Zip']);
+			$this->setDataToPopulate($sheet_name, "T$spreadsheet_row", $contact_detail['Country']);
+			$this->setDataToPopulate($sheet_name, "U$spreadsheet_row", $contact_detail['Median Household Income']);
+			$this->setDataToPopulate($sheet_name, "V$spreadsheet_row", $contact_detail['Per Capita Income']);
+			$this->setDataToPopulate($sheet_name, "W$spreadsheet_row", $contact_detail['Median Earnings']);
 		}
 	}
 }

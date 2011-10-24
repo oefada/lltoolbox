@@ -572,7 +572,7 @@ class ConsolidatedReport extends AppModel
 					$siteName = ''; 
 			}
 			
-			$call_details[] = self::buildContactDetails(
+			$call_details[] = $this->buildContactDetails(
 				'Call',
 				$siteName,
 				date('Y-m-d', strtotime($call_detail['ClientPhoneLead']['date'])),
@@ -662,7 +662,7 @@ class ConsolidatedReport extends AppModel
 		
 		$booking_details_raw = $this->query($sql);
 		foreach($booking_details_raw as $key => $booking_detail) {
-			$booking_details[] = self::buildContactDetails(
+			$booking_details[] = $this->buildContactDetails(
 				'Booking',
 				$booking_detail['Site']['siteName'],
 				date('Y-m-d', strtotime($booking_detail['Ticket']['created'])),
@@ -730,7 +730,7 @@ class ConsolidatedReport extends AppModel
 		
 		$booking_details_raw = $this->query($sql);
 		foreach($booking_details_raw as $key => $booking_detail) {
-			$booking_details[] = self::buildContactDetails(
+			$booking_details[] = $this->buildContactDetails(
 				'Booking',
 				'Vacationist',
 				date('Y-m-d', strtotime($booking_detail['Ticket']['created'])),
@@ -790,9 +790,10 @@ class ConsolidatedReport extends AppModel
 	 * 
 	 * @return	array
 	 */
-	private static function buildContactDetails($lead_type, $site, $activity_date, $arrival, $departure, $room_nights, $booking_amount, $call_duration, $booking_type, $phone, $firstname, $lastname, $email, $optin, $address, $city, $state, $zip, $country, $median_household_income, $per_capita_income, $median_earnings)
+	private function buildContactDetails($lead_type, $site, $activity_date, $arrival, $departure, $room_nights, $booking_amount, $call_duration, $booking_type, $phone, $firstname, $lastname, $email, $optin, $address, $city, $state, $zip, $country, $median_household_income, $per_capita_income, $median_earnings)
 	{
 		$phone = preg_replace('[\D]', '', $phone);
+
 		if ($phone[0] == 1) {
 			$phone = substr($phone, 1);
 		}
@@ -800,6 +801,7 @@ class ConsolidatedReport extends AppModel
 			'Lead Type'					=> trim($lead_type),
 			'Site'						=> trim($site),
 			'Activity Date'				=> trim($activity_date),
+			'This Month'				=> ((substr($this->report_date,0,7) === substr($activity_date,0,7))) ? 'x' : '',
 			'Arrival'					=> trim($arrival),
 			'Departure'					=> trim($departure),
 			'Room Nights'				=> trim($room_nights),
