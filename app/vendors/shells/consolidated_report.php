@@ -1,5 +1,7 @@
 <?php
-App::import('core', array('ConnectionManager'));
+App::import('Core', 'Controller');
+App::import('Component', 'Email');
+App::import('Core', 'ConnectionManager');
 App::Import('Model', 'Client');
 App::Import('Model', 'ConsolidatedReport');
 App::import('Vendor', 'ConsolidatedReportHelper', array('file' => 'consolidated_report' . DS . 'consolidated_report_helper.php'));
@@ -7,6 +9,8 @@ class ConsolidatedReportShell extends Shell {
 	private $client_id = '';
 	private $report_date = '';
 	
+	private $Controller;
+	private $Email;
 	private $Client;
 	private $Loa;
 	private $ConsolidatedReport;
@@ -22,6 +26,9 @@ class ConsolidatedReportShell extends Shell {
 	public function initialize()
 	{
 		self::log('Process Started.');
+		$this->Controller = new Controller();
+		$this->Email = new EmailComponent(null);
+		$this->Email->startup($this->Controller);
 	}
 
 	/**
@@ -41,6 +48,7 @@ class ConsolidatedReportShell extends Shell {
 	{
 		$this->client_id = isset($this->params['client_id']) ? $this->params['client_id'] : null;
 		$this->report_date = isset($this->params['report_date']) ? $this->params['report_date'] : null;
+		$this->isProduction = isset($this->params['production']) ? true : false;
 		
 		// Report initialization variables
 		$template = APP . 'vendors/consolidated_report/templates/consolidated_report_revision-6.xlsx';
@@ -49,6 +57,14 @@ class ConsolidatedReportShell extends Shell {
 		// Client & LOA Details
 		$client_details = $this->getClientDetails();
 		$loa_details = $this->getLoaDetails();
+		
+		if (!$this->isProduction) {
+			self::log("This is not a production run. Reports will not be sent to the client.");
+			$send_report_to = 'mclifford@luxurylink.com';
+		} else {
+			self::log("This is a production run. Reports will be sent to the client.");
+			$send_report_to = $client_details['Client']['email'];
+		}
 
 		// Set date, fee, and output file parameters
 		$loa_start_date = date('Y-m-d', strtotime($loa_details['Loa']['startDate']));
@@ -70,25 +86,27 @@ class ConsolidatedReportShell extends Shell {
 		$report = new ConsolidatedReportHelper($template, $newFile, $outputFile, $this->ConsolidatedReport);
 		
 		// Populate the report
-		self::log("Building the report data array.");
+		self::log('Building the report data array.');
 		$report->populateDashboard($client_details['Client']['name'], $membership_fee, $loa_start_date, $this->ConsolidatedReport->getMonthEndDate());		
 		$report->populateActivitySummary($loa_start_date, $this->ConsolidatedReport->getMonthEndDate(), 15, 2);
 		$report->populateBookings();
 		$report->populateImpressions();
 		$report->populateContactDetails();
-		self::log("The report data array was built successfully.");
+		self::log('The report data array was built successfully.');
 
 		// Save array to spreadsheet object
 		try {
-			self::log("Saving the report data array to the report object.");
+			self::log('Saving the report data array to the report object.');
 			$report->populateFromArray($report->getDataToPopulate());
-			self::log("The save was successful.");
+			self::log('The save was successful.');
 
 			// Write the report object to disk
 			try {
-				self::log("Writing the report object to disk.");
+				self::log('Writing the report object to disk.');
 				$report->writeSpreadsheetObjectToFile();
-				self::log("The write was successful.");
+				self::log('The write was successful.');
+				self::log("Emailing report to $send_report_to");
+				$this->emailReport($send_report_to, $outputFile);				
 			} catch (Exception $e) {
 				self::log("Error - There was an issue saving the report object to disk. Message: '" . $e->getMessage() . "'");
 			}
@@ -147,21 +165,20 @@ class ConsolidatedReportShell extends Shell {
 	}
 	
 	/**
-	 * Utility method to send email notifications when errors crop up
+	 * Email the generated report
 	 *
-	 * @access	public
-	 * @param	array messages to email
+	 * @access	private
+	 * @param	string to address
+	 * @param	string path to file to attach
 	 */
-	private function sendEmailNotification($messages)
+	private function emailReport($recipient, $file)
 	{
-		$emailTo = 'mclifford@luxurylink.com';
-		$emailSubject = "Error encountered in Toolbox shell - booking_report.php";
-		$emailHeaders = "From: LuxuryLink.com DevMail<devmail@luxurylink.com>\r\n";
-		$emailBody = "While generating the booking report for Convertro I encountered the following error(s):\r\n\r\n";
-		foreach($messages as $message) {
-			$emailBody .= $message . "\r\n";
-		}
-		@mail($emailTo, $emailSubject, $emailBody, $emailHeaders);		
+		$this->Email->reset();
+		$this->Email->from = 'noreply@luxurylink.com';
+		$this->Email->to = 'mclifford@luxurylink.com';
+		$this->Email->subject = 'Consolidated Report';
+		$this->Email->attachments = array($file);
+		$this->Email->send('Here is your Consolidated Report');
 	}
 }
 ?>
