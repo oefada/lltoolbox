@@ -114,6 +114,19 @@ class WebServiceNewClientsController extends WebServicesController
 				return false;
 			}
 		} else {
+			
+			// 10/7/2011 jwoods - duplicate name check
+			$dupClient = $this->Client->query("SELECT * FROM client WHERE name = ?", array($decoded_request['client']['client_name']));
+			if (isset($dupClient[0]) && isset($dupClient[0]['client']['clientId'])) {
+				@mail('jwoods@luxurylink.com', 'SUGAR BUS -- DUPLICATE CLIENT NAME', print_r($dupClient, true) . print_r($decoded_request, true));
+				$decoded_request['request']['response'] = '-1';
+				$decoded_request['request']['response_time'] = time();
+				$decoded_request['client']['client_id'] = -1;
+				$encoded_response = json_encode($decoded_request);
+				return $encoded_response;
+			}
+			// end duplicate name check
+			
 			// ======= NEW CLIENT INSERT =============
 			$next_auto_inc_result = $this->Client->query("SHOW TABLE STATUS WHERE Name = 'client'");
 			$next_client_auto_id = $next_auto_inc_result[0]['TABLES']['Auto_increment'];
