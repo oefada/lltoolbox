@@ -96,7 +96,7 @@
 																			<img width="172" height="172" alt="How was your experience?" src="http://www.luxurylink.com/images/email/how_was_your_experience_LL.png">
 																			<br>
 																			<br>
-																			<img width="130" height="42" alt="Click here to rate your experience" src="http://www.luxurylink.com/images/email/btn_rateExperience_LL.jpg">
+																			<a href="%%URL%%"><img border="0" width="130" height="42" alt="Click here to rate your experience" src="http://www.luxurylink.com/images/email/btn_rateExperience_LL.jpg"></a>
 																		</td>
 																	</tr>
 																</table> <!-- ---------- -->
