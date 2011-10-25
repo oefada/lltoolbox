@@ -1,0 +1,8 @@
+																		<p>Thank you for choosing <?= $siteName ?>. Your reservation at <?= $clientNameP ?> in <?= $locationDisplay ?> for <?= $numNights ?> nights starting on <?php echo $resArrivalDate;?> and checking-out on <?php echo $resDepartureDate;?> has been confirmed!</p>
+
+																		<?php if ($siteId == 1 && count($destData)): ?><p>As you begin planning your trip, we invite you to get inspired with some information on<br />
+																		<a href="<?= $siteUrl ?>fivestar/<?= $destData['Destination']['destinationSeoName'] ?>/hotel-guide" target="_blank" style="color: #056ff7;"><?php echo $locationDisplay;?></a> provided by the editors of <i>Travel + Leisure</i> magazine.</p>
+																		<?php endif; ?>
+%%reservation_details%%
+%%package_details%%
+%%property_notes%%

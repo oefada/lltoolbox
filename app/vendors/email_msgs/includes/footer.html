@@ -1,63 +1,22 @@
-								<tr><td style="font-size:0; line-height:0;"><img src="blank.gif" width="1" height="27"></td></tr>
-								<tr>
-									<td>
-										<table width="100%" cellpadding="0" cellspacing="0" border="0">
-											<tr>
-												<td width="21"></td>
-												<td width="292" valign="top">
-													<table width="100%" cellpadding="0" cellspacing="0" border="0">
-														<tr><td style="line-height:14px;"><font face="Arial, Helvetica, sans-serif" color="#474747" size="1" style="font-size:10px; line-height:14px">
-															<a style="text-decoration:underline; color:#036dfc;" href="http://www.luxurylink.com/"><font color="#036dfc">Luxury Link</font></a><br>
-															5570 Lincoln Boulevard, Los Angeles, CA 90094<br><br>
-															For information or assistance, call 1 (888) 297-3299 or email <br>
-															<a style="text-decoration:underline; color:#036dfc;" href="mailto:concierge@luxurylink.com"><font color="#036dfc">concierge@luxurylink.com</font></a>.<br>
-															<a style="text-decoration:underline; color:#036dfc;" href="http://www.luxurylink.com/LL/home_prvcy2.php"><font color="#036dfc">Privacy Policy</font></a>
-														</font></td></tr>
-													</table>
-												</td>
-												<td width="114"></td>
-												<td width="1" bgcolor="#86878a" style="font-size:0; line-height:0;"><img src="blank.gif" align="left" vspace="0" hspace="0" width="1" height="1"></td>
-												<td width="20"></td>
-												<td width="152" valign="top">
-													<table width="100%" cellpadding="0" cellspacing="0" border="0">
-														<tr><td style="line-height:13px;"><font face="Arial, Helvetica, sans-serif" size="1" style="font-size:10px; line-height:13px" color="#474747">Keep up with the latest deals.</font></td></tr>
-														<tr><td style="font-size:0; line-height:0;"><img src="blank.gif" width="1" height="5"></td></tr>
-														<tr>
-															<td>
-																<table cellpadding="0" cellspacing="0" border="0">
-																	<tr>
-																		<td width="24" style="font-size:0; line-height:0;"><img src="http://www.luxurylink.com/images/email/ico-facebook.jpg" align="left" vspace="0" hspace="0" alt="facebook" width="24" height="24"></td>
-																		<td width="6"></td>
-																		<td style="line-height:13px;"><font face="Arial, Helvetica, sans-serif" color="#036dfc" size="1" style="font-size:10px; line-height:13px"><a style="text-decoration:none; color:#036dfc;" href="http://www.facebook.com/LuxuryLink"><font color="#036dfc">Facebook</font></a></font></td>
-																	</tr>
-																	<tr><td colspan="3" style="font-size:0; line-height:0;"><img src="blank.gif" width="1" height="5"></td></tr>
-																	<tr>
-																		<td width="24" style="font-size:0; line-height:0;"><img src="http://www.luxurylink.com/images/email/ico-twitter.jpg" align="left" vspace="0" hspace="0" alt="twitter" width="24" height="24"></td>
-																		<td width="6"></td>
-																		<td style="line-height:13px;"><font face="Arial, Helvetica, sans-serif" color="#036dfc" size="1" style="font-size:10px; line-height:13px"><a style="text-decoration:none; color:#036dfc;" href="http://twitter.com/luxurylink"><font color="#036dfc">Twitter</font></a></font></td>
-																	</tr>
-																	<tr><td colspan="3" style="font-size:0; line-height:0;"><img src="blank.gif" width="1" height="5"></td></tr>
-																	<tr>
-																		<td width="24" style="font-size:0; line-height:0;"><img src="http://www.luxurylink.com/images/email/ico-community.jpg" align="left" vspace="0" hspace="0" alt="community" width="24" height="24"></td>
-																		<td width="6"></td>
-																		<td style="line-height:13px;"><font face="Arial, Helvetica, sans-serif" color="#036dfc" size="1" style="font-size:10px; line-height:13px"><a style="text-decoration:none; color:#036dfc;" href="http://www.luxurylink.com/community/forum.php"><font color="#036dfc">Join the<br>Community</font></a></font></td>
-																	</tr>
-																</table>
-															</td>
-														</tr>
-													</table>
-												</td>
-											</tr>
-										</table>
-									</td>
-								</tr>
-								<tr><td style="font-size:0; line-height:0;"><img src="blank.gif" width="1" height="22"></td></tr>
-							</table>
-						</td>
-					</tr>
-				</table>
-			</td>
-		</tr>
-	</table>
-</body>
-</html>
+																				  			<td valign="top" style="padding-left: 5px;">
+																				  			%%special_boxes%%	
+																				  			</td>
+																				  		</tr>
+																				  		<tr>
+																				  			<td colspan="2">
+																				  			%%other_boxes%%
+<?php if (!in_array($ppvNoticeTypeId, array(36))): ?>
+<font face="Arial, Helvetica, sans-serif" size="2" style="font-size:12px; line-height:20px" color="#474747">
+<p>
+<?php if ($ppvNoticeTypeId != 14): ?>
+If you have any questions or additional needs, please <?php else: ?>
+<p>Please <a href="<?=$dateRequestLink;?>" target="_blank" style="color: #056ff7;">submit alternate travel dates</a>, or
+<?php endif; ?>
+
+contact our Travel Concierge at (888) 279-3299
+or (310) 215-8060, or send us an email at <a href="mailto:concierge@<?= $siteEmail ?>">concierge@<?= $siteEmail ?></a>. Our business hours are Monday through Friday, 7am to 5pm Pacific Time.</p>
+
+<p>Sincerely,<br>
+<?= $siteName ?> Concierge</p>
+<?php endif; ?>
+</p>

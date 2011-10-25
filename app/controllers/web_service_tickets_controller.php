@@ -58,6 +58,24 @@ class WebServiceTicketsController extends WebServicesController
 						'input' => array('in0' => 'xsd:string'),
 						'output' => array('return' => 'xsd:string')
 						),
+					'sendPpvEmail' => array(
+						'input' => array(
+							'emailTo' => 'xsd:string', 
+							'emailFrom' => 'xsd:string', 
+							'emailCc' => 'xsd:string', 
+							'emailBcc' => 'xsd:string', 
+							'emailReplyTo' => 'xsd:string',
+							'emailSubject' => 'xsd:string',
+							'emailBody' => 'xsd:string',
+							'ticketId' => 'xsd:int',
+							'ppvNoticeTypeId' => 'xsd:int',
+							'ppvInitials' => 'xsd:string',
+							),
+						
+						'output' => array(
+							'return' => 'xsd:boolean',
+							),
+						),
 					'sendResRequestReminder' => array(
 						'doc' => 'N/A',
 						'input' => array('in0' => 'xsd:string'),
@@ -150,18 +168,15 @@ class WebServiceTicketsController extends WebServicesController
 
 	}
 
-	// see processTicket()
+	// see $this->processTicket()
 	function processNewTicket($in0) {
-
-
 		$json_decoded = json_decode($in0, true);
 		$this->errorResponse = $this->errorMsg = $this->errorTitle = false;
 		if (!$this->processTicket($json_decoded)) {
-
 			$server_type = '';
-			if (isset($_SERVER['HTTP_HOST']) && stristr($_SERVER['HTTP_HOST'], 'dev')) {
+			if (defined(ISDEV) && !defined(ISSTAGE)) {
 				$server_type = '[DEV] --> ';
-			}else if (isset($_SERVER['HTTP_HOST']) && stristr($_SERVER['HTTP_HOST'], 'stage')) {
+			} else if (defined(ISSTAGE)) {
 				$server_type = '[STAGE] --> ';
 			}
 			@mail('devmail@luxurylink.com', "$server_type" . 'WEBSERVICE (TICKETS): ERROR ('. $this->errorResponse . ')' . $this->errorTitle , $this->errorMsg . "<br /><br />\n\n" . print_r($json_decoded, true));
@@ -260,10 +275,8 @@ class WebServiceTicketsController extends WebServicesController
 		return true;
 	}
 
-
-
 	// see processNewTicket() - it calls this method
-	function processTicket($data){
+	private function processTicket($data){
 		// TODO optimize and implement error handler class
 
 		// if we do not have these values then void
@@ -272,24 +285,28 @@ class WebServiceTicketsController extends WebServicesController
 			$this->errorResponse = 1101;
 			$this->errorTitle = 'Invalid Data';
 			$this->errorMsg = 'Ticket processing was aborted due to receiving invalid data.';
+			$this->logError(__METHOD__);
 			return false;
 		}
 		if (!isset($data['ticketId']) || empty($data['ticketId'])) {
 			$this->errorResponse = 1102;
 			$this->errorTitle = 'Invalid Data';
 			$this->errorMsg = 'Ticket processing was aborted because the required field ticketId was not supplied.';
+			$this->logError(__METHOD__);
 			return false;
 		}
 		if (!isset($data['userId']) || empty($data['userId'])) {
 			$this->errorResponse = 1103;
 			$this->errorTitle = 'Invalid Data';
 			$this->errorMsg = 'Ticket processing was aborted because the required field userId was not supplied.';
+			$this->logError(__METHOD__);
 			return false;
 		}
 		if (!isset($data['offerId']) || empty($data['offerId'])) {
 			$this->errorResponse = 1104;
 			$this->errorTitle = 'Invalid Data';
 			$this->errorMsg = 'Ticket processing was aborted because the required field offerId was not supplied.';
+			$this->logError(__METHOD__);
 			return false;
 		}
 
@@ -300,7 +317,6 @@ class WebServiceTicketsController extends WebServicesController
 
 		// joins on client table and clientLoaPackageRel
 		$clientData = $this->Ticket->getClientsFromPackageId($data['packageId']);
-
 
 		// gather all data that is necessary
 		// -------------------------------------------------------------------------------
@@ -321,9 +337,9 @@ class WebServiceTicketsController extends WebServicesController
 		} else {
 			$this->errorTitle = 'Invalid Site';
 			$this->errorMsg = 'Ticket processing was aborted because site was not supplied.';
+			$this->logError(__METHOD__);
 			return false;
 		}
-
 
 		// $ticket_toolbox contains data specific to the the purchase as contained in 'ticket' table. eg. user data, departure times, packageId etc
 		$ticket_toolbox = $this->Ticket->read(null, $data['ticketId']);
@@ -333,6 +349,7 @@ class WebServiceTicketsController extends WebServicesController
 			$this->errorResponse = 187;
 			$this->errorTitle = 'Ticket Not Processsed [CHECK REPLICATION]';
 			$this->errorMsg = 'Ticket data not replicated to Toolbox yet or TB DB is down.  This ticket has been flagged for reprocessing and will finish the process when the systems come online.';
+			$this->logError(__METHOD__);
 			return false;
 		}
 
@@ -343,13 +360,13 @@ class WebServiceTicketsController extends WebServicesController
 			$this->errorResponse = 188;
 			$this->errorTitle = 'Payment Already Detected for Ticket';
 			$this->errorMsg = 'Stopped processing this ticket.  An existing payment has been detected for this ticket id whether it was successful or not.  This ticket has been marked as processed successfully.';
+			$this->logError(__METHOD__);
 			return true;
 		}
 
 		// all ticket processing happens in here
 		// the auction closing cron job sets the the ticket to transmitted=1 when it finishes with it to prevent concurrency issues
 		if ($ticket_toolbox['Ticket']['transmitted'] == 0) {
-
 			$ticketId = $data['ticketId'];
 
 			// 2011-05-04 jwoods - fill in ticket.guaranteeAmt if necessary
@@ -369,16 +386,14 @@ class WebServiceTicketsController extends WebServicesController
 			// was original buy now price discounted?
 			if (!empty($resultsDiscount)) {
 				$guaranteeAmount = round($data['billingPrice'] / ((100 - $resultsDiscount[0]['m']['percentDiscount']) / 100));
-
 			// else, was a reserve amount set?
 			} elseif (intval($offerLive['reserveAmt']) > 0) {
-        $guaranteeAmount = $offerLive['reserveAmt'];
+				$guaranteeAmount = $offerLive['reserveAmt'];
 			}
 
 			if ($guaranteeAmount > 0) {
 				$this->Ticket->query("UPDATE ticket SET guaranteeAmt = ? WHERE ticketId = ?", array($guaranteeAmount, $ticketId));
 			}
-
 
 			// update the tracks
 			// 'track' table contains info on what should be done with the money coming in with regards to the client
@@ -558,11 +573,13 @@ class WebServiceTicketsController extends WebServicesController
 
 			// send out client and winner ppv if charge is successfully charged
 			// -------------------------------------------------------------------------------
+			/*
 			if ($autoSendClientWinnerPpv) {
 				$ppv_settings['ppvNoticeTypeId'] = 4;    // client PPV
 				$this->ppv(json_encode($ppv_settings));
 			}
-
+			*/
+			
 			// finally, return back
 			// -------------------------------------------------------------------------------
 			return true;
@@ -876,7 +893,11 @@ class WebServiceTicketsController extends WebServicesController
 	}
 
 	function ppv($in0) {
-		$params = json_decode($in0, true);
+		if (!is_array($in0)) {
+			$params = json_decode($in0, true);
+		} else {
+			$params = $in0;
+		}
 
 		// TODO THIS METHOD NEEDS SOME MAJOR REVAMP
 
@@ -891,7 +912,8 @@ class WebServiceTicketsController extends WebServicesController
 		$ppvInitials		= isset($params['initials']) ? $params['initials'] : null;
 		$clientIdParam		= isset($params['clientId']) ? $params['clientId'] : false;
 		$siteId				= isset($params['siteId']) ? $params['siteId'] : false;
-
+		$offerId			= isset($params['offerId']) ? $params['offerId'] : false;
+		
 		// sender signature (mainly for manual emails sent from toolbox)
 		// -------------------------------------------------------------------------------
 		$sender_sig 		= isset($params['sender_sig']) ? $params['sender_sig'] : 0;
@@ -912,11 +934,11 @@ class WebServiceTicketsController extends WebServicesController
 
 		// TODO: error checking for params
 
-		if ($ticketId == null && $username == null) {
+		if ($ticketId == null && $username == null && !$offerId) {
 			return 'Invalid input';
 			exit;
 		}
-
+		
 		if ($ticketId) {
 			// retrieve data to fill out the email templates
 			// -------------------------------------------------------------------------------
@@ -925,16 +947,24 @@ class WebServiceTicketsController extends WebServicesController
 			$this->ClientLoaPackageRel->recursive = 0;
 			$ticket = $this->Ticket->read(null, $ticketId);
 
-			switch ($ticket['Ticket']['siteId']) {
-				case 1:
-					$offerSite = 'offerLuxuryLink';
-					break;
-				case 2:
-					$offerSite = 'offerFamily';
-					break;
+			$siteId = $ticket['Ticket']['siteId'];
+			$offerId = $ticket['Ticket']['offerId'];
+		} elseif ($offerId) {
+			if (!$siteId) {
+				return "Invalid site ID";
+				exit;
 			}
-			$liveOffer	= $this->Ticket->query("select * from $offerSite as LiveOffer where offerId = " . $ticket['Ticket']['offerId'] . " limit 1");
+		}
 
+		$offerSite = Configure::read("OfferSite".$siteId);
+		
+		if ($offerId || $ticketId) {
+			$bidInfo = $this->Bid->getBidStatsForOffer($offerId);
+			$liveOfferData = $this->Ticket->query("select * from $offerSite as LiveOffer where offerId = " . $offerId . " limit 1");
+			$liveOfferData = $liveOfferData[0]['LiveOffer'];
+		}
+		
+		if ($ticketId) {
 			// data arrays
 			// -------------------------------------------------------------------------------
 			$ticketData 		= $ticket['Ticket'];
@@ -947,15 +977,18 @@ class WebServiceTicketsController extends WebServicesController
 			$clientData			= $this->ClientLoaPackageRel->findAllBypackageid($ticket['Ticket']['packageId']);
 
 			$this->ClientLoaPackageRel->Client->ClientDestinationRel->contain('Destination');
-			$destData			= $this->ClientLoaPackageRel->Client->ClientDestinationRel->findByclientId($clientData[0]['Client']['clientId']);
-
-			$liveOfferData 		= $liveOffer[0]['LiveOffer'];
+			$destData			= $this->ClientLoaPackageRel->Client->ClientDestinationRel->findByclientId($clientData[0]['Client']['clientId'],array(),"clientDestinationRelId DESC");
+			CakeLog::write("debug",var_export($destData,1));
 			$offerType			= $this->OfferType->find('list');
 			$userPaymentData	= $this->findValidUserPaymentSetting($ticketData['userId']);
-
+			$paymentDetail		= $this->PaymentDetail->findByticketId($ticketId);
+			$paymentDetail		= (isset($paymentDetail['PaymentDetail'][0]) ? $paymentDetail['PaymentDetail'][0] : $paymentDetail['PaymentDetail']);
+			
 			$promoGcCofData		= $this->Ticket->getPromoGcCofData($ticketId, $ticket['Ticket']['billingPrice']);
-
-			$siteId 			= $ticket['Ticket']['siteId'];
+			$promoApplied		= ($promoGcCofData['Promo'] && $promoGcCofData['Promo']['applied'] ? true : false);
+			$cofApplied			= ($promoGcCofData['Cof']   && $promoGcCofData['Cof']['applied'] ? true : false);
+			$giftApplied		= ($promoGcCofData['GiftCert']   && $promoGcCofData['GiftCert']['applied'] ? true : false);
+			
 		} elseif ($username) {
 			$this->User->UserSiteExtended->recursive = 0;
 			$userId = $this->User->UserSiteExtended->findByusername($username);
@@ -1135,6 +1168,7 @@ class WebServiceTicketsController extends WebServicesController
 			if (is_array($userPaymentData) && !empty($userPaymentData)) {
 				$ccFour				= substr(aesDecrypt($userPaymentData['UserPaymentSetting']['ccNumber']), -4, 4);
 				$ccType				= $userPaymentData['UserPaymentSetting']['ccType'];
+				//$billDate			= 
 			}
 
 			// guarantee amount
@@ -1233,10 +1267,17 @@ class WebServiceTicketsController extends WebServicesController
 			$clientName 		    = $clients[$client_index]['contacts'][0]['ppv_name'];
 			$oldProductId		    = $clients[$client_index]['oldProductId'];
 			$locationDisplay	    = $clients[$client_index]['locationDisplay'];
-			$clientPrimaryEmail     = $clients[$client_index]['contact_to_string'];
+			$clientPrimaryEmail     = substr($clients[$client_index]['contact_to_string'],0,strpos($clients[$client_index]['contact_to_string'],",")); // Prevents comma separated e-mails 
 			$clientCcEmail 		    = $clients[$client_index]['contact_cc_string'];
 			$clientAdjustedPrice    = $this->numF(($clients[$client_index]['percentOfRevenue'] / 100) * $ticketData['billingPrice']);
-
+			$clientPhone			= ($clients[$client_index]['estaraPhoneLocal'] == NULL ? $clients[$client_index]['contacts'][0]['ppv_phone'] : $clients[$client_index]['estaraPhoneLocal']);
+			$clientPhoneIntl		= $clients[$client_index]['estaraPhoneIntl'] == NULL ? false : $clients[$client_index]['estaraPhoneIntl'];
+			$pdpUrl = $siteUrl."luxury-hotels/".$clients[$client_index]['seoName']."?clid=".$clientId;
+			
+			App::import("Vendor","UtilityHelper",array('file' => "appshared".DS."helpers".DS."UtilityHelper.php"));
+			$clientPhone = UtilityHelper::cleanUSD($clientPhone,6); // Formats phone number consistenly
+			$clientPhoneIntl = UtilityHelper::cleanUSD($clientPhoneIntl,6);
+			
 			// added June 17 -- to allow copy for LL Auc Winner Email and Res Confirmed Email
 			if (in_array($ppvNoticeTypeId, array(1,18))) {
 				$primaryDest = $this->Ticket->getTicketDestStyleId($ticketId);
@@ -1248,7 +1289,7 @@ class WebServiceTicketsController extends WebServicesController
 				$res_request_count = $resrequest[0][0]['count'];
 			}
 		} //End IF for $ticketId
-
+		
 		// Click tracking for templates
 		$emailFrom = "$siteDisplay <no-reply@$siteEmail>";
 		$emailReplyTo = "no-reply@$siteEmail";
@@ -1257,12 +1298,10 @@ class WebServiceTicketsController extends WebServicesController
 		// -------------------------------------------------------------------------------
 		ob_start();
 		switch ($ppvNoticeTypeId) {
-			/* NEW TEMPLATES
 			case 1:
-				// send out res confirmation
 				$templateFile = "1_reservation_confirmation";
 				$templateTitle = "Your reservation is confirmed";
-				$emailSubject = "Your $siteName Booking is Confirmed - $clientNameP";
+				$emailSubject = "Your $siteName Reservation is Confirmed - $clientNameP";
 				$emailFrom = ($isAuction) ? "$siteDisplay <resconfirm@$siteEmail>" : "$siteDisplay <reservations@$siteEmail>";
 				$emailReplyTo = ($isAuction) ? "resconfirm@$siteEmail" : "reservations@$siteEmail";
 				break;
@@ -1325,7 +1364,7 @@ class WebServiceTicketsController extends WebServicesController
 				break;
 			case 12:
 				$templateFile = '12_reservation_ack';
-				$templateTitle = "We have received your reservation request";
+				$templateTitle = "We are in the process of confirming your reservation";
 				$emailSubject = "Your $siteName Travel Booking - $clientNameP";
 				$emailFrom = ($isAuction) ? "$siteDisplay <auction@$siteEmail>" : "$siteDisplay <exclusives@$siteEmail>";
 				$emailReplyTo = ($isAuction) ? "auction@$siteEmail" : "exclusives@$siteEmail";
@@ -1338,8 +1377,8 @@ class WebServiceTicketsController extends WebServicesController
 				break;
 			case 14:
 				$templateFile = "14_dates_not_available";
-				$templateTitle = "Update &ndash; Your Luxury Link Reservation";
-				$emailSubject = "Your Dates Were Not Available - $clientNameP";
+				$templateTitle = "Your requested dates are unavailable";
+				$emailSubject = "Your requested dates are unavailable - $clientNameP";
 				$emailFrom = ($isAuction) ? "$siteDisplay <auction@$siteEmail>" : "$siteDisplay <exclusives@$siteEmail>";
 				$emailReplyTo = ($isAuction) ? "auction@$siteEmail" : "exclusives@$siteEmail";
 				break;
@@ -1364,7 +1403,7 @@ class WebServiceTicketsController extends WebServicesController
 				break;
 			case 18:
 				$templateFile = '18_auction_winner_ppv';
-				$templateTitle = "You have won your Luxury Link auction!";
+				$templateTitle = "Congratulations - You Won!";
 				$emailSubject = "$siteName Auction Winner Receipt - $clientNameP";
 				$emailFrom = "$siteDisplay <auction@$siteEmail>";
 				$emailReplyTo = "auction@$siteEmail";
@@ -1474,6 +1513,7 @@ class WebServiceTicketsController extends WebServicesController
 				$emailFrom = ($isAuction) ? "$siteDisplay <auction@$siteEmail>" : "$siteDisplay <exclusives@$siteEmail>";
 				$emailReplyTo = ($isAuction) ? "auction@$siteEmail" : "exclusives@$siteEmail";
 				break;
+			// New logic depends on these -- keeping for now
 			case 34:
 				$templateFile = "34_forgot_password";
 				$emailSubject = $templateTitle = "Your $siteName Password";
@@ -1484,255 +1524,43 @@ class WebServiceTicketsController extends WebServicesController
 				break;
 			case 36:
 				$templateFile = "36_highest_bidder";
-				$templateTitle = "Highest Bidder";
+				$templateTitle = "You are the highest bidder";
 				$emailSubject = "$siteName: Your bid has been received!";
-				break;
-			*/
-			///* OLD TEMPLATES
-			case 1:
-				// send out res confirmation
-				include('../vendors/email_msgs/ppv/conf_ppv.html');
-				$emailSubject = "Your $siteName Booking is Confirmed - $clientNameP";
-				$emailFrom = ($isAuction) ? "$siteDisplay<resconfirm@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
-				$emailReplyTo = ($isAuction) ? "resconfirm@$siteEmail" : "reservations@$siteEmail";
-				break;
-			case 26:
-				// general customer template
-				include('../vendors/email_msgs/notifications/26_general_customer_template.html');
-				$emailSubject = "Your $siteName Booking is Confirmed - $clientNameP";
-				$emailFrom=($isAuction)?"$siteDisplay<resconfirm@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
-				$emailReplyTo = ($isAuction) ? "resconfirm@$siteEmail" : "reservations@$siteEmail";
-				break;
-			case 23:
-				// send out res confirmation to client also as copy
-				include('../vendors/email_msgs/ppv/23_conf_copy_client.html');
-				$emailSubject = "$siteName Booking Confirmed for $userFirstName $userLastName - $clientNameP";
-				$emailFrom = ($isAuction) ? "$siteDisplay<resconfirm@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
-				$emailReplyTo = ($isAuction) ? "resconfirm@$siteEmail" : "reservations@$siteEmail";
-				$userEmail = $clientPrimaryEmail;
-				break;
-			case 2:
-				// send out res request
-				$extranet_link = $this->getExtranetLink($ticketId, $siteId);
-				include('../vendors/email_msgs/notifications/2_reservation_request.html');
-				$emailSubject = "Please Confirm This $siteName Booking - $offerTypeTxt - ACTION REQUIRED - $userFirstName $userLastName";
-				if (isset($res_request_count) && $res_request_count > 0) {
-					$emailSubject = 'NEW DATES REQUESTED - ' . $emailSubject;
-				}
-
-				$emailFrom = ($isAuction) ? "$siteDisplay<resrequests@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
-				$emailReplyTo = ($isAuction) ? "resrequests@$siteEmail" : "reservations@$siteEmail";
-				$userEmail = $clientPrimaryEmail;
-				$emailCc = $clientCcEmail;
-				break;
-			case 29:
-				// send out res cancellation request
-				$extranet_link = $this->getExtranetCancellationLink($ticketId, $siteId);
-				include('../vendors/email_msgs/notifications/29_reservation_cancel_request.html');
-				$emailSubject = "$siteName Cancellation Request - ACTION REQUIRED - $clientName";
-				$emailFrom = ($isAuction) ? "$siteDisplay<resrequests@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
-				$emailReplyTo = ($isAuction) ? "resrequests@$siteEmail" : "reservations@$siteEmail";
-				$userEmail = $clientPrimaryEmail;
-				$emailCc = $clientCcEmail;
-				break;
-			case 30:
-				// send out res cancellation confirmation
-				include('../vendors/email_msgs/notifications/30_reservation_cancel_confirmation.html');
-				$emailSubject = "Your $siteName Booking was Cancelled. - $userFirstName $userLastName";
-				$emailFrom = ($isAuction) ? "$siteDisplay<resrequests@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
-				$emailReplyTo = ($isAuction) ? "resrequests@$siteEmail" : "reservations@$siteEmail";
-				break;
-			case 31:
-				// send out res cancellation confirmation
-				include('../vendors/email_msgs/ppv/cancel_ppv.html');
-				$emailSubject = "Your $siteName Booking was Cancelled. - $clientNameP";
-				$emailFrom = ($isAuction) ? "$siteDisplay<resrequests@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
-				$emailReplyTo = ($isAuction) ? "resrequests@$siteEmail" : "reservations@$siteEmail";
-				$userEmail = $clientPrimaryEmail;
-				break;
-			case 25:
-				// send out res request w/o xnet
-				include('../vendors/email_msgs/notifications/25_res_request_no_xnet.html');
-				$emailSubject = "Please Confirm This $siteName Booking - $offerTypeTxt - ACTION REQUIRED - $userFirstName $userLastName";
-				$emailFrom = ($isAuction) ? "$siteDisplay<resrequests@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
-				$emailReplyTo = ($isAuction) ? "resrequests@$siteEmail" : "reservations@$siteEmail";
-				$userEmail = $clientPrimaryEmail;
-				$emailCc = $clientCcEmail;
-				break;
-			case 27:
-				// general client template
-				include('../vendors/email_msgs/notifications/27_general_client_template.html');
-				$emailSubject = "Please Confirm This $siteName Booking - $offerTypeTxt - ACTION REQUIRED - $userFirstName $userLastName";
-				$emailFrom = ($isAuction) ? "$siteDisplay<resrequests@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
-				$emailReplyTo = ($isAuction) ? "resrequests@$siteEmail" : "reservations@$siteEmail";
-				$userEmail = $clientPrimaryEmail;
-				$emailCc = $clientCcEmail;
-				break;
-			case 28:
-				// general res request template
-				include('../vendors/email_msgs/notifications/28_general_res_request_template.html');
-				$emailSubject = "Please Confirm This $siteName Booking - $offerTypeTxt - ACTION REQUIRED - $userFirstName $userLastName";
-				$emailFrom = ($isAuction) ? "$siteDisplay<resrequests@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
-				$emailReplyTo = ($isAuction) ? "resrequests@$siteEmail" : "reservations@$siteEmail";
-				$userEmail = $clientPrimaryEmail;
-				$emailCc = $clientCcEmail;
-				break;
-			case 24:
-				// send out res request
-				$extranet_link = $this->getExtranetLink($ticketId, $siteId);
-				include('../vendors/email_msgs/notifications/24_reservation_request_followup.html');
-				$emailSubject = "2nd Request, Please Confirm This $siteName Booking - $offerTypeTxt - ACTION REQUIRED - $userFirstName $userLastName";
-				$emailFrom = ($isAuction) ? "$siteDisplay<resrequests@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
-				$emailReplyTo = ($isAuction) ? "resrequests@$siteEmail" : "reservations@$siteEmail";
-				$userEmail = $clientPrimaryEmail;
-				$emailCc = $clientCcEmail;
-				break;
-			case 32:
-				// this goes out with 24, info to customer
-				$extranet_link = $this->getExtranetLink($ticketId, $siteId);
-				include('../vendors/email_msgs/notifications/32_reservation_request_followup_customer.html');
-				$emailSubject = "Your Pending Reservation";
-				$emailFrom = ($isAuction) ? "$siteDisplay<resrequests@$siteEmail>" : "$siteDisplay<reservations@$siteEmail>";
-				$emailReplyTo = ($isAuction) ? "resrequests@$siteEmail" : "reservations@$siteEmail";
-				break;
-			case 4:
-				include('../vendors/email_msgs/ppv/client_ppv.html');
-				$emailSubject = "$siteName Auction Winner Notification - $userFirstName $userLastName";
-				$emailFrom = "$siteDisplay<auctions@$siteEmail>";
-				$emailReplyTo = "auctions@$siteEmail";
-				$userEmail = $clientPrimaryEmail;
-				$emailCc = $clientCcEmail;
-				break;
-			case 5:
-				include('../vendors/email_msgs/notifications/winner_notification.html');
-				$emailSubject = "$siteName Auction Winner - $clientNameP";
-				$emailFrom = "$siteDisplay<auction@$siteEmail>";
-				$emailReplyTo = "auction@$siteEmail";
-				break;
-			case 9:
-				include('../vendors/email_msgs/fixed_price/msg_fixedprice.html');
-				$emailSubject = "$siteName - Your Request Has Been Received";
-				$emailFrom = "$siteDisplay<exclusives@$siteEmail>";
-				$emailReplyTo = "exclusives@$siteEmail";
-				break;
-			case 10:
-				include('../vendors/email_msgs/fixed_price/msg_client_fixedprice.html');
-				$emailSubject = "An Exclusive $siteName Booking Request Has Come In!";
-				$emailSubject = "Please Confirm This $siteName Booking - $offerTypeTxt - ACTION REQUIRED - $userFirstName $userLastName";
-				if (isset($res_request_count) && $res_request_count > 0) {
-					$emailSubject = 'NEW DATES REQUESTED - ' . $emailSubject;
-				}
-				$emailFrom = "$siteDisplay<exclusives@$siteEmail>";
-				$emailReplyTo = "exclusives@$siteEmail";
-				if ($this->Ticket->isMultiProductPackage($ticketId)) {
-					$emailFrom = "$siteDisplay<resrequest@$siteEmail>";
-					$emailReplyTo = "resrequest@$siteEmail";
-				}
-				$userEmail = $clientPrimaryEmail;
-				$emailCc = $clientCcEmail;
-				break;
-			case 11:
-				include('../vendors/email_msgs/fixed_price/msg_internal_fixedprice.html');
-				$emailSubject = "A $siteName $fpRequestType Request Has Come In!";
-				$emailFrom = "$siteDisplay<exclusives@$siteEmail>";
-				$emailReplyTo = "exclusives@$siteEmail";
-				$userEmail = "exclusives@$siteEmail";
-				break;
-			case 12:
-				include('../vendors/email_msgs/fixed_price/notification_acknowledgement.html');
-				$emailSubject = "Your $siteName Travel Booking - $clientNameP";
-				$emailFrom = ($isAuction) ? "$siteDisplay<auction@$siteEmail>" : "$siteDisplay<exclusives@$siteEmail>";
-				$emailReplyTo = ($isAuction) ? "auction@$siteEmail" : "exclusives@$siteEmail";
-				break;
-			case 13:
-				include('../vendors/email_msgs/fixed_price/notification_dates_available.html');
-				$emailSubject = "Your $siteName Travel Booking - $clientNameP";
-				$emailFrom = ($isAuction) ? "$siteDisplay<auction@$siteEmail>" : "$siteDisplay<exclusives@$siteEmail>";
-				$emailReplyTo = ($isAuction) ? "auction@$siteEmail" : "exclusives@$siteEmail";
-				break;
-			case 14:
-				include('../vendors/email_msgs/fixed_price/notification_dates_not_available.html');
-				$emailSubject = "Your Dates Were Not Available - $clientNameP";
-				$emailFrom = ($isAuction) ? "$siteDisplay<auction@$siteEmail>" : "$siteDisplay<exclusives@$siteEmail>";
-				$emailReplyTo = ($isAuction) ? "auction@$siteEmail" : "exclusives@$siteEmail";
-				break;
-			case 15:
-				include('../vendors/email_msgs/notifications/chase_money_notification.html');
-				$emailSubject = "$siteName Auction Winner - $clientNameP";
-				$emailFrom = "$siteDisplay<auction@$siteEmail>";
-				$emailReplyTo = "auction@$siteEmail";
-				break;
-			case 16:
-				include('../vendors/email_msgs/notifications/first_offense_flake.html');
-				$emailSubject = "$siteName Auction Winner - $clientNameP";
-				$emailFrom = "$siteDisplay<auction@$siteEmail>";
-				$emailReplyTo = "auction@$siteEmail";
-				break;
-			case 17:
-				include('../vendors/email_msgs/notifications/second_offense_flake.html');
-				$emailSubject = "$siteName Auction Winner - $clientNameP";
-				$emailFrom = "$siteDisplay<auction@$siteEmail>";
-				$emailReplyTo = "auction@$siteEmail";
-				break;
-			case 18:
-				include('../vendors/email_msgs/notifications/18_auction_winner_ppv.html');
-				$emailSubject = "$siteName Auction Winner Receipt - $clientNameP";
-				$emailFrom = "$siteDisplay<auction@$siteEmail>";
-				$emailReplyTo = "auction@$siteEmail";
-				break;
-			case 19:
-				include('../vendors/email_msgs/notifications/19_auction_winner_declined_expired.html');
-				$emailSubject = "Your $siteName Purchase is Not Complete - Action Required - $clientNameP";
-				$emailFrom = "$siteDisplay<auction@$siteEmail>";
-				$emailReplyTo = "auction@$siteEmail";
-				break;
-			case 20:
-				include('../vendors/email_msgs/notifications/20_auction_your_dates_received.html');
-				$emailSubject = "Your $siteName Request has been Received - $clientNameP";
-				$emailFrom = ($isAuction) ? "$siteDisplay<auction@$siteEmail>" : "$siteDisplay<exclusives@$siteEmail>";
-				$emailReplyTo = ($isAuction) ? "auction@$siteEmail" : "exclusives@$siteEmail";
-				break;
-			case 33:
-				include('../vendors/email_msgs/notifications/33_change_dates_request_template.html');
-				$emailSubject = "Your $siteName Request has been Received - $clientNameP";
-				$emailFrom = ($isAuction) ? "$siteDisplay<auction@$siteEmail>" : "$siteDisplay<exclusives@$siteEmail>";
-				$emailReplyTo = ($isAuction) ? "auction@$siteEmail" : "exclusives@$siteEmail";
-				break;
-			// New logic depends on these -- keeping for now
-			case 34:
-				$templateFile = "34_forgot_password";
-				$emailSubject = $templateTitle = "Your $siteName Password";
-				break;
-			case 35:
-				$templateFile = "35_forgot_username";
-				$emailSubject = $templateTitle = "Your $siteName Username";
 				break;
 			case 37:
 				$ppvNoticeTypeId = 35; //TODO REMOVE THIS LINE ONCE IT WORKS RIGHT WITH SILVERPOP
 				$templateFile = "37_post_trip_email";
 				$emailSubject = $templateTitle = "Rate your $siteName experience";
-			//*/
+				break;
+			case 38:
+				$templateFile = "38_auction_watch_ending";
+				$templateTitle = "The auction you are watching ends soon";
+				$emailSubject = $siteName . ": ".$templateTitle;
+				break;
 			default:
 				break;
 		}
 
 		if ($templateFile) {
-			if (($template = $this->utmLinks($templateFile,$ppvNoticeTypeId,$append)) !== FALSE) {
+			if (($template = $this->newEmailTemplate($templateFile,$append)) !== FALSE) {
 				$rand = rand(100,1000);
 				$file = "/tmp/template-".$rand;
 
 				file_put_contents($file,$template);
 				include($file);
 				unlink($file);
+				
+				$emailBody = ob_get_clean();
+				$emailBody = $this->utmLinks($emailBody, $ppvNoticeTypeId, $append);
 			} else {
 				CakeLog::write("debug","INVALID TEMPLATE");
 				return false;
 				exit;
 			}
+		} else {
+			$emailBody = ob_get_clean();
 		}
-
-		$emailBody = ob_get_clean();
-
+		
 		if (in_array($ppvNoticeTypeId, array(5,18,19)) && $liveOfferData['isMystery']) {
 			$emailSubject = "$siteName Mystery Auction Winner";
 		}
@@ -1798,27 +1626,90 @@ class WebServiceTicketsController extends WebServicesController
 		}
 	}
 
-	function utmLinks($templateFile,$ppvNoticeTypeId,$append = "LL") {
+	private function newEmailTemplate($templateFile,$append = "LL") {
 		// Add UTM links
-		$this->PpvNotice->PpvNoticeType->PpvNoticeClickTrack->recursive = -1;
-		$utm = $this->PpvNotice->PpvNoticeType->PpvNoticeClickTrack->findByppvNoticeTypeId($ppvNoticeTypeId);
-		$utm = $utm['PpvNoticeClickTrack'];
-
 		$template  = file_get_contents("../vendors/email_msgs/includes/header_".$append.".html");
 		$template .= file_get_contents("../vendors/email_msgs/notifications/".$templateFile.".html");
 
-		if (strstr($template,"%%package_details%%") !== FALSE) {
-			$pD = file_get_contents("../vendors/email_msgs/includes/package_details.html");
-			$pD .= "<?php \$packageDetails = 1; ?>";
-			$template = str_replace("%%package_details%%",$pD,$template);
+		// Special templates that are re-used
+		$special_templates = array(
+			'package_details' => 1,
+			'property_notes' => 1,
+			'about_this_auction' => 1,
+			
+			// Special boxes that exist in the header. Place these anywhere in your template and it will be placed in a td next to the Dear Firstname,
+			'reservation_details' => 2,
+			'purchase_details' => 2,
+			'booking_request_dates' => 2,
+		);
+		
+		$special_boxes = "";
+		$other_boxes   = "";
+		$no_special = false;
+		
+		// Flag to allow certain boxes to be inline of eachother, rather than to the right of content
+		if (strstr($template,"%%no_special%%") !== FALSE) {
+			$no_special = true;
+			$template = str_replace("%%no_special%%","",$template);
 		}
+		
+		foreach ($special_templates as $k=>$s) {
+			if (strstr($template,"%%".$k."%%") !== FALSE) {
+				$pD = file_get_contents("../vendors/email_msgs/includes/".$k.".html");
+				$pD .= "<?php \$".$k." = 1; ?>";
 
+				// Special boxes that need to be in the header
+				if ($s == 2) {
+					if (!$no_special) {
+						$special_boxes .= $pD;
+						$pD = "";
+					}
+				} elseif ($s == 1) {
+					$other_boxes .= $pD;
+					$pD = "";
+				}
+
+				$template = str_replace("%%".$k."%%",$pD,$template);
+			}
+		}
+		
+		// Common footer
+		$template .= file_get_contents("../vendors/email_msgs/includes/footer.html");
+		$template = str_replace("%%special_boxes%%",$special_boxes,$template);
+		$template = str_replace("%%other_boxes%%",$other_boxes,$template);
 		$template .= file_get_contents("../vendors/email_msgs/includes/footer_".$append.".html");
 
+		// LL / FG Skinning (temp hack)
+		$colorsLL = array(
+			'#484846', // Box header text
+			'#d8d7b8', // Box header background
+			'#d4d5b5', // Special box header text
+			'bgcolor="#474747"', // Special box background
+		);
+		
+		$colorsFG = array(
+			'#b30000',
+			'#f6f6f6',
+			'#eeeeee',
+			'bgcolor="#666666"',
+		);
+
+		if ($append == "FG") {
+			$template = str_replace($colorsLL,$colorsFG,$template);
+		}
+		
 		if (!$template) {
 			return false;
+		} else {
+			return $template;
 		}
-
+	}
+	
+	private function utmLinks($template,$ppvNoticeTypeId,$append) {
+		$this->PpvNotice->PpvNoticeType->PpvNoticeClickTrack->recursive = -1;
+		$utm = $this->PpvNotice->PpvNoticeType->PpvNoticeClickTrack->findByppvNoticeTypeId($ppvNoticeTypeId);
+		$utm = $utm['PpvNoticeClickTrack'];
+		
 		preg_match_all("/(href\s?=\s?[\"|'](?!#|mailto)(.*?)[\"|\'])[\s|>]/",$template,$matches);
 		$matches = $matches[1];
 
@@ -1857,7 +1748,7 @@ class WebServiceTicketsController extends WebServicesController
 		return $template;
 	}
 
-	function getExtranetLink($ticketId, $siteId) {
+	private function getExtranetLink($ticketId, $siteId) {
 
 		if (!$ticketId || !is_numeric($ticketId)) {
 			return null;
@@ -1881,7 +1772,7 @@ class WebServiceTicketsController extends WebServicesController
 		return $host . $uri . "?z=$hash&t=$ticketIdHash&ts=$tsHash";
 	}
 
-	function getExtranetCancellationLink($ticketId, $siteId) {
+	private function getExtranetCancellationLink($ticketId, $siteId) {
 
 		if (!$ticketId || !is_numeric($ticketId)) {
 			return null;
@@ -1905,7 +1796,7 @@ class WebServiceTicketsController extends WebServicesController
 		return $host . $uri . "?z=$hash&t=$ticketIdHash&ts=$tsHash";
 	}
 
-	function sendPpvEmail($emailTo, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials) {
+	public function sendPpvEmail($emailTo, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials, $resend = false) {
 		if (stristr($_SERVER['HTTP_HOST'], 'dev') || stristr($_SERVER['HTTP_HOST'], 'stage') || ISDEV) {
 			//$appendDevMessage = "---- DEV MAIL ---- \n<br />ORIGINAL TO:  $emailTo\n<br />ORIGINAL CC: $emailCc\n<br />ORIGINAL BCC: $emailBcc";
 			$emailTo = $emailCc = $emailBcc = 'devmail@luxurylink.com';
@@ -1952,7 +1843,7 @@ class WebServiceTicketsController extends WebServicesController
 		$ppvNoticeSave['emailCc']			= $emailCc;
 		$ppvNoticeSave['emailSubject']		= $emailSubject;
 		// 10/01/2011 - jwoods added body text to db
-		$ppvNoticeSave['emailBody']	= $emailBody;
+		$ppvNoticeSave['emailBody']			= $emailBody;
 		$ppvNoticeSave['emailBodyFileName']	= $emailBodyFileName;
 		$ppvNoticeSave['emailSentDatetime']	= date('Y-m-d H:i:s', $emailSentDatetime);
 		$ppvNoticeSave['initials']			= $ppvInitials;
@@ -1964,55 +1855,59 @@ class WebServiceTicketsController extends WebServicesController
 			@mail('devmail@luxurylink.com', 'WEB SERVICE TICKETS: ppv record not saved', print_r($ppvNoticeSave, true));
 		}
 
-		// update ticket status if required
-		// -------------------------------------------------------------------------------
-		$newTicketStatus = false;
-		if ($ppvNoticeTypeId == 1 || $ppvNoticeTypeId == 23) {
-			// reservation confirmation from buy now with seasonal pricing
-			$currentTicketStatus = $this->Ticket->query("SELECT ticketStatusId as tsi FROM ticket WHERE ticketId = {$ticketId}");
-			if($currentTicketStatus[0]['tsi'] == 14 )
-				$newTicketStatus = 14;
-			else
-				$newTicketStatus = 4; //auction or FP
-
-			$resData = $this->Ticket->query("SELECT * FROM reservation WHERE ticketId = $ticketId ORDER BY reservationId DESC LIMIT 1");
-			if (!empty($resData)) {
-				$reservationId = $resData[0]['reservation']['reservationId'];
-				$reservation = array();
-				$reservation['reservationId'] = $reservationId;
-				$reservation['ticketId'] = $ticketId;
-				$reservation['reservationConfirmToCustomer'] = date('Y:m:d H:i:s', strtotime('now'));
-				$this->Reservation->save($reservation);
+		if ($resend == false) {
+			// update ticket status if required
+			// -------------------------------------------------------------------------------
+			$newTicketStatus = false;
+			if ($ppvNoticeTypeId == 1 || $ppvNoticeTypeId == 23) {
+				// reservation confirmation from buy now with seasonal pricing
+				$currentTicketStatus = $this->Ticket->query("SELECT ticketStatusId as tsi FROM ticket WHERE ticketId = {$ticketId}");
+				if($currentTicketStatus[0]['tsi'] == 14 )
+					$newTicketStatus = 14;
+				else
+					$newTicketStatus = 4; //auction or FP
+	
+				$resData = $this->Ticket->query("SELECT * FROM reservation WHERE ticketId = $ticketId ORDER BY reservationId DESC LIMIT 1");
+				if (!empty($resData)) {
+					$reservationId = $resData[0]['reservation']['reservationId'];
+					$reservation = array();
+					$reservation['reservationId'] = $reservationId;
+					$reservation['ticketId'] = $ticketId;
+					$reservation['reservationConfirmToCustomer'] = date('Y:m:d H:i:s', strtotime('now'));
+					$this->Reservation->save($reservation);
+				}
+			} elseif (in_array($ppvNoticeTypeId, array(2,25))) {
+				// send ticket status to RESERVATION REQUESTED
+				$newTicketStatus = 3;
+			} elseif (in_array($ppvNoticeTypeId, array(10, 33))) {
+				#$newTicketStatus = 1;
+				$newTicketStatus = 12;
+			} elseif ($ppvNoticeTypeId == 14) {
+				// DATES NOT AVAILABLE
+				$newTicketStatus = 11;
+			}  elseif ($ppvNoticeTypeId == 29) {
+				// Ticket cancellation request
+				$newTicketStatus = 16;
+			} elseif ($ppvNoticeTypeId == 30) {
+				// Ticket cancellation confirmation
+				$newTicketStatus = 17;
+			} elseif ($ppvNoticeTypeId == 24) {
+				// Res follow up (for FP)
+				$newTicketStatus = 9;
+			} elseif ($ppvNoticeTypeId == 28) {
+				// ticket #2243
+				$newTicketStatus = 19;
 			}
-		} elseif (in_array($ppvNoticeTypeId, array(2,25))) {
-			// send ticket status to RESERVATION REQUESTED
-			$newTicketStatus = 3;
-		} elseif (in_array($ppvNoticeTypeId, array(10, 33))) {
-			#$newTicketStatus = 1;
-			$newTicketStatus = 12;
-		} elseif ($ppvNoticeTypeId == 14) {
-			// DATES NOT AVAILABLE
-			$newTicketStatus = 11;
-		}  elseif ($ppvNoticeTypeId == 29) {
-			// Ticket cancellation request
-			$newTicketStatus = 16;
-		} elseif ($ppvNoticeTypeId == 30) {
-			// Ticket cancellation confirmation
-			$newTicketStatus = 17;
-		} elseif ($ppvNoticeTypeId == 24) {
-			// Res follow up (for FP)
-			$newTicketStatus = 9;
-		} elseif ($ppvNoticeTypeId == 28) {
-			// ticket #2243
-			$newTicketStatus = 19;
+	
+			if ($newTicketStatus) {
+				$this->updateTicketStatus($ticketId, $newTicketStatus);
+			}
 		}
 
-		if ($newTicketStatus) {
-			$this->updateTicketStatus($ticketId, $newTicketStatus);
-		}
+		return true;
 	}
 
-	function updateTicketStatus($ticketId, $newStatusId) {
+	private function updateTicketStatus($ticketId, $newStatusId) {
 		$updateTicket = array();
 		$updateTicket['ticketId'] = $ticketId;
 		$updateTicket['ticketStatusId'] = $newStatusId;
@@ -2059,7 +1954,7 @@ class WebServiceTicketsController extends WebServicesController
 		return false;
 	}
 
-	function processPaymentTicket($in0) {
+	public function processPaymentTicket($in0) {
 		// ---------------------------------------------------------------------------
 		// SUBMIT PAYMENT VIA PROCESSOR
 		// ---------------------------------------------------------------------------

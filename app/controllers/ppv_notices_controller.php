@@ -192,6 +192,14 @@ class PpvNoticesController extends AppController {
 		$soap_client = new nusoap_client($webservice_live_url, true);
         $response = $soap_client->call($webservice_live_method_name, array($webservice_live_method_param => $data_json_encoded));
 
+		$ppv_only = 0;
+		if (isset($_GET['ppv_only'])) {
+			$this->layout = "ajax";
+			$ppv_only = 1;
+			Configure::write("debug",0);
+		}
+		
+		$this->set('ppv_only',$ppv_only);
      	$this->set('ppv_body_text', $response);
 		$this->set('ticketId', $ticketId);
 	}

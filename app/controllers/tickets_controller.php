@@ -690,34 +690,6 @@ class TicketsController extends AppController {
 		}
 	}
 
-
-	// -------------------------------------------------------
-	// DO NOT USE OR ALTER ANY OF THE FUNCTIONS BELOW .... YET
-	// -------------------------------------------------------
-
-	function updateTicketStatus($id = null, $ticketStatusId = null) {
-		//dont use this function yet
-		if (!$id) {
-			$this->Session->setFlash(__('Invalid id for Ticket', true));
-			//$this->redirect(array('action'=>'index'));
-			return false;
-		}
-		$ticketStatusIds = $this->Ticket->TicketStatus->find('list');
-		if (!$ticketStatusId || !isset($ticketStatusIds[$ticketStatusId])) {
-			$this->Session->setFlash(__('Invalid attempt to update workstatus', true));
-			//$this->redirect(array('action'=>'view', 'id' => $id));
-			return false;
-		} else {
-			$ticket['Ticket']['ticketId'] = $id;
-			$ticket['Ticket']['ticketStatusId'] = $ticketStatusId;
-			if ($this->Ticket->save($ticket)) {
-				$this->Session->setFlash(__("Workstatus has been updated to \"$ticketStatusIds[$ticketStatusId]\"", true));
-			} else {
-				$this->Session->setFlash(__('Ticket status has NOT been updated', true));
-			}
-		}
-	}
-
 	function autoNewTicket($id = null) {
 		if ($newTicketId = $this->createNewTicketFromTicket($id)) {
 			$this->redirect(array('controller' => 'tickets', 'action'=>'view', 'id' => $newTicketId));

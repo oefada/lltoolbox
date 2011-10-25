@@ -234,6 +234,9 @@ $cacheAction = true;
  	));
  *
  */
+
+ 	/* Site Specific Configuration */
+ 	
 	Cache::config('default', array('engine' => 'File'));
 	
 	$webservice_live_url = 'http://toolbox.luxurylink.com';
@@ -247,6 +250,7 @@ $cacheAction = true;
 		$webservice_live_url = 'http://'. $_SERVER['ENV_USER'] .'-toolboxdev.luxurylink.com';
 	} elseif (stristr($_SERVER['HTTP_HOST'], 'stage') || $_SERVER['ENV'] == 'staging' || strpos($_ENV['HOSTNAME'],'stage')!==FALSE) {
 		define("ISDEV",true);
+		define("ISSTAGE",true);
 		$ll_url = 'stage-luxurylink.luxurylink.com';
 		$fg_url = 'stage-family.luxurylink.com';
 		$webservice_live_url = 'http://stage-toolbox.luxurylink.com';
@@ -258,6 +262,9 @@ $cacheAction = true;
 	$ll_url = 'http://'.$ll_url; 
 	$fg_urls = 'https://'.$fg_url;
 	$fg_url = 'http://'.$fg_url; 
+	
+	Configure::write("OfferSite1","offerLuxuryLink");
+	Configure::write("OfferSite2","offerFamily");
 	
 	Configure::write("Url.Ws",$webservice_live_url);
 	Configure::write("Url.LL",$ll_url);

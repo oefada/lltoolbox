@@ -1,178 +1,99 @@
-																				</td></tr>
-																				<tr><td style="font-size:0; line-height:0;"><img src="blank.gif" width="1" height="25"></td></tr>
-																				<tr>
-																					<td>
-																						<table width="100%" cellpadding="0" cellspacing="0" border="0">
-																							<tr><td colspan="3" bgcolor="#86878a" style="font-size:0; line-height:0;"><img src="blank.gif" align="left" vspace="0" hspace="0" width="1" height="1"></td></tr>
-																							<tr>
-																								<td width="1" bgcolor="#86878a" style="font-size:0; line-height:0;"><img src="blank.gif" align="left" vspace="0" hspace="0" width="1" height="1"></td>
-																								<td width="556" valign="top">
-																									<table bgcolor="#f6f6f6" width="100%" cellpadding="0" cellspacing="0" border="0">
-																										<tr><td colspan="3" style="font-size:0; line-height:0;"><img src="blank.gif" width="1" height="9"></td></tr>
-																										<tr>
-																											<td width="10"></td>
-																											<td width="536" style="line-height:17px;"><font face="Arial, Helvetica, sans-serif" size="2" style="font-size:14px; line-height:17px" color="#b30000"><strong>Package Details</strong></font></td>
-
-																											<td width="10"></td>
-																										</tr>
-																										<tr><td colspan="3" style="font-size:0; line-height:0;"><img src="blank.gif" width="1" height="11"></td></tr>
-																										<tr><td colspan="3" bgcolor="#86878a" style="font-size:0; line-height:0;"><img src="blank.gif" align="left" vspace="0" hspace="0" width="1" height="1"></td></tr>
-																									</table>
-																									<table width="100%" cellpadding="0" cellspacing="0" border="0">
-																										<tr>
-																											<td width="10"></td>
-																											<td width="511" valign="top">
-																												<table width="100%" cellpadding="0" cellspacing="0" border="0">
-																													<tr><td colspan="3" style="font-size:0; line-height:0;"><img src="blank.gif" width="1" height="9"></td></tr>
-																													<tr>
-																														<td width="225" valign="top">
-																															<table width="100%" cellpadding="0" cellspacing="0" border="0">
-																																<tr><td colspan="3" bgcolor="#86878a" style="font-size:0; line-height:0;"><img src="blank.gif" align="left" vspace="0" hspace="0" width="1" height="1"></td></tr>
-																																<tr>
-																																	<td width="1" bgcolor="#86878a" style="font-size:0; line-height:0;"><img src="blank.gif" align="left" vspace="0" hspace="0" width="1" height="1"></td>
-																																	<td align="center" style="font-size:0; line-height:0;"><img width="225" height="169" src="<?= $siteUrl ?>images/por/<?php echo $oldProductId;?>/<?php echo $oldProductId;?>-gal-lrg-01.jpg" alt="<?php echo $packageName;?>" border="0" />
-																																	</td>
-																																	<td width="1" bgcolor="#86878a" style="font-size:0; line-height:0;"><img src="blank.gif" align="left" vspace="0" hspace="0" width="1" height="1"></td>
-																																</tr>
-																																<tr><td colspan="3" bgcolor="#86878a" style="font-size:0; line-height:0;"><img src="blank.gif" align="left" vspace="0" hspace="0" width="1" height="1"></td></tr>
-																															</table>
-																														</td>
-																														<td width="14"></td>
-																														<td width="230" valign="top">
-																															<table width="100%" cellpadding="0" cellspacing="0" border="0">
-																																<tr><td style="line-height:17px;"><font face="Arial, Helvetica, sans-serif" size="3" style="font-size:14px; line-height:17px" color="#036dfc"><strong><?php echo $clientNameP;?></strong></font></td></tr>
-																																<tr><td style="line-height:17px;"><font face="Arial, Helvetica, sans-serif" size="2" style="font-size:14px; line-height:17px" color="#474747"><?php echo $locationDisplay;?></font></td></tr>
-																																<tr><td style="font-size:0; line-height:0;"><img src="blank.gif" width="1" height="14"></td></tr>
-																																<tr><td style="line-height:17px;"><font face="Arial, Helvetica, sans-serif" size="2" style="font-size:12px; line-height:17px" color="#474747"><?= $roomGrade ?> for <?= $numGuests ?> Travelers - <?php echo $numNights;?> nights </font></td></tr>
-																																<tr><td style="font-size:0; line-height:0;"><img src="blank.gif" width="1" height="14"></td></tr>
-																																<tr><td style="font-size:0; line-height:17px;"><font face="Arial, Helvetica, sans-serif" size="2" style="font-size:12px; line-height:17px" color="#474747"><strong>Address:</strong><br><?= $clients[0]['address1'] ?><br><?= ($clients[0]['address2'] != "" ? $clients[0]['address2']."<br>" : "") ?><?= $locationDisplay ?></font></td></tr>
-																																<tr><td style="font-size:0; line-height:0;"><img src="blank.gif" width="1" height="14"></td></tr>
-																																<tr><td style="font-size:0; line-height:17px;"><font face="Arial, Helvetica, sans-serif" size="2" style="font-size:12px; line-height:17px" color="#474747"><?= $packageIncludes ?></font></td></tr>
-																																<tr><td style="font-size:0; line-height:0;"><img src="blank.gif" width="1" height="14"></td></tr>
-																																<? if ($legalText != ""): ?><tr><td style="font-size:0; line-height:17px;"><font face="Arial, Helvetica, sans-serif" size="2" style="font-size:12px; line-height:17px" color="#474747">Fine Print:<br><?= $legalText ?></font></td></tr><?php endif; ?>
-																															</table>
-																														</td>
-																													</tr>
-																													<tr><td colspan="3" style="font-size:0; line-height:0;"><img src="blank.gif" width="1" height="10"></td></tr>
-																												</table>
-																											</td>
-																											<td width="35"></td>
-																										</tr>
-																									</table>
-																								</td>
-																								<td width="1" bgcolor="#86878a" style="font-size:0; line-height:0;"><img src="blank.gif" align="left" vspace="0" hspace="0" width="1" height="1"></td>
-																							</tr>
-																							<tr><td colspan="3" bgcolor="#86878a" style="font-size:0; line-height:0;"><img src="blank.gif" align="left" vspace="0" hspace="0" width="1" height="1"></td></tr>
-																							<tr>
-																								<td width="1" bgcolor="#86878a" style="font-size:0; line-height:0;"><img src="blank.gif" align="left" vspace="0" hspace="0" width="1" height="1"></td>
-																								<td width="556" valign="top">
-																									<table width="100%" cellpadding="0" cellspacing="0" border="0">
-																										<tr><td style="font-size:0; line-height:0;"><img src="blank.gif" width="1" height="9"></td></tr>
-																										<tr>
-																											<td width="10"></td>
-																											<td width="511" valign="top">
-																												<font face="Arial, Helvetica, sans-serif" size="2" style="font-size:14px; line-height:17px" color="#474747">
-																													<p><strong>This package is valid for travel:</strong></p>
-																													<p>March 1, 2011 - March 1, 2012<br>
-																													Blah blah</p>
-																												</font>
-																											<td width="10"></td>
-																										</tr>
-																										<tr><td style="font-size:0; line-height:0;"><img src="blank.gif" width="1" height="9"></td></tr>
-																									</table>
-																								</td>
-																								<td width="1" bgcolor="#86878a" style="font-size:0; line-height:0;"><img src="blank.gif" align="left" vspace="0" hspace="0" width="1" height="1"></td>
-																							</tr>
-																							<tr><td colspan="3" bgcolor="#86878a" style="font-size:0; line-height:0;"><img src="blank.gif" align="left" vspace="0" hspace="0" width="1" height="1"></td></tr>
-																						</table>
 																					</td>
 																				</tr>
-																				<tr><td style="font-size:0; line-height:0;"><img src="blank.gif" width="1" height="15"></td></tr>
-																				<? if ($resConfirmationNotes != ""): ?>
+																				<tr><td colspan="2"><img src="http://www.luxurylink.com/images/email/pixel.gif" align="left" vspace="0" hspace="0" width="1" height="15"></td></tr>
 																				<tr>
-																					<td>
-																						<table width="100%" cellpadding="0" cellspacing="0" border="0">
-																							<tr><td colspan="3" bgcolor="#86878a" style="font-size:0; line-height:0;"><img src="blank.gif" align="left" vspace="0" hspace="0" width="1" height="1"></td></tr>
-
+																					<td colspan="2">
+																						<table border="0" cellpadding="0" cellspacing="0" align="center" width="558" style="border-width: 1px; border-color:#c3c3c3;border-style: solid;">
 																							<tr>
-																								<td width="1" bgcolor="#86878a" style="font-size:0; line-height:0;"><img src="blank.gif" align="left" vspace="0" hspace="0" width="1" height="1"></td>
-																								<td width="556" valign="top">
-																									<table bgcolor="#f6f6f6" width="100%" cellpadding="0" cellspacing="0" border="0">
-																										<tr><td colspan="3" style="font-size:0; line-height:0;"><img src="blank.gif" width="1" height="9"></td></tr>
+																                                <td valign="top" width="" style="padding: 0px 0px 0px 0px;" align="center">
+																	                                <table bgcolor="#d8d7b8" border="0" cellpadding="0" cellspacing="0" align="center" width="558" style="padding: 11px 11px 11px 17px;border-bottom: 1px #c3c3c3 solid;">
 																										<tr>
-																											<td width="10"></td>
-																											<td width="536" style="line-height:17px;"><font face="Arial, Helvetica, sans-serif" size="2" style="font-size:14px; line-height:17px" color="#b30000"><strong>Notes From The Property</strong></font></td>
-
-																											<td width="10"></td>
+																											<td style="font-size:14px;line-height: 16px; font-family: Arial,Sans-Serif;color:#484846;"><b><?= ($ppvNoticeTypeId == 38 ? "AUCTION ENDS ".strtoupper(date("M d, Y \A\T g:i A",strtotime($liveOfferData['endDate'])))." PACIFIC TIME" : "YOUR VACATION PACKAGE") ?></b><td>
 																										</tr>
-																										<tr><td colspan="3" style="font-size:0; line-height:0;"><img src="blank.gif" width="1" height="11"></td></tr>
-																										<tr><td colspan="3" bgcolor="#86878a" style="font-size:0; line-height:0;"><img src="blank.gif" align="left" vspace="0" hspace="0" width="1" height="1"></td></tr>
 																									</table>
-																									<table width="100%" cellpadding="0" cellspacing="0" border="0">
-																										<tr><td colspan="3" style="font-size:0; line-height:0;"><img src="blank.gif" width="1" height="9"></td></tr>
-																										<tr>
-																											<td width="10"></td>
-																											<td width="511" valign="top">
-																												<font face="Arial, Helvetica, sans-serif" size="2" style="font-size:12px; line-height:17px" color="#474747">
-																												<?= $resConfirmationNotes ?>
-																												</font>
-																											</td>
-																											<td width="10"></td>
-																										</tr>
-																										<tr><td colspan="3" style="font-size:0; line-height:0;"><img src="blank.gif" width="1" height="9"></td></tr>
-																									</table>
-																								</td>
-																								<td width="1" bgcolor="#86878a" style="font-size:0; line-height:0;"><img src="blank.gif" align="left" vspace="0" hspace="0" width="1" height="1"></td>
+																                                </td>
 																							</tr>
-																							<tr><td colspan="3" bgcolor="#86878a" style="font-size:0; line-height:0;"><img src="blank.gif" align="left" vspace="0" hspace="0" width="1" height="1"></td></tr>
-																						</table>
-																					</td>
-																				</tr>
-																				<tr><td style="font-size:0; line-height:0;"><img src="blank.gif" width="1" height="15"></td></tr>
-																				<?php endif; ?>
-																				<tr>
-																					<td>
-																						<table width="100%" cellpadding="0" cellspacing="0" border="0">
-																							<tr><td colspan="3" bgcolor="#86878a" style="font-size:0; line-height:0;"><img src="blank.gif" align="left" vspace="0" hspace="0" width="1" height="1"></td></tr>
-
 																							<tr>
-																								<td width="1" bgcolor="#86878a" style="font-size:0; line-height:0;"><img src="blank.gif" align="left" vspace="0" hspace="0" width="1" height="1"></td>
-																								<td width="556" valign="top">
-																									<table bgcolor="#f6f6f6" width="100%" cellpadding="0" cellspacing="0" border="0">
-																										<tr><td colspan="3" style="font-size:0; line-height:0;"><img src="blank.gif" width="1" height="9"></td></tr>
-																										<tr>
-																											<td width="10"></td>
-																											<td width="536" style="line-height:17px;"><font face="Arial, Helvetica, sans-serif" size="2" style="font-size:14px; line-height:17px" color="#b30000"><strong>Please contact the property directly for any special requests</strong></font></td>
-
-																											<td width="10"></td>
-																										</tr>
-																										<tr><td colspan="3" style="font-size:0; line-height:0;"><img src="blank.gif" width="1" height="11"></td></tr>
-																										<tr><td colspan="3" bgcolor="#86878a" style="font-size:0; line-height:0;"><img src="blank.gif" align="left" vspace="0" hspace="0" width="1" height="1"></td></tr>
-																									</table>
-																									<table width="100%" cellpadding="0" cellspacing="0" border="0">
-																										<tr><td colspan="3" style="font-size:0; line-height:0;"><img src="blank.gif" width="1" height="9"></td></tr>
-																										<tr>
-																											<td width="10"></td>
-																											<td width="511" valign="top">
-																												<font face="Arial, Helvetica, sans-serif" size="2" style="font-size:12px; line-height:17px" color="#474747">
-																												<p><?= $clients[0]['address1'] ?><br><?= ($clients[0]['address2'] != "" ? $clients[0]['address2']."<br>" : "") ?><?= $locationDisplay ?></p>
-																												<p>Phone Number: <?= $clients[0]['estaraPhoneLocal'] ?><br>
-																													International: <?= $clients[0]['estaraPhoneIntl'] ?>
-																												</p>
-																												<p>
-																													E-Mail: <?= $clients[0]['contacts']['ppv_email_address'] ?>
-																												</p>
-																												</font>
-																											</td>
-																											<td width="10"></td>
-																										</tr>
-																										<tr><td colspan="3" style="font-size:0; line-height:0;"><img src="blank.gif" width="1" height="9"></td></tr>
-																									</table>
-																								</td>
-																								<td width="1" bgcolor="#86878a" style="font-size:0; line-height:0;"><img src="blank.gif" align="left" vspace="0" hspace="0" width="1" height="1"></td>
-																							</tr>
-																							<tr><td colspan="3" bgcolor="#86878a" style="font-size:0; line-height:0;"><img src="blank.gif" align="left" vspace="0" hspace="0" width="1" height="1"></td></tr>
-																						</table>
-																					</td>
-																				</tr>
-																				<tr><td style="font-size:0; line-height:0;"><img src="blank.gif" width="1" height="15"></td></tr>
+																                                <td valign="top" width="558" style="padding: 0px 0px 0px 0px;" align="center">
+																	                                <table border="0" cellpadding="0" cellspacing="0" align="center" width="558" >
+																	                                    <tbody>
+																	                                        <tr>
+																	                                            <td valign="top" style="padding: 15px 30px 0px 15px;" height="160" align="left">
+																		                                            <div><a target="_blank" href="#"><img name="Cont_29" width="246" height="171" border="0" style="display: block;" src="<?= $siteUrl ?>images/por/<?php echo $oldProductId;?>/<?php echo $oldProductId;?>-gal-lrg-01.jpg" alt="<?php echo $packageName;?>" /></a></div>
+																	                                            </td>
+																	                                            <td valign="top" colspan="2" style="padding: 15px 0px 0px 0px;" align="left">
+																		                                            <table height="75" cellspacing="0" cellpadding="0" border="0" align="left" width="255">
+																		                                                <tbody>
+																		                                                    <tr>
+																		                                                        <td style="font-size:17px;line-height: 16px; font-family: Arial,Sans-Serif;color:#036dfc;" valign="top" width="157"><a href="<?= $pdpUrl ?>" style="color:#036dfc;text-decoration:none;" target="_blank"><b><?= $clientNameP ?></b></a></td>
+																		                                                    </tr>
+																		                                                    <tr>
+																		                                                        <td style="padding: 5px 0px 0px 0px;font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;text-decoration:none;"><i><?= $locationDisplay ?></i></td>
+																		                                                    </tr>
+																		                                                    <tr>
+																		                                                        <td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;padding: 15px 0px 0px 0px;" colspan="2"><?= $clients[0]['address1'] ?><br><?= ($clients[0]['address2'] != "" ? $clients[0]['address2']."<br>" : "") ?><?= $locationDisplay ?></td>
+																		                                                    </tr>
+																															<tr>
+																		                                                        <td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;padding: 15px 0px 2px 0px;" colspan="2">Phone Number: <?= $clientPhone ?></td>
+																		                                                    </tr>
+																		                                                    <? if ($clientPhoneIntl): ?>
+																															<tr>
+																		                                                        <td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;padding: 0px 0px 2px 0px;" colspan="2">International: <?= $clientPhoneIntl ?></td>
+																		                                                    </tr>
+																		                                                	<?php endif; ?>
+																		 													<tr>
+																		                                                        <td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;padding: 0px 0px 0px 0px;" colspan="2">E-mail: <a href="mailto:<?= $clientPrimaryEmail ?>" target="_blank" style="color: #056ff7;"><?= $clientPrimaryEmail ?></a></td>
+																		                                                    </tr>
+																		                                                </tbody>
+																		                                            </table>
+																	                                            </td>
+																	                                        </tr>
+																											<tr>
+																	                                  			<td height="15" width="100%" colspan="5"></td>
+																	                                  		</tr>
+																	                                        <?php if (!in_array($ppvNoticeTypeId,array(38))): ?>
+																											<tr>
+																											 	<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;padding: 2px 0px 5px 15px;" colspan="3"><?= $packageIncludes ?></td>
+																	                                  		</tr>
+																											<tr>
+																	                                  			<td bgcolor="#c3c3c3" height="1" width="100%" colspan="5"></td>
+																	                                  		</tr>
+																											<?php endif; ?>
+																	                                  		<? if (in_array($ppvNoticeTypeId, array(1,36))): ?>
+																											<tr>
+																	                                  			<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;padding: 20px 0px 2px 15px;" colspan="4"><b>Hotel Cancellation Policy:</b></td>
+																	                                  		</tr>
+																											<tr>
+																											 	<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:18px;padding: 0px 20px 5px 15px;" colspan="4">
+																													<ul>
+																														<li>Cancellation up to 15 days prior to trip entails a penalty fee of US $35 plus any additional hotel penalties.</li>
+																														<li>Cancellation that is between the day of departure and 14 days prior to entails a penalty fee of US $100 plus any additional hotel penalties.</li>
+																														<li>A customer "No Show" could result in a forfeiture of entire package amount plus any additional hotel penalty.</li>
+																													</ul>
+																											 	</td>
+																	                                  		</tr>
+																	                                		<?php endif; ?>
+																	                                		<?php if (in_array($ppvNoticeTypeId, array(12,14,18,19,36))): ?>
+																											<tr>
+																	                                  			<td bgcolor="#c3c3c3" height="1" width="100%" colspan="5"></td>
+																	                                  		</tr>
+																											<tr>
+																											 	<td style="font-size: 12px; font-family: Arial,Sans-Serif; color: rgb(79, 63, 50); line-height: 18px; padding: 15px 20px 15px 15px;" colspan="4"><?= $validityNote ?></td>
+																	                                  		</tr>
+																	                                  		<?php endif; ?>
+																	                                  		<?php if (in_array($ppvNoticeTypeId, array(18)) && $legalText != ""): ?>
+																											<tr>
+																	                                  			<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;padding: 2px 0px 2px 15px;" colspan="4"><b>Booking Conditions:</b></td>
+																	                                  		</tr>
+																											<tr>
+																											 	<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:18px;padding: 0px 20px 15px 15px;" colspan="4">
+																											 		<?= $legalText ?>
+																											 	</td>
+																	                                  		</tr>
+																	                                  		<?php endif; ?>
+																	                                    </tbody>
+																	                                </table>
+																	                              </td>
+																	                            </tr>
+																	                         </table>
+																	                             

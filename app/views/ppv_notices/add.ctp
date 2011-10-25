@@ -1,3 +1,6 @@
+<? if ($ppv_only == 1): ?>
+<?= $ppv_body_text ?>
+<? else: ?>
 <div class="ppvNotices form">
 <?php echo $form->create(null, array('url' => array('controller' => 'tickets/' . $this->params['ticketId'], 'action' => 'ppvNotices/add/' . $this->params['id'] . $clientIdParam  ), 'enctype' => 'multipart/form-data' )); ?>
 <?php echo $javascript->link('tiny_mce/tiny_mce.js');?>
@@ -98,3 +101,4 @@
 	</fieldset>
 <?php echo $form->end();?>
 </div>
+<?php endif; ?>

@@ -1,0 +1,68 @@
+				<table border="0" cellpadding="0" cellspacing="0" align="left" width="267" style="border-width: 1px; border-color:#c3c3c3;border-style: solid;">
+					<tr>
+ 						<td valign="top" style="padding: 0px 0px 0px 0px;" align="center">
+							<table bgcolor="#474747" border="0" cellpadding="0" cellspacing="0" align="center" width="267" style="padding: 11px 11px 11px 15px;border-bottom: 1px #c3c3c3 solid;">
+								<tr>
+									<td style="font-size:14px;line-height: 16px; font-family: Arial,Sans-Serif;color:#d4d5b5;"><b>RESERVATION DETAILS</b><td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+                 		<td valign="top" width="267" style="padding: 0px 0px 0px 0px;" align="center">
+                           	<table border="0" cellpadding="0" cellspacing="0" align="center" width="267">
+								<tr>
+									<td align="left" style="padding: 0px 0px 0px 15px;">
+										<table border="0" cellpadding="0" cellspacing="0" align="left">
+											<tr>
+										 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 15px 0px 0px 0px;">Hotel Confirmation #:</td>
+                                  			</tr>
+											<tr>
+                                  				<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:16px;padding: 0px 0px 0px 0px;"><b>Guest Name:</b></td>
+                                  			</tr>
+											<tr>
+										 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;">No. of Nights:</td>
+                                  			</tr>
+											<tr>
+										 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;">Check-in:</td>
+                                  			</tr>
+											<tr>
+										 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;">Check-out:</td>
+                                  			</tr>
+                                    	</table>
+                                    </td>
+									<td align="left">
+										<table border="0" cellpadding="0" cellspacing="0" align="left">
+											<tr>
+										 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 15px 20px 0px 0px;"><?= $resConfNum;?></td>
+                                  			</tr>
+											<tr>
+                                  				<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:16px;padding: 0px 0px 0px 0px;"><?php echo $userFirstName;?> <?php echo $userLastName;?></td>
+                                  			</tr>
+											<tr>
+										 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;"><?php echo $numNights;?></td>
+                                  			</tr>
+											<tr>
+										 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;"><?php echo $resArrivalDate;?></td>
+                                  			</tr>
+											<tr>
+										 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;"><?php echo $resDepartureDate;?></td>
+                                  			</tr>
+										</table>
+                                  	</td>
+                                  </tr>
+                                <?php if (!$isAuction && $fpNotes): ?>
+								<tr>
+                                  	<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:16px;padding: 12px 0px 0px 15px;" colspan="2"><b>Special Requests:</b></td>
+                                 </tr>
+								<tr>
+									<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:16px;padding: 7px 20px 14px 15px;" colspan="2"><?=$fpNotes;?></td>
+                           		</tr>
+                           		<?php endif; ?>
+				                <tr>
+				                	<td style="line-height: 18px;">&nbsp;</td>
+				                </tr>
+                      		</table>
+                    	</td>
+					</tr>
+				</table>

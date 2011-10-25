@@ -25,18 +25,18 @@
 										<tr><td style="font-size:0; line-height:0;"><a href="http://www.familygetaway.com"><img src="http://www.familygetaway.com/images/email/fg/logo-new.gif" alt="" width="397" height="48" align="left" vspace="0" hspace="0" border="0"></a></td></tr>
 										<tr><td style="font-size:0; line-height:0;"><img src="http://www.familygetaway.com/images/email/pixel.gif" width="1" height="19"></td></tr>
 										<tr><td bgcolor="#574a3f" style="font-size:0; line-height:0;"><img src="http://www.familygetaway.com/images/email/pixel.gif" width="1" height="1"></td></tr>
-										<tr><td style="font-size:0; line-height:0;"><img src="http://www.familygetaway.com/images/email/pixel.gif" width="1" height="34"></td></tr>
-										<tr>
-											<td style="font-size:18px; line-height:20px;">
-
-												<font face="Arial, Helvetica, sans-serif" size="3" color="#df7126" style="font-size:18px; line-height:20px;">
-													<strong><?= $templateTitle ?></strong>
-												</font>
-											</td>
-										</tr>
-										<tr><td style="font-size:0; line-height:0;"><img src="http://www.familygetaway.com/images/email/pixel.gif" width="1" height="25"></td></tr>
+										<tr><td style="font-size:0; line-height:0;"><img src="http://www.familygetaway.com/images/email/pixel.gif" width="1" height="15""></td></tr>
 										<tr>
 											<td style="font-size:14px; line-height:20px;">
-
-												<font face="Arial, Helvetica, sans-serif" size="2" color="#4f3f32" style="font-size:14px; line-height:20px;">
-													<strong>Hi <?= $userFirstName ?>,</strong> <br><br>
+											  	<table width="558" cellspacing="0" cellpadding="0" border="0">
+													<tr><td colspan="2" style="line-height:22px; padding: 0px 0px 15px 0px;""><font face="Arial, Helvetica, sans-serif" size="3" style="font-size:18px; line-height:22px" color="#df7126"><strong><?= $templateTitle ?></strong></font></td></tr>
+													<tr valign="top">
+														<td style="line-height:20px;">
+														<?php if ($ticketId): ?><font face="Arial, Helvetica, sans-serif" color="#7b7b7b" style="font-size:12px; line-height:15px;"><b>Ticket ID: <?= $ticketId ?></b></font><?php endif; ?>
+														<p>
+															<font face="Arial, Helvetica, sans-serif" size="2" style="font-size:14px; line-height:15px" color="#4f3f32">
+																<strong>Dear <?= $userFirstName ?>,</strong>
+															</font>
+														</p>
+											    		<p>
+															<font size="2" face="Arial, Helvetica, sans-serif" color="#474747" style="font-size:13px; line-height:20px">

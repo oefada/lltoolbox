@@ -197,7 +197,7 @@ class Client extends AppModel {
 						array_push($setFields, "{$field} = '{$data['Client'][$field]}'");
 
 					// 06/27/11 jwoods - force update when loaLevelId = 0
-					} elseif ($data['Client'][$field] === 0 && $field == 'loaLevelId') {
+					} elseif ($field=="loaLevelId" && $data['Client'][$field] === 0) {
 						array_push($setFields, "{$field} = '{$data['Client'][$field]}'");
 					}
 				}
