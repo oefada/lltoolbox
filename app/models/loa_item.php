@@ -387,8 +387,8 @@ class LoaItem extends AppModel {
             $query = "SELECT * FROM fee Fee
                       WHERE Fee.loaItemId = {$inclusion['LoaItem']['loaItemId']}";
             if ($fees = $this->query($query)) {
+                $taxes = 0;
                 foreach ($fees as $fee) {
-                    $taxes = 0;
                     if ($fee['Fee']['feeTypeId'] == 1) {            //percentage
                         $taxes += ($fee['Fee']['feePercent']/100)*$inclusion['LoaItem']['itemBasePrice'];
                     }
@@ -436,8 +436,8 @@ class LoaItem extends AppModel {
                 $query = "SELECT * FROM fee Fee
                           WHERE Fee.loaItemId = {$inclusion['LoaItem']['loaItemId']}";
                 if ($fees = $this->query($query)) {
+                    $taxes = 0;
                     foreach ($fees as $fee) {
-                        $taxes = 0;
                         if ($fee['Fee']['feeTypeId'] == 1) {            //percentage
                             $taxes += ($fee['Fee']['feePercent']/100)*$inclusion['LoaItem']['itemBasePrice'];
                         }
