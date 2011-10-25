@@ -29,9 +29,36 @@
  * 
  * 
  */
+App::import('Model', 'Client');
+App::import('Model', 'Loa');
+App::import('Model', 'User');
 class ConsolidatedReport extends AppModel
 {
 	public $useTable = false;
+	
+	/**
+	 * Client Model
+	 *
+	 * @access	private
+	 * @param	object
+	 */
+	private $Client;
+	
+	/**
+	 * Loa Model
+	 *
+	 * @access	private
+	 * @param	object
+	 */
+	private $Loa;
+	
+	/**
+	 * User Model
+	 *
+	 * @access	private
+	 * @param	object
+	 */
+	private $User;
 	
 	/**
 	 * client id
@@ -80,6 +107,17 @@ class ConsolidatedReport extends AppModel
 	 * @param	string
 	 */
 	private $month_end_date;
+	
+	/**
+	 *
+	 */
+	public function __construct()
+	{
+		$this->Client = new Client();
+		$this->Loa = new Loa();
+		$this->User = new User();
+		parent::__construct();
+	}
 	
 	/**
 	 * Initialize private variables required to build a report and do some
@@ -147,6 +185,51 @@ class ConsolidatedReport extends AppModel
 	public function getClientId()
 	{
 		return $this->client_id;
+	}
+	
+	/**
+	 *
+	 */
+	public function getClientDetails($client_id)
+	{
+		$this->Client->id = $client_id;
+		$client_details = $this->Client->find('first', array('recursive' => -1));
+		
+		$account_manager = $this->User->find(
+			'first',
+			array(
+				'recursive' => -1,
+				'fields' => array('firstname', 'lastname', 'email'),
+				'conditions' => array(
+					'email' => $client_details['Client']['managerUsername'] . '@luxurylink.com'
+				)
+			)
+		);
+
+		$client_details['AccountManager']['name'] = $account_manager['User']['firstname'] . ' ' . $account_manager['User']['lastname'];
+		$client_details['AccountManager']['email'] = $account_manager['User']['email'];
+		
+		return $client_details;
+	}
+	
+	/**
+	 *
+	 */
+	public function getLoaDetails($client_id, $report_date)
+	{
+		$loa_details = $this->Loa->find(
+			'first',
+			array(
+				'recursive' => -1,
+				'fields' => array('clientId', 'loaId', 'startDate', 'endDate', 'membershipFee'),
+				'conditions' => array(
+					"'$report_date' BETWEEN startDate AND endDate",
+					"clientId = $client_id"
+				)
+			)
+		);
+
+		return $loa_details;
 	}
 	
 	/**
@@ -609,7 +692,12 @@ class ConsolidatedReport extends AppModel
 		$offer_join_table = '';
 		$booking_details_raw = array();
 		$booking_details = array();
-		
+		$address = '';
+		$city = '';
+		$state = '';
+		$zip = '';
+		$country = '';
+
 		switch($site_id) {
 			case 1:
 				$offer_join_table = 'offerLuxuryLink';
@@ -618,7 +706,7 @@ class ConsolidatedReport extends AppModel
 				$offer_join_table = 'offerFamily';
 				break;
 		}
-	
+
 		$sql = "
 			SELECT
 				Ticket.ticketId,
@@ -640,7 +728,12 @@ class ConsolidatedReport extends AppModel
 				Ticket.userCity,
 				Ticket.userState,
 				Ticket.userZip,
-				Ticket.userCountry
+				Ticket.userCountry,
+				PaymentDetail.ppBillingAddress1,
+				PaymentDetail.ppBillingCity,
+				PaymentDetail.ppBillingState,
+				PaymentDetail.ppBillingZip,
+				PaymentDetail.ppBillingCountry
 			FROM
 				ticket Ticket,
 				paymentDetail PaymentDetail,
@@ -662,6 +755,12 @@ class ConsolidatedReport extends AppModel
 		
 		$booking_details_raw = $this->query($sql);
 		foreach($booking_details_raw as $key => $booking_detail) {
+			$address = (isset($booking_detail['Ticket']['userAddress1'])) ? $booking_detail['Ticket']['userAddress1'] . ' '. $booking_detail['Ticket']['userAddress2'] . ' ' . $booking_detail['Ticket']['userAddress3'] : $booking_detail['PaymentDetail']['ppBillingAddress1'];
+			$city = (isset($booking_detail['Ticket']['userAddress1'])) ? $booking_detail['Ticket']['userCity'] : $booking_detail['PaymentDetail']['ppBillingCity'];
+			$state = (isset($booking_detail['Ticket']['userAddress1'])) ? $booking_detail['Ticket']['userState'] : $booking_detail['PaymentDetail']['ppBillingState'];
+			$zip = (isset($booking_detail['Ticket']['userAddress1'])) ? $booking_detail['Ticket']['userZip'] : $booking_detail['PaymentDetail']['ppBillingZip'];
+			$country = (isset($booking_detail['Ticket']['userAddress1'])) ? $booking_detail['Ticket']['userCountry'] : $booking_detail['PaymentDetail']['ppBillingCountry'];
+			
 			$booking_details[] = $this->buildContactDetails(
 				'Booking',
 				$booking_detail['Site']['siteName'],
@@ -677,11 +776,11 @@ class ConsolidatedReport extends AppModel
 				$booking_detail['Ticket']['userLastName'],
 				$booking_detail['Ticket']['userEmail1'],
 				$booking_detail['User']['doNotContact'],
-				$booking_detail['Ticket']['userAddress1'] . ' '. $booking_detail['Ticket']['userAddress2'] . ' ' . $booking_detail['Ticket']['userAddress3'],
-				$booking_detail['Ticket']['userCity'],
-				$booking_detail['Ticket']['userState'],
-				$booking_detail['Ticket']['userZip'],
-				$booking_detail['Ticket']['userCountry'],
+				$address,
+				$city,
+				$state,
+				$zip,
+				$country,
 				null,
 				null,
 				null

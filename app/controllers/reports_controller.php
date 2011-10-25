@@ -4073,6 +4073,8 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 	 */
 	public function download_consolidated_report($client_id)
 	{
+		$this->loadModel('ConsolidatedReport');
+		
 		// Cake's debug output can cause issues with the spreadsheet generation
 		Configure::write('debug', 0);
 		
@@ -4083,31 +4085,14 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		$this->layout = 'excel';
 		
 		// Report initialization variables
-		$template = APP . 'vendors/consolidated_report/templates/consolidated_report_revision-6.xlsx';
+		$template = APP . 'vendors/consolidated_report/templates/consolidated_report_revision-7.xlsx';
 		$newFile = TMP . 'consolidated_report.xlsx';
 		$outputFile = TMP . 'consolidated_report_output.xlsx';
 		
-		// Client Details
-		$this->loadModel('Client');
-		$this->Client->id = $client_id;
-		$client_details = $this->Client->find('first', array('recursive' => -1));
-		unset($this->Client);
-		
-		// LOA Details
-		$this->loadModel('Loa');
-		$loa_details = $this->Loa->find(
-			'first',
-			array(
-				'recursive' => -1,
-				'fields' => array('clientId', 'loaId', 'startDate', 'endDate', 'membershipFee'),
-				'conditions' => array(
-					"'$report_date' BETWEEN startDate AND endDate",
-					"clientId = $client_id"
-				)
-			)
-		);
-		unset($this->Loa);
-		
+		// Client & LOA Details
+		$client_details = $this->ConsolidatedReport->getClientDetails($client_id);
+		$loa_details = $this->ConsolidatedReport->getLoaDetails($client_id, $report_date);
+
 		if ($loa_details === false) {
 			// This client doesn't have a current LOA, don't generate the report
 			$this->Session->setFlash(__("This client doesn't have a current LOA within the report period.", true));
@@ -4120,7 +4105,6 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		$filename = 'consolidated_report_' . $client_details['Client']['seoName'] . '_' . $loa_start_date . '_to_' . $report_date;
 
 		// Initialize the report Model
-		$this->loadModel('ConsolidatedReport');
 		$this->ConsolidatedReport->create($client_id, $report_date, $loa_start_date, $loa_end_date);
 		
 		// Create the report object
@@ -4129,7 +4113,7 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		
 		// Populate the report
 		$report->populateDashboard($client_details['Client']['name'], $membership_fee, $loa_start_date, $this->ConsolidatedReport->getMonthEndDate());		
-		$report->populateActivitySummary($loa_start_date, $this->ConsolidatedReport->getMonthEndDate(), 15, 2);
+		$report->populateActivitySummary($loa_start_date, $this->ConsolidatedReport->getMonthEndDate(), $client_details['AccountManager']['name'], $client_details['AccountManager']['email'], 15, 2);
 		$report->populateBookings();	
 		$report->populateImpressions();
 		$report->populateContactDetails();

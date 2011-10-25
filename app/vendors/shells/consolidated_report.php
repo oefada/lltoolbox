@@ -33,6 +33,7 @@ class ConsolidatedReportShell extends Shell {
 		$this->Controller = new Controller();
 		$this->Email = new EmailComponent(null);
 		$this->Email->startup($this->Controller);
+		$this->ConsolidatedReport = new ConsolidatedReport();
 	}
 
 	/**
@@ -59,9 +60,9 @@ class ConsolidatedReportShell extends Shell {
 		$newFile = TMP . 'consolidated_report.xlsx';
 		
 		// Client & LOA Details
-		$client_details = $this->getClientDetails($client_id);
-		$loa_details = $this->getLoaDetails($client_id);
-		
+		$client_details = $this->ConsolidatedReport->getClientDetails($client_id);
+		$loa_details = $this->ConsolidatedReport->getLoaDetails($client_id, $this->report_date);
+
 		if ($loa_details !== false) {
 			// The client has a current LOA around the report date, generate the report
 		
@@ -85,7 +86,6 @@ class ConsolidatedReportShell extends Shell {
 			self::log("Filepath: $outputFile");
 		
 			// Initialize the report Model
-			$this->ConsolidatedReport = new ConsolidatedReport();
 			$this->ConsolidatedReport->create($client_id, $this->report_date, $loa_start_date, $loa_end_date);
 		
 			// Create the report object
@@ -123,56 +123,7 @@ class ConsolidatedReportShell extends Shell {
 			self::log("This client doesn't have a current LOA within the report period.");
 		}
 	}
-	
-	/**
-	 * Get client details
-	 * 
-	 * @access	private
-	 */
-	private function getClientDetails($client_id)
-	{
-		$this->Client->id = $client_id;
-		$client_details = $this->Client->find('first', array('recursive' => -1));
-		
-		$account_manager = $this->User->find(
-			'first',
-			array(
-				'recursive' => -1,
-				'fields' => array('firstname', 'lastname', 'email'),
-				'conditions' => array(
-					'email' => $client_details['Client']['managerUsername'] . '@luxurylink.com'
-				)
-			)
-		);
 
-		$client_details['AccountManager']['name'] = $account_manager['User']['firstname'] . ' ' . $account_manager['User']['lastname'];
-		$client_details['AccountManager']['email'] = $account_manager['User']['email'];
-		
-		return $client_details;
-	}
-	
-	/**
-	 * Get the LOA details for a given client
-	 *
-	 * @access	private
-	 */
-	private function getLoaDetails($client_id)
-	{
-		$loa_details = $this->Loa->find(
-			'first',
-			array(
-				'recursive' => -1,
-				'fields' => array('clientId', 'loaId', 'startDate', 'endDate', 'membershipFee'),
-				'conditions' => array(
-					"'{$this->report_date}' BETWEEN startDate AND endDate",
-					"clientId = $client_id"
-				)
-			)
-		);
-
-		return $loa_details;
-	}
-	
 	/**
 	 * Utility method to log output
 	 *
