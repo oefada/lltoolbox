@@ -106,7 +106,7 @@
                         <? endif; ?>
                         <td><? echo $ratePeriod['dateRanges']; ?></td>
                         <td><? echo number_format($ratePeriod['retailValue'], 0); ?></td>
-                        <td><input type="hidden" name="gpr-<? echo $ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId']; ?>" value="<?php echo $ratePeriod['LoaItemRatePackageRel']['guaranteePercentRetail']; ?>"><?php echo $ratePeriod['LoaItemRatePackageRel']['guaranteePercentRetail']; ?></td>
+                        <td><input type="hidden" name="data[gpr-<? echo $ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId']; ?>]" value="<?php echo $ratePeriod['LoaItemRatePackageRel']['guaranteePercentRetail']; ?>"><?php echo $ratePeriod['LoaItemRatePackageRel']['guaranteePercentRetail']; ?></td>
                         <td><? echo number_format($ratePeriod['startPrice'], 0); ?></td>
                     </tr>
            <? endforeach; ?>
