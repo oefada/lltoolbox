@@ -89,6 +89,7 @@
 																			<br>
 																			<br>
 																			Luxury Link
+																			<br>
 																		</p>
 																		<br>
 																		</td>
@@ -151,7 +152,7 @@
 										<td>
 										<table cellpadding="0" cellspacing="0" border="0">
 											<tr>
-												<td width="24" style="font-size:0; line-height:0;"><img src="http://www.luxurylink.com/images/email/ico-facebook.jpg" align="left" vspace="0" hspace="0" alt="facebook" width="24" height="24"></td>
+												<td width="24" style="font-size:0; line-height:0;"><a style="text-decoration:none; color:#036dfc;" href="http://www.facebook.com/LuxuryLink"><img src="http://www.luxurylink.com/images/email/ico-facebook.jpg" align="left" vspace="0" hspace="0" alt="facebook" width="24" height="24" border="0"></a></td>
 												<td width="6"></td>
 												<td style="line-height:13px;"><font face="Arial, Helvetica, sans-serif" color="#036dfc" size="1" style="font-size:10px; line-height:13px"><a style="text-decoration:none; color:#036dfc;" href="http://www.facebook.com/LuxuryLink"><font color="#036dfc">Facebook</font></a></font></td>
 											</tr>
@@ -159,7 +160,7 @@
 												<td colspan="3" style="font-size:0; line-height:0;"><img src="http://www.luxurylink.com/images/email/pixel.gif" width="1" height="5"></td>
 											</tr>
 											<tr>
-												<td width="24" style="font-size:0; line-height:0;"><img src="http://www.luxurylink.com/images/email/ico-twitter.jpg" align="left" vspace="0" hspace="0" alt="twitter" width="24" height="24"></td>
+												<td width="24" style="font-size:0; line-height:0;"><a style="text-decoration:none; color:#036dfc;" href="http://twitter.com/luxurylink"><img src="http://www.luxurylink.com/images/email/ico-twitter.jpg" align="left" vspace="0" hspace="0" alt="twitter" width="24" height="24" border="0"></a></td>
 												<td width="6"></td>
 												<td style="line-height:13px;"><font face="Arial, Helvetica, sans-serif" color="#036dfc" size="1" style="font-size:10px; line-height:13px"><a style="text-decoration:none; color:#036dfc;" href="http://twitter.com/luxurylink"><font color="#036dfc">Twitter</font></a></font></td>
 											</tr>
@@ -167,7 +168,7 @@
 												<td colspan="3" style="font-size:0; line-height:0;"><img src="http://www.luxurylink.com/images/email/pixel.gif" width="1" height="5"></td>
 											</tr>
 											<tr>
-												<td width="24" style="font-size:0; line-height:0;"><img src="http://www.luxurylink.com/images/email/ico-community.jpg" align="left" vspace="0" hspace="0" alt="community" width="24" height="24"></td>
+												<td width="24" style="font-size:0; line-height:0;"><a style="text-decoration:none; color:#036dfc;" href="http://www.luxurylink.com/community/forum.php"><img src="http://www.luxurylink.com/images/email/ico-community.jpg" align="left" vspace="0" hspace="0" alt="community" width="24" height="24" border="0"></a></td>
 												<td width="6"></td>
 												<td style="line-height:13px;"><font face="Arial, Helvetica, sans-serif" color="#036dfc" size="1" style="font-size:10px; line-height:13px"><a style="text-decoration:none; color:#036dfc;" href="http://www.luxurylink.com/community/forum.php"><font color="#036dfc">Join the
 														<br>
