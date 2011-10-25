@@ -78,7 +78,7 @@ class ConsolidatedReportShell extends Shell {
 			$loa_start_date = date('Y-m-d', strtotime($loa_details['Loa']['startDate']));
 			$loa_end_date = date('Y-m-d', strtotime($loa_details['Loa']['endDate']));
 			$membership_fee = $loa_details['Loa']['membershipFee'];
-			$outputFile = TMP .'consolidated_report_' . $client_details['Client']['seoName'] . '_' . $loa_start_date . '_to_' . $this->report_date . '.xlsx';
+			$outputFile = TMP . $client_details['Client']['seoName'] . '_' . $loa_start_date . '_to_' . $this->report_date . '_consolidated_report.xlsx';
 		
 			// Log date and filename parameters
 			self::log("Generating Report for client_id: $client_id, report_date: {$this->report_date}");
@@ -86,10 +86,14 @@ class ConsolidatedReportShell extends Shell {
 			self::log("Filepath: $outputFile");
 		
 			// Initialize the report Model
+			self::log("Initializing the report model.");
 			$this->ConsolidatedReport->create($client_id, $this->report_date, $loa_start_date, $loa_end_date);
+			self::log("The report model has been initialized successfully.");
 		
 			// Create the report object
+			self::log("Creating a blank report object in memory.");
 			$report = new ConsolidatedReportHelper($template, $newFile, $outputFile, $this->ConsolidatedReport);
+			self::log("The blank report object has been created successfully.");
 		
 			// Populate the report
 			self::log('Building the report data array.');
