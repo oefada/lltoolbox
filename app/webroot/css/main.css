@@ -1073,6 +1073,7 @@ div #ticket-search-box th {
  padding-top: 0;
  padding-left: 25px;
  margin: 0;
+ line-height:20px;
  background-image: url('../img/corner.gif');
  background-repeat: no-repeat;
  background-position: 8px 0px;
