@@ -4182,21 +4182,41 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		
 		$this->loadModel('Client');
 		$q = "SELECT *, IF(trackDetail.amountRemitted IS NULL, 0, SUM(trackDetail.amountRemitted)) AS remitted, IF(ticket.created IS NULL, DATEDIFF(NOW(), loa.startDate) , DATEDIFF(NOW(), ticket.created)) AS lastSold, 
-					DATE_FORMAT(MIN(loa.startDate), '%c/%e/%y') AS loaStart, DATE_FORMAT(MAX(loa.endDate), '%c/%e/%y') AS loaEnd,
-					(offerLuxuryLink.offerId IS NOT NULL OR offerFamily.offerId IS NOT NULL) AS isLive 
+					DATE_FORMAT(MIN(loa.startDate), '%c/%e/%y') AS loaStart, DATE_FORMAT(MAX(loa.endDate), '%c/%e/%y') AS loaEnd
 				FROM client 
 				INNER JOIN loa ON (client.clientId = loa.clientId)
 				INNER JOIN track USING (loaId)
 				LEFT JOIN trackDetail USING (trackId)
 				LEFT JOIN ticket USING (ticketId)
 				INNER JOIN package ON (ticket.packageId = package.packageId AND package.isBarter = 0)
-				LEFT JOIN offerLuxuryLink ON (package.packageId = offerLuxuryLink.packageId AND package.siteId = 1 AND NOW() BETWEEN offerLuxuryLink.startDate AND offerLuxuryLink.endDate)
-				LEFT JOIN offerFamily ON (package.packageId = offerFamily.packageId AND package.siteId = 2 AND NOW() BETWEEN offerFamily.startDate AND offerFamily.endDate)
 				GROUP BY ticket.packageId, loa.loaId
 				HAVING (ticket.created = MAX(ticket.created) OR ticket.created IS NULL) AND lastSold >= 45 AND NOW() BETWEEN loa.startDate AND loa.endDate
 				ORDER BY $sortBy $sortDirection";
 
 		$result = $this->Client->query($q);
+		
+		if (isset($_POST['csv']) && $_POST['csv'] == 'y') {
+			$displayPackages = $result;
+		} else {
+			$displayPackages = array_slice($result, ($currentPage - 1) * $resultsPerPage, $resultsPerPage, true);
+		}
+		
+		foreach ($displayPackages AS &$r) {
+			if ($r['package']['siteId'] == 1) {
+				$offerTable = 'offerLuxuryLink';
+			} else {
+				$offerTable = 'offerFamily';
+			}
+			
+			$q = "SELECT * FROM $offerTable WHERE packageId = ? AND NOW() BETWEEN startDate AND endDate";
+			$t = $this->Client->query($q, Array($r['package']['packageId']));
+			
+			if (is_array($t) && count($t) >= 1) {
+				$r[0]['isLive'] = 1;
+			} else {
+				$r[0]['isLive'] = 0;
+			}
+		}
 
 		$numResults = count($result);
 		$numPages = ceil($numResults/$resultsPerPage);
@@ -4208,9 +4228,9 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		if (isset($_POST['csv']) && $_POST['csv'] == 'y') {
 			$this->viewPath .= '/csv';
 			$this->layoutPath = 'csv';
-			$this->set('packages', $result);
+			$this->set('packages', $displayPackages);
 		} else {
-			$this->set('packages', array_slice($result, ($currentPage - 1) * $resultsPerPage, $resultsPerPage, true));
+			$this->set('packages', $displayPackages);
 		}
 	}
 	
