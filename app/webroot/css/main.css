@@ -1063,6 +1063,7 @@ div #ticket-search-box th {
  background-image: url('../img/vdot.gif');
  background-repeat: repeat-y;
  background-position: 8px 0px;
+ margin-top:10px;
 }
 .treed a {
  background-repeat: no-repeat;
