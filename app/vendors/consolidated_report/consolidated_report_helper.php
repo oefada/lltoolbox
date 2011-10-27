@@ -22,15 +22,15 @@ class ConsolidatedReportHelper
 	private $template;
 	
 	/**
-	 * Path to the new file that will be created from the spreadsheet object
+	 * Path to the temporary file that will be created from the spreadsheet object
 	 * 
 	 * @access	private
 	 * @param	string
 	 */
-	private $newFile;
+	private $tmpOutputFile;
 	
 	/**
-	 * Path to the file that will contain the data from $newFile and the chart
+	 * Path to the file that will contain the final data
 	 * data from $template
 	 * 
 	 * @access	private
@@ -54,6 +54,12 @@ class ConsolidatedReportHelper
 	 * @access	private
 	 * @param	object
 	 */
+	private $phpExcelHolder;
+	
+	/**
+	 * @access	private
+	 * @param	object
+	 */
 	private $writer;
 	
 	/**
@@ -71,20 +77,31 @@ class ConsolidatedReportHelper
 	 * @param	string newFile_path
 	 * @param	string outputFile_path
 	 */
-	public function __construct($template_path, $newFile_path, $outputFile_path, &$consolidated_report_model)
+	public function __construct($template, $output_file_path, &$consolidated_report_model)
 	{
-		$this->template = $template_path;
-		$this->newFile = $newFile_path;
-		$this->outputFile = $outputFile_path;
-		$this->ConsolidatedReport = $consolidated_report_model;
+		$this->template = APP . 'vendors/consolidated_report/templates/' . $template;
 		
-		// Create the phpExcel object from a Reader loading a template
-		$this->phpExcel = PHPExcel_IOFactory::createReader('Excel2007')->load($this->template);
+		// Create the phpExcel object
+		$this->phpExcel = PHPExcel_IOFactory::load($this->template);
+
+		// Set output and temporary files
+		$this->outputFile = $output_file_path;
+		$this->tmpOutputFile = $this->outputFile . '.tmp';
+
+		$this->ConsolidatedReport = $consolidated_report_model;
 		
 		// Get the worksheet names
 		$this->worksheets = $this->get()->getSheetNames();
 	}
-
+	
+	public function __destruct()
+	{
+		$this->dataToPopulate = array();
+		$this->phpExcel->disconnectWorksheets();
+		unset($this->phpExcel);
+		unlink($this->tmpOutputFile);
+	}
+	
 	/**
 	 * Return the phpExcel object in case the object needs to be used directly
 	 * 
@@ -215,17 +232,21 @@ class ConsolidatedReportHelper
 	 */
 	public function writeSpreadsheetObjectToFile($inject_into_chart = true)
 	{
-		$this->writer = new PHPExcel_Writer_Excel2007($this->phpExcel);
-		$this->writer->save($this->newFile);
+		//$this->writer->setPHPExcel($this->phpExcel);
+		//$this->writer->save($this->tmpOutputFile);
+		$objWriter = new PHPExcel_Writer_Excel2007($this->phpExcel);
+		$objWriter->save($this->tmpOutputFile);
+		unset($objWriter);
+
 		if ($inject_into_chart) {
 			// Output file will contain chart data from template
-			file_put_contents($this->outputFile, file_get_contents($this->template));
-			
+			file_put_contents($this->outputFile, file_get_contents($this->template), LOCK_EX);
+
 			// Inject modified cell data into file with charts
-			$this->injectDataIntoChartFile($this->outputFile, $this->newFile);
+			self::injectDataIntoChartFile($this->outputFile, $this->tmpOutputFile);
 		} else {
 			// Output file will not contain chart data
-			file_put_contents($this->outputFile, file_get_contents($this->newFile));
+			file_put_contents($this->outputFile, file_get_contents($this->tmpOutputFile));
 		}
 	}
 
@@ -250,36 +271,26 @@ class ConsolidatedReportHelper
 	 * @access	public
 	 * @param	string filepath of the spreadsheet with charts
 	 * @param	string filepath of the spreadsheet sans charts / with updated data
-	 * @param	boolean updateSheetData flag
 	 */
-	private function injectDataIntoChartFile($originalFile, $updatedFile, $updateSheetData = false)
+	private static function injectDataIntoChartFile($originalFile, $updatedFile)
 	{
-		$zipUpdated= new ZipArchive();
+		$zipUpdated = new ZipArchive();
 		$zipUpdated->open($updatedFile);
 		$zipOriginal = new ZipArchive();
-		$zipOriginal->open($originalFile);		
+		$zipOriginal->open($originalFile);
+				
 		$xmlWorkbook = simplexml_load_string($zipUpdated->getFromName("xl/_rels/workbook.xml.rels"));
 		foreach($xmlWorkbook->Relationship as $ele) {
 			if ($ele["Type"] == "http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet") {
 				$currentSheetName = "xl/". $ele["Target"];
 				$updatedSheet = simplexml_load_string($zipUpdated->getFromName($currentSheetName));
 				$origSheet = simplexml_load_string($zipOriginal->getFromName($currentSheetName));
-				$origSheet->sheetData ="";
+				$origSheet->sheetData = "";
 				$str = str_replace("<sheetData></sheetData>", $updatedSheet->sheetData->asXml(), $origSheet->asXml());
 				$zipOriginal->addFromString($currentSheetName, $str);
 			}
 		}
 
-		if ($updateSheetData) {
-			$workbookXML = "xl/workbook.xml";
-  			$origNames = simplexml_load_string($zipOriginal->getFromName($workbookXML));
-  			$updatedNames = simplexml_load_string($zipUpdated->getFromName($workbookXML));
-
-	  		$origNames->definedNames = "";
-  			$nRanges = str_replace("<definedNames></definedNames>", $updatedNames->definedNames->asXML(), $origNames->asXML());
-  			$zipOriginal->addFromString($workbookXML, $nRanges);
-		}
-		
 		$updatedStrings = simplexml_load_string($zipUpdated->getFromName( "xl/sharedStrings.xml"));
 		$zipOriginal->addFromString("xl/sharedStrings.xml", $updatedStrings->asXML());
 		$zipOriginal->close();

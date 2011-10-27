@@ -8,7 +8,6 @@ App::Import('Model', 'User');
 App::Import('Model', 'ConsolidatedReport');
 App::import('Vendor', 'ConsolidatedReportHelper', array('file' => 'consolidated_report' . DS . 'consolidated_report_helper.php'));
 class ConsolidatedReportShell extends Shell {
-	private $report_date = '';
 	private $isProduction = false;
 	
 	private $Controller;
@@ -51,17 +50,17 @@ class ConsolidatedReportShell extends Shell {
 	 */
 	public function main()
 	{
-		$this->report_date = isset($this->params['report_date']) ? $this->params['report_date'] : null;
 		$this->isProduction = isset($this->params['production']) ? true : false;
-		$client_id = isset($this->params['client_id']) ? $this->params['client_id'] : null;
 		
 		// Report initialization variables
-		$template = APP . 'vendors/consolidated_report/templates/consolidated_report_revision-7.xlsx';
-		$newFile = TMP . 'consolidated_report.xlsx';
+		$template = 'consolidated_report_revision-7.xlsx';
 		
+		$report_date = isset($this->params['report_date']) ? $this->params['report_date'] : null;		
+		$client_id = isset($this->params['client_id']) ? $this->params['client_id'] : null;
+
 		// Client & LOA Details
 		$client_details = $this->ConsolidatedReport->getClientDetails($client_id);
-		$loa_details = $this->ConsolidatedReport->getLoaDetails($client_id, $this->report_date);
+		$loa_details = $this->ConsolidatedReport->getLoaDetails($client_id, $report_date);
 
 		if ($loa_details !== false) {
 			// The client has a current LOA around the report date, generate the report
@@ -78,21 +77,21 @@ class ConsolidatedReportShell extends Shell {
 			$loa_start_date = date('Y-m-d', strtotime($loa_details['Loa']['startDate']));
 			$loa_end_date = date('Y-m-d', strtotime($loa_details['Loa']['endDate']));
 			$membership_fee = $loa_details['Loa']['membershipFee'];
-			$outputFile = TMP . $client_details['Client']['seoName'] . '_' . $loa_start_date . '_to_' . $this->report_date . '_consolidated_report.xlsx';
+			$outputFile = TMP . "consolidated_reports/" . $client_details['Client']['seoName'] . '_' . $loa_start_date . '_to_' . $report_date . '_consolidated_report.xlsx';
 		
 			// Log date and filename parameters
-			self::log("Generating Report for client_id: $client_id, report_date: {$this->report_date}");
+			self::log("Generating Report for client_id: $client_id, report_date: $report_date");
 			self::log("LOA Period: $loa_start_date - $loa_end_date");
 			self::log("Filepath: $outputFile");
 		
 			// Initialize the report Model
 			self::log("Initializing the report model.");
-			$this->ConsolidatedReport->create($client_id, $this->report_date, $loa_start_date, $loa_end_date);
+			$this->ConsolidatedReport->create($client_id, $report_date, $loa_start_date, $loa_end_date);
 			self::log("The report model has been initialized successfully.");
 		
 			// Create the report object
 			self::log("Creating a blank report object in memory.");
-			$report = new ConsolidatedReportHelper($template, $newFile, $outputFile, $this->ConsolidatedReport);
+			$report = new ConsolidatedReportHelper($template, $outputFile, $this->ConsolidatedReport);
 			self::log("The blank report object has been created successfully.");
 		
 			// Populate the report
@@ -116,15 +115,19 @@ class ConsolidatedReportShell extends Shell {
 					$report->writeSpreadsheetObjectToFile();
 					self::log('The write was successful.');
 					self::log("Emailing report to $send_report_to");
-					$this->emailReport($send_report_to, $client_details['Client']['name'], $outputFile);				
+					//$this->emailReport($send_report_to, $client_details['Client']['name'], $report_date, $outputFile);
+					return 0;
 				} catch (Exception $e) {
 					self::log("Error - There was an issue saving the report object to disk. Message: '" . $e->getMessage() . "'");
+					return 1;
 				}
 			} catch (Exception $e) {
 				self::log("Error - There was an issue saving the array to the spreadsheet object. Message: '" . $e->getMessage() . "'");		
+				return 1;
 			}
 		} else {
 			self::log("This client doesn't have a current LOA within the report period.");
+			return 1;
 		}
 	}
 
@@ -147,12 +150,12 @@ class ConsolidatedReportShell extends Shell {
 	 * @param	string client name
 	 * @param	string path to file to attach
 	 */
-	private function emailReport($recipient, $client_name, $file)
+	private function emailReport($recipient, $client_name, $report_date, $file)
 	{
 		$this->Email->reset();
 		$this->Email->from = 'noreply@luxurylink.com';
 		$this->Email->to = 'mclifford@luxurylink.com';
-		$this->Email->subject = "Consolidated Report for $client_name, {$this->report_date}";
+		$this->Email->subject = "Consolidated Report for $client_name, $report_date";
 		$this->Email->attachments = array($file);
 		$this->Email->send();
 	}
