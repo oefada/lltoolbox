@@ -1298,8 +1298,9 @@ class WebServiceTicketsController extends WebServicesController
 			$clientPrimaryEmail     = substr($clients[$client_index]['contact_to_string'],0,strpos($clients[$client_index]['contact_to_string'],",")); // Prevents comma separated e-mails 
 			$clientCcEmail 		    = $clients[$client_index]['contact_cc_string'];
 			$clientAdjustedPrice    = $this->numF(($clients[$client_index]['percentOfRevenue'] / 100) * $ticketData['billingPrice']);
-			$clientPhone			= ($clients[$client_index]['estaraPhoneLocal'] == NULL ? $clients[$client_index]['contacts'][0]['ppv_phone'] : $clients[$client_index]['estaraPhoneLocal']);
-			$clientPhoneIntl		= $clients[$client_index]['estaraPhoneIntl'] == NULL ? false : $clients[$client_index]['estaraPhoneIntl'];
+			$clientPhone			= $clients[$client_index]['estaraPhoneLocal'] == NULL ? $clients[$client_index]['phone1'] : $clients[$client_index]['estaraPhoneLocal'];
+			$clientPhoneIntl		= $clients[$client_index]['estaraPhoneIntl'] == NULL ? $clients[$client_index]['phone2'] : $clients[$client_index]['estaraPhoneIntl'];
+			
 			$pdpUrl = $siteUrl."luxury-hotels/".$clients[$client_index]['seoName']."?clid=".$clientId;
 			
 			App::import("Vendor","UtilityHelper",array('file' => "appshared".DS."helpers".DS."UtilityHelper.php"));
