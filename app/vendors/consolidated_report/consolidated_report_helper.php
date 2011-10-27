@@ -232,8 +232,6 @@ class ConsolidatedReportHelper
 	 */
 	public function writeSpreadsheetObjectToFile($inject_into_chart = true)
 	{
-		//$this->writer->setPHPExcel($this->phpExcel);
-		//$this->writer->save($this->tmpOutputFile);
 		$objWriter = new PHPExcel_Writer_Excel2007($this->phpExcel);
 		$objWriter->save($this->tmpOutputFile);
 		unset($objWriter);
