@@ -41,9 +41,11 @@
 																		                                                        <td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;padding: 0px 0px 2px 0px;" colspan="2">International: <?= $clientPhoneIntl ?></td>
 																		                                                    </tr>
 																		                                                	<?php endif; ?>
+																		                                                	<? if ($clientPrimaryEmail != ""): ?>
 																		 													<tr>
 																		                                                        <td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;padding: 0px 0px 0px 0px;" colspan="2">E-mail: <a href="mailto:<?= $clientPrimaryEmail ?>" target="_blank" style="color: #056ff7;"><?= $clientPrimaryEmail ?></a></td>
 																		                                                    </tr>
+																		                                                    <?php endif; ?>
 																		                                                </tbody>
 																		                                            </table>
 																	                                            </td>
