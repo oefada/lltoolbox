@@ -888,11 +888,24 @@ class WebServiceTicketsController extends WebServicesController
 	}
 
 	function numF($str) {
-		// for commas thousand group separater
+		// for commas thousand group separator
 		return number_format($str);
 	}
 
-	function ppv($in0) {
+	public function ppv_multiple($inData) {
+		if (!is_array($inData)) {
+			return "Data isn't array!";
+		}
+		
+		foreach ($inData as $r) {
+			$return[] = $this->ppv($r);
+		}
+		
+		return implode("\n",$return);
+	}
+	
+	public function ppv($in0) {
+		// Can send in array or JSON string. Useful for using ppv() inside toolbox
 		if (!is_array($in0)) {
 			$params = json_decode($in0, true);
 		} else {
@@ -905,6 +918,7 @@ class WebServiceTicketsController extends WebServicesController
 		// -------------------------------------------------------------------------------
 		$ticketId 			= isset($params['ticketId']) ? $params['ticketId'] : null;
 		$username			= isset($params['username']) ? $params['username'] : null;
+		$userId	 			= isset($params['userId']) ? $params['userId'] : null;
 		$send 				= isset($params['send']) ? $params['send'] : false;
 		$returnString 		= isset($params['returnString']) ? $params['returnString'] : false;
 		$manualEmailBody	= isset($params['manualEmailBody']) ? $params['manualEmailBody'] : null;
@@ -934,7 +948,7 @@ class WebServiceTicketsController extends WebServicesController
 
 		// TODO: error checking for params
 
-		if ($ticketId == null && $username == null && !$offerId) {
+		if ($ticketId == null && $username == null && !$offerId && !$userId) {
 			return 'Invalid input';
 			exit;
 		}
@@ -962,6 +976,20 @@ class WebServiceTicketsController extends WebServicesController
 			$bidInfo = $this->Bid->getBidStatsForOffer($offerId);
 			$liveOfferData = $this->Ticket->query("select * from $offerSite as LiveOffer where offerId = " . $offerId . " limit 1");
 			$liveOfferData = $liveOfferData[0]['LiveOffer'];
+			
+			$packageName 		= strip_tags($liveOfferData['offerName']);
+			$packageIncludes 	= $liveOfferData['offerIncludes'];
+			$legalText			= $liveOfferData['termsAndConditions'];
+			$validityNote		= $liveOfferData['validityDisclaimer'];
+			//$validityLeadIn     = $packageData['validityLeadInLine'];
+			$addtlDescription   = $liveOfferData['additionalDescription'];
+			$numGuests			= $liveOfferData['numGuests'];
+			$roomGrade			= $liveOfferData['roomGrade'];
+			$packageBlurb		= ucfirst($liveOfferData['packageBlurb']);
+			$offerEndDate		= date('M d Y H:i A', strtotime($liveOfferData['endDate']));
+			$maxNumWinners		= $liveOfferData['numWinners'];
+
+			$clientData			= $this->ClientLoaPackageRel->findAllBypackageid($liveOfferData['packageId']);
 		}
 		
 		if ($ticketId) {
@@ -974,11 +1002,8 @@ class WebServiceTicketsController extends WebServicesController
 			$userAddressData	= $this->Address->findByuserid($userData['userId']);
 			$userAddressData	= $userAddressData['Address'];
 
-			$clientData			= $this->ClientLoaPackageRel->findAllBypackageid($ticket['Ticket']['packageId']);
-
 			$this->ClientLoaPackageRel->Client->ClientDestinationRel->contain('Destination');
 			$destData			= $this->ClientLoaPackageRel->Client->ClientDestinationRel->findByclientId($clientData[0]['Client']['clientId'],array(),"clientDestinationRelId DESC");
-			CakeLog::write("debug",var_export($destData,1));
 			$offerType			= $this->OfferType->find('list');
 			$userPaymentData	= $this->findValidUserPaymentSetting($ticketData['userId']);
 			$paymentDetail		= $this->PaymentDetail->findByticketId($ticketId);
@@ -989,10 +1014,14 @@ class WebServiceTicketsController extends WebServicesController
 			$cofApplied			= ($promoGcCofData['Cof']   && $promoGcCofData['Cof']['applied'] ? true : false);
 			$giftApplied		= ($promoGcCofData['GiftCert']   && $promoGcCofData['GiftCert']['applied'] ? true : false);
 			
-		} elseif ($username) {
-			$this->User->UserSiteExtended->recursive = 0;
-			$userId = $this->User->UserSiteExtended->findByusername($username);
-
+		} else {
+			if ($username) {
+				$this->User->UserSiteExtended->recursive = 0;
+				$userId = $this->User->UserSiteExtended->findByusername($username);
+			} elseif ($userId) {
+				$userId = $this->User->UserSiteExtended->findByuserId($userId);
+			}
+			
 			if (!empty($userId)) {
 				$userData = array_merge($userId['UserSiteExtended'],$userId['User']);
 			} else {
@@ -1000,7 +1029,7 @@ class WebServiceTicketsController extends WebServicesController
 				exit;
 			}
 		}
-
+	
 		// ********************************************************************************************************
 		// ALL VARIABLES ARE SET HERE -- WE DONT HAVE TO CHANGE A MILLION TEMPLATES IF CHANGE IS MADE TO DB FIELD
 		// *********************************************************************************************************
@@ -1057,19 +1086,7 @@ class WebServiceTicketsController extends WebServicesController
 
 		if ($ticketId) {
 			$offerId			= $offerData['offerId'];
-			$packageName 		= strip_tags($liveOfferData['offerName']);
 			$packageSubtitle	= $packageData['subtitle'];
-
-			$packageIncludes 	= $liveOfferData['offerIncludes'];
-			$legalText			= $liveOfferData['termsAndConditions'];
-			$validityNote		= $liveOfferData['validityDisclaimer'];
-			//$validityLeadIn     = $packageData['validityLeadInLine'];
-			$addtlDescription   = $liveOfferData['additionalDescription'];
-
-			//2011-01-10 mbyrnes
-			$numGuests			= $liveOfferData['numGuests'];
-			$roomGrade			= $liveOfferData['roomGrade'];
-			$packageBlurb		= ucfirst($liveOfferData['packageBlurb']);
 
 			$packageId			= $ticketData['packageId'];
 			// 2011-01-05
@@ -1078,14 +1095,12 @@ class WebServiceTicketsController extends WebServicesController
 			$offerTypeId		= $ticketData['offerTypeId'];
 			$offerTypeName		= str_replace('Standard ', '', $offerType[$offerTypeId]);
 			$offerTypeBidder	= ($offerTypeId == 1) ? 'Winner' : 'Winning Bidder';
-			$offerEndDate		= date('M d Y H:i A', strtotime($liveOfferData['endDate']));
 			$isAuction			= in_array($offerTypeId, array(1,2,6)) ? true : false;
 
 			$billingPrice		= $this->numF($ticketData['billingPrice']);
 			$llFeeAmount		= 40;
 			$llFee				= $llFeeAmount;
 			$totalPrice			= $this->numF($ticketData['billingPrice'] + $llFeeAmount);
-			$maxNumWinners		= $liveOfferData['numWinners'];
 			$isTaxIncluded      = $ticketData['isTaxIncluded'];
 
 			$checkoutHash		= md5($ticketId . $userId . $offerId . 'LL_L33T_KEY');
@@ -1198,6 +1213,19 @@ class WebServiceTicketsController extends WebServicesController
 			// -------------------------------------------------------------------------------
 			$wholesale			= false;
 
+			// added June 17 -- to allow copy for LL Auc Winner Email and Res Confirmed Email
+			if (in_array($ppvNoticeTypeId, array(1,18))) {
+				$primaryDest = $this->Ticket->getTicketDestStyleId($ticketId);
+			}
+
+			// check if already sent out a reservation request
+			if (in_array($ppvNoticeTypeId, array(2,10))) {
+				$res_request = $this->Ticket->query("SELECT COUNT(*) AS count FROM ppvNotice where ticketId = {$ticketId} AND ppvNoticeTypeId IN (2,10);");
+				$res_request_count = $resrequest[0][0]['count'];
+			}
+		} //End IF for $ticketId
+
+		if (!empty($clientData)) {
 			// fetch client contacts
 			// -------------------------------------------------------------------------------
 			$clients		 	= array();
@@ -1239,9 +1267,9 @@ class WebServiceTicketsController extends WebServicesController
 				$tmp['percentOfRevenue'] = $v['ClientLoaPackageRel']['percentOfRevenue'];
 				$clients[$k] = $tmp;
 			}
-
+	
 			$client_index = ($multi_client_map_override !== false) ? $multi_client_map_override : 0;
-
+	
 			// acarney 2010-12-08
 			// Making it so that confirmation template is multi-client aware
 			// TODO: investigate impact of using array for client variables in other templates
@@ -1277,18 +1305,7 @@ class WebServiceTicketsController extends WebServicesController
 			App::import("Vendor","UtilityHelper",array('file' => "appshared".DS."helpers".DS."UtilityHelper.php"));
 			$clientPhone = UtilityHelper::cleanUSD($clientPhone,6); // Formats phone number consistenly
 			$clientPhoneIntl = UtilityHelper::cleanUSD($clientPhoneIntl,6);
-			
-			// added June 17 -- to allow copy for LL Auc Winner Email and Res Confirmed Email
-			if (in_array($ppvNoticeTypeId, array(1,18))) {
-				$primaryDest = $this->Ticket->getTicketDestStyleId($ticketId);
-			}
-
-			// check if already sent out a reservation request
-			if (in_array($ppvNoticeTypeId, array(2,10))) {
-				$res_request = $this->Ticket->query("SELECT COUNT(*) AS count FROM ppvNotice where ticketId = {$ticketId} AND ppvNoticeTypeId IN (2,10);");
-				$res_request_count = $resrequest[0][0]['count'];
-			}
-		} //End IF for $ticketId
+		}
 		
 		// Click tracking for templates
 		$emailFrom = "$siteDisplay <no-reply@$siteEmail>";
@@ -1525,7 +1542,7 @@ class WebServiceTicketsController extends WebServicesController
 			case 36:
 				$templateFile = "36_highest_bidder";
 				$templateTitle = "You are the highest bidder";
-				$emailSubject = "$siteName: Your bid has been received!";
+				$emailSubject = "$siteName: Your bid has been received! - $clientNameP";
 				break;
 			case 37:
 				$ppvNoticeTypeId = 35; //TODO REMOVE THIS LINE ONCE IT WORKS RIGHT WITH SILVERPOP
@@ -1623,6 +1640,8 @@ class WebServiceTicketsController extends WebServicesController
 		// -------------------------------------------------------------------------------
 		if ($returnString) {
 			return $emailBody;
+		} else {
+			return "SUCCESS";
 		}
 	}
 
@@ -1663,6 +1682,7 @@ class WebServiceTicketsController extends WebServicesController
 					if (!$no_special) {
 						$special_boxes .= $pD;
 						$pD = "";
+						$pD .= "<?php \$special_boxes = true; ?>";
 					}
 				} elseif ($s == 1) {
 					$other_boxes .= $pD;
@@ -2421,16 +2441,20 @@ function wstErrorHandler($errno, $errstr, $errfile, $errline) {
 	$log = "debug";
 
     switch ($errno) {
-		case E_RECOVERABLE_ERROR:
-			$eMsg = "RECOVERABLE ERROR";
+		//case E_RECOVERABLE_ERROR:
+			//$eMsg = "RECOVERABLE ERROR";
 		case E_ERROR:
 			$eMsg = "ERROR";
+			break;
 		case E_PARSE:
 			$eMsg = "PARSE ERROR";
+			break;
 		case E_CORE_ERROR:
 			$eMsg = "CORE ERROR";
+			break;
 		case E_COMPILE_ERROR:
 			$eMsg = "COMPILE ERROR";
+			break;
 		case E_USER_ERROR:
 	        $eMsg = "USER ERROR";
 	        break;
