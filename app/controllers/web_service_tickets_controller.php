@@ -1120,6 +1120,9 @@ class WebServiceTicketsController extends WebServicesController
 			$fpDeparture		= isset($ticketData['requestDeparture']) ? date('M d, Y', strtotime($ticketData['requestDeparture'])) : 'N/A';
 			$fpArrival2			= isset($ticketData['requestArrival2']) && ($ticketData['requestArrival2'] != '0000-00-00') ? date('M d, Y', strtotime($ticketData['requestArrival2'])) : 'N/A';
 			$fpDeparture2		= isset($ticketData['requestDeparture2']) && ($ticketData['requestDeparture2'] != '0000-00-00') ? date('M d, Y', strtotime($ticketData['requestDeparture2'])) : 'N/A';
+			$fpArrivalLast 		= ($fpArrival2 == "N/A" ? $fpArrival : $fpArrival2); 
+			$fpDepartureLast	= ($fpDeparture2 == "N/A" ? $fpDeparture : $fpDeparture2);
+			
 			$fpNumGuests		= $ticketData['requestNumGuests'];
 			$fpNotes			= $ticketData['requestNotes'];
 
@@ -1136,12 +1139,22 @@ class WebServiceTicketsController extends WebServicesController
 			}
 
 			if (!$isAuction && !empty($aucPreferDates)) {
-				$fpArrival			= ($aucPreferDates[0]['rpd']['in']) ? $aucPreferDates[0]['rpd']['in'] : 'N/A';
-				$fpDeparture		= ($aucPreferDates[0]['rpd']['out']) ? $aucPreferDates[0]['rpd']['out'] : 'N/A';
-				$fpArrival2			= ($aucPreferDates[1]['rpd']['in']) ? $aucPreferDates[1]['rpd']['in'] : 'N/A';
-				$fpDeparture2		= ($aucPreferDates[1]['rpd']['out']) ? $aucPreferDates[1]['rpd']['out'] : 'N/A';
-				$fpArrival3			= ($aucPreferDates[2]['rpd']['in']) ? $aucPreferDates[2]['rpd']['in'] : 'N/A';
-				$fpDeparture3		= ($aucPreferDates[2]['rpd']['out']) ? $aucPreferDates[2]['rpd']['out'] : 'N/A';
+				foreach ($aucPreferDates as $k=>$v) {
+					$append = $k;
+					if ($k == 0) {
+						$append = "";
+					} 
+					
+					$appendA  = "fpArrival".$append;
+					$appendD  = "fpDeparture".$append;
+					$$appendA = ($v['rpd']['in']) ? $v['rpd']['in'] : 'N/A';
+					$$appendD = ($v['rpd']['out']) ? $v['rpd']['out'] : 'N/A';
+					
+					if ($k == (count($aucPreferDates) - 1)) {
+						$fpArrivalLast = $$appendA;
+						$fpDepartureLast = $$appendD;						
+					}
+				}
 			}
 
 			// reservation info
@@ -1289,6 +1302,7 @@ class WebServiceTicketsController extends WebServicesController
 					$clientVars[$i]['clientAdjustedPrice']  = $this->numF(($client['percentOfRevenue'] / 100) * $ticketData['billingPrice']);
 				}
 			}
+			
 			$clientId			    = $clients[$client_index]['clientId'];
 			$parentClientId 	    = $clients[$client_index]['parentClientId'];
 			$clientNameP 		    = $clients[$client_index]['name'];

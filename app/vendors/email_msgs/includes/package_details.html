@@ -33,10 +33,12 @@
 																		                                                    <tr>
 																		                                                        <td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;padding: 15px 0px 0px 0px;" colspan="2"><?= $clients[0]['address1'] ?><br><?= ($clients[0]['address2'] != "" ? $clients[0]['address2']."<br>" : "") ?><?= $locationDisplay ?></td>
 																		                                                    </tr>
+																		                                                    <? if ($clientPhone != ""): ?>
 																															<tr>
 																		                                                        <td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;padding: 15px 0px 2px 0px;" colspan="2">Phone Number: <?= $clientPhone ?></td>
 																		                                                    </tr>
-																		                                                    <? if ($clientPhoneIntl): ?>
+																		                                                    <? endif; ?>
+																		                                                    <? if ($clientPhoneIntl != ""): ?>
 																															<tr>
 																		                                                        <td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;padding: 0px 0px 2px 0px;" colspan="2">International: <?= $clientPhoneIntl ?></td>
 																		                                                    </tr>
