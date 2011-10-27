@@ -60,7 +60,7 @@
 																							<td colspan="2" style="line-height:22px; padding: 0px 0px 15px 0px;"><font face="Arial, Helvetica, sans-serif" size="3" style="font-size:18px; line-height:22px" color="#9c9a68"><strong><?= $templateTitle ?></strong></font></td>
 																						</tr>
 																						<tr valign="top">
-																							<td style="line-height:20px;" colspan="2">
+																							<td style="line-height:20px;"<? if (isset($special_boxes)): ?> colspan="2"<?php endif; ?>>
 																								<?php if ($ticketId): ?><font face="Arial, Helvetica, sans-serif" color="#7b7b7b" style="font-size:12px; line-height:15px;"><b>Ticket ID: <?= $ticketId ?></b></font><?php endif; ?>
 																								<p>
 																									<font face="Arial, Helvetica, sans-serif" size="2" style="font-size:14px; line-height:15px" color="#474747">
