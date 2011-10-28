@@ -623,7 +623,7 @@ class WebServiceTicketsController extends WebServicesController
 
 		// send both the my dates have been received and reservation request
 		// -------------------------------------------------------------------------------
-		$params['ppvNoticeTypeId'] = 20;     // Your Dates Have Been Received
+		$params['ppvNoticeTypeId'] = 12;     // Your Dates Have Been Received
 		$this->ppv(json_encode($params));
 
 		// ppvNoticeTypeId 2 is the new res request with client res xtranet
@@ -1138,15 +1138,15 @@ class WebServiceTicketsController extends WebServicesController
 				}
 			}
 
-			if (!$isAuction && !empty($aucPreferDates)) {
+			if (!empty($aucPreferDates)) {
 				foreach ($aucPreferDates as $k=>$v) {
-					$append = $k;
+					$appendN = $k;
 					if ($k == 0) {
-						$append = "";
+						$appendN = "";
 					} 
 					
-					$appendA  = "fpArrival".$append;
-					$appendD  = "fpDeparture".$append;
+					$appendA  = "fpArrival".$appendN;
+					$appendD  = "fpDeparture".$appendN;
 					$$appendA = ($v['rpd']['in']) ? $v['rpd']['in'] : 'N/A';
 					$$appendD = ($v['rpd']['out']) ? $v['rpd']['out'] : 'N/A';
 					
