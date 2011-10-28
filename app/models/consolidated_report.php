@@ -610,10 +610,10 @@ class ConsolidatedReport extends AppModel
 		
 		$call_details = $this->getCallDetails();
 		$booking_details = array_merge($this->getBookingDetails(1), $this->getBookingDetails(2), $this->getVacationistBookingDetails());
-		$contact_details = array_merge($call_details, $booking_details);
-		unset($call_details, $booking_details);
-		usort($contact_details, array('self', 'cmp_booking_dates'));
-	
+		uasort($booking_details, array('self', 'cmp_activity_dates'));
+		$contact_details = array_merge($booking_details, $call_details);
+		unset($booking_details, $call_details);
+
 		if ($this->validates()) {
 			return $contact_details;
 		}
@@ -631,11 +631,7 @@ class ConsolidatedReport extends AppModel
 				ClientPhoneLead.duration,
 				ClientPhoneLead.caller_number,
 				ClientPhoneLead.caller_name,
-				ClientPhoneLead.caller_location,
-				ClientPhoneLead.country,
-				ClientPhoneLead.median_household_income,
-				ClientPhoneLead.per_capita_income,
-				ClientPhoneLead.median_earnings
+				ClientPhoneLead.caller_location
 			FROM client_phone_leads ClientPhoneLead
 			WHERE
 				client_id = {$this->client_id}
@@ -662,7 +658,6 @@ class ConsolidatedReport extends AppModel
 				null,
 				null,
 				null,
-				null,
 				$call_detail['ClientPhoneLead']['duration'],
 				null,
 				$call_detail['ClientPhoneLead']['caller_number'],
@@ -674,10 +669,10 @@ class ConsolidatedReport extends AppModel
 				null,
 				null,
 				null,
-				$call_detail['ClientPhoneLead']['country'],
-				$call_detail['ClientPhoneLead']['median_household_income'],
-				$call_detail['ClientPhoneLead']['per_capita_income'],
-				$call_detail['ClientPhoneLead']['median_earnings']
+				null,
+				null,
+				null,
+				null
 			);
 		}
 		
@@ -768,7 +763,6 @@ class ConsolidatedReport extends AppModel
 				$booking_detail['Reservation']['arrivalDate'],
 				$booking_detail['Reservation']['departureDate'],
 				$booking_detail['Ticket']['numNights'],
-				$booking_detail['Ticket']['billingPrice'],
 				null,
 				(is_null($booking_detail['Ticket']['bidId'])) ? 'Fixed Price' : 'Auction',
 				$booking_detail['Ticket']['userHomePhone'],
@@ -836,7 +830,6 @@ class ConsolidatedReport extends AppModel
 				$booking_detail['Ticket']['checkIn'],
 				$booking_detail['Ticket']['checkOut'],
 				$booking_detail['Ticket']['numNights'],
-				$booking_detail['Ticket']['salePrice'],
 				null,
 				'Room Only',
 				null,
@@ -889,22 +882,24 @@ class ConsolidatedReport extends AppModel
 	 * 
 	 * @return	array
 	 */
-	private function buildContactDetails($lead_type, $site, $activity_date, $arrival, $departure, $room_nights, $booking_amount, $call_duration, $booking_type, $phone, $firstname, $lastname, $email, $optin, $address, $city, $state, $zip, $country, $median_household_income, $per_capita_income, $median_earnings)
+	private function buildContactDetails($lead_type, $site, $activity_date, $arrival, $departure, $room_nights, $call_duration, $booking_type, $phone, $firstname, $lastname, $email, $optin, $address, $city, $state, $zip, $country, $median_household_income, $per_capita_income, $median_earnings)
 	{
 		$phone = preg_replace('[\D]', '', $phone);
-
 		if ($phone[0] == 1) {
 			$phone = substr($phone, 1);
 		}
+		
+		$arrival = (!is_null($arrival)) ? date('j-M-y', strtotime(trim($activity_date))) : null;
+		$departure = (!is_null($departure)) ? date('j-M-y', strtotime(trim($departure))) : null;
+		
 		return array(
 			'Lead Type'					=> trim($lead_type),
 			'Site'						=> trim($site),
-			'Activity Date'				=> trim($activity_date),
+			'Activity Date'				=> date('j-M-y', strtotime(trim($activity_date))),
 			'This Month'				=> ((substr($this->report_date,0,7) === substr($activity_date,0,7))) ? 'x' : '',
-			'Arrival'					=> trim($arrival),
-			'Departure'					=> trim($departure),
+			'Arrival'					=> $arrival,
+			'Departure'					=> $departure,
 			'Room Nights'				=> trim($room_nights),
-			'Booking Amount'			=> trim($booking_amount),
 			'Call Duration'				=> trim($call_duration),
 			'Booking Type'				=> trim($booking_type),
 			'Phone'						=> $phone,
@@ -916,15 +911,12 @@ class ConsolidatedReport extends AppModel
 			'City'						=> trim($city),
 			'State'						=> trim($state),
 			'Zip'						=> trim($zip),
-			'Country'					=> trim($country),
-			'Median Household Income'	=> trim($median_household_income),
-			'Per Capita Income'			=> trim($per_capita_income),
-			'Median Earnings'			=> trim($median_earnings)
+			'Country'					=> trim($country)
 		);
 	}
 	
 	/**
-	 * Sort method to compare booking dates and sort contact detail arrays
+	 * Sort method to compare activity dates
 	 * 
 	 * @access	private
 	 * @param	array
@@ -932,8 +924,11 @@ class ConsolidatedReport extends AppModel
 	 * 
 	 * @return	int
 	 */
-	private static function cmp_booking_dates($a, $b)
+	private static function cmp_activity_dates($a, $b)
 	{
+		$a['Activity Date'] = date('Y-m-d', strtotime($a['Activity Date']));
+		$b['Activity Date'] = date('Y-m-d', strtotime($b['Activity Date']));
+
 		if ($a['Activity Date'] == $b['Activity Date']) {
 			return 0;
 		}
