@@ -1003,7 +1003,7 @@ class WebServiceTicketsController extends WebServicesController
 			$userAddressData	= $userAddressData['Address'];
 
 			$this->ClientLoaPackageRel->Client->ClientDestinationRel->contain('Destination');
-			$destData			= $this->ClientLoaPackageRel->Client->ClientDestinationRel->findByclientId($clientData[0]['Client']['clientId'],array(),"clientDestinationRelId DESC");
+			$destData			= $this->ClientLoaPackageRel->Client->ClientDestinationRel->findByclientId($clientData[0]['Client']['clientId'],array(),"parentId DESC, clientDestinationRelId DESC");
 			$offerType			= $this->OfferType->find('list');
 			$userPaymentData	= $this->findValidUserPaymentSetting($ticketData['userId']);
 			$paymentDetail		= $this->PaymentDetail->findByticketId($ticketId);
