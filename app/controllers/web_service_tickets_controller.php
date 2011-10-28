@@ -1305,7 +1305,7 @@ class WebServiceTicketsController extends WebServicesController
 			
 			$clientId			    = $clients[$client_index]['clientId'];
 			$parentClientId 	    = $clients[$client_index]['parentClientId'];
-			$clientNameP 		    = $clients[$client_index]['name'];
+			$clientNameP 		    = utf8_encode($clients[$client_index]['name']);
 			$clientName 		    = $clients[$client_index]['contacts'][0]['ppv_name'];
 			$oldProductId		    = $clients[$client_index]['oldProductId'];
 			$locationDisplay	    = $clients[$client_index]['locationDisplay'];
