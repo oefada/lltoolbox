@@ -73,11 +73,10 @@
 
 						if(arr[1]) {
 							$("fd-dp-package-<?=$package['Package']['packageId']?>").fade();
-							openSchedulingOverlay(arr[3]+'-'+arr[2]+'-'+arr[1], <?=$package['Package']['packageId']?>, <?="'",str_replace("'","\'",htmlentities($package['Package']['packageName'])),"'"?>);
+							openSchedulingOverlay(arr[3]+'-'+arr[2]+'-'+arr[1], <?=$package['Package']['packageId']?>, <?="'".str_replace("'","\'",htmlentities($package['Package']['packageName']))."'"?>);
 						}
 						return false;});
 				});
-				/*new Form.Element.Observer($("dp-package-<?=$package['Package']['packageId']?>"), 0.2, function() { if($F("dp-package-<?=$package['Package']['packageId']?>") == '') { return; } openSchedulingOverlay("dp-package-<?=$package['Package']['packageId']?>", <?=$package['Package']['packageId']?>, <?="'",str_replace("'","\'",htmlentities($package['Package']['packageName'])),"'"?>); $("dp-package-<?=$package['Package']['packageId']?>").value = ''});*/
 			</script>
 		
 		<? } ?>

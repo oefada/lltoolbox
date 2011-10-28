@@ -1331,7 +1331,12 @@ class WebServiceTicketsController extends WebServicesController
 		ob_start();
 		switch ($ppvNoticeTypeId) {
 			case 1:
-				$templateFile = "1_reservation_confirmation";
+				if ($siteId == 2) {
+					include('../vendors/email_msgs/notifications/old/conf_ppv.html');
+				} else {
+					$templateFile = "1_reservation_confirmation";
+				}
+				
 				$templateTitle = "Your reservation is confirmed";
 				$emailSubject = "Your $siteName Reservation is Confirmed - $clientNameP";
 				$emailFrom = ($isAuction) ? "$siteDisplay <resconfirm@$siteEmail>" : "$siteDisplay <reservations@$siteEmail>";
@@ -1395,7 +1400,12 @@ class WebServiceTicketsController extends WebServicesController
 				$userEmail = "exclusives@$siteEmail";
 				break;
 			case 12:
-				$templateFile = '12_reservation_ack';
+				if ($siteId == 2) {
+					include('../vendors/email_msgs/notifications/old/notification_acknowledgement.html');
+				} else {
+					$templateFile = '12_reservation_ack';
+				}
+				
 				$templateTitle = "We are in the process of confirming your reservation";
 				$emailSubject = "Your $siteName Travel Booking - $clientNameP";
 				$emailFrom = ($isAuction) ? "$siteDisplay <auction@$siteEmail>" : "$siteDisplay <exclusives@$siteEmail>";
@@ -1408,7 +1418,12 @@ class WebServiceTicketsController extends WebServicesController
 				$emailReplyTo = ($isAuction) ? "auction@$siteEmail" : "exclusives@$siteEmail";
 				break;
 			case 14:
-				$templateFile = "14_dates_not_available";
+				if ($siteId == 2) {
+					include('../vendors/email_msgs/notifications/old/notification_dates_not_available.html');
+				} else {
+					$templateFile = "14_dates_not_available";	
+				}
+				
 				$templateTitle = "Your requested dates are unavailable";
 				$emailSubject = "Your requested dates are unavailable - $clientNameP";
 				$emailFrom = ($isAuction) ? "$siteDisplay <auction@$siteEmail>" : "$siteDisplay <exclusives@$siteEmail>";
@@ -1427,21 +1442,36 @@ class WebServiceTicketsController extends WebServicesController
 				$emailReplyTo = "auction@$siteEmail";
 				break;
 			case 17:
-				$templateFile = "17_second_offense_flake";
+				if ($siteId == 2) {
+					include('../vendors/email_msgs/notifications/second_offense_flake.html');
+				} else {
+					$templateFile = "17_second_offense_flake";	
+				}
+				
 				$templateTitle = "Your bidding privileges on $siteName";
 				$emailSubject = "$siteName Auction Winner - $clientNameP";
 				$emailFrom = "$siteDisplay <auction@$siteEmail>";
 				$emailReplyTo = "auction@$siteEmail";
 				break;
 			case 18:
-				$templateFile = '18_auction_winner_ppv';
+				if ($siteId == 2) {
+					include('../vendors/email_msgs/notifications/old/18_auction_winner_ppv.html');
+				} else {
+					$templateFile = '18_auction_winner_ppv';	
+				}
+				
 				$templateTitle = "Congratulations - You Won!";
 				$emailSubject = "$siteName Auction Winner Receipt - $clientNameP";
 				$emailFrom = "$siteDisplay <auction@$siteEmail>";
 				$emailReplyTo = "auction@$siteEmail";
 				break;
 			case 19:
-				$templateFile = "19_auction_winner_declined_expired";
+				if ($siteId == 2) {
+					include('../vendors/email_msgs/notifications/old/19_auction_winner_declined_expired.html');
+				} else {
+					$templateFile = "19_auction_winner_declined_expired";
+				}
+				
 				$templateTitle = "PLEASE RESPOND - Your $siteName Purchase";
 				$emailSubject = "Your $siteName Purchase is Not Complete - Action Required - $clientNameP";
 				$emailFrom = "$siteDisplay <auction@$siteEmail>";
@@ -1517,7 +1547,12 @@ class WebServiceTicketsController extends WebServicesController
 				break;
 			case 30:
 				// send out res cancellation confirmation
-				$templateFile = "30_reservation_cancel_confirmation";
+				if ($siteId == 2) {
+					include('../vendors/email_msgs/notifications/old/30_reservation_cancel_confirmation.html');
+				} else {
+					$templateFile = "30_reservation_cancel_confirmation";
+				}
+				
 				$templateTitle = "Your reservation has been cancelled";
 				$emailSubject = "Your $siteName Booking was Cancelled. - $userFirstName $userLastName";
 				$emailFrom = ($isAuction) ? "$siteDisplay <resrequests@$siteEmail>" : "$siteDisplay <reservations@$siteEmail>";
