@@ -636,6 +636,7 @@ class ConsolidatedReport extends AppModel
 			WHERE
 				client_id = {$this->client_id}
 				AND date BETWEEN '{$this->loa_start_date}' AND '{$this->month_end_date}'
+				AND substr(ClientPhoneLead.caller_number,1,7) != '1424835'
 		";
 		
 		$call_details_raw = $this->query($sql);
@@ -932,7 +933,7 @@ class ConsolidatedReport extends AppModel
 		if ($a['Activity Date'] == $b['Activity Date']) {
 			return 0;
 		}
-		return ($a['Activity Date'] > $b['Activity Date']) ? 1 : -1;
+		return ($a['Activity Date'] < $b['Activity Date']) ? 1 : -1;
 	}
 }
 ?>

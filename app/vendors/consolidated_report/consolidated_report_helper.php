@@ -521,11 +521,12 @@ class ConsolidatedReportHelper
 			$this->setDataToPopulate($sheet_name, "K$spreadsheet_row", $contact_detail['Firstname']);
 			$this->setDataToPopulate($sheet_name, "L$spreadsheet_row", $contact_detail['Lastname']);
 			$this->setDataToPopulate($sheet_name, "M$spreadsheet_row", $contact_detail['Email']);
-			$this->setDataToPopulate($sheet_name, "N$spreadsheet_row", $contact_detail['Address']);
-			$this->setDataToPopulate($sheet_name, "O$spreadsheet_row", $contact_detail['City']);
-			$this->setDataToPopulate($sheet_name, "P$spreadsheet_row", $contact_detail['State']);
-			$this->setDataToPopulate($sheet_name, "Q$spreadsheet_row", $contact_detail['Zip']);
-			$this->setDataToPopulate($sheet_name, "R$spreadsheet_row", $contact_detail['Country']);
+			$this->setDataToPopulate($sheet_name, "N$spreadsheet_row", 'No');
+			$this->setDataToPopulate($sheet_name, "O$spreadsheet_row", $contact_detail['Address']);
+			$this->setDataToPopulate($sheet_name, "P$spreadsheet_row", $contact_detail['City']);
+			$this->setDataToPopulate($sheet_name, "Q$spreadsheet_row", $contact_detail['State']);
+			$this->setDataToPopulate($sheet_name, "R$spreadsheet_row", $contact_detail['Zip']);
+			$this->setDataToPopulate($sheet_name, "S$spreadsheet_row", $contact_detail['Country']);
 		}
 	}
 }
