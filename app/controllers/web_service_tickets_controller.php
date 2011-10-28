@@ -215,7 +215,7 @@ class WebServiceTicketsController extends WebServicesController
 
 		// send out fixed price emails
 		// -------------------------------------------------------------------------------
-		$params['ppvNoticeTypeId'] = 9;     // Fixed Price - Winner Notification
+		$params['ppvNoticeTypeId'] = 12;     // Fixed Price - Winner Notification
 		$this->ppv(json_encode($params));
 
 		//special request
