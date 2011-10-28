@@ -1315,7 +1315,7 @@ class WebServiceTicketsController extends WebServicesController
 			$clientPhone			= $clients[$client_index]['estaraPhoneLocal'] == NULL ? $clients[$client_index]['phone1'] : $clients[$client_index]['estaraPhoneLocal'];
 			$clientPhoneIntl		= $clients[$client_index]['estaraPhoneIntl'] == NULL ? $clients[$client_index]['phone2'] : $clients[$client_index]['estaraPhoneIntl'];
 			
-			$pdpUrl = $siteUrl."luxury-hotels/".$clients[$client_index]['seoName']."?clid=".$clientId;
+			$pdpUrl = $siteUrl."luxury-hotels/".$clients[$client_index]['seoName']."?clid=".$clientId."&pkid=".$packageId;
 			
 			App::import("Vendor","UtilityHelper",array('file' => "appshared".DS."helpers".DS."UtilityHelper.php"));
 			$clientPhone = UtilityHelper::cleanUSD($clientPhone,6); // Formats phone number consistenly

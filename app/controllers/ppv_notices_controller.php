@@ -19,6 +19,7 @@ class PpvNoticesController extends AppController {
 			$this->redirect(array('action'=>'index'));
 		}
 		$this->set('ppvNotice', $this->PpvNotice->read(null, $id));
+		$this->layout = "ajax";
 	}
 
 	function add($ticketId, $id, $clientId = null) {

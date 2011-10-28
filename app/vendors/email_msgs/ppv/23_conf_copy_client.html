@@ -44,9 +44,8 @@ include('../vendors/email_msgs/email_includes/header.html');
 				<?  
 
 				if ($liveOfferData['isFlexPackage']==1){
-
-					//$arr=getFlexPricing($liveOfferData,$ticketData); ?>
-					$arr = array();
+					$arr = array(); 
+					?>
 					<tr>
 						<td style='font-weight:bold;font-size:12px;'>
 						<!--Total <?= $arr['num_nights'];?>-Night<br>-->Package Price:
@@ -55,6 +54,7 @@ include('../vendors/email_msgs/email_includes/header.html');
 						$<?= number_format($ticketData['billingPrice']);?>
 						</td>
 					</tr>
+					<?php if ($arr['orig_num_nights']): ?>
 					<tr>
 						<td> &nbsp; </td>
 						<td valign="top" align="left" style="font-weight:normal;font-size:12px;">
@@ -62,7 +62,7 @@ include('../vendors/email_msgs/email_includes/header.html');
 						<br>
 						<?= $arr['price_expl'];?>)
 						</td>
-					</tr>
+					</tr><?php endif; ?>
 				<?}else{?>
 					<tr>
 					<td valign="top" align="left" style="font-size:12px;font-weight:bold;" nowrap>
