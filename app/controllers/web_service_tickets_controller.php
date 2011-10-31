@@ -1897,7 +1897,8 @@ class WebServiceTicketsController extends WebServicesController
 
 		// save the email as a flat file on /vendors/email_msgs/toolbox_sent_messages
 		// -------------------------------------------------------------------------------
-		file_put_contents("../vendors/email_msgs/toolbox_sent_messages/$emailBodyFileName", $emailBody);
+		// 10/31/11 jwoods - no longer saving emial content to filesystem
+		// file_put_contents("../vendors/email_msgs/toolbox_sent_messages/$emailBodyFileName", $emailBody);
 
 		// get initials
 		// -------------------------------------------------------------------------------
