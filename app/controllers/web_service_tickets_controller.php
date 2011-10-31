@@ -977,6 +977,7 @@ class WebServiceTicketsController extends WebServicesController
 			$liveOfferData = $this->Ticket->query("select * from $offerSite as LiveOffer where offerId = " . $offerId . " limit 1");
 			$liveOfferData = $liveOfferData[0]['LiveOffer'];
 			
+			$packageId			= $liveOfferData['packageId'];
 			$packageName 		= strip_tags($liveOfferData['offerName']);
 			$packageIncludes 	= $liveOfferData['offerIncludes'];
 			$legalText			= $liveOfferData['termsAndConditions'];
