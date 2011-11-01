@@ -637,6 +637,7 @@ class ConsolidatedReport extends AppModel
 				client_id = {$this->client_id}
 				AND date BETWEEN '{$this->loa_start_date}' AND '{$this->month_end_date}'
 				AND substr(ClientPhoneLead.caller_number,1,7) != '1424835'
+			ORDER BY date DESC
 		";
 		
 		$call_details_raw = $this->query($sql);

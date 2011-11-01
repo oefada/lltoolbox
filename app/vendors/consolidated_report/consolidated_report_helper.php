@@ -472,18 +472,30 @@ class ConsolidatedReportHelper
 			}
 			foreach($impression_detail as $impression_data) {
 				$impression_data = array_shift($impression_data);
-				$key = $impression_data['year'] . '-' . $impression_data['month'];
-				$cell = $column_map[$key] . $spreadsheet_row;
+				$array_key = $impression_data['year'] . '-' . $impression_data['month'];
+				$cell = $column_map[$array_key] . $spreadsheet_row;
 
-				$impressions_by_type[$key]['portfolio_microsite'] += $impression_data['productview'];
-				$impressions_by_type[$key]['destination'] += $impression_data['destinationview'];
-				$impressions_by_type[$key]['search'] += $impression_data['searchview'];
-				$impressions_by_type[$key]['email'] += $impression_data['email'];
+				$impressions_by_type[$array_key]['portfolio_microsite'] += $impression_data['productview'];
+				$impressions_by_type[$array_key]['destination'] += $impression_data['destinationview'];
+				$impressions_by_type[$array_key]['search'] += $impression_data['searchview'];
+				$impressions_by_type[$array_key]['email'] += $impression_data['email'];
 				
-				if (isset($column_map[$key])) {
+				if (isset($column_map[$array_key])) {
 					$this->setDataToPopulate($sheet_name, $cell, $impression_data['total_impressions']);
 				}
 			}
+			if ($key == 'Luxury Link') {
+				$spreadsheet_row = 34;
+			} else if ($key == 'Family Getaway') {
+				$spreadsheet_row = 35;
+			} else {
+				$spreadsheet_row = 36;
+			}
+			$this->setDataToPopulate($sheet_name, 'A' . $spreadsheet_row, $key);
+			$this->setDataToPopulate($sheet_name, 'B' . $spreadsheet_row, $impression_data['productview']);
+			$this->setDataToPopulate($sheet_name, 'C' . $spreadsheet_row, $impression_data['destinationview']);
+			$this->setDataToPopulate($sheet_name, 'D' . $spreadsheet_row, $impression_data['searchview']);
+			$this->setDataToPopulate($sheet_name, 'E' . $spreadsheet_row, $impression_data['email']);
 		}
 
 		//Populate Impressions by Type
@@ -521,7 +533,7 @@ class ConsolidatedReportHelper
 			$this->setDataToPopulate($sheet_name, "K$spreadsheet_row", $contact_detail['Firstname']);
 			$this->setDataToPopulate($sheet_name, "L$spreadsheet_row", $contact_detail['Lastname']);
 			$this->setDataToPopulate($sheet_name, "M$spreadsheet_row", $contact_detail['Email']);
-			$this->setDataToPopulate($sheet_name, "N$spreadsheet_row", 'No');
+			$this->setDataToPopulate($sheet_name, "N$spreadsheet_row", ($contact_detail['Email'] != '') ? 'No' : '');
 			$this->setDataToPopulate($sheet_name, "O$spreadsheet_row", $contact_detail['Address']);
 			$this->setDataToPopulate($sheet_name, "P$spreadsheet_row", $contact_detail['City']);
 			$this->setDataToPopulate($sheet_name, "Q$spreadsheet_row", $contact_detail['State']);
