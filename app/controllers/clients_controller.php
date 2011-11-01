@@ -233,14 +233,25 @@ class ClientsController extends AppController {
 		}
 		
 		$this->set('client', $this->data);
+		
+		$this->Country->primaryKey = "id";
 		$countryIds = $this->Country->find('list');
+
 		if (!empty($this->data['Client']['countryId'])) {
             $this->Country->State->recursive = -1;
-		    $stateIds = $this->Country->State->find('list', array('conditions' => array('State.countryId' => $this->data['Client']['countryId'])));
+			
+			$this->data['Client']['countryCode'] = $this->Country->getCountryCode($this->data['Client']['countryId']);
+			
+			$this->Country->State->primaryKey = 'id';
+		    $stateIds = $this->Country->State->find('list', array('conditions' => array('State.countryId' => $this->data['Client']['countryCode'])));
 		}
+		
 		if (!empty($this->data['Client']['stateId'])) {
             $this->Country->State->City->recursive = -1;
-		    $cityIds = $this->Country->State->City->find('list', array('conditions' => array('City.stateId' => $this->data['Client']['stateId'])));
+			
+			list($this->data['Client']['stateCode']) = $this->Country->State->getStateCode($this->data['Client']['stateId']);
+
+		    $cityIds = $this->Country->State->City->find('list', array('conditions' => array('City.stateId' => $this->data['Client']['stateCode'],'City.countryId' => $this->data['Client']['countryCode'])));
 		}
 		
 		$this->set(compact('clientStatusIds','clientTypeIds','clientCollectionIds','regions','clientAcquisitionSourceIds', 'loas', 'themes', 'destinations', 'destSelected', 'countryIds', 'stateIds', 'cityIds'));

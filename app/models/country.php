@@ -10,5 +10,12 @@ class Country extends AppModel {
 						'City' => array('foreignKey' => 'countryId'),
 						);
 						
+						
+	public function getCountryCode($id) {
+		$this->recursive = -1;
+		
+		$result = $this->find('first',array('conditions' => array('id' => $id)));
+		return $result['Country']['countryId'];
+	}
 }
 

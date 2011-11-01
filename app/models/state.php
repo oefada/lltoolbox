@@ -21,5 +21,15 @@ class State extends AppModel {
 			VALID_NOT_EMPTY,
 		)
 	);
+	
+	/**
+	 * Gets OUR auto increment state ID in relation to geonames state ID/Code stored in DB. Fix this later.
+	 */
+	public function getStateCode($id) {
+		$this->recursive = -1;
+		
+		$result = $this->find('first',array('conditions' => array('id' => $id)));
+		return array($result['State']['stateId'],$result['State']['countryId']);
+	}
 }
 ?>

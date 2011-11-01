@@ -114,7 +114,11 @@ class StatesController extends AppController {
 	    if ($stateId == null) {
 	        $stateId = $this->data['Client']['stateId'];
 	    }
-		$cityIds = $this->State->City->find('list', array('conditions' => array('City.stateId' => $stateId ) ) );		
+		
+		// StateID/Code from geonames DB, not our ID
+		list($stateCode,$countryCode) = $this->State->getStateCode($stateId);
+
+		$cityIds = $this->State->City->find('list', array('conditions' => array('City.stateId' => $stateCode, 'City.countryId' => $countryCode ) ) );		
 		$this->set(compact('cityIds'));
 		$this->layout = 'ajax';
 	}

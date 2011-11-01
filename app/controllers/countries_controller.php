@@ -84,7 +84,8 @@ class CountriesController extends AppController {
 	}
 	
 	function get_states() {
-	    $stateIds = $this->Country->State->find('list', array('conditions' => array('State.countryId' => $this->data['Client']['countryId'])));
+		$countryCode = $this->Country->getCountryCode($this->data['Client']['countryId']);
+	    $stateIds = $this->Country->State->find('list', array('conditions' => array('State.countryId' => $countryCode)));
 		$this->set(compact('stateIds'));
 		$this->layout = 'ajax';
 	}
