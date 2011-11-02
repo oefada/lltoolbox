@@ -26,6 +26,7 @@ class ConsolidatedReportShell extends Shell {
 	public function initialize()
 	{
 		self::log('Process Started.');
+		Configure::write('Cache.disable', true);
 		$this->Client = new Client();
 		$this->Loa = new Loa();
 		$this->User = new User();
