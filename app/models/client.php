@@ -812,7 +812,7 @@ class Client extends AppModel {
 			WHERE
 				Client.clientId = Loa.clientId
 				AND '$date' BETWEEN Loa.startDate AND Loa.endDate
-			ORDER BY Client.clientId
+			ORDER BY Client.name
 		";
 		return $this->query($sql);
 		
