@@ -527,18 +527,17 @@ class ConsolidatedReportHelper
 			$this->setDataToPopulate($sheet_name, "E$spreadsheet_row", $contact_detail['Arrival']);
 			$this->setDataToPopulate($sheet_name, "F$spreadsheet_row", $contact_detail['Departure']);
 			$this->setDataToPopulate($sheet_name, "G$spreadsheet_row", $contact_detail['Room Nights']);
-			$this->setDataToPopulate($sheet_name, "H$spreadsheet_row", $contact_detail['Call Duration']);
-			$this->setDataToPopulate($sheet_name, "I$spreadsheet_row", $contact_detail['Booking Type']);
-			$this->setDataToPopulate($sheet_name, "J$spreadsheet_row", $contact_detail['Phone']);
-			$this->setDataToPopulate($sheet_name, "K$spreadsheet_row", $contact_detail['Firstname']);
-			$this->setDataToPopulate($sheet_name, "L$spreadsheet_row", $contact_detail['Lastname']);
-			$this->setDataToPopulate($sheet_name, "M$spreadsheet_row", $contact_detail['Email']);
-			$this->setDataToPopulate($sheet_name, "N$spreadsheet_row", ($contact_detail['Email'] != '') ? 'No' : '');
-			$this->setDataToPopulate($sheet_name, "O$spreadsheet_row", $contact_detail['Address']);
-			$this->setDataToPopulate($sheet_name, "P$spreadsheet_row", $contact_detail['City']);
-			$this->setDataToPopulate($sheet_name, "Q$spreadsheet_row", $contact_detail['State']);
-			$this->setDataToPopulate($sheet_name, "R$spreadsheet_row", $contact_detail['Zip']);
-			$this->setDataToPopulate($sheet_name, "S$spreadsheet_row", $contact_detail['Country']);
+			$this->setDataToPopulate($sheet_name, "H$spreadsheet_row", $contact_detail['Booking Type']);
+			$this->setDataToPopulate($sheet_name, "I$spreadsheet_row", $contact_detail['Phone']);
+			$this->setDataToPopulate($sheet_name, "J$spreadsheet_row", $contact_detail['Firstname']);
+			$this->setDataToPopulate($sheet_name, "K$spreadsheet_row", $contact_detail['Lastname']);
+			$this->setDataToPopulate($sheet_name, "L$spreadsheet_row", $contact_detail['Email']);
+			$this->setDataToPopulate($sheet_name, "M$spreadsheet_row", ($contact_detail['Email'] != '') ? 'No' : '');
+			$this->setDataToPopulate($sheet_name, "N$spreadsheet_row", $contact_detail['Address']);
+			$this->setDataToPopulate($sheet_name, "O$spreadsheet_row", $contact_detail['City']);
+			$this->setDataToPopulate($sheet_name, "P$spreadsheet_row", $contact_detail['State']);
+			$this->setDataToPopulate($sheet_name, "Q$spreadsheet_row", $contact_detail['Zip']);
+			$this->setDataToPopulate($sheet_name, "R$spreadsheet_row", $contact_detail['Country']);
 		}
 	}
 }
