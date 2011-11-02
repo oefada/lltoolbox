@@ -1310,7 +1310,13 @@ class WebServiceTicketsController extends WebServicesController
 			$clientName 		    = $clients[$client_index]['contacts'][0]['ppv_name'];
 			$oldProductId		    = $clients[$client_index]['oldProductId'];
 			$locationDisplay	    = $clients[$client_index]['locationDisplay'];
-			$clientPrimaryEmail     = substr($clients[$client_index]['contact_to_string'],0,strpos($clients[$client_index]['contact_to_string'],",")); // Prevents comma separated e-mails 
+
+			if (($pos = strpos($clients[$client_index]['contact_to_string'], ",")) != 0) {
+				$clientPrimaryEmail 	= substr($clients[$client_index]['contact_to_string'],0,$pos);
+			} else {
+				$clientPrimaryEmail     = $clients[$client_index]['contact_to_string'];
+			}
+			
 			$clientCcEmail 		    = $clients[$client_index]['contact_cc_string'];
 			$clientAdjustedPrice    = $this->numF(($clients[$client_index]['percentOfRevenue'] / 100) * $ticketData['billingPrice']);
 			$clientPhone			= $clients[$client_index]['estaraPhoneLocal'] == NULL ? $clients[$client_index]['phone1'] : $clients[$client_index]['estaraPhoneLocal'];
