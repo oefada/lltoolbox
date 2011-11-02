@@ -477,16 +477,17 @@ class ClientsController extends AppController {
 	}
 	
 	/**
-	 * 
+	 *
 	 */
-	public function test()
+	public function get_clients_with_loa_around_date($date)
 	{
+		Configure::write('debug', 0);
 		$this->layout = 'ajax';
-		$this->autoRender = false;
-		
-		$this->loadModel('ConsolidatedReport');
-		var_dump($this->ConsolidatedReport->create(10006, '2011-08-01', '2011-08-31'));
-		var_dump($this->ConsolidatedReport->getContactDetails());
+		$clients = $this->Client->getClientsWithLoaAroundDate($date);
+		$this->set('date', $date);
+		$this->set('clients', $clients);
 	}
+	
+
 }
 ?>

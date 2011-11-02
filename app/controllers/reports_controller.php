@@ -4067,6 +4067,22 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		$dompdf->render();
 		$dompdf->stream('sample.pdf');
 	}
+	
+	/**
+	 *
+	 */
+	public function consolidated_report_batch()
+	{
+		// No data was POSTed, ask for a report date
+		if (!empty($this->data)) {
+			$this->loadModel('ConsolidatedReportJob');
+			if ($this->ConsolidatedReportJob->saveAll($this->data)) {
+				$this->Session->setFlash(__("The batch was successfully created."));
+			} else {
+				$this->Session->setFlash(__("There was a problem saving the batch."));
+			}
+		}
+	}
 
 	/**
 	 *

@@ -794,5 +794,28 @@ class Client extends AppModel {
 
 		return $keywords;
 	}
+	
+	/**
+	 *
+	 */
+	public function getClientsWithLoaAroundDate($date)
+	{
+		$sql = "
+			SELECT
+				Client.clientId,
+				Client.name,
+				Loa.startDate,
+				Loa.endDate
+			FROM
+				client Client,
+				loa Loa
+			WHERE
+				Client.clientId = Loa.clientId
+				AND '$date' BETWEEN Loa.startDate AND Loa.endDate
+			ORDER BY Client.clientId
+		";
+		return $this->query($sql);
+		
+	}
 }
 ?>

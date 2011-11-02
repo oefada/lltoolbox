@@ -1,24 +1,25 @@
 <ul class="tree">
-	<li><?=$html->link('Account Manager Client Report', 'mcr')?></li>
-	<li><?=$html->link('Aging', 'aging')?></li>
-	<li><?=$html->link('Auction Timeslot', 'auction_timeslot')?></li>
-	<li><?=$html->link('Auction Winner', 'auction_winner')?></li>
-	<li><?=$html->link('Bids', 'bids')?></li>
-	<li><?=$html->link('Check-in Date','check_in_date')?></li>
-	<li><?=$html->link('Client Activity Report (internal use)', 'car')?></li>
-	<li><?=$html->link('Client Management', 'cmr')?></li>
-	<li><?=$html->link('Experiments', 'experiments')?></li>
-	<li><?=$html->link('Fixed Price', 'fixed_price')?></li>
-	<li><?=$html->link('Inventory Management', 'imr')?></li>
-    	<li><?=$html->link('Invoice Report','invoice')?></li>
-	<li><?=$html->link('Merchandising Dashboard', 'merch')?></li>
-	<li><?=$html->link('Offer Search', 'offer_search')?></li>
-	<li><?=$html->link('Package Search', 'packages')?></li>
-	<li><?=$html->link('Promotions Report','promotions')?></li>
-	<li><?=$html->link('Remit Packages', 'remit');?></li>
-	<li><?=$html->link('Weekly Scorecard','weekly_scorecard')?></li>
+	<li><?=$html->link('Account Manager Client Report', $this->webroot . 'reports/mcr')?></li>
+	<li><?=$html->link('Aging', $this->webroot . 'reports/aging')?></li>
+	<li><?=$html->link('Auction Timeslot', $this->webroot . 'reports/auction_timeslot')?></li>
+	<li><?=$html->link('Auction Winner', $this->webroot . 'reports/auction_winner')?></li>
+	<li><?=$html->link('Bids', $this->webroot . 'reports/bids')?></li>
+	<li><?=$html->link('Check-in Date', $this->webroot . 'reports/check_in_date')?></li>
+	<li><?=$html->link('Client Activity Report (internal use)', $this->webroot . 'reports/car')?></li>
+	<li><?=$html->link('Client Management', $this->webroot . 'reports/cmr')?></li>
+	<li><?=$html->link('Experiments', $this->webroot . 'reports/experiments')?></li>
+	<li><?=$html->link('Fixed Price', $this->webroot . 'reports/fixed_price')?></li>
+	<li><?=$html->link('Inventory Management', $this->webroot . 'reports/imr')?></li>
+   	<li><?=$html->link('Invoice Report', $this->webroot . 'reports/invoice')?></li>
+	<li><?=$html->link('Merchandising Dashboard', $this->webroot . 'reports/merch')?></li>
+	<li><?=$html->link('Offer Search', $this->webroot . 'reports/offer_search')?></li>
+	<li><?=$html->link('Package Search', $this->webroot . 'reports/packages')?></li>
+	<li><?=$html->link('Promotions Report', $this->webroot . 'reports/promotions')?></li>
+	<li><?=$html->link('Remit Packages', $this->webroot . 'reports/remit');?></li>
+	<li><?=$html->link('Weekly Scorecard', $this->webroot . 'reports/weekly_scorecard')?></li>
 </ul>
 <h3>Other Tools</h3>
 <ul class="tree">
-	<li><?=$html->link('Client Newsletter Notifier', '/client_newsletter_notifier')?></li>
+	<li><?=$html->link('Client Newsletter Notifier', $this->webroot . 'reports/client_newsletter_notifier')?></li>
+	<li><?=$html->link('Consolidated Report Batch', $this->webroot . 'reports/consolidated_report_batch')?></li>
 </ul>
