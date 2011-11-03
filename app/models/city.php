@@ -26,5 +26,9 @@ class City extends AppModel {
 		)
 	);
 
+	public function paginateCount($conditions = null, $recursive = 0, $extra = array()) {
+	    return $this->find('count',array('fields' => 'cityId'));
+	}
+
 }
 ?>
