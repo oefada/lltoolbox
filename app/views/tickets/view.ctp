@@ -319,7 +319,7 @@ $this->searchController = 'Tickets';
 	<div style="float:left;">
 	<table width="370" cellspacing="3" cellpadding="3" border="0" style="border:0px;width:370px;">
 		<tr><td style="border:0px;"><h2>Fixed Price</h2></td></tr>
-		<tr><td style="border:0px;"><?php echo $html->link('Fixed Price - Winner Notification', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/9');?></td></tr>
+		<tr><td style="border:0px;"><?php echo $html->link('Fixed Price - Winner Notification', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/12');?></td></tr>
 		<tr><td style="border:0px;"><?php echo $html->link('Fixed Price - Internal Exclusive Email', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/11');?></td></tr>
 		<tr>
 			<?php if (count($ticket['Client']) > 1) : ?>
