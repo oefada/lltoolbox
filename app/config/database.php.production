@@ -1,59 +1,59 @@
 <?php
-class DATABASE_CONFIG {
+class DATABASE_CONFIG {	
 	var $default = array(
 		'driver' => 'mysqli',
 		'persistent' => false,
-		'host' => 'dev-db1',
-		'login' => 'root',
-		'password' => 'traveler',
+		'host' => 'toolboxprod-db',
+		'login' => 'toolbox_user',
+		'password' => '',
 		'database' => 'toolbox',
 		'prefix' => '',
 	);
-    
+
 	var $luxurylink = array(
-	    'driver' => 'mysqli',
+		'driver' => 'mysqli',
 		'persistent' => false,
-		'host' => 'dev-db2',
+		'host' => 'liveprod-db',
 		'login' => 'root',
-		'password' => 'traveler',
+		'password' => '',
 		'database' => 'luxurylink',
-		'prefix' => '',
+		'prefix' => ''
 	);
 
 	var $family = array(
 		'driver' => 'mysqli',
 		'persistent' => false,
-		'host' => 'dev-db2',
+		'host' => 'liveprod-db',
 		'login' => 'root',
-		'password' => 'traveler',
+		'password' => '',
 		'database' => 'family',
 		'prefix' => '',
 	);
-	
+
 	var $shared = array(
 		'driver' => 'mysqli',
 		'persistent' => false,
-		'host' => 'dev-db2',
+		'host' => 'liveprod-db',
 		'login' => 'root',
-		'password' => 'traveler',
+		'password' => '',
 		'database' => 'shared',
 		'prefix' => '',
 	);
-	
+
 	var $reporting = array(
 		'driver' => 'mysqli',
 		'persistent' => false,
-		'host' => 'dev-db1',
-		'login' => 'root',
-		'password' => 'traveler',
+		'host' => 'toolboxprod-db',
+		'login' => 'toolbox_user',
+		'password' => '',
 		'database' => 'reporting',
 		'prefix' => '',
 	);
-	
+
 	var $vacationist = array(
 		'driver' => 'mysqli',
 		'persistent' => false,
-		'host' => 'dev-db2',
+		'host' => 'bellhop-lamp',
 		'login' => 'root',
 		'password' => 'traveler',
 		'database' => 'vacationist',

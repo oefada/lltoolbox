@@ -3,17 +3,17 @@ class DATABASE_CONFIG {
 	var $default = array(
 		'driver' => 'mysqli',
 		'persistent' => false,
-		'host' => 'dev-db1',
+		'host' => 'stage-db1',
 		'login' => 'root',
 		'password' => 'traveler',
 		'database' => 'toolbox',
 		'prefix' => '',
 	);
-    
+
 	var $luxurylink = array(
-	    'driver' => 'mysqli',
+		'driver' => 'mysqli',
 		'persistent' => false,
-		'host' => 'dev-db2',
+		'host' => 'stage-db2',
 		'login' => 'root',
 		'password' => 'traveler',
 		'database' => 'luxurylink',
@@ -23,37 +23,37 @@ class DATABASE_CONFIG {
 	var $family = array(
 		'driver' => 'mysqli',
 		'persistent' => false,
-		'host' => 'dev-db2',
+		'host' => 'stage-db2',
 		'login' => 'root',
 		'password' => 'traveler',
 		'database' => 'family',
 		'prefix' => '',
 	);
-	
+
 	var $shared = array(
 		'driver' => 'mysqli',
 		'persistent' => false,
-		'host' => 'dev-db2',
+		'host' => 'stage-db2',
 		'login' => 'root',
 		'password' => 'traveler',
 		'database' => 'shared',
 		'prefix' => '',
 	);
-	
+
 	var $reporting = array(
 		'driver' => 'mysqli',
 		'persistent' => false,
-		'host' => 'dev-db1',
+		'host' => 'stage-db1',
 		'login' => 'root',
 		'password' => 'traveler',
 		'database' => 'reporting',
 		'prefix' => '',
 	);
-	
+
 	var $vacationist = array(
 		'driver' => 'mysqli',
 		'persistent' => false,
-		'host' => 'dev-db2',
+		'host' => 'stage-basement',
 		'login' => 'root',
 		'password' => 'traveler',
 		'database' => 'vacationist',
