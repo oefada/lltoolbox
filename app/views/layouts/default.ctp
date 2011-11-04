@@ -35,6 +35,8 @@
 			echo $javascript->link('prototip');
 			echo $javascript->link('jquery/jquery.js');
 			echo $javascript->link('jquery/jquery-noconflict.js');
+			echo $javascript->link('jquery/jquery.tablesorter.min.js');
+			echo $javascript->link('jquery/jquery.tableheader.src.js');
 			//echo $javascript->link('fixed_table_headers');
 		endif;
 
