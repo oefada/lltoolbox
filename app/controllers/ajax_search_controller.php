@@ -111,9 +111,9 @@ class AjaxSearchController extends AppController {
 					),
 					'conditions' => array(
 						'OR' => array(
-							'username LIKE' => '%'.$query.'%',
-							'AjaxSearch.userId LIKE' => '%'.$query.'%',
-							'ticketId LIKE' => '%'.$query.'%',
+							'SimpleModel.username LIKE' => ''.$query.'%',
+							'AjaxSearch.userId LIKE' => ''.$query.'%',
+							'ticketId LIKE' => ''.$query.'%',
 							'ticketId' => $query
 						),
 					),
