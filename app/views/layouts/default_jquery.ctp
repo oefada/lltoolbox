@@ -29,8 +29,7 @@
             echo $javascript->link('jquery/jquery-ui-1.7.2.custom.min');
             echo $javascript->link('jquery/jquery.dimensions.min');
             echo $javascript->link('jquery/jquery.wtooltip');
-			echo $javascript->link('jquery/jquery.tablesorter.min.js');
-			echo $javascript->link('jquery/jquery.tableheader.src.js');
+			echo $javascript->link('jquery/jquery.tableutils.src.js');
 			
 		endif;
 

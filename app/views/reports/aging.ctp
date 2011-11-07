@@ -1,191 +1,156 @@
-<?// var_dump($this);exit;?><?php $this->pageTitle = "LOA Quarterly Aging Report" ?>
 <style>
-th {
-	font-size: 11px;
-	padding: 0;
-}
+	th.header {
+		background-image: url(../img/tablesort_bg.gif);
+		cursor: pointer;
+		font-weight: bold;
+		background-repeat: no-repeat;
+		background-position: center left;
+		padding: 0 10px 0 20px;
+		border-right: 1px solid #dad9c7;
+		margin-left: -1px;
+		background-color: #f3e1b0;
+		white-space: nowrap;
+	}
+	th.headerSortUp {
+		background-image: url(/img/tablesort_asc.gif);
+		background-color: #ecce7f;
+	}
+	th.headerSortDown {
+		background-image: url(/img/tablesort_desc.gif);
+		background-color: #ecce7f;
+	}
+	tr:nth-child(even) {
+		background-color: #fafafa;
+	}
 </style>
 <script>
-/*
- * InPlaceEditor extension that adds a 'click to edit' text when the field is 
- * empty.
- */
-Ajax.InPlaceEditorWithEmptyText = Class.create(Ajax.InPlaceEditor, {
+	/*
+	 * InPlaceEditor extension that adds a 'click to edit' text when the field is
+	 * empty.
+	 */
+	Ajax.InPlaceEditorWithEmptyText = Class.create(Ajax.InPlaceEditor, {
 
-  initialize : function($super, element, url, options) {
+		initialize : function($super, element, url, options) {
 
-    if (!options.emptyText)        options.emptyText      = "click to edit&hellip";
-    if (!options.emptyClassName)   options.emptyClassName = "inplaceeditor-empty";
+			if(!options.emptyText)
+				options.emptyText = "click to edit&hellip";
+			if(!options.emptyClassName)
+				options.emptyClassName = "inplaceeditor-empty";
 
-    $super(element, url, options);
+			$super(element, url, options);
 
-    this.checkEmpty();
-  },
+			this.checkEmpty();
+		},
+		checkEmpty : function() {
 
-  checkEmpty : function() {
+			if(this.element.innerHTML.length == 0 && this.options.emptyText) {
 
-    if (this.element.innerHTML.length == 0 && this.options.emptyText) {
+				this.element.appendChild(new Element("span", {
+					className : this.options.emptyClassName
+				}).update(this.options.emptyText));
+			}
 
-      this.element.appendChild(
-          new Element("span", { className : this.options.emptyClassName }).update(this.options.emptyText)
-        );
-    }
+		},
+		getText : function($super) {
 
-  },
+			if( empty_span = this.element.select("." + this.options.emptyClassName).first()) {
+				empty_span.remove();
+			}
 
-  getText : function($super) {
+			return $super();
 
-    if (empty_span = this.element.select("." + this.options.emptyClassName).first()) {
-      empty_span.remove();
-    }
-
-    return $super();
-
-  },
-
-  wrapUp : function($super, transport) {
-    this.checkEmpty();
-    return $super(transport);
-  }
-
-});
+		},
+		wrapUp : function($super, transport) {
+			this.checkEmpty();
+			return $super(transport);
+		}
+	});
 
 </script>
-<div class='index'>
-<?php
-/*
-//TODO: put this in a helper
-function $utilities->sortLink($field, $title, $view, $html) {
-
-	//$url = "/reports/bids/filter:";
-	$url = "/reports/aging";
-	$url .= "/sortBy:$field";
-
-	if (isset($view->params['named']['sortBy']) && $view->params['named']['sortBy'] == $field) {
-		$dir = ($view->params['named']['sortDirection'] == 'ASC') ? 'DESC' : 'ASC';
-	} elseif(isset($view->params['named']['sortBy'])  && $view->params['named']['sortBy'] == $field) {
-		$dir = 'DESC';
-	} else {
-		$dir = 'ASC';
-	}
-	
-	$url .= "/sortDirection:$dir";
-	
-	return $html->link($title, $url);
-
-}
-*/
-
-if (!empty($results)): 
-$i = 1;
-$j = 1;
-
-$grandTotalMembershipFee = 0;
-$grandTotalMembershipBalance = 0;
-
-?>
-<?php foreach($results as $periodName => $timeperiod): ?>
-	<a name="section-<?=$j?>"></a>
-	<div style="float: right">
-	<?= $html->link('<span><b class="icon"></b>Export Report</span>', array('action'=>'aging.csv'), array('class' => 'button excel'), null, false); ?>
-	</div>
-	<div><h2>Accounts aged <?=$periodName?> days</h2>
-		<?php if ($showingOld) { ?>
-			<a href="/reports/aging#section-<?=$j?>">Hide LOAs that expired more than 30 days ago</a>
-		<?php } else { ?>
-			<a href="/reports/aging?showOld=1#section-<?=$j?>">Show LOAs that expired more than 30 days ago</a>
-		<?php }?><br />
-	<?=count($timeperiod)?> records found</div>
-	<table style="margin-top: 20px">
+<div style="float:right;">
+	<?=$html->link("View old aging report",array('action'=>'aging2'));?>
+</div>
+<div style="float:right;clear:both;">
+	<?= $html->link('<span><b class="icon"></b>Export Report</span>' , array('action' => 'aging.csv') , array('class' => 'button excel') , null , false);?>
+</div>
+<table class="tablesorter tablefilter">
+	<thead>
+		<tr style="text-align:center;">
+			<td colspan="2">Age</td>
+			<td colspan="3">Client</td>
+			<td colspan="1"></td>
+			<td colspan="2"></td>
+			<td colspan="2">Membership</td>
+			<td colspan="2"># of Packages</td>
+			<td colspan="2">Sites</td>
+			<td colspan="2">Last Sell</td>
+			<td colspan="2">Packages</td>
+			<td></td>
+		</tr>
 		<tr>
-			<!--<th>&nbsp;</th>-->
-			<th><?=$utilities->sortLink('age', 'Age (Days)', $this, $html)?></th>
-			<th><?="Destination";?></th>
-			<th><?=$utilities->sortLink('Client.name', 'Client Name', $this, $html)?></th>
-			<th><?=$utilities->sortLink('Client.managerUsername', 'Account Manager', $this, $html)?></th>
-			<th><?=$utilities->sortLink('Loa.startDate', 'Start Date', $this, $html)?></th>
-			<th><?=$utilities->sortLink('loaEndDate', 'End Date', $this, $html)?></th>
-			<th><?=$utilities->sortLink('membershipFee', 'Membership Fee', $this, $html)?></th>
-			<th><?=$utilities->sortLink('membershipBalance', 'Remaining Balance', $this, $html)?></th>
-			<th><?=$utilities->sortLink('lastSellPrice', 'Last Ticket Price', $this, $html)?></th>
-			<th><?=$utilities->sortLink('lastSellDate', 'Last Ticket Date', $this, $html)?></th>
+			<th>Days</th>
+			<th>30d</th>
+			<th>Name</th>
+			<th>Location</th>
+			<th>Destination</th>
+			<th>Manager</th>
+			<th>Start</th>
+			<th>End</th>
+			<th>Fee</th>
+			<th>Balance</th>
+			<th>Total</th>
+			<th>Remaining</th>
 			<th>LL</th>
 			<th>FG</th>
-			<th>Packages Live</th>
-			<th><?=$utilities->sortLink('Loa.notes', 'Notes', $this, $html)?></th>
+			<th>LL</th>
+			<th>FG</th>
+			<th>Date</th>
+			<th>Price</th>
+			<th>Notes</th>
 		</tr>
-<?php
-$subtotalMembershipFee = 0;
-$subtotalMembershipBalance = 0;
-foreach ($timeperiod as $k => $r):
-	//die(var_dump($r,true));
-$class = ($k % 2) ? ' class="altrow"' : '';
-$subtotalMembershipFee += (int)$r['Loa']['membershipFee'];
-$subtotalMembershipBalance += (int)$r['Loa']['membershipBalance'];
-?>
-	<tr<?=$class?>>
-		<!--<td><?=$i++?></td>-->
-		<td><?=$r[0]['age']?></td>
-		<td><?=isset($r['Client']['destinationName'])?$r['Client']['destinationName']:'';?></td>
-		<td><?php echo $html->link($r['Client']['name'],array('controller'=>'clients','action'=>'edit','id'=>$r['Client']['clientId'])); ?></td>
-		<td><?=$r['Client']['managerUsername']?></td>
-		<td><?=$r['Loa']['startDate']?></td>
-		<td><?=$r[0]['loaEndDate']?></td>
-		<td>
-			<?php if ($r['Loa']['membershipBalance'] > 0) { echo number_format($r['Loa']['membershipFee']); } ?>
-			<?php if ($r['Loa']['membershipPackagesRemaining'] > 0) { echo "<br />{$r['Loa']['membershipTotalPackages']} packages<br />";} ?>
-		</td>
-		<td>
-			<?php if ($r['Loa']['membershipBalance'] > 0) { echo number_format($r['Loa']['membershipBalance']); } ?>
-			<?php if ($r['Loa']['membershipPackagesRemaining'] > 0) { echo "<br />{$r['Loa']['membershipPackagesRemaining']} packages<br />";} ?>
-		</td>
-		<td><?=number_format($r[0]['lastSellPrice'])?></td>
-		<td><?=$html->link($r[0]['lastSellDate'], '/loas/maintTracking/'.$r['Loa']['loaId'])?></td>
+	</thead>
+	<tbody>
+		<?php
+foreach ($aging as $a):
+		?>
+		<tr>
+			<td><?=$a['age'];?></td>
+			<td><?=30*intval($a['age']/30);?></td>
+			<td><?=$html->link($a['name'] , array('controller' => 'clients' , 'action' => 'edit' , 'id' => $a['clientId']));?></td>
+			<td><?= $a['locationDisplay'];?></td>
+			<td><?= $a['destinationName'];?></td>
+			<td><?= $a['managerUsername'];?></td>
+			<td><?=substr($a['startDate'] , 0 , 10);?></td>
+			<td><?=substr($a['loaEndDate'] , 0 , 10);?></td>
+			<td align="right">$<?=intval($a['membershipFee']);?></td>
+			<td align="right">$<?=intval($a['membershipBalance']);?></td>
+			
+			<td><?=strpos($a['sites'] , 'luxurylink') === false ? '' : 'LL';?></td>
+			<td><?=strpos($a['sites'] , 'family') === false ? '' : 'FG';?></td>
 
-		<td><?=(strpos($r['Client']['sites'],'luxurylink')===FALSE)?'':'LL'?></td>
-		<td><?=(strpos($r['Client']['sites'],'family')===FALSE)?'':'FG'?></td>
-		<td> <?=isset($r['Client']['numOffers'])?$r['Client']['numOffers']:''?> </td>
-		<td>
-			<p id="notes-<?=$r['Loa']['loaId']?>"><?=$r['Loa']['notes']?></p>
+			<td><?=$a['offersLuxuryLink'] ? $a['offersLuxuryLink'] : '';?>
+			<td><?=$a['offersFamily'] ? $a['offersFamily'] : '';?>
+
+			<td><?=substr($a['lastSellDate'] , 0 , 10);?></td>
+			<td align="right">$<?=intval($a['lastSellPrice']);?></td>
+			<td><?=$a['membershipTotalPackages'];?></td>
+			<td><?=$a['membershipPackagesRemaining'];?></td>
+			<td>
+			<p id="notes-<?=$a['loaId']?>">
+				<?=$a['notes'];?>
+			</p>
 			<script type="text/javascript">
-			 new Ajax.InPlaceEditorWithEmptyText("notes-<?=$r['Loa']['loaId']?>", '/loas/inplace_notes_save', {rows:5,cols:30});
-			</script>
-		</td>
-	</tr>
-<?php endforeach; //TODO: add totals ?>
-	<tr class="blackBg">
-		<th colspan=6 style="text-align: right">Subtotals:</th>
-		<th><?=number_format($subtotalMembershipFee)?></th>
-		<th><?=number_format($subtotalMembershipBalance)?></th>
-		<th colspan=6>
-			&nbsp;
-		</th>
-	</tr>
-	
-<?php if($periodName != '0 to 30'): ?>
+new Ajax.InPlaceEditorWithEmptyText("notes-<?=$a['loaId']?>", '/loas/inplace_notes_save', {rows:5,cols:30});</script></td>
+			<?php
+			echo "</tr>\n";
+			endforeach;
+			?>
+	</tbody>
 </table>
-<?php endif;?>
-<?php 
-$j++;
-$grandTotalMembershipFee += $subtotalMembershipFee;
-$grandTotalMembershipBalance += $subtotalMembershipBalance;
-endforeach; //end periods
-?>
-	<tr>
-		<th colspan=14>&nbsp;</th>
-	</tr>
-	<tr class="blackBg">
-		<th colspan=6 style="text-align: right">Grand Total:</th>
-		<th><?=number_format($grandTotalMembershipFee)?></th>
-		<th><?=number_format($grandTotalMembershipBalance)?></th>
-		<th colspan=4>
-			&nbsp;
-		</th>
-	</tr>
-</table>
-<?php else: ?>
-	<div class='blankExample'>
-		<h1>No results found</h1>
-	</div>
-<?php endif; ?>
-</div>
+<script type="text/javascript">
+	jQuery(document).ready(function() {
+		jQuery.tablesorter.defaults.sortList = [[1,0],[5,0],[9,1]];
+		jQuery("table.tablesorter").tablesorter();
+	});
+
+</script>

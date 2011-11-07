@@ -1,69 +1,48 @@
 <?php
+/*
+ $handle=fopen('php://output','a');
+ fputcsv($handle , array_keys(current($aging)));
+ foreach ($aging as $row) {
+ fputcsv($handle , $row);
+ }
+ */
 
-if (!empty($results)){
+$handle = fopen('php://output' , 'a');
 
-	$i = 1;
+fputcsv($handle , array('Age Days' , '30 days' , 'Client id' , 'LOA id' , 'Client Name' , 'Location' , 'Destination' , 'Manager' , 'Start' , 'End' , 'Membership Fee' , 'Balance' , 'Total Packages' , 'Packages Remaining' , 'LL' , 'FG' , 'Offers LL' , 'Offers FG' , 'Last Sell Price' , 'Last Sell Date' , 'Notes' , ));
 
-	foreach($results as $periodName => $timeperiod){
+foreach ($aging as $a) {
+	$row = array();
+	$row['age_days'] = formatCSV($a['age']);
+	$row['age_30d'] = formatCSV(30*intval($a['age']/30));
+	$row['clientId'] = formatCSV($a['clientId']);
+	$row['loaId'] = formatCSV($a['loaId']);
+	$row['name'] = formatCSV($a['name']);
+	$row['locationDisplay'] = formatCSV($a['locationDisplay']);
+	$row['destinationName'] = formatCSV($a['destinationName']);
+	$row['managerUsername'] = formatCSV($a['managerUsername']);
+	$row['startDate'] = formatDate($a['startDate']);
+	$row['loaEndDate'] = formatDate($a['loaEndDate']);
+	$row['membershipFee'] = formatDollars($a['membershipFee']);
+	$row['membershipBalance'] = formatDollars($a['membershipBalance']);
+	$row['membershipTotalPackages'] = formatCSV($a['membershipTotalPackages']>0?$a['membershipTotalPackages']:'');
+	$row['membershipPackagesRemaining'] = formatCSV($a['membershipPackagesRemaining']>0?$a['membershipPackagesRemaining']:'');
+	$row['sitesLL'] = formatCSV(strpos($a['sites'],'luxurylink')!==false?'LL':'');
+	$row['sitesFG'] = formatCSV(strpos($a['sites'],'family')!==false?'FG':'');
+	$row['offersLuxuryLink'] = formatCSV($a['offersLuxuryLink']>0?$a['offersLuxuryLink']:'');
+	$row['offersFamily'] = formatCSV($a['offersFamily']>0?$a['offersFamily']:'');
+	$row['lastSellPrice'] = formatDollars($a['lastSellPrice']);
+	$row['lastSellDate'] = formatDate($a['lastSellDate']);
+	$row['notes'] = formatCSV($a['notes']);
+	fputcsv($handle , $row);
+}
 
-		echo "Accounts aged $periodName days\n";
-		echo count($timeperiod);
-		echo "records found \n";
-		echo ",Age (Days),Client ID,Client Name,Manager Username,LOA ID,Start Date,End Date,";
-		echo "Membership Fee,Remaining Balance,Last Sell Price,Last Sell Date,";
-		echo "Sites,";
-		echo "Packages Live,";	
-		echo "Notes\n";
-
-		foreach ($timeperiod as $k => $r){
-
-			echo ($i++).",".$r[0]['age'];
-			echo ",";
-			echo $r['Client']['clientId'];
-			echo ",";
-			echo '"';
-			echo str_replace('"', '\"', $r['Client']['name']);
-			echo '"';
-			echo ",";
-			echo $r['Client']['managerUsername'];
-			echo ",";
-			echo $r['Loa']['loaId'];
-			echo ",";
-			echo $r['Loa']['startDate'];
-			echo ",";
-			echo $r[0]['loaEndDate'];
-			echo ",";
-			echo $r['Loa']['membershipFee'];
-
-			if ($r['Loa']['membershipPackagesRemaining']){
-				echo $r['Loa']['membershipTotalPackages'] . ' packages'; 
-			}
-			echo ",";
-			echo $r['Loa']['membershipBalance'];
-			if ($r['Loa']['membershipPackagesRemaining']){
-				echo $r['Loa']['membershipPackagesRemaining'] . ' packages'; 
-			}
-			echo ",";
-			echo $r[0]['lastSellPrice'];
-			echo ",";
-			echo $r[0]['lastSellDate'];
-			echo ",";
-
-			echo isset($r['Client']['sites'])?str_replace(",","/",$r['Client']['sites']).",":',';
-
-			echo isset($r['Client']['numOffers'])?$r['Client']['numOffers'].",":',';
-
-			echo '"'.str_replace('"', '\"', $r['Loa']['notes']).'"';
-			echo "\n";
-
-		}
-
-		echo "\n";
-
-	}
-
-}else{
-
-	echo "No results found";
-
+function formatDollars($s) {
+return '$'.number_format($s,0);	
+}
+function formatDate($s) {
+	return substr($s,0,10);
+}
+function formatCSV($s) {
+	return str_replace("\n",chr(10),str_replace("\r",'',trim($s)));
 }

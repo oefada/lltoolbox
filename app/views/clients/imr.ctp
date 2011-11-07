@@ -127,5 +127,4 @@
         </tbody>
     </table>
 <?php endif; ?>
-<script type="text/javascript" src="/js/jquery/jquery.tablesorter.min.js"></script>
 <script type="text/javascript" src="/js/imr.js"></script>

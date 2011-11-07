@@ -1,9 +1,4 @@
 <?
-function printR($arr){
-	echo "<pre>";
-	print_r($arr);
-	echo "</pre>";
-}
 class ReportsController extends AppController {
 
 	var $name = 'Reports';
@@ -948,8 +943,125 @@ class ReportsController extends AppController {
 		return $results;
 
 	}
+function aging() {
 
-	function aging() {
+	$aging = array();
+
+	$sql = "
+SELECT
+Client.clientId,
+Client.name,
+Client.sites                    AS sites,
+Loa.loaId,
+Loa.startDate,
+MAX(Loa.endDate)                AS loaEndDate,
+Loa.membershipFee,
+Loa.membershipBalance,
+Loa.notes,
+Loa.membershipTotalPackages,
+Loa.membershipPackagesRemaining,
+Loa.loaMembershipTypeId,
+DATEDIFF(NOW(), Loa.startDate)  AS age,
+Client.managerUsername,
+Client.locationDisplay,
+(SELECT
+Ticket.billingPrice
+FROM ticket AS Ticket
+INNER JOIN clientLoaPackageRel clp
+ON (clp.packageId = Ticket.packageId)
+WHERE clp.clientId = Client.clientId
+AND clp.LoaId = Loa.loaId
+ORDER BY Ticket.created DESC
+LIMIT 1 ) AS lastSellPrice,
+(SELECT
+Ticket.created
+FROM ticket AS Ticket
+INNER JOIN clientLoaPackageRel clp
+ON (clp.packageId = Ticket.packageId)
+WHERE clp.clientId = Client.clientId
+AND clp.LoaId = Loa.loaId
+ORDER BY Ticket.created DESC
+LIMIT 1 ) as lastSellDate
+FROM client AS Client
+INNER JOIN loa AS Loa
+ON (Loa.clientId = Client.clientId)
+WHERE (Loa.membershipBalance > 0
+OR Loa.membershipPackagesRemaining > 0)
+AND Loa.loaLevelId = 2
+GROUP BY Client.clientId, Loa.loaId
+";
+	$results = $this->OfferType->query($sql);
+
+	// Flatten results
+	$aging = array();
+	foreach ($results as $result) {
+		if (isset($result['Client']['clientId'])) {
+			$data = array();
+			foreach ($result as $r) {
+				foreach ($r as $k => $v) {
+					$data[$k] = $v;
+				}
+			}
+			$data['destinationName'] = '';
+			$data['offersLuxuryLink']=$data['offersFamily']=0;
+			$aging[$result['Client']['clientId']] = $data;
+		}
+	}
+
+	// get destination names
+	$q = "SELECT c.clientId,dest.destinationName FROM clientDestinationRel as cdr ";
+	$q .= "INNER JOIN client as c ON (cdr.clientId=c.clientId) ";
+	$q .= "INNER JOIN destination as dest ON (cdr.destinationId=dest.destinationId) ";
+	$clientId_arr = array();
+	$q .= "WHERE c.clientId IN (" . implode(", " , array_keys($aging)) . ")";
+	$destinations = $this->OfferType->query($q);
+	foreach ($destinations as $d) {
+		if (isset($d['c']['clientId']) && isset($d['dest']['destinationName']) && isset($aging[$d['c']['clientId']])) {
+			$aging[$d['c']['clientId']]['destinationName'] = $d['dest']['destinationName'];
+			//$aging[$d['c']['clientId']] = $this->getNumOffers($d['c']['clientId']);
+		}
+	}
+	
+	// get number of offers
+	foreach (array("LuxuryLink","Family") as $site) {
+$sql = "SELECT clientId,COUNT(clientId) AS num".$site." FROM offer".$site."
+		WHERE clientId IN (".implode(", ",array_keys($aging)).")
+		AND endDate>NOW()
+		AND ISCLOSED=0 
+		GROUP BY clientId";
+	$results=$this->OfferType->query($sql);
+	
+	foreach ($results as $r) {
+		$clientId = $r['offer'.$site]['clientId'];
+
+		$offers = $r[0]['num'.$site];		
+		$aging[$clientId]['offers'.$site]=		$offers;
+		
+	}
+	}
+
+		// get the unique values for these columns:
+	$destinations = $locations = $managers = array();
+	foreach ($aging as $a) {
+		if (!empty($a['destinationName'])) {
+			$destinations[$a['destinationName']] = true;
+			$locations[$a['locationDisplay']]=true;
+			$managers[$a['managerUsername']]=true;
+		}
+	}
+	$destinations = array_keys($destinations);
+	$locations = array_keys($locations);
+	$managers = array_keys($managers);
+	sort($destinations);sort($locations);sort($managers);
+	$this->set('destinations' , $destinations);
+	$this->set('locations' , $locations);
+	$this->set('managers' , $managers);
+	
+	$this->set('aging' , $aging);
+
+}
+
+	function aging2() {
 
 		$sortBy=isset($this->params['named']['sortBy'])?$this->params['named']['sortBy']:"default";
 		$sortDirection=isset($this->params['named']['sortDirection'])?$this->params['named']['sortDirection']:"DESC";
