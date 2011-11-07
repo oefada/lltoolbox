@@ -1554,11 +1554,7 @@ class WebServiceTicketsController extends WebServicesController
 				break;
 			case 30:
 				// send out res cancellation confirmation
-				if ($siteId == 2) {
-					include('../vendors/email_msgs/notifications/old/30_reservation_cancel_confirmation.html');
-				} else {
-					$templateFile = "30_reservation_cancel_confirmation";
-				}
+				include('../vendors/email_msgs/notifications/old/30_reservation_cancel_confirmation.html');
 				
 				$templateTitle = "Your reservation has been cancelled";
 				$emailSubject = "Your $siteName Booking was Cancelled. - $userFirstName $userLastName";
