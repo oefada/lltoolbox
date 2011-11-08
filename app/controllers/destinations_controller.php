@@ -20,10 +20,7 @@ class DestinationsController extends AppController {
 	function add() {
 		if (!empty($this->data)) {
 			$this->Destination->create();
-			$this->Destination->Tag->create();
-			if ($this->Destination->Tag->save(array('Tag' => array('tagName' => $this->data['Destination']['destinationName'])))) {
-				$this->data['Destination']['tagId'] = $this->Destination->Tag->getLastInsertID();
-			}
+
 			if ($this->Destination->save($this->data)) {
 				$this->Session->setFlash(__('The Destination has been saved', true));
 				$this->redirect(array('action'=>'index'));
@@ -31,8 +28,6 @@ class DestinationsController extends AppController {
 				$this->Session->setFlash(__('The Destination could not be saved. Please, try again.', true));
 			}
 		}
-		$tags = $this->Destination->Tag->find('list');
-		$this->set(compact('tags'));
 	}
 
 	function edit($id = null) {
@@ -51,8 +46,6 @@ class DestinationsController extends AppController {
 		if (empty($this->data)) {
 			$this->data = $this->Destination->read(null, $id);
 		}
-		$tags = $this->Destination->Tag->find('list');
-		$this->set(compact('tags'));
 	}
 
 	function delete($id = null) {
