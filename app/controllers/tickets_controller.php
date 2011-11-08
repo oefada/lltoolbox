@@ -118,7 +118,7 @@ class TicketsController extends AppController {
 		                        );
 
 		if ($csv_export) {
-			$this->paginate['limit'] = 1000;
+			$this->paginate['limit'] = 10000;
 		}
 
 		$single_search = true;
