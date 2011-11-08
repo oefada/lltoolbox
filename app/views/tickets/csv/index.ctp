@@ -19,7 +19,7 @@ foreach($tickets as $ticket) {
 	echo $ticket['Ticket']['billingPrice'] . ",";
 	echo $ticket['Ticket']['validCard'] . ",";
 	echo $ticket['TicketStatus']['ticketStatusName'] . ",";
-	echo $ticket['Promo'][0]['pc']['promoCode'] . ",";
+	echo (isset($ticket['Promo'][0]['pc']['promoCode'])?$ticket['Promo'][0]['pc']['promoCode']:'') . ",";
 	echo str_replace($ex, ' ', $ticket['Ticket']['ticketNotes']) . ",";
 	echo "\n";
 }
