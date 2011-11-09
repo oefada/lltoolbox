@@ -487,7 +487,6 @@ class PackagesController extends AppController {
 	}
 
 	function edit($clientId = null, $id = null) {
-
 		if (!$clientId && !$id && empty($this->data)) {
 			$this->Session->setFlash(__('Invalid Package or Client', true));
 			$this->redirect(array('controller' => 'clients', 'action'=>'index'));
@@ -2074,13 +2073,11 @@ class PackagesController extends AppController {
     }
 
     function edit_price_points($clientId, $packageId){
-
         $package = $this->Package->getPackage($packageId);
         $isMultiClientPackage = (count($package['ClientLoaPackageRel']) > 1) ? true : false;
 
         // saving data
         if (!empty($this->data)){
-
             $this->autoRender = false;
 
             // validation
@@ -2133,7 +2130,6 @@ class PackagesController extends AppController {
                 $errors[] = 'Buy Now Price is a required field.';
             }
 						*/
-
 
             if ($package['Package']['isFlexPackage'] == 1) {
               if (empty($this->data['PricePoint']['flexRetailPricePerNight']) || $this->data['PricePoint']['flexRetailPricePerNight'] <= 0) {
@@ -2255,9 +2251,6 @@ class PackagesController extends AppController {
 
 			$this->Package->updatePricePointValidityGroupId($ppid,$vg_id);
 
-CakeLog::write('debug', 'C');
-      echo "ok";// ppid:$ppid|vg_id:$vg_id";
-
 			// view data
 			} else {
 
@@ -2265,7 +2258,7 @@ CakeLog::write('debug', 'C');
 				$loaItemRatePeriodIds = array();
 				$pricePointId = isset($this->params['url']['pricePointId']) ? $this->params['url']['pricePointId'] : 0;
 				if ($pricePointId) {
-					$pricePoint = $this->Package->PricePoint->find('first', array('conditions' => array('PricePoint.pricePointId' => $pricePointId)));
+					$pricePoint = $this->Package->PricePoint->find('first', array('conditions' => array('PricePoint.pricePointId' => $pricePointId), 'contain' => array('PricePointRatePeriodRel')));
 					$this->set('pricePoint', $pricePoint['PricePoint']);
 
 					$pricePointRatePeriodRels = $this->Package->PricePoint->PricePointRatePeriodRel->find('all', array('conditions' => array('PricePointRatePeriodRel.pricePointId' => $pricePointId), 'fields' => array('PricePointRatePeriodRel.loaItemRatePeriodId')));
@@ -2298,6 +2291,7 @@ CakeLog::write('debug', 'C');
 
 				// disable ratePeriods that have already been used
 				$pricePointRatePeriods = $this->Package->PricePoint->getLoaItemRatePeriod($packageId);
+
 				foreach ($ratePeriods as $key => $ratePeriod) {
 					foreach ($pricePointRatePeriods as $pricePointRatePeriod) {
 						if ($ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId'] == $pricePointRatePeriod['PricePointRatePeriodRel']['loaItemRatePeriodId'] && !in_array($pricePointRatePeriod['PricePointRatePeriodRel']['loaItemRatePeriodId'], $loaItemRatePeriodIds)) {
@@ -2537,8 +2531,6 @@ CakeLog::write('debug', 'C');
             }
 
         }
-
-
     }
 
     function getRatePeriodsInfo($packageId) {
@@ -2612,6 +2604,7 @@ CakeLog::write('debug', 'C');
                 }
             }
         }
+	
         return $ratePeriods;
     }
 

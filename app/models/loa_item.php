@@ -465,6 +465,14 @@ class LoaItem extends AppModel {
             return $loaId[0]['ClientLoaPackageRel']['loaId'];
         }
     }
+	
+	function getPackageIdByLoaId($loaId) {
+		if (($packageId = $this->query("SELECT packageId FROM clientLoaPackageRel ClientLoaPackageRel WHERE loaId = '{$loaId}'")) !== false) {
+			return $packageId[0]['ClientLoaPackageRel']['packageId'];
+		} else {
+			return false;
+		}
+	}
     
     function getLoaItem($loaItemId) {
         return $this->find('first', array('conditions' => array('LoaItem.loaItemId' => $loaItemId)));
@@ -536,6 +544,7 @@ class LoaItem extends AppModel {
     function calcTotalAccommodations($rate, $fees, $totalNights) {
         $rates = array();
         $i = 0;
+		
         foreach ($rate as $roomRate) {
             foreach ($roomRate['LoaItemRate'] as $price) {
                 $taxes = 0;
@@ -716,7 +725,8 @@ class LoaItem extends AppModel {
             }
             $pricePerNight = $roomBasePrice + $perNightInclusionTotal;
         }
-        return $pricePerNight;
+		
+        return round($pricePerNight,0);
     }
     
      /** acarney 2011-01-07

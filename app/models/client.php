@@ -35,12 +35,7 @@ class Client extends AppModel {
                         'RoomGrade' => array('className' => 'RoomGrade', 'foreignKey' => 'clientId')
 					   );
 
-   var $hasAndBelongsToMany = array('Tag' => array('className'    => 'Tag',
-												   'foreignKey'   => 'clientId',
-												   'associationForeignKey'=> 'tagId',
-												   'with' => 'clientTag',
-												   'unique'       => true),
-									'Destination' => array('className' => 'Destination',
+   var $hasAndBelongsToMany = array('Destination' => array('className' => 'Destination',
 														   'foreignKey' => 'clientId',
 														   'with' => 'ClientDestinationRel',
 														   'associationForeignKey' => 'destinationId')

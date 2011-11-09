@@ -333,7 +333,4 @@ if ($isGroup) {
 	</fieldset>
 </div>
 <script>Event.observe("LoaItemLoaItemTypeId", "change", toggle_price);toggle_price();</script>
-
-<?php
-if (isset($closeModalbox) && $closeModalbox) echo "<div id='closeModalbox'></div>";
-?>
+<? if (isset($closeModalbox) && $closeModalbox) echo "<div id='closeModalbox'></div>";

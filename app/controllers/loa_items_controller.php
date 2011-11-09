@@ -169,7 +169,6 @@ class LoaItemsController extends AppController {
 		$this->set('masterLoaItemTypeIds', $masterLoaItemTypeIds);
 
 		if (!empty($this->data)) {
-			
 			$loaItemData = array();
 			$loaItemData['LoaItem'] = $this->data['LoaItem'];
 			$loaItemData['Fee'] = $this->data['Fee'];
@@ -219,6 +218,7 @@ class LoaItemsController extends AppController {
 							$this->LoaItem->query("DELETE FROM loaItemRate WHERE loaItemRatePeriodId = $v[loaItemRatePeriodId]");
 							$this->LoaItem->query("DELETE FROM loaItemDate WHERE loaItemRatePeriodId = $v[loaItemRatePeriodId]");
 						}
+
 						$loaItemRatePeriod['LoaItemRatePeriod']['loaItemId'] = $loaItemData['LoaItem']['loaItemId'];
 						$loaItemRatePeriod['LoaItemRatePeriod']['loaItemRatePeriodName'] = $v['loaItemRatePeriodName'];
 						$loaItemRatePeriod['LoaItemRate'] = array_values($v['LoaItemRate']);
@@ -227,12 +227,27 @@ class LoaItemsController extends AppController {
 							$loaItemRatePeriod['LoaItemDate'][$kd]['startDate'] = date('Y-m-d', strtotime($vd['startDate']));
 							$loaItemRatePeriod['LoaItemDate'][$kd]['endDate'] = date('Y-m-d', strtotime($vd['endDate']));
 						}
+
 						$this->LoaItemRatePeriod->saveAll($loaItemRatePeriod);
+
+						// Ticket 2523 -- Flex rate doesn't recalc when changing tax rate
+						// Need to re-calc FLEX price points when making fee changes
+						$packageId = $this->LoaItem->getPackageIdByLoaId($loaItemData['LoaItem']['loaId']);
+						$pricePoint = $this->LoaItemRatePeriod->PricePointRatePeriodRel->getPricePointForRatePeriod($packageId,$v['loaItemRatePeriodId']);
+						$pricePoint = $pricePoint['PricePoint'];
+						
+						if ($pricePoint['flexRetailPricePerNight'] != NULL) {
+							$pricePoint['flexRetailPricePerNight'] = $this->LoaItem->calcFlexPricePerNight($loaItemData['LoaItem']['loaItemId'], $packageId, $v['loaItemRatePeriodId']);
+							$this->LoaItemRatePeriod->PricePointRatePeriodRel->PricePoint->save(array('PricePoint' => $pricePoint));
+						
+							$flexWarning = "<script>alert('WARNING: You have updated the pricing or taxes/fees for a Flex package. The Flex Retail Price Per Night has been updated, however, the price per EXTRA night has not.\\n\\nYou must manually edit the price point for this LOA and re-calculate the Flex price.\\n\\n');</script>";
+						}
 					}
 				}
+
 				if ($this->RequestHandler->isAjax()) {
 					$this->set('closeModalbox', true);
-					$this->Session->setFlash(__('The LoaItem has been saved', true), 'default', array(), 'success');
+					$this->Session->setFlash(__('The LoaItem has been saved'.$flexWarning, true), 'default', array(), 'success');
 				} else {
 					$this->redirect(array('controller' => 'loas', 'action'=>'view', 'id' => $this->params['data']['LoaItem']['loaId']));
 				}
@@ -240,6 +255,7 @@ class LoaItemsController extends AppController {
 				$this->Session->setFlash(__('The LoaItem could not be saved. Please, try again.', true));
 			}
 		}
+
 		if (empty($this->data)) {
 			$this->LoaItem->recursive = 2;
 			$this->data = $this->LoaItem->read(null, $id);

@@ -5,7 +5,7 @@ class PricePoint extends AppModel {
 	var $useTable = 'pricePoint';
 	var $primaryKey = 'pricePointId';
 	var $displayField = 'name';
-    
+
     var $belongsTo = array(
         'Package' => array('foreignKey' => 'packageId')
     );
@@ -15,38 +15,25 @@ class PricePoint extends AppModel {
         'SchedulingMaster' => array('foreignKey' => 'pricePointId')
     );
     
-    var $actsAs = array('Logable');
+    var $actsAs = array('Logable','Containable');
 
-		function setInactive($val,$ppid){
+    function setInactive($val,$ppid){
+        $q="UPDATE pricePoint SET inactive=$val WHERE pricePointId=$ppid";
+        $this->query($q);
 
-			$q="UPDATE pricePoint SET inactive=$val WHERE pricePointId=$ppid";
-			$this->query($q);
+        $q="DELETE FROM pricePointRatePeriodRel WHERE pricePointId=$ppid";
+        $this->query($q);
 
-			$q="DELETE FROM pricePointRatePeriodRel WHERE pricePointId=$ppid";
-			$this->query($q);
-
-		}
+    }
     
     function afterSave($created) {
         $pricePointId = (isset($this->data['PricePoint']['pricePointId'])) ? isset($this->data['PricePoint']['pricePointId']) : $this->id;
         $packageId = $this->data['PricePoint']['packageId'];
-        
+
         // get the site and offer table for the package first
         $rows = $this->query("SELECT siteId FROM package Package WHERE packageId = $packageId");
-        switch ($rows[0]['Package']['siteId']) {
-            case '1':
-            $offerTable = 'offerLuxuryLink';
-            break;
-            
-            case '2':
-            $offerTable = 'offerFamily';
-            break;
-            
-            default:
-            $offerTable = false;
-            break;
-        }
-        
+        $offerTable = $this->getOfferTable($rows[0]['Package']['siteId']);
+
         // update buyNow offers with the latest pricing
         if ($offerTable) {
             $buyNowPrice = round($this->data['PricePoint']['retailValue'] * $this->data['PricePoint']['percentRetailBuyNow'] / 100); 
@@ -56,6 +43,23 @@ class PricePoint extends AppModel {
                 WHERE pricePointId = $pricePointId AND packageId = $packageId AND offerTypeId IN(3, 4)
             ");
         }
+    }
+
+    public function getOfferTable($siteId) {
+        switch ($siteId) {
+            case '1':
+                $offerTable = 'offerLuxuryLink';
+                break;
+
+            case '2':
+                $offerTable = 'offerFamily';
+                break;
+
+            default:
+                $offerTable = false;
+                break;
+        }
+        return $offerTable;
     }
 
     function getPricePoint($packageId) {
@@ -107,7 +111,7 @@ class PricePoint extends AppModel {
             WHERE packageId = $packageId
         ");
     }
-    
+
     function createHotelOfferPricePoint($packageId) {
         $packageQuery = "SELECT Package.validityStartDate, Package.validityEndDate
                          FROM package Package
@@ -120,8 +124,7 @@ class PricePoint extends AppModel {
                         WHERE packageId = {$packageId} AND validityStart = '{$startDate}' AND validityEnd = '{$endDate}'";
             if ($ppExists = $this->query($ppQuery)) {
                 return;
-            }
-            else {
+            } else {
                 $pricePoint = array('packageId' => $packageId,
                                     'name' => 'Hotel Offer',
                                     'validityStart' => $startDate,
@@ -132,7 +135,7 @@ class PricePoint extends AppModel {
             }
         }
     }
-    
+
     function getHotelOfferPricePoint($packageId) {
         return ($this->query("SELECT * FROM pricePoint PricePoint
                              WHERE PricePoint.packageId = {$packageId}
@@ -140,4 +143,3 @@ class PricePoint extends AppModel {
                              LIMIT 1"));
     }
 }
-?>
