@@ -1336,14 +1336,18 @@ class WebServiceTicketsController extends WebServicesController
 		// fetch template with the vars above
 		// -------------------------------------------------------------------------------
 		ob_start();
+		
+		$specialException = false;
+		
 		switch ($ppvNoticeTypeId) {
 			case 1:
 				if ($siteId == 2) {
 					include('../vendors/email_msgs/notifications/old/conf_ppv.html');
 				} else {
 					$templateFile = "1_reservation_confirmation";
+					if ($isAuction) $specialException = true;
 				}
-				
+		
 				$templateTitle = "Your reservation is confirmed";
 				$emailSubject = "Your $siteName Reservation is Confirmed - $clientNameP";
 				$emailFrom = ($isAuction) ? "$siteDisplay <resconfirm@$siteEmail>" : "$siteDisplay <reservations@$siteEmail>";
@@ -1612,7 +1616,7 @@ class WebServiceTicketsController extends WebServicesController
 		}
 
 		if ($templateFile) {
-			if (($template = $this->newEmailTemplate($templateFile,$append)) !== FALSE) {
+			if (($template = $this->newEmailTemplate($templateFile,$append,$specialException)) !== FALSE) {
 				$rand = rand(100,1000);
 				$file = "/tmp/template-".$rand;
 
@@ -1698,7 +1702,7 @@ class WebServiceTicketsController extends WebServicesController
 		}
 	}
 
-	private function newEmailTemplate($templateFile,$append = "LL") {
+	private function newEmailTemplate($templateFile,$append = "LL", $specialException = false) {
 		// Add UTM links
 		$template  = file_get_contents("../vendors/email_msgs/includes/header_".$append.".html");
 		$template .= file_get_contents("../vendors/email_msgs/notifications/".$templateFile.".html");
@@ -1717,13 +1721,15 @@ class WebServiceTicketsController extends WebServicesController
 		
 		$special_boxes = "";
 		$other_boxes   = "";
+		
 		$no_special = false;
 		
 		// Flag to allow certain boxes to be inline of eachother, rather than to the right of content
-		if (strstr($template,"%%no_special%%") !== FALSE) {
+		if (strstr($template,"%%no_special%%") !== FALSE && !$specialException) {
 			$no_special = true;
-			$template = str_replace("%%no_special%%","",$template);
 		}
+		
+		$template = str_replace("%%no_special%%","",$template);
 		
 		foreach ($special_templates as $k=>$s) {
 			if (strstr($template,"%%".$k."%%") !== FALSE) {

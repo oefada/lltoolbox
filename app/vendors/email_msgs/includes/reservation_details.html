@@ -49,18 +49,18 @@
 										 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;"><?php echo $resDepartureDate;?></td>
                                   			</tr>
 										</table>
-                                  	</td>
-                                  </tr>
-                                <?php if (!$isAuction && $fpNotes): ?>
+									</td>
+                                </tr>
+                                <?php if ($fpNotes): ?>
 								<tr>
-                                  	<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:16px;padding: 12px 0px 0px 15px;" colspan="2"><b>Special Requests:</b></td>
+                                  	<td colspan="2" style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:16px;padding: 12px 0px 0px 15px;" colspan="2"><b>Special Requests:</b></td>
                                  </tr>
 								<tr>
-									<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:16px;padding: 7px 20px 14px 15px;" colspan="2"><?=$fpNotes;?></td>
+									<td colspan="2" style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:16px;padding: 7px 20px 0px 15px;" colspan="2"><?=$fpNotes;?></td>
                            		</tr>
                            		<?php endif; ?>
 				                <tr>
-				                	<td style="line-height: 18px;">&nbsp;</td>
+				                	<td style="line-height: 13px;" colspan="2">&nbsp;</td>
 				                </tr>
                       		</table>
                     	</td>

@@ -1,3 +1,4 @@
+<?php if (($ppvNoticeTypeId == 1 && !$isAuction) || $ppvNoticeTypeId != 1): ?>
 				<table border="0" cellpadding="0" cellspacing="0" align="right" width="255" style="border-width: 1px; border-color:#c3c3c3;border-style: solid;">
 					<tr>
  						<td valign="top" style="padding: 0px 0px 0px 0px;" align="center">
@@ -5,7 +6,7 @@
 								<tr>
 									<td style="font-size:14px;line-height: 16px; font-family: Arial,Sans-Serif;color:#d4d5b5;">
 										<b>
-										<? if ($ppvNoticeTypeId == 19):
+										<? if ($isAuction):
 											?>YOUR WINNING BID<?php
 										else: ?>PURCHASE DETAILS<?php
 										endif; ?></b><td>
@@ -131,3 +132,4 @@
                     	</td>
 					</tr>
 				</table>
+<?php endif; ?>

@@ -23,6 +23,9 @@
 											<tr>
 										 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;">Check-out:</td>
                                   			</tr>
+											<tr>
+										 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;"><b>Total <? if ($ppvNoticeTypeId == 19): ?>Due<?php else: ?>Paid<?php endif; ?>:</b></td>
+                                  			</tr>
 										</table>
                                     </td>
 
@@ -37,7 +40,9 @@
 											<tr>
 										 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:18px;padding: 0px 0px 0px 0px;" align="left"><?php echo $fpDeparture;?></td>
                                   			</tr>
-
+											<tr>
+										 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:18px;padding: 0px 0px 0px 0px;" align="left"><b>$<?php if ($promoGcCofData['applied']) : ?><?=$promoGcCofData['final_price']; ?>	<?php else: ?><?=$totalPrice;?><?php endif; ?></b></td>
+                                  			</tr>
 										</table>
                                   	</td>
                                  </tr>
@@ -46,7 +51,7 @@
 									<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#AD0306;line-height:18px;padding: 10px 0px 8px 0px;" align="center" colspan="3"><b>Your requested dates are unavailable:</b></td>
 								</tr>
 								<tr>
-									<td style="font-size: 12px; font-family: Arial,Sans-Serif; color: rgb(0, 0, 0); line-height: 18px; padding: 7px 0px 15px;" colspan="3" align="center"><a href="<?=$dateRequestLink;?>&" target="_blank"><img src="<?= $siteUrl ?>images/email/new/select_travel_dates.gif" alt="Select New Travel Dates" border="0" height="26" width="142"></a></td>
+									<td style="font-size: 12px; font-family: Arial,Sans-Serif; color: rgb(0, 0, 0); line-height: 18px; padding: 7px 0px 15px;" colspan="3" align="center"><a href="<?=$dateRequestLink;?>&" target="_blank"><img src="<?= $siteUrl ?>images/email/new/select_alternate_dates.gif" alt="Select Alternate Dates" border="0" height="26" width="161"></a></td>
   								</tr>
   								<?php endif ?>
                       		</table>
