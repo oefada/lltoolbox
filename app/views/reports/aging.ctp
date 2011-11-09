@@ -67,12 +67,71 @@
 	});
 
 </script>
+
+
 <div style="float:right;">
-	<?=$html->link("View old aging report",array('action'=>'aging2'));?>
+	<?=$html->link("View old aging report" , array('action' => 'aging2'));?>
+	<br/>
+	<?=$html->link('<span><b class="icon"></b>Export Report</span>' , array('action' => 'aging.csv?format=excel'.((isset($startDate)&&!empty($startDate))?"&data[startDate][0]=$startDate":'').((isset($endDate)&&!empty($endDate))?"&data[startDate][1]=$endDate":'').((isset($manager)&&!empty($manager))?"&data[manager]=$manager":'')) , array('class' => 'button excel') , null , false);?>
 </div>
-<div style="float:right;clear:both;">
-	<?= $html->link('<span><b class="icon"></b>Export Report</span>' , array('action' => 'aging.csv') , array('class' => 'button excel') , null , false);?>
+
+
+
+
+<div class='advancedSearch' style="width: 800px">
+	<?php echo $form->create(array('action'=>'aging','type'=>'get'))?>
+<fieldset>
+<h3 class='title'>SEARCH <?=strtoupper($this->pageTitle)?> BY:</h3>
+<div style="float: left; ">
+<div class="fieldRow">
+<label>Start Date</label>
+<div class="range">
+	<?=$datePicker->picker('startDate.0', array('label' => 'From','value'=>(isset($startDate)?substr($startDate,0,10):'')));?>
+	<?=$datePicker->picker('startDate.1', array('label' => 'To','value'=>(isset($endDate)?substr($endDate,0,10):'')));?>
+	<br/>
+	<?php
+		$dateranges = array(
+							'Today'=>array(date('Y-m-d'),date('Y-m-d')),
+							'Yesterday'=>array(  date('Y-m-d',strtotime('-1 day')),date('Y-m-d',strtotime('-1 day')) ),
+							'This Week'=>array(  date('Y-m-d',strtotime('-7 day')),date('Y-m-d') ),
+							'0-30 Days'=>array(  date('Y-m-d',strtotime('-30 day')),date('Y-m-d') ),
+							'31-60 Days'=>array(  date('Y-m-d',strtotime('-60 day')),date('Y-m-d',strtotime('-31 day')) ),
+							'61-90 Days'=>array(  date('Y-m-d',strtotime('-90 day')),date('Y-m-d',strtotime('-61 day')) ),
+							'91-180 Days'=>array(  date('Y-m-d',strtotime('-180 day')),date('Y-m-d',strtotime('-91 day')) ),
+							'181+ Days'=>array( '1970-01-01',date('Y-m-d',strtotime('-181 day')) ),
+							
+							'All Time'=>array('',''),
+								) ;
+								foreach ($dateranges as $k=>$v) {
+	?>
+	<a href="#" onclick='javascript: $("startDate0").value = "<?=$v[0]?>"; $("startDate1").value = "<?=$v[1];?>";return false;'><?=$k;?></a> |
+	<?php } ?> 
 </div>
+</div>
+<div class="fieldRow">
+<label>Manager</label>
+<div class="range">
+	<select name="data[manager]">
+		<option value=""<?=(empty($manager)?' selected':'')?>></option>
+		<?php
+		foreach ($managers as $m) :
+		?>
+		<option value="<?=$m;?>"<?=($m==$manager?' selected':'');?>><?=$m;?></option>
+		<?php endforeach; ?>
+	</select>	
+</div>
+</div>
+<?=$form->submit('Search');?>
+</div>
+</fieldset>
+<?=$form->end();?>
+</div>
+
+
+
+
+
+
 <table class="tablesorter tablefilter">
 	<thead>
 		<tr style="text-align:center;">
@@ -115,7 +174,7 @@ foreach ($aging as $a):
 		?>
 		<tr>
 			<td><?=$a['age'];?></td>
-			<td><?=30*intval($a['age']/30);?></td>
+			<td><?=30 * intval($a['age'] / 30);?></td>
 			<td><?=$html->link($a['name'] , array('controller' => 'clients' , 'action' => 'edit' , 'id' => $a['clientId']));?></td>
 			<td><?= $a['locationDisplay'];?></td>
 			<td><?= $a['destinationName'];?></td>
@@ -149,7 +208,7 @@ new Ajax.InPlaceEditorWithEmptyText("notes-<?=$a['loaId']?>", '/loas/inplace_not
 </table>
 <script type="text/javascript">
 	jQuery(document).ready(function() {
-		jQuery.tablesorter.defaults.sortList = [[1,0],[5,0],[9,1]];
+		jQuery.tablesorter.defaults.sortList = [[1, 0], [5, 0], [9, 1]];
 		jQuery("table.tablesorter").tablesorter();
 	});
 

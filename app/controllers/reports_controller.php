@@ -79,7 +79,8 @@ class ReportsController extends AppController {
                       WHERE offerClients.clientId IS NULL
                   ) clientInfo
                   LEFT JOIN offerLuxuryLink o USING(clientId)
-                  GROUP BY clientInfo.loaId, clientInfo.clientId) results";
+                  GROUP BY clientInfo.loaId, clientInfo.clientId) results
+                  ORDER BY managerUsername ASC,startDate ASC";
         $llResults = $this->OfferType->query($llsql);
 
         // FG no package clients
@@ -99,7 +100,8 @@ class ReportsController extends AppController {
                       WHERE offerClients.clientId IS NULL
                   ) clientInfo
                   LEFT JOIN offerFamily o USING(clientId)
-                  GROUP BY clientInfo.loaId, clientInfo.clientId) results";
+                  GROUP BY clientInfo.loaId, clientInfo.clientId) results
+                  ORDER BY managerUsername ASC,startDate ASC";
         $fgResults = $this->OfferType->query($fgsql);
 
         // combine LL and FG
@@ -200,7 +202,7 @@ class ReportsController extends AppController {
 
             // balance
             if (in_array($l['loaMembershipTypeId'], array(1,2,4))) {
-                $loas[$k]['balance'] = '$' . number_format($l['membershipBalance'], 2);
+                $loas[$k]['balance'] = '$' . number_format($l['membershipBalance'], 0);
                 $loas[$k]['balanceSort'] = intval($l['membershipBalance']);
             } elseif ($l['loaMembershipTypeId'] == 3) {
                 $loas[$k]['balance'] = $l['membershipPackagesRemaining'] . ' pkg';
@@ -944,8 +946,36 @@ class ReportsController extends AppController {
 
 	}
 function aging() {
-
+				
+			//die("<PRE>".print_r($this,true));
+		
 	$aging = array();
+
+// Date Range
+if (isset($this->params['url']['data']['startDate'][0])&&!empty($this->params['url']['data']['startDate'][0])) {
+	$sqlStartDate=date('Y-m-d',strtotime($this->params['url']['data']['startDate'][0]));
+	$this->set('startDate',$sqlStartDate);
+} else {
+	$sqlStartDate='1970-01-01';
+}
+if (isset($this->params['url']['data']['startDate'][1])&&!empty($this->params['url']['data']['startDate'][1])) {
+	$sqlEndDate=date('Y-m-d',strtotime($this->params['url']['data']['startDate'][1]));
+	$this->set('endDate',$sqlEndDate);
+} else {
+	$sqlEndDate='2099-12-31';
+}
+$sqlStartDate .= ' 00:00:00';
+$sqlEndDate  .=' 23:59:59';
+
+// Manager
+$sqlManager='';
+$managerName = '';
+if (isset($this->params['url']['data']['manager'])&&!empty($this->params['url']['data']['manager'])) {
+	$managerName = strtolower(trim($this->params['url']['data']['manager']));
+	$sqlManager = "AND Client.managerUsername='".mysql_real_escape_string($managerName)."'";
+	
+}
+$this->set('manager',$managerName);
 
 	$sql = "
 SELECT
@@ -988,12 +1018,22 @@ ON (Loa.clientId = Client.clientId)
 WHERE (Loa.membershipBalance > 0
 OR Loa.membershipPackagesRemaining > 0)
 AND Loa.loaLevelId = 2
+AND Loa.inactive != 1
+AND Loa.endDate>(NOW()+INTERVAL 7 DAY)
+
+AND Loa.startDate BETWEEN '$sqlStartDate' and '$sqlEndDate'
+$sqlManager
+
 GROUP BY Client.clientId, Loa.loaId
+ORDER BY Client.managerUsername ASC,Loa.startDate ASC,Client.name
 ";
-	$results = $this->OfferType->query($sql);
+
+$aging = array();
+
+if (	$results = $this->OfferType->query($sql) ) {
 
 	// Flatten results
-	$aging = array();
+	
 	foreach ($results as $result) {
 		if (isset($result['Client']['clientId'])) {
 			$data = array();
@@ -1044,19 +1084,21 @@ $sql = "SELECT clientId,COUNT(clientId) AS num".$site." FROM offer".$site."
 	$destinations = $locations = $managers = array();
 	foreach ($aging as $a) {
 		if (!empty($a['destinationName'])) {
-			$destinations[$a['destinationName']] = true;
-			$locations[$a['locationDisplay']]=true;
-			$managers[$a['managerUsername']]=true;
+			$destinations[strtolower($a['destinationName'])] = $a['destinationName'];
+		}
+				if (!empty($a['locationDisplay'])) {
+			$locations[strtolower($a['locationDisplay'])]=$a['locationDisplay'];
+		}
+				if (!empty($a['managerUsername'])) {
+			$managers[strtolower($a['managerUsername'])]=$a['managerUsername'];
 		}
 	}
-	$destinations = array_keys($destinations);
-	$locations = array_keys($locations);
-	$managers = array_keys($managers);
-	sort($destinations);sort($locations);sort($managers);
+	ksort($destinations);ksort($locations);ksort($managers);
 	$this->set('destinations' , $destinations);
 	$this->set('locations' , $locations);
 	$this->set('managers' , $managers);
-	
+	}
+
 	$this->set('aging' , $aging);
 
 }
