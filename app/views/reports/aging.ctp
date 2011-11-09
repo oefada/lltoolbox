@@ -135,20 +135,16 @@
 <table class="tablesorter tablefilter">
 	<thead>
 		<tr style="text-align:center;">
-			<td colspan="2">Age</td>
-			<td colspan="3">Client</td>
-			<td colspan="1"></td>
-			<td colspan="2"></td>
-			<td colspan="2">Membership</td>
-			<td colspan="2"># of Packages</td>
+			<td colspan="1">Age</td>
+			<td colspan="4">Client</td>
+			<td colspan="4">Membership</td>
 			<td colspan="2">Sites</td>
 			<td colspan="2">Last Sell</td>
-			<td colspan="2">Packages</td>
+			<td colspan="1"></td>
 			<td></td>
 		</tr>
 		<tr>
 			<th>Days</th>
-			<th>30d</th>
 			<th>Name</th>
 			<th>Location</th>
 			<th>Destination</th>
@@ -157,10 +153,6 @@
 			<th>End</th>
 			<th>Fee</th>
 			<th>Balance</th>
-			<th>Total</th>
-			<th>Remaining</th>
-			<th>LL</th>
-			<th>FG</th>
 			<th>LL</th>
 			<th>FG</th>
 			<th>Date</th>
@@ -174,26 +166,20 @@ foreach ($aging as $a):
 		?>
 		<tr>
 			<td><?=$a['age'];?></td>
-			<td><?=30 * intval($a['age'] / 30);?></td>
 			<td><?=$html->link($a['name'] , array('controller' => 'clients' , 'action' => 'edit' , 'id' => $a['clientId']));?></td>
 			<td><?= $a['locationDisplay'];?></td>
 			<td><?= $a['destinationName'];?></td>
 			<td><?= $a['managerUsername'];?></td>
 			<td><?=substr($a['startDate'] , 0 , 10);?></td>
 			<td><?=substr($a['loaEndDate'] , 0 , 10);?></td>
-			<td align="right">$<?=intval($a['membershipFee']);?></td>
-			<td align="right">$<?=intval($a['membershipBalance']);?></td>
+			<td align="right"><?=($a['membershipTotalPackages']>0?$a['membershipTotalPackages'].' pkgs':'$'.intval($a['membershipFee']));?></td>
+			<td align="right"><?=($a['membershipPackagesRemaining']>0?$a['membershipPackagesRemaining'].' pkgs':'$'.intval($a['membershipBalance']));?></td>
 			
 			<td><?=strpos($a['sites'] , 'luxurylink') === false ? '' : 'LL';?></td>
 			<td><?=strpos($a['sites'] , 'family') === false ? '' : 'FG';?></td>
 
-			<td><?=$a['offersLuxuryLink'] ? $a['offersLuxuryLink'] : '';?>
-			<td><?=$a['offersFamily'] ? $a['offersFamily'] : '';?>
-
 			<td><?=substr($a['lastSellDate'] , 0 , 10);?></td>
 			<td align="right">$<?=intval($a['lastSellPrice']);?></td>
-			<td><?=$a['membershipTotalPackages'];?></td>
-			<td><?=$a['membershipPackagesRemaining'];?></td>
 			<td>
 			<p id="notes-<?=$a['loaId']?>">
 				<?=$a['notes'];?>

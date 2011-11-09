@@ -972,9 +972,9 @@ $sqlManager='';
 $managerName = '';
 if (isset($this->params['url']['data']['manager'])&&!empty($this->params['url']['data']['manager'])) {
 	$managerName = strtolower(trim($this->params['url']['data']['manager']));
-	$sqlManager = "AND Client.managerUsername='".mysql_real_escape_string($managerName)."'";
-	
+	$sqlManager = "AND Client.managerUsername='".mysql_real_escape_string($managerName)."' \n";
 }
+
 $this->set('manager',$managerName);
 
 	$sql = "
@@ -1025,7 +1025,7 @@ AND Loa.startDate BETWEEN '$sqlStartDate' and '$sqlEndDate'
 $sqlManager
 
 GROUP BY Client.clientId, Loa.loaId
-ORDER BY Client.managerUsername ASC,Loa.startDate ASC,Client.name
+ORDER BY Loa.startDate ASC
 ";
 
 $aging = array();
