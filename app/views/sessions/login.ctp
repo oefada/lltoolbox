@@ -6,4 +6,4 @@
 	?>
 <?php echo $form->end('Sign In');?>
 </div>
-<?php echo $javascript->codeBlock('Event.observe(window, "load", function() {$("LdapUserUsername").focus(); new Effect.Shake($("authMessage"))})'); ?>
+<?php  echo $javascript->codeBlock('Event.observe(window, "load", function() {$("AdminUserUsername").focus(); new Effect.Shake($("authMessage"))})'); ?>
