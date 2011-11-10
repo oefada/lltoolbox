@@ -1,13 +1,30 @@
 <p>
 <? if($isAuction): ?>
-Thank you for choosing <?= $siteName ?>. Your reservation at <?= $clientNameP ?> in <?= $locationDisplay ?> for <?= $numNights ?> nights starting on <?php echo $resArrivalDate;?> and checking-out on <?php echo $resDepartureDate;?> has been confirmed!
+Thank you for choosing <?= $siteName ?>. Your reservation at
+<? 
+
+// Multi-client
+
+foreach ($clients as $cn=>$c):
+	if ($cn > 0) echo " and ";
+	echo $c['name'] . " in " . $c['locationDisplay'];
+endforeach;
+?> for <?= $numNights ?> nights starting on <?php echo $resArrivalDate;?> and checking-out on <?php echo $resDepartureDate;?> has been confirmed!
 <? else: ?>
 Thank you for your Luxury Link purchase. This email is your reservation confirmation and receipt of payment in full for the following package. Please keep it for your records.
 <? endif; ?>
 </p>
-																		<?php if ($siteId == 1 && count($destData)): ?><p>As you begin planning your trip, we invite you to get inspired with some information on<br />
-																		<a href="<?= $siteUrl ?>fivestar/<?= $destData['Destination']['destinationSeoName'] ?>/hotel-guide" target="_blank" style="color: #056ff7;"><?php echo $locationDisplay;?></a> provided by the editors of <i>Travel + Leisure</i> magazine.</p>
-																		<?php endif; ?>
+<?php if ($siteId == 1 && count($clients[0]['destData'])): ?>
+<p>As you begin planning your trip, we invite you to get inspired with some information on<br />
+<?
+foreach ($clients as $cn=>$c):
+	if ($cn > 0) echo " or ";
+	echo '<a href="'.$siteUrl.'fivestar/'.$c['destData']['Destination']['destinationSeoName'].'/hotel-guide" target="_blank" style="color: #056ff7;">';
+	echo $c['locationDisplay'].'</a>';
+endforeach;
+?> provided by the editors of <i>Travel + Leisure</i> magazine.</p>
+<?php endif; // End isAuction ?>
+
 %%reservation_details%%
 %%purchase_details%%
 %%no_special%%

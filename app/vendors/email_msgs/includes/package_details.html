@@ -17,41 +17,48 @@
 																                                <td valign="top" style="padding: 0px 0px 0px 0px;" align="center">
 																	                                <table border="0" cellpadding="0" cellspacing="0" align="center" width="555" >
 																	                                    <tbody>
+																	                                    	<? foreach ($clients as $cn=>$c):
+																												$c = (object)$c;
+																											?>
 																	                                        <tr>
 																	                                            <td valign="top" style="padding: 15px 30px 0px 15px;" height="160" align="left">
+																	                                            	<? // Only display package image once 
+																	                                            		if ($cn == 0): ?>
 																		                                            <div><a target="_blank" href="#"><img name="Cont_29" width="246" height="171" border="0" style="display: block;" src="<?= $siteUrl ?>images/por/<?php echo $oldProductId;?>/<?php echo $oldProductId;?>-gal-lrg-01.jpg" alt="<?php echo $packageName;?>" /></a></div>
+																		                                            <?php endif; ?>
 																	                                            </td>
 																	                                            <td valign="top" colspan="2" style="padding: 15px 0px 0px 0px;" align="left">
 																		                                            <table height="75" cellspacing="0" cellpadding="0" border="0" align="left" width="255">
 																		                                                <tbody>
 																		                                                    <tr>
-																		                                                        <td style="font-size:17px;line-height: 16px; font-family: Arial,Sans-Serif;color:#036dfc;" valign="top" width="157"><a href="<?= $pdpUrl ?>" style="color:#036dfc;text-decoration:none;" target="_blank"><b><?= $clientNameP ?></b></a></td>
+																		                                                        <td style="font-size:17px;line-height: 16px; font-family: Arial,Sans-Serif;color:#036dfc;" valign="top" width="157"><a href="<?= $c->pdpUrl ?>" style="color:#036dfc;text-decoration:none;" target="_blank"><b><?= $c->name ?></b></a></td>
 																		                                                    </tr>
 																		                                                    <tr>
-																		                                                        <td style="padding: 5px 0px 0px 0px;font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;text-decoration:none;"><i><?= $locationDisplay ?></i></td>
+																		                                                        <td style="padding: 5px 0px 0px 0px;font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;text-decoration:none;"><i><?= $c->locationDisplay ?></i></td>
 																		                                                    </tr>
 																		                                                    <tr>
-																		                                                        <td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;padding: 15px 0px 0px 0px;" colspan="2"><?= $clients[0]['address1'] ?><br><?= ($clients[0]['address2'] != "" ? $clients[0]['address2']."<br>" : "") ?><?= $locationDisplay ?></td>
+																		                                                        <td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;padding: 15px 0px 0px 0px;" colspan="2"><?= $c->address1 ?><br><?= ($c->address2 != "" ? $c->address2."<br>" : "") ?><?= $c->locationDisplay ?></td>
 																		                                                    </tr>
-																		                                                    <? if ($clientPhone != ""): ?>
+																		                                                    <? if ($c->estaraPhoneLocal != ""): ?>
 																															<tr>
-																		                                                        <td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;padding: 15px 0px 2px 0px;" colspan="2">Phone Number: <?= $clientPhone ?></td>
+																		                                                        <td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;padding: 15px 0px 2px 0px;" colspan="2">Phone Number: <?= $c->estaraPhoneLocal ?></td>
 																		                                                    </tr>
 																		                                                    <? endif; ?>
-																		                                                    <? if ($clientPhoneIntl != ""): ?>
+																		                                                    <? if ($c->estaraPhoneIntl != ""): ?>
 																															<tr>
-																		                                                        <td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;padding: 0px 0px 2px 0px;" colspan="2">International: <?= $clientPhoneIntl ?></td>
+																		                                                        <td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;padding: 0px 0px 2px 0px;" colspan="2">International: <?= $c->estaraPhoneIntl ?></td>
 																		                                                    </tr>
 																		                                                	<?php endif; ?>
-																		                                                	<? if ($clientPrimaryEmail != ""): ?>
+																		                                                	<? if ($c->contact_to_string != ""): ?>
 																		 													<tr>
-																		                                                        <td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;padding: 0px 0px 0px 0px;" colspan="2">E-mail: <a href="mailto:<?= $clientPrimaryEmail ?>" target="_blank" style="color: #056ff7;"><?= $clientPrimaryEmail ?></a></td>
+																		                                                        <td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;padding: 0px 0px 0px 0px;" colspan="2">E-mail: <a href="mailto:<?= $c->contact_to_string ?>" target="_blank" style="color: #056ff7;"><?= $c->contact_to_string ?></a></td>
 																		                                                    </tr>
 																		                                                    <?php endif; ?>
 																		                                                </tbody>
 																		                                            </table>
 																	                                            </td>
 																	                                        </tr>
+																	                                        <? endforeach; ?>
 																											<tr>
 																	                                  			<td height="15" width="100%" colspan="5"></td>
 																	                                  		</tr>

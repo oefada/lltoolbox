@@ -1004,7 +1004,6 @@ class WebServiceTicketsController extends WebServicesController
 			$userAddressData	= $userAddressData['Address'];
 
 			$this->ClientLoaPackageRel->Client->ClientDestinationRel->contain('Destination');
-			$destData			= $this->ClientLoaPackageRel->Client->ClientDestinationRel->findByclientId($clientData[0]['Client']['clientId'],array(),"parentId DESC, clientDestinationRelId DESC");
 			$offerType			= $this->OfferType->find('list');
 			$userPaymentData	= $this->findValidUserPaymentSetting($ticketData['userId']);
 			$paymentDetail		= $this->PaymentDetail->findByticketId($ticketId);
@@ -1282,51 +1281,47 @@ class WebServiceTicketsController extends WebServicesController
 				$clients[$k] = $tmp;
 			}
 	
-			$client_index = ($multi_client_map_override !== false) ? $multi_client_map_override : 0;
-	
-			// acarney 2010-12-08
-			// Making it so that confirmation template is multi-client aware
-			// TODO: investigate impact of using array for client variables in other templates
-			// to avoid duplication of code
 			$isMultiClientPackage = (count($clients) > 1) ? true : false;
-			if ($isMultiClientPackage) {
-				$clientVars = array();
-				foreach ($clients as $i => $client) {
-					$clientVars[$i]['clientId']		        = $client['clientId'];
-					$clientVars[$i]['parentClientId'] 	    = $client['parentClientId'];
-					$clientVars[$i]['clientNameP'] 		    = $client['name'];
-					$clientVars[$i]['clientName'] 		    = $client['contacts'][0]['ppv_name'];
-					$clientVars[$i]['oldProductId']		    = $client['oldProductId'];
-					$clientVars[$i]['locationDisplay']	    = $client['locationDisplay'];
-					$clientVars[$i]['clientPrimaryEmail']   = $client['contact_to_string'];
-					$clientVars[$i]['clientCcEmail'] 		= $client['contact_cc_string'];
-					$clientVars[$i]['clientAdjustedPrice']  = $this->numF(($client['percentOfRevenue'] / 100) * $ticketData['billingPrice']);
+			
+			// Multi-client stuff is a mess. This is a partial cleanup.
+			// rvella
+			
+			App::import("Vendor","UtilityHelper",array('file' => "appshared".DS."helpers".DS."UtilityHelper.php"));
+			
+			foreach ($clients as $client_index => $row) {
+				$clients[$client_index]['name'] 				= UtilityHelper::checkUtf8($clients[$client_index]['name']) ? utf8_encode($clients[$client_index]['name']) : $clients[$client_index]['name'];
+				$clients[$client_index]['estaraPhoneLocal'] 	= $clients[$client_index]['estaraPhoneLocal'] == NULL ? $clients[$client_index]['phone1'] : $clients[$client_index]['estaraPhoneLocal'];
+				$clients[$client_index]['estaraPhoneIntl']		= $clients[$client_index]['estaraPhoneIntl'] == NULL ? $clients[$client_index]['phone2'] : $clients[$client_index]['estaraPhoneIntl'];
+				
+				// Format phone numbers if possible
+				$clients[$client_index]['estaraPhoneLocal'] = UtilityHelper::cleanUSD($clients[$client_index]['estaraPhoneLocal'],6);
+				$clients[$client_index]['estaraPhoneIntl'] = UtilityHelper::cleanUSD($clients[$client_index]['estaraPhoneIntl'],6);
+
+				$clients[$client_index]['clientAdjustedPrice']	= $this->numF(($clients[$client_index]['percentOfRevenue'] / 100) * $ticketData['billingPrice']);
+				$clients[$client_index]['pdpUrl'] 				= $siteUrl."luxury-hotels/".$clients[$client_index]['seoName']."?clid=".$clientId."&pkid=".$packageId;
+				$clients[$client_index]['destData'] 			= $this->ClientLoaPackageRel->Client->ClientDestinationRel->findByclientId($row['clientId'],array(),"parentId DESC, clientDestinationRelId DESC");
+				
+				if (($pos = strpos($clients[$client_index]['contact_to_string'], ",")) != 0) {
+					$clients[$client_index]['contact_to_string'] = substr($clients[$client_index]['contact_to_string'],0,$pos);
 				}
 			}
+
+			$client_index = ($multi_client_map_override !== false) ? $multi_client_map_override : 0;
 			
 			$clientId			    = $clients[$client_index]['clientId'];
 			$parentClientId 	    = $clients[$client_index]['parentClientId'];
-			$clientNameP 		    = utf8_encode($clients[$client_index]['name']);
+			$clientNameP 		    = $clients[$client_index]['name'];
 			$clientName 		    = $clients[$client_index]['contacts'][0]['ppv_name'];
 			$oldProductId		    = $clients[$client_index]['oldProductId'];
-			$locationDisplay	    = $clients[$client_index]['locationDisplay'];
+			$locationDisplay	    = $clients[$client_index]['locationDisplay'];					
 
-			if (($pos = strpos($clients[$client_index]['contact_to_string'], ",")) != 0) {
-				$clientPrimaryEmail 	= substr($clients[$client_index]['contact_to_string'],0,$pos);
-			} else {
-				$clientPrimaryEmail     = $clients[$client_index]['contact_to_string'];
-			}
-			
+			$clientPrimaryEmail 	= $clients[$client_index]['contact_to_string'];
 			$clientCcEmail 		    = $clients[$client_index]['contact_cc_string'];
-			$clientAdjustedPrice    = $this->numF(($clients[$client_index]['percentOfRevenue'] / 100) * $ticketData['billingPrice']);
-			$clientPhone			= $clients[$client_index]['estaraPhoneLocal'] == NULL ? $clients[$client_index]['phone1'] : $clients[$client_index]['estaraPhoneLocal'];
-			$clientPhoneIntl		= $clients[$client_index]['estaraPhoneIntl'] == NULL ? $clients[$client_index]['phone2'] : $clients[$client_index]['estaraPhoneIntl'];
+			$clientAdjustedPrice    = $clients[$client_index]['clientAdjustedPrice'];
+			$clientPhone 			= $clients[$client_index]['estaraPhoneLocal'];
+			$clientPhoneIntl		= $clients[$client_index]['estaraPhoneIntl'];
 			
-			$pdpUrl = $siteUrl."luxury-hotels/".$clients[$client_index]['seoName']."?clid=".$clientId."&pkid=".$packageId;
-			
-			App::import("Vendor","UtilityHelper",array('file' => "appshared".DS."helpers".DS."UtilityHelper.php"));
-			$clientPhone = UtilityHelper::cleanUSD($clientPhone,6); // Formats phone number consistenly
-			$clientPhoneIntl = UtilityHelper::cleanUSD($clientPhoneIntl,6);
+			$pdpUrl 				= $clients[$client_index]['pdpUrl'];
 		}
 		
 		// Click tracking for templates
