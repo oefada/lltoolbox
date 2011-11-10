@@ -46,9 +46,17 @@
 										</table>
                                   	</td>
                                  </tr>
+                                <?php if ($fpNotes): ?>
+								<tr>
+                                  	<td colspan="2" style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 15px;" colspan="2"><b>Special Requests:</b></td>
+                                 </tr>
+								<tr>
+									<td colspan="2" style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 7px 20px 0px 15px;" colspan="2"><?=$fpNotes;?></td>
+                           		</tr>
+                           		<?php endif; ?>
                                 <?php if ($ppvNoticeTypeId == 14): ?>
 								<tr>
-									<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#AD0306;line-height:18px;padding: 10px 0px 8px 0px;" align="center" colspan="3"><b>Your requested dates are unavailable:</b></td>
+									<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#AD0306;line-height:18px;padding: 10px 0px 5px 0px;" align="center" colspan="3"><b>Your requested dates are unavailable:</b></td>
 								</tr>
 								<tr>
 									<td style="font-size: 12px; font-family: Arial,Sans-Serif; color: rgb(0, 0, 0); line-height: 18px; padding: 7px 0px 15px;" colspan="3" align="center"><a href="<?=$dateRequestLink;?>&" target="_blank"><img src="<?= $siteUrl ?>images/email/new/select_alternate_dates.gif" alt="Select Alternate Dates" border="0" height="26" width="161"></a></td>
