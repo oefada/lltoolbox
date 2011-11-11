@@ -23,6 +23,21 @@
 											<tr>
 										 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;">Check-out:</td>
                                   			</tr>
+                                  			<? if ($promoApplied): ?>
+											<tr>
+										 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;">Promotion Applied:</td>
+                                  			</tr>
+                                			<?php endif; ?>
+                                			<? if ($giftApplied): ?>
+											<tr>
+										 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;">Gift Certificate Applied:</td>
+                                  			</tr>
+                               				<?php endif ?>
+                                			<? if ($cofApplied): ?>
+											<tr>
+										 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;">Credit On File Applied:</td>
+                                  			</tr>
+                               				<?php endif ?>
 											<tr>
 										 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;"><b>Total <? if ($ppvNoticeTypeId == 19): ?>Due<?php else: ?>Paid<?php endif; ?>:</b></td>
                                   			</tr>
@@ -40,8 +55,23 @@
 											<tr>
 										 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:18px;padding: 0px 0px 0px 0px;" align="left"><?php echo $fpDeparture;?></td>
                                   			</tr>
+                                  			<? if ($promoApplied): ?>
 											<tr>
-										 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:18px;padding: 0px 0px 0px 0px;" align="left"><b>$<?php if ($promoGcCofData['applied']) : ?><?=$promoGcCofData['final_price']; ?>	<?php else: ?><?=$totalPrice;?><?php endif; ?></b></td>
+										 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;" align="left">US -$<?=$promoGcCofData['Promo']['totalAmountOff'];?></td>
+                                  			</tr>
+											<?php endif; ?>
+                                  			<? if ($giftApplied): ?>
+											<tr>
+										 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;" align="left">US -$<?=$promoGcCofData['GiftCert']['totalAmountOff'];?></td>
+                                  			</tr>
+											<?php endif; ?>
+                                  			<? if ($cofApplied): ?>
+											<tr>
+										 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;" align="left">US -$<?=$promoGcCofData['Cof']['totalAmountOff'];?></td>
+                                  			</tr>
+											<?php endif; ?>
+											<tr>
+										 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:18px;padding: 0px 0px 0px 0px;" align="left"><b>US $<?php if ($promoGcCofData['applied']) : ?><?=$promoGcCofData['final_price']; ?>	<?php else: ?><?=$totalPrice;?><?php endif; ?></b></td>
                                   			</tr>
 										</table>
                                   	</td>
