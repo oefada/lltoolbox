@@ -20,6 +20,6 @@
 </ul>
 <h3>Other Tools</h3>
 <ul class="tree">
-	<li><?=$html->link('Client Newsletter Notifier', $this->webroot . 'reports/client_newsletter_notifier')?></li>
+	<li><?=$html->link('Client Newsletter Notifier', '/client_newsletter_notifier')?></li>
 	<li><?=$html->link('Consolidated Report Batch', $this->webroot . 'reports/consolidated_report_batch')?></li>
 </ul>
