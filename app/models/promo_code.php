@@ -42,9 +42,11 @@ class PromoCode extends AppModel {
 	function __generateCode($length) {
 		$code = array();
 		for ($i = 0; $i < $length + 1; $i++) {
-			$code[$i] = rand(0,35);
+			$code[$i] = rand(2,35);
 			if ($code[$i] > 9) {
 				$code[$i] = chr(55 + $code[$i]);
+				if ($code[$i] == 'I') { $code[$i] = 'Z'; }
+				if ($code[$i] == 'O') { $code[$i] = 'W'; }
 			}
 		}
 		return implode('', $code);
