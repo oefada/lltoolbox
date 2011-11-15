@@ -149,6 +149,8 @@ class TicketsController extends AppController {
 			$this->paginate['conditions']['Ticket.userId'] = $s_user_id;
 		} elseif ($s_bid_id) {
 			$this->paginate['conditions']['Ticket.bidId'] = $s_bid_id;
+		} elseif ($s_offer_id) {
+			$this->paginate['conditions']['Ticket.offerId'] = $s_offer_id;
 		} elseif ($s_client_id) {
 			$this->paginate['joins'][] =
 				array(

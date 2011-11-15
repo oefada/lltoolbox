@@ -69,10 +69,10 @@
                 </td>
                 <td class="offers">
                     <?php if (!empty($master['Offers'])): ?>
-                        <?php if ($master['SchedulingMaster']['offerTypeId'] == 4): ?>
+                        <?php if ($master['SchedulingMaster']['offerTypeId'] == 4 || $master['SchedulingMaster']['offerTypeId'] == 3): ?>
                             <?php // link to ticket results for the scheduling master if there have been buy now requests ?>
                             <?php if ($master['Offers']['buyNowRequests'] > 0): ?>
-                                <?php $searchStr = 's_offer_type_id:4' .
+                                <?php $searchStr = 's_offer_type_id:' . $master['SchedulingMaster']['offerTypeId'] .
                                                     '/s_offer_id:' . $master['Offers'][$master['SchedulingMaster']['offerStatus']][0]['Offer']['offerId'] .
                                                     '/s_start_y:'. date('Y', strtotime($master['SchedulingMaster']['startDate'])) .
                                                     '/s_start_m:' . date('m', strtotime($master['SchedulingMaster']['startDate'])) .
@@ -86,11 +86,13 @@
                             <?php echo $master['Offers']['buyNowRequests']; ?> requests<?php if ($master['Offers']['buyNowRequests'] > 0): ?></a><?php endif; ?>, <?php echo $master['Offers']['buyNowConfirmedRequests']; ?> confirmed
                         <?php else: ?>
                             <?php foreach ($master['Offers'][$master['SchedulingMaster']['offerStatus']] as $offer): ?>
-                                <span class="bids" id="offer-<?php echo $offer['Offer']['offerId']; ?>"><?php echo $offer['Offer']['bidCount']; ?></span>
                                 <?php if ($offer['Offer']['bidCount'] > 0): ?>
+                                    <span class="bids" id="offer-<?php echo $offer['Offer']['offerId']; ?>"><a href="/tickets/index/s_offer_id:<?php echo $offer['Offer']['offerId']; ?>" target="_blank"><?php echo $offer['Offer']['bidCount']; ?></a></span>
                                     <span class="retail" style="display:none;"><?php echo $offer['Offer']['retailValue']; ?></span>
                                     <span class="winningBid" style="display:none;"><?php echo $offer['Offer']['winningBidAmount']; ?></span>
                                     <span class="endDate" style="display:none;"><?php echo date('M d, Y h:i a', strtotime($offer['Offer']['endDate'])); ?></span>
+                                <?php else: ?>
+                                    <span class="bids" id="offer-<?php echo $offer['Offer']['offerId']; ?>"><?php echo $offer['Offer']['bidCount']; ?></span>
                                 <?php endif; ?>
                             <?php endforeach; ?>
                             <?php if ($master['SchedulingMaster']['offerStatus'] == 'Live'): ?>

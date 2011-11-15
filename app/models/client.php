@@ -680,7 +680,7 @@ class Client extends AppModel {
                   WHERE Offer.clientId = " . $clientId . " AND SchedulingInstance.schedulingMasterId = " . $schedulingMaster['SchedulingMaster']['schedulingMasterId'] . "
                   ORDER BY Offer.endDate";
         if ($offers = $this->query($query)) {
-            if ($schedulingMaster['SchedulingMaster']['offerTypeId'] == 4) {
+            if ($schedulingMaster['SchedulingMaster']['offerTypeId'] == 4 || $schedulingMaster['SchedulingMaster']['offerTypeId'] == 3) {
                 foreach ($offers as $index=>$offer) {
                     $offers[$index]['Offer']['retailValue'] = round($offer['Offer']['retailValue']);
                     $requestsQuery = "SELECT COUNT(*) AS requests FROM ticket WHERE offerId = " . $offer['Offer']['offerId'];
