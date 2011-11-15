@@ -1,5 +1,7 @@
 <?php $this->pageTitle = "Inventory Management Report" ?>
 
+<div style="font-size:20px; font-weight:bold; color:#990000; margin-bottom:20px;">This report is not currently supported.<br/> Please use the Inventory link in the left-side menu from the Client Detail screen.</div>
+
 <div class='advancedSearch' style="width: 800px">
 	<?php echo $form->create('', array('action' => 'imr'))?>
 <fieldset>
