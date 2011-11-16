@@ -17,6 +17,19 @@ class ClientNewsletterNotifierController extends AppController {
             if (@$this->data['ClientNewsletterNotifier']['approve']) {
                 $this->_send($clients, $this->data);
                 $this->set('emailSent', true);
+
+                // 11/16/11 jwoods - added notification
+                $clientlist = 'clients were notified on ' . date('m/d/Y g:i:s a') . ":\n\n";
+                $clientlist .= 'user: ' . $this->user['LdapUser']['cn'] . "\n";
+                $clientlist .= 'site: ' . $this->data['ClientNewsletterNotifier']['site'] . "\n";
+                $clientlist .= 'themeName: ' . $this->data['ClientNewsletterNotifier']['themeName'] . "\n";
+                $clientlist .= 'url: ' . $this->data['ClientNewsletterNotifier']['url'] . "\n\n";
+                foreach ($clients as $c) {
+                	$clientlist .= $c['Client']['name'] . "\n";
+                }
+                $titleFrom = ($_SERVER['ENV'] == 'development' || $_SERVER['ENV'] == 'staging') ? 'Newsletter Notification Dev/Stage' : 'Newsletter Notification';
+                $header = "From: " . $titleFrom . " <devmail@luxurylink.com>\r\n";
+                @mail('NewsletterNotifications@luxurylink.com', 'client newsletter notifier :: ' . date('m/d/Y g:i:s a') , $clientlist, $header);
             }
             
             $this->set('clients', $clients);
