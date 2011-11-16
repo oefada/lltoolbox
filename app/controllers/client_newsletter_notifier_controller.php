@@ -18,7 +18,7 @@ class ClientNewsletterNotifierController extends AppController {
                 $this->_send($clients, $this->data);
                 $this->set('emailSent', true);
 
-                // 11/16/11 jwoods - added notification
+                // 11/16/11 jwoods - added email logging
                 $clientlist = 'clients were notified on ' . date('m/d/Y g:i:s a') . ":\n\n";
                 $clientlist .= 'user: ' . $this->user['LdapUser']['cn'] . "\n";
                 $clientlist .= 'site: ' . $this->data['ClientNewsletterNotifier']['site'] . "\n";
