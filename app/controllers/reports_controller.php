@@ -43,6 +43,9 @@ class ReportsController extends AppController {
             $this->page = 1;
             $this->perPage = 9999;
             $this->limit = 9999;
+						if ($this->layoutPath === 'csv') {
+							$this->limit = 1000000;
+						}
         } elseif (!empty($this->params['named']['page'])) {
                 $this->page = $this->params['named']['page'];
                 $this->limit = (($this->page-1)*20).',20';
