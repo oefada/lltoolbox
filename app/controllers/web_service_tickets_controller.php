@@ -1010,10 +1010,11 @@ class WebServiceTicketsController extends WebServicesController
 			$paymentDetail		= (isset($paymentDetail['PaymentDetail'][0]) ? $paymentDetail['PaymentDetail'][0] : $paymentDetail['PaymentDetail']);
 			
 			$promoGcCofData		= $this->Ticket->getPromoGcCofData($ticketId, $ticket['Ticket']['billingPrice']);
+			$promoGcCofData['final_price'] = number_format($promoGcCofData['final_price'],2);
+			
 			$promoApplied		= ($promoGcCofData['Promo'] && $promoGcCofData['Promo']['applied'] ? true : false);
 			$cofApplied			= ($promoGcCofData['Cof']   && $promoGcCofData['Cof']['applied'] ? true : false);
 			$giftApplied		= ($promoGcCofData['GiftCert']   && $promoGcCofData['GiftCert']['applied'] ? true : false);
-			
 		} else {
 			if ($username) {
 				$this->User->UserSiteExtended->recursive = 0;
