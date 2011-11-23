@@ -201,15 +201,6 @@ $cacheAction = true;
  *	));
  *
  *
- * APC (http://pecl.php.net/package/APC)
- *
- * 	 Cache::config('default', array(
- *		'engine' => 'Apc', //[required]
- *		'duration'=> 3600, //[optional]
- *		'probability'=> 100, //[optional]
- * 		'prefix' => Inflector::slug(APP_DIR) . '_', //[optional]  prefix every cache file with this string
- *	));
- *
  * Xcache (http://xcache.lighttpd.net/)
  *
  * 	 Cache::config('default', array(
@@ -237,7 +228,7 @@ $cacheAction = true;
 
  	/* Site Specific Configuration */
  	
-	Cache::config('default', array('engine' => 'File'));
+	//Cache::config('default', array('engine' => 'File'));
 	
 	$webservice_live_url = 'http://toolbox.luxurylink.com';
 	$ll_url = 'www.luxurylink.com';
@@ -258,6 +249,18 @@ $cacheAction = true;
 		define("ISDEV",false);
 	}
 
+	if (ISDEV) {
+		/*
+		 * APC (http://pecl.php.net/package/APC)
+		 */
+	  	 Cache::config('default', array(
+	 		'engine' => 'Apc', //[required]
+	 		'duration'=> 3600, //[optional]
+	 		'probability'=> 100, //[optional]
+	  		'prefix' => Inflector::slug(APP_DIR) . '_', //[optional]  prefix every cache file with this string
+	 	));
+	}
+	
 	$ll_urls = 'https://'.$ll_url;
 	$ll_url = 'http://'.$ll_url; 
 	$fg_urls = 'https://'.$fg_url;
@@ -271,5 +274,3 @@ $cacheAction = true;
 	Configure::write("Url.FG",$fg_url);
 	Configure::write("UrlS.LL",$ll_urls);
 	Configure::write("UrlS.FG",$fg_urls);
-
-?>
