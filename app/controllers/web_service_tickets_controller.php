@@ -623,7 +623,13 @@ class WebServiceTicketsController extends WebServicesController
 
 		// send both the my dates have been received and reservation request
 		// -------------------------------------------------------------------------------
-		$params['ppvNoticeTypeId'] = 12;     // Your Dates Have Been Received
+		
+		if (isset($params['siteId']) && $params['siteId'] == 2) {
+			$params['ppvNoticeTypeId'] = 20;     // Your Dates Have Been Received
+		} else {
+			$params['ppvNoticeTypeId'] = 12;     // Your Dates Have Been Received
+		}
+		
 		$this->ppv(json_encode($params));
 
 		// ppvNoticeTypeId 2 is the new res request with client res xtranet
