@@ -1018,9 +1018,23 @@ class WebServiceTicketsController extends WebServicesController
 			$promoGcCofData		= $this->Ticket->getPromoGcCofData($ticketId, $ticket['Ticket']['billingPrice']);
 			$promoGcCofData['final_price'] = number_format($promoGcCofData['final_price'],2);
 			
-			$promoApplied		= ($promoGcCofData['Promo'] && $promoGcCofData['Promo']['applied'] ? true : false);
-			$cofApplied			= ($promoGcCofData['Cof']   && $promoGcCofData['Cof']['applied'] ? true : false);
-			$giftApplied		= ($promoGcCofData['GiftCert']   && $promoGcCofData['GiftCert']['applied'] ? true : false);
+			$promoApplied		= (
+									isset($promoGcCofData['Promo'])
+									&& isset($promoGcCofData['Promo']['applied'])
+									&& $promoGcCofData['Promo']['applied']
+								) ? true : false;
+									
+			$cofApplied			= (
+									isset($promoGcCofData['Cof'])
+									&& isset($promoGcCofData['Cof']['applied'])
+									&& $promoGcCofData['Cof']['applied']
+								) ? true : false;
+								
+			$giftApplied		= (
+									isset($promoGcCofData['GiftCert'])
+									&& isset($promoGcCofData['GiftCert']['applied'])
+									&& $promoGcCofData['GiftCert']['applied']
+								) ? true : false;
 		} else {
 			if ($username) {
 				$this->User->UserSiteExtended->recursive = 0;
@@ -1108,7 +1122,7 @@ class WebServiceTicketsController extends WebServicesController
 			$llFeeAmount		= 40;
 			$llFee				= $llFeeAmount;
 			$totalPrice			= $this->numF($ticketData['billingPrice'] + $llFeeAmount);
-			$isTaxIncluded      = $ticketData['isTaxIncluded'];
+			$isTaxIncluded      = (isset($ticketData['isTaxIncluded'])) ? $ticketData['isTaxIncluded'] : NULL;
 
 			$checkoutHash		= md5($ticketId . $userId . $offerId . 'LL_L33T_KEY');
 			$checkoutKey		= base64_encode(serialize(array('ticketId' => $ticketId, 'userId' => $userId, 'offerId' => $offerId, 'zKey' => $checkoutHash)));
@@ -1617,7 +1631,7 @@ class WebServiceTicketsController extends WebServicesController
 				break;
 		}
 
-		if ($templateFile) {
+		if (isset($templateFile) && $templateFile) {
 			if (($template = $this->newEmailTemplate($templateFile,$append,$specialException)) !== FALSE) {
 				$rand = rand(100,1000);
 				$file = "/tmp/template-".$rand;

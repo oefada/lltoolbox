@@ -262,8 +262,8 @@ class Ticket extends AppModel {
 		$data['Cof']['totalAmountOff'] = abs($data['Cof']['totalAmountOff']);
 		$data['GiftCert']['totalAmountOff'] = abs($data['GiftCert']['totalAmountOff']);
 		
-		$data['Cof']['remainingBalance'] = ($data['Cof']['remainingBalance'] < 0 ? 0 : $data['Cof']['remainingBalance']);
-		$data['GiftCert']['remainingBalance'] = ($data['GiftCert']['remainingBalance'] < 0 ? 0 : $data['GiftCert']['remainingBalance']);
+		$data['Cof']['remainingBalance'] = (isset($data['Cof']['remainingBalance']) && $data['Cof']['remainingBalance'] < 0) ? 0 : $data['Cof']['remainingBalance'];
+		$data['GiftCert']['remainingBalance'] = (isset($data['GiftCert']['remainingBalance']) && $data['GiftCert']['remainingBalance'] < 0) ? 0 : $data['GiftCert']['remainingBalance'];
 		
 		$data['final_price'] = ($ticketPrice < 0 ? 0 : $ticketPrice);
 		
