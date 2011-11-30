@@ -1122,7 +1122,7 @@ class WebServiceTicketsController extends WebServicesController
 
 			// fixed price variables
 			// -------------------------------------------------------------------------------
-			$fpRequestType		= ($wholesale) ? 'A Wholesale Exclusive' : 'An Exclusive';
+			$fpRequestType		= (isset($wholesale) && $wholesale) ? 'A Wholesale Exclusive' : 'An Exclusive';
 			$fpArrival			= isset($ticketData['requestArrival']) ? date('M d, Y', strtotime($ticketData['requestArrival'])) : 'N/A';
 			$fpDeparture		= isset($ticketData['requestDeparture']) ? date('M d, Y', strtotime($ticketData['requestDeparture'])) : 'N/A';
 			$fpArrival2			= isset($ticketData['requestArrival2']) && ($ticketData['requestArrival2'] != '0000-00-00') ? date('M d, Y', strtotime($ticketData['requestArrival2'])) : 'N/A';
@@ -1224,7 +1224,7 @@ class WebServiceTicketsController extends WebServicesController
 						$guarantee = $this->numF($liveOfferData['reserveAmt']);
 					}
 				}
-				if ($offerLive['isMystery']) {
+				if (isset($offerLive['isMystery']) && $offerLive['isMystery']) {
 					$guarantee = $this->numF($liveOfferData['reserveAmt']);
 				}
 			}
@@ -1241,7 +1241,7 @@ class WebServiceTicketsController extends WebServicesController
 			// check if already sent out a reservation request
 			if (in_array($ppvNoticeTypeId, array(2,10))) {
 				$res_request = $this->Ticket->query("SELECT COUNT(*) AS count FROM ppvNotice where ticketId = {$ticketId} AND ppvNoticeTypeId IN (2,10);");
-				$res_request_count = $resrequest[0][0]['count'];
+				$res_request_count = $res_request[0][0]['count'];
 			}
 		} //End IF for $ticketId
 
@@ -1305,7 +1305,7 @@ class WebServiceTicketsController extends WebServicesController
 				$clients[$client_index]['estaraPhoneIntl'] = UtilityHelper::cleanUSD($clients[$client_index]['estaraPhoneIntl'],6);
 
 				$clients[$client_index]['clientAdjustedPrice']	= $this->numF(($clients[$client_index]['percentOfRevenue'] / 100) * $ticketData['billingPrice']);
-				$clients[$client_index]['pdpUrl'] 				= $siteUrl."luxury-hotels/".$clients[$client_index]['seoName']."?clid=".$clientId."&pkid=".$packageId;
+				$clients[$client_index]['pdpUrl'] 				= $siteUrl."luxury-hotels/".$clients[$client_index]['seoName']."?clid=".$row['clientId']."&pkid=".$packageId;
 				$clients[$client_index]['destData'] 			= $this->ClientLoaPackageRel->Client->ClientDestinationRel->findByclientId($row['clientId'],array(),"parentId DESC, clientDestinationRelId DESC");
 				
 				if (($pos = strpos($clients[$client_index]['contact_to_string'], ",")) != 0) {
