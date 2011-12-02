@@ -2238,14 +2238,14 @@ class WebServiceTicketsController extends WebServicesController
 		$paymentDetail['autoProcessed']			= $data['autoCharge'];
 		$paymentDetail['initials']				= $data['initials'];
 		$paymentDetail['paymentProcessorId']	= $data['paymentProcessorId'];
-		$paymentDetail['paymentTypeId']			= $data['paymentTypeId'];
+		$paymentDetail['paymentTypeId']			= (isset($data['paymentTypeId'])) ? $data['paymentTypeId'] : NULL;
 		$paymentDetail['paymentAmount']			= $totalChargeAmount;
 		$paymentDetail['userPaymentSettingId']	= ($usingUpsId) ? $data['userPaymentSettingId'] : '';
 		$paymentDetail['ppBillingAmount']		= $totalChargeAmount;
 
 		$otherCharge = 0;
 
-		if ($data['paymentTypeId'] == 1 || !$toolboxManualCharge) {
+		if ((isset($data['paymentTypeId']) && $data['paymentTypeId'] == 1) || !$toolboxManualCharge) {
 			// set total charge amount to send to processor
 			// ---------------------------------------------------------------------------
 			// init payment processing and submit payment
@@ -2287,8 +2287,8 @@ class WebServiceTicketsController extends WebServicesController
 
 			$paymentDetail 							= array_merge($paymentDetail,$processor->GetMappedResponse());
 			$paymentDetail['paymentTypeId'] 		= 1;
-			$paymentDetail['ppFirstName']			= $data['firstName'];
-			$paymentDetail['ppLastName']			= $data['lastName'];
+			$paymentDetail['ppFirstName']			= (isset($data['firstName'])) ? $data['firstName'] : NULL;
+			$paymentDetail['ppLastName']			= (isset($data['lastName'])) ? $data['lastName'] : NULL;
 			$paymentDetail['ppBillingAddress1']		= $userPaymentSettingPost['UserPaymentSetting']['address1'];
 			$paymentDetail['ppBillingCity']			= $userPaymentSettingPost['UserPaymentSetting']['city'];
 			$paymentDetail['ppBillingState']		= $userPaymentSettingPost['UserPaymentSetting']['state'];
@@ -2338,7 +2338,9 @@ class WebServiceTicketsController extends WebServicesController
 		}
 
 		// CoF & Gift being saved even if it wasn't used
-		if ($data['paymentTypeId'] < 2 && $toolboxManualCharge) {
+		if (
+				(!isset($data['paymentTypeId'])	|| (isset($data['paymentTypeId']) && $data['paymentTypeId'] < 2))
+				&& $toolboxManualCharge) {
 			if (isset($promoGcCofData['Cof']['applied'])) {
 				$promoGcCofData['Cof']['applied'] = 0;
 			}
@@ -2445,7 +2447,7 @@ class WebServiceTicketsController extends WebServicesController
 			$this->logError(__METHOD__);
 		}
 
-		if (isset($promoGcCofData['Cof']) && $promoGcCofData['Cof']['applied'] == 1) {
+		if (isset($promoGcCofData['Cof']) && isset($promoGcCofData['Cof']['applied']) && $promoGcCofData['Cof']['applied'] == 1) {
 			$promoGcCofData['Cof']['creditTrackingTypeId'] = 1;
 			$this->PaymentDetail->saveCof($ticket['Ticket']['ticketId'], $promoGcCofData['Cof'], $ticket['Ticket']['userId'], $data['autoCharge'], $data['initials'],$toolboxManualCharge);
 			$this->errorMsg = "CoF Saved";
