@@ -1318,6 +1318,9 @@ class WebServiceTicketsController extends WebServicesController
 				$clients[$client_index]['estaraPhoneLocal'] = UtilityHelper::cleanUSD($clients[$client_index]['estaraPhoneLocal'],6);
 				$clients[$client_index]['estaraPhoneIntl'] = UtilityHelper::cleanUSD($clients[$client_index]['estaraPhoneIntl'],6);
 
+				// Check if billingPrice is set, else set it to 0
+				$ticketData['billingPrice'] = (isset($ticketData['billingPrice'])) ? $ticketData['billingPrice'] : 0;
+				
 				$clients[$client_index]['clientAdjustedPrice']	= $this->numF(($clients[$client_index]['percentOfRevenue'] / 100) * $ticketData['billingPrice']);
 				$clients[$client_index]['pdpUrl'] 				= $siteUrl."luxury-hotels/".$clients[$client_index]['seoName']."?clid=".$row['clientId']."&pkid=".$packageId;
 				$clients[$client_index]['destData'] 			= $this->ClientLoaPackageRel->Client->ClientDestinationRel->findByclientId($row['clientId'],array(),"parentId DESC, clientDestinationRelId DESC");
