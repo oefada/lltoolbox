@@ -18,7 +18,7 @@ Please <a style="color:#369;font-weight:bold;" href="<?=$dateRequestLink;?>"> su
 		<div style="font-weight:bold; font-size:12px; padding-top:8px;"><?php echo $clientNameP;?></div>
 		<div style="font-size:12px;"><?php echo $locationDisplay;?></div>
 		<div style="font-size:12px; padding-top:10px;"><?php echo $packageName.' - '.$numNights.' nights' ?></div>
-		<div style="font-size:12px; padding-top:15px;"><?php echo $shortBlurb; ?></div>
+		<div style="font-size:12px; padding-top:15px;"><?php echo (isset($shortBlurb)) ? $shortBlurb : ''; ?></div>
 		<div style="font-size:12px; padding-top:35px;">
 			<a style="color:#336699;" href="<?=$siteUrl;?>portfolio/por_offer_redirect.php?oid=<?=$offerId;?>&utm_source=ll&utm_medium=xa&utm_campaign=bn_datesnotavail">View Package Details</a>
 		</div>
@@ -102,7 +102,7 @@ Please reference ticket id # <?php echo $ticketId ?> when you call.
 	<div style="height:20px;margin-top:20px;border-top:1px solid #E4E4E4;">&nbsp;</div>
 	<div>Toll Free in the U.S. <?=$sitePhone;?> | Outside the U.S. <?=$sitePhoneLocal;?> | Facsimile <?=$siteFax;?></div>
 	<a href="<?=$siteUrl;?>" style="color:#336699;"><?=$siteUrl;?></a>
-	<?php if ($footer_sig) : ?>
+	<?php if (isset($footer_sig)): ?>
 	<p>
 	<?=$footer_sig;?>
 	</p>
