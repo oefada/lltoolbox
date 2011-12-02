@@ -600,19 +600,21 @@ class PackagesController extends AppController {
 		$this->LoaItem->Behaviors->attach('Containable');
 
 		$clientLoaDetails=array();
-		foreach($this->data['ClientLoaPackageRel'] as $key => $clientLoaPackageRel):
+		foreach($this->data['ClientLoaPackageRel'] as $key => $clientLoaPackageRel) {
 			$clientLoaDetails[$key] = $this->Client->Loa->findByLoaId($clientLoaPackageRel['loaId']);
 
 			$clientLoaDetails[$key]['ClientLoaPackageRel'] = $clientLoaPackageRel;
 
 			//Get all the fees for each item
-			foreach($clientLoaDetails[$key]['LoaItem'] as $k => $v) {
-			    $itemId = $v['loaItemId'];
-			    $loaItem = $this->LoaItem->read(null, $itemId);
-			    $clientLoaDetails[$key]['LoaItem'][$k]['Fee'] = $loaItem['Fee'];
-			    $clientLoaDetails[$key]['LoaItem'][$k]['LoaItemRatePeriod'] = $loaItem['LoaItemRatePeriod'];
+			if (isset($clientLoaDetails[$key]['LoaItem'])) {
+				foreach($clientLoaDetails[$key]['LoaItem'] as $k => $v) {
+				    $itemId = $v['loaItemId'];
+				    $loaItem = $this->LoaItem->read(null, $itemId);
+				    $clientLoaDetails[$key]['LoaItem'][$k]['Fee'] = $loaItem['Fee'];
+			    	$clientLoaDetails[$key]['LoaItem'][$k]['LoaItemRatePeriod'] = $loaItem['LoaItemRatePeriod'];
+				}
 			}
-		endforeach;
+		}
 
 		$formats = $this->Package->Format->find('list');
 		$this->set('formats', $formats);
@@ -632,7 +634,9 @@ class PackagesController extends AppController {
 		//sort the LOA Items so that the checked ones appear at the top
 		$approvalNotNeeded = 0;
 		foreach($clientLoaDetails as $k => $a):
-			uasort($clientLoaDetails[$k]['LoaItem'], array($this, 'sortLoaItemsForEdit'));
+			if (isset($clientLoaDetails[$k]['LoaItem'])) {
+				uasort($clientLoaDetails[$k]['LoaItem'], array($this, 'sortLoaItemsForEdit'));
+			}
 
 			$track = $this->Package->ClientLoaPackageRel->Loa->Track->findByTrackId($a['ClientLoaPackageRel']['trackId']);
 
@@ -1797,28 +1801,29 @@ class PackagesController extends AppController {
       echo 'ok';
 
     } else {
+		$package = $this->Package->getPackage($packageId);
+		$isMultiClientPackage = (count($package['ClientLoaPackageRel']) > 1) ? true : false;
+		$this->set('isMultiClientPackage', $isMultiClientPackage);
+		$this->set('packageId', $packageId);
+		$this->set('clientId', $clientId);
+		$this->set('package', $package);
+		$inclusions = $this->Package->getInclusions($packageId);
 
-			$package = $this->Package->getPackage($packageId);
-			$isMultiClientPackage = (count($package['ClientLoaPackageRel']) > 1) ? true : false;
-			$this->set('isMultiClientPackage', $isMultiClientPackage);
-			$this->set('packageId', $packageId);
-			$this->set('clientId', $clientId);
-      $this->set('package', $package);
-			$inclusions = $this->Package->getInclusions($packageId);
-
-			if ($package['Package']['isTaxIncluded']) {
-       	$roomNights = $this->LoaItem->getRoomNights($packageId);
-				$taxes_fees = array();
-				$rn = $roomNights[0];
+		if ($package['Package']['isTaxIncluded']) {
+			$taxes_fees = array();
+	       	$roomNights = $this->LoaItem->getRoomNights($packageId);
+			$rn = $roomNights[0];
+			if (isset($rn['Fees'])) {
 				foreach ($rn['Fees'] as $fee) {
 					if (trim($fee['Fee']['feeName'])) {
 						$taxes_fees[] = $fee['Fee']['feeName'];
 					}
 				}
-				if (!empty($taxes_fees)) {
-					$inclusions[] = array('LoaItem' => array('merchandisingDescription' => $this->getTaxesText($taxes_fees)));
-				}
 			}
+			if (!empty($taxes_fees)) {
+				$inclusions[] = array('LoaItem' => array('merchandisingDescription' => $this->getTaxesText($taxes_fees)));
+			}
+		}
 
 			// get roomGradeName for this package
 	    $this->Package->PackageLoaItemRel->recursive = 2;
