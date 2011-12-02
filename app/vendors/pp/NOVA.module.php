@@ -44,7 +44,7 @@ class NOVA
 		$tmp_array = split("\n", strval($raw_response));
 		foreach($tmp_array as $k=>$v) {
 			$tmp = explode('=', $v);
-			$processed[$tmp[0]] = $tmp[1];
+			$processed[$tmp[0]] = (isset($tmp[1])) ? $tmp[1] : 0;
 		}
 		return $processed;
 	}
@@ -61,14 +61,14 @@ class NOVA
 		$paymentDetail = array();
 		
 		$paymentDetail['ppResponseDate']		= date('Y-m-d H:i:s', strtotime('now'));
-		$paymentDetail['ppTransactionId']		= $response['ssl_txn_id'];
-		$paymentDetail['ppApprovalText']		= $response['ssl_result_message'];
-		$paymentDetail['ppApprovalCode']		= $response['ssl_result'];
-		$paymentDetail['ppAvsCode']				= $response['ssl_avs_response'];
+		$paymentDetail['ppTransactionId']		= (isset($response['ssl_txn_id'])) ? $response['ssl_txn_id'] : 0;
+		$paymentDetail['ppApprovalText']		= (isset($response['ssl_result_message'])) ? $response['ssl_result_message'] : 0;
+		$paymentDetail['ppApprovalCode']		= (isset($response['ssl_result'])) ? $response['ssl_result'] : 0;
+		$paymentDetail['ppAvsCode']				= (isset($response['ssl_avs_response'])) ? $response['ssl_avs_response'] : 0;
 		$paymentDetail['ppResponseText']		= '';
 		$paymentDetail['ppResponseSubCode']		= '';
 		$paymentDetail['ppReasonCode']			= '';
-		$paymentDetail['isSuccessfulCharge']	= ($response['ssl_result'] == '0') && (stristr($response['ssl_result_message'], 'APPROVAL')) ? 1 : 0;
+		$paymentDetail['isSuccessfulCharge']	= (isset($response['ssl_result']) && ($response['ssl_result'] == '0') && isset($response['ssl_result_message']) && (stristr($response['ssl_result_message'], 'APPROVAL'))) ? 1 : 0;
 		
 		return $paymentDetail;
 	}
