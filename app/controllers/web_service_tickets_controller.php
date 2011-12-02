@@ -1682,7 +1682,7 @@ class WebServiceTicketsController extends WebServicesController
 
 			// AUTO SECTION FOR MULTI CLIENT PPV for multi-client packages send client emails [CLIENT PPV]
 			// -------------------------------------------------------------------------------
-			$count_clients = count($clients);
+			$count_clients = (isset($clients)) ? count($clients) : 0;
 			if ((in_array($ppvNoticeTypeId, array(2,4,10))) && (!$manualEmailBody) && ($count_clients > 1)) {
 				for ($i = 1; $i < $count_clients; $i++) {
 					$clientId			= $clients[$i]['clientId'];
