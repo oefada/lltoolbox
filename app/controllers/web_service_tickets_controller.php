@@ -1958,7 +1958,7 @@ class WebServiceTicketsController extends WebServicesController
 			if ($ppvNoticeTypeId == 1 || $ppvNoticeTypeId == 23) {
 				// reservation confirmation from buy now with seasonal pricing
 				$currentTicketStatus = $this->Ticket->query("SELECT ticketStatusId as tsi FROM ticket WHERE ticketId = {$ticketId}");
-				if($currentTicketStatus[0]['tsi'] == 14 )
+				if(isset($currentTicketStatus[0]['tsi']) && $currentTicketStatus[0]['tsi'] == 14 )
 					$newTicketStatus = 14;
 				else
 					$newTicketStatus = 4; //auction or FP
