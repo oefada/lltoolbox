@@ -2164,7 +2164,7 @@ class WebServiceTicketsController extends WebServicesController
 			unset($tmp_result);
 			$usingUpsId = true;
 		} else {
-			$userPaymentSettingPost['UserPaymentSetting'] = $data['userPaymentSetting'];
+			$userPaymentSettingPost['UserPaymentSetting'] = (isset($data['userPaymentSetting'])) ? $data['userPaymentSetting'] : 0;
 		}
 
 		if (!$userPaymentSettingPost || empty($userPaymentSettingPost)) {
