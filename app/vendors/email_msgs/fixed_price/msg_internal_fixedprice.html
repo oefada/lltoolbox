@@ -58,7 +58,7 @@
 		<td style="color:#990000;font-size:12px;" valign="top" align="left">$<?=$promoGcCofData['Promo']['totalAmountOff'];?></td>
 	</tr>
 	<?php endif; ?>
-	<?php if (isset($promoGcCofData['GiftCert']) && $promoGcCofData['GiftCert']['applied']) : ?>
+	<?php if (isset($promoGcCofData['GiftCert']) && isset($promoGcCofData['GiftCert']['applied']) && $promoGcCofData['GiftCert']['applied']): ?>
 	<tr>
 		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">Gift Certificate:</td>
 		<td style="color:#990000;font-size:12px;" valign="top" align="left">
@@ -69,7 +69,7 @@
 		</td>
 	</tr>
 	<?php endif; ?>
-	<?php if ($promoGcCofData['Cof'] && $promoGcCofData['Cof']['applied']) : ?>
+	<?php if (isset($promoGcCofData['Cof']) && isset($promoGcCofData['Cof']['applied']) && $promoGcCofData['Cof']['applied']): ?>
 	<tr>
 		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">Credit On File:</td>
 		<td style="color:#990000;font-size:12px;" valign="top" align="left">
