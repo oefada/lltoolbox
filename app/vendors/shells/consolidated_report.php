@@ -54,7 +54,7 @@ class ConsolidatedReportShell extends Shell {
 		$this->isProduction = isset($this->params['production']) ? true : false;
 		
 		// Report initialization variables
-		$template = 'consolidated_report_revision-9.xlsx';
+		$template = 'consolidated_report_revision-10.xlsx';
 		
 		$report_date = isset($this->params['report_date']) ? $this->params['report_date'] : null;		
 		$client_id = isset($this->params['client_id']) ? $this->params['client_id'] : null;
