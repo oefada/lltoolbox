@@ -78,7 +78,19 @@ class ConsolidatedReportShell extends Shell {
 			$loa_start_date = date('Y-m-d', strtotime($loa_details['Loa']['startDate']));
 			$loa_end_date = date('Y-m-d', strtotime($loa_details['Loa']['endDate']));
 			$membership_fee = $loa_details['Loa']['membershipFee'];
-			$outputFile = TMP . "consolidated_reports/" . $client_details['Client']['seoName'] . '_' . $loa_start_date . '_to_' . $report_date . '_consolidated_report.xlsx';
+			$outputDir = TMP . "consolidated_reports/" . $report_date;
+			if (!is_dir($outputDir)) {
+				try {
+					self::log("Output Directory $outputDir does not exist. Creating it.");
+					mkdir($outputDir);
+					self::log('Output Directory created successfully');
+				} catch (Exception $e) {
+					self::log("Error - There was an issue creating the output directory. Message: '" . $e->getMessage(). "'");
+					return 1;
+				}
+				
+			}
+			$outputFile = $outputDir . '/' . $client_details['Client']['seoName'] . '_' . $loa_start_date . '_to_' . $report_date . '_consolidated_report.xlsx';
 		
 			// Log date and filename parameters
 			self::log("Generating Report for client_id: $client_id, report_date: $report_date");
