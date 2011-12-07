@@ -807,6 +807,9 @@ class Client extends AppModel {
 			WHERE
 				Client.clientId = Loa.clientId
 				AND '$date' BETWEEN Loa.startDate AND Loa.endDate
+				AND Loa.accountTypeId <> 5
+				AND Loa.loaLevelId = 2
+				AND Loa.inactive = 0
 			ORDER BY Client.name
 		";
 		return $this->query($sql);

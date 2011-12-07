@@ -224,7 +224,10 @@ class ConsolidatedReport extends AppModel
 				'fields' => array('clientId', 'loaId', 'startDate', 'endDate', 'membershipFee'),
 				'conditions' => array(
 					"'$report_date' BETWEEN startDate AND endDate",
-					"clientId = $client_id"
+					"clientId = $client_id",
+					'accountTypeId <> 5', //excludes PHG Pilot
+					'loaLevelId = 2', //includes only sponsorship and excludes beds & wholesale
+					'inactive = 0'
 				)
 			)
 		);
