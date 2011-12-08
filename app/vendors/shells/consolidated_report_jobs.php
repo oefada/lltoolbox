@@ -3,7 +3,7 @@ class ConsolidatedReportJobsShell extends Shell
 {
 	public $uses = array('ConsolidatedReportJob');
 	public $errors = array();
-	public static $logfile = 'consolidated_report';
+	public static $logfile = 'consolidated_report_jobs';
 	
 	public function initialize() {
 		self::log('Consolidated Job Process Started.');
