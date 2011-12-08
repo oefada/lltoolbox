@@ -614,23 +614,23 @@ class Client extends AppModel {
 			WHERE
 				Client.`clientId` = $client_id
 				AND ClientContact.`clientId` = Client.`clientId`
-			GROUP BY Client.`clientId`
-			HAVING MAX(ClientContact.`clientContactId`)
+			GROUP BY ClientContact.`emailAddress`
 		";
 		
-		$contact_details = $this->query($sql);
-		if (isset($contact_details[0])) {
-			$contact_details = $contact_details[0];
-			$contact_details = array(
-				'client_name' => $contact_details['Client']['property_name'],
-				'account_manager_email' => $contact_details['Client']['account_manager'] . '@luxurylink.com',
-				'contact_name' => $contact_details['ClientContact']['contact_name'],
-				'contact_email' => $contact_details['ClientContact']['contact_email']
-			);
+		$contact_details_raw = $this->query($sql);
+		if (is_array($contact_details_raw) AND !empty($contact_details_raw)) {
+			foreach($contact_details_raw as $contact_detail) {
+				$contact_details[] = array(
+					'client_name' => $contact_detail['Client']['property_name'],
+					'account_manager_email' => $contact_detail['Client']['account_manager'] . '@luxurylink.com',
+					'contact_name' => $contact_detail['ClientContact']['contact_name'],
+					'contact_email' => $contact_detail['ClientContact']['contact_email']
+				);
+			}
 		} else {
 			$contact_details = false;
 		}
-		
+
 		return $contact_details;
 	}
 

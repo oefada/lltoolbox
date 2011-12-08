@@ -68,7 +68,7 @@ class ConsolidatedReportShell extends Shell {
 			
 			// Get contact details
 			$contact_details = $this->Client->getClientContactDetails($client_id);
-			if ($contact_details === false OR !isset($contact_details['contact_email'])) {
+			if ($contact_details === false) {
 				self::log("Error - There are no contact details for client_id: $client_id");
 				return 1;
 			}
@@ -77,11 +77,16 @@ class ConsolidatedReportShell extends Shell {
 				self::log("This is not a production run. Reports will not be sent to the client.");
 			} else {
 				self::log("This is a production run. Reports will be sent to the client.");
+				$account_manager_email = $contact_details[0]['account_manager_email'];
+				$contact_email = '';
+				foreach($contact_details as $contact_detail) {
+					$contact_email .= $contact_detail['contact_email'] . ',';
+				}
+				$contact_email = trim($contact_email, ',');
+
 				$send_report_to = array(
-					//$contact_details['account_manager_email'],
-					//$contact_details['contact_email']
-					'mclifford@luxurylink.com',
-					'cliffom@gmail.com'
+					$contact_email,
+					$account_manager_email
 				);
 			}
 
