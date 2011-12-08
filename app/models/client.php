@@ -592,6 +592,47 @@ class Client extends AppModel {
             return $client;
         }
    }
+   
+   /**
+    * Return client contact details
+    * 
+    * @param	int $client_id
+    * @return	array or boolean
+    */
+	public function getClientContactDetails($client_id)
+	{
+		$sql = "
+			SELECT 
+				Client.`name` AS property_name,
+				ClientContact.`name` AS contact_name,
+				ClientContact.`emailAddress` AS contact_email,
+				Client.`managerUsername` AS account_manager,
+				Client.`clientId` AS client_id
+			FROM
+				client Client,
+				clientContact ClientContact
+			WHERE
+				Client.`clientId` = $client_id
+				AND ClientContact.`clientId` = Client.`clientId`
+			GROUP BY Client.`clientId`
+			HAVING MAX(ClientContact.`clientContactId`)
+		";
+		
+		$contact_details = $this->query($sql);
+		if (isset($contact_details[0])) {
+			$contact_details = $contact_details[0];
+			$contact_details = array(
+				'client_name' => $contact_details['Client']['property_name'],
+				'account_manager_email' => $contact_details['Client']['account_manager'] . '@luxurylink.com',
+				'contact_name' => $contact_details['ClientContact']['contact_name'],
+				'contact_email' => $contact_details['ClientContact']['contact_email']
+			);
+		} else {
+			$contact_details = false;
+		}
+		
+		return $contact_details;
+	}
 
    function getClientSchedulingMasters($clientId, $startDate, $endDate) {
         $query = "SELECT SchedulingMaster.packageId,

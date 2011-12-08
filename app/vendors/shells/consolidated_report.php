@@ -65,13 +65,24 @@ class ConsolidatedReportShell extends Shell {
 
 		if ($loa_details !== false) {
 			// The client has a current LOA around the report date, generate the report
-		
+			
+			// Get contact details
+			$contact_details = $this->Client->getClientContactDetails($client_id);
+			if ($contact_details === false OR !isset($contact_details['contact_email'])) {
+				self::log("Error - There are no contact details for client_id: $client_id");
+				return 1;
+			}
+
 			if (!$this->isProduction) {
 				self::log("This is not a production run. Reports will not be sent to the client.");
-				$send_report_to = 'mclifford@luxurylink.com';
 			} else {
 				self::log("This is a production run. Reports will be sent to the client.");
-				$send_report_to = $client_details['Client']['email'];
+				$send_report_to = array(
+					//$contact_details['account_manager_email'],
+					//$contact_details['contact_email']
+					'mclifford@luxurylink.com',
+					'cliffom@gmail.com'
+				);
 			}
 
 			// Set date, fee, and output file parameters
@@ -127,8 +138,10 @@ class ConsolidatedReportShell extends Shell {
 					self::log('Writing the report object to disk.');
 					$report->writeSpreadsheetObjectToFile();
 					self::log('The write was successful.');
-					self::log("Emailing report to $send_report_to");
-					//$this->emailReport($send_report_to, $client_details['Client']['name'], $report_date, $outputFile);
+					if ($this->isProduction) {
+						self::log('Emailing report to ' . implode(', ', $send_report_to));
+						$this->emailReport($send_report_to, $contact_details['client_name'], $report_date, $outputFile);
+					}
 					return 0;
 				} catch (Exception $e) {
 					self::log("Error - There was an issue saving the report object to disk. Message: '" . $e->getMessage() . "'");
@@ -159,7 +172,7 @@ class ConsolidatedReportShell extends Shell {
 	 * Email the generated report
 	 *
 	 * @access	private
-	 * @param	string to address
+	 * @param	array to address
 	 * @param	string client name
 	 * @param	string path to file to attach
 	 */
@@ -167,7 +180,10 @@ class ConsolidatedReportShell extends Shell {
 	{
 		$this->Email->reset();
 		$this->Email->from = 'noreply@luxurylink.com';
-		$this->Email->to = 'mclifford@luxurylink.com';
+		$this->Email->to = array_shift($recipient);
+		if (isset($recipient) AND is_array($recipient) AND !empty($recipient)) {
+			$this->Email->bcc = $recipient;
+		}
 		$this->Email->subject = "Consolidated Report for $client_name, $report_date";
 		$this->Email->attachments = array($file);
 		$this->Email->send();
