@@ -27,6 +27,7 @@ class ConsolidatedReportJobsShell extends Shell
 			$job_id = $job['ConsolidatedReportJob']['id'];
 			$report_date = $job['ConsolidatedReportJob']['report_date'];
 			$tasks = $job['ConsolidatedReportJobsClients'];
+			$is_production = (isset($this->params['production'])) ? true : false;
 			
 			$this->ConsolidatedReportJob->setJobInProgress($job_id);
 			
@@ -38,6 +39,10 @@ class ConsolidatedReportJobsShell extends Shell
 				if ($task['status'] === 'scheduled') {
 					$client_id = $task['client_id'];
 					$command = "consolidated_report -report_date $report_date -client_id $client_id";
+					if ($is_production === true) {
+						$command .= ' -production';
+					}
+
 					$output = array();
 					$status = 0;
 
