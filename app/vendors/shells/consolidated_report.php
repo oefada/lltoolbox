@@ -145,7 +145,7 @@ class ConsolidatedReportShell extends Shell {
 					self::log('The write was successful.');
 					if ($this->isProduction) {
 						self::log('Emailing report to ' . implode(', ', $send_report_to));
-						$this->emailReport($send_report_to, $contact_details['client_name'], $report_date, $outputFile);
+						$this->emailReport($send_report_to, $contact_details[0]['client_name'], $report_date, $outputFile);
 					}
 					return 0;
 				} catch (Exception $e) {
