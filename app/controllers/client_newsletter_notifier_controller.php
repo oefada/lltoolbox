@@ -85,6 +85,8 @@ class ClientNewsletterNotifierController extends AppController {
 					$this->Email->cc[] = $contact['name'].' <'.$contact['emailAddress'].'>';
 				}
 	        }
+			// 12/8/11 jwoods - Michael asked to be copied on all of these
+			$this->Email->bcc[] = 'mchoe@luxurylink.com';
 	        $this->Email->send();
 	    }
 	}
