@@ -77,17 +77,10 @@ class ConsolidatedReportShell extends Shell {
 				self::log("This is not a production run. Reports will not be sent to the client.");
 			} else {
 				self::log("This is a production run. Reports will be sent to the client.");
-				$account_manager_email = $contact_details[0]['account_manager_email'];
-				$contact_email = '';
+				$send_report_to = array();
 				foreach($contact_details as $contact_detail) {
-					$contact_email .= $contact_detail['contact_email'] . ',';
+					$send_report_to[] = $contact_detail['contact_email'];
 				}
-				$contact_email = trim($contact_email, ',');
-
-				$send_report_to = array(
-					$contact_email,
-					$account_manager_email
-				);
 			}
 
 			// Set date, fee, and output file parameters
@@ -177,7 +170,7 @@ class ConsolidatedReportShell extends Shell {
 	 * Email the generated report
 	 *
 	 * @access	private
-	 * @param	array to address
+	 * @param	array to address(es)
 	 * @param	string client name
 	 * @param	string path to file to attach
 	 */
@@ -185,10 +178,7 @@ class ConsolidatedReportShell extends Shell {
 	{
 		$this->Email->reset();
 		$this->Email->from = 'noreply@luxurylink.com';
-		$this->Email->to = array_shift($recipient);
-		if (isset($recipient) AND is_array($recipient) AND !empty($recipient)) {
-			$this->Email->bcc = $recipient;
-		}
+		$this->Email->to = implode(',', $recipient);
 		$this->Email->subject = "Consolidated Report for $client_name, $report_date";
 		$this->Email->attachments = array($file);
 		$this->Email->send();
