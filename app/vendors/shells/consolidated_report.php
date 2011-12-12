@@ -181,7 +181,7 @@ class ConsolidatedReportShell extends Shell {
 	{
 		ini_set('session.save_handler', 'files');
 		$this->Email->reset();
-		$this->Email->from = 'Luxury Link Travel Group <noreply@luxurylink.com>';
+		$this->Email->from = 'Luxury Link Travel Group <accounts@luxurylink.com>';
 		$this->Email->to = 'Luxury Link Travel Group <noreply@luxurylink.com>';
 		$this->Email->bcc = $recipient;
 		$this->Email->subject = "Consolidated Report for $property_name, $report_date";
