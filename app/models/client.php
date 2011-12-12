@@ -851,6 +851,9 @@ class Client extends AppModel {
 				AND Loa.accountTypeId <> 5
 				AND Loa.loaLevelId = 2
 				AND Loa.inactive = 0
+				AND Client.managerUsername != 'sgreen'
+				AND Client.clientId NOT IN (557,9017,4639,11014,8455,2039,2273,3616,8370,1887,2394,3042,3255,11150)
+				AND Client.clientId NOT IN (1257,865,143,11458)
 			ORDER BY Client.name
 		";
 		return $this->query($sql);

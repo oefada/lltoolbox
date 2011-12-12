@@ -31,8 +31,8 @@ class ConsolidatedReportShell extends Shell {
 		$this->Loa = new Loa();
 		$this->User = new User();
 		$this->Controller = new Controller();
-		$this->Email = new EmailComponent(null);
-		$this->Email->startup($this->Controller);
+		$this->Email = new EmailComponent();
+		$this->Email->initialize($this->Controller);
 		$this->ConsolidatedReport = new ConsolidatedReport();
 	}
 
@@ -78,6 +78,8 @@ class ConsolidatedReportShell extends Shell {
 			} else {
 				self::log("This is a production run. Reports will be sent to the client.");
 				$send_report_to = array();
+				$property_name = $contact_details[0]['client_name'];
+				$account_manager_email = $contact_details[0]['account_manager_email'];
 				foreach($contact_details as $contact_detail) {
 					$send_report_to[] = $contact_detail['contact_email'];
 				}
@@ -138,7 +140,7 @@ class ConsolidatedReportShell extends Shell {
 					self::log('The write was successful.');
 					if ($this->isProduction) {
 						self::log('Emailing report to ' . implode(', ', $send_report_to));
-						$this->emailReport($send_report_to, $contact_details[0]['client_name'], $report_date, $outputFile);
+						$this->emailReport($send_report_to, $property_name, $account_manager_email, $report_date, $outputFile);
 					}
 					return 0;
 				} catch (Exception $e) {
@@ -171,15 +173,21 @@ class ConsolidatedReportShell extends Shell {
 	 *
 	 * @access	private
 	 * @param	array to address(es)
-	 * @param	string client name
+	 * @param	string property name
+	 * @param	string account manager email address
 	 * @param	string path to file to attach
 	 */
-	private function emailReport($recipient, $client_name, $report_date, $file)
+	private function emailReport($recipient, $property_name, $account_manager_email, $report_date, $file)
 	{
+		ini_set('session.save_handler', 'files');
 		$this->Email->reset();
-		$this->Email->from = 'noreply@luxurylink.com';
-		$this->Email->to = implode(',', $recipient);
-		$this->Email->subject = "Consolidated Report for $client_name, $report_date";
+		$this->Email->from = 'Luxury Link Travel Group <noreply@luxurylink.com>';
+		$this->Email->to = 'Luxury Link Travel Group <noreply@luxurylink.com>';
+		$this->Email->bcc = $recipient;
+		$this->Email->subject = "Consolidated Report for $property_name, $report_date";
+		$this->Email->template = 'consolidated_report_email';
+		$this->Email->sendAs = 'text';
+		$this->Controller->set('account_manager_email', $account_manager_email);
 		$this->Email->attachments = array($file);
 		$this->Email->send();
 	}
