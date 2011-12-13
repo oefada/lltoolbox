@@ -215,7 +215,12 @@ class WebServiceTicketsController extends WebServicesController
 
 		// send out fixed price emails
 		// -------------------------------------------------------------------------------
-		$params['ppvNoticeTypeId'] = 12;     // Fixed Price - Winner Notification
+		if (isset($ticketData['siteId']) && $ticketData['siteId'] == 2) {
+			$params['ppvNoticeTypeId'] = 20;     // Fixed Price - Winner Notification	
+		} else {
+			$params['ppvNoticeTypeId'] = 12;     // Fixed Price - Winner Notification
+		}
+		
 		$this->ppv(json_encode($params));
 
 		//special request
@@ -627,7 +632,7 @@ class WebServiceTicketsController extends WebServicesController
 		if (isset($params['siteId']) && $params['siteId'] == 2) {
 			$params['ppvNoticeTypeId'] = 20;     // Your Dates Have Been Received
 		} else {
-			$params['ppvNoticeTypeId'] = 12;     // Your Dates Have Been Received
+			$params['ppvNoticeTypeId'] = 12;     // We are in the process of confirming your reservation
 		}
 		
 		$this->ppv(json_encode($params));
