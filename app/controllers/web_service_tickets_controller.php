@@ -476,7 +476,11 @@ class WebServiceTicketsController extends WebServicesController
 			// set ppv params
 			// -------------------------------------------------------------------------------
 			$ppv_settings = array();
-			if (isset($_SERVER['HTTP_HOST']) && stristr($_SERVER['HTTP_HOST'],"dev"))$ppv_settings['override_email_to']='devmail@luxurylink.com';//mbyrnes
+			
+			if (isset($_SERVER['HTTP_HOST']) && stristr($_SERVER['HTTP_HOST'],"dev")) {
+				$ppv_settings['override_email_to']='devmail@luxurylink.com'; //mbyrnes
+			}
+			
 			$ppv_settings['ticketId'] 			= $ticketId;
 			$ppv_settings['send'] 				= 1;
 			$ppv_settings['manualEmailBody']	= 0;
@@ -1903,6 +1907,7 @@ class WebServiceTicketsController extends WebServicesController
 		if (stristr($_SERVER['HTTP_HOST'], 'dev') || stristr($_SERVER['HTTP_HOST'], 'stage') || ISDEV) {
 			//$appendDevMessage = "---- DEV MAIL ---- \n<br />ORIGINAL TO:  $emailTo\n<br />ORIGINAL CC: $emailCc\n<br />ORIGINAL BCC: $emailBcc";
 			$emailTo = $emailCc = $emailBcc = 'devmail@luxurylink.com';
+			
 			//$emailBody = $appendDevMessage . $emailBody;
 			//$emailBody.= print_r($_SERVER, true);
 			$emailSubject = "DEV - " . $emailSubject;
@@ -1911,9 +1916,18 @@ class WebServiceTicketsController extends WebServicesController
 		// -------------------------------------------------------------------------------
 
         $emailHeaders['From'] = "$emailFrom";
-		if ($emailCc) $emailHeaders['Cc'] = $emailCc;
+		
+		// Ticket 2705 Silverpop doesn't support CC, place all CCs in the To:
+		if ($emailCc) $emailTo .= ",".$emailCc;
+		if ($emailBcc) $emailTo .= ",".$emailBcc;
+		
+		// Clean duplicates
+		$emailTo = explode(",",$emailTo);
+		$emailTo = array_unique($emailTo);
+		$emailTo = implode(",",$emailTo);
+		
 		if ($emailReplyTo) $emailHeaders['Reply-To'] = $emailReplyTo;
-		if ($emailBcc) $emailHeaders['Bcc'] = $emailBcc;
+		
 		$emailHeaders['Subject'] = $emailSubject;
         $emailHeaders['Content-Type'] = "text/html";
         $emailHeaders['Content-Transfer-Encoding'] = "8bit";
@@ -2583,5 +2597,3 @@ function wstErrorShutdown() {
 		//CakeLog::write("debug","STRICT: ".var_export($error,1));
 	}
 }
-
-?>
