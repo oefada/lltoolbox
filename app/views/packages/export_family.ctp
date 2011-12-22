@@ -51,7 +51,6 @@ table.lp td {
 }
 </style>
 <!-- comment for svn update -->
-<!-- <pre><?=print_r($roomNights);?></pre>-->
 <table id="package-export" cellspacing="2" cellpadding="0">
 <tr><td colspan="4" class="m"><img src="http://www.luxurylink.com/images/family/logo_emails.gif" /></td></tr>
 <tr><td colspan="4" class="m hdr uline"><?=strtoupper($client['name']);?></td></tr>
