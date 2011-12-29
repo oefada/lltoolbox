@@ -1680,7 +1680,8 @@ class WebServiceTicketsController extends WebServicesController
 				$userEmail = $override_email_to;
 			}
 
-			$emailCc = trim($override_email_cc) ? $override_email_cc : false;
+			$emailCc = isset($emailCc) ? $emailCc : FALSE;
+			$emailCc = trim($override_email_cc) != FALSE ? $override_email_cc : $emailCc;
 			$emailBcc = isset($emailBcc) ? $emailBcc : false;
 
 			if (trim($override_email_subject)) {
@@ -1912,6 +1913,7 @@ class WebServiceTicketsController extends WebServicesController
 			//$emailBody.= print_r($_SERVER, true);
 			$emailSubject = "DEV - " . $emailSubject;
 		}
+
 		// send out ppv and winner notification emails
 		// -------------------------------------------------------------------------------
 
@@ -1921,10 +1923,12 @@ class WebServiceTicketsController extends WebServicesController
 		if ($emailCc) $emailTo .= ",".$emailCc;
 		if ($emailBcc) $emailTo .= ",".$emailBcc;
 		
-		// Clean duplicates
-		$emailTo = explode(",",$emailTo);
-		$emailTo = array_unique($emailTo);
-		$emailTo = implode(",",$emailTo);
+		if (!ISDEV) {
+			// Clean duplicates
+			$emailTo = explode(",",$emailTo);
+			$emailTo = array_unique($emailTo);
+			$emailTo = implode(",",$emailTo);
+		}
 		
 		if ($emailReplyTo) $emailHeaders['Reply-To'] = $emailReplyTo;
 		
