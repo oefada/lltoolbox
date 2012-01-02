@@ -3272,7 +3272,8 @@ $sql = "SELECT clientId,COUNT(clientId) AS num".$site." FROM offer".$site."
 			$mail = new PHPMailer();
 			$mail->From = 'no-reply@toolbox.luxurylink.com';
 			$mail->FromName = 'no-reply@toolbox.luxurylink.com';
-			$mail->AddAddress('scorecard@luxurylink.com', 'scorecard@luxurylink.com');
+			$mail->AddAddress('mchoe@luxurylink.com', 'mchoe@luxurylink.com');
+			$mail->AddAddress('bscott@luxurylink.com', 'bscott@luxurylink.com');
 			$mail->Subject = 'Weekly Scorecard Report';
 			$mail->Body = 'Weekly scorecard report enclosed' . "\n";
 			$mail->AddStringAttachment($this->output, 'weekly_scorecard.html', 'base64', 'text/html');
