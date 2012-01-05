@@ -1133,10 +1133,20 @@ class WebServiceTicketsController extends WebServicesController
 			$totalPrice			= $this->numF($ticketData['billingPrice'] + $llFeeAmount);
 			$isTaxIncluded      = (isset($ticketData['isTaxIncluded'])) ? $ticketData['isTaxIncluded'] : NULL;
 
+			
+			//////////////////////////////////////////////////////////////////////////////////////////////////////
+			// TODO: figure out how to share this with the customer facing sites
+			//
+			// Is currently used in LL's my/ directory
+			//
+			// Can't does this without including php/includes/php/setup.php (launchpad, etc)
+			// App::import('Vendor', 'PPvHelper', array('file' => 'appshared' . DS . 'helpers' . DS . 'PpvHelper.php'));
 			$checkoutHash		= md5($ticketId . $userId . $offerId . 'LL_L33T_KEY');
 			$checkoutKey		= base64_encode(serialize(array('ticketId' => $ticketId, 'userId' => $userId, 'offerId' => $offerId, 'zKey' => $checkoutHash)));
-
 			$checkoutLink		= $prefixUrl . "/my/my_purchase.php?z=$checkoutKey";
+			//
+			//////////////////////////////////////////////////////////////////////////////////////////////////////
+
 			$dateRequestLink 	= $prefixUrl . "/my/my_date_request.php?tid=$ticketId";
 
 			$loaLevelId			= isset($clientData[0]['Loa']['loaLevelId']) ? $clientData[0]['Loa']['loaLevelId'] : false;
