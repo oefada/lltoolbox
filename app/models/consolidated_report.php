@@ -226,6 +226,7 @@ class ConsolidatedReport extends AppModel
 					"'$report_date' BETWEEN startDate AND endDate",
 					"clientId = $client_id",
 					'accountTypeId <> 5', //excludes PHG Pilot
+					'accountTypeID <> 2', //exclude first-year clients
 					'loaLevelId = 2', //includes only sponsorship and excludes beds & wholesale
 					'inactive = 0'
 				)
