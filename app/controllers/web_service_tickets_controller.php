@@ -1267,8 +1267,7 @@ class WebServiceTicketsController extends WebServicesController
 			}
 
 			$isMystery = isset($offerLive['isMystery']) && $offerLive['isMystery'] ? true : false;
-$isMystery = true;
-			$offerLive['offerName'] = 'South America Mystery Auction - $1 Starting Bid';
+
 	        // guarantee check prior to 2011-05-03 changes
 	        if (!$guarantee) {
 				if ($liveOfferData['reserveAmt'] && is_numeric($liveOfferData['reserveAmt']) && ($liveOfferData['reserveAmt'] > 0)) {
