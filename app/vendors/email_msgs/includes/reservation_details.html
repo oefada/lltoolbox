@@ -51,6 +51,11 @@
 										</table>
 									</td>
                                 </tr>
+                                <?php if ($ppvNoticeTypeId == 30): ?>
+                                <tr>
+                               		<td colspan="2" style="font-size:14px; font-family: Arial,Sans-Serif;color:#990000;line-height:16px;text-align:center;padding: 12px 0px 0px 0px;" colspan="2" align="center"><b>RESERVATION CANCELLED</b></td>
+                                </tr>
+                                <?php endif; ?>
                                 <?php if ($fpNotes): ?>
 								<tr>
                                   	<td colspan="2" style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:16px;padding: 12px 0px 0px 15px;" colspan="2"><b>Special Requests:</b></td>

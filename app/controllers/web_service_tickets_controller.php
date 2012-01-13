@@ -1130,7 +1130,7 @@ class WebServiceTicketsController extends WebServicesController
 			$billingPrice		= $this->numF($ticketData['billingPrice']);
 			$llFeeAmount		= 40;
 			$llFee				= $llFeeAmount;
-			$totalPrice			= $this->numF($ticketData['billingPrice'] + $llFeeAmount);
+			
 			$isTaxIncluded      = (isset($ticketData['isTaxIncluded'])) ? $ticketData['isTaxIncluded'] : NULL;
 
 			
@@ -1212,6 +1212,22 @@ class WebServiceTicketsController extends WebServicesController
 				// 07/06/11 - jwoods added
 				$resConfirmationNotes = $resData[0]['reservation']['confirmationNotes'];
 			}
+			
+			// Calculate cancellation fee. < 15 days from arrival, $100 fee, > 15 days from arrival, $35 fee 
+			if ($ppvNoticeTypeId == 30) {
+				$cancelFee = 35;
+				
+				if (!empty($resArrDate)) {
+					if (strtotime($resArrDate) - time() < strtotime("+15 days") - time()) {
+						$cancelFee = 100;
+					}
+				}
+				
+				$totalPrice = $this->numF($ticketData['billingPrice'] - $llFeeAmount - $cancelFee);
+			} else {
+				$totalPrice	= $this->numF($ticketData['billingPrice'] + $llFeeAmount);
+			}
+			
 			// cancellation info
 			$ppvNoticeData = $this->Ticket->query("SELECT * FROM ppvNotice WHERE ticketId = $ticketId and ppvNoticeTypeId = 29 ORDER BY created DESC LIMIT 1");
 			// you cannot send out cancellation confirmed email unless cancellation request email has been sent
@@ -1250,6 +1266,9 @@ class WebServiceTicketsController extends WebServicesController
 				}
 			}
 
+			$isMystery = isset($offerLive['isMystery']) && $offerLive['isMystery'] ? true : false;
+$isMystery = true;
+			$offerLive['offerName'] = 'South America Mystery Auction - $1 Starting Bid';
 	        // guarantee check prior to 2011-05-03 changes
 	        if (!$guarantee) {
 				if ($liveOfferData['reserveAmt'] && is_numeric($liveOfferData['reserveAmt']) && ($liveOfferData['reserveAmt'] > 0)) {
@@ -1596,12 +1615,16 @@ class WebServiceTicketsController extends WebServicesController
 				break;
 			case 30:
 				// send out res cancellation confirmation
-				include('../vendors/email_msgs/notifications/old/30_reservation_cancel_confirmation.html');
-				
+				$templateFile = "30_reservation_cancel_confirmation";
 				$templateTitle = "Your reservation has been cancelled";
-				$emailSubject = "Your $siteName Booking was Cancelled. - $userFirstName $userLastName";
+				$emailSubject = "Your reservation has been cancelled";
 				$emailFrom = ($isAuction) ? "$siteDisplay <resrequests@$siteEmail>" : "$siteDisplay <reservations@$siteEmail>";
 				$emailReplyTo = ($isAuction) ? "resrequests@$siteEmail" : "reservations@$siteEmail";
+				
+				if ($isAuction) {
+					$specialException = true;
+				}
+				
 				break;
 			case 31:
 				// send out res cancellation confirmation
@@ -1647,6 +1670,11 @@ class WebServiceTicketsController extends WebServicesController
 			case 38:
 				$templateFile = "38_auction_watch_ending";
 				$templateTitle = "The auction you are watching ends soon";
+				$emailSubject = $siteName . ": ".$templateTitle;
+				break;
+			case 39:
+				$templateFile = "39_auction_outbid";
+				$templateTitle = "You have been out bid! Bid again.";
 				$emailSubject = $siteName . ": ".$templateTitle;
 				break;
 			default:
@@ -1755,6 +1783,7 @@ class WebServiceTicketsController extends WebServicesController
 			// Special boxes that exist in the header. Place these anywhere in your template and it will be placed in a td next to the Dear Firstname,
 			'reservation_details' => 2,
 			'purchase_details' => 2,
+			'refund_details' => 2,
 			'booking_request_dates' => 2,
 		);
 		

@@ -20,6 +20,11 @@
 								<tr>
 									<td align="left" style="padding: 15px 0px 0px 15px;">
 										<table border="0" cellpadding="0" cellspacing="0" align="left"  width="124">
+											<? if ($ppvNoticeTypeId == 18 || $ppvNoticeTypeId == 19): ?>
+											<tr>
+										 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;">No. of Nights:</td>
+                                  			</tr>
+                                			<? endif; ?>
 											<tr>
 										 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;">Your Price:</td>
                                   			</tr>
@@ -45,6 +50,11 @@
                                     </td>
 									<td align="left" valign="top" style="padding: 15px 15px 0px 0px;">
 										<table border="0" cellpadding="0" cellspacing="0" align="left">
+											<? if ($ppvNoticeTypeId == 18 || $ppvNoticeTypeId == 19): ?>
+											<tr>
+										 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;" align="right">&nbsp;</td>
+                                  			</tr>
+                                  			<? endif; ?>
 											<tr>
 										 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;" align="right">US</td>
                                   			</tr>
@@ -70,6 +80,11 @@
                                   	</td>
 									<td align="left" valign="top" style="padding: 15px 0px 0px 0px;">
 										<table border="0" cellpadding="0" cellspacing="0" align="left">
+											<? if ($ppvNoticeTypeId == 18 || $ppvNoticeTypeId == 19): ?>
+											<tr>
+										 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;" align="right"><?=$numNights; ?></td>
+                                  			</tr>
+                                  			<? endif; ?>
 											<tr>
 										 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;" align="right">$<?=$billingPrice;?></td>
                                   			</tr>

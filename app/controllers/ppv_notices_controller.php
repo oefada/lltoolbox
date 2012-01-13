@@ -1,7 +1,5 @@
 <?php
 
-App::import('Vendor', 'nusoap_client/lib/nusoap');
-
 class PpvNoticesController extends AppController {
 
 	var $name = 'PpvNotices';
@@ -26,9 +24,7 @@ class PpvNoticesController extends AppController {
 		// web service for tickets for getting/sending ppv
 		$ticket = $this->Ticket->read(null, $ticketId);
 		
-		$webservice_live_url = Configure::read("Url.Ws"). "/web_service_tickets?wsdl";
-		$webservice_live_method_name = 'ppv';
-		$webservice_live_method_param = 'in0';
+		$webservice_live_url = Configure::read("Url.Ws"). "/web_service_tickets/?wsdl";
 		
 		if (!empty($this->data)) {
 				if (empty($this->data['PpvNotice']['emailTo'])) {
@@ -78,9 +74,10 @@ class PpvNoticesController extends AppController {
 					}
 
 					$data_json_encoded = json_encode($data);
-					$soap_client = new nusoap_client($webservice_live_url, true);
-	        		$response = $soap_client->call($webservice_live_method_name, array($webservice_live_method_param => $data_json_encoded));
-
+					$soap_client = new SoapClient($webservice_live_url, array("exception" => 1));
+	        		$response = $soap_client->ppv($data_json_encoded);
+					var_dump($response);
+					exit;
 	        		if( in_array($id, array(1,23)) ) {
 	        			$updateTicket = array();
 						$updateTicket['ticketId'] = $ticketId;
@@ -190,8 +187,8 @@ class PpvNoticesController extends AppController {
 		}
 		
 		$data_json_encoded = json_encode($data);
-		$soap_client = new nusoap_client($webservice_live_url, true);
-        $response = $soap_client->call($webservice_live_method_name, array($webservice_live_method_param => $data_json_encoded));
+		$soap_client = new SoapClient($webservice_live_url, array('encoding'=>'ISO-8859-1',"exception" => 1));
+        $response = $soap_client->ppv($data_json_encoded);
 
 		$ppv_only = 0;
 		if (isset($_GET['ppv_only'])) {

@@ -1,4 +1,4 @@
-																		<p>Thank you for your bid on <?= $clientNameP ?>. You are currently the highest bidder.</p>
+																		<p>Thank you for your bid on <? if ($isMystery): ?>our Mystery Auction<? else: ?><?= $clientNameP ?><? endif; ?>. You are currently the highest bidder.</p>
 																		<p>We will email you if you are outbid. If you win the auction we will email you to request your<br />
 																		preferred travel dates.</p>
 																		<p>Good luck!</p>

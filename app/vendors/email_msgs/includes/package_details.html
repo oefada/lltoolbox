@@ -8,7 +8,7 @@
 																                                <td valign="top" style="padding: 0px 0px 0px 0px;" align="center">
 																	                                <table bgcolor="#d8d7b8" border="0" cellpadding="0" cellspacing="0" align="center" width="555" style="padding: 11px 11px 11px 17px;border-bottom: 1px #c3c3c3 solid;">
 																										<tr>
-																											<td style="font-size:14px;line-height: 16px; font-family: Arial,Sans-Serif;color:#484846;"><b><?= ($ppvNoticeTypeId == 38 ? "AUCTION ENDS ".strtoupper(date("M d, Y \A\T g:i A",strtotime($liveOfferData['endDate'])))." PACIFIC TIME" : "YOUR VACATION PACKAGE") ?></b><td>
+																											<td style="font-size:14px;line-height: 16px; font-family: Arial,Sans-Serif;color:#484846;"><b><? if ($isMystery): ?>MYSTERY AUCTION DETAILS<? else: ?><?= ($ppvNoticeTypeId == 38 ? "AUCTION ENDS ".strtoupper(date("M d, Y \A\T g:i A",strtotime($liveOfferData['endDate'])))." PACIFIC TIME" : "YOUR VACATION PACKAGE") ?><? endif; ?></b><td>
 																										</tr>
 																									</table>
 																                                </td>
@@ -28,11 +28,16 @@
 																		                                            <table height="75" cellspacing="0" cellpadding="0" border="0" align="left" width="255">
 																		                                                <tbody>
 																		                                                    <tr>
-																		                                                        <td style="font-size:17px;line-height: 16px; font-family: Arial,Sans-Serif;color:#036dfc;" valign="top" width="157"><a href="<?= $c->pdpUrl ?>" style="color:#036dfc;text-decoration:none;" target="_blank"><b><?= $c->name ?></b></a></td>
+																		                                                        <td style="font-size:17px;line-height: 16px; font-family: Arial,Sans-Serif;color:#036dfc;" width="157"><a href="<?= $c->pdpUrl ?>" style="color:#036dfc;text-decoration:none;" target="_blank"><b><?= $isMystery ? "Mystery Auction" : $c->name ?></b></a></td>
 																		                                                    </tr>
 																		                                                    <tr>
-																		                                                        <td style="padding: 5px 0px 0px 0px;font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;text-decoration:none;"><i><?= $c->locationDisplay ?></i></td>
+																		                                                        <td style="padding: 5px 0px 0px 0px;font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;text-decoration:none;"><i><? if ($isMystery): ?><?= $offerLive['offerName'] ?><? else: ?><?= $c->locationDisplay ?><? endif; ?></i></td>
 																		                                                    </tr>
+																		                                                    <? if ($isMystery): ?>
+																		                                                    <tr>
+																		                                                        <td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;padding: 15px 0px 0px 0px;" colspan="2">The property name for this Mystery Auction will remain a secret, and for the moment so will the location, but only for the moment. We will be revealing clues throughout the course of the auction in our <a style="color:#036dfc;text-decoration:none;" href="http://www.luxurylink.com/community/forum.php">Online Community.</a></td>
+																		                                                    </tr>
+																		                                                    <? else: ?>
 																		                                                    <tr>
 																		                                                        <td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;padding: 15px 0px 0px 0px;" colspan="2"><?= $c->address1 ?><br><?= ($c->address2 != "" ? $c->address2."<br>" : "") ?><?= $c->locationDisplay ?></td>
 																		                                                    </tr>
@@ -51,6 +56,7 @@
 																		                                                        <td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;padding: 0px 0px 0px 0px;" colspan="2">E-mail: <a href="mailto:<?= $c->contact_to_string ?>" target="_blank" style="color: #056ff7;"><?= $c->contact_to_string ?></a></td>
 																		                                                    </tr>
 																		                                                    <?php endif; ?>
+																		                                               		<?php endif; ?>
 																		                                                </tbody>
 																		                                            </table>
 																	                                            </td>
