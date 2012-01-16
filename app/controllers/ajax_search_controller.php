@@ -81,6 +81,7 @@ class AjaxSearchController extends AppController {
 					'limit'      => 10,
 				);
 			} elseif ($searchtype == "users") {
+				return; //TODO: cholland note: disabling this until we can track-down what causes rare edge condition that locks down the entire user table
 				$this->AjaxSearch->table = 'user';
 				$this->AjaxSearch->primaryKey = 'userId';
 
