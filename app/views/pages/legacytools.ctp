@@ -10,6 +10,7 @@
 <li><?=$html->link("Deal of the Day", '/deal_of_the_days')?></li>
 <li><?=$html->link("Missing PPV Images", 'legacytools/ppv_client_images')?></li>
 <li><?=$html->link("Clients Without Live Packages Report", '/reports/active_loa_and_packages_check')?></li>
+<li><?=$html->link('Site Merchandising Tool', '/merchandising')?>
 </ul>
 <br>
 <h2>Search Tools</h2>
