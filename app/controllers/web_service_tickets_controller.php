@@ -509,10 +509,6 @@ class WebServiceTicketsController extends WebServicesController
         }
 			}
 
-			// 07/20/11 jwoods - ticket 581 - treat Mystery like other auctions
-			// if ($offerLive['isMystery'] || $offerLive['retailValue'] == 1 || $offerLive['openingBid'] == 1) {
-			// 	$restricted_auction = true;
-			// }
 			if (stristr($offerLive['offerName'], 'RED') && stristr($offerLive['offerName'],'HOT')) {
 				$restricted_auction = true;
 			}
@@ -1006,6 +1002,7 @@ class WebServiceTicketsController extends WebServicesController
 			$maxNumWinners		= $liveOfferData['numWinners'];
 
 			$clientData			= $this->ClientLoaPackageRel->findAllBypackageid($liveOfferData['packageId']);
+			$isMystery 			= isset($liveOfferData['isMystery']) && $liveOfferData['isMystery'] ? true : false;
 		}
 		
 		if ($ticketId) {
@@ -1266,8 +1263,6 @@ class WebServiceTicketsController extends WebServicesController
 				}
 			}
 
-			$isMystery = isset($offerLive['isMystery']) && $offerLive['isMystery'] ? true : false;
-
 	        // guarantee check prior to 2011-05-03 changes
 	        if (!$guarantee) {
 				if ($liveOfferData['reserveAmt'] && is_numeric($liveOfferData['reserveAmt']) && ($liveOfferData['reserveAmt'] > 0)) {
@@ -1275,7 +1270,8 @@ class WebServiceTicketsController extends WebServicesController
 						$guarantee = $this->numF($liveOfferData['reserveAmt']);
 					}
 				}
-				if (isset($offerLive['isMystery']) && $offerLive['isMystery']) {
+				
+				if ($isMystery) {
 					$guarantee = $this->numF($liveOfferData['reserveAmt']);
 				}
 			}
@@ -1700,7 +1696,7 @@ class WebServiceTicketsController extends WebServicesController
 			$emailBody = ob_get_clean();
 		}
 		
-		if (in_array($ppvNoticeTypeId, array(5,18,19)) && $liveOfferData['isMystery']) {
+		if (in_array($ppvNoticeTypeId, array(5,18,19)) && $isMystery) {
 			$emailSubject = "$siteName Mystery Auction Winner";
 		}
 
