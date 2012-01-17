@@ -1655,7 +1655,12 @@ class WebServiceTicketsController extends WebServicesController
 			case 36:
 				$templateFile = "36_highest_bidder";
 				$templateTitle = "You are the highest bidder";
-				$emailSubject = "$siteName: Your bid has been received! - $clientNameP";
+				$emailSubject = "$siteName: Your bid has been received!";
+				
+				if (!$isMystery) {
+					$emailSubject .= " - $clientNameP";
+				}
+				
 				break;
 			case 37:
 				$ppvNoticeTypeId = 35; //TODO REMOVE THIS LINE ONCE IT WORKS RIGHT WITH SILVERPOP
