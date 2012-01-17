@@ -307,7 +307,7 @@ class ConsolidatedReportHelper
 	public function populateDashboard($client_name, $membership_fee, $start_date, $end_date)
 	{
 		$sheet_name = 'Dashboard';
-		
+		$client_name = utf8_encode($client_name);
 		$this->setDataToPopulate($sheet_name, 'J4', $client_name);
 		$this->setDataToPopulate($sheet_name, 'J5', date('M j, Y', strtotime($start_date)) . ' - ' . date('M j, Y', strtotime($end_date)));
 	}
