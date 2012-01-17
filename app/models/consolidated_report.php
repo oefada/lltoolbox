@@ -895,7 +895,7 @@ class ConsolidatedReport extends AppModel
 			$phone = substr($phone, 1);
 		}
 		
-		$arrival = (!is_null($arrival)) ? date('j-M-y', strtotime(trim($activity_date))) : null;
+		$arrival = (!is_null($arrival)) ? date('j-M-y', strtotime(trim($arrival))) : null;
 		$departure = (!is_null($departure)) ? date('j-M-y', strtotime(trim($departure))) : null;
 		
 		return array(
