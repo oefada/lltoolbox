@@ -233,6 +233,8 @@ $cacheAction = true;
 	$webservice_live_url = 'http://toolbox.luxurylink.com';
 	$ll_url = 'www.luxurylink.com';
 	$fg_url = 'www.familygetaway.com';
+	define("ISSTAGE",false);
+	define("ISDEV",false);
 	
 	if (stristr($_SERVER['HTTP_HOST'], 'dev') || $_SERVER['ENV'] == 'development' || strpos($_ENV['HOSTNAME'],'dev')!==FALSE) {
 		define("ISDEV",true);
