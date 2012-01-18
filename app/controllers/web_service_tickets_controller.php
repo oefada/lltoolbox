@@ -1360,9 +1360,13 @@ class WebServiceTicketsController extends WebServicesController
 				$clients[$client_index]['pdpUrl'] 				= $siteUrl."luxury-hotels/".$clients[$client_index]['seoName']."?clid=".$row['clientId']."&pkid=".$packageId;
 				$clients[$client_index]['destData'] 			= $this->ClientLoaPackageRel->Client->ClientDestinationRel->findByclientId($row['clientId'],array(),"parentId DESC, clientDestinationRelId DESC");
 				
+				$clients[$client_index]['contact_to_string_trimmed'] = $clients[$client_index]['contact_to_string'];
+				
 				if (($pos = strpos($clients[$client_index]['contact_to_string'], ",")) != 0) {
 					// Causing issues when clients have multiple primary RES contacts
 					//$clients[$client_index]['contact_to_string'] = substr($clients[$client_index]['contact_to_string'],0,$pos);
+				
+					$clients[$client_index]['contact_to_string_trimmed'] = substr($clients[$client_index]['contact_to_string'],0,$pos);	
 				}
 			}
 
