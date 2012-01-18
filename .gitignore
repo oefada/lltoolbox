@@ -1,3 +1,4 @@
 .project
 .settings
+.externalToolBuilders
 app/config/database.php
