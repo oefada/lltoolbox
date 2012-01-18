@@ -1327,10 +1327,12 @@ class WebServiceTicketsController extends WebServicesController
 				}
 				$tmp['contact_cc_string'] = implode(',', array_unique($contact_cc_string));
 				$tmp['contact_to_string'] = implode(',', array_unique($contact_to_string));
+
 				if (!$tmp['contact_to_string'] && !empty($tmp['contact_cc_string'])) {
 					$tmp['contact_to_string'] = $tmp['contact_cc_string'];
 					$tmp['contact_cc_string'] = '';
 				}
+				
 				$tmp['percentOfRevenue'] = $v['ClientLoaPackageRel']['percentOfRevenue'];
 				$clients[$k] = $tmp;
 			}
@@ -1359,7 +1361,8 @@ class WebServiceTicketsController extends WebServicesController
 				$clients[$client_index]['destData'] 			= $this->ClientLoaPackageRel->Client->ClientDestinationRel->findByclientId($row['clientId'],array(),"parentId DESC, clientDestinationRelId DESC");
 				
 				if (($pos = strpos($clients[$client_index]['contact_to_string'], ",")) != 0) {
-					$clients[$client_index]['contact_to_string'] = substr($clients[$client_index]['contact_to_string'],0,$pos);
+					// Causing issues when clients have multiple primary RES contacts
+					//$clients[$client_index]['contact_to_string'] = substr($clients[$client_index]['contact_to_string'],0,$pos);
 				}
 			}
 
@@ -1725,7 +1728,7 @@ class WebServiceTicketsController extends WebServicesController
 			if (trim($override_email_subject)) {
 				$emailSubject = $override_email_subject;
 			}
-
+			
 			$this->sendPpvEmail($userEmail, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials);
 
 			// AUTO SECTION FOR MULTI CLIENT PPV for multi-client packages send client emails [CLIENT PPV]
