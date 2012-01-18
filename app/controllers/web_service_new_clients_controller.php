@@ -1,26 +1,4 @@
 <?php
-/*
-this script is called nowhere
-in toolbox:
-[mbyrnes@dev controllers]$ sgrep web_service_new_clients_controller.php
-Case sensitive search for: 'web_service_new_clients_controller.php'
-returns nothing
-in luxurylink:
-[mbyrnes@dev controllers]$ luxdev
-[mbyrnes@dev development]$ sgrep web_service_new_clients_controller.php
-Case sensitive search for: 'web_service_new_clients_controller.php'
-returns nothing
-in familygetaway:
-[mbyrnes@dev development]$ famdev
-[mbyrnes@dev development]$ sgrep web_service_new_clients_controller.php
-Case sensitive search for: 'web_service_new_clients_controller.php'
-returns nothing
-in vacationist
-[mbyrnes@dev development]$ cd /home/mbyrnes/vacationist/
-[mbyrnes@dev vacationist]$ sgrep web_service_new_clients_controller.php
-Case sensitive search for: 'web_service_new_clients_controller.php'
-returns nothing
-*/
 
 Configure::write('debug', 0);
 App::import('Vendor', 'nusoap/web_services_controller');
@@ -165,6 +143,8 @@ class WebServiceNewClientsController extends WebServicesController
 		$reservationCopy = array('ALL');
 		$deleteContacts = array('NLT');
 
+		$this->ClientContact->recursive = -1;
+		
 	    if ($client_id) {
 		    $contacts = $decoded_request['contacts'];
 			if (!empty($contacts)) {
@@ -196,7 +176,19 @@ class WebServiceNewClientsController extends WebServicesController
 		    	$newClientContact['sugarContactId']			= $contact_id;
 
 		    	if (in_array($recipient_type, $reservationContacts)) {
-		    		$newClientContact['clientContactTypeId'] = 1;
+		    		// Verify that there isn't already a primary reservation contact
+					$existing = $this->ClientContact->find('all',array('conditions' => array('ClientContact.clientId' => $client_id)));
+					
+					$newClientContact['clientContactTypeId'] = 1;
+					
+					foreach ($existing as $e) {
+						// Set this to a "copy" if a main/primary exists
+						if ($e['ClientContact']['clientContactTypeId'] == "1") {
+							$newClientContact['clientContactTypeId'] = 3;
+							break;
+						}
+					}
+		    		
 		    		$this->ClientContact->create();
 		    		$this->ClientContact->save($newClientContact, array('callbacks'=>false));
 		    	}
