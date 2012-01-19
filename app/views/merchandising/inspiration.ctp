@@ -62,8 +62,8 @@ function setRow(rowId) {
 
 <h2>Inspiration Scheduling</h2>
 
+<div style="float: left;">
 Select a date to schedule:
-
 <form name="schedule-date" method="POST" action="/merchandising/inspiration">
 <input type="hidden" name="schedule-date" value="1" />
 <select name="month">
@@ -80,12 +80,28 @@ Select a date to schedule:
 </select>
 <select name="year">
 	<option value="0">Year</option>
-	<? for ($i=2011; $i<=2014; $i++) : ?>
+	<? for ($i=2012; $i<=2014; $i++) : ?>
 	<option value="<?=$i?>" <? if (@$year == $i) echo 'SELECTED'; ?> ><?=$i;?></option>
 	<? endfor; ?>
 </select>
 <input type="submit" value="Go" />
 </form>
+</div>
+
+<div style="float: left; margin-left: 35px; margin-top: 10px;">
+<? if (isset($others['current']['startDate'])) : ?>
+Currently scheduled date: <?=$others['current']['startDate'];?><br />
+<? endif; ?>
+<? if (isset($others['next']['startDate'])) : ?>
+Next scheduled date: <?=$others['next']['startDate'];?><br />
+<? endif; ?>
+</div>
+<? if (isset($scheduleDate)) : ?>
+<div style="float: left; margin-left: 35px; margin-top: 15px;">
+	<input type="submit" value="Preview" onClick="window.open('http://www.luxurylink.com/?pDate=<?=$scheduleDate?>'); return false;" />
+</div>
+<? endif; ?>
+<div style="clear: both;"></div>
 
 
 <br /><br />

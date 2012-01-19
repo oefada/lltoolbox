@@ -50,7 +50,7 @@ class MerchandisingController extends AppController
 	}
 	
 	function billboard()
-	{	
+	{
 		// get merchDataType record for billboard
 		$params = Array(
 			'recursive' => 0,
@@ -64,6 +64,9 @@ class MerchandisingController extends AppController
 			'conditions' => Array('isHeader' => 1, 'merchDataTypeName' => 'Billboard')
 		);
 		$welcomeSlide = $this->MerchDataEntries->find('first', $params);
+		
+		$others = $this->getOtherScheduled($billboardDataType['MerchDataType']['id']);
+		$this->set('others', $others);
 
 		// check form submit
 		if (isset($_POST) && count($_POST) > 0) {
@@ -115,8 +118,12 @@ class MerchandisingController extends AppController
 					'conditions' => Array('isHeader' => 0, 'startDate' => $_POST['year'].'-'.$_POST['month'].'-'.$_POST['day'], 'merchDataTypeName' => 'Billboard')
 				);
 				$currData = $this->MerchDataEntries->find('first', $params);
-
-				$this->set('currData', $currData['MerchDataEntries']['merchDataArr']);
+				
+				if (!$currData && isset($others['current']['merchDataArr'])) {
+					$this->set('currData', $others['current']['merchDataArr']);
+				} else {
+					$this->set('currData', $currData['MerchDataEntries']['merchDataArr']);
+				}
 				$this->set('month', $_POST['month']);
 				$this->set('day', $_POST['day']);
 				$this->set('year', $_POST['year']);
@@ -249,8 +256,14 @@ class MerchandisingController extends AppController
 							} else {
 								// update
 								$this->MerchDataGroup->read(null, $tab['merchDataGroupId']);
-								$this->MerchDataGroup->set(Array('merchDataGroupName' => $tab['tabName']));
-								$this->MerchDataGroup->save();
+								// if none read, create
+								if (!is_array($this->MerchDataGroup->data)) {
+									$this->MerchDataGroup->create();
+									$this->MerchDataGroup->save(Array('merchDataGroupName' => $tab['tabName'], 'id' => $tab['merchDataGroupId']));
+								} else {
+									$this->MerchDataGroup->set(Array('merchDataGroupName' => $tab['tabName']));
+									$this->MerchDataGroup->save();
+								}
 							}
 						}
 					
@@ -292,13 +305,8 @@ class MerchandisingController extends AppController
 			$tabs = $tabHeader['MerchDataEntries']['merchDataArr'];
 			$tabName = $_GET['t'];
 			if (isset($tabs[$tabName])) {
-				// get merchDataGroup row
-				$params = Array(
-					'conditions' => Array(
-					'merchDataGroupName' => $tabName
-					)
-				);
-				$merchDataGroup = $this->MerchDataGroup->find('first', $params);
+				$others = $this->getOtherScheduled($homepageTabsDataType['MerchDataType']['id'], $tabs[$tabName]['merchDataGroupId']);
+				$this->set('others', $others);
 			
 				// check date submit
 				if (isset($_POST['schedule-date']) && $_POST['schedule-date']) {
@@ -311,24 +319,31 @@ class MerchandisingController extends AppController
 					$params = Array(
 						'recursive' => 0,
 						'conditions' => Array(
-							'MerchDataEntries.merchDataGroupId' => $merchDataGroup['MerchDataGroup']['id'],
+							'MerchDataEntries.merchDataGroupId' => $tabs[$tabName]['merchDataGroupId'],
 							'startDate' => $_POST['year'].'-'.$_POST['month'].'-'.$_POST['day']
 						)
 					);
 					$currData = $this->MerchDataEntries->find('first', $params);
 					
-					$this->set('currData', $currData['MerchDataEntries']['merchDataArr']);
+					if (!$currData && isset($others['current']['merchDataArr'])) {
+						$this->set('currData', $others['current']['merchDataArr']);
+					} else {
+						$this->set('currData', $currData['MerchDataEntries']['merchDataArr']);
+					}
 				}
 				
 				if (isset($_POST['tab-data']) && $_POST['tab-data'] && isset($_POST['schedule-date'])) {
-					// save tab  data
+					// save tab data
 					$tabData = Array();
 					foreach ($_POST['clientUrl'] AS $i => $clientUrl) {
 					
 						$tab = Array(
-							'clientUrl' => $clientUrl,
-							'packageId' => $_POST['packageId'][$i]
+							'clientUrl' => $clientUrl
 						);
+						
+						if (isset($_POST['packageId'][$i]) && is_numeric($_POST['packageId'][$i])) {
+							$tab['packageId'] = $_POST['packageId'][$i];
+						}
 						
 						// lookup client url
 						$clientArr = $this->setLinkUrl($clientUrl);
@@ -338,15 +353,15 @@ class MerchandisingController extends AppController
 						) {
 							$tab['clientId'] = $clientArr['Client']['clientId'];
 							$tab['clientUrl'] = $clientUrl;
+							$tabData[] = $tab;
 						}
 						
-						$tabData[] = $tab;
 					}
 						
 					$merchDataJSON = json_encode($tabData);
 					$dataArr = Array(
 						'merchDataTypeId' => $homepageTabsDataType['MerchDataType']['id'],
-						'merchDataGroupId' => $merchDataGroup['MerchDataGroup']['id'],
+						'merchDataGroupId' => $tabs[$tabName]['merchDataGroupId'],
 						'startDate' => $_POST['schedule-date'],
 						'merchDataJSON' => $merchDataJSON
 					);
@@ -367,7 +382,7 @@ class MerchandisingController extends AppController
 					$params = Array(
 						'recursive' => 0,
 						'conditions' => Array(
-							'MerchDataEntries.merchDataGroupId' => $merchDataGroup['MerchDataGroup']['id'],
+							'MerchDataEntries.merchDataGroupId' => $tabs[$tabName]['merchDataGroupId'],
 							'startDate' => $_POST['schedule-date']
 						)
 					);
@@ -395,6 +410,9 @@ class MerchandisingController extends AppController
 			'conditions' => Array('merchDataTypeName' => 'Inspiration')
 		);
 		$inspirationDataType = $this->MerchDataType->find('first', $params);
+		
+		$others = $this->getOtherScheduled($inspirationDataType['MerchDataType']['id']);
+		$this->set('others', $others);
 			
 		if (isset($_POST['schedule-date'])) {
 			$this->set('month', $_POST['month']);
@@ -482,6 +500,9 @@ class MerchandisingController extends AppController
 			'conditions' => Array('merchDataTypeName' => 'Featured Auction')
 		);
 		$fauctionDataType = $this->MerchDataType->find('first', $params);
+		
+		$others = $this->getOtherScheduled($fauctionDataType['MerchDataType']['id']);
+		$this->set('others', $others);
 			
 		if (isset($_POST['schedule-date'])) {
 			$this->set('month', $_POST['month']);
@@ -557,7 +578,46 @@ class MerchandisingController extends AppController
 		
 	}
 	
-	
+	private function getOtherScheduled($merchDataTypeId, $merchDataGroupId=null)
+	{
+		$result = Array();
+		
+		// current
+		$current = $this->MerchDataEntries->find('first', Array(
+			'recursive' => -1,
+			'conditions' => Array(
+				'isHeader' => 0,
+				'merchDataTypeId' => $merchDataTypeId,
+				'merchDataGroupId' => $merchDataGroupId,
+				'startDate <= NOW()'
+			),
+			'order' => Array('startDate DESC')
+		));
+		if (is_array($current) && isset($current['MerchDataEntries']['merchDataArr'])) {
+			$result['current'] = $current['MerchDataEntries'];
+		} else {
+			$result['current'] = false;
+		}
+		
+		// next
+		$next = $this->MerchDataEntries->find('first', Array(
+			'recursive' => -1,
+			'conditions' => Array(
+				'isHeader' => 0,
+				'merchDataTypeId' => $merchDataTypeId,
+				'merchDataGroupId' => $merchDataGroupId,
+				'startDate > NOW()'
+			),
+			'order' => Array('startDate ASC')
+		));
+		if (is_array($next) && isset($next['MerchDataEntries'])) {
+			$result['next'] = $next['MerchDataEntries'];
+		} else {
+			$result['next'] = false;
+		}
+		
+		return $result;
+	}
 	
 	private function getClient($clientId)
 	{
@@ -573,10 +633,14 @@ class MerchandisingController extends AppController
 	// alters linkUrl and tries returns client info if found from seo-name
 	private function setLinkUrl(&$linkUrl)
 	{
+		// remove query string
+		$linkUrl = preg_replace('/\?.*/', '', $linkUrl);
+		
 		// make link urls relative
 		if (!empty($linkUrl)) {
 			if ( ($urlStr = str_replace('http://www.luxurylink.com/', '/', $linkUrl))
 				|| ($urlStr = str_replace('www.luxurylink.com/', '/', $linkUrl))
+				|| (($urlStr = substr($linkUrl, 0, 1)) == '/')
 			) {
 				// try lookup of client info
 				if (substr($urlStr, 0, 10) == '/fivestar/') {

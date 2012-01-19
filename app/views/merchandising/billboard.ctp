@@ -55,6 +55,7 @@ function setRow(rowId) {
 					jQuery('#sort-table #'+rowId+' .link-text').val('View Experience');
 					jQuery('#sort-table #'+rowId+' .headline').val(dataArr.name);
 					jQuery('#sort-table #'+rowId+' .description').val(dataArr.locationDisplay);
+					jQuery('#sort-table #'+rowId+' .image-alt').val(dataArr.name + ' ' + dataArr.locationDisplay);
 				}
 			});
 		}
@@ -137,8 +138,10 @@ function setRow(rowId) {
 <br />
 <h2>Slideshow Scheduling</h2>
 
-Select a date to schedule:
 
+
+<div style="float: left;">
+Select a date to schedule:
 <form name="schedule-date" method="POST" action="/merchandising/billboard">
 <input type="hidden" name="schedule-date" value="1" />
 <select name="month">
@@ -161,9 +164,22 @@ Select a date to schedule:
 </select>
 <input type="submit" value="Go" />
 </form>
+</div>
 
-
-<br /><br />
+<div style="float: left; margin-left: 35px; margin-top: 10px;">
+<? if (isset($others['current']['startDate'])) : ?>
+Currently scheduled date: <?=$others['current']['startDate'];?><br />
+<? endif; ?>
+<? if (isset($others['next']['startDate'])) : ?>
+Next scheduled date: <?=$others['next']['startDate'];?><br />
+<? endif; ?>
+</div>
+<? if (isset($scheduleDate)) : ?>
+<div style="float: left; margin-left: 35px; margin-top: 15px;">
+	<input type="submit" value="Preview" onClick="window.open('http://www.luxurylink.com/?pDate=<?=$scheduleDate?>'); return false;" />
+</div>
+<? endif; ?>
+<div style="clear: both;"></div>
 
 <? if (!isset($scheduleDate)) : ?>
 	<center><h3>Please select a date to schedule</h3></center>
