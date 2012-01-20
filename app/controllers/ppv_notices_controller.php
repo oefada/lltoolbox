@@ -76,8 +76,8 @@ class PpvNoticesController extends AppController {
 					$data_json_encoded = json_encode($data);
 					$soap_client = new SoapClient($webservice_live_url, array("exception" => 1));
 	        		$response = $soap_client->ppv($data_json_encoded);
-					var_dump($response);
-					exit;
+					// var_dump($response);
+					// exit;
 	        		if( in_array($id, array(1,23)) ) {
 	        			$updateTicket = array();
 						$updateTicket['ticketId'] = $ticketId;
