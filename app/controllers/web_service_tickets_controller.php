@@ -1684,6 +1684,14 @@ class WebServiceTicketsController extends WebServicesController
 				$templateTitle = "You have been out bid! Bid again.";
 				$emailSubject = $siteName . ": ".$templateTitle;
 				break;
+			case 40:
+				$templateFile = "40_leadgen_favorite";
+				$emailSubject = $templateTitle = $clientNameP . " has a new vacation experience";
+				break;
+			case 41:
+				$templateFile = "41_leadgen_alert";
+				$emailSubject = $templateTitle = $clientNameP . " has a new vacation experience";
+				break;
 			default:
 				break;
 		}
