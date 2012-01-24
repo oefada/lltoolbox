@@ -1609,7 +1609,7 @@ class WebServiceTicketsController extends WebServicesController
 				// send out res cancellation request
 				$extranet_link = $this->getExtranetCancellationLink($ticketId, $siteId);
 				include('../vendors/email_msgs/notifications/29_reservation_cancel_request.html');
-				$emailSubject = "$siteName Cancellation Request - ACTION REQUIRED - $clientName";
+				$emailSubject = "$siteName Cancellation Request - ACTION REQUIRED - $emailName";
 				$emailFrom = ($isAuction) ? "$siteDisplay <resrequests@$siteEmail>" : "$siteDisplay <reservations@$siteEmail>";
 				$emailReplyTo = ($isAuction) ? "resrequests@$siteEmail" : "reservations@$siteEmail";
 				$userEmail = $clientPrimaryEmail;
