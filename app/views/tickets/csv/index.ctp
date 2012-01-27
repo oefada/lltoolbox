@@ -3,11 +3,12 @@ if (!empty($tickets)):
 	$i = 1;
 	$ex = array(',', "\n", "\r");
 ?>
-COUNT,TICKET_ID,CLIENT,USER_FIRST_NAME,USER_LAST_NAME,USER_ID,OFFER_TYPE_ID,BID_ID,OFFER_ID,PACKAGE_ID,BILLING_PRICE,VALID_CARD,TICKET_STATUS,PROMO,TICKET_NOTES<?php echo "\n";?>
+COUNT,TICKET_ID,CREATED,CLIENT,USER_FIRST_NAME,USER_LAST_NAME,USER_ID,OFFER_TYPE_ID,BID_ID,OFFER_ID,PACKAGE_ID,BILLING_PRICE,VALID_CARD,TICKET_STATUS,PROMO,TICKET_NOTES<?php echo "\n";?>
 <?php 
 foreach($tickets as $ticket) {
 	echo $i++ . ",";
 	echo $ticket['Ticket']['ticketId'] . ",";
+	echo $ticket['Ticket']['created'] . ",";
 	echo str_replace($ex, ' ', $ticket['Client'][0]['Client']['name']) . ",";
 	echo str_replace($ex, ' ', $ticket['Ticket']['userFirstName']) . ",";
 	echo str_replace($ex, ' ', $ticket['Ticket']['userLastName']) . ",";
