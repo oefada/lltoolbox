@@ -186,9 +186,11 @@ class PpvNoticesController extends AppController {
 			$this->set('isResConf', 1);
 		}
 		
-		$data_json_encoded = json_encode($data);
-		$soap_client = new SoapClient($webservice_live_url, array('encoding'=>'ISO-8859-1',"exception" => 1));
-        $response = $soap_client->ppv($data_json_encoded);
+		App::import('Controller', 'WebServiceTickets');
+		
+		$wstc = new WebServiceTicketsController;
+		$wstc->constructClasses();
+		$response = $wstc->ppv($data);
 
 		$ppv_only = 0;
 		if (isset($_GET['ppv_only'])) {

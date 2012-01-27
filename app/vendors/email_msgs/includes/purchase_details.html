@@ -138,7 +138,7 @@
 								<tr>
 									<td style="font-size: 12px; font-family: Arial,Sans-Serif; color: rgb(0, 0, 0); line-height: 18px; padding: 7px 0px 15px;" colspan="3" align="center"><a href="<?=$dateRequestLink;?>&" target="_blank"><img src="<?= $siteUrl ?>images/email/new/select_travel_dates.gif" alt="Select Travel Dates" border="0" height="26" width="142"></a></td>
   								</tr>
-                           		<?php elseif ($ppvNoticeTypeId == 19): ?>
+                           		<?php elseif (in_array($ppvNoticeTypeId,array(15,16,19))): ?>
 								<tr>
 									<td style="font-size: 12px; font-family: Arial,Sans-Serif; color: rgb(0, 0, 0); line-height: 18px; padding: 7px 0px 15px;" colspan="3" align="center"><a href="<?=$checkoutLink;?>&" target="_blank"><img src="<?= $siteUrl ?>images/email/new/update_cc_info.gif" alt="Select Travel Dates" border="0" height="26" width="218"></a></td>
   								</tr>

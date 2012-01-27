@@ -261,12 +261,12 @@ $this->searchController = 'Tickets';
 	<?php if (!empty($ticket['PpvNotice'])):?>
 		<table cellpadding = "0" cellspacing = "0">
 		<tr>
-			<th><?php __('PpvNoticeId'); ?></th>
+			<th><?php __('XA ID'); ?></th>
 			<th><?php __('Notice Type'); ?></th>
 			<th><?php __('To'); ?></th>
 			<th><?php __('From'); ?></th>
 			<th><?php __('Subject'); ?></th>
-			<th><?php __('DateSent'); ?></th>
+			<th><?php __('Sent'); ?></th>
 			<th><?php __('Initials'); ?></th>
 			<th class="actions"><?php __('Actions');?></th>
 		</tr>
@@ -289,7 +289,7 @@ $this->searchController = 'Tickets';
 			?>
 			<tr<?php echo $class;?>>
 				<td><?php echo $ppvNotice['ppvNoticeId'];?></td>
-				<td><?php echo $ppvNotice['PpvNoticeType']['ppvNoticeTypeName'];?></td>
+				<td><?php echo $ppvNotice['PpvNoticeType']['ppvNoticeTypeName'];?> (<?php echo $ppvNotice['PpvNoticeType']['ppvNoticeTypeId'];?>)</td>
 				<td><?php echo $ppvNotice['emailTo'];?></td>
 				<td><?php echo $ppvNotice['emailFrom'];?></td>
 				<td><?php echo $ppvNotice['emailSubject'];?></td>
