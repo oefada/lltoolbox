@@ -1455,8 +1455,8 @@ class WebServiceTicketsController extends WebServicesController
 					$emailSubject = "Please Confirm This $siteName Booking - $offerTypeTxt - ACTION REQUIRED - $userFirstName $userLastName";
 				} else {
 					$templateFile = "2_reservation_request_new";
-					$templateTitle = "Luxury Link booking request with special request";
-					$emailSubject = "Booking request – Please Confirm";
+					$templateTitle = "Luxury Link Booking Request";
+					$emailSubject = "Booking request - Please Confirm";
 				}
 				
 				if (isset($res_request_count) && $res_request_count > 0) {
@@ -1574,11 +1574,11 @@ class WebServiceTicketsController extends WebServicesController
 				}
 				
 				$templateTitle = "ACTION REQUIRED: Transaction Incomplete";
-				$emailSubject = "Please Respond – Transaction Incomplete";
+				$emailSubject = "Please Respond - Transaction Incomplete";
 
 				if ($ppvNoticeTypeId == 16) {
-					$templateTitle .= " – Second Attempt";
-					$emailSubject .= " – Second Attempt";
+					$templateTitle .= " - Second Attempt";
+					$emailSubject .= " - Second Attempt";
 				}
 
 				$emailReplyTo = "auction@$siteEmail";
@@ -1592,7 +1592,7 @@ class WebServiceTicketsController extends WebServicesController
 					$templateFile = "17_second_offense_flake";	
 				}
 				
-				$templateTitle = "Your bidding privileges on $siteName";
+				$templateTitle = "Your $siteName bidding privileges";
 				$emailSubject = "$siteName Auction Winner - $clientNameP";
 				$emailReplyTo = "auction@$siteEmail";
 				$emailFrom = $siteDisplay . " <".$emailReplyTo.">";
@@ -1628,11 +1628,11 @@ class WebServiceTicketsController extends WebServicesController
 				if ($siteId == 1) {
 					$templateFile = "24_reservation_request_followup_new";
 					$templateTitle = "Immediate Attention Required: Luxury Link Booking Request";
-					$emailSubject = "Booking Request – Immediate Response Required - $userFirstName $userLastName";	
+					$emailSubject = "Booking Request - Immediate Response Required - $userFirstName $userLastName";	
 				} else {
 					// send out res request
 					include('../vendors/email_msgs/notifications/24_reservation_request_followup.html');
-					$emailSubject = "Booking Request – Immediate Response Required - $userFirstName $userLastName";
+					$emailSubject = "Booking Request - Immediate Response Required - $userFirstName $userLastName";
 				}
 				
 				break;
@@ -1684,7 +1684,7 @@ class WebServiceTicketsController extends WebServicesController
 					include('../vendors/email_msgs/notifications/29_reservation_cancel_request.html');
 					$emailSubject = "$siteName Cancellation Request - ACTION REQUIRED - $emailName";
 				} else {
-					$emailSubject = "Reservation Cancellation – Please Confirm - $userFirstName $userLastName";
+					$emailSubject = "Reservation Cancellation - Please Confirm - $userFirstName $userLastName";
 					$templateFile = "29_reservation_cancel_request_new";
 					$templateTitle = "Luxury Link Booking Cancellation";
 				}
