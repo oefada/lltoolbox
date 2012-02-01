@@ -1770,11 +1770,6 @@ class WebServiceTicketsController extends WebServicesController
 				break;
 		}
 
-		// Returns editable subject part for ppv_notices_controller
-		if (isset($params['returnSubject'])) {
-			return $emailSubject;
-		}
-		
 		// Turns mystery option off for winner e-mails to display correct package info
 		if (in_array($ppvNoticeTypeId, array(5,18,19)) && $isMystery) {
 			$isMystery = false;
@@ -1799,6 +1794,11 @@ class WebServiceTicketsController extends WebServicesController
 			}
 		} else {
 			$emailBody = ob_get_clean();
+		}
+		
+		// Returns editable subject part for ppv_notices_controller
+		if (isset($params['returnSubject'])) {
+			return $emailSubject;
 		}
 		
 		// if sending from toolbox tool ppvNotice add screen (manual edit and send)
