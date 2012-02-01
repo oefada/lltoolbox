@@ -1655,7 +1655,7 @@ class WebServiceTicketsController extends WebServicesController
 				if ($siteId == 1) {
 					$templateTitle = "[enter header here]";
 					$templateFile = "27_general_client_template_new";
-					$emailSubject = "Booking Request – Please Confirm - $emailName";
+					$emailSubject = "Booking Request - Please Confirm - $emailName";
 				} else {
 					// general client template
 					include('../vendors/email_msgs/notifications/27_general_client_template.html');
