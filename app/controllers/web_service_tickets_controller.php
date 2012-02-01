@@ -1452,7 +1452,7 @@ class WebServiceTicketsController extends WebServicesController
 				if ($siteId == 2) {
 					// send out res request
 					include('../vendors/email_msgs/notifications/2_reservation_request.html');
-					$emailSubject = "Please Confirm This $siteName Booking - $offerTypeTxt - ACTION REQUIRED - $userFirstName $userLastName";
+					$emailSubject = "Please Confirm This $siteName Booking - $offerTypeTxt - ACTION REQUIRED - $emailName";
 				} else {
 					$templateFile = "2_reservation_request_new";
 					$templateTitle = "Luxury Link Booking Request";
@@ -1466,7 +1466,7 @@ class WebServiceTicketsController extends WebServicesController
 				break;
 			case 4:
 				include('../vendors/email_msgs/ppv/client_ppv.html');
-				$emailSubject = "$siteName Auction Winner Notification - $userFirstName $userLastName";
+				$emailSubject = "$siteName Auction Winner Notification - $emailName";
 				$emailReplyTo = "auctions@$siteEmail";
 				
 				$emailFrom = $siteDisplay . " <".$emailReplyTo.">";
@@ -1592,8 +1592,7 @@ class WebServiceTicketsController extends WebServicesController
 					$templateFile = "17_second_offense_flake";	
 				}
 				
-				$templateTitle = "Your $siteName bidding privileges";
-				$emailSubject = "$siteName Auction Winner - $clientNameP";
+				$emailSubject = $templateTitle = "Your $siteName bidding privileges";
 				$emailReplyTo = "auction@$siteEmail";
 				$emailFrom = $siteDisplay . " <".$emailReplyTo.">";
 				
@@ -1619,7 +1618,7 @@ class WebServiceTicketsController extends WebServicesController
 			case 23:
 				// send out res confirmation to client also as copy
 				include('../vendors/email_msgs/ppv/23_conf_copy_client.html');
-				$emailSubject = "$siteName Booking Confirmed for $userFirstName $userLastName - $clientNameP";
+				$emailSubject = "$siteName Booking Confirmed for $emailName - $clientNameP";
 				$emailFrom = ($isAuction) ? "$siteDisplay <resconfirm@$siteEmail>" : "$siteDisplay <reservations@$siteEmail>";
 				$emailReplyTo = ($isAuction) ? "resconfirm@$siteEmail" : "reservations@$siteEmail";
 				$userEmail = $clientPrimaryEmail;
@@ -1628,18 +1627,18 @@ class WebServiceTicketsController extends WebServicesController
 				if ($siteId == 1) {
 					$templateFile = "24_reservation_request_followup_new";
 					$templateTitle = "Immediate Attention Required: Luxury Link Booking Request";
-					$emailSubject = "Booking Request - Immediate Response Required - $userFirstName $userLastName";	
+					$emailSubject = "Booking Request - Immediate Response Required - $emailName";	
 				} else {
 					// send out res request
 					include('../vendors/email_msgs/notifications/24_reservation_request_followup.html');
-					$emailSubject = "Booking Request - Immediate Response Required - $userFirstName $userLastName";
+					$emailSubject = "Booking Request - Immediate Response Required - $emailName";
 				}
 				
 				break;
 			case 25:
 				// send out res request w/o xnet
 				include('../vendors/email_msgs/notifications/25_res_request_no_xnet.html');
-				$emailSubject = "Please Confirm This $siteName Booking - $offerTypeTxt - ACTION REQUIRED - $userFirstName $userLastName";
+				$emailSubject = "Please Confirm This $siteName Booking - $offerTypeTxt - ACTION REQUIRED - $emailName";
 				break;
 			case 26:
 				// general customer template
@@ -1656,11 +1655,11 @@ class WebServiceTicketsController extends WebServicesController
 				if ($siteId == 1) {
 					$templateTitle = "[enter header here]";
 					$templateFile = "27_general_client_template_new";
-					$emailSubject = "Booking Request – Please Confirm - $userFirstName $userLastName";	
+					$emailSubject = "Booking Request – Please Confirm - $emailName";
 				} else {
 					// general client template
 					include('../vendors/email_msgs/notifications/27_general_client_template.html');
-					$emailSubject = "Please Confirm This $siteName Booking - $offerTypeTxt - ACTION REQUIRED - $userFirstName $userLastName";
+					$emailSubject = "Please Confirm This $siteName Booking - $offerTypeTxt - ACTION REQUIRED - $emailName";
 				}
 				
 				break;
@@ -1668,11 +1667,11 @@ class WebServiceTicketsController extends WebServicesController
 				if ($siteId == 1) {
 					$templateFile = "28_general_res_request_template_new";
 					$templateTitle = "Luxury Link Booking Request";
-					$emailSubject = "Booking Request - Please Confirm - $userFirstName $userLastName";
+					$emailSubject = "Booking Request - Please Confirm - $emailName";
 				} else {
 					// general res request template
 					include('../vendors/email_msgs/notifications/28_general_res_request_template.html');
-					$emailSubject = "Please Confirm This $siteName Booking - $offerTypeTxt - ACTION REQUIRED - $userFirstName $userLastName";
+					$emailSubject = "Please Confirm This $siteName Booking - $offerTypeTxt - ACTION REQUIRED - $emailName";
 				}
 				
 				break;
@@ -1684,7 +1683,7 @@ class WebServiceTicketsController extends WebServicesController
 					include('../vendors/email_msgs/notifications/29_reservation_cancel_request.html');
 					$emailSubject = "$siteName Cancellation Request - ACTION REQUIRED - $emailName";
 				} else {
-					$emailSubject = "Reservation Cancellation - Please Confirm - $userFirstName $userLastName";
+					$emailSubject = "Reservation Cancellation - Please Confirm - $emailName";
 					$templateFile = "29_reservation_cancel_request_new";
 					$templateTitle = "Luxury Link Booking Cancellation";
 				}
@@ -1771,6 +1770,11 @@ class WebServiceTicketsController extends WebServicesController
 				break;
 		}
 
+		// Returns editable subject part for ppv_notices_controller
+		if (isset($params['returnSubject'])) {
+			return $emailSubject;
+		}
+		
 		// Turns mystery option off for winner e-mails to display correct package info
 		if (in_array($ppvNoticeTypeId, array(5,18,19)) && $isMystery) {
 			$isMystery = false;
@@ -1954,6 +1958,11 @@ class WebServiceTicketsController extends WebServicesController
 		preg_match_all("/(href\s?=\s?[\"|'](?!#|mailto)(.*?)[\"|\'])[\s|>]/",$template,$matches);
 		$matches = $matches[1];
 
+		// Override UTM_SOURCE for PPV #28
+		if ($ppvNoticeTypeId == "28") {
+			$append = "concierge";
+		}
+		
 		foreach ($matches as $m) {
 			// Does URL already have question mark?
 			if (preg_match("/luxurylink\.com|familygetaway\.com|prefixUrl|siteUrl|dateRequestLink/", $m)) {

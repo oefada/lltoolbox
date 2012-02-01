@@ -163,15 +163,6 @@ class PpvNoticesController extends AppController {
 			}
 		}
 
-		if (in_array($id, array(26,27,28,33))) {
-			$this->set('editSubject', 'FILL IN SUBJECT LINE HERE!!!!!!!!!!!');
-			if($id == 33) {
-				$this->Ticket->recursive = 0;
-				$ticket = $this->Ticket->read(null, $ticketId);
-				$this->set('editSubject', 'Please Confirm this Luxury Link Booking - CHANGE OF DATE - ACTION REQUIRED - '.$ticket['Ticket']['userFirstName'].' '.$ticket['Ticket']['userLastName']);
-			}
-		} 
-
 		$this->set('clientIdParam', $clientIdParam);
 		
 		if ($id == 1 || $id == 33) {
@@ -192,6 +183,17 @@ class PpvNoticesController extends AppController {
 		$wstc->constructClasses();
 		$response = $wstc->ppv($data);
 
+		if (in_array($id, array(26,27,28,33))) {
+			$data['returnSubject'] = true;
+			$this->set('editSubject', $wstc->ppv($data));
+			
+			if($id == 33) {
+				$this->Ticket->recursive = 0;
+				$ticket = $this->Ticket->read(null, $ticketId);
+				$this->set('editSubject', 'Please Confirm this Luxury Link Booking - CHANGE OF DATE - ACTION REQUIRED - '.$ticket['Ticket']['userFirstName'].' '.$ticket['Ticket']['userLastName']);
+			}
+		}
+		
 		$ppv_only = 0;
 		if (isset($_GET['ppv_only'])) {
 			$this->layout = "ajax";
