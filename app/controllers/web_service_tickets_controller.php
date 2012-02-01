@@ -1771,6 +1771,12 @@ class WebServiceTicketsController extends WebServicesController
 				break;
 		}
 
+		// Turns mystery option off for winner e-mails to display correct package info
+		if (in_array($ppvNoticeTypeId, array(5,18,19)) && $isMystery) {
+			$isMystery = false;
+			$emailSubject = "$siteName Mystery Auction Winner";
+		}
+		
 		if (isset($templateFile) && $templateFile) {
 			if (($template = $this->newEmailTemplate($templateFile,$append,$specialException)) !== FALSE) {
 				$rand = rand(100,1000);
@@ -1791,10 +1797,6 @@ class WebServiceTicketsController extends WebServicesController
 			$emailBody = ob_get_clean();
 		}
 		
-		if (in_array($ppvNoticeTypeId, array(5,18,19)) && $isMystery) {
-			$emailSubject = "$siteName Mystery Auction Winner";
-		}
-
 		// if sending from toolbox tool ppvNotice add screen (manual edit and send)
 		// -------------------------------------------------------------------------------
 		if ($manualEmailBody) {
