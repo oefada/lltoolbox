@@ -32,11 +32,11 @@
 			                                  			</tr>
 														<tr>
 													 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;">Check-in:</td>
-													 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;"><? if ($ppvNoticeTypeId == 28): ?><?= $fpArrival	?><? else: ?><?php echo $resArrivalDate;?><? endif; ?></td>
+													 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;"><? if ($ppvNoticeTypeId == 28 || ($ppvNoticeTypeId == 2 && $resArrivalDate == "")): ?><?= $fpArrival	?><? else: ?><?php echo $resArrivalDate;?><? endif; ?></td>
 			                                  			</tr>
 														<tr>
 													 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;">Check-out:</td>
-													 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;"><? if ($ppvNoticeTypeId == 28): ?><?= $fpDeparture ?><? else: ?><?php echo $resDepartureDate;?><? endif; ?></td>
+													 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;"><? if ($ppvNoticeTypeId == 28 || ($ppvNoticeTypeId == 2 && $resDepartureDate == "")): ?><?= $fpDeparture ?><? else: ?><?php echo $resDepartureDate;?><? endif; ?></td>
 			                                  			</tr>
 			                                  			<?php if ($clientPpv): ?>
 														<tr>
