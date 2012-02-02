@@ -3284,6 +3284,15 @@ $sql = "SELECT clientId,COUNT(clientId) AS num".$site." FROM offer".$site."
 		}
 	}
 
+	function leads()
+	{
+		Configure::write('debug',0);
+		$this->loadModel('UserClientSpecialOffer');
+		$options = array('recursive'=>2);
+		$results = $this->UserClientSpecialOffer->find('all',$options);
+		$this->set('results', $results);
+	}
+
 	function deal_alert() {
 		$db = ConnectionManager::getDataSource('live');
 

@@ -17,6 +17,7 @@
 	<li><?=$html->link('Promotions Report', $this->webroot . 'reports/promotions')?></li>
 	<li><?=$html->link('Remit Packages', $this->webroot . 'reports/remit');?></li>
 	<li><?=$html->link('Weekly Scorecard', $this->webroot . 'reports/weekly_scorecard')?></li>
+	<li><?=$html->link('Leads Report', $this->webroot . 'reports/leads')?></li>
 </ul>
 <h3>Other Tools</h3>
 <ul class="tree">
