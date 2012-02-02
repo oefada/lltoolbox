@@ -9,6 +9,21 @@ class UserSiteExtended extends AppModel {
 	
 	var $belongsTo = array('User' => array('foreignKey' => 'userId'));
 	
+	function afterSave() {
+		if (isset($this->data['UserSiteExtended']['userSiteExtendedId'])) {
+			// get user from userSiteExtendedId
+			$this->id = $this->data['UserSiteExtended']['userSiteExtendedId'];
+			$this->read();
+
+			$ch = curl_init();
+			$cacheKey = 'UserEntity_'.$this->data['UserSiteExtended']['userId'].'_1';
+			curl_setopt($ch, CURLOPT_URL, "http://live.luxurylink.com/shell/memcache/commands.php?request_command=delete&request_key=$cacheKey&request_duration=&request_data=&request_delay=&request_server=LL&request_api=Server");
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			curl_exec($ch);
+			curl_close($ch);
+		}
+	}
+
 	/**
 	 * This method runs before a user account is created or saved. For now it just creates a hash from the password field if it is found
 	 */
