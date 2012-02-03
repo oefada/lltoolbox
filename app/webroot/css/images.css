@@ -51,6 +51,7 @@ input.tImage[type="radio"] {
    border:1px solid black;
    margin:0 16px 20px 16px;
    width:178px;
+   height:132px;
 }
 
 .organize h3 {

@@ -52,7 +52,7 @@
                         <ul id="sortableSlideshow-<?php echo $site; ?>" class="sortableSS">
                   <?php endif; ?>
                   <li id="item_<?php echo $ssImage['ImageClient']['clientImageId'] ?>-<?php echo $site; ?>">
-                     <img src="<?php echo $ssImage['Image']['imagePath']; ?>" height="100" alt="<?php echo $ssImage['Image']['caption']; ?>" />
+                     <img src="<?php echo $ssImage['Image']['imagePath']; ?>" style="vertical-align:bottom; max-height: 100px; max-width: 176px; margin: 1px;" alt="<?php echo $ssImage['Image']['caption']; ?>" />
                      <?php $fileArr = explode('/', $ssImage['Image']['imagePath']); ?>
                      <div class="filename"><?php echo end($fileArr); ?></div>
                      <input type="hidden" class="ss" name="data[ImageClient][<?php echo $ssImage['ImageClient']['clientImageId'] ?>][inactive]" value="<?php echo $ssImage['ImageClient']['inactive'] ?>" />
