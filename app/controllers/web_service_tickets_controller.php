@@ -1216,6 +1216,13 @@ class WebServiceTicketsController extends WebServicesController
 				$resConfirmationNotes = $resData[0]['reservation']['confirmationNotes'];
 			}
 			
+			// Set reservation date to REQUESTED date. These PPVs are sent when ticket doesn't yet have reservation
+			if (in_array($ppvNoticeTypeId,array(24,2,10,28))) {
+				$resArrivalDate = $fpArrival;
+				$resDepartureDate = $fpDeparture;
+			}
+			
+			
 			// Calculate cancellation fee. < 15 days from arrival, $100 fee, > 15 days from arrival, $35 fee 
 			if ($ppvNoticeTypeId == 30) {
 				$cancelFee = 35;
