@@ -324,7 +324,7 @@ class Package extends AppModel {
         $this->contain(array_keys($logableModels));
         $package = $this->find('first', array('conditions' => array('Package.packageId' => $packageId)));
         $queries = array();
-        $queries[0] = "(SELECT `description`, `action`, `samaccountname`, `change`, `created` AS historyCreated
+        $queries[0] = "(SELECT `description`, `action`, `samaccountname`, `change`, `model`, `created` AS historyCreated
                        FROM `logs`
                        WHERE `model` ='Package' AND `model_id` = {$packageId})";
         foreach ($logableModels as $modelName => $tableName) {
@@ -334,7 +334,7 @@ class Package extends AppModel {
                     $ids[] = $record[$this->$modelName->primaryKey];
                 }
                 $modelIds = implode(',', $ids);
-                $queries[] = "(SELECT `description`, `action`, `samaccountname`, `change`, `created`
+                $queries[] = "(SELECT `description`, `action`, `samaccountname`, `change`, `model`, `created`
                               FROM `logs`
                               WHERE `model` ='{$modelName}' AND `model_id` IN ({$modelIds}))";
             }
@@ -344,6 +344,9 @@ class Package extends AppModel {
 
         $historyDesc = array();
         if ($history = $this->query($query)) {
+		
+			//var_dump($history); die();
+		
             foreach($history as $update) {
                 $historyDate = date('M j Y g:i A', strtotime($update[key($update)]['historyCreated']));
                 switch ($update[key($update)]['action']) {
@@ -351,17 +354,37 @@ class Package extends AppModel {
                         $historyStr = "{$historyDate} - {$update[key($update)]['samaccountname']} -- Created";
                         break;
                     case 'edit':
-                        if (preg_match('/packageStatusId \([0-9]*\) => \(([0-9]+)\)/', $update[key($update)]['change'], $matches)) {
-                            $statusId = end($matches);
-                            if ($statusId) {
-                                $statusName = $this->PackageStatus->field('packageStatusName', array('packageStatusId' => $statusId));
-                                $updateStr = "STATUS: {$statusName}";
-                            }
-                        }
-                        else {
-                            $updateStr = 'Updated';
-                        }
-                        $historyStr = "{$historyDate} - {$update[key($update)]['samaccountname']} -- {$updateStr}";
+					
+						switch ($update[key($update)]['model']) {
+							case 'Package':
+								// edit packageSatusId
+								if (preg_match('/packageStatusId \([0-9]*\) => \(([0-9]+)\)/', $update[key($update)]['change'], $matches)) {
+									$statusId = end($matches);
+									if ($statusId) {
+										$statusName = $this->PackageStatus->field('packageStatusName', array('packageStatusId' => $statusId));
+										$updateStr = "STATUS: {$statusName}";
+									}
+								}
+								break;
+							case 'PricePoint':
+								// use description for pricePoint name
+								$ppNameArr = explode('"', $update[key($update)]['description']);
+								$tStr = str_replace(',', '<br>&nbsp;&nbsp;&nbsp;', $update[key($update)]['change']);
+								if (is_array($ppNameArr) && count($ppNameArr) > 1) {
+									$updateStr = 'Updated Price Point "' . $ppNameArr[1] . '"<br>&nbsp;&nbsp;&nbsp;&nbsp;' . $tStr . '<br>';
+								} else {
+									$updateStr = 'Updated Price Point<br>&nbsp;&nbsp;&nbsp;&nbsp;' . $tStr . '<br>';
+								}
+								break;
+							default:
+								$tStr = str_replace('PackageRel', '', $update[key($update)]['model']);
+								$tStr = str_replace('ItemRel', '', $tStr);
+								$updateStr = 'Updated';
+								$updateStr .= ' ' . implode(preg_split('/([[:upper:]][[:lower:]]+)/', $tStr, null, PREG_SPLIT_DELIM_CAPTURE|PREG_SPLIT_NO_EMPTY), ' ');
+								break;
+						}
+						$historyStr = "{$historyDate} - {$update[key($update)]['samaccountname']} -- {$updateStr}";
+						
                         break;
                     default:
                         $historyStr = '';
