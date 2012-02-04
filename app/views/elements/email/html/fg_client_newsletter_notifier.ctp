@@ -2,7 +2,7 @@
 
 <p>Hello <?php echo ucwords($clientContact['name']); ?>,</p>
 
-<p>We are pleased to inform you that <?=$client['name']?> has been featured in
+<p>We are pleased to inform you that <b><?=$client['name']?></b> has been featured in
 this week's Family Getaway Newsletter. The Newsletter is sent to our family
 travel buyers to promote your property, and includes direct links to your
 offers on the Family Getaway site. Furthermore, your portfolio page on Family Getaway also includes a direct link to your web site.</p>
@@ -10,7 +10,7 @@ offers on the Family Getaway site. Furthermore, your portfolio page on Family Ge
 <p>You can view the Family Getaway email by clicking on the following link:<br/>
 <a href="<?=$url?>"><?=$url?></a></p>
 
-<p>It is certainly our pleasure to promote <?=$client['name']?>.</p>
+<p>It is certainly our pleasure to promote <b><?=$client['name']?></b>.</p>
 
 <p>Warm Regards,</p>
 

@@ -1,7 +1,7 @@
 <p><img src="http://www.luxurylink.com/images/ll_logo_2010.gif" width="310" height="60" alt="Luxury Link" border="0" /></p>
 <p>Hello <?=$clientContact['name']?>,</p>
 <p>
-	We are pleased to inform you that <?=$client['name']?> has been featured in 
+	We are pleased to inform you that <b><?=$client['name']?></b> has been featured in 
 	this week's Luxury Link 
 	<? if($theme):?> themed <strong>"<?=$theme?>"</strong><?endif;?> 
 	Newsletter. The Newsletter is sent to our registered luxury travel buyers
@@ -15,7 +15,7 @@
 	<a href="<?=$url?>"><?=$url?></a>
 </p>
 <p>
-	It is certainly our pleasure to promote <?=$client['name']?>.
+	It is certainly our pleasure to promote <b><?=$client['name']?></b>.
 </p>
 <p>Warm Regards,<br />
 Luxury Link<br />
