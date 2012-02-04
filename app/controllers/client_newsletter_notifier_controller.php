@@ -91,8 +91,8 @@ class ClientNewsletterNotifierController extends AppController {
 	        
 	        // add records to carDataFeedEmail and carDataFeedEmailFg 
 	        $carTable = ($data['ClientNewsletterNotifier']['site'] == 'luxurylink') ? 'reporting.carDataFeedEmail' : 'reporting.carDataFeedEmailFg';
-			$sql = 'INSERT INTO ' . $carTable . ' (clientid, year2, month2, insertDateTime, newsletterDate) VALUES (?, ?, ?, NOW(), ?)';
-			$params = array($client['Client']['clientId'], date('Y'), date('n'), '0000-00-00');
+			$sql = 'INSERT INTO ' . $carTable . ' (clientid, year2, month2, insertDateTime, newsletterDate, url) VALUES (?, ?, ?, NOW(), ?, ?)';
+			$params = array($client['Client']['clientId'], date('Y'), date('n'), '0000-00-00', $data['ClientNewsletterNotifier']['url']);
 			$results = $this->ClientNewsletterNotifier->query($sql, $params);
 	    }
 	}
