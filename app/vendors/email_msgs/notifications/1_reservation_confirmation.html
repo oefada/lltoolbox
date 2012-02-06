@@ -1,7 +1,7 @@
 <p>
 <? if($isAuction): ?>
 Thank you for choosing <?= $siteName ?>. Your reservation at
-<? 
+<?
 
 // Multi-client
 
@@ -20,7 +20,7 @@ Thank you for your Luxury Link purchase. This email is your reservation confirma
 foreach ($clients as $cn=>$c):
 	if ($cn > 0) echo " or ";
 	echo '<a href="'.$siteUrl.'fivestar/'.$c['destData']['Destination']['destinationSeoName'].'/hotel-guide" target="_blank" style="color: #056ff7;">';
-	echo $c['locationDisplay'].'</a>';
+	echo $c['destData']['Destination']['destinationName'].'</a>';
 endforeach;
 ?> provided by the editors of <i>Travel + Leisure</i> magazine.</p>
 <?php endif; // End isAuction ?>
