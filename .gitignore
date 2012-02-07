@@ -2,9 +2,9 @@
 .settings
 .externalToolBuilders
 app/config/database.php
-tmp/logs/*
-tmp/cache/views/*
-tmp/cache/models/*
-tmp/cache/persistent/*
-tmp/sessions/*
-tmp/tests/*
+app/tmp/logs/*
+app/tmp/cache/views/*
+app/tmp/cache/models/*
+app/tmp/cache/persistent/*
+app/tmp/sessions/*
+app/tmp/tests/*
