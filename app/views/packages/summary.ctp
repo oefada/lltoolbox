@@ -448,6 +448,7 @@ if ($_SERVER['ENV']=="staging"){
             <th>Retail Value</th>
             <th>Percent of Retail (Auction)</th>
             <th>Percent of Retail (Buy Now)</th>
+            <th>Guarantee %</th>
 						<th>Flex Per Night Price</th>
             <th>Max Num Sales</th>
             <th>Preview Price Point</th>
@@ -469,6 +470,7 @@ if ($_SERVER['ENV']=="staging"){
 									<td>" . number_format($pricePoint['PricePoint']['retailValue'], 0) . "</td>
 									<td>{$pricePoint['PricePoint']['percentRetailAuc']}</td>
 									<td>{$pricePoint['PricePoint']['percentRetailBuyNow']}</td>
+									<td>{$pricePoint['PricePoint']['percentReservePrice']}</td>
 									<td>{$pricePoint['PricePoint']['pricePerExtraNight']}</td>
 									<td>{$pricePoint['PricePoint']['maxNumSales']}</td>
 									<td><a href='{$previewHost}/luxury-hotels/preview.html?clid={$clientId}&oid={$ppid}&preview=pricepoint&toolbox-display-package-id-{$pricePoint['Package']['packageId']}' target='_blank'>Preview</a></td>
