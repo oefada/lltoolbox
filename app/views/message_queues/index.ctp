@@ -20,13 +20,13 @@
 		}
 	}
 	
-	function click(messageQueueId, item) {
+	function clickRow(messageQueueId, item) {
 		$$('.selected').each(function(s) { s.removeClassName('selected')});
 		
 		item.addClassName('selected');
 		//item.removeClassName('unread');
 		
-		new Ajax.Request('/message_queues/view/'+messageQueueId, {
+		new Ajax.Request('//<?= $_SERVER['HTTP_HOST']; ?>/message_queues/view/'+messageQueueId, {
 		  method: 'get',
 		  onSuccess: function(transport) {
 		    var messageWindow = $('rightPane');
@@ -41,7 +41,7 @@
 			} else {
 				var status = 'unread';
 			}
-			new Ajax.Request('/message_queues/change_status/status:'+status+'/messageQueueId:'+item.value, {
+			new Ajax.Request('//<?= $_SERVER['HTTP_HOST']; ?>/message_queues/change_status/status:'+status+'/messageQueueId:'+item.value, {
 			  method: 'get',
 			  onLoading: function(request) { Element.show('spinner'); },
 			  onSuccess: function(request) { Element.hide('spinner');

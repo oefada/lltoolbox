@@ -24,7 +24,7 @@ foreach ($messages as $messageQueue):
 	
 	$class = ' class="'.implode(' ', $classes).'"';
 ?>
-	<tr<?php echo $class;?> id='message-<?=$messageQueue['MessageQueue']['messageQueueId']?>' onmouseover="rollover(1, this);" onclick="click(<?=$messageQueue['MessageQueue']['messageQueueId']?>, this);" onmouseout="rollover(0, this);">
+	<tr<?php echo $class;?> id='message-<?=$messageQueue['MessageQueue']['messageQueueId']?>' onmouseover="rollover(1, this);" onclick="clickRow(<?=$messageQueue['MessageQueue']['messageQueueId']?>, this);" onmouseout="rollover(0, this);">
 		<td style="text-align: center"><input type="checkbox" onclick="complete(this)" value="<?=$messageQueue['MessageQueue']['messageQueueId']?>" <? if(@$read) echo "checked='checked'" ?>/></td>
 		<td style="text-align: center">
 			<?php 
