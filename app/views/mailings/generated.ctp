@@ -918,7 +918,7 @@ your Feedback</span></a></td>
 &copy; 2011 Luxury Link. All Rights Reserved.</td>
 <td align="right">For information or assistance, call our Concierge at<br />
 1 (888) 297-3299. Please do not reply to this email,<br />
-you may unsubscribe <a name="Unsubscribe" style="color:#336699;text-decoration:underline" xt="SPCUSTOMOPTOUT" href="#SPCUSTOMOPTOUT">here</a>.  <a xt="SPCLICK" name="www_luxurylink_com_LL_home_prv" style="color:#336699" target="_blank" href="http://www.luxurylink.com/LL/home_prvcy2.php">Privacy Policy</a>.</td>
+you may unsubscribe <a name="Unsubscribe" style="color:#336699;text-decoration:underline" xt="SPCUSTOMOPTOUT" href="#SPCUSTOMOPTOUT">here</a>.  <a xt="SPCLICK" name="www_luxurylink_com_LL_home_prv" style="color:#336699" target="_blank" href="http://www.luxurylink.com/about/index.php/privacy-policy/">Privacy Policy</a>.</td>
 
 </tr>
 <tr>

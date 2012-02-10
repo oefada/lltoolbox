@@ -134,7 +134,7 @@
 												<br>
 												<a style="text-decoration:underline; color:#036dfc;" href="mailto:concierge@luxurylink.com"><font color="#036dfc">concierge@luxurylink.com</font></a>.
 												<br>
-												<a style="text-decoration:underline; color:#036dfc;" href="http://www.luxurylink.com/LL/home_prvcy2.php"><font color="#036dfc">Privacy Policy</font></a> </font></td>
+												<a style="text-decoration:underline; color:#036dfc;" href="http://www.luxurylink.com/about/index.php/privacy-policy/"><font color="#036dfc">Privacy Policy</font></a> </font></td>
 									</tr>
 								</table></td>
 								<td width="114"></td>
