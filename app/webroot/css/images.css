@@ -327,3 +327,11 @@ div.roomGradeImages img {
 div.roomGradeImages p {
    margin-bottom:10px;
 }
+.organize ul li.imagesOld {
+	background-image:url('/img/checker-gray.png');
+	background-position:left bottom;
+	background-repeat: repeat-x;
+	border: 1px solid #777;
+	text-shadow: #fff 0 0 8px;
+	color: #777;
+}

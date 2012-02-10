@@ -52,7 +52,7 @@
                         <h3>Slideshow</h3>
                         <ul id="sortableSlideshow-<?php echo $site; ?>" class="sortableSS">
                   <?php endif; ?>
-                  <li id="item_<?php echo $ssImage['ImageClient']['clientImageId'] ?>-<?php echo $site; ?>">
+                  <li id="item_<?php echo $ssImage['ImageClient']['clientImageId'] ?>-<?php echo $site; ?>" class="imagesOld">
                      <img src="<?php echo $ssImage['Image']['imagePath']; ?>" style="vertical-align:bottom; max-height: 100px; max-width: 176px; margin: 1px;" alt="<?php echo $ssImage['Image']['caption']; ?>" />
                      <?php $fileArr = explode('/', $ssImage['Image']['imagePath']); ?>
                      <div class="filename"><?php echo end($fileArr); ?></div>
