@@ -2083,7 +2083,9 @@ class WebServiceTicketsController extends WebServicesController
 			$emailTo = implode(",",$emailTo);
 		}
 		
-		if ($emailReplyTo) $emailHeaders['Reply-To'] = $emailReplyTo;
+		if ($emailReplyTo) {
+			$emailHeaders['Reply-To'] = $emailReplyTo;
+		}
 		
 		$emailHeaders['Subject'] = $emailSubject;
         $emailHeaders['Content-Type'] = "text/html";
