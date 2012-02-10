@@ -2069,8 +2069,12 @@ class WebServiceTicketsController extends WebServicesController
         $emailHeaders['From'] = "$emailFrom";
 		
 		// Ticket 2705 Silverpop doesn't support CC, place all CCs in the To:
-		if ($emailCc) $emailTo .= ",".$emailCc;
-		if ($emailBcc) $emailTo .= ",".$emailBcc;
+		if ($emailCc) {
+			$emailTo .= ",".$emailCc;
+		}
+		if ($emailBcc) {
+			$emailTo .= ",".$emailBcc;
+		}
 		
 		if (!ISDEV) {
 			// Clean duplicates
