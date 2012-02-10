@@ -1427,7 +1427,7 @@ class WebServiceTicketsController extends WebServicesController
 				$extranet_link = $this->getExtranetLink($ticketId, $siteId);
 				
 				if ($isAuction) {
-					$emailFrom = $emailReplyTo = "auctionresreq@$siteEmail";
+					$emailFrom = $emailReplyTo = "reservationrequests@$siteEmail";
 				} else {
 					$emailFrom = $emailReplyTo = "reservations@$siteEmail";
 				}
@@ -1507,7 +1507,7 @@ class WebServiceTicketsController extends WebServicesController
 				$emailReplyTo = "exclusives@$siteEmail";
 
 				if ($isAuction && $siteId == 1) {
-					$emailReplyTo = "auctionresreq@$siteEmail";
+					$emailReplyTo = "reservationrequests@$siteEmail";
 				}
 
 				if ($this->Ticket->isMultiProductPackage($ticketId)) {
