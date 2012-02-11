@@ -19,7 +19,7 @@ Cancellations and changes may result in additional fees.
 <a href="<?= $siteUrl ?>about/index.php/cancellations-refunds/">View Cancellation Policy</a>.</p>
 <p>
 <? endif; ?>
-<?php if (!$clientPpv): ?>
+<?php if (!$clientPpv && !in_array($ppvNoticeTypeId, Array(34, 35))): ?>
 <?php if ($ppvNoticeTypeId != 14): ?>
 If you have any questions or additional needs, please <?php else: ?>
 <p>Please <a href="<?=$dateRequestLink;?>" target="_blank" style="color: #056ff7;">submit alternate travel dates</a>, or
@@ -27,9 +27,12 @@ If you have any questions or additional needs, please <?php else: ?>
 
 
 contact our Travel Concierge at (888) 297-3299
-or (310) 215-8060, or send us an email at <a href="mailto:concierge@<?= $siteEmail ?>" style="text-decoration: none; color: #008EC5;">concierge@<?= $siteEmail ?></a>. Our business hours are Monday through Friday, 6am to 6pm Pacific Time.</p>
+or (310) 215-8060, or send us an email at <a href="mailto:concierge@<?= $siteEmail ?>" style="text-decoration: none; color: #008EC5;">concierge@<?= $siteEmail ?></a>. Our business hours are Monday through Friday, 6:00am to 6:00pm and Sunday from 10:00am to 2:30pm Pacific Time.</p>
 
-<p>Sincerely,<br>
-<?= $siteName ?> Concierge</p>
+<? if (!in_array($ppvNoticeTypeId, Array(34, 35))) : ?>
+	<p>Sincerely,<br>
+	<?= $siteName ?> Concierge</p>
+<? endif; ?>
+
 <?php endif; endif; ?>
 </p>

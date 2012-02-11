@@ -18,6 +18,12 @@
 											<tr valign="top">
 												<td align="left" width="100%">
 													<table border="0" cellpadding="0" cellspacing="0" align="left">
+														<?php if ($canConfNum != '') : ?>
+														<tr>
+													 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 15px 0px 0px 0px;" width="121">Hotel Cancellation #:</td>
+													 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 15px 20px 0px 0px;"><?= $canConfNum;?></td>
+			                                  			</tr>
+														<? endif; ?>
 														<?php if ($resConfNum != ""): ?>
 														<tr>
 													 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 15px 0px 0px 0px;" width="121">Hotel Confirmation #:</td>
@@ -34,6 +40,22 @@
 			                                  				<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:16px;padding: 0px 0px 0px 0px;"><b>Guest Name:</b></td>
 			                                  				<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:16px;padding: 0px 0px 0px 0px;"><?php echo $userFirstName;?> <?php echo $userLastName;?></td>
 			                                  			</tr>
+														
+														<? if (in_array($ppvNoticeTypeId, Array(2, 10, 24, 27, 28, 29))) : ?>
+															<? if (!empty($userEmail)) : ?>
+																<tr>
+																	<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:16px;padding: 0px 0px 0px 0px;">Guest Email:</td>
+																	<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:16px;padding: 0px 0px 0px 0px;"><?=$userEmail;?></td>
+																</tr>
+															<? endif; ?>
+															<? if (!empty($userPhone)) : ?>
+																<tr>
+																	<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:16px;padding: 0px 0px 0px 0px;">Guest Telephone:</td>
+																	<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:16px;padding: 0px 0px 0px 0px;"><?=$userPhone;?></td>
+																</tr>
+															<? endif; ?>
+														<? endif; ?>
+														
 														<tr>
 													 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;">No. of Nights:</td>
 													 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;"><?php echo $numNights;?></td>
