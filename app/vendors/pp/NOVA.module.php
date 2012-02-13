@@ -87,8 +87,10 @@ class NOVA
 		if(isset($response['ssl_invoice_number'])) {
 			if(trim($response['ssl_invoice_number']) == trim($valid_param)) {
 				return true;
-			}else return false;
-		}else return false;
+			}
+		}
+		
+		return false;
 	}
 
 	function GetResponseTxt($response) {
