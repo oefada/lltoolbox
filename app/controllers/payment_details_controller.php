@@ -235,7 +235,7 @@ class PaymentDetailsController extends AppController {
 	        	$error = "NO_ACCT";
 	        }
 			
-			if ($error) {
+			if (isset($error)) {
 				CakeLog::write("debug",var_export(array("WEB SERVICE TICKETS: ",$error),1));
 				echo $error;
 			} else {

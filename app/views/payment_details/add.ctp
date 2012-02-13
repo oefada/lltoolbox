@@ -331,6 +331,8 @@ jQuery(document).ready(function($) {
 			if (data != "CHARGE_SUCCESS") {
 				if (data == "NO_ACCT") {
 					alert("You did not select a credit card to charge.");
+				} else if (data == "NO_AVS") {
+					alert("ZIP Code provided didn't match credit card. Please verify information.")
 				} else {
 					alert("Payment declined or an error occurred. Please verify information.");
 				}

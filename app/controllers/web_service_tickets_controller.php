@@ -2255,16 +2255,7 @@ class WebServiceTicketsController extends WebServicesController
 
 		// DEV NO CHARGE
 		// ---------------------------------------------------------------------------
-		$isDev = false;
-		if (stristr($_SERVER['HTTP_HOST'], 'dev') || stristr($_SERVER['HTTP_HOST'], 'stage') ||
-			stristr($_SERVER['HTTP_HOST'], 'alee') || stristr($_SERVER['HTTP_HOST'], 'alee')) {
-			$this->isDev = $isDev = true;
-		}
-
-		// also check server env
-		if (in_array($_SERVER['ENV'], array('development','staging'))) {
-			$this->isDev = $isDev = true;
-		}
+		$this->isDev = $isDev = (ISDEV || ISSTAGE);
 
 		if (!isset($data['userId']) || empty($data['userId'])) {
 			$this->errorResponse = 101;
@@ -2437,9 +2428,9 @@ class WebServiceTicketsController extends WebServicesController
 
 			// Allows 4111111111111111 on Hotel Testerosa on LIVE/DEV
 
-			$ticket['Ticket']['testCard'] = false;
+			$test_card = false;
 
-			if ($userPaymentSettingPost['UserPaymentSetting']['ccNumber'] == "4111111111111111") {
+			if ($userPaymentSettingPost['UserPaymentSetting']['ccNumber'] == "4111111111111111" || $isDev === TRUE) {
 				switch ($ticket['Ticket']['siteId']) {
 					case 1:
 						$ticketSite = 'offerLuxuryLink';
@@ -2451,15 +2442,15 @@ class WebServiceTicketsController extends WebServicesController
 
 				$clientId = $this->Ticket->query("SELECT clientId FROM ".$ticketSite." WHERE offerId = '".$ticket['Ticket']['offerId']."' AND clientId = 8455");
 
-				if (count($clientId)) {
-					$ticket['Ticket']['testCard'] = true;
+				if (count($clientId) || $isDev === TRUE) {
+					$test_card = true;
 				}
 			}
 
-			$processor = new Processor($paymentProcessorName);
+			$processor = new Processor($paymentProcessorName,$test_card);
 			$processor->InitPayment($userPaymentSettingPost, $ticket);
 
-			if (!$isDev) {
+			if ($test_card || !$isDev) {
 				// do not charge on dev or stage. For Production - charge away!
 				$processor->SubmitPost();
 			}
@@ -2543,11 +2534,13 @@ class WebServiceTicketsController extends WebServicesController
 
 		// return result whether success or denied
 		// ---------------------------------------------------------------------------
-		if ((isset($processor) && $processor->ChargeSuccess()) || $isDev || $otherCharge) {
+		if ((isset($processor) && $processor->ChargeSuccess()) || $otherCharge) {
 			return $this->runPostChargeSuccess($ticket, $data, $usingUpsId, $userPaymentSettingPost, $promoGcCofData, $toolboxManualCharge);
 		} else {
 			if ($data['paymentProcessorId'] == 1) {
-				return $processor->GetResponseTxt();
+				$response_txt = $processor->GetResponseTxt();
+				CakeLog::write("debug","DECLINED. RESPONSE: ".var_export($processor->GetMappedResponse(),1));
+				return $response_txt;
 			} else {
 				return false;
 			}

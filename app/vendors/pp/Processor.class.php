@@ -9,16 +9,15 @@ class Processor
 	var $module;
 	var $module_list = array('AIM','NOVA','PAYPAL');
 	var $processor_name;
-	var $test_card = false;
 	
 	private $response_data = array();
 	private $post_data = array();
 	
-	function Processor($processor_name) {
+	function Processor($processor_name, $test_card = false) {
 		if (!in_array($processor_name, $this->module_list)) {
 			return false;
 		}
-		$this->module = new $processor_name();
+		$this->module = new $processor_name($test_card);
 		$this->processor_name = $processor_name;
 	} 
 	
@@ -28,10 +27,16 @@ class Processor
 		$ups = $userPaymentSetting['UserPaymentSetting'];
 		$ups['expMonth'] = str_pad(substr($ups['expMonth'], -2, 2), 2, '0', STR_PAD_LEFT);
 		$ups['expYear'] = str_pad(substr($ups['expYear'], -2, 2), 2, '0', STR_PAD_LEFT);
-		$nameSplit = str_word_count($ups['nameOnCard'], 1);
-		$firstName = trim($nameSplit[0]);
-		$lastName = trim(array_pop($nameSplit));
 		
+		$name = explode(" ",$ups['nameOnCard']);
+		
+		$firstName = $name[0];
+		$lastName = $name[1];
+		
+		if (count($name) > 2) {
+			$lastName = $name[(count($name) - 1)];
+		}
+		 
 		$db_params = array();
 		$db_params['map_ticket_id'] 				= $ticket['Ticket']['ticketId'];
 		$db_params['map_total_amount'] 				= $ticket['Ticket']['billingPrice'];
@@ -46,10 +51,6 @@ class Processor
 		$db_params['map_expiration'] 				= $ups['expMonth'] . $ups['expYear']; 
 		$db_params['map_card_num'] 					= trim($ups['ccNumber']);
 		
-		if ($ticket['Ticket']['testCard']) {
-			$this->test_card = true;
-		}
-		
 		$this->post_data = $this->MapParams($db_params);
 	}
 
@@ -59,7 +60,7 @@ class Processor
 		}
 
 		$post_string = $this->SetPostFields($this->post_data);
-		
+				
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $this->module->url);
 		curl_setopt($ch, CURLOPT_HEADER, 0);
@@ -72,11 +73,15 @@ class Processor
 		curl_setopt($ch, CURLOPT_TIMEOUT, 30);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $post_string);
 
-		if (!$this->test_card) {
-			$response = curl_exec($ch);
-			curl_close($ch);	
-			$this->response_data = $this->module->ProcessResponse($response);	
-		}
+		$response = curl_exec($ch);
+		curl_close($ch);
+		$this->response_data = $this->module->ProcessResponse($response);	
+		
+		// If AVS only was ran, re-run as a sale
+		if (isset($this->response_data['avs_only']) && $this->response_data['avs_only'] == true && $this->ChargeSuccess() === true) {
+			$this->post_data = array_merge($this->post_data,$this->module->getPostSale());
+			$this->SubmitPost();
+ 		}
 		
 		$this->post_data = array();
 		unset($post_string);
@@ -85,11 +90,7 @@ class Processor
 	}
 
 	function ChargeSuccess() {
-		if ($this->test_card) {
-			return true;
-		} else {
-			return $this->module->ChargeSuccess($this->response_data);
-		}
+		return $this->module->ChargeSuccess($this->response_data);
 	}
 
 	function GetResponseTxt() {
@@ -97,12 +98,7 @@ class Processor
 	}
 	
 	function GetMappedResponse() {
-		if ($this->test_card) {
-			return $this->dummyMappedResponse();
-		} else {
-			return $this->module->GetMappedResponse($this->response_data);
-		}
-		
+		return $this->module->GetMappedResponse($this->response_data);
 	}
 
 	function IsValidResponse($ticket_id) {
@@ -144,4 +140,3 @@ class Processor
 		return $tmp_str;
 	}
 }
-?>

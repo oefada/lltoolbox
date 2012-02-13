@@ -10,14 +10,15 @@ class NOVA
 	var $url = 'https://www.myvirtualmerchant.com/VirtualMerchant/process.do';
 	var $map_params;
 	var $post_data;
-
+	private $valid_avs_codes = array("F","D","M","P","W","X","Y","Z");
+	
 	function NOVA($test_param = FALSE) {
-		
 		$this->post_data = array();
 		$this->post_data['ssl_merchant_id'] 		= '506345';
 		$this->post_data['ssl_user_id'] 			= 'web';
 		$this->post_data['ssl_pin'] 				= '252176';
-		$this->post_data['ssl_transaction_type'] 	= 'CCSALE';
+		$this->post_data['ssl_pin'] 				= '252176';
+		$this->post_data['ssl_transaction_type']	= 'ccavsonly';
 		$this->post_data['ssl_test_mode'] 			= $test_param ? 'TRUE' : 'FALSE';
 		$this->post_data['ssl_result_format'] 		= 'ASCII';
 		$this->post_data['ssl_show_form']	 		= '0';
@@ -41,20 +42,29 @@ class NOVA
 
 	function ProcessResponse($raw_response) {
 		$processed = array();
-		$tmp_array = split("\n", strval($raw_response));
+		$tmp_array = explode("\n", strval($raw_response));
 		foreach($tmp_array as $k=>$v) {
 			$tmp = explode('=', $v);
 			$processed[$tmp[0]] = (isset($tmp[1])) ? $tmp[1] : 0;
 		}
+
+		$processed['avs_only'] = false;
+				
+		if ($this->post_data['ssl_transaction_type'] == 'ccavsonly') {
+			$processed['avs_only'] = true;
+		}
+
 		return $processed;
 	}
 
-	function ChargeSuccess($response) {
+	public function ChargeSuccess($response) {
 		if(isset($response['ssl_result'])) {
-			if($response['ssl_result'] == 0) {
+			if($response['ssl_result'] == 0 && in_array($response['ssl_avs_response'],$this->valid_avs_codes)) {
 				return true;
-			}else return false;
-		}else return false;
+			}
+		}
+		
+		return false;
 	}
 
 	function GetMappedResponse($response) {
@@ -68,7 +78,7 @@ class NOVA
 		$paymentDetail['ppResponseText']		= '';
 		$paymentDetail['ppResponseSubCode']		= '';
 		$paymentDetail['ppReasonCode']			= '';
-		$paymentDetail['isSuccessfulCharge']	= (isset($response['ssl_result']) && ($response['ssl_result'] == '0') && isset($response['ssl_result_message']) && (stristr($response['ssl_result_message'], 'APPROVAL'))) ? 1 : 0;
+		$paymentDetail['isSuccessfulCharge']	= $this->ChargeSuccess($response) ? '1' : '0';
 		
 		return $paymentDetail;
 	}
@@ -82,11 +92,19 @@ class NOVA
 	}
 
 	function GetResponseTxt($response) {
-		if(isset($response['ssl_result_message'])) {
+		if (isset($response['ssl_avs_response']) && !in_array($response['ssl_avs_response'],$this->valid_avs_codes)) {
+			return "NO_AVS";
+		} elseif(isset($response['ssl_result_message'])) {
 			return $response['ssl_result_message'];
 		}else {
 			return false;
 		}
+	}
+
+	public function getPostSale()
+	{
+		$this->post_data['ssl_transaction_type'] = 'ccsale';
+		return array('ssl_transaction_type' => 'ccsale');
 	}
 }
 
@@ -204,5 +222,3 @@ ssl_txn_time=02/16/2009 05:05:17 PM
 END OF SAMPLE RESPONSES -- ALL RESPONSES ARE DATATYPE (STRING)
 ----------------------------------------------------------------
 */
-
-?>
