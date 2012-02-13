@@ -345,7 +345,7 @@ $this->searchController = 'Tickets';
 		<tr><td style="border:0px;"><?php echo $html->link('Winner Email (PPV)', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/18');?></td></tr>
 		<tr><td style="border:0px;"><?php echo $html->link('Winner Email (Dec/Exp CC)', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/19');?></td></tr>
 		<tr>
-			<?php if (count($ticket['Client']) > 1) : ?>
+			<?php if (count($ticket['Client']) > 1 && $ticket['Ticket']['siteId'] != 1) : ?>
 				<td style="border:0px;">
 					** Multi-Client Package **<br />
 					<?php 
@@ -359,7 +359,9 @@ $this->searchController = 'Tickets';
 				<td style="border:0px;"><?php echo $html->link('Client PPV', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/4');?></td>
 			<?php endif; ?>
 		</tr>
+		<? if ($ticket['Ticket']['siteId'] != 1) : ?>
 		<tr><td style="border:0px;"><?php echo $html->link('Chase Money', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/15');?></td></tr>
+		<? endif; ?>
 		<tr><td style="border:0px;"><?php echo $html->link('1st Offense Flake', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/16');?></td></tr>
 		<tr><td style="border:0px;"><?php echo $html->link('2nd Offense Flake', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/17');?></td></tr>
 	</table>
@@ -375,10 +377,14 @@ $this->searchController = 'Tickets';
 		</tr>
 		<tr><td style="border:0px;"><?php echo $html->link('Reservation Confirmation', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/1');?></td></tr>
 		<tr><td style="border:0px;"><?php echo $html->link('Reservation Acknowledgement', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/12');?></td></tr>
+		<? if ($ticket['Ticket']['siteId'] != 1) : ?>
 		<tr><td style="border:0px;"><?php echo $html->link('Reservation Dates Available', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/13');?></td></tr>
+		<? endif; ?>
 		<tr><td style="border:0px;"><?php echo $html->link('Reservation Dates Not Available', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/14');?></td></tr>
 		<tr><td style="border:0px;"><?php echo $html->link('Reservation Request - Follow Up', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/24');?></td></tr>
+		<? if ($ticket['Ticket']['siteId'] != 1) : ?>
 		<tr><td style="border:0px;"><?php echo $html->link('Reservation Request - Follow Up to Customer', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/32');?></td></tr>
+		<? endif; ?>
 		<tr><td style="border:0px;"><?php echo $html->link('Reservation Cancellation - Request', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/29');?></td></tr>
 		<tr><td style="border:0px;"><?php echo $html->link('Reservation Cancellation - Confirmation', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/30');?></td></tr>
 		<tr><td style="border:0px;"><?php echo $html->link('Reservation Cancellation - Client Reciept', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/31');?></td></tr>
