@@ -22,8 +22,8 @@ foreach ($aging as $a) {
 	$row['managerUsername'] = formatCSV($a['managerUsername']);
 	$row['startDate'] = formatDate($a['startDate']);
 	$row['loaEndDate'] = formatDate($a['loaEndDate']);
-	$row['membershipFee'] = ($a['membershipTotalPackages'] > 0 ? 'N/A' : formatDollars($a['membershipFee']));
-	$row['membershipBalance'] = ($a['membershipPackagesRemaining'] > 0 ? 'N/A' : formatDollars($a['membershipBalance']));
+	$row['membershipFee'] = ($a['membershipTotalPackages'] > 0 ? $a['membershipTotalPackages']  : formatDollars($a['membershipFee']));
+	$row['membershipBalance'] = ($a['membershipPackagesRemaining'] > 0 ? $a['membershipPackagesRemaining'] : formatDollars($a['membershipBalance']));
 	$row['membershipTotalPackages'] = formatCSV($a['membershipTotalPackages'] > 0 ? $a['membershipTotalPackages'] : '');
 	$row['membershipPackagesRemaining'] = formatCSV($a['membershipPackagesRemaining'] > 0 ? $a['membershipPackagesRemaining'] : '');
 	$row['sitesLL'] = formatCSV(strpos($a['sites'] , 'luxurylink') !== false ? 'LL' : '');
