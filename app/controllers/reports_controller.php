@@ -997,28 +997,26 @@ Loa.loaMembershipTypeId,
 DATEDIFF(NOW(), Loa.startDate)  AS age,
 Client.managerUsername,
 Client.locationDisplay,
-(SELECT
-Ticket.billingPrice
+
+(SELECT Ticket.billingPrice
 FROM ticket AS Ticket
-INNER JOIN clientLoaPackageRel clp
-ON (clp.packageId = Ticket.packageId)
-WHERE clp.clientId = Client.clientId
-AND clp.LoaId = Loa.loaId
+INNER JOIN clientLoaPackageRel clp ON (clp.packageId = Ticket.packageId)
+WHERE clp.clientId = Client.clientId AND clp.LoaId = Loa.loaId
 ORDER BY Ticket.created DESC
 LIMIT 1 ) AS lastSellPrice,
-(SELECT
-Ticket.created
-FROM ticket AS Ticket
-INNER JOIN clientLoaPackageRel clp
-ON (clp.packageId = Ticket.packageId)
-WHERE clp.clientId = Client.clientId
-AND clp.LoaId = Loa.loaId
+
+(SELECT Ticket.created
+FROM ticket AS Ticket INNER JOIN clientLoaPackageRel clp ON (clp.packageId = Ticket.packageId)
+WHERE clp.clientId = Client.clientId AND clp.LoaId = Loa.loaId
 ORDER BY Ticket.created DESC
 LIMIT 1 ) as lastSellDate
+
 FROM client AS Client
-INNER JOIN loa AS Loa
-ON (Loa.clientId = Client.clientId)
-WHERE (Loa.membershipBalance > 0
+INNER JOIN loa AS Loa ON (Loa.clientId = Client.clientId) ";
+
+// Do not include clients that are of accountTypeId 5 - PHG properties
+$sql.="INNER JOIN accountType on (Loa.accountTypeId=accountType.accountTypeId)  
+WHERE accountType.accountTypeId!=5 AND (Loa.membershipBalance > 0
 OR Loa.membershipPackagesRemaining > 0)
 AND Loa.loaLevelId = 2
 AND Loa.inactive != 1
@@ -1034,6 +1032,7 @@ ORDER BY Loa.startDate ASC
 $aging = array();
 
 if (	$results = $this->OfferType->query($sql) ) {
+
 
 	// Flatten results
 	
