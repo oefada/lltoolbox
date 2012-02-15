@@ -355,7 +355,7 @@ $this->searchController = 'Tickets';
 						}
 					?>
 				</td>
-			<?php else : ?>
+			<?php elseif ($ticket['Ticket']['siteId'] != 1) : ?>
 				<td style="border:0px;"><?php echo $html->link('Client PPV', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/4');?></td>
 			<?php endif; ?>
 		</tr>

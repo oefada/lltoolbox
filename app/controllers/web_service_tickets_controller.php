@@ -1106,6 +1106,7 @@ class WebServiceTicketsController extends WebServicesController
 		$userLastName		= ucwords(strtolower($userData['lastName']));
 		$emailName			= "$userFirstName $userLastName";
 		$userEmail 			= $userData['email'];
+		$guestEmail			= $userData['email'];
 
 		$userWorkPhone		= $userData['workPhone'];
 		$userMobilePhone	= $userData['mobilePhone'];
