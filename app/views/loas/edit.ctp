@@ -1,6 +1,13 @@
 <?php
 $loa = $this->data;
-$this->pageTitle = $loa['Client']['name'].$html2->c($loa['Client']['clientId'], 'Client Id:').'<br />'.$html2->c('manager: '.$client['Client']['managerUsername']);
+$this->pageTitle = $loa['Client']['name'];
+$this->pageTitle.=$html2->c($loa['Client']['clientId'], 'Client Id:');
+$this->pageTitle.='<br />';
+$this->pageTitle.=$html2->c('manager: '.$client['Client']['managerUsername']);
+$this->pageTitle.='<span class="inline-counter"> # of LOAs - ';
+$this->pageTitle.=isset($client['Loa'])?count($client['Loa']):'0';
+$this->pageTitle.='</span>';
+
 $this->searchController = 'Clients';
 $this->set('clientId', $this->data['Client']['clientId']);
 ?>
