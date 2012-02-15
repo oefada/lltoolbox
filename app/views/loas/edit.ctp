@@ -126,7 +126,7 @@ $this->set('clientId', $this->data['Client']['clientId']);
 		
 		echo $form->input('accountTypeId', array('label' => 'Account Type'));
 		
-		echo $form->input('notes', array('label'=>'LOA Notes', 'id' => 'loaNotes', 'onKeyDown'=>'limitText(loaNotes, 300)', 'onKeyUp'=>'limitText(loaNotes, 300)'));
+		echo $form->input('notes', array('label'=>'LOA Notes', 'id' => 'loaNotes'));
 		echo $form->input('emailNewsletterDates', array('id' => 'emailNewsletterDates', 'onKeyDown'=>'limitText(emailNewsletterDates, 300)', 'onKeyUp'=>'limitText(emailNewsletterDates, 300)'));
 		echo $form->input('homepageDates', array('id' => 'homepageDates', 'onKeyDown'=>'limitText(homepageDates, 300)', 'onKeyUp'=>'limitText(homepageDates, 300)'));
 		echo $form->input('additionalMarketing', array('id' => 'additionalMarketing', 'onKeyDown'=>'limitText(additionalMarketing, 300)', 'onKeyUp'=>'limitText(additionalMarketing, 300)'));
