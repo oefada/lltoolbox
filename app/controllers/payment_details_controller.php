@@ -264,7 +264,9 @@ class PaymentDetailsController extends AppController {
 		
 		$ticket = $this->PaymentDetail->Ticket->find('first',$params);
 
-		$ticket['UserPromo'] = $this->Ticket->getPromoGcCofData($ticket['Ticket']['ticketId'], $ticket['Ticket']['billingPrice']);
+		// Ticket 1002
+		// Only apply CoF for credits BEFORE ticket created. Always show CoF for manual charges.
+		$ticket['UserPromo'] = $this->Ticket->getPromoGcCofData($ticket['Ticket']['ticketId'], $ticket['Ticket']['billingPrice'], 0, true);
 		
 		$paymentProcessors = $this->PaymentDetail->PaymentProcessor->find('list', array('conditions' => array('sites LIKE' => '%'.$ticket['Ticket']['siteId'].'%')));
 		$paymentTypeIds = $this->PaymentDetail->PaymentType->find('list');

@@ -122,8 +122,7 @@ class Ticket extends AppModel {
 		return $result;
 	}
 
-	function getPromoGcCofData($ticketId, $ticketPrice, $payment_amt = 0) {
-
+	function getPromoGcCofData($ticketId, $ticketPrice, $payment_amt = 0, $manualCharge = false) {
 		$data = array();
 		$data['original_ticket_price'] = $ticketPrice;
 		$data['payment_amt'] = $payment_amt;
@@ -139,7 +138,7 @@ class Ticket extends AppModel {
 								GROUP BY PromoTicketRel.promoCodeId";
 		$result = $this->query($q);
 
-				// loop over the result set
+		// loop over the result set
 		// and overwrite 'Promo' if it is a promo with an array of the last result set
 		// if it is a 'GiftCert', overwrite 'GiftCert' with the last result set that contains the balance 
 		foreach ($result as $k => $row) {
@@ -149,6 +148,7 @@ class Ticket extends AppModel {
 				$gcSql = 'SELECT * FROM giftCertBalance ';
 				$gcSql.= 'WHERE promoCodeId = ' . $row['PromoCode']['promoCodeId'] . ' ';
 				$gcSql.= 'ORDER BY giftCertBalanceId DESC LIMIT 1';
+
 				$gcResult = $this->query($gcSql);
 				if (!empty($gcResult) && ($gcResult[0]['giftCertBalance']['balance'] > 0)) {
 					$data['GiftCert'] = $gcResult[0]['giftCertBalance'];
@@ -205,11 +205,18 @@ class Ticket extends AppModel {
 		$cofSql = 'SELECT CreditTracking.balance FROM ticket AS Ticket ';
 		$cofSql.= 'INNER JOIN creditTracking AS CreditTracking USING (userId) ';
 		$cofSql.= "WHERE Ticket.ticketId = $ticketId ";
+		
+		// Ticket 1002
+		// Only show CoF that was added BEFORE ticket was created
+		if (!$manualCharge) {
+			$cofSql .= " AND CreditTracking.datetime < Ticket.created ";
+		}
+		
 		$cofSql.= "ORDER BY CreditTracking.creditTrackingId DESC LIMIT 1";
 		$cofResult = $this->query($cofSql);
 
 		if (!empty($cofResult) && ($cofResult[0]['CreditTracking']['balance'] > 0)) {
-			$data['Cof'] = $cofResult[0]['CreditTracking'];	
+			$data['Cof'] = $cofResult[0]['CreditTracking'];
 		}
 
 		// if there is a credit on file and a ticketPrice
@@ -235,7 +242,7 @@ class Ticket extends AppModel {
 		$paymentRecordSql = 'SELECT paymentTypeId, paymentAmount FROM paymentDetail ';
 		$paymentRecordSql.= "WHERE ticketId = $ticketId AND isSuccessfulCharge = 1";
 		$paymentRecordResult = $this->query($paymentRecordSql);
-		
+
 		if (!empty($paymentRecordResult)) {
 			// loop over the result set from payementDetail with the gift cert data
 			// set GiftCert applied to 1 

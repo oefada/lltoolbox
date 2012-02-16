@@ -2388,7 +2388,7 @@ class WebServiceTicketsController extends WebServicesController
 			}
 		}
 
-		$promoGcCofData	= $this->Ticket->getPromoGcCofData($ticket['Ticket']['ticketId'], $totalChargeAmount, $payment_amt);
+		$promoGcCofData	= $this->Ticket->getPromoGcCofData($ticket['Ticket']['ticketId'], $totalChargeAmount, $payment_amt, $toolboxManualCharge);
 
 		if (!$toolboxManualCharge) {
 			// this is either autocharge or user checkout
