@@ -4,7 +4,7 @@
    <?php foreach ($sites as $site => $siteName): ?>
          <div id="<?php echo $site; ?>" class="<?php echo ($site == $displayTab) ? ' siteActive' :  ' siteInactive'; ?>"><?php __($sites[$site]); ?></div>
    <?php endforeach; ?>
-         <div id="showcase" class="siteInactive">Showcase</div>
+         <div id="resizer" class="siteInactive">Resizer</div>
 </div>
 <?php foreach ($sites as $site => $siteName): ?>
    <?php
@@ -205,7 +205,7 @@
                            toggleSites('<?php echo $site; ?>');
                         }
       });
-      Event.observe('showcase', 'click', function() {
+      Event.observe('resizer', 'click', function() {
 		window.location.replace('http://showcase.luxurylink.com/clients/view/<?php echo $client['Client']['clientId'];?>');
       });
       
