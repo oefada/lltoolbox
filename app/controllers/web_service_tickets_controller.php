@@ -1218,7 +1218,7 @@ class WebServiceTicketsController extends WebServicesController
 			}
 			
 			// Set reservation date to REQUESTED date. These PPVs are sent when ticket doesn't yet have reservation
-			if (in_array($ppvNoticeTypeId,array(24,2,10,28))) {
+			if (in_array($ppvNoticeTypeId,array(24,2,10,28,11))) {
 				$resArrivalDate = $fpArrival;
 				$resDepartureDate = $fpDeparture;
 			}
@@ -1414,6 +1414,7 @@ class WebServiceTicketsController extends WebServicesController
 		
 		// PPV is a client PPV. Determines what blurbs show up
 		$clientPpv = false;
+		$internalPpv = false;
 		
 		switch ($ppvNoticeTypeId) {
 			case 10:
@@ -1518,8 +1519,16 @@ class WebServiceTicketsController extends WebServicesController
 				
 				break;
 			case 11:
-				include('../vendors/email_msgs/fixed_price/msg_internal_fixedprice.html');
-				$emailSubject = "A $siteName $fpRequestType Request Has Come In!";
+				if ($siteId == 2) {
+					include('../vendors/email_msgs/fixed_price/msg_internal_fixedprice.html');
+				} else {
+					$internalPpv = true;
+					$clientPpv = true;
+					$templateFile = "11_fp_internal_exclusive";
+					$templateTitle = "Fixed Price Booking Requested";
+				}
+				
+				$emailSubject = "A Fixed Price Request has Been Made";
 				$emailFrom = "$siteDisplay <exclusives@$siteEmail>";
 				$emailReplyTo = "exclusives@$siteEmail";
 				$userEmail = "exclusives@$siteEmail";
