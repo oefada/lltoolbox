@@ -7,6 +7,8 @@ table tr th { text-decoration: underline; }
 table tr td { border: none; }
 .input { margin: 0; }
 #sort-table .input-row input { width: 250px; }
+.date { width: 350px; float: left; }
+form div { clear: none; }
 </style>
 
 <script type="text/javascript" src="/js/tablednd.js"></script>
@@ -40,6 +42,12 @@ function deleteRow(rowId) {
 		alert('Must have at least one slide!');
 	}
 }
+
+jQuery(function() {
+	jQuery('#scheduleDate').click(function() {
+		showCalendar('scheduleDate', '%Y-%m-%d');
+	});
+});
 </script>
 
 
@@ -49,32 +57,14 @@ function deleteRow(rowId) {
 <? if (isset($header[$tabName]['algorithm']) && !empty($header[$tabName]['algorithm'])) : ?>
 	Algorithm: <?=$header[$tabName]['algorithm']?>
 <? else: ?>
-
-<div style="float: left;">
-Select a date to schedule:<br />
 <form name="schedule-date" method="POST" action="#">
-<input type="hidden" name="schedule-date" value="1" />
-<select name="month">
-	<option value="0">Month</option>
-	<? for ($i=1; $i<=12; $i++) : ?>
-	<option value="<?=$i?>" <? if (@$month == $i) echo 'SELECTED'; ?> ><?=date('F', mktime(0, 0, 0, $i));?></option>
-	<? endfor; ?>
-</select>
-<select name="day">
-	<option value="0">Day</option>
-	<? for ($i = 1; $i <= 31; $i++) : ?>
-	<option value="<?=$i;?>" <? if (@$day == $i) echo 'SELECTED'; ?> ><?=$i;?></option>
-	<? endfor; ?>
-</select>
-<select name="year">
-	<option value="0">Year</option>
-	<? for ($i=2012; $i<=2014; $i++) : ?>
-	<option value="<?=$i?>" <? if (@$year == $i) echo 'SELECTED'; ?> ><?=$i;?></option>
-	<? endfor; ?>
-</select>
-<input type="submit" value="Go" />
+	<input type="hidden" name="schedule-date" value="1" />
+	<?=$datePicker->picker('scheduleDate', array('label' => 'Select a date to schedule: ','value'=>(isset($scheduleDate)?$scheduleDate:'')));?>
+	<div style="float: left;">
+		<input type="submit" value="Go" />
+	</div>
 </form>
-</div>
+
 
 <div style="float: left; margin-left: 35px; margin-top: 10px;">
 <? if (isset($others['current']['startDate'])) : ?>
@@ -102,10 +92,7 @@ Scheduling for <?=$scheduleDate?>
 <? endif; ?>
 <form name="tabs" method="POST" action="#">
 <input type="hidden" name="tab-data" value="1" />
-<input type="hidden" name="schedule-date" value="<?=$scheduleDate?>" />
-<input type="hidden" name="month" value="<?=$month?>" />
-<input type="hidden" name="year" value="<?=$year?>" />
-<input type="hidden" name="day" value="<?=$day?>" />
+<input type="hidden" name="data[scheduleDate]" value="<?=$scheduleDate?>" />
 
 <table id="sort-table">
 	<tr id="header-row" class="nodrag nodrop">

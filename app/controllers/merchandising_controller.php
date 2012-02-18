@@ -110,12 +110,11 @@ class MerchandisingController extends AppController
 				);
 				$welcomeSlide = $this->MerchDataEntries->find('first', $params);
 
-			} else if (isset($_POST['schedule-date'])) {
-			
+			} else if (isset($_POST['data']['scheduleDate']) && !isset($_POST['slides'])) {
 				// lookup data entries for date
 				$params = Array(
 					'recursive' => 0,
-					'conditions' => Array('isHeader' => 0, 'startDate' => $_POST['year'].'-'.$_POST['month'].'-'.$_POST['day'], 'merchDataTypeName' => 'Billboard')
+					'conditions' => Array('isHeader' => 0, 'startDate' => $_POST['data']['scheduleDate'], 'merchDataTypeName' => 'Billboard')
 				);
 				$currData = $this->MerchDataEntries->find('first', $params);
 				
@@ -124,10 +123,7 @@ class MerchandisingController extends AppController
 				} else {
 					$this->set('currData', $currData['MerchDataEntries']['merchDataArr']);
 				}
-				$this->set('month', $_POST['month']);
-				$this->set('day', $_POST['day']);
-				$this->set('year', $_POST['year']);
-				$this->set('scheduleDate', $_POST['year'].'-'.$_POST['month'].'-'.$_POST['day']);
+				$this->set('scheduleDate', $_POST['data']['scheduleDate']);
 				
 			} else if (isset($_POST['slides'])) {
 			
@@ -135,7 +131,7 @@ class MerchandisingController extends AppController
 				if (isset($_POST['imageUrl']) && is_array($_POST['imageUrl'])) {
 					$params = Array(
 						'recursive' => 0,
-						'conditions' => Array('isHeader' => 0, 'startDate' => $_POST['scheduleDate'], 'merchDataTypeName' => 'Billboard')
+						'conditions' => Array('isHeader' => 0, 'startDate' => $_POST['data']['scheduleDate'], 'merchDataTypeName' => 'Billboard')
 					);
 					$currData = $this->MerchDataEntries->find('first', $params);
 					
@@ -164,7 +160,7 @@ class MerchandisingController extends AppController
 					$jsonData = json_encode($slides);
 					$dataArr = Array(
 						'merchDataTypeId' => $billboardDataType['MerchDataType']['id'],
-						'startDate' => $_POST['scheduleDate'],
+						'startDate' => $_POST['data']['scheduleDate'],
 						'merchDataJSON' => $jsonData,
 					);
 					// insert or update
@@ -181,12 +177,12 @@ class MerchandisingController extends AppController
 					
 					$params = Array(
 						'recursive' => 0,
-						'conditions' => Array('isHeader' => 0, 'startDate' => $_POST['scheduleDate'], 'merchDataTypeName' => 'Billboard')
+						'conditions' => Array('isHeader' => 0, 'startDate' => $_POST['data']['scheduleDate'], 'merchDataTypeName' => 'Billboard')
 					);
 					$currData = $this->MerchDataEntries->find('all', $params);
 
 					$this->set('currData', $currData[0]['MerchDataEntries']['merchDataArr']);
-					$this->set('scheduleDate', $_POST['scheduleDate']);
+					$this->set('scheduleDate', $_POST['data']['scheduleDate']);
 					$this->set('dataSaved', true);
 				}
 				
@@ -309,18 +305,15 @@ class MerchandisingController extends AppController
 				$this->set('others', $others);
 			
 				// check date submit
-				if (isset($_POST['schedule-date']) && $_POST['schedule-date']) {
-					$this->set('month', $_POST['month']);
-					$this->set('day', $_POST['day']);
-					$this->set('year', $_POST['year']);
-					$this->set('scheduleDate', $_POST['year'].'-'.$_POST['month'].'-'.$_POST['day']);
+				if (isset($_POST['data']['scheduleDate']) && $_POST['data']['scheduleDate']) {
+					$this->set('scheduleDate', $_POST['data']['scheduleDate']);
 					
 					// get data for date
 					$params = Array(
 						'recursive' => 0,
 						'conditions' => Array(
 							'MerchDataEntries.merchDataGroupId' => $tabs[$tabName]['merchDataGroupId'],
-							'startDate' => $_POST['year'].'-'.$_POST['month'].'-'.$_POST['day']
+							'startDate' => $_POST['data']['scheduleDate']
 						)
 					);
 					$currData = $this->MerchDataEntries->find('first', $params);
@@ -332,7 +325,7 @@ class MerchandisingController extends AppController
 					}
 				}
 				
-				if (isset($_POST['tab-data']) && $_POST['tab-data'] && isset($_POST['schedule-date'])) {
+				if (isset($_POST['tab-data']) && $_POST['tab-data'] && isset($_POST['data']['scheduleDate'])) {
 					// save tab data
 					$tabData = Array();
 					foreach ($_POST['clientUrl'] AS $i => $clientUrl) {
@@ -362,7 +355,7 @@ class MerchandisingController extends AppController
 					$dataArr = Array(
 						'merchDataTypeId' => $homepageTabsDataType['MerchDataType']['id'],
 						'merchDataGroupId' => $tabs[$tabName]['merchDataGroupId'],
-						'startDate' => $_POST['schedule-date'],
+						'startDate' => $_POST['data']['scheduleDate'],
 						'merchDataJSON' => $merchDataJSON
 					);
 					
@@ -383,7 +376,7 @@ class MerchandisingController extends AppController
 						'recursive' => 0,
 						'conditions' => Array(
 							'MerchDataEntries.merchDataGroupId' => $tabs[$tabName]['merchDataGroupId'],
-							'startDate' => $_POST['schedule-date']
+							'startDate' => $_POST['data']['scheduleDate']
 						)
 					);
 					$currData = $this->MerchDataEntries->find('first', $params);
@@ -414,18 +407,15 @@ class MerchandisingController extends AppController
 		$others = $this->getOtherScheduled($inspirationDataType['MerchDataType']['id']);
 		$this->set('others', $others);
 			
-		if (isset($_POST['schedule-date'])) {
-			$this->set('month', $_POST['month']);
-			$this->set('day', $_POST['day']);
-			$this->set('year', $_POST['year']);
-			$this->set('scheduleDate', $_POST['year'].'-'.$_POST['month'].'-'.$_POST['day']);
+		if (isset($_POST['data']['scheduleDate'])) {
+			$this->set('scheduleDate', $_POST['data']['scheduleDate']);
 			
 			// get current data
 			$params = Array(
 				'recursive' => 0,
 				'conditions' => Array(
 						'merchDataTypeId' => $inspirationDataType['MerchDataType']['id'], 
-						'startDate' => $_POST['year'].'-'.$_POST['month'].'-'.$_POST['day'])
+						'startDate' => $_POST['data']['scheduleDate'])
 			);
 			$currData = $this->MerchDataEntries->find('first', $params);
 			
@@ -462,7 +452,7 @@ class MerchandisingController extends AppController
 					
 					$dataArr = Array(
 						'merchDataTypeId' => $inspirationDataType['MerchDataType']['id'],
-						'startDate' => $_POST['schedule-date'],
+						'startDate' => $_POST['data']['scheduleDate'],
 						'merchDataJSON' => json_encode($inspArr)
 					);
 					
@@ -481,7 +471,7 @@ class MerchandisingController extends AppController
 					// get current data
 					$params = Array(
 						'recursive' => 0,
-						'conditions' => Array('merchDataTypeId' => $inspirationDataType['MerchDataType']['id'], 'startDate' => $_POST['schedule-date'])
+						'conditions' => Array('merchDataTypeId' => $inspirationDataType['MerchDataType']['id'], 'startDate' => $_POST['data']['scheduleDate'])
 					);
 					$currData = $this->MerchDataEntries->find('first', $params);
 					
@@ -504,18 +494,15 @@ class MerchandisingController extends AppController
 		$others = $this->getOtherScheduled($fauctionDataType['MerchDataType']['id']);
 		$this->set('others', $others);
 			
-		if (isset($_POST['schedule-date'])) {
-			$this->set('month', $_POST['month']);
-			$this->set('day', $_POST['day']);
-			$this->set('year', $_POST['year']);
-			$this->set('scheduleDate', $_POST['year'].'-'.$_POST['month'].'-'.$_POST['day']);
+		if (isset($_POST['data']['scheduleDate'])) {
+			$this->set('scheduleDate', $_POST['data']['scheduleDate']);
 			
 			// get current data
 			$params = Array(
 				'recursive' => 0,
 				'conditions' => Array(
 						'merchDataTypeId' => $fauctionDataType['MerchDataType']['id'], 
-						'startDate' => $_POST['year'].'-'.$_POST['month'].'-'.$_POST['day'])
+						'startDate' => $_POST['data']['scheduleDate'])
 			);
 			$currData = $this->MerchDataEntries->find('first', $params);
 			
@@ -546,7 +533,7 @@ class MerchandisingController extends AppController
 					
 					$dataArr = Array(
 						'merchDataTypeId' => $fauctionDataType['MerchDataType']['id'],
-						'startDate' => $_POST['schedule-date'],
+						'startDate' => $_POST['data']['scheduleDate'],
 						'merchDataJSON' => json_encode($arr)
 					);
 					
@@ -565,7 +552,7 @@ class MerchandisingController extends AppController
 					// get current data
 					$params = Array(
 						'recursive' => 0,
-						'conditions' => Array('merchDataTypeId' => $fauctionDataType['MerchDataType']['id'], 'startDate' => $_POST['schedule-date'])
+						'conditions' => Array('merchDataTypeId' => $fauctionDataType['MerchDataType']['id'], 'startDate' => $_POST['data']['scheduleDate'])
 					);
 					$currData = $this->MerchDataEntries->find('first', $params);
 					

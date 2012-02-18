@@ -10,6 +10,8 @@ table tr td { border: none; }
 .input-row td { padding: 25px 0 25px; }
 .input-col label { float: left; width: 80px; text-align: right; margin-right: 10px; margin-bottom: 4px; margin-top: 2px; clear: left; }
 .input-col input { float: left; width: 350px; margin-bottom: 4px; }
+.date { width: 350px; float: left; }
+form div { clear: none; }
 </style>
 
 <script type="text/javascript" src="/js/tablednd.js"></script>
@@ -70,6 +72,11 @@ function setRow(rowId) {
 	jQuery('#sort-table').tableDnD();
 	jQuery('#sort-table #'+rowId+' .link-url').blur();
 }
+jQuery(function() {
+	jQuery('#scheduleDate').click(function() {
+		showCalendar('scheduleDate', '%Y-%m-%d');
+	});
+});
 </script>
 
 
@@ -140,33 +147,17 @@ function setRow(rowId) {
 
 
 
-<div style="float: left;">
-Select a date to schedule:
-<form name="schedule-date" method="POST" action="/merchandising/billboard">
-<input type="hidden" name="schedule-date" value="1" />
-<select name="month">
-	<option value="0">Month</option>
-	<? for ($i=1; $i<=12; $i++) : ?>
-	<option value="<?=$i?>" <? if (@$month == $i) echo 'SELECTED'; ?> ><?=date('F', mktime(0, 0, 0, $i));?></option>
-	<? endfor; ?>
-</select>
-<select name="day">
-	<option value="0">Day</option>
-	<? for ($i = 1; $i <= 31; $i++) : ?>
-	<option value="<?=$i;?>" <? if (@$day == $i) echo 'SELECTED'; ?> ><?=$i;?></option>
-	<? endfor; ?>
-</select>
-<select name="year">
-	<option value="0">Year</option>
-	<? for ($i=2011; $i<=2014; $i++) : ?>
-	<option value="<?=$i?>" <? if (@$year == $i) echo 'SELECTED'; ?> ><?=$i;?></option>
-	<? endfor; ?>
-</select>
-<input type="submit" value="Go" />
-</form>
-</div>
 
-<div style="float: left; margin-left: 35px; margin-top: 10px;">
+<form name="schedule-date" method="POST" action="/merchandising/billboard">
+	<input type="hidden" name="schedule-date" value="1" />
+	<?=$datePicker->picker('scheduleDate', array('label' => 'Select a date to schedule: ','value'=>(isset($scheduleDate)?$scheduleDate:'')));?>
+	<div style="float: left;">
+		<input type="submit" value="Go" />
+	</div>
+</form>
+
+
+<div style="float: left; margin-left: 35px;">
 <? if (isset($others['current']['startDate'])) : ?>
 Currently scheduled date: <?=$others['current']['startDate'];?><br />
 <? endif; ?>
@@ -175,7 +166,7 @@ Next scheduled date: <?=$others['next']['startDate'];?><br />
 <? endif; ?>
 </div>
 <? if (isset($scheduleDate)) : ?>
-<div style="float: left; margin-left: 35px; margin-top: 15px;">
+<div style="float: left; margin-left: 35px;">
 	<input type="submit" value="Preview" onClick="window.open('http://www.luxurylink.com/?pDate=<?=$scheduleDate?>'); return false;" />
 </div>
 <? endif; ?>
@@ -193,7 +184,7 @@ Next scheduled date: <?=$others['next']['startDate'];?><br />
 
 <form name="slides" method="POST" action="/merchandising/billboard">
 <input type="hidden" name="slides" value="1" />
-<input type="hidden" name="scheduleDate" value="<?=$scheduleDate?>" />
+<input type="hidden" name="data[scheduleDate]" value="<?=$scheduleDate?>" />
 <table id="sort-table">
 	<tr id="header-row" class="nodrag nodrop">
 		<th>Image Preview</th>

@@ -10,6 +10,8 @@ table tr td { border: none; }
 .input-col label { float: left; width: 80px; text-align: right; margin-right: 10px; margin-bottom: 4px; margin-top: 2px; clear: left; }
 .input-col input { float: left; width: 350px; margin-bottom: 4px; }
 form { clear: none; }
+.date { width: 350px; float: left; }
+form div { clear: none; }
 </style>
 
 <script type="text/javascript" src="/js/tablednd.js"></script>
@@ -40,6 +42,12 @@ function setRow(rowId) {
 	});
 	jQuery('#sort-table').tableDnD();
 }
+
+jQuery(function() {
+	jQuery('#scheduleDate').click(function() {
+		showCalendar('scheduleDate', '%Y-%m-%d');
+	});
+});
 </script>
 
 
@@ -62,31 +70,13 @@ function setRow(rowId) {
 
 <h2>Inspiration Scheduling</h2>
 
-<div style="float: left;">
-Select a date to schedule:
-<form name="schedule-date" method="POST" action="/merchandising/inspiration">
-<input type="hidden" name="schedule-date" value="1" />
-<select name="month">
-	<option value="0">Month</option>
-	<? for ($i=1; $i<=12; $i++) : ?>
-	<option value="<?=$i?>" <? if (@$month == $i) echo 'SELECTED'; ?> ><?=date('F', mktime(0, 0, 0, $i));?></option>
-	<? endfor; ?>
-</select>
-<select name="day">
-	<option value="0">Day</option>
-	<? for ($i = 1; $i <= 31; $i++) : ?>
-	<option value="<?=$i;?>" <? if (@$day == $i) echo 'SELECTED'; ?> ><?=$i;?></option>
-	<? endfor; ?>
-</select>
-<select name="year">
-	<option value="0">Year</option>
-	<? for ($i=2012; $i<=2014; $i++) : ?>
-	<option value="<?=$i?>" <? if (@$year == $i) echo 'SELECTED'; ?> ><?=$i;?></option>
-	<? endfor; ?>
-</select>
-<input type="submit" value="Go" />
+<form name="schedule-date" method="POST" action="#">
+	<input type="hidden" name="schedule-date" value="1" />
+	<?=$datePicker->picker('scheduleDate', array('label' => 'Select a date to schedule: ','value'=>(isset($scheduleDate)?$scheduleDate:'')));?>
+	<div style="float: left;">
+		<input type="submit" value="Go" />
+	</div>
 </form>
-</div>
 
 <div style="float: left; margin-left: 35px; margin-top: 10px;">
 <? if (isset($others['current']['startDate'])) : ?>
@@ -120,10 +110,7 @@ Next scheduled date: <?=$others['next']['startDate'];?><br />
 
 
 <form name="inspiration" method="POST" action="/merchandising/inspiration">
-	<input type="hidden" name="schedule-date" value="<?=$scheduleDate?>" />
-	<input type="hidden" name="month" value="<?=$month?>" />
-	<input type="hidden" name="year" value="<?=$year?>" />
-	<input type="hidden" name="day" value="<?=$day?>" />
+	<input type="hidden" name="data[scheduleDate]" value="<?=$scheduleDate?>" />
 	<input type="hidden" name="inspiration" value="1" />
 	
 <div style="float: left; margin-left: 25px;">
