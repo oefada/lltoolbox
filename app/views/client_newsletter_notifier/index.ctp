@@ -6,6 +6,7 @@
 		echo $form->input('site');
 		echo $form->input('themeName');
 		echo $form->input('url');
+		echo $form->input('subscribers');
 	?>
 	</fieldset>
 <?php echo $form->end('Submit');?>
@@ -40,6 +41,7 @@
 		echo $form->input('site', array('type' => 'hidden'));
 		echo $form->input('themeName', array('type' => 'hidden'));
 		echo $form->input('url', array('type' => 'hidden'));
+		echo $form->input('subscribers', array('type' => 'hidden'));
 		echo $form->input('approve', array('type' => 'hidden', 'value' => true));
 	?>
 	</fieldset>

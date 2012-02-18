@@ -14,6 +14,7 @@ class ClientNewsletterNotifierController extends AppController {
 	    if (!empty($this->data)) {
 	        $this->ClientNewsletterNotifier->data = $this->data;
             $clients = $this->ClientNewsletterNotifier->prepareContactDetails();
+                        
             if (@$this->data['ClientNewsletterNotifier']['approve']) {
                 $this->_send($clients, $this->data);
                 $this->set('emailSent', true);
@@ -23,7 +24,8 @@ class ClientNewsletterNotifierController extends AppController {
                 $clientlist .= 'user: ' . $this->user['LdapUser']['cn'] . "\n";
                 $clientlist .= 'site: ' . $this->data['ClientNewsletterNotifier']['site'] . "\n";
                 $clientlist .= 'themeName: ' . $this->data['ClientNewsletterNotifier']['themeName'] . "\n";
-                $clientlist .= 'url: ' . $this->data['ClientNewsletterNotifier']['url'] . "\n\n";
+                $clientlist .= 'url: ' . $this->data['ClientNewsletterNotifier']['url'] . "\n";
+                $clientlist .= 'subscribers: ' . $this->data['ClientNewsletterNotifier']['subscribers'] . "\n\n";
                 foreach ($clients as $c) {
                 	$clientlist .= $c['Client']['name'] . "\n";
                 }
@@ -36,7 +38,7 @@ class ClientNewsletterNotifierController extends AppController {
         }
 	}
 	
-	function _send($clients, $data) {//TODO: turn off debug
+	function _send($clients, $data) {//TODO: turn off debug	    
 	    foreach ($clients as $client) {
 			$this->Email->reset();
 
@@ -70,6 +72,7 @@ class ClientNewsletterNotifierController extends AppController {
             $this->set('clientContact', $client['ClientContact'][0]);
             $this->set('theme', $data['ClientNewsletterNotifier']['themeName']);
             $this->set('url', $data['ClientNewsletterNotifier']['url']);
+            $this->set('subscribers', $data['ClientNewsletterNotifier']['subscribers']);
 	        
 	        $mainContact = array_shift($client['ClientContact']);                       //first contact is primary, relies on order by clause in model
             if ($_SERVER['ENV'] == 'development' || $_SERVER['ENV'] == 'staging') {
@@ -84,6 +87,8 @@ class ClientNewsletterNotifierController extends AppController {
 		        foreach ($client['ClientContact'] as $contact) { //$contact['emailAddress']
 					$this->Email->cc[] = $contact['name'].' <'.$contact['emailAddress'].'>';
 				}
+				$mgr = $client['Client']['managerUsername'] . '@luxurylink.com';
+				$this->Email->cc[] = $mgr;
 	        }
 			// 12/8/11 jwoods - Michael asked to be copied on all of these
 			$this->Email->bcc[] = 'mchoe@luxurylink.com';
@@ -91,8 +96,8 @@ class ClientNewsletterNotifierController extends AppController {
 	        
 	        // add records to carDataFeedEmail and carDataFeedEmailFg 
 	        $carTable = ($data['ClientNewsletterNotifier']['site'] == 'luxurylink') ? 'reporting.carDataFeedEmail' : 'reporting.carDataFeedEmailFg';
-			$sql = 'INSERT INTO ' . $carTable . ' (clientid, year2, month2, insertDateTime, newsletterDate, url) VALUES (?, ?, ?, NOW(), ?, ?)';
-			$params = array($client['Client']['clientId'], date('Y'), date('n'), '0000-00-00', $data['ClientNewsletterNotifier']['url']);
+			$sql = 'INSERT INTO ' . $carTable . ' (clientid, year2, month2, insertDateTime, newsletterDate, url, subscribers) VALUES (?, ?, ?, NOW(), ?, ?, ?)';
+			$params = array($client['Client']['clientId'], date('Y'), date('n'), '0000-00-00', $data['ClientNewsletterNotifier']['url'], str_replace(',', '', $data['ClientNewsletterNotifier']['subscribers']));
 			$results = $this->ClientNewsletterNotifier->query($sql, $params);
 	    }
 	}
