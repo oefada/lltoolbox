@@ -87,28 +87,6 @@
 									<td width="280">
 										<table border="0" cellpadding="0" cellspacing="0" align="center">
 											<tr>
-												<?php
-
-$imgHref = "mailto:".$emailReplyTo."?Subject=Ticket%20".$ticketId."%20-%20".$emailSubject;
-switch ($ppvNoticeTypeId) {
-	case 2:
-	case 24:
-		$imgHref = $extranet_link;
-		$imgSrc = "confirm_reservation.gif";
-		break;
-	case 27:
-	case 28:
-		$imgSrc = "confirm_reservation.gif";
-		break;
-	case 29:
-		$imgHref = $extranet_link;
-		$imgSrc = "confirm_cancellation.gif";
-		break;
-	case 10:
-		$imgSrc = "reply_with_availability.gif";
-		break;
-}
-												?>
 												<td align="center" style="text-align: center;">
 													<a href="<?= $imgHref ?>">
 														<img src="<?=$siteUrl ?>images/email/new/<?= $imgSrc ?>">

@@ -1416,6 +1416,27 @@ class WebServiceTicketsController extends WebServicesController
 		$clientPpv = false;
 		$internalPpv = false;
 		
+		// "Confirm Reservation" button and other buttons...
+		$imgHref = "mailto:".$emailReplyTo."?Subject=Ticket%20".$ticketId."%20-%20".$emailSubject;
+		switch ($ppvNoticeTypeId) {
+			case 2:
+			case 24:
+				$imgHref = $extranet_link;
+				$imgSrc = "confirm_reservation.gif";
+				break;
+			case 27:
+			case 28:
+				$imgSrc = "confirm_reservation.gif";
+				break;
+			case 29:
+				$imgHref = $extranet_link;
+				$imgSrc = "confirm_cancellation.gif";
+				break;
+			case 10:
+				$imgSrc = "reply_with_availability.gif";
+				break;
+		}
+
 		switch ($ppvNoticeTypeId) {
 			case 10:
 			case 2:
