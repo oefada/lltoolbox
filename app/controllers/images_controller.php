@@ -235,7 +235,7 @@ class ImagesController extends AppController
 			}
 
 		}
-		$files = glob($this->fileRoot . $directory . '/*.jpg');
+		$files = array_merge(glob($this->fileRoot . $directory . '/*.jpg'), glob($this->fileRoot . '/images/pho/' . $this->Image->client['Client']['clientId'] . '/' . $this->Image->client['Client']['clientId'] . '_*_wxh.jpg'));
 		$useLrgForSlideshow = false;
 		$useXlForSlideshow = false;
 		$activateLrg = false;
