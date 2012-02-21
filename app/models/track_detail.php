@@ -183,6 +183,8 @@ class TrackDetail extends AppModel {
 				$new_track_detail['cycle']					= 1;
 				$new_track_detail['iteration']				= ++$last_track_detail['iteration'];
 				$new_track_detail['amountKept'] 			= ($track['keepPercentage'] / 100) * $allocated_amount;
+				// ticket 2541 - only 2 decimal places before subtraction
+				$new_track_detail['amountKept'] 			= round($new_track_detail['amountKept'], 2);
 				$new_track_detail['amountRemitted'] 		= $allocated_amount - $new_track_detail['amountKept'];
 				break;
 			case 2:
@@ -201,6 +203,8 @@ class TrackDetail extends AppModel {
 					} else {
 						$new_track_detail['keepBalDue']		= 0;
 						$new_track_detail['amountKept'] 	= $new_track_detail['xyAverage'];
+						// ticket 2541 - only 2 decimal places before subtraction
+						$new_track_detail['amountKept'] 	= round($new_track_detail['amountKept'], 2);
 						$new_track_detail['amountRemitted'] = $allocated_amount - $new_track_detail['amountKept'];
 					}
 				} else {
@@ -252,6 +256,8 @@ class TrackDetail extends AppModel {
 					$new_track_detail['cycle']			= $last_track_detail['cycle'];
 					$new_track_detail['iteration']		= ++$last_track_detail['iteration'];
 					$new_track_detail['amountKept'] 	= ($track['commissionPercentage'] / 100) * $allocated_amount;
+					// ticket 2541 - only 2 decimal places before subtraction
+					$new_track_detail['amountKept'] 	= round($new_track_detail['amountKept'], 2);
 					$new_track_detail['amountRemitted'] = $allocated_amount - $new_track_detail['amountKept'];
 					$is_y_iteration = true;
 				} else {
