@@ -206,19 +206,19 @@ class CarDataImporterComponent extends Object {
     	if ($feed == 'clientid47') {
     	    $client = $data[2];
     	    $columns = 'event6, event12, event1';
-    	    $values = intval($data[3]) . ', ' . intval($data[5]) . ', ' . intval($data[7]);
+    	    $values = intval(str_replace(',', '', $data[3])) . ', ' . intval(str_replace(',', '', $data[5])) . ', ' . intval(str_replace(',', '', $data[7]));
     	} elseif ($feed == 'destinationlist21') {
     	    $client = $data[1];
     	    $columns = 'prop21';
-    	    $values = intval($data[2]);
+    	    $values = intval(str_replace(',', '', $data[2]));
     	} elseif ($feed == 'homelist49') {
     	    $client = $data[1];
     	    $columns = 'prop49';
-    	    $values = intval($data[2]);
+    	    $values = intval(str_replace(',', '', $data[2]));
     	} elseif ($feed == 'searchlist50') {
     	    $client = $data[1];
     	    $columns = 'prop50';
-    	    $values = intval($data[2]);
+    	    $values = intval(str_replace(',', '', $data[2]));
     	}
     	$columns .= ', clientid, reportingDate, insertDateTime, carDataFileId';
     	$values .= ", " . $client . ", '" . $feedinfo['date'] . "', NOW(), " . $feedinfo['carDataFileId'];
