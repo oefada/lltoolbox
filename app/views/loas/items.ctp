@@ -3,9 +3,10 @@
 
 <?php
 $loa = $this->data;
-$this->pageTitle = $loa['Client']['name'].$html2->c($loa['Client']['clientId'], 'Client Id:').'<br />'.$html2->c('manager: '.$client['Client']['managerUsername']);
+echo $this->element("loas_subheader", array("loa"=>$loa,"client"=>$client));
 $this->searchController = 'Clients';
 $this->set('clientId', $this->data['Client']['clientId']);
+
 ?>
 
 <script>var currencyCode = '<?=$loa['Currency']['currencyCode'];?>';</script>
