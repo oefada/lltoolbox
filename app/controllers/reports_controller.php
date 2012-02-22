@@ -976,12 +976,13 @@ class ReportsController extends AppController {
         $managerName = '';
         if (isset($this->params['url']['data']['manager'])&&!empty($this->params['url']['data']['manager'])) {
         	$managerName = strtolower(trim($this->params['url']['data']['manager']));
-        	$sqlManager = "AND Client.managerUsername='".mysql_real_escape_string($managerName)."' \n";
+        	$sqlManager = "AND Client.managerUsername='".addslashes($managerName)."' \n";
         }
         
         $this->set('manager',$managerName);
     
         $sql = "SELECT
+						Client.notes, 
             Client.clientId,
             Client.name,
             Client.sites                    AS sites,
@@ -990,7 +991,6 @@ class ReportsController extends AppController {
             MAX(Loa.endDate)                AS loaEndDate,
             Loa.membershipFee,
             Loa.membershipBalance,
-            Loa.notes,
             Loa.membershipTotalPackages,
             Loa.membershipPackagesRemaining,
             Loa.loaMembershipTypeId,
