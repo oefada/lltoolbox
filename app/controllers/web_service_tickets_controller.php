@@ -2031,11 +2031,11 @@ class WebServiceTicketsController extends WebServicesController
 				$m .= "utm_source=".strtolower($append)."&";
 
 				if ($utm['medium']) {
-					$m .= "medium=".$utm['medium']."&";
+					$m .= "utm_medium=".$utm['medium']."&";
 				}
 
 				if ($utm['campaign']) {
-					$m .= "campaign=".$utm['campaign'];
+					$m .= "utm_campaign=".$utm['campaign'];
 				}
 
 				$m .= $whichQuote;
