@@ -61,11 +61,19 @@
 													 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;"><?php echo $numNights;?></td>
 			                                  			</tr>
 														<tr>
+															<? if ($ppvNoticeTypeId == 33) : ?>
+															<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;"><b>NEW Check-in:</b></td>
+															<? else : ?>
 													 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;">Check-in:</td>
+															<? endif; ?>
 													 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;"><?= $resArrivalDate;?></td>
 			                                  			</tr>
 														<tr>
-													 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;">Check-out:</td>
+															<? if ($ppvNoticeTypeId == 33) : ?>
+													 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;"><b>NEW Check-out:</b></td>
+															<? else :?>
+															<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;">Check-out:</td>
+															<? endif; ?>
 													 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;"><?= $resDepartureDate;?></td>
 			                                  			</tr>
 			                                  			<?php if ($clientPpv): ?>
@@ -83,7 +91,7 @@
 											</tr>
 										</table>
 									</td>
-									<?php if ($clientPpv && in_array($ppvNoticeTypeId,array(2,10,24,27,28,29))): ?>
+									<?php if ($clientPpv && in_array($ppvNoticeTypeId,array(2,10,24,27,28,29,33))): ?>
 									<td width="280">
 										<table border="0" cellpadding="0" cellspacing="0" align="center">
 											<tr>
@@ -91,7 +99,7 @@
 													<a href="<?= $imgHref ?>">
 														<img src="<?=$siteUrl ?>images/email/new/<?= $imgSrc ?>">
 													</a>
-													<? if (in_array($ppvNoticeTypeId,array(27,28))): ?>
+													<? if (in_array($ppvNoticeTypeId,array(27,28,33))): ?>
 													<p><a style="text-decoration:none; color:#008ec5;font-size: 13px;" href="<?= $extranet_link ?>">Suggest Alternate Dates</a></p>
 													<? endif; ?>
 												</td>

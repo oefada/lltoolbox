@@ -1421,6 +1421,7 @@ class WebServiceTicketsController extends WebServicesController
 		switch ($ppvNoticeTypeId) {
 			case 2:
 			case 24:
+			case 33:
 				$imgHref = $extranet_link;
 				$imgSrc = "confirm_reservation.gif";
 				break;
@@ -1446,6 +1447,8 @@ class WebServiceTicketsController extends WebServicesController
 			case 27:
 			case 28:
 			case 29:
+			case 31:
+			case 33:
 				$clientPpv = true;
 				$extranet_link = $this->getExtranetLink($ticketId, $siteId);
 				
@@ -1742,11 +1745,18 @@ class WebServiceTicketsController extends WebServicesController
 				break;
 			case 31:
 				// send out res cancellation confirmation
-				include('../vendors/email_msgs/ppv/cancel_ppv.html');
-				$emailSubject = "Your $siteName Booking was Cancelled. - $clientNameP";
 				$emailFrom = ($isAuction) ? "$siteDisplay <resrequests@$siteEmail>" : "$siteDisplay <reservations@$siteEmail>";
 				$emailReplyTo = ($isAuction) ? "resrequests@$siteEmail" : "reservations@$siteEmail";
 				$userEmail = $clientPrimaryEmail;
+					
+				if ($siteId == 1) {
+					$templateFile = "31_reservation_cancel_receipt";
+					$templateTitle = "Luxury Link booking cancellation receipt";
+					$emailSubject = "Luxury Link Cancellation Confirmation";
+				} else {
+					include('../vendors/email_msgs/ppv/cancel_ppv.html');
+					$emailSubject = "Your $siteName Booking was Cancelled. - $clientNameP";
+				}
 				break;
 			case 32:
 				// this goes out with 24, info to customer
@@ -1757,7 +1767,8 @@ class WebServiceTicketsController extends WebServicesController
 				$emailReplyTo = ($isAuction) ? "resrequests@$siteEmail" : "reservations@$siteEmail";
 				break;
 			case 33:
-				include('../vendors/email_msgs/notifications/33_change_dates_request_template.html');
+				//include('../vendors/email_msgs/notifications/33_change_dates_request_template.html');
+				$templateFile = "33_change_dates_request_template";
 				$emailSubject = "Your $siteName Request has been Received - $clientNameP";
 				$emailFrom = ($isAuction) ? "$siteDisplay <auction@$siteEmail>" : "$siteDisplay <exclusives@$siteEmail>";
 				$emailReplyTo = ($isAuction) ? "auction@$siteEmail" : "exclusives@$siteEmail";
