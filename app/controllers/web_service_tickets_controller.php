@@ -1130,7 +1130,8 @@ class WebServiceTicketsController extends WebServicesController
 			$offerTypeName		= str_replace('Standard ', '', $offerType[$offerTypeId]);
 			$offerTypeBidder	= ($offerTypeId == 1) ? 'Winner' : 'Winning Bidder';
 			$isAuction			= in_array($offerTypeId, array(1,2,6)) ? true : false;
-
+			$isAuction			= in_array($ppvNoticeTypeId, array(36)) ? true : $isAuction;
+			
 			$billingPrice		= $this->numF($ticketData['billingPrice']);
 			$llFeeAmount		= 40;
 			$llFee				= $llFeeAmount;
