@@ -18,13 +18,13 @@
 											<tr valign="top">
 												<td align="left" width="100%">
 													<table border="0" cellpadding="0" cellspacing="0" align="left">
-														<?php if ($canConfNum != '') : ?>
+														<?php if (isset($canConfNum) && $canConfNum != '') : ?>
 														<tr>
 													 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 15px 0px 0px 0px;" width="121">Hotel Cancellation #:</td>
 													 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 15px 20px 0px 0px;"><?= $canConfNum;?></td>
 			                                  			</tr>
 														<? endif; ?>
-														<?php if ($resConfNum != ""): ?>
+														<?php if (isset($resConfNum) && $resConfNum != ""): ?>
 														<tr>
 													 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 15px 0px 0px 0px;" width="121">Hotel Confirmation #:</td>
 													 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 15px 20px 0px 0px;"><?= $resConfNum;?></td>
