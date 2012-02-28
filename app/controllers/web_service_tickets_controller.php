@@ -1086,7 +1086,7 @@ class WebServiceTicketsController extends WebServicesController
 			case 2:
 				$siteName = 'FamilyGetaway.com';
 				$siteDisplay = 'FamilyGetaway.com';
-				$siteEmail = 'familygetaway.com';
+				$siteEmail = 'e.familygetaway.com';
 				$siteUrl = 'http://www.familygetaway.com/';
 				$siteHeader = 'DE6F0A';
 				$sitePhone  = '(877) 372-5877';
@@ -2686,7 +2686,7 @@ class WebServiceTicketsController extends WebServicesController
 			case 2:
 				$siteName = 'Family';
 				$url = 'http://www.familygetaway.com';
-				$emailFrom = $emailReplyTo = 'referafriend@familygetaway.com';
+				$emailFrom = $emailReplyTo = 'referafriend@e.familygetaway.com';
 				$headerLogo = 'http://www.luxurylink.com/images/family/logo.gif';
 				break;
 			default:
