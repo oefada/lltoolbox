@@ -59,7 +59,7 @@ class NOVA
 
 	public function ChargeSuccess($response) {
 		if(isset($response['ssl_result'])) {
-			if($response['ssl_result'] == 0 && in_array($response['ssl_avs_response'],$this->valid_avs_codes)) {
+			if($response['ssl_result'] == 0) {// DISABLE AVS FOR NOW - rvella 2-29-2012 && in_array($response['ssl_avs_response'],$this->valid_avs_codes)) {
 				return true;
 			}
 		}
@@ -94,9 +94,12 @@ class NOVA
 	}
 
 	function GetResponseTxt($response) {
+		/*
 		if (isset($response['ssl_avs_response']) && !in_array($response['ssl_avs_response'],$this->valid_avs_codes)) {
 			return "NO_AVS";
-		} elseif(isset($response['ssl_result_message'])) {
+		} else
+		*/
+		if(isset($response['ssl_result_message'])) {
 			return $response['ssl_result_message'];
 		}else {
 			return false;
