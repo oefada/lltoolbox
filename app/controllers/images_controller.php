@@ -23,7 +23,8 @@ class ImagesController extends AppController
 		$this->Image->imageTypes = array(
 				'gal-xl' => 1, //slideshow
 				'gal-lrg' => 2, //large (listing)
-				'list-sml' => 3	//	thumbnail
+				'list-sml' => 3,	//	thumbnail
+				'-auto-' => 1, // new PHOtos
 		);
 
 		$this->fileRoot = dirname(dirname(dirname(dirname(__FILE__)))) . '/luxurylink/php';
@@ -235,7 +236,8 @@ class ImagesController extends AppController
 			}
 
 		}
-		$files = array_merge(glob($this->fileRoot . $directory . '/*.jpg'), glob($this->fileRoot . '/images/pho/' . $this->Image->client['Client']['clientId'] . '/' . $this->Image->client['Client']['clientId'] . '_*_wxh.jpg'));
+		// $files = glob($this->fileRoot . $directory . '/*.jpg');
+		$files = glob($this->fileRoot . '/images/pho/' . $this->Image->client['Client']['clientId'] . '/' . $this->Image->client['Client']['clientId'] . '_*-auto-*.jpg');
 		$useLrgForSlideshow = false;
 		$useXlForSlideshow = false;
 		$activateLrg = false;
