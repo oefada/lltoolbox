@@ -2640,7 +2640,7 @@ class WebServiceTicketsController extends WebServicesController
 		// ---------------------------------------------------------------------------
 
 		if ($toolboxManualCharge) {
-			if ($data['paymentAmount'] >= $promoGcCofData['final_price_actual']) {
+			if ($promoGcCofData['final_price_actual'] == 0) {
 				$fundTicket = true;
 			}
 		} else {
