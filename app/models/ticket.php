@@ -202,18 +202,17 @@ class Ticket extends AppModel {
 		// the last row in the table will be the sum total of the credit they have
 		// may be multiple rows per user with debits and credits
 		
-		$cofSql = 'SELECT CreditTracking.balance FROM ticket AS Ticket ';
+		$cofSql = 'SELECT CreditTracking.balance,CreditTracking.amount FROM ticket AS Ticket ';
 		$cofSql.= 'INNER JOIN creditTracking AS CreditTracking USING (userId) ';
 		$cofSql.= "WHERE Ticket.ticketId = $ticketId ";
 		
-		// Ticket 1002
-		// Only show CoF that was added BEFORE ticket was created
 		if (!$manualCharge) {
-			$cofSql .= " AND CreditTracking.datetime < Ticket.created ";
+			$cofSqlC = " AND CreditTracking.datetime < Ticket.created OR (CreditTracking.datetime > Ticket.created AND amount < 0)";
 		}
 		
-		$cofSql.= "ORDER BY CreditTracking.creditTrackingId DESC LIMIT 1";
-		$cofResult = $this->query($cofSql);
+		$cofSqlEnd .= " ORDER BY CreditTracking.creditTrackingId DESC";
+		
+		$cofResult = $this->query($cofSql.$cofSqlC.$cofSqlEnd . " LIMIT 1");
 
 		if (!empty($cofResult) && ($cofResult[0]['CreditTracking']['balance'] > 0)) {
 			$data['Cof'] = $cofResult[0]['CreditTracking'];
