@@ -68,6 +68,7 @@ echo $javascript->link('jquery/jquery-autocomplete/jquery.autocomplete'); ?>
     
             </td></tr>
     <?php endif; ?>
+    <tr><th></th><td><span style="color: #7f0000; font-weight: bold;">* NOTE * For Promo info that you do not want the client to see, wrap the promo info with &lt;promo&gt; and &lt;/promo&gt;</span></td></tr>
 	<tr><th>Inclusions</th><td>
 		<textarea name="data[Package][packageIncludes]" id="package-validity-includes" <?php if (!$isMultiClientPackage): ?>readonly="readonly"<?php endif; ?>><?=htmlentities($package['Package']['packageIncludes']);?></textarea>
 		<div>

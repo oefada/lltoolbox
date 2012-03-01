@@ -29,7 +29,9 @@ define('DEV_USER', $_SERVER['ENV_USER']);
 class WebServiceTicketsController extends WebServicesController
 {
 	var $name = 'WebServiceTickets';
-
+	
+	var $components = array('PackageIncludes');
+	
 	var $uses = array('Ticket', 'UserPaymentSetting','PaymentDetail', 'Client', 'User', 'Offer', 'Bid',
 					  'ClientLoaPackageRel', 'Track', 'OfferType', 'Loa', 'TrackDetail', 'PpvNotice',
 					  'Address', 'OfferLuxuryLink', 'SchedulingMaster', 'SchedulingInstance', 'Reservation',
@@ -1441,6 +1443,7 @@ class WebServiceTicketsController extends WebServicesController
 
 		switch ($ppvNoticeTypeId) {
 			case 10:
+			case 11:
 			case 2:
 			case 4:
 			case 24:
@@ -1466,6 +1469,12 @@ class WebServiceTicketsController extends WebServicesController
 				break;
 		}
 		
+		// Removes promo info for package / offer for clients
+		if ($clientPpv) {
+			$this->PackageIncludes->removePromoInfo($liveOfferData,'offer');
+			$packageIncludes 	= $liveOfferData['offerIncludes'];
+		}
+
 		switch ($ppvNoticeTypeId) {
 			case 1:
 				if ($siteId == 2) {
@@ -1548,7 +1557,6 @@ class WebServiceTicketsController extends WebServicesController
 					include('../vendors/email_msgs/fixed_price/msg_internal_fixedprice.html');
 				} else {
 					$internalPpv = true;
-					$clientPpv = true;
 					$templateFile = "11_fp_internal_exclusive";
 					$templateTitle = "Fixed Price Booking Requested";
 				}
