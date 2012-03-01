@@ -1333,3 +1333,9 @@ table.clone-items td.price span.currency-code {
 .cityDisabled {
 	background-color: #ff5544;
 }
+
+#linkAdditionalForm {
+	display: none;
+	margin: 20px 0 20px 0;
+	font-weight: bold;
+}

@@ -63,8 +63,6 @@ class AjaxSearchController extends AppController {
 			    $sqlquery .= $piece.'* ';
 			}
 
-
-
 			if ($searchtype == "clients" || $searchtype=='generator' || $searchtype=='selectclients') {
 				$this->AjaxSearch->table = 'clientNames';
 				$this->AjaxSearch->primaryKey = 'clientId';
@@ -92,7 +90,9 @@ class AjaxSearchController extends AppController {
 				    $query = substr_replace(strtolower($query), "", 0, 9);
 				    $conditions = array('OR' => array('AjaxSearch.username LIKE' => "%$query%"));
 				} else {
-				    $conditions = array('OR' => array("MATCH(AjaxSearch.lastName,AjaxSearch.firstName,AjaxSearch.email) AGAINST('$sqlquery' IN BOOLEAN MODE)"));
+				    $conditions = array(
+				    	'OR' => array("MATCH(AjaxSearch.lastName,AjaxSearch.firstName) AGAINST('$sqlquery' IN BOOLEAN MODE)"),
+				    	'OR' => array('AjaxSearch.email LIKE "%'.$query.'%"'));
 				}
 
 				$params = array(

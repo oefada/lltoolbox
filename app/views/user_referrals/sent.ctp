@@ -1,9 +1,32 @@
 
 <?php $this->pageTitle = 'Referrals'; ?>
-
-
+<script type="text/javascript">
+	jQuery(function($) {
+		$("#linkAdditional").click(function() {
+			$("#linkAdditionalForm").show();
+		})
+		
+		$("#linkAdditionalForm input[type=button]").click(function() {
+			var linkid = $("#linkUserId").val();
+			$.get("/users/linkreferral/<?= $this->params['pass'][0] ?>", { linkid: linkid }, function(data) {
+				data = $.parseJSON(data);
+				
+				if (data.msg == "OK") {
+					alert("User linked successfully!");
+					location.reload(true);
+				} else if (data.msg == "ALREADY") {
+					alert("This user has already been referred by another user (userID: "+data.userId+")");
+				}
+			});
+		});
+	});
+</script>
 <h2>Referrals sent by user</h2>
-Apply credit to <?=$user['User']['email'];?> for a purchase made by someone they referred. Also applies credit to person referred for registering through a referral.
+<h3><a href="#" id="linkAdditional">Link Additional User Account</a> - This will allow you to link a user that was referred by this user, but wasn't properly invited.</h3>
+<div id="linkAdditionalForm">
+	<label for="additionalUser">Please enter user ID to link: </label><input type="text" name="additionalUser" id="linkUserId"><input type="button" value="Link User">
+</div>
+<p>Apply credit to <?=$user['User']['email'];?> for a purchase made by someone they referred. Also applies credit to person referred for registering through a referral.</p>
 
 <div class="bids index referrals-index" style="margin-bottom: 40px;">
 	<?php echo $this->renderElement('ajax_paginator', array('showCount' => true, 'form' => '/users/referrals/a')); ?>
@@ -28,7 +51,9 @@ Apply credit to <?=$user['User']['email'];?> for a purchase made by someone they
 	
 		<tr <?php echo $class;?>>
 			<td>
-				<?php echo $r['UserReferrals']['referredEmail']; ?>
+				<? if ($r['UserReferrals']['isRegistered'] == 1): ?><a href="/users/edit/<?php echo $r['User']['userId']; ?>"><?php echo $r['User']['userId']; ?> - <?php echo $r['UserReferrals']['referredEmail']; ?></a><?else:?>
+					<?php echo $r['UserReferrals']['referredEmail']; ?>
+					<?endif; ?>
 			</td>
 			<td>
 				<?php
@@ -52,8 +77,8 @@ Apply credit to <?=$user['User']['email'];?> for a purchase made by someone they
 			</td>
 			<td>
 				<?php 
-					if ($r['UserReferrals']['statusTypeId'] == 1 && $r['UserReferrals']['hasPurchase'] == 1) {
-						echo '<a href="/userReferrals/completereferral/' . $r['UserReferrals']['id'] . '/3">Apply Credit</a>';
+					if ($r['UserReferrals']['statusTypeId'] < 3 && $r['UserReferrals']['hasPurchase'] == 1) {
+						echo '<a href="/userReferrals/completereferral/' . $r['UserReferrals']['id'] . '/3/'.$r['UserReferrals']['referrerUserId'].'">Apply Credit</a>';
 					}
 				?>
 			</td>

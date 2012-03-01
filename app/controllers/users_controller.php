@@ -100,20 +100,45 @@ class UsersController extends AppController {
 			    $query .= $part.' ';
 			}
 
-			if (strpos(strtolower($origQuery), 'userid:') !== false) {
-			    $origQuery = substr_replace(strtolower($origQuery), "", 0, 7);
-			    $conditions = array('OR' => array('User.userId' => $origQuery));
-			} else if (strpos(strtolower($origQuery), 'username:') !== false) {
-			    $origQuery = substr_replace(strtolower($origQuery), "", 0, 9);
-			    $conditions = array('OR' => array('UserSiteExtended.username LIKE' => "%$origQuery%"));
-			} else {
-			    $conditions = array('OR' => array("MATCH(User.lastName,User.firstName,User.email) AGAINST('$query' IN BOOLEAN MODE)"));
-			}
+		    $conditions = array(
+		    	'OR' => array(
+		    		"MATCH(User.lastName,User.firstName) AGAINST('$query' IN BOOLEAN MODE)",
+	    		),
+			);
 
+			$noSpace = FALSE;
+			$isEmail = false;
+			
+			$fields = array('UserSiteExtended.username', 'User.userId', 'User.firstName', 'User.lastName', 'User.email', 'User.inactive');
+			$order = array();
+			
+			if (intval($origQuery) !== 0) {
+				$conditions['OR']['User.userId'] = $origQuery;
+			} elseif (strpos($origQuery, " ") === FALSE) {
+				$noSpace = true;
+				
+				if (strpos($origQuery, "@")) {
+					$isEmail = true;
+					$fields[] = "(CASE WHEN User.email LIKE '".$origQuery."' THEN 1 ELSE 0 END) AS emailmatch";
+					$conditions['OR']['User.email LIKE'] = '%'.$origQuery.'%';
+					$order[] = 'emailmatch DESC';
+				} else {
+					$order[] = 'usernamematch DESC';
+					$fields[] = "(CASE WHEN UserSiteExtended.username LIKE '".$origQuery."' THEN 1 ELSE 0 END) AS usernamematch";
+					$conditions['OR']['UserSiteExtended.username LIKE'] = "%$origQuery%";
+				}
+			}
+			
 			if($_GET['query'] ||  $this->params['named']['query']) {
 				$this->autoRender = false;
                 $this->User->Behaviors->attach('Containable');
-				$this->paginate = array('conditions' => $conditions, 'contain' => array('UserSiteExtended', 'Ticket'), 'fields' => array('UserSiteExtended.username', 'User.userId', 'User.firstName', 'User.lastName', 'User.email', 'User.inactive'));
+				$this->paginate = array(
+					'conditions' => $conditions, 
+					'contain' => array('UserSiteExtended', 'Ticket'), 
+					'fields' => $fields,
+					'order' => $order,
+				);
+				
 				$this->set('query', $query);
 
 				$this->set('users', $this->paginate());
@@ -124,6 +149,7 @@ class UsersController extends AppController {
 				$results = $this->User->find('all', array('conditions' => $conditions, 'limit' => 5));
 				$this->set('query', $query);
 				$this->set('results', $results);
+				var_dump($results);
 				return $results;
 			}
 		endif;
@@ -200,6 +226,70 @@ class UsersController extends AppController {
 		$this->render('../bids/index');
 	}
 
+	function linkReferral($id) {
+		$this->layout = "ajax";
+		
+		$linkId = $this->params['url']['linkid'];
+		
+		// Lookup user's email
+		$toLink = $this->User->find('first', Array(
+			'conditions' => Array('User.userId' => $linkId),
+		));
+		
+		$this->UserReferrals = new UserReferrals;
+		// Check if user has already been referred
+		$alreadyReferred = $this->UserReferrals->find('first', array(
+			'conditions' => Array('UserReferrals.referredEmail' => $toLink['User']['email']),
+		));
+
+		$this->UserReferrals->recursive = -1;
+				
+		if ($alreadyReferred !== false) {
+			echo json_encode(array(
+				'msg'=>'ALREADY',
+				'userId' => $alreadyReferred['UserReferrals']['referrerUserId']
+			));
+			
+			exit;
+		} else {
+			$referrerStatus = 2;
+			$referrerBonus = 0;
+			
+			if (!empty($toLink['Ticket'])) {
+				$referrerStatus = 1;
+				$referrerBonus = 1;
+			}
+			
+			$data = array(
+				'siteId' => $toLink['User']['siteId'],
+				'referrerUserId' => $id,
+				'referredEmail' => $toLink['User']['email'],
+				'statusTypeId' => $referrerStatus,
+				'referrerBonusApplied' => 0,
+				'referredBonusApplied' => 1,
+			);
+
+			if ($this->UserReferrals->save($data)) {
+				$refId = $this->UserReferrals->getLastInsertId();
+				
+				/*
+				if ($referrerBonus) {
+					// Apply credit to referrer
+					$this->UserReferrals->completeReferral($refId,3);
+				}
+				*/
+				
+				echo json_encode(array('msg' => 'OK'));
+				exit;
+			}
+		}
+		
+		echo json_encode(array('msg' => 'ERROR'));
+		
+		//referrerUserId
+		$this->render('../user_referrals/link');
+	}
+	
 	function referralsSent($id) {
 		$this->autoRender = false;
 
@@ -212,28 +302,38 @@ class UsersController extends AppController {
 							 'UserReferrals.referredEmail' => 'asc'),
 			'limit' => 20
 		);
+		
+		$this->UserReferrals = new UserReferrals;
+		$this->UserReferrals->recursive = -1;
 		$referralsSent = $this->paginate('UserReferrals');
 
 		// check for registered users that were referred, with status 1
 		foreach ($referralsSent AS &$r) {
+			$params = Array('conditions' => Array('email' => $r['UserReferrals']['referredEmail']));
+			$x = $this->User->find('first', $params);
+
+			if (isset($x['Ticket']) && is_array($x['Ticket']) && count($x['Ticket']) > 0) {
+				$r['UserReferrals']['hasPurchase'] = 1;
+			} else {
+				$r['UserReferrals']['hasPurchase'] = 0;
+			}
+
 			if ($r['UserReferrals']['statusTypeId'] == 1) {
-				$params = Array('conditions' => Array('email' => $r['UserReferrals']['referredEmail']));
-				$x = $this->User->find('first', $params);
-				
 				if (is_array($x) && count($x) > 0) {
 					$r['UserReferrals']['isRegistered'] = 1;
-					if (isset($x['Ticket']) && is_array($x['Ticket']) && count($x['Ticket']) > 0) {
-						$r['UserReferrals']['hasPurchase'] = 1;
-					} else {
-						$r['UserReferrals']['hasPurchase'] = 0;
-					}
 				} else {
 					$r['UserReferrals']['isRegistered'] = 0;
-					$r['UserReferrals']['hasPurchase'] = 0;
 				}
 			} else {
-				$r['UserReferrals']['isRegistered'] = 0;
-				$r['UserReferrals']['hasPurchase'] = 0;
+				if ($x !== false) {
+					$r['UserReferrals']['isRegistered'] = 1;
+				} else {
+					$r['UserReferrals']['isRegistered'] = 0;
+				}
+			}
+			
+			if ($x !== false) {
+				$r['User'] = $x['User'];
 			}
 		}
 	

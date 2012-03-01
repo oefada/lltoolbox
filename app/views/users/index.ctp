@@ -38,7 +38,7 @@ foreach ($users as $user):
 		</td>
 		
 		<td>
-			<?php echo count($user['Ticket']); ?>
+			<?= $html->link(count($user['Ticket']), '/tickets/?searchUserId='.$user['User']['userId']) ?>
 		</td>
 
 		<td>
