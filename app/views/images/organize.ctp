@@ -4,7 +4,7 @@
    <?php foreach ($sites as $site => $siteName): ?>
          <div id="<?php echo $site; ?>" class="<?php echo ($site == $displayTab) ? ' siteActive' :  ' siteInactive'; ?>"><?php __($sites[$site]); ?></div>
    <?php endforeach; ?>
-         <div id="resizer" class="siteInactive">Resizer <?php echo $html->image('http://showcase.luxurylink.com/clients/toolbox/'.$client['Client']['clientId'].'?rand='.mt_rand(100000,999999),array('width'=>'8px','height'=>'8px'));?></div>
+         <div id="resizer" class="siteInactive">Resizer <?php echo $html->image('http://showcase.luxurylink.com/clients/toolbox/'.$client['Client']['clientId'].'?oldProductId='.$client['Client']['oldProductId'].'&rand='.mt_rand(100000,999999),array('width'=>'8px','height'=>'8px'));?></div>
 </div>
 <?php foreach ($sites as $site => $siteName): ?>
    <?php
@@ -206,7 +206,7 @@
                         }
       });
       Event.observe('resizer', 'click', function() {
-		window.location.replace('http://showcase.luxurylink.com/clients/view/<?php echo $client['Client']['clientId'];?>');
+		window.location.replace('http://showcase.luxurylink.com/clients/view/<?php echo $client['Client']['clientId'].'/oldProductId:'.$client['Client']['oldProductId'];?>');
       });
       
    </script>

@@ -27,7 +27,6 @@
                 <li style="margin-bottom:3px;"><?php echo $html->link('Organize', '/clients/'.$clientId.'/images/organize', array('update' => 'content-area', 'indicator' => 'spinner')); ?></li>
                 <li style="margin-bottom:3px;"><?php echo $html->link('Captions', '/clients/'.$clientId.'/images/captions', array('update' => 'content-area', 'indicator' => 'spinner')); ?></li>
                 <li style="margin-bottom:3px;"><?php echo $html->link('PDP Slideshow', '/clients/'.$clientId.'/images/slideshow', array('update' => 'content-area', 'indicator' => 'spinner')); ?></li>
-                <li style="margin-bottom:3px;"><?php echo $html->link('Resizer', 'http://showcase.luxurylink.com/clients/view/'.$clientId); ?></li>
                 <?php /* <li style="margin-bottom:3px;"><?php echo $html->link('Delete', '/clients/'.$clientId.'/images/delete_images', array('update' => 'content-area', 'indicator' => 'spinner')); ?></li> */ ?>
             </ul>
         </li>
