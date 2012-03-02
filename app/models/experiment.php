@@ -36,6 +36,7 @@ class Experiment extends AppModel
 				'Site.siteId',
 				'Site.siteName',
 				'SitesExperiments.status',
+				'SitesExperiments.test_percentage',
 				'SitesExperiments.created',
 				'SitesExperiments.last_test'
 			),
@@ -60,6 +61,26 @@ class Experiment extends AppModel
 		$sql = "UPDATE sites_experiments SET status = $status_id WHERE experiment_id = $experiment_id";
 		$this->query($sql);
 	}
+
+	/**
+	 * Updates an experiments test percentage
+	 * 
+	 * @access	public
+	 * @param	int
+	 * @param	int
+	 */
+	public function updateTestPercentage($experiment_id, $pct)
+	{
+		$sql = "UPDATE sites_experiments SET test_percentage = $pct WHERE experiment_id = $experiment_id";
+		$this->query($sql);
+	}
+
+	public function getTestPercentageByExperiemntId($experiment_id)
+	{
+		$sql = "SELECT test_percentage FROM sites_experiments WHERE experiment_id = $experiment_id";
+		return $this->query($sql);
+	}
+
 	
 	/**
 	 * Builds a nice results array with calculations
@@ -74,11 +95,17 @@ class Experiment extends AppModel
 		$total_tests = $this->getTotalTestsForExperimentId($experiment_id);
 		$total_conversions = $this->getTotalConversionsForExperimentId($experiment_id);
 		$conversion_rate = floatval($total_conversions) / floatval($total_tests);
-		$default_treatments_tested = $this->getDefaultTreatmentsTestedForExperimentId($experiment_id);
-		$default_treatments_completed = $this->getDefaultTreatmentsCompletedForExperimentId($experiment_id);
+		$untested_treatments_tested = $this->getTestedCountByExperimentIdAndTreatmentName($experiment_id, 'untested');
+		$untested_treatments_completed = $this->getCompletedCountByExperimentIdAndTreatmentName($experiment_id, 'untested');
+		$untested_conversion_rate = ($untested_treatments_tested != 0) ? floatval($untested_treatments_completed) / floatval($untested_treatments_tested) : 0;
+		$bot_treatments_tested = $this->getTestedCountByExperimentIdAndTreatmentName($experiment_id, 'bot');
+		$bot_treatments_completed = $this->getCompletedCountByExperimentIdAndTreatmentName($experiment_id, 'bot');
+		$bot_conversion_rate = ($bot_treatments_tested != 0) ? floatval($bot_treatments_completed) / floatval($bot_treatments_tested) : 0;
+		$default_treatments_tested = $this->getTestedCountByExperimentIdAndTreatmentName($experiment_id, 'default');
+		$default_treatments_completed = $this->getCompletedCountByExperimentIdAndTreatmentName($experiment_id, 'default');
 		$default_conversion_rate = ($default_treatments_tested != 0) ? floatval($default_treatments_completed) / floatval($default_treatments_tested) : 0;
-		$alt_treatments_tested = $this->getAlternateTreatmentsTestedForExperimentId($experiment_id);
-		$alt_treatments_completed = $this->getAlternateTreatmentsCompletedForExperimentId($experiment_id);
+		$alt_treatments_tested = $this->getTestedCountByExperimentIdAndTreatmentName($experiment_id, 'alternate');
+		$alt_treatments_completed = $this->getCompletedCountByExperimentIdAndTreatmentName($experiment_id, 'alternate');
 		$alt_conversion_rate = ($alt_treatments_tested != 0) ? floatval($alt_treatments_completed) / floatval($alt_treatments_tested) : 0;
 		$alt_z_score = ($total_conversions != 0) ? $this->calculateZscore($alt_conversion_rate, $default_conversion_rate, $alt_treatments_tested, $total_conversions) : 0;
 
@@ -94,7 +121,13 @@ class Experiment extends AppModel
 			'alt_treatments_tested' => $alt_treatments_tested,
 			'alt_treatments_completed' => $alt_treatments_completed,
 			'alt_conversion_rate' => $alt_conversion_rate * 100.0,
-			'alt_z_score' => $alt_z_score
+			'alt_z_score' => $alt_z_score,
+			'untested_treatments_tested' => $untested_treatments_tested,
+			'untested_treatments_completed' => $untested_treatments_completed,
+			'untested_conversion_rate' => $untested_conversion_rate * 100.0,
+			'bot_treatments_tested' => $bot_treatments_tested,
+			'bot_treatments_completed' => $bot_treatments_completed,
+			'bot_conversion_rate' => $bot_conversion_rate * 100.0
 		);
 
 		return $results;
@@ -127,95 +160,51 @@ class Experiment extends AppModel
 		$total_conversions = $this->query($sql);
 		return (int) $total_conversions[0][0]['TOTAL_CONVERSIONS'];		
 	}
-	
+
 	/**
-	 * Gets the total number of default (control) treatments for an experiment
+	 * Gets the total number of treatments for an experiment by name
 	 * 
 	 * @access	public
 	 * @param	int
 	 * @return	int
 	 */
-	private function getDefaultTreatmentsTestedForExperimentId($experiment_id)
+	private function getTestedCountByExperimentIdAndTreatmentName($experiment_id, $treatment_name)
 	{
 		$sql = "
-			SELECT COUNT(1) AS DEFAULT_TREATMENTS
+			SELECT COUNT(1) AS TREATMENTS
 			FROM users_treatments ut, treatments t
 			WHERE
 				ut.experiment_id = $experiment_id
 				AND ut.treatment_id = t.id
-				AND t.name = 'default'
+				AND t.name = '$treatment_name'
 		";
-		$default_treatments_tested = $this->query($sql);
-		return (int) $default_treatments_tested[0][0]['DEFAULT_TREATMENTS'];
+		$treatments_tested = $this->query($sql);
+		return (int) $treatments_tested[0][0]['TREATMENTS'];
 	}
 	
 	/**
-	 * Gets the total number of default (control) treatments completed
+	 * Gets the number of treatments completed
 	 * for an experiment
 	 * 
 	 * @access	public
 	 * @param	int
 	 * @return	int
 	 */
-	private function getDefaultTreatmentsCompletedForExperimentId($experiment_id)
+	private function getCompletedCountByExperimentIdAndTreatmentName($experiment_id, $treatment_name)
 	{
 		$sql = "
-			SELECT COUNT(1) AS DEFAULT_TREATMENTS_COMPLETED
+			SELECT COUNT(1) AS TREATMENTS
 			FROM users_treatments ut, treatments t
 			WHERE
 				ut.experiment_id = $experiment_id
 				AND ut.treatment_id = t.id
 				AND ut.completed = 1
-				AND t.name = 'default'				
+				AND t.name = '$treatment_name'
 		";
-		$default_treatments_completed = $this->query($sql);
-		return (int) $default_treatments_completed[0][0]['DEFAULT_TREATMENTS_COMPLETED'];
+		$treatments_tested = $this->query($sql);
+		return (int) $treatments_tested[0][0]['TREATMENTS'];
 	}
-	
-	/**
-	 * Gets the total number of alternate treatments for an experiment
-	 * 
-	 * @access	public
-	 * @param	int
-	 * @return	int
-	 */
-	private function getAlternateTreatmentsTestedForExperimentId($experiment_id)
-	{
-		$sql = "
-			SELECT COUNT(1) AS ALTERNATE_TREATMENTS
-			FROM users_treatments ut, treatments t
-			WHERE
-				ut.experiment_id = $experiment_id
-				AND ut.treatment_id = t.id
-				AND t.name = 'alternate'
-		";
-		$alternate_treatments_tested = $this->query($sql);
-		return (int) $alternate_treatments_tested[0][0]['ALTERNATE_TREATMENTS'];
-	}
-	
-	/**
-	 * Gets the total number of alternate treatments completed for an 
-	 * experiment
-	 * 
-	 * @access	public
-	 * @param	int
-	 * @return	int 
-	 */
-	private function getAlternateTreatmentsCompletedForExperimentId($experiment_id)
-	{
-		$sql = "
-			SELECT COUNT(1) AS ALTERNATE_TREATMENTS_COMPLETED
-			FROM users_treatments ut, treatments t
-			WHERE
-				ut.experiment_id = $experiment_id
-				AND ut.treatment_id = t.id
-				AND ut.completed = 1
-				AND t.name = 'alternate'
-		";
-		$alternate_treatments_completed = $this->query($sql);
-		return (int) $alternate_treatments_completed[0][0]['ALTERNATE_TREATMENTS_COMPLETED'];
-	}
-	
+
 	/**
 	 * Calculates the z-score (standard-deviation like) of an alternate
 	 * experiment. Negative number is bad, positive number is good

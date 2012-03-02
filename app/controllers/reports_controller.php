@@ -4157,6 +4157,9 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		} else { // display experiment results
 			$results = $this->Experiment->getResults((int) $experiment_id);
 			$this->set('results', $results);
+			$this->set('experiment_id', $experiment_id);
+			$pct = $this->Experiment->getTestPercentageByExperiemntId((int) $experiment_id);
+			$this->set('test_percentage', $pct[0]['sites_experiments']['test_percentage']);
 		}
 	}
 
@@ -4172,6 +4175,22 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		$this->autoRender = false;
 		$this->loadModel('Experiment');
 		$this->Experiment->updateStatus($experiment_id, $status_id);
+	}
+
+	/**
+	 * method to update experiment test_percentage
+	 *
+	 * @access	public
+	 * @param	int
+	 * @param	int
+	 */
+	public function experiment_testpercent($experiment_id, $pct)
+	{
+		$test_percentage = intval($pct);
+		$this->loadModel('Experiment');
+		$this->Experiment->updateTestPercentage($experiment_id, $test_percentage);
+		$this->Session->setFlash('Test percentage has been set to ' . intval($test_percentage));
+		$this->redirect("/reports/experiments/$experiment_id");
 	}
 
 	/**

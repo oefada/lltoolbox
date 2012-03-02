@@ -18,6 +18,7 @@
 			<th>Status</th>
 			<th>Site</th>
 			<th>Experiment Name</th>
+			<th>Test %</th>
 			<th>Created</th>
 			<th>Last Test</th>
 		</tr>
@@ -32,6 +33,7 @@
 			</td>
 			<td><?php echo $experiment['Site']['siteName']?></td>
 			<td><a href="experiments/<?php echo $experiment['Experiment']['id'] ?>"><?php echo $experiment['Experiment']['name']?></a></td>
+			<td style="text-align: center;"><?php echo $experiment['SitesExperiments']['test_percentage']?></td>
 			<td><?php echo $experiment['SitesExperiments']['created']?></td>
 			<td><?php echo $experiment['SitesExperiments']['last_test']?></td>			
 		</tr>
@@ -90,9 +92,36 @@
 			<td><?php echo number_format($results['default_conversion_rate'], 2); ?>%</td>
 			<td><?php echo $results['default_z_score']; ?></td>
 		</tr>
-		
+		<? if ($results['untested_treatments_tested']) { ?>
+			<tr>
+				<td>untested</td>
+				<td><?php echo $results['untested_treatments_tested']; ?></td>
+				<td><?php echo $results['untested_treatments_completed']; ?></td>
+				<td><?php echo number_format($results['untested_conversion_rate'], 2); ?>%</td>
+				<td></td>
+			</tr>
+		<? } ?>
+		<? if ($results['bot_treatments_tested']) { ?>
+			<tr>
+				<td>bot</td>
+				<td><?php echo $results['bot_treatments_tested']; ?></td>
+				<td><?php echo $results['bot_treatments_completed']; ?></td>
+				<td><?php echo number_format($results['bot_conversion_rate'], 2); ?>%</td>
+				<td></td>
+			</tr>
+		<? } ?>
 	</table>
-	
+	test % <input type="text" id="f_test_percentage" value="<?php echo $test_percentage; ?>" style="width:40px;">&nbsp;&nbsp;&nbsp;<a href="javascript:void(0);" id="btn_test_percentage">Update</a>
+	<script type="text/javascript">
+		jQuery(document).ready(function() {
+			jQuery("#btn_test_percentage").click(function(e) {
+				var experiment_pct = jQuery("#f_test_percentage").val();
+				var url = "<?php echo $this->webroot ?>reports/experiment_testpercent/<?php echo $experiment_id; ?>/" + experiment_pct;
+				window.location.href = url;				
+			});
+		});		
+	</script>
+	<br /><br />
 	<a href="<?php echo $this->webroot ?>reports/experiments">Return to experiments</a>
 	<?php endif; ?>
 </div>
