@@ -25,6 +25,10 @@ jQuery(document).ready(function() {
 function addRow() {
 	var row = jQuery('#sort-table .input-row:first').clone();
 	var numRows = jQuery('#sort-table .input-row').length;
+	// check id not existing already
+	while (jQuery('#r'+(numRows+1)).length != 0) {
+		numRows++;
+	}
 	row.attr('id', 'r'+(numRows+1));
 	jQuery('#sort-table .input-row:last').after(row);
 	jQuery('#r'+(numRows+1)+' .input-col').children('input').val('');
@@ -43,24 +47,8 @@ function addRow() {
 }
 
 function setRow(rowId) {
-	jQuery('#sort-table #'+rowId+' .image-url').blur(function() {
-		jQuery('#sort-table #'+rowId+' .image-preview').html('<img src="'+jQuery('#sort-table #'+rowId+' .image-url').val()+'" width="360" height="100" />');
-	});
 	jQuery('#sort-table #'+rowId+' .link-url').blur(function() {
-		if (jQuery('#sort-table #'+rowId+' .link-url').val()) {
-			jQuery.get('/merchandising/clientInfo/?linkUrl='+jQuery('#sort-table #'+rowId+' .link-url').val(), function(data) {
-				var dataArr = jQuery.parseJSON(data);
-				if (dataArr.linkUrl) {
-					jQuery('#sort-table #'+rowId+' .link-url').val(dataArr.linkUrl);
-				}
-				if (dataArr.clientId) {
-					jQuery('#sort-table #'+rowId+' .link-text').val('View Experience');
-					jQuery('#sort-table #'+rowId+' .headline').val(dataArr.name);
-					jQuery('#sort-table #'+rowId+' .description').val(dataArr.locationDisplay);
-					jQuery('#sort-table #'+rowId+' .image-alt').val(dataArr.name + ' ' + dataArr.locationDisplay);
-				}
-			});
-		}
+		updatePreviewImg(rowId);
 	});
 	jQuery('#'+rowId+' .remove-link').click(function() {
 		if (jQuery('#sort-table .input-row').length > 1) {
@@ -70,13 +58,31 @@ function setRow(rowId) {
 		}
 	});
 	jQuery('#sort-table').tableDnD();
-	jQuery('#sort-table #'+rowId+' .link-url').blur();
+	updatePreviewImg(rowId);
 }
 jQuery(function() {
 	jQuery('#scheduleDate').click(function() {
 		showCalendar('scheduleDate', '%Y-%m-%d');
 	});
 });
+
+function updatePreviewImg(rowId) {
+	jQuery('#sort-table #'+rowId+' .image-preview').html('<img src="'+jQuery('#sort-table #'+rowId+' .image-url').val()+'" width="360" height="100" />');
+	if (jQuery('#sort-table #'+rowId+' .link-url').val()) {
+		jQuery.get('/merchandising/clientInfo/?linkUrl='+jQuery('#sort-table #'+rowId+' .link-url').val(), function(data) {
+			var dataArr = jQuery.parseJSON(data);
+			if (dataArr.linkUrl) {
+				jQuery('#sort-table #'+rowId+' .link-url').val(dataArr.linkUrl);
+			}
+			if (dataArr.clientId) {
+				jQuery('#sort-table #'+rowId+' .link-text').val('View Experience');
+				jQuery('#sort-table #'+rowId+' .headline').val(dataArr.name);
+				jQuery('#sort-table #'+rowId+' .description').val(dataArr.locationDisplay);
+				jQuery('#sort-table #'+rowId+' .image-alt').val(dataArr.name + ' ' + dataArr.locationDisplay);
+			}
+		});
+	}
+}
 </script>
 
 
