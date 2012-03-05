@@ -6031,8 +6031,9 @@ class soap_parser extends nusoap_base {
         	$key_prefix = $this->getPrefix($key);
 			$key_localpart = $this->getLocalPart($key);
 			// if ns declarations, add to class level array of valid namespaces
-            if($key_prefix == 'xmlns'){
-				if(preg_match('/'.'^http://www.w3.org/[0-9]{4}/XMLSchema$'.'/',$value)){
+				if($key_prefix == 'xmlns'){
+				// switch to ~ as a delimiter as the default / doesn't work because the patter contains /
+				if(preg_match('~'.'^http://www.w3.org/[0-9]{4}/XMLSchema$'.'~',$value)){
 					$this->XMLSchemaVersion = $value;
 					$this->namespaces['xsd'] = $this->XMLSchemaVersion;
 					$this->namespaces['xsi'] = $this->XMLSchemaVersion.'-instance';
