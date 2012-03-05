@@ -33,7 +33,7 @@ $this->set('clientId', $this->data['Client']['clientId']);
 		
 		// for editing membershipBalance, totalKept, totalRemitted, totalRevenue
 		// added Dec 22,2009 ALEE
-		$disable_advanced_edit = (in_array($userDetails['username'], array('alee','rhastings','mchoe','dpen','kferson','acarney','jlagraff','mtrinh')) ||
+		$disable_advanced_edit = (in_array($userDetails['username'], array('mchoe','dpen','kferson','mbyrnes','jlagraff','mtrinh')) ||
             in_array('Production', $userDetails['groups'])) ? false : true;
 
 		// for editing membershipPackagesRemaining
