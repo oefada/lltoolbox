@@ -1350,6 +1350,12 @@ class WebServiceTicketsController extends WebServicesController
 					$tmp['contact_cc_string'] = '';
 				}
 				
+				// Exception for Ritz Carlton -- See Zoe
+				if ($clientId == 11627 && in_array($ppvNoticeTypeId,array(40,41))) {
+					$tmp['contact_to_string'] = '';
+					$tmp['contact_cc_string'] = '';
+				}
+
 				$tmp['percentOfRevenue'] = $v['ClientLoaPackageRel']['percentOfRevenue'];
 				$clients[$k] = $tmp;
 			}
