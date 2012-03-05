@@ -79,25 +79,35 @@ class AjaxSearchController extends AppController {
 					'limit'      => 10,
 				);
 			} elseif ($searchtype == "users") {
-				return; //TODO: cholland note: disabling this until we can track-down what causes rare edge condition that locks down the entire user table
 				$this->AjaxSearch->table = 'user';
 				$this->AjaxSearch->primaryKey = 'userId';
+				$this->loadSimple("userSiteExtended", "userId");
 
-				if (strpos(strtolower($query), 'userid:') !== false) {
-				    $query = substr_replace(strtolower($query), "", 0, 7);
-				    $conditions = array('OR' => array('AjaxSearch.userId' => $query));
-				} else if (strpos(strtolower($query), 'username:') !== false) {
-				    $query = substr_replace(strtolower($query), "", 0, 9);
-				    $conditions = array('OR' => array('AjaxSearch.username LIKE' => "%$query%"));
-				} else {
-				    $conditions = array(
-				    	'OR' => array("MATCH(AjaxSearch.lastName,AjaxSearch.firstName) AGAINST('$sqlquery' IN BOOLEAN MODE)"),
-				    	'OR' => array('AjaxSearch.email LIKE "%'.$query.'%"'));
+				$conditions = array();
+				$order = array();
+				$fields = array('SimpleModel.username', 'AjaxSearch.userId', 'AjaxSearch.firstName', 'AjaxSearch.lastName', 'AjaxSearch.email', 'AjaxSearch.inactive');
+				
+				if (intval($query) !== 0) {
+					$conditions['OR']['AjaxSearch.userId LIKE'] = '%'.$query.'%';
+				} elseif (strpos($query, " ") === FALSE) {
+					$noSpace = true;
+				
+					if (strpos($query, "@")) {
+						$isEmail = true;
+						$fields[] = "(CASE WHEN AjaxSearch.email LIKE '".$query."' THEN 1 ELSE 0 END) AS emailmatch";
+						$conditions['OR']['AjaxSearch.email LIKE'] = '%'.$query.'%';
+						$order[] = 'emailmatch DESC';
+					} else {
+						$order[] = 'usernamematch DESC';
+						$fields[] = "(CASE WHEN SimpleModel.username LIKE '".$query."' THEN 1 ELSE 0 END) AS usernamematch";
+						$conditions['OR']['SimpleModel.username LIKE'] = "%$query%";
+					}
 				}
-
+				
 				$params = array(
-					'fields' => array('*'),
+					'fields' => $fields,
 					'limit'  => 10,
+					'order' => $order,
 					'conditions' => $conditions
 				);
 			} elseif ($searchtype == "tickets") {
