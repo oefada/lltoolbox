@@ -1208,8 +1208,8 @@ class WebServiceTicketsController extends WebServicesController
 			$resData = $this->Ticket->query("SELECT * FROM reservation WHERE ticketId = $ticketId ORDER BY reservationId DESC LIMIT 1");
 			if (!empty($resData)) {
 				$resConfNum = $resData[0]['reservation']['reservationConfirmNum'];
-				$resArrivalDate = date('M d, Y', strtotime($resData[0]['reservation']['arrivalDate']));
-				$resDepartureDate = date('M d, Y', strtotime($resData[0]['reservation']['departureDate']));
+				$resArrivalDate = $resData[0]['reservation']['arrivalDate'] ? date('M d, Y', strtotime($resData[0]['reservation']['arrivalDate'])) : 'N/A';
+				$resDepartureDate = $resData[0]['reservation']['departureDate'] ? date('M d, Y', strtotime($resData[0]['reservation']['departureDate'])) : 'N/A';
 				$resConfToCustomer = empty($resData[0]['reservation']['reservationConfirmToCustomer']) ?
 										 $resData[0]['reservation']['created']
 										: $resData[0]['reservation']['reservationConfirmToCustomer'];
@@ -1225,7 +1225,6 @@ class WebServiceTicketsController extends WebServicesController
 				$resArrivalDate = $fpArrival;
 				$resDepartureDate = $fpDeparture;
 			}
-			
 			
 			// Calculate cancellation fee. < 15 days from arrival, $100 fee, > 15 days from arrival, $35 fee 
 			if ($ppvNoticeTypeId == 30) {

@@ -206,11 +206,12 @@ class Ticket extends AppModel {
 		$cofSql.= 'INNER JOIN creditTracking AS CreditTracking USING (userId) ';
 		$cofSql.= "WHERE Ticket.ticketId = $ticketId ";
 		
+		$cofSqlC = '';
 		if (!$manualCharge) {
 			$cofSqlC = " AND CreditTracking.datetime < Ticket.created OR (CreditTracking.datetime > Ticket.created AND amount < 0)";
 		}
 		
-		$cofSqlEnd .= " ORDER BY CreditTracking.creditTrackingId DESC";
+		$cofSqlEnd = " ORDER BY CreditTracking.creditTrackingId DESC";
 		
 		$cofResult = $this->query($cofSql.$cofSqlC.$cofSqlEnd . " LIMIT 1");
 
