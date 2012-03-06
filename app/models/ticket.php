@@ -207,6 +207,7 @@ class Ticket extends AppModel {
 		$cofSql.= "WHERE Ticket.ticketId = $ticketId ";
 		
 		$cofSqlC = '';
+		
 		if (!$manualCharge) {
 			$cofSqlC = " AND CreditTracking.datetime < Ticket.created OR (CreditTracking.datetime > Ticket.created AND amount < 0)";
 		}
