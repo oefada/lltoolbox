@@ -1679,6 +1679,8 @@ class WebServiceTicketsController extends WebServicesController
 				$emailFrom = ($isAuction) ? "$siteDisplay <resconfirm@$siteEmail>" : "$siteDisplay <reservations@$siteEmail>";
 				$emailReplyTo = ($isAuction) ? "resconfirm@$siteEmail" : "reservations@$siteEmail";
 				$userEmail = $clientPrimaryEmail;
+				// ticket 3032
+				if ($userEmail == 'phg@luxurylink.com') { $userEmail = 'phgcfm@luxurylink.com'; }
 				break;
 			case 24:
 				if ($siteId == 1) {
