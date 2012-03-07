@@ -64,6 +64,18 @@ class UsersController extends AppController {
 		$paymentTypes = $this->User->UserPaymentSetting->PaymentType->find('list');
 		$addressTypes = $this->User->Address->AddressType->find('list');
 		$mailingListIds = $this->User->UserMailOptin->MailingList->find('list');
+		
+		$this->loadModel("CreditTracking");
+		$cof = $this->CreditTracking->find('all', array(
+			'fields' => array('CreditTracking.*'), 
+			'contain' => array('User'),
+			'conditions' => array('User.userId' => $id),
+			'order' => 'CreditTracking.creditTrackingId DESC',
+			'limit' => 1,
+		));
+
+		$this->data['CreditTracking'] = $cof[0]['CreditTracking'];
+
 		$this->set('user', $this->data);
 		$this->set(compact('user', 'salutationIds', 'paymentTypes', 'addressTypes', 'mailingListIds'));
 	}

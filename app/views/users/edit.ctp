@@ -13,7 +13,10 @@
 		echo $form->input('lastName');		
 		echo $form->input('email');
 	?>
-	<div class='controlset'><?php echo $form->input('inactive'); ?></div>
+	<div class='controlset'>
+		<?php echo $form->input('inactive'); ?><br>
+	</div>
+	<div style="font-size: 14px; color: #990000; font-weight: bold;">Credit on File Balance:</strong> <a href="/credit_trackings/index/query:<?= $this->data['User']['userId'] ?>">$<?= number_format($this->data['CreditTracking']['balance'],2) ?></a></div>
 		<fieldset class="collapsible">
 			<legend class="handle">Contact Details</legend>
 			<div class="collapsibleContent related">
@@ -34,7 +37,7 @@
 				<div class="collapsibleContent">
 				<?php if (!empty($userSiteExtended['username'])):?>
 					<div class="input text"><label>Username</label> <strong><?php echo $userSiteExtended['username'];?></strong></div>
-					<div class="input text"><label>Registration Date</label> <?php echo $userSiteExtended['registrationDate'];?></div>
+					<div class="input text"><label>Registration Date</label> <?= isset($userSiteExtended['registrationDate']) ? $userSiteExtended['registrationDate'] : 'N/A'; ?></div>
 					<div class="input text"><label>Last Login</label> <?php echo $userSiteExtended['lastLogin'];?></div>
 					<div class="input text"><label>&nbsp;</label><?php echo $html->link('Reset Password', '/users/resetPassword/'.$userSiteExtended['userSiteExtendedId'],
 					array(
