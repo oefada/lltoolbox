@@ -209,7 +209,7 @@ class Ticket extends AppModel {
 		$cofSqlC = '';
 		
 		if (!$manualCharge) {
-			$cofSqlC = " AND CreditTracking.datetime < Ticket.created OR (CreditTracking.datetime > Ticket.created AND amount < 0)";
+			$cofSqlC = " AND (CreditTracking.datetime < Ticket.created OR (CreditTracking.datetime > Ticket.created AND amount < 0))";
 		}
 		
 		$cofSqlEnd = " ORDER BY CreditTracking.creditTrackingId DESC";
