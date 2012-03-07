@@ -16,7 +16,7 @@
 	<div class='controlset'>
 		<?php echo $form->input('inactive'); ?><br>
 	</div>
-	<div style="font-size: 14px; color: #990000; font-weight: bold;">Credit on File Balance:</strong> <a href="/credit_trackings/index/query:<?= $this->data['User']['userId'] ?>">$<?= number_format($this->data['CreditTracking']['balance'],2) ?></a></div>
+	<div style="font-size: 14px; color: #990000; font-weight: bold;">Credit on File Balance:</strong> <a href="/credit_trackings/index/query:<?= $this->data['User']['userId'] ?>">$<? if (!isset($this->data['CreditTracking'])): ?>0.00<? else: ?><?= number_format($this->data['CreditTracking']['balance'],2) ?><? endif; ?></a></div>
 		<fieldset class="collapsible">
 			<legend class="handle">Contact Details</legend>
 			<div class="collapsibleContent related">

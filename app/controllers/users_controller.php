@@ -74,7 +74,9 @@ class UsersController extends AppController {
 			'limit' => 1,
 		));
 
-		$this->data['CreditTracking'] = $cof[0]['CreditTracking'];
+		if (!empty($cof)) {
+			$this->data['CreditTracking'] = $cof[0]['CreditTracking'];
+		}
 
 		$this->set('user', $this->data);
 		$this->set(compact('user', 'salutationIds', 'paymentTypes', 'addressTypes', 'mailingListIds'));
