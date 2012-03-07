@@ -962,7 +962,7 @@ class WebServiceTicketsController extends WebServicesController
 
 		// TODO: error checking for params
 
-		if ($ticketId == null && $username == null && !$offerId && !$userId) {
+		if ($ticketId == null && $username == null && !$offerId && !$userId && !isset($params['userEmail'])) {
 			return 'Invalid input';
 			exit;
 		}
@@ -1055,13 +1055,21 @@ class WebServiceTicketsController extends WebServicesController
 				$userId = $this->User->UserSiteExtended->findByusername($username);
 			} elseif ($userId) {
 				$userId = $this->User->UserSiteExtended->findByuserId($userId);
+			} elseif (isset($params['userEmail'])) {
+				// Deal alert and other non-user e-mails
+				$userData = array(
+					'email' => $params['userEmail'],
+					'firstName' => $params['userEmail'],
+				);
 			}
 			
-			if (!empty($userId)) {
-				$userData = array_merge($userId['UserSiteExtended'],$userId['User']);
-			} else {
-				return "Invalid User";
-				exit;
+			if (!isset($userData)) {
+				if (!empty($userId)) {
+					$userData = array_merge($userId['UserSiteExtended'],$userId['User']);
+				} else {
+					return "Invalid User";
+					exit;
+				}
 			}
 		}
 	
@@ -2116,7 +2124,10 @@ class WebServiceTicketsController extends WebServicesController
 	public function sendPpvEmail($emailTo, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials, $resend = false) {
 		if (stristr($_SERVER['HTTP_HOST'], 'dev') || stristr($_SERVER['HTTP_HOST'], 'stage') || ISDEV) {
 			//$appendDevMessage = "---- DEV MAIL ---- \n<br />ORIGINAL TO:  $emailTo\n<br />ORIGINAL CC: $emailCc\n<br />ORIGINAL BCC: $emailBcc";
-			$emailTo = $emailCc = $emailBcc = 'devmail@luxurylink.com';
+			$devMail = 'devmail@luxurylink.com';
+			$emailTo = $emailTo ? $devMail : '';
+			$emailCc = $emailCc ? $devMail : '';
+			$emailBcc = $emailBcc ? $devMail : '';
 			
 			//$emailBody = $appendDevMessage . $emailBody;
 			//$emailBody.= print_r($_SERVER, true);
