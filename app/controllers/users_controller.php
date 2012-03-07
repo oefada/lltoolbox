@@ -274,6 +274,13 @@ class UsersController extends AppController {
 				$referrerBonus = 1;
 			}
 			
+			// Temp fix for weird users (ticket 3036)
+			if ($toLink['User']['siteId'] == null) {
+				$toLink['User']['siteId'] = 1;
+				$toLink['User']['createDatetime'] = date("Y-m-d h:i:s");
+				$this->User->save($toLink['User']);
+			}
+			
 			$data = array(
 				'siteId' => $toLink['User']['siteId'],
 				'referrerUserId' => $id,
