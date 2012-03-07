@@ -1432,6 +1432,7 @@ class WebServiceTicketsController extends WebServicesController
 			case 11:
 			case 2:
 			case 4:
+			case 23:
 			case 24:
 			case 25:
 			case 27:
