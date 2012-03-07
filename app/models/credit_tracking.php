@@ -36,10 +36,10 @@ class CreditTracking extends AppModel {
 	function beforeSave() {
 		// get number of trackings for userId and the balance
 		$results = $this->query("SELECT balance FROM creditTracking WHERE userId = " . $this->data['CreditTracking']['userId'] . " ORDER BY creditTrackingId DESC LIMIT 1");
-		$balance = $results[0]['creditTracking']['balance'];
 
 		// balance
 		if (!empty($results)) {
+			$balance = $results[0]['creditTracking']['balance'];
 			$this->data['CreditTracking']['balance'] = $balance + $this->data['CreditTracking']['amount'];
 		} else {
 			$this->data['CreditTracking']['balance'] = $this->data['CreditTracking']['amount'];

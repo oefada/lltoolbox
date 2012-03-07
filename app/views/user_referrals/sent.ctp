@@ -60,11 +60,6 @@
 					switch ($r['UserReferrals']['statusTypeId']) {
 						case '1':
 							echo 'No Response';
-							if (isset($r['UserReferrals']['hasPurchase']) && $r['UserReferrals']['hasPurchase'] == 1) {
-								echo ' (registered and purchased)';
-							} else if (isset($r['UserReferrals']['isRegistered']) && $r['UserReferrals']['isRegistered'] == 1) {
-								echo ' (registered)';
-							}
 							break;
 						case '2':
 							echo 'Accepted';
@@ -72,6 +67,12 @@
 						case '3':
 							echo 'Purchased';
 							break;
+					}
+
+					if (isset($r['UserReferrals']['hasPurchase']) && $r['UserReferrals']['hasPurchase'] == 1) {
+						echo ' (registered and purchased)';
+					} else if (isset($r['UserReferrals']['isRegistered']) && $r['UserReferrals']['isRegistered'] == 1) {
+						echo ' (registered and no completed purchases)';
 					}
 				?>
 			</td>

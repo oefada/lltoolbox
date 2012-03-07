@@ -270,8 +270,12 @@ class UsersController extends AppController {
 			$referrerBonus = 0;
 			
 			if (!empty($toLink['Ticket'])) {
-				$referrerStatus = 1;
-				$referrerBonus = 1;
+				foreach ($toLink['Ticket'] as $t) {
+					if ($t['ticketStatusId'] == 4) {
+						$referrerBonus = 1;
+						$referrerStatus = 1;
+					}
+				}
 			}
 			
 			// Temp fix for weird users (ticket 3036)
@@ -286,19 +290,17 @@ class UsersController extends AppController {
 				'referrerUserId' => $id,
 				'referredEmail' => $toLink['User']['email'],
 				'statusTypeId' => $referrerStatus,
-				'referrerBonusApplied' => 0,
+				'referrerBonusApplied' => $referrerBonus,
 				'referredBonusApplied' => 1,
 			);
 
 			if ($this->UserReferrals->save($data)) {
 				$refId = $this->UserReferrals->getLastInsertId();
 				
-				/*
 				if ($referrerBonus) {
 					// Apply credit to referrer
 					$this->UserReferrals->completeReferral($refId,3);
 				}
-				*/
 				
 				echo json_encode(array('msg' => 'OK'));
 				exit;
@@ -333,8 +335,17 @@ class UsersController extends AppController {
 			$params = Array('conditions' => Array('email' => $r['UserReferrals']['referredEmail']));
 			$x = $this->User->find('first', $params);
 
-			if (isset($x['Ticket']) && is_array($x['Ticket']) && count($x['Ticket']) > 0) {
-				$r['UserReferrals']['hasPurchase'] = 1;
+			if (is_array($x['Ticket']) && count($x['Ticket']) > 0) {
+				$r['UserReferrals']['hasPurchase'] = 0;
+				
+				// Verify that a ticket has been completed
+				foreach ($x['Ticket'] as $t) {
+					// "Reservation confirmed"
+					if ($t['ticketStatusId'] == 4) {
+						$r['UserReferrals']['hasPurchase'] = 1;
+						break;
+					}
+				}
 			} else {
 				$r['UserReferrals']['hasPurchase'] = 0;
 			}
