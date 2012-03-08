@@ -2125,14 +2125,13 @@ class WebServiceTicketsController extends WebServicesController
 
 	public function sendPpvEmail($emailTo, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials, $resend = false) {
 		if (stristr($_SERVER['HTTP_HOST'], 'dev') || stristr($_SERVER['HTTP_HOST'], 'stage') || ISDEV) {
-			//$appendDevMessage = "---- DEV MAIL ---- \n<br />ORIGINAL TO:  $emailTo\n<br />ORIGINAL CC: $emailCc\n<br />ORIGINAL BCC: $emailBcc";
+			$appendDevMessage = "\n<br />ORIGINAL TO:  $emailTo\n<br />ORIGINAL CC: $emailCc<br />ORIGINAL BCC: $emailBcc";
 			$devMail = 'devmail@luxurylink.com';
 			$emailTo = $emailTo ? $devMail : '';
 			$emailCc = $emailCc ? $devMail : '';
 			$emailBcc = $emailBcc ? $devMail : '';
 			
-			//$emailBody = $appendDevMessage . $emailBody;
-			//$emailBody.= print_r($_SERVER, true);
+			$emailBody = $emailBody . $appendDevMessage;
 			$emailSubject = "DEV - " . $emailSubject;
 		}
 
