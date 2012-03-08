@@ -1427,14 +1427,25 @@ class WebServiceTicketsController extends WebServicesController
 		ob_start();
 		
 		$specialException = false;
-		
-		// PPV is a client PPV. Determines what blurbs show up
 		$clientPpv = false;
 		$internalPpv = false;
+		$pleaseRespond = false;
 		
 		// "Confirm Reservation" button and other buttons...
 		$imgHref = "mailto:".$emailReplyTo."?Subject=Ticket%20".$ticketId."%20-%20".$emailSubject;
 
+		// "Please respond" header
+		switch ($ppvNoticeTypeId) {
+			case 2:
+			case 10:
+			case 24:
+			case 27:
+			case 29:
+			case 33:
+				$pleaseRespond = true;
+		}
+		
+		// Client PPVs
 		switch ($ppvNoticeTypeId) {
 			case 10:
 			case 11:
@@ -1797,7 +1808,14 @@ class WebServiceTicketsController extends WebServicesController
 			case 33:
 				//include('../vendors/email_msgs/notifications/33_change_dates_request_template.html');
 				$templateFile = "33_change_dates_request_template";
-				$emailSubject = "Your $siteName Request has been Received - $clientNameP";
+				
+				if ($siteId == 1) {
+					$emailSubject = "Luxury Link Booking Request – Change of Dates requested";
+					$templateTitle = "Immediate Attention Required: Change of Dates";
+				} else {
+					$emailSubject = "Your $siteName Request has been Received - $clientNameP";
+				}
+				
 				$emailFrom = ($isAuction) ? "$siteDisplay <auction@$siteEmail>" : "$siteDisplay <exclusives@$siteEmail>";
 				$emailReplyTo = ($isAuction) ? "auction@$siteEmail" : "exclusives@$siteEmail";
 				break;

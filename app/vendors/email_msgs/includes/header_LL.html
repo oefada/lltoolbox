@@ -41,7 +41,11 @@
 																								<td width="16"></td>
 																								<td width="275" valign="top">
 																									<table width="100%" cellpadding="0" cellspacing="0" border="0">
+																										<? if (!$pleaseRespond): ?>
 																										<tr><td style="font-size:0; line-height:0;"><img src="http://www.luxurylink.com/images/email/pixel.gif" width="1" height="18"></td></tr>
+																										<? else: ?>
+																										<tr><td align="right" style="line-height:15px; text-align:right;"><font face="Arial, Helvetica, sans-serif" size="2" style="font-size:12px; line-height:15px" color="#990000">Please Respond</font></td></tr>
+																										<? endif; ?>
 																										<tr><td align="right" style="line-height:15px; text-align:right;"><font face="Arial, Helvetica, sans-serif" size="2" style="font-size:12px; line-height:15px" color="#a4a5a7"><?= $dateNow ?></font></td></tr>
 																									</table>
 																								</td>
