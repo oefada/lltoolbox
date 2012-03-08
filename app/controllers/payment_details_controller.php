@@ -8,7 +8,9 @@ class PaymentDetailsController extends AppController {
 
 	var $name = 'PaymentDetails';
 	var $helpers = array('Html', 'Form', 'Ajax', 'Text', 'Layout', 'Number');
-	var $uses = array('PaymentDetail', 'Ticket', 'UserPaymentSetting', 'PpvNotice', 'Country', 'Track', 'TrackDetail', 'User','creditTracking');
+	var $uses = array('PaymentDetail', 'Ticket', 'UserPaymentSetting', 'PpvNotice', 'Country', 'Track', 'TrackDetail', 'User','creditTracking', 'PromoTicketRel', 'Promo', 'PromoCode', 'PaymentType', 'PaymentDetail','Ticket'
+);
+
 
 	function beforeFilter() {
 		parent::beforeFilter();
@@ -30,7 +32,9 @@ class PaymentDetailsController extends AppController {
 		if (!$id) {
 			$this->Session->setFlash(__('Invalid Payment Detail Id.', true), 'default', array(), 'error');
 		}
-		$this->set('paymentDetail', $this->PaymentDetail->read(null, $id));
+		$arr=$this->PaymentDetail->readPaymentDetail($id);
+		$this->set('paymentDetail', $arr[0]);
+		$this->set('promo', $arr[0]);
 	}
 
 	function add() {

@@ -39,8 +39,8 @@
 					<td><?php echo $paymentDetail['PaymentProcessor']['paymentProcessorName']; ?></td>
 				</tr>
 				<tr>
-					<td width="200"><strong>paymentProcessorRefId</strong></td>
-					<td><?php echo $paymentDetail['PaymentDetail']['paymentProcessorRefId']; ?></td>
+					<td width="200"><strong>paymentProcessorId</strong></td>
+					<td><?php echo $paymentDetail['PaymentProcessor']['paymentProcessorId']; ?></td>
 				</tr>
 				<tr>
 					<td width="200"><strong>ppFirstName</strong></td>
@@ -140,6 +140,12 @@
 				<tr>
 					<td width="200"><strong>initials</strong></td>
 					<td><?php echo $paymentDetail['PaymentDetail']['initials']; ?></td>
+				</tr>
+				<tr>
+					<td width="200"><strong>Gift Certificate Code</strong></td>
+					<td><?php echo $promo['promo']['promoName']; ?>
+					&nbsp; | &nbsp; Code: <?=$promo['promo']['promoId'];?>	
+					</td>
 				</tr>
 		</table>
 	</div>
