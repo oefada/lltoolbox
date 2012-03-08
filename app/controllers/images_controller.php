@@ -221,6 +221,7 @@ class ImagesController extends AppController
 	function findNewImages()
 	{
 		$dbImages = $this->Image->getFilenamesFromDb($this->Image->clientId);
+
 		if (!empty($dbImages)) {
 			$extractDir = explode('/', $dbImages[0]);
 			array_pop($extractDir);
@@ -236,8 +237,14 @@ class ImagesController extends AppController
 			}
 
 		}
-		// $files = glob($this->fileRoot . $directory . '/*.jpg');
+
 		$files = glob($this->fileRoot . '/images/pho/' . $this->Image->client['Client']['clientId'] . '/' . $this->Image->client['Client']['clientId'] . '_*-auto-*.jpg');
+		
+		// Legacy
+		if (empty($files)) {
+			$files = glob($this->fileRoot . $directory . '/*.jpg');
+		}
+		
 		$useLrgForSlideshow = false;
 		$useXlForSlideshow = false;
 		$activateLrg = false;
