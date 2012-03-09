@@ -238,12 +238,9 @@ class ImagesController extends AppController
 
 		}
 
+		// Add legacy and new auto files
 		$files = glob($this->fileRoot . '/images/pho/' . $this->Image->client['Client']['clientId'] . '/' . $this->Image->client['Client']['clientId'] . '_*-auto-*.jpg');
-		
-		// Legacy
-		if (empty($files)) {
-			$files = glob($this->fileRoot . $directory . '/*.jpg');
-		}
+		$files = glob($this->fileRoot . $directory . '/*.jpg') + $files;
 		
 		$useLrgForSlideshow = false;
 		$useXlForSlideshow = false;
