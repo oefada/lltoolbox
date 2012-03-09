@@ -221,11 +221,16 @@ class ImagesController extends AppController
 	function findNewImages()
 	{
 		$dbImages = $this->Image->getFilenamesFromDb($this->Image->clientId);
-
+		$directories = array();
+		
 		if (!empty($dbImages)) {
-			$extractDir = explode('/', $dbImages[0]);
-			array_pop($extractDir);
-			$directory = implode('/', $extractDir);
+			foreach ($dbImages as $d) {
+				$extractDir = explode('/', $d);
+				array_pop($extractDir);
+				$directory = implode('/', $extractDir);
+				$directories[$directory] = $directory;
+			}
+
 			$oldProductId = (empty($this->Image->client['Client']['oldProductId'])) ? '0-' . $this->Image->client['Client']['clientId'] : $this->Image->client['Client']['oldProductId'];
 		} else {
 			if (empty($this->Image->client['Client']['oldProductId'])) {
@@ -238,9 +243,21 @@ class ImagesController extends AppController
 
 		}
 
-		// Add legacy and new auto files
 		$files = glob($this->fileRoot . '/images/pho/' . $this->Image->client['Client']['clientId'] . '/' . $this->Image->client['Client']['clientId'] . '_*-auto-*.jpg');
-		$files = glob($this->fileRoot . $directory . '/*.jpg') + $files;
+		
+		// Go through each possible directory and add
+		foreach ($directories as $d) {
+			$dFiles = array();
+			
+			if (strpos($d,"images/pho") === FALSE) {
+				// Add legacy and new auto files
+				$dFiles = glob($this->fileRoot . $d . '/*.jpg');
+				
+				if (!empty($dFiles)) {
+					$files = $files + $dFiles;
+				}
+			}
+		}
 		
 		$useLrgForSlideshow = false;
 		$useXlForSlideshow = false;
