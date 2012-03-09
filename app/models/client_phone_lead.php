@@ -51,20 +51,13 @@ class ClientPhoneLead extends AppModel
 				unset($client_phone_lead_record[$row_number]);
 				continue;
 			}
-			switch($client_phone_lead_record[$row_number]['site']) {
-				case 'luxurylink':
-					$client_phone_lead_record[$row_number]['site_id'] = 1;
-					break;
-				case 'family':
-					$client_phone_lead_record[$row_number]['site'] = 2;
-					break;
-			}
-			unset($client_phone_lead_record[$row_number]['site']);
-			$client_phone_lead_record[$row_number]['date'] = date('Y-m-d H:i:s', strtotime($client_phone_lead_record[$row_number]['date']));
+
+			$client_phone_lead_record[$row_number]['site_id'] = self::getSiteID($client_phone_lead_record[$row_number]['site']);
+			$client_phone_lead_record[$row_number]['date'] = self::formatDate($client_phone_lead_record[$row_number]['date']);
 			$client_phone_lead_record[$row_number]['caller_name'] = trim(strtolower($client_phone_lead_record[$row_number]['caller_first_name'] . ' ' . $client_phone_lead_record[$row_number]['caller_last_name']));
-			$client_phone_lead_record[$row_number]['published_number'] = ereg_replace("[^0-9]", "", $client_phone_lead_record[$row_number]['published_number']);
-			$client_phone_lead_record[$row_number]['destination_number'] = ereg_replace("[^0-9]", "", $client_phone_lead_record[$row_number]['destination_number']);
-			$client_phone_lead_record[$row_number]['caller_number'] = ereg_replace("[^0-9]", "", $client_phone_lead_record[$row_number]['caller_number']);
+			$client_phone_lead_record[$row_number]['published_number'] = self::formatPhoneNumber($client_phone_lead_record[$row_number]['published_number']);
+			$client_phone_lead_record[$row_number]['destination_number'] = self::formatPhoneNumber($client_phone_lead_record[$row_number]['destination_number']);
+			$client_phone_lead_record[$row_number]['caller_number'] = self::formatPhoneNumber($client_phone_lead_record[$row_number]['caller_number']);
 		}
 
 		return $client_phone_lead_record;
@@ -92,6 +85,53 @@ class ClientPhoneLead extends AppModel
 		}
 
 		return $data_is_valid;
+	}
+
+	/**
+	 * Get a site id from a string
+	 *
+	 * @param	string site_name
+	 * @return	int
+	 */
+	private static function getSiteId($site_name)
+	{
+		// default to luxurylink, siteId=1
+		$site_id = 1;
+
+		switch($site_name) {
+			case 'luxurylink':
+				$site_id = 1;
+				break;
+			case 'family':
+				$site_id = 2;
+				break;
+			default:
+				$site_id = 1;
+		}
+
+		return $site_id;
+	}
+
+	/**
+	 * Format a date
+	 *
+	 * @param	string date
+	 * @return	string
+	 */
+	private static function formatDate($date)
+	{
+		return date('Y-m-d H:i:s', strtotime($date));
+	}
+
+	/**
+	 * Remove non-numeric characters from a phone number
+	 * 
+	 * @param	string phone_number
+	 * @return	string
+	 */
+	private static function formatPhoneNumber($phone_number)
+	{
+		return ereg_replace("[^0-9]", '', $phone_number);
 	}
 }
 ?>
