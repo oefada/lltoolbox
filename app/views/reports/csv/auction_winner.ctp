@@ -33,9 +33,9 @@ foreach ($results as $r):
 	foreach($r['PaymentDetailFull'] as $k => $v) {
 		if($v['pt']['paymentTypeName'] != 'Charge') {
 			if(empty($promoCode)) {
-				$promoCode = $v['pt']['paymentTypeName'];
+				$promoCode = $v['pt']['paymentTypeName'] . ' of $' . $v['pd']['paymentAmount'];
 			} else {
-				$promoCode .= ' - '.$v['pt']['paymentTypeName'];
+				$promoCode .= ' - ' . $v['pt']['paymentTypeName'] . ' of $' . $v['pd']['paymentAmount'];
 			}
 		}
 	}
