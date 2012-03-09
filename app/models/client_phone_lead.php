@@ -16,22 +16,22 @@ class ClientPhoneLead extends AppModel
 	 * @param	string
 	 */
 	public $tableColums = array(
-		'Client ID' => 'client_id',
-		'Site' => 'site',
-		'Time Initiated' => 'date',
+		'clientid' => 'client_id',
+		'site' => 'site',
+		'Datetime' => 'date',
 		'Duration' => 'duration',
-		'Published Number' => 'published_number',
-		'Destination Number' => 'destination_number',
-		"Caller's Number" => 'caller_number',
-		"Caller's Name" => 'caller_name',
-		"Caller's Location" => 'caller_location',
-		'Country' => 'country',
-		'Median Household Income' => 'median_household_income',
-		'Per Capita Income' => 'per_capita_income',
-		'Median Earnings' => 'median_earnings'
+		'Tracking Number' => 'published_number',
+		'Target Number' => 'destination_number',
+		"Caller Number" => 'caller_number',
+		"Caller First Name" => 'caller_first_name',
+		"Last Name" => 'caller_last_name',
+		"City" => "city",
+		"State" => "state",
+		"Zip" => "zip",
+		'country' => 'country',
+		"caller location" => "caller_location"
 	);
-	
-	
+
 	/**
 	 * Build an array to later be saved from CSV data
 	 * 
@@ -47,17 +47,26 @@ class ClientPhoneLead extends AppModel
 			foreach($this->tableColums as $key => $value) {
 				$client_phone_lead_record[$row_number][$value] = $row[array_search($key, $columns)];
 			}
+			if (!$client_phone_lead_record[$row_number]['client_id']) {
+				unset($client_phone_lead_record[$row_number]);
+				continue;
+			}
 			switch($client_phone_lead_record[$row_number]['site']) {
-				case 'luxury link':
+				case 'luxurylink':
 					$client_phone_lead_record[$row_number]['site_id'] = 1;
 					break;
-				case 'family getaway':
+				case 'family':
 					$client_phone_lead_record[$row_number]['site'] = 2;
 					break;
 			}
 			unset($client_phone_lead_record[$row_number]['site']);
 			$client_phone_lead_record[$row_number]['date'] = date('Y-m-d H:i:s', strtotime($client_phone_lead_record[$row_number]['date']));
+			$client_phone_lead_record[$row_number]['caller_name'] = trim(strtolower($client_phone_lead_record[$row_number]['caller_first_name'] . ' ' . $client_phone_lead_record[$row_number]['caller_last_name']));
+			$client_phone_lead_record[$row_number]['published_number'] = ereg_replace("[^0-9]", "", $client_phone_lead_record[$row_number]['published_number']);
+			$client_phone_lead_record[$row_number]['destination_number'] = ereg_replace("[^0-9]", "", $client_phone_lead_record[$row_number]['destination_number']);
+			$client_phone_lead_record[$row_number]['caller_number'] = ereg_replace("[^0-9]", "", $client_phone_lead_record[$row_number]['caller_number']);
 		}
+
 		return $client_phone_lead_record;
 	}
 	
