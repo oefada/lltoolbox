@@ -90,6 +90,7 @@ class PaymentDetail extends AppModel {
 	function saveCof($ticketId, $cofData, $userId, $auto = 0, $initials = 'NA',$dontSavePayment = false) {
 		$paymentDetail = array();
 		$paymentDetail['paymentTypeId'] 		= 3;
+		$paymentDetail['paymentProcessorId'] 	= 6;
 		$paymentDetail['paymentAmount'] 		= $cofData['totalAmountOff'];
 		$paymentDetail['ticketId']				= $ticketId;
 		$paymentDetail['userId']				= $userId;
@@ -110,9 +111,25 @@ class PaymentDetail extends AppModel {
 		$data['CreditTracking']['amount']	= -$cofData['totalAmountOff'];
 		$data['CreditTracking']['creditTrackingTypeId'] = $cofData['creditTrackingTypeId'];
 
-		if (!$this->CreditTracking->save($data)) {
-			CakeLog::write("debug",__METHOD__." CANNOT SAVE COF");
+		if ($this->CreditTracking->save($data)) {
+			$data = array();
+			// Add this as being related to the ticket specified
+			// ticket 3009
+			$creditTrackingId = $this->CreditTracking->getLastInsertId();
+			
+			$this->CreditTrackingTicketRel = ClassRegistry::init("CreditTrackingTicketRel");
+			
+			$data['CreditTrackingTicketRel']['creditTrackingId'] = $creditTrackingId;
+			$data['CreditTrackingTicketRel']['ticketId'] = $ticketId;
+			
+			if ($this->CreditTrackingTicketRel->save($data)) {
+				return true;
+			}
 		}
+
+		CakeLog::write("debug",__METHOD__." CANNOT SAVE COF");
+		
+		return false;
 	}
 }
 ?>

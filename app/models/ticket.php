@@ -202,19 +202,12 @@ class Ticket extends AppModel {
 		// the last row in the table will be the sum total of the credit they have
 		// may be multiple rows per user with debits and credits
 		
-		$cofSql = 'SELECT CreditTracking.balance,CreditTracking.amount FROM ticket AS Ticket ';
+		$cofSql = 'SELECT CreditTracking.creditTrackingId,CreditTracking.balance,CreditTracking.amount FROM ticket AS Ticket ';
 		$cofSql.= 'INNER JOIN creditTracking AS CreditTracking USING (userId) ';
 		$cofSql.= "WHERE Ticket.ticketId = $ticketId ";
-		
-		$cofSqlC = '';
-		
-		if (!$manualCharge) {
-			$cofSqlC = " AND (CreditTracking.datetime < Ticket.created OR (CreditTracking.datetime > Ticket.created AND amount < 0))";
-		}
-		
 		$cofSqlEnd = " ORDER BY CreditTracking.creditTrackingId DESC";
 		
-		$cofResult = $this->query($cofSql.$cofSqlC.$cofSqlEnd . " LIMIT 1");
+		$cofResult = $this->query($cofSql.$cofSqlEnd . " LIMIT 1");
 
 		if (!empty($cofResult) && ($cofResult[0]['CreditTracking']['balance'] > 0)) {
 			$data['Cof'] = $cofResult[0]['CreditTracking'];
@@ -223,6 +216,22 @@ class Ticket extends AppModel {
 		// if there is a credit on file and a ticketPrice
 		// deduct the credit from the ticketPrice
 		if (isset($data['Cof']) && $ticketPrice > 0) {
+			if (!$manualCharge) {
+				// Retrieve credits related to this ticket
+				
+				$this->CreditTracking = ClassRegistry::init("CreditTracking");
+				$related = $this->query("SELECT 
+				CreditTracking.creditTrackingId,CreditTracking.balance,CreditTracking.amount 
+				FROM creditTracking CreditTracking 
+				WHERE CreditTracking.creditTrackingId IN (SELECT creditTrackingId FROM creditTrackingTicketRel 
+					WHERE ticketId = ".intval($ticketId).") ORDER BY CreditTracking.creditTrackingId DESC LIMIT 1");
+
+				// If this ticket has an existing CoF entry, use that as the definitive source for CoF balance	
+				if (!empty($related)) {
+					$data['Cof'] = $related[0]['CreditTracking'];
+				}
+			}
+			
 			$new_price = $ticketPrice - $data['Cof']['balance'];
 			if ($new_price <= 0) {
 				$data['Cof']['totalAmountOff'] = $ticketPrice;
