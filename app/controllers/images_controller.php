@@ -221,16 +221,10 @@ class ImagesController extends AppController
 	function findNewImages()
 	{
 		$dbImages = $this->Image->getFilenamesFromDb($this->Image->clientId);
-		$directories = array();
-		
 		if (!empty($dbImages)) {
-			foreach ($dbImages as $d) {
-				$extractDir = explode('/', $d);
-				array_pop($extractDir);
-				$directory = implode('/', $extractDir);
-				$directories[$directory] = $directory;
-			}
-
+			$extractDir = explode('/', $dbImages[0]);
+			array_pop($extractDir);
+			$directory = implode('/', $extractDir);
 			$oldProductId = (empty($this->Image->client['Client']['oldProductId'])) ? '0-' . $this->Image->client['Client']['clientId'] : $this->Image->client['Client']['oldProductId'];
 		} else {
 			if (empty($this->Image->client['Client']['oldProductId'])) {
@@ -240,25 +234,9 @@ class ImagesController extends AppController
 				$oldProductId = $this->Image->client['Client']['oldProductId'];
 				$directory = '/images/por/' . $oldProductId;
 			}
-
+	
 		}
-
-		$files = glob($this->fileRoot . '/images/pho/' . $this->Image->client['Client']['clientId'] . '/' . $this->Image->client['Client']['clientId'] . '_*-auto-*.jpg');
-		
-		// Go through each possible directory and add
-		foreach ($directories as $d) {
-			$dFiles = array();
-			
-			if (strpos($d,"images/pho") === FALSE) {
-				// Add legacy and new auto files
-				$dFiles = glob($this->fileRoot . $d . '/*.jpg');
-				
-				if (!empty($dFiles)) {
-					$files = $files + $dFiles;
-				}
-			}
-		}
-		
+		$files = glob($this->fileRoot . $directory . '/*.jpg');
 		$useLrgForSlideshow = false;
 		$useXlForSlideshow = false;
 		$activateLrg = false;
@@ -275,6 +253,17 @@ class ImagesController extends AppController
 			$useLrgForSlideshow = true;
 			$activateLrg = true;
 		}
+	
+		$newFiles = glob($this->fileRoot . '/images/pho/' . $this->Image->clientId . '/' . $this->Image->clientId . '_*-auto-*.jpg');
+		if (!empty($newFiles)) {
+			$useXlForSlideshow = true;
+			foreach ($newFiles as $newFile) {
+				if (!in_array($newFile, $dbImages)) {
+					$files[] = $newFile;
+				}
+			}
+		}
+	
 		if (!empty($files)) {
 			//$siteId = array_search($this->Image->client['Client']['sites'][0],
 			// $this->siteDbs);
@@ -300,8 +289,8 @@ class ImagesController extends AppController
 						foreach ($this->siteDbs as $siteId => $siteDb) {
 							$this->Image->recursive = -1;
 							$image = $this->Image->find('first', array(
-									'conditions' => array('imagePath' => $imagePath),
-									'fields' => 'imageId'
+								'conditions' => array('imagePath' => $imagePath),
+								'fields' => 'imageId'
 							));
 							if (empty($image)) {
 								$imageId = $this->Image->createFromFile(compact('imagePath', 'clientId', 'imageTypeId', 'siteId', 'inactive'));
