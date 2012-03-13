@@ -318,11 +318,7 @@ class MerchandisingController extends AppController
 					);
 					$currData = $this->MerchDataEntries->find('first', $params);
 					
-					if (!$currData && isset($others['current']['merchDataArr'])) {
-						$this->set('currData', $others['current']['merchDataArr']);
-					} else {
-						$this->set('currData', $currData['MerchDataEntries']['merchDataArr']);
-					}
+					$this->set('currData', $currData['MerchDataEntries']['merchDataArr']);
 				}
 				
 				if (isset($_POST['tab-data']) && $_POST['tab-data'] && isset($_POST['data']['scheduleDate'])) {
