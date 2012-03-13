@@ -9,21 +9,28 @@ class Promo extends AppModel {
 	var $rafPromoId = 60;
 
 	var $hasAndBelongsToMany = array(
-		'PromoCode' =>
-		   array('className'    => 'PromoCode',
-				 'foreignKey'   => 'promoId',
-				 'associationForeignKey'=> 'promoCodeId',
-				 'with' => 'promoCodeRel',
-				 'unique'       => true,
-		   )
+		'PromoCode' => 
+			array(
+				'className'    => 'PromoCode',
+				'foreignKey'   => 'promoId',
+				'associationForeignKey'=> 'promoCodeId',
+				'with' => 'promoCodeRel',
+				'unique'       => true,
+		  ),
 	);
 
-	var $hasMany = array('PromoRestrictionClient' => array('foreignKey' => 'promoId'),
-						'PromoRestrictionClientType' => array('foreignKey' => 'promoId'),
-						'PromoRestrictionDestination' => array('foreignKey' => 'promoId'),
-                        'PromoRestrictionTheme' => array('foreignKey' => 'promoId')
-					   );
 
+	var $hasMany = array(
+		'PromoRestrictionClient' => array(
+			'foreignKey' => 'promoId'),
+		'PromoRestrictionClientType' => array(
+			'foreignKey' => 'promoId'),
+		'PromoRestrictionDestination' => array(
+			'foreignKey' => 'promoId'),
+		'PromoRestrictionTheme' => array(
+			'foreignKey' => 'promoId')
+	);
+	
 	function checkInsertRaf($promoCodeId) {
 		if (!$promoCodeId) {
 			return false;
