@@ -143,8 +143,14 @@
 				</tr>
 				<tr>
 					<td width="200"><strong>Gift Certificate Code</strong></td>
-					<td><?php echo $promo['promo']['promoName']; ?>
-					&nbsp; | &nbsp; Code: <?=$promo['promo']['promoId'];?>	
+					<td>
+					<?php 
+					if ($paymentDetail['promo']['promoName']!=''){
+						echo $paymentDetail['promo']['promoName']; ?>
+						&nbsp; | &nbsp; PromoId: <?=$paymentDetail['promo']['promoId'];
+					}
+					
+					?>	
 					</td>
 				</tr>
 		</table>

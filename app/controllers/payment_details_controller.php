@@ -34,7 +34,7 @@ class PaymentDetailsController extends AppController {
 		}
 		$arr=$this->PaymentDetail->readPaymentDetail($id);
 		$this->set('paymentDetail', $arr[0]);
-		$this->set('promo', $arr[0]);
+		
 	}
 
 	function add() {

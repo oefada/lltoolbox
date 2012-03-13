@@ -21,45 +21,36 @@ class PaymentDetail extends AppModel {
 		),
   );
 
+
 	/**
-	 * Get info about a ticket.
+	 * Get payment detail for a ticketId. Add promo details if additional details are returned ($rows[1])
 	 * 
-	 * @param int $id
+	 * @param int $id 
 	 * 
-	 * @return array
+	 * @return TODO
 	 */
 	public function readPaymentDetail($id){
 
-		$this->unbindModel(array('belongsTo'=>array('Ticket')));
-		$options['joins'] = 
-			array(
-				array(
-					'table'=>'ticket',
-					'alias'=>'Ticket',
-					'conditions'=>array('PaymentDetail.ticketId=Ticket.ticketId'),
-					'type'=>'inner'
-				),
-				array(
-					'table'=>'promoTicketRel',
-					'conditions'=>array('promoTicketRel.ticketId=Ticket.ticketId'),
-					'type'=>'right'
-				),
-				array(
-					'table'=>'promoCodeRel',
-					'conditions'=>array('promoCodeRel.promoCodeId=promoTicketRel.promoCodeId'),
-					'type'=>'right'
-				),
-				array(
-					'table'=>'promo',
-					'conditions'=>array('promo.promoId=promoCodeRel.promoId'),
-					'type'=>'right',
-				)
-			);
-
-		$options['conditions']=array('Ticket.ticketId'=>$id);
-		$options['fields']=array('Ticket.*','PaymentDetail.*','PaymentType.*','PaymentProcessor.*','promo.*');
-    $rows= $this->find('all', $options);
-		return $rows;
+		$options=array(
+			'conditions'=>array(
+				'PaymentDetail.paymentDetailId'=>$id,
+			)
+		);
+    $rows=$this->find('all', $options);
+		// see if an additional array is returned with other ticket data. If so, that is a credit
+		$q="select promo.promoName, promo.promoId from promoCodeRel ";
+		$q.="inner join promoTicketRel on (promoCodeRel.promoCodeRelId=promoTicketRel.promoCodeId) ";
+		$q.="inner join promo on (promo.promoId=promoCodeRel.promoId) ";
+		$q.="WHERE promoTicketRel.ticketId=".$rows[0]['Ticket']['ticketId'];
+		$arr=$this->query($q);
+		if (count($arr)>0){
+			$rows[0]['promo']['promoName']=$arr[0]['promo']['promoName'];
+			$rows[0]['promo']['promoId']=$arr[0]['promo']['promoId'];
+		}else{
+			$rows[0]['promo']['promoName']='';
+			$rows[0]['promo']['promoId']='';
+		}
+		return (count($rows)>0)?$rows:false;;
 
 	}
 

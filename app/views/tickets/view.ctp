@@ -214,7 +214,12 @@ $this->searchController = 'Tickets';
 					<?php $amount = isset($paymentDetail['ppBillingAmount']) && $paymentDetail['ppBillingAmount'] != 0 ? $paymentDetail['ppBillingAmount'] : $paymentDetail['paymentAmount']; ?>
 					<td align="center"><?php echo $number->currency($amount);?></td>
 					<td align="center"><?php echo $paymentDetail['ppCardNumLastFour'];?></td>
-					<td align="center"><?php echo $paymentDetail['PaymentProcessor']['paymentProcessorName'];?></td>
+					<td align="center">
+					<?php 
+					if (isset($paymentDetail['PaymentProcessor']['paymentProcessorName'])){
+						echo $paymentDetail['PaymentProcessor']['paymentProcessorName'];
+					}	
+					?></td>
 					<td align="center"><?php echo $processed_flag;?></td>
 					<td align="center"><?php echo $paymentDetail['ccType']; ?></td>
 					<td align="center"><?php echo $paymentDetail['initials'];?></td>
