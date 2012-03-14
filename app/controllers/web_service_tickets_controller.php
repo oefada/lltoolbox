@@ -36,7 +36,7 @@ class WebServiceTicketsController extends WebServicesController
 					  'ClientLoaPackageRel', 'Track', 'OfferType', 'Loa', 'TrackDetail', 'PpvNotice',
 					  'Address', 'OfferLuxuryLink', 'SchedulingMaster', 'SchedulingInstance', 'Reservation',
 					  'PromoTicketRel', 'Promo', 'TicketReferFriend','Package','PaymentProcessor','CakeLog',
-					  'Theme'
+					  'ClientThemeRel'
 					  );
 
 	var $serviceUrl = 'http://toolbox.luxurylink.com/web_service_tickets';
@@ -1390,7 +1390,7 @@ class WebServiceTicketsController extends WebServicesController
 				$clients[$client_index]['clientAdjustedPrice']	= $this->numF(($clients[$client_index]['percentOfRevenue'] / 100) * $ticketData['billingPrice']);
 				$clients[$client_index]['pdpUrl'] 				= $siteUrl."luxury-hotels/".$clients[$client_index]['seoName']."?clid=".$row['clientId']."&pkid=".$packageId;
 				$clients[$client_index]['destData'] 			= $this->ClientLoaPackageRel->Client->ClientDestinationRel->findByclientId($row['clientId'],array(),"parentId DESC, clientDestinationRelId DESC");
-				$clients[$client_index]['themeData']			= $this->Theme->findClientThemes($row['clientId']);
+				$clients[$client_index]['themeData']			= $this->ClientThemeRel->find('all', Array('conditions' => Array('ClientThemeRel.clientId' =>$row['clientId'])));
 				
 				$clients[$client_index]['contact_to_string_trimmed'] = $clients[$client_index]['contact_to_string'];
 				
