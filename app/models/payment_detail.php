@@ -31,25 +31,42 @@ class PaymentDetail extends AppModel {
 	 */
 	public function readPaymentDetail($id){
 
+		$this->unbindModel(array('belongsTo'=>array('PaymentProcessor')));
 		$options=array(
 			'conditions'=>array(
 				'PaymentDetail.paymentDetailId'=>$id,
 			)
 		);
     $rows=$this->find('all', $options);
+		$rows[0]['promo']['promoName']='';
+		$rows[0]['promo']['promoId']='';
+		$paymentTypeId=$rows[0]['PaymentType']['paymentTypeId'];
+		$ticketId=$rows[0]['PaymentDetail']['ticketId'];
+		$userId=$rows[0]['PaymentDetail']['userId'];
 		// see if an additional array is returned with other ticket data. If so, that is a credit
-		$q="select promo.promoName, promo.promoId from promoCodeRel ";
-		$q.="inner join promoTicketRel on (promoCodeRel.promoCodeRelId=promoTicketRel.promoCodeId) ";
-		$q.="inner join promo on (promo.promoId=promoCodeRel.promoId) ";
-		$q.="WHERE promoTicketRel.ticketId=".$rows[0]['Ticket']['ticketId'];
-		$arr=$this->query($q);
-		if (count($arr)>0){
-			$rows[0]['promo']['promoName']=$arr[0]['promo']['promoName'];
-			$rows[0]['promo']['promoId']=$arr[0]['promo']['promoId'];
-		}else{
-			$rows[0]['promo']['promoName']='';
-			$rows[0]['promo']['promoId']='';
+		if ($paymentTypeId==4 || $paymentTypeId==2){//Promo or Gift Cert
+			if ($paymentTypeId==4){
+				$q="select promo.promoName, promo.promoId from promoCodeRel ";
+				$q.="inner join promoTicketRel on (promoCodeRel.promoCodeRelId=promoTicketRel.promoCodeId) ";
+				$q.="inner join promo on (promo.promoId=promoCodeRel.promoId) ";
+				$q.="WHERE promoTicketRel.ticketId=".$rows[0]['Ticket']['ticketId'];
+				$arr=$this->query($q);
+				if (count($arr)>0){
+					$rows[0]['promo']['promoName']=$arr[0]['promo']['promoName'];
+					$rows[0]['promo']['promoId']=$arr[0]['promo']['promoId'];
+				}
+			}elseif($paymentTypeId==2){//Gift Cert
+				$q="SELECT pc.promoCode FROM giftCertBalance AS gcb ";
+				$q.="INNER JOIN promoTicketRel as ptr ON (ptr.promoCodeId=gcb.promoCodeId) ";
+				$q.="INNER JOIN promoCode as pc ON (pc.promoCodeId=ptr.promoCodeId) ";
+				$q.="WHERE gcb.userId=$userId AND ptr.ticketId=$ticketId GROUP BY ticketId";
+				$arr=$this->query($q);
+				if (count($arr)>0){
+					$rows[0]['giftCertificate']['promoCode']=$arr[0]['pc']['promoCode'];
+				}
+			}
 		}
+		
 		return (count($rows)>0)?$rows:false;;
 
 	}
