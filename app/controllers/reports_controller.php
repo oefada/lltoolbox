@@ -1486,7 +1486,7 @@ class ReportsController extends AppController {
 	        	$paymentDetail = $this->PaymentDetail->query('
 	        		SELECT pd.*, pt.paymentTypeName FROM paymentDetail AS pd
 	        		INNER JOIN paymentType AS pt ON pt.paymentTypeId = pd.paymentTypeId
-	        		WHERE ticketId = '.$v['Ticket']['ticketId']);
+	        		WHERE ticketId = ' . $v['Ticket']['ticketId'] . ' ORDER BY pd.paymentTypeId');
 	        	$results[$k]['PaymentDetailFull'] = $paymentDetail;
 	        }
 					// This extracts pricePointId and PackageId from the result set and queries
