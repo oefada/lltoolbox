@@ -59,7 +59,7 @@ class PaymentDetail extends AppModel {
 				$q="SELECT pc.promoCode FROM giftCertBalance AS gcb ";
 				$q.="INNER JOIN promoTicketRel as ptr ON (ptr.promoCodeId=gcb.promoCodeId) ";
 				$q.="INNER JOIN promoCode as pc ON (pc.promoCodeId=ptr.promoCodeId) ";
-				$q.="WHERE gcb.userId=$userId AND ptr.ticketId=$ticketId GROUP BY ticketId";
+				$q.="WHERE ptr.ticketId=$ticketId GROUP BY ticketId";
 				$arr=$this->query($q);
 				if (count($arr)>0){
 					$rows[0]['giftCertificate']['promoCode']=$arr[0]['pc']['promoCode'];

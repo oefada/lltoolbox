@@ -148,7 +148,7 @@
 					if ($paymentDetail['promo']['promoName']!=''){
 						echo $paymentDetail['promo']['promoName']; ?>
 						&nbsp; | &nbsp; PromoId: <?=$paymentDetail['promo']['promoId'];
-					}else if ($paymentDetail['giftCertificate']['promoCode']!=''){
+					}else if (isset($paymentDetail['giftCertificate']['promoCode']) && $paymentDetail['giftCertificate']['promoCode'] !=''){
 						echo $paymentDetail['giftCertificate']['promoCode'];
 					}
 					

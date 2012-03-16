@@ -363,6 +363,11 @@ class TicketsController extends AppController {
 		$this->Ticket->recursive = 2;
 		$ticket = $this->Ticket->read(null, $id);
 
+		if ($ticket===false){
+			$this->Session->setFlash(__("Not Finding ticketId $id", true), 'default', array(), 'error');
+			$this->redirect(array('action'=>'index'));
+		}
+
 		$this->PaymentType->recursive = 0;
 		foreach($ticket['PaymentDetail'] as $k => $v) {
 			$paymentType = $this->PaymentType->read(null, $v['paymentTypeId']);
