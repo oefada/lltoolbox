@@ -1433,9 +1433,6 @@ class WebServiceTicketsController extends WebServicesController
 		$internalPpv = false;
 		$pleaseRespond = false;
 		
-		// "Confirm Reservation" button and other buttons...
-		$imgHref = "mailto:".$emailReplyTo."?Subject=Ticket%20".$ticketId."%20-%20".$emailSubject;
-
 		// "Please respond" header
 		switch ($ppvNoticeTypeId) {
 			case 2:
@@ -1476,6 +1473,9 @@ class WebServiceTicketsController extends WebServicesController
 				
 				break;
 		}
+
+		// "Confirm Reservation" button and other buttons...
+		$imgHref = "mailto:".$emailReplyTo."?Subject=Ticket%20".$ticketId."%20-%20".$emailSubject;
 
 		switch ($ppvNoticeTypeId) {
 			case 2:
@@ -1538,7 +1538,7 @@ class WebServiceTicketsController extends WebServicesController
 			case 4:
 				include('../vendors/email_msgs/ppv/client_ppv.html');
 				$emailSubject = "$siteName Auction Winner Notification - $emailName";
-				$emailReplyTo = "auctions@$siteEmail";
+				$emailReplyTo = "auction@$siteEmail";
 				
 				$emailFrom = $siteDisplay . " <".$emailReplyTo.">";
 				break;
