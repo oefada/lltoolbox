@@ -5,5 +5,6 @@ class RefundReason extends AppModel {
 	var $useTable = 'refundReason';
 	var $primaryKey = 'refundReasonId';
 	var $displayField = 'refundReasonName';
+	var $order = 'refundReasonName ASC';
 }
 ?>

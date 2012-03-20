@@ -14,7 +14,7 @@ if (isset($this->params['url']['cof'])) {
  		<legend><?php __('Add TicketRefund');?></legend>
 	<?php
 		echo $form->input('ticketRefundTypeId');
-		echo $form->input('refundReasonId');
+		echo $form->input('refundReasonId',array('default'=>1));
 		echo $form->input('ticketId', array('readonly' => 'readonly'));
 		echo $form->input('dateRequested');
 		echo $form->input('refundEntire', array('type' => 'checkbox','label' => 'Refund entire ticket?<br><span class="smallText">(Sets status to refunded)</span>','checked' => 'checked'));
