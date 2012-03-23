@@ -352,12 +352,12 @@ class ConsolidatedReportHelper
 		$this->setDataToPopulate($sheet_name, 'F25', '0');			
 		
 		// Call Data
-		$this->setDataToPopulate($sheet_name, 'B12', $this->ConsolidatedReport->getCallCountBySiteForCurrentMonth(1));
-		$this->setDataToPopulate($sheet_name, 'D12', $this->ConsolidatedReport->getCallCountBySiteForCurrentMonth(2));
-		$this->setDataToPopulate($sheet_name, 'F12', $this->ConsolidatedReport->getCallCountBySiteForCurrentMonth(3));
-		$this->setDataToPopulate($sheet_name, 'B27', $this->ConsolidatedReport->getCallCountBySiteForYearToDate(1));
-		$this->setDataToPopulate($sheet_name, 'D27', $this->ConsolidatedReport->getCallCountBySiteForYearToDate(2));
-		$this->setDataToPopulate($sheet_name, 'F27', $this->ConsolidatedReport->getCallCountBySiteForYearToDate(3));
+		$this->setDataToPopulate($sheet_name, 'B12', $this->ConsolidatedReport->getLeadCountBySiteForCurrentMonth(1));
+		$this->setDataToPopulate($sheet_name, 'D12', $this->ConsolidatedReport->getLeadCountBySiteForCurrentMonth(2));
+		$this->setDataToPopulate($sheet_name, 'F12', $this->ConsolidatedReport->getLeadCountBySiteForCurrentMonth(3));
+		$this->setDataToPopulate($sheet_name, 'B27', $this->ConsolidatedReport->getLeadCountBySiteForYearToDate(1));
+		$this->setDataToPopulate($sheet_name, 'D27', $this->ConsolidatedReport->getLeadCountBySiteForYearToDate(2));
+		$this->setDataToPopulate($sheet_name, 'F27', $this->ConsolidatedReport->getLeadCountBySiteForYearToDate(3));
 	}
 	
 	/**
@@ -532,7 +532,7 @@ class ConsolidatedReportHelper
 			$this->setDataToPopulate($sheet_name, "J$spreadsheet_row", $contact_detail['Firstname']);
 			$this->setDataToPopulate($sheet_name, "K$spreadsheet_row", $contact_detail['Lastname']);
 			$this->setDataToPopulate($sheet_name, "L$spreadsheet_row", $contact_detail['Email']);
-			$this->setDataToPopulate($sheet_name, "M$spreadsheet_row", ($contact_detail['Email'] != '') ? 'No' : '');
+			$this->setDataToPopulate($sheet_name, "M$spreadsheet_row", ($contact_detail['Opt-in'] != 'Y') ? 'No' : 'Yes');
 			$this->setDataToPopulate($sheet_name, "N$spreadsheet_row", $contact_detail['Address']);
 			$this->setDataToPopulate($sheet_name, "O$spreadsheet_row", $contact_detail['City']);
 			$this->setDataToPopulate($sheet_name, "P$spreadsheet_row", $contact_detail['State']);

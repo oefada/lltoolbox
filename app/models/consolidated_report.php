@@ -268,49 +268,33 @@ class ConsolidatedReport extends AppModel
 	{
 		return $this->month_end_date . ' 23:59:59';
 	}
-	
+
 	/**
-	 * Get the number of calls from a site for a given client for the current month
+	 * Get the number of leads from a site for a given client for the current month
 	 *
 	 * @access	public
 	 * @param	int site_id
 	 * @return	int
 	 */
-	public function getCallCountBySiteForCurrentMonth($site_id)
+	public function getLeadCountBySiteForCurrentMonth($site_id)
 	{
-		return $this->getCallCountBySiteForPeriod($site_id, $this->month_start_date, $this->month_end_date);
+		return $this->getLeadCountBySiteForPeriod($site_id, $this->month_start_date, $this->month_end_date);
 	}
-	
+
 	/**
-	 *
-	 */
-	public function getCallCountForCurrentMonth()
-	{
-		return $this->getCallCountForPeriod($this->month_start_date, $this->month_end_date);
-	}
-	
-	/**
-	 * Get the number of calls from a site for a given client year-to-date
+	 * Get the number of leads from a site for a given client year-to-date
 	 *
 	 * @access	public
 	 * @param	int site_id
 	 * @return	int
 	 */
-	public function getCallCountBySiteForYearToDate($site_id)
+	public function getLeadCountBySiteForYearToDate($site_id)
 	{
-		return $this->getCallCountBySiteForPeriod($site_id, $this->loa_start_date, $this->month_end_date);
+		return $this->getLeadCountBySiteForPeriod($site_id, $this->loa_start_date, $this->month_end_date);
 	}
-	
+
 	/**
-	 *
-	 */
-	public function getCallCountForYearToDate()
-	{
-		return $this->getCallCountForPeriod($this->loa_start_date, $this->month_end_date);
-	}
-	
-	/**
-	 * Get the number of calls from a site for a given client in a given period
+	 * Get the number of leads from a site for a given client in a given period
 	 * 
 	 * @access	private
 	 * @param	int site_id
@@ -318,8 +302,22 @@ class ConsolidatedReport extends AppModel
 	 * @param	string end_date
 	 * @return	int
 	 */
-	private function getCallCountBySiteForPeriod($site_id, $start_date, $end_date)
+	private function getLeadCountBySiteForPeriod($site_id, $start_date, $end_date)
 	{
+		// leads from leadgen
+		$sql = "
+			SELECT
+				count(1) as num_leads
+			FROM
+				userClientSpecialOffers
+			WHERE
+				clientId = {$this->client_id}
+				AND siteId = {$site_id}
+				AND created BETWEEN '{$start_date}' AND '{$end_date}'
+		";
+		$num_leads = $this->query($sql);
+
+		// leads from calls
 		$sql = "
 			SELECT
 				count(1) as num_calls
@@ -330,30 +328,11 @@ class ConsolidatedReport extends AppModel
 				AND site_id = {$site_id}
 				AND date BETWEEN '{$start_date}' AND '{$end_date}'
 		";
+		$num_calls = $this->query($sql);
 
-		$num_calls = $this->query($sql);
-		return $num_calls[0][0]['num_calls'];
+		return ($num_leads[0][0]['num_leads'] + $num_calls[0][0]['num_calls']);
 	}
-	
-	/**
-	 *
-	 */
-	private function getCallCountForPeriod($start_date, $end_date)
-	{
-		$sql = "
-			SELECT
-				count(1) as num_calls
-			FROM
-				client_phone_leads
-			WHERE
-				client_id = {$this->client_id}
-				AND date BETWEEN '{$start_date}' AND '{$end_date}'
-		";
-		
-		$num_calls = $this->query($sql);
-		return (is_null($num_calls[0][0]['num_calls'])) ? 0 : $num_calls[0][0]['num_calls'];
-	}
-	
+
 	/**
 	 *
 	 */
@@ -614,15 +593,20 @@ class ConsolidatedReport extends AppModel
 		
 		$call_details = $this->getCallDetails();
 		$booking_details = array_merge($this->getBookingDetails(1), $this->getBookingDetails(2), $this->getVacationistBookingDetails());
+		$lead_details = array_merge($this->getLeadDetailsBySiteId(1), $this->getLeadDetailsBySiteId(2));
+
 		uasort($booking_details, array('self', 'cmp_activity_dates'));
-		$contact_details = array_merge($booking_details, $call_details);
-		unset($booking_details, $call_details);
+		$contact_details = array_merge($booking_details, $call_details, $lead_details);
+		unset($booking_details, $call_details, $lead_details);
 
 		if ($this->validates()) {
 			return $contact_details;
 		}
 	}
-	
+
+	/**
+	 * 
+	 */
 	private function getCallDetails()
 	{
 		$call_details_raw = array();
@@ -860,6 +844,67 @@ class ConsolidatedReport extends AppModel
 	}
 
 	/**
+	 * Get lead generation data
+	 *
+	 * @return	array
+	 */
+	private function getLeadDetailsBySiteId($site_id)
+	{
+		$leadDetails = array();
+		$siteName = '';
+		$sql = "
+			SELECT
+				`UserClientSpecialOffer`.`created`,
+				`User`.`firstname`,
+				`User`.`lastname`,
+				`User`.`email`
+			FROM
+				`userClientSpecialOffers` `UserClientSpecialOffer`,
+				`user` `User`
+			WHERE
+				`User`.`userId` = `UserClientSpecialOffer`.`userId`
+				AND `UserClientSpecialOffer`.`clientId` = $this->client_id
+				AND `UserClientSpecialOffer`.`siteId` = $site_id
+				AND `UserClientSpecialOffer`.`created` BETWEEN '{$this->loa_start_date}' AND '{$this->month_end_date}'
+		";
+
+		switch($site_id) {
+			case 1: $siteName = 'Luxury Link'; break;
+			case 2: $siteName = 'Family Getaway'; break;
+			default: $siteName = 'Luxury Link'; break;
+		}
+
+		$leadDetailsRaw = $this->query($sql);
+		foreach($leadDetailsRaw as $key => $leadDetail) {
+			$leadDetails[] = $this->buildContactDetails(
+				'Lead',
+				$siteName,
+				date('Y-m-d', strtotime($leadDetail['UserClientSpecialOffer']['created'])),
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				$leadDetail['User']['firstname'],
+				$leadDetail['User']['lastname'],
+				$leadDetail['User']['email'],
+				'Y',
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null
+			);
+		}
+
+		return $leadDetails;
+	}
+
+	/**
 	 * Build contact details array
 	 * 
 	 * @access	private
@@ -909,9 +954,9 @@ class ConsolidatedReport extends AppModel
 			'Call Duration'				=> trim($call_duration),
 			'Booking Type'				=> trim($booking_type),
 			'Phone'						=> $phone,
-			'Firstname'					=> trim($firstname),
-			'Lastname'					=> trim($lastname),
-			'Email'						=> trim($email),
+			'Firstname'					=> trim(ucwords($firstname)),
+			'Lastname'					=> trim(ucwords($lastname)),
+			'Email'						=> trim(strtolower($email)),
 			'Opt-in'					=> trim($optin),
 			'Address'					=> trim($address),
 			'City'						=> trim($city),

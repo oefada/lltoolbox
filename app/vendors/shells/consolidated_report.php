@@ -54,7 +54,7 @@ class ConsolidatedReportShell extends Shell {
 		$this->isProduction = isset($this->params['production']) ? true : false;
 		
 		// Report initialization variables
-		$template = 'consolidated_report_revision-10.xlsx';
+		$template = 'consolidated_report_revision-11.xlsx';
 		
 		$report_date = isset($this->params['report_date']) ? $this->params['report_date'] : null;		
 		$client_id = isset($this->params['client_id']) ? $this->params['client_id'] : null;
@@ -166,8 +166,16 @@ class ConsolidatedReportShell extends Shell {
 	public function log($message)
 	{
 		parent::log($message, self::$logfile);
+		echo date('Y-m-d H:i:s') . ' - ' . $message . "\n";
 	}
-	
+
+	/**
+	 * Overloading parent::welcome to do nothing
+	 */
+	public function _welcome() {
+		// do nothing
+	}
+
 	/**
 	 * Email the generated report
 	 *
