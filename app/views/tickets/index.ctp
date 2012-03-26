@@ -399,7 +399,7 @@ foreach ($tickets as $ticket):
 
 			<?php endforeach; ?>
 			<?php endif; ?>
-			<?php echo $ticket['Ticket']['ticketNotes']; ?>
+			<?php echo str_replace("\n",'<br/>',$ticket['Ticket']['ticketNotes']); ?>
 		</td>
 		<td>
 		<?

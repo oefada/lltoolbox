@@ -172,7 +172,7 @@ $this->searchController = 'Tickets';
 
 				<?php endforeach; ?>
 				<?php endif; ?>
-				<?php echo $ticket['Ticket']['ticketNotes']; ?></td>
+				<?php echo str_replace("\n",'<br/>',$ticket['Ticket']['ticketNotes']); ?></td>
 			</tr>
 		</table>
 	</div>
