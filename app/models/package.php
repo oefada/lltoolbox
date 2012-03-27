@@ -354,7 +354,7 @@ class Package extends AppModel {
                         $historyStr = "{$historyDate} - {$update[key($update)]['samaccountname']} -- Created";
                         break;
                     case 'edit':
-					
+						$updateStr = '';
 						switch ($update[key($update)]['model']) {
 							case 'Package':
 								// edit packageSatusId
