@@ -14,8 +14,9 @@ class PaymentDetailsController extends AppController {
 
 	function beforeFilter() {
 		parent::beforeFilter();
-		
-		$currentUser = $this->LdapAuth->user();		
+
+		$currentUser = $this->LdapAuth->user();
+		$this->canSave = false;
 		if (in_array('Accounting',$currentUser['LdapUser']['groups']) || in_array('concierge',$currentUser['LdapUser']['groups']) || in_array('Geeks',$currentUser['LdapUser']['groups'])) {
 			$this->canSave = true;
 		}
