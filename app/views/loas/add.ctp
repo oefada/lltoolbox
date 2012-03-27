@@ -68,6 +68,18 @@ $this->set('clientId', $this->data['Loa']['clientId']);
 
 <script type="text/javascript">
 
+jQuery(document).ready(function() {
+	jQuery("#LoaAddForm").submit(function(){
+		if (jQuery("#LoaSitesLuxuryLink").attr('checked')==false && jQuery("#LoaSitesFamily").attr('checked')==false){
+			alert("You must check off which site(s) this is for.");
+			return false;
+		}else{
+			return true;
+		}
+	});
+});
+
+
 Event.observe('LoaLoaMembershipTypeId', 'change', toggle_fields);
 Event.observe(window, 'load', toggle_fields);
 function toggle_fields() {
