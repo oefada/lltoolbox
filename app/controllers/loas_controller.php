@@ -136,7 +136,9 @@ class LoasController extends AppController {
 		$this->Loa->recursive = 2;
 		if (empty($this->data)) {
 			$this->data = $this->Loa->read(null, $id);
-			usort($this->data['LoaItem'], array($this, 'sortLoaItemsByType'));
+			if ($this->data){
+				usort($this->data['LoaItem'], array($this, 'sortLoaItemsByType'));
+			}
 		}
 		$customerApprovalStatusIds = $this->Loa->LoaCustomerApprovalStatus->find('list');
 		$currencyIds = $this->Loa->Currency->find('list');
