@@ -15,6 +15,7 @@
 	<li><?=$html->link('Offer Search', $this->webroot . 'reports/offer_search')?></li>
 	<li><?=$html->link('Package Search', $this->webroot . 'reports/packages')?></li>
 	<li><?=$html->link('Promotions Report', $this->webroot . 'reports/promotions')?></li>
+	<li><?=$html->link('RAF Report', $this->webroot . 'reports/raf')?></li>
 	<li><?=$html->link('Remit Packages', $this->webroot . 'reports/remit');?></li>
 	<li><?=$html->link('Weekly Scorecard', $this->webroot . 'reports/weekly_scorecard')?></li>
 	<li><?=$html->link('Leads Report', $this->webroot . 'reports/leads')?></li>

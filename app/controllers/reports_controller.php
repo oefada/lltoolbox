@@ -4500,6 +4500,65 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		}
 	}
 
+	/* refer a friend report */
+	function raf()
+	{
+
+		if (isset($_POST['siteId']) && isset($_POST['data']['startDate']) && isset($_POST['data']['endDate'])) {
+			$this->loadModel('Client');
+			$siteId = $_POST['siteId'];
+			$startDate = $_POST['data']['startDate'];
+			$endDate = $_POST['data']['endDate'];
+			$resultArr = Array();
+			
+			/* can refactor all these queries */
+			$q = 'SELECT ur.referrerUserId AS c FROM userReferrals ur ';
+			$q .= 'WHERE ur.siteId = ' . $siteId . ' ';
+			$q .= 'AND ur.createdDt BETWEEN \'' . $startDate . '\' AND \'' . $endDate . '\' ';
+			$q .= 'GROUP BY ur.referrerUserId';
+			$r = $this->Client->query($q);
+			$resultArr['numReferrers'] = count($r);
+			
+			$q = 'SELECT ur.referredEmail AS c FROM userReferrals ur ';
+			$q .= 'WHERE ur.siteId = ' . $siteId . ' ';
+			$q .= 'AND ur.createdDt BETWEEN \'' . $startDate . '\' AND \'' . $endDate . '\' ';
+			$q .= 'GROUP BY ur.referredEmail';
+			$r = $this->Client->query($q);
+			$resultArr['numReferred'] = count($r);
+			
+			$q = 'SELECT ur.referredEmail AS c FROM userReferrals ur ';
+			$q .= 'WHERE ur.statusTypeId = 3 AND ur.siteId = ' . $siteId . ' ';
+			$q .= 'AND ur.createdDt BETWEEN \'' . $startDate . '\' AND \'' . $endDate . '\' ';
+			$r = $this->Client->query($q);
+			$resultArr['numWithPurchase'] = count($r);
+			
+			$q = 'SELECT ur.referredEmail AS c FROM userReferrals ur ';
+			$q .= 'WHERE (ur.statusTypeId = 3 OR ur.statusTypeId = 2) AND ur.siteId = ' . $siteId . ' ';
+			$q .= 'AND ur.createdDt BETWEEN \'' . $startDate . '\' AND \'' . $endDate . '\' ';
+			$r = $this->Client->query($q);
+			$resultArr['referredCredit'] = 100 * count($r);
+			
+			$resultArr['referrerCredit'] = 100 * $resultArr['numWithPurchase'];
+			
+			$resultArr['avgInvitesSent'] = $resultArr['numReferred'] / $resultArr['numReferrers'];
+			$resultArr['avgInvitesComplete'] = count($r) / $resultArr['numReferrers'];
+			
+			$q = 'SELECT SUM(t.billingPrice) AS s, AVG(DATEDIFF(t.created, ur.createdDt)) AS a FROM userReferrals ur ';
+			$q .= 'LEFT JOIN ticket t ON (ur.referredEmail = t.userEmail1) ';
+			$q .= 'WHERE ur.statusTypeId = 3 AND ur.siteId = ' . $siteId . ' ';
+			$q .= 'AND ur.createdDt BETWEEN \'' . $startDate . '\' AND \'' . $endDate . '\' ';
+			$r = $this->Client->query($q);
+			$resultArr['totalSales'] = $r[0][0]['s'];
+			$resultArr['avgDays'] = $r[0][0]['a'];
+			
+			$this->set('siteId', $siteId);
+			$this->set('startDate', $startDate);
+			$this->set('endDate', $endDate);
+			$this->set('resultArr', $resultArr);
+		}
+
+	}
+	
 }
 
 class ReportsControllerFunctions
