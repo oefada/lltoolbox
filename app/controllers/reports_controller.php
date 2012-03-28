@@ -1,72 +1,86 @@
 <?
-class ReportsController extends AppController {
+class ReportsController extends AppController
+{
 
 	var $name = 'Reports';
-	var $uses = array('OfferType', 'PaymentDetail', 'PaymentType');
-	var $helpers = array('Pagination',"Utilities");
-	var $components = array('CarDataImporter', 'ArraySorter');
-	//TODO: Add sorting, speed up the sql by adding indexes or a loading splash page, double check accuracy of data
+	var $uses = array(
+		'OfferType',
+		'PaymentDetail',
+		'PaymentType'
+	);
+	var $helpers = array(
+		'Pagination',
+		"Utilities"
+	);
+	var $components = array(
+		'CarDataImporter',
+		'ArraySorter'
+	);
+	//TODO: Add sorting, speed up the sql by adding indexes or a loading splash page,
+	// double check accuracy of data
 
 	var $page;
 	var $limit;
 	var $perPage = 20;
 
-	function beforeFilter() {
+	function beforeFilter()
+	{
 
-
-	    parent::beforeFilter();
+		parent::beforeFilter();
 
 		if (isset($this->params['named']['cron']) && $this->params['action'] == 'weekly_scorecard') {
 			$this->LdapAuth->allow();
 		}
 
-	    $this->set('currentTab', 'reports');
+		$this->set('currentTab', 'reports');
 
-	    if (!empty($this->params['named']['filter'])) {
-	        $filter = urldecode($this->params['named']['filter']);
-	        $get    = @unserialize($filter);
+		if (!empty($this->params['named']['filter'])) {
+			$filter = urldecode($this->params['named']['filter']);
+			$get = @unserialize($filter);
 
-	        if ($get !== false) {
-	            $this->data = $get;
-	        }
-	    }
+			if ($get !== false) {
+				$this->data = $get;
+			}
+		}
 
-	    if (@$this->data['download']['csv'] == 1) {
-	        Configure::write('debug', '0');
-	        $this->data['paging']['disablePagination'] = 1;
+		if (@$this->data['download']['csv'] == 1) {
+			Configure::write('debug', '0');
+			$this->data['paging']['disablePagination'] = 1;
 
-            $this->viewPath .= '/csv';
-	        $this->layoutPath = 'csv';
-        }
+			$this->viewPath .= '/csv';
+			$this->layoutPath = 'csv';
+		}
 
-		if(@$this->data['paging']['disablePagination'] == 1) {
-            $this->page = 1;
-            $this->perPage = 9999;
-            $this->limit = 9999;
-						if ($this->layoutPath === 'csv') {
-							$this->limit = 1000000;
-						}
-        } elseif (!empty($this->params['named']['page'])) {
-                $this->page = $this->params['named']['page'];
-                $this->limit = (($this->page-1)*20).',20';
-        } else {
-            $this->page = 1;
-            $this->limit = 20;
-        }
+		if (@$this->data['paging']['disablePagination'] == 1) {
+			$this->page = 1;
+			$this->perPage = 9999;
+			$this->limit = 9999;
+			if ($this->layoutPath === 'csv') {
+				$this->limit = 1000000;
+			}
+		} elseif (!empty($this->params['named']['page'])) {
+			$this->page = $this->params['named']['page'];
+			$this->limit = (($this->page - 1) * 20) . ',20';
+		} else {
+			$this->page = 1;
+			$this->limit = 20;
+		}
 
-        //None of these reports need absolutely fresh data, so perform all queries during this session in
-        //no lock mode, to improve performance and not lock tables
-        $this->OfferType->query('SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;');
+		//None of these reports need absolutely fresh data, so perform all queries during
+		// this session in
+		//no lock mode, to improve performance and not lock tables
+		$this->OfferType->query('SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;');
 	}
 
-	function index() {
+	function index()
+	{
 	}
 
+	function active_loa_and_packages_check()
+	{
 
-    function active_loa_and_packages_check() {
-
-        // LL no package clients
-        $llsql = "SELECT results.* FROM (SELECT clientInfo.*, IFNULL(MAX(o.endDate), 0) AS llLastOffer
+		// LL no package clients
+		$llsql = "SELECT results.* FROM (SELECT clientInfo.*, IFNULL(MAX(o.endDate), 0) AS llLastOffer
                   FROM (
                       SELECT loaClients.*
                       FROM (
@@ -84,10 +98,10 @@ class ReportsController extends AppController {
                   LEFT JOIN offerLuxuryLink o USING(clientId)
                   GROUP BY clientInfo.loaId, clientInfo.clientId) results
                   ORDER BY managerUsername ASC,startDate ASC";
-        $llResults = $this->OfferType->query($llsql);
+		$llResults = $this->OfferType->query($llsql);
 
-        // FG no package clients
-        $fgsql = "SELECT results.* FROM (SELECT clientInfo.*, IFNULL(MAX(o.endDate), 0) AS fgLastOffer
+		// FG no package clients
+		$fgsql = "SELECT results.* FROM (SELECT clientInfo.*, IFNULL(MAX(o.endDate), 0) AS fgLastOffer
                   FROM (
                       SELECT loaClients.*
                       FROM (
@@ -105,162 +119,172 @@ class ReportsController extends AppController {
                   LEFT JOIN offerFamily o USING(clientId)
                   GROUP BY clientInfo.loaId, clientInfo.clientId) results
                   ORDER BY managerUsername ASC,startDate ASC";
-        $fgResults = $this->OfferType->query($fgsql);
+		$fgResults = $this->OfferType->query($fgsql);
 
-        // combine LL and FG
-        $loas = array();
-        $clients = array();
-        foreach ($llResults as $r) {
-            $loas[$r['results']['loaId']] = $r['results'];
-            $clients[] = $r['results']['clientId'];
-        }
-        foreach ($fgResults as $k=>$r) {
-            if (array_key_exists($r['results']['loaId'], $loas)) {
-            	$loas[$r['results']['loaId']]['fgLastOffer'] = $r['results']['fgLastOffer'];
-            } else {
-                $loas[$r['results']['loaId']] = $r['results'];
-            }
-            $clients[] = $r['results']['clientId'];
-        }
+		// combine LL and FG
+		$loas = array();
+		$clients = array();
+		foreach ($llResults as $r) {
+			$loas[$r['results']['loaId']] = $r['results'];
+			$clients[] = $r['results']['clientId'];
+		}
+		foreach ($fgResults as $k => $r) {
+			if (array_key_exists($r['results']['loaId'], $loas)) {
+				$loas[$r['results']['loaId']]['fgLastOffer'] = $r['results']['fgLastOffer'];
+			} else {
+				$loas[$r['results']['loaId']] = $r['results'];
+			}
+			$clients[] = $r['results']['clientId'];
+		}
 
-        // add destinations
-        $destsql = "SELECT results.* FROM (SELECT c.clientId, GROUP_CONCAT(d.destinationName SEPARATOR ' - ') AS destinations
+		// add destinations
+		$destsql = "SELECT results.* FROM (SELECT c.clientId, GROUP_CONCAT(d.destinationName SEPARATOR ' - ') AS destinations
                     FROM clientDestinationRel c
                     INNER JOIN destination d USING(destinationId)
                     WHERE c.clientId IN (" . implode(',', $clients) . ")
                     GROUP BY c.clientId) results";
-        $destResults = $this->OfferType->query($destsql);
-        $clientDestinations = array();
-        foreach ($destResults as $d) {
-            $clientDestinations[$d['results']['clientId']] = $d['results']['destinations'];
-        }
+		$destResults = $this->OfferType->query($destsql);
+		$clientDestinations = array();
+		foreach ($destResults as $d) {
+			$clientDestinations[$d['results']['clientId']] = $d['results']['destinations'];
+		}
 
-
-        // add ticket info
-        $ticketsql = "SELECT results.* FROM (SELECT loas.loaId, COUNT(*) AS ticketCount, SUM(billingPrice) AS grossRevenue
+		// add ticket info
+		$ticketsql = "SELECT results.* FROM (SELECT loas.loaId, COUNT(*) AS ticketCount, SUM(billingPrice) AS grossRevenue
                       FROM ticket t
                       INNER JOIN (SELECT DISTINCT loaId, packageId
                           FROM clientLoaPackageRel
                           WHERE loaId IN (" . implode(',', array_keys($loas)) . ")) loas USING(packageId)
                       WHERE t.ticketStatusId IN (3,4,5,6)
                       GROUP BY loas.loaId) results";
-        $ticketResults = $this->OfferType->query($ticketsql);
-        $loaTickets = array();
-        foreach ($ticketResults as $t) {
-            $loaTickets[$t['results']['loaId']] = $t['results'];
-        }
+		$ticketResults = $this->OfferType->query($ticketsql);
+		$loaTickets = array();
+		foreach ($ticketResults as $t) {
+			$loaTickets[$t['results']['loaId']] = $t['results'];
+		}
 
 		// loop through to set all required fields
-		foreach ($loas as $k=>$l) {
-            $loas[$k]['destinations'] = (isset($clientDestinations[$l['clientId']])) ? $clientDestinations[$l['clientId']] : '';;
-            $loas[$k]['startDate'] = date('m/d/Y', strtotime($l['startDate']));
-            $loas[$k]['endDate'] = date('m/d/Y', strtotime($l['endDate']));
-            $loas[$k]['startDateSort'] = date('Ymd', strtotime($l['startDate']));
-            $loas[$k]['endDateSort'] = date('Ymd', strtotime($l['endDate']));
+		foreach ($loas as $k => $l) {
+			$loas[$k]['destinations'] = (isset($clientDestinations[$l['clientId']])) ? $clientDestinations[$l['clientId']] : '';
+			;
+			$loas[$k]['startDate'] = date('m/d/Y', strtotime($l['startDate']));
+			$loas[$k]['endDate'] = date('m/d/Y', strtotime($l['endDate']));
+			$loas[$k]['startDateSort'] = date('Ymd', strtotime($l['startDate']));
+			$loas[$k]['endDateSort'] = date('Ymd', strtotime($l['endDate']));
 
-            // ll last package info
-            if (isset($l['llLastOffer'])) {
-            	if ($l['llLastOffer'] == '0' || strtotime($l['llLastOffer']) < strtotime($l['startDate'])) {
-                    $loas[$k]['llLastOffer'] = 'None Found';
-                    $loas[$k]['llLastOfferDays'] = '-';
-                    $loas[$k]['llLastOfferDaysSort'] = -1;
-            	} else {
-                    $loas[$k]['llLastOffer'] = date('m/d/Y', strtotime($l['llLastOffer']));
-                    $diff = abs(time() - strtotime($l['llLastOffer']));
-                    $loas[$k]['llLastOfferDays'] = intval($diff/86400);
-                    $loas[$k]['llLastOfferDaysSort'] = $loas[$k]['llLastOfferDays'];
-            	}
-            } else {
-                $loas[$k]['llLastOfferDays'] = null;
-                $loas[$k]['llLastOffer'] = null;
-                $loas[$k]['llLastOfferDaysSort'] = -2;
-            }
+			// ll last package info
+			if (isset($l['llLastOffer'])) {
+				if ($l['llLastOffer'] == '0' || strtotime($l['llLastOffer']) < strtotime($l['startDate'])) {
+					$loas[$k]['llLastOffer'] = 'None Found';
+					$loas[$k]['llLastOfferDays'] = '-';
+					$loas[$k]['llLastOfferDaysSort'] = -1;
+				} else {
+					$loas[$k]['llLastOffer'] = date('m/d/Y', strtotime($l['llLastOffer']));
+					$diff = abs(time() - strtotime($l['llLastOffer']));
+					$loas[$k]['llLastOfferDays'] = intval($diff / 86400);
+					$loas[$k]['llLastOfferDaysSort'] = $loas[$k]['llLastOfferDays'];
+				}
+			} else {
+				$loas[$k]['llLastOfferDays'] = null;
+				$loas[$k]['llLastOffer'] = null;
+				$loas[$k]['llLastOfferDaysSort'] = -2;
+			}
 
-            // fg last package info
-            if (isset($l['fgLastOffer'])) {
-            	if ($l['fgLastOffer'] == '0' || strtotime($l['fgLastOffer']) < strtotime($l['startDate'])) {
-                    $loas[$k]['fgLastOffer'] = 'None Found';
-                    $loas[$k]['fgLastOfferDays'] = '-';
-                    $loas[$k]['fgLastOfferDaysSort'] = -1;
-            	} else {
-                    $loas[$k]['fgLastOffer'] = date('m/d/Y', strtotime($l['fgLastOffer']));
-                    $diff = abs(time() - strtotime($l['fgLastOffer']));
-                    $loas[$k]['fgLastOfferDays'] = intval($diff/86400);
-                    $loas[$k]['fgLastOfferDaysSort'] = $loas[$k]['fgLastOfferDays'];
-            	}
-            } else {
-                $loas[$k]['fgLastOffer'] = null;
-                $loas[$k]['fgLastOfferDays'] = null;
-                $loas[$k]['fgLastOfferDaysSort'] = -2;
-            }
+			// fg last package info
+			if (isset($l['fgLastOffer'])) {
+				if ($l['fgLastOffer'] == '0' || strtotime($l['fgLastOffer']) < strtotime($l['startDate'])) {
+					$loas[$k]['fgLastOffer'] = 'None Found';
+					$loas[$k]['fgLastOfferDays'] = '-';
+					$loas[$k]['fgLastOfferDaysSort'] = -1;
+				} else {
+					$loas[$k]['fgLastOffer'] = date('m/d/Y', strtotime($l['fgLastOffer']));
+					$diff = abs(time() - strtotime($l['fgLastOffer']));
+					$loas[$k]['fgLastOfferDays'] = intval($diff / 86400);
+					$loas[$k]['fgLastOfferDaysSort'] = $loas[$k]['fgLastOfferDays'];
+				}
+			} else {
+				$loas[$k]['fgLastOffer'] = null;
+				$loas[$k]['fgLastOfferDays'] = null;
+				$loas[$k]['fgLastOfferDaysSort'] = -2;
+			}
 
-            // ticket info
-            if (isset($loaTickets[$l['loaId']])) {
-                $loas[$k]['ticketCount'] = $loaTickets[$l['loaId']]['ticketCount'];
-                $loas[$k]['grossRevenue'] = $loaTickets[$l['loaId']]['grossRevenue'];
-            } else {
-                $loas[$k]['ticketCount'] = 0;
-                $loas[$k]['grossRevenue'] = 0;
-            }
+			// ticket info
+			if (isset($loaTickets[$l['loaId']])) {
+				$loas[$k]['ticketCount'] = $loaTickets[$l['loaId']]['ticketCount'];
+				$loas[$k]['grossRevenue'] = $loaTickets[$l['loaId']]['grossRevenue'];
+			} else {
+				$loas[$k]['ticketCount'] = 0;
+				$loas[$k]['grossRevenue'] = 0;
+			}
 
-            // balance
-            if (in_array($l['loaMembershipTypeId'], array(1,2,4))) {
-                $loas[$k]['balance'] = '$' . number_format($l['membershipBalance'], 0);
-                $loas[$k]['balanceSort'] = intval($l['membershipBalance']);
-            } elseif ($l['loaMembershipTypeId'] == 3) {
-                $loas[$k]['balance'] = $l['membershipPackagesRemaining'] . ' pkg';
-                $loas[$k]['balanceSort'] = $l['membershipPackagesRemaining'] + 1000000;
-            } elseif ($l['loaMembershipTypeId'] == 5) {
-                $loas[$k]['balance'] = 'Barter';
-                $loas[$k]['balanceSort'] = -1;
-            } elseif ($l['loaMembershipTypeId'] == 6) {
-                $loas[$k]['balance'] = 'Wholesale';
-                $loas[$k]['balanceSort'] = -1;
-            }
+			// balance
+			if (in_array($l['loaMembershipTypeId'], array(
+				1,
+				2,
+				4
+			))) {
+				$loas[$k]['balance'] = '$' . number_format($l['membershipBalance'], 0);
+				$loas[$k]['balanceSort'] = intval($l['membershipBalance']);
+			} elseif ($l['loaMembershipTypeId'] == 3) {
+				$loas[$k]['balance'] = $l['membershipPackagesRemaining'] . ' pkg';
+				$loas[$k]['balanceSort'] = $l['membershipPackagesRemaining'] + 1000000;
+			} elseif ($l['loaMembershipTypeId'] == 5) {
+				$loas[$k]['balance'] = 'Barter';
+				$loas[$k]['balanceSort'] = -1;
+			} elseif ($l['loaMembershipTypeId'] == 6) {
+				$loas[$k]['balance'] = 'Wholesale';
+				$loas[$k]['balanceSort'] = -1;
+			}
 		}
 
 		// sorting
 		$sortKey = (isset($this->params['url']['sort'])) ? $this->params['url']['sort'] : 'llLastOfferDaysSort';
-        $reverseKeys = array('llLastOfferDaysSort', 'fgLastOfferDaysSort', 'ticketCount', 'grossRevenue', 'balanceSort');
-        if (in_array($sortKey, $reverseKeys)) {
-             $this->ArraySorter->aarsort($loas, $sortKey);
-        } else {
-             $this->ArraySorter->aasort($loas, $sortKey);
-        }
-        $this->set('results', $loas);
-        $this->set('sortKey', $sortKey);
+		$reverseKeys = array(
+			'llLastOfferDaysSort',
+			'fgLastOfferDaysSort',
+			'ticketCount',
+			'grossRevenue',
+			'balanceSort'
+		);
+		if (in_array($sortKey, $reverseKeys)) {
+			$this->ArraySorter->aarsort($loas, $sortKey);
+		} else {
+			$this->ArraySorter->aasort($loas, $sortKey);
+		}
+		$this->set('results', $loas);
+		$this->set('sortKey', $sortKey);
 
-        // csv version
-        if (isset($this->params['url']['csv'])) {
-            $this->viewPath .= '/csv';
-            $this->layoutPath = 'csv';
-        }
+		// csv version
+		if (isset($this->params['url']['csv'])) {
+			$this->viewPath .= '/csv';
+			$this->layoutPath = 'csv';
+		}
 
-    }
+	}
 
+	function offer_search()
+	{
+		if (isset($this->params['named']['offerId'])) {
+			$this->data['condition1']['field'] = 'Offer.offerId';
+			$this->data['condition1']['value'] = $this->params['named']['offerId'];
+		}
+		if (!empty($this->data)) {
+			$conditions = $this->_offer_search_build_conditions($this->data);
 
-	function offer_search() {
-	    if (isset($this->params['named']['offerId'])) {
-	        $this->data['condition1']['field'] = 'Offer.offerId';
-	        $this->data['condition1']['value'] = $this->params['named']['offerId'];
-	    }
-	    if (!empty($this->data)) {
-	        $conditions = $this->_offer_search_build_conditions($this->data);
+			if (!empty($this->params['named']['sortBy'])) {
+				$direction = (@$this->params['named']['sortDirection'] == 'DESC') ? 'DESC' : 'ASC';
+				$order = $this->params['named']['sortBy'] . ' ' . $direction;
 
-	        if (!empty($this->params['named']['sortBy'])) {
-	            $direction = (@$this->params['named']['sortDirection'] == 'DESC') ? 'DESC' : 'ASC';
-	            $order = $this->params['named']['sortBy'].' '.$direction;
+				$this->set('sortBy', $this->params['named']['sortBy']);
+				$this->set('sortDirection', $direction);
+			} else {
+				$order = 'Client.name';
 
-	            $this->set('sortBy', $this->params['named']['sortBy']);
-	            $this->set('sortDirection', $direction);
-	        } else {
-	            $order = 'Client.name';
+				$this->set('sortBy', 'Client.name');
+				$this->set('sortDirection', 'DESC');
+			}
 
-	            $this->set('sortBy', 'Client.name');
-    	        $this->set('sortDirection', 'DESC');
-	        }
-
-            $count = "SELECT COUNT(DISTINCT Offer.offerId) as numRecords
+			$count = "SELECT COUNT(DISTINCT Offer.offerId) as numRecords
 	                FROM offer AS Offer
 	                LEFT JOIN bid AS Bid ON (Bid.offerId = Offer.offerId)
 	                INNER JOIN schedulingInstance AS SchedulingInstance ON (SchedulingInstance.schedulingInstanceId = Offer.schedulingInstanceId)
@@ -275,11 +299,11 @@ class ReportsController extends AppController {
 	                LEFT JOIN client AS Client ON (Client.clientId = ClientLoaPackageRel.clientId)
 	                WHERE $conditions";
 
-	        $results = $this->OfferType->query($count);
-	        $numRecords = $results[0][0]['numRecords'];
-            $numPages = ceil($numRecords / $this->perPage);
+			$results = $this->OfferType->query($count);
+			$numRecords = $results[0][0]['numRecords'];
+			$numPages = ceil($numRecords / $this->perPage);
 
-	        $sql = "SELECT
+			$sql = "SELECT
 	                SchedulingInstance.schedulingInstanceId, (SchedulingInstance.endDate >= NOW()) AS offerStatus, SchedulingInstance.startDate, SchedulingInstance.endDate,
 	                Client.clientId, Client.name,
 	                OfferType.offerTypeId,
@@ -321,12 +345,12 @@ class ReportsController extends AppController {
 	                ORDER BY $order
 	                LIMIT $this->limit";
 
-	        $results = $this->OfferType->query($sql);
+			$results = $this->OfferType->query($sql);
 
-	        foreach ($results as $k => $v) {
-	            $results[$k][0]['lastInstance'] = 0;
+			foreach ($results as $k => $v) {
+				$results[$k][0]['lastInstance'] = 0;
 
-	            $futureInstances = $this->OfferType->query("SELECT schedulingInstanceId FROM schedulingInstance AS SchedulingInstance
+				$futureInstances = $this->OfferType->query("SELECT schedulingInstanceId FROM schedulingInstance AS SchedulingInstance
 	                                    INNER JOIN schedulingMaster AS SchedulingMaster USING(schedulingMasterId)
 	                                    INNER JOIN clientLoaPackageRel AS cl USING(packageId)
 	                                    INNER JOIN loa AS Loa USING(loaId)
@@ -334,7 +358,7 @@ class ReportsController extends AppController {
 	                                    AND SchedulingInstance.startDate > '{$v['SchedulingInstance']['endDate']}'
 	                                    AND SchedulingInstance.endDate <= '{$v['Loa']['endDate']}'");
 
-	            $last12IterationBids =  $this->OfferType->query("SELECT COUNT(Bid.bidId) AS numBids FROM bid AS Bid
+				$last12IterationBids = $this->OfferType->query("SELECT COUNT(Bid.bidId) AS numBids FROM bid AS Bid
 	                                                        INNER JOIN offer AS Offer USING(offerId)
 	                                                        INNER JOIN schedulingInstance AS SchedulingInstance USING(schedulingInstanceId)
                     	                                    INNER JOIN schedulingMaster AS SchedulingMaster USING(schedulingMasterId)
@@ -342,8 +366,8 @@ class ReportsController extends AppController {
                     	                                    WHERE cl.packageId = {$v['Package']['packageId']}
                     	                                    ORDER BY SchedulingInstance.endDate DESC LIMIT 12");
 
-	            if ($last12IterationBids[0][0]['numBids'] > 0) {
-	                $last8IterationBids =  $this->OfferType->query("SELECT COUNT(Bid.bidId) AS numBids FROM bid AS Bid
+				if ($last12IterationBids[0][0]['numBids'] > 0) {
+					$last8IterationBids = $this->OfferType->query("SELECT COUNT(Bid.bidId) AS numBids FROM bid AS Bid
     	                                                        INNER JOIN offer AS Offer USING(offerId)
     	                                                        INNER JOIN schedulingInstance AS SchedulingInstance USING(schedulingInstanceId)
                         	                                    INNER JOIN schedulingMaster AS SchedulingMaster USING(schedulingMasterId)
@@ -351,19 +375,19 @@ class ReportsController extends AppController {
                         	                                    WHERE cl.packageId = {$v['Package']['packageId']}
                         	                                    ORDER BY SchedulingInstance.endDate DESC LIMIT 8");
 
-                    if ($last8IterationBids[0][0]['numBids'] == 0) {
-                        $results[$k][0]['iterationBidFlag'] = '#ff0';
-                    }
+					if ($last8IterationBids[0][0]['numBids'] == 0) {
+						$results[$k][0]['iterationBidFlag'] = '#ff0';
+					}
 
-                    //Calculate number of packages sold for this loa
-                    $sql = "SELECT count(*) AS COUNT FROM ticket INNER JOIN paymentDetail pd ON (ticket.ticketId = pd.ticketId AND pd.isSuccessfulCharge = 1) INNER JOIN clientLoaPackageRel cl ON (ticket.packageId = cl.packageId) ";
-            		$sql.= "WHERE cl.loaId = {$v['Loa']['loaId']} AND ticket.ticketStatusId NOT IN (7,8)";
-            		$result = $this->OfferType->query($sql);
+					//Calculate number of packages sold for this loa
+					$sql = "SELECT count(*) AS COUNT FROM ticket INNER JOIN paymentDetail pd ON (ticket.ticketId = pd.ticketId AND pd.isSuccessfulCharge = 1) INNER JOIN clientLoaPackageRel cl ON (ticket.packageId = cl.packageId) ";
+					$sql .= "WHERE cl.loaId = {$v['Loa']['loaId']} AND ticket.ticketStatusId NOT IN (7,8)";
+					$result = $this->OfferType->query($sql);
 
-            		$numPackagesSold = $result[0][0]['COUNT'];
+					$numPackagesSold = $result[0][0]['COUNT'];
 
-                    //Get all live offers for this LOA
-                    $liveOffers = $this->OfferType->query("SELECT OfferLive.offerTypeId, OfferLive.openingBid, OfferLive.buyNowPrice, ExpirationCriteria.expirationCriteriaId,
+					//Get all live offers for this LOA
+					$liveOffers = $this->OfferType->query("SELECT OfferLive.offerTypeId, OfferLive.openingBid, OfferLive.buyNowPrice, ExpirationCriteria.expirationCriteriaId,
                                                                     Loa.membershipBalance, Loa.numberPackagesRemaining, COUNT(Bid.bidId) as numBids
                                                                     FROM offerLuxuryLink AS OfferLive
                                                                     LEFT JOIN bid AS Bid USING(offerId)
@@ -374,182 +398,186 @@ class ReportsController extends AppController {
                                                                     WHERE Loa.loaId = {$v['Loa']['loaId']} AND OfferLive.isClosed = 0
                                                                     GROUP BY Loa.loaId");
 
-                    $priceSum           = 0;
+					$priceSum = 0;
 
-                    //calculate loa balance flags
-                    foreach ($liveOffers as $k2 => $v2):
-                        $currentPrice = 0;
+					//calculate loa balance flags
+					foreach ($liveOffers as $k2 => $v2) :
+						$currentPrice = 0;
 
-                        //sum the opening bid or buy now price
-                        if (in_array($v2['OfferLive']['offerTypeId'], unserialize(OFFER_TYPES_AUCTION))) {
-                            $currentPrice = $v2['OfferLive']['openingBid'];
-                            $priceSum += $v2['OfferLive']['openingBid'];
-                        } elseif (in_array($v2['OfferLive']['offerTypeId'], unserialize(OFFER_TYPES_FIXED_PRICED))) {
-                            $currentPrice = $v2['OfferLive']['openingBid'];
-                            $priceSum += $v2['OfferLive']['buyNowPrice'];
-                        }
+						//sum the opening bid or buy now price
+						if (in_array($v2['OfferLive']['offerTypeId'], unserialize(OFFER_TYPES_AUCTION))) {
+							$currentPrice = $v2['OfferLive']['openingBid'];
+							$priceSum += $v2['OfferLive']['openingBid'];
+						} elseif (in_array($v2['OfferLive']['offerTypeId'], unserialize(OFFER_TYPES_FIXED_PRICED))) {
+							$currentPrice = $v2['OfferLive']['openingBid'];
+							$priceSum += $v2['OfferLive']['buyNowPrice'];
+						}
 
-                        //check balance (keep) status and flag
-                        if ($v2['ExpirationCriteria']['expirationCriteriaId'] == 1 && $v2['Loa']['membershipBalance'] - $currentPrice <= 500) {
-                            if ($v2[0]['numBids'] > 0) {
-                                $results[$k][0]['loaBalanceFlag'] = 'darkred';
-                            } else {
-                                $results[$k][0]['loaBalanceFlag'] = 'orange';
-                            }
-                            break;
+						//check balance (keep) status and flag
+						if ($v2['ExpirationCriteria']['expirationCriteriaId'] == 1 && $v2['Loa']['membershipBalance'] - $currentPrice <= 500) {
+							if ($v2[0]['numBids'] > 0) {
+								$results[$k][0]['loaBalanceFlag'] = 'darkred';
+							} else {
+								$results[$k][0]['loaBalanceFlag'] = 'orange';
+							}
+							break;
 
-                        //check loa number packages and flag red if there's already a bid
-                        } elseif ($v2['ExpirationCriteria']['expirationCriteriaId'] == 4 && $v2[0]['numBids'] > 0 && $v2['Loa']['loaNumberPackages'] - $numPackagesSold <= 1) {
-                            $results[$k][0]['loaBalanceFlag'] = 'darkred';
-                            break;
-                        }
-                    endforeach;
+							//check loa number packages and flag red if there's already a bid
+						} elseif ($v2['ExpirationCriteria']['expirationCriteriaId'] == 4 && $v2[0]['numBids'] > 0 && $v2['Loa']['loaNumberPackages'] - $numPackagesSold <= 1) {
+							$results[$k][0]['loaBalanceFlag'] = 'darkred';
+							break;
+						}
+					endforeach;
 
-                    //do the same check but on the sum now
-                    if ($liveOffers[0]['ExpirationCriteria']['expirationCriteriaId'] == 1 && $liveOffers[0]['Loa']['membershipBalance'] - $priceSum <= 500) {
-                        $results[$k][0]['loaBalanceFlag'] = 'yellow';
-                    } elseif ($liveOffers[0]['ExpirationCriteria']['expirationCriteriaId'] == 4
-                                && $liveOffers[0]['Loa']['loaNumberPackages'] - $numPackagesSold - count($liveOffers) <= 2) {
-                        $results[$k][0]['loaBalanceFlag'] = 'orange';
-                    }
-	            } else {
-	                $results[$k][0]['iterationBidFlag'] = 'darkred';
-	            }
+					//do the same check but on the sum now
+					if ($liveOffers[0]['ExpirationCriteria']['expirationCriteriaId'] == 1 && $liveOffers[0]['Loa']['membershipBalance'] - $priceSum <= 500) {
+						$results[$k][0]['loaBalanceFlag'] = 'yellow';
+					} elseif ($liveOffers[0]['ExpirationCriteria']['expirationCriteriaId'] == 4 && $liveOffers[0]['Loa']['loaNumberPackages'] - $numPackagesSold - count($liveOffers) <= 2) {
+						$results[$k][0]['loaBalanceFlag'] = 'orange';
+					}
+				} else {
+					$results[$k][0]['iterationBidFlag'] = 'darkred';
+				}
 
-	            if (empty($futureInstances)) {
-	                $results[$k][0]['lastInstance'] = 1;
-	            }
-	        }
+				if (empty($futureInstances)) {
+					$results[$k][0]['lastInstance'] = 1;
+				}
+			}
 
-            $this->set('currentPage', $this->page);
-            $this->set('numRecords', $numRecords);
-            $this->set('numPages', $numPages);
-            $this->set('data', $this->data);
-	        $this->set('results', $results);
-	        $this->set('serializedFormInput', serialize($this->data));
-	    }
+			$this->set('currentPage', $this->page);
+			$this->set('numRecords', $numRecords);
+			$this->set('numPages', $numPages);
+			$this->set('data', $this->data);
+			$this->set('results', $results);
+			$this->set('serializedFormInput', serialize($this->data));
+		}
 
-	    $condition1Options = array(
-	                        'SchedulingMaster.packageId' => 'Package ID',
-	                        'Offer.offerId' => 'Offer ID',
-	                        'Client.name' => 'Client Name',
-	                        'Client.managerUsername' => 'Manager Username',
-	                        'Package.packageName' => 'Offer Title'
-	                        );
+		$condition1Options = array(
+			'SchedulingMaster.packageId' => 'Package ID',
+			'Offer.offerId' => 'Offer ID',
+			'Client.name' => 'Client Name',
+			'Client.managerUsername' => 'Manager Username',
+			'Package.packageName' => 'Offer Title'
+		);
 
-	    $condition3Options = array(
-	                        'SchedulingInstance.liveDuring' => 'Live During Date Range',
-	                        'SchedulingInstance.startDate' => 'Open Date',
-	                        'SchedulingInstance.endDate' => 'Close Date'
-	                        );
+		$condition3Options = array(
+			'SchedulingInstance.liveDuring' => 'Live During Date Range',
+			'SchedulingInstance.startDate' => 'Open Date',
+			'SchedulingInstance.endDate' => 'Close Date'
+		);
 
-	    $condition4Options = $this->OfferType->find('list');
-	    $this->set(compact('condition1Options', 'condition3Options', 'condition4Options'));
+		$condition4Options = $this->OfferType->find('list');
+		$this->set(compact('condition1Options', 'condition3Options', 'condition4Options'));
 	}
-
 
 	//TODO: take out whatever isn't report specific and put into its own method
-	function _offer_search_build_conditions($data) {
-	    $conditions = array();
-	    foreach ($data as $k => $ca) {
-	        if (isset($ca['value']['between'])) {
-                $betweenCondition = $ca['value']['between'];
-            } else {
-                $betweenCondition = false;
-            }
+	function _offer_search_build_conditions($data)
+	{
+		$conditions = array();
+		foreach ($data as $k => $ca) {
+			if (isset($ca['value']['between'])) {
+				$betweenCondition = $ca['value']['between'];
+			} else {
+				$betweenCondition = false;
+			}
 
-            /* Check if the conditions have valid data and can be used in a where clause */
-	        if (empty($ca['field']) ||
-	            empty($ca['value'])) {
-	                continue;                               //skip if no valid data found
-	            }
+			/* Check if the conditions have valid data and can be used in a where clause */
+			if (empty($ca['field']) || empty($ca['value'])) {
+				continue;
+				//skip if no valid data found
+			}
 
-            /* If we got this far then that means we have adequate data for a where clause */
-            if (is_array($betweenCondition)) {              //check for a condition eligible for BETWEEN
-                $firstValue = array_shift($betweenCondition);
-                $secondValue = array_shift($betweenCondition);
+			/* If we got this far then that means we have adequate data for a where clause */
+			if (is_array($betweenCondition)) {//check for a condition eligible for BETWEEN
+				$firstValue = array_shift($betweenCondition);
+				$secondValue = array_shift($betweenCondition);
 
-                if (strlen($firstValue) == 0) {
-                    $firstValue = NULL;
-                }
+				if (strlen($firstValue) == 0) {
+					$firstValue = NULL;
+				}
 
-                if (strlen($secondValue) == 0) {
-                    $secondValue = NULL;
-                }
+				if (strlen($secondValue) == 0) {
+					$secondValue = NULL;
+				}
 
-                $betweenCondition = true;
-                if (!strlen($firstValue)  && !strlen($secondValue)) {   //if both between values were ommited, it's invalid
-                    continue;
-                }
-            } else {
-                unset($firstValue);
-                unset($secondValue);
-                $betweenCondition = false;
-            }
+				$betweenCondition = true;
+				if (!strlen($firstValue) && !strlen($secondValue)) {//if both between values were
+					// ommited, it's invalid
+					continue;
+				}
+			} else {
+				unset($firstValue);
+				unset($secondValue);
+				$betweenCondition = false;
+			}
 
-	        if ($betweenCondition):                                    //generate valid SQL for a between condition
-	            if (NULL !== $firstValue && NULL !== $secondValue) {    //if both values were entered, it's a between
-	                if($ca['field'] == 'SchedulingInstance.liveDuring') {
+			if ($betweenCondition) ://generate valid SQL for a between condition
+				if (NULL !== $firstValue && NULL !== $secondValue) {//if both values were
+					// entered, it's a between
+					if ($ca['field'] == 'SchedulingInstance.liveDuring') {
 						$liveDuringCondition = "(SchedulingInstance.startDate BETWEEN '$firstValue' AND '$secondValue' + INTERVAL 1 DAY";
-			            $liveDuringCondition .= " OR SchedulingInstance.endDate BETWEEN '$firstValue' AND '$secondValue' + INTERVAL 1 DAY";
-			            $liveDuringCondition .= " OR (SchedulingInstance.startDate <= '$firstValue' AND SchedulingInstance.endDate >= '$secondValue'))";
+						$liveDuringCondition .= " OR SchedulingInstance.endDate BETWEEN '$firstValue' AND '$secondValue' + INTERVAL 1 DAY";
+						$liveDuringCondition .= " OR (SchedulingInstance.startDate <= '$firstValue' AND SchedulingInstance.endDate >= '$secondValue'))";
 
-	                    $conditions[$k] = $liveDuringCondition;
-	                } else if($ca['field'] == 'SchedulingInstance.startDate') {
-	                    $conditions[$k] = "SchedulingInstance.startDate >= '$firstValue' AND SchedulingInstance.startDate <= '$secondValue' + INTERVAL 1 DAY";
-	                } else if($ca['field'] == 'SchedulingInstance.endDate') {
-                        $conditions[$k] = "SchedulingInstance.endDate >= '$firstValue' AND SchedulingInstance.endDate <= '$secondValue' + INTERVAL 1 DAY";
-    	            } else {
-    	                $conditions[$k] =   $ca['field'].' BETWEEN '."'{$firstValue}'".' AND '."'{$secondValue}'";
-	                }
-	            } else {                                                //if only one value was entered, it's not a between
-	                $conditions[$k] =   $ca['field'].' = '."'{$firstValue}'";
-	            }
+						$conditions[$k] = $liveDuringCondition;
+					} else if ($ca['field'] == 'SchedulingInstance.startDate') {
+						$conditions[$k] = "SchedulingInstance.startDate >= '$firstValue' AND SchedulingInstance.startDate <= '$secondValue' + INTERVAL 1 DAY";
+					} else if ($ca['field'] == 'SchedulingInstance.endDate') {
+						$conditions[$k] = "SchedulingInstance.endDate >= '$firstValue' AND SchedulingInstance.endDate <= '$secondValue' + INTERVAL 1 DAY";
+					} else {
+						$conditions[$k] = $ca['field'] . ' BETWEEN ' . "'{$firstValue}'" . ' AND ' . "'{$secondValue}'";
+					}
+				} else {//if only one value was entered, it's not a between
+					$conditions[$k] = $ca['field'] . ' = ' . "'{$firstValue}'";
+				}
+			else :
+				if (is_array($ca['value']) || ($ca['field'] == 'ExpirationCriteria.expirationCriteriaId' && $ca['value'][0] == 'keep')) {
 
-	        else:
-	            if(is_array($ca['value']) || ($ca['field'] == 'ExpirationCriteria.expirationCriteriaId' && $ca['value'][0] == 'keep')) {
+					//override for expiration criteria type keep
+					if ($ca['field'] == 'ExpirationCriteria.expirationCriteriaId' && $ca['value'][0] == 'keep') {
+						$values = array(
+							1,
+							4
+						);
+					} else {
+						foreach ($ca['value'] as $value) {
+							$values[] = "'{$value}'";
+							//wrap in single quotes
+						}
+					}
+					$conditions[$k] = $ca['field'] . ' IN(' . implode(',', $values) . ')';
+				} else if ($ca['field'] == 'Package.packageName') {
+					$conditions[$k] = "MATCH({$ca['field']}) AGAINST('{$ca['value']}' IN BOOLEAN MODE)";
+				} else if ($ca['field'] == 'Client.name') {
+					$conditions[$k] = "{$ca['field']} LIKE '%{$ca['value']}%'";
+				} else {
+					$conditions[$k] = $ca['field'] . ' = ' . "'{$ca['value']}'";
+				}
 
-
-                    //override for expiration criteria type keep
-                    if ($ca['field'] == 'ExpirationCriteria.expirationCriteriaId' && $ca['value'][0] == 'keep') {
-                        $values = array(1, 4);
-                    } else {
-                        foreach ($ca['value'] as $value) {
-                            $values[] = "'{$value}'";  //wrap in single quotes
-                        }
-                    }
-                    $conditions[$k] =   $ca['field'].' IN('.implode(',', $values).')';
-                }else if ($ca['field'] == 'Package.packageName') {
-	                $conditions[$k] =   "MATCH({$ca['field']}) AGAINST('{$ca['value']}' IN BOOLEAN MODE)";
-	            } else if ($ca['field'] == 'Client.name') {
-	                $conditions[$k] =   "{$ca['field']} LIKE '%{$ca['value']}%'";
-	            } else {
-	               $conditions[$k] =   $ca['field'].' = '."'{$ca['value']}'";
-	            }
-
-	        endif; //end generate SQL for between condition
-	    }
-	    return implode($conditions, ' AND ');
+			endif; //end generate SQL for between condition
+		}
+		return implode($conditions, ' AND ');
 	}
 
-	function bids() {
-	    if (!empty($this->data)) {
-	        $conditions = $this->_bids_build_conditions($this->data);
+	function bids()
+	{
+		if (!empty($this->data)) {
+			$conditions = $this->_bids_build_conditions($this->data);
 
-	        if (!empty($this->params['named']['sortBy'])) {
-	            $direction = (@$this->params['named']['sortDirection'] == 'DESC') ? 'DESC' : 'ASC';
-	            $order = $this->params['named']['sortBy'].' '.$direction;
+			if (!empty($this->params['named']['sortBy'])) {
+				$direction = (@$this->params['named']['sortDirection'] == 'DESC') ? 'DESC' : 'ASC';
+				$order = $this->params['named']['sortBy'] . ' ' . $direction;
 
-	            $this->set('sortBy', $this->params['named']['sortBy']);
-	            $this->set('sortDirection', $direction);
-	        } else {
-	            $order = 'Offer.offerId ASC';
+				$this->set('sortBy', $this->params['named']['sortBy']);
+				$this->set('sortDirection', $direction);
+			} else {
+				$order = 'Offer.offerId ASC';
 
-	            $this->set('sortBy', 'Offer.offerId');
-    	        $this->set('sortDirection', 'ASC');
-	        }
+				$this->set('sortBy', 'Offer.offerId');
+				$this->set('sortDirection', 'ASC');
+			}
 
-        $count = "    SELECT
+			$count = "    SELECT
                         Offer.offerId
                         FROM offer AS Offer
                         LEFT JOIN ticket AS Ticket ON (Ticket.offerId = Offer.offerId)
@@ -564,13 +592,13 @@ class ReportsController extends AppController {
                         INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Package.packageId)
                         INNER JOIN client AS Client ON (Client.clientId = ClientLoaPackageRel.clientId)
                     WHERE $conditions
-                    GROUP BY Offer.offerId, Client.clientId LIMIT ".$this->limit;
+                    GROUP BY Offer.offerId, Client.clientId LIMIT " . $this->limit;
 
-	        $results = $this->OfferType->query($count);
-	        $numRecords = count($results);
-            $numPages = ceil($numRecords / $this->perPage);
+			$results = $this->OfferType->query($count);
+			$numRecords = count($results);
+			$numPages = ceil($numRecords / $this->perPage);
 
-	        $sql = "SELECT
+			$sql = "SELECT
                             Offer.offerId,
                         	GROUP_CONCAT(Client.name) as clientNames,
                         	Track.expirationCriteriaId,
@@ -615,121 +643,125 @@ class ReportsController extends AppController {
                     ORDER BY $order
 	                LIMIT $this->limit";
 
-	        $results = $this->OfferType->query($sql);
+			$results = $this->OfferType->query($sql);
 
-            $this->set('currentPage', $this->page);
-            $this->set('numRecords', $numRecords);
-            $this->set('numPages', $numPages);
-            $this->set('data', $this->data);
-	        $this->set('results', $results);
-	        $this->set('serializedFormInput', serialize($this->data));
-	    }
+			$this->set('currentPage', $this->page);
+			$this->set('numRecords', $numRecords);
+			$this->set('numPages', $numPages);
+			$this->set('data', $this->data);
+			$this->set('results', $results);
+			$this->set('serializedFormInput', serialize($this->data));
+		}
 
-	    $condition1Options = array(
-	                        'SchedulingMaster.packageId' => 'Package ID',
-	                        'Offer.offerId' => 'Offer ID',
-	                        'Client.name' => 'Client Name',
-	                        'Package.packageName' => 'Offer Title'
-	                        );
+		$condition1Options = array(
+			'SchedulingMaster.packageId' => 'Package ID',
+			'Offer.offerId' => 'Offer ID',
+			'Client.name' => 'Client Name',
+			'Package.packageName' => 'Offer Title'
+		);
 
-	    $condition3Options = array(
-	                        'SchedulingInstance.liveDuring' => 'Live During Date Range',
-	                        'SchedulingInstance.startDate' => 'Open Date',
-	                        'SchedulingInstance.endDate' => 'Close Date'
-	                        );
+		$condition3Options = array(
+			'SchedulingInstance.liveDuring' => 'Live During Date Range',
+			'SchedulingInstance.startDate' => 'Open Date',
+			'SchedulingInstance.endDate' => 'Close Date'
+		);
 
-	    $condition4Options = $this->OfferType->find('list');
-	    $this->set(compact('condition1Options', 'condition3Options', 'condition4Options'));
+		$condition4Options = $this->OfferType->find('list');
+		$this->set(compact('condition1Options', 'condition3Options', 'condition4Options'));
 	}
 
-	function _bids_build_conditions($data) {
-	    $conditions = array();
-	    foreach ($data as $k => $ca) {
-	        if (isset($ca['value']['between'])) {
-                $betweenCondition = $ca['value']['between'];
-            } else {
-                $betweenCondition = false;
-            }
+	function _bids_build_conditions($data)
+	{
+		$conditions = array();
+		foreach ($data as $k => $ca) {
+			if (isset($ca['value']['between'])) {
+				$betweenCondition = $ca['value']['between'];
+			} else {
+				$betweenCondition = false;
+			}
 
-            /* Check if the conditions have valid data and can be used in a where clause */
-	        if (empty($ca['field']) ||
-	            empty($ca['value'])) {
-	                continue;                               //skip if no valid data found
-	            }
+			/* Check if the conditions have valid data and can be used in a where clause */
+			if (empty($ca['field']) || empty($ca['value'])) {
+				continue;
+				//skip if no valid data found
+			}
 
-            /* If we got this far then that means we have adequate data for a where clause */
-            if (is_array($betweenCondition)) {              //check for a condition eligible for BETWEEN
-                $firstValue = array_shift($betweenCondition);
-                $secondValue = array_shift($betweenCondition);
+			/* If we got this far then that means we have adequate data for a where clause */
+			if (is_array($betweenCondition)) {//check for a condition eligible for BETWEEN
+				$firstValue = array_shift($betweenCondition);
+				$secondValue = array_shift($betweenCondition);
 
-                if (strlen($firstValue) == 0) {
-                    $firstValue = NULL;
-                }
+				if (strlen($firstValue) == 0) {
+					$firstValue = NULL;
+				}
 
-                if (strlen($secondValue) == 0) {
-                    $secondValue = NULL;
-                }
-                $betweenCondition = true;
-                if (!strlen($firstValue)  && !strlen($secondValue)) {   //if both between values were ommited, it's invalid
-                    continue;
-                }
-            } else {
-                unset($firstValue);
-                unset($secondValue);
-                $betweenCondition = false;
-            }
+				if (strlen($secondValue) == 0) {
+					$secondValue = NULL;
+				}
+				$betweenCondition = true;
+				if (!strlen($firstValue) && !strlen($secondValue)) {//if both between values were
+					// ommited, it's invalid
+					continue;
+				}
+			} else {
+				unset($firstValue);
+				unset($secondValue);
+				$betweenCondition = false;
+			}
 
-	        if ($betweenCondition):                                    //generate valid SQL for a between condition
-	            if (NULL !== $firstValue && NULL !== $secondValue) {    //if both values were entered, it's a between
-	                $conditions[$k] =   $ca['field'].' BETWEEN '."'{$firstValue}'".' AND '."'{$secondValue}'";
-	            } else {                                                //if only one value was entered, it's not a between
-	                $conditions[$k] =   $ca['field'].' = '."'{$firstValue}'";
-	            }
+			if ($betweenCondition) ://generate valid SQL for a between condition
+				if (NULL !== $firstValue && NULL !== $secondValue) {//if both values were
+					// entered, it's a between
+					$conditions[$k] = $ca['field'] . ' BETWEEN ' . "'{$firstValue}'" . ' AND ' . "'{$secondValue}'";
+				} else {//if only one value was entered, it's not a between
+					$conditions[$k] = $ca['field'] . ' = ' . "'{$firstValue}'";
+				}
+			else :
+				if (is_array($ca['value'])) {
+					//wrap in single quotes
+					foreach ($ca['value'] as $value) {
+						$values[] = "'{$value}'";
+					}
+					$conditions[$k] = $ca['field'] . ' IN(' . implode(',', $values) . ')';
+				} else {
+					$conditions[$k] = $ca['field'] . ' = ' . "'{$ca['value']}'";
+				}
 
-	        else:
-	            if(is_array($ca['value'])) {
-	                //wrap in single quotes
-	                foreach ($ca['value'] as $value) {
-	                    $values[] = "'{$value}'";
-	                }
-	                $conditions[$k] =   $ca['field'].' IN('.implode(',', $values).')';
-	            } else {
-	                $conditions[$k] =   $ca['field'].' = '."'{$ca['value']}'";
-	            }
+			endif; //end generate SQL for between condition
 
-	        endif; //end generate SQL for between condition
+			//for live during we need to tweak the condition a little bit
+			if ($ca['field'] == 'SchedulingInstance.liveDuring') {
+				$originalCondition = $conditions[$k];
+				$conditions[$k] = str_replace('liveDuring', 'startDate', $originalCondition);
+				$conditions[$k] .= ' AND ';
+				$conditions[$k] .= str_replace('liveDuring', 'endDate', $originalCondition);
+			}
+		}
 
-	        //for live during we need to tweak the condition a little bit
-	        if ($ca['field'] == 'SchedulingInstance.liveDuring') {
-	            $originalCondition = $conditions[$k];
-	            $conditions[$k] = str_replace('liveDuring', 'startDate', $originalCondition);
-	            $conditions[$k] .= ' AND ';
-	            $conditions[$k] .= str_replace('liveDuring', 'endDate', $originalCondition);
-	        }
-	    }
-
-	    $conditions[] = 'SchedulingMaster.offerTypeId IN (1,2,6)';  //filter only auction types
-	    return implode($conditions, ' AND ');
+		$conditions[] = 'SchedulingMaster.offerTypeId IN (1,2,6)';
+		//filter only auction types
+		return implode($conditions, ' AND ');
 	}
 
-	function fixed_price() {
-	    if (!empty($this->data)) {
-	        $conditions = $this->_fixed_price_build_conditions($this->data);
+	function fixed_price()
+	{
+		if (!empty($this->data)) {
+			$conditions = $this->_fixed_price_build_conditions($this->data);
 
-	        if (!empty($this->params['named']['sortBy'])) {
-	            $direction = (@$this->params['named']['sortDirection'] == 'DESC') ? 'DESC' : 'ASC';
-	            $order = $this->params['named']['sortBy'].' '.$direction;
+			if (!empty($this->params['named']['sortBy'])) {
+				$direction = (@$this->params['named']['sortDirection'] == 'DESC') ? 'DESC' : 'ASC';
+				$order = $this->params['named']['sortBy'] . ' ' . $direction;
 
-	            $this->set('sortBy', $this->params['named']['sortBy']);
-	            $this->set('sortDirection', $direction);
-	        } else {
-	            $order = 'Offer.offerId';
+				$this->set('sortBy', $this->params['named']['sortBy']);
+				$this->set('sortDirection', $direction);
+			} else {
+				$order = 'Offer.offerId';
 
-	            $this->set('sortBy', 'Offer.offerId');
-    	        $this->set('sortDirection', 'DESC');
-	        }
+				$this->set('sortBy', 'Offer.offerId');
+				$this->set('sortDirection', 'DESC');
+			}
 
-            $count = "SELECT COUNT(DISTINCT Ticket.ticketId) AS numRecords
+			$count = "SELECT COUNT(DISTINCT Ticket.ticketId) AS numRecords
                                 FROM ticket AS Ticket
                                 LEFT JOIN offerType as OfferType ON (OfferType.offerTypeId = Ticket.offerTypeId)
                                 LEFT JOIN offer AS Offer ON (Offer.offerId = Ticket.offerId)
@@ -743,11 +775,11 @@ class ReportsController extends AppController {
                                 LEFT JOIN paymentDetail AS PaymentDetail ON (PaymentDetail.ticketId = Ticket.ticketId AND PaymentDetail.userId = Ticket.userId)
                     WHERE $conditions";
 
-	        $results = $this->OfferType->query($count);
-	        $numRecords = $results[0][0]['numRecords'];
-            $numPages = ceil($numRecords / $this->perPage);
+			$results = $this->OfferType->query($count);
+			$numRecords = $results[0][0]['numRecords'];
+			$numPages = ceil($numRecords / $this->perPage);
 
-	        $sql = "SELECT
+			$sql = "SELECT
                                         Offer.offerId,
                                         Ticket.ticketId,
                                         GROUP_CONCAT(Client.clientId) as clientIds,
@@ -783,163 +815,179 @@ class ReportsController extends AppController {
                     ORDER BY $order
 	                LIMIT $this->limit";
 
-	        $results = $this->OfferType->query($sql);
+			$results = $this->OfferType->query($sql);
 
-            $this->set('currentPage', $this->page);
-            $this->set('numRecords', $numRecords);
-            $this->set('numPages', $numPages);
-            $this->set('data', $this->data);
-	        $this->set('results', $results);
-	        $this->set('serializedFormInput', serialize($this->data));
-	    }
+			$this->set('currentPage', $this->page);
+			$this->set('numRecords', $numRecords);
+			$this->set('numPages', $numPages);
+			$this->set('data', $this->data);
+			$this->set('results', $results);
+			$this->set('serializedFormInput', serialize($this->data));
+		}
 	}
 
-	function _fixed_price_build_conditions($data) {
-	    $conditions = array();
-	    foreach ($data as $k => $ca) {
-	        if (isset($ca['value']['between'])) {
-                $betweenCondition = $ca['value']['between'];
-            } else {
-                $betweenCondition = false;
-            }
+	function _fixed_price_build_conditions($data)
+	{
+		$conditions = array();
+		foreach ($data as $k => $ca) {
+			if (isset($ca['value']['between'])) {
+				$betweenCondition = $ca['value']['between'];
+			} else {
+				$betweenCondition = false;
+			}
 
-            /* Check if the conditions have valid data and can be used in a where clause */
-	        if (empty($ca['field']) ||
-	            empty($ca['value'])) {
-	                continue;                               //skip if no valid data found
-	            }
+			/* Check if the conditions have valid data and can be used in a where clause */
+			if (empty($ca['field']) || empty($ca['value'])) {
+				continue;
+				//skip if no valid data found
+			}
 
-            /* If we got this far then that means we have adequate data for a where clause */
-            if (is_array($betweenCondition)) {              //check for a condition eligible for BETWEEN
-                $firstValue = array_shift($betweenCondition);
-                $secondValue = array_shift($betweenCondition);
+			/* If we got this far then that means we have adequate data for a where clause */
+			if (is_array($betweenCondition)) {//check for a condition eligible for BETWEEN
+				$firstValue = array_shift($betweenCondition);
+				$secondValue = array_shift($betweenCondition);
 
-                if (strlen($firstValue) == 0) {
-                    $firstValue = NULL;
-                }
+				if (strlen($firstValue) == 0) {
+					$firstValue = NULL;
+				}
 
-                if (strlen($secondValue) == 0) {
-                    $secondValue = NULL;
-                }
-                $betweenCondition = true;
-                if (!strlen($firstValue)  && !strlen($secondValue)) {   //if both between values were ommited, it's invalid
-                    continue;
-                }
-            } else {
-                unset($firstValue);
-                unset($secondValue);
-                $betweenCondition = false;
-            }
+				if (strlen($secondValue) == 0) {
+					$secondValue = NULL;
+				}
+				$betweenCondition = true;
+				if (!strlen($firstValue) && !strlen($secondValue)) {//if both between values were
+					// ommited, it's invalid
+					continue;
+				}
+			} else {
+				unset($firstValue);
+				unset($secondValue);
+				$betweenCondition = false;
+			}
 
-	        if ($betweenCondition):                                    //generate valid SQL for a between condition
-	            if (NULL !== $firstValue && NULL !== $secondValue) {    //if both values were entered, it's a between
-	                $conditions[$k] =   $ca['field'].' BETWEEN '."'{$firstValue}'".' AND '."'{$secondValue}'";
-	            } else {                                                //if only one value was entered, it's not a between
-	                $conditions[$k] =   $ca['field'].' = '."'{$firstValue}'";
-	            }
-
-	        else:
-	            if(is_array($ca['value'])) {
-	                //wrap in single quotes
-	                foreach ($ca['value'] as $value) {
-	                    $values[] = "'{$value}'";
-	                }
+			if ($betweenCondition) ://generate valid SQL for a between condition
+				if (NULL !== $firstValue && NULL !== $secondValue) {//if both values were
+					// entered, it's a between
+					$conditions[$k] = $ca['field'] . ' BETWEEN ' . "'{$firstValue}'" . ' AND ' . "'{$secondValue}'";
+				} else {//if only one value was entered, it's not a between
+					$conditions[$k] = $ca['field'] . ' = ' . "'{$firstValue}'";
+				}
+			else :
+				if (is_array($ca['value'])) {
+					//wrap in single quotes
+					foreach ($ca['value'] as $value) {
+						$values[] = "'{$value}'";
+					}
 					if ($ca['field'] == 'Track.expirationCriteriaId') {
 						$valTmp = $values;
 						$values = array();
-						foreach($valTmp as $val) {
+						foreach ($valTmp as $val) {
 							if ($val == "'keep'") {
 								$values[] = '1,4';
-							} elseif($val == "'remit'") {
+							} elseif ($val == "'remit'") {
 								$values[] = '2,3';
 							}
 						}
 					}
-	                $conditions[$k] =   $ca['field'].' IN('.implode(',', $values).')';
-	            } else {
-	                $conditions[$k] =   $ca['field'].' = '."'{$ca['value']}'";
-	            }
+					$conditions[$k] = $ca['field'] . ' IN(' . implode(',', $values) . ')';
+				} else {
+					$conditions[$k] = $ca['field'] . ' = ' . "'{$ca['value']}'";
+				}
 
-	        endif; //end generate SQL for between condition
-	    }
+			endif; //end generate SQL for between condition
+		}
 
-	    $conditions[] = 'Ticket.formatId = 2';  //filter only fixed price types
-	    return implode($conditions, ' AND ');
+		$conditions[] = 'Ticket.formatId = 2';
+		//filter only fixed price types
+		return implode($conditions, ' AND ');
 	}
 
+	private function getOrderBy($sortBy)
+	{
 
-	private function getOrderBy($sortBy){
-
-		$orderBy='';
-		if ($sortBy=="membershipFee")$orderBy.="ORDER BY Loa.membershipFee ";
-		else if ($sortBy=="loaEndDate")$orderBy.="ORDER BY loaEndDate ";
-		else if ($sortBy=="Loa.startDate")$orderBy.="ORDER BY Loa.startDate ";
-		else if ($sortBy=="age")$orderBy.="ORDER BY age ";
-		else if ($sortBy=="Client.clientId")$orderBy.="ORDER BY Client.clientId ";
-		else if ($sortBy=="Client.name")$orderBy.="ORDER BY Client.name ";
-		else if ($sortBy=="Client.managerUsername")$orderBy.="ORDER BY Client.managerUsername ";
-		else if ($sortBy=="Loa.loaId")$orderBy.="ORDER BY Loa.loaId ";
-		else if ($sortBy=="membershipBalance")$orderBy.="ORDER BY membershipBalance ";
-		else if ($sortBy=="lastSellPrice")$orderBy.="ORDER BY lastSellPrice ";
-		else if ($sortBy=="lastSellDate")$orderBy.="ORDER BY lastSellDate ";
-		else if ($sortBy=="Loa.notes")$orderBy.="ORDER BY Loa.notes ";
+		$orderBy = '';
+		if ($sortBy == "membershipFee")
+			$orderBy .= "ORDER BY Loa.membershipFee ";
+		else if ($sortBy == "loaEndDate")
+			$orderBy .= "ORDER BY loaEndDate ";
+		else if ($sortBy == "Loa.startDate")
+			$orderBy .= "ORDER BY Loa.startDate ";
+		else if ($sortBy == "age")
+			$orderBy .= "ORDER BY age ";
+		else if ($sortBy == "Client.clientId")
+			$orderBy .= "ORDER BY Client.clientId ";
+		else if ($sortBy == "Client.name")
+			$orderBy .= "ORDER BY Client.name ";
+		else if ($sortBy == "Client.managerUsername")
+			$orderBy .= "ORDER BY Client.managerUsername ";
+		else if ($sortBy == "Loa.loaId")
+			$orderBy .= "ORDER BY Loa.loaId ";
+		else if ($sortBy == "membershipBalance")
+			$orderBy .= "ORDER BY membershipBalance ";
+		else if ($sortBy == "lastSellPrice")
+			$orderBy .= "ORDER BY lastSellPrice ";
+		else if ($sortBy == "lastSellDate")
+			$orderBy .= "ORDER BY lastSellDate ";
+		else if ($sortBy == "Loa.notes")
+			$orderBy .= "ORDER BY Loa.notes ";
 
 		return $orderBy;
 
 	}
 
-	private function getNumOffers($results,$sortBy,$sortDirection){
+	private function getNumOffers($results, $sortBy, $sortDirection)
+	{
 
-		$clientId_arr=array();
-		foreach($results as $key=>$arr){
-			$sites_arr=explode(",",$arr['Client']['sites']);
-			foreach($sites_arr as $site){
-				$clientId_arr[$site][]=$arr['Client']['clientId'];
+		$clientId_arr = array();
+		foreach ($results as $key => $arr) {
+			$sites_arr = explode(",", $arr['Client']['sites']);
+			foreach ($sites_arr as $site) {
+				$clientId_arr[$site][] = $arr['Client']['clientId'];
 			}
 		}
 
-		$ll_num_arr=array();
-		$q="SELECT clientId,count(clientId) as num FROM offerLuxuryLink ";
-		$q.="WHERE clientId IN (".implode(",",$clientId_arr['luxurylink']).") ";
-		$q.="AND endDate>NOW() ";
-		$q.="AND isClosed=0 ";
-		$q.="GROUP BY clientId";
-		$rows=$this->OfferType->query($q);
-		foreach($rows as $key=>$arr){
-			$clientId=$arr['offerLuxuryLink']['clientId'];
-			$num=$arr[0]['num'];
-			$ll_num_arr[$clientId]=$num;
+		$ll_num_arr = array();
+		$q = "SELECT clientId,count(clientId) as num FROM offerLuxuryLink ";
+		$q .= "WHERE clientId IN (" . implode(",", $clientId_arr['luxurylink']) . ") ";
+		$q .= "AND endDate>NOW() ";
+		$q .= "AND isClosed=0 ";
+		$q .= "GROUP BY clientId";
+		$rows = $this->OfferType->query($q);
+		foreach ($rows as $key => $arr) {
+			$clientId = $arr['offerLuxuryLink']['clientId'];
+			$num = $arr[0]['num'];
+			$ll_num_arr[$clientId] = $num;
 		}
-		$fg_num_arr=array();
-		$q="SELECT clientId,count(clientId) as num FROM offerFamily ";
-		$q.="WHERE clientId IN (".implode(",",$clientId_arr['family']).") ";
-		$q.="AND endDate>NOW() ";
-		$q.="AND isClosed=0 ";
-		$q.="GROUP BY clientId";
-		$rows=$this->OfferType->query($q);
-		foreach($rows as $key=>$arr){
-			$clientId=$arr['offerFamily']['clientId'];
-			$num=$arr[0]['num'];
-			$fg_num_arr[$clientId]=$num;
+		$fg_num_arr = array();
+		$q = "SELECT clientId,count(clientId) as num FROM offerFamily ";
+		$q .= "WHERE clientId IN (" . implode(",", $clientId_arr['family']) . ") ";
+		$q .= "AND endDate>NOW() ";
+		$q .= "AND isClosed=0 ";
+		$q .= "GROUP BY clientId";
+		$rows = $this->OfferType->query($q);
+		foreach ($rows as $key => $arr) {
+			$clientId = $arr['offerFamily']['clientId'];
+			$num = $arr[0]['num'];
+			$fg_num_arr[$clientId] = $num;
 		}
 
-		foreach($results as $key=>$arr){
+		foreach ($results as $key => $arr) {
 
-			$sites_arr=explode(",",$arr['Client']['sites']);
-			foreach($ll_num_arr as $clientId=>$numOffers){
-				if ($clientId==$results[$key]['Client']['clientId'] && in_array("luxurylink",$sites_arr)){
-					$results[$key]['Client']['numOffers']=" LL($numOffers)";
-					$ll_clientId_numOffers_arr[$clientId]=$numOffers;
+			$sites_arr = explode(",", $arr['Client']['sites']);
+			foreach ($ll_num_arr as $clientId => $numOffers) {
+				if ($clientId == $results[$key]['Client']['clientId'] && in_array("luxurylink", $sites_arr)) {
+					$results[$key]['Client']['numOffers'] = " LL($numOffers)";
+					$ll_clientId_numOffers_arr[$clientId] = $numOffers;
 				}
 			}
-			foreach($fg_num_arr as $clientId=>$numOffers){
-				if ($clientId==$results[$key]['Client']['clientId'] && in_array("family",$sites_arr)){
-					if (isset($results[$key]['Client']['numOffers'])){
-						$results[$key]['Client']['numOffers'].=" FG($numOffers)";
-					}else{
-						$results[$key]['Client']['numOffers']="FG($numOffers)";
+			foreach ($fg_num_arr as $clientId => $numOffers) {
+				if ($clientId == $results[$key]['Client']['clientId'] && in_array("family", $sites_arr)) {
+					if (isset($results[$key]['Client']['numOffers'])) {
+						$results[$key]['Client']['numOffers'] .= " FG($numOffers)";
+					} else {
+						$results[$key]['Client']['numOffers'] = "FG($numOffers)";
 					}
-					$fg_clientId_numOffers_arr[$clientId]=$numOffers;
+					$fg_clientId_numOffers_arr[$clientId] = $numOffers;
 				}
 			}
 
@@ -949,39 +997,40 @@ class ReportsController extends AppController {
 
 	}
 
-    function aging() {
-				
-    	//die("<PRE>".print_r($this,true));
-    		
-    	$aging = array();
-    
-        // Date Range
-        if (isset($this->params['url']['data']['startDate'][0])&&!empty($this->params['url']['data']['startDate'][0])) {
-        	$sqlStartDate=date('Y-m-d',strtotime($this->params['url']['data']['startDate'][0]));
-        	$this->set('startDate',$sqlStartDate);
-        } else {
-        	$sqlStartDate='1970-01-01';
-        }
-        if (isset($this->params['url']['data']['startDate'][1])&&!empty($this->params['url']['data']['startDate'][1])) {
-        	$sqlEndDate=date('Y-m-d',strtotime($this->params['url']['data']['startDate'][1]));
-        	$this->set('endDate',$sqlEndDate);
-        } else {
-        	$sqlEndDate='2099-12-31';
-        }
-        $sqlStartDate .= ' 00:00:00';
-        $sqlEndDate  .=' 23:59:59';
-        
-        // Manager
-        $sqlManager='';
-        $managerName = '';
-        if (isset($this->params['url']['data']['manager'])&&!empty($this->params['url']['data']['manager'])) {
-        	$managerName = strtolower(trim($this->params['url']['data']['manager']));
-        	$sqlManager = "AND Client.managerUsername='".addslashes($managerName)."' \n";
-        }
-        
-        $this->set('manager',$managerName);
-    
-        $sql = "SELECT
+	function aging()
+	{
+
+		//die("<PRE>".print_r($this,true));
+
+		$aging = array();
+
+		// Date Range
+		if (isset($this->params['url']['data']['startDate'][0]) && !empty($this->params['url']['data']['startDate'][0])) {
+			$sqlStartDate = date('Y-m-d', strtotime($this->params['url']['data']['startDate'][0]));
+			$this->set('startDate', $sqlStartDate);
+		} else {
+			$sqlStartDate = '1970-01-01';
+		}
+		if (isset($this->params['url']['data']['startDate'][1]) && !empty($this->params['url']['data']['startDate'][1])) {
+			$sqlEndDate = date('Y-m-d', strtotime($this->params['url']['data']['startDate'][1]));
+			$this->set('endDate', $sqlEndDate);
+		} else {
+			$sqlEndDate = '2099-12-31';
+		}
+		$sqlStartDate .= ' 00:00:00';
+		$sqlEndDate .= ' 23:59:59';
+
+		// Manager
+		$sqlManager = '';
+		$managerName = '';
+		if (isset($this->params['url']['data']['manager']) && !empty($this->params['url']['data']['manager'])) {
+			$managerName = strtolower(trim($this->params['url']['data']['manager']));
+			$sqlManager = "AND Client.managerUsername='" . addslashes($managerName) . "' \n";
+		}
+
+		$this->set('manager', $managerName);
+
+		$sql = "SELECT
 						Client.notes, 
             Client.clientId,
             Client.name,
@@ -1013,9 +1062,9 @@ class ReportsController extends AppController {
             
             FROM client AS Client
             INNER JOIN loa AS Loa ON (Loa.clientId = Client.clientId) ";
-            
-            // Do not include clients that are of accountTypeId 5 - PHG properties
-            $sql.="INNER JOIN accountType on (Loa.accountTypeId=accountType.accountTypeId)  
+
+		// Do not include clients that are of accountTypeId 5 - PHG properties
+		$sql .= "INNER JOIN accountType on (Loa.accountTypeId=accountType.accountTypeId)  
             WHERE accountType.accountTypeId!=5 AND (Loa.membershipBalance > 0 
             OR Loa.membershipPackagesRemaining > 0)
             AND Loa.loaLevelId = 2
@@ -1028,88 +1077,90 @@ class ReportsController extends AppController {
             GROUP BY Client.clientId, Loa.loaId
             ORDER BY Loa.startDate ASC
             ";
-    
-            $aging = array();
-            
-            if (	$results = $this->OfferType->query($sql) ) {
-    
-    
-        	// Flatten results
-        	
-        	foreach ($results as $result) {
-        		if (isset($result['Client']['clientId'])) {
-        			$data = array();
-        			foreach ($result as $r) {
-        				foreach ($r as $k => $v) {
-        					$data[$k] = $v;
-        				}
-        			}
-        			$data['destinationName'] = '';
-        			$data['offersLuxuryLink']=$data['offersFamily']=0;
-        			$aging[$result['Client']['clientId']] = $data;
-        		}
-        	}
-        
-        	// get destination names
-        	$q = "SELECT c.clientId,dest.destinationName FROM clientDestinationRel as cdr ";
-        	$q .= "INNER JOIN client as c ON (cdr.clientId=c.clientId) ";
-        	$q .= "INNER JOIN destination as dest ON (cdr.destinationId=dest.destinationId) ";
-        	$clientId_arr = array();
-        	$q .= "WHERE c.clientId IN (" . implode(", " , array_keys($aging)) . ")";
-        	$destinations = $this->OfferType->query($q);
-        	foreach ($destinations as $d) {
-        		if (isset($d['c']['clientId']) && isset($d['dest']['destinationName']) && isset($aging[$d['c']['clientId']])) {
-        			$aging[$d['c']['clientId']]['destinationName'] = $d['dest']['destinationName'];
-        			//$aging[$d['c']['clientId']] = $this->getNumOffers($d['c']['clientId']);
-        		}
-        	}
-        	
-        	// get number of offers
-        	foreach (array("LuxuryLink","Family") as $site) {
-                $sql = "SELECT clientId,COUNT(clientId) AS num".$site." FROM offer".$site."
-        		WHERE clientId IN (".implode(", ",array_keys($aging)).")
+
+		$aging = array();
+
+		if ($results = $this->OfferType->query($sql)) {
+
+			// Flatten results
+
+			foreach ($results as $result) {
+				if (isset($result['Client']['clientId'])) {
+					$data = array();
+					foreach ($result as $r) {
+						foreach ($r as $k => $v) {
+							$data[$k] = $v;
+						}
+					}
+					$data['destinationName'] = '';
+					$data['offersLuxuryLink'] = $data['offersFamily'] = 0;
+					$aging[$result['Client']['clientId']] = $data;
+				}
+			}
+
+			// get destination names
+			$q = "SELECT c.clientId,dest.destinationName FROM clientDestinationRel as cdr ";
+			$q .= "INNER JOIN client as c ON (cdr.clientId=c.clientId) ";
+			$q .= "INNER JOIN destination as dest ON (cdr.destinationId=dest.destinationId) ";
+			$clientId_arr = array();
+			$q .= "WHERE c.clientId IN (" . implode(", ", array_keys($aging)) . ")";
+			$destinations = $this->OfferType->query($q);
+			foreach ($destinations as $d) {
+				if (isset($d['c']['clientId']) && isset($d['dest']['destinationName']) && isset($aging[$d['c']['clientId']])) {
+					$aging[$d['c']['clientId']]['destinationName'] = $d['dest']['destinationName'];
+					//$aging[$d['c']['clientId']] = $this->getNumOffers($d['c']['clientId']);
+				}
+			}
+
+			// get number of offers
+			foreach (array("LuxuryLink","Family") as $site) {
+				$sql = "SELECT clientId,COUNT(clientId) AS num" . $site . " FROM offer" . $site . "
+        		WHERE clientId IN (" . implode(", ", array_keys($aging)) . ")
         		AND endDate>NOW()
         		AND ISCLOSED=0 
         		GROUP BY clientId";
-        	   $results=$this->OfferType->query($sql);
-        	
-        	foreach ($results as $r) {
-        		$clientId = $r['offer'.$site]['clientId'];
-        
-        		$offers = $r[0]['num'.$site];		
-        		$aging[$clientId]['offers'.$site]=		$offers;
-        		
-        	}
-        	
-    	}
-    
-    		// get the unique values for these columns:
-    	$destinations = $locations = $managers = array();
-    	foreach ($aging as $a) {
-    		if (!empty($a['destinationName'])) {
-    			$destinations[strtolower($a['destinationName'])] = $a['destinationName'];
-    		}
-    				if (!empty($a['locationDisplay'])) {
-    			$locations[strtolower($a['locationDisplay'])]=$a['locationDisplay'];
-    		}
-    				if (!empty($a['managerUsername'])) {
-    			$managers[strtolower($a['managerUsername'])]=$a['managerUsername'];
-    		}
-    	}
-    	ksort($destinations);ksort($locations);ksort($managers);
-    	$this->set('destinations' , $destinations);
-    	$this->set('locations' , $locations);
-    	$this->set('managers' , $managers);
-    	}
-    
-    	$this->set('aging' , $aging);
+				$results = $this->OfferType->query($sql);
 
-    }
+				foreach ($results as $r) {
+					$clientId = $r['offer' . $site]['clientId'];
 
-	function aging2() {
+					$offers = $r[0]['num' . $site];
+					$aging[$clientId]['offers' . $site] = $offers;
 
-		$sortBy=isset($this->params['named']['sortBy'])?$this->params['named']['sortBy']:"default";
-		$sortDirection=isset($this->params['named']['sortDirection'])?$this->params['named']['sortDirection']:"DESC";
+				}
+
+			}
+
+			// get the unique values for these columns:
+			$destinations = $locations = $managers = array();
+			foreach ($aging as $a) {
+				if (!empty($a['destinationName'])) {
+					$destinations[strtolower($a['destinationName'])] = $a['destinationName'];
+				}
+				if (!empty($a['locationDisplay'])) {
+					$locations[strtolower($a['locationDisplay'])] = $a['locationDisplay'];
+				}
+				if (!empty($a['managerUsername'])) {
+					$managers[strtolower($a['managerUsername'])] = $a['managerUsername'];
+				}
+			}
+			ksort($destinations);
+			ksort($locations);
+			ksort($managers);
+			$this->set('destinations', $destinations);
+			$this->set('locations', $locations);
+			$this->set('managers', $managers);
+		}
+
+		$this->set('aging', $aging);
+
+	}
+
+	function aging2()
+	{
+
+		$sortBy = isset($this->params['named']['sortBy']) ? $this->params['named']['sortBy'] : "default";
+		$sortDirection = isset($this->params['named']['sortDirection']) ? $this->params['named']['sortDirection'] : "DESC";
 
 		$this->set('showingOld', isset($_GET['showOld']) ? 1 : 0);
 
@@ -1119,7 +1170,7 @@ class ReportsController extends AppController {
 			$condition = " AND Loa.endDate >= NOW() - INTERVAL 30 DAY";
 		}
 
-		$index_arr=array(
+		$index_arr = array(
 			'0 to 30',
 			'31 to 60',
 			'91 to 120',
@@ -1128,19 +1179,18 @@ class ReportsController extends AppController {
 			'180 plus'
 		);
 
-		$interval_arr=array(
+		$interval_arr = array(
 			"-31",
 			"-61",
 			"-91",
 			"-121",
 			"-151",
 			"-181"
-
 		);
 
-		foreach($index_arr as $key=>$index){
+		foreach ($index_arr as $key => $index) {
 
-			$interval=$interval_arr[$key];
+			$interval = $interval_arr[$key];
 
 			$sql = "SELECT Client.clientId, Client.name, Client.sites as sites,
 																Loa.loaId,
@@ -1169,93 +1219,90 @@ class ReportsController extends AppController {
 							FROM client AS Client
 							INNER JOIN loa AS Loa ON (Loa.clientId = Client.clientId)
 							WHERE (Loa.membershipBalance > 0 OR Loa.membershipPackagesRemaining > 0) AND Loa.startDate
-							BETWEEN DATE_ADD(NOW(), INTERVAL ".$interval." DAY) AND NOW()
+							BETWEEN DATE_ADD(NOW(), INTERVAL " . $interval . " DAY) AND NOW()
 							AND YEAR(Loa.endDate) >= YEAR(NOW() - INTERVAL 1 YEAR) AND Loa.loaLevelId = 2 $condition
 							GROUP BY Client.clientId, Loa.loaId ";
-			$sql.=$this->getOrderBy($sortBy);
-			$sql.=$sortDirection;
+			$sql .= $this->getOrderBy($sortBy);
+			$sql .= $sortDirection;
 			$results[$index] = $this->OfferType->query($sql);
-			$results[$index] = $this->getNumOffers($results[$index],$sortBy,$sortDirection);
+			$results[$index] = $this->getNumOffers($results[$index], $sortBy, $sortDirection);
 
 		}
 
 		// get rid of hh:mm:ss
 		// build clientId array
-		$clientId_arr=array();
-		foreach($results as $key=>$result){
-			foreach($result as $index=>$arr){
-				$cid=$arr['Client']['clientId'];
-				$clientId_arr[$cid]=$cid;
-				$results[$key][$index]['Loa']['startDate']=str_replace(" 00:00:00","",$arr['Loa']['startDate']);
-				$results[$key][$index][0]['loaEndDate']=str_replace(" 00:00:00","",$arr[0]['loaEndDate']);
+		$clientId_arr = array();
+		foreach ($results as $key => $result) {
+			foreach ($result as $index => $arr) {
+				$cid = $arr['Client']['clientId'];
+				$clientId_arr[$cid] = $cid;
+				$results[$key][$index]['Loa']['startDate'] = str_replace(" 00:00:00", "", $arr['Loa']['startDate']);
+				$results[$key][$index][0]['loaEndDate'] = str_replace(" 00:00:00", "", $arr[0]['loaEndDate']);
 			}
 		}
 
 		// get destination names
-		$q="SELECT c.clientId,dest.destinationName FROM clientDestinationRel as cdr ";
-		$q.="INNER JOIN client as c ON (cdr.clientId=c.clientId) ";
-		$q.="INNER JOIN destination as dest ON (cdr.destinationId=dest.destinationId) ";
-		$q.="WHERE c.clientId IN (".implode(", ",$clientId_arr).")";
-		$rows=$this->OfferType->query($q);
-		foreach($rows as $i=>$row){
-			foreach($results as $j=>$result){
-				foreach($result as $k=>$arr){
-					if ($arr['Client']['clientId']==$row['c']['clientId']){
-						$results[$j][$k]['Client']['destinationName']=$row['dest']['destinationName'];
+		$q = "SELECT c.clientId,dest.destinationName FROM clientDestinationRel as cdr ";
+		$q .= "INNER JOIN client as c ON (cdr.clientId=c.clientId) ";
+		$q .= "INNER JOIN destination as dest ON (cdr.destinationId=dest.destinationId) ";
+		$q .= "WHERE c.clientId IN (" . implode(", ", $clientId_arr) . ")";
+		$rows = $this->OfferType->query($q);
+		foreach ($rows as $i => $row) {
+			foreach ($results as $j => $result) {
+				foreach ($result as $k => $arr) {
+					if ($arr['Client']['clientId'] == $row['c']['clientId']) {
+						$results[$j][$k]['Client']['destinationName'] = $row['dest']['destinationName'];
 					}
 				}
 			}
 		}
 
 		// build array to use for sorting if it is needed
-		if ($sortBy=="default" || $sortBy=="age"){
+		if ($sortBy == "default" || $sortBy == "age") {
 
-			foreach($results as $key=>$result){
-				foreach($result as $index=>$arr){
-					if (!isset($arr['Client']['destinationName'])){
-						$results[$key][$index]['Client']['destinationName']="";
+			foreach ($results as $key => $result) {
+				foreach ($result as $index => $arr) {
+					if (!isset($arr['Client']['destinationName'])) {
+						$results[$key][$index]['Client']['destinationName'] = "";
 					}
 					// $data[] = array('volume' => 67, 'edition' => 2);
-					$sort_arr[$key]['age'][]=$arr[0]['age'];
-					$sort_arr[$key]['destinationName'][]=$results[$key][$index]['Client']['destinationName'];
+					$sort_arr[$key]['age'][] = $arr[0]['age'];
+					$sort_arr[$key]['destinationName'][] = $results[$key][$index]['Client']['destinationName'];
 				}
 			}
 
-
 			// set default sort to be days old and destination
-			foreach($sort_arr as $key=>$arr){
-				$sort_flag="SORT_".$sortDirection;
-				array_multisort(
-					$sort_arr[$key]['age'], ($sortDirection=="ASC")?SORT_ASC:SORT_DESC, SORT_NUMERIC,
-					$sort_arr[$key]['destinationName'], ($sortDirection=="ASC")?SORT_ASC:SORT_DESC, SORT_STRING,
-					$results[$key]
-				);
+			foreach ($sort_arr as $key => $arr) {
+				$sort_flag = "SORT_" . $sortDirection;
+				array_multisort($sort_arr[$key]['age'], ($sortDirection == "ASC") ? SORT_ASC : SORT_DESC, SORT_NUMERIC, $sort_arr[$key]['destinationName'], ($sortDirection == "ASC") ? SORT_ASC : SORT_DESC, SORT_STRING, $results[$key]);
 			}
 
 		}
 
-	  $this->set('results', $results);
+		$this->set('results', $results);
 
 	}
 
-	function auction_timeslot() {
-	    if (!empty($this->data)) {
-	        $conditions = $this->_bids_build_conditions($this->data); //we can use the same conditions as bids
+	function auction_timeslot()
+	{
+		if (!empty($this->data)) {
+			$conditions = $this->_bids_build_conditions($this->data);
+			//we can use the same conditions as bids
 
-	        if (!empty($this->params['named']['sortBy'])) {
-	            $direction = (@$this->params['named']['sortDirection'] == 'DESC') ? 'DESC' : 'ASC';
-	            $order = $this->params['named']['sortBy'].' '.$direction;
+			if (!empty($this->params['named']['sortBy'])) {
+				$direction = (@$this->params['named']['sortDirection'] == 'DESC') ? 'DESC' : 'ASC';
+				$order = $this->params['named']['sortBy'] . ' ' . $direction;
 
-	            $this->set('sortBy', $this->params['named']['sortBy']);
-	            $this->set('sortDirection', $direction);
-	        } else {
-	            $order = 'Offer.offerId';
+				$this->set('sortBy', $this->params['named']['sortBy']);
+				$this->set('sortDirection', $direction);
+			} else {
+				$order = 'Offer.offerId';
 
-	            $this->set('sortBy', 'Offer.offerId');
-    	        $this->set('sortDirection', 'DESC');
-	        }
+				$this->set('sortBy', 'Offer.offerId');
+				$this->set('sortDirection', 'DESC');
+			}
 
-	        $sql = "SELECT HOUR(SchedulingInstance.endDate), DATE_FORMAT(SchedulingInstance.endDate, '%Y-%m-%d') as onlyEndDate, OfferType.offerTypeName, COUNT(DISTINCT SchedulingInstance.schedulingInstanceId) as numOffers,
+			$sql = "SELECT HOUR(SchedulingInstance.endDate), DATE_FORMAT(SchedulingInstance.endDate, '%Y-%m-%d') as onlyEndDate, OfferType.offerTypeName, COUNT(DISTINCT SchedulingInstance.schedulingInstanceId) as numOffers,
                         CASE
                             WHEN HOUR(SchedulingInstance.endDate) BETWEEN 0 AND 6 THEN -1 #before 7am
                                 WHEN HOUR(SchedulingInstance.endDate) BETWEEN 7 AND 16 THEN HOUR(SchedulingInstance.endDate) #everything in between
@@ -1270,24 +1317,25 @@ class ReportsController extends AppController {
                     GROUP BY SchedulingMaster.siteId, onlyEndDate, timeOfDay, OfferType.offerTypeId
                     ORDER BY onlyEndDate, timeOfDay ASC";
 
-	        $results = $this->OfferType->query($sql);
+			$results = $this->OfferType->query($sql);
 
-	        //have to get the results in a format that we can easily loop through
+			//have to get the results in a format that we can easily loop through
 			$siteIds = $this->siteIds;
-	        $rows = array();
-	        foreach ($results as $r) {
-	            $rows[$r[0]['onlyEndDate'].' '.$siteIds[$r['SchedulingMaster']['siteId']]][$r['OfferType']['offerTypeName']][$r[0]['timeOfDay']] = $r[0]['numOffers'];
-	        }
+			$rows = array();
+			foreach ($results as $r) {
+				$rows[$r[0]['onlyEndDate'] . ' ' . $siteIds[$r['SchedulingMaster']['siteId']]][$r['OfferType']['offerTypeName']][$r[0]['timeOfDay']] = $r[0]['numOffers'];
+			}
 
-            $this->set('data', $this->data);
-	        $this->set('results', $rows);
-	        $this->set('serializedFormInput', serialize($this->data));
-	    }
+			$this->set('data', $this->data);
+			$this->set('results', $rows);
+			$this->set('serializedFormInput', serialize($this->data));
+		}
 	}
 
-	function check_in_date() {
-	    if (!empty($this->data)) {
-	        $conditions = $this->_build_conditions($this->data);
+	function check_in_date()
+	{
+		if (!empty($this->data)) {
+			$conditions = $this->_build_conditions($this->data);
 
 			$clientId = (isset($this->data['Client']['clientId']) && !empty($this->data['Client']['clientId'])) ? (int)$this->data['Client']['clientId'] : false;
 			$clientSql = '';
@@ -1295,24 +1343,24 @@ class ReportsController extends AppController {
 				$clientSql = 'AND Client.clientId = ' . $clientId;
 			}
 
-	        if (!empty($this->params['named']['sortBy'])) {
-	            $direction = (@$this->params['named']['sortDirection'] == 'DESC') ? 'DESC' : 'ASC';
-	            $order = $this->params['named']['sortBy'].' '.$direction;
+			if (!empty($this->params['named']['sortBy'])) {
+				$direction = (@$this->params['named']['sortDirection'] == 'DESC') ? 'DESC' : 'ASC';
+				$order = $this->params['named']['sortBy'] . ' ' . $direction;
 
-	            $this->set('sortBy', $this->params['named']['sortBy']);
-	            $this->set('sortDirection', $direction);
-	        } else {
-	            $order = 'Reservation.arrivalDate DESC';
+				$this->set('sortBy', $this->params['named']['sortBy']);
+				$this->set('sortDirection', $direction);
+			} else {
+				$order = 'Reservation.arrivalDate DESC';
 
-	            $this->set('sortBy', 'Reservation.arrivalDate');
-    	        $this->set('sortDirection', 'DESC');
-	        }
+				$this->set('sortBy', 'Reservation.arrivalDate');
+				$this->set('sortDirection', 'DESC');
+			}
 
-            if (empty($conditions)) {
-                $conditions = '1=1';
-            }
+			if (empty($conditions)) {
+				$conditions = '1=1';
+			}
 
-            $sql = "SELECT COUNT(DISTINCT Reservation.ticketId) as numRecords
+			$sql = "SELECT COUNT(DISTINCT Reservation.ticketId) as numRecords
 						FROM reservation AS Reservation
 						INNER JOIN ticket AS Ticket USING (ticketId)
 						INNER JOIN user AS User ON User.userId = Ticket.userId
@@ -1322,9 +1370,9 @@ class ReportsController extends AppController {
 						LEFT JOIN ticketRefund AS TicketRefund ON TicketRefund.ticketId = Ticket.ticketId
 						WHERE TicketRefund.ticketRefundId IS NULL AND $conditions";
 
-    	    $results = $this->OfferType->query($sql);
-    	    $numRecords = $results[0][0]['numRecords'];
-            $numPages = ceil($numRecords / $this->perPage);
+			$results = $this->OfferType->query($sql);
+			$numRecords = $results[0][0]['numRecords'];
+			$numPages = ceil($numRecords / $this->perPage);
 
 			$sql = "SELECT Reservation.*,
 						GROUP_CONCAT(DISTINCT Client.clientId) as clientIds,
@@ -1346,39 +1394,40 @@ class ReportsController extends AppController {
                     ORDER BY $order
 	                LIMIT $this->limit";
 
-	        $results = $this->OfferType->query($sql);
+			$results = $this->OfferType->query($sql);
 
-            $this->set('currentPage', $this->page);
-            $this->set('numRecords', $numRecords);
-            $this->set('numPages', $numPages);
-            $this->set('data', $this->data);
-	        $this->set('results', $results);
-		    $this->set('serializedFormInput', serialize($this->data));
-	    }
+			$this->set('currentPage', $this->page);
+			$this->set('numRecords', $numRecords);
+			$this->set('numPages', $numPages);
+			$this->set('data', $this->data);
+			$this->set('results', $results);
+			$this->set('serializedFormInput', serialize($this->data));
+		}
 	}
 
-	function auction_winner() {
-	    if (!empty($this->data)) {
-	        $conditions = $this->_build_conditions($this->data);
+	function auction_winner()
+	{
+		if (!empty($this->data)) {
+			$conditions = $this->_build_conditions($this->data);
 
-	        if (!empty($this->params['named']['sortBy'])) {
-	            $direction = (@$this->params['named']['sortDirection'] == 'DESC') ? 'DESC' : 'ASC';
-	            $order = $this->params['named']['sortBy'].' '.$direction;
+			if (!empty($this->params['named']['sortBy'])) {
+				$direction = (@$this->params['named']['sortDirection'] == 'DESC') ? 'DESC' : 'ASC';
+				$order = $this->params['named']['sortBy'] . ' ' . $direction;
 
-	            $this->set('sortBy', $this->params['named']['sortBy']);
-	            $this->set('sortDirection', $direction);
-	        } else {
-	            $order = 'Ticket.ticketId DESC';
+				$this->set('sortBy', $this->params['named']['sortBy']);
+				$this->set('sortDirection', $direction);
+			} else {
+				$order = 'Ticket.ticketId DESC';
 
-	            $this->set('sortBy', 'Ticket.ticketId');
-    	        $this->set('sortDirection', 'DESC');
-	        }
+				$this->set('sortBy', 'Ticket.ticketId');
+				$this->set('sortDirection', 'DESC');
+			}
 
-            if (empty($conditions)) {
-                $conditions = '1=1';
-            }
+			if (empty($conditions)) {
+				$conditions = '1=1';
+			}
 
-            $sql = "SELECT COUNT(DISTINCT Ticket.ticketId) as numRecords
+			$sql = "SELECT COUNT(DISTINCT Ticket.ticketId) as numRecords
                         FROM ticket AS Ticket
                                INNER JOIN offer AS Offer USING(offerId)
                                LEFT JOIN offerType AS OfferType USING(offerTypeId)
@@ -1394,18 +1443,21 @@ class ReportsController extends AppController {
                                INNER JOIN client as Client ON(Client.clientId = ClientLoaPackageRel.clientId)
                         WHERE $conditions";
 
-    	    $results = $this->OfferType->query($sql);
-    	    $numRecords = $results[0][0]['numRecords'];
-          $numPages = ceil($numRecords / $this->perPage);
+			$results = $this->OfferType->query($sql);
+			$numRecords = $results[0][0]['numRecords'];
+			$numPages = ceil($numRecords / $this->perPage);
 
-					// query modified
-					// mbyrnes 2011-02-22
-					// The join on pricePoint caused problems because there is no ticketId in the pricePoint table
-					// The result was multiple rows incorrectly selected and SUM-med before the GROUP BY ticketId
-					// was enforced
-					// Too much redundant data in the tables and not enough correlated keys to get it right easily,
-					// so php solution implemented
-          $sql = "SELECT if(Ticket.offerTypeId IN(3,4),PaymentDetail.ppResponseDate,SchedulingInstance.endDate) endDate,
+			// query modified
+			// mbyrnes 2011-02-22
+			// The join on pricePoint caused problems because there is no ticketId in the
+			// pricePoint table
+			// The result was multiple rows incorrectly selected and SUM-med before the GROUP
+			// BY ticketId
+			// was enforced
+			// Too much redundant data in the tables and not enough correlated keys to get it
+			// right easily,
+			// so php solution implemented
+			$sql = "SELECT if(Ticket.offerTypeId IN(3,4),PaymentDetail.ppResponseDate,SchedulingInstance.endDate) endDate,
                            PaymentDetail.ppResponseDate,
                            Ticket.ticketId,
                            GROUP_CONCAT(DISTINCT Client.clientId) as clientIds,
@@ -1473,147 +1525,149 @@ class ReportsController extends AppController {
                     ORDER BY $order
 	                LIMIT $this->limit";
 
-	        $results = $this->OfferType->query($sql);
+			$results = $this->OfferType->query($sql);
 
-	        $this->PaymentDetail->recursive = 0;
-	        $ids = null;
-	        foreach($results as $k => $v) {
-	        	if(!$ids) {
-	        		$ids = $v['Ticket']['ticketId'];
-	        	} else {
-	        		$ids .= ','.$v['Ticket']['ticketId'];
-	        	}
-	        	$paymentDetail = $this->PaymentDetail->query('
+			$this->PaymentDetail->recursive = 0;
+			$ids = null;
+			foreach ($results as $k => $v) {
+				if (!$ids) {
+					$ids = $v['Ticket']['ticketId'];
+				} else {
+					$ids .= ',' . $v['Ticket']['ticketId'];
+				}
+				$paymentDetail = $this->PaymentDetail->query('
 	        		SELECT pd.*, pt.paymentTypeName FROM paymentDetail AS pd
 	        		INNER JOIN paymentType AS pt ON pt.paymentTypeId = pd.paymentTypeId
 	        		WHERE ticketId = ' . $v['Ticket']['ticketId'] . ' ORDER BY pd.paymentTypeId');
-	        	$results[$k]['PaymentDetailFull'] = $paymentDetail;
-	        }
-					// This extracts pricePointId and PackageId from the result set and queries
-					// pricePoint table to get the validity dates and then inserts them into the $results array
-					// 2011-02-22 mbyrnes
-					foreach($results as $key=>$arr){
-						$ticketId=$arr['Ticket']['ticketId'];
-						$pricePointId_arr[$ticketId]=$arr['SchedulingMaster']['pricePointId'];
-						$packageId_arr[$ticketId]=$arr['SchedulingMaster']['packageId'];
-					}
+				$results[$k]['PaymentDetailFull'] = $paymentDetail;
+			}
+			// This extracts pricePointId and PackageId from the result set and queries
+			// pricePoint table to get the validity dates and then inserts them into the
+			// $results array
+			// 2011-02-22 mbyrnes
+			foreach ($results as $key => $arr) {
+				$ticketId = $arr['Ticket']['ticketId'];
+				$pricePointId_arr[$ticketId] = $arr['SchedulingMaster']['pricePointId'];
+				$packageId_arr[$ticketId] = $arr['SchedulingMaster']['packageId'];
+			}
 
-					$q="SELECT validityStart,validityEnd,pricePointId,packageId ";
-					$q.="FROM pricePoint WHERE pricePointId IN (".implode(",",$pricePointId_arr).") AND ";
-					$q.="packageId IN (".implode(",",$packageId_arr).")";
-					$pp_results=$this->OfferType->query($q);
-					foreach($pp_results as $i=>$pp_arr){
+			$q = "SELECT validityStart,validityEnd,pricePointId,packageId ";
+			$q .= "FROM pricePoint WHERE pricePointId IN (" . implode(",", $pricePointId_arr) . ") AND ";
+			$q .= "packageId IN (" . implode(",", $packageId_arr) . ")";
+			$pp_results = $this->OfferType->query($q);
+			foreach ($pp_results as $i => $pp_arr) {
 
-						foreach($results as $j=>$r_arr){
+				foreach ($results as $j => $r_arr) {
 
-							if ($pp_arr['pricePoint']['pricePointId']==$r_arr['SchedulingMaster']['pricePointId']
-							&& $pp_arr['pricePoint']['packageId']==$r_arr['SchedulingMaster']['packageId']){
-								$results[$j]['PricePoint']['validityStart']=$pp_arr['pricePoint']['validityStart'];
-								$results[$j]['PricePoint']['validityEnd']=$pp_arr['pricePoint']['validityEnd'];
-
-							}
-
-						}
+					if ($pp_arr['pricePoint']['pricePointId'] == $r_arr['SchedulingMaster']['pricePointId'] && $pp_arr['pricePoint']['packageId'] == $r_arr['SchedulingMaster']['packageId']) {
+						$results[$j]['PricePoint']['validityStart'] = $pp_arr['pricePoint']['validityStart'];
+						$results[$j]['PricePoint']['validityEnd'] = $pp_arr['pricePoint']['validityEnd'];
 
 					}
 
-					// 2011-04-25 jwoods - need reserveAmt for "guarantee" ticket 1917
-					foreach($results as $key=>$arr) {
-						$guaranteeTable = ($arr['Ticket']['siteId'] == 1) ? 'offerLuxuryLink' : 'offerFamily';
-						$q="SELECT reserveAmt FROM " . $guaranteeTable . " WHERE offerId = " . $arr['Ticket']['offerId'];
-						$guar_results=$this->OfferType->query($q);
-						$results[$key]['OfferLookup']['reserveAmt']=$guar_results[0][$guaranteeTable]['reserveAmt'];
-					}
+				}
 
+			}
 
-					// populate guarantee amount
-					foreach($results as $key=>$arr) {
-					    $guaranteeAmount = 0;
-					    $guaranteeTicket = $arr['Ticket']['guaranteeAmt'];
-					    $guaranteeReserveAmt = $arr['OfferLookup']['reserveAmt'];
-					    if ((intval($guaranteeTicket) > 0) && ($arr['Ticket']['billingPrice'] < $guaranteeTicket)) {
-					        $guaranteeAmount = $guaranteeTicket;
-					    } elseif ((intval($guaranteeReserveAmt) > 0) && ($arr['Ticket']['billingPrice'] < $guaranteeReserveAmt)) {
-					        $guaranteeAmount = $guaranteeReserveAmt;
-					    }
-					    $results[$key]['OfferLookup']['guaranteeAmount'] = $guaranteeAmount;
-					}
+			// 2011-04-25 jwoods - need reserveAmt for "guarantee" ticket 1917
+			foreach ($results as $key => $arr) {
+				$guaranteeTable = ($arr['Ticket']['siteId'] == 1) ? 'offerLuxuryLink' : 'offerFamily';
+				$q = "SELECT reserveAmt FROM " . $guaranteeTable . " WHERE offerId = " . $arr['Ticket']['offerId'];
+				$guar_results = $this->OfferType->query($q);
+				$results[$key]['OfferLookup']['reserveAmt'] = $guar_results[0][$guaranteeTable]['reserveAmt'];
+			}
 
+			// populate guarantee amount
+			foreach ($results as $key => $arr) {
+				$guaranteeAmount = 0;
+				$guaranteeTicket = $arr['Ticket']['guaranteeAmt'];
+				$guaranteeReserveAmt = $arr['OfferLookup']['reserveAmt'];
+				if ((intval($guaranteeTicket) > 0) && ($arr['Ticket']['billingPrice'] < $guaranteeTicket)) {
+					$guaranteeAmount = $guaranteeTicket;
+				} elseif ((intval($guaranteeReserveAmt) > 0) && ($arr['Ticket']['billingPrice'] < $guaranteeReserveAmt)) {
+					$guaranteeAmount = $guaranteeReserveAmt;
+				}
+				$results[$key]['OfferLookup']['guaranteeAmount'] = $guaranteeAmount;
+			}
 
-				$this->set('currentPage', $this->page);
-				$this->set('numRecords', $numRecords);
-				$this->set('numPages', $numPages);
-				$this->set('data', $this->data);
-				$this->set('results', $results);
-				$this->set('serializedFormInput', serialize($this->data));
+			$this->set('currentPage', $this->page);
+			$this->set('numRecords', $numRecords);
+			$this->set('numPages', $numPages);
+			$this->set('data', $this->data);
+			$this->set('results', $results);
+			$this->set('serializedFormInput', serialize($this->data));
 
-	    }
+		}
 	}
 
-	function cmr() {
-	    if (!empty($this->data) || !empty($this->params['named']['clientIds'])) {
-	        if ($this->data['condition2']['value'] == 'keep') {
-	            $this->data['condition2']['value'] = array(1, 4);
-	        }
+	function cmr()
+	{
+		if (!empty($this->data) || !empty($this->params['named']['clientIds'])) {
+			if ($this->data['condition2']['value'] == 'keep') {
+				$this->data['condition2']['value'] = array(
+					1,
+					4
+				);
+			}
 
 			if (!empty($this->params['named']['clientIds'])) {
 				$this->page = 1;
-	            $this->perPage = 9999;
-	            $this->limit = 9999;
+				$this->perPage = 9999;
+				$this->limit = 9999;
 				$conditions = "Client.clientId IN({$this->params['named']['clientIds']})";
 			} else {
-		        $conditions = $this->_build_conditions($this->data);
+				$conditions = $this->_build_conditions($this->data);
 			}
 
-	        if (!empty($this->params['named']['sortBy'])) {
-	            $direction = (@$this->params['named']['sortDirection'] == 'DESC') ? 'DESC' : 'ASC';
-	            $order = $this->params['named']['sortBy'].' '.$direction;
+			if (!empty($this->params['named']['sortBy'])) {
+				$direction = (@$this->params['named']['sortDirection'] == 'DESC') ? 'DESC' : 'ASC';
+				$order = $this->params['named']['sortBy'] . ' ' . $direction;
 
-	            $this->set('sortBy', $this->params['named']['sortBy']);
-	            $this->set('sortDirection', $direction);
-	        } else {
-	            $order = 'Loa.loaId';
+				$this->set('sortBy', $this->params['named']['sortBy']);
+				$this->set('sortDirection', $direction);
+			} else {
+				$order = 'Loa.loaId';
 
-	            $this->set('sortBy', 'Loa.loaId');
-    	        $this->set('sortDirection', 'DESC');
-	        }
+				$this->set('sortBy', 'Loa.loaId');
+				$this->set('sortDirection', 'DESC');
+			}
 
-            if (empty($conditions)) {
-                $conditions = '1=1';
-            }
+			if (empty($conditions)) {
+				$conditions = '1=1';
+			}
 
-            switch ( $this->data['condition2']['value'] ):
-                case 1:
-                    $subquery = '(SELECT COUNT(*) FROM offerLuxuryLink as OfferLive2 WHERE NOW() BETWEEN OfferLive2.startDate AND OfferLive2.endDate AND OfferLive2.offerTypeId IN (1,2,6) AND OfferLive2.clientId = Client.clientId) AS countSubqueryOffers,';
-                    $having = 'HAVING countSubqueryOffers > 0';
-                    break;
-                case 2:
-                    $subquery = '(SELECT COUNT(*) FROM offerLuxuryLink as OfferLive2 WHERE NOW() BETWEEN OfferLive2.startDate AND OfferLive2.endDate AND OfferLive2.offerTypeId IN (3,4) AND OfferLive2.clientId = Client.clientId) AS countSubqueryOffers,';
-                    $having = 'HAVING countSubqueryOffers > 0';
-                    break;
-                case 3:
-                    $subquery = '(SELECT COUNT(*) FROM offerLuxuryLink as OfferLive2 WHERE NOW() BETWEEN OfferLive2.startDate AND OfferLive2.endDate AND OfferLive2.offerTypeId IN (1,2,6) AND OfferLive2.clientId = Client.clientId) AS countSubqueryOffers,';
-                    $having = 'HAVING countSubqueryOffers = 0';
-                    break;
-                case 4:
-                    $subquery = '(SELECT COUNT(*) FROM offerLuxuryLink as OfferLive2 WHERE NOW() BETWEEN OfferLive2.startDate AND OfferLive2.endDate AND OfferLive2.offerTypeId IN (3,4) AND OfferLive2.clientId = Client.clientId) AS countSubqueryOffers,';
-                    $having = 'HAVING countSubqueryOffers = 0';
-                    break;
-                case 5:
-                    $subquery = '(SELECT COUNT(*) FROM offerLuxuryLink as OfferLive2 WHERE NOW() BETWEEN OfferLive2.startDate AND OfferLive2.endDate AND OfferLive2.clientId = Client.clientId) AS countSubqueryOffers,';
-                    $having = 'HAVING countSubqueryOffers = 0';
-                    break;
-                case 6:
-                    $subquery = '(SELECT COUNT(*) FROM offerLuxuryLink as OfferLive2 WHERE NOW() BETWEEN OfferLive2.startDate AND OfferLive2.endDate AND OfferLive2.offerTypeId IN (1,2,6) AND OfferLive2.clientId = Client.clientId) AS countSubqueryOffers,';
-                    $subquery .= '(SELECT COUNT(*) FROM offerLuxuryLink as OfferLive2 WHERE NOW() BETWEEN OfferLive2.startDate AND OfferLive2.endDate AND OfferLive2.offerTypeId IN (3,4) AND OfferLive2.clientId = Client.clientId) AS countSubqueryOffers2,';
-                    $having = 'HAVING countSubqueryOffers > 0 AND countSubqueryOffers2 > 0';
-                    break;
-				default:
+			switch ( $this->data['condition2']['value'] ) :
+				case 1 :
+					$subquery = '(SELECT COUNT(*) FROM offerLuxuryLink as OfferLive2 WHERE NOW() BETWEEN OfferLive2.startDate AND OfferLive2.endDate AND OfferLive2.offerTypeId IN (1,2,6) AND OfferLive2.clientId = Client.clientId) AS countSubqueryOffers,';
+					$having = 'HAVING countSubqueryOffers > 0';
+					break;
+				case 2 :
+					$subquery = '(SELECT COUNT(*) FROM offerLuxuryLink as OfferLive2 WHERE NOW() BETWEEN OfferLive2.startDate AND OfferLive2.endDate AND OfferLive2.offerTypeId IN (3,4) AND OfferLive2.clientId = Client.clientId) AS countSubqueryOffers,';
+					$having = 'HAVING countSubqueryOffers > 0';
+					break;
+				case 3 :
+					$subquery = '(SELECT COUNT(*) FROM offerLuxuryLink as OfferLive2 WHERE NOW() BETWEEN OfferLive2.startDate AND OfferLive2.endDate AND OfferLive2.offerTypeId IN (1,2,6) AND OfferLive2.clientId = Client.clientId) AS countSubqueryOffers,';
+					$having = 'HAVING countSubqueryOffers = 0';
+					break;
+				case 4 :
+					$subquery = '(SELECT COUNT(*) FROM offerLuxuryLink as OfferLive2 WHERE NOW() BETWEEN OfferLive2.startDate AND OfferLive2.endDate AND OfferLive2.offerTypeId IN (3,4) AND OfferLive2.clientId = Client.clientId) AS countSubqueryOffers,';
+					$having = 'HAVING countSubqueryOffers = 0';
+					break;
+				case 5 :
+					$subquery = '(SELECT COUNT(*) FROM offerLuxuryLink as OfferLive2 WHERE NOW() BETWEEN OfferLive2.startDate AND OfferLive2.endDate AND OfferLive2.clientId = Client.clientId) AS countSubqueryOffers,';
+					$having = 'HAVING countSubqueryOffers = 0';
+					break;
+				case 6 :
+					$subquery = '(SELECT COUNT(*) FROM offerLuxuryLink as OfferLive2 WHERE NOW() BETWEEN OfferLive2.startDate AND OfferLive2.endDate AND OfferLive2.offerTypeId IN (1,2,6) AND OfferLive2.clientId = Client.clientId) AS countSubqueryOffers,';
+					$subquery .= '(SELECT COUNT(*) FROM offerLuxuryLink as OfferLive2 WHERE NOW() BETWEEN OfferLive2.startDate AND OfferLive2.endDate AND OfferLive2.offerTypeId IN (3,4) AND OfferLive2.clientId = Client.clientId) AS countSubqueryOffers2,';
+					$having = 'HAVING countSubqueryOffers > 0 AND countSubqueryOffers2 > 0';
+					break;
+				default :
 					$subquery = '';
 					$having = '';
-            endswitch;
+			endswitch;
 
-            $sql = "SELECT $subquery 1
+			$sql = "SELECT $subquery 1
                         FROM client as Client
                         INNER JOIN loa as Loa USING(clientId)
                         LEFT JOIN loaLevel as LoaLevel USING(loaLevelId)
@@ -1622,11 +1676,11 @@ class ReportsController extends AppController {
                         GROUP BY Loa.loaId, Client.clientId
                         $having";
 
-    	    $results = $this->OfferType->query($sql);
-    	    $numRecords = count($results);
-            $numPages = ceil($numRecords / $this->perPage);
+			$results = $this->OfferType->query($sql);
+			$numRecords = count($results);
+			$numPages = ceil($numRecords / $this->perPage);
 
-            $sql = "SELECT
+			$sql = "SELECT
                         $subquery
                         Client.clientId,
                         Client.name,
@@ -1664,98 +1718,96 @@ class ReportsController extends AppController {
                     ORDER BY $order
 	                LIMIT $this->limit";
 
-	        $results = $this->OfferType->query($sql);
+			$results = $this->OfferType->query($sql);
 
-            $this->set('currentPage', $this->page);
-            $this->set('numRecords', $numRecords);
-            $this->set('numPages', $numPages);
-            $this->set('data', $this->data);
-	        $this->set('results', $results);
-	        $this->set('serializedFormInput', serialize($this->data));
-	    }
+			$this->set('currentPage', $this->page);
+			$this->set('numRecords', $numRecords);
+			$this->set('numPages', $numPages);
+			$this->set('data', $this->data);
+			$this->set('results', $results);
+			$this->set('serializedFormInput', serialize($this->data));
+		}
 	}
 
-	function imr() {
-	    if (!empty($this->data) ||
-			!empty($this->params['named']['schedulingMasterIds']) ||
-			!empty($this->params['named']['packageIds'])) {
+	function imr()
+	{
+		if (!empty($this->data) || !empty($this->params['named']['schedulingMasterIds']) || !empty($this->params['named']['packageIds'])) {
 
-	        if(isset($this->data['condition1'])) {
-	            $liveDuringStartDate  = $this->data['condition1']['value']['between'][0];
-	            $liveDuringEndDate    = $this->data['condition1']['value']['between'][1];
+			if (isset($this->data['condition1'])) {
+				$liveDuringStartDate = $this->data['condition1']['value']['between'][0];
+				$liveDuringEndDate = $this->data['condition1']['value']['between'][1];
 
-	            $condition1Saved = $this->data['condition1'];
-	            unset($this->data['condition1']);
-	        }
+				$condition1Saved = $this->data['condition1'];
+				unset($this->data['condition1']);
+			}
 
 			if (!empty($this->params['named']['schedulingMasterIds'])) {
 				$this->page = 1;
-	            $this->perPage = 9999;
-	            $this->limit = 9999;
+				$this->perPage = 9999;
+				$this->limit = 9999;
 				$conditions = "schedulingMasterId IN({$this->params['named']['schedulingMasterIds']})";
 			} else if (!empty($this->params['named']['packageIds'])) {
 				$this->page = 1;
-	            $this->perPage = 9999;
-	            $this->limit = 9999;
+				$this->perPage = 9999;
+				$this->limit = 9999;
 				$conditions = "packageId IN({$this->params['named']['packageIds']})";
-			}else {
-		        $conditions = $this->_build_conditions($this->data);
+			} else {
+				$conditions = $this->_build_conditions($this->data);
 			}
 
+			if (!empty($liveDuringStartDate)) {
+				$this->data['condition1'] = $condition1Saved;
+				// restore this so the drop down reflects the right data
+				if (strlen($conditions)) {
+					$conditions .= " AND ";
+				}
 
-	        if (!empty($liveDuringStartDate)) {
-	            $this->data['condition1'] = $condition1Saved; // restore this so the drop down reflects the right data
-	            if (strlen($conditions)) {
-	                $conditions .= " AND ";
-	            }
+				$conditions .= "(schedulingInstanceStartDate BETWEEN '$liveDuringStartDate' AND '$liveDuringEndDate' + INTERVAL 1 DAY";
+				$conditions .= " OR schedulingInstanceEndDate BETWEEN '$liveDuringStartDate' AND '$liveDuringEndDate' + INTERVAL 1 DAY";
+				$conditions .= " OR (schedulingInstanceStartDate <= '$liveDuringStartDate' AND schedulingInstanceEndDate >= '$liveDuringEndDate')";
+				$conditions .= ")";
+			}
 
-	            $conditions .= "(schedulingInstanceStartDate BETWEEN '$liveDuringStartDate' AND '$liveDuringEndDate' + INTERVAL 1 DAY";
-	            $conditions .= " OR schedulingInstanceEndDate BETWEEN '$liveDuringStartDate' AND '$liveDuringEndDate' + INTERVAL 1 DAY";
-	            $conditions .= " OR (schedulingInstanceStartDate <= '$liveDuringStartDate' AND schedulingInstanceEndDate >= '$liveDuringEndDate')";
-	            $conditions .= ")";
-	        }
+			if (!empty($this->params['named']['sortBy'])) {
+				$direction = (@$this->params['named']['sortDirection'] == 'DESC') ? 'DESC' : 'ASC';
+				$order = $this->params['named']['sortBy'] . ' ' . $direction;
 
-	        if (!empty($this->params['named']['sortBy'])) {
-	            $direction = (@$this->params['named']['sortDirection'] == 'DESC') ? 'DESC' : 'ASC';
-	            $order = $this->params['named']['sortBy'].' '.$direction;
+				$this->set('sortBy', $this->params['named']['sortBy']);
+				$this->set('sortDirection', $direction);
+			} else {
+				$order = 'schedulingMasterId';
 
-	            $this->set('sortBy', $this->params['named']['sortBy']);
-	            $this->set('sortDirection', $direction);
-	        } else {
-	            $order = 'schedulingMasterId';
+				$this->set('sortBy', 'schedulingMasterId');
+				$this->set('sortDirection', 'DESC');
+			}
 
-	            $this->set('sortBy', 'schedulingMasterId');
-    	        $this->set('sortDirection', 'DESC');
-	        }
+			if (empty($conditions)) {
+				$conditions = '1=1';
+			}
 
-            if (empty($conditions)) {
-                $conditions = '1=1';
-            }
+			$sql = "CALL imrReport(\"$conditions\", '$order', '{$this->limit}', @numRecords)";
 
-            $sql = "CALL imrReport(\"$conditions\", '$order', '{$this->limit}', @numRecords)";
+			$results = $this->OfferType->query($sql);
 
-	        $results = $this->OfferType->query($sql);
+			$sql2 = 'SELECT @numRecords as numRecords';
 
-	        $sql2 = 'SELECT @numRecords as numRecords';
+			$count = $this->OfferType->query($sql2);
+			$numRecords = $count[0][0]['numRecords'];
+			$numPages = ceil($numRecords / $this->perPage);
 
-	        $count = $this->OfferType->query($sql2);
-    	    $numRecords = $count[0][0]['numRecords'];
-            $numPages = ceil($numRecords / $this->perPage);
+			$this->set('currentPage', $this->page);
+			$this->set('numRecords', $numRecords);
+			$this->set('numPages', $numPages);
+			$this->set('data', $this->data);
+			$this->set('results', $results);
+			$this->set('serializedFormInput', serialize($this->data));
+		}
 
-            $this->set('currentPage', $this->page);
-            $this->set('numRecords', $numRecords);
-            $this->set('numPages', $numPages);
-            $this->set('data', $this->data);
-	        $this->set('results', $results);
-	        $this->set('serializedFormInput', serialize($this->data));
-	    }
-
-	    if (empty($this->data)) {
-	        $this->data['condition1']['field'] = 'liveDuring';
-            $this->data['condition1']['value']['between'][] = date('Y-m-d', strtotime('2 months ago'));
-            $this->data['condition1']['value']['between'][] = date('Y-m-d', strtotime('+1 month'));
-        }
-
+		if (empty($this->data)) {
+			$this->data['condition1']['field'] = 'liveDuring';
+			$this->data['condition1']['value']['between'][] = date('Y-m-d', strtotime('2 months ago'));
+			$this->data['condition1']['value']['between'][] = date('Y-m-d', strtotime('+1 month'));
+		}
 
 		$this->loadModel("Country");
 		$this->loadModel("State");
@@ -1763,31 +1815,32 @@ class ReportsController extends AppController {
 
 		$this->set('countries', $this->Country->find('list'));
 		$this->set('states', $this->State->find('list'));
-	    $this->set('offerTypeIds', $this->OfferType->find('list'));
+		$this->set('offerTypeIds', $this->OfferType->find('list'));
 	}
 
-	function packages() {
-	    if (!empty($this->data)) {
-	        $conditions = $this->_build_conditions($this->data);
+	function packages()
+	{
+		if (!empty($this->data)) {
+			$conditions = $this->_build_conditions($this->data);
 
-	        if (!empty($this->params['named']['sortBy'])) {
-	            $direction = (@$this->params['named']['sortDirection'] == 'DESC') ? 'DESC' : 'ASC';
-	            $order = $this->params['named']['sortBy'].' '.$direction;
+			if (!empty($this->params['named']['sortBy'])) {
+				$direction = (@$this->params['named']['sortDirection'] == 'DESC') ? 'DESC' : 'ASC';
+				$order = $this->params['named']['sortBy'] . ' ' . $direction;
 
-	            $this->set('sortBy', $this->params['named']['sortBy']);
-	            $this->set('sortDirection', $direction);
-	        } else {
-	            $order = 'Client.clientId';
+				$this->set('sortBy', $this->params['named']['sortBy']);
+				$this->set('sortDirection', $direction);
+			} else {
+				$order = 'Client.clientId';
 
-	            $this->set('sortBy', 'Client.clientId');
-    	        $this->set('sortDirection', 'DESC');
-	        }
+				$this->set('sortBy', 'Client.clientId');
+				$this->set('sortDirection', 'DESC');
+			}
 
-            if (empty($conditions)) {
-                $conditions = '1=1';
-            }
+			if (empty($conditions)) {
+				$conditions = '1=1';
+			}
 
-            $sql = "SELECT
+			$sql = "SELECT
                         COUNT(cl.clientLoaPackageRelId) as numRecords
                     FROM package AS Package
                         LEFT JOIN packageStatus AS PackageStatus USING (packageStatusId)
@@ -1798,11 +1851,11 @@ class ReportsController extends AppController {
                         LEFT JOIN revenueModel as RevenueModel USING (revenueModelId)
                         WHERE Loa.endDate >= NOW() AND $conditions";
 
-	        $count = $this->OfferType->query($sql);
-    	    $numRecords = $count[0][0]['numRecords'];
-            $numPages = ceil($numRecords / $this->perPage);
+			$count = $this->OfferType->query($sql);
+			$numRecords = $count[0][0]['numRecords'];
+			$numPages = ceil($numRecords / $this->perPage);
 
-            $sql = "SELECT
+			$sql = "SELECT
                         Client.clientId,
                         Client.name,
                         Package.packageId,
@@ -1822,56 +1875,59 @@ class ReportsController extends AppController {
                     ORDER BY $order
 	                LIMIT $this->limit";
 
-	        $results = $this->OfferType->query($sql);
-	        $this->set('currentPage', $this->page);
-            $this->set('numRecords', $numRecords);
-            $this->set('numPages', $numPages);
-            $this->set('data', $this->data);
-	        $this->set('results', $results);
-	        $this->set('serializedFormInput', serialize($this->data));
-	    }
+			$results = $this->OfferType->query($sql);
+			$this->set('currentPage', $this->page);
+			$this->set('numRecords', $numRecords);
+			$this->set('numPages', $numPages);
+			$this->set('data', $this->data);
+			$this->set('results', $results);
+			$this->set('serializedFormInput', serialize($this->data));
+		}
 
-            $condition1Options = array('MATCH=Client.name' => 'Client Name',
-                                        'MATCH=Client.managerUsername' => 'Manager Username');
+		$condition1Options = array(
+			'MATCH=Client.name' => 'Client Name',
+			'MATCH=Client.managerUsername' => 'Manager Username'
+		);
 
-			$this->loadModel("RevenueModel");
-			$this->loadModel("PackageStatus");
+		$this->loadModel("RevenueModel");
+		$this->loadModel("PackageStatus");
 
-			$this->set('condition1Options', $condition1Options);
-            $this->set('revenueModelIds', $this->RevenueModel->find('list'));
-            $this->set('packageStatusIds', $this->PackageStatus->find('list'));
+		$this->set('condition1Options', $condition1Options);
+		$this->set('revenueModelIds', $this->RevenueModel->find('list'));
+		$this->set('packageStatusIds', $this->PackageStatus->find('list'));
 	}
 
-	function car_033111() {
-	    if (!empty($this->data) || !empty($this->params['named']['clientId'])) {
-	        $clientId = (!empty($this->params['named']['clientId'])) ? $this->params['named']['clientId'] : $this->data['Client']['clientName_id'];
+	function car_033111()
+	{
+		if (!empty($this->data) || !empty($this->params['named']['clientId'])) {
+			$clientId = (!empty($this->params['named']['clientId'])) ? $this->params['named']['clientId'] : $this->data['Client']['clientName_id'];
 
-	        $stats = $this->OfferType->query("SELECT DATE_FORMAT(activityStart, '%Y%m' ) as yearMonth,
+			$stats = $this->OfferType->query("SELECT DATE_FORMAT(activityStart, '%Y%m' ) as yearMonth,
 	                                                    phone, webRefer, productView, searchView, destinationView, email
 	                                            FROM reporting.carConsolidatedView AS rs
 	                                            WHERE CURDATE() - INTERVAL 14 MONTH <= activityStart
 	                                            AND rs.clientId = '$clientId'
 	                                            ORDER BY activityStart ");
 
-	        $auctions = $this->OfferType->query("SELECT DATE_FORMAT(auc.firstTicketDate, '%Y%m' ) as yearMonth, tickets as aucTickets, revenue as aucRevenue
+			$auctions = $this->OfferType->query("SELECT DATE_FORMAT(auc.firstTicketDate, '%Y%m' ) as yearMonth, tickets as aucTickets, revenue as aucRevenue
     	                                            FROM reporting.carAuctionSold AS auc
     	                                            WHERE CURDATE() - INTERVAL 14 MONTH <= firstTicketDate
     	                                            AND auc.clientid = '$clientId'
     	                                            ORDER BY firstTicketDate ");
 
-    	    $fixedprice = $this->OfferType->query("SELECT DATE_FORMAT(fp.firstTicketDate, '%Y%m' ) as yearMonth, tickets as fpTickets, revenue as fpRevenue
+			$fixedprice = $this->OfferType->query("SELECT DATE_FORMAT(fp.firstTicketDate, '%Y%m' ) as yearMonth, tickets as fpTickets, revenue as fpRevenue
     	                                            FROM reporting.carFixedPriceSold AS fp
     	                                            WHERE CURDATE() - INTERVAL 14 MONTH <= firstTicketDate
     	                                            AND fp.clientid = '$clientId'
     	                                            ORDER BY firstTicketDate ");
 
-    	    $auctionsTotal = $this->OfferType->query("SELECT DATE_FORMAT(auc.minStartDate, '%Y%m' ) as yearMonth, numberAuctions
+			$auctionsTotal = $this->OfferType->query("SELECT DATE_FORMAT(auc.minStartDate, '%Y%m' ) as yearMonth, numberAuctions
         	                                        FROM reporting.carAuction AS auc
         	                                        WHERE CURDATE() - INTERVAL 14 MONTH <= minStartDate
         	                                        AND auc.clientid = '$clientId'
         	                                        ORDER BY minStartDate ");
 
-            $fixedpriceTotal = $this->OfferType->query("SELECT DATE_FORMAT(fp.lastUpdate, '%Y%m' ) as yearMonth, numberPackages
+			$fixedpriceTotal = $this->OfferType->query("SELECT DATE_FORMAT(fp.lastUpdate, '%Y%m' ) as yearMonth, numberPackages
         	                                        FROM reporting.carFixedPricePackage AS fp
         	                                        WHERE CURDATE() - INTERVAL 14 MONTH <= lastUpdate
         	                                        AND fp.clientid = '$clientId'
@@ -1889,112 +1945,113 @@ class ReportsController extends AppController {
 																AND pr.clientId = '$clientId'
 					                                            ORDER BY year2, month2");
 
-           	foreach ($hotelOfferClicksTotal as $k => $v) {
+			foreach ($hotelOfferClicksTotal as $k => $v) {
 				$hotelOfferClicksTotal[$k][0]['yearMonth'] = $v['pr']['year2'] . str_pad($v['pr']['month2'], 2, '0', STR_PAD_LEFT);
 				unset($hotelOfferClicksTotal[$k]['pr']['month2']);
 				unset($hotelOfferClicksTotal[$k]['pr']['year2']);
 			}
 
-            //setup array of all months we are using in this view
+			//setup array of all months we are using in this view
 
-            $today = strtotime(date('Y-m-01'));
-            for ($i = 0; $i <= 12; $i++) {
-                $ts = strtotime("-".(12-($i-1))." months", $today);
-                $months[$i] = date('Ym', $ts);
-                $monthNames[$i] = date('M Y', $ts);
-            }
+			$today = strtotime(date('Y-m-01'));
+			for ($i = 0; $i <= 12; $i++) {
+				$ts = strtotime("-" . (12 - ($i - 1)) . " months", $today);
+				$months[$i] = date('Ym', $ts);
+				$monthNames[$i] = date('M Y', $ts);
+			}
 
-            foreach($auctions as $k => $v):
-                $auctionsKeyed[$v[0]['yearMonth']] = $v['auc'];     //set the key for each to the year and month so we can iterate through it easily
-            endforeach;
+			foreach ($auctions as $k => $v) :
+				$auctionsKeyed[$v[0]['yearMonth']] = $v['auc'];
+				//set the key for each to the year and month so we can iterate through it easily
+			endforeach;
 
-            foreach($fixedprice as $k => $v):
-                $fpKeyed[$v[0]['yearMonth']] = $v['fp'];           //set the key for each to the year and month so we can iterate through it easily
-            endforeach;
+			foreach ($fixedprice as $k => $v) :
+				$fpKeyed[$v[0]['yearMonth']] = $v['fp'];
+				//set the key for each to the year and month so we can iterate through it easily
+			endforeach;
 
-            foreach($auctionsTotal as $k => $v):
-                $aucTotKeyed[$v[0]['yearMonth']] = $v['auc'];           //set the key for each to the year and month so we can iterate through it easily
-            endforeach;
+			foreach ($auctionsTotal as $k => $v) :
+				$aucTotKeyed[$v[0]['yearMonth']] = $v['auc'];
+				//set the key for each to the year and month so we can iterate through it easily
+			endforeach;
 
-            foreach($fixedpriceTotal as $k => $v):
-                $fpTotKeyed[$v[0]['yearMonth']] = $v['fp'];           //set the key for each to the year and month so we can iterate through it easily
-            endforeach;
+			foreach ($fixedpriceTotal as $k => $v) :
+				$fpTotKeyed[$v[0]['yearMonth']] = $v['fp'];
+				//set the key for each to the year and month so we can iterate through it easily
+			endforeach;
 
-			foreach($hotelOfferTotal as $k => $v):
-                $hotelOfferKeyed[$v[0]['yearMonth']] = $v['ho'];           //set the key for each to the year and month so we can iterate through it easily
-            endforeach;
+			foreach ($hotelOfferTotal as $k => $v) :
+				$hotelOfferKeyed[$v[0]['yearMonth']] = $v['ho'];
+				//set the key for each to the year and month so we can iterate through it easily
+			endforeach;
 
-			foreach($hotelOfferClicksTotal as $k => $v):
-                $hotelOfferClicksKeyed[$v[0]['yearMonth']] = $v['pr'];           //set the key for each to the year and month so we can iterate through it easily
-            endforeach;
+			foreach ($hotelOfferClicksTotal as $k => $v) :
+				$hotelOfferClicksKeyed[$v[0]['yearMonth']] = $v['pr'];
+				//set the key for each to the year and month so we can iterate through it easily
+			endforeach;
 
-            //sum the totals for the last 12 months and put everything in an array we can easily reference later
-            foreach($stats as $k => $v):
-                $keyedStats[$v[0]['yearMonth']] = array_merge($v['rs'], $v[0]);           //set the key for each to the year and month so we can iterate through it easily
-            endforeach;
+			//sum the totals for the last 12 months and put everything in an array we can
+			// easily reference later
+			foreach ($stats as $k => $v) :
+				$keyedStats[$v[0]['yearMonth']] = array_merge($v['rs'], $v[0]);
+				//set the key for each to the year and month so we can iterate through it easily
+			endforeach;
 
-
-            $totals['phone'] = 0;
-            $totals['webRefer'] = 0;
-            $totals['productView'] = 0;
-            $totals['searchView'] = 0;
-            $totals['destinationView'] = 0;
-            $totals['email'] = 0;
-            $totals['aucTickets'] = 0;
-            $totals['aucRevenue'] = 0;
-            $totals['fpTickets'] = 0;
-            $totals['fpRevenue'] = 0;
-            $totals['aucTotals'] = 0;
-            $totals['fpTotals'] = 0;
+			$totals['phone'] = 0;
+			$totals['webRefer'] = 0;
+			$totals['productView'] = 0;
+			$totals['searchView'] = 0;
+			$totals['destinationView'] = 0;
+			$totals['email'] = 0;
+			$totals['aucTickets'] = 0;
+			$totals['aucRevenue'] = 0;
+			$totals['fpTickets'] = 0;
+			$totals['fpRevenue'] = 0;
+			$totals['aucTotals'] = 0;
+			$totals['fpTotals'] = 0;
 			$totals['hotelOfferTotal'] = 0;
 			$totals['hotelOfferClicksTotal'] = 0;
 
-            foreach ($months as $k => $month):
-                $keyedResults[$month] = array_merge((array)@$keyedStats[$month],
-                                                (array)@$auctionsKeyed[$month],
-                                                (array)@$fpKeyed[$month],
-                                                (array)@$aucTotKeyed[$month],
-                                                (array)@$fpTotKeyed[$month],
-												(array)@$hotelOfferKeyed[$month],
-												(array)@$hotelOfferClicksKeyed[$month]
-												);
+			foreach ($months as $k => $month) :
+				$keyedResults[$month] = array_merge((array)@$keyedStats[$month], (array)@$auctionsKeyed[$month], (array)@$fpKeyed[$month], (array)@$aucTotKeyed[$month], (array)@$fpTotKeyed[$month], (array)@$hotelOfferKeyed[$month], (array)@$hotelOfferClicksKeyed[$month]);
 
-                //only count the last 12 months in the totals, months array has 13 months
-                if ($k == 0) {
-                    continue;
-                }
-                $totals['phone'] += @$keyedResults[$month]['phone'];
-                $totals['webRefer'] += @$keyedResults[$month]['webRefer'];
-                $totals['productView'] += @$keyedResults[$month]['productView'];
-                $totals['searchView'] += @$keyedResults[$month]['searchView'];
-                $totals['destinationView'] += @$keyedResults[$month]['destinationView'];
-                $totals['email'] += @$keyedResults[$month]['email'];
-                $totals['aucTickets'] += @$keyedResults[$month]['aucTickets'];
-                $totals['aucRevenue'] += @$keyedResults[$month]['aucRevenue'];
-                $totals['fpTickets'] += @$keyedResults[$month]['fpTickets'];
-                $totals['fpRevenue'] += @$keyedResults[$month]['fpRevenue'];
-                $totals['aucTotals'] += @$keyedResults[$month]['numberAuctions'];
-                $totals['fpTotals'] += @$keyedResults[$month]['numberPackages'];
+				//only count the last 12 months in the totals, months array has 13 months
+				if ($k == 0) {
+					continue;
+				}
+				$totals['phone'] += @$keyedResults[$month]['phone'];
+				$totals['webRefer'] += @$keyedResults[$month]['webRefer'];
+				$totals['productView'] += @$keyedResults[$month]['productView'];
+				$totals['searchView'] += @$keyedResults[$month]['searchView'];
+				$totals['destinationView'] += @$keyedResults[$month]['destinationView'];
+				$totals['email'] += @$keyedResults[$month]['email'];
+				$totals['aucTickets'] += @$keyedResults[$month]['aucTickets'];
+				$totals['aucRevenue'] += @$keyedResults[$month]['aucRevenue'];
+				$totals['fpTickets'] += @$keyedResults[$month]['fpTickets'];
+				$totals['fpRevenue'] += @$keyedResults[$month]['fpRevenue'];
+				$totals['aucTotals'] += @$keyedResults[$month]['numberAuctions'];
+				$totals['fpTotals'] += @$keyedResults[$month]['numberPackages'];
 				$totals['hotelOfferTotal'] += @$keyedResults[$month]['numberOffers'];
-				$totals['hotelOfferClicksTotal'] +=@$keyedResults[$month]['event12'];
-            endforeach;
+				$totals['hotelOfferClicksTotal'] += @$keyedResults[$month]['event12'];
+			endforeach;
 
-            $results = $keyedResults;
+			$results = $keyedResults;
 
 			$this->loadModel("Client");
-            $this->Client->recursive = -1;
-            $clientDetails = $this->Client->read(null, $clientId);
+			$this->Client->recursive = -1;
+			$clientDetails = $this->Client->read(null, $clientId);
 
-            $this->Client->Loa->recursive = -1;
-            $loa = $this->Client->Loa->find('first', array('conditions' => array('Loa.clientId' => $this->Client->id)));
+			$this->Client->Loa->recursive = -1;
+			$loa = $this->Client->Loa->find('first', array('conditions' => array('Loa.clientId' => $this->Client->id)));
 
-            $clientDetails['Loa'] = $loa['Loa'];
+			$clientDetails['Loa'] = $loa['Loa'];
 
-            $this->set(compact('results', 'totals', 'months', 'monthNames', 'clients', 'clientDetails'));
-	    }
+			$this->set(compact('results', 'totals', 'months', 'monthNames', 'clients', 'clientDetails'));
+		}
 	}
 
-	function mcr() {
+	function mcr()
+	{
 
 		$this->loadModel("Client");
 		$startDate = date("Y-m-d 00:00:00");
@@ -2004,9 +2061,9 @@ class ReportsController extends AppController {
 		if (!empty($_POST['downloadcsv']) && $_POST['downloadcsv'] == 1) {
 
 			Configure::write('debug', 0);
-			$this->set('clients', unserialize(stripslashes( htmlspecialchars_decode($_POST['clients']))));
+			$this->set('clients', unserialize(stripslashes(htmlspecialchars_decode($_POST['clients']))));
 			$this->viewPath .= '/csv';
-	    $this->layoutPath = 'csv';
+			$this->layoutPath = 'csv';
 
 		} else {
 
@@ -2016,13 +2073,15 @@ class ReportsController extends AppController {
 				// in short, properties with zero offers are properly highlighted when displaying
 				// full report, but when link is clicked (
 				// to display only properties with zero offers today,
-				// results are mangled. So instead of working through this slop of code, just display the
-				// the full report and set the view to only display those properties with zero offers
+				// results are mangled. So instead of working through this slop of code, just
+				// display the
+				// the full report and set the view to only display those properties with zero
+				// offers
 				// mbyrnes
 
-				if (isset($this->params['named']['ql'])==2 && $this->params['named']['ql']==2){
-					$this->params['named']['ql']='';
-					$this->set("zero_offers_only",1);
+				if (isset($this->params['named']['ql']) == 2 && $this->params['named']['ql'] == 2) {
+					$this->params['named']['ql'] = '';
+					$this->set("zero_offers_only", 1);
 				}
 
 				$conditions = $this->_build_conditions($this->data);
@@ -2030,365 +2089,366 @@ class ReportsController extends AppController {
 				if (!empty($this->params['named']['sortBy'])) {
 
 					$direction = (@$this->params['named']['sortDirection'] == 'DESC') ? 'DESC' : 'ASC';
-					$order = $this->params['named']['sortBy'].' '.$direction;
+					$order = $this->params['named']['sortBy'] . ' ' . $direction;
 					$this->set('sortBy', $this->params['named']['sortBy']);
 					$this->set('sortDirection', $direction);
 
 				} else {
 
-
-					switch(@$this->params['named']['ql']):
-					case 1:
-					$order = "Loa2.endDate";
-					break;
-					case 2:
-					case 3:
-					case 5:
-					case 6:
-					case 7:
-					$order = "Loa.membershipBalance DESC";
-					break;
-					case 4:
-					$order = "Loa.endDate";
-					break;
-					default:
-					$order = 'Loa.endDate';
-					break;
+					switch(@$this->params['named']['ql']) :
+						case 1 :
+							$order = "Loa2.endDate";
+							break;
+						case 2 :
+						case 3 :
+						case 5 :
+						case 6 :
+						case 7 :
+							$order = "Loa.membershipBalance DESC";
+							break;
+						case 4 :
+							$order = "Loa.endDate";
+							break;
+						default :
+							$order = 'Loa.endDate';
+							break;
 					endswitch;
 
 					$this->set('sortBy', $order);
 					$this->set('sortDirection', 'DESC');
 
-        }
+				}
 
 				if (!empty($conditions) || isset($this->params['named']['ql'])) {
 
-					switch(@$this->params['named']['ql']):
-					case 1:
-						$qlconditions = "NOW() + INTERVAL 90 DAY >= Loa.endDate";
-					break;
-					case 2:
-						$clients = $this->Client->query("CALL clientsNoScheduledOffersLoa('$startDate2','$startDate2')");
-						foreach($clients as $c) {
-							$clientIds[] = $c['c']['clientId'];
-						}
+					switch(@$this->params['named']['ql']) :
+						case 1 :
+							$qlconditions = "NOW() + INTERVAL 90 DAY >= Loa.endDate";
+							break;
+						case 2 :
+							$clients = $this->Client->query("CALL clientsNoScheduledOffersLoa('$startDate2','$startDate2')");
+							foreach ($clients as $c) {
+								$clientIds[] = $c['c']['clientId'];
+							}
 
-						$qlconditions = "Client.clientId IN (".implode(',', $clientIds).")";
-					break;
-					case 3:
-						$q="SELECT DISTINCT cl.clientId ";
-						$q.="FROM clientLoaPackageRel cl ";
-						$q.="INNER JOIN package USING(packageId) ";
-						$q.="INNER JOIN loa USING(loaId) ";
-						$q.="WHERE NOW() + INTERVAL 60 DAY >= validityEndDate ";
-						$q.="AND validityEndDate >= NOW() AND loa.inactive <> 1";
-						$clients = $this->Client->query($q);
-						foreach($clients as $c) {
-							$clientIds[] = $c['cl']['clientId'];
-						}
-						$qlconditions = "Client.clientId IN (".implode(',', $clientIds).")";
-					break;
-					case 4:
-						$q="SELECT DISTINCT clientId, MAX(activityStart) as latestDate, activityStart, phone ";
-						$q.="FROM reporting.carConsolidatedView as Referrals ";
-						$q.="WHERE activityStart >= (NOW() - INTERVAL 120 DAY) AND phone = 0 OR phone IS NULL ";
-						$q.="GROUP BY clientId ";
-						$q.="HAVING activityStart = latestDate AND latestDate >= NOW() - INTERVAL 60 DAY";
-						$noCalls = $this->Client->query($q);
+							$qlconditions = "Client.clientId IN (" . implode(',', $clientIds) . ")";
+							break;
+						case 3 :
+							$q = "SELECT DISTINCT cl.clientId ";
+							$q .= "FROM clientLoaPackageRel cl ";
+							$q .= "INNER JOIN package USING(packageId) ";
+							$q .= "INNER JOIN loa USING(loaId) ";
+							$q .= "WHERE NOW() + INTERVAL 60 DAY >= validityEndDate ";
+							$q .= "AND validityEndDate >= NOW() AND loa.inactive <> 1";
+							$clients = $this->Client->query($q);
+							foreach ($clients as $c) {
+								$clientIds[] = $c['cl']['clientId'];
+							}
+							$qlconditions = "Client.clientId IN (" . implode(',', $clientIds) . ")";
+							break;
+						case 4 :
+							$q = "SELECT DISTINCT clientId, MAX(activityStart) as latestDate, activityStart, phone ";
+							$q .= "FROM reporting.carConsolidatedView as Referrals ";
+							$q .= "WHERE activityStart >= (NOW() - INTERVAL 120 DAY) AND phone = 0 OR phone IS NULL ";
+							$q .= "GROUP BY clientId ";
+							$q .= "HAVING activityStart = latestDate AND latestDate >= NOW() - INTERVAL 60 DAY";
+							$noCalls = $this->Client->query($q);
 
-						foreach($noCalls as $c) {
-							$clientIds[] = $c['Referrals']['clientId'];
-						}
-						$qlconditions = "Client.clientId IN (".implode(',', $clientIds).")";
-					break;
-					case 5:
+							foreach ($noCalls as $c) {
+								$clientIds[] = $c['Referrals']['clientId'];
+							}
+							$qlconditions = "Client.clientId IN (" . implode(',', $clientIds) . ")";
+							break;
+						case 5 :
+							$q = "CREATE TEMPORARY TABLE recentTickets ";
+							$q .= "SELECT clientLoaPackageRel.clientId FROM ticket AS Ticket ";
+							$q .= "INNER JOIN clientLoaPackageRel USING(packageId) ";
+							$q .= "WHERE Ticket.created >= (NOW() - INTERVAL " . $this->params['named']['days'] . " DAY)";
+							$this->Client->query($q);
+							$this->Client->query("CREATE INDEX clientId ON recentTickets (clientId)");
+							$q = "SELECT DISTINCT Client.clientId ";
+							$q .= "FROM client AS Client ";
+							$q .= "INNER JOIN loa AS Loa USING(clientId) ";
+							$q .= "INNER JOIN clientLoaPackageRel USING(clientId) ";
+							$q .= "LEFT JOIN recentTickets USING (clientId) ";
+							$q .= "WHERE recentTickets.clientId IS NULL AND Loa.inactive <> 1 AND Loa.endDate > NOW()";
+							$noSell = $this->Client->query($q);
 
-						$q="CREATE TEMPORARY TABLE recentTickets ";
-						$q.="SELECT clientLoaPackageRel.clientId FROM ticket AS Ticket ";
-						$q.="INNER JOIN clientLoaPackageRel USING(packageId) ";
-						$q.="WHERE Ticket.created >= (NOW() - INTERVAL ".$this->params['named']['days']." DAY)";
-						$this->Client->query($q);
-						$this->Client->query("CREATE INDEX clientId ON recentTickets (clientId)");
-						$q="SELECT DISTINCT Client.clientId ";
-						$q.="FROM client AS Client ";
-						$q.="INNER JOIN loa AS Loa USING(clientId) ";
-						$q.="INNER JOIN clientLoaPackageRel USING(clientId) ";
-						$q.="LEFT JOIN recentTickets USING (clientId) ";
-						$q.="WHERE recentTickets.clientId IS NULL AND Loa.inactive <> 1 AND Loa.endDate > NOW()";
-						$noSell = $this->Client->query($q);
+							foreach ($noSell as $c) {
+								$clientIds[] = $c['Client']['clientId'];
+							}
+							$qlconditions = "Client.clientId IN (" . implode(',', $clientIds) . ")";
+							break;
+						case 6 :
+							$q = "CREATE TEMPORARY TABLE recentTickets ";
+							$q .= "SELECT clientLoaPackageRel.clientId ";
+							$q .= "FROM ticket AS Ticket ";
+							$q .= "INNER JOIN clientLoaPackageRel USING(packageId) ";
+							$q .= "WHERE Ticket.created >= (NOW() - INTERVAL 30 DAY) AND Ticket.offerTypeId IN(3,4)";
+							$this->Client->query($q);
 
-						foreach($noSell as $c) {
-							$clientIds[] = $c['Client']['clientId'];
-						}
-						$qlconditions = "Client.clientId IN (".implode(',', $clientIds).")";
-					break;
-					case 6:
-						$q="CREATE TEMPORARY TABLE recentTickets ";
-						$q.="SELECT clientLoaPackageRel.clientId ";
-						$q.="FROM ticket AS Ticket ";
-						$q.="INNER JOIN clientLoaPackageRel USING(packageId) ";
-						$q.="WHERE Ticket.created >= (NOW() - INTERVAL 30 DAY) AND Ticket.offerTypeId IN(3,4)";
-						$this->Client->query($q);
+							$q = "SELECT DISTINCT Client.clientId ";
+							$q .= "FROM client AS Client ";
+							$q .= "INNER JOIN loa AS Loa USING(clientId) ";
+							$q .= "INNER JOIN clientLoaPackageRel USING(clientId) ";
+							$q .= "LEFT JOIN recentTickets USING (clientId) ";
+							$q .= "WHERE recentTickets.clientId IS NULL AND Loa.inactive <> 1 AND Loa.endDate > NOW()";
+							$noSell = $this->Client->query($q);
 
-						$q="SELECT DISTINCT Client.clientId ";
-						$q.="FROM client AS Client ";
-						$q.="INNER JOIN loa AS Loa USING(clientId) ";
-						$q.="INNER JOIN clientLoaPackageRel USING(clientId) ";
-						$q.="LEFT JOIN recentTickets USING (clientId) ";
-						$q.="WHERE recentTickets.clientId IS NULL AND Loa.inactive <> 1 AND Loa.endDate > NOW()";
-						$noSell = $this->Client->query($q);
-
-						foreach($noSell as $c) {
-							$clientIds[] = $c['Client']['clientId'];
-						}
-						$qlconditions = "Client.clientId IN (".implode(',', $clientIds).")";
-					break;
-					case 7:
-						$q="CALL clientsNoScheduledOffersLoaFlex('$startDate2','$startDate2', true)";
-						$clients = $this->Client->query($q);
-						foreach($clients as $c) {
-							$clientIds[] = $c['c']['clientId'];
-						}
-						$qlconditions = "Client.clientId IN (".implode(',', $clientIds).")";
-					break;
-					default:
-						$conditions = $conditions;
-					break;
+							foreach ($noSell as $c) {
+								$clientIds[] = $c['Client']['clientId'];
+							}
+							$qlconditions = "Client.clientId IN (" . implode(',', $clientIds) . ")";
+							break;
+						case 7 :
+							$q = "CALL clientsNoScheduledOffersLoaFlex('$startDate2','$startDate2', true)";
+							$clients = $this->Client->query($q);
+							foreach ($clients as $c) {
+								$clientIds[] = $c['c']['clientId'];
+							}
+							$qlconditions = "Client.clientId IN (" . implode(',', $clientIds) . ")";
+							break;
+						default :
+							$conditions = $conditions;
+							break;
 					endswitch;
 
 					if (!empty($qlconditions) && !empty($conditions)) {
-						$conditions .= ' AND '.$qlconditions;
-					} else if(!empty($qlconditions)) {
+						$conditions .= ' AND ' . $qlconditions;
+					} else if (!empty($qlconditions)) {
 						$conditions = $qlconditions;
 					}
 
-					$q= "SELECT Client.clientId, Client.name, Client.sites, Loa.loaId, Loa.startDate, Loa.endDate, ";
-					$q.="Loa2.startDate, Loa.loaLevelId, Loa.membershipBalance, Loa.membershipFee, ";
-					$q.="IF(Loa.totalKept = 0 OR Loa.totalKept IS NULL, 'N/A', ";
-					$q.="ROUND(-Loa.membershipBalance / (Loa.totalKept / (DATEDIFF(Loa.startDate,NOW()))))) ";
-					$q.="as daysUntilKeepEnd ";
-					$q.="FROM loa AS Loa ";
-					$q.="INNER JOIN client AS Client ON (Client.clientId = Loa.clientId AND curdate() ";
-					$q.="BETWEEN Loa.startDate AND Loa.endDate AND Loa.inactive <> 1) ";
-					$q.="INNER JOIN clientSiteExtended cse ON Client.clientId = cse.clientId ";
-					$q.="LEFT JOIN loa AS Loa2 ON (Loa2.clientId = Client.clientId AND Loa2.startDate > NOW() ";
-					$q.="AND Loa2.inactive <> 1) ";
-					$q.="LEFT JOIN clientDestinationRel AS ClientDestinationRel ";
-					$q.="ON (Client.clientId = ClientDestinationRel.clientId) WHERE $conditions ";
-					if ($conditions!="")$q.="AND ";
-					$q.="cse.inactive <> 1 AND Loa.inactive <> 1 GROUP BY Loa.loaId ORDER BY $order";
-					$clients=$this->Client->query($q);
+					$q = "SELECT Client.clientId, Client.name, Client.sites, Loa.loaId, Loa.startDate, Loa.endDate, ";
+					$q .= "Loa2.startDate, Loa.loaLevelId, Loa.membershipBalance, Loa.membershipFee, ";
+					$q .= "IF(Loa.totalKept = 0 OR Loa.totalKept IS NULL, 'N/A', ";
+					$q .= "ROUND(-Loa.membershipBalance / (Loa.totalKept / (DATEDIFF(Loa.startDate,NOW()))))) ";
+					$q .= "as daysUntilKeepEnd ";
+					$q .= "FROM loa AS Loa ";
+					$q .= "INNER JOIN client AS Client ON (Client.clientId = Loa.clientId AND curdate() ";
+					$q .= "BETWEEN Loa.startDate AND Loa.endDate AND Loa.inactive <> 1) ";
+					$q .= "INNER JOIN clientSiteExtended cse ON Client.clientId = cse.clientId ";
+					$q .= "LEFT JOIN loa AS Loa2 ON (Loa2.clientId = Client.clientId AND Loa2.startDate > NOW() ";
+					$q .= "AND Loa2.inactive <> 1) ";
+					$q .= "LEFT JOIN clientDestinationRel AS ClientDestinationRel ";
+					$q .= "ON (Client.clientId = ClientDestinationRel.clientId) WHERE $conditions ";
+					if ($conditions != "")
+						$q .= "AND ";
+					$q .= "cse.inactive <> 1 AND Loa.inactive <> 1 GROUP BY Loa.loaId ORDER BY $order";
+					$clients = $this->Client->query($q);
 
+				}
 			}
-		}
-
-	    if (isset($this->data['MCR'])) {
-			switch($this->data['MCR']['pkgRevenueRange']):
-				case 1:
-					$pkgRevenueStart = date('Y-m-d', strtotime('-60 days'));
-					break;
-				case 2:
-					$pkgRevenueStart = date('Y-m-d', strtotime('-90 days'));
-					break;
-				case 3:
-					$pkgRevenueStart = date('Y-m-01');
-					break;
-				case 4:
-					if (date('Y-m-d') < date('Y-04-01')) {
-						$pkgRevenueStart = date('Y-01-01');
-					} else if (date('Y-m-d') < date('Y-07-01')) {
-						$pkgRevenueStart = date('Y-04-01');
-					} else if (date('Y-m-d') < date('Y-10-01')) {
-						$pkgRevenueStart = date('Y-07-01');
-					} else {
-						$pkgRevenueStart = date('Y-10-01');
-					}
-					break;
-				case 0:
-				default:
-					$pkgRevenueStart = date('Y-m-d', strtotime('-30 days'));
-				break;
-			endswitch;
-		}
-		else {
-			$pkgRevenueStart = date('Y-m-d', strtotime('-30 days'));
-		}
-
-		$pkgRevenueEnd = date('Y-m-d', strtotime("+1 day"));
-		if (!isset($clients)) {
-			 $clients = array();
-		}
-
-		$q="SELECT DATE_FORMAT(MAX(activityStart), '%Y-%m-%d') as latestReferralDate ";
-		$q.="FROM reporting.carConsolidatedView as Referrals";
-		$referrals = $this->Client->query($q);
-		$latestReferralDate = $referrals[0][0]['latestReferralDate'];
-
-		foreach($clients as $k => $client) {
-			$clientId = $client['Client']['clientId'];
-
-			//sites
-			//$clients[$k]['Client']['sites'] = $this->Client->get_sites($clientId);
 
 			if (isset($this->data['MCR'])) {
-				if ($this->data['MCR']['pkgRevenueRange'] == 5) {
-					$pkgRevenueStart = date('Y-m-d', strtotime($client['Loa']['startDate']));
-				}
+				switch($this->data['MCR']['pkgRevenueRange']) :
+					case 1 :
+						$pkgRevenueStart = date('Y-m-d', strtotime('-60 days'));
+						break;
+					case 2 :
+						$pkgRevenueStart = date('Y-m-d', strtotime('-90 days'));
+						break;
+					case 3 :
+						$pkgRevenueStart = date('Y-m-01');
+						break;
+					case 4 :
+						if (date('Y-m-d') < date('Y-04-01')) {
+							$pkgRevenueStart = date('Y-01-01');
+						} else if (date('Y-m-d') < date('Y-07-01')) {
+							$pkgRevenueStart = date('Y-04-01');
+						} else if (date('Y-m-d') < date('Y-10-01')) {
+							$pkgRevenueStart = date('Y-07-01');
+						} else {
+							$pkgRevenueStart = date('Y-10-01');
+						}
+						break;
+					case 0 :
+					default :
+						$pkgRevenueStart = date('Y-m-d', strtotime('-30 days'));
+						break;
+				endswitch;
+			} else {
+				$pkgRevenueStart = date('Y-m-d', strtotime('-30 days'));
 			}
 
-			#### Package Revenue ####
-			// Begin Packages Live Today
-			$q="SELECT COUNT(DISTINCT SchedulingMaster.packageId) as packagesLive, offerTypeId, siteId ";
-			$q.="FROM schedulingInstance as SchedulingInstance ";
-			$q.="INNER JOIN schedulingMaster as SchedulingMaster USING (schedulingMasterId) ";
-			$q.="INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel USING(packageId) ";
-			$q.="WHERE (SchedulingInstance.startDate between '$startDate' and '$endDate' or ";
-			$q.="SchedulingInstance.endDate between '$startDate' and '$endDate' ";
-			$q.="or (SchedulingInstance.startDate < '$startDate' and SchedulingInstance.endDate > '$endDate')) ";
-			$q.="AND clientId = $clientId ";
-			$q.="GROUP BY offerTypeId, siteId";
-			$packagesLive = $this->Client->query($q);
-
-			if (true) {
-				$q="SELECT COUNT(DISTINCT SchedulingMaster.packageId) as packagesLive, offerTypeId, ";
-				$q.="SchedulingMaster.siteId ";
-				$q.="FROM schedulingInstance as SchedulingInstance ";
-				$q.="INNER JOIN schedulingMaster as SchedulingMaster USING (schedulingMasterId) ";
-				$q.="INNER JOIN package USING (packageId) ";
-				$q.="INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel USING(packageId) ";
-				$q.="WHERE (SchedulingInstance.startDate between '$startDate' and '$endDate' ";
-				$q.="or SchedulingInstance.endDate between '$startDate' and '$endDate' ";
-				$q.="or (SchedulingInstance.startDate < '$startDate' and SchedulingInstance.endDate > '$endDate')) ";
-				$q.="AND clientId = $clientId ";
-				$q.="AND package.isFlexPackage = 1 ";
-				$q.="GROUP BY offerTypeId, SchedulingMaster.siteId";
-				$packagesLiveFlex = $this->Client->query($q);
+			$pkgRevenueEnd = date('Y-m-d', strtotime("+1 day"));
+			if (!isset($clients)) {
+				$clients = array();
 			}
 
-			$packageStats = array();
-			$packageStats['packagesLiveTodayLL'] = $packageStats['packagesLiveTodayFG'] = $packageStats['auctionsLiveToday'] = $packageStats['fpLiveToday'] = 0;
+			$q = "SELECT DATE_FORMAT(MAX(activityStart), '%Y-%m-%d') as latestReferralDate ";
+			$q .= "FROM reporting.carConsolidatedView as Referrals";
+			$referrals = $this->Client->query($q);
+			$latestReferralDate = $referrals[0][0]['latestReferralDate'];
 
-			foreach ($packagesLive as $v) {
-				switch($v['SchedulingMaster']['siteId']) {
-						case 1:         //LL
-								$packageStats['packagesLiveTodayLL'] += $v[0]['packagesLive'];
-								break;
-						case 2:         //FG
-								$packageStats['packagesLiveTodayFG'] += $v[0]['packagesLive'];
-								break;
-						default:
-								break;
-				}
-				switch($v['SchedulingMaster']['offerTypeId']) {
-					case 1:
-					case 2:
-					case 6:
-						$packageStats['auctionsLiveToday'] += $v[0]['packagesLive'];
-					break;
-					case 3:
-					case 4:
-						$packageStats['fpLiveToday'] += $v[0]['packagesLive'];
-				}
-			}
+			foreach ($clients as $k => $client) {
+				$clientId = $client['Client']['clientId'];
 
-			if (true) {
-				$packageStats['packagesLiveTodayLLFlex'] = $packageStats['packagesLiveTodayFGFlex'] = $packageStats['auctionsLiveTodayFlex'] = $packageStats['fpLiveTodayFlex'] = 0;
-				foreach ($packagesLiveFlex as $v) {
+				//sites
+				//$clients[$k]['Client']['sites'] = $this->Client->get_sites($clientId);
+
+				if (isset($this->data['MCR'])) {
+					if ($this->data['MCR']['pkgRevenueRange'] == 5) {
+						$pkgRevenueStart = date('Y-m-d', strtotime($client['Loa']['startDate']));
+					}
+				}
+
+				#### Package Revenue ####
+				// Begin Packages Live Today
+				$q = "SELECT COUNT(DISTINCT SchedulingMaster.packageId) as packagesLive, offerTypeId, siteId ";
+				$q .= "FROM schedulingInstance as SchedulingInstance ";
+				$q .= "INNER JOIN schedulingMaster as SchedulingMaster USING (schedulingMasterId) ";
+				$q .= "INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel USING(packageId) ";
+				$q .= "WHERE (SchedulingInstance.startDate between '$startDate' and '$endDate' or ";
+				$q .= "SchedulingInstance.endDate between '$startDate' and '$endDate' ";
+				$q .= "or (SchedulingInstance.startDate < '$startDate' and SchedulingInstance.endDate > '$endDate')) ";
+				$q .= "AND clientId = $clientId ";
+				$q .= "GROUP BY offerTypeId, siteId";
+				$packagesLive = $this->Client->query($q);
+
+				if (true) {
+					$q = "SELECT COUNT(DISTINCT SchedulingMaster.packageId) as packagesLive, offerTypeId, ";
+					$q .= "SchedulingMaster.siteId ";
+					$q .= "FROM schedulingInstance as SchedulingInstance ";
+					$q .= "INNER JOIN schedulingMaster as SchedulingMaster USING (schedulingMasterId) ";
+					$q .= "INNER JOIN package USING (packageId) ";
+					$q .= "INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel USING(packageId) ";
+					$q .= "WHERE (SchedulingInstance.startDate between '$startDate' and '$endDate' ";
+					$q .= "or SchedulingInstance.endDate between '$startDate' and '$endDate' ";
+					$q .= "or (SchedulingInstance.startDate < '$startDate' and SchedulingInstance.endDate > '$endDate')) ";
+					$q .= "AND clientId = $clientId ";
+					$q .= "AND package.isFlexPackage = 1 ";
+					$q .= "GROUP BY offerTypeId, SchedulingMaster.siteId";
+					$packagesLiveFlex = $this->Client->query($q);
+				}
+
+				$packageStats = array();
+				$packageStats['packagesLiveTodayLL'] = $packageStats['packagesLiveTodayFG'] = $packageStats['auctionsLiveToday'] = $packageStats['fpLiveToday'] = 0;
+
+				foreach ($packagesLive as $v) {
 					switch($v['SchedulingMaster']['siteId']) {
-						case 1:         //LL
-							$packageStats['packagesLiveTodayLLFlex'] += $v[0]['packagesLive'];
+						case 1 :
+						//LL
+							$packageStats['packagesLiveTodayLL'] += $v[0]['packagesLive'];
 							break;
-						case 2:         //FG
-							$packageStats['packagesLiveTodayFGFlex'] += $v[0]['packagesLive'];
+						case 2 :
+						//FG
+							$packageStats['packagesLiveTodayFG'] += $v[0]['packagesLive'];
 							break;
-						default:
+						default :
 							break;
 					}
 					switch($v['SchedulingMaster']['offerTypeId']) {
-						case 1:
-						case 2:
-						case 6:
-							$packageStats['auctionsLiveTodayFlex'] += $v[0]['packagesLive'];
-						break;
-						case 3:
-						case 4:
-							$packageStats['fpLiveTodayFlex'] += $v[0]['packagesLive'];
+						case 1 :
+						case 2 :
+						case 6 :
+							$packageStats['auctionsLiveToday'] += $v[0]['packagesLive'];
+							break;
+						case 3 :
+						case 4 :
+							$packageStats['fpLiveToday'] += $v[0]['packagesLive'];
 					}
 				}
-			}
 
-
-			// End Packages Live Today
-			// Packages Uptime
-			$q="CALL clientPackagesUptime($clientId, '$pkgRevenueStart', '$pkgRevenueEnd')";
-			$packageUptime = $this->Client->query($q);
-			$packageStats['packageUptime'] = $packageUptime[0][0]['packageUptime'];
-			// End Packages Uptime
-
-			// Begin Total Sold/Total $$
-			$q="SELECT COUNT(DISTINCT Ticket.ticketId) as totalTickets, ";
-			$q.="SUM(Ticket.billingPrice) AS totalRevenue, ";
-			$q.="ROUND(COUNT(DISTINCT Ticket.ticketId) / (SELECT COUNT(DISTINCT OfferLive.offerId) ";
-			$q.="FROM offerLuxuryLink AS OfferLive ";
-			$q.="INNER JOIN clientLoaPackageRel as cl2 USING(packageId) ";
-			$q.="WHERE cl2.clientId = $clientId  AND OfferLive.offerTypeId = Ticket.offerTypeId ";
-			$q.="AND (OfferLive.startDate between '$pkgRevenueStart' and '$pkgRevenueEnd' or ";
-			$q.="OfferLive.endDate between '$pkgRevenueStart' and '$pkgRevenueEnd' or ";
-			$q.="(OfferLive.startDate < '$pkgRevenueStart' and OfferLive.endDate > '$pkgRevenueEnd'))) * 100) ";
-			$q.="as closeRate, ";
-			$q.="Ticket.offerTypeId ";
-			$q.="FROM ticket as Ticket ";
-			$q.="INNER JOIN package as Package USING (packageId) ";
-			$q.="INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel USING(packageId) ";
-			$q.="WHERE Ticket.created between '$pkgRevenueStart' and '$pkgRevenueEnd' ";
-			$q.="AND ClientLoaPackageRel.clientId = $clientId ";
-			$q.="GROUP BY Ticket.offerTypeId";
-			$tickets = $this->Client->query($q);
-
-			$q="SELECT SUM(Ticket.billingPrice) AS totalLoaRevenue ";
-			$q.="FROM ticket as Ticket ";
-			$q.="INNER JOIN package as Package USING (packageId) ";
-			$q.="INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel USING(packageId) ";
-			$q.="WHERE Ticket.created >= '{$client['Loa']['startDate']}' ";
-			$q.="AND ClientLoaPackageRel.loaId = {$client['Loa']['loaId']} ";
-			$q.="AND ClientLoaPackageRel.clientId = $clientId";
-			$totalRemitted = $this->Client->query($q);
-
-			$totalRemitted['totalLoaRemitted']=$totalRemitted[0][0]['totalLoaRevenue']-$client['Loa']['membershipFee'];
-
-			$ticketStats = array();
-			$ticketStats['totalSold'] = $ticketStats['totalRevenue'] = $ticketStats['fpRequests'] = $ticketStats['auctionCloseRate'] = 0;
-
-			foreach ($tickets as $v) {
-				$ticketStats['totalSold'] += $v[0]['totalTickets'];
-				$ticketStats['totalRevenue'] += $v[0]['totalRevenue'];
-
-				switch($v['Ticket']['offerTypeId']) {
-					case 1:
-					case 2:
-					case 6:
-						$ticketStats['auctionCloseRate'] += $v[0]['closeRate'];
-					break;
-					case 3:
-					case 4:
-						$ticketStats['fpRequests'] += $v[0]['totalTickets'];
+				if (true) {
+					$packageStats['packagesLiveTodayLLFlex'] = $packageStats['packagesLiveTodayFGFlex'] = $packageStats['auctionsLiveTodayFlex'] = $packageStats['fpLiveTodayFlex'] = 0;
+					foreach ($packagesLiveFlex as $v) {
+						switch($v['SchedulingMaster']['siteId']) {
+							case 1 :
+							//LL
+								$packageStats['packagesLiveTodayLLFlex'] += $v[0]['packagesLive'];
+								break;
+							case 2 :
+							//FG
+								$packageStats['packagesLiveTodayFGFlex'] += $v[0]['packagesLive'];
+								break;
+							default :
+								break;
+						}
+						switch($v['SchedulingMaster']['offerTypeId']) {
+							case 1 :
+							case 2 :
+							case 6 :
+								$packageStats['auctionsLiveTodayFlex'] += $v[0]['packagesLive'];
+								break;
+							case 3 :
+							case 4 :
+								$packageStats['fpLiveTodayFlex'] += $v[0]['packagesLive'];
+						}
+					}
 				}
-			}
-			// End Total Sold/Total $$
-			### End Packages Revenue
-			// Begin Referrals/Impressions
-			$q="SELECT activityStart, webRefer, phone, productView, searchView, email, destinationView ";
-			$q.="FROM reporting.carConsolidatedView as Referrals ";
-			$q.="WHERE Referrals.clientId = $clientId AND activityStart = '$latestReferralDate'";
-			$referrals = $this->Client->query($q);
-			// End Referrals/Impressions
-			$clients[$k] = @array_merge($clients[$k], (array)$packageStats, (array)$ticketStats, (array)$referrals[0], $totalRemitted);
+
+				// End Packages Live Today
+				// Packages Uptime
+				$q = "CALL clientPackagesUptime($clientId, '$pkgRevenueStart', '$pkgRevenueEnd')";
+				$packageUptime = $this->Client->query($q);
+				$packageStats['packageUptime'] = $packageUptime[0][0]['packageUptime'];
+				// End Packages Uptime
+
+				// Begin Total Sold/Total $$
+				$q = "SELECT COUNT(DISTINCT Ticket.ticketId) as totalTickets, ";
+				$q .= "SUM(Ticket.billingPrice) AS totalRevenue, ";
+				$q .= "ROUND(COUNT(DISTINCT Ticket.ticketId) / (SELECT COUNT(DISTINCT OfferLive.offerId) ";
+				$q .= "FROM offerLuxuryLink AS OfferLive ";
+				$q .= "INNER JOIN clientLoaPackageRel as cl2 USING(packageId) ";
+				$q .= "WHERE cl2.clientId = $clientId  AND OfferLive.offerTypeId = Ticket.offerTypeId ";
+				$q .= "AND (OfferLive.startDate between '$pkgRevenueStart' and '$pkgRevenueEnd' or ";
+				$q .= "OfferLive.endDate between '$pkgRevenueStart' and '$pkgRevenueEnd' or ";
+				$q .= "(OfferLive.startDate < '$pkgRevenueStart' and OfferLive.endDate > '$pkgRevenueEnd'))) * 100) ";
+				$q .= "as closeRate, ";
+				$q .= "Ticket.offerTypeId ";
+				$q .= "FROM ticket as Ticket ";
+				$q .= "INNER JOIN package as Package USING (packageId) ";
+				$q .= "INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel USING(packageId) ";
+				$q .= "WHERE Ticket.created between '$pkgRevenueStart' and '$pkgRevenueEnd' ";
+				$q .= "AND ClientLoaPackageRel.clientId = $clientId ";
+				$q .= "GROUP BY Ticket.offerTypeId";
+				$tickets = $this->Client->query($q);
+
+				$q = "SELECT SUM(Ticket.billingPrice) AS totalLoaRevenue ";
+				$q .= "FROM ticket as Ticket ";
+				$q .= "INNER JOIN package as Package USING (packageId) ";
+				$q .= "INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel USING(packageId) ";
+				$q .= "WHERE Ticket.created >= '{$client['Loa']['startDate']}' ";
+				$q .= "AND ClientLoaPackageRel.loaId = {$client['Loa']['loaId']} ";
+				$q .= "AND ClientLoaPackageRel.clientId = $clientId";
+				$totalRemitted = $this->Client->query($q);
+
+				$totalRemitted['totalLoaRemitted'] = $totalRemitted[0][0]['totalLoaRevenue'] - $client['Loa']['membershipFee'];
+
+				$ticketStats = array();
+				$ticketStats['totalSold'] = $ticketStats['totalRevenue'] = $ticketStats['fpRequests'] = $ticketStats['auctionCloseRate'] = 0;
+
+				foreach ($tickets as $v) {
+					$ticketStats['totalSold'] += $v[0]['totalTickets'];
+					$ticketStats['totalRevenue'] += $v[0]['totalRevenue'];
+
+					switch($v['Ticket']['offerTypeId']) {
+						case 1 :
+						case 2 :
+						case 6 :
+							$ticketStats['auctionCloseRate'] += $v[0]['closeRate'];
+							break;
+						case 3 :
+						case 4 :
+							$ticketStats['fpRequests'] += $v[0]['totalTickets'];
+					}
+				}
+				// End Total Sold/Total $$
+				### End Packages Revenue
+				// Begin Referrals/Impressions
+				$q = "SELECT activityStart, webRefer, phone, productView, searchView, email, destinationView ";
+				$q .= "FROM reporting.carConsolidatedView as Referrals ";
+				$q .= "WHERE Referrals.clientId = $clientId AND activityStart = '$latestReferralDate'";
+				$referrals = $this->Client->query($q);
+				// End Referrals/Impressions
+				$clients[$k] = @array_merge($clients[$k], (array)$packageStats, (array)$ticketStats, (array)$referrals[0], $totalRemitted);
 			}
 
 			//Setup Client Manager Usernames
-			$q="SELECT DISTINCT LOWER(managerUsername) as username ";
-			$q.="FROM client ";
-			$q.="INNER JOIN adminUser ON(adminUser.username = client.managerUsername)";
+			$q = "SELECT DISTINCT LOWER(managerUsername) as username ";
+			$q .= "FROM client ";
+			$q .= "INNER JOIN adminUser ON(adminUser.username = client.managerUsername)";
 			$tmp = $this->Client->query($q);
 
 			foreach ($tmp as $username) {
@@ -2397,11 +2457,10 @@ class ReportsController extends AppController {
 
 			$this->set('managerUsernames', $managerUsernames);
 
-
 			//Setup Regions
-			$q="SELECT destinationId, parentId, destinationName ";
-			$q.="FROM destination as Destination ";
-			$q.="ORDER BY destinationName";
+			$q = "SELECT destinationId, parentId, destinationName ";
+			$q .= "FROM destination as Destination ";
+			$q .= "ORDER BY destinationName";
 			$tmp = $this->Client->query($q);
 
 			foreach ($tmp as $k => $v) {
@@ -2411,12 +2470,14 @@ class ReportsController extends AppController {
 
 			$this->set('regions', $regions);
 
-			$pkgRevenueRanges = array('Past 30 Days',
-										'Past 60 Days',
-										'Past 90 Days',
-										'Month to Date',
-										'Quarter to Date',
-										'Since LOA Start Date');
+			$pkgRevenueRanges = array(
+				'Past 30 Days',
+				'Past 60 Days',
+				'Past 90 Days',
+				'Month to Date',
+				'Quarter to Date',
+				'Since LOA Start Date'
+			);
 
 			$this->set('pkgRevenueRanges', $pkgRevenueRanges);
 			$this->set('latestReferralDate', $latestReferralDate);
@@ -2428,31 +2489,24 @@ class ReportsController extends AppController {
 
 	}
 
-	function destinationTree($list) {
+	function destinationTree($list)
+	{
 		$lookup = array();
-		foreach( $list as $item )
-		{
-		    $item['children'] = array();
-		    $lookup[$item['Destination']['destinationId']] = $item['Destination'];
+		foreach ($list as $item) {
+			$item['children'] = array();
+			$lookup[$item['Destination']['destinationId']] = $item['Destination'];
 		}
 
 		$tree = array();
-		foreach( $lookup as $id => $foo )
-		{
-		    $item = &$lookup[$id];
-		    if( $item['parentId'] == 0 )
-		    {
-		        $tree[$id] = &$item;
-		    }
-		    else
-		    if( isset( $lookup[$item['parentId']] ) )
-		    {
-		        $lookup[$item['parentId']]['children'][$id] = &$item;
-		    }
-		    else
-		    {
-		        $tree['_orphans_'][$id] = &$item;
-		    }
+		foreach ($lookup as $id => $foo) {
+			$item = &$lookup[$id];
+			if ($item['parentId'] == 0) {
+				$tree[$id] = &$item;
+			} else if (isset($lookup[$item['parentId']])) {
+				$lookup[$item['parentId']]['children'][$id] = &$item;
+			} else {
+				$tree['_orphans_'][$id] = &$item;
+			}
 		}
 
 		$this->reduceDestinationTree($tree);
@@ -2462,39 +2516,38 @@ class ReportsController extends AppController {
 
 	function reduceDestinationTree(&$a, $depth)
 	{
-	    foreach($a as $key=>$value)
-	    {
+		foreach ($a as $key => $value) {
 			//debug($a);
-	        if (is_array($value))
-	           $this->reduceDestinationTree($a[$key], $depth+1);
+			if (is_array($value))
+				$this->reduceDestinationTree($a[$key], $depth + 1);
 
-	    }
+		}
 
 	}
-
 
 	// Will return the number of days between the two dates passed in
-	function count_days( $a, $b )
+	function count_days($a, $b)
 	{
-	    // First we need to break these dates into their constituent parts:
-	    $gd_a = getdate( $a );
-	    $gd_b = getdate( $b );
+		// First we need to break these dates into their constituent parts:
+		$gd_a = getdate($a);
+		$gd_b = getdate($b);
 
-	    // Now recreate these timestamps, based upon noon on each day
-	    // The specific time doesn't matter but it must be the same each day
-	    $a_new = mktime( 12, 0, 0, $gd_a['mon'], $gd_a['mday'], $gd_a['year'] );
-	    $b_new = mktime( 12, 0, 0, $gd_b['mon'], $gd_b['mday'], $gd_b['year'] );
+		// Now recreate these timestamps, based upon noon on each day
+		// The specific time doesn't matter but it must be the same each day
+		$a_new = mktime(12, 0, 0, $gd_a['mon'], $gd_a['mday'], $gd_a['year']);
+		$b_new = mktime(12, 0, 0, $gd_b['mon'], $gd_b['mday'], $gd_b['year']);
 
-	    // Subtract these two numbers and divide by the number of seconds in a
-	    //  day. Round the result since crossing over a daylight savings time
-	    //  barrier will cause this time to be off by an hour or two.
-	    return round( abs( $a_new - $b_new ) / 86400 );
+		// Subtract these two numbers and divide by the number of seconds in a
+		//  day. Round the result since crossing over a daylight savings time
+		//  barrier will cause this time to be off by an hour or two.
+		return round(abs($a_new - $b_new) / 86400);
 	}
 
-	function merch_031811() {
+	function merch_031811()
+	{
 		$this->loadModel("Client");
 
-		if(!empty($this->data['datePicker'])){
+		if (!empty($this->data['datePicker'])) {
 			$date = $this->data['datePicker'];
 		} else {
 			$date = date('Y-m-d');
@@ -2511,9 +2564,11 @@ class ReportsController extends AppController {
 
 		$this->set(compact('lastMonthDisplay', 'twoMonthsAgoDisplay', 'lastMonthLastYearDisplay'));
 
-
-
-		$auctions = array(1,2,6);
+		$auctions = array(
+			1,
+			2,
+			6
+		);
 
 		if (isset($this->data['site']) && $this->params['data']['site'] == 'family') {
 			$siteId = 2;
@@ -2524,8 +2579,9 @@ class ReportsController extends AppController {
 		}
 
 		$siteCondition = "schedulingMaster.siteId = $siteId";
-        $loaSiteCondition = "Loa.sites LIKE '%{$siteName}%'";
-		//$loaSiteCondition = "EXISTS(SELECT * FROM multiSite WHERE model = 'Loa' and modelId = Loa.loaId and sites LIKE '%$siteName%')";
+		$loaSiteCondition = "Loa.sites LIKE '%{$siteName}%'";
+		//$loaSiteCondition = "EXISTS(SELECT * FROM multiSite WHERE model = 'Loa' and
+		// modelId = Loa.loaId and sites LIKE '%$siteName%')";
 		$offerLive = "offer$siteName";
 		$ticketSiteCondition = "Ticket.siteId = $siteId";
 
@@ -2574,13 +2630,13 @@ class ReportsController extends AppController {
 											AND offerTypeId IN (1,2,6)");
 		$sales[1][6] = $tmp[0][0]['dailyAverage'];
 
-
 		# END AUCTIONS CLOSING
 
 		# AUCTIONS/FP CLOSING WITH FUNDED TICKETS
 		/* Today/Yesterday */
 
-		// [ALEE] RECODED THIS SECTION JAN 22 2010 -- CHANGED TO AUCTIONS CLOSING WITH FUNDED TICKETS
+		// [ALEE] RECODED THIS SECTION JAN 22 2010 -- CHANGED TO AUCTIONS CLOSING WITH
+		// FUNDED TICKETS
 		$tmp = $this->Client->query("SELECT COUNT(DISTINCT Ticket.offerId) AS numClosing, DATE_FORMAT(Ticket.created, '%Y-%m-%d') as theDate FROM ticket AS Ticket
 											WHERE Ticket.formatId = 1 AND Ticket.created BETWEEN '$date' - INTERVAL 1 DAY AND '$date' + INTERVAL 1 DAY AND $ticketSiteCondition AND Ticket.ticketStatusId IN (3,4,5,6)
 											GROUP BY DATE_FORMAT(Ticket.created, '%Y-%m-%d')");
@@ -2588,10 +2644,10 @@ class ReportsController extends AppController {
 		foreach ($tmp as $v) {
 			if ($v[0]['theDate'] == $date) {
 				$sales[2][1] = $v[0]['numClosing'];
-				$sales[3][1] = ROUND($sales[2][1]/$sales[1][1]*100,1);
+				$sales[3][1] = ROUND($sales[2][1] / $sales[1][1] * 100, 1);
 			} else {
 				$sales[2][2] = $v[0]['numClosing'];
-				$sales[3][2] = ROUND($sales[2][2]/$sales[1][2]*100,1);
+				$sales[3][2] = ROUND($sales[2][2] / $sales[1][2] * 100, 1);
 			}
 		}
 
@@ -2599,25 +2655,25 @@ class ReportsController extends AppController {
 		$tmp = $this->Client->query("SELECT ROUND(COUNT(DISTINCT Ticket.offerId)/7) as dailyAverage FROM ticket AS Ticket
 											WHERE Ticket.formatId = 1 AND Ticket.created BETWEEN '$date' - INTERVAL 6 DAY AND '$date' + INTERVAL 1 DAY AND $ticketSiteCondition AND Ticket.ticketStatusId IN (3,4,5,6)");
 		$sales[2][3] = $tmp[0][0]['dailyAverage'];
-		$sales[3][3] = ROUND($sales[2][3]/$sales[1][3]*100,1);
+		$sales[3][3] = ROUND($sales[2][3] / $sales[1][3] * 100, 1);
 
 		/* Last 30 Days Avg */
 		$tmp = $this->Client->query("SELECT ROUND(COUNT(DISTINCT Ticket.offerId)/30) as dailyAverage FROM ticket AS Ticket
 											WHERE Ticket.formatId = 1 AND Ticket.created BETWEEN '$date' - INTERVAL 29 DAY AND '$date' + INTERVAL 1 DAY AND $ticketSiteCondition AND Ticket.ticketStatusId IN (3,4,5,6)");
 		$sales[2][4] = $tmp[0][0]['dailyAverage'];
-		$sales[3][4] = ROUND($sales[2][4]/$sales[1][4]*100,1);
+		$sales[3][4] = ROUND($sales[2][4] / $sales[1][4] * 100, 1);
 
 		/* Last 90 Days Avg */
 		$tmp = $this->Client->query("SELECT ROUND(COUNT(DISTINCT Ticket.offerId)/90) as dailyAverage FROM ticket AS Ticket
 											WHERE Ticket.formatId = 1 AND Ticket.created BETWEEN '$date' - INTERVAL 89 DAY AND '$date' + INTERVAL 1 DAY AND $ticketSiteCondition AND Ticket.ticketStatusId IN (3,4,5,6)");
 		$sales[2][5] = $tmp[0][0]['dailyAverage'];
-		$sales[3][5] = ROUND($sales[2][5]/$sales[1][5]*100,1);
+		$sales[3][5] = ROUND($sales[2][5] / $sales[1][5] * 100, 1);
 
 		/* Last 365 Days Avg */
 		$tmp = $this->Client->query("SELECT ROUND(COUNT(DISTINCT Ticket.offerId)/365) as dailyAverage FROM ticket AS Ticket
 											WHERE Ticket.formatId = 1 AND Ticket.created BETWEEN '$date' - INTERVAL 364 DAY AND '$date' + INTERVAL 1 DAY AND $ticketSiteCondition AND Ticket.ticketStatusId IN (3,4,5,6)");
 		$sales[2][6] = $tmp[0][0]['dailyAverage'];
-		$sales[3][6] = ROUND($sales[2][6]/$sales[1][6]*100,1);
+		$sales[3][6] = ROUND($sales[2][6] / $sales[1][6] * 100, 1);
 
 		# END AUCTIONS CLOSING WITH FUNDED TICKETS
 
@@ -2629,8 +2685,7 @@ class ReportsController extends AppController {
 		$sales[8][1] = 0;
 		$sales[8][2] = 0;
 
-		foreach($tmp as $v) {
-
+		foreach ($tmp as $v) {
 
 			if ($v[0]['theDate'] == $date) {
 				$col = '1';
@@ -2656,7 +2711,7 @@ class ReportsController extends AppController {
 											WHERE Ticket.created BETWEEN '$date' - INTERVAL 6 DAY AND '$date' + INTERVAL 1 DAY  AND Ticket.ticketStatusId IN(3,4,5,6)  AND $ticketSiteCondition
 											GROUP BY offerTypeId, ticketStatusId");
 		$sales[8][3] = 0;
-		foreach($tmp as $v) {
+		foreach ($tmp as $v) {
 			if (in_array($v['Ticket']['offerTypeId'], $auctions)) {
 				$row = '4';
 			} else {
@@ -2673,7 +2728,7 @@ class ReportsController extends AppController {
 											WHERE Ticket.created BETWEEN '$date' - INTERVAL 29 DAY AND '$date' + INTERVAL 1 DAY  AND Ticket.ticketStatusId IN(3,4,5,6) AND $ticketSiteCondition
 											GROUP BY offerTypeId, ticketStatusId");
 		$sales[8][4] = 0;
-		foreach($tmp as $v) {
+		foreach ($tmp as $v) {
 
 			if (in_array($v['Ticket']['offerTypeId'], $auctions)) {
 				$row = '4';
@@ -2693,7 +2748,7 @@ class ReportsController extends AppController {
 											WHERE Ticket.created BETWEEN '$date' - INTERVAL 89 DAY AND '$date' + INTERVAL 1 DAY  AND Ticket.ticketStatusId IN(3,4,5,6) AND $ticketSiteCondition
 											GROUP BY offerTypeId, ticketStatusId");
 		$sales[8][5] = 0;
-		foreach($tmp as $v) {
+		foreach ($tmp as $v) {
 
 			if (in_array($v['Ticket']['offerTypeId'], $auctions)) {
 				$row = '4';
@@ -2713,7 +2768,7 @@ class ReportsController extends AppController {
 											WHERE Ticket.created BETWEEN '$date' - INTERVAL 364 DAY AND '$date' + INTERVAL 1 DAY AND Ticket.ticketStatusId IN(3,4,5,6) AND $ticketSiteCondition
 											GROUP BY offerTypeId, ticketStatusId");
 		$sales[8][6] = 0;
-		foreach($tmp as $v) {
+		foreach ($tmp as $v) {
 
 			if (in_array($v['Ticket']['offerTypeId'], $auctions)) {
 				$row = '4';
@@ -2735,7 +2790,7 @@ class ReportsController extends AppController {
 			foreach ($v as $k2 => $v2) {
 				$sum = array_sum($v2);
 				$num = count($v2);
-				$sales[$k][$k2] = $sum/$num;
+				$sales[$k][$k2] = $sum / $num;
 			}
 		}
 		# END AVG SELL PRICES
@@ -2748,7 +2803,7 @@ class ReportsController extends AppController {
 											WHERE offerTypeId IN (3, 4) AND Ticket.created BETWEEN '$date' - INTERVAL 1 DAY AND '$date' + INTERVAL 1 DAY AND $ticketSiteCondition
 											GROUP BY offerTypeId, DATE_FORMAT(Ticket.created, '%Y-%m-%d')");
 
-		foreach($tmp as $v) {
+		foreach ($tmp as $v) {
 			if ($v[0]['theDate'] == $date) {
 				$col = '1';
 			} else {
@@ -2777,17 +2832,16 @@ class ReportsController extends AppController {
 		$sales[5][5] = ROUND($tmp[0][0]['fpRequests']);
 		$sales[6][5] = ROUND($tmp[0][0]['fpFunded']);
 
-
 		$tmp = $this->Client->query("SELECT COUNT(DISTINCT Ticket.ticketId)/365 as fpRequests, SUM(IF(PaymentDetail.paymentDetailId IS NULL, 0, 1))/365 as fpFunded FROM ticket AS Ticket
 												LEFT JOIN paymentDetail AS PaymentDetail ON (PaymentDetail.ticketId = Ticket.ticketId AND PaymentDetail.isSuccessfulCharge = 1)
 												WHERE offerTypeId IN (3, 4) AND Ticket.created BETWEEN '$date' - INTERVAL 364 DAY AND '$date' + INTERVAL 1 DAY AND $ticketSiteCondition");
 		$sales[5][6] = ROUND($tmp[0][0]['fpRequests']);
 		$sales[6][6] = ROUND($tmp[0][0]['fpFunded']);
 
-
 		# END FP Requests and FP Funded
 
-		# TRAVEL REVENUE [ALEE] CHANGED HOW THIS IS CALCULATED REQUEST BY MCHOE JAN 22-2010
+		# TRAVEL REVENUE [ALEE] CHANGED HOW THIS IS CALCULATED REQUEST BY MCHOE JAN
+		# 22-2010
 
 		$sales[8][1] = ($sales[2][1] * $sales[4][1]) + ($sales[6][1] * $sales[7][1]);
 		$sales[8][2] = ($sales[2][2] * $sales[4][2]) + ($sales[6][2] * $sales[7][2]);
@@ -2801,7 +2855,6 @@ class ReportsController extends AppController {
 		$this->set('sales', $sales);
 
 		#### END SALES ####
-
 
 		#### Revenue ####
 		$mtdStart = date('Y-m-01', strtotime($date));
@@ -2821,7 +2874,7 @@ class ReportsController extends AppController {
 		$revenueYtd = $this->Client->query("SELECT SUM(Ticket.billingPrice) as revenue FROM ticket as Ticket INNER JOIN paymentDetail pd ON(pd.ticketId = Ticket.ticketId AND pd.isSuccessfulCharge = 1) WHERE Ticket.created >= '$ytdStart' AND Ticket.created <= '$date' AND Ticket.ticketStatusId != 8 AND $ticketSiteCondition");
 		$this->set(compact('revenueMtd', 'revenueQtd', 'revenueYtd'));
 		#### End Revenue ####
-	#### BEGIN AGING ####
+		#### BEGIN AGING ####
 		$tmp = $this->Client->query("SELECT GROUP_CONCAT(DISTINCT clientId) as clients, COUNT(DISTINCT clientId) as numClients,
 										IF(DATEDIFF(NOW(), startDate) > 121, 3, IF(DATEDIFF(NOW(), startDate) > 91, 2, 1)) as severity
 										FROM loa AS Loa
@@ -2845,10 +2898,9 @@ class ReportsController extends AppController {
 
 		$this->set('aging', $aging);
 
-	#### END AGING ####
+		#### END AGING ####
 
-
-	#### Inventory Management ####
+		#### Inventory Management ####
 		/* Distressed Auctions */
 		$tmp = $this->Client->query("SELECT GROUP_CONCAT(DISTINCT schedulingMaster.schedulingMasterId) as ids,
 								COUNT(DISTINCT schedulingMaster.schedulingMasterId) as numOffers,
@@ -2870,7 +2922,7 @@ class ReportsController extends AppController {
 											GROUP BY expirationCriteriaId");
 
 		foreach ($tmp as $v) {
-			if($v['track']['expirationCriteriaId'] == 1 || $v['track']['expirationCriteriaId'] == 4 || $v['track']['expirationCriteriaId'] == 6) {
+			if ($v['track']['expirationCriteriaId'] == 1 || $v['track']['expirationCriteriaId'] == 4 || $v['track']['expirationCriteriaId'] == 6) {
 				$row = 1;
 			} else {
 				$row = 2;
@@ -2883,7 +2935,7 @@ class ReportsController extends AppController {
 		}
 
 		foreach ($tmp2 as $v) {
-			if($v['track']['expirationCriteriaId'] == 1 || $v['track']['expirationCriteriaId'] == 4 || $v['track']['expirationCriteriaId'] == 6) {
+			if ($v['track']['expirationCriteriaId'] == 1 || $v['track']['expirationCriteriaId'] == 4 || $v['track']['expirationCriteriaId'] == 6) {
 				$row = 1;
 			} else {
 				$row = 2;
@@ -2916,7 +2968,7 @@ class ReportsController extends AppController {
 								GROUP BY severity, expirationCriteriaId");
 
 		foreach ($tmp as $v) {
-			if($v['track']['expirationCriteriaId'] == 1 || $v['track']['expirationCriteriaId'] == 4 || $v['track']['expirationCriteriaId'] == 6) {
+			if ($v['track']['expirationCriteriaId'] == 1 || $v['track']['expirationCriteriaId'] == 4 || $v['track']['expirationCriteriaId'] == 6) {
 				$row = 1;
 			} else {
 				$row = 2;
@@ -2935,7 +2987,7 @@ class ReportsController extends AppController {
 
 		foreach ($tmp as $v) {
 
-			if($v['track']['expirationCriteriaId'] == 1 || $v['track']['expirationCriteriaId'] == 4 || $v['track']['expirationCriteriaId'] == 6) {
+			if ($v['track']['expirationCriteriaId'] == 1 || $v['track']['expirationCriteriaId'] == 4 || $v['track']['expirationCriteriaId'] == 6) {
 				$row = 1;
 			} else {
 				$row = 2;
@@ -2962,7 +3014,7 @@ class ReportsController extends AppController {
 										GROUP BY expirationCriteriaId
 										");
 		foreach ($tmp as $v) {
-			if($v['track']['expirationCriteriaId'] == 1 || $v['track']['expirationCriteriaId'] == 4 || $v['track']['expirationCriteriaId'] == 6) {
+			if ($v['track']['expirationCriteriaId'] == 1 || $v['track']['expirationCriteriaId'] == 4 || $v['track']['expirationCriteriaId'] == 6) {
 				$row = 1;
 			} else {
 				$row = 2;
@@ -3004,8 +3056,7 @@ class ReportsController extends AppController {
 				if (empty($lastLiveDate)) {
 					continue;
 				}
-				if ($lastLiveDate[0]['Loa']['loaLevelId'] == 2
-					&& ($lastLiveDate[0]['Loa']['membershipPackagesRemaining'] > 0 OR $lastLiveDate[0]['Loa']['membershipBalance'] > 0)) {
+				if ($lastLiveDate[0]['Loa']['loaLevelId'] == 2 && ($lastLiveDate[0]['Loa']['membershipPackagesRemaining'] > 0 OR $lastLiveDate[0]['Loa']['membershipBalance'] > 0)) {
 					$row = 1;
 				} else {
 					$row = 2;
@@ -3031,10 +3082,11 @@ class ReportsController extends AppController {
 		$clientsNoPackages['totalClients'] = $tmp2[0][0]['totalClients'];
 
 		$this->set('clientsNoPackages', $clientsNoPackages);
-	#### END Inventory Management ####
+		#### END Inventory Management ####
 	}
 
-	function weekly_scorecard() {
+	function weekly_scorecard()
+	{
 		/* 1 - Total */
 		$tot = $this->OfferType->query("SELECT
 		 weeknumber as col1, weekBeginSunday as col2,
@@ -3085,7 +3137,6 @@ class ReportsController extends AppController {
 		ORDER BY weekbeginsunday
 		;");
 		$this->set('qtr', $qtr);
-
 
 		/* 2 - Auctions */
 		$auc = $this->OfferType->query("select
@@ -3147,7 +3198,6 @@ class ReportsController extends AppController {
 		$this->set('aucqtr', $aucqtr);
 		$this->set('aucLastYear', array_merge($tmp2[0][0], $tmp3[0][0]));
 		$this->set('auc', $auc);
-
 
 		/* 3 - Fixed Price */
 		$fp = $this->OfferType->query("select
@@ -3265,9 +3315,10 @@ class ReportsController extends AppController {
 			$this->layout = '';
 			$this->render();
 
-            // jw 3/10/11 - switched to PHPMailer for iPad/iPhone fix
-			// $to = 'mchoe@luxurylink.com,management@luxurylink.com,jlagraff@luxurylink.com,ahahn@luxurylink.com,kjost@luxurylink.com';
-			App::import('Vendor', 'PHPMailer', array('file' => 'phpmailer'.DS.'class.phpmailer.php'));
+			// jw 3/10/11 - switched to PHPMailer for iPad/iPhone fix
+			// $to =
+			// 'mchoe@luxurylink.com,management@luxurylink.com,jlagraff@luxurylink.com,ahahn@luxurylink.com,kjost@luxurylink.com';
+			App::import('Vendor', 'PHPMailer', array('file' => 'phpmailer' . DS . 'class.phpmailer.php'));
 
 			$mail = new PHPMailer();
 			$mail->From = 'no-reply@toolbox.luxurylink.com';
@@ -3286,14 +3337,15 @@ class ReportsController extends AppController {
 
 	function leads()
 	{
-		Configure::write('debug',0);
+		Configure::write('debug', 0);
 		$this->loadModel('UserClientSpecialOffer');
-		$options = array('recursive'=>2);
-		$results = $this->UserClientSpecialOffer->find('all',$options);
+		$options = array('recursive' => 2);
+		$results = $this->UserClientSpecialOffer->find('all', $options);
 		$this->set('results', $results);
 	}
 
-	function deal_alert() {
+	function deal_alert()
+	{
 		$db = ConnectionManager::getDataSource('live');
 
 		$top = $db->query("SELECT clientId, client.name, count(*) as n
@@ -3311,182 +3363,188 @@ class ReportsController extends AppController {
 
 		$numSignups = $this->googleSimpleEncode($numSignups);
 
-		for($i = 0; $i < 10; $i++) {
+		for ($i = 0; $i < 10; $i++) {
 			$points[] = $top[$i][0]['n'];
 			$clients[] = urlencode($top[$i]['client']['name']);
 		}
 		$this->set(compact('top', 'points', 'clients', 'numSignups', 'numSignupsWeek'));
 	}
 
-	function googleSimpleEncode($values, $max = -1, $min = 0) {
-	        $encoding = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-	        $chartdata = '';
-	        $rangemax = 61;
-	        if ($max < 0) {
-	                $max = max($values);
-	        }
-	        if ($max < max($values)) {
-	                $max = max($values);
-	        }
-	        $range = $max - $min;
-	        $scale = $rangemax / $range;
-	        foreach ($values as $k => $v) {
-	                if ($v - $min >= 0) {
-	                        $chartdata .= $encoding[floor(($v - $min) * $scale)];
-	                } else {
-	                        $chartdata .= '_';
-	                }
-	        }
-	        return $chartdata;
+	function googleSimpleEncode($values, $max = -1, $min = 0)
+	{
+		$encoding = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+		$chartdata = '';
+		$rangemax = 61;
+		if ($max < 0) {
+			$max = max($values);
+		}
+		if ($max < max($values)) {
+			$max = max($values);
+		}
+		$range = $max - $min;
+		$scale = $rangemax / $range;
+		foreach ($values as $k => $v) {
+			if ($v - $min >= 0) {
+				$chartdata .= $encoding[floor(($v - $min) * $scale)];
+			} else {
+				$chartdata .= '_';
+			}
+		}
+		return $chartdata;
 	}
 
-    //invoice added by ronayson 11/08/10
-    function invoice() {
+	//invoice added by ronayson 11/08/10
+	function invoice()
+	{
 
-       if (!empty($this->data)) {
+		if (!empty($this->data)) {
 
-	        if (!empty($this->params['named']['sortBy'])) {
-	            $direction = (@$this->params['named']['sortDirection'] == 'DESC') ? 'DESC' : 'ASC';
-	            $order = $this->params['named']['sortBy'].' '.$direction;
-	            $this->set('sortBy', $this->params['named']['sortBy']);
-	            $this->set('sortDirection', $direction);
-	        } else {
-	            $order = 'Invoice.submittedByDate DESC';
-	            $this->set('sortBy', 'Invoice.accountingInvoiceId');
-    	        $this->set('sortDirection', 'DESC');
-	        }
+			if (!empty($this->params['named']['sortBy'])) {
+				$direction = (@$this->params['named']['sortDirection'] == 'DESC') ? 'DESC' : 'ASC';
+				$order = $this->params['named']['sortBy'] . ' ' . $direction;
+				$this->set('sortBy', $this->params['named']['sortBy']);
+				$this->set('sortDirection', $direction);
+			} else {
+				$order = 'Invoice.submittedByDate DESC';
+				$this->set('sortBy', 'Invoice.accountingInvoiceId');
+				$this->set('sortDirection', 'DESC');
+			}
 
-           $where = "";
+			$where = "";
 
-           if (isset($this->params['data']) && $this->params['data']['condition1']['value']['between'][0] && $this->params['data']['condition1']['value']['between'][1]) {
-                $date1 = $this->params['data']['condition1']['value']['between'][0];
-                $date2 = $this->params['data']['condition1']['value']['between'][1];
-                $seachBy = $this->params['data']['OfferType']['searchBy'];
-            } else {
-                $date1 = $this->data['condition1']['value']['between'][0];
-                $date2 = $this->data['condition1']['value']['between'][1];
-                $seachBy = $this->data['OfferType']['searchBy'];
-            }
+			if (isset($this->params['data']) && $this->params['data']['condition1']['value']['between'][0] && $this->params['data']['condition1']['value']['between'][1]) {
+				$date1 = $this->params['data']['condition1']['value']['between'][0];
+				$date2 = $this->params['data']['condition1']['value']['between'][1];
+				$seachBy = $this->params['data']['OfferType']['searchBy'];
+			} else {
+				$date1 = $this->data['condition1']['value']['between'][0];
+				$date2 = $this->data['condition1']['value']['between'][1];
+				$seachBy = $this->data['OfferType']['searchBy'];
+			}
 
-            switch ($seachBy) {
-                    case 0:
-                        $where = " WHERE Invoice.submittedByDate BETWEEN DATE('$date1') AND DATE('$date2')";
-                        break;
-                    case 1:
-                        $where = " WHERE Invoice.checkinDate BETWEEN DATE('$date1') AND DATE('$date2')";
-                        break;
-                    default:
-                        $where = " WHERE Invoice.submittedByDate BETWEEN DATE('$date1') AND DATE('$date2')";
-                }
+			switch ($seachBy) {
+				case 0 :
+					$where = " WHERE Invoice.submittedByDate BETWEEN DATE('$date1') AND DATE('$date2')";
+					break;
+				case 1 :
+					$where = " WHERE Invoice.checkinDate BETWEEN DATE('$date1') AND DATE('$date2')";
+					break;
+				default :
+					$where = " WHERE Invoice.submittedByDate BETWEEN DATE('$date1') AND DATE('$date2')";
+			}
 
-            $sql = "SELECT COUNT(accountingInvoiceId) as numRecords FROM accountingInvoice as Invoice $where";
+			$sql = "SELECT COUNT(accountingInvoiceId) as numRecords FROM accountingInvoice as Invoice $where";
 
-       	    $results = $this->OfferType->query($sql);
+			$results = $this->OfferType->query($sql);
 
-            $numRecords = $results[0][0]['numRecords'];
-            $numPages = ceil($numRecords / $this->perPage);
+			$numRecords = $results[0][0]['numRecords'];
+			$numPages = ceil($numRecords / $this->perPage);
 
-            $sql = "SELECT * FROM accountingInvoice as Invoice $where ORDER BY $order LIMIT $this->limit";
+			$sql = "SELECT * FROM accountingInvoice as Invoice $where ORDER BY $order LIMIT $this->limit";
 
-	        $results = $this->OfferType->query($sql);
+			$results = $this->OfferType->query($sql);
 
-            $this->set('currentPage', $this->page);
-            $this->set('numRecords', $numRecords);
-            $this->set('numPages', $numPages);
-            $this->set('data', $this->data);
-	        $this->set('results', $results);
-		    $this->set('serializedFormInput', serialize($this->data));
+			$this->set('currentPage', $this->page);
+			$this->set('numRecords', $numRecords);
+			$this->set('numPages', $numPages);
+			$this->set('data', $this->data);
+			$this->set('results', $results);
+			$this->set('serializedFormInput', serialize($this->data));
 
-	    }
+		}
 	}
 
-    //TODO: A lot of duplication of code, use this method as a template for all the others and cut down on the number of times the following code is repeated
-	function _build_conditions($data) {
-	    $conditions = array();
+	//TODO: A lot of duplication of code, use this method as a template for all the
+	// others and cut down on the number of times the following code is repeated
+	function _build_conditions($data)
+	{
+		$conditions = array();
 
 		if (empty($data)) {
 			return false;
 		}
 
-	    foreach ($data as $k => $ca) {
-	        if (isset($ca['value']['between'])) {
-                $betweenCondition = $ca['value']['between'];
-            } else {
-                $betweenCondition = false;
-            }
+		foreach ($data as $k => $ca) {
+			if (isset($ca['value']['between'])) {
+				$betweenCondition = $ca['value']['between'];
+			} else {
+				$betweenCondition = false;
+			}
 
-            /* Check if the conditions have valid data and can be used in a where clause */
-	        if (empty($ca['field']) ||
-	            empty($ca['value'])) {
-	                continue;                               //skip if no valid data found
-	            }
+			/* Check if the conditions have valid data and can be used in a where clause */
+			if (empty($ca['field']) || empty($ca['value'])) {
+				continue;
+				//skip if no valid data found
+			}
 
-            /* If we got this far then that means we have adequate data for a where clause */
-            if (is_array($betweenCondition)) {              //check for a condition eligible for BETWEEN
-                $firstValue = array_shift($betweenCondition);
-                $secondValue = array_shift($betweenCondition);
+			/* If we got this far then that means we have adequate data for a where clause */
+			if (is_array($betweenCondition)) {//check for a condition eligible for BETWEEN
+				$firstValue = array_shift($betweenCondition);
+				$secondValue = array_shift($betweenCondition);
 
-                if (strlen($firstValue) == 0) {
-                    $firstValue = NULL;
-                }
+				if (strlen($firstValue) == 0) {
+					$firstValue = NULL;
+				}
 
-                if (strlen($secondValue) == 0) {
-                    $secondValue = NULL;
-                }
-                $betweenCondition = true;
-                if (!strlen($firstValue)  && !strlen($secondValue)) {   //if both between values were ommited, it's invalid
-                    continue;
-                }
-            } else {
-                unset($firstValue);
-                unset($secondValue);
-                $betweenCondition = false;
-            }
+				if (strlen($secondValue) == 0) {
+					$secondValue = NULL;
+				}
+				$betweenCondition = true;
+				if (!strlen($firstValue) && !strlen($secondValue)) {//if both between values were
+					// ommited, it's invalid
+					continue;
+				}
+			} else {
+				unset($firstValue);
+				unset($secondValue);
+				$betweenCondition = false;
+			}
 
-            if (isset($ca['explicit']) && $ca['explicit'] == 'true'):
-                $conditions[$k] =   $ca['field'].' '.$ca['value'];
-            elseif ($betweenCondition):                                    //generate valid SQL for a between condition
-	            if (NULL !== $firstValue && NULL !== $secondValue) {    //if both values were entered, it's a between
-	                $conditions[$k] =   $ca['field'].' BETWEEN '."'{$firstValue}'".' AND '."'{$secondValue}'";
-	            } else {                                                //if only one value was entered, it's not a between
-	                $conditions[$k] =   $ca['field'].' = '."'{$firstValue}'";
-	            }
+			if (isset($ca['explicit']) && $ca['explicit'] == 'true') :
+				$conditions[$k] = $ca['field'] . ' ' . $ca['value'];
+			elseif ($betweenCondition) ://generate valid SQL for a between condition
+				if (NULL !== $firstValue && NULL !== $secondValue) {//if both values were
+					// entered, it's a between
+					$conditions[$k] = $ca['field'] . ' BETWEEN ' . "'{$firstValue}'" . ' AND ' . "'{$secondValue}'";
+				} else {//if only one value was entered, it's not a between
+					$conditions[$k] = $ca['field'] . ' = ' . "'{$firstValue}'";
+				}
+			else :
+				if (is_array($ca['value'])) {
+					//wrap in single quotes
+					foreach ($ca['value'] as $value) {
+						$values[] = "'{$value}'";
+					}
+					$conditions[$k] = $ca['field'] . ' IN(' . implode(',', $values) . ')';
+				} elseif (strpos($ca['field'], 'MATCH=') !== false) {
+					$field = substr($ca['field'], strpos($ca['field'], '=') + 1);
+					$conditions[$k] = 'MATCH(' . $field . ') AGAINST(' . "'{$ca['value']}' IN BOOLEAN MODE)";
+				} elseif (strpos($ca['field'], 'LIKE=') !== false) {
+					$field = substr($ca['field'], strpos($ca['field'], '=') + 1);
+					$conditions[$k] = "{$field} LIKE '%{$ca['value']}%'";
+				} elseif (strpos($ca['value'], '!=') !== false) {
+					$value = substr($ca['value'], strpos($ca['value'], '=') + 2);
+					$conditions[$k] = "{$ca['field']} != '{$value}'";
+				} elseif (strpos($ca['value'], '>') !== false) {
+					$value = trim(substr($ca['value'], strpos($ca['value'], '>') + 1));
+					$conditions[$k] = "{$ca['field']} > '{$value}'";
+				} else {
+					$conditions[$k] = $ca['field'] . ' = ' . "'{$ca['value']}'";
+				}
 
-	        else:
-	            if(is_array($ca['value'])) {
-	                //wrap in single quotes
-	                foreach ($ca['value'] as $value) {
-	                    $values[] = "'{$value}'";
-	                }
-	                $conditions[$k] =   $ca['field'].' IN('.implode(',', $values).')';
-	            } elseif (strpos($ca['field'], 'MATCH=') !== false) {
-	                $field = substr($ca['field'], strpos($ca['field'], '=')+1);
-	                $conditions[$k] =   'MATCH('.$field.') AGAINST('."'{$ca['value']}' IN BOOLEAN MODE)";
-	            } elseif (strpos($ca['field'], 'LIKE=') !== false) {
-    	                $field = substr($ca['field'], strpos($ca['field'], '=')+1);
-    	                $conditions[$k] =   "{$field} LIKE '%{$ca['value']}%'";
-    	        } elseif (strpos($ca['value'], '!=') !== false) {
-    	            $value = substr($ca['value'], strpos($ca['value'], '=')+2);
-	                $conditions[$k] =   "{$ca['field']} != '{$value}'";
-    	        } elseif (strpos($ca['value'], '>') !== false) {
-        	            $value = trim(substr($ca['value'], strpos($ca['value'], '>')+1));
-    	                $conditions[$k] =   "{$ca['field']} > '{$value}'";
-        	    } else {
-	                $conditions[$k] =   $ca['field'].' = '."'{$ca['value']}'";
-	            }
+			endif; //end generate SQL for between condition
+		}
 
-	        endif; //end generate SQL for between condition
-	    }
-
-	    return implode($conditions, ' AND ');
+		return implode($conditions, ' AND ');
 
 	}
 
-	function merch() {
+	function merch()
+	{
 
 		$this->loadModel("Client");
 
-		if(!empty($this->data['datePicker'])){
+		if (!empty($this->data['datePicker'])) {
 			$date = $this->data['datePicker'];
 		} else {
 			$date = date('Y-m-d');
@@ -3506,7 +3564,11 @@ class ReportsController extends AppController {
 
 		$this->set(compact('lastMonthDisplay', 'twoMonthsAgoDisplay', 'lastMonthLastYearDisplay'));
 
-		$auctions = array(1,2,6);
+		$auctions = array(
+			1,
+			2,
+			6
+		);
 
 		if (isset($this->data['site']) && $this->params['data']['site'] == 'family') {
 			$siteId = 2;
@@ -3517,12 +3579,13 @@ class ReportsController extends AppController {
 		}
 
 		$siteCondition = "schedulingMaster.siteId = $siteId";
-        $loaSiteCondition = "Loa.sites LIKE '%{$siteName}%'";
-		//$loaSiteCondition = "EXISTS(SELECT * FROM multiSite WHERE model = 'Loa' and modelId = Loa.loaId and sites LIKE '%$siteName%')";
+		$loaSiteCondition = "Loa.sites LIKE '%{$siteName}%'";
+		//$loaSiteCondition = "EXISTS(SELECT * FROM multiSite WHERE model = 'Loa' and
+		// modelId = Loa.loaId and sites LIKE '%$siteName%')";
 		$offerLive = "offer$siteName";
 		$ticketSiteCondition = "Ticket.siteId = $siteId";
 
- 		$sqlFunctions = new ReportsControllerFunctions();
+		$sqlFunctions = new ReportsControllerFunctions();
 
 		# AUCTIONS/FP CLOSING
 		/* Auctions/Fp Closing Today */
@@ -3556,52 +3619,49 @@ class ReportsController extends AppController {
 		$sales[1][6] = $tmp[0][0]['auctionsClosingCount'];
 		# END AUCTIONS CLOSING
 
-
-
 		# AUCTIONS/FP CLOSING WITH FUNDED TICKETS
 		/* Today */
 		$sql = $sqlFunctions->sqlAuctionsFunded($siteId, $date, 1);
 		$tmp = $this->Client->query($sql);
 		$sales[2][1] = $tmp[0][0]['auctionsFundedCount'];
-		$sales[3][1] = ROUND($sales[2][1]/$sales[1][1]*100,1);
+		$sales[3][1] = ROUND($sales[2][1] / $sales[1][1] * 100, 1);
 		$sales[4][1] = $tmp[0][0]['auctionsFundedAveragePrice'];
 
 		/* Yesterday */
 		$sql = $sqlFunctions->sqlAuctionsFunded($siteId, $yesterday, 1);
 		$tmp = $this->Client->query($sql);
 		$sales[2][2] = $tmp[0][0]['auctionsFundedCount'];
-		$sales[3][2] = ROUND($sales[2][2]/$sales[1][2]*100,1);
+		$sales[3][2] = ROUND($sales[2][2] / $sales[1][2] * 100, 1);
 		$sales[4][2] = $tmp[0][0]['auctionsFundedAveragePrice'];
 
 		/* Last 7 Days Avg */
 		$sql = $sqlFunctions->sqlAuctionsFunded($siteId, $date, 7);
 		$tmp = $this->Client->query($sql);
 		$sales[2][3] = $tmp[0][0]['auctionsFundedCount'];
-		$sales[3][3] = ROUND($sales[2][3]/$sales[1][3]*100,1);
+		$sales[3][3] = ROUND($sales[2][3] / $sales[1][3] * 100, 1);
 		$sales[4][3] = $tmp[0][0]['auctionsFundedAveragePrice'];
 
 		/* Last 30 Days Avg */
 		$sql = $sqlFunctions->sqlAuctionsFunded($siteId, $date, 30);
 		$tmp = $this->Client->query($sql);
 		$sales[2][4] = $tmp[0][0]['auctionsFundedCount'];
-		$sales[3][4] = ROUND($sales[2][4]/$sales[1][4]*100,1);
+		$sales[3][4] = ROUND($sales[2][4] / $sales[1][4] * 100, 1);
 		$sales[4][4] = $tmp[0][0]['auctionsFundedAveragePrice'];
 
 		/* Last 90 Days Avg */
 		$sql = $sqlFunctions->sqlAuctionsFunded($siteId, $date, 90);
 		$tmp = $this->Client->query($sql);
 		$sales[2][5] = $tmp[0][0]['auctionsFundedCount'];
-		$sales[3][5] = ROUND($sales[2][5]/$sales[1][5]*100,1);
+		$sales[3][5] = ROUND($sales[2][5] / $sales[1][5] * 100, 1);
 		$sales[4][5] = $tmp[0][0]['auctionsFundedAveragePrice'];
 
 		/* Last 365 Days Avg */
 		$sql = $sqlFunctions->sqlAuctionsFunded($siteId, $date, 365);
 		$tmp = $this->Client->query($sql);
 		$sales[2][6] = $tmp[0][0]['auctionsFundedCount'];
-		$sales[3][6] = ROUND($sales[2][6]/$sales[1][6]*100,1);
+		$sales[3][6] = ROUND($sales[2][6] / $sales[1][6] * 100, 1);
 		$sales[4][6] = $tmp[0][0]['auctionsFundedAveragePrice'];
 		# END AUCTIONS CLOSING WITH FUNDED TICKETS
-
 
 		# FP Requests
 		// today
@@ -3634,7 +3694,6 @@ class ReportsController extends AppController {
 		$tmp = $this->Client->query($sql);
 		$sales[5][6] = ROUND($tmp[0][0]['fpRequestCount']);
 		# END FP Requests
-
 
 		# FP Funded
 		// today
@@ -3674,9 +3733,8 @@ class ReportsController extends AppController {
 		$sales[7][6] = ROUND($tmp[0][0]['fpFundedAveragePrice']);
 		# END FP Requests
 
-
-
-		# TRAVEL REVENUE [ALEE] CHANGED HOW THIS IS CALCULATED REQUEST BY MCHOE JAN 22-2010
+		# TRAVEL REVENUE [ALEE] CHANGED HOW THIS IS CALCULATED REQUEST BY MCHOE JAN
+		# 22-2010
 		$sales[8][1] = ($sales[2][1] * $sales[4][1]) + ($sales[6][1] * $sales[7][1]);
 		$sales[8][2] = ($sales[2][2] * $sales[4][2]) + ($sales[6][2] * $sales[7][2]);
 		$sales[8][3] = ($sales[2][3] * $sales[4][3]) + ($sales[6][3] * $sales[7][3]);
@@ -3688,7 +3746,6 @@ class ReportsController extends AppController {
 		$this->set('sales', $sales);
 
 		#### END SALES ####
-
 
 		#### Revenue ####
 		$mtdStart = date('Y-m-01', strtotime($date));
@@ -3708,7 +3765,7 @@ class ReportsController extends AppController {
 		$revenueYtd = $this->Client->query("SELECT SUM(Ticket.billingPrice) as revenue FROM ticket as Ticket WHERE Ticket.created >= '$ytdStart' AND Ticket.created <= '$date' AND $ticketSiteCondition AND Ticket.ticketStatusId NOT IN (7,8,17) AND Ticket.ticketId IN (SELECT ticketId FROM paymentDetail WHERE isSuccessfulCharge = 1)");
 		$this->set(compact('revenueMtd', 'revenueQtd', 'revenueYtd'));
 		#### End Revenue ####
-	#### BEGIN AGING ####
+		#### BEGIN AGING ####
 		$tmp = $this->Client->query("SELECT GROUP_CONCAT(DISTINCT clientId) as clients, COUNT(DISTINCT clientId) as numClients,
 										IF(DATEDIFF(NOW(), startDate) > 121, 3, IF(DATEDIFF(NOW(), startDate) > 91, 2, 1)) as severity
 										FROM loa AS Loa
@@ -3732,10 +3789,9 @@ class ReportsController extends AppController {
 
 		$this->set('aging', $aging);
 
-	#### END AGING ####
+		#### END AGING ####
 
-
-	#### Inventory Management ####
+		#### Inventory Management ####
 		/* Distressed Auctions */
 		$tmp = $this->Client->query("SELECT GROUP_CONCAT(DISTINCT schedulingMaster.schedulingMasterId) as ids,
 								COUNT(DISTINCT schedulingMaster.schedulingMasterId) as numOffers,
@@ -3757,7 +3813,7 @@ class ReportsController extends AppController {
 											GROUP BY expirationCriteriaId");
 
 		foreach ($tmp as $v) {
-			if($v['track']['expirationCriteriaId'] == 1 || $v['track']['expirationCriteriaId'] == 4 || $v['track']['expirationCriteriaId'] == 6) {
+			if ($v['track']['expirationCriteriaId'] == 1 || $v['track']['expirationCriteriaId'] == 4 || $v['track']['expirationCriteriaId'] == 6) {
 				$row = 1;
 			} else {
 				$row = 2;
@@ -3770,7 +3826,7 @@ class ReportsController extends AppController {
 		}
 
 		foreach ($tmp2 as $v) {
-			if($v['track']['expirationCriteriaId'] == 1 || $v['track']['expirationCriteriaId'] == 4 || $v['track']['expirationCriteriaId'] == 6) {
+			if ($v['track']['expirationCriteriaId'] == 1 || $v['track']['expirationCriteriaId'] == 4 || $v['track']['expirationCriteriaId'] == 6) {
 				$row = 1;
 			} else {
 				$row = 2;
@@ -3803,7 +3859,7 @@ class ReportsController extends AppController {
 								GROUP BY severity, expirationCriteriaId");
 
 		foreach ($tmp as $v) {
-			if($v['track']['expirationCriteriaId'] == 1 || $v['track']['expirationCriteriaId'] == 4 || $v['track']['expirationCriteriaId'] == 6) {
+			if ($v['track']['expirationCriteriaId'] == 1 || $v['track']['expirationCriteriaId'] == 4 || $v['track']['expirationCriteriaId'] == 6) {
 				$row = 1;
 			} else {
 				$row = 2;
@@ -3831,7 +3887,7 @@ WHERE (pricePoint.validityEnd BETWEEN NOW() AND NOW() + INTERVAL 60 DAY)
 AND (NOW() BETWEEN Loa.startDate AND Loa.endDate) AND Loa.loaLevelId IN (1,2) AND Loa.inactive = 0
 AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		foreach ($tmp as $v) {
-			if($v['track']['expirationCriteriaId'] == 1 || $v['track']['expirationCriteriaId'] == 4 || $v['track']['expirationCriteriaId'] == 6) {
+			if ($v['track']['expirationCriteriaId'] == 1 || $v['track']['expirationCriteriaId'] == 4 || $v['track']['expirationCriteriaId'] == 6) {
 				$row = 1;
 			} else {
 				$row = 2;
@@ -3857,7 +3913,7 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 										GROUP BY expirationCriteriaId
 										");
 		foreach ($tmp as $v) {
-			if($v['track']['expirationCriteriaId'] == 1 || $v['track']['expirationCriteriaId'] == 4 || $v['track']['expirationCriteriaId'] == 6) {
+			if ($v['track']['expirationCriteriaId'] == 1 || $v['track']['expirationCriteriaId'] == 4 || $v['track']['expirationCriteriaId'] == 6) {
 				$row = 1;
 			} else {
 				$row = 2;
@@ -3899,8 +3955,7 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 				if (empty($lastLiveDate)) {
 					continue;
 				}
-				if ($lastLiveDate[0]['Loa']['loaLevelId'] == 2
-					&& ($lastLiveDate[0]['Loa']['membershipPackagesRemaining'] > 0 OR $lastLiveDate[0]['Loa']['membershipBalance'] > 0)) {
+				if ($lastLiveDate[0]['Loa']['loaLevelId'] == 2 && ($lastLiveDate[0]['Loa']['membershipPackagesRemaining'] > 0 OR $lastLiveDate[0]['Loa']['membershipBalance'] > 0)) {
 					$row = 1;
 				} else {
 					$row = 2;
@@ -3926,17 +3981,21 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		$clientsNoPackages['totalClients'] = $tmp2[0][0]['totalClients'];
 
 		$this->set('clientsNoPackages', $clientsNoPackages);
-	#### END Inventory Management ####
+		#### END Inventory Management ####
 	}
 
+	function car()
+	{
+		if (!empty($this->data) || !empty($this->params['named']['clientId'])) {
 
-	function car() {
-	    if (!empty($this->data) || !empty($this->params['named']['clientId'])) {
+			$clientId = (!empty($this->params['named']['clientId'])) ? $this->params['named']['clientId'] : $this->data['Client']['clientName_id'];
+			$versionArray = ($this->data['Client']['site'] == 'combined') ? array(
+				'luxurylink',
+				'family'
+			) : array($this->data['Client']['site']);
 
-	        $clientId = (!empty($this->params['named']['clientId'])) ? $this->params['named']['clientId'] : $this->data['Client']['clientName_id'];
-			$versionArray = ($this->data['Client']['site'] == 'combined') ? array('luxurylink', 'family') : array($this->data['Client']['site']);
-
-	        // 03/22/11 jw - put the entire process in a loop so it can be run for multiple sites if necessary
+			// 03/22/11 jw - put the entire process in a loop so it can be run for multiple
+			// sites if necessary
 			foreach ($versionArray as $version) {
 
 				$tableConsolidatedView = ($version == 'family') ? 'carConsolidatedViewFg' : 'carConsolidatedView';
@@ -3983,10 +4042,10 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 														ORDER BY snapShotDate ");
 
 				//setup array of all months we are using in this view
-	            //03/22/11 jw - removed 13th month back / added current month
+				//03/22/11 jw - removed 13th month back / added current month
 				$today = strtotime(date('Y-m-01'));
 				for ($i = 0; $i <= 12; $i++) {
-					$ts = strtotime("-".(12-($i))." months", $today);
+					$ts = strtotime("-" . (12 - ($i)) . " months", $today);
 
 					$months[$i] = date('Ym', $ts);
 					if ($i == 12) {
@@ -3996,7 +4055,6 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 					}
 				}
 
-
 				//03/22/11 jw - initialize arrays in case we loop
 				$auctionsKeyed = array();
 				$fpKeyed = array();
@@ -4005,29 +4063,36 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 				$hotelOfferKeyed = array();
 				$keyedStats = array();
 
-				foreach($auctions as $k => $v):
-					$auctionsKeyed[$v[0]['yearMonth']] = $v['auc'];     //set the key for each to the year and month so we can iterate through it easily
+				foreach ($auctions as $k => $v) :
+					$auctionsKeyed[$v[0]['yearMonth']] = $v['auc'];
+					//set the key for each to the year and month so we can iterate through it easily
 				endforeach;
 
-				foreach($fixedprice as $k => $v):
-					$fpKeyed[$v[0]['yearMonth']] = $v['fp'];           //set the key for each to the year and month so we can iterate through it easily
+				foreach ($fixedprice as $k => $v) :
+					$fpKeyed[$v[0]['yearMonth']] = $v['fp'];
+					//set the key for each to the year and month so we can iterate through it easily
 				endforeach;
 
-				foreach($auctionsTotal as $k => $v):
-					$aucTotKeyed[$v[0]['yearMonth']] = $v['auc'];           //set the key for each to the year and month so we can iterate through it easily
+				foreach ($auctionsTotal as $k => $v) :
+					$aucTotKeyed[$v[0]['yearMonth']] = $v['auc'];
+					//set the key for each to the year and month so we can iterate through it easily
 				endforeach;
 
-				foreach($fixedpriceTotal as $k => $v):
-					$fpTotKeyed[$v[0]['yearMonth']] = $v['fp'];           //set the key for each to the year and month so we can iterate through it easily
+				foreach ($fixedpriceTotal as $k => $v) :
+					$fpTotKeyed[$v[0]['yearMonth']] = $v['fp'];
+					//set the key for each to the year and month so we can iterate through it easily
 				endforeach;
 
-				foreach($hotelOfferTotal as $k => $v):
-					$hotelOfferKeyed[$v[0]['yearMonth']] = $v['ho'];           //set the key for each to the year and month so we can iterate through it easily
+				foreach ($hotelOfferTotal as $k => $v) :
+					$hotelOfferKeyed[$v[0]['yearMonth']] = $v['ho'];
+					//set the key for each to the year and month so we can iterate through it easily
 				endforeach;
 
-				//sum the totals for the last 12 months and put everything in an array we can easily reference later
-				foreach($stats as $k => $v):
-					$keyedStats[$v[0]['yearMonth']] = array_merge($v['rs'], $v[0]);           //set the key for each to the year and month so we can iterate through it easily
+				//sum the totals for the last 12 months and put everything in an array we can
+				// easily reference later
+				foreach ($stats as $k => $v) :
+					$keyedStats[$v[0]['yearMonth']] = array_merge($v['rs'], $v[0]);
+					//set the key for each to the year and month so we can iterate through it easily
 				endforeach;
 
 				$totals['phone'] = 0;
@@ -4047,17 +4112,12 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 				$totals['fpTotals'] = 0;
 				$totals['hotelOfferTotal'] = 0;
 
-				foreach ($months as $k => $month):
-					$keyedResults[$month] = array_merge((array)@$keyedStats[$month],
-													(array)@$auctionsKeyed[$month],
-													(array)@$fpKeyed[$month],
-													(array)@$aucTotKeyed[$month],
-													(array)@$fpTotKeyed[$month],
-													(array)@$hotelOfferKeyed[$month]
-													);
+				foreach ($months as $k => $month) :
+					$keyedResults[$month] = array_merge((array)@$keyedStats[$month], (array)@$auctionsKeyed[$month], (array)@$fpKeyed[$month], (array)@$aucTotKeyed[$month], (array)@$fpTotKeyed[$month], (array)@$hotelOfferKeyed[$month]);
 
 					//only count the last 12 months in the totals
-					//03/22/11 jw - switched k check from 0 to 12 to account adding current month / removing 13 months back
+					//03/22/11 jw - switched k check from 0 to 12 to account adding current month /
+					// removing 13 months back
 					if ($k == 12) {
 						continue;
 					}
@@ -4089,22 +4149,25 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 			if (sizeof($versionResults) > 1) {
 
 				$sumResults = array();
-				foreach ($versionResults as $k=>$subArray) {
+				foreach ($versionResults as $k => $subArray) {
 					foreach ($months as $kMonth => $month) {
-						if(!isset($sumResults[$month])) { $sumResults[$month] = array(); }
-						foreach ($subArray[$month] as $id=>$value) {
-							if(!isset($sumResults[$month][$id])) { $sumResults[$month][$id] = 0; }
-							$sumResults[$month][$id]+=$value;
+						if (!isset($sumResults[$month])) { $sumResults[$month] = array();
+						}
+						foreach ($subArray[$month] as $id => $value) {
+							if (!isset($sumResults[$month][$id])) { $sumResults[$month][$id] = 0;
+							}
+							$sumResults[$month][$id] += $value;
 						}
 					}
 				}
 				$results = $sumResults;
 
 				$sumTotals = array();
-				foreach ($versionTotals as $k=>$subArray) {
-					foreach ($subArray as $id=>$value) {
-						if(!isset($sumTotals[$id])) { $sumTotals[$id] = 0; }
-						$sumTotals[$id]+=$value;
+				foreach ($versionTotals as $k => $subArray) {
+					foreach ($subArray as $id => $value) {
+						if (!isset($sumTotals[$id])) { $sumTotals[$id] = 0;
+						}
+						$sumTotals[$id] += $value;
 					}
 				}
 				$totals = $sumTotals;
@@ -4112,28 +4175,29 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 			}
 			// end combining data
 
-            $this->loadModel("Client");
-            $this->Client->recursive = -1;
-            $clientDetails = $this->Client->read(null, $clientId);
+			$this->loadModel("Client");
+			$this->Client->recursive = -1;
+			$clientDetails = $this->Client->read(null, $clientId);
 
-            $this->Client->Loa->recursive = -1;
-            $loa = $this->Client->Loa->find('first', array('conditions' => array('Loa.clientId' => $this->Client->id)));
+			$this->Client->Loa->recursive = -1;
+			$loa = $this->Client->Loa->find('first', array('conditions' => array('Loa.clientId' => $this->Client->id)));
 
-            $clientDetails['Loa'] = $loa['Loa'];
+			$clientDetails['Loa'] = $loa['Loa'];
 
-            $this->set(compact('results', 'totals', 'months', 'monthNames', 'clients', 'clientDetails'));
-	    }
+			$this->set(compact('results', 'totals', 'months', 'monthNames', 'clients', 'clientDetails'));
+		}
 	}
 
-	function car_import() {
+	function car_import()
+	{
 		$action = isset($this->params['url']['|GO|']) ? $this->params['url']['|GO|'] : '';
 		if ($action == 'download') {
 			$this->CarDataImporter->downloadNewFiles();
 		}
 		if ($action == 'import') {
-		    if (isset($this->params['url']['del'])) {
-		        $this->CarDataImporter->setDeleteSkippedFlag();
-		    }
+			if (isset($this->params['url']['del'])) {
+				$this->CarDataImporter->setDeleteSkippedFlag();
+			}
 			$this->CarDataImporter->importPendingFiles();
 		}
 		$pending = $this->CarDataImporter->getPendingInfo();
@@ -4151,14 +4215,14 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		$experiments = array();
 		$this->loadModel('Experiment');
 
-		if (is_null($experiment_id)) { // list all experiments
+		if (is_null($experiment_id)) {// list all experiments
 			$experiments = $this->Experiment->listExperiments($site_id);
 			$this->set('experiments', $experiments);
-		} else { // display experiment results
-			$results = $this->Experiment->getResults((int) $experiment_id);
+		} else {// display experiment results
+			$results = $this->Experiment->getResults((int)$experiment_id);
 			$this->set('results', $results);
 			$this->set('experiment_id', $experiment_id);
-			$pct = $this->Experiment->getTestPercentageByExperiemntId((int) $experiment_id);
+			$pct = $this->Experiment->getTestPercentageByExperiemntId((int)$experiment_id);
 			$this->set('test_percentage', $pct[0]['sites_experiments']['test_percentage']);
 		}
 	}
@@ -4212,7 +4276,7 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 				$properties = json_decode(file_get_contents($service_url));
 				$this->set('properties', $properties);
 			} else {
-				foreach($this->data['Properties'] as $property_code) {
+				foreach ($this->data['Properties'] as $property_code) {
 					$service_url = $service_base . 'index/' . "$property_code/$start_date/$end_date";
 					$service_urls[] = array(
 						'html' => $service_url,
@@ -4253,7 +4317,7 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		$dompdf->render();
 		$dompdf->stream('sample.pdf');
 	}
-	
+
 	/**
 	 *
 	 */
@@ -4276,21 +4340,21 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 	public function download_consolidated_report($client_id)
 	{
 		$this->loadModel('ConsolidatedReport');
-		
+
 		// Cake's debug output can cause issues with the spreadsheet generation
 		Configure::write('debug', 0);
-		
+
 		// Set the report ceiling to last month
 		$report_date = date('Y-m-t', strtotime('-1 month'));
 
-		// Set layout to excel		
+		// Set layout to excel
 		$this->layout = 'excel';
-		
+
 		// Report initialization variables
 		$template = APP . 'vendors/consolidated_report/templates/consolidated_report_revision-7.xlsx';
 		$newFile = TMP . 'consolidated_report.xlsx';
 		$outputFile = TMP . 'consolidated_report_output.xlsx';
-		
+
 		// Client & LOA Details
 		$client_details = $this->ConsolidatedReport->getClientDetails($client_id);
 		$loa_details = $this->ConsolidatedReport->getLoaDetails($client_id, $report_date);
@@ -4308,15 +4372,15 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 
 		// Initialize the report Model
 		$this->ConsolidatedReport->create($client_id, $report_date, $loa_start_date, $loa_end_date);
-		
+
 		// Create the report object
 		App::import('Vendor', 'ConsolidatedReportHelper', array('file' => 'consolidated_report' . DS . 'consolidated_report_helper.php'));
 		$report = new ConsolidatedReportHelper($template, $newFile, $outputFile, $this->ConsolidatedReport);
-		
+
 		// Populate the report
-		$report->populateDashboard($client_details['Client']['name'], $membership_fee, $loa_start_date, $this->ConsolidatedReport->getMonthEndDate());		
+		$report->populateDashboard($client_details['Client']['name'], $membership_fee, $loa_start_date, $this->ConsolidatedReport->getMonthEndDate());
 		$report->populateActivitySummary($loa_start_date, $this->ConsolidatedReport->getMonthEndDate(), $client_details['AccountManager']['name'], $client_details['AccountManager']['email'], 15, 2);
-		$report->populateBookings();	
+		$report->populateBookings();
 		$report->populateImpressions();
 		$report->populateContactDetails();
 
@@ -4331,8 +4395,8 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		$this->set('filename', $filename);
 	}
 
-
-	function promotions($promotionId=null) {
+	function promotions($promotionId = null)
+	{
 		$this->loadModel('Promotions');
 		$params = Array(
 			'recursive' => 0,
@@ -4363,8 +4427,8 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 
 	}
 
-	
-	function remit() {
+	function remit()
+	{
 		if (!empty($this->params['named']['sortBy'])) {
 			$sortDirection = (@$this->params['named']['sortDirection'] == 'DESC') ? 'DESC' : 'ASC';
 			$sortBy = $this->params['named']['sortBy'];
@@ -4374,14 +4438,14 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		}
 		$this->set('sortBy', $sortBy);
 		$this->set('sortDirection', $sortDirection);
-		
+
 		$resultsPerPage = 20;
 		if (!empty($this->params['named']['page'])) {
 			$currentPage = $this->params['named']['page'];
 		} else {
 			$currentPage = 1;
 		}
-		
+
 		$this->loadModel('Client');
 		$q = "SELECT *, IF(trackDetail.amountRemitted IS NULL, 0, SUM(trackDetail.amountRemitted)) AS remitted, IF(ticket.created IS NULL, DATEDIFF(NOW(), loa.startDate) , DATEDIFF(NOW(), ticket.created)) AS lastSold, 
 					DATE_FORMAT(MIN(loa.startDate), '%c/%e/%y') AS loaStart, DATE_FORMAT(MAX(loa.endDate), '%c/%e/%y') AS loaEnd
@@ -4396,23 +4460,23 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 				ORDER BY $sortBy $sortDirection";
 
 		$result = $this->Client->query($q);
-		
+
 		if (isset($_POST['csv']) && $_POST['csv'] == 'y') {
 			$displayPackages = $result;
 		} else {
 			$displayPackages = array_slice($result, ($currentPage - 1) * $resultsPerPage, $resultsPerPage, true);
 		}
-		
+
 		foreach ($displayPackages AS &$r) {
 			if ($r['package']['siteId'] == 1) {
 				$offerTable = 'offerLuxuryLink';
 			} else {
 				$offerTable = 'offerFamily';
 			}
-			
+
 			$q = "SELECT * FROM $offerTable WHERE packageId = ? AND NOW() BETWEEN startDate AND endDate";
 			$t = $this->Client->query($q, Array($r['package']['packageId']));
-			
+
 			if (is_array($t) && count($t) >= 1) {
 				$r[0]['isLive'] = 1;
 			} else {
@@ -4421,12 +4485,12 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 		}
 
 		$numResults = count($result);
-		$numPages = ceil($numResults/$resultsPerPage);
-		
+		$numPages = ceil($numResults / $resultsPerPage);
+
 		$this->set('numResults', $numResults);
 		$this->set('numPages', $numPages);
 		$this->set('currentPage', $currentPage);
-		
+
 		if (isset($_POST['csv']) && $_POST['csv'] == 'y') {
 			$this->viewPath .= '/csv';
 			$this->layoutPath = 'csv';
@@ -4435,13 +4499,14 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 			$this->set('packages', $displayPackages);
 		}
 	}
-	
+
 }
 
+class ReportsControllerFunctions
+{
 
-class ReportsControllerFunctions {
-
-	function sqlAuctionsClosing($siteId, $date, $days) {
+	function sqlAuctionsClosing($siteId, $date, $days)
+	{
 		$interval = $days - 1;
 		$tableName = ($siteId == 1) ? 'offerLuxuryLink' : 'offerFamily';
 		$sql = "SELECT ROUND(COUNT(*)/$days) as auctionsClosingCount
@@ -4451,7 +4516,8 @@ class ReportsControllerFunctions {
 		return $sql;
 	}
 
-	function sqlAuctionsFunded($siteId, $date, $days) {
+	function sqlAuctionsFunded($siteId, $date, $days)
+	{
 		$interval = $days - 1;
 		$sql = "SELECT COUNT(ticketId)/$days as auctionsFundedCount, AVG(billingPrice) as auctionsFundedAveragePrice
 				FROM ticket
@@ -4463,7 +4529,8 @@ class ReportsControllerFunctions {
 		return $sql;
 	}
 
-	function sqlFixedPriceRequest($siteId, $date, $days) {
+	function sqlFixedPriceRequest($siteId, $date, $days)
+	{
 		$interval = $days - 1;
 		$sql = "SELECT COUNT(ticketId)/$days AS fpRequestCount
 					FROM ticket
@@ -4473,7 +4540,8 @@ class ReportsControllerFunctions {
 		return $sql;
 	}
 
-	function sqlFixedPriceFunded($siteId, $date, $days) {
+	function sqlFixedPriceFunded($siteId, $date, $days)
+	{
 		$interval = $days - 1;
 		$sql = "SELECT COUNT(ticketId)/$days AS fpFundedCount, AVG(billingPrice) as fpFundedAveragePrice
 					FROM ticket
@@ -4484,6 +4552,6 @@ class ReportsControllerFunctions {
 					AND ticketId IN (SELECT ticketId FROM paymentDetail WHERE isSuccessfulCharge = 1)";
 		return $sql;
 	}
-}
 
+}
 ?>
