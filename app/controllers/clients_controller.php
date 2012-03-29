@@ -235,7 +235,7 @@ class ClientsController extends AppController {
 		$this->set('client', $this->data);
 		
 		$this->Country->primaryKey = "id";
-		$countryIds = $this->Country->find('list');
+		$countryIds = $this->Country->find('list', array('order'=>'Country.countryName'));
 
 		if (!empty($this->data['Client']['countryId'])) {
             $this->Country->State->recursive = -1;

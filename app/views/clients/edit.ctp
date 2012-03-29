@@ -232,7 +232,7 @@ foreach ($this->data['Client']['sites'] as $site) {
 		               "ClientCountryId",
 		               array(
 		                  "update"=>"stateChooser",
-		                  "url"=>"/countries/get_states",
+		                  "url"=>"/countries/get_states_with_id_for_select",
 						  'indicator' => 'spinner'
 		               )
 		          );

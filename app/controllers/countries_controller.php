@@ -90,5 +90,12 @@ class CountriesController extends AppController {
 		$this->layout = 'ajax';
 	}
 
+	function get_states_with_id_for_select() {
+		$countryCode = $this->Country->getCountryCode($this->data['Client']['countryId']);
+	    $stateIds = $this->Country->State->find('list', array('fields' => array('State.id' , 'State.stateName'), 'conditions' => array('State.countryId' => $countryCode), 'order' => array('State.stateName')));
+		$this->set(compact('stateIds'));
+		$this->layout = 'ajax';
+	}
+
 }
 ?>
