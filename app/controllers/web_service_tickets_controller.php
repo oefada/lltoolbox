@@ -1852,7 +1852,7 @@ class WebServiceTicketsController extends WebServicesController
 				break;
 			case 39:
 				$templateFile = "39_auction_outbid";
-				$templateTitle = "You have been out bid! Bid again.";
+				$templateTitle = "You have been out bid! Please bid again.";
 				$emailSubject = $siteName . ": ".$templateTitle;
 				break;
 			case 40:
