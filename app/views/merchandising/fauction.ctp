@@ -68,7 +68,7 @@ jQuery(function() {
 <br />
 
 
-<h2>Featured Auction Scheduling</h2>
+<h2>Homepage Featured Auction Scheduling</h2>
 
 <form name="schedule-date" method="POST" action="#">
 	<input type="hidden" name="schedule-date" value="1" />
