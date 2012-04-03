@@ -210,41 +210,91 @@ foreach ($this->data['Client']['sites'] as $site) {
 			echo $form->input('address2');
 			echo $form->input('postalCode');
 		?>
-		<?	echo $form->input('Client.countryId', array('type' => 'select', 'label' => 'Country', 'empty' => true)); ?>
-		<div id='stateChooser' style="padding: 0; margin:0">
-		<?php
-		echo $form->input('Client.stateId', array('type' => 'select', 'label' => 'State', 'empty' => true));
-		echo $ajax->observeField(
-		               "ClientStateId",
-		               array(
-		                  "update"=>"cityChooser",
-		                  "url"=>"/states/get_cities",
-						  'indicator' => 'spinner'
-		               )
-		          );
-		?>
-		</div>
-		<div id='cityChooser' style="padding: 0; margin:0">
-			<?	echo $form->input('Client.cityId', array('type' => 'select', 'label' => 'City', 'empty' => '')); ?>
-		</div>
-
-		<?php echo $ajax->observeField(
-		               "ClientCountryId",
-		               array(
-		                  "update"=>"stateChooser",
-		                  "url"=>"/countries/get_states_with_id_for_select",
-						  'indicator' => 'spinner'
-		               )
-		          );
+		
+			<div class="input text">
+				<label for="countryDisplay">Country</label>
+				<span id="countryDisplay"><?= $countryIds[$this->data['Client']['countryId']]; ?></span>
+			</div>		
+			<div class="input text">
+				<label for="stateDisplay">State</label>
+				<span id="stateDisplay"><?= $stateIds[$this->data['Client']['stateId']]; ?></span>
+			</div>	
+			<div class="input text">
+				<label for="cityDisplay">City</label>
+				<span id="cityDisplay" style="text-decoration:underline; color:#336699; cursor:pointer;"><?= (isset($cityIds[$this->data['Client']['cityId']])) ? $cityIds[$this->data['Client']['cityId']] : 'None'; ?></span>
+			</div>
+			<div id='clientLocator' style="margin:10px 0; border: 1px solid #e2e2e2; background-color: #f0f0f0; display: none;">
+				<?
+					echo $form->input('countryId', array('type'=>'hidden'));
+					echo $form->input('stateId', array('type'=>'hidden'));
+					echo $form->input('cityId', array('type'=>'hidden'));
+					echo $form->input('cityNewId', array('type'=>'hidden'));
+					echo $form->input('locatorCountry', array('type'=>'select', 'label'=>'Select Country', 'empty'=>'--', 'options'=>$countryIds, 'default'=>$this->data['Client']['countryId']));
+					echo $form->input('locatorState', array('type'=>'select', 'label'=>'Select State', 'empty'=>'--', 'options'=>$stateIds, 'default'=>$this->data['Client']['stateId']));
+					echo $form->input('locatorCity', array('type'=>'select', 'label'=>'Select City', 'empty'=>'--', 'options'=>$cityIds, 'default'=>$this->data['Client']['cityId'])); 
+				?>
+			</div>
+		<?php 
 			echo $javascript->link('jquery/jquery',true);
 			echo $javascript->link('jquery/jquery-noconflict',true);				  
 		?>
 		<script>
+			
+
 			jQuery(function($) {
+				
+				$("#cityDisplay").click(function() {
+					$('#clientLocator').toggle('slow');
+				});
+
+				$("#ClientLocatorCountry").change(function(){
+					$.getJSON("/countries/get_states_locator",{id: $(this).val()}, function(data) {
+						$('#ClientLocatorState')[0].options.length = 0;
+						$('#ClientLocatorCity')[0].options.length = 0;
+						$('#ClientLocatorState')[0].options.add(new Option('--', ''));
+						$('#ClientLocatorCity')[0].options.add(new Option('--', ''));
+						for (state in data.states) {
+							if (data.states.hasOwnProperty(state)) {
+								$('#ClientLocatorState')[0].options.add(new Option(data.states[state], state));
+							}
+						}
+					})
+				});
+
+				$("#ClientLocatorState").change(function(){
+					$.getJSON("/states/get_cities_locator",{id: $(this).val()}, function(data) {
+						$('#ClientLocatorCity')[0].options.length = 0;
+						$('#ClientLocatorCity')[0].options.add(new Option('--', ''));
+						for (city in data.cities) {
+							if (data.cities.hasOwnProperty(city)) {
+								$('#ClientLocatorCity')[0].options.add(new Option(data.cities[city], city));
+							}
+						}
+					})
+				});
+
+				$("#ClientLocatorCity").change(function(){
+					var city = $('#ClientLocatorCity').val();
+					$('#ClientCityId').val(city);
+					$('#ClientCityNewId').val(city);
+					
+					$.getJSON("/cities/ajaxinfo",{id: city}, function(data) {
+						$('#countryDisplay').html(data.info.countryName);
+						$('#stateDisplay').html(data.info.stateName);
+						$('#cityDisplay').html(data.info.cityName);
+						$('#ClientCountryId').val(data.info.cid);
+						$('#ClientStateId').val(data.info.sid);
+					});
+					
+					if (city != '') {
+						$('#clientLocator').slideUp('slow');
+					}
+				});
+				
 				$("#CopyLoc").click(function() {
-					var country = $("#ClientCountryId option:selected").text();
-					var state   = $("#ClientStateId option:selected").text()
-					var city    = $("#ClientCityId option:selected").text()
+					var country = $("#countryDisplay").html();
+					var state   = $("#stateDisplay").html();
+					var city    = $("#cityDisplay").html();
 
 					var copyLoc = city;
 					if (country != "United States" && country != "Canada") {

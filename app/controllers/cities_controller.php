@@ -133,5 +133,12 @@ class CitiesController extends AppController {
 		$this->redirect(array('action'=>'index','query' => $this->params['url']['query']));
 	}
 
+	function ajaxinfo() {
+		$city = $this->City->read(null, $this->params['url']['id']);
+		$info = array('cid'=>$city['Country']['id'], 'countryName'=>$city['Country']['countryName'], 'sid'=>$city['State']['id'], 'stateName'=>$city['State']['stateName'], 'cityName'=>$city['City']['cityName']);
+		echo json_encode(array('info'=>$info));
+		exit;
+	}
+
 }
 ?>

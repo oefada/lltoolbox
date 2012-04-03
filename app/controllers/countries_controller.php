@@ -97,5 +97,13 @@ class CountriesController extends AppController {
 		$this->layout = 'ajax';
 	}
 
+	function get_states_locator() {	
+		$countryCode = $this->Country->getCountryCode($this->params['url']['id']);
+	    $stateIds = $this->Country->State->find('list', array('fields' => array('State.id' , 'State.stateName'), 'conditions' => array('State.countryId' => $countryCode), 'order' => array('State.stateName')));
+		$this->layout = 'ajax';
+		echo json_encode(array('states'=>$stateIds));
+		exit;
+	}
+
 }
 ?>

@@ -123,6 +123,14 @@ class StatesController extends AppController {
 		$this->layout = 'ajax';
 	}
 
+	function get_cities_locator() {
+		list($stateCode,$countryCode) = $this->State->getStateCode($this->params['url']['id']);
+		$cityIds = $this->State->City->find('list', array('conditions' => array('City.stateId' => $stateCode, 'City.countryId' => $countryCode ), 'order' => array('City.cityName') ) );		
+		echo json_encode(array('cities'=>$cityIds));
+		exit;
+		
+	}
+
 	function search() {
 		$this->redirect(array('action'=>'index','query' => $this->params['url']['query']));
 	}
