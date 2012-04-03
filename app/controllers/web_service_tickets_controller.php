@@ -1460,7 +1460,6 @@ class WebServiceTicketsController extends WebServicesController
 			case 33:
 				$clientPpv = true;
 				$extranet_link = $this->getExtranetLink($ticketId, $siteId);
-				
 				if ($isAuction) {
 					$emailFrom = $emailReplyTo = "reservationrequests@$siteEmail";
 				} else {
@@ -1486,6 +1485,7 @@ class WebServiceTicketsController extends WebServicesController
 				break;
 			case 27:
 			case 28:
+				$imgHref = $extranet_link;
 				$imgSrc = "confirm_reservation.gif";
 				break;
 			case 29:
@@ -1966,7 +1966,6 @@ class WebServiceTicketsController extends WebServicesController
 		// Add UTM links
 		$template  = file_get_contents("../vendors/email_msgs/includes/header_".$append.".html");
 		$template .= file_get_contents("../vendors/email_msgs/notifications/".$templateFile.".html");
-
 		// Special templates that are re-used
 		$special_templates = array(
 			'package_details' => 1,
@@ -2039,7 +2038,6 @@ class WebServiceTicketsController extends WebServicesController
 		if ($append == "FG") {
 			$template = str_replace($colorsLL,$colorsFG,$template);
 		}
-		
 		if (!$template) {
 			return false;
 		} else {
