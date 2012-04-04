@@ -22,7 +22,6 @@ class CountriesController extends AppController {
 		}
 
 		$this->paginate = array(
-			'order' => 'countryId ASC',
 			'conditions' => $conditions,
 		);
 

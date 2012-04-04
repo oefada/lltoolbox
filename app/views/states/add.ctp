@@ -12,7 +12,7 @@
  			</select>
  		</div>
 	<?php
-		echo $form->input('stateCode');
+		echo $form->input('stateId');
 		echo $form->input('stateName');
 	?>
 	</fieldset>

@@ -8,12 +8,6 @@
 		echo $form->input('cityName');
 	?>
 		<div class="input">
-			<label for="CityStateId">State (optional)</label>
-			<select id="CityStateId" name="data[City][stateId]">
-				<option value="">Loading states..</option>
-			</select>
-		</div>
-		<div class="input">
 			<label for="CityCountryId">Country</label>
 			<select id="CityCountryId" name="data[City][countryId]">
 				<?php foreach ($countries as $k=>$r): ?>
@@ -21,6 +15,13 @@
 				<?php endforeach; ?>
 			</select>
 		</div>
+		<div class="input">
+			<label for="CityStateId">State</label>
+			<select id="CityStateId" name="data[City][stateId]">
+				<option value="">Loading states..</option>
+			</select>
+		</div>
+
 		<?php echo $this->element('statecountryajax', array('countryId' => $this->data['City']['countryId'], 'stateId' => $this->data['City']['stateId'])) ?>
 	<?php
 

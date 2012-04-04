@@ -9,9 +9,6 @@
 <tr>
 	<th><?php echo $paginator->sort('countryId');?></th>
 	<th><?php echo $paginator->sort('countryName');?></th>
-	<th><?php echo $paginator->sort('mapRef');?></th>
-	<th><?php echo $paginator->sort('currencyName');?></th>
-	<th><?php echo $paginator->sort('currencyCode');?></th>
 	<th class="actions"><?php __('Actions');?></th>
 </tr>
 <?php
@@ -28,15 +25,6 @@ foreach ($countries as $country):
 		</td>
 		<td>
 			<?php echo $country['Country']['countryName']; ?>
-		</td>
-		<td>
-			<?php echo $country['Country']['mapRef']; ?>
-		</td>
-		<td>
-			<?php echo $country['Country']['currencyName']; ?>
-		</td>
-		<td>
-			<?php echo $country['Country']['currencyCode']; ?>
 		</td>
 		<td class="actions">
 			<?php echo $html->link(__('Edit', true), array('action'=>'edit', $country['Country']['countryId'])); ?>

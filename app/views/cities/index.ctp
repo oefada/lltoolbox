@@ -38,13 +38,13 @@ foreach ($cities as $city):
 			<?php echo $city['City']['cityId']; ?>
 		</td>
 		<td>
-			<?php echo $city['City']['cityName']; ?>
+			<?php echo $html->link($city['City']['cityName'], array('controller'=> 'cities', 'action'=>'edit', $city['City']['cityId'])); ?>
 		</td>
 		<td>
 			<?php echo $city['City']['cityAlias']; ?>
 		</td>
 		<td>
-			<?php echo $html->link($city['State']['stateName'], array('controller'=> 'states', 'action'=>'edit', $city['State']['stateId'])); ?>
+			<?php echo $html->link($city['State']['stateName'], array('controller'=> 'states', 'action'=>'edit', $city['State']['id'])); ?>
 		</td>
 		<td>
 			<?php echo $html->link($city['Country']['countryName'], array('controller'=> 'countries', 'action'=>'edit', $city['Country']['countryId'])); ?>

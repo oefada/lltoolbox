@@ -44,7 +44,7 @@ class StatesController extends AppController {
 			}
 		}
 
-		$countries = $this->State->Country->find('list');
+		$countries = $this->State->Country->find('list', array('order' => array('Country.countryName') ));
 		$this->set(compact('tags', 'countries'));
 	}
 
@@ -79,7 +79,7 @@ class StatesController extends AppController {
 			$this->data = $this->State->read(null, $id);
 		}
 
-		$countries = $this->State->Country->find('list');
+		$countries = $this->State->Country->find('list', array('order' => array('Country.countryName') ));
 		$this->set(compact('tags','countries'));
 	}
 

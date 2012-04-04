@@ -4,11 +4,7 @@
 	<fieldset>
  		<legend><?php __('Edit Country');?></legend>
 	<?php
-		echo $form->input('countryId');
 		echo $form->input('countryName');
-		echo $form->input('mapRef');
-		echo $form->input('currencyName');
-		echo $form->input('currencyCode');
 	?>
 	</fieldset>
 <?php echo $form->end('Submit');?>

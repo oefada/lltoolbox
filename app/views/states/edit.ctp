@@ -5,7 +5,6 @@
  		<legend><?php __('Edit State');?></legend>
 	<?php
 		echo $form->input('stateId');
-		echo $form->input('stateCode');
 	?>
  		<div class="input">
  			<label for="StateCountryId">Country</label>

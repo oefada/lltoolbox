@@ -3,7 +3,7 @@ class State extends AppModel {
 
 	var $name           = 'State';
 	var $useTable       = 'stateNew';
-	var $primaryKey     = 'stateId';
+	var $primaryKey     = 'id';
 	var $displayField   = 'stateName';
 	var $order          = 'stateName';
 	

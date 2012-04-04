@@ -5,6 +5,7 @@ class Country extends AppModel {
 	var $useTable = 'countryNew';
 	var $primaryKey = 'countryId';
 	var $displayField = 'countryName';
+	var $order      = 'countryName';
 	
 	var $hasMany = array('State' => array('foreignKey' => 'countryId'),
 						'City' => array('foreignKey' => 'countryId'),

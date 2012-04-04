@@ -7,6 +7,7 @@
 <?php echo $this->renderElement('ajax_paginator', array('showCount' => true)); ?>
 <table cellpadding="0" cellspacing="0">
 <tr>
+	<th><?php echo $paginator->sort('id');?></th>
 	<th><?php echo $paginator->sort('stateId');?></th>
 	<th><?php echo $paginator->sort('stateName');?></th>
 	<th><?php echo $paginator->sort('countryId');?></th>
@@ -22,6 +23,9 @@ foreach ($states as $state):
 ?>
 	<tr<?php echo $class;?>>
 		<td>
+			<?php echo $state['State']['id']; ?>
+		</td>
+		<td>
 			<?php echo $state['State']['stateId']; ?>
 		</td>
 		<td>
@@ -31,8 +35,8 @@ foreach ($states as $state):
 			<?php echo $html->link($state['Country']['countryName'], array('controller'=> 'countries', 'action'=>'edit', $state['Country']['countryId'])); ?>
 		</td>
 		<td class="actions">
-			<?php echo $html->link(__('Edit', true), array('action'=>'edit', $state['State']['stateId'])); ?>
-			<?php echo $html->link(__('Delete', true), array('action'=>'delete', $state['State']['stateId']), null, sprintf(__('Are you sure you want to delete # %s?', true), $state['State']['stateId'])); ?>
+			<?php echo $html->link(__('Edit', true), array('action'=>'edit', $state['State']['id'])); ?>
+			<?php echo $html->link(__('Delete', true), array('action'=>'delete', $state['State']['id']), null, sprintf(__('Are you sure you want to delete # %s?', true), $state['State']['id'])); ?>
 		</td>
 	</tr>
 <?php endforeach; ?>

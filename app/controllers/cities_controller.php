@@ -61,7 +61,7 @@ class CitiesController extends AppController {
 		
 		//$tags = $this->City->Tag->find('list');
 		$states = $this->City->State->find('list');
-		$countries = $this->City->Country->find('list');
+		$countries = $this->City->Country->find('list', array('order' => array('Country.countryName') ));
 		//$this->set(compact('tags', 'states', 'countries'));
 		$this->set(compact('states', 'countries'));
 	}
