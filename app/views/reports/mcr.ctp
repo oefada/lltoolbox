@@ -185,7 +185,7 @@ td.error div{
 				<?php echo $form->end(); ?>
 			</div>
 		</td>
-	    <th colspan="7" class="blackBg" style="text-align: center">LOA Information</td>
+	    <th colspan="8" class="blackBg" style="text-align: center">LOA Information</td>
 	    <th colspan="6" class="darkBlackBg rowBorderWhite" style="border-top: 1px solid #000; text-align: center">Referrals/Impressions (<?=date('M y', strtotime($latestReferralDate))?>)</td>
 	  </tr>
 	  <tr>
@@ -209,6 +209,7 @@ td.error div{
 		<th class="blackBg" style="text-align: center"><a href="15" id="sort16">LOA Bal</a></td>
 		<th class="blackBg" style="text-align: center"><a href="16" id="sort17">Total Remitted</a></td>
 	    <th class="blackBg" style="text-align: center"><a href="17" id="sort18">Days until keep ends</a></td>
+	    <th class="blackBg" style="text-align: center">LOA Count</td>
 	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="18" id="sort19">Web</a></td>
 	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="19" id="sort20">Phone</a></td>
 	    <th class="darkBlackBg rowBorderWhite" style="text-align: center"><a href="20" id="sort21">Portfolio</a></td>
@@ -218,8 +219,12 @@ td.error div{
 	  </tr>
 	</thead>
 	<tbody>
-<?php foreach($clients as $k => $row):
-	if ($k %2 == 0) {
+<?php 
+
+$clientCount = 0;
+foreach($clients as $k => $row):
+	$clientCount++;
+	if ($clientCount %2 == 0) {
 		$class = ' class="altrow"';
 	} else {
 		$class = '';
@@ -230,27 +235,18 @@ td.error div{
 
 // workaround to get report to properly display properties with zero offers today - see notes in controller
 // mbyrnes
-$ll_class_error='';
-if ((int)$row['packagesLiveTodayLL'] == 0 && stristr($row['Client']['sites'], 'luxurylink')){
-	$ll_class_error='class="error"';
-}
-$fg_class_error='';
-if((int)$row['packagesLiveTodayFG'] == 0 && stristr($row['Client']['sites'], 'family')){
-	$fg_class_error='class="error"';
-}
-
-if (isset($zero_offers_only) && $zero_offers_only){
-	if ($ll_class_error=='' && $fg_class_error=='')continue;
-}
+// 04/04/12 jwoods - logic moved to controller
+$ll_class_error = (isset($row['errorPackagesLL'])) ? 'class="error"' : '';
+$fg_class_error = (isset($row['errorPackagesFG'])) ? 'class="error"' : '';
 
 ?>
 
 	  <tr<?=$class?>>
-		<td><?=$k+1?></td>
+		<td><?=$clientCount?></td>
 	    <td style="text-align: left;" class="textSort">
 			<?=$html->link($row['Client']['name'], '/clients/edit/'.$row['Client']['clientId'])?>
 			</td>
-      <td><?php echo ucwords($row['Client']['sites']); ?></td>
+      <td><?php echo ucwords($row['Loa']['sites']); ?></td>
 			<? if ($k == 0) echo "<div id='packageRevenue'>"?>
 	    <td <?=$ll_class_error?>><div><?=(int)$row['packagesLiveTodayLL']?></div></td>
       <td <?=$fg_class_error?>><div><?=(int)$row['packagesLiveTodayFG']?></div></td>
@@ -280,6 +276,7 @@ if (isset($zero_offers_only) && $zero_offers_only){
 		<td><?=(int)$row['Loa']['membershipBalance']?></td>
 		<td><?=(int)$row['totalLoaRemitted']?></td>
 	    <td <?if((int)$row[0]['daysUntilKeepEnd'] < 30) echo " class='error'"?>><div><?=(int)$row[0]['daysUntilKeepEnd']?></div></td>
+	    <td><?=(int)$row['loaCount']?></td>
 	    <td <?if(@$row['Referrals']['webRefer'] < 100) echo " class='error'"?>><div><?=$html->link((int)@$row['Referrals']['webRefer'], '/reports/car/clientId:'.$row['Client']['clientId'])?></div></td>
 	    <td <?if(@$row['Referrals']['phone'] < 20) echo " class='error'"?>><div><?=(int)@$row['Referrals']['phone']?></div></td>
 	    <td><?=(int)@$row['Referrals']['productView']?></td>

@@ -2057,11 +2057,12 @@ class ReportsController extends AppController
 		$startDate = date("Y-m-d 00:00:00");
 		$endDate = date("Y-m-d 23:59:59");
 		$startDate2 = date("Y-m-d");
+		$zeroOffersOnly = false;
 
 		if (!empty($_POST['downloadcsv']) && $_POST['downloadcsv'] == 1) {
 
 			Configure::write('debug', 0);
-			$this->set('clients', unserialize(stripslashes(htmlspecialchars_decode($_POST['clients']))));
+			$this->set('clients', unserialize(stripslashes(htmlspecialchars_decode($_POST['clients']))));		
 			$this->viewPath .= '/csv';
 			$this->layoutPath = 'csv';
 
@@ -2078,10 +2079,11 @@ class ReportsController extends AppController
 				// the full report and set the view to only display those properties with zero
 				// offers
 				// mbyrnes
-
+				// 04/04/12 jwoods - switched from Client.sites to Loa.sites and moved into controller for csv 
 				if (isset($this->params['named']['ql']) == 2 && $this->params['named']['ql'] == 2) {
 					$this->params['named']['ql'] = '';
 					$this->set("zero_offers_only", 1);
+					$zeroOffersOnly = true;
 				}
 
 				$conditions = $this->_build_conditions($this->data);
@@ -2104,13 +2106,13 @@ class ReportsController extends AppController
 						case 5 :
 						case 6 :
 						case 7 :
-							$order = "Loa.membershipBalance DESC";
+							$order = "Client.name";
 							break;
 						case 4 :
-							$order = "Loa.endDate";
+							$order = "Client.name";
 							break;
 						default :
-							$order = 'Loa.endDate';
+							$order = 'Client.name';
 							break;
 					endswitch;
 
@@ -2219,7 +2221,7 @@ class ReportsController extends AppController
 						$conditions = $qlconditions;
 					}
 
-					$q = "SELECT Client.clientId, Client.name, Client.sites, Loa.loaId, Loa.startDate, Loa.endDate, ";
+					$q = "SELECT Client.clientId, Client.name, Loa.sites, Loa.loaId, Loa.startDate, Loa.endDate, ";
 					$q .= "Loa2.startDate, Loa.loaLevelId, Loa.membershipBalance, Loa.membershipFee, ";
 					$q .= "IF(Loa.totalKept = 0 OR Loa.totalKept IS NULL, 'N/A', ";
 					$q .= "ROUND(-Loa.membershipBalance / (Loa.totalKept / (DATEDIFF(Loa.startDate,NOW()))))) ";
@@ -2481,6 +2483,40 @@ class ReportsController extends AppController
 
 			$this->set('pkgRevenueRanges', $pkgRevenueRanges);
 			$this->set('latestReferralDate', $latestReferralDate);
+			
+			// 04/04/12 jwoods - moved zeroOffersOnly to controller
+			if ($zeroOffersOnly) {
+				foreach ($clients as $k=>$v) {
+					$removeClient = true;
+					if ((int)$v['packagesLiveTodayLL'] == 0 && stristr($v['Loa']['sites'], 'luxurylink')){
+						$removeClient = false;
+						$clients[$k]['errorPackagesLL'] = true;
+					}
+					if((int)$v['packagesLiveTodayFG'] == 0 && stristr($v['Loa']['sites'], 'family')){
+						$removeClient = false;
+						$clients[$k]['errorPackagesFG'] = true;
+					}
+					if ($removeClient) {
+						unset($clients[$k]);
+					}
+				}
+			}
+			
+			// 04/04/12 jwoods - added LOA count			
+			$clientLoaCount = array();
+			foreach ($clients as $c) {
+				$clientLoaCount[$c['Client']['clientId']] = 0;
+			}
+			if (sizeof($clientLoaCount) > 0) {
+				$q = "SELECT clientId, COUNT(*) AS nbr FROM loa WHERE clientId IN (" . implode(',', array_keys($clientLoaCount)) . ") GROUP BY clientId";
+				$result = $this->Client->query($q);
+				foreach ($result as $r) {
+					$clientLoaCount[$r['loa']['clientId']] = $r[0]['nbr'];
+				}
+			}
+			foreach ($clients as $k=>$v) {
+				$clients[$k]['loaCount'] = $clientLoaCount[$v['Client']['clientId']];
+			}
 
 			//all of the client data aggregated in this one array
 			$this->set('clients', $clients);
