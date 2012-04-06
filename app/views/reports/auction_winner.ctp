@@ -103,7 +103,7 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 		<td>xxxx<?=$r['PaymentDetailFull'][0]['pd']['ppCardNumLastFour']?></td>
 		<td><?=$r['PaymentDetailFull'][0]['pd']['ppExpMonth'].'/'.$r['PaymentDetailFull'][0]['pd']['ppExpYear']?></td>
 		<td><?=$r[0]['revenue']?></td>
-		<td><?=$r['Ticket']['numNights']?></td>
+		<td><?=($r['Ticket']['numNights'] * $r['Package']['numRooms'])?></td>
 		<td><?=$r['OfferType']['offerTypeName']?></td>
 		<td><?switch($r['OfferType']['offerTypeName']) {
 			case 'Standard Auction':

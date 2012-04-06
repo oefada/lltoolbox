@@ -1496,6 +1496,7 @@ class ReportsController extends AppController
 						   Promo.amountOff,
 						   PromoCode.promoCode,
                            Package.numNights,
+                           Package.numRooms,
                            Ticket.offerId,
                            Ticket.guaranteeAmt,
                            Ticket.billingPrice
