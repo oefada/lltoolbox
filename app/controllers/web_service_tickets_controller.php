@@ -1695,7 +1695,7 @@ class WebServiceTicketsController extends WebServicesController
 				break;
 			case 23:
 				// send out res confirmation to client also as copy
-				include('../vendors/email_msgs/ppv/23_conf_copy_client.html');
+				include('../vendors/email_msgs/ppv/23_conf_copy_client.php');
 				$emailSubject = "$siteName Booking Confirmed for $emailName - $clientNameP";
 				$emailFrom = ($isAuction) ? "$siteDisplay <resconfirm@$siteEmail>" : "$siteDisplay <reservations@$siteEmail>";
 				$emailReplyTo = ($isAuction) ? "resconfirm@$siteEmail" : "reservations@$siteEmail";
