@@ -5,6 +5,16 @@
          <div id="<?php echo $site; ?>" class="<?php echo ($site == $displayTab) ? ' siteActive' :  ' siteInactive'; ?>"><?php __($sites[$site]); ?></div>
    <?php endforeach; ?>
          <div id="resizer" class="siteInactive">Resizer <?php echo $html->image('http://showcase.luxurylink.com/clients/toolbox/'.$client['Client']['clientId'].'?oldProductId='.$client['Client']['oldProductId'].'&rand='.mt_rand(100000,999999),array('width'=>'8px','height'=>'8px'));?></div>
+		<?php
+		if (strpos($_SERVER['HTTP_USER_AGENT'], 'Macintosh') !== false) {
+			$finderURL = 'smb://showcase/sho/' . $clientId;
+			$finderTitle = 'Open in Finder';
+			$finderImage = 'finder-network.png';
+			echo '<div id="smbpath" class="siteInactive" style="width:300px;cursor:default;">';
+			echo $html->link($finderURL, $finderURL);
+			echo '</div>';
+		}
+		?>
 </div>
 <?php foreach ($sites as $site => $siteName): ?>
    <?php
