@@ -536,7 +536,7 @@ class Ticket extends AppModel {
 			// check LOA packages
 			// ------------------------------------------------------------------
 			if (is_numeric($loa_m_total_packages) && ($loa_m_total_packages > 0)) {         
-				$sql = "SELECT count(*) AS COUNT FROM ticket INNER JOIN paymentDetail pd ON ticket.ticketId = pd.ticketId AND pd.isSuccessfulCharge = 1 ";
+				$sql = "SELECT count(DISTINCT ticket.ticketId) AS COUNT FROM ticket INNER JOIN paymentDetail pd ON ticket.ticketId = pd.ticketId AND pd.isSuccessfulCharge = 1 ";
 				$sql.= "WHERE ticket.ticketStatusId NOT IN (7,8) AND ticket.packageId IN ($package_ids_imp)";		
 				$result = $this->query($sql);
 				if (!empty($result)) {
