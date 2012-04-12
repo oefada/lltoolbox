@@ -4,7 +4,7 @@
    <?php foreach ($sites as $site => $siteName): ?>
          <div id="<?php echo $site; ?>" class="<?php echo ($site == $displayTab) ? ' siteActive' :  ' siteInactive'; ?>"><?php __($sites[$site]); ?></div>
    <?php endforeach; ?>
-         <div id="resizer" class="siteInactive">Resizer <?php echo $html->image('http://showcase.luxurylink.com/clients/toolbox/'.$client['Client']['clientId'].'?oldProductId='.$client['Client']['oldProductId'].'&rand='.mt_rand(100000,999999),array('width'=>'8px','height'=>'8px'));?></div>
+         <div id="resizer" onclick="return resizeTabClick();" class="siteInactive">Resizer <?php echo $html->image('http://showcase.luxurylink.com/clients/toolbox/'.$client['Client']['clientId'].'?oldProductId='.$client['Client']['oldProductId'].'&rand='.mt_rand(100000,999999),array('width'=>'8px','height'=>'8px'));?></div>
 		<?php
 		if (strpos($_SERVER['HTTP_USER_AGENT'], 'Macintosh') !== false) {
 			$finderURL = 'smb://showcase/sho/' . $clientId;
@@ -215,9 +215,19 @@
                            toggleSites('<?php echo $site; ?>');
                         }
       });
-      Event.observe('resizer', 'click', function() {
-		window.location.replace('http://showcase.luxurylink.com/clients/view/<?php echo $client['Client']['clientId'].'/oldProductId:'.$client['Client']['oldProductId'];?>');
-      });
+		function resizeTabClick() {
+			var $tab = jQuery('#resizer');
+			if (!$tab.hasClass('poked')) {
+				$tab.addClass('poked');
+				$tab.css({'background-color':'#fee'});
+				var $ajax = new Image();
+				$ajax.src='http://showcase.luxurylink.com/queues/poke';
+				$tab.html('Poked!');
+			} else {
+				window.location.replace('http://showcase.luxurylink.com/clients/view/<?php echo $client['Client']['clientId'].'/oldProductId:'.$client['Client']['oldProductId'];?>');
+			}
+			return false;
+		}
       
    </script>
 <?php endforeach; ?>
