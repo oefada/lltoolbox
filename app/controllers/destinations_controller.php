@@ -59,5 +59,13 @@ class DestinationsController extends AppController {
 		}
 	}
 
+	function get_parent_tree() {
+		$tree = $this->Destination->getLineageForId($this->params['url']['id']);
+		echo json_encode(array('tree'=>$tree));
+		exit;
+		
+	}
+
+
 }
 ?>

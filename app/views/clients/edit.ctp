@@ -461,11 +461,49 @@ foreach ($this->data['Client']['sites'] as $site) {
                     </div>
 				</fieldset>
 		<?php endif; ?>
+
+
+		<script>
+			jQuery(function($) {
+				
+
+				$("#DestinationSelector").change(function(){
+					$.getJSON("/destinations/get_parent_tree",{id: $(this).val()}, function(data) {
+						$("#destinationRelDisplay").html('<img src="/img/spinner.gif">');
+						var did = new Array();
+						var dname = new Array();
+						var dcount = 0;
+						for (d in data.tree) {
+							if (data.tree.hasOwnProperty(d)) {
+								did[dcount] = data.tree[d].destinationId;
+								dname[dcount] = data.tree[d].destinationName;
+								dcount++;
+							}
+						}
+						$("#destinationIds").val(did.join(','));
+						$("#destinationRelDisplay").html(dname.join('<br />'));
+					})
+				});
+				
+			});
+		</script>
+
+
 		<fieldset class="collapsible">
 			<legend class="handle">Destinations <?=$html2->c($client['ClientDestinationRel']); ?></legend>
 			<div class="collapsibleContent">
 				<div class='controlset2'>
-					<?php echo $form->input('Destination', array('multiple' => 'checkbox', 'label' => false, 'selected' => $destSelected)); ?>
+					<input id="destinationIds" name="data[destinationIds]" value="<?= implode(',', $destSelected); ?>" type="hidden">
+					<div style="font-weight:bold; margin:0; padding:5px 0 5px;">Set Primary Destination:</div>
+					<select id="DestinationSelector" name="data[Client][primaryDestinationId]" style="font-size:12px">
+						<option value="">-- </option>
+						<?= $destinationSelectOptions; ?>
+					</select>
+					<div id="destinationRelDisplay" style="font-size: 14px; margin:0; padding:10px 0 10px; line-height: 20px;">
+					<?php foreach ($destSelected as $d) { ?>
+						<?= $destinations[$d]; ?><br />
+					<?php } ?>
+					</div>
 				</div>
 			</div>
 		</fieldset>

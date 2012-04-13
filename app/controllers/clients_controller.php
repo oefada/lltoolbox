@@ -155,6 +155,10 @@ class ClientsController extends AppController {
 				}
 		    endif;
 	         /** END SORT **/   
+
+			$this->data['Destination']['Destination'] = explode(',', $this->data['destinationIds']); 
+			unset($this->data['destinationIds']);	
+
 		    
 	         $this->data['Client']['seoName'] = $this->convertToSeoName($this->data['Client']['name']);
              $this->data['Client']['seoLocation'] = $this->convertToSeoName($this->data['Client']['locationDisplay']);
@@ -231,6 +235,8 @@ class ClientsController extends AppController {
 		foreach ($this->data['ClientDestinationRel'] as $v) {
 			$destSelected[] = $v['destinationId'];
 		}
+
+		$this->set('destinationSelectOptions', $this->Client->Destination->getHierarchySelectOptions($this->data['Client']['primaryDestinationId']));
 		
 		$this->set('client', $this->data);
 		
