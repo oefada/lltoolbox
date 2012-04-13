@@ -465,8 +465,6 @@ foreach ($this->data['Client']['sites'] as $site) {
 
 		<script>
 			jQuery(function($) {
-				
-
 				$("#DestinationSelector").change(function(){
 					$.getJSON("/destinations/get_parent_tree",{id: $(this).val()}, function(data) {
 						$("#destinationRelDisplay").html('<img src="/img/spinner.gif">');
@@ -484,7 +482,6 @@ foreach ($this->data['Client']['sites'] as $site) {
 						$("#destinationRelDisplay").html(dname.join('<br />'));
 					})
 				});
-				
 			});
 		</script>
 
@@ -493,14 +490,17 @@ foreach ($this->data['Client']['sites'] as $site) {
 			<legend class="handle">Destinations <?=$html2->c($client['ClientDestinationRel']); ?></legend>
 			<div class="collapsibleContent">
 				<div class='controlset2'>
-					<input id="destinationIds" name="data[destinationIds]" value="<?= implode(',', $destSelected); ?>" type="hidden">
+				
+					<? $destSelectedArray = (isset($destSelected) && is_array($destSelected)) ? $destSelected : array(); ?>
+				
+					<input id="destinationIds" name="data[destinationIds]" value="<?= implode(',', $destSelectedArray); ?>" type="hidden">
 					<div style="font-weight:bold; margin:0; padding:5px 0 5px;">Set Primary Destination:</div>
 					<select id="DestinationSelector" name="data[Client][primaryDestinationId]" style="font-size:12px">
 						<option value="">-- </option>
 						<?= $destinationSelectOptions; ?>
 					</select>
 					<div id="destinationRelDisplay" style="font-size: 14px; margin:0; padding:10px 0 10px; line-height: 20px;">
-					<?php foreach ($destSelected as $d) { ?>
+					<?php foreach ($destSelectedArray as $d) { ?>
 						<?= $destinations[$d]; ?><br />
 					<?php } ?>
 					</div>
