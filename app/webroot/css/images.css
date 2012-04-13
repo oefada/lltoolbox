@@ -64,6 +64,11 @@ input.tImage[type="radio"] {
 	margin: 0;
 	padding: 0;
 }
+div.logos {
+	float: left;
+	width: 410px;
+	padding: 0;
+}
 div.large {
 	float: left;
 	width: 410px;
