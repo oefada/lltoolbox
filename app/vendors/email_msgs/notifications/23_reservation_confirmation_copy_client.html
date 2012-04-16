@@ -1,0 +1,11 @@
+<p>Thank you for confirming the following reservation for the Luxury Link vacation package below. The confirmed dates are <?php echo $resArrivalDate;?> - <?php echo $resDepartureDate;?>.</p>
+
+<?php if ($isAuction && $isMystery && $guarantee) : ?>
+	<p>On this occasion <?=$siteName;?> will subsidize the winning bid to <span style="font-weight:bold; color:#990000;">guarantee $<?=$guarantee;?></span>. This amount will be reflected on your month end statement.</p>
+<?php endif ;?>
+
+%%client_footer%%
+%%no_special%%
+%%reservation_details%%
+%%package_details_client%%
+%%property_notes%%
