@@ -183,7 +183,7 @@
 		<select id="flexNumNightsMin" name="data[Package][flexNumNightsMin]">
 		<option></option>
 		<? 
-		for($i=2; $i <= 14; $i++){ 
+		for($i=1; $i <= 14; $i++){ 
 			$selected = ($i == $package['Package']['flexNumNightsMin']) ? ' selected' : ''; 
 			echo "<option value='$i' $selected>$i</option>";
 		} 
@@ -193,7 +193,7 @@
 		<select id="flexNumNightsMax" name="data[Package][flexNumNightsMax]">
 		<option></option>
 		<? 
-		for($i=2; $i <= 14; $i++){
+		for($i=1; $i <= 14; $i++){
 			$selected = ($i == $package['Package']['flexNumNightsMax']) ? ' selected' : ''; 
 			echo "<option value='$i' $selected>$i</option>";
 		}
