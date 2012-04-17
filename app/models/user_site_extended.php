@@ -16,7 +16,7 @@ class UserSiteExtended extends AppModel {
 			$this->read();
 
 			$ch = curl_init();
-			$cacheKey = 'UserEntity_1_'.$this->data['UserSiteExtended']['userId'];
+			$cacheKey = 'UserEntity_shared_'.$this->data['UserSiteExtended']['userId'];
 			curl_setopt($ch, CURLOPT_URL, "http://live.luxurylink.com/shell/memcache/commands.php?request_command=delete&request_key=$cacheKey&request_duration=&request_data=&request_delay=&request_server=LL&request_api=Server");
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 			curl_exec($ch);
