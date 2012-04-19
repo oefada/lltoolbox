@@ -86,12 +86,13 @@ if (!isset($masterState) || $masterState != 1) {
                 <?php endforeach; ?>
             </table>
         <?php endif; ?>
-        
         <!-- SCHEDULING -->
         <h2>Scheduling</h2>
         <table id="data-table" cellpadding="0" cellspacing="0" border="0">
             <tr>
-                <td colspan="5">This LOA is valid from <?php echo date('M d, Y', strtotime($loa['Loa']['startDate'])); ?> to <?php echo date('M d, Y', strtotime($loa['Loa']['endDate'])); ?><br /><br /></td>
+                <td colspan="5">LOA valid <?php echo date('M d, Y', strtotime($loa['Loa']['startDate'])); ?> to <?php echo date('M d, Y', strtotime($loa['Loa']['endDate'])); ?> Status: 
+								<?php echo $loa['LoaLevel']['loaLevelName']; ?>	
+								<br /><br /></td>
             </tr>
             <tr>
                 <?php if ($singleClientPackage): ?><th>Track</th><?php endif; ?>
