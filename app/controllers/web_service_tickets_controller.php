@@ -1317,6 +1317,10 @@ class WebServiceTicketsController extends WebServicesController
 			}
 		} //End IF for $ticketId
 
+
+		// this needs to run outside of "if ($ticketId)" because bids (36) do not have tickets yet 
+		$isAuction = in_array($ppvNoticeTypeId, array(36)) ? true : $isAuction;
+
 		if (!empty($clientData)) {
 			// fetch client contacts
 			// -------------------------------------------------------------------------------
