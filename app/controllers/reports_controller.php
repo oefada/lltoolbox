@@ -6,7 +6,8 @@ class ReportsController extends AppController
 	var $uses = array(
 		'OfferType',
 		'PaymentDetail',
-		'PaymentType'
+		'PaymentType',
+		'Destination'
 	);
 	var $helpers = array(
 		'Pagination',
@@ -1404,6 +1405,83 @@ class ReportsController extends AppController
 			$this->set('serializedFormInput', serialize($this->data));
 		}
 	}
+
+
+	function bbd()
+	{
+		if (!empty($this->data)) {
+			$conditions = $this->_build_conditions($this->data);
+
+			if (empty($conditions)) {
+				$conditions = '1=1';
+			}
+
+			$sql = "SELECT IFNULL(d.destinationId, 0) AS destinationId, IFNULL(d.destinationName, 'None') AS destinationName, IFNULL(c.locationDisplay, 'No Location') AS locationDisplay, IFNULL(c.clientId, 'No Id') AS clientId, IFNULL(c.name, 'No Client') AS clientName, COUNT(Ticket.ticketId) AS bookingCount, SUM(Ticket.billingPrice) AS bookingTotal
+					FROM ticket Ticket 
+					INNER JOIN offerLuxuryLink o USING(offerId)
+					INNER JOIN client c USING(clientId)
+					LEFT JOIN destination d ON c.primaryDestinationId = d.destinationId
+					WHERE $conditions 
+					AND Ticket.ticketStatusId IN (3,4,5,6)
+					GROUP BY d.destinationId, d.destinationName, c.locationDisplay, c.clientId
+					ORDER BY d.destinationName, c.locationDisplay, c.name";
+										
+			$results = $this->OfferType->query($sql);
+			$results = $this->Destination->getHierarchyWithBookingTotals($results);			
+			$results = $this->Destination->flattenHierarchy($results);
+			
+			// grand totals
+			$gtClientCount = 0;
+			$gtBookingCount = 0;
+			$gtBookingTotal = 0;
+			foreach ($results as $r) {
+				if ($r['parentId'] == 0) {
+					$gtClientCount += $r['clientCount'];
+					$gtBookingCount += $r['bookings']['bookingCount'];
+					$gtBookingTotal += $r['bookings']['bookingTotal'];
+				}
+			}
+
+			$csv = 'Row Type,,,,,,,,,,Client Count,Booking Count, Booking $, % Parent Count, % Parent $, % Total Count, % Total $' . "\n";
+			$csv .= $this->bookingsRow('D', 0, 'All Destinations', $gtClientCount, $gtBookingCount, $gtBookingTotal, $gtBookingCount, $gtBookingTotal, $gtBookingCount, $gtBookingTotal);
+			foreach ($results as $dest) {
+				if ($dest['parentId'] == 0) {
+					$parentCount = $gtBookingCount;
+					$parentTotal = $gtBookingTotal;
+				} else {
+					$parentCount = $results[$dest['parentId']]['bookings']['bookingCount'];
+					$parentTotal = $results[$dest['parentId']]['bookings']['bookingTotal'];
+				}
+				$csv .= $this->bookingsRow('D', $dest['level'], $dest['destinationName'], $dest['clientCount'], $dest['bookings']['bookingCount'], $dest['bookings']['bookingTotal'], $parentCount, $parentTotal, $gtBookingCount, $gtBookingTotal);
+				foreach ($dest['locations'] as $lk=>$loc) { 
+					$csv .= $this->bookingsRow('L', $dest['level']+1, $lk, sizeof($loc['clients']), $loc['bookings']['bookingCount'], $loc['bookings']['bookingTotal'], $dest['bookings']['bookingCount'], $dest['bookings']['bookingTotal'], $gtBookingCount, $gtBookingTotal);
+					foreach ($loc['clients'] as $client) { 
+						$csv .= $this->bookingsRow('C', $dest['level']+2, $client['clientId'] . ' - ' . $client['clientName'], '', $client['bookingCount'], $client['bookingTotal'], $loc['bookings']['bookingCount'], $loc['bookings']['bookingTotal'], $gtBookingCount, $gtBookingTotal);
+					}
+				}
+			}				
+			Configure::write('debug', 0);
+			$this->set('csv', $csv);		
+			$this->viewPath .= '/csv';
+			$this->layoutPath = 'csv';
+		}
+	}
+
+	function bookingsRow($type, $level, $desc, $cc, $nbr, $dlr, $pNbr, $pDlr, $tNbr, $tDlr) {
+		$result = array_pad(array($type), $level+1, '');
+		$result[] = '"' . str_replace('"', ' ', $desc) . '"';
+		$result = array_pad($result, 10, '');
+		$result[] = $cc;
+		$result[] = $nbr;
+		$result[] = $dlr;
+		$result[] = ($pNbr > 0) ? round(($nbr / $pNbr) * 100, 2) : 0;
+		$result[] = ($pDlr > 0) ? round(($dlr / $pDlr) * 100, 2) : 0;
+		$result[] = ($tNbr > 0) ? round(($nbr / $tNbr) * 100, 2) : 0;
+		$result[] = ($tDlr > 0) ? round(($dlr / $tDlr) * 100, 2) : 0;
+		return implode(',', $result) . "\n";
+	}
+
+
 
 	function auction_winner()
 	{

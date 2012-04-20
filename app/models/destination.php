@@ -77,6 +77,83 @@ class Destination extends AppModel {
 		}
 		return array_reverse($result, true);
 	}
+
+
+
+
+	public function flattenHierarchy($hierarchy) {
+		$result = array();
+		foreach($hierarchy as $h) {
+			if ($h['parentId'] == 0) {
+				$result = $this->flattenHierarchyRecursive($hierarchy, $h['destinationId'], $result);
+			}
+		}
+		return $result;
+	}
+
+	private function flattenHierarchyRecursive($arr, $id, $result, $level = 0) {
+		$dest = $arr[$id];
+		$dest['level'] = $level;
+		$level++;
+		$result[$id] = $dest;
+		if (isset($arr[$id]['children'])) {
+			foreach($arr[$id]['children'] as $c) {
+				$result = $this->flattenHierarchyRecursive($arr, $c, $result, $level);
+			}
+		}
+		return $result;
+	}
+			
+			
+	public function getHierarchyWithBookingTotals($data) {
+		$hierarchy = $this->getHierarchy();
+		$hierarchy[0] = array('destinationId'=>0, 'parentId'=>0, 'destinationName'=>'No Destination Set', 'children'=>array());
+		foreach($hierarchy as $k=>$v) {
+			$hierarchy[$k]['locations'] = array();
+		}
+		
+		foreach($data as $row) {
+			$d = $row[0];
+			$hierarchy[$d['destinationId']]['locations'][$d['locationDisplay']]['clients'][] = $d;
+		}
+		
+		// set location totals
+		foreach($hierarchy as $hk=>$hv) {
+			foreach($hv['locations'] as $lk=>$lv) {
+				$bTotal = 0;
+				$bCount = 0;
+				foreach($lv['clients'] as $l) {
+					$bCount += $l['bookingCount'];
+					$bTotal += $l['bookingTotal'];
+				}
+				$hv['locations'][$lk]['bookings'] = array('bookingCount'=>$bCount, 'bookingTotal'=>$bTotal);
+			}
+			$hierarchy[$hk]['locations'] = $hv['locations'];
+		}
+								
+		foreach($hierarchy as $k=>$v) {
+			$locationInfo = $this->getBookingsRecursiveInfo($hierarchy, $k);
+			$hierarchy[$k]['clientCount'] = $locationInfo['clientCount'];
+			$hierarchy[$k]['bookings'] = array('bookingCount'=>$locationInfo['bookingCount'], 'bookingTotal'=>$locationInfo['bookingTotal']);
+		}		
+		return $hierarchy;
+	}
+
+	private function getBookingsRecursiveInfo($arr, $id, $info = array('clientCount'=>0, 'bookingCount'=>0, 'bookingTotal'=>0)) {
+		foreach($arr[$id]['locations'] as $l) {
+			$info['clientCount'] += sizeof($l['clients']);
+			$info['bookingCount'] += $l['bookings']['bookingCount'];
+			$info['bookingTotal'] += $l['bookings']['bookingTotal'];
+		}
+		if (isset($arr[$id]['children'])) {
+			foreach($arr[$id]['children'] as $c) {
+				$info = $this->getBookingsRecursiveInfo($arr, $c, $info);
+			}
+		}
+		return $info;
+	}
+
+
 								 
 }
 ?>
