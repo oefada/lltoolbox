@@ -583,43 +583,41 @@ class MerchandisingController extends AppController
 
 	public function fauctionld()
 	{
-		$params = Array(
-			'recursive' => 0,
-			'conditions' => Array('merchDataTypeName' => 'Listing and Destination Featured Auction')
-		);
-		$fauctionDataType = $this->MerchDataType->find('first', $params);
-
-		if (isset($_POST['data']['scheduleDate']) && (preg_match('/[0-9]{4}\-(0[1-9]|1[0-2])\-(0[1-9]|[1-2][0-9]|3[0-1])/', trim($_POST['data']['scheduleDate'])) == 1)) {
-			$this->set('scheduleDate', $_POST['data']['scheduleDate']);
-			// get current data
-			$currData = $this->MerchDataEntries->find('first', $params);
-			if (isset($currData['MerchDataEntries']['startDate'])) {
-				$this->set('lastDate', $currData['MerchDataEntries']['startDate']);
+		if (isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+			if (isset($this->params['form']['saveData'])) {
+				$formData = $this->params['form']['saveData'];
+			} else {
+				$formData = array();
 			}
-			$formData = $tempData = array();
-			if (isset($currData['MerchDataEntries']['merchDataJSON'])) {
-				$tempData = json_decode($currData['MerchDataEntries']['merchDataJSON']);
-			}
-			if (is_object($tempData) && property_exists($tempData, 'fauctionLD')) {
-				$this->set('formData', (array)$tempData->fauctionLD);
-			}
-			//die('ZZZ<pre>'.print_r((array)$tempData->fauctionLD,true));
-
-			if (isset($this->data['fauctionLD'])) {
-				$saveData = array();
-				foreach ($this->data['fauctionLD'] as $k => &$v) {
-					if (!isset($v['delete'])) {
-						$v['listing'] = array_filter(explode("\n", str_replace("\r", '', $v['listing'])));
-						$v['client'] = array_filter(explode("\n", str_replace("\r", '', $v['client'])));
-						if (!empty($v['listing']) && !empty($v['client'])) {
-							$saveData[] = $v;
-						}
-					}
-				}
-				$saveData = array('fauctionLD' => $saveData);
-				$this->set('saveData', $saveData);
-			}
+			$jData = json_encode($formData);
+			die('CAKE:' . print_r($jData, true));
 		}
+		$data = array(
+			array(
+				'source' => array(
+					'sean',
+					'e',
+					'knight'
+				),
+				'destination' => array(
+					'is',
+					'cool'
+				),
+			),
+			array(
+				'source' => array(
+					'yes',
+					'he',
+					'is'
+				),
+				'destination' => array(
+					'i',
+					'knew',
+					'that'
+				),
+			),
+		);
+		$this->set('fAuctionData', $data);
 	}
 
 	private function getOtherScheduled($merchDataTypeId, $merchDataGroupId = null)
