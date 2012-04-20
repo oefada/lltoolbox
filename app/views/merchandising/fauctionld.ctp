@@ -7,23 +7,47 @@
 	<div>
 		<h3 style="font-size: 16px; padding: 0;">Featured Auction</h3>
 	</div>
-	<div>
+	<div style="float:right;background:#eee;padding:8px;margin:16px;">
+		<div>
+			<h4>Today is:</h4>
+		</div>
+		<div>
+			<a href="#" onclick="jQuery('#scheduleDate').val('<?php echo date('Y-m-d');?>');jQuery('#GoButton').click();return false;"><?php echo date('Y-m-d');?></a>
+		</div>
+		<?php if (isset($lastDate)):
+		?>
+		<div>
+			<h4>Last Scheduled Date:</h4>
+		</div>
+		<div>
+			<a href="#" onclick="jQuery('#scheduleDate').val('<?php echo $lastDate;?>');jQuery('#GoButton').click();return false;"><?php echo $lastDate;?></a>
+		</div>
+		<?php endif;?>
+		<?php if (isset($futureDates)&&is_array($futureDates)&&$futureDates):
+		?><div>
+		<h4>Future Scheduled Dates:</h4>
+		</div>
+		<?php foreach ($futureDates as $fd):
+		?>
+		<div>
+			<a href="#" onclick="jQuery('#scheduleDate').val('<?php echo $fd;?>');jQuery('#GoButton').click();return false;"><?php echo $fd;?></a>
+		</div>
+		<?php endforeach;?>
+		<?php endif;?>
+	</div>
+	<div style="float:left;">
 		<form method="get">
-			<?php
-			if (isset($lastDate)) {
-				echo 'Last scheduled date: ' . $html->link($lastDate, '#', array('onclick' => 'jQuery(\'#scheduleDate\').val(\'' . $lastDate . '\');return false;'));
-			}
-			?>
 			<?php echo $datePicker->picker('scheduleDate', array(
-					'label' => 'Select a date to schedule: ',
-					'value' => (isset($scheduleDate) ? $scheduleDate : '')
-				));
+				'label' => 'Select a date to schedule: ',
+				'value' => (isset($scheduleDate) ? $scheduleDate : '')
+			));
 			?>
-			<button>
+			<button id="GoButton">
 				Go
 			</button>
 		</form>
 	</div>
+	<div style="clear:both;"></div>
 	<br/>
 	<?php if (isset($scheduleDate)):
 	?>
@@ -32,11 +56,26 @@
 	</div>
 	<br/>
 	<div>
+		<div>
+			<div style="display:inline-block;width:420px;text-align:center;font-weight:bold;">
+				Pages module appears on:
+			</div>
+			<div style="display:inline-block;width:420px;text-align:center;font-weight:bold;">
+				Pages to link to:
+			</div>
+		</div>
 		<table id="Schedulomatic"></table>
 	</div>
 	<br/>
 	<div style="background:#eee;font-size:16pt;font-weight:bold;padding:8px;color:#666666;" id="MrStatus"></div>
-	<pre style="background:#eee;font-family:Courier;" id="jsonDebug"></pre>
+	<pre style="background:#eee;font-family:Courier;display:none;" id="jsonDebug"></pre>
+	<?php else:?>
+	<div>
+		<h2>Pick a date to schedule, and then press the Go button.</h2>
+		<div>
+			Or, click on of the date links on the right hand side.
+		</div>
+	</div>
 	<?php endif;?>
 </div>
 <script type="text/javascript">
@@ -148,7 +187,7 @@
 	});
 
 </script>
-<script type="text/javascript">var data =<?php echo isset($fAuctionData) ? json_encode($fAuctionData) : '[]';?>
+<script type="text/javascript">var data =<?php echo isset($merchDataJSON) ? ($merchDataJSON) : '[]';?>
 		;
 		for(var i = 0; i < data.length; i++) {
 			var value = data[i];

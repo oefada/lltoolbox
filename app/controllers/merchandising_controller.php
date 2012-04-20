@@ -590,7 +590,7 @@ class MerchandisingController extends AppController
 		);
 		$fAuctionDataType = $this->MerchDataType->find('first', $params);
 		if (isset($fAuctionDataType['MerchDataType']['id'])) {
-			$fAuctionId = $fAuctionDataType['MerchDataType']['id'];
+			$merchDataTypeId = $fAuctionDataType['MerchDataType']['id'];
 		} else {
 			$this->MerchDataType->create();
 			$this->MerchDataType->save(array(
@@ -598,43 +598,81 @@ class MerchandisingController extends AppController
 				'merchDataTypeName' => $merchDataTypeName,
 				'dataColumnsCsv' => 'clientUrl'
 			));
-			$fAuctionId = $this->MerchDataType->getLastInsertId();
+			$merchDataTypeId = $this->MerchDataType->getLastInsertId();
 		}
+		// Find future Schedule Dates
+		$futureDates = array();
+		foreach ($this->MerchDataEntries->find('all',array('recursive'=>0,'conditions'=>array('merchDataTypeId'=>$merchDataTypeId,'startDate >= DATE(NOW())'))) as $fds) {
+			if (isset($fds['MerchDataEntries']['startDate'])) {
+				$futureDates[] = $fds['MerchDataEntries']['startDate'];
+			}
+		}
+		$futureDates = array_unique($futureDates);
+		sort($futureDates);
+		$this->set('futureDates', $futureDates);
+		// Find last scheduled date
+		$lastDate = $this->MerchDataEntries->find('first', array(
+			'recursive' => 0,
+			'order' => 'startDate DESC',
+			'limit' => 1,
+			'conditions' => array(
+				'merchDataTypeId' => $merchDataTypeId,
+				'startDate <= DATE(NOW())',
+			),
+		));
+		if (isset($lastDate['MerchDataEntries']['startDate'])) {
+			$this->set('lastDate', $lastDate['MerchDataEntries']['startDate']);
+		}
+		// See if a valid scheduled date is set
 		$scheduleDate = null;
 		if (isset($this->params['url']['data']['scheduleDate'])) {
-			if (is_string($this->params['url']['data']['scheduleDate'])) {
-				if (preg_match('/20[0-9]{2}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[0-1])/', $this->params['url']['data']['scheduleDate'])) {
-					$scheduleDate = $this->params['url']['data']['scheduleDate'];
-					$this->set('scheduleDate', $scheduleDate);
+			// Check for valid schedule date
+			if (preg_match('/20[0-9]{2}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[0-1])/', $this->params['url']['data']['scheduleDate'])) {
+				// We have a valid date
+				$scheduleDate = $this->params['url']['data']['scheduleDate'];
+				$this->set('scheduleDate', $scheduleDate);
+				// See if this date is already scheduled
+				$params = array(
+					'recursive' => 0,
+					'conditions' => array(
+						'merchDataTypeId' => $merchDataTypeId,
+						'startDate' => $scheduleDate,
+					)
+				);
+				$merchEntry = $this->MerchDataEntries->find('first', $params);
+				if (isset($merchEntry['MerchDataEntries']['id']) && $merchEntry['MerchDataEntries']['id']) {
+					$merchDataEntryId = $merchEntry['MerchDataEntries']['id'];
+					$merchDataJSON = $merchEntry['MerchDataEntries']['merchDataJSON'];
+					$this->set('merchDataJSON', $merchDataJSON);
+				} else {
+					$merchDataEntryId = null;
+				}
+
+				// Save data if there is any
+				if (isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+					$this->autoRender = false;
+					$newId = null;
+					$formData = array();
+					if (isset($this->params['form']['saveData'])) {
+						$saveData = array(
+							'id' => $merchDataEntryId,
+							'merchDataTypeId' => $merchDataTypeId,
+							'merchDataGroupId' => null,
+							'startDate' => $scheduleDate,
+							'merchDataJSON' => json_encode($this->params['form']['saveData']),
+							'isHeader' => 0,
+						);
+						$this->MerchDataEntries->create();
+						$this->MerchDataEntries->id = $merchDataEntryId;
+						$this->MerchDataEntries->save($saveData);
+					} else {
+						if ($merchDataEntryId) {
+							$this->MerchDataEntries->delete($merchDataEntryId);
+						}
+					}
 				}
 			}
 		}
-		$formData = array();
-		if (isset($this->params['form']['saveData'])) {
-			$formData = $this->params['form']['saveData'];
-		}
-		die("mno<pre>" . print_r($this, true));
-		$newId = null;
-		if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && !is_null($scheduleDate)) {
-			if (isset($this->params['form']['saveData'])) {
-				$this->MerchDataEntries->create();
-				$this->MerchDataEntries->save(array(
-					'id' => $newId,
-					'merchDataTypeId' => $fAuctionId,
-					'merchDataGroupId' => null,
-					'startDate' => $scheduleDate,
-					'merchDataJSON' => json_encode($formData),
-					'isHeader' => 0,
-				));
-			}
-			$jData = json_encode($formData);
-			die('CAKE:' . print_r($jData, true));
-		}
-		$data = array(
-			array(),
-			array(),
-		);
-		$this->set('fAuctionData', $data);
 	}
 
 	private function getOtherScheduled($merchDataTypeId, $merchDataGroupId = null)
