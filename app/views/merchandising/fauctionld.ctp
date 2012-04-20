@@ -6,14 +6,38 @@
 <div>
 	<div>
 		<h3 style="font-size: 16px; padding: 0;">Featured Auction</h3>
+	</div>
+	<div>
+		<form method="get">
+			<?php
+			if (isset($lastDate)) {
+				echo 'Last scheduled date: ' . $html->link($lastDate, '#', array('onclick' => 'jQuery(\'#scheduleDate\').val(\'' . $lastDate . '\');return false;'));
+			}
+			?>
+			<?php echo $datePicker->picker('scheduleDate', array(
+					'label' => 'Select a date to schedule: ',
+					'value' => (isset($scheduleDate) ? $scheduleDate : '')
+				));
+			?>
+			<button>
+				Go
+			</button>
+		</form>
+	</div>
+	<br/>
+	<?php if (isset($scheduleDate)):
+	?>
+	<div>
 		<h2>Listing and Destination Page Featured Auction Scheduling</h2>
 	</div>
+	<br/>
 	<div>
 		<table id="Schedulomatic"></table>
 	</div>
 	<br/>
 	<div style="background:#eee;font-size:16pt;font-weight:bold;padding:8px;color:#666666;" id="MrStatus"></div>
 	<pre style="background:#eee;font-family:Courier;" id="jsonDebug"></pre>
+	<?php endif;?>
 </div>
 <script type="text/javascript">
 	function updateStatus(message, color) {
@@ -92,7 +116,7 @@
 
 	jQuery(function() {
 		var $ = jQuery;
-		var $addLink = $('<a href="#" style="display:block;">Add row</a>');
+		var $addLink = $('<a href="#" style="display:inline-block;padding:10px;">Add row</a>');
 		jQuery('#Schedulomatic').parent().append($addLink);
 		$addLink.click(function(e) {
 			addNewRow();

@@ -583,39 +583,56 @@ class MerchandisingController extends AppController
 
 	public function fauctionld()
 	{
-		if (isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+		$merchDataTypeName = 'Listing & Destination Featured Auctions';
+		$params = array(
+			'recursive' => 0,
+			'conditions' => array('merchDataTypeName' => $merchDataTypeName)
+		);
+		$fAuctionDataType = $this->MerchDataType->find('first', $params);
+		if (isset($fAuctionDataType['MerchDataType']['id'])) {
+			$fAuctionId = $fAuctionDataType['MerchDataType']['id'];
+		} else {
+			$this->MerchDataType->create();
+			$this->MerchDataType->save(array(
+				'siteId' => '1',
+				'merchDataTypeName' => $merchDataTypeName,
+				'dataColumnsCsv' => 'clientUrl'
+			));
+			$fAuctionId = $this->MerchDataType->getLastInsertId();
+		}
+		$scheduleDate = null;
+		if (isset($this->params['url']['data']['scheduleDate'])) {
+			if (is_string($this->params['url']['data']['scheduleDate'])) {
+				if (preg_match('/20[0-9]{2}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[0-1])/', $this->params['url']['data']['scheduleDate'])) {
+					$scheduleDate = $this->params['url']['data']['scheduleDate'];
+					$this->set('scheduleDate', $scheduleDate);
+				}
+			}
+		}
+		$formData = array();
+		if (isset($this->params['form']['saveData'])) {
+			$formData = $this->params['form']['saveData'];
+		}
+		die("mno<pre>" . print_r($this, true));
+		$newId = null;
+		if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && !is_null($scheduleDate)) {
 			if (isset($this->params['form']['saveData'])) {
-				$formData = $this->params['form']['saveData'];
-			} else {
-				$formData = array();
+				$this->MerchDataEntries->create();
+				$this->MerchDataEntries->save(array(
+					'id' => $newId,
+					'merchDataTypeId' => $fAuctionId,
+					'merchDataGroupId' => null,
+					'startDate' => $scheduleDate,
+					'merchDataJSON' => json_encode($formData),
+					'isHeader' => 0,
+				));
 			}
 			$jData = json_encode($formData);
 			die('CAKE:' . print_r($jData, true));
 		}
 		$data = array(
-			array(
-				'source' => array(
-					'sean',
-					'e',
-					'knight'
-				),
-				'destination' => array(
-					'is',
-					'cool'
-				),
-			),
-			array(
-				'source' => array(
-					'yes',
-					'he',
-					'is'
-				),
-				'destination' => array(
-					'i',
-					'knew',
-					'that'
-				),
-			),
+			array(),
+			array(),
 		);
 		$this->set('fAuctionData', $data);
 	}
