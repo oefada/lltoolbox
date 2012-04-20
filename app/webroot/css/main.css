@@ -620,7 +620,7 @@ input[type=checkbox] {
 	width: auto;
 }
 
-input[type=submit] {
+input[type=submit], button {
 	display: inline;
 	font-size: 110%;
 	font-family: "Tahoma";
