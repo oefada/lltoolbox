@@ -1,6 +1,15 @@
 <style>
-	table {
+	table#Schedulomatic {
 		width: auto;
+	}
+	table#Schedulomatic tr td {
+		padding: 10px;
+	}
+	table#Schedulomatic tr:nth-child(even) {
+		background: #eeffee;
+	}
+	table#Schedulomatic tr:nth-child(odd) {
+		background: #e8e8ff;
 	}
 </style>
 <div>
@@ -107,6 +116,13 @@
 		var $tdB = $('<td/>');
 		$tdB.append($textDestination);
 		$newRow.append($tdB);
+		var $tdX = $('<td/>');
+		$tdX.append('X');
+		$tdX.click(function(e) {
+			$(this).parent().remove();
+			doChange();
+		});
+		$newRow.append($tdX);
 
 		$sch.append($newRow);
 
@@ -150,6 +166,9 @@
 		});
 		$('#jsonDebug').text(JSON.stringify(data));
 		updateStatus('Unsaved changes', '#ffffdd');
+		if($sch.find('tr').length > 0 && ($sch.find('tr').length == data.length)) {
+			addNewRow();
+		}
 		return data;
 	}
 
