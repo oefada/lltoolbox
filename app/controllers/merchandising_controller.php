@@ -627,9 +627,9 @@ class MerchandisingController extends AppController
 		$scheduleDate = null;
 		if (isset($this->params['url']['data']['scheduleDate'])) {
 			// Check for valid schedule date
-			if (preg_match('/20[0-9]{2}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[0-1])/', $this->params['url']['data']['scheduleDate'])) {
+			if (preg_match('/^20[0-9]{2}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[0-1])$/', trim($this->params['url']['data']['scheduleDate']))) {
 				// We have a valid date
-				$scheduleDate = $this->params['url']['data']['scheduleDate'];
+				$scheduleDate = trim($this->params['url']['data']['scheduleDate']);
 				$this->set('scheduleDate', $scheduleDate);
 				// See if this date is already scheduled
 				$params = array(
