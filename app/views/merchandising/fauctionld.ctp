@@ -146,13 +146,13 @@
 			dest = b.split("\n");
 
 			for(var i = 0; i < source.length; i++) {
-				var value = $.trim(source[i]).replace(/^(http:\/\/|)[^\/]*\//, '/').replace(/\?.*$/, '').replace(/\/$/,'');
+				var value = $.trim(source[i]).replace(/^(http:\/\/|)[^\/]*\//, '/').replace(/\?.*$/, '').replace(/(.+)\/$/,'$1');
 				if(value.charAt(0) == '/') {
 					newSource.push(value);
 				}
 			}
 			for(var i = 0; i < dest.length; i++) {
-				var value = $.trim(dest[i]).replace(/^(http:\/\/|)[^\/]*\//, '/').replace(/\?.*$/, '').replace(/\/$/,'');
+				var value = $.trim(dest[i]).replace(/^(http:\/\/|)[^\/]*\//, '/').replace(/\?.*$/, '').replace(/(.+)\/$/,'$1');
 				if(value.charAt(0) == '/') {
 					newDest.push(value);
 				}
