@@ -675,6 +675,72 @@ class MerchandisingController extends AppController
 		}
 	}
 
+	public function featured_blog()
+	{
+		/* $defaultDate is hardcoded, but in the future we could set up scheduling of the
+		 * blogs */
+		$defaultDate = '2012-03-24';
+		$merchDataTypeName = 'Featured Blog';
+		$params = array(
+			'recursive' => 0,
+			'conditions' => array('merchDataTypeName' => $merchDataTypeName)
+		);
+		$fAuctionDataType = $this->MerchDataType->find('first', $params);
+		if (isset($fAuctionDataType['MerchDataType']['id'])) {
+			$merchDataTypeId = $fAuctionDataType['MerchDataType']['id'];
+		} else {
+			$this->MerchDataType->create();
+			$this->MerchDataType->save(array(
+				'siteId' => '1',
+				'merchDataTypeName' => $merchDataTypeName,
+				'dataColumnsCsv' => 'clientUrl'
+			));
+			$merchDataTypeId = $this->MerchDataType->getLastInsertId();
+		}
+
+		$params = array(
+			'recursive' => 0,
+			'conditions' => array(
+				'merchDataTypeId' => $merchDataTypeId,
+				'startDate' => $defaultDate
+			)
+		);
+		$fBlogEntry = $this->MerchDataEntries->find('first', $params);
+		if (isset($fBlogEntry['MerchDataEntries']['id'])) {
+			$fBlogEntryId = $fBlogEntry['MerchDataEntries']['id'];
+			$fBlogId = $fBlogEntry['MerchDataEntries']['merchDataArr']['featuredBlogId'];
+		} else {
+			$this->MerchDataEntries->create();
+			$fBlogId = 1427;
+			$this->MerchDataEntries->save(array(
+				'merchDataTypeId' => $merchDataTypeId,
+				'startDate' => $defaultDate,
+				'merchDataJSON' => '{"featuredBlogId":' . $fBlogId . '}',
+			));
+			$fBlogEntryId = $this->MerchDataEntries->getLastInsertId();
+		}
+
+		// Save data if there is any
+		if (isset($this->data['fBlogId']) && is_numeric($this->data['fBlogId'])) {
+			$fBlogId = intval($this->data['fBlogId']);
+			$saveData = array(
+				'id' => $fBlogEntryId,
+				'merchDataTypeId' => $merchDataTypeId,
+				'merchDataGroupId' => null,
+				'startDate' => $defaultDate,
+				'merchDataJSON' => json_encode(array('featuredBlogId' => $fBlogId)),
+				'isHeader' => 0,
+			);
+			$this->MerchDataEntries->create();
+			$this->MerchDataEntries->id = $fBlogEntryId;
+			$this->MerchDataEntries->save($saveData);
+
+		}
+
+		$this->set('fBlogId', $fBlogId);
+
+	}
+
 	private function getOtherScheduled($merchDataTypeId, $merchDataGroupId = null)
 	{
 		$result = Array();

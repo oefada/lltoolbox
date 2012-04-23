@@ -12,9 +12,10 @@
 	<br/>
 	<li><?=$html->link('Inspiration', Array('controller' => 'merchandising', 'action' => 'inspiration'));?></li>
 	<br/>
-	<li>Featured Auction</li>
+	<li>Featured</li>
 	<ul class="tree">
-		<li style="line-height: 13px; margin-bottom: 6px;"><?=$html->link('Homepage', Array('controller' => 'merchandising', 'action' => 'fauction'));?></li>
-		<li style="line-height: 13px; margin-bottom: 6px;"><?=$html->link('Listing & Destination', Array('controller' => 'merchandising', 'action' => 'fauctionld'));?></li>
+		<li style="line-height: 13px; margin-bottom: 6px;"><?=$html->link('Blog', Array('controller' => 'merchandising', 'action' => 'featured_blog'));?></li>
+		<li style="line-height: 13px; margin-bottom: 6px;"><?=$html->link('Homepage Auction', Array('controller' => 'merchandising', 'action' => 'fauction'));?></li>
+		<li style="line-height: 13px; margin-bottom: 6px;"><?=$html->link('Listing & Destination Auction', Array('controller' => 'merchandising', 'action' => 'fauctionld'));?></li>
 	</ul>
 </ul>
