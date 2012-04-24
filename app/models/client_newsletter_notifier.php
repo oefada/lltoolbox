@@ -11,7 +11,7 @@ class ClientNewsletterNotifier extends AppModel {
 
 	    // toolbox can't communicate using www. so we need to direct the connection to one of the servers
 	    // in this case we pick web1 randomly
-	    $urlToOpen = str_replace('http://www.', 'http://www6.', $url);
+	    $urlToOpen = str_replace('http://www.', 'http://www1.', $url);
 
 	    $handle = fopen($urlToOpen, "r");
         $contents = '';
