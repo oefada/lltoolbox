@@ -296,6 +296,15 @@ class TicketsController extends AppController {
 		$this->set('s_end_d', $s_end_d);
 
 		$tickets_index = $this->paginate();
+		
+		// redirect for ticket 1082
+		if ($s_ticket_id) {
+			if (sizeof($tickets_index) == 1) {
+				header("location: /tickets/view/" . $tickets_index[0]['Ticket']['ticketId']);
+				exit;
+			}
+		}
+		
 		foreach ($tickets_index as $k => $v) {
 			$tickets_index[$k]['Ticket']['validCard'] = $this->getValidCcOnFile($v['Ticket']['userId'], $v['Ticket']['bidId']);
 			$clients = $this->Ticket->getClientsFromPackageId($v['Ticket']['packageId']);
