@@ -1317,7 +1317,6 @@ class WebServiceTicketsController extends WebServicesController
 			}
 		} //End IF for $ticketId
 
-
 		// this needs to run outside of "if ($ticketId)" because bids (36) do not have tickets yet 
 		$isAuction = in_array($ppvNoticeTypeId, array(36)) ? true : $isAuction;
 
@@ -1703,8 +1702,8 @@ class WebServiceTicketsController extends WebServicesController
 				$templateFile = "23_reservation_confirmation_copy_client";
 				$templateTitle = "Luxury Link Booking Confirmation";
 				$emailSubject = "$siteName Booking Confirmed for $emailName - $clientNameP";
-				$emailFrom = ($isAuction) ? "$siteDisplay <resconfirm@$siteEmail>" : "$siteDisplay <reservations@$siteEmail>";
-				$emailReplyTo = ($isAuction) ? "resconfirm@$siteEmail" : "reservations@$siteEmail";
+				$emailFrom = ($isAuction) ? "$siteDisplay <auctionresreq@$siteEmail>" : "$siteDisplay <reservations@$siteEmail>";
+				$emailReplyTo = ($isAuction) ? "auctionresreq@$siteEmail" : "reservations@$siteEmail";				
 				$userEmail = $clientPrimaryEmail;
 				// ticket 3032
 				if (stripos($userEmail, 'phg@luxurylink.com') !== false) { 
