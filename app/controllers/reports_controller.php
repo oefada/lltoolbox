@@ -91,6 +91,7 @@ class ReportsController extends AppController
                           WHERE l.loaLevelId = 2
                           AND l.inactive = 0
                           AND l.endDate > NOW()
+                          AND l.accountTypeId <> 5
                           AND (c.sites = 'luxurylink' OR c.sites = 'luxurylink,family')
                       ) loaClients
                       LEFT JOIN (SELECT clientId FROM offerLuxuryLink WHERE ISCLOSED = 0 AND startDate < NOW() AND endDate > NOW()) offerClients USING (clientId)
@@ -112,6 +113,7 @@ class ReportsController extends AppController
                           WHERE l.loaLevelId = 2
                           AND l.inactive = 0
                           AND l.endDate > NOW()
+                          AND l.accountTypeId <> 5
                           AND (c.sites = 'family' OR c.sites = 'luxurylink,family')
                       ) loaClients
                       LEFT JOIN (SELECT clientId FROM offerFamily WHERE ISCLOSED = 0 AND startDate < NOW() AND endDate > NOW()) offerClients USING (clientId)
