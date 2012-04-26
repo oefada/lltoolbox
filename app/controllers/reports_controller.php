@@ -1072,6 +1072,8 @@ class ReportsController extends AppController
             OR Loa.membershipPackagesRemaining > 0)
             AND Loa.loaLevelId = 2
             AND Loa.inactive != 1
+            AND Loa.loaMembershipTypeId <> 2
+            AND Loa.accountTypeId <> 4
             AND Loa.endDate>(NOW()+INTERVAL 7 DAY)
             
             AND Loa.startDate BETWEEN '$sqlStartDate' and '$sqlEndDate'
