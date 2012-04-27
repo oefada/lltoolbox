@@ -126,6 +126,7 @@ foreach ($this->data['Client']['sites'] as $site) {
 		echo $form->input('numRooms');
 		echo $form->input('numRoomsText');
 		echo $form->input('starRating', array('type' => 'select', 'options' => array('3' => '3', '3.5' => '3.5', '4' => '4', '4.5' => '4.5', '5' => '5'), 'empty' => true));
+		echo $form->input('segment');
 	?>
     <?php foreach($this->data['ClientSiteExtended'] as $site): ?>
         <div style="float: left; <?php echo (count($this->data['ClientSiteExtended']) == 2) ? 'clear:right;width:47%;' : 'width:100%;'?>" class="multiSiteNarrow multiSiteSingle">
