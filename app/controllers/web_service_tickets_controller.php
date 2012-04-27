@@ -1471,7 +1471,9 @@ class WebServiceTicketsController extends WebServicesController
 				
 				$emailFrom = $siteDisplay . " <".$emailFrom.">";
 				$userEmail = $clientPrimaryEmail;
-				$emailCc = $clientCcEmail;
+				if ($ppvNoticeTypeId != 11) {
+					$emailCc = $clientCcEmail;
+				}
 				
 				break;
 		}
