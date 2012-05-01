@@ -9,13 +9,28 @@
 																				  			%%other_boxes%%
 																							
 <?php
-/* copy for Pack For A Purpose Theme */
-if (!$clientPpv && is_array($clients)) :
-	foreach ($clients AS $c) :
-		if (isset($c['themeData'])) :
-			foreach ($c['themeData'] AS $t) :
-				if (isset($t['Theme']) && isset($t['Theme']['themeId']) && $t['Theme']['themeId'] == 104) :		
+/* pack for a purpose */
+$pfapTheme = $afapTheme = false;
+if (!$clientPpv && is_array($clients)) {
+	foreach ($clients AS $c) {
+		if (isset($c['themeData'])) {
+			foreach ($c['themeData'] AS $t) {
+				if (isset($t['Theme']) && isset($t['Theme']['themeId']) && $t['Theme']['themeId'] == 104) {
+					$pfapTheme = true;
+				}
+				if (isset($t['Theme']) && isset($t['Theme']['themeId']) && $t['Theme']['themeId'] == 142) {
+					$afapTheme = true;
+				}
+			}
+		}
+	}
+	if ($afapTheme==true) {
+		$pfapTheme = false;
+	}
+}
 ?>
+
+<?php if ($pfapTheme) : ?>
 	<hr style="color: #bbb; height: 1px; margin: 10px 0;">
 	<img src="http://www.luxurylink.com/images/logos/pfap-xa.jpg" alt="Pack For A Purpose" style="margin-bottom: 3px;"/>
 	<br />
@@ -25,13 +40,25 @@ if (!$clientPpv && is_array($clients)) :
 	<a href="http://www.luxurylink.com/pack-for-a-purpose" style="color: #008EC5;">Learn more</a> about Pack For A Purpose&#0174;.
 	</font>
 	<hr style="color: #bbb; height: 1px; margin: 10px 0;">
-<?php
-				endif;
-			endforeach;
-		endif;
-	endforeach;
-endif;
-?>
+<?php endif; ?>
+
+
+<?php if ($afapTheme) : ?>
+	<hr style="color: #bbb; height: 1px; margin: 10px 0;">
+	<img src="http://www.luxurylink.com/images/logos/pfap-small-auction-pdp2.gif" alt="Pack For A Purpose Auction Partner" style="margin-bottom: 3px;"/>
+	<br />
+	<font face="Arial, Helvetica, sans-serif" size="2" style="font-size:12px; line-height:20px" color="#474747">
+	<?php echo $c['name']; ?> is participating in Luxury Link's Auctions for a Purpose campaign this month. 
+	A portion of the winning auction bid will be being donated to Pack for a Purpose, 
+	an incredible non-profit organization which empowers travelers to delivers needed supplies throughout the world. 
+	<a href="http://links.mkt3213.com/ctt?m=4167596&r=LTIxMzU1NDQ1MgS2&b=0&j=MjY5NTE5MTA3S0&mt=1&kt=12&kx=1&k=www_luxurylink_com_pack-f_1&kd=http%3A%2F%2Fwww.luxurylink.com%2Fpack-for-a-purpose%3Futm_source%3Dll%26utm_medium%3Dxa%26utm_campaign%3Dauc_winner">Learn more</a> 
+	about Pack For A Purpose, and how you can give back to the communities you visit simply by using available space in your luggage.
+	</font>
+	<hr style="color: #bbb; height: 1px; margin: 10px 0;">
+<?php endif; ?>
+
+
+
 
 <?php if (!in_array($ppvNoticeTypeId, array(36))): ?>
 <font face="Arial, Helvetica, sans-serif" size="2" style="font-size:12px; line-height:20px" color="#474747">
