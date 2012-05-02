@@ -386,7 +386,7 @@ class Client extends AppModel {
                 $update_arr = array();
                 $insert_arr['clientId'] = $clientId;
                 foreach($data['Theme'] as $themeId => $clientThemeRel) {
-                    if (in_array($site, $clientThemeRel['sites'])) {
+                    if (isset($clientThemeRel['sites']) && is_array($clientThemeRel['sites']) && in_array($site, $clientThemeRel['sites'])) {
                         $insert_arr['theme'.$themeId] = 1;
                         $update_arr[] = 'theme'.$themeId.'=1';
                     }
