@@ -816,7 +816,7 @@ class WebServiceTicketsController extends WebServicesController
 
 		// if valid successful charge exists, then return true
 		// =====================================================================
-		$checkExists = $this->PaymentDetail->query("SELECT * FROM paymentDetail WHERE ticketId = $ticketId AND userId = $userId");
+		$checkExists = $this->PaymentDetail->query("SELECT * FROM paymentDetail WHERE paymentTypeId = 1 AND ticketId = $ticketId AND userId = $userId");
 		if (isset($checkExists[0]['paymentDetail']) && !empty($checkExists[0]['paymentDetail'])) {
 			return true;
 		}
