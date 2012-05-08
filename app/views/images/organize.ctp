@@ -328,7 +328,11 @@ jQuery(function(){
 	});
 	$('span.nukeOld').parent().dblclick(function(e){
 		$(this).children('span').css('visibility', 'visible');
+		document.cookie='shownukeold=yes';
 	});
+	if (document.cookie.indexOf('shownukeold')!=-1) {
+		$('span.nukeOld').parent().dblclick();
+	}
 	$(document).keypress(function(e){
 		var $scrollTop = false;
 		switch (e.which) {
