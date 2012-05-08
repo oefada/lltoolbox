@@ -329,6 +329,26 @@ jQuery(function(){
 	$('span.nukeOld').parent().dblclick(function(e){
 		$(this).children('span').css('visibility', 'visible');
 	});
+	$(document).keypress(function(e){
+		var $scrollTop = false;
+		switch (e.which) {
+			case 115:
+			// s
+				$scrollTop = $('input[type="submit"][value="Save"]:first').offset().top;
+			break;
+			case 100:
+			// d
+				$scrollTop = $('#nukelink_luxurylink').offset().top;
+			break;
+			case 102:
+			// f
+				$scrollTop = $('#largeImages-luxurylink').offset().top;
+			break;
+		}
+		if ($scrollTop) {
+			window.scrollTo(0,$scrollTop);
+		}
+	});
 });
 
 </script>
