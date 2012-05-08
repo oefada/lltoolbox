@@ -291,3 +291,6 @@ div.roomGradeImages p {
 	background-color: #f4f4ff;
 	border-color: #77c;
 }
+.nukeOld {
+	visibility: hidden;
+}

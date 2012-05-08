@@ -62,7 +62,7 @@
                         <h3>Slideshow</h3>
                         <ul id="sortableSlideshow-<?php echo $site; ?>" class="sortableSS">
                   <?php endif; ?>
-                  <li id="item_<?php echo $ssImage['ImageClient']['clientImageId'] ?>-<?php echo $site; ?>" class="imagesOld">
+                  <li id="item_<?php echo $ssImage['ImageClient']['clientImageId'] ?>-<?php echo $site; ?>" class="droppableLI">
                      <img src="<?php echo $ssImage['Image']['imagePath']; ?>" style="vertical-align:bottom; max-height: 100px; max-width: 176px; margin: 1px;" alt="<?php echo $ssImage['Image']['caption']; ?>" />
                      <?php $fileArr = explode('/', $ssImage['Image']['imagePath']); ?>
                      <div class="filename"><?php echo end($fileArr); ?></div>
@@ -79,12 +79,12 @@
          <?php endforeach; ?>
          
          <div class="organize slideshow inactive">
-            <h3>Inactive</h3>
+            <h3>Inactive <span class="nukeOld"> - <a href="#" id="nukelink_<?php echo $site; ?>">Nuke old photos</a></span></h3>
             <ul id="sortableInactive-<?php echo $site; ?>" class="sortableInactive">
                <?php if ($start_inactive !== false): ?>
                   <?php for ($i=$start_inactive; $i < count($slideshowImages); $i++): ?>
-                     <li id="item_<?php echo $slideshowImages[$i]['ImageClient']['clientImageId'] ?>-<?php echo $site; ?>">
-                          <img src="<?php echo $slideshowImages[$i]['Image']['imagePath']; ?>" height="100" alt="<?php echo $slideshowImages[$i]['Image']['caption']; ?>" />
+                     <li id="item_<?php echo $slideshowImages[$i]['ImageClient']['clientImageId'] ?>-<?php echo $site; ?>" class="droppableLI">
+                          <img src="<?php echo $slideshowImages[$i]['Image']['imagePath']; ?>" style="vertical-align:bottom; max-height: 100px; max-width: 176px; margin: 1px;" alt="<?php echo $slideshowImages[$i]['Image']['caption']; ?>" />
                           <?php $fileArr = explode('/', $slideshowImages[$i]['Image']['imagePath']); ?>
                           <div class="filename"><?php echo end($fileArr); ?></div>
                           <input type="hidden" class="ss" name="data[ImageClient][<?php echo $slideshowImages[$i]['ImageClient']['clientImageId'] ?>][inactive]" value="<?php echo $slideshowImages[$i]['ImageClient']['inactive'] ?>" />
@@ -228,20 +228,6 @@
                            toggleSites('<?php echo $site; ?>');
                         }
       });
-		function resizeTabClick() {
-			var $tab = jQuery('#resizer');
-			if (!$tab.hasClass('poked')) {
-				$tab.addClass('poked');
-				$tab.css({'background-color':'#fee'});
-				var $ajax = new Image();
-				$ajax.src='http://showcase.luxurylink.com/queues/poke';
-				$tab.html('Poked!');
-			} else {
-				window.location.replace('http://showcase.luxurylink.com/clients/view/<?php echo $client['Client']['clientId'].'/oldProductId:'.$client['Client']['oldProductId'];?>');
-			}
-			return false;
-		}
-      
    </script>
 <?php endforeach; ?>
 
@@ -279,4 +265,70 @@
             });
       });
    }
+function resizeTabClick() {
+	var $tab = jQuery('#resizer');
+	if (!$tab.hasClass('poked')) {
+		$tab.addClass('poked');
+		$tab.css({'background-color':'#fee'});
+		var $ajax = new Image();
+		$ajax.src='http://showcase.luxurylink.com/queues/poke';
+		$tab.html('Poked!');
+	} else {
+		window.location.replace('http://showcase.luxurylink.com/clients/view/<?php echo $client['Client']['clientId'].'/oldProductId:'.$client['Client']['oldProductId'];?>');
+	}
+	return false;
+}
+
+jQuery(function(){
+	var $ = jQuery;
+	var toggleState = function(that){
+		$parent=$(that).parent();
+		var $newParent = false;
+		switch ($parent.attr('id')) {
+			case 'sortableSlideshow-luxurylink':
+				$newParent = $('#sortableInactive-luxurylink');
+			break;
+			case 'sortableInactive-luxurylink':
+				$newParent = $('#sortableSlideshow-luxurylink');
+			break;
+			case 'sortableSlideshow-family':
+				$newParent = $('#sortableInactive-family');
+			break;
+			case 'sortableInactive-family':
+				$newParent = $('#sortableSlideshow-family');
+			break;
+		}
+		if ($newParent) {
+			$newParent.append($(that));
+		}
+	}
+	$lis = $('li.droppableLI');
+	$lis.dblclick(function(e){
+		toggleState(this);
+	});
+	$('span.nukeOld').children('a').click(function(e){
+		var $targets = false;
+		switch ($(this).attr('id')) {
+			case 'nukelink_luxurylink':
+				$targets = $('#sortableSlideshow-luxurylink li img[src^="/images/por"]');
+			break;
+			case 'nukelink_family':
+				$targets = $('#sortableSlideshow-family li img[src^="/images/por"]');
+			break;
+		}
+		if ($targets) {
+			$targets.each(function(i){
+				//toggleState(this);
+				console.log(Math.random(),'XI',$(this).parent());
+				toggleState($(this).parent());
+			});
+		}
+		e.preventDefault();
+		return false;
+	});
+	$('span.nukeOld').parent().dblclick(function(e){
+		$(this).children('span').css('visibility', 'visible');
+	});
+});
+
 </script>
