@@ -342,14 +342,17 @@ jQuery(function(){
 			break;
 			case 100:
 			// d
-				$scrollTop = $('#nukelink_luxurylink').offset().top;
+				$scrollTop = $('#nukelink_luxurylink').offset().top - (window.innerHeight / 2);
 			break;
 			case 102:
 			// f
-				$scrollTop = $('#largeImages-luxurylink').offset().top;
+				$scrollTop = $('#largeImages-luxurylink').offset().top - (window.innerHeight);
 			break;
 		}
 		if ($scrollTop) {
+			if ($scrollTop<0) {
+				$scrollTop = 0;
+			}
 			window.scrollTo(0,$scrollTop);
 		}
 	});
