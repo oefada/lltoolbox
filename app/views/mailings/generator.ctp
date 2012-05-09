@@ -25,6 +25,7 @@
 </ul>
 <br>
 <form method='post' id='generator_form' action='generated' onsubmit='return validateJunkAndStuff();'>
+<input type="hidden" name="tid" value="<?= $templateId; ?>">
 <? echo $this->renderElement("input_search",array('name' => 'query','label'=>'Client Search','controller' => 'generator')); ?>
 <div style='clear:both;'></div>
 <br>
@@ -49,14 +50,19 @@ $client_arr=array(
 197=>'Rancho Valencia'
 );
 
+$showCaptions = true;
+if ($templateId == 'fg1') {
+	$showCaptions = false;
+	$client_arr = array_slice($client_arr, 0, 12, true);
+	echo '<div><b>FG Weekly Email</b></div>';
+}
 
 $i=0;
 foreach($client_arr as $clientId=>$name){
-//for($i=0;$i<15;$i++){
-	if ($i==0)echo "<p><b>New Offers</b></p>";
-	else if ($i==4) echo "<p><b>Top Deals</b></p>";
-	else if ($i==8) echo "<p><b>More Top Deals</b></p>";
-	else if ($i==12) echo "<p><b>Editor's Picks</b></p>";
+	if ($i==0 && $showCaptions)echo "<p><b>New Offers</b></p>";
+	else if ($i==4 && $showCaptions) echo "<p><b>Top Deals</b></p>";
+	else if ($i==8 && $showCaptions) echo "<p><b>More Top Deals</b></p>";
+	else if ($i==12 && $showCaptions) echo "<p><b>Editor's Picks</b></p>";
 	echo "<input type='radio' name='index' id='index_$i' value='$i' ";
 	if ($i==0)echo "checked";	
 	echo ">";

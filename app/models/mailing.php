@@ -18,7 +18,7 @@ class Mailing extends AppModel {
                          'MailingAdvertising' => array('className' => 'MailingAdvertising', 'foreignKey' => 'mailingId')
     );
 
-		function generator($clientId_arr){
+		function generator($clientId_arr, $siteId = 1){
 
 			foreach($clientId_arr as $key=>$id)if ($id!='')$arr[$key]=$id;
 
@@ -48,9 +48,12 @@ class Mailing extends AppModel {
 
 			// build seo friendly urls
 			foreach($rows as $key=>$row){
-
-				$url="http://www.luxurylink.com/";
-				$url.="fivestar/";
+				if ($siteId == 2) {
+					$url = "http://www.familygetaway.com/vacation/";
+				} else {
+					$url="http://www.luxurylink.com/";
+					$url.="fivestar/";
+				}
 				$url.=$row['client']['clientTypeSeoName']."/";
 				$url.=$row['client']['seoLocation']."/";
 				$url.=$row['client']['seoName'];
@@ -99,7 +102,7 @@ class Mailing extends AppModel {
 
 
 			$q="SELECT longDesc,clientId FROM clientSiteExtended WHERE clientId IN (".implode(",",$arr).")";
-			$q.=" AND siteId=1";
+			$q.=" AND siteId = " . $siteId;
 			$longDesc_arr=$this->query($q);
 			foreach($longDesc_arr as $key=>$row){
 				$clientId=$row['clientSiteExtended']['clientId'];

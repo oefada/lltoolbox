@@ -25,6 +25,8 @@ class MailingsController extends AppController {
 
 	function generator(){
 
+		$templateId = (isset($this->params['url']['tid'])) ? $this->params['url']['tid'] : false;
+		$this->set('templateId', $templateId);
 
 	}
 
@@ -32,6 +34,9 @@ class MailingsController extends AppController {
 
 		if (!empty($this->params['form']['clientId_arr'])){
 
+			$templateId = (isset($this->params['form']['tid'])) ? $this->params['form']['tid'] : false;
+			$siteId = ($templateId == 'fg1') ? 2 : 1;
+			
 			$month=$this->params['form']['month'];
 			$day=$this->params['form']['day'];
 			$year=$this->params['form']['year'];
@@ -45,7 +50,16 @@ class MailingsController extends AppController {
 			$clientName_arr=$this->params['form']['clientName'];
 			$error=false;
 			foreach($clientId_arr as $key=>$id){
-				if (trim($id)=='')$error=true;	
+			
+				if ($templateId == 'fg1') {
+					if (trim($id)=='') {
+						unset($clientId_arr[$key]);	
+					}
+				} else {
+					if (trim($id)=='')$error=true;	
+				}
+			
+				
 			}
 			if ($error){
 				echo "<p>The following clientId's were submitted:</p>";
@@ -55,12 +69,14 @@ class MailingsController extends AppController {
 				exit("<p style='color:red;'>You must submit 15 clients.</p>");
 			}
 			$this->layout=false;
-			$rows=$this->Mailing->generator($clientId_arr);	
+			$rows=$this->Mailing->generator($clientId_arr, $siteId);	
 			$this->set('rows',$rows);
-
+			
+			if ($templateId == 'fg1') {
+				$this->render('generated_fg1');
+			}
+			
 		}
-
-
 	}
 
 	function mailings(){
