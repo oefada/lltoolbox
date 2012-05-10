@@ -21,10 +21,10 @@ class ImagesController extends AppController
 		$this->set('clientSites', $this->Image->client['Client']['sites']);
 
 		$this->Image->imageTypes = array(
-				'gal-xl' => 1, //slideshow
-				'gal-lrg' => 2, //large (listing)
-				'list-sml' => 3,	//	thumbnail
-				'-auto-' => 1, // new PHOtos
+			'gal-xl' => 1, //slideshow
+			'gal-lrg' => 2, //large (listing)
+			'list-sml' => 3, //	thumbnail
+			'-auto-' => 1,  // new PHOtos
 		);
 
 		$this->fileRoot = dirname(dirname(dirname(dirname(__FILE__)))) . '/luxurylink/php';
@@ -55,38 +55,38 @@ class ImagesController extends AppController
 		//foreach($this->Image->client['Client']['sites'] as $site) {
 		foreach ($this->siteDbs as $siteId => $siteDb) {
 			$this->Image->ImageClient->contain(array(
-					'Image',
-					'ImageType'
+				'Image',
+				'ImageType'
 			));
 			$slideshowImages = $this->Image->ImageClient->find('all', array(
-					'conditions' => array(
-							'ImageClient.clientId' => $this->Image->clientId,
-							'ImageClient.imageTypeId' => 1,
-							'ImageClient.isHidden' => 0,
-							'ImageClient.siteId' => $siteId
-					),
-					'order' => array(
-							'ImageClient.inactive',
-							'ImageClient.sortOrder'
-					)
+				'conditions' => array(
+					'ImageClient.clientId' => $this->Image->clientId,
+					'ImageClient.imageTypeId' => 1,
+					'ImageClient.isHidden' => 0,
+					'ImageClient.siteId' => $siteId
+				),
+				'order' => array(
+					'ImageClient.inactive',
+					'ImageClient.sortOrder'
+				)
 			));
 			$largeImages = $this->Image->ImageClient->find('all', array(
-					'conditions' => array(
-							'ImageClient.clientId' => $this->Image->clientId,
-							'ImageClient.imageTypeId' => 2,
-							'ImageClient.isHidden' => 0,
-							'ImageClient.siteId' => $siteId
-					),
-					'order' => array('ImageClient.inactive')
+				'conditions' => array(
+					'ImageClient.clientId' => $this->Image->clientId,
+					'ImageClient.imageTypeId' => 2,
+					'ImageClient.isHidden' => 0,
+					'ImageClient.siteId' => $siteId
+				),
+				'order' => array('ImageClient.inactive')
 			));
 			$thumbnailImages = $this->Image->ImageClient->find('all', array(
-					'conditions' => array(
-							'ImageClient.clientId' => $this->Image->clientId,
-							'ImageClient.imageTypeId' => 3,
-							'ImageClient.isHidden' => 0,
-							'ImageClient.siteId' => $siteId
-					),
-					'order' => array('ImageClient.inactive')
+				'conditions' => array(
+					'ImageClient.clientId' => $this->Image->clientId,
+					'ImageClient.imageTypeId' => 3,
+					'ImageClient.isHidden' => 0,
+					'ImageClient.siteId' => $siteId
+				),
+				'order' => array('ImageClient.inactive')
 			));
 			$this->set('slideshowImages' . $siteDb, $slideshowImages);
 			$this->set('largeImages' . $siteDb, $largeImages);
@@ -100,12 +100,12 @@ class ImagesController extends AppController
 		if (!empty($this->data)) {
 			$postImages = $this->data['Image'];
 			$images = $this->Image->ImageClient->find('all', array(
-					'conditions' => array(
-							'ImageClient.clientId' => $this->Image->clientId,
-							'ImageClient.imageTypeId' => 1,
-							'ImageClient.inactive' => 0
-					),
-					'group' => array('ImageClient.imageId')
+				'conditions' => array(
+					'ImageClient.clientId' => $this->Image->clientId,
+					'ImageClient.imageTypeId' => 1,
+					'ImageClient.inactive' => 0
+				),
+				'group' => array('ImageClient.imageId')
 			));
 			foreach ($images as $image) {
 				if (in_array($image['Image']['imageId'], array_keys($postImages))) {
@@ -119,18 +119,18 @@ class ImagesController extends AppController
 			}
 		}
 		$images = $this->Image->ImageClient->find('all', array(
-				'conditions' => array(
-						'ImageClient.clientId' => $this->Image->clientId,
-						'ImageClient.imageTypeId' => 1,
-						'ImageClient.inactive' => 0
-				),
-				'order' => array('Image.caption'),
-				'group' => array('ImageClient.imageId')
+			'conditions' => array(
+				'ImageClient.clientId' => $this->Image->clientId,
+				'ImageClient.imageTypeId' => 1,
+				'ImageClient.inactive' => 0
+			),
+			'order' => array('Image.caption'),
+			'group' => array('ImageClient.imageId')
 		));
 		$this->Image->ImageRoomGradeRel->RoomGrade->recursive = -1;
 		$roomGrades = $this->Image->ImageRoomGradeRel->RoomGrade->find('all', array(
-				'conditions' => array('RoomGrade.clientId' => $this->Image->clientId),
-				'order' => array('RoomGrade.roomGradeName')
+			'conditions' => array('RoomGrade.clientId' => $this->Image->clientId),
+			'order' => array('RoomGrade.roomGradeName')
 		));
 		$this->set('images', $images);
 		$this->set('roomGrades', $roomGrades);
@@ -149,13 +149,13 @@ class ImagesController extends AppController
 		foreach ($this->siteDbs as $siteId => $siteDb) {
 			$this->Image->ImageClient->contain('Image');
 			$images = $this->Image->ImageClient->find('all', array(
-					'conditions' => array(
-							'ImageClient.clientId' => $this->Image->clientId,
-							'ImageClient.imageTypeId' => 1,
-							'ImageClient.inactive' => 0,
-							'ImageClient.siteId' => $siteId
-					),
-					'order' => array('ImageClient.sortOrder')
+				'conditions' => array(
+					'ImageClient.clientId' => $this->Image->clientId,
+					'ImageClient.imageTypeId' => 1,
+					'ImageClient.inactive' => 0,
+					'ImageClient.siteId' => $siteId
+				),
+				'order' => array('ImageClient.sortOrder')
 			));
 			$this->set('images' . $siteDb, $images);
 		}
@@ -174,12 +174,12 @@ class ImagesController extends AppController
 						unset($data['clientImageId']);
 					}
 					$siteImage = $this->Image->ImageClient->find('first', array(
-							'conditions' => array(
-									'ImageClient.imageId' => $image['imageId'],
-									'ImageClient.clientId' => $this->Image->clientId,
-									'ImageClient.siteId' => $siteId
-							),
-							'fields' => 'ImageClient.clientImageId'
+						'conditions' => array(
+							'ImageClient.imageId' => $image['imageId'],
+							'ImageClient.clientId' => $this->Image->clientId,
+							'ImageClient.siteId' => $siteId
+						),
+						'fields' => 'ImageClient.clientImageId'
 					));
 					$data['clientImageId'] = $siteImage['ImageClient']['clientImageId'];
 					$this->Image->ImageClient->save($data);
@@ -188,18 +188,18 @@ class ImagesController extends AppController
 		}
 		$this->Image->ImageClient->contain('Image');
 		$images = $this->Image->ImageClient->find('all', array(
-				'fields' => array(
-						'ImageClient.imageId',
-						'Image.imagePath',
-						'GROUP_CONCAT(ImageClient.inactive ORDER BY ImageClient.siteId) AS inactive',
-						'GROUP_CONCAT(ImageClient.siteId ORDER BY ImageClient.siteId) AS sites'
-				),
-				'conditions' => array(
-						'ImageClient.clientId' => $this->Image->clientId,
-						'ImageClient.isHidden' => 0
-				),
-				'order' => array('ImageClient.siteId'),
-				'group' => array('ImageClient.imageId')
+			'fields' => array(
+				'ImageClient.imageId',
+				'Image.imagePath',
+				'GROUP_CONCAT(ImageClient.inactive ORDER BY ImageClient.siteId) AS inactive',
+				'GROUP_CONCAT(ImageClient.siteId ORDER BY ImageClient.siteId) AS sites'
+			),
+			'conditions' => array(
+				'ImageClient.clientId' => $this->Image->clientId,
+				'ImageClient.isHidden' => 0
+			),
+			'order' => array('ImageClient.siteId'),
+			'group' => array('ImageClient.imageId')
 		));
 		foreach ($images as &$image) {
 			$sitesArr = explode(',', $image[0]['sites']);
@@ -234,7 +234,7 @@ class ImagesController extends AppController
 				$oldProductId = $this->Image->client['Client']['oldProductId'];
 				$directory = '/images/por/' . $oldProductId;
 			}
-	
+
 		}
 		$files = glob($this->fileRoot . $directory . '/*.jpg');
 		$useLrgForSlideshow = false;
@@ -253,7 +253,7 @@ class ImagesController extends AppController
 			$useLrgForSlideshow = true;
 			$activateLrg = true;
 		}
-	
+
 		$newFiles = glob($this->fileRoot . '/images/pho/' . $this->Image->clientId . '/' . $this->Image->clientId . '_*-auto-*.jpg');
 		if (!empty($newFiles)) {
 			$useXlForSlideshow = true;
@@ -263,7 +263,7 @@ class ImagesController extends AppController
 				}
 			}
 		}
-	
+
 		if (!empty($files)) {
 			//$siteId = array_search($this->Image->client['Client']['sites'][0],
 			// $this->siteDbs);
