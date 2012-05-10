@@ -24,7 +24,7 @@ class ImagesController extends AppController
 			'gal-xl' => 1, //slideshow
 			'gal-lrg' => 2, //large (listing)
 			'list-sml' => 3, //	thumbnail
-			'-auto-' => 1,  // new PHOtos
+			'-auto-' => 1,     // new PHOtos
 		);
 
 		$this->fileRoot = dirname(dirname(dirname(dirname(__FILE__)))) . '/luxurylink/php';
@@ -308,6 +308,12 @@ class ImagesController extends AppController
 				}
 			}
 		}
+	}
+
+	function deduplicate()
+	{
+		$sql = 'SELECT DISTINCT clientId FROM (SELECT clientId,siteId,imageId,COUNT(clientImageId) AS c FROM imageClient WHERE imageTypeId=1 GROUP BY siteId,clientId,imageId ORDER BY COUNT(clientImageId) DESC) t1 WHERE c>1 ORDER BY clientId';
+		$this->set('dupes', $this->Image->query($sql));
 	}
 
 }
