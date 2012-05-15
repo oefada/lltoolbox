@@ -7,7 +7,8 @@
 <li><a href='/mailings/generator?tid=fg1'>Weekly Email Generator Tool - Family</a></li>
 <li><a href="/mailing_types">Configure Newsletter Types</a></li>
 <li><a href="/mailings/add">Create Newsletter Mailing</a></li>
-<li><a target='_blank' href="http://live.luxurylink.com/inspiration/upload_newsletter.php">Upload and Sync Inspiration Newsletter</a></li>
+<!--<li><a target='_blank' href="http://live.luxurylink.com/inspiration/upload_newsletter.php">Upload and Sync Inspiration Newsletter</a></li>-->
+<li><a href="/unsubscribe_logs/index">Unsubscribes Logs</a>
 </ul>
 
 </div>
