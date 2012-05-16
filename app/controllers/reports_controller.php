@@ -2319,7 +2319,7 @@ class ReportsController extends AppController
 					$q .= "ON (Client.clientId = ClientDestinationRel.clientId) WHERE $conditions ";
 					if ($conditions != "")
 						$q .= "AND ";
-					$q .= "cse.inactive <> 1 AND Loa.inactive <> 1 GROUP BY Loa.loaId ORDER BY $order";
+					$q .= "cse.inactive <> 1 AND Loa.inactive <> 1 AND Loa.loaLevelId = 2 GROUP BY Loa.loaId ORDER BY $order";
 					$clients = $this->Client->query($q);
 
 				}
