@@ -31,6 +31,7 @@ $this->set('hideSidebar', true);
 </script>
 <table cellpadding="0" cellspacing="0">
 <tr>
+	<th><?php echo $paginator->sort('clientId');?></th>
 	<th><?php echo $paginator->sort('name');?></th>
 	<th><?php echo $paginator->sort('Type', 'clientTypeId');?></th>
 	<th><?php echo $paginator->sort('Level', 'clientLevelId');?></th>
@@ -45,6 +46,10 @@ foreach ($clients as $client):
 	}
 ?>
 	<tr<?php echo $class;?>>
+
+		<td style="width:60px;">
+			<?php echo $html->link(__($client['Client']['clientId'], true), array('action'=>'edit', $client['Client']['clientId'])); ?>
+		</td>
 		<td>
 			<strong>
 			<?php if (isset($query)): ?>
@@ -67,6 +72,7 @@ foreach ($clients as $client):
 		$numChildren = isset($client['ChildClient'])?count($client['ChildClient']):0;
 	if ($numChildren): ?>
 	<tr<?php echo $class;?>>
+		<td> &nbsp; </td>
 		<td colspan=5 class='collapsible' style='padding: 0 10px; border: 0'>
 				<h3 class='handle'>Show Children <?=$html2->c($numChildren)?></h3>
 			<div class='collapsibleContent'>
