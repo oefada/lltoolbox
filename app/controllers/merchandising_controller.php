@@ -286,6 +286,28 @@ class MerchandisingController extends AppController
 							}
 						}
 
+						// lltEvent
+						foreach ($tabData as $xTabKey => &$xTabValue) {
+							$xlltEventId = $xTabValue['merchDataGroupId'];
+							$xlltTabName = strtolower(strip_tags(str_replace('<', ' <', $xTabValue['tabName'])));
+							$xlltTabName = preg_replace('/[^A-Za-z0-9]/', '-', $xlltTabName);
+							$xlltTabName = preg_replace('/\-+/', '-', $xlltTabName);
+							$xTabPrefix = 'client-click home-page ' . $xlltEventId . ' ';
+							$xTabName = $xTabPrefix . $xlltTabName;
+							$xEventQuery = $this->MerchDataGroup->query('SELECT lltEventId FROM lltEvent WHERE lltEventGroupId=12 AND eventName LIKE ?', array($xTabPrefix . '%'));
+							$xlltEventId = NULL;
+							if (count($xEventQuery) > 0) {
+								$xlltEventId = $xEventQuery[0]['lltEvent']['lltEventId'];
+							}
+							$this->MerchDataGroup->query('REPLACE INTO lltEvent (lltEventId,lltEventGroupId,eventName) VALUES (?,12,?)', array(
+								$xlltEventId,
+								$xTabName
+							));
+							$xEventQuery = $this->MerchDataGroup->query('SELECT * FROM lltEvent WHERE lltEventGroupId=12 AND eventName LIKE ?', array($xTabPrefix . '%'));
+							$xlltEventId = $xEventQuery[0]['lltEvent']['lltEventId'];
+							$xTabValue['lltgEventId'] = $xlltEventId;
+						}
+
 						$tabDataJSON = json_encode($tabData);
 						$dataArr = Array(
 							'isHeader' => 1,
@@ -367,7 +389,6 @@ class MerchandisingController extends AppController
 						}
 
 					}
-
 					$merchDataJSON = json_encode($tabData);
 					$dataArr = Array(
 						'merchDataTypeId' => $homepageTabsDataType['MerchDataType']['id'],
