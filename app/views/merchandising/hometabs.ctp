@@ -93,9 +93,7 @@ function addRow() {
 	<? endif; ?>
 	
 	<tr class="nodrag nodrop">
-		<td>&nbsp;</td>
-		<td>&nbsp;</td>
-		<td>&nbsp;</td>
+		<td colspan="3"><span style="color:#999;font-size:80%;">Note: Do not reuse old tabs for new features.<br/>Instead, create a new tab and deactivate the old one.<br/>This is because each tab gets a unique click tracking id.</span></td>
 		<td><input type="submit" value="Save" /></td>
 	</tr>
 </table>
