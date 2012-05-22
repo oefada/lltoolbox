@@ -236,7 +236,12 @@ class ImagesController extends AppController
 			}
 
 		}
-		$files = glob($this->fileRoot . $directory . '/*.jpg');
+		if (false) {
+			// DEAD CODE, DO NOT NEED TO READ FROM POR DIRECTORY ANYMORE
+			$files = glob($this->fileRoot . $directory . '/*.jpg');
+		} else {
+			$files = array();
+		}
 		$useLrgForSlideshow = false;
 		$useXlForSlideshow = false;
 		$activateLrg = false;
