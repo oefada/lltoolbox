@@ -163,6 +163,7 @@ class MerchandisingController extends AppController
 							'headline' => $_POST['headline'][$k],
 							'description' => $_POST['description'][$k]
 						);
+						$slide['linkUrl']=preg_replace('/^http:\/\/www\.luxurylink\.com\//','/',$slide['linkUrl']);
 						$slide['imageUrl'] = $this->_filterImageUrl($slide['imageUrl']);
 						if (is_array($clientArr) && isset($clientArr['Client']) && isset($clientArr['Client']['clientId'])) {
 							$slide['clientId'] = $clientArr['Client']['clientId'];
@@ -834,7 +835,7 @@ class MerchandisingController extends AppController
 	private function _filterImageUrl($url) {
 		$possible = array('www.luxurylink.com','luxurylink.com','img.llsrv.us','ui.llsrv.us','photos.luxurylink.us');
 		foreach ($possible as $p) {
-			$url=preg_replace('/^http:\/\/'.$p.'\//','/',$url);
+			$url=preg_replace('/^http:\/\/'.str_replace('.','\.',$p).'\//','/',$url);
 		}
 		$url = preg_replace('/^\//','http://photos.luxurylink.us/',$url);
 		return $url;
