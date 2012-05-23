@@ -15,13 +15,12 @@ class NOVA
 	function NOVA($test_param = FALSE) {
 		$this->post_data = array();
 		$this->post_data['ssl_merchant_id'] 		= '506345';
-		$this->post_data['ssl_user_id'] 			= 'web';
-		$this->post_data['ssl_pin'] 				= '252176';
-		$this->post_data['ssl_pin'] 				= '252176';
+		$this->post_data['ssl_user_id'] 			= 'webpage';
+		$this->post_data['ssl_pin'] 				= '277516';
 		$this->post_data['ssl_transaction_type']	= 'ccavsonly';
 		$this->post_data['ssl_test_mode'] 			= $test_param ? 'TRUE' : 'FALSE';
 		$this->post_data['ssl_result_format'] 		= 'ASCII';
-		$this->post_data['ssl_show_form']	 		= '0';
+		$this->post_data['ssl_show_form']	 		= 'false';
 		$this->post_data['ssl_cvv2cvc2_indicator'] 	= '0';
 		$this->post_data['ssl_salestax'] 			= '0';
 
