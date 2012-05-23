@@ -3,18 +3,17 @@ $this->set('hideSidebar', true);
 ?>
 
 <?php if(isset($query)): 
-$this->pageTitle = __('Users', true);
-?>
-<div id='users-index' class="users index">
 
-<?php $html->addCrumb('Users'); ?>
+$this->pageTitle = __('Users', true);
+echo '<div id="users-index" class="users index">';
+$html->addCrumb('Users'); ?>
 <?php if(isset($query)) $query = ''; ?>
 <?php echo $this->renderElement('ajax_paginator', array('divToPaginate' => 'users-index', 'showCount' => true))?>
 <table cellpadding="0" cellspacing="0">
 <tr>
 	<th><?php echo $paginator->sort('userId');?></th>
 	<th><?php echo $paginator->sort('Username','UserSiteExtended.username');?></th>
-	<th><?php echo $paginator->sort('# Tickets');?></th>
+	<th><?php echo $paginator->sort('Tickets','ticketCount');?></th>
 	<th><?php echo $paginator->sort('firstName');?></th>
 	<th><?php echo $paginator->sort('lastName');?></th>
 	<th><?php echo $paginator->sort('email');?></th>
@@ -38,7 +37,13 @@ foreach ($users as $user):
 		</td>
 		
 		<td>
-			<?= $html->link(count($user['Ticket']), '/tickets/?searchUserId='.$user['User']['userId']) ?>
+			<?
+			if (isset($user['ticket']) && $user['ticket']['ticketId']!=''){	
+				echo $html->link(($user[0]['ticketCount']), '/tickets/?searchUserId='.$user['User']['userId']); 
+			}else{
+				echo '0';
+			}
+			?>
 		</td>
 
 		<td>

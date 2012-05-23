@@ -34,5 +34,19 @@ class User extends AppModel {
 										  'associationForeignKey' => 'contestId'
 									)
 								);
+
+
+
+	/**
+	 * TODO: short description.
+	 * 
+	 * @return TODO
+	 */
+	function paginateCount($conditions = null, $recursive = 0, $extra = array()) {
+
+		$this->recursive=$recursive;
+		$r=$this->find('count',array('conditions'=>$conditions));
+		return ($r);
+	}
+
 }
-?>
