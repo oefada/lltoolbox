@@ -6,6 +6,7 @@
 	<th>User Id</th>
 	<th>Amount ($)</th>
 	<th>Running Balance ($)</th>
+	<th>Notes</th>
 	<th>Transaction Date</th>
 </tr>
 <?php
@@ -28,6 +29,9 @@ foreach ($giftCertBalances as $giftCertBalance):
 		</td>
 		<td>
 			<?php echo $giftCertBalance['GiftCertBalance']['balance']; ?>
+		</td>
+		<td>
+			<?php echo $giftCertBalance['GiftCertBalance']['note']; ?>
 		</td>
 		<td>
 			<?php echo $giftCertBalance['GiftCertBalance']['datetime']; ?>

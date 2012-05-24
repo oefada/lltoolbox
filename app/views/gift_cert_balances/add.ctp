@@ -8,6 +8,7 @@
 			<div class="input text"><label>Promo Code</label><input id="promoCode" name="data[promoCode]" type="text" maxlength="50" value=""/></div>
 		';
 		echo $form->input('amount');
+		echo $form->input('note');
 	?>
 	</fieldset>
 <?php echo $form->end('Submit');?>
