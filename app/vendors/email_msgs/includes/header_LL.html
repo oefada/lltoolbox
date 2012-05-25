@@ -66,10 +66,12 @@
 																						<tr valign="top">
 																							<td style="line-height:20px;"<? if (isset($special_boxes)): ?> colspan="2"<?php endif; ?>>
 																								<?php if ($ticketId): ?><font face="Arial, Helvetica, sans-serif" color="#7b7b7b" style="font-size:12px; line-height:15px;"><b>Ticket ID: <?= $ticketId ?></b></font><?php endif; ?>
-																								<p>
-																									<font face="Arial, Helvetica, sans-serif" size="2" style="font-size:14px; line-height:15px" color="#474747">
-																										<strong>Dear <? if ($internalPpv): ?>Concierge<? elseif ($clientPpv): ?>Reservations Manager<? else: ?><?= $userFirstName ?><? endif; ?>,</strong>
-																									</font>
-																								</p>
+																								<? if (!$hideSalutation): ?>
+																									<p>
+																										<font face="Arial, Helvetica, sans-serif" size="2" style="font-size:14px; line-height:15px" color="#474747">
+																											<strong>Dear <? if ($internalPpv): ?>Concierge<? elseif ($clientPpv): ?>Reservations Manager<? else: ?><?= $userFirstName ?><? endif; ?>,</strong>
+																										</font>
+																									</p>
+																					    		<? endif; ?>
 																					    		<p>
 																									<font face="Arial, Helvetica, sans-serif" size="2" style="font-size:13px; line-height:20px" color="#474747">

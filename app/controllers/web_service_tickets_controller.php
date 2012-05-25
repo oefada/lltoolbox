@@ -1869,6 +1869,7 @@ class WebServiceTicketsController extends WebServicesController
 			case 41:
 				$templateFile = "41_leadgen_alert";
 				$emailSubject = $templateTitle = $clientNameP . " has a new vacation experience";
+				$hideSalutation = true;
 				break;
 			default:
 				break;
@@ -2637,6 +2638,8 @@ class WebServiceTicketsController extends WebServicesController
 			if ($data['paymentProcessorId'] == 1) {
 				$response_txt = $processor->GetResponseTxt();
 				CakeLog::write("debug","DECLINED. RESPONSE: ".var_export($processor->GetMappedResponse(),1));
+				// $allDebug = print_r($processor, true);
+				// CakeLog::write("debug", $allDebug);
 				return $response_txt;
 			} else {
 				return false;
