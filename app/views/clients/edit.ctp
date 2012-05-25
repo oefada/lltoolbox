@@ -149,9 +149,9 @@ foreach ($this->data['Client']['sites'] as $site) {
 		<?php
 		echo $form->input('phone1');
 		echo $form->input('phone2');
-		echo $form->input('fax');
-		echo $form->input('estaraPhoneLocal');
-		echo $form->input('estaraPhoneIntl');
+		echo $form->input('fax', array('type' => 'hidden'));
+		echo $form->input('estaraPhoneLocal', array('label'=>'Toll-Free Tracking #'));
+		echo $form->input('estaraPhoneIntl', array('label'=>'Intl / Direct Phone #'));
         echo $form->input('contactLL', array('type' => 'checkbox',
                                              'label' => 'Use LL/FG contact info instead of client\'s on PDP',
                                              'class' => 'contactLL-align'));
