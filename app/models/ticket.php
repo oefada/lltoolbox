@@ -12,17 +12,39 @@ class Ticket extends AppModel {
 						   'User' => array('foreignKey' => 'userId')
 						);
 
-	var $hasMany = array('PaymentDetail' => array('foreignKey' => 'ticketId'),
-						 'PpvNotice' => array('foreignKey' => 'ticketId'),
-						 'PromoTicketRel' => array('foreignKey' => 'ticketId'),
-						 //'CreditTrackingTicketRel' => array('foreignKey' => 'ticketId')
-						);
+	public $hasMany = array(
+		'PaymentDetail' => array(
+			'foreignKey' => 'ticketId',
+			'dependent' => true
+		),
+		'PpvNotice' => array(
+			'foreignKey' => 'ticketId',
+			'dependent' => true
+		),
+		'PromoTicketRel' => array(
+			'foreignKey' => 'ticketId',
+			'dependent' => true
+		),
+	);
 	
-	var $hasOne = array('TicketWriteoff' => array('foreignKey' => 'ticketId'),
-						'TicketRefund' => array('foreignKey' => 'ticketId'),
-						'Reservation' => array('foreignKey' => 'ticketId'),
-						'Cancellation' => array('foreignKey' => 'ticketId')
-						);
+	public $hasOne = array(
+		'TicketWriteoff' => array(
+			'foreignKey' => 'ticketId',
+			'dependent' => true
+		),
+		'TicketRefund' => array(
+			'foreignKey' => 'ticketId',
+			'dependent' => true
+		),
+		'Reservation' => array(
+			'foreignKey' => 'ticketId',
+			'dependent' => true
+		),
+		'Cancellation' => array(
+			'foreignKey' => 'ticketId',
+			'dependent' => true
+		)
+	);
 
 	var $validate = array(
 		'totalBillingAmount' => array('rule'=> array('money','left'))
