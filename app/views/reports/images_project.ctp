@@ -29,11 +29,7 @@ $totalNew = 0;
 		<tr class="record <?php echo ($rd[0]['old_format_count']>0?'hasOld':'').' '.($rd[0]['old_format_count']==0?'isDone':'');?>">
 			<td><?php echo ++$i;?></td>
 			<td><?php echo $rd['t1']['client_id'];?></td>
-			<td style="width:444px; overflow: hidden;"><?php echo $html->link($rd['t1']['name'], array(
-				'controller' => 'clients',
-				'action' => 'edit',
-				$rd['t1']['client_id']
-			));
+			<td style="width:444px; overflow: hidden;"><?php echo $html->link($rd['t1']['name'], '/clients/'.$rd['t1']['client_id'].'/images/organize');
 			 ?></td>
 			<td style="text-align: right;"><?php echo $rd[0]['old_format_count']; ?></td>
 			<td style="text-align: right;"><?php echo $rd[0]['new_format_count']; ?></td>
