@@ -1,7 +1,15 @@
+<script>
+	function recount() {
+		jQuery('#imageReport tr.record:visible').each(function(i){jQuery(this).children('td:first').html(i+1);});
+	}
+</script>
+<?php
+$i = 0;
+?>
 <div style="text-align: right;">
-	<a href="#" onclick="jQuery('#imageReport tr.record').css('display','table-row');return false;">All</a>
-	<a href="#" onclick="jQuery('#imageReport tr.record').css('display','none');jQuery('#imageReport tr.isDone').css('display','table-row');return false;">Complete</a>
-	<a href="#" onclick="jQuery('#imageReport tr.record').css('display','none');jQuery('#imageReport tr.hasOld').css('display','table-row');return false;">Incomplete</a>
+	<a href="#" onclick="jQuery('#imageReport tr.record').css('display','table-row');recount();return false;">All</a>
+	<a href="#" onclick="jQuery('#imageReport tr.record').css('display','none');jQuery('#imageReport tr.isDone').css('display','table-row');recount();return false;">Complete</a>
+	<a href="#" onclick="jQuery('#imageReport tr.record').css('display','none');jQuery('#imageReport tr.hasOld').css('display','table-row');recount();return false;">Incomplete</a>
 </div>
 <?php
 $totalOld = 0;
@@ -9,6 +17,7 @@ $totalNew = 0;
 ?>
 <table style="width: 800px;" id="imageReport">
 	<tr>
+		<th>Count</th>
 		<th>Id</th>
 		<th>Client</th>
 		<th>Old</th>
@@ -18,8 +27,9 @@ $totalNew = 0;
 	</tr>
 	<?php foreach ($reportData as $rd): ?>
 		<tr class="record <?php echo ($rd[0]['old_format_count']>0?'hasOld':'').' '.($rd[0]['old_format_count']==0?'isDone':'');?>">
-			<td style="text-align: right; color: #888;"><?php echo $rd['t1']['client_id'];?></td>
-			<td style="width:500px; overflow: hidden;"><?php echo $html->link($rd['t1']['name'], array(
+			<td><?php echo ++$i;?></td>
+			<td><?php echo $rd['t1']['client_id'];?></td>
+			<td style="width:444px; overflow: hidden;"><?php echo $html->link($rd['t1']['name'], array(
 				'controller' => 'clients',
 				'action' => 'edit',
 				$rd['t1']['client_id']
