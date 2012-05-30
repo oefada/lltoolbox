@@ -9,8 +9,9 @@
 	<li><?=$html->link('Client Management', $this->webroot . 'reports/cmr')?></li>
 	<li><?=$html->link('Experiments', $this->webroot . 'reports/experiments')?></li>
 	<li><?=$html->link('Fixed Price', $this->webroot . 'reports/fixed_price')?></li>
+	<li><?=$html->link('Images Project', array('controller'=>'reports','action'=>'images_project')); ?></li>
 	<li><?=$html->link('Inventory Management', $this->webroot . 'reports/imr')?></li>
-   	<li><?=$html->link('Invoice Report', $this->webroot . 'reports/invoice')?></li>
+	<li><?=$html->link('Invoice Report', $this->webroot . 'reports/invoice')?></li>
 	<li><?=$html->link('Merchandising Dashboard', $this->webroot . 'reports/merch')?></li>
 	<li><?=$html->link('Offer Search', $this->webroot . 'reports/offer_search')?></li>
 	<li><?=$html->link('Package Search', $this->webroot . 'reports/packages')?></li>

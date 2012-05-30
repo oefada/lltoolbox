@@ -76,6 +76,11 @@ class ReportsController extends AppController
 	function index()
 	{
 	}
+	
+	function images_project() {
+		$sql = "SELECT clientId AS client_id,name,SUM(oldFormat) AS old_format_count,SUM(newFormat) AS new_format_count,SUM(oldFormat)+SUM(newFormat) AS total_image_count,ROUND(100*SUM(newFormat)/(SUM(oldFormat)+SUM(newFormat)),2) AS percent_complete FROM (SELECT c.clientImageId,c.clientId,t.name,i.imagePath,imagePath REGEXP '^/images/por/(0\-[0-9]+|[0-9]+)/(0\-[0-9]+|[0-9]+)\-gal\-xl\-[0-9]+.jpg$' AS oldFormat,imagePath REGEXP '^/images/pho/[0-9]+/[0-9]+_[0-9]+.*\.jpg$' AS newFormat FROM imageClient c,image i,`client` t WHERE c.clientId=t.clientId AND c.imageId=i.imageId AND c.siteId=1 AND ishidden=0 AND inactive=0 AND (imagePath LIKE '/images/por/%-gal-xl-%' OR imagePath LIKE '/images/pho/%')) t1 WHERE (oldFormat>0 OR newFormat>0) GROUP BY clientId ORDER BY name";
+		$this->set('reportData',$this->OfferType->query($sql));
+	}
 
 	function active_loa_and_packages_check()
 	{
