@@ -220,6 +220,10 @@ class ImagesController extends AppController
 
 	function findNewImages()
 	{
+		if (false) {
+			// TEMPORARILY DISABLE FINDING ANY NEW IMAGES IN TOOLBOX DURING MIGRATION;
+			return false;
+		}
 		$dbImages = $this->Image->getFilenamesFromDb($this->Image->clientId);
 		if (!empty($dbImages)) {
 			$extractDir = explode('/', $dbImages[0]);
