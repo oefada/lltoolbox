@@ -817,9 +817,6 @@ class MerchandisingController extends AppController
 	// alters linkUrl and tries returns client info if found from seo-name
 	private function setLinkUrl(&$linkUrl)
 	{
-
-		// TICKET3267 was here
-
 		// make link urls relative
 		if (!empty($linkUrl)) {
 			if (($urlStr = str_replace('http://www.luxurylink.com/', '/', $linkUrl)) || ($urlStr = str_replace('www.luxurylink.com/', '/', $linkUrl)) || (($urlStr = substr($linkUrl, 0, 1)) == '/')) {
