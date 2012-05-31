@@ -1,26 +1,27 @@
 $().ready(function() {
 
+	$('div.edit-link').click(function() {
 
-        $('div.edit-link').click(function() {
-                                    if ($(this).attr('href') == undefined) {
-                                        var url = '/clients/'+clientId+'/packages/'+$(this).attr('name')+'/'+packageId;
-                                        if ($(this).attr('qs') != undefined) {
-                                            url += '/?' + $(this).attr('qs');
-                                        }
-                                    }
-                                    else {
-                                        var url = $(this).attr('href')+'/?overlayForm=1';
-                                    }
-                                    $('iframe#dynamicForm').attr('src', url);
-                                    $('div#formContainer').dialog({modal:true,
-                                                                   autoOpen:false,
-                                                                   height:800,
-                                                                   width:1100,
-                                                                   title:'Edit'
-                                                                  });
-                                    $('div#formContainer').dialog('open');
-                        }
-                    );
+		if ($(this).attr('href') == undefined) {
+			var url = '/clients/'+clientId+'/packages/'+$(this).attr('name')+'/'+packageId;
+			if ($(this).attr('qs') != undefined) {
+				url += '/?' + $(this).attr('qs');
+			}
+		} else {
+			var url = $(this).attr('href')+'/?overlayForm=1';
+		}
+
+		$('iframe#dynamicForm').attr('src', url);
+		$('div#formContainer').dialog({modal:true,
+			autoOpen:false,
+			height:800,
+			width:1100,
+			title:'Edit'
+		});
+
+		$('div#formContainer').dialog('open');
+
+	});
     
         if ($('option#family').is(':selected')) {
             $('div#familyAgeRanges').show();
