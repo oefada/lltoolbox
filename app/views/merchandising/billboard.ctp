@@ -71,9 +71,6 @@ function updatePreviewImg(rowId) {
 	if (jQuery('#sort-table #'+rowId+' .link-url').val()) {
 		jQuery.get('/merchandising/clientInfo/?linkUrl='+jQuery('#sort-table #'+rowId+' .link-url').val(), function(data) {
 			var dataArr = jQuery.parseJSON(data);
-			if (dataArr.linkUrl) {
-				jQuery('#sort-table #'+rowId+' .link-url').val(dataArr.linkUrl);
-			}
 			if (dataArr.clientId) {
 				jQuery('#sort-table #'+rowId+' .link-text').val('View Experience');
 				jQuery('#sort-table #'+rowId+' .headline').val(dataArr.name);
