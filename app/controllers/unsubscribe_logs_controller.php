@@ -17,17 +17,42 @@ class UnsubscribeLogsController extends AppController
 	 */
 	function index(){
 
-		$this->set('startYear', date("Y"));
-		$this->set('startMonth', date("n"));
-		$this->set('startDay', date("j"));
-
-		$this->set('endYear', date("Y"));
-		$this->set('endMonth', date("n"));
-		$this->set('endDay', date("j"));
 
 		$nlMgr=new NewsletterManager();
-		$this->set('nlIdArr',$nlMgr->getNewsletterIdArr());
+		$nlIdArr=$nlMgr->getNewsletterIdArr();
+		$this->set('nlIdArr',$nlIdArr);
 
+		if (!empty($this->data)){
+
+			$startMonth=$this->data['start']['month'];
+			$startDay=$this->data['start']['day'];
+			$startYear=$this->data['start']['year'];
+			$this->start_ut=mktime(0,0,0,$startMonth,$startDay,$startYear);
+			$endMonth=$this->data['end']['month'];
+			$endDay=$this->data['end']['day'];
+			$endYear=$this->data['end']['year'];
+			$this->end_ut=mktime(0,0,0,$endMonth,$endDay,$endYear);
+			$data=$this->getUnsubData();
+			$this->set('output', $this->data['unsubscribe_logs']['Output']);
+			$this->set('start_ut',$this->start_ut);
+			$this->set('end_ut',$this->end_ut);
+			$this->set('unsubLogs', $data);
+			$this->set('nl',$nlIdArr[$this->data['unsubscribe_logs']['mailingList']]);
+			$this->set('startYear', $startYear);
+			$this->set('startMonth', $startMonth);
+			$this->set('startDay', $startDay);
+			$this->set('endYear', $endYear);
+			$this->set('endMonth',$endMonth);
+			$this->set('endDay', $endDay);
+		}else{
+			$this->set('output', 'csv');
+			$this->set('startYear', date("Y"));
+			$this->set('startMonth', date("n"));
+			$this->set('startDay', date("j"));
+			$this->set('endYear', date("Y"));
+			$this->set('endMonth', date("n"));
+			$this->set('endDay', date("j"));
+		}
 
 	}
 
@@ -38,8 +63,6 @@ class UnsubscribeLogsController extends AppController
 	 */
 	public function export(){
 
-		$start=mktime(0,0,0,$this->data['start']['month'],$this->data['start']['day'],$this->data['start']['year']);
-		$end=mktime(0,0,0,$this->data['end']['month'],$this->data['end']['day'],$this->data['end']['year']);		
 
 		// Stop Cake from displaying action's execution time 
 		Configure::write('debug',0); 
@@ -47,23 +70,7 @@ class UnsubscribeLogsController extends AppController
 		$nlMgr=new NewsletterManager();
 		$nlArr=$nlMgr->getNewsletterIdArr();
 
-		// Find fields needed without recursing through associated models 
-		$data = $this->UnsubscribeLog->find('all',
-			array(
-				'conditions'=>array(
-					'mailingId'=>$this->data['unsubscribe_logs']['mailingList'],
-					'unsubDate >='=>$start,
-					'unsubDate <='=>$end,
-				),
-				'fields' => array(
-					'email',
-					'mailingId',
-					"from_unixtime(subDate, '%Y-%m-%d') as subDate","from_unixtime(unsubDate, '%Y-%m-%d') as unsubDate" 
-				),
-				'order' => "unsubDate DESC", 
-				'contain' => false 
-			)
-		); 
+		$data=$this->getUnsubData();
 
 		// Define column headers for CSV file, in same array format as the data itself 
 		$headers = array( 
@@ -82,65 +89,35 @@ class UnsubscribeLogsController extends AppController
 
 	}
 
-	/**************************
-	// Cake's auto-built stuff 
-	*/////////////////////////
+	private function getUnsubData(){
 
-	function listLog() {
-		$this->UnsubscribeLog->recursive = 0;
-		$this->set('unsubscribeLogs', $this->paginate());
+
+		// Find fields needed without recursing through associated models 
+		// Note about the date range:
+		// the end date is hour zero of the date, but there are 24 hours occuring after that that are still  
+		// the end date, so add 86400 seconds to it: end_ut+86400. 
+		// eg. 2012-01-01 00:00:00 + 24hours
+		$data = $this->UnsubscribeLog->find('all',
+			array(
+				'conditions'=>array(
+					'mailingId'=>$this->data['unsubscribe_logs']['mailingList'],
+					'unsubDate >='=>$this->start_ut,
+					'unsubDate <='=>$this->end_ut+86400,
+				),
+				'fields' => array(
+					'email',
+					'mailingId',
+					"from_unixtime(subDate, '%Y-%m-%d') as subDateYmd",
+					"from_unixtime(unsubDate, '%Y-%m-%d') as unsubDateYmd" 
+				),
+				'order' => "unsubDate DESC", 
+				'contain' => false 
+			)
+		); 
+
+		return $data;
+
 	}
 
-	function view($id = null) {
-		if (!$id) {
-			$this->Session->setFlash(__('Invalid UnsubscribeLog', true));
-			$this->redirect(array('action' => 'index'));
-		}
-		$this->set('unsubscribeLog', $this->UnsubscribeLog->read(null, $id));
-	}
-
-	function add() {
-		if (!empty($this->data)) {
-			$this->UnsubscribeLog->create();
-			if ($this->UnsubscribeLog->save($this->data)) {
-				$this->Session->setFlash(__('The UnsubscribeLog has been saved', true));
-				$this->redirect(array('action' => 'index'));
-			} else {
-				$this->Session->setFlash(__('The UnsubscribeLog could not be saved. Please, try again.', true));
-			}
-		}
-	}
-
-	function edit($id = null) {
-		if (!$id && empty($this->data)) {
-			$this->Session->setFlash(__('Invalid UnsubscribeLog', true));
-			$this->redirect(array('action' => 'index'));
-		}
-		if (!empty($this->data)) {
-			if ($this->UnsubscribeLog->save($this->data)) {
-				$this->Session->setFlash(__('The UnsubscribeLog has been saved', true));
-				$this->redirect(array('action' => 'index'));
-			} else {
-				$this->Session->setFlash(__('The UnsubscribeLog could not be saved. Please, try again.', true));
-			}
-		}
-		if (empty($this->data)) {
-			$this->data = $this->UnsubscribeLog->read(null, $id);
-		}
-	}
-
-	function delete($id = null) {
-		if (!$id) {
-			$this->Session->setFlash(__('Invalid id for UnsubscribeLog', true));
-			$this->redirect(array('action' => 'index'));
-		}
-		if ($this->UnsubscribeLog->del($id)) {
-			$this->Session->setFlash(__('UnsubscribeLog deleted', true));
-			$this->redirect(array('action' => 'index'));
-		}
-		$this->Session->setFlash(__('The UnsubscribeLog could not be deleted. Please, try again.', true));
-		$this->redirect(array('action' => 'index'));
-	}
 
 }
-?>
