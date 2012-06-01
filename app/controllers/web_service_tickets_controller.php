@@ -943,6 +943,11 @@ class WebServiceTicketsController extends WebServicesController
 		$clientId			= isset($params['clientId']) ? $params['clientId'] : false;
 		$offerId			= isset($params['offerId']) ? $params['offerId'] : false;
 		
+		// package id for deal alerts
+		if ($ppvNoticeTypeId == 41) {
+			$packageId = isset($params['packageId']) ? $params['packageId'] : null;
+		}
+		
 		// sender signature (mainly for manual emails sent from toolbox)
 		// -------------------------------------------------------------------------------
 		$sender_sig 		= isset($params['sender_sig']) ? $params['sender_sig'] : 0;
