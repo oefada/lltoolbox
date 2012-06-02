@@ -134,6 +134,7 @@
 		      		<li<?if(@($this->viewVars['currentTab'] == 'reports')) echo ' class="current"'?>><?=$html->link('Reports', array('controller' => 'reports', 'action' => 'index'))?></li>
 		      		<li<?if(@($this->viewVars['currentTab'] == 'customers')) echo ' class="current"'?>><?=$html->link('Concierge', array('controller' => 'users', 'action' => 'index'))?></li>
                     <li<?if(@($this->viewVars['currentTab'] == 'newsletters')) echo ' class="current"'?>><?=$html->link('Newsletters', array('controller' => 'mailings', 'action' => 'index'))?></li>
+					<li<?if(@($this->viewVars['currentTab'] == 'wiki')) echo ' class="current"'?>><?=$html->link('Wiki', 'http://wiki.luxurylink.com/Main_Page')?></li>
 					<li style="float: right; width: auto; background: none"><a href="/logout" style="background: none">Logout</a></li>
 		    	</ul>
 			</div>
