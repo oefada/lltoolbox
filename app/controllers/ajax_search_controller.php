@@ -1,5 +1,4 @@
 <?php
-
 /**
  * To add search to a controller, create a search() method with the following
  * code:
@@ -287,29 +286,32 @@ class AjaxSearchController extends AppController
 
 	function clients_jsonp()
 	{
-		header('Content-type: text/javascript');
 		$json = array();
 		if (isset($this->params['url']['name'])) {
 			$query = $this->params['url']['name'];
 			Configure::write('debug', 0);
 			$this->layout = 'ajax';
-			$this->AjaxSearch->table = 'clientNames';
-			$this->AjaxSearch->primaryKey = 'clientId';
-			$this->AjaxSearch->cacheClientNames();
-			$params = array(
-				'fields' => array(
-					'name',
-					'clientId'
-				),
-				'conditions' => array('OR' => array('name LIKE' => '%' . $query . '%', )),
-				'limit' => 10,
-				'order' => 'name',
-			);
-			foreach ($this->AjaxSearch->find('all', $params) as $client) {
-				$json[$client['AjaxSearch']['name']] = $client['AjaxSearch']['clientId'];
+			$results = $this->AjaxSearch->query('SELECT cl.*,ct.cityName FROM clientNames cn,`client` cl,city ct WHERE cn.clientId=cl.clientId AND ct.cityId=cl.cityId AND cn.name LIKE ? LIMIT 20', array($query . '%'));
+			foreach ($results as $client) {
+				if (isset($client['cl']['name']) && !empty($client['cl']['name'])) {
+					$cn = utf8_encode($client['cl']['name']);
+					$json[$cn] = array();
+					foreach (array('cl','ct') as $cx) {
+						foreach ($client[$cx] as $ck => $cv) {
+							if (!empty($ck) && !empty($cv)) {
+								$json[$cn][$ck] = is_string($cv) ? utf8_encode($cv) : $cv;
+							}
+						}
+					}
+				}
 			}
 			$this->set('jsonp', $json);
 		}
+	}
+
+	function beforeFilter()
+	{
+		$this->LdapAuth->allow('clients_jsonp');
 	}
 
 }
