@@ -139,9 +139,8 @@ class UsersController extends AppController {
 
 			$noSpace = FALSE;
 			$isEmail = false;
-
 			// when sorting by number of tickets	
-			if ($sort=='ticketCount'){
+			if ($sort=='ticketCount' || $sort==''){
 				$fields = array(
 					'ticket.ticketId',
 					'UserSiteExtended.username', 
@@ -173,7 +172,7 @@ class UsersController extends AppController {
 					$fields[] = "(CASE WHEN User.email LIKE '".$origQuery."' THEN 1 ELSE 0 END) AS emailmatch";
 					$conditions['OR']['User.email LIKE'] = '%'.$origQuery.'%';
 					$order[] = 'emailmatch DESC';
-				}else if ($sort=='ticketCount'){
+				}else if ($sort=='ticketCount' || $sort==''){
 					$joins=array(
 						array(
 							'table'=>'userSiteExtended',
@@ -221,7 +220,7 @@ class UsersController extends AppController {
 					$conditions['OR']['UserSiteExtended.username LIKE'] = "%$origQuery%";
 				}
 			}
-			if ($sort!='ticketCount'){
+			if ($sort!='ticketCount' && $sort!=''){
 				$this->paginate = array(
 					'conditions' => $conditions,
 					'contain' => array('UserSiteExtended', 'Ticket'),
