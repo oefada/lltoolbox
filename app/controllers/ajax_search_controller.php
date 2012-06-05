@@ -309,9 +309,11 @@ class AjaxSearchController extends AppController
 		}
 	}
 
+	/*
 	function beforeFilter()
 	{
 		$this->LdapAuth->allow('clients_jsonp');
 	}
+	*/
 
 }
