@@ -10,6 +10,9 @@ class UnsubscribeLogsController extends AppController
 
 	var $components = array('RequestHandler');
 
+	private start_ut;
+	private end_ut;
+
 	/**
 	 * Process posted data for retrieval of records by date range and mailing list id
 	 * 
@@ -17,22 +20,22 @@ class UnsubscribeLogsController extends AppController
 	 */
 	function index(){
 
-
+		// populate mailing list drop down selector
 		$nlMgr=new NewsletterManager();
 		$nlIdArr=$nlMgr->getNewsletterIdArr();
 		$this->set('nlIdArr',$nlIdArr);
 
 		if (!empty($this->data)){
 
-			$startMonth=$this->data['start']['month'];
-			$startDay=$this->data['start']['day'];
-			$startYear=$this->data['start']['year'];
-			$this->start_ut=mktime(0,0,0,$startMonth,$startDay,$startYear);
-			$endMonth=$this->data['end']['month'];
-			$endDay=$this->data['end']['day'];
-			$endYear=$this->data['end']['year'];
-			$this->end_ut=mktime(0,0,0,$endMonth,$endDay,$endYear);
+			// this sets $this->start_ut
+			$this->setStartUt();
+			// sets $this->end_ut
+			$this->setEndUt();
+
+			// get the data inside the date range
 			$data=$this->getUnsubData();
+
+			// set the view data
 			$this->set('output', $this->data['unsubscribe_logs']['Output']);
 			$this->set('start_ut',$this->start_ut);
 			$this->set('end_ut',$this->end_ut);
@@ -44,7 +47,9 @@ class UnsubscribeLogsController extends AppController
 			$this->set('endYear', $endYear);
 			$this->set('endMonth',$endMonth);
 			$this->set('endDay', $endDay);
+
 		}else{
+			// default form criteria 
 			$this->set('output', 'csv');
 			$this->set('startYear', date("Y"));
 			$this->set('startMonth', date("n"));
@@ -56,6 +61,36 @@ class UnsubscribeLogsController extends AppController
 
 	}
 
+
+	/**
+	 * Set the start unixtime based on user posted data 
+	 * 
+	 * @return null
+	 */
+	private function setStartUt(){
+
+		// repopulate the form with criteria user selected
+		$startMonth=$this->data['start']['month'];
+		$startDay=$this->data['start']['day'];
+		$startYear=$this->data['start']['year'];
+		$this->start_ut=mktime(0,0,0,$startMonth,$startDay,$startYear);
+
+	}
+
+	/**
+	 * Set the end unixtime based on user posted data 
+	 * 
+	 * @return null
+	 */
+	private function setEndUt(){
+
+		$endMonth=$this->data['end']['month'];
+		$endDay=$this->data['end']['day'];
+		$endYear=$this->data['end']['year'];
+		$this->end_ut=mktime(0,0,0,$endMonth,$endDay,$endYear);
+
+	}
+
 	/**
 	 * Export result set to csv file
 	 * 
@@ -63,12 +98,17 @@ class UnsubscribeLogsController extends AppController
 	 */
 	public function export(){
 
-
 		// Stop Cake from displaying action's execution time 
 		Configure::write('debug',0); 
 
+		// for mailing list drop down selector
 		$nlMgr=new NewsletterManager();
 		$nlArr=$nlMgr->getNewsletterIdArr();
+
+		// sets $this->start_ut
+		$this->setStartUt();
+		// sets $this->end_ut
+		$this->setEndUt();
 
 		$data=$this->getUnsubData();
 
@@ -84,7 +124,7 @@ class UnsubscribeLogsController extends AppController
 
 		// Add headers to start of data array 
 		array_unshift($data,$headers); 
-		// Make the data available to the view (and the resulting CSV file) 
+		// Make the data available to the view (and the resultant CSV file) 
 		$this->set(compact('data')); 
 
 	}
@@ -118,6 +158,5 @@ class UnsubscribeLogsController extends AppController
 		return $data;
 
 	}
-
 
 }
