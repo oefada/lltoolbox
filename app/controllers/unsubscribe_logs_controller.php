@@ -10,8 +10,8 @@ class UnsubscribeLogsController extends AppController
 
 	var $components = array('RequestHandler');
 
-	private start_ut;
-	private end_ut;
+	private $start_ut;
+	private $end_ut;
 
 	/**
 	 * Process posted data for retrieval of records by date range and mailing list id
