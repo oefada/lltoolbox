@@ -131,13 +131,14 @@ class UsersController extends AppController {
 				$query .= $part.' ';
 			}
 
-			$conditions = array(
+			/*
+				$conditions = array(
 				'OR' => array(
 				"MATCH(User.lastName,User.firstName) AGAINST('$query' IN BOOLEAN MODE)",
 				),
 			);
+			*/
 
-			$noSpace = FALSE;
 			$isEmail = false;
 			// when sorting by number of tickets	
 			if ($sort=='ticketCount' || $sort==''){
@@ -165,68 +166,75 @@ class UsersController extends AppController {
 
 			if (is_numeric($origQuery)) {// this is clearer, if it is a userId
 				$conditions['OR']['User.userId'] = $origQuery;
-			} elseif (strpos($origQuery, " ") === FALSE) {
-				$noSpace = true;
-				if (strpos($origQuery, "@")) {
-					$isEmail = true;
-					$fields[] = "(CASE WHEN User.email LIKE '".$origQuery."' THEN 1 ELSE 0 END) AS emailmatch";
-					$conditions['OR']['User.email LIKE'] = '%'.$origQuery.'%';
-					$order[] = 'emailmatch DESC';
-				}else if ($sort=='ticketCount' || $sort==''){
-					$joins=array(
-						array(
-							'table'=>'userSiteExtended',
-							'alias'=>'UserSiteExtended',
-							'type'=>'LEFT',
-							'conditions'=>array(
-								'User.userId=UserSiteExtended.userId',
-							)
-						),
-						array(
-							'table'=>'ticket',
-							'type'=>'LEFT',
-							'conditions'=>'User.userId=ticket.userId'
-						),
+			} elseif ( strpos($origQuery, "@")){// strpos(trim($origQuery), " ") === FALSE) {//no space has no meaining
+				$isEmail = true;
+				$fields[] = "(CASE WHEN User.email LIKE '".$origQuery."' THEN 1 ELSE 0 END) AS emailmatch";
+				$conditions['OR']['User.email LIKE'] = '%'.$origQuery.'%';
+				$order[] = 'emailmatch DESC';
+				$joins=array(
+					array(
+						'table'=>'ticket',
+						'type'=>'LEFT',
+						'conditions'=>'User.userId=ticket.userId'
+					)
+				);
+			}else if ($sort=='ticketCount' || $sort==''){
+				$joins=array(
+					array(
+						'table'=>'userSiteExtended',
+						'alias'=>'UserSiteExtended',
+						'type'=>'LEFT',
+						'conditions'=>array(
+							'User.userId=UserSiteExtended.userId',
+						)
+					),
+					array(
+						'table'=>'ticket',
+						'type'=>'LEFT',
+						'conditions'=>'User.userId=ticket.userId'
+					),
 
-					);
-					$conditions=array(
-							"((MATCH(User.lastName,User.firstName) AGAINST('$query' IN BOOLEAN MODE))
-							 OR UserSiteExtended.username LIKE  '%$origQuery%')",
-					);
+				);
+				$conditions=array(
+						"((MATCH(User.lastName,User.firstName) AGAINST('$query' IN BOOLEAN MODE))
+						 OR UserSiteExtended.username LIKE  '%$origQuery%')",
+				);
 
-					$this->paginate = array(
-						'recursive'=>0,
-						'joins' => $joins,
-						'contain' => array(), 
-						'conditions' => $conditions, 
-						'fields' => $fields,
-						'group' => 'User.userId',
-					);
-
-					if(isset($this->passedArgs['sort'])) {
-						$dsort = $this->passedArgs['sort'];
-						unset($this->passedArgs['sort']);
-						$dir=$this->passedArgs['direction'];
-						$this->paginate['order'] = array($dsort => $dir, 'hasTicketId'=>$dir);
-					}else{
-						$this->paginate['order'] = array('ticketCount' => 'DESC', 'hasTicketId'=>'DESC');
-					}
-
-				}else{
-					$order[] = 'usernamematch DESC';
-					$str= "(CASE WHEN UserSiteExtended.username LIKE '".$origQuery."' THEN 1 ELSE 0 END) ";
-					$str.="AS usernamematch";
-					$fields[]=$str;
-					$conditions['OR']['UserSiteExtended.username LIKE'] = "%$origQuery%";
-				}
-			}
-			if ($sort!='ticketCount' && $sort!=''){
 				$this->paginate = array(
+					'recursive'=>0,
+					'joins' => $joins,
+					'contain' => array(), 
+					'conditions' => $conditions, 
+					'fields' => $fields,
+					'group' => 'User.userId',
+				);
+
+				if(isset($this->passedArgs['sort'])) {
+					$dsort = $this->passedArgs['sort'];
+					unset($this->passedArgs['sort']);
+					$dir=$this->passedArgs['direction'];
+					$this->paginate['order'] = array($dsort => $dir, 'hasTicketId'=>$dir);
+				}else{
+					$this->paginate['order'] = array('ticketCount' => 'DESC', 'hasTicketId'=>'DESC');
+				}
+
+			}else{
+				$order[] = 'usernamematch DESC';
+				$str= "(CASE WHEN UserSiteExtended.username LIKE '".$origQuery."' THEN 1 ELSE 0 END) ";
+				$str.="AS usernamematch";
+				$fields[]=$str;
+				$conditions['OR']['UserSiteExtended.username LIKE'] = "%$origQuery%";
+			}
+
+			if ($isEmail || ($sort!='ticketCount' && $sort!='')){
+				$arr=array(
 					'conditions' => $conditions,
 					'contain' => array('UserSiteExtended', 'Ticket'),
 					'fields' => $fields,
+					'joins' => $joins,
 					'order' => $order,
 				);
+				$this->paginate = $arr;
 			}
 
 			if($this->params['form']['query']){
