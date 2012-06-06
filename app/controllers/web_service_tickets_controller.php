@@ -1031,7 +1031,8 @@ class WebServiceTicketsController extends WebServicesController
 
 			$this->ClientLoaPackageRel->Client->ClientDestinationRel->contain('Destination');
 			$offerType			= $this->OfferType->find('list');
-			$userPaymentData	= $this->findValidUserPaymentSetting($ticketData['userId']);
+			$ticketPaymentData	= $this->findUserPaymentSettingInfo($ticketData['userPaymentSettingId']);
+			
 			$paymentDetail		= $this->PaymentDetail->findByticketId($ticketId);
 			$paymentDetail		= (isset($paymentDetail['PaymentDetail'][0]) ? $paymentDetail['PaymentDetail'][0] : $paymentDetail['PaymentDetail']);
 			
@@ -1276,9 +1277,9 @@ class WebServiceTicketsController extends WebServicesController
 
 			// cc variables
 			// -------------------------------------------------------------------------------
-			if (is_array($userPaymentData) && !empty($userPaymentData)) {
-				$ccFour				= substr(aesDecrypt($userPaymentData['UserPaymentSetting']['ccNumber']), -4, 4);
-				$ccType				= $userPaymentData['UserPaymentSetting']['ccType'];
+			if (is_array($ticketPaymentData) && !empty($ticketPaymentData)) {
+				$ccFour				= substr(aesDecrypt($ticketPaymentData['UserPaymentSetting']['ccNumber']), -4, 4);
+				$ccType				= $ticketPaymentData['UserPaymentSetting']['ccType'];
 				//$billDate			= 
 			}
 
@@ -1396,7 +1397,13 @@ class WebServiceTicketsController extends WebServicesController
 				$ticketData['billingPrice'] = (isset($ticketData['billingPrice'])) ? $ticketData['billingPrice'] : 0;
 				
 				$clients[$client_index]['clientAdjustedPrice']	= $this->numF(($clients[$client_index]['percentOfRevenue'] / 100) * $ticketData['billingPrice']);
-				$clients[$client_index]['pdpUrl'] 				= $siteUrl."luxury-hotels/".$clients[$client_index]['seoName']."?clid=".$row['clientId']."&pkid=".$packageId;
+				
+				if ($isMystery) {
+					$clients[$client_index]['pdpUrl'] = $siteUrl."luxury-hotels/mystery-hotel?isMystery=1&oid=" . $offerId;
+				} else {
+					$clients[$client_index]['pdpUrl'] = $siteUrl."luxury-hotels/".$clients[$client_index]['seoName']."?clid=".$row['clientId']."&pkid=".$packageId;
+				}
+				
 				$clients[$client_index]['destData'] 			= $this->ClientLoaPackageRel->Client->ClientDestinationRel->findByclientId($row['clientId'],array(),"parentId DESC, clientDestinationRelId DESC");
 				$clients[$client_index]['themeData']			= $this->ClientThemeRel->find('all', Array('conditions' => Array('ClientThemeRel.clientId' =>$row['clientId'])));
 				
@@ -2321,6 +2328,12 @@ class WebServiceTicketsController extends WebServicesController
 		}
 		return ($found_valid_cc) ? $v : 'EXPIRED';
 	}
+
+	function findUserPaymentSettingInfo($upsId) {
+		$ups = $this->User->query("SELECT * FROM userPaymentSetting AS UserPaymentSetting WHERE userPaymentSettingId = $upsId");
+		return (is_array($ups)) ? $ups[0] : false;
+	}
+
 
 	function addTrackPending($trackId, $pendingAmount) {
 
