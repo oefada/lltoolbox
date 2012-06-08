@@ -32,6 +32,7 @@
 App::import('Model', 'Client');
 App::import('Model', 'Loa');
 App::import('Model', 'User');
+App::import('Model', 'LltUserEvent');
 class ConsolidatedReport extends AppModel
 {
 	public $useTable = false;
@@ -59,6 +60,13 @@ class ConsolidatedReport extends AppModel
 	 * @param	object
 	 */
 	private $User;
+	
+	/**
+	 * lltUserEvent Model
+	 * 
+	 * @param	object
+	 */
+	private $lltUserEvent;
 	
 	/**
 	 * client id
@@ -116,6 +124,7 @@ class ConsolidatedReport extends AppModel
 		$this->Client = new Client();
 		$this->Loa = new Loa();
 		$this->User = new User();
+		$this->lltUserEvent = new LltUserEvent();
 		parent::__construct();
 	}
 	
@@ -403,6 +412,7 @@ class ConsolidatedReport extends AppModel
 			case 2: $table = 'carConsolidatedViewFg'; break;
 		}
 		
+		// Get impressions from omniture
 		$this->setDataSource('reporting');
 		$sql = "
 			SELECT
@@ -416,6 +426,10 @@ class ConsolidatedReport extends AppModel
 		";
 		$data = $this->query($sql);
 		
+		// Get impressions from skynet
+		
+		
+		// set datasource back to default
 		$this->setDataSource('default');
 		return array(
 			'impressions' => (is_null($data[0][0]['impressions'])) ? 0 : $data[0][0]['impressions'],

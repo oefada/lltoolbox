@@ -25,6 +25,21 @@ class ConsolidatedReportJob extends AppModel
 	}
 	
 	/**
+	 * 
+	 */
+	 public function getClientIdsByJobId($jobId)
+	 {
+	 	$params = array(
+	 		'conditions' => array(
+				'ConsolidatedReportJob.id' => $jobId
+			),
+		);
+		
+		$jobData = $this->find('all', $params); 
+		return $jobData[0]['ConsolidatedReportJobsClients'];
+	 }
+	
+	/**
 	 *
 	 */
 	public function setJobInProgress($job_id) {

@@ -59,5 +59,15 @@ class DATABASE_CONFIG {
 		'database' => 'vacationist',
 		'previx' => ''
 	);
+	
+	public $business_db2 = array(
+		'driver' => 'mysqli',
+		'persistent' => false,
+		'host' => 'business-db2',
+		'login' => 'root',
+		'password' => '',
+		'database' => 'toolbox',
+		'previx' => ''
+	);
 }
 ?>
