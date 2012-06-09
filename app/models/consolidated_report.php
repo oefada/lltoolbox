@@ -406,31 +406,61 @@ class ConsolidatedReport extends AppModel
 	 */
 	private function getImpressionsBySiteForPeriod($site_id, $start_date, $end_date)
 	{
-		$table = '';
-		switch($site_id) {
-			case 1: $table = 'carConsolidatedView'; break;
-			case 2: $table = 'carConsolidatedViewFg'; break;
-		}
-		
-		// Get impressions from omniture
+		//We are using the reporting database for this data
 		$this->setDataSource('reporting');
-		$sql = "
-			SELECT
-				sum(totalImpressions) as impressions,
-				sum(webrefer) as clicks
-			FROM
-				$table
-			WHERE
-				clientid = {$this->client_id}
-				AND activityStart BETWEEN '{$start_date}' AND '{$end_date}'
-		";
-		$data = $this->query($sql);
 		
-		// Get impressions from skynet
-		
+		if ($site_id == 1 && $end_date > '2012-04-30 23:59:59') {
+			// Get impressions from skynet
+			$params = array($this->client_id, substr($start_date, 0, 7));
+
+			$sql = "
+				SELECT
+					sum(total) as impressions
+				FROM
+					lltUserEventRollupByMonth
+				WHERE
+					clientId = ?
+					AND eventId IN (41, 42, 43, 44, 45, 46, 48)
+					AND yearMonth = ?
+			";
+			$skynetImpressions = $this->query($sql, $params);
+			
+			$sql = "
+				SELECT
+					total as clicks
+				FROM
+					lltUserEventRollupByMonth
+				WHERE
+					clientId = ?
+					AND eventId = 40
+					AND yearMonth = ?
+			";
+			$skynetClicks = $this->query($sql, $params);
+			
+			$data = array(array(array('impressions' => $skynetImpressions[0][0]['impressions'], 'clicks' => $skynetClicks[0]['lltUserEventRollupByMonth']['clicks'])));
+		} else {
+			// Get impressions from omniture
+			switch($site_id) {
+				case 1: $table = 'carConsolidatedView'; break;
+				case 2: $table = 'carConsolidatedViewFg'; break;
+			}
+			
+			$sql = "
+				SELECT
+					sum(totalImpressions) as impressions,
+					sum(webrefer) as clicks
+				FROM
+					$table
+				WHERE
+					clientid = {$this->client_id}
+					AND activityStart BETWEEN '{$start_date}' AND '{$end_date}'
+			";
+			$data = $this->query($sql);
+		}
 		
 		// set datasource back to default
 		$this->setDataSource('default');
+		
 		return array(
 			'impressions' => (is_null($data[0][0]['impressions'])) ? 0 : $data[0][0]['impressions'],
 			'clicks' => (is_null($data[0][0]['clicks'])) ? 0 : $data[0][0]['clicks']
