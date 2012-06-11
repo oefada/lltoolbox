@@ -944,7 +944,7 @@ class WebServiceTicketsController extends WebServicesController
 		$offerId			= isset($params['offerId']) ? $params['offerId'] : false;
 		
 		// package id for deal alerts
-		if ($ppvNoticeTypeId == 41 || $ppvNoticeTypeId == 42) {
+		if ($ppvNoticeTypeId == 41 || $ppvNoticeTypeId == 42 || $ppvNoticeTypeId == 43) {
 			$packageId = isset($params['packageId']) ? $params['packageId'] : null;
 		}
 		
@@ -1881,6 +1881,14 @@ class WebServiceTicketsController extends WebServicesController
 				$templateFile = "41_leadgen_alert";
 				$emailSubject = $templateTitle = $clientNameP . " has a new vacation experience";
 				$hideSalutation = true;
+				break;
+			case 42:
+				include('../vendors/email_msgs/notifications/42_43_abandoned_cart.html');
+				$emailSubject = "Your Pending Reservation";
+				break;
+			case 43:
+				include('../vendors/email_msgs/notifications/42_43_abandoned_cart.html');
+				$emailSubject = "Your Pending Reservation";
 				break;
 			default:
 				break;
