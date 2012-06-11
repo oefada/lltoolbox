@@ -944,7 +944,7 @@ class WebServiceTicketsController extends WebServicesController
 		$offerId			= isset($params['offerId']) ? $params['offerId'] : false;
 		
 		// package id for deal alerts
-		if ($ppvNoticeTypeId == 41) {
+		if ($ppvNoticeTypeId == 41 || $ppvNoticeTypeId == 42) {
 			$packageId = isset($params['packageId']) ? $params['packageId'] : null;
 		}
 		
