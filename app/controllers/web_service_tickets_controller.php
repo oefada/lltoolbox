@@ -1474,7 +1474,11 @@ class WebServiceTicketsController extends WebServicesController
 			case 31:
 			case 33:
 				$clientPpv = true;
-				$extranet_link = $this->getExtranetLink($ticketId, $siteId);
+				if ($ppvNoticeTypeId == 29) {
+					$extranet_link = $this->getExtranetCancellationLink($ticketId, $siteId);
+				} else {
+					$extranet_link = $this->getExtranetLink($ticketId, $siteId);
+				}
 				if ($isAuction) {
 					$emailFrom = $emailReplyTo = "reservationrequests@$siteEmail";
 				} else {
@@ -1776,10 +1780,7 @@ class WebServiceTicketsController extends WebServicesController
 				}
 				
 				break;
-			case 29:
-				// send out res cancellation request
-				$extranet_link = $this->getExtranetCancellationLink($ticketId, $siteId);
-				
+			case 29:				
 				if ($siteId == 2) {
 					include('../vendors/email_msgs/notifications/29_reservation_cancel_request.html');
 					$emailSubject = "$siteName Cancellation Request - ACTION REQUIRED - $emailName";
@@ -1818,9 +1819,7 @@ class WebServiceTicketsController extends WebServicesController
 					$emailSubject = "Your $siteName Booking was Cancelled. - $clientNameP";
 				}
 				break;
-			case 32:
-				// this goes out with 24, info to customer
-				$extranet_link = $this->getExtranetLink($ticketId, $siteId);
+			case 32:				
 				include('../vendors/email_msgs/notifications/32_reservation_request_followup_customer.html');
 				$emailSubject = "Your Pending Reservation";
 				$emailFrom = ($isAuction) ? "$siteDisplay <resrequests@$siteEmail>" : "$siteDisplay <reservations@$siteEmail>";
@@ -1831,7 +1830,7 @@ class WebServiceTicketsController extends WebServicesController
 				$templateFile = "33_change_dates_request_template";
 				
 				if ($siteId == 1) {
-					$emailSubject = "Luxury Link Booking Request – Change of Dates requested";
+					$emailSubject = "Luxury Link Booking Request - Change of Dates requested";
 					$templateTitle = "Immediate Attention Required: Change of Dates";
 				} else {
 					$emailSubject = "Your $siteName Request has been Received - $clientNameP";
