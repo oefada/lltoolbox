@@ -942,6 +942,7 @@ class WebServiceTicketsController extends WebServicesController
 		$siteId				= isset($params['siteId']) ? $params['siteId'] : false;
 		$clientId			= isset($params['clientId']) ? $params['clientId'] : false;
 		$offerId			= isset($params['offerId']) ? $params['offerId'] : false;
+		$clientImagePath	= isset($params['clientImagePath']) ? $params['clientImagePath'] : false;
 		
 		// package id for deal alerts
 		if ($ppvNoticeTypeId == 41 || $ppvNoticeTypeId == 42 || $ppvNoticeTypeId == 43) {
@@ -1064,10 +1065,12 @@ class WebServiceTicketsController extends WebServicesController
 				$userId = $this->User->UserSiteExtended->findByuserId($userId);
 			} elseif (isset($params['userEmail'])) {
 				// Deal alert and other non-user e-mails
-				$userData = array(
-					'email' => $params['userEmail'],
-					'firstName' => $params['userEmail'],
-				);
+				$userData = array('email' => $params['userEmail']);
+				if (isset($params['userFirstName'])) {
+					$userData['firstName'] = $params['userFirstName'];
+				} else {
+					$userData['firstName'] = $params['userEmail'];
+				}
 			}
 			
 			if (!isset($userData)) {
@@ -1883,12 +1886,16 @@ class WebServiceTicketsController extends WebServicesController
 				$hideSalutation = true;
 				break;
 			case 42:
+				$isAuction = 1;
+				$additionalClients = (isset($params['acAdditionalClients'])) ? $params['acAdditionalClients'] : array();
 				include('../vendors/email_msgs/notifications/42_43_abandoned_cart.html');
-				$emailSubject = "Your Pending Reservation";
+				$emailSubject = "Questions with your " . $clientNameP . " Order?";
 				break;
 			case 43:
+				$isAuction = 0;
+				$additionalClients = (isset($params['acAdditionalClients'])) ? $params['acAdditionalClients'] : array();
 				include('../vendors/email_msgs/notifications/42_43_abandoned_cart.html');
-				$emailSubject = "Your Pending Reservation";
+				$emailSubject = "Questions with your " . $clientNameP . " Order?";
 				break;
 			default:
 				break;
@@ -2340,7 +2347,6 @@ class WebServiceTicketsController extends WebServicesController
 		$ups = $this->User->query("SELECT * FROM userPaymentSetting AS UserPaymentSetting WHERE userPaymentSettingId = $upsId");
 		return (is_array($ups)) ? $ups[0] : false;
 	}
-
 
 	function addTrackPending($trackId, $pendingAmount) {
 
