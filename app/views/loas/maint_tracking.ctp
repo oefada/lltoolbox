@@ -41,6 +41,13 @@ $this->set('clientId', $this->data['Client']['clientId']);
 		</tr>
 	</table>
 
+
+	<p align="center" style='margin-bottom:-20px;'>
+		<a href="javascript:void(0);" id="showRows"><b>Show rows without ticketId's</b></a>
+		 &#183;   
+		<a href="javascript:void(0);" id="hideRows"><b>Hide rows without ticketId's</b></a>
+	</p>
+
 	<?php if (!empty($tracks)) :?>
 	<?php foreach ($tracks as $track) : ?>
 	
@@ -63,20 +70,21 @@ $this->set('clientId', $this->data['Client']['clientId']);
 		</table>
 		
 		<?php if (!empty($track['offers'])) : ?>
+
 			<table cellpadding="0" cellspacing="0" border="1" style="font-size:11px;">
 				<tr>
-					<th style="color:#FFF;">Offer Id</th>
-					<th style="color:#FFF;">Package Id</th>
-					<th style="color:#FFF;">Offer Type</th>
-					<th style="color:#FFF;">Start Date</th>
-					<th style="color:#FFF;">End Date</th>
-					<th style="color:#FFF;">Retail Value</th>
-					<th style="color:#FFF;">Opening Bid</th>
+					<th style="color:#FFF;"><?=($utilities->clickSort($this, 'offerId'));?></a></th>
+					<th style="color:#FFF;"><?=$utilities->clickSort($this,'packageId');?></th>
+					<th style="color:#FFF;"><?=$utilities->clickSort($this, 'offerTypeName');?></th>
+					<th style="color:#FFF;"><?=$utilities->clickSort($this,'startDate');?></th>
+					<th style="color:#FFF;"><?=$utilities->clickSort($this, 'endDate');?></th>
+					<th style="color:#FFF;"><?=$utilities->clickSort($this, 'retailValue');?></th>
+					<th style="color:#FFF;"><?=$utilities->clickSort($this, 'openingBid');?></th>
 					<th style="color:#FFF;">Min Bid % Retail</th>
 					<th style="color:#FFF;">Closing % Retail</th>
-                    <th style="color:#FFF;">Num. Nights</th>
+		  		<th style="color:#FFF;">Num. Nights</th>
 					<th style="color:#FFF;">Track Detail Id</th>
-					<th style="color:#FFF;">Ticket Id</th>
+					<th style="color:#FFF;"><?=$utilities->clickSort($this, 'ticketId', 'Ticket Id');?></th>
 					<th style="color:#FFF;">Ticket Amount</th>
 					<th style="color:#FFF;">Allocated Amount</th>
 					<th style="color:#FFF;">Cycle</th>
@@ -84,54 +92,49 @@ $this->set('clientId', $this->data['Client']['clientId']);
 					<th style="color:#FFF;">Amount Remitted</th>
 				</tr>
 
-				<?php foreach ($track['offers'] as $offer) : ?>			
+				<?php foreach ($track['offers'] as $tid=>$offer) : 
 
-				<?php if (isset($track_details[$offer['offerId']])) : ?>				
+					$td_rows='<td style="text-align:center;">'.$offer['offerId'].'</td>
+					<td style="text-align:center;">'.$offer['packageId'].'</td>
+					<td style="text-align:center;">'.$offer['offerTypeName'].'</td>
+					<td style="text-align:center;">'.$offer['startDate'].'</td>
+					<td style="text-align:center;">'.$offer['endDate'].'</td>
+					<td style="text-align:center;">'.($number->currency($offer['retailValue'])).'</td>
+					<td style="text-align:center;">'.($number->currency($offer['openingBid'])).'</td>
+					<td style="text-align:center;">'.($number->toPercentage($offer['openingBid'] / $offer['retailValue'] * 100)).'</td>';
 
-					<?php foreach ($track_details[$offer['offerId']] as $k => $trackDetail) : ?>			
-					<tr style="background-color:#FFFFEE">
-					<td style="text-align:center;"><?=$offer['offerId'];?></td>
-					<td style="text-align:center;"><?=$offer['packageId'];?></td>
-					<td style="text-align:center;"><?=$offer['offerTypeName'];?></td>
-					<td style="text-align:center;"><?=$offer['startDate'];?></td>
-					<td style="text-align:center;"><?=$offer['endDate'];?></td>
-					<td style="text-align:center;"><?php echo $number->currency($offer['retailValue']);?></td>
-					<td style="text-align:center;"><?php echo $number->currency($offer['openingBid']);?></td>
-					<td style="text-align:center;"><?php echo $number->toPercentage($offer['openingBid'] / $offer['retailValue'] * 100);?></td>
-					<td style="text-align:center;"><?php echo $number->toPercentage($trackDetail['ticketAmount'] / $offer['retailValue'] * 100);?></td>
-                    <td style="text-align:center;"><?php echo isset($trackDetail['numNights']) ? $trackDetail['numNights'] : '-'; ?></td>
-					<td style="text-align:center;"><a href="/tickets/<?php echo $trackDetail['ticketId'];?>/trackDetails/edit/<?php echo $trackDetail['trackDetailId'];?>" target="_BLANK"><?php echo $trackDetail['trackDetailId'];?></a></td>
-					<td style="text-align:center;"><a href="/tickets/view/<?php echo $trackDetail['ticketId'];?>" target="_BLANK"><?php echo $trackDetail['ticketId'];?></a></td>
-					<td style="text-align:center;"><?php echo $number->currency($trackDetail['ticketAmount']);?></td>
-					<td style="text-align:center;"><?php echo $number->currency($trackDetail['allocatedAmount']);?></td>
-					<td style="text-align:center;"><?php echo $trackDetail['cycle'];?></td>
-					<td style="text-align:center;"><?php echo $number->currency($trackDetail['amountKept']);?></td>
-					<td style="text-align:center;"><?php echo $number->currency($trackDetail['amountRemitted']);?></td>					
-					</tr>
-					<?php endforeach; ?>
 
-				<?php else :?>
+						if (isset($offer['ticketId'])){ ?>
 
-					<tr>
-					<td style="text-align:center;"><?=$offer['offerId'];?></td>
-					<td style="text-align:center;"><?=$offer['packageId'];?></td>
-					<td style="text-align:center;"><?=$offer['offerTypeName'];?></td>
-					<td style="text-align:center;"><?=$offer['startDate'];?></td>
-					<td style="text-align:center;"><?=$offer['endDate'];?></td>
-					<td style="text-align:center;"><?php echo $number->currency($offer['retailValue']);?></td>
-					<td style="text-align:center;"><?php echo $number->currency($offer['openingBid']);?></td>
-					<td style="text-align:center;"><?php echo $number->toPercentage($offer['openingBid'] / $offer['retailValue'] * 100);?></td>
-					<td style="text-align:center;"> - </td>
-					<td style="text-align:center;"> - </td>
-					<td style="text-align:center;"> - </td>
-					<td style="text-align:center;"> - </td>
-					<td style="text-align:center;"> - </td>
-					<td style="text-align:center;"> - </td>
-					<td style="text-align:center;"> - </td>
-					<td style="text-align:center;"> - </td>
-					</tr>			
+							<tr style="background-color:#FFFFEE">
+							<?=$td_rows;?>
+							<td style="text-align:center;"><?php echo $number->toPercentage($offer['ticketAmount'] / $offer['retailValue'] * 100);?></td>
+							<td style="text-align:center;"><?php echo isset($offer['numNights']) ? $offer['numNights'] : '-'; ?></td>
+							<td style="text-align:center;"><a href="/tickets/<?php echo $offer['ticketId'];?>/trackDetails/edit/<?php echo $offer['trackDetailId'];?>" target="_BLANK"><?php echo $offer['trackDetailId'];?></a></td>
+							<td style="text-align:center;"><a href="/tickets/view/<?php echo $offer['ticketId'];?>" target="_BLANK"><?php echo $offer['ticketId'];?></a></td>
+							<td style="text-align:center;"><?php echo $number->currency($offer['ticketAmount']);?></td>
+							<td style="text-align:center;"><?php echo $number->currency($offer['allocatedAmount']);?></td>
+							<td style="text-align:center;"><?php echo $offer['cycle'];?></td>
+							<td style="text-align:center;"><?php echo $number->currency($offer['amountKept']);?></td>
+							<td style="text-align:center;"><?php echo $number->currency($offer['amountRemitted']);?></td>
+						<? }else{ ?>
 
-				<?php endif; ?>
+							<tr class='noTicketId' style="display:none;">
+							<?=$td_rows;?>
+							<td style="text-align:center;"> - </td>
+							<td style="text-align:center;"> - </td>
+							<td style="text-align:center;"> - </td>
+							<td style="text-align:center;"> - </td>
+							<td style="text-align:center;"> - </td>
+							<td style="text-align:center;"> - </td>
+							<td style="text-align:center;"> - </td>
+							<td style="text-align:center;"> - </td>
+							<td style="text-align:center;"> - </td>
+							</tr>			
+
+						<? } ?>
+
+						</tr>
 
 				<?php endforeach; ?>
 
@@ -144,3 +147,18 @@ $this->set('clientId', $this->data['Client']['clientId']);
 	<?php if ($trackWarning) { echo $trackWarning; } ?>
 	
 </div>
+
+
+
+<script>
+
+jQuery(function(){
+	jQuery("#showRows").click(function(){
+		jQuery(".noTicketId").show();
+	});
+	jQuery("#hideRows").click(function(){
+		jQuery(".noTicketId").hide();
+	});
+});
+
+</script>
