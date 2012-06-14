@@ -4,6 +4,10 @@ $this->searchController = 'Tickets';
 ?>
 <div class="tickets view">
 	<h2 class="title">Ticket Detail</h2>
+	<? if ($ticket['Ticket']['manualTicketInitials']!=''){
+		echo "<span style='color:red;'>Manual Ticket</span>";
+	} ?>
+	<? //print "<pre>";print_r($ticket);?>
 	<?php if (count($ticket['Client']) > 1) {
 		echo "<h3>*** This is a MULTI-CLIENT package ***</h3>";
 	} ?>
