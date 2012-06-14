@@ -1925,6 +1925,9 @@ class WebServiceTicketsController extends WebServicesController
 			}
 		} else {
 			$emailBody = ob_get_clean();
+			if ($ppvNoticeTypeId == 42 || $ppvNoticeTypeId == 43) {
+				$emailBody = $this->utmLinks($emailBody, $ppvNoticeTypeId, $append);
+			}
 		}
 		
 		// Returns editable subject part for ppv_notices_controller
