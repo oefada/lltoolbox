@@ -398,7 +398,26 @@ class ConsolidatedReport extends AppModel
 	 */
 	public function getImpressionDataBySiteForYearToDate($site_id)
 	{
-		return $this->getImpressionsBySiteForPeriod($site_id, $this->loa_start_date, $this->month_end_date);
+		$omnitureData = array();
+		$skynetData = array();
+		$impressions = 0;
+		$clicks = 0;
+		$dataToReturn = array();
+
+		if ($site_id === 1 && $this->month_end_date > '2012-04-30 23:59:59') {
+			$omnitureData = $this->getImpressionsBySiteForPeriod($site_id, $this->loa_start_date, '2012-04-30 23:59:59');
+			$skynetData = $this->getImpressionsBySiteForPeriod($site_id, '2012-05-01 00:00:00', $this->month_end_date);
+			$impressions = $omnitureData['impressions'] + $skynetData['impressions'];
+			$clicks = $omnitureData['clicks'] + $skynetData['clicks'];
+			$dataToReturn = array(
+				'impressions'	=> $impressions,
+				'clicks'		=> $clicks
+			);
+		} else {
+			$dataToReturn = $this->getImpressionsBySiteForPeriod($site_id, $this->loa_start_date, $this->month_end_date);
+		}
+
+		return $dataToReturn;
 	}
 	
 	/**
