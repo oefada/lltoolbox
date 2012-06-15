@@ -1,22 +1,35 @@
 <?php
 $this->set('hideSidebar', true);
+
 ?>
 
 <?php if(isset($query)): 
 
+//var_dump($paginator);exit;
+
 $this->pageTitle = __('Users', true);
 echo '<div id="users-index" class="users index">';
 $html->addCrumb('Users'); ?>
-<?php if(isset($query)) $query = ''; ?>
+<?php //if(isset($query)) $query = ''; ?>
 <?php echo $this->renderElement('ajax_paginator', array('divToPaginate' => 'users-index', 'showCount' => true))?>
 <table cellpadding="0" cellspacing="0">
 <tr>
-	<th><?php echo $paginator->sort('userId');?></th>
-	<th><?php echo $paginator->sort('Username','UserSiteExtended.username');?></th>
-	<th><?php echo $paginator->sort('Tickets','ticketCount');?></th>
-	<th><?php echo $paginator->sort('firstName');?></th>
-	<th><?php echo $paginator->sort('lastName');?></th>
-	<th><?php echo $paginator->sort('email');?></th>
+<!--	
+	<th><?php echo $utilities->clickSort($this,'userId',null,$_GET);?></th>
+	<th><?php echo $utilities->clickSort($this,'UserSiteExtended.username','Username',$_GET);?></th>
+	<th><?php echo $utilities->clickSort($this,'ticketCount','Tickets',$_GET);?></th>
+	<th><?php echo $utilities->clickSort($this,'firstName','First Name',$_GET);?></th>
+	<th><?php echo $utilities->clickSort($this,'lastName','Last Name',$_GET);?></th>
+	<th><?php echo $utilities->clickSort($this,'email','email',$_GET);?></th>
+-->
+
+<th><?php echo $paginator->sort('userId');?></th>
+<th><?php echo $paginator->sort('Username','UserSiteExtended.username');?></th>
+<th><?php echo $paginator->sort('Tickets','ticketCount');?></th>
+<th><?php echo $paginator->sort('firstName');?></th>
+<th><?php echo $paginator->sort('lastName');?></th>
+<th><?php echo $paginator->sort('email');?></th>
+
 	<th class="actions"><?php __('Actions');?></th>
 </tr>
 <?php
@@ -37,8 +50,8 @@ foreach ($users as $user):
 		</td>
 		
 		<td>
-			<?
-			if (isset($user['ticket']) && $user['ticket']['ticketId']!=''){	
+			<?//the row will be counted as one when there is no ticket, so only display ticketCount if hasTicketId 
+			if ($user[0]['hasTicketId']){
 				echo $html->link(($user[0]['ticketCount']), '/tickets/?searchUserId='.$user['User']['userId']); 
 			}else{
 				echo '0';
