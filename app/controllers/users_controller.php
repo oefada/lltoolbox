@@ -91,161 +91,184 @@ class UsersController extends AppController {
 		}
 	}
 
+	// $query is used to query against firstName, lastName and userName at the same time
+	// $specificSearch is used to signify a single search against firstName, or single search against lastName
+	// or a single search against firstName + lastName, or single search against username
+	// email searches use $origQuery
 	function search()
 	{
 
-		if(!empty($_GET['query'])) {
+		$options = array();
+		$joins = array();
+		$order=array();
+		$origQuery='';
+		$firstName='';
+		$lastName='';
+		$username='';
+		$email='';
+		$query='';
+		$queryBooleanMode='';
+		$specificSearch=false;
+		$paginateArr=array();
+
+		$params=$this->params;
+
+		//
+		// set posted form values 
+		//
+		if (!empty($params['url']['firstName'])){
+			$firstName=trim($this->Sanitize->escape($this->params['url']['firstName']));
+			$specificSearch='firstName';
+		}elseif (!empty($params['named']['firstName'])){
+			$firstName=trim($this->Sanitize->escape($params['named']['firstName']));
+			$specificSearch='firstName';
+		}
+
+		if (!empty($params['url']['lastName'])){
+			$lastName=trim($this->Sanitize->escape($this->params['url']['lastName']));
+			$specificSearch='lastName';
+		}else if (!empty($params['named']['lastName'])){
+			$lastName=trim($this->Sanitize->escape($this->params['named']['lastName']));
+			$specificSearch='lastName';
+		}
+		if (!empty($params['url']['username'])){
+			$username=trim($this->Sanitize->escape($params['url']['username']));
+			$specificSearch='username';
+		}elseif(!empty($params['named']['username'])){
+			$username=trim($this->Sanitize->escape($params['named']['username']));
+			$specificSearch='username';
+		}
+
+		if(!empty($_GET['query']) && $_GET['query']!='email') {
 			$this->params['form']['query'] = $_GET['query'];
  		} elseif(!empty($this->params['named']['query'])) {
 			$this->params['form']['query'] = $this->params['named']['query'];
 		}
 
-		if(strlen($this->params['form']['query']) <= 3) {
+		if (!empty($this->params['form']['query'])){
+			$query = trim($this->Sanitize->escape($this->params['form']['query']));
+			// If it has a space in it, treat as first and last name 
+			if (strstr($query," ")){
+				$qArr=explode(" ", $query);
+				$firstName=$qArr[0];
+				$lastName=$qArr[1];
+				$specificSearch="fullName";
+			}
+		}
+		if($query!='' && strlen($query) <= 3){
 			return;
 		}
 
-		// for handling unique sort of ticket count
-		if (isset($this->params['named']['sort'])){
-			$sort=$this->params['named']['sort'];
-		}else if (isset($this->passedArgs['sort'])){
-			$sort=$this->passedArgs['sort'];
-		}else{
-			$sort='';
+		if (strstr($query, "@")){
+			$email=trim($query);
 		}
 
-		$options = array();
-		$joins = array();
-		$order=array();
 
-		if(!empty($this->params['form']['query'])){
+		//
+		// set sort and direction of sort
+		//
+		if (isset($this->params['named']['sort'])){
+			$sort=$this->params['named']['sort'];
+			$dir=$this->params['named']['direction'];
+		}else if (isset($this->passedArgs['sort'])){
+			$sort=$this->passedArgs['sort'];
+			$dir=$this->passedArgs['direction'];
+		}else{
+			$sort='ticketCount';
+			$dir='DESC';
+		}
 
-			$query = $this->Sanitize->escape($this->params['form']['query']);
-			$origQuery = $query;
-			$parts = explode(' ', $query);
+		// For some reason, to get ticketCount to work, this has to be unset.
+		if (isset($this->passedArgs['sort']) && $this->passedArgs['sort']=='ticketCount'){
+			unset($this->passedArgs['sort']);
+		}
 
-			$query = '';
-			foreach ($parts as $part) {
-				if (strlen($part) > 2) {
-					$query .= '+';
-				}
-				$query .= $part.' ';
-			}
+		//
+		// build queries
+		//
+		if ($query || $specificSearch || $email){
 
-			/*
-				$conditions = array(
-				'OR' => array(
-				"MATCH(User.lastName,User.firstName) AGAINST('$query' IN BOOLEAN MODE)",
+			$fields = array(
+				'ticket.ticketId',
+				'UserSiteExtended.username', 
+				'User.userId', 
+				'User.firstName', 
+				'User.lastName', 
+				'User.email', 
+				'User.inactive',
+				'count(*) as ticketCount',
+				'(CASE WHEN ticket.ticketId is not null THEN 1 ELSE 0 END) AS hasTicketId'
+			);
+
+			$joins=array(
+				array(
+					'table'=>'userSiteExtended',
+					'alias'=>'UserSiteExtended',
+					'type'=>'LEFT',
+					'conditions'=>array(
+						'User.userId=UserSiteExtended.userId',
+					)
+				),
+				array(
+					'table'=>'ticket',
+					'type'=>'LEFT',
+					'conditions'=>'User.userId=ticket.userId'
 				),
 			);
-			*/
 
-			$isEmail = false;
-			// when sorting by number of tickets	
-			if ($sort=='ticketCount' || $sort==''){
-				$fields = array(
-					'ticket.ticketId',
-					'UserSiteExtended.username', 
-					'User.userId', 
-					'User.firstName', 
-					'User.lastName', 
-					'User.email', 
-					'User.inactive',
-					'count(*) as ticketCount',
-					'(CASE WHEN ticket.ticketId is not null THEN 1 ELSE 0 END) AS hasTicketId'
-				);
-			}else{
-				$fields = array(
-					'UserSiteExtended.username', 
-					'User.userId', 
-					'User.firstName', 
-					'User.lastName', 
-					'User.email', 
-					'User.inactive'
-				);
-			}
+			if ( $email ){ 
 
-			if (is_numeric($origQuery)) {// this is clearer, if it is a userId
-				$conditions['OR']['User.userId'] = $origQuery;
-			} elseif ( strpos($origQuery, "@")){// strpos(trim($origQuery), " ") === FALSE) {//no space has no meaining
-				$isEmail = true;
-				$fields[] = "(CASE WHEN User.email LIKE '".$origQuery."' THEN 1 ELSE 0 END) AS emailmatch";
-				$conditions['OR']['User.email LIKE'] = '%'.$origQuery.'%';
+				$fields[] = "(CASE WHEN User.email LIKE '".$email."' THEN 1 ELSE 0 END) AS emailmatch";
+				$conditions['OR']['User.email LIKE'] = $email.'%';
 				$order[] = 'emailmatch DESC';
-				$joins=array(
-					array(
-						'table'=>'ticket',
-						'type'=>'LEFT',
-						'conditions'=>'User.userId=ticket.userId'
-					)
-				);
-			}else if ($sort=='ticketCount' || $sort==''){
-				$joins=array(
-					array(
-						'table'=>'userSiteExtended',
-						'alias'=>'UserSiteExtended',
-						'type'=>'LEFT',
-						'conditions'=>array(
-							'User.userId=UserSiteExtended.userId',
-						)
-					),
-					array(
-						'table'=>'ticket',
-						'type'=>'LEFT',
-						'conditions'=>'User.userId=ticket.userId'
-					),
 
-				);
-				$conditions=array(
-						"((MATCH(User.lastName,User.firstName) AGAINST('$query' IN BOOLEAN MODE))
-						 OR UserSiteExtended.username LIKE  '%$origQuery%')",
-				);
+			}else{
 
-				$this->paginate = array(
-					'recursive'=>0,
-					'joins' => $joins,
-					'contain' => array(), 
-					'conditions' => $conditions, 
-					'fields' => $fields,
-					'group' => 'User.userId',
-				);
-
-				if(isset($this->passedArgs['sort'])) {
-					$dsort = $this->passedArgs['sort'];
-					unset($this->passedArgs['sort']);
-					$dir=$this->passedArgs['direction'];
-					$this->paginate['order'] = array($dsort => $dir, 'hasTicketId'=>$dir);
+				if ($firstName && $lastName){
+					$conditions=array( "(User.lastName like '".$lastName."%' OR User.firstName LIKE '".$firstName."%')");
+					$order[]="fullNameMatch DESC";
+					$fields[]="(CASE WHEN User.lastname like '".$lastName."%' AND User.firstName LIKE '".$firstName."%' THEN 1 ELSE 0 END ) AS fullNameMatch";
+				}else if ($firstName){
+					$conditions=array("User.firstName LIKE '".$firstName."%'");
+				}else if ($lastName){
+					$conditions=array("User.lastName LIKE '".$lastName."%'");
+				}else if ($username){
+					$conditions=array("UserSiteExtended.username LIKE  '".$username."%'");
 				}else{
-					$this->paginate['order'] = array('ticketCount' => 'DESC', 'hasTicketId'=>'DESC');
+					$conditions=array(
+						"(User.lastName like '".$query."%' OR User.firstName LIKE '".$query."%' OR UserSiteExtended.username LIKE  '".($query)."%')"
+					);
 				}
 
-			}else{
-				$order[] = 'usernamematch DESC';
-				$str= "(CASE WHEN UserSiteExtended.username LIKE '".$origQuery."' THEN 1 ELSE 0 END) ";
-				$str.="AS usernamematch";
-				$fields[]=$str;
-				$conditions['OR']['UserSiteExtended.username LIKE'] = "%$origQuery%";
 			}
 
-			if ($isEmail || ($sort!='ticketCount' && $sort!='')){
-				$arr=array(
-					'conditions' => $conditions,
-					'contain' => array('UserSiteExtended', 'Ticket'),
-					'fields' => $fields,
-					'joins' => $joins,
-					'order' => $order,
-				);
-				$this->paginate = $arr;
+			$order[]=$sort.' '.$dir;
+			if ($sort=='ticketCount'){
+				$order[]='hasTicketId '.$dir;
 			}
 
-			if($this->params['form']['query']){
+			$paginateArr=array(
+				'joins' => $joins,
+				'contain' => array(), 
+				'conditions' => $conditions, 
+				'fields' => $fields,
+				'group' => 'User.userId',
+				'order' => $order
+			);
+			//'contain' => array('UserSiteExtended', 'Ticket'),
 
-				$this->autoRender = false;
-				$this->User->Behaviors->attach('Containable');
+			$this->paginate = $paginateArr;
+
+			if(!empty($query)){
 				$this->set('query', $query);
-				$this->set('users', $this->paginate());
-				$this->render('index');
-
+			}else if (!empty($specificSearch)){
+				$this->set('query', $specificSearch);
 			}
+
+			$this->autoRender = false;
+			$this->User->Behaviors->attach('Containable');
+			$this->set('users', $this->paginate());
+			$this->render('index');
 
 		}
 
