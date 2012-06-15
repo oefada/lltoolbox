@@ -1450,7 +1450,9 @@ class WebServiceTicketsController extends WebServicesController
 		$clientPpv = false;
 		$internalPpv = false;
 		$pleaseRespond = false;
-		
+        
+        $offerTypeTxt_inEmail = false;
+        
 		// "Please respond" header
 		switch ($ppvNoticeTypeId) {
 			case 2:
@@ -1461,6 +1463,20 @@ class WebServiceTicketsController extends WebServicesController
 			case 33:
 				$pleaseRespond = true;
 		}
+        
+        // Offer Type Text header
+        switch ($ppvNoticeTypeId) {
+            case 2:
+            case 10:
+            case 23:
+            case 24:
+            case 27:
+            case 28:
+            case 29:
+            case 33:
+                $offerTypeTxt_inEmail = $offerTypeTxt;
+        }
+        
 		
 		// Client PPVs
 		switch ($ppvNoticeTypeId) {
