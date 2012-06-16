@@ -428,7 +428,7 @@ class ConsolidatedReport extends AppModel
 		//We are using the reporting database for this data
 		$this->setDataSource('reporting');
 		
-		if ($site_id == 1 && $end_date > '2012-04-30 23:59:59') {
+		if ($site_id === 1 && $end_date > '2012-04-30 23:59:59') {
 			// Get impressions from skynet
 			$params = array($this->client_id, substr($start_date, 0, 7));
 
@@ -439,7 +439,7 @@ class ConsolidatedReport extends AppModel
 					lltUserEventRollupByMonth
 				WHERE
 					clientId = ?
-					AND eventId IN (41, 42, 43, 44, 45, 46, 48)
+					AND eventId IN (41, 42, 43, 46)
 					AND yearMonth = ?
 			";
 			$skynetImpressions = $this->query($sql, $params);
@@ -586,56 +586,184 @@ class ConsolidatedReport extends AppModel
 	 */
 	public function getImpressions()
 	{
-		$this->setDataSource('reporting');
+		$omnitureData = array();
+		$skynetData = array();
 		$impressions = array();
+		$impressionData = array();
+		
 		$tables = array(
 			'Luxury Link' => 'carConsolidatedView',
 			'Family Getaway' => 'carConsolidatedViewFg'
 		);
 
 		foreach($tables as $site => $table) {
-			$sql = "
-				SELECT
-					year2,
-					month2,
-					clientid,
-					phone,
-					webrefer,
-					productview,
-					searchview,
-					destinationview,
-					email,
-					totalimpressions
-				FROM $table
-				WHERE
-					clientid = {$this->client_id}					
-					AND (
-						activityStart BETWEEN '{$this->loa_start_date}' AND '{$this->month_end_date}'
-						OR activityEnd BETWEEN '{$this->loa_start_date}' AND '{$this->month_end_date}'
-					)
-				ORDER BY activityStart, year2, month2
-			";
-			$rows = $this->query($sql);
+			$impressionData = array();
+			if ($site === 'Luxury Link' && $this->month_end_date > '2012-04-30 23:59:59') {
+				// We need a blend of skynet and omniture
+				if ($this->loa_start_date < '2012-05-01 00:00:00') {
+					// First get omniture data
+					$omnitureData = $this->getOmnitureImpressionsForClientByDate($this->loa_start_date, '2012-04-30', $this->client_id, $table);
+				}
 
-			foreach($rows as $row) {
-				$impressions[$site][][$row[$table]['month2']] = array(
-					'year' => $row[$table]['year2'],
-					'month' => $row[$table]['month2'],
-					'phonecalls' => (is_null($row[$table]['phone'])) ? 0 : $row[$table]['phone'],
-					'webrefer' => (is_null($row[$table]['webrefer'])) ? 0 : $row[$table]['webrefer'],
-					'productview' => (is_null($row[$table]['productview'])) ? 0 : $row[$table]['productview'],
-					'searchview' => (is_null($row[$table]['searchview'])) ? 0 : $row[$table]['searchview'],
-					'destinationview' => (is_null($row[$table]['destinationview'])) ? 0 : $row[$table]['destinationview'],
-					'email' => (is_null($row[$table]['email'])) ? 0 : $row[$table]['email'],
-					'total_impressions' => (is_null($row[$table]['totalimpressions'])) ? 0 : $row[$table]['totalimpressions'] 
-				);
+				$skynetData = $this->getSkynetImpressionsForClientByDate('2012-05-01', $this->client_id);
+
+				$impressionData = array_merge($omnitureData, $skynetData);
+				if (!empty($impressionData)) {
+					$impressions[$site] = $impressionData;
+				}
+			} else {
+				// Just grab data from omniture
+				$impressionData = $this->getOmnitureImpressionsForClientByDate($this->loa_start_date, $this->month_end_date, $this->client_id, $table);
+				if (!empty($impressionData)) {
+					$impressions[$site] = $impressionData;
+				}
 			}
+		}
+
+		return $impressions;
+	}
+
+	/**
+	 * Get impression data from omniture
+	 * 
+	 * @param   string $startDate
+	 * @param   string $endDate
+	 * @param   int $clientId
+	 * @param   string $table reporting table to query
+	 * @return  array
+	 */
+	private function getOmnitureImpressionsForClientByDate($startDate, $endDate, $clientId, $table)
+	{
+		$this->setDataSource('reporting');
+		$impressions = array();
+		$params = array(
+			$clientId,
+			$startDate,
+			$endDate,
+			$startDate,
+			$endDate
+		);
+
+		$sql = "
+			SELECT
+				year2,
+				month2,
+				clientid,
+				phone,
+				webrefer,
+				productview,
+				searchview,
+				destinationview,
+				email,
+				totalimpressions
+			FROM $table
+			WHERE
+				clientid = ?
+				AND (
+					activityStart BETWEEN ? AND ?
+					OR activityEnd BETWEEN ? AND ?
+				)
+			ORDER BY activityStart, year2, month2
+		";
+		$rows = $this->query($sql, $params);
+
+		foreach($rows as $row) {
+			$impressions[][$row[$table]['month2']] = array(
+				'year' => $row[$table]['year2'],
+				'month' => $row[$table]['month2'],
+				'phonecalls' => (is_null($row[$table]['phone'])) ? 0 : $row[$table]['phone'],
+				'webrefer' => (is_null($row[$table]['webrefer'])) ? 0 : $row[$table]['webrefer'],
+				'productview' => (is_null($row[$table]['productview'])) ? 0 : $row[$table]['productview'],
+				'searchview' => (is_null($row[$table]['searchview'])) ? 0 : $row[$table]['searchview'],
+				'destinationview' => (is_null($row[$table]['destinationview'])) ? 0 : $row[$table]['destinationview'],
+				'email' => (is_null($row[$table]['email'])) ? 0 : $row[$table]['email'],
+				'total_impressions' => (is_null($row[$table]['totalimpressions'])) ? 0 : $row[$table]['totalimpressions'] 
+			);
+		}
+		
+		$this->setDataSource('default');
+		return $impressions;
+	}
+
+	/**
+	 * Get impression data from skynet
+	 * 
+	 * @param   string $date
+	 * @param   int $clientId
+	 */
+	 private function getSkynetImpressionsForClientByDate($date, $clientId)
+	 {
+		 $this->setDataSource('reporting');
+		 
+		 $impressions = array();
+		 $params = array(
+			$date,
+			$clientId
+		 );
+		 
+		 $sql = "
+			SELECT
+				eventId,
+				sum(total) AS total,
+				YEAR (startDate) AS year,
+				MONTH (startDate) AS month
+			FROM
+				lltUserEventRollupByDay
+			WHERE
+				clientId = $clientId
+				AND eventId IN (42, 41, 43, 46)
+			GROUP BY
+				SUBSTR(startDate, 1, 7),
+				eventId
+		 ";
+		 $rows = $this->query($sql);
+		 
+		 foreach($rows as $key => $row) {
+			 $month = $row[0]['month'];
+			 $eventId = $row['lltUserEventRollupByDay']['eventId'];
+			 
+			 $impressions[$month]['year'] = $row[0]['year'];
+			 $impressions[$month]['month'] = $row[0]['month'];
+
+			 switch($eventId) {
+				case 42:
+					$impressions[$month]['searchview'] = $row[0]['total'];
+					break;
+				case 46:
+					$impressions[$month]['productview'] = $row[0]['total'];
+					break;
+				case 41:
+					$impressions[$month]['destinationview'] += $row[0]['total'];
+					break;
+				case 43:
+					$impressions[$month]['destinationview'] += $row[0]['total'];
+					break;
+			}
+		}
+		
+		foreach($impressions as $key => $arrayData) {
+			$totalImpressions = $arrayData['destinationview'] + $arrayData['productview'] + $arrayData['searchview'] + $arrayData['email'];
+			$totalEmails = $this->getOmnitureImpressionsForClientByDate('2012-04-01', '2012-04-01', $clientId, 'carConsolidatedView');
+			$totalEmails = (isset($totalEmails[0][$arrayData['month']]['email'])) ? $totalEmails[0][$arrayData['month']]['email'] : 0;
+
+			$arrayData = array(
+				'year' => $arrayData['year'],
+				'month' => $arrayData['month'],
+				'phonecalls' => 0,
+				'webrefer' => 0,
+				'productview' => $arrayData['productview'],
+				'searchview' => $arrayData['searchview'],
+				'destinationview' => "{$arrayData['destinationview']}",
+				'email' => $totalEmails,
+				'total_impressions' => "$totalImpressions"
+			);
+			$impressions[$key] = array($arrayData['month'] => $arrayData);
 		}
 
 		$this->setDataSource('default');
 		return $impressions;
 	}
-	
+
 	/**
 	 * Query the database for contact details
 	 * 
