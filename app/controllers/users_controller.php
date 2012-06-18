@@ -225,9 +225,9 @@ class UsersController extends AppController {
 			}else{
 
 				if ($firstName && $lastName){
-					$conditions=array( "(User.lastName like '".$lastName."%' OR User.firstName LIKE '".$firstName."%')");
+					$conditions=array( "(User.lastName like '".$lastName."%' AND User.firstName LIKE '".$firstName."%')");
 					$order[]="fullNameMatch DESC";
-					$fields[]="(CASE WHEN User.lastname like '".$lastName."%' AND User.firstName LIKE '".$firstName."%' THEN 1 ELSE 0 END ) AS fullNameMatch";
+					$fields[]="(CASE WHEN User.lastname ='".$lastName."' AND User.firstName = '".$firstName."' THEN 2  WHEN User.lastname like '".$lastName."%' AND User.firstName like '".$firstName."%' THEN 1   ELSE 0 END ) AS fullNameMatch";
 				}else if ($firstName){
 					$conditions=array("User.firstName LIKE '".$firstName."%'");
 				}else if ($lastName){
