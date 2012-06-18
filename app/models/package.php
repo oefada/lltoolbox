@@ -5,67 +5,64 @@ class Package extends AppModel {
 	var $useTable = 'package';
 	var $primaryKey = 'packageId';
 
-	var $belongsTo = array('Currency' => array('foreignKey' => 'currencyId'),
-						   'PackageStatus' => array('foreignKey' => 'packageStatusId')
-						);
+	var $belongsTo = array(
+		'Currency' => array('foreignKey' => 'currencyId'),
+		'PackageStatus' => array('foreignKey' => 'packageStatusId')
+	);
 
-	var $hasOne = array('PackagePerformance' => array('foreignKey' => 'packageId'),
-                        'PackageAgeRange' => array('foreignKey' => 'packageId'));
+	var $hasOne = array(
+		'PackagePerformance' => array('foreignKey' => 'packageId'),
+	'PackageAgeRange' => array('foreignKey' => 'packageId')
+	);
 
-	var $hasMany = array('PackageBlackout' => array('foreignKey' => 'packageId'),
-						 'PackageBlackoutWeekday' => array('foreignKey' => 'packageId'),
-						 'PackageOfferTypeDefField' => array('foreignKey' => 'packageId'),
-						 'PackageLoaItemRel' => array('foreignKey' => 'packageId'),
-						 'ClientLoaPackageRel' => array('foreignKey' => 'packageId', 'dependent' => true),
-						 'SchedulingMaster' => array('foreignKey' => 'packageId'),
-						 'ClientTracking' => array('foreignKey' => 'packageId'),
-						 'LoaItemRatePackageRel' => array('foreignKey' => 'packageId'),
-                         'PricePoint' => array('foreignKey' => 'packageId')
-						);
+	var $hasMany = array(
+		'PackageBlackout' => array('foreignKey' => 'packageId'),
+		'PackageBlackoutWeekday' => array('foreignKey' => 'packageId'),
+		'PackageOfferTypeDefField' => array('foreignKey' => 'packageId'),
+		'PackageLoaItemRel' => array('foreignKey' => 'packageId'),
+		'ClientLoaPackageRel' => array('foreignKey' => 'packageId', 'dependent' => true),
+		'SchedulingMaster' => array('foreignKey' => 'packageId'),
+		'ClientTracking' => array('foreignKey' => 'packageId'),
+		'LoaItemRatePackageRel' => array('foreignKey' => 'packageId'),
+		'PricePoint' => array('foreignKey' => 'packageId')
+	);
 
-	var $validate = array('packageName' => VALID_NOT_EMPTY,
-						'numConcurrentOffers' => array('rule' => 'numeric', 'message' => 'Number of concurrent offers must be a number'),
-						'maxNumSales' => array('rule' => 'numeric', 'message' => 'Maximum number of sales must be a number', 'allowEmpty' => true),
-						'numGuests' => array('rule' => 'numeric', 'message' => 'Number of guests must be a number'),
-						'minGuests' => array('minGuestsRule1' => array('rule' => 'numeric', 'message' => 'Minimum number of guests must be a number'),
-											 'minGuestsRule2' => array('rule' => 'validateGuests', 'message' => 'Minimum # of guests must be less than or equal to the maximum # of guests')
-											),
-						'maxAdults' => array('maxAdultsRule1' => array('rule' => 'numeric', 'message' => 'Maximum number of adults must be a number'),
-											 'maxAdultsRule2' => array('rule' => 'validateGuests', 'message' => 'Maximum # of adults must be less than or equal to the maximum # of guests')
-											 ),
-						'numNights' => array('numeric' => array('rule' => 'numeric', 'message' => 'Number of nights must be a number'),
-						                    'validateNumNightsAddsUp' => array('rule' => 'validateNumNightsAddsUp', 'message' => 'Must match with the number of nights entered for each room item below.')),
-						'endDate' => array('rule' => array('validateDateRanges'), 'message' => 'End Date must be greater than Start Date'),
-						'validityEndDate' => array('rule' => array('validateDateRanges'), 'message' => 'End Date must be greater than Start Date'));
+	var $validate = array(
+		'packageName' => VALID_NOT_EMPTY, 'numConcurrentOffers' => array('rule' => 'numeric', 'message' => 'Number of concurrent offers must be a number'), 'maxNumSales' => array('rule' => 'numeric', 'message' => 'Maximum number of sales must be a number', 'allowEmpty' => true), 'numGuests' => array('rule' => 'numeric', 'message' => 'Number of guests must be a number'), 'minGuests' => array('minGuestsRule1' => array('rule' => 'numeric', 'message' => 'Minimum number of guests must be a number'), 'minGuestsRule2' => array('rule' => 'validateGuests', 'message' => 'Minimum # of guests must be less than or equal to the maximum # of guests')), 'maxAdults' => array('maxAdultsRule1' => array('rule' => 'numeric', 'message' => 'Maximum number of adults must be a number'), 'maxAdultsRule2' => array('rule' => 'validateGuests', 'message' => 'Maximum # of adults must be less than or equal to the maximum # of guests')), 'numNights' => array('numeric' => array('rule' => 'numeric', 'message' => 'Number of nights must be a number'), 'validateNumNightsAddsUp' => array('rule' => 'validateNumNightsAddsUp', 'message' => 'Must match with the number of nights entered for each room item below.')), 'endDate' => array('rule' => array('validateDateRanges'), 'message' => 'End Date must be greater than Start Date'), 'validityEndDate' => array('rule' => array('validateDateRanges'), 'message' => 'End Date must be greater than Start Date')
+	);
 
 	var $hasAndBelongsToMany = array(
-								'Format' =>
-									array('className' => 'Format',
-										  'joinTable' => 'packageFormatRel',
-										  'foreignKey' => 'packageId',
-										  'associationForeignKey' => 'formatId'
-									),
-								'PackagePromo' =>
-								    array('joinTable' => 'packagePromoRel',
-								          'foreignKey' => 'packageId',
-								          'associationForeignKey' => 'packagePromoId'),
-								'FamilyAmenity' =>
-									array('className' => 'FamilyAmenity',
-										  'foreignKey' => 'packageId',
-										  'joinTable' => 'packageFamilyAmenityRel',
-										  'associationForeignKey' => 'familyAmenityId'
-								   )
-								);
-    var $actsAs = array('Logable', 'Containable');
+		'Format' =>
+			array(
+				'className' => 'Format',
+				'joinTable' => 'packageFormatRel',
+				'foreignKey' => 'packageId',
+				'associationForeignKey' => 'formatId'
+			),
+		'PackagePromo' =>
+			array(
+				'joinTable' => 'packagePromoRel',
+				'foreignKey' => 'packageId',
+				'associationForeignKey' => 'packagePromoId'
+			),
+			'FamilyAmenity' =>
+				array(
+					'className' => 'FamilyAmenity',
+					'foreignKey' => 'packageId',
+					'joinTable' => 'packageFamilyAmenityRel',
+					'associationForeignKey' => 'familyAmenityId'
+				)
+	);
 
+	var $actsAs = array('Logable', 'Containable');
 
 	function validateGuests($data) {
-	  $numGuests = $this->data['Package']['numGuests'];
-	  $guestsValue = array_values($data);
-	  if ($numGuests < $guestsValue[0]) {
+		$numGuests = $this->data['Package']['numGuests'];
+		$guestsValue = array_values($data);
+		if ($numGuests < $guestsValue[0]) {
 		 return false;
-	  }
-	  return true;
+		}
+		return true;
 	}
 
 
@@ -83,37 +80,37 @@ class Package extends AppModel {
 	}
 
 	function validateNumNightsAddsUp($data) {
-	    $numNights = 0;
+		$numNights = 0;
 
-	    if(isset($this->data['PackageLoaItemRel']) && is_array($this->data['PackageLoaItemRel'])) {
-            foreach ($this->data['PackageLoaItemRel'] as $item) {
+		if(isset($this->data['PackageLoaItemRel']) && is_array($this->data['PackageLoaItemRel'])) {
+			foreach ($this->data['PackageLoaItemRel'] as $item) {
 
-                //If type Pre-packaged is included, skip validation and just return true
-                if (in_array($item['loaItemTypeId'], array(12,20))) {
-                    return true;
-                }
+				//If type Pre-packaged is included, skip validation and just return true
+				if (in_array($item['loaItemTypeId'], array(12,20))) {
+					return true;
+				}
 
-                //If type room night is included, keep a running count of the room nights
-                if ($item['loaItemTypeId'] == 1) {
-                    $numNights += $item['quantity'];
-                }
-            }
+				//If type room night is included, keep a running count of the room nights
+				if ($item['loaItemTypeId'] == 1) {
+					$numNights += $item['quantity'];
+				}
+			}
 
-            if ($numNights == $data['numNights']) {
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
-	    return true;
+			if ($numNights == $data['numNights']) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	function cloneData($data)
 	{
 		// LEGACY PRE-PKGR -- no use
 		$data['Package']['copiedFromPackageId'] = $data['Package']['packageId'];
-	    $data['Package']['packageStatusId'] = 1;
+		$data['Package']['packageStatusId'] = 1;
 		foreach ($data['ClientLoaPackageRel'] as &$packageRel):
 			unset($packageRel['clientLoaPackageRelId']);
 		endforeach;
@@ -124,236 +121,177 @@ class Package extends AppModel {
 	}
 
 	function beforeSave($created) {
-        //get all descriptions for the inclusions and populate a text area field to store all of this on the database.
-
-		/*
-		ALEE PKGR - NO NEED FOR THIS AUG 13 -2010
-
-        if (isset($this->data['Package']['repopulateInclusions'])) {
-            //only do this if the package loa item rel array is there because we need the weights
-            if (isset($this->data['PackageLoaItemRel'])):
-                if (!empty($this->data['Package']['CheckedLoaItems'])) {
-                    $itemDescriptions = $this->query("SELECT LoaItemGroup.*, LoaItem.loaItemId, LoaItem.merchandisingDescription FROM loaItem AS LoaItem
-                                                      LEFT JOIN loaItemGroup AS LoaItemGroup USING (loaItemId)
-                                                      WHERE LoaItem.loaItemId IN(".implode(',', $this->data['Package']['CheckedLoaItems']).") GROUP BY LoaItem.loaItemId");
-                }
-                foreach ($itemDescriptions as $v) {
-                    $itemId = $v['LoaItem']['loaItemId'];
-                    $weight = $this->data['PackageLoaItemRel'][$itemId]['weight'];
-                    if (!isset($descriptions[$weight])) {
-                        $descriptions[$weight] = $v['LoaItem']['merchandisingDescription'];
-                    } else {
-                        $descriptions[] = $v['LoaItem']['merchandisingDescription'];
-                    }
-
-                    if ($v['LoaItemGroup']['loaItemGroupId']) {
-                        $groupDescriptions = $this->query("SELECT LoaItem.loaItemId, LoaItem.merchandisingDescription FROM loaItemGroup AS LoaItemGroup
-                                                           INNER JOIN loaItem AS LoaItem ON LoaItemGroup.groupItemId = LoaItem.loaItemId WHERE LoaItemGroup.loaItemId = $itemId");
-                        $gdCount = 1;
-                        foreach ($groupDescriptions as $gd) {
-                            if ($weight) {
-                                $descriptions["$weight.$gdCount"] = $gd['LoaItem']['merchandisingDescription'];
-                                $gdCount++;
-                            } else {
-                                $descriptions[] = $gd['LoaItem']['merchandisingDescription'];
-                            }
-                        }
-                    }
-                }
-
-                //sort the array by the weights so the implode works
-                ksort($descriptions);
-                $this->data['Package']['packageIncludes'] = implode("\r\n", $descriptions);
-            endif;
-        }
-	    */
 
 		//dynamically set the client approved date
-	    if ($created != true) {
-    	    $orig = $this->find('Package.packageId = '.$this->data['Package']['packageId'], array('packageStatusId'));
+		if ($created != true) {
+			$orig = $this->find('Package.packageId = '.$this->data['Package']['packageId'], array('packageStatusId'));
 
-    	    if (@$orig['Package']['packageStatusId'] != 3 && $this->data['Package']['packageStatusId'] == 3) {
-    	        $this->data['Package']['dateClientApproved'] = date('Y-m-d H:i:s');
-    	    }
-	    }
+			if (@$orig['Package']['packageStatusId'] != 3 && $this->data['Package']['packageStatusId'] == 3) {
+				$this->data['Package']['dateClientApproved'] = date('Y-m-d H:i:s');
+			}
+		}
 
-	   //set packageStatusId to Setup if new package
-	   if (!isset($this->data['Package']['packageStatusId']) && empty($this->data['Package']['packageId'])) {
+		 //set packageStatusId to Setup if new package
+		 if (!isset($this->data['Package']['packageStatusId']) && empty($this->data['Package']['packageId'])) {
 		$this->data['Package']['packageStatusId'] = 1;
-	   }
+		 }
 
-       $sites = (empty($this->data['Package']['sites']) && !empty($this->data['Package']['packageId'])) ? $this->field('sites', array('Package.packageId' => $this->data['Package']['packageId'])) : $this->data['Package']['sites'];
+		 $sites = (empty($this->data['Package']['sites']) && !empty($this->data['Package']['packageId'])) ? $this->field('sites', array('Package.packageId' => $this->data['Package']['packageId'])) : $this->data['Package']['sites'];
 
-       if (empty($sites) && !empty($this->data['Package']['siteId'])) {
-            switch ($this->data['Package']['siteId']) {
-                case 1:
-                    $sites = 'luxurylink';
-                    break;
-                case 2:
-                    $sites = 'family';
-                    break;
-                default:
-                    break;
-            }
-       }
+		 if (empty($sites) && !empty($this->data['Package']['siteId'])) {
+			switch ($this->data['Package']['siteId']) {
+				case 1:
+					$sites = 'luxurylink';
+					break;
+				case 2:
+					$sites = 'family';
+					break;
+				default:
+					break;
+			}
+		 }
 
-       $this->data['Package']['sites'] = (is_array($sites)) ? implode(',', $sites) : $sites;
+		 $this->data['Package']['sites'] = (is_array($sites)) ? implode(',', $sites) : $sites;
 
-	   return true;
+		 return true;
 	}
 
 	function afterSave($created) {
 		 $packageId = (empty($this->data['Package']['packageId'])) ? $this->getLastInsertID() : $this->data['Package']['packageId'];
 
-	  	/*
-		DISABLED BY ALEE SINCE PKGR [AUG 12]
-		===========================================================================
-		// get validity disclaimer by joining it with validityLeadInLine
-		$validity_disclaimer = (isset($this->data['Package']['validityLeadInLine'])) ? '<p><strong>' . Sanitize::escape($this->data['Package']['validityLeadInLine']) . '</strong></p>' : ' ';
-		$validity_disclaimer .= Sanitize::escape(isset($this->data['Package']['validityDisclaimer']));
-		*/
+		 //delete from packageAgeRange if this package isn't associated with Family
+		 if (isset($this->data['Package']['siteId']) && !in_array($this->data['Package']['siteId'], array(2)) ||
+			 (isset($this->data['Package']['sites']) && !stristr('family', $this->data['Package']['sites']))) {
+			$age_ranges = $this->PackageAgeRange->findByPackageId($packageId);
+			if (!empty($age_ranges)) {
+				 $this->PackageAgeRange->deleteAll(array('PackageAgeRange.packageId' => $packageId), false);
+			}
+		 }
 
-	   //delete from packageAgeRange if this package isn't associated with Family
-	   if (isset($this->data['Package']['siteId']) && !in_array($this->data['Package']['siteId'], array(2)) ||
-           (isset($this->data['Package']['sites']) && !stristr('family', $this->data['Package']['sites']))) {
-            $age_ranges = $this->PackageAgeRange->findByPackageId($packageId);
-            if (!empty($age_ranges)) {
-               $this->PackageAgeRange->deleteAll(array('PackageAgeRange.packageId' => $packageId), false);
-            }
-	   }
+		$sites = (isset($this->data['Package']['sites'])) ? explode(',', $this->data['Package']['sites']) : array($this->data['Package']['siteId']);
+		$updateFields = array('validityStart' => 'validityStartDate',
+									'validityEnd' => 'validityEndDate',
+									'numGuests' => 'numGuests',
+									'minGuests' => 'minGuests',
+									'maxAdults' => 'maxAdults');
+		$setFields = array();
 
-        $sites = (isset($this->data['Package']['sites'])) ? explode(',', $this->data['Package']['sites']) : array($this->data['Package']['siteId']);
-        $updateFields = array('validityStart' => 'validityStartDate',
-                                  'validityEnd' => 'validityEndDate',
-                                  'numGuests' => 'numGuests',
-                                  'minGuests' => 'minGuests',
-                                  'maxAdults' => 'maxAdults');
-        $setFields = array();
+		foreach ($updateFields as $column => $dataField) {
+			if (!empty($this->data['Package'][$dataField])) {
+				$setFields[] = "{$column} = '{$this->data['Package'][$dataField]}'";
+			}
+		}
 
-        foreach ($updateFields as $column => $dataField) {
-            if (!empty($this->data['Package'][$dataField])) {
-                $setFields[] = "{$column} = '{$this->data['Package'][$dataField]}'";
-            }
-        }
+		foreach ($sites as $site) {
+			switch ($site) {
+				 case 1:		//Luxury Link
+				 case 'luxurylink':
+					$table = 'offerLuxuryLink';
+					break;
+				 case 2:		//Family
+				 case 'family':
+					$table = 'offerFamily';
+					break;
+				 default:		//default to Luxury Link
+					$table = 'offerLuxuryLink';
+			}
 
-		/*
-		DISABLED BY ALEE SINCE PKGR [AUG 12]
-		===========================================================================
-        if (!empty($validity_disclaimer)) {
-            $setFields[] = "validityDisclaimer = '{$validity_disclaimer}'";
-        }
-        */
+			if (!empty($setFields)) {
+				$query = "UPDATE {$table}
+							SET " . implode(', ', $setFields) .
+							"WHERE packageId = {$this->id} AND isAuction = 0 AND now() < endDate";
+				$this->query($query);
+			}
 
-        foreach ($sites as $site) {
-            switch ($site) {
-               case 1:		//Luxury Link
-               case 'luxurylink':
-                  $table = 'offerLuxuryLink';
-                  break;
-               case 2:		//Family
-               case 'family':
-                  $table = 'offerFamily';
-                  break;
-               default:		//default to Luxury Link
-                  $table = 'offerLuxuryLink';
-            }
+		}
 
-            if (!empty($setFields)) {
-                $query = "UPDATE {$table}
-                          SET " . implode(', ', $setFields) .
-                          "WHERE packageId = {$this->id} AND isAuction = 0 AND now() < endDate";
-                $this->query($query);
-            }
-
-        }
-
-	    // update offer details in offer for hotel offers type (7)
-	    if (!empty($this->data['Package']['externalOfferUrl'])) {
-	    	$package_title = Sanitize::escape($this->data['Package']['packageTitle']);
-	    	$short_blurb = Sanitize::escape($this->data['Package']['shortBlurb']);
-	    	$additionalDescription = Sanitize::escape($this->data['Package']['additionalDescription']);
-	    	$package_includes = Sanitize::escape($this->data['Package']['packageIncludes']);
+		// update offer details in offer for hotel offers type (7)
+		if (!empty($this->data['Package']['externalOfferUrl'])) {
+			$package_title = Sanitize::escape($this->data['Package']['packageTitle']);
+			$short_blurb = Sanitize::escape($this->data['Package']['shortBlurb']);
+			$additionalDescription = Sanitize::escape($this->data['Package']['additionalDescription']);
+			$package_includes = Sanitize::escape($this->data['Package']['packageIncludes']);
 
 			$this->query("
-			    UPDATE {$table}
-			    SET validityStart = '{$this->data['Package']['validityStartDate']}',
-				    validityEnd = '{$this->data['Package']['validityEndDate']}',
-				    offerName = '$package_title',
+				UPDATE {$table}
+				SET validityStart = '{$this->data['Package']['validityStartDate']}',
+					validityEnd = '{$this->data['Package']['validityEndDate']}',
+					offerName = '$package_title',
 					shortBlurb = '$short_blurb',
 					additionalDescription = '$additionalDescription',
-				    offerIncludes = '$package_includes',
+					offerIncludes = '$package_includes',
 					externalOfferUrl = '{$this->data['Package']['externalOfferUrl']}'
-			    WHERE packageId = $this->id AND offerTypeId = 7 AND now() < endDate
-		    ");
-	    }
+				WHERE packageId = $this->id AND offerTypeId = 7 AND now() < endDate
+			");
+		}
 	}
 
-    /**
-     * Package revamp functions
-     **/
+	/**
+	 * Package revamp functions
+	 **/
 
-    function getPackage($packageId) {
-        $query = "SELECT * FROM package Package
-                    INNER JOIN clientLoaPackageRel ClientLoaPackageRel using (packageId)
-                    LEFT JOIN packageAgeRange PackageAgeRange USING (packageId)
-                    INNER JOIN packageStatus PackageStatus USING (packageStatusId)
-                    LEFT JOIN loa Loa ON ClientLoaPackageRel.loaId = Loa.loaId
-                    LEFT JOIN currency Currency ON Package.currencyId  = Currency.currencyId
-                    WHERE Package.packageId = {$packageId}";
-        if ($package = $this->query($query)) {
-            $clientsQuery = "SELECT *, Client.name FROM clientLoaPackageRel ClientLoaPackageRel
-                             INNER JOIN client Client USING (clientId)
-                             WHERE ClientLoaPackageRel.packageId = {$packageId}";
-            $packageClients = $this->query($clientsQuery);
-            $package[0]['ClientLoaPackageRel'] = $packageClients;
-            $package[0]['Package']['sites'] = explode(',', $package[0]['Package']['sites']);
-            $package[0]['Loa']['sites'] = explode(',', $package[0]['Loa']['sites']);
-            return $package[0];
-        }
-        else {
-            return false;
-        }
-    }
+	function getPackage($packageId) {
+		$query = "SELECT * FROM package Package
+					INNER JOIN clientLoaPackageRel ClientLoaPackageRel using (packageId)
+					LEFT JOIN packageAgeRange PackageAgeRange USING (packageId)
+					INNER JOIN packageStatus PackageStatus USING (packageStatusId)
+					LEFT JOIN loa Loa ON ClientLoaPackageRel.loaId = Loa.loaId
+					LEFT JOIN currency Currency ON Package.currencyId	= Currency.currencyId
+					WHERE Package.packageId = {$packageId}";
+		if ($package = $this->query($query)) {
+			$clientsQuery = "SELECT *, Client.name FROM clientLoaPackageRel ClientLoaPackageRel
+							 INNER JOIN client Client USING (clientId)
+							 WHERE ClientLoaPackageRel.packageId = {$packageId}";
+			$packageClients = $this->query($clientsQuery);
+			$package[0]['ClientLoaPackageRel'] = $packageClients;
+			$package[0]['Package']['sites'] = explode(',', $package[0]['Package']['sites']);
+			$package[0]['Loa']['sites'] = explode(',', $package[0]['Loa']['sites']);
+			return $package[0];
+		}
+		else {
+			return false;
+		}
+	}
 
-    function getHistory($packageId) {
-        $logableModels = array('LoaItemRatePackageRel' => 'loaItemRatePackageRel',
-                               'PackageLoaItemRel' => 'packageLoaItemRel',
-                               'PricePoint' => 'pricePoint',
-                               'PackageBlackout' => 'packageBlackout',
-                               'PackageBlackoutWeekday' => 'packageBlackoutWeekday');
-        $this->contain(array_keys($logableModels));
-        $package = $this->find('first', array('conditions' => array('Package.packageId' => $packageId)));
-        $queries = array();
-        $queries[0] = "(SELECT `description`, `action`, `samaccountname`, `change`, `model`, `created` AS historyCreated
-                       FROM `logs`
-                       WHERE `model` ='Package' AND `model_id` = {$packageId})";
-        foreach ($logableModels as $modelName => $tableName) {
-            $ids = array();
-            if (!empty($package[$modelName])) {
-                foreach ($package[$modelName] as $record) {
-                    $ids[] = $record[$this->$modelName->primaryKey];
-                }
-                $modelIds = implode(',', $ids);
-                $queries[] = "(SELECT `description`, `action`, `samaccountname`, `change`, `model`, `created`
-                              FROM `logs`
-                              WHERE `model` ='{$modelName}' AND `model_id` IN ({$modelIds}))";
-            }
-        }
-        $query = implode(' UNION ', $queries);
-        $query .= ' ORDER BY historyCreated DESC';
+	function getHistory($packageId) {
+		$logableModels = array('LoaItemRatePackageRel' => 'loaItemRatePackageRel',
+								 'PackageLoaItemRel' => 'packageLoaItemRel',
+								 'PricePoint' => 'pricePoint',
+								 'PackageBlackout' => 'packageBlackout',
+								 'PackageBlackoutWeekday' => 'packageBlackoutWeekday');
+		$this->contain(array_keys($logableModels));
+		$package = $this->find('first', array('conditions' => array('Package.packageId' => $packageId)));
+		$queries = array();
+		$queries[0] = "(SELECT `description`, `action`, `samaccountname`, `change`, `model`, `created` AS historyCreated
+						 FROM `logs`
+						 WHERE `model` ='Package' AND `model_id` = {$packageId})";
+		foreach ($logableModels as $modelName => $tableName) {
+			$ids = array();
+			if (!empty($package[$modelName])) {
+				foreach ($package[$modelName] as $record) {
+					$ids[] = $record[$this->$modelName->primaryKey];
+				}
+				$modelIds = implode(',', $ids);
+				$queries[] = "(SELECT `description`, `action`, `samaccountname`, `change`, `model`, `created`
+								FROM `logs`
+								WHERE `model` ='{$modelName}' AND `model_id` IN ({$modelIds}))";
+			}
+		}
+		$query = implode(' UNION ', $queries);
+		$query .= ' ORDER BY historyCreated DESC';
 
-        $historyDesc = array();
-        if ($history = $this->query($query)) {
+		$historyDesc = array();
+		if ($history = $this->query($query)) {
 		
 			//var_dump($history); die();
 		
-            foreach($history as $update) {
-                $historyDate = date('M j Y g:i A', strtotime($update[key($update)]['historyCreated']));
-                switch ($update[key($update)]['action']) {
-                    case 'add':
-                        $historyStr = "{$historyDate} - {$update[key($update)]['samaccountname']} -- Created";
-                        break;
-                    case 'edit':
+			foreach($history as $update) {
+				$historyDate = date('M j Y g:i A', strtotime($update[key($update)]['historyCreated']));
+				switch ($update[key($update)]['action']) {
+					case 'add':
+						$historyStr = "{$historyDate} - {$update[key($update)]['samaccountname']} -- Created";
+						break;
+					case 'edit':
 						$updateStr = '';
 						switch ($update[key($update)]['model']) {
 							case 'Package':
@@ -385,84 +323,77 @@ class Package extends AppModel {
 						}
 						$historyStr = "{$historyDate} - {$update[key($update)]['samaccountname']} -- {$updateStr}";
 						
-                        break;
-                    default:
-                        $historyStr = '';
-                        break;
-                }
-                $historyDesc[] = $historyStr;
-            }
-        }
-        return $historyDesc;
-    }
+						break;
+					default:
+						$historyStr = '';
+						break;
+				}
+				$historyDesc[] = $historyStr;
+			}
+		}
+		return $historyDesc;
+	}
 
-    function getRatePeriods($packageId) {
-        //$query = "SELECT * FROM loaItemRatePeriod LoaItemRatePeriod
-        //          INNER JOIN loaItemRate LoaItemRate USING (loaItemRatePeriodId)
-        //          INNER JOIN loaItemRatePackageRel LoaItemRatePackageRel USING (loaItemRateId)
-        //          LEFT JOIN pricePoint PricePoint ON LoaItemRatePackageRel.packageId = PricePoint.packageId
-        //          LEFT JOIN pricePointRatePeriodRel PricePointRatePeriodRel ON LoaItemRatePeriod.loaItemRatePeriodId = PricePointRatePeriodRel.loaItemRatePeriodId AND PricePoint.pricePointId = PricePointRatePeriodRel.pricePointId
-        //          WHERE LoaItemRatePackageRel.packageId = {$packageId}
-        //";
+	function getRatePeriods($packageId) {
 
-        $query = "SELECT * FROM loaItemRatePeriod LoaItemRatePeriod
-                  INNER JOIN loaItemRate LoaItemRate USING (loaItemRatePeriodId)
-                  INNER JOIN loaItemRatePackageRel LoaItemRatePackageRel USING (loaItemRateId)
-                  WHERE LoaItemRatePackageRel.packageId = {$packageId}
-                  GROUP BY LoaItemRatePeriod.loaItemRatePeriodId";
+		$query = "SELECT * FROM loaItemRatePeriod LoaItemRatePeriod
+					INNER JOIN loaItemRate LoaItemRate USING (loaItemRatePeriodId)
+					INNER JOIN loaItemRatePackageRel LoaItemRatePackageRel USING (loaItemRateId)
+					WHERE LoaItemRatePackageRel.packageId = {$packageId}
+					GROUP BY LoaItemRatePeriod.loaItemRatePeriodId";
 
-        //print_r($query);
-        //die();
-        if ($ratePeriods = $this->query($query)) {
-            return $ratePeriods;
-        }
-        else {
-            return false;
-        }
-    }
+		//print_r($query);
+		//die();
+		if ($ratePeriods = $this->query($query)) {
+			return $ratePeriods;
+		}
+		else {
+			return false;
+		}
+	}
 
-    function getRoomRate($loaItemRatePeriodId, $packageId) {
-        $loaItemRates = $this->query("
-            SELECT * FROM loaItemRate LoaItemRate
-            INNER JOIN loaItemRatePackageRel LoaItemRatePackageRel USING(loaItemRateId)
-            INNER JOIN loaItemRatePeriod LoaItemRatePeriod USING(loaItemRatePeriodId)
-            INNER JOIN loaItem LoaItem USING (loaItemId)
-            WHERE loaItemRatePeriodId = $loaItemRatePeriodId AND packageId = $packageId
-        ");
-        $total = 0;
-        foreach ($loaItemRates as $loaItemRate) {
-            $groupQuantity = "SELECT COUNT(*) AS quantity FROM loaItemGroup LoaItemGroup
-                              INNER JOIN packageLoaItemRel USING (loaItemId)
-                              WHERE groupItemId = {$loaItemRate['LoaItemRatePeriod']['loaItemId']} AND packageId = {$packageId}";
-            if ($quantity = $this->query($groupQuantity)) {
-                $roomQuantity = ($quantity[0][0]['quantity'] == 0) ? 1 : $quantity[0][0]['quantity'];
-            }
-            $taxes = $this->getTaxes($loaItemRate['LoaItemRatePeriod']['loaItemId']);
-            if ($loaItemRate['LoaItem']['loaItemTypeId'] == 12) {
-                $price = $loaItemRate['LoaItemRate']['price'] * $roomQuantity;
-                $total += $price + ($price * $taxes['percent'] / 100) + ($taxes['fixed'] * $loaItemRate['LoaItemRatePackageRel']['numNights']);
-            }
-            else {
-                $price = ($loaItemRate['LoaItemRate']['price'] * $loaItemRate['LoaItemRatePackageRel']['numNights']) * $roomQuantity;
-                $total += $price + ($price * $taxes['percent'] / 100) + ($taxes['fixed'] * ($loaItemRate['LoaItemRatePackageRel']['numNights']) * $roomQuantity);
-            }
-        }
-        return $total;
-    }
+	function getRoomRate($loaItemRatePeriodId, $packageId) {
+		$loaItemRates = $this->query("
+			SELECT * FROM loaItemRate LoaItemRate
+			INNER JOIN loaItemRatePackageRel LoaItemRatePackageRel USING(loaItemRateId)
+			INNER JOIN loaItemRatePeriod LoaItemRatePeriod USING(loaItemRatePeriodId)
+			INNER JOIN loaItem LoaItem USING (loaItemId)
+			WHERE loaItemRatePeriodId = $loaItemRatePeriodId AND packageId = $packageId
+		");
+		$total = 0;
+		foreach ($loaItemRates as $loaItemRate) {
+			$groupQuantity = "SELECT COUNT(*) AS quantity FROM loaItemGroup LoaItemGroup
+								INNER JOIN packageLoaItemRel USING (loaItemId)
+								WHERE groupItemId = {$loaItemRate['LoaItemRatePeriod']['loaItemId']} AND packageId = {$packageId}";
+			if ($quantity = $this->query($groupQuantity)) {
+				$roomQuantity = ($quantity[0][0]['quantity'] == 0) ? 1 : $quantity[0][0]['quantity'];
+			}
+			$taxes = $this->getTaxes($loaItemRate['LoaItemRatePeriod']['loaItemId']);
+			if ($loaItemRate['LoaItem']['loaItemTypeId'] == 12) {
+				$price = $loaItemRate['LoaItemRate']['price'] * $roomQuantity;
+				$total += $price + ($price * $taxes['percent'] / 100) + ($taxes['fixed'] * $loaItemRate['LoaItemRatePackageRel']['numNights']);
+			}
+			else {
+				$price = ($loaItemRate['LoaItemRate']['price'] * $loaItemRate['LoaItemRatePackageRel']['numNights']) * $roomQuantity;
+				$total += $price + ($price * $taxes['percent'] / 100) + ($taxes['fixed'] * ($loaItemRate['LoaItemRatePackageRel']['numNights']) * $roomQuantity);
+			}
+		}
+		return $total;
+	}
 
-    function getLoaItemDates($loaItemRatePeriodId) {
-        return $this->query("SELECT * FROM loaItemDate LoaItemDate WHERE loaItemRatePeriodId = {$loaItemRatePeriodId}");
-    }
+	function getLoaItemDates($loaItemRatePeriodId) {
+		return $this->query("SELECT * FROM loaItemDate LoaItemDate WHERE loaItemRatePeriodId = {$loaItemRatePeriodId}");
+	}
 
-    function deleteDate($loaItemDateId) {
-        $query = "DELETE FROM loaItemDate WHERE loaItemDateId = {$loaItemDateId}";
-        return $this->query($query);
-    }
+	function deleteDate($loaItemDateId) {
+		$query = "DELETE FROM loaItemDate WHERE loaItemDateId = {$loaItemDateId}";
+		return $this->query($query);
+	}
 
 
-	//  =====================================================================
-	//  PKGR - START OF VALIDITY / BLACKOUT METHODS
-	//  =====================================================================
+	//	=====================================================================
+	//	PKGR - START OF VALIDITY / BLACKOUT METHODS
+	//	=====================================================================
 
 	function updatePackagePricePointValidity($packageId) {
 		$this->updateValidityDisclaimer($packageId);
@@ -496,10 +427,16 @@ class Package extends AppModel {
 		$q.="endDate='".$arr['endDate']."', ";
 		$q.="created='".date("Y-m-d H:i:s")."', ";
 		$q.="isBlackout='".$arr['isBlackout']."', ";
-		$q.="siteId='$siteId'";
+		$q.="siteId='$siteId' ";
+		$q.="ON DUPLICATE KEY UPDATE ";
+		$q.="startDate='".$arr['startDate']."', ";
+		$q.="endDate='".$arr['endDate']."', ";
+		$q.="created='".date("Y-m-d H:i:s")."', ";
+		$q.="isBlackout='".$arr['isBlackout']."', ";
+		$q.="siteId='$siteId' ";
 		$this->query($q);
 		if ($debug_q && $_SERVER['ENV']=='development'){
-			require('/usr/lib/php/FirePHPCore/fb.php'); 
+			require_once('/usr/lib/php/FirePHPCore/fb.php'); 
 			FB::log("<p>$q</p>");
 			FB::log("<p>Affected Rows: ".$this->getAffectedRows()."</p>");
 		}
@@ -604,9 +541,9 @@ class Package extends AppModel {
 				$pvd_ts_start = strtotime($r['pvd']['startDate']);
 				$pvd_ts_end = strtotime($r['pvd']['endDate']);
 				if($this->isSameDate($pvd_ts_start, $pvd_ts_end)) {
-					$html.= date('F d, Y', $pvd_ts_start)  .'<br>';
+					$html.= date('F d, Y', $pvd_ts_start)	.'<br>';
 				} else if ($this->isSameMonth($pvd_ts_start, $pvd_ts_end)) {
-					$html.= date('F', $pvd_ts_start) . ' ' . date('j', $pvd_ts_start) . '-' . date('j', $pvd_ts_end) . ', ' . date('Y', $pvd_ts_start)  .'<br>';
+					$html.= date('F', $pvd_ts_start) . ' ' . date('j', $pvd_ts_start) . '-' . date('j', $pvd_ts_end) . ', ' . date('Y', $pvd_ts_start)	.'<br>';
 				} else {
 					$html.= date('F j, Y', $pvd_ts_start) . ' - ' . date('F j, Y', $pvd_ts_end) . "<br>";
 				}
@@ -621,9 +558,9 @@ class Package extends AppModel {
 				$pvd_ts_start = strtotime($r['pvd']['startDate']);
 				$pvd_ts_end = strtotime($r['pvd']['endDate']);
 				if($this->isSameDate($pvd_ts_start, $pvd_ts_end)) {
-					$html.= date('F d, Y', $pvd_ts_start)  .'<br>';
+					$html.= date('F d, Y', $pvd_ts_start)	.'<br>';
 				} else if ($this->isSameMonth($pvd_ts_start, $pvd_ts_end)) {
-					$html.= date('F', $pvd_ts_start) . ' ' . date('j', $pvd_ts_start) . '-' . date('j', $pvd_ts_end) . ', ' . date('Y', $pvd_ts_start)  .'<br>';
+					$html.= date('F', $pvd_ts_start) . ' ' . date('j', $pvd_ts_start) . '-' . date('j', $pvd_ts_end) . ', ' . date('Y', $pvd_ts_start)	.'<br>';
 				} else {
 					$html.= date('F j, Y', $pvd_ts_start) . ' - ' . date('F j, Y', $pvd_ts_end) . "<br>";
 				}
@@ -632,7 +569,7 @@ class Package extends AppModel {
 				$html.= $this->pluralize($blackout_week) . "<br>";
 			}
 		} else {
-            $html.= 'Reservations are subject to availability at time of booking. May not be valid during holidays and special event periods.';
+			$html.= 'Reservations are subject to availability at time of booking. May not be valid during holidays and special event periods.';
 		}
 
 		return $html;
@@ -640,15 +577,15 @@ class Package extends AppModel {
 
 	function connectValidDateRanges(&$dates) {
 		foreach ($dates as $i => $ranges) {
-            if ($i > 0) {
-                $prev_index = $i - 1;
-                if (date('Y-m-d', strtotime($dates[$prev_index]['pvd']['endDate'] . ' +1 DAY')) == $ranges['pvd']['startDate']) {
-                    // if previous enddate is 1 day before current start date so [2010-01-05 -> 2010-01-09] AND [2010-01-10 -> 2010-01-15]
-                    $dates[$i]['pvd']['startDate'] = $dates[$prev_index]['pvd']['startDate'];
-                    $dates[$i]['pvd']['endDate'] = $ranges['pvd']['endDate'];
-                    unset($dates[$prev_index]);
-                }
-            }
+			if ($i > 0) {
+				$prev_index = $i - 1;
+				if (date('Y-m-d', strtotime($dates[$prev_index]['pvd']['endDate'] . ' +1 DAY')) == $ranges['pvd']['startDate']) {
+					// if previous enddate is 1 day before current start date so [2010-01-05 -> 2010-01-09] AND [2010-01-10 -> 2010-01-15]
+					$dates[$i]['pvd']['startDate'] = $dates[$prev_index]['pvd']['startDate'];
+					$dates[$i]['pvd']['endDate'] = $ranges['pvd']['endDate'];
+					unset($dates[$prev_index]);
+				}
+			}
 		}
 	}
 
@@ -656,7 +593,7 @@ class Package extends AppModel {
 		$days_plural = array('Mon' => 'Mondays',
 							 'Tue' => 'Tuesdays',
 							 'Wed' => 'Wednesdays',
-							 'Thu' => 'Thurdays',
+							 'Thu' => 'Thursdays',
 							 'Fri' => 'Fridays',
 							 'Sat' => 'Saturdays',
 							 'Sun' => 'Sundays'
@@ -689,9 +626,9 @@ class Package extends AppModel {
 
 	function getBlackoutWeekday($packageId) {
 		$r = $this->query("SELECT weekday FROM packageBlackoutWeekday WHERE packageId = {$packageId}");
-        if (!empty($r)) {
-            return $r[0]['packageBlackoutWeekday']['weekday'];
-        }
+		if (!empty($r)) {
+			return $r[0]['packageBlackoutWeekday']['weekday'];
+		}
 	}
 
 	function getBlackout($packageId) {
@@ -703,10 +640,8 @@ class Package extends AppModel {
 		$this->query("DELETE FROM packageBlackout WHERE packageId = {$packageId}");
 		$this->query("DELETE FROM packageBlackoutWeekday WHERE packageId = {$packageId}");
 		if ($weekdays = implode(',', $data['PackageBlackoutWeekday'])) {
-			//$this->query("INSERT INTO packageBlackoutWeekday SET packageId = {$packageId}, weekday = '{$weekdays}'");
-            $pbw = array('packageId' => $packageId,
-                         'weekday' => $weekdays);
-            $this->PackageBlackoutWeekday->save($pbw);
+			$pbw = array('packageId' => $packageId, 'weekday' => $weekdays);
+			$this->PackageBlackoutWeekday->save($pbw);
 		}
 		if (!empty($data['PackageBlackout'])) {
 			foreach ($data['PackageBlackout'] as $k=>$pb) {
@@ -716,13 +651,11 @@ class Package extends AppModel {
 				$start = strtotime($pb['startDate']);
 				$end = strtotime($pb['endDate']);
 				if ($start && $end) {
-                    $pb['packageId'] = $packageId;
+					$pb['packageId'] = $packageId;
 					$pb['startDate'] = date('Y-m-d', $start);
 					$pb['endDate'] = date('Y-m-d', $end);
-                    $this->PackageBlackout->create();
-                    $this->PackageBlackout->save($pb);
-					//$this->query("INSERT INTO packageBlackout SET packageId = {$packageId}, created = NOW(), startDate = '{$startDate}', endDate = '{$endDate}'");
-
+					$this->PackageBlackout->create();
+					$this->PackageBlackout->save($pb);
 				}
 			}
 		}
@@ -749,7 +682,6 @@ class Package extends AppModel {
 
 	function getPackageValidityDisclaimerByItem($packageId,$loaItemRatePeriodIds,$startDate,$endDate,$debug_q=false){
 
-		//$r = $this->query("SELECT startDate,endDate,isBlackout FROM packageValidityDisclaimer pvd WHERE packageId = {$packageId} AND startDate >= '{$startDate}' AND endDate <= '{$endDate}' ORDER BY startDate");
 		$q="SELECT pvd.startDate, pvd.endDate, pvd.isBlackout FROM loaItemDate date INNER JOIN packageValidityDisclaimer pvd ON pvd.packageId = {$packageId} AND date.startDate <= pvd.startDate AND pvd.endDate <= date.endDate WHERE date.loaItemRatePeriodId IN ($loaItemRatePeriodIds) ORDER BY pvd.startDate";
 		$r = $this->query($q);
 		if ($debug_q){
@@ -793,7 +725,7 @@ class Package extends AppModel {
 		// * this clears and updates the table packageValidityDisclaimer
 		// * does not auto populate price point validity disclaimer
 
-		$validRanges = array();  // pairs of start/end valid date ranges
+		$validRanges = array();	// pairs of start/end valid date ranges
 		$blackoutRanges = array(); // pairs of start/end blackout date ranges
 		$blackoutDates = array(); // pairs of start/end blackout dates (not part of official ranges but for display only)
 
@@ -857,7 +789,7 @@ class Package extends AppModel {
 		// carve the date ranges for both validity and blackout.
 		// build date boundaries and carve out new ranges
 
-		$ranges = array();  // new carved date ranges
+		$ranges = array();	// new carved date ranges
 
 		// gather all days to use as guide boundaries
 		$dates = array();
@@ -866,7 +798,7 @@ class Package extends AppModel {
 			$dates[] = $d['e'];
 		}
 		$dates = array_unique($dates);
-		sort($dates);  // sort reorders indexes and sorts by value
+		sort($dates);	// sort reorders indexes and sorts by value
 
 		$count = count($dates);
 		foreach ($dates as $k => $d) {
@@ -901,89 +833,85 @@ class Package extends AppModel {
 
 		$count = count($ranges);
 		for ($i = 0 ; $i < $count; $i++) {
-            if ($i > 0) {
-                $prev_index = $i - 1;
-                // if current start is the same as previous end so [2010-01-05 -> 2010-01-09]  AND [2010-01-09 -> 2010-01-15]
-                if ($ranges[$i]['s'] == $ranges[$prev_index]['e']) {
-                    if ($ranges[$i]['t'] == $ranges[$prev_index]['t']) {
-                        // two date ranges are actually one  -- so combine them and remove old range
-                        // both either validity or both blackout -- either way, combine that shiz
-                        $ranges[$i] = array('s' => $ranges[$prev_index]['s'], 'e' => $ranges[$i]['e'], 't' => $ranges[$i]['t']);
-                        unset($ranges[$prev_index]);
-                    } elseif ($ranges[$i]['t'] == 'validity') {
-                        $ranges[$i]['s'] = date('Y-m-d', strtotime($ranges[$i]['s'] . ' +1 day'));
-                    } elseif ($ranges[$i]['t'] == 'blackout') {
-                        $ranges[$prev_index]['e'] = date('Y-m-d', strtotime($ranges[$prev_index]['e'] . ' -1 day'));
-                    }
-                }/* else if (date('Y-m-d', strtotime($ranges[$prev_index]['e'] . ' +1 DAY')) == $ranges[$i]['s']) {
-                    // if previous enddate is 1 day before current start date so [2010-01-05 -> 2010-01-09] AND [2010-01-10 -> 2010-01-15]
-                    $ranges[$i] = array('s' => $ranges[$prev_index]['s'], 'e' => $ranges[$i]['e'], 't' => $ranges[$i]['t']);
-                    unset($ranges[$prev_index]);
-                }*/
-            }
+			if ($i > 0) {
+				$prev_index = $i - 1;
+				// if current start is the same as previous end so [2010-01-05 -> 2010-01-09]	AND [2010-01-09 -> 2010-01-15]
+				if ($ranges[$i]['s'] == $ranges[$prev_index]['e']) {
+					if ($ranges[$i]['t'] == $ranges[$prev_index]['t']) {
+						// two date ranges are actually one	-- so combine them and remove old range
+						// both either validity or both blackout -- either way, combine that shiz
+						$ranges[$i] = array('s' => $ranges[$prev_index]['s'], 'e' => $ranges[$i]['e'], 't' => $ranges[$i]['t']);
+						unset($ranges[$prev_index]);
+					} elseif ($ranges[$i]['t'] == 'validity') {
+						$ranges[$i]['s'] = date('Y-m-d', strtotime($ranges[$i]['s'] . ' +1 day'));
+					} elseif ($ranges[$i]['t'] == 'blackout') {
+						$ranges[$prev_index]['e'] = date('Y-m-d', strtotime($ranges[$prev_index]['e'] . ' -1 day'));
+					}
+				}
+			}
 		}
 		return $ranges;
 	}
 
-	//  =====================================================================
-	//  END OF VALIDITY / BLACKOUT METHODS
-	//  =====================================================================
+	//	=====================================================================
+	//	END OF VALIDITY / BLACKOUT METHODS
+	//	=====================================================================
 
 
 	function getLoaItems($packageId, $clientId=null) {
-        $query = "
-            SELECT * FROM packageLoaItemRel PackageLoaItemRel
-            INNER JOIN loaItem LoaItem USING(loaItemId)
-        ";
-        $where = "PackageLoaItemRel.packageId = {$packageId}";
-        if ($clientId) {
-            $query .= "INNER JOIN loa Loa USING (loaId)";
-            $where .= " AND Loa.clientId = {$clientId}";
-        }
-        $query .= " WHERE {$where}";
-        return $this->query($query);
-    }
+		$query = "
+			SELECT * FROM packageLoaItemRel PackageLoaItemRel
+			INNER JOIN loaItem LoaItem USING(loaItemId)
+		";
+		$where = "PackageLoaItemRel.packageId = {$packageId}";
+		if ($clientId) {
+			$query .= "INNER JOIN loa Loa USING (loaId)";
+			$where .= " AND Loa.clientId = {$clientId}";
+		}
+		$query .= " WHERE {$where}";
+		return $this->query($query);
+	}
 
 	function getInclusions($packageId) {
-        return $this->query("
-            SELECT LoaItem.merchandisingDescription,PackageLoaItemRel.packageLoaItemRelId FROM packageLoaItemRel PackageLoaItemRel
-            INNER JOIN loaItem LoaItem USING(loaItemId)
+		return $this->query("
+			SELECT LoaItem.merchandisingDescription,PackageLoaItemRel.packageLoaItemRelId FROM packageLoaItemRel PackageLoaItemRel
+			INNER JOIN loaItem LoaItem USING(loaItemId)
 			WHERE packageId = $packageId AND loaItemTypeId NOT IN (1,12) ORDER BY weight;
-        ");
-    }
+		");
+	}
 
-    function getCurrency($packageId) {
-        if ($currency = $this->query("
-            SELECT Currency.*, CurrencyExchangeRate.*
-            FROM package
-            INNER JOIN currency Currency USING(currencyId)
-            LEFT JOIN currencyExchangeRate CurrencyExchangeRate USING(currencyId)
-            WHERE packageId = $packageId
-            ORDER BY asOfDateTime DESC
-            LIMIT 1
-            ")) {
-            return $currency[0];
-        }
-    }
+	function getCurrency($packageId) {
+		if ($currency = $this->query("
+			SELECT Currency.*, CurrencyExchangeRate.*
+			FROM package
+			INNER JOIN currency Currency USING(currencyId)
+			LEFT JOIN currencyExchangeRate CurrencyExchangeRate USING(currencyId)
+			WHERE packageId = $packageId
+			ORDER BY asOfDateTime DESC
+			LIMIT 1
+			")) {
+			return $currency[0];
+		}
+	}
 
-    function getTaxes($loaItemId) {
-        $fees = $this->query("SELECT * FROM fee Fee WHERE loaItemId = $loaItemId");
-        if (count($fees)) {
-            // add all percentages and fixed fees
-            $percent = $fixed = 0;
-            foreach ($fees as $key => $row) {
-                $percent += ($row['Fee']['feeTypeId'] == 1) ? $row['Fee']['feePercent'] : 0;
-                $fixed += ($row['Fee']['feeTypeId'] == 2) ? $row['Fee']['feePercent'] : 0;
-            }
-            return array('percent' => $percent, 'fixed' => $fixed);
-        } else {
-            return array('percent' => 0, 'fixed' => 0);
-        }
-    }
+	function getTaxes($loaItemId) {
+		$fees = $this->query("SELECT * FROM fee Fee WHERE loaItemId = $loaItemId");
+		if (count($fees)) {
+			// add all percentages and fixed fees
+			$percent = $fixed = 0;
+			foreach ($fees as $key => $row) {
+				$percent += ($row['Fee']['feeTypeId'] == 1) ? $row['Fee']['feePercent'] : 0;
+				$fixed += ($row['Fee']['feeTypeId'] == 2) ? $row['Fee']['feePercent'] : 0;
+			}
+			return array('percent' => $percent, 'fixed' => $fixed);
+		} else {
+			return array('percent' => 0, 'fixed' => 0);
+		}
+	}
 
 	/*
 		====================================================
-		PKGR :  clone package
+		PKGR :	clone package
 		====================================================
 	*/
 
@@ -1004,7 +932,7 @@ class Package extends AppModel {
 		$this->save($data);
 		$newPkgId = $this->getLastInsertID();
 
-		// no package id  -- could not create row
+		// no package id	-- could not create row
 		if (!$newPkgId) {
 			$errors = 'ERRORS:<BR /><BR />' . implode("\n\n<br /><br />", $this->validationErrors);
 			return $errors;
@@ -1035,10 +963,10 @@ class Package extends AppModel {
 		$origData = $this->read(null, $originalPkgId);
 
 		foreach ($origData['ClientLoaPackageRel'] as $clpr) {
-		    if ($clpr['loaId'] == $loaId) {
-		        echo 'this package is already associated with loa ' . $loaId;
-		        exit;
-		    }
+			if ($clpr['loaId'] == $loaId) {
+				echo 'this package is already associated with loa ' . $loaId;
+				exit;
+			}
 		}
 
 		// need these models
@@ -1051,15 +979,15 @@ class Package extends AppModel {
 		$newLoaItems = array();
 		foreach ($origData['PackageLoaItemRel'] as $item) {
 
-		    // begin by making sure there are new loaItems for the this item's loaItemGroup loaItems
-		    $LoaItemGroup->recursive = -1;
-		    $groups = $LoaItemGroup->find('all', array('conditions' => array('LoaItemGroup.loaItemId'=>$item['loaItemId'])));
+			// begin by making sure there are new loaItems for the this item's loaItemGroup loaItems
+			$LoaItemGroup->recursive = -1;
+			$groups = $LoaItemGroup->find('all', array('conditions' => array('LoaItemGroup.loaItemId'=>$item['loaItemId'])));
 			foreach($groups as $group) {
 				$result = $this->getCrossLoaClonedLoaItem($group['LoaItemGroup']['groupItemId'], $loaId);
 			}
 
-		    // now retrieve or create new item
-		    $newLoaItems[$item['loaItemId']] = $this->getCrossLoaClonedLoaItem($item['loaItemId'], $loaId);
+			// now retrieve or create new item
+			$newLoaItems[$item['loaItemId']] = $this->getCrossLoaClonedLoaItem($item['loaItemId'], $loaId);
 
 		}
 
@@ -1090,55 +1018,55 @@ class Package extends AppModel {
 				unset($modelData['packageId']);
 
 				if ($model == 'PackageLoaItemRel') {
-				    $newItem = $newLoaItems[$modelData['loaItemId']];
-				    $modelData['loaItemId'] = $newItem['LoaItem']['loaItemId'];
-				    $modelData['loaItemTypeId'] = $newItem['LoaItem']['loaItemTypeId'];
-				    $modelData['created'] = $modelData['modified'] = date('Y-m-d H:i:s');
+					$newItem = $newLoaItems[$modelData['loaItemId']];
+					$modelData['loaItemId'] = $newItem['LoaItem']['loaItemId'];
+					$modelData['loaItemTypeId'] = $newItem['LoaItem']['loaItemTypeId'];
+					$modelData['created'] = $modelData['modified'] = date('Y-m-d H:i:s');
 				}
 
 				if ($model == 'LoaItemRatePackageRel') {
 
-				    $LoaItemRate->recursive = -1;
-				    $origItemRate = $LoaItemRate->read(null, $modelData['loaItemRateId']);
+					$LoaItemRate->recursive = -1;
+					$origItemRate = $LoaItemRate->read(null, $modelData['loaItemRateId']);
 
-				    $LoaItemRatePeriod->recursive = -1;
-				    $origItmeRatePeriod = $LoaItemRatePeriod->read(null, $origItemRate['LoaItemRate']['loaItemRatePeriodId']);
+					$LoaItemRatePeriod->recursive = -1;
+					$origItmeRatePeriod = $LoaItemRatePeriod->read(null, $origItemRate['LoaItemRate']['loaItemRatePeriodId']);
 
-				    $newItem = $newLoaItems[$origItmeRatePeriod['LoaItemRatePeriod']['loaItemId']];
+					$newItem = $newLoaItems[$origItmeRatePeriod['LoaItemRatePeriod']['loaItemId']];
 
-				    $newRatePeriods = array();
-				    foreach ($newItem['LoaItemRatePeriod'] as $rp) {
-				        $newRatePeriods[] = $rp['loaItemRatePeriodId'];
-				    }
+					$newRatePeriods = array();
+					foreach ($newItem['LoaItemRatePeriod'] as $rp) {
+						$newRatePeriods[] = $rp['loaItemRatePeriodId'];
+					}
 
-				    $newItemRate = $LoaItemRate->find('first', array('conditions' => array(
-				                                                  'LoaItemRate.loaItemRatePeriodId' => $newRatePeriods
-				                                                , 'LoaItemRate.price' => $origItemRate['LoaItemRate']['price']
-				                                                , 'LoaItemRate.w0' => $origItemRate['LoaItemRate']['w0']
-				                                                , 'LoaItemRate.w1' => $origItemRate['LoaItemRate']['w1']
-				                                                , 'LoaItemRate.w2' => $origItemRate['LoaItemRate']['w2']
-				                                                , 'LoaItemRate.w3' => $origItemRate['LoaItemRate']['w3']
-				                                                , 'LoaItemRate.w4' => $origItemRate['LoaItemRate']['w4']
-				                                                , 'LoaItemRate.w5' => $origItemRate['LoaItemRate']['w5']
-				                                                , 'LoaItemRate.w6' => $origItemRate['LoaItemRate']['w6']
-				                                                , 'NOT' => array('LoaItemRate.loaItemRateId' => $newRatePeriodsMatched)
-				                                                )));
+					$newItemRate = $LoaItemRate->find('first', array('conditions' => array(
+																	'LoaItemRate.loaItemRatePeriodId' => $newRatePeriods
+																, 'LoaItemRate.price' => $origItemRate['LoaItemRate']['price']
+																, 'LoaItemRate.w0' => $origItemRate['LoaItemRate']['w0']
+																, 'LoaItemRate.w1' => $origItemRate['LoaItemRate']['w1']
+																, 'LoaItemRate.w2' => $origItemRate['LoaItemRate']['w2']
+																, 'LoaItemRate.w3' => $origItemRate['LoaItemRate']['w3']
+																, 'LoaItemRate.w4' => $origItemRate['LoaItemRate']['w4']
+																, 'LoaItemRate.w5' => $origItemRate['LoaItemRate']['w5']
+																, 'LoaItemRate.w6' => $origItemRate['LoaItemRate']['w6']
+																, 'NOT' => array('LoaItemRate.loaItemRateId' => $newRatePeriodsMatched)
+																)));
 
-				    $modelData['loaItemRateId'] = $newItemRate['LoaItemRate']['loaItemRateId'];
-				    $newRatePeriodsMatched[] = $newItemRate['LoaItemRate']['loaItemRateId'];
+					$modelData['loaItemRateId'] = $newItemRate['LoaItemRate']['loaItemRateId'];
+					$newRatePeriodsMatched[] = $newItemRate['LoaItemRate']['loaItemRateId'];
 				}
 
 				if ($model == 'PackageBlackout') {
-				    $modelData['created'] = date('Y-m-d H:i:s');
+					$modelData['created'] = date('Y-m-d H:i:s');
 				}
 
 				if ($model == 'PackageBlackoutWeekday') {
-				    $modelData['created'] = date('Y-m-d H:i:s');
+					$modelData['created'] = date('Y-m-d H:i:s');
 				}
 
 				if ($model == 'ClientLoaPackageRel') {
-				    $modelData['loaId'] = $loaId;
-				    $modelData['created'] = $modelData['modified'] = date('Y-m-d H:i:s');
+					$modelData['loaId'] = $loaId;
+					$modelData['created'] = $modelData['modified'] = date('Y-m-d H:i:s');
 				}
 			}
 
@@ -1153,7 +1081,7 @@ class Package extends AppModel {
 		$this->saveAll($data);
 		$newPkgId = $this->getLastInsertID();
 
-		// no package id  -- could not create row
+		// no package id	-- could not create row
 		if (!$newPkgId) {
 			$errors = 'ERRORS:<BR /><BR />' . implode("\n\n<br /><br />", $this->validationErrors);
 			echo $errors;
@@ -1177,85 +1105,85 @@ class Package extends AppModel {
 		$item = $LoaItem->find('first', array('conditions' => array('LoaItem.loaId'=>$newLoaId, 'LoaItem.createdFromItemIdCrossLoa'=>$itemId)));
 
 		if (!$item) {
-		    $LoaItem->recursive = -1;
-		    $oldItem = $LoaItem->find('first', array('conditions' => array('LoaItem.loaItemId'=>$itemId)));
+			$LoaItem->recursive = -1;
+			$oldItem = $LoaItem->find('first', array('conditions' => array('LoaItem.loaItemId'=>$itemId)));
 
-		    // setup new item
-		    $newItem = $oldItem;
-		    $newItem['LoaItem']['createdFromItemIdCrossLoa'] = $itemId;
-		    $newItem['LoaItem']['loaId'] = $newLoaId;
-		    unset($newItem['LoaItem']['loaItemId']);
-		    unset($newItem['LoaItem']['createdFromItemId']);
-		    $newItem['LoaItem']['created'] = $newItem['LoaItem']['modified'] = date('Y-m-d H:i:s');
+			// setup new item
+			$newItem = $oldItem;
+			$newItem['LoaItem']['createdFromItemIdCrossLoa'] = $itemId;
+			$newItem['LoaItem']['loaId'] = $newLoaId;
+			unset($newItem['LoaItem']['loaItemId']);
+			unset($newItem['LoaItem']['createdFromItemId']);
+			$newItem['LoaItem']['created'] = $newItem['LoaItem']['modified'] = date('Y-m-d H:i:s');
 
-		    // new item fees
-		    $Fee->recursive = -1;
-		    $fees = $Fee->find('all', array('conditions' => array('Fee.loaItemId'=>$itemId)));
-		    foreach($fees as $fee) {
-		        unset($fee['Fee']['feeId']);
-		        unset($fee['Fee']['loaItemId']);
-		        $fee['Fee']['created'] = $fee['Fee']['modified'] = date('Y-m-d H:i:s');
-		        $newItem['Fee'][] = $fee['Fee'];
-		    }
+			// new item fees
+			$Fee->recursive = -1;
+			$fees = $Fee->find('all', array('conditions' => array('Fee.loaItemId'=>$itemId)));
+			foreach($fees as $fee) {
+				unset($fee['Fee']['feeId']);
+				unset($fee['Fee']['loaItemId']);
+				$fee['Fee']['created'] = $fee['Fee']['modified'] = date('Y-m-d H:i:s');
+				$newItem['Fee'][] = $fee['Fee'];
+			}
 
-		    // save new item
-		    $LoaItem->create();
-		    $LoaItem->saveAll($newItem);
-		    $newItemId = $LoaItem->getLastInsertID();
+			// save new item
+			$LoaItem->create();
+			$LoaItem->saveAll($newItem);
+			$newItemId = $LoaItem->getLastInsertID();
 
-		    // no item id  -- could not create
-		    if (!$newItemId) {
-		        $errors = 'ERRORS:<BR /><BR />' . implode("\n\n<br /><br />", $LoaItem->validationErrors);
-		        echo $errors;
-		        exit;
-		    }
+			// no item id	-- could not create
+			if (!$newItemId) {
+				$errors = 'ERRORS:<BR /><BR />' . implode("\n\n<br /><br />", $LoaItem->validationErrors);
+				echo $errors;
+				exit;
+			}
 
-		    // new item groups
-		    $LoaItemGroup->recursive = -1;
-		    $groups = $LoaItemGroup->find('all', array('conditions' => array('LoaItemGroup.loaItemId'=>$itemId)));
-		    foreach($groups as $group) {
-		        $newgrp = array();
-		        $newgrp['loaItemId'] = $newItemId;
-		        $newgrp['quantity'] = $group['LoaItemGroup']['quantity'];
+			// new item groups
+			$LoaItemGroup->recursive = -1;
+			$groups = $LoaItemGroup->find('all', array('conditions' => array('LoaItemGroup.loaItemId'=>$itemId)));
+			foreach($groups as $group) {
+				$newgrp = array();
+				$newgrp['loaItemId'] = $newItemId;
+				$newgrp['quantity'] = $group['LoaItemGroup']['quantity'];
 
-		        // lookup groupItemId
-		        $LoaItem->recursive = -1;
-		        $grpitem = $LoaItem->find('first', array('conditions' => array('LoaItem.createdFromItemIdCrossLoa'=>$group['LoaItemGroup']['groupItemId'])));
-		        $newgrp['groupItemId'] = $grpitem['LoaItem']['loaItemId'];
+				// lookup groupItemId
+				$LoaItem->recursive = -1;
+				$grpitem = $LoaItem->find('first', array('conditions' => array('LoaItem.createdFromItemIdCrossLoa'=>$group['LoaItemGroup']['groupItemId'])));
+				$newgrp['groupItemId'] = $grpitem['LoaItem']['loaItemId'];
 
-		        $LoaItemGroup->create();
-		        $LoaItemGroup->saveAll($newgrp);
-		    }
+				$LoaItemGroup->create();
+				$LoaItemGroup->saveAll($newgrp);
+			}
 
-		    // new item rate periods
-		    $LoaItemRatePeriod->recursive = 1;
-		    $ratePeriods = $LoaItemRatePeriod->find('all', array('conditions' => array('LoaItemRatePeriod.loaItemId'=>$itemId)));
+			// new item rate periods
+			$LoaItemRatePeriod->recursive = 1;
+			$ratePeriods = $LoaItemRatePeriod->find('all', array('conditions' => array('LoaItemRatePeriod.loaItemId'=>$itemId)));
 
-		    foreach ($ratePeriods as $ratePeriod) {
-		        $rp = array();
-		        $rp['loaItemId'] = $newItemId;
-		        $rp['loaItemRatePeriodName'] = $ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodName'];
-		        $rp['created'] = $rp['modified'] = date('Y-m-d H:i:s');
-		        $rp['LoaItemRate'] = $ratePeriod['LoaItemRate'];
-		        $rp['LoaItemDate'] = $ratePeriod['LoaItemDate'];
+			foreach ($ratePeriods as $ratePeriod) {
+				$rp = array();
+				$rp['loaItemId'] = $newItemId;
+				$rp['loaItemRatePeriodName'] = $ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodName'];
+				$rp['created'] = $rp['modified'] = date('Y-m-d H:i:s');
+				$rp['LoaItemRate'] = $ratePeriod['LoaItemRate'];
+				$rp['LoaItemDate'] = $ratePeriod['LoaItemDate'];
 
-		        foreach($rp['LoaItemRate'] as $key=>$val) {
-		            unset($rp['LoaItemRate'][$key]['loaItemRateId']);
-		            unset($rp['LoaItemRate'][$key]['loaItemRatePeriodId']);
-		            $rp['LoaItemRate'][$key]['created'] = $rp['LoaItemRate'][$key]['modified'] = date('Y-m-d H:i:s');
-		        }
+				foreach($rp['LoaItemRate'] as $key=>$val) {
+					unset($rp['LoaItemRate'][$key]['loaItemRateId']);
+					unset($rp['LoaItemRate'][$key]['loaItemRatePeriodId']);
+					$rp['LoaItemRate'][$key]['created'] = $rp['LoaItemRate'][$key]['modified'] = date('Y-m-d H:i:s');
+				}
 
-		        foreach($rp['LoaItemDate'] as $key=>$val) {
-		            unset($rp['LoaItemDate'][$key]['loaItemDateId']);
-		            unset($rp['LoaItemDate'][$key]['loaItemRatePeriodId']);
-		            $rp['LoaItemDate'][$key]['created'] = $rp['LoaItemDate'][$key]['modified'] = date('Y-m-d H:i:s');
-		        }
-		        $LoaItemRatePeriod->create();
-		        $LoaItemRatePeriod->saveAll($rp);
-		    }
+				foreach($rp['LoaItemDate'] as $key=>$val) {
+					unset($rp['LoaItemDate'][$key]['loaItemDateId']);
+					unset($rp['LoaItemDate'][$key]['loaItemRatePeriodId']);
+					$rp['LoaItemDate'][$key]['created'] = $rp['LoaItemDate'][$key]['modified'] = date('Y-m-d H:i:s');
+				}
+				$LoaItemRatePeriod->create();
+				$LoaItemRatePeriod->saveAll($rp);
+			}
 
-		    $LoaItem->recursive = 1;
-		    $item = $LoaItem->find('first', array('conditions' => array('LoaItem.loaItemId'=>$newItemId)));
+			$LoaItem->recursive = 1;
+			$item = $LoaItem->find('first', array('conditions' => array('LoaItem.loaItemId'=>$newItemId)));
 		}
 		return $item;
 	}
