@@ -50,11 +50,16 @@
     <tr class="odd">
        <th>LOA Sites</th>
        <td>
-            <?php foreach ($package['Loa']['sites'] as $i => $site) {
-                    echo $sites[$site];
-                    if ($i < count($package['Loa']['sites'])-1) {
-                        echo ', ';
-                    }
+            <?php 
+						foreach ($package['Loa']['sites'] as $i => $site) {
+							if (trim($site)==''){
+								echo "Value of 'site' not set in package['Loa']['sites']<br>";
+								continue;
+							}
+							echo $sites[$site];
+							if ($i < count($package['Loa']['sites'])-1) {
+									echo ', ';
+							}
             }
             ?>
        </td>
