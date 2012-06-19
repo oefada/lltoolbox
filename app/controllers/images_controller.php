@@ -24,7 +24,7 @@ class ImagesController extends AppController
 			'gal-xl' => 1, //slideshow
 			'gal-lrg' => 2, //large (listing)
 			'list-sml' => 3, //	thumbnail
-			'-auto-' => 1,     // new PHOtos
+			'-auto-' => 1, // new PHOtos
 		);
 
 		$this->fileRoot = dirname(dirname(dirname(dirname(__FILE__)))) . '/luxurylink/php';
@@ -70,6 +70,15 @@ class ImagesController extends AppController
 					'ImageClient.sortOrder'
 				)
 			));
+			foreach ($slideshowImages as &$ssi) {
+				if (isset($ssi['Image']['imagePath'])) {
+					if (is_file('/mnt' . $ssi['Image']['imagePath'])) {
+						$ssi['Image']['filemtime'] = filemtime('/mnt' . $ssi['Image']['imagePath']);
+					} else {
+						$ssi['Image']['filemtime'] = 69;
+					}
+				}
+			}
 			$largeImages = $this->Image->ImageClient->find('all', array(
 				'conditions' => array(
 					'ImageClient.clientId' => $this->Image->clientId,

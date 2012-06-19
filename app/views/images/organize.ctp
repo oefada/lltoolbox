@@ -1,4 +1,11 @@
 <?php echo $html->css('images.css'); ?>
+<style type="text/css">
+	.organize ul li.imageAge-0 {
+		border-color: #008800;
+		background-color:#eeffee;
+		font-weight: bold;
+	}
+</style>
 <?php $this->pageTitle = $client['Client']['name'].$html2->c($client['Client']['clientId'], 'Client Id:').'<br />'.$html2->c('manager: '.$client['Client']['managerUsername']); ?>
 <div class="sitesTab">
    <?php foreach ($sites as $site => $siteName): ?>
@@ -62,7 +69,7 @@
                         <h3>Slideshow</h3>
                         <ul id="sortableSlideshow-<?php echo $site; ?>" class="sortableSS">
                   <?php endif; ?>
-                  <li id="item_<?php echo $ssImage['ImageClient']['clientImageId'] ?>-<?php echo $site; ?>" class="droppableLI">
+                  <li id="item_<?php echo $ssImage['ImageClient']['clientImageId'] ?>-<?php echo $site; ?>" class="droppableLI imageAge-<?php echo intval((time()-$slideshowImages[$i]['Image']['filemtime'])/86400); ?>">
                      <img src="<?php echo $ssImage['Image']['imagePath']; ?>" style="vertical-align:bottom; max-height: 100px; max-width: 176px; margin: 1px;" alt="<?php echo $ssImage['Image']['caption']; ?>" />
                      <?php $fileArr = explode('/', $ssImage['Image']['imagePath']); ?>
                      <div class="filename"><?php echo end($fileArr); ?></div>
@@ -83,7 +90,7 @@
             <ul id="sortableInactive-<?php echo $site; ?>" class="sortableInactive">
                <?php if ($start_inactive !== false): ?>
                   <?php for ($i=$start_inactive; $i < count($slideshowImages); $i++): ?>
-                     <li id="item_<?php echo $slideshowImages[$i]['ImageClient']['clientImageId'] ?>-<?php echo $site; ?>" class="droppableLI">
+                     <li id="item_<?php echo $slideshowImages[$i]['ImageClient']['clientImageId'] ?>-<?php echo $site; ?>" class="droppableLI imageAge-<?php echo intval((time()-$slideshowImages[$i]['Image']['filemtime'])/86400); ?>">
                           <img src="<?php echo $slideshowImages[$i]['Image']['imagePath']; ?>" style="vertical-align:bottom; max-height: 100px; max-width: 176px; margin: 1px;" alt="<?php echo $slideshowImages[$i]['Image']['caption']; ?>" />
                           <?php $fileArr = explode('/', $slideshowImages[$i]['Image']['imagePath']); ?>
                           <div class="filename"><?php echo end($fileArr); ?></div>
