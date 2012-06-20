@@ -42,8 +42,9 @@ class LoasController extends AppController {
 		}else{
 			$options['order'] = array('offerId' => 'ASC');
 		}
-
-		$tracks_result = $this->Loa->query('SELECT * FROM track WHERE loaId = ' . $loa['Loa']['loaId']);
+	
+		$q='SELECT * FROM track WHERE loaId =?';
+		$tracks_result = $this->Loa->query($q,array($loa['Loa']['loaId']));
 
 		foreach ($tracks_result as $track) {
 
