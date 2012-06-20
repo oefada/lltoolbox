@@ -181,6 +181,7 @@ class UsersController extends AppController {
 		// For some reason, to get ticketCount to work, this has to be unset.
 		if (isset($this->passedArgs['sort']) && $this->passedArgs['sort']=='ticketCount'){
 			unset($this->passedArgs['sort']);
+			unset($this->passedArgs['direction']);
 		}
 
 		//
@@ -244,6 +245,8 @@ class UsersController extends AppController {
 
 			$order[]=$sort.' '.$dir;
 			if ($sort=='ticketCount'){
+				// this is necessary as count() will count a row that is actually a null result set as one, 
+				// putting real result sets of one on the same level
 				$order[]='hasTicketId '.$dir;
 			}
 
