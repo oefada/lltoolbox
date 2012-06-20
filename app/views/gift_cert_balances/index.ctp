@@ -8,11 +8,16 @@
 </div>
 <table cellpadding="0" cellspacing="0">
 <tr>
-	<th>Purchaser User Id</th>
-	<th>Purchaser Username</th>
-	<th>Promo Code</th>
-	<th>Balance</th>
-	<th>Last Transaction</th>
+<? 
+
+$paginator->options(array('url' => $this->passedArgs));
+
+?>
+	<th><?=$paginator->sort('Purchaser User Id','userId');?></th>
+	<th><?=$paginator->sort('Purchaser Username','UserSiteExtended.username');?></th>
+	<th><?=$paginator->sort('Promo Code','PromoCode.promoCode');?></th>
+	<th><?=$paginator->sort('Balance','balance');?></th>
+	<th><?=$paginator->sort('Last Transaction', 'datetime');?></th>
 	<th class="actions"><?php __('Actions');?></th>
 </tr>
 <?php
