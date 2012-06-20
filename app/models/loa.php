@@ -13,7 +13,15 @@ class Loa extends AppModel {
 						   'AccountType' => array('foreignKey' => 'accountTypeId')
 						  );
 	var $validate = array('startDate' => array('rule' => array('validateEndStartDate'), 'message' => 'Start date must be less than end date'),
-						  'endDate' => array('rule' => array('validateEndStartDate'), 'message' => 'Start date must be less than end date')
+						  'endDate' => array('rule' => array('validateEndStartDate'), 'message' => 'Start date must be less than end date'),
+						  'loaMembershipTypeId' => array(
+			'rule' => array(
+				'comparison',
+				'>',
+				0
+			),
+			'message' => 'Please select an LOA membership type'
+		),
 							);
 
 	var $order = array("Loa.startDate DESC");
