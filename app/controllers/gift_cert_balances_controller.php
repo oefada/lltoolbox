@@ -10,19 +10,81 @@ class GiftCertBalancesController extends AppController {
 	}
 
 	function index() {
-		$this->GiftCertBalance->recursive = 0;
-		
-		$results = $this->GiftCertBalance->query("
-			SELECT GiftCertBalance.giftCertBalanceId, promoCodeId, promoCode, balance, datetime, UserSiteExtended.username, User.userId
-			FROM (SELECT max(giftCertBalanceId) AS giftCertBalanceId FROM giftCertBalance GROUP BY promoCodeId) gcb
-				INNER JOIN giftCertBalance GiftCertBalance USING(giftCertBalanceId)
-				INNER JOIN promoCode PromoCode USING(promoCodeId)
-				LEFT JOIN user User USING(userId)
-				LEFT JOIN userSiteExtended UserSiteExtended USING(userId)
-				ORDER BY GiftCertBalance.giftCertBalanceId DESC
-		");		
-		
-		$this->set('giftCertBalances', $results);		
+
+		$this->GiftCertBalance->recursive = -1;
+
+		$idArr=array();
+		$optionsArr['group']='promoCodeId';
+		$optionsArr['fields']='max(giftCertBalanceId) as giftCertBalanceId';
+		$optoinsArr['contain']=array('GiftCertBalance');
+		$rows=$this->GiftCertBalance->find('all', $optionsArr);
+		foreach($rows as $i=>$arr){
+			$idArr[]=$arr[0]['giftCertBalanceId'];
+		}
+
+		$optionsArr=array();
+		$fields='GiftCertBalance.giftCertBalanceId, GiftCertBalance.promoCodeId, PromoCode.promoCode, balance, ';
+		$fields.='datetime, UserSiteExtended.username, User.userId ';
+		$optionsArr['fields']=$fields;
+		//$optoinsArr['contain']=array('GiftCertBalance','User','UserSiteExtended','PromoCode');
+		$optionsArr['table']='giftCertBalance';
+		$optionsArr['alias']='GiftCertBalance';
+		$joins=array(
+			array(
+				'table'=>'promoCode',
+				'alias'=>'PromoCode',
+				'type'=>'INNER',
+				'conditions'=>array(
+					'GiftCertBalance.promoCodeId = PromoCode.promoCodeId'
+				)
+			),
+			array(
+				'table'=>'user',
+				'alias'=>'User',
+				'type'=>'LEFT',
+				'conditions'=>array(
+					'User.userId = GiftCertBalance.userId'
+				)
+			),
+			array(
+				'table'=>'userSiteExtended',
+				'alias'=>'UserSiteExtended',
+				'type'=>'LEFT',
+				'conditions'=>array(
+					'User.userId = UserSiteExtended.userId'
+				)
+			)
+		);
+
+		$optionsArr['joins']=$joins;
+		$optionsArr['conditions']="GiftCertBalance.GiftCertBalanceId IN (".implode(", ", $idArr).") ";
+		if (isset($this->passedArgs['sort'])){
+			$optionsArr['order']=array($this->passedArgs['sort']=>$this->passedArgs['direction']);
+			// This seems to be necessary to get the sort working for username
+			unset($this->passedArgs['sort']);
+		}else{
+			$optionsArr['order']=array('promoCode'=>'DESC');
+		}
+		$optionsArr['limit']=count($idArr);
+		$this->paginate=$optionsArr;
+		$results=$this->paginate();
+		$this->set('giftCertBalances', $results);
+
+		// original query without subquery and use of where in ()
+		$q="SELECT GiftCertBalance.giftCertBalanceId, promoCodeId, promoCode, balance, datetime, ";
+		$q.="UserSiteExtended.username, User.userId ";
+		$q.="FROM giftCertBalance AS GiftCertBalance ";
+		$q.="INNER JOIN promoCode PromoCode USING(promoCodeId) ";
+		$q.="LEFT JOIN user User USING(userId) ";
+		$q.="LEFT JOIN userSiteExtended UserSiteExtended USING(userId) ";
+		$q.="WHERE giftCertBalanceId IN (".implode(", ", $idArr).") ";
+		$q.="ORDER BY GiftCertBalance.giftCertBalanceId DESC";
+		//$results = $this->GiftCertBalance->query($q);
+
+		// original query with subquery
+		//$results = $this->GiftCertBalance->query(" SELECT GiftCertBalance.giftCertBalanceId, promoCodeId, promoCode, balance, datetime, UserSiteExtended.username, User.userId FROM (SELECT max(giftCertBalanceId) AS giftCertBalanceId FROM giftCertBalance GROUP BY promoCodeId) gcb INNER JOIN giftCertBalance GiftCertBalance USING(giftCertBalanceId) INNER JOIN promoCode PromoCode USING(promoCodeId) LEFT JOIN user User USING(userId) LEFT JOIN userSiteExtended UserSiteExtended USING(userId) ORDER BY GiftCertBalance.giftCertBalanceId DESC ");      
+
+
 	}
 
 	function view($id = null) {
