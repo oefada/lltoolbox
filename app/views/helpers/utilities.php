@@ -20,22 +20,12 @@ class UtilitiesHelper extends AppHelper {
 
 	}
 
-	function clickSort($view, $field, $fieldTitle=null, $qArr=null){
+	function clickSort($view, $field, $fieldTitle=null, $html){
 
-		$url=$view->params['url']['url'];
+		$url="/".$view->params['url']['url'];
 
 		if (!strstr($url, "page:"))$url.="/page:1";
-		if ($qArr){
-			$keyArr=array();
-			foreach($qArr as $key=>$val){
-				if ($key=="url")continue;
-				if (in_array($key,$keyArr)){
-					continue;
-				}
-				$keyArr[]=$key;
-				$url.="/".urlencode($key).":".urlencode($val);
-			}
-		}
+		else $url=preg_replace("~page:[0-9]+~is","page:1",$url);
 
 		if (isset($view->params['named']['direction'])){
 			if ($view->params['named']['direction']=='asc'){
@@ -51,9 +41,9 @@ class UtilitiesHelper extends AppHelper {
 		}else{
 			$url.="/sort:$field";
 		}
-		
+
 		$name=($fieldTitle!==null)?$fieldTitle:$field;
-		return "<a href='/$url'>$name</a>";
+		return $html->link($name,$url);
 
 	}
 
