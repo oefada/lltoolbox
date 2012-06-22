@@ -140,6 +140,16 @@ class TrackDetail extends AppModel {
 
 		// 2011-05-03 jwoods - guarantee check
 		$guarantee_amount = (!empty($guaranteeAmt) && (intval($guaranteeAmt) > 0)) ? $guaranteeAmt : false;
+		
+		// ticket 3327 - guarantee for combo packages
+		if ($guarantee_amount && intval($ticket_and_rev['clpr']['percentOfRevenue']) < 100) {
+			$guarantee_amount = floor(($ticket_and_rev['clpr']['percentOfRevenue'] / 100) * $guarantee_amount);
+		}
+		if ($reserve_amount && intval($ticket_and_rev['clpr']['percentOfRevenue']) < 100) {
+			$reserve_amount = floor(($ticket_and_rev['clpr']['percentOfRevenue'] / 100) * $reserve_amount);
+		}
+		// end ticket 3327
+		
 		if ($guarantee_amount && ($allocated_amount < $guarantee_amount)) {
 			$allocated_amount = $guarantee_amount;
 		} else {
