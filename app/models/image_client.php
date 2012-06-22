@@ -88,5 +88,18 @@ class ImageClient extends AppModel
 		return true;
 	}
 
+	function getFirstImagePath($clientId)
+	{
+		$results = $this->find('first', array(
+			'order' => 'ImageClient.sortOrder ASC,ImageClient.clientImageId ASC',
+			'conditions' => array(
+				'ImageClient.clientId' => $clientId,
+				'ImageClient.isHidden' => 0,
+				'ImageClient.inactive' => 0,
+				'ImageClient.imageTypeId' => 1,
+			)
+		));
+		return isset($results['Image']['imagePath']) ? $results['Image']['imagePath'] : false;
+	}
+
 }
-?>

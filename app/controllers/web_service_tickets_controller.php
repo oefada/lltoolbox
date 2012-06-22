@@ -36,7 +36,7 @@ class WebServiceTicketsController extends WebServicesController
 					  'ClientLoaPackageRel', 'Track', 'OfferType', 'Loa', 'TrackDetail', 'PpvNotice',
 					  'Address', 'OfferLuxuryLink', 'SchedulingMaster', 'SchedulingInstance', 'Reservation',
 					  'PromoTicketRel', 'Promo', 'TicketReferFriend','Package','PaymentProcessor','CakeLog',
-					  'ClientThemeRel'
+					  'ClientThemeRel', 'Image', 'ImageClient',
 					  );
 
 	var $serviceUrl = 'http://toolbox.luxurylink.com/web_service_tickets';
@@ -940,10 +940,23 @@ class WebServiceTicketsController extends WebServicesController
 		$ppvInitials		= isset($params['initials']) ? $params['initials'] : null;
 		$clientIdParam		= isset($params['clientId']) ? $params['clientId'] : false;
 		$siteId				= isset($params['siteId']) ? $params['siteId'] : false;
-		$clientId			= isset($params['clientId']) ? $params['clientId'] : false;
 		$offerId			= isset($params['offerId']) ? $params['offerId'] : false;
-		$clientImagePath	= isset($params['clientImagePath']) ? $params['clientImagePath'] : false;
-		
+		$clientId			= isset($params['clientId']) ? $params['clientId'] : false;
+		if (!$clientId && $ticketId) {
+			$packageId = $this->Ticket->field('packageId', array('Ticket.ticketId' =>$ticketId));
+			if ($packageId) {
+				$clientId = $this->ClientLoaPackageRel->field('clientId', array('ClientLoaPackageRel.packageId' => $packageId));
+			}
+		}
+		if ($clientId) {
+			$clientImagePath = $this->ImageClient->getFirstImagePath($clientId);
+			if (substr($clientImagePath,0,1)=='/') {
+				$clientImagePath = 'http://photos.luxurylink.us' . $clientImagePath;
+			}
+		} else {
+			$clientImagePath = false;
+		}
+
 		// package id for deal alerts
 		if ($ppvNoticeTypeId == 41 || $ppvNoticeTypeId == 42 || $ppvNoticeTypeId == 43) {
 			$packageId = isset($params['packageId']) ? $params['packageId'] : null;
