@@ -41,12 +41,12 @@ class UnsubscribeLogsController extends AppController
 			$this->set('end_ut',$this->end_ut);
 			$this->set('unsubLogs', $data);
 			$this->set('nl',$nlIdArr[$this->data['unsubscribe_logs']['mailingList']]);
-			$this->set('startYear', $startYear);
-			$this->set('startMonth', $startMonth);
-			$this->set('startDay', $startDay);
-			$this->set('endYear', $endYear);
-			$this->set('endMonth',$endMonth);
-			$this->set('endDay', $endDay);
+			$this->set('startYear', $this->startYear);
+			$this->set('startMonth', $this->startMonth);
+			$this->set('startDay', $this->startDay);
+			$this->set('endYear', $this->endYear);
+			$this->set('endMonth',$this->endMonth);
+			$this->set('endDay', $this->endDay);
 
 		}else{
 			// default form criteria 
@@ -70,10 +70,10 @@ class UnsubscribeLogsController extends AppController
 	private function setStartUt(){
 
 		// repopulate the form with criteria user selected
-		$startMonth=$this->data['start']['month'];
-		$startDay=$this->data['start']['day'];
-		$startYear=$this->data['start']['year'];
-		$this->start_ut=mktime(0,0,0,$startMonth,$startDay,$startYear);
+		$this->startMonth=$this->data['start']['month'];
+		$this->startDay=$this->data['start']['day'];
+		$this->startYear=$this->data['start']['year'];
+		$this->start_ut=mktime(0,0,0,$this->startMonth,$this->startDay,$this->startYear);
 
 	}
 
@@ -84,10 +84,10 @@ class UnsubscribeLogsController extends AppController
 	 */
 	private function setEndUt(){
 
-		$endMonth=$this->data['end']['month'];
-		$endDay=$this->data['end']['day'];
-		$endYear=$this->data['end']['year'];
-		$this->end_ut=mktime(0,0,0,$endMonth,$endDay,$endYear);
+		$this->endMonth=$this->data['end']['month'];
+		$this->endDay=$this->data['end']['day'];
+		$this->endYear=$this->data['end']['year'];
+		$this->end_ut=mktime(0,0,0,$this->endMonth,$this->endDay,$this->endYear);
 
 	}
 
