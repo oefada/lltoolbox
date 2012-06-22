@@ -20,6 +20,11 @@
 			<li style="margin-bottom:3px;"><?=$html->link('Scheduling', "/scheduling/index/clientId:{$clientId}", array('update' => 'content-area', 'indicator' => 'spinner'))?></li>
 		</ul>
 	</li>
+
+	<li style="margin-bottom:3px;"><?=$html->link("ACCOLADES", "/accolades");?></li>
+
+	<li style="margin-bottom:3px;"><?=$html->link("CLIENT REVIEWS", "/clientReviews");?></li>
+	
 	<li style="margin-bottom:3px;"><?=$html->link('ROOM GRADE', "/clients/$clientId/room_grades", array('update' => 'content-area', 'indicator' => 'spinner'))?></li>
     <?php if (in_array($userDetails['samaccountname'], $validPhotoUsers) || in_array('Geeks', $userDetails['groups']) || in_array('tbphotos', $userDetails['groups'])): ?>
         <li class="open">PHOTOS
