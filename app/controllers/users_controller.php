@@ -45,9 +45,9 @@ class UsersController extends AppController {
 		}
 		if (!empty($this->data)) {
 			if ($this->User->save($this->data)) {
-			    $this->User->setDataSource("live");
-
-        		$this->User->save($this->data);
+			    
+			    // $this->User->setDataSource("live");
+        		// $this->User->save($this->data);
 
 				$this->Session->setFlash(__('The User has been saved.', true));
 
