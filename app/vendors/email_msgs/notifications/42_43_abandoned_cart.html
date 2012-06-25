@@ -23,7 +23,12 @@
 <? } ?>
 
 <tr>
-	<td align="left" style="padding:15px 20px 0px 25px;line-height:17px; font-weight:bold; font-family:Helvetica,maradival,Sans-Serif; color:rgb(68, 68, 68);font-size:13px">Need help booking your stay at <?= $clientNameP ?> in <?= $locationDisplay ?>?
+	<td align="left" style="padding:15px 20px 0px 25px;line-height:17px; font-weight:bold; font-family:Helvetica,maradival,Sans-Serif; color:rgb(68, 68, 68);font-size:13px">
+		<? if ($isAuction) { ?>
+			We see you are interested in <?= $clientNameP ?> in <?= $locationDisplay ?>?
+		<? } else { ?>
+			Need help booking your stay at <?= $clientNameP ?> in <?= $locationDisplay ?>?
+		<? } ?>
 	</td>
 </tr>
 <tr>
@@ -101,9 +106,9 @@
 					<td align="center" width="250" style="padding:0px 0px 0px 0px;font-size:12px; line-height:18px; font-family:Helvetica,maradival,Sans-Serif; color:#666666; text-align: center;"><?= $additionalClients[1]['locationDisplay']; ?></td>
 				</tr>
 				<tr>
-					<td align="center" width="250" style="padding:5px 0px 0px 0px;font-size:12px; line-height:18px; font-family:Helvetica,maradival,Sans-Serif; text-align: center;"><a style="text-decoration:none; color:#3ca9d5" name="" target="_blank" href="<?= $siteUrl . $additionalClients[0]['url']; ?>">View Property</a></td>
+					<td align="center" width="250" style="padding:0px 0px 0px 0px;font-size:12px; line-height:18px; font-family:Helvetica,maradival,Sans-Serif; text-align: center;"><a style="text-decoration:none; color:#3ca9d5" name="" target="_blank" href="<?= $siteUrl . $additionalClients[0]['url']; ?>">View Property</a></td>
 
-					<td align="center" width="250" style="padding:5px 0px 0px 0px;font-size:12px; line-height:18px; font-family: Helvetica,maradival,Sans-Serif; text-align: center;"><a style="text-decoration:none; color:#3ca9d5" name="" target="_blank" href="<?= $siteUrl . $additionalClients[1]['url']; ?>">View Property</a></td>
+					<td align="center" width="250" style="padding:0px 0px 0px 0px;font-size:12px; line-height:18px; font-family: Helvetica,maradival,Sans-Serif; text-align: center;"><a style="text-decoration:none; color:#3ca9d5" name="" target="_blank" href="<?= $siteUrl . $additionalClients[1]['url']; ?>">View Property</a></td>
 
 				</tr>
 			</table>
