@@ -73,18 +73,18 @@ $this->set('clientId', $this->data['Client']['clientId']);
 
 			<table cellpadding="0" cellspacing="0" border="1" style="font-size:11px;">
 				<tr>
-					<th style="color:#FFF;"><?=($utilities->clickSort($this, 'offerId'));?></a></th>
-					<th style="color:#FFF;"><?=$utilities->clickSort($this,'packageId');?></th>
-					<th style="color:#FFF;"><?=$utilities->clickSort($this, 'offerTypeName');?></th>
-					<th style="color:#FFF;"><?=$utilities->clickSort($this,'startDate');?></th>
-					<th style="color:#FFF;"><?=$utilities->clickSort($this, 'endDate');?></th>
-					<th style="color:#FFF;"><?=$utilities->clickSort($this, 'retailValue');?></th>
-					<th style="color:#FFF;"><?=$utilities->clickSort($this, 'openingBid');?></th>
+					<th style="color:#FFF;"><?=($utilities->clickSort($this, 'offerId','',$html));?></a></th>
+					<th style="color:#FFF;"><?=$utilities->clickSort($this,'packageId','',$html);?></th>
+					<th style="color:#FFF;"><?=$utilities->clickSort($this, 'offerTypeName','',$html);?></th>
+					<th style="color:#FFF;"><?=$utilities->clickSort($this,'startDate','',$html);?></th>
+					<th style="color:#FFF;"><?=$utilities->clickSort($this, 'endDate','',$html);?></th>
+					<th style="color:#FFF;"><?=$utilities->clickSort($this, 'retailValue','',$html);?></th>
+					<th style="color:#FFF;"><?=$utilities->clickSort($this, 'openingBid','',$html);?></th>
 					<th style="color:#FFF;">Min Bid % Retail</th>
 					<th style="color:#FFF;">Closing % Retail</th>
 		  		<th style="color:#FFF;">Num. Nights</th>
 					<th style="color:#FFF;">Track Detail Id</th>
-					<th style="color:#FFF;"><?=$utilities->clickSort($this, 'ticketId', 'Ticket Id');?></th>
+					<th style="color:#FFF;"><?=$utilities->clickSort($this, 'ticketId', 'Ticket Id', $html);?></th>
 					<th style="color:#FFF;">Ticket Amount</th>
 					<th style="color:#FFF;">Allocated Amount</th>
 					<th style="color:#FFF;">Cycle</th>
