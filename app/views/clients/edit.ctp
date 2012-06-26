@@ -106,6 +106,7 @@ foreach ($this->data['Client']['sites'] as $site) {
 					$("#clientNoteModule").html(data);
 					scrollWindow(); // auto scrolls to bottom of the clientNoteDisplay div
 					document.onkeyup = KeyCheck; // watches for 'enter' keypress on the clientNoteDisplay div
+					$("#clientNoteInput").focus(function(){ noteCheck(); });
 				}
 			});
 		});

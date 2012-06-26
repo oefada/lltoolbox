@@ -29,10 +29,11 @@
 	}
 	
 	#clientNoteInput {
-		width: 240px;
+		width: 235px;
 		border: 1px solid #777;
 		padding: 2px;
 	}
+	.clientNoteInputFirst { color: #999; }
 	
 	#clientNoteSubmit {
 		border: 1px solid #777;
@@ -78,8 +79,8 @@
 		
 	// auto scroll to bottom of clientNoteDisplay
 	scrollWindow = function(){
-			var $=jQuery;
-			$("#clientNoteDisplay").scrollTop($("#clientNoteDisplay")[0].scrollHeight);
+		var $=jQuery;
+		$("#clientNoteDisplay").scrollTop($("#clientNoteDisplay")[0].scrollHeight);
 	};
 	
 	// watch for 'enter' keypress on clientNoteDisplay input
@@ -89,6 +90,16 @@
 		// hit enter on the clientNote input form
 		if ( KeyID == 13 && document.activeElement.id == 'clientNoteInput' ){
 			submit_clientNote();
+		}
+	};
+	
+	noteCheck = function(){
+		var $=jQuery;
+		var myClass = $("#clientNoteInput");
+		
+		if(myClass.hasClass("clientNoteInputFirst")){
+			myClass.removeClass("clientNoteInputFirst");
+			myClass.val('');
 		}
 	};
 	
@@ -108,7 +119,7 @@
 
 <div id="clientNote">
 	<input type="button" id="clientNoteSubmit" name="clientNoteSubmit" value="Send" onclick="submit_clientNote()" />
-	<input type="text" id="clientNoteInput" name="clientNoteInput" value="" name="message" />
+	<input type="text" id="clientNoteInput" name="clientNoteInput" value="Enter note here..." name="message" class="clientNoteInputFirst" />
 	<input type="hidden" id="clientId" name="clientId" value="<?= $clientId; ?>" />
 	<input type="hidden" id="baseurl" name="baseurl" value="<?=$_SERVER['HTTP_HOST']; ?>" />
 </div>
