@@ -87,6 +87,32 @@ foreach ($this->data['Client']['sites'] as $site) {
             }
         ?>    
 	</div>
+	
+<script type="text/javascript">
+	/***
+	 * Script added by martin to allow for client notes
+	 */
+	jQuery(function($){
+		
+		$(window).ready(function(){
+			
+			// gets clientId 
+			var v_url = "/clientNotes/view/" + <?= $client['Client']['clientId']; ?>;
+			
+			// calls clientNotes/view to load clientNote module
+			$.ajax({
+				url: v_url,
+				success: function(data) {
+					$("#clientNoteModule").html(data);
+					scrollWindow(); // auto scrolls to bottom of the clientNoteDisplay div
+					document.onkeyup = KeyCheck; // watches for 'enter' keypress on the clientNoteDisplay div
+				}
+			});
+		});
+	});
+	
+</script>
+<div id="clientNoteModule" style="position: absolute; top: 280px; left: 850px;"></div>
 <?php echo $form->create('Client');?>
 <?php foreach($this->data['ClientSiteExtended'] as $site) {
 		echo $form->hidden('ClientSiteExtended.'.$site['clientSiteExtendedId'].'.clientSiteExtendedId', array('value' => $site['clientSiteExtendedId']));
