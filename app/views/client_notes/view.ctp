@@ -101,7 +101,7 @@
 			myClass.removeClass("clientNoteInputFirst");
 			myClass.val('');
 		}
-	};
+	}; 
 	
 	
 </script>
