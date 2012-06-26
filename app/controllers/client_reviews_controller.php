@@ -5,6 +5,11 @@ class ClientReviewsController extends AppController {
 	var $helpers = array('Html', 'Form');
 
 	function index() {
+		
+		if (isset($this->passedArgs[0]) && $this->passedArgs[0]=='clientId'){
+			$clientId=$this->passedArgs[1];
+			$this->paginate['conditions']=array("Client.clientId=$clientId");
+		}
 		$this->ClientReview->recursive = 0;
 		$this->paginate['order'] = 'ClientReview.datetime DESC';
 		$this->set('clientReviews', $this->paginate());
