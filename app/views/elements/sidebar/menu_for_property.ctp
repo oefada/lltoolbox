@@ -1,6 +1,9 @@
 <ul class="tree">
 	<?php
 	$clientId = $this->viewVars['clientId'];
+	if ($clientId==null){
+		$clientId=$client['Client']['clientId'];
+	}
 	$currentLoaId = (isset($client['Client']['currentLoaId'])) ? $client['Client']['currentLoaId'] : '';
     $validPhotoUsers = array('jpawlowska', 'kgathany', 'dpen', 'jkramer');
 	?>
@@ -21,9 +24,9 @@
 		</ul>
 	</li>
 
-	<li style="margin-bottom:3px;"><?=$html->link("ACCOLADES", "/accolades");?></li>
+	<li style="margin-bottom:3px;"><?=$html->link("ACCOLADES", "/accolades/search?query=$clientId");?></li>
 
-	<li style="margin-bottom:3px;"><?=$html->link("CLIENT REVIEWS", "/clientReviews");?></li>
+	<li style="margin-bottom:3px;"><?=$html->link("CLIENT REVIEWS", "/clientReviews/index/clientId/$clientId");?></li>
 	
 	<li style="margin-bottom:3px;"><?=$html->link('ROOM GRADE', "/clients/$clientId/room_grades", array('update' => 'content-area', 'indicator' => 'spinner'))?></li>
     <?php if (in_array($userDetails['samaccountname'], $validPhotoUsers) || in_array('Geeks', $userDetails['groups']) || in_array('tbphotos', $userDetails['groups'])): ?>
