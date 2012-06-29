@@ -35,13 +35,15 @@ class LoasController extends AppController {
 			$dir=$this->passedArgs['direction'];
 		}else{
 			$sort='ticketId';
-			$dir='asc';
+			$dir='desc';
 		}
+		/* Because of the multiple queries, sorting in the query has no effect
 		if ($sort!='' && in_array($sort,$offerLiveFieldArr)){
 			$options['order'] = array($sort => $dir);
 		}else{
 			$options['order'] = array('offerId' => 'ASC');
 		}
+		*/
 	
 		$q='SELECT * FROM track WHERE loaId =?';
 		$tracks_result = $this->Loa->query($q,array($loa['Loa']['loaId']));
@@ -85,11 +87,10 @@ class LoasController extends AppController {
 					)
 				);
 
-	      $offer_result=$this->SchedulingMasterTrackRel->find('all', $options);
+				$offer_result=$this->SchedulingMasterTrackRel->find('all', $options);
 
 				foreach ($offer_result as $offer) {
-					$oid=$offer['offerLive']['offerId'];
-					$offers[$oid] = $offer['offerLive'];	
+					$offers[] = $offer['offerLive'];	
 				}
 
 			}
@@ -99,6 +100,8 @@ class LoasController extends AppController {
 		}
 
 		if (!empty($tracks)) {
+
+			//print "<pre>";print_r($tracks);exit;
 			$q='SELECT trackDetail.*, ticket.offerId, ticket.numNights as numNights ';
 			$q.="FROM trackDetail INNER JOIN ticket USING (ticketId) ";
 			$q.='WHERE trackId IN (' . implode(',', array_keys($tracks)) . ') ';
@@ -106,57 +109,89 @@ class LoasController extends AppController {
 			$track_details_result = $this->Loa->query($q);
 			foreach ($track_details_result as $track_detail) {
 				$oid=$track_detail['ticket']['offerId'];
-				$track_detail['trackDetail']['numNights']=$track_detail['ticket']['numNights'];
 				$track_details[$oid][] = $track_detail['trackDetail'];
 			}
 
-			//
-			// Restructure array - In order to be able to sort by ticketId, restructure array
-			//
-			foreach($tracks as $trackId=>$arr){
-				$tmpArr=array();
-				foreach($arr['offers'] as $oid=>$row){
-					if (isset($track_details[$oid])){
-						foreach($track_details[$oid] as $i=>$row){
-							$tracks[$trackId]['offers'][$oid]+=$row;
+			//print '<pre>';print_r($track_details);exit;
+			// $tracks['offers'] has a one to many relationship with $track_details.
+			// That is, there will be one offerId in $tracks to potentially many ticketId's in $track_details.
+			// Make it one to one so as to be able to sort by ticketId.
+			$new_tracks=array();
+			foreach($track_details as $oid=>$track_detail){
+				foreach($track_detail as $i=>$detail){
+					foreach($tracks as $trackId=>$arr){
+						foreach($arr['offers'] as $j=>$row){
+							$found=false;
+							if ($oid==$row['offerId']){
+								$found=true;
+								// don't overwrite existing offerId
+								if (!isset($row['ticketId'])){
+									$tmp=array_merge($detail,$row);
+									$tracks[$trackId]['offers'][$j]=$tmp;
+								}else{
+									$tmp=$detail+$row;
+									$tracks[$trackId]['offers'][]=$tmp;
+								}
+								unset($track_details[$oid][$i]);
+								break;
+							}
 						}
-					}else{
-						$tmpArr[$oid]=$row;
-						unset($tracks[$trackId]['offers'][$oid]);
 					}
-				}
-				if (count($tmpArr)>0){
-					$tracks[$trackId]['offers']+=$tmpArr;	
 				}
 			}
 
-			$new_arr=array();
-			if ($sort=='ticketId'){
-				//set key to use ticketId
-				foreach($tracks as $trackId=>$arr){
-					$counter=($dir=="asc")?10000000:0;
-					foreach($arr['offers'] as $oid=>$row){
-						$counter++;
-						if (isset($row['ticketId'])){
-							$tracks[$trackId]['offers'][$row['ticketId']]=$row;	
-						}else{
-							$tracks[$trackId]['offers'][$counter]=$row;	
-						}
-						unset($tracks[$trackId]['offers'][$oid]);
+			// Set any offer without a ticketId to hold empty track details
+			$track_detail_empty=array(
+				'trackDetailId' => 0, 
+				'trackId' => 0,
+				'ticketId' => 0, 
+				'ticketAmount' => 0,
+				'allocatedAmount' => 0,
+				'iteration' => 0, 
+				'cycle' => 0, 
+				'amountKept' => 0,
+				'amountRemitted' => 0,
+				'xyRunningTotal' => 0,
+				'xyAverage' => 0,
+				'keepBalDue' => 0,
+				'oaBalance' => 0,
+				'created' => 0,
+				'modified' => 0, 
+				'initials' => 0
+			);
+
+			foreach($tracks as $trackId=>$arr){
+				foreach($arr['offers'] as $j=>$row){
+					if (!isset($row['ticketId'])){
+						$tracks[$trackId]['offers'][$j]+=$track_detail_empty;
 					}
-					$arr=$tracks[$trackId]['offers'];
-					if ($dir=='asc'){
-						ksort($arr);
-					}else{
-						krsort($arr);
-					}
-					unset($tracks[$trackId['offers']]);
-					$tracks[$trackId]['offers']=$arr;
 				}
 			}
-			// 
-			// End restructuring
-			//
+
+			// sort by ticketId's 
+			if ($sort=='ticketId'){
+
+				// order the ticketId's within each track
+				function ticketIdDesc_cmp($a, $b){
+					if ($a['ticketId']==$b['ticketId']) return 0;
+					return ($a['ticketId']<$b['ticketId'])?1:-1;
+				}
+				function ticketIdAsc_cmp($a, $b){
+					if ($a['ticketId']==$b['ticketId']) return 0;
+					return ($a['ticketId']>$b['ticketId'])?1:-1;
+				}
+
+				foreach($tracks as $trackId=>$arr){
+					foreach($arr['offers'] as $j=>$offers){
+						if ($dir=='desc'){
+							usort($tracks[$trackId]['offers'],'ticketIdDesc_cmp');
+						}else{
+							usort($tracks[$trackId]['offers'],'ticketIdAsc_cmp');
+						}
+					}
+				}
+
+			}
 
 			$trackWarning = false;
 		} else {
