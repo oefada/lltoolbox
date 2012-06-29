@@ -79,8 +79,10 @@ Cancellations and changes may result in additional fees.
 
 <?php if (!$clientPpv): ?>
 
+<?php if (!in_array($ppvNoticeTypeId, array(14))): ?>
 If you have any questions or additional needs, please contact our Travel Concierge at (888) 297-3299
 or (310) 215-8060, or send us an email at <a href="mailto:concierge@<?= $siteEmail ?>" style="text-decoration: none; color: #008EC5;">concierge@<?= $siteEmail ?></a>. Our business hours are Monday through Friday, 6:00am to 9:00pm, Saturday and Sunday from 9:00am to 4:00pm Pacific Time.</p>
+<? endif; ?>
 
 
 	<p>Sincerely,<br>
