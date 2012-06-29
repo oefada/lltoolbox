@@ -256,7 +256,7 @@ foreach ($this->data['Client']['sites'] as $site) {
 					echo $form->input('countryId', array('type'=>'hidden'));
 					echo $form->input('stateId', array('type'=>'hidden'));
 					echo $form->input('cityId', array('type'=>'hidden'));
-					echo $form->input('cityNewId', array('type'=>'hidden'));
+					echo $form->input('cityIdUpdated', array('type'=>'hidden'));
 					echo $form->input('locatorCountry', array('type'=>'select', 'label'=>'Select Country', 'empty'=>'--', 'options'=>$countryIds, 'default'=>$this->data['Client']['countryId']));
 					echo $form->input('locatorState', array('type'=>'select', 'label'=>'Select State', 'empty'=>'--', 'options'=>$stateIds, 'default'=>$this->data['Client']['stateId']));
 					echo $form->input('locatorCity', array('type'=>'select', 'label'=>'Select City', 'empty'=>'--', 'options'=>$cityIds, 'default'=>$this->data['Client']['cityId'])); 
@@ -304,7 +304,7 @@ foreach ($this->data['Client']['sites'] as $site) {
 				$("#ClientLocatorCity").change(function(){
 					var city = $('#ClientLocatorCity').val();
 					$('#ClientCityId').val(city);
-					$('#ClientCityNewId').val(city);
+					$('#ClientCityIdUpdated').val(city);
 					
 					$.getJSON("/cities/ajaxinfo",{id: city}, function(data) {
 						$('#countryDisplay').html(data.info.countryName);
