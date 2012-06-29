@@ -73,7 +73,7 @@ class LdapAuthComponent extends AuthComponent {
                         $data[$this->userModel]['email'] = $res[0][$this->ldapModel]['mail'];
 
                         $model->save($data);
-                        
+                        $this->log("Successful Login by {$data[$this->userModel]['displayName']}", 'auth');
                         $this->Session->setFlash('Welcome back, '.$res[0][$this->ldapModel]['givenname'], 'default', array(), 'success');
                         
                         return true;
