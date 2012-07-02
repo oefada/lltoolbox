@@ -77,13 +77,22 @@
 	<h3 class="handle"><?php __('Related User Mail Optins');?> <?=$html2->c($user['UserMailOptin']);?></h3>
 	<div class="collapsibleContent related">
 	<?php if (!empty($user['UserMailOptin'])):?>
+
+	<?php 
+	
+	echo $form->create('User', array("action"=>"unsub"));
+	echo $form->hidden("email");
+	echo $form->hidden("userId");
+
+	?>
+	<br><br>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
 		<th><?php __('Mailing List'); ?></th>
 		<th><?php __('Optin'); ?></th>
 		<th><?php __('Optin Date'); ?></th>
 		<th><?php __('Optout Date'); ?></th>
-		<th class="actions"><?php __('Actions');?></th>
+		<th class="actions"><?php __('Unsubscribe');?></th>
 	</tr>
 	<?php
 		$i = 0;
@@ -94,12 +103,40 @@
 			}
 		?>
 		<tr<?php echo $class;?>>
-			<td><?php echo $mailingListIds[$userMailOptin['mailingListId']];?></td>
+			<td><?php 
+
+			$mailingListId=$userMailOptin['mailingListId'];
+			$arr=NewsletterManager::getNewsletterData();
+			$siteId=isset($arr[1][$mailingListId])?1:2;
+			$name=$arr[$siteId][$mailingListId]['name'];
+			echo $name;
+
+			$optinDatetime=$userMailOptin['optinDatetime'];
+
+			?></td>
 			<td><?php echo $html->image($userMailOptin['optin'] ? 'tick.png' : 'cross.png');?></td>
-			<td><?php echo $userMailOptin['optinDate'];?></td>
-			<td><?php echo $userMailOptin['optoutDate'];?></td>
+			<td><?php echo $optinDatetime;?></td>
+			<td><?php echo $userMailOptin['optoutDatetime'];?></td>
+			<td><?
+			if ($userMailOptin['optin']){
+				echo "<input type='checkbox' name='data[User][mailingListId][]' value='".$mailingListId."' checked>";
+				echo "<input type='hidden' name='data[User][siteId][]' value='".$siteId."'>";
+				echo "<input type='hidden' name='data[User][optinDatetime][]' value='".$optinDatetime."'>";
+			}
+
+
+			?> &nbsp; </td>
 		</tr>
-	<?php endforeach; ?>
+	<?php endforeach; 
+			$class = null;
+			if ($i++ % 2 == 0) {
+				$class = ' class="altrow"';
+			}
+			?>
+		<tr <?=$class?>>
+		<td colspan='5' align='center'>
+		<?=$form->end("Unsubscribe ".$user['User']['email']." From Checked Newsletters");?>
+		</td>
 	</table>
 <?php else: ?>
 	This User has no mail opt-ins
@@ -212,4 +249,11 @@
 		</ul>
 	</div>
 	</div>
+
+	<br>
+	<hr>
+
+
+
+	
 </div>

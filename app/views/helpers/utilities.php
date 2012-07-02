@@ -42,7 +42,7 @@ class UtilitiesHelper extends AppHelper {
 			$url.="/sort:$field";
 		}
 
-		$name=($fieldTitle!==null)?$fieldTitle:$field;
+		$name=($fieldTitle!=null)?$fieldTitle:$field;
 		return $html->link($name,$url);
 
 	}
