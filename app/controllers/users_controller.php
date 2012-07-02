@@ -1,9 +1,13 @@
 <?php
+
+App::import("Vendor","NL",array('file' => "appshared".DS."legacy".DS."classes".DS."newsletter_manager.php"));
+
 class UsersController extends AppController {
 
 	var $name = 'Users';
 	var $helpers = array('Html', 'Form');
 	var $user;
+	var $uses = array('User');
 
 	function index() {
 
@@ -33,38 +37,134 @@ class UsersController extends AppController {
 		$this->set(compact('contests', 'clients', 'salutationIds'));
 	}
 
+	/**
+	 * Unsub user from all newsletters 
+	 * 
+	 * @param int $id
+	 * 
+	 * @return nuttin'
+	 */
+	function unsub($id=null){
+
+		$error_str='';
+
+		if (!$id || empty($this->data)) {
+
+			$this->flash(__('Invalid User', true), array('action'=>'edit'));
+
+		}else if (!empty($this->data)){
+
+			$email=$this->data['User']['email'];
+			$mailingListIdArr=$this->data['User']['mailingListId'];
+			$userId=$this->data['User']['userId'];
+
+			$nlMgr=new NewsletterManager();
+
+			if (count($mailingListIdArr)>0){
+
+				// Retrieve id's related to silverpop from $nlDataArr in order to unsub from silverpop
+				// Update local dbs
+				$allNlArr=NewsletterManager::$nlDataArr;
+				foreach($allNlArr as $siteId=>$nlArr){
+					if ($siteId==3){//no vcom
+						continue;
+					}
+					foreach($nlArr as $nlId=>$row){
+						foreach($mailingListIdArr as $key=>$id){
+
+							$postedSiteId=$this->data['User']['siteId'][$key];
+							$optinDatetime=$this->data['User']['optinDatetime'][$key];
+
+							if ($nlId==$id && $postedSiteId==$siteId){
+								$r=$nlMgr->removeUserFromContactList($email, $row['contactId']);
+								if (isset($row['legacyId']) && $row['legacyId']>0){
+									$nlMgr->optoutUserFromDatabase($email, $row['legacyId']);
+								}
+								if (isset($row['altContactIdSub']) && is_array($row['altContactIdSub'])){
+									foreach($row['altContactIdSub'] as $contactId){
+										$r=$nlMgr->removeUserFromContactList($email, $contactId);
+									}
+								}
+								// update userMailOptin table
+								$this->User->UserMailOptin->updateAll( 
+									array(
+										'UserMailOptin.optin'=>'0',
+										'UserMailOptin.optoutDatetime'=>"'".date("Y-m-d H:m:s")."'",
+									),
+									array(
+										'UserMailOptin.userId'=>$userId, 
+										'UserMailOptin.mailingListId'=>$nlId
+									)
+								);
+								$this->User->bindModel(
+									array(
+										'hasMany'=>array(
+											'unsubscribeLog'=>array(
+												'UnsubscribeLog'=>array(
+													'className'=>'UnsubscribeLog'
+												)
+											)
+										)
+									)
+								);
+								$arr['unsubscribeLog']=array(
+									'email'=>$email, 
+									'siteId'=>$siteId,
+									'mailingId'=>$nlId,
+									'unsubDate'=>time(),
+									'subDate'=>strtotime($optinDatetime)
+								);
+								$this->User->unsubscribeLog->create();
+								$this->User->unsubscribeLog->save($arr);
+								break;
+							}
+						}
+					}
+				}
+				$errors=$nlMgr->getErrors();
+				if (is_array($errors) && count($errors)>0){
+					$error_str=implode("<br>",$errors);
+				}
+			}
+		}
+
+		if ($error_str!=''){
+			$this->Session->setFlash(__('Errors unsubing '.$this->data['User']['email'].'<br>'.$error_str, true));
+		}else{
+			$this->Session->setFlash(__('Updated Unsub for '.$this->data['User']['email'], true));
+		}
+		$this->redirect(array("action" => 'edit', $userId));
+
+	}
+
 	function view($id = null) {
 		$this->redirect(array("action" => 'edit', $id));
 		exit;
 	}
 
 	function edit($id = null) {
+
 		$this->set('userId', $id);
 		if (!$id && empty($this->data)) {
 			$this->flash(__('Invalid User', true), array('action'=>'index'));
 		}
 		if (!empty($this->data)) {
 			if ($this->User->save($this->data)) {
-			    
-			    // $this->User->setDataSource("live");
-        		// $this->User->save($this->data);
-
 				$this->Session->setFlash(__('The User has been saved.', true));
-
 				$this->redirect("/users/".$this->data['User']['userId']);
-			} else {
-				
-			}
+			} 
 		}
 		if (empty($this->data)) {
 			$this->data = $this->user;
 		}
-	
+
 		$salutationIds = $this->User->Salutation->find('list');
 		$paymentTypes = $this->User->UserPaymentSetting->PaymentType->find('list');
 		$addressTypes = $this->User->Address->AddressType->find('list');
-		$mailingListIds = $this->User->UserMailOptin->MailingList->find('list');
-		
+		//$options['conditions']=array('userId'=>$id);
+		//$options['fields']=array('mailingListId','optin');
+		//$mailingListIds = $this->User->UserMailOptin->find('list', $options);
+
 		$this->loadModel("CreditTracking");
 		$cof = $this->CreditTracking->find('all', array(
 			'fields' => array('CreditTracking.*'), 
@@ -79,7 +179,7 @@ class UsersController extends AppController {
 		}
 
 		$this->set('user', $this->data);
-		$this->set(compact('user', 'salutationIds', 'paymentTypes', 'addressTypes', 'mailingListIds'));
+		$this->set(compact('user', 'salutationIds', 'paymentTypes', 'addressTypes'));
 	}
 
 	function delete($id = null) {
@@ -219,9 +319,7 @@ class UsersController extends AppController {
 
 			if ( $email ){ 
 
-				$fields[] = "(CASE WHEN User.email LIKE '".$email."' THEN 1 ELSE 0 END) AS emailmatch";
-				$conditions['OR']['User.email LIKE'] = $email.'%';
-				$order[] = 'emailmatch DESC';
+				$conditions=array("User.email"=>$email);
 
 			}else{
 
@@ -252,13 +350,13 @@ class UsersController extends AppController {
 
 			$paginateArr=array(
 				'joins' => $joins,
-				'contain' => array(), 
+				'fields'=>$fields,
+				'contain' => false,
 				'conditions' => $conditions, 
-				'fields' => $fields,
 				'group' => 'User.userId',
-				'order' => $order
+				'order' => $order,
+				'limit'=>20
 			);
-			//'contain' => array('UserSiteExtended', 'Ticket'),
 
 			$this->paginate = $paginateArr;
 
@@ -267,10 +365,14 @@ class UsersController extends AppController {
 			}else if (!empty($specificSearch)){
 				$this->set('query', $specificSearch);
 			}
-
+//print "<pre>";print_r($paginateArr);
+			//$this->UserReferrals->recursive = 0;
 			$this->autoRender = false;
 			$this->User->Behaviors->attach('Containable');
-			$this->set('users', $this->paginate());
+			//debug($this->User->find('all', $paginateArr));
+			$users=$this->paginate();
+//			var_dump($users);exit;
+			$this->set('users', $users);
 			$this->render('index');
 
 		}
