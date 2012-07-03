@@ -5,7 +5,6 @@
 		$clientId=$client['Client']['clientId'];
 	}
 	$currentLoaId = (isset($client['Client']['currentLoaId'])) ? $client['Client']['currentLoaId'] : '';
-    $validPhotoUsers = array('jpawlowska', 'kgathany', 'dpen', 'jkramer');
 	?>
 	<li><?=$html->link('INFO/ATTRIBUTES', array("controller" => 'clients', 'action' => 'edit', $clientId), array('update' => 'content-area', 'indicator' => 'spinner'))?></li>
 	<li class="open">LOA <?=(isset($client['Loa'])?$html2->c($client['Loa']):'');?>
@@ -29,7 +28,7 @@
 	<li style="margin-bottom:3px;"><?=$html->link("CLIENT REVIEWS", "/clientReviews/index/clientId/$clientId");?></li>
 	
 	<li style="margin-bottom:3px;"><?=$html->link('ROOM GRADE', "/clients/$clientId/room_grades", array('update' => 'content-area', 'indicator' => 'spinner'))?></li>
-    <?php if (in_array($userDetails['samaccountname'], $validPhotoUsers) || in_array('Geeks', $userDetails['groups']) || in_array('tbphotos', $userDetails['groups'])): ?>
+    <?php if (in_array('Geeks', $userDetails['groups']) || in_array('tbphotos', $userDetails['groups'])): ?>
         <li class="open">PHOTOS
             <ul>
                 <li style="margin-bottom:3px;"><?php echo $html->link('Organize', '/clients/'.$clientId.'/images/organize', array('update' => 'content-area', 'indicator' => 'spinner')); ?></li>
