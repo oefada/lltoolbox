@@ -1,13 +1,25 @@
 <style type="text/css">
 
 	#clientNoteDisplay {
-		width: 300px;
+		width: 350px;
 		height: 340px;
-		border: 1px solid #999;
+		border-left: 1px solid #999;
+		border-right: 1px solid #999;
+		border-bottom: 1px solid #999;
 		overflow: auto;
 		font-family: Helvetica, Verdana, Arial;
 		font-size: 13px;
-		margin: 0 0 5px 0;
+		margin: 0 0 0 0;
+	}
+	
+	#clientNoteHeader {
+		width: 344px;
+		background-color: #333;
+		border-radius: 4px 4px 0 0;
+		color: #eee;
+		text-transform: uppercase;
+		font-size: 11px;
+		padding: 5px 0 5px 8px;
 	}
 	
 	.clientNoteCommentHeader {
@@ -23,31 +35,54 @@
 	}
 	
 	#clientNote {
-		width: 300px;
+		width: 350px;
 		margin: 0;
 		padding: 0;
+		border-left: 1px solid #999;
+		border-right: 1px solid #999;
+		border-bottom: 1px solid #999;
 	}
 	
 	#clientNoteInput {
-		width: 235px;
-		border: 1px solid #777;
+		width: 223px;
+		border: 1px solid #fff;
 		padding: 2px;
 	}
 	.clientNoteInputFirst { color: #999; }
 	
-	#clientNoteSubmit {
-		border: 1px solid #777;
-		border-radius: 3px;
+	.clientNoteSubmit {
+		border: 0;
+		border-left: 2px solid #999;
 		background-color: #555;
 		color: #fff;
-		padding: 2px 8px;
+		padding: 3px 8px;
 		float: right;
 		cursor: pointer;
 	}
 	
-	#clientNoteSubmit:hover {
-		background-color: #777;
+	.clientNoteSubmit:hover {
+		background-color: #333;
 	}
+	
+	.clientNoteDelete {
+		background: #ddd url(/img/clientNoteRemove.png) no-repeat 2px 2px;
+		border: 1px solid #ccc;
+		padding: 2px;
+		text-align: center;
+		width: 10px;
+		height: 10px;
+		margin: 2px 0 2px 2px;
+		float: right;
+		cursor: pointer;
+	}
+	
+	.clientNoteDelete:hover {
+		background-color: #bbb;
+		border: 1px solid #ddd;
+	}
+	
+	.clientNoteOwner { color: #a64a01 !important; }
+	.clientNoteOwnerText { background-color: #eee; }
 	
 	
 
@@ -63,7 +98,7 @@
 		var v_url = "/clientNotes/add/"; // destination to save data
 
 		// if message is not empty...
-		if( v_message != ''){
+		if( v_message != '' && v_message != 'Enter note here...'){
 			$.ajax({
 				type: "POST",
 				url: v_url,
@@ -103,22 +138,51 @@
 		}
 	}; 
 	
+	removeNote = function( i_noteId ){
+		var $=jQuery;
+		var v_message = $("#clientNoteInput").val(); // get new client note
+		var v_clientId = $("#clientId").val(); // get clientId
+		var v_url = "/clientNotes/remove/"; // destination to save data
+
+		// if message is not empty...
+		if( i_noteId != ''){
+			$.ajax({
+				type: "POST",
+				url: v_url,
+				data: { noteId: i_noteId },
+				success: function(res) {
+					$(".clientNote_" + i_noteId).remove();
+				}
+			});
+		}
+	}
+	
 	
 </script>
 
-<h2>Client Notes</h2>
+<div id="clientNoteHeader">Client Notes</div>
 <div id="clientNoteDisplay">
 <?php
 	foreach($clientNoteResults as $cn){
-		echo "<div class=\"clientNoteCommentHeader\"><strong>" . $cn['clientNote']['author'] . "</strong> <em>said on " . $time->format( 'M, d Y @ g:i a', $cn['clientNote']['created']) . "</em></div>";
-		echo "<div class=\"clientNoteCommentText\">" . $cn['clientNote']['notes'] . "</div>";	
+		if($cn['clientNote']['author'] == $clientNoteUser){
+			echo "<div class=\"clientNoteCommentHeader clientNoteOwnerText clientNote_" . $cn['clientNote']['clientNoteId'] . "\">";
+			echo "<div class=\"clientNoteDelete\" onclick=\"removeNote('" . $cn['clientNote']['clientNoteId'] . "')\" title=\"Remove this note\"></div>";
+			echo "<strong class=\"clientNoteOwner\">" . $cn['clientNote']['author'] . "</strong> <em>said on " . $time->format( 'M, d Y @ g:i a', $cn['clientNote']['created']) . "</em></div>";
+			echo "<div class=\"clientNoteCommentText clientNoteOwnerText clientNote_" . $cn['clientNote']['clientNoteId'] . "\">" . $cn['clientNote']['notes'] . "</div>";	
+		}
+		else {
+			echo "<div class=\"clientNoteCommentHeader clientNote_" . $cn['clientNote']['clientNoteId'] . "\">";
+			echo "<strong>" . $cn['clientNote']['author'] . "</strong> <em>said on " . $time->format( 'M, d Y @ g:i a', $cn['clientNote']['created']) . "</em></div>";
+			echo "<div class=\"clientNoteCommentText clientNote_" . $cn['clientNote']['clientNoteId'] . "\">" . $cn['clientNote']['notes'] . "</div>";	
+		}
 	}
 ?>
 
 </div><!-- close clientNoteDisplay -->
 
 <div id="clientNote">
-	<input type="button" id="clientNoteSubmit" name="clientNoteSubmit" value="Send" onclick="submit_clientNote()" />
+	<input type="button" class="clientNoteSubmit" name="clientNoteSubmit" value="Refresh" onclick="load_clientNotes(<?= $clientId; ?>)" />
+	<input type="button" class="clientNoteSubmit" name="clientNoteSubmit" value="Send" onclick="submit_clientNote()" title="Refresh the client note section." />
 	<input type="text" id="clientNoteInput" name="clientNoteInput" value="Enter note here..." name="message" class="clientNoteInputFirst" />
 	<input type="hidden" id="clientId" name="clientId" value="<?= $clientId; ?>" />
 	<input type="hidden" id="baseurl" name="baseurl" value="<?=$_SERVER['HTTP_HOST']; ?>" />

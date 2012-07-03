@@ -24,6 +24,7 @@ class ClientNotesController extends AppController {
 		
 		$this->set('clientId', $clientId);
 		$this->set('clientNoteResults', $result);
+		$this->set('clientNoteUser', $this->LdapAuth->object->viewVars['user']['LdapUser']['samaccountname']);
 	}
 	
 	/***
@@ -40,11 +41,28 @@ class ClientNotesController extends AppController {
 		$created = date('M, d Y @ g:i a');
 		
 		// save new clientNote entry
-		$this->ClientNote->saveClientNote( $clientId, $author, $message );
+		$clientNoteId = $this->ClientNote->saveClientNote( $clientId, $author, $message );
 		
 		$this->set('author', $author);
 		$this->set('message', $message);
 		$this->set('created', $created);
+		$this->set('clientNoteId', $clientNoteId);
+	}
+	
+	/***
+	 * Removes a new client note to client specified by POST clientId
+	 */
+	function remove(){
+		
+		$this->layout = 'ajax';
+			
+		// get values
+		$author = $this->LdapAuth->object->viewVars['user']['LdapUser']['samaccountname'];
+		$clientNoteId = $_POST['noteId'];
+		
+		// save new clientNote entry
+		$this->ClientNote->removeClientNote( $clientNoteId, $author );
+		
 	}
 }
 ?>

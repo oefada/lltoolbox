@@ -95,22 +95,27 @@ foreach ($this->data['Client']['sites'] as $site) {
 	jQuery(function($){
 		
 		$(window).ready(function(){
-			
-			// gets clientId 
-			var v_url = "/clientNotes/view/" + <?= $client['Client']['clientId']; ?>;
-			
-			// calls clientNotes/view to load clientNote module
-			$.ajax({
-				url: v_url,
-				success: function(data) {
-					$("#clientNoteModule").html(data);
-					scrollWindow(); // auto scrolls to bottom of the clientNoteDisplay div
-					document.onkeyup = KeyCheck; // watches for 'enter' keypress on the clientNoteDisplay div
-					$("#clientNoteInput").focus(function(){ noteCheck(); });
-				}
-			});
+			load_clientNotes(<?= $client['Client']['clientId']; ?>);
 		});
 	});
+	
+	load_clientNotes = function( i_clientId ){
+		var $=jQuery;
+		
+		// gets clientId 
+		var v_url = "/clientNotes/view/" + i_clientId;
+		
+		// calls clientNotes/view to load clientNote module
+		$.ajax({
+			url: v_url,
+			success: function(data) {
+				$("#clientNoteModule").html(data);
+				scrollWindow(); // auto scrolls to bottom of the clientNoteDisplay div
+				document.onkeyup = KeyCheck; // watches for 'enter' keypress on the clientNoteDisplay div
+				$("#clientNoteInput").focus(function(){ noteCheck(); });
+			}
+		});
+	};
 	
 </script>
 <div id="clientNoteModule" style="position: absolute; top: 280px; left: 850px;"></div>
