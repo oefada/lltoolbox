@@ -119,9 +119,8 @@
 			<td><?php echo $userMailOptin['optoutDatetime'];?></td>
 			<td><?
 			if ($userMailOptin['optin']){
-				echo "<input type='checkbox' name='data[User][mailingListId][]' value='".$mailingListId."' checked>";
-				echo "<input type='hidden' name='data[User][siteId][]' value='".$siteId."'>";
-				echo "<input type='hidden' name='data[User][optinDatetime][]' value='".$optinDatetime."'>";
+				$str=$mailingListId.'~'.$siteId.'~'.$optinDatetime;
+				echo "<input type='checkbox' name='data[User][mailingListData][]' value='".$str."' checked>";
 			}
 
 
