@@ -6,6 +6,11 @@
 	margin-left:4px;
 	margin-bottom:4px;
 }
+.tdTitle{
+	color:#FFFFFF;
+	background-color:#000000;
+	font-weight:bold;
+}
 input radio{width:50px;
 form div{padding:0px;}
 </style>
@@ -25,6 +30,8 @@ jQuery(document).ready(function($){
 
 <?
 
+echo "<table style='border:0px;' border=0 cellpadding=4 cellspacing=0><tr><td valign='top'>";
+
 echo $form->create('unsubscribe_logs',array('id'=>'unsubForm','action'=>'index','type'=>'post')); 
 echo "<b>Retrieve all unsubscribers that unsubscribed between:</b><br><br>  ";
 echo $form->year('start', (date("Y")-5), (date("Y")+1), $startYear);
@@ -43,8 +50,35 @@ $attributes=array('legend'=>false, 'value'=>$output, 'separator'=>' &nbsp; ');
 echo "<br><b>Output</b><br><br>";
 echo $form->radio('Output', $options, $attributes);
 
-
 echo $form->end(array('name'=>'Retrieve','label'=>'Retrieve'));
+
+echo "</td><td valign=top>";
+
+	echo "<table border=1 cellpadding=4 cellspacing=0 width='300' style='width:300px;'>";
+	echo "<tr><td class='tdTitle'>mailingId</td><td class='tdTitle'># unsubs</td><td class='tdTitle'>Year-Month</td></tr>";
+	$total=0;
+	foreach($unsubCountArr as $key=>$rows){
+		foreach($rows as $j=>$arr){
+			$nlId=$arr['unsubscribeLog']['mailingId'];
+			$siteId=$arr['unsubscribeLog']['siteId'];
+			if (!isset($p[$siteId][$nlId])){
+				echo "<tr><td colspan=3 bgcolor=#cccccc>";
+				echo $nlDataArr[$siteId][$nlId]['name']." : ".$nlId;
+				echo "</td></tr>";
+				$p[$siteId][$nlId]=1;
+			}
+			echo "<tr><td>".$siteId."</td>";
+			echo "<td>".number_format($arr[0]['num'])."</td>";
+			echo "<td>".$arr[0]['unsubDate_ym']."</td>";
+			echo "</tr>";
+			$total+=$arr[0]['num'];
+		}
+	}
+	echo "<tr><td align=right> Total:</td><td>".number_format($total)."</td><td> &nbsp; </td></tr>";
+	echo "</table>";
+
+echo "</td></tr></table>";
+
 
 if (isset($unsubLogs) && count($unsubLogs)>0){
 
@@ -54,21 +88,24 @@ if (isset($unsubLogs) && count($unsubLogs)>0){
 	?></b>
 	<br>
 
-	<table cellpadding='4' cellspacing='0' border='1' width='600' style='width:600px;'>
-	<tr>
-	<td> &nbsp; </td>
-	<td>Email</td>
-	<td>subDate</td>
-	<td>unsubDate</td>
-	</tr>
-	<?
-	foreach($unsubLogs as $key=>$row){
-		echo '<tr>';
-		echo '<td>'.($key+1).'</td>';
-		echo '<td>'.$row['UnsubscribeLog']['email'].'</td>';
-		echo '<td>'.$row[0]['subDateYmd'].'</td>';
-		echo '<td>'.$row[0]['unsubDateYmd'].'</td>';
-		echo '</tr>';
-	}
-	echo "</table>";
+	<table><tr><td valign='top'>
+
+		<table cellpadding='4' cellspacing='0' border='1' width='600' style='width:600px;'>
+		<tr>
+		<td> &nbsp; </td>
+		<td>Email</td>
+		<td>subDate</td>
+		<td>unsubDate</td>
+		</tr>
+		<?
+		foreach($unsubLogs as $key=>$row){
+			echo '<tr>';
+			echo '<td>'.($key+1).'</td>';
+			echo '<td>'.$row['UnsubscribeLog']['email'].'</td>';
+			echo '<td>'.$row[0]['subDateYmd'].'</td>';
+			echo '<td>'.$row[0]['unsubDateYmd'].'</td>';
+			echo '</tr>';
+		}
+		echo "</table>";
+
 }
