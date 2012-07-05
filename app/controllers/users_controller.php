@@ -55,77 +55,79 @@ class UsersController extends AppController {
 		}else if (!empty($this->data)){
 
 			$email=$this->data['User']['email'];
-			$mailingListIdArr=$this->data['User']['mailingListId'];
 			$userId=$this->data['User']['userId'];
 
 			$nlMgr=new NewsletterManager();
 
-			if (count($mailingListIdArr)>0){
+			if (isset($this->data['User']['mailingListData']) && count($this->data['User']['mailingListData'])>0){
+			
+				$mailingListDataArr=$this->data['User']['mailingListData'];
 
-				// Retrieve id's related to silverpop from $nlDataArr in order to unsub from silverpop
-				// Update local dbs
 				$allNlArr=NewsletterManager::$nlDataArr;
-				foreach($allNlArr as $siteId=>$nlArr){
-					if ($siteId==3){//no vcom
-						continue;
+
+				foreach($mailingListDataArr as $key=>$str){
+
+					$arr=explode("~",$str);
+					$checkedMailingListId=$arr[0];
+					$postedSiteId=$arr[1];
+					$optinDatetime=$arr[2];
+
+					// Retrieve id's related to silverpop from $nlDataArr and unsub from silverpop
+					$row=$allNlArr[$postedSiteId][$checkedMailingListId];
+					$r=$nlMgr->removeUserFromContactList($email, $row['contactId']);
+					if (isset($row['legacyId']) && $row['legacyId']>0){
+						$nlMgr->optoutUserFromDatabase($email, $row['legacyId']);
 					}
-					foreach($nlArr as $nlId=>$row){
-						foreach($mailingListIdArr as $key=>$id){
-
-							$postedSiteId=$this->data['User']['siteId'][$key];
-							$optinDatetime=$this->data['User']['optinDatetime'][$key];
-
-							if ($nlId==$id && $postedSiteId==$siteId){
-								$r=$nlMgr->removeUserFromContactList($email, $row['contactId']);
-								if (isset($row['legacyId']) && $row['legacyId']>0){
-									$nlMgr->optoutUserFromDatabase($email, $row['legacyId']);
-								}
-								if (isset($row['altContactIdSub']) && is_array($row['altContactIdSub'])){
-									foreach($row['altContactIdSub'] as $contactId){
-										$r=$nlMgr->removeUserFromContactList($email, $contactId);
-									}
-								}
-								// update userMailOptin table
-								$this->User->UserMailOptin->updateAll( 
-									array(
-										'UserMailOptin.optin'=>'0',
-										'UserMailOptin.optoutDatetime'=>"'".date("Y-m-d H:m:s")."'",
-									),
-									array(
-										'UserMailOptin.userId'=>$userId, 
-										'UserMailOptin.mailingListId'=>$nlId
-									)
-								);
-								$this->User->bindModel(
-									array(
-										'hasMany'=>array(
-											'unsubscribeLog'=>array(
-												'UnsubscribeLog'=>array(
-													'className'=>'UnsubscribeLog'
-												)
-											)
-										)
-									)
-								);
-								$arr['unsubscribeLog']=array(
-									'email'=>$email, 
-									'siteId'=>$siteId,
-									'mailingId'=>$nlId,
-									'unsubDate'=>time(),
-									'subDate'=>strtotime($optinDatetime)
-								);
-								$this->User->unsubscribeLog->create();
-								$this->User->unsubscribeLog->save($arr);
-								break;
-							}
+					if (isset($row['altContactIdSub']) && is_array($row['altContactIdSub'])){
+						foreach($row['altContactIdSub'] as $contactId){
+							$r=$nlMgr->removeUserFromContactList($email, $contactId);
 						}
 					}
+
+
+					// Update local dbs
+					// update userMailOptin table
+					$this->User->UserMailOptin->updateAll( 
+						array(
+							'UserMailOptin.optin'=>'0',
+							'UserMailOptin.optoutDatetime'=>"'".date("Y-m-d H:m:s")."'",
+						),
+						array(
+							'UserMailOptin.userId'=>$userId, 
+							'UserMailOptin.mailingListId'=>$checkedMailingListId
+						)
+					);
+					$this->User->bindModel(
+						array(
+							'hasMany'=>array(
+								'unsubscribeLog'=>array(
+									'UnsubscribeLog'=>array(
+										'className'=>'UnsubscribeLog'
+									)
+								)
+							)
+						)
+					);
+					// update unsubscribeLog table
+					$arr['unsubscribeLog']=array(
+						'email'=>$email, 
+						'siteId'=>$postedSiteId,
+						'mailingId'=>$checkedMailingListId,
+						'unsubDate'=>time(),
+						'subDate'=>strtotime($optinDatetime)
+					);
+					$this->User->unsubscribeLog->create();
+					$this->User->unsubscribeLog->save($arr);
+
 				}
-				$errors=$nlMgr->getErrors();
-				if (is_array($errors) && count($errors)>0){
-					$error_str=implode("<br>",$errors);
-				}
+
+			}	
+
+			$errors=$nlMgr->getErrors();
+			if (is_array($errors) && count($errors)>0){
+				$error_str=implode("<br>",$errors);
 			}
+
 		}
 
 		if ($error_str!=''){
@@ -133,7 +135,9 @@ class UsersController extends AppController {
 		}else{
 			$this->Session->setFlash(__('Updated Unsub for '.$this->data['User']['email'], true));
 		}
+
 		$this->redirect(array("action" => 'edit', $userId));
+
 
 	}
 
