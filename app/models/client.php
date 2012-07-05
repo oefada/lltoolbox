@@ -18,7 +18,7 @@ class Client extends AppModel {
 						  'Region' => array('foreignKey' => 'regionId'),
 						  'ParentClient' => array('className' => 'Client', 'foreignKey' => 'parentClientId')
 					   );
-
+ 
    var $hasMany = array('Loa' => array('foreignKey' => 'clientId'),
 						'Accolade' => array('foreignKey' => 'clientId'),
 						'Audit' => array('foreignKey' => 'foreignId', 'conditions' => array('Audit.class' => 'Client'), 'limit' => 5, 'order' => 'Audit.created DESC'),
@@ -32,7 +32,8 @@ class Client extends AppModel {
 						'ClientTracking' => array('className' => 'ClientTracking', 'foreignKey' => 'clientId'),
 						'ClientReview' => array('className' => 'ClientReview', 'foreignKey' => 'clientId'),
 						'ImageClient' => array('className' => 'ImageClient', 'foreignKey' => 'clientId'),
-                        'RoomGrade' => array('className' => 'RoomGrade', 'foreignKey' => 'clientId')
+                        'RoomGrade' => array('className' => 'RoomGrade', 'foreignKey' => 'clientId'),
+                        'ClientInterview' => array('className' => 'ClientInterview', 'foreignKey' => 'clientId')
 					   );
 
    var $hasAndBelongsToMany = array('Destination' => array('className' => 'Destination',

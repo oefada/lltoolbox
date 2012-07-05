@@ -579,6 +579,22 @@ foreach ($this->data['Client']['sites'] as $site) {
 			
 			</div>
 		</fieldset>
+				
+		<fieldset class="collapsible">
+			<legend class="handle">Client Interviews</legend>
+			<div class="collapsibleContent">
+			<?php
+			
+				echo $form->input('ClientInterview.0.intervieweeName', array('label' => 'Interviewee Name and Title'));
+				echo $form->input('ClientInterview.0.article', array('label' => 'Interview Full Article', 'type' => 'textarea'));
+				echo $form->input('ClientInterview.0.summary', array('label' => 'Interview Summary', 'type' => 'textarea'));
+				echo $form->input('ClientInterview.0.active', array('label' => 'Display Interview', 'type' => 'checkbox'));
+				echo $form->input('ClientInterview.0.clientId', array('type' => 'hidden'));
+				echo $form->input('ClientInterview.0.clientInterviewId', array('type' => 'hidden'));
+				
+			?>
+			</div><!-- close collapsibleContent -->
+		</fieldset>
 		
 	</fieldset>
 

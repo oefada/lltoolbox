@@ -5,7 +5,7 @@ App::import('Vendor', 'nusoap_client/lib/nusoap');
 class ClientsController extends AppController {
 
 	var $name = 'Clients';
-	var $uses = array('Client', 'ClientThemeRel', 'ClientDestinationRel', 'ClientAmenityTypeRel');
+	var $uses = array('Client', 'ClientThemeRel', 'ClientDestinationRel', 'ClientAmenityTypeRel', 'ClientInterview');
 
 	function beforeFilter() {
 		parent::beforeFilter();
@@ -135,6 +135,11 @@ class ClientsController extends AppController {
 		if (!empty($this->data)) {
 			$clientCollectionIds = $this->Client->find('list', array('conditions' => 'Client.clientTypeId = 14'));
 			
+			//set clientId for clientInterview
+			if($this->data['ClientInterview'][0]['clientId'] == ''){
+				$this->data['ClientInterview'][0]['clientId'] = $this->data['Client']['clientId'];
+			}
+			
 			//set collection id
 			if (!empty($this->data['Client']['clientCollectionId'])) {
 				$this->data['Client']['parentClientId'] = $this->data['Client']['clientCollectionId'];
@@ -174,6 +179,9 @@ class ClientsController extends AppController {
 			 }
 
 			if ($this->Client->save($this->data)) {
+				if($this->data['ClientInterview'][0]){
+					$this->Client->ClientInterview->save($this->data['ClientInterview'][0]);
+				}
 				$this->Session->setFlash(__('The Client has been saved', true));
 				$this->redirect(array('action'=>'edit', 'id' => $id));
 			} else {
@@ -197,7 +205,7 @@ class ClientsController extends AppController {
 							)
 						),
 						'ClientDestinationRel',
-						'ClientContact'
+						'ClientInterview'
 					)
 			));
 			
