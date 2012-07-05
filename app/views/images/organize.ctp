@@ -86,7 +86,7 @@
          <?php endforeach; ?>
          
          <div class="organize slideshow inactive">
-            <h3>Inactive <span class="nukeOld"> - <a href="#" id="nukelink_<?php echo $site; ?>_nonauto">NukeNonAUTO</a> <a href="#" id="nukelink_<?php echo $site; ?>_all">NukeALL</a></span></h3>
+            <h3>Inactive <span class="nukeOld"> - <a href="#" id="nukelink_<?php echo $site; ?>_nonauto">Nuke578</a> <a href="#" id="nukelink_<?php echo $site; ?>_all">NukeALL</a></span></h3>
             <ul id="sortableInactive-<?php echo $site; ?>" class="sortableInactive">
                <?php if ($start_inactive !== false): ?>
                   <?php for ($i=$start_inactive; $i < count($slideshowImages); $i++): ?>
@@ -317,10 +317,10 @@ jQuery(function(){
 		var $targets = false;
 		switch ($(this).attr('id')) {
 			case 'nukelink_luxurylink_nonauto':
-				$targets = $('#sortableSlideshow-luxurylink li img[src^="/images/por"]');
+				$targets = $('#sortableSlideshow-luxurylink li img[src^="/images/por"], #sortableSlideshow-luxurylink li img[src^="/images/pho"][src$="-auto-578.jpg"]');
 			break;
 			case 'nukelink_family_nonauto':
-				$targets = $('#sortableSlideshow-family li img[src^="/images/por"]');
+				$targets = $('#sortableSlideshow-family li img[src^="/images/por"], #sortableSlideshow-family li img[src^="/images/pho"][src$="-auto-578.jpg"]');
 			break;
 			case 'nukelink_luxurylink_all':
 				$targets = $('#sortableSlideshow-luxurylink li img[src^="/images"]');
