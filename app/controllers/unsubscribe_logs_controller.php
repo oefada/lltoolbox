@@ -22,8 +22,17 @@ class UnsubscribeLogsController extends AppController
 
 		// populate mailing list drop down selector
 		$nlMgr=new NewsletterManager();
-		$nlIdArr=$nlMgr->getNewsletterIdArr();
+		$nlArr=$nlMgr->getNewsletterData();
+		foreach($nlArr as $siteId=>$arr){
+			foreach($arr as $nlId=>$row){
+				$nlIdArr[$nlId]=$row['name'];
+			}
+		}
 		$this->set('nlIdArr',$nlIdArr);
+		$this->set('nlDataArr',$nlArr);
+
+		$unsubCountArr=$this->UnsubscribeLog->getUnsubCountByMonth($nlArr);
+		$this->set("unsubCountArr", $unsubCountArr);
 
 		if (!empty($this->data)){
 
