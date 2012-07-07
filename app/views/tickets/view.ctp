@@ -205,7 +205,11 @@ $this->searchController = 'Tickets';
 		<?php
 			$i = 0;
 			foreach ($ticket['PaymentDetail'] as $paymentDetail):
-				$processed_flag = $paymentDetail['isSuccessfulCharge'] ? 'Payment Successful' : 'Payment Declined';
+				if (!isset($paymentDetail['isSuccessfulCharge'])){
+					$processed_flag="Payment Detail missing status of credit card charge. Please see a dev to prevent double charging customer.";
+				}else{
+					$processed_flag = $paymentDetail['isSuccessfulCharge'] ? 'Payment Successful' : 'Payment Declined';
+				}
 				$class = null;
 				if ($i++ % 2 == 0) {
 					$class = ' class="altrow"';
@@ -224,7 +228,14 @@ $this->searchController = 'Tickets';
 						echo $paymentDetail['PaymentProcessor']['paymentProcessorName'];
 					}	
 					?></td>
-					<td align="center"><?php echo $processed_flag;?></td>
+					<td align="center"><?php echo $processed_flag;?>
+					<? if ($paymentDetail['paymentTypeId']==1){
+						if ($paymentDetail['ppApprovalText']=='APPROVAL' && $paymentDetail['isSuccessfulCharge']!=1){
+							echo "<span style='color:red;'>Discrepancy</span> ";
+							echo " ".$paymentDetail['ppApprovalText'];
+						}
+					}?>
+					</td>
 					<td align="center"><?php echo $paymentDetail['ccType']; ?></td>
 					<td align="center"><?php echo $paymentDetail['initials'];?></td>
 					<td class="actions">
