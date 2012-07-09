@@ -205,6 +205,7 @@ class ClientsController extends AppController {
 							)
 						),
 						'ClientDestinationRel',
+					 	'ClientContact',
 						'ClientInterview'
 					)
 			));
