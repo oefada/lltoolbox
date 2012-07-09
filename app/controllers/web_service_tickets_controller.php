@@ -948,14 +948,6 @@ class WebServiceTicketsController extends WebServicesController
 				$clientId = $this->ClientLoaPackageRel->field('clientId', array('ClientLoaPackageRel.packageId' => $packageId));
 			}
 		}
-		if ($clientId) {
-			$clientImagePath = $this->ImageClient->getFirstImagePath($clientId);
-			if (substr($clientImagePath,0,1)=='/') {
-				$clientImagePath = 'http://photos.luxurylink.us' . $clientImagePath;
-			}
-		} else {
-			$clientImagePath = false;
-		}
 
 		// package id for deal alerts
 		if ($ppvNoticeTypeId == 41 || $ppvNoticeTypeId == 42 || $ppvNoticeTypeId == 43) {
@@ -1033,6 +1025,16 @@ class WebServiceTicketsController extends WebServicesController
 			$isMystery 			= isset($liveOfferData['isMystery']) && $liveOfferData['isMystery'] ? true : false;
 		}
 
+		if ($clientId) {
+			$clientImagePath = $this->ImageClient->getFirstImagePath($clientId, (isset($isMystery)?$isMystery:false));
+			if (substr($clientImagePath,0,1)=='/') {
+				$clientImagePath = 'http://photos.luxurylink.us' . $clientImagePath;
+			}
+		} else {
+			$clientImagePath = false;
+		}
+		
+		
 		if ($ticketId) {
 			// data arrays
 			// -------------------------------------------------------------------------------
