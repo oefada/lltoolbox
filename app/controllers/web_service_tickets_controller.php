@@ -1921,12 +1921,14 @@ class WebServiceTicketsController extends WebServicesController
 				$additionalClients = (isset($params['acAdditionalClients'])) ? $params['acAdditionalClients'] : array();
 				include('../vendors/email_msgs/notifications/42_43_abandoned_cart.html');
 				$emailSubject = "Questions with your " . $clientNameP . " Order?";
+				$emailCc = 'devmail@luxurylink.com';
 				break;
 			case 43:
 				$isAuction = 0;
 				$additionalClients = (isset($params['acAdditionalClients'])) ? $params['acAdditionalClients'] : array();
 				include('../vendors/email_msgs/notifications/42_43_abandoned_cart.html');
 				$emailSubject = "Questions with your " . $clientNameP . " Order?";
+				$emailCc = 'devmail@luxurylink.com';
 				break;
 			default:
 				break;
