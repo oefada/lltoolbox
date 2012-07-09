@@ -228,11 +228,13 @@ $this->searchController = 'Tickets';
 						echo $paymentDetail['PaymentProcessor']['paymentProcessorName'];
 					}	
 					?></td>
-					<td align="center"><?php echo $processed_flag;?>
+					<td align="center">
 					<? if ($paymentDetail['paymentTypeId']==1){
 						if ($paymentDetail['ppApprovalText']=='APPROVAL' && $paymentDetail['isSuccessfulCharge']!=1){
-							echo "<span style='color:red;'>Discrepancy</span> ";
-							echo " ".$paymentDetail['ppApprovalText'];
+							echo "<span style='color:red;'>Please talk to a dev as the isSuccessfulCharge is not 1, but the approval text is 'APPROVAL'</span> ";
+							//echo " ".$paymentDetail['ppApprovalText'];
+						}else{
+							echo $processed_flag;
 						}
 					}?>
 					</td>
