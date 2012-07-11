@@ -108,7 +108,6 @@ $this->set('clientId', $this->data['Client']['clientId']);
 		$enable_rvc = !$disable_advanced_edit && ($loa['Loa']['loaMembershipTypeId'] == 5) ? true : false;
 		echo $form->input('retailValueBalance', array('disabled' => $enable_rvc));
 		echo $form->input('retailValueFee', array('disabled' => $enable_rvc));
-
 		echo $form->input('membershipFee', array('disabled' => $disabled));
 		echo $form->input('membershipBalance', array('disabled' => $disable_advanced_edit));
 		echo $form->input('totalRemitted', array('disabled' => $disable_advanced_edit));
@@ -148,6 +147,7 @@ $this->set('clientId', $this->data['Client']['clientId']);
 		<?php echo $form->end('Submit');?>
 	</div>
 </div>
+
 <!--
 <div class="collapsible">
 	<div class="handle"><?php __('Related LOA Items');?></div>
@@ -289,12 +289,20 @@ $this->set('clientId', $this->data['Client']['clientId']);
 
 jQuery(document).ready(function() {
 	jQuery("#LoaEditForm").submit(function(){
+
+		if (jQuery("#LoaMembershipBalance").val()==0 && <?=$client['Loa'][0]['membershipBalance']?>>0){
+			if (confirm('are you sure you want to set the membership balance to ZERO?')==false){
+				return false;
+			}
+		}
+
 		if (jQuery("#LoaSitesLuxuryLink").attr('checked')==false && jQuery("#LoaSitesFamily").attr('checked')==false){
 			alert("You must check off which site(s) this is for.");
 			return false;
 		}else{
 			return true;
 		}
+
 	});
 });
 
