@@ -1125,10 +1125,7 @@ class PackagesController extends AppController
 						$this->Package->LoaItemRatePackageRel->setNumNights(&$package);
 						$this->Package->LoaItemRatePackageRel->save($package);
 					}
-
-						header('Content-Type: application/json');
-						echo json_encode("ok");
-						exit;
+					echo 'ok';
 				} else {
 					echo json_encode($this->Package->validationErrors);
 				}
@@ -1568,8 +1565,7 @@ class PackagesController extends AppController
 					$this->Package->PackageLoaItemRel->save($loaItem);
 				}
 			}
-			header('Content-Type: application/json');
-			echo json_encode("ok");
+			echo 'ok';
 			exit;
 		}
 		$this->set('isMultiClientPackage', $isMultiClientPackage);
@@ -1663,9 +1659,7 @@ class PackagesController extends AppController
 	{
 		$this->autoRender = false;
 		if ($this->Package->PackageLoaItemRel->delete($_GET['packageLoaItemRelId'])) {
-			header('Content-Type: application/json');
-			echo json_encode("ok");
-			exit;
+			echo 'ok';
 		} else {
 			echo json_encode($this->Package->validationErrors);
 		}
@@ -1725,10 +1719,7 @@ class PackagesController extends AppController
 			$this->autoRender = false;
 			$this->Package->saveBlackouts($packageId, $this->data);
 			$this->Package->updatePackagePricePointValidity($packageId);
-			header('Content-Type: application/json');
-			echo json_encode("ok");
-			exit;
-
+			echo 'ok';
 		} else {
 			$blackout_weekday = $this->Package->getBlackoutWeekday($packageId);
 			$blackout = $this->Package->getBlackout($packageId);
@@ -1770,9 +1761,7 @@ class PackagesController extends AppController
 				}
 			}
 
-			header('Content-Type: application/json');
-			echo json_encode("ok");
-			exit;
+			echo 'ok';
 
 		} else {
 			$package = $this->Package->getPackage($packageId);
@@ -1936,9 +1925,7 @@ class PackagesController extends AppController
 					}
 				}
 				$this->Package->updatePackagePricePointValidity($packageId);
-				header('Content-Type: application/json');
-				echo json_encode("ok");
-				exit;
+				echo 'ok';
 			}
 		} else {
 			$this->set('package', $package);
@@ -2034,9 +2021,7 @@ class PackagesController extends AppController
 				$loaItemRatePeriod = array('loaItemRatePackageRelId' => $loaItemRatePackageRelId, 'guaranteePercentRetail' => $guaranteePercentRetail);
 				$this->Package->LoaItemRatePackageRel->save($loaItemRatePeriod);
 			}
-			header('Content-Type: application/json');
-			echo json_encode("ok");
-			exit;
+			echo 'ok';
 		} else {
 			$ratePeriods = $this->getRatePeriodsInfo($packageId);
 			$this->set('ratePeriods', $ratePeriods);
@@ -2222,11 +2207,9 @@ class PackagesController extends AppController
 			}
 
 			$this->Package->updatePricePointValidityGroupId($ppid, $vg_id);
-			header('Content-Type: application/json');
-			echo json_encode("ok");
+			ob_clean();
+			echo 'ok';
 			exit;
-
-
 			// Do not remove without refactoring the JS call. The Ajax call is looking for a response of 'ok'
 
 			// view data
@@ -2491,15 +2474,11 @@ class PackagesController extends AppController
 			if (empty($ratePeriod['LoaItemRatePeriod'])) {
 				foreach ($this->data[0]['LoaItemDate'] as $date) {
 					if (empty($date['loaItemDateId'])) {
-						header('Content-Type: application/json');
-						echo json_encode("ok");
-						exit;
+						echo 'ok';
+						return;
 					} else {
 						$this->Package->deleteDate($date['loaItemDateId']);
-						header('Content-Type: application/json');
-						echo json_encode("ok");
-						exit;
-
+						echo 'ok';
 					}
 				}
 			} else {
