@@ -1920,15 +1920,23 @@ class WebServiceTicketsController extends WebServicesController
 				$isAuction = 1;
 				$additionalClients = (isset($params['acAdditionalClients'])) ? $params['acAdditionalClients'] : array();
 				include('../vendors/email_msgs/notifications/42_43_abandoned_cart.html');
-				$emailSubject = "Questions with your " . $clientNameP . " Order?";
+				$emailSubject = "Questions with your " . $clientNameP . " order?";
 				$emailCc = 'devmail@luxurylink.com';
 				break;
 			case 43:
 				$isAuction = 0;
 				$additionalClients = (isset($params['acAdditionalClients'])) ? $params['acAdditionalClients'] : array();
 				include('../vendors/email_msgs/notifications/42_43_abandoned_cart.html');
-				$emailSubject = "Questions with your " . $clientNameP . " Order?";
+				$emailSubject = "Questions with your " . $clientNameP . " order?";
 				$emailCc = 'devmail@luxurylink.com';
+				break;
+			case 44:
+				include('../vendors/email_msgs/notifications/44_abandoned_cart_vcom.html');
+				$emailFrom = "Vacationist.com";
+				$emailReplyTo = "no-reply@vacationist.com";
+				$emailCc = 'devmail@luxurylink.com';
+				$emailSubject = "Questions with your order?";
+				$saleInfo = $params['vcomSaleInfo'];
 				break;
 			default:
 				break;
@@ -1958,7 +1966,7 @@ class WebServiceTicketsController extends WebServicesController
 			}
 		} else {
 			$emailBody = ob_get_clean();
-			if ($ppvNoticeTypeId == 42 || $ppvNoticeTypeId == 43) {
+			if ($ppvNoticeTypeId == 42 || $ppvNoticeTypeId == 43 || $ppvNoticeTypeId == 44) {
 				$emailBody = $this->utmLinks($emailBody, $ppvNoticeTypeId, $append);
 			}
 		}
