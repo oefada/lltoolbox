@@ -2207,7 +2207,7 @@ class PackagesController extends AppController
 			}
 
 			$this->Package->updatePricePointValidityGroupId($ppid, $vg_id);
-			ob_clean();
+			
 			echo 'ok';
 			exit;
 			// Do not remove without refactoring the JS call. The Ajax call is looking for a response of 'ok'

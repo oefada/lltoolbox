@@ -5,6 +5,3 @@ class ClientInterview extends AppModel {
 	public $useTable = 'clientInterview';
 	public $primaryKey = 'clientInterviewId';
 }
-?>
-
-
