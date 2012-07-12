@@ -201,7 +201,38 @@
          <input type="submit" value="Save" class="save_changes" />
       </form>
    </div>
-
+	
+	<script type="text/javascript">
+		/***
+		 * Script added by martin to allow for client notes
+		 */
+		jQuery(function($){
+			
+			$(window).ready(function(){
+				load_clientNotes(<?= $client['Client']['clientId']; ?>);
+			});
+		});
+		
+		load_clientNotes = function( i_clientId ){
+			var $=jQuery;
+			
+			// gets clientId 
+			var v_url = "/clientNotes/view/" + i_clientId;
+			
+			// calls clientNotes/view to load clientNote module
+			$.ajax({
+				url: v_url,
+				success: function(data) {
+					$("#clientNoteModule").html(data);
+					scrollWindow(); // auto scrolls to bottom of the clientNoteDisplay div
+					document.onkeyup = KeyCheck; // watches for 'enter' keypress on the clientNoteDisplay div
+					$("#clientNoteInput").focus(function(){ noteCheck(); });
+				}
+			});
+		};
+		
+	</script>
+	<div id="clientNoteModule" style="padding: 0 0 50px 0"></div>
 
    <script type="text/javascript">
       Event.observe(window, 'load', function() {

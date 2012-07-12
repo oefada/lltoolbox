@@ -10,6 +10,7 @@
 		font-family: Helvetica, Verdana, Arial;
 		font-size: 13px;
 		margin: 0 0 0 0;
+		background-color: #fff;
 	}
 	
 	#clientNoteHeader {
