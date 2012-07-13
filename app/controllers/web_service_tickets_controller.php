@@ -1132,6 +1132,15 @@ class WebServiceTicketsController extends WebServicesController
 				$prefixUrl = Configure::read("UrlS.FG");
 
 				break;
+
+			case 3:
+				$siteName = 'Vacationist.com';
+				$siteEmail = 'vacationist.com';
+				$sitePhone  = '(877) 313-6769';
+				$sitePhoneLocal = '(310) 215-8279';
+				$siteFax = '(800) 440-3820';
+
+				break;
 		}
 
 		// Auction facilitator
@@ -1929,8 +1938,6 @@ class WebServiceTicketsController extends WebServicesController
 				$emailSubject = "Questions with your " . $clientNameP . " Order?";
 				break;
 			case 44:
-				$emailFrom = "Vacationist.com";
-				$emailReplyTo = "no-reply@vacationist.com";
 				$vcomSaleInfo = $params['vcomSaleInfo'];
 				$vcomSaleInfo['tracking'] = 'utm_source=vac&utm_medium=xa&utm_campaign=abandon_vcom';
 				$vcomSaleInfo['pdpLink'] = 'http://www.vacationist.com/membersonly/hotels/id/' . $vcomSaleInfo['clientId'] . '?' . $vcomSaleInfo['tracking'];
@@ -1938,8 +1945,9 @@ class WebServiceTicketsController extends WebServicesController
 				include('../vendors/email_msgs/notifications/44_abandoned_cart_vcom.html');
 				break;
 			case 45:
-				include('../vendors/email_msgs/notifications/45_raf_paid.html');
+				$rafAmount = $params['rafAmount'];
 				$emailSubject = "";
+				include('../vendors/email_msgs/notifications/45_raf_paid.html');
 				break;				
 			default:
 				break;

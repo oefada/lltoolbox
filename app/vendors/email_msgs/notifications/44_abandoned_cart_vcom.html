@@ -37,7 +37,7 @@
 <? } ?>
 
 <tr>
-	<td align="left" style="padding:15px 20px 20px 25px; line-height:21px; font-family:Arial, helvetica, Sans-Serif;color:#666666;font-size:14px">Uh-oh! It looks like you tried to book a stay at <?= $vcomSaleInfo['name']; ?> but did not complete your reservation. <a style="text-decoration:none;color:#008ec5" href="<?= $vcomSaleInfo['pdpLink']; ?>" name="" target="_blank">Click here</a> to complete your booking or contact our Concierege team at 1(877) 313-6179 or 1(310) 956-3704 for assistance. Remember this sale is only available until <?= date('g a \P\D\T l F j, Y', strtotime($vcomSaleInfo['end'])); ?>.<td>
+	<td align="left" style="padding:15px 20px 20px 25px; line-height:21px; font-family:Arial, helvetica, Sans-Serif;color:#666666;font-size:14px">Uh-oh! It looks like you tried to book a stay at <?= $vcomSaleInfo['name']; ?> but did not complete your reservation. <a style="text-decoration:none;color:#008ec5" href="<?= $vcomSaleInfo['pdpLink']; ?>" name="" target="_blank">Click here</a> to complete your booking or contact our Concierege team at <?= $sitePhone; ?> or <?= $sitePhoneLocal; ?> for assistance. Remember this sale is only available until <?= date('g a \P\D\T l F j, Y', strtotime($vcomSaleInfo['end'])); ?>.<td>
 </tr>
 
 <tr>
@@ -63,7 +63,7 @@
 </tr>
 <tr>
 	<td align="left" style="padding:50px 20px 20px 25px;line-height:17px; font-family:Helvetica,maradival,Sans-Serif; color:#999999; font-size:12px">
-If you have any questions or additional needs, please contact our Travel Concierge at &#40;877&#41; 313-6769 or &#40;310&#41; 215-8279, or email <a style="text-decoration:none;color:#008ec5" href="mailto:concierge@vacationist.com">concierge@vacationist.com</a>. Our business hours are Monday through Friday, 6:00am to 9:00pm, or Saturday and Sunday from 9:00 am to 4:00 pm Pacific Time.
+If you have any questions or additional needs, please contact our Travel Concierge at <?= $sitePhone; ?> or <?= $sitePhoneLocal; ?>, or email <a style="text-decoration:none;color:#008ec5" href="mailto:concierge@vacationist.com">concierge@vacationist.com</a>. Our business hours are Monday through Friday, 6:00am to 9:00pm, or Saturday and Sunday from 9:00 am to 4:00 pm Pacific Time.
 
 	</td>
 </tr>
@@ -96,7 +96,7 @@ If you have any questions or additional needs, please contact our Travel Concier
 
 <a name="footer" href="http://www.vacationist.com/?<?= $vcomSaleInfo['tracking']; ?>" target="_blank" style="color: #008ec5;text-decoration: none;">Vacationist</a><br>
 5570 Lincoln Blvd. Los Angeles, CA 90094 <br><br>
-For information or assistance, call 1 (877) 313-6769 or email <a name="footer_email" href="mailto:concierge@vacationist.com" target="_blank" style="color: #008ec5;text-decoration: none;"><span id="__cf_email__" class="61020e0f020804130604210d14191413180d080f0a4f020e0c">concierge@vacationist.com</span></a>. | <a name="footer_privacy" href="http://www.vacationist.com/privacypolicy/" target="_blank" style="color: #008ec5;text-decoration: none;">Privacy Policy</a></td>
+For information or assistance, call <?= $sitePhone; ?> or email <a name="footer_email" href="mailto:concierge@vacationist.com" target="_blank" style="color: #008ec5;text-decoration: none;"><span id="__cf_email__" class="61020e0f020804130604210d14191413180d080f0a4f020e0c">concierge@vacationist.com</span></a>. | <a name="footer_privacy" href="http://www.vacationist.com/privacypolicy/" target="_blank" style="color: #008ec5;text-decoration: none;">Privacy Policy</a></td>
 <td align="right" valign="top" style="padding-top:10px">
 		<table cellspacing="0" cellpadding="0">
 		<tbody>
