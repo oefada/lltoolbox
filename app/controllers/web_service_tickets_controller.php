@@ -1920,24 +1920,27 @@ class WebServiceTicketsController extends WebServicesController
 				$isAuction = 1;
 				$additionalClients = (isset($params['acAdditionalClients'])) ? $params['acAdditionalClients'] : array();
 				include('../vendors/email_msgs/notifications/42_43_abandoned_cart.html');
-				$emailSubject = "Questions with your " . $clientNameP . " order?";
-				$emailCc = 'devmail@luxurylink.com';
+				$emailSubject = "Questions with your " . $clientNameP . " Order?";
 				break;
 			case 43:
 				$isAuction = 0;
 				$additionalClients = (isset($params['acAdditionalClients'])) ? $params['acAdditionalClients'] : array();
 				include('../vendors/email_msgs/notifications/42_43_abandoned_cart.html');
-				$emailSubject = "Questions with your " . $clientNameP . " order?";
-				$emailCc = 'devmail@luxurylink.com';
+				$emailSubject = "Questions with your " . $clientNameP . " Order?";
 				break;
 			case 44:
-				include('../vendors/email_msgs/notifications/44_abandoned_cart_vcom.html');
 				$emailFrom = "Vacationist.com";
 				$emailReplyTo = "no-reply@vacationist.com";
-				$emailCc = 'devmail@luxurylink.com';
-				$emailSubject = "Questions with your order?";
-				$saleInfo = $params['vcomSaleInfo'];
+				$vcomSaleInfo = $params['vcomSaleInfo'];
+				$vcomSaleInfo['tracking'] = 'utm_source=vac&utm_medium=xa&utm_campaign=abandon_vcom';
+				$vcomSaleInfo['pdpLink'] = 'http://www.vacationist.com/membersonly/hotels/id/' . $vcomSaleInfo['clientId'] . '?' . $vcomSaleInfo['tracking'];
+				$emailSubject = "Your " . $vcomSaleInfo['name'] . " Order";
+				include('../vendors/email_msgs/notifications/44_abandoned_cart_vcom.html');
 				break;
+			case 45:
+				include('../vendors/email_msgs/notifications/45_raf_paid.html');
+				$emailSubject = "";
+				break;				
 			default:
 				break;
 		}
@@ -1966,7 +1969,7 @@ class WebServiceTicketsController extends WebServicesController
 			}
 		} else {
 			$emailBody = ob_get_clean();
-			if ($ppvNoticeTypeId == 42 || $ppvNoticeTypeId == 43 || $ppvNoticeTypeId == 44) {
+			if ($ppvNoticeTypeId == 42 || $ppvNoticeTypeId == 43 || $ppvNoticeTypeId == 45) {
 				$emailBody = $this->utmLinks($emailBody, $ppvNoticeTypeId, $append);
 			}
 		}
