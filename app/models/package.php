@@ -1,4 +1,7 @@
 <?php
+
+App::import("Vendor","DateHelper",array('file' => "appshared".DS."helpers".DS."DateHelper.php"));
+
 class Package extends AppModel {
 
 	var $name = 'Package';
@@ -12,7 +15,7 @@ class Package extends AppModel {
 
 	var $hasOne = array(
 		'PackagePerformance' => array('foreignKey' => 'packageId'),
-	'PackageAgeRange' => array('foreignKey' => 'packageId')
+		'PackageAgeRange' => array('foreignKey' => 'packageId')
 	);
 
 	var $hasMany = array(
@@ -202,7 +205,6 @@ class Package extends AppModel {
 							"WHERE packageId = {$this->id} AND isAuction = 0 AND now() < endDate";
 				$this->query($query);
 			}
-
 		}
 
 		// update offer details in offer for hotel offers type (7)
@@ -395,31 +397,82 @@ class Package extends AppModel {
 	//	PKGR - START OF VALIDITY / BLACKOUT METHODS
 	//	=====================================================================
 
-	function updatePackagePricePointValidity($packageId) {
-		$this->updateValidityDisclaimer($packageId);
+	function updatePackagePricePointValidity($packageId, $siteId=0) {
+
+		$this->updateValidityDisclaimer($packageId);//update table packageValidityDisclaimer
 		$this->recursive = -1;
 		$package = $this->read(null, $packageId);
 		// ticket1870 - we still need to set validityStart and validityEnd in the pricePoint table
 		$ovd=$package['Package']['overrideValidityDisclaimer'];
-		if (false && $package['Package']['overrideValidityDisclaimer']) {
-			return;
-		}
 		$rp = $this->getPricePointDateRangeByPackage($packageId);
 		foreach ($rp as $r) {
-			$validityDisclaimer = $this->getValidityDisclaimerText($packageId, $r[0]['minStartDate'], $r[0]['maxEndDate'], $r[0]['loaItemRatePeriodIds']);
+			$start=$r[0]['minStartDate'];
+			$end=$r[0]['maxEndDate'];
+			$lirpId=$r[0]['loaItemRatePeriodIds'];
+			$validityDisclaimer = $this->getValidityDisclaimerText($packageId, $start, $end, $lirpId);
 			if ($validityDisclaimer) {
-				$r['PricePoint']['validityStart'] = $r[0]['minStartDate'];
-				$r['PricePoint']['validityEnd'] = $r[0]['maxEndDate'];
-				if ($ovd==false)$r['PricePoint']['validityDisclaimer'] = Sanitize::escape($validityDisclaimer);
+				$r['PricePoint']['validityStart'] = $start;
+				$r['PricePoint']['validityEnd'] = $end;
+				// If validityDisclaimer was manually edited, do not update pricePoint table with 
+				// code generated validityDisclaimer
+				if ($ovd==false){
+					$r['PricePoint']['validityDisclaimer'] = Sanitize::escape($validityDisclaimer);
+				}
 				$this->PricePoint->save($r['PricePoint'], array('validate' => false, 'callbacks' => false));
+
+				if ($siteId!=0 && $ovd==false){
+					$offerTable='offerLuxuryLink';
+					if ($siteId==2){
+						$offerTable='offerFamily';
+					}
+					$q="UPDATE $offerTable SET validityDisclaimer=? WHERE pricePointId=? AND packageId=?";
+					$this->query($q,array($validityDisclaimer,$r['pp']['pricePointId'],$packageId));
+				}
+
 			}
 		}
 
 		return;
 	}
 
-	// mbyrnes 2011-03-29
-	function insertValidityGroup($vg_id,$arr,$siteId,$debug_q=false){
+	public function validityGroupWrapper($rows_db, $siteId=0){
+
+		$IdCreatorObj= ClassRegistry::init("IdCreator"); 
+		$vg_id = $IdCreatorObj->genId();
+		if ($vg_id == '') {
+			Configure::write("debug", "vg_id not generated in validityGroupWrapper()");
+			exit("vg_id not generated");
+		}
+
+		if (isset($rows_db['ValidRanges'])){
+			foreach ($rows_db['ValidRanges'] as $key => $arr) {
+				foreach ($arr as $key2 => $validity_arr) {
+					if ($this->insertValidityGroup($vg_id, $validity_arr, $siteId) === false) {
+						$err_msg = 'Failed to insert validrange into validityGroup, please try again.';
+						Configure::write("debug",$err_msg);
+						$this->Session->setFlash(__($err_msg, true), 'default', array(), 'error');
+					}
+				}
+			}
+		}
+
+		if (isset($rows_db['BlackoutDays'])){
+			foreach ($rows_db['BlackoutDays'] as $key => $arr) {
+				foreach ($arr as $key2 => $validity_arr) {
+					if ($this->insertValidityGroup($vg_id, $validity_arr, $siteId) === false) {
+						$err_msg = 'Failed to insert blackoutday into validityGroup, please try again.';
+						Configure::write("debug",$err_msg);
+						$this->Session->setFlash(__($err_msg, true), 'default', array(), 'error');
+					}
+				}
+			}
+		}
+
+		return $vg_id;
+
+	} 
+
+	function insertValidityGroup($vg_id,$arr,$siteId=0,$debug_q=false){
 
 		$q="INSERT INTO validityGroup SET ";
 		$q.="validityGroupId=$vg_id, ";
@@ -428,12 +481,14 @@ class Package extends AppModel {
 		$q.="created='".date("Y-m-d H:i:s")."', ";
 		$q.="isBlackout='".$arr['isBlackout']."', ";
 		$q.="siteId='$siteId' ";
+		/* a unique vg_id is always passed, so there will be no on duplicate key update
 		$q.="ON DUPLICATE KEY UPDATE ";
 		$q.="startDate='".$arr['startDate']."', ";
 		$q.="endDate='".$arr['endDate']."', ";
 		$q.="created='".date("Y-m-d H:i:s")."', ";
 		$q.="isBlackout='".$arr['isBlackout']."', ";
 		$q.="siteId='$siteId' ";
+		*/
 		$this->query($q);
 		if ($debug_q && $_SERVER['ENV']=='development'){
 			require_once('/usr/lib/php/FirePHPCore/fb.php'); 
@@ -460,12 +515,11 @@ class Package extends AppModel {
 
 	}
 
-	function updatePricePointValidityGroupId($ppid_arr,$vg_id,$debug_q=false){
+	function updatePricePointValidityGroupId($ppid,$vg_id,$debug_q=false){
 
-		if (!is_array($ppid_arr))$ppid_arr=(array)$ppid_arr;
 
 		$q="UPDATE pricePoint SET validityGroupId=$vg_id ";
-		$q.="WHERE pricePointId IN (".implode(",",$ppid_arr).")";
+		$q.="WHERE pricePointId=$ppid";
 		$this->query($q);
 		if ($debug_q && $_SERVER['ENV']=='development'){
 			require('/usr/lib/php/FirePHPCore/fb.php'); 
@@ -474,6 +528,7 @@ class Package extends AppModel {
 		}
 
 	}
+
 
 	function getValidityGroup($vg_id,$debug_q=false){
 
@@ -487,18 +542,35 @@ class Package extends AppModel {
 
 	}
 
-	function updateOfferWithGroupId($pricePointId,$vg_id,$siteId,$debug_q=false){
+	public function updateOfferWithValidityGroupId($ppId, $siteId, $new_vgId, $old_vgId){
+
+		$table="offerFamily";
+		if ($siteId==1){
+			$table="offerLuxuryLink";
+		}
+		$q="UPDATE $table SET validityGroupId=$new_vgId ";
+		$q.="WHERE pricePointId=$ppId ";
+		$q.="AND validityGroupId=$old_vgId";
+		$this->query($q);
+
+	}
+
+	function updateOfferWithGroupId($ppidArr,$vg_id,$siteId,$debug_q=false){
+
+		if (!is_array($ppidArr)){
+			$ppidArr=array($ppidArr);
+		}
+		$ppidArr=array_unique($ppidArr);
 
 		$table="offerFamily";
 		if ($siteId==1)$table="offerLuxuryLink";
-		$q="UPDATE $table SET validityGroupId=$vg_id WHERE pricePointId=$pricePointId";
-		$this->query($q);
-		if ($debug_q){
-			echo "<p>$q</p>";
-			echo "<p>Affected Rows: ".$this->getAffectedRows()."</p>";
-		}
-		if ($this->getAffectedRows()<=0){
-			return false;
+		foreach($ppidArr as $pricePointId){
+			$q="UPDATE $table SET validityGroupId=$vg_id WHERE pricePointId=$pricePointId";
+			$this->query($q);
+			if ($debug_q){
+				echo "<p>$q</p>";
+				echo "<p>Affected Rows: ".$this->getAffectedRows()."</p>";
+			}
 		}
 
 	}
@@ -510,7 +582,13 @@ class Package extends AppModel {
 
 		$dates = $this->getPackageValidityDisclaimerByItem($packageId, $loaItemRatePeriodIds, $startDate, $endDate);
 		$blackout_week = $this->getBlackoutWeekday($packageId);
+		$valid='';
 		if ($blackout_week) {
+
+			$dateHelper = new DateHelper();
+			$valid=$dateHelper->convertWeekdayStrToHeader($blackout_week);
+
+			/*
 			switch ($blackout_week) {
 				case 'Fri,Sat,Sun':
 					$valid = "Monday through Thursday";
@@ -529,7 +607,9 @@ class Package extends AppModel {
 					$add_to_blackout = true;
 					break;
 			}
-			$html = "<b>This package is valid for travel $valid:</b><br><br>";
+			*/
+			//$html = "<b>This package is valid for travel $valid:</b><br><br>";
+			$html=$valid."<br><br>";
 		} else {
 			$html = "<b>This package is valid for travel:</b><br><br>";
 		}
@@ -636,13 +716,22 @@ class Package extends AppModel {
 		return $r;
 	}
 
+	function checkData($clientId, $pkId, $num){
+
+		$q="select vg.*, oll.packageId, oll.pricePointId, oll.offerId from validityGroup as vg 
+		inner join offerLuxuryLink as oll on (oll.validityGroupId=vg.validityGroupId) 
+		where oll.clientId=$clientId and oll.packageId=$pkId  
+		and oll.isClosed=0 and vg.endDate>NOW() 
+		group by vg.id";
+		$res=$this->query($q);
+
+
+	}
+
 	function saveBlackouts($packageId, $data) {
+
 		$this->query("DELETE FROM packageBlackout WHERE packageId = {$packageId}");
 		$this->query("DELETE FROM packageBlackoutWeekday WHERE packageId = {$packageId}");
-		if ($weekdays = implode(',', $data['PackageBlackoutWeekday'])) {
-			$pbw = array('packageId' => $packageId, 'weekday' => $weekdays);
-			$this->PackageBlackoutWeekday->save($pbw);
-		}
 		if (!empty($data['PackageBlackout'])) {
 			foreach ($data['PackageBlackout'] as $k=>$pb) {
 				if ($pb['delete'] == 1) {
@@ -659,6 +748,16 @@ class Package extends AppModel {
 				}
 			}
 		}
+		if (isset($data['PackageBlackoutWeekday']) && $data['PackageBlackoutWeekday']!=''){
+			$weekdays = implode(',', $data['PackageBlackoutWeekday']);
+			$pbw = array(
+				'packageId' => $packageId, 
+				'weekday' => $weekdays
+			);
+			$this->PackageBlackoutWeekday->saveBlackoutWeekdayStr($pbw, $data['siteId']);
+			//$this->PackageBlackoutWeekday->save($pbw);
+		}
+
 	}
 
 	function getPkgVbDates($packageId) {
@@ -682,7 +781,12 @@ class Package extends AppModel {
 
 	function getPackageValidityDisclaimerByItem($packageId,$loaItemRatePeriodIds,$startDate,$endDate,$debug_q=false){
 
-		$q="SELECT pvd.startDate, pvd.endDate, pvd.isBlackout FROM loaItemDate date INNER JOIN packageValidityDisclaimer pvd ON pvd.packageId = {$packageId} AND date.startDate <= pvd.startDate AND pvd.endDate <= date.endDate WHERE date.loaItemRatePeriodId IN ($loaItemRatePeriodIds) ORDER BY pvd.startDate";
+		$q="SELECT pvd.startDate, pvd.endDate, pvd.isBlackout ";
+		$q.="FROM loaItemDate lid ";
+		$q.="INNER JOIN packageValidityDisclaimer pvd ";
+		$q.="ON (pvd.packageId = {$packageId} AND lid.startDate <= pvd.startDate AND pvd.endDate <= lid.endDate) ";
+		$q.="WHERE lid.loaItemRatePeriodId IN ($loaItemRatePeriodIds) ";
+		$q.="ORDER BY pvd.startDate";
 		$r = $this->query($q);
 		if ($debug_q){
 			echo "<p>$q</p>";
@@ -713,9 +817,14 @@ class Package extends AppModel {
 	}
 
 	function getPricePointDateRangeByPackage($packageId) {
-		$r = $this->query("SELECT PricePoint.pricePointId, MIN(item.startDate) AS minStartDate, MAX(item.endDate) AS maxEndDate, GROUP_CONCAT(DISTINCT loaItemRatePeriodId) AS loaItemRatePeriodIds
-							FROM pricePoint PricePoint INNER JOIN pricePointRatePeriodRel pr USING (pricePointId) INNER JOIN loaItemDate item USING (loaItemRatePeriodId)
-							WHERE PricePoint.packageId = {$packageId} GROUP BY pricePointId;");
+		$q="SELECT pp.pricePointId, MIN(item.startDate) AS minStartDate, MAX(item.endDate) AS maxEndDate, ";
+		$q.="GROUP_CONCAT(DISTINCT loaItemRatePeriodId) AS loaItemRatePeriodIds ";
+		$q.="FROM pricePoint pp ";
+		$q.="INNER JOIN pricePointRatePeriodRel pr USING (pricePointId) ";
+		$q.="INNER JOIN loaItemDate item USING (loaItemRatePeriodId) ";
+		$q.="WHERE pp.packageId = {$packageId} ";
+		$q.="GROUP BY pricePointId";
+		$r = $this->query($q);
 		return $r;
 	}
 
@@ -869,6 +978,11 @@ class Package extends AppModel {
 			$where .= " AND Loa.clientId = {$clientId}";
 		}
 		$query .= " WHERE {$where}";
+		/*
+		SELECT * FROM packageLoaItemRel PackageLoaItemRel INNER JOIN loaItem LoaItem USING(loaItemId) 
+		INNER JOIN loa Loa USING (loaId) WHERE PackageLoaItemRel.packageId = 265108 AND Loa.clientId = 9404;
+		select * from loaItemType;
+		*/
 		return $this->query($query);
 	}
 
@@ -1088,7 +1202,6 @@ class Package extends AppModel {
 			exit;
 		}
 
-		// $this->updatePackagePricePointValidity($newPkgId);
 		return $newPkgId;
 	}
 

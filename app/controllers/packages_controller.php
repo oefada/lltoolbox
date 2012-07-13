@@ -6,6 +6,9 @@ class PackagesController extends AppController
 	var $uses = array('Package', 'Client', 'PackageRatePeriod', 'LoaItem', 'IdCreator', 'Loa');
 	var $paginate = array('order' => array('Package.packageId' => 'desc'));
 
+	// Where to send errors 
+	const DEV_EMAIL='mbyrnes@luxurylink.com';
+
 	function beforeFilter()
 	{
 		parent::beforeFilter();
@@ -1125,7 +1128,7 @@ class PackagesController extends AppController
 						$this->Package->LoaItemRatePackageRel->setNumNights(&$package);
 						$this->Package->LoaItemRatePackageRel->save($package);
 					}
-					echo 'ok';
+					echo "ok";
 				} else {
 					echo json_encode($this->Package->validationErrors);
 				}
@@ -1431,7 +1434,7 @@ class PackagesController extends AppController
 			foreach ($packageLoaItemIds as $packageLoaItem) {
 				$loaItemId = $packageLoaItem['loaItemId'];
 				$query = "SELECT * FROM loaItem LoaItem
-                          WHERE LoaItem.loaItemId = {$packageLoaItem['loaItemId']}";
+                        WHERE LoaItem.loaItemId = {$packageLoaItem['loaItemId']}";
 				$loaItem = $this->Package->query($query);
 				//debug($loaItem);
 				//die();
@@ -1481,9 +1484,9 @@ class PackagesController extends AppController
 			//acarney 2010-11-08 -- moving this logic to sql statement
 			// PKGR - currency
 			//foreach ($roomLoaItems as $k => $item) {
-			//    if ($item['LoaItem']['currencyId'] !== $packageCurrencyId) {
-			//        unset($roomLoaItems[$k]);
-			//    }
+			//  if ($item['LoaItem']['currencyId'] !== $packageCurrencyId) {
+			//      unset($roomLoaItems[$k]);
+			//  }
 			//}
 
 			$this->set('package', $package);
@@ -1565,8 +1568,7 @@ class PackagesController extends AppController
 					$this->Package->PackageLoaItemRel->save($loaItem);
 				}
 			}
-			echo 'ok';
-			exit;
+			echo "ok";
 		}
 		$this->set('isMultiClientPackage', $isMultiClientPackage);
 		$numNights = $this->Package->field('numNights', array('Package.packageId' => $packageId));
@@ -1659,7 +1661,7 @@ class PackagesController extends AppController
 	{
 		$this->autoRender = false;
 		if ($this->Package->PackageLoaItemRel->delete($_GET['packageLoaItemRelId'])) {
-			echo 'ok';
+			echo "ok";
 		} else {
 			echo json_encode($this->Package->validationErrors);
 		}
@@ -1715,11 +1717,61 @@ class PackagesController extends AppController
 
 	function edit_blackout_dates($clientId, $packageId)
 	{
+
 		if (!empty($this->data)) {
+
+			$this->Package->recursive=-1;
+			$arr=$this->Package->findByPackageId($packageId);
+			$siteId=$arr['Package']['siteId'];
+			$this->data['siteId']=$siteId;
 			$this->autoRender = false;
 			$this->Package->saveBlackouts($packageId, $this->data);
-			$this->Package->updatePackagePricePointValidity($packageId);
-			echo 'ok';
+
+			$this->Package->updatePackagePricePointValidity($packageId, $siteId);
+
+			$this->Package->PricePoint->contain(array());
+			$ppRows=$this->Package->PricePoint->findAllByPackageId($packageId);
+			foreach($ppRows as $ppRow){
+				// Weird cake bug where it sometimes returns 'PricePoint' and other times 'pricePoint'
+				if (isset($ppRow['PricePoint'])){
+					$ppArr=$ppRow['PricePoint'];
+				}else if (isset($ppRow['pricePoint'])){
+					$ppArr=$ppRow['pricePoint'];
+				}else{
+					$err='PricePoint key nor pricePoint key not found in array from findAllByPackageId for ';
+					$err.='packageId '.$packageId;
+					mail(DEV_EMAIL, 'error in edit_blackout_dates()', $err);
+					continue;
+				}
+				$ppId=$ppArr['pricePointId'];
+				$old_vgId=$ppArr['validityGroupId'];
+
+				$arr=$this->Package->PricePoint->getPricePointValidities($packageId, $ppId);
+
+				if (empty($arr)){
+					continue;
+				}
+
+				$loaItemRatePeriodIds='';
+				foreach($arr as $key=>$rows){
+					$id=$rows['PricePointRatePeriodRel']['loaItemRatePeriodId'];
+					$tmpArr[$id]=$id;
+				}
+				$loaItemRatePeriodIds=implode(",", $tmpArr);
+
+				// If the date range being posted is outside the date range of the loaItemDate, it will
+				// not be retrieved by this. 
+				$rows_db = $this->Package->getPackageValidityDisclaimerByItem($packageId, $loaItemRatePeriodIds, '', '');
+				$vgId=$this->Package->validityGroupWrapper($rows_db);
+				$this->Package->updatePricePointValidityGroupId($ppId, $vgId);
+				$this->Package->updateOfferWithValidityGroupId($ppId, $siteId, $vgId, $old_vgId);
+
+			}
+
+	
+			echo ("ok");
+			exit;
+
 		} else {
 			$blackout_weekday = $this->Package->getBlackoutWeekday($packageId);
 			$blackout = $this->Package->getBlackout($packageId);
@@ -1761,7 +1813,8 @@ class PackagesController extends AppController
 				}
 			}
 
-			echo 'ok';
+			echo ("ok");
+			exit;
 
 		} else {
 			$package = $this->Package->getPackage($packageId);
@@ -1849,6 +1902,7 @@ class PackagesController extends AppController
 	function edit_room_nights($clientId, $packageId)
 	{
 		$package = $this->Package->getPackage($packageId);
+		$siteId=$package['Package']['siteId'];
 		$isMultiClientPackage = (count($package['ClientLoaPackageRel']) > 1) ? true : false;
 		if (!empty($this->data)) {
 			$this->autoRender = false;
@@ -1879,9 +1933,9 @@ class PackagesController extends AppController
 										$ratePeriodId = $ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId'];
 									}
 									$query = "SELECT LoaItemRate.loaItemRateId, LoaItemRatePackageRel.loaItemRatePackageRelId
-                                              FROM loaItemRate LoaItemRate
-                                              INNER JOIN loaItemRatePackageRel LoaItemRatePackageRel USING (loaItemRateId)
-                                              WHERE LoaItemRatePackageRel.packageId = {$packageId} AND LoaItemRate.loaItemRatePeriodId = {$ratePeriodId}";
+                                            FROM loaItemRate LoaItemRate
+                                            INNER JOIN loaItemRatePackageRel LoaItemRatePackageRel USING (loaItemRateId)
+                                            WHERE LoaItemRatePackageRel.packageId = {$packageId} AND LoaItemRate.loaItemRatePeriodId = {$ratePeriodId}";
 									if ($rates = $this->Package->query($query)) {
 										foreach ($rates as $rate) {
 											$rateIds[$rate['LoaItemRate']['loaItemRateId']] = $rate['LoaItemRatePackageRel']['loaItemRatePackageRelId'];
@@ -1924,8 +1978,10 @@ class PackagesController extends AppController
 						}
 					}
 				}
-				$this->Package->updatePackagePricePointValidity($packageId);
-				echo 'ok';
+				$this->Package->updatePackagePricePointValidity($packageId, $siteId);
+				echo ("ok");
+				exit;
+
 			}
 		} else {
 			$this->set('package', $package);
@@ -2021,7 +2077,8 @@ class PackagesController extends AppController
 				$loaItemRatePeriod = array('loaItemRatePackageRelId' => $loaItemRatePackageRelId, 'guaranteePercentRetail' => $guaranteePercentRetail);
 				$this->Package->LoaItemRatePackageRel->save($loaItemRatePeriod);
 			}
-			echo 'ok';
+			echo ("ok");
+			exit;
 		} else {
 			$ratePeriods = $this->getRatePeriodsInfo($packageId);
 			$this->set('ratePeriods', $ratePeriods);
@@ -2032,6 +2089,7 @@ class PackagesController extends AppController
 	function edit_price_points($clientId, $packageId)
 	{
 		$package = $this->Package->getPackage($packageId);
+		$siteId = $package['Package']['siteId'];
 		$isMultiClientPackage = (count($package['ClientLoaPackageRel']) > 1) ? true : false;
 
 		// saving data
@@ -2068,7 +2126,7 @@ class PackagesController extends AppController
 				$errors[] = "Either an auction price OR a buy now price must be entered";
 			}
 			// If either field is NULL then check to see if there are existing scheduling masters
-			// for this price point and corresponding offer type ID.  If there are, then prompt
+			// for this price point and corresponding offer type ID.If there are, then prompt
 			if ($isNew == false && ($hasAuctionPrice == false || $hasBuyNowPrice == false)) {
 
 				$ppid = $this->data['PricePoint']['pricePointId'];
@@ -2083,14 +2141,6 @@ class PackagesController extends AppController
 					$errors[] = $msg;
 				}
 			}
-			/*
-			 if (empty($this->data['PricePoint']['percentRetailAuc'])) {
-			 $errors[] = 'Auction Price is a required field.';
-			 }
-			 if (empty($this->data['PricePoint']['percentRetailBuyNow'])) {
-			 $errors[] = 'Buy Now Price is a required field.';
-			 }
-			 */
 
 			if ($package['Package']['isFlexPackage'] == 1) {
 				if (empty($this->data['PricePoint']['flexRetailPricePerNight']) || $this->data['PricePoint']['flexRetailPricePerNight'] <= 0) {
@@ -2112,14 +2162,10 @@ class PackagesController extends AppController
 				return;
 			}
 
-			$this->data['PricePoint']['validityDisclaimer'] = str_replace(array('\n', '\r', "\n", "\r"), '', $this->data['PricePoint']['validityDisclaimer']);
-			$this->data['PricePoint']['validityDisclaimer'] = Sanitize::escape($this->data['PricePoint']['validityDisclaimer']);
+			$vd=$this->data['PricePoint']['validityDisclaimer'];
+			$this->data['PricePoint']['validityDisclaimer'] = str_replace(array('\n', '\r', "\n", "\r"), '', $vd);
+			$this->data['PricePoint']['validityDisclaimer'] = Sanitize::escape($vd);
 
-			// handle percentReservePrice
-			// 08/03/11 jwoods - ticket 2257 - switched to highest "Guaranteed Percent of Retail"
-			// if ($this->data['auctionOverride'] || $this->data['buynowOverride']) {
-			//   $this->data['PricePoint']['percentReservePrice'] = $this->data['guaranteedPercent'];
-			// }
 			$maxGuaranteedPercent = 0;
 			foreach ($this->data['loaItemRatePeriodIds'] as $loaItemRatePeriodId) {
 				$checkPercent = $this->data['gpr-' . $loaItemRatePeriodId];
@@ -2133,10 +2179,34 @@ class PackagesController extends AppController
 			$pricePointId = $this->data['PricePoint']['pricePointId'];
 			if ($pricePointId) {
 				// pricePoint
+				/*
+				Array
+				(
+						[packageId] => 264478
+						[pricePointId] => 22696
+						[name] => MID: Apr-May 2012
+						[maxNumSales] => 
+						[retailValue] => 1318
+						[percentRetailAuc] => 70
+						[percentRetailBuyNow] => 70
+						[flexRetailPricePerNight] => 489.3235
+						[pricePerExtraNight] => 0
+						[validityDisclaimer] => <!--startheader--><b>This package is valid for Sunday through Tuesday 
+							arrivals:</b><!--endheader--><br><br>April 3, 2012 - May 31, 2012<br>Reservations are subject 
+							to availability at time of booking.<br><br><b>Blackout dates:</b><br><br>May 27-28, 2012<br>
+							May not be valid during other holidays and special event periods.
+						[percentReservePrice] => 0
+				)
+				*/
 				$this->Package->PricePoint->save($this->data['PricePoint']);
 
 				// remove pricePointRatePeriodRels and add below
-				$this->Package->PricePoint->PricePointRatePeriodRel->deleteAll(array('PricePointRatePeriodRel.pricePointId' => $pricePointId), false);
+				$this->Package->PricePoint->PricePointRatePeriodRel->deleteAll(
+					array(
+						'PricePointRatePeriodRel.pricePointId' => $pricePointId
+					), 
+					false
+				);
 
 				// add pricePoint
 			} else {
@@ -2147,7 +2217,10 @@ class PackagesController extends AppController
 
 			// add pricePointRatePeriodRel
 			foreach ($this->data['loaItemRatePeriodIds'] as $loaItemRatePeriodId) {
-				$pricePointRatePeriodRel = array('pricePointId' => $pricePointId, 'loaItemRatePeriodId' => $loaItemRatePeriodId);
+				$pricePointRatePeriodRel = array(
+					'pricePointId' => $pricePointId, 
+					'loaItemRatePeriodId' => $loaItemRatePeriodId
+				);
 				$this->Package->PricePoint->PricePointRatePeriodRel->create();
 				$this->Package->PricePoint->PricePointRatePeriodRel->save($pricePointRatePeriodRel);
 			}
@@ -2171,10 +2244,11 @@ class PackagesController extends AppController
 			}
 
 			// ticket1870 - we still need to set validityStart and validityEnd in the pricePoint table
-			$this->Package->updatePackagePricePointValidity($packageId);
+			$this->Package->updatePackagePricePointValidity($packageId, $siteId);
 
-			// validityGroup stuff - by mbyrnes
-			if (isset($this->data['PricePoint']['pricePointId']) && trim($this->data['PricePoint']['pricePointId']) != '') {
+			// validityGroup stuff 
+			$ppid=isset($this->data['PricePoint']['pricePointId'])?trim($this->data['PricePoint']['pricePointId']):'';
+			if ($ppid != '') {
 				$ppid = $this->data['PricePoint']['pricePointId'];
 			} else {
 				$ppid = $this->Package->PricePoint->id;
@@ -2182,35 +2256,12 @@ class PackagesController extends AppController
 			$loaItemRatePeriodIds = implode(",", $this->data['loaItemRatePeriodIds']);
 			$rows_db = $this->Package->getPackageValidityDisclaimerByItem($packageId, $loaItemRatePeriodIds, '', '');
 
-			$vg_id = $this->IdCreator->genId();
-
-			if ($vg_id == '') {
-				exit("vg_id not generated");
-			}
-
-			foreach ($rows_db['ValidRanges'] as $key => $arr) {
-				foreach ($arr as $key2 => $validity_arr) {
-					if ($this->Package->insertValidityGroup($vg_id, $validity_arr, $siteId) === false) {
-						$err_msg = 'Failed to insert int validityGroup, please try again.';
-						$this->Session->setFlash(__($err_msg, true), 'default', array(), 'error');
-					}
-				}
-			}
-
-			foreach ($rows_db['BlackoutDays'] as $key => $arr) {
-				foreach ($arr as $key2 => $validity_arr) {
-					if ($this->Package->insertValidityGroup($vg_id, $validity_arr, $siteId) === false) {
-						$err_msg = 'Failed to insert int validityGroup, please try again.';
-						$this->Session->setFlash(__($err_msg, true), 'default', array(), 'error');
-					}
-				}
-			}
+			$vg_id=$this->Package->validityGroupWrapper($rows_db, $siteId);
 
 			$this->Package->updatePricePointValidityGroupId($ppid, $vg_id);
-			
-			echo 'ok';
+
+			echo ("ok");
 			exit;
-			// Do not remove without refactoring the JS call. The Ajax call is looking for a response of 'ok'
 
 			// view data
 		} else {
@@ -2227,7 +2278,9 @@ class PackagesController extends AppController
 					$loaItemRatePeriodIds[] = $pricePointRatePeriodRel['PricePointRatePeriodRel']['loaItemRatePeriodId'];
 				}
 
-				$this->Package->updatePackagePricePointValidity($packageId);
+				// Why is this being updated when data is only being viewed?
+				$this->Package->updatePackagePricePointValidity($packageId, $siteId);
+
 			}
 
 			$this->set('loaItemRatePeriodIds', $loaItemRatePeriodIds);
@@ -2474,11 +2527,11 @@ class PackagesController extends AppController
 			if (empty($ratePeriod['LoaItemRatePeriod'])) {
 				foreach ($this->data[0]['LoaItemDate'] as $date) {
 					if (empty($date['loaItemDateId'])) {
-						echo 'ok';
+						echo "ok";
 						return;
 					} else {
 						$this->Package->deleteDate($date['loaItemDateId']);
-						echo 'ok';
+						echo "ok";
 					}
 				}
 			} else {
@@ -2535,7 +2588,9 @@ class PackagesController extends AppController
 					$loaDates[] = date('M j, Y', strtotime($loaItemDate['LoaItemDate']['startDate'])) . ' - ' . date('M j, Y', strtotime($loaItemDate['LoaItemDate']['endDate']));
 				}
 
-				if ($pricePoint = $this->LoaItem->LoaItemRatePeriod->PricePointRatePeriodRel->getPricePointForRatePeriod($packageId, $ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId'])) {
+				$loaItemRatePeriodId=$ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId'];
+				$pricePoint = $this->LoaItem->LoaItemRatePeriod->PricePointRatePeriodRel->getPricePointForRatePeriod($packageId,$loaItemRatePeriodId );
+				if ($pricePoint) {
 					$ratePeriod['PricePoint'] = $pricePoint['PricePoint'];
 					$ratePeriod['PricePointRatePeriodRel'] = $pricePoint['PricePointRatePeriodRel'];
 				}

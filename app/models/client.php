@@ -327,7 +327,8 @@ class Client extends AppModel {
 				} else {
 					$results[$key]['Client']['currentLoaId'] = $currentLoaId;
 					$results[$key]['ClientLevel']['clientLevelId'] = $currentLoaLevelId;
-					$results[$key]['ClientLevel']['clientLevelName'] = $loaLevelNames[$currentLoaLevelId];
+					$clientLevelName=isset($loaLevelNames[$currentLoaLevelId])?$loaLevelNames[$currentLoaLevelId]:'';
+					$results[$key]['ClientLevel']['clientLevelName'] = $clientLevelName;
 			   }
 
 			   $results[$key]['Client']['numLoas'] = $loas;

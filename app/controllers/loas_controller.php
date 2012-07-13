@@ -320,11 +320,12 @@ class LoasController extends AppController {
 			$this->redirect(array('action'=>'index'));
 		}
 		if (!empty($this->data)) {
-	  if (empty($this->data['Loa']['sites'])) {
-		$loa = $this->Loa->find($this->data['Loa']['loaId']);
+
+			if (empty($this->data['Loa']['sites'])) {
+				$loa = $this->Loa->find($this->data['Loa']['loaId']);
 				$this->data['Client'] = $loa['Client'];
 				$this->Session->setFlash(__('You must select at least one site to save this LOA.', true));
-	  } elseif ($this->Loa->save($this->data)) {
+			} elseif ($this->Loa->save($this->data)) {
 				$this->Session->setFlash(__('The Loa has been saved', true));
 				$this->redirect(array('action'=>'edit', $this->data['Loa']['loaId']));
 			} else {
@@ -350,17 +351,21 @@ class LoasController extends AppController {
 		$completedStatusLL = array();
 		$completedStatusFG = array();
 		if (!empty($this->data['LoaPublishingStatusRel'])) {
-				foreach ($this->data['LoaPublishingStatusRel'] as $pStatus) {
-					if($pStatus['site'] == 'luxurylink') {
-							$completedStatusLL[$pStatus['publishingStatusId']] = $pStatus['completedDate'];
-					} else {
-						$completedStatusFG[$pStatus['publishingStatusId']] = $pStatus['completedDate'];
-					}
+			foreach ($this->data['LoaPublishingStatusRel'] as $pStatus) {
+				if($pStatus['site'] == 'luxurylink') {
+						$completedStatusLL[$pStatus['publishingStatusId']] = $pStatus['completedDate'];
+				} else {
+					$completedStatusFG[$pStatus['publishingStatusId']] = $pStatus['completedDate'];
 				}
+			}
 		}
+
 		$this->set(compact('customerApprovalStatusIds', 'currencyIds', 'loaLevelIds', 'loaMembershipTypeIds', 'publishingStatus', 'completedStatusLL', 'completedStatusFG', 'accountTypeIds'));
-		$this->set('client', $this->Loa->Client->findByClientId($this->data['Loa']['clientId']));
+		$client=$this->Loa->Client->findByClientId($this->data['Loa']['clientId']);
+		//print '<pre>';print_r($client);exit;
+		$this->set('client', $client);
 		$this->set('currencyCodes', $this->Loa->Currency->find('list', array('fields' => array('currencyCode'))));
+
 	}
 	
 	function sortLoaItemsByType($a, $b) {

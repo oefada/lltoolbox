@@ -75,7 +75,32 @@ class AppModel extends LazyModel {
 
 		parent::__construct($id, $table, $ds);
 	}
-	
+
+
+	// Wrapper for logging all of an array or any data. Needs to be accessible in all tiers.
+	//
+	public function logIt($data, $toFirebug=false, $var_dump=false, $num=null){
+
+		ob_start();
+		if ($var_dump){
+			var_dump($data);
+		}else{
+			print_r($data);
+		}
+		$str=ob_get_contents();
+		ob_end_clean();
+		if ($toFirebug && $_SERVER['ENV']=='development'){
+			// need Configure::write, otherwise there are output buffering issues when talking to firephp
+			Configure::write('debug',2);
+			require_once('/usr/lib/php/FirePHPCore/fb.php'); 
+			FB::log($str,$num." log:");
+		}else{
+			CakeLog::write("debug",$str);
+		}
+
+	}
+
+
 	//convert sites field into a Cake-readable array if the sites column is a set field	
 	function afterFind($results) {
 		if (Model::hasField('sites') && $this->isMultisite()) {
@@ -287,5 +312,3 @@ class AppModel extends LazyModel {
 		return (isset($this->multisite) && (Model::hasField(array('sites', 'siteId')) || isset($this->inheritsFrom)));
 	}
 }
-
-?>
