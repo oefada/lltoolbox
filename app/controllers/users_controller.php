@@ -495,7 +495,7 @@ class UsersController extends AppController {
 			// Temp fix for weird users (ticket 3036)
 			if ($toLink['User']['siteId'] == null) {
 				$toLink['User']['siteId'] = 1;
-				$toLink['User']['createDatetime'] = date("Y-m-d h:i:s");
+				$toLink['User']['createDatetime'] = date("Y-m-d H:i:s");
 				$this->User->save($toLink['User']);
 			}
 			
@@ -506,7 +506,7 @@ class UsersController extends AppController {
 				'statusTypeId' => $referrerStatus,
 				'referrerBonusApplied' => $referrerBonus,
 				'referredBonusApplied' => 1,
-				'createdDt' => date("Y-m-d h:i:s"),
+				'createdDt' => date("Y-m-d H:i:s"),
 			);
 
 			if ($this->UserReferrals->save($data)) {
