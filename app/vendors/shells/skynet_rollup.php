@@ -27,9 +27,10 @@ class SkynetRollupShell extends Shell
 		foreach($clients as $client) {
 			$rollupData = $this->lltUserEvent->eventsByClient($client['client_id'], $siteId, $startDate, $endDate);
 			if (!empty($rollupData)) {
+				$numRecords = sizeof($rollupData);
 				$this->lltUserEventRollup->create();
 				if ($this->lltUserEventRollup->saveAll($rollupData)) {
-					$this->log("Successfully saved rollup data for clientId: {$client['client_id']}, siteId: $siteId, startDate: $startDate,  endDate: $endDate");
+					$this->log("Successfully saved $numRecords of rollup data for clientId: {$client['client_id']}, siteId: $siteId, startDate: $startDate,  endDate: $endDate");
 				} else {
 					$this->log("Could not save rollup data for clientId: {$client['client_id']}, siteId: $siteId, startDate: $startDate,  endDate: $endDate");
 				}
