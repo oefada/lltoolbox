@@ -200,4 +200,3 @@ class ConsolidatedReportShell extends Shell {
 		$this->Email->send();
 	}
 }
-?>
