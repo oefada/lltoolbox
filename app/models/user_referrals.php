@@ -25,16 +25,23 @@ class UserReferrals extends AppModel {
 			
 			$referredUser = $this->User->find('first', $params);
 			$this->CreditTracking = ClassRegistry::init("CreditTracking");
+
+
+			App::import("Vendor","UserReferralsHelper",array('file' => "appshared".DS."helpers".DS."UserReferralsHelper.php"));
+			$referralsHelper = new UserReferralsHelper();
 			
-			if (is_array($referredUser) && isset($referredUser['User'])) {
-				$creditArr = Array();
-				$creditArr['CreditTracking'] = Array(
-					'creditTrackingTypeId' => 3,
-					'userId' => $referredUser['User']['userId'],
-					'amount' => 100
-				);
-				$this->CreditTracking->create();
-				$this->CreditTracking->save($creditArr);
+			// give credit to referred user
+			if ($status == 2) {
+				if (is_array($referredUser) && isset($referredUser['User'])) {
+					$creditArr = Array();
+					$creditArr['CreditTracking'] = Array(
+						'creditTrackingTypeId' => 3,
+						'userId' => $referredUser['User']['userId'],
+						'amount' => $referralsHelper->getRafAmountReceiver($referral['UserReferrals']['siteId'], $referral['UserReferrals']['createdDt'])
+					);
+					$this->CreditTracking->create();
+					$this->CreditTracking->save($creditArr);
+				}
 			}
 
 			// give credit to referrer
@@ -43,7 +50,7 @@ class UserReferrals extends AppModel {
 				$creditArr['CreditTracking'] = Array(
 					'creditTrackingTypeId' => 3,
 					'userId' => $referral['UserReferrals']['referrerUserId'],
-					'amount' => 100
+					'amount' => $referralsHelper->getRafAmountSender($referral['UserReferrals']['siteId'], $referral['UserReferrals']['createdDt'])
 				);
 				$this->CreditTracking->create();
 				$this->CreditTracking->save($creditArr);
