@@ -506,6 +506,7 @@ class UsersController extends AppController {
 				'statusTypeId' => $referrerStatus,
 				'referrerBonusApplied' => $referrerBonus,
 				'referredBonusApplied' => 1,
+				'createdDt' => date("Y-m-d h:i:s"),
 			);
 
 			if ($this->UserReferrals->save($data)) {
@@ -513,7 +514,7 @@ class UsersController extends AppController {
 				
 				if ($referrerBonus) {
 					// Apply credit to referrer
-					$this->UserReferrals->completeReferral($refId,3);
+					$this->UserReferrals->completeReferral($refId, 3);
 				}
 				
 				echo json_encode(array('msg' => 'OK'));
