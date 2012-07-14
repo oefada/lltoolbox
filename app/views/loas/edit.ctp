@@ -137,6 +137,11 @@ $this->set('clientId', $this->data['Client']['clientId']);
 		echo $form->input('familiyGetawayFee');
 		echo $form->input('advertisingFee');
 		
+		echo $form->input('renewalResult', array('type' => 'select', 'options' => $renewalResultOptions));
+		echo $form->input('nonRenewalNote');
+		echo $form->input('nonRenewalReason', array('type' => 'select', 'options' => $nonRenewalReasonOptions));
+		
+		
 		echo '<div><label>Created</label><span>'.$loa['Loa']['created'].'</span></div>';
 		echo '<div><label>Modified</label><span>'.$loa['Loa']['modified'].'</span></div>';
 		echo '<div><label>Modified By</label><span>'.$loa['Loa']['modifiedBy'].'</span></div>';

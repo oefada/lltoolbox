@@ -360,6 +360,27 @@ class LoasController extends AppController {
 			}
 		}
 
+
+		$renewalResultOptions = array(0=>'Pending', 1=> 'No', 2=>'Yes');
+		$nonRenewalReasonOptions = array(
+										0=>'Unknown',
+										1=>'Fee - Could Not Collect',
+										2=>'ADR/Discount/High Season',
+										3=>'Insufficient ROI',
+										4=>'Low Sales Volume',
+										5=>'Pursuing Different Channels',
+										6=>'Membership Fee Constraint',
+										7=>'Wrong Decision Maker',
+										8=>'Operational Constraint',
+										9=>'Ownership/Management Change',
+										10=>'Participation Constraint',
+										11=>'Budget',
+										12=>'Bankruptcy/Foreclosure',
+										13=>'Low Confidence In Program');
+		
+		$this->set('renewalResultOptions', $renewalResultOptions);
+		$this->set('nonRenewalReasonOptions', $nonRenewalReasonOptions); 
+
 		$this->set(compact('customerApprovalStatusIds', 'currencyIds', 'loaLevelIds', 'loaMembershipTypeIds', 'publishingStatus', 'completedStatusLL', 'completedStatusFG', 'accountTypeIds'));
 		$client=$this->Loa->Client->findByClientId($this->data['Loa']['clientId']);
 		//print '<pre>';print_r($client);exit;
