@@ -2,11 +2,13 @@
 App::import('Model', 'LltUserEvent');
 App::import('Model', 'ConsolidatedReportJob');
 App::import('Model', 'lltUserEventRollup');
+App::import('Model', 'Client');
 class SkynetRollupShell extends Shell
 {
 	private $lltUserEvent;
 	private $ConsolidatedReportJob;
 	private $lltUserEventRollup;
+	private $Client;
 	private $logfile = 'skynet_rollup';
 	
 	public function initialize()
@@ -14,14 +16,25 @@ class SkynetRollupShell extends Shell
 		$this->lltUserEvent = new LltUserEvent;
 		$this->ConsolidatedReportJob = new ConsolidatedReportJob;
 		$this->lltUserEventRollup = new lltUserEventRollup;
+		$this->Client = new Client;
 	}
 	
 	public function main()
 	{
-		$startDate = '2012-06-01 00:00:00';
-		$endDate = '2012-06-30 23:59:59';
-		$siteId = 1;
-		$clients = $this->ConsolidatedReportJob->getClientIdsByJobId(9);
+		if (isset($this->params['month']) && isset($this->params['year']) && isset($this->params['siteId'])) {
+			$this->params['month'] = str_pad($this->params['month'], 2, 0, STR_PAD_LEFT);
+			$startDate = $this->params['year'] . '-' . $this->params['month'] . '-01 00:00:00';
+			$endDate = $this->params['year'] . '-' . $this->params['month'] . '-' . cal_days_in_month(CAL_GREGORIAN, $this->params['month'], $this->params['year']) . ' 23:59:59';
+			$siteId = (int) $this->params['siteId'];
+		} else {
+			$this->log('siteId, month, and date are required parameters.');
+			exit;
+		}
+
+		$clients = $this->Client->getClientsWithLoaAroundDate(substr($endDate, 0, 10));
+		foreach ($clients as $key => $client) {
+			$clients[$key] = array('client_id' => (int) $client['Client']['clientId']);
+		}
 		$rollupData = array();
 
 		foreach($clients as $client) {
