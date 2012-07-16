@@ -136,6 +136,11 @@ $this->set('clientId', $this->data['Client']['clientId']);
 		echo $form->input('luxuryLinkFee');
 		echo $form->input('familiyGetawayFee');
 		echo $form->input('advertisingFee');
+
+		echo $form->input('renewalResult', array('type' => 'select', 'options' => $renewalResultOptions));
+		echo $form->input('nonRenewalNote', array('type' => 'textarea'));
+		echo $form->input('nonRenewalReason', array('type' => 'select', 'options' => $nonRenewalReasonOptions));
+		
 		
 		echo $form->input('renewalResult', array('type' => 'select', 'options' => $renewalResultOptions));
 		echo $form->input('nonRenewalNote');
