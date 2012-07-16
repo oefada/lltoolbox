@@ -360,7 +360,6 @@ class LoasController extends AppController {
 			}
 		}
 
-
 		$renewalResultOptions = array(0=>'Pending', 1=> 'No', 2=>'Yes');
 		$nonRenewalReasonOptions = array(
 										0=>'Unknown',
