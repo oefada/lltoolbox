@@ -1,12 +1,10 @@
 <?php
 App::import('Model', 'LltUserEvent');
-App::import('Model', 'ConsolidatedReportJob');
 App::import('Model', 'lltUserEventRollup');
 App::import('Model', 'Client');
 class SkynetRollupShell extends Shell
 {
 	private $lltUserEvent;
-	private $ConsolidatedReportJob;
 	private $lltUserEventRollup;
 	private $Client;
 	private $logfile = 'skynet_rollup';
@@ -14,7 +12,6 @@ class SkynetRollupShell extends Shell
 	public function initialize()
 	{
 		$this->lltUserEvent = new LltUserEvent;
-		$this->ConsolidatedReportJob = new ConsolidatedReportJob;
 		$this->lltUserEventRollup = new lltUserEventRollup;
 		$this->Client = new Client;
 	}
