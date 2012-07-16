@@ -35,6 +35,9 @@ App::import('Model', 'User');
 App::import('Model', 'LltUserEvent');
 class ConsolidatedReport extends AppModel
 {
+	//The John Connor switch. Set to true to use Skynet data from 2012-05 on
+	private static $USE_SKYNET_DATA = false;
+	 
 	public $useTable = false;
 	
 	/**
@@ -404,7 +407,7 @@ class ConsolidatedReport extends AppModel
 		$clicks = 0;
 		$dataToReturn = array();
 
-		if ($site_id === 1 && $this->month_end_date > '2012-04-30 23:59:59') {
+		if (self::$USE_SKYNET_DATA && in_array((int) $site_id , array(1, 2)) && $this->month_end_date > '2012-04-30 23:59:59') {
 			$omnitureData = $this->getImpressionsBySiteForPeriod($site_id, $this->loa_start_date, '2012-04-30 23:59:59');
 			$skynetData = $this->getImpressionsBySiteForPeriod($site_id, '2012-05-01 00:00:00', $this->month_end_date);
 			$impressions = $omnitureData['impressions'] + $skynetData['impressions'];
@@ -428,9 +431,9 @@ class ConsolidatedReport extends AppModel
 		//We are using the reporting database for this data
 		$this->setDataSource('reporting');
 		
-		if ($site_id === 1 && $end_date > '2012-04-30 23:59:59') {
+		if (self::$USE_SKYNET_DATA && in_array((int) $site_id , array(1, 2)) && $end_date > '2012-04-30 23:59:59') {
 			// Get impressions from skynet
-			$params = array($this->client_id, substr($start_date, 0, 7));
+			$params = array($this->client_id, $site_id, substr($start_date, 0, 7));
 
 			$sql = "
 				SELECT
@@ -439,6 +442,7 @@ class ConsolidatedReport extends AppModel
 					lltUserEventRollupByMonth
 				WHERE
 					clientId = ?
+					AND siteId = ?
 					AND eventId IN (41, 42, 43, 46)
 					AND yearMonth = ?
 			";
@@ -451,6 +455,7 @@ class ConsolidatedReport extends AppModel
 					lltUserEventRollupByMonth
 				WHERE
 					clientId = ?
+					siteId = ?
 					AND eventId = 40
 					AND yearMonth = ?
 			";
@@ -598,14 +603,21 @@ class ConsolidatedReport extends AppModel
 
 		foreach($tables as $site => $table) {
 			$impressionData = array();
-			if ($site === 'Luxury Link' && $this->month_end_date > '2012-04-30 23:59:59') {
+			if (self::$USE_SKYNET_DATA && ($site === 'Luxury Link' || $site === 'Family Getaway') && $this->month_end_date > '2012-04-30 23:59:59') {
 				// We need a blend of skynet and omniture
+				
+				if ($site === 'Luxury Link') {
+					$siteId = 1;
+				} else if ($site === 'Family Getaway') {
+					$siteId = 2;
+				}
+
 				if ($this->loa_start_date < '2012-05-01 00:00:00') {
 					// First get omniture data
 					$omnitureData = $this->getOmnitureImpressionsForClientByDate($this->loa_start_date, '2012-04-30', $this->client_id, $table);
 				}
 
-				$skynetData = $this->getSkynetImpressionsForClientByDate('2012-05-01', $this->client_id);
+				$skynetData = $this->getSkynetImpressionsForClientByDate($this->loa_start_date, $this->month_end_date, $this->client_id, $siteId);
 
 				$impressionData = array_merge($omnitureData, $skynetData);
 				if (!empty($impressionData)) {
@@ -690,18 +702,21 @@ class ConsolidatedReport extends AppModel
 	 * 
 	 * @param   string $date
 	 * @param   int $clientId
+	 * @param	int $siteId
 	 */
-	 private function getSkynetImpressionsForClientByDate($date, $clientId)
-	 {
-		 $this->setDataSource('reporting');
-		 
-		 $impressions = array();
-		 $params = array(
-			$date,
-			$clientId
-		 );
-		 
-		 $sql = "
+	private function getSkynetImpressionsForClientByDate($startDate, $endDate, $clientId, $siteId)
+	{
+		$this->setDataSource('reporting');
+		
+		if ($siteId === 1) {
+			$table = 'carConsolidatedView';
+		} else if ($siteId === 2) {
+			$table = 'carConsolidatedViewFg';
+		}
+		
+		$impressions = array();
+		
+		$sql = "
 			SELECT
 				eventId,
 				sum(total) AS total,
@@ -710,22 +725,35 @@ class ConsolidatedReport extends AppModel
 			FROM
 				lltUserEventRollupByDay
 			WHERE
-				clientId = $clientId
+				clientId = ?
+				AND siteId = ?
+				AND (
+					startDate BETWEEN ? AND ?
+					OR endDate BETWEEN ? AND ?
+				)
 				AND eventId IN (42, 41, 43, 46)
 			GROUP BY
 				SUBSTR(startDate, 1, 7),
 				eventId
-		 ";
-		 $rows = $this->query($sql);
-		 
-		 foreach($rows as $key => $row) {
-			 $month = $row[0]['month'];
-			 $eventId = $row['lltUserEventRollupByDay']['eventId'];
-			 
-			 $impressions[$month]['year'] = $row[0]['year'];
-			 $impressions[$month]['month'] = $row[0]['month'];
+		";
+		$params = array(
+			$clientId,
+			$siteId,
+			$startDate,
+			$endDate,
+			$startDate,
+			$endDate
+		);
+		$rows = $this->query($sql, $params);
 
-			 switch($eventId) {
+		foreach($rows as $key => $row) {
+			$month = $row[0]['month'];
+			$eventId = $row['lltUserEventRollupByDay']['eventId'];
+
+			$impressions[$month]['year'] = $row[0]['year'];
+			$impressions[$month]['month'] = $row[0]['month'];
+
+			switch($eventId) {
 				case 42:
 					$impressions[$month]['searchview'] = $row[0]['total'];
 					break;
@@ -740,10 +768,10 @@ class ConsolidatedReport extends AppModel
 					break;
 			}
 		}
-		
+
 		foreach($impressions as $key => $arrayData) {
 			$totalImpressions = $arrayData['destinationview'] + $arrayData['productview'] + $arrayData['searchview'] + $arrayData['email'];
-			$totalEmails = $this->getOmnitureImpressionsForClientByDate('2012-04-01', '2012-04-01', $clientId, 'carConsolidatedView');
+			$totalEmails = $this->getOmnitureImpressionsForClientByDate($startDate, $endDate, $clientId, $table);
 			$totalEmails = (isset($totalEmails[0][$arrayData['month']]['email'])) ? $totalEmails[0][$arrayData['month']]['email'] : 0;
 
 			$arrayData = array(
