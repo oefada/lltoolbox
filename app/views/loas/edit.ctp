@@ -294,13 +294,12 @@ $this->set('clientId', $this->data['Client']['clientId']);
 
 </div>
 </div>
-
 <script type="text/javascript">
 
 jQuery(document).ready(function() {
 	jQuery("#LoaEditForm").submit(function(){
 
-		if (jQuery("#LoaMembershipBalance").val()==0 && <?=$client['Loa'][0]['membershipBalance']?>>0){
+		if (jQuery("#LoaMembershipBalance").val()==0 && <?=$form->data['Loa']['membershipBalance']?>>0){
 			if (confirm('are you sure you want to set the membership balance to ZERO?')==false){
 				return false;
 			}
