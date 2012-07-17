@@ -806,11 +806,11 @@ class ConsolidatedReport extends AppModel
 				'month' => $arrayData['month'],
 				'phonecalls' => 0,
 				'webrefer' => 0,
-				'productview' => $arrayData['productview'],
-				'searchview' => $arrayData['searchview'],
-				'destinationview' => "{$arrayData['destinationview']}",
-				'email' => $totalEmails,
-				'total_impressions' => "$totalImpressions"
+				'productview' => is_null($arrayData['productview']) ? 0 : $arrayData['productview'],
+				'searchview' => is_null($arrayData['searchview']) ? 0 : $arrayData['searchview'],
+				'destinationview' => is_null($arrayData['destinationview']) ? 0 : $arrayData['destinationview'],
+				'email' => is_null($totalEmails) ? 0 : $totalEmails,
+				'total_impressions' => is_null($totalImpressions) ? 0 : $totalImpressions
 			);
 			$impressions[$key] = array($arrayData['month'] => $arrayData);
 		}
