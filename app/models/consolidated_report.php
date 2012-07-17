@@ -450,7 +450,7 @@ class ConsolidatedReport extends AppModel
 		//We are using the reporting database for this data
 		$this->setDataSource('reporting');
 		
-		if ($this->useSkynetData && in_array((int) $site_id , array(1, 2)) && $end_date > '2012-04-30 23:59:59') {
+		if ($this->useSkynetData && in_array((int) $site_id, array(1, 2)) && $end_date > '2012-04-30 23:59:59') {
 			// Get impressions from skynet
 			$params = array($this->client_id, $site_id, substr($start_date, 0, 7));
 
@@ -474,13 +474,21 @@ class ConsolidatedReport extends AppModel
 					lltUserEventRollupByMonth
 				WHERE
 					clientId = ?
-					siteId = ?
+					AND siteId = ?
 					AND eventId = 40
 					AND yearMonth = ?
 			";
 			$skynetClicks = $this->query($sql, $params);
 			
-			$data = array(array(array('impressions' => $skynetImpressions[0][0]['impressions'], 'clicks' => $skynetClicks[0]['lltUserEventRollupByMonth']['clicks'])));
+			$data = array(
+						array(
+							array(
+								'impressions' => $skynetImpressions[0][0]['impressions'],
+								'clicks' => $skynetClicks[0]['lltUserEventRollupByMonth']['clicks']
+							)
+						)
+					);
+					var_dump($data);
 		} else {
 			// Get impressions from omniture
 			switch($site_id) {
