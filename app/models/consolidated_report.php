@@ -428,7 +428,7 @@ class ConsolidatedReport extends AppModel
 
 		if ($this->useSkynetData && in_array((int) $site_id , array(1, 2)) && $this->month_end_date > '2012-04-30 23:59:59') {
 			$omnitureData = $this->getImpressionsBySiteForPeriod($site_id, $this->loa_start_date, '2012-04-30 23:59:59');
-			$skynetData = $this->getImpressionsBySiteForPeriod($site_id, '2012-05-01 00:00:00', $this->month_end_date);
+			$skynetData = $this->getImpressionsBySiteForPeriod($site_id, $this->loa_start_date, $this->month_end_date);
 			$impressions = $omnitureData['impressions'] + $skynetData['impressions'];
 			$clicks = $omnitureData['clicks'] + $skynetData['clicks'];
 			$dataToReturn = array(
@@ -452,18 +452,18 @@ class ConsolidatedReport extends AppModel
 		
 		if ($this->useSkynetData && in_array((int) $site_id, array(1, 2)) && $end_date > '2012-04-30 23:59:59') {
 			// Get impressions from skynet
-			$params = array($this->client_id, $site_id, substr($start_date, 0, 7));
+			$params = array($this->client_id, $site_id, $start_date, $end_date);
 
 			$sql = "
 				SELECT
 					sum(total) as impressions
 				FROM
-					lltUserEventRollupByMonth
+					lltUserEventRollupByDay
 				WHERE
 					clientId = ?
 					AND siteId = ?
 					AND eventId IN (41, 42, 43, 46)
-					AND yearMonth = ?
+					AND startDate BETWEEN ? AND ?
 			";
 			$skynetImpressions = $this->query($sql, $params);
 			
@@ -471,12 +471,12 @@ class ConsolidatedReport extends AppModel
 				SELECT
 					total as clicks
 				FROM
-					lltUserEventRollupByMonth
+					lltUserEventRollupByDay
 				WHERE
 					clientId = ?
 					AND siteId = ?
 					AND eventId = 40
-					AND yearMonth = ?
+					AND startDate BETWEEN ? AND ?
 			";
 			$skynetClicks = $this->query($sql, $params);
 			
@@ -484,7 +484,7 @@ class ConsolidatedReport extends AppModel
 						array(
 							array(
 								'impressions' => $skynetImpressions[0][0]['impressions'],
-								'clicks' => $skynetClicks[0]['lltUserEventRollupByMonth']['clicks']
+								'clicks' => $skynetClicks[0]['lltUserEventRollupByDay']['clicks']
 							)
 						)
 					);
@@ -494,6 +494,7 @@ class ConsolidatedReport extends AppModel
 				case 1: $table = 'carConsolidatedView'; break;
 				case 2: $table = 'carConsolidatedViewFg'; break;
 			}
+			$params = array($this->client_id, $start_date,	$end_date);
 			
 			$sql = "
 				SELECT
@@ -502,10 +503,10 @@ class ConsolidatedReport extends AppModel
 				FROM
 					$table
 				WHERE
-					clientid = {$this->client_id}
-					AND activityStart BETWEEN '{$start_date}' AND '{$end_date}'
+					clientid = ?
+					AND activityStart BETWEEN ? AND ?
 			";
-			$data = $this->query($sql);
+			$data = $this->query($sql, $params);
 		}
 		
 		// set datasource back to default
