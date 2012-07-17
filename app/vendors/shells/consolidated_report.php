@@ -52,7 +52,15 @@ class ConsolidatedReportShell extends Shell {
 	public function main()
 	{
 		$this->isProduction = isset($this->params['production']) ? true : false;
-		
+
+		if (isset($this->params['useSkynetData'])) {
+			$this->ConsolidatedReport->setUseSkynetData();
+			self::log("Using Skynet Data for this report");
+		} else {
+			$this->ConsolidatedReport->setDoNotUseSkynetData();
+			self::log("Not using Skynet Data for this report");
+		}
+
 		// Report initialization variables
 		$template = 'consolidated_report_revision-11.xlsx';
 		

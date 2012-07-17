@@ -35,9 +35,6 @@ App::import('Model', 'User');
 App::import('Model', 'LltUserEvent');
 class ConsolidatedReport extends AppModel
 {
-	//The John Connor switch. Set to true to use Skynet data from 2012-05 on
-	private static $USE_SKYNET_DATA = false;
-	 
 	public $useTable = false;
 	
 	/**
@@ -120,16 +117,38 @@ class ConsolidatedReport extends AppModel
 	private $month_end_date;
 	
 	/**
+	 * John Connor switch for Skynet
+	 */
+	private $useSkynetData;
+	
+	/**
 	 *
 	 */
-	public function __construct()
+	public function __construct($useSkynetData = false)
 	{
 		$this->Client = new Client();
 		$this->Loa = new Loa();
 		$this->User = new User();
 		$this->lltUserEvent = new LltUserEvent();
+		$this->useSkynetData = $useSkynetData;
 		parent::__construct();
 	}
+	
+	/**
+	 * Unset John Connor switch (use Skynet Data)
+	 */
+	public function setUseSkynetData()
+	{
+		$this->useSkynetData = true;
+	}
+	
+	/**
+	 * Set John Connor switch (DO NOT use Skynet Data)
+	 */
+	 public function setDoNotUseSkynetData()
+	 {
+	 	$this->useSkynetData = false;
+	 }
 	
 	/**
 	 * Initialize private variables required to build a report and do some
@@ -407,7 +426,7 @@ class ConsolidatedReport extends AppModel
 		$clicks = 0;
 		$dataToReturn = array();
 
-		if (self::$USE_SKYNET_DATA && in_array((int) $site_id , array(1, 2)) && $this->month_end_date > '2012-04-30 23:59:59') {
+		if ($this->useSkynetData && in_array((int) $site_id , array(1, 2)) && $this->month_end_date > '2012-04-30 23:59:59') {
 			$omnitureData = $this->getImpressionsBySiteForPeriod($site_id, $this->loa_start_date, '2012-04-30 23:59:59');
 			$skynetData = $this->getImpressionsBySiteForPeriod($site_id, '2012-05-01 00:00:00', $this->month_end_date);
 			$impressions = $omnitureData['impressions'] + $skynetData['impressions'];
@@ -431,7 +450,7 @@ class ConsolidatedReport extends AppModel
 		//We are using the reporting database for this data
 		$this->setDataSource('reporting');
 		
-		if (self::$USE_SKYNET_DATA && in_array((int) $site_id , array(1, 2)) && $end_date > '2012-04-30 23:59:59') {
+		if ($this->useSkynetData && in_array((int) $site_id , array(1, 2)) && $end_date > '2012-04-30 23:59:59') {
 			// Get impressions from skynet
 			$params = array($this->client_id, $site_id, substr($start_date, 0, 7));
 
@@ -603,7 +622,7 @@ class ConsolidatedReport extends AppModel
 
 		foreach($tables as $site => $table) {
 			$impressionData = array();
-			if (self::$USE_SKYNET_DATA && ($site === 'Luxury Link' || $site === 'Family Getaway') && $this->month_end_date > '2012-04-30 23:59:59') {
+			if ($this->useSkynetData && ($site === 'Luxury Link' || $site === 'Family Getaway') && $this->month_end_date > '2012-04-30 23:59:59') {
 				// We need a blend of skynet and omniture
 				
 				if ($site === 'Luxury Link') {
