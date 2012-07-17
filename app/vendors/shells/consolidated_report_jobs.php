@@ -28,6 +28,7 @@ class ConsolidatedReportJobsShell extends Shell
 			$report_date = $job['ConsolidatedReportJob']['report_date'];
 			$tasks = $job['ConsolidatedReportJobsClients'];
 			$is_production = (isset($this->params['production'])) ? true : false;
+			$useSkynetData = (isset($this->params['useSkynetData'])) ? true : false;
 			
 			$this->ConsolidatedReportJob->setJobInProgress($job_id);
 			
@@ -41,6 +42,9 @@ class ConsolidatedReportJobsShell extends Shell
 					$command = "consolidated_report -report_date $report_date -client_id $client_id";
 					if ($is_production === true) {
 						$command .= ' -production';
+					}
+					if ($useSkynetData === true) {
+						$command .= ' -useSkynetData';
 					}
 
 					$output = array();
