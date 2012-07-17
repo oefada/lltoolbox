@@ -488,7 +488,6 @@ class ConsolidatedReport extends AppModel
 							)
 						)
 					);
-					var_dump($data);
 		} else {
 			// Get impressions from omniture
 			switch($site_id) {
