@@ -24,7 +24,7 @@ class ReservationsController extends AppController {
 			if ($this->Reservation->save($this->data)) {
 				
 				// temp reverse and readd loa for retail value
-				if ($this->data['Reservation']['retailValue'] > 0) {
+				if (isset($this->data['Reservation']['retailValue']) && $this->data['Reservation']['retailValue'] > 0) {
 					$this->TrackDetail->adjustForRetailValueTmp($this->data['Reservation']['ticketId'], $this->data['Reservation']['retailValue']);
 				}
 
