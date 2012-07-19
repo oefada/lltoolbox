@@ -1940,13 +1940,13 @@ class WebServiceTicketsController extends WebServicesController
 			case 44:
 				$vcomSaleInfo = $params['vcomSaleInfo'];
 				$vcomSaleInfo['tracking'] = 'utm_source=vac&utm_medium=xa&utm_campaign=abandon_vcom';
-				$vcomSaleInfo['pdpLink'] = 'http://www.vacationist.com/membersonly/hotels/id/' . $vcomSaleInfo['clientId'] . '?' . $vcomSaleInfo['tracking'];
+				$vcomSaleInfo['pdpLink'] = 'http://www.vacationist.com/visitors/hotels/id/' . $vcomSaleInfo['clientId'] . '/visitor/' . $params['vcomUserHash'] . '/?' . $vcomSaleInfo['tracking'];				
 				$emailSubject = "Your " . $vcomSaleInfo['name'] . " Order";
 				include('../vendors/email_msgs/notifications/44_abandoned_cart_vcom.html');
 				break;
 			case 45:
 				$rafAmount = $params['rafAmount'];
-				$emailSubject = "";
+				$emailSubject = "Your account has been credited";
 				include('../vendors/email_msgs/notifications/45_raf_paid.html');
 				break;				
 			default:

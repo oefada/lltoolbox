@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><html><head><META http-equiv="Content-Type" content="text/html; charset=utf-8"></head><body>
+ <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><html><head><META http-equiv="Content-Type" content="text/html; charset=utf-8"></head><body>
  <table width="800" cellspacing="0" cellpadding="0" border="0" align="center" style="background-color:#e3e6e4;">
                         <tbody>
 
@@ -37,7 +37,7 @@
 <? } ?>
 
 <tr>
-	<td align="left" style="padding:15px 20px 20px 25px; line-height:21px; font-family:Arial, helvetica, Sans-Serif;color:#666666;font-size:14px">Uh-oh! It looks like you tried to book a stay at <?= $vcomSaleInfo['name']; ?> but did not complete your reservation. <a style="text-decoration:none;color:#008ec5" href="<?= $vcomSaleInfo['pdpLink']; ?>" name="" target="_blank">Click here</a> to complete your booking or contact our Concierege team at <?= $sitePhone; ?> or <?= $sitePhoneLocal; ?> for assistance. Remember this sale is only available until <?= date('g a \P\D\T l F j, Y', strtotime($vcomSaleInfo['end'])); ?>.<td>
+	<td align="left" style="padding:15px 20px 20px 25px; line-height:21px; font-family:Arial, helvetica, Sans-Serif;color:#666666;font-size:14px">Uh-oh! It looks like you tried to book a stay at <?= $vcomSaleInfo['name']; ?> but did not complete your reservation. Still want it? <a style="text-decoration:none;color:#008ec5" href="<?= $vcomSaleInfo['pdpLink']; ?>" name="" target="_blank">Click here</a> to complete your booking or contact our Concierge team at <?= $sitePhone; ?> or <?= $sitePhoneLocal; ?> for assistance. Remember this sale is only available until <?= date('g a \P\D\T l F j, Y', strtotime($vcomSaleInfo['end'])); ?>.<td>
 </tr>
 
 <tr>
@@ -117,5 +117,4 @@ For information or assistance, call <?= $sitePhone; ?> or email <a name="footer_
 </tr>
 </tbody>
 </table>
-
 </body></html>
