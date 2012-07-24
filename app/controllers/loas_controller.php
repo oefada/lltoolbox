@@ -3,7 +3,7 @@ class LoasController extends AppController {
 
 	var $name = 'Loas';
 	var $helpers = array('Html', 'Form', 'Ajax', 'Text', 'Layout', 'Number', 'Paginator');
-	var $uses = array('Loa', 'LoaItemRatePeriod', 'SchedulingMasterTrackRel');
+	var $uses = array('Loa', 'LoaItemRatePeriod', 'SchedulingMasterTrackRel','LoaText');
 	var $paginate;
 
 	function maintTracking($id = null) {
@@ -359,23 +359,18 @@ class LoasController extends AppController {
 				}
 			}
 		}
-
-		$renewalResultOptions = array(0=>'Pending', 1=> 'No', 2=>'Yes');
-		$nonRenewalReasonOptions = array(
-										0=>'Unknown',
-										1=>'Fee - Could Not Collect',
-										2=>'ADR/Discount/High Season',
-										3=>'Insufficient ROI',
-										4=>'Low Sales Volume',
-										5=>'Pursuing Different Channels',
-										6=>'Membership Fee Constraint',
-										7=>'Wrong Decision Maker',
-										8=>'Operational Constraint',
-										9=>'Ownership/Management Change',
-										10=>'Participation Constraint',
-										11=>'Budget',
-										12=>'Bankruptcy/Foreclosure',
-										13=>'Low Confidence In Program');
+		
+		// get Renewal Result Options
+		$loaTextResult = $this->LoaText->getLoaText(1);
+		foreach( $loaTextResult as $loaText ){
+			$renewalResultOptions[$loaText['loaText']['loaTextId']] = $loaText['loaText']['loaText'];
+		}
+		
+		// get non Renewal Reason Options
+		$nonRenewalReasonOptionsResult = $this->LoaText->getLoaText(2);
+		foreach( $nonRenewalReasonOptionsResult as $loaText ){
+			$nonRenewalReasonOptions[$loaText['loaText']['loaTextId']] = $loaText['loaText']['loaText'];
+		}
 		
 		$this->set('renewalResultOptions', $renewalResultOptions);
 		$this->set('nonRenewalReasonOptions', $nonRenewalReasonOptions); 
