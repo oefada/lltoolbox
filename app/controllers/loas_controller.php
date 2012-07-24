@@ -433,4 +433,3 @@ class LoasController extends AppController {
 		echo $notesSaved['Loa']['notes'];
 	}
 }
-?>

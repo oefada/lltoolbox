@@ -9,6 +9,3 @@ class LoaTextsController extends AppController {
 	}
 }
 ?>
-
-
-
