@@ -1747,7 +1747,6 @@ class PackagesController extends AppController
 				$old_vgId=$ppArr['validityGroupId'];
 
 				$arr=$this->Package->PricePoint->getPricePointValidities($packageId, $ppId);
-
 				if (empty($arr)){
 					continue;
 				}
@@ -2245,7 +2244,6 @@ class PackagesController extends AppController
 
 			// ticket1870 - we still need to set validityStart and validityEnd in the pricePoint table
 			$this->Package->updatePackagePricePointValidity($packageId, $siteId);
-
 			// validityGroup stuff 
 			$ppid=isset($this->data['PricePoint']['pricePointId'])?trim($this->data['PricePoint']['pricePointId']):'';
 			if ($ppid != '') {
@@ -2257,8 +2255,8 @@ class PackagesController extends AppController
 			$rows_db = $this->Package->getPackageValidityDisclaimerByItem($packageId, $loaItemRatePeriodIds, '', '');
 
 			$vg_id=$this->Package->validityGroupWrapper($rows_db, $siteId);
-
 			$this->Package->updatePricePointValidityGroupId($ppid, $vg_id);
+			$this->Package->updateOfferWithValidityGroupId($ppid, $siteId, $vg_id, false);
 
 			echo ("ok");
 			exit;
@@ -2279,7 +2277,7 @@ class PackagesController extends AppController
 				}
 
 				// Why is this being updated when data is only being viewed?
-				$this->Package->updatePackagePricePointValidity($packageId, $siteId);
+				//$this->Package->updatePackagePricePointValidity($packageId, $siteId);
 
 			}
 

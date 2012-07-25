@@ -419,13 +419,25 @@ class Package extends AppModel {
 					$r['PricePoint']['validityDisclaimer'] = Sanitize::escape($validityDisclaimer);
 				}
 				$this->PricePoint->save($r['PricePoint'], array('validate' => false, 'callbacks' => false));
+				$offerTable='offerLuxuryLink';
+				if ($siteId==2){
+					$offerTable='offerFamily';
+				}
 				if ($siteId!=0 && $ovd==false){
-					$offerTable='offerLuxuryLink';
-					if ($siteId==2){
-						$offerTable='offerFamily';
-					}
-					$q="UPDATE $offerTable SET validityDisclaimer=? WHERE pricePointId=? AND packageId=?";
-					$this->query($q,array($validityDisclaimer,$r['PricePoint']['pricePointId'],$packageId));
+					$q="UPDATE $offerTable SET validityDisclaimer=?, ";
+					$q.="validityStart=?, ";
+					$q.="validityEnd=? ";
+					$q.="WHERE pricePointId=? AND packageId=?";
+					$arr=array($validityDisclaimer, $start, $end, $r['PricePoint']['pricePointId'],$packageId);
+					$this->query($q,$arr);
+				}else{
+
+					$q="UPDATE $offerTable SET  ";
+					$q.="validityStart=?, ";
+					$q.="validityEnd=? ";
+					$q.="WHERE pricePointId=? AND packageId=?";
+					$arr=array( $start, $end, $r['PricePoint']['pricePointId'],$packageId);
+					$this->query($q,$arr);
 				}
 
 			}
@@ -541,7 +553,7 @@ class Package extends AppModel {
 
 	}
 
-	public function updateOfferWithValidityGroupId($ppId, $siteId, $new_vgId, $old_vgId){
+	public function updateOfferWithValidityGroupId($ppId, $siteId, $new_vgId, $old_vgId=false){
 
 		$table="offerFamily";
 		if ($siteId==1){
@@ -549,7 +561,9 @@ class Package extends AppModel {
 		}
 		$q="UPDATE $table SET validityGroupId=$new_vgId ";
 		$q.="WHERE pricePointId=$ppId ";
-		$q.="AND validityGroupId=$old_vgId";
+		if ($old_vgId){
+			$q.="AND validityGroupId=$old_vgId";
+		}
 		$this->query($q);
 
 	}
