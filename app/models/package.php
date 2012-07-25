@@ -432,7 +432,7 @@ class Package extends AppModel {
 					$this->query($q,$arr);
 				}else{
 
-					$q="UPDATE $offerTable SET  ";
+					$q="UPDATE $offerTable SET ";
 					$q.="validityStart=?, ";
 					$q.="validityEnd=? ";
 					$q.="WHERE pricePointId=? AND packageId=?";
