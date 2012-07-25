@@ -1,4 +1,40 @@
 <?php  $this->pageTitle = $user['User']['firstName'].' '.$user['User']['lastName'].$html2->c($user['User']['userId'], 'User Id:');?>
+
+<script type="text/javascript">
+	/***
+	 * Script added by martin to allow for client notes
+	 */
+	jQuery(function($){
+		
+		$(window).ready(function(){
+			load_clientNotes(<?= $user['User']['userId']; ?>);
+		});
+	});
+	
+	load_clientNotes = function( i_userId ){
+		var $=jQuery;
+		
+		// gets clientId 
+		var v_url = "/clientNotes/viewUserNotes/" + i_userId;
+		
+		// calls clientNotes/view to load clientNote module
+		$.ajax({
+			url: v_url,
+			success: function(data) {
+				$("#clientNoteModule").html(data);
+				scrollWindow(); // auto scrolls to bottom of the clientNoteDisplay div
+				document.onkeyup = KeyCheck; // watches for 'enter' keypress on the clientNoteDisplay div
+				$("#clientNoteInput").focus(function(){ noteCheck(); });
+			}
+		});
+	};
+	
+</script>
+<div id="clientNoteModule" style="position: absolute; top: 140px; left: 850px;"></div>
+
+
+
+
 <div class="users form">
 <?php echo $form->create('User');?>
 <?php if ($user['User']['inactive']): ?>
@@ -16,7 +52,16 @@
 	<div class='controlset'>
 		<?php echo $form->input('inactive'); ?><br>
 	</div>
-	<div style="font-size: 14px; color: #990000; font-weight: bold;">Credit on File Balance:</strong> <a href="/credit_trackings/index/query:<?= $this->data['User']['userId'] ?>">$<? if (!isset($this->data['CreditTracking'])): ?>0.00<? else: ?><?= number_format($this->data['CreditTracking']['balance'],2) ?><? endif; ?></a></div>
+	<div style="font-size: 14px; color: #990000; font-weight: bold; margin-left: 174px; padding: 15px 15px 13px 20px; background-color: #fdcab9; width: 280px; border-radius: 4px;">Credit on File Balance:</strong> <a href="/credit_trackings/index/query:<?= $this->data['User']['userId'] ?>">$<? if (!isset($this->data['CreditTracking'])): ?>0.00<? else: ?><?= number_format($this->data['CreditTracking']['balance'],2) ?><? endif; ?></a></div>
+	
+	
+		<p>&nbsp;</p>
+		<p>&nbsp;</p>
+		<p>&nbsp;</p>
+		<p>&nbsp;</p>
+		<p>&nbsp;</p>
+		<p>&nbsp;</p>
+	
 		<fieldset class="collapsible">
 			<legend class="handle">Contact Details</legend>
 			<div class="collapsibleContent related">

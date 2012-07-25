@@ -28,6 +28,25 @@ class ClientNotesController extends AppController {
 	}
 	
 	/***
+	 * Grabs all user notes for a user specified by GET input userId and displays to screen
+	 */
+	function viewUserNotes(){
+		
+		// declare this function as an ajax call
+		$this->layout = 'ajax';
+		
+		// get vars
+		$userId = $this->params['pass'][0];
+		
+		// get clientNote data
+		$result = $this->ClientNote->getUserNoteList($userId);
+		
+		$this->set('clientId', $userId);
+		$this->set('clientNoteResults', $result);
+		$this->set('clientNoteUser', $this->LdapAuth->object->viewVars['user']['LdapUser']['samaccountname']);
+	}
+	
+	/***
 	 * Saves a new client note to client specified by POST clientId
 	 */
 	function add(){
@@ -37,11 +56,23 @@ class ClientNotesController extends AppController {
 		// get values
 		$author = $this->LdapAuth->object->viewVars['user']['LdapUser']['samaccountname'];
 		$message = $_POST['message'];
-		$clientId = $_POST['clientId'];
 		$created = date('M, d Y @ g:i a');
 		
-		// save new clientNote entry
-		$clientNoteId = $this->ClientNote->saveClientNote( $clientId, $author, $message );
+		// if for client, save client info
+		if(isset($_POST['clientId'])){		
+			$clientId = $_POST['clientId'];
+			$type = 1;
+			
+			// save new clientNote entry
+			$clientNoteId = $this->ClientNote->saveClientNote( $clientId, $author, $message, $type );
+		}
+		else if(isset($_POST['userId'])){
+			$clientId = $_POST['userId'];
+			$type = 2;
+			
+			// save new clientNote entry
+			$clientNoteId = $this->ClientNote->saveClientNote( $clientId, $author, $message, $type );
+		}
 		
 		$this->set('author', $author);
 		$this->set('message', $message);
@@ -65,7 +96,5 @@ class ClientNotesController extends AppController {
 		
 	}
 }
-?>
-
 
 

@@ -9,17 +9,27 @@ class ClientNote extends AppModel {
 	function getClientNoteList( $clientId ){
 				
 		if(!is_null($clientId)){
-			$query = "SELECT * FROM clientNote WHERE clientId = '$clientId' AND status = 1 ORDER BY created ASC";
+			$query = "SELECT * FROM clientNote WHERE clientId = '$clientId' AND note_type = 1 AND status = 1 ORDER BY created ASC";
+			return $this->query($query);
+		}
+		
+	}
+
+
+	function getUserNoteList( $userId ){
+				
+		if(!is_null($userId)){
+			$query = "SELECT * FROM clientNote WHERE clientId = '$userId' AND note_type = 2 AND status = 1 ORDER BY created ASC";
 			return $this->query($query);
 		}
 		
 	}
 	
-	function saveClientNote( $clientId, $author, $message ){
+	function saveClientNote( $clientId, $author, $message, $type ){
 		$query = " 	INSERT INTO clientNote 
-					( clientId, author, created, notes )
+					( clientId, author, created, notes, note_type )
 					VALUES
-					( $clientId, '$author', NOW(), '" . addslashes($message) . "')";
+					( $clientId, '$author', NOW(), '" . addslashes($message) . "', '" . $type . "')";
 		$this->query($query);
 		
 		$query = "SELECT last_insert_id() as last_id";
