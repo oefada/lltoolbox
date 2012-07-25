@@ -95,6 +95,7 @@ class AppModel extends LazyModel {
 			require_once('/usr/lib/php/FirePHPCore/fb.php'); 
 			FB::log($str,$num." log:");
 		}else{
+			Configure::write('debug',2);
 			CakeLog::write("debug",$str);
 		}
 
