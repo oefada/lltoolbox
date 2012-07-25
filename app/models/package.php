@@ -397,6 +397,7 @@ class Package extends AppModel {
 	//	PKGR - START OF VALIDITY / BLACKOUT METHODS
 	//	=====================================================================
 
+	// This function updates a lot of de-normalized data
 	function updatePackagePricePointValidity($packageId, $siteId=0) {
 
 		$this->updateValidityDisclaimer($packageId);//update table packageValidityDisclaimer
