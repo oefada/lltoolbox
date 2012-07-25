@@ -1764,7 +1764,7 @@ class PackagesController extends AppController
 				$vgId=$this->Package->validityGroupWrapper($rows_db);
 				$this->Package->updatePricePointValidityGroupId($ppId, $vgId);
 				$this->Package->updateOfferWithValidityGroupId($ppId, $siteId, $vgId, $old_vgId);
-
+ 
 			}
 
 	
