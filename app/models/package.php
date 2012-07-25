@@ -419,14 +419,13 @@ class Package extends AppModel {
 					$r['PricePoint']['validityDisclaimer'] = Sanitize::escape($validityDisclaimer);
 				}
 				$this->PricePoint->save($r['PricePoint'], array('validate' => false, 'callbacks' => false));
-
 				if ($siteId!=0 && $ovd==false){
 					$offerTable='offerLuxuryLink';
 					if ($siteId==2){
 						$offerTable='offerFamily';
 					}
 					$q="UPDATE $offerTable SET validityDisclaimer=? WHERE pricePointId=? AND packageId=?";
-					$this->query($q,array($validityDisclaimer,$r['pp']['pricePointId'],$packageId));
+					$this->query($q,array($validityDisclaimer,$r['PricePoint']['pricePointId'],$packageId));
 				}
 
 			}
@@ -817,14 +816,7 @@ class Package extends AppModel {
 	}
 
 	function getPricePointDateRangeByPackage($packageId) {
-		$q="SELECT pp.pricePointId, MIN(item.startDate) AS minStartDate, MAX(item.endDate) AS maxEndDate, ";
-		$q.="GROUP_CONCAT(DISTINCT loaItemRatePeriodId) AS loaItemRatePeriodIds ";
-		$q.="FROM pricePoint pp ";
-		$q.="INNER JOIN pricePointRatePeriodRel pr USING (pricePointId) ";
-		$q.="INNER JOIN loaItemDate item USING (loaItemRatePeriodId) ";
-		$q.="WHERE pp.packageId = {$packageId} ";
-		$q.="GROUP BY pricePointId";
-		$r = $this->query($q);
+		$r = $this->query("SELECT PricePoint.pricePointId, MIN(item.startDate) AS minStartDate, MAX(item.endDate) AS maxEndDate, GROUP_CONCAT(DISTINCT loaItemRatePeriodId) AS loaItemRatePeriodIds FROM pricePoint PricePoint INNER JOIN pricePointRatePeriodRel pr USING (pricePointId) INNER JOIN loaItemDate item USING (loaItemRatePeriodId) WHERE PricePoint.packageId = {$packageId} GROUP BY pricePointId;");
 		return $r;
 	}
 
