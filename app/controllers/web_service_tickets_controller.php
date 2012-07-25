@@ -1902,6 +1902,8 @@ class WebServiceTicketsController extends WebServicesController
 				
 				break;
 			case 37:
+				// Note: This template isn't where it should be, to edit it see
+				// app/vendors/shells/templates/post_trip_email.ctp
 				$ppvNoticeTypeId = 35; //TODO REMOVE THIS LINE ONCE IT WORKS RIGHT WITH SILVERPOP
 				$templateFile = "37_post_trip_email";
 				$emailSubject = $templateTitle = "Rate your $siteName experience";
