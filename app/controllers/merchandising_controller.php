@@ -305,6 +305,11 @@ class MerchandisingController extends AppController
 								$xlltEventId,
 								$xTabName
 							));
+							$this->MerchDataGroup->query('UPDATE lltEvent SET eventName = ?,lltEventGroupId = ? WHERE lltEventId = ?', array(
+								$xTabName,
+								12,
+								$xlltEventId,
+							));
 							$xEventQuery = $this->MerchDataGroup->query('SELECT * FROM lltEvent WHERE lltEventGroupId=12 AND eventName LIKE ?', array($xTabPrefix . '%'));
 							$xlltEventId = $xEventQuery[0]['lltEvent']['lltEventId'];
 							$xTabValue['lltgEventId'] = $xlltEventId;
