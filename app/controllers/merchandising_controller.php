@@ -301,10 +301,6 @@ class MerchandisingController extends AppController
 							if (count($xEventQuery) > 0) {
 								$xlltEventId = $xEventQuery[0]['lltEvent']['lltEventId'];
 							}
-							$this->MerchDataGroup->query('REPLACE INTO lltEvent (lltEventId,lltEventGroupId,eventName) VALUES (?,12,?)', array(
-								$xlltEventId,
-								$xTabName
-							));
 							$this->MerchDataGroup->query('UPDATE lltEvent SET eventName = ?,lltEventGroupId = ? WHERE lltEventId = ?', array(
 								$xTabName,
 								12,
