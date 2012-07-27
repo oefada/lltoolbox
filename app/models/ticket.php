@@ -25,6 +25,10 @@ class Ticket extends AppModel {
 			'foreignKey' => 'ticketId',
 			'dependent' => true
 		),
+		'RefundRequest' => array(
+			'foreignKey' => 'ticketId',
+			'dependent' => true
+		),		
 	);
 	
 	public $hasOne = array(

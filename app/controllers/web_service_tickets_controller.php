@@ -1137,8 +1137,8 @@ class WebServiceTicketsController extends WebServicesController
 				$siteName = 'Vacationist.com';
 				$siteEmail = 'vacationist.com';
 				$sitePhone  = '(877) 313-6769';
-				$sitePhoneLocal = '(310) 215-8279';
-				$siteFax = '(800) 440-3820';
+				$sitePhoneLocal = '(310) 956-3704';
+				$siteFax = '(310) 215-8279';
 
 				break;
 		}
