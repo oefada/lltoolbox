@@ -111,9 +111,5 @@
 		<? } ?>
 		
 		<?= $form->input('paymentDetailId', array('label' => 'CC to Credit', 'options' => $refundInfo['creditCards'], 'empty' => '-- ')); ?>
-
-		<hr class="refundRequestDivider" />
-
 		<?= $form->input('refundOrCOF', array('label' => 'Refund / COF', 'options' => $keepOrRemitList, 'empty' => '-- ')); ?>
-		<?= $form->input('keepOrRemit', array('label' => 'Keep / Remit', 'options' => $refundOrCOFList, 'empty' => '-- ')); ?>
 		<?= $form->input('notes'); ?>

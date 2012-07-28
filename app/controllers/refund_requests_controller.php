@@ -160,7 +160,12 @@ class RefundRequestsController extends AppController {
 			$this->Session->setFlash(__('You do not have permission to edit the request.', true));
 			$this->redirect(array('action'=>'index'));	
 		}
-		
+
+		if ($this->data['RefundRequest']['refundRequestStatusId'] == 3) {
+			$this->Session->setFlash(__('This request has been completed and cannot be edited.', true));
+			$this->redirect(array('action'=>'view', $id));	
+		}
+
 		if ($editorAccess && $this->data['RefundRequest']['refundRequestStatusId'] == 1) {
 			$this->set('displayRefundRequestApproveLink', true);
 		}
