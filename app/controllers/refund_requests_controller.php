@@ -99,7 +99,7 @@ class RefundRequestsController extends AppController {
 		$refundInfo = $this->prepRefundInfoByTicketId($this->data['RefundRequest']['ticketId']);
 		$this->set('refundInfo', 	$refundInfo);
 		$editorAccess = $this->hasEditorAccess();
-		if ($editorAccess) {
+		if ($editorAccess && $this->data['RefundRequest']['refundRequestStatusId'] != 3) {
 			$this->set('displayRefundRequestEditLink', true);
 		}
 		$this->set('pageVersion', 	'V');
@@ -164,14 +164,13 @@ class RefundRequestsController extends AppController {
 				$this->redirect(array('action'=>'index'));
 			} else {
 				$this->Session->setFlash(__('The Refund Request could not be saved. Please, try again.', true));
+				$this->redirect(array('action'=>'edit', $this->data['RefundRequest']['refundRequestId']));
 			}			
 		} else {
 			if (!$id) {
 				$this->Session->setFlash(__('No Request Found.', true));
 				$this->redirect(array('action'=>'index'));
 			}
-		}
-		if (empty($this->data)) {
 			$this->data = $this->RefundRequest->read(null, $id);
 		}
 		

@@ -34,7 +34,7 @@ foreach ($refundRequests as $r):
 		, $boolDisplayX[$r['RefundInfo']['cofPostedFlag']]			
 		, $refundOrCOFList[$r['RefundInfo']['keepOrRemit']] 
 		, $boolDisplayX[$r['RefundInfo']['toolboxAllocatedFlag']]	
-		, $boolDisplayX[$r['RefundInfo']['propertyPaidFlag']]	
+		, $boolDisplayYN[$r['RefundInfo']['propertyPaidFlag']]	
 		, $r['RefundInfo']['propertyPaidDate']
 		, $boolDisplayX[$r['RefundInfo']['caUpdateFlag']]		
 		, $boolDisplayX[$r['RefundInfo']['caCheckRequestFlag']]			

@@ -22,6 +22,8 @@
 
 </style>
 
+<? $boolDisplayX = array(0=>'', 1=>'X'); ?>
+
 <div class="refundRequests form">
 	<fieldset>
  		<legend><?php __('Refund Request #' . $this->data['RefundRequest']['refundRequestId']);?></legend>
@@ -41,6 +43,11 @@
 		</div>
 
 		<div class="refundRequestDiv">
+			<label>Arrival Date</label>
+			<?= $this->data['RefundRequest']['arrivalDate']; ?>
+		</div>
+
+		<div class="refundRequestDiv">
 			<label>Cancellation Number</label>
 			<?= $this->data['RefundRequest']['cancellationNumber']; ?>
 		</div>
@@ -48,11 +55,6 @@
 		<div class="refundRequestDiv">
 			<label>Cancelled With</label>
 			<?= $this->data['RefundRequest']['cancelledWith']; ?>
-		</div>
-
-		<div class="refundRequestDiv">
-			<label>Arrival Date</label>
-			<?= $this->data['RefundRequest']['arrivalDate']; ?>
 		</div>
 
 		<hr style="width: 60%; margin: 20px 0;" />
@@ -122,27 +124,71 @@
 			<?= $this->data['RefundRequest']['refundTotal']; ?>
 		</div>
 
-		<hr style="width: 60%; margin: 20px 0;" />
-
 		<div class="refundRequestDiv">
 			<label>CC to Credit</label>
-			<?= $this->data['RefundRequest']['paymentDetailId']; ?>
-		</div>
-		
-		<div class="refundRequestDiv">
-			<label>Refund / COF</label>
-			<?= $refundOrCOFList[$this->data['RefundRequest']['refundOrCOF']]; ?>
+			<?= $this->data['PaymentDetail']['ppCardNumLastFour']; ?>
 		</div>
 
 		<div class="refundRequestDiv">
-			<label>Keep / Remit</label>
-			<?= $keepOrRemitList[$this->data['RefundRequest']['keepOrRemit']]; ?>
-		</div>		
+			<label>Refund / COF</label>
+			<?
+			if ($this->data['RefundRequest']['refundOrCOF']) {	
+				echo $refundOrCOFList[$this->data['RefundRequest']['refundOrCOF']]; 
+			}
+			?>
+		</div>
 
 		<div class="refundRequestDiv">
 			<label>Notes</label>
 			<?= $this->data['RefundRequest']['notes']; ?>
 		</div>
+
+		<hr style="width: 60%; margin: 20px 0;" />
+
+		<div class="refundRequestDiv">
+			<label>Keep / Remit</label>
+			<? 
+			if ($this->data['RefundRequest']['keepOrRemit']) {			
+				echo $keepOrRemitList[$this->data['RefundRequest']['keepOrRemit']];
+			}
+			?>
+		</div>		
+
+		<div class="refundRequestDiv">
+			<label>CC Refunded</label>
+			<?= $boolDisplayX[$this->data['RefundRequest']['ccRefundedFlag']]; ?>
+		</div>
+
+		<div class="refundRequestDiv">
+			<label>CC Posted</label>
+			<?= $boolDisplayX[$this->data['RefundRequest']['cofPostedFlag']]; ?>
+		</div>
+
+		<div class="refundRequestDiv">
+			<label>Toolbox Allocated</label>
+			<?= $boolDisplayX[$this->data['RefundRequest']['toolboxAllocatedFlag']]; ?>
+		</div>
+
+		<div class="refundRequestDiv">
+			<label>CA Check Request</label>
+			<?= $boolDisplayX[$this->data['RefundRequest']['caCheckRequestFlag']]; ?>
+		</div>
+
+		<div class="refundRequestDiv">
+			<label>CA Update</label>
+			<?= $boolDisplayX[$this->data['RefundRequest']['caUpdateFlag']]; ?>
+		</div>
+
+		<div class="refundRequestDiv">
+			<label>Property Paid</label>
+			<?= $boolDisplayX[$this->data['RefundRequest']['propertyPaidFlag']]; ?>
+		</div>
+
+		<div class="refundRequestDiv">
+			<label>Date Paid</label>
+			<?= $this->data['RefundRequest']['propertyPaidDate']; ?>
+		</div>
+
 
 	</fieldset>
 </div>
