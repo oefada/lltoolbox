@@ -4683,7 +4683,35 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 
 	}
 	
+	function fraud_check()
+	{		
+		if(isset($this->params['url']['c'])) {
+		
+			$ticketId = $this->params['url']['c'];
+		
+			$q = 'DELETE FROM fraudCheck WHERE ticketId = ?';
+			$this->OfferType->query($q, array($ticketId));
+
+			$currentUser = $this->LdapAuth->user();
+			$q = 'INSERT INTO fraudCheck (ticketId, dateCleared, clearedBy) VALUES (?, NOW(), ?);';
+			$this->OfferType->query($q, array($ticketId, $currentUser['LdapUser']['samaccountname']));
+		}
+
+		$q = 'SELECT p.ticketId, f.dateCleared, f.clearedBy, MIN(p.ppResponseDate) AS declinedFirst, MAX(p.ppResponseDate) AS declinedLast, COUNT(*) AS declinedCount 
+			  FROM paymentDetail p
+			  LEFT JOIN fraudCheck f USING(ticketId) 
+			  WHERE p.isSuccessfulCharge = 0
+			  AND p.ppResponseDate > NOW() - INTERVAL 30 DAY
+			  GROUP BY p.ticketId, f.dateCleared, f.clearedBy
+			  HAVING COUNT(*) > 1
+			  ORDER BY p.ticketId DESC';
+		$results = $this->OfferType->query($q);
+		$this->set('results', $results);
+	}
+
+
 }
+
 
 class ReportsControllerFunctions
 {

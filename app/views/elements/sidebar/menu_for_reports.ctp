@@ -20,6 +20,7 @@
 	<li><?=$html->link('Remit Packages', $this->webroot . 'reports/remit');?></li>
 	<li><?=$html->link('Weekly Scorecard', $this->webroot . 'reports/weekly_scorecard')?></li>
 	<li><?=$html->link('Leads Report', $this->webroot . 'reports/leads')?></li>
+	<li><?=$html->link('Fraud Check', $this->webroot . 'reports/fraud_check')?></li>
 </ul>
 <h3>Other Tools</h3>
 <ul class="tree">
