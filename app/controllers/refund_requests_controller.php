@@ -50,7 +50,28 @@ class RefundRequestsController extends AppController {
 			  FROM `client` c
 			  INNER JOIN clientLoaPackageRel cpr USING(clientId)
 			  GROUP BY cpr.packageId
-			  ) ClientInfo USING(packageId)";
+			  ) ClientInfo USING(packageId)
+			  LEFT JOIN			   
+			  (SELECT ticketId, SUM(ppBillingAmount) AS ccBillingAmount 
+			   FROM paymentDetail 
+			   WHERE isSuccessfulCharge = 1
+			   AND paymentTypeId = 1
+			   GROUP BY ticketId 
+			  ) BillingInfoCC USING(ticketId)
+			  LEFT JOIN			   
+			  (SELECT ticketId, SUM(ppBillingAmount) AS gcBillingAmount 
+			   FROM paymentDetail 
+			   WHERE isSuccessfulCharge = 1
+			   AND paymentTypeId = 2
+			   GROUP BY ticketId 
+			  ) BillingInfoGC USING(ticketId)
+			  LEFT JOIN			   
+			  (SELECT ticketId, SUM(ppBillingAmount) AS cofBillingAmount 
+			   FROM paymentDetail 
+			   WHERE isSuccessfulCharge = 1 
+			   AND paymentTypeId = 3
+			   GROUP BY ticketId 
+			  ) BillingInfoCOF USING(ticketId)";
 
 		$results = $this->RefundRequest->query($q);
 		$this->set('refundRequests', $results);
