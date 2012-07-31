@@ -14,7 +14,7 @@
 	foreach ($results as $r) { 
 
 		$ticketCleared = false;
-		if ($r['f']['dateCleared'] != '' && (strtotime($r['f']['dateCleared']) > strtotime($r[0]['declinedCount']))) {
+		if ($r['f']['dateCleared'] != '' && (strtotime($r['f']['dateCleared']) > strtotime($r[0]['declinedLast']))) {
 			$ticketCleared = true;
 		}
 		
