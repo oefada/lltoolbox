@@ -6,6 +6,8 @@ $boolDisplayX = array(0=>'', 1=>'X');
 echo "Status,Date Created,Agent,Refund or COF,Property Name,Ticket,Offer Type,Customer Last Name,Date CC Processed,Last 4,Total CC Charge,Total GC Charge,Total COF Charge,Original Package Price,LLTG Fee,Promo $ Deduction,Hotel Cancel Fee,Refund Handling Fee,Total Refund,Reason,Hotel Cancellation Number / Name,Approval,Kat Process Date,CC Refund,COF Posted,Keep or Remit,TB Reallocated,Paid Property,Date Paid,CA Updated,CA Check Request\n";
 foreach ($refundRequests as $r):
 
+	$handlingFee = ($r['RefundInfo']['refundHandlingFeeFlag'] == 1) ? 40 : 0;
+	
 	$line = array(
 		$r['RefundInfo']['description']
 		, $r['RefundInfo']['dateCreated']
@@ -24,7 +26,7 @@ foreach ($refundRequests as $r):
 		, $r['RefundInfo']['cancelFeeLL']
 		, $r['RefundInfo']['promoDeduction']
 		, $r['RefundInfo']['cancelFeeHotel']
-		, $r['RefundInfo']['refundHandlingFeeFlag']
+		, $handlingFee
 		, $r['RefundInfo']['refundTotal']
 		, $r['RefundInfo']['refundReasonName']
 		, $r['RefundInfo']['cancellationNumber'] . ' / ' . $r['RefundInfo']['cancelledWith']

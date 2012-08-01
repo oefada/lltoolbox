@@ -44,6 +44,7 @@ function addRow() {
 		<th>Footer Link</th>
 		<th>Footer Text</th>
 		<th style="text-align: right;">Inactive</th>
+		<th style="text-align: right;">No Rotation</th>
 	</tr>
 
 	<?
@@ -69,6 +70,9 @@ function addRow() {
 		<td align="right">
 			<input type="checkbox" name="inactive-<?=$i?>" class="inactive" value="1" <? if ($tab['inactive']) echo 'CHECKED'; ?> style="width: 10px;" />
 		</td>
+		<td align="right">
+			<input type="checkbox" name="disableClientRotation-<?=$i?>" class="inactive" value="1" <? if ($tab['disableClientRotation']) echo 'CHECKED'; ?> style="width: 10px;" />
+		</td>		
 	</tr>
 		<? endforeach; ?>
 	<?
@@ -93,8 +97,8 @@ function addRow() {
 	<? endif; ?>
 	
 	<tr class="nodrag nodrop">
-		<td colspan="3"><span style="color:#999;font-size:80%;">Note: Do not reuse old tabs for new features.<br/>Instead, create a new tab and deactivate the old one.<br/>This is because each tab gets a unique click tracking id.</span></td>
-		<td><input type="submit" value="Save" /></td>
+		<td colspan="4"><span style="color:#999;font-size:80%;">Note: Do not reuse old tabs for new features.<br/>Instead, create a new tab and deactivate the old one.<br/>This is because each tab gets a unique click tracking id.</span></td>
+		<td style="text-align: right;"><input type="submit" value="Save" /></td>
 	</tr>
 </table>
 </form>
