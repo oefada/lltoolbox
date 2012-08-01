@@ -454,14 +454,16 @@ class WebServiceTicketsController extends WebServicesController
 					$promo_ticket_rel['userId'] = $data['userId'];
 					$this->PromoTicketRel->create();
 					if ($this->PromoTicketRel->save($promo_ticket_rel)) {
-						$referrerUserId = $this->Promo->checkInsertRaf($promo_ticket_rel['promoCodeId']);
-						if ($referrerUserId !== false && is_numeric($referrerUserId)) {
-							$ticket_refer_friend = array();
-							$ticket_refer_friend['ticketId'] = $ticketId;
-							$ticket_refer_friend['referrerUserId'] = $referrerUserId;
-							$ticket_refer_friend['datetime'] = date('Y:m:d H:i:s', strtotime('now'));
-							$this->TicketReferFriend->save($ticket_refer_friend);
-						}
+						
+						// 08/01/12 - no more old RAF
+						// $referrerUserId = $this->Promo->checkInsertRaf($promo_ticket_rel['promoCodeId']);
+						// if ($referrerUserId !== false && is_numeric($referrerUserId)) {
+						//	$ticket_refer_friend = array();
+						//	$ticket_refer_friend['ticketId'] = $ticketId;
+						//	$ticket_refer_friend['referrerUserId'] = $referrerUserId;
+						//	$ticket_refer_friend['datetime'] = date('Y:m:d H:i:s', strtotime('now'));
+						//	$this->TicketReferFriend->save($ticket_refer_friend);
+						// }
 					}
 				}
 			}
@@ -2836,25 +2838,6 @@ class WebServiceTicketsController extends WebServicesController
 				break;
 			default:
 				$siteName = '';
-		}
-
-		// RAF promo -- send out referrer purchase notification
-		// ---------------------------------------------------------------------------
-		if (isset($promoGcCofData['Promo']) && $promoGcCofData['Promo']['promoId'] == 60) {
-			$ticketReferFriend = $this->TicketReferFriend->read(null, $ticket['Ticket']['ticketId']);
-			if (!empty($ticketReferFriend)) {
-				$rafData = $this->Promo->getRafData($promoGcCofData['Promo']['promoCodeId']);
-				$emailTo = $rafData['User']['email'];
-				$emailCc = $emailBcc = '';
-				$emailSubject = "Your Friend Has Made a $siteName Purchase";
-				$ppvNoticeTypeId = 21;
-				$ppvInitials = 'AUTO_RAF';
-				$ticketId = $ticket['Ticket']['ticketId'];
-				ob_start();
-				include('../vendors/email_msgs/notifications/21_raf_referrer_purchase_notification.html');
-				$emailBody = ob_get_clean();
-				$this->sendPpvEmail($emailTo, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials);
-			}
 		}
 
 		$this->errorMsg = "End CHARGE_SUCCESS";
