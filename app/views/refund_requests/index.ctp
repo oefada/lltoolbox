@@ -1,18 +1,22 @@
 <div class="index">
 <h2><?php __('Refund Requests');?></h2>
 
-<div class='advancedSearch' style="width: 600px; position: relative;">
+<div class='advancedSearch' style="width: 700px; position: relative;">
 	<?= $form->create(null, array('action'=>'index')); ?>
 	<fieldset>
 		<div class="fieldRow">
 			<?= $form->input('f_status', array('label' => 'Status', 'options' => $refundStatuses, 'empty' => '-- ')); ?>
 		</div>
 		<div class="fieldRow">
-			<label>Date Created</label>
 			<div class="range">
-				<?echo $datePicker->picker('f_createDate.start', array('label' => ''))?>
+				<label style="padding-right: 60px;">Date Filter</label>
+				<?= $form->input('f_Date.field', array('options'=> array('dateCreated'=>'Date Created', 'dateApproved'=>'Date Approved', 'dateCompleted'=>'Date Completed'), 'empty'=>'--', 'style'=>'', 'label'=>false, 'div'=>false)); ?>
+				<?echo $datePicker->picker('f_Date.start', array('label' => ''))?>
 				&nbsp;- 
-				<?echo $datePicker->picker('f_createDate.end', array('label' => ''))?>
+				<?echo $datePicker->picker('f_Date.end', array('label' => ''))?>
+				&nbsp;
+				<a href="#" onclick='javascript: $("f_DateStart").value = "<?=date('Y-m-d')?>"; $("f_DateEnd").value = "<?=date('Y-m-d', strtotime('+1 day'))?>"; return false;'>Today</a> | 
+				<a href="#" onclick='javascript: $("f_DateStart").value = "<?=date('Y-m-d', strtotime('-1 day'))?>"; $("f_DateEnd").value = "<?=date('Y-m-d')?>"; return false;'>Yesterday</a>
 			</div>
 		</div>
 		<div class="fieldRow">
@@ -20,7 +24,7 @@
 			<?= $form->checkbox('csv', array('style'=>'width:10px;')); ?>
 		</div>
 		
-		<div style="position:absolute; top: 70px; right: 20px;">
+		<div style="position:absolute; top: 90px; right: 20px;">
 			<?php echo $form->submit('Search') ?>
 		</div>
 	</fieldset>
@@ -52,7 +56,7 @@ foreach ($refundRequests as $rq):
 ?>
 	<tr<?php echo $class;?>>
 		<td><?php echo $rq['RefundInfo']['refundRequestId']; ?></td>
-		<td><?php echo $rq['RefundInfo']['ticketId']; ?></td>
+		<td><a href="/tickets/view/<?php echo $rq['RefundInfo']['ticketId']; ?>"><?php echo $rq['RefundInfo']['ticketId']; ?></a></td>
 		<td><?php echo $rq['RefundInfo']['description']; ?></td>
 		<td><?php echo $rq['RefundInfo']['dateCreated']; ?></td>
 		<td><?php echo $rq['RefundInfo']['createdBy']; ?></td>

@@ -4697,14 +4697,16 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 			$this->OfferType->query($q, array($ticketId, $currentUser['LdapUser']['samaccountname']));
 		}
 
-		$q = 'SELECT p.ticketId, f.dateCleared, f.clearedBy, MIN(p.ppResponseDate) AS declinedFirst, MAX(p.ppResponseDate) AS declinedLast, COUNT(*) AS declinedCount 
+		$q = 'SELECT t.ticketId, t.created, f.dateCleared, f.clearedBy, IFNULL(f.ticketId, 1000000000) AS clearedId, MIN(p.ppResponseDate) AS declinedFirst, MAX(p.ppResponseDate) AS declinedLast, COUNT(*) AS declinedCount 
 			  FROM paymentDetail p
+			  INNER JOIN ticket t USING(ticketId)
 			  LEFT JOIN fraudCheck f USING(ticketId) 
 			  WHERE p.isSuccessfulCharge = 0
-			  AND p.ppResponseDate > NOW() - INTERVAL 30 DAY
-			  GROUP BY p.ticketId, f.dateCleared, f.clearedBy
+			  AND t.created > NOW() - INTERVAL 1 YEAR
+			  GROUP BY t.ticketId
 			  HAVING COUNT(*) > 1
-			  ORDER BY p.ticketId DESC';
+			  AND MAX(p.ppResponseDate) > NOW() - INTERVAL 180 DAY
+			  ORDER BY clearedId DESC, t.ticketId DESC';
 		$results = $this->OfferType->query($q);
 		$this->set('results', $results);
 	}

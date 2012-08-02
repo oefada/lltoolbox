@@ -20,8 +20,9 @@ class RefundRequestsController extends AppController {
 
 		$displayCsv = (!empty($this->data) && $this->data['RefundRequest']['csv'] == 1) ? true : false;
 		$status = (!empty($this->data) && intval($this->data['RefundRequest']['f_status']) > 0) ? $this->data['RefundRequest']['f_status'] : false;
-		$createDateStart = (!empty($this->data) && $this->data['f_createDate']['start'] != '') ? $this->data['f_createDate']['start'] : false;
-		$createDateEnd = (!empty($this->data) && $this->data['f_createDate']['end'] != '') ? $this->data['f_createDate']['end'] : false;
+		$dateField = (!empty($this->data) && $this->data['f_Date']['field'] != '') ? $this->data['f_Date']['field'] : false;
+		$dateStart = (!empty($this->data) && $this->data['f_Date']['start'] != '') ? $this->data['f_Date']['start'] : false;
+		$dateEnd = (!empty($this->data) && $this->data['f_Date']['end'] != '') ? $this->data['f_Date']['end'] : false;
 
 		$q = "SELECT * FROM
 			  (
@@ -37,11 +38,11 @@ class RefundRequestsController extends AppController {
 		if ($status) {
 			$q .= " AND RefundRequest.refundRequestStatusId = " . $status;
 		}
-		if ($createDateStart) {
-			$q .= " AND RefundRequest.dateCreated > '" . $createDateStart . "'";
+		if ($dateField && $dateStart) {
+			$q .= " AND RefundRequest." . $dateField . " >= '" . $dateStart . "'";
 		}			
-		if ($createDateEnd) {
-			$q .= " AND RefundRequest.dateCreated < '" . $createDateEnd . "'";
+		if ($dateField && $dateEnd) {
+			$q .= " AND RefundRequest." . $dateField . " < '" . $dateEnd . "'";
 		}
 
 		$q .= ") RefundInfo
@@ -114,6 +115,11 @@ class RefundRequestsController extends AppController {
 			$this->RefundRequest->create();
 			if ($this->RefundRequest->save($this->data)) {
 				$this->Session->setFlash(__('The Refund Request has been saved', true));
+				
+				$note = date("n/j/Y") . " -- addded refund request\n\n";
+				$q = "UPDATE ticket SET ticketNotes = CONCAT(?, IFNULL(ticketNotes, '')) WHERE ticketId = ?";
+				$this->RefundRequest->query($q, array($note, $this->data['RefundRequest']['ticketId']));
+				
 				$this->redirect(array('action'=>'index'));
 			} else {
 				$this->Session->setFlash(__('The Refund Request could not be saved. Please, try again.', true));
@@ -281,6 +287,10 @@ class RefundRequestsController extends AppController {
 
 		$this->Ticket->recursive = 1;
 		$ticket = $this->Ticket->read(null, $ticketId);
+		
+		// $this->Offer->recursive = 1;
+		// $offer = $this->Offer->read(null, $ticket['Ticket']['offerId']);
+		
 		$totalPaid = 0;
 		$cards = array();
 		foreach($ticket['PaymentDetail'] as $k=>$v) {

@@ -479,7 +479,46 @@ $this->searchController = 'Tickets';
 	<?php endif; ?>
 	</div>
 </div>
-	
+
+<br />
+<div class="collapsible">
+	<div class="handle"><?php __("Refund Requests (" . sizeof($ticket['RefundRequest']) . ")");?></div>
+	<div class="collapsibleContent related">
+	<br />
+	<?php if (sizeof($ticket['RefundRequest']) > 0):?>
+		<table cellspacing="0" cellpadding="0">
+ 			<tr>
+ 				<th style="text-align:center;">Request Id</th>
+ 				<th style="text-align:center;">Status</th>
+ 				<th style="text-align:center;">Request Date</th>
+ 				<th style="text-align:center;">Requested By</th>
+ 				<th style="text-align:center;">Approval Date</th>
+ 				<th style="text-align:center;">Approved By</th>
+ 				<th style="text-align:center;">Complete Date</th>
+ 				<th style="text-align:center;">Completed By</th>
+ 				<th style="text-align:center;">&nbsp;</th>
+ 			</tr>
+ 			<?php foreach ($ticket['RefundRequest'] as $k=>$v) : ?>
+ 			<tr>
+				<td style="text-align:center;"><?=$v['refundRequestId'];?></td>
+				<td style="text-align:center;"><?=$v['RefundRequestStatus']['description'];?></td>
+				<td style="text-align:center;"><?=$v['dateCreated'];?></td>
+				<td style="text-align:center;"><?=$v['createdBy'];?></td>
+				<td style="text-align:center;"><?=$v['dateApproved'];?></td>
+				<td style="text-align:center;"><?=$v['approvedBy'];?></td>
+				<td style="text-align:center;"><?=$v['dateCompleted'];?></td>
+				<td style="text-align:center;"><?=$v['completedBy'];?></td>				
+				<td style="text-align:center;">
+					<?php echo $html->link('View', '/refund_requests/view/' . $v['refundRequestId']); ?>
+				</td>
+			</tr>
+			<?php endforeach; ?>
+		</table>
+	<?php endif; ?>
+	<?php echo $html->link('Add Refund Request', '/refund_requests/add/' . $ticket['Ticket']['ticketId']); ?>
+	</div>
+</div>
+
 <br />
 <div class="collapsible">
 	<div class="handle"><?php __('Refund');?></div>
@@ -540,47 +579,6 @@ $this->searchController = 'Tickets';
 	<?php endif; ?>
 	</div>
 </div>
-
-
-<br />
-<div class="collapsible">
-	<div class="handle"><?php __("Refund Requests (" . sizeof($ticket['RefundRequest']) . ")");?></div>
-	<div class="collapsibleContent related">
-	<br />
-	<?php if (sizeof($ticket['RefundRequest']) > 0):?>
-		<table cellspacing="0" cellpadding="0">
- 			<tr>
- 				<th style="text-align:center;">Request Id</th>
- 				<th style="text-align:center;">Status</th>
- 				<th style="text-align:center;">Request Date</th>
- 				<th style="text-align:center;">Requested By</th>
- 				<th style="text-align:center;">Approval Date</th>
- 				<th style="text-align:center;">Approved By</th>
- 				<th style="text-align:center;">Complete Date</th>
- 				<th style="text-align:center;">Completed By</th>
- 				<th style="text-align:center;">&nbsp;</th>
- 			</tr>
- 			<?php foreach ($ticket['RefundRequest'] as $k=>$v) : ?>
- 			<tr>
-				<td style="text-align:center;"><?=$v['refundRequestId'];?></td>
-				<td style="text-align:center;"><?=$v['RefundRequestStatus']['description'];?></td>
-				<td style="text-align:center;"><?=$v['dateCreated'];?></td>
-				<td style="text-align:center;"><?=$v['createdBy'];?></td>
-				<td style="text-align:center;"><?=$v['dateApproved'];?></td>
-				<td style="text-align:center;"><?=$v['approvedBy'];?></td>
-				<td style="text-align:center;"><?=$v['dateCompleted'];?></td>
-				<td style="text-align:center;"><?=$v['completedBy'];?></td>				
-				<td style="text-align:center;">
-					<?php echo $html->link('View', '/refund_requests/view/' . $v['refundRequestId']); ?>
-				</td>
-			</tr>
-			<?php endforeach; ?>
-		</table>
-	<?php endif; ?>
-	<?php echo $html->link('Add Refund Request', '/refund_requests/add/' . $ticket['Ticket']['ticketId']); ?>
-	</div>
-</div>
-
 
 <br />
 <div class="collapsible">

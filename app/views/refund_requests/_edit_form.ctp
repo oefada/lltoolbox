@@ -42,6 +42,12 @@
 				background-color: #ccc;
 				height: 1px;
 			 }
+
+			 input.moneyWidth {
+				width: 150px;
+				text-align: right;
+			 }
+			 
 		</style>
 	
 		<hr class="refundRequestDivider" />
@@ -94,9 +100,9 @@
 		<? } ?>
 		
 		<div style="width: 50%; background-color: #dadada; border: 1px solid #ccc; margin: 0 0 20px 0;">
-			<?= $form->input('promoDeduction', array('label'=>'Promo Deduction', 'class'=>'refund-update')); ?>
-			<?= $form->input('cancelFeeHotel', array('label'=>'Hotel Cancel Fee', 'class'=>'refund-update')); ?>
-			<?= $form->input('cancelFeeLL', array('label'=>'LL Cancel Fee', 'class'=>'refund-update')); ?>
+			<?= $form->input('promoDeduction', array('label'=>'Promo Deduction', 'class'=>'refund-update moneyWidth')); ?>
+			<?= $form->input('cancelFeeHotel', array('label'=>'Hotel Cancel Fee', 'class'=>'refund-update moneyWidth')); ?>
+			<?= $form->input('cancelFeeLL', array('label'=>'LL Cancel Fee', 'class'=>'refund-update moneyWidth')); ?>
 			<?= $form->input('refundHandlingFeeFlag', array('label' => 'Refund Handling', 'options'=>array('0'=>'No', '1'=>'Yes'), 'class'=>'refund-update')); ?>
 		</div>
 		
