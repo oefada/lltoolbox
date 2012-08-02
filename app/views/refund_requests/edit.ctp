@@ -15,7 +15,7 @@
 	
 	<hr class="refundRequestDivider" />
 	
-	<?= $form->input('keepOrRemit', array('label' => 'Keep / Remit', 'options' => $refundOrCOFList, 'empty' => '-- ')); ?>
+	<?= $form->input('keepOrRemit', array('label' => 'Keep / Remit', 'options' => $keepOrRemitList, 'empty' => '-- ')); ?>
 	<?= $form->input('ccRefundedFlag', array('type' => 'checkbox', 'label' => 'CC Refunded')); ?>
 	<?= $form->input('cofPostedFlag', array('type' => 'checkbox', 'label' => 'CC Posted')); ?>
 	<?= $form->input('toolboxAllocatedFlag', array('type' => 'checkbox', 'label' => 'Toolbox Allocated')); ?>
