@@ -34,6 +34,9 @@ class UnsubscribeLogsController extends AppController
 		$unsubCountArr=$this->UnsubscribeLog->getUnsubCountByMonth($nlArr);
 		$this->set("unsubCountArr", $unsubCountArr);
 
+		$subCountArr=$this->UnsubscribeLog->getSubCountByMailingListId();
+		$this->set("subCountArr", $subCountArr);
+
 		if (!empty($this->data)){
 
 			// this sets $this->start_ut
