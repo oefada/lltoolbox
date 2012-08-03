@@ -921,13 +921,13 @@ class WebServiceTicketsController extends WebServicesController
 	}
 	
 	public function ppv($in0) {
+
 		// Can send in array or JSON string. Useful for using ppv() inside toolbox
 		if (!is_array($in0)) {
 			$params = json_decode($in0, true);
 		} else {
 			$params = $in0;
 		}
-
 		// TODO THIS METHOD NEEDS SOME MAJOR REVAMP
 
 		// required params for sending and viewing ppvs
@@ -1476,8 +1476,8 @@ class WebServiceTicketsController extends WebServicesController
 		$clientPpv = false;
 		$internalPpv = false;
 		$pleaseRespond = false;
-        
-        $offerTypeTxt_inEmail = false;
+ 
+    $offerTypeTxt_inEmail = false;
         
 		// "Please respond" header
 		switch ($ppvNoticeTypeId) {
@@ -1487,21 +1487,21 @@ class WebServiceTicketsController extends WebServicesController
 			case 27:
 			case 29:
 			case 33:
-				$pleaseRespond = true;
+			$pleaseRespond = true;
 		}
         
-        // Offer Type Text header
-        switch ($ppvNoticeTypeId) {
-            case 2:
-            case 10:
-            case 23:
-            case 24:
-            case 27:
-            case 28:
-            case 29:
-            case 33:
-                $offerTypeTxt_inEmail = $offerTypeTxt;
-        }
+		// Offer Type Text header
+		switch ($ppvNoticeTypeId) {
+			case 2:
+			case 10:
+			case 23:
+			case 24:
+			case 27:
+			case 28:
+			case 29:
+			case 33:
+			$offerTypeTxt_inEmail = $offerTypeTxt;
+		}
         
 		
 		// Client PPVs
@@ -1540,6 +1540,11 @@ class WebServiceTicketsController extends WebServicesController
 		}
 
 		// "Confirm Reservation" button and other buttons...
+		// $emailSubject has not be defined as this point, not sure why it is appended to imgHref, 
+		// so check/init it
+		if (!isset($emailSubject)){
+			$emailSubject='';
+		}
 		$imgHref = "mailto:".$emailReplyTo."?Subject=Ticket%20".$ticketId."%20-%20".$emailSubject;
 
 		switch ($ppvNoticeTypeId) {
@@ -1951,8 +1956,17 @@ class WebServiceTicketsController extends WebServicesController
 			case 45:
 				$rafAmount = $params['rafAmount'];
 				$emailSubject = "Your account has been credited";
-				include('../vendors/email_msgs/notifications/45_raf_paid.html');
-				break;				
+				if ($params['siteId']==1){
+					include('../vendors/email_msgs/notifications/45_raf_paid.html');
+				}else{
+					if ($params['ppvVersion']=='old'){
+						$name=$params['userFirstName'];
+						include('../vendors/email_msgs/notifications/46_raf_credited.old.html');
+					}else{
+						include('../vendors/email_msgs/notifications/47_raf_credited.html');
+					}
+				}
+				break;
 			default:
 				break;
 		}
@@ -1981,7 +1995,8 @@ class WebServiceTicketsController extends WebServicesController
 			}
 		} else {
 			$emailBody = ob_get_clean();
-			if ($ppvNoticeTypeId == 42 || $ppvNoticeTypeId == 43 || $ppvNoticeTypeId == 45) {
+			$ppvNoticeTypeIdArr=array(42, 43, 45);
+			if (in_array($ppvNoticeTypeId, $ppvNoticeTypeIdArr)){
 				$emailBody = $this->utmLinks($emailBody, $ppvNoticeTypeId, $append);
 			}
 		}
@@ -2011,7 +2026,12 @@ class WebServiceTicketsController extends WebServicesController
 			if (trim($override_email_subject)) {
 				$emailSubject = $override_email_subject;
 			}
-			
+
+			//$str=$userEmail.$emailFrom.$emailCc.$emailBcc.$emailReplyTo.$emailSubject.$emailBody.$ticketId.$ppvNoticeTypeId.$ppvInitials;
+			//$this->Ticket->logIt('email_data');
+			//$this->Ticket->logIt($str);
+
+
 			$this->sendPpvEmail($userEmail, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials);
 
 			// AUTO SECTION FOR MULTI CLIENT PPV for multi-client packages send client emails [CLIENT PPV]
