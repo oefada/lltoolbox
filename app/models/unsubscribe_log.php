@@ -21,7 +21,19 @@ class UnsubscribeLog extends AppModel {
  
 		return $r;
 
-	} 
+	}
+
+	/**
+	 * TODO: short description.
+	 * 
+	 * @return TODO
+	 */
+	public function getSubCountByMailingListId(){
+
+		$q="SELECT COUNT(*) as num, mailingListId FROM userMailOptin WHERE optin=1 GROUP BY mailingListId";
+		return $this->query($q);
+
+	}
 }
 
 ?>
