@@ -63,25 +63,27 @@ if (!$clientPpv && is_array($clients)) {
 <?php if (!in_array($ppvNoticeTypeId, array(36))): ?>
 <font face="Arial, Helvetica, sans-serif" size="2" style="font-size:12px; line-height:20px" color="#474747">
 <p>
-<? if ($ppvNoticeTypeId == 1): // RESERVATION CONFIRMATION (PPV 1)?>
-<? if ($isAuction): ?>
-This reservation is non refundable. Cancellations and changes may result in additional fees.
-<? else: ?>
-Cancellations and changes may result in additional fees.
+<? 
+// RESERVATION CONFIRMATION (PPV 1)
+// AUCTION WINNER (PPV 18)
+if ($ppvNoticeTypeId == 1 || $ppvNoticeTypeId==18): 
+
+	if ($isAuction): ?>
+
+		This Auction purchase is non refundable. Cancellations and changes may result in additional fees. 
+
+	<? else: ?>
+		Cancellations and changes may result in additional fees.
+	<? endif; ?>
+
+	<a href='http://www.luxurylink.com/about/index.php/cancellations-refunds/?utm_source=ll&utm_medium=xa&utm_campaign=res_confirm' target='_blank'>View Cancellation Policy</a>.<br> </p> <p>
+
 <? endif; ?>
-<a href="<?= $siteUrl ?>about/index.php/cancellations-refunds/">View Cancellation Policy</a>.</p>
-<p>
-<? endif; ?>
-
-
-
-
 
 <?php if (!$clientPpv): ?>
 
 <?php if (!in_array($ppvNoticeTypeId, array(14))): ?>
-If you have any questions or additional needs, please contact our Travel Concierge at (888) 297-3299
-or (310) 215-8060, or send us an email at <a href="mailto:concierge@<?= $siteEmail ?>" style="text-decoration: none; color: #008EC5;">concierge@<?= $siteEmail ?></a>. Our business hours are Monday through Friday, 6:00am to 9:00pm, Saturday and Sunday from 9:00am to 4:00pm Pacific Time.</p>
+If you have any questions or additional needs, please contact our Travel Concierge at <?=Base::phoneLongLL?>, or send us an email at <a href="mailto:concierge@<?= $siteEmail ?>" style="text-decoration: none; color: #008EC5;">concierge@<?= $siteEmail ?></a>. Our business hours are Monday through Friday, 6:00am to 9:00pm, Saturday and Sunday from 9:00am to 4:00pm Pacific Time.</p>
 <? endif; ?>
 
 
