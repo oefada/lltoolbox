@@ -1,190 +1,94 @@
-<style type="text/css">
-	.ExternalClass {
-		width: 100% !important;
-	}
-</style>
-<table width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#f6f6f6" align="center">
-	<tr>
-		<td>
-		<table width="600" cellpadding="0" cellspacing="0" border="0" align="center">
-			<tr>
-				<td>
-				<table width="100%" cellpadding="0" cellspacing="0" border="0">
-					<tr>
-						<td style="font-size:0; line-height:0;"><img src="http://www.luxurylink.com/images/email/pixel.gif" width="1" height="63"></td>
-					</tr>
-					<tr>
-						<td>
-						<table width="100%" cellpadding="0" cellspacing="0" border="0">
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><html><head><META http-equiv="Content-Type" content="text/html; charset=utf-8"></head><body>
+     <table border="0" width="100%" style="background-color:#f6f6f6;">
+            <tbody>
+                <tr>
+                    <td align="center" valign="top" colspan="3">
+
+                    <table cellspacing="0" cellpadding="0" border="0" align="center" width="600" style="text-align:left;background-color:rgb(255, 255, 255)">
+                        <tbody>
+
+                            <tr>
+                                <td align="left" style="padding:0px 0px 9px 0px;font-family:Helvetica,maradival,Sans-Serif;color:rgb(68, 68, 68);font-size:12px">
+									<a name="logo" href="http://www.luxurylink.com?utm_medium=email&utm_source=post-trip&utm_campaign=post-trip" target="_blank">
+									<img border="0"  height="44" alt="Luxury Link" src="www.luxurylink.com/images/email/new/images/survey_03.jpg">
+									</a>
+								</td>
+                            </tr>
+
+                            <tr>
+                                <td align="center" style="padding:13px 0px 0px 0px;">
+									<a name="banner" href="http://www.surveygizmo.com/s3/637607/How-was-your-Luxury-Link-Vacation?utm_medium=email&utm_source=post-trip&utm_campaign=post-trip" target="_blank">
+									<img border="0" width="560" height="191" alt="Where to next?" src="www.luxurylink.com/images/email/new/images/banner.jpg">
+									</a>
+								</td>
+                            </tr>
+
+                            <tr>
+                                <td style="padding:15px 0px 8px 0px" colspan="3">
+                                <table cellspacing="0" cellpadding="0" border="0" width="558" align="center">
+                                    <tbody>
+									<tr>
+                                            <td align="left" style="padding:0px 0px 0px 0px;font-family:Times New Roman,Georgia,Serif;color:rgb(68, 68, 68);font-size:33px;">
+											Dear %%User.FirstName%%, </td>
+                                        </tr>
+                                        <tr>
+                                            <td align="left" style="padding:25px 0px 0px 0px;line-height:19px;font-family:Helvetica,maradival,Sans-Serif;color:rgb(68, 68, 68);font-size:14px">
+											I hope you enjoyed your Luxury Link vacation at %%ClientNames%%.  We pride ourselves on hand-selecting the world’s finest luxury hotels and resorts and offering them to you at an incredible value.  We would love to know all about your experience so we can make each Luxury Link vacation better than the last and continue to offer the best. 
+											</td>
+                                        </tr>
+										<tr>
+                                            <td align="left" style="padding:20px 0px 0px 0px;">
+											<a href="http://www.surveygizmo.com/s3/637607/How-was-your-Luxury-Link-Vacation" target="_blank"><img src="www.luxurylink.com/images/email/new/images/button.jpg" width="213" height="26" alt="Tell Us About Your Experience" border="0"></a>
+											</td>
+                                        </tr>
+										<tr>
+                                            <td align="left" style="padding:18px 0px 0px 0px;line-height:17px;font-family:Helvetica,maradival,Sans-Serif;color:rgb(68, 68, 68);font-size:14px">
+											Thanks in advance for your valuable time and input.
+											</td>
+                                        </tr>
+										<tr>
+                                            <td align="left" style="padding:20px 0px 0px 0px;line-height:17px;font-family:Helvetica,maradival,Sans-Serif;color:rgb(68, 68, 68);font-size:14px">
+											Warm Regards,
+										</tr>
+										<tr>
+											<td align="left" style="padding:0px 0px 0px 0px;"><img border="0" width="147" height="48" src="www.luxurylink.com/images/email/new/images/diane.gif"></td>
+										 </tr>
+										<tr>
+											<td align="left" style="padding:5px 0px 0px 0px;line-height:17px;font-family:Helvetica,maradival,Sans-Serif;color:rgb(68, 68, 68);font-size:14px">
+											Diane McDavitt<br />
+											President & Co-Founder
+											</td>
+										</tr>
+ 										<tr>
+                                            <td align="left" style="padding:25px 0px 0px 0px;line-height:19px;font-family:Helvetica,maradival,Sans-Serif;color:rgb(68, 68, 68);font-size:14px">
+											P.S. Introduce your friends to the extraordinary vacation experiences on Luxury Link! We will welcome them with a $50 credit for their first purchase, and thank you for the introduction with a $50 credit for each friend that books with us. <a href="http://www.luxurylink.com/refer-friend/?utm_source=ll&utm_medium=xa&utm_campaign=ll_posttrip" target="_blank" style="color: #008ec5;text-decoration: none;">Refer your friends now</a>.
+											</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                </td>
+                            </tr>
 							<tr>
-								<td bgcolor="#86878a" colspan="3" style="font-size:0; line-height:0;"><img src="http://www.luxurylink.com/images/email/pixel.gif" align="left" vspace="0" hspace="0" width="1" height="1"></td>
-							</tr>
-							<tr>
-								<td width="1" bgcolor="#86878a" style="font-size:0; line-height:0;"><img src="http://www.luxurylink.com/images/email/pixel.gif" align="left" vspace="0" hspace="0" width="1" height="1"></td>
-								<td width="598" valign="top">
-								<table bgcolor="#ffffff" width="100%" cellpadding="0" cellspacing="0" border="0">
-									<tr>
-										<td>
-										<table width="100%" cellpadding="0" cellspacing="0" border="0">
-											<tr>
-												<td width="20"></td>
-												<td width="558" valign="top">
-												<table width="100%" cellpadding="0" cellspacing="0" border="0">
-													<tr>
-														<td style="font-size:0; line-height:0;"><img src="http://www.luxurylink.com/images/email/pixel.gif" width="1" height="21"></td>
-													</tr>
-													<tr>
-														<td>
-														<table width="100%" cellpadding="0" cellspacing="0" border="0">
-															<tr>
-																<td width="267" style="font-size:0; line-height:0;" valign="top"><a href="http://www.luxurylink.com"><img src="http://www.luxurylink.com/images/email/logo.gif" border="0" alt="BreakFly" align="left" vspace="0" hspace="0" width="267" height="36"></a></td>
-																<td width="16"></td>
-																<td width="275" valign="top">
-																<table width="100%" cellpadding="0" cellspacing="0" border="0">
-																	<tr>
-																		<td style="font-size:0; line-height:0;"><img src="http://www.luxurylink.com/images/email/pixel.gif" width="1" height="18"></td>
-																	</tr>
-																	<tr>
-																		<td align="right" style="line-height:15px; text-align:right;"><font face="Arial, Helvetica, sans-serif" size="2" style="font-size:12px; line-height:15px" color="#a4a5a7">%%CurrentDate%%</font></td>
-																	</tr>
-																</table></td>
-															</tr>
-														</table></td>
-													</tr>
-													<tr>
-														<td>
-														<p>
-															<font face="Arial, Helvetica, sans-serif" size="2" style="font-size:14px; line-height:20px" color="#474747">
-																<br>
-																<!-- ---------- -->
-																<table cellpadding="0" cellspacing="0">
-																	<tr>
-																		<td colspan="2" style="font-size:0; line-height:0;" bgcolor="#86878a"><img src="http://www.luxurylink.com/images/email/pixel.gif" alt="" hspace="0" vspace="0" width="1" height="1" align="left" /></td>
-																	</tr>
-																	<tr>
-																		<td valign="top">
-																		<p style="margin-top:18px;">
-																			<font face="Arial, Helvetica, sans-serif" size="3" style="font-size:18px; line-height:22px" color="#9c9a68"> <strong>Your Luxury Link experience</strong></font>
-																		</p>
-																		<p>
-																			<strong>Dear %%User.FirstName%%,</strong>
-																		</p>
-																		<p>
-																			Welcome home! We hope you had a remarkable experience on your Luxury Link vacation at %%ClientNames%%.
-																		</p>
-																		<p>
-																			With your help, we can make each Luxury Link experience even better than the last &ndash; please tell us about your trip.
-																		</p>
-																		<p>
-																			<a href="%%URL%%">Click here</a> to rate your Luxury Link experience.
-																		</p>
-																		<p>
-																			Thank you for using Luxury Link, and we look forward to helping you plan your next vacation soon.
-																		</p>
-																		<p>
-																			&nbsp;
-																		</p>
-																		<p>
-																			Warm Regards,
-																			<br>
-																			<br>
-																			Luxury Link
-																			<br>
-																		</p>
-																		<br>
-																		</td>
-																		<td valign="top" align="center" width="172">
-																			<img width="172" height="172" alt="How was your experience?" src="http://www.luxurylink.com/images/email/how_was_your_experience_LL.png">
-																			<br>
-																			<br>
-																			<a href="%%URL%%"><img border="0" width="130" height="42" alt="Click here to rate your experience" src="http://www.luxurylink.com/images/email/btn_rateExperience_LL.jpg"></a>
-																		</td>
-																	</tr>
-																</table> <!-- ---------- -->
-												</table></td>
-												<td width="20"></td>
-											</tr>
-										</table></td>
-									</tr>
-								</table></td>
-								<td width="1" bgcolor="#86878a" style="font-size:0; line-height:0;"><img src="http://www.luxurylink.com/images/email/pixel.gif" align="left" vspace="0" hspace="0" width="1" height="1"></td>
-							</tr>
-							<tr>
-								<td bgcolor="#86878a" colspan="3" style="font-size:0; line-height:0;"><img src="http://www.luxurylink.com/images/email/pixel.gif" align="left" vspace="0" hspace="0" width="1" height="1"></td>
-							</tr>
-						</table></td>
-					</tr>
-					<tr>
-						<td style="font-size:0; line-height:0;"><img src="http://www.luxurylink.com/images/email/pixel.gif" width="1" height="27"></td>
-					</tr>
-					<tr>
-						<td>
-						<table width="100%" cellpadding="0" cellspacing="0" border="0">
-							<tr>
-								<td width="21"></td>
-								<td width="292" valign="top">
-								<table width="100%" cellpadding="0" cellspacing="0" border="0">
-									<tr>
-										<td style="line-height:14px;"><font face="Arial, Helvetica, sans-serif" color="#474747" size="1" style="font-size:10px; line-height:14px"> <a style="text-decoration:underline; color:#036dfc;" href="http://www.luxurylink.com/"><font color="#036dfc">Luxury Link</font></a>
-											<br>
-											<font face="Arial, Helvetica, sans-serif" color="#474747" size="1" style="font-size:10px; line-height:14px"> 5570 Lincoln Boulevard, Los Angeles, CA 90094
-												<br>
-												<br>
-												For information or assistance, call 1 (888) 297-3299 or email
-												<br>
-												<a style="text-decoration:underline; color:#036dfc;" href="mailto:concierge@luxurylink.com"><font color="#036dfc">concierge@luxurylink.com</font></a>.
-												<br>
-												<a style="text-decoration:underline; color:#036dfc;" href="http://www.luxurylink.com/about/index.php/privacy-policy/"><font color="#036dfc">Privacy Policy</font></a> </font></td>
-									</tr>
-								</table></td>
-								<td width="114"></td>
-								<td width="1" bgcolor="#86878a" style="font-size:0; line-height:0;"><img src="http://www.luxurylink.com/images/email/pixel.gif" align="left" vspace="0" hspace="0" width="1" height="1"></td>
-								<td width="20"></td>
-								<td width="152" valign="top">
-								<table width="100%" cellpadding="0" cellspacing="0" border="0">
-									<tr>
-										<td style="line-height:13px;"><font face="Arial, Helvetica, sans-serif" size="1" style="font-size:10px; line-height:13px" color="#474747">Keep up with the latest deals.</font></td>
-									</tr>
-									<tr>
-										<td style="font-size:0; line-height:0;"><img src="http://www.luxurylink.com/images/email/pixel.gif" width="1" height="5"></td>
-									</tr>
-									<tr>
-										<td>
-										<table cellpadding="0" cellspacing="0" border="0">
-											<tr>
-												<td width="24" style="font-size:0; line-height:0;"><a style="text-decoration:none; color:#036dfc;" href="http://www.facebook.com/LuxuryLink"><img src="http://www.luxurylink.com/images/email/ico-facebook.jpg" align="left" vspace="0" hspace="0" alt="facebook" width="24" height="24" border="0"></a></td>
-												<td width="6"></td>
-												<td style="line-height:13px;"><font face="Arial, Helvetica, sans-serif" color="#036dfc" size="1" style="font-size:10px; line-height:13px"><a style="text-decoration:none; color:#036dfc;" href="http://www.facebook.com/LuxuryLink"><font color="#036dfc">Facebook</font></a></font></td>
-											</tr>
-											<tr>
-												<td colspan="3" style="font-size:0; line-height:0;"><img src="http://www.luxurylink.com/images/email/pixel.gif" width="1" height="5"></td>
-											</tr>
-											<tr>
-												<td width="24" style="font-size:0; line-height:0;"><a style="text-decoration:none; color:#036dfc;" href="http://twitter.com/luxurylink"><img src="http://www.luxurylink.com/images/email/ico-twitter.jpg" align="left" vspace="0" hspace="0" alt="twitter" width="24" height="24" border="0"></a></td>
-												<td width="6"></td>
-												<td style="line-height:13px;"><font face="Arial, Helvetica, sans-serif" color="#036dfc" size="1" style="font-size:10px; line-height:13px"><a style="text-decoration:none; color:#036dfc;" href="http://twitter.com/luxurylink"><font color="#036dfc">Twitter</font></a></font></td>
-											</tr>
-											<tr>
-												<td colspan="3" style="font-size:0; line-height:0;"><img src="http://www.luxurylink.com/images/email/pixel.gif" width="1" height="5"></td>
-											</tr>
-											<tr>
-												<td width="24" style="font-size:0; line-height:0;"><a style="text-decoration:none; color:#036dfc;" href="http://www.luxurylink.com/community/forum.php"><img src="http://www.luxurylink.com/images/email/ico-community.jpg" align="left" vspace="0" hspace="0" alt="community" width="24" height="24" border="0"></a></td>
-												<td width="6"></td>
-												<td style="line-height:13px;"><font face="Arial, Helvetica, sans-serif" color="#036dfc" size="1" style="font-size:10px; line-height:13px"><a style="text-decoration:none; color:#036dfc;" href="http://www.luxurylink.com/community/forum.php"><font color="#036dfc">Join the
-														<br>
-														Community</font></a></font></td>
-											</tr>
-										</table></td>
-									</tr>
-								</table></td>
-							</tr>
-						</table></td>
-					</tr>
-					<tr>
-						<td style="font-size:0; line-height:0;"><img src="http://www.luxurylink.com/images/email/pixel.gif" width="1" height="22"></td>
-					</tr>
-				</table></td>
-			</tr>
-		</table></td>
-	</tr>
-</table>
+                                <td align="center" style="padding:5px 0px 0px 0px;">&nbsp;</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <table cellspacing="0" cellpadding="0" border="0" align="center" width="600" style="background-color: #2d2f31;">
+                        <tbody>
+                            <tr>
+                                <td style="text-align:center;line-height:15px;font-family:Helvetica,maradival,Sans-Serif;color: #6e7072;font-size:10px;padding:20px 0px 20px 0px;">
+                                <a name="footer" href="http://www.luxurylink.com/?utm_source=ll&utm_medium=xa&utm_campaign=ll_posttrip" target="_blank" style="color: #008ec5;text-decoration: none;">Luxury Link</a><br>
+                                5570 Lincoln Blvd. Los Angeles, CA 90094 <br>
+                                For information or assistance, call 1 (888) 297-3299 or email
+                                <a name="footer_email" href="mailto:concierge@luxurylink.com" target="_blank" style="color: #008ec5;text-decoration: none;">concierge@luxurylink.com</a>.  |  <a name="footer_privacy" href="http://www.luxurylink.com/about/index.php/privacy-policy/" target="_blank" style="color: #008ec5;text-decoration: none;">Privacy Policy</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+</body></html>
