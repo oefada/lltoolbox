@@ -84,6 +84,48 @@ if (isset($unsubLogs) && count($unsubLogs)>0){
 
 }
 
+echo "<b>Number of unsubs per userMailOptin table</b>";
+//print "<pre>";print_r($unsubUMOCountArr);print "</pre>";
+echo "<table border=1 cellpadding=4 cellspacing=0 width='300' style='width:300px;'>";
+echo "<tr><td class='tdTitle'># unsubs</td><td class='tdTitle'>Year-Month</td></tr>";
+$total=0;
+foreach($unsubUMOCountArr as $key=>$rows){
+	foreach($rows as $j=>$arr){
+		$nlId=$arr['userMailOptin']['mailingListId'];
+		if (isset($nlDataArr[1][$nlId])){
+			$siteId=1;
+			$name=$nlDataArr[1][$nlId]['name'];
+		}elseif (isset($nlDataArr[2][$nlId])){
+			$siteId=2;
+			$name=$nlDataArr[2][$nlId]['name'];
+		}elseif (isset($nlDataArr[3][$nlId])){
+			$siteId=3;
+			$name=$nlDataArr[3][$nlId]['name'];
+		}else{
+			$siteId=0;
+			$name="?";
+		}
+		if (!isset($p[$siteId][$nlId])){
+			echo "<tr><td colspan=2 bgcolor=#cccccc>";
+			echo $nlDataArr[$siteId][$nlId]['name']." : ".$nlId." : ".$nlDataArr[$siteId][$nlId]['contactId'];
+			echo "</td></tr>";
+			$p[$siteId][$nlId]=1;
+		}
+		echo "<tr>";
+		echo "<td>".number_format($arr[0]['num'])."</td>";
+		echo "<td>";
+		echo date("M - Y", $arr[0]['optoutDatetime_ut']);
+		echo "</td>";
+		echo "</tr>";
+		$total+=$arr[0]['num'];
+	}
+}
+echo "<tr><td align=right> Total:</td><td>".number_format($total)."</td></tr>";
+echo "</table>";
+
+$total=0;
+unset($p);
+
 ?>
 
 <b>Users Sub'd per Our Dbs</b><br>
@@ -108,29 +150,34 @@ echo "</table>";
 
 echo "</td><td valign=top>";
 
-	echo "<b>Number of unsubs by mailingId and month</b>";
+	echo "<b>Number of unsubs per unsubscribeLog table</b>";
 
 	echo "<table border=1 cellpadding=4 cellspacing=0 width='300' style='width:300px;'>";
-	echo "<tr><td class='tdTitle'>mailingId</td><td class='tdTitle'># unsubs</td><td class='tdTitle'>Year-Month</td></tr>";
+	echo "<tr><td class='tdTitle'># unsubs</td><td class='tdTitle'>Year-Month</td></tr>";
 	$total=0;
 	foreach($unsubCountArr as $key=>$rows){
 		foreach($rows as $j=>$arr){
 			$nlId=$arr['unsubscribeLog']['mailingId'];
 			$siteId=$arr['unsubscribeLog']['siteId'];
 			if (!isset($p[$siteId][$nlId])){
-				echo "<tr><td colspan=3 bgcolor=#cccccc>";
+				echo "<tr><td colspan=2 bgcolor=#cccccc>";
 				echo $nlDataArr[$siteId][$nlId]['name']." : ".$nlId;
+				echo " : ".$nlDataArr[$siteId][$nlId]['contactId'];
 				echo "</td></tr>";
 				$p[$siteId][$nlId]=1;
 			}
-			echo "<tr><td>".$siteId."</td>";
+			echo "<tr>";
+			//echo "<td>".$siteId."</td>";
 			echo "<td>".number_format($arr[0]['num'])."</td>";
-			echo "<td>".$arr[0]['unsubDate_ym']."</td>";
+			echo "<td>";
+			echo date("M", strtotime($arr[0]['unsubDate_ym']));	
+			echo " - ".substr($arr[0]['unsubDate_ym'],0,4);
+			echo "</td>";
 			echo "</tr>";
 			$total+=$arr[0]['num'];
 		}
 	}
-	echo "<tr><td align=right> Total:</td><td>".number_format($total)."</td><td> &nbsp; </td></tr>";
+	echo "<tr><td align=right> Total:</td><td>".number_format($total)."</td></tr>";
 	echo "</table>";
 
 echo "</td></tr></table>";
