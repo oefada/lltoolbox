@@ -2,11 +2,13 @@
 
 App::import("Vendor","NL",array('file' => "appshared".DS."legacy".DS."classes".DS."newsletter_manager.php"));
 
+
 class UnsubscribeLogsController extends AppController 
 {
 
 	var $name = 'UnsubscribeLogs';
 	var $helpers = array('Form', 'Javascript');
+	var $uses = array('UserMailOptin','UnsubscribeLog');
 
 	var $components = array('RequestHandler');
 
@@ -36,6 +38,9 @@ class UnsubscribeLogsController extends AppController
 
 		$subCountArr=$this->UnsubscribeLog->getSubCountByMailingListId();
 		$this->set("subCountArr", $subCountArr);
+
+		$unsubUMOCountArr=$this->UserMailOptin->getUnsubCountByMonth($nlArr);
+		$this->set("unsubUMOCountArr", $unsubUMOCountArr);
 
 		if (!empty($this->data)){
 
@@ -113,10 +118,6 @@ class UnsubscribeLogsController extends AppController
 		// Stop Cake from displaying action's execution time 
 		Configure::write('debug',0); 
 
-		// for mailing list drop down selector
-		$nlMgr=new NewsletterManager();
-		$nlArr=$nlMgr->getNewsletterIdArr();
-
 		// sets $this->start_ut
 		$this->setStartUt();
 		// sets $this->end_ut
@@ -128,7 +129,7 @@ class UnsubscribeLogsController extends AppController
 		$headers = array( 
 			'UnsubscribeLog'=>array( 
 				'email' => 'Email', 
-				'mailingId' => $nlArr[$this->data['unsubscribe_logs']['mailingList']], 
+				'mailingId' => $this->data['unsubscribe_logs']['mailingList'], 
 				'subDate' => 'Subscribed', 
 				'unsubDate' => 'Unsubscribed' 
 			) 
