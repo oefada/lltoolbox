@@ -39,7 +39,7 @@
                                         </tr>
 										<tr>
                                             <td align="left" style="padding:20px 0px 0px 0px;">
-											<a href="http://www.surveygizmo.com/s3/637607/How-was-your-Luxury-Link-Vacation" target="_blank"><img src="http://www.luxurylink.com/images/email/new/images/button.jpg" width="213" height="26" alt="Tell Us About Your Experience" border="0"></a>
+											<a href="http://www.surveygizmo.com/s3/637607/How-was-your-Luxury-Link-Vacation?utm_medium=email&utm_source=post-trip&utm_campaign=post-trip" target="_blank"><img src="http://www.luxurylink.com/images/email/new/images/button.jpg" width="213" height="26" alt="Tell Us About Your Experience" border="0"></a>
 											</td>
                                         </tr>
 										<tr>
