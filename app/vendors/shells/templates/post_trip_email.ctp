@@ -11,7 +11,7 @@
                             <tr>
                                 <td align="left" style="padding:0px 0px 9px 0px;font-family:Helvetica,maradival,Sans-Serif;color:rgb(68, 68, 68);font-size:12px">
 									<a name="logo" href="http://www.luxurylink.com?utm_medium=email&utm_source=post-trip&utm_campaign=post-trip" target="_blank">
-									<img border="0"  height="44" alt="Luxury Link" src="www.luxurylink.com/images/email/new/images/survey_03.jpg">
+									<img border="0"  height="44" alt="Luxury Link" src="http://www.luxurylink.com/images/email/new/images/survey_03.jpg">
 									</a>
 								</td>
                             </tr>
@@ -19,7 +19,7 @@
                             <tr>
                                 <td align="center" style="padding:13px 0px 0px 0px;">
 									<a name="banner" href="http://www.surveygizmo.com/s3/637607/How-was-your-Luxury-Link-Vacation?utm_medium=email&utm_source=post-trip&utm_campaign=post-trip" target="_blank">
-									<img border="0" width="560" height="191" alt="Where to next?" src="www.luxurylink.com/images/email/new/images/banner.jpg">
+									<img border="0" width="560" height="191" alt="Where to next?" src="http://www.luxurylink.com/images/email/new/images/banner.jpg">
 									</a>
 								</td>
                             </tr>
@@ -39,7 +39,7 @@
                                         </tr>
 										<tr>
                                             <td align="left" style="padding:20px 0px 0px 0px;">
-											<a href="http://www.surveygizmo.com/s3/637607/How-was-your-Luxury-Link-Vacation" target="_blank"><img src="www.luxurylink.com/images/email/new/images/button.jpg" width="213" height="26" alt="Tell Us About Your Experience" border="0"></a>
+											<a href="http://www.surveygizmo.com/s3/637607/How-was-your-Luxury-Link-Vacation" target="_blank"><img src="http://www.luxurylink.com/images/email/new/images/button.jpg" width="213" height="26" alt="Tell Us About Your Experience" border="0"></a>
 											</td>
                                         </tr>
 										<tr>
@@ -52,7 +52,7 @@
 											Warm Regards,
 										</tr>
 										<tr>
-											<td align="left" style="padding:0px 0px 0px 0px;"><img border="0" width="147" height="48" src="www.luxurylink.com/images/email/new/images/diane.gif"></td>
+											<td align="left" style="padding:0px 0px 0px 0px;"><img border="0" width="147" height="48" src="http://www.luxurylink.com/images/email/new/images/diane.gif"></td>
 										 </tr>
 										<tr>
 											<td align="left" style="padding:5px 0px 0px 0px;line-height:17px;font-family:Helvetica,maradival,Sans-Serif;color:rgb(68, 68, 68);font-size:14px">
