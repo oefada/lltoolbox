@@ -1,5 +1,5 @@
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><html><head><META http-equiv="Content-Type" content="text/html; charset=utf-8"></head><body>
+<html><body>
      <table border="0" width="100%" style="background-color:#f6f6f6;">
             <tbody>
                 <tr>
