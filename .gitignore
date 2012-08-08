@@ -13,3 +13,4 @@ app/vendors/appshared
 app/webroot/images
 luxurylink
 .DS_Store
+.idea
