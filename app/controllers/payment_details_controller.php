@@ -8,7 +8,7 @@ class PaymentDetailsController extends AppController {
 
 	var $name = 'PaymentDetails';
 	var $helpers = array('Html', 'Form', 'Ajax', 'Text', 'Layout', 'Number');
-	var $uses = array('PaymentDetail', 'Ticket', 'UserPaymentSetting', 'PpvNotice', 'Country', 'Track', 'TrackDetail', 'User','creditTracking', 'PromoTicketRel', 'Promo', 'PromoCode', 'PaymentType', 'PaymentDetail','Ticket'
+	var $uses = array('PaymentDetail', 'Ticket', 'UserPaymentSetting', 'PpvNotice', 'Country', 'CountryBilling', 'Track', 'TrackDetail', 'User','creditTracking', 'PromoTicketRel', 'Promo', 'PromoCode', 'PaymentType', 'PaymentDetail','Ticket'
 );
 
 
@@ -151,15 +151,28 @@ class PaymentDetailsController extends AppController {
 				$this->loadModel('PromoCode');
 				$code = $this->PromoCode->findBypromoCode($this->data['PaymentDetail']['ppTransactionId']);
 				
-				$this->PaymentDetail->Ticket->PromoTicketRel->create();
-				$this->PaymentDetail->Ticket->PromoTicketRel->save(array(
-						'ticketId' => $this->data['ticketId'],
-						'userId'   => $this->data['userId'],
-						'promoCodeId' => $code['PromoCode']['promoCodeId']
-				));
+				// ticket 3446 - minimum purchase restriction
+				$minimumPurchase = intval($code['Promo'][0]['minPurchaseAmount']);
+				$ticketLookup = $this->Ticket->query('SELECT * FROM ticket WHERE ticketId = ?', array($this->data['ticketId']));
+				$ticketPrice = $ticketLookup[0]['ticket']['billingPrice'];
 				
-				$this->redirect("/tickets/".$this->data['ticketId']."/payment_details/add");
-				$paymentResponse = "CHARGE_SUCCESS";
+				if ($ticketPrice < $minimumPurchase) {
+					$this->Session->setFlash(__($code['PromoCode']['promoCode'] . ' requires a minimum purchase of $' . $minimumPurchase, true));
+					$this->redirect("/tickets/".$this->data['ticketId']."/payment_details/add");
+				} else {
+				
+					$this->PaymentDetail->Ticket->PromoTicketRel->create();
+					$this->PaymentDetail->Ticket->PromoTicketRel->save(array(
+							'ticketId' => $this->data['ticketId'],
+							'userId'   => $this->data['userId'],
+							'promoCodeId' => $code['PromoCode']['promoCodeId']
+					));
+
+					$this->redirect("/tickets/".$this->data['ticketId']."/payment_details/add");
+					$paymentResponse = "CHARGE_SUCCESS";
+				}
+				
+				
 			} elseif ($this->data['PaymentDetail']['paymentProcessorId'] == 1 || $this->data['PaymentDetail']['paymentProcessorId'] == 3) {
 				// Credit card
 				$usingNewCard = 0;
@@ -310,14 +323,7 @@ class PaymentDetailsController extends AppController {
 		} else {
 			$initials_user = false;
 		}
-		
-		/*
-		if (!in_array($initials_user, array('rvella','cholland','bjensen','kferson'))) {
-			$this->Session->setFlash("Only accounting and tech can access this page. Please contact Chris or Rob.");
-			$this->redirect($_SERVER['HTTP_REFERER']);
-		}
-		*/
-					
+							
 		if (in_array($initials_user, array('rvella','cholland','bjensen','kferson','mtrinh'))) {
 			if (!empty($ticket['User']['UserPaymentSetting'])) {
 				foreach ($ticket['User']['UserPaymentSetting'] as $ups_key => $ups) {
@@ -332,7 +338,7 @@ class PaymentDetailsController extends AppController {
 		}
 
 		$this->set('ticket', $ticket);
-		$this->set('countries', $this->Country->find('list'));
+		$this->set('countries', $this->CountryBilling->getList());
 		$this->set('selectExpMonth', $selectExpMonth);
 		$this->set('selectExpYear', $selectExpYear);
 		$this->set('userPaymentSetting', (isset($ticket['User']['UserPaymentSetting']) ? $ticket['User']['UserPaymentSetting'] : array()));

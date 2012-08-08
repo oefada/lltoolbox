@@ -125,7 +125,7 @@
 												<option value="US">US</option>
 												<?php
 												foreach ($countries as $ckey => $country) {
-													echo "<option value=\"$country\">$country</option>\n";
+													echo "<option value=\"$ckey\">$country</option>\n";
 												}
 												?>
 											</select>
