@@ -574,7 +574,7 @@ class WebServiceTicketsController extends WebServicesController
 					$ppv_settings['ppvNoticeTypeId'] = 18;     // Auction Winner Email (PPV)
 					$autoSendClientWinnerPpv = true;
 				} else {
-					CakeLog::write("debug",var_export(array("WEB SERVICE TICKETS: ",$data_post_result),1));
+					CakeLog::write("web_service_tickets_controller",var_export(array("WEB SERVICE TICKETS: ",$data_post_result),1));
 					$ppv_settings['ppvNoticeTypeId'] = 19;     // Auction Winner Email (Declined / Expired CC)
 				}
 			}
@@ -1992,7 +1992,7 @@ class WebServiceTicketsController extends WebServicesController
 				$emailBody = ob_get_clean();
 				$emailBody = $this->utmLinks($emailBody, $ppvNoticeTypeId, $append);
 			} else {
-				CakeLog::write("debug","INVALID TEMPLATE");
+				CakeLog::write("web_service_tickets_controller","INVALID TEMPLATE");
 				return false;
 				exit;
 			}
@@ -2741,7 +2741,7 @@ class WebServiceTicketsController extends WebServicesController
 			@mail('devmail@luxurylink.com', 'WEB SERVICE ERROR: PAYMENT PROCESSED BUT NOT SAVED', print_r($this->PaymentDetail->validationErrors,true)  . print_r($paymentDetail, true));
 		}
 
-		CakeLog::write("debug",var_export(array("WEB SERVICE TICKETS: ",$paymentDetail,$promoGcCofData),1));
+		CakeLog::write("web_service_tickets_controller",var_export(array("WEB SERVICE TICKETS: ",$paymentDetail,$promoGcCofData),1));
 
 		// return result whether success or denied
 		// ---------------------------------------------------------------------------
@@ -2750,7 +2750,7 @@ class WebServiceTicketsController extends WebServicesController
 		} else {
 			if ($data['paymentProcessorId'] == 1) {
 				$response_txt = $processor->GetResponseTxt();
-				CakeLog::write("debug","DECLINED. RESPONSE: ".var_export($processor->GetMappedResponse(),1));
+				CakeLog::write("web_service_tickets_controller","DECLINED. RESPONSE: ".var_export($processor->GetMappedResponse(),1));
 				// $allDebug = print_r($processor, true);
 				// CakeLog::write("debug", $allDebug);
 				return $response_txt;
@@ -2873,7 +2873,7 @@ class WebServiceTicketsController extends WebServicesController
 			$msg = $this->errorMsg;
 		}
 
-		CakeLog::write("debug",var_export($method.": ".$msg,1));
+		CakeLog::write("web_service_tickets_controller",var_export($method.": ".$msg,1));
 	}
 
 	function returnError($method) {
@@ -2884,7 +2884,7 @@ class WebServiceTicketsController extends WebServicesController
 }
 
 function wstErrorHandler($errno, $errstr, $errfile, $errline) {
-	$log = "debug";
+	$log = "web_service_tickets_controller";
 
     switch ($errno) {
 		//case E_RECOVERABLE_ERROR:
@@ -2937,7 +2937,7 @@ function wstErrorShutdown() {
 	$error = error_get_last();
 
 	if ($error['type'] != 2048 && $error != NULL) {
-		CakeLog::write("debug","SCRIPT ABORTED: ".var_export($error,1));
+		CakeLog::write("web_service_tickets_controller","SCRIPT ABORTED: ".var_export($error,1));
 		die();
 	} else {
 		//CakeLog::write("debug","STRICT: ".var_export($error,1));
