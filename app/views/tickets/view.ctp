@@ -521,7 +521,7 @@ $this->searchController = 'Tickets';
 
 <br />
 <div class="collapsible">
-	<div class="handle"><?php __('Refund');?></div>
+	<div class="handle"><?php __('Refund Processed');?></div>
 	<div class="collapsibleContent related">
 	<br />
 	<?php if (!empty($ticket['TicketRefund']['ticketRefundId'])):?>

@@ -138,6 +138,15 @@ class Ticket extends AppModel {
 		}
 	}
 
+	function findPromoOfferTrackingsExtended($userId, $offerId) {
+		$result = $this->query("SELECT promoCodeId, creditBlockedFlag FROM promoOfferTracking where userId = $userId and offerId = $offerId");
+		if (!empty($result)) {
+			return $result;
+		} else {
+			return false;
+		}
+	}
+
 	function getTicketPromoData($ticketId) {
 		$sql = "SELECT pc.*, p.promoName, p.amountOff, p.percentOff FROM promoTicketRel ptr ";
 		$sql.= "INNER JOIN promoCode pc ON pc.promoCodeId = ptr.promoCodeId ";
@@ -155,7 +164,7 @@ class Ticket extends AppModel {
 		$data['payments'] = 0;
 		
 		// get the promo code that is applied to this ticket
-		$q="SELECT PromoCode.*, Promo.*
+		$q="SELECT PromoCode.*, Promo.*, PromoTicketRel.creditBlockedFlag
 								FROM promoTicketRel as PromoTicketRel 
 								LEFT JOIN promoCode AS PromoCode ON PromoTicketRel.promoCodeId = PromoCode.promoCodeId 
 								LEFT JOIN promoCodeRel AS PromoCodeRel ON PromoCode.promocodeId = PromoCodeRel.promoCodeId 
@@ -169,7 +178,7 @@ class Ticket extends AppModel {
 		// if it is a 'GiftCert', overwrite 'GiftCert' with the last result set that contains the balance 
 		foreach ($result as $k => $row) {
 			if ($row['PromoCode']['promoCodeId'] && $row['Promo']['promoId']) {
-				$data['Promo'] = array_merge($row['PromoCode'], $row['Promo']);	
+				$data['Promo'] = array_merge($row['PromoCode'], $row['Promo'], $row['PromoTicketRel']);	
 			} else {
 				$gcSql = 'SELECT * FROM giftCertBalance ';
 				$gcSql.= 'WHERE promoCodeId = ' . $row['PromoCode']['promoCodeId'] . ' ';
@@ -181,7 +190,9 @@ class Ticket extends AppModel {
 				}
 			}
 		}
-
+		
+		$blockCreditOnFile = false;
+		
 		// if there is a promo and a ticket price... 
 		if (isset($data['Promo']) && $data['Promo'] && ($ticketPrice > 0)) {
 			// get the amount off for the ticket
@@ -193,6 +204,11 @@ class Ticket extends AppModel {
 				$data['Promo']['totalAmountOff'] = intval($data['Promo']['amountOff']);
 			} 
 			$data['Promo']['applied'] = ($data['Promo']['totalAmountOff'] > 0) ? 1 : 0;
+			
+			// ticket 3384
+			if ($data['Promo']['creditBlockedFlag'] == 1) {
+				$blockCreditOnFile = true;
+			}
 		}
 
 		// get the handling fee
@@ -220,23 +236,27 @@ class Ticket extends AppModel {
 			$data['GiftCert']['totalAmountOff'] = 0;
 		}
 
-		// This is commented out because CreditTracking does not determine if the credit
-		// was used against the ticket, paymentDetail with paymentTypeId of 3 determines
-		// if the credit was applied to the ticket
-		// 
-		// see if the user has any credit on file
-		// the last row in the table will be the sum total of the credit they have
-		// may be multiple rows per user with debits and credits
+		// if clause added for ticket 3384
+		if (!$blockCreditOnFile) {
 		
-		$cofSql = 'SELECT CreditTracking.creditTrackingId,CreditTracking.balance,CreditTracking.amount FROM ticket AS Ticket ';
-		$cofSql.= 'INNER JOIN creditTracking AS CreditTracking USING (userId) ';
-		$cofSql.= "WHERE Ticket.ticketId = $ticketId ";
-		$cofSqlEnd = " ORDER BY CreditTracking.creditTrackingId DESC";
-		
-		$cofResult = $this->query($cofSql.$cofSqlEnd . " LIMIT 1");
+			// This is commented out because CreditTracking does not determine if the credit
+			// was used against the ticket, paymentDetail with paymentTypeId of 3 determines
+			// if the credit was applied to the ticket
+			// 
+			// see if the user has any credit on file
+			// the last row in the table will be the sum total of the credit they have
+			// may be multiple rows per user with debits and credits
 
-		if (!empty($cofResult) && ($cofResult[0]['CreditTracking']['balance'] > 0)) {
-			$data['Cof'] = $cofResult[0]['CreditTracking'];
+			$cofSql = 'SELECT CreditTracking.creditTrackingId,CreditTracking.balance,CreditTracking.amount FROM ticket AS Ticket ';
+			$cofSql.= 'INNER JOIN creditTracking AS CreditTracking USING (userId) ';
+			$cofSql.= "WHERE Ticket.ticketId = $ticketId ";
+			$cofSqlEnd = " ORDER BY CreditTracking.creditTrackingId DESC";
+
+			$cofResult = $this->query($cofSql.$cofSqlEnd . " LIMIT 1");
+
+			if (!empty($cofResult) && ($cofResult[0]['CreditTracking']['balance'] > 0)) {
+				$data['Cof'] = $cofResult[0]['CreditTracking'];
+			}
 		}
 
 		// if there is a credit on file and a ticketPrice

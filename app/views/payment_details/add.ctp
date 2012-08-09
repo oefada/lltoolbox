@@ -122,7 +122,6 @@
 										<td>Country</td>
 										<td>
 											<select name="data[UserPaymentSetting][country]" id="UserPaymentSettingCountry">
-												<option value="US">US</option>
 												<?php
 												foreach ($countries as $ckey => $country) {
 													echo "<option value=\"$ckey\">$country</option>\n";

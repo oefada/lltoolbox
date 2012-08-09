@@ -448,13 +448,15 @@ class WebServiceTicketsController extends WebServicesController
 
 			// find and set promos for this new ticket + refer friend relationship setup
 			// -------------------------------------------------------------------------------
-			$promo_data = $this->Ticket->findPromoOfferTrackings($data['userId'], $data['offerId']);
+			// $promo_data = $this->Ticket->findPromoOfferTrackings($data['userId'], $data['offerId']);
+			$promo_data = $this->Ticket->findPromoOfferTrackingsExtended($data['userId'], $data['offerId']);
 			if ($promo_data !== false && is_array($promo_data) && !empty($promo_data)) {
 				foreach ($promo_data as $promoOfferTracking) {
 					$promo_ticket_rel = array();
 					$promo_ticket_rel['promoCodeId'] = $promoOfferTracking['promoOfferTracking']['promoCodeId'];
 					$promo_ticket_rel['ticketId'] = $ticketId;
 					$promo_ticket_rel['userId'] = $data['userId'];
+					$promo_ticket_rel['creditBlockedFlag'] = $promoOfferTracking['promoOfferTracking']['creditBlockedFlag'];
 					$this->PromoTicketRel->create();
 					if ($this->PromoTicketRel->save($promo_ticket_rel)) {
 						
