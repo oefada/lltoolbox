@@ -156,7 +156,7 @@ class RefundRequestsController extends AppController {
 		$editorAccess = $this->hasEditorAccess();
 		$this->set('editorAccess', $editorAccess);
 		
-		$refundReasons = $this->RefundRequest->RefundReason->find('list');
+		$refundReasons = $this->RefundRequest->RefundReason->find('list', array('conditions' => array("inactive" => 0)));
 		$refundStatuses = $this->RefundRequest->RefundRequestStatus->find('list');
 		$this->set(compact('refundInfo', 'refundReasons', 'refundStatuses'));
 		$this->set('pageVersion', 	'A');
@@ -201,7 +201,7 @@ class RefundRequestsController extends AppController {
 		}
 				
 		$refundInfo = $this->prepRefundInfoByTicketId($this->data['RefundRequest']['ticketId']);
-		$refundReasons = $this->RefundRequest->RefundReason->find('list');
+		$refundReasons = $this->RefundRequest->RefundReason->find('list', array('conditions' => array("inactive" => 0)));
 		$refundStatuses = $this->RefundRequest->RefundRequestStatus->find('list');
 		$this->set(compact('refundInfo', 'refundReasons', 'refundStatuses'));
 		$this->set('editorAccess', $editorAccess);

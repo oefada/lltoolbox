@@ -40,7 +40,7 @@ class TicketRefundsController extends AppController {
 			$this->render();
 		} 
 		
-		$refundReasons = $this->TicketRefund->RefundReason->find('list');
+		$refundReasons = $this->TicketRefund->RefundReason->find('list', array('conditions' => array("inactive" => 0)));
 		if (!empty($this->data) && $this->data['TicketRefund']['ticketId']) {
 			// 07/19/11 jwoods - ticket 2067 for error handling
 			if (is_numeric($this->data['cofAmount']) && $this->data['cofAmount'] > 20000) {
@@ -181,7 +181,7 @@ class TicketRefundsController extends AppController {
 			$this->data = $this->TicketRefund->read(null, $id);
 		}
 
-		$this->set('refundReasonIds', $this->TicketRefund->RefundReason->find('list'));
+		$this->set('refundReasonIds', $this->TicketRefund->RefundReason->find('list', array('conditions' => array("inactive" => 0))));
 		$refundTypes = $this->TicketRefund->TicketRefundType->find('list');
 		$this->set('ticketRefundTypeIds', $refundTypes);
 	}
