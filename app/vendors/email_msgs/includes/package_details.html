@@ -88,60 +88,62 @@
 																					<?php endif; ?>
 																																								
 																																								
-																																								
-																																								<? if($ppvNoticeTypeId == "41"): ?>
-																																								<tr>
-																																										<td style="padding: 0px 0px 0px 0px;" colspan="2">
-																																												<a href="<?= $c->pdpUrl ?>" style="font-family:Arial;font-size:12px;font-weight:bold;display:block; color:#ffffff;border:0px solid #005a97;padding:6px 20px 5px 20px;text-decoration:none;float:left;margin:15px 0 0 0; background: #0070a8 url(http://www.luxurylink.com/images/email/new/email_viewdetails.png) repeat-x top left; ">View Details</a></td>
-																																								</tr>
-																																								<?php endif; ?>
-																				</tbody>
-																		</table>
-																	</td>
-															</tr>
-															<? endforeach; ?>
-					<tr>
-															<td height="15" width="100%" colspan="5"></td>
-														</tr>
-															<?php if (!in_array($ppvNoticeTypeId,array(38))): ?>
-					<tr>
-						<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;padding: 2px 0px 5px 15px;" colspan="3"><?= $packageIncludes ?></td>
-														</tr>
-					<tr>
-															<td bgcolor="#c3c3c3" height="1" width="100%" colspan="5"></td>
-														</tr>
-					<?php endif; ?>
-														<? if (in_array($ppvNoticeTypeId, array(36))): ?>
-					<tr>
-															<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;padding: 20px 0px 2px 15px;" colspan="4"><b><?= $siteName ?> Cancellation Policy:</b></td>
-														</tr>
-					<tr>
-						<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:18px;padding: 0px 20px 5px 15px;" colspan="4">
-							<ul>
-								<? if ($isAuction): ?>
+
+	<? if($ppvNoticeTypeId == "41"): ?>
+		<tr>
+		<td style="padding: 0px 0px 0px 0px;">
+		<br>
+		<table width='100' cellpadding='0' cellspacing='0' border='0' style="padding:0px 10px 5px 10px;border:1px solid #005a97;margin-top:5px;background: #0070a8;"><tr><td>
+		<a href="<?= $c->pdpUrl ?>" style="font-family:Arial;font-size:12px;font-weight:bold; color:#ffffff;padding:6px 20px 5px 20px;text-decoration:none;float:left; ">View Details</a></td></tr></table></td>
+		</tr>
+	<?php endif; ?>
+	</tbody>
+	</table>
+	</td>
+	</tr>
+<? endforeach; ?>
+<tr>
+<td height="15" width="100%" colspan="5"></td>
+</tr>
+<?php if (!in_array($ppvNoticeTypeId,array(38))): ?>
+<tr>
+<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;padding: 2px 0px 5px 15px;" colspan="3"><?= $packageIncludes ?></td>
+</tr>
+<tr>
+<td bgcolor="#c3c3c3" height="1" width="100%" colspan="5"></td>
+</tr>
+<?php endif; ?>
+<? if (in_array($ppvNoticeTypeId, array(36))): ?>
+<tr>
+<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;padding: 20px 0px 2px 15px;" colspan="4"><b><?= $siteName ?> Cancellation Policy:</b></td>
+</tr>
+<tr>
+<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:18px;padding: 0px 20px 5px 15px;" colspan="4">
+<ul>
+<? if ($isAuction): ?>
 <li>Luxury Link goes through great lengths to ensure fairness to all parties in auctions. It would not be fair if the auction winner was able to bid up the auction only to get a refund after winning. Once you have won an auction, the vacation is yours alone.</li>
 <li>Auction dates are not confirmed with the hotel until after you have won.  The Concierge team can check availability for you prior to bidding, but this is not a guarantee.</li>
 <li>Because Auctions offer your best chance of benefitting from the biggest savings, they are non-refundable.  We will try our best to accomodate your preferred dates.</li>
 <li>You may change your travel dates at any time without charge, subject to hotel change policies and fees.</li>
-								<? else: ?>
+<? else: ?>
 <li>Book Now (Buy Now) offers are changeable and refundable.</li>
 <li>After our Concierge Team confirms your preferred dates, we charge you for your purchase, along with a $40 non-refundable handling fee.</li>
 <li>Subsequent date changes to any confirmed booking are subject to a $35 change fee, along with any change fees assessed by the hotel.</li>
 <li>If you wish to cancel your reservation, Luxury Link will refund your credit card for the purchase in full, minus Luxury Link's fees.</li>
 <li>Cancellations made more than 15 days prior to check-in will incur a $35 cancellation fee. Cancellations made within 15 days of check-in will incur a $100 cancellation fee and are subject to hotel cancellation policies and fees.</li>
-								<? endif; ?>
-							</ul>
-						</td>
-														</tr>
-													<?php endif; ?>
-													<?php if (in_array($ppvNoticeTypeId, array(12,14,18,19,26,28,36))): ?>
-					<tr>
-															<td bgcolor="#c3c3c3" height="1" width="100%" colspan="5"></td>
-														</tr>
-					<tr>
-						<td style="font-size: 12px; font-family: Arial,Sans-Serif; color: rgb(79, 63, 50); line-height: 18px; padding: 15px 20px 15px 15px;" colspan="4"><?= $validityNote ?></td>
-														</tr>
-														<?php endif; ?>
+<? endif; ?>
+</ul>
+</td>
+</tr>
+<?php endif; ?>
+<?php if (in_array($ppvNoticeTypeId, array(12,14,18,19,26,28,36))): ?>
+<tr>
+<td bgcolor="#c3c3c3" height="1" width="100%" colspan="5"></td>
+</tr>
+<tr>
+<td style="font-size: 12px; font-family: Arial,Sans-Serif; color: rgb(79, 63, 50); line-height: 18px; padding: 15px 20px 15px 15px;" colspan="4"><?= $validityNote ?></td>
+</tr>
+<?php endif; ?>
 														<?php if (in_array($ppvNoticeTypeId, array(1,12,14,18,19,26,36)) && $legalText != ""): ?>
 					<tr>
 															<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;padding: 2px 0px 2px 15px;" colspan="4"><b>Booking Conditions:</b></td>
