@@ -40,17 +40,17 @@ class SchedulingController extends AppController {
 		$monthYearString = date('F Y', strtotime($year.'-'.$month.'-01'));		//string to display as a heading in the view
 		
 		$packages = $this->_clientPackages($clientId, $month, $year);					//grab all client packages
-		
+
 		$client = $this->Package->ClientLoaPackageRel->Client->find('first', array('contain' => array(), 'conditions' => array('Client.clientId' => $clientId)));
 		$currentLoaId = $client['Client']['currentLoaId'];
 		$currentLoa = $this->Package->ClientLoaPackageRel->Loa->find('first', array('contain' => array(), 'conditions' => array('Loa.loaId' => $currentLoaId)));
 
-        $this->set('currentLoa', $currentLoa);
+		$this->set('currentLoa', $currentLoa);
 		$this->set('loaEndDate', $currentLoa['Loa']['endDate']);
 		$client['Client'] = $client['Client'];								//the first package has the client details
 		$clientName = $client['Client']['name'];
-        $loaBalanceFlag = $this->_setLoaBalanceFlag($clientId, $currentLoa['Loa']);
-        $this->set('packages', $packages);
+		$loaBalanceFlag = $this->_setLoaBalanceFlag($clientId, $currentLoa['Loa']);
+		$this->set('packages', $packages);
 		$this->set(compact('clientId', 'month', 'year', 'monthDays', 'monthYearString', 'clientName', 'client', 'loaBalanceFlag'));
 	}
 
@@ -116,26 +116,9 @@ class SchedulingController extends AppController {
 			$this->Package->ClientLoaPackageRel->recursive = -1;
 
 			$schedulingMasterIds=$this->mngSMIDs($clientId);
-/*
-			$packages = $this->Package->ClientLoaPackageRel->findAllByclientId($clientId);
-			$schedulingMasterIds = array();
-			foreach ($packages as $p) {
-				$schedulingMasterIds = array_merge($schedulingMasterIds, $this->Ticket->getSmIdsFromPackage($p['ClientLoaPackageRel']['packageId']));
-			}
-			$schedulingMasterIds = array_unique($schedulingMasterIds);
-*/
+
 			$this->mngTakeDown($schedulingMasterIds);
-/*
-			if (!empty($schedulingMasterIds)) {
-				if ($this->Ticket->__runTakeDown(implode(',', $schedulingMasterIds))) {
-					$this->Session->setFlash(__('Scheduling blocks have been taken down.  Have a nice day. :)', true), 'default', array(), 'success');				
-				} else {
-					$this->Session->setFlash(__('There were no scheduling blocks to pull down. Have a nice day.', true), 'default', array(), 'error');				
-				}
-			} else {
-				$this->Session->setFlash(__('There were no packages to take down.', true), 'default', array(), 'error');				
-			}
-*/
+
 			$this->set('closeModalbox', true);
 		}
 
@@ -153,6 +136,7 @@ class SchedulingController extends AppController {
 	 * @return array $packages an associative array with all of the package data needed in the view
 	 */
 	function _clientPackages($clientId, $month, $year) {
+
 		$this->Package->ClientLoaPackageRel->Behaviors->attach('Containable');
 
 		$this->Package->ClientLoaPackageRel->contain('Package', 'Client', 'Loa');
@@ -160,26 +144,31 @@ class SchedulingController extends AppController {
 		$numDaysInMonth = date('t', strtotime($year.'-'.$month.'-01'));
 		$loa = $this->Package->query("SELECT GROUP_CONCAT(loaId) AS loaIds FROM loa AS Loa WHERE ('$year-$month-01' BETWEEN Loa.startDate AND Loa.endDate OR '$year-$month-$numDaysInMonth' BETWEEN Loa.startDate AND Loa.endDate) AND clientId = $clientId GROUP BY clientId");
 
-        //if no current LOA is found, display all packages
-        if (empty($loa)) {
-            $packages = $this->Package->ClientLoaPackageRel->find('all', array('conditions' => array('ClientLoaPackageRel.clientId' => $clientId, 'packageStatusId' => 4)));
-        } else { // if current LOA is found, display only packages for the current LOA to limit clutter
-            $loaIds = $loa[0][0]['loaIds'];
-            $loaIds = explode(',', $loaIds);
-            $packages = $this->Package->ClientLoaPackageRel->find('all', array('conditions' => array('ClientLoaPackageRel.clientId' => $clientId, 'packageStatusId' => 4, 'ClientLoaPackageRel.loaId' => $loaIds)));
-        }
-        
-	    $this->Package->SchedulingMaster->Behaviors->attach('Containable');
-	    foreach ($packages as $k => $package) {
-	        $packages[$k]['Package']['masterList'] = $this->Package->SchedulingMaster->find('all', array('conditions' => array('SchedulingMaster.packageId' => $package['Package']['packageId']),
-	                                                                                        'fields' => array('SchedulingMaster.schedulingMasterId', 'SchedulingMaster.startDate', 'SchedulingMaster.endDate', 'OfferType.offerTypeName'),
-	                                                                                        'contain' => array('OfferType')
-	                                                                                        ));
-	    }
-	    
+		//if no current LOA is found, display all packages
+		if (empty($loa)) {
+			$packages = $this->Package->ClientLoaPackageRel->find('all', array('conditions' => array('ClientLoaPackageRel.clientId' => $clientId, 'packageStatusId' => 4)));
+		} else { // if current LOA is found, display only packages for the current LOA to limit clutter
+			$loaIds = $loa[0][0]['loaIds'];
+			$loaIds = explode(',', $loaIds);
+			$packages = $this->Package->ClientLoaPackageRel->find('all', array('conditions' => array('ClientLoaPackageRel.clientId' => $clientId, 'packageStatusId' => 4, 'ClientLoaPackageRel.loaId' => $loaIds)));
+		}
+		
+		$this->Package->SchedulingMaster->Behaviors->attach('Containable');
+		foreach ($packages as $k => $package) {
+		  $tmp = $this->Package->SchedulingMaster->find('all', 
+				array(
+					'conditions' =>array('SchedulingMaster.packageId' => $package['Package']['packageId']),
+					'fields' => array('SchedulingMaster.schedulingMasterId', 'SchedulingMaster.startDate', 'SchedulingMaster.endDate', 'OfferType.offerTypeName'),
+					'contain' => array('OfferType')
+				)
+			);
+			$packages[$k]['Package']['masterList']=$tmp;
+		}
+	
 		$this->_addPackageSchedulingInstances($packages, $month, $year);
 		
 		return $packages;
+
 	}
 	/**
 	 * Associates all of the scheduling instances with each package array
@@ -188,6 +177,7 @@ class SchedulingController extends AppController {
 	 * @param array $packages byref package array which we inject with scheduling instances
 	 */
 	function _addPackageSchedulingInstances(&$packages, $month = null, $year) {
+
 		foreach($packages as $package):											//extract all the package ids
 			$packageIds[] = $package['Package']['packageId'];
 		endforeach;
@@ -197,15 +187,15 @@ class SchedulingController extends AppController {
 		$this->Package->SchedulingMaster->Behaviors->attach('Containable');
 		$this->Package->SchedulingMaster->contain('SchedulingInstance');
 
-		$containConditions = array('conditions' => array("(month(SchedulingInstance.startDate) = $month AND year(SchedulingInstance.startDate) = $year) OR
-		                                                    (month(SchedulingInstance.endDate) =  $month AND year(SchedulingInstance.endDate) = $year) OR
-		                                                    (SchedulingInstance.startDate <= '$year-$month-01' AND SchedulingInstance.endDate >= '$year-$month-".date('t', strtotime("$year-$month-01"))."')"));
+		$containConditions = array('conditions' => array("(month(SchedulingInstance.startDate) = $month AND year(SchedulingInstance.startDate) = $year) OR (month(SchedulingInstance.endDate) =  $month AND year(SchedulingInstance.endDate) = $year) OR (SchedulingInstance.startDate <= '$year-$month-01' AND SchedulingInstance.endDate >= '$year-$month-".date('t', strtotime("$year-$month-01"))."')")); 
+		
 		//select all instances for each package
-		$packageSchedulingInstance = $this->Package->SchedulingMaster->find('all', array('conditions'   =>  array('SchedulingMaster.packageId'  =>  $packageIds),//array packageIds causes this to act as an IN clause
-																					     'contain'      =>  array('SchedulingInstance'          =>  $containConditions,
-                                                                                                                  'PricePoint')
-																				        )
-																			);
+		$packageSchedulingInstance = $this->Package->SchedulingMaster->find('all', 
+			array(
+				'conditions' => array('SchedulingMaster.packageId'  =>  $packageIds),//array packageIds causes this to act as an IN clause
+				'contain'	  =>  array('SchedulingInstance'		  =>  $containConditions, 'PricePoint')
+			)
+		);
 
 		//loop through all of the instances and associate them nicely so we can look them up below				
 		foreach($packageSchedulingInstance as $instance) {
@@ -216,42 +206,43 @@ class SchedulingController extends AppController {
 		foreach($packages as &$package):
 			$package['Scheduling'] = @$instances[$package['Package']['packageId']];
 		endforeach;
+
 	}
 	
 	function _setLoaBalanceFlag($clientId, $currentLoa) {
-	    $loaMembershipBalance = $currentLoa['membershipBalance'];
-	    $totalRevenue = $currentLoa['totalRevenue'];
-	    
-	    /* Get all of the instances that have not gone live yet for this client */
-	    $totals = $this->Package->query("CALL getClientCurrentAndFutureInstances($clientId)");
+		$loaMembershipBalance = $currentLoa['membershipBalance'];
+		$totalRevenue = $currentLoa['totalRevenue'];
+		
+		/* Get all of the instances that have not gone live yet for this client */
+		$totals = $this->Package->query("CALL getClientCurrentAndFutureInstances($clientId)");
 
-	    if (empty($totals)) {
-	        return array();
-	    }
+		if (empty($totals)) {
+			return array();
+		}
 
-        $returnArray['totalOpeningBidSum']  =   $totals[0][0]['totalOpeningBidSum'];
-        $returnArray['maxOpeningBid']       =   $totals[0][0]['maxOpeningBid'];
-        $returnArray['class']               =   '';
-        
-        $returnArray['errorSchedulingInstanceId']   =     null;
-	    if (isset($totals[0][0]['maxOpeningBid']) && $totals[0][0]['maxOpeningBid'] >= $loaMembershipBalance) {
-	        $returnArray['class'] = 'icon-error';
-	        
-	        $result = $this->Package->query("SELECT schedulingInstanceId FROM clientLoaPackageRel AS ClientLoaPackageRel INNER JOIN
-    	                                        schedulingMaster AS SchedulingMaster ON (ClientLoaPackageRel.packageId = SchedulingMaster.packageId) INNER JOIN
-    	                                        schedulingInstance AS SchedulingInstance ON (SchedulingInstance.schedulingMasterId = SchedulingMaster.schedulingMasterId)
-    	                                        WHERE ClientLoaPackageRel.clientId = $clientId AND SchedulingInstance.endDate > NOW() AND SchedulingMaster.openingBid = {$totals[0][0]['maxOpeningBid']}
-    	                                        ORDER BY SchedulingInstance.endDate ASC
-    	                                        LIMIT 1");
-    	                                        
-            $returnArray['errorSchedulingInstanceId'] = $result[0]['SchedulingInstance']['schedulingInstanceId'];
-             return $returnArray;
-	    } else if ($totals[0][0]['totalOpeningBidSum'] >= $loaMembershipBalance) {
-	        $returnArray['class'] = 'icon-yellow';
-	         return $returnArray;
-	    }
-	    
-	    return array();
+		$returnArray['totalOpeningBidSum']  =   $totals[0][0]['totalOpeningBidSum'];
+		$returnArray['maxOpeningBid']	   =   $totals[0][0]['maxOpeningBid'];
+		$returnArray['class']		       =   '';
+		
+		$returnArray['errorSchedulingInstanceId']   =	 null;
+		if (isset($totals[0][0]['maxOpeningBid']) && $totals[0][0]['maxOpeningBid'] >= $loaMembershipBalance) {
+			$returnArray['class'] = 'icon-error';
+			
+			$result = $this->Package->query("SELECT schedulingInstanceId FROM clientLoaPackageRel AS ClientLoaPackageRel INNER JOIN
+					                            schedulingMaster AS SchedulingMaster ON (ClientLoaPackageRel.packageId = SchedulingMaster.packageId) INNER JOIN
+					                            schedulingInstance AS SchedulingInstance ON (SchedulingInstance.schedulingMasterId = SchedulingMaster.schedulingMasterId)
+					                            WHERE ClientLoaPackageRel.clientId = $clientId AND SchedulingInstance.endDate > NOW() AND SchedulingMaster.openingBid = {$totals[0][0]['maxOpeningBid']}
+					                            ORDER BY SchedulingInstance.endDate ASC
+					                            LIMIT 1");
+					                            
+			$returnArray['errorSchedulingInstanceId'] = $result[0]['SchedulingInstance']['schedulingInstanceId'];
+			 return $returnArray;
+		} else if ($totals[0][0]['totalOpeningBidSum'] >= $loaMembershipBalance) {
+			$returnArray['class'] = 'icon-yellow';
+			 return $returnArray;
+		}
+		
+		return array();
 	}
 	
 	/**
@@ -267,4 +258,3 @@ class SchedulingController extends AppController {
 		return date("t", strtotime($y . "-" . $m . "-01"));
 	}
 }
-?>
