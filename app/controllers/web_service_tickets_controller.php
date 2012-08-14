@@ -4,11 +4,9 @@
 
 NOTES
 
-To debug this, use
-
-
-
-this will write to toolbox/development/app/tmp/logs
+To debug this, use:
+Configure::write('debug',1);
+It will write to toolbox/development/app/tmp/logs/debug.log
 
 */
 
