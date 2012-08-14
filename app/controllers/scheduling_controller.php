@@ -23,7 +23,9 @@ class SchedulingController extends AppController {
 	 */
 	function index($clientId = null)
 	{
-		$clientId 	= @$this->params['named']['clientId'];						//client id is used to fetch all packages for this client
+
+		//client id is used to fetch all packages for this client
+		$clientId 	= @$this->params['named']['clientId'];						
 		
 		// User posts some data
 		if(!empty($this->data) && isset($this->data['client']['notes'])) {			
@@ -35,23 +37,38 @@ class SchedulingController extends AppController {
 		/* Grab all necessary parameters from the URL */
 		$month 		= empty($this->params['named']['month']) ? date('m') : $this->params['named']['month'];
 		$year 		= empty($this->params['named']['year']) ? date('Y') : $this->params['named']['year'];
-		$monthDays 	= $this->_monthDays($month, $year);							// we need to know how many days are in this month
+		// we need to know how many days are in this month
+		$monthDays 	= $this->_monthDays($month, $year);							
 
-		$monthYearString = date('F Y', strtotime($year.'-'.$month.'-01'));		//string to display as a heading in the view
-		
-		$packages = $this->_clientPackages($clientId, $month, $year);					//grab all client packages
+		//string to display as a heading in the view
+		$monthYearString = date('F Y', strtotime($year.'-'.$month.'-01'));		
 
-		$client = $this->Package->ClientLoaPackageRel->Client->find('first', array('contain' => array(), 'conditions' => array('Client.clientId' => $clientId)));
+		$packages = $this->_clientPackages($clientId, $month, $year);	
+
+		$client = $this->Package->ClientLoaPackageRel->Client->find('first', 
+			array(
+			'contain' => array(), 
+			'conditions' => array('Client.clientId' => $clientId)
+			)
+		);
+
 		$currentLoaId = $client['Client']['currentLoaId'];
-		$currentLoa = $this->Package->ClientLoaPackageRel->Loa->find('first', array('contain' => array(), 'conditions' => array('Loa.loaId' => $currentLoaId)));
+		$currentLoa = $this->Package->ClientLoaPackageRel->Loa->find('first', 
+			array(
+			'contain' => array(), 
+			'conditions' => array('Loa.loaId' => $currentLoaId)
+			)
+		);
 
 		$this->set('currentLoa', $currentLoa);
 		$this->set('loaEndDate', $currentLoa['Loa']['endDate']);
-		$client['Client'] = $client['Client'];								//the first package has the client details
+		//the first package has the client details
+		$client['Client'] = $client['Client'];								
 		$clientName = $client['Client']['name'];
 		$loaBalanceFlag = $this->_setLoaBalanceFlag($clientId, $currentLoa['Loa']);
 		$this->set('packages', $packages);
 		$this->set(compact('clientId', 'month', 'year', 'monthDays', 'monthYearString', 'clientName', 'client', 'loaBalanceFlag'));
+
 	}
 
 	function delPackageOffers(){
@@ -142,7 +159,9 @@ class SchedulingController extends AppController {
 		$this->Package->ClientLoaPackageRel->contain('Package', 'Client', 'Loa');
 		
 		$numDaysInMonth = date('t', strtotime($year.'-'.$month.'-01'));
-		$loa = $this->Package->query("SELECT GROUP_CONCAT(loaId) AS loaIds FROM loa AS Loa WHERE ('$year-$month-01' BETWEEN Loa.startDate AND Loa.endDate OR '$year-$month-$numDaysInMonth' BETWEEN Loa.startDate AND Loa.endDate) AND clientId = $clientId GROUP BY clientId");
+
+		$q="SELECT GROUP_CONCAT(loaId) AS loaIds FROM loa AS Loa WHERE ('$year-$month-01' BETWEEN Loa.startDate AND Loa.endDate OR '$year-$month-$numDaysInMonth' BETWEEN Loa.startDate AND Loa.endDate) AND clientId = $clientId GROUP BY clientId";
+		$loa = $this->Package->query($q);
 
 		//if no current LOA is found, display all packages
 		if (empty($loa)) {
@@ -164,7 +183,7 @@ class SchedulingController extends AppController {
 			);
 			$packages[$k]['Package']['masterList']=$tmp;
 		}
-	
+
 		$this->_addPackageSchedulingInstances($packages, $month, $year);
 		
 		return $packages;
@@ -187,16 +206,56 @@ class SchedulingController extends AppController {
 		$this->Package->SchedulingMaster->Behaviors->attach('Containable');
 		$this->Package->SchedulingMaster->contain('SchedulingInstance');
 
-		$containConditions = array('conditions' => array("(month(SchedulingInstance.startDate) = $month AND year(SchedulingInstance.startDate) = $year) OR (month(SchedulingInstance.endDate) =  $month AND year(SchedulingInstance.endDate) = $year) OR (SchedulingInstance.startDate <= '$year-$month-01' AND SchedulingInstance.endDate >= '$year-$month-".date('t', strtotime("$year-$month-01"))."')")); 
+		$containConditions = array(
+			'conditions' => array("(month(SchedulingInstance.startDate) = $month AND year(SchedulingInstance.startDate) = $year) OR (month(SchedulingInstance.endDate) =  $month AND year(SchedulingInstance.endDate) = $year) OR (SchedulingInstance.startDate <= '$year-$month-01' AND SchedulingInstance.endDate >= '$year-$month-".date('t', strtotime("$year-$month-01"))."')")); 
 		
 		//select all instances for each package
 		$packageSchedulingInstance = $this->Package->SchedulingMaster->find('all', 
 			array(
-				'conditions' => array('SchedulingMaster.packageId'  =>  $packageIds),//array packageIds causes this to act as an IN clause
-				'contain'	  =>  array('SchedulingInstance'		  =>  $containConditions, 'PricePoint')
+				//array packageIds causes this to act as an IN clause
+				'conditions' => array('SchedulingMaster.packageId'  =>  $packageIds),
+				//'contain'	  =>  array('SchedulingInstance'		  =>  $containConditions, 'PricePoint')
+				'contain'	  =>  array('PricePoint')
 			)
 		);
 
+		$keepArr=array();
+		foreach($packageSchedulingInstance as $i=>$arr){
+			foreach($arr['SchedulingInstance'] as $j=>$row){
+
+			// have php do this eval as the cake query was too slow
+			//month(SchedulingInstance.startDate) = $month AND year(SchedulingInstance.startDate) = $year) 
+			//OR (month(SchedulingInstance.endDate) =  $month AND year(SchedulingInstance.endDate) = $year) 
+			// OR (SchedulingInstance.startDate <= '$year-$month-01' AND SchedulingInstance.endDate >= 
+			// '$year-$month-".date('t', strtotime("$year-$month-01"))."')"
+
+				$startDate=$row['startDate'];
+				$startDate_month=date("m",strtotime($startDate));
+				$startDate_year=date("Y",strtotime($startDate));
+				$endDate=$row['endDate'];
+				$endDate_month=date("m",strtotime($endDate));
+				$endDate_year=date("Y",strtotime($endDate));
+			
+				if ( ($startDate_month==$month && $startDate_year==$year) 
+					|| ($endDate_month==$month && $endDate_year==$year) 
+					|| (strtotime($startDate)<=strtotime($year.'-'.$month.'-01'))
+						&& strtotime($endDate)>=strtotime($year.'-'.$month.'-'.date('t', strtotime("$year-$month-01")))
+					){
+						$keepArr[$i][]=$j;	
+				}	
+			}
+		}
+
+		foreach($packageSchedulingInstance as $i=>$arr){
+			foreach($arr['SchedulingInstance'] as $j=>$row){
+				if (!isset($keepArr[$i]) || !is_array($keepArr[$i]) || !in_array($j,$keepArr[$i])){
+					//echo "unset $j<br>";
+					unset($packageSchedulingInstance[$i]['SchedulingInstance'][$j]);
+				}
+			}
+		}
+
+//printR($packageSchedulingInstance);exit;
 		//loop through all of the instances and associate them nicely so we can look them up below				
 		foreach($packageSchedulingInstance as $instance) {
 			$instances[$instance['SchedulingMaster']['packageId']][] = $instance;
