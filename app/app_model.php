@@ -41,6 +41,7 @@
 
 App::import('Lib', 'LazyModel.LazyModel');
 
+
 class AppModel extends LazyModel {
 	
 	var $sites = array(1 => 'luxurylink', 2 => 'family');
@@ -74,6 +75,13 @@ class AppModel extends LazyModel {
 		endif;
 
 		parent::__construct($id, $table, $ds);
+	}
+
+
+	public static function printR($arr){
+
+		print "<pre>";print_r($arr);print "</pre>";
+
 	}
 
 

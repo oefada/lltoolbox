@@ -8,7 +8,7 @@ class UnsubscribeLogsController extends AppController
 
 	var $name = 'UnsubscribeLogs';
 	var $helpers = array('Form', 'Javascript');
-	var $uses = array('UserMailOptin','UnsubscribeLog');
+	var $uses = array('UserMailOptin','UnsubscribeLog', 'UndeliverableLog');
 
 	var $components = array('RequestHandler');
 
@@ -30,11 +30,19 @@ class UnsubscribeLogsController extends AppController
 				$nlIdArr[$nlId]=$row['name'];
 			}
 		}
+		$nlArr[0][0]['name']='Undeliverables';
+		$nlArr[0][0]['contactId']='0';
 		$this->set('nlIdArr',$nlIdArr);
 		$this->set('nlDataArr',$nlArr);
 
+		$undelivCountArr=$this->UndeliverableLog->getUndelivCountByMonth($nlArr);
+		$this->set("undelivCountArr", $undelivCountArr);
+
 		$unsubCountArr=$this->UnsubscribeLog->getUnsubCountByMonth($nlArr);
 		$this->set("unsubCountArr", $unsubCountArr);
+
+		$unOptOutCountArr=$this->UnsubscribeLog->getUnOptOutCountByMonth($nlArr);
+		$this->set("unOptOutCountArr", $unOptOutCountArr);
 
 		$subCountArr=$this->UnsubscribeLog->getSubCountByMailingListId();
 		$this->set("subCountArr", $subCountArr);

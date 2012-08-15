@@ -30,6 +30,7 @@ jQuery(document).ready(function($){
 
 <?
 
+
 echo "<table style='border:0px;' border=0 cellpadding=4 cellspacing=0>";
 echo "<tr>";
 echo "<td valign='top' width=300>";
@@ -54,17 +55,62 @@ echo $form->radio('Output', $options, $attributes);
 
 echo $form->end(array('name'=>'Retrieve','label'=>'Retrieve'));
 
-echo "</td><td valign=top width=500>";
+
+?>
+
+<br><br>
+<b>Users Sub'd per Our Dbs</b><br>
+<table cellpadding='4' cellspacing='0' border='1'>
+<tr>
+<td class='tdTitle'><b>mailingListId</b></td>
+<td class='tdTitle'>newsletter</td>
+<td class='tdTitle'># Sub'd</td>
+</tr>
+
+<?
+
+foreach($subCountArr as $i=>$row){
+	$nlId=$row['userMailOptin']['mailingListId'];
+	echo "<tr>";
+	echo "<td>".$nlId."</td>";
+	echo "<td>".$nlIdArr[$nlId]."</td>";
+	echo "<td>".number_format($row[0]['num'])."</td>";
+	echo "</tr>";
+}
+echo "</table>";
+
+echo "<br>";
+echo "<b>Undeliverables per Silverpop</b><br>";?>
+<table cellpadding='4' cellspacing='0' border='1'>
+<tr>
+<td class='tdTitle'><b>#undeliv</b></td>
+<td class='tdTitle'>Year-Month</td>
+</tr>
+<?
+foreach($undelivCountArr as $i=>$arr){
+	echo "<tr>";
+	echo "<td>".number_format($arr[0]['num']);
+	echo "<td>".date("M-Y",$arr['undeliverableLog']['dateUtYmd'])."</td>";
+	echo "</tr>";
+}
+echo "</table>";
+
+$width=300;
+if (isset($unsubLogs) && count($unsubLogs)>0){
+	$width=500;
+}
+
+echo "</td><td valign=top width=$width>";
 
 if (isset($unsubLogs) && count($unsubLogs)>0){
 
 	?><b><?
-	echo $nl." ";
+	echo $nl." Unsub Log ";
 	echo date("Y-m-d",$start_ut).' to '.date("Y-m-d",$end_ut)."<br>";
 	?></b>
 	<br>
 
-	<table cellpadding='4' cellspacing='0' border='1' width='600' style='width:600px;'>
+	<table cellpadding='4' cellspacing='0' border='1' width='500' style='width:500px;'>
 	<tr>
 	<td> &nbsp; </td>
 	<td>Email</td>
@@ -84,7 +130,7 @@ if (isset($unsubLogs) && count($unsubLogs)>0){
 
 }
 
-echo "<b>Number of unsubs per userMailOptin table</b>";
+echo "<b>unsubs per userMailOptin table</b>";
 //print "<pre>";print_r($unsubUMOCountArr);print "</pre>";
 echo "<table border=1 cellpadding=4 cellspacing=0 width='300' style='width:300px;'>";
 echo "<tr><td class='tdTitle'># unsubs</td><td class='tdTitle'>Year-Month</td></tr>";
@@ -126,31 +172,11 @@ echo "</table>";
 $total=0;
 unset($p);
 
-?>
 
-<b>Users Sub'd per Our Dbs</b><br>
-<table cellpadding='4' cellspacing='0' border='1' style='width:500px;' width='500'>
-<tr>
-<td class='tdTitle'><b>mailingListId</b></td>
-<td class='tdTitle'>newsletter</td>
-<td class='tdTitle'># Sub'd</td>
-</tr>
+echo "<br>";
+echo "</td><td valign=top width=300>";
 
-<?
-
-foreach($subCountArr as $i=>$row){
-	$nlId=$row['userMailOptin']['mailingListId'];
-	echo "<tr>";
-	echo "<td>".$nlId."</td>";
-	echo "<td>".$nlIdArr[$nlId]."</td>";
-	echo "<td>".number_format($row[0]['num'])."</td>";
-	echo "</tr>";
-}
-echo "</table>";
-
-echo "</td><td valign=top>";
-
-	echo "<b>Number of unsubs per unsubscribeLog table</b>";
+	echo "<b>unsubs per unsubscribeLog table</b>";
 
 	echo "<table border=1 cellpadding=4 cellspacing=0 width='300' style='width:300px;'>";
 	echo "<tr><td class='tdTitle'># unsubs</td><td class='tdTitle'>Year-Month</td></tr>";
@@ -159,6 +185,40 @@ echo "</td><td valign=top>";
 		foreach($rows as $j=>$arr){
 			$nlId=$arr['unsubscribeLog']['mailingId'];
 			$siteId=$arr['unsubscribeLog']['siteId'];
+			if (!isset($p[$siteId][$nlId])){
+				echo "<tr><td colspan=2 bgcolor=#cccccc>";
+				echo $nlDataArr[$siteId][$nlId]['name']." : ".$nlId;
+				echo " : ".$nlDataArr[$siteId][$nlId]['contactId'];
+				echo "</td></tr>";
+				$p[$siteId][$nlId]=1;
+			}
+			echo "<tr>";
+			//echo "<td>".$siteId."</td>";
+			echo "<td>".number_format($arr[0]['num'])."</td>";
+			echo "<td>";
+			echo date("M", strtotime($arr[0]['unsubDate_ym']));	
+			echo " - ".substr($arr[0]['unsubDate_ym'],0,4);
+			echo "</td>";
+			echo "</tr>";
+			$total+=$arr[0]['num'];
+		}
+	}
+	echo "<tr><td align=right> Total:</td><td>".number_format($total)."</td></tr>";
+	echo "</table>";
+
+echo "</td><td valign=top>";
+
+
+	echo "<b>optouts in silverpop where no matching email<br>for the specified newsletter in our db</b>";
+
+	echo "<table border=1 cellpadding=4 cellspacing=0 width='300' style='width:300px;'>";
+	echo "<tr><td class='tdTitle'># optouts</td><td class='tdTitle'>Year-Month</td></tr>";
+	$total=0;
+	unset($p);
+	foreach($unOptOutCountArr as $key=>$rows){
+		foreach($rows as $j=>$arr){
+			$nlId=$arr['unOptOutLog']['newsletterId'];
+			$siteId=$arr['unOptOutLog']['siteId'];
 			if (!isset($p[$siteId][$nlId])){
 				echo "<tr><td colspan=2 bgcolor=#cccccc>";
 				echo $nlDataArr[$siteId][$nlId]['name']." : ".$nlId;
