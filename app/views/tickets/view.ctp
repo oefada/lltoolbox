@@ -209,6 +209,9 @@ $this->searchController = 'Tickets';
 					$processed_flag="Payment Detail missing status of credit card charge. Please see a dev to prevent double charging customer.";
 				}else{
 					$processed_flag = $paymentDetail['isSuccessfulCharge'] ? 'Payment Successful' : 'Payment Declined';
+					if ($paymentDetail['isVoided'] == 1) {
+						$processed_flag = 'Payment Voided';
+					}
 				}
 				$class = null;
 				if ($i++ % 2 == 0) {
@@ -261,17 +264,10 @@ $this->searchController = 'Tickets';
 	<?php endif; ?>
 	<?php
 		echo $html->link('Create New Payment', '/tickets/' . $ticket['Ticket']['ticketId'] . '/payment_details/add');
-		/*echo $html->link('Create New Payment',
-			'/tickets/' . $ticket['Ticket']['ticketId'] . '/payment_details/add',
-			array(
-				'title' => 'Create New Payment',
-				'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
-				'complete' => 'closeModalbox()'
-				),
-			null,
-			false
-		);*/
+		echo '<br /><br />';
+		echo $html->link('Void Existing Payment', '/tickets/' . $ticket['Ticket']['ticketId'] . '/payment_details/void');
 	?>
+	
 	</div>
 </div>
 

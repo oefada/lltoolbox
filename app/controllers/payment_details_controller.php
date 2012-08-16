@@ -37,6 +37,43 @@ class PaymentDetailsController extends AppController {
 		$this->set('paymentDetail', $arr[0]);
 		
 	}
+	
+	function void() {
+
+		$currentUser = $this->LdapAuth->user();
+		if (!in_array('Accounting',$currentUser['LdapUser']['groups']) && !in_array('Geeks',$currentUser['LdapUser']['groups'])) {
+			$this->Session->setFlash(__('You do not have permission to void payments.', true));
+			$this->redirect(array('controller'=>'tickets', 'action'=>'view', $this->params['ticketId']));
+		}
+
+		if (isset($this->params['url']['v']) && intval($this->params['url']['v']) > 0) {
+			if (isset($this->params['url']['cnf']) && $this->params['url']['cnf'] == '1') {
+				$data = array('PaymentDetail' => array());
+				$data['PaymentDetail']['paymentDetailId'] = $this->params['url']['v'];
+				$data['PaymentDetail']['isSuccessfulCharge'] = 0;
+				$data['PaymentDetail']['ppApprovalText'] = 'Voided';
+				$data['PaymentDetail']['isVoided'] = 1;
+				$data['PaymentDetail']['voidDate'] = date("Y-m-d H:i:s");
+				$data['PaymentDetail']['voidInitials'] = $currentUser['LdapUser']['samaccountname'];
+				$this->PaymentDetail->save($data);
+				$this->Session->setFlash(__('Payment Has Been Voided', true));
+			} else {
+				$this->set('confirm', $this->params['url']['v']);	
+			}
+		}
+
+		$params = array(
+			'conditions' => array(
+				'Ticket.ticketId' => $this->params['ticketId'],
+			),
+			'contain' => array(
+				'PaymentDetail'
+			),
+		);
+		
+		$ticket = $this->PaymentDetail->Ticket->find('first',$params);
+		$this->set('ticket', $ticket);
+	}
 
 	function add() {
 		if (!empty($this->data)) {
