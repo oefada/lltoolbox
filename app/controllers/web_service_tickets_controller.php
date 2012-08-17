@@ -925,6 +925,10 @@ class WebServiceTicketsController extends WebServicesController
 	
 	public function ppv($in0) {
 
+		$headerRed=false;
+		$hideSalutation=false;
+		$resConfirmationNotes=false;
+
 		// Can send in array or JSON string. Useful for using ppv() inside toolbox
 		if (!is_array($in0)) {
 			$params = json_decode($in0, true);
@@ -1139,6 +1143,7 @@ class WebServiceTicketsController extends WebServicesController
 				break;
 
 			case 3:
+				$siteDisplay='';
 				$siteName = 'Vacationist.com';
 				$siteEmail = 'vacationist.com';
 				$sitePhone  = '(877) 313-6769';
@@ -1150,20 +1155,32 @@ class WebServiceTicketsController extends WebServicesController
 
 		// Auction facilitator
 
-		$userId 			= $userData['userId'];
-		$userFirstName		= ucwords(strtolower($userData['firstName']));
-		$userLastName		= ucwords(strtolower($userData['lastName']));
-		$emailName			= "$userFirstName $userLastName";
-		$userEmail 			= $userData['email'];
-		$guestEmail			= $userData['email'];
+		$userId=false;
+		$userFirstName='';
+		$userLastName='';
+		$emailName='';
+		$userEmail='';
+		$guestEmail='';
+		$userWorkPhone='';
+		$userMobilPhone='';
+		$userHomePhone='';
+		$userPhone='';
+		if (isset($userData['userId'])){
+			$userId 			= $userData['userId'];
+			$userFirstName		= ucwords(strtolower($userData['firstName']));
+			$userLastName		= ucwords(strtolower($userData['lastName']));
+			$emailName			= "$userFirstName $userLastName";
+			$userEmail 			= $userData['email'];
+			$guestEmail			= $userData['email'];
 
-		$userWorkPhone		= $userData['workPhone'];
-		$userMobilePhone	= $userData['mobilePhone'];
-		$userHomePhone		= $userData['homePhone'];
+			$userWorkPhone		= $userData['workPhone'];
+			$userMobilePhone	= $userData['mobilePhone'];
+			$userHomePhone		= $userData['homePhone'];
 
-		$userPhone			= $userHomePhone;
-		$userPhone			= !$userPhone && $userMobilePhone ? $userMobilePhone : $userPhone;
-		$userPhone			= !$userPhone && $userWorkPhone ? $userWorkPhone : $userPhone;
+			$userPhone			= $userHomePhone;
+			$userPhone			= !$userPhone && $userMobilePhone ? $userMobilePhone : $userPhone;
+			$userPhone			= !$userPhone && $userWorkPhone ? $userWorkPhone : $userPhone;
+		}
 
 		$dateNow = date("M d, Y");
 
@@ -1356,6 +1373,9 @@ class WebServiceTicketsController extends WebServicesController
 		} //End IF for $ticketId
 
 		// this needs to run outside of "if ($ticketId)" because bids (36) do not have tickets yet 
+		if (!isset($isAuction)){
+			$isAuction=false;
+		}
 		$isAuction = in_array($ppvNoticeTypeId, array(36)) ? true : $isAuction;
 
 		if (!empty($clientData)) {
