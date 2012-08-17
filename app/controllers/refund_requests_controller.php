@@ -116,7 +116,7 @@ class RefundRequestsController extends AppController {
 			if ($this->RefundRequest->save($this->data)) {
 				$this->Session->setFlash(__('The Refund Request has been saved', true));
 				
-				$note = date("n/j/Y") . " -- addded refund request\n\n";
+				$note = date("n/j/Y") . " -- added refund request\n\n";
 				$q = "UPDATE ticket SET ticketNotes = CONCAT(?, IFNULL(ticketNotes, '')) WHERE ticketId = ?";
 				$this->RefundRequest->query($q, array($note, $this->data['RefundRequest']['ticketId']));
 				
