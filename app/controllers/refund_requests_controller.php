@@ -165,6 +165,12 @@ class RefundRequestsController extends AppController {
 	function edit($id = null) {
 
 		if (!empty($this->data)) {
+			if ($this->data['RefundRequest']['markCompleted'] == '1') {
+				$this->data['RefundRequest']['refundRequestStatusId'] = 3;
+				$this->data['RefundRequest']['dateCompleted'] = date('Y-m-d G:i:s');
+				$currentUser = $this->LdapAuth->user();
+				$this->data['RefundRequest']['completedBy'] = $currentUser['LdapUser']['samaccountname'];
+			}
 			if ($this->RefundRequest->save($this->data)) {
 				$this->Session->setFlash(__('The Refund Request has been saved', true));
 				$this->redirect(array('action'=>'index'));

@@ -14,6 +14,7 @@
 	<?php echo $this->renderElement('../refund_requests/_edit_form'); ?>
 	
 	<hr class="refundRequestDivider" />
+	<div style="color:#880A00; font-weight: bold;">Accounting Purposes Only</div>
 	
 	<?= $form->input('keepOrRemit', array('label' => 'Keep / Remit', 'options' => $keepOrRemitList, 'empty' => '-- ')); ?>
 	<?= $form->input('ccRefundedFlag', array('type' => 'checkbox', 'label' => 'CC Refunded')); ?>
@@ -23,6 +24,10 @@
 	<?= $form->input('caUpdateFlag', array('type' => 'checkbox', 'label' => 'CA Update')); ?>
 	<?= $form->input('propertyPaidFlag', array('type' => 'checkbox', 'label' => 'Property Paid')); ?>
 	<?= $form->input('propertyPaidDate', array('label' => 'Date Paid',  'empty' => '-- ', 'minYear'=>date('Y')-2, 'maxYear'=>date('Y')+2)); ?>
+
+	<? if ($this->data['RefundRequestStatus']['refundRequestStatusId'] == 2) { ?>
+		<?= $form->input('markCompleted', array('type' => 'checkbox', 'label' => 'SET COMPLETED')); ?>
+	<? } ?>
 	
 	<?php echo $form->end('Submit');?>
 	</fieldset>
