@@ -15,6 +15,13 @@ class UnsubscribeLogsController extends AppController
 	private $start_ut;
 	private $end_ut;
 
+	function beforeFilter(){
+
+		parent::beforeFilter();
+		$this->set('hideSidebar', true);
+
+	}
+
 	/**
 	 * Count number of unsubs per mailingListId ie. per specific newsletter
 	 * 
