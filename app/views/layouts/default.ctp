@@ -98,7 +98,8 @@
 
             <div id="logo"><img src="/img/sm_logo.png" alt="" id="logo-image" /></div>
 			<div id='user-header-details'>
-				<?php if(@$userDetails['masquerading'] == true): ?>
+				<? $masq=isset($userDetails['masquerading'])?$userDetails['masquerading']:false;?>
+				<?php if($masq == true): ?>
 					<strong><?=$userDetails['originalUser']['LdapUser']['samaccountname']?><br />
 					Masquerading as <?=$userDetails['displayname']?><?=$html2->c($userDetails['samaccountname'])?><br />
 					<a href="/sessions/masquerade/revert" style="color: #ddad00">Unmasquerade</a>
@@ -120,21 +121,22 @@
 			if (!isset($queueCountSeverity))$queueCountSeverity='';
 		?>
 
+		<? $currentTab=isset($this->viewVars['currentTab'])?$this->viewVars['currentTab']:false;?>
     <div id="main">
 	<div id="main-inner" class="clear-block<?php if(!isset($this->viewVars['hideSidebar']) || $this->viewVars['hideSidebar'] === false) { echo ' sidebar-left';}?>">
 		<div id="navbar"><div id="navbar-inner" class="region">
 		    <div id="mainNav">
 				<ul>
 					<?if(0):?>
-		      		<li<?if(@($this->viewVars['currentTab'] == 'home')) echo ' class="current"'?>><?=$html->link('Home', '/')?></li>
+		      		<li<?if(@($currentTab == 'home')) echo ' class="current"'?>><?=$html->link('Home', '/')?></li>
 					<?endif;?>
-					<li<?if(@($this->viewVars['currentTab'] == 'message_queue')) echo ' class="current"'?>><?=$html->link('My Queue (<span id="queueCounter">'.$queueCountUnread.', '.$queueCountSeverity.'</span>)', array('controller' => 'message_queues', 'action' => 'index'), array(), null, false)?></li>
-		      		<li<?if(@($this->viewVars['currentTab'] == 'property')) echo ' class="current"'?>><?=$html->link('Clients', array('controller' => 'clients', 'action' => 'index'))?></li>
-		      		<li<?if(@($this->viewVars['currentTab'] == 'siteMerchandising')) echo ' class="current"'?>><a href="/pages/legacytools">Site Merchandising</a></li>
-		      		<li<?if(@($this->viewVars['currentTab'] == 'reports')) echo ' class="current"'?>><?=$html->link('Reports', array('controller' => 'reports', 'action' => 'index'))?></li>
-		      		<li<?if(@($this->viewVars['currentTab'] == 'customers')) echo ' class="current"'?>><?=$html->link('Concierge', array('controller' => 'users', 'action' => 'index'))?></li>
-                    <li<?if(@($this->viewVars['currentTab'] == 'newsletters')) echo ' class="current"'?>><?=$html->link('Newsletters', array('controller' => 'mailings', 'action' => 'index'))?></li>
-					<li<?if(@($this->viewVars['currentTab'] == 'wiki')) echo ' class="current"'?>><?=$html->link('Wiki', 'http://wiki.luxurylink.com/Main_Page')?></li>
+					<li<?if(@($currentTab == 'message_queue')) echo ' class="current"'?>><?=$html->link('My Queue (<span id="queueCounter">'.$queueCountUnread.', '.$queueCountSeverity.'</span>)', array('controller' => 'message_queues', 'action' => 'index'), array(), null, false)?></li>
+		      		<li<?if(@($currentTab == 'property')) echo ' class="current"'?>><?=$html->link('Clients', array('controller' => 'clients', 'action' => 'index'))?></li>
+		      		<li<?if(@($currentTab == 'siteMerchandising')) echo ' class="current"'?>><a href="/pages/legacytools">Site Merchandising</a></li>
+		      		<li<?if(@($currentTab == 'reports')) echo ' class="current"'?>><?=$html->link('Reports', array('controller' => 'reports', 'action' => 'index'))?></li>
+		      		<li<?if(@($currentTab == 'customers')) echo ' class="current"'?>><?=$html->link('Concierge', array('controller' => 'users', 'action' => 'index'))?></li>
+                    <li<?if(@($currentTab == 'newsletters')) echo ' class="current"'?>><?=$html->link('Newsletters', array('controller' => 'mailings', 'action' => 'index'))?></li>
+					<li<?if(@($currentTab == 'wiki')) echo ' class="current"'?>><?=$html->link('Wiki', 'http://wiki.luxurylink.com/Main_Page')?></li>
 					<li style="float: right; width: auto; background: none"><a href="/logout" style="background: none">Logout</a></li>
 		    	</ul>
 			</div>
