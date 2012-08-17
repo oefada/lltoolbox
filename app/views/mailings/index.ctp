@@ -10,6 +10,7 @@
 <!--<li><a target='_blank' href="http://live.luxurylink.com/inspiration/upload_newsletter.php">Upload and Sync Inspiration Newsletter</a></li>-->
 <li><a href="/unsubscribe_logs/index">Unsubscribes Logs</a>
 <li><a href="/sync_emails/index">Import undeliverables and optout emails</a>
+<li><a href="/unsubscribe_logs/mid">Unsubs by specific newsletter</a>
 </ul>
 
 </div>

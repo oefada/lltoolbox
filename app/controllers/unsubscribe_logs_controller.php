@@ -16,6 +16,33 @@ class UnsubscribeLogsController extends AppController
 	private $end_ut;
 
 	/**
+	 * Count number of unsubs per mailingListId ie. per specific newsletter
+	 * 
+	 * @return arr
+	 */
+	public function mid(){
+
+		$data = $this->UnsubscribeLog->find('all',
+			array(
+				'conditions'=>array(
+					'unsubDate >='=>mktime(0,0,0,8,15,2012)
+				),
+				'fields' => array(
+					'mailingListInstanceId',
+					'COUNT(*) as num',
+					'siteId'
+				),
+				'order' => "unsubDate DESC", 
+				'group' => "mailingListInstanceId, siteId",
+				'contain' => false 
+			)
+		); 
+
+		$this->set("unsubMidArr",$data);
+
+	}
+
+	/**
 	 * Process posted data for retrieval of records by date range and mailing list id
 	 * 
 	 * @return null

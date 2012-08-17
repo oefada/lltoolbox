@@ -1,11 +1,16 @@
 <?php
-uses('view/helpers/Html');
+
+// Triggers a sporadic fatal error that class already exists, so check first
+//
+if (!class_exists('HtmlHelper')){
+	uses('view/helpers/Html');
+}
 class Html2Helper extends HtmlHelper
 {
-	/* Formats a number to be a counter, surrounded by parenthesis
-	 * @input $num the number to use for the counter
-	 * @returns a string with the proper spans and tags
-	 */
+	// Formats a number to be a counter, surrounded by parenthesis
+	 // @input $num the number to use for the counter
+	 // @returns a string with the proper spans and tags
+	 //
 	function c($num = 0, $prepend = '', $append = '') {
 		if(is_array($num))
 			$num = count($num);
@@ -26,11 +31,11 @@ class Html2Helper extends HtmlHelper
 		return $out;
 	}
 	
-	/*
-	 * Formats a date to display in more human-friendly format
-	 */
+	//
+	 // Formats a date to display in more human-friendly format
+	 //
 	function date($date) {
 	   return date('M d, Y', strtotime($date));
 	}
 }
-?>
+

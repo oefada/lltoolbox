@@ -62,7 +62,7 @@ echo $form->end(array('name'=>'Retrieve','label'=>'Retrieve'));
 <b>Users Sub'd per Our Dbs</b><br>
 <table cellpadding='4' cellspacing='0' border='1'>
 <tr>
-<td class='tdTitle'><b>mailingListId</b></td>
+<td class='tdTitle'><b>newsletterId</b></td>
 <td class='tdTitle'>newsletter</td>
 <td class='tdTitle'># Sub'd</td>
 </tr>
