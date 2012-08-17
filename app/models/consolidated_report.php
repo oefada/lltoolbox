@@ -198,7 +198,14 @@ class ConsolidatedReport extends AppModel
 				$this->month_start_date = substr($this->report_date, 0, 7) . '-01';
 			}
 			
-			$this->month_end_date = substr($this->report_date, 0, 7) . '-' . cal_days_in_month(CAL_GREGORIAN, date('n', strtotime($this->report_date)), date('Y', strtotime($this->report_date)));
+			$this->month_end_date =
+				substr($this->report_date, 0, 7) . '-' .
+				cal_days_in_month(
+					CAL_GREGORIAN,
+					date('n', strtotime($this->report_date)),
+					date('Y', strtotime($this->report_date))
+				);
+
 			if (substr($this->month_end_date, 0, 7) === substr($this->loa_end_date, 0, 7)) {
 				$this->month_end_date = $this->loa_end_date;
 			}
@@ -237,7 +244,8 @@ class ConsolidatedReport extends AppModel
 			)
 		);
 
-		$client_details['AccountManager']['name'] = $account_manager['User']['firstname'] . ' ' . $account_manager['User']['lastname'];
+		$client_details['AccountManager']['name'] =
+			$account_manager['User']['firstname'] . ' ' . $account_manager['User']['lastname'];
 		$client_details['AccountManager']['email'] = $account_manager['User']['email'];
 		
 		return $client_details;
@@ -426,7 +434,10 @@ class ConsolidatedReport extends AppModel
 		$clicks = 0;
 		$dataToReturn = array();
 
-		if ($this->useSkynetData && in_array((int) $site_id , array(1, 2)) && $this->month_end_date > '2012-04-30 23:59:59') {
+		if ($this->useSkynetData
+			&& in_array((int) $site_id , array(1, 2))
+			&& $this->month_end_date > '2012-04-30 23:59:59'
+		) {
 			$omnitureData = $this->getImpressionsBySiteForPeriod($site_id, $this->loa_start_date, '2012-04-30 23:59:59');
 			$skynetData = $this->getImpressionsBySiteForPeriod($site_id, $this->loa_start_date, $this->month_end_date);
 			$impressions = $omnitureData['impressions'] + $skynetData['impressions'];
@@ -436,7 +447,8 @@ class ConsolidatedReport extends AppModel
 				'clicks'		=> $clicks
 			);
 		} else {
-			$dataToReturn = $this->getImpressionsBySiteForPeriod($site_id, $this->loa_start_date, $this->month_end_date);
+			$dataToReturn =
+				$this->getImpressionsBySiteForPeriod($site_id, $this->loa_start_date, $this->month_end_date);
 		}
 
 		return $dataToReturn;
@@ -796,10 +808,12 @@ class ConsolidatedReport extends AppModel
 			}
 		}
 
+		// we need the omniture data for the email impressions
+		$omnitureData = $this->getOmnitureImpressionsForClientByDate($startDate, $endDate, $clientId, $table);
 		foreach($impressions as $key => $arrayData) {
-			$totalImpressions = $arrayData['destinationview'] + $arrayData['productview'] + $arrayData['searchview'] + $arrayData['email'];
-			$totalEmails = $this->getOmnitureImpressionsForClientByDate($startDate, $endDate, $clientId, $table);
-			$totalEmails = (isset($totalEmails[0][$arrayData['month']]['email'])) ? $totalEmails[0][$arrayData['month']]['email'] : 0;
+			$totalEmails = array_shift(Set::extract($omnitureData, "/./{$arrayData['month']}/email"));
+			$totalImpressions =
+				$arrayData['destinationview'] + $arrayData['productview'] + $arrayData['searchview'] + $totalEmails;
 
 			$arrayData = array(
 				'year' => $arrayData['year'],
