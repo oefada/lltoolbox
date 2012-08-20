@@ -116,7 +116,7 @@
 												$clientId = $r['client']['name'];
 												$clientName = $r['client']['name'];
 												$locationDisplay = $r['client']['locationDisplay'];
-												$shortBlurb = $r['client']['longDesc'];
+												$shortBlurb = isset($r['client']['longDesc'])?$r['client']['longDesc']:'';
 												$clientImage = "http://www.familygetaway.com" . $r['client']['imagePath'];
 												$trackingName = $r['client']['seoName'];
 												$clientUrl = $r['client']['seoUrl'] . '?utm_medium=news&utm_source=fgnews&utm_campaign=' . $campaign . '&utm_content=' . $trackingName;
@@ -166,7 +166,7 @@
                                             <table align="center" width="660" cellspacing="0" cellpadding="0" border="0">
                                                 <tbody>
                                                     <tr>
-                                                        <td width="660" valign="top" height="100" style="padding: 0px 0px 15px;"><a name="fg-refer-friend" style="font-size: 12px; font-family: Verdana,Arial,Sans-Serif; color: rgb(222, 111, 10); line-height: 16px; text-decoration: underline;" target="_blank" xt="SPCLICK" href="http://www.familygetaway.com/refer-friend/?utm_medium=news&utm_source=fgnews&utm_campaign=<?= $campaign; ?>&utm_content=fg-refer-friend">                                       	<img align="middle" width="673" height="86" border="0" name="Cont_27" style="display: block;" alt="FamilyGetaway" src="http://www.luxurylink.com/images/ads/insertions/FG_RAF_Promo_660_83_f-v2.jpg" /></a></td>
+                                                        <td width="660" valign="top" height="100" style="padding: 0px 0px 15px;"><a name="fg-refer-friend" style="font-size: 12px; font-family: Verdana,Arial,Sans-Serif; color: rgb(222, 111, 10); line-height: 16px; text-decoration: underline;" target="_blank" xt="SPCLICK" href="http://www.familygetaway.com/refer-friend/?utm_medium=news&utm_source=fgnews&utm_campaign=<?= $campaign; ?>&utm_content=fg-refer-friend"><img align="middle" width="673" height="86" border="0" name="Cont_27" style="display: block;" alt="FamilyGetaway" src="http://www.luxurylink.com/images/family/email/FG_RAF_Promo_728_90_f.jpg" /></a></td>
                                                     </tr>
                                                 </tbody>
                                             </table>
