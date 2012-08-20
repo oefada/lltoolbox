@@ -11,11 +11,43 @@ class PpvNoticesController extends AppController {
 		$this->set('ppvNotices', $this->paginate());
 	}
 
+	/**
+	 * Dummy data and display for coding the template
+	 * 
+	 * @return TODO
+	 */
+	public function preview(){
+
+		$this->set("fontFamily", "font-family:Helvetica,maradival,Sans-Serif");
+		$this->set("siteId", 1);
+		$this->set("siteEmail", "luxurylink.com");
+		$this->set("siteName", "LuxuryLink");
+		$this->set("siteUrl", "http://www.luxurylink.com");
+		$this->set("additionalClients", false);
+		$this->set("isAuction", false);
+		$this->set("additionalClients", false);
+		$this->set("clientNameP", "Test Client Name");
+		$this->set("locationDisplay", "Test of location display value");
+		$this->set("sitePhone", "123-123-1234");
+		$this->set("sitePhoneLocal", "333-444-1234");
+		$this->set("pdpUrl", "http://www.luxurylink.com/fivestar/hotels/test-location/hotel-testerosa");
+		$img="http://photos.luxurylink.us/images/sho_4fcee4e4/8455_9015-auto-578/image-8455_9015.jpg";
+		$this->set("clientImagePath", $img);
+
+		$file="42_43_abandoned_cart.html";
+		$this->set('fileName', $file);
+		$this->autoLayout=false;
+		Configure::write('debug',0);
+		$this->render("preview");
+
+	}
+
 	function view($id = null) {
 		if (!$id) {
 			$this->Session->setFlash(__('Invalid PpvNotice.', true));
 			$this->redirect(array('action'=>'index'));
 		}
+
 		$this->set('ppvNotice', $this->PpvNotice->read(null, $id));
 		$this->layout = "ajax";
 	}
