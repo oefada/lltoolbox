@@ -419,11 +419,13 @@ class Package extends AppModel {
 				if ($ovd==false){
 					$r['PricePoint']['validityDisclaimer'] = Sanitize::escape($validityDisclaimer);
 				}
+
 				if (!isset($r['PricePoint']) || $r['PricePoint']['validityStart']=='' || $r['PricePoint']['validityEnd']==''){
 					$this->logIt($r);
 					$this->logIt($_SERVER);
+					return false;
+				}
 
-}
 				$this->PricePoint->save($r['PricePoint'], array('validate' => false, 'callbacks' => false));
 				$offerTable='offerLuxuryLink';
 				if ($siteId==2){

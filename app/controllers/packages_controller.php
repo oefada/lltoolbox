@@ -1727,7 +1727,9 @@ class PackagesController extends AppController
 			$this->autoRender = false;
 			$this->Package->saveBlackouts($packageId, $this->data);
 
-			$this->Package->updatePackagePricePointValidity($packageId, $siteId);
+			if ($this->Package->updatePackagePricePointValidity($packageId, $siteId)===false){
+				mail(self::DEV_EMAIL, 'error in edit_blackout_dates() packageId $packageId', 'eom');
+			}
 
 			$this->Package->PricePoint->contain(array());
 			$ppRows=$this->Package->PricePoint->findAllByPackageId($packageId);
@@ -1740,7 +1742,7 @@ class PackagesController extends AppController
 				}else{
 					$err='PricePoint key nor pricePoint key not found in array from findAllByPackageId for ';
 					$err.='packageId '.$packageId;
-					mail(DEV_EMAIL, 'error in edit_blackout_dates()', $err);
+					mail(self::DEV_EMAIL, 'error in edit_blackout_dates()', $err);
 					continue;
 				}
 				$ppId=$ppArr['pricePointId'];
