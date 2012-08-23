@@ -125,17 +125,17 @@
 		</div>
 
 		<div class="refundRequestDiv">
-			<label>CC to Credit</label>
-			<?= $this->data['PaymentDetail']['ppCardNumLastFour']; ?>
-		</div>
-
-		<div class="refundRequestDiv">
 			<label>Refund / COF</label>
 			<?
 			if ($this->data['RefundRequest']['refundOrCOF']) {	
 				echo $refundOrCOFList[$this->data['RefundRequest']['refundOrCOF']]; 
 			}
 			?>
+		</div>
+
+		<div class="refundRequestDiv">
+			<label>CC to Credit</label>
+			<? if ($this->data['PaymentDetail']['ppCardNumLastFour']) {?>XXXX-XXXX-XXXX-<? } ?><?= $this->data['PaymentDetail']['ppCardNumLastFour']; ?>
 		</div>
 
 		<div class="refundRequestDiv">

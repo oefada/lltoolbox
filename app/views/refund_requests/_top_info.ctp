@@ -20,10 +20,12 @@
 			<? } ;?>
 		</div>
 
+		<!--
 		<div class="input text refundRequestDiv">
 			<label>Date Purchased</label>
 			<?= $refundInfo['ticket']['Ticket']['created']; ?>
 		</div>
+		-->
 
 		
 		<? if ($pageVersion != 'A') { ?>

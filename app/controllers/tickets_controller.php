@@ -409,6 +409,13 @@ class TicketsController extends AppController {
 		$this->set('trackExistsCount', $trackDetailExists ? 1 : 0);
 		$this->set('trackDetailExists', $trackDetailExists);
 		$this->set('track', $track);
+
+		$showVoidLink = false;
+		$currentUser = $this->LdapAuth->user();
+		if (in_array('Accounting',$currentUser['LdapUser']['groups']) || in_array('Geeks',$currentUser['LdapUser']['groups'])) {
+			$showVoidLink = true;
+		}
+		$this->set('showVoidLink', $showVoidLink);
 	}
 
 	function phpinfoshow() {

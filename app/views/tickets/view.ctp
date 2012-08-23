@@ -264,8 +264,10 @@ $this->searchController = 'Tickets';
 	<?php endif; ?>
 	<?php
 		echo $html->link('Create New Payment', '/tickets/' . $ticket['Ticket']['ticketId'] . '/payment_details/add');
-		echo '<br /><br />';
-		echo $html->link('Void Existing Payment', '/tickets/' . $ticket['Ticket']['ticketId'] . '/payment_details/void');
+		if ($showVoidLink) {
+			echo '<br /><br />';
+			echo $html->link('Void Existing Payment', '/tickets/' . $ticket['Ticket']['ticketId'] . '/payment_details/void');
+		}
 	?>
 	
 	</div>

@@ -116,6 +116,6 @@
 			</div>
 		<? } ?>
 		
-		<?= $form->input('paymentDetailId', array('label' => 'CC to Credit', 'options' => $refundInfo['creditCards'], 'empty' => '-- ')); ?>
 		<?= $form->input('refundOrCOF', array('label' => 'Refund / COF', 'options' => $refundOrCOFList, 'empty' => '-- ')); ?>
+		<?= $form->input('paymentDetailId', array('label' => 'CC to Credit', 'options' => $refundInfo['creditCards'], 'empty' => '-- ')); ?>
 		<?= $form->input('notes'); ?>
