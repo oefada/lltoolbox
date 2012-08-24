@@ -116,7 +116,8 @@
 
 		<div class="refundRequestDiv">
 			<label>Refund Handling</label>
-			<?= $this->data['RefundRequest']['refundHandlingFeeFlag']; ?>
+			<? $handlingFee = ($this->data['RefundRequest']['refundHandlingFeeFlag'] == 1) ? 40 : 0; ?>
+			<?= $handlingFee; ?>
 		</div>
 
 		<div class="refundRequestDiv">

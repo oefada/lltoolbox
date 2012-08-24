@@ -72,7 +72,7 @@ class RefundRequestsController extends AppController {
 			   WHERE isSuccessfulCharge = 1 
 			   AND paymentTypeId = 3
 			   GROUP BY ticketId 
-			  ) BillingInfoCOF USING(ticketId)";
+			  ) BillingInfoCOF USING(ticketId) ORDER BY RefundInfo.refundRequestId DESC";
 
 		$results = $this->RefundRequest->query($q);
 		$this->set('refundRequests', $results);
