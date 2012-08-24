@@ -1,5 +1,5 @@
 <?php
-$this->pageTitle = 'Payment Details for Ticket Id: ' . $ticket['Ticket']['ticketId'];
+$this->pageTitle = 'Payment Details for Ticket Id: <a href="/tickets/view/' . $ticket['Ticket']['ticketId'] . '">' . $ticket['Ticket']['ticketId'] . '</a>';
 ?>
 
 <? if (isset($confirm)) { ?>
