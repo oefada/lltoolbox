@@ -4,6 +4,12 @@
 					updateRefundAmount();
 				});				
 
+				$("#RefundRequestRefundReasonId").change(function() {
+					if ($("#RefundRequestRefundReasonId").val() == 9) { 
+						updateRefundAmount();
+					}
+				});	
+
 				function updateRefundAmount() {
 
 					var total = parseFloat($("#orignalBillingPrice").val());
@@ -12,9 +18,16 @@
 					var llFee = ($("#RefundRequestCancelFeeLL").val() == '') ? 0 : parseFloat($("#RefundRequestCancelFeeLL").val());
 					var handlingFlag = ($("#RefundRequestRefundHandlingFeeFlag").val() == '1') ? 1 : 0;
 
-					var refund = total - promo - hotelFee - llFee;
-					if (handlingFlag == 1) {
-						refund = refund + <?= $handlingFee; ?>;
+					var refund = 0;
+					
+					// promo code
+					if ($("#RefundRequestRefundReasonId").val() == 9) { 
+						refund = promo;
+					} else {
+						refund = total - promo - hotelFee - llFee;
+						if (handlingFlag == 1) {
+							refund = refund + <?= $handlingFee; ?>;
+						}
 					}
 
 					$("#RefundRequestRefundTotal").val(refund);

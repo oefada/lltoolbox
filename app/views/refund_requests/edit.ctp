@@ -18,7 +18,7 @@
 	
 	<?= $form->input('keepOrRemit', array('label' => 'Keep / Remit', 'options' => $keepOrRemitList, 'empty' => '-- ')); ?>
 	<?= $form->input('ccRefundedFlag', array('type' => 'checkbox', 'label' => 'CC Refunded')); ?>
-	<?= $form->input('cofPostedFlag', array('type' => 'checkbox', 'label' => 'CC Posted')); ?>
+	<?= $form->input('cofPostedFlag', array('type' => 'checkbox', 'label' => 'COF Posted')); ?>
 	<?= $form->input('toolboxAllocatedFlag', array('type' => 'checkbox', 'label' => 'Toolbox Allocated')); ?>
 	<?= $form->input('caCheckRequestFlag', array('type' => 'checkbox', 'label' => 'CA Check Request')); ?>
 	<?= $form->input('caUpdateFlag', array('type' => 'checkbox', 'label' => 'CA Update')); ?>
