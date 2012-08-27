@@ -1154,33 +1154,20 @@ class WebServiceTicketsController extends WebServicesController
 		}
 
 		// Auction facilitator
+		$userId = isset($userData['userId'])?$userData['userId']:false;
+		$userFirstName = isset($userData['firstName'])?ucwords(strtolower($userData['firstName'])):false;
+		$userLastName	= isset($userData['lastName'])?ucwords(strtolower($userData['lastName'])):false;
+		$emailName = $userFirstName." ".$userLastName;
+		$userEmail = isset($userData['email'])?$userData['email']:false;
+		$guestEmail	= isset($userData['email'])?$userData['email']:false;
 
-		$userId=false;
-		$userFirstName='';
-		$userLastName='';
-		$emailName='';
-		$userEmail='';
-		$guestEmail='';
-		$userWorkPhone='';
-		$userMobilPhone='';
-		$userHomePhone='';
-		$userPhone='';
-		if (isset($userData['userId'])){
-			$userId 			= $userData['userId'];
-			$userFirstName		= ucwords(strtolower($userData['firstName']));
-			$userLastName		= ucwords(strtolower($userData['lastName']));
-			$emailName			= "$userFirstName $userLastName";
-			$userEmail 			= $userData['email'];
-			$guestEmail			= $userData['email'];
+		$userWorkPhone = isset($userData['workPhone'])?$userData['workPhone']:false;
+		$userMobilePhone = isset($userData['mobilePhone'])?$userData['mobilePhone']:false;
+		$userHomePhone = isset($userData['homePhone'])?$userData['homePhone']:false;
 
-			$userWorkPhone		= $userData['workPhone'];
-			$userMobilePhone	= $userData['mobilePhone'];
-			$userHomePhone		= $userData['homePhone'];
-
-			$userPhone			= $userHomePhone;
-			$userPhone			= !$userPhone && $userMobilePhone ? $userMobilePhone : $userPhone;
-			$userPhone			= !$userPhone && $userWorkPhone ? $userWorkPhone : $userPhone;
-		}
+		$userPhone = $userHomePhone;
+		$userPhone = !$userPhone && $userMobilePhone ? $userMobilePhone : $userPhone;
+		$userPhone = !$userPhone && $userWorkPhone ? $userWorkPhone : $userPhone;
 
 		$dateNow = date("M d, Y");
 
