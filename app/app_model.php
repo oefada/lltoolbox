@@ -104,7 +104,7 @@ class AppModel extends LazyModel {
 			FB::log($str,$num." log:");
 		}else{
 			Configure::write('debug',1);
-			CakeLog::write("debug",$str);
+			CakeLog::write("logitlog",$str);
 		}
 
 	}
