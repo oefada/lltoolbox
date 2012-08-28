@@ -12,6 +12,8 @@
 
 </style>
 
+<b>mailingListId of 0 means no mailingListId was found at the time of unsub-ing.</b><br><br>
+
 <table cellpadding='4' cellspacing='0' border='1' width='500' style='width:500px;'>
 <tr>
 <td class='tdTitle'>mailingListId</td>
