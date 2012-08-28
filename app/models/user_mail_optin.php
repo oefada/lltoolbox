@@ -52,6 +52,7 @@ class UserMailOptin extends AppModel {
 			$offset=0;
 			$length=300;
 			while($arr=array_slice($tmp, $offset,$length,true)){
+				$arr=array_map('mysql_real_escape_string',$arr);
 				$q="UPDATE userMailOptin umo INNER JOIN user u ON (umo.userId=u.userId) ";
 				$q.="SET optin=$val, optoutDatetime='".date("Y-m-d H:i:s",$unsubDate_ut)."' ";
 				$q.="WHERE email IN ('".implode("', '", $arr)."') ";
@@ -80,7 +81,6 @@ class UserMailOptin extends AppModel {
 			$offset=0;
 			$length=300;
 			while($tmp=array_slice($arr, $offset,$length,true)){
-
 				$emailInStr="('".implode("', '",($tmp))."')";
 				$conditions=array("email IN $emailInStr");
 				$joins=array();
@@ -105,7 +105,7 @@ class UserMailOptin extends AppModel {
 					'joins'=>$joins
 				));
 				$offset+=$length;
-
+				//AppModel::printR($r);exit;
 				if (count($r)==0 || !is_array($r)){
 					continue;
 				}
@@ -150,10 +150,11 @@ class UserMailOptin extends AppModel {
 				while($tmp=array_slice($emailArr, $offset,$length,true)){
 					$q="INSERT INTO unOptOutLog (email, dateUtYmd, newsletterId, siteId) VALUES ";
 					foreach($tmp as $email){
-						$q.="('$email', $optoutDate, $newsletterId, $siteId), ";
+						$q.="('".mysql_real_escape_string($email)."', $optoutDate, $newsletterId, $siteId), ";
 					}
 					$q=substr($q,0,-2)." ";
-					$q.="ON DUPLICATE KEY UPDATE email=email";
+					$q.="ON DUPLICATE KEY UPDATE dateUtYmd=$optoutDate";
+					//echo "'".implode("', '", $tmpArr)."'";
 					$this->query($q);
 					$offset+=$length;
 				}

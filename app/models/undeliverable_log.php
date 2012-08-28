@@ -18,7 +18,7 @@ class UndeliverableLog extends AppModel{
 					$q.="('$email', $unsubDate_ut), ";
 				}
 				$q=substr($q,0,-2)." ";
-				$q.="ON DUPLICATE KEY UPDATE email=email";
+				$q.="ON DUPLICATE KEY UPDATE dateUtYmd=$unsubDate_ut";
 				$this->query($q);
 				$offset+=$length;
 			}

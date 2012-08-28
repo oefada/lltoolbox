@@ -12,8 +12,8 @@ class SyncEmailsController extends AppController
 
 	public function index(){
 
-		$selectedNlId=false;
-		$selectedSiteId=false;
+		$selectedNlId=0;
+		$selectedSiteId=0;
 		if (isset($this->data['sync_emails']['mailingList'])){
 			$tmp=explode("-",$this->data['sync_emails']['mailingList']);
 			$selectedNlId=$tmp[1];
@@ -70,11 +70,10 @@ class SyncEmailsController extends AppController
 				$this->Session->setFlash(__("Unable to parse file. Be sure it is of type csv.", true), 'default', array(), 'success');
 				$this->redirect("/sync_emails/index");
 			}
-			
+
 			$emailArr=array();
 			foreach($arr[1] as $key=>$email){
-
-				$email=trim(strtolower($email));
+				$email=mysql_real_escape_string(trim(strtolower($email)));
 
 				// group emails by optout year-month
 				$date=$arr[2][$key];
@@ -83,7 +82,6 @@ class SyncEmailsController extends AppController
 				$emailArr[$date_ut][]=$email;
 
 				$undelivEmailArr[$date_ut][]=$email;
-
 			}
 
 			// make sure email exists in userMailOptin before adding to unsubscribeLog
@@ -98,8 +96,10 @@ class SyncEmailsController extends AppController
 				$this->UnsubscribeLog->insertIntoUnsubLog($emailArr, $selectedSiteId,$selectedNlId);
 			}
 			$this->set("msg","Uploaded file: $origFilename siteId:$selectedSiteId nlId: $selectedNlId");
-			//$this->Session->setFlash(__("Updated!", true), 'default', array(), 'success');
-			//$this->redirect("/sync_emails/index");
+			if ($_SERVER['ENV']!='development'){
+				$this->Session->setFlash(__("Updated!", true), 'default', array(), 'success');
+				$this->redirect("/sync_emails/index");
+			}
 
 		}
 
