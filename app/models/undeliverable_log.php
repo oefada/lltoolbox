@@ -32,7 +32,7 @@ class UndeliverableLog extends AppModel{
 		$q="select count(*) as num, dateUtYmd, ";
 		$q.="FROM_UNIXTIME(dateUtYmd, '%Y-%m') as dateYm "; 
 		$q.="FROM undeliverableLog ";
-		$q.="WHERE dateUtYmd>=".mktime(0,0,0,6,1,2012)." ";
+		$q.="WHERE dateUtYmd>=".(mktime()-(86400*30*12))." ";
 		$q.="GROUP BY dateYm ";
 		$q.="ORDER BY dateUtYmd DESC";
 		$r=$this->query($q);
