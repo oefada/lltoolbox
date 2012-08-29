@@ -40,6 +40,12 @@ class PromoCodesController extends AppController {
 	}
 
 	function add($id = null) {
+
+		if (!$this->PromoCode->Promo->hasEditAccess($this->LdapAuth->user())) {
+			$this->Session->setFlash(__('You do not have permission to edit promos.', true));
+			$this->redirect(array('controller'=>'promos', 'action'=>'index'));	
+		}
+
 		if (!empty($this->data)) {
 			if (empty($this->data['PromoCode']['promoCode']) && $this->data['totalCode'] && $this->data['prefix']) {
 				$results = $this->PromoCode->query("SELECT GROUP_CONCAT(promoCode) AS promoCodes FROM promoCode");

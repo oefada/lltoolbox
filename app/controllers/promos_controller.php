@@ -69,7 +69,16 @@ class PromosController extends AppController {
 		}
 	}
 
+	
+
+
 	function edit($id = null) {
+				
+		if (!$this->Promo->hasEditAccess($this->LdapAuth->user())) {
+			$this->Session->setFlash(__('You do not have permission to edit promos.', true));
+			$this->redirect(array('action'=>'index'));	
+		}
+			
 		$isNewPromo = (intval($id) > 0) ? false : true;
 		if (!empty($this->data)) {
 			$formData = $this->data['Promo'];
@@ -129,7 +138,7 @@ class PromosController extends AppController {
 							$this->PromoCode->generateMultipleCodes($this->data['Promo']['generatePrefix'], $this->data['Promo']['generateQuantity'], $promoId);
 						}
 					}
-
+										
 					$this->Session->setFlash(__('"' . $this->data['Promo']['promoName'] . '" has been saved', true));
 					$this->redirect(array('action'=>'edit', $promoId));
 				} else {

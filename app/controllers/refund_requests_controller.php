@@ -17,12 +17,17 @@ class RefundRequestsController extends AppController {
 	}	
 
 	function index() {
-
+		
 		$displayCsv = (!empty($this->data) && $this->data['RefundRequest']['csv'] == 1) ? true : false;
-		$status = (!empty($this->data) && intval($this->data['RefundRequest']['f_status']) > 0) ? $this->data['RefundRequest']['f_status'] : false;
+		$status = (!empty($this->data) && $this->data['RefundRequest']['f_status'] != '') ? $this->data['RefundRequest']['f_status'] : false;
 		$dateField = (!empty($this->data) && $this->data['f_Date']['field'] != '') ? $this->data['f_Date']['field'] : false;
 		$dateStart = (!empty($this->data) && $this->data['f_Date']['start'] != '') ? $this->data['f_Date']['start'] : false;
 		$dateEnd = (!empty($this->data) && $this->data['f_Date']['end'] != '') ? $this->data['f_Date']['end'] : false;
+
+		if (empty($this->data)) {
+			$status = 'HC';
+			$this->data = array('RefundRequest' => array('f_status' => 'HC'));
+		}
 
 		$q = "SELECT * FROM
 			  (
@@ -35,7 +40,9 @@ class RefundRequestsController extends AppController {
 			  LEFT JOIN paymentDetail PaymentDetail ON RefundRequest.paymentDetailId = PaymentDetail.paymentDetailId
 			  WHERE 1 = 1";
 
-		if ($status) {
+		if ($status == 'HC') {
+			$q .= " AND RefundRequest.refundRequestStatusId IN (1, 2)";
+		} elseif ($status) {
 			$q .= " AND RefundRequest.refundRequestStatusId = " . $status;
 		}
 		if ($dateField && $dateStart) {
@@ -44,9 +51,11 @@ class RefundRequestsController extends AppController {
 		if ($dateField && $dateEnd) {
 			$q .= " AND RefundRequest." . $dateField . " < '" . $dateEnd . "'";
 		}
+		
+		$q .= ") RefundInfo";
 
-		$q .= ") RefundInfo
-			  INNER JOIN
+		if ($displayCsv) {
+			$q .= " INNER JOIN
 			  (SELECT cpr.packageId, GROUP_CONCAT(c.name) AS `name` 
 			  FROM `client` c
 			  INNER JOIN clientLoaPackageRel cpr USING(clientId)
@@ -72,7 +81,10 @@ class RefundRequestsController extends AppController {
 			   WHERE isSuccessfulCharge = 1 
 			   AND paymentTypeId = 3
 			   GROUP BY ticketId 
-			  ) BillingInfoCOF USING(ticketId) ORDER BY RefundInfo.refundRequestId DESC";
+			  ) BillingInfoCOF USING(ticketId)";
+		}
+
+		$q .= " ORDER BY RefundInfo.refundRequestId DESC";
 
 		$results = $this->RefundRequest->query($q);
 		$this->set('refundRequests', $results);
@@ -86,6 +98,7 @@ class RefundRequestsController extends AppController {
 		
 		} else {
 			$refundStatuses = $this->RefundRequest->RefundRequestStatus->find('list');
+			$refundStatuses['HC'] = 'Hide Completed';
 			$this->set('refundStatuses', $refundStatuses);
 			$this->set('hideSidebar', true);
 		}
@@ -122,7 +135,11 @@ class RefundRequestsController extends AppController {
 				
 				$this->redirect(array('action'=>'index'));
 			} else {
-				$this->Session->setFlash(__('The Refund Request could not be saved. Please, try again.', true));
+				$errors = '';
+				foreach($this->RefundRequest->invalidFields() as $f) {
+					$errors .= '<br>' . $f;
+				}
+				$this->Session->setFlash(__('The Refund Request could not be saved.' . $errors, true));
 			}
 			
 			$refundInfo = $this->prepRefundInfoByTicketId($ticketId);
@@ -175,7 +192,11 @@ class RefundRequestsController extends AppController {
 				$this->Session->setFlash(__('The Refund Request has been saved', true));
 				$this->redirect(array('action'=>'index'));
 			} else {
-				$this->Session->setFlash(__('The Refund Request could not be saved. Please, try again.', true));
+				$errors = '';
+				foreach($this->RefundRequest->invalidFields() as $f) {
+					$errors .= '<br>' . $f;
+				}
+				$this->Session->setFlash(__('The Refund Request could not be saved.' . $errors, true));
 				$this->redirect(array('action'=>'edit', $this->data['RefundRequest']['refundRequestId']));
 			}			
 		} else {

@@ -30,6 +30,8 @@ class Promo extends AppModel {
 		'PromoRestrictionTheme' => array(
 			'foreignKey' => 'promoId')
 	);
+
+	var $actsAs = array('Logable');
 	
 	function checkInsertRaf($promoCodeId) {
 		if (!$promoCodeId) {
@@ -252,7 +254,12 @@ class Promo extends AppModel {
 		return $count;
 	}
 
-
+	public function hasEditAccess($currentUser) {
+		$authorizedUsers = array('bjensen', 'bcariou', 'cholland', 'kferson', 'rrotzang', 'zbolinn');
+		if (in_array($currentUser['LdapUser']['samaccountname'], $authorizedUsers) || in_array('Geeks',$currentUser['LdapUser']['groups'])) {
+			return true;
+		}
+		return false;
+	}
 
 }
-?>

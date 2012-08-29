@@ -20,6 +20,10 @@ class RefundRequest extends AppModel {
 								'rule' => 'numeric',
 								'message' => 'The Ticket Id must be numeric.'
 								),
+						'refundOrCOF' => array(
+								'rule' => 'alphaNumeric',
+								'message' => 'Please complete Refund / COF.'
+								),
 						);
 
 	var $belongsTo = array('RefundReason' => array('foreignKey' => 'refundReasonId'),
