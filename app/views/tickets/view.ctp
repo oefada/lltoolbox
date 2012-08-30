@@ -478,6 +478,8 @@ $this->searchController = 'Tickets';
 	</div>
 </div>
 
+<? $refundOrCOFList = array('R'=>'Refund', 'C'=>'COF', 'B'=>'Both'); ?> 
+
 <br />
 <div class="collapsible">
 	<div class="handle"><?php __("Refund Requests (" . sizeof($ticket['RefundRequest']) . ")");?></div>
@@ -494,6 +496,7 @@ $this->searchController = 'Tickets';
  				<th style="text-align:center;">Approved By</th>
  				<th style="text-align:center;">Complete Date</th>
  				<th style="text-align:center;">Completed By</th>
+ 				<th style="text-align:center;">Refund / COF</th>
  				<th style="text-align:center;">&nbsp;</th>
  			</tr>
  			<?php foreach ($ticket['RefundRequest'] as $k=>$v) : ?>
@@ -506,6 +509,13 @@ $this->searchController = 'Tickets';
 				<td style="text-align:center;"><?=$v['approvedBy'];?></td>
 				<td style="text-align:center;"><?=$v['dateCompleted'];?></td>
 				<td style="text-align:center;"><?=$v['completedBy'];?></td>				
+				<td style="text-align:center;">
+					<?
+					if ($v['refundOrCOF']) {	
+						echo $refundOrCOFList[$v['refundOrCOF']]; 
+					}
+					?>
+				</td>
 				<td style="text-align:center;">
 					<?php echo $html->link('View', '/refund_requests/view/' . $v['refundRequestId']); ?>
 				</td>

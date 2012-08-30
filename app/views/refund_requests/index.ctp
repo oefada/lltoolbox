@@ -44,6 +44,7 @@
 	<th>Approved By</th>
 	<th>Date Completed</th>
 	<th>Completed By</th>
+	<th>Refund / COF</th>
 	<th class="actions">Actions</th>
 </tr>
 <?php
@@ -64,6 +65,15 @@ foreach ($refundRequests as $rq):
 		<td><?php echo $rq['RefundInfo']['approvedBy']; ?></td>
 		<td><?php echo $rq['RefundInfo']['dateCompleted']; ?></td>
 		<td><?php echo $rq['RefundInfo']['completedBy']; ?></td>
+		<td style="text-align:center;">
+		
+			<?
+			if ($rq['RefundInfo']['refundOrCOF']) {	
+				echo $refundOrCOFList[$rq['RefundInfo']['refundOrCOF']]; 
+			}
+			?>
+		
+		</td>
 		<td class="actions">
 			<?php echo $html->link(__('View', true), array('action'=>'view', $rq['RefundInfo']['refundRequestId'])); ?>
 			<? if ($rq['RefundInfo']['refundRequestStatusId'] == 1) { ?>
