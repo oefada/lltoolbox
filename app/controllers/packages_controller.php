@@ -2279,7 +2279,9 @@ class PackagesController extends AppController
 				}
 
 				// Why is this being updated when data is only being viewed?
-				//$this->Package->updatePackagePricePointValidity($packageId, $siteId);
+				// - Problem of packages not setting pricePoint validityStart or validityEnd, but gets it correctly set
+				// if resaved. Apparently this is a work around to that, so putting it back in.
+				$this->Package->updatePackagePricePointValidity($packageId, $siteId);
 
 			}
 
