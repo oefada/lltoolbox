@@ -640,7 +640,7 @@ class WebServiceTicketsController extends WebServicesController
 		if (isset($params['siteId']) && $params['siteId'] == 2) {
 			$params['ppvNoticeTypeId'] = 20;     // Your Dates Have Been Received
 		} else {
-			$params['ppvNoticeTypeId'] = 12;     // We are in the process of confirming your reservation
+			$params['ppvNoticeTypeId'] = 12;     // Your reservation request has been submitted to %%HotelName%%
 		}
 		
 		$this->ppv(json_encode($params));
@@ -1682,7 +1682,7 @@ class WebServiceTicketsController extends WebServicesController
 					$templateFile = '12_reservation_ack';
 				}
 				
-				$templateTitle = "We are in the process of confirming your reservation";
+				$templateTitle = "Your reservation request has been submitted to $clientNameP.  Please allow 1-2 business days for a reply.";
 				$emailSubject = "Your $siteName Travel Booking - $clientNameP";
 				$emailFrom = ($isAuction) ? "$siteDisplay <auction@$siteEmail>" : "$siteDisplay <exclusives@$siteEmail>";
 				$emailReplyTo = ($isAuction) ? "auction@$siteEmail" : "exclusives@$siteEmail";
