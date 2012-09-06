@@ -15,7 +15,7 @@ class CallsController extends AppController
 		$this->Call->recursive = 0;
 		$this->set('calls', $this->paginate());
 	}
-/*
+
 	function view($id = null)
 	{
 		if (!$id) {
@@ -70,5 +70,5 @@ class CallsController extends AppController
 		$this->Session->setFlash(__('The Call could not be deleted. Please, try again.', true));
 		$this->redirect(array('action' => 'index'));
 	}
-*/
+
 }
