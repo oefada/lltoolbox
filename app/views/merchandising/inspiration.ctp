@@ -12,12 +12,19 @@ table tr td { border: none; }
 form { clear: none; }
 .date { width: 350px; float: left; }
 form div { clear: none; }
+a.remove-link { display: inline-block; }
 </style>
 
 <script type="text/javascript" src="/js/tablednd.js"></script>
 <script type="text/javascript">
 jQuery(document).ready(function() {
-	setRow('r1');
+	var $ = jQuery;
+	$('tr.input-row').each(function(i){
+		var r = $(this).attr('id');
+		if (typeof r == 'string') {
+			setRow(r);
+		}
+	});
 });
 
 function addRow() {
