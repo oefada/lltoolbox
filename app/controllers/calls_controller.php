@@ -19,6 +19,17 @@ class CallsController extends AppController
 	{
 	}
 
+	function ajax()
+	{
+		if (isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+			Configure::write('debug', 0);
+			header('Content-type: application/json');
+		}
+		$data = array();
+		$data['asdf']='jkl';
+		$this->set('ajax_for_layout', $data);
+	}
+
 	function beforeRender()
 	{
 		$this->set('username', ((isset($this->viewVars['user']['LdapUser']['username']) ? $this->viewVars['user']['LdapUser']['username'] : false)));
