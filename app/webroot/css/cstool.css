@@ -14,4 +14,10 @@ table.cake-sql-log {
 	width: 100%;
 	font-size: 150%;
 	margin: 8px 0;
+	padding: 2px;
+}
+.interaction {
+	background-color: #ffffee;
+	padding: 4px;
+	margin: 8px 0;
 }

@@ -19,4 +19,10 @@ class CallsController extends AppController
 	{
 	}
 
+	function beforeRender()
+	{
+		$this->set('username', ((isset($this->viewVars['user']['LdapUser']['username']) ? $this->viewVars['user']['LdapUser']['username'] : false)));
+		parent::beforeRender();
+	}
+
 }
