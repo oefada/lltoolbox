@@ -36,6 +36,7 @@
 			echo $javascript->link('jquery/jquery.js');
 			echo $javascript->link('jquery/jquery-noconflict.js');
 			echo $javascript->link('jquery/jquery.tableutils.src.js');
+			echo $javascript->link('cstool_popup');
 			//echo $javascript->link('fixed_table_headers');
 		endif;
 

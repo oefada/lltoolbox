@@ -30,6 +30,7 @@
             echo $javascript->link('jquery/jquery.dimensions.min');
             echo $javascript->link('jquery/jquery.wtooltip');
 			echo $javascript->link('jquery/jquery.tableutils.src.js');
+			echo $javascript->link('cstool_popup');
 			
 		endif;
 

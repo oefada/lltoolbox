@@ -11,6 +11,8 @@
 		echo $html->css('//ajax.googleapis.com/ajax/libs/jqueryui/1.8.21/themes/blitzer/jquery-ui.css');
 		echo $javascript->link('//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js');
 		echo $javascript->link('//ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js');
+		echo $javascript->link('cstool_popup');
+		echo $javascript->link('cstool');
 		// echo $scripts_for_layout;
 		?>
 	</head>
@@ -22,11 +24,8 @@
 			<div id="cscontent">
 				<?php echo $content_for_layout; ?>
 			</div>
-			<div id="csfooter">
-			</div>
+			<div id="csfooter"></div>
 		</div>
-		<div id="csdebug">
-			<?php echo $cakeDebug; ?>
-		</div>
+		<?php echo $cakeDebug; ?>
 	</body>
 </html>
