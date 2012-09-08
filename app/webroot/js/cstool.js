@@ -33,15 +33,13 @@ var cs_util = {
 	},
 	processAjax : function(d) {
 		var $ = jQuery;
-		console.log('processAjax', Math.random(), d);
 		var aj = $('#ajaxDebug');
 		aj.empty();
 		for (var prop in d) {
 			var o = '';
 			o += prop + ': ';
-			alert( typeof d[prop]);
 			if ( typeof d[prop] == 'object') {
-				o += d[prop].toSource();
+				o += JSON.stringify(d[prop]);
 			} else {
 				o += d[prop];
 			}
