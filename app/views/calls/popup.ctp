@@ -38,3 +38,8 @@
 		<li><a href="#" onclick="jQuery(this).parents('div.interaction').css({'background':'#eeffee'});return false;">Green</a></li>
 	</ul>
 </div>
+
+<div class="ajax debug interaction">
+	<h3>Ajax Debug</h3>
+	<div id="ajaxDebug">Ready.</div>
+</div>

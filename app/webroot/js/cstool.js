@@ -32,7 +32,21 @@ var cs_util = {
 		$.ajax(data);
 	},
 	processAjax : function(d) {
+		var $ = jQuery;
 		console.log('processAjax', Math.random(), d);
+		var aj = $('#ajaxDebug');
+		aj.empty();
+		for (var prop in d) {
+			var o = '';
+			o += prop + ': ';
+			alert( typeof d[prop]);
+			if ( typeof d[prop] == 'object') {
+				o += d[prop].toSource();
+			} else {
+				o += d[prop];
+			}
+			aj.append($('<div/>').text(o));
+		}
 	},
 	oldHash : ''
 };
@@ -45,9 +59,9 @@ var cs_clock = {
 		}
 		var $ = jQuery;
 		cs_clock.dots = !cs_clock.dots;
-		var dots = cs_clock.dots ? ':' : '<span style="color:#666;">:</span>';
+		var dots = cs_clock.dots ? ':' : '<span style="color:#777;">:</span>';
 		var d = new Date();
-		var ds = '<span style="color:#666;">' + d.toDateString() + '</span>';
+		var ds = '<span style="color:#777;">' + d.toDateString() + '</span>';
 		ds += ' ';
 		ds += (d.getHours() % 12);
 		ds += dots;
