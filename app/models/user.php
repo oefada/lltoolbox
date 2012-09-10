@@ -80,9 +80,45 @@ class User extends AppModel
 	{
 		return ($this->findByUserId($userId) === FALSE) ? FALSE : TRUE;
 	}
+
+	/**
+	 * Count the number of distinct userId's associated with the email. (Legacy data issue) 
+	 * 
+	 * @param mixed $email 
+	 * 
+	 * @return int
+	 */
+	public function countAccountsWithEmail($email){
+
+		return $this->find('count', array('conditions'=>array('email'=>$email)));
+
+	}
 	
 	/**
 	 * Delete a user and related records
+		Currently, these are all the tables with a userId column 
+		address
+		badUser
+		bid
+		creditTracking
+		dealAlert
+		giftCertBalance
+		partnerRequest
+		promoCodeOwner
+		promoCodeRecipient
+		promoOfferTracking
+		promoTicketRel
+		ticket
+		user
+		userAuctionsTracked
+		userClientFavorites
+		userClientSpecialOffers
+		userClientTracking
+		userMailOptin
+		userOauth
+		userPaymentSetting
+		userPreference
+		userSiteExtended
 	 * 
 	 * @param	int userId
 	 * @param	bool cascade

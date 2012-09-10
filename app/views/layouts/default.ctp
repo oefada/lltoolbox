@@ -178,26 +178,48 @@
           <?php print $content_for_layout; ?>
         </div>
       </div></div> <!-- /#content-inner, /#content -->
-	  <?php if(!isset($this->viewVars['hideSidebar']) || $this->viewVars['hideSidebar'] === false): ?>
-		<div id="sidebar-left"><div id="sidebar-left-inner" class="region region-left">
-			<?php if(file_exists(ELEMENTS.'/sidebar/menu_for_'.$this->params['controller'].'_'.$this->params['action'].'.ctp')): ?>
-				<?php echo $this->renderElement('sidebar/menu_for_'.$this->params['controller'].'_'.$this->params['action']); ?>
-			<?php elseif(file_exists(ELEMENTS.'/sidebar/menu_for_'.$this->params['controller'].'.ctp')): ?>
-				<?php echo $this->renderElement('sidebar/menu_for_'.$this->params['controller']); ?>
-			<?php elseif (isset($this->viewVars['currentTab']) && file_exists(ELEMENTS.'/sidebar/menu_for_'.$this->viewVars['currentTab'].'.ctp')): ?>
-				<?php echo $this->renderElement('sidebar/menu_for_'.$this->viewVars['currentTab']); ?>
-			<?php endif; ?>
-		<div style="clear: both;"></div>
-		</div></div> <!-- /#sidebar-left-inner, /#sidebar-left -->
+
+	  <?php 
+		
+		if(!isset($this->viewVars['hideSidebar']) || $this->viewVars['hideSidebar'] === false): 
+			
+		?>
+		
+			<div id="sidebar-left"><div id="sidebar-left-inner" class="region region-left">
+
+				<?php 
+
+				$tab=ELEMENTS.'sidebar/menu_for_'.$this->viewVars['currentTab'].'.ctp';
+				$file=ELEMENTS.'sidebar/menu_for_'.$this->params['controller'].'_'.$this->params['action'].'.ctp';
+
+				if(file_exists($file)): 
+
+					echo $this->renderElement('sidebar/menu_for_'.$this->params['controller'].'_'.$this->params['action']); 
+			
+				elseif(file_exists(ELEMENTS.'/sidebar/menu_for_'.$this->params['controller'].'.ctp')): 
+
+					echo $this->renderElement('sidebar/menu_for_'.$this->params['controller']); 
+			
+				elseif (isset($this->viewVars['currentTab']) && file_exists($tab)): 
+
+					echo $this->renderElement('sidebar/menu_for_'.$this->viewVars['currentTab']);
+
+				endif; ?>
+
+			<div style="clear: both;"></div>
+			</div></div> <!-- /#sidebar-left-inner, /#sidebar-left -->
+
 	  <?php endif;?>
 
     </div></div> <!-- /#main-inner, /#main -->
 
-      <div id="footer"><div id="footer-inner" class="region region-footer">
+    <div id="footer"><div id="footer-inner" class="region region-footer">
 
-          <div id="footer-message"><? if (REVISION) { ?><strong>Running SVN Revision <?=REVISION?></strong><? } ?></div>
+    <div id="footer-message">
+			<? if (REVISION) { ?><strong>Running SVN Revision <?=REVISION?></strong><? } ?>
+		</div>
 
-      </div></div> <!-- /#footer-inner, /#footer -->
+    </div></div> <!-- /#footer-inner, /#footer -->
 
   </div></div> <!-- /#page-inner, /#page -->
 	

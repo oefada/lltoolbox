@@ -182,8 +182,232 @@ class UsersController extends AppController {
 			$this->data['CreditTracking'] = $cof[0]['CreditTracking'];
 		}
 
+		$numAccountsWithEmail=$this->User->countAccountsWithEmail($this->data['User']['email']);		
+		$this->set('numAccountsWithEmail', $numAccountsWithEmail);
+		$this->set('email', $this->data['User']['email']);
 		$this->set('user', $this->data);
 		$this->set(compact('user', 'salutationIds', 'paymentTypes', 'addressTypes'));
+	}
+
+	/**
+	 * Display all accounts and their status for associated email
+	 * 
+	 * @return null
+	 */
+	public function email($id=null){
+
+		$email=$this->params['url']['email'];
+		$process=isset($this->params['url']['process'])?$this->params['url']['process']:0;
+
+		$this->set('hideSidebar', false);
+		$this->set("currentTab", "customers");
+
+		$arr=$this->processDupEmails(array($email),$process);
+		$rowArr=$arr[0];
+		$keepArr=$arr[1];
+		$inactiveArr=$arr[2];
+		$delIdArr=$arr[3];
+
+		$this->set("userId", $id);
+		$this->set("email", $email);
+		$this->set("rowArr", $rowArr);
+		$this->set("keepArr", $keepArr);
+		$this->set("inactiveArr", $inactiveArr);
+		$this->set("delIdArr", $delIdArr);
+
+	}
+
+	/**
+	 * Batch process accounts with one email associated with multiple userIds.
+	 * 
+	 * @param array
+	 * 
+	 * @return array
+	 */
+	private function processDupEmails($emailArr=array(), $process=0){
+
+		foreach($emailArr as $email){
+
+			$delIdArr=array();
+			$q="SELECT u.createDateTime, u.modifyDateTime, u.email, u.userId, ticket.ticketId, ue.userSiteExtendedId, ";
+			$q.="u.inactive ";
+			$q.="FROM user u ";
+			$q.="LEFT JOIN ticket using(userId) ";
+			$q.="LEFT JOIN userSiteExtended ue using(userId) ";
+			$q.="WHERE email=\"$email\" ";
+			$q.="GROUP BY userId, ticketId ";
+			$q.="ORDER BY ticketId DESC ";
+			$r=$this->User->query($q);
+			if (count($r)==0){
+				return "done";
+			}
+
+			$inactiveArr[$email]=array();
+			$latestDate=0;
+			$latestUserId=0;
+			$keepArr[$email]=array();
+			foreach($r as $arr){
+
+				$id=$arr['u']['userId'];
+
+				$rowArr[$id]=array(
+					"userId"=>$id, 
+					"email"=>$email, 
+					"createDateTime"=>$arr['u']['createDateTime'], 
+					"modifyDateTime"=>$arr['u']['modifyDateTime'], 
+					"inactive"=>$arr['u']['inactive'],
+					"ticketId"=>$arr['ticket']['ticketId'], 
+					"userSiteExtendedId"=>$arr['ue']['userSiteExtendedId']
+				);
+
+				$emailIdArr[$email][]=$id;
+
+				$delIdArr[$id]=$id;
+
+				$ut=strtotime($arr['u']['createDateTime']);
+
+				if ($ut>$latestDate && $arr['u']['inactive']==0){
+					$latestDate=$ut;
+					$latestUserId=$id;
+				}
+
+				// This email/userId has a ticket associated with it
+				// Set it in these arrays for use later 
+				if ($arr['ticket']['ticketId']!=null){
+					$userIdHasTicketArr[$id]=1;
+					$emailHasTicketArr[$email][$id]=$arr['ticket']['ticketId'];
+				}
+
+			}
+
+			// if there are no tickets, keep latestUserId
+			if (!isset($emailHasTicketArr[$email]) && $latestUserId!=0){
+				$keepArr[$email][]=$latestUserId;	
+			}
+
+			// keep userIds that have ticketIds (to be set to inactive)
+			if (isset($emailHasTicketArr[$email])){
+				foreach($emailHasTicketArr[$email] as $uid=>$tid){
+					if (!in_array($uid, $keepArr[$email])){
+						$inactiveArr[$email][]=$uid;
+					}
+				}
+
+				// if no userIds where found to keep and there are userId's in inactiveArr 
+				// set the primary userId to the most recent userId in the inactive array
+				if (count($keepArr[$email])==0 && count($inactiveArr[$email])>0){
+					rsort($inactiveArr[$email]);
+					$keepArr[$email][]=$inactiveArr[$email][0];
+					unset($inactiveArr[$email][0]);
+				}
+
+			}
+
+			if (count($keepArr[$email])==0 && count($emailIdArr[$email])>0){
+				//echo $email;
+				//AppModel::printR($emailIdArr[$email]);
+				//AppModel::printR($delIdArr);
+				$delIdArr=$delIdArr+$emailIdArr[$email];	
+			}
+
+			// remove userId's that are designated to be kept from the deletion array
+			foreach($keepArr[$email] as $i=>$uid){
+				unset($delIdArr[$uid]);
+			}
+			// remove userId's that are designated to be set to inactive 
+			foreach($inactiveArr[$email] as $i=>$uid){
+				unset($delIdArr[$uid]);
+			}
+
+			if (count($delIdArr)>0 && $process==1){
+				$q="DELETE FROM userSiteExtended WHERE userId IN(".implode(", ", $delIdArr).")";
+				$this->User->query($q);
+				$q="DELETE FROM user WHERE userId IN(".implode(", ", $delIdArr).")";
+				$this->User->query($q);
+				foreach($delIdArr as $userId){
+					unset($rowArr[$userId]);
+				}
+				$delIdArr=array();
+			}
+
+			if (count($inactiveArr[$email])>0 && $process==1){
+				$q="UPDATE user SET inactive=1 WHERE userId IN(".implode(", ", $inactiveArr[$email]).")";
+				$this->User->query($q);
+				foreach($inactiveArr[$email] as $i=>$userId){
+					$rowArr[$userId]['inactive']=1;
+				}
+			}
+
+		}
+
+		return array($rowArr, $keepArr, $inactiveArr, $delIdArr);
+
+	}
+
+	/**
+	 * Batch process accounts with multiple userId's associated with one email 
+	 * 
+	 * @return null
+	 */
+	public function deleteDups(){
+
+		$limit=100;
+		$ajax=isset($this->params['url']['ajax'])?$this->params['url']['ajax']:false;
+		if ($ajax){
+			$this->layout = false;
+			$this->autoRender = false;
+		}
+		$this->set('hideSidebar', true);
+		$offset=isset($this->params['url']['query_offset'])?$this->params['url']['query_offset']:false;
+		$showDupCount=isset($this->params['url']['showDupCount'])?1:0;
+		$showDupCountNoInactive=isset($this->params['url']['showDupCountNoInactive'])?1:0;
+		$runProcess=isset($this->params['url']['runProcess'])?1:0;
+		$dupCount=false;
+		$dupCountNoInactive=false;
+
+		if ($showDupCount){
+
+			$q="SELECT email, COUNT(email) as num FROM user GROUP BY email HAVING num>1";
+			$r=$this->User->query($q);
+			$dupCount=number_format(count($r));
+
+		}elseif ($showDupCountNoInactive){
+
+			$q="SELECT email, COUNT(email) as num FROM user ";
+			$q.="WHERE inactive=0 ";	
+			$q.="GROUP BY email HAVING num>1";
+			$r=$this->User->query($q);
+			$dupCountNoInactive=number_format(count($r));
+
+		}elseif ($runProcess){
+
+			$q="SELECT email, COUNT(email) as num FROM user GROUP BY email HAVING num>1 ";
+			if ($offset!==false){
+				$q.="ORDER BY num DESC ";
+				$q.="LIMIT $offset, $limit";
+			}
+			//echo $q;
+			$r=$this->User->query($q);
+			if (count($r)==0){
+				echo "done";
+				return;
+			}
+			//AppModel::printR($r);
+			foreach($r as $arr){
+				$emailArr[]=$arr['user']['email'];
+			}
+
+			$response=$this->processDupEmails($emailArr, 1);
+			if ($response!="done" && $ajax){
+				echo "continue";
+				return;
+			}
+
+		}
+
+		$this->set('dupCount', $dupCount);
+		$this->set('dupCountNoInactive', $dupCountNoInactive);
+
 	}
 
 	function delete($id = null) {
