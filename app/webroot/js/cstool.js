@@ -45,6 +45,15 @@ var cs_util = {
 			}
 			aj.append($('<div/>').text(o));
 		}
+		if ( typeof d.User == 'object' && typeof d.User.userId == 'string') {
+			$('#CallUserId').val(d.User.userId);
+		}
+		if ( typeof d.Client == 'object' && typeof d.Client.clientId == 'string') {
+			$('#CallClientId').val(d.Client.clientId);
+		}
+		if ( typeof d.Ticket == 'object' && typeof d.Ticket.ticketId == 'string') {
+			$('#CallTicketId').val(d.Ticket.ticketId);
+		}
 	},
 	oldHash : ''
 };
@@ -82,6 +91,26 @@ $(function() {
 	$('#openCsSearch').click(function(e) {
 		cs_search_popup();
 		e.preventDefault();
+	});
+	var unsavedChanges = function(e) {
+		var that = $(e.target);
+		that.parents('div.interaction').css({
+			'background' : '#ffffee'
+		});
+	};
+	$('input,textarea,select').change(unsavedChanges).keypress(unsavedChanges);
+	var submitHandler = function(e) {
+		e.preventDefault();
+		var that = $(e.target);
+		that.parents('div.interaction').css({
+			'background' : '#eeffee'
+		});
+	}
+	$('form').submit(submitHandler);
+	$(document).ajaxStart(function(e) {
+		$('.ajaxLoadingIndicator').css('visibility', 'visible');
+	}).ajaxStop(function(e) {
+		$('.ajaxLoadingIndicator').css('visibility', 'hidden');
 	});
 	window.setInterval(cs_clock.tick, 500);
 });

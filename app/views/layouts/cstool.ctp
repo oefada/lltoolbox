@@ -7,8 +7,8 @@
 		<?php
 		echo $html->meta('icon');
 		echo $html->css('//yui.yahooapis.com/combo?3.6.0/build/cssfonts/cssfonts-min.css&3.6.0/build/cssreset/cssreset-min.css&3.6.0/build/cssbase/cssbase-min.css');
-		echo $html->css('cstool');
 		echo $html->css('//ajax.googleapis.com/ajax/libs/jqueryui/1.8.21/themes/blitzer/jquery-ui.css');
+		echo $html->css('cstool');
 		echo $javascript->link('//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js');
 		echo $javascript->link('//ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js');
 		echo $javascript->link('cstool_popup');

@@ -1,5 +1,6 @@
 <div>
 	<div style="float: right;">
+		<span class="ajaxLoadingIndicator"><?php echo $html->image('ajax-loader2.gif'); ?></span>
 		<button id="newCs">
 			New
 		</button>
@@ -21,25 +22,47 @@
 	<input id="cs_omnibox" type="text" value="OmniBox goes here..." />
 </div>
 
-<div class="guest interaction">
-	<h3>Guest</h3>
-	<p>This is a test.</p>
-	<ul>
-		<li><a href="#" onclick="jQuery(this).parents('div.interaction').css({'background':'#ffeeee'});return false;">Red</a></li>
-		<li><a href="#" onclick="jQuery(this).parents('div.interaction').css({'background':'#eeffee'});return false;">Green</a></li>
-	</ul>
-</div>
-
-<div class="client interaction">
-	<h3>Client</h3>
-	<p>This is a test.</p>
-	<ul>
-		<li><a href="#" onclick="jQuery(this).parents('div.interaction').css({'background':'#ffeeee'});return false;">Red</a></li>
-		<li><a href="#" onclick="jQuery(this).parents('div.interaction').css({'background':'#eeffee'});return false;">Green</a></li>
-	</ul>
+<div class="interaction">
+	<?php
+	echo $form->create('Call', array('action' => 'popup'));
+	echo $form->hidden('timestamp', array('value' => time()));
+	echo $form->hidden('username', array('value' => $username));
+	echo $form->input('interaction_type', array(
+		'empty' => false,
+		'multiple' => 'false',
+		'size' => count(Call::$interactionTypes),
+		'options' => Call::$interactionTypes,
+		'default' => 1,
+	));
+	echo $form->input('contact_type', array(
+		'empty' => false,
+		'multiple' => 'false',
+		'size' => count(Call::$contactTypes),
+		'options' => Call::$contactTypes,
+		'default' => 1,
+	));
+	echo $form->input('contact_topic', array(
+		'empty' => false,
+		'multiple' => 'false',
+		'size' => count(Call::$contactTopics),
+		'options' => Call::$contactTopics,
+	));
+	echo $form->input('user_id');
+	echo $form->input('client_id');
+	echo $form->input('ticket_id');
+	echo $form->input('notes', array('type' => 'textarea'));
+	echo $form->label('&nbsp;');
+	echo $form->submit('Save');
+	echo $form->end();
+	?>
 </div>
 
 <div class="ajax debug interaction">
 	<h3>Ajax Debug</h3>
 	<div id="ajaxDebug">Ready.</div>
+</div>
+	
+</div><div class="form debug interaction">
+	<h3>Form Submit Debug</h3>
+	<div id="postDebug"><pre style="overflow:scroll;"><?php echo htmlentities(print_r($this->data, true)); ?></pre></div>
 </div>

@@ -17,7 +17,23 @@ table.cake-sql-log {
 	padding: 2px;
 }
 .interaction {
-	background-color: #ffffee;
+	background-color: #eeeeff;
 	padding: 4px;
 	margin: 8px 0;
+}
+
+form label {
+	font-size: 80%;
+	display: block;
+	margin-top: 10px;
+}
+
+select, textarea, input[type="submit"] {
+	width: 100% !important;
+}
+select {
+	font-size: 80%;
+}
+.ajaxLoadingIndicator {
+	visibility: hidden;
 }
