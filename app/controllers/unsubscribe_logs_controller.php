@@ -68,7 +68,7 @@ class UnsubscribeLogsController extends AppController
 		$nlArr[0][0]['contactId']='0';
 		$this->set('nlIdArr',$nlIdArr);
 		$this->set('nlDataArr',$nlArr);
-
+/*
 		$undelivCountArr=$this->UndeliverableLog->getUndelivCountByMonth($nlArr);
 		$this->set("undelivCountArr", $undelivCountArr);
 
@@ -83,7 +83,7 @@ class UnsubscribeLogsController extends AppController
 
 		$unsubUMOCountArr=$this->UserMailOptin->getUnsubCountByMonth($nlArr);
 		$this->set("unsubUMOCountArr", $unsubUMOCountArr);
-
+*/
 		if (!empty($this->data)){
 
 			// this sets $this->start_ut

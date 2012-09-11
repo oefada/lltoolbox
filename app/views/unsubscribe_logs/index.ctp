@@ -56,7 +56,7 @@ echo $form->radio('Output', $options, $attributes);
 echo $form->end(array('name'=>'Retrieve','label'=>'Retrieve'));
 
 
-?>
+if (false){?>
 
 <br><br>
 <b>Users Sub'd per Our Dbs</b><br>
@@ -95,11 +95,12 @@ foreach($undelivCountArr as $i=>$arr){
 }
 echo "</table>";
 
+
+}//false
 $width=300;
 if (isset($unsubLogs) && count($unsubLogs)>0){
 	$width=500;
 }
-
 echo "</td><td valign=top width=$width>";
 
 if (isset($unsubLogs) && count($unsubLogs)>0){
@@ -129,6 +130,8 @@ if (isset($unsubLogs) && count($unsubLogs)>0){
 	echo "</table><br>";
 
 }
+
+if (false){
 
 echo "<b>unsubs per userMailOptin table</b>";
 //print "<pre>";print_r($unsubUMOCountArr);print "</pre>";
@@ -240,6 +243,7 @@ echo "</td><td valign=top>";
 	echo "<tr><td align=right> Total:</td><td>".number_format($total)."</td></tr>";
 	echo "</table>";
 
+}//false
 echo "</td></tr></table>";
 
 
