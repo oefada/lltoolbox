@@ -78,10 +78,8 @@ foreach ($users as $user):
 		<li class="file"><a href="/bids">Search Bids</a></li>
 		<li class="file"><a href="/credit_trackings">Credit On File</a></li>
 		<li class="file"><a href="/gift_cert_balances">Gift Certificates</a></li>
-		<li class="file"><a href="#" onclick="alert('To open the CS Tool press the ` key (the one above 
-		the TAB key) from anywhere inside of Toolbox.');return false;">CS Tool</a></li>
+		<li class="file"><a href="#" onclick="alert('To open the CS Tool press the ` key (the one above the TAB key) from anywhere inside of Toolbox.');return false;">CS Tool</a></li>
 		<li class="file"><a href="/users/deletedups">Email Duplicates</a>
-
 	</ul>
 </div>
 <?php endif; ?>
