@@ -599,6 +599,13 @@ class UsersController extends AppController {
 			$this->User->Behaviors->attach('Containable');
 			//debug($this->User->find('all', $paginateArr));
 			$users=$this->paginate();
+			if ($this->params['paging']['User']['count']==1) {
+				$user = reset($users);
+				if (isset($user['User']['userId'])){
+					$this->Session->setFlash('Exactly 1 user found for search' . (!empty($query) ? ': ' . $query : '.'));
+					$this->redirect(array('action'=>'edit',$user['User']['userId']));
+				}
+			}
 //			var_dump($users);exit;
 			$this->set('users', $users);
 			$this->render('index');
