@@ -19,7 +19,13 @@
 </div>
 
 <div>
-	<input id="cs_omnibox" type="text" value="OmniBox goes here..." />
+	<?php echo $form->create('Call', array(
+		'action' => 'omnibox',
+		'target' => '_cssearch',
+	));
+	echo $form->input('Search', array('label' => 'Search by username, full name, email, client id, ticket id'));
+	echo $form->end();
+	?>
 </div>
 
 <div class="interaction">
@@ -57,12 +63,16 @@
 	?>
 </div>
 
-<div class="ajax debug interaction">
-	<h3>Ajax Debug</h3>
-	<div id="ajaxDebug">Ready.</div>
-</div>
-	
-</div><div class="form debug interaction">
-	<h3>Form Submit Debug</h3>
-	<div id="postDebug"><pre style="overflow:scroll;"><?php echo htmlentities(print_r($this->data, true)); ?></pre></div>
+<div style="display: none;">
+
+	<div class="ajax debug interaction">
+		<h3>Ajax Debug</h3>
+		<div id="ajaxDebug">Ready.</div>
+	</div>
+		
+	<div class="form debug interaction">
+		<h3>Form Submit Debug</h3>
+		<div id="postDebug"><pre style="overflow:scroll;"><?php echo htmlentities(print_r($this->data, true)); ?></pre></div>
+	</div>
+
 </div>

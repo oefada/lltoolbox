@@ -106,11 +106,15 @@ $(function() {
 			'background' : '#eeffee'
 		});
 	}
-	$('form').submit(submitHandler);
+	$('#CallPopupForm').submit(submitHandler);
+	$('#CallOmniboxForm').submit(function(e) {
+		cs_search_popup();
+	});
 	$(document).ajaxStart(function(e) {
 		$('.ajaxLoadingIndicator').css('visibility', 'visible');
 	}).ajaxStop(function(e) {
 		$('.ajaxLoadingIndicator').css('visibility', 'hidden');
 	});
 	window.setInterval(cs_clock.tick, 500);
+	$('#CallSearch').focus().select();
 });

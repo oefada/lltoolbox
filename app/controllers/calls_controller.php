@@ -15,6 +15,73 @@ class CallsController extends AppController
 		$this->redirect(array('controller' => 'users'));
 	}
 
+	function omnibox()
+	{
+		$this->layout = 'default';
+		if ($search = isset($this->data['Call']['Search']) ? trim($this->data['Call']['Search']) : false) {
+			if (preg_match('/^.*@.*\..*$/', $search)) {
+				$this->_emailSearch($search);
+			} elseif (preg_match('/^[A-Za-z]+[ ]+[A-Za-z]+$/', $search)) {
+				$this->_nameSearch($search);
+			} elseif (preg_match('/^[A-Za-z][A-Za-z\-0-9]*$/', $search)) {
+				$this->_usernameSearch($search);
+			} elseif (is_numeric($search) && (intval($search) <= 99999)) {
+				$this->_clientSearch($search);
+			} elseif (is_numeric($search) && (intval($search) <= 999999)) {
+				$this->_ticketSearch($search);
+			}
+		}
+		$this->set('search', $search);
+	}
+
+	private function _ticketSearch($ticketId)
+	{
+			$this->Session->setFlash('Searching for ticket #' . $ticketId);
+		$this->redirect(array(
+			'controller' => 'tickets',
+			'action' => 'view',
+			$ticketId,
+		));
+	}
+
+	private function _clientSearch($clientId)
+	{
+		$this->Session->setFlash('Searching for client #' . $clientId);
+		$this->redirect(array(
+			'controller' => 'clients',
+			'action' => 'view',
+			$clientId,
+		));
+	}
+
+	private function _usernameSearch($username)
+	{
+		$this->Session->setFlash('Searching for username: ' . $username);
+		$this->redirect(array(
+			'controller' => 'users',
+			'action' => 'search',
+			'username' => $username,
+		));
+	}
+
+	private function _emailSearch($email)
+	{
+		$this->Session->setFlash('Searching for email address: ' . $email);
+		$this->redirect('/users/search?query=' . $email);
+	}
+
+	private function _nameSearch($fullname)
+	{
+		$this->Session->setFlash('Searching for user with the name: ' . ucwords($fullname));
+		$name = split(' ', $fullname);
+		$this->redirect(array(
+			'controller' => 'users',
+			'action' => 'search',
+			'firstName' => ucwords($name[0]),
+			'lastName' => ucwords($name[1]),
+		));
+	}
+
 	function popup()
 	{
 	}

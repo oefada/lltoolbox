@@ -22,10 +22,10 @@ class Call extends AppModel
 	public static $contactTopics = array(
 		1 => 'Haven\'t received confirmation - checking confirmation',
 		2 => 'Checking availability before purchase',
-		3 => 'Checking availability before purchase - unmet demand',
+		3 => 'Checking availability before purchase - Unmet demand',
 		4 => 'Checking availability before purchase - PHG',
 		5 => 'General website question, how does site work?',
-		6 => 'Help me find a package = A travel question (not "how to" question)',
+		6 => 'Non "how to" travel question - Help me find a package',
 		7 => 'Registration/Login Issues',
 		8 => 'Glitches/Bugs',
 		9 => 'Change of dates request',
