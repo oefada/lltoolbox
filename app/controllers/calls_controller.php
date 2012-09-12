@@ -49,7 +49,7 @@ class CallsController extends AppController
 		$this->Session->setFlash('Searching for client #' . $clientId);
 		$this->redirect(array(
 			'controller' => 'clients',
-			'action' => 'view',
+			'action' => 'edit',
 			$clientId,
 		));
 	}

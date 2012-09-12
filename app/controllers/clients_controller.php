@@ -209,7 +209,12 @@ class ClientsController extends AppController {
 						'ClientInterview'
 					)
 			));
-			
+
+			if (!$this->data) {
+				$this->Session->setFlash(__('Invalid Client #'.$id, true));
+				$this->redirect(array('action'=>'index'));
+			}
+
 			$this->data['Client']['clientCollectionId'] = $this->data['Client']['parentClientId'];
 		}
 		
