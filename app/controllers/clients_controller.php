@@ -86,9 +86,20 @@ class ClientsController extends AppController {
 		), 
 		'conditions' => $conditions,
 		'order' => $order);
-		
+
 		$clients = $this->paginate();
-		
+
+		if ($this->params['paging']['Client']['count'] == 1) {
+			$client = reset($clients);
+			if (isset($client['Client']['clientId'])) {
+				$this->Session->setFlash('Exactly 1 client found for search' . (!empty($query) ? ': ' . $query : '.'));
+				$this->redirect(array(
+					'action' => 'edit',
+					$client['Client']['clientId']
+				));
+			}
+		}
+
 		$this->Client->containable = false;
 		$this->set('clients', $clients);
 	}
