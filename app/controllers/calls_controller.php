@@ -19,15 +19,15 @@ class CallsController extends AppController
 	{
 		$this->layout = 'default';
 		if ($search = isset($this->data['Call']['Search']) ? trim($this->data['Call']['Search']) : false) {
-			if (preg_match('/^.*@.*\..*$/', $search)) {
+			if (preg_match('/^~{0,1}email .*$/i', $search) || preg_match('/^.*@.*\..*$/', $search)) {
 				$this->_emailSearch($search);
-			} elseif (preg_match('/^[A-Za-z]+[ ]+[A-Za-z]+$/', $search)) {
+			} elseif (preg_match('/^~{0,1}name .*$/i', $search) || preg_match('/^[A-Za-z]+[ ]+[A-Za-z]+$/', $search)) {
 				$this->_nameSearch($search);
-			} elseif (preg_match('/^[A-Za-z][A-Za-z\-0-9]*$/', $search)) {
+			} elseif (preg_match('/^~{0,1}username .*$/i', $search) || preg_match('/^[A-Za-z][A-Za-z\-0-9]*$/', $search)) {
 				$this->_usernameSearch($search);
-			} elseif (is_numeric($search) && (intval($search) <= 99999)) {
+			} elseif (preg_match('/^~{0,1}client .*$/i', $search) || is_numeric($search) && (intval($search) <= 99999)) {
 				$this->_clientSearch($search);
-			} elseif (is_numeric($search) && (intval($search) <= 999999)) {
+			} elseif (preg_match('/^~{0,1}ticket .*$/i', $search) || is_numeric($search) && (intval($search) <= 999999)) {
 				$this->_ticketSearch($search);
 			}
 		}
@@ -36,7 +36,8 @@ class CallsController extends AppController
 
 	private function _ticketSearch($ticketId)
 	{
-			$this->Session->setFlash('Searching for ticket #' . $ticketId);
+		$ticketId = preg_replace('/^~{0,1}ticket /i', '', $ticketId);
+		$this->Session->setFlash('Searching for ticket #' . $ticketId);
 		$this->redirect(array(
 			'controller' => 'tickets',
 			'action' => 'view',
@@ -46,16 +47,26 @@ class CallsController extends AppController
 
 	private function _clientSearch($clientId)
 	{
-		$this->Session->setFlash('Searching for client #' . $clientId);
-		$this->redirect(array(
-			'controller' => 'clients',
-			'action' => 'edit',
-			$clientId,
-		));
+		$clientId = preg_replace('/^~{0,1}client /i', '', $clientId);
+		if (is_numeric($clientId)) {
+			$this->Session->setFlash('Searching for client #' . $clientId);
+			$this->redirect(array(
+				'controller' => 'clients',
+				'action' => 'edit',
+				$clientId,
+			));
+		} else {
+			$this->redirect(array(
+				'controller' => 'clients',
+				'action' => 'index',
+				'query' => $clientId,
+			));
+		}
 	}
 
 	private function _usernameSearch($username)
 	{
+		$username = preg_replace('/^~{0,1}username /i', '', $username);
 		$this->Session->setFlash('Searching for username: ' . $username);
 		$this->redirect(array(
 			'controller' => 'users',
@@ -66,12 +77,14 @@ class CallsController extends AppController
 
 	private function _emailSearch($email)
 	{
+		$email = preg_replace('/^~{0,1}email /i', '', $email);
 		$this->Session->setFlash('Searching for email address: ' . $email);
 		$this->redirect('/users/search?query=' . $email);
 	}
 
 	private function _nameSearch($fullname)
 	{
+		$fullname = preg_replace('/^~{0,1}name /i', '', $fullname);
 		$this->Session->setFlash('Searching for user with the name: ' . ucwords($fullname));
 		$name = split(' ', $fullname);
 		$this->redirect(array(
