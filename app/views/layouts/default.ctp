@@ -189,7 +189,7 @@
 
 				<?php 
 
-				$tab=ELEMENTS.'sidebar/menu_for_'.$this->viewVars['currentTab'].'.ctp';
+				$tab=ELEMENTS.'sidebar/menu_for_'.(isset($this->viewVars['currentTab'])?$this->viewVars['currentTab']:'unknown').'.ctp';
 				$file=ELEMENTS.'sidebar/menu_for_'.$this->params['controller'].'_'.$this->params['action'].'.ctp';
 
 				if(file_exists($file)): 
