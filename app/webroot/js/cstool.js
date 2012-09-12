@@ -46,14 +46,17 @@ var cs_util = {
 			aj.append($('<div/>').text(o));
 		}
 		if ( typeof d.User == 'object' && typeof d.User.userId == 'string') {
-			$('#CallUserId').val(d.User.userId);
+			$('#CallUserId').val(d.User.userId).change();
 		}
 		if ( typeof d.Client == 'object' && typeof d.Client.clientId == 'string') {
-			$('#CallClientId').val(d.Client.clientId);
+			$('#CallClientId').val(d.Client.clientId).change();
 		}
 		if ( typeof d.Ticket == 'object' && typeof d.Ticket.ticketId == 'string') {
-			$('#CallTicketId').val(d.Ticket.ticketId);
+			$('#CallTicketId').val(d.Ticket.ticketId).change();
 		}
+	},
+	doOmniSearch : function(s) {
+		$('#CallSearch').val(s).parents('form').submit();
 	},
 	oldHash : ''
 };
@@ -110,6 +113,17 @@ $(function() {
 	$('#CallOmniboxForm').submit(function(e) {
 		cs_search_popup();
 	});
+
+	$('form#CallPopupForm input[id="CallUserId"], form#CallPopupForm input[id="CallClientId"]').change(function(e) {
+		if (isNaN($(this).val() - 0)) {
+			var $tid = $(this).attr('id');
+			if ( typeof $tid == 'string') {
+				cs_util.doOmniSearch('~' + $('label[for="' + $tid + '"]').text() + ' ' + $(this).val());
+			}
+			$(this).val('');
+		}
+	});
+
 	$(document).ajaxStart(function(e) {
 		$('.ajaxLoadingIndicator').css('visibility', 'visible');
 	}).ajaxStop(function(e) {

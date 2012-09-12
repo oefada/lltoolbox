@@ -21,7 +21,7 @@ class CallsController extends AppController
 		if ($search = isset($this->data['Call']['Search']) ? trim($this->data['Call']['Search']) : false) {
 			if (preg_match('/^~{0,1}email .*$/i', $search) || preg_match('/^.*@.*\..*$/', $search)) {
 				$this->_emailSearch($search);
-			} elseif (preg_match('/^~{0,1}name .*$/i', $search) || preg_match('/^[A-Za-z]+[ ]+[A-Za-z]+$/', $search)) {
+			} elseif (preg_match('/^~{0,1}name .*$/i', $search) || preg_match('/^~{0,1}user .*$/i', $search) || preg_match('/^[A-Za-z]+[ ]+[A-Za-z]+$/', $search)) {
 				$this->_nameSearch($search);
 			} elseif (preg_match('/^~{0,1}username .*$/i', $search) || preg_match('/^[A-Za-z][A-Za-z\-0-9]*$/', $search)) {
 				$this->_usernameSearch($search);
@@ -66,7 +66,7 @@ class CallsController extends AppController
 
 	private function _usernameSearch($username)
 	{
-		$username = preg_replace('/^~{0,1}username /i', '', $username);
+		$username = preg_replace('/^~{0,1}user /i', '', $username);
 		$this->Session->setFlash('Searching for username: ' . $username);
 		$this->redirect(array(
 			'controller' => 'users',
@@ -84,7 +84,7 @@ class CallsController extends AppController
 
 	private function _nameSearch($fullname)
 	{
-		$fullname = preg_replace('/^~{0,1}name /i', '', $fullname);
+		$fullname = preg_replace('/^~{0,1}(name|user) /i', '', $fullname);
 		$this->Session->setFlash('Searching for user with the name: ' . ucwords($fullname));
 		$name = split(' ', $fullname);
 		$this->redirect(array(
