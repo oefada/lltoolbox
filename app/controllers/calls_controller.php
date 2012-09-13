@@ -21,9 +21,9 @@ class CallsController extends AppController
 		if ($search = isset($this->data['Call']['Search']) ? trim($this->data['Call']['Search']) : false) {
 			if (preg_match('/^~{0,1}email .*$/i', $search) || preg_match('/^.*@.*\..*$/', $search)) {
 				$this->_emailSearch($search);
-			} elseif (preg_match('/^~{0,1}name .*$/i', $search) || preg_match('/^~{0,1}user .*$/i', $search) || preg_match('/^[A-Za-z]+[ ]+[A-Za-z]+$/', $search)) {
+			} elseif (preg_match('/^~{0,1}name .*$/i', $search) || preg_match('/^~{0,1}user [A-Za-z]+ [A-Za-z]+$/i', $search) || preg_match('/^[A-Za-z]+[ ]+[A-Za-z]+$/', $search)) {
 				$this->_nameSearch($search);
-			} elseif (preg_match('/^~{0,1}username .*$/i', $search) || preg_match('/^[A-Za-z][A-Za-z\-0-9]*$/', $search)) {
+			} elseif (preg_match('/^~{0,1}username .*$/i', $search) || preg_match('/^~{0,1}user [A-Za-z0-9\-]+$/i', $search) || preg_match('/^[A-Za-z][A-Za-z\-0-9]*$/', $search)) {
 				$this->_usernameSearch($search);
 			} elseif (preg_match('/^~{0,1}client .*$/i', $search) || is_numeric($search) && (intval($search) <= 99999)) {
 				$this->_clientSearch($search);
@@ -97,6 +97,14 @@ class CallsController extends AppController
 
 	function popup()
 	{
+		$this->set('lastTenCalls', $this->Call->find('all', array(
+			'conditions' => array(
+				'Call.representative' => 'sknight',
+				'created LIKE' => (date('Y-m-d')) . ' %',
+			),
+			'limit' => 10,
+			'order' => 'created DESC',
+		)));
 	}
 
 	function ajax()

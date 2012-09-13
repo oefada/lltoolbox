@@ -1,3 +1,7 @@
+h2 {
+	margin-top: 0;
+	margin-bottom: 8px;
+}
 #cstool {
 	padding: 10px;
 }
@@ -13,7 +17,7 @@ table.cake-sql-log {
 #CallSearch {
 	width: 98%;
 	font-size: 150%;
-	margin: 8px 0;
+	margin: 4px 0;
 	padding: 2px;
 }
 .interaction {
@@ -25,7 +29,7 @@ table.cake-sql-log {
 form label {
 	font-size: 80%;
 	display: block;
-	margin-top: 10px;
+	margin-top: 5px;
 }
 
 select, textarea, input[type="submit"] {
@@ -36,4 +40,41 @@ select {
 }
 .ajaxLoadingIndicator {
 	visibility: hidden;
+}
+#lastTenCalls {
+	background-color: #f8f8f8;
+	margin: 0;
+	padding: 0;
+}
+#lastTenCalls h3 {
+	margin: 0;
+	padding: 6px;
+}
+#lastTenCalls .blurb {
+	font-size: 12px;
+	line-height: 14px;
+	height: 14px;
+	display: block;
+	overflow: hidden;
+	color: #888888;
+}
+#lastTenCalls .blurb span {
+	font-size: 10px;
+}
+#lastTenCalls ul {
+	margin: 0;
+}
+#lastTenCalls li {
+	margin: 0;
+	padding: 4px 0 4px 4px;
+}
+#lastTenCalls li a, #lastTenCalls li a:hover, #lastTenCalls li a:visited {
+	color: #000088;
+	text-decoration: none;
+}
+#lastTenCalls li:hover {
+	background-color: #f0f0f0;
+}
+#lastTenCalls li a:hover {
+	color: #0000cc;
 }

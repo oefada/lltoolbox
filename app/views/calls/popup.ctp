@@ -53,9 +53,9 @@
 		'size' => count(Call::$contactTopics),
 		'options' => Call::$contactTopics,
 	));
+	echo $form->input('ticket_id');
 	echo $form->input('user_id');
 	echo $form->input('client_id');
-	echo $form->input('ticket_id');
 	echo $form->input('notes', array('type' => 'textarea'));
 	echo $form->label('&nbsp;');
 	echo $form->submit('Save');
@@ -63,16 +63,11 @@
 	?>
 </div>
 
-<div style="display: none;">
-
-	<div class="ajax debug interaction">
-		<h3>Ajax Debug</h3>
-		<div id="ajaxDebug">Ready.</div>
-	</div>
-		
-	<div class="form debug interaction">
-		<h3>Form Submit Debug</h3>
-		<div id="postDebug"><pre style="overflow:scroll;"><?php echo htmlentities(print_r($this->data, true)); ?></pre></div>
-	</div>
-
+<div id="lastTenCalls">
+	<h3>Recent Calls</h3>
+	<ul>
+		<?php foreach ($lastTenCalls as $ltc): ?>
+			<li class="blurb"><a href="#"><?php echo preg_replace('/^.* /', '', $ltc['Call']['created']); ?></a> &nbsp; <span><?php echo $ltc['Call']['notes']; ?></span></li>
+		<?php endforeach; ?>
+	</ul>
 </div>

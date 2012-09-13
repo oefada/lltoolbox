@@ -33,8 +33,6 @@ var cs_util = {
 	},
 	processAjax : function(d) {
 		var $ = jQuery;
-		var aj = $('#ajaxDebug');
-		aj.empty();
 		for (var prop in d) {
 			var o = '';
 			o += prop + ': ';
@@ -43,7 +41,6 @@ var cs_util = {
 			} else {
 				o += d[prop];
 			}
-			aj.append($('<div/>').text(o));
 		}
 		if ( typeof d.User == 'object' && typeof d.User.userId == 'string') {
 			$('#CallUserId').val(d.User.userId).change();
@@ -56,7 +53,16 @@ var cs_util = {
 		}
 	},
 	doOmniSearch : function(s) {
-		$('#CallSearch').val(s).parents('form').submit();
+		var $cs = $('#CallSearch');
+		$cs.val(s);
+		$cs.effect('highlight', {
+			'color' : '#ccffcc'
+		}, 300, function() {
+			$cs.effect('highlight', {
+				'color' : '#ccffcc'
+			}, 1700)
+		});
+		$cs.parents('form').submit();
 	},
 	oldHash : ''
 };
@@ -130,5 +136,9 @@ $(function() {
 		$('.ajaxLoadingIndicator').css('visibility', 'hidden');
 	});
 	window.setInterval(cs_clock.tick, 500);
-	$('#CallSearch').focus().select();
+	$('#CallSearch').focus().select().focus(function(e) {
+		setTimeout(function() {
+			$('#CallSearch').select();
+		}, 1);
+	});
 });
