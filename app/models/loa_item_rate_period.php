@@ -7,7 +7,7 @@ class LoaItemRatePeriod extends AppModel {
 	
 	var $belongsTo = array('LoaItem' => array('foreignKey' => 'loaItemId'));
 	
-	var $hasMany = array('LoaItemRate' => array('foreignKey' => 'loaItemRatePeriodId', 'dependent' => true),
+	var $hasMany = array('LoaItemRate' => array('foreignKey' => 'loaItemRatePeriodId', 'dependent' => true, 'order' => 'w0 DESC'),
 						 'LoaItemDate' => array('foreignKey' => 'loaItemRatePeriodId', 'dependent' => true),
                          'PricePointRatePeriodRel' => array('foreignKey' => 'loaItemRatePeriodId')
 						 );
