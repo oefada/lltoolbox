@@ -22,6 +22,7 @@
 <li>Enter the client name in the Client Search field.
 <li>Click on the link that pops up to populate field you selected.
 <li>The order they appear here will be the order they apear in the newsletter.
+<li>To populate the form with dummy data, click <a href=?test=1>here</a>
 </ul>
 <br>
 <form method='post' id='generator_form' action='generated' onsubmit='return validateJunkAndStuff();'>

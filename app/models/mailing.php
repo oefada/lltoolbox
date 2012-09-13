@@ -1,4 +1,7 @@
 <?php
+
+App::import("Vendor","FlexHelper",array('file' => "appshared".DS."helpers".DS."FlexHelper.php"));
+
 class Mailing extends AppModel {
 
 	var $name = 'Mailing';
@@ -79,6 +82,7 @@ class Mailing extends AppModel {
 				foreach($rows as $index=>$row){
 					if ($row['client']['clientId']==$id){
 						$new_rows[$key]=$row;
+						unset($new_rows[$key]['client']['notes']);
 					}
 				}
 			}
@@ -136,6 +140,48 @@ class Mailing extends AppModel {
 						
 						$new_rows[$index]['client']['longDesc']=$longDesc;
 					}
+				}
+			}
+
+			//set lowest price 
+			if ($siteId==1){
+
+				$flexHelper = new FlexHelper();
+
+				foreach($clientId_arr as $id){
+					$q="select *, ";
+					$q.="(case  ";
+					$q.="when offerLuxuryLink.offerTypeId=1  ";
+					$q.="then openingBid "; 
+					$q.="else buyNowPrice  ";
+					$q.="end) as price ";
+					$q.="from offerLuxuryLink ";
+					$q.="where clientId=$id ";
+					$q.="and isClosed=0 ";
+					$q.="order by price asc ";
+					$q.="limit 1";
+					$r=$this->query($q);
+					if (count($r)>0){
+						$offer=$r[0]['offerLuxuryLink'];
+						$price=$r[0][0]['price'];
+						$offer['price']=$price;
+						unset($offer['offerIncludes']);
+						unset($offer['validityDisclaimer']);
+						foreach($new_rows as $i=>$arr){
+							if ($arr['client']['clientId']==$id){
+								if ($offer['isFlexPackage']==1){
+									$offer=$flexHelper->calcFlexNights($offer['flexNumNightsMin'], $offer);	
+									$offer['price']=$offer['buyNowPrice'];
+								}else{
+									$offer['percentOff']=(int)((1 - ($price / $offer['retailValue'])) * 100);
+								}
+								$new_rows[$i]['client']['offers'][]=$offer;
+								//AppModel::printR($new_rows[$i]['client']);exit;
+								break;
+							}
+						}
+					}
+
 				}
 			}
 

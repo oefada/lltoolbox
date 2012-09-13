@@ -6,16 +6,17 @@ class MailingsController extends AppController {
 
 	var $name = 'Mailings';
 	var $scaffold;
+	var $helpers=array('mailing');
     
     function beforeFilter() {
 		parent::beforeFilter();
         $users = array();
-        $superusers = array('ahahn', 'ajames', 'jlagraff', 'pkaelin', 'kgathany', 'kjost');
-        $adusers = array('ahahn', 'ajames', 'sgreen', 'gmaltzman', 'sflax');
+        $superusers = array('jlagraff', 'pkaelin');
+        $adusers = array('sgreen', 'gmaltzman', 'sflax');
         $supergroups = array('Geeks');
         $this->set('superusers', $superusers);
         $this->set('adusers', $adusers);
-		$this->set('currentTab', 'newsletters');
+				$this->set('currentTab', 'newsletters');
         $this->set('hideSidebar', true);
 	}
 
@@ -31,6 +32,9 @@ class MailingsController extends AppController {
 	}
 
 	function generated(){
+
+		
+		//Configure::write('debug',0);
 
 		if (!empty($this->params['form']['clientId_arr'])){
 
@@ -70,7 +74,16 @@ class MailingsController extends AppController {
 			}
 			$this->layout=false;
 			$rows=$this->Mailing->generator($clientId_arr, $siteId);	
+			//AppModel::printR($rows);exit;
 			$this->set('rows',$rows);
+
+			$this->set('url', 'http://www.luxurylink.com');
+			$utmArr['utm_medium']='news';
+			$utmArr['utm_source']='insider';
+			$utmArr['utm_campaign']='insider_'.$date_ymd.$version;
+			// utm_content is set per item in the view
+			// utm_term is set per item in the view
+			$this->set('utmArr', $utmArr);
 			
 			if ($templateId == 'fg1') {
 				$this->render('generated_fg1');
