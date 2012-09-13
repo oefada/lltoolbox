@@ -66,6 +66,7 @@
 <div id="lastTenCalls">
 	<h3>Recent Calls</h3>
 	<ul>
+		<?php echo !count($lastTenCalls) ? '<li>None yet.</li>' : ''; ?>
 		<?php foreach ($lastTenCalls as $ltc): ?>
 			<li class="blurb"><a href="#"><?php echo preg_replace('/^.* /', '', $ltc['Call']['created']); ?></a> &nbsp; <span><?php echo $ltc['Call']['notes']; ?></span></li>
 		<?php endforeach; ?>
