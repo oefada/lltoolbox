@@ -4,8 +4,8 @@
 		</div>	
 
 		<div class="input text refundRequestDiv">
-			<label>Ticket Id</label>
-			<?= $refundInfo['ticket']['Ticket']['ticketId']; ?>
+			<label>Ticket</label>
+			<?= $refundInfo['ticket']['Ticket']['ticketId']; ?> &nbsp;-&nbsp; <?= $refundInfo['ticket']['OfferType']['offerTypeName']; ?>
 		</div>	
 
 		<div class="input text refundRequestDiv">
