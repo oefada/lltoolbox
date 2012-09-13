@@ -7,9 +7,11 @@
     
     <?php foreach($images as $image): ?>
             <div class="captionImage">
-                <img src="<?php echo $image['Image']['imagePath'] ?>" height="100" />
-                <input type="text" maxlength="60" name="data[Image][<?php echo $image['Image']['imageId'] ?>][caption]" value="<?php echo $image['Image']['caption']; ?>" />
+                <img src="http://www.luxurylink.com/<?php echo $image['Image']['imagePath'] ?>" height="100" />                
                 <div class="roomGrade">
+                
+                	<?php if ($image['Image']['caption']) { echo $image['Image']['caption'] . '<br /><br />'; } ?>
+
                     Room Grade:&nbsp;&nbsp;
                     <select id="ImageRoomGradeId" name="data[Image][<?php echo $image['Image']['imageId'] ?>][RoomGradeId]">
                         <option></option>

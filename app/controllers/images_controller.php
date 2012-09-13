@@ -118,7 +118,7 @@ class ImagesController extends AppController
 			));
 			foreach ($images as $image) {
 				if (in_array($image['Image']['imageId'], array_keys($postImages))) {
-					$this->Image->saveCaptions($postImages[$image['Image']['imageId']], $image, $this->Image->clientId);
+					// $this->Image->saveCaptions($postImages[$image['Image']['imageId']], $image, $this->Image->clientId);
 					if (!empty($postImages[$image['Image']['imageId']]['RoomGradeId'])) {
 						$this->Image->ImageRoomGradeRel->saveImageRoomGrade($postImages[$image['Image']['imageId']]['RoomGradeId'], $image);
 					} elseif (empty($postImages[$image['Image']['imageId']]['RoomGradeId']) && !empty($image['Image']['ImageRoomGradeRel'][0]['roomGradeId'])) {
