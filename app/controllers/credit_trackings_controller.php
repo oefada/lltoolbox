@@ -9,7 +9,7 @@ class CreditTrackingsController extends AppController {
 		parent::beforeFilter();
 		
 		$currentUser = $this->LdapAuth->user();		
-		if (in_array('Accounting',$currentUser['LdapUser']['groups']) || in_array('Geeks',$currentUser['LdapUser']['groups'])) {
+		if (in_array('Accounting',$currentUser['LdapUser']['groups']) || in_array('Geeks',$currentUser['LdapUser']['groups']) || in_array('cof',$currentUser['LdapUser']['groups'])) {
 			$this->canSave = true;
 		}
 		
