@@ -560,31 +560,38 @@ $this->searchController = 'Tickets';
 				<td><?php echo $ticket['TicketRefund']['refundNotes'];?></td>
 			</tr>
 		</table>
-		<?php
-		echo $html->link('Edit Ticket Refund',
-			'/ticket_refunds/edit/' . $ticket['TicketRefund']['ticketRefundId'],
-			array(
-				'title' => 'Edit Ticket Refund',
-				'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
-				'complete' => 'closeModalbox()'
-				),
-			null,
-			false
-		);
-		?>
+
+		<?php if ($showRefundLink):?>
+				<?php
+				echo $html->link('Edit Ticket Refund',
+					'/ticket_refunds/edit/' . $ticket['TicketRefund']['ticketRefundId'],
+					array(
+						'title' => 'Edit Ticket Refund',
+						'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
+						'complete' => 'closeModalbox()'
+						),
+					null,
+					false
+				);
+				?>
+		<?php endif; ?>				
+				
 	<?php else: ?>
-		<?php
-		echo $html->link('Refund this Ticket',
-			'/tickets/' . $ticket['Ticket']['ticketId'] . '/ticket_refunds/add',
-			array(
-				'title' => 'Ticket Refund',
-				'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
-				'complete' => 'closeModalbox()'
-				),
-			null,
-			false
-		);
-		?>
+
+		<?php if ($showRefundLink):?>
+				<?php
+				echo $html->link('Refund this Ticket',
+					'/tickets/' . $ticket['Ticket']['ticketId'] . '/ticket_refunds/add',
+					array(
+						'title' => 'Ticket Refund',
+						'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
+						'complete' => 'closeModalbox()'
+						),
+					null,
+					false
+				); ?>
+		<?php endif; ?>	
+		
 	<?php endif; ?>
 	</div>
 </div>

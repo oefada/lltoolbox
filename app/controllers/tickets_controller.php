@@ -411,11 +411,14 @@ class TicketsController extends AppController {
 		$this->set('track', $track);
 
 		$showVoidLink = false;
+		$showRefundLink = false;
 		$currentUser = $this->LdapAuth->user();
 		if (in_array('Accounting',$currentUser['LdapUser']['groups']) || in_array('Geeks',$currentUser['LdapUser']['groups'])) {
 			$showVoidLink = true;
+			$showRefundLink = true;
 		}
 		$this->set('showVoidLink', $showVoidLink);
+		$this->set('showRefundLink', $showRefundLink);
 	}
 
 	function phpinfoshow() {
