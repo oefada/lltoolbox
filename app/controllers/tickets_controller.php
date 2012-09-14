@@ -470,6 +470,8 @@ class TicketsController extends AppController {
 				$this->Session->setFlash(__('The ticket was not created.  The billingPrice cannot be blank and must be a number.', true), 'default', array(), 'error');
 			} elseif (!$this->data['Ticket']['siteId'] || !is_numeric($this->data['Ticket']['siteId'])) {
 				$this->Session->setFlash(__('The ticket was not created.  You must select a site!', true), 'default', array(), 'error');
+			} elseif (intval($this->data['Ticket']['billingPrice']) > 30000) {
+				$this->Session->setFlash(__('The ticket was not created.  Maximum Billing Price is 30,000', true), 'default', array(), 'error');
 			} else {
 				$this->User->recursive = 1;
 				$userData = $this->User->read(null, $this->data['Ticket']['userId']);
