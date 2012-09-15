@@ -12,7 +12,10 @@ class CallsController extends AppController
 
 	function index()
 	{
-		$this->redirect(array('controller' => 'users'));
+		$this->paginate['order'] = array('Call.callId' => 'desc');
+		$this->layout = 'default';
+		$this->Call->recursive = 0;
+		$this->set('calls', $this->paginate());
 	}
 
 	function omnibox()
@@ -95,8 +98,29 @@ class CallsController extends AppController
 		));
 	}
 
-	function popup()
+	function popup($id = null)
 	{
+		if (!empty($this->data)) {
+			if (isset($_POST['loadTicket'])) {
+				if (is_numeric($_POST['loadTicket'])) {
+					$this->data = $this->Call->read(null, intval($_POST['loadTicket']));
+				}
+			} else {
+				$this->data['Call']['representative'] = $this->viewVars['user']['LdapUser']['username'];
+				foreach ($this->data['Call'] as $k => $v) {
+					if (is_array($this->data['Call'][$k])) {
+						$this->data['Call'][$k] = reset($v);
+					}
+				}
+				if ($id) {
+					$this->Call->create();
+					$this->Call->id = $id;
+				}
+				if ($this->Call->save($this->data)) {
+					$this->data = array();
+				}
+			}
+		}
 		$this->set('lastTenCalls', $this->Call->find('all', array(
 			'conditions' => array(
 				'Call.representative' => 'sknight',

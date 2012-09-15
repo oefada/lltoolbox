@@ -1,9 +1,9 @@
+var $ = jQuery;
 var cs_util = {
 	tick : function() {
 		cs_util.hashCheck();
 	},
 	hashCheck : function() {
-		var $ = jQuery;
 		if (cs_util.oldHash != window.location.hash) {
 			if (window.location.hash.match(/^#[A-Za-z]+~[0-9]+$/)) {
 				var h = window.location.hash.replace(/^#/, '').split('~');
@@ -15,7 +15,6 @@ var cs_util = {
 		}
 	},
 	doAjax : function(thing, value) {
-		var $ = jQuery;
 		var data = {
 			'url' : '/calls/ajax.json',
 			'type' : 'GET',
@@ -32,7 +31,6 @@ var cs_util = {
 		$.ajax(data);
 	},
 	processAjax : function(d) {
-		var $ = jQuery;
 		for (var prop in d) {
 			var o = '';
 			o += prop + ': ';
@@ -43,14 +41,38 @@ var cs_util = {
 			}
 		}
 		if ( typeof d.User == 'object' && typeof d.User.userId == 'string') {
-			$('#CallUserId').val(d.User.userId).change();
+			cs_util.updateField('#CallUserId', d.User.userId, d.User.name);
 		}
 		if ( typeof d.Client == 'object' && typeof d.Client.clientId == 'string') {
-			$('#CallClientId').val(d.Client.clientId).change();
+			cs_util.updateField('#CallClientId', d.Client.clientId, d.Client.name);
 		}
 		if ( typeof d.Ticket == 'object' && typeof d.Ticket.ticketId == 'string') {
-			$('#CallTicketId').val(d.Ticket.ticketId).change();
+			cs_util.updateField('#CallTicketId', d.Ticket.ticketId, d.Ticket.ticketId);
 		}
+	},
+	updateField : function(target, value, label) {
+		var $t = $(target);
+		if ($t.length > 0) {
+			if ( typeof value == 'string') {
+				$t.val(value).effect('highlight', {
+					'color' : '#ccffee'
+				}, 1200);
+			}
+			if ( typeof label == 'string') {
+				console.log(Math.random(), label);
+				var $s = $t.parent().find('span');
+				if ($s.length == 0) {
+					$t.parent().find('input').after( $s = $('<span/>'));
+				}
+				$s.text(label)
+			}
+		}
+	},
+	doFormSubmit : function(e) {
+		var that = $(e.target);
+		that.parents('div.interaction').css({
+			'background' : '#eeffee'
+		});
 	},
 	doOmniSearch : function(s) {
 		var $cs = $('#CallSearch');
@@ -73,7 +95,6 @@ var cs_clock = {
 		if ( typeof cs_util.tick == 'function') {
 			cs_util.tick();
 		}
-		var $ = jQuery;
 		cs_clock.dots = !cs_clock.dots;
 		var dots = cs_clock.dots ? ':' : '<span style="color:#777;">:</span>';
 		var d = new Date();
@@ -91,7 +112,6 @@ var cs_clock = {
 };
 
 $(function() {
-	var $ = jQuery;
 	cs_clock.tick();
 	$('#newCs').click(function(e) {
 		window.location.replace('/calls/popup');
@@ -108,28 +128,28 @@ $(function() {
 		});
 	};
 	$('input,textarea,select').change(unsavedChanges).keypress(unsavedChanges);
-	var submitHandler = function(e) {
-		e.preventDefault();
-		var that = $(e.target);
-		that.parents('div.interaction').css({
-			'background' : '#eeffee'
-		});
-	}
-	$('#CallPopupForm').submit(submitHandler);
+	$('#CallPopupForm').submit(cs_util.doFormSubmit);
 	$('#CallOmniboxForm').submit(function(e) {
 		cs_search_popup();
 	});
 
 	$('form#CallPopupForm input[id="CallUserId"], form#CallPopupForm input[id="CallClientId"]').change(function(e) {
+		var $tid = $(this).attr('id');
+		var $for = $('label[for="' + $tid + '"]').text();
 		if (isNaN($(this).val() - 0)) {
-			var $tid = $(this).attr('id');
 			if ( typeof $tid == 'string') {
-				cs_util.doOmniSearch('~' + $('label[for="' + $tid + '"]').text() + ' ' + $(this).val());
+				cs_util.doOmniSearch('~' + $for + ' ' + $(this).val());
 			}
 			$(this).val('');
+		} else if ( typeof $for == 'string') {
+			cs_util.doAjax($for.toLowerCase() + 's', $(this).val());
 		}
 	});
-
+	$('form#CallPopupForm input[type="text"], form#CallPopupForm select').keypress(function(e) {
+		if (e.which == 10 || e.which == 13) {
+			e.preventDefault();
+		}
+	});
 	$(document).ajaxStart(function(e) {
 		$('.ajaxLoadingIndicator').css('visibility', 'visible');
 	}).ajaxStop(function(e) {

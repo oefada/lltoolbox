@@ -9,8 +9,4 @@
 	?>
 </div>
 
-<div>Search term: <?php echo $search; ?></div>
-
-<div><pre style="background:#ffeeee;">PERSON</pre></div>
-<div><pre style="background:#ffeeee;">CLIENT</pre></div>
-<div><pre style="background:#ffeeee;">TICKET</pre></div>
+<div>\o/</div>
