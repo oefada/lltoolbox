@@ -143,6 +143,9 @@ class TicketsController extends AppController {
 					$this->paginate['conditions']['Ticket.ticketStatusId <> '] = 4;
 					$this->paginate['group'] = array('Ticket.ticketId HAVING rescount > 1');
 					break;
+				case 4:
+					$this->paginate['conditions']['not'] = array('Ticket.manualTicketInitials' => null, 'Ticket.ticketStatusId' => array(4, 6, 7, 8, 17, 18));
+					break;
 			}
 			$single_search_override = true;
 		}  elseif ($s_user_id) {

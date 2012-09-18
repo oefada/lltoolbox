@@ -271,6 +271,9 @@ $this->set('hideSidebar', true);
 			<tr>
 				<td><a href="/tickets/index/?s_quick_link=3">Buy Now with > 1 Res. request</a></td>
 			</tr>
+			<tr>
+				<td><a href="/tickets/index/?s_quick_link=4">Pending Manual Tickets</a></td>
+			</tr>
 			</table>
 		</td>
 		<td>&nbsp;</td>
