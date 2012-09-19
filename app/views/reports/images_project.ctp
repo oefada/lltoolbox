@@ -20,24 +20,26 @@ $totalNew = 0;
 		<th>Count</th>
 		<th>Id</th>
 		<th>Client</th>
+		<th>LOA End Date</th>
 		<th>Old</th>
 		<th>New</th>
 		<th>Total</th>
 		<th>Complete</th>
 	</tr>
 	<?php foreach ($reportData as $rd): ?>
-		<tr class="record <?php echo ($rd[0]['old_format_count']>0?'hasOld':'').' '.($rd[0]['old_format_count']==0?'isDone':'');?>">
+		<tr class="record <?php echo (($rd['t2']['oldFormat']>0||($rd['t2']['oldFormat']==0&&$rd['t2']['newFormat']==0))?'hasOld':'').' '.(($rd['t2']['oldFormat']==0&&$rd['t2']['newFormat']>0)?'isDone':'');?>">
 			<td><?php echo ++$i;?></td>
-			<td><?php echo $rd['t1']['client_id'];?></td>
-			<td style="width:444px; overflow: hidden;"><?php echo $html->link($rd['t1']['name'], '/clients/'.$rd['t1']['client_id'].'/images/organize');
+			<td><?php echo $rd['t1']['clientId'];?></td>
+			<td style="width:444px; overflow: hidden;"><?php echo $html->link($rd['t1']['name'], '/clients/'.$rd['t1']['clientId'].'/images/organize');
 			 ?></td>
-			<td style="text-align: right;"><?php echo $rd[0]['old_format_count']; ?></td>
-			<td style="text-align: right;"><?php echo $rd[0]['new_format_count']; ?></td>
-			<td style="text-align: right;"><?php echo $rd[0]['total_image_count']; ?></td>
-			<td style="text-align: right;"><?php echo $rd[0]['percent_complete']; ?>%</td>
+			<td style="text-align: right;"><?php echo substr($rd['t1']['endDate'],0,10); ?></td>
+			<td style="text-align: right;"><?php echo $rd['t2']['oldFormat']; ?></td>
+			<td style="text-align: right;"><?php echo $rd['t2']['newFormat']; ?></td>
+			<td style="text-align: right;"><?php echo ($rd['t2']['oldFormat']+$rd['t2']['newFormat']); ?></td>
+			<td style="text-align: right;"><?php echo number_format( ($rd['t2']['oldFormat']+$rd['t2']['newFormat']) > 0 ? (100*$rd['t2']['newFormat']/($rd['t2']['oldFormat']+$rd['t2']['newFormat'])) :0 ,2); ?>%</td>
 			<?php
-			$totalOld = $totalOld + $rd[0]['old_format_count'];
-			$totalNew = $totalNew + $rd[0]['new_format_count'];
+			$totalOld = $totalOld + $rd['t2']['oldFormat'];
+			$totalNew = $totalNew + $rd['t2']['newFormat'];
 						?>
 		</tr>
 	<? endforeach; ?>
@@ -51,10 +53,8 @@ Total All: <?php echo number_format($totalOld + $totalNew); ?>
 
 %Complete: <?php echo number_format(
 
-($totalOld + $totalNew)==0
-?
-(100 * $totalNew / ($totalOld + $totalNew))
-:
-0
-, 4); ?>%
+($totalOld + $totalNew) == 0 ? 0 :
+(100 * ($totalNew / ($totalOld + $totalNew)))
+
+, 2); ?>%
 </pre>
