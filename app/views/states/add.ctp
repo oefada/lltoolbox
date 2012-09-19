@@ -27,3 +27,15 @@
 		<li><?php echo $html->link(__('New City', true), array('controller'=> 'cities', 'action'=>'add')); ?> </li>
 	</ul>
 </div>
+
+<script>
+	jQuery(function($) {
+		$("#StateCountryId").change(function() {
+			if ($("#StateStateId").val() == '') {
+				$.getJSON("/countries/suggest_state_id",{id: $(this).val()}, function(data) {
+					$("#StateStateId").val(data.state_id);
+				})
+			}
+		});
+	});
+</script>

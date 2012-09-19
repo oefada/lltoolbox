@@ -104,5 +104,22 @@ class CountriesController extends AppController {
 		exit;
 	}
 
+	function suggest_state_id() {	
+		$countryCode = $this->params['url']['id'];
+	    $stateIds = $this->Country->State->find('list', array('fields' => array('State.stateId'), 'conditions' => array('State.countryId' => $countryCode), 'order' => array('State.stateId')));
+		
+		$suggestion = '';
+		for ($i = 10; $i <= 99; $i++) {
+			if (!in_array($i, $stateIds)) {
+				$suggestion = $i;
+				break;
+			}
+		}
+		
+		$this->layout = 'ajax';
+		echo json_encode(array('state_id'=>$suggestion));
+		exit;
+	}	
+
 }
 ?>
