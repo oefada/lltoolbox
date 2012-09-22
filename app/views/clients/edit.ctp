@@ -126,7 +126,13 @@ foreach ($this->data['Client']['sites'] as $site) {
 ?>
 	<fieldset>
 		<? echo $form->input('clientTypeId', array('label' => 'Client Type', 'empty' => true)); ?>
-		<? echo $form->input('clientCollectionName', array('label' => 'Collection')); ?>
+		<? echo $form->input('clientCollections', array(	'label' => 'Collection<span class="tips">Press CONTROL to select multiple options.</span>', 
+															'type' => 'select', 
+															'size' => 10, 
+															'multiple' => 'multiple', 
+															'style' => 'width: auto', 
+															'selected' => $collectionsSelected,
+															'options' => $collections)); ?>
 		<div class="input text"><label>LOA Level</label><?=$this->data['ClientLevel']['clientLevelName']?></div>
 		<div class="controlset4">
 			<label>Hide on</label>

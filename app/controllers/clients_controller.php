@@ -5,7 +5,7 @@ App::import('Vendor', 'nusoap_client/lib/nusoap');
 class ClientsController extends AppController {
 
 	var $name = 'Clients';
-	var $uses = array('Client', 'ClientThemeRel', 'ClientDestinationRel', 'ClientAmenityTypeRel', 'ClientInterview');
+	var $uses = array('Client', 'ClientThemeRel', 'ClientDestinationRel', 'ClientAmenityTypeRel', 'ClientInterview', 'ClientCollection');
 
 	function beforeFilter() {
 		parent::beforeFilter();
@@ -193,6 +193,7 @@ class ClientsController extends AppController {
 				if($this->data['ClientInterview'][0]){
 					$this->Client->ClientInterview->save($this->data['ClientInterview'][0]);
 				}
+				$this->ClientCollection->saveCollected($this->data['Client']['clientId'], $this->data['Client']['clientCollections']);
 				$this->Session->setFlash(__('The Client has been saved', true));
 				$this->redirect(array('action'=>'edit', 'id' => $id));
 			} else {
@@ -286,6 +287,22 @@ class ClientsController extends AppController {
 		}
 		
 		$this->set(compact('clientStatusIds','clientTypeIds','clientCollectionIds','regions','clientAcquisitionSourceIds', 'loas', 'themes', 'destinations', 'destSelected', 'countryIds', 'stateIds', 'cityIds'));
+
+		// GET COLLECTIONS DATA
+		$collections = $this->ClientCollection->getAll($this->data['Client']['clientId']);
+		$collectionsArray = null; 
+		$collectionsSelected = null;
+
+		foreach($collections as $c){
+			$collectionsArray[$c['c']['id']] = $c['c']['name'];
+			
+			if($c['cc']['collection_id']){
+				$collectionsSelected[$c['cc']['collection_id']] = $c['cc']['collection_id'];
+			}
+		}
+		
+		$this->set("collections", $collectionsArray);
+		$this->set("collectionsSelected", $collectionsSelected);
 	}
 		
 	function search()
