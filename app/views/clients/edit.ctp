@@ -126,13 +126,22 @@ foreach ($this->data['Client']['sites'] as $site) {
 ?>
 	<fieldset>
 		<? echo $form->input('clientTypeId', array('label' => 'Client Type', 'empty' => true)); ?>
-		<? echo $form->input('clientCollections', array(	'label' => 'Collection<span class="tips">Press CONTROL to select multiple options.</span>', 
-															'type' => 'select', 
-															'size' => 10, 
-															'multiple' => 'multiple', 
-															'style' => 'width: auto', 
-															'selected' => $collectionsSelected,
-															'options' => $collections)); ?>
+		
+		
+		<div class="input select" style="width: 495px;">
+			
+			<div style="border: 1px solid #ccc; padding: 10px; width: 300px; height: 200px; overflow: auto; float: right;">
+				<?
+					foreach($collections as $key => $collect){
+						if( isset($collectionsSelected[$key]) && $collectionsSelected[$key] == $key){ $checked = " checked"; } else { $checked = ""; }
+						echo "<input type=\"checkbox\" id=\"data[Client][clientCollections][$key]\" name=\"data[Client][clientCollections][$key]\" value=\"$key\" $checked /> $collect <br />";  
+ 					}
+				?>
+			</div>
+
+			<label for="ClientClientCollections">Collection </span></label>
+		</div>
+		
 		<div class="input text"><label>LOA Level</label><?=$this->data['ClientLevel']['clientLevelName']?></div>
 		<div class="controlset4">
 			<label>Hide on</label>
