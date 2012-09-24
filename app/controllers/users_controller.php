@@ -197,23 +197,18 @@ class UsersController extends AppController {
 	public function email($id=null){
 
 		$email=$this->params['url']['email'];
-		$process=isset($this->params['url']['process'])?$this->params['url']['process']:0;
+		$doProcessOne=isset($this->params['url']['process'])?$this->params['url']['process']:0;
 
 		$this->set('hideSidebar', false);
 		$this->set("currentTab", "customers");
 
-		$arr=$this->processDupEmails(array($email),$process);
-		$rowArr=$arr[0];
-		$keepArr=$arr[1];
-		$inactiveArr=$arr[2];
-		$delIdArr=$arr[3];
+		$rowArr=$this->processDupEmails(array($email),$doProcessOne);
+		if ($rowArr=="done"){
+			$rowArr=array();
+		}
 
-		$this->set("userId", $id);
 		$this->set("email", $email);
 		$this->set("rowArr", $rowArr);
-		$this->set("keepArr", $keepArr);
-		$this->set("inactiveArr", $inactiveArr);
-		$this->set("delIdArr", $delIdArr);
 
 	}
 
@@ -224,123 +219,148 @@ class UsersController extends AppController {
 	 * 
 	 * @return array
 	 */
-	private function processDupEmails($emailArr=array(), $process=0){
+	private function processDupEmails($emailArr=array(), $doProcessOne=0){
 
 		foreach($emailArr as $email){
 
-			$delIdArr=array();
-			$q="SELECT u.createDateTime, u.modifyDateTime, u.email, u.userId, ticket.ticketId, ue.userSiteExtendedId, ";
-			$q.="u.inactive ";
+			// see if email has some userIds without matching rows in userSiteExtended AND
+			// some userIds with matching rows in userSiteExtended
+			$numWith=0;
+			$numWithout=0;
+			$doProcessTwo=false;
+
+			if ($doProcessOne){
+				$q="SELECT COUNT(*) AS num FROM user u LEFT JOIN userSiteExtended ue using(userId) ";
+				$q.="WHERE ue.userId IS NULL ";
+				$q.="AND email=\"$email\" ";
+				$r=$this->User->query($q);
+				$numWithout=$r[0][0]['num'];
+				$q="SELECT COUNT(*) AS num FROM user LEFT JOIN userSiteExtended ue using(userId) ";
+				$q.="WHERE ue.userId IS NOT NULL ";
+				$q.="AND email=\"$email\" ";
+				$r=$this->User->query($q);
+				$numWith=$r[0][0]['num'];
+
+				// at least one userId in user table has a matching row in userSiteExtended.
+				// get the userIds without matching rows in userSiteExtended and de-dup them
+				if ($numWith>0 && $numWithout>0 && $numWith!=$numWithout){
+					$q="SELECT * FROM user u LEFT JOIN userSiteExtended ue using(userId) ";
+					$q.="WHERE ue.userId IS NULL ";
+					$q.="AND email=\"$email\" ";
+					$r=$this->User->query($q);
+					foreach($r as $arr){
+						$userId=$arr['u']['userId'];
+						$renameEmail=$arr['u']['email'].'_dup_'.$userId;
+						$q="UPDATE user SET email=\"$renameEmail\", inactive=1 WHERE userId=$userId";
+						$this->User->query($q);
+					}
+				}
+			}
+
+			// all but one where successfully de-duped, no need to process the rest
+			if ($numWith==1){
+				$doProcessTwo=false;
+			}elseif ($doProcessOne){
+				$doProcessTwo=true;
+			}
+
+			// process emails that have userId's that all have matching rows in userSiteExtended
+			// OR no matching rows in userSiteExtended.
+			// ergo, userSiteExtended is no longer a criteria
+			/*
+			 1. user row with most recent modifyDateTime (login) that has a ticketId
+			 2. the most recent (non null) modifyDateTime
+			 3. the most recent userId
+			*/
+			
+			$q="SELECT u.createDateTime, u.modifyDateTime, u.email, u.userId, ue.userSiteExtendedId, ";
+			$q.="u.inactive, ticket.ticketId ";
 			$q.="FROM user u ";
 			$q.="LEFT JOIN ticket using(userId) ";
 			$q.="LEFT JOIN userSiteExtended ue using(userId) ";
 			$q.="WHERE email=\"$email\" ";
 			$q.="GROUP BY userId, ticketId ";
 			$q.="ORDER BY ticketId DESC ";
-			$r=$this->User->query($q);
+			$r=$this->User->query($q, false);
 			if (count($r)==0){
 				return "done";
 			}
 
-			$inactiveArr[$email]=array();
-			$latestDate=0;
-			$latestUserId=0;
-			$keepArr[$email]=array();
+			$userIdArr=array();
+			$modifyDateTimeArr=array();
+			$ticketArr=array();
+			$rowArr=array();
+			$modifyDateTimeIsNotNull=false;
+			$primaryUserId=false;
 			foreach($r as $arr){
 
-				$id=$arr['u']['userId'];
+				$userId=$arr['u']['userId'];
+				$email=strtolower($arr['u']['email']);
+				$renameEmail=$email.'_dup_'.$userId;
 
-				$rowArr[$id]=array(
-					"userId"=>$id, 
+				$rowArr[$userId]=array(
+					"userId"=>$userId, 
 					"email"=>$email, 
+					"renameEmail"=>$renameEmail,
 					"createDateTime"=>$arr['u']['createDateTime'], 
 					"modifyDateTime"=>$arr['u']['modifyDateTime'], 
-					"inactive"=>$arr['u']['inactive'],
-					"ticketId"=>$arr['ticket']['ticketId'], 
-					"userSiteExtendedId"=>$arr['ue']['userSiteExtendedId']
+					"userSiteExtendedId"=>$arr['ue']['userSiteExtendedId'],
+					"inactive"=>$arr['u']['inactive']
 				);
 
-				$emailIdArr[$email][]=$id;
-
-				$delIdArr[$id]=$id;
-
-				$ut=strtotime($arr['u']['createDateTime']);
-
-				if ($ut>$latestDate && $arr['u']['inactive']==0){
-					$latestDate=$ut;
-					$latestUserId=$id;
+				$userIdArr[]=$userId;
+				$modifyDateTimeArr[$userId][]=strtotime($arr['u']['modifyDateTime']);
+				if ($arr['u']['modifyDateTime']!=null){
+					$modifyDateTimeIsNotNull=true;
 				}
 
 				// This email/userId has a ticket associated with it
-				// Set it in these arrays for use later 
 				if ($arr['ticket']['ticketId']!=null){
-					$userIdHasTicketArr[$id]=1;
-					$emailHasTicketArr[$email][$id]=$arr['ticket']['ticketId'];
+					$ut=strtotime($arr['u']['modifyDateTime']);
+					$ticketArr[$ut]=$userId;
+					$rowArr[$userId]['ticketId']=$arr['ticket']['ticketId'];
 				}
 
 			}
 
-			// if there are no tickets, keep latestUserId
-			if (!isset($emailHasTicketArr[$email]) && $latestUserId!=0){
-				$keepArr[$email][]=$latestUserId;	
+			// a userId has a ticket. set the most recent userId to be primary userId 
+			if (count($ticketArr)>0){
+				krsort($ticketArr);
+				$primaryUserId=array_shift($ticketArr);
+			}else{
+				// no tickets and has a modifyDateTime, set most recent modifyDatetime to be primary userId
+				if ($modifyDateTimeIsNotNull){
+					arsort($modifyDateTimeArr);
+					$primaryUserId=array_shift(array_keys($modifyDateTimeArr));
+				}else{
+					rsort($userIdArr);
+					$primaryUserId=array_shift($userIdArr);
+				}
 			}
 
-			// keep userIds that have ticketIds (to be set to inactive)
-			if (isset($emailHasTicketArr[$email])){
-				foreach($emailHasTicketArr[$email] as $uid=>$tid){
-					if (!in_array($uid, $keepArr[$email])){
-						$inactiveArr[$email][]=$uid;
+			if ($doProcessTwo){
+				if ($primaryUserId){
+					$q="UPDATE user SET inactive=0 WHERE userId=$primaryUserId";
+					$this->User->query($q);
+					foreach($rowArr as $userId=>$arr){
+						if ($primaryUserId==$userId){
+							continue;
+						}
+						$q="UPDATE user SET inactive=1, email=\"".$arr['renameEmail']."\" WHERE userId=$userId";
+						$this->User->query($q);
+						unset($rowArr[$userId]);
 					}
-				}
-
-				// if no userIds where found to keep and there are userId's in inactiveArr 
-				// set the primary userId to the most recent userId in the inactive array
-				if (count($keepArr[$email])==0 && count($inactiveArr[$email])>0){
-					rsort($inactiveArr[$email]);
-					$keepArr[$email][]=$inactiveArr[$email][0];
-					unset($inactiveArr[$email][0]);
-				}
-
-			}
-
-			if (count($keepArr[$email])==0 && count($emailIdArr[$email])>0){
-				//echo $email;
-				//AppModel::printR($emailIdArr[$email]);
-				//AppModel::printR($delIdArr);
-				$delIdArr=$delIdArr+$emailIdArr[$email];	
-			}
-
-			// remove userId's that are designated to be kept from the deletion array
-			foreach($keepArr[$email] as $i=>$uid){
-				unset($delIdArr[$uid]);
-			}
-			// remove userId's that are designated to be set to inactive 
-			foreach($inactiveArr[$email] as $i=>$uid){
-				unset($delIdArr[$uid]);
-			}
-
-			if (count($delIdArr)>0 && $process==1){
-				$q="DELETE FROM userSiteExtended WHERE userId IN(".implode(", ", $delIdArr).")";
-				$this->User->query($q);
-				$q="DELETE FROM user WHERE userId IN(".implode(", ", $delIdArr).")";
-				$this->User->query($q);
-				foreach($delIdArr as $userId){
-					unset($rowArr[$userId]);
-				}
-				$delIdArr=array();
-			}
-
-			if (count($inactiveArr[$email])>0 && $process==1){
-				$q="UPDATE user SET inactive=1 WHERE userId IN(".implode(", ", $inactiveArr[$email]).")";
-				$this->User->query($q);
-				foreach($inactiveArr[$email] as $i=>$userId){
-					$rowArr[$userId]['inactive']=1;
+				}else{
+					echo "<br>No primaryUserId found<br>";
+					$this->User->logit("No primaryUserId found");
+					$this->User->logit($rowArr);
+					$this->User->logit('------------------------------');
 				}
 			}
 
 		}
 
-		return array($rowArr, $keepArr, $inactiveArr, $delIdArr);
+		return isset($rowArr)?$rowArr:array();
 
 	}
 
@@ -397,7 +417,7 @@ class UsersController extends AppController {
 				$emailArr[]=$arr['user']['email'];
 			}
 
-			$response=$this->processDupEmails($emailArr, 1);
+			$response=$this->processDupEmails($emailArr, true);
 			if ($response!="done" && $ajax){
 				echo "continue";
 				return;
@@ -606,7 +626,6 @@ class UsersController extends AppController {
 					$this->redirect(array('action'=>'edit',$user['User']['userId']));
 				}
 			}
-//			var_dump($users);exit;
 			$this->set('users', $users);
 			$this->render('index');
 
@@ -835,7 +854,6 @@ class UsersController extends AppController {
 		);
 		$referralsRecvd = $this->paginate('UserReferrals');
 		
-		//var_dump($referralsRecvd); die();
 
 		$this->set('referralsRecvd', $referralsRecvd);
 		$this->set('user', $this->user);

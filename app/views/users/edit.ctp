@@ -48,12 +48,11 @@
 		echo $form->input('firstName');
 		echo $form->input('lastName');		
 		echo $form->input('email');
-		/*
 		echo "<div style='margin-left:170px;'>";
 		echo "Number of accounts associated with email: ";
 		echo "<a href='/users/email/$userId?email=$email'><b>$numAccountsWithEmail</b></a>";
 		echo "</div>";
-		*/
+		
 	?>
 	<div class='controlset'>
 		<?php echo $form->input('inactive'); ?><br>

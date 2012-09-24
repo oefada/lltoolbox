@@ -87,7 +87,7 @@ class AppModel extends LazyModel {
 
 	// Wrapper for logging all of an array or any data. Needs to be accessible in all tiers.
 	//
-	public function logIt($data, $toFirebug=false, $var_dump=false, $num=null){
+	public static function logIt($data, $toFirebug=false, $var_dump=false, $num=null){
 
 		ob_start();
 		if ($var_dump){
@@ -99,7 +99,7 @@ class AppModel extends LazyModel {
 		ob_end_clean();
 		if ($toFirebug && $_SERVER['ENV']=='development'){
 			// need Configure::write, otherwise there are output buffering issues when talking to firephp
-			Configure::write('debug',2);
+			Configure::write('debug',0);
 			require_once('/usr/lib/php/FirePHPCore/fb.php'); 
 			FB::log($str,$num." log:");
 		}else{

@@ -17,16 +17,15 @@ if ($dupCountNoInactive!==false){
 	echo "<br><br>";
 }
 ?>
-<b>Run process</b> will do the following for emails that are associated with multiple userId's:<br><br>
-<ul>
-<li>
-Select a primary account based on the most recent active account with a ticket, 
-or if there are no tickets, the most recent active account.
-<li>
-Set alternate accounts that have tickets to inactive.
-<li>
-Delete alternate accounts that have no tickets.
-</ul>
+<b>Run process</b> will select a primary userId for emails that are associated with multiple userId's:<br><br>
+
+<br><br>
+Emails that have userId's that all have matching rows in userSiteExtended OR no matching rows in userSiteExtended are processed first.  This makes userSiteExtended no longer a criteria for the rest of the script.
+<br><br>Then set the primary userId by:<br><br>
+1. user row with most recent modifyDateTime (login) that has a ticketId<br>
+2. or the most recent (non null) modifyDateTime<br>
+3. or the most recent userId<br><br>
+
 <br>
 <p>
 <a onclick="return false" href="/users/deletedups?runProcess=1" id="runProcess"><b>Run Process</b></a>
