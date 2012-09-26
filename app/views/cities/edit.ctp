@@ -28,8 +28,18 @@
 		echo $form->input('latitude');
 		echo $form->input('longitude');
 		echo $form->input('cityAlias');
-		echo $form->input('isDisabled');
 	?>
+
+		<div class="input">
+			<label for="CityGeoBandId">Geo Band</label>
+			<select name="data[City][geoBandId]" style="font-size:12px">
+				<option value="">-- </option>
+				<?= $geoSelectOptions; ?>
+			</select>
+		</div>
+	
+	
+	<?php echo $form->input('isDisabled'); ?>
 	</fieldset>
 <?php echo $form->submit('Submit');?>
 <?php echo $form->end() ?>

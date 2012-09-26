@@ -2,6 +2,7 @@
 class StatesController extends AppController {
 	var $name = 'States';
 	var $helpers = array('Html', 'Form');
+	var $uses = array('State', 'GeoBand');
 
 	function __construct() {
 		parent::__construct();
@@ -80,6 +81,9 @@ class StatesController extends AppController {
 		}
 
 		$countries = $this->State->Country->find('list', array('order' => array('Country.countryName') ));
+
+		$this->set('geoSelectOptions', $this->GeoBand->getHierarchySelectOptions($this->data['State']['geoBandId']));
+
 		$this->set(compact('tags','countries'));
 	}
 

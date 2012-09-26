@@ -3,6 +3,7 @@ class CountriesController extends AppController {
 
 	var $name = 'Countries';
 	var $helpers = array('Html', 'Form');
+	var $uses = array('Country', 'GeoBand');
 
 	function index() {
 		$this->Country->recursive = 0;
@@ -57,6 +58,8 @@ class CountriesController extends AppController {
 		if (empty($this->data)) {
 			$this->data = $this->Country->read(null, $id);
 		}
+		
+		$this->set('geoSelectOptions', $this->GeoBand->getHierarchySelectOptions($this->data['Country']['geoBandId']));		
 	}
 
 	function delete($id = null) {

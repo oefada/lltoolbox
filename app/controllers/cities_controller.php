@@ -3,6 +3,8 @@ class CitiesController extends AppController {
 
 	var $name = 'Cities';
 	var $helpers = array('Html', 'Form');
+	var $uses = array('City', 'GeoBand');
+
 
 	function __construct() {
 		parent::__construct();
@@ -62,6 +64,9 @@ class CitiesController extends AppController {
 		//$tags = $this->City->Tag->find('list');
 		$states = $this->City->State->find('list');
 		$countries = $this->City->Country->find('list', array('order' => array('Country.countryName') ));
+
+		$this->set('geoSelectOptions', $this->GeoBand->getHierarchySelectOptions($this->data['City']['geoBandId']));
+
 		//$this->set(compact('tags', 'states', 'countries'));
 		$this->set(compact('states', 'countries'));
 	}
@@ -86,6 +91,8 @@ class CitiesController extends AppController {
 		//$tags = $this->City->Tag->find('list');
 		//$states = $this->City->State->find('list');
 		$countries = $this->City->Country->find('list');
+		$this->set('geoSelectOptions', $this->GeoBand->getHierarchySelectOptions($this->data['City']['geoBandId']));
+		
 		//$this->set(compact('tags','states','countries'));
 		$this->set(compact('states', 'countries'));
 	}

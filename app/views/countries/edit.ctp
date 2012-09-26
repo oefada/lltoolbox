@@ -4,8 +4,18 @@
 	<fieldset>
  		<legend><?php __('Edit Country');?></legend>
 	<?php
+		echo $form->hidden('countryId');
 		echo $form->input('countryName');
 	?>
+	
+	<div class="input">
+		<label for="CountryGeoBandId">Geo Band</label>
+		<select name="data[Country][geoBandId]" style="font-size:12px">
+			<option value="">-- </option>
+			<?= $geoSelectOptions; ?>
+		</select>
+	</div>
+	
 	</fieldset>
 <?php echo $form->end('Submit');?>
 </div>

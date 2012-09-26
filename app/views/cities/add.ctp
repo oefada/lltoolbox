@@ -27,6 +27,15 @@
 		echo $form->input('latitude');
 		echo $form->input('longitude');
 	?>
+	
+		<div class="input">
+			<label for="CitygeoBandId">Geo Band</label>
+			<select name="data[City][geoBandId]" style="font-size:12px">
+				<option value="">-- </option>
+				<?= $geoSelectOptions; ?>
+			</select>
+		</div>
+	
 	</fieldset>
 <?php echo $form->end('Submit');?>
 <?php echo $this->element('gm_geocode', array(
