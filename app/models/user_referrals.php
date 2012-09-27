@@ -1,4 +1,5 @@
 <?php
+
 class UserReferrals extends AppModel {
 
 	var $name = 'UserReferrals';
@@ -8,7 +9,7 @@ class UserReferrals extends AppModel {
 	var $actsAs = array('Transactional');
 	 	
 	var $belongsTo = Array('User' => Array('foreignKey' => 'referrerUserId'));
-	
+
 	public function completeReferral($id, $status = 2)
 	{
 		if ($id && ($status == 2 || $status == 3)) {
@@ -26,18 +27,19 @@ class UserReferrals extends AppModel {
 			$referredUser = $this->User->find('first', $params);
 			$this->CreditTracking = ClassRegistry::init("CreditTracking");
 
-
-			App::import("Vendor","UserReferralsHelper",array('file' => "appshared".DS."helpers".DS."UserReferralsHelper.php"));
-			$referralsHelper = new UserReferralsHelper();
+			$arr=array('file' => "appshared".DS."helpers".DS."UserReferralsPartial.php");
+			App::import("Vendor","UserRerferralsPartial", $arr);
 			
 			// give credit to referred user
 			if ($status == 2) {
 				if (is_array($referredUser) && isset($referredUser['User'])) {
 					$creditArr = Array();
+					$siteId=$referral['UserReferrals']['siteId'];
+					$createdDt=$referral['UserReferrals']['createdDt'];
 					$creditArr['CreditTracking'] = Array(
 						'creditTrackingTypeId' => 3,
 						'userId' => $referredUser['User']['userId'],
-						'amount' => $referralsHelper->getRafAmountReceiver($referral['UserReferrals']['siteId'], $referral['UserReferrals']['createdDt'])
+						'amount' => UserReferralsPartial::getRafAmountReceiver($siteId, $createdDt)
 					);
 					$this->CreditTracking->create();
 					$this->CreditTracking->save($creditArr);
@@ -47,10 +49,12 @@ class UserReferrals extends AppModel {
 			// give credit to referrer
 			if ($status == 3) {
 				$creditArr = Array();
+				$siteId=$referral['UserReferrals']['siteId'];
+				$createdDt=$referral['UserReferrals']['createdDt'];
 				$creditArr['CreditTracking'] = Array(
 					'creditTrackingTypeId' => 3,
 					'userId' => $referral['UserReferrals']['referrerUserId'],
-					'amount' => $referralsHelper->getRafAmountSender($referral['UserReferrals']['siteId'], $referral['UserReferrals']['createdDt'])
+					'amount' => UserReferralsPartial::getRafAmountSender($siteId, $createdDt)
 				);
 				$this->CreditTracking->create();
 				$this->CreditTracking->save($creditArr);
