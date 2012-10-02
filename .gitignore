@@ -7,6 +7,7 @@ app/tmp/cache/views/*
 app/tmp/cache/models/*
 app/tmp/cache/persistent/*
 app/tmp/cache/cake_*
+app/tmp/consolidated_reports
 app/tmp/sessions/*
 app/tmp/tests/*
 app/vendors/appshared
