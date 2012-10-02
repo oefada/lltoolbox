@@ -396,39 +396,60 @@ foreach ($this->data['Client']['sites'] as $site) {
             $('currentAmenities' + amenityTypeId).update(amenities);
         }
     </script>
-    
+
 	<fieldset class="collapsible">
 		<legend class="handle">Amenities <?=$html2->c($client['ClientAmenityRel']); ?></legend>
 		<div class="collapsibleContent">
-            <br />
-            <?php
-                $clientAmenityRelIdsChecked = array();            
-                foreach ($client['ClientAmenityTypeRel'] as $amenityTypeId => $amenityType) {
-                    if (isset($amenityType['amenities'])) {
-                        echo "<div style='clear:none; border:1px dotted silver; background:#FEFEFE; padding:10px; float:left; width:315px; height:300px; margin:0px 20px 20px 0px;'><div style='padding:0px; margin:0px 0px 10px 0px; font-weight:bold; font-size:1.2em;'>{$amenityType['amenityTypeName']}</div>";
-
-                        echo "<div id='amenityType$amenityTypeId' style='background:white; border:1px solid silver; width:300px; height:100px; margin:0px 0px 8px 0px; overflow:auto;'>";
-                        foreach ($amenityType['amenities'] as $key => $amenity) {
-                            $checked = ($amenity['checked']) ? 'checked' : '';
-                            echo "
-                                <input type='checkbox' id='amenity{$amenity['amenityId']}' name='data[ClientAmenityRel][{$amenity['amenityId']}]' value='{$amenity['amenityId']}' onclick='refreshCurrentAmenities($amenityTypeId);' $checked/>
-                                <label id='amenity-label-{$amenity['amenityId']}' for='amenity{$amenity['amenityId']}' style='display:inline; float:none; padding:0px; margin:0px; font-weight:normal; font-size:0.9em;'>{$amenity['amenityName']}</label><br/>
-                            ";                                
-                        }
-                        echo "</div>";
-
-                        echo "<div style='padding:0px; margin:0px 0px 15px 0px; height:65px; overflow:auto; font-size:0.9em;'><strong>Selected:</strong> <span id='currentAmenities$amenityTypeId'></span></div>";
-                        echo "<script>refreshCurrentAmenities($amenityTypeId);</script>";
-                        if ($amenityType['clientAmenityTypeRelId']) {
-                            echo "<input type='hidden' name='data[ClientAmenityTypeRelId][$amenityTypeId]' value='{$amenityType['clientAmenityTypeRelId']}'/>";   
-                        }
-                        echo "<div style='padding:0px; margin:0px 0px 5px 0px; font-size:0.9em;'><strong>Description:</strong></div><textarea name='data[ClientAmenityTypeRel][$amenityTypeId]' style='width:308px; border:1px solid silver; font-size:50px;'>{$amenityType['description']}</textarea></div>";
-                    }
-                }
-            ?>
-            
-            <div class="clear"><a href="/amenities">Manage Amenities</a></div>           
-            
+			<?php echo $html->css('//ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery.ui.all.css', null, array(), false); ?>
+			<?php echo $javascript->link('//ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js', true); ?>
+			<script>
+				jQuery(function() {
+					var $ = jQuery;
+					$("#amenities-accordion").accordion({
+						collapsible: true,
+						active: false,
+						autoHeight: false
+					});
+				});
+			</script>
+			<div id="amenities-accordion">
+				<?php foreach ($client['ClientAmenityTypeRel'] as $amenityType): ?>
+				<?php if (isset($amenityType['amenities'])): ?>
+				<h3><a href="#"><?php echo $amenityType['amenityTypeName']?></a></h3>
+				<div>
+					<table border="0">
+						<tr valign="bottom" bgcolor="#bbb">
+							<td width="400"></td>
+							<?php foreach($client['ClientAmenityTypeRel'] as $amenityType2): ?>
+							<td align="center" style="vertical-align: bottom !important;">
+								<?php echo $amenityType2['amenityTypeName']?>
+							</td>
+							<?php endforeach; ?>
+						</tr>
+						<?php $amenities = $amenityType['amenities']; ?>
+						<?php foreach($amenities as $key => $amenity): ?>
+						<?php $bgcolor = ($key % 2) ? '#eee' : '#fff'; ?>
+						<tr bgcolor="<?php echo $bgcolor; ?>">
+							<td><?=$amenity['amenityName']?></td>
+							<?php foreach ($client['ClientAmenityTypeRel'] as $amenityType3): ?>
+							<?php $checked = ($amenity['checked'] && $amenity['amenityTypeId'] === $amenityType3['amenityTypeId']) ? 'checked' : ''; ?>
+							<td align="center">
+								<input
+									type="checkbox"
+									name="data[ClientAmenityRel][<?php echo $amenity['amenityId'] ?>]"
+									value="<?php echo $amenity['amenityId'] ?>"
+									<?php echo $checked; ?>
+								/>
+							</td>
+							<?php endforeach; ?>
+						</tr>
+						<?php endforeach; ?>
+					</table>
+				</div>
+				<?php endif; ?>
+				<?php endforeach; ?>
+			</div>
+			<div class="clear"><a href="/amenities">Manage Amenities</a></div>
 		</div>
     </fieldset>    
     
