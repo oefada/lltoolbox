@@ -1029,6 +1029,7 @@ class WebServiceTicketsController extends WebServicesController
 			$packageBlurb		= ucfirst($liveOfferData['packageBlurb']);
 			$offerEndDate		= date('M d Y H:i A', strtotime($liveOfferData['endDate']));
 			$maxNumWinners		= $liveOfferData['numWinners'];
+			$numRooms = $liveOfferData['numRooms'];
 
 			$clientData			= $this->ClientLoaPackageRel->findAllBypackageid($liveOfferData['packageId']);
 			$isMystery 			= isset($liveOfferData['isMystery']) && $liveOfferData['isMystery'] ? true : false;
@@ -1176,8 +1177,10 @@ class WebServiceTicketsController extends WebServicesController
 			$packageSubtitle	= $packageData['subtitle'];
 
 			$packageId			= $ticketData['packageId'];
-			// 2011-01-05
+
 			$numNights			= $ticketData['numNights'];
+
+			$numRooms = $packageData['numRooms'];
 
 			$offerTypeId		= $ticketData['offerTypeId'];
 			$offerTypeName		= str_replace('Standard ', '', $offerType[$offerTypeId]);
