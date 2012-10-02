@@ -435,7 +435,7 @@ class ConsolidatedReport extends AppModel
 		$dataToReturn = array();
 
 		if ($this->useSkynetData
-			&& in_array((int) $site_id , array(1, 2))
+			&& in_array((int) $site_id , array(1))
 			&& $this->month_end_date > '2012-04-30 23:59:59'
 		) {
 			$omnitureData = $this->getImpressionsBySiteForPeriod($site_id, $this->loa_start_date, '2012-04-30 23:59:59');
@@ -459,10 +459,10 @@ class ConsolidatedReport extends AppModel
 	 */
 	private function getImpressionsBySiteForPeriod($site_id, $start_date, $end_date)
 	{
-		//We are using the reporting database for this data
-		$this->setDataSource('reporting');
-		
-		if ($this->useSkynetData && in_array((int) $site_id, array(1, 2)) && $end_date > '2012-04-30 23:59:59') {
+		if ($this->useSkynetData && in_array((int) $site_id, array(1)) && $end_date > '2012-04-30 23:59:59') {
+			//We are using the business_db2 database for this data
+			$this->setDataSource('business_db2');
+
 			// Get impressions from skynet
 			$params = array($this->client_id, $site_id, $start_date, $end_date);
 
@@ -481,7 +481,7 @@ class ConsolidatedReport extends AppModel
 			
 			$sql = "
 				SELECT
-					total as clicks
+					sum(total) as clicks
 				FROM
 					lltUserEventRollupByDay
 				WHERE
@@ -496,11 +496,14 @@ class ConsolidatedReport extends AppModel
 						array(
 							array(
 								'impressions' => $skynetImpressions[0][0]['impressions'],
-								'clicks' => $skynetClicks[0]['lltUserEventRollupByDay']['clicks']
+								'clicks' => $skynetClicks[0][0]['clicks']
 							)
 						)
 					);
 		} else {
+			//We are using the reporting database for this data
+			$this->setDataSource('reporting');
+
 			// Get impressions from omniture
 			switch($site_id) {
 				case 1: $table = 'carConsolidatedView'; break;
@@ -642,7 +645,7 @@ class ConsolidatedReport extends AppModel
 
 		foreach($tables as $site => $table) {
 			$impressionData = array();
-			if ($this->useSkynetData && ($site === 'Luxury Link' || $site === 'Family Getaway') && $this->month_end_date > '2012-04-30 23:59:59') {
+			if ($this->useSkynetData && $site === 'Luxury Link' && $this->month_end_date > '2012-04-30 23:59:59') {
 				// We need a blend of skynet and omniture
 				
 				if ($site === 'Luxury Link') {
@@ -745,7 +748,7 @@ class ConsolidatedReport extends AppModel
 	 */
 	private function getSkynetImpressionsForClientByDate($startDate, $endDate, $clientId, $siteId)
 	{
-		$this->setDataSource('reporting');
+		$this->setDataSource('business_db2');
 		
 		if ($siteId === 1) {
 			$table = 'carConsolidatedView';
