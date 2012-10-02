@@ -339,8 +339,8 @@ $this->searchController = 'Tickets';
 	<div style="float:left;">
 	<table width="370" cellspacing="3" cellpadding="3" border="0" style="border:0px;width:370px;">
 		<tr><td style="border:0px;"><h2>Fixed Price</h2></td></tr>
-		<tr><td style="border:0px;"><?php echo $html->link('Fixed Price - Winner Notification', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/12');?></td></tr>
-		<tr><td style="border:0px;"><?php echo $html->link('Fixed Price - Internal Exclusive Email', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/11');?></td></tr>
+		<tr><td style="border:0px;"><?php echo $html->link('Fixed Price - Winner Notification', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/12');?> - 12</td></tr>
+		<tr><td style="border:0px;"><?php echo $html->link('Fixed Price - Internal Exclusive Email', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/11');?> - 11 </td></tr>
 		<tr>
 			<?php if (count($ticket['Client']) > 1) : ?>
 				<td style="border:0px;">
@@ -348,12 +348,12 @@ $this->searchController = 'Tickets';
 					<?php 
 						foreach ($ticket['Client'] as $k=>$client) {
 							echo $html->link("Reservation Request - Client Exclusive Email [". $client['Client']['name'] . "]", '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/10/' . $client['Client']['clientId']);	
-							echo '<br />';
+							echo ' - 10<br />';
 						}
 					?>
 				</td>
 			<?php else : ?>
-				<td style="border:0px;"><?php echo $html->link('Reservation Request - Client Exclusive Email', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/10');?></td>
+				<td style="border:0px;"><?php echo $html->link('Reservation Request - Client Exclusive Email', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/10');?> - 10</td>
 			<?php endif; ?>
 		</tr>
 	</table>
@@ -362,8 +362,8 @@ $this->searchController = 'Tickets';
 	<div style="float:left;">
 	<table width="260" cellspacing="3" cellpadding="3" border="0" style="border:0px;width:260px;">
 		<tr><td style="border:0px;"><h2>Auctions</h2></td></tr>
-		<tr><td style="border:0px;"><?php echo $html->link('Winner Email (PPV)', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/18');?></td></tr>
-		<tr><td style="border:0px;"><?php echo $html->link('Winner Email (Dec/Exp CC)', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/19');?></td></tr>
+		<tr><td style="border:0px;"><?php echo $html->link('Winner Email (PPV)', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/18');?> - 18</td></tr>
+		<tr><td style="border:0px;"><?php echo $html->link('Winner Email (Dec/Exp CC)', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/19');?> - 19</td></tr>
 		<tr>
 			<?php if (count($ticket['Client']) > 1 && $ticket['Ticket']['siteId'] != 1) : ?>
 				<td style="border:0px;">
@@ -371,19 +371,19 @@ $this->searchController = 'Tickets';
 					<?php 
 						foreach ($ticket['Client'] as $k=>$client) {
 							echo $html->link("Client PPV [". $client['Client']['name'] . "]", '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/4/' . $client['Client']['clientId']);	
-							echo '<br />';
+							echo ' - 4<br />';
 						}
 					?>
 				</td>
 			<?php elseif ($ticket['Ticket']['siteId'] != 1) : ?>
-				<td style="border:0px;"><?php echo $html->link('Client PPV', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/4');?></td>
+				<td style="border:0px;"><?php echo $html->link('Client PPV', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/4');?> - 4</td>
 			<?php endif; ?>
 		</tr>
 		<? if ($ticket['Ticket']['siteId'] != 1) : ?>
-		<tr><td style="border:0px;"><?php echo $html->link('Chase Money', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/15');?></td></tr>
+		<tr><td style="border:0px;"><?php echo $html->link('Chase Money', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/15');?> - 15</td></tr>
 		<? endif; ?>
-		<tr><td style="border:0px;"><?php echo $html->link('1st Offense Flake', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/16');?></td></tr>
-		<tr><td style="border:0px;"><?php echo $html->link('2nd Offense Flake', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/17');?></td></tr>
+		<tr><td style="border:0px;"><?php echo $html->link('1st Offense Flake', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/16');?> - 16</td></tr>
+		<tr><td style="border:0px;"><?php echo $html->link('2nd Offense Flake', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/17');?> - 17</td></tr>
 	</table>
 	</div>
 	
@@ -392,32 +392,32 @@ $this->searchController = 'Tickets';
 		<tr><td style="border:0px;"><h2>Reservations</h2></td></tr>
 		<tr>
 			<td style="border:0px;">
-			<?php echo $html->link('Reservation Request (No Special Requests)', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/2');?>
+			<?php echo $html->link('Reservation Request (No Special Requests)', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/2');?> - 2
 			</td>
 		</tr>
-		<tr><td style="border:0px;"><?php echo $html->link('Reservation Confirmation', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/1');?></td></tr>
-		<tr><td style="border:0px;"><?php echo $html->link('Reservation Acknowledgement', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/12');?></td></tr>
+		<tr><td style="border:0px;"><?php echo $html->link('Reservation Confirmation', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/1');?> - 1</td></tr>
+		<tr><td style="border:0px;"><?php echo $html->link('Reservation Acknowledgement', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/12');?> - 12</td></tr>
 		<? if ($ticket['Ticket']['siteId'] != 1) : ?>
-		<tr><td style="border:0px;"><?php echo $html->link('Reservation Dates Available', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/13');?></td></tr>
+		<tr><td style="border:0px;"><?php echo $html->link('Reservation Dates Available', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/13');?> - 13</td></tr>
 		<? endif; ?>
-		<tr><td style="border:0px;"><?php echo $html->link('Reservation Dates Not Available', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/14');?></td></tr>
-		<tr><td style="border:0px;"><?php echo $html->link('Reservation Request - Follow Up', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/24');?></td></tr>
+		<tr><td style="border:0px;"><?php echo $html->link('Reservation Dates Not Available', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/14');?> - 14</td></tr>
+		<tr><td style="border:0px;"><?php echo $html->link('Reservation Request - Follow Up', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/24');?> - 24</td></tr>
 		<? if ($ticket['Ticket']['siteId'] != 1) : ?>
-		<tr><td style="border:0px;"><?php echo $html->link('Reservation Request - Follow Up to Customer', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/32');?></td></tr>
+		<tr><td style="border:0px;"><?php echo $html->link('Reservation Request - Follow Up to Customer', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/32');?> - 32</td></tr>
 		<? endif; ?>
-		<tr><td style="border:0px;"><?php echo $html->link('Reservation Cancellation - Request', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/29');?></td></tr>
-		<tr><td style="border:0px;"><?php echo $html->link('Reservation Cancellation - Confirmation', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/30');?></td></tr>
-		<tr><td style="border:0px;"><?php echo $html->link('Reservation Cancellation - Client Reciept', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/31');?></td></tr>
+		<tr><td style="border:0px;"><?php echo $html->link('Reservation Cancellation - Request', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/29');?> - 29</td></tr>
+		<tr><td style="border:0px;"><?php echo $html->link('Reservation Cancellation - Confirmation', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/30');?> - 30</td></tr>
+		<tr><td style="border:0px;"><?php echo $html->link('Reservation Cancellation - Client Reciept', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/31');?> - 31</td></tr>
 	</table>
 	</div>
 	
 	<div style="float:left;">
 	<table width="340" cellspacing="3" cellpadding="3" border="0" style="border:0px;width:340px;">
 		<tr><td style="border:0px;"><h2>General Templates</h2></td></tr>
-		<tr><td style="border:0px;"><?php echo $html->link('Customer Email Template', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/26');?></td></tr>
-		<tr><td style="border:0px;"><?php echo $html->link('Client Confirmation Template', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/27');?></td></tr>
-		<tr><td style="border:0px;"><?php echo $html->link('Change Dates Request Template', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/33');?></td></tr>
-		<tr><td style="border:0px;"><?php echo $html->link('Client Res Request Template', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/28');?></td></tr>
+		<tr><td style="border:0px;"><?php echo $html->link('Customer Email Template', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/26');?> - 26</td></tr>
+		<tr><td style="border:0px;"><?php echo $html->link('Client Confirmation Template', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/27');?> - 27</td></tr>
+		<tr><td style="border:0px;"><?php echo $html->link('Change Dates Request Template', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/33');?> - 33</td></tr>
+		<tr><td style="border:0px;"><?php echo $html->link('Client Res Request Template', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/28');?> - 28</td></tr>
 	</table>
 	</div>
 

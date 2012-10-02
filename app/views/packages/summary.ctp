@@ -477,8 +477,11 @@ if ($_SERVER['ENV']=="staging"){
 									<td>{$pricePoint['PricePoint']['percentRetailBuyNow']}</td>
 									<td>{$pricePoint['PricePoint']['percentReservePrice']}</td>
 									<td>{$pricePoint['PricePoint']['pricePerExtraNight']}</td>
-									<td>{$pricePoint['PricePoint']['maxNumSales']}</td>
-									<td><a href='{$previewHost}/luxury-hotels/preview.html?clid={$clientId}&oid={$ppid}&preview=pricepoint&toolbox-display-package-id-{$pricePoint['Package']['packageId']}' target='_blank'>Preview</a></td>
+									<td>{$pricePoint['PricePoint']['maxNumSales']}</td>";
+									
+					echo "<td><a href='{$previewHost}/luxury-hotels/preview.html?";
+					// not 'oid' is not offerId, it is set to pricePointId
+					echo "oid=$ppid&clid={$clientId}&ppid={$ppid}&preview=pricepoint&toolbox-display-package-id-{$pricePoint['Package']['packageId']}' target='_blank'>Preview $ppid</a></td>
 									<td><div style='float:left;' qs=\"pricePointId={$ppid}&otid=$otid\" class=\"edit-link\" name=\"$linkName\" title=\"$linkTitle\">Edit</div></td>";
 					echo "<td>";
 					echo $html->link('Delete', "/packages/deletePackage/pricepointid/".$pricePoint['PricePoint']['pricePointId']."/clientId/".$clientId."/packageId/".$pricePoint['Package']['packageId'], array(), 'Are you sure?');
