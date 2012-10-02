@@ -58,3 +58,9 @@ Total All: <?php echo number_format($totalOld + $totalNew); ?>
 
 , 2); ?>%
 </pre>
+
+<script type="text/javascript">
+	jQuery(function(){
+		jQuery('#imageReport tr.record').css('display','none');jQuery('#imageReport tr.hasOld').css('display','table-row');recount();
+	});
+</script>
