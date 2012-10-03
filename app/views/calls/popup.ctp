@@ -59,7 +59,7 @@
 	echo $form->input('notes', array('type' => 'textarea'));
 	echo $form->label('&nbsp;');
 	echo $form->input('callId');
-	echo $form->submit('Save');
+	echo $form->submit(isset($callIdLabel) ? 'Save Call #' . $callIdLabel : 'Save New Call');
 	?>
 </div>
 

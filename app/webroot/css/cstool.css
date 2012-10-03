@@ -39,6 +39,9 @@ form label {
 input {
 	width: 25% !important;
 }
+div.input.text.required span {
+	padding-left: 8px;
+}
 select, textarea, input[type="submit"] {
 	width: 100% !important;
 }
@@ -99,4 +102,10 @@ select {
 	padding: 0;
 	height: 14px;
 	font-size: 10px;
+}
+div.error-message {
+	background-color: #ffcccc;
+	font-weight: bold;
+	color: red;
+	padding: 4px;
 }

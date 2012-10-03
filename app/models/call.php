@@ -9,6 +9,44 @@ class Call extends AppModel
 
 	var $name = 'Call';
 	var $primaryKey = 'callId';
+
+	var $belongsTo = array(
+		'Ticket' => array(
+			'className' => 'Ticket',
+			'foreignKey' => 'ticketId',
+			'fields' => array('ticketId'),
+		),
+		'User' => array(
+			'className' => 'User',
+			'foreignKey' => 'userId',
+			'fields' => array('userId','firstName','lastName'),
+		),
+		'Client' => array(
+			'className' => 'Client',
+			'foreignKey' => 'clientId',
+			'fields' => array('clientId','name'),
+		),
+	);
+
+	var $validate = array(
+		'contactTopic' => 'numeric',
+		'ticketId' => array(
+			'rule' => 'numeric',
+			'message' => 'Enter a valid ticket id',
+			'allowEmpty' => true,
+		),
+		'userId' => array(
+			'rule' => 'numeric',
+			'message' => 'Enter a valid user id',
+			'allowEmpty' => true,
+		),
+		'clientId' => array(
+			'rule' => 'numeric',
+			'message' => 'Enter a valid client id',
+			'allowEmpty' => true,
+		),
+	);
+
 	public static $interactionTypes = array(
 		1 => 'Guest',
 		2 => 'Client',

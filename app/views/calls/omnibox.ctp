@@ -1,12 +1,14 @@
-<h2>OmniBox</h2>
+<div style="font-size: 300%;">Searching for: <b><?php echo $search; ?></b></div>
+<br/>
 <div>
-	<?php echo $form->create('Call', array(
-		'action' => 'omnibox',
-		'target' => '_cssearch',
-	));
-	echo $form->input('Search');
-	echo $form->end();
-	?>
+	<?php echo $html->image('loading_bar.gif'); ?>
 </div>
+<br/>
 
-<div>\o/</div>
+<script type="text/javascript">
+	jQuery(function() {
+		setTimeout(function() {
+			window.location.replace('/calls/search?q=<?php echo urlencode($search); ?>');
+		}, 5);
+	}); 
+</script>

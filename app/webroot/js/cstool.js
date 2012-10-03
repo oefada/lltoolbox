@@ -132,8 +132,7 @@ $(function() {
 	$('#CallOmniboxForm').submit(function(e) {
 		cs_search_popup();
 	});
-
-	$('form#CallPopupForm input[id="CallUserId"], form#CallPopupForm input[id="CallClientId"]').change(function(e) {
+	var updateNames = function(e) {
 		var $tid = $(this).attr('id');
 		var $for = $('label[for="' + $tid + '"]').text();
 		if (isNaN($(this).val() - 0)) {
@@ -144,11 +143,21 @@ $(function() {
 		} else if ( typeof $for == 'string') {
 			cs_util.doAjax($for.toLowerCase() + 's', $(this).val());
 		}
-	});
+	};
+	$('form#CallPopupForm input[id="CallUserId"], form#CallPopupForm input[id="CallClientId"]').change(updateNames).change();
 	$('form#CallPopupForm input[type="text"], form#CallPopupForm select').keypress(function(e) {
 		if (e.which == 10 || e.which == 13) {
 			e.preventDefault();
 		}
+	});
+	$('input#CallTicketId').dblclick(function(e) {
+		cs_util.doOmniSearch('~Ticket ' + $(this).val());
+	});
+	$('input#CallUserId').dblclick(function(e) {
+		cs_util.doOmniSearch('~UserId ' + $(this).val());
+	});
+	$('input#CallClientId').dblclick(function(e) {
+		cs_util.doOmniSearch('~Client ' + $(this).val());
 	});
 	$(document).ajaxStart(function(e) {
 		$('.ajaxLoadingIndicator').css('visibility', 'visible');

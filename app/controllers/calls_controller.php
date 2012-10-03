@@ -12,22 +12,49 @@ class CallsController extends AppController
 
 	function index()
 	{
-		$this->paginate['order'] = array('Call.callId' => 'desc');
 		$this->layout = 'default';
 		$this->Call->recursive = 0;
-		$this->set('calls', $this->paginate());
+		if (isset($this->params['named']['format']) && $this->params['named']['format'] == 'csv') {
+			Configure::write('debug', '0');
+			$this->set('calls', $this->Call->find('all', array('order' => 'created DESC', )));
+			$this->viewPath .= '/csv';
+			$this->layoutPath = 'csv';
+		} else {
+			$this->paginate['order'] = array('Call.callId' => 'desc');
+			$this->set('calls', $this->paginate());
+		}
 	}
 
 	function omnibox()
 	{
 		$this->layout = 'default';
-		if ($search = isset($this->data['Call']['Search']) ? trim($this->data['Call']['Search']) : false) {
+		$search = false;
+		if (isset($this->data['Call']['Search'])) {
+			$search = trim($this->data['Call']['Search']);
+		} elseif (isset($_GET['q'])) {
+			$search = trim($_GET['q']);
+		}
+		$this->set('search', $search);
+	}
+
+	function search()
+	{
+		$this->layout = 'default';
+		$search = false;
+		if (isset($this->data['Call']['Search'])) {
+			$search = trim($this->data['Call']['Search']);
+		} elseif (isset($_GET['q'])) {
+			$search = trim($_GET['q']);
+		}
+		if ($search) {
 			if (preg_match('/^~{0,1}email .*$/i', $search) || preg_match('/^.*@.*\..*$/', $search)) {
 				$this->_emailSearch($search);
 			} elseif (preg_match('/^~{0,1}name .*$/i', $search) || preg_match('/^~{0,1}user [A-Za-z]+ [A-Za-z]+$/i', $search) || preg_match('/^[A-Za-z]+[ ]+[A-Za-z]+$/', $search)) {
 				$this->_nameSearch($search);
 			} elseif (preg_match('/^~{0,1}username .*$/i', $search) || preg_match('/^~{0,1}user [A-Za-z0-9\-]+$/i', $search) || preg_match('/^[A-Za-z][A-Za-z\-0-9]*$/', $search)) {
 				$this->_usernameSearch($search);
+			} elseif (preg_match('/^~{0,1}userid [0-9]+$/i', $search)) {
+				$this->_userIdSearch($search);
 			} elseif (preg_match('/^~{0,1}client .*$/i', $search) || is_numeric($search) && (intval($search) <= 99999)) {
 				$this->_clientSearch($search);
 			} elseif (preg_match('/^~{0,1}ticket .*$/i', $search) || is_numeric($search) && (intval($search) <= 999999)) {
@@ -78,6 +105,17 @@ class CallsController extends AppController
 		));
 	}
 
+	private function _userIdSearch($userId)
+	{
+		$userId = preg_replace('/^~{0,1}userid /i', '', $userId);
+		$this->Session->setFlash('Searching for userid: ' . $userId);
+		$this->redirect(array(
+			'controller' => 'users',
+			'action' => 'view',
+			$userId,
+		));
+	}
+
 	private function _emailSearch($email)
 	{
 		$email = preg_replace('/^~{0,1}email /i', '', $email);
@@ -100,10 +138,12 @@ class CallsController extends AppController
 
 	function popup($id = null)
 	{
+		$this->Call->recursive = 0;
 		if (!empty($this->data)) {
 			if (isset($_POST['loadTicket'])) {
 				if (is_numeric($_POST['loadTicket'])) {
 					$this->data = $this->Call->read(null, intval($_POST['loadTicket']));
+					$this->set('callIdLabel', $_POST['loadTicket']);
 				}
 			} else {
 				$this->data['Call']['representative'] = $this->viewVars['user']['LdapUser']['username'];
@@ -123,11 +163,11 @@ class CallsController extends AppController
 		}
 		$this->set('lastTenCalls', $this->Call->find('all', array(
 			'conditions' => array(
-				'Call.representative' => 'sknight',
-				'created LIKE' => (date('Y-m-d')) . ' %',
+				'Call.representative' => isset($this->viewVars['user']['LdapUser']['username']) ? $this->viewVars['user']['LdapUser']['username'] : 'none',
+				'Call.created LIKE' => (date('Y-m-d')) . ' %',
 			),
 			'limit' => 10,
-			'order' => 'created DESC',
+			'order' => 'Call.created DESC',
 		)));
 	}
 
