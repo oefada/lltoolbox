@@ -251,6 +251,7 @@
 	</div>
 	</div>
 </div>
+
 <div class="collapsible">
 	<h3 class="handle"><?php __('Related Contests');?> (<?=count($user['Contest'])?>)</h3>
 	<div class="collapsibleContent related">
@@ -305,4 +306,31 @@
 
 
 	
+</div>
+
+<div class="collapsible">
+	<h3 class="handle"><?php __('Calls');?> (<?=count($user['Call'])?>)</h3>
+	<div class="collapsibleContent related">
+		<table cellpadding="0" cellspacing="0">
+			<tr>
+				<td>CallId</td>
+				<td>TicketId</td>
+				<td>ClientId</td>
+				<td>Rep</td>
+				<td>Notes</td>
+				<td>Date</td>
+			</tr>
+			<?php $altRow = false; ?>
+			<?php foreach ($user['Call'] as $call): $altRow = !$altRow; ?>
+				<tr <?php echo $altRow?'class="altrow"':'';?>>
+					<td><?php echo $call['callId']; ?></td>
+					<td><?php echo $call['ticketId']; ?></td>
+					<td><?php echo $call['clientId']; ?></td>
+					<td><?php echo $call['representative']; ?></td>
+					<td><?php echo str_replace("\n","<br/>",htmlentities($call['notes'])); ?></td>
+					<td><?php echo $call['created']; ?></td>
+				</tr>
+			<?php endforeach; ?>
+		</table>
+	</div>	
 </div>

@@ -13,7 +13,6 @@ class CallsController extends AppController
 	function index()
 	{
 		$this->layout = 'default';
-		$this->Call->recursive = 0;
 		if (isset($this->params['named']['format']) && $this->params['named']['format'] == 'csv') {
 			Configure::write('debug', '0');
 			$this->set('calls', $this->Call->find('all', array('order' => 'created DESC', )));

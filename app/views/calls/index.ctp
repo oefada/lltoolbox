@@ -41,7 +41,7 @@
 				<td><?php echo $html->link($call['User']['firstName'].' '.$call['User']['lastName'],array('controller'=>'users','action'=>'view',$call['User']['userId'])); ?></td>
 				<td><?php echo $html->link($call['Client']['name'],array('controller'=>'clients','action'=>'view',$call['Client']['clientId'])); ?></td>
 				<td><?php echo $html->link($call['Ticket']['ticketId'],array('controller'=>'tickets','action'=>'edit',$call['Ticket']['ticketId'])); ?></td>
-				<td><?php echo $call['Call']['notes']; ?></td>
+				<td><?php echo str_replace("\n", $html->image('carriage_return.png'), htmlentities($call['Call']['notes'])); ?></td>
 				<td nowrap><?php echo $call['Call']['created']; ?></td>
 			</tr>
 		<?php endforeach; ?>

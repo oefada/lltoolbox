@@ -57,7 +57,10 @@ class User extends AppModel
 		'UserReferrals' => array(
 			'foreignKey' => 'referrerUserId',
 			'dependent' => true
-		)
+		),
+		'Call' => array(
+			'foreignKey' => 'userId',
+		),		
 	);
 
 	public $hasAndBelongsToMany = array(

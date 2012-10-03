@@ -770,6 +770,33 @@ $this->searchController = 'Tickets';
 	</div>
 </div>
 
+<div class="collapsible">
+	<div class="handle"><?php __('Calls ('. count($ticket['Call']) .')');?></div>
+	<div class="collapsibleContent related">
+		<table cellpadding="0" cellspacing="0">
+			<tr>
+				<td>CallId</td>
+				<td>UserId</td>
+				<td>ClientId</td>
+				<td>Rep</td>
+				<td>Notes</td>
+				<td>Date</td>
+			</tr>
+			<?php $altRow = false; ?>
+			<?php foreach ($ticket['Call'] as $call): $altRow = !$altRow; ?>
+				<tr <?php echo $altRow?'class="altrow"':'';?>>
+					<td><?php echo $call['callId']; ?></td>
+					<td><?php echo $call['userId']; ?></td>
+					<td><?php echo $call['clientId']; ?></td>
+					<td><?php echo $call['representative']; ?></td>
+					<td><?php echo str_replace("\n","<br/>",htmlentities($call['notes'])); ?></td>
+					<td><?php echo $call['created']; ?></td>
+				</tr>
+			<?php endforeach; ?>
+		</table>
+	</div>
+</div>
+
 <br />
 <script>
 function setEndDate() {

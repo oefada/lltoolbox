@@ -29,6 +29,9 @@ class Ticket extends AppModel {
 			'foreignKey' => 'ticketId',
 			'dependent' => true
 		),		
+		'Call' => array(
+			'foreignKey' => 'ticketId',
+		),		
 	);
 	
 	public $hasOne = array(
