@@ -432,12 +432,14 @@ foreach ($this->data['Client']['sites'] as $site) {
 						<tr bgcolor="<?php echo $bgcolor; ?>">
 							<td><?=$amenity['amenityName']?></td>
 							<?php foreach ($client['ClientAmenityTypeRel'] as $amenityType3): ?>
-							<?php $checked = ($amenity['checked'] && $amenity['amenityTypeId'] === $amenityType3['amenityTypeId']) ? 'checked' : ''; ?>
+							<?php $checked = ($amenity['checked'] && $amenity['amenityTypeId'] === $amenityType3['amenityTypeId']) ? ' checked' : ''; ?>
+							<?php $disabled = ($amenity['amenityTypeId'] !== $amenityType3['amenityTypeId']) ? ' disabled="disabled"' : ''; ?>
 							<td align="center">
 								<input
 									type="checkbox"
 									name="data[ClientAmenityRel][<?php echo $amenity['amenityId'] ?>]"
 									value="<?php echo $amenity['amenityId'] ?>"
+									<?php echo $disabled ?>
 									<?php echo $checked; ?>
 								/>
 							</td>
