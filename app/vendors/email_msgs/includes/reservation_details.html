@@ -1,138 +1,156 @@
 <? if ($clientPpv): $thisWidth = "100%"; else: $thisWidth = "267"; endif; ?>
-				<table border="0" cellpadding="0" cellspacing="0" align="left" width="<?= $thisWidth ?>" style="border-width: 1px; border-color:#c3c3c3;border-style: solid;">
-					<tr>
- 						<td valign="top" style="padding: 0px 0px 0px 0px;" align="center">
-							<table bgcolor="#474747" border="0" cellpadding="0" cellspacing="0" align="center" width="<?= $thisWidth ?>" style="padding: 11px 11px 11px 15px;border-bottom: 1px #c3c3c3 solid;">
+
+<table border="0" cellpadding="0" cellspacing="0" align="left" width="<?= $thisWidth ?>" style="border-width: 1px; border-color:#c3c3c3;border-style: solid;">
+	<tr>
+		<td valign="top" style="padding: 0px 0px 0px 0px;" align="center">
+			<table bgcolor="#474747" border="0" cellpadding="0" cellspacing="0" align="center" width="<?= $thisWidth ?>" style="padding: 11px 11px 11px 15px;border-bottom: 1px #c3c3c3 solid;">
+				<tr>
+					<td style="font-size:14px;line-height: 16px; font-family: Arial,Sans-Serif;color:#d4d5b5;"><b>RESERVATION DETAILS</b><td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+<td valign="top" width="<?= $thisWidth ?>" style="padding: 0px 0px 0px 0px;" align="center">
+<table border="0" cellpadding="0" cellspacing="0" width="<?= $thisWidth ?>" style="padding: 0px 0px 0px 15px;">
+<tr valign="middle">
+	<td align="left">
+		<table border="0" cellpadding="0" cellspacing="0">
+			<tr valign="top">
+				<td align="left" width="100%">
+					<br>
+					<table border="0" cellpadding="0" cellspacing="0" align="left">
+
+						<?php if (isset($canConfNum) && $canConfNum != '') : ?>
+						<tr>
+							<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 15px 0px 0px 0px;" width="121">Hotel Cancellation #:</td>
+							<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 15px 20px 0px 0px;"><?= $canConfNum;?></td>
+						</tr>
+						<? endif; ?>
+
+						<?php if (isset($resConfNum) && $resConfNum != ""): ?>
+						<tr>
+							<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 15px 0px 0px 0px;" width="121">Hotel Confirmation #:</td>
+							<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 15px 20px 0px 0px;"><?= $resConfNum;?></td>
+						</tr>
+						<?php endif; ?>
+
+						<?php if ($clientPpv): ?>
+						<tr>
+							<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;">Property:</td>
+							<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;"><?= $clientNameP ?></td>
+						</tr>
+						<? endif; ?>
+
+						<tr>
+							<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:16px;padding: 0px 0px 0px 0px;"><b>Guest Name:</b></td>
+							<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:16px;padding: 0px 0px 0px 0px;"><?php echo $userFirstName;?> <?php echo $userLastName;?></td>
+						</tr>
+
+						<? if (in_array($ppvNoticeTypeId, Array(2, 10, 24, 27, 11, 28, 29, 33))) : ?>
+
+							<? if (!empty($guestEmail)) : ?>
 								<tr>
-									<td style="font-size:14px;line-height: 16px; font-family: Arial,Sans-Serif;color:#d4d5b5;"><b>RESERVATION DETAILS</b><td>
+									<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:16px;padding: 0px 0px 0px 0px;">Guest Email:</td>
+									<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:16px;padding: 0px 0px 0px 0px;"><?=$guestEmail;?></td>
 								</tr>
-							</table>
-						</td>
-					</tr>
-					<tr>
-                 		<td valign="top" width="<?= $thisWidth ?>" style="padding: 0px 0px 0px 0px;" align="center">
-							<table border="0" cellpadding="0" cellspacing="0" width="<?= $thisWidth ?>" style="padding: 0px 0px 0px 15px;">
-								<tr valign="middle">
-									<td align="left">
-			                           	<table border="0" cellpadding="0" cellspacing="0">
-											<tr valign="top">
-												<td align="left" width="100%">
-													<br>
-													<table border="0" cellpadding="0" cellspacing="0" align="left">
-														<?php if (isset($canConfNum) && $canConfNum != '') : ?>
-														<tr>
-													 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 15px 0px 0px 0px;" width="121">Hotel Cancellation #:</td>
-													 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 15px 20px 0px 0px;"><?= $canConfNum;?></td>
-			                                  			</tr>
-														<? endif; ?>
-														<?php if (isset($resConfNum) && $resConfNum != ""): ?>
-														<tr>
-													 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 15px 0px 0px 0px;" width="121">Hotel Confirmation #:</td>
-													 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 15px 20px 0px 0px;"><?= $resConfNum;?></td>
-			                                  			</tr>
-			                               				<?php endif; ?>
-			                                  			<?php if ($clientPpv): ?>
-														<tr>
-													 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;">Property:</td>
-													 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;"><?= $clientNameP ?></td>
-			                                  			</tr>
-			                                  			<? endif; ?>
-														<tr>
-			                                  				<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:16px;padding: 0px 0px 0px 0px;"><b>Guest Name:</b></td>
-			                                  				<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:16px;padding: 0px 0px 0px 0px;"><?php echo $userFirstName;?> <?php echo $userLastName;?></td>
-			                                  			</tr>
+							<? endif; ?>
 
-														<? if (in_array($ppvNoticeTypeId, Array(2, 10, 24, 27, 11, 28, 29, 33))) : ?>
-															<? if (!empty($guestEmail)) : ?>
-																<tr>
-																	<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:16px;padding: 0px 0px 0px 0px;">Guest Email:</td>
-																	<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:16px;padding: 0px 0px 0px 0px;"><?=$guestEmail;?></td>
-																</tr>
-															<? endif; ?>
-															<? if (!empty($userPhone)) : ?>
-																<tr>
-																	<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:16px;padding: 0px 0px 0px 0px;">Guest Telephone:</td>
-																	<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:16px;padding: 0px 0px 0px 0px;"><?=$userPhone;?></td>
-																</tr>
-															<? endif; ?>
-														<? endif; ?>
-			                                  			<?php if ($clientPpv): ?>
-														<tr>
-													 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;">No. of Guests:</td>
-													 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;"><?= $numGuests ?></td>
-			                                  			</tr>
-			                                  			<?php endif; ?>
-														<tr>
-													 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;">No. of Nights:</td>
-													 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;"><?php echo $numNights;?></td>
-			                                  			</tr>
-
-														<tr>
-															<? if ($ppvNoticeTypeId == 33) : ?>
-															<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;"><b>NEW Check-in:</b></td>
-															<? else : ?>
-													 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;">Check-in:</td>
-															<? endif; ?>
-													 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;"><?= $resArrivalDate;?></td>
-			                                  			</tr>
-														<tr>
-															<? if ($ppvNoticeTypeId == 33) : ?>
-													 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;"><b>NEW Check-out:</b></td>
-															<? else :?>
-															<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;">Check-out:</td>
-															<? endif; ?>
-													 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;"><?= $resDepartureDate;?></td>
-			                                  			</tr>
-														<tr>
-													 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;">Purchase Price:</td>
-													 		<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;">$<?=$billingPrice;?></td>
-			                                  			</tr>
-
-			                                    	</table>
-			                                    </td>
-											</tr>
-										</table>
-									</td>
-									<?php if ($clientPpv && in_array($ppvNoticeTypeId,array(2,10,24,27,28,29,33))): ?>
-									<td width="280">
-										<table border="0" cellpadding="0" cellspacing="0" align="center">
-											<tr>
-												<td align="center" style="text-align: center; font-family: Arial,Sans-Serif; font-size: 13px;">
-													<?php if (in_array($ppvNoticeTypeId,array(33))): ?>
-														<p style="color:#000000; font-weight:bold;">Please click your reply key<br/> to respond to this request</p>
-													<? else :?>
-														<a href="<?= $imgHref ?>">
-															<img src="<?=$siteUrl ?>images/email/new/<?= $imgSrc ?>">
-														</a>
-													<? endif; ?>
-													<? if (in_array($ppvNoticeTypeId,array(27,28))): ?>
-														<p><a style="text-decoration:none; color:#008ec5;" href="<?= $extranet_link ?>">Suggest Alternate Dates</a></p>
-													<? endif; ?>
-												</td>
-											</tr>
-										</table>
-									</td>
-									<? endif; ?>
+							<? if (!empty($userPhone)) : ?>
+								<tr>
+									<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:16px;padding: 0px 0px 0px 0px;">Guest Telephone:</td>
+									<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:16px;padding: 0px 0px 0px 0px;"><?=$userPhone;?></td>
 								</tr>
-							</table>
-						</td>
-					</tr>
-                    <?php if ($ppvNoticeTypeId == 30): ?>
-                    <tr>
-                   		<td colspan="2" style="font-size:14px; font-family: Arial,Sans-Serif;color:#990000;line-height:16px;text-align:center;padding: 12px 0px 0px 0px;" colspan="2" align="center"><b>RESERVATION CANCELLED</b></td>
-                    </tr>
-                    <?php endif; ?>
-                    <?php if ($fpNotes): ?>
-					<tr>
-                      	<td colspan="2" style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:16px;padding: 12px 0px 0px 15px;" colspan="2"><b>Special Requests:</b></td>
-                     </tr>
-					<tr>
-						<td colspan="2" style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:16px;padding: 7px 20px 0px 15px;" colspan="2"><?=$fpNotes;?></td>
-               		</tr>
-               		<?php endif; ?>
-	                <tr>
-	                	<td style="line-height: 13px;" colspan="2">&nbsp;</td>
-	                </tr>
+							<? endif; ?>
+
+						<? endif; ?>
+
+						<?php if ($clientPpv): ?>
+							<tr>
+								<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;">No. of Guests:</td>
+								<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;"><?= $numGuests ?></td>
+							</tr>
+						<?php endif; ?>
+
+						<tr>
+							<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;">No. of Rooms:</td>
+							<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;"><?php echo $numRooms;?></td>
+						</tr>
+
+						<tr>
+							<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;">No. of Nights:</td>
+							<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;"><?php echo $numNights;?></td>
+						</tr>
+
+						<tr>
+
+							<? if ($ppvNoticeTypeId == 33) : ?>
+								<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;"><b>NEW Check-in:</b></td>
+							<? else : ?>
+								<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;">Check-in:</td>
+							<? endif; ?>
+
+							<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;"><?= $resArrivalDate;?></td>
+						</tr>
+
+						<tr>
+							<? if ($ppvNoticeTypeId == 33) : ?>
+							<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;"><b>NEW Check-out:</b></td>
+							<? else :?>
+							<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;">Check-out:</td>
+							<? endif; ?>
+							<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;"><?= $resDepartureDate;?></td>
+						</tr>
+						<tr>
+							<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;">Purchase Price:</td>
+							<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;">$<?=$billingPrice;?></td>
+						</tr>
+
+						</table>
+							</td>
+			</tr>
+		</table>
+	</td>
+	<?php if ($clientPpv && in_array($ppvNoticeTypeId,array(2,10,24,27,28,29,33))): ?>
+	<td width="280">
+		<table border="0" cellpadding="0" cellspacing="0" align="center">
+			<tr>
+				<td align="center" style="text-align: center; font-family: Arial,Sans-Serif; font-size: 13px;">
+					<?php if (in_array($ppvNoticeTypeId,array(33))): ?>
+						<p style="color:#000000; font-weight:bold;">Please click your reply key<br/> to respond to this request</p>
+					<? else :?>
+						<a href="<?= $imgHref ?>">
+							<img src="<?=$siteUrl ?>images/email/new/<?= $imgSrc ?>">
+						</a>
+					<? endif; ?>
+					<? if (in_array($ppvNoticeTypeId,array(27,28))): ?>
+						<p><a style="text-decoration:none; color:#008ec5;" href="<?= $extranet_link ?>">Suggest Alternate Dates</a></p>
+					<? endif; ?>
+				</td>
+			</tr>
+		</table>
+	</td>
+	<? endif; ?>
+</tr>
+</table>
+</td>
+</tr>
+<?php if ($ppvNoticeTypeId == 30): ?>
+<tr>
+<td colspan="2" style="font-size:14px; font-family: Arial,Sans-Serif;color:#990000;line-height:16px;text-align:center;padding: 12px 0px 0px 0px;" colspan="2" align="center"><b>RESERVATION CANCELLED</b></td>
+</tr>
+<?php endif; ?>
+<?php if ($fpNotes): ?>
+<tr>
+<td colspan="2" style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:16px;padding: 12px 0px 0px 15px;" colspan="2"><b>Special Requests:</b></td>
+</tr>
+<tr>
+<td colspan="2" style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:16px;padding: 7px 20px 0px 15px;" colspan="2"><?=$fpNotes;?></td>
+</tr>
+<?php endif; ?>
+<tr>
+<td style="line-height: 13px;" colspan="2">&nbsp;</td>
+</tr>
 <?php if (in_array($ppvNoticeTypeId, array(1,2,10,12,14,18,19,24,26,27,28,29,30,31,33,36)) && $legalText != ""):
 ?>
 <tr>
@@ -142,4 +160,4 @@
 	<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:18px;padding: 0px 20px 15px 15px;" colspan="4"><?= $legalText ?></td>
 </tr>
 <?php endif; ?>
-          		</table>
+			 		</table>
