@@ -232,7 +232,7 @@
 		};
 		
 	</script>
-	<div id="clientNoteModule" style="padding: 0 0 50px 0"></div>
+	<div id="clientNoteModule" style="position: absolute; top: 285px; left: 1085px;"></div>
 
    <script type="text/javascript">
       Event.observe(window, 'load', function() {
