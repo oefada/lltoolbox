@@ -217,7 +217,7 @@
 			var $=jQuery;
 			
 			// gets clientId 
-			var v_url = "/clientNotes/view/" + i_clientId;
+			var v_url = "/clientNotes/viewPhotoNotes/" + i_clientId;
 			
 			// calls clientNotes/view to load clientNote module
 			$.ajax({

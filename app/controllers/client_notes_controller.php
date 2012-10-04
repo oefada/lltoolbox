@@ -47,6 +47,25 @@ class ClientNotesController extends AppController {
 	}
 	
 	/***
+	 * Grabs all user notes for a user specified by GET input userId and displays to screen
+	 */
+	function viewPhotoNotes(){
+		
+		// declare this function as an ajax call
+		$this->layout = 'ajax';
+		
+		// get vars
+		$clientId = $this->params['pass'][0];
+		
+		// get clientNote data
+		$result = $this->ClientNote->getPhotoNoteList($clientId);
+		
+		$this->set('clientId', $clientId);
+		$this->set('clientNoteResults', $result);
+		$this->set('clientNoteUser', $this->LdapAuth->object->viewVars['user']['LdapUser']['samaccountname']);
+	}
+	
+	/***
 	 * Saves a new client note to client specified by POST clientId
 	 */
 	function add(){
@@ -69,6 +88,13 @@ class ClientNotesController extends AppController {
 		else if(isset($_POST['userId'])){
 			$clientId = $_POST['userId'];
 			$type = 2;
+			
+			// save new clientNote entry
+			$clientNoteId = $this->ClientNote->saveClientNote( $clientId, $author, $message, $type );
+		}
+		else if(isset($_POST['photoId'])){
+			$clientId = $_POST['photoId'];
+			$type = 3;
 			
 			// save new clientNote entry
 			$clientNoteId = $this->ClientNote->saveClientNote( $clientId, $author, $message, $type );

@@ -24,6 +24,16 @@ class ClientNote extends AppModel {
 		}
 		
 	}
+
+
+	function getPhotoNoteList( $clientId ){
+				
+		if(!is_null($clientId)){
+			$query = "SELECT * FROM clientNote WHERE clientId = '$clientId' AND note_type = 3 AND status = 1 ORDER BY created ASC";
+			return $this->query($query);
+		}
+		
+	}
 	
 	function saveClientNote( $clientId, $author, $message, $type ){
 		$query = " 	INSERT INTO clientNote 
