@@ -28,7 +28,7 @@ class UserReferrals extends AppModel {
 			$this->CreditTracking = ClassRegistry::init("CreditTracking");
 
 			$arr=array('file' => "appshared".DS."helpers".DS."UserReferralsPartial.php");
-			App::import("Vendor","UserRerferralsPartial", $arr);
+			App::import("Vendor","UserRerferralsPartialHelper", $arr);
 			
 			// give credit to referred user
 			if ($status == 2) {
