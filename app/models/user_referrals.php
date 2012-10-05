@@ -39,7 +39,7 @@ class UserReferrals extends AppModel {
 					$creditArr['CreditTracking'] = Array(
 						'creditTrackingTypeId' => 3,
 						'userId' => $referredUser['User']['userId'],
-						'amount' => UserReferralsPartial::getRafAmountReceiver($siteId, $createdDt)
+						'amount' => UserReferralsPartialHelper::getRafAmountReceiver($siteId, $createdDt)
 					);
 					$this->CreditTracking->create();
 					$this->CreditTracking->save($creditArr);
@@ -54,7 +54,7 @@ class UserReferrals extends AppModel {
 				$creditArr['CreditTracking'] = Array(
 					'creditTrackingTypeId' => 3,
 					'userId' => $referral['UserReferrals']['referrerUserId'],
-					'amount' => UserReferralsPartial::getRafAmountSender($siteId, $createdDt)
+					'amount' => UserReferralsPartialHelper::getRafAmountSender($siteId, $createdDt)
 				);
 				$this->CreditTracking->create();
 				$this->CreditTracking->save($creditArr);
