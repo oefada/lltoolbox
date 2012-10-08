@@ -33,6 +33,7 @@
 <div class="interaction">
 	<?php
 	echo $form->hidden('timestamp', array('value' => time()));
+	echo '<table id="interactionTable"><tr><td>';
 	echo $form->input('interactionType', array(
 		'empty' => false,
 		'multiple' => 'false',
@@ -40,6 +41,7 @@
 		'options' => Call::$interactionTypes,
 		'default' => 1,
 	));
+	echo '</td><td>';
 	echo $form->input('contactType', array(
 		'empty' => false,
 		'multiple' => 'false',
@@ -47,6 +49,7 @@
 		'options' => Call::$contactTypes,
 		'default' => 1,
 	));
+	echo '</td></tr></table>';
 	echo $form->input('contactTopic', array(
 		'empty' => false,
 		'multiple' => 'false',
@@ -59,7 +62,7 @@
 	echo $form->input('notes', array('type' => 'textarea'));
 	echo $form->label('&nbsp;');
 	echo $form->input('callId');
-	echo $form->submit(isset($callIdLabel) ? 'Save Call #' . $callIdLabel : 'Save New Call');
+	echo $form->submit(isset($callIdLabel) ? 'Save Call #' . $callIdLabel : 'Save New Call',array('class'=>(isset($callIdLabel)?'editCall':'newCall')));
 	?>
 </div>
 

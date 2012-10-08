@@ -45,6 +45,12 @@ div.input.text.required span {
 select, textarea, input[type="submit"] {
 	width: 100% !important;
 }
+#CallPopupForm input[type="submit"].newCall {
+	color: #006600;
+}
+#CallPopupForm input[type="submit"] {
+	color: #aa0000;
+}
 select {
 	font-size: 80%;
 }
@@ -68,7 +74,7 @@ select {
 	height: 14px;
 }
 #lastTenCalls .blurb span {
-	overflow: scroll;
+	overflow: hidden;
 	font-size: 10px;
 }
 #lastTenCalls div.submit {
@@ -81,6 +87,7 @@ select {
 #lastTenCalls li {
 	margin: 0;
 	padding: 4px 0 4px 4px;
+	list-style: none;
 }
 #lastTenCalls li a, #lastTenCalls li a:hover, #lastTenCalls li a:visited {
 	color: #000088;
@@ -108,4 +115,15 @@ div.error-message {
 	font-weight: bold;
 	color: red;
 	padding: 4px;
+}
+table#interactionTable, table#interactionTable td {
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	border: none;
+}
+table#interactionTable td {
+	width: 50%;
+}
+
 }
