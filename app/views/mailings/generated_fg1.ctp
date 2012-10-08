@@ -13,68 +13,91 @@
 	html { -webkit-text-size-adjust:none; }</style>
     <body>
         <table align="center" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#cee8f3" style="padding: 10px 0px;">
-            <tbody>
-                <tr>
-                    <td>
-                    <table align="center" width="720" cellspacing="0" cellpadding="0" border="0" bgcolor="#ffffff" style="border: 2px solid rgb(216, 216, 216); font-size: 14px; font-family: Arial,Sans-Serif; padding: 0px 0px 10px;">
-                        <tbody>
-                            <tr>
-                                <td>
-                                <table align="center" cellspacing="0" cellpadding="0" border="0" style="background: none repeat scroll 0% 0% rgb(255, 255, 255); text-align: left; color: rgb(102, 102, 102); font-size: 10px; line-height: 16px; font-family: Arial,Helvetica,sans-serif;">
-                                    <tbody>
-                                        <tr>
-                                            <td height="15" colspan="4"></td>
-                                        </tr>
-                                        <tr>
-                                            <td width="30"></td>
-                                            <td align="left" width="470" class="nav"><strong>FG_preheader</strong></td>
-                                            <td align="right" width="200" class="nav"><a xt="SPCLICK" name="www_luxurylink_com_images_emai" class="graylink" style="color: rgb(102, 102, 102); text-decoration: none;" href="http://www.luxurylink.com/images/email/<?=$date_ymd?>_FG.html" title="View email with images" target="_blank">View email in browser</a></td>
-                                            <td width="30"></td>
-                                        </tr>
-                                        <tr>
-                                            <td height="1" colspan="4"></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                <table align="center" width="720" cellspacing="0" cellpadding="0" border="0">
-                                    <tbody>
-                                        <tr>
-                                            <td align="left" width="310" valign="bottom" style="padding: 15px 0px 10px 20px;"><a xt="SPCLICK" name="www_familygetaway_com_home" target="_blank" href="http://www.familygetaway.com?utm_medium=news&utm_source=fgnews&utm_campaign=<?= $campaign; ?>&utm_content=logo"><img width="310" height="52" border="0" alt="Family Getaway" name="logo" src="http://www.luxurylink.com/images/ads/insertions/fg_logo1.gif" /></a></td>
-                                            <td align="right" valign="middle" style="padding: 16px 30px 0px 0px;">
-                                            <table align="right" width="85" cellspacing="0" cellpadding="0" border="0">
-                                                <tbody>
-                                                    <tr>
-                                                        <td align="right" width="128" valign="bottom" style="padding: 0px 4px 0px 0px;"><a name="Forward" xt="SPFORWARD" target="_blank" href="#SPFORWARD"><img width="128" height="25" border="0" alt="Send to a Friend" name="share" src="http://www.luxurylink.com/images/inspiration/header/send-friend-off-white.jpg" /></a></td>
-                                                        <td align="right" width="42" valign="bottom" style="padding: 0px;"><a name="share" xt="SPCLICKSTREAM" target="_blank" href="http://www.luxurylink.com/?utm_medium=news&utm_source=fgnews&utm_campaign=<?= $campaign; ?>&utm_content=logo"><img width="40" height="23" border="0" alt="Share" name="share" src="http://www.luxurylink.com/images/inspiration/header/share-off-white.jpg" /></a></td>
-                                                        <td align="right" width="19" valign="middle" style="padding: 0px;"><a xt="SPSNCLICK" xtsn="FB" name="share-facebook" target="_blank" href="#SPSNCLICK"><img width="19" height="19" border="0" alt="" name="share-facebook" src="http://www.luxurylink.com/images/inspiration/header/fb-off-white.jpg" /></a></td>
-                                                        <td align="right" valign="middle" style="padding: 0px;"><a qstparam="&text=encoded_tweet" href="#SPSNCLICK" xtsn="TW" xt="SPSNCLICK" name="Twitter_img" target="_blank"><img width="19" height="19" border="0" alt="" name="share-twitter" src="http://www.luxurylink.com/images/inspiration/header/t-off-white.jpg" /></a></td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><!-- START PRIMARY NAVIGATION -->
-                                <table align="center" cellspacing="0" cellpadding="0" border="0">
-                                    <tbody>
-                                        <tr>
-                                            <td align="right" colspan="6" style="padding: 0px 3px 4px 0px; font-size: 10px; font-family: Arial,Helvetica,sans-serif; color: rgb(136, 136, 136);"><?=date("M d, Y")?></td>
-                                        </tr>
-                                        <tr>
-                                            <td align="center" colspan="2" style="padding: 2px 0px 7px;"><img width="660" height="5" border="0" name="Cont_28" alt="" src="http://www.luxurylink.com/images/ads/insertions/fg_line.gif" /></td>
-                                        </tr>
-                                        <tr>
-                                            <td align="center" valign="middle" height="10" style="padding: 0px 0px 9px; font-family: Arial,Sans-Serif; font-size: 13px;" colspan="15"><a href="http://www.familygetaway.com/vacations?utm_medium=news&utm_source=fgnews&utm_campaign=<?= $campaign; ?>&utm_content=destinations" xt="SPCLICK" target="_blank" style="color: rgb(102, 102, 102); text-decoration: none; font-family: Arial,Sans-Serif;" name="0.1_www_luxurylink_com_fivestar_ut">Destinations </a><img width="8" height="10" border="0" alt="" valign="middle" src="http://www.luxurylink.com/images/ads/insertions/fg/down_arrow10x10.gif" name="Cont_30" /><span style="color: rgb(153, 153, 153);"><span style="color: rgb(153, 153, 153);">&nbsp; | &nbsp;</span></span><a href="http://www.familygetaway.com/vacation/all-inclusive-resorts/best?utm_medium=news&utm_source=fgnews&utm_campaign=<?= $campaign; ?>&utm_content=caribbean" xt="SPCLICK" target="_blank" style="color: rgb(102, 102, 102); text-decoration: none; font-family: Arial,Sans-Serif;" name="0.1_www_luxurylink_com_fi_1">All-Inclusive</a><img width="8" height="10" border="0" alt="" valign="middle" src="http://www.luxurylink.com/images/ads/insertions/fg/down_arrow10x10.gif" name="Cont_30" /><span style="color: rgb(153, 153, 153);">&nbsp; | &nbsp;</span><a href="http://www.familygetaway.com/hotel-deals?num_adults=4&num_children=3&sortb=bestselling&offerAuc=1&offerFp=1&utm_medium=news&utm_source=fgnews&utm_campaign=<?= $campaign; ?>&utm_content=group-getaways" xt="SPCLICK" target="_blank" style="color: rgb(102, 102, 102); text-decoration: none; font-family: Arial,Sans-Serif;" name="0.1_www_luxurylink_com_fi_2">Group Getaways </a><img width="8" height="10" border="0" alt="" valign="middle" src="http://www.luxurylink.com/images/ads/insertions/fg/down_arrow10x10.gif" name="Cont_30" /><span style="color: rgb(153, 153, 153);">&nbsp; | &nbsp;</span><a href="http://www.familygetaway.com/vacations/deals/florida?sortb=bestselling&pp=25&utm_medium=news%20&utm_source=fgnews&utm_campaign=fgnews_<?= $campaign; ?>&utm_content=Florida" xt="SPCLICK" target="_blank" style="color: rgb(102, 102, 102); text-decoration: none; font-family: Arial,Sans-Serif;" name="0.1_www_luxurylink_com_fi_3">Florida </a><img width="8" height="10" border="0" alt="" valign="middle" src="http://www.luxurylink.com/images/ads/insertions/fg/down_arrow10x10.gif" name="Cont_30" /><span style="color: rgb(153, 153, 153);">&nbsp; | &nbsp;</span><a href="http://www.familygetaway.com/vacations/deals/italy?pp=10&x=58&sortb=percent-&utm_medium=news&utm_source=fgnews&utm_campaign=<?= $campaign; ?>&utm_content=italy" xt="SPCLICK" target="_blank" style="color: rgb(102, 102, 102); text-decoration: none; font-family: Arial,Sans-Serif;" name="0.1_www_luxurylink_com_fi_4">Italy </a><img width="8" height="10" border="0" alt="" valign="middle" src="http://www.luxurylink.com/images/ads/insertions/fg/down_arrow10x10.gif" name="Cont_30" /><span style="color: rgb(153, 153, 153);">&nbsp; | &nbsp;</span><a href="http://www.familygetaway.com/vacations/hotel-deals?ppn=0-250&sortb=percent-&utm_medium=news&utm_source=fgnews&utm_campaign=<?= $campaign; ?>&utm_content=under-$250-night" xt="SPCLICK" target="_blank" style="color: rgb(102, 102, 102); text-decoration: none; font-family: Arial,Sans-Serif;" name="0.1_www_luxurylink_com_fi_5">Under $250/night</a><img width="8" height="10" border="0" alt="" valign="middle" src="http://www.luxurylink.com/images/ads/insertions/fg/down_arrow10x10.gif" name="Cont_30" /></td>
-                                        </tr>
-                                        <tr>
+<tbody>
+<tr>
+<td>
+<table align="center" width="720" cellspacing="0" cellpadding="0" border="0" bgcolor="#ffffff" style="border: 2px solid rgb(216, 216, 216); font-size: 14px; font-family: Arial,Sans-Serif; padding: 0px 0px 10px;">
+<tbody>
+<tr>
+<td>
+<table align="center" cellspacing="0" cellpadding="0" border="0" style="background: none repeat scroll 0% 0% rgb(255, 255, 255); text-align: left; color: rgb(102, 102, 102); font-size: 10px; line-height: 16px; font-family: Arial,Helvetica,sans-serif;">
+<tbody>
+<tr>
+<td height="15" colspan="4"></td>
+</tr>
+<tr>
+<td width="30"></td>
+<td align="left" width="470" class="nav">
+
+<strong>FG_preheader</strong></td>
+<td align="right" width="200" class="nav"><a xt="SPCLICK" name="www_luxurylink_com_images_emai" class="graylink" style="color: rgb(102, 102, 102); text-decoration: none;" href="http://www.luxurylink.com/images/email/<?=$date_ymd?>_FG.html" title="View email with images" target="_blank">View email in browser</a></td>
+<td width="30"></td>
+</tr>
+<tr>
+<td height="1" colspan="4"></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr>
+<td>
+<table align="center" width="720" cellspacing="0" cellpadding="0" border="0">
+<tbody>
+<tr>
+<td align="left" width="310" valign="bottom" style="padding: 15px 0px 10px 20px;"><a 
+	xt="SPCLICK" 
+	name="www_familygetaway_com_home" 
+	target="_blank" 
+	href="http://www.familygetaway.com?utm_medium=news&utm_source=fgnews&utm_campaign=<?=$campaign;?>&utm_content=logo"><img 
+		width="214" 
+		height="33" 
+		border="0" 
+		alt="Family Getaway" 
+		name="logo" 
+		src="http://www.familygetaway.com/images/family/fg-logo.png"/></a>
+</td>
+<td align="right" valign="middle" style="padding: 16px 30px 0px 0px;">
+<table align="right" width="85" cellspacing="0" cellpadding="0" border="0">
+<tbody>
+<tr>
+<td align="right" width="128" valign="bottom" style="padding: 0px 4px 0px 0px;"><a name="Forward" xt="SPFORWARD" target="_blank" href="#SPFORWARD"><img width="128" height="25" border="0" alt="Send to a Friend" name="share" src="http://www.luxurylink.com/images/inspiration/header/send-friend-off-white.jpg" /></a></td>
+<td align="right" width="42" valign="bottom" style="padding: 0px;"><a name="share" xt="SPCLICKSTREAM" target="_blank" href="http://www.luxurylink.com/?utm_medium=news&utm_source=fgnews&utm_campaign=<?= $campaign; ?>&utm_content=logo"><img width="40" height="23" border="0" alt="Share" name="share" src="http://www.luxurylink.com/images/inspiration/header/share-off-white.jpg" /></a></td>
+<td align="right" width="19" valign="middle" style="padding: 0px;"><a xt="SPSNCLICK" xtsn="FB" name="share-facebook" target="_blank" href="#SPSNCLICK"><img width="19" height="19" border="0" alt="" name="share-facebook" src="http://www.luxurylink.com/images/inspiration/header/fb-off-white.jpg" /></a></td>
+<td align="right" valign="middle" style="padding: 0px;"><a qstparam="&text=encoded_tweet" href="#SPSNCLICK" xtsn="TW" xt="SPSNCLICK" name="Twitter_img" target="_blank"><img width="19" height="19" border="0" alt="" name="share-twitter" src="http://www.luxurylink.com/images/inspiration/header/t-off-white.jpg" /></a></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr>
+<td><!-- START PRIMARY NAVIGATION -->
+<table align="center" cellspacing="0" cellpadding="0" border="0">
+<tbody>
+<tr>
+<td align="right" colspan="6" style="padding: 0px 3px 4px 0px; font-size: 10px; font-family: Arial,Helvetica,sans-serif; color: rgb(136, 136, 136);"><?=date("M d, Y")?></td>
+</tr>
+<tr>
+<td align="center" colspan="2" style="padding: 2px 0px 7px;"><img width="660" height="5" border="0" name="Cont_28" alt="" src="http://www.luxurylink.com/images/ads/insertions/fg_line.gif" /></td>
+</tr>
+<tr>
+<td align="center" valign="middle" height="10" style="padding: 0px 0px 9px; font-family: Arial,Sans-Serif; font-size: 13px;" colspan="15"><a href="http://www.familygetaway.com/vacations?utm_medium=news&utm_source=fgnews&utm_campaign=<?= $campaign; ?>&utm_content=destinations" xt="SPCLICK" target="_blank" style="color: rgb(102, 102, 102); text-decoration: none; font-family: Arial,Sans-Serif;" name="0.1_www_luxurylink_com_fivestar_ut">Destinations </a><img width="8" height="10" border="0" alt="" valign="middle" src="http://www.luxurylink.com/images/ads/insertions/fg/down_arrow10x10.gif" name="Cont_30" /><span style="color: rgb(153, 153, 153);"><span style="color: rgb(153, 153, 153);">&nbsp; | &nbsp;</span></span><a href="http://www.familygetaway.com/vacation/all-inclusive-resorts/best?utm_medium=news&utm_source=fgnews&utm_campaign=<?= $campaign; ?>&utm_content=caribbean" xt="SPCLICK" target="_blank" style="color: rgb(102, 102, 102); text-decoration: none; font-family: Arial,Sans-Serif;" name="0.1_www_luxurylink_com_fi_1">All-Inclusive</a><img width="8" height="10" border="0" alt="" valign="middle" src="http://www.luxurylink.com/images/ads/insertions/fg/down_arrow10x10.gif" name="Cont_30" /><span style="color: rgb(153, 153, 153);">&nbsp; | &nbsp;</span><a 
+	href="http://www.familygetaway.com/vacation-ideas/weekend-getaways/deals?len=1-2-3&utm_medium=news&utm_source=fgnews&utm_campaign=<?=$campaign;?>&utm_content=weekend-getaways" 
+	xt="SPCLICK" 
+	target="_blank" 
+	style="color: rgb(102, 102, 102); text-decoration: none; font-family: Arial,Sans-Serif;" 
+	name="0.1_www_luxurylink_com_fi_2">Weekend Getaways</a><img width="8" height="10" border="0" alt="" valign="middle" src="http://www.luxurylink.com/images/ads/insertions/fg/down_arrow10x10.gif" name="Cont_30" /><span style="color: rgb(153, 153, 153);">&nbsp; | &nbsp;</span><a href="http://www.familygetaway.com/vacations/deals/florida?sortb=bestselling&pp=25&utm_medium=news%20&utm_source=fgnews&utm_campaign=fgnews_<?= $campaign; ?>&utm_content=Florida" xt="SPCLICK" target="_blank" style="color: rgb(102, 102, 102); text-decoration: none; font-family: Arial,Sans-Serif;" name="0.1_www_luxurylink_com_fi_3">Florida </a><img width="8" height="10" border="0" alt="" valign="middle" src="http://www.luxurylink.com/images/ads/insertions/fg/down_arrow10x10.gif" name="Cont_30" /><span style="color: rgb(153, 153, 153);">&nbsp; | &nbsp;</span><a 
+		href="http://www.familygetaway.com/vacations/california&utm_medium=news&utm_source=fgnews&utm_campaign=<?=$campaign;?>&utm_content=california" 
+		xt="SPCLICK" 
+		target="_blank" 
+		style="color: rgb(102, 102, 102); text-decoration: none; font-family: Arial,Sans-Serif;" 
+		name="0.1_www_luxurylink_com_fi_4">California</a><img width="8" height="10" border="0" alt="" valign="middle" src="http://www.luxurylink.com/images/ads/insertions/fg/down_arrow10x10.gif" name="Cont_30" /><span style="color: rgb(153, 153, 153);">&nbsp; | &nbsp;</span><a href="http://www.familygetaway.com/vacations/hotel-deals?ppn=0-250&sortb=percent-&utm_medium=news&utm_source=fgnews&utm_campaign=<?= $campaign; ?>&utm_content=under-$250-night" xt="SPCLICK" target="_blank" style="color: rgb(102, 102, 102); text-decoration: none; font-family: Arial,Sans-Serif;" name="0.1_www_luxurylink_com_fi_5">Under $250/night</a><img width="8" height="10" border="0" alt="" valign="middle" src="http://www.luxurylink.com/images/ads/insertions/fg/down_arrow10x10.gif" name="Cont_30" /></td>
+</tr>
+<tr>
                                             <td align="center" colspan="2" style="padding: 0px 0px 2px;"><img width="660" height="5" border="0" name="Cont_28" alt="" src="http://www.luxurylink.com/images/ads/insertions/fg_line.gif" /></td>
                                         </tr>
                                     </tbody>
