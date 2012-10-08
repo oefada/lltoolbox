@@ -3,6 +3,14 @@
 	<fieldset>
  		<legend><?php __('Edit Amenity');?></legend>
 	<?php
+		echo $form->input(
+			'parentAmenityId',
+			array(
+				'label'		=> 'Parent Amenity',
+				'empty'		=> false,
+				'options'	=> $parentAmenities
+			)
+		);
 		echo $form->input('amenityName');
 		echo "<div class='controlset'>";
 		echo $form->input('inactive');

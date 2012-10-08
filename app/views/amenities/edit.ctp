@@ -5,6 +5,15 @@
 	<?php
 		echo $form->input('amenityId');
 		echo $form->input('amenityName');
+		echo $form->input(
+			'parentAmenityId',
+			array(
+				'label'		=> 'Parent Amenity',
+				'empty'		=> false,
+				'options'	=> $parentAmenities,
+				'disabled'	=>'disabled'
+			)
+		);
         echo $form->input('amenityTypeId', array('label' => 'Amenity Type', 'type' => 'select', 'options' => $amenityTypeNames, 'selected' => $this->data['amenityType']['amenityTypeId']));
 		echo "<div class='controlset'>";
 		echo $form->input('inactive');

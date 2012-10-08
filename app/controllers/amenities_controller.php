@@ -25,6 +25,8 @@ class AmenitiesController extends AppController {
 		}
 		if (empty($this->data)) {
 			$this->data = $this->Amenity->read(null, $id);
+			$parentAmenities = $this->Amenity->getParents();
+			$this->set(compact('parentAmenities'));
             $this->set('amenityTypeNames', $this->AmenityType->find('list'));
 		}
 	}
@@ -37,6 +39,9 @@ class AmenitiesController extends AppController {
 			} else {
 				$this->Session->setFlash(__('The City could not be saved. Please, try again.', true));
 			}
+		} else {
+			$parentAmenities = $this->Amenity->getParents();
+			$this->set(compact('parentAmenities'));
 		}
 	}
 	

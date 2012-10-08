@@ -1,18 +1,60 @@
 <?php
-class Amenity extends AppModel {
+class Amenity extends AppModel
+{
+	public $name = 'Amenity';
+	public $useTable = 'amenity';
+	public $primaryKey = 'amenityId';
+	public $displayField = 'amenityName';
+	public $multisite = true;
 
-	var $name = 'Amenity';
-	var $useTable = 'amenity';
-	var $primaryKey = 'amenityId';
-	var $displayField = 'amenityName';
+	public $hasMany = array(
+		'ClientAmenityRel' => array(
+			'className'		=> 'ClientAmenityRel',
+			'foreignKey'	=> 'amenityId'
+		)
+	);
 
-	var $hasMany = array(
-	   'ClientAmenityRel' => array('className' => 'ClientAmenityRel', 'foreignKey' => 'amenityId')
-	   );
+	public $belongsTo = array(
+		'amenityType' => array(
+			'foreignKey' => 'amenityTypeId'
+		)
+	);
 
-    var $belongsTo = array('amenityType' => array('foreignKey' => 'amenityTypeId'));
+	/**
+	 * @param	mixed $data
+	 * @return	mixed
+	 */
+	public function afterFind($data)
+	{
+		$parentAmenities = $this->getParents();
+		foreach($data as &$amenity) {
+			if (isset($amenity['Amenity']['parentAmenityId'])) {
+				$amenity['Amenity']['parentAmenity'] = $parentAmenities[$amenity['Amenity']['parentAmenityId']];
+			} else {
+				$amenity['Amenity']['parentAmenity'] = '';
+			}
+		}
+		return $data;
+	}
 
-   	var $multisite=true;
+	/**
+	 * @return array
+	 */
+	public function getParents()
+	{
+		$conditions = array(
+			'Amenity.parentAmenityId IS NULL'
+		);
+		$fields = array('Amenity.amenityId', 'Amenity.amenityName');
+		$params = array(
+			'fields'		=> $fields,
+			'conditions'	=> $conditions,
+			'order'			=> 'Amenity.amenityName',
+			'recursive'		=> -1,
+			'callbacks' => false
+		);
 
+		return $this->find('list', $params);
+	}
 }
 ?>
