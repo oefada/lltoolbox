@@ -89,10 +89,6 @@ class UserReferrals extends AppModel {
 					$this->save($params);
 				}
 			}
-			else if ($status!=3 && ==1) {
-				$params=array('id'=>$id,'statusTypeId'=>3);
-				$this->save($params);
-			}	
 			if ($status!=3 && ($referral['UserReferrals']['referredBonusApplied']==1 || 
 				$referral['UserReferrals']['referrerBonusApplied']==1
 				)){
