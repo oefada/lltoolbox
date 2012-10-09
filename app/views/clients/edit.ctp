@@ -417,6 +417,12 @@ foreach ($this->data['Client']['sites'] as $site) {
 				<?php if (isset($amenityType['amenities'])): ?>
 				<h3><a href="#"><?php echo $amenityType['amenityTypeName']?></a></h3>
 				<div>
+                    <?php if ($amenityType['clientAmenityTypeRelId']): ?>
+                    <input type='hidden' name='data[ClientAmenityTypeRelId][<?php echo $amenityType['amenityTypeId']; ?>]' value='<?php echo $amenityType['clientAmenityTypeRelId']; ?>'/>
+                    <?php endif; ?>
+					<strong>Description:</strong><br/>
+					<textarea name='data[ClientAmenityTypeRel][<?php echo $amenityType['amenityTypeId']; ?>]' style='width:308px; border:1px solid silver; font-size:50px;'><?php echo $amenityType['description']; ?></textarea>
+
 					<table border="0">
 						<tr valign="bottom" bgcolor="#bbb">
 							<td width="400"></td>
