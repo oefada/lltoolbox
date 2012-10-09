@@ -97,13 +97,16 @@ class AppModel extends LazyModel {
 		}
 		$str=ob_get_contents();
 		ob_end_clean();
-		if ($toFirebug && $_SERVER['ENV']=='development'){
+		if ($toFirebug && isset($_SERVER['ENV']) && $_SERVER['ENV']=='development'){
 			// need Configure::write, otherwise there are output buffering issues when talking to firephp
 			Configure::write('debug',0);
 			require_once('/usr/lib/php/FirePHPCore/fb.php'); 
 			FB::log($str,$num." log:");
 		}else{
-			Configure::write('debug',2);
+			Configure::write('debug',0);
+			if ($var_dump && !is_array($data)){
+				$str=strip_tags($str);
+			}
 			CakeLog::write("logitlog",$str);
 		}
 
