@@ -1763,7 +1763,7 @@ class PackagesController extends AppController
 				// If the date range being posted is outside the date range of the loaItemDate, it will
 				// not be retrieved by this. 
 				$rows_db = $this->Package->getPackageValidityDisclaimerByItem($packageId, $loaItemRatePeriodIds, '', '');
-				$vgId=$this->Package->validityGroupWrapper($rows_db);
+				$vgId=$this->Package->validityGroupWrapper($rows_db, $siteId);
 				$this->Package->updatePricePointValidityGroupId($ppId, $vgId);
 				$this->Package->updateOfferWithValidityGroupId($ppId, $siteId, $vgId, $old_vgId);
  
