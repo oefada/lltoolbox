@@ -179,7 +179,7 @@ class WebServiceTicketsController extends WebServicesController
 		$this->errorResponse = $this->errorMsg = $this->errorTitle = false;
 		// The ISDEV and ISSTAGE vars are set in core.php and they rely on $_SERVER, which isn't set
 		// when run as a cron/shell.
-		// Get the environment this was rpc was called from - set in cron_auction_closing.php
+		// Get the environment this rpc was called from - set in cron_auction_closing.php
 		$env=isset($json_decoded['env'])?$json_decoded['env']:false;
 		$debug=isset($json_decoded['debug'])?$json_decoded['debug']:false;
 		define('CRON_ENV', $env);
@@ -386,8 +386,12 @@ class WebServiceTicketsController extends WebServicesController
 		$ticket_payment = $this->PaymentDetail->query('SELECT * FROM paymentDetail WHERE ticketId = ' . $data['ticketId']);
 
 		if (DEBUG){
-			$this->User->logIt('ticket_payment:');
+			$this->User->logIt('ticket_payment. if exists, ticket already processed:');
 			$this->User->logIt($ticket_payment,0,1);
+			$this->User->logIt("ticket_toolbox['Ticket']['transmitted']");
+			$this->User->logIt($ticket_toolbox['Ticket']['transmitted']);
+			$this->User->logIt('ticket_toolbox:');
+			$this->User->logIt($ticket_toolbox);
 		}
 
 		if (!empty($ticket_payment)) {
@@ -581,7 +585,7 @@ class WebServiceTicketsController extends WebServicesController
 			}
 
 			$HTTP_HOST=isset($_SERVER['HTTP_HOST'])?$_SERVER['HTTP_HOST']:false;
-			if (stristr($HTTP_HOST, 'dev') || stristr($HTTP_HOST, 'stage') || CRON_ENV=='dev' || CRON_ENV=='staging'){
+			if (stristr($HTTP_HOST, 'dev') || stristr($HTTP_HOST, 'stage') || CRON_ENV=='dev' || CRON_ENV=='stage'){
 				$auto_charge_card = false;
 			}
 
@@ -589,7 +593,7 @@ class WebServiceTicketsController extends WebServicesController
 			if ($tmpCC == "4111111111111111"){
 				$test_card=true;
 			}
-			if ((CRON_ENV=='dev' || CRON_ENV=='staging') && $test_card){
+			if ((CRON_ENV=='dev' || CRON_ENV=='stage') && $test_card){
 				$auto_charge_card=true;
 			}
 
@@ -2542,15 +2546,19 @@ class WebServiceTicketsController extends WebServicesController
 		// DEV NO CHARGE
 		// ---------------------------------------------------------------------------
 		$this->isDev = $isDev = (ISDEV || ISSTAGE);
-$this->User->logIt('$isDev');
-$this->User->logIt($isDev,false,true);
 		if (defined('CRON_ENV')){
-			if (CRON_ENV=='dev' || CRON_ENV=='staging'){
+			if (CRON_ENV=='dev' || CRON_ENV=='stage'){
 				$this->isDev=$isDev=true;
 			}
 		}
-$this->User->logIt('CRON_ENV');
-$this->User->logIt(CRON_ENV,false,true);
+
+		if (DEBUG){
+			$this->User->logIt('$isDev');
+			$this->User->logIt($isDev,false,true);
+			$this->User->logIt('CRON_ENV');
+			$this->User->logIt(CRON_ENV,false,true);
+		}
+
 		if (!isset($data['userId']) || empty($data['userId'])) {
 			$this->errorResponse = 101;
 			return $this->returnError(__METHOD__);
@@ -2783,6 +2791,7 @@ $this->User->logIt($test_card);
 				$shortWord = "CR";
 			}
 
+			// by '$longWord', I gather if paymentTypeId 2 or 3 is meant
 			if ($longWord) {
 				$otherCharge = 1;
 
@@ -2823,10 +2832,12 @@ $this->User->logIt($test_card);
 
 		$this->PaymentDetail->create();
 		$tmpResult=$this->PaymentDetail->save($paymentDetail);
-$this->User->logIt('payment detail result');
-$this->User->logIt($tmpResult);
-$this->User->logIt('paymentDetail array');
-$this->User->logIt($paymentDetail);
+		if (DEBUG){
+			$this->User->logIt('payment detail result');
+			$this->User->logIt($tmpResult);
+			$this->User->logIt('paymentDetail array');
+			$this->User->logIt($paymentDetail);
+		}
 		if (!$tmpResult) {
 		//if (!$this->PaymentDetail->save($paymentDetail)) {
 			@mail('devmail@luxurylink.com', 'WEB SERVICE ERROR: PAYMENT PROCESSED BUT NOT SAVED', print_r($this->PaymentDetail->validationErrors,true)  . print_r($paymentDetail, true));
