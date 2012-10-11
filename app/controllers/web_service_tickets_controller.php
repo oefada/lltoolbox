@@ -187,6 +187,7 @@ class WebServiceTicketsController extends WebServicesController
 		unset($json_decoded['env']);
 		unset($json_decoded['debug']);
 		if (DEBUG){
+			$this->User->logIt('START -----------------------------------------------------------');
 			$this->User->logIt('CRON_ENV:');
 			$this->User->logIt(CRON_ENV);
 			$this->User->logIt('DEBUG:');
@@ -391,7 +392,12 @@ class WebServiceTicketsController extends WebServicesController
 			$this->User->logIt("ticket_toolbox['Ticket']['transmitted']");
 			$this->User->logIt($ticket_toolbox['Ticket']['transmitted']);
 			$this->User->logIt('ticket_toolbox:');
-			$this->User->logIt($ticket_toolbox);
+			$tmp_tb=$ticket_toolbox;
+			unset($tmp_tb['Ticket']['ticketNotes']);
+			unset($tmp_tb['Package']['packageIncludes']);
+			unset($tmp_tb['Package']['flexNotes']);
+			unset($tmp_tb['Package']['notes']);
+			$this->User->logIt($tmp_tb);
 		}
 
 		if (!empty($ticket_payment)) {
@@ -2837,6 +2843,7 @@ $this->User->logIt($test_card);
 			$this->User->logIt($tmpResult);
 			$this->User->logIt('paymentDetail array');
 			$this->User->logIt($paymentDetail);
+			$this->User->logIt('END -----------------------------------------------------------');
 		}
 		if (!$tmpResult) {
 		//if (!$this->PaymentDetail->save($paymentDetail)) {
