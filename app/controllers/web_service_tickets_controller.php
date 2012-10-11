@@ -596,6 +596,8 @@ class WebServiceTicketsController extends WebServicesController
 			}
 
 			$test_card=false;
+			$tmpCC=$user_payment_setting['UserPaymentSetting']['ccNumber'];
+			$tmpCC=aesFullDecrypt($tmpCC);
 			if ($tmpCC == "4111111111111111"){
 				$test_card=true;
 			}
@@ -604,8 +606,6 @@ class WebServiceTicketsController extends WebServicesController
 			}
 
 			if (DEBUG){
-				$tmpCC=$user_payment_setting['UserPaymentSetting']['ccNumber'];
-				$tmpCC=aesFullDecrypt($tmpCC);
 				$this->User->logIt('cc:');
 				$this->User->logIt($tmpCC);
 				$this->User->logIt('test_card:');
@@ -2758,8 +2758,10 @@ class WebServiceTicketsController extends WebServicesController
 			$processor = new Processor($paymentProcessorName,$test_card);
 			$processor->InitPayment($userPaymentSettingPost, $ticket);
 
-$this->User->logIt('test_card');
-$this->User->logIt($test_card);
+			if (DEBUG){
+				$this->User->logIt('test_card prior to paymentDetail');
+				$this->User->logIt($test_card,false,true);
+			}
 
 			if ($test_card || !$isDev) {
 				$processor->SubmitPost();
@@ -2797,7 +2799,7 @@ $this->User->logIt($test_card);
 				$shortWord = "CR";
 			}
 
-			// by '$longWord', I gather if paymentTypeId 2 or 3 is meant
+			// by '$longWord', I gather paymentTypeId 2 or 3 is meant
 			if ($longWord) {
 				$otherCharge = 1;
 
