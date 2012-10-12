@@ -26,7 +26,7 @@ class BookingReportShell extends Shell {
 	
 	public function initialize() {
 		$this->log('Process Started.', $this->logfile);
-		$this->db =& ConnectionManager::getDataSource('shared');
+		$this->db =& ConnectionManager::getDataSource('default');
 	}
 
 	public function __destruct() {
@@ -39,7 +39,7 @@ class BookingReportShell extends Shell {
 		$this->s3_bucket = isset($this->params['b']) ? $this->params['b'] : null;
 		$this->start_date = isset($this->params['s']) ? $this->params['s'] : null;
 		$this->end_date = isset($this->params['e']) ? $this->params['e'] : null;
-		
+
 		if (is_null($this->start_date) || is_null($this->end_date)) {
 			$daysBack = (isset($this->params['n']) AND intval($this->params['n']) !==0) ? intval($this->params['n']) : 1;
 			$this->start_date = $this->end_date = date('Y-m-d', strtotime("-$daysBack days")); 

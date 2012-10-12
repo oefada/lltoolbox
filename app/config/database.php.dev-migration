@@ -5,7 +5,7 @@ class DATABASE_CONFIG {
 		'persistent' => false,
 		'host' => 'app-db1-dev',
 		'login' => 'root',
-		'password' => 'traveler',
+		'password' => '',
 		'database' => 'toolbox',
 		'prefix' => '',
 	);
@@ -15,7 +15,7 @@ class DATABASE_CONFIG {
 		'persistent' => false,
 		'host' => 'app-db1-dev',
 		'login' => 'root',
-		'password' => 'traveler',
+		'password' => '',
 		'database' => 'luxurylink',
 		'prefix' => '',
 	);
@@ -25,7 +25,7 @@ class DATABASE_CONFIG {
 		'persistent' => false,
 		'host' => 'app-db1-dev',
 		'login' => 'root',
-		'password' => 'traveler',
+		'password' => '',
 		'database' => 'family',
 		'prefix' => '',
 	);
@@ -35,7 +35,7 @@ class DATABASE_CONFIG {
 		'persistent' => false,
 		'host' => 'app-db1-dev',
 		'login' => 'root',
-		'password' => 'traveler',
+		'password' => '',
 		'database' => 'toolbox',
 		'prefix' => '',
 	);
@@ -45,7 +45,7 @@ class DATABASE_CONFIG {
 		'persistent' => false,
 		'host' => 'app-db1-dev',
 		'login' => 'root',
-		'password' => 'traveler',
+		'password' => '',
 		'database' => 'reporting',
 		'prefix' => '',
 	);
@@ -63,9 +63,9 @@ class DATABASE_CONFIG {
 	var $business_db2 = array(
 		'driver' => 'mysqli',
 		'persistent' => false,
-		'host' => 'app-db1-dev',
+		'host' => 'business-db2',
 		'login' => 'root',
-		'password' => 'traveler',
+		'password' => '',
 		'database' => 'toolbox',
 		'prefix' => '',
 	);
