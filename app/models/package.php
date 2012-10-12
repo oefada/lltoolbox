@@ -605,32 +605,9 @@ class Package extends AppModel {
 		$blackout_week = $this->getBlackoutWeekday($packageId);
 		$valid='';
 		if ($blackout_week) {
-
 			$dateHelper = new DateHelper();
 			$valid=$dateHelper->convertWeekdayStrToHeader($blackout_week);
-
-			/*
-			switch ($blackout_week) {
-				case 'Fri,Sat,Sun':
-					$valid = "Monday through Thursday";
-					break;
-				case 'Fri,Sat':
-					$valid = "Sunday through Thursday";
-					break;
-				case 'Sat':
-					$valid = "Sunday through Friday";
-					break;
-				case 'Mon,Tue,Wed,Thu':
-					$valid = "Friday through Sunday";
-					break;
-				default:
-					$valid = '';
-					$add_to_blackout = true;
-					break;
-			}
-			*/
-			//$html = "<b>This package is valid for travel $valid:</b><br><br>";
-			$html=$valid."<br><br>";
+			$html="<b>".$valid."</b><br><br>";
 		} else {
 			$html = "<b>This package is valid for travel:</b><br><br>";
 		}
