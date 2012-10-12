@@ -1299,7 +1299,7 @@ class WebServiceTicketsController extends WebServicesController
 			$fpNumGuests		= $ticketData['requestNumGuests'];
 			$fpNotes			= $ticketData['requestNotes'];
 
-			$offerTypeTxt = $isAuction ? 'Auction' : 'Buy Now';
+			$offerTypeTxt = (isset($isAuction) && $isAuction) ? 'Auction' : 'Buy Now';
 
 			// auction preferred dates
 			// -------------------------------------------------------------------------------
@@ -2178,7 +2178,8 @@ class WebServiceTicketsController extends WebServicesController
 			'property_notes' => 1,
 			'about_this_auction' => 1,
 			
-			// Special boxes that exist in the header. Place these anywhere in your template and it will be placed in a td next to the Dear Firstname,
+			// Special boxes that exist in the header. Place these anywhere in your template and 
+			// it will be placed in a td next to the Dear Firstname,
 			'client_footer' => 2,
 			'reservation_details' => 2,
 			'purchase_details' => 2,
@@ -2218,7 +2219,7 @@ class WebServiceTicketsController extends WebServicesController
 				$template = str_replace("%%".$k."%%",$pD,$template);
 			}
 		}
-		
+
 		// Common footer
 		$template .= file_get_contents("../vendors/email_msgs/includes/footer.html");
 		$template = str_replace("%%special_boxes%%",$special_boxes,$template);
@@ -2924,6 +2925,7 @@ class WebServiceTicketsController extends WebServicesController
 		// update ticket status to FUNDED
 		// ---------------------------------------------------------------------------
 
+		$fundTicket=false;
 		if ($toolboxManualCharge) {
 			if ($promoGcCofData['final_price_actual'] == 0) {
 				$fundTicket = true;
@@ -2932,8 +2934,8 @@ class WebServiceTicketsController extends WebServicesController
 			$fundTicket = false;
 		}
 
+		$ticketStatusChange = array();
 		if (!$toolboxManualCharge || $fundTicket) {
-			$ticketStatusChange = array();
 			$ticketStatusChange['ticketId'] = $ticket['Ticket']['ticketId'];
 			$ticketStatusChange['ticketStatusId'] = 5;
 
