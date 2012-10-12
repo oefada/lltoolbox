@@ -35,33 +35,6 @@
 				}
 			});
 		</script>
-
-		<style>
-			.refundRequestPayments {
-				display: inline; 
-				width: 60%; 
-				border: none; 
-			 }
-
-			.refundRequestPayments td {
-				border: none; 
-				padding: 0 20px 10px 0;
-			 }
-
-			 .refundRequestDivider {
-				width: 60%; 
-				margin: 20px 0;
-				border: 0;
-				background-color: #ccc;
-				height: 1px;
-			 }
-
-			 input.moneyWidth {
-				width: 150px;
-				text-align: right;
-			 }
-			 
-		</style>
 	
 		<hr class="refundRequestDivider" />
 

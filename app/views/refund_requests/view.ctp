@@ -13,7 +13,6 @@
 .refundRequestDiv label {
 	
 }
-
 .refundRequestDiv {
 	clear: both;
 	margin: 0 0 10px 0;
@@ -35,7 +34,7 @@
 
 		<?php echo $this->renderElement('../refund_requests/_top_info'); ?>
 
-		<hr style="width: 60%; margin: 20px 0;" />
+		<hr class="refundRequestDivider" />
 
 		<div class="refundRequestDiv">
 			<label>Reason</label>
@@ -57,7 +56,7 @@
 			<?= $this->data['RefundRequest']['cancelledWith']; ?>
 		</div>
 
-		<hr style="width: 60%; margin: 20px 0;" />
+		<hr class="refundRequestDivider" />
 
 		<div class="refundRequestDiv">
 			<label>Billing Price</label>
@@ -144,7 +143,7 @@
 			<?= $this->data['RefundRequest']['notes']; ?>
 		</div>
 
-		<hr style="width: 60%; margin: 20px 0;" />
+		<hr class="refundRequestDivider" />
 
 		<div class="refundRequestDiv">
 			<label>Keep / Remit</label>
