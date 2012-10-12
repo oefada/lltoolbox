@@ -49,3 +49,11 @@
 				</div>
 			<? } ?>
 		<? } ?>
+			
+		<? if ($refundInfo['ticket']['Cancellation']['cancellationNotes'] != '') { ?>
+			<hr class="refundRequestDivider" />
+			<div class="input text refundRequestDiv">
+				<label>Cancellation Notes</label>
+				<?= $refundInfo['ticket']['Cancellation']['cancellationNotes']; ?>
+			</div>
+		<? } ?>
