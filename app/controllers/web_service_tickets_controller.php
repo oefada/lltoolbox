@@ -1092,7 +1092,8 @@ class WebServiceTicketsController extends WebServicesController
 			$validityNote		= $liveOfferData['validityDisclaimer'];
 			// if validityNote lead in line is not bold, bold it
 			if (strstr($validityNote, "This package is valid for ") && substr($validityNote,0,3)!='<b>'){
-				preg_replace("~This package is valid for [^<]+)~is", "<b>$0</b>",$validityNote);
+				preg_match("~This package is valid for travel [^<]+~is", $validityNote,$arr);
+				$validityNote=preg_replace("~This package is valid for [^<]+~is", "<b>$0</b>",$validityNote);
 			}
 			//$validityLeadIn     = $packageData['validityLeadInLine'];
 			$addtlDescription   = $liveOfferData['additionalDescription'];
