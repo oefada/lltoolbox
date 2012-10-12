@@ -165,6 +165,28 @@ class GiftCertBalancesController extends AppController {
 		$this->set(compact('promoCodes'));
 	}
 
+	function assign_user($promoCodeId = null) {
+		if (!$promoCodeId && empty($this->data)) {
+			$this->Session->setFlash(__('Invalid Promo Code', true));
+			$this->redirect(array('action'=>'index'));
+		}
+		
+		if (!empty($this->data)) {
+			$userId = intval($this->data['GiftCertBalance']['userId']);
+			if ($userId == 0) {
+				$this->Session->setFlash(__('User Id must be numeric', true));
+			} else {
+				$q = 'UPDATE giftCertBalance SET userId = ? WHERE promoCodeId = ?';
+				$this->GiftCertBalance->query($q, array($userId, $promoCodeId));
+				$this->Session->setFlash(__('The User Ids have been updated', true));
+			}
+		}
+		
+		$activity = $this->GiftCertBalance->find('all', array('conditions' => array('GiftCertBalance.promoCodeId' => $promoCodeId), 'order' => 'GiftCertBalance.datetime DESC'));
+		$this->set('activity', $activity);
+		$this->set('promoCode', $this->GiftCertBalance->PromoCode->read(null, $promoCodeId));
+	}
+
 	function delete($id = null) {
 		if (!$id) {
 			$this->Session->setFlash(__('Invalid id for GiftCertBalance', true));

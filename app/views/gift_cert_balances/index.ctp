@@ -36,7 +36,11 @@ foreach ($giftCertBalances as $giftCertBalance):
 			<?php echo $giftCertBalance['UserSiteExtended']['username']; ?>
 		</td>
 		<td>
-			<?php echo $giftCertBalance['PromoCode']['promoCode']; ?>
+			<? if ($giftCertBalance['User']['userId'] > 0) { ?>
+				<?php echo $giftCertBalance['PromoCode']['promoCode']; ?>
+			<? } else { ?>
+				<a href="/gift_cert_balances/assign_user/<?= $giftCertBalance['GiftCertBalance']['promoCodeId']; ?>"><?php echo $giftCertBalance['PromoCode']['promoCode']; ?></a>
+			<? } ?>
 		</td>
 		<td>
 			$<?php echo $giftCertBalance['GiftCertBalance']['balance']; ?>
