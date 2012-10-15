@@ -1501,6 +1501,10 @@ class WebServiceTicketsController extends WebServicesController
 			
 			foreach ($clients as $client_index => $row) {
 				$clients[$client_index]['name'] 				= UtilityHelper::checkUtf8($clients[$client_index]['name']) ? utf8_encode($clients[$client_index]['name']) : $clients[$client_index]['name'];
+				if (isset($clients[$client_index]['nameNormalized']) && $clients[$client_index]['nameNormalized'] != '') {
+					 $clients[$client_index]['name'] 			= $clients[$client_index]['nameNormalized'];
+				}
+
 				$clients[$client_index]['estaraPhoneLocal'] 	= $clients[$client_index]['estaraPhoneLocal'] == NULL ? $clients[$client_index]['phone1'] : $clients[$client_index]['estaraPhoneLocal'];
 				$clients[$client_index]['estaraPhoneIntl']		= $clients[$client_index]['estaraPhoneIntl'] == NULL ? $clients[$client_index]['phone2'] : $clients[$client_index]['estaraPhoneIntl'];
 				
@@ -1537,9 +1541,6 @@ class WebServiceTicketsController extends WebServicesController
 			$clientId			    = $clients[$client_index]['clientId'];
 			$parentClientId 	    = $clients[$client_index]['parentClientId'];
 			$clientNameP 		    = $clients[$client_index]['name'];
-			if (isset($clients[$client_index]['nameNormalized']) && $clients[$client_index]['nameNormalized'] != '') {
-				 $clientNameP 		= $clients[$client_index]['nameNormalized'];
-			}
 			
 			$clientName 		    = $clients[$client_index]['contacts'][0]['ppv_name'];
 			$oldProductId		    = $clients[$client_index]['oldProductId'];
