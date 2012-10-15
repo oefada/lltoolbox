@@ -91,7 +91,7 @@
 	target="_blank" 
 	style="color: rgb(102, 102, 102); text-decoration: none; font-family: Arial,Sans-Serif;" 
 	name="0.1_www_luxurylink_com_fi_2">Weekend Getaways</a><img width="8" height="10" border="0" alt="" valign="middle" src="http://www.luxurylink.com/images/ads/insertions/fg/down_arrow10x10.gif" name="Cont_30" /><span style="color: rgb(153, 153, 153);">&nbsp; | &nbsp;</span><a href="http://www.familygetaway.com/vacations/deals/florida?sortb=bestselling&pp=25&utm_medium=news%20&utm_source=fgnews&utm_campaign=fgnews_<?= $campaign; ?>&utm_content=Florida" xt="SPCLICK" target="_blank" style="color: rgb(102, 102, 102); text-decoration: none; font-family: Arial,Sans-Serif;" name="0.1_www_luxurylink_com_fi_3">Florida </a><img width="8" height="10" border="0" alt="" valign="middle" src="http://www.luxurylink.com/images/ads/insertions/fg/down_arrow10x10.gif" name="Cont_30" /><span style="color: rgb(153, 153, 153);">&nbsp; | &nbsp;</span><a 
-		href="http://www.familygetaway.com/vacations/california&utm_medium=news&utm_source=fgnews&utm_campaign=<?=$campaign;?>&utm_content=california" 
+		href="http://www.familygetaway.com/vacations/california?utm_medium=news&utm_source=fgnews&utm_campaign=<?=$campaign;?>&utm_content=california" 
 		xt="SPCLICK" 
 		target="_blank" 
 		style="color: rgb(102, 102, 102); text-decoration: none; font-family: Arial,Sans-Serif;" 
