@@ -8,57 +8,67 @@
 <div style="font-size:14px;">Ticket ID: <?=$ticketId;?></div>
 <div style="padding:10px;background-color:#E0E0CD;margin-top:8px;margin-bottom:25px;">
 
-			<div style="color:#<?=$siteHeader;?>;font-size:16px;font-weight:bold;margin-bottom:2px;"><?=$clientNameP;?></div>
-			<div style="font-size:14px;"><?=$locationDisplay;?></div>
+<div style="color:#<?=$siteHeader;?>;font-size:16px;font-weight:bold;margin-bottom:2px;"><?=$clientNameP;?></div>
+<div style="font-size:14px;"><?=$locationDisplay;?></div>
 
-			<?php if ($isAuction) : ?>
-				<table cellspacing="0" cellpadding="5" border="0" style="margin-top:15px;">
-				<tr>
-					<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="120"><strong>1st Preference:</strong></td>
-					<td style="color:#444444;font-size:12px;" valign="top" align="left">Check-in Date: <?php echo ($aucPreferDates[0]['rpd']['in']) ? $aucPreferDates[0]['rpd']['in'] : 'N/A';?></td>
-					<td style="color:#444444;font-size:12px;padding-left:15px;" valign="top" align="left">Check-out Date: <?php echo ($aucPreferDates[0]['rpd']['out']) ? $aucPreferDates[0]['rpd']['out'] : 'N/A';?></td>
-				</tr>
-				<?php if ($aucPreferDates[1]['rpd']['in']) : ?>
-				<tr>
-					<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="120"><strong>2nd Preference:</strong></td>
-					<td style="color:#444444;font-size:12px;" valign="top" align="left">Check-in Date: <?php echo ($aucPreferDates[1]['rpd']['in']) ? $aucPreferDates[1]['rpd']['in'] : 'N/A';?></td>
-					<td style="color:#444444;font-size:12px;padding-left:15px;" valign="top" align="left">Check-out Date: <?php echo ($aucPreferDates[1]['rpd']['out']) ? $aucPreferDates[1]['rpd']['out'] : 'N/A';?></td>
-				</tr>
-				<?php endif; ?>
-				<?php if ($aucPreferDates[2]['rpd']['in']) : ?>
-				<tr>
-					<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="120"><strong>3rd Preference:</strong></td>
-					<td style="color:#444444;font-size:12px;" valign="top" align="left">Check-in Date: <?php echo ($aucPreferDates[2]['rpd']['in']) ? $aucPreferDates[2]['rpd']['in'] : 'N/A';?></td>
-					<td style="color:#444444;font-size:12px;padding-left:15px;" valign="top" align="left">Check-out Date: <?php echo ($aucPreferDates[2]['rpd']['out']) ? $aucPreferDates[2]['rpd']['out'] : 'N/A';?></td>
-				</tr>
-				<?php endif; ?>
-				</table>
-			<?php else: ?>
-				<table cellspacing="0" cellpadding="5" border="0" style="margin-top:15px;">
-				<tr>
-					<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170"><strong>Preferred Travel Dates:</strong></td>
-					<td style="color:#444444;font-size:12px;" valign="top" align="left">Check-in Date: <?php echo $fpArrival;?></td>
-					<td style="color:#444444;font-size:12px;padding-left:15px;" valign="top" align="left">Check-out Date: <?php echo $fpDeparture;?></td>
-				</tr>
-				<?php if (strlen($fpArrival2) > 5) : ?>
-				<tr>
-					<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170"><strong>Alternate Travel Dates:</strong></td>
-					<td style="color:#444444;font-size:12px;" valign="top" align="left">Check-in Date: <?php echo $fpArrival2;?></td>
-					<td style="color:#444444;font-size:12px;padding-left:15px;" valign="top" align="left">Check-out Date: <?php echo $fpDeparture2;?></td>
-				</tr>
-				<?php endif; ?>
+<?php if ($isAuction) { ?>
+	<table cellspacing="0" cellpadding="5" border="0" style="margin-top:15px;">
+	<tr>
+	<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="120"><strong>1st Preference:</strong></td>
+	<td style="color:#444444;font-size:12px;" valign="top" align="left">Check-in Date: <?php echo ($aucPreferDates[0]['rpd']['in']) ? $aucPreferDates[0]['rpd']['in'] : 'N/A';?></td>
+	<td style="color:#444444;font-size:12px;padding-left:15px;" valign="top" align="left">Check-out Date: <?php echo ($aucPreferDates[0]['rpd']['out']) ? $aucPreferDates[0]['rpd']['out'] : 'N/A';?></td>
+	</tr>
 
-				<tr>
-					<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">
-						<strong>No. of Rooms:</strong>
-					</td>
-					<td colspan="2" style="color:#444444;font-size:12px;" valign="top" align="left">
-						<?=$numRooms;?>
-					</td>
-				</tr>
+	<tr>
+	<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">
+	<strong>No. of Rooms:</strong>
+	</td>
+	<td colspan="2" style="color:#444444;font-size:12px;" valign="top" align="left">
+	<?=$numRooms;?>
+	</td>
+	</tr>
 
-				</table>
-			<?php endif; ?>
+	<?php if ($aucPreferDates[1]['rpd']['in']) { ?>
+		<tr>
+		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="120"><strong>2nd Preference:</strong></td>
+		<td style="color:#444444;font-size:12px;" valign="top" align="left">Check-in Date: <?php echo ($aucPreferDates[1]['rpd']['in']) ? $aucPreferDates[1]['rpd']['in'] : 'N/A';?></td>
+		<td style="color:#444444;font-size:12px;padding-left:15px;" valign="top" align="left">Check-out Date: <?php echo ($aucPreferDates[1]['rpd']['out']) ? $aucPreferDates[1]['rpd']['out'] : 'N/A';?></td>
+		</tr>
+	<?php }; ?>
+	<?php if ($aucPreferDates[2]['rpd']['in']) { ?>
+		<tr>
+		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="120"><strong>3rd Preference:</strong></td>
+		<td style="color:#444444;font-size:12px;" valign="top" align="left">Check-in Date: <?php echo ($aucPreferDates[2]['rpd']['in']) ? $aucPreferDates[2]['rpd']['in'] : 'N/A';?></td>
+		<td style="color:#444444;font-size:12px;padding-left:15px;" valign="top" align="left">Check-out Date: <?php echo ($aucPreferDates[2]['rpd']['out']) ? $aucPreferDates[2]['rpd']['out'] : 'N/A';?></td>
+		</tr>
+	<?php }; ?>
+	</table>
+<?php }else{ ?>
+	<table cellspacing="0" cellpadding="5" border="0" style="margin-top:15px;">
+	<tr>
+	<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170"><strong>Preferred Travel Dates:</strong></td>
+	<td style="color:#444444;font-size:12px;" valign="top" align="left">Check-in Date: <?php echo $fpArrival;?></td>
+	<td style="color:#444444;font-size:12px;padding-left:15px;" valign="top" align="left">Check-out Date: <?php echo $fpDeparture;?></td>
+	</tr>
+	<? if (strlen($fpArrival2) > 5){ ?>
+		<tr>
+		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170"><strong>Alternate Travel Dates:</strong></td>
+		<td style="color:#444444;font-size:12px;" valign="top" align="left">Check-in Date: <?php echo $fpArrival2;?></td>
+		<td style="color:#444444;font-size:12px;padding-left:15px;" valign="top" align="left">Check-out Date: <?php echo $fpDeparture2;?></td>
+		</tr>
+	<?php }; ?>
+
+	<tr>
+	<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">
+	<strong>No. of Rooms:</strong>
+	</td>
+	<td colspan="2" style="color:#444444;font-size:12px;" valign="top" align="left">
+	<?=$numRooms;?>
+	</td>
+	</tr>
+
+	</table>
+<?php }; ?>
 
 </div>
 
