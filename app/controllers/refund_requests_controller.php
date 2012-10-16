@@ -126,20 +126,25 @@ class RefundRequestsController extends AppController {
 			$this->data['RefundRequest']['createdBy'] = $currentUser['LdapUser']['samaccountname'];
 			$this->data['RefundRequest']['dateCreated'] = date('Y-m-d G:i:s');
 			$this->RefundRequest->create();
-			if ($this->RefundRequest->save($this->data)) {
-				$this->Session->setFlash(__('The Refund Request has been saved', true));
-				
-				$note = date("n/j/Y") . " -- added refund request\n\n";
-				$q = "UPDATE ticket SET ticketNotes = CONCAT(?, IFNULL(ticketNotes, '')) WHERE ticketId = ?";
-				$this->RefundRequest->query($q, array($note, $this->data['RefundRequest']['ticketId']));
-				
-				$this->redirect(array('action'=>'index'));
+			
+			if ($this->data['RefundRequest']['refundOrCOF'] == '') {
+				$this->Session->setFlash(__('The Refund Request could not be saved.<br/>Refund / COF Select is required', true));
 			} else {
-				$errors = '';
-				foreach($this->RefundRequest->invalidFields() as $f) {
-					$errors .= '<br>' . $f;
+				if ($this->RefundRequest->save($this->data)) {
+					$this->Session->setFlash(__('The Refund Request has been saved', true));
+
+					$note = date("n/j/Y") . " -- added refund request\n\n";
+					$q = "UPDATE ticket SET ticketNotes = CONCAT(?, IFNULL(ticketNotes, '')) WHERE ticketId = ?";
+					$this->RefundRequest->query($q, array($note, $this->data['RefundRequest']['ticketId']));
+
+					$this->redirect(array('action'=>'index'));
+				} else {
+					$errors = '';
+					foreach($this->RefundRequest->invalidFields() as $f) {
+						$errors .= '<br>' . $f;
+					}
+					$this->Session->setFlash(__('The Refund Request could not be saved.' . $errors, true));
 				}
-				$this->Session->setFlash(__('The Refund Request could not be saved.' . $errors, true));
 			}
 			
 			$refundInfo = $this->prepRefundInfoByTicketId($ticketId);
