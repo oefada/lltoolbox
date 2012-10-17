@@ -485,7 +485,7 @@ class Package extends AppModel {
 		}
 
 		// double check idCreator hasn't gotten out of sync
-		$r=$this->getValidityGroup($vgi_id);
+		$r=$this->getValidityGroup($vg_id);
 		if (count($r)>0){
 			$err_msg="validityGroupId $vg_id already in use, please contact a dev";
 			mail(PackagesController::DEV_EMAIL, $err_msg,$err_msg);
