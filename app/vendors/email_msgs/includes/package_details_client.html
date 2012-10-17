@@ -58,9 +58,18 @@
 </tr>
 <?php endif; ?>
 
+<? if ($legalText!=""){?>
 <tr>
-<td style="font-size: 12px; font-family: Arial,Sans-Serif; color: rgb(79, 63, 50); line-height: 18px; padding: 15px 20px 15px 15px;" colspan="4"><?= $legalText?></td>
+	<td 
+		style="font-size: 12px; font-family: Arial,Sans-Serif; color: rgb(79, 63, 50); line-height: 18px; padding: 15px 20px 15px 15px;" 
+		colspan="4">
+		<b>Booking Conditions:</b>
+		<br>
+		<br>
+		<?=$legalText?>
+	</td>
 </tr>
+<? } ?>
 
 <tr>
 <td bgcolor="#c3c3c3" height="1" width="100%" colspan="5"></td>
