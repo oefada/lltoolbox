@@ -219,7 +219,7 @@ class UsersController extends AppController {
 	 * 
 	 * @return array
 	 */
-	private function processDupEmails($emailArr=array(), $doProcessOne=0){
+	private function processDupEmails($emailArr=array(), $doProcessOne=0, $ajax=0){
 
 		foreach($emailArr as $email){
 
@@ -227,15 +227,20 @@ class UsersController extends AppController {
 			// some userIds with matching rows in userSiteExtended
 			$numWith=0;
 			$numWithout=0;
-			$doProcessTwo=false;
+			$doProcessTwo=0;
 
 			if ($doProcessOne){
-				$q="SELECT COUNT(*) AS num FROM user u LEFT JOIN userSiteExtended ue using(userId) ";
+
+				// has rows in user WITHOUT matching row in userSiteExt
+				$q="SELECT COUNT(*) AS num FROM `user` LEFT JOIN userSiteExtended ue using(userId) ";
 				$q.="WHERE ue.userId IS NULL ";
+				//$q.="AND TRIM(LOWER(email))=\"$email\" ";
 				$q.="AND email=\"$email\" ";
 				$r=$this->User->query($q);
 				$numWithout=$r[0][0]['num'];
-				$q="SELECT COUNT(*) AS num FROM user LEFT JOIN userSiteExtended ue using(userId) ";
+
+				// has rows in user WITH matching row in userSiteExt
+				$q="SELECT COUNT(*) AS num FROM `user` LEFT JOIN userSiteExtended ue using(userId) ";
 				$q.="WHERE ue.userId IS NOT NULL ";
 				$q.="AND email=\"$email\" ";
 				$r=$this->User->query($q);
@@ -243,15 +248,15 @@ class UsersController extends AppController {
 
 				// at least one userId in user table has a matching row in userSiteExtended.
 				// get the userIds without matching rows in userSiteExtended and de-dup them
-				if ($numWith>0 && $numWithout>0 && $numWith!=$numWithout){
-					$q="SELECT * FROM user u LEFT JOIN userSiteExtended ue using(userId) ";
+				if ($numWith>0 && $numWithout>0){// && $numWith!=$numWithout){
+					$q="SELECT * FROM `user` u LEFT JOIN userSiteExtended ue using(userId) ";
 					$q.="WHERE ue.userId IS NULL ";
 					$q.="AND email=\"$email\" ";
 					$r=$this->User->query($q);
 					foreach($r as $arr){
 						$userId=$arr['u']['userId'];
 						$renameEmail=$arr['u']['email'].'_dup_'.$userId;
-						$q="UPDATE user SET email=\"$renameEmail\", inactive=1 WHERE userId=$userId";
+						$q="UPDATE `user` SET email=\"$renameEmail\", inactive=1 WHERE userId=$userId";
 						$this->User->query($q);
 					}
 				}
@@ -259,9 +264,13 @@ class UsersController extends AppController {
 
 			// all but one where successfully de-duped, no need to process the rest
 			if ($numWith==1){
-				$doProcessTwo=false;
+				$doProcessTwo=0;
+				// if this is ajax, it isn't for display and there is no further processing to do
+				if ($ajax==1){
+					continue;
+				}
 			}elseif ($doProcessOne){
-				$doProcessTwo=true;
+				$doProcessTwo=1;
 			}
 
 			// process emails that have userId's that all have matching rows in userSiteExtended
@@ -273,18 +282,16 @@ class UsersController extends AppController {
 			 3. the most recent userId
 			*/
 			
-			$q="SELECT u.createDateTime, u.modifyDateTime, u.email, u.userId, ue.userSiteExtendedId, ";
+			$q="SELECT u.createDateTime, u.modifyDateTime, u.email as email, ";
+			$q.="u.userId, ue.userSiteExtendedId, ";
 			$q.="u.inactive, ticket.ticketId ";
-			$q.="FROM user u ";
+			$q.="FROM `user` u ";
 			$q.="LEFT JOIN ticket using(userId) ";
 			$q.="LEFT JOIN userSiteExtended ue using(userId) ";
-			$q.="WHERE email=\"$email\" ";
+			$q.="WHERE TRIM(LOWER(email))=\"$email\" ";
 			$q.="GROUP BY userId, ticketId ";
 			$q.="ORDER BY ticketId DESC ";
 			$r=$this->User->query($q, false);
-			if (count($r)==0){
-				return "done";
-			}
 
 			$userIdArr=array();
 			$modifyDateTimeArr=array();
@@ -295,7 +302,7 @@ class UsersController extends AppController {
 			foreach($r as $arr){
 
 				$userId=$arr['u']['userId'];
-				$email=strtolower($arr['u']['email']);
+				$email=strtolower($arr[0]['email']);
 				$renameEmail=$email.'_dup_'.$userId;
 
 				$rowArr[$userId]=array(
@@ -322,31 +329,41 @@ class UsersController extends AppController {
 				}
 
 			}
+//$this->User->logit($rowArr);
 
 			// a userId has a ticket. set the most recent userId to be primary userId 
 			if (count($ticketArr)>0){
 				krsort($ticketArr);
 				$primaryUserId=array_shift($ticketArr);
+//$this->User->logit("primary userId set by ticket");
 			}else{
-				// no tickets and has a modifyDateTime, set most recent modifyDatetime to be primary userId
+				// no tickets and has a modifyDateTime, set most recent modifyDateTime to be primary userId
+				// else just take the most recent userId
 				if ($modifyDateTimeIsNotNull){
 					arsort($modifyDateTimeArr);
 					$primaryUserId=array_shift(array_keys($modifyDateTimeArr));
+//$this->User->logit("primary userId set by modifyDateTime");
 				}else{
 					rsort($userIdArr);
 					$primaryUserId=array_shift($userIdArr);
+//$this->User->logit("primary userId set by most recent userId");
 				}
 			}
-
+/*
+$this->User->logit('primary userId:');
+$this->User->logit($primaryUserId);
+$this->User->logit('doProcessTwo:');
+$this->User->logit($doProcessTwo);
+*/
 			if ($doProcessTwo){
 				if ($primaryUserId){
-					$q="UPDATE user SET inactive=0 WHERE userId=$primaryUserId";
+					$q="UPDATE `user` SET inactive=0 WHERE userId=$primaryUserId";
 					$this->User->query($q);
 					foreach($rowArr as $userId=>$arr){
 						if ($primaryUserId==$userId){
 							continue;
 						}
-						$q="UPDATE user SET inactive=1, email=\"".$arr['renameEmail']."\" WHERE userId=$userId";
+						$q="UPDATE `user` SET inactive=1, email=\"".$arr['renameEmail']."\" WHERE userId=$userId";
 						$this->User->query($q);
 						unset($rowArr[$userId]);
 					}
@@ -358,6 +375,8 @@ class UsersController extends AppController {
 				}
 			}
 
+//$this->User->logit("end $email");
+//$this->User->logit('---------');
 		}
 
 		return isset($rowArr)?$rowArr:array();
@@ -371,14 +390,12 @@ class UsersController extends AppController {
 	 */
 	public function deleteDups(){
 
-		$limit=100;
 		$ajax=isset($this->params['url']['ajax'])?$this->params['url']['ajax']:false;
 		if ($ajax){
 			$this->layout = false;
 			$this->autoRender = false;
 		}
 		$this->set('hideSidebar', true);
-		$offset=isset($this->params['url']['query_offset'])?$this->params['url']['query_offset']:false;
 		$showDupCount=isset($this->params['url']['showDupCount'])?1:0;
 		$showDupCountNoInactive=isset($this->params['url']['showDupCountNoInactive'])?1:0;
 		$runProcess=isset($this->params['url']['runProcess'])?1:0;
@@ -401,25 +418,30 @@ class UsersController extends AppController {
 
 		}elseif ($runProcess){
 
-			$q="SELECT email, COUNT(email) as num FROM user GROUP BY email HAVING num>1 ";
-			if ($offset!==false){
-				$q.="ORDER BY num DESC ";
-				$q.="LIMIT $offset, $limit";
-			}
-			//echo $q;
+			$q="SELECT TRIM(LOWER(email)) as email, COUNT(email) as num FROM user GROUP BY email HAVING num>1 ";
+			// offset is always 0 as the data set being operated on gets removed once operated on and
+			// thus reduces the count
+			$q.="LIMIT 0, 5";
 			$r=$this->User->query($q);
 			if (count($r)==0){
 				echo "done";
 				return;
 			}
-			//AppModel::printR($r);
 			foreach($r as $arr){
-				$emailArr[]=$arr['user']['email'];
+				$emailArr[]=$arr[0]['email'];
 			}
 
-			$response=$this->processDupEmails($emailArr, true);
-			if ($response!="done" && $ajax){
-				echo "continue";
+			$response=$this->processDupEmails($emailArr, true, $ajax);
+			if ($ajax){
+				// for debugging, log or echo and use in WHERE of query to examine altered accounts
+				$str='';
+				foreach($emailArr as $email){
+					$str.=" OR email LIKE '$email%' ";
+				}
+				$str.="\n\n";
+				$str.=implode("', '", $emailArr);
+				//
+				echo count($emailArr);
 				return;
 			}
 
@@ -785,9 +807,13 @@ class UsersController extends AppController {
 		
 		// referrals sent by user
 		$this->paginate = Array(
-			'conditions' => Array('UserReferrals.referrerUserId' => $id),
-			'order' => Array('UserReferrals.statusTypeId' => 'desc',
-							 'UserReferrals.referredEmail' => 'asc'),
+			'conditions' => Array(
+				'UserReferrals.referrerUserId' => $id
+			),
+			'order' => Array(
+				'UserReferrals.statusTypeId' => 'desc',
+				'UserReferrals.referredEmail' => 'asc'
+			),
 			'limit' => 20
 		);
 		
