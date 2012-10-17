@@ -40,8 +40,7 @@ Emails that have userId's that all have matching rows in userSiteExtended OR no 
 <script type="text/javascript">
 
 	var running=0;
-	var offset=0;
-	var limit=100;
+	var total=0;
 
 	jQuery("#runProcess").click(function(){
 
@@ -54,14 +53,13 @@ Emails that have userId's that all have matching rows in userSiteExtended OR no 
 			type: 'GET',
 			data: ({
 				runProcess:1,
-				query_offset:offset,
 				ajax:1
 			}),
 			success: function(response){
 
 				if (response.substr(0,4)!='done'){
-					offset=offset+limit;
-					jQuery('#processCount').html(offset);
+					total=total+parseInt(response);
+					jQuery('#processCount').html(total);
 					jQuery('#runProcess').trigger('click');
 				}else{
 					jQuery("#processStatus").html('<span style="color:red;">Done!</span>');
