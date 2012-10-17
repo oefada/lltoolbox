@@ -75,7 +75,19 @@ class PricePoint extends AppModel {
 		return $this->query("$q");
 	}
 	
+	/**
+	 * TODO: short description.
+	 * 
+	 * @param mixed        
+	 * 
+	 * @return TODO
+	 */
 	function getPricePointValidities($packageId, $pricePointId=null) {
+
+		if (LOGIT){
+			$this->logit('----getPricePointValidities() start--');
+		}
+
 		$query = "
 			SELECT pricePointId, startDate, endDate, loaItemRatePeriodId, validityGroupId, packageId	
 			FROM pricePoint PricePoint
@@ -87,6 +99,10 @@ class PricePoint extends AppModel {
 			$query .= " AND pricePointId = " . $pricePointId;
 		}
 		$query .= " ORDER BY endDate";
+
+		if (LOGIT){
+			$this->logit('----getPricePointValidities() end---');
+		}
 		return $this->query($query);
 	}
 	

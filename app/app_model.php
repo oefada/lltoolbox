@@ -41,6 +41,7 @@
 
 App::import('Lib', 'LazyModel.LazyModel');
 
+define('LOGIT', false);
 
 class AppModel extends LazyModel {
 	

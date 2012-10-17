@@ -2,6 +2,7 @@
 
 App::import("Vendor","DateHelper",array('file' => "appshared".DS."helpers".DS."DateHelper.php"));
 
+
 class Package extends AppModel {
 
 	var $name = 'Package';
@@ -397,8 +398,18 @@ class Package extends AppModel {
 	//	PKGR - START OF VALIDITY / BLACKOUT METHODS
 	//	=====================================================================
 
-	// This function updates a lot of de-normalized data
+	/**
+	 * This function updates a lot of de-normalized data
+	 * 
+	 * @param mixed        
+	 * 
+	 * @return TODO
+	 */
 	function updatePackagePricePointValidity($packageId, $siteId=0) {
+
+		if (LOGIT){
+			$this->logit('--- updatePackagePricePointValidity() start---');
+		}
 
 		$this->updateValidityDisclaimer($packageId);//update table packageValidityDisclaimer
 		$this->recursive = -1;
@@ -451,25 +462,49 @@ class Package extends AppModel {
 			}
 		}
 
+		if (LOGIT){
+			$this->logit('--- updatePackagePricePointValidity() end ---');
+		}
+
 		return;
 	}
 
 	public function validityGroupWrapper($rows_db, $siteId=0){
 
+		if (LOGIT){
+			$this->logit('----validityGroupWrapper() start---');
+		}
+
+		$hasValidDate=false;
 		$IdCreatorObj= ClassRegistry::init("IdCreator"); 
 		$vg_id = $IdCreatorObj->genId();
 		if ($vg_id == '') {
 			Configure::write("debug", "vg_id not generated in validityGroupWrapper()");
-			exit("vg_id not generated");
+			$err_msg=("vg_id not generated");
+			exit(json_encode(array($err_msg)));
+		}
+
+		// double check idCreator hasn't gotten out of sync
+		$r=$this->getValidityGroup($vgi_id);
+		if (count($r)>0){
+			$err_msg="validityGroupId $vg_id already in use, please contact a dev";
+			mail(PackagesController::DEV_EMAIL, $err_msg,$err_msg);
+			Configure::write("debug", $err_msg);
+			exit(json_encode(array($err_msg)));
 		}
 
 		if (isset($rows_db['ValidRanges'])){
 			foreach ($rows_db['ValidRanges'] as $key => $arr) {
 				foreach ($arr as $key2 => $validity_arr) {
+					if (strtotime($validity_arr['endDate'])<time()){
+						continue;
+					}
 					if ($this->insertValidityGroup($vg_id, $validity_arr, $siteId) === false) {
 						$err_msg = 'Failed to insert validrange into validityGroup, please try again.';
 						Configure::write("debug",$err_msg);
-						$this->Session->setFlash(__($err_msg, true), 'default', array(), 'error');
+						exit(json_encode(array($err_msg)));
+					}else{
+						$hasValidDate=true;
 					}
 				}
 			}
@@ -478,21 +513,46 @@ class Package extends AppModel {
 		if (isset($rows_db['BlackoutDays'])){
 			foreach ($rows_db['BlackoutDays'] as $key => $arr) {
 				foreach ($arr as $key2 => $validity_arr) {
+					if (strtotime($validity_arr['endDate'])<time()){
+						continue;
+					}
 					if ($this->insertValidityGroup($vg_id, $validity_arr, $siteId) === false) {
 						$err_msg = 'Failed to insert blackoutday into validityGroup, please try again.';
 						Configure::write("debug",$err_msg);
-						$this->Session->setFlash(__($err_msg, true), 'default', array(), 'error');
+						exit(json_encode(array($err_msg)));
+					}else{
+						$hasValidDate=true;
 					}
 				}
 			}
 		}
 
-		return $vg_id;
+		if (LOGIT){
+			$this->logit('----validityGroupWrapper() end---');
+		}
+
+		return ($hasValidDate)?$vg_id:false;
 
 	} 
 
+	/**
+	 * TODO: short description.
+	 * 
+	 * @param mixed   
+	 * 
+	 * @return TODO
+	 */
 	function insertValidityGroup($vg_id,$arr,$siteId=0,$debug_q=false){
 
+		if (strtotime($arr['endDate'])<time()){
+			return 'past date';
+		}
+
+		if (LOGIT){
+			$this->logit('---start insertValidityGroup()---');
+		}
+
+		// a unique vg_id is always passed, so there will be no on duplicate key update
 		$q="INSERT INTO validityGroup SET ";
 		$q.="validityGroupId=$vg_id, ";
 		$q.="startDate='".$arr['startDate']."', ";
@@ -500,19 +560,9 @@ class Package extends AppModel {
 		$q.="created='".date("Y-m-d H:i:s")."', ";
 		$q.="isBlackout='".$arr['isBlackout']."', ";
 		$q.="siteId='$siteId' ";
-		/* a unique vg_id is always passed, so there will be no on duplicate key update
-		$q.="ON DUPLICATE KEY UPDATE ";
-		$q.="startDate='".$arr['startDate']."', ";
-		$q.="endDate='".$arr['endDate']."', ";
-		$q.="created='".date("Y-m-d H:i:s")."', ";
-		$q.="isBlackout='".$arr['isBlackout']."', ";
-		$q.="siteId='$siteId' ";
-		*/
 		$this->query($q);
-		if ($debug_q && $_SERVER['ENV']=='development'){
-			require_once('/usr/lib/php/FirePHPCore/fb.php'); 
-			FB::log("<p>$q</p>");
-			FB::log("<p>Affected Rows: ".$this->getAffectedRows()."</p>");
+		if (LOGIT){
+			$this->logit('---end insertValidityGroup()---');
 		}
 		if ($this->getAffectedRows()<=0){
 			return false;
@@ -536,6 +586,9 @@ class Package extends AppModel {
 
 	function updatePricePointValidityGroupId($ppid,$vg_id,$debug_q=false){
 
+		if (LOGIT){
+			$this->logit('----updatePricePointValidityGroupId() start---');
+		}
 
 		$q="UPDATE pricePoint SET validityGroupId=$vg_id ";
 		$q.="WHERE pricePointId=$ppid";
@@ -544,6 +597,10 @@ class Package extends AppModel {
 			require('/usr/lib/php/FirePHPCore/fb.php'); 
 			FB::log("<p>$q</p>");
 			FB::log("<p>Affected Rows: ".$this->getAffectedRows()."</p>");
+		}
+
+		if (LOGIT){
+			$this->logit('----updatePricePointValidityGroupId() end---');
 		}
 
 	}
@@ -563,6 +620,10 @@ class Package extends AppModel {
 
 	public function updateOfferWithValidityGroupId($ppId, $siteId, $new_vgId, $old_vgId=false){
 
+		if (LOGIT){
+			$this->logit('----updateOfferWithValidityGroupId() start---');
+		}
+
 		$table="offerFamily";
 		if ($siteId==1){
 			$table="offerLuxuryLink";
@@ -573,6 +634,10 @@ class Package extends AppModel {
 			$q.="AND validityGroupId=$old_vgId";
 		}
 		$this->query($q);
+
+		if (LOGIT){
+			$this->logit('----updateOfferWithValidityGroupId() end---');
+		}
 
 	}
 
@@ -726,7 +791,18 @@ class Package extends AppModel {
 
 	}
 
+	/**
+	 * TODO: short description.
+	 * 
+	 * @param mixed        
+	 * 
+	 * @return TODO
+	 */
 	function saveBlackouts($packageId, $data) {
+
+		if (LOGIT){
+			$this->logit('---saveBlackouts() start ---');
+		}
 
 		$this->query("DELETE FROM packageBlackout WHERE packageId = {$packageId}");
 		$this->query("DELETE FROM packageBlackoutWeekday WHERE packageId = {$packageId}");
@@ -756,6 +832,10 @@ class Package extends AppModel {
 			//$this->PackageBlackoutWeekday->save($pbw);
 		}
 
+		if (LOGIT){
+			$this->logit('---saveBlackouts() end ---');
+		}
+
 	}
 
 	function getPkgVbDates($packageId) {
@@ -779,6 +859,10 @@ class Package extends AppModel {
 
 	function getPackageValidityDisclaimerByItem($packageId,$loaItemRatePeriodIds,$startDate,$endDate,$debug_q=false){
 
+		if (LOGIT){
+			$this->logit("----getPackageValidityDisclaimerByItem($packageId,$loaItemRatePeriodIds,$startDate,$endDate) start---");
+		}
+
 		$q="SELECT pvd.startDate, pvd.endDate, pvd.isBlackout ";
 		$q.="FROM loaItemDate lid ";
 		$q.="INNER JOIN packageValidityDisclaimer pvd ";
@@ -790,7 +874,6 @@ class Package extends AppModel {
 			echo "<p>$q</p>";
 		}
 
-		//if (count($r)==0)echo $q."<br>";
 		$data = array();
 		foreach ($r as $m => $arr) {
 			if ($arr['pvd']['isBlackout'] == 1) {
@@ -798,6 +881,9 @@ class Package extends AppModel {
 			} else {
 				$data['ValidRanges'][] = $arr;
 			}
+		}
+		if (LOGIT){
+			$this->logit('----getPackageValidityDisclaimerByItem() end---');
 		}
 		return $data;
 	}

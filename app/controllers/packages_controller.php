@@ -1,4 +1,6 @@
 <?php
+
+
 class PackagesController extends AppController
 {
 	var $name = 'Packages';
@@ -1718,7 +1720,16 @@ class PackagesController extends AppController
 	function edit_blackout_dates($clientId, $packageId)
 	{
 
+
 		if (!empty($this->data)) {
+
+			//LOGIT defined in app_model.php
+
+			if (LOGIT){
+				$this->Package->logit("start---------------------------");
+				$this->Package->logit("--------------------------------");
+				$this->Package->logit("start---------------------------");
+			}
 
 			$this->Package->recursive=-1;
 			$arr=$this->Package->findByPackageId($packageId);
@@ -1726,9 +1737,8 @@ class PackagesController extends AppController
 			$this->data['siteId']=$siteId;
 			$this->autoRender = false;
 			$this->Package->saveBlackouts($packageId, $this->data);
-
 			if ($this->Package->updatePackagePricePointValidity($packageId, $siteId)===false){
-				mail(self::DEV_EMAIL, 'error in edit_blackout_dates() packageId $packageId', 'eom');
+				mail(self::DEV_EMAIL, '1741 error in edit_blackout_dates() packageId $packageId', 'eom');
 			}
 
 			$this->Package->PricePoint->contain(array());
@@ -1763,14 +1773,21 @@ class PackagesController extends AppController
 				// If the date range being posted is outside the date range of the loaItemDate, it will
 				// not be retrieved by this. 
 				$rows_db = $this->Package->getPackageValidityDisclaimerByItem($packageId, $loaItemRatePeriodIds, '', '');
-				$vgId=$this->Package->validityGroupWrapper($rows_db, $siteId);
-				$this->Package->updatePricePointValidityGroupId($ppId, $vgId);
-				$this->Package->updateOfferWithValidityGroupId($ppId, $siteId, $vgId, $old_vgId);
- 
+				if (($vgId=$this->Package->validityGroupWrapper($rows_db, $siteId))!==false){
+					$this->Package->updatePricePointValidityGroupId($ppId, $vgId);
+					$this->Package->updateOfferWithValidityGroupId($ppId, $siteId, $vgId, $old_vgId);
+				}
+
 			}
 
-	
+			if (LOGIT){
+				$this->Package->logit("end ---------------------------");
+				$this->Package->logit("-------------------------------");
+				$this->Package->logit("end ---------------------------");
+			}
+
 			echo ("ok");
+
 			exit;
 
 		} else {
@@ -2095,6 +2112,48 @@ class PackagesController extends AppController
 
 		// saving data
 		if (!empty($this->data)) {
+
+			/*
+			Array
+			(
+					[PricePoint] => Array
+							(
+									[packageId] => 265754
+									[pricePointId] => 26009
+									[name] => High - Dec 19, 2012 - 2013
+									[maxNumSales] =>
+									[retailValue] => 3074
+									[percentRetailAuc] => 50
+									[percentRetailBuyNow] => 58
+									[flexRetailPricePerNight] => 756
+									[pricePerExtraNight] => 438
+									[validityDisclaimer] => <b>This package is valid for travel:</b><br><br>December 19, 2012 - 
+										September 3, 2013<br>Reservations are subject to availability at time of booking. 
+										May not be valid during holidays and special event periods.
+							)
+
+					[gpr-22835] => 40
+					[loaItemRatePeriodIds] => Array
+							(
+									[0] => 22836
+							)
+
+					[gpr-22836] => 40
+					[guaranteedPercent] => 40
+					[Package] => Array
+							(
+									[isFlexPackage] => 1
+									[flexNumNightsMin] => 4
+									[flexNumNightsMax] => 14
+									[flexNotes] =>
+									[overrideValidityDisclaimer] => 0
+							)
+
+			)
+
+
+			*/
+
 			$this->autoRender = false;
 
 			// validation

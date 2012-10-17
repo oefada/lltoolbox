@@ -44,6 +44,12 @@ echo $javascript->link('jquery/jquery-autocomplete/jquery.autocomplete'); ?>
 </tr>
 </table>
 
+<div id="errorsContainer" style="display:none;">
+    Please fix the following errors:<br />
+    <ol>
+        <div id="errors">&nbsp;</div>
+    </ol>
+</div>
 
 <form id="edit_blackout">
 	<h3 style="margin-bottom;15px;">Recurring Blackout Days</h3>
