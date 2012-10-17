@@ -514,6 +514,9 @@ class Package extends AppModel {
 			foreach ($rows_db['BlackoutDays'] as $key => $arr) {
 				foreach ($arr as $key2 => $validity_arr) {
 					if (strtotime($validity_arr['endDate'])<time()){
+						$this->logit(strtotime($validity_arr['endDate']));
+						$this->logit(time());
+						$this->logit('argh');
 						continue;
 					}
 					if ($this->insertValidityGroup($vg_id, $validity_arr, $siteId) === false) {
@@ -630,9 +633,10 @@ class Package extends AppModel {
 		}
 		$q="UPDATE $table SET validityGroupId=$new_vgId ";
 		$q.="WHERE pricePointId=$ppId ";
-		if ($old_vgId){
-			$q.="AND validityGroupId=$old_vgId";
-		}
+		$q.="AND endDate>NOW()";
+		//if ($old_vgId){
+		//	$q.="AND validityGroupId=$old_vgId";
+		//}
 		$this->query($q);
 
 		if (LOGIT){
