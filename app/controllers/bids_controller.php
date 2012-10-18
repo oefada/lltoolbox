@@ -50,11 +50,17 @@ class BidsController extends AppController {
 				$this->Session->setFlash(__('The Bid could not be saved. Please, try again.', true));
 			}
 		}
+		
 		if (empty($this->data)) {
 			$this->data = $this->Bid->read(null, $id);
 		}
-		$offers = $this->Bid->Offer->find('list');
+		
+		$offers = $this->Bid->Offer->find('list', array(
+			'conditions'=>array('Offer.offerId'=>$this->data['Offer']['offerId'])
+			)
+		);
 		$this->set(compact('offers'));
+		
 	}
 
 	function search()
