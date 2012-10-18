@@ -485,9 +485,20 @@ class Package extends AppModel {
 		}
 
 		// double check idCreator hasn't gotten out of sync
-		$r=$this->getValidityGroup($vg_id);
-		if (count($r)>0){
-			$err_msg="validityGroupId $vg_id already in use, please contact a dev";
+		$r1=$this->getValidityGroup($vg_id);
+		$r2=$this->getValidityGroupIdFromOfferTable($vg_id, $siteId);
+		if (count($r1)>0 || count($r2)>0){
+			$err_msg="validityGroupId $vg_id already in use in siteId $siteId in table(s): ";
+			if (count($r1)>0){
+				$err_msg.=" validityGroup ";
+			}
+			if (count($r2)>0){
+				if (count($r1)>0){
+					$err_msg.=" and ";
+				}
+				$err_msg.=($siteId==1)?"offerLuxuryLink":"offerFamily";
+			}
+			$err_msg.=", please contact a dev";
 			mail(PackagesController::DEV_EMAIL, $err_msg,$err_msg);
 			Configure::write("debug", $err_msg);
 			exit(json_encode(array($err_msg)));
@@ -514,9 +525,6 @@ class Package extends AppModel {
 			foreach ($rows_db['BlackoutDays'] as $key => $arr) {
 				foreach ($arr as $key2 => $validity_arr) {
 					if (strtotime($validity_arr['endDate'])<time()){
-						$this->logit(strtotime($validity_arr['endDate']));
-						$this->logit(time());
-						$this->logit('argh');
 						continue;
 					}
 					if ($this->insertValidityGroup($vg_id, $validity_arr, $siteId) === false) {
@@ -608,6 +616,19 @@ class Package extends AppModel {
 
 	}
 
+
+	public function getValidityGroupIdFromOfferTable($vg_id, $siteId){
+
+		$table="offerFamily";
+		if ($siteId==1){
+			$table="offerLuxuryLink";
+		}
+
+		$q="SELECT * FROM $table WHERE validityGroupId=$vg_id";
+		$res=$this->query($q);
+		return $res;
+
+	}
 
 	function getValidityGroup($vg_id,$debug_q=false){
 

@@ -1724,11 +1724,10 @@ class PackagesController extends AppController
 		if (!empty($this->data)) {
 
 			//LOGIT defined in app_model.php
+//define('LOGIT', true);
 
 			if (LOGIT){
-				$this->Package->logit("start---------------------------");
-				$this->Package->logit("--------------------------------");
-				$this->Package->logit("start---------------------------");
+				$this->Package->logit("\n\nstart edit_blackout_dates---------------------------\n\n");
 			}
 
 			$this->Package->recursive=-1;
@@ -1775,15 +1774,13 @@ class PackagesController extends AppController
 				$rows_db = $this->Package->getPackageValidityDisclaimerByItem($packageId, $loaItemRatePeriodIds, '', '');
 				if (($vgId=$this->Package->validityGroupWrapper($rows_db, $siteId))!==false){
 					$this->Package->updatePricePointValidityGroupId($ppId, $vgId);
-					$this->Package->updateOfferWithValidityGroupId($ppId, $siteId, $vgId, $old_vgId);
+					$this->Package->updateOfferWithValidityGroupId($ppId, $siteId, $vgId);
 				}
 
 			}
 
 			if (LOGIT){
-				$this->Package->logit("end ---------------------------");
-				$this->Package->logit("-------------------------------");
-				$this->Package->logit("end ---------------------------");
+				$this->Package->logit("end edit_blackout_dates ---------------------------\n\n");
 			}
 
 			echo ("ok");
