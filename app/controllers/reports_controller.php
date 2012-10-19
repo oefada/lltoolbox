@@ -7,7 +7,8 @@ class ReportsController extends AppController
 		'OfferType',
 		'PaymentDetail',
 		'PaymentType',
-		'Destination'
+		'Destination',
+		'Reporting'
 	);
 	var $helpers = array(
 		'Pagination',
@@ -1985,159 +1986,6 @@ class ReportsController extends AppController
 		$this->set('packageStatusIds', $this->PackageStatus->find('list'));
 	}
 
-	function car_033111()
-	{
-		if (!empty($this->data) || !empty($this->params['named']['clientId'])) {
-			$clientId = (!empty($this->params['named']['clientId'])) ? $this->params['named']['clientId'] : $this->data['Client']['clientName_id'];
-
-			$stats = $this->OfferType->query("SELECT DATE_FORMAT(activityStart, '%Y%m' ) as yearMonth,
-	                                                    phone, webRefer, productView, searchView, destinationView, email
-	                                            FROM reporting.carConsolidatedView AS rs
-	                                            WHERE CURDATE() - INTERVAL 14 MONTH <= activityStart
-	                                            AND rs.clientId = '$clientId'
-	                                            ORDER BY activityStart ");
-
-			$auctions = $this->OfferType->query("SELECT DATE_FORMAT(auc.firstTicketDate, '%Y%m' ) as yearMonth, tickets as aucTickets, revenue as aucRevenue
-    	                                            FROM reporting.carAuctionSold AS auc
-    	                                            WHERE CURDATE() - INTERVAL 14 MONTH <= firstTicketDate
-    	                                            AND auc.clientid = '$clientId'
-    	                                            ORDER BY firstTicketDate ");
-
-			$fixedprice = $this->OfferType->query("SELECT DATE_FORMAT(fp.firstTicketDate, '%Y%m' ) as yearMonth, tickets as fpTickets, revenue as fpRevenue
-    	                                            FROM reporting.carFixedPriceSold AS fp
-    	                                            WHERE CURDATE() - INTERVAL 14 MONTH <= firstTicketDate
-    	                                            AND fp.clientid = '$clientId'
-    	                                            ORDER BY firstTicketDate ");
-
-			$auctionsTotal = $this->OfferType->query("SELECT DATE_FORMAT(auc.minStartDate, '%Y%m' ) as yearMonth, numberAuctions
-        	                                        FROM reporting.carAuction AS auc
-        	                                        WHERE CURDATE() - INTERVAL 14 MONTH <= minStartDate
-        	                                        AND auc.clientid = '$clientId'
-        	                                        ORDER BY minStartDate ");
-
-			$fixedpriceTotal = $this->OfferType->query("SELECT DATE_FORMAT(fp.lastUpdate, '%Y%m' ) as yearMonth, numberPackages
-        	                                        FROM reporting.carFixedPricePackage AS fp
-        	                                        WHERE CURDATE() - INTERVAL 14 MONTH <= lastUpdate
-        	                                        AND fp.clientid = '$clientId'
-        	                                        ORDER BY lastUpdate ");
-
-			$hotelOfferTotal = $this->OfferType->query("SELECT DATE_FORMAT(ho.snapShotDate, '%Y%m' ) as yearMonth, numberOffers
-        	                                        FROM reporting.carHotelOffer AS ho
-        	                                        WHERE CURDATE() - INTERVAL 14 MONTH <= snapShotDate
-        	                                        AND ho.clientid = '$clientId'
-        	                                        ORDER BY snapShotDate ");
-
-			$hotelOfferClicksTotal = $this->OfferType->query("SELECT year2, month2, event12
-			                                                    FROM reporting.carPortfolioReferral AS pr
-																WHERE CURDATE() - INTERVAL 14 MONTH <= STR_TO_DATE(CONCAT(year2,'-',month2), '%Y-%m')
-																AND pr.clientId = '$clientId'
-					                                            ORDER BY year2, month2");
-
-			foreach ($hotelOfferClicksTotal as $k => $v) {
-				$hotelOfferClicksTotal[$k][0]['yearMonth'] = $v['pr']['year2'] . str_pad($v['pr']['month2'], 2, '0', STR_PAD_LEFT);
-				unset($hotelOfferClicksTotal[$k]['pr']['month2']);
-				unset($hotelOfferClicksTotal[$k]['pr']['year2']);
-			}
-
-			//setup array of all months we are using in this view
-
-			$today = strtotime(date('Y-m-01'));
-			for ($i = 0; $i <= 12; $i++) {
-				$ts = strtotime("-" . (12 - ($i - 1)) . " months", $today);
-				$months[$i] = date('Ym', $ts);
-				$monthNames[$i] = date('M Y', $ts);
-			}
-
-			foreach ($auctions as $k => $v) :
-				$auctionsKeyed[$v[0]['yearMonth']] = $v['auc'];
-				//set the key for each to the year and month so we can iterate through it easily
-			endforeach;
-
-			foreach ($fixedprice as $k => $v) :
-				$fpKeyed[$v[0]['yearMonth']] = $v['fp'];
-				//set the key for each to the year and month so we can iterate through it easily
-			endforeach;
-
-			foreach ($auctionsTotal as $k => $v) :
-				$aucTotKeyed[$v[0]['yearMonth']] = $v['auc'];
-				//set the key for each to the year and month so we can iterate through it easily
-			endforeach;
-
-			foreach ($fixedpriceTotal as $k => $v) :
-				$fpTotKeyed[$v[0]['yearMonth']] = $v['fp'];
-				//set the key for each to the year and month so we can iterate through it easily
-			endforeach;
-
-			foreach ($hotelOfferTotal as $k => $v) :
-				$hotelOfferKeyed[$v[0]['yearMonth']] = $v['ho'];
-				//set the key for each to the year and month so we can iterate through it easily
-			endforeach;
-
-			foreach ($hotelOfferClicksTotal as $k => $v) :
-				$hotelOfferClicksKeyed[$v[0]['yearMonth']] = $v['pr'];
-				//set the key for each to the year and month so we can iterate through it easily
-			endforeach;
-
-			//sum the totals for the last 12 months and put everything in an array we can
-			// easily reference later
-			foreach ($stats as $k => $v) :
-				$keyedStats[$v[0]['yearMonth']] = array_merge($v['rs'], $v[0]);
-				//set the key for each to the year and month so we can iterate through it easily
-			endforeach;
-
-			$totals['phone'] = 0;
-			$totals['webRefer'] = 0;
-			$totals['productView'] = 0;
-			$totals['searchView'] = 0;
-			$totals['destinationView'] = 0;
-			$totals['email'] = 0;
-			$totals['aucTickets'] = 0;
-			$totals['aucRevenue'] = 0;
-			$totals['fpTickets'] = 0;
-			$totals['fpRevenue'] = 0;
-			$totals['aucTotals'] = 0;
-			$totals['fpTotals'] = 0;
-			$totals['hotelOfferTotal'] = 0;
-			$totals['hotelOfferClicksTotal'] = 0;
-
-			foreach ($months as $k => $month) :
-				$keyedResults[$month] = array_merge((array)@$keyedStats[$month], (array)@$auctionsKeyed[$month], (array)@$fpKeyed[$month], (array)@$aucTotKeyed[$month], (array)@$fpTotKeyed[$month], (array)@$hotelOfferKeyed[$month], (array)@$hotelOfferClicksKeyed[$month]);
-
-				//only count the last 12 months in the totals, months array has 13 months
-				if ($k == 0) {
-					continue;
-				}
-				$totals['phone'] += @$keyedResults[$month]['phone'];
-				$totals['webRefer'] += @$keyedResults[$month]['webRefer'];
-				$totals['productView'] += @$keyedResults[$month]['productView'];
-				$totals['searchView'] += @$keyedResults[$month]['searchView'];
-				$totals['destinationView'] += @$keyedResults[$month]['destinationView'];
-				$totals['email'] += @$keyedResults[$month]['email'];
-				$totals['aucTickets'] += @$keyedResults[$month]['aucTickets'];
-				$totals['aucRevenue'] += @$keyedResults[$month]['aucRevenue'];
-				$totals['fpTickets'] += @$keyedResults[$month]['fpTickets'];
-				$totals['fpRevenue'] += @$keyedResults[$month]['fpRevenue'];
-				$totals['aucTotals'] += @$keyedResults[$month]['numberAuctions'];
-				$totals['fpTotals'] += @$keyedResults[$month]['numberPackages'];
-				$totals['hotelOfferTotal'] += @$keyedResults[$month]['numberOffers'];
-				$totals['hotelOfferClicksTotal'] += @$keyedResults[$month]['event12'];
-			endforeach;
-
-			$results = $keyedResults;
-
-			$this->loadModel("Client");
-			$this->Client->recursive = -1;
-			$clientDetails = $this->Client->read(null, $clientId);
-
-			$this->Client->Loa->recursive = -1;
-			$loa = $this->Client->Loa->find('first', array('conditions' => array('Loa.clientId' => $this->Client->id)));
-
-			$clientDetails['Loa'] = $loa['Loa'];
-
-			$this->set(compact('results', 'totals', 'months', 'monthNames', 'clients', 'clientDetails'));
-		}
-	}
-
 	function mcr()
 	{
 
@@ -2242,7 +2090,7 @@ class ReportsController extends AppController
 							$q .= "WHERE activityStart >= (NOW() - INTERVAL 120 DAY) AND phone = 0 OR phone IS NULL ";
 							$q .= "GROUP BY clientId ";
 							$q .= "HAVING activityStart = latestDate AND latestDate >= NOW() - INTERVAL 60 DAY";
-							$noCalls = $this->Client->query($q);
+							$noCalls = $this->Reporting->query($q);
 
 							foreach ($noCalls as $c) {
 								$clientIds[] = $c['Referrals']['clientId'];
@@ -2368,7 +2216,7 @@ class ReportsController extends AppController
 
 			$q = "SELECT DATE_FORMAT(MAX(activityStart), '%Y-%m-%d') as latestReferralDate ";
 			$q .= "FROM reporting.carConsolidatedView as Referrals";
-			$referrals = $this->Client->query($q);
+			$referrals = $this->Reporting->query($q);
 			$latestReferralDate = $referrals[0][0]['latestReferralDate'];
 
 			foreach ($clients as $k => $client) {
@@ -2530,7 +2378,7 @@ class ReportsController extends AppController
 				$q = "SELECT activityStart, webRefer, phone, productView, searchView, email, destinationView ";
 				$q .= "FROM reporting.carConsolidatedView as Referrals ";
 				$q .= "WHERE Referrals.clientId = $clientId AND activityStart = '$latestReferralDate'";
-				$referrals = $this->Client->query($q);
+				$referrals = $this->Reporting->query($q);
 				// End Referrals/Impressions
 				$clients[$k] = @array_merge($clients[$k], (array)$packageStats, (array)$ticketStats, (array)$referrals[0], $totalRemitted);
 			}
@@ -3212,7 +3060,7 @@ class ReportsController extends AppController
 	function weekly_scorecard()
 	{
 		/* 1 - Total */
-		$tot = $this->OfferType->query("SELECT
+		$tot = $this->Reporting->query("SELECT
 		 weeknumber as col1, weekBeginSunday as col2,
 		 packagesSold as col3, packagesSoldYoY as col4,
 		 revenueCollected as col5, revenueCollectedYoY as col6,
@@ -3225,7 +3073,7 @@ class ReportsController extends AppController
 		ORDER BY weekBeginSunday
 		;");
 		// QTD Revenue Target
-		$tmp = $this->OfferType->query("SELECT
+		$tmp = $this->Reporting->query("SELECT
 		 SUM(revenuetarget) as quarterRevenueTarget
 		FROM reporting.weeklyScorecardTotal as data
 		WHERE YEAR(weekBeginSunday) = YEAR(NOW() - INTERVAL 7 DAY)
@@ -3235,7 +3083,7 @@ class ReportsController extends AppController
 		ORDER BY weekBeginSunday
 		;");
 		//QTD Last Year
-		$tmp2 = $this->OfferType->query("SELECT SUM(t.packagesSoldPrevious) as packagesSoldPrevious, SUM(revenuecollectedprevious) as revenueCollectedPrevious,
+		$tmp2 = $this->Reporting->query("SELECT SUM(t.packagesSoldPrevious) as packagesSoldPrevious, SUM(revenuecollectedprevious) as revenueCollectedPrevious,
 		SUM(revenuecollectedprevious)/SUM(t.packagesSoldPrevious) AS aspCollectedPrevious
 		FROM reporting.weeklyScorecardTotal t
 		WHERE
@@ -3244,7 +3092,7 @@ class ReportsController extends AppController
 		 AND weeknumber < WEEK(NOW())
 		;");
 		// QTR
-		$tmp3 = $this->OfferType->query("SELECT SUM(t.packagesSoldPrevious) as qtr_packagesSoldPrevious, SUM(revenuecollectedprevious) as qtr_revenueCollectedPrevious
+		$tmp3 = $this->Reporting->query("SELECT SUM(t.packagesSoldPrevious) as qtr_packagesSoldPrevious, SUM(revenuecollectedprevious) as qtr_revenueCollectedPrevious
 		FROM reporting.weeklyScorecardTotal t
 		WHERE
 		 QUARTER(weekBeginSunday) = QUARTER(NOW() - INTERVAL 7 DAY)
@@ -3263,7 +3111,7 @@ class ReportsController extends AppController
 		$this->set('qtr', $qtr);
 
 		/* 2 - Auctions */
-		$auc = $this->OfferType->query("select
+		$auc = $this->Reporting->query("select
 			weeknumber as col1, weekbeginsunday as col2,
 			auctionrevenuepotential as col3, auctionRevenuePotentialYoY as col4,
 			auctionslisted as col5, auctionslistedyoy as col6,
@@ -3291,7 +3139,7 @@ class ReportsController extends AppController
 		ORDER BY weekBeginSunday
 		;");
 
-		$tmp2 = $this->OfferType->query("SELECT SUM(a.auctionsListedPrevious) as auctionsListedPrevious, SUM(a.successfulAuctionsPrevious) as successfulAuctionsPrevious,
+		$tmp2 = $this->Reporting->query("SELECT SUM(a.auctionsListedPrevious) as auctionsListedPrevious, SUM(a.successfulAuctionsPrevious) as successfulAuctionsPrevious,
 		 SUM(a.auctionTicketsPotentialPrevious) as auctionTicketsPotentialPrevious, SUM(a.auctionRevenueCollectedPrevious) as auctionRevenueCollectedPrevious,
 		 SUM(a.auctionTicketsCollectedPrevious) as auctionTicketsCollectedPrevious, SUM(a.auctionRevenueCollectedPrevious) / SUM(a.auctionTicketsCollectedPrevious) AS aspPrevious
 		FROM reporting.weeklyScorecardAuctions a
@@ -3301,7 +3149,7 @@ class ReportsController extends AppController
 		 AND weeknumber < WEEK(NOW())
 		;
 		");
-		$tmp3 = $this->OfferType->query("SELECT SUM(a.auctionsListedPrevious) as qtr_auctionsListedPrevious, SUM(a.successfulAuctionsPrevious) as qtr_successfulAuctionsPrevious,
+		$tmp3 = $this->Reporting->query("SELECT SUM(a.auctionsListedPrevious) as qtr_auctionsListedPrevious, SUM(a.successfulAuctionsPrevious) as qtr_successfulAuctionsPrevious,
 		 SUM(a.auctionTicketsPotentialPrevious) as qtr_auctionTicketsPotentialPrevious, SUM(a.auctionRevenueCollectedPrevious) as qtr_auctionRevenueCollectedPrevious,
 			SUM(a.auctionTicketsCollectedPrevious) as qtr_auctionTicketsCollectedPrevious
 		FROM reporting.weeklyScorecardAuctions a
@@ -3312,7 +3160,7 @@ class ReportsController extends AppController
 		");
 
 		$auc[0][0] = $tmp[0][0];
-		$aucqtr = $this->OfferType->query("SELECT SUM(revenuetarget) as revenueTarget
+		$aucqtr = $this->Reporting->query("SELECT SUM(revenuetarget) as revenueTarget
 		FROM reporting.weeklyScorecardAuctions
 		WHERE
 		 QUARTER(weekBeginSunday) = QUARTER(NOW() - INTERVAL 7 DAY)
@@ -3324,7 +3172,7 @@ class ReportsController extends AppController
 		$this->set('auc', $auc);
 
 		/* 3 - Fixed Price */
-		$fp = $this->OfferType->query("select
+		$fp = $this->Reporting->query("select
 		 weeknumber as col1, weekbeginsunday as col2,
 		 buynowoffers as col3, buynowoffersyoy as col4,
 		 numberrequests as col5, numberrequestsyoy as col6,
@@ -3339,7 +3187,7 @@ class ReportsController extends AppController
 		group by quarter, weekbeginsunday
 		order by weekbeginsunday
 		;");
-		$tmp = $this->OfferType->query("SELECT
+		$tmp = $this->Reporting->query("SELECT
 		 SUM(revenuetarget) as quarterRevenueTarget
 		FROM reporting.weeklyScorecardFixedPrice as data
 		WHERE YEAR(weekBeginSunday) = YEAR(NOW() - INTERVAL 7 DAY)
@@ -3349,7 +3197,7 @@ class ReportsController extends AppController
 		ORDER BY weekBeginSunday
 		;");
 
-		$tmp2 = $this->OfferType->query("SELECT SUM(a.buyNowOffersPrevious) as buyNowOffersPrevious, SUM(a.numberRequestsPrevious) as numberRequestsPrevious,
+		$tmp2 = $this->Reporting->query("SELECT SUM(a.buyNowOffersPrevious) as buyNowOffersPrevious, SUM(a.numberRequestsPrevious) as numberRequestsPrevious,
 		SUM(packagesSoldPrevious) as packagesSoldPrevious, SUM(revenuecollectedprevious) as revenueCollectedPrevious,
 		SUM(a.revenueCollectedPrevious) / SUM(a.packagesSoldPrevious) AS aspPrevious
 		FROM reporting.weeklyScorecardFixedPrice a
@@ -3358,7 +3206,7 @@ class ReportsController extends AppController
 		AND  YEAR(weekBeginSunday) = YEAR(NOW() - INTERVAL 7 DAY)
 		 AND weeknumber < WEEK(NOW())
 		;");
-		$tmp3 = $this->OfferType->query("SELECT SUM(a.buyNowOffersPrevious) as qtr_buyNowOffersPrevious, SUM(a.numberRequestsPrevious) as qtr_numberRequestsPrevious,
+		$tmp3 = $this->Reporting->query("SELECT SUM(a.buyNowOffersPrevious) as qtr_buyNowOffersPrevious, SUM(a.numberRequestsPrevious) as qtr_numberRequestsPrevious,
 		SUM(packagesSoldPrevious) as qtr_packagesSoldPrevious, SUM(revenuecollectedprevious) as qtr_revenueCollectedPrevious
 		FROM reporting.weeklyScorecardFixedPrice a
 		WHERE
@@ -3367,7 +3215,7 @@ class ReportsController extends AppController
 		;");
 
 		$fp[0][0] = $tmp[0][0];
-		$fpqtr = $this->OfferType->query("SELECT SUM(revenuetarget) as revenueTarget
+		$fpqtr = $this->Reporting->query("SELECT SUM(revenuetarget) as revenueTarget
 		FROM reporting.weeklyScorecardFixedPrice
 		WHERE
 		 QUARTER(weekBeginSunday) = QUARTER(NOW() - INTERVAL 7 DAY)
@@ -3379,7 +3227,7 @@ class ReportsController extends AppController
 		$this->set('fpLastYear', array_merge($tmp2[0][0], $tmp3[0][0]));
 
 		/* 8 - Buyers */
-		$buyers = $this->OfferType->query("
+		$buyers = $this->Reporting->query("
 		select
 		 weeknumber as col1, weekBeginSunday as col2,
 		 newBuyerActivity as col3, newbuyerYoY as col4,
@@ -3392,7 +3240,7 @@ class ReportsController extends AppController
 		group by quarter, weekbeginsunday
 		order by weekbeginsunday
 		;");
-		$tmp = $this->OfferType->query("SELECT
+		$tmp = $this->Reporting->query("SELECT
 		 SUM(newbuyertarget) quarterNewBuyerTarget, sum(returningbuyertarget) quarterReturningBuyerTarget, sum(totalbuyertarget) quarterTotalBuyerTarget
 		FROM reporting.weeklyScorecardBuyers as data
 		WHERE YEAR(weekBeginSunday) = YEAR(NOW() - INTERVAL 7 DAY)
@@ -3402,7 +3250,7 @@ class ReportsController extends AppController
 		ORDER BY weekBeginSunday
 		;");
 
-		$tmp2 = $this->OfferType->query("SELECT SUM(b.newBuyerActivityPrevious) as newBuyerActivityPrevious, SUM(b.returningBuyerActivityPrevious) as returningBuyerActivityPrevious,
+		$tmp2 = $this->Reporting->query("SELECT SUM(b.newBuyerActivityPrevious) as newBuyerActivityPrevious, SUM(b.returningBuyerActivityPrevious) as returningBuyerActivityPrevious,
 		 SUM(b.totalBuyerActivityPrevious) as totalBuyerActivityPrevious
 		FROM reporting.weeklyScorecardBuyers b
 		WHERE
@@ -3411,7 +3259,7 @@ class ReportsController extends AppController
 		 AND weeknumber < WEEK(NOW())
 
 		;");
-		$tmp3 = $this->OfferType->query("SELECT SUM(b.newBuyerActivityPrevious) as qtr_newBuyerActivityPrevious, SUM(b.returningBuyerActivityPrevious) as qtr_returningBuyerActivityPrevious,
+		$tmp3 = $this->Reporting->query("SELECT SUM(b.newBuyerActivityPrevious) as qtr_newBuyerActivityPrevious, SUM(b.returningBuyerActivityPrevious) as qtr_returningBuyerActivityPrevious,
 		 SUM(b.totalBuyerActivityPrevious) as qtr_totalBuyerActivityPrevious
 		FROM reporting.weeklyScorecardBuyers b
 		WHERE
@@ -3420,7 +3268,7 @@ class ReportsController extends AppController
 		;");
 
 		$buyers[0][0] = $tmp[0][0];
-		$buyerQtr = $this->OfferType->query("SELECT
+		$buyerQtr = $this->Reporting->query("SELECT
 		SUM(newbuyertarget) quarterNewBuyerTarget, sum(returningbuyertarget) quarterReturningBuyerTarget, sum(totalbuyertarget) quarterTotalBuyerTarget
 		FROM reporting.weeklyScorecardBuyers
 		WHERE
@@ -4123,7 +3971,7 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 			foreach ($versionArray as $version) {
 
 				$tableConsolidatedView = ($version == 'family') ? 'carConsolidatedViewFg' : 'carConsolidatedView';
-				$stats = $this->OfferType->query("SELECT DATE_FORMAT(CONCAT(year2,'-',month2,'-1'), '%Y%m' ) as yearMonth,
+				$stats = $this->Reporting->query("SELECT DATE_FORMAT(CONCAT(year2,'-',month2,'-1'), '%Y%m' ) as yearMonth,
 															phone, webRefer, productView, searchView, destinationView, email, event12
 													FROM reporting.$tableConsolidatedView AS rs
 													WHERE CURDATE() - INTERVAL 14 MONTH <= DATE_FORMAT(CONCAT(year2,'-',month2,'-1'), '%Y-%m-%d')
@@ -4131,35 +3979,35 @@ AND $loaSiteCondition GROUP BY severity, expirationCriteriaId");
 													ORDER BY DATE_FORMAT(CONCAT(year2,'-',month2,'-1'), '%Y-%m-%d') ");
 
 				$tableAuctionSold = ($version == 'family') ? 'carAuctionSoldFg' : 'carAuctionSold';
-				$auctions = $this->OfferType->query("SELECT DATE_FORMAT(auc.firstTicketDate, '%Y%m' ) as yearMonth, tickets as aucTickets, revenue as aucRevenue, roomNights as aucNights
+				$auctions = $this->Reporting->query("SELECT DATE_FORMAT(auc.firstTicketDate, '%Y%m' ) as yearMonth, tickets as aucTickets, revenue as aucRevenue, roomNights as aucNights
 														FROM reporting.$tableAuctionSold AS auc
 														WHERE CURDATE() - INTERVAL 14 MONTH <= firstTicketDate
 														AND auc.clientid = '$clientId'
 														ORDER BY firstTicketDate ");
 
 				$tableFixedPriceSold = ($version == 'family') ? 'carFixedPriceSoldFg' : 'carFixedPriceSold';
-				$fixedprice = $this->OfferType->query("SELECT DATE_FORMAT(fp.firstTicketDate, '%Y%m' ) as yearMonth, tickets as fpTickets, revenue as fpRevenue, roomNights as fpNights
+				$fixedprice = $this->Reporting->query("SELECT DATE_FORMAT(fp.firstTicketDate, '%Y%m' ) as yearMonth, tickets as fpTickets, revenue as fpRevenue, roomNights as fpNights
 														FROM reporting.$tableFixedPriceSold AS fp
 														WHERE CURDATE() - INTERVAL 14 MONTH <= firstTicketDate
 														AND fp.clientid = '$clientId'
 														ORDER BY firstTicketDate ");
 
 				$tableAuction = ($version == 'family') ? 'carAuctionFg' : 'carAuction';
-				$auctionsTotal = $this->OfferType->query("SELECT DATE_FORMAT(auc.minStartDate, '%Y%m' ) as yearMonth, numberAuctions
+				$auctionsTotal = $this->Reporting->query("SELECT DATE_FORMAT(auc.minStartDate, '%Y%m' ) as yearMonth, numberAuctions
 														FROM reporting.$tableAuction AS auc
 														WHERE CURDATE() - INTERVAL 14 MONTH <= minStartDate
 														AND auc.clientid = '$clientId'
 														ORDER BY minStartDate ");
 
 				$tableFixedPricePackage = ($version == 'family') ? 'carFixedPricePackageFg' : 'carFixedPricePackage';
-				$fixedpriceTotal = $this->OfferType->query("SELECT DATE_FORMAT(fp.lastUpdate, '%Y%m' ) as yearMonth, numberPackages
+				$fixedpriceTotal = $this->Reporting->query("SELECT DATE_FORMAT(fp.lastUpdate, '%Y%m' ) as yearMonth, numberPackages
 														FROM reporting.$tableFixedPricePackage AS fp
 														WHERE CURDATE() - INTERVAL 14 MONTH <= lastUpdate
 														AND fp.clientid = '$clientId'
 														ORDER BY lastUpdate ");
 
 				$tableHotelOffer = ($version == 'family') ? 'carHotelOfferFg' : 'carHotelOffer';
-				$hotelOfferTotal = $this->OfferType->query("SELECT DATE_FORMAT(ho.snapShotDate, '%Y%m' ) as yearMonth, numberOffers
+				$hotelOfferTotal = $this->Reporting->query("SELECT DATE_FORMAT(ho.snapShotDate, '%Y%m' ) as yearMonth, numberOffers
 														FROM reporting.$tableHotelOffer AS ho
 														WHERE CURDATE() - INTERVAL 14 MONTH <= snapShotDate
 														AND ho.clientid = '$clientId'

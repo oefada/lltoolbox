@@ -14,7 +14,7 @@ class CarDataImporterComponent extends Object {
 
     function startup(&$controller) {
         $db = ConnectionManager::getInstance();
-        $this->conn = $db->getDataSource('default');
+        $this->conn = $db->getDataSource('reporting');
     }
 
     // -------------------------

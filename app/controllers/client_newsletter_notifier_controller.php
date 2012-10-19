@@ -4,6 +4,7 @@ class ClientNewsletterNotifierController extends AppController {
 	var $name = 'ClientNewsletterNotifier';
 	var $helpers = array('Html', 'Form');
 	var $components = array('Email');
+	var $uses = array('ClientNewsletterNotifier', 'Reporting');
 	
 	function beforeFilter() {
 	    parent::beforeFilter();
@@ -98,7 +99,7 @@ class ClientNewsletterNotifierController extends AppController {
 	        $carTable = ($data['ClientNewsletterNotifier']['site'] == 'luxurylink') ? 'reporting.carDataFeedEmail' : 'reporting.carDataFeedEmailFg';
 			$sql = 'INSERT INTO ' . $carTable . ' (clientid, year2, month2, insertDateTime, newsletterDate, url, subscribers) VALUES (?, ?, ?, NOW(), ?, ?, ?)';
 			$params = array($client['Client']['clientId'], date('Y'), date('n'), '0000-00-00', $data['ClientNewsletterNotifier']['url'], str_replace(',', '', $data['ClientNewsletterNotifier']['subscribers']));
-			$results = $this->ClientNewsletterNotifier->query($sql, $params);
+			$results = $this->Reporting->query($sql, $params);
 	    }
 	}
 }
