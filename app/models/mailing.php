@@ -173,7 +173,11 @@ class Mailing extends AppModel {
 									$offer=$flexHelper->calcFlexNights($offer['flexNumNightsMin'], $offer);	
 									$offer['price']=$offer['buyNowPrice'];
 								}else{
-									$offer['percentOff']=(int)((1 - ($price / $offer['retailValue'])) * 100);
+									if ($offer['retailValue']==0){
+										$offer['percentOff']=0;
+									}else{
+										$offer['percentOff']=(int)((1 - ($price / $offer['retailValue'])) * 100);
+									}
 								}
 								$new_rows[$i]['client']['offers'][]=$offer;
 								//AppModel::printR($new_rows[$i]['client']);exit;

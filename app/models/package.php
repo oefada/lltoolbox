@@ -408,7 +408,7 @@ class Package extends AppModel {
 	function updatePackagePricePointValidity($packageId, $siteId=0) {
 
 		if (LOGIT){
-			$this->logit('--- updatePackagePricePointValidity() start---');
+			$this->logit("--- updatePackagePricePointValidity() start---\n");
 		}
 
 		$this->updateValidityDisclaimer($packageId);//update table packageValidityDisclaimer
@@ -437,6 +437,8 @@ class Package extends AppModel {
 					return false;
 				}
 
+				// dups showing up from 
+
 				$this->PricePoint->save($r['PricePoint'], array('validate' => false, 'callbacks' => false));
 				$offerTable='offerLuxuryLink';
 				if ($siteId==2){
@@ -463,7 +465,7 @@ class Package extends AppModel {
 		}
 
 		if (LOGIT){
-			$this->logit('--- updatePackagePricePointValidity() end ---');
+			$this->logit("--- updatePackagePricePointValidity() end ---\n");
 		}
 
 		return;
@@ -472,7 +474,7 @@ class Package extends AppModel {
 	public function validityGroupWrapper($rows_db, $siteId=0){
 
 		if (LOGIT){
-			$this->logit('----validityGroupWrapper() start---');
+			$this->logit("----validityGroupWrapper() start---\n");
 		}
 
 		$hasValidDate=false;
@@ -506,9 +508,16 @@ class Package extends AppModel {
 
 		if (isset($rows_db['ValidRanges'])){
 			foreach ($rows_db['ValidRanges'] as $key => $arr) {
+				$alreadyInsertedArr=array();
 				foreach ($arr as $key2 => $validity_arr) {
 					if (strtotime($validity_arr['endDate'])<time()){
 						continue;
+					}
+					$startDate=$arr['startDate'];
+					$endDate=$arr['endDate'];
+					$isBlackout=$arr['isBlackout'];
+					if (isset($alreadyInsertedArr[$startDate][$endDate][$isBlackout])){
+						continue;	
 					}
 					if ($this->insertValidityGroup($vg_id, $validity_arr, $siteId) === false) {
 						$err_msg = 'Failed to insert validrange into validityGroup, please try again.';
@@ -517,15 +526,24 @@ class Package extends AppModel {
 					}else{
 						$hasValidDate=true;
 					}
+					$alreadyInsertedArr[$startDate][$endDate][$isBlackout]=1;
+			
 				}
 			}
 		}
 
 		if (isset($rows_db['BlackoutDays'])){
 			foreach ($rows_db['BlackoutDays'] as $key => $arr) {
+				$alreadyInsertedArr=array();
 				foreach ($arr as $key2 => $validity_arr) {
 					if (strtotime($validity_arr['endDate'])<time()){
 						continue;
+					}
+					$startDate=$arr['startDate'];
+					$endDate=$arr['endDate'];
+					$isBlackout=$arr['isBlackout'];
+					if (isset($alreadyInsertedArr[$startDate][$endDate][$isBlackout])){
+						continue;	
 					}
 					if ($this->insertValidityGroup($vg_id, $validity_arr, $siteId) === false) {
 						$err_msg = 'Failed to insert blackoutday into validityGroup, please try again.';
@@ -534,25 +552,19 @@ class Package extends AppModel {
 					}else{
 						$hasValidDate=true;
 					}
+					$alreadyInsertedArr[$startDate][$endDate][$isBlackout]=1;
 				}
 			}
 		}
 
 		if (LOGIT){
-			$this->logit('----validityGroupWrapper() end---');
+			$this->logit("----validityGroupWrapper() end---\n");
 		}
 
 		return ($hasValidDate)?$vg_id:false;
 
 	} 
 
-	/**
-	 * TODO: short description.
-	 * 
-	 * @param mixed   
-	 * 
-	 * @return TODO
-	 */
 	function insertValidityGroup($vg_id,$arr,$siteId=0,$debug_q=false){
 
 		if (strtotime($arr['endDate'])<time()){
@@ -560,7 +572,7 @@ class Package extends AppModel {
 		}
 
 		if (LOGIT){
-			$this->logit('---start insertValidityGroup()---');
+			$this->logit("---start insertValidityGroup()---\n");
 		}
 
 		// a unique vg_id is always passed, so there will be no on duplicate key update
@@ -573,7 +585,7 @@ class Package extends AppModel {
 		$q.="siteId='$siteId' ";
 		$this->query($q);
 		if (LOGIT){
-			$this->logit('---end insertValidityGroup()---');
+			$this->logit("---end insertValidityGroup()---\n");
 		}
 		if ($this->getAffectedRows()<=0){
 			return false;
@@ -598,7 +610,7 @@ class Package extends AppModel {
 	function updatePricePointValidityGroupId($ppid,$vg_id,$debug_q=false){
 
 		if (LOGIT){
-			$this->logit('----updatePricePointValidityGroupId() start---');
+			$this->logit("----updatePricePointValidityGroupId() start---\n");
 		}
 
 		$q="UPDATE pricePoint SET validityGroupId=$vg_id ";
@@ -611,7 +623,7 @@ class Package extends AppModel {
 		}
 
 		if (LOGIT){
-			$this->logit('----updatePricePointValidityGroupId() end---');
+			$this->logit("----updatePricePointValidityGroupId() end---\n");
 		}
 
 	}
@@ -645,7 +657,7 @@ class Package extends AppModel {
 	public function updateOfferWithValidityGroupId($ppId, $siteId, $new_vgId, $old_vgId=false){
 
 		if (LOGIT){
-			$this->logit('----updateOfferWithValidityGroupId() start---');
+			$this->logit("----updateOfferWithValidityGroupId() start---\n");
 		}
 
 		$table="offerFamily";
@@ -661,7 +673,7 @@ class Package extends AppModel {
 		$this->query($q);
 
 		if (LOGIT){
-			$this->logit('----updateOfferWithValidityGroupId() end---');
+			$this->logit("----updateOfferWithValidityGroupId() end---\n");
 		}
 
 	}
@@ -826,7 +838,7 @@ class Package extends AppModel {
 	function saveBlackouts($packageId, $data) {
 
 		if (LOGIT){
-			$this->logit('---saveBlackouts() start ---');
+			$this->logit("---saveBlackouts() start ---\n");
 		}
 
 		$this->query("DELETE FROM packageBlackout WHERE packageId = {$packageId}");
@@ -858,7 +870,7 @@ class Package extends AppModel {
 		}
 
 		if (LOGIT){
-			$this->logit('---saveBlackouts() end ---');
+			$this->logit("---saveBlackouts() end ---\n");
 		}
 
 	}
@@ -882,10 +894,13 @@ class Package extends AppModel {
 		return $data;
 	}
 
-	function getPackageValidityDisclaimerByItem($packageId,$loaItemRatePeriodIds,$startDate,$endDate,$debug_q=false){
+	//
+	//startDate and endDate were passed in, but not used
+	//
+	public function getPackageValidityDisclaimerByItem($packageId, $loaItemRatePeriodIds,$s='',$e='',$debug_q=false){
 
 		if (LOGIT){
-			$this->logit("----getPackageValidityDisclaimerByItem($packageId,$loaItemRatePeriodIds,$startDate,$endDate) start---");
+			$this->logit("----getPackageValidityDisclaimerByItem($packageId,$loaItemRatePeriodIds) start---\n");
 		}
 
 		$q="SELECT pvd.startDate, pvd.endDate, pvd.isBlackout ";
@@ -908,7 +923,7 @@ class Package extends AppModel {
 			}
 		}
 		if (LOGIT){
-			$this->logit('----getPackageValidityDisclaimerByItem() end---');
+			$this->logit("----getPackageValidityDisclaimerByItem() end---\n");
 		}
 		return $data;
 	}
@@ -931,6 +946,11 @@ class Package extends AppModel {
 	}
 
 	function updateValidityDisclaimer($packageId) {
+
+
+		if (LOGIT){
+			$this->logit("--- updateValidityDisclaimer() start---\n");
+		}
 
 		// * this method is called whenever a user defined blackout or room night date range is changed
 		// * this clears and updates the table packageValidityDisclaimer
@@ -987,12 +1007,55 @@ class Package extends AppModel {
 		// return user defined blackout day (or range) + validity ranges
 		// do not care about black ranges ('NON-VALID period')
 		$this->query("DELETE FROM packageValidityDisclaimer WHERE packageId ={$packageId}");
-		foreach ($data['ValidRanges'] as $r) {
-			$this->query("INSERT INTO packageValidityDisclaimer SET packageId = {$packageId}, startDate = '{$r['s']}', endDate = '{$r['e']}', isBlackout = 0, created = NOW() ON DUPLICATE KEY UPDATE modified = NOW()");
+
+		$this->insertIntoValidityDisclaimer($data['ValidRanges'],  $packageId, 0);
+		$this->insertIntoValidityDisclaimer($data['BlackoutDays'], $packageId, 1);
+
+		if (LOGIT){
+			$this->logit("--- updateValidityDisclaimer() end---\n");
 		}
-		foreach ($data['BlackoutDays'] as $r) {
-			$this->query("INSERT INTO packageValidityDisclaimer SET packageId = {$packageId}, startDate = '{$r['s']}', endDate = '{$r['e']}', isBlackout = 1, created = NOW() ON DUPLICATE KEY UPDATE modified = NOW()");
+	}
+
+	/**
+	 * Making query re-useable
+	 * 
+	 * @param array $arr containing 'BlackoutDays' or 'ValidRanges' 
+	 * @param int $packageId
+	 * @param int $isBlackout 
+	 * 
+	 * @return null
+	 */
+	private function insertIntoValidityDisclaimer($arr,$packageId,$isBlackout){
+
+		if (LOGIT){
+			$this->logit("--- insertIntoValidityDisclaimer() start---\n");
 		}
+
+		// dups showing up for some reason
+		$alreadyInsertedArr=array();
+		foreach ($arr as $r) {
+			$startDate=$r['s'];
+			$endDate=$r['e'];
+			if (strtotime($endDate)<time()){
+				continue;
+			}
+			if (!isset($alreadyInsertedArr[$packageId][$startDate][$endDate])){
+				$q="INSERT INTO packageValidityDisclaimer ";
+				$q.="SET packageId = $packageId, ";
+				$q.="startDate = '".$startDate."', ";
+				$q.="endDate = '".$endDate."', ";
+				$q.="isBlackout = $isBlackout, ";
+				$q.="created = NOW() ";
+				$q.="ON DUPLICATE KEY UPDATE modified = NOW()";
+				$this->query($q);
+			}
+			$alreadyInsertedArr[$packageId][$startDate][$endDate]=1;
+		}
+
+		if (LOGIT){
+			$this->logit("--- insertIntoValidityDisclaimer() end---\n");
+		}
+
 	}
 
 	function carveDateRanges($validDates, $blackoutDates) {

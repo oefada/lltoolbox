@@ -698,6 +698,9 @@ function submitForm(thisId) {
 		}
 	}
 
+ $("input[type='button']").attr("disabled", true).val("Please wait...");
+
+
   $.post(window.location.href,
 		$('#'+thisId).serialize(),
 			function(data) {
@@ -705,6 +708,9 @@ function submitForm(thisId) {
 				if (data == 'ok') {
 					parent.closeForm(thisId);
 				} else {
+
+					$("input[type='button']").attr("disabled", false).val("Save Changes");
+
 					var errors = $.parseJSON(data);
 					var errorStr = '';
 					$.each(errors, function(i, error) {

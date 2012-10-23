@@ -41,8 +41,6 @@
 
 App::import('Lib', 'LazyModel.LazyModel');
 
-define('LOGIT', false);
-
 class AppModel extends LazyModel {
 	
 	var $sites = array(1 => 'luxurylink', 2 => 'family');

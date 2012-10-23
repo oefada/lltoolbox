@@ -1,5 +1,8 @@
 <?php
 
+// for logging data and queries here and in model packages.php 
+define('LOGIT', false);
+define('LOGIT_QUERIES', false);
 
 class PackagesController extends AppController
 {
@@ -1720,11 +1723,7 @@ class PackagesController extends AppController
 	function edit_blackout_dates($clientId, $packageId)
 	{
 
-
 		if (!empty($this->data)) {
-
-			//LOGIT defined in app_model.php
-//define('LOGIT', true);
 
 			if (LOGIT){
 				$this->Package->logit("\n\nstart edit_blackout_dates---------------------------\n\n");
@@ -1735,13 +1734,18 @@ class PackagesController extends AppController
 			$siteId=$arr['Package']['siteId'];
 			$this->data['siteId']=$siteId;
 			$this->autoRender = false;
-			$this->Package->saveBlackouts($packageId, $this->data);
-			if ($this->Package->updatePackagePricePointValidity($packageId, $siteId)===false){
-				mail(self::DEV_EMAIL, '1741 error in edit_blackout_dates() packageId $packageId', 'eom');
+			foreach($this->data['PackageBlackout'] as $key=>$arr){
+				if (trim($arr['startDate'])==''){
+					unset($this->data['PackageBlackout'][$key]);
+				}
 			}
+			$this->Package->saveBlackouts($packageId, $this->data);
+			$this->Package->logit($this->data);
 
 			$this->Package->PricePoint->contain(array());
 			$ppRows=$this->Package->PricePoint->findAllByPackageId($packageId);
+
+			$loaItemRatePeriodIds='';
 			foreach($ppRows as $ppRow){
 				// Weird cake bug where it sometimes returns 'PricePoint' and other times 'pricePoint'
 				if (isset($ppRow['PricePoint'])){
@@ -1762,29 +1766,32 @@ class PackagesController extends AppController
 					continue;
 				}
 
-				$loaItemRatePeriodIds='';
 				foreach($arr as $key=>$rows){
 					$id=$rows['PricePointRatePeriodRel']['loaItemRatePeriodId'];
-					$tmpArr[$id]=$id;
-				}
-				$loaItemRatePeriodIds=implode(",", $tmpArr);
-
-				// If the date range being posted is outside the date range of the loaItemDate, it will
-				// not be retrieved by this. 
-				$rows_db = $this->Package->getPackageValidityDisclaimerByItem($packageId, $loaItemRatePeriodIds, '', '');
-				if (($vgId=$this->Package->validityGroupWrapper($rows_db, $siteId))!==false){
-					$this->Package->updatePricePointValidityGroupId($ppId, $vgId);
-					$this->Package->updateOfferWithValidityGroupId($ppId, $siteId, $vgId);
+					$pricePointLoaItemRatePeriodIdArr[$ppId][$id]=$id;
 				}
 
 			}
 
+			if ($this->Package->updatePackagePricePointValidity($packageId, $siteId)===false){
+				mail(self::DEV_EMAIL, '1X error in edit_blackout_dates() packageId $packageId', 'eom');
+			}
+
+			// If the date range being posted is outside the date range of the loaItemDate, it will
+			// not be retrieved by this. 
+			foreach($pricePointLoaItemRatePeriodIdArr as $ppId=>$loaItemRatePeriodIdArr){
+				$loaItemRatePeriodIds=implode(",", array_unique($loaItemRatePeriodIdArr));
+				$rows_db = $this->Package->getPackageValidityDisclaimerByItem($packageId, $loaItemRatePeriodIds);
+				if (($vgId=$this->Package->validityGroupWrapper($rows_db, $siteId))!==false){
+					$this->Package->updatePricePointValidityGroupId($ppId, $vgId);
+					$this->Package->updateOfferWithValidityGroupId($ppId, $siteId, $vgId);
+				}
+			}
 			if (LOGIT){
 				$this->Package->logit("end edit_blackout_dates ---------------------------\n\n");
 			}
 
 			echo ("ok");
-
 			exit;
 
 		} else {
@@ -2086,6 +2093,7 @@ class PackagesController extends AppController
 	{
 		$package = $this->Package->getPackage($packageId);
 		$isMultiClientPackage = (count($package['ClientLoaPackageRel']) > 1) ? 1 : 0;
+		$ratePeriods=false;
 		if (!empty($this->data)) {
 			$this->autoRender = false;
 			foreach ($this->data['LoaItemRatePackageRel'] as $loaItemRatePackageRelId => $guaranteePercentRetail) {
@@ -2095,10 +2103,12 @@ class PackagesController extends AppController
 			echo ("ok");
 			exit;
 		} else {
-			$ratePeriods = $this->getRatePeriodsInfo($packageId);
-			$this->set('ratePeriods', $ratePeriods);
-			$this->set('isMultiClientPackage', $isMultiClientPackage);
+			if (($r = $this->getRatePeriodsInfo($packageId))!==false){
+				$ratePeriods=$r;
+			}
 		}
+		$this->set('ratePeriods', $ratePeriods);
+		$this->set('isMultiClientPackage', $isMultiClientPackage);
 	}
 
 	function edit_price_points($clientId, $packageId)
@@ -2225,6 +2235,7 @@ class PackagesController extends AppController
 
 			$maxGuaranteedPercent = 0;
 			foreach ($this->data['loaItemRatePeriodIds'] as $loaItemRatePeriodId) {
+				//gpr = Guaranteed Percent of Retail
 				$checkPercent = $this->data['gpr-' . $loaItemRatePeriodId];
 				if ($checkPercent > $maxGuaranteedPercent) {
 					$maxGuaranteedPercent = $checkPercent;
@@ -2337,7 +2348,7 @@ class PackagesController extends AppController
 				// Why is this being updated when data is only being viewed?
 				// - Problem of packages not setting pricePoint validityStart or validityEnd, but gets it correctly set
 				// if resaved. Apparently this is a work around to that, so putting it back in.
-				$this->Package->updatePackagePricePointValidity($packageId, $siteId);
+				//$this->Package->updatePackagePricePointValidity($packageId, $siteId);
 
 			}
 

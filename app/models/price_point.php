@@ -85,7 +85,7 @@ class PricePoint extends AppModel {
 	function getPricePointValidities($packageId, $pricePointId=null) {
 
 		if (LOGIT){
-			$this->logit('----getPricePointValidities() start--');
+			$this->logit("----getPricePointValidities($packageId, $pricePointId) start--");
 		}
 
 		$query = "
@@ -100,10 +100,14 @@ class PricePoint extends AppModel {
 		}
 		$query .= " ORDER BY endDate";
 
+		$result=$this->query($query);
+
 		if (LOGIT){
-			$this->logit('----getPricePointValidities() end---');
+			$this->logit("----getPricePointValidities($packageId, $pricePointId) end---");
 		}
-		return $this->query($query);
+
+		return $result; 
+
 	}
 	
 	function getPricePointStartEnd($pricePointId) {
