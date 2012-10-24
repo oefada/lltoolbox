@@ -110,6 +110,9 @@ class DboMysqli extends DboMysqlBase {
  * @access protected
  */
 	function _execute($sql) {
+		if (defined('LOGIT_QUERIES') && LOGIT_QUERIES && class_exists('logIt')){
+			AppModel::logit($sql."\n");
+		}
 		if (preg_match('/^\s*call/i', $sql)) {
 			return $this->_executeProcedure($sql);
 		}

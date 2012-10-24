@@ -1,8 +1,5 @@
 <?php
 
-// for logging data and queries here and in model packages.php 
-define('LOGIT', false);
-define('LOGIT_QUERIES', false);
 
 class PackagesController extends AppController
 {
@@ -1744,7 +1741,8 @@ class PackagesController extends AppController
 
 			$this->Package->PricePoint->contain(array());
 			$ppRows=$this->Package->PricePoint->findAllByPackageId($packageId);
-
+	
+			$issetArr=array();
 			$loaItemRatePeriodIds='';
 			foreach($ppRows as $ppRow){
 				// Weird cake bug where it sometimes returns 'PricePoint' and other times 'pricePoint'
@@ -1760,6 +1758,10 @@ class PackagesController extends AppController
 				}
 				$ppId=$ppArr['pricePointId'];
 				$old_vgId=$ppArr['validityGroupId'];
+				if (isset($issetArr[$ppId])){
+					continue;
+				}
+				$issetArr[$ppId]=1;
 
 				$arr=$this->Package->PricePoint->getPricePointValidities($packageId, $ppId);
 				if (empty($arr)){
@@ -1770,7 +1772,7 @@ class PackagesController extends AppController
 					$id=$rows['PricePointRatePeriodRel']['loaItemRatePeriodId'];
 					$pricePointLoaItemRatePeriodIdArr[$ppId][$id]=$id;
 				}
-
+				AppModel::logit($pricePointLoaItemRatePeriodIdArr);
 			}
 
 			if ($this->Package->updatePackagePricePointValidity($packageId, $siteId)===false){

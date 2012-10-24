@@ -311,7 +311,7 @@
 				<td colspan="5">
 					<input type="hidden" id="edit-this-validity-disclaimer" name="data[Package][overrideValidityDisclaimer]" value="<?=$overrideValidityDisclaimer;?>" />
 					<? $readonly_vd = ($overrideValidityDisclaimer) ? '' : 'readonly="readonly"';?>
-					<textarea name="data[PricePoint][validityDisclaimer]" id="validity-disclaimer" <?=$readonly_vd;?> style="height:150px;"><?=$vd;?></textarea>
+					<textarea name="data[PricePoint][validityDisclaimer]" id="validity-disclaimer" <?=$readonly_vd;?> style="height:150px;"><?=stripslashes($vd);?></textarea>
 					<? if (!$overrideValidityDisclaimer):?>
 					<div>
 						<a href="javascript:void(0);" onclick="return editThis();">Make Changes</a>
