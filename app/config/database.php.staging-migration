@@ -63,9 +63,9 @@ class DATABASE_CONFIG {
 	var $business_db2 = array(
 		'driver' => 'mysqli',
 		'persistent' => false,
-		'host' => 'business-db2',
+		'host' => 'stage-db1',
 		'login' => 'root',
-		'password' => '',
+		'password' => 'traveler',
 		'database' => 'toolbox',
 		'prefix' => '',
 	);
