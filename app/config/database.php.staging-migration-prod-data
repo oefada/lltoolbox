@@ -69,4 +69,7 @@ class DATABASE_CONFIG {
 		'database' => 'toolbox',
 		'prefix' => '',
 	);
+
+}
+
 ?>
