@@ -57,7 +57,7 @@
 	<div class='controlset'>
 		<?php echo $form->input('inactive'); ?><br>
 	</div>
-	<div style="font-size: 14px; color: #990000; font-weight: bold; margin-left: 174px; padding: 15px 15px 13px 20px; background-color: #fdcab9; width: 280px; border-radius: 4px;">Credit on File Balance:</strong> <a href="/credit_trackings/index/query:<?= $this->data['User']['userId'] ?>">$<? if (!isset($this->data['CreditTracking'])): ?>0.00<? else: ?><?= number_format($this->data['CreditTracking']['balance'],2) ?><? endif; ?></a></div>
+	<div style="font-size: 14px; color: #990000; font-weight: bold; margin-left: 174px; padding: 15px 15px 13px 20px; background-color: #fdcab9; width: 280px; border-radius: 4px;">Credit on File Balance:</strong> <a href="/credit_trackings/view/<?= $this->data['User']['userId'] ?>">$<? if (!isset($this->data['CreditTracking'])): ?>0.00<? else: ?><?= number_format($this->data['CreditTracking']['balance'],2) ?><? endif; ?></a></div>
 	
 	
 		<p>&nbsp;</p>
