@@ -3,8 +3,8 @@ class DATABASE_CONFIG {
 	var $default = array(
 		'driver'		=> 'mysqli',
 		'persistent'	=> false,
-		'host'			=> 'dbm1-dev',
-		'login'			=> 'dev_usr',
+		'host'			=> 'dev-db1',
+		'login'			=> 'root',
 		'password'		=> 'traveler',
 		'database'		=> 'toolbox',
 		'prefix'		=> '',
@@ -13,8 +13,8 @@ class DATABASE_CONFIG {
 	var $luxurylink = array(
 	    'driver'		=> 'mysqli',
 		'persistent'	=> false,
-		'host'			=> 'dbm1-dev',
-		'login'			=> 'dev_usr',
+		'host'			=> 'dev-db2',
+		'login'			=> 'root',
 		'password'		=> 'traveler',
 		'database'		=> 'luxurylink',
 		'prefix'		=> '',
@@ -23,8 +23,8 @@ class DATABASE_CONFIG {
 	var $family = array(
 		'driver'		=> 'mysqli',
 		'persistent'	=> false,
-		'host'			=> 'dbm1-dev',
-		'login'			=> 'dev_usr',
+		'host'			=> 'dev-db2',
+		'login'			=> 'root',
 		'password'		=> 'traveler',
 		'database'		=> 'family',
 		'prefix'		=> '',
@@ -33,18 +33,18 @@ class DATABASE_CONFIG {
 	var $shared = array(
 		'driver'		=> 'mysqli',
 		'persistent'	=> false,
-		'host'			=> 'dbm1-dev',
-		'login'			=> 'dev_usr',
+		'host'			=> 'dev-db2',
+		'login'			=> 'root',
 		'password'		=> 'traveler',
-		'database'		=> 'toolbox',
+		'database'		=> 'shared',
 		'prefix'		=> '',
 	);
 	
 	var $reporting = array(
 		'driver'		=> 'mysqli',
 		'persistent'	=> false,
-		'host'			=> 'dbm1-dev',
-		'login'			=> 'dev_usr',
+		'host'			=> 'dev-db1',
+		'login'			=> 'root',
 		'password'		=> 'traveler',
 		'database'		=> 'reporting',
 		'prefix'		=> '',
@@ -53,8 +53,8 @@ class DATABASE_CONFIG {
 	var $vacationist = array(
 		'driver'		=> 'mysqli',
 		'persistent'	=> false,
-		'host'			=> 'dbm1-dev',
-		'login'			=> 'dev_usr',
+		'host'			=> 'dev-db2',
+		'login'			=> 'root',
 		'password'		=> 'traveler',
 		'database'		=> 'vacationist',
 		'previx'		=> ''
@@ -63,8 +63,8 @@ class DATABASE_CONFIG {
 	var $business_db2 = array(
 		'driver'		=> 'mysqli',
 		'persistent'	=> false,
-		'host'			=> 'dbm1-dev',
-		'login'			=> 'dev_usr',
+		'host'			=> 'dev-db1',
+		'login'			=> 'root',
 		'password'		=> 'traveler',
 		'database'		=> 'toolbox',
 		'prefix'		=> '',
