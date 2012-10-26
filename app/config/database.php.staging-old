@@ -3,18 +3,18 @@ class DATABASE_CONFIG {
 	var $default = array(
 		'driver'		=> 'mysqli',
 		'persistent'	=> false,
-		'host'			=> 'dbm1-dev',
-		'login'			=> 'dev_usr',
+		'host'			=> 'stage-db1',
+		'login'			=> 'root',
 		'password'		=> 'traveler',
 		'database'		=> 'toolbox',
 		'prefix'		=> '',
 	);
-    
+
 	var $luxurylink = array(
-	    'driver'		=> 'mysqli',
+		'driver'		=> 'mysqli',
 		'persistent'	=> false,
-		'host'			=> 'dbm1-dev',
-		'login'			=> 'dev_usr',
+		'host'			=> 'stage-db2',
+		'login'			=> 'root',
 		'password'		=> 'traveler',
 		'database'		=> 'luxurylink',
 		'prefix'		=> '',
@@ -23,38 +23,38 @@ class DATABASE_CONFIG {
 	var $family = array(
 		'driver'		=> 'mysqli',
 		'persistent'	=> false,
-		'host'			=> 'dbm1-dev',
-		'login'			=> 'dev_usr',
+		'host'			=> 'stage-db2',
+		'login'			=> 'root',
 		'password'		=> 'traveler',
 		'database'		=> 'family',
 		'prefix'		=> '',
 	);
-	
+
 	var $shared = array(
 		'driver'		=> 'mysqli',
 		'persistent'	=> false,
-		'host'			=> 'dbm1-dev',
-		'login'			=> 'dev_usr',
+		'host'			=> 'stage-db2',
+		'login'			=> 'root',
 		'password'		=> 'traveler',
-		'database'		=> 'toolbox',
+		'database'		=> 'shared',
 		'prefix'		=> '',
 	);
-	
+
 	var $reporting = array(
 		'driver'		=> 'mysqli',
 		'persistent'	=> false,
-		'host'			=> 'dbm1-dev',
-		'login'			=> 'dev_usr',
+		'host'			=> 'stage-db1',
+		'login'			=> 'root',
 		'password'		=> 'traveler',
 		'database'		=> 'reporting',
 		'prefix'		=> '',
 	);
-	
+
 	var $vacationist = array(
 		'driver'		=> 'mysqli',
 		'persistent'	=> false,
-		'host'			=> 'dbm1-dev',
-		'login'			=> 'dev_usr',
+		'host'			=> 'stage-basement',
+		'login'			=> 'root',
 		'password'		=> 'traveler',
 		'database'		=> 'vacationist',
 		'previx'		=> ''
@@ -63,8 +63,8 @@ class DATABASE_CONFIG {
 	var $business_db2 = array(
 		'driver'		=> 'mysqli',
 		'persistent'	=> false,
-		'host'			=> 'dbm1-dev',
-		'login'			=> 'dev_usr',
+		'host'			=> 'stage-db1',
+		'login'			=> 'root',
 		'password'		=> 'traveler',
 		'database'		=> 'toolbox',
 		'prefix'		=> '',

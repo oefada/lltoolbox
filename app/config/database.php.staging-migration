@@ -1,73 +1,72 @@
 <?php
 class DATABASE_CONFIG {
 	var $default = array(
-		'driver' => 'mysqli',
-		'persistent' => false,
-		'host' => 'dbm1-stg',
-		'login' => 'root',
-		'password' => 'traveler',
-		'database' => 'toolbox',
-		'prefix' => '',
+		'driver'		=> 'mysqli',
+		'persistent'	=> false,
+		'host'			=> 'dbm1-stg',
+		'login'			=> 'stg_usr',
+		'password'		=> 'traveler',
+		'database'		=> 'toolbox',
+		'prefix'		=> '',
 	);
     
 	var $luxurylink = array(
-	    'driver' => 'mysqli',
-		'persistent' => false,
-		'host' => 'dbm1-stg',
-		'login' => 'root',
-		'password' => 'traveler',
-		'database' => 'luxurylink',
-		'prefix' => '',
+	    'driver'		=> 'mysqli',
+		'persistent'	=> false,
+		'host'			=> 'dbm1-stg',
+		'login'			=> 'stg_usr',
+		'password'		=> 'traveler',
+		'database'		=> 'luxurylink',
+		'prefix'		=> '',
 	);
 
 	var $family = array(
-		'driver' => 'mysqli',
-		'persistent' => false,
-		'host' => 'dbm1-stg',
-		'login' => 'root',
-		'password' => 'traveler',
-		'database' => 'family',
-		'prefix' => '',
+		'driver'		=> 'mysqli',
+		'persistent'	=> false,
+		'host'			=> 'dbm1-stg',
+		'login' 		=> 'stg_usr',
+		'password'		=> 'traveler',
+		'database'		=> 'family',
+		'prefix'		=> '',
 	);
 	
 	var $shared = array(
-		'driver' => 'mysqli',
-		'persistent' => false,
-		'host' => 'dbm1-stg',
-		'login' => 'root',
-		'password' => 'traveler',
-		'database' => 'toolbox',
-		'prefix' => '',
+		'driver'		=> 'mysqli',
+		'persistent'	=> false,
+		'host'			=> 'dbm1-stg',
+		'login'			=> 'stg_usr',
+		'password'		=> 'traveler',
+		'database'		=> 'toolbox',
+		'prefix'		=> '',
 	);
 	
 	var $reporting = array(
-		'driver' => 'mysqli',
-		'persistent' => false,
-		'host' => 'dbm1-stg',
-		'login' => 'root',
-		'password' => 'traveler',
-		'database' => 'reporting',
-		'prefix' => '',
+		'driver'		=> 'mysqli',
+		'persistent'	=> false,
+		'host'			=> 'dbm1-stg',
+		'login'			=> 'stg_usr',
+		'password'		=> 'traveler',
+		'database'		=> 'reporting',
+		'prefix'		=> '',
 	);
 	
 	var $vacationist = array(
-		'driver' => 'mysqli',
-		'persistent' => false,
-		'host' => 'stage-basement.vacationist.com',
-		'login' => 'root',
-		'password' => 'traveler',
-		'database' => 'vacationist',
-		'previx' => ''
+		'driver'		=> 'mysqli',
+		'persistent'	=> false,
+		'host'			=> 'stage-basement.vacationist.com',
+		'login'			=> 'root',
+		'password'		=> 'traveler',
+		'database'		=> 'vacationist',
+		'previx'		=> ''
 	);
 	
 	var $business_db2 = array(
-		'driver' => 'mysqli',
-		'persistent' => false,
-		'host' => 'stage-db1',
-		'login' => 'root',
-		'password' => 'traveler',
-		'database' => 'toolbox',
-		'prefix' => '',
+		'driver'		=> 'mysqli',
+		'persistent'	=> false,
+		'host'			=> 'dbm1-stg',
+		'login'			=> 'stg_usr',
+		'password'		=> 'traveler',
+		'database'		=> 'toolbox',
+		'prefix'		 => '',
 	);
 }
-?>
