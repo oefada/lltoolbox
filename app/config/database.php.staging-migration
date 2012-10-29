@@ -69,4 +69,15 @@ class DATABASE_CONFIG {
 		'database'		=> 'toolbox',
 		'prefix'		 => '',
 	);
+
+	var $default_ro = array(
+		'driver'		=> 'mysqli',
+		'persistent'	=> false,
+		'host'			=> 'dbm1-stg',
+		'login'			=> 'toolbox_ro',
+		'password'		=> 'r0us3r',
+		'database'		=> 'toolbox',
+		'prefix'		 => '',
+	);
+
 }

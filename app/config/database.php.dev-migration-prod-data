@@ -41,13 +41,13 @@ class DATABASE_CONFIG {
 	);
 	
 	var $reporting = array(
-		'driver' => 'mysqli',
-		'persistent' => false,
-		'host' => 'app-db1-dev',
-		'login' => 'toolbox',
-		'password' => '',
-		'database' => 'reporting',
-		'prefix' => '',
+		'driver'		=> 'mysqli',
+		'persistent'	=> false,
+		'host'			=> 'dbm1-dev',
+		'login'			=> 'dev_usr',
+		'password'		=> 'traveler',
+		'database'		=> 'toolbox',
+		'prefix'		=> '',
 	);
 	
 	var $vacationist = array(
@@ -61,13 +61,24 @@ class DATABASE_CONFIG {
 	);
 	
 	var $business_db2 = array(
-		'driver' => 'mysqli',
-		'persistent' => false,
-		'host' => 'app-db1-dev',
-		'login' => 'root',
-		'password' => 'traveler',
-		'database' => 'toolbox',
-		'prefix' => '',
+		'driver'		=> 'mysqli',
+		'persistent'	=> false,
+		'host'			=> 'dbm1-dev',
+		'login'			=> 'dev_usr',
+		'password'		=> 'traveler',
+		'database'		=> 'toolbox',
+		'prefix'		=> '',
 	);
+
+	var $default_ro = array(
+		'driver'		=> 'mysqli',
+		'persistent'	=> false,
+		'host'			=> 'dbm1-dev',
+		'login'			=> 'toolbox_ro',
+		'password'		=> 'r0us3r',
+		'database'		=> 'toolbox',
+		'prefix'		=> '',
+	);
+
 }
 ?>
