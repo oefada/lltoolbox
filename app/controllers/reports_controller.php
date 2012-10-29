@@ -3101,7 +3101,7 @@ class ReportsController extends AppController
 		$tot[0][0] = $tmp[0][0];
 		$this->set('tot', $tot);
 		$this->set('totLastYear', array_merge($tmp2[0][0], $tmp3[0][0]));
-		$qtr = $this->OfferType->query("SELECT SUM(revenuetarget) as revenueTarget
+		$qtr = $this->Reporting->query("SELECT SUM(revenuetarget) as revenueTarget
 		FROM reporting.weeklyScorecardTotal
 		WHERE
 		 QUARTER(weekBeginSunday) = QUARTER(NOW() - INTERVAL 7 DAY)
@@ -3129,7 +3129,7 @@ class ReportsController extends AppController
 		 AND QUARTER(weekBeginSunday) = QUARTER(NOW() - INTERVAL 7 DAY)
 		group by quarter, weekBeginSunday
 		order by weekBeginSunday;");
-		$tmp = $this->OfferType->query("SELECT
+		$tmp = $this->Reporting->query("SELECT
 		 SUM(revenuetarget) as quarterRevenueTarget
 		FROM reporting.weeklyScorecardAuctions as data
 		WHERE YEAR(weekBeginSunday) = YEAR(NOW() - INTERVAL 7 DAY)
