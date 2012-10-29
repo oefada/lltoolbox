@@ -73,8 +73,8 @@ class DATABASE_CONFIG {
 	var $default_ro = array(
 		'driver'		=> 'mysqli',
 		'persistent'	=> false,
-		'host'			=> 'dbm1-stg',
-		'login'			=> 'stg_usr',
+		'host'			=> 'stage-db1',
+		'login'			=> 'root',
 		'password'		=> 'traveler',
 		'database'		=> 'toolbox',
 		'prefix'		 => '',
