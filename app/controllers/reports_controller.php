@@ -8,7 +8,8 @@ class ReportsController extends AppController
 		'PaymentDetail',
 		'PaymentType',
 		'Destination',
-		'Reporting'
+		'Reporting',
+		'Readonly'
 	);
 	var $helpers = array(
 		'Pagination',
@@ -72,6 +73,7 @@ class ReportsController extends AppController
 		// this session in
 		//no lock mode, to improve performance and not lock tables
 		$this->OfferType->query('SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;');
+		$this->Readonly->query('SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;');
 	}
 
 	function index()
@@ -80,7 +82,7 @@ class ReportsController extends AppController
 	
 	function images_project() {
 		$sql = "SELECT t1.clientId,t1.name,t1.endDate,t2.oldFormat,t2.newFormat FROM (SELECT loa.clientId, MIN(loa.endDate) AS endDate, client.name FROM toolbox.loa INNER JOIN toolbox.client ON (loa.clientId = client.clientId) WHERE (loa.sites LIKE '%luxurylink%' AND loa.inactive =0) GROUP BY loa.clientId HAVING (endDate >DATE_SUB(NOW(),INTERVAL 1 DAY)) ORDER BY endDate ASC, client.name ASC) t1 LEFT JOIN (SELECT imageClient.clientId, SUM(imagePath REGEXP '(^/images/por/(0\-[0-9]+|[0-9]+)/(0\-[0-9]+|[0-9]+)\-gal\-xl\-[0-9]+.jpg$|^/images/pho/[0-9]+/[0-9]+_[9][01][0-9]{2}[^0-9].*jpg)$') AS oldFormat, SUM(imagePath REGEXP '^/images/pho/[0-9]+/[0-9]+_([9][0-9]{0,2}|[9][0-9]{4,9}|[0-8][0-9]*)[^0-9].*jpg$') AS newFormat FROM toolbox.imageClient INNER JOIN toolbox.image  ON (imageClient.imageId = image.imageId) WHERE (imageClient.isHidden =0 AND imageClient.inactive =0 AND imageClient.imageTypeId =1) GROUP BY imageClient.clientId ) t2 ON t1.clientId=t2.clientId ORDER BY t1.endDate DESC,t1.name ASC";
-		$this->set('reportData',$this->OfferType->query($sql));
+		$this->set('reportData',$this->Readonly->query($sql));
 	}
 
 	function active_loa_and_packages_check()
@@ -603,7 +605,7 @@ class ReportsController extends AppController
                     WHERE $conditions
                     GROUP BY Offer.offerId, Client.clientId LIMIT " . $this->limit;
 
-			$results = $this->OfferType->query($count);
+			$results = $this->Readonly->query($count);
 			$numRecords = count($results);
 			$numPages = ceil($numRecords / $this->perPage);
 
@@ -652,7 +654,7 @@ class ReportsController extends AppController
                     ORDER BY $order
 	                LIMIT $this->limit";
 
-			$results = $this->OfferType->query($sql);
+			$results = $this->Readonly->query($sql);
 
 			$this->set('currentPage', $this->page);
 			$this->set('numRecords', $numRecords);
@@ -784,7 +786,7 @@ class ReportsController extends AppController
                                 LEFT JOIN paymentDetail AS PaymentDetail ON (PaymentDetail.ticketId = Ticket.ticketId AND PaymentDetail.userId = Ticket.userId)
                     WHERE $conditions";
 
-			$results = $this->OfferType->query($count);
+			$results = $this->Readonly->query($count);
 			$numRecords = $results[0][0]['numRecords'];
 			$numPages = ceil($numRecords / $this->perPage);
 
@@ -824,7 +826,7 @@ class ReportsController extends AppController
                     ORDER BY $order
 	                LIMIT $this->limit";
 
-			$results = $this->OfferType->query($sql);
+			$results = $this->Readonly->query($sql);
 
 			$this->set('currentPage', $this->page);
 			$this->set('numRecords', $numRecords);
@@ -1091,7 +1093,7 @@ class ReportsController extends AppController
 
 		$aging = array();
 
-		if ($results = $this->OfferType->query($sql)) {
+		if ($results = $this->Readonly->query($sql)) {
 
 			// Flatten results
 
@@ -1115,7 +1117,7 @@ class ReportsController extends AppController
 			$q .= "INNER JOIN destination as dest ON (cdr.destinationId=dest.destinationId) ";
 			$clientId_arr = array();
 			$q .= "WHERE c.clientId IN (" . implode(", ", array_keys($aging)) . ")";
-			$destinations = $this->OfferType->query($q);
+			$destinations = $this->Readonly->query($q);
 			foreach ($destinations as $d) {
 				if (isset($d['c']['clientId']) && isset($d['dest']['destinationName']) && isset($aging[$d['c']['clientId']])) {
 					$aging[$d['c']['clientId']]['destinationName'] = $d['dest']['destinationName'];
@@ -1130,7 +1132,7 @@ class ReportsController extends AppController
         		AND endDate>NOW()
         		AND ISCLOSED=0 
         		GROUP BY clientId";
-				$results = $this->OfferType->query($sql);
+				$results = $this->Readonly->query($sql);
 
 				foreach ($results as $r) {
 					$clientId = $r['offer' . $site]['clientId'];
@@ -1381,7 +1383,7 @@ class ReportsController extends AppController
 						LEFT JOIN ticketRefund AS TicketRefund ON TicketRefund.ticketId = Ticket.ticketId
 						WHERE TicketRefund.ticketRefundId IS NULL AND $conditions";
 
-			$results = $this->OfferType->query($sql);
+			$results = $this->Readonly->query($sql);
 			$numRecords = $results[0][0]['numRecords'];
 			$numPages = ceil($numRecords / $this->perPage);
 
@@ -1405,7 +1407,7 @@ class ReportsController extends AppController
                     ORDER BY $order
 	                LIMIT $this->limit";
 
-			$results = $this->OfferType->query($sql);
+			$results = $this->Readonly->query($sql);
 
 			$this->set('currentPage', $this->page);
 			$this->set('numRecords', $numRecords);
@@ -3407,14 +3409,14 @@ class ReportsController extends AppController
 
 			$sql = "SELECT COUNT(accountingInvoiceId) as numRecords FROM accountingInvoice as Invoice $where";
 
-			$results = $this->OfferType->query($sql);
+			$results = $this->Readonly->query($sql);
 
 			$numRecords = $results[0][0]['numRecords'];
 			$numPages = ceil($numRecords / $this->perPage);
 
 			$sql = "SELECT * FROM accountingInvoice as Invoice $where ORDER BY $order LIMIT $this->limit";
 
-			$results = $this->OfferType->query($sql);
+			$results = $this->Readonly->query($sql);
 
 			$this->set('currentPage', $this->page);
 			$this->set('numRecords', $numRecords);

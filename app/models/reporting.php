@@ -3,12 +3,7 @@
 class Reporting extends AppModel
 {
 	public $useTable = false;
+	public $useDbConfig = 'reporting';
 
-	public function __construct()
-	{
-		parent::__construct();
-		$this->setDataSource('reporting');
-	}
-	
 }
 	
