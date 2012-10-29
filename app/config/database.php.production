@@ -43,8 +43,8 @@ class DATABASE_CONFIG {
 	var $reporting = array(
 		'driver' => 'mysqli',
 		'persistent' => false,
-		'host' => 'toolboxprod-db',
-		'login' => 'toolbox_user',
+		'host' => 'business-db2',
+		'login' => 'root',
 		'password' => '',
 		'database' => 'reporting',
 		'prefix' => '',
