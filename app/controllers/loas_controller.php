@@ -238,12 +238,18 @@ class LoasController extends AppController {
 				// TEMP for booking credit
 				$this->data['Loa']['retailValueBalance'] = $this->data['Loa']['retailValueFee'];
 			}
-			$this->Loa->create();
-			if ($this->Loa->save($this->data)) {
-				$this->Session->setFlash(__('The Loa has been saved', true));
-				$this->redirect("/clients/$clientId/loas");
+			// ticket 3404 - check for date conflicts
+			$conflictLoa = $this->findDateConflict($clientId, implode('/', $this->data['Loa']['startDate']));
+			if ($conflictLoa !== false) {
+				$this->Session->setFlash(__('The new dates overlap with LOA <a href="/loas/edit/' . $conflictLoa . '">' . $conflictLoa . '</a>.', true));
 			} else {
-				$this->Session->setFlash(__('The Loa could not be saved. Please, try again.', true));
+				$this->Loa->create();
+				if ($this->Loa->save($this->data)) {
+					$this->Session->setFlash(__('The Loa has been saved', true));
+					$this->redirect("/clients/$clientId/loas");
+				} else {
+					$this->Session->setFlash(__('The Loa could not be saved. Please, try again.', true));
+				}
 			}
 		}
 		
@@ -267,6 +273,18 @@ class LoasController extends AppController {
 		$this->set(compact('customerApprovalStatusIds', 'currencyIds', 'loaLevelIds', 'loaMembershipTypeIds', 'publishingStatus', 'accountTypeIds'));
 		
 	}
+	
+	function findDateConflict($clientId, $startDate) {
+		$startTime = strtotime($startDate);
+		$loas = $this->Loa->getClientLoas($clientId);
+		foreach ($loas as $loa) {
+			if (($startTime >= strtotime($loa['Loa']['startDate'])) && ($startTime <= strtotime($loa['Loa']['endDate']))) {
+				return $loa['Loa']['loaId'];
+			}
+		}
+		return false;
+	}
+	
 
 	function items($id = null) {
 		if (!$id && empty($this->data)) {
