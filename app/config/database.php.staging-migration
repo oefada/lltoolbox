@@ -53,8 +53,8 @@ class DATABASE_CONFIG {
 	var $vacationist = array(
 		'driver'		=> 'mysqli',
 		'persistent'	=> false,
-		'host'			=> 'stage-basement.vacationist.com',
-		'login'			=> 'root',
+		'host'			=> 'dbm1-stg',
+		'login'			=> 'stg_usr',
 		'password'		=> 'traveler',
 		'database'		=> 'vacationist',
 		'previx'		=> ''
