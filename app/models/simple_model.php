@@ -10,5 +10,10 @@ class SimpleModel extends AppModel {
 		$this->table = $in['id'][0];
 		$this->primaryKey = $in['id'][1];
 		$parentModel = $in['id'][2];
+		
+		if (isset($in['id'][3])) {
+			$this->useDbConfig = $in['id'][3];
+		}
+		
 	}
 }

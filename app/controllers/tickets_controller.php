@@ -13,11 +13,17 @@ class TicketsController extends AppController {
 
 	var $uses = array('Ticket','OfferType', 'Format', 'User', 'ClientLoaPackageRel',
 					  'Track', 'TrackDetail','Offer','Loa','Client', 'OfferLuxuryLink', 'OfferFamily',
-					  'Reservation', 'PromoTicketRel', 'Promo', 'PromoCode', 'PaymentType'
+					  'Reservation', 'PromoTicketRel', 'Promo', 'PromoCode', 'PaymentType', 'Readonly'
 					  );
 
 	function index() {
 
+		// Readonly db config
+		$this->Ticket->useReadonlyDb();
+		$this->Ticket->TicketStatus->useReadonlyDb();
+		$this->Ticket->PromoTicketRel->useReadonlyDb();
+		$this->Ticket->Reservation->useReadonlyDb();
+		
 		// set search criteria from form post or set defaults
 		$form = $this->params['form'];
 		$named = $this->params['named'];
@@ -341,9 +347,9 @@ class TicketsController extends AppController {
 	}
 
 	function getValidCcOnFile($userId, $bidId = null) {
-		$ups = $this->User->query("select * from userPaymentSetting as UserPaymentSetting where userId = $userId and inactive = 0 order by primaryCC desc, expYear desc");
+		$ups = $this->Readonly->query("select * from userPaymentSetting as UserPaymentSetting where userId = $userId and inactive = 0 order by primaryCC desc, expYear desc");
 		if ($bidId && is_numeric($bidId)) {
-			$ups_bid = $this->User->query("select * from userPaymentSetting as UserPaymentSetting where userPaymentSettingId = (select userPaymentSettingId from bid where bidId = $bidId)");
+			$ups_bid = $this->Readonly->query("select * from userPaymentSetting as UserPaymentSetting where userPaymentSettingId = (select userPaymentSettingId from bid where bidId = $bidId)");
 			if (!empty($ups_bid)) {
 				$ups = $ups_bid;
 			}

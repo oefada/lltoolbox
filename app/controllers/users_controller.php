@@ -467,6 +467,8 @@ $this->User->logit($doProcessTwo);
 	// email searches use $origQuery
 	function search()
 	{
+		// Readonly db config
+		$this->User->useReadonlyDb();
 
 		$options = array();
 		$joins = array();

@@ -81,6 +81,11 @@ class AppModel extends LazyModel {
 	}
 
 
+	public function useReadonlyDb() {
+		$this->useDbConfig = 'default_ro';
+	}
+
+
 	public static function printR($arr){
 
 		print "<pre>";print_r($arr);print "</pre>";

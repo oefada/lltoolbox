@@ -92,6 +92,10 @@ class AjaxSearchController extends AppController
 			} elseif ($searchtype == "users") {
 				$this->AjaxSearch->table = 'user';
 				$this->AjaxSearch->primaryKey = 'userId';
+				
+				// Readonly db config
+				$this->AjaxSearch->useReadonlyDb();
+				
 				$this->loadSimple("userSiteExtended", "userId");
 
 				$conditions = array();
@@ -131,6 +135,10 @@ class AjaxSearchController extends AppController
 			} elseif ($searchtype == "tickets") {
 				$this->AjaxSearch->table = 'ticket';
 				$this->AjaxSearch->primaryKey = 'userId';
+				
+				// Readonly db config
+				$this->AjaxSearch->useReadonlyDb();
+				
 				$this->loadSimple("userSiteExtended", "userId");
 
 				$params = array(
@@ -149,6 +157,9 @@ class AjaxSearchController extends AppController
 			} elseif ($searchtype == "credit_trackings") {
 				$this->AjaxSearch->table = 'creditTracking';
 				$this->AjaxSearch->primaryKey = 'userId';
+
+				// Readonly db config
+				$this->AjaxSearch->useReadonlyDb();
 
 				$this->loadSimple("userSiteExtended", "userId");
 
@@ -169,6 +180,10 @@ class AjaxSearchController extends AppController
 			} elseif ($searchtype == "cities") {
 				$this->AjaxSearch->table = 'cityNew';
 				$this->AjaxSearch->primaryKey = 'countryId';
+
+				// Readonly db config
+				$this->AjaxSearch->useReadonlyDb();
+
 				$this->loadSimple("countryNew", "countryId");
 
 				$params = array(
@@ -189,6 +204,10 @@ class AjaxSearchController extends AppController
 			} elseif ($searchtype == "states") {
 				$this->AjaxSearch->table = 'stateNew';
 				$this->AjaxSearch->primaryKey = 'countryId';
+
+				// Readonly db config
+				$this->AjaxSearch->useReadonlyDb();
+
 				$this->loadSimple("countryNew", "countryId");
 
 				$params = array(
@@ -211,6 +230,9 @@ class AjaxSearchController extends AppController
 			} elseif ($searchtype == "countries") {
 				$this->AjaxSearch->table = 'countryNew';
 
+				// Readonly db config
+				$this->AjaxSearch->useReadonlyDb();
+
 				$params = array(
 					'fields' => array(
 						'countryId',
@@ -227,6 +249,9 @@ class AjaxSearchController extends AppController
 			} elseif ($searchtype == "search_redirects") {
 				$this->AjaxSearch->table = 'searchRedirect';
 
+				// Readonly db config
+				$this->AjaxSearch->useReadonlyDb();
+
 				$params = array(
 					'fields' => array(
 						'keyword',
@@ -236,6 +261,9 @@ class AjaxSearchController extends AppController
 				);
 			} elseif ($searchtype == "landing_pages") {
 				$this->AjaxSearch->table = 'landingPage';
+
+				// Readonly db config
+				$this->AjaxSearch->useReadonlyDb();
 
 				$params = array(
 					'fields' => array(
@@ -247,6 +275,10 @@ class AjaxSearchController extends AppController
 			} elseif ($searchtype == "bids") {
 				$this->AjaxSearch->table = 'bid';
 				$this->AjaxSearch->primaryKey = 'userId';
+
+				// Readonly db config
+				$this->AjaxSearch->useReadonlyDb();
+
 				$this->loadSimple("userSiteExtended", "userId");
 
 				$params = array(
@@ -279,8 +311,10 @@ class AjaxSearchController extends AppController
 		$this->loadModel("SimpleModel", array(
 			$tableName,
 			$primaryKey,
-			"AjaxSearch"
+			"AjaxSearch",
+			$this->AjaxSearch->useDbConfig
 		));
+		
 		$this->AjaxSearch->bindModel(array('hasOne' => array('SimpleModel' => array('foreignKey' => $primaryKey))));
 	}
 
