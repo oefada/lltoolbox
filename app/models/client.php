@@ -190,7 +190,7 @@ class Client extends AppModel {
 			foreach($this->frontend_fields as $model => $fields) {
 				foreach ($fields as $field) {
 					if (!empty($data['Client'][$field])) {
-						array_push($setFields, "{$field} = '{$data['Client'][$field]}'");
+						array_push($setFields, "{$field} = \"{$data['Client'][$field]}\"");
 
 					// 06/27/11 jwoods - force update when loaLevelId = 0
 					} elseif ($field=="loaLevelId" && $data['Client'][$field] === 0) {
