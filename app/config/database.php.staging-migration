@@ -9,7 +9,7 @@ class DATABASE_CONFIG {
 		'database'		=> 'toolbox',
 		'prefix'		=> '',
 	);
-    
+
 	var $luxurylink = array(
 	    'driver'		=> 'mysqli',
 		'persistent'	=> false,
@@ -29,17 +29,7 @@ class DATABASE_CONFIG {
 		'database'		=> 'family',
 		'prefix'		=> '',
 	);
-	
-	var $shared = array(
-		'driver'		=> 'mysqli',
-		'persistent'	=> false,
-		'host'			=> 'dbm1-stg',
-		'login'			=> 'stg_usr',
-		'password'		=> 'traveler',
-		'database'		=> 'toolbox',
-		'prefix'		=> '',
-	);
-	
+
 	var $reporting = array(
 		'driver'		=> 'mysqli',
 		'persistent'	=> false,
@@ -49,7 +39,7 @@ class DATABASE_CONFIG {
 		'database'		=> 'reporting',
 		'prefix'		=> '',
 	);
-	
+
 	var $vacationist = array(
 		'driver'		=> 'mysqli',
 		'persistent'	=> false,
@@ -59,7 +49,7 @@ class DATABASE_CONFIG {
 		'database'		=> 'vacationist',
 		'previx'		=> ''
 	);
-	
+
 	var $business_db2 = array(
 		'driver'		=> 'mysqli',
 		'persistent'	=> false,
@@ -79,5 +69,4 @@ class DATABASE_CONFIG {
 		'database'		=> 'toolbox',
 		'prefix'		 => '',
 	);
-
 }

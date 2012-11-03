@@ -57,9 +57,9 @@ class DATABASE_CONFIG {
 		'login'			=> 'root',
 		'password'		=> 'traveler',
 		'database'		=> 'vacationist',
-		'previx'		=> ''
+		'prefix'		=> ''
 	);
-	
+
 	var $business_db2 = array(
 		'driver'		=> 'mysqli',
 		'persistent'	=> false,
@@ -79,5 +79,4 @@ class DATABASE_CONFIG {
 		'database'		=> 'toolbox',
 		'prefix'		 => '',
 	);
-
 }

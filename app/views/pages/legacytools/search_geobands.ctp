@@ -1,7 +1,7 @@
 <?php
 uses('model' . DS . 'connection_manager');
 $db = ConnectionManager::getInstance();
-$connected = $db->getDataSource('shared');
+$connected = $db->getDataSource('default');
 
 $clear = isset($_GET['c']) ? intval($_GET['c']) : false; 
 if ($clear) {

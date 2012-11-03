@@ -2,7 +2,6 @@
 class Experiment extends AppModel
 {
 	public $name = 'Experiment';
-	public $useDbConfig = 'shared';
 	public $useTable = 'experiments';
 	public $displayField = 'name';
 
