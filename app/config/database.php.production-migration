@@ -63,7 +63,7 @@ class DATABASE_CONFIG {
 	var $default_ro = array(
 		'driver'		=> 'mysqli',
 		'persistent'	=> false,
-		'host'			=> 'business-db2',
+		'host'			=> 'dbs1-prd',
 		'login'			=> 'toolbox_ro',
 		'password'		=> 'r0us3r',
 		'database'		=> 'toolbox',
