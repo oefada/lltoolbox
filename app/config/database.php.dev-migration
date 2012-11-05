@@ -53,7 +53,7 @@ class DATABASE_CONFIG {
 	var $business_db2 = array(
 		'driver'		=> 'mysqli',
 		'persistent'	=> false,
-		'host'			=> 'dbs1-dev',
+		'host'			=> 'dbm1-dev',
 		'login'			=> 'dev_usr_ro',
 		'password'		=> 'traveler',
 		'database'		=> 'toolbox',
@@ -63,7 +63,7 @@ class DATABASE_CONFIG {
 	var $default_ro = array(
 		'driver'		=> 'mysqli',
 		'persistent'	=> false,
-		'host'			=> 'dbs1-dev',
+		'host'			=> 'dbm1-dev',
 		'login'			=> 'dev_usr_ro',
 		'password'		=> 'traveler',
 		'database'		=> 'toolbox',
