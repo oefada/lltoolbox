@@ -23,7 +23,7 @@ class TicketsController extends AppController {
 		$this->Ticket->TicketStatus->useReadonlyDb();
 		$this->Ticket->PromoTicketRel->useReadonlyDb();
 		$this->Ticket->Reservation->useReadonlyDb();
-		
+
 		// set search criteria from form post or set defaults
 		$form = $this->params['form'];
 		$named = $this->params['named'];
@@ -54,6 +54,7 @@ class TicketsController extends AppController {
 		$s_res_confirmation_num = isset($form['s_res_confirmation_num']) ? $form['s_res_confirmation_num'] : '';
 		$s_res_check_in_date = isset($form['s_res_check_in_date']) ? $form['s_res_check_in_date'] : '';
 		$s_has_promo = isset($form['s_has_promo']) ? $form['s_has_promo'] : '';
+		$s_manual_ticket = isset($form['s_manual_ticket']) ? $form['s_manual_ticket'] : '';
 		$s_start_y = isset($form['s_start_y']) ? $form['s_start_y'] : date('Y');
 		$s_start_m = isset($form['s_start_m']) ? $form['s_start_m'] : date('m');
 		$s_start_d = isset($form['s_start_d']) ? $form['s_start_d'] : date('d');
@@ -252,6 +253,9 @@ class TicketsController extends AppController {
 								);
 				$this->paginate['conditions']['PromoTicketRel.promoCodeId > '] = 0;
 			}
+			if ($s_manual_ticket) {
+				$this->paginate['conditions'][] = array('Ticket.ticketNotes IS NOT NULL');
+			}
 		}
 
 		// allow package/client/user/pricePoint to use date and status
@@ -274,7 +278,7 @@ class TicketsController extends AppController {
 		if (!$single_search) {
 			$s_ticket_id = $s_offer_id = $s_bid_id = $s_res_confirmation_num = null;
 		} else {
-			$s_res_check_in_date = $s_offer_type_id = $s_has_promo = null;
+			$s_res_check_in_date = $s_offer_type_id = $s_has_promo = $s_manual_ticket = null;
 			if (!$single_search_override) {
 				$s_ticket_status_id = $s_format_id = $s_site_id = null;
 			}
@@ -297,6 +301,7 @@ class TicketsController extends AppController {
 		$this->set('s_res_confirmation_num', $s_res_confirmation_num);
 		$this->set('s_res_check_in_date', $s_res_check_in_date);
 		$this->set('s_has_promo', $s_has_promo);
+		$this->set('s_manual_ticket', $s_manual_ticket);
 		$this->set('s_start_y', $s_start_y);
 		$this->set('s_start_m', $s_start_m);
 		$this->set('s_start_d', $s_start_d);

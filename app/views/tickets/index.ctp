@@ -153,22 +153,30 @@ $this->set('hideSidebar', true);
 				</td>
 			</tr>
 			<tr>
-				<td width="150">
-					Res. Check-In Date<br />
-					via Date Range
-				</td>
-				<td>
-					<input type="checkbox" id="s_res_check_in_date" name="s_res_check_in_date" <?php if ($s_res_check_in_date) { echo 'checked="checked"'; }?> />
+				<td colspan="2" style="padding-left: 0px;">
+				<table>
+					<tr>
+						<td>Res Check-In Date (via Date Range)</td>
+						<td>
+							<input style="width: 30px;" type="checkbox" id="s_res_check_in_date" name="s_res_check_in_date" <?php if ($s_res_check_in_date) { echo 'checked="checked"'; }?> />
+						</td>
+					</tr>
+					<tr>
+						<td>Has Promo</td>
+						<td>
+							<input style="width: 30px;" type="checkbox" id="s_has_promo" name="s_has_promo" <?php if ($s_has_promo) { echo 'checked="checked"'; }?> />
+						</td>
+					</tr>
+					<tr>
+						<td>Manual Ticket</td>
+						<td>
+							<input style="width: 30px;" type="checkbox" id="s_manual_ticket" name="s_manual_ticket" <?php if ($s_manual_ticket) { echo 'checked="checked"'; }?> />
+						</td>
+					</tr>
+				</table>
 				</td>
 			</tr>
-			<tr>
-				<td width="150">
-					Has Promo
-				</td>
-				<td>
-					<input type="checkbox" id="s_has_promo" name="s_has_promo" <?php if ($s_has_promo) { echo 'checked="checked"'; }?> />
-				</td>
-			</tr>
+
 			</table>
 		
 		</td>
