@@ -33,8 +33,9 @@
 			echo $javascript->link('livepipe');
 			echo $javascript->link('tabs');
 			echo $javascript->link('prototip');
-			echo $javascript->link('jquery/jquery.js');
+			echo $javascript->link('jquery/jquery-1.8.2.min');
 			echo $javascript->link('jquery/jquery-noconflict.js');
+			echo $javascript->link('jquery/jquery-ui-1.9.1.custom.min');
 			echo $javascript->link('jquery/jquery.tableutils.src.js');
 			echo $javascript->link('cstool_popup');
 			//echo $javascript->link('fixed_table_headers');

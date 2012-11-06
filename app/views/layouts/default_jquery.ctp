@@ -25,8 +25,8 @@
         echo $html->css('pepper-grinder/jquery-ui-1.7.2.custom');
 		
 		if(isset($javascript)):
-            echo $javascript->link('jquery/jquery');
-            echo $javascript->link('jquery/jquery-ui-1.7.2.custom.min');
+            echo $javascript->link('jquery/jquery-1.8.2.min');
+            echo $javascript->link('jquery/jquery-ui-1.9.1.custom.min');
             echo $javascript->link('jquery/jquery.dimensions.min');
             echo $javascript->link('jquery/jquery.wtooltip');
 			echo $javascript->link('jquery/jquery.tableutils.src.js');
