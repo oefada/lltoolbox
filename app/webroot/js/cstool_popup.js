@@ -32,10 +32,10 @@ jQuery(function() {
 		}
 	});
 	$(document).ajaxStart(function(){
-		$('#ajaxLoadingIndicator').show('slide',{direction:'down'},250);
+		$('.ajaxLoadingIndicator').show('slide',{direction:'down'},250);
 	});
 	$(document).ajaxComplete(function(){
-		$('#ajaxLoadingIndicator').stop(true, true);
-		$('#ajaxLoadingIndicator').hide('slide',{direction:'down'},250);
+		$('.ajaxLoadingIndicator').stop(true, true);
+		$('.ajaxLoadingIndicator').hide('slide',{direction:'down'},250);
 	});
 });
