@@ -23,7 +23,7 @@ class LltUserEvent extends AppModel
 				`lltue`.`lltEventId`,
 				count(1) as `total`
 			FROM
-				`lltUserEvent` `lltue` USE INDEX (`eventRelatedClient`)
+				`lltUserEvent` `lltue` USE INDEX (`idx_lltUserEvent_eventRelatedClient_siteId_created`)
 			WHERE
 				`lltue`.`eventRelatedClient` = ?
 				AND `lltue`.`siteId` = ?
