@@ -27,6 +27,7 @@
 		if(isset($javascript)):
             echo $javascript->link('jquery/jquery-1.8.2.min');
             echo $javascript->link('jquery/jquery-ui-1.9.1.custom.min');
+            echo $javascript->link('jquery/jstree/jquery.jstree.min');
             echo $javascript->link('jquery/jquery.dimensions.min');
             echo $javascript->link('jquery/jquery.wtooltip');
 			echo $javascript->link('jquery/jquery.tableutils.src.js');
