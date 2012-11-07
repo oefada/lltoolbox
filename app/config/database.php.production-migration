@@ -34,8 +34,8 @@ class DATABASE_CONFIG {
 		'driver'		=> 'mysqli',
 		'persistent'	=> false,
 		'host'			=> 'business-db2',
-		'login'			=> 'root',
-		'password'		=> '',
+		'login'			=> 'reporting_usr',
+		'password'		=> 'traveler',
 		'database'		=> 'reporting',
 		'prefix'		=> '',
 	);
