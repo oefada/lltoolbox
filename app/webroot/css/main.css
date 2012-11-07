@@ -111,7 +111,7 @@ h2 {
 	background: url(../img/nav_button_right.png) no-repeat right bottom;
 	margin: 0;
 	padding: 0;
-	width: 165px;
+	white-space: nowrap;
 }
 
 #mainNav a {
@@ -143,6 +143,10 @@ h2 {
   #mainNav .current a {
 	background-image: url(../img/nav_button_left_on.png);
 	color: #706e5f;
+}
+
+#ajaxLoadingIndicator {
+	display: none;
 }
 
 /* @end */
