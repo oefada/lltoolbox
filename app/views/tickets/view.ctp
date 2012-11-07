@@ -181,6 +181,11 @@ $this->searchController = 'Tickets';
 		</table>
 	</div>
 	<div style="clear:both;"></div>
+	
+	<? if ($showEditLink) { ?>
+		<a href="/tickets/updateDetails/<?= $ticket['Ticket']['ticketId']; ?>">Update Ticket Info</a>
+    <? } ?>
+	
 </div>
 
 <br />

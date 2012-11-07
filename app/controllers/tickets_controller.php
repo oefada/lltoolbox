@@ -433,6 +433,7 @@ class TicketsController extends AppController {
 		}
 		$this->set('showVoidLink', $showVoidLink);
 		$this->set('showRefundLink', $showRefundLink);
+		$this->set('showEditLink', $this->hasEditorAccess());
 	}
 
 	function phpinfoshow() {
@@ -472,6 +473,61 @@ class TicketsController extends AppController {
 		$ticketStatusIds = $this->Ticket->TicketStatus->find('list');
 		unset($ticketStatusIds[6]);
 		$this->set('ticketStatusIds',$ticketStatusIds);
+	}
+
+	function updateDetails($id = null) {
+		if (!$id && empty($this->data)) {
+			$this->Session->setFlash(__('Invalid Ticket.', true), 'default', array(), 'error');
+			$this->redirect(array('action'=>'index'));
+		}
+		if (!$this->hasEditorAccess()) {
+			$this->Session->setFlash(__('You do not have permission to edit ticket details.', true), 'default', array(), 'error');
+			$this->redirect(array('action'=>'view', 'id' => $id));
+		}
+		
+		if (!empty($this->data) && !empty($this->data['Ticket']['ticketId'])) {
+
+			$arrivalDate = implode('/', $this->data['Ticket']['requestArrival']);
+			$departureDate = implode('/', $this->data['Ticket']['requestDeparture']);
+			$calculatedNights = (strtotime($departureDate) - strtotime($arrivalDate)) / 86400;
+			$error = false;
+						
+			if ($this->data['extraNotes'] == '') {
+				$error = true;
+				$this->Session->setFlash(__('Please add a note.', true), 'default', array(), 'error');
+			}
+			if ($calculatedNights != $this->data['Ticket']['numNights']) {
+				$error = true;
+				$this->Session->setFlash(__('Arrival to Departure is not ' . $this->data['Ticket']['numNights'] . ' nights.', true), 'default', array(), 'error');
+			}
+			if (!Validation::date($departureDate, 'mdy')) {
+				$error = true;
+				$this->Session->setFlash(__('Request Departure must be a valid date', true), 'default', array(), 'error');
+			}
+			if (!Validation::date($arrivalDate, 'mdy')) {
+				$error = true;
+				$this->Session->setFlash(__('Request Arrival must be a valid date', true), 'default', array(), 'error');
+			}
+
+			if (!$error) {
+				if ($this->Ticket->save($this->data)) {
+					$currentUser = $this->LdapAuth->user();
+					$note = date("n/j/Y") . ' -- ' . $currentUser['LdapUser']['samaccountname'] . " modified ticket\n";
+					$note .= $this->data['extraNotes'] . "\n\n";
+					$q = "UPDATE ticket SET ticketNotes = CONCAT(?, IFNULL(ticketNotes, '')) WHERE ticketId = ?";
+					$this->Ticket->query($q, array($note, $this->data['Ticket']['ticketId']));
+
+					$this->Session->setFlash(__('The ticket has been updated.', true), 'default', array(), 'success');
+					$this->redirect(array('action'=>'view', 'id' => $this->data['Ticket']['ticketId']));
+				} else {
+					$this->Session->setFlash(__('The ticket has not been saved due to an error.', true), 'default', array(), 'error');
+				}
+			}
+		}
+		if (empty($this->data)) {
+			$this->data = $this->Ticket->read(null, $id);
+			$this->data['extraNotes'] = '';
+		}
 	}
 
 	function add() {
@@ -709,6 +765,17 @@ class TicketsController extends AppController {
 		}
 		$this->set('tickets', $tickets_index);
 		$this->set('format', $this->Format->find('list'));
+	}
+
+	private function hasEditorAccess() {
+		$currentUser = $this->LdapAuth->user();
+		$editGroups = array('Accounting', 'Geeks', 'Concierge');
+		foreach ($editGroups as $eg) {
+			if (in_array($eg, $currentUser['LdapUser']['groups'])) { 
+				return true;
+			}
+		}
+		return false;
 	}
 
 	// -------------------------------------------
