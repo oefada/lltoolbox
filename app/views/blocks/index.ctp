@@ -132,58 +132,95 @@ $this->set('hideSidebar', true);
 <br/>
 
 <script type="text/javascript">
-jQuery(function () {
-	var $ = jQuery;
-	$("#blocktree")
-		.jstree({
-			"plugins" : ["themes","html_data","ui","crrm","hotkeys", "types"],
-			"core" : { "initially_open" : [ "phtml_1" ] },
-			"types" : {
-				"root" : {
-					"max_children" : 1
-				}
+	jQuery(function() {
+		var $ = jQuery;
+		$("#blocktree").jstree({
+			"plugins" : ["themes", "html_data", "ui", "contextmenu", "crrm", "hotkeys", "types"],
+			"core" : {
+				"initially_open" : ["phtml_1"]
 			},
 			"crrm" : {
 				"move" : {
-					"check_move" : function (m) {
+					"check_move" : function(m) {
 						var p = this._get_parent(m.o);
-						if(!p){
+						if (!p) {
 							return false;
 						}
 						p = (p == -1) ? this.get_container() : p;
 						if (p === m.np) {
-						return true;
+							return true;
 						}
-						if(p[0] && m.np[0] && p[0] === m.np[0]) {
+						if (p[0] && m.np[0] && p[0] === m.np[0]) {
 							return true;
 						}
 						return false;
 					}
 				}
 			},
-			"dnd" : {
-				"drop_target" : false,
-				"drag_target" : false
+			"contextmenu" : {
+				"items" : {
+					"add" : {
+						// The item label
+						"label" : "Add",
+						// The function to execute upon a click
+						"action" : function(obj) {
+							console.log(Math.random(), "addAction", obj);
+						},
+						"separator_before" : false, // Insert a separator before the item
+						"separator_after" : true, // Insert a separator after the item
+						"submenu" : {
+							"ClientDisplayModule" : {
+								"label" : "ClientDisplayModule"
+							},
+							"DivModule" : {
+								"label" : "DivModule"
+							},
+							"HeaderModule" : {
+								"label" : "HeaderModule"
+							},
+							"LinkModule" : {
+								"label" : "LinkModule"
+							},
+							"ParagraphModule" : {
+								"label" : "ParagraphModule"
+							},
+							"PhotoModule" : {
+								"label" : "PhotoModule"
+							}
+						}
+					}
+				}
 			},
 			"themes" : {
 				"theme" : "classic"
 			}
-		})
-		.bind("loaded.jstree", function (event, data) {
-		})
-		.bind("select_node.jstree", function (event, data) {
-			console.log(Math.random(),event,data,data.rslt.obj.attr("id"));
+		}).bind("loaded.jstree", function(event, data) {
+		}).bind("select_node.jstree", function(event, data) {
+			console.log(Math.random(), event, data, data.rslt.obj.attr("id"));
 			var outputText = typeof data.rslt.obj.attr("showme");
-			if (typeof outputText == 'string' && outputText.length > 0) {
+			if ( typeof outputText == 'string' && outputText.length > 0) {
 				$('#editorDiv').html(outputText);
 			}
-		})
-		.delegate("a", "click", function (event, data) { event.preventDefault(); });
-	setTimeout(function () { $.jstree._reference("#phtml_1").open_node("#phtml_1"); }, 1000);
-	setTimeout(function () { $.jstree._reference("#phtml_2").open_node("#phtml_2"); }, 2000);
-	setTimeout(function () { $.jstree._reference("#phtml_3").open_node("#phtml_3"); }, 3000);
-	setTimeout(function () { $.jstree._reference("#phtml_31").open_node("#phtml_31"); }, 4000);
-	setTimeout(function () { $.jstree._reference("#phtml_311").open_node("#phtml_311"); }, 5000);
-	setTimeout(function () { $.jstree._reference("#phtml_32").open_node("#phtml_32"); }, 6000);
-});
+		}).delegate("a", "click", function(event, data) {
+			event.preventDefault();
+		});
+		setTimeout(function() {
+			$.jstree._reference("#phtml_1").open_node("#phtml_1");
+		}, 1000);
+		setTimeout(function() {
+			$.jstree._reference("#phtml_2").open_node("#phtml_2");
+		}, 2000);
+		setTimeout(function() {
+			$.jstree._reference("#phtml_3").open_node("#phtml_3");
+		}, 3000);
+		setTimeout(function() {
+			$.jstree._reference("#phtml_31").open_node("#phtml_31");
+		}, 4000);
+		setTimeout(function() {
+			$.jstree._reference("#phtml_311").open_node("#phtml_311");
+		}, 5000);
+		setTimeout(function() {
+			$.jstree._reference("#phtml_32").open_node("#phtml_32");
+		}, 6000);
+	}); 
 </script>
