@@ -46,6 +46,9 @@ div.title-header div.buttons {
 	right: 10px;
 }
 
+#content-area {
+	padding-top: 10px;
+}
 #content-area h2 {
 	border-bottom: 1px dotted #b1b1b1;
 	padding: 0;

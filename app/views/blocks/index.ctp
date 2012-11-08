@@ -1,9 +1,38 @@
+<style>
+	div.title-header {
+		padding-bottom: 0;
+	}
+	#content-area {
+		padding-top: 0;
+		padding-left: 10px;
+	}
+	#editorDiv {
+		margin-left: 257px;
+		padding-left: 16px;
+		border: none;
+		border-left-style: solid;
+		border-left-width: 1px;
+		border-left-color: #EEEEEE;
+		min-height: 400px;
+	}
+	#blocktree {
+		min-height: 400px;
+	}
+	#previewFrame {
+		margin: 0;
+		padding: 0;
+		box-shadow: 3px 3px 10px #88bbdd;
+		border: none;
+		width: 100%;
+		height: 400px;
+	}
+</style>
 <?php
 $this->pageTitle = 'Blocks Editor';
 $this->set('hideSidebar', true);
 ?>
 
-<div id="demo1" class="demo" style="float: left; width: 300px;">
+<div id="blocktree" class="demo" style="float: left; width: 256px; overflow-x: scroll;">
 	<ul>
 		<li id="phtml_1">
 			<a href="#">Ski &amp; Snow</a>
@@ -86,19 +115,59 @@ $this->set('hideSidebar', true);
 	</ul>
 </div>
 
-<div id="outputDiv">ASDF</div>
+<div id="editorDiv">
+	ASDF
+</div>
 
 <div style="clear: both;"></div>
 
+<!--
+<br/>
+<hr/>
+<br/>
+<iframe id="previewFrame" src="http://www.luxurylink.com/"></iframe>
+-->
+
+<br/>
 <br/>
 
 <script type="text/javascript">
 jQuery(function () {
 	var $ = jQuery;
-	$("#demo1")
+	$("#blocktree")
 		.jstree({
-			"plugins" : ["themes","html_data","ui","crrm","hotkeys"],
-			"core" : { "initially_open" : [ "phtml_1" ] }
+			"plugins" : ["themes","html_data","ui","crrm","hotkeys", "types"],
+			"core" : { "initially_open" : [ "phtml_1" ] },
+			"types" : {
+				"root" : {
+					"max_children" : 1
+				}
+			},
+			"crrm" : {
+				"move" : {
+					"check_move" : function (m) {
+						var p = this._get_parent(m.o);
+						if(!p){
+							return false;
+						}
+						p = (p == -1) ? this.get_container() : p;
+						if (p === m.np) {
+						return true;
+						}
+						if(p[0] && m.np[0] && p[0] === m.np[0]) {
+							return true;
+						}
+						return false;
+					}
+				}
+			},
+			"dnd" : {
+				"drop_target" : false,
+				"drag_target" : false
+			},
+			"themes" : {
+				"theme" : "classic"
+			}
 		})
 		.bind("loaded.jstree", function (event, data) {
 		})
@@ -106,7 +175,7 @@ jQuery(function () {
 			console.log(Math.random(),event,data,data.rslt.obj.attr("id"));
 			var outputText = typeof data.rslt.obj.attr("showme");
 			if (typeof outputText == 'string' && outputText.length > 0) {
-				$('#outputDiv').html(outputText);
+				$('#editorDiv').html(outputText);
 			}
 		})
 		.delegate("a", "click", function (event, data) { event.preventDefault(); });

@@ -178,7 +178,7 @@
 
           </div> <!-- /#content-header -->
 
-        <div id="content-area" style="padding-top: 10px">
+        <div id="content-area">
           <?php print $content_for_layout; ?>
         </div>
       </div></div> <!-- /#content-inner, /#content -->
