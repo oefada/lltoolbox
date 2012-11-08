@@ -254,7 +254,7 @@ class TicketsController extends AppController {
 				$this->paginate['conditions']['PromoTicketRel.promoCodeId > '] = 0;
 			}
 			if ($s_manual_ticket) {
-				$this->paginate['conditions'][] = array('Ticket.ticketNotes IS NOT NULL');
+				$this->paginate['conditions'][] = array('Ticket.manualTicketInitials IS NOT NULL');
 			}
 		}
 
