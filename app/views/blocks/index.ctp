@@ -8,12 +8,22 @@
 	}
 	#editorDiv {
 		margin-left: 257px;
+		margin-right: 16px;
 		padding-left: 16px;
 		border: none;
 		border-left-style: solid;
 		border-left-width: 1px;
 		border-left-color: #EEEEEE;
 		min-height: 400px;
+	}
+	.editorPanel {
+		border-color: #cccccc;
+		border-width: 1px;
+		border-style: solid;
+		min-height: 300px;
+		padding: 8px;
+		background: white;
+		box-shadow: 3px 3px 10px #dddddd;
 	}
 	#blocktree {
 		min-height: 400px;
@@ -116,7 +126,11 @@ $this->set('hideSidebar', true);
 </div>
 
 <div id="editorDiv">
-	ASDF
+	<div class="editorPanel">
+		<div style="text-align: center; font-size: 32px; text-shadow: 5px 5px 25px #888;">
+			Select a block to edit from the tree on the left.
+		</div>
+	</div>
 </div>
 
 <div style="clear: both;"></div>
@@ -135,7 +149,7 @@ $this->set('hideSidebar', true);
 	jQuery(function() {
 		var $ = jQuery;
 		$("#blocktree").jstree({
-			"plugins" : ["themes", "html_data", "ui", "contextmenu", "crrm", "hotkeys", "types"],
+			"plugins" : ["themes", "html_data", "ui", /*"contextmenu",*/ "crrm", "hotkeys", "types"],
 			"core" : {
 				"initially_open" : ["phtml_1"]
 			},
@@ -197,10 +211,9 @@ $this->set('hideSidebar', true);
 		}).bind("loaded.jstree", function(event, data) {
 		}).bind("select_node.jstree", function(event, data) {
 			console.log(Math.random(), event, data, data.rslt.obj.attr("id"));
-			var outputText = typeof data.rslt.obj.attr("showme");
-			if ( typeof outputText == 'string' && outputText.length > 0) {
-				$('#editorDiv').html(outputText);
-			}
+			var $output = $('<div class="editorPanel" />');
+			$output.append($('<h2/>').text(data.rslt.obj.text()));
+			$('#editorDiv').html($output);
 		}).delegate("a", "click", function(event, data) {
 			event.preventDefault();
 		});
