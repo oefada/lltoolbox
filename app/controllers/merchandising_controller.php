@@ -79,6 +79,9 @@ class MerchandisingController extends AppController
 		// check form submit
 		if (isset($_POST) && count($_POST) > 0) {
 			if (isset($_POST['welcomeSlide'])) {
+				foreach($_POST as $postKey => $postValue) {
+					$_POST[$postKey] = trim($postValue);
+				}
 
 				// welcome slide
 				unset($_POST['welcomeSlide']);
@@ -156,12 +159,12 @@ class MerchandisingController extends AppController
 						$slide = Array();
 						$clientArr = $this->setLinkUrl($_POST['linkUrl'][$k]);
 						$slide = Array(
-							'imageUrl' => $imageUrl,
-							'linkUrl' => $_POST['linkUrl'][$k],
-							'linkText' => $_POST['linkText'][$k],
-							'imageAlt' => $_POST['imageAlt'][$k],
-							'headline' => $_POST['headline'][$k],
-							'description' => $_POST['description'][$k]
+							'imageUrl'		=> trim($imageUrl),
+							'linkUrl'		=> trim($_POST['linkUrl'][$k]),
+							'linkText'		=> trim($_POST['linkText'][$k]),
+							'imageAlt'		=> trim($_POST['imageAlt'][$k]),
+							'headline'		=> trim($_POST['headline'][$k]),
+							'description'	=> trim($_POST['description'][$k])
 						);
 						$slide['linkUrl']=preg_replace('/^http:\/\/www\.luxurylink\.com\//','/',$slide['linkUrl']);
 						$slide['imageUrl'] = $this->_filterImageUrl($slide['imageUrl']);
