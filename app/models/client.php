@@ -28,6 +28,7 @@ class Client extends AppModel {
 						'ClientAmenityRel' => array('className' => 'ClientAmenityRel', 'foreignKey' => 'clientId'),
 						'ClientDestinationRel' => array('className' => 'ClientDestinationRel', 'foreignKey' => 'clientId'),
                         'ClientSiteExtended' => array('className' => 'ClientSiteExtended', 'foreignKey' => 'clientId', 'conditions' => array('ClientSiteExtended.isCurrentLoaSite' => 1)),
+						'ClientTagRel' => array('className' => 'ClientTagRel', 'foreignKey' => 'clientId'),
 						'ClientThemeRel' => array('className' => 'ClientThemeRel', 'foreignKey' => 'clientId'),
 						'ClientTracking' => array('className' => 'ClientTracking', 'foreignKey' => 'clientId'),
 						'ClientReview' => array('className' => 'ClientReview', 'foreignKey' => 'clientId'),
@@ -165,6 +166,31 @@ class Client extends AppModel {
                 array_push($themeData, $data);
             }
             $this->ClientThemeRel->saveAll($themeData);
+       }
+
+       // TAGS
+       if (!empty($this->data['ClientTagRel'])) {
+
+            // current tags
+            $currentClientTags = array();
+            $clientTagRels = $this->query("SELECT * FROM clientTagRel WHERE clientId = {$client['Client']['clientId']}");
+            foreach ($clientTagRels as $key => $clientTagRel) {
+                $currentClientTags[$clientTagRel['clientTagRel']['clientTagId']] = $clientTagRel['clientTagRel']['clientTagRelId'];
+            }
+
+            // insert tags
+            $clientTagData = array();
+            $tagsToInsert = array_diff_key($this->data['ClientTagRel'], $currentClientTags);
+            foreach ($tagsToInsert as $tagId => $tagToInsert) {
+                $clientTagData[] = array('clientId' => $client['Client']['clientId'], 'clientTagId' => $tagId);
+            }
+            $this->ClientTagRel->saveAll($clientTagData);
+
+            // delete tags
+            $tagsToDelete = array_diff_key($currentClientTags, $this->data['ClientTagRel']);
+            foreach ($tagsToDelete as $clientTagId => $currentClientTagRelId) {
+                $this->ClientTagRel->delete($currentClientTagRelId);
+            }
        }
 
        AppModel::afterSave($created);

@@ -5,7 +5,7 @@ App::import('Vendor', 'nusoap_client/lib/nusoap');
 class ClientsController extends AppController {
 
 	var $name = 'Clients';
-	var $uses = array('Client', 'ClientThemeRel', 'ClientDestinationRel', 'ClientAmenityTypeRel', 'ClientInterview', 'ClientCollection');
+	var $uses = array('Client', 'ClientThemeRel', 'ClientTag', 'ClientTagRel', 'ClientDestinationRel', 'ClientAmenityTypeRel', 'ClientInterview', 'ClientCollection');
 
 	function beforeFilter() {
 		parent::beforeFilter();
@@ -218,7 +218,8 @@ class ClientsController extends AppController {
 						),
 						'ClientDestinationRel',
 					 	'ClientContact',
-						'ClientInterview'
+						'ClientInterview',
+						'ClientTagRel',
 					)
 			));
 
@@ -257,6 +258,27 @@ class ClientsController extends AppController {
 			$ranges = explode(',',$this->data['Client']['ageRanges']);
 			$this->data['Client']['ageRanges'] = $ranges;
 		}
+
+		// TAGS
+		$tagListByGroup = array('1'=>array(), '2'=>array(), '3'=>array(), '4'=>array());
+		$tagList = $this->ClientTag->find('all', array('conditions' => 'ClientTag.inactive = 0', 'order' => array('description')));
+		foreach ($tagList as $tl) {
+			$tagListByGroup[$tl['ClientTag']['clientTagGroupId']][$tl['ClientTag']['clientTagId']] = $tl['ClientTag']['description'];
+		}
+		$tagGroups = array('Client Type' => $tagListByGroup['1'],
+						   'Theme' => $tagListByGroup['2'],
+						   'Style' => $tagListByGroup['3'],
+						   'Atmosphere' => $tagListByGroup['4'],
+		);
+		
+		$selectedTags = array();
+		foreach($this->data['ClientTagRel'] as $tag) {
+			$selectedTags[] = $tag['clientTagId'];
+		}
+		
+		$this->set('tagGroups', $tagGroups);
+		$this->set('selectedTags', $selectedTags);
+		// END TAGS
 
 		foreach ($this->data['ClientDestinationRel'] as $v) {
 			$destSelected[] = $v['destinationId'];

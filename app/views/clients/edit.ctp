@@ -639,6 +639,52 @@ foreach ($this->data['Client']['sites'] as $site) {
 			?>
 			</div><!-- close collapsibleContent -->
 		</fieldset>
+
+		<fieldset class="collapsible">
+			<legend class="handle">Tags</legend>
+			<div class="collapsibleContent">
+
+				<script>
+					jQuery(function() {
+						var $ = jQuery;
+						$("#tags-accordion").accordion({
+							collapsible: true,
+							active: false,
+							autoHeight: false
+						});
+					});
+				</script>
+				<div id="tags-accordion">
+					<?php foreach ($tagGroups as $groupName => $tags): ?>
+
+					<h3><a href="#"><?php echo $groupName; ?></a></h3>
+					<div>
+						<table border="0">
+							<?php $tagCount = 0; ?>
+							<?php foreach($tags as $tagId => $tagName): ?>
+								<?php $tagCount++; ?>
+								<?php $bgcolor = ($tagCount % 2) ? '#eee' : '#fff'; ?>
+								<tr bgcolor="<?php echo $bgcolor; ?>">
+									<td style="width: 300px;"><?= $tagName; ?></td>
+									<?php $checked = (in_array($tagId, $selectedTags)) ? ' checked' : ''; ?>
+									<td style="width: 100px;" align="center">
+										<input
+											type="checkbox"
+											name="data[ClientTagRel][<?php echo $tagId; ?>]"
+											value="<?php echo $tagId; ?>"
+											<?php echo $checked; ?>
+										/>
+									</td>
+									<td>&nbsp;</td>
+								</tr>
+							<?php endforeach; ?>
+						</table>
+					</div>
+					<?php endforeach; ?>
+				</div>
+
+			</div>
+		</fieldset>
 		
 	</fieldset>
 
