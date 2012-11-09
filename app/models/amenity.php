@@ -34,6 +34,8 @@ class Amenity extends AppModel
 				$amenity['Amenity']['parentAmenity'] = '';
 			}
 		}
+		parent::afterFind($data);
+
 		return $data;
 	}
 
