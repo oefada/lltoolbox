@@ -17,105 +17,56 @@ $this->set('clientId', $this->data['Client']['clientId']);
 <div class="loas form">
 <?php echo $form->create('Loa');?>
 	<fieldset>
-	<?php
-		echo $form->input('accountExecutive');
-		echo $form->input('accountManager');
-		echo $form->input('accountTypeId', array('label' => 'Account Type'));
-	?>
-		<div class="controlset4">
-		<?
-		echo $multisite->checkbox('Loa');
+
+		<?php
+			// for editing membershipBalance, totalKept, totalRemitted, totalRevenue
+			// added Dec 22,2009 ALEE
+			$disable_advanced_edit = (in_array($userDetails['username'], array('mchoe','dpen','kferson','mbyrnes','jlagraff','mtrinh')) ||
+				in_array('Production', $userDetails['groups'])) ? false : true;
+
+			if (in_array($userDetails['username'], array('dpen','kferson','mchoe','rfriedman','jlagraff','mtrinh')) ||
+				in_array('Production', $userDetails['groups'])) {
+				$disabled = false;
+			} else {
+				$disabled = true;
+			}
+			// for editing membershipPackagesRemaining
+			$disable_mp = (in_array($userDetails['username'], array('alee','mchoe','rhastings','kferson','acarney','jlagraff','mtrinh')) ||
+				in_array('Production', $userDetails['groups'])) ? false : true;
 		?>
-		</div>
-	<?php
-		// for editing membershipBalance, totalKept, totalRemitted, totalRevenue
-		// added Dec 22,2009 ALEE
-		$disable_advanced_edit = (in_array($userDetails['username'], array('mchoe','dpen','kferson','mbyrnes','jlagraff','mtrinh')) ||
-			in_array('Production', $userDetails['groups'])) ? false : true;
 
-		if (in_array($userDetails['username'], array('dpen','kferson','mchoe','rfriedman','jlagraff','mtrinh')) ||
-			in_array('Production', $userDetails['groups'])) {
-			$disabled = false;
-		} else {
-			$disabled = true;
-		}
-
-		echo $form->input('startDate', array('minYear' => date('Y', strtotime('January 01, 2000')), 'maxYear' => date('Y', strtotime('+5 year')), 'timeFormat' => ''));
-		echo $form->input('endDate',  array('minYear' => date('Y', strtotime('January 01, 2000')), 'maxYear' => date('Y', strtotime('+5 year')), 'timeFormat' => ''));
-		echo $form->input('loaMembershipTypeId', array('label' => 'Membership Type', 'disabled' => $disable_advanced_edit));
-
-		// ESTIMATED
-		$enable_est = !$disable_advanced_edit && ($loa['Loa']['loaMembershipTypeId'] == 3) ? true : false;
-		echo $form->input('membershipFeeEstimated', array('disabled' => $enable_est));
-
-		echo $form->input('luxuryLinkFee');
-		echo $form->input('familiyGetawayFee');
-		echo $form->input('advertisingFee');
-		echo $form->input('notes', array('label'=>'LOA Notes', 'id' => 'loaNotes'));
-		echo $form->input('Loa.currencyId', array('label' => 'Item Currency'));
-
-		echo $form->input('loaLevelId', array('disabled' => $disabled, 'label' => 'LOA Level'));
-		echo $form->input('customerApprovalDate', array('empty' => true, 'label' => 'Package in Date', 'minYear' => date('Y', strtotime('January 01, 2000')), 'maxYear' => date('Y', strtotime('+5 year')), 'timeFormat' => ''));
-		echo $form->input('customerApprovalStatusId', array('label' => 'Client Approval Status'));
-	?>
-
-        <div class="controlset">
-            <span class='label'>&nbsp;</span>
-			<?php
-			echo $form->input('moneyBackGuarantee', array('label' => 'Money Back Guarantee'));
-			echo $form->input('upgraded');
-			echo $form->input('inactive');
-			?>
-        </div>
-
-	<?php
-		echo $form->input('numEmailInclusions');
-		echo $form->input('emailNewsletterDates', array('id' => 'emailNewsletterDates', 'onKeyDown'=>'limitText(emailNewsletterDates, 300)', 'onKeyUp'=>'limitText(emailNewsletterDates, 300)'));
-		echo $form->input('homepageDates', array('id' => 'homepageDates', 'onKeyDown'=>'limitText(homepageDates, 300)', 'onKeyUp'=>'limitText(homepageDates, 300)'));
-		echo $form->input('additionalMarketing', array('id' => 'additionalMarketing', 'onKeyDown'=>'limitText(additionalMarketing, 300)', 'onKeyUp'=>'limitText(additionalMarketing, 300)'));
-		echo $form->input('loaNumberPackages', array('label' => 'Commission-Free Packages'));
-		echo $form->input('commissionStructure', array('id' => 'commissionStructure', 'onKeyDown'=>'limitText(commissionStructure, 300)', 'onKeyUp'=>'limitText(commissionStructure, 300)'));
-		echo $form->input('commissionFreeYield');
-
-		echo $form->input('loaId');
-
-		// for editing membershipPackagesRemaining
-		$disable_mp = (in_array($userDetails['username'], array('alee','mchoe','rhastings','kferson','acarney','jlagraff','mtrinh')) ||
-            in_array('Production', $userDetails['groups'])) ? false : true;
-
-		echo $form->input('clientId', array('type' => 'hidden'));
-	?>
-		<div style="clear:both;"></div>
+        <div style="clear:both;"></div>
         <div class="pub-status" style="width:950px; clear:none; float: left; border: #CCCCCC solid 1px;">
-        <label for="LoaPublishingStatus">Publishing Status</label>
-		<input type="hidden" value="" name="data[Loa][PublishingStatusLL]" />
-		<br />
+            <label for="LoaPublishingStatus">Publishing Status</label>
+            <input type="hidden" value="" name="data[Loa][PublishingStatusLL]" />
+            <br />
             <div class="input select" style="width: 450px; float:left; clear:none;">
-				<label for="LoaPublishingStatusLL" style="padding-left:70px; padding-bottom:10px;">Luxury Link</label>
-				<input type="hidden" name="data[Loa][modifiedBy]" value="<?=$userDetails['username'];?>" />
+                <label for="LoaPublishingStatusLL" style="padding-left:70px; padding-bottom:10px;">Luxury Link</label>
+                <input type="hidden" name="data[Loa][modifiedBy]" value="<?=$userDetails['username'];?>" />
                 <input type="hidden" value="" name="data[Loa][PublishingStatusLL]" />
-                <?php foreach ($publishingStatus as $pStatusId => $pStatus	): ?>
-					<div class="checkbox">
-						<input type="checkbox" id="LoaPublishingStatusLL<?php echo $pStatusId; ?>" value="<?php echo $pStatusId; ?>" name="data[Loa][PublishingStatusLL][]" <?php if (in_array($pStatusId, array_keys($completedStatusLL))) echo "checked"?>/>
-						<label for="LoaPublishingStatusLL<?php echo $pStatusId; ?>"><?php echo $pStatus; ?></label>
-						<?php if (in_array($pStatusId, array_keys($completedStatusLL))) echo '<span>'.date('M d, Y h:i a', strtotime($completedStatusLL[$pStatusId])).'</span>'; ?>
-					</div>
-                <?php endforeach; ?>
+				<?php foreach ($publishingStatus as $pStatusId => $pStatus	): ?>
+                <div class="checkbox">
+                    <input type="checkbox" id="LoaPublishingStatusLL<?php echo $pStatusId; ?>" value="<?php echo $pStatusId; ?>" name="data[Loa][PublishingStatusLL][]" <?php if (in_array($pStatusId, array_keys($completedStatusLL))) echo "checked"?>/>
+                    <label for="LoaPublishingStatusLL<?php echo $pStatusId; ?>"><?php echo $pStatus; ?></label>
+					<?php if (in_array($pStatusId, array_keys($completedStatusLL))) echo '<span>'.date('M d, Y h:i a', strtotime($completedStatusLL[$pStatusId])).'</span>'; ?>
+                </div>
+				<?php endforeach; ?>
             </div>
             <div class="input select" style="width: 450px; float:right; clear:none;">
                 <label for="LoaPublishingStatusFG" style="padding-left:70px; padding-bottom:10px;">Family Getaway</label>
                 <input type="hidden" value="" name="data[Loa][PublishingStatusFG]" />
-				<input type="hidden" name="data[Loa][modifiedBy]" value="<?=$userDetails['username'];?>" />
-                <?php foreach ($publishingStatus as $pStatusId => $pStatus): ?>
-					<div class="checkbox">
-						<input type="checkbox" id="LoaPublishingStatusFG<?php echo $pStatusId; ?>" value="<?php echo $pStatusId; ?>" name="data[Loa][PublishingStatusFG][]" <?php if (in_array($pStatusId, array_keys($completedStatusFG))) echo "checked"; ?> />
-						<label for="LoaPublishingStatusFG<?php echo $pStatusId; ?>"><?php echo $pStatus; ?></label>
-						<?php if (in_array($pStatusId, array_keys($completedStatusFG))) echo '<span>'.date('M d, Y h:i a', strtotime($completedStatusFG[$pStatusId])).'</span>'; ?>
-					</div>
-                <?php endforeach; ?>
+                <input type="hidden" name="data[Loa][modifiedBy]" value="<?=$userDetails['username'];?>" />
+				<?php foreach ($publishingStatus as $pStatusId => $pStatus): ?>
+                <div class="checkbox">
+                    <input type="checkbox" id="LoaPublishingStatusFG<?php echo $pStatusId; ?>" value="<?php echo $pStatusId; ?>" name="data[Loa][PublishingStatusFG][]" <?php if (in_array($pStatusId, array_keys($completedStatusFG))) echo "checked"; ?> />
+                    <label for="LoaPublishingStatusFG<?php echo $pStatusId; ?>"><?php echo $pStatus; ?></label>
+					<?php if (in_array($pStatusId, array_keys($completedStatusFG))) echo '<span>'.date('M d, Y h:i a', strtotime($completedStatusFG[$pStatusId])).'</span>'; ?>
+                </div>
+				<?php endforeach; ?>
             </div>
         </div>
-        <?php
+
+		<?php
 			echo $form->input('totalRevenue', array('disabled' => $disable_advanced_edit, 'label' => 'Total Revenue'));
 
 			echo $form->input('membershipTotalNights');
@@ -144,6 +95,54 @@ $this->set('clientId', $this->data['Client']['clientId']);
 			echo $form->input('renewalResult', array('type' => 'select', 'options' => $renewalResultOptions));
 			echo $form->input('nonRenewalNote', array('type' => 'textarea'));
 			echo $form->input('nonRenewalReason', array('type' => 'select', 'options' => $nonRenewalReasonOptions));
+
+			echo $form->input('accountExecutive');
+			echo $form->input('accountManager');
+			echo $form->input('accountTypeId', array('label' => 'Account Type'));
+		?>
+
+		<div class="controlset4"><?php echo $multisite->checkbox('Loa'); ?></div>
+
+		<?php
+			echo $form->input('startDate', array('minYear' => date('Y', strtotime('January 01, 2000')), 'maxYear' => date('Y', strtotime('+5 year')), 'timeFormat' => ''));
+			echo $form->input('endDate',  array('minYear' => date('Y', strtotime('January 01, 2000')), 'maxYear' => date('Y', strtotime('+5 year')), 'timeFormat' => ''));
+			echo $form->input('loaMembershipTypeId', array('label' => 'Membership Type', 'disabled' => $disable_advanced_edit));
+
+			// ESTIMATED
+			$enable_est = !$disable_advanced_edit && ($loa['Loa']['loaMembershipTypeId'] == 3) ? true : false;
+			echo $form->input('membershipFeeEstimated', array('disabled' => $enable_est));
+
+			echo $form->input('luxuryLinkFee');
+			echo $form->input('familiyGetawayFee');
+			echo $form->input('advertisingFee');
+			echo $form->input('notes', array('label'=>'LOA Notes', 'id' => 'loaNotes'));
+			echo $form->input('Loa.currencyId', array('label' => 'Item Currency'));
+
+			echo $form->input('loaLevelId', array('disabled' => $disabled, 'label' => 'LOA Level'));
+			echo $form->input('customerApprovalDate', array('empty' => true, 'label' => 'Package in Date', 'minYear' => date('Y', strtotime('January 01, 2000')), 'maxYear' => date('Y', strtotime('+5 year')), 'timeFormat' => ''));
+			echo $form->input('customerApprovalStatusId', array('label' => 'Client Approval Status'));
+		?>
+
+        <div class="controlset">
+            <span class='label'>&nbsp;</span>
+			<?php
+			echo $form->input('moneyBackGuarantee', array('label' => 'Money Back Guarantee'));
+			echo $form->input('upgraded');
+			echo $form->input('inactive');
+			?>
+        </div>
+
+		<?php
+			echo $form->input('numEmailInclusions');
+			echo $form->input('emailNewsletterDates', array('id' => 'emailNewsletterDates', 'onKeyDown'=>'limitText(emailNewsletterDates, 300)', 'onKeyUp'=>'limitText(emailNewsletterDates, 300)'));
+			echo $form->input('homepageDates', array('id' => 'homepageDates', 'onKeyDown'=>'limitText(homepageDates, 300)', 'onKeyUp'=>'limitText(homepageDates, 300)'));
+			echo $form->input('additionalMarketing', array('id' => 'additionalMarketing', 'onKeyDown'=>'limitText(additionalMarketing, 300)', 'onKeyUp'=>'limitText(additionalMarketing, 300)'));
+			echo $form->input('loaNumberPackages', array('label' => 'Commission-Free Packages'));
+			echo $form->input('commissionStructure', array('id' => 'commissionStructure', 'onKeyDown'=>'limitText(commissionStructure, 300)', 'onKeyUp'=>'limitText(commissionStructure, 300)'));
+			echo $form->input('commissionFreeYield');
+
+			echo $form->input('loaId');
+			echo $form->input('clientId', array('type' => 'hidden'));
 
 			echo '<div><label>Created</label><span>'.$loa['Loa']['created'].'</span></div>';
 			echo '<div><label>Modified</label><span>'.$loa['Loa']['modified'].'</span></div>';
