@@ -487,8 +487,8 @@ class TicketsController extends AppController {
 		
 		if (!empty($this->data) && !empty($this->data['Ticket']['ticketId'])) {
 
-			$arrivalDate = implode('/', $this->data['Ticket']['requestArrival']);
-			$departureDate = implode('/', $this->data['Ticket']['requestDeparture']);
+			$arrivalDate = $this->dateArrayToString($this->data['Ticket']['requestArrival']);
+			$departureDate = $this->dateArrayToString($this->data['Ticket']['requestDeparture']);
 			$calculatedNights = (strtotime($departureDate) - strtotime($arrivalDate)) / 86400;
 			$error = false;
 						
@@ -500,11 +500,11 @@ class TicketsController extends AppController {
 				$error = true;
 				$this->Session->setFlash(__('Arrival to Departure is not ' . $this->data['Ticket']['numNights'] . ' nights.', true), 'default', array(), 'error');
 			}
-			if (!Validation::date($departureDate, 'mdy')) {
+			if (!$departureDate) {
 				$error = true;
 				$this->Session->setFlash(__('Request Departure must be a valid date', true), 'default', array(), 'error');
 			}
-			if (!Validation::date($arrivalDate, 'mdy')) {
+			if (!$arrivalDate) {
 				$error = true;
 				$this->Session->setFlash(__('Request Arrival must be a valid date', true), 'default', array(), 'error');
 			}
@@ -517,6 +517,13 @@ class TicketsController extends AppController {
 					$q = "UPDATE ticket SET ticketNotes = CONCAT(?, IFNULL(ticketNotes, '')) WHERE ticketId = ?";
 					$this->Ticket->query($q, array($note, $this->data['Ticket']['ticketId']));
 
+					// requested reservation dates
+					$q = "DELETE FROM reservationPreferDate WHERE ticketId = ?";
+					$this->Ticket->query($q, array($this->data['Ticket']['ticketId']));
+					
+					$q = "INSERT INTO reservationPreferDate (reservationPreferDateTypeId, ticketId, arrivalDate, departureDate, created) VALUES (1, ?, ?, ?, NOW())";
+					$this->Ticket->query($q, array($this->data['Ticket']['ticketId'], $arrivalDate, $departureDate));
+
 					$this->Session->setFlash(__('The ticket has been updated.', true), 'default', array(), 'success');
 					$this->redirect(array('action'=>'view', 'id' => $this->data['Ticket']['ticketId']));
 				} else {
@@ -527,6 +534,15 @@ class TicketsController extends AppController {
 		if (empty($this->data)) {
 			$this->data = $this->Ticket->read(null, $id);
 			$this->data['extraNotes'] = '';
+		}
+	}
+
+	private function dateArrayToString($dt) {
+		$rtn = $dt['year'] . '-' . $dt['month'] . '-' . $dt['day'];
+		if (Validation::date($rtn, 'ymd')) {
+			return $rtn;
+		} else {
+			return false;
 		}
 	}
 
@@ -612,6 +628,106 @@ class TicketsController extends AppController {
 		}
 		$this->data['Ticket']['manualTicketInitials'] = $manualTicketInitials;
 	}
+
+
+
+
+
+
+
+
+
+	function add2012() {
+
+		if (!$this->hasAddAccess()) {
+			$this->Session->setFlash(__('You do not have permission to add manual tickets.', true), 'default', array(), 'error');
+			$this->redirect(array('action'=>'index'));
+		}
+
+
+		if (!empty($this->data)) {
+			
+			$errors = array();
+			
+			
+			if (sizeof($errors) > 0) {
+			
+			} else {
+			
+			
+/*			
+			//if (!$this->data['Ticket']['offerId'] || !is_numeric($this->data['Ticket']['offerId'])) {
+			//	$this->Session->setFlash(__('The ticket was not created.  The offerId cannot be blank and must be a number.', true), 'default', array(), 'error');
+			//} elseif (!$this->data['Ticket']['userId'] || !is_numeric($this->data['Ticket']['userId'])) {
+			//	$this->Session->setFlash(__('The ticket was not created.  The userId cannot be blank and must be a number.', true), 'default', array(), 'error');
+			//} elseif (!$this->data['Ticket']['billingPrice'] || !is_numeric($this->data['Ticket']['billingPrice'])) {
+			//	$this->Session->setFlash(__('The ticket was not created.  The billingPrice cannot be blank and must be a number.', true), 'default', array(), 'error');
+			//} elseif (!$this->data['Ticket']['siteId'] || !is_numeric($this->data['Ticket']['siteId'])) {
+			//	$this->Session->setFlash(__('The ticket was not created.  You must select a site!', true), 'default', array(), 'error');
+			//} elseif (intval($this->data['Ticket']['billingPrice']) > 30000) {
+			//	$this->Session->setFlash(__('The ticket was not created.  Maximum Billing Price is 30,000', true), 'default', array(), 'error');
+			//} else {
+				$this->User->recursive = 1;
+				$userData = $this->User->read(null, $this->data['Ticket']['userId']);
+
+				if (empty($userData)) {
+					$this->Session->setFlash(__('The ticket was not created.  Invalid User Id.', true), 'default', array(), 'error');
+				} elseif (empty($offerData)) {
+					$this->Session->setFlash(__('The ticket was not created.  Invalid Offer Id.', true), 'default', array(), 'error');
+				} else {
+					$manual_datetime = date('Y-m-d H:i:s');
+					$this->data['Ticket']['ticketStatusId'] 	= 1;
+					$this->data['Ticket']['packageId'] 			= $offerData['packageId'];
+					$this->data['Ticket']['formatId']			= in_array($offerData['offerTypeId'], array(1,2,6)) ? 1 : 2;
+					$this->data['Ticket']['offerTypeId']		= $offerData['offerTypeId'];
+					$this->data['Ticket']['userFirstName']		= $userData['User']['firstName'];
+					$this->data['Ticket']['userLastName']		= $userData['User']['lastName'];
+					$this->data['Ticket']['userEmail1']			= $userData['User']['email'];
+					$this->data['Ticket']['userWorkPhone']		= $userData['User']['workPhone'];
+					$this->data['Ticket']['userHomePhone']		= $userData['User']['homePhone'];
+					$this->data['Ticket']['userMobilePhone']	= $userData['User']['mobilePhone'];
+					$this->data['Ticket']['userFax']			= $userData['User']['fax'];
+					$this->data['Ticket']['userAddress1']		= $userData['Address'][0]['address1'];
+					$this->data['Ticket']['userAddress2']		= $userData['Address'][0]['address2'];
+					$this->data['Ticket']['userCity']			= $userData['Address'][0]['address3'];
+					$this->data['Ticket']['userState']			= $userData['Address'][0]['stateName'];
+					$this->data['Ticket']['userCountry']		= $userData['Address'][0]['countryText'];
+					$this->data['Ticket']['userZip']			= $userData['Address'][0]['postalCode'];
+					$this->data['Ticket']['transmitted']			= 1;
+					$this->data['Ticket']['transmittedDatetime'] 	= $manual_datetime;
+					$this->data['Ticket']['inProcess']				= 0;
+					$this->data['Ticket']['inProcessDatetime'] 		= $manual_datetime;
+					$this->data['Ticket']['ticketNotes']		= 'MANUALLY CREATED TICKET' . trim($this->data['Ticket']['ticketNotes']);
+					$this->data['Ticket']['numNights']		    = intval($this->data['Ticket']['numNights']);
+
+					$this->Ticket->create();
+					if ($this->Ticket->save($this->data)) {
+						$this->Session->setFlash(__('This manual ticket has been created successfully', true));
+						$this->redirect(array('action'=>'view', 'id' => $this->Ticket->getLastInsertId()));
+					} else {
+						$this->Session->setFlash(__('The Ticket could not be saved. Please, try again.', true));
+					}
+				}
+*/
+				
+			}
+			
+
+			
+		}
+
+		$currentUser = $this->LdapAuth->user();
+		$this->data['Ticket']['manualTicketInitials'] = $currentUser['LdapUser']['samaccountname'];
+	}
+
+
+
+
+
+
+
+
+
 
 	function search()
 	{
@@ -768,6 +884,17 @@ class TicketsController extends AppController {
 	}
 
 	private function hasEditorAccess() {
+		$currentUser = $this->LdapAuth->user();
+		$editGroups = array('Accounting', 'Geeks', 'Concierge');
+		foreach ($editGroups as $eg) {
+			if (in_array($eg, $currentUser['LdapUser']['groups'])) { 
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private function hasAddAccess() {
 		$currentUser = $this->LdapAuth->user();
 		$editGroups = array('Accounting', 'Geeks', 'Concierge');
 		foreach ($editGroups as $eg) {
