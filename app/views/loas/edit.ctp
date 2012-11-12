@@ -66,7 +66,20 @@ $this->set('clientId', $this->data['Client']['clientId']);
             </div>
         </div>
 
+		<?php echo $form->input('accountTypeId', array('label' => 'Account Type')); ?>
+
+		<div class="controlset4"><?php echo $multisite->checkbox('Loa'); ?></div>
+
 		<?php
+			echo $form->input('startDate', array('minYear' => date('Y', strtotime('January 01, 2000')), 'maxYear' => date('Y', strtotime('+5 year')), 'timeFormat' => ''));
+			echo $form->input('endDate',  array('minYear' => date('Y', strtotime('January 01, 2000')), 'maxYear' => date('Y', strtotime('+5 year')), 'timeFormat' => ''));
+			echo $form->input('loaMembershipTypeId', array('label' => 'Membership Type', 'disabled' => $disable_advanced_edit));
+			echo $form->input('membershipFee', array('disabled' => $disabled));
+			echo $form->input('membershipBalance', array('disabled' => $disable_advanced_edit));
+			// ESTIMATED
+			$enable_est = !$disable_advanced_edit && ($loa['Loa']['loaMembershipTypeId'] == 3) ? true : false;
+			echo $form->input('membershipFeeEstimated', array('disabled' => $enable_est));
+
 			echo $form->input('totalRevenue', array('disabled' => $disable_advanced_edit, 'label' => 'Total Revenue'));
 
 			echo $form->input('membershipTotalNights');
@@ -79,8 +92,6 @@ $this->set('clientId', $this->data['Client']['clientId']);
 			$enable_rvc = !$disable_advanced_edit && ($loa['Loa']['loaMembershipTypeId'] == 5) ? true : false;
 			echo $form->input('retailValueBalance', array('disabled' => $enable_rvc));
 			echo $form->input('retailValueFee', array('disabled' => $enable_rvc));
-			echo $form->input('membershipFee', array('disabled' => $disabled));
-			echo $form->input('membershipBalance', array('disabled' => $disable_advanced_edit));
 			echo $form->input('totalRemitted', array('disabled' => $disable_advanced_edit));
 
 			if (in_array($userDetails['username'],array('kferson', 'jlagraff','mtrinh'))) {
@@ -98,20 +109,11 @@ $this->set('clientId', $this->data['Client']['clientId']);
 
 			echo $form->input('accountExecutive');
 			echo $form->input('accountManager');
-			echo $form->input('accountTypeId', array('label' => 'Account Type'));
 		?>
 
-		<div class="controlset4"><?php echo $multisite->checkbox('Loa'); ?></div>
+
 
 		<?php
-			echo $form->input('startDate', array('minYear' => date('Y', strtotime('January 01, 2000')), 'maxYear' => date('Y', strtotime('+5 year')), 'timeFormat' => ''));
-			echo $form->input('endDate',  array('minYear' => date('Y', strtotime('January 01, 2000')), 'maxYear' => date('Y', strtotime('+5 year')), 'timeFormat' => ''));
-			echo $form->input('loaMembershipTypeId', array('label' => 'Membership Type', 'disabled' => $disable_advanced_edit));
-
-			// ESTIMATED
-			$enable_est = !$disable_advanced_edit && ($loa['Loa']['loaMembershipTypeId'] == 3) ? true : false;
-			echo $form->input('membershipFeeEstimated', array('disabled' => $enable_est));
-
 			echo $form->input('luxuryLinkFee');
 			echo $form->input('familiyGetawayFee');
 			echo $form->input('advertisingFee');
