@@ -53,7 +53,7 @@
 		name="0.1_logo" 
 		target="_blank" 
 		xt="SPCLICK" 
-		href=<?=$mailing->genUrl('logo');?>
+		href="<?=$mailing->genUrl('logo');?>"
 	><img 
 		src="http://ui.llsrv.us/images/insider/new/header3_06.jpg" 
 		align="center" 
@@ -250,6 +250,7 @@
 	that seriously! So each week we comb our site for deals that will interest you most. The Insider offers 
 	you an outstanding collection of properties in spectacular destinations&#45;at a great value. 
 	<a 
+		name="monthly_deals"   
 		style="text-decoration:none;color:#3ca9d5" 
 		href="<?=$mailing->genUrl(
 			'Monthly_deals',
@@ -291,6 +292,7 @@
 		bgcolor="#ffffff" 
 		style="font-family:Arial,Verdana, sans-serif;font-size:12px;line-height:24px;color:#3ca9d5; font-weight: bold; text-align: left;"
 	><a 
+		name="new_offers"  
 		style="text-decoration:none;color:#3ca9d5" 
 		xt="SPCLICK" 
 		href="<?=$mailing->genUrl('new-offers','/fivestar/new-hotels/', 'New%20Additions');?>"
@@ -307,6 +309,7 @@
 		bgcolor="#ffffff" 
 		style="font-family:Arial,Verdana, sans-serif;font-size:12px;line-height:24px;color:#3ca9d5; font-weight: bold; text-align: left;">
 		<a 
+			name="top_deals"  
 			style="text-decoration:none;color:#3ca9d5" 
 			xt="SPCLICK" 
 			href="<?=$mailing->genUrl('top-deals','/last-minute-travel-deals/biggest-discount-offer','Top%20Deals');?>"
@@ -325,6 +328,7 @@
 	><a 
 		style="text-decoration:none;color:#3ca9d5" 
 		xt="SPCLICK" 
+		name="giveaway"  
 		href="<?=$mailing->genUrl('open-sky','/mini/jamaica','b');?>"
 		target="_blank"
 	>Giveaway</a>
@@ -353,6 +357,7 @@
 		bgcolor="#ffffff" 
 		style="font-family:Arial,Verdana, sans-serif;font-size:12px;line-height:24px;color:#3ca9d5; font-weight: bold; text-align: left;">
 		<a 
+			name="mystery_auction"  
 			style="text-decoration:none;color:#3ca9d5" 
 			xt="SPCLICK" 
 			href="<?=$mailing->genUrl('mystery','/last-minute-travel-deals/mystery-offer');?>"
@@ -369,6 +374,7 @@
 		bgcolor="#ffffff" 
 		style="font-family:Arial,Verdana, sans-serif;font-size:12px;line-height:24px;color:#3ca9d5; font-weight: bold; text-align: left;"
 	><a 
+		name="monthly_deals2"  
 		style="text-decoration:none;color:#3ca9d5" 
 		target="_blank"  
 		xt="SPCLICK" 
@@ -388,6 +394,7 @@
 		bgcolor="#ffffff" 
 		style="font-family:Arial,Verdana, sans-serif;font-size:12px;line-height:24px;color:#3ca9d5; font-weight: bold; text-align: left;"
 	><a 
+		name="bestsellers"  
 			style="text-decoration:none;color:#3ca9d5" 
 			xt="SPCLICK" 
 			href="<?=$mailing->genUrl('BestSellers','/last-minute-travel-deals/best-selling-offers');?>"
@@ -623,6 +630,7 @@ YOUR AD HERE
 		<td align="left" width="780" height="30" bgcolor="#ffffff" 
 			style="font-family: Georgia, Garamond, Times New Roman, serif; text-align: left; font-size: 24px; line-height: 26px; color: #444444;"
 		><a 
+			name="topdeals_lowestprices"   
 			xt="SPCLICK" 
 			style="color:#444444; text-decoration: none;" 
 			target="_blank" 
@@ -928,6 +936,7 @@ YOUR AD HERE
 		valign="middle" 
 		style="font-family:Arial,Verdana, sans-serif;font-size:12px;line-height: 25px; color:#3ca9d5; font-weight: bold; text-align: right;padding-bottom: 5px;"
 	><a 
+		name="topdeals_traveldeals_lowestprices"  
 		target="_blank" 
 		xt="SPCLICK" 
 		href="<?=$mailing->genUrl('top-deals','/travel-deals/lowest-prices');?>"
@@ -995,6 +1004,7 @@ YOUR AD HERE
 			bgcolor="#ffffff" 
 			style="font-family: Georgia, Garamond, Times New Roman, serif; text-align: left; font-size: 24px; line-height: 26px; color: #444444;"
 		><a 
+			name="editors_choice"  
 			xt="SPCLICK" 
 			style="color:#444444; text-decoration: none;" 
 			target="_blank" 
@@ -1301,6 +1311,7 @@ YOUR AD HERE
 		valign="middle" 
 		style="font-family:Arial,Verdana, sans-serif;font-size:12px;line-height: 25px; color:#3ca9d5; font-weight: bold; text-align: right;padding-bottom: 5px;"
 	><a 
+		name="editorspicks"   
 		target="_blank" 
 		xt="SPCLICK" 
 		href="<?=$mailing->genUrl('editors-choice','/fivestar/hotel-deals/Editor_Choice', 'Editors%20Picks');?>"
@@ -1341,6 +1352,7 @@ YOUR AD HERE
 	<td align="center" >
 ADD OFFERID TO URL FOR IMAGE
 <a 
+	name="luxuryhotels_mysteryhotel"  
 		href="<?=$mailing->genUrl(
 			'content', 
 			'/luxury-hotels/mystery-hotel', 
@@ -1367,7 +1379,8 @@ ADD OFFERID TO URL FOR IMAGE
 			height="55" 
 			style="padding: 0px 0px 0px 20px; font-family: Georgia, Georgia, serif; color: #161719; font-size: 22px; text-align: left; line-height: 25px; background-color: #ffffff; border-bottom: 1px solid #e3e3e3"
 		><a 
-			xt="SPCLICK" 
+			xt="SPCLICK"  
+			name="monthly_deals_ofthe_month"  
 			style="color:#444444; text-decoration: none;" 
 			valign="top" 
 			target="_blank" 
@@ -1390,6 +1403,7 @@ ADD OFFERID TO URL FOR IMAGE
 			href="ADD URL" 
 			target="_blank" 
 			xt="SPCLICKSTREAM"
+			name="deal"  
 		><strong>ADD PROPERTY NAME</strong></a>
 		<br/>
 		<span style="font-size: 12px; line-height: 1.5; color: #6e7c86"><strong>ADD LOCATION</strong></span>
@@ -1414,6 +1428,7 @@ ADD OFFERID TO URL FOR IMAGE
 	href="ADD URL" 
 	target="_blank" 
 	xt="SPCLICKSTREAM"
+	name="bottom_prop_1"  
 ><strong>ADD PROPERTY</strong></a>
 <br/>
 <span style="font-size: 12px; line-height: 1.5; color: #6e7c86">
@@ -1422,6 +1437,7 @@ ADD OFFERID TO URL FOR IMAGE
 <br/>
 <span style="font-size: 11px; line-height: 1.5; color: #6e7c86">ADD DETAILS 
 <a 
+	name="bottom_prop_2"  
 	style="text-decoration: underline; color: #3ca9d5" 
 	href="ADD URL" 
 	target="_blank" 
@@ -1436,6 +1452,7 @@ ADD OFFERID TO URL FOR IMAGE
 	height="77" 
 	style="font-size:13px; font-family: Arial, helvetica, Sans-Serif;color:#3ca9d5;line-height:1.5; text-align: left; background-color: #ffffff; padding:0px 0px 0px 20px; border-bottom: 1px solid #e3e3e3"
 ><a 
+	name="bottom_prop_3"  
 	style="text-decoration: none; color: #3ca9d5" 
 	href="ADD URL" 
 	target="_blank" 
@@ -1447,6 +1464,7 @@ ADD OFFERID TO URL FOR IMAGE
 <br/>
 <span 
 	style="font-size: 11px; line-height: 1.5; color: #6e7c86">ADD DETAILS &nbsp;<a 
+	name="bottom_prop_4"  
 	style="text-decoration: underline; color: #3ca9d5" 
 	href="ADD URL" 
 	target="_blank" 
@@ -1507,7 +1525,9 @@ but only for the moment.
 <tr>
 <td align='center'>
 ADD OFFERID TO click for details
-<a  
+<a
+
+	name="bottom_mysteryhotel"  
 	target="_blank" 
 	xt="SPCLICKSTREAM"
 	href="<?=$mailing->genUrl(
@@ -1581,7 +1601,7 @@ ADD OFFERID TO click for details
 <td colspan="5" width="580" style="text-align: left; line-height: 15px; font-family: arial, helvetica, sans-serif; color: rgb(144,144,144); font-size: 11px; padding: 5px 0px 15px 10px">Luxury Link <br />
 
 5570 Lincoln Blvd. Los Angeles, CA 90094 <br />
-&copy; 2012 Luxury Link. All Rights Reserved.<br /><br />For information or assistance, call 1 (888) 297-3299 or email <a style="color: rgb(144,144,144); text-decoration: underline;" href="http://cloudflare.com/email-protection.html#6c0f03020f05091e0b092c001914191e1500050207420f0301">concierge&#64;luxurylink&#46;com.</a><br />Please do not reply to this email, you may unsubscribe <a href="#SPCUSTOMOPTOUT" name="Unsubscribe" style="color: rgb(144,144,144); text-decoration: underline;" xt="SPCUSTOMOPTOUT" target="_blank">here</a>.  <a href="http://www.luxurylink.com/about/index.php/privacy-policy/" xt="SPCLICKSTREAM" name="www_luxurylink_com_images_1" style="color: rgb(144,144,144); text-decoration: underline;" target="_blank">Privacy Policy</a> <br/>To ensure delivery to your inbox, please add <a style="color: rgb(144,144,144); text-decoration: none;" href="http://cloudflare.com/email-protection.html#5b3235282b32293a2f3234351b372e232e29223732353075383436"><span id="__cf_email__" class="bdd4d3cecdd4cfdcc9d4d2d3fdd1c8c5c8cfc4d1d4d3d693ded2d0">[email&nbsp;protected]</span></a> to your address book.</td>
+&copy; 2012 Luxury Link. All Rights Reserved.<br /><br />For information or assistance, call 1 (888) 297-3299 or email <a style="color: rgb(144,144,144); text-decoration: underline;" href="http://cloudflare.com/email-protection.html#6c0f03020f05091e0b092c001914191e1500050207420f0301">concierge&#64;luxurylink&#46;com.</a><br />Please do not reply to this email, you may unsubscribe <a href="#SPCUSTOMOPTOUT" name="Unsubscribe" style="color: rgb(144,144,144); text-decoration: underline;" xt="SPCUSTOMOPTOUT" target="_blank">here</a>.  <a href="http://www.luxurylink.com/about/index.php/privacy-policy/" xt="SPCLICKSTREAM" name="www_luxurylink_com_images_1" style="color: rgb(144,144,144); text-decoration: underline;" target="_blank">Privacy Policy</a> <br/>To ensure delivery to your inbox, please add <a name="ensure_delivery" style="color: rgb(144,144,144); text-decoration: none;" href="http://cloudflare.com/email-protection.html#5b3235282b32293a2f3234351b372e232e29223732353075383436"><span id="__cf_email__" class="bdd4d3cecdd4cfdcc9d4d2d3fdd1c8c5c8cfc4d1d4d3d693ded2d0">[email&nbsp;protected]</span></a> to your address book.</td>
 <td  colspan="5" width="200" style="text-align: right; padding: 0px 0px 15px 0px"><a href="http://www.luxurylink.com/refer-friend/?utm_medium=news&utm_source=insider&utm_campaign=insider_120430a&utm_content=refer-friend" target="_blank" name="RAF" xt="SPCLICK"><img border="0" src="http://ui.llsrv.us/images/insider/new/raf_e9_144x103.jpg" width="144" height="103" alt=""/></a></td>
 </tr>
 </table>
@@ -1593,4 +1613,3 @@ ADD OFFERID TO click for details
 
 </body>
 </html>
-
