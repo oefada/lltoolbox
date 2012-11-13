@@ -1210,7 +1210,7 @@ class WebServiceTicketsController extends WebServicesController
 				$sitePhone  = '(877) 372-5877';
 				$sitePhoneLocal = '(310) 956-3703';
 				$siteFax = '(800) 440-3820';
-				$headerLogo = 'http://www.luxurylink.com/images/family/logo_emails.gif';
+				$headerLogo = 'http://www.luxurylink.com/images/family/fglogo_minimal.gif';
 				$append = "FG";
 				$prefixUrl = Configure::read("UrlS.FG");
 
