@@ -111,49 +111,49 @@
 		style="font-family:Arial,Verdana, sans-serif;font-size:12px;line-height:15px;color:#666666; text-transform: uppercase; font-weight: bold; text-align: left;"
 	>
 	<a 
-		name="0.1_www_luxurylink_com_fivestar_ut" 
+		name="fivestar_1" 
 		style="color:#666666;text-decoration:none" 
 		target="_blank" 
 		xt="SPCLICK" 
 		href="<?=$mailing->genUrl('destinations','/fivestar/all-deals/');?>"
 	>&nbsp;&nbsp;&nbsp;&nbsp;Destinations</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
 	<a 
-		name="0.1_www_luxurylink_com_fivestar_ut" 
+		name="fivestar_2" 
 		style="color:#666666;text-decoration:none" 
 		target="_blank" 
 		xt="SPCLICK" 
 		href="<?=$mailing->genUrl('all-inclusive','/fivestar/all-inclusive-resorts/deals');?>"
 	>All-Inclusive</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
 	<a 
-		name="0.1_www_luxurylink_com_fivestar_ut" 
+		name="fivestar_3" 
 		style="color:#666666;text-decoration:none" 
 		target="_blank" 
 		xt="SPCLICK" 
 		href="<?=$mailing->genUrl('florida','/fivestar/hotel-deals/florida');?>"
 	>Florida</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
 	<a
-		name="0.1_www_luxurylink_com_fivestar_ut" 
+		name="fivestar_4" 
 		style="color:#666666;text-decoration:none" 
 		target="_blank" 
 		xt="SPCLICK" 
 		href="<?=$mailing->genUrl('europe','/fivestar/hotel-deals/europe');?>"
 	>Europe</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
 	<a 
-		name="0.1_www_luxurylink_com_fivestar_ut" 
+		name="fivestar_5" 
 		style="color:#666666;text-decoration:none" 
 		target="_blank" 
 		xt="SPCLICK" 
 		href="<?=$mailing->genUrl('new+york','/fivestar/hotel-deals/New-York');?>"
 	>New York</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
 	<a 
-		name="0.1_www_luxurylink_com_fivestar_ut" 
+		name="fivestar_6" 
 		style="color:#666666;text-decoration:none" 
 		target="_blank" 
 		xt="SPCLICK" 
 		href="<?=$mailing->genUrl('caribbean','/fivestar/hotel-deals/caribbean-and-bermuda');?>"
 	>Caribbean</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
 	<a 
-		name="0.1_www_luxurylink_com_fivestar_ut" 
+		name="fivestar_7" 
 		style="color:#666666;text-decoration:none" 
 		target="_blank" 
 		xt="SPCLICK" 
