@@ -24,17 +24,17 @@ class Client extends AppModel {
 						'Audit' => array('foreignKey' => 'foreignId', 'conditions' => array('Audit.class' => 'Client'), 'limit' => 5, 'order' => 'Audit.created DESC'),
 						'ChildClient' => array('className' => 'Client', 'foreignKey' => 'parentClientId'),
 						'ClientContact' => array('className' => 'ClientContact', 'foreignKey' => 'clientId'),
-                        'ClientAmenityTypeRel' => array('className' => 'ClientAmenityTypeRel', 'foreignKey' => 'clientId'),
+						'ClientAmenityTypeRel' => array('className' => 'ClientAmenityTypeRel', 'foreignKey' => 'clientId'),
 						'ClientAmenityRel' => array('className' => 'ClientAmenityRel', 'foreignKey' => 'clientId'),
 						'ClientDestinationRel' => array('className' => 'ClientDestinationRel', 'foreignKey' => 'clientId'),
-                        'ClientSiteExtended' => array('className' => 'ClientSiteExtended', 'foreignKey' => 'clientId', 'conditions' => array('ClientSiteExtended.isCurrentLoaSite' => 1)),
+						'ClientSiteExtended' => array('className' => 'ClientSiteExtended', 'foreignKey' => 'clientId', 'conditions' => array('ClientSiteExtended.isCurrentLoaSite' => 1)),
 						'ClientTagRel' => array('className' => 'ClientTagRel', 'foreignKey' => 'clientId'),
 						'ClientThemeRel' => array('className' => 'ClientThemeRel', 'foreignKey' => 'clientId'),
 						'ClientTracking' => array('className' => 'ClientTracking', 'foreignKey' => 'clientId'),
 						'ClientReview' => array('className' => 'ClientReview', 'foreignKey' => 'clientId'),
 						'ImageClient' => array('className' => 'ImageClient', 'foreignKey' => 'clientId'),
-                        'RoomGrade' => array('className' => 'RoomGrade', 'foreignKey' => 'clientId'),
-                        'ClientInterview' => array('className' => 'ClientInterview', 'foreignKey' => 'clientId')
+						'RoomGrade' => array('className' => 'RoomGrade', 'foreignKey' => 'clientId'),
+						'ClientInterview' => array('className' => 'ClientInterview', 'foreignKey' => 'clientId')
 					   );
 
    var $hasAndBelongsToMany = array('Destination' => array('className' => 'Destination',
@@ -51,8 +51,8 @@ class Client extends AppModel {
 
    var $multisite = true;
    var $containModels = array('ClientAmenityRel',
-                              'ClientDestinationRel',
-                              'ClientTracking');
+							  'ClientDestinationRel',
+							  'ClientTracking');
 
    var $loaId;
    var $cacheQueries = false;
@@ -67,144 +67,144 @@ class Client extends AppModel {
 	return true;
    }
 
-    function afterSave($created) {
-        // run some custom afterSaves for client.
-        $client = $this->data;
+	function afterSave($created) {
+		// run some custom afterSaves for client.
+		$client = $this->data;
 
-        if (is_array($client['Client']['sites'])) {
-            $clientSites = $client['Client']['sites'];
-        }
-        else {
-            $clientSites = explode(',', $client['Client']['sites']);
-        }
+		if (is_array($client['Client']['sites'])) {
+			$clientSites = $client['Client']['sites'];
+		}
+		else {
+			$clientSites = explode(',', $client['Client']['sites']);
+		}
 
-        //delete HABTM records from front end databases
-        if (!empty($this->hasAndBelongsToMany)) {
-            foreach($this->hasAndBelongsToMany as $model => $habtm) {
-                //what is Tag for?
-                if ($model == 'Destination') {
-                    $modelName = 'Client'.$model.'Rel';
-                    foreach($clientSites as $site) {
-                        $this->$modelName->useDbConfig = $site;
-                        $this->$modelName->deleteAll(array('clientId' => $client['Client']['clientId']), $callbacks=false);
-                        $this->$modelName->useDbConfig = 'default';
-                    }
-                }
-            }
-        }
+		//delete HABTM records from front end databases
+		if (!empty($this->hasAndBelongsToMany)) {
+			foreach($this->hasAndBelongsToMany as $model => $habtm) {
+				//what is Tag for?
+				if ($model == 'Destination') {
+					$modelName = 'Client'.$model.'Rel';
+					foreach($clientSites as $site) {
+						$this->$modelName->useDbConfig = $site;
+						$this->$modelName->deleteAll(array('clientId' => $client['Client']['clientId']), $callbacks=false);
+						$this->$modelName->useDbConfig = 'default';
+					}
+				}
+			}
+		}
 
-        // AMENITIES
-        if (!empty($this->data['ClientAmenityRel'])) {
-            $amenityKeys = array_keys($this->data['ClientAmenityRel']);
-            // if this is a client aftersave from set_sites(), the amenities array will be different
-            // from what it is when we submit the edit form.
-            // we need to transform it to what the rest of the script expects,
-            // so that we can save the data properly and push it out to the front end.
-            if (is_array($this->data['ClientAmenityRel'][$amenityKeys[0]])) {
-                $postAmenities = array();
-                foreach ($this->data['ClientAmenityRel'] as $amenity) {
-                    $postAmenities[$amenity['amenityId']] = $amenity['amenityId'];
-                }
-            }
-            else {
-                $postAmenities = $this->data['ClientAmenityRel'];
-            }
+		// AMENITIES
+		if (!empty($this->data['ClientAmenityRel'])) {
+			$amenityKeys = array_keys($this->data['ClientAmenityRel']);
+			// if this is a client aftersave from set_sites(), the amenities array will be different
+			// from what it is when we submit the edit form.
+			// we need to transform it to what the rest of the script expects,
+			// so that we can save the data properly and push it out to the front end.
+			if (is_array($this->data['ClientAmenityRel'][$amenityKeys[0]])) {
+				$postAmenities = array();
+				foreach ($this->data['ClientAmenityRel'] as $amenity) {
+					$postAmenities[$amenity['amenityId']] = $amenity['amenityId'];
+				}
+			}
+			else {
+				$postAmenities = $this->data['ClientAmenityRel'];
+			}
 
-            // select current amenities
-            $currentClientAmenities = array();
-            $clientAmenityRels = $this->query("SELECT * FROM clientAmenityRel WHERE clientId = {$client['Client']['clientId']}");
-            foreach ($clientAmenityRels as $key => $clientAmenityRel) {
-                $currentClientAmenities[$clientAmenityRel['clientAmenityRel']['amenityId']] = $clientAmenityRel['clientAmenityRel']['clientAmenityRelId'];
-            }
+			// select current amenities
+			$currentClientAmenities = array();
+			$clientAmenityRels = $this->query("SELECT * FROM clientAmenityRel WHERE clientId = {$client['Client']['clientId']}");
+			foreach ($clientAmenityRels as $key => $clientAmenityRel) {
+				$currentClientAmenities[$clientAmenityRel['clientAmenityRel']['amenityId']] = $clientAmenityRel['clientAmenityRel']['clientAmenityRelId'];
+			}
 
-            // insert amenities
-            $amenitiesData = array();
-            $amenitiesToInsert = array_diff_key($postAmenities, $currentClientAmenities);
-            foreach ($amenitiesToInsert as $amenityId => $amenityToInsert) {
-                $amenitiesData[] = array('clientId' => $client['Client']['clientId'], 'amenityId' => $amenityId);
-            }
-            $this->ClientAmenityRel->saveAll($amenitiesData);
+			// insert amenities
+			$amenitiesData = array();
+			$amenitiesToInsert = array_diff_key($postAmenities, $currentClientAmenities);
+			foreach ($amenitiesToInsert as $amenityId => $amenityToInsert) {
+				$amenitiesData[] = array('clientId' => $client['Client']['clientId'], 'amenityId' => $amenityId);
+			}
+			$this->ClientAmenityRel->saveAll($amenitiesData);
 
-            // delete amenities
-            $amenitiesToDelete = array_diff_key($currentClientAmenities, $postAmenities);
-            foreach ($amenitiesToDelete as $amenityId => $currentClientAmenityRelId) {
-                $this->ClientAmenityRel->delete($currentClientAmenityRelId);
-            }
-        }
+			// delete amenities
+			$amenitiesToDelete = array_diff_key($currentClientAmenities, $postAmenities);
+			foreach ($amenitiesToDelete as $amenityId => $currentClientAmenityRelId) {
+				$this->ClientAmenityRel->delete($currentClientAmenityRelId);
+			}
+		}
 
-        // AMENITY TYPES
-        if (!empty($this->data['ClientAmenityTypeRel'])) {
-            $amenityTypesData = array();
-            foreach ($this->data['ClientAmenityTypeRel'] as $amenityTypeId => $amenityTypeDescription) {
-                if ($amenityTypeDescription) {
-                    $amenityTypeRelId = (isset($this->data['ClientAmenityTypeRelId'][$amenityTypeId])) ? $this->data['ClientAmenityTypeRelId'][$amenityTypeId] : null;
-                    $amenityTypesData[] = array('clientAmenityTypeRelId' => $amenityTypeRelId, 'clientId' => $client['Client']['clientId'], 'amenityTypeId' => $amenityTypeId, 'description' => $amenityTypeDescription);
-                }
-            }
-            $this->ClientAmenityTypeRel->saveAll($amenityTypesData);
-        }
+		// AMENITY TYPES
+		if (!empty($this->data['ClientAmenityTypeRel'])) {
+			$amenityTypesData = array();
+			foreach ($this->data['ClientAmenityTypeRel'] as $amenityTypeId => $amenityTypeDescription) {
+				if ($amenityTypeDescription) {
+					$amenityTypeRelId = (isset($this->data['ClientAmenityTypeRelId'][$amenityTypeId])) ? $this->data['ClientAmenityTypeRelId'][$amenityTypeId] : null;
+					$amenityTypesData[] = array('clientAmenityTypeRelId' => $amenityTypeRelId, 'clientId' => $client['Client']['clientId'], 'amenityTypeId' => $amenityTypeId, 'description' => $amenityTypeDescription);
+				}
+			}
+			$this->ClientAmenityTypeRel->saveAll($amenityTypesData);
+		}
 
-       //save tracking
-       if (!empty($this->data['ClientTracking'])) {
-            $trackingData = array();
-            foreach($this->data['ClientTracking'] as $trackingRecord) {
-                $trackingRecord['clientId'] = $this->data['Client']['clientId'];
-                array_push($trackingData, $trackingRecord);
-            }
-            $this->ClientTracking->saveAll($trackingData);
-        }
-       //save themes
-       if (!empty($this->data['Theme'])) {
-            $themeData = array();
-            foreach ($this->data['Theme'] as $themeId => $data) {
-                if (empty($data['sites']) && !empty($data['clientThemeRelId'])) {
-                    $this->ClientThemeRel->delete($data['clientThemeRelId']);
-                    continue;
-                }
-                $data['themeId'] = $themeId;
-                $data['clientId'] = $this->data['Client']['clientId'];
-                array_push($themeData, $data);
-            }
-            $this->ClientThemeRel->saveAll($themeData);
-       }
+	   //save tracking
+	   if (!empty($this->data['ClientTracking'])) {
+			$trackingData = array();
+			foreach($this->data['ClientTracking'] as $trackingRecord) {
+				$trackingRecord['clientId'] = $this->data['Client']['clientId'];
+				array_push($trackingData, $trackingRecord);
+			}
+			$this->ClientTracking->saveAll($trackingData);
+		}
+	   //save themes
+	   if (!empty($this->data['Theme'])) {
+			$themeData = array();
+			foreach ($this->data['Theme'] as $themeId => $data) {
+				if (empty($data['sites']) && !empty($data['clientThemeRelId'])) {
+					$this->ClientThemeRel->delete($data['clientThemeRelId']);
+					continue;
+				}
+				$data['themeId'] = $themeId;
+				$data['clientId'] = $this->data['Client']['clientId'];
+				array_push($themeData, $data);
+			}
+			$this->ClientThemeRel->saveAll($themeData);
+	   }
 
-       // TAGS
-       if (!empty($this->data['ClientTagRel'])) {
+	   // TAGS
+	   if (!empty($this->data['ClientTagRel'])) {
 
-            // current tags
-            $currentClientTags = array();
-            $clientTagRels = $this->query("SELECT * FROM clientTagRel WHERE clientId = {$client['Client']['clientId']}");
-            foreach ($clientTagRels as $key => $clientTagRel) {
-                $currentClientTags[$clientTagRel['clientTagRel']['clientTagId']] = $clientTagRel['clientTagRel']['clientTagRelId'];
-            }
+			// current tags
+			$currentClientTags = array();
+			$clientTagRels = $this->query("SELECT * FROM clientTagRel WHERE clientId = {$client['Client']['clientId']}");
+			foreach ($clientTagRels as $key => $clientTagRel) {
+				$currentClientTags[$clientTagRel['clientTagRel']['clientTagId']] = $clientTagRel['clientTagRel']['clientTagRelId'];
+			}
 
-            // insert tags
-            $clientTagData = array();
-            $tagsToInsert = array_diff_key($this->data['ClientTagRel'], $currentClientTags);
-            foreach ($tagsToInsert as $tagId => $tagToInsert) {
-                $clientTagData[] = array('clientId' => $client['Client']['clientId'], 'clientTagId' => $tagId);
-            }
-            $this->ClientTagRel->saveAll($clientTagData);
+			// insert tags
+			$clientTagData = array();
+			$tagsToInsert = array_diff_key($this->data['ClientTagRel'], $currentClientTags);
+			foreach ($tagsToInsert as $tagId => $tagToInsert) {
+				$clientTagData[] = array('clientId' => $client['Client']['clientId'], 'clientTagId' => $tagId);
+			}
+			$this->ClientTagRel->saveAll($clientTagData);
 
-            // delete tags
-            $tagsToDelete = array_diff_key($currentClientTags, $this->data['ClientTagRel']);
-            foreach ($tagsToDelete as $clientTagId => $currentClientTagRelId) {
-                $this->ClientTagRel->delete($currentClientTagRelId);
-            }
-       }
+			// delete tags
+			$tagsToDelete = array_diff_key($currentClientTags, $this->data['ClientTagRel']);
+			foreach ($tagsToDelete as $clientTagId => $currentClientTagRelId) {
+				$this->ClientTagRel->delete($currentClientTagRelId);
+			}
+	   }
 
-       AppModel::afterSave($created);
+	   AppModel::afterSave($created);
 	   $this->loaId = $this->Loa->get_current_loa($client['Client']['clientId']);
-       $this->saveFrontEndFields($client, $clientSites);
+	   $this->saveFrontEndFields($client, $clientSites);
 	   //save client site extended data
-       if (!empty($client['ClientSiteExtended'])) {
-            foreach($client['ClientSiteExtended'] as $clientSiteExtendedId => $siteData) {
-                $siteData['clientId'] = $client['Client']['clientId'];
-                $this->ClientSiteExtended->create();
-                $clientSiteExtended = $this->ClientSiteExtended->save($siteData);
-                $this->ClientSiteExtended->saveToFrontEnd($clientSiteExtended);
-            }
-       }
+	   if (!empty($client['ClientSiteExtended'])) {
+			foreach($client['ClientSiteExtended'] as $clientSiteExtendedId => $siteData) {
+				$siteData['clientId'] = $client['Client']['clientId'];
+				$this->ClientSiteExtended->create();
+				$clientSiteExtended = $this->ClientSiteExtended->save($siteData);
+				$this->ClientSiteExtended->saveToFrontEnd($clientSiteExtended);
+			}
+	   }
 	   return $this->saveDestThemeLookup($created, $client);
    }
 
@@ -239,14 +239,14 @@ class Client extends AppModel {
    function populate_frontend_fields($client) {
 	  $data = array();
 	  foreach ($this->frontend_fields as $model => $fields) {
-        switch ($model) {
-           case 'LoaLevel':
-                $loa = $this->Loa->findByLoaId($this->loaId);
-                foreach ($fields as $field) {
-                            if (empty($client['Client'][$field]) && !empty($loa['LoaLevel'][$field])) {
-                                        $data['Client'][$field] = $loa['LoaLevel'][$field];
-                            }
-                }
+		switch ($model) {
+		   case 'LoaLevel':
+				$loa = $this->Loa->findByLoaId($this->loaId);
+				foreach ($fields as $field) {
+							if (empty($client['Client'][$field]) && !empty($loa['LoaLevel'][$field])) {
+										$data['Client'][$field] = $loa['LoaLevel'][$field];
+							}
+				}
 
 				// 06/27/11 jwoods - default values for Non-Clients
 				if (intval($this->loaId) == 0 || ($loa['LoaLevel']['loaLevelId'] != 1 && $loa['LoaLevel']['loaLevelId'] != 2)) {
@@ -254,25 +254,25 @@ class Client extends AppModel {
 					$data['Client']['loaLevelName'] = 'Non-Client';
 				}
 
-                break;
-           case 'ClientType':
-                $client_type = $this->ClientType->findByClientTypeId($client['Client']['clientTypeId']);
-                foreach ($fields as $field) {
-                            if (empty($client['Client'][$field]) && !empty($client_type['ClientType'][$field])) {
-                                        $data['Client'][$field] = $client_type['ClientType'][$field];
-                            }
-                }
-                break;
-           case 'Client':
-                $clientData = $this->find('first', array('fields' => $fields, 'conditions' => array('Client.clientId' => $client['Client']['clientId'])));
-                foreach($fields as $field) {
-                            if (empty($client['Client'][$field]) && !empty($clientData['Client'][$field])) {
-                                        $data['Client'][$field] = $clientData['Client'][$field];
-                            }
-                }
-                break;
-           default:
-                break;
+				break;
+		   case 'ClientType':
+				$client_type = $this->ClientType->findByClientTypeId($client['Client']['clientTypeId']);
+				foreach ($fields as $field) {
+							if (empty($client['Client'][$field]) && !empty($client_type['ClientType'][$field])) {
+										$data['Client'][$field] = $client_type['ClientType'][$field];
+							}
+				}
+				break;
+		   case 'Client':
+				$clientData = $this->find('first', array('fields' => $fields, 'conditions' => array('Client.clientId' => $client['Client']['clientId'])));
+				foreach($fields as $field) {
+							if (empty($client['Client'][$field]) && !empty($clientData['Client'][$field])) {
+										$data['Client'][$field] = $clientData['Client'][$field];
+							}
+				}
+				break;
+		   default:
+				break;
 			}
 		 }
 		 return $data;
@@ -290,52 +290,52 @@ class Client extends AppModel {
 		}
    }
 
-    function getClientAmenityTypeRel($clientId) {
-        $amenityTypes = array();
+	function getClientAmenityTypeRel($clientId) {
+		$amenityTypes = array();
 
-        // get amenity ids for this client
-        $clientAmenityRels = $this->query("
-            SELECT GROUP_CONCAT(amenity.amenityId) AS amenities
-            FROM clientAmenityRel
-            INNER JOIN amenity ON clientAmenityRel.amenityId = amenity.amenityId AND amenity.inactive = 0
-            WHERE clientId = $clientId
-            GROUP BY clientId;
-        ");
+		// get amenity ids for this client
+		$clientAmenityRels = $this->query("
+			SELECT GROUP_CONCAT(amenity.amenityId) AS amenities
+			FROM clientAmenityRel
+			INNER JOIN amenity ON clientAmenityRel.amenityId = amenity.amenityId AND amenity.inactive = 0
+			WHERE clientId = $clientId
+			GROUP BY clientId;
+		");
 
 		$clientAmenities = isset($clientAmenityRels[0][0]['amenities']) ? $clientAmenityRels[0][0]['amenities'] : false;
-        $clientAmenities = explode(',', $clientAmenities);
+		$clientAmenities = explode(',', $clientAmenities);
 
-        // get amenity type
-        $clientAmenityTypeRels = $this->query("
-            SELECT amenityType.amenityTypeId, amenityTypeName, clientAmenityTypeRelId, description
-            FROM amenityType LEFT JOIN clientAmenityTypeRel ON amenityType.amenityTypeId = clientAmenityTypeRel.amenityTypeId AND clientId = $clientId
-        ");
-        $clientAmenityTypes = array();
-        foreach ($clientAmenityTypeRels as $key => $clientAmenityTypeRel) {
-            $amenityTypes[$clientAmenityTypeRel['amenityType']['amenityTypeId']] = array_merge($clientAmenityTypeRel['amenityType'], $clientAmenityTypeRel['clientAmenityTypeRel']);
-        }
+		// get amenity type
+		$clientAmenityTypeRels = $this->query("
+			SELECT amenityType.amenityTypeId, amenityTypeName, clientAmenityTypeRelId, description
+			FROM amenityType LEFT JOIN clientAmenityTypeRel ON amenityType.amenityTypeId = clientAmenityTypeRel.amenityTypeId AND clientId = $clientId
+		");
+		$clientAmenityTypes = array();
+		foreach ($clientAmenityTypeRels as $key => $clientAmenityTypeRel) {
+			$amenityTypes[$clientAmenityTypeRel['amenityType']['amenityTypeId']] = array_merge($clientAmenityTypeRel['amenityType'], $clientAmenityTypeRel['clientAmenityTypeRel']);
+		}
 
-        // get all amenities
-        if (($amenities = Cache::read("clientAmenities")) === FALSE) {
-        	$amenities = $this->query("SELECT amenityTypeId, amenityId, amenityName FROM amenity WHERE amenityTypeId IS NOT NULL AND amenity.inactive = 0");
-        	Cache::write("clientAmenities",$amenities);
-        }
+		// get all amenities
+		if (($amenities = Cache::read("clientAmenities")) === FALSE) {
+			$amenities = $this->query("SELECT amenityTypeId, amenityId, amenityName FROM amenity WHERE amenityTypeId IS NOT NULL AND amenity.inactive = 0");
+			Cache::write("clientAmenities",$amenities);
+		}
 
-        foreach ($amenities as $key => $amenity) {
-            $amenity['amenity']['checked'] = in_array($amenity['amenity']['amenityId'], $clientAmenities); // determine if client has this amenity
-            $amenityTypes[$amenity['amenity']['amenityTypeId']]['amenities'][] = $amenity['amenity']; // add to final array of amenities
-        }
+		foreach ($amenities as $key => $amenity) {
+			$amenity['amenity']['checked'] = in_array($amenity['amenity']['amenityId'], $clientAmenities); // determine if client has this amenity
+			$amenityTypes[$amenity['amenity']['amenityTypeId']]['amenities'][] = $amenity['amenity']; // add to final array of amenities
+		}
 
-        return $amenityTypes;
-    }
+		return $amenityTypes;
+	}
 
    function afterFind($results, $primary = false) {
 	  if ($primary == true && $this->recursive != -1 && $this->containable == false) {
 		 foreach ($results as $key => $val) {
 			if (!empty($val['Client']) && is_int($key)) {
-                $currentLoaId = $this->Loa->get_current_loa_loalevel($val['Client']['clientId']);
+				$currentLoaId = $this->Loa->get_current_loa_loalevel($val['Client']['clientId']);
 				$this->Loa->recursive = -1;
-			    $loas = $this->Loa->find('count',array('conditions' => array('Loa.clientId' => $val['Client']['clientId'])));
+				$loas = $this->Loa->find('count',array('conditions' => array('Loa.clientId' => $val['Client']['clientId'])));
 				$this->Loa->recursive = 0;
 
 				if (($loaLevelNames = Cache::read("loaLevelNames")) === FALSE) {
@@ -374,65 +374,65 @@ class Client extends AppModel {
 		   @mail('devmail@luxurylink.com', 'CLIENT AFTERSAVE ERROR: NO CLIENT ID', print_r($this->data));
 	   }
 	   $clientSites = $this->find('first', array('conditions' => array('Client.clientId' => $data['Client']['clientId']),
-                                           'fields' => array('sites')));
-       $sites = $clientSites['Client']['sites'];
+										   'fields' => array('sites')));
+	   $sites = $clientSites['Client']['sites'];
 
-       foreach ($sites as $site) {
-            // for clientDestinationLookup only on the frontend
-           // -----------------------------------------------------------------
-            if (isset($data['Destination']) && !empty($data['Destination']['Destination'])) {
-                $destinationIds = array();
-                if (isset($data['Destination']['Destination']) && !empty($data['Destination']['Destination'])) {
-                    $destinationIds = $data['Destination']['Destination'];
-                }
-                else {
-                    foreach($data['Destination'] as $destination) {
-                         array_push($destinationIds, $destination['destinationId']);
-                    }
-                }
-               $tmp = '';
-               sort($destinationIds);
-               $insert_arr = array();
-               $insert_arr['clientId'] = $clientId;
-               for ($i = 1; $i <= 150; $i++) {
-                   if (in_array($i, $destinationIds)) {
-                       $insert_arr["destination$i"] = 1;
-                       $tmp.= "destination$i=1,";
-                   } else {
-                       $tmp.= "destination$i=0,";
-                   }
-               }
-               $update_tmp = rtrim($tmp, ',');
-               $sql = "INSERT DELAYED INTO clientDestinationLookup (". implode(',',array_keys($insert_arr)) .") VALUES (". implode(',',array_values($insert_arr)) .") ON DUPLICATE KEY UPDATE $update_tmp";
-               $this->useDbConfig = $site;
-               $result = $this->query($sql);
-            }
-            // for clientThemeLookup only on the frontend
-            // -----------------------------------------------------------------
-            if (isset($data['Theme']) && !empty($data['Theme'])) {
-                $insert_arr = array();
-                $update_arr = array();
-                $insert_arr['clientId'] = $clientId;
-                foreach($data['Theme'] as $themeId => $clientThemeRel) {
-                    if (isset($clientThemeRel['sites']) && is_array($clientThemeRel['sites']) && in_array($site, $clientThemeRel['sites'])) {
-                        $insert_arr['theme'.$themeId] = 1;
-                        $update_arr[] = 'theme'.$themeId.'=1';
-                    }
-                }
-                for ($i=1; $i <= 150; $i++) {
-                    if (!isset($insert_arr['theme'.$i])) {
-                        $insert_arr['theme'.$i] = 0;
-                        $update_arr[] = 'theme'.$i.'=0';
-                    }
-                }
-               //$update_tmp = rtrim($tmp, ',');
-               $sql = "INSERT DELAYED INTO clientThemeLookup (". implode(',',array_keys($insert_arr)) .")
-                       VALUES (". implode(',',array_values($insert_arr)) .")
-                       ON DUPLICATE KEY UPDATE ".implode(',', $update_arr);
-               $this->useDbConfig = $site;
-               $result = $this->query($sql);
-            }
-       }
+	   foreach ($sites as $site) {
+			// for clientDestinationLookup only on the frontend
+		   // -----------------------------------------------------------------
+			if (isset($data['Destination']) && !empty($data['Destination']['Destination'])) {
+				$destinationIds = array();
+				if (isset($data['Destination']['Destination']) && !empty($data['Destination']['Destination'])) {
+					$destinationIds = $data['Destination']['Destination'];
+				}
+				else {
+					foreach($data['Destination'] as $destination) {
+						 array_push($destinationIds, $destination['destinationId']);
+					}
+				}
+			   $tmp = '';
+			   sort($destinationIds);
+			   $insert_arr = array();
+			   $insert_arr['clientId'] = $clientId;
+			   for ($i = 1; $i <= 150; $i++) {
+				   if (in_array($i, $destinationIds)) {
+					   $insert_arr["destination$i"] = 1;
+					   $tmp.= "destination$i=1,";
+				   } else {
+					   $tmp.= "destination$i=0,";
+				   }
+			   }
+			   $update_tmp = rtrim($tmp, ',');
+			   $sql = "INSERT DELAYED INTO clientDestinationLookup (". implode(',',array_keys($insert_arr)) .") VALUES (". implode(',',array_values($insert_arr)) .") ON DUPLICATE KEY UPDATE $update_tmp";
+			   $this->useDbConfig = $site;
+			   $result = $this->query($sql);
+			}
+			// for clientThemeLookup only on the frontend
+			// -----------------------------------------------------------------
+			if (isset($data['Theme']) && !empty($data['Theme'])) {
+				$insert_arr = array();
+				$update_arr = array();
+				$insert_arr['clientId'] = $clientId;
+				foreach($data['Theme'] as $themeId => $clientThemeRel) {
+					if (isset($clientThemeRel['sites']) && is_array($clientThemeRel['sites']) && in_array($site, $clientThemeRel['sites'])) {
+						$insert_arr['theme'.$themeId] = 1;
+						$update_arr[] = 'theme'.$themeId.'=1';
+					}
+				}
+				for ($i=1; $i <= 150; $i++) {
+					if (!isset($insert_arr['theme'.$i])) {
+						$insert_arr['theme'.$i] = 0;
+						$update_arr[] = 'theme'.$i.'=0';
+					}
+				}
+			   //$update_tmp = rtrim($tmp, ',');
+			   $sql = "INSERT DELAYED INTO clientThemeLookup (". implode(',',array_keys($insert_arr)) .")
+					   VALUES (". implode(',',array_values($insert_arr)) .")
+					   ON DUPLICATE KEY UPDATE ".implode(',', $update_arr);
+			   $this->useDbConfig = $site;
+			   $result = $this->query($sql);
+			}
+	   }
 	   $this->useDbConfig = 'default';
 	   return true;
    }
@@ -441,31 +441,31 @@ class Client extends AppModel {
    // 08/17/11 jwoods - added $parentSiteExtended to update child clients
    function set_sites($client_id, $sites, $parentSiteExtended = array()) {
 	  $this->id = $client_id;
-      $this->recursive = 1;
+	  $this->recursive = 1;
 	  $client = $this->findByClientId($client_id);
-      if (!is_array($sites)) {
-        $loaSites = explode(',', $sites);
-      }
-      else {
-        $loaSites = $sites;
-      }
+	  if (!is_array($sites)) {
+		$loaSites = explode(',', $sites);
+	  }
+	  else {
+		$loaSites = $sites;
+	  }
 
 	  if (!empty($client['Client']['sites'])) {
 			$newSites = array_diff($loaSites, $client['Client']['sites']);
-            $removeSites = array_diff($client['Client']['sites'], $loaSites);
+			$removeSites = array_diff($client['Client']['sites'], $loaSites);
 
-            // 08/23/11 jwoods - if ClientSiteExtended record is missing, treat that as newSite
-            foreach ($client['Client']['sites'] as $cseToCheck) {
+			// 08/23/11 jwoods - if ClientSiteExtended record is missing, treat that as newSite
+			foreach ($client['Client']['sites'] as $cseToCheck) {
    				$cseExisting = $this->ClientSiteExtended->find('first', array('conditions' => array('ClientSiteExtended.siteId' => array_search($cseToCheck, $this->sites), 'ClientSiteExtended.clientId' => $client['Client']['clientId'])));
    				if (!$cseExisting) { $newSites[] = $cseToCheck; }
-            }
+			}
 
-            if (empty($newSites) && empty($removeSites)) {
-                return;
-            }
+			if (empty($newSites) && empty($removeSites)) {
+				return;
+			}
 
-            // ticket 288 - if this is a child client without it's own LOA, it should inherit some ClientSiteExtended info
-            $needsParentInfo = false;
+			// ticket 288 - if this is a child client without it's own LOA, it should inherit some ClientSiteExtended info
+			$needsParentInfo = false;
 			if (sizeof($parentSiteExtended) > 0) {
 				$childLoas = $this->Loa->getClientLoasWithoutParentInfo($client['Client']['clientId']);
 				if (sizeof($childLoas) == 0) { $needsParentInfo = true; }
@@ -476,12 +476,12 @@ class Client extends AppModel {
 					$client['ClientSiteExtended'] = array();
 				}
 				foreach($newSites as $site) {
-                    if ($oldClientSiteExtended = $this->ClientSiteExtended->find('first', array('conditions' => array('ClientSiteExtended.siteId' => array_search($site, $this->sites), 'ClientSiteExtended.clientId' => $client['Client']['clientId'])))) {
-                        $clientSiteExtended = $oldClientSiteExtended['ClientSiteExtended'];
-                    }
+					if ($oldClientSiteExtended = $this->ClientSiteExtended->find('first', array('conditions' => array('ClientSiteExtended.siteId' => array_search($site, $this->sites), 'ClientSiteExtended.clientId' => $client['Client']['clientId'])))) {
+						$clientSiteExtended = $oldClientSiteExtended['ClientSiteExtended'];
+					}
 					$clientSiteExtended['clientId'] = $client_id;
 					$clientSiteExtended['siteId'] = array_search($site, $this->sites);
-                    $clientSiteExtended['isCurrentLoaSite'] = 1;
+					$clientSiteExtended['isCurrentLoaSite'] = 1;
 
 					// ticket 288 - inherit ClientSiteExtended info
 					if ($needsParentInfo) {
@@ -495,66 +495,66 @@ class Client extends AppModel {
 
 					array_push($client['ClientSiteExtended'], $clientSiteExtended);
 
-                    //save room grades
-                    if (!empty($client['ImageClient'])) {
-                         $this->RoomGrade->contain($this->RoomGrade->containModels);
-                         $roomGrades = $this->RoomGrade->find('all', array('conditions' => array('RoomGrade.clientId' => $client['Client']['clientId'])));
-                         if (!empty($roomGrades)) {
-                             foreach($roomGrades as $roomGrade) {
-                                $this->RoomGrade->saveToFrontEndDb($roomGrade, $site, array($site), false);
-                             }
-                         }
-                    }
+					//save room grades
+					if (!empty($client['ImageClient'])) {
+						 $this->RoomGrade->contain($this->RoomGrade->containModels);
+						 $roomGrades = $this->RoomGrade->find('all', array('conditions' => array('RoomGrade.clientId' => $client['Client']['clientId'])));
+						 if (!empty($roomGrades)) {
+							 foreach($roomGrades as $roomGrade) {
+								$this->RoomGrade->saveToFrontEndDb($roomGrade, $site, array($site), false);
+							 }
+						 }
+					}
 
 				}
 			}
 			if (!empty($removeSites)) {
-                $extraModels = array('RoomGrade');
-                $this->containModels = array_merge($this->containModels, $extraModels);
-                $this->contain($this->containModels);
-                $delClient = $this->find('first', array('conditions' => array('Client.clientId' => $client['Client']['clientId']),
-                                                        'fields' => array('Client.clientId'),
-                                                        'callbacks' => 'before'));
+				$extraModels = array('RoomGrade');
+				$this->containModels = array_merge($this->containModels, $extraModels);
+				$this->contain($this->containModels);
+				$delClient = $this->find('first', array('conditions' => array('Client.clientId' => $client['Client']['clientId']),
+														'fields' => array('Client.clientId'),
+														'callbacks' => 'before'));
 				foreach($removeSites as $site) {
-                    $delClientId = $delClient['Client']['clientId'];
-                    $siteId = array_search($site, $this->sites);
-                    $this->deleteFromFrontEnd($delClient, $site);
-                    $this->useDbConfig = 'default';
-                    $delQuery = 'UPDATE clientSiteExtended SET isCurrentLoaSite = 0 WHERE clientId='. $delClientId . ' AND siteId=' . $siteId;
-                    $this->query($delQuery);
-                    $i = 0;
-                    foreach($client['ClientSiteExtended'] as $record) {
-                        if ($record['siteId'] == $siteId) {
-                            unset($client['ClientSiteExtended'][$i]);
-                            break;
-                        }
-                        $i++;
-                    }
-                    if (!empty($client['ClientThemeRel'])) {
-                        $i = 0;
-                        foreach($client['ClientThemeRel'] as &$theme) {
-                            if (in_array($site, $theme['sites'])) {
-                                if (count($theme['sites']) == 1) {
-                                    $this->ClientThemeRel->delete($theme['clientThemeRelId']);
-                                }
-                                elseif (count($theme['sites']) > 1) {
-                                    $key = array_search($site, $theme['sites']);
-                                    unset($theme['sites'][$key]);
-                                    $this->ClientThemeRel->save($theme);
-                                }
-                                unset($client['ClientThemeRel'][$i]);
-                            }
-                            $i++;
-                        }
-                    }
-                    $lookups = array('Destination', 'Theme');
-                    $this->useDbConfig = $site;
-                    foreach ($lookups as $lookup) {
-                        $query = "DELETE FROM client{$lookup}Lookup WHERE clientId = {$delClientId}";
-                        $this->query($query);
-                    }
-                    $this->useDbConfig = 'default';
-                }
+					$delClientId = $delClient['Client']['clientId'];
+					$siteId = array_search($site, $this->sites);
+					$this->deleteFromFrontEnd($delClient, $site);
+					$this->useDbConfig = 'default';
+					$delQuery = 'UPDATE clientSiteExtended SET isCurrentLoaSite = 0 WHERE clientId='. $delClientId . ' AND siteId=' . $siteId;
+					$this->query($delQuery);
+					$i = 0;
+					foreach($client['ClientSiteExtended'] as $record) {
+						if ($record['siteId'] == $siteId) {
+							unset($client['ClientSiteExtended'][$i]);
+							break;
+						}
+						$i++;
+					}
+					if (!empty($client['ClientThemeRel'])) {
+						$i = 0;
+						foreach($client['ClientThemeRel'] as &$theme) {
+							if (in_array($site, $theme['sites'])) {
+								if (count($theme['sites']) == 1) {
+									$this->ClientThemeRel->delete($theme['clientThemeRelId']);
+								}
+								elseif (count($theme['sites']) > 1) {
+									$key = array_search($site, $theme['sites']);
+									unset($theme['sites'][$key]);
+									$this->ClientThemeRel->save($theme);
+								}
+								unset($client['ClientThemeRel'][$i]);
+							}
+							$i++;
+						}
+					}
+					$lookups = array('Destination', 'Theme');
+					$this->useDbConfig = $site;
+					foreach ($lookups as $lookup) {
+						$query = "DELETE FROM client{$lookup}Lookup WHERE clientId = {$delClientId}";
+						$this->query($query);
+					}
+					$this->useDbConfig = 'default';
+				}
 			}
 	  }
 	  else {
@@ -563,22 +563,22 @@ class Client extends AppModel {
 				  foreach($loaSites as $site) {
 					  $clientSiteExtended['clientId'] = $client_id;
 					  $clientSiteExtended['siteId'] = array_search($site, $this->sites);
-                      $clientSiteExtended['inactive'] = 1;
+					  $clientSiteExtended['inactive'] = 1;
 					  array_push($client['ClientSiteExtended'], $clientSiteExtended);
 				  }
 			}
 	  }
 
-      if (!empty($extraModels)) {
-            $this->containModels = array_splice($this->containModels, 0, -count($extraModels));
-      }
+	  if (!empty($extraModels)) {
+			$this->containModels = array_splice($this->containModels, 0, -count($extraModels));
+	  }
 	  $client['Client']['sites'] = implode(',', $loaSites);
 	  $this->save($client, array('callbacks' => 'after'));
-      if (!empty($client['ChildClient'])) {
-            foreach($client['ChildClient'] as $child) {
-                $this->set_sites($child['clientId'], $sites, $client['ClientSiteExtended']);
-            }
-      }
+	  if (!empty($client['ChildClient'])) {
+			foreach($client['ChildClient'] as $child) {
+				$this->set_sites($child['clientId'], $sites, $client['ClientSiteExtended']);
+			}
+	  }
    }
 
    function bindOnly($keep_assocs=array(), $reset=true) {
@@ -594,39 +594,39 @@ class Client extends AppModel {
    }
 
    function searchClients($searchTerm) {
-        $query = "SELECT Client.clientId,
-                         Client.name,
-                         ClientLevel.loaLevelName AS clientLevelName,
-                         ClientType.clientTypeName
-                  FROM client Client
-                  LEFT JOIN clientLoaPackageRel ClientLoaPackageRel ON Client.clientId = ClientLoaPackageRel.clientId
-                  INNER JOIN loa Loa USING (loaId)
-                  INNER JOIN loaLevel AS ClientLevel USING (loaLevelId)
-                  INNER JOIN clientType ClientType ON Client.clientTypeId = ClientType.clientTypeId
-                  WHERE LOWER(Client.name) LIKE '%{$searchTerm}%'
-                  AND ClientLoaPackageRel.clientLoaPackageRelId IS NOT NULL
-                  GROUP BY ClientLoaPackageRel.clientId";
-        return $this->query($query);
+		$query = "SELECT Client.clientId,
+						 Client.name,
+						 ClientLevel.loaLevelName AS clientLevelName,
+						 ClientType.clientTypeName
+				  FROM client Client
+				  LEFT JOIN clientLoaPackageRel ClientLoaPackageRel ON Client.clientId = ClientLoaPackageRel.clientId
+				  INNER JOIN loa Loa USING (loaId)
+				  INNER JOIN loaLevel AS ClientLevel USING (loaLevelId)
+				  INNER JOIN clientType ClientType ON Client.clientTypeId = ClientType.clientTypeId
+				  WHERE LOWER(Client.name) LIKE '%{$searchTerm}%'
+				  AND ClientLoaPackageRel.clientLoaPackageRelId IS NOT NULL
+				  GROUP BY ClientLoaPackageRel.clientId";
+		return $this->query($query);
    }
 
    function getClientBySeoUrl($url) {
-        list($clientTypeSeoName, $seoLocation, $seoName) = explode('/', $url);
-        $this->recursive = -1;
-        if ($client = $this->find('first', array('conditions' => array('lower(Client.seoName)' => $seoName,
-                                                                       'lower(Client.seoLocation)' => $seoLocation,
-                                                                       'lower(Client.clientTypeSeoName)' => $clientTypeSeoName
-                                                                       ),
-                                                 'fields' => 'Client.clientId'))) {
-            return $client;
-        }
+		list($clientTypeSeoName, $seoLocation, $seoName) = explode('/', $url);
+		$this->recursive = -1;
+		if ($client = $this->find('first', array('conditions' => array('lower(Client.seoName)' => $seoName,
+																	   'lower(Client.seoLocation)' => $seoLocation,
+																	   'lower(Client.clientTypeSeoName)' => $clientTypeSeoName
+																	   ),
+												 'fields' => 'Client.clientId'))) {
+			return $client;
+		}
    }
    
    /**
-    * Return client contact details
-    * 
-    * @param	int $client_id
-    * @return	array or boolean
-    */
+	* Return client contact details
+	* 
+	* @param	int $client_id
+	* @return	array or boolean
+	*/
 	public function getClientContactDetails($client_id)
 	{
 		$sql = "
@@ -663,147 +663,147 @@ class Client extends AppModel {
 	}
 
    function getClientSchedulingMasters($clientId, $startDate, $endDate) {
-        $query = "SELECT SchedulingMaster.packageId,
-                        ClientLoaPackageRel.loaId,
-                        Package.packageName,
-                        PricePoint.name,
-                        Track.trackName,
-                        OfferType.offerTypeName,
-                        SchedulingMaster.siteId,
-                        IF (Package.isFlexPackage AND SchedulingMaster.offerTypeId = 4, CONCAT(Package.flexNumNightsMin, '-', Package.flexNumNightsMax), Package.numNights) AS roomNights,
-                        SchedulingMaster.pricePointRetailValue,
-                        IF (SchedulingMaster.offerTypeId = 4, ROUND(SchedulingMaster.pricePointRetailValue * (SchedulingMaster.pricePointPercentRetailBuyNow/100)),
-                                                              ROUND(SchedulingMaster.pricePointRetailValue * (SchedulingMaster.pricePointPercentRetailAuc/100)))
-                            AS price,
-                        IF (SchedulingMaster.offerTypeId = 4, SchedulingMaster.pricePointPercentRetailBuyNow, SchedulingMaster.pricePointPercentRetailAuc) AS percentRetail,
-                        SchedulingMaster.startDate,
-                        SchedulingMaster.endDate,
-                        PricePoint.validityStart,
-                        PricePoint.validityEnd,
-                        PackageStatus.packageStatusName,
-                        Currency.currencyCode,
-                        Package.packageStatusId,
-                        SchedulingMaster.schedulingMasterId,
-                        SchedulingMaster.offerTypeId,
-                        SchedulingMaster.pricePointId
-                        FROM schedulingMaster SchedulingMaster
-                        INNER JOIN package Package USING (packageId)
-                        INNER JOIN clientLoaPackageRel ClientLoaPackageRel USING (packageId)
-                        INNER JOIN packageStatus PackageStatus USING (packageStatusId)
-                        INNER JOIN pricePoint PricePoint USING (pricePointId)
-                        INNER JOIN offerType OfferType USING (offerTypeId)
-                        INNER JOIN schedulingMasterTrackRel SchedulingMasterTrackRel USING (schedulingMasterId)
-                        INNER JOIN track Track ON SchedulingMasterTrackRel.trackId = Track.trackId
-                        INNER JOIN currency Currency USING (currencyId)
-                        WHERE ClientLoaPackageRel.clientId = " . $clientId
-                        . " AND (SchedulingMaster.startDate >= '" . $startDate . "' AND SchedulingMaster.endDate <= '". $endDate . "')
-                        AND SchedulingMaster.offerTypeId <> 7
-                        ORDER BY SchedulingMaster.packageId DESC, SchedulingMaster.startDate DESC";
-        if ($schedulingMasters = $this->query($query)) {
-            $extraInfoArr = array();
-            foreach($schedulingMasters as $index => $master) {
-                $schedulingMasters[$index]['SchedulingMaster'] = Set::merge($master[0], $master['SchedulingMaster']);
-                unset($schedulingMasters[$index][0]);
-                // store validity in array keyed by price point so that we're not hitting the db everytime we have a scheduling master with the same price point
-                if (!isset($extraInfoArr[$master['SchedulingMaster']['pricePointId']]['validity'])) {
-                    if ($validity = $this->Loa->ClientLoaPackageRel->Package->PricePoint->getPricePointValidities($master['SchedulingMaster']['packageId'], $master['SchedulingMaster']['pricePointId'])) {
-                        $extraInfoArr[$master['SchedulingMaster']['pricePointId']]['validity'] = $validity;
-                    }
-                    else {
-                        $extraInfoArr[$master['SchedulingMaster']['pricePointId']]['validity'] = array();
-                    }
-                }
-                $schedulingMasters[$index]['SchedulingMaster']['validityDates'] = $extraInfoArr[$master['SchedulingMaster']['pricePointId']]['validity'];
-                if ($offers = $this->getSchedulingMasterOffers($clientId, $master)) {
-                    $schedulingMasters[$index]['Offers'] = $offers;
-                    $offerStatuses = array_keys($offers);
-                    if (in_array('Live', $offerStatuses)) {
-                        $schedulingMasters[$index]['SchedulingMaster']['offerStatus'] = 'Live';
-                    }
-                    elseif (in_array('Scheduled', $offerStatuses) && !in_array('Live', $offerStatuses)) {
-                        $schedulingMasters[$index]['SchedulingMaster']['offerStatus'] = 'Scheduled';
-                    }
-                    else {
-                        $schedulingMasters[$index]['SchedulingMaster']['offerStatus'] = 'Closed';
-                    }
-                }
-            }
-            //debug($schedulingMasters); die();
-            return $schedulingMasters;
-        }
+		$query = "SELECT SchedulingMaster.packageId,
+						ClientLoaPackageRel.loaId,
+						Package.packageName,
+						PricePoint.name,
+						Track.trackName,
+						OfferType.offerTypeName,
+						SchedulingMaster.siteId,
+						IF (Package.isFlexPackage AND SchedulingMaster.offerTypeId = 4, CONCAT(Package.flexNumNightsMin, '-', Package.flexNumNightsMax), Package.numNights) AS roomNights,
+						SchedulingMaster.pricePointRetailValue,
+						IF (SchedulingMaster.offerTypeId = 4, ROUND(SchedulingMaster.pricePointRetailValue * (SchedulingMaster.pricePointPercentRetailBuyNow/100)),
+															  ROUND(SchedulingMaster.pricePointRetailValue * (SchedulingMaster.pricePointPercentRetailAuc/100)))
+							AS price,
+						IF (SchedulingMaster.offerTypeId = 4, SchedulingMaster.pricePointPercentRetailBuyNow, SchedulingMaster.pricePointPercentRetailAuc) AS percentRetail,
+						SchedulingMaster.startDate,
+						SchedulingMaster.endDate,
+						PricePoint.validityStart,
+						PricePoint.validityEnd,
+						PackageStatus.packageStatusName,
+						Currency.currencyCode,
+						Package.packageStatusId,
+						SchedulingMaster.schedulingMasterId,
+						SchedulingMaster.offerTypeId,
+						SchedulingMaster.pricePointId
+						FROM schedulingMaster SchedulingMaster
+						INNER JOIN package Package USING (packageId)
+						INNER JOIN clientLoaPackageRel ClientLoaPackageRel USING (packageId)
+						INNER JOIN packageStatus PackageStatus USING (packageStatusId)
+						INNER JOIN pricePoint PricePoint USING (pricePointId)
+						INNER JOIN offerType OfferType USING (offerTypeId)
+						INNER JOIN schedulingMasterTrackRel SchedulingMasterTrackRel USING (schedulingMasterId)
+						INNER JOIN track Track ON SchedulingMasterTrackRel.trackId = Track.trackId
+						INNER JOIN currency Currency USING (currencyId)
+						WHERE ClientLoaPackageRel.clientId = " . $clientId
+						. " AND (SchedulingMaster.startDate >= '" . $startDate . "' AND SchedulingMaster.endDate <= '". $endDate . "')
+						AND SchedulingMaster.offerTypeId <> 7
+						ORDER BY SchedulingMaster.packageId DESC, SchedulingMaster.startDate DESC";
+		if ($schedulingMasters = $this->query($query)) {
+			$extraInfoArr = array();
+			foreach($schedulingMasters as $index => $master) {
+				$schedulingMasters[$index]['SchedulingMaster'] = Set::merge($master[0], $master['SchedulingMaster']);
+				unset($schedulingMasters[$index][0]);
+				// store validity in array keyed by price point so that we're not hitting the db everytime we have a scheduling master with the same price point
+				if (!isset($extraInfoArr[$master['SchedulingMaster']['pricePointId']]['validity'])) {
+					if ($validity = $this->Loa->ClientLoaPackageRel->Package->PricePoint->getPricePointValidities($master['SchedulingMaster']['packageId'], $master['SchedulingMaster']['pricePointId'])) {
+						$extraInfoArr[$master['SchedulingMaster']['pricePointId']]['validity'] = $validity;
+					}
+					else {
+						$extraInfoArr[$master['SchedulingMaster']['pricePointId']]['validity'] = array();
+					}
+				}
+				$schedulingMasters[$index]['SchedulingMaster']['validityDates'] = $extraInfoArr[$master['SchedulingMaster']['pricePointId']]['validity'];
+				if ($offers = $this->getSchedulingMasterOffers($clientId, $master)) {
+					$schedulingMasters[$index]['Offers'] = $offers;
+					$offerStatuses = array_keys($offers);
+					if (in_array('Live', $offerStatuses)) {
+						$schedulingMasters[$index]['SchedulingMaster']['offerStatus'] = 'Live';
+					}
+					elseif (in_array('Scheduled', $offerStatuses) && !in_array('Live', $offerStatuses)) {
+						$schedulingMasters[$index]['SchedulingMaster']['offerStatus'] = 'Scheduled';
+					}
+					else {
+						$schedulingMasters[$index]['SchedulingMaster']['offerStatus'] = 'Closed';
+					}
+				}
+			}
+			//debug($schedulingMasters); die();
+			return $schedulingMasters;
+		}
    }
 
    function getSchedulingMasterOffers($clientId, $schedulingMaster) {
-        $auctionsClosed = 0;
-        $auctionsWithWinner = 0;
-        $buyNowRequests = 0;
-        $buyNowConfirmedRequests = 0;
-        $conversionRate = 0;
-        $isOpen = false;
-        $instances = array();
-        $offerTable = ($schedulingMaster['SchedulingMaster']['siteId'] == 1) ? 'offerLuxuryLink' : 'offerFamily';
-        $query = "SELECT Offer.offerTypeId, Offer.endDate, Offer.retailValue, Offer.isClosed, Offer.offerId
-                  FROM " . $offerTable . " Offer
-                  INNER JOIN offer USING (offerId)
-                  INNER JOIN schedulingInstance SchedulingInstance USING (schedulingInstanceId)
-                  WHERE Offer.clientId = " . $clientId . " AND SchedulingInstance.schedulingMasterId = " . $schedulingMaster['SchedulingMaster']['schedulingMasterId'] . "
-                  ORDER BY Offer.endDate";
-        if ($offers = $this->query($query)) {
-            if ($schedulingMaster['SchedulingMaster']['offerTypeId'] == 4 || $schedulingMaster['SchedulingMaster']['offerTypeId'] == 3) {
-                foreach ($offers as $index=>$offer) {
-                    $offers[$index]['Offer']['retailValue'] = round($offer['Offer']['retailValue']);
-                    $requestsQuery = "SELECT COUNT(*) AS requests FROM ticket WHERE offerId = " . $offer['Offer']['offerId'];
-                    $confirmedQuery = "SELECT COUNT(*) AS confirmedRequests FROM ticket WHERE offerId = " . $offer['Offer']['offerId'] . " AND ticketStatusId = 4";
-                    if ($requests = $this->query($requestsQuery)) {
-                        $buyNowRequests += $requests[0][0]['requests'];
-                    }
-                    if ($confirmed = $this->query($confirmedQuery)) {
-                        $buyNowConfirmedRequests += $confirmed[0][0]['confirmedRequests'];
-                    }
-                    if ($offer['Offer']['isClosed'] == 0) {
-                        $isOpen = true;
-                    }
-                }
-                if ($buyNowRequests > 0 && $buyNowConfirmedRequests > 0) {
-                    $conversionRate = round(($buyNowConfirmedRequests/$buyNowRequests) * 100);
-                }
-            }
-            else {
-                foreach($offers as $index => $offer) {
-                    $offers[$index]['Offer']['retailValue'] = round($offer['Offer']['retailValue']);
-                    if ($bids = $this->Loa->ClientLoaPackageRel->Package->SchedulingMaster->SchedulingInstance->Offer->Bid->getBidStatsForOffer($offer['Offer']['offerId'])) {
-                        $offers[$index]['Offer']['bidCount'] = $bids[0][0]['bidCount'];
-                        $offers[$index]['Offer']['winningBidAmount'] = $bids[0][0]['winner'];
-                        if ($offer['Offer']['isClosed'] == 1) {
-                            $auctionsClosed += 1;
-                        }
-                        if ($bids[0][0]['bidCount'] > 0 && !empty($bids[0][0]['winner'])) {
-                            $auctionsWithWinner += 1;
-                        }
-                    }
-                    if ($offer['Offer']['isClosed'] == 0) {
-                        $isOpen = true;
-                    }
-                }
-                if ($auctionsClosed > 0 && $auctionsWithWinner > 0) {
-                    $conversionRate = round(($auctionsWithWinner/$auctionsClosed) * 100);
-                }
-            }
-        }
-        $instances['conversionRate'] = $conversionRate;
-        $instances['buyNowRequests'] = $buyNowRequests;
-        $instances['buyNowConfirmedRequests'] = $buyNowConfirmedRequests;
-        $instances['isScheduled'] = $this->Loa->ClientLoaPackageRel->Package->SchedulingMaster->SchedulingInstance->isScheduled($schedulingMaster['SchedulingMaster']['schedulingMasterId'], $schedulingMaster['SchedulingMaster']['endDate']);
-        if ($isOpen) {
-            $instances['Live'] = $offers;
-        }
-        elseif ($instances['isScheduled']) {
-            $instances['Scheduled'] = $offers;
-        }
-        else {
-            $instances['Closed'] = $offers;
-        }
-        return $instances;
+		$auctionsClosed = 0;
+		$auctionsWithWinner = 0;
+		$buyNowRequests = 0;
+		$buyNowConfirmedRequests = 0;
+		$conversionRate = 0;
+		$isOpen = false;
+		$instances = array();
+		$offerTable = ($schedulingMaster['SchedulingMaster']['siteId'] == 1) ? 'offerLuxuryLink' : 'offerFamily';
+		$query = "SELECT Offer.offerTypeId, Offer.endDate, Offer.retailValue, Offer.isClosed, Offer.offerId
+				  FROM " . $offerTable . " Offer
+				  INNER JOIN offer USING (offerId)
+				  INNER JOIN schedulingInstance SchedulingInstance USING (schedulingInstanceId)
+				  WHERE Offer.clientId = " . $clientId . " AND SchedulingInstance.schedulingMasterId = " . $schedulingMaster['SchedulingMaster']['schedulingMasterId'] . "
+				  ORDER BY Offer.endDate";
+		if ($offers = $this->query($query)) {
+			if ($schedulingMaster['SchedulingMaster']['offerTypeId'] == 4 || $schedulingMaster['SchedulingMaster']['offerTypeId'] == 3) {
+				foreach ($offers as $index=>$offer) {
+					$offers[$index]['Offer']['retailValue'] = round($offer['Offer']['retailValue']);
+					$requestsQuery = "SELECT COUNT(*) AS requests FROM ticket WHERE offerId = " . $offer['Offer']['offerId'];
+					$confirmedQuery = "SELECT COUNT(*) AS confirmedRequests FROM ticket WHERE offerId = " . $offer['Offer']['offerId'] . " AND ticketStatusId = 4";
+					if ($requests = $this->query($requestsQuery)) {
+						$buyNowRequests += $requests[0][0]['requests'];
+					}
+					if ($confirmed = $this->query($confirmedQuery)) {
+						$buyNowConfirmedRequests += $confirmed[0][0]['confirmedRequests'];
+					}
+					if ($offer['Offer']['isClosed'] == 0) {
+						$isOpen = true;
+					}
+				}
+				if ($buyNowRequests > 0 && $buyNowConfirmedRequests > 0) {
+					$conversionRate = round(($buyNowConfirmedRequests/$buyNowRequests) * 100);
+				}
+			}
+			else {
+				foreach($offers as $index => $offer) {
+					$offers[$index]['Offer']['retailValue'] = round($offer['Offer']['retailValue']);
+					if ($bids = $this->Loa->ClientLoaPackageRel->Package->SchedulingMaster->SchedulingInstance->Offer->Bid->getBidStatsForOffer($offer['Offer']['offerId'])) {
+						$offers[$index]['Offer']['bidCount'] = $bids[0][0]['bidCount'];
+						$offers[$index]['Offer']['winningBidAmount'] = $bids[0][0]['winner'];
+						if ($offer['Offer']['isClosed'] == 1) {
+							$auctionsClosed += 1;
+						}
+						if ($bids[0][0]['bidCount'] > 0 && !empty($bids[0][0]['winner'])) {
+							$auctionsWithWinner += 1;
+						}
+					}
+					if ($offer['Offer']['isClosed'] == 0) {
+						$isOpen = true;
+					}
+				}
+				if ($auctionsClosed > 0 && $auctionsWithWinner > 0) {
+					$conversionRate = round(($auctionsWithWinner/$auctionsClosed) * 100);
+				}
+			}
+		}
+		$instances['conversionRate'] = $conversionRate;
+		$instances['buyNowRequests'] = $buyNowRequests;
+		$instances['buyNowConfirmedRequests'] = $buyNowConfirmedRequests;
+		$instances['isScheduled'] = $this->Loa->ClientLoaPackageRel->Package->SchedulingMaster->SchedulingInstance->isScheduled($schedulingMaster['SchedulingMaster']['schedulingMasterId'], $schedulingMaster['SchedulingMaster']['endDate']);
+		if ($isOpen) {
+			$instances['Live'] = $offers;
+		}
+		elseif ($instances['isScheduled']) {
+			$instances['Scheduled'] = $offers;
+		}
+		else {
+			$instances['Closed'] = $offers;
+		}
+		return $instances;
    }
 
 	function normalize($keywords,$atozonly) {
@@ -860,40 +860,40 @@ class Client extends AppModel {
 	}
 
 	public function convertToSeoName($str) {
-	    $str = strtolower(html_entity_decode($str, ENT_QUOTES, "ISO-8859-1"));  // convert everything to lower string
-	    
-	    // $search_accent = explode(",","ç,æ,~\,á,é,í,ó,ú,à,è,ì,ò,ù,ä,ë,ï,ö,ü,ÿ,â,ê,î,ô,û,å,e,i,ø,u,ñ");
-	    // $replace_accent = explode(",","c,ae,oe,a,e,i,o,u,a,e,i,o,u,a,e,i,o,u,y,a,e,i,o,u,a,e,i,o,u,n");
-	    // $search_accent[] = '&';
-	    // $replace_accent[] = ' and ';
-	    // $str = str_replace($search_accent, $replace_accent, $str);
+		$str = strtolower(html_entity_decode($str, ENT_QUOTES, "ISO-8859-1"));  // convert everything to lower string
+		
+		// $search_accent = explode(",","ç,æ,~\,á,é,í,ó,ú,à,è,ì,ò,ù,ä,ë,ï,ö,ü,ÿ,â,ê,î,ô,û,å,e,i,ø,u,ñ");
+		// $replace_accent = explode(",","c,ae,oe,a,e,i,o,u,a,e,i,o,u,a,e,i,o,u,y,a,e,i,o,u,a,e,i,o,u,n");
+		// $search_accent[] = '&';
+		// $replace_accent[] = ' and ';
+		// $str = str_replace($search_accent, $replace_accent, $str);
 
 		// accent replace stopped working for some reason
-	    $str = $this->normalize($str, 0);
-	    $str = str_replace('&', ' and ', $str);
-	    
-	    $str = preg_replace("/<([^<>]*)>/", ' ', $str);                     // remove html tags
-	    $str_array = preg_split("/[^a-zA-Z0-9]+/", $str);                   // remove non-alphanumeric
-	    $count_a = count($str_array);
-	    if ($count_a) {
-	        if ($str_array[0] == 'the') {
-	            array_shift($str_array);
-	        }
-	        if (isset($str_array[($count_a - 1)]) && (($str_array[($count_a - 1)] == 'the') || !$str_array[($count_a - 1)])) {
-	            array_pop($str_array);
-	        }
-	        for ($i=0; $i<$count_a; $i++) {
-	            if ($str_array[$i]=='s' && strlen($str_array[($i - 1)])>1) {
-	                $str_array[($i - 1)] = $str_array[($i - 1)] . 's';
-	                unset($str_array[$i]);
-	            } elseif ($str_array[$i]=='' || !$str_array[$i]) {
-	                unset($str_array[$i]);
-	            }
-	        }
-	        return (substr(implode('-', $str_array), 0, 499));
-	    }else {
-	        return '';
-	    }
+		$str = $this->normalize($str, 0);
+		$str = str_replace('&', ' and ', $str);
+		
+		$str = preg_replace("/<([^<>]*)>/", ' ', $str);					 // remove html tags
+		$str_array = preg_split("/[^a-zA-Z0-9]+/", $str);				   // remove non-alphanumeric
+		$count_a = count($str_array);
+		if ($count_a) {
+			if ($str_array[0] == 'the') {
+				array_shift($str_array);
+			}
+			if (isset($str_array[($count_a - 1)]) && (($str_array[($count_a - 1)] == 'the') || !$str_array[($count_a - 1)])) {
+				array_pop($str_array);
+			}
+			for ($i=0; $i<$count_a; $i++) {
+				if ($str_array[$i]=='s' && strlen($str_array[($i - 1)])>1) {
+					$str_array[($i - 1)] = $str_array[($i - 1)] . 's';
+					unset($str_array[$i]);
+				} elseif ($str_array[$i]=='' || !$str_array[$i]) {
+					unset($str_array[$i]);
+				}
+			}
+			return (substr(implode('-', $str_array), 0, 499));
+		}else {
+			return '';
+		}
 	}
 	
 	/**
