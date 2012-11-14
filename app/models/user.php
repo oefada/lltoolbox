@@ -165,17 +165,62 @@ class User extends AppModel
 			return false;
 		}
 	}
-	
-	/**
-	 * TODO: short description.
-	 * 
-	 * @return TODO
-	 */
+
+	// This method wasn't matching the query it was paginating for and failing
+	// 
+	// Query:
+	// 
+	// SELECT *, count(*) as ticketCount, (CASE WHEN ticket.ticketId is not null THEN 1 ELSE 0 END) AS hasTicketId 
+	// FROM `user` AS `User` LEFT JOIN userSiteExtended AS `UserSiteExtended` 
+	// ON (`User`.`userId`=`UserSiteExtended`.`userId`) LEFT JOIN ticket 
+	// ON (`User`.`userId`=`ticket`.`userId`) 
+	// WHERE (`User`.`lastName` like 'roybatty%' OR `User`.`firstName` LIKE 'roybatty%' 
+	// OR `UserSiteExtended`.`username` LIKE 'roybatty%') 
+	// GROUP BY `User`.`userId` ORDER BY `ticketCount` DESC, `hasTicketId` DESC LIMIT 20
+	// 
+	// Failed pagination query: 
+	//
+	// SELECT COUNT(*) AS `count` FROM `user` AS `User`   
+	// WHERE (`User`.`lastName` like 'roybatty%' OR `User`.`firstName` 
+	// LIKE 'roybatty%' OR `UserSiteExtended`.`username` LIKE  'roybatty%')  
+	// 
+	// Fix implemented below
+	// http://stackoverflow.com/questions/7120257/cakephp-pagination-count-not-matching-query
+	/*
 	public function paginateCount($conditions = null, $recursive = 0, $extra = array())
 	{
 		$this->recursive = $recursive;
 		$r = $this->find('count', array('conditions' => $conditions));
 		return ($r);
 	}
+	*/
+
+	/**
+	* See notes above
+	* 
+	* @return int
+	*/
+	public function paginateCount($conditions = null, $recursive = 0, $extra = array()) {
+		$parameters = compact('conditions', 'recursive');
+		if (isset($extra['group'])) {
+			$parameters['fields'] = $extra['group'];
+			if (is_string($parameters['fields'])) {
+				// pagination with single GROUP BY field
+				if (substr($parameters['fields'], 0, 9) != 'DISTINCT ') {
+					$parameters['fields'] = 'DISTINCT ' . $parameters['fields'];
+				}
+				unset($extra['group']);
+				$count = $this->find('count', array_merge($parameters, $extra));
+			} else {
+				// resort to inefficient method for multiple GROUP BY fields
+				$count = $this->find('count', array_merge($parameters, $extra));
+				$count = $this->getAffectedRows();
+			}
+		} else {
+			// regular pagination
+			$count = $this->find('count', array_merge($parameters, $extra));
+		}
+		return $count;
+	}
+
 }
-?>
