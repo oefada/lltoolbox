@@ -314,6 +314,7 @@ jQuery(document).ready(function($) {
 		}
 		
 		if (ptId.val() == 4) {
+			$("#paymentForm")[0].onsubmit = function(){};
 			$("#paymentForm")[0].action = thisUrl;
 			$("#paymentForm")[0].method = "POST";
 			$("#paymentForm").submit();
