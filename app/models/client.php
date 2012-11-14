@@ -620,6 +620,27 @@ class Client extends AppModel {
 			return $client;
 		}
    }
+
+	/**
+	 * Retrieve client row using client name 
+	 * 
+	 * @param string $name 
+	 * 
+	 * @return array
+	 */
+	function getClientByName($name){
+
+		$this->recursive = -1;
+		$client = $this->find('first', 
+			array('conditions' => 
+				array('lower(Client.name)' => $name),
+			'fields' => 'Client.clientId')
+		);
+
+		return (count($client)>0)?$client:false;
+
+	}
+
    
    /**
 	* Return client contact details
@@ -862,18 +883,12 @@ class Client extends AppModel {
 	public function convertToSeoName($str) {
 		$str = strtolower(html_entity_decode($str, ENT_QUOTES, "ISO-8859-1"));  // convert everything to lower string
 		
-		// $search_accent = explode(",","ç,æ,~\,á,é,í,ó,ú,à,è,ì,ò,ù,ä,ë,ï,ö,ü,ÿ,â,ê,î,ô,û,å,e,i,ø,u,ñ");
-		// $replace_accent = explode(",","c,ae,oe,a,e,i,o,u,a,e,i,o,u,a,e,i,o,u,y,a,e,i,o,u,a,e,i,o,u,n");
-		// $search_accent[] = '&';
-		// $replace_accent[] = ' and ';
-		// $str = str_replace($search_accent, $replace_accent, $str);
-
 		// accent replace stopped working for some reason
 		$str = $this->normalize($str, 0);
 		$str = str_replace('&', ' and ', $str);
 		
 		$str = preg_replace("/<([^<>]*)>/", ' ', $str);					 // remove html tags
-		$str_array = preg_split("/[^a-zA-Z0-9]+/", $str);				   // remove non-alphanumeric
+		$str_array = preg_split("/[^a-zA-Z-1-9]+/", $str);				   // remove non-alphanumeric
 		$count_a = count($str_array);
 		if ($count_a) {
 			if ($str_array[0] == 'the') {
