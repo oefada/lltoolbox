@@ -325,7 +325,7 @@ class AjaxSearchController extends AppController
 			$query = $this->params['url']['name'];
 			Configure::write('debug', 0);
 			$this->layout = 'ajax';
-			$results = $this->AjaxSearch->query('SELECT cl.*, ct.cityName FROM clientNames cn LEFT JOIN client cl ON (cn.clientId = cl.clientId) LEFT JOIN city ct ON (cl.cityId = ct.cityId) WHERE (cn.name LIKE ?);', array($query . '%'));
+			$results = $this->AjaxSearch->query('SELECT cl.*, ct.cityName FROM client cl LEFT JOIN city ct ON (cl.cityId = ct.cityId) WHERE (cl.name LIKE ?);', array($query . '%'));
 			foreach ($results as $client) {
 				if (isset($client['cl']['name']) && !empty($client['cl']['name'])) {
 					$cn = utf8_encode($client['cl']['name']);
