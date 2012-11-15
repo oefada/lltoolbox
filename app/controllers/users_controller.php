@@ -295,7 +295,7 @@ class UsersController extends AppController {
 			$q.="GROUP BY userId, ticketId ";
 			$q.="ORDER BY ticketId DESC ";
 			$r=$this->User->query($q, array($email));
-//$this->User->logIt($q);
+
 			$userIdArr=array();
 			$modifyDateTimeArr=array();
 			$ticketArr=array();
@@ -303,9 +303,7 @@ class UsersController extends AppController {
 			$modifyDateTimeIsNotNull=false;
 			$primaryUserId=false;
 			foreach($r as $arr){
-
 				$userId=$arr['u']['userId'];
-				$email=strtolower($arr[0]['email']);
 				$renameEmail=$email.'_dup_'.$userId;
 
 				$rowArr[$userId]=array(
