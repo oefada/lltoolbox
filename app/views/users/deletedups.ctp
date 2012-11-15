@@ -1,9 +1,15 @@
-<a href="/users/deletedups?showDupCount=1">Count accounts with multiple userId's associated with one email</a>
+
+<a href="/users/deletedups?trimEmails=1">Trim white space from emails</a> (Num:<?=$numEmailsWithWhitespace?>)
 <br><br>
+
+# accounts with multiple userId's associated with one email:
+
 <?
 
-if ($dupCount!==false){
+if (true || $dupCount!==false){
+	echo "<span id='dupCount'>";
 	echo $dupCount;
+	echo "</span>";
 	echo "<br><br>";
 }
 ?>
@@ -21,7 +27,7 @@ if ($dupCountNoInactive!==false){
 
 <br><br>
 Emails that have userId's that all have matching rows in userSiteExtended OR no matching rows in userSiteExtended are processed first.  This makes userSiteExtended no longer a criteria for the rest of the script.
-<br><br>Then set the primary userId by:<br><br>
+<br><br>Then the primary userId is set by one of the following criteria:<br><br>
 1. user row with most recent modifyDateTime (login) that has a ticketId<br>
 2. or the most recent (non null) modifyDateTime<br>
 3. or the most recent userId<br><br>
@@ -29,11 +35,16 @@ Emails that have userId's that all have matching rows in userSiteExtended OR no 
 <br>
 <p>
 <a onclick="return false" href="/users/deletedups?runProcess=1" id="runProcess"><b>Run Process</b></a>
+ &nbsp; 
+<span id='processStatus'></span>
 </p>
 <br>
-<div id='processStatus'></div>
 <br>
-<div>Num processed: <span id='processCount'>0</span></div>
+<div>Num processed: 
+<span id='processCount'>0</span>
+	 &#183; 
+<span id='dupCountDesc'><?=str_replace(",","",$dupCount);?></span>
+</div>
 <div id='feedback'></div>
 <br>
 
@@ -58,8 +69,11 @@ Emails that have userId's that all have matching rows in userSiteExtended OR no 
 			success: function(response){
 
 				if (response.substr(0,4)!='done'){
-					total=total+parseInt(response);
+					numResponse=parseInt(response);
+					total=total+numResponse;
 					jQuery('#processCount').html(total);
+					dupCountDesc=parseInt(jQuery("#dupCountDesc").html());
+					jQuery('#dupCountDesc').html(dupCountDesc-numResponse);
 					jQuery('#runProcess').trigger('click');
 				}else{
 					jQuery("#processStatus").html('<span style="color:red;">Done!</span>');

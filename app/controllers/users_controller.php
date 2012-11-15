@@ -220,7 +220,10 @@ class UsersController extends AppController {
 	 * @return array
 	 */
 	private function processDupEmails($emailArr=array(), $doProcessOne=0, $ajax=0){
-
+	
+//$this->User->logIt("--------emailArr------");
+//$this->User->logIt($emailArr);
+//$this->User->logIt("--------");
 		foreach($emailArr as $email){
 
 			// see if email has some userIds without matching rows in userSiteExtended AND
@@ -234,30 +237,30 @@ class UsersController extends AppController {
 				// has rows in user WITHOUT matching row in userSiteExt
 				$q="SELECT COUNT(*) AS num FROM `user` LEFT JOIN userSiteExtended ue using(userId) ";
 				$q.="WHERE ue.userId IS NULL ";
-				//$q.="AND TRIM(LOWER(email))=\"$email\" ";
-				$q.="AND email=\"$email\" ";
-				$r=$this->User->query($q);
+				$q.="AND email=? ";
+				$r=$this->User->query($q, array($email));
 				$numWithout=$r[0][0]['num'];
 
 				// has rows in user WITH matching row in userSiteExt
 				$q="SELECT COUNT(*) AS num FROM `user` LEFT JOIN userSiteExtended ue using(userId) ";
 				$q.="WHERE ue.userId IS NOT NULL ";
-				$q.="AND email=\"$email\" ";
-				$r=$this->User->query($q);
+				$q.="AND email=? ";
+				$r=$this->User->query($q, array($email));
 				$numWith=$r[0][0]['num'];
 
 				// at least one userId in user table has a matching row in userSiteExtended.
 				// get the userIds without matching rows in userSiteExtended and de-dup them
-				if ($numWith>0 && $numWithout>0){// && $numWith!=$numWithout){
+				if ($numWith>0 && $numWithout>0){
 					$q="SELECT * FROM `user` u LEFT JOIN userSiteExtended ue using(userId) ";
 					$q.="WHERE ue.userId IS NULL ";
-					$q.="AND email=\"$email\" ";
-					$r=$this->User->query($q);
+					$q.="AND email=? ";
+					$r=$this->User->query($q,array($email));
 					foreach($r as $arr){
 						$userId=$arr['u']['userId'];
 						$renameEmail=$arr['u']['email'].'_dup_'.$userId;
-						$q="UPDATE `user` SET email=\"$renameEmail\", inactive=1 WHERE userId=$userId";
-						$this->User->query($q);
+						//$q="UPDATE `user` SET email=\"$renameEmail\", inactive=1 WHERE userId=$userId";
+						$q="UPDATE `user` SET email=?, inactive=1 WHERE userId=?";
+						$this->User->query($q, array($renameEmail, $userId));
 					}
 				}
 			}
@@ -288,11 +291,11 @@ class UsersController extends AppController {
 			$q.="FROM `user` u ";
 			$q.="LEFT JOIN ticket using(userId) ";
 			$q.="LEFT JOIN userSiteExtended ue using(userId) ";
-			$q.="WHERE TRIM(LOWER(email))=\"$email\" ";
+			$q.="WHERE email=? ";
 			$q.="GROUP BY userId, ticketId ";
 			$q.="ORDER BY ticketId DESC ";
-			$r=$this->User->query($q, false);
-
+			$r=$this->User->query($q, array($email));
+//$this->User->logIt($q);
 			$userIdArr=array();
 			$modifyDateTimeArr=array();
 			$ticketArr=array();
@@ -363,8 +366,8 @@ $this->User->logit($doProcessTwo);
 						if ($primaryUserId==$userId){
 							continue;
 						}
-						$q="UPDATE `user` SET inactive=1, email=\"".$arr['renameEmail']."\" WHERE userId=$userId";
-						$this->User->query($q);
+						$q="UPDATE `user` SET inactive=1, email=? WHERE userId=$userId";
+						$this->User->query($q, array($arr['renameEmail']));
 						unset($rowArr[$userId]);
 					}
 				}else{
@@ -397,16 +400,20 @@ $this->User->logit($doProcessTwo);
 		}
 		$this->set('hideSidebar', true);
 		$showDupCount=isset($this->params['url']['showDupCount'])?1:0;
+		$trimEmails=isset($this->params['url']['trimEmails'])?1:0;
 		$showDupCountNoInactive=isset($this->params['url']['showDupCountNoInactive'])?1:0;
 		$runProcess=isset($this->params['url']['runProcess'])?1:0;
-		$dupCount=false;
+		$dupCount=true;
 		$dupCountNoInactive=false;
 
-		if ($showDupCount){
+		$q="SELECT email, COUNT(email) as num FROM user GROUP BY email HAVING num>1";
+		$r=$this->User->query($q);
+		$dupCount=number_format(count($r));
 
-			$q="SELECT email, COUNT(email) as num FROM user GROUP BY email HAVING num>1";
+		if ($trimEmails){
+
+			$q="UPDATE `user` SET email = TRIM(email) WHERE email<>TRIM(email)";
 			$r=$this->User->query($q);
-			$dupCount=number_format(count($r));
 
 		}elseif ($showDupCountNoInactive){
 
@@ -420,8 +427,8 @@ $this->User->logit($doProcessTwo);
 
 			$q="SELECT TRIM(LOWER(email)) as email, COUNT(email) as num FROM user GROUP BY email HAVING num>1 ";
 			// offset is always 0 as the data set being operated on gets removed once operated on and
-			// thus reduces the count
-			$q.="LIMIT 0, 5";
+			// thus reduces the count. 
+			$q.="LIMIT 0, 100";
 			$r=$this->User->query($q);
 			if (count($r)==0){
 				echo "done";
@@ -431,7 +438,14 @@ $this->User->logit($doProcessTwo);
 				$emailArr[]=$arr[0]['email'];
 			}
 
+//$this->User->logIt('---------start');
+//$this->User->logIt('emailArr');
+//$this->User->logIt($emailArr);
 			$response=$this->processDupEmails($emailArr, true, $ajax);
+//$this->User->logIt('response');
+//$this->User->logIt($response);
+//$this->User->logIt('---------end');
+//exit;
 			if ($ajax){
 				// for debugging, log or echo and use in WHERE of query to examine altered accounts
 				$str='';
@@ -440,6 +454,8 @@ $this->User->logit($doProcessTwo);
 				}
 				$str.="\n\n";
 				$str.=implode("', '", $emailArr);
+				//$this->User->logIt($str);
+				//exit();
 				//
 				echo count($emailArr);
 				return;
@@ -447,6 +463,13 @@ $this->User->logit($doProcessTwo);
 
 		}
 
+		if ($ajax==false){
+			$q="SELECT count(*) as num FROM user WHERE email<>trim(email)";
+			$r=$this->User->query($q);
+			$numEmailsWithWhitespace=$r[0][0]['num'];
+		}
+
+		$this->set('numEmailsWithWhitespace', $numEmailsWithWhitespace);
 		$this->set('dupCount', $dupCount);
 		$this->set('dupCountNoInactive', $dupCountNoInactive);
 
@@ -604,7 +627,10 @@ $this->User->logit($doProcessTwo);
 				}else if ($lastName){
 					$conditions=array("User.lastName LIKE '".$lastName."%'");
 				}else if ($username){
-					$conditions=array("UserSiteExtended.username LIKE  '".$username."%'");
+					$conditions=array();
+					$joins[0]['type']="INNER";
+					$joins[0]['conditions'][]=("UserSiteExtended.username LIKE  '".$username."%'");
+					//$conditions[]=("UserSiteExtended.username LIKE  '".$username."%'");
 				}else{
 					$conditions=array(
 						"(User.lastName like '".$query."%' OR User.firstName LIKE '".$query."%' OR UserSiteExtended.username LIKE  '".($query)."%')"
@@ -631,7 +657,7 @@ $this->User->logit($doProcessTwo);
 			);
 
 			$this->paginate = $paginateArr;
-
+//print "<pre>";print_r($paginateArr);exit;
 			if(!empty($query)){
 				$this->set('query', $query);
 			}else if (!empty($specificSearch)){
