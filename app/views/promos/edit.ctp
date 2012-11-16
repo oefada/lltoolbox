@@ -325,7 +325,7 @@ if (isset($formErrors)) {
 		<?= $form->input('listRestrictedClients', array('type'=>'hidden')); ?>
 		<?= displayContainerHeader('client', 'Client Restrictions', $this->data['Promo']['restrictClient']); ?>
 
-			     <?= $this->renderElement("input_search",array('name'=>'addClient', 'controller'=>'selectclients', 'label'=>'Client Name /ID', 'style'=>'width:200px')); ?>
+			     <?= $this->renderElement("input_search",array('name'=>'addClient', 'controller'=>'selectclients', 'label'=>'Client Name /ID', 'style'=>'width:200px', 'callingId'=>'promoEdit')); ?>
 			    <div style="float:left; clear: none;"><a href="javascript:void(0);" onClick="addClientRestriction();">ADD</a></div>
 			    <div style="float:left; clear: none; font-weight: bold; color: #990000; margin: 0 20px 0 20px;">-- OR --</div>
 			    <div style="float:left; clear: none;"><span class="localLabelNoLeftMargin">List IDs</span><br/><span style="font-size:10px;">(one per line)</span></div>

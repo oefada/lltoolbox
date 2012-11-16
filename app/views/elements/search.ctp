@@ -87,7 +87,7 @@ function clearField(obj, value){
 	</div>
 </form>
 
-<?= $javascript->link('livesearch'); ?>
+<?= $javascript->link('livesearch.js?v=121121'); ?>
 <script>jQuery('.search-input-with-livesearch input[name="query"]').liveSearch({id: "search-input-with-livesearch", url: "/ajax_search?searchtype=<?= $controllerUrl ?>"});</script>
 </div>
 </div>

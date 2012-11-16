@@ -30,7 +30,7 @@
 	    }
 
 	    return this.each(function () {
-	        var input                            = jQuery(this).attr('autocomplete', 'off');
+	        var input                           = jQuery(this).attr('autocomplete', 'off');
 	        var liveSearchPaddingBorderHoriz    = parseInt(liveSearch.css('paddingLeft'), 10) + parseInt(liveSearch.css('paddingRight'), 10) + parseInt(liveSearch.css('borderLeftWidth'), 10) + parseInt(liveSearch.css('borderRightWidth'), 10);
 	
 	        // Re calculates live search's position
@@ -44,9 +44,7 @@
 	                height:        input.outerHeight()
 	            };
 	            
-	            // jwoods - hack to position auto complete correctly in collapsible div
-	            // TODO - remove this from javascript
-	            if (this.document.title == 'LL Toolbox: Promos') {
+	            if (config.callingId == 'promoEdit') {
 	                inputDim.top = 26;
 	                inputDim.left = 175;
 	            }
@@ -84,8 +82,20 @@
 			
 			if (config.placeInput == true) {
 				jQuery(".inputplace").live('click', function() {
+					var thisUrl = this.toString();
 					$(this).attr('href','');
-					jQuery(input).val($(this).find('.inputtable').html());
+					if (config.callingId == 'tickeAdd2012') {
+						if (thisUrl.indexOf('users/view') > 0) {
+							$('#TicketUserId').val($(this).find('.inputtable').html());
+							jQuery('#TicketUserId').change();
+						} 
+						if (thisUrl.indexOf('clients/view') > 0) {
+							$('#TicketClientId').val($(this).find('.inputtable').html());
+							jQuery('#TicketClientId').change();
+						}
+					} else {
+						jQuery(input).val($(this).find('.inputtable').html());
+					}
 					loadingId.hide();
 					return false;
 				});

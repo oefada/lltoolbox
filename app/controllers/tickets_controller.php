@@ -631,12 +631,6 @@ class TicketsController extends AppController {
 
 
 
-
-
-
-
-
-
 	function add2012() {
 
 		if (!$this->hasAddAccess()) {
@@ -644,86 +638,146 @@ class TicketsController extends AppController {
 			$this->redirect(array('action'=>'index'));
 		}
 
-
 		if (!empty($this->data)) {
 			
+			$tData = $this->data['Ticket'];
+			
+			// validation
 			$errors = array();
+			if ($tData['siteId'] == '') { $errors[] = 'Please complete the Site Id field.'; } 
+			if (intval($tData['packageId']) == 0) { $errors[] = 'Please complete the Package Id field.'; }	
+			if (intval($tData['offerId']) == 0) { $errors[] = 'Please complete the Offer Id field.'; }			
+			if (intval($tData['userId']) == 0) { $errors[] = 'Please complete the User Id field.'; }				
+			if (intval($tData['userPaymentSettingId']) == 0) { $errors[] = 'Please complete the Credit Card field.'; }
+			if (intval($tData['billingPrice']) == 0) { $errors[] = 'Please complete the Billing Price field.'; }			
+			if (intval($tData['numNights']) == 0) { $errors[] = 'Please complete the Num Nights field.'; }
 			
-			
-			if (sizeof($errors) > 0) {
-			
-			} else {
-			
-			
-/*			
-			//if (!$this->data['Ticket']['offerId'] || !is_numeric($this->data['Ticket']['offerId'])) {
-			//	$this->Session->setFlash(__('The ticket was not created.  The offerId cannot be blank and must be a number.', true), 'default', array(), 'error');
-			//} elseif (!$this->data['Ticket']['userId'] || !is_numeric($this->data['Ticket']['userId'])) {
-			//	$this->Session->setFlash(__('The ticket was not created.  The userId cannot be blank and must be a number.', true), 'default', array(), 'error');
-			//} elseif (!$this->data['Ticket']['billingPrice'] || !is_numeric($this->data['Ticket']['billingPrice'])) {
-			//	$this->Session->setFlash(__('The ticket was not created.  The billingPrice cannot be blank and must be a number.', true), 'default', array(), 'error');
-			//} elseif (!$this->data['Ticket']['siteId'] || !is_numeric($this->data['Ticket']['siteId'])) {
-			//	$this->Session->setFlash(__('The ticket was not created.  You must select a site!', true), 'default', array(), 'error');
-			//} elseif (intval($this->data['Ticket']['billingPrice']) > 30000) {
-			//	$this->Session->setFlash(__('The ticket was not created.  Maximum Billing Price is 30,000', true), 'default', array(), 'error');
-			//} else {
-				$this->User->recursive = 1;
-				$userData = $this->User->read(null, $this->data['Ticket']['userId']);
-
-				if (empty($userData)) {
-					$this->Session->setFlash(__('The ticket was not created.  Invalid User Id.', true), 'default', array(), 'error');
-				} elseif (empty($offerData)) {
-					$this->Session->setFlash(__('The ticket was not created.  Invalid Offer Id.', true), 'default', array(), 'error');
-				} else {
-					$manual_datetime = date('Y-m-d H:i:s');
-					$this->data['Ticket']['ticketStatusId'] 	= 1;
-					$this->data['Ticket']['packageId'] 			= $offerData['packageId'];
-					$this->data['Ticket']['formatId']			= in_array($offerData['offerTypeId'], array(1,2,6)) ? 1 : 2;
-					$this->data['Ticket']['offerTypeId']		= $offerData['offerTypeId'];
-					$this->data['Ticket']['userFirstName']		= $userData['User']['firstName'];
-					$this->data['Ticket']['userLastName']		= $userData['User']['lastName'];
-					$this->data['Ticket']['userEmail1']			= $userData['User']['email'];
-					$this->data['Ticket']['userWorkPhone']		= $userData['User']['workPhone'];
-					$this->data['Ticket']['userHomePhone']		= $userData['User']['homePhone'];
-					$this->data['Ticket']['userMobilePhone']	= $userData['User']['mobilePhone'];
-					$this->data['Ticket']['userFax']			= $userData['User']['fax'];
-					$this->data['Ticket']['userAddress1']		= $userData['Address'][0]['address1'];
-					$this->data['Ticket']['userAddress2']		= $userData['Address'][0]['address2'];
-					$this->data['Ticket']['userCity']			= $userData['Address'][0]['address3'];
-					$this->data['Ticket']['userState']			= $userData['Address'][0]['stateName'];
-					$this->data['Ticket']['userCountry']		= $userData['Address'][0]['countryText'];
-					$this->data['Ticket']['userZip']			= $userData['Address'][0]['postalCode'];
-					$this->data['Ticket']['transmitted']			= 1;
-					$this->data['Ticket']['transmittedDatetime'] 	= $manual_datetime;
-					$this->data['Ticket']['inProcess']				= 0;
-					$this->data['Ticket']['inProcessDatetime'] 		= $manual_datetime;
-					$this->data['Ticket']['ticketNotes']		= 'MANUALLY CREATED TICKET' . trim($this->data['Ticket']['ticketNotes']);
-					$this->data['Ticket']['numNights']		    = intval($this->data['Ticket']['numNights']);
-
-					$this->Ticket->create();
-					if ($this->Ticket->save($this->data)) {
-						$this->Session->setFlash(__('This manual ticket has been created successfully', true));
-						$this->redirect(array('action'=>'view', 'id' => $this->Ticket->getLastInsertId()));
-					} else {
-						$this->Session->setFlash(__('The Ticket could not be saved. Please, try again.', true));
-					}
-				}
-*/
-				
+			$arrivalDate = $this->dateArrayToString($tData['requestArrival']);
+			if (!$arrivalDate) {
+				$errors[] = 'Request Arrival must be a valid date';
 			}
 			
+			$insertPromoCodeId = false;
+			if ($tData['promoCode'] != '') {
+				$code = $this->PromoCode->findBypromoCode($tData['promoCode']);
+				if (!$code) {
+					$errors[] = 'Promo code ' . $tData['promoCode'] . ' not found';
+				} else {
+					if ($tData['autoConfirm'] == 'N') {
+						$errors[] = 'Promo Codes require Auto Confirm - codes can be applied from the payment screen.';
+					} elseif (intval($tData['billingPrice']) < intval($code['Promo'][0]['minPurchaseAmount'])) {
+						$errors[] = $code['PromoCode']['promoCode'] . ' requires a minimum purchase of $' . $code['Promo'][0]['minPurchaseAmount'];
+					} else {
+						$insertPromoCodeId = $code['PromoCode']['promoCodeId'];
+					}
+				}
+			}
+			if ($tData['autoConfirm'] == '') {
+				$errors[] = 'Please complete the Auto Confirm field.';
+			} 
+			if ($tData['autoConfirm'] == 'Y') {
+				if ($tData['billingPrice'] != $tData['offerPrice']) { $errors[] = 'Billing Price can not be modified for Auto Confirm tickets.'; }
+				if ($tData['numNights'] != $tData['offerNights']) { $errors[] = 'Num Nights can not be modified for Auto Confirm tickets.'; }
+			} 
 
 			
+			if (sizeof($errors) > 0) {
+				$this->Session->setFlash(__((implode('<br />', $errors)), true));
+			} else {
+			
+				// populate ticket
+				$saveTicketData = array();
+				$saveTicketData['manualTicketInitials'] = $tData['manualTicketInitials'];
+				$saveTicketData['siteId'] = $tData['siteId'];
+				$saveTicketData['billingPrice'] = $tData['billingPrice'];
+				$saveTicketData['numNights'] = $tData['numNights'];
+				$saveTicketData['requestNumGuests'] = $tData['requestNumGuests'];
+				$saveTicketData['requestNotes'] = $tData['requestNotes'];
+				$saveTicketData['userPaymentSettingId'] = $tData['userPaymentSettingId'];
+				$saveTicketData['created'] = date('Y-m-d H:i:s');
+				$saveTicketData['modified'] = date('Y-m-d H:i:s');
+				$saveTicketData['ticketStatusId'] = 1;
+				
+				$saveTicketData['requestArrival'] = $tData['requestArrival'];
+				$dTime = strtotime($arrivalDate) + ($tData['numNights'] * 86400);
+				$saveTicketData['requestDeparture'] = array('month'=> date('m', $dTime), 'day'=> date('d', $dTime), 'year'=> date('Y', $dTime));
+
+				$notes = ($tData['ticketNotes'] != '') ? "\n\n" . trim($tData['ticketNotes']) : '';
+				$saveTicketData['ticketNotes'] = 'MANUALLY CREATED TICKET 2' . $notes;
+				
+				// offer info
+				if ($tData['siteId'] == 1) {
+					$this->OfferLuxuryLink->recursive = -1;
+					$tmp = $this->OfferLuxuryLink->read(null, $tData['offerId']);
+					$offerData = $tmp['OfferLuxuryLink'];
+				} elseif ($tData['siteId'] == 2) {
+					$this->OfferFamily->recursive = -1;
+					$tmp = $this->OfferFamily->read(null, $tData['offerId']);
+					$offerData = $tmp['OfferFamily'];
+				}				
+				$saveTicketData['offerId'] = $tData['offerId'];
+				$saveTicketData['bidId'] = null;
+				$saveTicketData['packageId'] = $offerData['packageId'];
+				$saveTicketData['formatId'] = in_array($offerData['offerTypeId'], array(1,2,6)) ? 1 : 2;
+				$saveTicketData['offerTypeId'] = $offerData['offerTypeId'];
+
+				// user info
+				$this->User->recursive = 1;
+				$userData = $this->User->read(null, $tData['userId']);
+				$saveTicketData['userId'] = $tData['userId'];
+				$saveTicketData['userFirstName'] = $userData['User']['firstName'];
+				$saveTicketData['userLastName'] = $userData['User']['lastName'];
+				$saveTicketData['userEmail1'] = $userData['User']['email'];
+				$saveTicketData['userWorkPhone'] = $userData['User']['workPhone'];
+				$saveTicketData['userHomePhone'] = $userData['User']['homePhone'];
+				$saveTicketData['userMobilePhone'] = $userData['User']['mobilePhone'];
+				$saveTicketData['userFax'] = $userData['User']['fax'];
+				$saveTicketData['userAddress1'] = $userData['Address'][0]['address1'];
+				$saveTicketData['userAddress2'] = $userData['Address'][0]['address2'];
+				$saveTicketData['userCity'] = $userData['Address'][0]['address3'];
+				$saveTicketData['userState'] = $userData['Address'][0]['stateName'];
+				$saveTicketData['userCountry'] = $userData['Address'][0]['countryText'];
+				$saveTicketData['userZip'] = $userData['Address'][0]['postalCode'];
+								
+				if ($tData['autoConfirm'] == 'Y') {
+					$saveTicketData['transmitted'] = 0;
+					$saveTicketData['inProcess'] = 0;
+				} else {
+					$saveTicketData['transmitted'] = 1;
+					$saveTicketData['transmittedDatetime'] = date('Y-m-d H:i:s');
+					$saveTicketData['inProcess'] = 0;
+					$saveTicketData['inProcessDatetime'] = date('Y-m-d H:i:s');
+				}
+				
+				$this->Ticket->create();
+				
+				if ($this->Ticket->save($saveTicketData)) {
+					if ($insertPromoCodeId) {
+						$q = 'DELETE FROM promoOfferTracking WHERE user = ? AND offerId = ?';
+						$this->Ticket->query($q, array($tData['userId'], $tData['offerId']));
+						$q = 'INSERT promoOfferTracking (promoCodeId, userId, offerId, datetime) VALUES (?, ?, ?, NOW())';
+						$this->Ticket->query($q, array($insertPromoCodeId, $tData['userId'], $tData['offerId']));
+					}
+					
+					$this->Session->setFlash(__('This manual ticket has been created successfully', true));
+					$this->redirect(array('action'=>'view', 'id' => $this->Ticket->getLastInsertId()));
+				} else {
+					$this->Session->setFlash(__('The Ticket could not be saved. Please, try again.', true));
+				}
+			}
+		} else {
+			$currentUser = $this->LdapAuth->user();
+			$this->data['Ticket']['manualTicketInitials'] = $currentUser['LdapUser']['samaccountname'];
 		}
-
-		$currentUser = $this->LdapAuth->user();
-		$this->data['Ticket']['manualTicketInitials'] = $currentUser['LdapUser']['samaccountname'];
+		
+		$packageList = (isset($this->data['Ticket']['siteId']) && isset($this->data['Ticket']['clientId'])) ? $this->mtPackagesBySiteAndClient($this->data['Ticket']['siteId'], $this->data['Ticket']['clientId']) : array();
+		$offerList = (isset($this->data['Ticket']['siteId']) && isset($this->data['Ticket']['packageId'])) ? $this->mtOffersBySiteAndPackage($this->data['Ticket']['siteId'], $this->data['Ticket']['packageId']) : array();
+		$ccList = (isset($this->data['Ticket']['userId'])) ? $this->mtCcsByUser($this->data['Ticket']['userId']) : array(); 
+		
+		$this->set('packageList', $packageList);
+		$this->set('offerList', $offerList);
+		$this->set('ccList', $ccList);
 	}
-
-
-
-
-
 
 
 
@@ -905,126 +959,78 @@ class TicketsController extends AppController {
 		return false;
 	}
 
-	// -------------------------------------------
-	// NO ONE IS ALLOWED TO EDIT OR DELETE TICKETS
-	// -------------------------------------------
-	/*
-
-	function delete($id = null) {
-		$this->Session->setFlash(__('Access Denied - You cannot perform that operation.', true), 'default', array(), 'error');
-		$this->redirect(array('action'=>'index'));
-		die('ACCESS DENIED');
-		if (!$id) {
-			$this->Session->setFlash(__('Invalid id for Ticket', true));
-			$this->redirect(array('action'=>'index'));
-		}
-		if ($this->Ticket->del($id)) {
-			$this->Session->setFlash(__('Ticket deleted', true));
-			$this->redirect(array('action'=>'index'));
-		}
+	function mt_packagelist_ajax() {
+		$packages = $this->mtPackagesBySiteAndClient($this->params['url']['siteId'], $this->params['url']['clientId']);
+		echo json_encode(array('packages'=>$packages));
+		exit;
 	}
 
-	function autoNewTicket($id = null) {
-		if ($newTicketId = $this->createNewTicketFromTicket($id)) {
-			$this->redirect(array('controller' => 'tickets', 'action'=>'view', 'id' => $newTicketId));
-		} else {
-			$this->redirect(array('controller' => 'tickets', 'action'=>'view', 'id' => $id));
-		}
+	function mt_offerlist_ajax() {
+		$offers = $this->mtOffersBySiteAndPackage($this->params['url']['siteId'], $this->params['url']['packageId']);
+		echo json_encode(array('offers'=>$offers));
+		exit;
+		
 	}
 
-	function createNewTicketFromTicket($id = null) {
-		if (!$id) {
-			return false;
+	function mt_cclist_ajax() {
+		$ccs = $this->mtCcsByUser($this->params['url']['userId']);
+		echo json_encode(array('ccs'=>$ccs));
+		exit;
+		
+	}
+
+	private function mtPackagesBySiteAndClient($siteId, $clientId) {
+		$offerTable = ($siteId == '2') ? 'offerFamily' : 'offerLuxuryLink';
+		$q = 'SELECT DISTINCT p.packageId, p.packageName 
+				FROM ' . $offerTable . ' o
+				INNER JOIN package p USING(packageId)
+				WHERE o.clientId = ? AND o.startDate < NOW() AND o.isClosed = 0 AND o.endDate > NOW()';
+		$result = $this->Ticket->query($q, array($clientId));
+		$packages = array();
+		foreach($result as $r) {
+			$packages[$r['p']['packageId']] = $r['p']['packageId'] . ' - ' . $r['p']['packageName'];
 		}
+		if (sizeof($packages) == 0) { $packages[0] = 'No Live Packages'; }
+		return $packages;
+	}
 
-		$this->Ticket->recursive = 0;
-		$ticketData = $this->Ticket->read(null, $id);
-		$newTicketData['Ticket'] = $ticketData['Ticket'];
-
-		// so we can create a NEW ticket based on current ticket
-		// change workstatus to NEW, hold same offer info just change bid and user info
-
-		unset($newTicketData['Ticket']['ticketId']);
-		$newTicketData['Ticket']['ticketStatusId'] = 1;
-		$newTicketData['Ticket']['parentTicketId'] = $id;
-		$newTicketData['Ticket']['requestId'] = 0;
-		$newTicketData['Ticket']['requestInfo'] = 0;
-		$newTicketData['Ticket']['notes'] = "SYSTEM:  This ticket was automatically created and has a status of NEW.";
-		$newTicketData['Ticket']['isFlake'] = 0;
-		$newTicketData['Ticket']['paymentAuthDate'] = '0000-00-00 00:00:00';
-		$newTicketData['Ticket']['paymentSettleDate'] = '0000-00-00 00:00:00';
-		$newTicketData['Ticket']['completedUsername'] = 'AUTO';
-		$newTicketData['Ticket']['completedDate'] = '0000-00-00 00:00:00';
-		$newTicketData['Ticket']['keepAmount'] = 0;
-		$newTicketData['Ticket']['remitAmount'] = 0;
-		$newTicketData['Ticket']['comissionAmount'] = 0;
-		$newTicketData['Ticket']['requestDate'] = date('Y-m-d H:i:s');
-		$newTicketData['Ticket']['userAddress1'] = '';
-		$newTicketData['Ticket']['userAddress2'] = '';
-		$newTicketData['Ticket']['userAddress3'] = '';
-		$newTicketData['Ticket']['userCity'] = '';
-		$newTicketData['Ticket']['userState'] = '';
-		$newTicketData['Ticket']['userCountry'] = '';
-		$newTicketData['Ticket']['userZip'] =	'';
-
-		$offerId = $ticketData['Offer']['offerId'];
-		$bidId = $ticketData['Ticket']['bidId'];
-		$userId = $ticketData['Ticket']['userId'];
-
-		if (!$offerId || !$bidId) {
-			return false;
+	private function mtOffersBySiteAndPackage($siteId, $packageId) {
+		$offerTable = ($siteId == '2') ? 'offerFamily' : 'offerLuxuryLink';
+		$q = 'SELECT offerId, offerTypeId, offerTypeName, openingBid, roomNights, buyNowPrice
+				FROM ' . $offerTable . ' o
+				WHERE o.packageId = ?
+				AND startDate < NOW()
+				AND (
+				(isClosed = 0 AND endDate > NOW())
+				OR
+				(isClosed = 1 AND endDate > NOW() - INTERVAL 7 DAY)
+				) ORDER BY offerTypeName, openingBid, buyNowPrice, offerId';
+		$result = $this->Ticket->query($q, array($packageId));
+		$offers = array();
+		foreach($result as $r) {
+			$price = ($r['o']['offerTypeId'] == 3 || $r['o']['offerTypeId'] == 4) ? $r['o']['buyNowPrice'] : $r['o']['openingBid'];
+			$offers[$r['o']['offerId']] = $r['o']['offerId'] . ' - ' . $r['o']['offerTypeName'] . ' : ' . $r['o']['roomNights'] . ' nights : $' . $price;
 		}
+		return $offers;
+	}
 
-		$bids = $this->Ticket->Offer->Bid->query('SELECT * from bid WHERE offerId = ' . $offerId . ' AND bidId != ' . $bidId . ' ORDER BY bidId DESC');
-
-		$foundValidNextBid = false;
-		foreach ($bids as $bid) {
-			// must have a valid active bid -- get the next top bid
-			if (($bid['bid']['bidInactive'] != 1) && ($bid['bid']['bidId'] != $bidId) && ($bid['bid']['userId'] != $userId)) {
-				$user = new User();
-				$userData = $user->read(null, $bid['bid']['userId']);
-				if ($userData) {
-					$newTicketData['Ticket']['bidId'] = 			$bid['bid']['bidId'];
-					$newTicketData['Ticket']['userId'] = 			$userData['User']['userId'];
-					$newTicketData['Ticket']['userFirstName'] = 	$userData['User']['firstName'];
-					$newTicketData['Ticket']['userLastName'] = 	$userData['User']['lastName'];
-					$newTicketData['Ticket']['userEmail1'] = 		$userData['User']['email'];
-					$newTicketData['Ticket']['userWorkPhone'] = 	$userData['User']['workPhone'];
-					$newTicketData['Ticket']['userHomePhone'] = 	$userData['User']['homePhone'];
-					$newTicketData['Ticket']['userMobilePhone'] = $userData['User']['mobilePhone'];
-					$newTicketData['Ticket']['userFax'] = 		$userData['User']['fax'];
-
-					if (!empty($userData['Address'])) {
-						$newTicketData['Ticket']['userAddress1'] =	$userData['Address']['address1'];
-						$newTicketData['Ticket']['userAddress2'] = 	$userData['Address']['address2'];
-						$newTicketData['Ticket']['userAddress3'] = 	$userData['Address']['address3'];
-						$newTicketData['Ticket']['userCity'] = 		$userData['Address']['city'];
-						$newTicketData['Ticket']['userState'] = 		$userData['Address']['stateName'];
-						$newTicketData['Ticket']['userCountry'] = 	$userData['Address']['countryName'];
-						$newTicketData['Ticket']['userZip'] =			$userData['Address']['postalCode'];
-					}
-					$foundValidNextBid = true;
-					break;
-				}
+	private function mtCcsByUser($userId) {
+		$q = 'SELECT * FROM userPaymentSetting p WHERE inactive = 0 AND userId = ?';
+		$result = $this->Ticket->query($q, array($userId));
+		$ccs = array();
+		foreach($result as $r) {
+			$dtExp = $r['p']['expYear'] . '-' . $r['p']['expMonth'] . '-2';
+			$dtNow = date('Y-m') . '-1';
+			if (strtotime($dtExp) > strtotime($dtNow)) {
+				$ccNumber = aesDecrypt($r['p']['ccNumber']);
+				$ccs[$r['p']['userPaymentSettingId']] = $r['p']['userPaymentSettingId'] . ' - ' . $r['p']['ccType'] . ' - XXXX-XXXX-XXXX-' . substr($ccNumber, -4);
 			}
 		}
-
-		if ($foundValidNextBid) {
-			$this->Ticket->create();
-			if ($this->Ticket->save($newTicketData)) {
-				$this->Session->setFlash(__('The original ticket was cancelled and a NEW ticket has been created based on the original.', true));
-				return $this->Ticket->getLastInsertID();
-			} else {
-				$this->Session->setFlash(__('There was an error while creating the new ticket.', true));
-				return false;
-			}
-		} else {
-			$this->Session->setFlash(__('Could not find the next eligible bid -- a new ticket was NOT created.', true));
-			return false;
-		}
+		if (sizeof($ccs) == 0) { $ccs[0] = 'No Valid Credit Cards'; }
+		return $ccs;
 	}
 
-	*/
+
 
 }
 ?>
