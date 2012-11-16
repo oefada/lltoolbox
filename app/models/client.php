@@ -205,7 +205,8 @@ class Client extends AppModel {
 				$this->ClientSiteExtended->saveToFrontEnd($clientSiteExtended);
 			}
 	   }
-	   return $this->saveDestThemeLookup($created, $client);
+	   return true;
+	   // return $this->saveDestThemeLookup($created, $client);
    }
 
    function saveFrontEndFields($client, $sites) {
@@ -366,75 +367,6 @@ class Client extends AppModel {
 
 	$r = AppModel::afterFind($results);
 	return $r;
-   }
-
-   function saveDestThemeLookup($created, $data) {
-	   $clientId = ($created && !isset($data['Client']['clientId'])) ? $this->getInsertId() : $this->id;
-	   if (!$clientId) {
-		   @mail('devmail@luxurylink.com', 'CLIENT AFTERSAVE ERROR: NO CLIENT ID', print_r($this->data));
-	   }
-	   $clientSites = $this->find('first', array('conditions' => array('Client.clientId' => $data['Client']['clientId']),
-										   'fields' => array('sites')));
-	   $sites = $clientSites['Client']['sites'];
-
-	   foreach ($sites as $site) {
-			// for clientDestinationLookup only on the frontend
-		   // -----------------------------------------------------------------
-			if (isset($data['Destination']) && !empty($data['Destination']['Destination'])) {
-				$destinationIds = array();
-				if (isset($data['Destination']['Destination']) && !empty($data['Destination']['Destination'])) {
-					$destinationIds = $data['Destination']['Destination'];
-				}
-				else {
-					foreach($data['Destination'] as $destination) {
-						 array_push($destinationIds, $destination['destinationId']);
-					}
-				}
-			   $tmp = '';
-			   sort($destinationIds);
-			   $insert_arr = array();
-			   $insert_arr['clientId'] = $clientId;
-			   for ($i = 1; $i <= 150; $i++) {
-				   if (in_array($i, $destinationIds)) {
-					   $insert_arr["destination$i"] = 1;
-					   $tmp.= "destination$i=1,";
-				   } else {
-					   $tmp.= "destination$i=0,";
-				   }
-			   }
-			   $update_tmp = rtrim($tmp, ',');
-			   $sql = "INSERT DELAYED INTO clientDestinationLookup (". implode(',',array_keys($insert_arr)) .") VALUES (". implode(',',array_values($insert_arr)) .") ON DUPLICATE KEY UPDATE $update_tmp";
-			   $this->useDbConfig = $site;
-			   $result = $this->query($sql);
-			}
-			// for clientThemeLookup only on the frontend
-			// -----------------------------------------------------------------
-			if (isset($data['Theme']) && !empty($data['Theme'])) {
-				$insert_arr = array();
-				$update_arr = array();
-				$insert_arr['clientId'] = $clientId;
-				foreach($data['Theme'] as $themeId => $clientThemeRel) {
-					if (isset($clientThemeRel['sites']) && is_array($clientThemeRel['sites']) && in_array($site, $clientThemeRel['sites'])) {
-						$insert_arr['theme'.$themeId] = 1;
-						$update_arr[] = 'theme'.$themeId.'=1';
-					}
-				}
-				for ($i=1; $i <= 150; $i++) {
-					if (!isset($insert_arr['theme'.$i])) {
-						$insert_arr['theme'.$i] = 0;
-						$update_arr[] = 'theme'.$i.'=0';
-					}
-				}
-			   //$update_tmp = rtrim($tmp, ',');
-			   $sql = "INSERT DELAYED INTO clientThemeLookup (". implode(',',array_keys($insert_arr)) .")
-					   VALUES (". implode(',',array_values($insert_arr)) .")
-					   ON DUPLICATE KEY UPDATE ".implode(',', $update_arr);
-			   $this->useDbConfig = $site;
-			   $result = $this->query($sql);
-			}
-	   }
-	   $this->useDbConfig = 'default';
-	   return true;
    }
 
    // save current LOA's sites to Client and push data to front-end dbs after an LOA has been saved
