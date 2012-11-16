@@ -240,15 +240,21 @@ $cacheAction = true;
 		$ll_url = $_SERVER['ENV_USER'] .'-lldev.luxurylink.com';
 		$fg_url = $_SERVER['ENV_USER'] .'-familydev.luxurylink.com';
 		$webservice_live_url = 'http://'. $_SERVER['ENV_USER'] .'-toolboxdev.luxurylink.com';
+		Configure::write('tokenExMerchantId', '8347361947284750');
+		Configure::write('tokenExWsdlURL', 'https://stage.tokenex.com/Tokenizer.svc?wsdl');
 	} elseif (stristr($_SERVER['HTTP_HOST'], 'stage') || $_SERVER['ENV'] == 'staging' || strpos($_ENV['HOSTNAME'],'stage')!==FALSE) {
 		define("ISDEV",true);
 		define("ISSTAGE",true);
 		$ll_url = 'stage-luxurylink.luxurylink.com';
 		$fg_url = 'stage-family.luxurylink.com';
 		$webservice_live_url = 'http://stage-toolbox.luxurylink.com';
+		Configure::write('tokenExMerchantId', '8347361947284750');
+		Configure::write('tokenExWsdlURL', 'https://stage.tokenex.com/Tokenizer.svc?wsdl');
 	} else {
 		define("ISDEV",false);
 		define("ISSTAGE",false);
+		Configure::write('tokenExMerchantId', '6420148734761242');
+		Configure::write('tokenExWsdlURL', 'https://token.api.tokenex.com/Tokenizer.svc?wsdl');
 	}
 
 	if (ISDEV) {

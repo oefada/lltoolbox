@@ -229,26 +229,21 @@ class PaymentDetailsController extends AppController {
 				
 		        if ($usingNewCard) {
 		        	$data['userPaymentSetting'] = $this->data['UserPaymentSetting'];
-		        	switch (substr($data['userPaymentSetting']['ccNumber'], 0, 1)) {
-		        		case 4:
-		        			$ccType = 'VI';
-		        			break;
-		        		case 5:
-		        			$ccType = 'MC';
-		        			break;
-		        		case 6:
-		        			$ccType = 'DS';
-		        			break;
-		        		case 3:	
-		        			$ccType = 'AX';
-		        			break;
-		        		default:
-		        			$ccType = '';
-		        			break;
-		        	}
-					
-					$data['userPaymentSetting']['ccType']			= $ccType;
-		        	$data['userPaymentSetting']['ccNumber'] 		= aesEncrypt($data['userPaymentSetting']['ccNumber']);
+
+					$expMonth = str_pad($this->data['UserPaymentSetting']['expMonth'], 2, 0, STR_PAD_LEFT);
+					$expYear = substr($this->data['UserPaymentSetting']['expYear'], -2);
+					$expirationDate = $expMonth . $expYear;
+
+					$data['userPaymentSetting']['ccType'] =
+						$this->UserPaymentSetting->getCcType($data['userPaymentSetting']['ccNumber']);
+
+		        	$data['userPaymentSetting']['ccToken'] =
+						$this->UserPaymentSetting->tokenizeCcNum(
+							$data['userPaymentSetting']['ccNumber'],
+							$expirationDate
+						);
+					unset($data['userPaymentSetting']['ccNumber']);
+
 					$data_json_encoded = json_encode($data);
 		        } elseif ($this->data['PaymentDetail']['userPaymentSettingId']) {
 		        	$data['userPaymentSettingId'] = $this->data['PaymentDetail']['userPaymentSettingId'];
@@ -258,7 +253,12 @@ class PaymentDetailsController extends AppController {
 			    }
 	
 		        if (!$badPaymentRequest) {
-	        		$paymentResponse = $soap_client->call($webservice_live_method_name, array($webservice_live_method_param => $data_json_encoded));
+	        		$paymentResponse = $soap_client->call(
+						$webservice_live_method_name,
+						array(
+							$webservice_live_method_param => $data_json_encoded
+						)
+					);
 	
 	        		$this->Ticket->recursive = -1;
 					$ticketRead = $this->Ticket->read(null, $ticketId);
@@ -361,19 +361,17 @@ class PaymentDetailsController extends AppController {
 			$initials_user = false;
 		}
 							
-		if (in_array($initials_user, array('rvella','cholland','bjensen','kferson','mtrinh'))) {
-			if (!empty($ticket['User']['UserPaymentSetting'])) {
-				foreach ($ticket['User']['UserPaymentSetting'] as $ups_key => $ups) {
-					$cc_full = $this->PaymentDetail->query('SELECT ccNumber FROM userPaymentSetting WHERE userPaymentSettingId = ' . $ups['userPaymentSettingId']);				
-					$ticket['User']['UserPaymentSetting'][$ups_key]['ccNumber'] = aesFullDecrypt($cc_full[0]['userPaymentSetting']['ccNumber']);
-				}
-			}
+		if (in_array($initials_user, array('mclifford','cholland','bjensen','kferson','mtrinh'))) {
+			$allowViewCCFull = true;
+		} else {
+			$allowViewCCFull = false;
 		}
 		
 		if (isset($ticket['UserPromo']['Promo']) && $ticket['UserPromo']['Promo']['applied'] == 1) {
 			unset($paymentTypeIds[4]);
 		}
 
+		$this->set('allowViewCCFull', $allowViewCCFull);
 		$this->set('ticket', $ticket);
 		$this->set('countries', $this->CountryBilling->getList());
 		$this->set('selectExpMonth', $selectExpMonth);
