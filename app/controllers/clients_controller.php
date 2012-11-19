@@ -13,7 +13,7 @@ class ClientsController extends AppController {
 		if ($this->action != "index") {
 			$this->set('currentTab', 'property');
 			$this->set('clientId', @$this->params['pass'][0]);
-	        $this->set('client', $this->Client->findByClientId(@$this->params['pass'][0]));
+			$this->set('client', $this->Client->findByClientId(@$this->params['pass'][0]));
 			$this->loadModel("Country");
 		}
 	}
@@ -42,10 +42,10 @@ class ClientsController extends AppController {
 			$queryPieces = explode(" ", $query);
 			$sqlquery = '';
 			foreach($queryPieces as $piece) {
-			    if (strlen($piece) > 2) {
-			        $sqlquery .= '+';
-			    }
-			    $sqlquery .= $piece.'* ';
+				if (strlen($piece) > 2) {
+					$sqlquery .= '+';
+				}
+				$sqlquery .= $piece.'* ';
 			}
 			
 			$conditions['OR']['clientId LIKE'] = '%'.$query.'%';
@@ -56,7 +56,7 @@ class ClientsController extends AppController {
 		}
 
 		if ($inactive == 0) {
-            $conditions['AND'][] = " Client.clientId IN (SELECT clientId FROM clientSiteExtended WHERE inactive = 0)";
+			$conditions['AND'][] = " Client.clientId IN (SELECT clientId FROM clientSiteExtended WHERE inactive = 0)";
 		}
 
 		//$conditions['OR'][] = 'parentClientId IS NULL';
@@ -109,32 +109,32 @@ class ClientsController extends AppController {
 	}
 	
 	function add($parentId = null) {
-	    if (!$parentId) {
-	        $this->Session->setFlash(__('Invalid Parent Client ID', true));
+		if (!$parentId) {
+			$this->Session->setFlash(__('Invalid Parent Client ID', true));
 			$this->redirect(array('action'=>'index'));
-	    }
-        
-	    if (!empty($this->data)) {
-	        $this->data['Client']['createdInToolbox'] = 1;
+		}
+		
+		if (!empty($this->data)) {
+			$this->data['Client']['createdInToolbox'] = 1;
 
-			// alee 03-17-2009 - add SEO NAME for child clients	        
-	        $this->data['Client']['seoName'] = $this->convertToSeoName($this->data['Client']['name']);
-            $this->data['Client']['seoLocation'] = $this->convertToSeoName($this->data['Client']['locationDisplay']);
+			// alee 03-17-2009 - add SEO NAME for child clients			
+			$this->data['Client']['seoName'] = $this->convertToSeoName($this->data['Client']['name']);
+			$this->data['Client']['seoLocation'] = $this->convertToSeoName($this->data['Client']['locationDisplay']);
 
-	        $this->Client->create();
-	        if($this->Client->save($this->data, array('callbacks' => false))) {
-                $parentClient = $this->Client->findByClientId($parentId);
-                $this->Client->set_sites($this->Client->id, $parentClient['Client']['sites']);
-	            $this->Session->setFlash(__('The Child Client has been saved, <a href="/clients/edit/'.$this->Client->id.'">click here to edit it</a>', true), 'default', array(), 'success');
-	            $this->set('closeModalbox', true);
-	        } else {
-	            $this->Session->setFlash(__('The Client could not be saved. Please, try again.', true), 'default', array(), 'error');
-	        }
-	    }
-	    
-	    $this->data['Client']['parentClientId'] = $parentId;
-	    $clientTypeIds = $this->Client->ClientType->find('list');
-	    $this->set('clientTypeIds', $clientTypeIds);
+			$this->Client->create();
+			if($this->Client->save($this->data, array('callbacks' => false))) {
+				$parentClient = $this->Client->findByClientId($parentId);
+				$this->Client->set_sites($this->Client->id, $parentClient['Client']['sites']);
+				$this->Session->setFlash(__('The Child Client has been saved, <a href="/clients/edit/'.$this->Client->id.'">click here to edit it</a>', true), 'default', array(), 'success');
+				$this->set('closeModalbox', true);
+			} else {
+				$this->Session->setFlash(__('The Client could not be saved. Please, try again.', true), 'default', array(), 'error');
+			}
+		}
+		
+		$this->data['Client']['parentClientId'] = $parentId;
+		$clientTypeIds = $this->Client->ClientType->find('list');
+		$this->set('clientTypeIds', $clientTypeIds);
 	}
 	
 	function edit($id = null) {
@@ -159,28 +159,28 @@ class ClientsController extends AppController {
 			} elseif (isset($this->data['Client']['parentClientId']) && array_key_exists($this->data['Client']['parentClientId'], $clientCollectionIds)) {
 				$this->data['Client']['parentClientId'] = null;
 			}
-		    /** SORT AMENITIES **/
-		    if (!empty($this->data['sortedAmenities'])):
+			/** SORT AMENITIES **/
+			if (!empty($this->data['sortedAmenities'])):
 				$ordAmLst = array();
 				parse_str($this->data['sortedAmenities'], $ordAmLst);
-				unset($this->data['sortedAmenities']);		    
+				unset($this->data['sortedAmenities']);			
 				foreach ($this->data['ClientAmenityRel'] as $k => $am) {
-                    if (!isset($am['remove'])) {
-                        $this->data['ClientAmenityRel'][$k]['weight'] = array_pop(array_keys($ordAmLst['ordAmLst'], $am['amenityId'], true));
-                    }
+					if (!isset($am['remove'])) {
+						$this->data['ClientAmenityRel'][$k]['weight'] = array_pop(array_keys($ordAmLst['ordAmLst'], $am['amenityId'], true));
+					}
 				}
-		    endif;
-	         /** END SORT **/   
+			endif;
+			 /** END SORT **/   
 
 			$this->data['Destination']['Destination'] = explode(',', $this->data['destinationIds']); 
 			unset($this->data['destinationIds']);	
 
-		    
-	         $this->data['Client']['seoName'] = $this->convertToSeoName($this->data['Client']['name']);
-             $this->data['Client']['seoLocation'] = $this->convertToSeoName($this->data['Client']['locationDisplay']);
+			
+			 $this->data['Client']['seoName'] = $this->convertToSeoName($this->data['Client']['name']);
+			 $this->data['Client']['seoLocation'] = $this->convertToSeoName($this->data['Client']['locationDisplay']);
 			 
-             $this->Client->ClientType->recursive = -1;
-             $this->data['Client']['clientTypeSeoName'] = $this->Client->ClientType->field('clientTypeSeoName', array('ClientType.clientTypeId' => $this->data['Client']['clientTypeId']));
+			 $this->Client->ClientType->recursive = -1;
+			 $this->data['Client']['clientTypeSeoName'] = $this->Client->ClientType->field('clientTypeSeoName', array('ClientType.clientTypeId' => $this->data['Client']['clientTypeId']));
 			 
 			 if (!empty($this->data['Client']['ageRanges'])) {
 				$this->data['Client']['ageRanges'] = implode(',',$this->data['Client']['ageRanges']);
@@ -204,7 +204,7 @@ class ClientsController extends AppController {
 		//set up our data, if it's a form post, we still need all related data
 		if (empty($this->data)) {
 			$this->Client->containModels[] = "ClientSiteExtended";
-		    $this->Client->recursive = 2;
+			$this->Client->recursive = 2;
 			$this->data = $this->Client->find('first',array(
 				'conditions' => array(
 					'Client.clientId' => $id
@@ -234,26 +234,26 @@ class ClientsController extends AppController {
 		$client_trackings = array();
 		// map clientTracking: use clientTrackingTypeId as key
 		if (isset($this->data['ClientTracking'])) {
-		    foreach ($this->data['ClientTracking'] as $k => $v) {
-			    $client_trackings[$v['clientTrackingTypeId']] = $v;	
-		    }
+			foreach ($this->data['ClientTracking'] as $k => $v) {
+				$client_trackings[$v['clientTrackingTypeId']] = $v;	
+			}
 		}
 		$this->data['ClientTracking'] = $client_trackings;
-        
-        // get amenities for each amenity type
-        $this->data['ClientAmenityTypeRel'] = $this->Client->getClientAmenityTypeRel($id);
+		
+		// get amenities for each amenity type
+		$this->data['ClientAmenityTypeRel'] = $this->Client->getClientAmenityTypeRel($id);
 
-        $this->Client->ClientType->recursive = -1;
+		$this->Client->ClientType->recursive = -1;
 		$clientTypeIds = $this->Client->ClientType->find('list');
 		
-        $this->Client->recursive = -1;
+		$this->Client->recursive = -1;
 		$clientCollectionIds = $this->Client->find('list', array('conditions' => 'Client.clientTypeId = 14'));
 		$themes = $this->Client->ClientThemeRel->Theme->findClientThemes($id);
-        $themesCount = $this->Client->ClientThemeRel->countThemesSites($id);
-        $this->Client->Destination->recursive = -1;
+		$themesCount = $this->Client->ClientThemeRel->countThemesSites($id);
+		$this->Client->Destination->recursive = -1;
 		$destinations = $this->Client->Destination->find('list', array('order' => array('destinationName')));		
-        $this->set('themes', $themes);
-        $this->set('themesCount', $themesCount);
+		$this->set('themes', $themes);
+		$this->set('themesCount', $themesCount);
 		if (!empty($this->data['Client']['ageRanges'])) {
 			$ranges = explode(',',$this->data['Client']['ageRanges']);
 			$this->data['Client']['ageRanges'] = $ranges;
@@ -292,20 +292,20 @@ class ClientsController extends AppController {
 		$countryIds = $this->Country->find('list', array('order'=>'Country.countryName'));
 
 		if (!empty($this->data['Client']['countryId'])) {
-            $this->Country->State->recursive = -1;
+			$this->Country->State->recursive = -1;
 			
 			$this->data['Client']['countryCode'] = $this->Country->getCountryCode($this->data['Client']['countryId']);
 			
 			$this->Country->State->primaryKey = 'id';
-		    $stateIds = $this->Country->State->find('list', array('conditions' => array('State.countryId' => $this->data['Client']['countryCode'])));
+			$stateIds = $this->Country->State->find('list', array('conditions' => array('State.countryId' => $this->data['Client']['countryCode'])));
 		}
 		
 		if (!empty($this->data['Client']['stateId'])) {
-            $this->Country->State->City->recursive = -1;
+			$this->Country->State->City->recursive = -1;
 			
 			list($this->data['Client']['stateCode']) = $this->Country->State->getStateCode($this->data['Client']['stateId']);
 
-		    $cityIds = $this->Country->State->City->find('list', array('conditions' => array('City.stateId' => $this->data['Client']['stateCode'],'City.countryId' => $this->data['Client']['countryCode'])));
+			$cityIds = $this->Country->State->City->find('list', array('conditions' => array('City.stateId' => $this->data['Client']['stateCode'],'City.countryId' => $this->data['Client']['countryCode'])));
 		}
 		
 		$this->set(compact('clientStatusIds','clientTypeIds','clientCollectionIds','regions','clientAcquisitionSourceIds', 'loas', 'themes', 'destinations', 'destSelected', 'countryIds', 'stateIds', 'cityIds'));
@@ -344,7 +344,7 @@ class ClientsController extends AppController {
 	}
 	
 	function convertToSeoName($str) {
-	    return $this->Client->convertToSeoName($str);
+		return $this->Client->convertToSeoName($str);
 	}
 	
 	function auto_complete() {
@@ -372,65 +372,64 @@ class ClientsController extends AppController {
 
 		return $client['Client']['name'];
   	}
-    
-    // 2011-03-21: New Inventory Management Report. Use this instead of the one
-    // in the reports controller.
-    function imr($clientId) {
-        $schedulingMasters = array();
-        if (!empty($this->data)) {
-            Sanitize::clean($this->data);
-            if (isset($this->data['download'])) {
-                Configure::write('debug', 0);
-                $this->viewPath .= '/csv';
-                $this->layoutPath = 'csv';
-            }
-            else {
-                $this->layout = 'default_jquery';
-            }
-            $searchStartDate = date('Y-m-d', strtotime($this->data['searchStartDate']));
-            $searchEndDate = date('Y-m-d', strtotime($this->data['searchEndDate']));
-        }
-        else {
-            $this->layout = 'default_jquery';
-        }
-        if (!isset($searchStartDate) && !isset($searchEndDate)) {
-            $this->Client->Loa->recursive = -1;
-            if ($loaDates = $this->Client->Loa->find('first', array('conditions' => array('Loa.loaId' => $this->Client->Loa->get_current_loa($clientId)),
-                                                                    'fields' => array('Loa.startDate', 'Loa.endDate')))) {
-                $searchStartDate = $loaDates['Loa']['startDate'];
-                $searchEndDate = $loaDates['Loa']['endDate'];
-            }
-            else {
-                // find most recent loa
-                if ($loas = $this->Client->Loa->getClientLoas($clientId)) {
-                    $searchStartDate = $loas[0]['Loa']['startDate'];
-                    $searchEndDate = $loas[0]['Loa']['endDate'];
-                }
-                else {
-                    $this->set('schedulingMasters', array());
-                    return;
-                }
-            }
-        }
-        if ($schedulingMasters = $this->Client->getClientSchedulingMasters($clientId, $searchStartDate, $searchEndDate)) {
-            $statusKey = array('Live' => 1,
-                               'Scheduled' => 2,
-                               'Closed' => 3);
-            $offerStatus = array();
-            $packageId = array();
-            $startDate = array();
-            foreach ($schedulingMasters as $i => $master) {
-                $offerStatus[$i] = $statusKey[$master['SchedulingMaster']['offerStatus']];
-                $packageId[$i] = $master['SchedulingMaster']['packageId'];
-                $startDate[$i] = $master['SchedulingMaster']['startDate'];
-            }
-            array_multisort($offerStatus, SORT_ASC, $packageId, SORT_DESC, $startDate, SORT_DESC, $schedulingMasters);
-            //debug($schedulingMasters); die();
-        }
-        $this->set('searchStartDate', $searchStartDate);
-        $this->set('searchEndDate', $searchEndDate);
-        $this->set('schedulingMasters', $schedulingMasters);
-    }
+	
+	// 2011-03-21: New Inventory Management Report. Use this instead of the one
+	// in the reports controller.
+	function imr($clientId) {
+		$schedulingMasters = array();
+		if (!empty($this->data)) {
+			Sanitize::clean($this->data);
+			if (isset($this->data['download'])) {
+				Configure::write('debug', 0);
+				$this->viewPath .= '/csv';
+				$this->layoutPath = 'csv';
+			}
+			else {
+				$this->layout = 'default_jquery';
+			}
+			$searchStartDate = date('Y-m-d', strtotime($this->data['searchStartDate']));
+			$searchEndDate = date('Y-m-d', strtotime($this->data['searchEndDate']));
+		}
+		else {
+			$this->layout = 'default_jquery';
+		}
+		if (!isset($searchStartDate) && !isset($searchEndDate)) {
+			$this->Client->Loa->recursive = -1;
+			if ($loaDates = $this->Client->Loa->find('first', array('conditions' => array('Loa.loaId' => $this->Client->Loa->get_current_loa($clientId)),'fields' => array('Loa.startDate', 'Loa.endDate')))) {
+				$searchStartDate = $loaDates['Loa']['startDate'];
+				$searchEndDate = $loaDates['Loa']['endDate'];
+			}
+			else {
+				// find most recent loa
+				if ($loas = $this->Client->Loa->getClientLoas($clientId)) {
+					$searchStartDate = $loas[0]['Loa']['startDate'];
+					$searchEndDate = $loas[0]['Loa']['endDate'];
+				}
+				else {
+					$this->set('schedulingMasters', array());
+					return;
+				}
+			}
+		}
+		if ($schedulingMasters = $this->Client->getClientSchedulingMasters($clientId, $searchStartDate, $searchEndDate)) {
+			$statusKey = array('Live' => 1,
+							   'Scheduled' => 2,
+							   'Closed' => 3);
+			$offerStatus = array();
+			$packageId = array();
+			$startDate = array();
+			foreach ($schedulingMasters as $i => $master) {
+				$offerStatus[$i] = $statusKey[$master['SchedulingMaster']['offerStatus']];
+				$packageId[$i] = $master['SchedulingMaster']['packageId'];
+				$startDate[$i] = $master['SchedulingMaster']['startDate'];
+			}
+			array_multisort($offerStatus, SORT_ASC, $packageId, SORT_DESC, $startDate, SORT_DESC, $schedulingMasters);
+			//debug($schedulingMasters); die();
+		}
+		$this->set('searchStartDate', $searchStartDate);
+		$this->set('searchEndDate', $searchEndDate);
+		$this->set('schedulingMasters', $schedulingMasters);
+	}
 
 	/**
 	 * 
