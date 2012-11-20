@@ -192,14 +192,16 @@ class MailingHelper extends AppHelper{
 		//$url=$clientArr['seoUrl'];
 		// link to listing page as landing page
 		$url="http://www.luxurylink.com/fivestar/hotel-deals/".$clientArr['seoLocation'];
-		$utm_content=($utm_content!='')?$utm_content:$clientArr['seoName'];
-		$qs=$this->utm_qs.'&utm_content='.$utm_content;
+		$url.="/featuring/".$clientArr['seoName'];
+		//$utm_content=($utm_content!='')?$utm_content:$clientArr['seoName'];
+		//$qs=$this->utm_qs.'&utm_content='.$utm_content;
+		$qs=$this->utm_qs;
 		if ($utm_term!=''){
 			$qs.='&utm_term='.$utm_term;
 		}else{
-			$qs.='&utm_term='.rawurlencode($clientArr['name']);
+			//$qs.='&utm_term='.rawurlencode($clientArr['name']);
 		}
-		$qs.="&featuredproperty=1&tmsg=2";
+		//$qs.="&featuredproperty=1&tmsg=2";
 
 		return strtolower($url.$qs);
 
@@ -271,7 +273,7 @@ class MailingHelper extends AppHelper{
 				<a 
 					style="text-decoration: none; color: #3ca9d5" 
 					href="'.$url.'"
-					name="'.$utm_term.'" 
+					name="'.htmlspecialchars($utm_term,ENT_NOQUOTES|ENT_QUOTES).'" 
 					target="_blank" 
 					xt="SPCLICKSTREAM"
 				><strong>'.$name.'</strong></a>
@@ -315,6 +317,9 @@ class MailingHelper extends AppHelper{
 		}
 		if ($dir!=''){
 			$url.=$dir;
+		}
+		if ($utm_term!=''){
+			$url.=rawurlencode(strtolower($utm_term));
 		}
 		$qs=$this->utm_qs;
 		if (is_array($paramsArr) && count($paramsArr)>0){
