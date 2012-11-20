@@ -63,7 +63,7 @@ $this->set('hideSidebar', true);
 						</li>
 					</ul>
 				</li>
-				<li id="phtml_3" rel="div">
+				<li id="phtml_3" rel="main">
 					<a href="#">Main</a>
 					<ul>
 						<li id="phtml_31" rel="content">
@@ -175,26 +175,30 @@ $this->set('hideSidebar', true);
 						"icon" : {
 							"image" : "http://ui.llsrv.us/images/icons/silk/page.png"
 						},
-						"valid_children" : ["image"],
-						"max_depth" : 2,
-						"hover_node" : false,
-						"select_node" : function() {
-							return false;
-						}
+						"valid_children" : ['PhotoModule', 'main']
 					},
 					"div" : {
 						"icon" : {
-							"image" : "http://ui.llsrv.us/images/icons/silk/layout.png"
+							"image" : "http://ui.llsrv.us/images/icons/silk/layout.png",
+							"valid_children" : ['div', 'ad']
 						}
 					},
 					"ad" : {
 						"icon" : {
-							"image" : "http://ui.llsrv.us/images/icons/silk/television.png"
+							"image" : "http://ui.llsrv.us/images/icons/silk/television.png",
+							"max_depth" : 0,
+							"max_children" : 0
 						}
 					},
 					"module" : {
 						"icon" : {
 							"image" : "http://ui.llsrv.us/images/icons/silk/script_gear.png"
+						}
+					},
+					"main" : {
+						"icon" : {
+							"image" : "http://ui.llsrv.us/images/icons/silk/application_tile_vertical.png",
+							"valid_children" : ['content', 'sidebar']
 						}
 					},
 					"content" : {
@@ -204,12 +208,14 @@ $this->set('hideSidebar', true);
 					},
 					"sidebar" : {
 						"icon" : {
-							"image" : "http://ui.llsrv.us/images/icons/silk/application_side_expand.png"
+							"image" : "http://ui.llsrv.us/images/icons/silk/application_side_expand.png",
+							"valid_children" : ['div', 'ad']
 						}
 					},
 					"TabsModule" : {
 						"icon" : {
-							"image" : "http://ui.llsrv.us/images/icons/silk/application_cascade.png"
+							"image" : "http://ui.llsrv.us/images/icons/silk/application_cascade.png",
+							"valid_children" : ['tab']
 						}
 					},
 					"tab" : {
@@ -219,16 +225,22 @@ $this->set('hideSidebar', true);
 					},
 					"image" : {
 						"icon" : {
-							"image" : "http://ui.llsrv.us/images/icons/silk/image.png"
+							"image" : "http://ui.llsrv.us/images/icons/silk/image.png",
+							"max_depth" : 0,
+							"max_children" : 0
 						}
 					},
 					"PhotoModule" : {
 						"icon" : {
-							"image" : "http://ui.llsrv.us/images/icons/silk/images.png"
+							"image" : "http://ui.llsrv.us/images/icons/silk/images.png",
+							"valid_children" : ['image'],
+							"max_depth" : 1
 						}
 					},
 					"default" : {
-						"valid_children" : []
+						"valid_children" : 'all',
+						"max_depth" : -1,
+						"max_children" : -1
 					}
 				}
 			},
