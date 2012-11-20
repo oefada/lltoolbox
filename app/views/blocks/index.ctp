@@ -47,19 +47,19 @@ $this->set('hideSidebar', true);
 					<a href="#">PhotoModule</a>
 					<ul>
 						<li id="phtml_22" rel="image">
-							<a href="#">Image</a>
+							<a href="#">Image 1</a>
 						</li>
 						<li id="phtml_23" rel="image">
-							<a href="#">Image</a>
+							<a href="#">Image 2</a>
 						</li>
 						<li id="phtml_24" rel="image">
-							<a href="#">Image</a>
+							<a href="#">Image 3</a>
 						</li>
 						<li id="phtml_25" rel="image">
-							<a href="#">Image</a>
+							<a href="#">Image 4</a>
 						</li>
 						<li id="phtml_26" rel="image">
-							<a href="#">Image</a>
+							<a href="#">Image 5</a>
 						</li>
 					</ul>
 				</li>
@@ -147,6 +147,9 @@ $this->set('hideSidebar', true);
 		var $tree = $('#blocktree');
 		$tree.jstree({
 			"plugins" : ["themes", "html_data", "ui", /*"contextmenu",*/"crrm", "hotkeys", "types", "dnd"],
+			"dnd" : {
+				"copy_modifier" : "shift"
+			},
 			"core" : {
 				"initially_open" : ["phtml_1"]
 			},
@@ -284,9 +287,13 @@ $this->set('hideSidebar', true);
 		}).bind("loaded.jstree", function(event, data) {
 			$(this).jstree('open_all');
 		}).bind("select_node.jstree", function(event, data) {
-			console.log(Math.random(), event, data, data.rslt.obj.attr("id"));
+			var $target = $(data.rslt.obj);
+			var type = $target.attr('rel');
 			var $output = $('<div class="editorPanel" />');
-			$output.append($('<h2/>').text(data.rslt.obj.text()));
+			$output.append($('<h2/>').text(type.charAt(0).toUpperCase() + type.slice(1)));
+			$output.append($('<h3/>').text($target.contents('a').contents().filter(function() {
+				return this.nodeType === 3;
+			}).text()));
 			$('#editorDiv').html($output);
 		}).delegate("a", "click", function(event, data) {
 			event.preventDefault();
