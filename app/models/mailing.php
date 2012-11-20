@@ -89,15 +89,17 @@ class Mailing extends AppModel {
 
 			$q="SELECT imagePath,clientId FROM imageClient INNER JOIN image USING(imageId) ";
 			$q.="WHERE clientId IN (".implode(", ",$clientId_arr).") ";
-			$q.="AND imageTypeId=2 ";
+			$q.="AND imageTypeId=1 ";
 			$q.="AND inactive = 0 ";
-			$q.="ORDER BY sortOrder";
+			$q.="AND imageClient.isHidden=0 AND imageClient.inactive=0 ";
+			$q.="ORDER BY imageClient.sortOrder ASC,imageClient.clientImageId ASC	";
 			$image_rows=$this->query($q);
 
 			foreach($image_rows as $key=>$row){
 				foreach($new_rows as $key=>$new_row){
 					if ($row['imageClient']['clientId']==$new_row['client']['clientId']){
-						$new_rows[$key]['client']['imagePath']=str_replace("gal-lrg","gal-xl",$row['image']['imagePath']);
+						//$new_rows[$key]['client']['imagePath']=str_replace("gal-lrg","gal-xl",$row['image']['imagePath']);
+						$new_rows[$key]['client']['imagePath']=$row['image']['imagePath'];
 					}
 				}
 			}
@@ -157,7 +159,8 @@ class Mailing extends AppModel {
 					$q.="end) as price ";
 					$q.="from offerLuxuryLink ";
 					$q.="where clientId=$id ";
-					$q.="and isClosed=0 ";
+					//$q.="and isClosed=0 ";
+					$q.="AND endDate>NOW() ";
 					$q.="order by price asc ";
 					$q.="limit 1";
 					$r=$this->query($q);
