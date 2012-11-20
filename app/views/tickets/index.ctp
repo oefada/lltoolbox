@@ -268,6 +268,9 @@ $this->set('hideSidebar', true);
 				<td><a href="/tickets/add/">Create Manual Ticket</a></td>
 			</tr>
 			<tr>
+				<td><a href="/tickets/add2012/">Create Manual Ticket *New*</a></td>
+			</tr>
+			<tr>
 				<td><a href="<?=$csv_link_string;?>">Export <?=$this->params['paging']['Ticket']['count']>10000?'10,000 of ':'';?><?=number_format($this->params['paging']['Ticket']['count']);?> records to CSV</a><br/></td>
 			</tr>
 			<tr>

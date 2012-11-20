@@ -996,7 +996,7 @@ class TicketsController extends AppController {
 
 	private function mtOffersBySiteAndPackage($siteId, $packageId) {
 		$offerTable = ($siteId == '2') ? 'offerFamily' : 'offerLuxuryLink';
-		$q = 'SELECT offerId, offerTypeId, offerTypeName, openingBid, roomNights, buyNowPrice
+		$q = 'SELECT offerId, offerTypeId, offerTypeName, openingBid, roomNights, buyNowPrice, numGuests, endDate
 				FROM ' . $offerTable . ' o
 				WHERE o.packageId = ?
 				AND startDate < NOW()
@@ -1009,7 +1009,17 @@ class TicketsController extends AppController {
 		$offers = array();
 		foreach($result as $r) {
 			$price = ($r['o']['offerTypeId'] == 3 || $r['o']['offerTypeId'] == 4) ? $r['o']['buyNowPrice'] : $r['o']['openingBid'];
-			$offers[$r['o']['offerId']] = $r['o']['offerId'] . ' - ' . $r['o']['offerTypeName'] . ' : ' . $r['o']['roomNights'] . ' nights : $' . $price;
+			$type = $r['o']['offerTypeName'];
+			$nights = $r['o']['roomNights'] . ' nights';
+			$guests = $r['o']['numGuests'] . ' guests';
+			$dates = '';
+			$ends = strtotime($r['o']['endDate']);
+			if ($ends < time()) {
+				$dates .= ' closed ' . date('m/d', $ends);
+			} else {
+				$dates .= ' live';
+			}
+			$offers[$r['o']['offerId']] = $r['o']['offerId'] . ' - ' . $type . ' : ' . $nights . ' : ' . $guests . ' : $' . $price . ' : ' . $dates;
 		}
 		return $offers;
 	}

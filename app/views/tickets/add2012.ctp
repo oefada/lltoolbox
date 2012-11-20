@@ -78,13 +78,16 @@
 					var txt = $(this).find("option:selected").text();
 					var info = txt.split(' : '); 
 					
-					var price = info[2].replace('$', '');
+					var price = info[3].replace('$', '');
 					$('#TicketBillingPrice').val(price);
 					$('#TicketOfferPrice').val(price);
 					
 					var nights = info[1].replace(' nights', '');
 					$('#TicketNumNights').val(nights);
 					$('#TicketOfferNights').val(nights);										
+
+					var guests = info[2].replace(' guests', '');
+					$('#TicketRequestNumGuests').val(guests);
 				}
 			});
 			
