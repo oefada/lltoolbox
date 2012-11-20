@@ -31,7 +31,7 @@ class MailingHelper extends AppHelper{
 	 */
 	public function genDealHtml($clientArr, $utm_content='', $utm_term=''){
 
-		$h='<table align="center" width="240" height="201"  border"1" cellpadding="0" cellspacing="0">
+		$h='<table align="center" width="240" height="201"  border="0" cellpadding="0" cellspacing="0">
 		<tr><!--top spacer-->
 		<td colspan="2">
 		<img src="http://www.luxurylink.com/images/insider/new/SPACER_240x1.jpg" width="240" height="10" alt=""/></td>
@@ -41,11 +41,11 @@ class MailingHelper extends AppHelper{
 		<td colspan="2" width="240" height="126" bgcolor="#ffffff" style="padding: 10px 0px 0px 0px;">
 		<a 
 			xt="SPCLICK" 
-			name="www_luxurylink_com_fivest_6" 
+			name="'.$clientArr['seoName'].'_link" 
 			target="_blank" 
 			href="'.$this->genPropUrl($clientArr, $utm_content, $utm_term).'"
 		><img 
-			name="Cont_26" 
+			name="'.$clientArr['seoName'].'_img" 
 			style="display:block;" 
 			width="240" 
 			height="134" 
@@ -104,23 +104,13 @@ class MailingHelper extends AppHelper{
 			style="background-color: #ffffff; border-top: 1px solid #e2e2e2; border-right: 1px solid #e2e2e2; border-bottom: 1px solid #e2e2e2;"
 		>
 		<table align="center" width="120"  valign="top" border="0" cellpadding="0" cellspacing="0">
-		<tr><!--savings-->
-		<td 
-			width="58" 
-			height="34" 	
-			color="#8f9259" 
-			valign="top" 
-			style="font-family:Georgia, Garamond, Times New Roman, serif; text-align: right; font-size: 22px; color: #8f9259;"
-			><span style="font-size:14px; line-height: 12px;">$</span>&nbsp;';
+		<tr><!--savings-->';
+		
+		$h.='<td height="34" width="70" valign="middle" style="font-family: Arial, Helvetica, sans-serif; text-align: left; font-size: 9px; color: #8f9259;"><strong>Packages Starting At</strong></td>';
 
-		$h.='</td>
-		<td 
-			width="70" 
-			height="34" 
-			valign="middle" 
-			style="font-family: Arial, Helvetica, sans-serif; text-align: left; font-size: 9px; color: #8f9259;"
-		><strong>EDIT Extras</strong>
-		</td>
+		$h.='<td height="34" width="58" valign="top" color="#8f9259" style="font-family: Georgia, Garamond, Times New Roman, serif; text-align: center; font-size: 22px; color: #8f9259;"><span style="font-size:14px; line-height: 12px;">$</span>'.number_format($clientArr['offers'][0]['price']).'&nbsp;</td>';
+
+		$h.='
 		</tr>
 		</table>
 
@@ -201,7 +191,7 @@ class MailingHelper extends AppHelper{
 
 		//$url=$clientArr['seoUrl'];
 		// link to listing page as landing page
-		$url="http://www.luxurylink.com/fivestar/hotel-deals/".str_replace(" ","_",$clientArr['country']);
+		$url="http://www.luxurylink.com/fivestar/hotel-deals/".$clientArr['seoLocation'];
 		$utm_content=($utm_content!='')?$utm_content:$clientArr['seoName'];
 		$qs=$this->utm_qs.'&utm_content='.$utm_content;
 		if ($utm_term!=''){
@@ -226,7 +216,6 @@ class MailingHelper extends AppHelper{
 
 		$name=$clientArr['name'];
 		$locationDisplay=$clientArr['locationDisplay'];
-		$imgsrc='http://photos.luxurylink.us'.$clientArr['imagePath'];
 
 		$h='<table align="center" width="240" height="219" border="0" cellpadding="0" cellspacing="0">';
 		$h.='<tr><!--top spacer-->';
@@ -237,18 +226,28 @@ class MailingHelper extends AppHelper{
 
 		$h.='<tr><!--image-->';
 		$h.='<td colspan="2" width="240" height="126" bgcolor="#ffffff">';
-		$h.='<a 
+
+		if (isset($clientArr['imagePath'])){
+			$imgsrc='http://photos.luxurylink.us'.$clientArr['imagePath'];
+			$h.='<a 
 				xt="SPCLICK" 
-				name="www_luxurylink_com_fivest_6" 
+				name="'.$clientArr['seoName'].'" 
 				target="_blank" 
 				href="'.$url.'"
-			><img 
+			>';
+			$h.='<img 
 				style="display:block;" 
 				width="240" 
 				height="134" 
 				border="0" 
 				src="'.$imgsrc.'"
-			/></a>';
+			/>';
+			$h.='</a>';
+		}else{
+			$h.="Images not set for client<br>";
+			$h.="<a target='_blank' href='/clients/".$clientArr['clientId']."/images/organize'>Organize</a>";
+		}
+			
 		$h.='</td>';
 		$h.='</tr>';
 
@@ -309,9 +308,11 @@ class MailingHelper extends AppHelper{
 	 * 
 	 * @return url
 	 */
-	public function genUrl($utm_content='', $dir='', $utm_term='', $paramsArr=''){
+	public function genUrl($utm_content='', $dir='', $utm_term='', $paramsArr='', $url=''){
 
-		$url=$this->url;
+		if ($url==''){
+			$url=$this->url;
+		}
 		if ($dir!=''){
 			$url.=$dir;
 		}
