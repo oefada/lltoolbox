@@ -32,30 +32,19 @@
 <br>
 <?
 
-// test data. to have it populate the fields, append ?test to url
-$client_arr=array(
-31=>'Orient-Express, Botswana',
-70=>'Charleston Place',
-202=>'Round Hill Hotel and Villas',
-79=>'Cobblers Cove',
-84=>'CuisinArt Resort & Spa',
-96=>'Grand Hotel Huis ter Duin',
-108=>'Half Moon, a RockResort',
-111=>'Horned Dorset Primavera',
-118=>'Hotel Punta Islita',
-121=>'Hotelito Desconocido Sanctuary Reserve & Spa',
-141=>'La Puertecita Boutique Hotel',
-155=>'Lismacue House',
-178=>'Mount Nelson Hotel',
-193=>'Point Grace',
-197=>'Rancho Valencia'
-);
-
 $showCaptions = true;
 if ($templateId == 'fg1') {
 	$showCaptions = false;
 	$client_arr = array_slice($client_arr, 0, 12, true);
 	echo '<div><b>FG Weekly Email</b></div>';
+}
+
+if (!isset($client_arr)){
+
+	for($i=0;$i<=14;$i++){
+		$client_arr[$i]='';
+	}
+
 }
 
 $i=0;
