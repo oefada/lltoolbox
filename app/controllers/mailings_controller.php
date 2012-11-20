@@ -24,23 +24,52 @@ class MailingsController extends AppController {
 
 	}
 
+	/**
+	 * Generate a list of test clients and/or present form for user entry of clients
+	 * 
+	 * 
+	 * 
+	 * @return null 
+	 */
 	function generator(){
 
 		$templateId = (isset($this->params['url']['tid'])) ? $this->params['url']['tid'] : false;
+
+		$client_arr=array();
+
+		// populate the fields with clients
+		if (isset($this->params['url']['test']) && $this->params['url']['test']==1){
+
+			$offerTable=($templateId=='fg1')?'offerFamily':'offerLuxuryLink';
+			$like=($templateId=='fg1')?'%family':'luxurylink%';
+	
+			$q="SELECT c.* FROM client `c` INNER JOIN $offerTable using (clientId) ";
+			$q.="WHERE endDate>NOW() AND sites like '$like' ";
+			$q.="GROUP BY clientId ";
+			$q.="ORDER BY offerId DESC ";
+			$q.="LIMIT 15";
+			$rows=$this->Mailing->query($q);
+			foreach($rows as $key=>$row){
+				foreach($row as $arr){
+					$client_arr[$arr['clientId']]=$arr['name'];
+				}
+			}
+			$this->set('client_arr',$client_arr);	
+		}
+
 		$this->set('templateId', $templateId);
 
 	}
 
 	function generated(){
 
-		
 		//Configure::write('debug',0);
 
 		if (!empty($this->params['form']['clientId_arr'])){
 
 			$templateId = (isset($this->params['form']['tid'])) ? $this->params['form']['tid'] : false;
 			$siteId = ($templateId == 'fg1') ? 2 : 1;
-			
+
 			$month=$this->params['form']['month'];
 			$day=$this->params['form']['day'];
 			$year=$this->params['form']['year'];
@@ -54,7 +83,6 @@ class MailingsController extends AppController {
 			$clientName_arr=$this->params['form']['clientName'];
 			$error=false;
 			foreach($clientId_arr as $key=>$id){
-			
 				if ($templateId == 'fg1') {
 					if (trim($id)=='') {
 						unset($clientId_arr[$key]);	
@@ -62,8 +90,6 @@ class MailingsController extends AppController {
 				} else {
 					if (trim($id)=='')$error=true;	
 				}
-			
-				
 			}
 			if ($error){
 				echo "<p>The following clientId's were submitted:</p>";
