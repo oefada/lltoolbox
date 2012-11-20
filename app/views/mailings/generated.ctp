@@ -26,7 +26,7 @@
 
 	</tr>  
 	<tr>
-	<td width="800"><a name="0.1_logo" target="_blank"  href="http://links.e.luxurylink-mail.com/ctt?kn=49&ms=NDkwNzI0NwS2&r=MTgwMzMwMDM5NjIS1&b=3&j=Mjk1NzQ2Nzc0S0&mt=1&rt=0"><img border="0" align="left" height="90" width="217"  src="http://www.luxurylink.com/images/email/Insider/LL_logo15.png" alt="Insider Header" style="display: block;padding: 10px 0px 9px 14px" /></a><img align="right" height="109" width="567"  src="http://www.luxurylink.com/images/email/Insider/header5_05-15yOnly.jpg" alt="" /></td>
+	<td width="800"><a name="0.1_logo" target="_blank"  href="<?=$mailing->genUrl('logo_top','/');?>"><img border="0" align="left" height="90" width="217"  src="http://www.luxurylink.com/images/email/Insider/LL_logo15.png" alt="Insider Header" style="display: block;padding: 10px 0px 9px 14px" /></a><img align="right" height="109" width="567"  src="http://www.luxurylink.com/images/email/Insider/header5_05-15yOnly.jpg" alt="" /></td>
 	</tr>
 	</table>
 
@@ -777,7 +777,7 @@ YOUR AD HERE
 		name="topdeals_traveldeals_lowestprices"  
 		target="_blank" 
 		xt="SPCLICK" 
-		href="http://www.luxurylink.com/travel-deals/lowest-prices?utm_medium=news&utm_source=insider&utm_campaign=insider_121119b&utm_content=top-deals"  
+		href="<?=$mailing->genUrl('top-deals','/travel-deals/lowest-prices');?>"  
 		style="color: #3ca9d5; text-decoration: none;"
 	>View All Top Deals&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
 	</td>
@@ -846,7 +846,7 @@ YOUR AD HERE
 			xt="SPCLICK" 
 			style="color:#444444; text-decoration: none;" 
 			target="_blank" 
-			href="http://www.luxurylink.com/fivestar/hotel-deals/editor%27s-choice?utm_term=editor%27s%20choice&utm_medium=news&utm_source=insider&utm_campaign=insider_121119b&utm_content=editors-choice"	
+			href="<?=$mailing->genUrl('editors-choice','/fivestar/hotel-deals/',"editor's choice");?>"
 		>Editors Picks</a>
 		</td>
 		</tr>
@@ -1152,7 +1152,7 @@ YOUR AD HERE
 		name="editorspicks"   
 		target="_blank" 
 		xt="SPCLICK" 
-		href="<?=$mailing->genUrl('editors-choice','/fivestar/hotel-deals/Editor_Choice', 'Editors%20Picks');?>"
+		href="<?=$mailing->genUrl('editors-choice','/fivestar/hotel-deals/', "editor's choice");?>"
 		style="color: #3ca9d5; text-decoration: none;"
 	>View All Editors Picks</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	</td>
@@ -1295,7 +1295,7 @@ href=""
 <tr>
 <td><a 
 	name="collections_footer"  
-	href="http://www.luxurylink.com/fivestar/travel-packages/best?utm_medium=news&utm_source=insider&utm_campaign=insider_121119b&utm_content=collections"  
+	href="<?=$mailing->genUrl('collections', '/fivestar/travel-packages/best');?>"   
 	target="_target"
 	><img 
 		style="display: block;" 
