@@ -939,7 +939,7 @@ class TicketsController extends AppController {
 
 	private function hasEditorAccess() {
 		$currentUser = $this->LdapAuth->user();
-		$editGroups = array('Accounting', 'Geeks', 'Concierge');
+		$editGroups = array('Accounting', 'Geeks', 'Concierge', 'conciergeDL');
 		foreach ($editGroups as $eg) {
 			if (in_array($eg, $currentUser['LdapUser']['groups'])) { 
 				return true;
@@ -950,7 +950,7 @@ class TicketsController extends AppController {
 
 	private function hasAddAccess() {
 		$currentUser = $this->LdapAuth->user();
-		$editGroups = array('Accounting', 'Geeks', 'Concierge');
+		$editGroups = array('Accounting', 'Geeks', 'Concierge', 'conciergeDL');
 		foreach ($editGroups as $eg) {
 			if (in_array($eg, $currentUser['LdapUser']['groups'])) { 
 				return true;

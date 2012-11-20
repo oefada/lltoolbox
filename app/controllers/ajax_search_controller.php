@@ -124,6 +124,8 @@ class AjaxSearchController extends AppController
 						$fields[] = "(CASE WHEN SimpleModel.username LIKE '" . $query . "' THEN 1 ELSE 0 END) AS usernamematch";
 						$conditions['OR']['SimpleModel.username LIKE'] = "%$query%";
 					}
+				} elseif (strpos($query, " ")) {
+					$conditions['OR']['CONCAT(AjaxSearch.firstName, " ", AjaxSearch.lastName) LIKE'] = '%' . $query . '%';
 				}
 
 				$params = array(

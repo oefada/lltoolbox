@@ -10,6 +10,7 @@ if (!isset($name) || !isset($controller)) {
 }
 
 $ar['autocomplete'] = "off";
+$ar['maxLength'] = '50';
 
 if (isset($label)) {
 	$ar['label'] = $label;
