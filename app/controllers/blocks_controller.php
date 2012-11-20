@@ -7,7 +7,6 @@ class BlocksController extends AppController
 	var $uses = array();
 	function index()
 	{
-
 	}
 
 }
