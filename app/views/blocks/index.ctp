@@ -40,76 +40,76 @@ $this->set('hideSidebar', true);
 
 <div id="blocktree" class="demo" style="float: left; width: 256px; overflow-x: scroll;">
 	<ul>
-		<li id="phtml_1">
+		<li id="phtml_1" rel="page">
 			<a href="#">Ski &amp; Snow</a>
 			<ul>
-				<li id="phtml_2">
+				<li id="phtml_2" rel="PhotoModule">
 					<a href="#">PhotoModule</a>
 					<ul>
-						<li id="phtml_22">
+						<li id="phtml_22" rel="image">
 							<a href="#">Image</a>
 						</li>
-						<li id="phtml_23">
+						<li id="phtml_23" rel="image">
 							<a href="#">Image</a>
 						</li>
-						<li id="phtml_24">
+						<li id="phtml_24" rel="image">
 							<a href="#">Image</a>
 						</li>
-						<li id="phtml_25">
+						<li id="phtml_25" rel="image">
 							<a href="#">Image</a>
 						</li>
-						<li id="phtml_26">
+						<li id="phtml_26" rel="image">
 							<a href="#">Image</a>
 						</li>
 					</ul>
 				</li>
-				<li id="phtml_3">
+				<li id="phtml_3" rel="div">
 					<a href="#">Main</a>
 					<ul>
-						<li id="phtml_31">
+						<li id="phtml_31" rel="content">
 							<a href="#">Content</a>
 							<ul>
-								<li id="phtml_311">
+								<li id="phtml_311" rel="TabsModule">
 									<a href="#">TabsModule</a>
 									<ul>
-										<li id="phtml_3111">
+										<li id="phtml_3111" rel="tab">
 											<a href="#">Colorado</a>
 										</li>
-										<li id="phtml_3112">
+										<li id="phtml_3112" rel="tab">
 											<a href="#">California</a>
 										</li>
-										<li id="phtml_3113">
+										<li id="phtml_3113" rel="tab">
 											<a href="#">International</a>
 										</li>
-										<li id="phtml_3114">
+										<li id="phtml_3114" rel="tab">
 											<a href="#">Canada</a>
 										</li>
-										<li id="phtml_3115">
+										<li id="phtml_3115" rel="tab">
 											<a href="#">Other</a>
 										</li>
 									</ul>
 								</li>
-								<li id="phtml_311">
+								<li id="phtml_311" rel="div">
 									<a href="#">SEO Text</a>
 								</li>
-								<li id="phtml_311">
+								<li id="phtml_311" rel="div">
 									<a href="#">Newsletter Signup</a>
 								</li>
 							</ul>
 						</li>
-						<li id="phtml_32">
+						<li id="phtml_32" rel="sidebar">
 							<a href="#">Sidebar</a>
 							<ul>
-								<li id="phtml_321">
+								<li id="phtml_321" rel="module">
 									<a href="#">Featured Auction</a>
 								</li>
-								<li id="phtml_322">
+								<li id="phtml_322" rel="ad">
 									<a href="#">Advertisement</a>
 								</li>
-								<li id="phtml_323">
+								<li id="phtml_323" rel="module">
 									<a href="#">Learn More</a>
 								</li>
-								<li id="phtml_324">
+								<li id="phtml_324" rel="ad">
 									<a href="#">Advertisement</a>
 								</li>
 							</ul>
@@ -146,7 +146,7 @@ $this->set('hideSidebar', true);
 		var $ = jQuery;
 		var $tree = $('#blocktree');
 		$tree.jstree({
-			"plugins" : ["themes", "html_data", "ui", /*"contextmenu",*/"crrm", "hotkeys", "types"],
+			"plugins" : ["themes", "html_data", "ui", /*"contextmenu",*/"crrm", "hotkeys", "types", "dnd"],
 			"core" : {
 				"initially_open" : ["phtml_1"]
 			},
@@ -165,6 +165,70 @@ $this->set('hideSidebar', true);
 							return true;
 						}
 						return false;
+					}
+				}
+			},
+			"types" : {
+				"valid_children" : ["page", "image"],
+				"types" : {
+					"page" : {
+						"icon" : {
+							"image" : "http://ui.llsrv.us/images/icons/silk/page.png"
+						},
+						"valid_children" : ["image"],
+						"max_depth" : 2,
+						"hover_node" : false,
+						"select_node" : function() {
+							return false;
+						}
+					},
+					"div" : {
+						"icon" : {
+							"image" : "http://ui.llsrv.us/images/icons/silk/layout.png"
+						}
+					},
+					"ad" : {
+						"icon" : {
+							"image" : "http://ui.llsrv.us/images/icons/silk/television.png"
+						}
+					},
+					"module" : {
+						"icon" : {
+							"image" : "http://ui.llsrv.us/images/icons/silk/script_gear.png"
+						}
+					},
+					"content" : {
+						"icon" : {
+							"image" : "http://ui.llsrv.us/images/icons/silk/application_view_detail.png"
+						}
+					},
+					"sidebar" : {
+						"icon" : {
+							"image" : "http://ui.llsrv.us/images/icons/silk/application_side_expand.png"
+						}
+					},
+					"TabsModule" : {
+						"icon" : {
+							"image" : "http://ui.llsrv.us/images/icons/silk/application_cascade.png"
+						}
+					},
+					"tab" : {
+						"icon" : {
+							"image" : "http://ui.llsrv.us/images/icons/silk/tab.png"
+						}
+					},
+					"image" : {
+						"icon" : {
+							"image" : "http://ui.llsrv.us/images/icons/silk/image.png"
+						}
+					},
+					"PhotoModule" : {
+						"icon" : {
+							"image" : "http://ui.llsrv.us/images/icons/silk/images.png"
+						}
+					},
+					"default" : {
+						"valid_children" : []
 					}
 				}
 			},
