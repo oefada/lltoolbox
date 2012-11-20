@@ -6,10 +6,10 @@
 		echo $form->input('manualTicketInitials', array('readonly' => 'readonly'));
 		echo $form->input('ticketNotes');
 		echo $form->input('siteId');
-		echo $this->renderElement("input_search", array('name'=>'clientId', 'controller'=>'selectclients', 'label'=>'Client Id', 'style'=>'width:400px', 'callingId'=>'tickeAdd2012'));
+		echo $this->renderElement("input_search", array('name'=>'clientId', 'controller'=>'selectclients', 'label'=>'Client Id', 'style'=>'width:400px', 'multiSelect'=>'TicketClientId'));
 		echo $form->input('packageId', array('type'=>'select', 'label'=>'Package Id', 'empty'=>'--', 'options'=>$packageList));
 		echo $form->input('offerId', array('type'=>'select', 'label'=>'Offer Id', 'empty'=>'--', 'options'=>$offerList));
-		echo $this->renderElement("input_search", array('name'=>'userId', 'controller'=>'users', 'label'=>'User Id', 'style'=>'width:400px', 'callingId'=>'tickeAdd2012')); ?>	
+		echo $this->renderElement("input_search", array('name'=>'userId', 'controller'=>'users', 'label'=>'User Id', 'style'=>'width:400px', 'multiSelect'=>'TicketUserId')); ?>	
 		
 		<div class="input select">
 			<? echo $form->input('userPaymentSettingId', array('type'=>'select', 'div'=> false, 'label'=>'Credit Card', 'empty'=>'--', 'options'=>$ccList)); ?>

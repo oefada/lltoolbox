@@ -82,17 +82,14 @@
 			
 			if (config.placeInput == true) {
 				jQuery(".inputplace").live('click', function() {
-					var thisUrl = this.toString();
 					$(this).attr('href','');
-					if (config.callingId == 'tickeAdd2012') {
-						if (thisUrl.indexOf('users/view') > 0) {
-							$('#TicketUserId').val($(this).find('.inputtable').html());
-							jQuery('#TicketUserId').change();
-						} 
-						if (thisUrl.indexOf('clients/view') > 0) {
-							$('#TicketClientId').val($(this).find('.inputtable').html());
-							jQuery('#TicketClientId').change();
-						}
+					if (config.multiSelect != '') {
+						var divs = $(this).parents('div');
+						var idArr = divs[0].id.split('-');
+						var selectedId = idArr[idArr.length-1];
+						var selectedText = $(this).find('.inputtable').html();
+						$('#'+selectedId).val(selectedText);
+						jQuery('#'+selectedId).change();						
 					} else {
 						jQuery(input).val($(this).find('.inputtable').html());
 					}
