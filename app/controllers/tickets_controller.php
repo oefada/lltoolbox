@@ -960,7 +960,13 @@ class TicketsController extends AppController {
 	}
 
 	function mt_packagelist_ajax() {
-		$packages = $this->mtPackagesBySiteAndClient($this->params['url']['siteId'], $this->params['url']['clientId']);
+		$clientId = $this->params['url']['clientId'];
+		if (intval($clientId) > 0 ) {
+			$packages = $this->mtPackagesBySiteAndClient($this->params['url']['siteId'], $clientId);
+		} else {
+			$packages = array();
+		}
+		if (sizeof($packages) == 0) { $packages[0] = 'No Live Packages'; }
 		echo json_encode(array('packages'=>$packages));
 		exit;
 	}
@@ -973,7 +979,13 @@ class TicketsController extends AppController {
 	}
 
 	function mt_cclist_ajax() {
-		$ccs = $this->mtCcsByUser($this->params['url']['userId']);
+		$userId = $this->params['url']['userId'];
+		if (intval($userId) > 0 ) {
+			$ccs = $this->mtCcsByUser($userId);
+		} else {
+			$ccs = array();
+		}
+		if (sizeof($ccs) == 0) { $ccs[0] = 'No Valid Credit Cards'; }
 		echo json_encode(array('ccs'=>$ccs));
 		exit;
 		
@@ -990,7 +1002,6 @@ class TicketsController extends AppController {
 		foreach($result as $r) {
 			$packages[$r['p']['packageId']] = $r['p']['packageId'] . ' - ' . $r['p']['packageName'];
 		}
-		if (sizeof($packages) == 0) { $packages[0] = 'No Live Packages'; }
 		return $packages;
 	}
 
@@ -1036,7 +1047,6 @@ class TicketsController extends AppController {
 				$ccs[$r['p']['userPaymentSettingId']] = $r['p']['userPaymentSettingId'] . ' - ' . $r['p']['ccType'] . ' - XXXX-XXXX-XXXX-' . substr($ccNumber, -4);
 			}
 		}
-		if (sizeof($ccs) == 0) { $ccs[0] = 'No Valid Credit Cards'; }
 		return $ccs;
 	}
 
