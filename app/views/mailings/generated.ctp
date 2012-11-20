@@ -92,6 +92,7 @@
 			width="32"
 		><a 
 			xtsn="FB" 
+			xt="SPSNCLICK" 
 			name="share-facebook" 
 			align="right" 
 			target="_blank" 
@@ -108,7 +109,8 @@
 		><a 
 			qstparam="&text=Luxury%20Link.%20Explore%20our%20collection%20of%20the%20world's%20finest%20properties%20and%20find%20your%20dream%20vacation." 
 			href="#SPSNCLICK" 
-			xtsn="TW"  
+			xtsn="TW" 
+			xt="SPSNCLICK"  
 			name="Twitter_img" 
 			target="_blank"><img 
 				border="0" 
