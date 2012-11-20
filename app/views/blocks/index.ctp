@@ -10,10 +10,6 @@
 		margin-left: 257px;
 		margin-right: 16px;
 		padding-left: 16px;
-		border: none;
-		border-left-style: solid;
-		border-left-width: 1px;
-		border-left-color: #EEEEEE;
 		min-height: 400px;
 	}
 	.editorPanel {
@@ -148,8 +144,9 @@ $this->set('hideSidebar', true);
 <script type="text/javascript">
 	jQuery(function() {
 		var $ = jQuery;
-		$("#blocktree").jstree({
-			"plugins" : ["themes", "html_data", "ui", /*"contextmenu",*/ "crrm", "hotkeys", "types"],
+		var $tree = $('#blocktree');
+		$tree.jstree({
+			"plugins" : ["themes", "html_data", "ui", /*"contextmenu",*/"crrm", "hotkeys", "types"],
 			"core" : {
 				"initially_open" : ["phtml_1"]
 			},
@@ -206,9 +203,10 @@ $this->set('hideSidebar', true);
 				}
 			},
 			"themes" : {
-				"theme" : "classic"
+				"theme" : "luxury"
 			}
 		}).bind("loaded.jstree", function(event, data) {
+			$(this).jstree('open_all');
 		}).bind("select_node.jstree", function(event, data) {
 			console.log(Math.random(), event, data, data.rslt.obj.attr("id"));
 			var $output = $('<div class="editorPanel" />');
@@ -217,23 +215,5 @@ $this->set('hideSidebar', true);
 		}).delegate("a", "click", function(event, data) {
 			event.preventDefault();
 		});
-		setTimeout(function() {
-			$.jstree._reference("#phtml_1").open_node("#phtml_1");
-		}, 1000);
-		setTimeout(function() {
-			$.jstree._reference("#phtml_2").open_node("#phtml_2");
-		}, 2000);
-		setTimeout(function() {
-			$.jstree._reference("#phtml_3").open_node("#phtml_3");
-		}, 3000);
-		setTimeout(function() {
-			$.jstree._reference("#phtml_31").open_node("#phtml_31");
-		}, 4000);
-		setTimeout(function() {
-			$.jstree._reference("#phtml_311").open_node("#phtml_311");
-		}, 5000);
-		setTimeout(function() {
-			$.jstree._reference("#phtml_32").open_node("#phtml_32");
-		}, 6000);
 	}); 
 </script>
