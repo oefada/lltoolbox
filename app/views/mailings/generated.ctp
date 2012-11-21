@@ -160,7 +160,7 @@ TEXT TBD
 	><a 
 		name="newest_additions_header" 
 		style="text-decoration:none;color:#3ca9d5"  
-		href="<?=$mailing->genUrl('newest_additions','/fivestar/new-hotels/deals');?>" 
+		href="<?=$mailing->genUrl('newest_additions','/fivestar/new-hotels/deals','New Additions');?>" 
 		target="_blank" 
 		alt=""
 		>Newest Additions</a>
@@ -276,7 +276,7 @@ TEXT TBD
 		name="0.1_section_NEW-EXPERIENCES" 
 		style="color:#444444; text-decoration: none;" 
 		target="_blank" 
-		href="<?=$mailing->genUrl('new-offer','/fivestar/new-hotels/deals/');?>"
+		href="<?=$mailing->genUrl('new-offer','/fivestar/new-hotels/deals');?>"
 	>Newest Additions</a>
 </td>
 </tr>
@@ -425,7 +425,7 @@ TEXT TBD
 	name="0.1_logo" 
 	target="_blank" 
 	xt="SPCLICK" 
-	href="<?=$mailing->genUrl('new-offers', '/fivestar/new-hotels/deals/');?>"
+	href="<?=$mailing->genUrl('new-offers', '/fivestar/new-hotels/deals', 'New Additions');?>"
 	style="color: #3ca9d5; text-decoration: none;" 
 >View All Newest Additions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
 </td>
@@ -848,8 +848,8 @@ YOUR AD HERE
 			xt="SPCLICK" 
 			style="color:#444444; text-decoration: none;" 
 			target="_blank" 
-			href="<?=$mailing->genUrl('editors-choice','/fivestar/hotel-deals/',"editor's choice");?>"
-		>Editors Picks</a>
+			href="<?=$mailing->genUrl('editors-choice','/fivestar/hotel-deals/editors-choice',"editor's choice");?>"
+		>Editor's Choice</a>
 		</td>
 		</tr>
 		<tr>
@@ -1154,9 +1154,9 @@ YOUR AD HERE
 		name="editorspicks"   
 		target="_blank" 
 		xt="SPCLICK" 
-		href="<?=$mailing->genUrl('editors-choice','/fivestar/hotel-deals/', "editor's choice");?>"
+		href="<?=$mailing->genUrl('editors-choice','/fivestar/hotel-deals/editors-choice', "editor's choice");?>"
 		style="color: #3ca9d5; text-decoration: none;"
-	>View All Editors Picks</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	>View All Editors Choices</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	</td>
 	</tr>
 	</table>
