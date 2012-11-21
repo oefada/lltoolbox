@@ -318,9 +318,6 @@ class MailingHelper extends AppHelper{
 		if ($dir!=''){
 			$url.=$dir;
 		}
-		if ($utm_term!=''){
-			$url.=rawurlencode(strtolower($utm_term));
-		}
 		$qs=$this->utm_qs;
 		if (is_array($paramsArr) && count($paramsArr)>0){
 			if ($qs==''){
@@ -332,7 +329,9 @@ class MailingHelper extends AppHelper{
 		}
 		$url.=$qs;
 		$url.='&utm_content='.$utm_content;
-
+		if ($utm_term!=''){
+			$url.='&utm_term='.rawurlencode(strtolower($utm_term));
+		}
 		return $url;
 
 	}
