@@ -1081,21 +1081,26 @@ class WebServiceTicketsController extends WebServicesController
 		}
 		
 		if ($offerId || $ticketId) {
+
 			$bidInfo = $this->Bid->getBidStatsForOffer($offerId);
-			$liveOfferData = $this->Ticket->query("select * from $offerSite as LiveOffer where offerId = " . $offerId . " limit 1");
+			$q="select * from $offerSite as LiveOffer where offerId = " . $offerId . " limit 1";
+			$liveOfferData = $this->Ticket->query($q);
 			$liveOfferData = $liveOfferData[0]['LiveOffer'];
-			
 			$packageId			= $liveOfferData['packageId'];
 			$packageName 		= strip_tags($liveOfferData['offerName']);
+
+			// Note that $packageIncludes is being set to 'offerIncludes' from offer table, as distinct from
+			// having $packageIncludes being set to 'packageIncludes from package table
 			$packageIncludes 	= $liveOfferData['offerIncludes'];
+
 			$legalText			= $liveOfferData['termsAndConditions'];
 			$validityNote		= $liveOfferData['validityDisclaimer'];
+
 			// if validityNote lead in line is not bold, bold it
 			if (strstr($validityNote, "This package is valid for ") && substr($validityNote,0,3)!='<b>'){
-				preg_match("~This package is valid for travel [^<]+~is", $validityNote,$arr);
 				$validityNote=preg_replace("~This package is valid for [^<]+~is", "<b>$0</b>",$validityNote);
 			}
-			//$validityLeadIn     = $packageData['validityLeadInLine'];
+
 			$addtlDescription   = $liveOfferData['additionalDescription'];
 			$numGuests			= $liveOfferData['numGuests'];
 			$roomGrade			= $liveOfferData['roomGrade'];
@@ -1106,6 +1111,19 @@ class WebServiceTicketsController extends WebServicesController
 
 			$clientData			= $this->ClientLoaPackageRel->findAllBypackageid($liveOfferData['packageId']);
 			$isMystery 			= isset($liveOfferData['isMystery']) && $liveOfferData['isMystery'] ? true : false;
+
+			// When making mystery auctions, the admin will enter generic data into the 'offerIncludes' field 
+			// in the offer table. However, once the mystery auction is over, the non-bid ppv's should 
+			// use the specific includes data found in the package table. 
+			// ticket3631 
+			$alwaysShowArr=array(1,12, 14, 18, 19, 26, 30, 32);
+			if ($isMystery && in_array($ppvNoticeTypeId	,$alwaysShowArr)){
+				$q="select * from package as Package where packageId = $packageId AND siteId=$siteId ";
+				$packageData = $this->Ticket->query($q);
+				$packageData = $packageData[0]['Package'];
+				$packageIncludes = $packageData['packageIncludes'];
+			}
+
 		}
 
 		if ($clientId) {
