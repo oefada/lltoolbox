@@ -9,11 +9,6 @@ class ClientNewsletterNotifier extends AppModel {
 		$site = $this->data[$this->name]['site'];
 		$url = $this->data[$this->name]['url'];
 
-		// toolbox can't communicate using www. so we need to direct the connection to one of the servers
-		// in this case we pick web1 randomly
-		// -- url is now silverpop url
-		//$urlToOpen = str_replace('http://www.', 'http://www1.', $url);
-
 		$handle = fopen($url, "r");
 		$contents = '';
 		while (!feof($handle)) {
@@ -47,6 +42,11 @@ class ClientNewsletterNotifier extends AppModel {
 
 	function getClientsFromNewsletter($data, $site) {
 
+		preg_match("~<input(.*?)name='clientIds' value='([^']+)'~is",$data,$arr);
+		$clientIdArr=explode(",",$arr[2]);
+
+		return $clientIdArr;
+/*
 		$match_str = '';
 
 		// Right now the $match_str looks similar for both luxurylink and familygetaway (only the URL is different)
@@ -78,6 +78,7 @@ class ClientNewsletterNotifier extends AppModel {
 			}
 		}
 		return $clientIdArr;
+*/
 	}
 
 	function getClientsFromHtml($data, $site) {
