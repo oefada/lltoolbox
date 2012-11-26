@@ -25,6 +25,27 @@ class MailingHelper extends AppHelper{
 	}
 
 	/**
+	 * String of clientId's for use with the client autonotifier
+	 * http://toolbox.luxurylink.com/client_newsletter_notifier
+	 * 
+	 * @param array $rows 
+	 * 
+	 * @return html str
+	 */
+	public function displayHiddenClientIds($rows){
+
+		$str='';
+		foreach($rows as $row){
+			$str.=$row['client']['clientId'].",";
+		}
+		$out="<!-- THIS MUST BE INCLUDED IN ORDER FOR THE CLIENT NOTIFIER TO WORK-->\n";
+		$out.="<input type='hidden' name='clientIds' value='".substr($str,0,-1)."'>\n";
+		$out.="<!-- END INCLUDE-->\n";
+		return $out;
+
+	}
+
+	/**
 	 * Wrap the standard deal display in html for a client
 	 * 
 	 * @return html
@@ -108,7 +129,8 @@ class MailingHelper extends AppHelper{
 		
 		$h.='<td height="34" width="70" valign="middle" style="font-family: Arial, Helvetica, sans-serif; text-align: left; font-size: 9px; color: #8f9259;"><strong>Packages Starting At</strong></td>';
 
-		$h.='<td height="34" width="58" valign="top" color="#8f9259" style="font-family: Georgia, Garamond, Times New Roman, serif; text-align: center; font-size: 22px; color: #8f9259;"><span style="font-size:14px; line-height: 12px;">$</span>'.number_format($clientArr['offers'][0]['price']).'&nbsp;</td>';
+		$offers=isset($clientArr['offers'][0]['price'])?number_format($clientArr['offers'][0]['price']):'TBD';
+		$h.='<td height="34" width="58" valign="top" color="#8f9259" style="font-family: Georgia, Garamond, Times New Roman, serif; text-align: center; font-size: 22px; color: #8f9259;"><span style="font-size:14px; line-height: 12px;">$</span>'.$offers.'&nbsp;</td>';
 
 		$h.='
 		</tr>
