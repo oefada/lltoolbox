@@ -1,15 +1,20 @@
 <script type='text/javascript'>
 	function generator(clientId,clientName){
 		var counter=0;
+		var selectedIndex=0;
 		var elem=document.getElementById('generator_form').elements;
 		for (var i = 0; i < elem.length; i++ ) {
-			if (elem[i].type == 'radio' && elem[i].checked == true) {
+			if (elem[i].type == 'radio' && elem[i].checked == true && elem[i].name!='tid') {
+				var selectedIndex=counter;
 				document.getElementById('clientName_'+counter).value=clientName;	
 				document.getElementById('clientId_'+counter).value=clientId;	
 			}
-			if (elem[i].type == 'radio'){ 
+			if (elem[i].type == 'radio' && elem[i].name!='tid'){ 
 				counter++;
 			}
+		}
+		if (document.getElementById('index_'+(selectedIndex+1)).value!=null){
+			document.getElementById('index_'+(selectedIndex+1)).checked=true;	
 		}
 	}
 </script>
@@ -22,22 +27,14 @@
 <li>Enter the client name in the Client Search field.
 <li>Click on the link that pops up to populate field you selected.
 <li>The order they appear here will be the order they apear in the newsletter.
-<li>To populate the form with dummy data, click <a href=?test=1>here</a>
+<li>To populate the form with dummy data, click <a href=?test=1&tid=<?=$templateId?>>here</a>
 </ul>
 <br>
 <form method='post' id='generator_form' action='generated' onsubmit='return validateJunkAndStuff();'>
-<input type="hidden" name="tid" value="<?= $templateId; ?>">
 <? echo $this->renderElement("input_search",array('name' => 'query','label'=>'Client Search','controller' => 'generator')); ?>
 <div style='clear:both;'></div>
 <br>
 <?
-
-$showCaptions = true;
-if ($templateId == 'fg1') {
-	$showCaptions = false;
-	$client_arr = array_slice($client_arr, 0, 12, true);
-	echo '<div><b>FG Weekly Email</b></div>';
-}
 
 if (!isset($client_arr)){
 
@@ -46,6 +43,22 @@ if (!isset($client_arr)){
 	}
 
 }
+
+$showCaptions = true;
+if ($templateId == 'fg1') {
+	echo '<input type="hidden" name="tid" value="'.$templateId.'">';
+	$showCaptions = false;
+	$client_arr = array_slice($client_arr, 0, 12, true);
+	echo '<div><b>FG Weekly Email</b></div>';
+}else{
+
+	echo "Insider: <input type=radio name='tid' value='insider' checked> | ";
+	echo "Inspiration: <input type=radio name='tid' value='inspiration'> ";
+	echo "<br>";
+	echo "<br>";
+
+}
+
 
 $i=0;
 foreach($client_arr as $clientId=>$name){

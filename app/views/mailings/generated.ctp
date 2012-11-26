@@ -11,6 +11,9 @@
 </head>  
 
 <body bgcolor="#e9e9e9" marginwidth="0" marginheight="0" leftmargin="0" topmargin="0"><CENTER><FONT SIZE="1" FACE="ARIAL">If you are still having problems viewing this message, please <a href="http://recp.rm02.net/ui/static/ReceptionIssues.html">click here</a> for additional help.</FONT></CENTER>
+
+<?=$mailing->displayHiddenClientIds($rows);?>
+
 <!-- open table D --> 
 <table cellspacing="0" cellpadding="0" border="0" width="100%"> 
 <tr> 

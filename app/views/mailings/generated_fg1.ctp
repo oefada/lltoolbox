@@ -12,6 +12,9 @@
 	.yshortcuts{color:inherit;}
 	html { -webkit-text-size-adjust:none; }</style>
     <body>
+
+<?=$mailing->displayHiddenClientIds($rows);?>
+
         <table align="center" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#cee8f3" style="padding: 10px 0px;">
 <tbody>
 <tr>
