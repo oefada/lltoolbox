@@ -45,6 +45,7 @@ class MailingsController extends AppController {
 	
 			$q="SELECT c.* FROM client `c` INNER JOIN $offerTable using (clientId) ";
 			$q.="WHERE endDate>NOW() AND sites like '$like' ";
+			$q.="AND offerTypeId!=7 ";
 			$q.="GROUP BY clientId ";
 			$q.="ORDER BY offerId DESC ";
 			$q.="LIMIT 15";
@@ -110,9 +111,11 @@ class MailingsController extends AppController {
 			// utm_content is set per item in the view
 			// utm_term is set per item in the view
 			$this->set('utmArr', $utmArr);
-			
+
 			if ($templateId == 'fg1') {
 				$this->render('generated_fg1');
+			}elseif ($templateId=='inspiration'){
+				$this->render('generated_inspiration');
 			}
 			
 		}
