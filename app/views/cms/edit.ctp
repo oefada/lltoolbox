@@ -26,6 +26,11 @@
 		font-weight: normal;
 	}
 	
+	.cmsBox {
+		width: 90%;
+		height: 300px;
+	}
+	
 </style>
 
 
@@ -44,7 +49,7 @@
 <?php echo $form->input('site_id', array('label' => 'Site ID <em>(locked)</em> ', 'disabled' => true, 'value' => $this->data[0]['cms']['site_id'])); ?>
 <?php echo $form->input('key', array('label' => 'Key <em>(locked)</em> ', 'disabled' => true, 'value' => $this->data[0]['cms']['key'])); ?>
 <?php echo $form->input('description', array('label' => 'Description ', 'value' => $this->data[0]['cms']['description'])); ?>
-<?php echo $form->input('html_content', array('label' => 'Code ', 'value' => $this->data[0]['cms']['html_content'])); ?>
+<?php echo $form->input('html_content', array('label' => 'Code ', 'value' => $this->data[0]['cms']['html_content'], 'class' => 'cmsBox')); ?>
 <?php echo $form->submit('Save Changes'); ?>
 <?php echo $form->end(); ?>
 
