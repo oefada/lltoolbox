@@ -1390,7 +1390,7 @@ class WebServiceTicketsController extends WebServicesController
 			// cc variables
 			// -------------------------------------------------------------------------------
 			if (is_array($ticketPaymentData) && !empty($ticketPaymentData)) {
-				$ccFour				= substr(aesDecrypt($ticketPaymentData['UserPaymentSetting']['ccNumber']), -4, 4);
+				$ccFour				= substr($ticketPaymentData['UserPaymentSetting']['ccToken'], -4, 4);
 				$ccType				= $ticketPaymentData['UserPaymentSetting']['ccType'];
 				//$billDate			= 
 			}
