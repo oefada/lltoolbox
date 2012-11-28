@@ -76,7 +76,7 @@ foreach ($refundRequests as $rq):
 		</td>
 		<td class="actions">
 			<?php echo $html->link(__('View', true), array('action'=>'view', $rq['RefundInfo']['refundRequestId'])); ?>
-			<? if ($rq['RefundInfo']['refundRequestStatusId'] == 1) { ?>
+			<? if ($rq['RefundInfo']['refundRequestStatusId'] == 1 || ($rq['RefundInfo']['refundRequestStatusId'] == 2 && $allowApprovedDelete)) { ?>
 				<?php echo $html->link(__('Delete', true), array('action'=>'delete', $rq['RefundInfo']['refundRequestId']), null, sprintf(__('Are you sure you want to delete # %s?', true), $rq['RefundInfo']['refundRequestId'])); ?>
 			<? } ?>
 			<? if ($rq['RefundInfo']['refundRequestStatusId'] != 3) { ?>
