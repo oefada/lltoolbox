@@ -56,7 +56,7 @@
 		var mapForm = document.createElement("form");
 	    mapForm.target = "Map";
 	    mapForm.method = "POST"; // or "post" if appropriate
-	    mapForm.action = "http://mbaek-lldev.luxurylink.com/?hptabstest=1";
+	    mapForm.action = "<?php echo $cmsEnv; ?>/?hptabstest=1";
 
 	    var mapInput = document.createElement("input");
 	    mapInput.type = "text";

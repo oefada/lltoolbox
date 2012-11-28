@@ -13,6 +13,8 @@ class CmsController extends AppController {
 	
 	function edit($id = null) {
 		
+		echo $env = Configure::read('Url.LL');
+		
 		if(empty($this->data)){
 			$this->data = $this->Cms->getCms($id);
 		} else {
@@ -24,6 +26,7 @@ class CmsController extends AppController {
 		}
 		
 		$this->set('cmsId', $this->params['pass']['0']);
+		$this->set('cmsEnv', $env);
 	}
 }
 
