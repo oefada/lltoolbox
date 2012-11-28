@@ -108,7 +108,9 @@ class ClientsController extends AppController {
 		$this->redirect(array('action'=>'edit', $id));
 	}
 	
-	function add($parentId = null) {
+	function add($parentId = null) 
+	{
+
 		if (!$parentId) {
 			$this->Session->setFlash(__('Invalid Parent Client ID', true));
 			$this->redirect(array('action'=>'index'));
@@ -116,25 +118,26 @@ class ClientsController extends AppController {
 		
 		if (!empty($this->data)) {
 			$this->data['Client']['createdInToolbox'] = 1;
-
-			// alee 03-17-2009 - add SEO NAME for child clients			
 			$this->data['Client']['seoName'] = $this->convertToSeoName($this->data['Client']['name']);
 			$this->data['Client']['seoLocation'] = $this->convertToSeoName($this->data['Client']['locationDisplay']);
-
 			$this->Client->create();
 			if($this->Client->save($this->data, array('callbacks' => false))) {
 				$parentClient = $this->Client->findByClientId($parentId);
 				$this->Client->set_sites($this->Client->id, $parentClient['Client']['sites']);
-				$this->Session->setFlash(__('The Child Client has been saved, <a href="/clients/edit/'.$this->Client->id.'">click here to edit it</a>', true), 'default', array(), 'success');
+				$msg='The Child Client has been saved, <a href="/clients/edit/'.$this->Client->id.'">';
+				$msg.='click here to edit it</a>';
+				$this->Session->setFlash(__($msg, true), 'default', array(), 'success');
 				$this->set('closeModalbox', true);
 			} else {
-				$this->Session->setFlash(__('The Client could not be saved. Please, try again.', true), 'default', array(), 'error');
+				$msg='The Client could not be saved. Please, try again.';
+				$this->Session->setFlash(__($msg, true), 'default', array(), 'error');
 			}
 		}
 		
 		$this->data['Client']['parentClientId'] = $parentId;
 		$clientTypeIds = $this->Client->ClientType->find('list');
 		$this->set('clientTypeIds', $clientTypeIds);
+
 	}
 	
 	function edit($id = null) {
