@@ -35,7 +35,7 @@
 												<?php echo $upsValue['city'] . ', ' . $upsValue['state'] . ' ' . $upsValue['postalCode'];?>
 											</td>
 											<td><?php echo $upsValue['ccType'];?></td>
-											<td><?php echo $upsValue['ccNumber'];?></td>
+											<td><?php echo $upsValue['ccToken'];?></td>
 											<td><?php echo $upsValue['expMonth'] . '/' . $upsValue['expYear'];?></td>
 											<td><?php echo ($upsValue['primaryCC']) ? 'Yes' : 'No';?></td>
 											<td><?php echo ($upsValue['inactive']) ? '<strong>Yes</strong>' : 'No';?></td>

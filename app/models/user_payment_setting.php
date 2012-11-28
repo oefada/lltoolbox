@@ -29,7 +29,8 @@ class UserPaymentSetting extends AppModel {
 	
 	
 	
-	function validateExpiration($data) {
+	function validateExpiration($data)
+	{
 		//set variables depending on what field is going through the validation rule
 		if(isset($data['expYear'])) {
 			$year = $data['expYear'];
@@ -61,23 +62,117 @@ class UserPaymentSetting extends AppModel {
 		
 		return false;
 	}
-	
-	function beforeSave() {
-		if(!empty($this->data['UserPaymentSetting']['ccNumber']) && strpos($this->data['UserPaymentSetting']['ccNumber'], '*') === false) {
-			$this->data['UserPaymentSetting']['ccNumber'] = aesEncrypt($this->data['UserPaymentSetting']['ccNumber']);
+
+	/**
+	 * @return	bool
+	 */
+	function beforeSave()
+	{
+		if(
+			!empty($this->data['UserPaymentSetting']['ccNumber'])
+			&& empty($this->data['UserPaymentSetting']['ccToken'])
+		) {
+			$expMonth = str_pad($this->data['UserPaymentSetting']['expMonth'], 2, 0, STR_PAD_LEFT);
+			$expYear = substr($this->data['UserPaymentSetting']['expYear'], -2);
+			$expirationDate = $expMonth . $expYear;
+			$datetime = date('Y-m-d H:i:s');
+
+			$this->data['UserPaymentSetting']['ccToken'] =
+				$this->tokenizeCcNum($this->data['UserPaymentSetting']['ccNumber'], $expirationDate);
+
+			$this->data['UserPaymentSetting']['ccType'] =
+				$this->getCcType($this->data['UserPaymentSetting']['ccNumber']);
+
+			$this->data['UserPaymentSetting']['ccTokenCreated'] = $datetime;
+			$this->data['UserPaymentSetting']['ccTokenModified'] = $datetime;
+		}
+
+		if (isset($this->data['UserPaymentSetting']['ccNumber'])) {
+			// We no longer want to save the ccNumber
+			unset($this->data['UserPaymentSetting']['ccNumber']);
 		}
 		
 		return true;
 	}
 
-	function afterFind($results) {
-		// For any results returned, replace the ccNumber with the descrypted one.
+	/**
+	 * @param	mixed $results
+	 * @return	mixed
+	 */
+	public function afterFind($results)
+	{
 		foreach ($results as $key => $val) {
-			if (isset($val['UserPaymentSetting']['ccNumber'])) {
-				$results[$key]['UserPaymentSetting']['ccNumber'] = aesDecrypt($results[$key]['UserPaymentSetting']['ccNumber']);  
+			if (isset($val['UserPaymentSetting']['ccToken'])) {
+				$results[$key]['UserPaymentSetting']['ccToken'] =
+					str_pad(substr($results[$key]['UserPaymentSetting']['ccToken'], -4, 4), 16, '*', STR_PAD_LEFT);
 			}
 		}
 		return $results;
 	}
+
+	/**
+	 * @param	string $ccNumber
+	 * @param	string $expirationDate
+	 * @return	string
+	 */
+	public function tokenizeCcNum($ccNumber, $expirationDate)
+	{
+		$tokenizer = $this->getTokenizer();
+		return $tokenizer->tokenizeCC($ccNumber, $expirationDate);
+	}
+
+	/**
+	 * @param	string $ccToken
+	 * @return	string
+	 */
+	public function detokenizeCcNum($ccToken)
+	{
+		$tokenizer = $this->getTokenizer();
+		return $tokenizer->detokenize($ccToken);
+	}
+
+	/**
+	 * @param	string $ccNumber
+	 * @return	string
+	 */
+	public function getCcType($ccNumber)
+	{
+		switch (substr($ccNumber, 0, 1)) {
+			case 4:
+				$ccType = 'VI';
+				break;
+			case 5:
+				$ccType = 'MC';
+				break;
+			case 6:
+				$ccType = 'DS';
+				break;
+			case 3:
+				$ccType = 'AX';
+				break;
+			default:
+				$ccType = '';
+				break;
+		}
+
+		return $ccType;
+	}
+
+	/**
+	 * @return	TokenizerHelper
+	 */
+	private function getTokenizer()
+	{
+		App::import("Vendor","Tokenizer",array('file' => "tokenizer.php"));
+		$tokenizer = new TokenizerHelper(
+			TokenizerFactoryHelper::newTokenizerInstance('tokenex',
+				array(
+					'tokenExMerchantId'	=> Configure::read('tokenExMerchantId'),
+					'tokenExWsdlURL'	=> Configure::read('tokenExWsdlURL')
+				)
+			)
+		);
+
+		return $tokenizer;
+	}
 }
-?>
