@@ -768,6 +768,7 @@ class TicketsController extends AppController {
 		} else {
 			$currentUser = $this->LdapAuth->user();
 			$this->data['Ticket']['manualTicketInitials'] = $currentUser['LdapUser']['samaccountname'];
+			$this->data['Ticket']['departureDisplay'] = '-';
 		}
 		
 		$packageList = (isset($this->data['Ticket']['siteId']) && isset($this->data['Ticket']['clientId'])) ? $this->mtPackagesBySiteAndClient($this->data['Ticket']['siteId'], $this->data['Ticket']['clientId']) : array();

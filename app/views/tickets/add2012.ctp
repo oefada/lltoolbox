@@ -25,10 +25,10 @@
 	?>	
 		<div class="input date">
 			<? echo $form->input('requestArrival', array('div'=> false)); ?>
-			<!--
+			<? echo $form->input('departureDisplay', array('type'=>'hidden')); ?>
+			
 			<span style="margin-left: 20px; color: #898989; font-weight: bold;">Request Departure</span>
-			<span id="lblDeparture" style="margin-left: 10px;"><?= $this->data['Ticket']['departure']; ?></span>
-			-->
+			<span id="lblDeparture" style="margin-left: 10px;"><?= $this->data['Ticket']['departureDisplay']; ?></span>
 		</div>
 		
 	<? 
@@ -90,6 +90,36 @@
 					$('#TicketRequestNumGuests').val(guests);
 				}
 			});
+
+			$('#TicketRequestArrivalYear').change(function() {
+				showDeparture();	
+			});
+			$('#TicketRequestArrivalMonth').change(function() {
+				showDeparture();	
+			});
+			$('#TicketRequestArrivalDay').change(function() {
+				showDeparture();	
+			});
+			$('#TicketNumNights').change(function() {
+				showDeparture();	
+			});
+			
+			function showDeparture() {
+				var nights = parseInt($('#TicketNumNights').val());
+				var display = '-';
+				if (nights > 0) {
+					var dtY = $('#TicketRequestArrivalYear').val();
+					var dtM = $('#TicketRequestArrivalMonth').val();
+					var dtD = $('#TicketRequestArrivalDay').val();
+					if (dtY != '' && dtM != '' && dtD != '') {
+						var dt = new Date(dtY, dtM - 1, dtD, 1, 0, 0, 0);
+						dt.setDate(dt.getDate() + nights);
+						display = dt.toLocaleDateString();
+					}
+				}
+				$('#TicketDepartureDisplay').val(display);
+				$('#lblDeparture').html(display);
+			}
 			
 			function resetPackageList() {
 				$('#TicketPackageId')[0].options.length = 0;
