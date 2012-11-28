@@ -37,13 +37,6 @@ class LoasController extends AppController {
 			$sort='ticketId';
 			$dir='desc';
 		}
-		/* Because of the multiple queries, sorting in the query has no effect
-		if ($sort!='' && in_array($sort,$offerLiveFieldArr)){
-			$options['order'] = array($sort => $dir);
-		}else{
-			$options['order'] = array('offerId' => 'ASC');
-		}
-		*/
 	
 		$q='SELECT * FROM track WHERE loaId =?';
 		$tracks_result = $this->Loa->query($q,array($loa['Loa']['loaId']));
@@ -228,7 +221,9 @@ class LoasController extends AppController {
 		$this->redirect(array('action' => 'edit', $id));
 	}
 
-	function add($clientId = null) {
+	function add($clientId = null) 
+	{
+
 		if (!empty($this->data)) {
 			$clientId = $this->data['Loa']['clientId'];
 			$this->data['Loa']['membershipBalance'] = $this->data['Loa']['membershipFee'];
@@ -241,36 +236,44 @@ class LoasController extends AppController {
 			// ticket 3404 - check for date conflicts
 			$conflictLoa = $this->findDateConflict($clientId, implode('/', $this->data['Loa']['startDate']));
 			if ($conflictLoa !== false) {
-				$this->Session->setFlash(__('The new dates overlap with LOA <a href="/loas/edit/' . $conflictLoa . '">' . $conflictLoa . '</a>.', true));
+				$msg='The new dates overlap with LOA <a href="/loas/edit/' . $conflictLoa . '">' . $conflictLoa.'</a>.';
+				$this->Session->setFlash(__($msg, true));
 			} else {
 				$this->Loa->create();
-				if ($this->Loa->save($this->data)) {
+				// make checkbox array work with mysql's "set" column type
+				//AppModel::printR($this->data['Loa']['checkboxes']);exit;
+				$this->data['Loa']['checkboxes']=implode(',',$this->data['Loa']['checkboxes']);
+				if (($r=$this->Loa->save($this->data))!==false) {
 					$this->Session->setFlash(__('The Loa has been saved', true));
 					$this->redirect("/clients/$clientId/loas");
 				} else {
-					$this->Session->setFlash(__('The Loa could not be saved. Please, try again.', true));
+					$msg='The Loa could not be saved. Please, try again.<br>';
+					$msg.=implode("<br>",array_values($this->Loa->invalidFields()));
+					$this->Session->setFlash(__($msg, true));
 				}
 			}
 		}
-		
+
 		if(!$clientId) {
 			$this->Session->setFlash(__('Incorrect client id specified. Please try again.', true));
 			$this->redirect(array('controller' => 'clients', 'action' => 'index'));
 		}
 		$this->data['Loa']['clientId'] = $clientId;
-		$customerApprovalStatusIds = $this->Loa->LoaCustomerApprovalStatus->find('list');
-
 		$this->Loa->Client->recursive = 1;
 		$client = $this->Loa->Client->find('Client.clientId = '.$clientId, 'name');
+		foreach($client['Loa'] as $key=>$arr){
+			$client['Loa'][$key]['checkboxes']=explode(",",$arr['checkboxes']);
+		}
+		$this->set('checkboxValuesArr',$this->getCheckboxValuesArr());
 		$currencyIds = $this->Loa->Currency->find('list');
 		$loaLevelIds = $this->Loa->LoaLevel->find('list', array('order' => array('LoaLevel.dropdownSortOrder')));
 		$loaMembershipTypeIds = $this->Loa->LoaMembershipType->find('list');
 		$accountTypeIds = $this->Loa->AccountType->find('list');
-	$this->Loa->LoaPublishingStatusRel->PublishingStatus->recursive = -1;
-	$publishingStatus = $this->Loa->LoaPublishingStatusRel->PublishingStatus->find('list');
+		$this->Loa->LoaPublishingStatusRel->PublishingStatus->recursive = -1;
+		$publishingStatus = $this->Loa->LoaPublishingStatusRel->PublishingStatus->find('list');
 		$this->set('clientName', $client['Client']['name']);
 		$this->set('client', $this->Loa->Client->findByClientId($clientId));
-		$this->set(compact('customerApprovalStatusIds', 'currencyIds', 'loaLevelIds', 'loaMembershipTypeIds', 'publishingStatus', 'accountTypeIds'));
+		$this->set(compact('currencyIds','loaLevelIds','loaMembershipTypeIds', 'publishingStatus', 'accountTypeIds'));
 		
 	}
 	
@@ -284,7 +287,22 @@ class LoasController extends AppController {
 		}
 		return false;
 	}
-	
+
+	/**
+	 * Values for checkboxes in 'checkbox' column
+	 * 
+	 * @return array
+	 */
+	public function getCheckboxValuesArr(){
+
+		return array(
+			'New York Times'=>'New York Times', 
+			'Departures (American Express)'=>'Departures (American Express)', 
+			'Exclusive Email'=>'Exclusive Email',
+			'Includes CC Fee'=>'Includes CC Fee'
+		);
+
+	}
 
 	function items($id = null) {
 		if (!$id && empty($this->data)) {
@@ -332,12 +350,19 @@ class LoasController extends AppController {
 		return $tmp;
 	}
 
-	function edit($id = null) {
+	function edit($id = null) 
+	{
+
 		if (!$id && empty($this->data)) {
 			$this->Session->setFlash(__('Invalid Loa', true));
 			$this->redirect(array('action'=>'index'));
 		}
+
 		if (!empty($this->data)) {
+
+			if (is_array($this->data['Loa']['checkboxes'])){
+				$this->data['Loa']['checkboxes']=implode(",",$this->data['Loa']['checkboxes']);
+			}
 
 			if (empty($this->data['Loa']['sites'])) {
 				$loa = $this->Loa->find($this->data['Loa']['loaId']);
@@ -355,11 +380,11 @@ class LoasController extends AppController {
 		$this->Loa->recursive = 2;
 		if (empty($this->data)) {
 			$this->data = $this->Loa->read(null, $id);
+			//AppModel::printR($this->data);exit;
 			if ($this->data){
 				usort($this->data['LoaItem'], array($this, 'sortLoaItemsByType'));
 			}
 		}
-		$customerApprovalStatusIds = $this->Loa->LoaCustomerApprovalStatus->find('list');
 		$currencyIds = $this->Loa->Currency->find('list');
 		$loaLevelIds = $this->Loa->LoaLevel->find('list', array('order' => array('LoaLevel.dropdownSortOrder')));
 		$loaMembershipTypeIds = $this->Loa->LoaMembershipType->find('list');
@@ -393,11 +418,21 @@ class LoasController extends AppController {
 		$this->set('renewalResultOptions', $renewalResultOptions);
 		$this->set('nonRenewalReasonOptions', $nonRenewalReasonOptions); 
 
-		$this->set(compact('customerApprovalStatusIds', 'currencyIds', 'loaLevelIds', 'loaMembershipTypeIds', 'publishingStatus', 'completedStatusLL', 'completedStatusFG', 'accountTypeIds'));
+		$this->set(compact( 'currencyIds', 'loaLevelIds', 'loaMembershipTypeIds', 'publishingStatus', 'completedStatusLL', 'completedStatusFG', 'accountTypeIds'));
 		$client=$this->Loa->Client->findByClientId($this->data['Loa']['clientId']);
+		$checkboxValuesSelectedArr=array();
+		foreach($client['Loa'] as $key=>$arr){
+			if ($arr['loaId']==$id){
+				$checkboxValuesSelectedArr=explode(",", $arr['checkboxes']);
+			}
+		}
+		//AppModel::printR($checkboxValuesSelectedArr);
 		//print '<pre>';print_r($client);exit;
 		$this->set('client', $client);
 		$this->set('currencyCodes', $this->Loa->Currency->find('list', array('fields' => array('currencyCode'))));
+		$this->set('checkboxValuesArr',$this->getCheckboxValuesArr());
+		$this->set('checkboxValuesSelectedArr',$checkboxValuesSelectedArr);
+		
 
 	}
 	

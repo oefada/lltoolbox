@@ -19,31 +19,48 @@ $this->set('clientId', $this->data['Loa']['clientId']);
 		echo $form->input('startDate',array('minYear' => date('Y', strtotime('January 01, 2000')), 'maxYear' => date('Y', strtotime('+5 year')), 'timeFormat' => ''));
 		echo $form->input('endDate', array('minYear' => date('Y', strtotime('January 01, 2000')), 'maxYear' => date('Y', strtotime('+5 year')), 'timeFormat' => ''));
 		echo $form->input('loaMembershipTypeId', array('label' => 'Membership Type'));
+
+		echo '<div id="_LoaMembershipFeeEstimated" style="padding:0px;">';
+		echo $form->input('membershipFeeEstimated', array('label' => 'Estimated Fee'));
+		echo '</div>';
+
+		echo '<div id="_LoaMembershipTotalPackages" style="padding:0px;">';
+		echo $form->input('membershipTotalPackages');
+		echo '</div>';
+
+		echo $form->input('membershipTotalNights');
+
 		echo '<div id="_LoaMembershipFee" style="padding:0px;">' . $form->input('membershipFee') . '</div>';
 		echo $form->input('luxuryLinkFee');
-		echo $form->input('familiyGetawayFee');
+		echo $form->input('familyGetawayFee');
 		echo $form->input('advertisingFee');
 		echo $form->input('notes', array('label'=>'LOA Notes', 'id' => 'loaNotes', 'onKeyDown'=>'limitText(loaNotes, 300)', 'onKeyUp'=>'limitText(loaNotes, 300)'));
 		echo $form->input('currencyId');
 
 		echo $form->input('loaLevelId', array('label' => 'LOA Level'));
 		echo $form->input('customerApprovalDate', array('empty' => true, 'label' => 'Package in Date', 'timeFormat' => '', 'minYear' => date('Y', strtotime('January 01, 2000')), 'maxYear' => date('Y', strtotime('+5 year'))));
-		echo $form->input('customerApprovalStatusId', array('label' => 'Client Approval Status'));
 		echo '<div class="controlset">'.$form->input('moneyBackGuarantee')."</div>";
-		echo '<div class="controlset">'.$form->input('upgraded')."</div>";
+		echo '<div class="controlset">'.$form->input('upgraded', array('label'=>'Risk Free Guarantee'))."</div>";
+		echo '<div class="controlset" style="margin-left:-155px;">';
+		echo $form->input('checkboxes', array(
+			'label'=>false,
+			'type'=>'select',
+			'multiple'=>'checkbox',
+			'options'=>$checkboxValuesArr
+			)
+		);
+		echo '</div>';
 		echo $form->input('numEmailInclusions');
-		echo $form->input('emailNewsletterDates', array('id' => 'emailNewsletterDates', 'onKeyDown'=>'limitText(emailNewsletterDates, 300)', 'onKeyUp'=>'limitText(emailNewsletterDates, 300)'));
-		echo $form->input('homepageDates', array('id' => 'homepageDates', 'onKeyDown'=>'limitText(homepageDates, 300)', 'onKeyUp'=>'limitText(homepageDates, 300)'));
+		echo $form->input('auctionCommissionPerc', array('label'=>'Auction % Commission'));
+		echo $form->input('buynowCommissionPerc', array('label'=>'BuyNow % Commission'));
+		echo $form->input('emailNewsletterDates', array('label'=>'Packaging Notes', 'id' => 'emailNewsletterDates', 'onKeyDown'=>'limitText(emailNewsletterDates, 300)', 'onKeyUp'=>'limitText(emailNewsletterDates, 300)'));
+		echo $form->input('homepageDates', array('label'=>'Homepage Placements', 'id' => 'homepageDates', 'onKeyDown'=>'limitText(homepageDates, 300)', 'onKeyUp'=>'limitText(homepageDates, 300)'));
 		echo $form->input('additionalMarketing', array('id' => 'additionalMarketing', 'onKeyDown'=>'limitText(additionalMarketing, 300)', 'onKeyUp'=>'limitText(additionalMarketing, 300)'));
 		echo $form->input('loaNumberPackages', array('label' => 'Commission-Free Packages'));
-		echo $form->input('commissionStructure', array('id' => 'commissionStructure', 'onKeyDown'=>'limitText(commissionStructure, 300)', 'onKeyUp'=>'limitText(commissionStructure, 300)'));
-		echo $form->input('commissionFreeYield');
 
 		echo $form->input('modifiedBy', array('type' => 'hidden', 'value' => $userDetails['username']));
 		echo $form->input('clientId', array('type' => 'hidden'));
 
-		echo '<div id="_LoaMembershipFeeEstimated" style="padding:0px;">' . $form->input('membershipFeeEstimated', array('label' => 'Estimated Fee')) . '</div>';
-		echo '<div id="_LoaMembershipTotalPackages" style="padding:0px;">' . $form->input('membershipTotalPackages') . '</div>';
 		echo '<div id="_LoaRetailValueFee" style="padding:0px;display:none;">' . $form->input('retailValueFee', array('label'=>'Retail Value Credit')) . '</div>';
 	?>
 	</fieldset>

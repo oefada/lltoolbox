@@ -5,24 +5,27 @@ class Loa extends AppModel {
 	var $useTable = 'loa';
 	var $primaryKey = 'loaId';
 
-	var $belongsTo = array('LoaCustomerApprovalStatus' => array('foreignKey' => 'customerApprovalStatusId'),
-						   'Client' => array('foreignKey' => 'clientId'),
-						   'Currency' => array('foreignKey' => 'currencyId'),
-						   'LoaLevel' => array('foreignKey' => 'loaLevelId'),
-						   'LoaMembershipType' => array('foreignKey' => 'loaMembershipTypeId'),
-						   'AccountType' => array('foreignKey' => 'accountTypeId')
-						  );
-	var $validate = array('startDate' => array('rule' => array('validateEndStartDate'), 'message' => 'Start date must be less than end date'),
-						  'endDate' => array('rule' => array('validateEndStartDate'), 'message' => 'Start date must be less than end date'),
-						  'loaMembershipTypeId' => array(
-			'rule' => array(
-				'comparison',
-				'>',
-				0
-			),
-			'message' => 'Please select an LOA membership type'
-		),
-							);
+	var $belongsTo = array(
+		'Client' => array('foreignKey' => 'clientId'),
+		'Currency' => array('foreignKey' => 'currencyId'),
+		'LoaLevel' => array('foreignKey' => 'loaLevelId'),
+		'LoaMembershipType' => array('foreignKey' => 'loaMembershipTypeId'),
+		'AccountType' => array('foreignKey' => 'accountTypeId')
+	);
+
+	var $validate = array(
+		'startDate' => array(
+			'rule' => array('validateEndStartDate'), 'message' => 'Start date must be less than end date'),
+		'endDate' => array(
+			'rule' => array('validateEndStartDate'), 'message' => 'Start date must be less than end date'),
+		'loaMembershipTypeId' => array(
+			'rule' => array( 'comparison', '>', 0), 'message' => 'Please select an LOA membership type'),
+		'sites' => array(
+			'rule' => array('multiple', array('min'=>1)),
+			'required' => true,
+			'allowEmpty' => false,
+			'message' => 'You must select a site.'),
+	);
 
 	var $order = array("Loa.startDate DESC");
 
@@ -66,6 +69,7 @@ class Loa extends AppModel {
 	}
 
 	function afterSave() {
+			//AppModel::printR($this->data);exit;
 		if ($this->id == $this->get_current_loa($this->data['Loa']['clientId'])) {
 			$this->Client->set_sites($this->data['Loa']['clientId'], $this->data['Loa']['sites']);
 		}
