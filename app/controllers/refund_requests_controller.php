@@ -88,6 +88,13 @@ class RefundRequestsController extends AppController {
 
 		$results = $this->RefundRequest->query($q);
 		$this->set('refundRequests', $results);
+		
+		$allowApprovedDelete = false;
+		$currentUser = $this->LdapAuth->user();
+		if ($currentUser['LdapUser']['samaccountname'] == 'kferson') {
+			$allowApprovedDelete = true;
+		}
+		$this->set('allowApprovedDelete', $allowApprovedDelete);
             
 		if ($displayCsv) {
             $this->set('keepOrRemitList', $this->keepOrRemitList);
