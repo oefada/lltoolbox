@@ -8,8 +8,25 @@ class PaymentDetailsController extends AppController {
 
 	var $name = 'PaymentDetails';
 	var $helpers = array('Html', 'Form', 'Ajax', 'Text', 'Layout', 'Number');
-	var $uses = array('PaymentDetail', 'Ticket', 'UserPaymentSetting', 'PpvNotice', 'Country', 'CountryBilling', 'Track', 'TrackDetail', 'User','creditTracking', 'PromoTicketRel', 'Promo', 'PromoCode', 'PaymentType', 'PaymentDetail','Ticket'
-);
+	var $uses = array(
+		'PaymentDetail',
+		'Ticket',
+		'UserPaymentSetting',
+		'PpvNotice',
+		'Country',
+		'CountryBilling',
+		'Track',
+		'TrackDetail',
+		'User',
+		'creditTracking',
+		'PromoTicketRel',
+		'Promo',
+		'PromoCode',
+		'PaymentType',
+		'PaymentDetail',
+		'Ticket');
+
+	private $securedUsers = array('mclifford','cholland','bjensen','kferson','mtrinh');
 
 
 	function beforeFilter() {
@@ -355,13 +372,7 @@ class PaymentDetailsController extends AppController {
 			$selectExpYear[] = $i;	
 		}
 
-		if (isset($_SESSION['Auth']['AdminUser']['mailnickname'])) {
-			$initials_user = $_SESSION['Auth']['AdminUser']['mailnickname'];
-		} else {
-			$initials_user = false;
-		}
-							
-		if (in_array($initials_user, array('mclifford','cholland','bjensen','kferson','mtrinh'))) {
+		if ($this->isSecuredUser($this->user['LdapUser']['username'])) {
 			$allowViewCCFull = true;
 		} else {
 			$allowViewCCFull = false;
@@ -379,8 +390,8 @@ class PaymentDetailsController extends AppController {
 		$this->set('userPaymentSetting', (isset($ticket['User']['UserPaymentSetting']) ? $ticket['User']['UserPaymentSetting'] : array()));
 		$this->set('paymentTypeIds', $paymentTypeIds);
 		$this->set('paymentProcessorIds', $paymentProcessors);		
-		$this->set('initials_user', $initials_user);
-		$this->set('nocollapse',1);
+		$this->set('initials_user', $this->user['LdapUser']['username']);
+		$this->set('nocollapse', 1);
 		
 		if (isset($this->params['url']['payments_applied'])) {
 			$this->render("payments_applied","ajax");
@@ -388,6 +399,37 @@ class PaymentDetailsController extends AppController {
 			$this->render("existing_cards","ajax");
 		}
 	}
-}
 
-?>
+	/**
+	 * @param $userPaymentSettingId
+	 */
+	public function detokenize($userPaymentSettingId)
+	{
+		Configure::write('debug', 0);
+		$this->layout = 'ajax';
+		$this->autoRender = false;
+
+		$ccToken = 0;
+
+		$params = array(
+			'callbacks' => false,
+			'conditions' => array('UserPaymentSetting.userPaymentSettingId' => $userPaymentSettingId),
+			'fields' => array('UserPaymentSetting.ccToken')
+		);
+		$userPaymentSetting = $this->UserPaymentSetting->find('first', $params);
+		if ($this->isSecuredUser($this->user['LdapUser']['username'])) {
+			$ccToken = $this->UserPaymentSetting->detokenizeCcNum($userPaymentSetting['UserPaymentSetting']['ccToken']);
+		}
+
+		echo $ccToken;
+	}
+
+	/**
+	 * @param $username
+	 * @return bool
+	 */
+	private function isSecuredUser($username)
+	{
+		return in_array($username, $this->securedUsers);
+	}
+}
