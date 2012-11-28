@@ -38,6 +38,7 @@
 	<th>Id</th>
 	<th>Ticket Id</th>
 	<th>Status</th>
+	<th>Amount</th>
 	<th>Date Created</th>
 	<th>Created By</th>
 	<th>Date Approved</th>
@@ -59,6 +60,7 @@ foreach ($refundRequests as $rq):
 		<td><?php echo $rq['RefundInfo']['refundRequestId']; ?></td>
 		<td><a href="/tickets/view/<?php echo $rq['RefundInfo']['ticketId']; ?>"><?php echo $rq['RefundInfo']['ticketId']; ?></a></td>
 		<td><?php echo $rq['RefundInfo']['description']; ?></td>
+		<td align="right">$<?php echo number_format($rq['RefundInfo']['refundTotal'], 2); ?>&nbsp;</td>
 		<td><?php echo $rq['RefundInfo']['dateCreated']; ?></td>
 		<td><?php echo $rq['RefundInfo']['createdBy']; ?></td>
 		<td><?php echo $rq['RefundInfo']['dateApproved']; ?></td>
