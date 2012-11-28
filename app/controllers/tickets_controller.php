@@ -1044,7 +1044,7 @@ class TicketsController extends AppController {
 			$dtExp = $r['p']['expYear'] . '-' . $r['p']['expMonth'] . '-2';
 			$dtNow = date('Y-m') . '-1';
 			if (strtotime($dtExp) > strtotime($dtNow)) {
-				$ccNumber = aesDecrypt($r['p']['ccNumber']);
+				$ccNumber = $r['p']['ccToken'];
 				$ccs[$r['p']['userPaymentSettingId']] = $r['p']['userPaymentSettingId'] . ' - ' . $r['p']['ccType'] . ' - XXXX-XXXX-XXXX-' . substr($ccNumber, -4);
 			}
 		}
