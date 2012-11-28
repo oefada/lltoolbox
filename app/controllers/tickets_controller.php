@@ -373,7 +373,7 @@ class TicketsController extends AppController {
 				break;
 			}
 		}
-		return ($found_valid_cc) ? $v['UserPaymentSetting']['ccType'] . '-' . substr(aesDecrypt($v['UserPaymentSetting']['ccNumber']), -4, 4) : 'EXPIRED';
+		return ($found_valid_cc) ? $v['UserPaymentSetting']['ccType'] . '-' . substr($v['UserPaymentSetting']['ccToken'], -4, 4) : 'EXPIRED';
 	}
 
 	function view($id = null) {
