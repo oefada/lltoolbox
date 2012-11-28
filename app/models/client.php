@@ -806,6 +806,7 @@ class Client extends AppModel {
 
 			$keywords = str_replace("-"," ",$keywords);
 			$keywords = preg_replace("/\s{2,}?/"," ",$keywords);
+			$keywords = preg_replace("/\s{2,}?/"," ",$keywords);
 			$keywords = preg_replace($patt,"",$keywords);
 		}
 
