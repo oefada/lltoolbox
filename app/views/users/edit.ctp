@@ -215,7 +215,7 @@
 		?>
 		<tr<?php echo $class;?>>
 			<td><?php echo $userPaymentSetting['ccType'];?></td>
-			<td><?php echo $userPaymentSetting['ccNumber'];?></td>
+			<td><?php echo $userPaymentSetting['ccToken'];?></td>
 			<td><?php echo $userPaymentSetting['nameOnCard'];?></td>
 			<td><?php echo $userPaymentSetting['expYear'];?></td>
 			<td><?php echo $userPaymentSetting['expMonth'];?></td>

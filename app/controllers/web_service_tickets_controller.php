@@ -1408,7 +1408,7 @@ class WebServiceTicketsController extends WebServicesController
 			// cc variables
 			// -------------------------------------------------------------------------------
 			if (is_array($ticketPaymentData) && !empty($ticketPaymentData)) {
-				$ccFour				= substr(aesDecrypt($ticketPaymentData['UserPaymentSetting']['ccNumber']), -4, 4);
+				$ccFour				= substr($ticketPaymentData['UserPaymentSetting']['ccToken'], -4, 4);
 				$ccType				= $ticketPaymentData['UserPaymentSetting']['ccType'];
 				//$billDate			= 
 			}
@@ -2674,7 +2674,8 @@ class WebServiceTicketsController extends WebServicesController
 			return $this->returnError(__METHOD__);
 		}
 
-		$userPaymentSettingPost['UserPaymentSetting']['ccNumber'] = aesFullDecrypt($userPaymentSettingPost['UserPaymentSetting']['ccNumber']);
+		$userPaymentSettingPost['UserPaymentSetting']['ccNumber'] =
+			$this->UserPaymentSetting->detokenizeCcNum($userPaymentSettingPost['UserPaymentSetting']['ccToken']);
 
 		// for FAMILY, payment is via PAYPAL only [override]
 		// ---------------------------------------------------------------------------
@@ -2938,6 +2939,9 @@ class WebServiceTicketsController extends WebServicesController
 		// ---------------------------------------------------------------------------
 		if ($data['saveUps'] && !$usingUpsId && !empty($userPaymentSettingPost['UserPaymentSetting'])) {
 			$userPaymentSettingPost['UserPaymentSetting']['userId'] = $ticket['Ticket']['userId'];
+			$datetime = date('Y-m-d H:i:s');
+			$userPaymentSettingPost['UserPaymentSetting']['ccTokenCreated'] = $datetime;
+			$userPaymentSettingPost['UserPaymentSetting']['ccTokenModified'] = $datetime;
 
 			$this->UserPaymentSetting->create();
 			$this->UserPaymentSetting->save($userPaymentSettingPost['UserPaymentSetting']);
