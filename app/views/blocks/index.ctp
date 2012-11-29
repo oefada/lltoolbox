@@ -124,7 +124,7 @@ $this->set('hideSidebar', true);
 <div id="editorDiv">
 	<div class="editorPanel">
 		<div style="text-align: center; font-size: 32px; text-shadow: 5px 5px 25px #888;">
-			Select a block to edit from the tree on the left.
+			<pre><?php echo htmlentities(print_r(serialize($z=new DivModule),true)); ?></pre>
 		</div>
 	</div>
 </div>
