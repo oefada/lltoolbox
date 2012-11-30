@@ -1,13 +1,12 @@
 <?php
 
-$modules = array(
-	'Markup',
-	'Block',
-	'Div',
+$loadModules = array(
+	'BlockMarkupModule',
+	'BlockPageModule',
+	'BlockDivModule',
 );
-
-foreach ($modules as $module) {
-	App::import('Vendor', $module . 'Module', array('file' => 'appshared' . DS . 'modules' . DS . $module . 'Module' . DS . $module . 'Module' . '.php'));
+foreach ($loadModules as $blockModuleName) {
+	App::import('Vendor', $blockModuleName, array('file' => 'appshared' . DS . 'modules' . DS . $blockModuleName . DS . $blockModuleName . '.php'));
 }
 
 class BlocksController extends AppController
