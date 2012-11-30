@@ -124,7 +124,7 @@ $this->set('hideSidebar', true);
 <div id="editorDiv">
 	<div class="editorPanel">
 		<div style="text-align: center; font-size: 32px; text-shadow: 5px 5px 25px #888;">
-			<pre><?php echo htmlentities(print_r(serialize($z=new DivModule),true)); ?></pre>
+			<pre><?php echo htmlentities(print_r(serialize($z=new BlockDivModule),true)); ?></pre>
 		</div>
 	</div>
 </div>
