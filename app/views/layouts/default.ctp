@@ -133,14 +133,15 @@
 		    <div id="mainNav">
 				<ul>
 					<?if(0):?>
-		      		<li<?if(@($currentTab == 'home')) echo ' class="current"'?>><?=$html->link('Home', '/')?></li>
+					<li<?if(@($currentTab == 'home')) echo ' class="current"'?>><?=$html->link('Home', '/')?></li>
 					<?endif;?>
 					<li<?if(@($currentTab == 'message_queue')) echo ' class="current"'?>><?=$html->link('My Queue (<span id="queueCounter">'.$queueCountUnread.', '.$queueCountSeverity.'</span>)', array('controller' => 'message_queues', 'action' => 'index'), array(), null, false)?></li>
-		      		<li<?if(@($currentTab == 'property')) echo ' class="current"'?>><?=$html->link('Clients', array('controller' => 'clients', 'action' => 'index'))?></li>
-		      		<li<?if(@($currentTab == 'siteMerchandising')) echo ' class="current"'?>><a href="/pages/legacytools">Merchandising</a></li>
-		      		<li<?if(@($currentTab == 'reports')) echo ' class="current"'?>><?=$html->link('Reports', array('controller' => 'reports', 'action' => 'index'))?></li>
-		      		<li<?if(@($currentTab == 'customers')) echo ' class="current"'?>><?=$html->link('Concierge', array('controller' => 'users', 'action' => 'index'))?></li>
-                    <li<?if(@($currentTab == 'newsletters')) echo ' class="current"'?>><?=$html->link('Newsletters', array('controller' => 'mailings', 'action' => 'index'))?></li>
+					<li<?if(@($currentTab == 'property')) echo ' class="current"'?>><?=$html->link('Clients', array('controller' => 'clients', 'action' => 'index'))?></li>
+					<li<?if(@($currentTab == 'siteMerchandising')) echo ' class="current"'?>><a href="/pages/legacytools">Merchandising</a></li>
+					<li<?if(@($currentTab == 'reports')) echo ' class="current"'?>><?=$html->link('Reports', array('controller' => 'reports', 'action' => 'index'))?></li>
+					<li<?if(@($currentTab == 'customers')) echo ' class="current"'?>><?=$html->link('Concierge', array('controller' => 'users', 'action' => 'index'))?></li>
+					<li<?if(@($currentTab == 'newsletters')) echo ' class="current"'?>><?=$html->link('Newsletters', array('controller' => 'mailings', 'action' => 'index'))?></li>
+					<li<?if(@($currentTab == 'tableau')) echo ' class="current"'?>><?=$html->link('Tableau', 'http://tableau.luxurylink.com/workbooks?fe_project.name=1%20Luxury%20Link')?></li>
 					<li<?if(@($currentTab == 'wiki')) echo ' class="current"'?>><?=$html->link('Wiki', 'http://wiki.luxurylink.com/Main_Page')?></li>
 					<li style="float: right; width: auto; background: none"><a href="/logout" style="background: none">Logout</a></li>
 		    	</ul>
