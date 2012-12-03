@@ -386,7 +386,7 @@ class WebServiceTicketsController extends WebServicesController
 		// if record exists in paymentDetail, this ticket got processed already.
 		$ticket_payment = $this->PaymentDetail->query('SELECT * FROM paymentDetail WHERE ticketId = ' . $data['ticketId']);
 
-		if (DEBUG){
+		if (defined('DEBUG') && DEBUG){
 			$this->User->logIt('ticket_payment. if exists, ticket already processed:');
 			$this->User->logIt($ticket_payment,0,1);
 			$this->User->logIt("ticket_toolbox['Ticket']['transmitted']");
@@ -516,7 +516,7 @@ class WebServiceTicketsController extends WebServicesController
 			// find out if there is a valid credit card to charge.  charge and send appropiate emails
 			// -------------------------------------------------------------------------------
 			$user_payment_setting = $this->findValidUserPaymentSetting($data['userId'], $data['userPaymentSettingId']);
-			if (DEBUG){
+			if (defined('DEBUG') && DEBUG){
 				$this->User->logIt('user_payment_setting:');
 				$this->User->logIt($user_payment_setting);
 			}
@@ -577,7 +577,7 @@ class WebServiceTicketsController extends WebServicesController
 				$ppv_settings['ppvNoticeTypeId'] = 5;     // Winner Notification (Old one)
 				$auto_charge_card = false;
 			}
-			if (DEBUG){
+			if (defined('DEBUG') && DEBUG){
 				$this->User->logIt('ticketId:');
 				$this->User->logIt($ticketId);
 			}
@@ -605,7 +605,7 @@ class WebServiceTicketsController extends WebServicesController
 				$auto_charge_card=true;
 			}
 
-			if (DEBUG){
+			if (defined('DEBUG') && DEBUG){
 				$this->User->logIt('cc:');
 				$this->User->logIt($tmpCC);
 				$this->User->logIt('test_card:');
@@ -2583,7 +2583,7 @@ class WebServiceTicketsController extends WebServicesController
 			}
 		}
 
-		if (DEBUG){
+		if (defined('DEBUG') && DEBUG){
 			$this->User->logIt('$isDev');
 			$this->User->logIt($isDev,false,true);
 			$this->User->logIt('CRON_ENV');
@@ -2784,7 +2784,7 @@ class WebServiceTicketsController extends WebServicesController
 			$processor = new Processor($paymentProcessorName,$test_card);
 			$processor->InitPayment($userPaymentSettingPost, $ticket);
 
-			if (DEBUG){
+			if (defined('DEBUG') && DEBUG){
 				$this->User->logIt('test_card prior to paymentDetail');
 				$this->User->logIt($test_card,false,true);
 			}
@@ -2866,7 +2866,7 @@ class WebServiceTicketsController extends WebServicesController
 
 		$this->PaymentDetail->create();
 		$tmpResult=$this->PaymentDetail->save($paymentDetail);
-		if (DEBUG){
+		if (defined('DEBUG') && DEBUG){
 			$this->User->logIt('payment detail result');
 			$this->User->logIt($tmpResult);
 			$this->User->logIt('paymentDetail array');
