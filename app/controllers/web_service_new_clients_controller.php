@@ -112,6 +112,7 @@ class WebServiceNewClientsController extends WebServicesController
 			$client_data_save['inactive'] 				= 1; // set new clients from sugar to inactive
 			$client_data_save['created'] 				= $date_now;
 			$client_data_save['oldProductId']			= "0-$next_client_auto_id";
+			$client_data_save['accountingId']			= $next_client_auto_id;
 
 			$this->Client->create();
 			if (!$this->Client->save($client_data_save, array('callbacks' => false))) {
