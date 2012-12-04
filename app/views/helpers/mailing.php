@@ -295,7 +295,7 @@ class MailingHelper extends AppHelper{
 				<a 
 					style="text-decoration: none; color: #3ca9d5" 
 					href="'.$url.'"
-					name="'.htmlspecialchars($utm_term,ENT_NOQUOTES|ENT_QUOTES).'" 
+					name="'.$clientArr['seoName'].'" 
 					target="_blank" 
 					xt="SPCLICKSTREAM"
 				><strong>'.$name.'</strong></a>

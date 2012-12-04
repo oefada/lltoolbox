@@ -7,23 +7,45 @@ class Mailing extends AppModel {
 	var $name = 'Mailing';
 	var $useTable = 'mailing';
 	var $primaryKey = 'mailingId';
-    
-    var $validate = array('mailingTypeId' => array('rule1' => array('rule' => 'numeric'),
-                                                   'rule2' => array('rule' => 'notEmpty')),
-                          'mailingDate' => array('rule1' => array('rule' => 'validateDayOfWeek',
-                                                                  'message' => 'The date you have selected is invalid for this mailing type'),
-                                                 'rule2' => array('rule' => 'validateNoDuplicates',
-                                                                  'message' => 'A mailing already exists for this date and mailing type.'))
-                          );
-    
-    var $belongsTo = array('MailingType' => array('className' => 'MailingType', 'foreignKey' => 'mailingTypeId'));
-    var $hasMany = array('MailingPackageSectionRel' => array('className' => 'MailingPackageSectionRel', 'foreignKey' => 'mailingId'),
-                         'MailingAdvertising' => array('className' => 'MailingAdvertising', 'foreignKey' => 'mailingId')
-    );
+	
+	var $validate = array(
+		'mailingTypeId' => array(
+			'rule1' => array('rule' => 'numeric'),
+			'rule2' => array('rule' => 'notEmpty')
+		),
+		'mailingDate' => array(
+			'rule1' => array(
+				'rule' => 'validateDayOfWeek',
+				'message' => 'The date you have selected is invalid for this mailing type'
+			),
+			'rule2' => array(
+				'rule' => 'validateNoDuplicates',
+				'message' => 'A mailing already exists for this date and mailing type.'
+				)
+			)
+		);
+	
+	var $belongsTo = array( 
+			'MailingType' => array(
+				'className' => 'MailingType', 
+				'foreignKey' =>'mailingTypeId'
+			)
+		);
 
-		function generator($clientId_arr, $siteId = 1){
+	var $hasMany = array(
+			'MailingPackageSectionRel' => array(
+				'className' => 'MailingPackageSectionRel', 
+				'foreignKey' => 'mailingId'
+			),
+			'MailingAdvertising' => array(
+				'className' => 'MailingAdvertising', 
+				'foreignKey' => 'mailingId'
+			)
+	);
 
-			foreach($clientId_arr as $key=>$id)if ($id!='')$arr[$key]=$id;
+	function generator($clientId_arr, $siteId = 1){
+
+		foreach($clientId_arr as $key=>$id)if ($id!='')$arr[$key]=$id;
 
 			$q="SELECT * FROM client WHERE client.clientId IN (".implode(",",$arr).")";
 			$rows=$this->query($q);
@@ -87,25 +109,19 @@ class Mailing extends AppModel {
 				}
 			}
 
-			$q="SELECT imagePath,clientId FROM imageClient INNER JOIN image USING(imageId) ";
-			$q.="WHERE clientId IN (".implode(", ",$clientId_arr).") ";
-			$q.="AND imageTypeId=1 ";
-			$q.="AND inactive = 0 ";
-			$q.="AND imageClient.isHidden=0 AND imageClient.inactive=0 ";
-			$q.="ORDER BY imageClient.sortOrder ASC,imageClient.clientImageId ASC	";
-			$image_rows=$this->query($q);
+			foreach($new_rows as $key=>$new_row){
 
-			foreach($image_rows as $key=>$row){
-				foreach($new_rows as $key=>$new_row){
-					if ($row['imageClient']['clientId']==$new_row['client']['clientId']){
-						//$new_rows[$key]['client']['imagePath']=str_replace("gal-lrg","gal-xl",$row['image']['imagePath']);
-						$new_rows[$key]['client']['imagePath']=$row['image']['imagePath'];
-					}
-				}
+				$q="SELECT imagePath,clientId FROM imageClient INNER JOIN image USING(imageId) ";
+				$q.="WHERE clientId IN (".$new_row['client']['clientId'].") ";
+				$q.="AND imageTypeId=1 ";
+				$q.="AND inactive = 0 ";
+				$q.="AND imageClient.isHidden=0 AND imageClient.inactive=0 ";
+				$q.="ORDER BY imageClient.sortOrder ASC,imageClient.clientImageId ASC	";
+				$q.="LIMIT 1";
+				$image_rows=$this->query($q);
+				$new_rows[$key]['client']['imagePath']=$image_rows[0]['image']['imagePath'];
+
 			}
-
-//print "<pre>"; print_r($image_rows);exit;
-
 
 			$q="SELECT longDesc,clientId FROM clientSiteExtended WHERE clientId IN (".implode(",",$arr).")";
 			$q.=" AND siteId = " . $siteId;
@@ -197,30 +213,30 @@ class Mailing extends AppModel {
 			return $new_rows;
 
 		}
-    
-    function validateDayOfWeek($date) {
-        $mailingDate = strtotime($date['mailingDate']);
-        if ($mailingDate < time()) {
-            return false;
-        }
-        $weekday = getdate($mailingDate);
-        $mailingType = $this->MailingType->findByMailingTypeId($this->data['Mailing']['mailingTypeId']);
-        if ($weekday['wday'] != $mailingType['MailingType']['mailingDay']) {
-            return false;
-        }
-        else {
-            return true;
-        }
-    }
-    
-    function validateNoDuplicates($date) {
-        if ($this->find('first', array('conditions' => array('Mailing.mailingDate' => $date, 'Mailing.mailingTypeId' => $this->data['Mailing']['mailingTypeId'])))) {
-            return false;
-        }
-        else {
-            return true;
-        }
-    }
+	
+	function validateDayOfWeek($date) {
+		$mailingDate = strtotime($date['mailingDate']);
+		if ($mailingDate < time()) {
+			return false;
+		}
+		$weekday = getdate($mailingDate);
+		$mailingType = $this->MailingType->findByMailingTypeId($this->data['Mailing']['mailingTypeId']);
+		if ($weekday['wday'] != $mailingType['MailingType']['mailingDay']) {
+			return false;
+		}
+		else {
+			return true;
+		}
+	}
+	
+	function validateNoDuplicates($date) {
+		if ($this->find('first', array('conditions' => array('Mailing.mailingDate' => $date, 'Mailing.mailingTypeId' => $this->data['Mailing']['mailingTypeId'])))) {
+			return false;
+		}
+		else {
+			return true;
+		}
+	}
 
 }
 ?>
