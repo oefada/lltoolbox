@@ -1,6 +1,105 @@
 jQuery(function() {
 	var $ = jQuery;
-	var $tree = $('#blocktree');
+
+	// Add module toolbar
+	$('#blockToolbar').on('click', 'a', function(e) {
+		e.preventDefault();
+		var $target = $('#blockTree > ul > li').length == 0 ? -1 : $('#blockTree').jstree('get_selected');
+		var $newNode = $('#blockTree').jstree('create', $target, 'last', {
+			'data' : $(this).attr('rel'),
+			'attr' : {
+				'rel' : $(this).attr('rel')
+			}
+		}, null, true);
+		$('#blockTree').jstree('deselect_all').jstree('select_node', $newNode);
+	});
+
+	var typeData = {
+		'BlockPageModule' : {
+			'toolbarName' : 'Page',
+			'icon' : {
+				'image' : 'http://ui.llsrv.us/images/icons/silk/page.png'
+			},
+			'valid_children' : ['BlockDivModule', 'BlockPhotoModule']
+		},
+		'BlockDivModule' : {
+			'toolbarName' : 'Div',
+			"icon" : {
+				"image" : "http://ui.llsrv.us/images/icons/silk/layout.png"
+			},
+			"valid_children" : ['BlockDivModule', 'BlockHeaderModule', 'BlockParagraphModule', 'BlockPhotoModule', 'BlockTabsModule','BlockLinkModule']
+		},
+		'BlockHeaderModule' : {
+			'toolbarName' : 'Header',
+			'icon' : {
+				'image' : 'http://ui.llsrv.us/images/icons/silk/text_heading_1.png'
+			},
+			'valid_children' : 'none'
+		},
+		'BlockParagraphModule' : {
+			'toolbarName' : 'Paragraph',
+			'icon' : {
+				'image' : 'http://ui.llsrv.us/images/icons/silk/text_dropcaps.png'
+			},
+			'valid_children' : "BlockLinkModule"
+		},
+		'BlockLinkModule' : {
+			'toolbarName' : 'Paragraph',
+			'icon' : {
+				'image' : 'http://ui.llsrv.us/images/icons/silk/text_dropcaps.png'
+			},
+			'valid_children' : "BlockLinkModule"
+		},
+		'BlockPhotoModule' : {
+			'toolbarName' : 'PhotoModule',
+			'icon' : {
+				'image' : 'http://ui.llsrv.us/images/icons/silk/images.png'
+			},
+			'valid_children' : ['BlockImageModule']
+		},
+		'BlockImageModule' : {
+			'toolbarName' : 'Image',
+			'icon' : {
+				'image' : 'http://ui.llsrv.us/images/icons/silk/image.png'
+			},
+			'valid_children' : 'none'
+		},
+		'BlockTabsModule' : {
+			'toolbarName' : 'Tabs',
+			'icon' : {
+				'image' : 'http://ui.llsrv.us/images/icons/silk/application_cascade.png'
+			},
+			'valid_children' : ['BlockTabModule']
+		},
+		'BlockTabModule' : {
+			'toolbarName' : 'Tab',
+			'icon' : {
+				'image' : 'http://ui.llsrv.us/images/icons/silk/tab.png'
+			},
+			'valid_children' : ['BlockDivModule']
+		},
+		'default' : {
+			'valid_children' : 'none',
+			'max_depth' : -1,
+			'max_children' : -1
+		}
+	};
+
+	// Build toolbar buttons
+	for (var key in typeData) {
+		var obj = typeData[key];
+		if ( typeof obj.toolbarName == 'string') {
+			var $newLink = $('<a href="#" />');
+			if ( typeof obj.icon == 'object' && typeof obj.icon.image == 'string') {
+				$newLink.append($('<img />').attr('src', obj.icon.image));
+			}
+			$newLink.append($('<span/>').text(obj.toolbarName));
+			$newLink.attr('rel', key);
+			$('#blockToolbar').append($newLink);
+		}
+	}
+
+	var $tree = $('#blockTree');
 	$tree.jstree({
 		"plugins" : ["themes", "html_data", "ui", /*"contextmenu",*/"crrm", "hotkeys", "types", "dnd"],
 		"dnd" : {
@@ -27,116 +126,13 @@ jQuery(function() {
 				}
 			}
 		},
-		"types" : {
-			"valid_children" : ["page", "image"],
-			"types" : {
-				"page" : {
-					"icon" : {
-						"image" : "http://ui.llsrv.us/images/icons/silk/page.png"
-					},
-					"valid_children" : ['PhotoModule', 'main']
-				},
-				"div" : {
-					"icon" : {
-						"image" : "http://ui.llsrv.us/images/icons/silk/layout.png",
-						"valid_children" : ['div', 'ad']
-					}
-				},
-				"ad" : {
-					"icon" : {
-						"image" : "http://ui.llsrv.us/images/icons/silk/television.png",
-						"max_depth" : 0,
-						"max_children" : 0
-					}
-				},
-				"module" : {
-					"icon" : {
-						"image" : "http://ui.llsrv.us/images/icons/silk/script_gear.png"
-					}
-				},
-				"main" : {
-					"icon" : {
-						"image" : "http://ui.llsrv.us/images/icons/silk/application_tile_vertical.png",
-						"valid_children" : ['content', 'sidebar']
-					}
-				},
-				"content" : {
-					"icon" : {
-						"image" : "http://ui.llsrv.us/images/icons/silk/application_view_detail.png"
-					}
-				},
-				"sidebar" : {
-					"icon" : {
-						"image" : "http://ui.llsrv.us/images/icons/silk/application_side_expand.png",
-						"valid_children" : ['div', 'ad']
-					}
-				},
-				"TabsModule" : {
-					"icon" : {
-						"image" : "http://ui.llsrv.us/images/icons/silk/application_cascade.png",
-						"valid_children" : ['tab']
-					}
-				},
-				"tab" : {
-					"icon" : {
-						"image" : "http://ui.llsrv.us/images/icons/silk/tab.png"
-					}
-				},
-				"image" : {
-					"icon" : {
-						"image" : "http://ui.llsrv.us/images/icons/silk/image.png",
-						"max_depth" : 0,
-						"max_children" : 0
-					}
-				},
-				"PhotoModule" : {
-					"icon" : {
-						"image" : "http://ui.llsrv.us/images/icons/silk/images.png",
-						"valid_children" : ['image'],
-						"max_depth" : 1
-					}
-				},
-				"default" : {
-					"valid_children" : 'all',
-					"max_depth" : -1,
-					"max_children" : -1
-				}
-			}
+
+		'types' : {
+			'valid_children' : ['BlockPageModule'],
+			'max_children' : 1,
+			'types' : typeData
 		},
-		"contextmenu" : {
-			"items" : {
-				"add" : {
-					// The item label
-					"label" : "Add",
-					// The function to execute upon a click
-					"action" : function(obj) {
-						console.log(Math.random(), "addAction", obj);
-					},
-					"separator_before" : false, // Insert a separator before the item
-					"separator_after" : true, // Insert a separator after the item
-					"submenu" : {
-						"ClientDisplayModule" : {
-							"label" : "ClientDisplayModule"
-						},
-						"DivModule" : {
-							"label" : "DivModule"
-						},
-						"HeaderModule" : {
-							"label" : "HeaderModule"
-						},
-						"LinkModule" : {
-							"label" : "LinkModule"
-						},
-						"ParagraphModule" : {
-							"label" : "ParagraphModule"
-						},
-						"PhotoModule" : {
-							"label" : "PhotoModule"
-						}
-					}
-				}
-			}
-		},
+
 		"themes" : {
 			"theme" : "luxury"
 		}
