@@ -279,7 +279,7 @@ TEXT TBD
 		name="0.1_section_NEW-EXPERIENCES" 
 		style="color:#444444; text-decoration: none;" 
 		target="_blank" 
-		href="<?=$mailing->genUrl('new-offer','/fivestar/new-hotels/deals');?>"
+		href="<?=$mailing->genUrl('newest_additions','/fivestar/new-hotels/deals', 'new additions');?>"
 	>Newest Additions</a>
 </td>
 </tr>
@@ -847,11 +847,11 @@ YOUR AD HERE
 			bgcolor="#ffffff" 
 			style="font-family: Georgia, Garamond, Times New Roman, serif; text-align: left; font-size: 24px; line-height: 26px; color: #444444;"
 		><a 
-			name="editors_choice"  
+			name="editor_choice"  
 			xt="SPCLICK" 
 			style="color:#444444; text-decoration: none;" 
 			target="_blank" 
-			href="<?=$mailing->genUrl('editors-choice','/fivestar/hotel-deals/editors-choice',"editor's choice");?>"
+			href="<?=$mailing->genUrl('editor_choice','/fivestar/hotel-deals/editor_choice',"editor's choice");?>"
 		>Editor's Choice</a>
 		</td>
 		</tr>
@@ -1157,7 +1157,7 @@ YOUR AD HERE
 		name="editorspicks"   
 		target="_blank" 
 		xt="SPCLICK" 
-		href="<?=$mailing->genUrl('editors-choice','/fivestar/hotel-deals/editors-choice', "editor's choice");?>"
+		href="<?=$mailing->genUrl('editor_choice','/fivestar/hotel-deals/editor_choice', "editor's choice");?>"
 		style="color: #3ca9d5; text-decoration: none;"
 	>View All Editors Choices</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	</td>
