@@ -70,6 +70,7 @@ echo $form->input('endDate',  array(
 	'minYear' => date('Y', strtotime('January 01, 2000')), 
 	'maxYear' => date('Y', strtotime('+5 year')), 'timeFormat' => '')
 );
+echo $form->input('notes', array('label'=>'LOA Notes', 'id' => 'loaNotes'));
 echo $form->input('customerApprovalDate', array(
 		'empty' => true, 
 		'label' => 'Package in Date', 
@@ -89,15 +90,15 @@ echo $form->input('loaMembershipTypeId', array(
 $enable_est = !$disable_advanced_edit && ($loa['Loa']['loaMembershipTypeId'] == 3) ? true : false;
 echo $form->input('membershipFeeEstimated', array('disabled' => $enable_est));
 echo $form->input('membershipTotalPackages');
+echo $form->input('membershipPackagesRemaining', array('disabled' => $disable_mp));
 echo $form->input('membershipFee', array('disabled' => $disabled));
 echo $form->input('membershipBalance', array('disabled' => $disable_advanced_edit));
-echo $form->input('totalRevenue', array('disabled' => $disable_advanced_edit, 'label' => 'Total Revenue'));
 echo $form->input('membershipTotalNights');
 echo $form->input('membershipNightsRemaining');
-echo $form->input('membershipPackagesRemaining', array('disabled' => $disable_mp));
 $enable_rvc = !$disable_advanced_edit && ($loa['Loa']['loaMembershipTypeId'] == 5) ? true : false;
 echo $form->input('retailValueBalance', array('disabled' => $enable_rvc));
 echo $form->input('retailValueFee', array('disabled' => $enable_rvc));
+echo $form->input('totalRevenue', array('disabled' => $disable_advanced_edit, 'label' => 'Total Revenue'));
 echo $form->input('totalRemitted', array('disabled' => $disable_advanced_edit));
 if (in_array($uname,array('kferson', 'jlagraff','mtrinh', 'mbyrnes'))) {
 	echo $form->input('cashPaid');
@@ -112,7 +113,6 @@ echo $form->input('nonRenewalReason', array('type' => 'select', 'options' => $no
 echo $form->input('luxuryLinkFee');
 echo $form->input('familyGetawayFee');
 echo $form->input('advertisingFee');
-echo $form->input('notes', array('label'=>'LOA Notes', 'id' => 'loaNotes'));
 
 ?>
 
