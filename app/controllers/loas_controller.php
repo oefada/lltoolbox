@@ -364,6 +364,8 @@ class LoasController extends AppController {
 				$this->data['Loa']['checkboxes']=implode(",",$this->data['Loa']['checkboxes']);
 			}
 
+			$this->data['Loa']['modifiedBy']=$_SERVER['ENV_USER'];
+
 			if (empty($this->data['Loa']['sites'])) {
 				$loa = $this->Loa->find($this->data['Loa']['loaId']);
 				$this->data['Client'] = $loa['Client'];
