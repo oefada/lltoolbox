@@ -21,7 +21,7 @@
 		background: white;
 		box-shadow: 3px 3px 10px #dddddd;
 	}
-	#blocktree {
+	#blockTree {
 		min-height: 400px;
 	}
 	#previewFrame {
@@ -32,99 +32,53 @@
 		width: 100%;
 		height: 400px;
 	}
+	#blockToolbar {
+		background-color: #dddddd;
+		margin: 24px 0;
+	}
+	#blockToolbar a {
+		height: 16px;
+		text-decoration: none;
+		color: black;
+		display: inline-block;
+		padding: 2px 4px;;
+		margin: 4px;
+		border-style: solid;
+		border-color: #cccccc;
+		border-width: 1px;
+		border-radius: 4px;
+		background: #eeeeee;
+			}
+	#blockToolbar a:hover {
+		background-color: #ffffff;
+		color: blue;
+	}
+	#blockToolbar a img {
+		width: 16px;
+		height: 16px;
+		vertical-align:middle;
+		margin-right: 4px;
+	}
+	#blockToolbar a span {
+		font-size: 10px;
+		font-weight: bold;
+	}
 </style>
 <?php
 $this->pageTitle = 'Blocks Editor';
 $this->set('hideSidebar', true);
 ?>
 
-<div id="blocktree" class="demo" style="float: left; width: 256px; overflow-x: scroll;">
-	<ul>
-		<li id="phtml_1" rel="page">
-			<a href="#">Ski &amp; Snow</a>
-			<ul>
-				<li id="phtml_2" rel="PhotoModule">
-					<a href="#">PhotoModule</a>
-					<ul>
-						<li id="phtml_22" rel="image">
-							<a href="#">Image 1</a>
-						</li>
-						<li id="phtml_23" rel="image">
-							<a href="#">Image 2</a>
-						</li>
-						<li id="phtml_24" rel="image">
-							<a href="#">Image 3</a>
-						</li>
-						<li id="phtml_25" rel="image">
-							<a href="#">Image 4</a>
-						</li>
-						<li id="phtml_26" rel="image">
-							<a href="#">Image 5</a>
-						</li>
-					</ul>
-				</li>
-				<li id="phtml_3" rel="main">
-					<a href="#">Main</a>
-					<ul>
-						<li id="phtml_31" rel="content">
-							<a href="#">Content</a>
-							<ul>
-								<li id="phtml_311" rel="TabsModule">
-									<a href="#">TabsModule</a>
-									<ul>
-										<li id="phtml_3111" rel="tab">
-											<a href="#">Colorado</a>
-										</li>
-										<li id="phtml_3112" rel="tab">
-											<a href="#">California</a>
-										</li>
-										<li id="phtml_3113" rel="tab">
-											<a href="#">International</a>
-										</li>
-										<li id="phtml_3114" rel="tab">
-											<a href="#">Canada</a>
-										</li>
-										<li id="phtml_3115" rel="tab">
-											<a href="#">Other</a>
-										</li>
-									</ul>
-								</li>
-								<li id="phtml_311" rel="div">
-									<a href="#">SEO Text</a>
-								</li>
-								<li id="phtml_311" rel="div">
-									<a href="#">Newsletter Signup</a>
-								</li>
-							</ul>
-						</li>
-						<li id="phtml_32" rel="sidebar">
-							<a href="#">Sidebar</a>
-							<ul>
-								<li id="phtml_321" rel="module">
-									<a href="#">Featured Auction</a>
-								</li>
-								<li id="phtml_322" rel="ad">
-									<a href="#">Advertisement</a>
-								</li>
-								<li id="phtml_323" rel="module">
-									<a href="#">Learn More</a>
-								</li>
-								<li id="phtml_324" rel="ad">
-									<a href="#">Advertisement</a>
-								</li>
-							</ul>
-						</li>
-					</ul>
-				</li>
-			</ul>
-		</li>
-	</ul>
-</div>
+<div id="blockToolbar"></div>
+
+<div class="clearfix"></div>
+
+<div id="blockTree" class="demo" style="float: left; width: 256px; overflow-x: scroll;"></div>
 
 <div id="editorDiv">
 	<div class="editorPanel">
 		<div style="text-align: center; font-size: 32px; text-shadow: 5px 5px 25px #888;">
-			<pre><?php echo htmlentities(print_r(serialize($z=new BlockDivModule),true)); ?></pre>
+			<pre><?php echo htmlentities(print_r(serialize($z = new BlockDivModule), true)); ?></pre>
 		</div>
 	</div>
 </div>
