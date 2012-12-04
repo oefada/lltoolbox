@@ -17,6 +17,11 @@ jQuery(function() {
 	var typeData = {
 		'BlockPageModule' : {
 			'toolbarName' : 'Page',
+			'parameters' : {
+				'meta_title' : 'text',
+				'meta_description' : 'text',
+				'meta_keywords' : 'text'
+			},
 			'icon' : {
 				'image' : 'http://ui.llsrv.us/images/icons/silk/page.png'
 			},
@@ -27,7 +32,7 @@ jQuery(function() {
 			"icon" : {
 				"image" : "http://ui.llsrv.us/images/icons/silk/layout.png"
 			},
-			"valid_children" : ['BlockDivModule', 'BlockHeaderModule', 'BlockParagraphModule', 'BlockPhotoModule', 'BlockTabsModule','BlockLinkModule']
+			"valid_children" : ['BlockDivModule', 'BlockHeaderModule', 'BlockParagraphModule', 'BlockPhotoModule', 'BlockTabsModule', 'BlockLinkModule']
 		},
 		'BlockHeaderModule' : {
 			'toolbarName' : 'Header',
@@ -44,11 +49,11 @@ jQuery(function() {
 			'valid_children' : "BlockLinkModule"
 		},
 		'BlockLinkModule' : {
-			'toolbarName' : 'Paragraph',
+			'toolbarName' : 'Link',
 			'icon' : {
-				'image' : 'http://ui.llsrv.us/images/icons/silk/text_dropcaps.png'
+				'image' : 'http://ui.llsrv.us/images/icons/silk/page_white_world.png'
 			},
-			'valid_children' : "BlockLinkModule"
+			'valid_children' : 'none'
 		},
 		'BlockPhotoModule' : {
 			'toolbarName' : 'PhotoModule',
@@ -99,9 +104,59 @@ jQuery(function() {
 		}
 	}
 
+	// Highlight enabled toolbar buttons
+	var updateToolbarButtons = function(activeModule) {
+		$('#blockToolbar a').removeClass('active');
+		var $selected = $('#blockTree').jstree('get_selected');
+		if ($('#blockTree > ul > li').length > 0) {
+			$selected.each(function(i) {
+				var moduleType = $(this).attr('rel');
+				if ( typeof moduleType == 'string') {
+					if ( typeof typeData[moduleType] == "object" && typeof typeData[moduleType]['valid_children'] == "object") {
+						var valid_children = typeData[moduleType]['valid_children'];
+						for (var child in valid_children) {
+							if (valid_children.hasOwnProperty(child)) {
+								$('#blockToolbar a[rel="' + valid_children[child] + '"]').addClass('active');
+							}
+						}
+					}
+				}
+			});
+		} else {
+			$('#blockToolbar a[rel="BlockPageModule"]').addClass('active');
+		}
+	};
+	updateToolbarButtons();
+
+	var loadEditor = function($target) {
+		var $editor = $('#editorDiv');
+		var $panel = $('<div class="editorPanel"></div>');
+		if ($target == 'boot') {
+			$panel.append('Welcome to Blocks!');
+			$panel.css({
+				'text-align' : 'center',
+				'font-size' : '32px',
+				'text-shadow' : '5px 5px 25px #888',
+				'color' : '#666',
+				'padding-top' : '24px'
+			});
+		} else {
+			$panel.append('<h2>Editor</h2>');
+		}
+		$editor.empty().append($panel);
+	};
+	loadEditor('boot');
+
+	var generateData = function() {
+		var data = $('#blockTree').jstree('get_json', -1);
+		var json = JSON.stringify(data, null, ' ');
+		data = (JSON.parse(json));
+		$('#dataDiv').text(data);
+	};
+
 	var $tree = $('#blockTree');
 	$tree.jstree({
-		"plugins" : ["themes", "html_data", "ui", /*"contextmenu",*/"crrm", "hotkeys", "types", "dnd"],
+		"plugins" : ["themes", "html_data", "ui", "crrm", "hotkeys", "types", "dnd", 'json_data'],
 		"dnd" : {
 			"copy_modifier" : "shift"
 		},
@@ -138,15 +193,16 @@ jQuery(function() {
 		}
 	}).bind("loaded.jstree", function(event, data) {
 		$(this).jstree('open_all');
+	}).bind('deselect_node.jstree', function(event, data) {
+		updateToolbarButtons(null);
+		loadEditor(null);
+		generateData();
 	}).bind("select_node.jstree", function(event, data) {
 		var $target = $(data.rslt.obj);
 		var type = $target.attr('rel');
-		var $output = $('<div class="editorPanel" />');
-		$output.append($('<h2/>').text(type.charAt(0).toUpperCase() + type.slice(1)));
-		$output.append($('<h3/>').text($target.contents('a').contents().filter(function() {
-			return this.nodeType === 3;
-		}).text()));
-		$('#editorDiv').html($output);
+		updateToolbarButtons(type);
+		loadEditor($target);
+		generateData();
 	}).delegate("a", "click", function(event, data) {
 		event.preventDefault();
 	});
