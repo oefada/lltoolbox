@@ -6,11 +6,16 @@
 		padding-top: 0;
 		padding-left: 10px;
 	}
-	#editorDiv {
+	#editorDiv, #dataDiv {
 		margin-left: 257px;
 		margin-right: 16px;
 		padding-left: 16px;
 		min-height: 400px;
+	}
+	#dataDiv {
+		white-space: pre;
+		font-family: monospace;
+		display: block;
 	}
 	.editorPanel {
 		border-color: #cccccc;
@@ -23,6 +28,7 @@
 	}
 	#blockTree {
 		min-height: 400px;
+		background-color: #fcfcff;
 	}
 	#previewFrame {
 		margin: 0;
@@ -48,7 +54,11 @@
 		border-width: 1px;
 		border-radius: 4px;
 		background: #eeeeee;
-			}
+		opacity: 0.3;
+	}
+	#blockToolbar a.active {
+		opacity: 1.0;
+	}
 	#blockToolbar a:hover {
 		background-color: #ffffff;
 		color: blue;
@@ -56,7 +66,7 @@
 	#blockToolbar a img {
 		width: 16px;
 		height: 16px;
-		vertical-align:middle;
+		vertical-align: middle;
 		margin-right: 4px;
 	}
 	#blockToolbar a span {
@@ -76,21 +86,12 @@ $this->set('hideSidebar', true);
 <div id="blockTree" class="demo" style="float: left; width: 256px; overflow-x: scroll;"></div>
 
 <div id="editorDiv">
-	<div class="editorPanel">
-		<div style="text-align: center; font-size: 32px; text-shadow: 5px 5px 25px #888;">
-			<pre><?php echo htmlentities(print_r(serialize($z = new BlockDivModule), true)); ?></pre>
-		</div>
-	</div>
+	<div class="editorPanel"></div>
 </div>
 
-<div style="clear: both;"></div>
+<div id="dataDiv"></div>
 
-<!--
-<br/>
-<hr/>
-<br/>
-<iframe id="previewFrame" src="http://www.luxurylink.com/"></iframe>
--->
+<div style="clear: both;"></div>
 
 <br/>
 <br/>
