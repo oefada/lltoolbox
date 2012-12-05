@@ -1,5 +1,5 @@
 <?php
-echo "Site,Booking Date,Payment Date,Booking,Vendor ID,Old Product Id,Vendor,Guest First Name,Guest Last Name,Address1,Address2,City,State,Zip,Country,Phone,Email,CC Type,CC Number,CC Exp,Type,Product Type,Revenue,Tax,COG,Profit,Room Nights,Confirmation Number,Arrival Date,Auction Type,Handling Fee,Percent,CC Processor,Remit Type,Adjust Amount,Validity Start Date,Validity End Date,Paid Search Id,Ref Url,Promo Description\n";
+echo "Site,Booking Date,Payment Date,Booking,Vendor ID,Old Product Id,Accounting Id,Vendor,Guest First Name,Guest Last Name,Address1,Address2,City,State,Zip,Country,Phone,Email,CC Type,CC Number,CC Exp,Type,Product Type,Revenue,Tax,COG,Profit,Room Nights,Confirmation Number,Arrival Date,Auction Type,Handling Fee,Percent,CC Processor,Remit Type,Adjust Amount,Validity Start Date,Validity End Date,Paid Search Id,Ref Url,Promo Description\n";
 foreach ($results as $r):
 	switch($r['OfferType']['offerTypeName']) {
 		case 'Standard Auction':
@@ -47,6 +47,7 @@ foreach ($results as $r):
 	$r['Ticket']['ticketId'],
 	$r[0]['clientIds'],
 	$r[0]['oldProductIds'],
+	$r[0]['accountingIds'],
 	str_replace(',', '|', $r[0]['clientNames']),
 	str_replace(',', '', $r['Ticket']['userFirstName']),
 	str_replace(',', '', $r['Ticket']['userLastName']),

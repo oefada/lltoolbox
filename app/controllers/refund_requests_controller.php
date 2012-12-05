@@ -317,7 +317,7 @@ class RefundRequestsController extends AppController {
 	
 	private function hasEditorAccess() {
 		$currentUser = $this->LdapAuth->user();
-		$access = (in_array('Accounting',$currentUser['LdapUser']['groups']) || in_array('Geeks',$currentUser['LdapUser']['groups']) || $currentUser['LdapUser']['samaccountname'] == 'bjensen') ? true : false;
+		$access = (in_array('Accounting',$currentUser['LdapUser']['groups']) || in_array('Geeks',$currentUser['LdapUser']['groups']) || $currentUser['LdapUser']['samaccountname'] == 'bjensen' || $currentUser['LdapUser']['samaccountname'] == 'jcross') ? true : false;
 		return $access;
 	}
 
