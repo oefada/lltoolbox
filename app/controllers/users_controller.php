@@ -72,19 +72,14 @@ class UsersController extends AppController {
 					$postedSiteId=$arr[1];
 					$optinDatetime=$arr[2];
 
+					$nlMgr->optoutSharedEmailFromListThirdPartyOnly($postedSiteId, $email, $checkedMailingListId);
+					
 					// Retrieve id's related to silverpop from $nlDataArr and unsub from silverpop
 					$row=$allNlArr[$postedSiteId][$checkedMailingListId];
-					$r=$nlMgr->removeUserFromContactList($email, $row['contactId']);
 					if (isset($row['legacyId']) && $row['legacyId']>0){
 						$nlMgr->optoutUserFromDatabase($email, $row['legacyId']);
 					}
-					if (isset($row['altContactIdSub']) && is_array($row['altContactIdSub'])){
-						foreach($row['altContactIdSub'] as $contactId){
-							$r=$nlMgr->removeUserFromContactList($email, $contactId);
-						}
-					}
-
-
+					
 					// Update local dbs
 					// update userMailOptin table
 					$this->User->UserMailOptin->updateAll( 
