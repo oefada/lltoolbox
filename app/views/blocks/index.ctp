@@ -90,6 +90,9 @@
 	textarea {
 		height: 100px;
 	}
+	#blockToolbar a[rel="Save"]{
+		float: right;
+	}
 </style>
 <?php
 $this->pageTitle = 'Blocks Editor';

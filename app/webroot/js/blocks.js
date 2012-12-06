@@ -65,7 +65,7 @@ jQuery(function() {
 				'class' : 'input'
 			},
 			"icon" : {
-				"image" : "http://ui.llsrv.us/images/icons/silk/html.png"
+				"image" : "http://ui.llsrv.us/images/icons/silk/page_white_width.png"
 			},
 			"valid_children" : ['BlockDivModule', 'BlockHeaderModule', 'BlockParagraphModule', 'BlockPhotoModule', 'BlockTabsModule', 'BlockLinkModule', 'BlockPrefabModule', 'BlockAdvertisingModule', 'BlockClientDisplayModule']
 		},
