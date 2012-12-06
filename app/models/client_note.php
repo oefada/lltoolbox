@@ -15,7 +15,6 @@ class ClientNote extends AppModel {
 		
 	}
 
-
 	function getUserNoteList( $userId ){
 				
 		if(!is_null($userId)){
@@ -25,11 +24,19 @@ class ClientNote extends AppModel {
 		
 	}
 
-
 	function getPhotoNoteList( $clientId ){
 				
 		if(!is_null($clientId)){
 			$query = "SELECT * FROM clientNote WHERE clientId = '$clientId' AND note_type = 3 AND status = 1 ORDER BY created ASC";
+			return $this->query($query);
+		}
+		
+	}
+
+	function getTicketNoteList( $ticketId ){
+				
+		if(!is_null($ticketId)){
+			$query = "SELECT * FROM clientNote WHERE clientId = '$ticketId' AND note_type = 4 AND status = 1 ORDER BY created ASC";
 			return $this->query($query);
 		}
 		
