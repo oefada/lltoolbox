@@ -1,6 +1,10 @@
 jQuery(function() {
 	var $ = jQuery;
 
+	if ( typeof JSON != 'object' || typeof JSON.stringify != 'function') {
+		alert('Your browser is not supported.');
+	}
+
 	// Add module toolbar
 	$('#blockToolbar').on('click', 'a', function(e) {
 		e.preventDefault();
@@ -18,24 +22,57 @@ jQuery(function() {
 		'BlockPageModule' : {
 			'toolbarName' : 'Page',
 			'parameters' : {
-				'meta_title' : 'text',
-				'meta_description' : 'text',
-				'meta_keywords' : 'text'
+				'meta_title' : 'input',
+				'meta_description' : 'input',
+				'meta_keywords' : 'input'
 			},
 			'icon' : {
 				'image' : 'http://ui.llsrv.us/images/icons/silk/page.png'
 			},
-			'valid_children' : ['BlockDivModule', 'BlockPhotoModule']
+			'valid_children' : ['BlockLayoutModule']
+		},
+		'BlockLayoutModule' : {
+			'toolbarName' : 'Layout',
+			'parameters' : {
+				'class' : {
+					'option' : {
+						'full' : 'Full Width',
+						'content' : 'Content',
+						'sidebar' : 'Sidebar'
+					}
+				}
+			},
+			"icon" : {
+				"image" : "http://ui.llsrv.us/images/icons/silk/application_side_boxes.png"
+			},
+			"valid_children" : ['BlockPhotoModule', 'BlockDivModule', 'BlockHeaderModule', 'BlockParagraphModule', 'BlockPhotoModule', 'BlockTabsModule', 'BlockLinkModule', 'BlockPrefabModule', 'BlockAdvertisingModule']
 		},
 		'BlockDivModule' : {
 			'toolbarName' : 'Div',
+			'parameters' : {
+				'content' : 'textarea',
+				'class' : 'input'
+			},
 			"icon" : {
 				"image" : "http://ui.llsrv.us/images/icons/silk/layout.png"
 			},
-			"valid_children" : ['BlockDivModule', 'BlockHeaderModule', 'BlockParagraphModule', 'BlockPhotoModule', 'BlockTabsModule', 'BlockLinkModule']
+			"valid_children" : ['BlockDivModule', 'BlockHeaderModule', 'BlockParagraphModule', 'BlockPhotoModule', 'BlockTabsModule', 'BlockLinkModule', 'BlockPrefabModule', 'BlockAdvertisingModule', 'BlockClientDisplayModule']
 		},
 		'BlockHeaderModule' : {
 			'toolbarName' : 'Header',
+			'parameters' : {
+				'content' : 'input',
+				'level' : {
+					'option' : {
+						'1' : '1',
+						'2' : '2',
+						'3' : '3',
+						'4' : '4',
+						'5' : '5',
+						'6' : '6'
+					}
+				}
+			},
 			'icon' : {
 				'image' : 'http://ui.llsrv.us/images/icons/silk/text_heading_1.png'
 			},
@@ -43,13 +80,21 @@ jQuery(function() {
 		},
 		'BlockParagraphModule' : {
 			'toolbarName' : 'Paragraph',
+			'parameters' : {
+				'content' : 'textarea'
+			},
 			'icon' : {
 				'image' : 'http://ui.llsrv.us/images/icons/silk/text_dropcaps.png'
 			},
-			'valid_children' : "BlockLinkModule"
+			'valid_children' : "none"
 		},
 		'BlockLinkModule' : {
 			'toolbarName' : 'Link',
+			'parameters' : {
+				'content' : 'input',
+				'href' : 'input',
+				'clicktrack' : 'input'
+			},
 			'icon' : {
 				'image' : 'http://ui.llsrv.us/images/icons/silk/page_white_world.png'
 			},
@@ -64,6 +109,10 @@ jQuery(function() {
 		},
 		'BlockImageModule' : {
 			'toolbarName' : 'Image',
+			'parameters' : {
+				'src' : 'input',
+				'link' : 'input'
+			},
 			'icon' : {
 				'image' : 'http://ui.llsrv.us/images/icons/silk/image.png'
 			},
@@ -78,10 +127,48 @@ jQuery(function() {
 		},
 		'BlockTabModule' : {
 			'toolbarName' : 'Tab',
+			'parameters' : {
+				'title' : 'input'
+			},
 			'icon' : {
 				'image' : 'http://ui.llsrv.us/images/icons/silk/tab.png'
 			},
 			'valid_children' : ['BlockDivModule']
+		},
+		'BlockAdvertisingModule' : {
+			'toolbarName' : 'Advertising',
+			'icon' : {
+				'image' : 'http://ui.llsrv.us/images/icons/silk/television.png'
+			},
+			'valid_children' : 'none',
+		},
+		'BlockClientDisplayModule' : {
+			'toolbarName' : 'Client Display',
+			'parameters' : {
+				'clientIds' : 'textarea',
+				'themeIds' : 'textarea',
+				'urls' : 'textarea',
+			},
+			'icon' : {
+				'image' : 'http://ui.llsrv.us/images/icons/silk/status_online.png'
+			},
+			'valid_children' : 'none',
+		},
+		'BlockPrefabModule' : {
+			'toolbarName' : 'Prefab',
+			'parameters' : {
+				'type' : {
+					'option' : {
+						'CommunityModule' : 'Community',
+						'NewsletterModule' : 'Newsletter Signup Box',
+						'FeaturedAuctionsModule' : 'Featured Auctions'
+					}
+				},
+			},
+			'icon' : {
+				'image' : 'http://ui.llsrv.us/images/icons/silk/plugin.png'
+			},
+			'valid_children' : 'none',
 		},
 		'default' : {
 			'valid_children' : 'none',
@@ -141,14 +228,60 @@ jQuery(function() {
 				'padding-top' : '24px'
 			});
 		} else {
-			$panel.append('<h2>Editor</h2>');
+			var rel = $target.attr('rel');
+			if ( typeof rel == 'string' && typeData.hasOwnProperty(rel)) {
+				var type = typeData[rel];
+				$panel.append('<h1>' + rel + ' Editor</h1>');
+				if (type.hasOwnProperty('parameters')) {
+					for (var parameter in type['parameters']) {
+						if (type['parameters'].hasOwnProperty(parameter)) {
+							var $newParam = $('<div class="editorParameter" />');
+							$newParam.append($('<h2/>').text(parameter));
+							var $newInput = $('');
+							switch(type['parameters'][parameter]) {
+								case 'input':
+									$newInput = $('<input type="text" />');
+									$newInput.attr('name', parameter);
+									$newParam.append($newInput);
+									break;
+								case'textarea':
+									$newInput = $('<textarea />');
+									$newInput.attr('name', parameter);
+									$newParam.append($newInput);
+									break;
+								default:
+									if ( typeof type['parameters'][parameter] == 'object') {
+										if (type['parameters'][parameter].hasOwnProperty('option')) {
+											for (var opt in type['parameters'][parameter]['option']) {
+												if (type['parameters'][parameter]['option'].hasOwnProperty(opt)) {
+													$newInput = $('<input />');
+													$newInput.attr({
+														'type' : 'radio',
+														'name' : parameter,
+														'value' : type['parameters'][parameter]['option'][opt]
+													});
+													$newParam.append($newInput);
+													$newParam.append($('<span/>').text(type['parameters'][parameter]['option'][opt]));
+													$newParam.append('<br/>');
+												}
+											}
+										} else {
+											$newParam.append('???');
+										}
+									}
+							}
+							$panel.append($newParam);
+						}
+					}
+				}
+			}
 		}
 		$editor.empty().append($panel);
 	};
 	loadEditor('boot');
 
 	var generateData = function() {
-		var data = $('#blockTree').jstree('get_json', -1);
+		var data = $('#blockTree').jstree('get_json', -1, ['data-blocks'], []);
 		var json = JSON.stringify(data, null, ' ');
 		data = (JSON.parse(json));
 		$('#dataDiv').text(data);

@@ -1,4 +1,9 @@
 <style>
+	h1 {
+		font-size: 200%;
+		color: #888;
+		margin-bottom: 20px;
+	}
 	div.title-header {
 		padding-bottom: 0;
 	}
@@ -72,6 +77,18 @@
 	#blockToolbar a span {
 		font-size: 10px;
 		font-weight: bold;
+	}
+	div.editorParameter {
+		margin-bottom: 20px;
+	}
+	input, textarea {
+		margin: 8px;
+	}
+	input[type="text"], textarea {
+		width: 80%;
+	}
+	textarea {
+		height: 100px;
 	}
 </style>
 <?php
