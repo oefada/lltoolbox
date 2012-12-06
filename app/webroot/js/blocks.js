@@ -1,26 +1,35 @@
 jQuery(function() {
 	var $ = jQuery;
 
+	var $editPointer = null;
+
 	if ( typeof JSON != 'object' || typeof JSON.stringify != 'function') {
 		alert('Your browser is not supported.');
 	}
 
-	// Add module toolbar
+	// Handle toolbar button click
 	$('#blockToolbar').on('click', 'a', function(e) {
 		e.preventDefault();
 		var $target = $('#blockTree > ul > li').length == 0 ? -1 : $('#blockTree').jstree('get_selected');
-		var $newNode = $('#blockTree').jstree('create', $target, 'last', {
-			'data' : $(this).attr('rel'),
-			'attr' : {
-				'rel' : $(this).attr('rel')
-			}
-		}, null, true);
-		$('#blockTree').jstree('deselect_all').jstree('select_node', $newNode);
+		if ($(this).attr('rel') == 'Save') {
+			generateData();
+			$('#blockToolbar a[rel="Save"]').removeClass('active');
+		} else {
+			var $newNode = $('#blockTree').jstree('create', $target, 'last', {
+				'data' : $(this).attr('rel'),
+				'attr' : {
+					'rel' : $(this).attr('rel')
+				}
+			}, null, true);
+			$('#blockTree').jstree('deselect_all').jstree('select_node', $newNode);
+			$('#blockToolbar a[rel="Save"]').addClass('active');
+		}
 	});
 
 	var typeData = {
 		'BlockPageModule' : {
 			'toolbarName' : 'Page',
+			'titleField' : 'meta_title',
 			'parameters' : {
 				'meta_title' : 'input',
 				'meta_description' : 'input',
@@ -33,6 +42,7 @@ jQuery(function() {
 		},
 		'BlockLayoutModule' : {
 			'toolbarName' : 'Layout',
+			'titleField' : 'class',
 			'parameters' : {
 				'class' : {
 					'option' : {
@@ -43,23 +53,25 @@ jQuery(function() {
 				}
 			},
 			"icon" : {
-				"image" : "http://ui.llsrv.us/images/icons/silk/application_side_boxes.png"
+				"image" : "http://ui.llsrv.us/images/icons/silk/layout.png"
 			},
 			"valid_children" : ['BlockPhotoModule', 'BlockDivModule', 'BlockHeaderModule', 'BlockParagraphModule', 'BlockPhotoModule', 'BlockTabsModule', 'BlockLinkModule', 'BlockPrefabModule', 'BlockAdvertisingModule']
 		},
 		'BlockDivModule' : {
 			'toolbarName' : 'Div',
+			'titleField' : 'content',
 			'parameters' : {
 				'content' : 'textarea',
 				'class' : 'input'
 			},
 			"icon" : {
-				"image" : "http://ui.llsrv.us/images/icons/silk/layout.png"
+				"image" : "http://ui.llsrv.us/images/icons/silk/html.png"
 			},
 			"valid_children" : ['BlockDivModule', 'BlockHeaderModule', 'BlockParagraphModule', 'BlockPhotoModule', 'BlockTabsModule', 'BlockLinkModule', 'BlockPrefabModule', 'BlockAdvertisingModule', 'BlockClientDisplayModule']
 		},
 		'BlockHeaderModule' : {
 			'toolbarName' : 'Header',
+			'titleField' : 'content',
 			'parameters' : {
 				'content' : 'input',
 				'level' : {
@@ -80,6 +92,7 @@ jQuery(function() {
 		},
 		'BlockParagraphModule' : {
 			'toolbarName' : 'Paragraph',
+			'titleField' : 'content',
 			'parameters' : {
 				'content' : 'textarea'
 			},
@@ -127,6 +140,7 @@ jQuery(function() {
 		},
 		'BlockTabModule' : {
 			'toolbarName' : 'Tab',
+			'titleField' : 'title',
 			'parameters' : {
 				'title' : 'input'
 			},
@@ -156,6 +170,7 @@ jQuery(function() {
 		},
 		'BlockPrefabModule' : {
 			'toolbarName' : 'Prefab',
+			'titleField' : 'type',
 			'parameters' : {
 				'type' : {
 					'option' : {
@@ -190,6 +205,10 @@ jQuery(function() {
 			$('#blockToolbar').append($newLink);
 		}
 	}
+	var $newLink = $('<a href="#" rel="Save" />');
+	$newLink.append($('<img />').attr('src', 'http://ui.llsrv.us/images/icons/silk/disk.png'));
+	$newLink.append($('<span/>').text('Save'));
+	$('#blockToolbar').append($newLink);
 
 	// Highlight enabled toolbar buttons
 	var updateToolbarButtons = function(activeModule) {
@@ -233,6 +252,10 @@ jQuery(function() {
 				var type = typeData[rel];
 				$panel.append('<h1>' + rel + ' Editor</h1>');
 				if (type.hasOwnProperty('parameters')) {
+					var data = {};
+					if ( typeof $target.attr('data-blocks') == 'string') {
+						data = JSON.parse($target.attr('data-blocks'));
+					}
 					for (var parameter in type['parameters']) {
 						if (type['parameters'].hasOwnProperty(parameter)) {
 							var $newParam = $('<div class="editorParameter" />');
@@ -242,11 +265,17 @@ jQuery(function() {
 								case 'input':
 									$newInput = $('<input type="text" />');
 									$newInput.attr('name', parameter);
+									if (data.hasOwnProperty(parameter)) {
+										$newInput.val(data[parameter]);
+									}
 									$newParam.append($newInput);
 									break;
 								case'textarea':
 									$newInput = $('<textarea />');
 									$newInput.attr('name', parameter);
+									if (data.hasOwnProperty(parameter)) {
+										$newInput.val(data[parameter]);
+									}
 									$newParam.append($newInput);
 									break;
 								default:
@@ -258,8 +287,13 @@ jQuery(function() {
 													$newInput.attr({
 														'type' : 'radio',
 														'name' : parameter,
-														'value' : type['parameters'][parameter]['option'][opt]
+														'value' : opt
 													});
+													if (data.hasOwnProperty(parameter)) {
+														if (data[parameter] == opt) {
+															$newInput.attr('checked', true);
+														}
+													}
 													$newParam.append($newInput);
 													$newParam.append($('<span/>').text(type['parameters'][parameter]['option'][opt]));
 													$newParam.append('<br/>');
@@ -285,6 +319,38 @@ jQuery(function() {
 		var json = JSON.stringify(data, null, ' ');
 		data = (JSON.parse(json));
 		$('#dataDiv').text(data);
+	};
+
+	var handleChange = function() {
+		generateData();
+		var $selected = $('#blockTree').jstree('get_selected');
+		var data = {};
+		$('#editorDiv *[name]').each(function(i) {
+			if ($(this).attr('name')) {
+				if ($(this).attr('type') == 'radio') {
+					if ($(this).attr('checked')) {
+						data[$(this).attr('name')] = $(this).val();
+					}
+				} else if ($(this).val()) {
+					data[$(this).attr('name')] = $(this).val();
+				}
+			}
+		});
+		var rel = $selected.attr('rel')
+		if ( typeof rel == 'string') {
+			if (typeData.hasOwnProperty(rel) && typeData[rel].hasOwnProperty('titleField')) {
+				var title = typeData[rel]['titleField'];
+				if ( typeof data[title] == 'string') {
+					var titleText = data[title];
+					if (titleText.length > 20) {
+						titleText = titleText.substring(0, 20) + '...';
+					}
+					$('#blockTree').jstree('rename_node', $selected, titleText);
+				}
+			}
+		}
+		$selected.attr('data-blocks', JSON.stringify(data));
+		$('#blockToolbar a[rel="save"]').addClass('active');
 	};
 
 	var $tree = $('#blockTree');
@@ -331,12 +397,19 @@ jQuery(function() {
 		loadEditor(null);
 		generateData();
 	}).bind("select_node.jstree", function(event, data) {
-		var $target = $(data.rslt.obj);
-		var type = $target.attr('rel');
+		$editPointer = $(data.rslt.obj);
+		var type = $editPointer.attr('rel');
 		updateToolbarButtons(type);
-		loadEditor($target);
+		loadEditor($editPointer);
 		generateData();
 	}).delegate("a", "click", function(event, data) {
 		event.preventDefault();
 	});
+	$('#editorDiv').on('change', 'input,textarea', handleChange).on('click', 'input[type="radio"]', handleChange).on('keyup', 'input,textarea', handleChange).on('keypress', 'input,textarea', handleChange);
+
+	var link = document.createElement('link');
+	link.type = 'image/x-icon';
+	link.rel = 'shortcut icon';
+	link.href = 'http://ui.llsrv.us/images/icons/silk/brick.png';
+	document.getElementsByTagName('head')[0].appendChild(link);
 });
