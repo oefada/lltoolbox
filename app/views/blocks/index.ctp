@@ -90,7 +90,7 @@
 	textarea {
 		height: 100px;
 	}
-	#blockToolbar a[rel="Save"]{
+	#blockToolbar a[rel="Save"] {
 		float: right;
 	}
 </style>
