@@ -4,6 +4,41 @@ $this->searchController = 'Tickets';
 ?>
 <div class="tickets view">
 	<h2 class="title">Ticket Detail</h2>
+	
+<script type="text/javascript">
+	/***
+	 * Script added by martin to allow for client notes
+	 */
+	jQuery(function($){
+		
+		$(window).ready(function(){
+			load_clientNotes(<?= $ticket['Ticket']['ticketId']; ?>);
+		});
+	});
+	
+	load_clientNotes = function( i_clientId ){
+		var $=jQuery;
+		
+		// gets clientId 
+		var v_url = "/clientNotes/viewTicketNotes/" + i_clientId;
+		
+		// calls clientNotes/view to load clientNote module
+		$.ajax({
+			url: v_url,
+			success: function(data) {
+				$("#clientNoteModule").html(data);
+				scrollWindow(); // auto scrolls to bottom of the clientNoteDisplay div
+				document.onkeyup = KeyCheck; // watches for 'enter' keypress on the clientNoteDisplay div
+				$("#clientNoteInput").focus(function(){ noteCheck(); });
+			}
+		});
+	};
+	
+</script>
+<div id="clientNoteModule" style="position: absolute; top: 194px; left: 940px;"></div>
+	
+	
+	
 	<? if ($ticket['Ticket']['manualTicketInitials']!=''){
 		echo "<span style='color:red;'>Manual Ticket</span>";
 	} ?>
