@@ -235,6 +235,7 @@ jQuery(function() {
 	updateToolbarButtons();
 
 	var loadEditor = function($target) {
+		console.log(Math.random(), 'loadEditor', $target)
 		var $editor = $('#editorDiv');
 		var $panel = $('<div class="editorPanel"></div>');
 		if ($target == 'boot') {
@@ -246,6 +247,8 @@ jQuery(function() {
 				'color' : '#666',
 				'padding-top' : '24px'
 			});
+		} else if ($target == null) {
+			console.log(Math.random(), 'loadEditor', 'NULL target');
 		} else {
 			var rel = $target.attr('rel');
 			if ( typeof rel == 'string' && typeData.hasOwnProperty(rel)) {
@@ -353,58 +356,71 @@ jQuery(function() {
 		$('#blockToolbar a[rel="save"]').addClass('active');
 	};
 
-	var $tree = $('#blockTree');
-	$tree.jstree({
-		"plugins" : ["themes", "html_data", "ui", "crrm", "hotkeys", "types", "dnd", 'json_data'],
-		"dnd" : {
-			"copy_modifier" : "shift"
-		},
-		"core" : {
-			"initially_open" : ["phtml_1"]
-		},
-		"crrm" : {
-			"move" : {
-				"check_move" : function(m) {
-					var p = this._get_parent(m.o);
-					if (!p) {
+	var loadTree = function(json_data) {
+		var loadData = {};
+		if ( typeof json_data == 'string') {
+			try {
+				loadData = JSON.parse(json_data)[0];
+			} catch(e) {
+				console.log('JSON parsing error');
+			}
+		}
+		console.log(Math.random(), 'loadTree', json_data, loadData);
+		var $tree = $('#blockTree');
+		$tree.empty();
+		$tree.jstree({
+			'json_data' : {
+				'data' : loadData
+			},
+			"plugins" : ["themes", "html_data", "ui", "crrm", "hotkeys", "types", "dnd", 'json_data'],
+			"dnd" : {
+				"copy_modifier" : "shift"
+			},
+			"crrm" : {
+				"move" : {
+					"check_move" : function(m) {
+						var p = this._get_parent(m.o);
+						if (!p) {
+							return false;
+						}
+						p = (p == -1) ? this.get_container() : p;
+						if (p === m.np) {
+							return true;
+						}
+						if (p[0] && m.np[0] && p[0] === m.np[0]) {
+							return true;
+						}
 						return false;
 					}
-					p = (p == -1) ? this.get_container() : p;
-					if (p === m.np) {
-						return true;
-					}
-					if (p[0] && m.np[0] && p[0] === m.np[0]) {
-						return true;
-					}
-					return false;
 				}
+			},
+			'types' : {
+				'valid_children' : ['BlockPageModule'],
+				'max_children' : 1,
+				'types' : typeData
+			},
+
+			"themes" : {
+				"theme" : "luxury"
 			}
-		},
-
-		'types' : {
-			'valid_children' : ['BlockPageModule'],
-			'max_children' : 1,
-			'types' : typeData
-		},
-
-		"themes" : {
-			"theme" : "luxury"
-		}
-	}).bind("loaded.jstree", function(event, data) {
-		$(this).jstree('open_all');
-	}).bind('deselect_node.jstree', function(event, data) {
-		updateToolbarButtons(null);
-		loadEditor(null);
-		generateData();
-	}).bind("select_node.jstree", function(event, data) {
-		$editPointer = $(data.rslt.obj);
-		var type = $editPointer.attr('rel');
-		updateToolbarButtons(type);
-		loadEditor($editPointer);
-		generateData();
-	}).delegate("a", "click", function(event, data) {
-		event.preventDefault();
-	});
+		}).bind("loaded.jstree", function(event, data) {
+			$(this).jstree('open_all');
+		}).bind('deselect_node.jstree', function(event, data) {
+			updateToolbarButtons(null);
+			loadEditor(null);
+			generateData();
+		}).bind("select_node.jstree", function(event, data) {
+			$editPointer = $(data.rslt.obj);
+			var type = $editPointer.attr('rel');
+			updateToolbarButtons(type);
+			loadEditor($editPointer);
+			generateData();
+		}).delegate("a", "click", function(event, data) {
+			event.preventDefault();
+		});
+	};
+	loadTree();
+	window.seanLoadTree = loadTree;
 	$('#editorDiv').on('change', 'input,textarea', handleChange).on('click', 'input[type="radio"]', handleChange).on('keyup', 'input,textarea', handleChange).on('keypress', 'input,textarea', handleChange);
 
 	var link = document.createElement('link');
@@ -412,4 +428,12 @@ jQuery(function() {
 	link.rel = 'shortcut icon';
 	link.href = 'http://ui.llsrv.us/images/icons/silk/brick.png';
 	document.getElementsByTagName('head')[0].appendChild(link);
+
+	/* DELETE */
+	$('#loadingButton').click(function(e) {
+		e.preventDefault();
+		var data = $('#loadingBay').val();
+		loadTree(data);
+	});
+
 });
