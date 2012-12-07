@@ -1,174 +1,376 @@
 </td>
 </tr>
 
-<?php if ($resConfirmationNotes != ""): ?>
-<tr><td colspan="2" style="font-size:0; line-height:0;"><img src="http://www.luxurylink.com/images/email/pixel.gif" width="1" height="10"></td></tr>
-<tr>
-<td colspan="2">
-<table border="0" cellpadding="0" cellspacing="0" align="center" width="558" style="border-width: 1px; border-color:#c3c3c3;border-style: solid;">
-<tr>
-<td valign="top" width="" style="padding: 0px 0px 0px 0px;" align="center">
-<table bgcolor="#d8d7b8" border="0" cellpadding="0" cellspacing="0" align="center" width="558" style="padding: 11px 11px 11px 18px;border-bottom: 1px #c3c3c3 solid;">
-<tr>
-<td style="font-size:14px;line-height: 16px; font-family: Arial,Sans-Serif;color:#484846;"><b>NOTES FROM THE PROPERTY</b><td>
-</tr>
-</table>
-</td>
-</tr>
-<tr>
-<td valign="top" width="558" style="padding: 0px 0px 0px 0px;" align="center">
-<table border="0" cellpadding="0" cellspacing="0" align="center" width="558" >
-<tr>
-<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;padding: 18px 18px 18px 18px;" colspan="2"><?= $resConfirmationNotes ?></td>
-</tr>
-</table>
-</td>
-</tr>
-</table>
-</td>
-</tr>
-<?php endif; ?>
+<?
 
-<tr><td colspan="2"><img src="http://www.luxurylink.com/images/email/pixel.gif" align="left" vspace="0" hspace="0" width="1" height="15"></td></tr>
-<tr>
-<td colspan="2">
-<table border="0" cellpadding="0" cellspacing="0" align="center" width="557" style="border-width: 1px; border-color:#c3c3c3;border-style: solid;">
-<tr>
-<td valign="top" style="padding: 0px 0px 0px 0px;" align="center">
-<table bgcolor="#d8d7b8" border="0" cellpadding="0" cellspacing="0" align="center" width="555" style="padding: 11px 11px 11px 17px;border-bottom: 1px #c3c3c3 solid;">
-<tr>
-<td style="font-size:14px;line-height: 16px; font-family: Arial,Sans-Serif;color:#484846;"><b>
-<? $nonBidPpvIdArr=array(1,12,14,18,19,26,30,32);//ticket 3631?>
-<? if ($isMystery && !in_array($ppvNoticeTypeId,$nonBidPpvIdArr)): ?>
-	MYSTERY AUCTION DETAILS
-<? elseif ($ppvNoticeTypeId == "40" || $ppvNoticeTypeId == "41"): ?>
-	AVAILABLE VACATION EXPERIENCE
-<? else: ?>
-	<?= ($ppvNoticeTypeId == 38 ? "AUCTION ENDS ".strtoupper(date("M d, Y \A\T g:i A",strtotime($liveOfferData['endDate'])))." PACIFIC TIME" : "YOUR VACATION PACKAGE") ?>
-	<? endif; ?>
-	</b></td>
-</tr>
-</table>
-</td>
-</tr>
-<tr>
-<td valign="top" style="padding: 0px 0px 0px 0px;" align="center">
-<table border="0" cellpadding="0" cellspacing="0" align="center" width="555" >
-<tbody>
-<?php foreach ($clients as $cn=>$c):
-$c = (object)$c;
-?>
-<tr>
-<td valign="top" style="padding: 15px 30px 0px 15px;" height="160" align="left">
-<div><a target="_blank" href="<?= $c->pdpUrl ?>"><img name="Cont_29" style="max-width:246px" width="246" border="0" style="display: block;" src="<?php echo $clientImagePath; ?>" alt="<?php echo $packageName;?>" /></a></div>
-</td>
-<td valign="top" colspan="2" style="padding: 15px 0px 0px 0px;" align="left">
-<table height="75" cellspacing="0" cellpadding="0" border="0" align="left" width="255">
-<tbody>
-<tr>
-<td style="font-size:17px;line-height: 16px; font-family: Arial,Sans-Serif;color:#036dfc;" width="157"><a href="<?= $c->pdpUrl ?>" style="color:#036dfc;text-decoration:none;" target="_blank"><b>
-<?=($isMystery  && !in_array($ppvNoticeTypeId,$nonBidPpvIdArr))? "Mystery Auction" : $c->name ?></b></a></td>
-</tr>
-<tr>
-<td style="padding: 5px 0px 0px 0px;font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;text-decoration:none;"><i><? if ($isMystery && !in_array($ppvNoticeTypeId,$nonBidPpvIdArr)): ?><?= $offerLive['offerName'] ?><? else: ?><?= $c->locationDisplay ?><? endif; ?></i></td>
-</tr>
-<? if ($isMystery && !in_array($ppvNoticeTypeId,$nonBidPpvIdArr)): ?>
-<tr>
-<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;padding: 15px 0px 0px 0px;" colspan="2">The property name for this Mystery Auction will remain a secret, and for the moment so will the location, but only for the moment. We will be revealing clues throughout the course of the auction in our <a style="color:#036dfc;text-decoration:none;" href="http://www.luxurylink.com/community/forum.php">Online Community.</a></td>
-</tr>
-<? else: ?>
-<tr>
-<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;padding: 15px 0px 0px 0px;" colspan="2"><?= $c->address1 ?><br><?= ($c->address2 != "" ? $c->address2."<br>" : "") ?><?= $c->locationDisplay ?></td>
-</tr>
-<? if ($c->estaraPhoneLocal != ""): ?>
-<tr>
-<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;padding: 15px 0px 2px 0px;" colspan="2">Phone Number: <?= $c->estaraPhoneLocal ?></td>
-</tr>
-<? endif; ?>
-<? if ($c->estaraPhoneIntl != ""): ?>
-<tr>
-<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;padding: 0px 0px 2px 0px;" colspan="2">International: <?= $c->estaraPhoneIntl ?></td>
-</tr>
-<?php endif; ?>
-<? if ($c->contact_to_string != ""): ?>
-<tr>
-<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;padding: 0px 0px 0px 0px;" colspan="2">E-mail: <a href="mailto:<?= $c->contact_to_string ?>" target="_blank" style="color: #056ff7;"><?= $c->contact_to_string_trimmed ?></a></td>
-</tr>
-<?php endif; ?>
-<?php endif; ?>
+$fontStyle="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;";
 
-<? if($ppvNoticeTypeId == "41"): ?>
-<tr>
-<td style="padding: 0px 0px 0px 0px;">
-<br>
-<table width='100' cellpadding='0' cellspacing='0' border='0' style="padding:0px 10px 5px 10px;border:1px solid #005a97;margin-top:5px;background: #0070a8;"><tr><td>
-<a href="<?= $c->pdpUrl ?>" style="font-family:Arial;font-size:12px;font-weight:bold; color:#ffffff;padding:6px 20px 5px 20px;text-decoration:none;float:left; ">View Details</a></td></tr></table></td>
-</tr>
-<?php endif; ?>
-</tbody>
-</table>
-</td>
-</tr>
-<? endforeach; ?>
-<tr>
-<td height="15" width="100%" colspan="5"></td>
-</tr>
-<?php if (!in_array($ppvNoticeTypeId,array(38))): ?>
-<tr>
-<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;padding: 2px 0px 5px 15px;" colspan="3"><?= $packageIncludes ?></td>
-</tr>
-<tr>
-<td bgcolor="#c3c3c3" height="1" width="100%" colspan="5"></td>
-</tr>
-<?php endif; ?>
-<? if (in_array($ppvNoticeTypeId, array(36))): ?>
-<tr>
-<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;padding: 20px 0px 2px 15px;" colspan="4"><b><?= $siteName ?> Cancellation Policy:</b></td>
-</tr>
-<tr>
-<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:18px;padding: 0px 20px 5px 15px;" colspan="4">
-<ul>
-<? if ($isAuction): ?>
-<li>Luxury Link goes through great lengths to ensure fairness to all parties in auctions. It would not be fair if the auction winner was able to bid up the auction only to get a refund after winning. Once you have won an auction, the vacation is yours alone.</li>
-<li>Auction dates are not confirmed with the hotel until after you have won.  The Concierge team can check availability for you prior to bidding, but this is not a guarantee.</li>
-<li>Because Auctions offer your best chance of benefitting from the biggest savings, they are non-refundable.  We will try our best to accomodate your preferred dates.</li>
-<li>You may change your travel dates at any time without charge, subject to hotel change policies and fees.</li>
-<? else: ?>
-<li>Book Now (Buy Now) offers are changeable and refundable.</li>
-<li>After our Concierge Team confirms your preferred dates, we charge you for your purchase, along with a $40 non-refundable handling fee.</li>
-<li>Subsequent date changes to any confirmed booking are subject to a $35 change fee, along with any change fees assessed by the hotel.</li>
-<li>If you wish to cancel your reservation, Luxury Link will refund your credit card for the purchase in full, minus Luxury Link's fees.</li>
-<li>Cancellations made more than 15 days prior to check-in will incur a $35 cancellation fee. Cancellations made within 15 days of check-in will incur a $100 cancellation fee and are subject to hotel cancellation policies and fees.</li>
-<? endif; ?>
-</ul>
-</td>
-</tr>
-<?php endif; ?>
-<?php if (in_array($ppvNoticeTypeId, array(1,12,14,18,19,26,28,36,16))): ?>
-<tr>
-<td bgcolor="#c3c3c3" height="1" width="100%" colspan="5"></td>
-</tr>
-<tr>
-<td
-	colspan="4"  
-	style="font-size: 12px; font-family: Arial,Sans-Serif; color: rgb(79, 63, 50); line-height: 18px; padding: 15px 20px 15px 15px;"
+if ($resConfirmationNotes != ""): ?>
+
+	<tr><td colspan="2" style="font-size:0; line-height:0;"><img src="http://www.luxurylink.com/images/email/pixel.gif" width="1" height="10"></td></tr>
+	<tr><td colspan="2">
+	<? // TABLE A OPEN ?>
+	<table 
+		border="0" 
+		cellpadding="0" 
+		cellspacing="0" 
+		align="center" 
+		width="558" 
+		style="border-width: 1px; border-color:#c3c3c3;border-style: solid;"
 	>
-	<?= $validityNote ?>
-</td>
-</tr>
+	<tr>
+	<td valign="top" width="" style="padding: 0px 0px 0px 0px;" align="center">
+		<? // TABLE B OPEN ?>
+		<table 
+			bgcolor="#d8d7b8" 
+			border="0" 
+			cellpadding="0" 
+			cellspacing="0" 
+			align="center" 
+			width="558" 
+			style="padding: 11px 11px 11px 18px;border-bottom: 1px #c3c3c3 solid;"
+		>
+		<tr>
+		<td 
+			style="font-size:14px;line-height: 16px; font-family: Arial,Sans-Serif;color:#484846;"
+			><b>NOTES FROM THE PROPERTY</b>
+		<td>
+		</tr>
+		<? // TABLE B CLOSED ?>
+		</table>
+	</td>
+	</tr>
+	<tr>
+	<td valign="top" width="558" style="padding: 0px 0px 0px 0px;" align="center">
+		<? // TABLE C OPENED ?>
+		<table border="0" cellpadding="0" cellspacing="0" align="center" width="558" >
+			<tr>
+			<td 
+				style="<?=$fontStyle?>line-height:16px;padding: 18px 18px 18px 18px;" 
+				colspan="2"><?= $resConfirmationNotes ?>
+			</td>
+			</tr>
+		<? // TABLE C CLOSED ?>
+		</table>
+	</td>
+	</tr>
+	<? // TABLE A CLOSED ?>
+	</table>
+	</td>
+	</tr>
+
 <?php endif; ?>
-<?php if (in_array($ppvNoticeTypeId, array(1,2,10,12,14,18,19,24,26,27,28,29,30,31,33,36,16,11)) && $legalText != ""): ?>
-<tr>
-<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;padding: 2px 0px 2px 15px;" colspan="4"><b>Booking Conditions:</b></td>
-</tr>
-<tr>
-<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:18px;padding: 0px 20px 15px 15px;" colspan="4">
-<?= $legalText ?>
-</td>
-</tr>
+
+<tr><td 
+	colspan="2"
+><img 
+	src="http://www.luxurylink.com/images/email/pixel.gif" 
+	align="left" 
+	vspace="0" 
+	hspace="0" 
+	width="1" 
+	height="15"
+></td></tr>
+<tr><td colspan="2">
+	<? // TABLE D OPEN ?>
+	<table 
+		border="0" 
+		cellpadding="0" 
+		cellspacing="0" 
+		align="center" 
+		width="557" 
+		style="border-width: 1px; border-color:#c3c3c3;border-style: solid;"
+	><tr><td 
+		valign="top" 
+		style="padding: 0px 0px 0px 0px;" align="center"
+		>
+		<? // TABLE E OPEN ?>
+		<table 
+			bgcolor="#d8d7b8" 
+			border="0" 
+			cellpadding="0" 
+			cellspacing="0" 
+			align="center" 
+			width="555" 
+			style="padding: 11px 11px 11px 17px;border-bottom: 1px #c3c3c3 solid;"
+		>
+		<tr><td 
+			style="font-size:14px;line-height: 16px; font-family: Arial,Sans-Serif;color:#484846;"
+		><b>
+
+		<? 
+
+		$nonBidPpvIdArr=array(1,12,14,18,19,26,30,32);
+		if ($isMystery && !in_array($ppvNoticeTypeId,$nonBidPpvIdArr)): 
+
+			echo 'MYSTERY AUCTION DETAILS';
+
+		elseif ($ppvNoticeTypeId == 40 || $ppvNoticeTypeId == 41): 
+
+			echo 'AVAILABLE VACATION EXPERIENCE';
+
+		else: 
+
+			if ($ppvNoticeTypeId == 38):
+				$tmpEndDate=strtoupper(date("M d, Y \A\T g:i A",strtotime($liveOfferData['endDate'])));
+				echo "AUCTION ENDS ".$tmpEndDate." PACIFIC TIME";
+			else: 
+				echo "YOUR VACATION PACKAGE";
+			endif; 
+
+		endif; 
+
+		?>
+		</b></td></tr>
+	</table>
+	<? // TABLE E CLOSED ?>
+</td></tr>
+
+<tr><td 
+	valign="top" 
+	style="padding: 0px 0px 0px 0px;" align="center"
+>
+<? // TABLE F OPEN?>
+<table 
+		border="0" 
+		cellpadding="0" 
+		cellspacing="0" 
+		align="center" 
+		width="555"
+><tbody>
+
+<?php 
+
+foreach ($clients as $cn=>$c):
+
+	$c = (object)$c;
+	?>
+	<tr><td 
+		valign="top" 
+		style="padding: 15px 30px 0px 15px;" 
+		height="160" 
+		align="left"
+	><div><a 
+		target="_blank" 
+		href="<?=$c->pdpUrl;?>"
+		><img 
+			name="Cont_29" 
+			style="max-width:246px" 
+			width="246" 
+			border="0" 
+			style="display: block;" 
+			src="<?php echo $clientImagePath; ?>" 
+			alt="<?php echo $packageName;?>" 
+		/></a></div>
+	</td><td 
+		valign="top" 
+		colspan="2" 
+		style="padding: 15px 0px 0px 0px;" 
+		align="left"
+	>
+	<? // TABLE G OPEN?>
+	<table 
+		height="75" 
+		cellspacing="0" 
+		cellpadding="0" 
+		border="0" 
+		align="left" 
+		width="255"
+	><tbody><tr><td 
+		style="font-size:17px;line-height: 16px; font-family: Arial,Sans-Serif;color:#036dfc;" 
+		width="157"
+	><a 
+		href="<?= $c->pdpUrl ?>" 
+		style="color:#036dfc;text-decoration:none;" 
+		target="_blank"
+	><b><?=($isMystery  && !in_array($ppvNoticeTypeId,$nonBidPpvIdArr))? "Mystery Auction" : $c->name ?></b></a>
+	</td></tr>
+	<tr><td 
+		style="<?=$fontStyle?>padding: 5px 0px 0px 0px;line-height:16px;text-decoration:none;"
+	>
+
+	<? 
+	
+	if ($isMystery && !in_array($ppvNoticeTypeId,$nonBidPpvIdArr)): ?>
+		<i><?= $offerLive['offerName'] ?><? else: ?><?= $c->locationDisplay ?></i>
+	<? endif; ?>
+
+	</td></tr>
+
+	<? if ($isMystery && !in_array($ppvNoticeTypeId,$nonBidPpvIdArr)): ?>
+
+		<tr><td 
+			style="<?=$fontStyle?>line-height:16px;padding:15px 0px 0px 0px;"
+			colspan="2"
+		>The property name for this Mystery Auction will remain a secret, and for the moment so will the location, but only for the moment. We will be revealing clues throughout the course of the auction in our <a 
+			style="color:#036dfc;text-decoration:none;" 
+			href="http://www.luxurylink.com/community/forum.php"
+			>Online Community.</a>
+		</td></tr>
+
+	<? else: ?>
+
+		<tr><td 
+			style="<?=$fontStyle?>line-height:16px;padding:15px 0px 0px 0px;" 
+			colspan="2"
+		><? echo $c->address1;
+			echo "<br>";
+
+			if ($c->address2 != ""):
+				echo $c->address2."<br>";
+			endif;
+
+			echo $c->locationDisplay;
+			?>
+		</td></tr>
+
+		<? if ($c->estaraPhoneLocal != ""): ?>
+			<tr><td 
+				style="<?=$fontStyle?>line-height:16px;padding: 15px 0px 2px 0px;" 
+				colspan="2">Phone Number: <?= $c->estaraPhoneLocal ?>
+			</td></tr>
+		<? endif; ?>
+
+		<? if ($c->estaraPhoneIntl != ""): ?>
+			<tr><td 
+				style="<?=$fontStyle?>line-height:16px;padding: 0px 0px 2px 0px;" 
+				colspan="2"
+			>International: <?= $c->estaraPhoneIntl ?>
+			</td></tr>
+		<?php endif; ?>
+
+		<? if ($c->contact_to_string != ""): ?>
+			<tr><td 
+				style="<?=$fontStyle?>line-height:16px;padding:0px 0px 0px 0px;" 
+				colspan="2"
+			>E-mail: <a 
+				href="mailto:<?= $c->contact_to_string ?>" 
+				target="_blank" 
+				style="color: #056ff7;"
+			><?= $c->contact_to_string_trimmed ?></a>
+			</td></tr>
+		<?php endif; ?>
+
+	<?php endif; ?>
+
+	<? if($ppvNoticeTypeId == "41"): ?>
+
+		<tr><td style="padding: 0px 0px 0px 0px;">
+			<br>
+			<? // TABLE H OPEN?>
+			<table 
+				width='100' 
+				cellpadding='0' 
+				cellspacing='0' 
+				border='0' 
+				style="padding:0px 10px 5px 10px;border:1px solid #005a97;margin-top:5px;background:#0070a8;"
+				><tr><td><a 
+					href="<?= $c->pdpUrl ?>" 
+					style="font-family:Arial;font-size:12px;font-weight:bold;color:#ffffff;padding:6px 20px 5px 20px;text-decoration:none;float:left;"
+				>View Details</a></td></tr>
+			</table>
+			<? // TABLE H CLOSED ?>
+		</td></tr>
+
+	<?php endif; ?>
+
+	</tbody>
+	<? // TABLE G CLOSED ?>
+	</table>
+	</td>
+	</tr>
+
+<? endforeach; ?>
+
+<tr><td height="15" width="100%" colspan="5"></td></tr>
+
+<?php if (!in_array($ppvNoticeTypeId,array(38))): ?>
+
+	<tr>
+	<td style="<?=$fontStyle?>line-height:16px;padding: 2px 0px 5px 15px;" colspan="3"><?= $packageIncludes ?></td>
+	</tr>
+	<tr>
+	<td bgcolor="#c3c3c3" height="1" width="100%" colspan="5"></td>
+	</tr>
+
 <?php endif; ?>
+
+<? if (in_array($ppvNoticeTypeId, array(36))): ?>
+
+	<tr>
+		<td 
+			style="<?=$fontStyle?>line-height:16px;padding: 20px 0px 2px 15px;" 
+			colspan="4"><b><?= $siteName ?> Cancellation Policy:</b>
+		</td>
+	</tr>
+	<tr>
+	<td style="<?=$fontStyle?>line-height:18px;padding: 0px 20px 5px 15px;" colspan="4">
+	<ul>
+
+	<? if ($isAuction): ?>
+
+		<li>Luxury Link goes through great lengths to ensure fairness to all parties in auctions. It would not be fair if the auction winner was able to bid up the auction only to get a refund after winning. Once you have won an auction, the vacation is yours alone.</li>
+		<li>Auction dates are not confirmed with the hotel until after you have won.  The Concierge team can check availability for you prior to bidding, but this is not a guarantee.</li>
+		<li>Because Auctions offer your best chance of benefitting from the biggest savings, they are non-refundable.  We will try our best to accomodate your preferred dates.</li>
+		<li>You may change your travel dates at any time without charge, subject to hotel change policies and fees.</li>
+
+	<? else: ?>
+
+		<li>Book Now (Buy Now) offers are changeable and refundable.</li>
+		<li>After our Concierge Team confirms your preferred dates, we charge you for your purchase, along with a $40 non-refundable handling fee.</li>
+		<li>Subsequent date changes to any confirmed booking are subject to a $35 change fee, along with any change fees assessed by the hotel.</li>
+		<li>If you wish to cancel your reservation, Luxury Link will refund your credit card for the purchase in full, minus Luxury Link's fees.</li>
+		<li>Cancellations made more than 15 days prior to check-in will incur a $35 cancellation fee. Cancellations made within 15 days of check-in will incur a $100 cancellation fee and are subject to hotel cancellation policies and fees.</li>
+
+	<? endif; ?>
+
+	</ul>
+	</td>
+</tr>
+
+<?php endif; ?>
+
+<?php if (in_array($ppvNoticeTypeId, array(1,12,14,18,19,26,28,36,16))): ?>
+
+	<tr>
+	<td bgcolor="#c3c3c3" height="1" width="100%" colspan="5"></td>
+	</tr>
+	<tr>
+	<td
+		colspan="4"  
+		style="font-size: 12px; font-family: Arial,Sans-Serif; color: rgb(79, 63, 50); line-height: 18px; padding: 15px 20px 15px 15px;"
+		><?= $validityNote ?>
+	</td>
+	</tr>
+
+<?php endif; ?>
+
+<?php 
+
+	$tmpArr=array(1,2,10,12,14,18,19,24,26,27,28,29,30,31,33,36,16,11);
+	if (in_array($ppvNoticeTypeId, $tmpArr) && $legalText != ""): ?>
+
+		<tr>
+		<td 
+			style="<?=$fontStyle?>line-height:16px;padding: 2px 0px 2px 15px;" 
+			colspan="4"
+		><b>Booking Conditions:</b>
+		</td>
+		</tr>
+		<tr>
+		<td 
+			style="<?=$fontStyle?>line-height:18px;padding: 0px 20px 15px 15px;" 
+			colspan="4"
+		><?= $legalText ?>
+		</td>
+		</tr>
+
+	<?php endif; ?>
+
 </tbody>
 </table>
+<? // TABLE F CLOSED?>
 </td>
 </tr>
 </table>
+<? // TABLE D CLOSED?>
