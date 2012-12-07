@@ -109,6 +109,11 @@ $this->set('hideSidebar', true);
 	<div class="editorPanel"></div>
 </div>
 
+<div>
+	<textarea id="loadingBay"></textarea>
+	<input type="submit" id="loadingButton" />
+</div>
+
 <div id="dataDiv"></div>
 
 <div style="clear: both;"></div>
