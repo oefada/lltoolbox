@@ -11,19 +11,18 @@ jQuery(function() {
 	$('#blockToolbar').on('click', 'a', function(e) {
 		e.preventDefault();
 		var $target = $('#blockTree > ul > li').length == 0 ? -1 : $('#blockTree').jstree('get_selected');
-		if ($(this).attr('rel') == 'Save') {
-			generateData();
-			$('#blockToolbar a[rel="Save"]').removeClass('active');
-		} else {
-			var $newNode = $('#blockTree').jstree('create', $target, 'last', {
-				'data' : $(this).attr('rel'),
-				'attr' : {
-					'rel' : $(this).attr('rel')
-				}
-			}, null, true);
-			$('#blockTree').jstree('deselect_all').jstree('select_node', $newNode);
-			$('#blockToolbar a[rel="Save"]').addClass('active');
-		}
+		var $newNode = $('#blockTree').jstree('create', $target, 'last', {
+			'data' : $(this).attr('rel'),
+			'attr' : {
+				'rel' : $(this).attr('rel')
+			}
+		}, null, true);
+		$('#blockTree').jstree('deselect_all').jstree('select_node', $newNode);
+	});
+
+	$('div.pressMe').on('click','a',function(e){
+		e.preventDefault();
+		alert(1);
 	});
 
 	var typeData = {
@@ -205,10 +204,6 @@ jQuery(function() {
 			$('#blockToolbar').append($newLink);
 		}
 	}
-	var $newLink = $('<a href="#" rel="Save" />');
-	$newLink.append($('<img />').attr('src', 'http://ui.llsrv.us/images/icons/silk/disk.png'));
-	$newLink.append($('<span/>').text('Save'));
-	$('#blockToolbar').append($newLink);
 
 	// Highlight enabled toolbar buttons
 	var updateToolbarButtons = function(activeModule) {
@@ -353,7 +348,6 @@ jQuery(function() {
 			}
 		}
 		$selected.attr('data-blocks', JSON.stringify(data));
-		$('#blockToolbar a[rel="save"]').addClass('active');
 	};
 
 	var loadTree = function(json_data) {
@@ -429,7 +423,7 @@ jQuery(function() {
 	link.href = 'http://ui.llsrv.us/images/icons/silk/brick.png';
 	document.getElementsByTagName('head')[0].appendChild(link);
 
-	/* DELETE */
+	/* DELETE THIS SECTION*/
 	$('#loadingButton').click(function(e) {
 		e.preventDefault();
 		var data = $('#loadingBay').val();
