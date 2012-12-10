@@ -17,7 +17,7 @@ $this->set('hideSidebar', true);
 		<li>
 			<?php
 			echo $html->link($BlockPage['BlockPage']['url'], array(
-				'action' => 'open',
+				'action' => 'edit',
 				$BlockPage['BlockPage']['blockPageId'],
 			));
 			?>

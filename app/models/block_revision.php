@@ -24,7 +24,10 @@ class BlockRevision extends AppModel
 
 	function activate($blockPageId, $blockRevisionId)
 	{
-		$this->query('UPDATE ' . $this->useTable . ' SET `active` = (`blockRevisionId` = ?) WHERE 1>0;', array($blockRevisionId));
+		$this->query('UPDATE ' . $this->useTable . ' SET `active` = (`blockRevisionId` = ?) WHERE `blockPageId` = ?;', array(
+			$blockRevisionId,
+			$blockPageId,
+		));
 	}
 
 }
