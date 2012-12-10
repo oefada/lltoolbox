@@ -37,12 +37,26 @@
 <tr>
 <td height="5" width="800">&nbsp;</td>
 </tr>
+
+<tr>
+<td width="800">
+	<table cellspacing="0" cellpadding="0" border="0" bgcolor="#ffffff" align="center" height="50" width="800" id="navbar">
+	<tr>
+		<td colspan="2" width="800"><img src="http://www.luxurylink.com/images/email/Insider/spacer-white.jpg" width="800" height="1"  border="0" style="display: block;padding: 0px 0px 0px 0px" /></td>
+	</tr>
+	<tr>
+	<td bgcolor="#ffffff" align="left" height="50" width="680" style="font-family:Arial,Verdana, sans-serif;font-size:12px;line-height:15px;color:#666666; text-transform: uppercase; font-weight: bold; text-align: left;">
+
+
+<!--
 <tr>
 <td width="800">
 	<table cellspacing="0" cellpadding="0" border="0" bgcolor="#ffffff" align="center" height="50" width="800" id="navbar">
 	<tr>
 	<td bgcolor="#ffffff" align="left" height="50" width="680" style="font-family:Arial,Verdana, sans-serif;font-size:12px;line-height:15px;color:#666666; text-transform: uppercase; font-weight: bold; text-align: left;"
-><a 
+>
+-->
+	<a 
 	name="destinations_header" 
 	style="color:#666666;text-decoration:none" 
 	target="_blank"  
