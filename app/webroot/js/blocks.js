@@ -120,7 +120,8 @@ jQuery(function() {
 			'parameters' : {
 				'content' : 'input',
 				'href' : 'input',
-				'clicktrack' : 'input'
+				'clicktrack' : 'input',
+				'class' : 'input'
 			},
 			'icon' : {
 				'image' : 'http://ui.llsrv.us/images/icons/silk/page_white_world.png'
