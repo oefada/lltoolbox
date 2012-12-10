@@ -20,9 +20,24 @@ jQuery(function() {
 		$('#blockTree').jstree('deselect_all').jstree('select_node', $newNode);
 	});
 
-	$('div.pressMe').on('click','a',function(e){
+	// Save data
+	$('div.pressMe').on('click', 'a', function(e) {
 		e.preventDefault();
-		alert(1);
+		switch ($(this).attr('href')) {
+			case '#save':
+				var json = JSON.stringify($('#blockTree').jstree('get_json', -1, ['data-blocks'], []), null, ' ');
+				var data = {
+					'treeData' : JSON.parse(json)
+				};
+				$.ajax({
+					'type' : 'POST',
+					'cache' : false,
+					'data' : data,
+					'dataType' : 'html'
+				});
+				$(this).effect('highlight');
+				break;
+		}
 	});
 
 	var typeData = {
@@ -230,7 +245,6 @@ jQuery(function() {
 	updateToolbarButtons();
 
 	var loadEditor = function($target) {
-		console.log(Math.random(), 'loadEditor', $target)
 		var $editor = $('#editorDiv');
 		var $panel = $('<div class="editorPanel"></div>');
 		if ($target == 'boot') {
@@ -243,7 +257,6 @@ jQuery(function() {
 				'padding-top' : '24px'
 			});
 		} else if ($target == null) {
-			console.log(Math.random(), 'loadEditor', 'NULL target');
 		} else {
 			var rel = $target.attr('rel');
 			if ( typeof rel == 'string' && typeData.hasOwnProperty(rel)) {
@@ -312,15 +325,7 @@ jQuery(function() {
 	};
 	loadEditor('boot');
 
-	var generateData = function() {
-		var data = $('#blockTree').jstree('get_json', -1, ['data-blocks'], []);
-		var json = JSON.stringify(data, null, ' ');
-		data = (JSON.parse(json));
-		$('#dataDiv').text(data);
-	};
-
 	var handleChange = function() {
-		generateData();
 		var $selected = $('#blockTree').jstree('get_selected');
 		var data = {};
 		$('#editorDiv *[name]').each(function(i) {
@@ -351,22 +356,17 @@ jQuery(function() {
 	};
 
 	var loadTree = function(json_data) {
-		var loadData = {};
-		if ( typeof json_data == 'string') {
-			try {
-				loadData = JSON.parse(json_data)[0];
-			} catch(e) {
-				console.log('JSON parsing error');
-			}
+		var loadData = [{}];
+		if ( typeof json_data == 'object') {
+			loadData = json_data;
 		}
-		console.log(Math.random(), 'loadTree', json_data, loadData);
 		var $tree = $('#blockTree');
 		$tree.empty();
 		$tree.jstree({
+			"plugins" : ["themes", "ui", "crrm", "hotkeys", "types", "dnd", 'json_data'],
 			'json_data' : {
-				'data' : loadData
+				'data' : loadData,
 			},
-			"plugins" : ["themes", "html_data", "ui", "crrm", "hotkeys", "types", "dnd", 'json_data'],
 			"dnd" : {
 				"copy_modifier" : "shift"
 			},
@@ -402,19 +402,20 @@ jQuery(function() {
 		}).bind('deselect_node.jstree', function(event, data) {
 			updateToolbarButtons(null);
 			loadEditor(null);
-			generateData();
 		}).bind("select_node.jstree", function(event, data) {
 			$editPointer = $(data.rslt.obj);
 			var type = $editPointer.attr('rel');
 			updateToolbarButtons(type);
 			loadEditor($editPointer);
-			generateData();
 		}).delegate("a", "click", function(event, data) {
 			event.preventDefault();
 		});
 	};
-	loadTree();
-	window.seanLoadTree = loadTree;
+	if ( typeof window.editorLoadData != 'undefined') {
+		loadTree(window.editorLoadData);
+	} else {
+		loadTree();
+	}
 	$('#editorDiv').on('change', 'input,textarea', handleChange).on('click', 'input[type="radio"]', handleChange).on('keyup', 'input,textarea', handleChange).on('keypress', 'input,textarea', handleChange);
 
 	var link = document.createElement('link');
@@ -422,12 +423,5 @@ jQuery(function() {
 	link.rel = 'shortcut icon';
 	link.href = 'http://ui.llsrv.us/images/icons/silk/brick.png';
 	document.getElementsByTagName('head')[0].appendChild(link);
-
-	/* DELETE THIS SECTION*/
-	$('#loadingButton').click(function(e) {
-		e.preventDefault();
-		var data = $('#loadingBay').val();
-		loadTree(data);
-	});
 
 });

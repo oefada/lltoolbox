@@ -96,6 +96,10 @@ $this->pageTitle = 'Blocks Editor';
 $this->set('hideSidebar', true);
 ?>
 
+<div>
+	<?php echo $html->link('Go back to Blocks index', array('action' => 'index')); ?>
+</div>
+
 <div class="pressMe">
 	<a href="#save"><img src="http://ui.llsrv.us/images/icons/silk/database_save.png" />Save</a>
 </div>
@@ -115,12 +119,7 @@ $this->set('hideSidebar', true);
 <br/>
 <br/>
 
-<script type="text/javascript" src="/js/blocks.js"></script>
+<script type="text/javascript">
+	window['editorLoadData'] = <?php echo $blockData; ?>;</script>
 
-<div id="deleteThisDebugStuff">
-	<div>
-		<textarea id="loadingBay"></textarea>
-		<input type="submit" id="loadingButton" />
-	</div>
-	<div id="dataDiv"></div>
-</div>
+<script type="text/javascript" src="/js/blocks.js"></script>
