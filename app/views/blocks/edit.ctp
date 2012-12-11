@@ -116,6 +116,8 @@ $this->set('hideSidebar', true);
 
 <div style="clear: both;"></div>
 
+<div id="generatedData"></div>
+
 <br/>
 <br/>
 

@@ -326,6 +326,10 @@ jQuery(function() {
 	};
 	loadEditor('boot');
 
+var getGeneratedData=function(){
+	return JSON.stringify($('#blockTree').jstree('get_json', -1, [], []), null, ' ');
+}
+
 	var handleChange = function() {
 		var $selected = $('#blockTree').jstree('get_selected');
 		var data = {};
@@ -336,7 +340,7 @@ jQuery(function() {
 						data[$(this).attr('name')] = $(this).val();
 					}
 				} else if ($(this).val()) {
-					data[$(this).attr('name')] = $(this).val();
+										data[$(this).attr('name')] = $(this).val();
 				}
 			}
 		});
@@ -354,6 +358,8 @@ jQuery(function() {
 			}
 		}
 		$selected.attr('data-blocks', JSON.stringify(data));
+		$('div.pressMe a[href="#save"]').css('opacity', 1.0);
+		$('#generatedData').text(getGeneratedData());
 	};
 
 	var loadTree = function(json_data) {
