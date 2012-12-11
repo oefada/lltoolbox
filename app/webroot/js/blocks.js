@@ -326,10 +326,6 @@ jQuery(function() {
 	};
 	loadEditor('boot');
 
-var getGeneratedData=function(){
-	return JSON.stringify($('#blockTree').jstree('get_json', -1, [], []), null, ' ');
-}
-
 	var handleChange = function() {
 		var $selected = $('#blockTree').jstree('get_selected');
 		var data = {};
@@ -340,7 +336,7 @@ var getGeneratedData=function(){
 						data[$(this).attr('name')] = $(this).val();
 					}
 				} else if ($(this).val()) {
-										data[$(this).attr('name')] = $(this).val();
+					data[$(this).attr('name')] = $(this).val();
 				}
 			}
 		});
@@ -354,12 +350,13 @@ var getGeneratedData=function(){
 						titleText = titleText.substring(0, 20) + '...';
 					}
 					$('#blockTree').jstree('rename_node', $selected, titleText);
+				} else {
+					$('#blockTree').jstree('rename_node', $selected, rel);
 				}
 			}
 		}
 		$selected.attr('data-blocks', JSON.stringify(data));
 		$('div.pressMe a[href="#save"]').css('opacity', 1.0);
-		$('#generatedData').text(getGeneratedData());
 	};
 
 	var loadTree = function(json_data) {
