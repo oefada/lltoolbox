@@ -1088,6 +1088,8 @@ class WebServiceTicketsController extends WebServicesController
 			$liveOfferData = $liveOfferData[0]['LiveOffer'];
 			$packageId			= $liveOfferData['packageId'];
 			$packageName 		= strip_tags($liveOfferData['offerName']);
+			$validityStart = $liveOfferData['validityStart'];
+			$validityEnd = $liveOfferData['validityEnd'];
 
 			// Note that $packageIncludes is being set to 'offerIncludes' from offer table, as distinct from
 			// having $packageIncludes being set to 'packageIncludes from package table
@@ -2044,7 +2046,7 @@ class WebServiceTicketsController extends WebServicesController
 			case 41:
 				$templateFile = "41_leadgen_alert";
 				$emailSubject = $templateTitle = $clientNameP . " has a new vacation experience";
-				$hideSalutation = true;
+				$hideSalutation = false;
 				break;
 			case 42:
 				$isAuction = 1;
@@ -2188,6 +2190,7 @@ class WebServiceTicketsController extends WebServicesController
 	}
 
 	private function newEmailTemplate($templateFile,$append = "LL", $specialException = false) {
+
 		// Add UTM links
 		$template  = file_get_contents("../vendors/email_msgs/includes/header_".$append.".html");
 		$template .= file_get_contents("../vendors/email_msgs/notifications/".$templateFile.".html");
@@ -2221,7 +2224,14 @@ class WebServiceTicketsController extends WebServicesController
 		
 		foreach ($special_templates as $k=>$s) {
 			if (strstr($template,"%%".$k."%%") !== FALSE) {
-				$pD = file_get_contents("../vendors/email_msgs/includes/".$k.".html");
+
+				// different formatting for lead gen alert ppv
+				$file=$k;
+				if ($k=="package_details" && $templateFile=="41_leadgen_alert" && $append=="LL"){
+					$file="package_details.41";	
+				}
+
+				$pD = file_get_contents("../vendors/email_msgs/includes/".$file.".html");
 				$pD .= "<?php \$".$k." = 1; ?>";
 
 				// Special boxes that need to be in the header
