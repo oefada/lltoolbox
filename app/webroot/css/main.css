@@ -1346,3 +1346,23 @@ table.clone-items td.price span.currency-code {
 	margin: 20px 0 20px 0;
 	font-weight: bold;
 }
+
+div.ticketCallLog {
+	background: #fcfffc;
+	margin: 8px 10px 8px 5px;
+	border-style: solid;
+	border-color: #ccc;
+	border-width: 1px;
+	border-radius: 6px;
+	padding: 6px;
+	box-shadow: 5px 5px 5px #eeeeee;
+}
+div.ticketCallLog.altRow {
+	background: #fcfcff;
+}
+div.ticketCallLogInfo {
+	margin-top: 3px;
+	color: #aaaaaa;
+	font-size: 78%;
+	font-style: italic;
+}

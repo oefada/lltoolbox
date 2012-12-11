@@ -60,10 +60,10 @@ class Call extends AppModel
 	public static $contactTopics = array(
 		1 => 'Haven\'t received confirmation - checking confirmation',
 		2 => 'Checking availability before purchase',
-		3 => 'Checking availability before purchase - Unmet demand',
+		/* 3 => 'Checking availability before purchase - Unmet demand', DELETED */
 		4 => 'Checking availability before purchase - PHG',
-		5 => 'General website question, how does site work?',
-		6 => 'Non "how to" travel question - Help me find a package',
+		5 => 'General "how to" website questions',
+		/* 6 => 'Non "how to" travel question - Help me find a package', DELETED */
 		7 => 'Registration/Login Issues',
 		8 => 'Glitches/Bugs',
 		9 => 'Change of dates request',
@@ -72,10 +72,13 @@ class Call extends AppModel
 		12 => 'Promos/Credits',
 		13 => 'Vendor Call (someone selling something)',
 		14 => 'Post trip feedback about the property or services',
-		15 => 'Hotel Confirmation Call, or Follow Up',
+		/* 15 => 'Hotel Confirmation Call, or Follow Up', DELETED */
 		16 => 'Vcom Questions',
-		17 => 'Unmet demand - location',
+		/* 17 => 'Unmet demand - location', DELETE */
 		18 => 'Unmet demand - property selection / type',
+		19 => 'Specific questions on a package',
+		20 => 'Customer shopping',
+		21 => 'Immediate issue at hotel',
 		999 => 'Other',
 	);
 
