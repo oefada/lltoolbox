@@ -1,5 +1,4 @@
 <style>
-
 	#dataDebug {
 		display: none;
 	}
@@ -95,6 +94,20 @@
 	textarea {
 		height: 100px;
 	}
+	#previewDiv {
+		margin: 32px 0;
+		padding: 64px 128px;
+		background: #fcfcfc;
+	}
+	#previewFrame {
+		background: white;
+		width: 100%;
+		height: 600px;
+		box-shadow: 10px 10px 20px #aaaaaa;
+		border-color: #ffcccc;
+		border-width: 5px;
+		border-style: dashed;
+	}
 </style>
 <?php
 $this->pageTitle = 'Blocks Editor';
@@ -102,11 +115,21 @@ $this->set('hideSidebar', true);
 ?>
 
 <div>
-	<?php echo $html->link('Go back to Blocks index', array('action' => 'index')); ?>
+	<ul>
+		<li><?php echo $html->link('Go back to Blocks index', array('action' => 'index')); ?></li>
+		<li><?php echo $html->link('View Revisions', array(
+				'action' => 'revisions',
+				$blockPageId
+			));
+		?></li>
+	</ul>
 </div>
 
+<br/>
+
 <div class="pressMe">
-	<a href="#save"><img src="http://ui.llsrv.us/images/icons/silk/database_save.png" />Save</a>
+	<a href="#save"><img src="http://ui.llsrv.us/images/icons/silk/database_save.png" />Save and Preview</a>
+	<a href="#publish" style="float:right;"><img src="http://ui.llsrv.us/images/icons/silk/exclamation.png" />Publish</a>
 </div>
 
 <div id="blockToolbar"></div>
@@ -121,6 +144,17 @@ $this->set('hideSidebar', true);
 
 <div style="clear: both;"></div>
 
+<div id="helpWindow"></div>
+
+<div id="previewDiv">
+		<h2>Preview:</h2>
+		<div id="previewLink"></div>
+		<br/>
+		<div><a href="#top">Go back to top</a></div>
+		<br/>
+		<iframe id="previewFrame" src="/blocks/preview"></iframe>
+</div>
+
 <div id="dataDebug">
 	DEBUG
 </div>
@@ -128,7 +162,6 @@ $this->set('hideSidebar', true);
 <br/>
 <br/>
 
-<script type="text/javascript">
-	window['editorLoadData'] = <?php echo $blockData; ?>;</script>
+<script type="text/javascript">window['editorLoadData'] = <?php echo $blockData; ?>;</script>
 
 <script type="text/javascript" src="/js/blocks.js"></script>

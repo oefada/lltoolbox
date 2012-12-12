@@ -71,14 +71,22 @@ class BlocksController extends AppController
 				'editor' => $this->getEditor(),
 			));
 			$this->BlockRevision->save();
-			$this->BlockRevision->activate($blockPageId, $this->BlockRevision->id);
+			header('X-Blocks-PageId: ' . $blockPageId);
+			header('X-Blocks-RevisionId: ' . $this->BlockRevision->id);
+			$sha1 = $this->BlockRevision->field('sha1');
+			header('X-Blocks-SHA1: ' . $sha1);
+			$previewPath = 'http://www.luxurylink.com';
+			if (strpos($_SERVER['HTTP_HOST'], 'toolboxdev') !== false) {
+				$previewPath = 'http://' . str_replace('toolboxdev', 'lldev', $_SERVER['HTTP_HOST']);
+			}
+			$previewPath .= '/blocks/blocks.php?mode=preview&blockRevisionId=' . $this->BlockRevision->id;
+			$previewPath .= '&blockSha1=' . $sha1;
+			header('X-Blocks-Preview: ' . $previewPath);
+			//			$this->BlockRevision->activate($blockPageId, $this->BlockRevision->id);
 		} else {
 			if ($blockPageId) {
 				$this->set('blockPageId', $blockPageId);
-				$blockData = $this->BlockRevision->field('blockData', array(
-					'blockPageId' => $blockPageId,
-					'active' => 1
-				));
+				$blockData = $this->BlockRevision->field('blockData', array('blockPageId' => $blockPageId));
 				if (!$blockData) {
 					$blockData = $this->defaultTemplate;
 				}
@@ -97,6 +105,11 @@ class BlocksController extends AppController
 			return $this->editor = $this->viewVars['user']['LdapUser']['username'];
 		}
 		return '';
+	}
+
+	function preview()
+	{
+		$this->layout = 'blank';
 	}
 
 }

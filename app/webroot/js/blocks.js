@@ -7,6 +7,13 @@ jQuery(function() {
 		alert('Your browser is not supported.');
 	}
 
+	$('a[href="#top"]').on('click', function(e) {
+		e.preventDefault();
+		$('html,body').animate({
+			scrollTop : 0
+		}, 500);
+	});
+
 	// Handle toolbar button click
 	$('#blockToolbar').on('click', 'a', function(e) {
 		e.preventDefault();
@@ -23,17 +30,33 @@ jQuery(function() {
 	// Save data
 	$('div.pressMe').on('click', 'a', function(e) {
 		e.preventDefault();
+		var data = {};
 		switch ($(this).attr('href')) {
+			case '#publish':
+				data['publish'] = true;
 			case '#save':
 				var json = JSON.stringify($('#blockTree').jstree('get_json', -1), null, ' ');
-				var data = {
-					'treeData' : JSON.parse(json)
-				};
+				data['treeData'] = JSON.parse(json);
 				$.ajax({
 					'type' : 'POST',
 					'cache' : false,
 					'data' : data,
-					'dataType' : 'html'
+					'dataType' : 'html',
+					'complete' : function(d, t, j) {
+						console.log(Math.random(), 'z', data, d, t, j);
+						window.sean = d;
+						var previewUrl = d.getResponseHeader('X-Blocks-Preview');
+						if (d.getResponseHeader('X-Blocks-Publish')) {
+							var previewUrl = d.getResponseHeader('X-Blocks-Publish');
+						}
+						if (previewUrl) {
+							$('#previewFrame').attr('src', previewUrl);
+							$('html,body').animate({
+								scrollTop : $("#previewDiv").offset().top
+							}, 500);
+							$('#previewLink').empty().append($('<a/>').attr('href', previewUrl).attr('target', 'blockPreview').text(previewUrl));
+						}
+					}
 				});
 				$(this).effect('highlight');
 				break;
@@ -390,7 +413,6 @@ jQuery(function() {
 
 			}
 		}
-		$('div.pressMe a[href="#save"]').css('opacity', 1.0);
 		$('#dataDebug').text(JSON.stringify($('#blockTree').jstree('get_json', -1, [], []), null, ' '));
 	};
 
