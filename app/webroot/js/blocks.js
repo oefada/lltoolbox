@@ -69,7 +69,7 @@ jQuery(function() {
 			"icon" : {
 				"image" : "http://ui.llsrv.us/images/icons/silk/layout.png"
 			},
-			"valid_children" : ['BlockDivModule', 'BlockPrefabModule']
+			"valid_children" : ['BlockDivModule', 'BlockPrefabModule', 'BlockAdvertisingModule']
 		},
 		'BlockDivModule' : {
 			'toolbarName' : 'Div',
@@ -154,7 +154,9 @@ jQuery(function() {
 			},
 			'parameters' : {
 				'src' : 'input',
-				'link' : 'input',
+				'linkHref' : 'input',
+				'linkRel' : 'input',
+				'linkClicktrack' : 'input',
 				'title' : 'input'
 			},
 			'icon' : {
@@ -211,6 +213,7 @@ jQuery(function() {
 					'option' : {
 						'CommunityModule' : 'Community',
 						'NewsletterModuleSidebar' : 'Newsletter Signup Box for Sidebar',
+						'NewsletterModuleContent' : 'Newsletter Signup Box for wide Content area',
 						'FeaturedAuctionsModule' : 'Featured Auctions'
 					}
 				},
@@ -352,8 +355,11 @@ jQuery(function() {
 					if ($(this).attr('checked')) {
 						$selected.data($(this).attr('name'), $(this).val());
 					}
-				} else if ($(this).val()) {
-					$selected.data($(this).attr('name'), $(this).val());
+				} else {
+					var val = $(this).val();
+					if ( typeof val == 'string' && val.length > 0) {
+						$selected.data($(this).attr('name'), val);
+					}
 				}
 			}
 		});
