@@ -25,7 +25,7 @@ jQuery(function() {
 		e.preventDefault();
 		switch ($(this).attr('href')) {
 			case '#save':
-				var json = JSON.stringify($('#blockTree').jstree('get_json', -1, ['data-blocks'], []), null, ' ');
+				var json = JSON.stringify($('#blockTree').jstree('get_json', -1), null, ' ');
 				var data = {
 					'treeData' : JSON.parse(json)
 				};
@@ -248,7 +248,7 @@ jQuery(function() {
 	var loadEditor = function($target) {
 		var $editor = $('#editorDiv');
 		var $panel = $('<div class="editorPanel"></div>');
-		if ($target == 'boot') {
+		if ($target == 'boot' || $target == null) {
 			$panel.append('Welcome to Blocks!');
 			$panel.css({
 				'text-align' : 'center',
@@ -257,17 +257,13 @@ jQuery(function() {
 				'color' : '#666',
 				'padding-top' : '24px'
 			});
-		} else if ($target == null) {
 		} else {
 			var rel = $target.attr('rel');
 			if ( typeof rel == 'string' && typeData.hasOwnProperty(rel)) {
 				var type = typeData[rel];
 				$panel.append('<h1>' + rel + ' Editor</h1>');
 				if (type.hasOwnProperty('parameters')) {
-					var data = {};
-					if ( typeof $target.attr('data-blocks') == 'string') {
-						data = JSON.parse($target.attr('data-blocks'));
-					}
+					var data = $target.data();
 					for (var parameter in type['parameters']) {
 						if (type['parameters'].hasOwnProperty(parameter)) {
 							var $newParam = $('<div class="editorParameter" />');
@@ -329,17 +325,19 @@ jQuery(function() {
 	var handleChange = function() {
 		var $selected = $('#blockTree').jstree('get_selected');
 		var data = {};
+		$selected.removeData();
 		$('#editorDiv *[name]').each(function(i) {
 			if ($(this).attr('name')) {
 				if ($(this).attr('type') == 'radio') {
 					if ($(this).attr('checked')) {
-						data[$(this).attr('name')] = $(this).val();
+						$selected.data($(this).attr('name'), $(this).val());
 					}
 				} else if ($(this).val()) {
-					data[$(this).attr('name')] = $(this).val();
+					$selected.data($(this).attr('name'), $(this).val());
 				}
 			}
 		});
+		data = $selected.data();
 		var rel = $selected.attr('rel')
 		if ( typeof rel == 'string') {
 			if (typeData.hasOwnProperty(rel) && typeData[rel].hasOwnProperty('titleField')) {
@@ -355,8 +353,8 @@ jQuery(function() {
 				}
 			}
 		}
-		$selected.attr('data-blocks', JSON.stringify(data));
 		$('div.pressMe a[href="#save"]').css('opacity', 1.0);
+		$('#dataDebug').text(JSON.stringify($('#blockTree').jstree('get_json', -1, [], []), null, ' '));
 	};
 
 	var loadTree = function(json_data) {
