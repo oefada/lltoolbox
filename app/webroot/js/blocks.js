@@ -43,8 +43,6 @@ jQuery(function() {
 					'data' : data,
 					'dataType' : 'html',
 					'complete' : function(d, t, j) {
-						console.log(Math.random(), 'z', data, d, t, j);
-						window.sean = d;
 						var previewUrl = d.getResponseHeader('X-Blocks-Preview');
 						if (d.getResponseHeader('X-Blocks-Publish')) {
 							var previewUrl = d.getResponseHeader('X-Blocks-Publish');
@@ -54,6 +52,7 @@ jQuery(function() {
 							$('html,body').animate({
 								scrollTop : $("#previewDiv").offset().top
 							}, 500);
+							previewUrl = previewUrl.replace(/\?clearCache.*$/, '');
 							$('#previewLink').empty().append($('<a/>').attr('href', previewUrl).attr('target', 'blockPreview').text(previewUrl));
 						}
 					}

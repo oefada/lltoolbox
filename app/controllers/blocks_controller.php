@@ -79,10 +79,17 @@ class BlocksController extends AppController
 			if (strpos($_SERVER['HTTP_HOST'], 'toolboxdev') !== false) {
 				$previewPath = 'http://' . str_replace('toolboxdev', 'lldev', $_SERVER['HTTP_HOST']);
 			}
-			$previewPath .= '/blocks/blocks.php?mode=preview&blockRevisionId=' . $this->BlockRevision->id;
-			$previewPath .= '&blockSha1=' . $sha1;
-			header('X-Blocks-Preview: ' . $previewPath);
-			//			$this->BlockRevision->activate($blockPageId, $this->BlockRevision->id);
+			if (isset($_POST['publish'])) {
+				$this->BlockRevision->activate($blockPageId, $this->BlockRevision->id);
+				$url = $this->BlockPage->field('url', array('blockPageId' => $blockPageId));
+				$previewPath .= $url;
+				$previewPath .= '?clearCache=' . sha1('LUXURY ' . $url . ' ' . date('Y-m-d') . ' LINK');
+				header('X-Blocks-Publish: ' . $previewPath);
+			} else {
+				$previewPath .= '/blocks/blocks.php?mode=preview&blockRevisionId=' . $this->BlockRevision->id;
+				$previewPath .= '&blockSha1=' . $sha1;
+				header('X-Blocks-Preview: ' . $previewPath);
+			}
 		} else {
 			if ($blockPageId) {
 				$this->set('blockPageId', $blockPageId);
