@@ -1,4 +1,9 @@
 <style>
+
+	#dataDebug {
+		display: none;
+	}
+
 	h1 {
 		font-size: 200%;
 		color: #888;
@@ -116,7 +121,9 @@ $this->set('hideSidebar', true);
 
 <div style="clear: both;"></div>
 
-<div id="dataDebug">DEBUG</div>
+<div id="dataDebug">
+	DEBUG
+</div>
 
 <br/>
 <br/>

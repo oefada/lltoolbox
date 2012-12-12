@@ -69,7 +69,7 @@ jQuery(function() {
 			"icon" : {
 				"image" : "http://ui.llsrv.us/images/icons/silk/layout.png"
 			},
-			"valid_children" : ['BlockPhotoModule', 'BlockDivModule', 'BlockHeaderModule', 'BlockParagraphModule', 'BlockPhotoModule', 'BlockTabsModule', 'BlockLinkModule', 'BlockPrefabModule', 'BlockAdvertisingModule']
+			"valid_children" : ['BlockDivModule', 'BlockPrefabModule']
 		},
 		'BlockDivModule' : {
 			'toolbarName' : 'Div',
@@ -117,6 +117,7 @@ jQuery(function() {
 		},
 		'BlockLinkModule' : {
 			'toolbarName' : 'Link',
+			'titleField' : 'content',
 			'parameters' : {
 				'content' : 'input',
 				'href' : 'input',
@@ -137,9 +138,24 @@ jQuery(function() {
 		},
 		'BlockImageModule' : {
 			'toolbarName' : 'Image',
+			'titleField' : function(data) {
+				var title = '';
+				if ( typeof data.title == 'string' && data.title.length > 0) {
+					title = data.title;
+				} else {
+					if ( typeof data.src == 'string') {
+						title = data.src
+						if (title.length > 17) {
+							title = '...' + title.substr(-17);
+						}
+					}
+				}
+				return title;
+			},
 			'parameters' : {
 				'src' : 'input',
-				'link' : 'input'
+				'link' : 'input',
+				'title' : 'input'
 			},
 			'icon' : {
 				'image' : 'http://ui.llsrv.us/images/icons/silk/image.png'
@@ -190,7 +206,7 @@ jQuery(function() {
 				'type' : {
 					'option' : {
 						'CommunityModule' : 'Community',
-						'NewsletterModule' : 'Newsletter Signup Box',
+						'NewsletterModuleSidebar' : 'Newsletter Signup Box for Sidebar',
 						'FeaturedAuctionsModule' : 'Featured Auctions'
 					}
 				},
@@ -341,16 +357,23 @@ jQuery(function() {
 		var rel = $selected.attr('rel')
 		if ( typeof rel == 'string') {
 			if (typeData.hasOwnProperty(rel) && typeData[rel].hasOwnProperty('titleField')) {
-				var title = typeData[rel]['titleField'];
-				if ( typeof data[title] == 'string') {
-					var titleText = data[title];
-					if (titleText.length > 20) {
-						titleText = titleText.substring(0, 20) + '...';
-					}
-					$('#blockTree').jstree('rename_node', $selected, titleText);
-				} else {
-					$('#blockTree').jstree('rename_node', $selected, rel);
+				var titleField = typeData[rel]['titleField'];
+				var titleText = '???';
+				switch(typeof titleField) {
+					case 'string':
+						titleText = data[titleField];
+						break;
+					case 'function':
+						titleText = titleField(data);
+						break;
+					default:
+						titleText = rel;
 				}
+				if (titleText.length > 20) {
+					titleText = titleText.substring(0, 20) + '...';
+				}
+				$('#blockTree').jstree('rename_node', $selected, titleText);
+
 			}
 		}
 		$('div.pressMe a[href="#save"]').css('opacity', 1.0);
