@@ -9,7 +9,7 @@ jQuery(function() {
 
 	$('a[href="#top"]').on('click', function(e) {
 		e.preventDefault();
-		$('html,body').animate({
+		$('body').animate({
 			scrollTop : 0
 		}, 500);
 	});
@@ -26,6 +26,22 @@ jQuery(function() {
 		}, null, true);
 		$('#blockTree').jstree('deselect_all').jstree('select_node', $newNode);
 	});
+
+	// Ping function
+	var pingServer = function(urls, $dialog) {
+		var url = urls.shift();
+		if (url) {
+			$dialog.append($('<p/>').text(url.replace(/\?clearCache.*$/, '')).prepend($('<img/>').attr('src', url).css({
+				'width' : '8px',
+				'height' : '8px',
+				'background-color' : 'red',
+				'margin-right' : '8px'
+			}).on('error', function(e) {
+				$(this).css('background-color', 'green');
+			})));
+			pingServer(urls, $dialog);
+		}
+	};
 
 	// Save data
 	$('div.pressMe').on('click', 'a', function(e) {
@@ -49,9 +65,35 @@ jQuery(function() {
 						}
 						if (previewUrl) {
 							$('#previewFrame').attr('src', previewUrl);
-							$('html,body').animate({
+							$('body').animate({
 								scrollTop : $("#previewDiv").offset().top
-							}, 500);
+							}, 500, null, function() {
+								if ( typeof data['publish'] == 'boolean' && data['publish'] == true) {
+									var $dialog = $('<div/>');
+									$dialog.append($('<h3/>').text('Pinging servers:'));
+									if (window.location.href.toLowerCase().indexOf('toolboxdev') != -1) {
+										pingServer([d.getResponseHeader('X-Blocks-Publish')], $dialog);
+									} else {
+										var baseUrl = d.getResponseHeader('X-Blocks-Publish');
+										var urls = [];
+										for (var i = 0; i <= 9; i++) {
+											urls.push(baseUrl.replace(/^[^\.]+\./, 'http://www' + i + '.'));
+										}
+										pingServer(urls, $dialog);
+									}
+									$dialog.dialog({
+										'title' : 'Publish',
+										'draggable' : false,
+										'resizable' : false,
+										'width' : 640,
+										'minHeight' : 300,
+										'modal' : true
+									});
+									setTimeout(function() {
+										$dialog.dialog('destroy');
+									}, 6000);
+								}
+							});
 							previewUrl = previewUrl.replace(/\?clearCache.*$/, '');
 							$('#previewLink').empty().append($('<a/>').attr('href', previewUrl).attr('target', 'blockPreview').text(previewUrl));
 						}

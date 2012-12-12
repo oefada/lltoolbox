@@ -24,6 +24,8 @@
 		echo $html->css('datepicker');
 		echo $html->css('prototip');
 		echo $html->css('print', null, array('media' => 'print'));
+		echo $html->css('pepper-grinder/jquery-ui-1.7.2.custom');
+
 		if(isset($javascript)):
             echo $javascript->link('prototype');
             echo $javascript->link('scriptaculous/scriptaculous');
