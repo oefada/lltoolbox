@@ -502,6 +502,7 @@ foreach ($this->data['Client']['sites'] as $site) {
                         <input class="themeCheckbox" type="checkbox" name="data[Theme][<?php echo $theme['Theme']['themeId'] ?>][sites][]" value="family" <?php echo $checkedSite2; ?> />
                     <?php endif; ?>
                     <span class="themeName"><?php echo $theme['Theme']['themeName']; ?></span>
+                    <span class="themeId" style="color: #cccccc;">(#<?php echo $theme['Theme']['themeId']; ?>)</span>
                     <br />
                 <?php endforeach; ?>
 			</div>
