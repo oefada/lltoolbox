@@ -173,7 +173,10 @@ jQuery(function() {
 			'toolbarName' : 'Tab',
 			'titleField' : 'title',
 			'parameters' : {
-				'title' : 'input'
+				'title' : 'input',
+				'linkBoxText' : 'input',
+				'linkBoxHref' : 'input',
+				'linkBoxClicktrack' : 'input',
 			},
 			'icon' : {
 				'image' : 'http://ui.llsrv.us/images/icons/silk/tab.png'
@@ -193,6 +196,7 @@ jQuery(function() {
 				'clientIds' : 'textarea',
 				'themeIds' : 'textarea',
 				'urls' : 'textarea',
+				'maxClientsToDisplay' : 'input',
 			},
 			'icon' : {
 				'image' : 'http://ui.llsrv.us/images/icons/silk/status_online.png'
@@ -361,7 +365,11 @@ jQuery(function() {
 				var titleText = '???';
 				switch(typeof titleField) {
 					case 'string':
-						titleText = data[titleField];
+						if ( typeof data[titleField] == 'string') {
+							titleText = data[titleField];
+						} else {
+							titleText = rel;
+						}
 						break;
 					case 'function':
 						titleText = titleField(data);
