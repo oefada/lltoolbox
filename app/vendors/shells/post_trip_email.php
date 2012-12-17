@@ -76,7 +76,7 @@ FROM
         ON (clientLoaPackageRel.packageId = ticket.packageId)
     INNER JOIN toolbox.reservation 
         ON (ticket.ticketId = reservation.ticketId)
-WHERE (reservation.departureDate BETWEEN NOW() - INTERVAL 120 DAY AND NOW() - INTERVAL 5 DAY
+WHERE (reservation.departureDate BETWEEN NOW() - INTERVAL 120 DAY AND NOW() - INTERVAL 3 DAY
     AND reservation.postTripEmailSent =0
     AND ticket.siteId =1)
     AND ticket.ticketStatusId BETWEEN 4 AND 6
