@@ -2042,6 +2042,12 @@ class WebServiceTicketsController extends WebServicesController
 				$emailSubject = $templateTitle = $clientNameP . " has a new vacation experience";
 				break;
 			case 41:
+		
+				$alertOfferTable = ($siteId == 2) ? 'offerFamily' : 'offerLuxuryLink';
+				$q="SELECT packageId, MAX(offerName) AS offerName, DATE_FORMAT(MIN(validityStart), '%M %e, %Y') AS validityStart, DATE_FORMAT(MAX(validityEnd), '%M %e, %Y') AS validityEnd from $alertOfferTable WHERE packageId = $packageId AND isClosed = 0 AND startDate < NOW() AND endDate > NOW() GROUP BY packageId";
+				$alertPackage = $this->Ticket->query($q);
+				$alertPackageData = $alertPackage[0][0];
+
 				$templateFile = "41_leadgen_alert";
 				$emailSubject = $templateTitle = $clientNameP . " has a new vacation experience";
 				$hideSalutation = true;
