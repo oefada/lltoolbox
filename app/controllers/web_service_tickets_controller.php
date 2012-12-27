@@ -2907,6 +2907,8 @@ class WebServiceTicketsController extends WebServicesController
 	function runPostChargeSuccess($ticket, $data, $usingUpsId, $userPaymentSettingPost, $promoGcCofData, $toolboxManualCharge) {
 		$this->errorMsg = "Start";
 		$this->logError(__METHOD__);
+		
+		//$this->CreditBank->martin_logging("run1");
 
 		// allocate revenue to loa and tracks
 		// ---------------------------------------------------------------------------
@@ -2945,8 +2947,10 @@ class WebServiceTicketsController extends WebServicesController
 		// get data for event registry tracking
 		// ---------------------------------------------------------------------------
 		$eventRegistryDataResult = $this->getCreditBankAssets($ticket['Ticket']['userId']);
-		$eventRegistryData['totalCredit'] = $eventRegistryDataResult['0']['totalCredit'];
-		$eventRegistryData['creditBankId'] = $eventRegistryDataResult['c']['creditBankId'];
+		$eventRegistryData['totalCreditBank'] = $eventRegistryDataResult['totalCreditBank'];
+		$eventRegistryData['creditBankId'] = $eventRegistryDataResult['creditBankId'];
+		$eventRegistryData['cof'] = $eventRegistryDataResult['cof'];
+		
 		$eventRegistryData['ticketCost'] = $promoGcCofData['Cof']['totalAmountOff'];
 		$eventRegistryData['ticketId'] = $ticket['Ticket']['ticketId'];
 		$eventRegistryData['userId'] = $ticket['Ticket']['userId'];
@@ -3108,14 +3112,19 @@ function wstErrorShutdown() {
 function getCreditBankAssets($userId){
 	
 	// get user's credit info
-	$result = $this->CreditTracking->find('last',array(
+	$result = $this->CreditTracking->find('first',array(
 				'conditions' => array('CreditTracking.userId' => $userId),
 				'order' => array('CreditTracking.datetime' => 'DESC')
 			));
-	$credit['cof'] = $result['CreditTracking']['amount'];
+	$credit['cof'] = $result['CreditTracking']['balance'];
 	
 	// get user's total credit bank info
-	$credit['creditBank'] = $this->CreditBank->getUserTotalAmount($userId);
-	if(is_null($credit['creditBank'])){ $credit['creditBank'] = 0; }
+	$result = $this->CreditBank->getUserTotalAmount($userId);
+	if(is_null($result)){ $credit['totalCreditBank'] = 0; }
+	else {
+		$credit['totalCreditBank'] = $result[0]['totalCreditBank'];
+		$credit['creditBankId'] = $result['c']['creditBankId'];
+	}
 	
+	return $credit;
 }
