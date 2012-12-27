@@ -37,7 +37,7 @@ class WebServiceTicketsController extends WebServicesController
 					  'ClientLoaPackageRel', 'Track', 'OfferType', 'Loa', 'TrackDetail', 'PpvNotice',
 					  'Address', 'OfferLuxuryLink', 'SchedulingMaster', 'SchedulingInstance', 'Reservation',
 					  'PromoTicketRel', 'Promo', 'TicketReferFriend','Package','PaymentProcessor','CakeLog',
-					  'ClientThemeRel', 'Image', 'ImageClient',
+					  'ClientThemeRel', 'Image', 'ImageClient','CreditTracking', 'CreditBank'
 					  );
 
 	var $serviceUrl = 'http://toolbox.luxurylink.com/web_service_tickets';
@@ -2942,6 +2942,15 @@ class WebServiceTicketsController extends WebServicesController
 			$this->logError(__METHOD__);
 		}
 
+		// get data for event registry tracking
+		// ---------------------------------------------------------------------------
+		$eventRegistryDataResult = $this->getCreditBankAssets($ticket['Ticket']['userId']);
+		$eventRegistryData['totalCredit'] = $eventRegistryDataResult['0']['totalCredit'];
+		$eventRegistryData['creditBankId'] = $eventRegistryDataResult['c']['creditBankId'];
+		$eventRegistryData['ticketCost'] = $promoGcCofData['Cof']['totalAmountOff'];
+		$eventRegistryData['ticketId'] = $ticket['Ticket']['ticketId'];
+		$eventRegistryData['userId'] = $ticket['Ticket']['userId'];
+
 		// if saving new user card information
 		// ---------------------------------------------------------------------------
 		if ($data['saveUps'] && !$usingUpsId && !empty($userPaymentSettingPost['UserPaymentSetting'])) {
@@ -2984,9 +2993,12 @@ class WebServiceTicketsController extends WebServicesController
 
 		if (isset($promoGcCofData['Cof']) && isset($promoGcCofData['Cof']['applied']) && $promoGcCofData['Cof']['applied'] == 1) {
 			$promoGcCofData['Cof']['creditTrackingTypeId'] = 1;
-			$this->PaymentDetail->saveCof($ticket['Ticket']['ticketId'], $promoGcCofData['Cof'], $ticket['Ticket']['userId'], $data['autoCharge'], $data['initials'],$toolboxManualCharge);
+			$this->PaymentDetail->saveCof($ticket['Ticket']['ticketId'], $promoGcCofData['Cof'], $ticket['Ticket']['userId'], $data['autoCharge'], $data['initials'],$toolboxManualCharge, $eventRegistryData);
 			$this->errorMsg = "CoF Saved";
 			$this->logError(__METHOD__);
+			
+			// calculate how much of CoF used is coming from the creditBank
+			$this->CreditBankItem->saveCreditPurchaseRecord($eventRegistryData);
 		}
 
 		$this->Ticket->save($ticketStatusChange);
@@ -3090,4 +3102,20 @@ function wstErrorShutdown() {
 	} else {
 		//CakeLog::write("debug","STRICT: ".var_export($error,1));
 	}
+}
+
+
+function getCreditBankAssets($userId){
+	
+	// get user's credit info
+	$result = $this->CreditTracking->find('last',array(
+				'conditions' => array('CreditTracking.userId' => $userId),
+				'order' => array('CreditTracking.datetime' => 'DESC')
+			));
+	$credit['cof'] = $result['CreditTracking']['amount'];
+	
+	// get user's total credit bank info
+	$credit['creditBank'] = $this->CreditBank->getUserTotalAmount($userId);
+	if(is_null($credit['creditBank'])){ $credit['creditBank'] = 0; }
+	
 }
