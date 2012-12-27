@@ -596,8 +596,7 @@ class WebServiceTicketsController extends WebServicesController
 			}
 
 			$test_card=false;
-			$tmpCC=$user_payment_setting['UserPaymentSetting']['ccNumber'];
-			$tmpCC=aesFullDecrypt($tmpCC);
+			$tmpCC = $this->UserPaymentSetting->detokenizeCcNum($user_payment_setting['UserPaymentSetting']['ccToken']);
 			if ($tmpCC == "4111111111111111"){
 				$test_card=true;
 			}
