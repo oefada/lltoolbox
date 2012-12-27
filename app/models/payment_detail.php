@@ -19,8 +19,9 @@ class PaymentDetail extends AppModel {
 	  'PaymentProcessor' => array(
 			'foreignKey' => 'paymentProcessorId',
 		),
-  );
-
+     );
+	
+	var $uses = array('CreditBankItem');
 
 	/**
 	 * Get payment detail for a ticketId. Add promo details if additional details are returned ($rows[1])
@@ -95,7 +96,7 @@ class PaymentDetail extends AppModel {
 		$this->GiftCertBalance->save($data);
 	}
 
-	function saveCof($ticketId, $cofData, $userId, $auto = 0, $initials = 'NA',$dontSavePayment = false) {
+	function saveCof($ticketId, $cofData, $userId, $auto = 0, $initials = 'NA',$dontSavePayment = false, $eventRegistryData) {
 		$paymentDetail = array();
 		$paymentDetail['paymentTypeId'] 		= 3;
 		$paymentDetail['paymentProcessorId'] 	= 6;
@@ -110,6 +111,10 @@ class PaymentDetail extends AppModel {
 		if (!$dontSavePayment) {
 			$this->create();
 			$this->save($paymentDetail);
+			
+			// save to creditBankItems
+			$eventRegistryData['paymentDetailId'] = $this->getLastInsertID();
+			$this->CreditBankItem->saveCreditPurchaseRecord($eventRegistryData);
 		}
 
 		$this->CreditTracking = ClassRegistry::init("CreditTracking");
