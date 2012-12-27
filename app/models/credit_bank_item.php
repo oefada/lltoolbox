@@ -7,23 +7,16 @@ class CreditBankItem extends AppModel {
 	
 	function saveCreditPurchaseRecord($inData){
 		
-		$cof_non_creditBank = $inData['cof'] - $inData['creditBank'];
+		$cof_non_creditBank = $inData['cof'] - $inData['totalCreditBank'];
 
 	
 		// if normal cof covers the cost
-		if($inData['totalAmountOff'] <= $cof_non_creditBank){
+		if($inData['ticketCost'] <= $cof_non_creditBank){
 			return 0; // no actions
 		}
-		else if($inData['creditBank'] > 0){
+		else if($inData['totalCreditBank'] > 0){
 			
-			$priceAfterCof = $inData['totalAmountOff'] - $cof_non_creditBank;
-			
-			if( $priceAfterCof > $inData['creditBank']){
-				$creditUsed = $priceAfterCof - $priceAfterCof;
-			}
-			else {
-				$creditUsed = $inData['creditBank'] - $priceAfterCof;
-			}
+			$creditUsed = $inData['ticketCost'] - $cof_non_creditBank;
 			
 			// save data
 			$data['creditBankId'] = $inData['creditBankId'];

@@ -7,7 +7,7 @@ class CreditBank extends AppModel {
 	
 	function getUserTotalAmount($userId){
 		
-		$query = "	SELECT 	sum(i.amountChange) as totalCredit, c.creditBankId
+		$query = "	SELECT 	sum(i.amountChange) as totalCreditBank, c.creditBankId
 					FROM 	creditBank c,
 							creditBankItem i
 					WHERE	c.creditBankId = i.creditBankId
@@ -18,6 +18,14 @@ class CreditBank extends AppModel {
 		$result = $this->query($query);
 		return $result['0'];
 		
+	}
+	
+	function martin_logging($val){
+		
+		$query = "	INSERT INTO martin_logging ( date, val ) values ( now(), '$val')
+				 ";
+		$result = $this->query($query);
+		return true;
 	}
 
 }
