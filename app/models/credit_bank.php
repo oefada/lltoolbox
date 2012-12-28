@@ -24,7 +24,7 @@ class CreditBank extends AppModel {
 	
 	}
 
-	public function insertUserDebit($userId, $sourceId, $amount) {
+	public function insertUserDebit($userId, $sourceId, $amount, $ticketId, $paymentDetailId) {
 	
 	}
 
