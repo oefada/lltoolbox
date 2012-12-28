@@ -56,6 +56,11 @@ class NOVA
 		return $processed;
 	}
 
+	public function AddCvc($cvc) {
+		$this->post_data['ssl_cvv2cvc2'] 			= $cvc;
+		$this->post_data['ssl_cvv2cvc2_indicator'] 	= '1';
+	}
+
 	public function ChargeSuccess($response) {
 		if(isset($response['ssl_result'])) {
 			if($response['ssl_result'] == 0) {// DISABLE AVS FOR NOW - rvella 2-29-2012 && in_array($response['ssl_avs_response'],$this->valid_avs_codes)) {

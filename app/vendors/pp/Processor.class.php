@@ -105,6 +105,10 @@ class Processor
 		return $this->module->IsValidResponse($this->response_data, $ticket_id);
 	}
 
+	function AddCvc($cvc) {
+		return $this->module->AddCvc($cvc);
+	}
+
 	function dummyMappedResponse() {
 		$paymentDetail['ppResponseDate']		= date('Y-m-d H:i:s', strtotime('now'));
 		$paymentDetail['ppTransactionId']		= "DUMMY-TEST";
