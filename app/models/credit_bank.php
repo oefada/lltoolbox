@@ -29,6 +29,30 @@ class CreditBank extends AppModel {
 		
 	}
 
+	public function saveCreditPurchaseRecordNEW($inData){
+		
+		$cof_non_creditBank = $inData['cof'] - $inData['totalCreditBank'];
+
+		// if normal cof covers the cost
+		if($inData['ticketCost'] <= $cof_non_creditBank){
+			return 0; // no actions
+		}
+		else if($inData['totalCreditBank'] > 0){
+			
+			$creditUsed = $inData['ticketCost'] - $cof_non_creditBank;
+			
+			// what determines the source?
+			$creditSource = (isset($inData['creditBankItemSourceId'])) ? $inData['creditBankItemSourceId'] : self::SOURCE_REGISTRY;
+			
+			$this->debitBankForTicketPurchase($inData['creditBankId'], $creditUsed, $creditSource, $inData['ticketId'], $inData['paymentDetailId']);
+		}
+		else {
+			return 0;
+		}
+		
+	}
+
+
 	public function creditUserForEventRegistry($userId, $amount, $eventRegistryDonorId) {
 		$bankId = $this->getUserCreditBankId($userId);
 		return $this->creditBankForEventRegistry($bankId, $amount, $eventRegistryDonorId);
@@ -54,7 +78,7 @@ class CreditBank extends AppModel {
 	private function debitBankForTicketPurchase($bankId, $amount, $sourceId, $ticketId, $paymentDetailId) {
 		$data = array();
 		$data['creditBankId'] = $bankId;
-		$data['amountChange'] = $amount;
+		$data['amountChange'] = $amount * -1;
 		$data['creditBankItemSourceId'] = $sourceId;
 		$data['ticketId'] = $ticketId;
 		$data['paymentDetailId'] = $paymentDetailId;
