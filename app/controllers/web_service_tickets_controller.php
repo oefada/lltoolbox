@@ -3055,11 +3055,12 @@ class WebServiceTicketsController extends WebServicesController
 	public function processPaymentGift($in0) {
 
 		// $data['eventRegistryId'] 
+		// $data['eventRegistryUserId'] 
 		// $data['donorUserId']
 		// $data['giftAmount'] 
 		// $data['giftMessage'] 
+		// $data['initials']
 		// $data['userPaymentSetting'] 
-		// $data['initials'] 
 		$data = json_decode($in0, true);
 
 		$isDev = (ISDEV || ISSTAGE);
@@ -3130,6 +3131,7 @@ class WebServiceTicketsController extends WebServicesController
 			$this->Ticket->query("UPDATE eventRegistryDonor SET statusId = 1 WHERE eventRegistryDonorId = $donationId");
 			
 			// update user bank
+			$this->CreditBank->insertCreditEventRegistry($eventRegistryUserId, $totalChargeAmount, $donationId);
 			$this->Ticket->query("UPDATE eventRegistryDonor SET statusId = 2 WHERE eventRegistryDonorId = $donationId");
 
 			// CakeLog::write("web_service_tickets_controller", var_export(array("WEB SERVICE TICKETS: ",$paymentDetail,$promoGcCofData),1));

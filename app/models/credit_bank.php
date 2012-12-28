@@ -4,6 +4,8 @@ class CreditBank extends AppModel {
 	public $name = 'CreditBank';
 	public $useTable = 'creditBank';
 	public $primaryKey = 'creditBankId';
+
+	const SOURCE_REGISTRY = 1;
 	
 	function getUserTotalAmount($userId){
 		
@@ -20,12 +22,36 @@ class CreditBank extends AppModel {
 		
 	}
 
-	public function insertUserCredit($userId, $sourceId, $amount) {
+	public function insertCreditEventRegistry($userId, $amount, $eventRegistryDonorId) {
 	
+		// insert cbi record 
+		$data = array();
+		$data['creditBankId'] = $this->getUserCreditBankId($userId);
+		$data['amountChange'] = $amount;
+		$data['eventRegistryDonorId'] = $eventRegistryDonorId;
+		$data['creditBankItemSourceId'] = self::SOURCE_REGISTRY;
+
 	}
 
-	public function insertUserDebit($userId, $sourceId, $amount, $ticketId, $paymentDetailId) {
+	public function insertDebitTicketPurchase($userId, $amount, $sourceId, $ticketId, $paymentDetailId) {
 	
+		// insert cbi record 
+		$data = array();
+		$data['creditBankId'] = $this->getUserCreditBankId($userId);
+		$data['amountChange'] = $amount;
+		$data['creditBankItemSourceId'] = $sourceId;
+		$data['ticketId'] = $ticketId;
+		$data['paymentDetailId'] = $paymentDetailId;
+	}
+
+	public function getUserCreditBankId($userId) {
+	
+		// if bank exists for user return id
+		
+		// else, insert new bank and return id
+		
+		return 3;
+		
 	}
 
 	function martin_logging($val){
