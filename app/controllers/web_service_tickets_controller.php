@@ -37,7 +37,7 @@ class WebServiceTicketsController extends WebServicesController
 					  'ClientLoaPackageRel', 'Track', 'OfferType', 'Loa', 'TrackDetail', 'PpvNotice',
 					  'Address', 'OfferLuxuryLink', 'SchedulingMaster', 'SchedulingInstance', 'Reservation',
 					  'PromoTicketRel', 'Promo', 'TicketReferFriend','Package','PaymentProcessor','CakeLog',
-					  'ClientThemeRel', 'Image', 'ImageClient','CreditTracking', 'CreditBank'
+					  'ClientThemeRel', 'Image', 'ImageClient','CreditTracking', 'CreditBank', 'EventRegistryDonor'
 					  );
 
 	var $serviceUrl = 'http://toolbox.luxurylink.com/web_service_tickets';
@@ -106,6 +106,11 @@ class WebServiceTicketsController extends WebServicesController
 						'output' => array('return' => 'xsd:string')
 						),
 					'processPaymentTicket' => array(
+						'doc' => 'N/A',
+						'input' => array('in0' => 'xsd:string'),
+						'output' => array('return' => 'xsd:string')
+						),
+					'processPaymentGift' => array(
 						'doc' => 'N/A',
 						'input' => array('in0' => 'xsd:string'),
 						'output' => array('return' => 'xsd:string')
@@ -2085,6 +2090,20 @@ class WebServiceTicketsController extends WebServicesController
 					}
 				}
 				break;
+			case 48:
+				// $vcomSaleInfo = $params['vcomSaleInfo'];
+				// $vcomSaleInfo['tracking'] = 'utm_source=vac&utm_medium=xa&utm_campaign=abandon_vcom';
+				// $vcomSaleInfo['pdpLink'] = 'http://www.vacationist.com/visitors/hotels/id/' . $vcomSaleInfo['clientId'] . '/visitor/' . $params['vcomUserHash'] . '/?' . $vcomSaleInfo['tracking'];				
+				$emailSubject = "Your Honeymoon Registry";
+				include('../vendors/email_msgs/notifications/48_registry_created_honeymoon.html');
+				break;
+			case 49:
+				// $vcomSaleInfo = $params['vcomSaleInfo'];
+				// $vcomSaleInfo['tracking'] = 'utm_source=vac&utm_medium=xa&utm_campaign=abandon_vcom';
+				// $vcomSaleInfo['pdpLink'] = 'http://www.vacationist.com/visitors/hotels/id/' . $vcomSaleInfo['clientId'] . '/visitor/' . $params['vcomUserHash'] . '/?' . $vcomSaleInfo['tracking'];				
+				$emailSubject = "Our Honeymoon Registry";
+				include('../vendors/email_msgs/notifications/49_registry_share_honeymoon.html');
+				break;
 			default:
 				break;
 		}
@@ -3029,6 +3048,111 @@ class WebServiceTicketsController extends WebServicesController
 		$this->errorMsg = "End CHARGE_SUCCESS";
 		$this->logError(__METHOD__);
 		return 'CHARGE_SUCCESS';
+	}
+
+
+
+	public function processPaymentGift($in0) {
+
+		// $data['eventRegistryId'] 
+		// $data['donorUserId']
+		// $data['giftAmount'] 
+		// $data['giftMessage'] 
+		// $data['userPaymentSetting'] 
+		// $data['initials'] 
+		$data = json_decode($in0, true);
+
+		$isDev = (ISDEV || ISSTAGE);
+		if (defined('CRON_ENV')) {
+			if (CRON_ENV == 'dev' || CRON_ENV == 'stage') {
+				$isDev = true;
+			}
+		}
+
+		$userPaymentSettingPost['UserPaymentSetting'] = (isset($data['userPaymentSetting'])) ? $data['userPaymentSetting'] : 0;
+		$userPaymentSettingPost['UserPaymentSetting']['ccNumber'] =
+			$this->UserPaymentSetting->detokenizeCcNum($userPaymentSettingPost['UserPaymentSetting']['ccToken']);
+
+		$eventRegistryId = $data['eventRegistryId'];
+		$eventRegistryUserId = $data['eventRegistryUserId'];
+		$totalChargeAmount = $data['giftAmount'];
+		
+		$ticketInfo = array();
+		$ticketInfo['Ticket']['ticketId'] = 'ER' . $eventRegistryId;
+		$ticketInfo['Ticket']['billingPrice'] = $totalChargeAmount;
+
+		$isTestCard = ($isDev) ? true : false;
+		$processor = new Processor('NOVA', $isTestCard);
+		
+		// cvc required for gift 
+		$processor->AddCvc($userPaymentSettingPost['UserPaymentSetting']['cvc']);
+		$processor->InitPayment($userPaymentSettingPost, $ticketInfo);
+		
+		if (!$isDev) {
+			$processor->SubmitPost();
+		}
+
+		if ((isset($processor) && $processor->ChargeSuccess()) || $isDev) {
+			$donationDetail = array();
+			$mappedResponse = $processor->GetMappedResponse();
+			
+			$donationDetail['eventRegistryId']		= $eventRegistryId;
+			$donationDetail['userId']				= $data['donorUserId'];
+			$donationDetail['transactionId']		= $mappedResponse['ppTransactionId'];
+			$donationDetail['personalNote']			= $data['giftMessage'];
+			$donationDetail['amount']				= $totalChargeAmount;
+			$donationDetail['dateCreated']			= date('Y-m-d h:i:s');
+			$donationDetail['donorFirstName']		= $data['firstName'];
+			$donationDetail['donorLastName']		= $data['lastName'];
+			$donationDetail['donorAddress1']		= $userPaymentSettingPost['UserPaymentSetting']['address1'];
+			$donationDetail['donorAddress2']		= $userPaymentSettingPost['UserPaymentSetting']['address2'];
+			$donationDetail['donorCity']			= $userPaymentSettingPost['UserPaymentSetting']['city'];
+			$donationDetail['donorStateName']		= $userPaymentSettingPost['UserPaymentSetting']['state'];
+			$donationDetail['donorPostalCode']		= $userPaymentSettingPost['UserPaymentSetting']['postalCode'];
+			$donationDetail['donorCountryCode']		= $userPaymentSettingPost['UserPaymentSetting']['country'];
+			$donationDetail['ccDigits']				= substr($userPaymentSettingPost['UserPaymentSetting']['ccNumber'], -4, 4);
+			$donationDetail['ccType']				= $userPaymentSettingPost['UserPaymentSetting']['ccType'];
+			$donationDetail['statusId']				= 0;
+
+			$this->EventRegistryDonor->create();
+			$this->EventRegistryDonor->save($donationDetail);
+			$donationId = $this->EventRegistryDonor->id;
+
+			// update COF 
+			$creditDetail = array();
+			$creditDetail['creditTrackingTypeId'] = 6;
+			$creditDetail['userId'] = $eventRegistryUserId;
+			$creditDetail['amount'] = $totalChargeAmount;
+			$creditDetail['notes'] = 'EventRegistryDonor #' . $donationId;
+			$creditDetail['ticketId'] = 0;
+			$this->CreditTracking->create();
+			$cofResult = $this->CreditTracking->save($creditDetail);
+			$this->Ticket->query("UPDATE eventRegistryDonor SET statusId = 1 WHERE eventRegistryDonorId = $donationId");
+			
+			// update user bank
+			$this->Ticket->query("UPDATE eventRegistryDonor SET statusId = 2 WHERE eventRegistryDonorId = $donationId");
+
+			// CakeLog::write("web_service_tickets_controller", var_export(array("WEB SERVICE TICKETS: ",$paymentDetail,$promoGcCofData),1));
+			
+			return 'CHARGE_SUCCESS';
+			
+		} else {
+			//$failureDetail = array();
+			//$mappedResponse = $processor->GetMappedResponse();
+			
+			//$failureDetail['eventRegistryId']		= $eventRegistryId;
+			//$failureDetail['userId']				= $data['donorUserId'];
+			//$failureDetail['transactionId']			= $mappedResponse['ppTransactionId'];
+			//$failureDetail['amount']				= $totalChargeAmount;
+			//$failureDetail['dateCreated']			= date('Y-m-d h:i:s');
+			//$failureDetail['ccDigits']				= substr($userPaymentSettingPost['UserPaymentSetting']['ccNumber'], -4, 4);
+			//$failureDetail['ccType']				= $userPaymentSettingPost['UserPaymentSetting']['ccType'];
+
+			$response_txt = $processor->GetResponseTxt();
+			
+			// CakeLog::write("web_service_tickets_controller","DECLINED. RESPONSE: ".var_export($processor->GetMappedResponse(),1));
+			return $response_txt;
+		}
 	}
 
 	function logError($method,$msg = "") {
