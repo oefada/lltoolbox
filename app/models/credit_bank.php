@@ -22,22 +22,27 @@ class CreditBank extends AppModel {
 		
 	}
 
-	public function insertCreditEventRegistry($userId, $amount, $eventRegistryDonorId) {
-	
-		// insert cbi record 
+	public function insertUserCreditForEventRegistry($userId, $amount, $eventRegistryDonorId) {
+		$bankId = $this->getUserCreditBankId($userId);
+		return $this->insertBankCreditEventRegistry($bankId, $amount, $eventRegistryDonorId);
+	}
+
+	private function insertBankCreditForEventRegistry($bankId, $amount, $eventRegistryDonorId) {
 		$data = array();
-		$data['creditBankId'] = $this->getUserCreditBankId($userId);
+		$data['creditBankId'] = $bankId;
 		$data['amountChange'] = $amount;
 		$data['eventRegistryDonorId'] = $eventRegistryDonorId;
 		$data['creditBankItemSourceId'] = self::SOURCE_REGISTRY;
-
 	}
 
-	public function insertDebitTicketPurchase($userId, $amount, $sourceId, $ticketId, $paymentDetailId) {
-	
-		// insert cbi record 
+	public function insertUserDebitForTicketPurchase($userId, $amount, $sourceId, $ticketId, $paymentDetailId) {
+		$bankId = $this->getUserCreditBankId($userId);
+		return $this->insertBankCreditEventRegistry($bankId, $amount, $sourceId, $ticketId, $paymentDetailId);
+	}
+
+	private function insertBankDebitForTicketPurchase($bankId, $amount, $sourceId, $ticketId, $paymentDetailId) {
 		$data = array();
-		$data['creditBankId'] = $this->getUserCreditBankId($userId);
+		$data['creditBankId'] = $bankId;
 		$data['amountChange'] = $amount;
 		$data['creditBankItemSourceId'] = $sourceId;
 		$data['ticketId'] = $ticketId;
