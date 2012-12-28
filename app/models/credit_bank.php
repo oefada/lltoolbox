@@ -29,7 +29,7 @@ class CreditBank extends AppModel {
 		
 	}
 
-	public function saveCreditPurchaseRecordNEW($inData){
+	public function saveCreditPurchaseRecord($inData){
 		
 		$cof_non_creditBank = $inData['cof'] - $inData['totalCreditBank'];
 

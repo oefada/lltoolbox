@@ -111,13 +111,11 @@ class PaymentDetail extends AppModel {
 		if (!$dontSavePayment) {
 			$this->create();
 			$this->save($paymentDetail);
-			
-			App::import('model','CreditBankItem');
-			$cbi = new CreditBankItem();
-			
-			// save to creditBankItems
+						
+			// save to CreditBank
 			$eventRegistryData['paymentDetailId'] = $this->getLastInsertID();
-			$cbi->saveCreditPurchaseRecord($eventRegistryData);
+			$bank = ClassRegistry::init("CreditBank");
+			$bank->saveCreditPurchaseRecord($eventRegistryData);
 		}
 
 		$this->CreditTracking = ClassRegistry::init("CreditTracking");
