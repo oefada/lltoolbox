@@ -83,12 +83,12 @@ class WebServiceNewClientsController extends WebServicesController
 				$client_cake_save = array();
 				$client_cake_save['Client'] = $client_data_save;
 	        	if (!$this->Client->save($client_cake_save, array('callbacks' => false))) {
-					@mail('devmail@luxurylink.com', 'SUGAR BUS -- EXISTING CLIENT NOT SAVED', print_r($client_data_save, true) . print_r($this->Client->validationErrors, true) . print_r($decoded_request, true) . print_r($this->Client->validationErrors, true));
+					@mail('dev@luxurylink.com', 'SUGAR BUS -- EXISTING CLIENT NOT SAVED', print_r($client_data_save, true) . print_r($this->Client->validationErrors, true) . print_r($decoded_request, true) . print_r($this->Client->validationErrors, true));
 				}
 	        	$decoded_request['client']['client_id'] = $client_id;
 			} else {
 				// the client id was invalid so send devmail, and do nothing
-				@mail('devmail@luxurylink.com', 'SUGAR BUS [CLIENT] -- INVALID CLIENTID', print_r($client_data_save, true) . print_r($decoded_request, true));
+				@mail('dev@luxurylink.com', 'SUGAR BUS [CLIENT] -- INVALID CLIENTID', print_r($client_data_save, true) . print_r($decoded_request, true));
 				return false;
 			}
 		} else {
@@ -96,7 +96,7 @@ class WebServiceNewClientsController extends WebServicesController
 			// 10/7/2011 jwoods - duplicate name check
 			$dupClient = $this->Client->query("SELECT * FROM client WHERE name = ?", array($decoded_request['client']['client_name']));
 			if (isset($dupClient[0]) && isset($dupClient[0]['client']['clientId'])) {
-				@mail('jwoods@luxurylink.com', 'SUGAR BUS -- DUPLICATE CLIENT NAME', print_r($dupClient, true) . print_r($decoded_request, true));
+				@mail('dev@luxurylink.com', 'SUGAR BUS -- DUPLICATE CLIENT NAME', print_r($dupClient, true) . print_r($decoded_request, true));
 				$decoded_request['request']['response'] = '-1';
 				$decoded_request['request']['response_time'] = time();
 				$decoded_request['client']['client_id'] = -1;
