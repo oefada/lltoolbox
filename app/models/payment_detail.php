@@ -21,7 +21,7 @@ class PaymentDetail extends AppModel {
 		),
      );
 	
-	var $uses = array('CreditBankItem');
+
 
 	/**
 	 * Get payment detail for a ticketId. Add promo details if additional details are returned ($rows[1])
@@ -112,9 +112,12 @@ class PaymentDetail extends AppModel {
 			$this->create();
 			$this->save($paymentDetail);
 			
+			App::import('model','CreditBankItem');
+			$cbi = new CreditBankItem();
+			
 			// save to creditBankItems
 			$eventRegistryData['paymentDetailId'] = $this->getLastInsertID();
-			$this->CreditBankItem->saveCreditPurchaseRecord($eventRegistryData);
+			$cbi->saveCreditPurchaseRecord($eventRegistryData);
 		}
 
 		$this->CreditTracking = ClassRegistry::init("CreditTracking");

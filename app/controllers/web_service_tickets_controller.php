@@ -3001,7 +3001,7 @@ class WebServiceTicketsController extends WebServicesController
 			$this->logError(__METHOD__);
 			
 			// calculate how much of CoF used is coming from the creditBank
-			$this->CreditBankItem->saveCreditPurchaseRecord($eventRegistryData);
+			// $this->CreditBankItem->saveCreditPurchaseRecord($eventRegistryData);
 		}
 
 		$this->Ticket->save($ticketStatusChange);
@@ -3044,6 +3044,26 @@ class WebServiceTicketsController extends WebServicesController
 		return $this->errorResponse;
 		exit;
 	}
+	
+	function getCreditBankAssets($userId){
+
+		// get user's credit info
+		$result = $this->CreditTracking->find('first',array(
+					'conditions' => array('CreditTracking.userId' => $userId),
+					'order' => array('CreditTracking.datetime' => 'DESC')
+				));
+		$credit['cof'] = $result['CreditTracking']['balance'];
+
+		// get user's total credit bank info
+		$result = $this->CreditBank->getUserTotalAmount($userId);
+		if(is_null($result)){ $credit['totalCreditBank'] = 0; }
+		else {
+			$credit['totalCreditBank'] = $result[0]['totalCreditBank'];
+			$credit['creditBankId'] = $result['c']['creditBankId'];
+		}
+
+		return $credit;
+	}	
 }
 
 function wstErrorHandler($errno, $errstr, $errfile, $errline) {
@@ -3108,22 +3128,4 @@ function wstErrorShutdown() {
 }
 
 
-function getCreditBankAssets($userId){
-	
-	// get user's credit info
-	$result = $this->CreditTracking->find('first',array(
-				'conditions' => array('CreditTracking.userId' => $userId),
-				'order' => array('CreditTracking.datetime' => 'DESC')
-			));
-	$credit['cof'] = $result['CreditTracking']['balance'];
-	
-	// get user's total credit bank info
-	$result = $this->CreditBank->getUserTotalAmount($userId);
-	if(is_null($result)){ $credit['totalCreditBank'] = 0; }
-	else {
-		$credit['totalCreditBank'] = $result[0]['totalCreditBank'];
-		$credit['creditBankId'] = $result['c']['creditBankId'];
-	}
-	
-	return $credit;
-}
+
