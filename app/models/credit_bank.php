@@ -19,7 +19,15 @@ class CreditBank extends AppModel {
 		return $result['0'];
 		
 	}
+
+	public function insertUserCredit($userId, $sourceId, $amount) {
 	
+	}
+
+	public function insertUserDebit($userId, $sourceId, $amount) {
+	
+	}
+
 	function martin_logging($val){
 		
 		$query = "	INSERT INTO martin_logging ( date, val ) values ( now(), '$val')
@@ -27,5 +35,8 @@ class CreditBank extends AppModel {
 		$result = $this->query($query);
 		return true;
 	}
+
+
+
 
 }
