@@ -2091,9 +2091,7 @@ class WebServiceTicketsController extends WebServicesController
 				}
 				break;
 			case 48:
-				// $vcomSaleInfo = $params['vcomSaleInfo'];
-				// $vcomSaleInfo['tracking'] = 'utm_source=vac&utm_medium=xa&utm_campaign=abandon_vcom';
-				// $vcomSaleInfo['pdpLink'] = 'http://www.vacationist.com/visitors/hotels/id/' . $vcomSaleInfo['clientId'] . '/visitor/' . $params['vcomUserHash'] . '/?' . $vcomSaleInfo['tracking'];				
+				$eventRegistryUrl = $params['eventRegistryUrl'];
 				$emailSubject = "Your Honeymoon Registry";
 				include('../vendors/email_msgs/notifications/48_registry_created_honeymoon.html');
 				break;
@@ -2132,7 +2130,7 @@ class WebServiceTicketsController extends WebServicesController
 			}
 		} else {
 			$emailBody = ob_get_clean();
-			$ppvNoticeTypeIdArr=array(42, 43, 45);
+			$ppvNoticeTypeIdArr=array(42, 43, 45, 48, 49);
 			if (in_array($ppvNoticeTypeId, $ppvNoticeTypeIdArr)){
 				$emailBody = $this->utmLinks($emailBody, $ppvNoticeTypeId, $append);
 			}
