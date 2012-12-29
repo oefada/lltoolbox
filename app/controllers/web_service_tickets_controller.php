@@ -10,7 +10,7 @@ It will write to toolbox/development/app/tmp/logs/debug.log
 
 */
 
-Configure::write('debug', 0);
+Configure::write('debug', 0); 
 App::import('Vendor', 'nusoap/web_services_controller');
 
 // Need the phone numbers set in the base class
@@ -2967,9 +2967,10 @@ class WebServiceTicketsController extends WebServicesController
 		$eventRegistryData['creditBankId'] = $eventRegistryDataResult['creditBankId'];
 		$eventRegistryData['cof'] = $eventRegistryDataResult['cof'];
 		
-		$eventRegistryData['ticketCost'] = $promoGcCofData['Cof']['totalAmountOff'];
+		$eventRegistryData['totalAmountOff'] = $promoGcCofData['Cof']['totalAmountOff'];
 		$eventRegistryData['ticketId'] = $ticket['Ticket']['ticketId'];
 		$eventRegistryData['userId'] = $ticket['Ticket']['userId'];
+		$this->CreditBank->martin_logging("Gather Data Done. UserId: " . $ticket['Ticket']['userId'] . "; Bank: " . $eventRegistryData['totalCreditBank'] . "; CoF: " . $eventRegistryData['cof']);
 
 		// if saving new user card information
 		// ---------------------------------------------------------------------------
@@ -3011,6 +3012,7 @@ class WebServiceTicketsController extends WebServicesController
 			$this->logError(__METHOD__);
 		}
 
+		$this->CreditBank->martin_logging("Credit on File processing.");
 		if (isset($promoGcCofData['Cof']) && isset($promoGcCofData['Cof']['applied']) && $promoGcCofData['Cof']['applied'] == 1) {
 			$promoGcCofData['Cof']['creditTrackingTypeId'] = 1;
 			$this->PaymentDetail->saveCof($ticket['Ticket']['ticketId'], $promoGcCofData['Cof'], $ticket['Ticket']['userId'], $data['autoCharge'], $data['initials'],$toolboxManualCharge, $eventRegistryData);

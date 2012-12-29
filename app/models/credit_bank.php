@@ -31,20 +31,28 @@ class CreditBank extends AppModel {
 
 	public function saveCreditPurchaseRecord($inData){
 		
+		//$this->martin_logging("Save Step 1.");
+		
 		$cof_non_creditBank = $inData['cof'] - $inData['totalCreditBank'];
 
+		
+		//$this->martin_logging("Save Step 2.");
 		// if normal cof covers the cost
-		if($inData['ticketCost'] <= $cof_non_creditBank){
+		if($inData['totalAmountOff'] <= $cof_non_creditBank){
 			return 0; // no actions
 		}
 		else if($inData['totalCreditBank'] > 0){
 			
-			$creditUsed = $inData['ticketCost'] - $cof_non_creditBank;
+			//$this->martin_logging("Save Step 3.");
+			
+			$creditUsed = $inData['totalAmountOff'] - $cof_non_creditBank;
 			
 			// what determines the source?
 			$creditSource = (isset($inData['creditBankItemSourceId'])) ? $inData['creditBankItemSourceId'] : self::SOURCE_REGISTRY;
 			
+			//$this->martin_logging("Save Step 4.");
 			$this->debitBankForTicketPurchase($inData['creditBankId'], $creditUsed, $creditSource, $inData['ticketId'], $inData['paymentDetailId']);
+			//$this->martin_logging("Save Step 5.");
 		}
 		else {
 			return 0;
