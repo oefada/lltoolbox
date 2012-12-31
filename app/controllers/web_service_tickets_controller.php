@@ -3103,6 +3103,7 @@ class WebServiceTicketsController extends WebServicesController
 			$donationDetail['personalNote']			= $data['giftMessage'];
 			$donationDetail['amount']				= $totalChargeAmount;
 			$donationDetail['dateCreated']			= date('Y-m-d h:i:s');
+			$donationDetail['donorNameOnCard']		= $userPaymentSettingPost['UserPaymentSetting']['nameOnCard'];
 			$donationDetail['donorAddress1']		= $userPaymentSettingPost['UserPaymentSetting']['address1'];
 			$donationDetail['donorAddress2']		= $userPaymentSettingPost['UserPaymentSetting']['address2'];
 			$donationDetail['donorCity']			= $userPaymentSettingPost['UserPaymentSetting']['city'];
