@@ -2096,9 +2096,9 @@ class WebServiceTicketsController extends WebServicesController
 				include('../vendors/email_msgs/notifications/48_registry_created_honeymoon.html');
 				break;
 			case 49:
-				// $vcomSaleInfo = $params['vcomSaleInfo'];
-				// $vcomSaleInfo['tracking'] = 'utm_source=vac&utm_medium=xa&utm_campaign=abandon_vcom';
-				// $vcomSaleInfo['pdpLink'] = 'http://www.vacationist.com/visitors/hotels/id/' . $vcomSaleInfo['clientId'] . '/visitor/' . $params['vcomUserHash'] . '/?' . $vcomSaleInfo['tracking'];				
+				$eventRegistryUrl = $params['eventRegistryUrl'];
+				$eventRegistryName = $params['eventRegistryName'];
+				$eventRegistryMessage = $params['eventRegistryMessage'];
 				$emailSubject = "Our Honeymoon Registry";
 				include('../vendors/email_msgs/notifications/49_registry_share_honeymoon.html');
 				break;
