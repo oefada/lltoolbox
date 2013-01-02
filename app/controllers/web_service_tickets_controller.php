@@ -2923,8 +2923,7 @@ class WebServiceTicketsController extends WebServicesController
 	function runPostChargeSuccess($ticket, $data, $usingUpsId, $userPaymentSettingPost, $promoGcCofData, $toolboxManualCharge) {
 		$this->errorMsg = "Start";
 		$this->logError(__METHOD__);
-		
-		//$this->CreditBank->martin_logging("run1");
+
 
 		// allocate revenue to loa and tracks
 		// ---------------------------------------------------------------------------
@@ -2970,8 +2969,8 @@ class WebServiceTicketsController extends WebServicesController
 		$eventRegistryData['totalAmountOff'] = $promoGcCofData['Cof']['totalAmountOff'];
 		$eventRegistryData['ticketId'] = $ticket['Ticket']['ticketId'];
 		$eventRegistryData['userId'] = $ticket['Ticket']['userId'];
-		$this->CreditBank->martin_logging("Gather Data Done. UserId: " . $ticket['Ticket']['userId'] . "; Bank: " . $eventRegistryData['totalCreditBank'] . "; CoF: " . $eventRegistryData['cof']);
-
+		$eventRegistryData['creditBankItemSourceId'] = 2;
+		
 		// if saving new user card information
 		// ---------------------------------------------------------------------------
 		if ($data['saveUps'] && !$usingUpsId && !empty($userPaymentSettingPost['UserPaymentSetting'])) {
@@ -3012,7 +3011,7 @@ class WebServiceTicketsController extends WebServicesController
 			$this->logError(__METHOD__);
 		}
 
-		$this->CreditBank->martin_logging("Credit on File processing.");
+		
 		if (isset($promoGcCofData['Cof']) && isset($promoGcCofData['Cof']['applied']) && $promoGcCofData['Cof']['applied'] == 1) {
 			$promoGcCofData['Cof']['creditTrackingTypeId'] = 1;
 			$this->PaymentDetail->saveCof($ticket['Ticket']['ticketId'], $promoGcCofData['Cof'], $ticket['Ticket']['userId'], $data['autoCharge'], $data['initials'],$toolboxManualCharge, $eventRegistryData);
