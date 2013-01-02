@@ -115,7 +115,6 @@ class PaymentDetail extends AppModel {
 			// save to CreditBank
 			$eventRegistryData['paymentDetailId'] = $this->getLastInsertID();
 			$bank = ClassRegistry::init("CreditBank");
-			//$bank->CreditBank->martin_logging("CreditBank Insert with PaymentDetailId: " . $eventRegistryData['paymentDetailId']);
 			$bank->saveCreditPurchaseRecord($eventRegistryData);
 		}
 

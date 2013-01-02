@@ -112,14 +112,64 @@ class CreditBank extends AppModel {
 		}
 	}
 
-	function martin_logging($val){
-		
-		$query = "	INSERT INTO martin_logging ( date, val ) values ( now(), '$val')
-				 ";
-		$result = $this->query($query);
-		return true;
-	}
 
+	public function refundCreditBankByTicket ( $ticketId, $manualValue = null ){
+		
+		$this->CreditBankItem->create();
+		
+		$query = "	SELECT 	t.userID
+					FROM 	ticket t,
+							creditBank c
+					WHERE 	t.ticketId = $ticketId
+					AND		t.userId = c.userId
+					AND		c.isActive = 1";
+		$result = $this->query($query);
+		
+		$userId = $result[0]['t']['userID'];
+		$creditBankId = $result[0]['c']['userID'];
+		
+		// if refund ticket credits back to creditBank from payment details
+		if(is_null($manualValue)){
+			
+			/*
+			 * To refund by a ticketId, the creditBankItem must be deduction from a purchase
+			 */
+			$query = "	SELECT	c.amountChange, c.paymentDetailId
+						FROM	creditBankItem c,
+								paymentDetail p
+						WHERE	c.ticketId = $ticketId
+						AND		c.creditBankItemSourceId = 2
+						AND		c.isActive = 1
+						AND		c.paymentDetailId = p.paymentDetailId
+						AND		p.ticketId = $ticketId
+						AND		c.amountChange < 0;
+					 ";
+			$result = $this->query($query);
+			
+			foreach($result as $r){
+				unset($data);
+				$data['creditBankId'] = $creditBankId;
+				$data['ticketId'] = $ticketId;
+				$data['paymentDetailId'] = $r['c']['paymentDetailId'];
+				$data['amountChange'] = $r['c']['amountChange'] * -1;
+				$data['creditBankItemSourceId'] = 3;
+				$data['dateCreated'] = date("Y-m-d H:i:s");
+				$data['isActive'] = 1;
+				$this->CreditBankItem->save($data);
+			}
+		}
+		// if refund a manual amount into the creditBank
+		else if(is_float($manualValue)){
+			$data['creditBankId'] = $creditBankId;
+			$data['ticketId'] = $ticketId;
+			$data['amountChange'] = $manualValue;
+			$data['creditBankItemSourceId'] = 4;
+			$data['dateCreated'] = date("Y-m-d H:i:s");
+			$data['isActive'] = 1;
+			$this->CreditBankItem->save($data);
+		}
+		
+	}
 
 
 
