@@ -2984,7 +2984,8 @@ class WebServiceTicketsController extends WebServicesController
 		$eventRegistryData['totalAmountOff'] = $promoGcCofData['Cof']['totalAmountOff'];
 		$eventRegistryData['ticketId'] = $ticket['Ticket']['ticketId'];
 		$eventRegistryData['userId'] = $ticket['Ticket']['userId'];
-		$eventRegistryData['creditBankItemSourceId'] = 2;
+		$eventRegistryData['creditBankItemSourceId'] = 1; // 1 refers to event registry transactions
+		$eventRegistryData['creditBankTransactionId'] = 2; // 2 refers to a deduction from the creditBank
 		
 		// if saving new user card information
 		// ---------------------------------------------------------------------------
