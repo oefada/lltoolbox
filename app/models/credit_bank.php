@@ -2,6 +2,7 @@
 class CreditBank extends AppModel {
 
 	const SOURCE_REGISTRY = 1;
+	const TRANSACTION_REGISTRY = 1;
 
 	public $name = 'CreditBank';
 	public $useTable = 'creditBank';
@@ -31,28 +32,21 @@ class CreditBank extends AppModel {
 
 	public function saveCreditPurchaseRecord($inData){
 		
-		//$this->martin_logging("Save Step 1.");
-		
 		$cof_non_creditBank = $inData['cof'] - $inData['totalCreditBank'];
 
-		
-		//$this->martin_logging("Save Step 2.");
 		// if normal cof covers the cost
 		if($inData['totalAmountOff'] <= $cof_non_creditBank){
 			return 0; // no actions
 		}
 		else if($inData['totalCreditBank'] > 0){
 			
-			//$this->martin_logging("Save Step 3.");
-			
 			$creditUsed = $inData['totalAmountOff'] - $cof_non_creditBank;
 			
 			// what determines the source?
 			$creditSource = (isset($inData['creditBankItemSourceId'])) ? $inData['creditBankItemSourceId'] : self::SOURCE_REGISTRY;
+			$transactionId = (isset($inData['creditBankTransactionId'])) ? $inData['creditBankTransactionId'] : self::TRANSACTION_REGISTRY;
 			
-			//$this->martin_logging("Save Step 4.");
-			$this->debitBankForTicketPurchase($inData['creditBankId'], $creditUsed, $creditSource, $inData['ticketId'], $inData['paymentDetailId']);
-			//$this->martin_logging("Save Step 5.");
+			$this->debitBankForTicketPurchase($inData['creditBankId'], $creditUsed, $creditSource, $transactionId, $inData['ticketId'], $inData['paymentDetailId']);
 		}
 		else {
 			return 0;
@@ -72,22 +66,24 @@ class CreditBank extends AppModel {
 		$data['amountChange'] = $amount;
 		$data['eventRegistryDonorId'] = $eventRegistryDonorId;
 		$data['creditBankItemSourceId'] = self::SOURCE_REGISTRY;
+		$data['creditBankTransactionId'] = self::TRANSACTION_REGISTRY;
 		$data['dateCreated'] = date("Y-m-d H:i:s");
 		$data['isActive'] = 1;
 		$this->CreditBankItem->create();
 		$result = $this->CreditBankItem->save($data);
 	}
 
-	public function debitUserForTicketPurchase($userId, $amount, $sourceId, $ticketId, $paymentDetailId) {
+	public function debitUserForTicketPurchase($userId, $amount, $sourceId, $transactionId, $ticketId, $paymentDetailId) {
 		$bankId = $this->getUserCreditBankId($userId);
-		return $this->debitBankForTicketPurchase($bankId, $amount, $sourceId, $ticketId, $paymentDetailId);
+		return $this->debitBankForTicketPurchase($bankId, $amount, $sourceId, $transactionId, $ticketId, $paymentDetailId);
 	}
 
-	private function debitBankForTicketPurchase($bankId, $amount, $sourceId, $ticketId, $paymentDetailId) {
+	private function debitBankForTicketPurchase($bankId, $amount, $sourceId, $transactionId, $ticketId, $paymentDetailId) {
 		$data = array();
 		$data['creditBankId'] = $bankId;
 		$data['amountChange'] = $amount * -1;
 		$data['creditBankItemSourceId'] = $sourceId;
+		$data['creditBankTransactionId'] = $transactionId;
 		$data['ticketId'] = $ticketId;
 		$data['paymentDetailId'] = $paymentDetailId;
 		$data['dateCreated'] = date("Y-m-d H:i:s");
@@ -138,7 +134,7 @@ class CreditBank extends AppModel {
 						FROM	creditBankItem c,
 								paymentDetail p
 						WHERE	c.ticketId = $ticketId
-						AND		c.creditBankItemSourceId = 2
+						AND		c.creditBankTransactionId = 2
 						AND		c.isActive = 1
 						AND		c.paymentDetailId = p.paymentDetailId
 						AND		p.ticketId = $ticketId
@@ -152,7 +148,8 @@ class CreditBank extends AppModel {
 				$data['ticketId'] = $ticketId;
 				$data['paymentDetailId'] = $r['c']['paymentDetailId'];
 				$data['amountChange'] = $r['c']['amountChange'] * -1;
-				$data['creditBankItemSourceId'] = 3;
+				$data['creditBankItemSourceId'] = 1;
+				$data['creditBankTransactionId'] = 3;
 				$data['dateCreated'] = date("Y-m-d H:i:s");
 				$data['isActive'] = 1;
 				$this->CreditBankItem->save($data);
@@ -163,7 +160,8 @@ class CreditBank extends AppModel {
 			$data['creditBankId'] = $creditBankId;
 			$data['ticketId'] = $ticketId;
 			$data['amountChange'] = $manualValue;
-			$data['creditBankItemSourceId'] = 4;
+			$data['creditBankItemSourceId'] = 1;
+			$data['creditBankTransactionId'] = 4;
 			$data['dateCreated'] = date("Y-m-d H:i:s");
 			$data['isActive'] = 1;
 			$this->CreditBankItem->save($data);
