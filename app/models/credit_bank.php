@@ -2,7 +2,14 @@
 class CreditBank extends AppModel {
 
 	const SOURCE_REGISTRY = 1;
-	const TRANSACTION_REGISTRY = 1;
+	
+	const TRANS_CREDIT_DEPOSIT_AUTO = 1;
+	const TRANS_CREDIT_DEPOSIT_MANUAL = 6;
+	const TRANS_CREDIT_REFUND_AUTO = 3;
+	const TRANS_CREDIT_REFUND_MANUAL = 4;
+	const TRANS_DEBIT_PURCHASE = 2;
+	const TRANS_DEBIT_MANUAL = 5;
+
 
 	public $name = 'CreditBank';
 	public $useTable = 'creditBank';
@@ -40,13 +47,8 @@ class CreditBank extends AppModel {
 		}
 		else if($inData['totalCreditBank'] > 0){
 			
-			$creditUsed = $inData['totalAmountOff'] - $cof_non_creditBank;
-			
-			// what determines the source?
-			$creditSource = (isset($inData['creditBankItemSourceId'])) ? $inData['creditBankItemSourceId'] : self::SOURCE_REGISTRY;
-			$transactionId = (isset($inData['creditBankTransactionId'])) ? $inData['creditBankTransactionId'] : self::TRANSACTION_REGISTRY;
-			
-			$this->debitBankForTicketPurchase($inData['creditBankId'], $creditUsed, $creditSource, $transactionId, $inData['ticketId'], $inData['paymentDetailId']);
+			$creditUsed = $inData['totalAmountOff'] - $cof_non_creditBank;			
+			$this->debitBankForTicketPurchase($inData['creditBankId'], $creditUsed, $inData['creditBankItemSourceId'], $inData['creditBankTransactionId'], $inData['ticketId'], $inData['paymentDetailId']);
 		}
 		else {
 			return 0;
@@ -66,7 +68,7 @@ class CreditBank extends AppModel {
 		$data['amountChange'] = $amount;
 		$data['eventRegistryDonorId'] = $eventRegistryDonorId;
 		$data['creditBankItemSourceId'] = self::SOURCE_REGISTRY;
-		$data['creditBankTransactionId'] = self::TRANSACTION_REGISTRY;
+		$data['creditBankTransactionId'] = self::TRANS_CREDIT_DEPOSIT_AUTO;
 		$data['dateCreated'] = date("Y-m-d H:i:s");
 		$data['isActive'] = 1;
 		$this->CreditBankItem->create();
