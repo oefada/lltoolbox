@@ -2102,6 +2102,21 @@ class WebServiceTicketsController extends WebServicesController
 				$emailSubject = "Our Honeymoon Registry";
 				include('../vendors/email_msgs/notifications/49_registry_share_honeymoon.html');
 				break;
+			case 50:
+				$giftMessage = $params['giftMessage'];
+				$giftFromName = $params['giftFromName'];
+				$emailSubject = "Your Honeymoon Registry";
+				include('../vendors/email_msgs/notifications/50_registry_congratulations_honeymoon.html');
+				break;				
+			case 51:
+				$templateFile = "51_registry_gift_receipt";
+				$emailSubject = "Luxury Link Gift Receipt";
+				$templateTitle = "Your Gift Is Appreciated!";
+				$ticketId = $params['transactionNumber'];
+				$eventRegistryName = $params['eventRegistryName'];
+				$giftAmount = $params['giftAmount'];
+				$ccFour = $params['ccFour'];
+				break;
 			default:
 				break;
 		}
@@ -2130,7 +2145,7 @@ class WebServiceTicketsController extends WebServicesController
 			}
 		} else {
 			$emailBody = ob_get_clean();
-			$ppvNoticeTypeIdArr=array(42, 43, 45, 48, 49);
+			$ppvNoticeTypeIdArr=array(42, 43, 45, 48, 49, 50);
 			if (in_array($ppvNoticeTypeId, $ppvNoticeTypeIdArr)){
 				$emailBody = $this->utmLinks($emailBody, $ppvNoticeTypeId, $append);
 			}
@@ -3096,6 +3111,8 @@ class WebServiceTicketsController extends WebServicesController
 			$donationDetail = array();
 			$mappedResponse = $processor->GetMappedResponse();
 			
+			$ccFour = substr($userPaymentSettingPost['UserPaymentSetting']['ccNumber'], -4, 4);
+			
 			$donationDetail['eventRegistryId']		= $eventRegistryId;
 			$donationDetail['userId']				= $data['donorUserId'];
 			$donationDetail['transactionId']		= $mappedResponse['ppTransactionId'];
@@ -3109,20 +3126,21 @@ class WebServiceTicketsController extends WebServicesController
 			$donationDetail['donorStateName']		= $userPaymentSettingPost['UserPaymentSetting']['state'];
 			$donationDetail['donorPostalCode']		= $userPaymentSettingPost['UserPaymentSetting']['postalCode'];
 			$donationDetail['donorCountryCode']		= $userPaymentSettingPost['UserPaymentSetting']['country'];
-			$donationDetail['ccDigits']				= substr($userPaymentSettingPost['UserPaymentSetting']['ccNumber'], -4, 4);
+			$donationDetail['ccDigits']				= $ccFour;
 			$donationDetail['ccType']				= $userPaymentSettingPost['UserPaymentSetting']['ccType'];
 			$donationDetail['statusId']				= 0;
 
 			$this->EventRegistryDonor->create();
 			$this->EventRegistryDonor->save($donationDetail);
 			$donationId = $this->EventRegistryDonor->id;
+			$transactionNumber = 'RG' . $donationId;
 
 			// update COF 
 			$creditDetail = array();
 			$creditDetail['creditTrackingTypeId'] = 6;
 			$creditDetail['userId'] = $eventRegistryUserId;
 			$creditDetail['amount'] = $totalChargeAmount;
-			$creditDetail['notes'] = 'EventRegistryDonor #' . $donationId;
+			$creditDetail['notes'] = 'Registry Gift' . $transactionNumber;
 			$creditDetail['ticketId'] = 0;
 			$this->CreditTracking->create();
 			$cofResult = $this->CreditTracking->save($creditDetail);
@@ -3132,9 +3150,42 @@ class WebServiceTicketsController extends WebServicesController
 			$this->CreditBank->creditUserForEventRegistry($eventRegistryUserId, $totalChargeAmount, $donationId);
 			$this->Ticket->query("UPDATE eventRegistryDonor SET statusId = 2 WHERE eventRegistryDonorId = $donationId");
 
+			// send receipt email
+			$params = array();
+			$params['ppvNoticeTypeId'] 		= 51;
+			$params['siteId']				= $data['siteId'];
+			$params['userId'] 				= $data['donorUserId'];
+			$params['send'] 				= 1;
+			$params['returnString']			= 0;
+			$params['manualEmailBody']		= 0;
+
+			$params['transactionNumber'] 	= $transactionNumber;
+			$params['initials'] 			= 'PROCESS_GIFT';
+			$params['eventRegistryName']	= $data['eventRegistryName'];
+			$params['giftAmount']			= $totalChargeAmount;
+			$params['ccFour']				= $ccFour;	
+				
+			$this->ppv(json_encode($params));
+
+			// send notification email
+			$params = array();
+			$params['ppvNoticeTypeId'] 		= 50;
+			$params['siteId']				= $data['siteId'];
+			$params['userId'] 				= $eventRegistryUserId;
+			$params['send'] 				= 1;
+			$params['returnString']			= 0;
+			$params['manualEmailBody']		= 0;
+
+			$params['giftMessage'] 			= $data['giftMessage'];
+			$params['giftFromName'] 		= $data['giftFromName'];
+			$params['initials'] 			= 'PROCESS_GIFT';
+			$this->ppv(json_encode($params));
+
+			$this->Ticket->query("UPDATE eventRegistryDonor SET statusId = 3 WHERE eventRegistryDonorId = $donationId");
+
 			// CakeLog::write("web_service_tickets_controller", var_export(array("WEB SERVICE TICKETS: ",$paymentDetail,$promoGcCofData),1));
 			
-			return 'CHARGE_SUCCESS';
+			return 'CHARGE_SUCCESS|' . $transactionNumber;
 			
 		} else {
 			//$failureDetail = array();
