@@ -1687,6 +1687,8 @@ class ReportsController extends AppController
 				}
 				$results[$key]['OfferLookup']['guaranteeAmount'] = $guaranteeAmount;
 			}
+			
+			var_dump($results);die;
 
 			$this->set('currentPage', $this->page);
 			$this->set('numRecords', $numRecords);
