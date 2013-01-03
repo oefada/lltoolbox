@@ -79,6 +79,7 @@ class Call extends AppModel
 		19 => 'Specific questions on a package',
 		20 => 'Customer shopping',
 		21 => 'Immediate issue at hotel',
+		25 => 'Buy Now Follow-up',
 		999 => 'Other',
 	);
 
