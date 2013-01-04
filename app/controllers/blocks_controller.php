@@ -25,6 +25,44 @@ class BlocksController extends AppController
 		$this->set('BlockPages', $this->BlockPage->find('all'));
 	}
 
+	function revisions($blockPageId = null)
+	{
+		if (!$blockPageId) {
+			$this->Session->setFlash('Error: No revision specified!');
+			$this->redirect(array('action' => 'index'));
+		} else {
+			if (isset($_POST['xhr']) && isset($this->params['named']['activate'])) {
+				$this->autoRender = false;
+				$revId = $this->params['named']['activate'];
+				$this->BlockRevision->duplicate($blockPageId, $revId);
+				echo "Ok!";
+			} else {
+				$this->set('blockPageId', $blockPageId);
+				$this->set('blockPageUrl', $this->BlockPage->field('url', array('blockPageId' => $blockPageId)));
+				$data = $this->BlockRevision->find('all', array(
+					'fields' => array(
+						'blockRevisionId',
+						'sha1',
+						'active',
+						'editor',
+						'created'
+					),
+					'conditions' => array('BlockPage.blockPageId' => $blockPageId)
+				));
+				foreach ($data as &$d) {
+					$previewPath = 'http://www.luxurylink.com';
+					if (strpos($_SERVER['HTTP_HOST'], 'toolboxdev') !== false) {
+						$previewPath = 'http://' . str_replace('toolboxdev', 'lldev', $_SERVER['HTTP_HOST']);
+					}
+					$previewPath .= '/blocks/blocks.php?mode=preview&blockRevisionId=' . $d['BlockRevision']['blockRevisionId'];
+					$previewPath .= '&blockSha1=' . $d['BlockRevision']['sha1'];
+					$d['BlockRevision']['previewUrl'] = $previewPath;
+				}
+				$this->set('blockRevisions', $data);
+			}
+		}
+	}
+
 	function add()
 	{
 		$url = 'Unknown URL';
@@ -93,6 +131,7 @@ class BlocksController extends AppController
 		} else {
 			if ($blockPageId) {
 				$this->set('blockPageId', $blockPageId);
+				$this->set('blockPageUrl', $this->BlockPage->field('url', array('blockPageId' => $blockPageId)));
 				$blockData = $this->BlockRevision->field('blockData', array('blockPageId' => $blockPageId));
 				if (!$blockData) {
 					$blockData = $this->defaultTemplate;
@@ -117,6 +156,44 @@ class BlocksController extends AppController
 	function preview()
 	{
 		$this->layout = 'blank';
+	}
+
+	function garbage($blockPageId)
+	{
+		if (!$blockPageId) {
+			$this->Session->setFlash('Error: No revision specified!');
+			$this->redirect(array('action' => 'index'));
+		} else {
+			echo "HI<pre>";
+			$this->BlockRevision->recursive = -1;
+			$data = $this->BlockRevision->find('all', array('conditions' => array('BlockRevision.blockPageId' => $blockPageId)));
+			$allrevs = array();
+			$safelist = array();
+			$earliest = array();
+			foreach ($data as $d) {
+				$br = $d['BlockRevision'];
+				$rev = $br['blockRevisionId'];
+				$sha = $br['sha1'];
+				$allrevs[$rev] = $rev;
+				if ($br['active']) {
+					$safelist[$rev] = $rev;
+				}
+				$earliest[$sha][$rev] = $rev;
+			}
+			foreach ($earliest as $l) {
+				$min = min($l);
+				$safelist[$min] = $min;
+			}
+			$hitlist = array_diff($allrevs, $safelist);
+			foreach ($hitlist as $h) {
+				$this->BlockRevision->delete($h);
+			}
+			$this->Session->setFlash('Garbage collected! (' . count($hitlist) . ' item' . (count($hitlist )==1 ? '' : 's') . ' deleted)');
+			$this->redirect(array(
+				'action' => 'revisions',
+				$blockPageId,
+			));
+		}
 	}
 
 }
