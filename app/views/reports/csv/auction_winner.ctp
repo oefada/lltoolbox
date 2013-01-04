@@ -85,4 +85,56 @@ foreach ($results as $r):
 	); //TODO: Add Paid Search Id and Ref Url
 	
 	echo implode(',', $line)."\r\n";
-endforeach; ?>
+endforeach;
+
+
+foreach ($eventRegistryData as $r):
+
+	$line = array(
+    $r['s']['siteName'],
+    $r['d']['bookingDate'],
+    $r['d']['paymentDate'],
+    $r['d']['booking'],
+    $r['r']['vendorId'],
+    $r['r']['vendor'],
+    'N/A',
+    'N/A',
+    $r['u']['guestFirstName'],
+    $r['u']['guestLastName'],
+    $r['d']['address1'],
+    $r['d']['address2'],
+    $r['d']['city'],
+    $r['d']['state'],
+    $r['d']['zip'],
+    $r['d']['country'],
+    $r['u']['phone'],
+    $r['u']['email'],
+    $r['d']['ccType'],
+    'xxxx' . $r['d']['ccDigits'],
+    'N/A',
+    'N/A',
+    'Event Registry',
+    $r['d']['revenue'],
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '0',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    ''
+    );
+	
+	echo implode(',', $line)."\r\n";
+	
+endforeach;
+ ?>
