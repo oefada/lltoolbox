@@ -10,7 +10,6 @@ class EventRegistry extends AppModel {
    						'EventRegistryType' => array('foreignKey' => 'eventRegistryTypeID'),
 					   );
 
-	
 	public function getAuctionWinnerReport($date1, $date2){
 		
 		$query = "  SELECT  s.siteName,
@@ -40,7 +39,7 @@ class EventRegistry extends AppModel {
 				            eventRegistryDonor d,
 				            user u,
 				            sites s
-				    WHERE   d.dateCreated BETWEEN '$date1' AND '$date2'
+				    WHERE   d.dateCreated BETWEEN '" . $date1 . "' AND '" . $date2 . "'
 				    AND     d.eventRegistryId = r.eventRegistryId
 				    AND     d.userId = u.userId
 				    AND     r.siteId = s.siteId
@@ -50,5 +49,4 @@ class EventRegistry extends AppModel {
 		return $result;
 		
 	}
-
 }

@@ -9,7 +9,8 @@ class ReportsController extends AppController
 		'PaymentType',
 		'Destination',
 		'Reporting',
-		'Readonly'
+		'Readonly',
+		'EventRegistry'
 	);
 	var $helpers = array(
 		'Pagination',
@@ -1687,8 +1688,14 @@ class ReportsController extends AppController
 				}
 				$results[$key]['OfferLookup']['guaranteeAmount'] = $guaranteeAmount;
 			}
-			
-			var_dump($results);die;
+
+			/*
+			 * If downloading as a CSV, append records from the event registry transactions to the auction winner report
+			 */
+			if (@$this->data['download']['csv'] == 1) {
+				$eventRegistryData = $this->EventRegistry->getAuctionWinnerReport($this->data['condition1']['value']['between'][0], $this->data['condition1']['value']['between'][1]);
+				$this->set('eventRegistryData', $eventRegistryData);
+			}
 
 			$this->set('currentPage', $this->page);
 			$this->set('numRecords', $numRecords);
