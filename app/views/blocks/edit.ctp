@@ -116,12 +116,13 @@ $this->set('hideSidebar', true);
 
 <div>
 	<ul>
-		<li><?php echo $html->link('Go back to Blocks index', array('action' => 'index')); ?></li>
+		<li>Currently editing: <b><?php echo $blockPageUrl; ?></b></li>
 		<li><?php echo $html->link('View Revisions', array(
 				'action' => 'revisions',
 				$blockPageId
 			));
 		?></li>
+		<li><?php echo $html->link('List all Blocks', array('action' => 'index')); ?></li>
 	</ul>
 </div>
 
