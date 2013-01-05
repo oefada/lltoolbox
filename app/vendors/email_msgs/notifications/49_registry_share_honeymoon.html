@@ -34,36 +34,40 @@
 <tr>
 	<td><img src="http://www.luxurylink.com/images/common/spacer.gif" width="600" height="30" alt=""></td>
 </tr>
-
 <tr>
-	<td style="font-size:32px; font-family: Times, Times New Roman, serif; color:#000000;line-height:36px;padding: 0px 20px 0px 20px;text-align: left; ">Hello,<br>
-	<span style="font-size:20px; color:#908e6e">Your friends, <?= $eventRegistryName; ?> have created a Honeymoon Registry on Luxury Link</span></td>
+	<td style="font-size:32px; font-family: Times, Times New Roman, serif; color:#000000;line-height:36px;padding: 0px 20px 0px 20px;text-align: left; ">Hello,</td>
+</tr>
+<tr>
+	<td style="font-size:20px; font-family: Times, Times New Roman, serif; color:#000000;line-height:24px;padding: 5px 20px 0px 20px;text-align: left; ">
+	<span style="font-size:20px; color:#908e6e">Your friends, <?= $eventRegistryName; ?>, have created a Honeymoon Registry on Luxury Link</span></td>
 </tr>
 <tr>
 	<td><img src="http://www.luxurylink.com/images/common/spacer.gif" width="560" height="15" alt=""></td>
 </tr>
 
-<? if ($eventRegistryMessage) { ?>
-<tr>
-	<td>message: <?= $eventRegistryMessage; ?></td>
-</tr>
+<? if ($eventRegistryMessage != '') { ?>
+	<tr>
+		<td style="font-size:20px; font-family: Times, Times New Roman, serif; color:#000000;line-height:24px;padding: 0px 20px 0px 20px;text-align: left; ">A Message From The Couple</td>
+	</tr>
+	<tr>
+		<td style="font-size:14px; font-family: Arial, Helvetica, sans-serif; color:#646569; line-height:20px;padding: 4px 20px 0px 20px; text-align: left;"><?= $eventRegistryMessage; ?></td>
+	</tr>
+	<tr>
+		<td><img src="http://www.luxurylink.com/images/common/spacer.gif" width="560" height="30" alt=""></td>
+	</tr>
+	<tr>
+		<td align="center" style="padding: 25px 0px 10px 0px;"><img width="560" height="1" border="0" src="http://www.luxurylink.com/images/email/Inspiration/line.jpg" name="line" alt=""/></td>
+	</tr>
 <? } ?>
 
-
-<tr>
-<td style="font-size:14px; font-family: Arial, Helvetica, sans-serif; color:#646569; line-height:20px;padding: 0px 20px 0px 20px; text-align: left;">Luxury Link is excited to help send you on the dream honeymoon you deserve! <a href="http://www.luxurylink.com/vacation-ideas/luxury-honeymoons/best" target="_blank" alt="" style="text-decoration:none;color: #008ec5">Browse our incredible collection</a> of romantic hotels and resorts worldwide, and invite friends and family members to contribute to your Honeymoon Fund. You can view and manage your registry at any time using the links below.</td>
-</tr>
-<tr>
-	<td align="center" style="padding: 25px 0px 10px 0px;"><img width="560" height="1" border="0" src="http://www.luxurylink.com/images/email/Inspiration/line.jpg" name="line" alt=""/></td>
-</tr>
 <tr>
 	<td><img src="http://www.luxurylink.com/images/common/spacer.gif" width="560" height="15" alt=""></td>
 </tr>
 <tr>
-<td style="font-size:13px; font-family: Arial, Helvetica, sans-serif; color:#646569; line-height:20px;padding: 0px 20px 0px 20px; text-align: center;">You can view your registry at the following link:<br><a href="<?echo $eventRegistryUrl; ?>" target="_blank" alt="" style="text-decoration:none;color: #008ec5"><?echo $eventRegistryUrl; ?></a><br>or edit your registry by visiting <a href="http://www.luxurylink.com/my/registry/list.php" target="_blank" alt="" style="text-decoration:none;color: #008ec5">your account</a>.<br><br></td>
+<td style="font-size:13px; font-family: Arial, Helvetica, sans-serif; color:#646569; line-height:20px;padding: 0px 20px 0px 20px; text-align: center;">Send the happy couple off in style.  Visit their registry at the following link:<br><a href="<?echo $eventRegistryUrl; ?>" target="_blank" alt="" style="text-decoration:none;color: #008ec5"><?echo $eventRegistryUrl; ?></a><br>or click the button below.<br><br></td>
 </tr>
 <tr>
-	<td align="center" style="padding: 0px 20px 0px 20px;"><a href="<?echo $eventRegistryUrl; ?>" target="_blank" alt="" style="text-decoration:none;color: #008ec5"><img src="http://www.luxurylink.com/images/email/new/view-registry_btn.jpg" width="165" height="39" alt=""></a></td>
+	<td align="center" style="padding: 0px 20px 0px 20px;"><a href="<?echo $eventRegistryUrl; ?>" target="_blank" alt="" style="text-decoration:none;color: #008ec5"><img width="145" height="39" alt="" src="http://www.luxurylink.com/images/email/new/give-gift_btn.jpg"></a></td>
 </tr>
 
 <tr>
@@ -77,8 +81,6 @@
 <tr>
 <td><img src="http://www.luxurylink.com/images/common/spacer.gif" width="560" height="20" alt=""></td>
 </tr>
-
-
 
 </table>
 
