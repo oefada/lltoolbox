@@ -3080,13 +3080,12 @@ class WebServiceTicketsController extends WebServicesController
 		*/
 		$data = json_decode($in0, true);
 
-		$isDev = (ISDEV || ISSTAGE);
-		if (defined('CRON_ENV')) {
-			if (CRON_ENV == 'dev' || CRON_ENV == 'stage') {
-				$isDev = true;
-			}
+		$isDev = true;
+		$envParam = isset($data['env']) ? $data['env'] : false;
+		if ($envParam == 'prod') {
+			$isDev = false;
 		}
-
+		
 		$userPaymentSettingPost['UserPaymentSetting'] = (isset($data['userPaymentSetting'])) ? $data['userPaymentSetting'] : 0;
 		$userPaymentSettingPost['UserPaymentSetting']['ccNumber'] =
 			$this->UserPaymentSetting->detokenizeCcNum($userPaymentSettingPost['UserPaymentSetting']['ccToken']);
