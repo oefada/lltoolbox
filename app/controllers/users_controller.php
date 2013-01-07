@@ -46,6 +46,15 @@ class UsersController extends AppController {
 	 */
 	function unsub($id=null){
 
+
+		App::import("Vendor","Mailvendor",array('file' => "mailvendor.php"));
+		$mailvendor = new MailVendorHelper(
+			MailVendorFactoryHelper::newMailVendorInstance('bluehornet',
+				array('disableMailProvider'=>false)
+			)
+		);
+
+
 		$error_str='';
 
 		if (!$id || empty($this->data)) {
@@ -73,6 +82,7 @@ class UsersController extends AppController {
 					$optinDatetime=$arr[2];
 
 					$nlMgr->optoutSharedEmailFromListThirdPartyOnly($postedSiteId, $email, $checkedMailingListId);
+					$mailvendor->removeEmailFromList($postedSiteId, $email, $checkedMailingListId);
 					
 					// Retrieve id's related to silverpop from $nlDataArr and unsub from silverpop
 					$row=$allNlArr[$postedSiteId][$checkedMailingListId];
