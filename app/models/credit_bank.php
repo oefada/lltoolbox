@@ -186,6 +186,8 @@ class CreditBank extends AppModel {
 					$data['isActive'] = 1;
 					$data['editorUserId'] = $userId;
 					$this->CreditBankItem->save($data);
+					
+					$this->saveCreditBankChangeToCOF($creditBankId, $refundAmount);
 				}
 			}
 			// if refund ticket credits back to creditBank from payment details
@@ -218,6 +220,8 @@ class CreditBank extends AppModel {
 					$data['isActive'] = 1;
 					$data['editorUserId'] = $userId;
 					$this->CreditBankItem->save($data);
+		
+					$this->saveCreditBankChangeToCOF($creditBankId, $r['c']['amountChange']);
 				}
 			}
 			// if refund a manual amount into the creditBank
@@ -231,6 +235,8 @@ class CreditBank extends AppModel {
 				$data['isActive'] = 1;
 				$data['editorUserId'] = $userId;
 				$this->CreditBankItem->save($data);
+				
+				$this->saveCreditBankChangeToCOF($creditBankId, $inData['manualValue']);
 			}
 		}
 		
@@ -244,6 +250,7 @@ class CreditBank extends AppModel {
 		// set transactionType
 		$transactionType = ($amount > 0 ? 6 : 5);
 		
+		// save to the credit bank item
 		$data['creditBankId'] = $creditBankId;
 		$data['editorUserId'] = $userId;
 		$data['amountChange'] = $amount;
@@ -252,6 +259,26 @@ class CreditBank extends AppModel {
 		$data['dateCreated'] = date("Y-m-d H:i:s");
 		$data['isActive'] = 1;
 		$this->CreditBankItem->save($data);
+		
+		// get credit bank's user id
+		$results = $this->query("SELECT userId FROM creditBank WHERE creditBankId = " . $creditBankId);
+		$userId = $results[0]['creditBank']['userId'];
+		
+		$this->saveCreditBankChangeToCOF($creditBankId, $amount);
+	}
+
+	public function saveCreditBankChangeToCOF($creditBankId, $amount){
+		
+		// get credit bank's user id
+		$results = $this->query("SELECT userId FROM creditBank WHERE creditBankId = " . $creditBankId);
+		$userId = $results[0]['creditBank']['userId'];
+		
+		$data['creditTrackingTypeId'] = 7;
+		$data['amount'] = $amount;
+		$data['notes'] = 'Manual input from the credit bank.';
+		$data['userId'] = $userId;
+		
+		Classregistry::init('CreditTracking')->save($data);
 	}
 
 
