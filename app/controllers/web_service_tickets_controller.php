@@ -2092,26 +2092,28 @@ class WebServiceTicketsController extends WebServicesController
 				break;
 			case 48:
 				$eventRegistryUrl = $params['eventRegistryUrl'];
-				$emailSubject = "Your Honeymoon Registry";
+				$emailSubject = "Your Luxury Link Honeymoon Registry has been Created";
 				include('../vendors/email_msgs/notifications/48_registry_created_honeymoon.html');
 				break;
 			case 49:
 				$eventRegistryUrl = $params['eventRegistryUrl'];
 				$eventRegistryName = $params['eventRegistryName'];
+				$eventRegistryFullName = $params['eventRegistryFullName'];
 				$eventRegistryMessage = $params['eventRegistryMessage'];
-				$emailSubject = "Our Honeymoon Registry";
+				$emailSubject = "A Message from " . $eventRegistryFullName;
 				include('../vendors/email_msgs/notifications/49_registry_share_honeymoon.html');
 				break;
 			case 50:
 				$giftMessage = $params['giftMessage'];
 				$giftFromName = $params['giftFromName'];
-				$emailSubject = "Your Honeymoon Registry";
+				$giftFromFullName = $params['giftFromFullName'];
+				$emailSubject = $giftFromFullName . " has Sent You a Gift!";
 				include('../vendors/email_msgs/notifications/50_registry_congratulations_honeymoon.html');
 				break;				
 			case 51:
 				$templateFile = "51_registry_gift_receipt";
 				$emailSubject = "Luxury Link Gift Receipt";
-				$templateTitle = "Your Gift Is Appreciated!";
+				$templateTitle = "Thank You for Your Luxury Link Honeymoon Registry Contribution";
 				$ticketId = $params['transactionNumber'];
 				$eventRegistryName = $params['eventRegistryName'];
 				$giftAmount = $params['giftAmount'];
@@ -3069,15 +3071,6 @@ class WebServiceTicketsController extends WebServicesController
 
 	public function processPaymentGift($in0) {
 
-		/*
-		$data['eventRegistryId'] 
-		$data['eventRegistryUserId'] 
-		$data['donorUserId'] 
-		$data['giftAmount'] 
-		$data['giftMessage'] 
-		$data['initials'] 
-		$data['userPaymentSetting']
-		*/
 		$data = json_decode($in0, true);
 
 		$isDev = true;
@@ -3186,6 +3179,7 @@ class WebServiceTicketsController extends WebServicesController
 
 			$params['giftMessage'] 			= $data['giftMessage'];
 			$params['giftFromName'] 		= $data['giftFromName'];
+			$params['giftFromFullName'] 	= $data['giftFromFullName'];
 			$params['initials'] 			= 'PROCESS_GIFT';
 			$this->ppv(json_encode($params));
 			$this->Ticket->query("UPDATE eventRegistryDonor SET statusId = 4 WHERE eventRegistryDonorId = $donationId");
