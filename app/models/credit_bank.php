@@ -21,6 +21,10 @@ class CreditBank extends AppModel {
 			'dependent' => true
 		),		
 	);
+
+   var $belongsTo = array(
+   						'User' => array('foreignKey' => 'userId')
+					   );
 	
 	function getUserTotalAmount($userId){
 		
@@ -111,7 +115,9 @@ class CreditBank extends AppModel {
 	}
 
 
-	public function refundCreditBankByTicket ( $ticketId, $manualValue = null ){
+	public function refundCreditBankByTicket ( $ticketId, $refundType = 1, $userId, $inData = null ){
+		
+		$refundAmount = 0;
 		
 		$this->CreditBankItem->create();
 		
@@ -123,52 +129,129 @@ class CreditBank extends AppModel {
 					AND		c.isActive = 1";
 		$result = $this->query($query);
 		
-		$userId = $result[0]['t']['userID'];
-		$creditBankId = $result[0]['c']['userID'];
-		
-		// if refund ticket credits back to creditBank from payment details
-		if(is_null($manualValue)){
+		// if creditBank was used
+		if(!is_null($result))
+		{
+			// get userId and creditBankId
+			$userId = $result[0]['t']['userID'];
+			$creditBankId = $result[0]['c']['userID'];
 			
-			/*
-			 * To refund by a ticketId, the creditBankItem must be deduction from a purchase
-			 */
-			$query = "	SELECT	c.amountChange, c.paymentDetailId
-						FROM	creditBankItem c,
-								paymentDetail p
-						WHERE	c.ticketId = $ticketId
-						AND		c.creditBankTransactionId = 2
-						AND		c.isActive = 1
-						AND		c.paymentDetailId = p.paymentDetailId
-						AND		p.ticketId = $ticketId
-						AND		c.amountChange < 0;
-					 ";
-			$result = $this->query($query);
-			
-			foreach($result as $r){
-				unset($data);
+			if($refundType == 1){
+				
+				// get total creditBank money used in this transaction
+				$query = "	SELECT	SUM(c.amountChange) as creditBankAmountUsed
+							FROM	creditBankItem c,
+									paymentDetail p
+							WHERE	c.ticketId = $ticketId
+							AND		c.creditBankTransactionId = 2
+							AND		c.isActive = 1
+							AND		c.paymentDetailId = p.paymentDetailId
+							AND		p.ticketId = $ticketId
+							AND		c.amountChange < 0;
+						 ";
+				$result = $this->query($query);
+				
+				$creditBankAmountUsed = $result[0][0]['creditBankAmountUsed'] * -1;
+				
+				
+				// get total creditOnFile money used in this transaction
+				$query = "	SELECT	SUM(paymentAmount) as creditOnFileUsed
+							FROM 	paymentDetail 
+							WHERE	ticketId = $ticketId
+							AND	    paymentTypeId = 3
+							AND 	isSuccessfulCharge = 1
+						 ";
+				$result = $this->query($query);
+				
+				$creditOnFileUsed = $result[0][0]['creditOnFileUsed'];
+				
+				/*
+				 * Assuming that we will refund creditBank before creditOnFile logic
+				 * */
+				if($inData['cofRefundAmount'] > $creditBankAmountUsed){
+					$refundAmount = $creditBankAmountUsed;
+				}
+				else {
+					$refundAmount = $inData['cofRefundAmount'];
+				}
+				
+				// refund money
+				if($refundAmount > 0){
+					$data['creditBankId'] = $creditBankId;
+					$data['ticketId'] = $ticketId;
+					$data['amountChange'] = $refundAmount;
+					$data['creditBankItemSourceId'] = 1;
+					$data['creditBankTransactionId'] = 3;
+					$data['dateCreated'] = date("Y-m-d H:i:s");
+					$data['isActive'] = 1;
+					$data['editorUserId'] = $userId;
+					$this->CreditBankItem->save($data);
+				}
+			}
+			// if refund ticket credits back to creditBank from payment details
+			if($refundType == 2){
+				
+				/*
+				 * To refund by a ticketId, the creditBankItem must be deduction from a purchase
+				 */
+				$query = "	SELECT	c.amountChange, c.paymentDetailId
+							FROM	creditBankItem c,
+									paymentDetail p
+							WHERE	c.ticketId = $ticketId
+							AND		c.creditBankTransactionId = 2
+							AND		c.isActive = 1
+							AND		c.paymentDetailId = p.paymentDetailId
+							AND		p.ticketId = $ticketId
+							AND		c.amountChange < 0;
+						 ";
+				$result = $this->query($query);
+				
+				foreach($result as $r){
+					unset($data);
+					$data['creditBankId'] = $creditBankId;
+					$data['ticketId'] = $ticketId;
+					$data['paymentDetailId'] = $r['c']['paymentDetailId'];
+					$data['amountChange'] = $r['c']['amountChange'] * -1;
+					$data['creditBankItemSourceId'] = 1;
+					$data['creditBankTransactionId'] = 3;
+					$data['dateCreated'] = date("Y-m-d H:i:s");
+					$data['isActive'] = 1;
+					$data['editorUserId'] = $userId;
+					$this->CreditBankItem->save($data);
+				}
+			}
+			// if refund a manual amount into the creditBank
+			else if($refundType == 3){
 				$data['creditBankId'] = $creditBankId;
 				$data['ticketId'] = $ticketId;
-				$data['paymentDetailId'] = $r['c']['paymentDetailId'];
-				$data['amountChange'] = $r['c']['amountChange'] * -1;
+				$data['amountChange'] = $inData['manualValue'];
 				$data['creditBankItemSourceId'] = 1;
-				$data['creditBankTransactionId'] = 3;
+				$data['creditBankTransactionId'] = 4;
 				$data['dateCreated'] = date("Y-m-d H:i:s");
 				$data['isActive'] = 1;
+				$data['editorUserId'] = $userId;
 				$this->CreditBankItem->save($data);
 			}
 		}
-		// if refund a manual amount into the creditBank
-		else if(is_float($manualValue)){
-			$data['creditBankId'] = $creditBankId;
-			$data['ticketId'] = $ticketId;
-			$data['amountChange'] = $manualValue;
-			$data['creditBankItemSourceId'] = 1;
-			$data['creditBankTransactionId'] = 4;
-			$data['dateCreated'] = date("Y-m-d H:i:s");
-			$data['isActive'] = 1;
-			$this->CreditBankItem->save($data);
-		}
 		
+		
+		return true;
+		
+	}
+	
+	public function alterCreditBank($creditBankId, $amount, $userId){
+		
+		// set transactionType
+		$transactionType = ($amount > 0 ? 6 : 5);
+		
+		$data['creditBankId'] = $creditBankId;
+		$data['editorUserId'] = $userId;
+		$data['amountChange'] = $amount;
+		$data['creditBankItemSourceId'] = 5;
+		$data['creditBankTransactionId'] = $transactionType;
+		$data['dateCreated'] = date("Y-m-d H:i:s");
+		$data['isActive'] = 1;
+		$this->CreditBankItem->save($data);
 	}
 
 
