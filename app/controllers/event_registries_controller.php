@@ -11,11 +11,36 @@ class EventRegistriesController extends AppController {
 		
 		$this->paginate = array(
 			'order' => $order,
-			'limit' => 50
+			'limit' => 50,
+			'joins' => array(
+					array(
+						'alias' => 'd',
+						'table' => 'eventRegistryDonor',
+						'type' => 'LEFT',
+						'conditions' => '`d.eventRegistryId` = `EventRegistry.eventRegistryId`'
+					)
+				),
+			'fields' => array(
+					'SUM(d.amount) as balance',
+					'EventRegistry.eventRegistryId',
+					'EventRegistry.eventTitle',
+					'EventRegistry.dateCreated',
+					'EventRegistry.registryUrl',
+					'EventRegistryType.eventName',
+					'EventRegistry.eventRegistryId',
+					'EventRegistry.registrant1_firstName',
+					'EventRegistry.registrant1_lastName',
+					'EventRegistry.eventRegistryId',
+					'EventRegistry.userId',
+					'User.userId',
+					'User.firstName',
+					'User.lastName'
+					),
+			'group' => 'EventRegistry.eventRegistryId'
 		);
 		
         $registries = $this->paginate();
-		
+
 		$this->set('registries', $registries);
 	}
 	

@@ -16,6 +16,7 @@ $this->set('hideSidebar', true);
 	<th><?php echo $paginator->sort('registrant1_firstName');?></th>
 	<th><?php echo $paginator->sort('registrant1_lastName');?></th>
 	<th><?php echo $paginator->sort('userId');?></th>
+	<th><?php echo $paginator->sort('balance');?></th>
 </tr>
 
 <?php
@@ -39,7 +40,11 @@ foreach ($registries as $registry):
 		<td><?php echo $registry['EventRegistryType']['eventName']; ?></td>
 		<td><?php echo $registry['EventRegistry']['registrant1_firstName']; ?></td>
 		<td><?php echo $registry['EventRegistry']['registrant1_lastName']; ?></td>
-		<td><?php echo $registry['EventRegistry']['userId']; ?></td>
+
+		<td>
+			<?php echo $html->link(__($registry['EventRegistry']['userId'], true), '/users/edit/' . $registry['EventRegistry']['userId']) . " - " . $registry['User']['firstName'] . " " . $registry['User']['lastName']; ?>
+		</td>
+		<td>$<?php echo number_format($registry['0']['balance'], 2); ?></td>
 	</tr>
 	
 <? endforeach; ?>
