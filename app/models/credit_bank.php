@@ -115,7 +115,7 @@ class CreditBank extends AppModel {
 	}
 
 
-	public function refundCreditBankByTicket ( $ticketId, $refundType = 1, $userId, $inData = null ){
+	public function refundCreditBankByTicket( $ticketId, $refundType = 1, $userId, $udpate_cof = 0, $inData = null ){
 		
 		$refundAmount = 0;
 		
@@ -187,7 +187,8 @@ class CreditBank extends AppModel {
 					$data['editorUserId'] = $userId;
 					$this->CreditBankItem->save($data);
 					
-					$this->saveCreditBankChangeToCOF($creditBankId, $refundAmount);
+					// save money chnage to CoF as well
+					if($udpate_cof == 1){ $this->saveCreditBankChangeToCOF($creditBankId, $refundAmount); }
 				}
 			}
 			// if refund ticket credits back to creditBank from payment details
@@ -221,7 +222,8 @@ class CreditBank extends AppModel {
 					$data['editorUserId'] = $userId;
 					$this->CreditBankItem->save($data);
 		
-					$this->saveCreditBankChangeToCOF($creditBankId, $r['c']['amountChange']);
+					// save money chnage to CoF as well
+					if($udpate_cof == 1){ $this->saveCreditBankChangeToCOF($creditBankId, $r['c']['amountChange']); }
 				}
 			}
 			// if refund a manual amount into the creditBank
@@ -236,7 +238,8 @@ class CreditBank extends AppModel {
 				$data['editorUserId'] = $userId;
 				$this->CreditBankItem->save($data);
 				
-				$this->saveCreditBankChangeToCOF($creditBankId, $inData['manualValue']);
+				// save money chnage to CoF as well
+				if($udpate_cof == 1){ $this->saveCreditBankChangeToCOF($creditBankId, $inData['manualValue']); }
 			}
 		}
 		
@@ -264,6 +267,7 @@ class CreditBank extends AppModel {
 		$results = $this->query("SELECT userId FROM creditBank WHERE creditBankId = " . $creditBankId);
 		$userId = $results[0]['creditBank']['userId'];
 		
+		// save money chnage to CoF as well
 		$this->saveCreditBankChangeToCOF($creditBankId, $amount);
 	}
 
