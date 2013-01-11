@@ -115,13 +115,19 @@ class CreditBank extends AppModel {
 	}
 
 
-	public function refundCreditBankByTicket( $ticketId, $refundType = 1, $userId, $udpate_cof = 0, $inData = null ){
+	public function refundCreditBankByTicket( $inData ){
+		
+		$ticketId = $inData['ticketId'];
+		$refundType = $inData['refundType']; 
+		$editorUserId = $inData['userId']; 
+		$udpate_cof = $inData['udpate_cof']; 
+		
 		
 		$refundAmount = 0;
 		
 		$this->CreditBankItem->create();
 		
-		$query = "	SELECT 	t.userID
+		$query = "	SELECT 	t.userID, c.creditBankId
 					FROM 	ticket t,
 							creditBank c
 					WHERE 	t.ticketId = $ticketId
@@ -134,7 +140,7 @@ class CreditBank extends AppModel {
 		{
 			// get userId and creditBankId
 			$userId = $result[0]['t']['userID'];
-			$creditBankId = $result[0]['c']['userID'];
+			$creditBankId = $result[0]['c']['creditBankId'];
 			
 			if($refundType == 1){
 				
@@ -184,7 +190,7 @@ class CreditBank extends AppModel {
 					$data['creditBankTransactionId'] = 3;
 					$data['dateCreated'] = date("Y-m-d H:i:s");
 					$data['isActive'] = 1;
-					$data['editorUserId'] = $userId;
+					$data['editorUserId'] = $editorUserId;
 					$this->CreditBankItem->save($data);
 					
 					// save money chnage to CoF as well
@@ -219,7 +225,7 @@ class CreditBank extends AppModel {
 					$data['creditBankTransactionId'] = 3;
 					$data['dateCreated'] = date("Y-m-d H:i:s");
 					$data['isActive'] = 1;
-					$data['editorUserId'] = $userId;
+					$data['editorUserId'] = $editorUserId;
 					$this->CreditBankItem->save($data);
 		
 					// save money chnage to CoF as well
@@ -235,7 +241,7 @@ class CreditBank extends AppModel {
 				$data['creditBankTransactionId'] = 4;
 				$data['dateCreated'] = date("Y-m-d H:i:s");
 				$data['isActive'] = 1;
-				$data['editorUserId'] = $userId;
+				$data['editorUserId'] = $editorUserId;
 				$this->CreditBankItem->save($data);
 				
 				// save money chnage to CoF as well
