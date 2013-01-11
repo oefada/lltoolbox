@@ -1581,7 +1581,7 @@ class WebServiceTicketsController extends WebServicesController
 		}
 		
 		// Click tracking for templates
-		$emailFrom = "$siteDisplay <no-reply@$siteEmail>";
+		$emailFrom = "$siteName <no-reply@$siteEmail>";
 		$emailReplyTo = "no-reply@$siteEmail";
 
 		// fetch template with the vars above
@@ -2447,10 +2447,25 @@ class WebServiceTicketsController extends WebServicesController
         $emailHeaders['Content-Type'] = "text/html";
         $emailHeaders['Content-Transfer-Encoding'] = "8bit";
 
-		App::import("Vendor","SilverpopRelay",array('file' => "appshared".DS."vendors".DS."Mail".DS."SilverpopRelay.php"));
-		$spRelay = new SilverpopRelay();
-		// 06/16/11 jwoods // 9/12/2011 rvella - relay through Silverpop
-		$spRelay->send($ppvNoticeTypeId, $emailHeaders, $emailTo, $emailBody);
+		if (in_array($ppvNoticeTypeId, array(48, 49, 50, 51))) {
+
+			App::import("Vendor","Mailvendor",array('file' => "mailvendor.php"));
+			$mailvendor = new MailVendorHelper(
+				MailVendorFactoryHelper::newMailVendorInstance('bluehornet',
+					array('disableMailProvider'=>false)
+				)
+			);
+			$mailvendor->sendMessage("ppv_".$ppvNoticeTypeId, $emailTo, $emailFrom, $emailHeaders['Subject'], $emailBody);
+
+		} else {
+			
+			App::import("Vendor","SilverpopRelay",array('file' => "appshared".DS."vendors".DS."Mail".DS."SilverpopRelay.php"));
+			$spRelay = new SilverpopRelay();
+			// 06/16/11 jwoods // 9/12/2011 rvella - relay through Silverpop
+			$spRelay->send($ppvNoticeTypeId, $emailHeaders, $emailTo, $emailBody);
+		
+		}
+
 		// below is for logging the email and updating the ticket
 		// -------------------------------------------------------------------------------
 
