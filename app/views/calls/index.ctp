@@ -33,7 +33,7 @@
 		<?php foreach ($calls as $call): ?>
 			<?php $altRow = !$altRow; ?>
 			<tr class="<?php echo $altRow ? 'altrow' : ''; ?>">
-				<td><?php echo $call['Call']['callId']; ?></td>
+				<td><?php echo $html->link($call['Call']['callId'], array('action'=>'view',$call['Call']['callId'])); ?></td>
 				<td><?php echo $call['Call']['representative']; ?></td>
 				<td><?php echo isset(Call::$interactionTypes[$call['Call']['interactionType']])?Call::$interactionTypes[$call['Call']['interactionType']]:$call['Call']['interactionType']; ?></td>
 				<td><?php echo isset(Call::$contactTypes[$call['Call']['contactType']])?Call::$contactTypes[$call['Call']['contactType']]:$call['Call']['contactType']; ?></td>

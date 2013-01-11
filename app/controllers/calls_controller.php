@@ -24,6 +24,14 @@ class CallsController extends AppController
 		}
 	}
 
+	function view($id = null)
+	{
+		$this->layout = 'default';
+		if ($id) {
+			$this->set('call', $this->Call->findByCallId($id));
+		}
+	}
+
 	function omnibox()
 	{
 		$this->layout = 'default';
