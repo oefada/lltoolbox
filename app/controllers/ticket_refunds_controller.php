@@ -6,7 +6,7 @@ class TicketRefundsController extends AppController {
 
 	var $name = 'TicketRefunds';
 	var $helpers = array('Html', 'Form');
-	var $uses = array('TicketRefund', 'Ticket', 'CreditTracking', 'CreditTrackingType', 'TicketReferFriend', 'Promo'); //'CreditTrackingTicketRel',);
+	var $uses = array('TicketRefund', 'Ticket', 'CreditTracking', 'CreditTrackingType', 'TicketReferFriend', 'Promo', 'CreditBank'); //'CreditTrackingTicketRel',);
 
 	function beforeFilter() {
 		parent::beforeFilter();
@@ -173,6 +173,16 @@ class TicketRefundsController extends AppController {
 				$this->Session->setFlash(__('The ticket refund information has been updated.', true), 'default', array(), 'success');
 				// $this->redirect(array('controller' => 'tickets', 'action' => 'view', 'id' => $this->data['TicketRefund']['ticketId']));
 				$this->set('closeModalbox', true);
+				
+				// save to creditBank if applicable
+				$creditBankData['ticketId'] = $this->data['TicketRefund']['ticketId'];
+				$creditBankData['refundType'] = 1;
+				$creditBankData['userId'] = $this->LdapAuth->object->viewVars['user']['LdapUser']['samaccountname'];
+				$creditBankData['udpate_cof'] = 1;
+				$creditBankData['cofRefundAmount'] = $this->data['TicketRefund']['amountRefunded'];
+				
+				$this->CreditBank->refundCreditBankByTicket($creditBankData);
+				
 			} else {
 				$this->Session->setFlash(__('The ticket refund could not be saved. Please, try again.', true));
 			}
