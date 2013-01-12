@@ -5,48 +5,20 @@ class ClientNote extends AppModel {
 	public $useTable = 'clientNote';
 	public $primaryKey = 'clientNoteId';
 
-
-	function getClientNoteList( $clientId ){
+	function getNoteList( $noteId, $noteType ){
 				
-		if(!is_null($clientId)){
-			$query = "SELECT * FROM clientNote WHERE clientId = '$clientId' AND note_type = 1 AND status = 1 ORDER BY created ASC";
-			return $this->query($query);
-		}
-		
-	}
-
-	function getUserNoteList( $userId ){
-				
-		if(!is_null($userId)){
-			$query = "SELECT * FROM clientNote WHERE clientId = '$userId' AND note_type = 2 AND status = 1 ORDER BY created ASC";
-			return $this->query($query);
-		}
-		
-	}
-
-	function getPhotoNoteList( $clientId ){
-				
-		if(!is_null($clientId)){
-			$query = "SELECT * FROM clientNote WHERE clientId = '$clientId' AND note_type = 3 AND status = 1 ORDER BY created ASC";
-			return $this->query($query);
-		}
-		
-	}
-
-	function getTicketNoteList( $ticketId ){
-				
-		if(!is_null($ticketId)){
-			$query = "SELECT * FROM clientNote WHERE clientId = '$ticketId' AND note_type = 4 AND status = 1 ORDER BY created ASC";
+		if(!is_null($noteId)){
+			$query = "SELECT * FROM clientNote WHERE clientId = '$noteId' AND note_type = '$noteType' AND status = 1 ORDER BY created ASC";
 			return $this->query($query);
 		}
 		
 	}
 	
-	function saveClientNote( $clientId, $author, $message, $type ){
+	function saveNote( $noteId, $author, $message, $noteType ){
 		$query = " 	INSERT INTO clientNote 
 					( clientId, author, created, notes, note_type )
 					VALUES
-					( $clientId, '$author', NOW(), '" . addslashes($message) . "', '" . $type . "')";
+					( $noteId, '$author', NOW(), '" . addslashes($message) . "', '" . $noteType . "')";
 		$this->query($query);
 		
 		$query = "SELECT last_insert_id() as last_id";
@@ -55,14 +27,24 @@ class ClientNote extends AppModel {
 		return $result[0][0]['last_id'];
 	}
 	
-	function removeClientNote( $clientNoteId, $author ){
+	function removeNote( $noteId, $author ){
 				
-		if(!is_null($clientNoteId)){
-			$query = "UPDATE clientNote SET status = 0 WHERE clientNoteId = " . $clientNoteId . " AND author = '" . $author . "'";
+		if(!is_null($noteId)){
+			$query = "UPDATE clientNote SET status = 0 WHERE clientNoteId = " . $noteId . " AND author = '" . $author . "'";
 			return $this->query($query);
 		}
 		
 	}
+	
+	function getNoteType( $noteType ){
+		
+		$query = "SELECT noteTypeName FROM clientNoteType WHERE id = '$noteType'";
+		$result = $this->query($query);
+		
+		return $result[0]['clientNoteType']['noteTypeName'];
+		
+	}
+	
 }
 ?>
 

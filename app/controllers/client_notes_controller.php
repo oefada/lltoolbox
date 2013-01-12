@@ -17,71 +17,20 @@ class ClientNotesController extends AppController {
 		$this->layout = 'ajax';
 		
 		// get vars
-		$clientId = $this->params['pass'][0];
+		$noteId = $this->params['pass'][0];
+		$noteType = $this->params['pass'][1];
 		
-		// get clientNote data
-		$result = $this->ClientNote->getClientNoteList($clientId);
+		// get note data
+		$result = $this->ClientNote->getNoteList($noteId, $noteType);
 		
-		$this->set('clientId', $clientId);
-		$this->set('clientNoteResults', $result);
-		$this->set('clientNoteUser', $this->LdapAuth->object->viewVars['user']['LdapUser']['samaccountname']);
-	}
-	
-	/***
-	 * Grabs all user notes for a user specified by GET input userId and displays to screen
-	 */
-	function viewUserNotes(){
+		// get note type name
+		$noteTypeName = $this->ClientNote->getNoteType($noteType);
 		
-		// declare this function as an ajax call
-		$this->layout = 'ajax';
-		
-		// get vars
-		$userId = $this->params['pass'][0];
-		
-		// get clientNote data
-		$result = $this->ClientNote->getUserNoteList($userId);
-		
-		$this->set('clientId', $userId);
-		$this->set('clientNoteResults', $result);
-		$this->set('clientNoteUser', $this->LdapAuth->object->viewVars['user']['LdapUser']['samaccountname']);
-	}
-	
-	/***
-	 * Grabs all user notes for a user specified by GET input userId and displays to screen
-	 */
-	function viewPhotoNotes(){
-		
-		// declare this function as an ajax call
-		$this->layout = 'ajax';
-		
-		// get vars
-		$clientId = $this->params['pass'][0];
-		
-		// get clientNote data
-		$result = $this->ClientNote->getPhotoNoteList($clientId);
-		
-		$this->set('clientId', $clientId);
-		$this->set('clientNoteResults', $result);
-		$this->set('clientNoteUser', $this->LdapAuth->object->viewVars['user']['LdapUser']['samaccountname']);
-	}
-	
-	/***
-	 * Grabs all user notes for a user specified by GET input userId and displays to screen
-	 */
-	function viewTicketNotes(){
-		
-		// declare this function as an ajax call
-		$this->layout = 'ajax';
-		
-		// get vars
-		$ticketId = $this->params['pass'][0];
-		
-		// get clientNote data
-		$result = $this->ClientNote->getTicketNoteList($ticketId);
-		
-		$this->set('clientId', $ticketId);
-		$this->set('clientNoteResults', $result);
-		$this->set('clientNoteUser', $this->LdapAuth->object->viewVars['user']['LdapUser']['samaccountname']);
+		$this->set('noteId', $noteId);
+		$this->set('noteType', $noteType);
+		$this->set('noteTypeName', $noteTypeName);
+		$this->set('noteResults', $result);
+		$this->set('noteUser', $this->LdapAuth->object->viewVars['user']['LdapUser']['samaccountname']);
 	}
 	
 	/***
@@ -96,40 +45,20 @@ class ClientNotesController extends AppController {
 		$message = $_POST['message'];
 		$created = date('M, d Y @ g:i a');
 		
+		
 		// if for client, save client info
-		if(isset($_POST['clientId'])){		
-			$clientId = $_POST['clientId'];
-			$type = 1;
+		if(isset($_POST['noteId'])){		
+			$noteId = $_POST['noteId'];	
+			$noteType = $_POST['noteType'];
 			
 			// save new clientNote entry
-			$clientNoteId = $this->ClientNote->saveClientNote( $clientId, $author, $message, $type );
-		}
-		else if(isset($_POST['userId'])){
-			$clientId = $_POST['userId'];
-			$type = 2;
-			
-			// save new clientNote entry
-			$clientNoteId = $this->ClientNote->saveClientNote( $clientId, $author, $message, $type );
-		}
-		else if(isset($_POST['photoId'])){
-			$clientId = $_POST['photoId'];
-			$type = 3;
-			
-			// save new clientNote entry
-			$clientNoteId = $this->ClientNote->saveClientNote( $clientId, $author, $message, $type );
-		}
-		else if(isset($_POST['ticketId'])){
-			$clientId = $_POST['ticketId'];
-			$type = 4;
-			
-			// save new clientNote entry
-			$clientNoteId = $this->ClientNote->saveClientNote( $clientId, $author, $message, $type );
+			$noteId = $this->ClientNote->saveNote( $noteId, $author, $message, $noteType );
 		}
 		
 		$this->set('author', $author);
 		$this->set('message', $message);
 		$this->set('created', $created);
-		$this->set('clientNoteId', $clientNoteId);
+		$this->set('noteId', $noteId);
 	}
 	
 	/***
@@ -141,10 +70,10 @@ class ClientNotesController extends AppController {
 			
 		// get values
 		$author = $this->LdapAuth->object->viewVars['user']['LdapUser']['samaccountname'];
-		$clientNoteId = $_POST['noteId'];
+		$noteId = $_POST['noteId'];
 		
 		// save new clientNote entry
-		$this->ClientNote->removeClientNote( $clientNoteId, $author );
+		$this->ClientNote->removeNote( $noteId, $author );
 		
 	}
 }

@@ -107,3 +107,27 @@ function limitText(limitFieldName, limitNum) {
 		limitField.value= text.substring(0, limitNum);
 	}
 }
+
+
+
+
+/*
+ * CLIENT NOTES
+ */
+function load_notes( i_noteId, i_noteType ){
+    var $=jQuery;
+    
+    // gets clientId 
+    var v_url = "/clientNotes/view/" + i_noteId + "/" + i_noteType;
+    
+    // calls clientNotes/view to load clientNote module
+    $.ajax({
+        url: v_url,
+        success: function(data) {
+            $("#noteModule").html(data);
+            scrollWindow(); // auto scrolls to bottom of the clientNoteDisplay div
+            document.onkeyup = KeyCheck; // watches for 'enter' keypress on the clientNoteDisplay div
+            $("#noteInput").focus(function(){ noteCheck(); });
+        }
+    });
+}
