@@ -1,36 +1,19 @@
 <?php  $this->pageTitle = $user['User']['firstName'].' '.$user['User']['lastName'].$html2->c($user['User']['userId'], 'User Id:');?>
 
+
+
 <script type="text/javascript">
 	/***
 	 * Script added by martin to allow for client notes
 	 */
 	jQuery(function($){
-		
 		$(window).ready(function(){
-			load_clientNotes(<?= $user['User']['userId']; ?>);
+			load_notes(<?= $user['User']['userId']; ?>, 2);
 		});
 	});
 	
-	load_clientNotes = function( i_userId ){
-		var $=jQuery;
-		
-		// gets clientId 
-		var v_url = "/clientNotes/viewUserNotes/" + i_userId;
-		
-		// calls clientNotes/view to load clientNote module
-		$.ajax({
-			url: v_url,
-			success: function(data) {
-				$("#clientNoteModule").html(data);
-				scrollWindow(); // auto scrolls to bottom of the clientNoteDisplay div
-				document.onkeyup = KeyCheck; // watches for 'enter' keypress on the clientNoteDisplay div
-				$("#clientNoteInput").focus(function(){ noteCheck(); });
-			}
-		});
-	};
-	
 </script>
-<div id="clientNoteModule" style="position: absolute; top: 140px; left: 850px;"></div>
+<div id="noteModule" style="position: absolute; top: 140px; left: 850px;"></div>
 
 
 

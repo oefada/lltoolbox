@@ -207,32 +207,13 @@
 		 * Script added by martin to allow for client notes
 		 */
 		jQuery(function($){
-			
 			$(window).ready(function(){
-				load_clientNotes(<?= $client['Client']['clientId']; ?>);
+				load_notes(<?= $client['Client']['clientId']; ?>, 3);
 			});
 		});
 		
-		load_clientNotes = function( i_clientId ){
-			var $=jQuery;
-			
-			// gets clientId 
-			var v_url = "/clientNotes/viewPhotoNotes/" + i_clientId;
-			
-			// calls clientNotes/view to load clientNote module
-			$.ajax({
-				url: v_url,
-				success: function(data) {
-					$("#clientNoteModule").html(data);
-					scrollWindow(); // auto scrolls to bottom of the clientNoteDisplay div
-					document.onkeyup = KeyCheck; // watches for 'enter' keypress on the clientNoteDisplay div
-					$("#clientNoteInput").focus(function(){ noteCheck(); });
-				}
-			});
-		};
-		
 	</script>
-	<div id="clientNoteModule" style="position: absolute; top: 285px; left: 1085px;"></div>
+	<div id="noteModule" style="position: absolute; top: 285px; left: 1185px;"></div>
 
    <script type="text/javascript">
       Event.observe(window, 'load', function() {
