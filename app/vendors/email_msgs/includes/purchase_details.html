@@ -7,7 +7,7 @@
 			<tr>
 				<td style="font-size:14px;line-height: 16px; font-family: Arial,Sans-Serif;color:#d4d5b5;">
 					<b>
-					<? if ($isAuction): ?>YOUR WINNING BID<?php else: ?>PURCHASE DETAILS<?php endif; ?>
+					<? if ($isAuction && !$ticket['Package']['isDNGPackage']): ?>YOUR WINNING BID<?php else: ?>PURCHASE DETAILS<?php endif; ?>
 					</b><td>
 			</tr>
 		</table>
