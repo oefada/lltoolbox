@@ -171,6 +171,27 @@
 		}
 	}
 	
+	/*
+	 * CLIENT NOTES
+	 */
+	refresh_notes = function( i_noteId, i_noteType ){
+	    var $=jQuery;
+	    
+	    // gets clientId 
+	    var v_url = "/clientNotes/view/" + i_noteId + "/" + i_noteType;
+	    
+	    // calls clientNotes/view to load clientNote module
+	    $.ajax({
+	        url: v_url,
+	        success: function(data) {
+	            $("#noteModule").html(data);
+	            scrollWindow(); // auto scrolls to bottom of the clientNoteDisplay div
+	            document.onkeyup = KeyCheck; // watches for 'enter' keypress on the clientNoteDisplay div
+	            $("#noteInput").focus(function(){ noteCheck(); });
+	        }
+	    });
+	}
+	
 	
 </script>
 
@@ -196,8 +217,8 @@
 
 <div id="noteMainDisplay">
 	<textarea type="text" id="noteInput" name="noteInput" name="message" class="noteInputFirst" >Enter note here...</textarea>
-	<input type="button" class="noteSubmit noteSubmitRefresh" name="noteRefresh" value="Refresh" onclick="load_notes(<?= $noteId; ?>)" />
-	<input type="button" class="noteSubmit noteSubmitSend" name="noteSubmit" value="Send" onclick="submit_note()" title="Refresh the client note section." />
+	<input type="button" class="noteSubmit noteSubmitRefresh" name="noteRefresh" value="Refresh" onclick="load_notes(<?=$noteId?>, <?=$noteType?>)" title="Refresh the client note section." />
+	<input type="button" class="noteSubmit noteSubmitSend" name="noteSubmit" value="Send" onclick="submit_note()" />
 	<div style="clear: both"></div>
 	<input type="hidden" id="noteId" name="noteId" value="<?= $noteId; ?>" />
 	<input type="hidden" id="noteType" name="noteType" value="<?= $noteType; ?>" />
