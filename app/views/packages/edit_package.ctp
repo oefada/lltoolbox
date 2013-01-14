@@ -106,8 +106,8 @@
 		<tr>
 			<th>Is DNG Package?</th>
 			<td>
-                <input type="radio" name="data[Package][isDNGPackage]" value="1" /> Yes
-                <input type="radio" name="data[Package][isDNGPackage]" value="0" checked /> No
+                <input type="radio" name="data[Package][isDNGPackage]" value="1" <?php if ($package['Package']['isDNGPackage']): ?>checked<?php endif; ?> /> Yes
+                <input type="radio" name="data[Package][isDNGPackage]" value="0"  <?php if (!$package['Package']['isDNGPackage']): ?>checked<?php endif; ?>/> No
 			</td>
 		</tr>
 
