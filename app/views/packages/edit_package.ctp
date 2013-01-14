@@ -92,17 +92,24 @@
                 <input type="text" size="5" id="totalNights" name="data[Package][numNights]" value="<?php echo $package['Package']['numNights']; ?>" />
             </td>
         </tr>
-
-				<tr>
-				<th>Num Rooms</th>
-				<td>
+		<tr>
+			<th>Num Rooms</th>
+			<td>
 				<?
 				$numRooms=(isset($package['Package']['numRooms']) && $package['Package']['numRooms']>0)?$package['Package']['numRooms']:1;
 				
 				?>
 				<input type='text' size='5' id='numRooms' name='data[Package][numRooms]' value="<?=$numRooms?>">
-				</td>
-				</tr>
+			</td>
+		</tr>
+
+		<tr>
+			<th>Is DNG Package?</th>
+			<td>
+                <input type="radio" name="data[Package][isDNGPackage]" value="1" /> Yes
+                <input type="radio" name="data[Package][isDNGPackage]" value="0" checked /> No
+			</td>
+		</tr>
 
         <tr>
            <th>Is Private Package?</th>
