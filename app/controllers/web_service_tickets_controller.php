@@ -37,7 +37,7 @@ class WebServiceTicketsController extends WebServicesController
 					  'ClientLoaPackageRel', 'Track', 'OfferType', 'Loa', 'TrackDetail', 'PpvNotice',
 					  'Address', 'OfferLuxuryLink', 'SchedulingMaster', 'SchedulingInstance', 'Reservation',
 					  'PromoTicketRel', 'Promo', 'TicketReferFriend','Package','PaymentProcessor','CakeLog',
-					  'ClientThemeRel', 'Image', 'ImageClient','CreditTracking', 'CreditBank', 'EventRegistryDonor'
+					  'ClientThemeRel', 'Image', 'ImageClient','CreditTracking', 'CreditBank', 'EventRegistryDonor', 'EventRegistryGiftFailure'
 					  );
 
 	var $serviceUrl = 'http://toolbox.luxurylink.com/web_service_tickets';
@@ -2452,7 +2452,7 @@ class WebServiceTicketsController extends WebServicesController
         $emailHeaders['Content-Type'] = "text/html";
         $emailHeaders['Content-Transfer-Encoding'] = "8bit";
 
-		if (in_array($ppvNoticeTypeId, array(48, 49, 50, 51))) {
+		if (in_array($ppvNoticeTypeId, array(42, 43, 44, 48, 49, 50, 51))) {
 
 			App::import("Vendor","Mailvendor",array('file' => "mailvendor.php"));
 			$mailvendor = new MailVendorHelper(
@@ -3146,30 +3146,33 @@ class WebServiceTicketsController extends WebServicesController
 			$this->EventRegistryDonor->save($donationDetail);
 			$donationId = $this->EventRegistryDonor->id;
 
-			// CakeLog::write("web_service_tickets_controller", var_export(array("WEB SERVICE TICKETS: ",$paymentDetail,$promoGcCofData),1));
+			CakeLog::write("web_service_gifts", var_export(array("WEB SERVICE GIFTS: ", $ticketInfo),1));
 		
 			return 'CHARGE_SUCCESS|' . $donationId;
 			
 		} else {
-			//$failureDetail = array();
-			//$mappedResponse = $processor->GetMappedResponse();
+			$failureDetail = array();
+			$mappedResponse = $processor->GetMappedResponse();
 			
-			//$failureDetail['eventRegistryId']		= $eventRegistryId;
-			//$failureDetail['userId']				= $data['donorUserId'];
-			//$failureDetail['transactionId']			= $mappedResponse['ppTransactionId'];
-			//$failureDetail['amount']				= $totalChargeAmount;
-			//$failureDetail['dateCreated']			= date('Y-m-d h:i:s');
-			//$failureDetail['ccDigits']				= substr($userPaymentSettingPost['UserPaymentSetting']['ccNumber'], -4, 4);
-			//$failureDetail['ccType']				= $userPaymentSettingPost['UserPaymentSetting']['ccType'];
+			$failureDetail['eventRegistryId']		= $eventRegistryId;
+			$failureDetail['userId']				= $data['donorUserId'];
+			$failureDetail['transactionId']			= $mappedResponse['ppTransactionId'];
+			$failureDetail['amount']				= $totalChargeAmount;
+			$failureDetail['dateCreated']			= date('Y-m-d h:i:s');
+			$failureDetail['donorNameOnCard']		= $userPaymentSettingPost['UserPaymentSetting']['nameOnCard'];
+			$failureDetail['donorPostalCode']		= $userPaymentSettingPost['UserPaymentSetting']['postalCode'];
+			$failureDetail['ccDigits']				= substr($userPaymentSettingPost['UserPaymentSetting']['ccNumber'], -4, 4);
+			$failureDetail['ccType']				= $userPaymentSettingPost['UserPaymentSetting']['ccType'];
+
+			$this->EventRegistryGiftFailure->create();
+			$this->EventRegistryGiftFailure->save($failureDetail);
+
+			CakeLog::write("web_service_gifts", "DECLINED. RESPONSE: " . var_export($mappedResponse, 1));
 
 			$response_txt = $processor->GetResponseTxt();
-			
-			// CakeLog::write("web_service_tickets_controller","DECLINED. RESPONSE: ".var_export($processor->GetMappedResponse(),1));
 			return $response_txt;
 		}
 	}
-
-
 
 	public function processGiftPostchargeSuccess($in0) {
 
