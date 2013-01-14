@@ -1873,11 +1873,21 @@ class WebServiceTicketsController extends WebServicesController
 				} else {
 					$templateFile = '18_auction_winner_ppv';	
 				}
-				
-				$templateTitle = "Congratulations - You Won!";
-				$emailSubject = "$siteName Auction Winner Receipt - $clientNameP";
-				$emailFrom = "$siteDisplay <auction@$siteEmail>";
-				$emailReplyTo = "auction@$siteEmail";
+
+				if ($package['Package']['isDNGPackage'] == 1) {
+					$isDNGPackage = 1;
+					$templateTitle = "Congratulations on your purchase";
+					$emailSubject = "$siteName Purchase Receipt - $clientNameP";
+					$emailFrom = "$siteDisplay <auction@$siteEmail>";
+					$emailReplyTo = "auction@$siteEmail";
+				} else {
+					$isDNGPackage = 0;
+					$templateTitle = "Congratulations - You Won!";
+					$emailSubject = "$siteName Auction Winner Receipt - $clientNameP";
+					$emailFrom = "$siteDisplay <auction@$siteEmail>";
+					$emailReplyTo = "auction@$siteEmail";
+				}
+
 				break;
 			case 20:
 				include('../vendors/email_msgs/notifications/20_auction_your_dates_received.html');
