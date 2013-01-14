@@ -91,6 +91,10 @@ $this->searchController = 'Tickets';
 				<td><strong>Offer Type</strong></td>
 				<td><?php echo $offerType[$ticket['Ticket']['offerTypeId']]; ?></td>
 			</tr>
+            <tr>
+                <td><strong>DNG Package</strong></td>
+                <td><?php echo ($ticket['Package']['isDNGPackage'] == 1) ? 'Yes' : 'No'; ?></td>
+            </tr>
 			<tr>
 				<td><strong>Ticket Amount</strong></td>
 				<td><?php echo $number->currency($ticket['Ticket']['billingPrice']); ?></td>
