@@ -98,12 +98,15 @@
 		<td><?=$package['Package']['numRooms'];?></td>
 		</tr>
 
-
     <tr class='odd'>
+        <th>Is DNG Package?</th>
+        <td><?php echo ($package['Package']['isDNGPackage'] == 1) ? 'Yes' : 'No'; ?></td>
+    </tr>
+    <tr>
         <th>Is Private Package?</th>
         <td><?php echo ($package['Package']['isPrivatePackage'] == 1) ? 'Yes' : 'No'; ?></td>
     </tr>
-    <tr>
+    <tr class='odd'>
         <th>Is Flex Package?</th>
         <td><?php echo ($package['Package']['isFlexPackage'] == 1) ? 'Yes' : 'No'; ?></td>
     </tr>
@@ -117,7 +120,7 @@
             <td><textarea class="notes" rows="10" readonly><?php echo "{$package['Package']['flexNotes']}\n"; ?></textarea></td>
         </tr>
     <?php endif; ?>
-    <tr class="odd">
+    <tr>
         <th>Max Num Guests</th>
         <td>
             <?php echo $package['Package']['numGuests']; ?>
@@ -126,15 +129,15 @@
             <?php endif; ?>
         </td>
     </tr>
-    <tr>
+    <tr class='odd'>
         <th>Min Num Guests</th>
         <td><?php echo $package['Package']['minGuests']; ?></td>
     </tr>
-    <tr class="odd">
+    <tr>
         <th>Max Num Adults</th>
         <td><?php echo $package['Package']['maxAdults']; ?></td>
     </tr>
-    <tr>
+    <tr class='odd'>
         <th>Currency</th>
         <td><?php if (!empty($package['Package']['currencyId'])) echo $currencyCodes[$package['Package']['currencyId']]; ?></td>
     </tr>
@@ -142,7 +145,7 @@
         <th>Rate Disclaimer</th>
         <td><?php echo $package['Package']['rateDisclaimer']; ?></td>
     </tr>
-    <tr class="odd">
+    <tr>
         <th>History</th>
         <td>
             <div class="history-detail">
@@ -152,7 +155,7 @@
             </div>
         </td>
     </tr>
-    <tr>
+    <tr class='odd'>
         <th>Notes</th>
         <td>
             <div class="history">
