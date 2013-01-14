@@ -1874,14 +1874,12 @@ class WebServiceTicketsController extends WebServicesController
 					$templateFile = '18_auction_winner_ppv';	
 				}
 
-				if ($package['Package']['isDNGPackage'] == 1) {
-					$isDNGPackage = 1;
+				if ($ticket['Package']['isDNGPackage'] == 1) {
 					$templateTitle = "Congratulations on your purchase";
 					$emailSubject = "$siteName Purchase Receipt - $clientNameP";
 					$emailFrom = "$siteDisplay <auction@$siteEmail>";
 					$emailReplyTo = "auction@$siteEmail";
 				} else {
-					$isDNGPackage = 0;
 					$templateTitle = "Congratulations - You Won!";
 					$emailSubject = "$siteName Auction Winner Receipt - $clientNameP";
 					$emailFrom = "$siteDisplay <auction@$siteEmail>";
