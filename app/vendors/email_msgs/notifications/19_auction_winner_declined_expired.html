@@ -1,4 +1,8 @@
 %%purchase_details%%
-We have been unsuccessful in completing the purchase for your winning bid on the <?= $packageName ?> auction.
+<?php if ($ticket['Package']['isDNGPackage'] == 1): ?>
+    <p>We have been unsuccessful in completing the purchase on the <?= $packageName ?> package.</p>
+<?php else: ?>
+    <p>We have been unsuccessful in completing the purchase for your winning bid on the <?= $packageName ?> auction.</p>
+<?php endif; ?>
 To complete this transaction, please update your account information with valid credit card information. <a href="<?= $checkoutLink ?>" target="_blank" style="color: #056ff7;">You may update your account here.</a>
 %%package_details%%
