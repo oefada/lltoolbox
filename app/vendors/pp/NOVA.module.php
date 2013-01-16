@@ -79,6 +79,7 @@ class NOVA
 		$paymentDetail['ppApprovalText']		= (isset($response['ssl_result_message'])) ? $response['ssl_result_message'] : 0;
 		$paymentDetail['ppApprovalCode']		= (isset($response['ssl_result'])) ? $response['ssl_result'] : 0;
 		$paymentDetail['ppAvsCode']				= (isset($response['ssl_avs_response'])) ? $response['ssl_avs_response'] : 0;
+		$paymentDetail['ppCvvCode']				= (isset($response['ssl_cvv2_response'])) ? $response['ssl_cvv2_response'] : 0;
 		$paymentDetail['ppResponseText']		= '';
 		$paymentDetail['ppResponseSubCode']		= '';
 		$paymentDetail['ppReasonCode']			= '';
