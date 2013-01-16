@@ -73,7 +73,17 @@ $this->set('hideSidebar', true);
 			<th>Editor</th>
 			<th>Date</th>
 		</tr>
-		<?php foreach ($blockRevisions as $br): ?>
+		<?php
+		$curDate = '';
+		foreach ($blockRevisions as $br):
+		$newDate = substr($br['BlockRevision']['created'],0,10);
+		if ($curDate!=$newDate) :
+		$curDate=$newDate;
+		?>
+		
+		<tr style="background:#eee; font-weight: bold;"><td colspan="5" style="text-align: center;"><?php echo $curDate; ?></td></tr>
+		
+		<?php endif; ?>
 			<tr>
 				<td><?php echo $br['BlockRevision']['blockRevisionId']; ?></td>
 				<td><?php echo $html->link($br['BlockRevision']['sha1'], $br['BlockRevision']['previewUrl'], array('target' => '_blockPreview')); ?></td>
