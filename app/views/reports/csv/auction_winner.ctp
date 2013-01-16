@@ -95,7 +95,7 @@ foreach ($eventRegistryData as $r):
     $r['d']['bookingDate'],
     $r['d']['paymentDate'],
     $r['d']['booking'],
-    $r['r']['vendorId'],
+    $r['r']['vendorId'] . 'ER',
     'N/A',
     'N/A',
     $r['r']['vendor'],
