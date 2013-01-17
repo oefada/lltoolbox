@@ -164,6 +164,11 @@ class WebServiceTicketsController extends WebServicesController
 						'doc' => 'N/A',
 						'input' => array('in0' => 'xsd:string'),
 						'output' => array('return' => 'xsd:string')
+						),
+					'getTicketAppliedPayment' => array(
+						'doc' => 'N/A',
+						'input' => array('in0' => 'xsd:string'),
+						'output' => array('return' => 'xsd:string')
 						)
 					);
 
@@ -3260,6 +3265,44 @@ class WebServiceTicketsController extends WebServicesController
 		}
 		
 		return false;
+	}
+
+	/**
+	 * @param $in0
+	 * @return string
+	 */
+	public function getTicketAppliedPayment($in0)
+	{
+		$ticketData = json_decode($in0, true);
+		$ticketId = $ticketData['ticketId'];
+
+		$this->Ticket->recursive = 0;
+		$ticket = $this->Ticket->read(null, $ticketId);
+
+		$promoGcCofData	= $this->Ticket->getPromoGcCofData($ticketId, $ticket['Ticket']['billingPrice']);
+		$promoGcCofData['final_price'] = number_format($promoGcCofData['final_price'],2);
+
+		$appliedPayments = array();
+
+		if (isset($promoGcCofData['Promo'])	&& isset($promoGcCofData['Promo']['applied']) && $promoGcCofData['Promo']['applied']) {
+			$appliedPayments['promo']['totalAmountOff'] = $promoGcCofData['promo']['totalAmountOff'];
+			$appliedPayments['promo']['promoCode'] = $promoGcCofData['promo']['promoCode'];
+		}
+
+		if (isset($promoGcCofData['Cof']) && isset($promoGcCofData['Cof']['applied']) && $promoGcCofData['Cof']['applied']) {
+			$appliedPayments['cof']['totalAmountOff'] = $promoGcCofData['Cof']['totalAmountOff'];
+		}
+
+		if (isset($promoGcCofData['GiftCert']) && isset($promoGcCofData['GiftCert']['applied']) && $promoGcCofData['GiftCert']['applied']) {
+			$appliedPayments['gc']['totalAmountOff'] = $promoGcCofData['GiftCert']['totalAmountOff'];
+		}
+
+		$appliedPayments['finalUserPrice'] = $promoGcCofData['final_price'];
+
+		CakeLog::write("web_service_tickets_controller",var_export(array($promoGcCofData),1));
+		CakeLog::write("web_service_tickets_controller",var_export($appliedPayments,1));
+
+		return json_encode($appliedPayments);
 	}
 
 	function logError($method,$msg = "") {
