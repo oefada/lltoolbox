@@ -47,16 +47,19 @@ class Call extends AppModel
 		),
 	);
 
+	// TODO READ THESE FROM THE DATABASE
 	public static $interactionTypes = array(
 		1 => 'Guest',
 		2 => 'Client',
 	);
+	// TODO READ THESE FROM THE DATABASE
 	public static $contactTypes = array(
 		1 => 'Inbound Call',
 		2 => 'Outbound Call',
 		3 => 'Live Chat Reactive',
 		4 => 'Live Chat Proactive',
 	);
+	// TODO READ THESE FROM THE DATABASE
 	public static $contactTopics = array(
 		1 => 'Haven\'t received confirmation - checking confirmation',
 		2 => 'Checking availability before purchase',
