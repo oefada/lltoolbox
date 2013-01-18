@@ -1138,6 +1138,10 @@ class WebServiceTicketsController extends WebServicesController
 				$packageIncludes = $packageData['packageIncludes'];
 			}
 
+			// ticket 3826
+			if (!$clientId && $offerId) {
+				$clientId = $liveOfferData['clientId'];
+			}
 		}
 
 		if ($clientId) {
@@ -2109,6 +2113,7 @@ class WebServiceTicketsController extends WebServicesController
 				}
 				break;
 			case 48:
+				$emailBcc = 'EventRegistry@luxurylink.com';
 				$eventRegistryUrl = $params['eventRegistryUrl'];
 				$emailSubject = "Your Luxury Link Honeymoon Registry has been Created";
 				include('../vendors/email_msgs/notifications/48_registry_created_honeymoon.html');
@@ -2122,6 +2127,7 @@ class WebServiceTicketsController extends WebServicesController
 				include('../vendors/email_msgs/notifications/49_registry_share_honeymoon.html');
 				break;
 			case 50:
+				$emailBcc = 'EventRegistry@luxurylink.com';
 				$giftMessage = $params['giftMessage'];
 				$giftFromName = $params['giftFromName'];
 				$giftFromFullName = $params['giftFromFullName'];
