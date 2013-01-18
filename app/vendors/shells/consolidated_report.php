@@ -202,7 +202,7 @@ class ConsolidatedReportShell extends Shell {
 		$this->Email->bcc = $recipient;
 		$this->Email->subject = "Monthly Marketing Report for $property_name from LuxuryLink.com - Including Detailed Lead Information";
 		$this->Email->template = 'consolidated_report_email';
-		$this->Email->sendAs = 'text';
+		$this->Email->sendAs = 'html';
 		$this->Controller->set('account_manager_email', $account_manager_email);
 		$this->Controller->set('property_name', $property_name);
 		$this->Email->attachments = array($file);

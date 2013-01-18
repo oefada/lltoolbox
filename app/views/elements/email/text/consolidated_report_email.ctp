@@ -2,7 +2,17 @@ Dear <?php echo $property_name ?> Team,
 
 Thank you for your ongoing business with Luxury Link Travel Group.
 
-Your monthly report includes:
+Your monthly report includes the following data:
+
+* Detailed Traveler Leads with Opt-In authorization enabling you to market to them directly (see tab marked ‘TRAVELER DETAILS’)
+
+* Media Impression overview – source & score
+
+* Click-through activity to your website directly for bookings
+
+* Phone Calls to your reservations office for information and direct bookings *includes caller name and full mailing address when validated
+
+* Booking data
 
 A comprehensive list of prospective guest leads originating from your property's showcase page
 This includes valuable lead details such as name, email, and phone
@@ -10,7 +20,6 @@ Dashboards showing calls to your property, click-through directly to your site, 
 Summary information to help you measure ROI
 
 If you would like us to update any information on your property page, please contact your dedicated Account Manager:  <?php echo $account_manager_email; ?>
-
 
 As your online marketing partner, our goal is to give you as much exposure to our loyal, highly-qualified guests as possible. Did you know that 40% of Luxury Link users have a household income over $200k? And 50% of our guests take 4+ vacations per year? Your showcase page with Luxury Link is the best advertisement value on the web.
 
