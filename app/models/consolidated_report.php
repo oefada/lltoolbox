@@ -573,21 +573,19 @@ class ConsolidatedReport extends AppModel
 	{
 		$sql = "
 			SELECT
-				count(distinct Ticket.ticketId) as bookings,
-				sum(Offer.roomNights) as room_nights,
+				COUNT(distinct Ticket.ticketId) as bookings,
+				sum(Ticket.numNights) as room_nights,
 				sum(Ticket.billingPrice) as gross_bookings
 			FROM
 				ticket Ticket,
-				paymentDetail PaymentDetail,
 				{$table} Offer
 			WHERE
-				Offer.clientId = {$this->client_id}
+				Offer.clientId = ?
 				AND Ticket.offerId = Offer.offerId
-				AND Ticket.ticketStatusId != 8
-				AND PaymentDetail.ticketId = Ticket.ticketId
-				AND PaymentDetail.isSuccessfulCharge = 1
-				AND Ticket.created BETWEEN '{$start_date}' AND '{$end_date}'
+				AND Ticket.ticketStatusId in (4,5,6)
+				AND Ticket.created BETWEEN ? AND ?
 		";
+		$params = array($this->client_id, $start_date, $end_date);
 			
 		return $this->query($sql); 
 	}
