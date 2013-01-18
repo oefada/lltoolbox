@@ -3285,8 +3285,8 @@ class WebServiceTicketsController extends WebServicesController
 		$appliedPayments = array();
 
 		if (isset($promoGcCofData['Promo'])	&& isset($promoGcCofData['Promo']['applied']) && $promoGcCofData['Promo']['applied']) {
-			$appliedPayments['promo']['totalAmountOff'] = $promoGcCofData['promo']['totalAmountOff'];
-			$appliedPayments['promo']['promoCode'] = $promoGcCofData['promo']['promoCode'];
+			$appliedPayments['promo']['totalAmountOff'] = $promoGcCofData['Promo']['totalAmountOff'];
+			$appliedPayments['promo']['promoCode'] = $promoGcCofData['Promo']['promoCode'];
 		}
 
 		if (isset($promoGcCofData['Cof']) && isset($promoGcCofData['Cof']['applied']) && $promoGcCofData['Cof']['applied']) {
