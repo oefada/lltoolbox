@@ -1591,7 +1591,7 @@ class WebServiceTicketsController extends WebServicesController
 		}
 		
 		// Click tracking for templates
-		$emailFrom = "$siteName <no-reply@$siteEmail>";
+		$emailFrom = "$siteDisplay <no-reply@$siteEmail>";
 		$emailReplyTo = "no-reply@$siteEmail";
 
 		// fetch template with the vars above
@@ -2465,7 +2465,7 @@ class WebServiceTicketsController extends WebServicesController
         $emailHeaders['Content-Type'] = "text/html";
         $emailHeaders['Content-Transfer-Encoding'] = "8bit";
 
-		if (in_array($ppvNoticeTypeId, array(42, 43, 44, 48, 49, 50, 51))) {
+		if (in_array($ppvNoticeTypeId, array(26, 27, 28, 34, 35, 36, 37, 39, 41, 42, 43, 44, 45, 48, 49, 50, 51))) {
 
 			App::import("Vendor","Mailvendor",array('file' => "mailvendor.php"));
 			$mailvendor = new MailVendorHelper(
@@ -3122,7 +3122,7 @@ class WebServiceTicketsController extends WebServicesController
 		$ticketInfo = array();
 		$ticketInfo['Ticket']['ticketId'] = $eventRegistryId . 'ER';
 		$ticketInfo['Ticket']['billingPrice'] = $totalChargeAmount;
-
+		
 		$isTestCard = ($isDev) ? true : false;
 		$processor = new Processor('NOVA', $isTestCard);
 		
@@ -3159,7 +3159,7 @@ class WebServiceTicketsController extends WebServicesController
 			$this->EventRegistryDonor->save($donationDetail);
 			$donationId = $this->EventRegistryDonor->id;
 
-			CakeLog::write("web_service_gifts", var_export(array("WEB SERVICE GIFTS: ", $ticketInfo),1));
+			CakeLog::write("web_service_gifts", var_export(array("WEB SERVICE GIFTS: ", $ticketInfo, $mappedResponse),1));
 		
 			return 'CHARGE_SUCCESS|' . $donationId;
 			
