@@ -587,7 +587,7 @@ class ConsolidatedReport extends AppModel
 		";
 		$params = array($this->client_id, $start_date, $end_date);
 			
-		return $this->query($sql); 
+		return $this->query($sql, $params);
 	}
 	
 	private function getVacationistBookingInformationForPeriod($start_date, $end_date)
