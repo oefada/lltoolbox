@@ -4,7 +4,7 @@
 
 <ul>
 	<li>Detailed Traveler Leads with Opt-In authorization enabling you to market to them directly (see tab marked 'TRAVELER DETAILS')</li>
-	<li>Media Impression overview – source & score</li>
+	<li>Media Impression overview - source & score</li>
     <li>Click-through activity to your website directly for bookings</li>
     <li>Phone Calls to your reservations office for information and direct bookings *includes caller name and full mailing address when validated</li>
     <li>Booking data</li>
