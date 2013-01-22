@@ -55,13 +55,13 @@ class UnsubscribeLogsController extends AppController
 
 		// populate mailing list drop down selector
 		$nlArr = $this->MailingList->getNewsletterData();
-		foreach($nlArr as $siteId=>$arr){
-			foreach($arr as $nlId=>$row){
-				$nlIdArr[$nlId] = $row['name'];
+		foreach($nlArr as $siteId => $arr) {
+			foreach($arr as $nlId => $row){
+				$nlIdArr[$siteId . '-' . $nlId] = $row['name'];
 			}
 		}
-		$nlArr[0][0]['name']='Undeliverables';
-		$nlArr[0][0]['contactId']='0';
+		$nlArr[0][0]['name'] = 'Undeliverables';
+		$nlArr[0][0]['contactId'] = '0';
 		$this->set('nlIdArr', $nlIdArr);
 		$this->set('nlDataArr', $nlArr);
 
@@ -73,7 +73,7 @@ class UnsubscribeLogsController extends AppController
 			$this->setEndUt();
 
 			// get the data inside the date range
-			$data=$this->getUnsubData();
+			$data = $this->getUnsubData($this->data['unsubscribe_logs']['mailingList']);
 
 			// set the view data
 			$this->set('output', $this->data['unsubscribe_logs']['Output']);
@@ -146,7 +146,7 @@ class UnsubscribeLogsController extends AppController
 		// sets $this->end_ut
 		$this->setEndUt();
 
-		$data=$this->getUnsubData();
+		$data=$this->getUnsubData($this->data['unsubscribe_logs']['mailingList']);
 
 		// Define column headers for CSV file, in same array format as the data itself 
 		$headers = array( 
@@ -165,7 +165,11 @@ class UnsubscribeLogsController extends AppController
 
 	}
 
-	private function getUnsubData(){
+	private function getUnsubData($selected) {
+	
+		$selArray = explode('-', $selected);
+		$siteId = $selArray[0];
+		$mailingId = $selArray[1];
 
 
 		// Find fields needed without recursing through associated models 
@@ -176,7 +180,8 @@ class UnsubscribeLogsController extends AppController
 		$data = $this->UnsubscribeLog->find('all',
 			array(
 				'conditions'=>array(
-					'mailingId'=>$this->data['unsubscribe_logs']['mailingList'],
+					'siteId'=> $siteId,
+					'mailingId'=> $mailingId,
 					'unsubDate >='=>$this->start_ut,
 					'unsubDate <='=>$this->end_ut+86400,
 				),
