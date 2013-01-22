@@ -1,13 +1,11 @@
 <?php
 
-App::import("Vendor","NL",array('file' => "appshared".DS."legacy".DS."classes".DS."newsletter_manager.php"));
-
 class UsersController extends AppController {
 
 	var $name = 'Users';
 	var $helpers = array('Html', 'Form');
 	var $user;
-	var $uses = array('User');
+	var $uses = array('User', 'MailingList');
 
 	function index() {
 
@@ -125,7 +123,6 @@ class UsersController extends AppController {
 		$this->Session->setFlash(__('Updated Unsub for '.$this->data['User']['email'], true));
 		$this->redirect(array("action" => 'edit', $userId));
 
-
 	}
 
 	function view($id = null) {
@@ -173,6 +170,7 @@ class UsersController extends AppController {
 		$this->set('numAccountsWithEmail', $numAccountsWithEmail);
 		$this->set('email', $this->data['User']['email']);
 		$this->set('user', $this->data);
+		$this->set('newsletterInfo', $this->MailingList->getNewsletterData());
 		$this->set(compact('user', 'salutationIds', 'paymentTypes', 'addressTypes'));
 	}
 
