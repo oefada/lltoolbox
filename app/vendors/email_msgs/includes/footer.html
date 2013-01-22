@@ -90,13 +90,18 @@ if (!$clientPpv && is_array($clients)) {
 		if ($isAuction){ ?>
 
 			This <?php if (!$ticket['Package']['isDNGPackage']): ?>Auction<?php endif; ?> purchase is non refundable. Cancellations and changes may result in additional fees.
-			<a href="http://www.luxurylink.com/about/index.php/cancellations-refunds/?utm_source=ll&utm_medium=xa&utm_campaign=res_confirm&utm_source=ll&utm_medium=xa&utm_campaign=res_confirm">View Cancellation Policy</a>.   
 
 		<? }else{ ?>
 
-			All changes and cancellations are subject to hotel cancellation policies and fees. <a href="http://www.luxurylink.com/about/index.php/cancellations-refunds/?utm_source=ll&utm_medium=xa&utm_campaign=res_confirm&utm_source=ll&utm_medium=xa&utm_campaign=res_confirm">View Cancellation Policy</a>.
+			All changes and cancellations are subject to hotel cancellation policies and fees.
 
 		<? } ?>
+
+        <?php if ($ticket['Package']['isDNGPackage']): ?>
+            <a href="http://www.luxurylink.com/about/index.php/cancellations-refunds-2/?utm_source=ll&utm_medium=xa&utm_campaign=res_confirm&utm_source=ll&utm_medium=xa&utm_campaign=res_confirm">View Cancellation Policy</a>.
+        <?php else: ?>
+            <a href="http://www.luxurylink.com/about/index.php/cancellations-refunds/?utm_source=ll&utm_medium=xa&utm_campaign=res_confirm&utm_source=ll&utm_medium=xa&utm_campaign=res_confirm">View Cancellation Policy</a>.
+        <?php endif; ?>
 
 		We recommend purchasing outside travel insurance.  
 		Please make yourself familiar with the hotel's policies before your trip. 
