@@ -1,5 +1,7 @@
 <?php
 
+App::import("Vendor","NL",array('file' => "appshared".DS."legacy".DS."classes".DS."newsletter_manager.php"));
+
 class UsersController extends AppController {
 
 	var $name = 'Users';
