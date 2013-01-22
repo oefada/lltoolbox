@@ -2471,35 +2471,20 @@ class WebServiceTicketsController extends WebServicesController
         $emailHeaders['Content-Type'] = "text/html";
         $emailHeaders['Content-Transfer-Encoding'] = "8bit";
 
-		if (in_array($ppvNoticeTypeId, array(26, 27, 28, 34, 35, 36, 37, 39, 41, 42, 43, 44, 45, 48, 49, 50, 51))) {
-
-			App::import("Vendor","Mailvendor",array('file' => "mailvendor.php"));
-			$mailvendor = new MailVendorHelper(
-				MailVendorFactoryHelper::newMailVendorInstance('bluehornet',
-					array('disableMailProvider'=>false)
-				)
-			);
-			$mailvendor->sendMessage("ppv_".$ppvNoticeTypeId, $emailTo, $emailFrom, $emailHeaders['Subject'], $emailBody);
-
-		} else {
-			
-			App::import("Vendor","SilverpopRelay",array('file' => "appshared".DS."vendors".DS."Mail".DS."SilverpopRelay.php"));
-			$spRelay = new SilverpopRelay();
-			// 06/16/11 jwoods // 9/12/2011 rvella - relay through Silverpop
-			$spRelay->send($ppvNoticeTypeId, $emailHeaders, $emailTo, $emailBody);
-		
-		}
+		// 2013-01-30 - all emails through Blue Hornet
+		App::import("Vendor","Mailvendor",array('file' => "mailvendor.php"));
+		$mailvendor = new MailVendorHelper(
+			MailVendorFactoryHelper::newMailVendorInstance('bluehornet',
+				array('disableMailProvider'=>false)
+			)
+		);
+		$mailvendor->sendMessage("ppv_".$ppvNoticeTypeId, $emailTo, $emailFrom, $emailHeaders['Subject'], $emailBody);
 
 		// below is for logging the email and updating the ticket
 		// -------------------------------------------------------------------------------
 
 		$emailSentDatetime = strtotime('now');
 		$emailBodyFileName = $ticketId . '_' . $ppvNoticeTypeId . '_' . $emailSentDatetime . '.html';
-
-		// save the email as a flat file on /vendors/email_msgs/toolbox_sent_messages
-		// -------------------------------------------------------------------------------
-		// 10/31/11 jwoods - no longer saving emial content to filesystem
-		// file_put_contents("../vendors/email_msgs/toolbox_sent_messages/$emailBodyFileName", $emailBody);
 
 		// get initials
 		// -------------------------------------------------------------------------------
@@ -2514,7 +2499,6 @@ class WebServiceTicketsController extends WebServicesController
 		$ppvNoticeSave['emailFrom']			= $emailFrom;
 		$ppvNoticeSave['emailCc']			= $emailCc;
 		$ppvNoticeSave['emailSubject']		= $emailSubject;
-		// 10/01/2011 - jwoods added body text to db
 		$ppvNoticeSave['emailBody']			= $emailBody;
 		$ppvNoticeSave['emailBodyFileName']	= $emailBodyFileName;
 		$ppvNoticeSave['emailSentDatetime']	= date('Y-m-d H:i:s', $emailSentDatetime);
