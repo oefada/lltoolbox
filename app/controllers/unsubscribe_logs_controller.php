@@ -1,14 +1,11 @@
 <?php
 
-App::import("Vendor","NL",array('file' => "appshared".DS."legacy".DS."classes".DS."newsletter_manager.php"));
-
-
 class UnsubscribeLogsController extends AppController 
 {
 
 	var $name = 'UnsubscribeLogs';
 	var $helpers = array('Form', 'Javascript');
-	var $uses = array('UserMailOptin','UnsubscribeLog', 'UndeliverableLog');
+	var $uses = array('UserMailOptin', 'UnsubscribeLog', 'UndeliverableLog', 'MailingList');
 
 	var $components = array('RequestHandler');
 
@@ -57,33 +54,17 @@ class UnsubscribeLogsController extends AppController
 	function index(){
 
 		// populate mailing list drop down selector
-		$nlMgr=new NewsletterManager();
-		$nlArr=$nlMgr->getNewsletterData();
+		$nlArr = $this->MailingList->getNewsletterData();
 		foreach($nlArr as $siteId=>$arr){
 			foreach($arr as $nlId=>$row){
-				$nlIdArr[$nlId]=$row['name'];
+				$nlIdArr[$nlId] = $row['name'];
 			}
 		}
 		$nlArr[0][0]['name']='Undeliverables';
 		$nlArr[0][0]['contactId']='0';
-		$this->set('nlIdArr',$nlIdArr);
-		$this->set('nlDataArr',$nlArr);
-/*
-		$undelivCountArr=$this->UndeliverableLog->getUndelivCountByMonth($nlArr);
-		$this->set("undelivCountArr", $undelivCountArr);
+		$this->set('nlIdArr', $nlIdArr);
+		$this->set('nlDataArr', $nlArr);
 
-		$unsubCountArr=$this->UnsubscribeLog->getUnsubCountByMonth($nlArr);
-		$this->set("unsubCountArr", $unsubCountArr);
-
-		$unOptOutCountArr=$this->UnsubscribeLog->getUnOptOutCountByMonth($nlArr);
-		$this->set("unOptOutCountArr", $unOptOutCountArr);
-
-		$subCountArr=$this->UnsubscribeLog->getSubCountByMailingListId();
-		$this->set("subCountArr", $subCountArr);
-
-		$unsubUMOCountArr=$this->UserMailOptin->getUnsubCountByMonth($nlArr);
-		$this->set("unsubUMOCountArr", $unsubUMOCountArr);
-*/
 		if (!empty($this->data)){
 
 			// this sets $this->start_ut

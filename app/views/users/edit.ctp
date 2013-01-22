@@ -138,10 +138,9 @@
 		<tr<?php echo $class;?>>
 			<td><?php 
 
-			$mailingListId=$userMailOptin['mailingListId'];
-			$arr=NewsletterManager::getNewsletterData();
-			$siteId=isset($arr[1][$mailingListId])?1:2;
-			$name=$arr[$siteId][$mailingListId]['name'];
+			$mailingListId = $userMailOptin['mailingListId'];
+			$siteId = isset($newsletterInfo[1][$mailingListId]) ? 1 : 2;
+			$name = $newsletterInfo[$siteId][$mailingListId]['name'];
 			echo $name;
 
 			$optinDatetime=$userMailOptin['optinDatetime'];

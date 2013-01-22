@@ -1,13 +1,11 @@
 <?php
 
-App::import("Vendor","NL",array('file' => "appshared".DS."legacy".DS."classes".DS."newsletter_manager.php"));
-
 class SyncEmailsController extends AppController 
 {
 
 	var $name = 'SyncEmails';
 	var $helpers = array('Form', 'Javascript');
-	var $uses = array('UserMailOptin','UnsubscribeLog', 'UndeliverableLog');
+	var $uses = array('UserMailOptin', 'UnsubscribeLog', 'UndeliverableLog', 'MailingList');
 	var $components = array('RequestHandler');
 
 	public function index(){
@@ -20,8 +18,7 @@ class SyncEmailsController extends AppController
 		}
 
 		// for mailing list drop down selector
-		$nlMgr=new NewsletterManager();
-		$nlArr=$nlMgr->getNewsletterData();
+		$nlArr = $this->MailingList->getNewsletterData();
 		foreach($nlArr as $siteId=>$arr){
 			// Skip vcom for now
 			if ($siteId==3){
