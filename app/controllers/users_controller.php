@@ -1,7 +1,5 @@
 <?php
 
-App::import("Vendor","NL",array('file' => "appshared".DS."legacy".DS."classes".DS."newsletter_manager.php"));
-
 class UsersController extends AppController {
 
 	var $name = 'Users';
@@ -54,7 +52,6 @@ class UsersController extends AppController {
 			)
 		);
 
-
 		$error_str='';
 
 		if (!$id || empty($this->data)) {
@@ -66,13 +63,9 @@ class UsersController extends AppController {
 			$email=$this->data['User']['email'];
 			$userId=$this->data['User']['userId'];
 
-			$nlMgr=new NewsletterManager();
-
 			if (isset($this->data['User']['mailingListData']) && count($this->data['User']['mailingListData'])>0){
 			
 				$mailingListDataArr=$this->data['User']['mailingListData'];
-
-				$allNlArr=NewsletterManager::$nlDataArr;
 
 				foreach($mailingListDataArr as $key=>$str){
 
@@ -80,16 +73,9 @@ class UsersController extends AppController {
 					$checkedMailingListId=$arr[0];
 					$postedSiteId=$arr[1];
 					$optinDatetime=$arr[2];
-
-					$nlMgr->optoutSharedEmailFromListThirdPartyOnly($postedSiteId, $email, $checkedMailingListId);
+					
 					$mailvendor->removeEmailFromList($postedSiteId, $email, $checkedMailingListId);
-					
-					// Retrieve id's related to silverpop from $nlDataArr and unsub from silverpop
-					$row=$allNlArr[$postedSiteId][$checkedMailingListId];
-					if (isset($row['legacyId']) && $row['legacyId']>0){
-						$nlMgr->optoutUserFromDatabase($email, $row['legacyId']);
-					}
-					
+										
 					// Update local dbs
 					// update userMailOptin table
 					$this->User->UserMailOptin->updateAll( 
@@ -128,19 +114,13 @@ class UsersController extends AppController {
 
 			}	
 
-			$errors=$nlMgr->getErrors();
 			if (is_array($errors) && count($errors)>0){
 				$error_str=implode("<br>",$errors);
 			}
 
 		}
 
-		if ($error_str!=''){
-			$this->Session->setFlash(__('Errors unsubing '.$this->data['User']['email'].'<br>'.$error_str, true));
-		}else{
-			$this->Session->setFlash(__('Updated Unsub for '.$this->data['User']['email'], true));
-		}
-
+		$this->Session->setFlash(__('Updated Unsub for '.$this->data['User']['email'], true));
 		$this->redirect(array("action" => 'edit', $userId));
 
 
