@@ -37,7 +37,7 @@ class WebServiceTicketsController extends WebServicesController
 					  'ClientLoaPackageRel', 'Track', 'OfferType', 'Loa', 'TrackDetail', 'PpvNotice',
 					  'Address', 'OfferLuxuryLink', 'SchedulingMaster', 'SchedulingInstance', 'Reservation',
 					  'PromoTicketRel', 'Promo', 'TicketReferFriend','Package','PaymentProcessor','CakeLog',
-					  'ClientThemeRel', 'Image', 'ImageClient','CreditTracking', 'CreditBank', 'EventRegistryDonor', 'EventRegistryGiftFailure'
+					  'ClientThemeRel', 'Image', 'ImageClient','CreditTracking', 'CreditBank', 'EventRegistryDonor', 'EventRegistryGiftFailure', 'MailingList'
 					  );
 
 	var $serviceUrl = 'http://toolbox.luxurylink.com/web_service_tickets';
@@ -2471,13 +2471,8 @@ class WebServiceTicketsController extends WebServicesController
         $emailHeaders['Content-Type'] = "text/html";
         $emailHeaders['Content-Transfer-Encoding'] = "8bit";
 
-		// 2013-01-30 - all emails through Blue Hornet
-		App::import("Vendor","Mailvendor",array('file' => "mailvendor.php"));
-		$mailvendor = new MailVendorHelper(
-			MailVendorFactoryHelper::newMailVendorInstance('bluehornet',
-				array('disableMailProvider'=>false)
-			)
-		);
+		// all emails through Blue Hornet
+		$mailvendor = $this->MailingList->getMailVendorHelper();
 		$mailvendor->sendMessage("ppv_".$ppvNoticeTypeId, $emailTo, $emailFrom, $emailHeaders['Subject'], $emailBody);
 
 		// below is for logging the email and updating the ticket

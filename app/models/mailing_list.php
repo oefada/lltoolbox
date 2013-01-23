@@ -26,6 +26,22 @@ class MailingList extends AppModel {
 		return $arr;
 	}
 	
+
+	public function getMailVendorHelper() {
+
+		App::import("Vendor","Mailvendor",array('file' => "mailvendor.php"));
+		$mailvendor = new MailVendorHelper(
+			MailVendorFactoryHelper::newMailVendorInstance('bluehornet',
+				array(
+					'disableMailProvider' => false
+				  , 'loggingServiceUrl' => Configure::read("Url.Ws") . '/web_service_lltg?wsdl'
+				)
+			)
+		);
+		
+		return $mailvendor;
+	
+	}
 	
 }
 

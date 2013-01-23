@@ -43,14 +43,8 @@ class UsersController extends AppController {
 	 * @return nuttin'
 	 */
 	function unsub($id=null){
-
-
-		App::import("Vendor","Mailvendor",array('file' => "mailvendor.php"));
-		$mailvendor = new MailVendorHelper(
-			MailVendorFactoryHelper::newMailVendorInstance('bluehornet',
-				array('disableMailProvider'=>false)
-			)
-		);
+		
+		$mailvendor = $this->MailingList->getMailVendorHelper();
 
 		$error_str='';
 
