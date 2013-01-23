@@ -10,6 +10,9 @@ class SyncEmailsController extends AppController
 
 	public function index(){
 
+		echo 'this was turned off on 01/30/2013 <br /> please contact the dev team if you need to use it';
+		exit;
+		
 		$selectedNlId=0;
 		$selectedSiteId=0;
 		if (isset($this->data['sync_emails']['mailingList'])){
