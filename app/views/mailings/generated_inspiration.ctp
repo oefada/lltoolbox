@@ -10,7 +10,8 @@
 	$seoUrl=$arr['seoUrl'];
 	$seoUrl.="?utm_medium=news&utm_source=inspiration";
 	$seoUrl.="&utm_campaign=".$mailing->utmArr['utm_campaign'];
-	$seoUrl.="&utm_content=".$arr['seoName'];
+	$seoUrl.="&utm_content=properties";
+	$seoUrl.="&utm_term=".$arr['seoName'];
 
 ?>
 

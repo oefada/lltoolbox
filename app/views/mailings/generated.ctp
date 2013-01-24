@@ -29,7 +29,7 @@
 
 	</tr>  
 	<tr>
-	<td width="800"><a name="0.1_logo" target="_blank"  href="<?=$mailing->genUrl('logo_top','/');?>"><img border="0" align="left" height="90" width="217"  src="http://www.luxurylink.com/images/email/Insider/LL_logo15.png" alt="Insider Header" style="display: block;padding: 10px 0px 9px 14px" /></a><img align="right" height="109" width="567"  src="http://www.luxurylink.com/images/email/Insider/header5_05-15yOnly.jpg" alt="" /></td>
+	<td width="800"><a name="0.1_logo" target="_blank"  href="<?=$mailing->genUrl('header', '/', 'logo');?>"><img border="0" align="left" height="90" width="217"  src="http://www.luxurylink.com/images/email/Insider/LL_logo15.png" alt="Insider Header" style="display: block;padding: 10px 0px 9px 14px" /></a><a name="0.1_logo_title" target="_blank"  href="<?=$mailing->genUrl('header', '/', 'title');?>"><img border="0" align="right" height="109" width="567"  src="http://www.luxurylink.com/images/email/Insider/header5_05-15yOnly.jpg" alt="Insider Title" /></a></td>
 	</tr>
 	</table>
 
@@ -60,38 +60,38 @@
 	name="destinations_header" 
 	style="color:#666666;text-decoration:none" 
 	target="_blank"  
-	href="<?=$mailing->genUrl('destinations','/fivestar/');?>">&nbsp;&nbsp;&nbsp;&nbsp;Destinations</a>
+	href="<?=$mailing->genUrl('nav', '/fivestar/', 'nav_destinations');?>">&nbsp;&nbsp;&nbsp;&nbsp;Destinations</a>
 &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; 
 <a 
 	name="all_inclusive_header" 
 	style="color:#666666;text-decoration:none" 
 	target="_blank"  
-	href="<?=$mailing->genUrl('all-inclusive', '/fivestar/all-inclusive-resorts/deals');?>"
+	href="<?=$mailing->genUrl('nav', '/fivestar/all-inclusive-resorts/deals', 'nav_all-inclusive');?>"
 >All-Inclusive</a>
 &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; 
 <a 
 	name="hawaii_header" 
 	style="color:#666666;text-decoration:none" 
 	target="_blank"  
-	href="<?=$mailing->genUrl('hawaii','/fivestar/hotel-deals/hawaii');?>">Hawaii</a>
+	href="<?=$mailing->genUrl('nav', '/fivestar/hotel-deals/hawaii', 'nav_hawaii');?>">Hawaii</a>
 &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; 
 <a 
 	name="california_header" 
 	style="color:#666666;text-decoration:none" 
 	target="_blank"  
-	href="<?=$mailing->genUrl('california','/fivestar/hotel-deals/california');?>">California</a>
+	href="<?=$mailing->genUrl('nav', '/fivestar/hotel-deals/california', 'nav_california');?>">California</a>
 &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; 
 <a 
 	name="costa_rica_header" 
 	style="color:#666666;text-decoration:none" 
 	target="_blank"  
-	href="<?=$mailing->genUrl('new+york','/fivestar/hotel-deals/costa-rica');?>">Costa Rica</a>
+	href="<?=$mailing->genUrl('nav', '/fivestar/hotel-deals/costa-rica', 'nav_costarica');?>">Costa Rica</a>
 &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; 
 <a 
 	name="dianes_picks_header" 
 	style="color:#666666;text-decoration:none" 
 	target="_blank"  
-	href="<?=$mailing->genUrl('dianes_picks','/vacation-ideas/presidents-picks');?>">Diane's Picks</a>
+	href="<?=$mailing->genUrl('nav', '/vacation-ideas/presidents-picks', 'nav_dianes_picks');?>">Diane's Picks</a>
 </td> 
 <td align="right" width="120">
 		<table cellspacing="0" cellpadding="0" border="0" bgcolor="#ffffff" height="27" width="120" id="Table_01">
@@ -165,112 +165,132 @@ TEXT TBD
 
 </td>
 <td><img border="0" align="top" height="180" width="25"  src="http://www.luxurylink.com/images/insider/new/top_copy_2_mod_03b.jpg" alt="" /></td>
-<td align="center" width="186" valign="middle" style="padding:0px 0px">
-	<table cellspacing="0" cellpadding="0" border="0" width="186" id="Table_In_this_issue">
-	<tr>
-	<td 
-		bgcolor="#ffffff" 
-		height="16" 
-		width="156" 
-		valign="top" 
-		style="font-family:Arial,Verdana, sans-serif;font-size:12px;line-height:24px;color:#3ca9d5; font-weight: bold; text-align: left;"
-	><a 
-		name="newest_additions_header" 
-		style="text-decoration:none;color:#3ca9d5"  
-		href="<?=$mailing->genUrl('newest_additions','/fivestar/new-hotels/deals','New Additions');?>" 
-		target="_blank" 
-		alt=""
-		>Newest Additions</a>
-	</td>
-	</tr>
-	<tr>
-	<td 
-		bgcolor="#ffffff" 
-		height="16" 
-		width="156" 
-		valign="bottom" 
-		style="font-family:Arial,Verdana, sans-serif;font-size:12px;line-height:24px;color:#3ca9d5; font-weight: bold; text-align: left;"
-	><a 
-		name="collection" 
-		style="text-decoration:none;color:#3ca9d5"  
-		href="<?=$mailing->genUrl('collection','/fivestar/dorchester');?>" 
-		target="_blank" 
-		alt=""
-	>Dorchester Collection</a>
-	</td>
-	</tr>
-	<tr>
-	<td 
-		bgcolor="#ffffff" 
-		height="16" 
-		width="156" 
-		valign="bottom" 
-		style="font-family:Arial,Verdana, sans-serif;font-size:12px;line-height:24px;color:#3ca9d5; font-weight: bold; text-align: left;"><a style="text-decoration:none;color:#3ca9d5"  
-		href="<?=$mailing->genUrl('weekend_getaways_header','/vacation-ideas/weekend-getaways/deals');?>" 
-		target="_blank" 
-		name="weekend-getaways" 
-		alt=""
-		>Weekend Getaways</a>
-	</td>
-	</tr>
-	<tr>
-	<td><img height="3" width="156"  src="http://www.luxurylink.com/images/insider/new/spacer.gif" alt="" /></td>
-	</tr>
-	</table>
-</td>
-<td height="105" width="155" valign="middle" style="padding:0px 0px">
-	<table cellspacing="0" cellpadding="0" border="0" width="155" id="Table_02">
-	<tr>
-	<td 
-		bgcolor="#ffffff" 
-		height="16" 
-		width="155" 
-		valign="top" 
-		style="font-family:Arial,Verdana, sans-serif;font-size:12px;line-height:24px;color:#3ca9d5; font-weight: bold; text-align: left;"><a 
-			name="mystery_auction" 
-			style="text-decoration:none;color:#3ca9d5"  
-			href="<?=$mailing->genUrl('mystery_auction_header','/last-minute-travel-deals/mystery-offer');?>" 
-			target="_blank" 
-			alt=""
-		>Mystery Auction</a>
-	</td>
-	</tr>
-	<tr>
-	<td 
-		bgcolor="#ffffff" 
-		height="16" 
-		width="155" 
-		valign="bottom" 
-		style="font-family:Arial,Verdana, sans-serif;font-size:12px;line-height:24px;color:#3ca9d5; font-weight: bold; text-align: left;"><a 
-			name="luxury_lounge_header" 
-			style="text-decoration:none;color:#3ca9d5" 
-			href="<?=$mailing->genUrl('luxury_lounge_header','/community/content');?>" 
-			target="_blank" 
-			alt=""
-		>Luxury Lounge</a>
-	</td>
-	</tr>
-	<tr>
-	<td 
-		bgcolor="#ffffff" 
-		height="16" 
-		width="155" 
-		valign="bottom" 
-		style="font-family:Arial,Verdana, sans-serif;font-size:12px;line-height:24px;color:#3ca9d5; font-weight: bold; text-align: left;"><a 
-			name="holiday_avail" 
-			style="text-decoration:none;color:#3ca9d5"  
-			href="http://www.luxurylink.com/fivestar/hotel-deals/holiday_availability?utm_term=Holiday%20Travel%20Opportunities&utm_medium=news&utm_source=insider&utm_campaign=insider_121119a&utm_content=HolidayAvailability"  
-			target="_blank" 
-			alt=""
-		>Holiday Availability</a>
-	</td>
-	</tr>
-	<tr>
-		<td><img height="3" width="155" src="http://www.luxurylink.com/images/insider/new/spacer.gif" alt=""/></td>
-	</tr>
-	</table>
 
-</td></tr> </table>   
+<td align="center" width="342" valign="middle" style="padding:30px 0px 0px 0px">
+	
+	<table cellspacing="0" cellpadding="0" border="0" width="340" id="trending_dest">
+	<tr>
+		<td colspan="2" style="font-family:Arial,Verdana, sans-serif;font-size:12px;line-height:24px;color:#666666; font-weight: bold; text-align: left;">TRENDING DESTINATIONS:</td>
+	</tr>
+	<tr>	
+	<td align="center" width="170" valign="top" style="padding:0px 0px">
+		<table cellspacing="0" cellpadding="0" border="0" width="186" id="Table_In_this_issue">
+		<tr>
+		<td 
+			bgcolor="#ffffff" 
+			height="16" 
+			width="156" 
+			valign="top" 
+			style="font-family:Arial,Verdana, sans-serif;font-size:12px;line-height:24px;color:#3ca9d5; font-weight: bold; text-align: left;"
+		><a 
+			name="newest_additions_header" 
+			style="text-decoration:none;color:#3ca9d5"  
+			href="<?=$mailing->genUrl('menu','/fivestar/hotel-deals/destination_1_url','menu_destination_1_url');?>" 
+			target="_blank" 
+			alt=""
+			>destination_1_text</a>
+		</td>
+		</tr>
+		<tr>
+		<td 
+			bgcolor="#ffffff" 
+			height="16" 
+			width="156" 
+			valign="bottom" 
+			style="font-family:Arial,Verdana, sans-serif;font-size:12px;line-height:24px;color:#3ca9d5; font-weight: bold; text-align: left;"
+		><a 
+			name="newest_additions_header" 
+			style="text-decoration:none;color:#3ca9d5"  
+			href="<?=$mailing->genUrl('menu','/fivestar/hotel-deals/destination_2_url','menu_destination_2_url');?>" 
+			target="_blank" 
+			alt=""
+			>destination_2_text</a>
+		</td>
+		</tr>
+		<tr>
+		<td 
+			bgcolor="#ffffff" 
+			height="16" 
+			width="156" 
+			valign="bottom" 
+			style="font-family:Arial,Verdana, sans-serif;font-size:12px;line-height:24px;color:#3ca9d5; font-weight: bold; text-align: left;"
+		><a 
+			name="newest_additions_header" 
+			style="text-decoration:none;color:#3ca9d5"  
+			href="<?=$mailing->genUrl('menu','/fivestar/hotel-deals/destination_3_url','menu_destination_3_url');?>" 
+			target="_blank" 
+			alt=""
+			>destination_3_text</a>
+		</td>
+		</tr>
+		<tr>
+		<td><img height="3" width="156"  src="http://www.luxurylink.com/images/insider/new/spacer.gif" alt="" /></td>
+		</tr>
+		</table>
+	</td>
+	<td height="105" width="155" valign="top" style="padding:0px 0px">
+		<table cellspacing="0" cellpadding="0" border="0" width="155" id="Table_02">
+		<tr>
+		<td 
+			bgcolor="#ffffff" 
+			height="16" 
+			width="155" 
+			valign="top" 
+			style="font-family:Arial,Verdana, sans-serif;font-size:12px;line-height:24px;color:#3ca9d5; font-weight: bold; text-align: left;"
+		><a 
+			name="newest_additions_header" 
+			style="text-decoration:none;color:#3ca9d5"  
+			href="<?=$mailing->genUrl('menu','/fivestar/hotel-deals/destination_4_url','menu_destination_4_url');?>" 
+			target="_blank" 
+			alt=""
+			>destination_4_text</a>
+		</td>
+		</tr>
+		<tr>
+		<td 
+			bgcolor="#ffffff" 
+			height="16" 
+			width="155" 
+			valign="bottom" 
+			style="font-family:Arial,Verdana, sans-serif;font-size:12px;line-height:24px;color:#3ca9d5; font-weight: bold; text-align: left;"
+		><a 
+			name="newest_additions_header" 
+			style="text-decoration:none;color:#3ca9d5"  
+			href="<?=$mailing->genUrl('menu','/fivestar/hotel-deals/destination_5_url','menu_destination_5_url');?>" 
+			target="_blank" 
+			alt=""
+			>destination_5_text</a>
+		</td>
+		</tr>
+		<tr>
+		<td 
+			bgcolor="#ffffff" 
+			height="16" 
+			width="155" 
+			valign="bottom" 
+			style="font-family:Arial,Verdana, sans-serif;font-size:12px;line-height:24px;color:#3ca9d5; font-weight: bold; text-align: left;"
+		><a 
+			name="newest_additions_header" 
+			style="text-decoration:none;color:#3ca9d5"  
+			href="<?=$mailing->genUrl('menu','/fivestar/hotel-deals/destination_6_url','menu_destination_6_url');?>" 
+			target="_blank" 
+			alt=""
+			>destination_6_text</a>
+
+		</td>
+		</tr>
+		<tr>
+			<td><img height="3" width="155" src="http://www.luxurylink.com/images/insider/new/spacer.gif" alt=""/></td>
+		</tr>
+		</table>
+	</td>
+	</tr>
+	</table>
+	
+	
+</td>
+
+</tr> </table>   
 <!--end header-->
 
 
@@ -442,7 +462,7 @@ TEXT TBD
 	name="0.1_logo" 
 	target="_blank" 
 	xt="SPCLICK" 
-	href="<?=$mailing->genUrl('new-offers', '/fivestar/new-hotels/deals', 'New Additions');?>"
+	href="<?=$mailing->genUrl('view-all', '/fivestar/new-hotels/deals', 'new-additions');?>"
 	style="color: #3ca9d5; text-decoration: none;" 
 >View All Newest Additions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
 </td>
@@ -796,7 +816,7 @@ YOUR AD HERE
 		name="topdeals_traveldeals_lowestprices"  
 		target="_blank" 
 		xt="SPCLICK" 
-		href="<?=$mailing->genUrl('top-deals','/travel-deals/lowest-prices');?>"  
+		href="<?=$mailing->genUrl('view-all','/travel-deals/lowest-prices', 'top-deals');?>"  
 		style="color: #3ca9d5; text-decoration: none;"
 	>View All Top Deals&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
 	</td>
@@ -1171,7 +1191,7 @@ YOUR AD HERE
 		name="editorspicks"   
 		target="_blank" 
 		xt="SPCLICK" 
-		href="<?=$mailing->genUrl('editor_choice','/fivestar/hotel-deals/editor_choice', "editor's choice");?>"
+		href="<?=$mailing->genUrl('view-all','/fivestar/hotel-deals/editor_choice', 'editor-choice');?>"
 		style="color: #3ca9d5; text-decoration: none;"
 	>View All Editors Choices</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	</td>
@@ -1216,7 +1236,7 @@ YOUR AD HERE
 	xt="SPCLICK" 
 	target="_blank" 
 	name="mystery-auction" 
-	href="<?=$mailing->genUrl('mystery-auction', '/last-minute-travel-deals/mystery-offer');?>" 
+	href="<?=$mailing->genUrl('mystery', '/last-minute-travel-deals/mystery-offer', 'mystery_logo');?>" 
 ><img 
 	width="350" 
 	height="83" 
@@ -1314,7 +1334,7 @@ href=""
 <tr>
 <td><a 
 	name="collections_footer"  
-	href="<?=$mailing->genUrl('collections', '/fivestar/travel-packages/best');?>"   
+	href="<?=$mailing->genUrl('collectionbar', '/fivestar/travel-packages/best');?>"   
 	target="_target"
 	><img 
 		style="display: block;" 
@@ -1333,7 +1353,7 @@ href=""
 <tr>
 <td width="179" style="padding: 0px 0px 0px 10px;">
 <a 
-	href="<?=$mailing->genUrl('main','/');?>" 
+	href="<?=$mailing->genUrl('footer', '/', 'footer_ll_logo');?>" 
 	target="_blank" 
 	xt="SPCLICKSTREAM" 
 	name="logo"
@@ -1356,7 +1376,7 @@ href=""
 /></td>
 <td width="52" style="padding: 0px 0px 0px 0px;">
 <a 
-	href="<?=$mailing->genUrl('auctions', '/last-minute-travel-deals');?>"
+	href="<?=$mailing->genUrl('footer', '/last-minute-travel-deals', 'footer_auctions');?>"
 	target="_blank" 
 	xt="SPCLICKSTREAM" 
 	name="auctions_footer"
@@ -1365,7 +1385,7 @@ href=""
 <img style="display: block;" src="http://www.luxurylink.com/images/email/Insider/vertical-line.gif" border="0" width="6" height="39" alt=""/></td>
 <td width="46" style="padding: 0px 5px 0px 5px;">
 <a 
-	href="<?=$mailing->genUrl('buynow', '/travel-deals');?>" 
+	href="<?=$mailing->genUrl('footer', '/travel-deals', 'footer_buynow');?>" 
 	target="_blank" 
 	xt="SPCLICKSTREAM" 
 	name="buy_now_footer"
@@ -1375,7 +1395,7 @@ href=""
 <img style="display: block;" src="http://www.luxurylink.com/images/email/Insider/vertical-line.gif" border="0" width="6" height="39" alt=""/></td>
 <td width="71" style="padding: 0px 5px 0px 5px;">
 <a 
-	href="<?=$mailing->genUrl('destinations_footer', '/fivestar');?>"   
+	href="<?=$mailing->genUrl('footer', '/fivestar', 'footer_destinations');?>"   
 	target="_blank" 
 	xt="SPCLICKSTREAM" 
 	name="destinations_footer"
@@ -1384,7 +1404,7 @@ href=""
 <img style="display: block;" src="http://www.luxurylink.com/images/email/Insider/vertical-line.gif" border="0" width="6" height="39" alt=""/></td>
 <td width="54" style="padding: 0px 5px 0px 5px;">
 <a 
-	href="<?=$mailing->genUrl('interests_footer', '/vacation-ideas');?>"
+	href="<?=$mailing->genUrl('footer', '/vacation-ideas', 'footer_interests');?>"
 	target="_blank" 
 	xt="SPCLICKSTREAM" 
 	name="intertests_footer"
@@ -1393,7 +1413,7 @@ href=""
 <img style="display: block;" src="http://www.luxurylink.com/images/email/Insider/vertical-line.gif" border="0" width="6" height="39" alt=""/></td>
 <td width="84" style="padding: 0px 5px 0px 5px;">
 <a 
-	href="<?=$mailing->genUrl('property_types_footer', '/fivestar/travel-packages/best');?>" 
+	href="<?=$mailing->genUrl('footer', '/fivestar/travel-packages/best', 'footer_property_types');?>" 
 	target="_blank" 
 	xt="SPCLICKSTREAM" 
 	name="property-types_footer"
@@ -1403,7 +1423,7 @@ href=""
 <tr>
 <td align="left">
 <a 
-	href="<?=$mailing->genUrl('community_footer', '/community/forum.php');?>" 
+	href="<?=$mailing->genUrl('footer', '/community/forum.php', 'footer_community');?>" 
 	name="communityfooter_footer" 
 	target="_blank" 
 	xt="SPCLICKSTREAM"
@@ -1462,13 +1482,13 @@ Please do not reply to this email, you may unsubscribe <a href="#SPCUSTOMOPTOUT"
 
 <td  align="right" style="padding: 13px 17px 15px 10px" >
 <a 
-	href="<?=$mailing->genUrl('vcom_footer', '', '', false, 'http://www.vacationist.com');?>" 
+	href="<?=$mailing->genUrl('footer', '', 'footer_vcom', false, 'http://www.vacationist.com');?>" 
 	target="_blank" 
 	name="RAF" 
 	xt="SPCLICK"
 ><img border="0" src="http://www.luxurylink.com/images/email/Insider/Vcom4foter.gif" width="140" height="69" alt=""/></a>&nbsp; &nbsp; &nbsp; &nbsp; 
 <a 
-	href="<?=$mailing->genUrl('raf_footer','', '', false, 'http://www.luxurylink.com/refer-friend');?>" 
+	href="<?=$mailing->genUrl('footer','', 'footer_raf', false, 'http://www.luxurylink.com/refer-friend');?>" 
 	target="_blank" 
 	name="RAF" 
 	xt="SPCLICK"

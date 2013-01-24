@@ -215,13 +215,16 @@ class MailingHelper extends AppHelper{
 		// link to listing page as landing page
 		$url="http://www.luxurylink.com/fivestar/hotel-deals/".$clientArr['seoLocation'];
 		$url.="/featuring/".$clientArr['seoName'];
-		//$utm_content=($utm_content!='')?$utm_content:$clientArr['seoName'];
-		//$qs=$this->utm_qs.'&utm_content='.$utm_content;
 		$qs=$this->utm_qs;
-		if ($utm_term!=''){
-			$qs.='&utm_term='.$utm_term;
+		if ($utm_content != '') {
+			$qs .= '&utm_content=' . $utm_content;
 		}else{
-			//$qs.='&utm_term='.rawurlencode($clientArr['name']);
+			$qs .= '&utm_content=properties';
+		}
+		if ($utm_term != '') {
+			$qs .= '&utm_term=' . $utm_term;
+		}else{
+			$qs .= '&utm_term=' . $clientArr['seoName'];
 		}
 		//$qs.="&featuredproperty=1&tmsg=2";
 
