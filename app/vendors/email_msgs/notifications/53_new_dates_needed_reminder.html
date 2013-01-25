@@ -1,0 +1,14 @@
+%%booking_request_dates%%
+<font face="Arial, Helvetica, sans-serif" size="2" style="font-size:13px; line-height:20px" color="#474747">
+
+Thank you again for your purchase.
+Since the travel date you submitted was not available, kindly
+<a href="<?=$dateRequestLink;?>" target="_blank" style="text-decoration: none; color: #008EC5;">click here</a> to submit your new travel dates or call our Travel Concierge at (888) 297-3299 or (310) 215-8060 for assistance. Our business hours are Monday through Friday, 6:00am to 9:00pm, Saturday and Sunday from 9:00am to 4:00pm Pacific Time.
+<br><br>
+
+<? if (!$isAuction) { ?>
+	Please note that your credit card will not be charged until <?= $siteName ?> can confirm your travel dates.
+<? } ?>
+
+%%package_details%%
+
