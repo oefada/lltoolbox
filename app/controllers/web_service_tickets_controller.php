@@ -2143,6 +2143,38 @@ class WebServiceTicketsController extends WebServicesController
 				$giftAmount = $params['giftAmount'];
 				$ccFour = $params['ccFour'];
 				break;
+			case 52:
+				if ($siteId == 2) {
+					include('../vendors/email_msgs/notifications/old/52_no_dates_reminder.html');
+				} else {
+					$templateFile = '52_no_dates_reminder';	
+				}
+
+				if ($ticket['Package']['isDNGPackage'] == 1) {
+					$templateTitle = "Please Request Your Preferred Travel Dates";
+					$emailSubject = "$siteName Purchase Receipt Reminder, Please Request Your Preferred Travel Dates for $clientNameP";
+					$emailFrom = "$siteDisplay <auction@$siteEmail>";
+					$emailReplyTo = "auction@$siteEmail";
+				} else {
+					$templateTitle = "Please Request Your Preferred Travel Dates";
+					$emailSubject = "$siteName Auction Winner Reminder, Please Request Your Preferred Travel Dates for $clientNameP";
+					$emailFrom = "$siteDisplay <auction@$siteEmail>";
+					$emailReplyTo = "auction@$siteEmail";
+				}
+				break;
+			case 53:
+				if ($siteId == 2) {
+					include('../vendors/email_msgs/notifications/old/53_new_dates_needed_reminder.html');
+				} else {
+					$templateFile = "53_new_dates_needed_reminder";	
+				}
+				
+				$templateTitle = "Please Request Alternate Travel Dates";
+				$emailSubject = "Please Submit Alternate Travel Dates for $clientNameP";
+				$emailFrom = ($isAuction) ? "$siteDisplay <auction@$siteEmail>" : "$siteDisplay <exclusives@$siteEmail>";
+				$emailReplyTo = ($isAuction) ? "auction@$siteEmail" : "exclusives@$siteEmail";
+				break;
+
 			default:
 				break;
 		}

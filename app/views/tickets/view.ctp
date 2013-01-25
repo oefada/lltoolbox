@@ -373,7 +373,7 @@ $this->searchController = 'Tickets';
 	<br />
 
 	<div style="float:left;">
-	<table width="370" cellspacing="3" cellpadding="3" border="0" style="border:0px;width:370px;">
+	<table width="340" cellspacing="3" cellpadding="3" border="0" style="border:0px;width:340px;">
 		<tr><td style="border:0px;"><h2>Fixed Price</h2></td></tr>
 		<tr><td style="border:0px;"><?php echo $html->link('Fixed Price - Winner Notification', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/12');?> - 12</td></tr>
 		<tr><td style="border:0px;"><?php echo $html->link('Fixed Price - Internal Exclusive Email', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/11');?> - 11 </td></tr>
@@ -396,7 +396,7 @@ $this->searchController = 'Tickets';
 	</div>
 	
 	<div style="float:left;">
-	<table width="260" cellspacing="3" cellpadding="3" border="0" style="border:0px;width:260px;">
+	<table width="340" cellspacing="3" cellpadding="3" border="0" style="border:0px;width:340px;">
 		<tr><td style="border:0px;"><h2>Auctions</h2></td></tr>
 		<tr><td style="border:0px;"><?php echo $html->link('Winner Email (PPV)', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/18');?> - 18</td></tr>
 		<tr><td style="border:0px;"><?php echo $html->link('Winner Email (Dec/Exp CC)', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/19');?> - 19</td></tr>
@@ -420,6 +420,9 @@ $this->searchController = 'Tickets';
 		<? endif; ?>
 		<tr><td style="border:0px;"><?php echo $html->link('1st Offense Flake', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/16');?> - 16</td></tr>
 		<tr><td style="border:0px;"><?php echo $html->link('2nd Offense Flake', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/17');?> - 17</td></tr>
+		<tr><td style="border:0px;">&nbsp;</td></tr>
+		<tr><td style="border:0px;"><?php echo $html->link('No Dates Submitted (One Month Reminder)', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/52');?> - 52</td></tr>
+		<tr><td style="border:0px;"><?php echo $html->link('New Dates Needed (One Week Reminder)', '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/53');?> - 53</td></tr>
 	</table>
 	</div>
 	
