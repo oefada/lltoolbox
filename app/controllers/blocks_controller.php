@@ -25,6 +25,26 @@ class BlocksController extends AppController
 		$this->set('BlockPages', $this->BlockPage->find('all'));
 	}
 
+	function help()
+	{
+		if (Configure::read('debug') != 2) {
+			header('Last-Modified: ' . gmdate('D, d M Y 00:00:00 \G\M\T', time() - 2 * 24 * 60 * 60));
+			header('Expires: ' . gmdate('D, d M Y 11:11:11 \G\M\T', time() + 12 * 60 * 60));
+			header('Cache-Control: public');
+			header("Pragma: cache");
+		}
+		Configure::write('debug', '0');
+		$moduleName = 'help';
+		if (isset($this->params['named']['module'])) {
+			if (!empty($this->params['named']['module'])) {
+				if (file_exists(APP . 'views' . DS . 'blocks' . DS . strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $this->params['named']['module'])) . '.ctp')) {
+					$moduleName = $this->params['named']['module'];
+				}
+			}
+		}
+		$this->render($moduleName, false);
+	}
+
 	function revisions($blockPageId = null)
 	{
 		if (!$blockPageId) {
@@ -188,7 +208,7 @@ class BlocksController extends AppController
 			foreach ($hitlist as $h) {
 				$this->BlockRevision->delete($h);
 			}
-			$this->Session->setFlash('Garbage collected! (' . count($hitlist) . ' item' . (count($hitlist )==1 ? '' : 's') . ' deleted)');
+			$this->Session->setFlash('Garbage collected! (' . count($hitlist) . ' item' . (count($hitlist) == 1 ? '' : 's') . ' deleted)');
 			$this->redirect(array(
 				'action' => 'revisions',
 				$blockPageId,
