@@ -1,0 +1,1 @@
+There is nothing to configure on a Tabs module.  Add individual <b>Tab</b> modules to the Tabs module.

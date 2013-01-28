@@ -126,7 +126,8 @@ jQuery(function() {
 					'option' : {
 						'full' : 'Full Width',
 						'content' : 'Content',
-						'sidebar' : 'Sidebar'
+						'sidebar' : 'Sidebar',
+						'block' : 'Block'
 					}
 				}
 			},
@@ -404,6 +405,17 @@ jQuery(function() {
 					}
 				}
 			}
+			$panel.append('<input type="button" class="doNotPress" value="Update" title="Press this button after making changes above." />');
+			$panel.append($('<br/><br/><div class="blocksHelp"/>').html('&#160;'));
+			$.ajax({
+					'url' : '/blocks/help/module:' + rel,
+					'dataType' : 'html',
+					'cache' : true,
+					'type' : 'GET',
+					'success' : function(data, textStatus, jqXHR) {
+						$('#editorDiv div.blocksHelp').html(data);
+					}
+			});
 		}
 		$editor.empty().append($panel);
 	};
@@ -455,6 +467,7 @@ jQuery(function() {
 			}
 		}
 		$('#dataDebug').text(JSON.stringify($('#blockTree').jstree('get_json', -1, [], []), null, ' '));
+		$('input[type="button"].doNotPress').css('color', 'red');
 	};
 
 	var loadTree = function(json_data) {
@@ -519,6 +532,10 @@ jQuery(function() {
 		loadTree();
 	}
 	$('#editorDiv').on('change', 'input,textarea', handleChange).on('click', 'input[type="radio"]', handleChange).on('keyup', 'input,textarea', handleChange).on('keypress', 'input,textarea', handleChange);
+
+	$('#editorDiv').on('click','input[type="button"].doNotPress', function(e) {
+		$(this).css('color', 'green');
+	});
 
 	var link = document.createElement('link');
 	link.type = 'image/x-icon';

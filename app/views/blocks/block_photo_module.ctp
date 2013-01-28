@@ -1,0 +1,1 @@
+There is nothing to configure on a Photo module.  Add individual <b>Image</b> modules to the Photo module.
