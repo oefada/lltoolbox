@@ -411,7 +411,7 @@ jQuery(function() {
 					'url' : '/blocks/help/module:' + rel,
 					'dataType' : 'html',
 					'cache' : true,
-					'type' : 'GET',
+					'type' : 'POST',
 					'success' : function(data, textStatus, jqXHR) {
 						$('#editorDiv div.blocksHelp').html(data);
 					}
