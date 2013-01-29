@@ -116,7 +116,7 @@ $this->set('hideSidebar', true);
 
 <div>
 	<ul>
-		<li>Currently editing: <b><?php echo $blockPageUrl; ?></b></li>
+		<li>Currently editing: <b id="blockPageUrl"><?php echo $blockPageUrl; ?></b></li>
 		<li><?php echo $html->link('View Revisions', array(
 				'action' => 'revisions',
 				$blockPageId
