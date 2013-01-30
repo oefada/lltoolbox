@@ -26,6 +26,7 @@
 				for (var i = 0; i < data.length; i++) {
 					var $newImg = $('<img/>');
 					$newImg.attr('src', data[i]);
+					$newImg.attr('title', data[i]);
 					$newImg.css({
 						'max-width' : '256px',
 						'max-height' : '256px',
@@ -34,7 +35,8 @@
 						'border-style' : 'solid',
 						'border-color' : 'blue',
 						'padding' : '1px',
-						'margin' : '5px'
+						'margin' : '5px',
+						'cursor' : 'pointer'
 					});
 					$newImg.click(function(e) {
 						$('#editorDiv input[name="src"]').val('http://img.llsrv.us' + $(this).attr('src')).change();
