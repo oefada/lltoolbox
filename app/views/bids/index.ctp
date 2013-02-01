@@ -58,7 +58,7 @@ foreach ($bids as $bid):
 			<?php echo $bid['Bid']['note']; ?>
 		</td>
 		<td class="actions">
-			<?php echo $html->link(__('Edit', true), array('action'=>'edit', $bid['Bid']['bidId'])); ?>
+			<?php echo $html->link(__('Edit', true), array('controller'=>'bids', 'action'=>'edit', $bid['Bid']['bidId'])); ?>
 		</td>
 	</tr>
 <?php endforeach; ?>
