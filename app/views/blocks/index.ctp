@@ -11,17 +11,29 @@ $this->pageTitle = 'Blocks';
 $this->set('hideSidebar', true);
 ?>
 <div>
-	<ul style="font-size: 180%;">
-		<?php foreach ($BlockPages as $BlockPage):
+	<table style="width: auto;">
+		<thead>
+			<tr>
+				<td>URL</td>
+				<td>Actions</td>
+				<td>Created</td>
+			</tr>
+		</thead>
+		<tbody>
+		<?php $altrow=false; foreach ($BlockPages as $BlockPage):
 		?>
-		<li>
-			<?php
-			echo $html->link($BlockPage['BlockPage']['url'], array(
-				'action' => 'edit',
-				$BlockPage['BlockPage']['blockPageId'],
-			));
-			?>
-		</li>
+		<tr <?php echo ($altrow=!$altrow)?' class="altrow" ':''; ?>>
+			<td style="font-size: 150%;"><?php echo $BlockPage['BlockPage']['url']; ?></td>
+			<td>
+				<b><?php echo $html->link('Edit', array('action' => 'edit', $BlockPage['BlockPage']['blockPageId'])); ?></b>
+				|
+				<?php echo $html->link('Revisions', array('action' => 'revisions', $BlockPage['BlockPage']['blockPageId'])); ?>
+				|
+				<?php echo $html->link('View Live', 'http://www.luxurylink.com' . $BlockPage['BlockPage']['url'], array('target' => '_blockView')); ?>
+			</td>
+			<td><?php echo $BlockPage['BlockPage']['created']; ?></td>
+		</tr>
 		<?php endforeach; ?>
-	</ul>
+		</tbody>
+	</table>
 </div>
