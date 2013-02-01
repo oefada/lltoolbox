@@ -34,7 +34,7 @@
                                         </tr>
                                         <tr>
                                             <td align="left" style="padding:25px 0px 0px 0px;line-height:19px;font-family:Helvetica,maradival,Sans-Serif;color:rgb(68, 68, 68);font-size:14px">
-											I hope you enjoyed your Luxury Link vacation at %%ClientNames%%.  We pride ourselves on hand-selecting the world’s finest luxury hotels and resorts and offering them to you at an incredible value.  We would love to know all about your experience so we can make each Luxury Link vacation better than the last and continue to offer the best. 
+											I hope you enjoyed your Luxury Link vacation at %%ClientNames%%.  We pride ourselves on hand-selecting the world's finest luxury hotels and resorts and offering them to you at an incredible value.  We would love to know all about your experience so we can make each Luxury Link vacation better than the last and continue to offer the best. 
 											</td>
                                         </tr>
 										<tr>

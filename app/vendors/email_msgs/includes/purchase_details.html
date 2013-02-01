@@ -35,7 +35,7 @@
 					<tr>
 							<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:16px;padding: 0px 0px 0px 0px;">Handling Fee:</td>
 						</tr>
-						
+
 					<? if ($promoApplied): ?>
 					<tr>
 						<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;">Promotion Applied:</td>
@@ -160,7 +160,7 @@
 			<tr>
 				<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 20px 13px 15px;" colspan="3">Billed on: <?= date("M d, Y",strtotime($paymentDetail['ppResponseDate'])) ?></td>
 			</tr>
-		<?php elseif ($ppvNoticeTypeId == 18): ?>
+		<?php elseif (in_array($ppvNoticeTypeId,array(18,52))): ?>
 			<tr>
 			<td style="font-size: 12px; font-family: Arial,Sans-Serif; color: rgb(0, 0, 0); line-height: 18px; padding: 7px 0px 15px;" colspan="3" align="center"><a href="<?=$dateRequestLink;?>&" target="_blank"><img src="<?= $siteUrl ?>images/email/new/select_travel_dates.gif" alt="Select Travel Dates" border="0" height="26" width="142"></a></td>
 			</tr>
