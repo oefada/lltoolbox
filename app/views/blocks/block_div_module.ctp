@@ -4,7 +4,6 @@
 		<ul>
 			<?php
 			$links = array(
-				'content',
 				'content-box',
 				'link-box',
 			);
