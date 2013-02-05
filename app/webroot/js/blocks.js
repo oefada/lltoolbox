@@ -51,7 +51,7 @@ jQuery(function() {
 			case '#publish':
 				data['publish'] = true;
 			case '#save':
-				var json = JSON.stringify($('#blockTree').jstree('get_json', -1), null, ' ');
+				var json = JSON.stringify($('#blockTree').jstree('get_json', -1), null, ' ').replace('</script>','<\\\\/script>');
 				data['treeData'] = JSON.parse(json);
 				$.ajax({
 					'type' : 'POST',
