@@ -111,7 +111,8 @@ jQuery(function() {
 			'parameters' : {
 				'meta_title' : 'input',
 				'meta_description' : 'input',
-				'meta_keywords' : 'input'
+				'meta_keywords' : 'input',
+				'leaderboardPos' : 'input'
 			},
 			'icon' : {
 				'image' : 'http://ui.llsrv.us/images/icons/silk/page.png'
