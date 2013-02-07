@@ -423,7 +423,7 @@ jQuery(function() {
 				}
 			}
 			$panel.append('<input type="button" class="doNotPress" value="Update" title="Press this button after making changes above." />');
-			if ($panel.find('textarea').length > 0) {
+			if ($panel.find('textarea,input[type="text"]').length > 0) {
 				$panel.append('<input type="button" class="htmlValidate" value="Validate" title="Look for problems in the HTML" />');
 				$panel.append('<input type="button" class="htmlTidy" value="Tidy" title="Tidy up the HTML" />');
 			}
@@ -562,7 +562,7 @@ jQuery(function() {
 		$('#editorDiv').find('.tidyError').remove();
 		var $tidyUp = $(this).hasClass('htmlTidy');
 		var validateData = {};
-		$('#editorDiv').find('textarea').each(function(i) {
+		$('#editorDiv').find('textarea,input[type="text"]').each(function(i) {
 			$(this).css('background-color', '#ffffee');
 			if ($(this).attr('name')) {
 				validateData[$(this).attr('name')] = $(this).val();
@@ -580,7 +580,7 @@ jQuery(function() {
 				if (data.cleanroom) {
 					for (var x in data.cleanroom) {
 						if (data.cleanroom.hasOwnProperty(x)) {
-							$('#editorDiv').find('textarea').each(function(i) {
+							$('#editorDiv').find('textarea,input[type="text"]').each(function(i) {
 								if ($(this).attr('name') == x) {
 									if (data.cleanroom[x].background) {
 										$(this).css('background', data.cleanroom[x].background);
@@ -591,7 +591,6 @@ jQuery(function() {
 										}
 									}
 									if (data.cleanroom[x].error) {
-
 										var $newError = $('<pre class="tidyError"/>').text(data.cleanroom[x].error);
 										$newError.html($newError.html().replace(/line ([0-9]+) column ([0-9]+)/g, function(match, contents, offset, s) {
 											return match;
