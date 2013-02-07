@@ -222,6 +222,49 @@ class BlocksController extends AppController
 		}
 	}
 
+	function tidy()
+	{
+		$this->autoRender = false;
+		header('Content-type: application/json');
+		Configure::write('debug', 0);
+		$data = array();
+		if (isset($_POST['validate']) && is_array($_POST['validate'])) {
+			foreach ($_POST['validate'] as $k => $v) {
+				$z = array();
+				$z['source'] = $v;
+				$config = array(
+					'indent' => TRUE,
+					'indent-spaces' => 2,
+					'tab-size' => 2,
+					'output-xhtml' => TRUE,
+					'wrap' => 200
+				);
+				$v = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title></title></head><body>' . "\n" . $v;
+				$v = $v . "\n" . '</body></html>';
+				$tidy = tidy_parse_string($v, $config, 'UTF8');
+				$tidy->cleanRepair();
+				$clean = strval($tidy);
+				if ($tidy->errorBuffer) {
+					$z['error'] = $tidy->errorBuffer;
+					$z['error'] = preg_replace_callback('/line ([0-9]+) column /', create_function('$matches', 'return "line ".(intval($matches[1])-1)." column ";'), $z['error']);
+					if (strpos($z['error'], 'Error:') !== false) {
+						$z['background'] = '#ffcccc';
+					} else {
+						$z['background'] = '#eeeeff';
+					}
+				} else {
+					$z['background'] = '#eeffee';
+				}
+				$clean = preg_replace('/.*\<body[^>]*\>/s', '', $clean);
+				$clean = preg_replace('/<\/body\>.*/s', '', $clean);
+				$clean = preg_replace('/^    /m', '', $clean);
+				$z['tidied'] = trim($clean);
+				$data[$k] = $z;
+			}
+		}
+		echo json_encode(array('cleanroom' => $data));
+	}
+
 }
 
 /*
