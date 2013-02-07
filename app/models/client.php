@@ -782,7 +782,7 @@ class Client extends AppModel {
 			248 => 'o',
 			249 => 'u', 250 => 'u', 251 => 'u', 252 => 'u',
 			255 => 'y', 253 => 'y',
-			254 => 'b', "&" => 'and', 'ft. ' => 'fort ', 'ft ' => 'fort '
+			254 => 'b', "&" => 'and', 'ft. ' => 'fort ', 'ft ' => 'fort ', '+' => 'and'
 		);
 
 		$keywords = html_entity_decode(strip_tags($keywords),ENT_QUOTES);
