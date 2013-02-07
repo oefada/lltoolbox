@@ -108,6 +108,14 @@
 		border-width: 5px;
 		border-style: dashed;
 	}
+	#editorDiv a.lineJump {
+		text-decoration: none;
+		color: #000066;
+	}
+	#editorDiv a.lineJump:hover {
+		text-decoration: none;
+		color: #0000CC;
+	}
 </style>
 <?php
 $this->pageTitle = 'Blocks Editor';

@@ -1,3 +1,19 @@
+/*jshint
+ forin:true,
+ noarg:true,
+ noempty:true,
+ eqeqeq:true,
+ bitwise:true,
+ strict:true,
+ undef:true,
+ unused:true,
+ curly:true,
+ browser:true,
+ evil:true,
+ devel:true,
+ jquery:true,
+ sub:true
+ */
 jQuery(function() {
 	var $ = jQuery;
 
@@ -51,7 +67,7 @@ jQuery(function() {
 			case '#publish':
 				data['publish'] = true;
 			case '#save':
-				var json = JSON.stringify($('#blockTree').jstree('get_json', -1), null, ' ').replace('</script>','<\\\\/script>');
+				var json = JSON.stringify($('#blockTree').jstree('get_json', -1), null, ' ').replace('</script>', '<\\\\/script>');
 				data['treeData'] = JSON.parse(json);
 				$.ajax({
 					'type' : 'POST',
@@ -407,15 +423,19 @@ jQuery(function() {
 				}
 			}
 			$panel.append('<input type="button" class="doNotPress" value="Update" title="Press this button after making changes above." />');
+			if ($panel.find('textarea').length > 0) {
+				$panel.append('<input type="button" class="htmlValidate" value="Validate" title="Look for problems in the HTML" />');
+				$panel.append('<input type="button" class="htmlTidy" value="Tidy" title="Tidy up the HTML" />');
+			}
 			$panel.append($('<br/><br/><div class="blocksHelp"/>').html('&#160;'));
 			$.ajax({
-					'url' : '/blocks/help/module:' + rel,
-					'dataType' : 'html',
-					'cache' : true,
-					'type' : 'POST',
-					'success' : function(data, textStatus, jqXHR) {
-						$('#editorDiv div.blocksHelp').html(data);
-					}
+				'url' : '/blocks/help/module:' + rel,
+				'dataType' : 'html',
+				'cache' : true,
+				'type' : 'POST',
+				'success' : function(data, textStatus, jqXHR) {
+					$('#editorDiv div.blocksHelp').html(data);
+				}
 			});
 		}
 		$editor.empty().append($panel);
@@ -534,8 +554,69 @@ jQuery(function() {
 	}
 	$('#editorDiv').on('change', 'input,textarea', handleChange).on('click', 'input[type="radio"]', handleChange).on('keyup', 'input,textarea', handleChange).on('keypress', 'input,textarea', handleChange);
 
-	$('#editorDiv').on('click','input[type="button"].doNotPress', function(e) {
+	$('#editorDiv').on('click', 'input[type="button"].doNotPress', function(e) {
 		$(this).css('color', 'green');
+	});
+
+	var phpTidy = function() {
+		$('#editorDiv').find('.tidyError').remove();
+		var $tidyUp = $(this).hasClass('htmlTidy');
+		var validateData = {};
+		$('#editorDiv').find('textarea').each(function(i) {
+			$(this).css('background-color', '#ffffee');
+			if ($(this).attr('name')) {
+				validateData[$(this).attr('name')] = $(this).val();
+			}
+		});
+		$.ajax({
+			'url' : '/blocks/tidy',
+			'data' : {
+				'validate' : validateData
+			},
+			'dataType' : 'json',
+			'cache' : false,
+			'type' : 'POST',
+			'success' : function(data, textStatus, jqXHR) {
+				if (data.cleanroom) {
+					for (var x in data.cleanroom) {
+						if (data.cleanroom.hasOwnProperty(x)) {
+							$('#editorDiv').find('textarea').each(function(i) {
+								if ($(this).attr('name') == x) {
+									if (data.cleanroom[x].background) {
+										$(this).css('background', data.cleanroom[x].background);
+									}
+									if ($tidyUp) {
+										if (data.cleanroom[x].tidied) {
+											$(this).val(data.cleanroom[x].tidied);
+										}
+									}
+									if (data.cleanroom[x].error) {
+
+										var $newError = $('<pre class="tidyError"/>').text(data.cleanroom[x].error);
+										$newError.html($newError.html().replace(/line ([0-9]+) column ([0-9]+)/g, function(match, contents, offset, s) {
+											return match;
+											return '<a class="lineJump" href="#">' + match + '</a>';
+										}));
+										$(this).after($newError);
+									}
+								}
+							});
+						}
+					}
+				}
+			}
+		});
+	};
+
+	$('#editorDiv').on('click', 'input[type="button"].htmlValidate', phpTidy);
+	$('#editorDiv').on('click', 'input[type="button"].htmlTidy', phpTidy);
+
+	$('#editorDiv').on('click', 'a.lineJump', function(e) {
+		var $target = $(this).parent().prev();
+		$target.effect('highlight');
+		var n = $(this).text().split(' ');
+		var nLine = n[1];
+		var nCol = n[3];
 	});
 
 	var link = document.createElement('link');
