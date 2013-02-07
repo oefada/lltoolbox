@@ -2127,7 +2127,6 @@ class WebServiceTicketsController extends WebServicesController
 				include('../vendors/email_msgs/notifications/49_registry_share_honeymoon.html');
 				break;
 			case 50:
-				$emailBcc = 'EventRegistry@luxurylink.com';
 				$giftMessage = $params['giftMessage'];
 				$giftFromName = $params['giftFromName'];
 				$giftFromFullName = $params['giftFromFullName'];
@@ -2135,6 +2134,7 @@ class WebServiceTicketsController extends WebServicesController
 				include('../vendors/email_msgs/notifications/50_registry_congratulations_honeymoon.html');
 				break;				
 			case 51:
+				$emailBcc = 'EventRegistry@luxurylink.com';
 				$templateFile = "51_registry_gift_receipt";
 				$emailSubject = "Luxury Link Gift Receipt";
 				$templateTitle = "Thank You for Your Luxury Link Honeymoon Registry Contribution";
