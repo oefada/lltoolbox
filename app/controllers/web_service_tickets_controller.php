@@ -1889,7 +1889,7 @@ class WebServiceTicketsController extends WebServicesController
 					$emailFrom = "$siteDisplay <auction@$siteEmail>";
 					$emailReplyTo = "auction@$siteEmail";
 				} else {
-					$templateTitle = "Congratulations - You Won!";
+					$templateTitle = "Congratulations - You Won";
 					$emailSubject = "$siteName Auction Winner Receipt - $clientNameP";
 					$emailFrom = "$siteDisplay <auction@$siteEmail>";
 					$emailReplyTo = "auction@$siteEmail";
@@ -2039,7 +2039,7 @@ class WebServiceTicketsController extends WebServicesController
 			case 36:
 				$templateFile = "36_highest_bidder";
 				$templateTitle = "You are the highest bidder";
-				$emailSubject = "$siteName: Your bid has been received!";
+				$emailSubject = "$siteName: Your bid has been received.";
 				
 				if (!$isMystery) {
 					$emailSubject .= " - $clientNameP";
@@ -2060,7 +2060,7 @@ class WebServiceTicketsController extends WebServicesController
 				break;
 			case 39:
 				$templateFile = "39_auction_outbid";
-				$templateTitle = "You have been out bid! Please bid again.";
+				$templateTitle = "You have been outbid, please bid again.";
 				$emailSubject = $siteName . ": ".$templateTitle;
 				break;
 			case 40:
@@ -2130,7 +2130,7 @@ class WebServiceTicketsController extends WebServicesController
 				$giftMessage = $params['giftMessage'];
 				$giftFromName = $params['giftFromName'];
 				$giftFromFullName = $params['giftFromFullName'];
-				$emailSubject = $giftFromFullName . " has Sent You a Gift!";
+				$emailSubject = $giftFromFullName . " has Sent You a Gift";
 				include('../vendors/email_msgs/notifications/50_registry_congratulations_honeymoon.html');
 				break;				
 			case 51:
