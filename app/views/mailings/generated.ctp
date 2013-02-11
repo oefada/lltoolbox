@@ -885,7 +885,7 @@ YOUR AD HERE
 			xt="SPCLICK" 
 			style="color:#444444; text-decoration: none;" 
 			target="_blank" 
-			href="<?=$mailing->genUrl('editor_choice','/fivestar/hotel-deals/editor_choice',"editor's choice");?>"
+			href="<?=$mailing->genUrl('editor_choice','/vacation-ideas/presidents-picks',"editor's choice");?>"
 		>Editor's Choice</a>
 		</td>
 		</tr>
@@ -1438,8 +1438,8 @@ href=""
 </td>
 <td><a href="http://www.twitter.com/LuxuryLink" name="twitterfooter" target="_blank" xt="SPCLICKSTREAM">
 <img style="display: block;" src="http://www.luxurylink.com/images/ads/insertions/social_parts_07.jpg" border="0" width="37" height="39" alt=""/></a></td>
-<td><a href="https://plus.google.com/u/0/110138338921064793302/posts" name="google-plus_footer" target="_blank" xt="SPCLICKSTREAM">
-<img style="display: block;" src="http://www.luxurylink.com/images/ads/insertions/social_parts_08.jpg" border="0" width="37" height="39" alt=""/></a></td>
+<td><a href="http://pinterest.com/luxurylink/" name="pinterest_footer" target="_blank" xt="SPCLICKSTREAM">
+<img style="display: block;" src="http://www.luxurylink.com/images/ads/insertions/social_parts_pin.jpg" border="0" width="37" height="39" alt=""/></a></td>
 <td><a href="#SPFORWARD" name="sendfooter_1" target="_blank" xt="SPFORWARD">
 <img style="display: block;" src="http://www.luxurylink.com/images/ads/insertions/social_parts_09.jpg" border="0" width="35" height="39" alt=""/></a></td>
 </tr>
