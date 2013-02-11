@@ -296,7 +296,7 @@ class SchedulingMastersController extends AppController {
 			$this->set('pricePointDefaultEndDates', $pricePointDefaultEndDates);
 
 			// default numDaysToRun
-			$this->data['SchedulingMaster']['numDaysToRun'] = 2;
+			$this->data['SchedulingMaster']['numDaysToRun'] = 1;
 
 			// default iteration
 			$this->data['SchedulingMaster']['iterationSchedulingOption'] = 1;
