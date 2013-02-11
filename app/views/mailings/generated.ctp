@@ -1439,7 +1439,7 @@ href=""
 <td><a href="http://www.twitter.com/LuxuryLink" name="twitterfooter" target="_blank" xt="SPCLICKSTREAM">
 <img style="display: block;" src="http://www.luxurylink.com/images/ads/insertions/social_parts_07.jpg" border="0" width="37" height="39" alt=""/></a></td>
 <td><a href="http://pinterest.com/luxurylink/" name="pinterest_footer" target="_blank" xt="SPCLICKSTREAM">
-<img style="display: block;" src="http://www.luxurylink.com/images/ads/insertions/social_parts_pin.jpg" border="0" width="37" height="39" alt=""/></a></td>
+<img style="display: block;" src="http://www.luxurylink.com/images/ads/insertions/social_parts_pin2.jpg" border="0" width="37" height="39" alt=""/></a></td>
 <td><a href="#SPFORWARD" name="sendfooter_1" target="_blank" xt="SPFORWARD">
 <img style="display: block;" src="http://www.luxurylink.com/images/ads/insertions/social_parts_09.jpg" border="0" width="35" height="39" alt=""/></a></td>
 </tr>
