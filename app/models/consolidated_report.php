@@ -981,19 +981,18 @@ class ConsolidatedReport extends AppModel
 				PaymentDetail.ppBillingZip,
 				PaymentDetail.ppBillingCountry
 			FROM
-				ticket Ticket,
-				paymentDetail PaymentDetail,
+				( ticket Ticket,
 				$offer_join_table Offer,
 				sites Site,
 				reservation Reservation,
-				`user` `User`
+				`user` `User` )
+			LEFT JOIN paymentDetail PaymentDetail ON PaymentDetail.ticketID = Ticket.ticketId AND PaymentDetail.paymentTypeId = 1
 			WHERE
-				PaymentDetail.ticketID = Ticket.ticketId
-				AND Site.siteId = Ticket.siteId
+				Site.siteId = Ticket.siteId
+				AND Ticket.ticketStatusId IN (4,5,6)
 				AND Ticket.offerId = Offer.offerId
 				AND Reservation.ticketId = Ticket.ticketId
 				AND `User`.userId = Ticket.userId
-				AND PaymentDetail.isSuccessfulCharge = 1
 				AND Ticket.siteId = $site_id
 				AND Offer.clientId = {$this->client_id}
 				AND Ticket.created between '{$this->loa_start_date}' AND '{$this->month_end_date}'
