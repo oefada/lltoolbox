@@ -5,6 +5,19 @@
 		background-color:#eeffee;
 		font-weight: bold;
 	}
+	.imageRequestMenuBox {
+		margin-left: 20px;
+		border: 1px solid #ccc;
+		padding: 5px;
+	}
+	.imageRequestMenuLink {
+		cursor: pointer; 
+		font-weight: bold;
+	}
+	.imageRequestMenu {
+		margin-left: 20px;
+		display: none;
+	}	
 </style>
 <?php $this->pageTitle = $client['Client']['name'].$html2->c($client['Client']['clientId'], 'Client Id:').'<br />'.$html2->c('manager: '.$client['Client']['managerUsername']); ?>
 <div class="sitesTab">
@@ -37,6 +50,19 @@
             <?php if (count($sites) > 1): ?>
                <span class="duplicateTo"><input type="checkbox" name="data[duplicateTo][<?php echo ($site == 'luxurylink') ? 'family' : 'luxurylink'; ?>]" /> Copy to <?php echo ($site == 'luxurylink') ? 'Family' : 'Luxury Link'; ?></span>
             <?php endif; ?>
+            
+			<? $requestLink = '/clients/' . $client['Client']['clientId'] . '/images/request'; ?>
+			<? $requestMenu = 'imageRequestMenu-' . $site; ?>
+            <span class="imageRequestMenuBox" onmouseover="document.getElementById('<?= $requestMenu; ?>').style.display = 'inline';"  onmouseout="document.getElementById('<?= $requestMenu; ?>').style.display = 'none';">
+				<span class="imageRequestMenuLink">Image Request</span>
+				<span class="imageRequestMenu" id="<?= $requestMenu; ?>">
+					<a href="<?= $requestLink; ?>?t=H">High Priority</a>
+					| <a href="<?= $requestLink; ?>?t=M">Medium Priority</a>
+					| <a href="<?= $requestLink; ?>?t=L">Low Priority</a>
+					| <a href="<?= $requestLink; ?>?t=C">Captions</a>
+				</span>
+            </span>
+            
             <span class="previewImages">
                <?php
                   if (in_array('luxurylink', $client['Client']['sites']) && $site == 'luxurylink') {
