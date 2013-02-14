@@ -334,4 +334,64 @@ class ImagesController extends AppController
 		$this->set('dupes', $this->Image->query($sql));
 	}
 
+
+	function request()
+	{				
+		$fromAddress = 'images@luxurylink.com';
+		if (ISDEV) {
+			$toAddress = 'devmail@luxurylink.com';
+		} else {
+			$toAddress = $this->Image->client['Client']['managerUsername'] . '@luxurylink.com';
+		}
+
+		$currentUser = $this->LdapAuth->user();
+		$bccAddress = $currentUser['LdapUser']['samaccountname'] . '@luxurylink.com';
+		
+		$this->set('fromAddress', $fromAddress);
+		$this->set('toAddress', $toAddress);
+						
+		if (isset($this->params['form']['msgSubject'])) {
+				
+			$headers = 'From: ' . $fromAddress . "\r\n";
+			$headers .= 'Bcc: ' . $bccAddress . "\r\n";
+			mail($toAddress, $this->params['form']['msgSubject'], $this->params['form']['msgContent'], $headers);
+
+			$this->Session->setFlash('Your image request has been sent.');
+			$this->redirect( '/clients/' . $this->Image->clientId . '/images/organize');
+			
+		} else {
+			$requestType = (isset($this->params['url']['t'])) ? $this->params['url']['t'] : '';
+			$priorities = array('H'=>'HIGH', 'M'=>'MEDIUM', 'L'=>'LOW');
+
+			if ($requestType != 'C' && !array_key_exists($requestType, $priorities)) {
+				echo 'unknown request type';
+				exit;
+			}
+			
+			$priorityLabel = (array_key_exists($requestType, $priorities)) ? $priorities[$requestType] : '***';
+			
+			$subject = ($requestType == 'C') ? 'Caption' : 'Image';
+			$subject .= ' Request: ' . $priorityLabel . ' priority - ' . $this->Image->client['Client']['nameNormalized'] . ' (' . $this->Image->clientId . ')';
+
+			$msg = 'Client Name: ' . $this->Image->client['Client']['nameNormalized'] . "\n";
+			$msg .= 'Client ID: ' . $this->Image->clientId . "\n\n";
+			$msg .= 'Priority Level: ' . $priorityLabel . "\n\n";
+			$msg .= 'Client Gallery Status: (IE, Live XXL gallery, XL gallery, No Gallery)' . "\n\n";
+			$msg .= 'Special Requests/Notes: (IE, exterior shot, pool shot, etc.)' . "\n";
+			if ($requestType != 'C') {
+				$msg .= "\n" . 'Photo requirements document:' . "\n";
+				$msg .= 'http://www.luxurylink.com/images/photo_requirements.pdf' . "\n";
+			}
+			
+			$msg .= "\n--\n";
+			$msg .= 'You have received this message because you are the associated contact for ' . $this->Image->client['Client']['nameNormalized'] . ' in toolbox:' . "\n";
+			$msg .= 'http://toolbox.luxurylink.com/clients/edit/' . $this->Image->clientId . "\n\n";
+			$msg .= 'If you feel you have received this message in error, please forward this email to the correct AE/AM.';
+
+			$this->set('msgSubject', $subject);
+			$this->set('msgContent', $msg);
+			
+		}
+	}
+
 }
