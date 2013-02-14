@@ -268,14 +268,16 @@ $this->searchController = 'Tickets';
 					}	
 					?></td>
 					<td align="center">
-					<? if ($paymentDetail['paymentTypeId']==1){
-						if ($paymentDetail['ppApprovalText']=='APPROVAL' && $paymentDetail['isSuccessfulCharge']!=1){
-							echo "<span style='color:red;'>Please talk to a dev as the isSuccessfulCharge is not 1, but the approval text is 'APPROVAL'</span> ";
-							//echo " ".$paymentDetail['ppApprovalText'];
-						}else{
-							echo $processed_flag;
+					<? if ($paymentDetail['paymentTypeId']==1) {
+							if ($paymentDetail['ppApprovalText'] == 'APPROVAL' && $paymentDetail['isSuccessfulCharge'] != 1) {
+								echo "<span style='color:red;'>Please talk to a dev as the isSuccessfulCharge is not 1, but the approval text is 'APPROVAL'</span> ";
+							} else {
+								echo $processed_flag;
+							}
+						} elseif ($paymentDetail['isVoided'] == 1) {
+							echo 'Payment Voided';
 						}
-					}?>
+					?>
 					</td>
 					<td align="center"><?php echo $paymentDetail['ccType']; ?></td>
 					<td align="center"><?php echo $paymentDetail['initials'];?></td>
