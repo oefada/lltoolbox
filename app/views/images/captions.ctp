@@ -28,6 +28,7 @@
 						<input type="hidden" name="data[ImageClient][<?php echo $clientImageId; ?>][clientImageId]" value="<?php echo $image['ImageClient']['clientImageId'] ?>" />
 						<input type="hidden" name="data[ImageClient][<?php echo $clientImageId; ?>][imageId]" value="<?php echo $image['ImageClient']['imageId'] ?>" />
 						<input type="hidden" name="data[ImageClient][<?php echo $clientImageId; ?>][currentRoomGrade]" value="<?php echo $currentRoomGrade; ?>" />
+						<input type="hidden" name="data[ImageClient][<?php echo $clientImageId; ?>][currentCaption]" value="<?php str_replace('"', '', $image['ImageClient']['caption']); ?>" />
 						<input type="text" maxlength="55" name="data[ImageClient][<?php echo $clientImageId; ?>][caption]" value="<?php echo $image['ImageClient']['caption'] ?>" />
 						<div class="roomGrade">
 							Room Grade:&nbsp;&nbsp;
