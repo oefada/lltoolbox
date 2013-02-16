@@ -3,7 +3,7 @@ class ImagesController extends AppController
 {
 
 	var $name = 'Images';
-	var $uses = array('Image', 'ImageClient');
+	var $uses = array('Image', 'ImageClient', 'ImageRoomGradeRel');
 
 	var $scaffold;
 
@@ -113,29 +113,35 @@ class ImagesController extends AppController
 				$this->ImageClient->save(array('ImageClient'=>$caption));
 				
 				// room grade 
-				if ($ic['roomGradeId'] != $ic['currentRoomGrade']) {
-					$this->Image->ImageClient->recursive = 1;
-					$rgImages = $this->Image->ImageClient->find('all', array(
+				if ($ic['roomGradeId'] != $ic['currentRoomGrade']) {					
+					
+					$this->Image->recursive = 1;
+					$rgImage = $this->Image->find('first', array(
 						'conditions' => array(
-							'ImageClient.clientId' => $this->Image->clientId,
-							'ImageClient.imageTypeId' => 1,
-							'ImageClient.inactive' => 0
-						),
-						'group' => array('ImageClient.imageId')
+							'Image.imageId' => $ic['imageId']
+						)						
 					));
-					$rgImage = $rgImages[0];
-				
+					$rgImage['ImageClient'] = $rgImage['ImageClient'][0];
+					$rgImage['Image']['ImageRoomGradeRel'] = $rgImage['ImageRoomGradeRel'];
+					unset($rgImage['ImageRoomGradeRel']);
+										
 					if ($ic['roomGradeId'] > 0) {
 						$this->Image->ImageRoomGradeRel->saveImageRoomGrade($ic['roomGradeId'], $rgImage);
 					} else {
-						$this->Image->ImageRoomGradeRel->deleteImageRoomGrade($ic['roomGradeId'], $rgImage);
+						$relId = intval($rgImage['Image']['ImageRoomGradeRel'][0]['imageRoomGradeRelId']);
+						if ($relId > 0) {
+							$this->Image->ImageRoomGradeRel->deleteImageRoomGrade($relId, $rgImage);
+						}
 					}
 				}
+				
+				$this->Session->setFlash('Your updates have been saved.');
+				$this->redirect( '/clients/' . $this->Image->clientId . '/images/captions');
 			}
 		}
 			
-		$this->Image->ImageClient->recursive = 2;
-		$images = $this->Image->ImageClient->find('all', array(
+		$this->ImageClient->recursive = 2;
+		$images = $this->ImageClient->find('all', array(
 			'conditions' => array(
 				'ImageClient.clientId' => $this->Image->clientId,
 				'ImageClient.imageTypeId' => 1,
