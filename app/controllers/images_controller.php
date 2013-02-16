@@ -3,6 +3,7 @@ class ImagesController extends AppController
 {
 
 	var $name = 'Images';
+	var $uses = array('Image', 'ImageClient');
 
 	var $scaffold;
 
@@ -105,43 +106,60 @@ class ImagesController extends AppController
 
 	function captions()
 	{
-		$this->Image->ImageClient->recursive = 2;
-		if (!empty($this->data)) {
-			$postImages = $this->data['Image'];
-			$images = $this->Image->ImageClient->find('all', array(
-				'conditions' => array(
-					'ImageClient.clientId' => $this->Image->clientId,
-					'ImageClient.imageTypeId' => 1,
-					'ImageClient.inactive' => 0
-				),
-				'group' => array('ImageClient.imageId')
-			));
-			foreach ($images as $image) {
-				if (in_array($image['Image']['imageId'], array_keys($postImages))) {
-					// $this->Image->saveCaptions($postImages[$image['Image']['imageId']], $image, $this->Image->clientId);
-					if (!empty($postImages[$image['Image']['imageId']]['RoomGradeId'])) {
-						$this->Image->ImageRoomGradeRel->saveImageRoomGrade($postImages[$image['Image']['imageId']]['RoomGradeId'], $image);
-					} elseif (empty($postImages[$image['Image']['imageId']]['RoomGradeId']) && !empty($image['Image']['ImageRoomGradeRel'][0]['roomGradeId'])) {
-						$this->Image->ImageRoomGradeRel->deleteImageRoomGrade($image['Image']['ImageRoomGradeRel'][0]['imageRoomGradeRelId'], $image);
+		if (!empty($this->data)) {		
+			foreach($this->data['ImageClient'] as $ic) {			
+				// caption
+				$caption = array('clientImageId' => $ic['clientImageId'], 'caption' => $ic['caption']);
+				$this->ImageClient->save(array('ImageClient'=>$caption));
+				
+				// room grade 
+				if ($ic['roomGradeId'] != $ic['currentRoomGrade']) {
+					$this->Image->ImageClient->recursive = 1;
+					$rgImages = $this->Image->ImageClient->find('all', array(
+						'conditions' => array(
+							'ImageClient.clientId' => $this->Image->clientId,
+							'ImageClient.imageTypeId' => 1,
+							'ImageClient.inactive' => 0
+						),
+						'group' => array('ImageClient.imageId')
+					));
+					$rgImage = $rgImages[0];
+				
+					if ($ic['roomGradeId'] > 0) {
+						$this->Image->ImageRoomGradeRel->saveImageRoomGrade($ic['roomGradeId'], $rgImage);
+					} else {
+						$this->Image->ImageRoomGradeRel->deleteImageRoomGrade($ic['roomGradeId'], $rgImage);
 					}
 				}
 			}
 		}
+			
+		$this->Image->ImageClient->recursive = 2;
 		$images = $this->Image->ImageClient->find('all', array(
 			'conditions' => array(
 				'ImageClient.clientId' => $this->Image->clientId,
 				'ImageClient.imageTypeId' => 1,
 				'ImageClient.inactive' => 0
 			),
-			'order' => array('Image.caption'),
-			'group' => array('ImageClient.imageId')
+			'order' => array('ImageClient.imageId')
 		));
+		
+		$imagesLL = $imagesFG = array();
+		foreach($images as $img) {
+			if ($img['ImageClient']['siteId'] == 1) {
+				$imagesLL[] = $img;
+			} elseif ($img['ImageClient']['siteId'] == 2) {
+				$imagesFG[] = $img;
+			}
+		}
+		$this->set('imagesluxurylink', $imagesLL);
+		$this->set('imagesfamily', $imagesFG);
+		
 		$this->Image->ImageRoomGradeRel->RoomGrade->recursive = -1;
 		$roomGrades = $this->Image->ImageRoomGradeRel->RoomGrade->find('all', array(
 			'conditions' => array('RoomGrade.clientId' => $this->Image->clientId),
 			'order' => array('RoomGrade.roomGradeName')
 		));
-		$this->set('images', $images);
 		$this->set('roomGrades', $roomGrades);
 	}
 
