@@ -109,8 +109,10 @@ class ImagesController extends AppController
 		if (!empty($this->data)) {		
 			foreach($this->data['ImageClient'] as $ic) {			
 				// caption
-				$caption = array('clientImageId' => $ic['clientImageId'], 'caption' => $ic['caption']);
-				$this->ImageClient->save(array('ImageClient'=>$caption));
+				if ($ic['caption'] != $ic['currentCaption']) {
+					$caption = array('clientImageId' => $ic['clientImageId'], 'caption' => $ic['caption']);
+					$this->ImageClient->save(array('ImageClient'=>$caption));
+				}
 				
 				// room grade 
 				if ($ic['roomGradeId'] != $ic['currentRoomGrade']) {					
