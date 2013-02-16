@@ -106,7 +106,7 @@ class ImagesController extends AppController
 
 	function captions()
 	{
-		if (!empty($this->data)) {		
+		if (!empty($this->data)) {			
 			foreach($this->data['ImageClient'] as $ic) {			
 				// caption
 				if ($ic['caption'] != $ic['currentCaption']) {
@@ -115,8 +115,7 @@ class ImagesController extends AppController
 				}
 				
 				// room grade 
-				if ($ic['roomGradeId'] != $ic['currentRoomGrade']) {					
-					
+				if ($ic['roomGradeId'] != $ic['currentRoomGrade']) {										
 					$this->Image->recursive = 1;
 					$rgImage = $this->Image->find('first', array(
 						'conditions' => array(
@@ -138,26 +137,23 @@ class ImagesController extends AppController
 				}
 				
 				$this->Session->setFlash('Your updates have been saved.');
-				$this->redirect( '/clients/' . $this->Image->clientId . '/images/captions');
 			}
 		}
 			
-		$this->ImageClient->recursive = 2;
-		$images = $this->ImageClient->find('all', array(
-			'conditions' => array(
-				'ImageClient.clientId' => $this->Image->clientId,
-				'ImageClient.imageTypeId' => 1,
-				'ImageClient.inactive' => 0
-			),
-			'order' => array('ImageClient.imageId')
-		));
+		$q = 'SELECT * FROM imageClient ImageClient 
+			  INNER JOIN image Image USING(imageId)
+			  LEFT JOIN imageRoomGradeRel ImageRoomGradeRel  USING(imageId)
+			  WHERE ImageClient.clientId = ?
+			  AND ImageClient.imageTypeId = 1
+			  AND ImageClient.inactive = 0';
+		$images = $this->Image->query($q, array($this->Image->clientId));		
 		
 		$imagesLL = $imagesFG = array();
-		foreach($images as $img) {
-			if ($img['ImageClient']['siteId'] == 1) {
-				$imagesLL[] = $img;
-			} elseif ($img['ImageClient']['siteId'] == 2) {
-				$imagesFG[] = $img;
+		foreach($images as $thisImg) {
+			if ($thisImg['ImageClient']['siteId'] == 1) {
+				$imagesLL[] = $thisImg;
+			} elseif ($thisImg['ImageClient']['siteId'] == 2) {
+				$imagesFG[] = $thisImg;
 			}
 		}
 		$this->set('imagesluxurylink', $imagesLL);

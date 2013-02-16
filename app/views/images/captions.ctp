@@ -20,7 +20,7 @@
 
 			<?php foreach($images as $image): 
 						$clientImageId = $image['ImageClient']['clientImageId']; 
-						$currentRoomGrade = (isset($image['Image']['ImageRoomGradeRel'][0])) ? $image['Image']['ImageRoomGradeRel'][0]['roomGradeId'] : '';
+						$currentRoomGrade = (isset($image['ImageRoomGradeRel'])) ? $image['ImageRoomGradeRel']['roomGradeId'] : '';
 					?>
 					
 					<div class="captionImage">
@@ -28,8 +28,8 @@
 						<input type="hidden" name="data[ImageClient][<?php echo $clientImageId; ?>][clientImageId]" value="<?php echo $image['ImageClient']['clientImageId'] ?>" />
 						<input type="hidden" name="data[ImageClient][<?php echo $clientImageId; ?>][imageId]" value="<?php echo $image['ImageClient']['imageId'] ?>" />
 						<input type="hidden" name="data[ImageClient][<?php echo $clientImageId; ?>][currentRoomGrade]" value="<?php echo $currentRoomGrade; ?>" />
-						<input type="hidden" name="data[ImageClient][<?php echo $clientImageId; ?>][currentCaption]" value="<?php str_replace('"', '', $image['ImageClient']['caption']); ?>" />
-						<input type="text" maxlength="55" name="data[ImageClient][<?php echo $clientImageId; ?>][caption]" value="<?php echo $image['ImageClient']['caption'] ?>" />
+						<input type="hidden" name="data[ImageClient][<?php echo $clientImageId; ?>][currentCaption]" value="<?php echo str_replace('"', '', $image['ImageClient']['caption']); ?>" />
+						<input type="text" maxlength="60" name="data[ImageClient][<?php echo $clientImageId; ?>][caption]" value="<?php echo $image['ImageClient']['caption'] ?>" />
 						<div class="roomGrade">
 							Room Grade:&nbsp;&nbsp;
 							<select id="ImageRoomGradeId" name="data[ImageClient][<?php echo $clientImageId; ?>][roomGradeId]">
