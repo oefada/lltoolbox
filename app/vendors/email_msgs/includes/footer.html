@@ -115,8 +115,7 @@ if (!$clientPpv && is_array($clients)) {
 		or send us an email at <a 
 			href="mailto:concierge@<?= $siteEmail ?>" 
 			style="text-decoration: none; color: #008EC5;">concierge@<?=$siteEmail ?></a>. 
-		Our business hours are Monday through Friday, 6:00am to 9:00pm, Saturday and Sunday from 9:00am to 
-		4:00pm Pacific Time.</p>
+		Our business hours are <?php echo Base::conciergeHoursComma; ?>.</p>
 
 
 		<p>Sincerely,<br>
