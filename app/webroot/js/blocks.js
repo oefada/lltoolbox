@@ -152,6 +152,28 @@ jQuery(function() {
 			},
 			"valid_children" : ['BlockDivModule', 'BlockPrefabModule', 'BlockAdvertisingModule']
 		},
+		'BlockSectionsModule' : {
+			'toolbarName' : 'Sections',
+			'titleField' : 'description',
+			'parameters' : {
+				'description': 'input'
+			},
+			'icon' : {
+				'image' : 'http://ui.llsrv.us/images/icons/silk/bricks.png'
+			},
+			'valid_children' : ['BlockSectionModule']
+		},
+		'BlockSectionModule' : {
+			'toolbarName' : 'Section',
+			'titleField' : 'keyName',
+			'parameters' : {
+				'keyName' : 'input'
+			},
+			"icon" : {
+				"image" : "http://ui.llsrv.us/images/icons/silk/brick.png"
+			},
+			"valid_children" : ['BlockDivModule']
+		},
 		'BlockDivModule' : {
 			'toolbarName' : 'Div',
 			'titleField' : 'content',
@@ -344,7 +366,7 @@ jQuery(function() {
 				}
 			});
 		} else {
-			$('#blockToolbar a[rel="BlockPageModule"]').addClass('active');
+			$('#blockToolbar a[rel="BlockPageModule"], #blockToolbar a[rel="BlockSectionsModule"]').addClass('active');
 		}
 	};
 	updateToolbarButtons();
@@ -524,7 +546,7 @@ jQuery(function() {
 				}
 			},
 			'types' : {
-				'valid_children' : ['BlockPageModule'],
+				'valid_children' : ['BlockPageModule', 'BlockSectionsModule'],
 				'max_children' : 1,
 				'types' : typeData
 			},
