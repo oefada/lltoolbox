@@ -162,7 +162,7 @@ class BlocksController extends AppController
 				if (!$blockData) {
 					$blockData = $this->defaultTemplate;
 				}
-				$this->set('blockData', $blockData);
+				$this->set('blockData', bin2hex($blockData));
 			} else {
 				$this->Session->setFlash('Error: No revision specified!');
 				$this->redirect(array('action' => 'index'));
