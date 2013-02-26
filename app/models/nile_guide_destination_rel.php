@@ -9,18 +9,19 @@ class NileGuideDestinationRel extends AppModel
 
 	public function import($data)
 	{
+		$i = 0;
 		foreach ($data['feed']['entry'] as $k => $v) {
-			echo "$k\n";
+			$i = ($i + 1) % 100;
+			if (!$i) {
+				echo '.';
+			}
 			$this->create();
 			$this->set('id', $this->field('id', array('nileGuideDestinationId' => $v['id'])));
-			/*
-			$this->set('destinationId', null);
-			$this->set('destinationName', null);
-			 */
 			$this->set('nileGuideDestinationId', $nileGuideDestinationId = $v['id']);
 			$this->set('nileGuideLocation', $v['title']);
 			$this->save($this->data);
 		}
+		echo "!\n";
 	}
 
 }
