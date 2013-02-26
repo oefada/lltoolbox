@@ -171,6 +171,11 @@ $this->set('hideSidebar', true);
 <br/>
 <br/>
 
-<script type="text/javascript">window['editorLoadData'] = <?php echo $blockData; ?>;</script>
+<script type="text/javascript">
+(function() {
+	var hex2bin = function(hexData){var r='';for(var i=0;i<hexData.length;i+=2){r+=unescape('%'+hexData.substr(i,2));}return r;};
+	window['editorLoadData'] = JSON.parse(hex2bin('<?php echo $blockData; ?>'));
+})();
+</script>
 
 <script type="text/javascript" src="/js/blocks.js"></script>
