@@ -33,14 +33,16 @@ class NileGuideApi extends Model
 			mkdir('/tmp/nileguide/');
 		}
 		$cacheFile = '/tmp/nileguide/cache-' . $cacheKey . '.delme';
-		echo "--== [ ";
-		echo preg_replace('/key=[^&]+/', 'key=REDACTED', $path);
-		echo " ] ==--\n";
+		/*
+		 echo "--== [ ";
+		 echo preg_replace('/key=[^&]+/', 'key=REDACTED', $path);
+		 echo " ] ==--\n";
+		 */
 		if (file_exists($cacheFile) && ((time() - filemtime($cacheFile)) < (60 * 60 * 24 * 7))) {
-			echo "NileGuideApi: Cache hit.\n";
+			//echo "NileGuideApi: Cache hit.\n";
 			$data = file_get_contents($cacheFile);
 		} else {
-			echo "NileGuideApi: Not cached, fetching from API...\n";
+			//echo "NileGuideApi: Not cached, fetching from API...\n";
 			$ch = curl_init();
 			curl_setopt($ch, CURLOPT_URL, $path);
 			curl_setopt($ch, CURLOPT_HEADER, 0);
