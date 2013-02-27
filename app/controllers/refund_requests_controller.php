@@ -136,6 +136,8 @@ class RefundRequestsController extends AppController {
 			
 			if ($this->data['RefundRequest']['refundOrCOF'] == '') {
 				$this->Session->setFlash(__('The Refund Request could not be saved.<br/>Refund / COF Select is required', true));
+			} elseif ($this->data['RefundRequest']['cancelFeeLL'] == '') {
+				$this->Session->setFlash(__('The Refund Request could not be saved.<br/>LL Cancel Fee is required', true));
 			} else {
 				if ($this->RefundRequest->save($this->data)) {
 					$this->Session->setFlash(__('The Refund Request has been saved', true));
