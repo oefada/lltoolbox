@@ -24,7 +24,6 @@ class NileGuideTrip extends AppModel
 					echo '.';
 					if (isset($entry['entry'])) {
 						$e = $entry['entry'];
-						die(print_r($e,true));
 						$this->create();
 						$oldId = $this->field('id', array('ngId' => $entry['id']));
 						if (is_numeric($oldId) && $oldId > 0) {
