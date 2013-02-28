@@ -843,6 +843,16 @@ class Client extends AppModel {
 			return '';
 		}
 	}
+
+	public function isPHG($clientId)
+	{
+		$sql = 'SELECT * FROM clientCollections WHERE client_id = ? AND collection_id IN (14, 15, 16)';
+		$result = $this->query($sql, array($clientId));
+		if (sizeof($result) > 0) {
+			return true;
+		}
+		return false;
+	}
 	
 	/**
 	 *

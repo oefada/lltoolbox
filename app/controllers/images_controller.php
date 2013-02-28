@@ -3,7 +3,7 @@ class ImagesController extends AppController
 {
 
 	var $name = 'Images';
-	var $uses = array('Image', 'ImageClient', 'ImageRoomGradeRel');
+	var $uses = array('Image', 'ImageClient', 'ImageRoomGradeRel', 'Client');
 
 	var $scaffold;
 
@@ -32,7 +32,7 @@ class ImagesController extends AppController
 	}
 
 	function organize()
-	{
+	{				
 		if (!empty($this->data)) {
 			$this->set('displayTab', $this->data['saveSite']);
 			unset($this->data['saveSite']);
@@ -102,6 +102,18 @@ class ImagesController extends AppController
 			$this->set('largeImages' . $siteDb, $largeImages);
 			$this->set('thumbnailImages' . $siteDb, $thumbnailImages);
 		}
+		
+		$showImageRequest = false;
+		foreach ($this->Image->client['Loa'] as $loa) { 
+			$endDate = strtotime($loa['endDate']);
+			if ($endDate > time()) {
+				$showImageRequest = true;
+			}
+		}
+		if ($this->Client->isPHG($this->Image->clientId)) {
+			$showImageRequest = false;
+		}
+		$this->set('showImageRequest', $showImageRequest);
 	}
 
 	function captions()

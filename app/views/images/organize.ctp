@@ -53,15 +53,17 @@
             
 			<? $requestLink = '/clients/' . $client['Client']['clientId'] . '/images/request'; ?>
 			<? $requestMenu = 'imageRequestMenu-' . $site; ?>
-            <span class="imageRequestMenuBox" onmouseover="document.getElementById('<?= $requestMenu; ?>').style.display = 'inline';"  onmouseout="document.getElementById('<?= $requestMenu; ?>').style.display = 'none';">
-				<span class="imageRequestMenuLink">Image Request</span>
-				<span class="imageRequestMenu" id="<?= $requestMenu; ?>">
-					<a href="<?= $requestLink; ?>?t=H">High Priority</a>
-					| <a href="<?= $requestLink; ?>?t=M">Medium Priority</a>
-					| <a href="<?= $requestLink; ?>?t=L">Low Priority</a>
-					| <a href="<?= $requestLink; ?>?t=C">Captions</a>
+           <? if ($showImageRequest) { ?>
+			   <span class="imageRequestMenuBox" onmouseover="document.getElementById('<?= $requestMenu; ?>').style.display = 'inline';"  onmouseout="document.getElementById('<?= $requestMenu; ?>').style.display = 'none';">
+					<span class="imageRequestMenuLink">Image Request</span>
+					<span class="imageRequestMenu" id="<?= $requestMenu; ?>">
+						<a href="<?= $requestLink; ?>?t=H">High Priority</a>
+						| <a href="<?= $requestLink; ?>?t=M">Medium Priority</a>
+						| <a href="<?= $requestLink; ?>?t=L">Low Priority</a>
+						| <a href="<?= $requestLink; ?>?t=C">Captions</a>
+					</span>
 				</span>
-            </span>
+			<? } ?>
             
             <span class="previewImages">
                <?php
