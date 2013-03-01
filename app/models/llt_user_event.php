@@ -1,23 +1,23 @@
 <?php
 class LltUserEvent extends AppModel
 {
-	public $name = 'LltUserEvent';
-	public $useDbConfig = 'business_db2';
-	public $useTable = 'lltUserEvent';
-	
-	/**
-	 * Gets a rollup of events within a specified date
-	 * period for given client id and site id
-	 * 
-	 * @param	int $clientId
-	 * @param	int $siteId
-	 * @param	string $startDate
-	 * @param	string $endDate
-	 * @return	array
-	 */
-	public function eventsByClient($clientId, $siteId, $startDate, $endDate)
-	{
-		$query = "
+    public $name = 'LltUserEvent';
+    public $useDbConfig = 'business_db2';
+    public $useTable = 'lltUserEvent';
+
+    /**
+     * Gets a rollup of events within a specified date
+     * period for given client id and site id
+     *
+     * @param    int $clientId
+     * @param    int $siteId
+     * @param    string $startDate
+     * @param    string $endDate
+     * @return    array
+     */
+    public function eventsByClient($clientId, $siteId, $startDate, $endDate)
+    {
+        $query = "
 			SELECT
 				SUBSTRING(`lltue`.`dateCreated`, 1, 10) as `dateCreated`,
 				`lltue`.`lltEventId`,
@@ -32,25 +32,43 @@ class LltUserEvent extends AppModel
 				SUBSTRING(`lltue`.`dateCreated`, 1, 10),
 				`lltue`.`lltEventId`;
 		";
-		$params = array($clientId, $siteId, $startDate, $endDate);
-		
-		$results = $this->query($query, $params);
-		$dataToReturn = array();
-		
-		if (!empty($results)) {
-			foreach($results as $result) {
-				$dataToReturn[] = array(
-					'clientId'	=> $clientId,
-					'siteId'	=> $siteId,
-					'eventId'	=> $result['lltue']['lltEventId'],
-					'startDate'	=> $result[0]['dateCreated'] . ' 00:00:00',
-					'endDate'	=> $result[0]['dateCreated'] . ' 23:59:59',
-					'total'		=> $result[0]['total'],
-					'created'	=> date('Y-m-d H:i:s')
-				);
-			}
-		}
+        $params = array($clientId, $siteId, $startDate, $endDate);
 
-		return $dataToReturn;
-	}
+        $results = $this->query($query, $params);
+        $dataToReturn = array();
+
+        if (!empty($results)) {
+            foreach ($results as $result) {
+                $dataToReturn[] = array(
+                    'clientId' => $clientId,
+                    'siteId' => $siteId,
+                    'eventId' => $result['lltue']['lltEventId'],
+                    'startDate' => $result[0]['dateCreated'] . ' 00:00:00',
+                    'endDate' => $result[0]['dateCreated'] . ' 23:59:59',
+                    'total' => $result[0]['total'],
+                    'created' => date('Y-m-d H:i:s')
+                );
+            }
+        }
+
+        return $dataToReturn;
+    }
+
+    /**
+     *
+     */
+    public function getClientsWithEventDataBetweenDatesBySiteId($startDate, $endDate, $siteId)
+    {
+        $sql = "
+            SELECT DISTINCT(eventRelatedClient) AS clientId
+            FROM lltUserEvent
+            WHERE
+              eventRelatedClient > 0
+              AND siteId = ?
+              AND dateCreated BETWEEN ? AND ?
+            ORDER BY eventRelatedClient
+        ";
+
+        return $this->query($sql, array($siteId, $startDate, $endDate));
+    }
 }
