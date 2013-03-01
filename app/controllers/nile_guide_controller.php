@@ -23,6 +23,13 @@ class NileGuideController extends AppController
 		$this->set('trips', $this->NileGuideTrip->find('all'));
 	}
 
+	function attraction($id)
+	{
+		if ($id) {
+			$this->set('attraction', $this->NileGuideAttraction->find('first', array('conditions' => array('ngId' => $id))));
+		}
+	}
+
 	function url()
 	{
 		$url = '';
@@ -33,7 +40,7 @@ class NileGuideController extends AppController
 		}
 		if (is_numeric($url) && $url > 0) {
 			$this->redirect(array(
-				'action' => 'view',
+				'action' => 'attraction',
 				$url,
 			));
 		} else {
