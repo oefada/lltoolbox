@@ -172,7 +172,10 @@ foreach ($this->data['Client']['sites'] as $site) {
         ?>
         </div>
     <?php endforeach; ?>
-	<div class="controlset"><?echo $form->input('showTripAdvisorReview');?></div>
+	<div class="controlset">
+		<?echo $form->hidden('showTripAdvisorReview');?>
+		<?echo $form->input('hideUserReviews');?>
+	</div>
 
 	<fieldset class="collapsible">
 		<legend class="handle">Contact Details</legend>
