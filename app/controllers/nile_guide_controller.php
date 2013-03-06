@@ -25,6 +25,12 @@ class NileGuideController extends AppController
 
 	function attraction($id)
 	{
+		if (isset($this->data['NileGuideAttraction'])) {
+			if (isset($this->data['NileGuideAttraction']['id']) && isset($this->data['NileGuideAttraction']['publish'])) {
+				$this->NileGuideAttraction->create();
+				$this->NileGuideAttraction->save($this->data);
+			}
+		}
 		if ($id) {
 			$this->set('attraction', $this->NileGuideAttraction->find('first', array('conditions' => array('ngId' => $id))));
 		}
