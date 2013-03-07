@@ -109,9 +109,16 @@ class BlocksController extends AppController
 					));
 					$this->BlockPage->save();
 					$blockPageId = $this->BlockPage->id;
+					$startingBlockData = '';
+					if (isset($this->data['BlockPage']['templatePageId']) && $this->data['BlockPage']['templatePageId']) {
+						$startingBlockData = $this->BlockRevision->field('blockData', array('blockPageId' => $this->data['BlockPage']['templatePageId']));
+					}
+					if (!$startingBlockData) {
+						$startingBlockData = $this->defaultTemplate;
+					}
 					$this->BlockRevision->create(array(
 						'blockPageId' => $blockPageId,
-						'blockData' => $this->defaultTemplate,
+						'blockData' => $startingBlockData,
 						'editor' => $this->getEditor(),
 					));
 					$this->BlockRevision->save();
