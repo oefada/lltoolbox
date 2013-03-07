@@ -1019,6 +1019,7 @@ CakeLog::write("debug","insertMessageQueuePackage results: ".count($result));
 					
 			}	
 
+			$title = Sanitize::Escape($title);
 			$description = Sanitize::Escape($description);
 			$sql = "CALL insertQueueMessage('$toUser', '$title', '$description', '$model', $modelId, 3)";
 			$this->query($sql);
