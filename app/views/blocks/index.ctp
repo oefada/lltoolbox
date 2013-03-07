@@ -1,8 +1,13 @@
 <div>
-	<h3>Open/create page:</h3>
 	<?php
 	echo $form->create(array('action' => 'add'));
 	echo $form->input('url',array('label'=>'http://www.luxurylink.com/','style'=>'border-style: none; background: #eee'));
+	$selectData=array('' => 'New blank template');
+	foreach ($BlockPages as $BlockPage) {
+		$selectData[$BlockPage['BlockPage']['blockPageId']] = $BlockPage['BlockPage']['url'];
+	}
+	echo $form->input('templatePageId', array('label' => 'Use template:', 'options' => $selectData));
+	echo $form->submit('Create New Block');
 	echo $form->end();
 	?>
 </div>
