@@ -388,7 +388,11 @@ class ImagesController extends AppController
 				
 			$headers = 'From: ' . $fromAddress . "\r\n";
 			$headers .= 'Bcc: ' . $bccAddress . "\r\n";
-			mail($toAddress, $this->params['form']['msgSubject'], $this->params['form']['msgContent'], $headers);
+			
+			$msg = $this->params['form']['msgContent'];
+			$msg .= "\n\n--\n" . $currentUser['LdapUser']['samaccountname'];
+			
+			mail($toAddress, $this->params['form']['msgSubject'], $msg, $headers);
 
 			$this->Session->setFlash('Your image request has been sent.');
 			$this->redirect( '/clients/' . $this->Image->clientId . '/images/organize');
