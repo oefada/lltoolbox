@@ -156,7 +156,7 @@ jQuery(function() {
 			'toolbarName' : 'Sections',
 			'titleField' : 'description',
 			'parameters' : {
-				'description': 'input'
+				'description' : 'input'
 			},
 			'icon' : {
 				'image' : 'http://ui.llsrv.us/images/icons/silk/bricks.png'
@@ -645,4 +645,15 @@ jQuery(function() {
 	link.href = 'http://ui.llsrv.us/images/icons/silk/brick.png';
 	document.getElementsByTagName('head')[0].appendChild(link);
 
+	// Keep alive
+	setInterval(function() {
+		$.ajax({
+			'url' : '/blocks/ping',
+			'type' : 'GET',
+			'cache' : false,
+			'dataType' : 'json',
+			'success' : function(data, textStatus, jqXHR) {
+			}
+		});
+	}, 5 * 60 * 1000);
 });

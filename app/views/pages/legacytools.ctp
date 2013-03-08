@@ -31,7 +31,7 @@ $this->set('hideSidebar', true);
 </style>
 <h2>Site Tools</h2>
 <div>
-	<div style="float: left; opacity: 0.5; width: 200px;">
+	<div style="float: left; opacity: 0.33; width: 200px;">
 		<ul>
 		<li><?=$html->link("Promo Tool", '/promos', array('escape'=>false))?></li>
 		<li><?=$html->link("Help FAQ", 'legacytools/help_faq')?></li>
