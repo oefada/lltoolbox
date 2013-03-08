@@ -25,6 +25,12 @@ class BlocksController extends AppController
 		$this->set('BlockPages', $this->BlockPage->find('all'));
 	}
 
+	function ping()
+	{
+		$this->autoLayout = false;
+		Configure::write('debug', '0');
+	}
+
 	function help()
 	{
 		if (Configure::read('debug') != 2) {
