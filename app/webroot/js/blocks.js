@@ -293,6 +293,15 @@ jQuery(function() {
 			'icon' : {
 				'image' : 'http://ui.llsrv.us/images/icons/silk/television.png'
 			},
+			'parameters' : {
+				'size' : {
+					'option' : {
+						'300x250' : '300x250',
+						'300x600' : '300x600'
+					}
+				},
+				'pos' : 'input'
+			},
 			'valid_children' : 'none',
 		},
 		'BlockClientDisplayModule' : {
