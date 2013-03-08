@@ -18,11 +18,6 @@ class NileGuideController extends AppController
 	{
 	}
 
-	function trips()
-	{
-		$this->set('trips', $this->NileGuideTrip->find('all'));
-	}
-
 	function attraction($id)
 	{
 		if (isset($this->data['NileGuideAttraction'])) {
