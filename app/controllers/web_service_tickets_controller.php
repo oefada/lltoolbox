@@ -1235,8 +1235,9 @@ class WebServiceTicketsController extends WebServicesController
 				$headerLogo = 'http://www.luxurylink.com/images/ll_logo_2009_2.gif';
 				$append = "LL";
 				$prefixUrl = Configure::read("UrlS.LL");
-
+				$optoutLink = 'http://echo3.bluehornet.com/phase2/survey1/change.htm?cid=mumogm&1362532207';
 				break;
+				
 			case 2:
 				$siteName = 'FamilyGetaway.com';
 				$siteDisplay = 'FamilyGetaway.com';
@@ -1249,7 +1250,7 @@ class WebServiceTicketsController extends WebServicesController
 				$headerLogo = 'http://www.luxurylink.com/images/family/fglogo_minimal.gif';
 				$append = "FG";
 				$prefixUrl = Configure::read("UrlS.FG");
-
+				$optoutLink = 'http://echo3.bluehornet.com/phase2/survey1/change.htm?cid=rrsxdv&1362532840';
 				break;
 
 			case 3:
@@ -1259,7 +1260,7 @@ class WebServiceTicketsController extends WebServicesController
 				$sitePhone  = '(877) 313-6769';
 				$sitePhoneLocal = '(310) 956-3704';
 				$siteFax = '(310) 215-8279';
-
+				$optoutLink = 'http://echo3.bluehornet.com/phase2/survey1/change.htm?cid=tcskep&1362533132';
 				break;
 		}
 
@@ -2208,7 +2209,7 @@ class WebServiceTicketsController extends WebServicesController
 				$emailBody = $this->utmLinks($emailBody, $ppvNoticeTypeId, $append);
 			}
 		}
-		
+				
 		// Returns editable subject part for ppv_notices_controller
 		if (isset($params['returnSubject'])) {
 			return $emailSubject;
@@ -2238,8 +2239,7 @@ class WebServiceTicketsController extends WebServicesController
 			//$str=$userEmail.$emailFrom.$emailCc.$emailBcc.$emailReplyTo.$emailSubject.$emailBody.$ticketId.$ppvNoticeTypeId.$ppvInitials;
 			//$this->Ticket->logIt('email_data');
 			//$this->Ticket->logIt($str);
-
-
+			
 			$this->sendPpvEmail($userEmail, $emailFrom, $emailCc, $emailBcc, $emailReplyTo, $emailSubject, $emailBody, $ticketId, $ppvNoticeTypeId, $ppvInitials);
 
 			// AUTO SECTION FOR MULTI CLIENT PPV for multi-client packages send client emails [CLIENT PPV]
