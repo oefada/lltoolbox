@@ -886,7 +886,7 @@ YOUR AD HERE
 			style="color:#444444; text-decoration: none;" 
 			target="_blank" 
 			href="<?=$mailing->genUrl('editor_choice','/vacation-ideas/presidents-picks',"editor's choice");?>"
-		>Editor's Choice</a>
+		>President's Picks</a>
 		</td>
 		</tr>
 		<tr>
