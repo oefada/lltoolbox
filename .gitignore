@@ -16,3 +16,5 @@ luxurylink
 .DS_Store
 ._.DS_Store
 .idea
+
+app/config/database.php.mclifford.prod
