@@ -158,11 +158,11 @@ class ConsolidatedReportShell extends Shell
             $fgImpressions = false;
             if (isset($impression_details['Luxury Link'])) {
                 $llImpressions = array_shift(array_pop($impression_details['Luxury Link']));
-                $llImpressions = ($llImpressions['productview'] > 300) ? true : false;
+                $llImpressions = ($llImpressions['productview'] >= 300) ? true : false;
             }
             if (isset($impression_details['Family Getaway'])) {
                 $fgImpressions = array_shift(array_pop($impression_details['Family Getaway']));
-                $fgImpressions = ($fgImpressions['productview'] > 300) ? true : false;
+                $fgImpressions = ($fgImpressions['productview'] >= 300) ? true : false;
             }
             $emailReport = ($llImpressions || $fgImpressions);
             if (!$emailReport) {
