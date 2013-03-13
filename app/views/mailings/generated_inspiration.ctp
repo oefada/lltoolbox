@@ -52,7 +52,7 @@
 					valign="top" 
 					align="left" 
 					style="font-size:23px; line-height: 23px; font-family: Georgia1, Georgia, serif;color:#444444;padding: 0px 0px 0px 0px;"
-				><?=$arr['name']?> 
+				><a href="<?=$seoUrl?>"><?=$arr['name']?></a>
 				</td> 
 			</tr>
 
