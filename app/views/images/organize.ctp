@@ -114,7 +114,13 @@
          <?php endforeach; ?>
          
          <div class="organize slideshow inactive">
-            <h3>Inactive <span class="nukeOld"> - <a href="#" id="nukelink_<?php echo $site; ?>_nonauto">Nuke578</a> <a href="#" id="nukelink_<?php echo $site; ?>_all">NukeALL</a></span></h3>
+            <h3>Inactive
+                <span class="nukeOld"> -
+                    <a href="#" id="nukelink_<?php echo $site; ?>_nonauto">Nuke578</a>
+                    <a href="#" id="nukelink_<?php echo $site; ?>_all">NukeALL</a>
+                    <a href="delete_images">Delete</a>
+                </span>
+            </h3>
             <ul id="sortableInactive-<?php echo $site; ?>" class="sortableInactive">
                <?php if ($start_inactive !== false): ?>
                   <?php for ($i=$start_inactive; $i < count($slideshowImages); $i++): ?>
@@ -353,7 +359,7 @@ jQuery(function(){
 	$lis.dblclick(function(e){
 		toggleState(this);
 	});
-	$('span.nukeOld').children('a').click(function(e){
+	$('span.nukeOld').children('a[id^="nuke"]').click(function(e){
 		var $targets = false;
 		switch ($(this).attr('id')) {
 			case 'nukelink_luxurylink_nonauto':
@@ -372,7 +378,6 @@ jQuery(function(){
 		if ($targets) {
 			$targets.each(function(i){
 				//toggleState(this);
-				console.log(Math.random(),'XI',$(this).parent());
 				toggleState($(this).parent());
 			});
 		}
