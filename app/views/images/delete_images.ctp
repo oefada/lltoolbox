@@ -19,4 +19,5 @@
     <?php endforeach; ?>
     </ul>
     <div class="deleteImages"><input type="submit" value="Delete Selected" onclick="return confirm('Are you sure you would like to permanently delete the selected photos?');" /></div>
+    <div><a href="#" onclick="jQuery('input[type=&quot;checkbox&quot;]').attr('checked','checked');return false;">Select All</a></div>
 </form>
