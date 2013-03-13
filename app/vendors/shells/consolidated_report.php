@@ -154,17 +154,21 @@ class ConsolidatedReportShell extends Shell
             $report->populateContactDetails();
             self::log('The report data array was built successfully.');
 
-            $llImpressions = false;
-            $fgImpressions = false;
+            $llImpressions = 0;
+            $fgImpressions = 0;
             if (isset($impression_details['Luxury Link'])) {
                 $llImpressions = array_shift(array_pop($impression_details['Luxury Link']));
-                $llImpressions = ($llImpressions['productview'] >= 300) ? true : false;
+                $llImpressions = $llImpressions['productview'];
+            } else {
+                $llImpressions = 0;
             }
             if (isset($impression_details['Family Getaway'])) {
                 $fgImpressions = array_shift(array_pop($impression_details['Family Getaway']));
-                $fgImpressions = ($fgImpressions['productview'] >= 300) ? true : false;
+                $fgImpressions = $fgImpressions['productview'];
+            } else {
+                $fgImpressions = 0;
             }
-            $emailReport = ($llImpressions || $fgImpressions);
+            $emailReport = (($llImpressions + $fgImpressions) >= 300);
             if (!$emailReport) {
                 self::log('This report will not be sent to the client as there are not enough impressions for last month.');
             }
