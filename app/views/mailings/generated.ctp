@@ -488,44 +488,6 @@ YOUR AD HERE
 <tr><td height="15">&nbsp;</td></tr>
 </table>
 
-<!-- Top Deals -->
-<table align="center" width="800" border="0" cellpadding="0" cellspacing="0"  style="padding: 0px 0 0px 0">
-
-	<tr>
-	<td align="center" >
-		<img src="http://ui.llsrv.us/images/insider/new/SPACER_800x1.jpg" width="800" align="center" height="16" />
-	</td>
-	</tr>
-
-	<tr>
-	<td>
-		<table align="center" width="800" height="35" cellpadding="0" bgcolor="#ffffff" cellspacing="0"  style="padding: 0px 0 10px 0">
-		<tr>
-		<td align="left" width="20" valign="bottom">
-		<img src="http://ui.llsrv.us/images/insider/new/SPACER_20x1.jpg" width="20" height="30" valign="bottom" border="0" style="display:block;" alt=""/>
-		</td>
-		<td align="left" width="780" height="30" bgcolor="#ffffff" 
-			style="font-family: Georgia, Garamond, Times New Roman, serif; text-align: left; font-size: 24px; line-height: 26px; color: #444444;"
-		><a 
-			name="topdeals_lowestprices"   
-			xt="SPCLICK" 
-			style="color:#444444; text-decoration: none;" 
-			target="_blank" 
-			href="<?=$mailing->genUrl('top-deals', '/travel-deals/lowest-prices');?>"
-		>Top Deals</a>
-		</td>
-		</tr>
-		<tr>
-		<td colspan="2">
-		<img src="http://ui.llsrv.us/images/insider/new/top_copy_mod_04.jpg" width="800" height="8" alt=""/>
-		</td>
-		</tr>
-		</table>
-	</td>
-	</tr>
-
-</table>
-
 <!--top deals first row start-->
 <table align="center" width="800" height="201" bgcolor="#ffffff" border="0" cellpadding="0" cellspacing="0">
 
@@ -842,65 +804,6 @@ YOUR AD HERE
 <tr><td height="15">&nbsp;</td></tr>
 </table>
 
-<!--Editors picks ###-->
-<table align="center" width="800" border="0" cellpadding="0" bgcolor="#f6f6f6" cellspacing="0">
-<tr>
-<td>
-
-	<table 
-		align="center" 
-		width="800" border="0" cellpadding="0" cellspacing="0"  bgcolor="#ffffff" style="padding: 0px 0 0px 0">
-	<tr>
-	<td align="center" >
-		<img 
-			src="http://ui.llsrv.us/images/insider/new/SPACER_800x1.jpg" width="800" align="center" height="16"/>
-	</td>
-	</tr>
-	<tr>
-	<td>
-		<table 
-			align="center" 
-			width="800" 
-			height="35" 
-			cellpadding="0" bgcolor="#ffffff" cellspacing="0"  style="padding: 0px 0 10px 0"
-		>
-		<tr>
-		<td align="left" width="20">
-			<img 
-				src="http://ui.llsrv.us/images/insider/new/SPACER_20x1.jpg" 
-				width="20" 
-				height="35" 
-				border="0" style="display:block;"
-			/>
-		</td>
-		<td 
-			align="left" 
-			width="780" 
-			height="30" 
-			name="0.1_section_EDITORS" 
-			bgcolor="#ffffff" 
-			style="font-family: Georgia, Garamond, Times New Roman, serif; text-align: left; font-size: 24px; line-height: 26px; color: #444444;"
-		><a 
-			name="editor_choice"  
-			xt="SPCLICK" 
-			style="color:#444444; text-decoration: none;" 
-			target="_blank" 
-			href="<?=$mailing->genUrl('editor_choice','/vacation-ideas/presidents-picks',"editor's choice");?>"
-		>President's Picks</a>
-		</td>
-		</tr>
-		<tr>
-		<td colspan="2">
-			<img src="http://ui.llsrv.us/images/insider/new/top_copy_mod_04.jpg" width="800" height="8"/>
-		</td>
-		</tr>
-		</table>
-
-</td>
-</tr>
-</table>
-
-
 <!--editors picks first row start-->
 <table align="center" width="800" height="201" bgcolor="#ffffff" border="0" cellpadding="0" cellspacing="0">
 
@@ -1193,7 +1096,7 @@ YOUR AD HERE
 		xt="SPCLICK" 
 		href="<?=$mailing->genUrl('view-all','/vacation-ideas/presidents-picks', 'editor-choice');?>"
 		style="color: #3ca9d5; text-decoration: none;"
-	>View All President's Picks</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	>View All Editors Choices</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	</td>
 	</tr>
 	</table>
