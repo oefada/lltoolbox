@@ -46,110 +46,47 @@
 	</tr>
 	<tr>
 	<td bgcolor="#ffffff" align="left" height="50" width="680" style="font-family:Arial,Verdana, sans-serif;font-size:12px;line-height:15px;color:#666666; text-transform: uppercase; font-weight: bold; text-align: left;">
-
-
-<!--
-<tr>
-<td width="800">
-	<table cellspacing="0" cellpadding="0" border="0" bgcolor="#ffffff" align="center" height="50" width="800" id="navbar">
-	<tr>
-	<td bgcolor="#ffffff" align="left" height="50" width="680" style="font-family:Arial,Verdana, sans-serif;font-size:12px;line-height:15px;color:#666666; text-transform: uppercase; font-weight: bold; text-align: left;"
->
--->
+	
+		<a 
+		name="destinations_header" 
+		style="color:#666666;text-decoration:none" 
+		target="_blank"  
+		href="<?=$mailing->genUrl('nav', '/fivestar/', 'nav_destinations');?>">&nbsp;&nbsp;&nbsp;&nbsp;Destinations</a>
+	&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; 
 	<a 
-	name="destinations_header" 
-	style="color:#666666;text-decoration:none" 
-	target="_blank"  
-	href="<?=$mailing->genUrl('nav', '/fivestar/', 'nav_destinations');?>">&nbsp;&nbsp;&nbsp;&nbsp;Destinations</a>
-&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; 
-<a 
-	name="all_inclusive_header" 
-	style="color:#666666;text-decoration:none" 
-	target="_blank"  
-	href="<?=$mailing->genUrl('nav', '/fivestar/all-inclusive-resorts/deals', 'nav_all-inclusive');?>"
->All-Inclusive</a>
-&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; 
-<a 
-	name="hawaii_header" 
-	style="color:#666666;text-decoration:none" 
-	target="_blank"  
-	href="<?=$mailing->genUrl('nav', '/fivestar/hotel-deals/hawaii', 'nav_hawaii');?>">Hawaii</a>
-&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; 
-<a 
-	name="california_header" 
-	style="color:#666666;text-decoration:none" 
-	target="_blank"  
-	href="<?=$mailing->genUrl('nav', '/fivestar/hotel-deals/california', 'nav_california');?>">California</a>
-&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; 
-<a 
-	name="costa_rica_header" 
-	style="color:#666666;text-decoration:none" 
-	target="_blank"  
-	href="<?=$mailing->genUrl('nav', '/fivestar/hotel-deals/costa-rica', 'nav_costarica');?>">Costa Rica</a>
-&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; 
-<a 
-	name="dianes_picks_header" 
-	style="color:#666666;text-decoration:none" 
-	target="_blank"  
-	href="<?=$mailing->genUrl('nav', '/vacation-ideas/presidents-picks', 'nav_dianes_picks');?>">Diane's Picks</a>
-</td> 
-<td align="right" width="120">
-		<table cellspacing="0" cellpadding="0" border="0" bgcolor="#ffffff" height="27" width="120" id="Table_01">
-		<tr>
-		<td 
-			align="right" 
-			height="50" 
-			width="40" 
-			valign="middle" 
-			style="font-family:Arial,Verdana, sans-serif;font-size:12px;line-height:12px;color:#666666; text-transform: uppercase; font-weight: bold; text-align: right;"
-		>Share</td>
-		<td 
-			align="right" 
-			height="50" 
-			width="32"
-		><a 
-			xtsn="FB" 
-			xt="SPSNCLICK" 
-			name="share-facebook" 
-			align="right" 
-			target="_blank" 
-			href="#SPSNCLICK"><img 
-				border="0" 
-				height="27" 
-				width="28" 
-				src="http://www.luxurylink.com/images/insider/new/social_small_04.jpg" alt="" /></a>
-		</td>
-		<td 
-			align="right" 
-			height="50" 
-			width="32"
-		><a 
-			qstparam="&text=Luxury%20Link.%20Explore%20our%20collection%20of%20the%20world's%20finest%20properties%20and%20find%20your%20dream%20vacation." 
-			href="#SPSNCLICK" 
-			xtsn="TW" 
-			xt="SPSNCLICK"  
-			name="Twitter_img" 
-			target="_blank"><img 
-				border="0" 
-				height="27" 
-				width="28" 
-				src="http://www.luxurylink.com/images/insider/new/social_small_05.jpg" alt="" /></a>
-		</td>
-		<td><img 
-			height="50" 
-			width="8" 
-			src="http://www.luxurylink.com/images/insider/new/social_small_06.jpg" alt="" />
-		</td>
-		</tr>
-		</table>
-	</td>
+		name="all_inclusive_header" 
+		style="color:#666666;text-decoration:none" 
+		target="_blank"  
+		href="<?=$mailing->genUrl('nav', '/fivestar/all-inclusive-resorts/deals', 'nav_all-inclusive');?>"
+	>All-Inclusive</a>
+	&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; 
+	<a 
+		name="weekend-getaways_header" 
+		style="color:#666666;text-decoration:none" 
+		target="_blank"  
+		href="<?=$mailing->genUrl('nav', '/vacation-ideas/weekend-getaways/deals', 'nav_weekend-getaways');?>">Weekend Getaways</a>
+	&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; 
+	<a 
+		name="caribbean_header" 
+		style="color:#666666;text-decoration:none" 
+		target="_blank"  
+		href="<?=$mailing->genUrl('nav', '/fivestar/caribbean/hotels', 'nav_caribbean');?>">Caribbean</a>
+	&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; 
+	<a 
+		name="extra-savings_header" 
+		style="color:#666666;text-decoration:none" 
+		target="_blank"  
+		href="<?=$mailing->genUrl('nav', '/fivestar/hotel-deals/Monthly_deals', 'nav_extra-savings');?>">Extra Savings</a>
+
+	</td> 
+	<td align="right" valign="middle" style="padding: 0px 0px 0px 0px"><img border="0" height="24" width="113" src="http://www.luxurylink.com/images/email/Insider/social_icons_color.gif" alt="Luxury Link Social" style="display: block; text-align:right" usemap="#Social"/></td>
 	</tr>
 	</table>
 </td>
-<!--end NAVBAR-->
 </tr>
+
 <tr>
-<td height="5">&nbsp;</td>
+<td height="5" width="800">&nbsp;</td>
 </tr>
 </table><!--end of header-->
 
@@ -1409,6 +1346,14 @@ Please do not reply to this email, you may unsubscribe <a href="#SPCUSTOMOPTOUT"
 </td>
 </tr>
 </table>
- 
+
+<map name="Social">
+	<area shape="rect" coords="0, 0, 24, 24" href="http://www.facebook.com/LuxuryLink" alt="Facebook" target="_blank">
+	<area shape="rect" coords="25, 0, 52, 24" href="http://www.twitter.com/LuxuryLink" alt="Twitter" target="_blank">
+	<area shape="rect" coords="54, 0, 80, 24" href="http://www.pinterest.com/luxurylink" alt="Pinterest" target="_blank">
+	<area shape="rect" coords="83, 0, 118, 24" href="http://www.instagram.com/luxurylink" alt="Instagram" target="_blank">
+</map>
+
+
 </body>
 </html>
