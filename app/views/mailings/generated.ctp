@@ -1191,9 +1191,9 @@ YOUR AD HERE
 		name="editorspicks"   
 		target="_blank" 
 		xt="SPCLICK" 
-		href="<?=$mailing->genUrl('view-all','/fivestar/hotel-deals/editor_choice', 'editor-choice');?>"
+		href="<?=$mailing->genUrl('view-all','/vacation-ideas/presidents-picks', 'editor-choice');?>"
 		style="color: #3ca9d5; text-decoration: none;"
-	>View All Editors Choices</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	>View All President's Picks</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	</td>
 	</tr>
 	</table>
