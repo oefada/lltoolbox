@@ -34,7 +34,7 @@ please add news@luxurylink.com to your address book. Having trouble viewing the 
 <!--LOGO HEADER-->
 <table cellpadding="0" cellspacing="0" width="100%" height="46" border="0">
 	<tr>
-		<td align="left"><a href="http://www.luxurylink.com" target="_blank"><img src="http://www.luxurylink.com/images/shared/ll_logo.gif" width="336" height="46" alt="Luxury Link" border="0"></a></td>
+		<td align="left"><a href="http://www.luxurylink.com" target="_blank"><img src="http://www.luxurylink.com/images/email/LL_logo-V3.jpg" width="212" height="90" alt="Luxury Link" border="0"></a></td>
 		<td align="right" valign="bottom"><font size="1" color="#919191" face="verdana, arial, sans-serif"><b>{$mailing_timestamp|date_format:"%B %e, %G"}</b></font></td>
 	</tr>
 </table>
@@ -116,7 +116,7 @@ please add news@luxurylink.com to your address book. Having trouble viewing the 
 <table cellpadding="0" cellspacing="7" width="519" border="0" align="center">
 <tr>
 <td align="left" valign="top" style="font:10px verdana,arial,sans-serif;">
-Looking for Value? Check out Luxury Link’s new and improved <a  style="color:#806284;" href="http://www.luxurylink.com/fixedprice/fp_listing.php?nav=hot&style=45&WT.mc_id=HomePgHotDeals" target="_blank">Hot Travel Deals</a> and <a style="color:#806284;" href="http://www.luxurylink.com/auctions/auc_listing.php?nav=hot&style=45&WT.mc_id=HomePgHotAuctions" target="_blank">Hot Travel Auctions</a>.  Here, we present the best deals on the website as determined by other Luxury Link users.
+Looking for Value? Check out Luxury Linkï¿½s new and improved <a  style="color:#806284;" href="http://www.luxurylink.com/fixedprice/fp_listing.php?nav=hot&style=45&WT.mc_id=HomePgHotDeals" target="_blank">Hot Travel Deals</a> and <a style="color:#806284;" href="http://www.luxurylink.com/auctions/auc_listing.php?nav=hot&style=45&WT.mc_id=HomePgHotAuctions" target="_blank">Hot Travel Auctions</a>.  Here, we present the best deals on the website as determined by other Luxury Link users.
 <a style="color:#806284;" href="http://ad.doubleclick.net/clk;75749114;10986294;u?http://family-travel.tauck.com/tours/europe-tours/great-britain-and-ireland-tours/paris-tour-yl-2007?WT.srch=1&WT.mc%20id=LL_YL" target="_blank"><b>Learn more</b></a>
 </td>
 <td align="right" width="120">
@@ -185,8 +185,8 @@ Looking for Value? Check out Luxury Link’s new and improved <a  style="color:#80
 
 <table bgcolor="#e9e9e9" border="0" width="100%" align="center" height="60">
 <tr align="center">
-<td width="33.3%" style="font:11px verdana,arial,sans-serif;"><a style="color:#806284;" href="http://www.luxurylink.com/portfolio/worlds_best.php?nav=wb" target="_blank"><b>World’s Best Hotels</b><br/>
-<b>2007 – Winners</b></a>
+<td width="33.3%" style="font:11px verdana,arial,sans-serif;"><a style="color:#806284;" href="http://www.luxurylink.com/portfolio/worlds_best.php?nav=wb" target="_blank"><b>Worldï¿½s Best Hotels</b><br/>
+<b>2007 ï¿½ Winners</b></a>
 </td>
 
 <td width="33.3%" style="font:11px verdana,arial,sans-serif;"><a style="color:#806284;" href="http://www.luxurylink.com/luxe/luxe_wine_listing.php?nav=wine" target="_blank"><b>Wine at Auction</b><br/>
@@ -227,7 +227,7 @@ Looking for Value? Check out Luxury Link’s new and improved <a  style="color:#80
 <table bgcolor="#e9e9e9" width="100%" align="center" height="40">
 <tr align="center">
 <td width="100%" style="font:11px verdana,arial,sans-serif;">
-<a style="color:#806284;" href="http://www.luxurylink.com/luxe/luxe_merch_listing.php?nav=luggage_and_bags&prodType=23&WT.mc_id=LuxeLifeEmailtxt" target="_blank"><b>Designer Handbags – Marc Jacobs, Prada – On LuxeLife NOW</a>
+<a style="color:#806284;" href="http://www.luxurylink.com/luxe/luxe_merch_listing.php?nav=luggage_and_bags&prodType=23&WT.mc_id=LuxeLifeEmailtxt" target="_blank"><b>Designer Handbags ï¿½ Marc Jacobs, Prada ï¿½ On LuxeLife NOW</a>
 </td>
 </tr>
 </table>
