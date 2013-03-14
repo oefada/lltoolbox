@@ -1,4 +1,15 @@
 <div class="promoCodeRels index">
+    <div style="float:right;">
+    <?=$html->link('<span><b class="icon"></b>Export Report</span>', array(
+        'controller' => 'PromoCodeRels',
+        'action' => 'index/'.$id,
+        'format' => 'csv',
+    ), array(
+        'escape' => false,
+        'class' => 'button excel',
+    ));
+    ?>
+    </div>
 <h2><?php __('Promo Codes for ' . $promo['Promo']['promoName']);?></h2>
 <p>
 <?php
