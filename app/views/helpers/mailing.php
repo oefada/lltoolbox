@@ -191,7 +191,7 @@ class MailingHelper extends AppHelper{
 			width="240" 
 			bgcolor="#ffffff" 
 			valign="bottom" 
-			style="font-size:11px; font-family: Arial, helvetica, Sans-Serif; color:#3ca9d5; line-height:13px; text-align: left; background-color: #ffffff; padding:0px 0px 0px 0px; width: 180px"
+			style="font-size:11px; font-family: Arial, helvetica, Sans-Serif; color:#3ca9d5; line-height:13px; text-align: right; background-color: #ffffff; padding:0px 0px 0px 0px; width: 180px"
 		><a 
 			style="text-decoration: none; color: #3ca9d5" 
 			href="'.$this->genPropUrl($clientArr, $utm_content, $utm_term).'" 
