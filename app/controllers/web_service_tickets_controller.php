@@ -1232,7 +1232,7 @@ class WebServiceTicketsController extends WebServicesController
 				$sitePhone  = '(888) 297-3299';
 				$sitePhoneLocal = '(310) 215-8060';
 				$siteFax = '(310) 215-8279';
-				$headerLogo = 'http://www.luxurylink.com/images/ll_logo_2009_2.gif';
+				$headerLogo = 'http://www.luxurylink.com/images/email/LL_logo-V3.jpg';
 				$append = "LL";
 				$prefixUrl = Configure::read("UrlS.LL");
 				$optoutLink = 'http://echo3.bluehornet.com/phase2/survey1/change.htm?cid=mumogm&1362532207';
@@ -3100,7 +3100,7 @@ class WebServiceTicketsController extends WebServicesController
 				$siteName = 'Luxury Link';
 				$url = 'http://www.luxurylink.com';
 				$emailFrom = $emailReplyTo = 'referafriend@luxurylink.com';
-				$headerLogo = 'http://www.luxurylink.com/images/ll_logo_2009_2.gif';
+				$headerLogo = 'http://www.luxurylink.com/images/email/LL_logo-V3.jpg';
 				break;
 			case 2:
 				$siteName = 'Family';

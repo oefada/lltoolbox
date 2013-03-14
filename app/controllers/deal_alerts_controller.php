@@ -148,7 +148,7 @@ class DealAlertsController extends AppController {
 				$siteUrl = 'http://www.luxurylink.com/';
 				$siteHeader = '990000';
 				$sitePhone  = '(888) 297-3299';
-				$headerLogo = 'http://www.luxurylink.com/images/ll_logo_2009_2.gif';
+				$headerLogo = 'http://www.luxurylink.com/images/email/LL_logo-V3.jpg';
 				break;
 			case 2:
 				$template = 'deal_alert_family.html';
