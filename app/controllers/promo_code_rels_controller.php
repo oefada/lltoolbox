@@ -20,24 +20,48 @@ class PromoCodeRelsController extends AppController {
 
 		$this->PromoCodeRel->recursive = 0;
 
+
+        /**
+         * Onjefu - Refactored. moved coupons query outside of paginate,
+         * in case we don't want to use paginate, e.g. excel.
+         *
+         */
+        $couponQuery =  array(
+            'fields' => array('PromoCodeRel.promoCodeId', 'PromoCode.promoCode', 'PromoCode.inactive'),
+            'contains' => array('PromoCode'),
+            'conditions' => array('PromoCodeRel.promoId' => $id),
+            'joins'=>array(
+                array(
+                    'table' => 'promoCode',
+                    'alias' => 'PromoCode',
+                    'type' => 'inner',
+                    'conditions'=> array('PromoCode.promoCodeId = PromoCodeRel.promoCodeId')
+                )
+            ),
+        );
+
+        $this->paginate =  $couponQuery;
 		$this->paginate['limit'] = 100;
-		$this->paginate['fields'] = array('PromoCodeRel.promoCodeId', 'PromoCode.promoCode', 'PromoCode.inactive');
-		$this->paginate['contains'] = array('PromoCode');
-		$this->paginate['conditions'] = array('PromoCodeRel.promoId' => $id);
-		$this->paginate['joins'] = array(
-				array(
-		            'table' => 'promoCode',
-		            'alias' => 'PromoCode',
-		            'type' => 'inner',
-		            'conditions'=> array('PromoCode.promoCodeId = PromoCodeRel.promoCodeId')
-			        )
-			    );
+
 		$this->set('id', $id);
-		$this->set('promoCodeRels', $this->paginate());
 		$this->set('promo', $this->Promo->read(null, $id));
 		$this->set('menuPromoIdEdit', $id);
 		$this->set('menuPromoIdAddCodes', $id);
-	}
+
+        //added excel export
+        if (isset($this->params['named']['format']) && $this->params['named']['format'] == 'csv') {
+            Configure::write('debug', '0'); //turn debug off or it could appear in CSV
+
+
+            $this->set('promoCodeRels', $this->PromoCodeRel->find('all',$couponQuery));
+
+            $this->viewPath .= '/csv';
+            $this->layoutPath = 'csv'; //force CSV header download.
+        } else {
+            //ordinary paginate stuff
+            $this->set('promoCodeRels', $this->paginate());
+        }
+    }
 
 }
 ?>
