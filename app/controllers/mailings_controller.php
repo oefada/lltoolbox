@@ -64,7 +64,7 @@ class MailingsController extends AppController {
 
 	function generated(){
 
-		//Configure::write('debug',0);
+		Configure::write('debug',3);
 
 		if (!empty($this->params['form']['clientId_arr'])){
 
@@ -115,6 +115,12 @@ class MailingsController extends AppController {
 			if ($templateId == 'fg1') {
 				$this->render('generated_fg1');
 			}elseif ($templateId=='inspiration'){
+                //There is a lot of code. The views are all doen differently. Let's continue doing it this way for now.
+                $utmArr['utm_source']='inspiration';
+                $utmArr['utm_campaign']='inspiration_'.$date_ymd.$version;
+                // utm_content is set per item in the view
+                // utm_term is set per item in the view
+                $this->set('utmArr', $utmArr);
 				$this->render('generated_inspiration');
 			}
 			
