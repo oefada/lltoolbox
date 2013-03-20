@@ -2,7 +2,8 @@
 	<?=$html->link('<span><b class="icon"></b>Export Report</span>', array(
 		'controller' => 'calls',
 		'action' => 'index',
-		'format' => 'csv',
+		'ext' => 'csv',
+        'format'=>'excel'
 	), array(
 		'escape' => false,
 		'class' => 'button excel',
