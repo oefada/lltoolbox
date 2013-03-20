@@ -3,7 +3,9 @@
     <?=$html->link('<span><b class="icon"></b>Export Report</span>', array(
         'controller' => 'PromoCodeRels',
         'action' => 'index/'.$id,
-        'format' => 'csv',
+        'ext' => 'csv',
+        'format'=>'excel'
+
     ), array(
         'escape' => false,
         'class' => 'button excel',
