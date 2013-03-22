@@ -52,11 +52,9 @@ class PromoCodeRelsController extends AppController {
         if (isset($this->params['named']['format']) && $this->params['named']['format'] == 'csv') {
             Configure::write('debug', '0'); //turn debug off or it could appear in CSV
 
-
+            $this->pageTitle ='_promo_codes';
             $this->set('promoCodeRels', $this->PromoCodeRel->find('all',$couponQuery));
 
-            $this->viewPath .= '/csv';
-            $this->layoutPath = 'csv'; //force CSV header download.
         } else {
             //ordinary paginate stuff
             $this->set('promoCodeRels', $this->paginate());
