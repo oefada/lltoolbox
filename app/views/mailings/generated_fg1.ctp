@@ -33,7 +33,7 @@
 <td align="left" width="470" class="nav">
 
 <strong>FG_preheader</strong></td>
-<td align="right" width="200" class="nav"><a xt="SPCLICK" name="www_luxurylink_com_images_emai" class="graylink" style="color: rgb(102, 102, 102); text-decoration: none;" href="http://www.luxurylink.com/images/email/<?=$date_ymd?>_FG.html" title="View email with images" target="_blank">View email in browser</a></td>
+<td align="right" width="200" class="nav"><a xt="SPCLICK" name="www_luxurylink_com_images_emai" class="graylink" style="color: rgb(102, 102, 102); text-decoration: none;" href="%%viewonline%%" title="View email with images" target="_blank">View email in browser</a></td>
 <td width="30"></td>
 </tr>
 <tr>
@@ -64,10 +64,10 @@
 <table align="right" width="85" cellspacing="0" cellpadding="0" border="0">
 <tbody>
 <tr>
-<td align="right" width="128" valign="bottom" style="padding: 0px 4px 0px 0px;"><a name="Forward" xt="SPFORWARD" target="_blank" href="#SPFORWARD"><img width="128" height="25" border="0" alt="Send to a Friend" name="share" src="http://www.luxurylink.com/images/inspiration/header/send-friend-off-white.jpg" /></a></td>
+<td align="right" width="128" valign="bottom" style="padding: 0px 4px 0px 0px;"><a name="Forward" xt="SPFORWARD" target="_blank" href="%%forwardthis%%"><img width="128" height="25" border="0" alt="Send to a Friend" name="share" src="http://www.luxurylink.com/images/inspiration/header/send-friend-off-white.jpg" /></a></td>
 <td align="right" width="42" valign="bottom" style="padding: 0px;"><a name="share" xt="SPCLICKSTREAM" target="_blank" href="http://www.luxurylink.com/?utm_medium=news&utm_source=fgnews&utm_campaign=<?= $campaign; ?>&utm_content=nav&utm_term=nav_facebook"><img width="40" height="23" border="0" alt="Share" name="share" src="http://www.luxurylink.com/images/inspiration/header/share-off-white.jpg" /></a></td>
-<td align="right" width="19" valign="middle" style="padding: 0px;"><a xt="SPSNCLICK" xtsn="FB" name="share-facebook" target="_blank" href="#SPSNCLICK"><img width="19" height="19" border="0" alt="" name="share-facebook" src="http://www.luxurylink.com/images/inspiration/header/fb-off-white.jpg" /></a></td>
-<td align="right" valign="middle" style="padding: 0px;"><a qstparam="&text=encoded_tweet" href="#SPSNCLICK" xtsn="TW" xt="SPSNCLICK" name="Twitter_img" target="_blank"><img width="19" height="19" border="0" alt="" name="share-twitter" src="http://www.luxurylink.com/images/inspiration/header/t-off-white.jpg" /></a></td>
+<td align="right" width="19" valign="middle" style="padding: 0px;"><a xt="SPSNCLICK" xtsn="FB" name="share-facebook" target="_blank" href="%%share%%"><img width="19" height="19" border="0" alt="" name="share-facebook" src="http://www.luxurylink.com/images/inspiration/header/fb-off-white.jpg" /></a></td>
+<td align="right" valign="middle" style="padding: 0px;"><a qstparam="&text=encoded_tweet" href="%%share%%" xtsn="TW" xt="SPSNCLICK" name="Twitter_img" target="_blank"><img width="19" height="19" border="0" alt="" name="share-twitter" src="http://www.luxurylink.com/images/inspiration/header/t-off-white.jpg" /></a></td>
 </tr>
 </tbody>
 </table>
@@ -222,7 +222,7 @@
                                                         </td>
                                                     </tr>
                                                     <tr>
-                                                        <td align="left" width="500" colspan="2" style="font-size: 11px; font-family: Helvetica,Arial,Sans-Serif; color: rgb(102, 102, 102); padding-top: 10px; padding-bottom: 10px;">For more information, call our Family Travel Specialists at 877.372.5877. Please do not reply to this email. You may unsubscribe <a name="Unsubscribe" style="width: 500px; color: rgb(51, 102, 153);" xt="SPCUSTOMOPTOUT" target="_blank" href="#SPCUSTOMOPTOUT">here</a>.<br />
+                                                        <td align="left" width="500" colspan="2" style="font-size: 11px; font-family: Helvetica,Arial,Sans-Serif; color: rgb(102, 102, 102); padding-top: 10px; padding-bottom: 10px;">For more information, call our Family Travel Specialists at 877.372.5877. Please do not reply to this email. You may unsubscribe <a name="Unsubscribe" style="width: 500px; color: rgb(51, 102, 153);" xt="SPCUSTOMOPTOUT" target="_blank" href="%%optout%%">here</a>.<br />
                                                         To ensure delivery to your inbox, please add news@familygetaway.com to your address book.</td>
                                                     </tr>
                                                 </tbody>

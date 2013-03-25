@@ -1280,7 +1280,7 @@ href=""
 <img style="display: block;" src="http://www.luxurylink.com/images/ads/insertions/social_parts_07.jpg" border="0" width="37" height="39" alt=""/></a></td>
 <td><a href="http://pinterest.com/luxurylink/" name="pinterest_footer" target="_blank" xt="SPCLICKSTREAM">
 <img style="display: block;" src="http://www.luxurylink.com/images/ads/insertions/social_parts_pin2.jpg" border="0" width="37" height="39" alt=""/></a></td>
-<td><a href="#SPFORWARD" name="sendfooter_1" target="_blank" xt="SPFORWARD">
+<td><a href="%%forwardthis%%" name="sendfooter_1" target="_blank" xt="SPFORWARD">
 <img style="display: block;" src="http://www.luxurylink.com/images/ads/insertions/social_parts_09.jpg" border="0" width="35" height="39" alt=""/></a></td>
 </tr>
 </table>
@@ -1315,7 +1315,7 @@ For information or assistance, call 1 (888) 297-3299 or email <a href="mailto:co
 
 <tr>
 <td colspan="5" style="text-align: left; line-height: 12px; font-family: arial, helvetica, sans-serif; color: #666666; font-size: 10px; padding:2px 0px 0px 0px;">
-Please do not reply to this email, you may unsubscribe <a href="#SPCUSTOMOPTOUT" name="Unsubscribe" style="color: #199bd7; text-decoration: none;" xt="SPCUSTOMOPTOUT" target="_blank">here</a>.  <a href="http://www.luxurylink.com/about/index.php/privacy-policy/" xt="SPCLICKSTREAM" name="www_luxurylink_com_images_1" style="color: #199bd7; text-decoration: none;" target="_blank">Privacy Policy</a></td>
+Please do not reply to this email, you may unsubscribe <a href="%%optout%%" name="Unsubscribe" style="color: #199bd7; text-decoration: none;" xt="SPCUSTOMOPTOUT" target="_blank">here</a>.  <a href="http://www.luxurylink.com/about/index.php/privacy-policy/" xt="SPCLICKSTREAM" name="www_luxurylink_com_images_1" style="color: #199bd7; text-decoration: none;" target="_blank">Privacy Policy</a></td>
 </tr>
 </table>
 </td>
