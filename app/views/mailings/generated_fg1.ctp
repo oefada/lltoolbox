@@ -207,7 +207,7 @@
                                                 <tbody>
                                                     <tr>
                                                         <td align="left" style="font-size: 11px; font-family: Helvetica,Arial,Sans-Serif; padding-top: 0px; color: rgb(102, 102, 102); line-height: 15px;"><a xt="SPCLICK" name="www_familygetaway_com" target="_blank" style="color: rgb(102, 102, 102); text-decoration: none;" href="http://www.familygetaway.com">FamilyGetaway</a><br />
-                                                        5510 Lincoln Blvd. Los Angeles, CA 90094<br />
+                                                            <?= ADDRESS_LL; ?><br />
                                                         &copy; <?=date("Y")?> Family Getaway. All Rights Reserved.</td>
                                                         <td align="right" valign="top" style="padding-top: 0px;">
                                                         <table>

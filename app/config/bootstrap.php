@@ -128,5 +128,8 @@ if (Configure::read() === 0) {
 
 }
 
+//LuxuryLink address
+//@TODO, consolidate constants and definations in a centeral location, for simple updates.
+define('ADDRESS_LL','5570 Lincoln Blvd, Suite 275. Los Angeles, CA 90094');
 
 ?>
