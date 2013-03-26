@@ -230,6 +230,6 @@
 
   </div></div> <!-- /#page-inner, /#page -->
 	
-<?php echo $cakeDebug; ?>
+<?php //echo $cakeDebug; ?>
 </body>
 </html>
