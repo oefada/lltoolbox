@@ -52,7 +52,7 @@
 					valign="top" 
 					align="left" 
 					style="font-size:23px; line-height: 23px; font-family: Georgia1, Georgia, serif;color:#444444;padding: 0px 0px 0px 0px;"
-				><a href="<?=$seoUrl?>" style=" text-decoration: none; color: #017fb8;"><?=$arr['name']?></a>
+				><a href="<?=$seoUrl?>" target="_blank" style=" text-decoration: none; color: #017fb8;"><?=$arr['name']?></a>
 				</td> 
 			</tr>
 
@@ -80,8 +80,8 @@
 				<td 
 					valign="bottom" 
 					height="26" 
-					align="left" 
-					style="font-size:12px; font-family: Arial,Sans-Serif;color:#666666;line-height:16px;padding: 18px 0px 0px 0px;"><a 
+					align="right" 
+					style="font-size:12px; font-family: Arial,Sans-Serif;color:#666666;line-height:16px;padding: 5px 30px 0px 0px;"><a 
 					xt="SPCLICK" 
 					target="_blank" 
 					name="<?=$arr['seoName']?>" 
