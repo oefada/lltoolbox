@@ -5,14 +5,15 @@
 <?php if ($isAuction) : ?>
 
 <p>
-My name is Jim and I am personally handling your request for <?=$clientNameP;?>.  <strong>I have not yet received confirmation of your requested 
+My name is <?= $this->Session->read('Auth.AdminUser.givenname'); ?>  and I am personally handling your request for <?=$clientNameP;?>.  <strong>I have not yet received confirmation of your requested
 dates and I am in the process of following up with the property to secure your reservation.</strong>  I will be in touch with you again soon.
 </p>
 
 <?php else: ?>
 
 <p>
-My name is Jim and I will personally handle your request for <?=$clientNameP;?>. <strong>I am currently following up with <?=$clientNameP;?> to secure 
+
+My name is <?= $this->Session->read('Auth.AdminUser.givenname'); ?> and I will personally handle your request for <?=$clientNameP;?>. <strong>I am currently following up with <?=$clientNameP;?> to secure
 your reservation, and will be in touch with you again soon.</strong>
 </p>
 
