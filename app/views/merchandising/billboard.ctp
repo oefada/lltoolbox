@@ -128,7 +128,11 @@ function updatePreviewImg(rowId) {
 			<label>Link Text</label>
 			<input type="text" name="linkText" value="<?=@$welcomeSlideData['linkText']?>" />
 		</div>
-		<div class="input">
+        <div class="input">
+            <label>Alt Tag</label>
+            <input type="text" name="imageAlt" class="image-alt" value="<?=@$welcomeSlideData['imageAlt']?>" />
+        </div>
+        <div class="input">
 			<label>Headline</label>
 			<input type="text" name="headline" value="<?=@$welcomeSlideData['headline']?>" />
 		</div>
