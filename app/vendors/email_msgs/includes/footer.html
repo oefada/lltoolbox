@@ -33,19 +33,19 @@ if (!$clientPpv && is_array($clients)) {
 <?php if ($pfapTheme) : ?>
 
 	<hr style="color: #bbb; height: 1px; margin: 10px 0;">
-	<img 
-		src="http://www.luxurylink.com/images/logos/pfap-xa.jpg" 
-		alt="Pack For A Purpose" 
+	<img
+		src="http://www.luxurylink.com/images/logos/pfap-xa.jpg"
+		alt="Pack For A Purpose"
 		style="margin-bottom: 3px;"
 	/>
 	<br />
 	<font face="Arial, Helvetica, sans-serif" size="2" style="font-size:12px; line-height:20px" color="#474747">
-	<?=$c['name'];?> is a Pack For A Purpose&#0174; partner. We hope that you will make a big impact by 
+	<?=$c['name'];?> is a Pack For A Purpose&#0174; partner. We hope that you will make a big impact by
 	taking needed supplies with you on your vacation, and we thank you in advance for your
-	participation. While you plan your trip, here are some tips on <a 
-		href="http://www.luxurylink.com/pack-for-a-purpose#tab2" 
-		style="color: #008EC5;">how to pack</a>.  <a 
-			href="http://www.luxurylink.com/pack-for-a-purpose" 
+	participation. While you plan your trip, here are some tips on <a
+		href="http://www.luxurylink.com/pack-for-a-purpose#tab2"
+		style="color: #008EC5;">how to pack</a>.  <a
+			href="http://www.luxurylink.com/pack-for-a-purpose"
 			style="color: #008EC5;">Learn more</a> about Pack For A Purpose&#0174;.
 	</font>
 	<hr style="color: #bbb; height: 1px; margin: 10px 0;">
@@ -56,16 +56,16 @@ if (!$clientPpv && is_array($clients)) {
 <?php if ($afapTheme) : ?>
 
 	<hr style="color: #bbb; height: 1px; margin: 10px 0;">
-	<img 
-		src="http://www.luxurylink.com/images/logos/pfap-small-auction-pdp2.gif" 
-		alt="Pack For A Purpose Auction Partner" 
+	<img
+		src="http://www.luxurylink.com/images/logos/pfap-small-auction-pdp2.gif"
+		alt="Pack For A Purpose Auction Partner"
 		style="margin-bottom: 3px;"/>
 	<br />
 	<font face="Arial, Helvetica, sans-serif" size="2" style="font-size:12px; line-height:20px" color="#474747">
 	<?=$c['name']; ?> is participating in Luxury Link's Auctions for a Purpose campaign this month.
 	A portion of the winning auction bid will be being donated to Pack for a Purpose,
 	an incredible non-profit organization which empowers travelers to delivers needed supplies throughout the world.
-	<a 
+	<a
 		href="http://links.mkt3213.com/ctt?m=4167596&r=LTIxMzU1NDQ1MgS2&b=0&j=MjY5NTE5MTA3S0&mt=1&kt=12&kx=1&k=www_luxurylink_com_pack-f_1&kd=http%3A%2F%2Fwww.luxurylink.com%2Fpack-for-a-purpose%3Futm_source%3Dll%26utm_medium%3Dxa%26utm_campaign%3Dauc_winner">Learn more</a>
 	about Pack For A Purpose, and how you can give back to the communities you visit simply by using available space in your luggage.
 	</font>
@@ -78,13 +78,14 @@ if (!$clientPpv && is_array($clients)) {
 
 	<font face="Arial, Helvetica, sans-serif" size="2" style="font-size:12px; line-height:20px" color="#474747">
 	<p>
-	<? 
+	<?
 	// RESERVATION CONFIRMATION (PPV 1)
 	// AUCTION WINNER (PPV 18)
 	// FIXED PRICE WINNER/RESERVATION ACKNOWLEDGMENT PPV 12
-	// RESERVATION CANCELLATION CONFIRMATION PPV 30 
+	// RESERVATION CANCELLATION CONFIRMATION PPV 30
 	// AUCTION WINNER EMAIL DECLINED/EXPIRED CC PPV 19
-	$tmpArr=array(1,18,12,30,19);
+	// 52 and 53 are auction winner reminders
+	$tmpArr=array(1,18,12,30,19,52,53);
 	if (in_array($ppvNoticeTypeId,$tmpArr)){
 
 		if ($isAuction){ ?>
@@ -103,18 +104,18 @@ if (!$clientPpv && is_array($clients)) {
             <a href="http://www.luxurylink.com/about/index.php/cancellations-refunds/?utm_source=ll&utm_medium=xa&utm_campaign=res_confirm&utm_source=ll&utm_medium=xa&utm_campaign=res_confirm">View Cancellation Policy</a>.
         <?php endif; ?>
 
-		We recommend purchasing outside travel insurance.  
-		Please make yourself familiar with the hotel's policies before your trip. 
+		We recommend purchasing outside travel insurance.
+		Please make yourself familiar with the hotel's policies before your trip.
 		<br> </p> <p>
 
-	<? } 
+	<? }
 
 	if (!$clientPpv){?>
 
-		If you have any questions or additional needs, please contact our Travel Concierge at <?=Base::phoneLongLL?>, 
-		or send us an email at <a 
-			href="mailto:concierge@<?= $siteEmail ?>" 
-			style="text-decoration: none; color: #008EC5;">concierge@<?=$siteEmail ?></a>. 
+		If you have any questions or additional needs, please contact our Travel Concierge at <?=Base::phoneLongLL?>,
+		or send us an email at <a
+			href="mailto:concierge@<?= $siteEmail ?>"
+			style="text-decoration: none; color: #008EC5;">concierge@<?=$siteEmail ?></a>.
 		Our business hours are <?php echo Base::conciergeHoursComma; ?>.</p>
 
 
