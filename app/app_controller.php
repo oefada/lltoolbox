@@ -40,7 +40,7 @@ uses('sanitize');
 App::import('Model', 'MessageQueue');
 class AppController extends Controller {
 	var $helpers = array('Html2', 'Html', 'Form', 'Text', 'Pagination', 'Layout', 'Ajax', 'StrictAutocomplete', 'Number', 'DatePicker', 'Prototip', 'Session', 'Multisite','Utilities');
-	var $components = array('Acl', 'LdapAuth', 'RequestHandler','DebugKit.Toolbar');
+	var $components = array('Acl', 'LdapAuth', 'RequestHandler');
 	var $publicControllers = array('sessions');
 	var $Sanitize;
 	
