@@ -222,6 +222,7 @@ class RefundRequestsController extends AppController {
 		}
 		
 		$editorAccess = $this->hasEditorAccess();
+		$accountingAccess = $this->hasAccountingAccess();
 
 		if ($this->data['RefundRequest']['refundRequestStatusId'] > 1 && !$editorAccess) {
 			$this->Session->setFlash(__('You do not have permission to edit the request.', true));
@@ -237,7 +238,7 @@ class RefundRequestsController extends AppController {
 			$this->set('displayRefundRequestApproveLink', true);
 		}
 
-		if ($editorAccess && $this->data['RefundRequest']['refundRequestStatusId'] == 2) {
+		if ($accountingAccess && $this->data['RefundRequest']['refundRequestStatusId'] == 2) {
 			$this->set('displayRefundRequestCompleteLink', true);
 		}
 				
@@ -246,6 +247,7 @@ class RefundRequestsController extends AppController {
 		$refundStatuses = $this->RefundRequest->RefundRequestStatus->find('list');
 		$this->set(compact('refundInfo', 'refundReasons', 'refundStatuses'));
 		$this->set('editorAccess', $editorAccess);
+		$this->set('accountingAccess', $accountingAccess);
 		$this->set('pageVersion', 	'E');	
 	}
 
@@ -289,8 +291,8 @@ class RefundRequestsController extends AppController {
 	}
 
 	function setComplete($id = null) {
-		$editorAccess = $this->hasEditorAccess();
-		if (!$editorAccess) {
+		$accountingAccess = $this->hasAccountingAccess();
+		if (!$accountingAccess) {
 			$this->Session->setFlash(__('You do not have permission to complete the request.', true));
 			$this->redirect(array('action'=>'index'));	
 		}
@@ -319,7 +321,13 @@ class RefundRequestsController extends AppController {
 	
 	private function hasEditorAccess() {
 		$currentUser = $this->LdapAuth->user();
-		$access = (in_array('Accounting',$currentUser['LdapUser']['groups']) || in_array('Geeks',$currentUser['LdapUser']['groups']) || $currentUser['LdapUser']['samaccountname'] == 'bjensen' || $currentUser['LdapUser']['samaccountname'] == 'jcross') ? true : false;
+		$access = ($this->hasAccountingAccess() || $currentUser['LdapUser']['samaccountname'] == 'bjensen' || $currentUser['LdapUser']['samaccountname'] == 'jcross') ? true : false;
+		return $access;
+	}
+
+	private function hasAccountingAccess() {
+		$currentUser = $this->LdapAuth->user();
+		$access = (in_array('Accounting',$currentUser['LdapUser']['groups']) || in_array('Geeks',$currentUser['LdapUser']['groups'])) ? true : false;
 		return $access;
 	}
 
