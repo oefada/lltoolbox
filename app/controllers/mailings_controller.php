@@ -64,7 +64,7 @@ class MailingsController extends AppController {
 
 	function generated(){
 
-		Configure::write('debug',3);
+
 
 		if (!empty($this->params['form']['clientId_arr'])){
 
