@@ -1,8 +1,14 @@
-			<?php foreach ($ticket['PaymentDetail'] as $v): ?>
+			<?php
+            $psettings = array();
+
+            foreach ($ticket['PaymentDetail'] as $v):
+                $psettings[0] = $v['userPaymentSettingId'];
+                ?>
 				<table class="paymentsApplied">
 					<tr>
 						<td>Payment ID:</td>
-						<td><a target="_blank" href="/payment_details/view/<?= $v['paymentDetailId'] ?>"><?= $v['paymentDetailId'] ?></a></td>
+                        <!-- the class below is important, it is used to select the credit card. please do not change -->
+						<td><a target="_blank" href="/payment_details/view/<?= $v['paymentDetailId'] ?>" class="<?= $v['userPaymentSettingId'] ?>"><?= $v['paymentDetailId'] ?></a></td>
 					</tr>
 					<tr>
 						<td>Payment Status:</td>
@@ -18,3 +24,25 @@
 					</tr>
 				</table>
 			<?php endforeach; ?>
+
+
+            <script type="text/javascript">
+
+                (function($){
+
+
+                    var userPaymentSettingId = <?= $psettings[0] ?>;// last payment setting
+
+                    //grab selector object of lasst used payment setting ID
+                    var lastUsedPaymentSel = $('input[value="'+userPaymentSettingId+'"]');
+
+                    //ensure the selector exists.
+                    if (lastUsedPaymentSel.length > 0){
+
+                        //check select the radio button for this object.
+                        $('input[value="'+userPaymentSettingId+'"]').attr("checked",true);
+                     }
+                    //
+                })(jQuery);
+
+            </script>
