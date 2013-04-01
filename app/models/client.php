@@ -10,9 +10,24 @@ class Client extends AppModel {
 					   'Logable');
 
    var $validate = array('name' => array(
-						 'rule' => '/[a-zA-Z0-9]/',
-						'message' => 'Client name must only contain letters.')
+						    'rule' => '/[a-zA-Z0-9]/',
+						    'message' => 'Client name must only contain letters.'),
+                        //'estaraPhoneLocal' => array('phone', null, 'us'),
+                         'estaraPhoneLocal'=>array(
+                             'rule'=>array('minLength', '10'),
+                             ///'rule'=>array('custom', '/^([1]-)?8[00|55|66|77|88]{2}-\d{3}-\d{4}$/'),
+                             //@TODO, consider doing validating on the public site. Not everyone lives in US (think Internerally).
+                             //'message'=>'Please update Toll-Free Tracking # in the following format: N-NNN-NNN-NNNN.',
+                             'allowEmpty' => true, //validate only if not empty
+                         )
 					 );
+
+
+//    public $validate = array(
+//        'phone' => array(
+//            'rule' => array('phone', null, 'us')
+//        )
+//    );
 
    var $belongsTo = array('ClientType' => array('foreignKey' => 'clientTypeId'),
 						  'Region' => array('foreignKey' => 'regionId'),
@@ -64,8 +79,19 @@ class Client extends AppModel {
 	$this->data['Client']['locationNormalized'] = $this->normalize($this->data['Client']['locationDisplay'],1);
 	$this->data['Client']['nameNormalized'] = $this->normalize($this->data['Client']['name'],1);
 
+       if (!empty($this->data['Client'])){
+
+
+
+           //sanitize toll free tracking #
+           $this->data['Client']['estaraPhoneLocal'] = str_replace('-','',$this->data['Client']['estaraPhoneLocal']);
+       }
+
+
 	return true;
    }
+
+
 
 	function afterSave($created) {
 		// run some custom afterSaves for client.

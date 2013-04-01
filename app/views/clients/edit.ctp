@@ -1,3 +1,10 @@
+
+<?php
+
+echo $javascript->link($this->webroot.'js/jquery/maskedinput/jquery.maskedinput.js', false);
+
+?>
+
 <style>
 div.ageRanges {
 		position:relative;
@@ -184,12 +191,30 @@ foreach ($this->data['Client']['sites'] as $site) {
 		echo $form->input('phone1');
 		echo $form->input('phone2');
 		echo $form->input('fax', array('type' => 'hidden'));
-		echo $form->input('estaraPhoneLocal', array('label'=>'Toll-Free Tracking #'));
+		echo $form->input('estaraPhoneLocal', array('label'=>'Toll-Free Tracking #','title'=>'Please enter in the format 1-NNN-NNN-NNNN.'));
 		echo $form->input('estaraPhoneIntl', array('label'=>'Intl / Direct Phone #'));
         echo $form->input('contactLL', array('type' => 'checkbox',
                                              'label' => 'Use LL/FG contact info instead of client\'s on PDP',
                                              'class' => 'contactLL-align'));
 		?>
+            <script type="text/javascript">
+
+
+
+                (function($) {
+                    $(function() {
+                        //jQuery("ClientEstaraPhoneLocal").mask('99-99');
+                        $("#ClientEstaraPhoneLocal").mask("1-999-999-9999");
+
+                        //$(document ).tooltip();
+                    });
+                })(jQuery);
+
+
+
+            </script>
+
+
 		<? if(isset($client['Address'])): ?>
 		<h4>Addresses</h4>
 		<?php foreach ($client['Address'] as $address):
