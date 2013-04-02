@@ -23,14 +23,14 @@ class ClientsController extends AppController {
         parent::beforeSave();
 
 
-            var_dump($this->data);
+
         if (!empty($this->data['Client'])){
 
 
             //sanitize toll free tracking #
             $this->data['Client']['estaraPhoneLocal'] = str_replace('-','',$this->data['Client']['estaraPhoneLocal']);
 
-            var_dump($this->data['Client']['estaraPhoneLocal']);
+
         }
 
         return true;

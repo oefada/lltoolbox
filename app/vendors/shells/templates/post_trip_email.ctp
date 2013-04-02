@@ -80,7 +80,7 @@
                             <tr>
                                 <td style="text-align:center;line-height:15px;font-family:Helvetica,maradival,Sans-Serif;color: #6e7072;font-size:10px;padding:20px 0px 20px 0px;">
                                 <a name="footer" href="http://www.luxurylink.com/?utm_source=ll&utm_medium=xa&utm_campaign=ll_posttrip" target="_blank" style="color: #008ec5;text-decoration: none;">Luxury Link</a><br>
-                                5570 Lincoln Blvd. Los Angeles, CA 90094 <br>
+                                    <?= ADDRESS_LL ?><br>
                                 For information or assistance, call 1 (888) 297-3299 or email
                                 <a name="footer_email" href="mailto:concierge@luxurylink.com" target="_blank" style="color: #008ec5;text-decoration: none;">concierge@luxurylink.com</a>.  |  <a name="footer_privacy" href="http://www.luxurylink.com/about/index.php/privacy-policy/" target="_blank" style="color: #008ec5;text-decoration: none;">Privacy Policy</a></td>
                             </tr>
