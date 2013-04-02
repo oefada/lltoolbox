@@ -145,5 +145,27 @@ class PaymentDetail extends AppModel {
 		
 		return false;
 	}
+
+    public function getLastSuccessfullCharge($ticketId){
+
+        $options=array(
+            'fields' => array('MAX(PaymentDetail.ppResponseDate) AS ppResponseDate', '*'),
+            'conditions'=>array(
+                'PaymentDetail.ticketId'=>$ticketId,
+                'PaymentDetail.paymentTypeId'=>1, //get only Charges
+                'PaymentDetail.isSuccessfulCharge' => 1
+            ),
+            'group' => 'PaymentDetail.ppResponseDate'
+        );
+        $rows = $this->find('first', $options);
+
+        if(empty($rows)){
+
+            return false;
+        }else{
+           return $rows;
+        }
+
+       }
 }
 ?>
