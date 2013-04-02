@@ -1166,9 +1166,12 @@ class WebServiceTicketsController extends WebServicesController
 
 			$this->ClientLoaPackageRel->Client->ClientDestinationRel->contain('Destination');
 			$offerType			= $this->OfferType->find('list');
+
+
 			$ticketPaymentData	= $this->findUserPaymentSettingInfo($ticketData['userPaymentSettingId']);
 			
 			$paymentDetail		= $this->PaymentDetail->findByticketId($ticketId);
+
 			$paymentDetail		= (isset($paymentDetail['PaymentDetail'][0]) ? $paymentDetail['PaymentDetail'][0] : $paymentDetail['PaymentDetail']);
 			
 			$promoGcCofData		= $this->Ticket->getPromoGcCofData($ticketId, $ticket['Ticket']['billingPrice']);
@@ -1426,11 +1429,21 @@ class WebServiceTicketsController extends WebServicesController
 
 			// cc variables
 			// -------------------------------------------------------------------------------
-			if (is_array($ticketPaymentData) && !empty($ticketPaymentData)) {
-				$ccFour				= substr($ticketPaymentData['UserPaymentSetting']['ccToken'], -4, 4);
-				$ccType				= $ticketPaymentData['UserPaymentSetting']['ccType'];
-				//$billDate			= 
-			}
+            //last 4 data
+
+            $successPaymentDetail = $this->PaymentDetail->getLastSuccessfullCharge($ticketId);
+            if (is_array($successPaymentDetail) && !empty($successPaymentDetail)) {
+
+                $ccFour				= $successPaymentDetail['PaymentDetail']['ppCardNumLastFour'];
+                $ccType				= $successPaymentDetail['PaymentDetail']['ccType'];
+                $billDate	        = $successPaymentDetail['PaymentDetail']['ppResponseDate'];
+            }
+
+//			if (is_array($ticketPaymentData) && !empty($ticketPaymentData)) {
+//				$ccFour				= substr($ticketPaymentData['UserPaymentSetting']['ccToken'], -4, 4);
+//				$ccType				= $ticketPaymentData['UserPaymentSetting']['ccType'];
+//				//$billDate			=
+//			}
 
 			// guarantee amount
 			// -------------------------------------------------------------------------------
