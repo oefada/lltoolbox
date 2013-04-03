@@ -12,8 +12,8 @@ $this->set('clientId', $this->data['Client']['clientId']);
 <script>var currencyCode = '<?=$loa['Currency']['currencyCode'];?>';</script>
 
 <h2 class="title"><?php __('Current LOA Items (Inclusions)');?> <?=$html2->c($loa['Loa']['loaId'], 'LOA Id:')?></h2>
-<div><strong>Start Date:</strong> <?=date('Y-m-d', strtotime($loa['Loa']['startDate']));?></div>
-<div><strong>End Date:</strong> <?=date('Y-m-d', strtotime($loa['Loa']['endDate']));?></div>
+<div><strong>Start Date:</strong> <?=date('M d, Y', strtotime($loa['Loa']['startDate']));?></div>
+<div><strong>End Date:</strong> <?=date('M d, Y', strtotime($loa['Loa']['endDate']));?></div>
 <div><strong>Selected Currency:  <?=$currencyCodes[$loa['Loa']['currencyId']];?></strong></div>
 <br />
 <div>
