@@ -32,8 +32,8 @@ $this->set('clientId', $this->data['Client']['clientId']);
 	<th class="c">Num. Packages Remaining</th>
 	</tr>
 	<tr class="altrow">
-	<td class="a"><?=$loa['Loa']['startDate'];?></td>
-	<td class="a"><?=$loa['Loa']['endDate'];?></td>
+	<td class="a"><?=date('M d, Y', strtotime($loa['Loa']['startDate']));?></td>
+	<td class="a"><?=date('M d, Y', strtotime($loa['Loa']['endDate']));?></td>
 	<td class="a"><?=$number->currency($loa['Loa']['membershipFee']);?></td>
 	<td class="a"><?=$number->currency($loa['Loa']['membershipBalance']);?></td>
 	<td class="a"><?=$number->currency($loa['Loa']['totalRevenue']);?></td>
@@ -136,8 +136,8 @@ $this->set('clientId', $this->data['Client']['clientId']);
 					<td class="a"><?=$o['offerId'];?></td>
 					<td class="a"><?=$o['packageId'];?></td>
 					<td class="a"><?=$o['offerTypeName'];?></td>
-					<td class="a"><?=$o['startDate'];?></td>
-					<td class="a"><?=$o['endDate'];?></td>
+					<td class="a"><?=date('M d, Y', strtotime($o['startDate']));?></td>
+					<td class="a"><?=date('M d, Y', strtotime($o['endDate']));?></td>
 					<td class="a"><?=$number->currency($o['retailValue']);?></td>
 					<td class="a"><?=$number->currency($o['openingBid']);?></td>
 					<td class="a"><?=$number->toPercentage($o['openingBid'] / $o['retailValue'] * 100);?></td>
