@@ -191,7 +191,7 @@ foreach ($this->data['Client']['sites'] as $site) {
 		echo $form->input('phone1');
 		echo $form->input('phone2');
 		echo $form->input('fax', array('type' => 'hidden'));
-		echo $form->input('estaraPhoneLocal', array('label'=>'Toll-Free Tracking #','title'=>'Please enter in the format 1-NNN-NNN-NNNN.'));
+		echo $form->input('estaraPhoneLocal', array('label'=>'Toll-Free Tracking #','title'=>'Please update Toll-Free Tracking # in the following format: N-NNN-NNN-NNNN'));
 		echo $form->input('estaraPhoneIntl', array('label'=>'Intl / Direct Phone #'));
         echo $form->input('contactLL', array('type' => 'checkbox',
                                              'label' => 'Use LL/FG contact info instead of client\'s on PDP',
@@ -206,11 +206,37 @@ foreach ($this->data['Client']['sites'] as $site) {
                         //jQuery("ClientEstaraPhoneLocal").mask('99-99');
                         $("#ClientEstaraPhoneLocal").mask("1-999-999-9999");
 
-                        //$(document ).tooltip();
                     });
                 })(jQuery);
 
+                (function($) {
 
+
+                    $(document).ready(function() {
+
+                        $('input' ).tooltip({
+
+                            open: function (event, ui) {
+                                ui.tooltip.css("max-width", "250px");
+                                ui.tooltip.css("color", "red");
+                                ui.tooltip.css("font-size", "10px");
+                                ui.tooltip.css("padding", "5px");
+                                ui.tooltip.css("margin-left", "850px");
+                                ui.tooltip.css("z-index", "1000");
+                                ui.tooltip.css("-webkit-box-shadow", "0px 0px 5px 1px #999");
+                                ui.tooltip.css("box-shadow", "0px 0px 5px 1px #999");
+
+                            },
+                            position: {
+//                                my: "center center",
+//                                at: "right right"
+                                my: "left top",
+                                at: "left top"
+                            }
+                        });
+                    });
+
+                })(jQuery);
 
             </script>
 
