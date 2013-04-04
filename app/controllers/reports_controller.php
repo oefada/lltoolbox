@@ -85,7 +85,7 @@ class ReportsController extends AppController
 		$sql = "SELECT t1.clientId,t1.name,t1.endDate,t2.oldFormat,t2.newFormat FROM (SELECT loa.clientId, MIN(loa.endDate) AS endDate, 
 		client.name FROM toolbox.loa INNER JOIN toolbox.client ON (loa.clientId = client.clientId) WHERE (loa.inactive =0) GROUP BY loa.clientId HAVING (endDate >DATE_SUB(NOW(),INTERVAL 1 YEAR)) ORDER BY endDate ASC, client.name ASC) t1 
 		LEFT JOIN (SELECT imageClient.clientId, SUM(imagePath REGEXP 
-		'(^/images/por/(0\-[0-9]+|[0-9]+)/(0\-[0-9]+|[0-9]+)\-gal\-xl\-[0-9]+.jpg$|^/images/pho/[0-9]+/[0-9]+_[9][01][0-9]{2}[^0-9].*jpg)$') AS oldFormat, 
+		'(^/images/por/(0\\-[0-9]+|[0-9]+)/(0\\-[0-9]+|[0-9]+)\\-gal\\-xl\\-[0-9]+.jpg$|^/images/pho/[0-9]+/[0-9]+_[9][01][0-9]{2}[^0-9].*jpg)$') AS oldFormat,
 		SUM(imagePath REGEXP '^/images/pho/[0-9]+/[0-9]+_([9][0-9]{0,2}|[9][0-9]{4,9}|[0-8][0-9]*)[^0-9].*jpg$') AS newFormat FROM toolbox.imageClient 
 		INNER JOIN toolbox.image  ON (imageClient.imageId = image.imageId) WHERE (imageClient.isHidden =0 AND imageClient.inactive =0 AND imageClient.imageTypeId =1) 
 		GROUP BY imageClient.clientId ) t2 ON t1.clientId=t2.clientId ORDER BY t1.endDate DESC,t1.name ASC";
