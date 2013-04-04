@@ -1356,8 +1356,16 @@ class Package extends AppModel {
 
 		// the "validateNumNightsAddsUp" validation seems outdated
 		unset($this->validate['numNights']['validateNumNightsAddsUp']);
+
+        $db->commit($this);
 		$this->create();
+
+        $db =& ConnectionManager::getDataSource($this->useDbConfig);
+        $db->begin($this);
+
 		$this->saveAll($data);
+
+
 		$newPkgId = $this->getLastInsertID();
 
 		// no package id	-- could not create row
