@@ -201,7 +201,8 @@ class MailingHelper extends AppHelper{
 				src="http://www.luxurylink.com/images/insider/new/view_btn.jpg" 
 				width="100" 
 				height="28" 
-				border="0"/>
+				border="0"
+				style="float: right;"/>
 		</a>
 		</td>';
 
