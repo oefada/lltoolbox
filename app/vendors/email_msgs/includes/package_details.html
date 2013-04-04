@@ -10,28 +10,28 @@ if ($resConfirmationNotes != ""): ?>
 	<tr><td colspan="2" style="font-size:0; line-height:0;"><img src="http://www.luxurylink.com/images/email/pixel.gif" width="1" height="10"></td></tr>
 	<tr><td colspan="2">
 	<? // TABLE A OPEN ?>
-	<table 
-		border="0" 
-		cellpadding="0" 
-		cellspacing="0" 
-		align="center" 
-		width="558" 
+	<table
+		border="0"
+		cellpadding="0"
+		cellspacing="0"
+		align="center"
+		width="558"
 		style="border-width: 1px; border-color:#c3c3c3;border-style: solid;"
 	>
 	<tr>
 	<td valign="top" width="" style="padding: 0px 0px 0px 0px;" align="center">
 		<? // TABLE B OPEN ?>
-		<table 
-			bgcolor="#d8d7b8" 
-			border="0" 
-			cellpadding="0" 
-			cellspacing="0" 
-			align="center" 
-			width="558" 
+		<table
+			bgcolor="#d8d7b8"
+			border="0"
+			cellpadding="0"
+			cellspacing="0"
+			align="center"
+			width="558"
 			style="padding: 11px 11px 11px 18px;border-bottom: 1px #c3c3c3 solid;"
 		>
 		<tr>
-		<td 
+		<td
 			style="font-size:14px;line-height: 16px; font-family: Arial,Sans-Serif;color:#484846;"
 			><b>NOTES FROM THE PROPERTY</b>
 		<td>
@@ -45,8 +45,8 @@ if ($resConfirmationNotes != ""): ?>
 		<? // TABLE C OPENED ?>
 		<table border="0" cellpadding="0" cellspacing="0" align="center" width="558" >
 			<tr>
-			<td 
-				style="<?=$fontStyle?>line-height:16px;padding: 18px 18px 18px 18px;" 
+			<td
+				style="<?=$fontStyle?>line-height:16px;padding: 18px 18px 18px 18px;"
 				colspan="2"><?= $resConfirmationNotes ?>
 			</td>
 			</tr>
@@ -61,64 +61,64 @@ if ($resConfirmationNotes != ""): ?>
 
 <?php endif; ?>
 
-<tr><td 
+<tr><td
 	colspan="2"
-><img 
-	src="http://www.luxurylink.com/images/email/pixel.gif" 
-	align="left" 
-	vspace="0" 
-	hspace="0" 
-	width="1" 
+><img
+	src="http://www.luxurylink.com/images/email/pixel.gif"
+	align="left"
+	vspace="0"
+	hspace="0"
+	width="1"
 	height="15"
 ></td></tr>
 <tr><td colspan="2">
 	<? // TABLE D OPEN ?>
-	<table 
-		border="0" 
-		cellpadding="0" 
-		cellspacing="0" 
-		align="center" 
-		width="557" 
+	<table
+		border="0"
+		cellpadding="0"
+		cellspacing="0"
+		align="center"
+		width="557"
 		style="border-width: 1px; border-color:#c3c3c3;border-style: solid;"
-	><tr><td 
-		valign="top" 
+	><tr><td
+		valign="top"
 		style="padding: 0px 0px 0px 0px;" align="center"
 		>
 		<? // TABLE E OPEN ?>
-		<table 
-			bgcolor="#d8d7b8" 
-			border="0" 
-			cellpadding="0" 
-			cellspacing="0" 
-			align="center" 
-			width="555" 
+		<table
+			bgcolor="#d8d7b8"
+			border="0"
+			cellpadding="0"
+			cellspacing="0"
+			align="center"
+			width="555"
 			style="padding: 11px 11px 11px 17px;border-bottom: 1px #c3c3c3 solid;"
 		>
-		<tr><td 
+		<tr><td
 			style="font-size:14px;line-height: 16px; font-family: Arial,Sans-Serif;color:#484846;"
 		><b>
 
-		<? 
+		<?
 
 		$nonBidPpvIdArr=array(1,12,14,18,19,26,30,32);
-		if ($isMystery && !in_array($ppvNoticeTypeId,$nonBidPpvIdArr)): 
+		if ($isMystery && !in_array($ppvNoticeTypeId,$nonBidPpvIdArr)):
 
 			echo 'MYSTERY AUCTION DETAILS';
 
-		elseif ($ppvNoticeTypeId == 40 || $ppvNoticeTypeId == 41): 
+		elseif ($ppvNoticeTypeId == 40 || $ppvNoticeTypeId == 41):
 
 			echo 'AVAILABLE VACATION EXPERIENCE';
 
-		else: 
+		else:
 
 			if ($ppvNoticeTypeId == 38):
 				$tmpEndDate=strtoupper(date("M d, Y \A\T g:i A",strtotime($liveOfferData['endDate'])));
 				echo "AUCTION ENDS ".$tmpEndDate." PACIFIC TIME";
-			else: 
+			else:
 				echo "YOUR VACATION PACKAGE";
-			endif; 
+			endif;
 
-		endif; 
+		endif;
 
 		?>
 		</b></td></tr>
@@ -126,71 +126,71 @@ if ($resConfirmationNotes != ""): ?>
 	<? // TABLE E CLOSED ?>
 </td></tr>
 
-<tr><td 
-	valign="top" 
+<tr><td
+	valign="top"
 	style="padding: 0px 0px 0px 0px;" align="center"
 >
 <? // TABLE F OPEN?>
-<table 
-		border="0" 
-		cellpadding="0" 
-		cellspacing="0" 
-		align="center" 
+<table
+		border="0"
+		cellpadding="0"
+		cellspacing="0"
+		align="center"
 		width="555"
 ><tbody>
 
-<?php 
+<?php
 
 foreach ($clients as $cn=>$c):
 
 	$c = (object)$c;
 	?>
-	<tr><td 
-		valign="top" 
-		style="padding: 15px 30px 0px 15px;" 
-		height="160" 
+	<tr><td
+		valign="top"
+		style="padding: 15px 30px 0px 15px;"
+		height="160"
 		align="left"
-	><div><a 
-		target="_blank" 
+	><div><a
+		target="_blank"
 		href="<?=$c->pdpUrl;?>"
-		><img 
-			name="Cont_29" 
-			style="max-width:246px" 
-			width="246" 
-			border="0" 
-			style="display: block;" 
-			src="<?php echo $clientImagePath; ?>" 
-			alt="<?php echo $packageName;?>" 
+		><img
+			name="Cont_29"
+			style="max-width:246px"
+			width="246"
+			border="0"
+			style="display: block;"
+			src="<?php echo $clientImagePath; ?>"
+			alt="<?php echo $packageName;?>"
 		/></a></div>
-	</td><td 
-		valign="top" 
-		colspan="2" 
-		style="padding: 15px 0px 0px 0px;" 
+	</td><td
+		valign="top"
+		colspan="2"
+		style="padding: 15px 0px 0px 0px;"
 		align="left"
 	>
 	<? // TABLE G OPEN?>
-	<table 
-		height="75" 
-		cellspacing="0" 
-		cellpadding="0" 
-		border="0" 
-		align="left" 
+	<table
+		height="75"
+		cellspacing="0"
+		cellpadding="0"
+		border="0"
+		align="left"
 		width="255"
-	><tbody><tr><td 
-		style="font-size:17px;line-height: 16px; font-family: Arial,Sans-Serif;color:#036dfc;" 
+	><tbody><tr><td
+		style="font-size:17px;line-height: 16px; font-family: Arial,Sans-Serif;color:#036dfc;"
 		width="157"
-	><a 
-		href="<?= $c->pdpUrl ?>" 
-		style="color:#036dfc;text-decoration:none;" 
+	><a
+		href="<?= $c->pdpUrl ?>"
+		style="color:#036dfc;text-decoration:none;"
 		target="_blank"
 	><b><?=($isMystery  && !in_array($ppvNoticeTypeId,$nonBidPpvIdArr))? "Mystery Auction" : $c->name ?></b></a>
 	</td></tr>
-	<tr><td 
+	<tr><td
 		style="<?=$fontStyle?>padding: 5px 0px 0px 0px;line-height:16px;text-decoration:none;"
 	>
 
-	<? 
-	
+	<?
+
 	if ($isMystery && !in_array($ppvNoticeTypeId,$nonBidPpvIdArr)): ?>
 		<i><?= $offerLive['offerName'] ?><? else: ?><?= $c->locationDisplay ?></i>
 	<? endif; ?>
@@ -199,19 +199,19 @@ foreach ($clients as $cn=>$c):
 
 	<? if ($isMystery && !in_array($ppvNoticeTypeId,$nonBidPpvIdArr)): ?>
 
-		<tr><td 
+		<tr><td
 			style="<?=$fontStyle?>line-height:16px;padding:15px 0px 0px 0px;"
 			colspan="2"
-		>The property name for this Mystery Auction will remain a secret, and for the moment so will the location, but only for the moment. We will be revealing clues throughout the course of the auction in our <a 
-			style="color:#036dfc;text-decoration:none;" 
+		>The property name for this Mystery Auction will remain a secret, and for the moment so will the location, but only for the moment. We will be revealing clues throughout the course of the auction in our <a
+			style="color:#036dfc;text-decoration:none;"
 			href="http://www.luxurylink.com/community/forum.php"
 			>Online Community.</a>
 		</td></tr>
 
 	<? else: ?>
 
-		<tr><td 
-			style="<?=$fontStyle?>line-height:16px;padding:15px 0px 0px 0px;" 
+		<tr><td
+			style="<?=$fontStyle?>line-height:16px;padding:15px 0px 0px 0px;"
 			colspan="2"
 		><? echo $c->address1;
 			echo "<br>";
@@ -225,27 +225,27 @@ foreach ($clients as $cn=>$c):
 		</td></tr>
 
 		<? if ($c->estaraPhoneLocal != ""): ?>
-			<tr><td 
-				style="<?=$fontStyle?>line-height:16px;padding: 15px 0px 2px 0px;" 
+			<tr><td
+				style="<?=$fontStyle?>line-height:16px;padding: 15px 0px 2px 0px;"
 				colspan="2">Phone Number: <?= $c->estaraPhoneLocal ?>
 			</td></tr>
 		<? endif; ?>
 
 		<? if ($c->estaraPhoneIntl != ""): ?>
-			<tr><td 
-				style="<?=$fontStyle?>line-height:16px;padding: 0px 0px 2px 0px;" 
+			<tr><td
+				style="<?=$fontStyle?>line-height:16px;padding: 0px 0px 2px 0px;"
 				colspan="2"
 			>International: <?= $c->estaraPhoneIntl ?>
 			</td></tr>
 		<?php endif; ?>
 
 		<? if ($c->contact_to_string != ""): ?>
-			<tr><td 
-				style="<?=$fontStyle?>line-height:16px;padding:0px 0px 0px 0px;" 
+			<tr><td
+				style="<?=$fontStyle?>line-height:16px;padding:0px 0px 0px 0px;"
 				colspan="2"
-			>E-mail: <a 
-				href="mailto:<?= $c->contact_to_string ?>" 
-				target="_blank" 
+			>E-mail: <a
+				href="mailto:<?= $c->contact_to_string ?>"
+				target="_blank"
 				style="color: #056ff7;"
 			><?= $c->contact_to_string_trimmed ?></a>
 			</td></tr>
@@ -258,14 +258,14 @@ foreach ($clients as $cn=>$c):
 		<tr><td style="padding: 0px 0px 0px 0px;">
 			<br>
 			<? // TABLE H OPEN?>
-			<table 
-				width='100' 
-				cellpadding='0' 
-				cellspacing='0' 
-				border='0' 
+			<table
+				width='100'
+				cellpadding='0'
+				cellspacing='0'
+				border='0'
 				style="padding:0px 10px 5px 10px;border:1px solid #005a97;margin-top:5px;background:#0070a8;"
-				><tr><td><a 
-					href="<?= $c->pdpUrl ?>" 
+				><tr><td><a
+					href="<?= $c->pdpUrl ?>"
 					style="font-family:Arial;font-size:12px;font-weight:bold;color:#ffffff;padding:6px 20px 5px 20px;text-decoration:none;float:left;"
 				>View Details</a></td></tr>
 			</table>
@@ -298,8 +298,8 @@ foreach ($clients as $cn=>$c):
 <? if (in_array($ppvNoticeTypeId, array(36))): ?>
 
 	<tr>
-		<td 
-			style="<?=$fontStyle?>line-height:16px;padding: 20px 0px 2px 15px;" 
+		<td
+			style="<?=$fontStyle?>line-height:16px;padding: 20px 0px 2px 15px;"
 			colspan="4"><b><?= $siteName ?> Cancellation Policy:</b>
 		</td>
 	</tr>
@@ -330,14 +330,14 @@ foreach ($clients as $cn=>$c):
 
 <?php endif; ?>
 
-<?php if (in_array($ppvNoticeTypeId, array(1,12,14,18,19,26,28,36,16))): ?>
+<?php if (in_array($ppvNoticeTypeId, array(1,12,14,18,19,26,28,36,16,52,53))): ?>
 
 	<tr>
 	<td bgcolor="#c3c3c3" height="1" width="100%" colspan="5"></td>
 	</tr>
 	<tr>
 	<td
-		colspan="4"  
+		colspan="4"
 		style="font-size: 12px; font-family: Arial,Sans-Serif; color: rgb(79, 63, 50); line-height: 18px; padding: 15px 20px 15px 15px;"
 		><?= $validityNote ?>
 	</td>
@@ -345,21 +345,21 @@ foreach ($clients as $cn=>$c):
 
 <?php endif; ?>
 
-<?php 
+<?php
 
-	$tmpArr=array(1,2,10,12,14,18,19,24,26,27,28,29,30,31,33,36,16,11);
+	$tmpArr=array(1,2,10,12,14,18,19,24,26,27,28,29,30,31,33,36,16,11,52,53);
 	if (in_array($ppvNoticeTypeId, $tmpArr) && $legalText != ""): ?>
 
 		<tr>
-		<td 
-			style="<?=$fontStyle?>line-height:16px;padding: 2px 0px 2px 15px;" 
+		<td
+			style="<?=$fontStyle?>line-height:16px;padding: 2px 0px 2px 15px;"
 			colspan="4"
 		><b>Booking Conditions:</b>
 		</td>
 		</tr>
 		<tr>
-		<td 
-			style="<?=$fontStyle?>line-height:18px;padding: 0px 20px 15px 15px;" 
+		<td
+			style="<?=$fontStyle?>line-height:18px;padding: 0px 20px 15px 15px;"
 			colspan="4"
 		><li><?= $legalText ?></li>
 		</td>
