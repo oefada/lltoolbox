@@ -1178,7 +1178,7 @@ href=""
 	target="_target"
 	><img 
 		style="display: block;" 
-		src="http://www.luxurylink.com/images/email/email_coll_footer_012413.gif" 
+		src="http://www.luxurylink.com/images/email/HotelCollections-dark800.gif"
 		border="0" 
 		width="800" 
 		height="58" 
