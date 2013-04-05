@@ -10,7 +10,7 @@
 <style type="text/css">.yshortcuts{color:inherit;}html{-webkit-text-size-adjust:none;}</style>
 </head>  
 
-<body bgcolor="#e9e9e9" marginwidth="0" marginheight="0" leftmargin="0" topmargin="0"><CENTER><FONT SIZE="1" FACE="ARIAL">If you are still having problems viewing this message, please <a href="http://recp.rm02.net/ui/static/ReceptionIssues.html">click here</a> for additional help.</FONT></CENTER>
+<body bgcolor="#e9e9e9" marginwidth="0" marginheight="0" leftmargin="0" topmargin="0"><CENTER><FONT SIZE="1" FACE="ARIAL">Viewing email on a mobile device? Shop our <a href="http://www.luxurylink.com?utm_medium=news&utm_source=insider&utm_campaign=<?= $utmArr['utm_campaign']; ?>&utm_content=top-top&utm_term=go-to-mobile-site" target="_blank" name="mobile-site">mobile-optimized site</a> &nbsp; | &nbsp; If you are having problems viewing this message, please <a href="%%viewonline%%">click here</a></FONT></CENTER>
 
 <?=$mailing->displayHiddenClientIds($rows);?>
 
