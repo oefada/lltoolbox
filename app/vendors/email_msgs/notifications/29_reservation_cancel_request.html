@@ -4,7 +4,7 @@
 
 <p>Dear <?php echo $clientName;?>,</p>
 
-<p><strong>The following <?=$siteName;?> <?php if ($isAuction) :?>auction<?php else:?>"Buy Now"<?php endif;?> package was confirmed by 
+<p><strong>The following <?=$siteName;?> <?php if ($isAuction) :?>auction<?php else:?>"Buy Now"<?php endif;?> package was confirmed by
 </strong> <?php echo $resConfBy ?> <strong>on</strong> <?php echo date('F d, Y',strtotime($resConfToCustomer)) ?> The customer has requested a cancellation, so <a href="<?=$extranet_link;?>">please click here to acknowledge the cancellation request</a> and to advise us of the cancellation number and related policies. </p>
 
 <div style="padding:10px;background-color:#E0E0CD;margin-top:25px;margin-bottom:25px;">
@@ -24,10 +24,10 @@
 		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">&nbsp;</td>
 		<td style="color:#444444;font-size:12px;" valign="top" align="left">&nbsp;</td>
 	</tr>
-	
-	
+
+
 	<tr>
-		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">Guest Name:</td> 
+		<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="170">Guest Name:</td>
 		<td style="color:#444444;font-size:12px;" valign="top" align="left"><?php echo $emailName;?></td>
 	</tr>
 
@@ -45,12 +45,14 @@
 		<td style="color:#444444;font-size:12px;" valign="top" align="left"><?=$numNights;?></td>
 	</tr>
 
+	<?php if ($resArrDate != '' && $resDepDate != ''):?>
+		<tr>
+			<td style="color:#000000;font-size:12px; font-weight:bold;padding-bottom:15px; border-bottom:1px solid silver;" valign="top" align="left" width="170">Confirmed Dates:</td>
+			<td style="color:#444444;font-size:12px;padding-bottom:15px; border-bottom:1px solid silver;" valign="top" align="left">Check-in: <?php echo date('F d, Y',strtotime($resArrDate));?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Check-out: <?php echo date('F d, Y',strtotime($resDepDate));?></td>
+		</tr>
+	<?php endif;?>
 	<tr>
-		<td style="color:#000000;font-size:12px; font-weight:bold;padding-bottom:15px; border-bottom:1px solid silver;" valign="top" align="left" width="170">Confirmed Dates:</td>
-		<td style="color:#444444;font-size:12px;padding-bottom:15px; border-bottom:1px solid silver;" valign="top" align="left">Check-in: <?php echo date('F d, Y',strtotime($resArrDate));?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Check-out: <?php echo date('F d, Y',strtotime($resDepDate));?></td>
-	</tr>
-	<tr>
-		<td colspan="2">		
+		<td colspan="2">
 		<div style="color:#444444;font-size:12px;"><b>Please process cancellation upon receipt of this email:</b></div><br />
 		<?php if ($siteId == 1 ):?>
 			<div style="font-size: 15px;text-align: center"><a href="<?=$extranet_link;?>" style="text-decoration:none"><img src="http://www.luxurylink.com/images/buttons/btn-conf_cancel.gif" alt="Confirm Cancellation" style="border:0px;" /></a><br /></div>
