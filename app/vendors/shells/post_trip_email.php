@@ -64,6 +64,7 @@ SELECT
     , ticket.ticketId
     , ticket.userFirstName
     , ticket.userEmail1
+    , ticket.userId
     , reservation.reservationId
     , reservation.departureDate
     , client.locationDisplay
@@ -92,6 +93,7 @@ LIMIT 200;
 			$tickets[$ticketId]['Ticket']['ticketId'] = $r['ticket']['ticketId'];
 			$tickets[$ticketId]['User']['FirstName'] = ucwords($r['ticket']['userFirstName']);
 			$tickets[$ticketId]['User']['Email'] = $r['ticket']['userEmail1'];
+			$tickets[$ticketId]['User']['UserId'] = $r['ticket']['userId'];
 			$tickets[$ticketId]['Reservation']['reservationId'] = $r['reservation']['reservationId'];
 			$tickets[$ticketId]['Package']['packageId'] = $r['clientLoaPackageRel']['packageId'];
 			$client = array();
@@ -108,10 +110,11 @@ LIMIT 200;
 			$url .= '?ticketid=' . urlencode($t['Ticket']['ticketId']);
 			$url .= '&reservationid=' . urlencode($t['Reservation']['reservationId']);
 			$url .= '&firstname=' . urlencode($t['User']['FirstName']);
-			$clientids = $clientnames = $clientlocations = array();
+			$clientids = $clientnames = $clientlocations = $bvclients = array();
 			foreach ($t['Clients'] as $tid => $v) {
 				$clientnames[] = $v['Name'];
 				$clientids[] = $v['clientId'];
+				$bvclients[] = $v['clientId']; 
 				$clientlocations[$v['Location']] = $v['Location'];
 			}
 			$clientids = $this->array_to_english($clientids, '');
@@ -127,7 +130,9 @@ LIMIT 200;
 			}
 			$t['ClientLocation'] = $this->array_to_english($clientlocations);
 			$t['ClientLocationIn'] = ' in ' . $t['ClientLocation'];
-			$t['URL'] = $url;
+			// $t['URL'] = $url;
+			
+			$t['URL'] = 'http://www.luxurylink.com/bv/container.php?bvaction=rr_submit_review&bvproductId=' . $bvclients[0] . '&bvusertoken=' . $this->getBvToken($t['User']['UserId']); 
 		}
 		return $tickets;
 	}
@@ -172,6 +177,14 @@ LIMIT 200;
 		$this->WebServiceTicketsController->sendPpvEmail($emailTo = $data['User']['Email'], $emailFrom = 'reservations@luxurylink.com', $emailCc = null, $emailBcc = null, $emailReplyTo = 'no-reply@luxurylink.com', $emailSubject = 'Rate your Luxury Link experience at ' . $data['ClientNames'], $emailBody = $this->getTemplate($this->array_flatten($data)), $ticketId = $data['Ticket']['ticketId'], $ppvNoticeTypeId = 37, $ppvInitials = NULL);
 		return true;
 	}
+
+	private function getBvToken($uid, $maxage = 45) {
+		if (intval($uid) == 0) { return ''; }
+        $sharedkey = 'xRKkVuqYLRwsbFFMl0hvlnAim';
+        $userStr = 'date=' . date('Ymd') . '&userid=' . $uid;
+        if ($maxage) { $userStr .= '&maxage=' . $maxage; }
+        return md5($sharedkey . $userStr) . bin2hex($userStr);
+    }
 
 	/**
 	 * Takes an array and converts it to an English comma separated list.
