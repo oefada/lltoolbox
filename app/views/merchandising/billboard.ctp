@@ -13,15 +13,25 @@ table tr td { border: none; }
 .date { width: 350px; float: left; }
 form div { clear: none; }
 </style>
-
+<?php
+echo $javascript->link($this->webroot.'js/jquery/jquery.wtooltip.js');
+?>
 <script type="text/javascript" src="/js/tablednd.js"></script>
 <script type="text/javascript">
 jQuery(document).ready(function() {
 	jQuery('#sort-table .input-row').each(function(index) {
 		setRow('r' + (index+1));
 	});
-});
 
+
+
+});
+(function($) {
+    $(document).ready(function() {
+        $("input").wTooltip();
+    });
+
+})(jQuery);
 function addRow() {
 	var row = jQuery('#sort-table .input-row:first').clone();
 	var numRows = jQuery('#sort-table .input-row').length;
@@ -127,14 +137,10 @@ function updatePreviewImg(rowId) {
 		<div class="input">
 			<label>Link Text</label>
 			<input type="text" name="linkText" value="<?=@$welcomeSlideData['linkText']?>" />
-		</div>
-        <div class="input">
-            <label>Alt Tag</label>
-            <input type="text" name="imageAlt" class="image-alt" value="<?=@$welcomeSlideData['imageAlt']?>" />
         </div>
         <div class="input">
-			<label>Headline</label>
-			<input type="text" name="headline" value="<?=@$welcomeSlideData['headline']?>" />
+			<label>Headline<br><span class="font-size:50%;font-weight:normal;">used for SEO</span></label>
+			<input type="text" name="headline" value="<?=@$welcomeSlideData['headline']?>" title="Used for SEO" />
 		</div>
 		<div class="input">
 			<label>Description</label>
@@ -223,11 +229,11 @@ Next scheduled date: <?=$others['next']['startDate'];?><br />
 			<label>Link Text</label>
 			<input type="text" name="linkText[]" class="link-text" value="<?=@$slide['linkText']?>" />
 			
-			<label>Alt Tag</label>
-			<input type="text" name="imageAlt[]" class="image-alt" value="<?=@$slide['imageAlt']?>" />
+<!--			<label>Alt Tag</label>-->
+<!--			<input type="text" name="imageAlt[]" class="image-alt" value="--><?//=@$slide['imageAlt']?><!--" />-->
 			
 			<label>Headline</label>
-			<input type="text" name="headline[]" class="headline" value="<?=@$slide['headline']?>" />
+			<input type="text" name="headline[]" class="headline" value="<?=@$slide['headline']?>" title="Images will use headlines for SEO"/>
 			
 			<label>Description</label>
 			<input type="text" name="description[]" class="description" value="<?=@$slide['description']?>" />
