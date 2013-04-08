@@ -9,7 +9,7 @@
 
 $handle = fopen('php://output' , 'a');
 
-fputcsv($handle , array('Age Days' , 'Client id' , 'LOA id' , 'Client Name' , 'Location' , 'Destination' , 'Manager' , 'Start' , 'End' , 'Membership Fee' , 'Balance' , 'Total Pkgs' , 'Pkgs Rem' , 'LL' , 'FG' , 'Offers LL' , 'Offers FG' , 'Last Sell Date' , 'Last Sell Price' , 'Notes' , ));
+fputcsv($handle , array('Age Days' , 'Client id' , 'LOA id' , 'Client Name' , 'Location' , 'Destination' , 'Manager', 'AccountExecutive' , 'Start' , 'End' , 'Membership Fee' , 'Balance' , 'Total Pkgs' , 'Pkgs Rem' , 'LL' , 'FG' , 'Offers LL' , 'Offers FG' , 'Last Sell Date' , 'Last Sell Price' , 'Notes' , ));
 
 foreach ($aging as $a) {
 	$row = array();
@@ -20,6 +20,7 @@ foreach ($aging as $a) {
 	$row['locationDisplay'] = formatCSV($a['locationDisplay']);
 	$row['destinationName'] = formatCSV($a['destinationName']);
 	$row['managerUsername'] = formatCSV($a['managerUsername']);
+    $row['accountExecutive'] = formatCSV($a['accountExecutive']);
 	$row['startDate'] = formatDate($a['startDate']);
 	$row['loaEndDate'] = formatDate($a['loaEndDate']);
 	$row['membershipFee'] = ($a['membershipTotalPackages'] > 0 ? $a['membershipTotalPackages']  : formatDollars($a['membershipFee']));
