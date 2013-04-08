@@ -149,6 +149,7 @@
 			<th>Location</th>
 			<th>Destination</th>
 			<th>Manager</th>
+            <th>Account Exec</th>
 			<th>Start</th>
 			<th>End</th>
 			<th>Fee</th>
@@ -170,6 +171,7 @@ foreach ($aging as $a):
 			<td><?= $a['locationDisplay'];?></td>
 			<td><?= $a['destinationName'];?></td>
 			<td><?= $a['managerUsername'];?></td>
+            <td><?= $a['accountExecutive'];?></td>
 			<td><?=substr($a['startDate'] , 0 , 10);?></td>
 			<td><?=substr($a['loaEndDate'] , 0 , 10);?></td>
 			<td align="right"><?=($a['membershipTotalPackages']>0?$a['membershipTotalPackages'].' pkgs':'$'.intval($a['membershipFee']));?></td>
