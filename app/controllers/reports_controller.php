@@ -100,7 +100,7 @@ class ReportsController extends AppController
                   FROM (
                       SELECT loaClients.*
                       FROM (
-                          SELECT l.loaId, l.clientId, c.name AS clientName, c.managerUsername, c.sites, l.startDate, l.endDate, l.loaMembershipTypeId, l.membershipBalance, l.membershipPackagesRemaining
+                          SELECT l.loaId, l.clientId, c.name AS clientName, c.managerUsername, l.accountExecutive, c.sites, l.startDate, l.endDate, l.loaMembershipTypeId, l.membershipBalance, l.membershipPackagesRemaining
                           FROM loa l
                           INNER JOIN `client` c USING(clientId)
                           WHERE l.loaLevelId = 2
@@ -1056,6 +1056,7 @@ class ReportsController extends AppController
             Loa.loaId,
             Loa.startDate,
             MAX(Loa.endDate)                AS loaEndDate,
+            Loa.accountExecutive,
             Loa.membershipFee,
             Loa.membershipBalance,
             Loa.membershipTotalPackages,
