@@ -4,8 +4,17 @@
 
 <p>Dear <?php echo $clientName;?>,</p>
 
-<p><strong>The following <?=$siteName;?> <?php if ($isAuction) :?>auction<?php else:?>"Buy Now"<?php endif;?> package was confirmed by
-</strong> <?php echo $resConfBy ?> <strong>on</strong> <?php echo date('F d, Y',strtotime($resConfToCustomer)) ?> The customer has requested a cancellation, so <a href="<?=$extranet_link;?>">please click here to acknowledge the cancellation request</a> and to advise us of the cancellation number and related policies. </p>
+<p>
+<?php if ($resConfBy != '' && $resConfToCustomer != ''):?>
+	<strong>The following <?=$siteName;?> <?php if ($isAuction) :?>auction<?php else:?>"Buy Now"<?php endif;?> package was confirmed
+	by </strong> <?php echo $resConfBy ?>
+	<strong>on</strong> <?php echo date('F d, Y',strtotime($resConfToCustomer)) ?>
+	The customer
+<?php else: ?>
+	The customer for this <?php if ($isAuction) :?>auction<?php else:?>"Buy Now"<?php endif;?> package
+<?php endif;?>
+
+has requested a cancellation, so <a href="<?=$extranet_link;?>">please click here to acknowledge the cancellation request</a> and to advise us of the cancellation number and related policies. </p>
 
 <div style="padding:10px;background-color:#E0E0CD;margin-top:25px;margin-bottom:25px;">
 <table cellpadding="5" cellspacing="0" border="0" width="100%">
