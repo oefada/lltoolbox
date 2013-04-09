@@ -1126,7 +1126,8 @@ href=""><img
 	border="0" 
 	alt="View Details" 
 	name="Mystery" 
-	src="http://www.luxurylink.com/images/email/Inspiration/view-details.jpg" 
+	src="http://www.luxurylink.com/images/email/Inspiration/view-details.jpg"
+	style="float: right"
 /></a><span style='color:red'>Add url</span><br></td>
 </tr>
 </tbody>
