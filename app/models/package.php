@@ -1357,10 +1357,12 @@ class Package extends AppModel {
 		// the "validateNumNightsAddsUp" validation seems outdated
 		unset($this->validate['numNights']['validateNumNightsAddsUp']);
 
+
+        $db =& ConnectionManager::getDataSource($this->useDbConfig);
         $db->commit($this);
 		$this->create();
 
-        $db =& ConnectionManager::getDataSource($this->useDbConfig);
+
         $db->begin($this);
 
 		$this->saveAll($data);
