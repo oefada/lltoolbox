@@ -21,6 +21,13 @@ class Cms extends AppModel {
 	}
 	
 	function saveCmsEdit( $id, $data ){
+
+        // save old cms entry into cms_archive
+        $query = "  INSERT INTO cms_archive " .
+                 "  SELECT null, id, description, site_id, `key`, html_content FROM cms WHERE id=" . $id;
+        $this->query($query);
+
+        // update cms
 		$query = "	UPDATE 	cms 
 					SET 	description = '" . $data['description'] . "', 
 							html_content = '" . $data['html_content'] . "' 
