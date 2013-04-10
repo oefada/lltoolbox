@@ -132,7 +132,8 @@ LIMIT 200;
 			$t['ClientLocationIn'] = ' in ' . $t['ClientLocation'];
 			// $t['URL'] = $url;
 			
-			$t['URL'] = 'http://www.luxurylink.com/bv/container.php?bvaction=rr_submit_review&bvproductId=' . $bvclients[0] . '&bvusertoken=' . $this->getBvToken($t['User']['UserId']); 
+			$t['URL'] = 'http://display.ugc.bazaarvoice.com/static/LuxuryLink/en_US/container.htm?bvaction=rr_submit_review&bvproductId=' . $bvclients[0] . '&bvusertoken=' . $this->getBvToken($t['User']['UserId']);
+			$t['ADDRESS_LL'] = ADDRESS_LL;
 		}
 		return $tickets;
 	}

@@ -18,7 +18,7 @@
 
                             <tr>
                                 <td align="center" style="padding:13px 0px 0px 0px;">
-									<a name="banner" href="http://www.surveygizmo.com/s3/637607/How-was-your-Luxury-Link-Vacation?utm_medium=email&utm_source=post-trip&utm_campaign=post-trip" target="_blank">
+									<a name="banner" href="%%URL%%" target="_blank">
 									<img border="0" width="560" height="191" alt="Where to next?" src="http://www.luxurylink.com/images/email/new/images/banner.jpg">
 									</a>
 								</td>
@@ -39,7 +39,7 @@
                                         </tr>
 										<tr>
                                             <td align="left" style="padding:20px 0px 0px 0px;">
-											<a href="http://www.surveygizmo.com/s3/637607/How-was-your-Luxury-Link-Vacation?utm_medium=email&utm_source=post-trip&utm_campaign=post-trip" target="_blank"><img src="http://www.luxurylink.com/images/email/new/images/button.jpg" width="213" height="26" alt="Tell Us About Your Experience" border="0"></a>
+											<a href="%%URL%%" target="_blank"><img src="http://www.luxurylink.com/images/email/new/images/button.jpg" width="213" height="26" alt="Tell Us About Your Experience" border="0"></a>
 											</td>
                                         </tr>
 										<tr>
@@ -80,7 +80,7 @@
                             <tr>
                                 <td style="text-align:center;line-height:15px;font-family:Helvetica,maradival,Sans-Serif;color: #6e7072;font-size:10px;padding:20px 0px 20px 0px;">
                                 <a name="footer" href="http://www.luxurylink.com/?utm_source=ll&utm_medium=xa&utm_campaign=ll_posttrip" target="_blank" style="color: #008ec5;text-decoration: none;">Luxury Link</a><br>
-                                    <?= ADDRESS_LL ?><br>
+                                    %%ADDRESS_LL%%<br>
                                 For information or assistance, call 1 (888) 297-3299 or email
                                 <a name="footer_email" href="mailto:concierge@luxurylink.com" target="_blank" style="color: #008ec5;text-decoration: none;">concierge@luxurylink.com</a>.  |  <a name="footer_privacy" href="http://www.luxurylink.com/about/index.php/privacy-policy/" target="_blank" style="color: #008ec5;text-decoration: none;">Privacy Policy</a></td>
                             </tr>
