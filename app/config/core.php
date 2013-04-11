@@ -247,9 +247,9 @@ $cacheAction = true;
 		define("ISSTAGE",true);
 		$ll_url = 'stage-luxurylink.luxurylink.com';
 		$fg_url = 'stage-family.luxurylink.com';
-		$webservice_live_url = 'https://token.api.tokenex.com/Tokenizer.svc?wsdl';
+		$webservice_live_url = 'http://stage-toolbox.luxurylink.com';
 		Configure::write('tokenExMerchantId', '3866313375553000');
-		Configure::write('tokenExWsdlURL', 'https://stage.tokenex.com/Tokenizer.svc?wsdl');
+		Configure::write('tokenExWsdlURL', 'https://token.api.tokenex.com/Tokenizer.svc?wsdl');
 	} else {
 		define("ISDEV",false);
 		define("ISSTAGE",false);
