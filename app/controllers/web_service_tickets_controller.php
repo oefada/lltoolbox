@@ -1567,7 +1567,7 @@ class WebServiceTicketsController extends WebServicesController
 				
 				$clients[$client_index]['clientAdjustedPrice']	= $this->numF(($clients[$client_index]['percentOfRevenue'] / 100) * $ticketData['billingPrice']);
 				
-				if ($isMystery) {
+				if ($isMystery && ($ppvNoticeTypeId != 18)) {
 					$clients[$client_index]['pdpUrl'] = $siteUrl."luxury-hotels/mystery-hotel?isMystery=1&oid=" . $offerId;
 				} else {
 					$clients[$client_index]['pdpUrl'] = $siteUrl."luxury-hotels/".$clients[$client_index]['seoName']."?clid=".$row['clientId']."&pkid=".$packageId;
