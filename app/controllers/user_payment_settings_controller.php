@@ -3,6 +3,7 @@ class UserPaymentSettingsController extends AppController {
 
 	var $name = 'UserPaymentSettings';
 	var $helpers = array('Html', 'Form');
+	var $uses = array('UserPaymentSetting', 'CountryBilling');
 
 	function index() {
 		$this->UserPaymentSetting->recursive = 0;
@@ -29,7 +30,8 @@ class UserPaymentSettingsController extends AppController {
 		}
 		$this->data['UserPaymentSetting']['userId'] = $userId;
 		$paymentTypeIds = $this->UserPaymentSetting->PaymentType->find('list');
-		$this->set(compact('paymentTypeIds'));
+		$countries = $this->CountryBilling->getList();
+		$this->set(compact('paymentTypeIds', 'countries'));
 	}
 
 	function edit($userId = null, $id = null) {
