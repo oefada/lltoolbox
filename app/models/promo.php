@@ -255,7 +255,17 @@ class Promo extends AppModel {
 	}
 
 	public function hasEditAccess($currentUser) {
-		$authorizedUsers = array('bjensen', 'bcariou', 'cholland', 'kferson', 'rrotzang', 'zbolinn');
+		$authorizedUsers = array(
+            'bjensen',
+            'bcariou',
+            'cholland',
+            'kferson',
+            'rrotzang',
+            'zbolinn',
+            'emendoza',
+            'bscott',
+            'mtrinh'
+        );
 		if (in_array($currentUser['LdapUser']['samaccountname'], $authorizedUsers) || in_array('Geeks',$currentUser['LdapUser']['groups'])) {
 			return true;
 		}
