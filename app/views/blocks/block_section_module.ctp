@@ -5,8 +5,11 @@
             <?php
             $links = array(
                 'destinationMainGraphic',
+                'destinationMainGraphicImage',
+                'destinationMainGraphicSelector',
                 'destinationFeaturedVacations',
                 'destinationWhatWeLove',
+                'destinationWhatWeLoveSidebar',
                 'destinationPhotos',
                 'destinationCommunity',
                 'destinationMaps',
