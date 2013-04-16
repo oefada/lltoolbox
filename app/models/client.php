@@ -28,14 +28,16 @@ class Client extends AppModel {
 //            'rule' => array('phone', null, 'us')
 //        )
 //    );
-   var $hasOne = array(
-        'ClientSocial' => array('className' => 'ClientSocial', 'foreignKey' => 'clientId')
-    );
+
    var $belongsTo = array('ClientType' => array('foreignKey' => 'clientTypeId'),
 						  'Region' => array('foreignKey' => 'regionId'),
 						  'ParentClient' => array('className' => 'Client', 'foreignKey' => 'parentClientId')
 					   );
  
+   var $hasOne = array(
+                        'ClientSocial' => array('className' => 'ClientSocial', 'foreignKey' => 'clientId')
+                        );
+
    var $hasMany = array('Loa' => array('foreignKey' => 'clientId'),
 						'Accolade' => array('foreignKey' => 'clientId'),
 						'Audit' => array('foreignKey' => 'foreignId', 'conditions' => array('Audit.class' => 'Client'), 'limit' => 5, 'order' => 'Audit.created DESC'),
