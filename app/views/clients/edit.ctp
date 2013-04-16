@@ -731,33 +731,44 @@ echo $form->input('segment');
 <fieldset class="collapsible">
     <legend class="handle">Social Media</legend>
     <div class="collapsibleContent">
-        <?php
-        echo $form->input('ClientSocial.showFb', array('label' => 'Show Facebook','type'=>'checkbox'));
-        echo $form->input('ClientSocial.showTw', array('label' => 'Show Twitter','type'=>'checkbox'));
 
-        ?>
-        <div class="facebook-controls">
-            <?php
-            echo $form->input('ClientSocial.fbUrl', array('label' => 'Facebook URL', 'type' => 'text'));?><b class="testfb" style="display:inline; float:right;">Test</b>
 
+
+
+
+        <table class="socialmedia">
+        <tr><th></th><th>Enabled</th><th>URL</th>
+        </tr>
+        <tr>
+            <th>Facebook</th>
+            <td><?php echo $form->input('ClientSocial.showFb', array('label' => '','type'=>'checkbox'));?></td>
+            <td><?php echo $form->input('ClientSocial.fbUrl', array('label' => 'Facebook Page URL <a class="testfb" style="font-size:10px;">[Test]</a>', 'type' => 'text'));?>
+                <div class="fb-url-test-results" style="display:inline;font-color:color: #00529B;"></div></td>
+        </tr>
+            <tr>
+                <th>Twitter</th>
+                <td><?php echo $form->input('ClientSocial.showTw', array('label' => '','type'=>'checkbox')); ?></td>
+                <td><?php echo $form->input('ClientSocial.twitterUser', array('label' => 'Twitter Username', 'type' => 'text')); ?></td>
+            </tr>
+        </table>
             <script type="text/javascript">
                 (function($) {
 
                     $(".testfb").click(function() {
-                        alert("Handler for .click() called.");
-                        var fb_url = $('input #ClientSocialFbUrl').val();
+                        var fb_url = $('#ClientSocialFbUrl').val();
                         $(function() {
                             $.ajax({
-                                type: "POST",
-                                url: "<?php echo $this->webroot; ?>/testurl",
-                                data: "checkout=" + fb_url,
+                                type: "GET",
+                                //url: location.hostname + "clients/testurl",
+                                url: "<?php echo $this->webroot; ?>clients/testurl",
+                                data: "checkurl=" + encodeURI(fb_url),
                                 success: function(data, textStatus) {
-
                                     alert(data);
                                     $(".fb-url-test-results").html(data);
+                                    $(".fb-url-test-results").css('background-color', '#BDE5F8');
                                 },
                                 error: function() {
-                                    alert('Not OKay');
+                                    alert('Could not check URL. Try again.');
                                 }
                             });
                         });
@@ -765,19 +776,10 @@ echo $form->input('segment');
                 })(jQuery);
 
             </script>
-            <div class="fb-url-test-results" style="display:inline; float:right;"></div>
-            <?//= $form->input('ClientSocial.fbApiKey', array('label' => 'Facebook API Key', 'type' => 'text'));?>
-            <?
-            // echo $form->input('ClientInterview.0.summary', array('label' => 'Interview Summary', 'type' => 'hidden'));
-            echo $form->input('ClientSocial.twitterUser', array('label' => 'Twitter User', 'type' => 'text'));
-            // echo $form->input('ClientSocial.twitterWidgetID', array('label' => 'Twitter Widget ID', 'type' => 'text'));
-            echo $form->input('ClientSocial.clientId', array('type' => 'hidden','value'=>$clientId));
+            <? echo $form->input('ClientSocial.clientId', array('type' => 'hidden','value'=>$clientId));
             echo $form->input('ClientSocial.clientSocialId', array('type' => 'hidden'));
-            ?></div>
+            ?>
 
-        <div class="twitter-controls">
-
-        </div>
 
     </div><!-- close collapsibleContent -->
 </fieldset>

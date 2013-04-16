@@ -7,6 +7,7 @@ class ClientsController extends AppController {
 	var $name = 'Clients';
 	var $uses = array('Client', 'ClientThemeRel', 'ClientTag', 'ClientTagRel', 'ClientDestinationRel', 'ClientAmenityTypeRel', 'ClientInterview', 'ClientCollection', 'ClientSocial');
 
+    public $helpers = array('Httprequest');
 
 	function beforeFilter() {
 		parent::beforeFilter();
@@ -213,6 +214,12 @@ class ClientsController extends AppController {
 			 }
 
 			if ($this->Client->save($this->data)) {
+                //save ClientSocial
+                if($this->data['ClientSocial']){
+
+                    $this->Client->ClientSocial->save($this->data['ClientSocial']);
+                }
+
 				if($this->data['ClientInterview'][0]){
 					$this->Client->ClientInterview->save($this->data['ClientInterview'][0]);
 				}
@@ -243,6 +250,7 @@ class ClientsController extends AppController {
 					 	'ClientContact',
 						'ClientInterview',
 						'ClientTagRel',
+                        'ClientSocial', //!important, to pull existing fields.
 					)
 			));
 
@@ -555,11 +563,10 @@ class ClientsController extends AppController {
 	
     public function testurl(){
 
-       // Configure::write('debug',0);
+       //Configure::write('debug',0);
         $url= $this->params['url']['checkurl'];
 
-        $this->autoRender = false;
-       $this->layout = 'ajax';
+        $this->layout = 'ajax';
 
          if (empty($url)){
             return FALSE;
@@ -573,11 +580,10 @@ class ClientsController extends AppController {
 
              $resCode = $Httprequest->check_response($url);
           if ($resCode ===200){
-              $response = 'The facebook page exists';
+              $response = 'Page Exists on Facebook';
           }else{
               $response = 'Invalid FaceBook Page';
           }
-
         $this->set('response',$response);
          }
     }
