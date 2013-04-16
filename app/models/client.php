@@ -28,7 +28,9 @@ class Client extends AppModel {
 //            'rule' => array('phone', null, 'us')
 //        )
 //    );
-
+   var $hasOne = array(
+        'ClientSocial' => array('className' => 'ClientSocial', 'foreignKey' => 'clientId')
+    );
    var $belongsTo = array('ClientType' => array('foreignKey' => 'clientTypeId'),
 						  'Region' => array('foreignKey' => 'regionId'),
 						  'ParentClient' => array('className' => 'Client', 'foreignKey' => 'parentClientId')

@@ -5,7 +5,8 @@ App::import('Vendor', 'nusoap_client/lib/nusoap');
 class ClientsController extends AppController {
 
 	var $name = 'Clients';
-	var $uses = array('Client', 'ClientThemeRel', 'ClientTag', 'ClientTagRel', 'ClientDestinationRel', 'ClientAmenityTypeRel', 'ClientInterview', 'ClientCollection');
+	var $uses = array('Client', 'ClientThemeRel', 'ClientTag', 'ClientTagRel', 'ClientDestinationRel', 'ClientAmenityTypeRel', 'ClientInterview', 'ClientCollection', 'ClientSocial');
+
 
 	function beforeFilter() {
 		parent::beforeFilter();
@@ -552,6 +553,33 @@ class ClientsController extends AppController {
 		$this->set('clients', $clients);
 	}
 	
+    public function testurl(){
 
+       // Configure::write('debug',0);
+        $url= $this->params['url']['checkurl'];
+
+        $this->autoRender = false;
+       $this->layout = 'ajax';
+
+         if (empty($url)){
+            return FALSE;
+         }else{
+            //since we are running this via browser, URL shoudl be encoded
+          $url =   urldecode($url);
+
+             App::import('Helper', 'Httprequest');
+
+             $Httprequest = $this->Httprequest = new HttprequestHelper();
+
+             $resCode = $Httprequest->check_response($url);
+          if ($resCode ===200){
+              $response = 'The facebook page exists';
+          }else{
+              $response = 'Invalid FaceBook Page';
+          }
+
+        $this->set('response',$response);
+         }
+    }
 }
 ?>
