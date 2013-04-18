@@ -79,7 +79,7 @@ class Client extends AppModel {
 
    function beforeSave() {
 	AppModel::beforeSave();
-
+	$this->data['Client']['locationDisplay'] = trim($this->data['Client']['locationDisplay']);
 	$this->data['Client']['locationNormalized'] = $this->normalize($this->data['Client']['locationDisplay'],1);
 	$this->data['Client']['nameNormalized'] = $this->normalize($this->data['Client']['name'],1);
 
