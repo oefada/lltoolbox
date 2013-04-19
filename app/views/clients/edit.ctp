@@ -479,6 +479,7 @@ echo $form->input('segment');
                                         <?php $checked = ($amenity['checked'] && $amenity['amenityTypeId'] === $amenityType3['amenityTypeId']) ? ' checked' : ''; ?>
                                         <?php $disabled = ($amenity['amenityTypeId'] !== $amenityType3['amenityTypeId']) ? ' disabled="disabled"' : ''; ?>
                                         <td align="center">
+                                            <?php if($disabled == ''){ ?>
                                             <input
                                                 type="checkbox"
                                                 name="data[ClientAmenityRel][<?php echo $amenity['amenityId'] ?>]"
@@ -486,6 +487,7 @@ echo $form->input('segment');
                                                 <?php echo $disabled ?>
                                                 <?php echo $checked; ?>
                                                 />
+                                            <? } ?>
                                         </td>
                                     <?php endforeach; ?>
                                 </tr>
