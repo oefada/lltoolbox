@@ -324,6 +324,12 @@ echo $form->input('segment');
         echo $javascript->link('jquery/jquery',true);
         echo $javascript->link('jquery/jquery-noconflict',true);
         ?>
+        <?php echo $html->css('//ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery.ui.all.css', null, array(), false); ?>
+
+        <?php //echo $javascript->link('/js/jqueryui/1.10.2/jquery-ui.min.js', true); ?>
+
+        <?php echo $javascript->link('//ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js', true); ?>
+
         <script>
 
 
@@ -438,8 +444,7 @@ echo $form->input('segment');
 <fieldset class="collapsible">
     <legend class="handle">Amenities <?=$html2->c($client['ClientAmenityRel']); ?></legend>
     <div class="collapsibleContent">
-        <?php echo $html->css('//ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery.ui.all.css', null, array(), false); ?>
-        <?php echo $javascript->link('//ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js', true); ?>
+
         <script>
             jQuery(function() {
                 var $ = jQuery;
@@ -739,18 +744,92 @@ echo $form->input('segment');
 
 
         <table class="socialmedia">
-        <tr><th></th><th>Enabled</th><th>URL</th>
+        <tr><th></th><th>Enabled</th><th>URL</th><th>Stats</th>
         </tr>
         <tr>
             <th>Facebook</th>
             <td><?php echo $form->input('ClientSocial.showFb', array('label' => '','type'=>'checkbox'));?></td>
             <td><?php echo $form->input('ClientSocial.fbUrl', array('label' => 'Facebook Page URL <a class="testfb" style="font-size:10px;">[Test]</a>', 'type' => 'text'));?>
                 <div class="fb-url-test-results" style="display:inline;font-color:color: #00529B;"></div></td>
+            <td>
+                <?php
+                if (isset($facebookStatsFirst['clientFacebookStats']['likeCount'])){
+
+
+                ?>
+                <table>
+                    <tr><th>Initial</th><th>Latest</th></tr>
+                    <tr>
+                        <td>
+                            <?
+                            if(isset($facebookStatsFirst)){
+                                echo 'Followers: '.$facebookStatsFirst['clientFacebookStats']['likeCount']."<br>\n";
+                                echo 'Recorded: <i>'.date('Y-m-d H:i:s', strtotime($facebookStatsFirst['clientFacebookStats']['timestamp']))."</i>\n";
+                            }
+                            ?>
+
+                        </td>
+                        <td>
+                            <?
+                            if(isset($facebookStatsLatest)){
+                                echo 'Followers: '.$facebookStatsLatest['clientFacebookStats']['likeCount']."<br>\n";
+                                echo 'Recorded: <i>'.date('Y-m-d H:i:s', strtotime($facebookStatsLatest['clientFacebookStats']['timestamp']))."</i>\n";
+                            }
+                            ?>
+
+
+
+                        </td>
+                    </tr>
+
+
+                </table>
+                <?
+                }//end hide FB block of no count
+                ?>
+
+            </td>
+
         </tr>
             <tr>
                 <th>Twitter</th>
                 <td><?php echo $form->input('ClientSocial.showTw', array('label' => '','type'=>'checkbox')); ?></td>
                 <td><?php echo $form->input('ClientSocial.twitterUser', array('label' => 'Twitter Username', 'type' => 'text')); ?></td>
+                <td>
+                    <?php
+                        if (isset($twitterStatsFirst['clientTwitterStats']['twitterUser'])){
+
+
+                    ?>
+                    <table><caption><?=$twitterStatsFirst['clientTwitterStats']['twitterUser'];?></caption></caption>
+                        <tr><th>Initial</th><th>Latest</th></tr>
+                        <tr><td><?
+                            if(isset($twitterStatsFirst)){
+                                echo 'Followers: '.$twitterStatsFirst['clientTwitterStats']['followersCount']."<br>\n";
+                                echo 'Friends: '.$twitterStatsFirst['clientTwitterStats']['friendsCount']."<br>\n";
+                                echo 'Recorded: <i>'.date('Y-m-d H:i:s', strtotime($twitterStatsFirst['clientTwitterStats']['timestamp']))."</i>\n";
+
+                            }
+
+                            ?></td>
+                        <td>
+                            <?
+                            if(isset($twitterStatsLatest)){
+                                echo 'Followers: '.$twitterStatsLatest['clientTwitterStats']['followersCount']."<br>\n";
+                                echo 'Friends: '.$twitterStatsLatest['clientTwitterStats']['friendsCount']."<br>\n";
+                                echo 'Recorded: <i>'.date('Y-m-d H:i:s', strtotime($twitterStatsLatest['clientTwitterStats']['timestamp']))."</i>\n";
+                            }
+                            ?>
+
+                        </td></tr>
+                    </table>
+                    <?php
+                        }//end hide twitter
+                    ?>
+
+
+
+                </td>
             </tr>
         </table>
             <script type="text/javascript">
@@ -759,6 +838,7 @@ echo $form->input('segment');
                     $(".testfb").click(function() {
                         var fb_url = $('#ClientSocialFbUrl').val();
                         $(function() {
+                            $(".fb-url-test-results").html('<img src="/img/spinner.gif">');
                             $.ajax({
                                 type: "GET",
                                 //url: location.hostname + "clients/testurl",
@@ -766,6 +846,7 @@ echo $form->input('segment');
                                 data: "checkurl=" + encodeURI(fb_url),
                                 success: function(data, textStatus) {
                                     alert(data);
+                                    $(".fb-url-test-results").empty();
                                     $(".fb-url-test-results").html(data);
                                     $(".fb-url-test-results").css('background-color', '#BDE5F8');
                                 },

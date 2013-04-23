@@ -166,7 +166,7 @@ class ClientsController extends AppController {
 			$this->Session->setFlash(__('Invalid Client', true));
 			$this->redirect(array('action'=>'index'));
 		}
-		
+
 		if (!empty($this->data)) {
 			$clientCollectionIds = $this->Client->find('list', array('conditions' => 'Client.clientTypeId = 14'));
 			
@@ -212,6 +212,9 @@ class ClientsController extends AppController {
 			 else {
 				$this->data['Client']['ageRanges'] = null;
 			 }
+
+
+
 
 			if ($this->Client->save($this->data)) {
                 //save ClientSocial
@@ -260,6 +263,35 @@ class ClientsController extends AppController {
 			}
 
 			$this->data['Client']['clientCollectionId'] = $this->data['Client']['parentClientId'];
+
+            if(!empty($this->data['ClientSocial']['twitterUser'])){
+
+                $firstTwitterStats = $this->ClientSocial->getTwitterStat($this->data['ClientSocial']['clientId'],
+                    $this->data['ClientSocial']['twitterUser'],
+                    'MIN');
+                $latestTwitterStats = $this->ClientSocial->getTwitterStat($this->data['ClientSocial']['clientId'],
+                    $this->data['ClientSocial']['twitterUser'],
+                    'MAX');
+
+                $this->set('twitterStatsFirst',$firstTwitterStats);
+                $this->set('twitterStatsLatest',$latestTwitterStats);
+            }
+
+            if(!empty($this->data['ClientSocial']['fbUrl'])){
+
+                $facebookStatsFirst = $this->ClientSocial->getFacebookStat($this->data['ClientSocial']['clientId'],
+                    $this->data['ClientSocial']['fbUrl'],
+                    'MIN'
+                );
+
+                $facebookStatsLatest = $this->ClientSocial->getFacebookStat($this->data['ClientSocial']['clientId'],
+                    $this->data['ClientSocial']['fbUrl'],
+                    'MAX'
+                );
+
+                $this->set('facebookStatsFirst',$facebookStatsFirst);
+                $this->set('facebookStatsLatest',$facebookStatsLatest);
+            }
 		}
 		
 		$client_trackings = array();
