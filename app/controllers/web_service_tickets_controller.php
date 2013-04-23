@@ -2089,7 +2089,7 @@ class WebServiceTicketsController extends WebServicesController
 				$alertPackageData = $alertPackage[0][0];
 
 				$templateFile = "41_leadgen_alert";
-				$emailSubject = "New Sale Alert";
+				$emailSubject = $clientNameP . " is back on " . $siteName;
 				$templateTitle = $clientNameP . " has a new vacation experience";
 				$hideSalutation = true;
 				break;
