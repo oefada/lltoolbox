@@ -791,22 +791,23 @@ echo $form->input('segment');
             </td>
 
         </tr>
-            <tr>
+            <tr style="border-top:1px solid #CCC;">
                 <th>Twitter</th>
                 <td><?php echo $form->input('ClientSocial.showTw', array('label' => '','type'=>'checkbox')); ?></td>
                 <td><?php echo $form->input('ClientSocial.twitterUser', array('label' => 'Twitter Username', 'type' => 'text')); ?></td>
-                <td>
+                <td >
                     <?php
                         if (isset($twitterStatsFirst['clientTwitterStats']['twitterUser'])){
 
 
                     ?>
-                    <table><caption><?=$twitterStatsFirst['clientTwitterStats']['twitterUser'];?></caption></caption>
+                    <table><caption></caption></caption>
                         <tr><th>Initial</th><th>Latest</th></tr>
                         <tr><td><?
                             if(isset($twitterStatsFirst)){
                                 echo 'Followers: '.$twitterStatsFirst['clientTwitterStats']['followersCount']."<br>\n";
-                                echo 'Friends: '.$twitterStatsFirst['clientTwitterStats']['friendsCount']."<br>\n";
+                                echo 'Following: '.$twitterStatsFirst['clientTwitterStats']['friendsCount']."<br>\n";
+                                echo 'Listed: '.$twitterStatsFirst['clientTwitterStats']['listedCount']."<br>\n";
                                 echo 'Recorded: <i>'.date('Y-m-d H:i:s', strtotime($twitterStatsFirst['clientTwitterStats']['timestamp']))."</i>\n";
 
                             }
@@ -816,7 +817,8 @@ echo $form->input('segment');
                             <?
                             if(isset($twitterStatsLatest)){
                                 echo 'Followers: '.$twitterStatsLatest['clientTwitterStats']['followersCount']."<br>\n";
-                                echo 'Friends: '.$twitterStatsLatest['clientTwitterStats']['friendsCount']."<br>\n";
+                                echo 'Following: '.$twitterStatsLatest['clientTwitterStats']['friendsCount']."<br>\n";
+                                echo 'Listed: '.$twitterStatsFirst['clientTwitterStats']['listedCount']."<br>\n";
                                 echo 'Recorded: <i>'.date('Y-m-d H:i:s', strtotime($twitterStatsLatest['clientTwitterStats']['timestamp']))."</i>\n";
                             }
                             ?>
