@@ -763,7 +763,7 @@ echo $form->input('segment');
                         <td>
                             <?
                             if(isset($facebookStatsFirst)){
-                                echo 'Followers: '.$facebookStatsFirst['clientFacebookStats']['likeCount']."<br>\n";
+                                echo 'Fans: '.$facebookStatsFirst['clientFacebookStats']['likeCount']."<br>\n";
                                 echo 'Recorded: <i>'.date('Y-m-d H:i:s', strtotime($facebookStatsFirst['clientFacebookStats']['timestamp']))."</i>\n";
                             }
                             ?>
@@ -772,7 +772,7 @@ echo $form->input('segment');
                         <td>
                             <?
                             if(isset($facebookStatsLatest)){
-                                echo 'Followers: '.$facebookStatsLatest['clientFacebookStats']['likeCount']."<br>\n";
+                                echo 'Fans: '.$facebookStatsLatest['clientFacebookStats']['likeCount']."<br>\n";
                                 echo 'Recorded: <i>'.date('Y-m-d H:i:s', strtotime($facebookStatsLatest['clientFacebookStats']['timestamp']))."</i>\n";
                             }
                             ?>
