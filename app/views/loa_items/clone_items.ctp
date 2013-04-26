@@ -42,7 +42,7 @@
                 <?php $class = ($i % 2 == 0) ? ' class="altrow"' : ''; ?>
                 <tr<?php echo $class; ?>>
                     <td class="clone-me">
-                        <input type="checkbox" name="data[CloneItems][<?php echo $item['LoaItem']['loaItemId']; ?>][LoaItem][loaItemId]" value="<?php echo $item['LoaItem']['loaItemId']; ?>" checked />
+                        <input type="checkbox" name="data[CloneItems][<?php echo $item['LoaItem']['loaItemId']; ?>][LoaItem][loaItemId]" value="<?php echo $item['LoaItem']['loaItemId']; ?>" />
                     </td>
                     <td><?php echo $item['LoaItemType']['loaItemTypeName']; ?></td>
                     <td><?php echo $item['LoaItem']['itemName']; ?></td>
