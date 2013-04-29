@@ -21,6 +21,7 @@ class UserPaymentSettingsController extends AppController {
 	function add($userId = null) {
 		if (!empty($this->data)) {
 			$this->UserPaymentSetting->create();
+			$this->data['UserPaymentSetting']['primaryCC'] = 0;
 			if ($this->UserPaymentSetting->save($this->data)) {
 				$this->Session->setFlash(__('The UserPaymentSetting has been saved', true));
 				$this->redirect(array('action'=>'index'));
