@@ -312,7 +312,14 @@ jQuery(document).ready(function($) {
 				return false;
 			}
 		}
-		
+
+		if (ptId.val() == 2) {
+			if ($("#promoCode").val() == '') {
+				alert("Please complete the Promo Code field.");
+				return false;
+			}
+		}
+
 		if (ptId.val() == 4) {
 			$("#paymentForm")[0].onsubmit = function(){};
 			$("#paymentForm")[0].action = thisUrl;
