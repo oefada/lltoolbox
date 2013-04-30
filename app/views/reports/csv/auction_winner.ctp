@@ -27,6 +27,20 @@ foreach ($results as $r):
 				break;
 	}
 	
+	// normalize names for Kat
+	$normalFirst = $r['Ticket']['userFirstName'];
+	if (strtoupper($normalFirst) == $normalFirst) {
+		$normalFirst = strtolower($normalFirst);
+	}
+	$normalFirst = ucwords($normalFirst);
+	
+	$normalLast = $r['Ticket']['userLastName'];
+	if (strtoupper($normalLast) == $normalLast) {
+		$normalLast = strtolower($normalLast);
+	}
+	$normalLast = ucwords($normalLast);
+	// end normalize names
+	
 	$promoCode = $r['PromoCode']['promoCode'];
 	if ($r['OfferLookup']['guaranteeAmount'] > 0) { $promoCode = 'Guarantee ' . $promoCode; }
 	
@@ -49,8 +63,8 @@ foreach ($results as $r):
 	$r[0]['oldProductIds'],
 	$r[0]['accountingIds'],
 	str_replace(',', '|', $r[0]['clientNames']),
-	str_replace(',', '', $r['Ticket']['userFirstName']),
-	str_replace(',', '', $r['Ticket']['userLastName']),
+	str_replace(',', '', $normalFirst),
+	str_replace(',', '', $normalLast),
 	str_replace(',', '', $r['PaymentDetailFull'][0]['pd']['ppBillingAddress1']),
 	'',
 	str_replace(',', '', $r['PaymentDetailFull'][0]['pd']['ppBillingCity']),
