@@ -593,31 +593,43 @@ class ClientsController extends AppController {
 		$this->set('clients', $clients);
 	}
 	
-    public function testurl(){
+    public function testurl($param=NULL){
 
-       //Configure::write('debug',0);
+      // Configure::write('debug',0);
         $url= $this->params['url']['checkurl'];
 
         $this->layout = 'ajax';
 
          if (empty($url)){
             return FALSE;
-         }else{
+         }
             //since we are running this via browser, URL shoudl be encoded
           $url =   urldecode($url);
+          App::import('Helper', 'Httprequest');
 
-             App::import('Helper', 'Httprequest');
+          $Httprequest = $this->Httprequest = new HttprequestHelper();
 
-             $Httprequest = $this->Httprequest = new HttprequestHelper();
 
-             $resCode = $Httprequest->check_response($url);
-          if ($resCode ===200){
-              $response = 'Page Exists on Facebook';
-          }else{
-              $response = 'Invalid FaceBook Page';
-          }
+        if (!$Httprequest->isValidUrl($url)){
+
+            $response = 'Invalid URL';
+        }else{
+            $resCode = $Httprequest->check_response($url);
+            if ($resCode ===200){
+                $response = 'Page Exists on Facebook';
+
+                if (isset($param)&& $param =='twitter'){
+                    $response = 'Valid Twitter User';
+                }
+            }else{
+                $response = 'Invalid FaceBook Page';
+                if (isset($param)&& $param =='twitter'){
+                    $response = 'Invalid Twitter User';
+                }
+            }
+        }
         $this->set('response',$response);
-         }
+
     }
 }
 ?>
