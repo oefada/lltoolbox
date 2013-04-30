@@ -595,7 +595,7 @@ class ClientsController extends AppController {
 	
     public function testurl($param=NULL){
 
-      // Configure::write('debug',0);
+       Configure::write('debug',0);
         $url= $this->params['url']['checkurl'];
 
         $this->layout = 'ajax';
