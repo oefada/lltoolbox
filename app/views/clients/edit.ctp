@@ -749,7 +749,7 @@ echo $form->input('segment');
         <tr>
             <th>Facebook</th>
             <td><?php echo $form->input('ClientSocial.showFb', array('label' => '','type'=>'checkbox'));?></td>
-            <td><?php echo $form->input('ClientSocial.fbUrl', array('label' => 'Facebook Page URL <a class="testfb" style="font-size:10px;">[Test]</a>', 'type' => 'text'));?>
+            <td><?php echo $form->input('ClientSocial.fbUrl', array('label' => 'Facebook Page URL <a class="testfb" style="font-size:10px;">[Check]</a>', 'type' => 'text'));?>
                 <div class="fb-url-test-results" style="display:inline;font-color:color: #00529B;"></div></td>
             <td>
                 <?php
@@ -794,7 +794,9 @@ echo $form->input('segment');
             <tr style="border-top:1px solid #CCC;">
                 <th>Twitter</th>
                 <td><?php echo $form->input('ClientSocial.showTw', array('label' => '','type'=>'checkbox')); ?></td>
-                <td><?php echo $form->input('ClientSocial.twitterUser', array('label' => 'Twitter Username', 'type' => 'text')); ?></td>
+                <td><?php echo $form->input('ClientSocial.twitterUser', array('label' => 'Twitter Username <a class="testtwitter" style="font-size:10px;">[Check]</a>', 'type' => 'text')); ?>
+                    <div class="tw-user-test-results" style="display:inline;"></div>
+                </td>
                 <td >
                     <?php
                         if (isset($twitterStatsFirst['clientTwitterStats']['twitterUser'])){
@@ -837,27 +839,77 @@ echo $form->input('segment');
             <script type="text/javascript">
                 (function($) {
 
-                    $(".testfb").click(function() {
-                        var fb_url = $('#ClientSocialFbUrl').val();
-                        $(function() {
-                            $(".fb-url-test-results").html('<img src="/img/spinner.gif">');
-                            $.ajax({
-                                type: "GET",
-                                //url: location.hostname + "clients/testurl",
-                                url: "<?php echo $this->webroot; ?>clients/testurl",
-                                data: "checkurl=" + encodeURI(fb_url),
-                                success: function(data, textStatus) {
-                                    alert(data);
-                                    $(".fb-url-test-results").empty();
-                                    $(".fb-url-test-results").html(data);
-                                    $(".fb-url-test-results").css('background-color', '#BDE5F8');
-                                },
-                                error: function() {
-                                    alert('Could not check URL. Try again.');
-                                }
+                    $(document).ready(function() {
+
+                        $(".testfb").click(function() {
+                            var fb_url = $('#ClientSocialFbUrl').val();
+
+
+                            if(typeof fb_url === 'undefined'){
+
+                                alert('Facebook page cannot be checked with blank field');
+                                return false;
+                            };
+
+                            $(function() {
+                                $(".fb-url-test-results").html('<img src="/img/spinner.gif">');
+                                $.ajax({
+                                    type: "GET",
+                                    //url: location.hostname + "clients/testurl",
+                                    url: "<?php echo $this->webroot; ?>clients/testurl",
+                                    data: "checkurl=" + encodeURI(fb_url),
+                                    success: function(data, textStatus) {
+                                        alert(data);
+                                        $(".fb-url-test-results").empty();
+                                        $(".fb-url-test-results").html(data);
+                                        $(".fb-url-test-results").css('background-color', '#BDE5F8');
+                                    },
+                                    error: function() {
+                                        alert('Could not check URL. Try again.');
+                                    }
+                                });
                             });
-                        });
-                    });//end click fnc
+                        });//end click fnc
+                    });
+
+                })(jQuery);
+
+
+                (function($) {
+
+                    $(document).ready(function() {
+
+                        $(".testtwitter").click(function() {
+
+                            var tw_user = $('#ClientSocialTwitterUser').val();
+
+                                if(typeof tw_user === 'undefined'){
+
+                                    alert('Twitter user cannot be checked with blank field');
+                                    return false;
+                                };
+                            var twitter_url = 'https://twitter.com/'+tw_user;
+
+                            $(function() {
+                                $(".tw-user-test-results").html('<img src="/img/spinner.gif">');
+                                $.ajax({
+                                    type: "GET",
+                                    //url: location.hostname + "clients/testurl",
+                                    url: "<?php echo $this->webroot; ?>clients/testurl/twitter",
+                                    data: "checkurl=" + encodeURI(twitter_url),
+                                    success: function(data, textStatus) {
+                                        alert(data);
+                                        $(".tw-user-test-results").empty();
+                                        $(".tw-user-test-results").html(data);
+                                        $(".tw-user-test-results").css('background-color', '#BDE5F8');
+                                    },
+                                    error: function() {
+                                        alert('Could not check URL. Try again.');
+                                    }
+                                });
+                            });
+                        });//end click fnc
+                    });
                 })(jQuery);
 
             </script>
