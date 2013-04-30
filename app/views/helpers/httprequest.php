@@ -23,8 +23,7 @@ class HttprequestHelper extends AppHelper {
 
     public function check_response($url, $timeout = 10) {
         if (
-            empty($url) ||
-            !$this->isValidUrl($url)
+            empty($url)
         ){
             return FALSE;
         }
@@ -64,15 +63,17 @@ class HttprequestHelper extends AppHelper {
     public function isValidUrl($url) {
 
         if(empty($url)){
-
             return FALSE;
-
-        }else{
-        return filter_var($url, FILTER_VALIDATE_URL);//if it's valid it return TRUE else FALSE
-
         }
+        if(preg_match( '/^(http|https):\/\/[a-z0-9_]+([\-\.]{1}[a-z_0-9]+)*\.[_a-z]{2,5}'.'((:[0-9]{1,5})?\/.*)?$/i' ,$url)){
+            return TRUE;
+        }
+        else{
+            return FALSE;
+        }
+        //this way requires PHP > PHP 5.2
+        //return filter_var($url, FILTER_VALIDATE_URL);//if it's valid it return TRUE else FALSE
     }
-
 }
 
 ?>

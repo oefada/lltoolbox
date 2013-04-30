@@ -21,11 +21,13 @@ class ClientCollection extends AppModel {
 		// delete old collections
 		$query = "DELETE FROM clientCollections WHERE client_id = '" . $client_id . "'";
 		$this->query($query);
-		
-		foreach ($collections AS $c){
-			$query = "INSERT INTO clientCollections ( client_id, collection_id ) VALUES ($client_id, $c)";
-			$this->query($query);
-		}
+
+        if (!empty($collections) && is_array($collections)){//make sure there is something to insert
+            foreach ($collections AS $c){
+                $query = "INSERT INTO clientCollections ( client_id, collection_id ) VALUES ($client_id, $c)";
+                $this->query($query);
+            }
+        }
 	}
 }
 ?>
