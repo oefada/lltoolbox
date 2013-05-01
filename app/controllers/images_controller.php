@@ -123,6 +123,8 @@ class ImagesController extends AppController
 				// caption
 				if ($ic['caption'] != $ic['currentCaption']) {
 					$caption = array('clientImageId' => $ic['clientImageId'], 'caption' => $ic['caption']);
+
+                    //var_dump($caption);
 					$this->ImageClient->save(array('ImageClient'=>$caption));
 				}
 				

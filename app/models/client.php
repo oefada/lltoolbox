@@ -9,18 +9,29 @@ class Client extends AppModel {
    var $actsAs = array('Containable',
 					   'Logable');
 
-   var $validate = array('name' => array(
-						    'rule' => '/[a-zA-Z0-9]/',
-						    'message' => 'Client name must only contain letters.'),
-                        //'estaraPhoneLocal' => array('phone', null, 'us'),
-                         'estaraPhoneLocal'=>array(
-                             'rule'=>array('minLength', '10'),
-                             ///'rule'=>array('custom', '/^([1]-)?8[00|55|66|77|88]{2}-\d{3}-\d{4}$/'),
-                             //@TODO, consider doing validating on the public site. Not everyone lives in US (think Internerally).
-                             //'message'=>'Please update Toll-Free Tracking # in the following format: N-NNN-NNN-NNNN.',
-                             'allowEmpty' => true, //validate only if not empty
-                         )
-					 );
+    var $validate = array(
+        'name' => array(
+            'rule' => '/[a-zA-Z0-9]/',
+            'message' => 'Client name must only contain letters.'
+        ),
+        //'estaraPhoneLocal' => array('phone', null, 'us'),
+        'estaraPhoneLocal' => array(
+            'rule' => array('minLength', '10'),
+            ///'rule'=>array('custom', '/^([1]-)?8[00|55|66|77|88]{2}-\d{3}-\d{4}$/'),
+            //@TODO, consider doing validating on the public site. Not everyone lives in US (think Internerally).
+            //'message'=>'Please update Toll-Free Tracking # in the following format: N-NNN-NNN-NNNN.',
+            'allowEmpty' => true,
+            //validate only if not empty
+        ),
+        'ClientSocial.fbUrl' => array(
+            'custom' => array(
+                'rule' => array('validateDependentFields'),
+                'message' => 'Please enter height',
+                'allowEmpty' => true,
+            ),
+        ),
+
+    );
 
 
 //    public $validate = array(
@@ -95,7 +106,14 @@ class Client extends AppModel {
 	return true;
    }
 
-
+    function validateSiteUrl($field)
+    {
+        $passed = true;
+        if (!isset($this->data['ClientSocial']['fbUrl'])) {
+            return false;
+        }
+        return $passed;
+    }
 
 	function afterSave($created) {
 		// run some custom afterSaves for client.
@@ -347,7 +365,7 @@ class Client extends AppModel {
 		}
 
 		// get all amenities
-		if (($amenities = Cache::read("clientAmenities")) === FALSE) {
+		if (($amenities = Cache::read("clientAmenities")) === false) {
 			$amenities = $this->query("SELECT amenityTypeId, amenityId, amenityName FROM amenity WHERE amenityTypeId IS NOT NULL AND amenity.inactive = 0");
 			Cache::write("clientAmenities",$amenities);
 		}
@@ -369,7 +387,7 @@ class Client extends AppModel {
 				$loas = $this->Loa->find('count',array('conditions' => array('Loa.clientId' => $val['Client']['clientId'])));
 				$this->Loa->recursive = 0;
 
-				if (($loaLevelNames = Cache::read("loaLevelNames")) === FALSE) {
+				if (($loaLevelNames = Cache::read("loaLevelNames")) === false) {
 					$loaLevelNames = $this->Loa->get_loa_names();
 					Cache::write("loaLevelNames",$loaLevelNames);
 				}
@@ -910,6 +928,5 @@ class Client extends AppModel {
 			ORDER BY Client.name
 		";
 		return $this->query($sql);
-		
 	}
 }
