@@ -220,6 +220,11 @@ class ClientsController extends AppController {
                 //save ClientSocial
                 if($this->data['ClientSocial']){
 
+                    if(isset($this->data['ClientSocial']['fbUrl'])){
+                        //strip out query strings, and anything after.
+                        $this->data['ClientSocial']['fbUrl'] = preg_replace('/\?.*/', '', $this->data['ClientSocial']['fbUrl']);
+                    }
+
                     $this->Client->ClientSocial->save($this->data['ClientSocial']);
                 }
 
@@ -605,9 +610,9 @@ class ClientsController extends AppController {
          }
             //since we are running this via browser, URL shoudl be encoded
           $url =   urldecode($url);
-          App::import('Helper', 'Httprequest');
 
-          $Httprequest = $this->Httprequest = new HttprequestHelper();
+         App::import('Component', 'HttpRequest');
+         $Httprequest = $this->HttpRequest  =& new HttpRequestComponent(null);
 
 
         if (!$Httprequest->isValidUrl($url)){

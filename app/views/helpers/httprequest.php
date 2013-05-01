@@ -37,10 +37,8 @@ class HttprequestHelper extends AppHelper {
           CURLOPT_TIMEOUT => $timeout,
           CURLOPT_USERAGENT => "page-check/1.0"
         ));
-
       // Execute request
         curl_exec($ch);
-
       // Check if an error occurred
         if(curl_errno($ch)) {
           curl_close($ch);

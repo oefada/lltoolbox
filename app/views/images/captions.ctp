@@ -10,8 +10,12 @@
 <?php foreach ($sites as $site => $siteName): ?>
    
    <? $urlPath = ($site == 2) ? 'www.familygetaway.com' : 'www.luxurylink.com'; ?>
+
+
    
-   <?php $images = ${'images'.$site}; ?>
+   <?php $images = ${'images'.$site};
+    //var_dump($images);
+    ?>
     <div id="images-<?php echo $site; ?>" class="captionsmulti" <?php if ($site != 'luxurylink'): ?> style="display:none"<?php endif; ?>>
 		<form method="post" id="captions">
 			<h2><?php __('All Active Photos');?></h2>
