@@ -96,7 +96,14 @@ class Image extends AppModel {
             $this->ImageClient->save($slide);
         }
     }
-    
-    
+
+    function copyImageCaptiontoSiteId($arrImageData, $siteId, $clientId)
+    {
+
+
+    }
+
+
+
 }
 ?>

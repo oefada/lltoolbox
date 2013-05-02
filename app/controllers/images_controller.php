@@ -116,70 +116,111 @@ class ImagesController extends AppController
 		$this->set('showImageRequest', $showImageRequest);
 	}
 
-	function captions()
-	{
-		if (!empty($this->data)) {			
-			foreach($this->data['ImageClient'] as $ic) {			
-				// caption
-				if ($ic['caption'] != $ic['currentCaption']) {
-					$caption = array('clientImageId' => $ic['clientImageId'], 'caption' => $ic['caption']);
+    function captions()
+    {
+        if (!empty($this->data)) {
+            foreach ($this->data['ImageClient'] as $ic) {
+                // caption
 
-                    //var_dump($caption);
-					$this->ImageClient->save(array('ImageClient'=>$caption));
-				}
-				
-				// room grade 
-				if ($ic['roomGradeId'] != $ic['currentRoomGrade']) {										
-					$this->Image->recursive = 1;
-					$rgImage = $this->Image->find('first', array(
-						'conditions' => array(
-							'Image.imageId' => $ic['imageId']
-						)						
-					));
-					$rgImage['ImageClient'] = $rgImage['ImageClient'][0];
-					$rgImage['Image']['ImageRoomGradeRel'] = $rgImage['ImageRoomGradeRel'];
-					unset($rgImage['ImageRoomGradeRel']);
-										
-					if ($ic['roomGradeId'] > 0) {
-						$this->Image->ImageRoomGradeRel->saveImageRoomGrade($ic['roomGradeId'], $rgImage);
-					} else {
-						$relId = intval($rgImage['Image']['ImageRoomGradeRel'][0]['imageRoomGradeRelId']);
-						if ($relId > 0) {
-							$this->Image->ImageRoomGradeRel->deleteImageRoomGrade($relId, $rgImage);
-						}
-					}
-				}
-				
-				$this->Session->setFlash('Your updates have been saved.');
-			}
-		}
-			
-		$q = 'SELECT * FROM imageClient ImageClient 
+                //copy to family is checked.
+                if (isset($this->data['ImageClient']['copy_to_family']) && $this->data['ImageClient']['copy_to_family'] == 1) {
+
+                    $newSiteId = 2;
+
+                    //check to see if image exist on other site (family getaway)
+                    $imgDataSite = $this->ImageClient->findActiveImagebySiteIdClientId(
+                        $ic['imageId'],
+                        $newSiteId,
+                        $this->Image->clientId
+                    );
+
+                    if (empty($imgDataSite)) {
+                        //Image doesn't exist on  the other site, insert new record
+//                        $this->ImageClient->create();
+//
+//                        $newRecord['ImageClient']['clientId']= $this->Image->clientId;
+//                        $newRecord['ImageClient']['siteId']= $newSiteId;
+//                        $newRecord['ImageClient']['caption']= $ic['caption'];
+//                        $this->ImageClient->save($newRecord);
+
+                    } else {
+
+                        //update the other site data with the new caption
+                        $this->ImageClient->updateCaptionbyOtherSiteId(
+                            $this->Image->clientId,
+                            $newSiteId,
+                            $ic['imageId'],
+                            $ic['caption']
+                        );
+                    }
+                }
+
+                //the captions seem to only get update if there was a change.
+                if ($ic['caption'] != $ic['currentCaption']) {
+                    $caption = array('clientImageId' => $ic['clientImageId'], 'caption' => $ic['caption']);
+
+
+                    $this->ImageClient->save(array('ImageClient' => $caption));
+                }
+
+                // room grade
+                if ($ic['roomGradeId'] != $ic['currentRoomGrade']) {
+                    $this->Image->recursive = 1;
+                    $rgImage = $this->Image->find(
+                        'first',
+                        array(
+                            'conditions' => array(
+                                'Image.imageId' => $ic['imageId']
+                            )
+                        )
+                    );
+                    $rgImage['ImageClient'] = $rgImage['ImageClient'][0];
+                    $rgImage['Image']['ImageRoomGradeRel'] = $rgImage['ImageRoomGradeRel'];
+                    unset($rgImage['ImageRoomGradeRel']);
+
+                    if ($ic['roomGradeId'] > 0) {
+                        $this->Image->ImageRoomGradeRel->saveImageRoomGrade($ic['roomGradeId'], $rgImage);
+                    } else {
+                        $relId = intval($rgImage['Image']['ImageRoomGradeRel'][0]['imageRoomGradeRelId']);
+                        if ($relId > 0) {
+                            $this->Image->ImageRoomGradeRel->deleteImageRoomGrade($relId, $rgImage);
+                        }
+                    }
+                }
+
+                $this->Session->setFlash('Your updates have been saved.');
+            }
+        }
+
+        $q = 'SELECT * FROM imageClient ImageClient
 			  INNER JOIN image Image USING(imageId)
 			  LEFT JOIN imageRoomGradeRel ImageRoomGradeRel  USING(imageId)
 			  WHERE ImageClient.clientId = ?
 			  AND ImageClient.imageTypeId = 1
 			  AND ImageClient.inactive = 0';
-		$images = $this->Image->query($q, array($this->Image->clientId));		
-		
-		$imagesLL = $imagesFG = array();
-		foreach($images as $thisImg) {
-			if ($thisImg['ImageClient']['siteId'] == 1) {
-				$imagesLL[] = $thisImg;
-			} elseif ($thisImg['ImageClient']['siteId'] == 2) {
-				$imagesFG[] = $thisImg;
-			}
-		}
-		$this->set('imagesluxurylink', $imagesLL);
-		$this->set('imagesfamily', $imagesFG);
-		
-		$this->Image->ImageRoomGradeRel->RoomGrade->recursive = -1;
-		$roomGrades = $this->Image->ImageRoomGradeRel->RoomGrade->find('all', array(
-			'conditions' => array('RoomGrade.clientId' => $this->Image->clientId),
-			'order' => array('RoomGrade.roomGradeName')
-		));
-		$this->set('roomGrades', $roomGrades);
-	}
+        $images = $this->Image->query($q, array($this->Image->clientId));
+
+        $imagesLL = $imagesFG = array();
+        foreach ($images as $thisImg) {
+            if ($thisImg['ImageClient']['siteId'] == 1) {
+                $imagesLL[] = $thisImg;
+            } elseif ($thisImg['ImageClient']['siteId'] == 2) {
+                $imagesFG[] = $thisImg;
+            }
+        }
+        $this->set('imagesluxurylink', $imagesLL);
+        $this->set('imagesfamily', $imagesFG);
+
+        $this->Image->ImageRoomGradeRel->RoomGrade->recursive = -1;
+        $roomGrades = $this->Image->ImageRoomGradeRel->RoomGrade->find(
+            'all',
+            array(
+                'conditions' => array('RoomGrade.clientId' => $this->Image->clientId),
+                'order' => array('RoomGrade.roomGradeName')
+            )
+        );
+        $this->set('roomGrades', $roomGrades);
+    }
 
 	function slideshow()
 	{
