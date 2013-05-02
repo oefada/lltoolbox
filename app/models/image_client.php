@@ -102,4 +102,41 @@ class ImageClient extends AppModel
 		return isset($results['Image']['imagePath']) ? $results['Image']['imagePath'] : false;
 	}
 
+    function findActiveImagebySiteIdClientId($imageId,$siteId,$clientId)
+    {
+        $imageClients = $this->find(
+            'all',
+            array(
+                'conditions' =>
+                array(
+                    'ImageClient.imageId' => $imageId,
+                    'ImageClient.clientId' => $clientId,
+                    'ImageClient.siteId' => $siteId,
+                    'ImageClient.inactive' => 0,
+                ),
+                'order'=> array('ImageClient.inactive')
+            )
+        );
+
+        if (empty($imageClients)){
+
+            return false;
+        }
+
+        return $imageClients[0]['ImageClient'];
+    }
+
+
+    function updateCaptionbyOtherSiteId($clientId, $siteId, $imageId, $caption = null)
+    {
+        $this->updateAll(
+            array('ImageClient.caption' => "'".$caption."'"),
+            array(
+                'ImageClient.siteId' => $siteId,
+                'ImageClient.imageId' => $imageId,
+                'ImageClient.clientId' => $clientId,
+            )
+        );
+    }
+
 }

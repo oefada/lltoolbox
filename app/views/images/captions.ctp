@@ -19,6 +19,10 @@
     <div id="images-<?php echo $site; ?>" class="captionsmulti" <?php if ($site != 'luxurylink'): ?> style="display:none"<?php endif; ?>>
 		<form method="post" id="captions">
 			<h2><?php __('All Active Photos');?></h2>
+            <? if ($site == 'luxurylink'){ ?>
+            <?= $form->input('ImageClient.copy_to_family', array('label'=>' Copy  to Family','type'=>'checkbox'));?>
+            <? } ?>
+            <label></label>
 			<h3>Add Caption (limit 55 characters, including spaces)</h3>
 			<input type="submit" value="Save" class="save_changes" />
 
