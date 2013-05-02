@@ -2,6 +2,7 @@
 
 App::import('Vendor', 'nusoap_client/lib/nusoap');
 
+
 class ClientsController extends AppController {
 
 	var $name = 'Clients';
@@ -214,29 +215,39 @@ class ClientsController extends AppController {
 			 }
 
 
+            //remove query string from fbUrl
+            if (isset($this->data['ClientSocial']['fbUrl']) && !empty($this->data['ClientSocial']['showFb'])) {
+                //strip out query strings, and anything after.
+                $this->data['ClientSocial']['fbUrl'] = preg_replace(
+                    '/\?.*/',
+                    '',
+                    $this->data['ClientSocial']['fbUrl']
+                );
 
+            }
 
-			if ($this->Client->save($this->data)) {
+            if ($this->Client->save($this->data) && $this->Client->ClientSocial->save($this->data['ClientSocial'])) {
                 //save ClientSocial
-                if($this->data['ClientSocial']){
+                if ($this->data['ClientSocial']) {
 
-                    if(isset($this->data['ClientSocial']['fbUrl'])){
-                        //strip out query strings, and anything after.
-                        $this->data['ClientSocial']['fbUrl'] = preg_replace('/\?.*/', '', $this->data['ClientSocial']['fbUrl']);
-                    }
 
-                    $this->Client->ClientSocial->save($this->data['ClientSocial']);
+
+
                 }
 
-				if($this->data['ClientInterview'][0]){
-					$this->Client->ClientInterview->save($this->data['ClientInterview'][0]);
-				}
-				$this->ClientCollection->saveCollected($this->data['Client']['clientId'], $this->data['Client']['clientCollections']);
-				$this->Session->setFlash(__('The Client has been saved', true));
-				$this->redirect(array('action'=>'edit', 'id' => $id));
-			} else {
-				$this->Session->setFlash(__('The Client could not be saved. Please, try again.', true));
-			}
+                if ($this->data['ClientInterview'][0]) {
+                    $this->Client->ClientInterview->save($this->data['ClientInterview'][0]);
+                }
+                $this->ClientCollection->saveCollected(
+                    $this->data['Client']['clientId'],
+                    $this->data['Client']['clientCollections']
+                );
+
+                $this->Session->setFlash(__('The Client has been saved', true));
+                $this->redirect(array('action' => 'edit', 'id' => $id));
+            } else {
+                $this->Session->setFlash(__('The Client could not be saved. Please, try again.', true));
+            }
 			$this->set('submission', true);
 		}
 		//set up our data, if it's a form post, we still need all related data

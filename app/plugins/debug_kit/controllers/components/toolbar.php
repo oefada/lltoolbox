@@ -569,11 +569,15 @@ class SqlLogPanel extends DebugPanel {
 				foreach ($rows as $row) {
 					$tds = $this->_getCells($row);
 					$queries[] = $tds;
-					$isSlow = (
-						$tds[5] > 0 &&
-						$tds[4] / $tds[5] != 1 &&
-						$tds[4] / $tds[5] <= $this->slowRate
-					);
+                    $isSlow = false;
+                    if (isset($tds[5])){
+                        $isSlow = (
+                            $tds[5] > 0 &&
+                                $tds[4] / $tds[5] != 1 &&
+                                $tds[4] / $tds[5] <= $this->slowRate
+                        );
+                    }
+
 					if ($isSlow && preg_match('/^SELECT /', $tds[1])) {
 						$explain = $this->_explainQuery($db, $tds[1]);
 						if (!empty($explain)) {

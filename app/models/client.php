@@ -1,4 +1,5 @@
 <?php
+
 class Client extends AppModel {
 
    var $name = 'Client';
@@ -23,17 +24,14 @@ class Client extends AppModel {
             'allowEmpty' => true,
             //validate only if not empty
         ),
-        'ClientSocial.fbUrl' => array(
-            'custom' => array(
-                'rule' => array('validateDependentFields'),
-                'message' => 'Please enter height',
-                'allowEmpty' => true,
-            ),
-        ),
-
+//        'fbUrl' => array(
+//            'custom' => array(
+//                'rule' => array('validateSiteUrl'),
+//                'message' => 'Invalid Facebook URl, please try again.',
+//                'allowEmpty' => true,
+//            ),
+//        ),
     );
-
-
 //    public $validate = array(
 //        'phone' => array(
 //            'rule' => array('phone', null, 'us')
@@ -106,14 +104,7 @@ class Client extends AppModel {
 	return true;
    }
 
-    function validateSiteUrl($field)
-    {
-        $passed = true;
-        if (!isset($this->data['ClientSocial']['fbUrl'])) {
-            return false;
-        }
-        return $passed;
-    }
+
 
 	function afterSave($created) {
 		// run some custom afterSaves for client.
