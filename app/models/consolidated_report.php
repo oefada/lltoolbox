@@ -353,28 +353,28 @@ class ConsolidatedReport extends AppModel
     {
         // leads from leadgen
         $sql = "
-			SELECT
-				count(1) as num_leads
-			FROM
-				userClientSpecialOffers
-			WHERE
-				clientId = {$this->client_id}
-				AND siteId = {$site_id}
-				AND created BETWEEN '{$start_date}' AND '{$end_date}'
-		";
+            SELECT
+                count(1) as num_leads
+            FROM
+                userClientSpecialOffers
+            WHERE
+                clientId = {$this->client_id}
+                AND siteId = {$site_id}
+                AND created BETWEEN '{$start_date}' AND '{$end_date}'
+        ";
         $num_leads = $this->query($sql);
 
         // leads from calls
         $sql = "
-			SELECT
-				count(1) as num_calls
-			FROM
-				client_phone_leads
-			WHERE
-				client_id = {$this->client_id}
-				AND site_id = {$site_id}
-				AND date BETWEEN '{$start_date}' AND '{$end_date}'
-		";
+            SELECT
+                count(1) as num_calls
+            FROM
+                client_phone_leads
+            WHERE
+                client_id = {$this->client_id}
+                AND site_id = {$site_id}
+                AND date BETWEEN '{$start_date}' AND '{$end_date}'
+        ";
         $num_calls = $this->query($sql);
 
         return ($num_leads[0][0]['num_leads'] + $num_calls[0][0]['num_calls']);
@@ -413,14 +413,14 @@ class ConsolidatedReport extends AppModel
 
         $this->setDataSource('reporting');
         $sql = "
-			SELECT
-				sum(email) as num_emails
-			FROM
-				$table
-			WHERE
-				clientid = {$this->client_id}
-				AND activityStart BETWEEN '{$start_date}' AND '{$end_date}'
-		";
+            SELECT
+                sum(email) as num_emails
+            FROM
+                $table
+            WHERE
+                clientid = {$this->client_id}
+                AND activityStart BETWEEN '{$start_date}' AND '{$end_date}'
+        ";
         $num_emails = $this->query($sql);
 
         $this->setDataSource('default');
@@ -483,29 +483,29 @@ class ConsolidatedReport extends AppModel
             $params = array($this->client_id, $site_id, $start_date, $end_date);
 
             $sql = "
-				SELECT
-					sum(total) as impressions
-				FROM
-					lltUserEventRollupByDay
-				WHERE
-					clientId = ?
-					AND siteId = ?
-					AND eventId IN (41, 42, 43, 46)
-					AND startDate BETWEEN ? AND ?
-			";
+              SELECT
+                sum(total) as impressions
+              FROM
+                lltUserEventRollupByDay
+              WHERE
+                clientId = ?
+                AND siteId = ?
+                AND eventId IN (41, 42, 43, 46)
+                AND startDate BETWEEN ? AND ?
+            ";
             $skynetImpressions = $this->query($sql, $params);
 
             $sql = "
-				SELECT
-					sum(total) as clicks
-				FROM
-					lltUserEventRollupByDay
-				WHERE
-					clientId = ?
-					AND siteId = ?
-					AND eventId = 40
-					AND startDate BETWEEN ? AND ?
-			";
+              SELECT
+                sum(total) as clicks
+              FROM
+                lltUserEventRollupByDay
+              WHERE
+                clientId = ?
+                AND siteId = ?
+                AND eventId = 40
+                AND startDate BETWEEN ? AND ?
+            ";
             $skynetClicks = $this->query($sql, $params);
 
             $data = array(
@@ -532,15 +532,15 @@ class ConsolidatedReport extends AppModel
             $params = array($this->client_id, $start_date, $end_date);
 
             $sql = "
-				SELECT
-					sum(totalImpressions) as impressions,
-					sum(webrefer) as clicks
-				FROM
-					$table
-				WHERE
-					clientid = ?
-					AND activityStart BETWEEN ? AND ?
-			";
+                SELECT
+                    sum(totalImpressions) as impressions,
+                    sum(webrefer) as clicks
+                FROM
+                    $table
+                WHERE
+                    clientid = ?
+                    AND activityStart BETWEEN ? AND ?
+            ";
             $data = $this->query($sql, $params);
         }
 
@@ -615,19 +615,19 @@ class ConsolidatedReport extends AppModel
     private function getBookingInformationForPeriod($table, $start_date, $end_date)
     {
         $sql = "
-			SELECT
-				COUNT(distinct Ticket.ticketId) as bookings,
-				sum(Ticket.numNights) as room_nights,
-				sum(Ticket.billingPrice) as gross_bookings
-			FROM
-				ticket Ticket,
-				{$table} Offer
-			WHERE
-				Offer.clientId = ?
-				AND Ticket.offerId = Offer.offerId
-				AND Ticket.ticketStatusId in (4,5,6)
-				AND Ticket.created BETWEEN ? AND ?
-		";
+            SELECT
+                COUNT(distinct Ticket.ticketId) as bookings,
+                sum(Ticket.numNights) as room_nights,
+                sum(Ticket.billingPrice) as gross_bookings
+            FROM
+                ticket Ticket,
+                {$table} Offer
+            WHERE
+                Offer.clientId = ?
+                AND Ticket.offerId = Offer.offerId
+                AND Ticket.ticketStatusId in (4,5,6)
+                AND Ticket.created BETWEEN ? AND ?
+        ";
         $params = array($this->client_id, $start_date, $end_date);
 
         return $this->query($sql, $params);
@@ -638,19 +638,19 @@ class ConsolidatedReport extends AppModel
         $this->setDataSource('vacationist');
         // Get current month data
         $sql = "
-			SELECT
-				count(distinct Ticket.id) as bookings,
-				sum(Ticket.numNights) as room_nights,
-				sum(Ticket.salePrice) as gross_bookings
-			FROM
-				ticket Ticket,
-				client Client
-			WHERE
-				Ticket.clientId = Client.id
-				AND Ticket.ticketStatusTypeId = 2
-				AND Client.toolboxClientId = {$this->client_id}
-				AND Ticket.created between '{$start_date}' AND '{$end_date}'
-		";
+            SELECT
+                count(distinct Ticket.id) as bookings,
+                sum(Ticket.numNights) as room_nights,
+                sum(Ticket.salePrice) as gross_bookings
+            FROM
+                ticket Ticket,
+                client Client
+            WHERE
+                Ticket.clientId = Client.id
+                AND Ticket.ticketStatusTypeId = 2
+                AND Client.toolboxClientId = {$this->client_id}
+                AND Ticket.created between '{$start_date}' AND '{$end_date}'
+        ";
         $booking_data = $this->query($sql);
         $this->setDataSource('default');
 
@@ -757,26 +757,26 @@ class ConsolidatedReport extends AppModel
         );
 
         $sql = "
-			SELECT
-				year2,
-				month2,
-				clientid,
-				phone,
-				webrefer,
-				productview,
-				searchview,
-				destinationview,
-				email,
-				totalimpressions
-			FROM $table
-			WHERE
-				clientid = ?
-				AND (
-					activityStart BETWEEN ? AND ?
-					OR activityEnd BETWEEN ? AND ?
-				)
-			ORDER BY activityStart, year2, month2
-		";
+            SELECT
+                year2,
+                month2,
+                clientid,
+                phone,
+                webrefer,
+                productview,
+                searchview,
+                destinationview,
+                email,
+                totalimpressions
+            FROM $table
+            WHERE
+                clientid = ?
+                AND (
+                    activityStart BETWEEN ? AND ?
+                    OR activityEnd BETWEEN ? AND ?
+                )
+            ORDER BY activityStart, year2, month2
+        ";
         $rows = $this->query($sql, $params);
 
         foreach ($rows as $row) {
@@ -821,25 +821,25 @@ class ConsolidatedReport extends AppModel
         $impressions = array();
 
         $sql = "
-			SELECT
-				eventId,
-				sum(total) AS total,
-				YEAR (startDate) AS year,
-				MONTH (startDate) AS month
-			FROM
-				lltUserEventRollupByDay
-			WHERE
-				clientId = ?
-				AND siteId = ?
-				AND (
-					startDate BETWEEN ? AND ?
-					OR endDate BETWEEN ? AND ?
-				)
-				AND eventId IN (42, 41, 43, 46)
-			GROUP BY
-				SUBSTR(startDate, 1, 7),
-				eventId
-		";
+            SELECT
+                eventId,
+                sum(total) AS total,
+                YEAR (startDate) AS year,
+                MONTH (startDate) AS month
+            FROM
+                lltUserEventRollupByDay
+            WHERE
+                clientId = ?
+                AND siteId = ?
+                AND (
+                    startDate BETWEEN ? AND ?
+                    OR endDate BETWEEN ? AND ?
+                )
+                AND eventId IN (42, 41, 43, 46)
+            GROUP BY
+                SUBSTR(startDate, 1, 7),
+                eventId
+        ";
         $params = array(
             $clientId,
             $siteId,
@@ -942,20 +942,20 @@ class ConsolidatedReport extends AppModel
         $call_details = array();
         $siteName = '';
         $sql = "
-			SELECT
-				ClientPhoneLead.site_id,
-				ClientPhoneLead.date,
-				ClientPhoneLead.duration,
-				ClientPhoneLead.caller_number,
-				ClientPhoneLead.caller_name,
-				ClientPhoneLead.caller_location
-			FROM client_phone_leads ClientPhoneLead
-			WHERE
-				client_id = {$this->client_id}
-				AND date BETWEEN '{$this->loa_start_date}' AND '{$this->month_end_date}'
-				AND substr(ClientPhoneLead.caller_number,1,7) != '1424835'
-			ORDER BY date DESC
-		";
+            SELECT
+                ClientPhoneLead.site_id,
+                ClientPhoneLead.date,
+                ClientPhoneLead.duration,
+                ClientPhoneLead.caller_number,
+                ClientPhoneLead.caller_name,
+                ClientPhoneLead.caller_location
+            FROM client_phone_leads ClientPhoneLead
+            WHERE
+                client_id = {$this->client_id}
+                AND date BETWEEN '{$this->loa_start_date}' AND '{$this->month_end_date}'
+                AND substr(ClientPhoneLead.caller_number,1,7) != '1424835'
+            ORDER BY date DESC
+        ";
 
         $call_details_raw = $this->query($sql);
         foreach ($call_details_raw as $key => $call_detail) {
@@ -1022,49 +1022,49 @@ class ConsolidatedReport extends AppModel
         }
 
         $sql = "
-			SELECT
-				Ticket.ticketId,
-				Site.siteName,
-				Ticket.created,
-				Reservation.arrivalDate,
-				Reservation.departureDate,
-				Ticket.numNights,
-				Ticket.billingPrice,
-				Ticket.bidId,
-				Ticket.userHomePhone,
-				Ticket.userFirstName,
-				Ticket.userLastName,
-				Ticket.userEmail1,
-				`User`.doNotContact,
-				Ticket.userAddress1,
-				Ticket.userAddress2,
-				Ticket.userAddress3,
-				Ticket.userCity,
-				Ticket.userState,
-				Ticket.userZip,
-				Ticket.userCountry,
-				PaymentDetail.ppBillingAddress1,
-				PaymentDetail.ppBillingCity,
-				PaymentDetail.ppBillingState,
-				PaymentDetail.ppBillingZip,
-				PaymentDetail.ppBillingCountry
-			FROM
-				( ticket Ticket,
-				$offer_join_table Offer,
-				sites Site,
-				reservation Reservation,
-				`user` `User` )
-			LEFT JOIN paymentDetail PaymentDetail ON PaymentDetail.ticketID = Ticket.ticketId AND PaymentDetail.paymentTypeId = 1
-			WHERE
-				Site.siteId = Ticket.siteId
-				AND Ticket.ticketStatusId IN (4,5,6)
-				AND Ticket.offerId = Offer.offerId
-				AND Reservation.ticketId = Ticket.ticketId
-				AND `User`.userId = Ticket.userId
-				AND Ticket.siteId = $site_id
-				AND Offer.clientId = {$this->client_id}
-				AND Ticket.created between '{$this->loa_start_date}' AND '{$this->month_end_date}'
-		";
+            SELECT
+                Ticket.ticketId,
+                Site.siteName,
+                Ticket.created,
+                Reservation.arrivalDate,
+                Reservation.departureDate,
+                Ticket.numNights,
+                Ticket.billingPrice,
+                Ticket.bidId,
+                Ticket.userHomePhone,
+                Ticket.userFirstName,
+                Ticket.userLastName,
+                Ticket.userEmail1,
+                `User`.doNotContact,
+                Ticket.userAddress1,
+                Ticket.userAddress2,
+                Ticket.userAddress3,
+                Ticket.userCity,
+                Ticket.userState,
+                Ticket.userZip,
+                Ticket.userCountry,
+                PaymentDetail.ppBillingAddress1,
+                PaymentDetail.ppBillingCity,
+                PaymentDetail.ppBillingState,
+                PaymentDetail.ppBillingZip,
+                PaymentDetail.ppBillingCountry
+            FROM
+                ( ticket Ticket,
+                $offer_join_table Offer,
+                sites Site,
+                reservation Reservation,
+                `user` `User` )
+            LEFT JOIN paymentDetail PaymentDetail ON PaymentDetail.ticketID = Ticket.ticketId AND PaymentDetail.paymentTypeId = 1
+            WHERE
+                Site.siteId = Ticket.siteId
+                AND Ticket.ticketStatusId IN (4,5,6)
+                AND Ticket.offerId = Offer.offerId
+                AND Reservation.ticketId = Ticket.ticketId
+                AND `User`.userId = Ticket.userId
+                AND Ticket.siteId = $site_id
+                AND Offer.clientId = {$this->client_id}
+                AND Ticket.created between '{$this->loa_start_date}' AND '{$this->month_end_date}'
+        ";
 
         $booking_details_raw = $this->query($sql);
         foreach ($booking_details_raw as $key => $booking_detail) {
@@ -1117,27 +1117,27 @@ class ConsolidatedReport extends AppModel
         $this->setDataSource('vacationist');
 
         $sql = "
-			SELECT
-				Ticket.id,
-				Ticket.created,
-				Ticket.checkIn,
-				Ticket.checkOut,
-				Ticket.numNights,
-				Ticket.salePrice,
-				`User`.firstName,
-				`User`.lastName,
-				`User`.zip,
-				`User`.email
-			FROM
-				ticket Ticket,
-				client Client,
-				`user` `User`
-			WHERE
-				Client.id = Ticket.clientId
-				AND User.id = Ticket.userId
-				AND Client.toolboxClientId = {$this->client_id}
-				AND Ticket.created BETWEEN '{$this->loa_start_date}' AND '{$this->month_end_date}'
-		";
+            SELECT
+                Ticket.id,
+                Ticket.created,
+                Ticket.checkIn,
+                Ticket.checkOut,
+                Ticket.numNights,
+                Ticket.salePrice,
+                `User`.firstName,
+                `User`.lastName,
+                `User`.zip,
+                `User`.email
+            FROM
+                ticket Ticket,
+                client Client,
+                `user` `User`
+            WHERE
+                Client.id = Ticket.clientId
+                AND User.id = Ticket.userId
+                AND Client.toolboxClientId = {$this->client_id}
+                AND Ticket.created BETWEEN '{$this->loa_start_date}' AND '{$this->month_end_date}'
+        ";
 
         $booking_details_raw = $this->query($sql);
         foreach ($booking_details_raw as $key => $booking_detail) {
@@ -1181,20 +1181,20 @@ class ConsolidatedReport extends AppModel
         $leadDetails = array();
         $siteName = '';
         $sql = "
-			SELECT
-				`UserClientSpecialOffer`.`created`,
-				`User`.`firstname`,
-				`User`.`lastname`,
-				`User`.`email`
-			FROM
-				`userClientSpecialOffers` `UserClientSpecialOffer`,
-				`user` `User`
-			WHERE
-				`User`.`userId` = `UserClientSpecialOffer`.`userId`
-				AND `UserClientSpecialOffer`.`clientId` = $this->client_id
-				AND `UserClientSpecialOffer`.`siteId` = $site_id
-				AND `UserClientSpecialOffer`.`created` BETWEEN '{$this->loa_start_date}' AND '{$this->month_end_date}'
-		";
+            SELECT
+                `UserClientSpecialOffer`.`created`,
+                `User`.`firstname`,
+                `User`.`lastname`,
+                `User`.`email`
+            FROM
+                `userClientSpecialOffers` `UserClientSpecialOffer`,
+                `user` `User`
+            WHERE
+                `User`.`userId` = `UserClientSpecialOffer`.`userId`
+                AND `UserClientSpecialOffer`.`clientId` = $this->client_id
+                AND `UserClientSpecialOffer`.`siteId` = $site_id
+                AND `UserClientSpecialOffer`.`created` BETWEEN '{$this->loa_start_date}' AND '{$this->month_end_date}'
+        ";
 
         switch ($site_id) {
             case 1:
@@ -1341,5 +1341,3 @@ class ConsolidatedReport extends AppModel
         return ($a['Activity Date'] < $b['Activity Date']) ? 1 : -1;
     }
 }
-
-?>
