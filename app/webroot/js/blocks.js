@@ -73,6 +73,7 @@ jQuery(function () {
                     }
                     if (previewUrl) {
                         $('#previewFrame').attr('src', previewUrl);
+                        $('html').animate({scrollTop:$('#previewDiv').offset().top},500);
                         $('body').animate({
                             scrollTop: $("#previewDiv").offset().top
                         }, 500, null, function () {
@@ -175,7 +176,7 @@ jQuery(function () {
             "icon": {
                 "image": "http://ui.llsrv.us/images/icons/silk/page_white_width.png"
             },
-            "valid_children": ['BlockDivModule', 'BlockHeaderModule', 'BlockParagraphModule', 'BlockPhotoModule', 'BlockTabsModule', 'BlockLinkModule', 'BlockPrefabModule', 'BlockAdvertisingModule', 'BlockClientDisplayModule']
+            "valid_children": ['BlockDivModule', 'BlockHeaderModule', 'BlockParagraphModule', 'BlockPhotoModule', 'BlockTabsModule', 'BlockLinkModule', 'BlockPrefabModule', 'BlockAdvertisingModule', 'BlockClientDisplayModule', 'BlockStrandsModule']
         },
         'BlockHeaderModule': {
             'toolbarName': 'Header',
@@ -305,6 +306,42 @@ jQuery(function () {
             },
             'icon': {
                 'image': 'http://ui.llsrv.us/images/icons/silk/status_online.png'
+            },
+            'valid_children': 'none'
+        },
+        'BlockStrandsModule': {
+            'toolbarName': 'Strands',
+            'titleField': function (data) {
+                console.log(Math.random(),data);
+                var title = 'BlockStrandsModule';
+                if (typeof data.type === 'string' && data.type.length > 0) {
+                    if (typeof data.number === 'string' && data.number.match(/[0-9]+/)) {
+                        title = data.type + data.number;
+                    }
+                }
+                return title;
+            },
+            'parameters': {
+                'type': {
+                    'option': {
+                        'home_': 'LL Custom Home',
+                        'ctgy_': 'LL Custom Category',
+                        'prod_': 'LL Custom Product Detail',
+                        'cart_': 'LL Custom Shopping Cart / Wishlist',
+                        'conf_': 'LL Custom Order Confirmation',
+                        'misc_': 'LL Custom Misc',
+                        'HOME-': 'Strands Built-in Home',
+                        'CTGY-': 'Strands Built-in Category',
+                        'PROD-': 'Strands Built-in Product Detail',
+                        'CART-': 'Strands Built-in Shopping Cart / Wishlist',
+                        'CONF-': 'Strands Built-in Order Confirmation'
+                    }
+                },
+                'number': 'input',
+                'item': 'input'
+            },
+            'icon': {
+                'image': 'http://ui.llsrv.us/images/icons/silk/group_go.png'
             },
             'valid_children': 'none'
         },
