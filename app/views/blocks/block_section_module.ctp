@@ -12,6 +12,7 @@
                 'destinationWhatWeLoveSidebar',
                 'destinationPhotos',
                 'destinationCommunity',
+                'destinationStrands',
                 'destinationMaps',
                 'destinationChatLog',
                 'destinationTripPlanning',

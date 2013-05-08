@@ -116,40 +116,34 @@ class BlocksController extends AppController
                 $this->Session->setFlash('Opening existing page: ' . htmlentities($url));
             } else {
                 // Doesn't exist already, create it
-                if ($url == '/') {
-                    $this->Session->setFlash('Error: Could not create page: ' . htmlentities($url));
-                    $this->redirect(array('action' => 'index'));
-                    return false;
-                } else {
-                    $this->BlockPage->create(
-                        array(
-                            'url' => $url,
-                            'creator' => $this->getEditor()
-                        )
+                $this->BlockPage->create(
+                    array(
+                        'url' => $url,
+                        'creator' => $this->getEditor()
+                    )
+                );
+                $this->BlockPage->save();
+                $blockPageId = $this->BlockPage->id;
+                $startingBlockData = '';
+                if (isset($this->data['BlockPage']['templatePageId']) && $this->data['BlockPage']['templatePageId']) {
+                    $startingBlockData = $this->BlockRevision->field(
+                        'blockData',
+                        array('blockPageId' => $this->data['BlockPage']['templatePageId'])
                     );
-                    $this->BlockPage->save();
-                    $blockPageId = $this->BlockPage->id;
-                    $startingBlockData = '';
-                    if (isset($this->data['BlockPage']['templatePageId']) && $this->data['BlockPage']['templatePageId']) {
-                        $startingBlockData = $this->BlockRevision->field(
-                            'blockData',
-                            array('blockPageId' => $this->data['BlockPage']['templatePageId'])
-                        );
-                    }
-                    if (!$startingBlockData) {
-                        $startingBlockData = $this->defaultTemplate;
-                    }
-                    $this->BlockRevision->create(
-                        array(
-                            'blockPageId' => $blockPageId,
-                            'blockData' => $startingBlockData,
-                            'editor' => $this->getEditor(),
-                        )
-                    );
-                    $this->BlockRevision->save();
-                    $this->BlockRevision->activate($this->BlockPage->id, $this->BlockRevision->id);
-                    $this->Session->setFlash('Created page: ' . htmlentities($url));
                 }
+                if (!$startingBlockData) {
+                    $startingBlockData = $this->defaultTemplate;
+                }
+                $this->BlockRevision->create(
+                    array(
+                        'blockPageId' => $blockPageId,
+                        'blockData' => $startingBlockData,
+                        'editor' => $this->getEditor(),
+                    )
+                );
+                $this->BlockRevision->save();
+                $this->BlockRevision->activate($this->BlockPage->id, $this->BlockRevision->id);
+                $this->Session->setFlash('Created page: ' . htmlentities($url));
             }
             $this->redirect(
                 array(
