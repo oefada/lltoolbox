@@ -50,11 +50,13 @@
 		'default' => 1,
 	));
 	echo '</td></tr></table>';
+    $topics = Call::$contactTopics;
+    asort($topics);
 	echo $form->input('contactTopic', array(
 		'empty' => false,
 		'multiple' => 'false',
-		'size' => count(Call::$contactTopics),
-		'options' => Call::$contactTopics,
+		'size' => count($topics),
+		'options' => $topics,
 	));
 	echo $form->input('ticketId', array('label' => 'Ticket'));
 	echo $form->input('userId', array('label' => 'User'));
