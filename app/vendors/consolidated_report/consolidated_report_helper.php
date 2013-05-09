@@ -77,7 +77,7 @@ class ConsolidatedReportHelper
      * @param    string newFile_path
      * @param    string outputFile_path
      */
-    public function __construct($template, $output_file_path, &$consolidated_report_model)
+    public function __construct($template, $output_file_path, ConsolidatedReport $consolidated_report_model)
     {
         $this->template = APP . 'vendors/consolidated_report/templates/' . $template;
 
@@ -561,6 +561,7 @@ class ConsolidatedReportHelper
                 $impressions_by_type[$array_key]['destination'] += $impression_data['destinationview'];
                 $impressions_by_type[$array_key]['search'] += $impression_data['searchview'];
                 $impressions_by_type[$array_key]['email'] += $impression_data['email'];
+                $impressions_by_type[$array_key]['social'] += $impression_data['social'];
 
                 if (isset($column_map[$array_key])) {
                     $this->setDataToPopulate($sheet_name, $cell, $impression_data['total_impressions']);
@@ -580,6 +581,7 @@ class ConsolidatedReportHelper
             $this->setDataToPopulate($sheet_name, 'C' . $spreadsheet_row, $impression_data['destinationview']);
             $this->setDataToPopulate($sheet_name, 'D' . $spreadsheet_row, $impression_data['searchview']);
             $this->setDataToPopulate($sheet_name, 'E' . $spreadsheet_row, $impression_data['email']);
+            $this->setDataToPopulate($sheet_name, 'E' . $spreadsheet_row, $impression_data['social']);
         }
 
         //Populate Impressions by Type
@@ -590,6 +592,7 @@ class ConsolidatedReportHelper
                 $this->setDataToPopulate($sheet_name, $row . 19, $impression_data['destination']);
                 $this->setDataToPopulate($sheet_name, $row . 20, $impression_data['search']);
                 $this->setDataToPopulate($sheet_name, $row . 21, $impression_data['email']);
+                $this->setDataToPopulate($sheet_name, $row . 22, $impression_data['social']);
             }
         }
 

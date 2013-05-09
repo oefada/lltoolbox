@@ -789,10 +789,9 @@ class ConsolidatedReport extends AppModel
                 'searchview' => (is_null($row[$table]['searchview'])) ? 0 : $row[$table]['searchview'],
                 'destinationview' => (is_null($row[$table]['destinationview'])) ? 0 : $row[$table]['destinationview'],
                 'email' => (is_null($row[$table]['email'])) ? 0 : $row[$table]['email'],
-                'total_impressions' => (is_null(
-                    $row[$table]['totalimpressions']
-                )) ? 0 : $row[$table]['totalimpressions']
+                'total_impressions' => $row[$table]['productview'] + $row[$table]['searchview'] + $row[$table]['destinationview'] + $row[$table]['email']
             );
+
         }
 
         $this->setDataSource('default');
@@ -875,10 +874,16 @@ class ConsolidatedReport extends AppModel
 
         // we need the omniture data for the email impressions
         $omnitureData = $this->getOmnitureImpressionsForClientByDate($startDate, $endDate, $clientId, $table);
+
+        // get social impressions
+        $socialData = $this->getSocialImpressionsForClientByDate($startData, $endDate, $clientId);
+
         foreach ($impressions as $key => $arrayData) {
-            $totalEmails = array_shift(Set::extract($omnitureData, "/./{$arrayData['month']}/email"));
+            $totalEmails = (int) array_shift(Set::extract($omnitureData, "/./{$arrayData['month']}/email"));
+            $totalSocial = (int) array_shift(Set::extract($socialData, "/./{$arrayData['month']}/social"));
+
             $totalImpressions =
-                $arrayData['destinationview'] + $arrayData['productview'] + $arrayData['searchview'] + $totalEmails;
+                $arrayData['destinationview'] + $arrayData['productview'] + $arrayData['searchview'] + $totalEmails + $totalSocial;
 
             $arrayData = array(
                 'year' => $arrayData['year'],
@@ -888,7 +893,8 @@ class ConsolidatedReport extends AppModel
                 'productview' => is_null($arrayData['productview']) ? 0 : $arrayData['productview'],
                 'searchview' => is_null($arrayData['searchview']) ? 0 : $arrayData['searchview'],
                 'destinationview' => is_null($arrayData['destinationview']) ? 0 : $arrayData['destinationview'],
-                'email' => is_null($totalEmails) ? 0 : $totalEmails,
+                'email' => $totalEmails,
+                'social' => $totalSocial,
                 'total_impressions' => is_null($totalImpressions) ? 0 : $totalImpressions
             );
             $impressions[$key] = array($arrayData['month'] => $arrayData);
@@ -896,6 +902,25 @@ class ConsolidatedReport extends AppModel
 
         $this->setDataSource('default');
         return $impressions;
+    }
+
+    /**
+     * @param $startData
+     * @param $endDate
+     * @param $clientId
+     * @return array
+     */
+    private function getSocialImpressionsForClientByDate($startData, $endDate, $clientId)
+    {
+        // TODO implement method
+        return false;
+        /*return array(
+            array(
+                '4' => array(
+                    'social' => 4500
+                )
+            )
+        );*/
     }
 
     /**
