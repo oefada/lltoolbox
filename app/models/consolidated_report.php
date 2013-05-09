@@ -475,7 +475,7 @@ class ConsolidatedReport extends AppModel
      */
     private function getImpressionsBySiteForPeriod($site_id, $start_date, $end_date)
     {
-        if ($this->useSkynetData && in_array((int)$site_id, array(1)) && $end_date > '2012-04-30 23:59:59') {
+        if ($this->useSkynetData && $end_date > '2012-04-30 23:59:59') {
             //We are using the business_db2 database for this data
             $this->setDataSource('business_db2');
 
@@ -686,7 +686,7 @@ class ConsolidatedReport extends AppModel
 
         foreach ($tables as $site => $table) {
             $impressionData = array();
-            if ($this->useSkynetData && $site === 'Luxury Link' && $this->month_end_date > '2012-04-30 23:59:59') {
+            if ($this->useSkynetData && $this->month_end_date > '2012-04-30 23:59:59') {
                 // We need a blend of skynet and omniture
 
                 if ($site === 'Luxury Link') {
