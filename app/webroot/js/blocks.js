@@ -338,7 +338,8 @@ jQuery(function () {
                     }
                 },
                 'number': 'input',
-                'item': 'input'
+                'item': 'input',
+                'dfilter': 'input'
             },
             'icon': {
                 'image': 'http://ui.llsrv.us/images/icons/silk/group_go.png'
