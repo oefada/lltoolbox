@@ -13,7 +13,7 @@ class TicketsController extends AppController {
 
 	var $uses = array('Ticket','OfferType', 'Format', 'User', 'ClientLoaPackageRel',
 					  'Track', 'TrackDetail','Offer','Loa','Client', 'OfferLuxuryLink', 'OfferFamily',
-					  'Reservation', 'PromoTicketRel', 'Promo', 'PromoCode', 'PaymentType', 'Readonly'
+					  'Reservation', 'PromoTicketRel', 'Promo', 'PromoCode', 'PaymentType', 'Readonly', 'ReservationPreferDate', 'ReservationPreferDateFromHotel'
 					  );
 
 	function index() {
@@ -434,6 +434,18 @@ class TicketsController extends AppController {
 		$this->set('showVoidLink', $showVoidLink);
 		$this->set('showRefundLink', $showRefundLink);
 		$this->set('showEditLink', $this->hasEditorAccess());
+		
+		$preferDatesUser = $this->ReservationPreferDate->find('all', array(
+												  'conditions' => array('ticketId' => $id)
+												, 'order' => array('reservationPreferDateTypeId ASC')
+											));
+		$this->set('preferDatesUser', $preferDatesUser);
+		
+		$preferDatesHotel = $this->ReservationPreferDateFromHotel->find('all', array(
+												  'conditions' => array('ticketId' => $id)
+												, 'order' => array('reservationPreferDateFromHotelId ASC')
+											));
+		$this->set('preferDatesHotel', $preferDatesHotel);
 	}
 
 	function phpinfoshow() {

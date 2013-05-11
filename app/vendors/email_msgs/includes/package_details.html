@@ -5,7 +5,7 @@
 
 $fontStyle="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;";
 
-if ($resConfirmationNotes != ""): ?>
+if ($resConfirmationNotes != "" || ($ppvNoticeTypeId == 14 && is_array($preferDatesHotel) && sizeof($preferDatesHotel) > 0)): ?>
 
 	<tr><td colspan="2" style="font-size:0; line-height:0;"><img src="http://www.luxurylink.com/images/email/pixel.gif" width="1" height="10"></td></tr>
 	<tr><td colspan="2">
@@ -48,8 +48,22 @@ if ($resConfirmationNotes != ""): ?>
 			<td
 				style="<?=$fontStyle?>line-height:16px;padding: 18px 18px 18px 18px;"
 				colspan="2"><?= $resConfirmationNotes ?>
+
+				<? if (($ppvNoticeTypeId == 14 && is_array($preferDatesHotel) && sizeof($preferDatesHotel) > 0)) { ?>
+						<br/><br/>
+						<b>Alternate Suggested Dates:</b>
+						<br/>
+						<? foreach ($preferDatesHotel as $pdt) { ?>
+							Check-in: <?=  date('l F j, Y', strtotime($pdt['ReservationPreferDateFromHotel']['arrivalDate'])); ?>
+							<br/>
+							Check-out: <?=  date('l F j, Y', strtotime($pdt['ReservationPreferDateFromHotel']['departureDate'])); ?>
+							<br/><br/>
+						<? } ?>
+				<? } ?>
+
 			</td>
 			</tr>
+
 		<? // TABLE C CLOSED ?>
 		</table>
 	</td>

@@ -37,7 +37,7 @@ class WebServiceTicketsController extends WebServicesController
 					  'ClientLoaPackageRel', 'Track', 'OfferType', 'Loa', 'TrackDetail', 'PpvNotice',
 					  'Address', 'OfferLuxuryLink', 'SchedulingMaster', 'SchedulingInstance', 'Reservation',
 					  'PromoTicketRel', 'Promo', 'TicketReferFriend','Package','PaymentProcessor','CakeLog',
-					  'ClientThemeRel', 'Image', 'ImageClient','CreditTracking', 'CreditBank', 'EventRegistryDonor', 'EventRegistryGiftFailure', 'MailingList'
+					  'ClientThemeRel', 'Image', 'ImageClient','CreditTracking', 'CreditBank', 'EventRegistryDonor', 'EventRegistryGiftFailure', 'MailingList', 'ReservationPreferDateFromHotel'
 					  );
 
 	var $serviceUrl = 'http://toolbox.luxurylink.com/web_service_tickets';
@@ -1154,6 +1154,7 @@ class WebServiceTicketsController extends WebServicesController
 		}
 		
 		
+		$preferDatesHotel = false;
 		if ($ticketId) {
 			// data arrays
 			// -------------------------------------------------------------------------------
@@ -1194,6 +1195,12 @@ class WebServiceTicketsController extends WebServicesController
 									&& isset($promoGcCofData['GiftCert']['applied'])
 									&& $promoGcCofData['GiftCert']['applied']
 								) ? true : false;
+								
+			$preferDatesHotel = $this->ReservationPreferDateFromHotel->find('all', array(
+													  'conditions' => array('ticketId' => $ticketId)
+													, 'order' => array('reservationPreferDateFromHotelId ASC')
+												));
+								
 		} else {
 			if ($username) {
 				$this->User->UserSiteExtended->recursive = 0;

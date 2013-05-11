@@ -1,7 +1,16 @@
 %%booking_request_dates%%
 <font face="Arial, Helvetica, sans-serif" size="2" style="font-size:13px; line-height:20px" color="#474747">
 
-Unfortunately, the dates you requested for <?= $clientNameP ?> are not available. We would still love to accommodate you; please <a href="<?=$dateRequestLink;?>" target="_blank" style="text-decoration: none; color: #008EC5;">click here</a> to submit your new travel dates or call our Travel Concierge at (888) 297-3299 or (310) 215-8060 for assistance. Our business hours are <?php echo Base::conciergeHoursComma; ?>.
+Unfortunately, the dates you requested for <?= $clientNameP ?> are not available.
+
+<? if (is_array($preferDatesHotel) && sizeof($preferDatesHotel) > 0) { ?>
+	However, <?= $clientNameP ?> would love to accommodate you and has offered alternate check-in dates; please <a href="<?=$dateRequestLink;?>" target="_blank" style="text-decoration: none; color: #008EC5;">click here</a> to view available dates
+<? } else { ?>
+	We would still love to accommodate you; please <a href="<?=$dateRequestLink;?>" target="_blank" style="text-decoration: none; color: #008EC5;">click here</a> to submit your new travel dates
+<? } ?>
+
+or call our Travel Concierge at (888) 297-3299 or (310) 215-8060 for assistance. Our business hours are <?php echo Base::conciergeHoursComma; ?>.
+
 <br><br>
 
 <? if (!$isAuction) { ?>

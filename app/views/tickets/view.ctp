@@ -140,15 +140,57 @@ $this->searchController = 'Tickets';
 					?>
 				</td>
 			</tr>
+
+
+			<? if ($preferDatesUser || $ticket['Ticket']['requestArrival'] || $ticket['Ticket']['requestArrival2']) { ?>
+				<tr>
+					<td><strong>Preferred Dates</strong></td>
+					<td>
+						<? if ($preferDatesUser) { ?>
+							<? foreach ($preferDatesUser as $dt) { ?>
+								<div style="margin-bottom: 8px; line-height: 16px;">
+									<span style="font-weight: bold; margin-right: 10px;">Check In:</span> <?= date('m/d/Y (l M j)', strtotime($dt['ReservationPreferDate']['arrivalDate'])); ?>
+									<br />
+									<span style="font-weight: bold; margin-right: 10px;">Check Out:</span> <?= date('m/d/Y (l M j)', strtotime($dt['ReservationPreferDate']['departureDate'])); ?>
+								</div>
+							<? } ?>
+						<? } else { ?>
+							<? if ($ticket['Ticket']['requestArrival']) { ?>
+								<div style="margin-bottom: 8px; line-height: 16px;">
+									<span style="font-weight: bold; margin-right: 10px;">Check In:</span> <?= date('m/d/Y (l M j)', strtotime($ticket['Ticket']['requestArrival'])); ?>
+									<br />
+									<span style="font-weight: bold; margin-right: 10px;">Check Out:</span> <?= date('m/d/Y (l M j)', strtotime($ticket['Ticket']['requestDeparture'])); ?>
+								</div>
+							<? } ?>
+							<? if ($ticket['Ticket']['requestArrival2']) { ?>
+								<div style="margin-bottom: 8px; line-height: 16px;">
+									<span style="font-weight: bold; margin-right: 10px;">Check In:</span> <?= date('m/d/Y (l M j)', strtotime($ticket['Ticket']['requestArrival2'])); ?>
+									<br />
+									<span style="font-weight: bold; margin-right: 10px;">Check Out:</span> <?= date('m/d/Y (l M j)', strtotime($ticket['Ticket']['requestDeparture2'])); ?>
+								</div>
+							<? } ?>
+						<? } ?>
+					</td>
+				</tr>
+			<? } ?>
+			<? if ($preferDatesHotel) { ?>
+				<tr>
+					<td><strong>Alternate Dates<br />From Client</strong></td>
+					<td>
+						<? foreach ($preferDatesHotel as $dt) { ?>
+							<div style="margin-bottom: 8px; line-height: 16px;">
+								<span style="font-weight: bold; margin-right: 10px;">Check In:</span> <?= date('m/d/Y (l M j)', strtotime($dt['ReservationPreferDateFromHotel']['arrivalDate'])); ?>
+								<br />
+								<span style="font-weight: bold; margin-right: 10px;">Check Out:</span> <?= date('m/d/Y (l M j)', strtotime($dt['ReservationPreferDateFromHotel']['departureDate'])); ?>
+							</div>
+						<? } ?>
+					</td>
+				</tr>
+			<? } ?>
+
+
+
 			<?php if (isset($ticket['Ticket']['format']) && $ticket['Ticket']['format'] == 2) : ?>
-			<tr>
-				<td><strong>Request Arrival</strong></td>
-				<td><?php echo $ticket['Ticket']['requestArrival']; ?></td>
-			</tr>
-			<tr>
-				<td><strong>Request Departure</strong></td>
-				<td><?php echo $ticket['Ticket']['requestDeparture']; ?></td>
-			</tr>
 			<tr>
 				<td><strong>Request Num Guests</strong></td>
 				<td><?php echo $ticket['Ticket']['requestNumGuests']; ?></td>
