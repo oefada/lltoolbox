@@ -162,7 +162,7 @@ $this->searchController = 'Tickets';
 									<span style="font-weight: bold; margin-right: 10px;">Check Out:</span> <?= date('m/d/Y (l M j)', strtotime($ticket['Ticket']['requestDeparture'])); ?>
 								</div>
 							<? } ?>
-							<? if ($ticket['Ticket']['requestArrival2']) { ?>
+							<? if ($ticket['Ticket']['requestArrival2'] && substr($ticket['Ticket']['requestArrival2'], 0, 4) != '0000') { ?>
 								<div style="margin-bottom: 8px; line-height: 16px;">
 									<span style="font-weight: bold; margin-right: 10px;">Check In:</span> <?= date('m/d/Y (l M j)', strtotime($ticket['Ticket']['requestArrival2'])); ?>
 									<br />
