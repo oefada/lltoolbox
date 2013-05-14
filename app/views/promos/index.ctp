@@ -127,6 +127,7 @@ foreach ($promos as $promo):
 		<td align="right"><?php echo $promo['Reporting']['ticketCount']; ?></td>
 		<td align="right">$<?php echo number_format($promo['Reporting']['grossRevenue']); ?></td>
 		<td class="actions">
+	        <?php echo $html->link(__('View', true), array('action'=>'view', $promo['Promo']['promoId'])); ?>
 	        <?php echo $html->link(__('Report', true), array('action'=>'report', $promo['Promo']['promoId'])); ?>
             <?php echo $html->link(__('Add Codes', true), array('controller'=>'promo_codes', 'action'=>'add', $promo['Promo']['promoId'])); ?>
 		</td>
