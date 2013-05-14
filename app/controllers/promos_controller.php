@@ -22,6 +22,29 @@ class PromosController extends AppController {
 			$this->Session->setFlash(__('Invalid Promo.', true));
 			$this->redirect(array('action'=>'index'));
 		}
+		$promo = $this->Promo->setupPromoFormData($id);
+		$this->set('promo', $promo);		
+
+		$this->set('promoCategoryTypeIds', $this->PromoCategoryType->find('list', array('order'=>array('rank'))));
+		$this->set('destinations', $this->Destination->find('list', array('recursive'=>-1, 'order'=>array('destinationName'))));
+		$this->set('themes', $this->Theme->find('list', array('recursive'=>-1, 'order'=>array('themeName'))));
+		$this->set('clientTypes', $this->ClientType->find('list', array('recursive'=>-1, 'order'=>array('clientTypeName'))));
+		$this->set('displayRestrictedClients', $this->Promo->getClientListByIdArray($promo['restrictClient']));
+		
+		$activeCodes = array();
+		$inactiveCodes = array();
+		$promoCodeRels = $this->Promo->query("SELECT promoCode.* FROM promo INNER JOIN promoCodeRel USING (promoId) INNER JOIN promoCode USING(promoCodeId) WHERE promo.promoId = $id ORDER BY promoCode.promoCode");
+		
+		
+		foreach ($promoCodeRels as $c) {
+			if ($c['promoCode']['inactive'] == 1) { 
+				$inactiveCodes[] = $c['promoCode']['promoCode'];
+			} else {
+				$activeCodes[] = $c['promoCode']['promoCode'];
+			}
+		}
+		$this->set('activeCodes', $activeCodes);
+		$this->set('inactiveCodes', $inactiveCodes);
 	}
 
 	function report($id = null) {
