@@ -5,3 +5,5 @@ php_value allow_call_time_pass_reference 1
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
 </IfModule>
+
+php_value newrelic.appname "Toolbox"
