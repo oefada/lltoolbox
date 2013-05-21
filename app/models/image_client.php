@@ -127,8 +127,15 @@ class ImageClient extends AppModel
     }
 
 
-    function updateCaptionbyOtherSiteId($clientId, $siteId, $imageId, $caption = null)
+    function updateCaptionbyOtherSiteId($clientId, $siteId, $imageId, $caption = null, $sortOrder= null)
     {
+        $newdata['ImageClient']['caption'] = $caption;
+        $newdata['ImageClient']['siteId'] = $siteId;
+        $newdata['ImageClient']['imageId'] = $imageId;
+        $newdata['ImageClient']['clientId'] = $clientId;
+        $newdata['ImageClient']['sortOrder'] = $sortOrder;
+
+
         $this->updateAll(
             array('ImageClient.caption' => "'".$caption."'"),
             array(
@@ -137,6 +144,17 @@ class ImageClient extends AppModel
                 'ImageClient.clientId' => $clientId,
             )
         );
+        $this->useDbConfig = 'family';
+        $this->updateAll(
+            array('ImageClient.caption' => "'".$caption."'"),
+            array(
+                'ImageClient.siteId' => $siteId,
+                'ImageClient.imageId' => $imageId,
+                'ImageClient.clientId' => $clientId,
+            )
+        );
+        $this->useDbConfig = 'default';
+
     }
 
 }
