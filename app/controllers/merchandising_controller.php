@@ -1,15 +1,15 @@
 <?php
 class MerchandisingController extends AppController
 {
-    var $name = 'Merchandising';
-    var $uses = array(
+    public $name = 'Merchandising';
+    public $uses = array(
         'MerchDataGroup',
         'MerchDataType',
         'MerchDataEntries',
         'Client'
     );
 
-    function __construct()
+    public function __construct()
     {
         parent::__construct();
         $this->loadModel('MerchDataType');
@@ -31,13 +31,13 @@ class MerchandisingController extends AppController
 
     }
 
-    function index()
+    public function index()
     {
 
     }
 
     // ajax to get client info from link
-    function clientInfo()
+    public function clientInfo()
     {
         if (isset($_GET['linkUrl']) && !empty($_GET['linkUrl'])) {
             $clientArr = $this->setLinkUrl($_GET['linkUrl']);
@@ -54,7 +54,7 @@ class MerchandisingController extends AppController
         die();
     }
 
-    function billboard()
+    public function billboard()
     {
         // get merchDataType record for billboard
         $params = Array(
@@ -229,12 +229,12 @@ class MerchandisingController extends AppController
 
     }
 
-    function tabs()
+    public function tabs()
     {
 
     }
 
-    function hometabs()
+    public function hometabs()
     {
         // select header row
         $params = Array(
