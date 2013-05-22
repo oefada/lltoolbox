@@ -137,7 +137,9 @@ class ImageClient extends AppModel
 
 
         $this->updateAll(
-            array('ImageClient.caption' => "'".$caption."'"),
+            array('ImageClient.caption' => "'".$caption."'",
+
+            ),
             array(
                 'ImageClient.siteId' => $siteId,
                 'ImageClient.imageId' => $imageId,
@@ -145,14 +147,18 @@ class ImageClient extends AppModel
             )
         );
         $this->useDbConfig = 'family';
+
         $this->updateAll(
-            array('ImageClient.caption' => "'".$caption."'"),
+            array('ImageClient.caption' => "'".$caption."'",
+                 'ImageClient.siteId' => $siteId,
+            ),
             array(
-                'ImageClient.siteId' => $siteId,
+
                 'ImageClient.imageId' => $imageId,
                 'ImageClient.clientId' => $clientId,
             )
         );
+       
         $this->useDbConfig = 'default';
 
     }
