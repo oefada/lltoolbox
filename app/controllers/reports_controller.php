@@ -1562,6 +1562,7 @@ class ReportsController extends AppController
                            GROUP_CONCAT(DISTINCT Client.oldProductId) as oldProductIds,
                            GROUP_CONCAT(DISTINCT Client.accountingId) as accountingIds,
                            GROUP_CONCAT(DISTINCT Client.name) as clientNames,
+                           Ticket.userId,
                            Ticket.userFirstName,
                            Ticket.userLastName,
                            PaymentDetail.ppBillingAddress1,

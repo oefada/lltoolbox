@@ -86,11 +86,23 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 		<td><?=$siteIds[$r['Ticket']['siteId']]?></td>
 		<td><?=$r[0]['endDate']?></td>
 		<td><?=$r['PaymentDetailFull'][0]['pd']['ppResponseDate']?></td>
-		<td><?=$r['Ticket']['ticketId']?></td>
+		<td>
+            <?php echo $html->link($r['Ticket']['ticketId'],
+                    array('controller'=>'tickets', 'action'=>'view',$r['Ticket']['ticketId']),
+                    array('class' => '', 'target' => '_blank')); ?>
+        </td>
 		<td><?=$r[0]['clientIds']?></td>
 		<td><?=$r[0]['clientNames']?></td>
-		<td><?=$r['Ticket']['userFirstName']?></td>
-		<td><?=$r['Ticket']['userLastName']?></td>
+		<td>
+            <?php echo $html->link($r['Ticket']['userFirstName'],
+                array('controller'=>'users', 'action'=>'edit',$r['Ticket']['userId']),
+                array('class' => '', 'target' => '_blank')); ?>
+            </td>
+		<td>
+            <?php echo $html->link($r['Ticket']['userLastName'],
+                array('controller'=>'users', 'action'=>'edit',$r['Ticket']['userId']),
+                array('class' => '', 'target' => '_blank')); ?>
+        </td>
 		<td><?=$r['PaymentDetailFull'][0]['pd']['ppBillingAddress1']; ?></td>
 		<td>&nbsp;</td>
 		<td><?=$r['PaymentDetailFull'][0]['pd']['ppBillingCity']?></td>
