@@ -24,6 +24,14 @@ class UserPaymentSetting extends AppModel {
 						'message' => 'Expiration month and year must be greater than or equal to today.'),
 						'range' => array('rule' => array('range', 0, 13),
 										'message' => 'Expiration month must be a number from 1 through 12')
+						),
+                    'address1' => array(
+						   'minrule' => array(
+                                'rule' => array('minLength', 5),
+                                        'required' => true,
+                                        'allowEmpty' => false,
+                                        'message' => 'Address must be at least 5 characters.'
+                                )
 						)
     				);
 	
