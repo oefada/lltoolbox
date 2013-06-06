@@ -7,7 +7,7 @@ $this->pageTitle = $client['Client']['name'].$html2->c($client['Client']['client
 <?= $this->renderElement('ajax_paginator', array('showCount' => true))?>
 <table cellpadding="0" cellspacing="0">
 <tr>
-    <th><?php echo $paginator->sort('Package ID', 'Package.packageId', array('url' => array('clientId' => $clientId))); ?></th>
+	<th><?php echo $paginator->sort('Package ID', 'Package.packageId', array('url' => array('clientId' => $clientId))); ?></th>
 	<th><?php echo $paginator->sort('LOA ID', 'ClientLoaPackageRel.loaId', array('url' => array('clientId' => $clientId)));?></th>
 	<th><?php echo $paginator->sort('Package Name', 'Package.packageName', array('url' => array('clientId' => $clientId)));?></th>
 	<th><?php echo $paginator->sort('Package Status', 'Package.packageStatusId', array('url' => array('clientId' => $clientId)));?></th>
@@ -30,6 +30,18 @@ foreach ($packages as $package):
 			<?php echo $package['ClientLoaPackageRel']['loaId']; ?>
 		</td>
 		<td>
+            <?php
+            switch ($package['Package']['siteId']) {
+                case 1:
+                    echo $html->image('http://www.luxurylink.com/favicon.ico', array('alt'=>'Luxury Link', 'title'=>'Luxury Link'));
+                    echo '&#160;';
+                    break;
+                case 2:
+                    echo $html->image('http://www.familygetaway.com/favicon.ico', array('alt'=>'Family Getaway', 'title'=>'Family Getaway'));
+                    echo '&#160;';
+                    break;
+            }
+            ?>
 			<?php echo $html->link($package['Package']['packageName'], "/clients/$clientId/packages/summary/{$package['Package']['packageId']}"); ?>
 		</td>
 		<td>
