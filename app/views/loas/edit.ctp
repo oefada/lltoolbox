@@ -185,6 +185,9 @@ echo $form->input('advertisingFee');
         )
     );
     echo $form->input('loaNumberPackages', array('label' => 'Commission-Free Packages'));
+    
+	echo $form->input('payoffDate', array('empty' => true));
+    
     echo $form->input('loaId');
     echo $form->input('clientId', array('type' => 'hidden'));
 
