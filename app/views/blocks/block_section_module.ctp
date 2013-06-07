@@ -15,7 +15,6 @@
                 'destinationStrands',
                 'destinationMaps',
                 'destinationChatLog',
-                'destinationTripPlanning',
                 'destinationLearnMore',
             );
             foreach ($links as $link) {
