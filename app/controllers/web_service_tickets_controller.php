@@ -521,7 +521,13 @@ class WebServiceTicketsController extends WebServicesController
 					}
 				}
 			}
-
+			
+			// additional data for ticket 4002			
+			$ppInfoLive = $this->Offer->query("SELECT * FROM pricePoint WHERE pricePointId = " . intval($offerLive['pricePointId']));
+			$ppInfoLive = $ppInfoLive[0]['pricePoint'];
+			$this->Ticket->query("UPDATE ticket SET offerRetailValueUSD = ?, offerRetailValueLocal = ?, offerExtraNightRetailValueUSD = ?, offerExtraNightRetailValueLocal = ? WHERE ticketId = ?", array($offerLive['retailValue'], $ppInfoLive['retailValue'], $offerLive['flexRetailPricePerNight'], $ppInfoLive['flexRetailPricePerNight'], $ticketId));			
+			
+			
 			// if non-auction, just stop here as charging and ppv should not be auto
 			// -------------------------------------------------------------------------------
 			if (!in_array($data['offerTypeId'], array(1,2,6))) {
