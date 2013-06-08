@@ -63,6 +63,7 @@ $disable_mp = (in_array($uname, $userPermArr) || in_array('Production', $userDet
 <div style="clear:both;"></div>
 
 <?php
+echo '<div class="controlset4">' . $multisite->checkbox('Loa') . '</div>';
 echo $form->input('accountTypeId', array('label' => 'Account Type'));
 echo $form->input('loaLevelId', array('disabled' => $disabled, 'label' => 'LOA Level'));
 echo $form->input(
@@ -82,6 +83,9 @@ echo $form->input(
     )
 );
 echo $form->input('notes', array('label' => 'LOA Notes', 'id' => 'loaNotes'));
+
+echo $form->input('averageDailyRate');
+
 echo $form->input(
     'customerApprovalDate',
     array(
@@ -96,7 +100,6 @@ echo $form->input('Loa.currencyId', array('label' => 'Item Currency'));
 echo $form->input('accountExecutive');
 echo $form->input('accountManager');
 
-echo '<div class="controlset4">' . $multisite->checkbox('Loa') . '</div>';
 echo $form->input(
     'loaMembershipTypeId',
     array(
@@ -130,7 +133,12 @@ echo $form->input('nonRenewalReason', array('type' => 'select', 'options' => $no
 echo $form->input('luxuryLinkFee');
 echo $form->input('familyGetawayFee');
 echo $form->input('advertisingFee');
+echo $form->input('loaPaymentTermId', array(
+        'label' => 'Payment Terms',
+        'empty' => true
+    ));
 
+echo $form->input('revenueSplitPercentage');
 ?>
 
 <div class="controlset">
@@ -185,9 +193,20 @@ echo $form->input('advertisingFee');
         )
     );
     echo $form->input('loaNumberPackages', array('label' => 'Commission-Free Packages'));
-    
-	echo $form->input('payoffDate', array('empty' => true));
-    
+
+    echo $form->input('payoffDate', array('empty' => true));
+
+    echo $form->input(
+        'socialMediaSuite',
+        array(
+            'type' => 'select',
+            'options' => array($this->data['Loa']['socialMediaSuite'] => $this->data['Loa']['socialMediaSuite']),
+            'disabled' => true
+        )
+    );
+
+    echo $form->input('socialMediaNotes', array('label' => 'Social Media Notes'));
+
     echo $form->input('loaId');
     echo $form->input('clientId', array('type' => 'hidden'));
 
@@ -281,24 +300,35 @@ echo $form->input('advertisingFee');
 <script type="text/javascript">
 
     jQuery(document).ready(function () {
-        jQuery("#LoaEditForm").submit(function () {
+        var $ = jQuery,
+            loaPaymentTermsElement = $("#LoaLoaPaymentTermId"),
+            loaRevenueSplitPercentageElement = $("#LoaRevenueSplitPercentage");
 
-            if (jQuery("#LoaMembershipBalance").val() == 0 && <?=$form->data['Loa']['membershipBalance']?>>
-            0
-            )
-            {
+        if (loaPaymentTermsElement.find("option:selected").text() !== 'Revenue Split') {
+            loaRevenueSplitPercentageElement.parent().hide();
+        }
+
+        loaPaymentTermsElement.on("change", function() {
+            if ($(this).find("option:selected").text() === 'Revenue Split') {
+                loaRevenueSplitPercentageElement.parent().show();
+            } else {
+                loaRevenueSplitPercentageElement.parent().hide();
+            }
+        })
+
+        $("#LoaEditForm").submit(function () {
+            if ($("#LoaMembershipBalance").val() == 0 && <?=$form->data['Loa']['membershipBalance']?> > 0) {
                 if (confirm('are you sure you want to set the membership balance to ZERO?') == false) {
                     return false;
                 }
             }
 
-            if (jQuery("#LoaSitesLuxuryLink").attr('checked') == false && jQuery("#LoaSitesFamily").attr('checked') == false) {
+            if ($("#LoaSitesLuxuryLink").attr('checked') == false && $("#LoaSitesFamily").attr('checked') == false) {
                 alert("You must check off which site(s) this is for.");
                 return false;
             } else {
                 return true;
             }
-
         });
     });
 
