@@ -23,7 +23,14 @@ foreach ($packages as $package):
 	}
 ?>
 	<tr<?php echo $class;?>>
-        <td>
+        <td><?php
+            if (isset($_GET['preview'])) {
+                $packagePreviewChecked = in_array($package['Package']['packageId'], explode(',', $_GET['preview']));
+            } else {
+                $packagePreviewChecked = true;
+            }
+            ?>
+            <input type="checkbox" class="previewPackage" name="previewPackage" value="<?php echo $package['Package']['packageId']; ?>" <?php echo $packagePreviewChecked?'checked="checked"':''; ?> />
             <?php echo $package['Package']['packageId']; ?>
         </td>
 		<td>
@@ -56,7 +63,15 @@ foreach ($packages as $package):
 	</tr>
 <?php endforeach; ?>
 </table>
-<?= $this->renderElement('ajax_paginator')?>
+    <?=
+    $html->link(
+        '<span>Preview Checked Packages</span>',
+        "#",
+        array('target' => '_blank', 'class' => 'button previewCheckedPackages', 'style' => isset($_GET['preview'])?'color: red;':''),
+        null,
+        false
+    ); ?>
+    <?= $this->renderElement('ajax_paginator')?>
 </div>
 <?php else: ?>
 	  <div class="blankBar">
@@ -67,3 +82,26 @@ foreach ($packages as $package):
 	</div>
 
 <?php endif; ?>
+
+<script type="text/javascript">
+    jQuery(function(){
+        var $ = jQuery;
+        $('a.button.previewCheckedPackages').click(function(e){
+            var selected = [];
+            $('input[type="checkbox"]:checked.previewPackage').each(function(){
+                selected.push($(this).val());
+            });;
+            if (selected.length < 1) {
+                e.preventDefault();
+                alert('Please check at least one package checkbox');
+            } else {
+                var previewUrl = 'http://' + window.location.host.replace('-toolboxdev','-lldev');
+                previewUrl += '/luxury-hotels/preview.html';
+                previewUrl += '?preview=packages';
+                previewUrl += '&clid=<?php echo $clientId; ?>';
+                previewUrl += '&packageIds='+selected.join(',');
+                $(this).attr('href', previewUrl);
+            }
+        });
+    });
+</script>
