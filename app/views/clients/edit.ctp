@@ -1,9 +1,4 @@
-
-<?php
-
-echo $javascript->link($this->webroot.'js/jquery/maskedinput/jquery.maskedinput.js', false);
-
-?>
+<?php echo $javascript->link($this->webroot.'js/jquery/maskedinput/jquery.maskedinput.js', false); ?>
 
 <style>
     div.ageRanges {

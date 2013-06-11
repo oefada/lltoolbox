@@ -349,6 +349,7 @@ class Client extends AppModel {
 		$clientAmenityTypeRels = $this->query("
 			SELECT amenityType.amenityTypeId, amenityTypeName, clientAmenityTypeRelId, description
 			FROM amenityType LEFT JOIN clientAmenityTypeRel ON amenityType.amenityTypeId = clientAmenityTypeRel.amenityTypeId AND clientId = $clientId
+			ORDER BY amenityTypeName
 		");
 		$clientAmenityTypes = array();
 		foreach ($clientAmenityTypeRels as $key => $clientAmenityTypeRel) {
@@ -357,7 +358,7 @@ class Client extends AppModel {
 
 		// get all amenities
 		if (($amenities = Cache::read("clientAmenities")) === false) {
-			$amenities = $this->query("SELECT amenityTypeId, amenityId, amenityName FROM amenity WHERE amenityTypeId IS NOT NULL AND amenity.inactive = 0");
+			$amenities = $this->query("SELECT amenityTypeId, amenityId, amenityName FROM amenity WHERE amenityTypeId IS NOT NULL AND amenity.inactive = 0 ORDER BY amenityName ASC");
 			Cache::write("clientAmenities",$amenities);
 		}
 
