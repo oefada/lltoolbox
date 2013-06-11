@@ -105,6 +105,7 @@ class MailingsController extends AppController {
 			$this->set('rows',$rows);
 
 			$this->set('url', 'http://www.luxurylink.com');
+            $utmArr['showLeader'] = '1';
 			$utmArr['utm_medium']='news';
 			$utmArr['utm_source']='insider';
 			$utmArr['utm_campaign']='insider_'.$date_ymd.$version;
@@ -116,6 +117,7 @@ class MailingsController extends AppController {
 				$this->render('generated_fg1');
 			}elseif ($templateId=='inspiration'){
                 //There is a lot of code. The views are all doen differently. Let's continue doing it this way for now.
+                $utmArr['showLeader'] = '1';
                 $utmArr['utm_source']='inspiration';
                 $utmArr['utm_campaign']='inspiration_'.$date_ymd.$version;
                 // utm_content is set per item in the view

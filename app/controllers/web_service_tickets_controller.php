@@ -2422,6 +2422,8 @@ class WebServiceTicketsController extends WebServicesController
 					}
 				}
 
+                $m .= "showLeader=1";
+
 				$m .= "utm_source=".strtolower($append)."&";
 
 				if ($utm['medium']) {

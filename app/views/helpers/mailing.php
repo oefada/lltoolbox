@@ -349,12 +349,14 @@ class MailingHelper extends AppHelper{
 			if ($qs==''){
 				$qs='?';
 			}
+            $paramsArr['showLeader'] ='1';
 			foreach($paramsArr as $key=>$val){
 				$qs.=urlencode($key)."=".urlencode($val)."&";
 			}
 		}
 		$url.=$qs;
 		$url.='&utm_content='.$utm_content;
+        $url.='&showLeader=1';
 		if ($utm_term!=''){
 			$url.='&utm_term='.rawurlencode(strtolower($utm_term));
 		}
