@@ -394,7 +394,6 @@ class LoasController extends AppController
 
     public function edit($id = null)
     {
-
         if (!$id && empty($this->data)) {
             $this->Session->setFlash(__('Invalid Loa', true));
             $this->redirect(array('action' => 'index'));
@@ -424,7 +423,6 @@ class LoasController extends AppController
         $this->Loa->recursive = 2;
         if (empty($this->data)) {
             $this->data = $this->Loa->read(null, $id);
-            //AppModel::printR($this->data);exit;
             if ($this->data) {
                 usort($this->data['LoaItem'], array($this, 'sortLoaItemsByType'));
             }
@@ -486,6 +484,7 @@ class LoasController extends AppController
         $this->set('checkboxValuesArr', $this->getCheckboxValuesArr());
         $this->set('checkboxValuesSelectedArr', $checkboxValuesSelectedArr);
         $this->set('loaPaymentTermIds', $this->Loa->LoaPaymentTerm->find('list'));
+        $this->set('socialSuiteValues', $this->getSocialSuiteValues($client['Client']['segment']));
     }
 
     public function sortLoaItemsByType($a, $b)

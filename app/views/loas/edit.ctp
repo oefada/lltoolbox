@@ -196,11 +196,10 @@ echo $form->input('revenueSplitPercentage');
 
     echo $form->input('payoffDate', array('empty' => true));
 
-    echo $form->input(
-        'socialMediaSuite',
-        array(
+    echo $form->input('socialMediaSuite', array(
+            'label' => 'Social Media Suite',
             'type' => 'select',
-            'options' => array($this->data['Loa']['socialMediaSuite'] => $this->data['Loa']['socialMediaSuite']),
+            'options' => $socialSuiteValues,
             'disabled' => true
         )
     );
