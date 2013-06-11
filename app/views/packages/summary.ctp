@@ -66,7 +66,7 @@ if ($_SERVER['ENV'] == "staging") {
             '<span>Preview This Package</span>',
             // "{$previewHost}/luxury-hotels/preview.html?packageId={$package['Package']['packageId']}&clid={$clientId}&preview=package",
             "/clients/$clientId/packages?preview=".$package['Package']['packageId'],
-            array('target' => '_blank', 'class' => 'button'),
+            array('class' => 'button'),
             null,
             false
         ); ?>

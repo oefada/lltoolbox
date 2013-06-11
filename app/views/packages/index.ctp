@@ -1,13 +1,14 @@
 <?php
 $clientEmails = array();
-if (isset($client['ClientContact'])){
-    foreach($client['ClientContact'] as $cc){
+if (isset($client['ClientContact'])) {
+    foreach ($client['ClientContact'] as $cc) {
         if (isset($cc['clientContactTypeId']) && $cc['clientContactTypeId'] == 2 && isset($cc['name']) && isset($cc['emailAddress'])) {
-            $clientEmails[] = $cc['name'].' <'.$cc['emailAddress'].'>';
+            $clientEmails[] = $cc['name'] . ' <' . $cc['emailAddress'] . '>';
         }
     }
 }
 $clientEmails = implode('; ', $clientEmails);
+$accountManagerEmail = (isset($client['Client']['managerUsername']) && $client['Client']['managerUsername']) ? $client['Client']['managerUsername'] . '@luxurylink.com' : '';
 
 $this->pageTitle = $client['Client']['name'] . $html2->c(
         $client['Client']['clientId'],
@@ -119,7 +120,7 @@ $this->pageTitle = $client['Client']['name'] . $html2->c(
                 $class = ' class="altrow"';
             } ?>
             <tr <?= $class; ?>>
-                <td colspan="6">&nbsp;</td>
+                <td colspan="6" rowspan="4">&nbsp;</td>
                 <td>
                     <?=
                     $html->link(
@@ -133,12 +134,29 @@ $this->pageTitle = $client['Client']['name'] . $html2->c(
                         null,
                         false
                     ); ?>
+                </td>
+            </tr>
+            <tr <?= $class; ?>>
+                <td>
+                    <hr/>
+                    <br/>
+                    <input type="checkbox" class="emailWho" name="emailWho" value="accountmanager" checked="checked "/>
+                    Email AM
+                </td>
+            </tr>
+            <tr <?= $class; ?>>
+                <td>
+                    <input type="checkbox" class="emailWho" name="emailWho" value="clients"/>
+                    Email Client
+                </td>
+            </tr>
+            <tr <?= $class; ?>>
+                <td>
                     <?=
                     $html->link(
-                        '<span>Email</span>',
+                        '<span>Create Email</span>',
                         "#",
                         array(
-                            'target' => '_blank',
                             'class' => 'button emailCheckedPackages'
                         ),
                         null,
@@ -198,7 +216,22 @@ $this->pageTitle = $client['Client']['name'] . $html2->c(
                 e.preventDefault();
                 alert('Please check at least one package checkbox');
             } else {
-                var mailurl = 'mailto:' + encodeURIComponent('<?= $clientEmails; ?>');
+                var mailurl = 'mailto:';
+                var destEmails = '';
+                $('input[type="checkbox"]:checked.emailWho').each(function () {
+                    if (destEmails.length > 0) {
+                        destEmails += ';';
+                    }
+                    switch ($(this).val()) {
+                        case 'clients':
+                            destEmails += '<?= $clientEmails;?>';
+                            break;
+                        case 'accountmanager':
+                            destEmails += '<?= $accountManagerEmail; ?>';
+                            break;
+                    }
+                });
+                mailurl += encodeURIComponent(destEmails);
                 mailurl += '?subject=' + encodeURIComponent('Package Preview for ' + '<?= $client['Client']['name'];?>');
                 mailurl += '&body=' + encodeURIComponent("\n\n" + url);
                 $(this).attr('href', mailurl);
