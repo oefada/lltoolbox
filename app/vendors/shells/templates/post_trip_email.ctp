@@ -10,7 +10,7 @@
 
                             <tr>
                                 <td align="left" style="padding:0px 0px 9px 0px;font-family:Helvetica,maradival,Sans-Serif;color:rgb(68, 68, 68);font-size:12px">
-									<a name="logo" href="http://www.luxurylink.com?utm_medium=email&utm_source=post-trip&utm_campaign=post-trip" target="_blank">
+									<a name="logo" href="http://www.luxurylink.com?&showLeader=1&utm_medium=email&utm_source=post-trip&utm_campaign=post-trip" target="_blank">
 									<img border="0"  height="44" alt="Luxury Link" src="http://www.luxurylink.com/images/email/new/images/survey_03.jpg">
 									</a>
 								</td>

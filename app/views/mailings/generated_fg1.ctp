@@ -52,7 +52,7 @@
 	xt="SPCLICK" 
 	name="www_familygetaway_com_home" 
 	target="_blank" 
-	href="http://www.familygetaway.com?utm_medium=news&utm_source=fgnews&utm_campaign=<?=$campaign;?>&utm_content=nav&utm_term=nav_logo"><img 
+	href="http://www.familygetaway.com?showLeader=1&utm_medium=news&utm_source=fgnews&utm_campaign=<?=$campaign;?>&utm_content=nav&utm_term=nav_logo"><img
 		width="214" 
 		height="33" 
 		border="0" 
@@ -65,7 +65,7 @@
 <tbody>
 <tr>
 <td align="right" width="128" valign="bottom" style="padding: 0px 4px 0px 0px;"><a name="Forward" xt="SPFORWARD" target="_blank" href="%%forwardthis%%"><img width="128" height="25" border="0" alt="Send to a Friend" name="share" src="http://www.luxurylink.com/images/inspiration/header/send-friend-off-white.jpg" /></a></td>
-<td align="right" width="42" valign="bottom" style="padding: 0px;"><a name="share" xt="SPCLICKSTREAM" target="_blank" href="http://www.luxurylink.com/?utm_medium=news&utm_source=fgnews&utm_campaign=<?= $campaign; ?>&utm_content=nav&utm_term=nav_facebook"><img width="40" height="23" border="0" alt="Share" name="share" src="http://www.luxurylink.com/images/inspiration/header/share-off-white.jpg" /></a></td>
+<td align="right" width="42" valign="bottom" style="padding: 0px;"><a name="share" xt="SPCLICKSTREAM" target="_blank" href="http://www.luxurylink.com/?showLeader=1&utm_medium=news&utm_source=fgnews&utm_campaign=<?= $campaign; ?>&utm_content=nav&utm_term=nav_facebook"><img width="40" height="23" border="0" alt="Share" name="share" src="http://www.luxurylink.com/images/inspiration/header/share-off-white.jpg" /></a></td>
 <td align="right" width="19" valign="middle" style="padding: 0px;"><a xt="SPSNCLICK" xtsn="FB" name="share-facebook" target="_blank" href="%%share%%"><img width="19" height="19" border="0" alt="" name="share-facebook" src="http://www.luxurylink.com/images/inspiration/header/fb-off-white.jpg" /></a></td>
 <td align="right" valign="middle" style="padding: 0px;"><a qstparam="&text=encoded_tweet" href="%%share%%" xtsn="TW" xt="SPSNCLICK" name="Twitter_img" target="_blank"><img width="19" height="19" border="0" alt="" name="share-twitter" src="http://www.luxurylink.com/images/inspiration/header/t-off-white.jpg" /></a></td>
 </tr>
@@ -145,7 +145,7 @@
 												$shortBlurb = isset($r['client']['longDesc'])?$r['client']['longDesc']:'';
 												$clientImage = "http://www.familygetaway.com" . $r['client']['imagePath'];
 												$trackingName = $r['client']['seoName'];
-												$clientUrl = $r['client']['seoUrl'] . '?utm_medium=news&utm_source=fgnews&utm_campaign=' . $campaign . '&utm_content=properties&utm_term=' . $trackingName;
+												$clientUrl = $r['client']['seoUrl'] . '?showLeader=1&utm_medium=news&utm_source=fgnews&utm_campaign=' . $campaign . '&utm_content=properties&utm_term=' . $trackingName;
                                         ?>
 											<tr>
 												<td width="100%" valign="top" style="padding: 5px 0px 0px 10px;">

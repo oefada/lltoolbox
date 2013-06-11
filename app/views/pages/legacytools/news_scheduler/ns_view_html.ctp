@@ -15,7 +15,7 @@ $smarty->force_compile = true;
 $templateId = ($_GET['temp']) ? $_GET['temp'] : 'c';
 $mailing_schedule_id = $_GET['mailing_schedule_id'];
 // google tracking
-$utm_qs = ($templateId == 'b') ? 'utm_source=email&utm_medium=news&utm_content=monday' : 'utm_source=email&utm_medium=news&utm_content=thursday';
+$utm_qs = ($templateId == 'b') ? 'showLeader=1&utm_source=email&utm_medium=news&utm_content=monday' : 'showLeader=1&utm_source=email&utm_medium=news&utm_content=thursday';
 $smarty->assign('utm_qs', $utm_qs);
 
 $result = mysql_query('SELECT  s.mailing_schedule_id, s.mailing_type_id, s.mailing_timestamp, s.mailing_subject, n.mailing_name, mailing_type.mailing_type_description

@@ -17,7 +17,7 @@ class MailingHelper extends AppHelper{
 			$this->utmArr=$this->viewVars['utmArr'];
 			$this->url=$this->viewVars['url'];
 
-			$this->utm_qs='?utm_medium='.$this->utmArr['utm_medium'];
+			$this->utm_qs='?showLeader=1&utm_medium='.$this->utmArr['utm_medium'];
 			$this->utm_qs.='&utm_source='.$this->utmArr['utm_source'];
 			$this->utm_qs.='&utm_campaign='.$this->utmArr['utm_campaign'];
 		}

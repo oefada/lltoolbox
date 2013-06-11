@@ -8,7 +8,7 @@
 	$arr=$row['client'];
 	$offers=$row['client']['offers'];
 	$seoUrl=$arr['seoUrl'];
-	$seoUrl.="?utm_medium=news&utm_source=inspiration";
+	$seoUrl.="?showLeader=1&utm_medium=news&utm_source=inspiration";
 	$seoUrl.="&utm_campaign=".$mailing->utmArr['utm_campaign'];
 	$seoUrl.="&utm_content=properties";
 	$seoUrl.="&utm_term=".$arr['seoName'];
