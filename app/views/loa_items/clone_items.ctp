@@ -30,6 +30,7 @@
             </td>
         </tr>
     </table>
+    <div><a href="#checkAllCloneItems" onclick="jQuery('table.clone-items.loaItems').find('input[type=&quot;checkbox&quot;]').prop('checked',true);return false;">Check All</a></div>
     <table class="related loaItems clone-items">
         <tr>
             <th>Clone Item</th>
