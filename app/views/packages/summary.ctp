@@ -650,3 +650,20 @@ $linkTitle = 'Edit Publishing';
     <iframe id="dynamicForm" width="100%" height="100%" marginWidth="0" marginHeight="0" frameBorder="0"
             scrolling="auto"></iframe>
 </div>
+
+<div>
+    <a href="#top">Back to Top</a>
+</div>
+<script type="text/javascript">
+    jQuery(function(){
+        var $ = jQuery;
+        $('a[href="#top"]').on('click', function(e){
+            e.preventDefault();
+            $('html, body').animate({
+                scrollTop: 0
+            }, 200);
+        });
+    });
+</script>
+
+<div>&nbsp;</div>
