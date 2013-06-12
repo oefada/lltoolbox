@@ -80,8 +80,10 @@ class Processor
         $this->response_data = $this->module->ProcessResponse($response);
 
         // If AVS only was ran, re-run as a sale
-        if (isset($this->response_data['avs_only']) && $this->response_data['avs_only'] == true && $this->ChargeSuccess(
-            ) === true
+        if (
+            isset($this->response_data['avs_only'])
+            && $this->response_data['avs_only'] == true
+            && $this->ChargeSuccess() === true
         ) {
             $this->post_data = array_merge($this->post_data, $this->module->getPostSale());
             $this->SubmitPost();
