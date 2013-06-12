@@ -2051,8 +2051,6 @@ class WebServiceTicketsController extends WebServicesController
                     $emailReplyTo = "auction@$siteEmail";
                     break;
                 }
-            case 15:
-            case 16:
             case 19:
                 if ($siteId == 2 && $ppvNoticeTypeId == 19) {
                     include('../vendors/email_msgs/notifications/old/19_auction_winner_declined_expired.html');
