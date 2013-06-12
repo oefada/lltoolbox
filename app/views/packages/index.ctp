@@ -199,16 +199,13 @@ $this->pageTitle = $client['Client']['name'] . $html2->c(
 <script type="text/javascript">
     jQuery(function () {
         var $ = jQuery;
-        var getLuxuryHostForEnv = function (currentHostname) {
-            var newHostname = currentHostname;
-            newHostname = newHostname.replace('toolboxdev', 'lldev');
-            newHostname = newHostname.replace('-toolbox', '-luxurylink');
-            newHostname = newHostname.replace('toolbox', 'www');
-            return newHostname;
-        }
         /*
-        test("getLuxuryHostForEnv test", function () {
-            a = {
+        // http://jsfiddle.net/mK6Um/5/embedded/result/
+        var getLuxuryHostForEnv = function (currentHostname) {
+            return currentHostname.replace('toolboxdev', 'lldev').replace('-toolbox', '-luxurylink').replace('toolbox', 'www');
+        }
+        test("hello test", function () {
+            var allTests = {
                 "toolbox": "www",
                 "toolbox.luxurylink.com": "www.luxurylink.com",
                 "sknight-toolboxdev.luxurylink.com": "sknight-lldev.luxurylink.com",
@@ -216,10 +213,10 @@ $this->pageTitle = $client['Client']['name'] . $html2->c(
                 "stage-toolbox.luxurylink.com": "stage-luxurylink.luxurylink.com",
                 "stage-toolbox": "stage-luxurylink"
             };
-            for (x in a) {
-                if (a.hasOwnProperty(x)) {
+            for (var x in allTests) {
+                if (allTests.hasOwnProperty(x)) {
                     var output = getLuxuryHostForEnv(x);
-                    ok(a[x] === output, "Rewriting: " + x + ": Expected " + a[x] + ", got " + output);
+                    ok(allTests[x] === output, "Rewriting: " + x + ": Expected " + allTests[x] + ", got " + output);
                 }
             }
         });
@@ -232,7 +229,7 @@ $this->pageTitle = $client['Client']['name'] . $html2->c(
             if (selected.length < 1) {
                 return false;
             }
-            var previewUrl = 'http://' + getLuxuryHostForEnv(window.location.host);
+            var previewUrl = 'http://' + window.location.host.replace('toolboxdev', 'lldev').replace('-toolbox', '-luxurylink').replace('toolbox', 'www');
             previewUrl += '/luxury-hotels/preview.html';
             previewUrl += '?preview=package';
             previewUrl += '&clid=<?php echo $clientId; ?>';
