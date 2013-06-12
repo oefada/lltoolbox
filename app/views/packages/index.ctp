@@ -60,7 +60,7 @@ $this->pageTitle = $client['Client']['name'] . $html2->c(
                 <tr<?php echo $class; ?>>
                     <td><?php echo $package['Package']['packageId']; ?></td>
                     <td>
-                        <?php echo $package['ClientLoaPackageRel']['loaId']; ?>
+                        <?php echo $package['ClientLoaPackageRel']['loaId'] ? $html->link($package['ClientLoaPackageRel']['loaId'], array('controller'=>'loas', 'action'=>'view', $package['ClientLoaPackageRel']['loaId'])) : '&#160;'; ?>
                     </td>
                     <td>
                         <?php
