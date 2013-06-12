@@ -2,31 +2,6 @@
 $this->layout = 'default_jquery';
 //debug($package);
 //die();
-?>
-<script type="text/javascript">
-    var clientId = <?php echo $clientId; ?>;
-    var packageId = <?php echo $package['Package']['packageId']; ?>;
-</script>
-<link href="/css/package.css" type="text/css" rel="stylesheet"/>
-<script src="/js/package.js" type="text/javascript"></script>
-
-
-
-<?php foreach ($package['ClientLoaPackageRel'] as $c) {
-    echo '<h2>' . $c['Client']['name'] . ' (' . $c['ClientLoaPackageRel']['clientId'] . ')</h2>';
-    if (count($package['ClientLoaPackageRel']) > 1) {
-        echo '<strong>Client LOA:</strong> <a href="/loas/edit/' . $c['ClientLoaPackageRel']['loaId'] . '" target="_blank">' . $c['ClientLoaPackageRel']['loaId'] . '</a><br />';
-        echo '<strong>Percent of Revenue:</strong> ' . $c['ClientLoaPackageRel']['percentOfRevenue'] . '<br /><br />';
-    }
-}?>
-<br/><br/>
-<h2>Summary for Package: <?php echo $package['Package']['packageName']; ?></h2>
-<div class="summary-navigation">Jump to: <a href="#packageForm">Package Info</a> | <a href="#roomNightsForm">Room
-        Nights</a> | <a href="#edit_blackout">Validity</a> | <a href="#inclusionsForm">LOA Items</a> | <a
-        href="#form-low-price-guarantees">Low Price Guarantees</a> | <a href="#form-price-points">Price Points</a> | <a
-        href="#edit_publishing">Publishing</a></div>
-
-<?php
 
 // get environment and link for preview
 if ($_SERVER['ENV'] == "staging") {
@@ -55,21 +30,55 @@ if ($_SERVER['ENV'] == "staging") {
         }
     }
 }
-
 ?>
+<script type="text/javascript">
+    var clientId = <?php echo $clientId; ?>;
+    var packageId = <?php echo $package['Package']['packageId']; ?>;
+</script>
+<link href="/css/package.css" type="text/css" rel="stylesheet"/>
+<script src="/js/package.js" type="text/javascript"></script>
+
+
+
+<?php foreach ($package['ClientLoaPackageRel'] as $c) {
+    echo '<h2>' . $c['Client']['name'] . ' (' . $c['ClientLoaPackageRel']['clientId'] . ')</h2>';
+    if (count($package['ClientLoaPackageRel']) > 1) {
+        echo '<strong>Client LOA:</strong> <a href="/loas/edit/' . $c['ClientLoaPackageRel']['loaId'] . '" target="_blank">' . $c['ClientLoaPackageRel']['loaId'] . '</a><br />';
+        echo '<strong>Percent of Revenue:</strong> ' . $c['ClientLoaPackageRel']['percentOfRevenue'] . '<br /><br />';
+    }
+}?>
+<br/><br/>
+<h2>Summary for Package: <?php echo $package['Package']['packageName']; ?></h2>
+<div class="summary-navigation">Jump to: <a href="#packageForm">Package Info</a> | <a href="#roomNightsForm">Room
+        Nights</a> | <a href="#edit_blackout">Validity</a> | <a href="#inclusionsForm">LOA Items</a> | <a
+        href="#form-low-price-guarantees">Low Price Guarantees</a> | <a href="#form-price-points">Price Points</a> | <a
+        href="#edit_publishing">Publishing</a></div>
 
 <!-- SOME BUTTONS ====================================================================-->
 <div class="section-header">
     <div style="text-align:right;position:absolute;right:0px;">
-        <?=
-        $html->link(
-            '<span>Preview This Package</span>',
-            // "{$previewHost}/luxury-hotels/preview.html?packageId={$package['Package']['packageId']}&clid={$clientId}&preview=package",
-            "/clients/$clientId/packages?preview=".$package['Package']['packageId'],
-            array('class' => 'button'),
-            null,
-            false
-        ); ?>
+        <?php
+        switch (trim(strip_tags($multisite->indexDisplay('Package', $package['Package']['sites'])))) {
+            case 'Luxury Link':
+                echo $html->link(
+                    '<span>Preview This Package</span>',
+                    "/clients/$clientId/packages?preview=" . $package['Package']['packageId'],
+                    array('class' => 'button'),
+                    null,
+                    false
+                );
+                break;
+            case 'Family':
+                echo $html->link(
+                    '<span>Preview on Family</span>',
+                    "{$previewHost}/luxury-hotels/preview.html?packageId={$package['Package']['packageId']}&clid={$clientId}&preview=package",
+                    array('class' => 'button', 'target' => '_preview'),
+                    null,
+                    false
+                );
+                break;
+        }
+        ?>
         <?=
         $html->link(
             '<span>Export</span>',
@@ -655,9 +664,9 @@ $linkTitle = 'Edit Publishing';
     <a href="#top">Back to Top</a>
 </div>
 <script type="text/javascript">
-    jQuery(function(){
+    jQuery(function () {
         var $ = jQuery;
-        $('a[href="#top"]').on('click', function(e){
+        $('a[href="#top"]').on('click', function (e) {
             e.preventDefault();
             $('html, body').animate({
                 scrollTop: 0

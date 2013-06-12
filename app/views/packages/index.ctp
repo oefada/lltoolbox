@@ -100,6 +100,7 @@ $this->pageTitle = $client['Client']['name'] . $html2->c(
                     </td>
                     <td>
                         <?php
+                        $hideCheckbox = false;
                         $pppEnd = isset($package['Package']['lastPricePointValidityEnd']) ? $package['Package']['lastPricePointValidityEnd'] : '';
                         if (isset($_GET['preview'])) {
                             $packagePreviewChecked = in_array(
@@ -109,9 +110,21 @@ $this->pageTitle = $client['Client']['name'] . $html2->c(
                         } else {
                             $packagePreviewChecked = date('Y-m-d') <= $pppEnd;
                         }
+                        if ($package['Package']['siteId'] != 1) {
+                            // LL ONLY!
+                            $hideCheckbox = true;
+                            $packagePreviewChecked = false;
+                        }
                         ?>
-                        <input type="checkbox" class="previewPackage" name="previewPackage"
-                               value="<?php echo $package['Package']['packageId']; ?>" <?php echo $packagePreviewChecked ? 'checked="checked"' : ''; ?> />
+                        <input
+                            type="checkbox"
+                            class="previewPackage"
+                            name="previewPackage"
+                            value="<?php echo $package['Package']['packageId']; ?>"
+                            <?php echo $packagePreviewChecked ? 'checked="checked"' : ''; ?>
+                            <?= $hideCheckbox ? 'disabled="disabled"' : ''; ?>
+                            style="<?= $hideCheckbox ? 'opacity: 0.0' : ''; ?>"
+                            />
                         <span <?php echo !$packagePreviewChecked ? 'style="opacity:0.5;"' : ''; ?>><?php echo $pppEnd; ?></span>
                     </td>
                 </tr>
@@ -186,6 +199,31 @@ $this->pageTitle = $client['Client']['name'] . $html2->c(
 <script type="text/javascript">
     jQuery(function () {
         var $ = jQuery;
+        var getLuxuryHostForEnv = function (currentHostname) {
+            var newHostname = currentHostname;
+            newHostname = newHostname.replace('toolboxdev', 'lldev');
+            newHostname = newHostname.replace('-toolbox', '-luxurylink');
+            newHostname = newHostname.replace('toolbox', 'www');
+            return newHostname;
+        }
+        /*
+        test("getLuxuryHostForEnv test", function () {
+            a = {
+                "toolbox": "www",
+                "toolbox.luxurylink.com": "www.luxurylink.com",
+                "sknight-toolboxdev.luxurylink.com": "sknight-lldev.luxurylink.com",
+                "sknight-toolboxdev": "sknight-lldev",
+                "stage-toolbox.luxurylink.com": "stage-luxurylink.luxurylink.com",
+                "stage-toolbox": "stage-luxurylink"
+            };
+            for (x in a) {
+                if (a.hasOwnProperty(x)) {
+                    var output = getLuxuryHostForEnv(x);
+                    ok(a[x] === output, "Rewriting: " + x + ": Expected " + a[x] + ", got " + output);
+                }
+            }
+        });
+        */
         var getCheckedPreviewUrl = function () {
             var selected = [];
             $('input[type="checkbox"]:checked.previewPackage').each(function () {
@@ -194,7 +232,7 @@ $this->pageTitle = $client['Client']['name'] . $html2->c(
             if (selected.length < 1) {
                 return false;
             }
-            var previewUrl = 'http://' + window.location.host.replace('-toolboxdev', '-lldev');
+            var previewUrl = 'http://' + getLuxuryHostForEnv(window.location.host);
             previewUrl += '/luxury-hotels/preview.html';
             previewUrl += '?preview=package';
             previewUrl += '&clid=<?php echo $clientId; ?>';
