@@ -62,7 +62,7 @@
 										</tr>
  										<tr>
                                             <td align="left" style="padding:25px 0px 0px 0px;line-height:19px;font-family:Helvetica,maradival,Sans-Serif;color:rgb(68, 68, 68);font-size:14px">
-											P.S. Introduce your friends to the extraordinary vacation experiences on Luxury Link! We will welcome them with a $50 credit for their first purchase, and thank you for the introduction with a $50 credit for each friend that books with us. <a href="http://www.luxurylink.com/refer-friend/?utm_source=ll&utm_medium=xa&utm_campaign=ll_posttrip" target="_blank" style="color: #008ec5;text-decoration: none;">Refer your friends now</a>.
+											P.S. Introduce your friends to the extraordinary vacation experiences on Luxury Link! We will welcome them with a $50 credit for their first purchase, and thank you for the introduction with a $50 credit for each friend that books with us. <a href="http://www.luxurylink.com/refer-friend/?utm_source=ll&utm_medium=xa&utm_campaign=ll_posttrip&showLeader=1" target="_blank" style="color: #008ec5;text-decoration: none;">Refer your friends now</a>.
 											</td>
                                         </tr>
                                     </tbody>
@@ -79,7 +79,7 @@
                         <tbody>
                             <tr>
                                 <td style="text-align:center;line-height:15px;font-family:Helvetica,maradival,Sans-Serif;color: #6e7072;font-size:10px;padding:20px 0px 20px 0px;">
-                                <a name="footer" href="http://www.luxurylink.com/?utm_source=ll&utm_medium=xa&utm_campaign=ll_posttrip" target="_blank" style="color: #008ec5;text-decoration: none;">Luxury Link</a><br>
+                                <a name="footer" href="http://www.luxurylink.com/?utm_source=ll&utm_medium=xa&utm_campaign=ll_posttrip&showLeader=1" target="_blank" style="color: #008ec5;text-decoration: none;">Luxury Link</a><br>
                                     %%ADDRESS_LL%%<br>
                                 For information or assistance, call 1 (888) 297-3299 or email
                                 <a name="footer_email" href="mailto:concierge@luxurylink.com" target="_blank" style="color: #008ec5;text-decoration: none;">concierge@luxurylink.com</a>.  |  <a name="footer_privacy" href="http://www.luxurylink.com/about/index.php/privacy-policy/" target="_blank" style="color: #008ec5;text-decoration: none;">Privacy Policy</a></td>

@@ -2422,7 +2422,7 @@ class WebServiceTicketsController extends WebServicesController
 					}
 				}
 
-                $m .= "showLeader=1";
+                $m .= "showLeader=1&";
 
 				$m .= "utm_source=".strtolower($append)."&";
 
