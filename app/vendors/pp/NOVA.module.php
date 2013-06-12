@@ -1,12 +1,12 @@
 <?php
 class NOVA
 {
-    var $url = 'https://www.myvirtualmerchant.com/VirtualMerchant/process.do';
-    var $map_params;
-    var $post_data;
+    public $url = 'https://www.myvirtualmerchant.com/VirtualMerchant/process.do';
+    public $map_params;
+    public $post_data;
     private $valid_avs_codes = array("F", "D", "M", "P", "W", "X", "Y", "Z");
 
-    function NOVA($test_param = false)
+    public function NOVA($test_param = false)
     {
         $this->post_data = array();
         $this->post_data['ssl_merchant_id'] = '506345';
@@ -34,7 +34,7 @@ class NOVA
         $this->map_params['map_card_num'] = 'ssl_card_number'; // 19
     }
 
-    function ProcessResponse($raw_response)
+    public function ProcessResponse($raw_response)
     {
         $processed = array();
         $tmp_array = explode("\n", strval($raw_response));
@@ -69,7 +69,7 @@ class NOVA
         return false;
     }
 
-    function GetMappedResponse($response)
+    public function GetMappedResponse($response)
     {
         $paymentDetail = array();
 
@@ -87,7 +87,7 @@ class NOVA
         return $paymentDetail;
     }
 
-    function IsValidResponse($response, $valid_param)
+    public function IsValidResponse($response, $valid_param)
     {
         if (isset($response['ssl_invoice_number'])) {
             if (trim($response['ssl_invoice_number']) == trim($valid_param)) {
@@ -98,7 +98,7 @@ class NOVA
         return false;
     }
 
-    function GetResponseTxt($response)
+    public function GetResponseTxt($response)
     {
         /*
         if (isset($response['ssl_avs_response']) && !in_array($response['ssl_avs_response'],$this->valid_avs_codes)) {
