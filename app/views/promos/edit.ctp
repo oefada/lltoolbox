@@ -173,6 +173,7 @@ if (isset($formErrors)) {
 		<?= $form->input('promoId', array('type'=>'hidden')); ?>
 		<?= $form->input('promoName'); ?>
 		<?= $form->input('siteId', array('options'=> array('0'=>'All', '1'=>'LuxuryLink', '2'=>'Family'))); ?>
+		<?= $form->input('tldId', array('label'=>'Locale', 'options'=> array('1'=>'Main Site', '2'=>'UK Site'))); ?>
 		<?= $form->input('promoCategoryTypeId', array('label'=>'Category', 'options'=> $promoCategoryTypeIds, 'empty'=> '-- Select Category')); ?>
                 
                 <? if ($isNewPromo) { ?>

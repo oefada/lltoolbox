@@ -19,6 +19,10 @@
 					    <td><?= $form->input('s_site_id', array('label'=>false, 'div'=>false, 'options'=> array('0'=>'--', '1'=>'LuxuryLink', '2'=>'Family'))); ?></td>
 					</tr>
 					<tr>
+					    <td class="leftFilterLabel">Locale</td>
+					    <td><?= $form->input('s_tld_id', array('label'=>false, 'div'=>false, 'options'=> array('0'=>'--', '1'=>'Main Site', '2'=>'UK Site'))); ?></td>
+					</tr>
+					<tr>
 					    <td class="leftFilterLabel">Destination</td>
 					    <td><?= $form->input('s_destination_id', array('label'=>false, 'div'=>false, 'options'=> $destinations, 'empty'=> '--')); ?></td>
 					</tr>
@@ -92,6 +96,7 @@
    	<th>Start Date</th>
    	<th>End Date</th>
    	<th>Site</th>
+   	<th>Locale</th>
    	<th>Tickets</th>
    	<th>Revenue</th>
 	<th class="actions"><?php __('Actions');?></th>
@@ -124,6 +129,7 @@ foreach ($promos as $promo):
 		<td><?php echo $promo['Promo']['startDate']; ?></td>
 		<td><?php echo $promo['Promo']['endDate']; ?></td>
 		<td><?php echo $promo['Promo']['siteLabel']; ?></td>
+		<td><?php echo $promo['Promo']['tldLabel']; ?></td>
 		<td align="right"><?php echo $promo['Reporting']['ticketCount']; ?></td>
 		<td align="right">$<?php echo number_format($promo['Reporting']['grossRevenue']); ?></td>
 		<td class="actions">

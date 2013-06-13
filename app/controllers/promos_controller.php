@@ -227,7 +227,7 @@ class PromosController extends AppController {
 
         $csv_export = (isset($this->params['form']['s_submit_csv'])) ? true : false;
 
-		$this->paginate = array('fields'=>array('Promo.promoId', 'Promo.promoName', 'PromoCode.promoCode', 'Promo.percentOff', 'Promo.amountOff', 'Promo.minPurchaseAmount', 'Promo.startDate', 'Promo.endDate', 'Promo.siteId', 'PromoCategoryType.promoCategoryTypeName', 'count(*) AS numPromoCode'),
+		$this->paginate = array('fields'=>array('Promo.promoId', 'Promo.promoName', 'PromoCode.promoCode', 'Promo.percentOff', 'Promo.amountOff', 'Promo.minPurchaseAmount', 'Promo.startDate', 'Promo.endDate', 'Promo.siteId', 'Promo.tldId', 'PromoCategoryType.promoCategoryTypeName', 'count(*) AS numPromoCode'),
 								'order' => array('Promo.promoName' => 'asc'),
 								'limit' => 50,
 								'joins' => array(
@@ -271,6 +271,10 @@ class PromosController extends AppController {
 
 			if ($this->data['s_site_id'] > 0) {
 				$this->paginate['conditions']['Promo.siteId'] = $this->data['s_site_id'];
+			}
+
+			if ($this->data['s_tld_id'] > 0) {
+				$this->paginate['conditions']['Promo.tldId'] = $this->data['s_tld_id'];
 			}
 
 			if ($this->data['s_start_date'] != '') {
@@ -356,7 +360,16 @@ class PromosController extends AppController {
 			} elseif ($promoSite == 0) {
 				$promos[$key]['Promo']['siteLabel'] = 'All';
 			}
-
+			
+			$promoTld = intval($val['Promo']['tldId']);
+			if ($promoTld == 1) {
+				$promos[$key]['Promo']['tldLabel'] = 'US';
+			} elseif ($promoTld == 2) {
+				$promos[$key]['Promo']['tldLabel'] = 'UK';
+			} else {
+				$promos[$key]['Promo']['tldLabel'] = '';
+			}
+			
 			if (strtotime($val['Promo']['startDate']) < time() && strtotime($val['Promo']['endDate']) > time()) {
 				$promos[$key]['Promo']['isActive'] = 'Y';
 			} else {

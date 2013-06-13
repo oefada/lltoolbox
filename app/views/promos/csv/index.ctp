@@ -1,5 +1,5 @@
 <?php
-echo "Internal Promotion Name,Category,Promotion Code,Live,% Off,$ Off,Min $,Start Date,End Date,Site,Tickets,Revenue\n";
+echo "Internal Promotion Name,Category,Promotion Code,Live,% Off,$ Off,Min $,Start Date,End Date,Site,Locale,Tickets,Revenue\n";
 foreach ($promos as $promo):
 
 	$promo_code = ($promo[0]['numPromoCode'] > 1) ? $promo[0]['numPromoCode'] . ' unique codes' : $promo['PromoCode']['promoCode'];
@@ -15,6 +15,7 @@ foreach ($promos as $promo):
 	$promo['Promo']['startDate'],
 	$promo['Promo']['endDate'],
 	$promo['Promo']['siteLabel'],
+	$promo['Promo']['tldLabel'],	
 	$promo['Reporting']['ticketCount'],
 	$promo['Reporting']['grossRevenue']
 	); 
