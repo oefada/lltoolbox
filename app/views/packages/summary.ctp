@@ -575,6 +575,7 @@ if (empty($pricePoints)) {
             <th>Guarantee %</th>
             <th>Flex Per Night Price</th>
             <th>Max Num Sales</th>
+            <th>Preview Price Point</th>
             <th>Edit</th>
             <th>Delete</th>
         </tr>
@@ -597,7 +598,10 @@ if (empty($pricePoints)) {
 									<td>{$pricePoint['PricePoint']['pricePerExtraNight']}</td>
 									<td>{$pricePoint['PricePoint']['maxNumSales']}</td>";
 
-            echo "<td><div style='float:left;' qs=\"pricePointId={$ppid}&otid=$otid\" class=\"edit-link\" name=\"$linkName\" title=\"$linkTitle\">Edit</div></td>";
+					echo "<td><a href='{$previewHost}/luxury-hotels/preview.html?";
+					// not 'oid' is not offerId, it is set to pricePointId
+					echo "oid=$ppid&clid={$clientId}&ppid={$ppid}&preview=pricepoint&toolbox-display-package-id-{$pricePoint['Package']['packageId']}' target='_blank'>Preview $ppid</a></td>
+									<td><div style='float:left;' qs=\"pricePointId={$ppid}&otid=$otid\" class=\"edit-link\" name=\"$linkName\" title=\"$linkTitle\">Edit</div></td>";
             echo "<td>";
             echo $html->link(
                 'Delete',
