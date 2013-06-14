@@ -351,7 +351,12 @@ class WebServiceTicketsController extends WebServicesController
         return true;
     }
 
-    // see processNewTicket() - it calls this method
+    /**
+     * see processNewTicket() - it calls this method
+     *
+     * @param $data
+     * @return bool
+     */
     private function processTicket($data)
     {
         // TODO optimize and implement error handler class
@@ -493,7 +498,6 @@ class WebServiceTicketsController extends WebServicesController
             );
             $smid = $smid[0]['schedulingMasterTrackRel']['trackId'];
             if (!empty($smid)) {
-// Why?
                 $this->addTrackPending($smid, $data['billingPrice']);
             }
 
@@ -542,22 +546,11 @@ class WebServiceTicketsController extends WebServicesController
                     $promo_ticket_rel['userId'] = $data['userId'];
                     $promo_ticket_rel['creditBlockedFlag'] = $promoOfferTracking['promoOfferTracking']['creditBlockedFlag'];
                     $this->PromoTicketRel->create();
-                    if ($this->PromoTicketRel->save($promo_ticket_rel)) {
-
-                        // 08/01/12 - no more old RAF
-                        // $referrerUserId = $this->Promo->checkInsertRaf($promo_ticket_rel['promoCodeId']);
-                        // if ($referrerUserId !== false && is_numeric($referrerUserId)) {
-                        //	$ticket_refer_friend = array();
-                        //	$ticket_refer_friend['ticketId'] = $ticketId;
-                        //	$ticket_refer_friend['referrerUserId'] = $referrerUserId;
-                        //	$ticket_refer_friend['datetime'] = date('Y:m:d H:i:s', strtotime('now'));
-                        //	$this->TicketReferFriend->save($ticket_refer_friend);
-                        // }
-                    }
+                    $this->PromoTicketRel->save($promo_ticket_rel);
                 }
             }
 
-            // additional data for ticket 4002			
+            // additional data for ticket 4002
             $ppInfoLive = $this->Offer->query(
                 "SELECT * FROM pricePoint WHERE pricePointId = " . intval($offerLive['pricePointId'])
             );
@@ -675,16 +668,17 @@ class WebServiceTicketsController extends WebServicesController
                 $data_post = array();
                 $data_post['userId'] = $data['userId'];
                 $data_post['ticketId'] = $ticketId;
-                $data_post['paymentProcessorId'] = 1;
-                if ($data['siteId'] == 2) {
-                    $data_post['paymentProcessorId'] = 3; // FAMILY site uses PAYPAL
-                }
+                $data_post['paymentProcessorId'] = $this->getProcessorIdBySiteId($data['siteId']);
                 $data_post['paymentAmount'] = $data['billingPrice'];
                 $data_post['initials'] = 'AUTOCHARGE';
                 $data_post['autoCharge'] = 1;
                 $data_post['saveUps'] = 0;
-                $data_post['zAuthHashKey'] = md5(
-                    'L33T_KEY_LL' . $data_post['userId'] . $data_post['ticketId'] . $data_post['paymentProcessorId'] . $data_post['paymentAmount'] . $data_post['initials']
+                $data_post['zAuthHashKey'] = $this->getAuthKeyHash(
+                    $data_post['userId'],
+                    $data_post['ticketId'],
+                    $data_post['paymentProcessorId'],
+                    $data_post['paymentAmount'],
+                    $data_post['initials']
                 );
                 $data_post['userPaymentSettingId'] = $user_payment_setting['UserPaymentSetting']['userPaymentSettingId'];
 
@@ -703,22 +697,9 @@ class WebServiceTicketsController extends WebServicesController
 
             // send out winner notifications
             // located in ../vendors/email_msgs in toolbox, not on specific site
-            // -------------------------------------------------------------------------------
             $this->ppv(json_encode($ppv_settings));
 
-            // send out client and winner ppv if charge is successfully charged
-            // -------------------------------------------------------------------------------
-            /*
-			if ($autoSendClientWinnerPpv) {
-				$ppv_settings['ppvNoticeTypeId'] = 4;    // client PPV
-				$this->ppv(json_encode($ppv_settings));
-			}
-			*/
-
-            // finally, return back
-            // -------------------------------------------------------------------------------
             return true;
-
         } else {
             $this->errorResponse = 1105;
             $this->errorMsg = "Detected re-processing of ticket.";
@@ -726,6 +707,32 @@ class WebServiceTicketsController extends WebServicesController
         }
     }
 
+    /**
+     * @param $siteId
+     * @return int
+     */
+    private function getProcessorIdBySiteId($siteId)
+    {
+        $processorId = 1;
+        switch($siteId) {
+            case 1:
+                // Luxury Link / NOVA
+                $processorId = 1;
+                break;
+            case 2:
+                // Family Getaway / Paypal
+                $processorId = 3;
+                break;
+        }
+
+        return $processorId;
+    }
+
+    private function getAuthKeyHash($userId, $ticketId, $paymentProcessorId, $paymentAmount, $initials)
+    {
+        $secret = 'L33T_KEY_LL';
+        return md5($secret . $userId . $ticketId . $paymentProcessorId . $paymentAmount . $initials);
+    }
     public function autoSendFromCheckout($in0)
     {
         // from the frontend checkout, only ticketId comes in.  fill the rest for security
@@ -974,18 +981,19 @@ class WebServiceTicketsController extends WebServicesController
             $data = array();
             $data['userId'] = $userId;
             $data['ticketId'] = $ticketId;
-            $data['paymentProcessorId'] = 1;
-            if ($ticketData['siteId'] == 2) {
-                // for family, use PAYPAL processor
-                $data['paymentProcessorId'] = 3;
-            }
+            $data['paymentProcessorId'] = $this->getProcessorIdBySiteId($ticketData['siteId']);
             $data['paymentAmount'] = $ticketData['billingPrice'];
             $data['initials'] = 'FPCARDCHARGE';
-            $data['autoCharge'] = 1; //if system charge set 1
+            $data['autoCharge'] = 1;
             $data['saveUps'] = 0;
-            $data['zAuthHashKey'] = md5(
-                'L33T_KEY_LL' . $data['userId'] . $data['ticketId'] . $data['paymentProcessorId'] . $data['paymentAmount'] . $data['initials']
+            $data['zAuthHashKey'] = $this->getAuthKeyHash(
+                $data['userId'],
+                $data['ticketId'],
+                $data['paymentProcessorId'],
+                $data['paymentAmount'],
+                $data['initials']
             );
+
             $data['userPaymentSettingId'] = $ticketData['userPaymentSettingId'];
 
             $data_json_encoded = json_encode($data);
@@ -2940,14 +2948,18 @@ class WebServiceTicketsController extends WebServicesController
 
         // also check the hash for more security
         // ---------------------------------------------------------------------------
-        $hashCheck = md5(
-            'L33T_KEY_LL' . $data['userId'] . $data['ticketId'] . $data['paymentProcessorId'] . $data['paymentAmount'] . $data['initials']
+        $hashCheck = $this->getAuthKeyHash(
+            $data['userId'],
+            $data['ticketId'],
+            $data['paymentProcessorId'],
+            $data['paymentAmount'],
+            $data['initials']
         );
+
         if (trim($hashCheck) !== trim($data['zAuthHashKey'])) {
             $this->errorResponse = 109;
             return $this->returnError(__METHOD__);
         }
-
         unset($hashCheck);
 
         // and even some more error checking.
@@ -3093,7 +3105,6 @@ class WebServiceTicketsController extends WebServicesController
             $this->logError(array("PAYMENT INFO", $ticket));
 
             // Allows 4111111111111111 on Hotel Testerosa on LIVE/DEV
-
             $test_card = false;
 
             if ($userPaymentSettingPost['UserPaymentSetting']['ccNumber'] == "4111111111111111" || $isDev === true) {
@@ -3215,7 +3226,6 @@ class WebServiceTicketsController extends WebServicesController
         $tmpResult = $this->PaymentDetail->save($paymentDetail);
 
         if (!$tmpResult) {
-            //if (!$this->PaymentDetail->save($paymentDetail)) {
             @mail(
                 'devmail@luxurylink.com',
                 'WEB SERVICE ERROR: PAYMENT PROCESSED BUT NOT SAVED',
