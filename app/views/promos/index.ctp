@@ -19,7 +19,7 @@
 					    <td><?= $form->input('s_site_id', array('label'=>false, 'div'=>false, 'options'=> array('0'=>'--', '1'=>'LuxuryLink', '2'=>'Family'))); ?></td>
 					</tr>
 					<tr>
-					    <td class="leftFilterLabel">Locale</td>
+					    <td class="leftFilterLabel">TLD</td>
 					    <td><?= $form->input('s_tld_id', array('label'=>false, 'div'=>false, 'options'=> array('0'=>'--', '1'=>'Main Site', '2'=>'UK Site'))); ?></td>
 					</tr>
 					<tr>
@@ -96,7 +96,7 @@
    	<th>Start Date</th>
    	<th>End Date</th>
    	<th>Site</th>
-   	<th>Locale</th>
+   	<th>TLD</th>
    	<th>Tickets</th>
    	<th>Revenue</th>
 	<th class="actions"><?php __('Actions');?></th>
