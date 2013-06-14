@@ -1,8 +1,6 @@
 <?php
 Configure::write('debug', 0);
 App::import('Vendor', 'nusoap/web_services_controller');
-
-// Need the phone numbers set in the base class
 App::import("Vendor", "Base", array('file' => "appshared" . DS . "framework" . DS . "Base.php"));
 
 require_once(APP . "/vendors/aes.php");
@@ -18,11 +16,11 @@ define('DEV_USER', $_SERVER['ENV_USER']);
 
 class WebServiceTicketsController extends WebServicesController
 {
-    var $name = 'WebServiceTickets';
+    public $name = 'WebServiceTickets';
 
-    var $components = array('PackageIncludes');
+    public $components = array('PackageIncludes');
 
-    var $uses = array(
+    public $uses = array(
         'Ticket',
         'UserPaymentSetting',
         'PaymentDetail',
@@ -58,18 +56,15 @@ class WebServiceTicketsController extends WebServicesController
         'ReservationPreferDateFromHotel'
     );
 
-    var $serviceUrl = 'http://toolbox.luxurylink.com/web_service_tickets';
-    var $serviceUrlStage = 'http://stage-toolbox.luxurylink.com/web_service_tickets';
-
-    // IF DEV, please make sure you use this path, or if using your own dev, then change this var
-    var $serviceUrlDev = DEV_USER_TOOLBOX_HOST;
-
-    var $errorResponse = false;
-    var $errorMsg = false;
-    var $errorTitle = false;
+    public $serviceUrl = 'http://toolbox.luxurylink.com/web_service_tickets';
+    public $serviceUrlStage = 'http://stage-toolbox.luxurylink.com/web_service_tickets';
+    public $serviceUrlDev = DEV_USER_TOOLBOX_HOST;
+    public $errorResponse = false;
+    public $errorMsg = false;
+    public $errorTitle = false;
 
     // nusoap.php needs this
-    var $api = array(
+    public $api = array(
         'processNewTicket' => array(
             'doc' => 'ticket processor functionality for family and luxurylink',
             'input' => array('in0' => 'xsd:string'),
@@ -189,47 +184,49 @@ class WebServiceTicketsController extends WebServicesController
         )
     );
 
-
-    function beforeFilter()
+    /**
+     *
+     */
+    public function beforeFilter()
     {
         $this->LdapAuth->allow('*');
     }
 
-    // for client specific tweaks of text before sending to client.
-    // eg http://comindwork/web2.aspx/ROADMAP/PROC/TICKET#keeperMatt:2351
-    // We're surroungind client specific text with the html comments so the customer doesn't see it
-    // and we strip the tags out before sending to the client
-    function cleanUpPackageIncludes($packageIncludes)
+    /**
+     * for client specific tweaks of text before sending to client.
+     * eg http://comindwork/web2.aspx/ROADMAP/PROC/TICKET#keeperMatt:2351
+     * We're surroungind client specific text with the html comments so the customer doesn't see it
+     * and we strip the tags out before sending to the client
+     *
+     * @param $packageIncludes
+     * @return mixed
+     */
+    public function cleanUpPackageIncludes($packageIncludes)
     {
-
         $packageIncludes = str_replace("<!--clientonlystart ", "", $packageIncludes);
         $packageIncludes = str_replace(" clientonlyend-->", "", $packageIncludes);
         return $packageIncludes;
-
     }
 
-    // see $this->processTicket()
+    /**
+     * see $this->processTicket()
+     *
+     * @param $in0
+     * @return string
+     */
     function processNewTicket($in0)
     {
-
         $json_decoded = json_decode($in0, true);
         $this->errorResponse = $this->errorMsg = $this->errorTitle = false;
         // The ISDEV and ISSTAGE vars are set in core.php and they rely on $_SERVER, which isn't set
         // when run as a cron/shell.
         // Get the environment this rpc was called from - set in cron_auction_closing.php
         $env = isset($json_decoded['env']) ? $json_decoded['env'] : false;
-        $debug = isset($json_decoded['debug']) ? $json_decoded['debug'] : false;
         define('CRON_ENV', $env);
-        define('DEBUG', $debug);
+
         unset($json_decoded['env']);
         unset($json_decoded['debug']);
-        if (DEBUG) {
-            $this->User->logIt('START -----------------------------------------------------------');
-            $this->User->logIt('CRON_ENV:');
-            $this->User->logIt(CRON_ENV);
-            $this->User->logIt('DEBUG:');
-            $this->User->logIt(DEBUG, 0, 1);
-        }
+
         if (!$this->processTicket($json_decoded)) {
             $server_type = '';
             if (defined('ISDEV') && !defined('ISSTAGE')) {
@@ -442,20 +439,6 @@ class WebServiceTicketsController extends WebServicesController
             'SELECT * FROM paymentDetail WHERE ticketId = ' . $data['ticketId']
         );
 
-        if (defined('DEBUG') && DEBUG) {
-            $this->User->logIt('ticket_payment. if exists, ticket already processed:');
-            $this->User->logIt($ticket_payment, 0, 1);
-            $this->User->logIt("ticket_toolbox['Ticket']['transmitted']");
-            $this->User->logIt($ticket_toolbox['Ticket']['transmitted']);
-            $this->User->logIt('ticket_toolbox:');
-            $tmp_tb = $ticket_toolbox;
-            unset($tmp_tb['Ticket']['ticketNotes']);
-            unset($tmp_tb['Package']['packageIncludes']);
-            unset($tmp_tb['Package']['flexNotes']);
-            unset($tmp_tb['Package']['notes']);
-            $this->User->logIt($tmp_tb);
-        }
-
         if (!empty($ticket_payment)) {
             $this->errorResponse = 188;
             $this->errorTitle = 'Payment Already Detected for Ticket';
@@ -600,10 +583,6 @@ class WebServiceTicketsController extends WebServicesController
             // find out if there is a valid credit card to charge.  charge and send appropiate emails
             // -------------------------------------------------------------------------------
             $user_payment_setting = $this->findValidUserPaymentSetting($data['userId'], $data['userPaymentSettingId']);
-            if (defined('DEBUG') && DEBUG) {
-                $this->User->logIt('user_payment_setting:');
-                $this->User->logIt($user_payment_setting);
-            }
 
             // set ppv params
             // -------------------------------------------------------------------------------
@@ -661,10 +640,7 @@ class WebServiceTicketsController extends WebServicesController
                 $ppv_settings['ppvNoticeTypeId'] = 5; // Winner Notification (Old one)
                 $auto_charge_card = false;
             }
-            if (defined('DEBUG') && DEBUG) {
-                $this->User->logIt('ticketId:');
-                $this->User->logIt($ticketId);
-            }
+
             // check if user has already paid for this ticket
             // -------------------------------------------------------------------------------
             $checkExists = $this->PaymentDetail->query("SELECT * FROM paymentDetail WHERE ticketId = $ticketId");
@@ -690,19 +666,6 @@ class WebServiceTicketsController extends WebServicesController
             }
             if ((CRON_ENV == 'dev' || CRON_ENV == 'stage') && $test_card) {
                 $auto_charge_card = true;
-            }
-
-            if (defined('DEBUG') && DEBUG) {
-                $this->User->logIt('cc:');
-                $this->User->logIt($tmpCC);
-                $this->User->logIt('test_card:');
-                $this->User->logIt($test_card, false, true);
-                $this->User->logIt('CRON_ENV:');
-                $this->User->logIt(CRON_ENV);
-                $this->User->logIt('auto_charge_card:');
-                $this->User->logIt($auto_charge_card, false, true);
-                $this->User->logIt('restricted_auction:');
-                $this->User->logIt($restricted_auction, 0, 1);
             }
 
             $autoSendClientWinnerPpv = false;
@@ -2935,13 +2898,6 @@ class WebServiceTicketsController extends WebServicesController
             }
         }
 
-        if (defined('DEBUG') && DEBUG) {
-            $this->User->logIt('$isDev');
-            $this->User->logIt($isDev, false, true);
-            $this->User->logIt('CRON_ENV');
-            $this->User->logIt(CRON_ENV, false, true);
-        }
-
         if (!isset($data['userId']) || empty($data['userId'])) {
             $this->errorResponse = 101;
             return $this->returnError(__METHOD__);
@@ -3162,11 +3118,6 @@ class WebServiceTicketsController extends WebServicesController
             $processor = new Processor($paymentProcessorName, $test_card);
             $processor->InitPayment($userPaymentSettingPost, $ticket);
 
-            if (defined('DEBUG') && DEBUG) {
-                $this->User->logIt('test_card prior to paymentDetail');
-                $this->User->logIt($test_card, false, true);
-            }
-
             if ($test_card || !$isDev) {
                 $processor->SubmitPost();
             }
@@ -3262,13 +3213,7 @@ class WebServiceTicketsController extends WebServicesController
 
         $this->PaymentDetail->create();
         $tmpResult = $this->PaymentDetail->save($paymentDetail);
-        if (defined('DEBUG') && DEBUG) {
-            $this->User->logIt('payment detail result');
-            $this->User->logIt($tmpResult);
-            $this->User->logIt('paymentDetail array');
-            $this->User->logIt($paymentDetail);
-            $this->User->logIt('END -----------------------------------------------------------');
-        }
+
         if (!$tmpResult) {
             //if (!$this->PaymentDetail->save($paymentDetail)) {
             @mail(

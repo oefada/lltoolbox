@@ -120,6 +120,11 @@ class Processor
         return $this->module->AddCvc($cvc);
     }
 
+    public function getResponseData()
+    {
+        return $this->response_data;
+    }
+
     public function dummyMappedResponse()
     {
         $paymentDetail['ppResponseDate'] = date('Y-m-d H:i:s', strtotime('now'));
