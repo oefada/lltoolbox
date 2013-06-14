@@ -214,7 +214,7 @@ class WebServiceTicketsController extends WebServicesController
      * @param $in0
      * @return string
      */
-    function processNewTicket($in0)
+    public function processNewTicket($in0)
     {
         $json_decoded = json_decode($in0, true);
         $this->errorResponse = $this->errorMsg = $this->errorTitle = false;
@@ -248,7 +248,7 @@ class WebServiceTicketsController extends WebServicesController
 
     }
 
-    function getPromoGcCofData($in0)
+    public function getPromoGcCofData($in0)
     {
         $data = json_decode($in0, true);
         if (!empty($data) && isset($data['ticketId']) && isset($data['billingPrice'])) {
@@ -258,7 +258,7 @@ class WebServiceTicketsController extends WebServicesController
     }
 
 
-    function processFixedPriceTicket($ticketData)
+    public function processFixedPriceTicket($ticketData)
     {
         if (!$ticketData['ticketId']) {
             $this->errorResponse = 2001;
@@ -726,7 +726,7 @@ class WebServiceTicketsController extends WebServicesController
         }
     }
 
-    function autoSendFromCheckout($in0)
+    public function autoSendFromCheckout($in0)
     {
         // from the frontend checkout, only ticketId comes in.  fill the rest for security
         // -------------------------------------------------------------------------------
@@ -745,7 +745,7 @@ class WebServiceTicketsController extends WebServicesController
         $this->ppv(json_encode($params));
     }
 
-    function autoSendPreferredDates($in0)
+    public function autoSendPreferredDates($in0)
     {
         // from the frontend my dates request
         // -------------------------------------------------------------------------------
@@ -798,7 +798,7 @@ class WebServiceTicketsController extends WebServicesController
         $this->ppv(json_encode($params));
     }
 
-    function autoSendXnetDatesNotAvail($in0)
+    public function autoSendXnetDatesNotAvail($in0)
     {
         // from the XNET - dates are NOT available
         // -------------------------------------------------------------------------------
@@ -811,7 +811,7 @@ class WebServiceTicketsController extends WebServicesController
         $this->ppv(json_encode($params));
     }
 
-    function sendResRequestReminder($in0)
+    public function sendResRequestReminder($in0)
     {
         // from the XNET - dates are NOT available
         // -------------------------------------------------------------------------------
@@ -824,7 +824,7 @@ class WebServiceTicketsController extends WebServicesController
         $this->ppv(json_encode($params));
     }
 
-    function sendResRequestReminderCustomer($in0)
+    public function sendResRequestReminderCustomer($in0)
     {
         // from the XNET - dates are NOT available
         // -------------------------------------------------------------------------------
@@ -837,7 +837,7 @@ class WebServiceTicketsController extends WebServicesController
         $this->ppv(json_encode($params));
     }
 
-    function autoSendXnetDatesConfirmed($in0)
+    public function autoSendXnetDatesConfirmed($in0)
     {
         // from the XNET - dates are CONFIRMED
         // -------------------------------------------------------------------------------
@@ -852,7 +852,7 @@ class WebServiceTicketsController extends WebServicesController
         $this->ppv(json_encode($params));
     }
 
-    function autoSendXnetDatesConfirmedOnlyProperty($in0)
+    public function autoSendXnetDatesConfirmedOnlyProperty($in0)
     {
         // from the XNET - dates are CONFIRMED
         // -------------------------------------------------------------------------------
@@ -865,7 +865,7 @@ class WebServiceTicketsController extends WebServicesController
         $this->ppv(json_encode($params));
     }
 
-    function autoSendXnetDatesConfirmedSeasonalPricing($in0)
+    public function autoSendXnetDatesConfirmedSeasonalPricing($in0)
     {
         // from the XNET - dates are CONFIRMED
         // -------------------------------------------------------------------------------
@@ -893,7 +893,7 @@ class WebServiceTicketsController extends WebServicesController
 
     }
 
-    function FixedPriceCardCharge($in0)
+    public function FixedPriceCardCharge($in0)
     {
         $params = json_decode($in0, true);
 
@@ -935,7 +935,7 @@ class WebServiceTicketsController extends WebServicesController
 
     }
 
-    function autoSendXnetCCDeclined($in0)
+    public function autoSendXnetCCDeclined($in0)
     {
         $params = json_decode($in0, true);
         $params['send'] = 1;
@@ -947,7 +947,7 @@ class WebServiceTicketsController extends WebServicesController
 
     }
 
-    function CardCharge($ticketId)
+    public function CardCharge($ticketId)
     {
 
         $ticketData = $this->Ticket->query("SELECT * FROM ticket WHERE ticketId = $ticketId LIMIT 1");
@@ -1007,7 +1007,7 @@ class WebServiceTicketsController extends WebServicesController
 
     }
 
-    function autoSendXnetDateResRequested($in0)
+    public function autoSendXnetDateResRequested($in0)
     {
         // from the XNET - dates are requested
         // -------------------------------------------------------------------------------
@@ -1020,7 +1020,7 @@ class WebServiceTicketsController extends WebServicesController
         $this->ppv(json_encode($params));
     }
 
-    function autoSendXnetCancelConfirmation($in0)
+    public function autoSendXnetCancelConfirmation($in0)
     {
         // from the XNET - cancellation confirmation - confirmed
         // -------------------------------------------------------------------------------
@@ -1033,7 +1033,7 @@ class WebServiceTicketsController extends WebServicesController
         $this->ppv(json_encode($params));
     }
 
-    function autoSendXnetResCancelled($in0)
+    public function autoSendXnetResCancelled($in0)
     {
         // from the XNET - client receipt for confirmed cancellation
         // -------------------------------------------------------------------------------
@@ -1046,7 +1046,7 @@ class WebServiceTicketsController extends WebServicesController
         $this->ppv(json_encode($params));
     }
 
-    function numF($str)
+    public function numF($str)
     {
         // for commas thousand group separator
         return number_format($str);
@@ -2816,7 +2816,7 @@ class WebServiceTicketsController extends WebServicesController
         }
     }
 
-    function findValidUserPaymentSetting($userId, $upsId = null)
+    public function findValidUserPaymentSetting($userId, $upsId = null)
     {
         if ($upsId && is_numeric($upsId)) {
             $ups = $this->User->query(
@@ -2845,7 +2845,7 @@ class WebServiceTicketsController extends WebServicesController
         return ($found_valid_cc) ? $v : 'EXPIRED';
     }
 
-    function findUserPaymentSettingInfo($upsId)
+    public function findUserPaymentSettingInfo($upsId)
     {
         $ups = $this->User->query(
             "SELECT * FROM userPaymentSetting AS UserPaymentSetting WHERE userPaymentSettingId = $upsId"
@@ -2853,7 +2853,7 @@ class WebServiceTicketsController extends WebServicesController
         return (is_array($ups)) ? $ups[0] : false;
     }
 
-    function addTrackPending($trackId, $pendingAmount)
+    public function addTrackPending($trackId, $pendingAmount)
     {
 
         $track = $this->Track->read(null, $trackId);
@@ -3255,7 +3255,7 @@ class WebServiceTicketsController extends WebServicesController
         }
     }
 
-    function runPostChargeSuccess(
+    public function runPostChargeSuccess(
         $ticket,
         $data,
         $usingUpsId,
@@ -3635,7 +3635,7 @@ class WebServiceTicketsController extends WebServicesController
         return json_encode($appliedPayments);
     }
 
-    function logError($method, $msg = "")
+    public function logError($method, $msg = "")
     {
         if ($msg == "") {
             $msg = $this->errorMsg;
@@ -3644,14 +3644,14 @@ class WebServiceTicketsController extends WebServicesController
         CakeLog::write("web_service_tickets_controller", var_export($method . ": " . $msg, 1));
     }
 
-    function returnError($method)
+    public function returnError($method)
     {
         $this->logError($method, $this->errorResponse);
         return $this->errorResponse;
         exit;
     }
 
-    function getCreditBankAssets($userId)
+    public function getCreditBankAssets($userId)
     {
 
         // get user's credit info
@@ -3682,8 +3682,6 @@ function wstErrorHandler($errno, $errstr, $errfile, $errline)
     $log = "web_service_tickets_controller";
 
     switch ($errno) {
-        //case E_RECOVERABLE_ERROR:
-        //$eMsg = "RECOVERABLE ERROR";
         case E_ERROR:
             $eMsg = "ERROR";
             break;
@@ -3700,7 +3698,6 @@ function wstErrorHandler($errno, $errstr, $errfile, $errline)
             $eMsg = "USER ERROR";
             break;
         case E_WARNING:
-            // Add to daily digest
             $log = "notices";
             $eMsg = "WARNING";
             break;
@@ -3724,7 +3721,7 @@ function wstErrorHandler($errno, $errstr, $errfile, $errline)
         CakeLog::write($log, $eMsg);
     }
 
-    /* Don't execute PHP internal error handler */
+    // Don't execute PHP internal error handler
     return true;
 }
 
