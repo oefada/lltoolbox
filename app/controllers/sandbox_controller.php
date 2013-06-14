@@ -6,6 +6,9 @@ class SandboxController extends AppController
 
     public function processorTest()
     {
+        $processor = 'PAYPAL'; // PAYPAL or NOVA
+        $testTransaction = true;
+
         $paymentSettings = array(
             'UserPaymentSetting' => array(
                 'nameOnCard' => 'Mort Wilson',
@@ -23,16 +26,16 @@ class SandboxController extends AppController
 
         $ticket = array(
             'Ticket' => array(
-                'billingPrice' => 100,
-                'ticketId' => uniqid()
+                'ticketId' => uniqid(),
+                'billingPrice' => 100
             )
         );
 
         require_once(APP . '/vendors/pp/Processor.class.php');
-        $processor = new Processor('NOVA', true);
+        $processor = new Processor($processor, $testTransaction);
         $processor->InitPayment($paymentSettings, $ticket);
-        //var_dump($processor); die;
         $processor->SubmitPost();
+
         var_dump($processor->GetMappedResponse());
         var_dump($processor->GetResponseTxt());
         var_dump($processor->getResponseData());
