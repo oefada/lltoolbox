@@ -5,7 +5,9 @@
 	<?php
 		echo $form->input('manualTicketInitials', array('readonly' => 'readonly'));
 		echo $form->input('ticketNotes');
-		echo $form->input('siteId');
+		echo $form->input('siteIdSelecter', array('type'=>'select', 'label'=>'Site', 'empty'=>'--', 'options'=>array('1'=>'Luxury Link', '2'=>'Family', 'UK'=>'Luxury Link UK') ));
+		echo $form->hidden('siteId');
+        echo $form->hidden('tldId');
 		echo $this->renderElement("input_search", array('name'=>'clientId', 'controller'=>'selectclients', 'label'=>'Client Id', 'style'=>'width:400px', 'multiSelect'=>'TicketClientId'));
 		echo $form->input('packageId', array('type'=>'select', 'label'=>'Package Id', 'empty'=>'--', 'options'=>$packageList));
 		echo $form->input('offerId', array('type'=>'select', 'label'=>'Offer Id', 'empty'=>'--', 'options'=>$offerList));
@@ -19,6 +21,7 @@
 		
 	<?		
 		echo $form->input('billingPrice');
+        echo $form->input('tldBillingPrice', array('readonly' => 'readonly', 'label' => 'GBP Price', 'div'=>array('id'=>'tldPriceWrapper', 'style'=>'display:none;')));
 		echo $form->input('offerPrice', array('type'=>'hidden'));
 		echo $form->input('numNights');
 		echo $form->input('offerNights', array('type'=>'hidden'));
@@ -44,7 +47,18 @@
 		?>
 		<script>	
 		jQuery(function($) {
-			$("#TicketSiteId").change(function(){
+			$("#TicketSiteIdSelecter").change(function(){
+				
+				var slct = $(this).val();
+				if (slct == 'UK') {
+					$('#TicketSiteId').val(1);
+                    $('#TicketTldId').val(2);
+				} else {
+					$('#TicketSiteId').val(slct);
+                    $('#TicketTldId').val(1);
+				}
+                tldPriceDisplay();
+
 				var client = parseInt($('#TicketClientId').val());
 				if (client > 0) {
 					getPackageList();
@@ -62,8 +76,10 @@
 				var site = $('#TicketSiteId').val();
 				$('#TicketOfferId')[0].options.length = 0;
 				$('#TicketOfferId')[0].options.add(new Option('--', ''));
-
-				$.getJSON("/tickets/mt_offerlist_ajax",{siteId: site, packageId: $(this).val()}, function(data) {
+				
+                var tld = $('#TicketTldId').val();
+				
+                $.getJSON("/tickets/mt_offerlist_ajax",{siteId: site, packageId: $(this).val(), tldId: tld}, function(data) {
 
 					for (offer in data.offers) {
 						if (data.offers.hasOwnProperty(offer)) {
@@ -88,6 +104,9 @@
 
 					var guests = info[2].replace(' guests', '');
 					$('#TicketRequestNumGuests').val(guests);
+                    
+                    var tldPrice = info[4].replace(' GBP', '');
+                    $('#TicketTldBillingPrice').val(tldPrice);
 				}
 			});
 
@@ -134,17 +153,31 @@
 
 				resetPackageList();
 
-				$.getJSON("/tickets/mt_packagelist_ajax",{siteId: site, clientId: client}, function(data) {					
+				if (site != '') {
+				
+                    var tld = $('#TicketTldId').val();
+				
+                    $.getJSON("/tickets/mt_packagelist_ajax",{siteId: site, clientId: client, tldId: tld}, function(data) {                  
 
-					resetPackageList();
+						resetPackageList();
 
-					for (package in data.packages) {
-						if (data.packages.hasOwnProperty(package)) {
-							 $('#TicketPackageId')[0].options.add(new Option(data.packages[package], package));
+						for (package in data.packages) {
+							if (data.packages.hasOwnProperty(package)) {
+								 $('#TicketPackageId')[0].options.add(new Option(data.packages[package], package));
+							}
 						}
-					}
-				})
+					})
+				}
 			}
+            
+            function tldPriceDisplay() {
+                var slct = $('#TicketSiteIdSelecter').val();
+                if (slct == 'UK') {
+                    $('#tldPriceWrapper').show();
+                } else {
+                    $('#tldPriceWrapper').hide();
+                }
+            }
 
 			$("#TicketUserId").change(function(){
 				$('#TicketUserPaymentSettingId')[0].options.length = 0;

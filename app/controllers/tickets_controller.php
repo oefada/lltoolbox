@@ -16,6 +16,10 @@ class TicketsController extends AppController {
 					  'Reservation', 'PromoTicketRel', 'Promo', 'PromoCode', 'PaymentType', 'Readonly', 'ReservationPreferDate', 'ReservationPreferDateFromHotel'
 					  );
 
+	var $components = array(
+		'LltgServiceHelper'
+	);
+
 	function index() {
 
 		// Readonly db config
@@ -43,6 +47,7 @@ class TicketsController extends AppController {
 		$s_user_id = isset($form['s_user_id']) ? $form['s_user_id'] : '';
 		$s_format_id = isset($form['s_format_id']) ? $form['s_format_id'] : '';
 		$s_site_id = isset($form['s_site_id']) ? $form['s_site_id'] : '';
+		$s_tld_id = isset($form['s_tld_id']) ? $form['s_tld_id'] : '';
 		$s_client_id = isset($form['s_client_id']) ? $form['s_client_id'] : '';
 		$s_bid_id = isset($form['s_bid_id']) ? $form['s_bid_id'] : '';
 		$s_quick_link = isset($form['s_quick_link']) ? $form['s_quick_link'] : '';
@@ -77,7 +82,7 @@ class TicketsController extends AppController {
 			}
 		}
 
-		$allowed_query_keys = array('s_ticket_status_id', 's_format_id', 's_offer_type_id', 's_quick_link', 's_site_id');
+		$allowed_query_keys = array('s_ticket_status_id', 's_format_id', 's_offer_type_id', 's_quick_link', 's_site_id', 's_tld_id');
 		foreach ($this->params['url'] as $key => $value) {
 			if (in_array($key, $allowed_query_keys)) {
 				$$key = $value;
@@ -96,7 +101,7 @@ class TicketsController extends AppController {
 		$s_end_date = $s_end_y . '-' . $s_end_m . '-' . $s_end_d . ' 23:59:59';
 
 		$this->paginate = array('fields' => array(
-									'Ticket.ticketId', 'Ticket.offerTypeId', 'Ticket.created', 'Ticket.bidId',
+									'Ticket.ticketId', 'Ticket.offerTypeId', 'Ticket.created', 'Ticket.bidId', 'Ticket.tldId', 'Ticket.tldBillingPrice',
 									'Ticket.offerId', 'Ticket.userId', 'TicketStatus.ticketStatusName', 'Ticket.packageId',
 									'Ticket.userFirstName', 'Ticket.userLastName', 'Ticket.packageId', 'Ticket.billingPrice', 'Ticket.numNights', 'Ticket.formatId', 'Ticket.ticketNotes','Ticket.siteId',
 									'Ticket.requestArrival', 'Ticket.requestDeparture',
@@ -208,6 +213,9 @@ class TicketsController extends AppController {
 			if ($s_site_id) {
 				$this->paginate['conditions']['Ticket.siteId'] = $s_site_id;
 			}
+			if ($s_tld_id) {
+				$this->paginate['conditions']['Ticket.tldId'] = $s_tld_id;
+			}
             if ($s_offer_id) {
                 $this->paginate['conditions']['Ticket.offerId'] = $s_offer_id;
             }
@@ -273,6 +281,9 @@ class TicketsController extends AppController {
 			if ($s_site_id) {
 				$this->paginate['conditions']['Ticket.siteId'] = $s_site_id;
 			}
+			if ($s_tld_id) {
+				$this->paginate['conditions']['Ticket.tldId'] = $s_tld_id;
+			}
 		}
 
 		if (!$single_search) {
@@ -280,7 +291,7 @@ class TicketsController extends AppController {
 		} else {
 			$s_res_check_in_date = $s_offer_type_id = $s_has_promo = $s_manual_ticket = null;
 			if (!$single_search_override) {
-				$s_ticket_status_id = $s_format_id = $s_site_id = null;
+				$s_ticket_status_id = $s_format_id = $s_site_id = $s_tld_id = null;
 			}
 			$s_start_y = $s_end_y = date('Y');
 			$s_start_m = $s_end_m = date('m');
@@ -296,6 +307,7 @@ class TicketsController extends AppController {
 		$this->set('s_promo_code', $s_promo_code);
 		$this->set('s_format_id', $s_format_id);
 		$this->set('s_site_id', $s_site_id);
+		$this->set('s_tld_id', $s_tld_id);
 		$this->set('s_offer_type_id', $s_offer_type_id);
 		$this->set('s_ticket_status_id', $s_ticket_status_id);
 		$this->set('s_res_confirmation_num', $s_res_confirmation_num);
@@ -663,7 +675,9 @@ class TicketsController extends AppController {
 			if (intval($tData['userPaymentSettingId']) == 0) { $errors[] = 'Please complete the Credit Card field.'; }
 			if (intval($tData['billingPrice']) == 0) { $errors[] = 'Please complete the Billing Price field.'; }			
 			if (intval($tData['numNights']) == 0) { $errors[] = 'Please complete the Num Nights field.'; }
-			
+
+			$tldId = $tData['tldId'];
+
 			$arrivalDate = $this->dateArrayToString($tData['requestArrival']);
 			if (!$arrivalDate) {
 				$errors[] = 'Request Arrival must be a valid date';
@@ -679,6 +693,8 @@ class TicketsController extends AppController {
 						$errors[] = 'Promo Codes require Auto Confirm - codes can be applied from the payment screen.';
 					} elseif (intval($tData['billingPrice']) < intval($code['Promo'][0]['minPurchaseAmount'])) {
 						$errors[] = $code['PromoCode']['promoCode'] . ' requires a minimum purchase of $' . $code['Promo'][0]['minPurchaseAmount'];
+					} elseif ($tldId != intval($code['Promo'][0]['tldId'])) {
+						$errors[] = $code['PromoCode']['promoCode'] . ' is not valid for locale #' . $tldId;
 					} else {
 						$insertPromoCodeId = $code['PromoCode']['promoCodeId'];
 					}
@@ -690,9 +706,12 @@ class TicketsController extends AppController {
 			if ($tData['autoConfirm'] == 'Y') {
 				if ($tData['billingPrice'] != $tData['offerPrice']) { $errors[] = 'Billing Price can not be modified for Auto Confirm tickets.'; }
 				if ($tData['numNights'] != $tData['offerNights']) { $errors[] = 'Num Nights can not be modified for Auto Confirm tickets.'; }
-			} 
+			}
+			if ($tldId == 2) {
+				if ($tData['billingPrice'] != $tData['offerPrice']) { $errors[] = 'Billing Price can not be modified for UK tickets.'; }
+				if ($tData['numNights'] != $tData['offerNights']) { $errors[] = 'Num Nights can not be modified for UK tickets.'; }
+			}
 
-			
 			if (sizeof($errors) > 0) {
 				$this->Session->setFlash(__((implode('<br />', $errors)), true));
 			} else {
@@ -732,7 +751,11 @@ class TicketsController extends AppController {
 				$saveTicketData['packageId'] = $offerData['packageId'];
 				$saveTicketData['formatId'] = in_array($offerData['offerTypeId'], array(1,2,6)) ? 1 : 2;
 				$saveTicketData['offerTypeId'] = $offerData['offerTypeId'];
-
+				$saveTicketData['tldId'] = $tldId;
+				if ($tldId > 1) {
+					$saveTicketData['tldBillingPrice'] = $tData['tldBillingPrice'];
+				}
+				
 				// user info
 				$this->User->recursive = 1;
 				$userData = $this->User->read(null, $tData['userId']);
@@ -783,8 +806,10 @@ class TicketsController extends AppController {
 			$this->data['Ticket']['departureDisplay'] = '-';
 		}
 		
-		$packageList = (isset($this->data['Ticket']['siteId']) && isset($this->data['Ticket']['clientId'])) ? $this->mtPackagesBySiteAndClient($this->data['Ticket']['siteId'], $this->data['Ticket']['clientId']) : array();
-		$offerList = (isset($this->data['Ticket']['siteId']) && isset($this->data['Ticket']['packageId'])) ? $this->mtOffersBySiteAndPackage($this->data['Ticket']['siteId'], $this->data['Ticket']['packageId']) : array();
+		$tldParam = (isset($tldId)) ? $tldId : 1;
+		
+		$packageList = (isset($this->data['Ticket']['siteId']) && isset($this->data['Ticket']['clientId'])) ? $this->mtPackagesBySiteAndClient($this->data['Ticket']['siteId'], $this->data['Ticket']['clientId'], $tldParam) : array();
+		$offerList = (isset($this->data['Ticket']['siteId']) && isset($this->data['Ticket']['packageId'])) ? $this->mtOffersBySiteAndPackage($this->data['Ticket']['siteId'], $this->data['Ticket']['packageId'], $tldParam) : array();
 		$ccList = (isset($this->data['Ticket']['userId'])) ? $this->mtCcsByUser($this->data['Ticket']['userId']) : array(); 
 		
 		$this->set('packageList', $packageList);
@@ -975,7 +1000,7 @@ class TicketsController extends AppController {
 	function mt_packagelist_ajax() {
 		$clientId = $this->params['url']['clientId'];
 		if (intval($clientId) > 0 ) {
-			$packages = $this->mtPackagesBySiteAndClient($this->params['url']['siteId'], $clientId);
+			$packages = $this->mtPackagesBySiteAndClient($this->params['url']['siteId'], $clientId, $this->params['url']['tldId']);
 		} else {
 			$packages = array();
 		}
@@ -985,7 +1010,7 @@ class TicketsController extends AppController {
 	}
 
 	function mt_offerlist_ajax() {
-		$offers = $this->mtOffersBySiteAndPackage($this->params['url']['siteId'], $this->params['url']['packageId']);
+		$offers = $this->mtOffersBySiteAndPackage($this->params['url']['siteId'], $this->params['url']['packageId'], $this->params['url']['tldId']);
 		echo json_encode(array('offers'=>$offers));
 		exit;
 		
@@ -1004,12 +1029,21 @@ class TicketsController extends AppController {
 		
 	}
 
-	private function mtPackagesBySiteAndClient($siteId, $clientId) {
+	private function mtPackagesBySiteAndClient($siteId, $clientId, $tldId) {
+		if ($tldId == 2) {
+			$allowedTypes = array(3, 4);
+		} else {
+			$allowedTypes = array(1, 2, 3, 4, 6);
+		}
 		$offerTable = ($siteId == '2') ? 'offerFamily' : 'offerLuxuryLink';
 		$q = 'SELECT DISTINCT p.packageId, p.packageName 
 				FROM ' . $offerTable . ' o
 				INNER JOIN package p USING(packageId)
-				WHERE o.clientId = ? AND o.startDate < NOW() AND o.isClosed = 0 AND o.endDate > NOW()';
+				WHERE o.clientId = ? 
+				AND o.startDate < NOW() 
+				AND o.isClosed = 0 
+				AND o.endDate > NOW()
+				AND o.offerTypeId IN (' . implode(',', $allowedTypes) . ')';
 		$result = $this->Ticket->query($q, array($clientId));
 		$packages = array();
 		foreach($result as $r) {
@@ -1018,12 +1052,22 @@ class TicketsController extends AppController {
 		return $packages;
 	}
 
-	private function mtOffersBySiteAndPackage($siteId, $packageId) {
+	private function mtOffersBySiteAndPackage($siteId, $packageId, $tldId) {
+		
+		if ($tldId == 2) {
+			$allowedTypes = array(3, 4);
+			$ukServiceBuilder = $this->LltgServiceHelper->getServiceBuilderFromTldId($tldId);
+			App::import("Vendor", "CurrencyService", array('file' => "appshared".DS."Services".DS."CurrencyService.php"));
+			$currencyService = $ukServiceBuilder->getService('CurrencyService');
+		} else {
+			$allowedTypes = array(1, 2, 3, 4, 6);
+		}
 		$offerTable = ($siteId == '2') ? 'offerFamily' : 'offerLuxuryLink';
 		$q = 'SELECT offerId, offerTypeId, offerTypeName, openingBid, roomNights, buyNowPrice, numGuests, endDate
 				FROM ' . $offerTable . ' o
 				WHERE o.packageId = ?
 				AND startDate < NOW()
+				AND o.offerTypeId IN (' . implode(',', $allowedTypes) . ')
 				AND (
 				(isClosed = 0 AND endDate > NOW())
 				OR
@@ -1043,7 +1087,13 @@ class TicketsController extends AppController {
 			} else {
 				$dates .= ' live';
 			}
-			$offers[$r['o']['offerId']] = $r['o']['offerId'] . ' - ' . $type . ' : ' . $nights . ' : ' . $guests . ' : $' . $price . ' : ' . $dates;
+			
+			$tldPrice = '';
+			if ($tldId == 2) {
+				$tldPrice = $currencyService->getLocalCurrencyFromDollars($price) . ' GBP';
+			}
+			
+			$offers[$r['o']['offerId']] = $r['o']['offerId'] . ' - ' . $type . ' : ' . $nights . ' : ' . $guests . ' : $' . $price . ' : ' . $tldPrice . ' : ' . $dates;
 		}
 		return $offers;
 	}

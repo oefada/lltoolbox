@@ -52,6 +52,10 @@ $this->searchController = 'Tickets';
                 </td>
 			</tr>
 			<tr>
+				<td width="200"><strong>TLD</strong></td>
+				<td><strong><?php echo ($ticket['Ticket']['tldId'] == 2) ? '.CO.UK' : '.COM'; ?></strong></td>
+			</tr>
+			<tr>
 				<td width="200"><strong>Site</strong></td>
 				<td><strong><?php echo $siteIds[$ticket['Ticket']['siteId']]; ?></strong></td>
 			</tr>
@@ -97,7 +101,15 @@ $this->searchController = 'Tickets';
             </tr>
 			<tr>
 				<td><strong>Ticket Amount</strong></td>
-				<td><?php echo $number->currency($ticket['Ticket']['billingPrice']); ?></td>
+				<td><?php 
+							
+				if ($ticket['Ticket']['tldId'] == 2) {
+					echo $number->currency($ticket['Ticket']['tldBillingPrice'], 'GBP'); 
+				} else {
+					echo $number->currency($ticket['Ticket']['billingPrice']);
+				}
+				
+				?></td>
 			</tr>
 			<tr>
 				<td><strong>User Id</strong></td>

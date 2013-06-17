@@ -104,6 +104,16 @@ $this->set('hideSidebar', true);
 					</select>
 				</td>
 			</tr>
+            <tr>
+                <td width="150">TLD</td>
+                <td>
+                    <select name="s_tld_id"> 
+                        <option value="0">All</option>
+                        <option value="1" <? if ($s_tld_id == 1) { echo 'selected="selected"'; } ?>>.COM</option>
+                        <option value="2" <? if ($s_tld_id == 2) { echo 'selected="selected"'; } ?>>.CO.UK</option>
+                    </select>
+                </td>
+            </tr>
 			<tr>
 				<td width="150">
 					Format Type
@@ -311,6 +321,7 @@ $this->set('hideSidebar', true);
 <table cellpadding="0" cellspacing="0" class="tickets-view-td" style="font-size:11px;">
 <tr>
 	<th width="10"><?php echo $paginator->sort('Ticket Id', 'Ticket.ticketId');?></th>
+	<th width="10" style="color:#FFF;">TLD</th>	
 	<th width="10"><?php echo $paginator->sort('Site', 'Ticket.siteId');?></th>
 	<th width="10"><?php echo $paginator->sort('Ticket Created', 'Ticket.created');?></th>
 	<th width="10"><?php echo $paginator->sort('Offer Type', 'Ticket.offerTypeId');?></th>
@@ -355,6 +366,9 @@ foreach ($tickets as $ticket):
             ?>
 		</td>
 		<td>
+			<?php echo ($ticket['Ticket']['tldId'] == 2) ? '.CO.UK' : '.COM'; ?>
+		</td>
+		<td>
 			<?php echo $siteIds[$ticket['Ticket']['siteId']]; ?>
 		</td>
 		<td>
@@ -377,7 +391,13 @@ foreach ($tickets as $ticket):
 			<a href="/users/view/<?php echo $ticket['Ticket']['userId'];?>" target="_BLANK"><?php echo $ticket['Ticket']['userId'];?></a> - <?php echo $ticket['Ticket']['userFirstName']; ?> <?php echo $ticket['Ticket']['userLastName']; ?>
 		</td>
 		<td>
-			<?php echo $number->currency($ticket['Ticket']['billingPrice']);?>
+			<?php 
+				if ($ticket['Ticket']['tldId'] == 2) {
+                    echo $number->currency($ticket['Ticket']['tldBillingPrice'], 'GBP'); 
+				} else {
+					echo $number->currency($ticket['Ticket']['billingPrice']);
+				}
+			?>
 		</td>
         <td>
 			<?php echo $ticket['Ticket']['numNights'];?>
