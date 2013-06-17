@@ -10,4 +10,12 @@ class LltgServiceHelperComponent extends Object {
 		$serviceBuilder = ServiceHelper::getServiceBuilderFromTldId($tldId);
 		return $serviceBuilder;
 	} 
+	
+	public function getCurrencyService($builder)
+	{
+		App::import("Vendor", "CurrencyService", array('file' => "appshared".DS."Services".DS."CurrencyService.php"));
+		$currencyService = $builder->getService('CurrencyService');
+		return $currencyService;
+	}	
+	
 }

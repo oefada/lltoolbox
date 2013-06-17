@@ -1056,9 +1056,8 @@ class TicketsController extends AppController {
 		
 		if ($tldId == 2) {
 			$allowedTypes = array(3, 4);
-			$ukServiceBuilder = $this->LltgServiceHelper->getServiceBuilderFromTldId($tldId);
-			App::import("Vendor", "CurrencyService", array('file' => "appshared".DS."Services".DS."CurrencyService.php"));
-			$currencyService = $ukServiceBuilder->getService('CurrencyService');
+			$ukServiceBuilder = $this->LltgServiceHelper->getServiceBuilderFromTldId($tldId);			
+			$currencyService = $this->LltgServiceHelper->getCurrencyService($ukServiceBuilder);
 		} else {
 			$allowedTypes = array(1, 2, 3, 4, 6);
 		}
