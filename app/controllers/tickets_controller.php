@@ -399,7 +399,7 @@ class TicketsController extends AppController {
 		$ticket = $this->Ticket->read(null, $id);
 
 		if ($ticket===false){
-			$this->Session->setFlash(__("Not Finding ticketId $id", true), 'default', array(), 'error');
+			pret
 			$this->redirect(array('action'=>'index'));
 		}
 

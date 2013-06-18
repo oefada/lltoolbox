@@ -199,28 +199,6 @@ $this->pageTitle = $client['Client']['name'] . $html2->c(
 <script type="text/javascript">
     jQuery(function () {
         var $ = jQuery;
-        /*
-        // http://jsfiddle.net/mK6Um/5/embedded/result/
-        var getLuxuryHostForEnv = function (currentHostname) {
-            return currentHostname.replace('toolboxdev', 'lldev').replace('-toolbox', '-luxurylink').replace('toolbox', 'www');
-        }
-        test("hello test", function () {
-            var allTests = {
-                "toolbox": "www",
-                "toolbox.luxurylink.com": "www.luxurylink.com",
-                "sknight-toolboxdev.luxurylink.com": "sknight-lldev.luxurylink.com",
-                "sknight-toolboxdev": "sknight-lldev",
-                "stage-toolbox.luxurylink.com": "stage-luxurylink.luxurylink.com",
-                "stage-toolbox": "stage-luxurylink"
-            };
-            for (var x in allTests) {
-                if (allTests.hasOwnProperty(x)) {
-                    var output = getLuxuryHostForEnv(x);
-                    ok(allTests[x] === output, "Rewriting: " + x + ": Expected " + allTests[x] + ", got " + output);
-                }
-            }
-        });
-        */
         var getCheckedPreviewUrl = function () {
             var selected = [];
             $('input[type="checkbox"]:checked.previewPackage').each(function () {
@@ -229,7 +207,8 @@ $this->pageTitle = $client['Client']['name'] . $html2->c(
             if (selected.length < 1) {
                 return false;
             }
-            var previewUrl = 'http://' + window.location.host.replace('toolboxdev', 'lldev').replace('-toolbox', '-luxurylink').replace('toolbox', 'www');
+            // previewUrl test: http://jsfiddle.net/mK6Um/7/
+            var previewUrl = 'http://' + window.location.host.replace(/toolboxdev/, 'lldev').replace(/-toolbox/, '-luxurylink').replace(/^toolbox/, 'www').replace(/(|\.luxurylink\.com)$/, '.luxurylink.com');
             previewUrl += '/luxury-hotels/preview.html';
             previewUrl += '?preview=package';
             previewUrl += '&clid=<?php echo $clientId; ?>';
