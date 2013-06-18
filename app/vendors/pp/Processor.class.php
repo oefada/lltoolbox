@@ -12,6 +12,11 @@ class Processor
     private $response_data = array();
     private $post_data = array();
 
+    /**
+     * @param $processor_name
+     * @param bool $test_card
+     * @return bool
+     */
     public function Processor($processor_name, $test_card = false)
     {
         if (!in_array($processor_name, $this->module_list)) {
@@ -21,6 +26,10 @@ class Processor
         $this->processor_name = $processor_name;
     }
 
+    /**
+     * @param $userPaymentSetting
+     * @param $ticket
+     */
     public function InitPayment($userPaymentSetting, $ticket)
     {
         // build needed parameters for a post.
@@ -55,6 +64,9 @@ class Processor
         $this->post_data = $this->MapParams($db_params);
     }
 
+    /**
+     * @return bool
+     */
     public function SubmitPost()
     {
         if (!is_array($this->post_data) || !$this->post_data || empty($this->post_data)) {
@@ -95,36 +107,59 @@ class Processor
         unset($ch);
     }
 
+    /**
+     * @return mixed
+     */
     public function ChargeSuccess()
     {
         return $this->module->ChargeSuccess($this->response_data);
     }
 
+    /**
+     * @return mixed
+     */
     public function GetResponseTxt()
     {
         return $this->module->GetResponseTxt($this->response_data);
     }
 
+    /**
+     * @return mixed
+     */
     public function GetMappedResponse()
     {
         return $this->module->GetMappedResponse($this->response_data);
     }
 
+    /**
+     * @param $ticket_id
+     * @return mixed
+     */
     public function IsValidResponse($ticket_id)
     {
         return $this->module->IsValidResponse($this->response_data, $ticket_id);
     }
 
+    /**
+     * @param $cvc
+     * @return mixed
+     */
     public function AddCvc($cvc)
     {
         return $this->module->AddCvc($cvc);
     }
 
+    /**
+     * @return array
+     */
     public function getResponseData()
     {
         return $this->response_data;
     }
 
+    /**
+     * @return mixed
+     */
     public function dummyMappedResponse()
     {
         $paymentDetail['ppResponseDate'] = date('Y-m-d H:i:s', strtotime('now'));
@@ -140,6 +175,10 @@ class Processor
         return $paymentDetail;
     }
 
+    /**
+     * @param $params
+     * @return array|bool
+     */
     private function MapParams($params)
     {
         if (!is_array($params)) {
@@ -154,6 +193,10 @@ class Processor
         return array_merge($this->module->post_data, $tmp);
     }
 
+    /**
+     * @param $params
+     * @return string
+     */
     private function SetPostFields($params)
     {
         $tmp_str = '';
