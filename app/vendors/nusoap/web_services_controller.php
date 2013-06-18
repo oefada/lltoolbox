@@ -26,7 +26,7 @@ class WebServicesController extends AppController
         'integer' => 'xsd:integer',
         'bigint' => 'xsd:integer',
         'float' => 'xsd:float',
-        'double' => 'xsd:float', //maybe exists xsd:double
+        'double' => 'xsd:float',
         'decimal' => 'xsd:float',
         'datetime' => 'xsd:string',
         'timestamp' => 'xsd:integer',
@@ -40,7 +40,6 @@ class WebServicesController extends AppController
 
     public function beforeFilter()
     {
-        //little trick for ?wsdl param
         global $_SERVER;
 
         if (preg_match('/' . Inflector::underscore($this->name) . '(\/)?$/', $_SERVER['PHP_SELF'])) {
@@ -61,19 +60,16 @@ class WebServicesController extends AppController
         App::import('Vendor', 'nusoap/nusoap');
         $cacheName = "soapserver/{$this->name}.soapserver";
         if ($this->server_cache && false) {
-            //reads the instance from cache
             $data = cache($cacheName, null, $expires = '+1 day');
             if ($data) {
                 $this->_soap_server = unserialize($data);
             }
-            //$this->_soap_server=$this->cacheObject->read($cacheName);
         } else {
             $this->_soap_server = false;
         }
 
         if (!$this->_soap_server) {
             $this->_soap_server = new soap_server();
-            //$wsdl="{$this->name}wsdl";
             $wsdl = "{$this->name}";
             $urn = "urn:$wsdl";
 
@@ -91,7 +87,6 @@ class WebServicesController extends AppController
             $this->_soap_server->configureWSDL($wsdl, $urn, $this->serviceUrl);
 
             foreach ($this->api as $name => $method) {
-
                 if (isset($method['output'])) {
                     if (is_array($method['output'])) {
                         $output = $this->_convertIOArray($method['output']);
@@ -102,7 +97,6 @@ class WebServicesController extends AppController
                 } else {
                     $output = array();
                 }
-
 
                 if (isset($method['input'])
                     && is_array($method['input'])
@@ -121,19 +115,15 @@ class WebServicesController extends AppController
                     $output,
                     $urn,
                     "$urn#$name",
-                    'rpc', // style
-                    'encoded', // use
+                    'rpc',
+                    'encoded',
                     $doc
-                ); // documentation
-
-
+                );
             }
             $this->_buildComplexTypes();
 
             if ($this->server_cache) {
                 $this->_make_cache_dir();
-                //saves the instance to cache
-                //$this->cacheObject->write($cacheName,$this->_soap_server,'+1 Day',2);
                 cache($cacheName, serialize($this->_soap_server));
             }
         }

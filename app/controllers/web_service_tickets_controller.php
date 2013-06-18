@@ -2874,6 +2874,10 @@ class WebServiceTicketsController extends WebServicesController
         return false;
     }
 
+    /**
+     * @param $in0
+     * @return bool|string
+     */
     public function processPaymentTicket($in0)
     {
         // ---------------------------------------------------------------------------
@@ -2881,19 +2885,16 @@ class WebServiceTicketsController extends WebServicesController
         // ---------------------------------------------------------------------------
         // REQUIRED: (1) userId
         //           (2) ticketId
-        //			 (3) paymentProcessorId
-        // 			 (4) paymentAmount
+        //           (3) paymentProcessorId
+        //           (4) paymentAmount
         //           (5) initials
-        //			 (6) autoCharge
+        //           (6) autoCharge
         //           (7) saveUps
-        //			 (8) zAuthHashKey
+        //           (8) zAuthHashKey
         //           (9) userPaymentSettingId or userPaymentSetting data array
-        //           (10) toolboxManualCharge
+        //          (10) toolboxManualCharge
         //
         // SEND TO PAYMENT PROCESSOR: $userPaymentSettingPost
-        // ---------------------------------------------------------------------------
-
-        // good o' error checking my friends.  make this as strict as possible
         // ---------------------------------------------------------------------------
         $data = json_decode($in0, true);
 
@@ -2906,37 +2907,8 @@ class WebServiceTicketsController extends WebServicesController
             }
         }
 
-        if (!isset($data['userId']) || empty($data['userId'])) {
-            $this->errorResponse = 101;
-            return $this->returnError(__METHOD__);
-        }
-        if (!isset($data['ticketId']) || empty($data['ticketId'])) {
-            $this->errorResponse = 102;
-            return $this->returnError(__METHOD__);
-        }
-        if (!isset($data['paymentProcessorId']) || !$data['paymentProcessorId']) {
-            $this->errorResponse = 103;
-            return $this->returnError(__METHOD__);
-        }
-        if (!isset($data['paymentAmount']) || $data['paymentAmount'] < 0) {
-            $this->errorResponse = 104;
-            return $this->returnError(__METHOD__);
-        }
-
-        if (!isset($data['initials']) || empty($data['initials'])) {
-            $this->errorResponse = 105;
-            return $this->returnError(__METHOD__);
-        }
-        if (!isset($data['autoCharge'])) {
-            $this->errorResponse = 106;
-            return $this->returnError(__METHOD__);
-        }
-        if (!isset($data['saveUps'])) {
-            $this->errorResponse = 107;
-            return $this->returnError(__METHOD__);
-        }
-        if (!isset($data['zAuthHashKey']) || !$data['zAuthHashKey']) {
-            $this->errorResponse = 108;
+        $this->errorResponse = $this->paymentDataToProcessIsValid($data);
+        if ($this->errorResponse !== false) {
             return $this->returnError(__METHOD__);
         }
 
@@ -2996,13 +2968,22 @@ class WebServiceTicketsController extends WebServicesController
             $userPaymentSettingPost['UserPaymentSetting'] = (isset($data['userPaymentSetting'])) ? $data['userPaymentSetting'] : 0;
         }
 
-        if (!$userPaymentSettingPost || empty($userPaymentSettingPost)) {
+        if (
+            !$userPaymentSettingPost
+            || empty($userPaymentSettingPost)
+            || !isset($userPaymentSettingPost['UserPaymentSetting']['ccToken'])
+        ) {
             $this->errorResponse = 113;
             return $this->returnError(__METHOD__);
         }
 
         $userPaymentSettingPost['UserPaymentSetting']['ccNumber'] =
             $this->UserPaymentSetting->detokenizeCcNum($userPaymentSettingPost['UserPaymentSetting']['ccToken']);
+
+        if (!is_numeric($userPaymentSettingPost['UserPaymentSetting']['ccNumber'])) {
+            $this->errorResponse = 114;
+            return $this->returnError(__METHOD__);
+        }
 
         // for FAMILY, payment is via PAYPAL only [override]
         // ---------------------------------------------------------------------------
@@ -3021,7 +3002,7 @@ class WebServiceTicketsController extends WebServicesController
         $paymentProcessorName = $paymentProcessorName['PaymentProcessor']['paymentProcessorName'];
 
         if (!$paymentProcessorName) {
-            $this->errorResponse = 114;
+            $this->errorResponse = 115;
             return $this->returnError(__METHOD__);
         }
 
@@ -3081,18 +3062,17 @@ class WebServiceTicketsController extends WebServicesController
             $totalChargeAmount = $payment_amt;
         }
 
-        $paymentDetail = array();
-
-        $paymentDetail['ticketId'] = $ticket['Ticket']['ticketId'];
-        $paymentDetail['userId'] = $ticket['Ticket']['userId'];
-        $paymentDetail['autoProcessed'] = $data['autoCharge'];
-        $paymentDetail['initials'] = $data['initials'];
-        $paymentDetail['paymentProcessorId'] = $data['paymentProcessorId'];
-        $paymentDetail['paymentTypeId'] = (isset($data['paymentTypeId'])) ? $data['paymentTypeId'] : null;
-        $paymentDetail['paymentAmount'] = $totalChargeAmount;
-        $paymentDetail['userPaymentSettingId'] = ($usingUpsId) ? $data['userPaymentSettingId'] : '';
-        $paymentDetail['ppBillingAmount'] = $totalChargeAmount;
-
+        $paymentDetail = array(
+            'ticketId' => $ticket['Ticket']['ticketId'],
+            'userId' => $ticket['Ticket']['userId'],
+            'autoProcessed' => $data['autoCharge'],
+            'initials' => $data['initials'],
+            'paymentProcessorId' => $data['paymentProcessorId'],
+            'paymentTypeId' => (isset($data['paymentTypeId'])) ? $data['paymentTypeId'] : null,
+            'paymentAmount' => $totalChargeAmount,
+            'userPaymentSettingId' => ($usingUpsId) ? $data['userPaymentSettingId'] : '',
+            'ppBillingAmount' => $totalChargeAmount
+        );
         $otherCharge = 0;
 
         if ((isset($data['paymentTypeId']) && $data['paymentTypeId'] == 1) || !$toolboxManualCharge) {
@@ -3104,34 +3084,16 @@ class WebServiceTicketsController extends WebServicesController
             $ticket['Ticket']['billingPrice'] = $totalChargeAmount;
             $this->logError(array("PAYMENT INFO", $ticket));
 
-            // Allows 4111111111111111 on Hotel Testerosa on LIVE/DEV
-            $test_card = false;
+            $isTestTransaction = $this->isTestTransaction(
+                $userPaymentSettingPost['UserPaymentSetting']['ccNumber'],
+                $ticket['Ticket']['siteId'],
+                $ticket['Ticket']['offerId'],
+                $isDev
+            );
 
-            if ($userPaymentSettingPost['UserPaymentSetting']['ccNumber'] == "4111111111111111" || $isDev === true) {
-                switch ($ticket['Ticket']['siteId']) {
-                    case 1:
-                        $ticketSite = 'offerLuxuryLink';
-                        break;
-                    case 2:
-                        $ticketSite = 'offerFamily';
-                        break;
-                }
-
-                $clientId = $this->Ticket->query(
-                    "SELECT clientId FROM " . $ticketSite . " WHERE offerId = '" . $ticket['Ticket']['offerId'] . "' AND clientId = 8455"
-                );
-
-                if (count($clientId) || $isDev === true) {
-                    $test_card = true;
-                }
-            }
-
-            $processor = new Processor($paymentProcessorName, $test_card);
+            $processor = new Processor($paymentProcessorName, $isTestTransaction);
             $processor->InitPayment($userPaymentSettingPost, $ticket);
-
-            if ($test_card || !$isDev) {
-                $processor->SubmitPost();
-            }
+            $processor->SubmitPost();
 
             $userPaymentSettingPost['UserPaymentSetting']['expMonth'] = str_pad(
                 $userPaymentSettingPost['UserPaymentSetting']['expMonth'],
@@ -3165,10 +3127,6 @@ class WebServiceTicketsController extends WebServicesController
             $paymentDetail['ppExpMonth'] = $userPaymentSettingPost['UserPaymentSetting']['expMonth'];
             $paymentDetail['ppExpYear'] = $userPaymentSettingPost['UserPaymentSetting']['expYear'];
             $paymentDetail['ccType'] = $userPaymentSettingPost['UserPaymentSetting']['ccType'];
-
-            if ($isDev) {
-                $paymentDetail['isSuccessfulCharge'] = 1;
-            }
         } else {
             if ($data['paymentTypeId'] == 2) {
                 // Gift cert
@@ -3221,7 +3179,6 @@ class WebServiceTicketsController extends WebServicesController
 
         // save the response from the payment processor
         // ---------------------------------------------------------------------------
-
         $this->PaymentDetail->create();
         $tmpResult = $this->PaymentDetail->save($paymentDetail);
 
@@ -3256,8 +3213,6 @@ class WebServiceTicketsController extends WebServicesController
                     "web_service_tickets_controller",
                     "DECLINED. RESPONSE: " . var_export($processor->GetMappedResponse(), 1)
                 );
-                // $allDebug = print_r($processor, true);
-                // CakeLog::write("debug", $allDebug);
                 return $response_txt;
             } else {
                 return false;
@@ -3684,6 +3639,74 @@ class WebServiceTicketsController extends WebServicesController
         }
 
         return $credit;
+    }
+
+    /**
+     * @param $data
+     * @return bool|int
+     */
+    private function paymentDataToProcessIsValid($data)
+    {
+        $errorResponse = false;
+        if (!isset($data['userId']) || empty($data['userId'])) {
+            $errorResponse = 101;
+        } else if (!isset($data['ticketId']) || empty($data['ticketId'])) {
+            $errorResponse = 102;
+        } else if (!isset($data['paymentProcessorId']) || !$data['paymentProcessorId']) {
+            $errorResponse = 103;
+        } else if (!isset($data['paymentAmount']) || $data['paymentAmount'] < 0) {
+            $errorResponse = 104;
+        } else if (!isset($data['initials']) || empty($data['initials'])) {
+            $errorResponse = 105;
+        } else if (!isset($data['autoCharge'])) {
+            $errorResponse = 106;
+        } else if (!isset($data['saveUps'])) {
+            $errorResponse = 107;
+        } else if (!isset($data['zAuthHashKey']) || !$data['zAuthHashKey']) {
+            $errorResponse = 108;
+        }
+
+        return $errorResponse;
+    }
+
+    /**
+     * @param $ccNumber
+     * @param $siteId
+     * @param $offerId
+     * @param $isDev
+     * @return bool
+     */
+    private function isTestTransaction($ccNumber, $siteId, $offerId, $isDev)
+    {
+        $offerTable = false;
+        $clientId = false;
+        $testClientId = 8455;
+        $testCCNumber = '4111111111111111';
+
+        if ($isDev === true) {
+            return true;
+        } else if ($ccNumber == $testCCNumber) {
+            switch($siteId) {
+                case 1:
+                    $offerTable = 'offerLuxuryLink';
+                    break;
+                case 2:
+                    $offerTable = 'offerFamily';
+                    break;
+            }
+
+            if ($offerTable !== false) {
+                $clientId = $this->Ticket->query("
+                    SELECT clientId
+                    FROM $offerTable
+                    WHERE
+                        offerId = ?
+                ", array($offerId));
+                $clientId = (isset($clientId[0][$offerTable]['clientId'])) ? $clientId[0][$offerTable]['clientId'] : false;
+            }
+        }
+
+        return ($clientId == $testClientId);
     }
 }
 
