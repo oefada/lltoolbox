@@ -93,18 +93,18 @@ class NOVA
      */
     public function GetMappedResponse($response)
     {
-        $paymentDetail = array();
-
-        $paymentDetail['ppResponseDate'] = date('Y-m-d H:i:s', strtotime('now'));
-        $paymentDetail['ppTransactionId'] = (isset($response['ssl_txn_id'])) ? $response['ssl_txn_id'] : 0;
-        $paymentDetail['ppApprovalText'] = (isset($response['ssl_result_message'])) ? $response['ssl_result_message'] : 0;
-        $paymentDetail['ppApprovalCode'] = (isset($response['ssl_result'])) ? $response['ssl_result'] : 0;
-        $paymentDetail['ppAvsCode'] = (isset($response['ssl_avs_response'])) ? $response['ssl_avs_response'] : 0;
-        $paymentDetail['ppCvvCode'] = (isset($response['ssl_cvv2_response'])) ? $response['ssl_cvv2_response'] : 0;
-        $paymentDetail['ppResponseText'] = '';
-        $paymentDetail['ppResponseSubCode'] = '';
-        $paymentDetail['ppReasonCode'] = '';
-        $paymentDetail['isSuccessfulCharge'] = $this->ChargeSuccess($response) ? '1' : '0';
+        $paymentDetail = array(
+            'ppResponseDate' => date('Y-m-d H:i:s', strtotime('now')),
+            'ppTransactionId' => (isset($response['ssl_txn_id'])) ? $response['ssl_txn_id'] : 0,
+            'ppApprovalText' => (isset($response['ssl_result_message'])) ? $response['ssl_result_message'] : 0,
+            'ppApprovalCode' => (isset($response['ssl_result'])) ? $response['ssl_result'] : 0,
+            'ppAvsCode' => (isset($response['ssl_avs_response'])) ? $response['ssl_avs_response'] : 0,
+            'ppCvvCode' => (isset($response['ssl_cvv2_response'])) ? $response['ssl_cvv2_response'] : 0,
+            'ppResponseText' => '',
+            'ppResponseSubCode' => '',
+            'ppReasonCode' => '',
+            'isSuccessfulCharge' => $this->ChargeSuccess($response) ? '1' : '0'
+        );
 
         return $paymentDetail;
     }
