@@ -2,9 +2,11 @@
 require(APP . '/vendors/pp/AIM.module.php');
 require(APP . '/vendors/pp/PAYPAL.module.php');
 require(APP . '/vendors/pp/NOVA.module.php');
-
 class Processor
 {
+    /**
+     * @var PaymentModuleInterface module
+     */
     public $module;
     public $module_list = array('AIM', 'NOVA', 'PAYPAL');
     public $processor_name;
@@ -22,6 +24,7 @@ class Processor
         if (!in_array($processor_name, $this->module_list)) {
             return false;
         }
+
         $this->module = new $processor_name($test_card);
         $this->processor_name = $processor_name;
     }

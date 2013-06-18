@@ -1,5 +1,6 @@
 <?php
-class NOVA
+require_once 'PaymentModuleInterface.php';
+class NOVA implements PaymentModuleInterface
 {
     public $url = 'https://www.myvirtualmerchant.com/VirtualMerchant/process.do';
     private $merchantId = 506345;
@@ -39,6 +40,30 @@ class NOVA
         $this->map_params['map_country'] = 'ssl_country'; // 50
         $this->map_params['map_expiration'] = 'ssl_exp_date'; // 4      2
         $this->map_params['map_card_num'] = 'ssl_card_number'; // 19
+    }
+
+    /**
+     * @return string
+     */
+    public function getUrl()
+    {
+        return $this->url;
+    }
+
+    /**
+     * @return array
+     */
+    public function getMappedParams()
+    {
+        return $this->map_params;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPostData()
+    {
+        return $this->post_data;
     }
 
     /**
