@@ -2,16 +2,20 @@
 class NOVA
 {
     public $url = 'https://www.myvirtualmerchant.com/VirtualMerchant/process.do';
+    private $merchantId = 506345;
+    private $userId = 'webpage';
+    private $pin = 277516;
+
     public $map_params;
     public $post_data;
     private $valid_avs_codes = array("F", "D", "M", "P", "W", "X", "Y", "Z");
 
-    public function NOVA($test_param = false)
+    public function __construct($test_param = false)
     {
         $this->post_data = array();
-        $this->post_data['ssl_merchant_id'] = '506345';
-        $this->post_data['ssl_user_id'] = 'webpage';
-        $this->post_data['ssl_pin'] = '277516';
+        $this->post_data['ssl_merchant_id'] = $this->merchantId;
+        $this->post_data['ssl_user_id'] = $this->userId;
+        $this->post_data['ssl_pin'] = $this->pin;
         $this->post_data['ssl_transaction_type'] = 'ccavsonly';
         $this->post_data['ssl_test_mode'] = $test_param ? 'TRUE' : 'FALSE';
         $this->post_data['ssl_result_format'] = 'ASCII';
