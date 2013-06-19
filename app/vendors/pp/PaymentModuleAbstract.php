@@ -45,4 +45,12 @@ abstract class PaymentModuleAbstract
     {
         // STUB, required by Interface
     }
+
+    /**
+     * 
+     */
+    public function getPostSale()
+    {
+        // STUB, required by Interface
+    }
 }

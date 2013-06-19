@@ -95,14 +95,6 @@ class PAYPAL extends PaymentModuleAbstract implements PaymentModuleInterface
     }
 
     /**
-     * @return bool
-     */
-    public function getPostSale()
-    {
-        return false;
-    }
-
-    /**
      * @param $response
      * @return bool
      */
