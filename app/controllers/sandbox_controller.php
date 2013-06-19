@@ -6,7 +6,7 @@ class SandboxController extends AppController
 
     public function processorTest()
     {
-        $processor = 'NOVA'; // PAYPAL or NOVA
+        $processor = 'PAYPAL'; // PAYPAL or NOVA
         $testTransaction = true;
 
         $paymentSettings = array(

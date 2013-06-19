@@ -19,7 +19,7 @@ class Processor
      * @param bool $test_card
      * @return bool
      */
-    public function Processor($processor_name, $test_card = false)
+    public function __construct($processor_name, $test_card = false)
     {
         if (!in_array($processor_name, $this->module_list)) {
             return false;
@@ -35,8 +35,6 @@ class Processor
      */
     public function InitPayment($userPaymentSetting, $ticket)
     {
-        // build needed parameters for a post.
-
         $ups = $userPaymentSetting['UserPaymentSetting'];
         $ups['expMonth'] = str_pad(substr($ups['expMonth'], -2, 2), 2, '0', STR_PAD_LEFT);
         $ups['expYear'] = str_pad(substr($ups['expYear'], -2, 2), 2, '0', STR_PAD_LEFT);
@@ -79,7 +77,7 @@ class Processor
         $post_string = $this->SetPostFields($this->post_data);
 
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $this->module->url);
+        curl_setopt($ch, CURLOPT_URL, $this->module->getUrl());
         curl_setopt($ch, CURLOPT_HEADER, 0);
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_VERBOSE, 0);
@@ -92,7 +90,7 @@ class Processor
 
         $response = curl_exec($ch);
         curl_close($ch);
-        $this->response_data = $this->module->ProcessResponse($response);
+        $this->response_data = $this->module->processResponse($response);
 
         // If AVS only was ran, re-run as a sale
         if (
@@ -115,7 +113,7 @@ class Processor
      */
     public function ChargeSuccess()
     {
-        return $this->module->ChargeSuccess($this->response_data);
+        return $this->module->chargeSuccess();
     }
 
     /**
@@ -123,7 +121,7 @@ class Processor
      */
     public function GetResponseTxt()
     {
-        return $this->module->GetResponseTxt($this->response_data);
+        return $this->module->getResponseTxt();
     }
 
     /**
@@ -131,7 +129,7 @@ class Processor
      */
     public function GetMappedResponse()
     {
-        return $this->module->GetMappedResponse($this->response_data);
+        return $this->module->getMappedResponse();
     }
 
     /**
@@ -140,7 +138,7 @@ class Processor
      */
     public function IsValidResponse($ticket_id)
     {
-        return $this->module->IsValidResponse($this->response_data, $ticket_id);
+        return $this->module->isValidResponse($ticket_id);
     }
 
     /**
@@ -149,7 +147,7 @@ class Processor
      */
     public function AddCvc($cvc)
     {
-        return $this->module->AddCvc($cvc);
+        return $this->module->addCvc($cvc);
     }
 
     /**
@@ -188,12 +186,12 @@ class Processor
             return false;
         }
         $tmp = array();
-        foreach ($this->module->map_params as $k => $v) {
+        foreach ($this->module->getMappedParams() as $k => $v) {
             if (isset($params[$k])) {
                 $tmp[$v] = $params[$k];
             }
         }
-        return array_merge($this->module->post_data, $tmp);
+        return array_merge($this->module->getPostData(), $tmp);
     }
 
     /**
