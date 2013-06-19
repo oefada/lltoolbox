@@ -6,7 +6,7 @@
  * Developer guide:
  * https://www.paypalobjects.com/webstatic/en_US/developer/docs/pdf/pp_payflowpro_guide.pdf
  *
- * @author Michael Clifford <michael@cliffom.net>
+ * @author Michael Clifford <mclifford@luxurylink.com>
  */
 
 require_once 'PaymentModuleAbstract.php';

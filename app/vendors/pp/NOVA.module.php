@@ -6,7 +6,7 @@
  * Developer guide:
  * https://www.myvirtualmerchant.com/VirtualMerchant/download/developerGuide.pdf
  *
- * @author Michael Clifford <michael@cliffom.net>
+ * @author Michael Clifford <mclifford@luxurylink.com>
  */
 
 require_once 'PaymentModuleAbstract.php';
