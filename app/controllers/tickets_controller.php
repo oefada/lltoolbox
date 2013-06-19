@@ -1,11 +1,5 @@
 <?php
-
-//ini_set('max_execution_time', 0);
-//ini_set('memory_limit', '256M');
-
 App::import('Vendor', 'nusoap_client/lib/nusoap');
-require_once "../vendors/aes.php";
-
 class TicketsController extends AppController {
 
 	var $name = 'Tickets';

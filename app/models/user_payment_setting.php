@@ -1,7 +1,4 @@
 <?php
-
-require_once(APP.'/vendors/aes.php');
-
 class UserPaymentSetting extends AppModel {
 
 	var $name = 'UserPaymentSetting';
