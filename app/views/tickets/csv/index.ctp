@@ -18,11 +18,7 @@ foreach($tickets as $ticket) {
 	echo $ticket['Ticket']['bidId'] . ",";
 	echo $ticket['Ticket']['offerId'] . ",";
 	echo $ticket['Ticket']['packageId'] . ",";
-    if ($ticket['Ticket']['tldId'] == 2) {
-        echo $ticket['Ticket']['tldBillingPrice'] . " GBP,";
-    } else {
-        echo $ticket['Ticket']['billingPrice'] . ",";
-    }
+    echo $ticket['Ticket']['billingPrice'] . ",";
 	echo $ticket['Ticket']['validCard'] . ",";
 	echo $ticket['TicketStatus']['ticketStatusName'] . ",";
 	echo (isset($ticket['Promo'][0]['pc']['promoCode'])?$ticket['Promo'][0]['pc']['promoCode']:'') . ",";

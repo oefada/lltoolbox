@@ -101,15 +101,7 @@ $this->searchController = 'Tickets';
             </tr>
 			<tr>
 				<td><strong>Ticket Amount</strong></td>
-				<td><?php 
-							
-				if ($ticket['Ticket']['tldId'] == 2) {
-					echo $number->currency($ticket['Ticket']['tldBillingPrice'], 'GBP'); 
-				} else {
-					echo $number->currency($ticket['Ticket']['billingPrice']);
-				}
-				
-				?></td>
+				<td><?php echo $number->currency($ticket['Ticket']['billingPrice']); ?></td>
 			</tr>
 			<tr>
 				<td><strong>User Id</strong></td>
@@ -575,127 +567,122 @@ $this->searchController = 'Tickets';
 
 <? $refundOrCOFList = array('R'=>'Refund', 'C'=>'COF', 'B'=>'Both'); ?> 
 
-<?php if (intval($ticket['Ticket']['tldId']) > 1):?>
-    <br /><div>UK Refund Options TBD</div>
-<?php else: ?>
+<br />
+<div class="collapsible">
+    <div class="handle"><?php __("Refund Requests (" . sizeof($ticket['RefundRequest']) . ")");?></div>
+    <div class="collapsibleContent related">
+    <br />
+    <?php if (sizeof($ticket['RefundRequest']) > 0):?>
+        <table cellspacing="0" cellpadding="0">
+            <tr>
+                <th style="text-align:center;">Request Id</th>
+                <th style="text-align:center;">Status</th>
+                <th style="text-align:center;">Request Date</th>
+                <th style="text-align:center;">Requested By</th>
+                <th style="text-align:center;">Approval Date</th>
+                <th style="text-align:center;">Approved By</th>
+                <th style="text-align:center;">Complete Date</th>
+                <th style="text-align:center;">Completed By</th>
+                <th style="text-align:center;">Refund / COF</th>
+                <th style="text-align:center;">&nbsp;</th>
+            </tr>
+            <?php foreach ($ticket['RefundRequest'] as $k=>$v) : ?>
+            <tr>
+                <td style="text-align:center;"><?=$v['refundRequestId'];?></td>
+                <td style="text-align:center;"><?=$v['RefundRequestStatus']['description'];?></td>
+                <td style="text-align:center;"><?=$v['dateCreated'];?></td>
+                <td style="text-align:center;"><?=$v['createdBy'];?></td>
+                <td style="text-align:center;"><?=$v['dateApproved'];?></td>
+                <td style="text-align:center;"><?=$v['approvedBy'];?></td>
+                <td style="text-align:center;"><?=$v['dateCompleted'];?></td>
+                <td style="text-align:center;"><?=$v['completedBy'];?></td>				
+                <td style="text-align:center;">
+                    <?
+                    if ($v['refundOrCOF']) {	
+                        echo $refundOrCOFList[$v['refundOrCOF']]; 
+                    }
+                    ?>
+                </td>
+                <td style="text-align:center;">
+                    <?php echo $html->link('View', '/refund_requests/view/' . $v['refundRequestId']); ?>
+                </td>
+            </tr>
+            <?php endforeach; ?>
+        </table>
+    <?php endif; ?>
+    <?php echo $html->link('Add Refund Request', '/refund_requests/add/' . $ticket['Ticket']['ticketId']); ?>
+    </div>
+</div>
 
-        <br />
-        <div class="collapsible">
-            <div class="handle"><?php __("Refund Requests (" . sizeof($ticket['RefundRequest']) . ")");?></div>
-            <div class="collapsibleContent related">
-            <br />
-            <?php if (sizeof($ticket['RefundRequest']) > 0):?>
-                <table cellspacing="0" cellpadding="0">
-                    <tr>
-                        <th style="text-align:center;">Request Id</th>
-                        <th style="text-align:center;">Status</th>
-                        <th style="text-align:center;">Request Date</th>
-                        <th style="text-align:center;">Requested By</th>
-                        <th style="text-align:center;">Approval Date</th>
-                        <th style="text-align:center;">Approved By</th>
-                        <th style="text-align:center;">Complete Date</th>
-                        <th style="text-align:center;">Completed By</th>
-                        <th style="text-align:center;">Refund / COF</th>
-                        <th style="text-align:center;">&nbsp;</th>
-                    </tr>
-                    <?php foreach ($ticket['RefundRequest'] as $k=>$v) : ?>
-                    <tr>
-                        <td style="text-align:center;"><?=$v['refundRequestId'];?></td>
-                        <td style="text-align:center;"><?=$v['RefundRequestStatus']['description'];?></td>
-                        <td style="text-align:center;"><?=$v['dateCreated'];?></td>
-                        <td style="text-align:center;"><?=$v['createdBy'];?></td>
-                        <td style="text-align:center;"><?=$v['dateApproved'];?></td>
-                        <td style="text-align:center;"><?=$v['approvedBy'];?></td>
-                        <td style="text-align:center;"><?=$v['dateCompleted'];?></td>
-                        <td style="text-align:center;"><?=$v['completedBy'];?></td>				
-                        <td style="text-align:center;">
-                            <?
-                            if ($v['refundOrCOF']) {	
-                                echo $refundOrCOFList[$v['refundOrCOF']]; 
-                            }
-                            ?>
-                        </td>
-                        <td style="text-align:center;">
-                            <?php echo $html->link('View', '/refund_requests/view/' . $v['refundRequestId']); ?>
-                        </td>
-                    </tr>
-                    <?php endforeach; ?>
-                </table>
-            <?php endif; ?>
-            <?php echo $html->link('Add Refund Request', '/refund_requests/add/' . $ticket['Ticket']['ticketId']); ?>
-            </div>
-        </div>
+<br />
+<div class="collapsible">
+    <? $refundProcessedCount = (empty($ticket['TicketRefund']['ticketRefundId'])) ? 0 : 1; ?>
+    <div class="handle"><?php __('Refund Processed (' . $refundProcessedCount . ')');?></div>
+    <div class="collapsibleContent related">
+    <br />
+    <?php if (!empty($ticket['TicketRefund']['ticketRefundId'])):?>
+        <table cellpadding="0" cellspacing="0">
+            <tr class="altrow">
+                <td width="200">Refund Id</td>
+                <td><?php echo $ticket['TicketRefund']['ticketRefundId'];?></td>
+            </tr>
+            <tr>
+                <td width="200">Refund Type</td>
+                <td><?php echo $ticket['TicketRefund']['TicketRefundType']['ticketRefundTypeName'];?></td>
+            </tr>
+            <tr class="altrow">
+                <td width="200">Refund Reason</td>
+                <td><?php echo $ticket['TicketRefund']['RefundReason']['refundReasonName'];?></td>
+            </tr>
+            <tr>
+                <td width="200">Refund Date</td>
+                <td><?php echo $ticket['TicketRefund']['dateRequested'];?></td>
+            </tr>
+            <tr class="altrow">
+                <td width="200">Refund Amount</td>
+                <td><?php echo $number->currency($ticket['TicketRefund']['amountRefunded']);?></td>
+            </tr>
+            <tr>
+                <td width="200">Refund Notes</td>
+                <td><?php echo $ticket['TicketRefund']['refundNotes'];?></td>
+            </tr>
+        </table>
 
-        <br />
-        <div class="collapsible">
-            <? $refundProcessedCount = (empty($ticket['TicketRefund']['ticketRefundId'])) ? 0 : 1; ?>
-            <div class="handle"><?php __('Refund Processed (' . $refundProcessedCount . ')');?></div>
-            <div class="collapsibleContent related">
-            <br />
-            <?php if (!empty($ticket['TicketRefund']['ticketRefundId'])):?>
-                <table cellpadding="0" cellspacing="0">
-                    <tr class="altrow">
-                        <td width="200">Refund Id</td>
-                        <td><?php echo $ticket['TicketRefund']['ticketRefundId'];?></td>
-                    </tr>
-                    <tr>
-                        <td width="200">Refund Type</td>
-                        <td><?php echo $ticket['TicketRefund']['TicketRefundType']['ticketRefundTypeName'];?></td>
-                    </tr>
-                    <tr class="altrow">
-                        <td width="200">Refund Reason</td>
-                        <td><?php echo $ticket['TicketRefund']['RefundReason']['refundReasonName'];?></td>
-                    </tr>
-                    <tr>
-                        <td width="200">Refund Date</td>
-                        <td><?php echo $ticket['TicketRefund']['dateRequested'];?></td>
-                    </tr>
-                    <tr class="altrow">
-                        <td width="200">Refund Amount</td>
-                        <td><?php echo $number->currency($ticket['TicketRefund']['amountRefunded']);?></td>
-                    </tr>
-                    <tr>
-                        <td width="200">Refund Notes</td>
-                        <td><?php echo $ticket['TicketRefund']['refundNotes'];?></td>
-                    </tr>
-                </table>
+        <?php if ($showRefundLink):?>
+                <?php
+                echo $html->link('Edit Ticket Refund',
+                    '/ticket_refunds/edit/' . $ticket['TicketRefund']['ticketRefundId'],
+                    array(
+                        'title' => 'Edit Ticket Refund',
+                        'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
+                        'complete' => 'closeModalbox()'
+                        ),
+                    null,
+                    false
+                );
+                ?>
+        <?php endif; ?>				
 
-                <?php if ($showRefundLink):?>
-                        <?php
-                        echo $html->link('Edit Ticket Refund',
-                            '/ticket_refunds/edit/' . $ticket['TicketRefund']['ticketRefundId'],
-                            array(
-                                'title' => 'Edit Ticket Refund',
-                                'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
-                                'complete' => 'closeModalbox()'
-                                ),
-                            null,
-                            false
-                        );
-                        ?>
-                <?php endif; ?>				
+    <?php else: ?>
 
-            <?php else: ?>
+        <?php if ($showRefundLink):?>
+                <?php
+                echo $html->link('Refund this Ticket',
+                    '/tickets/' . $ticket['Ticket']['ticketId'] . '/ticket_refunds/add',
+                    array(
+                        'title' => 'Ticket Refund',
+                        'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
+                        'complete' => 'closeModalbox()'
+                        ),
+                    null,
+                    false
+                ); ?>
+        <?php endif; ?>	
 
-                <?php if ($showRefundLink):?>
-                        <?php
-                        echo $html->link('Refund this Ticket',
-                            '/tickets/' . $ticket['Ticket']['ticketId'] . '/ticket_refunds/add',
-                            array(
-                                'title' => 'Ticket Refund',
-                                'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
-                                'complete' => 'closeModalbox()'
-                                ),
-                            null,
-                            false
-                        ); ?>
-                <?php endif; ?>	
-
-            <?php endif; ?>
-            </div>
-        </div>
-<?php endif; ?>        
-
+    <?php endif; ?>
+    </div>
+</div>
+  
 <br />
 <div class="collapsible">
 	<div class="handle"><?php __("Revenue Allocation ($trackExistsCount)");?></div>

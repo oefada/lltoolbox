@@ -21,7 +21,6 @@
 		
 	<?		
 		echo $form->input('billingPrice');
-        echo $form->input('tldBillingPrice', array('readonly' => 'readonly', 'label' => 'GBP Price', 'div'=>array('id'=>'tldPriceWrapper', 'style'=>'display:none;')));
 		echo $form->input('offerPrice', array('type'=>'hidden'));
 		echo $form->input('numNights');
 		echo $form->input('offerNights', array('type'=>'hidden'));
@@ -105,8 +104,8 @@
 					var guests = info[2].replace(' guests', '');
 					$('#TicketRequestNumGuests').val(guests);
                     
-                    var tldPrice = info[4].replace(' GBP', '');
-                    $('#TicketTldBillingPrice').val(tldPrice);
+                    // var tldPrice = info[4].replace(' GBP', '');
+                    // $('#TicketTldBillingPrice').val(tldPrice);
 				}
 			});
 
@@ -171,12 +170,7 @@
 			}
             
             function tldPriceDisplay() {
-                var slct = $('#TicketSiteIdSelecter').val();
-                if (slct == 'UK') {
-                    $('#tldPriceWrapper').show();
-                } else {
-                    $('#tldPriceWrapper').hide();
-                }
+
             }
 
 			$("#TicketUserId").change(function(){

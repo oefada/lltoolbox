@@ -101,7 +101,7 @@ class TicketsController extends AppController {
 		$s_end_date = $s_end_y . '-' . $s_end_m . '-' . $s_end_d . ' 23:59:59';
 
 		$this->paginate = array('fields' => array(
-									'Ticket.ticketId', 'Ticket.offerTypeId', 'Ticket.created', 'Ticket.bidId', 'Ticket.tldId', 'Ticket.tldBillingPrice',
+									'Ticket.ticketId', 'Ticket.offerTypeId', 'Ticket.created', 'Ticket.bidId', 'Ticket.tldId', 
 									'Ticket.offerId', 'Ticket.userId', 'TicketStatus.ticketStatusName', 'Ticket.packageId',
 									'Ticket.userFirstName', 'Ticket.userLastName', 'Ticket.packageId', 'Ticket.billingPrice', 'Ticket.numNights', 'Ticket.formatId', 'Ticket.ticketNotes','Ticket.siteId',
 									'Ticket.requestArrival', 'Ticket.requestDeparture',
@@ -707,10 +707,6 @@ class TicketsController extends AppController {
 				if ($tData['billingPrice'] != $tData['offerPrice']) { $errors[] = 'Billing Price can not be modified for Auto Confirm tickets.'; }
 				if ($tData['numNights'] != $tData['offerNights']) { $errors[] = 'Num Nights can not be modified for Auto Confirm tickets.'; }
 			}
-			if ($tldId == 2) {
-				if ($tData['billingPrice'] != $tData['offerPrice']) { $errors[] = 'Billing Price can not be modified for UK tickets.'; }
-				if ($tData['numNights'] != $tData['offerNights']) { $errors[] = 'Num Nights can not be modified for UK tickets.'; }
-			}
 
 			if (sizeof($errors) > 0) {
 				$this->Session->setFlash(__((implode('<br />', $errors)), true));
@@ -752,9 +748,6 @@ class TicketsController extends AppController {
 				$saveTicketData['formatId'] = in_array($offerData['offerTypeId'], array(1,2,6)) ? 1 : 2;
 				$saveTicketData['offerTypeId'] = $offerData['offerTypeId'];
 				$saveTicketData['tldId'] = $tldId;
-				if ($tldId > 1) {
-					$saveTicketData['tldBillingPrice'] = $tData['tldBillingPrice'];
-				}
 				
 				// user info
 				$this->User->recursive = 1;
