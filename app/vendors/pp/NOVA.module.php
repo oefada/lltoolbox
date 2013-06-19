@@ -83,10 +83,10 @@ class NOVA extends PaymentModuleAbstract implements PaymentModuleInterface
             'ppApprovalCode' => (isset($response['ssl_result'])) ? $response['ssl_result'] : 0,
             'ppAvsCode' => (isset($response['ssl_avs_response'])) ? $response['ssl_avs_response'] : 0,
             'ppCvvCode' => (isset($response['ssl_cvv2_response'])) ? $response['ssl_cvv2_response'] : 0,
-            'ppResponseText' => '',
-            'ppResponseSubCode' => '',
+            'ppResponseText' => (isset($response['ssl_approval_code'])) ? $response['ssl_approval_code'] : '',
+            'ppResponseSubcode' => '',
             'ppReasonCode' => '',
-            'isSuccessfulCharge' => $this->ChargeSuccess($response) ? '1' : '0'
+            'isSuccessfulCharge' => $this->chargeSuccess() ? 1 : 0
         );
 
         return $paymentDetail;

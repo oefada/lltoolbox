@@ -3179,6 +3179,7 @@ class WebServiceTicketsController extends WebServicesController
 
         // save the response from the payment processor
         // ---------------------------------------------------------------------------
+        CakeLog::write('cliffom_debug', print_r($paymentDetail, true));
         $this->PaymentDetail->create();
         $tmpResult = $this->PaymentDetail->save($paymentDetail);
 

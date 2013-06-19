@@ -76,7 +76,7 @@ class PAYPAL extends PaymentModuleAbstract implements PaymentModuleInterface
             'ppApprovalCode' => $response['RESULT'],
             'ppAvsCode' => isset($response['AVSADDR']) ? $response['AVSADDR'] : '',
             'ppResponseText' => isset($response['PPREF']) ? $response['PPREF'] : '',
-            'ppResponseSubCode' => isset($response['CORRELATIONID']) ? $response['CORRELATIONID'] : '',
+            'ppResponseSubcode' => isset($response['CORRELATIONID']) ? $response['CORRELATIONID'] : '',
             'ppReasonCode' => isset($response['AUTHCODE']) ? $response['AUTHCODE'] : '',
             'isSuccessfulCharge' => ($response['RESULT'] == '0') && (stristr($response['RESPMSG'], 'APPROVED')) ? 1 : 0
         );

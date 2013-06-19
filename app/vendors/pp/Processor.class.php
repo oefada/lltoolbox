@@ -53,19 +53,20 @@ class Processor
             $lastName = $name[(count($name) - 1)];
         }
 
-        $db_params = array();
-        $db_params['map_ticket_id'] = $ticket['Ticket']['ticketId'];
-        $db_params['map_total_amount'] = $ticket['Ticket']['billingPrice'];
-        $db_params['map_first_name'] = substr($firstName, 0, 20);
-        $db_params['map_last_name'] = substr($lastName, 0, 20);
-        $db_params['map_street'] = substr(trim($ups['address1']), 0, 20);
-        $db_params['map_street2'] = substr(trim($ups['address2']), 0, 20);
-        $db_params['map_city'] = substr(trim($ups['city']), 0, 20);
-        $db_params['map_state'] = substr(trim($ups['state']), 0, 20);
-        $db_params['map_zip'] = substr(trim(str_replace(' ', '', $ups['postalCode'])), 0, 9);
-        $db_params['map_country'] = substr(trim($ups['country']), 0, 20);
-        $db_params['map_expiration'] = $ups['expMonth'] . $ups['expYear'];
-        $db_params['map_card_num'] = trim($ups['ccNumber']);
+        $db_params = array(
+            'map_ticket_id' => $ticket['Ticket']['ticketId'],
+            'map_total_amount' => $ticket['Ticket']['billingPrice'],
+            'map_first_name' => substr($firstName, 0, 20),
+            'map_last_name' => substr($lastName, 0, 20),
+            'map_street' => substr(trim($ups['address1']), 0, 20),
+            'map_street2' => substr(trim($ups['address2']), 0, 20),
+            'map_city' => substr(trim($ups['city']), 0, 20),
+            'map_state' => substr(trim($ups['state']), 0, 20),
+            'map_zip' => substr(trim(str_replace(' ', '', $ups['postalCode'])), 0, 9),
+            'map_country' => substr(trim($ups['country']), 0, 20),
+            'map_expiration' => $ups['expMonth'] . $ups['expYear'],
+            'map_card_num' => trim($ups['ccNumber'])
+        );
 
         $this->post_data = $this->MapParams($db_params);
     }
