@@ -45,14 +45,6 @@ class PAYPAL extends PaymentModuleAbstract implements PaymentModuleInterface
     }
 
     /**
-     * @param $cvc
-     */
-    public function addCvc($cvc)
-    {
-        // STUB, required by Interface
-    }
-
-    /**
      * @param $response
      * @return bool
      */

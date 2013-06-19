@@ -37,4 +37,12 @@ abstract class PaymentModuleAbstract
     {
         return $this->url;
     }
+
+    /**
+     * @param $cvc
+     */
+    public function addCvc($cvc)
+    {
+        // STUB, required by Interface
+    }
 }

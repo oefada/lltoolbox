@@ -80,12 +80,12 @@ class Processor
             return false;
         }
         $tmp = array();
-        foreach ($this->module->getMappedParams() as $k => $v) {
+        foreach ($this->getModule()->getMappedParams() as $k => $v) {
             if (isset($params[$k])) {
                 $tmp[$v] = $params[$k];
             }
         }
-        return array_merge($this->module->getPostData(), $tmp);
+        return array_merge($this->getModule()->getPostData(), $tmp);
     }
 
     /**
@@ -113,7 +113,7 @@ class Processor
         $post_string = $this->SetPostFields();
 
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $this->module->getUrl());
+        curl_setopt($ch, CURLOPT_URL, $this->getModule()->getUrl());
         curl_setopt($ch, CURLOPT_HEADER, 0);
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_VERBOSE, 0);
@@ -126,7 +126,7 @@ class Processor
 
         $response = curl_exec($ch);
         curl_close($ch);
-        $this->response_data = $this->module->processResponse($response);
+        $this->response_data = $this->getModule()->processResponse($response);
 
         // If AVS only was ran, re-run as a sale
         if (
@@ -134,7 +134,7 @@ class Processor
             && $this->response_data['avs_only'] == true
             && $this->getModule()->chargeSuccess() === true
         ) {
-            $this->post_data = array_merge($this->post_data, $this->module->getPostSale());
+            $this->post_data = array_merge($this->post_data, $this->getModule()->getPostSale());
             $this->SubmitPost();
         }
 
