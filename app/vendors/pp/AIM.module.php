@@ -1,47 +1,56 @@
 <?php
-class AIM
+/**
+ * Payment Module for Authorize.net
+ * http://www.authorize.net
+ *
+ * Developer guide:
+ * http://developer.authorize.net/api/
+ *
+ * @author Michael Clifford <mclifford@luxurylink.com>
+ */
+
+require_once 'PaymentModuleAbstract.php';
+require_once 'PaymentModuleInterface.php';
+class AIM extends PaymentModuleAbstract implements PaymentModuleInterface
 {
-    var $url = 'https://secure.authorize.net/gateway/transact.dll';
-    var $map_params;
-    var $post_data;
+    protected $mappedParams;
+    protected $postData;
+    protected $response;
+    protected $url = 'https://secure.authorize.net/gateway/transact.dll';
 
-    function AIM($test_param = false)
+    public function __construct($test_param = false)
     {
+        $this->postData = array(
+            'x_version' => '3.1',
+            'x_delim_data' => 'TRUE',
+            'x_delim_char' => '|',
+            'x_encap_char' => '',
+            'x_relay_response' => 'FALSE',
+            'x_login' => 'LuxuryLink5200',
+            'x_tran_key' => 'zWBPWcEWgz9HPQYP',
+            'x_test_request' => $test_param ? 'TRUE' : 'FALSE',
+            'x_method' => 'CC',
+            'x_type' => 'AUTH_CAPTURE'
+        );
 
-        $this->post_data = array();
-        $this->post_data['x_version'] = '3.1';
-        $this->post_data['x_delim_data'] = 'TRUE';
-        $this->post_data['x_delim_char'] = '|';
-        $this->post_data['x_encap_char'] = '';
-        $this->post_data['x_relay_response'] = 'FALSE';
-        $this->post_data['x_login'] = 'LuxuryLink5200';
-        $this->post_data['x_tran_key'] = 'zWBPWcEWgz9HPQYP';
-        $this->post_data['x_test_request'] = $test_param ? 'TRUE' : 'FALSE';
-        $this->post_data['x_method'] = 'CC';
-        $this->post_data['x_type'] = 'AUTH_CAPTURE';
-
-        $this->map_params = array();
-        $this->map_params['map_ticket_id'] = 'x_invoice_num';
-        $this->map_params['map_total_amount'] = 'x_amount';
-        $this->map_params['map_first_name'] = 'x_first_name';
-        $this->map_params['map_last_name'] = 'x_last_name';
-        $this->map_params['map_street'] = 'x_address';
-        $this->map_params['map_city'] = 'x_city';
-        $this->map_params['map_state'] = 'x_state';
-        $this->map_params['map_zip'] = 'x_zip';
-        $this->map_params['map_country'] = 'x_country';
-        $this->map_params['map_expiration'] = 'x_exp_date';
-        $this->map_params['map_card_num'] = 'x_card_num';
+        $this->mappedParams = array(
+            'map_ticket_id' => 'x_invoice_num',
+            'map_total_amount' => 'x_amount',
+            'map_first_name' => 'x_first_name',
+            'map_last_name' => 'x_last_name',
+            'map_street' => 'x_address',
+            'map_city' => 'x_city',
+            'map_state' => 'x_state',
+            'map_zip' => 'x_zip',
+            'map_country' => 'x_country',
+            'map_expiration' => 'x_exp_date',
+            'map_card_num' => 'x_card_num'
+        );
     }
 
-    function ProcessResponse($raw_response)
+    public function chargeSuccess()
     {
-        $tmp_array = split('[|]', strval($raw_response));
-        return $tmp_array;
-    }
-
-    function ChargeSuccess($response)
-    {
+        $response = $this->getResponse();
         if (isset($response[0])) {
             if ($response[0] == 1) {
                 return true;
@@ -53,25 +62,37 @@ class AIM
         }
     }
 
-    function GetMappedResponse($response)
+    public function getMappedResponse()
     {
-        $paymentDetail = array();
-
-        $paymentDetail['ppResponseDate'] = date('Y-m-d H:i:s', strtotime('now'));
-        $paymentDetail['ppTransactionId'] = $response[6];
-        $paymentDetail['ppApprovalText'] = $response[3];
-        $paymentDetail['ppApprovalCode'] = $response[0];
-        $paymentDetail['ppAvsCode'] = $response[5];
-        $paymentDetail['ppResponseText'] = $response[37];
-        $paymentDetail['ppResponseSubCode'] = $response[4];
-        $paymentDetail['ppReasonCode'] = $response[7];
-        $paymentDetail['isSuccessfulCharge'] = ($response[0] == 1) && (stristr($response[3], 'APPROVED')) ? 1 : 0;
+        $response = $this->getResponse();
+        $paymentDetail = array(
+            'ppResponseDate' => date('Y-m-d H:i:s', strtotime('now')),
+            'ppTransactionId' => $response[6],
+            'ppApprovalText' => $response[3],
+            'ppApprovalCode' => $response[0],
+            'ppAvsCode' => $response[5],
+            'ppResponseText' => $response[37],
+            'ppResponseSubcode' => $response[4],
+            'ppReasonCode' => $response[7],
+            'isSuccessfulCharge' => ($response[0] == 1) && (stristr($response[3], 'APPROVED')) ? 1 : 0
+        );
 
         return $paymentDetail;
     }
 
-    function IsValidResponse($response, $valid_param)
+    public function getResponseTxt()
     {
+        $response = $this->getResponse();
+        if (isset($response[3])) {
+            return $response[3];
+        } else {
+            return false;
+        }
+    }
+
+    public function isValidResponse($valid_param)
+    {
+        $response = $this->getResponse();
         if (isset($response[7])) {
             if (trim($response[7]) == trim($valid_param)) {
                 return true;
@@ -83,12 +104,9 @@ class AIM
         }
     }
 
-    function GetResponseTxt($response)
+    public function processResponse($raw_response)
     {
-        if (isset($response[3])) {
-            return $response[3];
-        } else {
-            return false;
-        }
+        $this->response = split('[|]', strval($raw_response));
+        return $this->getResponse();
     }
 }
