@@ -3102,7 +3102,7 @@ class WebServiceTicketsController extends WebServicesController
                 STR_PAD_LEFT
             );
 
-            $paymentDetail = array_merge($paymentDetail, $processor->GetMappedResponse());
+            $paymentDetail = array_merge($paymentDetail, $processor->getModule()->getMappedResponse());
             $paymentDetail['paymentTypeId'] = 1;
             $paymentDetail['ppFirstName'] = (isset($data['firstName'])) ? $data['firstName'] : null;
             $paymentDetail['ppLastName'] = (isset($data['lastName'])) ? $data['lastName'] : null;
@@ -3197,7 +3197,7 @@ class WebServiceTicketsController extends WebServicesController
 
         // return result whether success or denied
         // ---------------------------------------------------------------------------
-        if ((isset($processor) && $processor->ChargeSuccess()) || $otherCharge) {
+        if ((isset($processor) && $processor->getModule()->chargeSuccess()) || $otherCharge) {
             return $this->runPostChargeSuccess(
                 $ticket,
                 $data,
@@ -3208,10 +3208,10 @@ class WebServiceTicketsController extends WebServicesController
             );
         } else {
             if ($data['paymentProcessorId'] == 1) {
-                $response_txt = $processor->GetResponseTxt();
+                $response_txt = $processor->getModule()->getResponseTxt();
                 CakeLog::write(
                     "web_service_tickets_controller",
-                    "DECLINED. RESPONSE: " . var_export($processor->GetMappedResponse(), 1)
+                    "DECLINED. RESPONSE: " . var_export($processor->getModule()->getMappedResponse(), 1)
                 );
                 return $response_txt;
             } else {
@@ -3357,9 +3357,6 @@ class WebServiceTicketsController extends WebServicesController
             );
             $this->errorMsg = "CoF Saved";
             $this->logError(__METHOD__);
-
-            // calculate how much of CoF used is coming from the creditBank
-            // $this->CreditBankItem->saveCreditPurchaseRecord($eventRegistryData);
         }
 
         $this->Ticket->save($ticketStatusChange);
@@ -3416,16 +3413,16 @@ class WebServiceTicketsController extends WebServicesController
         $processor = new Processor('NOVA', $isTestCard);
 
         // cvc required for gift 
-        $processor->AddCvc($userPaymentSettingPost['UserPaymentSetting']['cvc']);
+        $processor->getModule()->addCvc($userPaymentSettingPost['UserPaymentSetting']['cvc']);
         $processor->InitPayment($userPaymentSettingPost, $ticketInfo);
 
         if (!$isDev) {
             $processor->SubmitPost();
         }
 
-        if ((isset($processor) && $processor->ChargeSuccess()) || $isDev) {
+        if ((isset($processor) && $processor->getModule()->chargeSuccess()) || $isDev) {
             $donationDetail = array();
-            $mappedResponse = $processor->GetMappedResponse();
+            $mappedResponse = $processor->getModule()->getMappedResponse();
 
             $donationDetail['eventRegistryId'] = $eventRegistryId;
             $donationDetail['userId'] = $data['donorUserId'];
@@ -3457,7 +3454,7 @@ class WebServiceTicketsController extends WebServicesController
 
         } else {
             $failureDetail = array();
-            $mappedResponse = $processor->GetMappedResponse();
+            $mappedResponse = $processor->getModule()->getMappedResponse();
 
             $failureDetail['eventRegistryId'] = $eventRegistryId;
             $failureDetail['userId'] = $data['donorUserId'];
@@ -3474,7 +3471,7 @@ class WebServiceTicketsController extends WebServicesController
 
             CakeLog::write("web_service_gifts", "DECLINED. RESPONSE: " . var_export($mappedResponse, 1));
 
-            $response_txt = $processor->GetResponseTxt();
+            $response_txt = $processor->getModule()->getResponseTxt();
             return $response_txt;
         }
     }

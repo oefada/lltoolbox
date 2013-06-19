@@ -1,15 +1,11 @@
 <?php
-require(APP . '/vendors/pp/AIM.module.php');
-require(APP . '/vendors/pp/PAYPAL.module.php');
-require(APP . '/vendors/pp/NOVA.module.php');
 class Processor
 {
     /**
      * @var PaymentModuleInterface module
      */
-    public $module;
-    public $module_list = array('AIM', 'NOVA', 'PAYPAL');
-    public $processor_name;
+    private $module;
+    private $module_list = array('AIM', 'NOVA', 'PAYPAL');
 
     private $response_data = array();
     private $post_data = array();
@@ -25,8 +21,17 @@ class Processor
             return false;
         }
 
+        require_once(APP . '/vendors/pp/' . $processor_name . '.module.php');
         $this->module = new $processor_name($test_card);
         $this->processor_name = $processor_name;
+    }
+
+    /**
+     * @return PaymentModuleInterface
+     */
+    public function getModule()
+    {
+        return $this->module;
     }
 
     /**
@@ -66,6 +71,37 @@ class Processor
     }
 
     /**
+     * @param $params
+     * @return array|bool
+     */
+    private function MapParams($params)
+    {
+        if (!is_array($params)) {
+            return false;
+        }
+        $tmp = array();
+        foreach ($this->module->getMappedParams() as $k => $v) {
+            if (isset($params[$k])) {
+                $tmp[$v] = $params[$k];
+            }
+        }
+        return array_merge($this->module->getPostData(), $tmp);
+    }
+
+    /**
+     * @return string
+     */
+    private function SetPostFields()
+    {
+        $params = $this->post_data;
+        $tmp_str = '';
+        foreach ($params as $k => $v) {
+            $tmp_str .= "$k=" . urlencode($v) . '&';
+        }
+        return $tmp_str;
+    }
+
+    /**
      * @return bool
      */
     public function SubmitPost()
@@ -74,7 +110,7 @@ class Processor
             return false;
         }
 
-        $post_string = $this->SetPostFields($this->post_data);
+        $post_string = $this->SetPostFields();
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $this->module->getUrl());
@@ -96,7 +132,7 @@ class Processor
         if (
             isset($this->response_data['avs_only'])
             && $this->response_data['avs_only'] == true
-            && $this->ChargeSuccess() === true
+            && $this->getModule()->chargeSuccess() === true
         ) {
             $this->post_data = array_merge($this->post_data, $this->module->getPostSale());
             $this->SubmitPost();
@@ -106,104 +142,5 @@ class Processor
         unset($post_string);
         unset($response);
         unset($ch);
-    }
-
-    /**
-     * @return mixed
-     */
-    public function ChargeSuccess()
-    {
-        return $this->module->chargeSuccess();
-    }
-
-    /**
-     * @return mixed
-     */
-    public function GetResponseTxt()
-    {
-        return $this->module->getResponseTxt();
-    }
-
-    /**
-     * @return mixed
-     */
-    public function GetMappedResponse()
-    {
-        return $this->module->getMappedResponse();
-    }
-
-    /**
-     * @param $ticket_id
-     * @return mixed
-     */
-    public function IsValidResponse($ticket_id)
-    {
-        return $this->module->isValidResponse($ticket_id);
-    }
-
-    /**
-     * @param $cvc
-     * @return mixed
-     */
-    public function AddCvc($cvc)
-    {
-        return $this->module->addCvc($cvc);
-    }
-
-    /**
-     * @return array
-     */
-    public function getResponseData()
-    {
-        return $this->response_data;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function dummyMappedResponse()
-    {
-        $paymentDetail['ppResponseDate'] = date('Y-m-d H:i:s', strtotime('now'));
-        $paymentDetail['ppTransactionId'] = "DUMMY-TEST";
-        $paymentDetail['ppApprovalText'] = "APPROVAL";
-        $paymentDetail['ppApprovalCode'] = "0";
-        $paymentDetail['ppAvsCode'] = "Y";
-        $paymentDetail['ppResponseText'] = '';
-        $paymentDetail['ppResponseSubCode'] = '';
-        $paymentDetail['ppReasonCode'] = '';
-        $paymentDetail['isSuccessfulCharge'] = 1;
-
-        return $paymentDetail;
-    }
-
-    /**
-     * @param $params
-     * @return array|bool
-     */
-    private function MapParams($params)
-    {
-        if (!is_array($params)) {
-            return false;
-        }
-        $tmp = array();
-        foreach ($this->module->getMappedParams() as $k => $v) {
-            if (isset($params[$k])) {
-                $tmp[$v] = $params[$k];
-            }
-        }
-        return array_merge($this->module->getPostData(), $tmp);
-    }
-
-    /**
-     * @param $params
-     * @return string
-     */
-    private function SetPostFields($params)
-    {
-        $tmp_str = '';
-        foreach ($params as $k => $v) {
-            $tmp_str .= "$k=" . urlencode($v) . '&';
-        }
-        return $tmp_str;
     }
 }

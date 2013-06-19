@@ -4,9 +4,8 @@ class SandboxController extends AppController
     public $name = 'Sandbox';
     public $uses = array();
 
-    public function processorTest()
+    public function processorTest($processor = 'NOVA')
     {
-        $processor = 'PAYPAL'; // PAYPAL or NOVA
         $testTransaction = true;
 
         $paymentSettings = array(
@@ -36,9 +35,9 @@ class SandboxController extends AppController
         $processor->InitPayment($paymentSettings, $ticket);
         $processor->SubmitPost();
 
-        var_dump($processor->GetMappedResponse());
-        var_dump($processor->GetResponseTxt());
-        var_dump($processor->getResponseData());
+        var_dump($processor->getModule()->getMappedResponse());
+        var_dump($processor->getModule()->getResponseTxt());
+        var_dump($processor->getModule()->getResponse());
         die;
     }
 }
