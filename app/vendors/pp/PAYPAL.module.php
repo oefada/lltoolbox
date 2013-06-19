@@ -1,4 +1,14 @@
 <?php
+/**
+ * Payment Module for Paypal Payflow Pro
+ * http://www.paypal.com
+ *
+ * Developer guide:
+ * https://www.paypalobjects.com/webstatic/en_US/developer/docs/pdf/pp_payflowpro_guide.pdf
+ *
+ * @author Michael Clifford <michael@cliffom.net>
+ */
+
 require_once 'PaymentModuleAbstract.php';
 require_once 'PaymentModuleInterface.php';
 class PAYPAL extends PaymentModuleAbstract implements PaymentModuleInterface

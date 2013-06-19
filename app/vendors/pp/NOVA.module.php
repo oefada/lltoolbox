@@ -1,4 +1,14 @@
 <?php
+/**
+ * Payment Module for My Virtual Merchant (Elavon)
+ * http://www.elavon.com
+ *
+ * Developer guide:
+ * https://www.myvirtualmerchant.com/VirtualMerchant/download/developerGuide.pdf
+ *
+ * @author Michael Clifford <michael@cliffom.net>
+ */
+
 require_once 'PaymentModuleAbstract.php';
 require_once 'PaymentModuleInterface.php';
 class NOVA extends PaymentModuleAbstract implements PaymentModuleInterface
