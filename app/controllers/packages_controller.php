@@ -2908,6 +2908,17 @@ class PackagesController extends AppController
         }
     }
 
+    function excel($clientId, $packageId)
+    {
+        App::import(
+            'Vendor',
+            'PackageExcel',
+            array('file' => 'PackageExcel' . DS . 'PackageExcel.php')
+        );
+        $pe = new PackageExcel();
+        die('z<pre>' . htmlentities(print_r($pe, true)));
+    }
+
     function export($clientId, $packageId)
     {
         $this->layout = false;

@@ -81,9 +81,17 @@ if ($_SERVER['ENV'] == "staging") {
         ?>
         <?=
         $html->link(
-            '<span>Export</span>',
+            '<span>Old Export</span>',
             "/clients/{$client['Client']['clientId']}/packages/export/{$package['Package']['packageId']}",
             array('target' => '_blank', 'class' => 'button'),
+            null,
+            false
+        ) ?>
+        <?=
+        $html->link(
+            '<span>Excel</span>',
+            "/clients/{$client['Client']['clientId']}/packages/excel/{$package['Package']['packageId']}",
+            array('target' => '_excel', 'class' => 'button'),
             null,
             false
         ) ?>
