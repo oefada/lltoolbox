@@ -1043,8 +1043,8 @@ class TicketsController extends AppController {
 		
 		if ($tldId == 2) {
 			$allowedTypes = array(3, 4);
-			$ukServiceBuilder = $this->LltgServiceHelper->getServiceBuilderFromTldId($tldId);			
-			$currencyService = $this->LltgServiceHelper->getCurrencyService($ukServiceBuilder);
+			// $ukServiceBuilder = $this->LltgServiceHelper->getServiceBuilderFromTldId($tldId);			
+			// $currencyService = $this->LltgServiceHelper->getCurrencyService($ukServiceBuilder);
 		} else {
 			$allowedTypes = array(1, 2, 3, 4, 6);
 		}
@@ -1076,7 +1076,7 @@ class TicketsController extends AppController {
 			
 			$tldPrice = '';
 			if ($tldId == 2) {
-				$tldPrice = $currencyService->getLocalCurrencyFromDollars($price) . ' GBP';
+				// $tldPrice = $currencyService->getLocalCurrencyFromDollars($price) . ' GBP';
 			}
 			
 			$offers[$r['o']['offerId']] = $r['o']['offerId'] . ' - ' . $type . ' : ' . $nights . ' : ' . $guests . ' : $' . $price . ' : ' . $tldPrice . ' : ' . $dates;
