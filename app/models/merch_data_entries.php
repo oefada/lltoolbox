@@ -32,7 +32,7 @@ class MerchDataEntries extends AppModel
      */
     public function getEntriesForToday()
     {
-        $date = '2012-10-22';
+        $date = date('Y-m-d');
         return $this->getEntriesByDate($date);
 
     }
@@ -41,7 +41,7 @@ class MerchDataEntries extends AppModel
      * @param $date
      * @return bool|mixed
      */
-    private function getEntriesByDate($date)
+    public function getEntriesByDate($date)
     {
         $results = array();
         $options = array(
