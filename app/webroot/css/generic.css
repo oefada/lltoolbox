@@ -114,12 +114,15 @@ th a:hover {
 	text-decoration: none;
 }
 table tr td {
-	border-right: 1px solid #ccc;
-	padding: 4px;
-	vertical-align: top;
+    border-right: 1px solid #ccc;
+    padding: 4px;
+    vertical-align: top;
 }
 table tr.altrow td {
-	background: #f5f2e2;
+    background: #f0f8ff;
+}
+table tr.altrow:hover td {
+    background: rgba(200,255,200,0.2);
 }
 td.actions {
 	text-align: center;
