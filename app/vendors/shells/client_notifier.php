@@ -32,7 +32,7 @@ class ClientNotifierShell extends Shell
      */
     public function __destruct()
     {
-        $this->out('Client Notifier complete for ' . $this->today);
+        $this->out(date('Y-m-d H:i:s') . ': Client Notifier complete for ' . $this->today);
     }
 
     /**
@@ -65,7 +65,7 @@ class ClientNotifierShell extends Shell
         $this->clientNotificationModel = new ClientNotification();
         $this->today = date('Y-m-d');
         $this->today = '2012-10-22';
-        $this->out('Client Notifier running for ' . $this->today);
+        $this->out(date('Y-m-d H:i:s') . ': Client Notifier running for ' . $this->today);
     }
 
     /**
