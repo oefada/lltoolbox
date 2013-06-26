@@ -64,7 +64,6 @@ class ClientNotifierShell extends Shell
         $this->merchDataModel = new MerchDataEntries();
         $this->clientNotificationModel = new ClientNotification();
         $this->today = date('Y-m-d');
-        $this->today = '2012-10-22';
         $this->out(date('Y-m-d H:i:s') . ': Client Notifier running for ' . $this->today);
     }
 
