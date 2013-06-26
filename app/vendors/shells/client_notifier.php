@@ -1,6 +1,7 @@
 <?php
 class ClientNotifierShell extends Shell
 {
+    private $today;
     /**
      * @var MerchDataEntries
      */
@@ -21,14 +22,49 @@ class ClientNotifierShell extends Shell
         'Listing & Destination Featured Auctions'
     );
 
+    /**
+     *
+     */
+    public function __destruct()
+    {
+        $this->out('Client Notifier complete for ' . $this->today);
+    }
+
+    /**
+     * Overriding this to mute the welcome display
+     */
+    public function _welcome() {}
+
+    /**
+     * @param string $title
+     * @param string $msg
+     */
+    public function error($title, $msg = '')
+    {
+        $this->out('Error: ' . $title);
+        if ($msg !== '') {
+            $this->out($msg);
+        }
+
+        exit(1);
+    }
+
+    /**
+     *
+     */
     public function initialize()
     {
         APP::import('Model', 'MerchDataEntries');
         APP::import('Model', 'ClientNotification');
         $this->merchDataModel = new MerchDataEntries();
         $this->clientNotificationModel = new ClientNotification();
+        $this->today = date('Y-m-d');
+        $this->out('Client Notifier running for ' . $this->today);
     }
 
+    /**
+     * Main routine
+     */
     public function main()
     {
         $merchEntries = $this->merchDataModel->getEntriesForToday();
@@ -38,16 +74,41 @@ class ClientNotifierShell extends Shell
             if ($notificationEntries !== false) {
                 $clientsToNotify = $this->getClientsToNotify($notificationEntries);
                 if ($clientsToNotify !== false) {
-                    var_dump($this->clientNotificationModel->saveAll($clientsToNotify));
+                    if ($this->clientNotificationModel->saveAll($clientsToNotify) !== true) {
+                        $this->error('Could not save data.');
+                    } else {
+                        $this->out('Notification data saved.');
+                    }
                 } else {
-
+                    $this->out('There are no clients to notify.');
                 }
             } else {
-
+                $this->out('There are no notification entries.');
             }
         } else {
-
+            $this->out('There are no merchendising entries.');
         }
+    }
+
+    /**
+     * @param $entries
+     * @param $type
+     * @return array|bool
+     */
+    private function getClientEntries($entryId, $typeId, $entries)
+    {
+        $notificationEntries = array();
+        foreach($entries as $entry) {
+            if (isset($entry['clientId'])) {
+                $notificationEntries[] = array(
+                    'clientId' => $entry['clientId'],
+                    'merchDataEntryId' => $entryId,
+                    'merchDataGroupId' => $typeId
+                );
+            }
+        }
+
+        return (empty($notificationEntries)) ? false : $notificationEntries;
     }
 
     /**
@@ -127,27 +188,6 @@ class ClientNotifierShell extends Shell
     }
 
     /**
-     * @param $entries
-     * @param $type
-     * @return array|bool
-     */
-    private function getClientEntries($entryId, $typeId, $entries)
-    {
-        $notificationEntries = array();
-        foreach($entries as $entry) {
-            if (isset($entry['clientId'])) {
-                $notificationEntries[] = array(
-                    'clientId' => $entry['clientId'],
-                    'merchDataEntryId' => $entryId,
-                    'merchDataGroupId' => $typeId
-                );
-            }
-        }
-
-        return (empty($notificationEntries)) ? false : $notificationEntries;
-    }
-
-    /**
      * @param $merchEntries
      * @return array|bool
      */
@@ -170,15 +210,6 @@ class ClientNotifierShell extends Shell
     }
 
     /**
-     * @param $merchType
-     * @return bool
-     */
-    private function isNotification($merchType)
-    {
-        return in_array($merchType, $this->getNotificationTypes());
-    }
-
-    /**
      * @return array
      */
     private function getNotificationTypes()
@@ -187,21 +218,11 @@ class ClientNotifierShell extends Shell
     }
 
     /**
-     * @param string $title
-     * @param string $msg
+     * @param $merchType
+     * @return bool
      */
-    public function error($title, $msg = '')
+    private function isNotification($merchType)
     {
-        $this->out('Error: ' . $title);
-        if ($msg !== '') {
-            $this->out($msg);
-        }
-
-        exit(1);
+        return in_array($merchType, $this->getNotificationTypes());
     }
-
-    /**
-     * Overriding this to mute the welcome display
-     */
-    public function _welcome() {}
 }
