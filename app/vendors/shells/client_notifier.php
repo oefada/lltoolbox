@@ -17,11 +17,6 @@ class ClientNotifierShell extends Shell
     private $clientNotificationModel;
 
     /**
-     * @var array $clientEntries
-     */
-    private $clientEntries;
-
-    /**
      * @var array $notificationTypes
      */
     private $notificationTypes = array(
