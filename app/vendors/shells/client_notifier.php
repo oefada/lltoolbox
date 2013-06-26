@@ -24,7 +24,7 @@ class ClientNotifierShell extends Shell
         'Homepage Tabs',
         'Inspiration',
         'Featured Auction',
-        'Listing & Destination Featured Auctions'
+        //'Listing & Destination Featured Auctions'
     );
 
     /**
@@ -64,15 +64,23 @@ class ClientNotifierShell extends Shell
         $this->merchDataModel = new MerchDataEntries();
         $this->clientNotificationModel = new ClientNotification();
         $this->today = date('Y-m-d');
+        $this->today = '2012-10-22';
         $this->out('Client Notifier running for ' . $this->today);
     }
 
     /**
      * Main routine
+     * Logic:
+     *  1) Get merch entries for today
+     *  2) Filter entries that don't qualify for notifications
+     *      a) Currently these are limited to Billboard, Homepage Tabs, Inspiration Module,
+     *          and Featured Auction
+     *  3) Get entries that are for clients
+     *  4) Save to clientNotifications table
      */
     public function main()
     {
-        $merchEntries = $this->merchDataModel->getEntriesForToday();
+        $merchEntries = $this->merchDataModel->getEntriesByDate($this->today);
         $clientsToNotify = array();
 
         if ($merchEntries !== false) {
@@ -86,7 +94,14 @@ class ClientNotifierShell extends Shell
                     if ($this->clientNotificationModel->saveAll($clientsToNotify) !== true) {
                         $this->error('Could not save data.');
                     } else {
-                        $this->out('Notification data saved.');
+                        if (($warnings = $this->clientNotificationModel->getWarnings()) !== false) {
+                            $this->out('Notification data saved, but there were warnings. Please see below:');
+                            foreach($warnings as $warning) {
+                                $this->out("    " . $warning);
+                            }
+                        } else {
+                            $this->out('Notification data saved.');
+                        }
                     }
 
                 } else {
