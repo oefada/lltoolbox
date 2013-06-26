@@ -1,19 +1,29 @@
 <?php
 class ClientNotifierShell extends Shell
 {
-    private $today;
     /**
-     * @var MerchDataEntries
+     * @var string $today
+     */
+    private $today;
+
+    /**
+     * @var MerchDataEntries $merchDataModel
      */
     private $merchDataModel;
 
     /**
-     * @var ClientNotification
+     * @var ClientNotification $clientNotificationModel
      */
     private $clientNotificationModel;
 
+    /**
+     * @var array $clientEntries
+     */
     private $clientEntries;
 
+    /**
+     * @var array $notificationTypes
+     */
     private $notificationTypes = array(
         'Billboard',
         'Homepage Tabs',
@@ -69,22 +79,29 @@ class ClientNotifierShell extends Shell
     {
         $merchEntries = $this->merchDataModel->getEntriesForToday();
         $clientsToNotify = array();
+
         if ($merchEntries !== false) {
             $notificationEntries = $this->getNotificationEntries($merchEntries);
+
             if ($notificationEntries !== false) {
                 $clientsToNotify = $this->getClientsToNotify($notificationEntries);
+
                 if ($clientsToNotify !== false) {
+
                     if ($this->clientNotificationModel->saveAll($clientsToNotify) !== true) {
                         $this->error('Could not save data.');
                     } else {
                         $this->out('Notification data saved.');
                     }
+
                 } else {
                     $this->out('There are no clients to notify.');
                 }
+
             } else {
                 $this->out('There are no notification entries.');
             }
+
         } else {
             $this->out('There are no merchendising entries.');
         }
