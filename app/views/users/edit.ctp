@@ -3,7 +3,9 @@
         $user['User']['firstName']
         . ' '
         . $user['User']['lastName']
-        . $html2->c($user['User']['userId'], 'User Id:');
+        . ' '
+        . $html2->c($user['User']['userId'], 'User Id:')
+        . ' [' . $lltgServiceBuilder->getContext()->getLocaleCode() .']';
 ?>
 
 <script type="text/javascript">

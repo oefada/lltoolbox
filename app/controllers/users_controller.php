@@ -6,6 +6,15 @@ class UsersController extends AppController
     var $user;
     var $uses = array('User', 'MailingList');
 
+    public $components = array(
+        'LltgServiceHelper'
+    );
+
+    /**
+     * @var LltgServiceHelperComponent $LltgServiceHelper
+     */
+    public $LltgServiceHelper;
+
     function index()
     {
         $this->set('users', array());
@@ -126,7 +135,6 @@ class UsersController extends AppController
 
     function edit($id = null)
     {
-
         $this->set('userId', $id);
         if (!$id && empty($this->data)) {
             $this->flash(__('Invalid User', true), array('action' => 'index'));
@@ -141,12 +149,12 @@ class UsersController extends AppController
             $this->data = $this->user;
         }
 
+        $lltgServiceBuilder = $this->LltgServiceHelper->getServiceBuilderFromTldId($this->user['User']['tldId']);
+        $this->set('lltgServiceBuilder', $lltgServiceBuilder);
+
         $salutationIds = $this->User->Salutation->find('list');
         $paymentTypes = $this->User->UserPaymentSetting->PaymentType->find('list');
         $addressTypes = $this->User->Address->AddressType->find('list');
-        //$options['conditions']=array('userId'=>$id);
-        //$options['fields']=array('mailingListId','optin');
-        //$mailingListIds = $this->User->UserMailOptin->find('list', $options);
 
         $this->loadModel("CreditTracking");
         $cof = $this->CreditTracking->find(
