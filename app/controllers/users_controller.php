@@ -213,10 +213,6 @@ class UsersController extends AppController
      */
     private function processDupEmails($emailArr = array(), $doProcessOne = 0, $ajax = 0)
     {
-
-//$this->User->logIt("--------emailArr------");
-//$this->User->logIt($emailArr);
-//$this->User->logIt("--------");
         foreach ($emailArr as $email) {
 
             // see if email has some userIds without matching rows in userSiteExtended AND
@@ -323,32 +319,23 @@ class UsersController extends AppController
                 }
 
             }
-//$this->User->logit($rowArr);
 
             // a userId has a ticket. set the most recent userId to be primary userId
             if (count($ticketArr) > 0) {
                 krsort($ticketArr);
                 $primaryUserId = array_shift($ticketArr);
-//$this->User->logit("primary userId set by ticket");
             } else {
                 // no tickets and has a modifyDateTime, set most recent modifyDateTime to be primary userId
                 // else just take the most recent userId
                 if ($modifyDateTimeIsNotNull) {
                     arsort($modifyDateTimeArr);
                     $primaryUserId = array_shift(array_keys($modifyDateTimeArr));
-//$this->User->logit("primary userId set by modifyDateTime");
                 } else {
                     rsort($userIdArr);
                     $primaryUserId = array_shift($userIdArr);
-//$this->User->logit("primary userId set by most recent userId");
                 }
             }
-            /*
-            $this->User->logit('primary userId:');
-            $this->User->logit($primaryUserId);
-            $this->User->logit('doProcessTwo:');
-            $this->User->logit($doProcessTwo);
-            */
+
             if ($doProcessTwo) {
                 if ($primaryUserId) {
                     $q = "UPDATE `user` SET inactive=0 WHERE userId=$primaryUserId";
@@ -368,9 +355,6 @@ class UsersController extends AppController
                     $this->User->logit('------------------------------');
                 }
             }
-
-//$this->User->logit("end $email");
-//$this->User->logit('---------');
         }
 
         return isset($rowArr) ? $rowArr : array();
@@ -430,25 +414,14 @@ class UsersController extends AppController
                 $emailArr[] = $arr[0]['email'];
             }
 
-//$this->User->logIt('---------start');
-//$this->User->logIt('emailArr');
-//$this->User->logIt($emailArr);
             $response = $this->processDupEmails($emailArr, true, $ajax);
-//$this->User->logIt('response');
-//$this->User->logIt($response);
-//$this->User->logIt('---------end');
-//exit;
             if ($ajax) {
-                // for debugging, log or echo and use in WHERE of query to examine altered accounts
                 $str = '';
                 foreach ($emailArr as $email) {
                     $str .= " OR email LIKE '$email%' ";
                 }
                 $str .= "\n\n";
                 $str .= implode("', '", $emailArr);
-                //$this->User->logIt($str);
-                //exit();
-                //
                 echo count($emailArr);
                 return;
             }

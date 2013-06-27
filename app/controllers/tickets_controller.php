@@ -5,6 +5,11 @@ class TicketsController extends AppController
     var $name = 'Tickets';
     var $helpers = array('Html', 'Form', 'Ajax', 'Text', 'Layout', 'Number');
 
+    /**
+     * @var LltgServiceHelper $LltgServiceHelper
+     */
+    public $LltgServiceHelper;
+
     var $uses = array(
         'Ticket',
         'OfferType',
@@ -457,7 +462,6 @@ class TicketsController extends AppController
 
     function view($id = null)
     {
-
         if (!$id) {
             $this->Session->setFlash(__('Invalid Ticket.', true), 'default', array(), 'error');
             $this->redirect(array('action' => 'index'));
@@ -470,6 +474,9 @@ class TicketsController extends AppController
             $this->Session->setFlash(__("Not Finding ticketId $id", true), 'default', array(), 'error');
             $this->redirect(array('action' => 'index'));
         }
+
+        $lltgServiceBuilder = $this->LltgServiceHelper->getServiceBuilderFromTldId($ticket['Ticket']['tldId']);
+        $this->set('lltgServiceBuilder', $lltgServiceBuilder);
 
         $this->PaymentType->recursive = 0;
         foreach ($ticket['PaymentDetail'] as $k => $v) {
