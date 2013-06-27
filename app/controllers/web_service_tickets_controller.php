@@ -16,7 +16,7 @@ class WebServiceTicketsController extends WebServicesController
 {
     public $name = 'WebServiceTickets';
 
-    public $components = array('PackageIncludes');
+    public $components = array('PackageIncludes', 'LltgServiceHelper');
 
     public $uses = array(
         'Ticket',
@@ -1324,6 +1324,13 @@ class WebServiceTicketsController extends WebServicesController
                 $append = "LL";
                 $prefixUrl = Configure::read("UrlS.LL");
                 $optoutLink = 'http://echo3.bluehornet.com/phase2/survey1/change.htm?cid=mumogm&1362532207';
+                if (isset($ticketData)) {
+                	$tldId = (isset($ticketData['tldId']) && intval($ticketData['tldId']) > 0) ? $ticketData['tldId'] : 1;
+                } elseif ($userData) {
+                	$tldId = (isset($userData['tldId']) && intval($userData['tldId']) > 0) ? $userData['tldId'] : 1;
+                } else {
+                	$tldId = 1;
+                } 
                 break;
 
             case 2:
@@ -1339,6 +1346,7 @@ class WebServiceTicketsController extends WebServicesController
                 $append = "FG";
                 $prefixUrl = Configure::read("UrlS.FG");
                 $optoutLink = 'http://echo3.bluehornet.com/phase2/survey1/change.htm?cid=rrsxdv&1362532840';
+                $tldId = 1;
                 break;
 
             case 3:
@@ -1349,9 +1357,23 @@ class WebServiceTicketsController extends WebServicesController
                 $sitePhoneLocal = '(310) 956-3704';
                 $siteFax = '(310) 215-8279';
                 $optoutLink = 'http://echo3.bluehornet.com/phase2/survey1/change.htm?cid=tcskep&1362533132';
+                $tldId = 1;
                 break;
         }
 
+        if ($ppvNoticeTypeId == 41) {
+            $packageId = isset($params['tldId']) ? $params['tldId'] : 1;
+        }
+
+		$lltgServiceBuilder = $this->LltgServiceHelper->getServiceBuilderFromTldId($tldId);			
+		$lltgComponentService = $this->LltgServiceHelper->getComponentService($lltgServiceBuilder);
+				
+		if ($tldId == 2) {
+        	$siteDisplay = 'Luxury Link';
+        	$prefixUrl = 'https://www.luxurylink.co.uk/';
+        	$siteUrl = 'http://www.luxurylink.co.uk/';
+		}
+		
         // Auction facilitator
         $userId = isset($userData['userId']) ? $userData['userId'] : false;
         $userFirstName = isset($userData['firstName']) ? ucwords(strtolower($userData['firstName'])) : false;

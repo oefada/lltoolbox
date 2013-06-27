@@ -24,7 +24,7 @@
     <td>
         <?php if ($clientPpv): ?>
         <font face="Arial, Helvetica, sans-serif" color="#474747" size="1" style="font-size:10px; line-height:14px">
-            <p><a style="text-decoration:underline; color:#036dfc;" href="http://www.luxurylink.com/"><font color="#036dfc">Luxury Link</font></a><br>
+            <p><a style="text-decoration:underline; color:#036dfc;" href="<?= $siteUrl; ?>"><font color="#036dfc">Luxury Link</font></a><br>
                 <?= ADDRESS_LL?> <br><br>
                 For information or assistance, call 1 (888) 297-3299 or email
                 <a style="text-decoration:underline; color:#036dfc;" href="mailto:concierge@luxurylink.com"><font color="#036dfc">concierge@luxurylink.com</font></a>.<br>
@@ -36,12 +36,12 @@
                     <td width="262" valign="top">
                         <table width="100%" cellpadding="0" cellspacing="0" border="0">
                             <tr><td style="line-height:14px;"><font face="Arial, Helvetica, sans-serif" color="#474747" size="1" style="font-size:10px; line-height:14px">
-                                <a style="text-decoration:underline; color:#036dfc;" href="http://www.luxurylink.com/"><font color="#036dfc">Luxury Link</font></a><br>
+                                <a style="text-decoration:underline; color:#036dfc;" href="<?= $siteUrl; ?>"><font color="#036dfc">Luxury Link</font></a><br>
                                 <font face="Arial, Helvetica, sans-serif" color="#474747" size="1" style="font-size:10px; line-height:14px">
                                     <?= ADDRESS_LL?><br><br>
                                     For information or assistance, call 1 (888) 297-3299<br> or email
                                     <a style="text-decoration:underline; color:#036dfc;" href="mailto:concierge@luxurylink.com"><font color="#036dfc">concierge@luxurylink.com</font></a>.<br><br>
-                                    <a style="text-decoration:underline; color:#036dfc;" href="http://www.luxurylink.com/about/index.php/privacy-policy/"><font color="#036dfc">Privacy Policy</font></a>
+                                    <a style="text-decoration:underline; color:#036dfc;" href="<?= $siteUrl; ?>about/index.php/privacy-policy/"><font color="#036dfc">Privacy Policy</font></a>
                                     | <a style="text-decoration:underline; color:#036dfc;" href="<?= $optoutLink; ?>"><font color="#036dfc">Unsubscribe</font></a>
                                 </font></td></tr>
                         </table>
@@ -49,9 +49,11 @@
                     <td width="1" bgcolor="#86878a" style="font-size:0;line-height:0;"><img src="<?= $siteUrl ?>images/common/blank.gif" align="left" vspace="0" hspace="0" width="1" height="1"></td>
                     <td width="26" bgcolor="#f6f6f6" style="font-size:0;line-height:0;"><img src="<?= $siteUrl ?>images/common/blank.gif" align="left" vspace="0" hspace="0" width="1" height="1"></td>
                     <td width="102">
+                        <? if ($lltgComponentService->isRafEnabled()) { ?>
                         <img src="<?= $siteUrl ?>images/email/new/share_your_passion_50.gif" width="102" height="68">
                         <img src="<?= $siteUrl ?>images/common/blank.gif" height="5" width="102">
                         <a href="<?= $siteUrl ?>refer-friend/"><img src="<?= $siteUrl ?>images/email/new/tell_a_friend.jpg" width="102" height="26"></a>
+                    	<? } ?>
                     </td>
                     <td width="26" bgcolor="#f6f6f6" style="font-size:0;line-height:0;"><img src="<?= $siteUrl ?>images/common/blank.gif" align="left" vspace="0" hspace="0" width="1" height="1"></td>
                     <td width="1" bgcolor="#86878a" style="font-size:0; line-height:0;"><img src="http://www.luxurylink.com/images/email/pixel.gif" align="left" vspace="0" hspace="0" width="1" height="1"></td>
@@ -74,12 +76,14 @@
                                             <td width="6"></td>
                                             <td style="line-height:13px;"><font face="Arial, Helvetica, sans-serif" color="#036dfc" size="1" style="font-size:10px; line-height:13px"><a style="text-decoration:none; color:#036dfc;" href="http://twitter.com/luxurylink"><font color="#036dfc">Twitter</font></a></font></td>
                                         </tr>
-                                        <tr><td colspan="3" style="font-size:0; line-height:0;"><img src="http://www.luxurylink.com/images/email/pixel.gif" width="1" height="5"></td></tr>
-                                        <tr>
-                                            <td width="24" style="font-size:0; line-height:0;"><img src="http://www.luxurylink.com/images/email/ico-community.jpg" align="left" vspace="0" hspace="0" alt="community" width="24" height="24"></td>
-                                            <td width="6"></td>
-                                            <td style="line-height:13px;"><font face="Arial, Helvetica, sans-serif" color="#036dfc" size="1" style="font-size:10px; line-height:13px"><a style="text-decoration:none; color:#036dfc;" href="http://www.luxurylink.com/community/forum.php"><font color="#036dfc">Join the<br>Community</font></a></font></td>
-                                        </tr>
+                                        <? if ($lltgComponentService->isLoungeEnabled()) { ?>
+											<tr><td colspan="3" style="font-size:0; line-height:0;"><img src="http://www.luxurylink.com/images/email/pixel.gif" width="1" height="5"></td></tr>
+											<tr>
+												<td width="24" style="font-size:0; line-height:0;"><img src="http://www.luxurylink.com/images/email/ico-community.jpg" align="left" vspace="0" hspace="0" alt="community" width="24" height="24"></td>
+												<td width="6"></td>
+												<td style="line-height:13px;"><font face="Arial, Helvetica, sans-serif" color="#036dfc" size="1" style="font-size:10px; line-height:13px"><a style="text-decoration:none; color:#036dfc;" href="http://www.luxurylink.com/community/forum.php"><font color="#036dfc">Join the<br>Community</font></a></font></td>
+											</tr>
+										<? } ?>
                                     </table>
                                 </td>
                             </tr>
