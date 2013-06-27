@@ -3,6 +3,7 @@ class ClientNotification extends AppModel
 {
     public $name = 'ClientNotification';
     public $useTable = 'clientNotifications';
+    public $primaryKey = 'id';
 
     private $warnings = array();
 
@@ -17,6 +18,7 @@ class ClientNotification extends AppModel
         if (
             isset($this->data['ClientNotification']['clientId'])
             && isset($this->data['ClientNotification']['merchDataEntryId'])
+            && !isset($this->id)
         ) {
             $options = array(
                 'conditions' => array(
@@ -34,6 +36,22 @@ class ClientNotification extends AppModel
         }
 
         return parent::beforeSave();
+    }
+
+    /**
+     * @return bool|array
+     */
+    public function getClientsToNotify()
+    {
+        $results = array();
+        $options = array(
+            'conditions' => array(
+                'notified' => null
+            )
+        );
+
+        $results = $this->find('all', $options);
+        return (empty($results)) ? false : $results;
     }
 
     /**
