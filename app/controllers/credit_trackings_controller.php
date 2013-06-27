@@ -6,6 +6,19 @@ class CreditTrackingsController extends AppController
     public $canSave = false;
 
     /**
+     * @var User $userModel
+     */
+    public $userModel;
+
+
+    public function __construct()
+    {
+        parent::__construct();
+        APP::import('Model', 'User');
+        $this->userModel = new User();
+    }
+
+    /**
      *
      */
     public function beforeFilter()
@@ -99,11 +112,15 @@ class CreditTrackingsController extends AppController
     {
         $this->canSave();
         if (!empty($this->data)) {
-            if ($this->CreditTracking->saveAll($this->data)) {
-                $this->Session->setFlash(__('The CreditTracking has been saved', true));
-                $this->redirect(array('action' => 'index'));
+            if ($this->userModel->isInternational($this->data['CreditTracking']['userId']) === false) {
+                if ($this->CreditTracking->saveAll($this->data)) {
+                    $this->Session->setFlash(__('The CreditTracking has been saved', true));
+                    $this->redirect(array('action' => 'index'));
+                } else {
+                    $this->Session->setFlash(__('The CreditTracking could not be saved. Please, try again.', true));
+                }
             } else {
-                $this->Session->setFlash(__('The CreditTracking could not be saved. Please, try again.', true));
+                $this->Session->setFlash(__('A Credit on File cannot be added for non-US users.', true));
             }
         }
         $creditTrackingTypes = $this->CreditTracking->CreditTrackingType->find('list');

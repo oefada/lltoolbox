@@ -175,4 +175,19 @@ class User extends AppModel
         }
         return $count;
     }
+
+    /**
+     * @param $userId
+     * @return bool
+     */
+    public function isInternational($userId)
+    {
+        $this->recursive = false;
+        $user = $this->read('User.tldId', $userId);
+        if (isset($user['User']['tldId'])) {
+            return ($user['User']['tldId'] > 1);
+        } else {
+            return false;
+        }
+    }
 }
