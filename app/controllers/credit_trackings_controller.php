@@ -1,19 +1,22 @@
 <?php
 class CreditTrackingsController extends AppController
 {
-    var $name = 'CreditTrackings';
-    var $helpers = array('Html', 'Form');
-    var $canSave = false;
+    public $name = 'CreditTrackings';
+    public $helpers = array('Html', 'Form');
+    public $canSave = false;
 
-    function beforeFilter()
+    /**
+     *
+     */
+    public function beforeFilter()
     {
         parent::beforeFilter();
 
         $currentUser = $this->LdapAuth->user();
-        if (in_array('Accounting', $currentUser['LdapUser']['groups']) || in_array(
-                'Geeks',
-                $currentUser['LdapUser']['groups']
-            ) || in_array('cof', $currentUser['LdapUser']['groups'])
+        if (
+            in_array('Accounting', $currentUser['LdapUser']['groups'])
+            || in_array('Geeks', $currentUser['LdapUser']['groups'])
+            || in_array('cof', $currentUser['LdapUser']['groups'])
         ) {
             $this->canSave = true;
         }
@@ -21,10 +24,11 @@ class CreditTrackingsController extends AppController
         $this->set('canSave', $this->canSave);
     }
 
-    function index()
+    /**
+     *
+     */
+    public function index()
     {
-        //$this->CreditTracking->recursive = -1;
-
         $this->UserSiteExtended->primaryKey = 'userId';
         $conditions = array();
 
@@ -71,7 +75,7 @@ class CreditTrackingsController extends AppController
         $this->set('creditTrackings', $this->paginate());
     }
 
-    function view($id = null)
+    public function view($id = null)
     {
         if (!$id) {
             $this->Session->setFlash(__('Invalid CreditTracking.', true));
@@ -88,11 +92,13 @@ class CreditTrackingsController extends AppController
         $this->set('creditTrackings', $trackings);
     }
 
-    function add()
+    /**
+     *
+     */
+    public function add()
     {
         $this->canSave();
         if (!empty($this->data)) {
-            //$this->CreditTracking->create();
             if ($this->CreditTracking->saveAll($this->data)) {
                 $this->Session->setFlash(__('The CreditTracking has been saved', true));
                 $this->redirect(array('action' => 'index'));
@@ -105,7 +111,7 @@ class CreditTrackingsController extends AppController
         $this->set(compact('creditTrackingTypes'));
     }
 
-    function edit($id = null)
+    public function edit($id = null)
     {
         $this->canSave();
         if (!$id && empty($this->data)) {
@@ -127,7 +133,7 @@ class CreditTrackingsController extends AppController
         $this->set(compact('creditTrackingTypes'));
     }
 
-    function delete($id = null)
+    public function delete($id = null)
     {
         $this->canSave();
 
@@ -150,12 +156,12 @@ class CreditTrackingsController extends AppController
         }
     }
 
-    function search()
+    public function search()
     {
         $this->redirect(array('action' => 'index', 'query' => $this->params['url']['query']));
     }
 
-    function canSave()
+    public function canSave()
     {
         if ($this->canSave == false) {
             $this->Session->setFlash('You are not authorized to view this page');
@@ -163,5 +169,3 @@ class CreditTrackingsController extends AppController
         }
     }
 }
-
-?>
