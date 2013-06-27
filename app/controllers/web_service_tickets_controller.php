@@ -2991,7 +2991,6 @@ class WebServiceTicketsController extends WebServicesController
         if (
             !$userPaymentSettingPost
             || empty($userPaymentSettingPost)
-            || !isset($userPaymentSettingPost['UserPaymentSetting']['ccToken'])
         ) {
             $this->errorResponse = 113;
             return $this->returnError(__METHOD__);
@@ -2999,11 +2998,6 @@ class WebServiceTicketsController extends WebServicesController
 
         $userPaymentSettingPost['UserPaymentSetting']['ccNumber'] =
             $this->UserPaymentSetting->detokenizeCcNum($userPaymentSettingPost['UserPaymentSetting']['ccToken']);
-
-        if (!is_numeric($userPaymentSettingPost['UserPaymentSetting']['ccNumber'])) {
-            $this->errorResponse = 114;
-            return $this->returnError(__METHOD__);
-        }
 
         // for FAMILY, payment is via PAYPAL only [override]
         // ---------------------------------------------------------------------------
@@ -3022,7 +3016,7 @@ class WebServiceTicketsController extends WebServicesController
         $paymentProcessorName = $paymentProcessorName['PaymentProcessor']['paymentProcessorName'];
 
         if (!$paymentProcessorName) {
-            $this->errorResponse = 115;
+            $this->errorResponse = 114;
             return $this->returnError(__METHOD__);
         }
 
