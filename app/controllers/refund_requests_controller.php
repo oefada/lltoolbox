@@ -201,6 +201,10 @@ class RefundRequestsController extends AppController
         $refundStatuses = $this->RefundRequest->RefundRequestStatus->find('list');
         $this->set(compact('refundInfo', 'refundReasons', 'refundStatuses'));
         $this->set('pageVersion', 'A');
+
+        if ($this->Ticket->isInternational($ticketId) === true) {
+            $this->set('refundOrCOFList', array('R' => 'Refund'));
+        }
     }
 
     function edit($id = null)

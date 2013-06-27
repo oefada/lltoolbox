@@ -1078,4 +1078,19 @@ class Ticket extends AppModel
 
         }
     }
+
+    /**
+     * @param $ticketId
+     * @return bool
+     */
+    public function isInternational($ticketId)
+    {
+        $this->recursive = false;
+        $ticket = $this->read('Ticket.tldId', $ticketId);
+        if (isset($ticket['Ticket']['tldId'])) {
+            return ($ticket['Ticket']['tldId'] > 1);
+        } else {
+            return false;
+        }
+    }
 }
