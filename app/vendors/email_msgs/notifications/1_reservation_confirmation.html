@@ -11,7 +11,7 @@ foreach ($clients as $cn=>$c):
 endforeach;
 ?> for <?= $numNights ?> nights starting on <?php echo $resArrivalDate;?> and checking-out on <?php echo $resDepartureDate;?> has been confirmed!
 <? else: ?>
-Thank you for your Luxury Link purchase. This email is your reservation confirmation and receipt of payment in full for the following package. Please keep it for your records.
+Thank you for your Luxury Link purchase. This email is your reservation confirmation and receipt of payment in full for the following <?= $word_package_lower;?>. Please keep it for your records.
 <? endif; ?>
 </p>
 <?php if ($siteId == 1 && count($clients[0]['destData'])): ?>

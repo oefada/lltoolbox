@@ -129,7 +129,7 @@ if ($resConfirmationNotes != "" || ($ppvNoticeTypeId == 14 && is_array($preferDa
 				$tmpEndDate=strtoupper(date("M d, Y \A\T g:i A",strtotime($liveOfferData['endDate'])));
 				echo "AUCTION ENDS ".$tmpEndDate." PACIFIC TIME";
 			else:
-				echo "YOUR VACATION PACKAGE";
+				echo "YOUR VACATION " . strtoupper($word_package_lower);
 			endif;
 
 		endif;

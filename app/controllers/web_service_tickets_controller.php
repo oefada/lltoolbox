@@ -1367,6 +1367,13 @@ class WebServiceTicketsController extends WebServicesController
 
 		$lltgServiceBuilder = $this->LltgServiceHelper->getServiceBuilderFromTldId($tldId);			
 		$lltgComponentService = $this->LltgServiceHelper->getComponentService($lltgServiceBuilder);
+		$lltgFormatterService = $this->LltgServiceHelper->getFormatterService($lltgServiceBuilder);
+		$lltgTranslationService = $this->LltgServiceHelper->getTranslationService($lltgServiceBuilder);
+		
+		$word_packages_upper = $lltgTranslationService->getTranslationforKey('TEXT_PACKAGES_UPPER');
+		$word_package_upper = $lltgTranslationService->getTranslationforKey('TEXT_PACKAGE_UPPER');
+		$word_packages_lower = $lltgTranslationService->getTranslationforKey('TEXT_PACKAGES_LOWER');
+		$word_package_lower = $lltgTranslationService->getTranslationforKey('TEXT_PACKAGE_LOWER');
 				
 		if ($tldId == 2) {
         	$siteDisplay = 'Luxury Link';

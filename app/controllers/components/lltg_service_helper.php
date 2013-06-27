@@ -13,16 +13,23 @@ class LltgServiceHelperComponent extends Object {
 		return $serviceBuilder;
 	} 
 	
-	public function getCurrencyService($builder)
-	{
-		App::import("Vendor", "CurrencyService", array('file' => "appshared".DS."Services".DS."CurrencyService.php"));
-		return $builder->getService('CurrencyService');
-	}	
 
 	public function getComponentService($builder)
 	{
 		App::import("Vendor", "ComponentService", array('file' => "appshared".DS."Services".DS."ComponentService.php"));
 		return $builder->getService('ComponentService');
+	}
+
+	public function getFormatterService($builder)
+	{
+		App::import("Vendor", "FormatterService", array('file' => "appshared".DS."Services".DS."FormatterService.php"));
+		return $builder->getService('FormatterService');
+	}
+
+	public function getTranslationService($builder)
+	{
+		App::import("Vendor", "TranslationService", array('file' => "appshared".DS."Services".DS."TranslationService.php"));
+		return $builder->getService('TranslationService');
 	}
 	
 }
