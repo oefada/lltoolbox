@@ -302,7 +302,6 @@ class LoasController extends AppController
         $this->set('loaMembershipTypeIds', $loaMembershipTypeIds);
         $this->set('publishingStatus', $publishingStatus);
         $this->set('accountTypeIds', $accountTypeIds);
-        $this->set('socialSuiteValues', $this->getSocialSuiteValues($client['Client']['segment']));
     }
 
     public function findDateConflict($clientId, $startDate)
@@ -333,15 +332,6 @@ class LoasController extends AppController
             'Exclusive Email' => 'Exclusive Email',
             'Includes CC Fee' => 'Includes CC Fee'
         );
-    }
-
-    private function getSocialSuiteValues($clientSegment)
-    {
-        if ($clientSegment === '') {
-            return array('Regular' => 'Regular');
-        } else {
-            return array('Extra' => 'Extra');
-        }
     }
 
     public function items($id = null)
@@ -484,7 +474,6 @@ class LoasController extends AppController
         $this->set('checkboxValuesArr', $this->getCheckboxValuesArr());
         $this->set('checkboxValuesSelectedArr', $checkboxValuesSelectedArr);
         $this->set('loaPaymentTermIds', $this->Loa->LoaPaymentTerm->find('list'));
-        $this->set('socialSuiteValues', $this->getSocialSuiteValues($client['Client']['segment']));
     }
 
     public function sortLoaItemsByType($a, $b)

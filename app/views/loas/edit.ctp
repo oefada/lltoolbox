@@ -196,13 +196,7 @@ echo $form->input('revenueSplitPercentage');
 
     echo $form->input('payoffDate', array('empty' => true));
 
-    echo $form->input('socialMediaSuite', array(
-            'label' => 'Social Media Suite',
-            'type' => 'select',
-            'options' => $socialSuiteValues,
-            'disabled' => true
-        )
-    );
+    echo '<div><label>Client Segment</label><span>' . $client['Client']['segment'] . '</span></div>';
 
     echo $form->input('socialMediaNotes', array('label' => 'Social Media Notes'));
 
