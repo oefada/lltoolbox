@@ -21,13 +21,10 @@ class PackageExcel
 
     function __construct()
     {
-        echo ($hello);
-        $hello = 'Hello, world!';
-        $xls = ROOT . DS . APP_DIR . DS . 'views' . DS . 'packages' . DS . 'xls' . DS . 'Package.xlsx';
-        $objReader = new PHPExcel_Reader_Excel2007();
-        $phpExcel = $objReader->load($xls);
-        die(print_r($phpExcel->getSheetNames(), true));
-        print_r('hello');
+        // $xls = ROOT . DS . APP_DIR . DS . 'views' . DS . 'packages' . DS . 'xls' . DS . 'Package.xlsx';
+        // $objReader = new PHPExcel_Reader_Excel2007();
+        // $phpExcel = $objReader->load($xls);
+
     }
 
 }

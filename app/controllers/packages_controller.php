@@ -2908,8 +2908,14 @@ class PackagesController extends AppController
         }
     }
 
+    private final function _get($varName)
+    {
+        return isset($this->viewVars[$varName]) ? $this->viewVars[$varName] : null;
+    }
+
     function excel($clientId, $packageId)
     {
+        /*
         App::import(
             'Vendor',
             'PackageExcel',
@@ -2917,12 +2923,37 @@ class PackagesController extends AppController
         );
         $pe = new PackageExcel();
         die('z<pre>' . htmlentities(print_r($pe, true)));
+        */
+        /*
+        $bo_weekdays = $this->_get('bo_weekdays');
+        $isMultiClientPackage = $this->_get('isMultiClientPackage');
+        $vb = $this->_get('vb');
+        $cc = $this->_get('cc');
+        */
+        $this->_generateExportData($clientId, $packageId);
+        $package = $this->_get('package');
+        $client = $this->_get('client');
+        $roomNights = $this->_get('roomNights');
+        $lowPrice = $this->_get('lowPrice');
+
+
     }
 
     function export($clientId, $packageId)
     {
         $this->layout = false;
         $this->Client->recursive = -1;
+        $this->_generateExportData($clientId, $packageId);
+        $package = $this->_get('package');
+        if ($package['Package']['siteId'] == 1) {
+            $this->render('export');
+        } else {
+            $this->render('export_family');
+        }
+    }
+
+    private final function _generateExportData($clientId, $packageId)
+    {
         $package = $this->Package->getPackage($packageId);
         $isMultiClientPackage = (count($package['ClientLoaPackageRel']) > 1) ? true : false;
         $client = $this->Client->read(null, $clientId);
@@ -2972,16 +3003,11 @@ class PackagesController extends AppController
         $lowPriceGuarantees = $this->getRatePeriodsInfo($packageId);
         $this->set('package', $package);
         $this->set('isMultiClientPackage', $isMultiClientPackage);
-        $this->set('client', $client['Client']);
+        $this->set('client', $client['Client']); // sigh
         $this->set('roomNights', $roomNights);
         $this->set('vb', $this->Package->getPkgVbDates($packageId));
         $this->set('lowPrice', $lowPriceGuarantees);
         $this->set('cc', $package['Currency']['currencyCode']);
-        if ($package['Package']['siteId'] == 1) {
-            $this->render('export');
-        } else {
-            $this->render('export_family');
-        }
     }
 
     function render_rate_period($clientId, $packageId)
