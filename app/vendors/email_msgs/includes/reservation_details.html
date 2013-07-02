@@ -109,7 +109,7 @@
 						<? if ($clientPpv && $foreignPricedPackage) { ?>
 							<tr>
 								<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;">Local Purchase Price:</td>
-								<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;"><?= $foreignPricedPackage['billingPriceLocal'] . ' ' . $foreignPricedPackage['currencyCode']; ?></td>
+								<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;"><?= number_format($foreignPricedPackage['billingPriceLocal'], 0) . ' ' . $foreignPricedPackage['currencyCode']; ?></td>
 							</tr>
 						<? } ?>
 
