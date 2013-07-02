@@ -1422,15 +1422,15 @@ class WebServiceTicketsController extends WebServicesController
             $isTaxIncluded = (isset($ticketData['isTaxIncluded'])) ? $ticketData['isTaxIncluded'] : null;
             
             $foreignPricedPackage = false;
-            //if (intval($packageData['currencyId']) > 1 && intval($ticketData['offerRetailValueUSD']) > 0 && intval($ticketData['offerRetailValueLocal']) > 0 && (intval($ticketData['offerRetailValueUSD']) != intval($ticketData['offerRetailValueLocal']))) {
-            //	if ($clientId == 8455) {
-            //		$foreignPricedPackage = array();
-            //		$foreignPricedPackage['exchangeRate'] = $ticketData['offerRetailValueLocal'] / $ticketData['offerRetailValueUSD'];
-            //		$foreignPricedPackage['billingPriceLocal'] = $ticketData['billingPrice'] * $foreignPricedPackage['exchangeRate'];
-			//		$currencyCodeData = $this->Ticket->query("SELECT currencyCode FROM currency WHERE currencyId = " . $packageData['currencyId']);
-            //		$foreignPricedPackage['currencyCode'] = $currencyCodeData[0]['currency']['currencyCode'];
-            //	}
-            //}
+            if (intval($packageData['currencyId']) > 1 && intval($ticketData['offerRetailValueUSD']) > 0 && intval($ticketData['offerRetailValueLocal']) > 0 && (intval($ticketData['offerRetailValueUSD']) != intval($ticketData['offerRetailValueLocal']))) {
+            	if ($clientId == 8455) {
+            		$foreignPricedPackage = array();
+            		$foreignPricedPackage['exchangeRate'] = $ticketData['offerRetailValueLocal'] / $ticketData['offerRetailValueUSD'];
+            		$foreignPricedPackage['billingPriceLocal'] = $ticketData['billingPrice'] * $foreignPricedPackage['exchangeRate'];
+					$currencyCodeData = $this->Ticket->query("SELECT currencyCode FROM currency WHERE currencyId = " . $packageData['currencyId']);
+            		$foreignPricedPackage['currencyCode'] = $currencyCodeData[0]['currency']['currencyCode'];
+            	}
+            }
             
             //////////////////////////////////////////////////////////////////////////////////////////////////////
             // TODO: figure out how to share this with the customer facing sites
