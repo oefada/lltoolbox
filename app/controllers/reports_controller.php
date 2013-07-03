@@ -1600,7 +1600,10 @@ class ReportsController extends AppController
     }
 
 
-    function auction_winner()
+    /**
+     *
+     */
+    public function auction_winner()
     {
         if (!empty($this->data)) {
             $conditions = $this->_build_conditions($this->data);
@@ -1642,86 +1645,82 @@ class ReportsController extends AppController
             $numRecords = $results[0][0]['numRecords'];
             $numPages = ceil($numRecords / $this->perPage);
 
-            // query modified
-            // mbyrnes 2011-02-22
-            // The join on pricePoint caused problems because there is no ticketId in the
-            // pricePoint table
-            // The result was multiple rows incorrectly selected and SUM-med before the GROUP
-            // BY ticketId
-            // was enforced
-            // Too much redundant data in the tables and not enough correlated keys to get it
-            // right easily,
-            // so php solution implemented
-            $sql = "SELECT if(Ticket.offerTypeId IN(3,4),PaymentDetail.ppResponseDate,SchedulingInstance.endDate) endDate,
-                           PaymentDetail.ppResponseDate,
-                           Ticket.ticketId,
-                           GROUP_CONCAT(DISTINCT Client.clientId) as clientIds,
-                           GROUP_CONCAT(DISTINCT Client.oldProductId) as oldProductIds,
-                           GROUP_CONCAT(DISTINCT Client.accountingId) as accountingIds,
-                           GROUP_CONCAT(DISTINCT Client.name) as clientNames,
-                           Ticket.userId,
-                           Ticket.userFirstName,
-                           Ticket.userLastName,
-                           PaymentDetail.ppBillingAddress1,
-                           PaymentDetail.ppBillingCity,
-                           PaymentDetail.ppBillingState,
-                           PaymentDetail.ppBillingCountry,
-                           PaymentDetail.ppBillingZip,
-                           Ticket.userWorkPhone,
-                           Ticket.userHomePhone,
-                           Ticket.userMobilePhone,
-                           Ticket.userEmail1,
-                           Ticket.numNights,
-                                                     r.arrivalDate,
-                                                     Ticket.siteId,
-                           PaymentDetail.ccType,
-                           PaymentDetail.ppCardNumLastFour,
-                           PaymentDetail.ppExpMonth,
-                           PaymentDetail.ppExpYear,
-                           SUM(PaymentDetail.ppBillingAmount) as revenue,
-                           OfferType.offerTypeName,
-
-                           IF(Ticket.siteId = 2, ROUND((SUM(PaymentDetail.ppBillingAmount) / (offerFamily.retailValue + IF(offerFamily.isFlexPackage = 1, (Ticket.numNights - offerFamily.roomNights) * offerFamily.flexRetailPricePerNight, 0)) * 100))
+            $sql = "
+              SELECT
+                IF(Ticket.offerTypeId IN(3,4),PaymentDetail.ppResponseDate,SchedulingInstance.endDate)
+                endDate,
+                PaymentDetail.ppResponseDate,
+                Ticket.ticketId,
+                GROUP_CONCAT(DISTINCT Client.clientId) as clientIds,
+                GROUP_CONCAT(DISTINCT Client.oldProductId) as oldProductIds,
+                GROUP_CONCAT(DISTINCT Client.accountingId) as accountingIds,
+                GROUP_CONCAT(DISTINCT Client.name) as clientNames,
+                Ticket.userId,
+                Ticket.userFirstName,
+                Ticket.userLastName,
+                PaymentDetail.ppBillingAddress1,
+                PaymentDetail.ppBillingCity,
+                PaymentDetail.ppBillingState,
+                PaymentDetail.ppBillingCountry,
+                PaymentDetail.ppBillingZip,
+                Ticket.userWorkPhone,
+                Ticket.userHomePhone,
+                Ticket.userMobilePhone,
+                Ticket.userEmail1,
+                Ticket.numNights,
+                r.arrivalDate,
+                Ticket.siteId,
+                PaymentDetail.ccType,
+                PaymentDetail.ppCardNumLastFour,
+                PaymentDetail.ppExpMonth,
+                PaymentDetail.ppExpYear,
+                SUM(PaymentDetail.ppBillingAmount) as revenue,
+                OfferType.offerTypeName,
+                IF(
+                  Ticket.siteId = 2,
+                  ROUND((SUM(PaymentDetail.ppBillingAmount) / (offerFamily.retailValue + IF(offerFamily.isFlexPackage = 1,
+                  (Ticket.numNights - offerFamily.roomNights) * offerFamily.flexRetailPricePerNight, 0)) * 100))
                                                , ROUND((SUM(PaymentDetail.ppBillingAmount) / (offerLuxuryLink.retailValue + IF(offerLuxuryLink.isFlexPackage = 1, (Ticket.numNights - offerLuxuryLink.roomNights) * offerLuxuryLink.flexRetailPricePerNight, 0)) * 100))
-                           ) AS percentOfRetail,
-
-
-                           PaymentProcessor.paymentProcessorName,
-                           ExpirationCriteria.expirationCriteriaId,
-                                                     SchedulingMaster.pricePointId,
-                                                     SchedulingMaster.packageId,
-                           Promo.amountOff,
-                           PromoCode.promoCode,
-                           Package.numNights,
-                           Package.numRooms,
-                           Ticket.offerId,
-                           Ticket.guaranteeAmt,
-                           Ticket.billingPrice
-                    FROM ticket AS Ticket
-                           INNER JOIN offer AS Offer USING(offerId)
-                           LEFT JOIN offerType AS OfferType ON (Ticket.offerTypeId = OfferType.offerTypeId)
-                           LEFT JOIN schedulingInstance AS SchedulingInstance USING(schedulingInstanceId)
-                           INNER JOIN schedulingMaster AS SchedulingMaster ON SchedulingMaster.schedulingMasterId = SchedulingInstance.schedulingMasterId
-                           INNER JOIN schedulingMasterTrackRel as SchedulingMasterTrackRel ON SchedulingMasterTrackRel.schedulingMasterId = SchedulingMaster.schedulingMasterId
-                           LEFT JOIN track AS Track ON Track.trackId = SchedulingMasterTrackRel.trackId
-                           LEFT JOIN paymentDetail AS PaymentDetail ON (PaymentDetail.ticketId = Ticket.ticketId AND PaymentDetail.isSuccessfulCharge <> 0)
-                           LEFT JOIN paymentProcessor AS PaymentProcessor USING (paymentProcessorId)
-                           LEFT JOIN userPaymentSetting AS UserPaymentSetting ON (UserPaymentSetting.userPaymentSettingId = PaymentDetail.userPaymentSettingId)
-                           LEFT JOIN package AS Package ON Package.packageId = Ticket.packageId
-                           LEFT JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Ticket.packageId)
-                           LEFT JOIN client as Client ON(Client.clientId = ClientLoaPackageRel.clientId)
-                           LEFT JOIN expirationCriteria AS ExpirationCriteria USING(expirationCriteriaId)
-                              LEFT JOIN reservation r ON Ticket.ticketId = r.ticketId
-                           LEFT JOIN promoTicketRel ptr ON Ticket.ticketId = ptr.ticketId
-                           LEFT JOIN promoCode PromoCode ON ptr.promoCodeId = PromoCode.promoCodeId
-                           LEFT JOIN promoCodeRel pcr ON PromoCode.promoCodeId = pcr.promoCodeId
-                           LEFT JOIN promo Promo ON pcr.promoId = Promo.promoId
-                           LEFT JOIN offerLuxuryLink USING(offerId)
-                           LEFT JOIN offerFamily USING(offerId)
-                       WHERE $conditions
-                    GROUP BY Ticket.ticketId
-                    ORDER BY $order
-                    LIMIT $this->limit";
+                ) AS percentOfRetail,
+                PaymentProcessor.paymentProcessorName,
+                ExpirationCriteria.expirationCriteriaId,
+                SchedulingMaster.pricePointId,
+                SchedulingMaster.packageId,
+                Promo.amountOff,
+                PromoCode.promoCode,
+                Package.numNights,
+                Package.numRooms,
+                Ticket.offerId,
+                Ticket.guaranteeAmt,
+                Ticket.billingPrice,
+                Locale.code
+              FROM ticket AS Ticket
+              INNER JOIN tld AS Tld ON (Ticket.tldId = Tld.tldId)
+              INNER JOIN i18nLocales AS Locale ON (Tld.localeId = Locale.localeId)
+              INNER JOIN offer AS Offer USING(offerId)
+              LEFT JOIN offerType AS OfferType ON (Ticket.offerTypeId = OfferType.offerTypeId)
+              LEFT JOIN schedulingInstance AS SchedulingInstance USING(schedulingInstanceId)
+              INNER JOIN schedulingMaster AS SchedulingMaster ON SchedulingMaster.schedulingMasterId = SchedulingInstance.schedulingMasterId
+              INNER JOIN schedulingMasterTrackRel as SchedulingMasterTrackRel ON SchedulingMasterTrackRel.schedulingMasterId = SchedulingMaster.schedulingMasterId
+              LEFT JOIN track AS Track ON Track.trackId = SchedulingMasterTrackRel.trackId
+              LEFT JOIN paymentDetail AS PaymentDetail ON (PaymentDetail.ticketId = Ticket.ticketId AND PaymentDetail.isSuccessfulCharge <> 0)
+              LEFT JOIN paymentProcessor AS PaymentProcessor USING (paymentProcessorId)
+              LEFT JOIN userPaymentSetting AS UserPaymentSetting ON (UserPaymentSetting.userPaymentSettingId = PaymentDetail.userPaymentSettingId)
+              LEFT JOIN package AS Package ON Package.packageId = Ticket.packageId
+              LEFT JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Ticket.packageId)
+              LEFT JOIN client as Client ON(Client.clientId = ClientLoaPackageRel.clientId)
+              LEFT JOIN expirationCriteria AS ExpirationCriteria USING(expirationCriteriaId)
+              LEFT JOIN reservation r ON Ticket.ticketId = r.ticketId
+              LEFT JOIN promoTicketRel ptr ON Ticket.ticketId = ptr.ticketId
+              LEFT JOIN promoCode PromoCode ON ptr.promoCodeId = PromoCode.promoCodeId
+              LEFT JOIN promoCodeRel pcr ON PromoCode.promoCodeId = pcr.promoCodeId
+              LEFT JOIN promo Promo ON pcr.promoId = Promo.promoId
+              LEFT JOIN offerLuxuryLink USING(offerId)
+              LEFT JOIN offerFamily USING(offerId)
+              WHERE $conditions
+              GROUP BY Ticket.ticketId
+              ORDER BY $order
+              LIMIT $this->limit";
 
             $results = $this->OfferType->query($sql);
 
