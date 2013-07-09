@@ -36,7 +36,8 @@
 <table cellpadding="0" cellspacing="0">
 <tr>
 	<th>Id</th>
-	<th>Ticket Id</th>
+    <th>Site</th>
+    <th>Ticket Id</th>
 	<th>Status</th>
 	<th>Amount</th>
 	<th>Date Created</th>
@@ -58,7 +59,19 @@ foreach ($refundRequests as $rq):
 ?>
 	<tr<?php echo $class;?>>
 		<td><?php echo $rq['RefundInfo']['refundRequestId']; ?></td>
-		<td><a href="/tickets/view/<?php echo $rq['RefundInfo']['ticketId']; ?>"><?php echo $rq['RefundInfo']['ticketId']; ?></a></td>
+        <td><?php 
+            if ($rq['RefundInfo']['siteId'] == 2) {
+                echo 'FG';
+            } else {
+                if ($rq['RefundInfo']['tldId'] == 2) {
+                    echo 'LL UK';
+                } else {
+                    echo 'LL';
+                }
+            }
+            ?>
+        </td>
+        <td><a href="/tickets/view/<?php echo $rq['RefundInfo']['ticketId']; ?>"><?php echo $rq['RefundInfo']['ticketId']; ?></a></td>
 		<td><?php echo $rq['RefundInfo']['description']; ?></td>
 		<td align="right">$<?php echo number_format($rq['RefundInfo']['refundTotal'], 2); ?>&nbsp;</td>
 		<td><?php echo $rq['RefundInfo']['dateCreated']; ?></td>

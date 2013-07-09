@@ -32,7 +32,7 @@ class RefundRequestsController extends AppController
 
         $q = "SELECT * FROM
 			  (
-			  SELECT RefundRequest.*, RefundReason.refundReasonName, RefundRequestStatus.description, Ticket.userLastName, Ticket.billingPrice, Ticket.packageId, OfferType.offerTypeName, PaymentDetail.ppCardNumLastFour, PaymentDetail.ppResponseDate
+			  SELECT RefundRequest.*, RefundReason.refundReasonName, RefundRequestStatus.description, Ticket.userLastName, Ticket.billingPrice, Ticket.packageId, Ticket.siteId, Ticket.tldId, OfferType.offerTypeName, PaymentDetail.ppCardNumLastFour, PaymentDetail.ppResponseDate
 			  FROM refundRequest RefundRequest
 			  INNER JOIN refundRequestStatus RefundRequestStatus ON RefundRequest.refundRequestStatusId = RefundRequestStatus.refundRequestStatusId
 			  INNER JOIN refundReason RefundReason ON RefundRequest.refundReasonId = RefundReason.refundReasonId
