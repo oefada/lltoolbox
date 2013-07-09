@@ -301,7 +301,7 @@ foreach ($clients as $cn=>$c):
 <?php if (!in_array($ppvNoticeTypeId,array(38))): ?>
 
 	<tr>
-	<td style="<?=$fontStyle?>line-height:16px;padding: 2px 0px 5px 15px;" colspan="3"><?= $packageIncludes ?></td>
+	<td style="<?=$fontStyle?>line-height:16px;padding: 2px 0px 5px 15px;" colspan="3"><?= $lltgTranslationService->getTranslationforText($packageIncludes, 'Package', 'Holiday'); ?></td>
 	</tr>
 	<tr>
 	<td bgcolor="#c3c3c3" height="1" width="100%" colspan="5"></td>
@@ -353,7 +353,7 @@ foreach ($clients as $cn=>$c):
 	<td
 		colspan="4"
 		style="font-size: 12px; font-family: Arial,Sans-Serif; color: rgb(79, 63, 50); line-height: 18px; padding: 15px 20px 15px 15px;"
-		><?= $validityNote ?>
+		><?= $lltgTranslationService->getTranslationforText($validityNote, 'package', 'holiday'); ?>
 	</td>
 	</tr>
 
