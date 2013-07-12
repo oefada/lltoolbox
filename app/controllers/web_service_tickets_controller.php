@@ -1423,7 +1423,7 @@ class WebServiceTicketsController extends WebServicesController
             
             $foreignPricedPackage = false;
             if (intval($packageData['currencyId']) > 1 && intval($ticketData['offerRetailValueUSD']) > 0 && intval($ticketData['offerRetailValueLocal']) > 0 && (intval($ticketData['offerRetailValueUSD']) != intval($ticketData['offerRetailValueLocal']))) {
-            	if ($clientId == 8455) {
+            	if (true) {
             		$foreignPricedPackage = array();
             		$foreignPricedPackage['exchangeRate'] = $ticketData['offerRetailValueLocal'] / $ticketData['offerRetailValueUSD'];
             		$foreignPricedPackage['billingPriceLocal'] = $ticketData['billingPrice'] * $foreignPricedPackage['exchangeRate'];
