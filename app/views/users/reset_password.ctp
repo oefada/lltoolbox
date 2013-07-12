@@ -1,6 +1,6 @@
 <?php if(!isset($newPassword)): ?>
 <div class='icon-yellow' style="padding-left: 40px; text-align: left">
-Are you sure you want to reset this user's password? An email confirmation will be sent to them with their new password, and you will be shown the generated password momentarily.
+Are you sure you want to reset this user's password?  You will be shown the generated password momentarily.
 </div>
 <div style="text-align: center">
 <?php echo $ajax->form('resetPassword', 'post', array('update' => 'MB_content', 'model' => 'User', 'complete' => 'closeModalbox()'));?>
@@ -12,7 +12,7 @@ Are you sure you want to reset this user's password? An email confirmation will 
 </div>
 <?php else: ?>
 	<div class='icon-yellow' style="padding-left: 40px; text-align: left">
-	The user's password has been reset to '<strong><?=$newPassword?></strong>'. An email with the new password will be sent to their default email address.
+	The user's password has been reset to '<strong><?=$newPassword?></strong>'. 
 	</div>
 <?php endif;?>
 
