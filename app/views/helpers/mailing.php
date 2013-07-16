@@ -212,11 +212,8 @@ class MailingHelper extends AppHelper{
 
 	public function genPropUrl($clientArr, $utm_content='', $utm_term=''){
 
-		//$url=$clientArr['seoUrl'];
-		// link to listing page as landing page
-		$url="http://www.luxurylink.com/fivestar/hotel-deals/".$clientArr['seoLocation'];
-		$url.="/featuring/".$clientArr['seoName'];
-		$qs=$this->utm_qs;
+		$url = $clientArr['seoUrl'];				
+		$qs = $this->utm_qs;
 		if ($utm_content != '') {
 			$qs .= '&utm_content=' . $utm_content;
 		}else{
