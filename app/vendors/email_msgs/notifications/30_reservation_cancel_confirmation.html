@@ -8,7 +8,7 @@ if ($siteId == 1) {
 
 <p>
 <?if (!$isAuction): ?>
-Your reservation for <?= $clientNameP ?> has been cancelled. Your credit card will be refunded the purchase amount minus a cancellation fee and $40 <?= $siteName ?> handling fee charged at the time of booking. A $35 cancellation fee will be charged if a cancellation is made more than 15 days prior to your check-in date. A $100 cancellation fee will be charged if a cancellation is made within 15 days if your check-in date. To view our cancelation policy <a href="<?=$cancelPolicyUrl?>" style="color: #008EC5; text-decoration: none;">click here</a>. Please note, additional hotel cancellation fees may apply.
+Your reservation for <?= $clientNameP ?> has been cancelled. Your credit card will be refunded the purchase amount minus a cancellation fee and $40 <?= $siteName ?> handling fee charged at the time of booking. A $35 cancellation fee will be charged if a cancellation is made more than 15 days prior to your check-in date. A $100 cancellation fee will be charged if a cancellation is made within 15 days if your check-in date. To view our cancellation policy <a href="<?=$cancelPolicyUrl?>" style="color: #008EC5; text-decoration: none;">click here</a>. Please note, additional hotel cancellation fees may apply.
 <? else: ?>
 Your reservation for <?= $clientNameP ?> has been cancelled. As stated in our Terms and Conditions, this <?= $word_package_lower;?> is non-refundable. To view our cancelation policy <a href="<?=$cancelPolicyUrl?>" style="color: #008EC5; text-decoration: none;">click here</a>.
 <? endif; ?>
