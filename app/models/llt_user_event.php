@@ -104,7 +104,8 @@ class LltUserEvent extends AppModel
                     'lltEventId' => $result['lltUserEvent']['lltEventId'],
                     'siteId' => $result['lltUserEvent']['siteId'],
                     'count' => $result[0]['count'],
-                    'date' => $result[0]['dateCreated']
+                    'startDate' => $startDate,
+                    'endDate' => $endDate
                 );
             }
         }

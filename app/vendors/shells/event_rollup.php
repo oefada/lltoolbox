@@ -33,7 +33,9 @@ class EventRollupShell extends Shell
      */
     public function main()
     {
-        $dates = $this->getFirstRunDates('2013-01-01', '2013-07-14');
+        $startDate = isset($this->params['startDate']) ? $this->params['startDate'] : date('Y-m-d', strtotime('yesterday'));
+        $endDate = isset($this->params['endDate']) ? $this->params['endDate'] : date('Y-m-d', strtotime('yesterday'));
+        $dates = $this->getFirstRunDates($startDate, $endDate);
         foreach($dates as $date) {
             $startDate = $date . ' 00:00:00';
             $endDate = $date . ' 23:59:59';
