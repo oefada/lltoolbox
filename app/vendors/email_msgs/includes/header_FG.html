@@ -36,7 +36,12 @@
 														<? if (!$hideSalutation): ?>
 															<p>
 																<font face="Arial, Helvetica, sans-serif" size="2" style="font-size:14px; line-height:15px" color="#4f3f32">
+
+                                                                    <?if ($ppvNoticeTypeId == 23){?>
+                                                                    <strong>Dear Reservations Manager,</strong>
+                                                                    <? }else{ ?>
 																	<strong>Dear <?= $userFirstName ?>,</strong>
+                                                                    <? } ?>
 																</font>
 															</p>
 														<? endif; ?>
