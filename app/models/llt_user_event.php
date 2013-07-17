@@ -71,4 +71,43 @@ class LltUserEvent extends AppModel
 
         return $this->query($sql, array($siteId, $startDate, $endDate));
     }
+
+    public function eventRollupBySourceId($startDate, $endDate)
+    {
+        $sql = '
+            SELECT
+              lltSourceId,
+              lltEventId,
+              siteId,
+              count(1) as count,
+              SUBSTRING(dateCreated, 1, 10) as dateCreated
+            FROM
+              lltUserEvent
+            WHERE
+              dateCreated BETWEEN ? AND ?
+              AND eventRelatedClient IS NULL
+            GROUP BY
+              lltSourceId,
+              siteId,
+              lltEventId,
+              SUBSTRING(dateCreated, 1, 10)
+            ORDER BY dateCreated ASC
+        ';
+
+        $eventData = $this->query($sql, array($startDate, $endDate));
+
+        $dataToReturn = array();
+        if (!empty($eventData)) {
+            foreach ($eventData as $result) {
+                $dataToReturn[] = array(
+                    'lltSourceId' => $result['lltUserEvent']['lltSourceId'],
+                    'lltEventId' => $result['lltUserEvent']['lltEventId'],
+                    'siteId' => $result['lltUserEvent']['siteId'],
+                    'count' => $result[0]['count'],
+                    'date' => $result[0]['dateCreated']
+                );
+            }
+        }
+        return $dataToReturn;
+    }
 }

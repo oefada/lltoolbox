@@ -1,5 +1,5 @@
 <?php
-class lltUserEventRollup extends AppModel
+class LltUserEventRollup extends AppModel
 {
 	public $name = 'lltUserEventRollup';
 	public $useTable = 'lltUserEventRollupByDay';
