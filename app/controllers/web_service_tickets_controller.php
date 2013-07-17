@@ -2401,7 +2401,7 @@ class WebServiceTicketsController extends WebServicesController
         }
 
         if (isset($templateFile) && $templateFile) {
-            if (($template = $this->newEmailTemplate($templateFile, $append, $specialException, $ppvNoticeTypeId)) !== false) {
+            if (($template = $this->newEmailTemplate($templateFile, $append, $specialException)) !== false) {
                 $rand = rand(100, 1000);
                 $file = "/tmp/template-" . $rand;
 
@@ -2520,7 +2520,7 @@ class WebServiceTicketsController extends WebServicesController
         }
     }
 
-    private function newEmailTemplate($templateFile, $append = "LL", $specialException = false, $ppvNoticeTypeId)
+    private function newEmailTemplate($templateFile, $append = "LL", $specialException = false)
     {
         // Add UTM links
         $template = file_get_contents("../vendors/email_msgs/includes/header_" . $append . ".html");
