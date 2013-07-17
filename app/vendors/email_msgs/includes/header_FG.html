@@ -36,7 +36,7 @@
 														<? if (!$hideSalutation): ?>
 															<p>
 																<font face="Arial, Helvetica, sans-serif" size="2" style="font-size:14px; line-height:15px" color="#4f3f32">
-																	<strong>Dear <?= $userFirstName ?>,</strong>
+                                                                    <strong>Dear <? if ($internalPpv): ?>Concierge<? elseif ($clientPpv): ?>Reservations Manager<? else: ?><?= $userFirstName ?><? endif; ?>,</strong>
 																</font>
 															</p>
 														<? endif; ?>
