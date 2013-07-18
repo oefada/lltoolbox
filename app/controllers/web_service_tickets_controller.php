@@ -3789,13 +3789,13 @@ function wstErrorHandler($errno, $errstr, $errfile, $errline)
 
 function wstErrorShutdown()
 {
-    $error = error_get_last();
+    if (function_exists('error_get_last')) {
+        $error = error_get_last();
 
-    if ($error['type'] != 2048 && $error != null) {
-        CakeLog::write("web_service_tickets_controller", "SCRIPT ABORTED: " . var_export($error, 1));
-        die();
-    } else {
-        //CakeLog::write("debug","STRICT: ".var_export($error,1));
+        if ($error['type'] != 2048 && $error != null) {
+            CakeLog::write("web_service_tickets_controller", "SCRIPT ABORTED: " . var_export($error, 1));
+            die();
+        }
     }
 }
 
