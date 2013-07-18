@@ -2915,28 +2915,29 @@ class PackagesController extends AppController
 
     function excel($clientId, $packageId)
     {
-        /*
-        App::import(
-            'Vendor',
-            'PackageExcel',
-            array('file' => 'PackageExcel' . DS . 'PackageExcel.php')
-        );
-        $pe = new PackageExcel();
-        die('z<pre>' . htmlentities(print_r($pe, true)));
-        */
-        /*
-        $bo_weekdays = $this->_get('bo_weekdays');
-        $isMultiClientPackage = $this->_get('isMultiClientPackage');
-        $vb = $this->_get('vb');
-        $cc = $this->_get('cc');
-        */
-        $this->_generateExportData($clientId, $packageId);
-        $package = $this->_get('package');
-        $client = $this->_get('client');
-        $roomNights = $this->_get('roomNights');
-        $lowPrice = $this->_get('lowPrice');
-
-
+        if (true) {
+            App::import(
+                'Vendor',
+                'PackageExcel',
+                array('file' => 'PackageExcel' . DS . 'PackageExcel.php')
+            );
+            $pe = new PackageExcel();
+            Configure::write('debug', 0);
+            $pe->dump();
+            die();
+        } else {
+            /*
+            $bo_weekdays = $this->_get('bo_weekdays');
+            $isMultiClientPackage = $this->_get('isMultiClientPackage');
+            $vb = $this->_get('vb');
+            $cc = $this->_get('cc');
+            */
+            $this->_generateExportData($clientId, $packageId);
+            $package = $this->_get('package');
+            $client = $this->_get('client');
+            $roomNights = $this->_get('roomNights');
+            $lowPrice = $this->_get('lowPrice');
+        }
     }
 
     function export($clientId, $packageId)
