@@ -1361,8 +1361,8 @@ class WebServiceTicketsController extends WebServicesController
                 break;
         }
 
-        if ($ppvNoticeTypeId == 41) {
-            $packageId = isset($params['tldId']) ? $params['tldId'] : 1;
+        if ($ppvNoticeTypeId == 41 || $ppvNoticeTypeId == 43) {
+            $tldId = isset($params['tldId']) ? $params['tldId'] : 1;
         }
 
 		$lltgServiceBuilder = $this->LltgServiceHelper->getServiceBuilderFromTldId($tldId);			
