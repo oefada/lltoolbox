@@ -58,9 +58,9 @@
 <tr>
 	<td align="left" style="padding:15px 20px 0px 25px; line-height:17px; font-family:<?= $fontFamily; ?>;color:rgb(68, 68, 68);font-size:13px">
 		<? if ($isAuction) { ?>
-			<a style="text-decoration:none;color:#3ca9d5" href="<?= $pdpUrl; ?>" name="" target="_blank">Click here</a> to bid on or buy this luxury vacation experience, or call our Travel Concierge at <?= $sitePhone; ?> or <?= $sitePhoneLocal; ?>. Our team of travel experts is happy to help facilitate your booking.
+			<a style="text-decoration:none;color:#3ca9d5" href="<?= $pdpUrl; ?>" name="" target="_blank">Click here</a> to bid on or buy this luxury vacation experience, or call our Travel Concierge at <?= $sitePhoneTld; ?> or <?= $sitePhoneLocalTld; ?>. Our team of travel experts is happy to help facilitate your booking.
 		<? } else { ?>
-			Call us today at <?= $sitePhone; ?> or <?= $sitePhoneLocal; ?>, or simply <a style="text-decoration:none;color:#3ca9d5" href="<?= $pdpUrl; ?>" name="" target="_blank">click here</a> to complete your reservation.
+			Call us today at <?= $sitePhoneTld; ?> or <?= $sitePhoneLocalTld; ?>, or simply <a style="text-decoration:none;color:#3ca9d5" href="<?= $pdpUrl; ?>" name="" target="_blank">click here</a> to complete your reservation.
 		<? } ?>
 	</td>
 </tr>
@@ -135,7 +135,7 @@
 
 <tr>
 	<td align="left" style="padding:40px 20px 40px 25px;line-height:17px; font-family:<?= $fontFamily; ?>;color:rgb(68, 68, 68);font-size:12px">
-		If you have any questions or additional needs, please contact our Travel Concierge at <?= $sitePhone; ?> or <?= $sitePhoneLocal; ?>, or email <a style="text-decoration:none;color:#3ca9d5" href="mailto:concierge@<?= $siteEmail; ?>">concierge@<?= $siteEmail; ?></a>. Our business hours are <?php echo Base::conciergeHoursComma; ?>.
+		If you have any questions or additional needs, please contact our Travel Concierge at <?= $sitePhoneTld; ?> or <?= $sitePhoneLocalTld; ?>, or email <a style="text-decoration:none;color:#3ca9d5" href="mailto:concierge@<?= $siteEmail; ?>">concierge@<?= $siteEmail; ?></a>. Our business hours are <?php echo Base::conciergeHoursComma; ?>.
 	</td>
 </tr>
 

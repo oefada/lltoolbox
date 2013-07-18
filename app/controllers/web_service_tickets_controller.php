@@ -1375,10 +1375,14 @@ class WebServiceTicketsController extends WebServicesController
 		$word_packages_lower = $lltgTranslationService->getTranslationforKey('TEXT_PACKAGES_LOWER');
 		$word_package_lower = $lltgTranslationService->getTranslationforKey('TEXT_PACKAGE_LOWER');
 				
+		$sitePhoneTld = $sitePhone;
+		$sitePhoneLocalTld = $sitePhoneLocal;
 		if ($tldId == 2) {
         	$siteDisplay = 'Luxury Link';
         	$prefixUrl = 'https://www.luxurylink.co.uk';
         	$siteUrl = 'http://www.luxurylink.co.uk/';
+        	$sitePhoneTld = $lltgFormatterService->formatTollFreeNumber('1' . preg_replace('/\D/', '', $sitePhoneTld));
+			$sitePhoneLocalTld = $lltgFormatterService->formatUSPhoneNumber('1' . preg_replace('/\D/', '', $sitePhoneLocalTld));		
 		}
 		
         // Auction facilitator
