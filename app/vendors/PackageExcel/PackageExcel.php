@@ -20,7 +20,7 @@ class PackageExcel
 {
 
     private $xls;
-    private $sheet;
+    public $sheet;
 
     public function __construct()
     {
@@ -29,12 +29,12 @@ class PackageExcel
         $this->sheet = $objReader->load($this->xls);
     }
 
-    public function dump()
+    public function dump($filename = 'spreadsheet')
     {
         header("Content-type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         header('Pragma: private');
         header('Cache-control: private, must-revalidate');
-        header("Content-Disposition: inline; filename=seanknight.xlsx");
+        header("Content-Disposition: inline; filename=$filename.xlsx");
         $writer = new PHPExcel_Writer_Excel2007($this->sheet);
         $tmpfname = tempnam("/tmp", "Ticket2553_");
         $writer->save($tmpfname);

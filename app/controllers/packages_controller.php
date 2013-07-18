@@ -2922,8 +2922,16 @@ class PackagesController extends AppController
                 array('file' => 'PackageExcel' . DS . 'PackageExcel.php')
             );
             $pe = new PackageExcel();
+            $as = $pe->sheet->getActiveSheet();
+            $as->setTitle('Package ' . $packageId);
+            $as->insertNewRowBefore(3);
+            $cell = $as->getCell('A3');
+            $cell->setValue('This is cell A3');
+            $cell = $as->getCell('B3');
+            $cell->setValue('=A1');
+            $as->insertNewRowBefore(1);
             Configure::write('debug', 0);
-            $pe->dump();
+            $pe->dump('Package-' . $packageId);
             die();
         } else {
             /*
