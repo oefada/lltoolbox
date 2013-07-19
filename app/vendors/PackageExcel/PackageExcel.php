@@ -79,7 +79,7 @@ class PackageExcel
         $i = 0;
         while ($lp = array_pop($lowPrice)) {
             $lp_row_offset = 29 + $i * $lp_row_height;
-            $as->getCell('A' . $lp_row_offset)->setValue($lp['dateRanges']);
+            $as->getCell('A' . $lp_row_offset)->setValue(str_replace('<br/>',', ',$lp['dateRanges']));
             $as->getCell('B' . ($lp_row_offset + 1))->setValue($package['numNights']);
             $as->getCell('B' . ($lp_row_offset + 2))->setValue($lp['retailValue']);
             $as->getCell('C' . ($lp_row_offset + 3))->setValue(
@@ -112,7 +112,7 @@ class PackageExcel
         $inclusions = $this->viewVars['package']['ClientLoaPackageRel'][0]['Inclusions'];
         $i = 0;
         foreach ($inclusions as $inclusion) {
-            $as->getCell('A' . ($lp_row_offset + $i))->setValue($inclusion['LoaItem']['merchandisingDescription']);
+            $as->getCell('A' . ($lp_row_offset + $i))->setValue($inclusion['LoaItem']['itemName']);
             $as->getCell('B' . ($lp_row_offset + $i))->setValue($inclusion['LoaItem']['itemBasePrice']);
             $as->getCell('C' . ($lp_row_offset + $i))->setValue(
                 '=B' . ($lp_row_offset + $i) . '*' . $inclusion['PackageLoaItemRel']['quantity']
