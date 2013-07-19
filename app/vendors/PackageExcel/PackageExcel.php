@@ -59,6 +59,14 @@ class PackageExcel
         $as->getCell('A4')->setValue($client['locationDisplay']);
         $as->getCell('A5')->setValue($client['url']);
 
+        $as->getCell('B7')->setValue($package['packageName']);
+        $as->getCell('B8')->setValue($client['clientId']);
+        $as->getCell('B9')->setValue($package['created']);
+        $as->getCell('B10')->setValue($package['isBarter'] ? 'Barter' : 'Remit');
+        $as->getCell('B11')->setValue($package['numNights']);
+        $as->getCell('B12')->setValue($package['numGuests']);
+
+
         /*
         $as->insertNewRowBefore(3);
         $cell = $as->getCell('A3');
