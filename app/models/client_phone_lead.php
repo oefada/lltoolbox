@@ -16,8 +16,8 @@ class ClientPhoneLead extends AppModel
      * @param string
      */
     public $tableColums = array(
-        'clientid' => 'client_id',
-        'site' => 'site',
+        'Customer Code' => 'client_id',
+        'Ad Source' => 'site',
         'Datetime' => 'date',
         'Duration' => 'duration',
         'Tracking Number' => 'published_number',
@@ -28,8 +28,6 @@ class ClientPhoneLead extends AppModel
         "City" => "city",
         "State" => "state",
         "Zip" => "zip",
-        'country' => 'country',
-        "caller location" => "caller_location"
     );
 
     /**
