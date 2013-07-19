@@ -67,18 +67,70 @@ class PackageExcel
         $as->getCell('B12')->setValue($package['numGuests']);
 
 
-        /*
-        $as->insertNewRowBefore(3);
-        $cell = $as->getCell('A3');
-        $cell->setValue('This is cell A3');
-        $cell = $as->getCell('B3');
-        $cell->setValue('=A1');
-        $as->insertNewRowBefore(1);
-        */
+        $lowPrice = array_reverse(array_slice($this->viewVars['lowPrice'], 0, 9));
+        $lp_row_height = 8;
+        $lp_row_offset = 28 + count($lowPrice) * $lp_row_height;
+        // Remove extra rows
+        for ($i = 0; $i < 100; $i++) {
+            $as->removeRow($lp_row_offset);
+        }
+
+        // Low price
+        $i = 0;
+        while ($lp = array_pop($lowPrice)) {
+            $lp_row_offset = 29 + $i * $lp_row_height;
+            $as->getCell('A' . $lp_row_offset)->setValue($lp['dateRanges']);
+            $as->getCell('B' . ($lp_row_offset + 1))->setValue($package['numNights']);
+            $as->getCell('B' . ($lp_row_offset + 2))->setValue($lp['retailValue']);
+            $as->getCell('C' . ($lp_row_offset + 3))->setValue(
+                $lp['LoaItemRatePackageRel']['guaranteePercentRetail'] / 100.0
+            );
+            $as->getCell('B' . ($lp_row_offset + 4))->setValue($lp['auctionPrice']);
+            $as->getCell('B' . ($lp_row_offset + 5))->setValue($lp['buyNowPrice']);
+            $as->getCell('B' . ($lp_row_offset + 6))->setValue($lp['flexPricePerNight']);
+            $i++;
+        }
+
+        // Booking conditions
+        $as->getCell('A27')->setValue($package['termsAndConditions']);
+
+        // Blackout Weekdays
+        $as->getCell('A24')->setValue($this->viewVars['bo_weekdays']);
+
+        // Blackout Dates
+        $lp_row_offset = 21;
+        foreach ($this->viewVars['validity'] as $bod) {
+            $as->insertNewRowBefore($lp_row_offset + 1);
+            $as->mergeCells('A' . $lp_row_offset . ':C' . $lp_row_offset);
+            $as->getCell('A' . $lp_row_offset)->setValue($bod);
+            $lp_row_offset++;
+        }
+        $as->removeRow($lp_row_offset);
+
+        // Inclusions
+        $lp_row_offset = 17;
+        $inclusions = $this->viewVars['package']['ClientLoaPackageRel'][0]['Inclusions'];
+        $i = 0;
+        foreach ($inclusions as $inclusion) {
+            $as->getCell('A' . ($lp_row_offset + $i))->setValue($inclusion['LoaItem']['merchandisingDescription']);
+            $as->getCell('B' . ($lp_row_offset + $i))->setValue($inclusion['LoaItem']['itemBasePrice']);
+            $as->getCell('C' . ($lp_row_offset + $i))->setValue(
+                '=B' . ($lp_row_offset + $i) . '*' . $inclusion['PackageLoaItemRel']['quantity']
+            );
+            $i++;
+            $as->insertNewRowBefore($lp_row_offset + $i);
+        }
+        $as->removeRow($lp_row_offset + $i);
+        $as->getCell('C' . ($lp_row_offset + $i))->setValue(
+            '=SUM(C' . $lp_row_offset . ':C' . ($lp_row_offset + $i - 1) . ')'
+        );
+
     }
 
-    public function dump($filename = 'spreadsheet')
-    {
+    public
+    function dump(
+        $filename = 'spreadsheet'
+    ) {
         header("Content-type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         header('Pragma: private');
         header('Cache-control: private, must-revalidate');
