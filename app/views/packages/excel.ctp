@@ -16,12 +16,24 @@
         <td><?= $client['name'] ?></td>
     </tr>
     <tr>
+        <td>Client Id</td>
+        <td><?= $client['clientId'] ?></td>
+    </tr>
+    <tr>
         <td>Location Display</td>
         <td><?= $client['locationDisplay'] ?></td>
     </tr>
     <tr>
         <td>URL</td>
         <td><?= $client['url'] ?></td>
+    </tr>
+    <tr>
+        <td>Package Id</td>
+        <td><?= $package['Package']['packageId'] ?></td>
+    </tr>
+    <tr>
+        <td>Package Level</td>
+        <td><?= ($package['Package']['isBarter'] ? 'Barter' : 'Remit') ?></td>
     </tr>
     <tr>
         <td>Package Created</td>
@@ -64,7 +76,14 @@
 
 <table>
     <tr>
-        <td>X</td>
+        <td>
+            <?php if (!empty($validity)) {
+                foreach ($validity as $v) {
+                    echo $v . '<br />';
+                }
+            }
+            ?>
+        </td>
     </tr>
 </table>
 
@@ -72,7 +91,25 @@
 
 <table>
     <tr>
-        <td>X</td>
+        <td>
+            <?php if (!empty($blackout)) {
+                foreach ($blackout as $v) {
+                    echo $v . '<br />';
+                }
+            }
+            ?></td>
+    </tr>
+</table>
+
+<h2>Blackout Weekdays</h2>
+
+<table>
+    <tr>
+        <td>
+            <?php if (!empty($bo_weekdays)) {
+                echo $bo_weekdays;
+            }
+            ?></td>
     </tr>
 </table>
 
@@ -103,28 +140,31 @@
         </tr>
         <tr>
             <td>Range of Nights</td>
-            <td><?= $package['Package']['flexNumNightsMin'] ?> - <?= $package['Package']['flexNumNightsMax'] ?> Nights</td>
+            <td><?= $package['Package']['flexNumNightsMin'] ?> - <?= $package['Package']['flexNumNightsMax'] ?>Nights
+            </td>
         </tr>
     </table>
 
 <?php endforeach; ?>
 
+<h2>Terms and Conditions</h2>
+
 <table>
     <tr>
-        <td>X</td>
+        <td><?php echo $package['Package']['termsAndConditions']; ?></td>
     </tr>
 </table>
 
-<hr/>
-
 <?php
 
+/*
 foreach (array('client', 'package', 'lowPrice') as $v) {
     echo '<hr/><h3>' . htmlentities($v) . '<h3>';
-    echo '<pre style="height: 200px; overflow-y: scroll;">';
+    echo '<pre>';
     echo htmlentities(print_r(${$v}, true));
     echo '</pre>';
 }
+*/
 
 ?>
 

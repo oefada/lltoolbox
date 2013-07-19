@@ -2908,43 +2908,22 @@ class PackagesController extends AppController
         }
     }
 
-    private final function _get($varName)
-    {
-        return isset($this->viewVars[$varName]) ? $this->viewVars[$varName] : null;
-    }
-
     function excel($clientId, $packageId)
     {
-        if (true) {
+        // Setup PackageExcel
+        $this->_generateExportData($clientId, $packageId);
+        if (!isset($_GET['debug'])) {
+            // Output Spreadsheet
+            Configure::write('debug', 0);
             App::import(
                 'Vendor',
                 'PackageExcel',
                 array('file' => 'PackageExcel' . DS . 'PackageExcel.php')
             );
-            $pe = new PackageExcel();
-            $as = $pe->sheet->getActiveSheet();
-            $as->setTitle('Package ' . $packageId);
-            $as->insertNewRowBefore(3);
-            $cell = $as->getCell('A3');
-            $cell->setValue('This is cell A3');
-            $cell = $as->getCell('B3');
-            $cell->setValue('=A1');
-            $as->insertNewRowBefore(1);
-            Configure::write('debug', 0);
+            $pe = new PackageExcel($this->viewVars);
+            $pe->modifySheet();
             $pe->dump('Package-' . $packageId);
             die();
-        } else {
-            /*
-            $bo_weekdays = $this->_get('bo_weekdays');
-            $isMultiClientPackage = $this->_get('isMultiClientPackage');
-            $vb = $this->_get('vb');
-            $cc = $this->_get('cc');
-            */
-            $this->_generateExportData($clientId, $packageId);
-            $package = $this->_get('package');
-            $client = $this->_get('client');
-            $roomNights = $this->_get('roomNights');
-            $lowPrice = $this->_get('lowPrice');
         }
     }
 
@@ -2953,7 +2932,7 @@ class PackagesController extends AppController
         $this->layout = false;
         $this->Client->recursive = -1;
         $this->_generateExportData($clientId, $packageId);
-        $package = $this->_get('package');
+        $package = $this->viewVars['package'];
         if ($package['Package']['siteId'] == 1) {
             $this->render('export');
         } else {
@@ -2995,12 +2974,23 @@ class PackagesController extends AppController
             }
         }
 
+        // blackout validity
+        $pkgVbDates = $this->Package->getPkgVbDates($packageId);
+        if (!empty($pkgVbDates)) {
+            if (empty($pkgVbDates['BlackoutDays'])) {
+                $pkgVbDates['BlackoutDays'] = array();
+            }
+            $this->set('validity', $pkgVbDates['ValidRanges']);
+            $this->set('blackout', $pkgVbDates['BlackoutDays']);
+        }
+
+        // blackout weekday
         $bo_weekdays = $this->Package->getBlackoutWeekday($packageId);
         $bo_weekdays_arr = array();
         foreach (explode(',', $bo_weekdays) as $w) {
             $bo_weekdays_arr[] = $this->Package->pluralize($w);
         }
-        $this->set('bo_weekdays', implode('<br />', $bo_weekdays_arr));
+        $this->set('bo_weekdays', implode(' ', $bo_weekdays_arr));
 
         //$loaItems = $this->Package->getLoaItems($packageId);
         foreach ($package['ClientLoaPackageRel'] as &$packageClient) {
@@ -3010,6 +3000,7 @@ class PackagesController extends AppController
             );
         }
         $lowPriceGuarantees = $this->getRatePeriodsInfo($packageId);
+        $this->set('ratePeriods', $roomNights);
         $this->set('package', $package);
         $this->set('isMultiClientPackage', $isMultiClientPackage);
         $this->set('client', $client['Client']); // sigh
