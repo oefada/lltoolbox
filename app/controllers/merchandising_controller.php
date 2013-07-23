@@ -891,9 +891,9 @@ class MerchandisingController extends AppController
                 )) || (($urlStr = substr($linkUrl, 0, 1)) == '/')
             ) {
                 // try lookup of client info
-                if (substr($urlStr, 0, 10) == '/fivestar/') {
+                if (substr($urlStr, 0, 7) == '/5star/') {
                     $linkUrl = $urlStr;
-                    return $this->Client->getClientBySeoUrl(str_replace('/fivestar/', '', $urlStr));
+                    return $this->Client->getClientBySeoUrl(str_replace('/5star/', '', $urlStr));
                 }
             }
         }
