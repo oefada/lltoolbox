@@ -161,6 +161,15 @@ class ImagesController extends AppController
 
 
                     $this->ImageClient->save(array('ImageClient' => $caption));
+
+                    // DANGER, Will Robinson, dirty hack ahead!
+                    // This changes the caption on the image table so changes to caption in the toolbox
+                    // are reflected on luxurylink.com
+                    $tempPostData['caption'] = $ic['caption'];
+                    $tempImageData['Image']['imageId'] = $ic['imageId'];
+                    $tempClientId = $this->Image->clientId;
+
+                    $this->Image->saveCaptions($tempPostData, $tempImageData, $tempClientId);
                 }
 
                 // room grade
