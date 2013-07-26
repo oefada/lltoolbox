@@ -275,7 +275,8 @@ class MerchandisingController extends AppController
                             'footerText' => $_POST['footerText'][$i],
                             'inactive' => isset($_POST['inactive-' . ($i + 1)]) ? 1 : 0,
                             'merchDataGroupId' => $_POST['merchDataGroupId'][$i],
-                            'disableClientRotation' => isset($_POST['disableClientRotation-' . ($i + 1)]) ? 1 : 0
+                            'disableClientRotation' => isset($_POST['disableClientRotation-' . ($i + 1)]) ? 1 : 0,
+                            'tldId' => $_POST['tldId'][$i]
                         );
                     }
 
