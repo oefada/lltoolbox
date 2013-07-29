@@ -246,7 +246,7 @@ $this->pageTitle = $client['Client']['name'] . $html2->c(
                     }
                 });
                 mailurl += encodeURIComponent(destEmails);
-                mailurl += '?subject=' + encodeURIComponent('Package Preview for ' + '<?= $client['Client']['name'];?>');
+                mailurl += '?subject=' + encodeURIComponent("Package Preview for  <?= $client['Client']['name'];?>");
                 mailurl += '&body=' + encodeURIComponent("\n\n" + url);
                 $(this).attr('href', mailurl);
             }
