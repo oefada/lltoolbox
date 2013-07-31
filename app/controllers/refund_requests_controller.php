@@ -92,7 +92,7 @@ class RefundRequestsController extends AppController
 
         $allowApprovedDelete = false;
         $currentUser = $this->LdapAuth->user();
-        if ($currentUser['LdapUser']['samaccountname'] == 'kferson') {
+        if ($this->isSecuredUser($currentUser['LdapUser']['samaccountname'])) {
             $allowApprovedDelete = true;
         }
         $this->set('allowApprovedDelete', $allowApprovedDelete);
