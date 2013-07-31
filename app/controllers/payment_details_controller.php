@@ -24,8 +24,6 @@ class PaymentDetailsController extends AppController
         'Ticket'
     );
 
-    private $securedUsers = array('mclifford', 'cholland', 'bjensen', 'kferson', 'mtrinh');
-
     public function beforeFilter()
     {
         parent::beforeFilter();
@@ -477,14 +475,5 @@ class PaymentDetailsController extends AppController
         }
 
         echo $ccToken;
-    }
-
-    /**
-     * @param $username
-     * @return bool
-     */
-    private function isSecuredUser($username)
-    {
-        return in_array($username, $this->securedUsers);
     }
 }
