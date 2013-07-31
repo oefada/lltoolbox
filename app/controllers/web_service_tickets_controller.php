@@ -1566,12 +1566,8 @@ class WebServiceTicketsController extends WebServicesController
                     }
                 }
 
-                //$totalPrice = $this->numF($ticketData['billingPrice'] - $llFeeAmount - $cancelFee);
-                // EDIT (bturner @ 7/29/13) - billingPrice already has llFeeAmount deducted from it.
-                // Using purchasePrice as amt paid by customer. Using bcadd/bcsub so I don't have to worry about
-                // precision. 
-                $totalPrice = $this->numF(bcsub($ticketData['billingPrice'], $cancelFee, 4));
-                $purchasePrice = $this->numF(bcadd($ticketData['billingPrice'], $llFeeAmount, 4));
+                $totalPrice = $this->numF($ticketData['billingPrice'] - $cancelFee);
+                $purchasePrice = $this->numF($ticketData['billingPrice'] + $llFeeAmount);
             } else {
                 $totalPrice = $this->numF($ticketData['billingPrice'] + $llFeeAmount);
             }
