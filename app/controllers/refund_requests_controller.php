@@ -1,14 +1,14 @@
 <?php
 class RefundRequestsController extends AppController
 {
-    var $name = 'RefundRequests';
-    var $uses = array('RefundRequest', 'PaymentDetail', 'Ticket', 'PaymentType', 'PromoCode');
+    public $name = 'RefundRequests';
+    public $uses = array('RefundRequest', 'PaymentDetail', 'Ticket', 'PaymentType', 'PromoCode');
 
-    var $handlingFee = 40;
-    var $keepOrRemitList = array('K' => 'Keep', 'R' => 'Remit');
-    var $refundOrCOFList = array('R' => 'Refund', 'C' => 'COF', 'B' => 'Both');
+    public $handlingFee = 40;
+    public $keepOrRemitList = array('K' => 'Keep', 'R' => 'Remit');
+    public $refundOrCOFList = array('R' => 'Refund', 'C' => 'COF', 'B' => 'Both');
 
-    function beforeFilter()
+    public function beforeFilter()
     {
         parent::beforeFilter();
         $this->set('handlingFee', $this->handlingFee);
@@ -16,7 +16,7 @@ class RefundRequestsController extends AppController
         $this->set('refundOrCOFList', $this->refundOrCOFList);
     }
 
-    function index()
+    public function index()
     {
 
         $displayCsv = (!empty($this->data) && $this->data['RefundRequest']['csv'] == 1) ? true : false;
@@ -112,7 +112,7 @@ class RefundRequestsController extends AppController
         }
     }
 
-    function view($id = null)
+    public function view($id = null)
     {
         if (!$id) {
             $this->Session->setFlash(__('Invalid RefundRequest.', true));
@@ -128,7 +128,7 @@ class RefundRequestsController extends AppController
         $this->set('pageVersion', 'V');
     }
 
-    function add($ticketId)
+    public function add($ticketId)
     {
         if (!empty($this->data)) {
             $currentUser = $this->LdapAuth->user();
@@ -207,7 +207,7 @@ class RefundRequestsController extends AppController
         }
     }
 
-    function edit($id = null)
+    public function edit($id = null)
     {
 
         if (!empty($this->data)) {
@@ -269,7 +269,7 @@ class RefundRequestsController extends AppController
         $this->set('pageVersion', 'E');
     }
 
-    function delete($id = null)
+    public function delete($id = null)
     {
         if (!$id) {
             $this->Session->setFlash(__('Invalid id for Request', true));
@@ -281,7 +281,7 @@ class RefundRequestsController extends AppController
         }
     }
 
-    function setApproved($id = null)
+    public function setApproved($id = null)
     {
         $editorAccess = $this->hasEditorAccess();
         if (!$editorAccess) {
@@ -310,7 +310,7 @@ class RefundRequestsController extends AppController
         $this->redirect(array('action' => 'edit', $id));
     }
 
-    function setComplete($id = null)
+    public function setComplete($id = null)
     {
         $accountingAccess = $this->hasAccountingAccess();
         if (!$accountingAccess) {
