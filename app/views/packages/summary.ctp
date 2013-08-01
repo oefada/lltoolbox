@@ -62,8 +62,8 @@ if ($_SERVER['ENV'] == "staging") {
             case 'Luxury Link':
                 echo $html->link(
                     '<span>Preview This Package</span>',
-                    "/clients/$clientId/packages?preview=" . $package['Package']['packageId'],
-                    array('class' => 'button'),
+                    "{$previewHost}/luxury-hotels/preview.html?clid={$clientId}&preview=package&multiPackages=" . $package['Package']['packageId'],
+                    array('class' => 'button', 'target' => '_blank'),
                     null,
                     false
                 );

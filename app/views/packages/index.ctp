@@ -212,7 +212,7 @@ $this->pageTitle = $client['Client']['name'] . $html2->c(
             previewUrl += '/luxury-hotels/preview.html';
             previewUrl += '?preview=package';
             previewUrl += '&clid=<?php echo $clientId; ?>';
-            previewUrl += '&packageIds=' + selected.join(',');
+            previewUrl += '&multiPackages=' + selected.join(',');
             return previewUrl;
         };
         $('a.button.previewCheckedPackages').click(function (e) {
