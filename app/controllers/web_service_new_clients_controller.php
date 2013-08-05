@@ -9,7 +9,7 @@ define('DEV_USER_TOOLBOX_HOST', 'http://' . $_SERVER['ENV_USER'] . '-toolboxdev.
 class WebServiceNewClientsController extends WebServicesController
 {
 	var $name = 'WebServiceNewClients';
-	var $uses = array('Client','ClientContact');
+	var $uses = array('Client','ClientContact','ConnectorLog');
 	var $serviceUrl = 'http://toolbox.luxurylink.com/web_service_new_clients';
 
 	// IF DEV, please make sure you use this path, or if using your own dev, then change this var
@@ -32,7 +32,8 @@ class WebServiceNewClientsController extends WebServicesController
 	    $response_value = '';
 	    $sm_sproc_response = array();
 
-	    // JOSN decoded the request into an assoc. array
+        $this->ConnectorLog->setData($sm_request);
+	    // JSON decoded the request into an assoc. array
 	    $decoded_request = json_decode($sm_request, true);
 
 	    // look for a client id but no error check
@@ -52,6 +53,14 @@ class WebServiceNewClientsController extends WebServicesController
 		if ($client_id) {
 			$client = $this->Client->findByClientId($client_id);
 			$client_data_save = $client['Client'];
+
+            $sugarClientName= str_replace('&#039;', "'", $decoded_request['client']['client_name']);
+            $sugarClientName = $this->utf8dec($sugarClientName);
+
+            if (isset($client_data_save['name'])){
+                //If name exists, run subroutine to check if it has changed against SugarCRM/LightboxName.
+                $this->Client->checkClientNameChange($sugarClientName, $client['Client']['name']);
+            }
             if (!empty($client_data_save['sites']) && is_array($client_data_save['sites'])) {
                 $client_data_save['sites'] = implode(',', $client_data_save['sites']);
             }
@@ -83,7 +92,14 @@ class WebServiceNewClientsController extends WebServicesController
 				$client_cake_save = array();
 				$client_cake_save['Client'] = $client_data_save;
 	        	if (!$this->Client->save($client_cake_save, array('callbacks' => false))) {
-					@mail('dev@luxurylink.com', 'SUGAR BUS -- EXISTING CLIENT NOT SAVED', print_r($client_data_save, true) . print_r($this->Client->validationErrors, true) . print_r($decoded_request, true) . print_r($this->Client->validationErrors, true));
+
+                    $errMsg= print_r($client_data_save, true) . print_r($this->Client->validationErrors, true) . print_r($decoded_request, true) . print_r($this->Client->validationErrors, true);
+                    if ($_SERVER['ENV'] !== 'development' && ISSTAGE !== true){
+					@mail('dev@luxurylink.com', 'SUGAR BUS -- EXISTING CLIENT NOT SAVED',$errMsg );
+                    }else{
+                     //
+                        @mail('devmail@luxurylink.com', 'SUGAR BUS -- EXISTING CLIENT NOT SAVED',$errMsg );
+                    }
 				}
 	        	$decoded_request['client']['client_id'] = $client_id;
 			} else {
@@ -206,6 +222,7 @@ class WebServiceNewClientsController extends WebServicesController
 		    }
 		}
 
+        $this->ConnectorLog->execute();
 	    // this tests to see if we were getting correct response from the request
 	    return $encoded_response;
 	}
