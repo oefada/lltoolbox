@@ -1104,4 +1104,52 @@ class Client extends AppModel
 		";
         return $this->query($sql);
     }
+
+    /**TICKET4003
+     * Checks to see if client name changes in sugar and follows a number of procedures.
+     * Assumes both input data share a clientID
+     * @param $sugarClientName string
+     * @param $existingClientName string
+     */
+    public function checkClientNameChange($sugarClientName, $existingClientName, $clientID)
+    {
+        if (trim(strtoupper($sugarClientName)) == trim(strtoupper($existingClientName))) {
+            //client name has not changed, do nothing.
+            return;
+        }
+        //client name has changed, send email.
+        $subj = "Name Change - {$sugarClientName} - CID {$clientID}";
+
+        App::import('Helper', 'Html'); // loadHelper('Html'); in CakePHP 1.1.x.x
+        $html = new HtmlHelper();
+        $text = "<h2>The following client's name has changed</h2>\n\n";
+
+        $tbl = "<table cellpadding='2' cellspacing='1' width='550'>";
+        $tbl .= $html->tableHeaders(
+            array('<b>Old Value</b>', '<b>New Value</b>', '<b>Change Date</b>'),
+            array('class' => 'product_table'),
+            array('style' => 'background-color:#CCC')
+        );
+        $tbl .= $html->tableCells(
+            array(
+                array($existingClientName, $sugarClientName, date('m-d-Y H:m:s')),
+            )
+        );
+        $tbl .= "</table><br />\n";
+        $msg = $text . $tbl;
+
+        $headers = 'MIME-Version: 1.0' . "\r\n";
+        $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+        // Additional headers
+        $headers .= 'From: Toolbox <dev@luxurylink.com>' . "\r\n";
+        if ($_SERVER['ENV'] == 'development' || ISSTAGE == true) {
+            $to = "devmail@luxurylink.com";
+            $headers .= 'Bcc: oefada@luxurylink.com' . "\r\n";
+        } else {
+            $to = "production@@example.com";
+            $headers .= 'Cc: accounting@luxurylink.com' . "\r\n";
+        }
+        mail($to, $subj, $msg, $headers);
+
+    }
 }
