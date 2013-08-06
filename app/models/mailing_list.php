@@ -42,6 +42,13 @@ class MailingList extends AppModel {
 		return $mailvendor;
 	
 	}
-	
+
+    public function getUserProfile() {
+
+        App::import("Vendor","MailVendor",array('file' => "mailvendor.php"));
+        $userProfile = new NewsletterUserProfile();
+
+        return $userProfile;
+    }
 }
 

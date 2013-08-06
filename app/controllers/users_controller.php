@@ -38,6 +38,106 @@ class UsersController extends AppController
     }
 
     /**
+     * Subscribes user to a given email list
+     *
+     * @param int $id
+     *
+     * @return nuttin'
+     */
+
+    function sub($id = null)
+    {
+        $mailVendor = $this->MailingList->getMailVendorHelper();
+        $profile = $this->MailingList->getUserProfile();
+
+        if (!$id || empty($this->data)) {
+            //$this->flash(__('Invalid User', true), array('action' => 'edit'));
+        } else {
+            if (!empty($this->data)) {
+                $email = $this->data['User']['email'];
+                $userId = $this->data['User']['userId'];
+
+                if (isset($this->data['User']['mailingListSubData']) &&
+                    count($this->data['User']['mailingListSubData']) > 0) {
+
+                    // Contains POST data of user choices
+                    $mailingListDataArr = $this->data['User']['mailingListSubData'];
+
+                    // Preparing Profile Object
+                    // For more, in LL codebase, go to appshared/legacy/class/newsletter_manager.php and look @ class
+                    // newsletterUserProfile
+                    $profile->setEmail($email);
+                    $profile->setFirstName($this->user['User']['firstName']);
+                    $profile->setLastName($this->user['User']['lastName']);
+                    $profile->setZip($this->user['Address'][0]['postalCode']);
+                    $profile->setCountry($this->user['Address'][0]['countryCode']);
+
+
+                    // Goal
+                    // 1 - Loops through each POST var. Var is in the form of "SID~MLID" where SID is Site ID and MLID is
+                    //     Mailing List ID
+                    // 2 - Get UserMailOptIn Object Associated with Current User
+                    // 3 - Given a specific mailing list id, cycle through the Optin Rows to see if record exists
+                    // 4 - If it does, enter it via an update
+                    // 5 - If not, insert it into the query directly
+
+                    foreach($mailingListDataArr as $subscription) {
+
+                        // Extracting SID and MLID from POST
+                        $subscriptionArr = explode('~',$subscription);
+                        $subscriptionSiteId = $subscriptionArr[0];
+                        $profile->setSiteId($subscriptionSiteId);
+                        $subscriptionMailingListId = $subscriptionArr[1];
+
+                        // Flag that determines whether an update is required or new entry
+                        $foundSubscription = false;
+
+                        // UPDATE PHASE -> If previously subscribed to this newsletter, updates row to set optin=1 (True)
+                        foreach($this->user['UserMailOptin'] as $optInRow) {
+                            foreach($optInRow as $key => $value) {
+                                if ($optInRow['mailingListId'] == $subscriptionMailingListId) {
+                                    $foundSubscription = true;
+                                    $this->User->UserMailOptin->updateAll(
+                                        array(
+                                            'UserMailOptin.optin' => '1',
+                                            'UserMailOptin.optinDatetime' => "'" . date("Y-m-d H:m:s") . "'",
+                                        ),
+                                        array(
+                                            'UserMailOptin.userId' => $userId,
+                                            'UserMailOptin.mailingListId' => $subscriptionMailingListId,
+                                        )
+                                    );
+                                }
+                            }
+                        }
+
+                        // NEW PHASE -> If this is a new subscription to this newsletter, enters row in optin table
+                        // in DB
+                        if (!$foundSubscription) {
+                            $optInData = array();
+                            $optInData['UserMailOptin']['mailingListId'] = $subscriptionMailingListId;
+                            $optInData['UserMailOptin']['optin'] = 1;
+                            $optInData['UserMailOptin']['optinDatetime'] = date("Y-m-d H:m:s");
+                            $optInData['UserMailOptin']['userId'] = $userId;
+                            $optInData['UserMailOptin']['subscribeDatetime'] = date("Y-m-d H:m:s");
+                            $optInData['UserMailOptin']['source'] = "toolbox";
+
+                            $this->User->UserMailOptin->saveAll($optInData);
+                        }
+
+                        $result[] = $mailVendor->addUserToList($profile, $subscriptionMailingListId);
+                    }
+                }
+            }
+        }
+
+        $this->Session->setFlash(__('Subscribed ' . $this->data['User']['email'] . ' to newsletters', true));
+        $this->redirect(array("action" => 'edit', $userId));
+    }
+
+
+
+    /**
      * Unsub user from all newsletters
      *
      * @param int $id
@@ -69,7 +169,6 @@ class UsersController extends AppController
                     $mailingListDataArr = $this->data['User']['mailingListData'];
 
                     foreach ($mailingListDataArr as $key => $str) {
-
                         $arr = explode("~", $str);
                         $checkedMailingListId = $arr[0];
                         $postedSiteId = $arr[1];
@@ -89,7 +188,10 @@ class UsersController extends AppController
                                 'UserMailOptin.mailingListId' => $checkedMailingListId
                             )
                         );
-                        $this->User->bindModel(
+                        // Model not properly binded. Need to research more
+                        // This Model needs to be accepted to allow duplicate composite keys/remove primary key restriction
+                        // Binding models is not advised
+                        /*$this->User->bindModel(
                             array(
                                 'hasMany' => array(
                                     'unsubscribeLog' => array(
@@ -99,18 +201,34 @@ class UsersController extends AppController
                                     )
                                 )
                             )
-                        );
+                        );*/
                         // update unsubscribeLog table
-                        $arr['unsubscribeLog'] = array(
-                            'email' => $email,
-                            'siteId' => $postedSiteId,
-                            'mailingId' => $checkedMailingListId,
-                            'unsubDate' => time(),
-                            'subDate' => strtotime($optinDatetime)
+                        //$arr['unsubscribeLog'] = array(
+                        $conditions = array(
+                            'UnsubscribeLog.email' => $email,
+                            'UnsubscribeLog.siteId' => $postedSiteId,
+                            'UnsubscribeLog.mailingId' => $checkedMailingListId,
+                            //'UnsubscribeLog.unsubDate' => time(),
+                            //'UnsubscribeLog.subDate' => strtotime($optinDatetime)
                         );
-                        $this->User->unsubscribeLog->create();
-                        $this->User->unsubscribeLog->save($arr);
+                        $this->loadModel('UnsubscribeLog');
 
+                        // Determine whether you have unsubscribed from this email before. If so, update row. If not,
+                        // insert new row into unsubscribe Log.
+                        if ($this->UnsubscribeLog->hasAny($conditions)) {
+                            $this->UnsubscribeLog->updateAll(
+                                array(
+                                    'UnsubscribeLog.unsubDate' => time()
+                                ),
+                                $conditions
+                            );
+                        } else {
+
+                            $this->unsubscribeLog->create();
+                            $conditions['UnsubscribeLog.unsubDate'] = time();
+                            $conditions['UnsubscribeLog.subDate'] = strtotime($optinDatetime);
+                            $this->unsubscribeLog->save($conditions);
+                        }
                     }
 
                 }
@@ -121,7 +239,6 @@ class UsersController extends AppController
 
             }
         }
-
         $this->Session->setFlash(__('Updated Unsub for ' . $this->data['User']['email'], true));
         $this->redirect(array("action" => 'edit', $userId));
 
@@ -172,12 +289,14 @@ class UsersController extends AppController
             $this->data['CreditTracking'] = $cof[0]['CreditTracking'];
         }
 
+
         $numAccountsWithEmail = $this->User->countAccountsWithEmail($this->data['User']['email']);
         $this->set('numAccountsWithEmail', $numAccountsWithEmail);
         $this->set('email', $this->data['User']['email']);
         $this->set('user', $this->data);
         $this->set('newsletterInfo', $this->MailingList->getNewsletterData());
         $this->set(compact('user', 'salutationIds', 'paymentTypes', 'addressTypes'));
+        $this->set('numOptIns', $this->getNumOfOptIns($this->data['UserMailOptin']));
     }
 
     /**
@@ -202,6 +321,23 @@ class UsersController extends AppController
         $this->set("email", $email);
         $this->set("rowArr", $rowArr);
 
+    }
+
+    /**
+     * Returns the number of active newsletter subscriptions for a given user
+     *
+     * @param array
+     *
+     * @return string
+     */
+    private function getNumOfOptIns($optInArray)
+    {
+        $numOptIns = 0;
+
+        foreach ($optInArray as $optIn) {
+            if ($optIn['optin'] == 1) $numOptIns++;
+        }
+        return "(" . $numOptIns . ")";
     }
 
     /**
@@ -676,10 +812,10 @@ class UsersController extends AppController
             $userSiteExtended = $this->User->UserSiteExtended->read(null, $id);
             $this->User->id = $userSiteExtended['UserSiteExtended']['userId'];
             $this->User->saveField('transmitted', 0);
-            
-            $url = Configure::read("Url.LL") . '/ajax/cc.php?e=u&id=' . $userSiteExtended['UserSiteExtended']['userId']; 
+
+            $url = Configure::read("Url.LL") . '/ajax/cc.php?e=u&id=' . $userSiteExtended['UserSiteExtended']['userId'];
             $result = file_get_contents($url);
-                        
+
         } else {
             $this->data = $this->User->read(null, $id);
         }

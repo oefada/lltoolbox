@@ -125,7 +125,7 @@
     <?php echo $form->end('Submit'); ?>
 </div>
 <div class="collapsible">
-    <h3 class="handle"><?php __('Related User Mail Optins'); ?> <?= $html2->c($user['UserMailOptin']); ?></h3>
+    <h3 class="handle"><?php __('Related User Mail Optins'); ?> <?= $numOptIns;//$html2->c($user['UserMailOptin']); ?></h3>
 
     <div class="collapsibleContent related">
         <?php if (!empty($user['UserMailOptin'])): ?>
@@ -149,6 +149,9 @@
                 <?php
                 $i = 0;
                 foreach ($user['UserMailOptin'] as $userMailOptin):
+                    if (!$userMailOptin['optin']) {
+                        continue;
+                    }
                     $class = null;
                     if ($i++ % 2 == 0) {
                         $class = ' class="altrow"';
@@ -191,6 +194,52 @@
         <?php else: ?>
             This User has no mail opt-ins
         <?php endif; ?>
+        <div>
+
+            <?php
+                echo $form->create('User', array("action" => "sub"));
+                echo $form->hidden("email");
+                echo $form->hidden("userId");
+            ?>
+            <table style="cellpadding:0;cellspacing:0;margin-left:auto;margin-right:auto;width:50%;">
+                <tr>
+                    <th><?php __('Newsletter Name'); ?></th>
+                    <th class="actions"><?php __('Subscribe'); ?></th>
+                </tr>
+                    <?php
+                        $i = 0;
+                        foreach ($newsletterInfo as $newsletterSiteID => $newsletterSiteArray) {
+                            // No currently active Vacationist subscription
+                            if ($newsletterSiteID == 3) continue;
+                            foreach ($newsletterSiteArray as $newsletterMailingListId => $newsletterName) {
+                                // Luxury Link Insights is currently not active.
+                                if ($newsletterMailingListId == 4) continue;
+                                $class = null;
+                                if ($i++ % 2 == 0) {
+                                    $class = ' class="altrow"';
+                                }
+                                ?>
+                                <tr<?php echo $class; ?>>
+                                    <? $newsletterStr = $newsletterSiteID . '~' . $newsletterMailingListId;
+                                    ?>
+                                    <td><? echo "<label for='$newsletterStr'>" . $newsletterName['name'] . "</label>"; ?></td>
+                                    <td><? echo "<input type='checkbox' name='data[User][mailingListSubData][]' id='$newsletterStr' value='" . $newsletterStr . "'>"; ?></td>
+                                </tr>
+                                <?
+                            }
+                        }
+                        $class = null;
+                        if ($i++ % 2 == 0) {
+                            $class = ' class="altrow"';
+                        }
+                    ?>
+                    <tr <?= $class ?>>
+                        <td colspan='2' style="margin-left:auto;margin-right:auto;">
+                            <?= $form->end("Subscribe " . $user['User']['email'] . " To Checked Newsletters"); ?>
+                        </td>
+                    </tr>
+            </table>
+        </div>
     </div>
 </div>
 <div class="collapsible">
