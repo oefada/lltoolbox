@@ -82,10 +82,11 @@ if (!$clientPpv && is_array($clients)) {
 	// RESERVATION CONFIRMATION (PPV 1)
 	// AUCTION WINNER (PPV 18)
 	// FIXED PRICE WINNER/RESERVATION ACKNOWLEDGMENT PPV 12
+	// RESERVATION DATES NOT AVAILABLE PPV 14
 	// RESERVATION CANCELLATION CONFIRMATION PPV 30
 	// AUCTION WINNER EMAIL DECLINED/EXPIRED CC PPV 19
 	// 52 and 53 are auction winner reminders
-	$tmpArr=array(1,18,12,30,19,52,53);
+	$tmpArr=array(1,18,12,14,30,19,52,53);
 	if (in_array($ppvNoticeTypeId,$tmpArr)){
 
 		if ($isAuction){ ?>
@@ -111,7 +112,6 @@ if (!$clientPpv && is_array($clients)) {
 	<? }
 
 	if (!$clientPpv){?>
-
 		If you have any questions or additional needs, please contact our Travel Concierge at <?=Base::phoneLongLL?>,
 		or send us an email at <a
 			href="mailto:concierge@<?= $siteEmail ?>"
