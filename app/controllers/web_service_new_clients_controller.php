@@ -69,7 +69,7 @@ class WebServiceNewClientsController extends WebServicesController
 
                 try {
                     //If name exists, run subroutine to check if it has changed against SugarCRM/LightboxName.
-                    $this->Client->checkClientNameChange($sugarClientName, $client['Client']['name']);
+                    $this->Client->checkClientNameChange($sugarClientName, $client_data_save['name'],$client_id);
                 } catch (Exception $e) {
                     mail('devmail@luxurylink.com','Client NameChange Error','Suagar Name:'.print_r($sugarClientName,true)
                         .'ToolboxName: '.print_r($client['Client']['name'],true));
