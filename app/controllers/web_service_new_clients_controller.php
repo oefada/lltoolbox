@@ -23,7 +23,6 @@ class WebServiceNewClientsController extends WebServicesController
 						'output' => array('return' => 'xsd:string')
 						)
 					);
-
 	function beforeFilter() { $this->LdapAuth->allow('*'); }
 
 	// main function to update or insert client records
@@ -32,7 +31,15 @@ class WebServiceNewClientsController extends WebServicesController
 	    $response_value = '';
 	    $sm_sproc_response = array();
 
-        $this->ConnectorLog->setData($sm_request);
+        if (isset($sm_request)){
+            $this->ConnectorLog->setData($sm_request);
+            try {
+                $this->ConnectorLog->execute();
+            } catch (Exception $e) {
+                @mail('oefada@luxurylink.com','Connector Log Error',$e->getMessage());
+            }
+        }
+
 	    // JSON decoded the request into an assoc. array
 	    $decoded_request = json_decode($sm_request, true);
 
@@ -58,9 +65,17 @@ class WebServiceNewClientsController extends WebServicesController
             $sugarClientName = $this->utf8dec($sugarClientName);
 
             if (isset($client_data_save['name'])){
-                //If name exists, run subroutine to check if it has changed against SugarCRM/LightboxName.
-                $this->Client->checkClientNameChange($sugarClientName, $client['Client']['name']);
-            }
+
+
+                try {
+                    //If name exists, run subroutine to check if it has changed against SugarCRM/LightboxName.
+                    $this->Client->checkClientNameChange($sugarClientName, $client['Client']['name']);
+                } catch (Exception $e) {
+                    mail('devmail@luxurylink.com','Client NameChange Error','Suagar Name:'.print_r($sugarClientName,true)
+                        .'ToolboxName: '.print_r($client['Client']['name'],true));
+
+                }
+                }
             if (!empty($client_data_save['sites']) && is_array($client_data_save['sites'])) {
                 $client_data_save['sites'] = implode(',', $client_data_save['sites']);
             }
@@ -222,7 +237,7 @@ class WebServiceNewClientsController extends WebServicesController
 		    }
 		}
 
-        $this->ConnectorLog->execute();
+
 	    // this tests to see if we were getting correct response from the request
 	    return $encoded_response;
 	}
