@@ -1,6 +1,6 @@
 Dear <?php echo $clientName ?> Team,
 
-I am pleased to inform you that your property is being featured on the Luxury Link home page.
+I am pleased to inform you that your property is being featured on the Luxury Link <?php echo $featuredOn ?>.
 
 You may view the promotion by clicking on the following link:
 

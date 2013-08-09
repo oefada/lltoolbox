@@ -7,8 +7,12 @@ class MerchDataEntries extends AppModel
     public $belongsTo = array(
         'MerchDataType' => array(
             'foreignKey' => 'merchDataTypeId'
+        ),
+        'MerchDataGroup' => array(
+            'foreignKey' => 'merchDataGroupId'
         )
     );
+
 
     /**
      * @param mixed $results
@@ -55,6 +59,23 @@ class MerchDataEntries extends AppModel
         }
 
         $results = $this->find('all', $options);
+        return (!empty($results)) ? $results : false;
+    }
+
+    /**
+     * @param $entryId
+     * @return bool
+     */
+    public function getEntryInfoByEntryId($entryId)
+    {
+        $results = array();
+        $options = array(
+            'conditions' => array(
+                'MerchDataEntries.id' => $entryId
+            )
+        );
+
+        $results = $this->find('first', $options);
         return (!empty($results)) ? $results : false;
     }
 }

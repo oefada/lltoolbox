@@ -22,6 +22,11 @@ class NotifyClientsShell extends Shell
     private $clientNotificationModel;
 
     /**
+     * @var MerchDataEntries $merchDataEntries
+     */
+    private $merchDataEntries;
+
+    /**
      * @var array $errors
      */
     private $errors = array();
@@ -46,11 +51,13 @@ class NotifyClientsShell extends Shell
         App::import('Component', 'Email');
         APP::import('Model', 'Client');
         APP::import('Model', 'ClientNotification');
+        APP::import('Model', 'MerchDataEntries');
         $this->Controller = new Controller();
         $this->Email = new EmailComponent();
         $this->Email->initialize($this->Controller);
         $this->clientModel = new Client();
         $this->clientNotificationModel = new ClientNotification();
+        $this->merchDataEntries = new MerchDataEntries();
     }
 
     public function main()
@@ -59,6 +66,7 @@ class NotifyClientsShell extends Shell
         if($clientsToNotify !== false) {
             foreach ($clientsToNotify as $client) {
                 $client = $client['ClientNotification'];
+                $merchDataInfo = $this->merchDataEntries->getEntryInfoByEntryId($client['merchDataEntryId']);
                 $this->out("Attempting to send notifications for clientId {$client['clientId']}, merchDataEntryId {$client['merchDataEntryId']}");
 
                 $contactDetails = $this->clientModel->getHomepageContact($client['clientId']);
@@ -66,6 +74,7 @@ class NotifyClientsShell extends Shell
                     $clientName = $contactDetails[0]['client_name'];
                     $accountManagerEmail = $contactDetails[0]['account_manager_email'];
                     $contactEmail = array($accountManagerEmail);
+                    $featuredOn = $this->getFeaturedOn($merchDataInfo);
 
                     $this->out("    $clientName was featured on our site.");
                     $this->out('    Notifications will be sent to the following addresses: ');
@@ -76,7 +85,7 @@ class NotifyClientsShell extends Shell
                     }
                     $contactEmail[] = "mclifford@luxurylink.com";
 
-                    if ($this->emailReport($clientName, $contactEmail, $accountManagerEmail) !== false) {
+                    if ($this->emailReport($clientName, $featuredOn, $contactEmail, $accountManagerEmail) !== false) {
                         $this->clientNotificationModel->id = $client['id'];
                         $this->clientNotificationModel->saveField('notified', date('Y-m-d H:i:s'));
                     } else {
@@ -89,6 +98,22 @@ class NotifyClientsShell extends Shell
         } else {
             $this->out('There are no clients to notify.');
         }
+    }
+
+    /**
+     * @param $merchDataInfo
+     * @return string
+     */
+    private function getFeaturedOn($merchDataInfo)
+    {
+        $featuredOn = 'Homepage ';
+        if ($merchDataInfo['MerchDataType']['merchDataTypeName'] === 'Homepage Tabs') {
+            $featuredOn .= str_replace('<br />', ' ', $merchDataInfo['MerchDataGroup']['merchDataGroupName']) . ' tab';
+        } else {
+            $featuredOn .= $merchDataInfo['MerchDataType']['merchDataTypeName'] . ' module';
+        }
+
+        return $featuredOn;
     }
 
     /**
@@ -108,12 +133,13 @@ class NotifyClientsShell extends Shell
     }
 
     /**
-     * @param array $contactEmail
-     * @param string $clientName
-     * @param string $accountManagerEmail
+     * @param $clientName
+     * @param $featuredOn
+     * @param $contactEmail
+     * @param $accountManagerEmail
      * @return bool
      */
-    private function emailReport($clientName, $contactEmail, $accountManagerEmail)
+    private function emailReport($clientName, $featuredOn, $contactEmail, $accountManagerEmail)
     {
         $this->Email->reset();
         $this->Email->from = 'Luxury Link Travel Group <clientmarketing@luxurylink.com>';
@@ -123,6 +149,7 @@ class NotifyClientsShell extends Shell
         $this->Email->subject = "$clientName is being featured on Luxury Link";
         $this->Email->template = 'client_notifications_email';
         $this->Email->sendAs = 'text';
+        $this->Controller->set('featuredOn', $featuredOn);
         $this->Controller->set('accountManagerEmail', $accountManagerEmail);
         $this->Controller->set('clientName', $clientName);
         return $this->Email->send();
