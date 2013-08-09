@@ -74,11 +74,13 @@ if (!$clientPpv && is_array($clients)) {
 <?php endif; ?>
 
 
-<?php if (!in_array($ppvNoticeTypeId, array(36))){ ?>
+<?php if ($ppvNoticeTypeId != 36){ ?>
 
 	<font face="Arial, Helvetica, sans-serif" size="2" style="font-size:12px; line-height:20px" color="#474747">
 	<p>
 	<?
+	// TODO: Refactor the frak out of this - bturner
+	// In general, every communique with a customer who purchased an auction should have this verbiage
 	// RESERVATION CONFIRMATION (PPV 1)
 	// AUCTION WINNER (PPV 18)
 	// FIXED PRICE WINNER/RESERVATION ACKNOWLEDGMENT PPV 12
@@ -86,7 +88,7 @@ if (!$clientPpv && is_array($clients)) {
 	// RESERVATION CANCELLATION CONFIRMATION PPV 30
 	// AUCTION WINNER EMAIL DECLINED/EXPIRED CC PPV 19
 	// 52 and 53 are auction winner reminders
-	$tmpArr=array(1,18,12,14,30,19,52,53);
+	$tmpArr=array(1,16,18,12,14,26,30,19,52,53);
 	if (in_array($ppvNoticeTypeId,$tmpArr)){
 
 		if ($isAuction){ ?>

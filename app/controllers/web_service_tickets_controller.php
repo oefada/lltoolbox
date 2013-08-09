@@ -1070,7 +1070,11 @@ class WebServiceTicketsController extends WebServicesController
 
         return implode("\n", $return);
     }
-
+    /*
+     * TODO Refactor some parts of this
+     * Thar she blows! It be da bane of scurvy coders everywhere, the dreaded 1000+ line function!!!
+     *  In my days, I've seen these monsters like these with over 50 parameters.
+     */
     public function ppv($in0)
     {
 
