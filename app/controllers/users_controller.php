@@ -176,8 +176,6 @@ class UsersController extends AppController
 
                         $mailvendor->removeEmailFromList($postedSiteId, $email, $checkedMailingListId);
 
-                        // Update local dbs
-                        // update userMailOptin table
                         $this->User->UserMailOptin->updateAll(
                             array(
                                 'UserMailOptin.optin' => '0',
@@ -188,51 +186,34 @@ class UsersController extends AppController
                                 'UserMailOptin.mailingListId' => $checkedMailingListId
                             )
                         );
-                        // Model not properly binded. Need to research more
-                        // This Model needs to be accepted to allow duplicate composite keys/remove primary key restriction
-                        // Binding models is not advised
-                        /*$this->User->bindModel(
-                            array(
-                                'hasMany' => array(
-                                    'unsubscribeLog' => array(
-                                        'UnsubscribeLog' => array(
-                                            'className' => 'UnsubscribeLog'
-                                        )
-                                    )
-                                )
-                            )
-                        );*/
-                        // update unsubscribeLog table
-                        //$arr['unsubscribeLog'] = array(
-                        $conditions = array(
-                            'UnsubscribeLog.email' => $email,
-                            'UnsubscribeLog.siteId' => $postedSiteId,
-                            'UnsubscribeLog.mailingId' => $checkedMailingListId,
-                            //'UnsubscribeLog.unsubDate' => time(),
-                            //'UnsubscribeLog.subDate' => strtotime($optinDatetime)
-                        );
-                        $this->loadModel('UnsubscribeLog');
 
-                        // Determine whether you have unsubscribed from this email before. If so, update row. If not,
-                        // insert new row into unsubscribe Log.
-                        if ($this->UnsubscribeLog->hasAny($conditions)) {
+                        $this->loadModel('UnsubscribeLog');
+                        $conditions = array(
+                            'email' => $email,
+                            'siteId' => $postedSiteId,
+                            'mailingId' => $checkedMailingListId,
+                        );
+
+                        $updateConditions = $this->prepareModelData('UPDATE', 'UnsubscribeLog', $conditions);
+
+                        if ($this->UnsubscribeLog->hasAny($updateConditions)) {
                             $this->UnsubscribeLog->updateAll(
                                 array(
                                     'UnsubscribeLog.unsubDate' => time()
                                 ),
-                                $conditions
+                                $updateConditions
                             );
                         } else {
-
-                            $this->unsubscribeLog->create();
-                            $conditions['UnsubscribeLog.unsubDate'] = time();
-                            $conditions['UnsubscribeLog.subDate'] = strtotime($optinDatetime);
-                            $this->unsubscribeLog->save($conditions);
+                            $this->UnsubscribeLog->create();
+                            $conditions['unsubDate'] = time();
+                            $conditions['subDate'] = strtotime($optinDatetime);
+                            $insertConditions = $this->prepareModelData('INSERT', 'UnsubscribeLog', $conditions);
+                            $this->UnsubscribeLog->save($insertConditions);
                         }
+
                     }
 
                 }
-
                 if (is_array($errors) && count($errors) > 0) {
                     $error_str = implode("<br>", $errors);
                 }
@@ -241,7 +222,6 @@ class UsersController extends AppController
         }
         $this->Session->setFlash(__('Updated Unsub for ' . $this->data['User']['email'], true));
         $this->redirect(array("action" => 'edit', $userId));
-
     }
 
     function view($id = null)
@@ -321,6 +301,33 @@ class UsersController extends AppController
         $this->set("email", $email);
         $this->set("rowArr", $rowArr);
 
+    }
+
+    /*
+     * Function that takes in a string query type, a string model name, and an array of the fields in the model
+     * that you want to create a record for/search for. Array passed by reference is modified by the function.
+     *  It's needed because Cake requires different data
+     * structures for different operations. **Groan**
+     *
+     * @param string
+     * @param string
+     * @param array by reference
+     */
+    private function prepareModelData($queryType, $modelName , $fields)
+    {
+        if ($queryType = 'UPDATE') {
+            // first, prefix each key in the array with the model name
+            foreach ($fields as $key => $value) {
+                $key = $modelName . '.' . $key;
+
+            }
+            return $fields;
+        }
+
+        if ($queryType = 'INSERT') {
+            $fields = array($modelName => $fields);
+            return $fields;
+        }
     }
 
     /**
