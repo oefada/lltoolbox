@@ -1118,6 +1118,15 @@ class Client extends AppModel
             return;
         }
         //client name has changed, send email.
+        $this->sendNameChangeEmail($sugarClientName, $existingClientName, $clientID);
+
+    }
+
+    public function sendNameChangeEmail($sugarClientName, $existingClientName, $clientID){
+        if (trim(strtoupper($sugarClientName)) == trim(strtoupper($existingClientName))) {
+            //client name has not changed, do nothing.
+            return;
+        }
         $subj = "Name Change - {$sugarClientName} - CID {$clientID}";
 
         App::import('Helper', 'Html'); // loadHelper('Html'); in CakePHP 1.1.x.x
@@ -1149,7 +1158,7 @@ class Client extends AppModel
             $to = "production@@example.com";
             $headers .= 'Cc: accounting@luxurylink.com' . "\r\n";
         }
-        mail($to, $subj, $msg, $headers);
+        @mail($to, $subj, $msg, $headers);
 
     }
 }
