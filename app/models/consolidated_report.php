@@ -876,7 +876,7 @@ class ConsolidatedReport extends AppModel
         $omnitureData = $this->getOmnitureImpressionsForClientByDate($startDate, $endDate, $clientId, $table);
 
         // get social impressions
-        $socialData = $this->getSocialImpressionsForClientByDate($startData, $endDate, $clientId);
+        $socialData = $this->getSocialImpressionsForClientByDate($startDate, $endDate, $clientId, $siteId);
 
         foreach ($impressions as $key => $arrayData) {
             $totalEmails = (int) array_shift(Set::extract($omnitureData, "/./{$arrayData['month']}/email"));
@@ -910,17 +910,37 @@ class ConsolidatedReport extends AppModel
      * @param $clientId
      * @return array
      */
-    private function getSocialImpressionsForClientByDate($startData, $endDate, $clientId)
+    private function getSocialImpressionsForClientByDate($startDate, $endDate, $clientId, $siteId)
     {
-        // TODO implement method
-        return false;
-        /*return array(
-            array(
-                '4' => array(
-                    'social' => 4500
-                )
-            )
-        );*/
+        $impressions = array();
+
+        if ($siteId == 1) {
+            $sql = "
+              SELECT
+                impressions,
+                MONTH(startDate) as month
+              FROM client_impressions
+              WHERE
+                client_id=?
+                AND startDate BETWEEN ? AND ?
+              ORDER BY startDate
+            ";
+
+            $params = array(
+                $clientId,
+                $startDate,
+                $endDate
+            );
+
+            $rows = $this->query($sql, $params);
+            foreach($rows as $row) {
+                $impressions[][$row[0]['month']] = array(
+                    'social' => $row['client_impressions']['impressions']
+                );
+            }
+        }
+
+        return $impressions;
     }
 
     /**
