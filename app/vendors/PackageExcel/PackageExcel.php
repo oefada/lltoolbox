@@ -73,14 +73,11 @@ class PackageExcel
         }
         $as->getCell('B13')->setValue($package['numGuests']);
         if (in_array('family', $package['sites'])) {
-            $as->getCell('B14')->setValue($package['numChildren']);
-            $as->getCell('B15')->setValue($this->viewVars['package']['PackageAgeRange']['rangeLow'] . ' - ' . $this->viewVars['package']['PackageAgeRange']['rangeHigh']);
+            $as->getCell('B14')->setValue($this->viewVars['package']['PackageAgeRange']['rangeLow'] . ' - ' . $this->viewVars['package']['PackageAgeRange']['rangeHigh']);
         } else {
             $as->getCell('B14')->setValue('');
-            $as->getCell('B15')->setValue('');
         }
-        $as->getCell('B16')->setValue($this->viewVars['cc']);
-
+        $as->getCell('B15')->setValue($this->viewVars['cc']);
 
         $lowPriceInfo = array_reverse(array_slice($this->viewVars['lowPrice'], 0, 9));
         $lowPrice = array();
@@ -94,7 +91,7 @@ class PackageExcel
  
         
         $lp_row_height = 8;
-        $lp_row_offset = 30 + count($lowPrice) * $lp_row_height;
+        $lp_row_offset = 29 + count($lowPrice) * $lp_row_height;
         // Remove extra rows
         for ($i = 0; $i < 100; $i++) {
             $as->removeRow($lp_row_offset);
@@ -103,7 +100,7 @@ class PackageExcel
         // Low price
         $i = 0;
         while ($lp = array_pop($lowPrice)) {
-            $lp_row_offset = 31 + $i * $lp_row_height;
+            $lp_row_offset = 30 + $i * $lp_row_height;
             $as->getCell('A' . $lp_row_offset)->setValue(str_replace('<br/>',', ',$lp['dateRanges']));
             $dateLineCount = substr_count($lp['dateRanges'], '|') + 1;
             $as->getRowDimension($lp_row_offset)->setRowHeight($dateLineCount * 24);
@@ -121,13 +118,13 @@ class PackageExcel
         }
 
         // Booking conditions
-        $as->getCell('A29')->setValue($package['termsAndConditions']);
+        $as->getCell('A28')->setValue($package['termsAndConditions']);
 
         // Blackout Weekdays
-        $as->getCell('A26')->setValue($this->viewVars['bo_weekdays']);
+        $as->getCell('A25')->setValue($this->viewVars['bo_weekdays']);
 
         // Blackout Dates
-        $lp_row_offset = 23;
+        $lp_row_offset = 22;
         foreach ($this->viewVars['blackout'] as $bod) {
             $as->insertNewRowBefore($lp_row_offset + 1);
             $as->mergeCells('A' . $lp_row_offset . ':C' . $lp_row_offset);
@@ -137,7 +134,7 @@ class PackageExcel
         $as->removeRow($lp_row_offset);
 
         // Inclusions
-        $lp_row_offset = 19;
+        $lp_row_offset = 18;
         $inclusions = $this->viewVars['package']['ClientLoaPackageRel'][0]['Inclusions'];
         $i = 0;
         foreach ($inclusions as $inclusion) {
