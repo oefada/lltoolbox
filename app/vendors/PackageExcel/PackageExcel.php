@@ -39,8 +39,8 @@ class PackageExcel
 
         // Modify Sheet
         $as = $this->sheet->getActiveSheet();
-        $as->getStyle('A1:C17')->getFill()->getStartColor()->setARGB('FFFFFFFF');
-        $as->getStyle('A19:C200')->getFill()->getStartColor()->setARGB('FFFFFFFF');
+        $as->getStyle('A1:C16')->getFill()->getStartColor()->setARGB('FFFFFFFF');
+        $as->getStyle('A18:C200')->getFill()->getStartColor()->setARGB('FFFFFFFF');
 
         switch ($package['siteId']) {
             case 1:
