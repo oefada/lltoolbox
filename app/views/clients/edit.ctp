@@ -152,6 +152,11 @@ endif;
 echo $form->input('oldProductId', array('disabled' => 'disabled'));
 
 echo $form->input('name', array('disabled' => !($this->data['Client']['createdInToolbox'] || $this->data['Client']['parentClientId'])));
+
+if ($showAccountingId) {
+    echo $form->input('accountingId');
+}
+
 ?>
 <?php
 echo $form->input('url');

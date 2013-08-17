@@ -404,6 +404,19 @@ class ClientsController extends AppController {
 		
 		$this->set("collections", $collectionsArray);
 		$this->set("collectionsSelected", $collectionsSelected);
+		
+		
+        $showAccountingId = false;
+        $currentUser = $this->LdapAuth->user();
+        if (in_array('Accounting', $currentUser['LdapUser']['groups']) || in_array(
+                'Geeks',
+                $currentUser['LdapUser']['groups']
+            )
+        ) {
+            $showAccountingId = true;
+        }
+        $this->set("showAccountingId", $showAccountingId);
+		
 	}
 		
 	function search()
