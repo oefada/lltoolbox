@@ -6,7 +6,7 @@ App::import('Vendor', 'nusoap_client/lib/nusoap');
 class ClientsController extends AppController {
 
 	var $name = 'Clients';
-	var $uses = array('Client', 'ClientThemeRel', 'ClientTag', 'ClientTagRel', 'ClientDestinationRel', 'ClientAmenityTypeRel', 'ClientInterview', 'ClientCollection', 'ClientSocial');
+	var $uses = array('Client', 'ClientThemeRel', 'ClientTag', 'ClientTagRel', 'ClientDestinationRel', 'ClientAmenityTypeRel', 'ClientInterview', 'ClientCollection', 'ClientSocial', 'ClientTypeHistory');
 
     public $helpers = array('Httprequest');
 
