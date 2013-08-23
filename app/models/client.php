@@ -63,7 +63,8 @@ class Client extends AppModel
         'ImageClient' => array('className' => 'ImageClient', 'foreignKey' => 'clientId'),
         'RoomGrade' => array('className' => 'RoomGrade', 'foreignKey' => 'clientId'),
         'ClientInterview' => array('className' => 'ClientInterview', 'foreignKey' => 'clientId'),
-        'ClientTypeHistory' => array('className' => 'ClientTypeHistory', 'foreignKey' => 'clientId')
+        'ClientTypeHistory' => array('className' => 'ClientTypeHistory', 'foreignKey' => 'clientId'),
+        'ClientNameHistory' => array('className' => 'ClientNameHistory', 'foreignKey' => 'clientId'),
     );
 
     public $hasAndBelongsToMany = array(
@@ -125,6 +126,7 @@ class Client extends AppModel
 
             // Checking name and not seo name since that function may change in the future. Name can only be changed in Sugar CRM
             // This is for name changes coming through app/controllers/web_service_new_client_controllers
+
             if (($this->old['Client']['name'] != $this->data['Client']['name'])) {
                 $conditions = array(
                                     'ClientNameHistory' => array(
@@ -135,6 +137,7 @@ class Client extends AppModel
                                     ));
                 $this->ClientNameHistory->save($conditions);
             }
+
 
         }
 
@@ -1137,7 +1140,9 @@ class Client extends AppModel
 
     /**TICKET4003
      * Checks to see if client name changes in sugar and follows a number of procedures.
-     * Assumes both input data share a clientID
+     * Assumes both input data share a clientID.
+     * If the client's name has changed, we archive that information so that we can provide
+     * a 301 redirect from the previous page to the client's page with the new name
      * @param $sugarClientName string
      * @param $existingClientName string
      */
@@ -1147,7 +1152,18 @@ class Client extends AppModel
             //client name has not changed, do nothing.
             return;
         }
-        //client name has changed, send email.
+
+        $conditions = array(
+            'ClientNameHistory' => array(
+                'clientId' => $clientID,
+                'oldClientName' => $existingClientName,
+                'oldClientSeoName' => $this->convertToSeoName($existingClientName),
+                'dateChanged' => DboSource::expression('NOW()')
+            ));
+
+        $this->ClientNameHistory->save($conditions);
+
+
         $this->sendNameChangeEmail($sugarClientName, $existingClientName, $clientID);
 
     }

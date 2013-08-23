@@ -26,6 +26,7 @@ class WebServiceNewClientsController extends WebServicesController
 	function beforeFilter() { $this->LdapAuth->allow('*'); }
 
 	// main function to update or insert client records
+
 	function save_client($sm_request)
 	{
 	    $response_value = '';
@@ -89,6 +90,7 @@ class WebServiceNewClientsController extends WebServicesController
 		//$client_data_save = array();
         $client_data_save['name']				= str_replace('&#039;', "'", $decoded_request['client']['client_name']);
 		$client_data_save['name']				= $this->utf8dec($client_data_save['name']);
+        $client_data_save['nameNormalized']     = $client_data_save['name'];
         $client_data_save['managerUsername'] 	= $decoded_request['client']['manager_ini'];
 		$client_data_save['teamName']			= $decoded_request['client']['team_name'];
         $client_data_save['modified']			= $date_now;
@@ -115,7 +117,17 @@ class WebServiceNewClientsController extends WebServicesController
                      //
                         @mail('devmail@luxurylink.com', 'SUGAR BUS -- EXISTING CLIENT NOT SAVED',$errMsg );
                     }
-				}
+				} else {
+                    // Save succeeded. Also saving to LuxuryLink Database
+                    // LuxuryLink DB/Client Table also needs to be updated RE TICKET4270
+                    $llquery = "UPDATE luxurylink.client SET ";
+                    $llquery .= "name = '$client_data_save[name]', ";
+                    $llquery .= "nameNormalized = '$client_data_save[nameNormalized]', ";
+                    $llquery .= "seoName = '$client_data_save[seoName]' ";
+                    $llquery .= "WHERE clientId = $client_id";
+
+                    $result = $this->Client->query($llquery);
+                }
 	        	$decoded_request['client']['client_id'] = $client_id;
 			} else {
 				// the client id was invalid so send devmail, and do nothing
