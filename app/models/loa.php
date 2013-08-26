@@ -15,7 +15,8 @@ class Loa extends AppModel
         'LoaLevel' => array('foreignKey' => 'loaLevelId'),
         'LoaMembershipType' => array('foreignKey' => 'loaMembershipTypeId'),
         'AccountType' => array('foreignKey' => 'accountTypeId'),
-        'LoaPaymentTerm' => array('foreignKey' => 'loaPaymentTermId')
+        'LoaPaymentTerm' => array('foreignKey' => 'loaPaymentTermId'),
+        'LoaInstallmentType' => array('foreignKey' => 'loaInstallmentTypeId')
     );
 
     public $hasMany = array(
@@ -317,6 +318,61 @@ class Loa extends AppModel
             );
         }
     }
+
+    public function changeEmail($data, $subject = null)
+    {
+        Configure::write('debug', 0);
+        $subj = "Loa Change";
+        if (!empty($subject)) {
+            $subj = $subject;
+        }
+        App::import('Helper', 'Html'); // loadHelper('Html'); in CakePHP 1.1.x.x
+        $html = new HtmlHelper();
+        //$text = "<h2>The following client's name has changed</h2>\n\n";
+
+        $tbl = "<table cellpadding='2' cellspacing='1'>";
+        $tbl .= $html->tableHeaders(
+            array(
+                '<b>Client Name</b>',
+                '<b>AM</b>',
+                '<b>Start Date</b>',
+                '<b>Membership Fee</b>',
+                '<b>Special Terms</b>'
+            ),
+            // array('class' => 'product_table'),
+            array('style' => 'background-color:#CCC')
+        );
+
+        $startDateAsString = date('F d, Y', strtotime($this->deconstruct('startDate', $data['Loa']['startDate'])));
+        $tbl .= $html->tableCells(
+            array(
+                $data['Client']['name'],
+                $data['Client']['managerUsername'],
+                $startDateAsString,
+                $data['Loa']['membershipFee'],
+                $data['Loa']['notes']
+            )
+        );
+        $tbl .= "</table><br />\n";
+        $text = 'http://' . $_SERVER['HTTP_HOST'] . '/loas/edit/' . $data['Loa']['loaId'];
+
+        $msg = $tbl . $text;
+
+        $headers = 'MIME-Version: 1.0' . "\r\n";
+        $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+        // Additional headers
+        $headers .= 'From: Toolbox <no-reply@luxurylink.com>' . "\r\n";
+        if ($_SERVER['ENV'] == 'development' || ISSTAGE == true) {
+            $to = "devmail@luxurylink.com";
+            $headers .= 'Bcc: oefada@luxurylink.com' . "\r\n";
+        } else {
+            $to = "renew@luxurylink.com";
+            //$headers .= 'Cc: accounting@luxurylink.com' . "\r\n";
+        }
+        @mail($to, $subj, $msg, $headers);
+        return true;
+    }
+
 }
 
 ?>

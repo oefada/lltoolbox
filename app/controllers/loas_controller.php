@@ -3,7 +3,7 @@ class LoasController extends AppController
 {
     public $name = 'Loas';
     public $helpers = array('Html', 'Form', 'Ajax', 'Text', 'Layout', 'Number', 'Paginator');
-    public $uses = array('Loa', 'LoaItemRatePeriod', 'SchedulingMasterTrackRel', 'LoaText');
+    public $uses = array('Loa', 'LoaItemRatePeriod', 'SchedulingMasterTrackRel', 'LoaText','LoaDocument');
     public $paginate;
 
     /**
@@ -288,6 +288,7 @@ class LoasController extends AppController
         $loaLevelIds = $this->Loa->LoaLevel->find('list', array('order' => array('LoaLevel.dropdownSortOrder')));
         $loaMembershipTypeIds = $this->Loa->LoaMembershipType->find('list');
         $loaPaymentTermIds = $this->Loa->LoaPaymentTerm->find('list');
+        $loaInstallmentTypeIds = $this->Loa->LoaInstallmentType->find('list');
         $accountTypeIds = $this->Loa->AccountType->find('list');
 
         $this->Loa->LoaPublishingStatusRel->PublishingStatus->recursive = -1;
@@ -297,6 +298,7 @@ class LoasController extends AppController
         $this->set('clientName', $client['Client']['name']);
         $this->set('client', $this->Loa->Client->findByClientId($clientId));
         $this->set('loaPaymentTermIds', $loaPaymentTermIds);
+        $this->set('loaInstallmentTypeIds',$loaInstallmentTypeIds);
         $this->set('currencyIds', $currencyIds);
         $this->set('loaLevelIds', $loaLevelIds);
         $this->set('loaMembershipTypeIds', $loaMembershipTypeIds);
@@ -390,20 +392,23 @@ class LoasController extends AppController
         }
 
         if (!empty($this->data)) {
-
-            if (is_array($this->data['Loa']['checkboxes'])) {
+            if (is_array($this->data['Loa']['checkboxes'])){
                 $this->data['Loa']['checkboxes'] = implode(",", $this->data['Loa']['checkboxes']);
             }
-
             $this->data['Loa']['modifiedBy'] = $this->user['LdapUser']['username'];
+            $loa = $this->Loa->find($this->data['Loa']['loaId']);
+            $this->data['Client'] = $loa['Client'];
 
-            if (empty($this->data['Loa']['sites'])) {
-                $loa = $this->Loa->find($this->data['Loa']['loaId']);
-                $this->data['Client'] = $loa['Client'];
+            if (empty($this->data['Loa']['sites'])){
                 $this->Session->setFlash(__('You must select at least one site to save this LOA.', true));
-            } elseif ($this->Loa->save($this->data)) {
+            }elseif ($this->Loa->save($this->data)){
+
+                if ($this->data['Loa']['loaLevelId_prev'] !== $this->data['Loa']['loaLevelId']){
+                    $this->Loa->changeEmail($this->data,'Loa Submission');
+                }
                 $this->Session->setFlash(__('The Loa has been saved', true));
                 $this->redirect(array('action' => 'edit', $this->data['Loa']['loaId']));
+
             } else {
                 $loa = $this->Loa->find($this->data['Loa']['loaId']);
                 $this->data['Client'] = $loa['Client'];
@@ -474,6 +479,7 @@ class LoasController extends AppController
         $this->set('checkboxValuesArr', $this->getCheckboxValuesArr());
         $this->set('checkboxValuesSelectedArr', $checkboxValuesSelectedArr);
         $this->set('loaPaymentTermIds', $this->Loa->LoaPaymentTerm->find('list'));
+        $this->set('loaInstallmentTypeIds', $this->Loa->LoaInstallmentType->find('list'));
     }
 
     public function sortLoaItemsByType($a, $b)
@@ -523,10 +529,109 @@ class LoasController extends AppController
     public function inplace_notes_save()
     {
         $this->autoRender = false;
-
         $this->Loa->id = str_replace('notes-', "", $this->params['form']['editorId']);
         $this->Loa->saveField('notes', $this->params['form']['value']);
         $notesSaved = $this->Loa->read('notes');
         echo $notesSaved['Loa']['notes'];
+    }
+
+    public function prepdocument($id)
+    {
+        //$this->layout = 'ajax';
+        //$this->layout = false;
+        Configure::write('debug',1);
+
+        if (empty($id)) {
+            $this->Session->setFlash(__('You must select a valid LOA', true));
+
+        } else {
+
+            if (!empty($this->data)) {
+
+                if (is_array($this->data['Loa']['checkboxes'])) {
+                    $this->data['Loa']['checkboxes'] = implode(",", $this->data['Loa']['checkboxes']);
+                }
+                $this->data['Loa']['modifiedBy'] = $this->user['LdapUser']['username'];
+
+                if (empty($this->data['Loa']['sites'])) {
+                    $loa = $this->Loa->find($this->data['Loa']['loaId']);
+                    $this->data['Client'] = $loa['Client'];
+                    $this->Session->setFlash(__('You must select at least one site to save this LOA.', true));
+                }
+            }
+            $this->Loa->recursive = 2;
+            if (empty($this->data)) {
+                $this->data = $this->Loa->read(null, $id);
+                if ($this->data) {
+                    usort($this->data['LoaItem'], array($this, 'sortLoaItemsByType'));
+                }
+            }
+            $currencyIds = $this->Loa->Currency->find('list');
+            $loaLevelIds = $this->Loa->LoaLevel->find('list', array('order' => array('LoaLevel.dropdownSortOrder')));
+            $loaMembershipTypeIds = $this->Loa->LoaMembershipType->find('list');
+            $this->Loa->LoaPublishingStatusRel->PublishingStatus->recursive = -1;
+            $publishingStatus = $this->Loa->LoaPublishingStatusRel->PublishingStatus->find('list');
+            $accountTypeIds = $this->Loa->AccountType->find('list');
+            $completedStatusLL = array();
+            $completedStatusFG = array();
+            if (!empty($this->data['LoaPublishingStatusRel'])) {
+                foreach ($this->data['LoaPublishingStatusRel'] as $pStatus) {
+                    if ($pStatus['site'] == 'luxurylink') {
+                        $completedStatusLL[$pStatus['publishingStatusId']] = $pStatus['completedDate'];
+                    } else {
+                        $completedStatusFG[$pStatus['publishingStatusId']] = $pStatus['completedDate'];
+                    }
+                }
+            }
+            // get Renewal Result Options
+            $loaTextResult = $this->LoaText->getLoaText(1);
+            foreach ($loaTextResult as $loaText) {
+                $renewalResultOptions[$loaText['loaText']['loaTextId']] = $loaText['loaText']['loaText'];
+            }
+
+            // get non Renewal Reason Options
+            $nonRenewalReasonOptionsResult = $this->LoaText->getLoaText(2);
+            foreach ($nonRenewalReasonOptionsResult as $loaText) {
+                $nonRenewalReasonOptions[$loaText['loaText']['loaTextId']] = $loaText['loaText']['loaText'];
+            }
+
+            $this->set('renewalResultOptions', $renewalResultOptions);
+            $this->set('nonRenewalReasonOptions', $nonRenewalReasonOptions);
+
+            $this->set(
+                compact(
+                    'currencyIds',
+                    'loaLevelIds',
+                    'loaMembershipTypeIds',
+                    'publishingStatus',
+                    'completedStatusLL',
+                    'completedStatusFG',
+                    'accountTypeIds'
+                )
+            );
+            $client = $this->Loa->Client->findByClientId($this->data['Loa']['clientId']);
+            $checkboxValuesSelectedArr = array();
+            foreach ($client['Loa'] as $key => $arr) {
+                if ($arr['loaId'] == $id) {
+                    $checkboxValuesSelectedArr = explode(",", $arr['checkboxes']);
+                }
+            }
+            $arrContactsDropdown =array();
+            if (isset($client['ClientContact'])){
+
+                foreach ($client['ClientContact'] as $cKey=>$cVal){
+
+                        $arrContactsDropDown[$cVal['name']]=$cVal['name'];
+                }
+            }
+            $this->set('client', $client);
+            $this->set('clientId', $this->data['Loa']['clientId']);
+            $this->set('currencyCodes', $this->Loa->Currency->find('list', array('fields' => array('currencyCode'))));
+            $this->set('checkboxValuesArr', $this->getCheckboxValuesArr());
+            $this->set('checkboxValuesSelectedArr', $checkboxValuesSelectedArr);
+            $this->set('loaPaymentTermIds', $this->Loa->LoaPaymentTerm->find('list'));
+
+            $this->set('arrContactsDropDown',$arrContactsDropDown);
+        }
     }
 }

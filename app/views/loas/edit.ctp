@@ -39,6 +39,32 @@ echo $layout->blockEnd();
 echo $form->create('Loa');
 echo $form->submit('Submit');
 echo '<fieldset>';
+$timestamp = time();
+//echo "<a><div style='float:left;' qs=\"time={$timestamp}\" class=\"edit-link\" name=\"prepdocument/{$this->data['Loa']['loaId']}\" title=\"Prepare LOA Document - {$this->data['Loa']['loaId']}\">Prep LOA Document</div>";
+//echo '</a>';
+?>
+<div class="actions">
+    <ul>
+
+        <li>
+            <?php
+
+            /** echo $html->link(
+                'Prep Document',
+                $this->webroot.'loas/prepdocument/' . $loa['Loa']['loaId'] . '',
+                array(
+                    'title' => 'Prepare LOA Document - Loa # '. $this->data['Loa']['loaId'],
+                    'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
+                    'complete' => 'closeModalbox()'
+                ),
+                null,
+                false
+            );**/
+            ?></li>
+    </ul>
+</div>
+<?
+
 
 // for editing membershipBalance, totalKept, totalRemitted, totalRevenue
 $uname = $userDetails['username'];
@@ -47,7 +73,7 @@ $userPermArr = array('mchoe', 'dpen', 'kferson', 'mbyrnes', 'jlagraff', 'mtrinh'
 
 $disable_advanced_edit = (in_array($uname, $userPermArr) || in_array('Production', $userGroupsArr)) ? false : true;
 
-$userPermArr = array('dpen', 'kferson', 'mchoe', 'rfriedman', 'jlagraff', 'mtrinh', 'mbyrnes');
+$userPermArr = array('dpen', 'kferson', 'mchoe', 'rfriedman', 'jlagraff', 'mtrinh', 'mbyrnes','oefada');
 if (in_array($uname, $userPermArr) || in_array('Production', $userDetails['groups'])) {
     $disabled = false;
 } else {
@@ -66,6 +92,7 @@ $disable_mp = (in_array($uname, $userPermArr) || in_array('Production', $userDet
 echo '<div class="controlset4">' . $multisite->checkbox('Loa') . '</div>';
 echo $form->input('accountTypeId', array('label' => 'Account Type'));
 echo $form->input('loaLevelId', array('disabled' => $disabled, 'label' => 'LOA Level'));
+echo $form->hidden('loaLevelId_prev', array('value'=>$form->value('loaLevelId')));
 echo $form->input(
     'startDate',
     array(
@@ -134,9 +161,20 @@ echo $form->input('luxuryLinkFee');
 echo $form->input('familyGetawayFee');
 echo $form->input('advertisingFee');
 echo $form->input('loaPaymentTermId', array(
+        'type' => 'select',
         'label' => 'Payment Terms',
         'empty' => true
     ));
+
+//allow empty selection AND select current setting
+echo $form->input('loaInstallmentTypeId', array(
+        'type' => 'select',
+        'label' => 'Installment Types',
+        'empty' => true,
+       //'selected'=>$this->data['Loa']['loaMembershipTypeId']
+    ));
+
+echo $form->input('loaI');
 
 echo $form->input('revenueSplitPercentage');
 ?>
@@ -323,6 +361,32 @@ echo $form->input('revenueSplitPercentage');
                 return true;
             }
         });
+
+    //modal handler
+        $('div.edit-link').click(function() {
+
+            if ($(this).attr('href') == undefined) {
+                var url = '/loas/'+$(this).attr('name');
+
+
+                if ($(this).attr('qs') != undefined) {
+                    url += '/?' + $(this).attr('qs')+'ts='+new Date().getTime();
+
+                }
+            } else {
+                var url = $(this).attr('href')+'/?overlayForm=1';
+            }
+
+            $('iframe#dynamicForm').attr('src', url);
+            $('div#formContainer').dialog({modal:true,
+                autoOpen:false,
+                height:800,
+                width:1100,
+                title:'Edit'
+            });
+
+            $('div#formContainer').dialog('open');
+        });
     });
 
     Event.observe('LoaLoaMembershipTypeId', 'change', toggle_fields);
@@ -349,3 +413,9 @@ echo $form->input('revenueSplitPercentage');
     }
 
 </script>
+<!-- CONTAINER FOR OVERLAYS ====================================================================-->
+
+<div id="formContainer" style="display:none;overflow:hidden">
+    <iframe id="dynamicForm" width="100%" height="100%" marginWidth="0" marginHeight="0" frameBorder="0"
+            scrolling="auto"></iframe>
+</div>
