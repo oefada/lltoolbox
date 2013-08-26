@@ -55,6 +55,10 @@ $this->set('clientId', $this->data['Loa']['clientId']);
                 'label' => 'Payment Terms',
                 'empty' => true
             ));
+        echo $form->input('loaInstallmentTypeIds', array(
+                'label' => 'Installment Types',
+                'empty' => true
+            ));
 
         echo $form->input('revenueSplitPercentage');
 
