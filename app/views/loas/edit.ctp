@@ -69,11 +69,11 @@ $timestamp = time();
 // for editing membershipBalance, totalKept, totalRemitted, totalRevenue
 $uname = $userDetails['username'];
 $userGroupsArr = $userDetails['groups'];
-$userPermArr = array('mchoe', 'dpen', 'kferson', 'mbyrnes', 'jlagraff', 'mtrinh');
+$userPermArr = array('dpen', 'kferson', 'emendoza', 'jlagraff', 'mtrinh');
 
 $disable_advanced_edit = (in_array($uname, $userPermArr) || in_array('Production', $userGroupsArr)) ? false : true;
 
-$userPermArr = array('dpen', 'kferson', 'mchoe', 'rfriedman', 'jlagraff', 'mtrinh', 'mbyrnes','oefada');
+$userPermArr = array('dpen', 'kferson', 'rfriedman', 'jlagraff', 'mtrinh', 'emendoza', 'oefada');
 if (in_array($uname, $userPermArr) || in_array('Production', $userDetails['groups'])) {
     $disabled = false;
 } else {
@@ -81,7 +81,7 @@ if (in_array($uname, $userPermArr) || in_array('Production', $userDetails['group
 }
 
 // for editing membershipPackagesRemaining
-$userPermArr = array('mchoe', 'kferson', 'jlagraff', 'mtrinh', 'mbyrnes');
+$userPermArr = array('kferson', 'jlagraff', 'mtrinh', 'emendoza');
 $disable_mp = (in_array($uname, $userPermArr) || in_array('Production', $userDetails['groups'])) ? false : true;
 
 ?>
@@ -147,7 +147,7 @@ echo $form->input('retailValueBalance', array('disabled' => $enable_rvc));
 echo $form->input('retailValueFee', array('disabled' => $enable_rvc));
 echo $form->input('totalRevenue', array('disabled' => $disable_advanced_edit, 'label' => 'Total Revenue'));
 echo $form->input('totalRemitted', array('disabled' => $disable_advanced_edit));
-if (in_array($uname, array('kferson', 'jlagraff', 'mtrinh', 'mbyrnes'))) {
+if (in_array($uname, array('kferson', 'jlagraff', 'mtrinh', 'emendoza'))) {
     echo $form->input('cashPaid');
 } else {
     echo $form->input('cashPaid', array('disabled' => true));
