@@ -1201,10 +1201,10 @@ class Client extends AppModel
             $to = "devmail@luxurylink.com";
             $headers .= 'Bcc: oefada@luxurylink.com' . "\r\n";
         } else {
-            $to = "production@@example.com";
+            $to = "production@luxurylink.com";
             $headers .= 'Cc: accounting@luxurylink.com' . "\r\n";
         }
         @mail($to, $subj, $msg, $headers);
-
+        return true;
     }
 }
