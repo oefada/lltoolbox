@@ -282,3 +282,7 @@ $cacheAction = true;
 	Configure::write("Url.FG",$fg_url);
 	Configure::write("UrlS.LL",$ll_urls);
 	Configure::write("UrlS.FG",$fg_urls);
+
+    $abs_path = dirname(__file__);
+    $abs_path = str_replace('/config','/',$abs_path);
+    define('APP_ABSOLUTE_PATH',$abs_path);
