@@ -632,6 +632,24 @@ class LoasController extends AppController
             $this->set('loaPaymentTermIds', $this->Loa->LoaPaymentTerm->find('list'));
 
             $this->set('arrContactsDropDown',$arrContactsDropDown);
+
+            $salesPeople =  $this->Loa->getSalesPeople();
+
+            if (!empty($salesPeople)){
+
+                $salesPeopleAutoComplete =array();
+                $i =0;
+                foreach ($salesPeople as $username=>$fullName){
+
+                    $fullName = str_replace("\r", "", $fullName);
+                    $fullName = str_replace("\n", "", $fullName);
+
+                    $salesPeopleAutoComplete[]= array('value'=>$username,'label'=>addslashes($fullName));
+
+                }
+            }
+
+            $this->set('listSalesPeople',$salesPeopleAutoComplete);
         }
     }
 }

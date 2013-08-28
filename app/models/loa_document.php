@@ -32,8 +32,9 @@ class LoaDocument extends AppModel
             )*/
         );
 
-    public function loaDocumentHowItWorks($membershipTypeId,$paymentTypeId,$hotelName){
-        if (empty($paymentTypeId)){
+    public function includeTextHowItWorks($membershipTypeId,$paymentTermId,$installmentTypeId=null, $hotelName)
+    {
+        if (empty($paymentTermId)){
             return false;
         }
          $arrMembershipTypes = array(
@@ -43,7 +44,7 @@ class LoaDocument extends AppModel
              7,//Total Nights
          );
          if(in_array($membershipTypeId, $arrMembershipTypes)){
-             switch($paymentTypeId){
+             switch($paymentTermId){
                  case(1)://Rev Split
                     $text= "In lieu of a cash fee, Luxury Link will accept a mutually agreed upon package from $hotelName to be sold on the Luxury Link website. Luxury Link will keep x% of the proceeds from the sale of these packages until the membership fee has been satisfied. Proceeds from subsequent sales of this package and any other promotional packages placed on the Luxury Link site shall be remitted directly to the property less the LL transaction fee noted above.";
                  break;
@@ -56,11 +57,19 @@ class LoaDocument extends AppModel
                  case(7)://Standard
                      $text ="In lieu of a cash fee, Luxury Link will accept a mutually agreed upon package from $hotelName to be sold on the Luxury Link website. Luxury Link will keep proceeds from the sale of these packages until the membership fee has been satisfied. Proceeds from subsequent sales of this package and any other promotional packages placed on the Luxury Link site shall be remitted directly to the property less the LL transaction fee noted above.";
                  break;
-                 default:
+                 default://cash-2
+                    $text= "Proceeds from sales of any  promotional packages placed on the Luxury Link site shall be remitted directly to the property less the LL transaction fee noted above.";
                  break;
              }
+             if (isset($installmentTypeId)){
+                  App::import('Model','LoaInstallmentType');
+                  $LoaInstallmentType = new LoaInstallmentType();
+                  $text .= 'The Membership Fee  will be collected in '.strtolower($LoaInstallmentType->getInstallmentTypeById($installmentTypeId)).' installments.';
+             }
+             return $text;
          }
     }
+
 
     public function includeText($strCheckbox)
     {
