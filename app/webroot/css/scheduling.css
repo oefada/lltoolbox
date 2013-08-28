@@ -141,6 +141,10 @@
 
 /*Dutch Auction*/
 .masterRow .oType6 { border-top: 7px solid #c39; }
+
+/*Optimized*/
+.masterRow .oType8 { border-top: 7px solid #ff3333; }
+
 /*
 .masterRow .oType3,
 .masterRow .oType4 {
@@ -172,6 +176,9 @@
 }
 .oKey6 {
 	border: 5px solid #c39;
+}
+.oKey8 {
+    border: 5px solid #ff3333;
 }
 div.module#module-schedulingraphs h1{
 text-align:left;

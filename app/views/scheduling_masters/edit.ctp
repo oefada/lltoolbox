@@ -102,6 +102,7 @@ switch($masterState) {
 		switch($this->data['SchedulingMaster']['offerTypeId']) {
 			case 3:
 			case 4:
+            case 8:
 				$linkTitle = 'Close this Fixed Price Offer';
 				$action = 'closeFixedPriceOffer';
 				break;

@@ -107,9 +107,14 @@ if (!isset($masterState) || $masterState != 1) {
                     <?php if ($package['Format'][0]['formatId'] != 3) { // NOT HOTEL OFFER
                         $isAuctionChecked = ($data['isAuction']) ? 'checked' : '';
                         $isBuyNowChecked = ($data['isBuyNow']) ? 'checked' : '';
+                        $isOptimizedChecked = ($data['isOptimized']) ? 'checked' : '';
                     ?>                        
                     <input value='<?=$pricePoint['PricePoint']['pricePointId'];?>' id="isAuction" type="checkbox" name="data[isAuction]" <?php echo $isAuctionChecked; ?>/> <label for="isAuction">Auction</label><br /><br />
-                    <input value='<?=$pricePoint['PricePoint']['pricePointId'];?>' id="isBuyNow" type="checkbox" name="data[isBuyNow]" <?php echo $isBuyNowChecked; ?>/> <label for="isBuyNow">Buy Now</label>
+                    <input value='<?=$pricePoint['PricePoint']['pricePointId'];?>' id="isBuyNow" type="checkbox" name="data[isBuyNow]" <?php echo $isBuyNowChecked; ?>/> <label for="isBuyNow">Buy Now</label><br /><br />
+                    
+                    <div style="background-color: #ffffaa;">
+                        <input value='<?=$pricePoint['PricePoint']['pricePointId'];?>' id="isOptimized" type="checkbox" name="data[isOptimized]" <?php echo $isOptimizedChecked; ?>/> <label for="isOptimized">Flexed</label>
+                    </div>
                     <?php
                         } else {
                             echo 'Hotel Offer';
@@ -166,6 +171,24 @@ if (!isset($masterState) || $masterState != 1) {
                 <input type='radio' id='suppress-retail' name='data[buyNowOfferTypeId]' value='3' /> <label for='suppress-retail'>Suppress Retail Value</label>
                 <?php if ($package['Package']['isFlexPackage']): ?>
                     <h3>Flex Package Info (Buy Now)</h3>
+                    <table class="flex-info">
+                        <tr>
+                            <th>Range of Nights:</th>
+                            <td><?php echo $package['Package']['flexNumNightsMin']; ?> - <?php echo $package['Package']['flexNumNightsMax']; ?> Nights</td>
+                        </tr>
+                        <tr>
+                            <th>Notes:</th>
+                            <td><?php echo htmlentities($package['Package']['flexNotes']); ?></td>
+                        </tr>
+                    </table>
+                <?php endif; ?>
+            </div>
+
+            <!-- OPTIMIZED OPTIONS -->
+            <div id="optimized-options" style="<?php if (!$data['isOptimized']) echo 'display:none;'; ?>">
+                <h2>Optimized Options</h2>              
+                <?php if ($package['Package']['isFlexPackage']): ?>
+                    <h3>Flex Package Info (Optimized)</h3>
                     <table class="flex-info">
                         <tr>
                             <th>Range of Nights:</th>
@@ -278,17 +301,48 @@ if (!isset($masterState) || $masterState != 1) {
         function respondToClick(event) {
             var element = Event.element(event);
             if (element.identify() == 'isAuction') {
-                Effect.toggle('auction-options', 'appear');            
+                if (element.checked) {
+                    $('auction-options').appear();
+                    $('optimized-options').fade();
+                    $('isOptimized').setValue(false);
+                } else {
+                    $('auction-options').fade();
+                }
             } else if (element.identify() == 'isBuyNow') {
-                Effect.toggle('buynow-options', 'appear');            
+                if (element.checked) {
+                    $('buynow-options').appear();
+                    $('optimized-options').fade();
+                    $('isOptimized').setValue(false);
+                } else {
+                    $('buynow-options').fade();
+                }
             } else if (element.identify() == 'isMystery') {
-                Effect.toggle('mystery-options', 'appear');            
-                        
+                if (element.checked) {
+                    $('mystery-options').appear();
+                    $('optimized-options').fade();
+                    $('isOptimized').setValue(false);
+                } else {
+                    $('mystery-options').fade();
+                }                       
+            } else if (element.identify() == 'isOptimized') {
+
+                if (element.checked) {
+                    $('optimized-options').appear();
+                    $('auction-options').fade();
+                    $('isAuction').setValue(false);
+                    $('buynow-options').fade();
+                    $('isBuyNow').setValue(false);
+                    $('mystery-options').fade();
+                    $('isMystery').setValue(false);
+                } else {
+                    $('optimized-options').fade();
+                }  
             }
         }   
         $('isAuction').observe('change', respondToClick);
         $('isBuyNow').observe('change', respondToClick);
         $('isMystery').observe('change', respondToClick);
+        $('isOptimized').observe('change', respondToClick);
     </script>
     
 <?php

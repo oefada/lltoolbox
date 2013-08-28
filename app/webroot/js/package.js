@@ -627,6 +627,7 @@ function updateRetail(autoFillPercentRetail, autoFillSuggestedFlexPrice, numNigh
             $('#flexSuggestedRetail').val(highestFlex + inclusionTotal);
         }
         $('span#suggestedFlexCalc').html($('#flexSuggestedRetail').val());
+        $('span#suggestedFlexCalcDNG').html($('#flexSuggestedRetail').val());
         if ($('#buynow-percent').val() > 0) {
             var calcPercent = $('#buynow-percent').val();
         }
@@ -634,9 +635,15 @@ function updateRetail(autoFillPercentRetail, autoFillSuggestedFlexPrice, numNigh
             var calcPercent = defaultPercent;
         }
         $('span#suggestedFlexPrice').html(Math.round($('#flexSuggestedRetail').val() * (calcPercent / 100)));
-        if (false && autoFillSuggestedFlexPrice) {
-            //$('input#flexPricePerNight').val(Math.round($('#flexSuggestedRetail').val() * (calcPercent / 100)));
+        
+        if ($('#auction-percent').val() > 0) {
+            var calcPercentDNG = $('#auction-percent').val();
         }
+        else {
+            var calcPercentDNG = defaultPercent;
+        }
+        $('span#suggestedFlexPriceDNG').html(Math.round($('#flexSuggestedRetail').val() * (calcPercentDNG / 100)));        
+        
     }
     if (($('input#pricePointId').val() == undefined) && autoFillPercentRetail) {
         $('#auction-percent').val(defaultPercent);
@@ -670,6 +677,7 @@ function updateValidityDisclaimer(ids) {
 
 function updatePerNightPrice(autoFillFlexPerNightPrice) {
     $('span#suggestedFlexCalc').html($('#flexSuggestedRetail').val());
+    $('span#suggestedFlexCalcDNG').html($('#flexSuggestedRetail').val());
     $('span#suggestedFlexPrice').html(Math.round($('#flexSuggestedRetail').val() * ($('#buynow-percent').val() / 100)));
     if (true || autoFillFlexPerNightPrice) {
 			$('input#flexPricePerNight').val(Math.round($('#flexSuggestedRetail').val() * ($('#buynow-percent').val() / 100)));

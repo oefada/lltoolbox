@@ -1,7 +1,7 @@
 <? $this->layout = 'overlay_form'; ?>
 
 <link href="/css/package.css" type="text/css" rel="stylesheet" />
-<script src="/js/package.js" type="text/javascript"></script>
+<script src="/js/package.js?v=20130821" type="text/javascript"></script>
 <link href="/css/jquery.tooltip.css" type="text/css" rel="stylesheet" />
 <script src="/js/jquery/jquery-tooltip/jquery.tooltip.pack.js" type="text/javascript"></script>
 
@@ -297,6 +297,24 @@
 		<? } ?>
 		</td>
 		</tr>
+
+        <tr style="background-color: #f5f5f5;">
+            <td align="right">Suggested DNG Price/Night = <span id="suggestedFlexCalcDNG"> </span> x .<span class="flexBuyNowCalc"><? echo (isset($pricePoint)) ? $pricePoint['percentRetailAuc'] : ''; ?></span></td>
+            <td align="right"><span id="suggestedFlexPriceDNG" class="price-points-price"></span> <? echo $package['Currency']['currencyCode']; ?></td>
+        </tr>
+        <tr style="background-color: #f5f5f5;">
+            <td align="right" width="80%">
+                DNG Per Night Price<br>
+            </td>
+            <td align="right">
+                <? if (!isset($pricePoint) || !isset($pricePoint['pricePerExtraNightDNG'])){ ?>
+                    <input type="text" size="5" id="flexPricePerNightDNG" name="data[PricePoint][pricePerExtraNightDNG]" value="" />
+                <? } else { ?>
+                    <input type="text" size="5" id="flexPricePerNightDNG" name="data[PricePoint][pricePerExtraNightDNG]" value="<? echo $pricePoint['pricePerExtraNightDNG']; ?>" />
+                <? } ?>
+            </td>
+        </tr>
+
 		</table>
 
 		</div> 
