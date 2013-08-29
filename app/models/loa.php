@@ -354,9 +354,9 @@ class Loa extends AppModel
             )
         );
         $tbl .= "</table><br />\n";
-        $text = 'http://' . $_SERVER['HTTP_HOST'] . '/loas/edit/' . $data['Loa']['loaId'];
+        $link = 'http://' . $_SERVER['HTTP_HOST'] . '/loas/edit/' . $data['Loa']['loaId'];
 
-        $msg = $tbl . $text;
+        $msg = $tbl . '<a href="'.$link.'">'.$link.'</a>';
 
         $headers = 'MIME-Version: 1.0' . "\r\n";
         $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
@@ -369,8 +369,37 @@ class Loa extends AppModel
             $to = "renew@luxurylink.com";
             //$headers .= 'Cc: accounting@luxurylink.com' . "\r\n";
         }
+
         @mail($to, $subj, $msg, $headers);
         return true;
+    }
+    /**
+     * Returns Array of all the people on the sales team from LDAP
+     * The keys are the usernames and the values
+     *
+     */
+    public function getSalesPeople()
+    {
+        Configure::write('debug',0);
+        App::import('Model','LdapUser');
+        $LdapUser = new LdapUser();
+        $groups = $LdapUser->findAll('samaccountname', '*', 'OU=Sales,OU=LuxuryLinkUser,DC=luxurylink,DC=com');
+        //var_dump($groups);
+        if (empty($groups)) {
+            return false;
+        }
+        $salesPeople = array();
+        $exclusionList = array('wtmlondon','gmine');
+        foreach ($groups as $k => $user) {
+
+            if ($user['LdapUser']['objectclass'][1] == 'person'){
+
+                if (!(in_array($user['LdapUser']['samaccountname'], $exclusionList))) {
+                    $salesPeople[$user['LdapUser']['samaccountname']] = $user['LdapUser']['name'];
+                }
+            }
+        }
+        return $salesPeople;
     }
 
 }
