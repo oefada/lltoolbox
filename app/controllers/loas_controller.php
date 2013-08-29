@@ -392,23 +392,30 @@ class LoasController extends AppController
         }
 
         if (!empty($this->data)) {
+
+            $client = $this->Loa->Client->findByClientId($this->data['Loa']['clientId']);
+            $this->data['Client'] = $client['Client'];
+
             if (is_array($this->data['Loa']['checkboxes'])){
                 $this->data['Loa']['checkboxes'] = implode(",", $this->data['Loa']['checkboxes']);
             }
+
             $this->data['Loa']['modifiedBy'] = $this->user['LdapUser']['username'];
+
+            if (empty($this->data['Loa']['sites'])) {
             $loa = $this->Loa->find($this->data['Loa']['loaId']);
             $this->data['Client'] = $loa['Client'];
-
-            if (empty($this->data['Loa']['sites'])){
                 $this->Session->setFlash(__('You must select at least one site to save this LOA.', true));
             }elseif ($this->Loa->save($this->data)){
-
                 if ($this->data['Loa']['loaLevelId_prev'] !== $this->data['Loa']['loaLevelId']){
-                    $this->Loa->changeEmail($this->data,'Loa Submission');
+                    //LOA level has changed
+                    if(4 == $this->data['Loa']['loaLevelId']){
+                        //4- Agreement
+                        $this->Loa->changeEmail($this->data,'Loa Submission');
+                    }
                 }
                 $this->Session->setFlash(__('The Loa has been saved', true));
                 $this->redirect(array('action' => 'edit', $this->data['Loa']['loaId']));
-
             } else {
                 $loa = $this->Loa->find($this->data['Loa']['loaId']);
                 $this->data['Client'] = $loa['Client'];
@@ -467,6 +474,7 @@ class LoasController extends AppController
             )
         );
         $client = $this->Loa->Client->findByClientId($this->data['Loa']['clientId']);
+
         $checkboxValuesSelectedArr = array();
         foreach ($client['Loa'] as $key => $arr) {
             if ($arr['loaId'] == $id) {
