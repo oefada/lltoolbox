@@ -270,7 +270,8 @@
 
 		<table style="width:90%">
 		<tr>
-		<td align="right" width="80%">Flex Per Night Retail</td>
+        <td align="right" width="80%">Flex Per Night Retail
+        <br />(Click to <a href='javascript:void(0);' onclick="updatePerNightPrice(true);">calculate</a>)</td>
 		<td align="right">
 		<?
 		if (!isset($pricePoint) || empty($pricePoint['flexRetailPricePerNight'])){ ?>
@@ -280,15 +281,30 @@
 		<? } ?>
 		</td>
 		</tr>
+        
+        <tr style="background-color: #f5f5f5;">
+            <td align="right">Suggested Auction Flex Price/Night = <span id="suggestedFlexCalcDNG"> </span> x .<span class="flexDNGCalc"><? echo (isset($pricePoint)) ? $pricePoint['percentRetailAuc'] : ''; ?></span></td>
+            <td align="right"><span id="suggestedFlexPriceDNG" class="price-points-price"></span> <? echo $package['Currency']['currencyCode']; ?></td>
+        </tr>
+        <tr style="background-color: #f5f5f5;">
+            <td align="right" width="80%">
+                Auction Flex Per Night Price<br>
+            </td>
+            <td align="right">
+                <? if (!isset($pricePoint) || !isset($pricePoint['pricePerExtraNightDNG'])){ ?>
+                    <input type="text" size="5" id="flexPricePerNightDNG" name="data[PricePoint][pricePerExtraNightDNG]" value="" />
+                <? } else { ?>
+                    <input type="text" size="5" id="flexPricePerNightDNG" name="data[PricePoint][pricePerExtraNightDNG]" value="<? echo $pricePoint['pricePerExtraNightDNG']; ?>" />
+                <? } ?>
+            </td>
+        </tr> 
+        
 		<tr>
 		<td align="right">Suggested Flex Price/Night = <span id="suggestedFlexCalc"> </span> x .<span class="flexBuyNowCalc"><? echo (isset($pricePoint)) ? $pricePoint['percentRetailBuyNow'] : ''; ?></span></td>
 		<td align="right"><span id="suggestedFlexPrice" class="price-points-price"></span> <? echo $package['Currency']['currencyCode']; ?></td>
 		</tr>
 		<tr>
-		<td align="right" width="80%">
-		Flex Per Night Price<br>
-		(Click to <a href='javascript:void(0);' onclick="updatePerNightPrice(true);">calculate</a>)
-		</td>
+		<td align="right" width="80%">Flex Per Night Price</td>
 		<td align="right">
 		<? if (!isset($pricePoint) || empty($pricePoint['pricePerExtraNight'])){ ?>
 			<input type="text" size="5" id="flexPricePerNight" name="data[PricePoint][pricePerExtraNight]" value="0" />
@@ -298,22 +314,7 @@
 		</td>
 		</tr>
 
-        <tr style="background-color: #f5f5f5;">
-            <td align="right">Suggested DNG Price/Night = <span id="suggestedFlexCalcDNG"> </span> x .<span class="flexBuyNowCalc"><? echo (isset($pricePoint)) ? $pricePoint['percentRetailAuc'] : ''; ?></span></td>
-            <td align="right"><span id="suggestedFlexPriceDNG" class="price-points-price"></span> <? echo $package['Currency']['currencyCode']; ?></td>
-        </tr>
-        <tr style="background-color: #f5f5f5;">
-            <td align="right" width="80%">
-                DNG Per Night Price<br>
-            </td>
-            <td align="right">
-                <? if (!isset($pricePoint) || !isset($pricePoint['pricePerExtraNightDNG'])){ ?>
-                    <input type="text" size="5" id="flexPricePerNightDNG" name="data[PricePoint][pricePerExtraNightDNG]" value="" />
-                <? } else { ?>
-                    <input type="text" size="5" id="flexPricePerNightDNG" name="data[PricePoint][pricePerExtraNightDNG]" value="<? echo $pricePoint['pricePerExtraNightDNG']; ?>" />
-                <? } ?>
-            </td>
-        </tr>
+
 
 		</table>
 
@@ -367,28 +368,19 @@ $('#isFlexPackage, #auction-percent, #buynow-percent').change(function() {
     //var autoFillFlexPerNightPrice = true;
     var flexPercentRetail = ($('#flexPricePerNight').val() / $('#flexSuggestedRetail').val()) * 100;
     var oldBuyNowPercent = $('.flexBuyNowCalc').text();
-    if (flexPercentRetail != oldBuyNowPercent && oldBuyNowPercent > 0) {
-        //autoFillFlexPerNightPrice = false;
-    }
-
-		// require admin to click link to calculate flex per night price
-		// this enables admin to manually enter the price if they want 
+    
+	// require admin to click link to calculate flex per night price
+	// this enables admin to manually enter the price if they want 
     var autoFillFlexPerNightPrice = false;
-
-    //updateRetail(false, autoFillFlexPerNightPrice, <? echo $package['Package']['numNights']; ?>, '<?php echo $ratePeriods[0]['currencyCode']; ?>', isMultiClientPackage, <?php echo $package['Package']['isFlexPackage']; ?>);
+   
     updateRetail(false, autoFillFlexPerNightPrice, <? echo $package['Package']['numNights']; ?>, '<?php echo $ratePeriods[0]['currencyCode']; ?>', isMultiClientPackage, 1);
     $('.flexBuyNowCalc').html($('#buynow-percent').val());
-    //updatePerNightPrice(autoFillFlexPerNightPrice);
+    $('.flexDNGCalc').html($('#auction-percent').val());
 });
 
 $('.check-rate-period').change(function() {
     $('#flexSuggestedRetail').val('0');
-    //updateRetail(true, true, <? echo $package['Package']['numNights']; ?>, '<?php echo $ratePeriods[0]['currencyCode']; ?>', isMultiClientPackage, <?php echo $package['Package']['isFlexPackage']; ?>);
     updateRetail(true, true, <? echo $package['Package']['numNights']; ?>, '<?php echo $ratePeriods[0]['currencyCode']; ?>', isMultiClientPackage, 1);
-});
-
-$('input#flexSuggestedRetail').change(function() {
-    //updatePerNightPrice(true);
 });
 
 </script>

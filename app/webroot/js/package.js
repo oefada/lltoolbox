@@ -678,10 +678,15 @@ function updateValidityDisclaimer(ids) {
 function updatePerNightPrice(autoFillFlexPerNightPrice) {
     $('span#suggestedFlexCalc').html($('#flexSuggestedRetail').val());
     $('span#suggestedFlexCalcDNG').html($('#flexSuggestedRetail').val());
-    $('span#suggestedFlexPrice').html(Math.round($('#flexSuggestedRetail').val() * ($('#buynow-percent').val() / 100)));
-    if (true || autoFillFlexPerNightPrice) {
-			$('input#flexPricePerNight').val(Math.round($('#flexSuggestedRetail').val() * ($('#buynow-percent').val() / 100)));
-    }
+    
+    var buynowPrice = Math.round($('#flexSuggestedRetail').val() * ($('#buynow-percent').val() / 100));
+    $('span#suggestedFlexPrice').html(buynowPrice);
+	$('input#flexPricePerNight').val(buynowPrice);
+
+    var auctionPrice = Math.round($('#flexSuggestedRetail').val() * ($('#auction-percent').val() / 100));
+    $('span#suggestedFlexPriceDNG').html(auctionPrice);
+	$('input#flexPricePerNightDNG').val(auctionPrice);
+
 }
 
 function closeForm(anchor) {

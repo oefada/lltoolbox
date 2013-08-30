@@ -28,7 +28,8 @@ if (!isset($masterState) || $masterState != 1) {
 				<th>% of <br />Retail<br />(Buy Now)</th>
 				<?php if ($package['Package']['isFlexPackage']): ?>
 					<th>Retail Price/<br />Extra Night</th>
-					<th>Price/<br />Extra Night</th>
+                    <th>Auction/<br />Extra Night</th>
+                    <th>Buy Now/<br />Extra Night</th>
 				<?php endif; ?>
 			</tr>
 		<?php
@@ -59,8 +60,11 @@ if (!isset($masterState) || $masterState != 1) {
 			</td>
 			<?php if ($package['Package']['isFlexPackage']): ?>
 				<td><?php echo $pricePoint['PricePoint']['flexRetailPricePerNight']; ?></td>
+                <td><?php echo $pricePoint['PricePoint']['pricePerExtraNightDNG']; ?>
+                <span>(<?php echo (round($pricePoint['PricePoint']['pricePerExtraNightDNG'] / $pricePoint['PricePoint']['flexRetailPricePerNight'], 2) * 100); ?>%)</span>
+                </td>
 				<td><?php echo $pricePoint['PricePoint']['pricePerExtraNight']; ?>
-				<span>(<?php echo (round($pricePoint['PricePoint']['pricePerExtraNight'] / $pricePoint['PricePoint']['flexRetailPricePerNight'], 2) * 100); ?>% of retail)</span>
+				<span>(<?php echo (round($pricePoint['PricePoint']['pricePerExtraNight'] / $pricePoint['PricePoint']['flexRetailPricePerNight'], 2) * 100); ?>%)</span>
 				</td>
 			<?php endif; ?>
 			</tr>
@@ -113,7 +117,7 @@ if (!isset($masterState) || $masterState != 1) {
                     <input value='<?=$pricePoint['PricePoint']['pricePointId'];?>' id="isBuyNow" type="checkbox" name="data[isBuyNow]" <?php echo $isBuyNowChecked; ?>/> <label for="isBuyNow">Buy Now</label><br /><br />
                     
                     <div style="background-color: #ffffaa;">
-                        <input value='<?=$pricePoint['PricePoint']['pricePointId'];?>' id="isOptimized" type="checkbox" name="data[isOptimized]" <?php echo $isOptimizedChecked; ?>/> <label for="isOptimized">Flexed</label>
+                        <input value='<?=$pricePoint['PricePoint']['pricePointId'];?>' id="isOptimized" type="checkbox" name="data[isOptimized]" <?php echo $isOptimizedChecked; ?>/> <label for="isOptimized">NEW!!!</label>
                     </div>
                     <?php
                         } else {
@@ -162,13 +166,16 @@ if (!isset($masterState) || $masterState != 1) {
                         </td>
                     </tr>
                 </table>
+                
+                <input type="checkbox" id="isMystery" name="data[MerchandisingFlag][MerchandisingFlag]" value="3"/> <b>Mystery Auction</b>
+                
             </div>
             
             <!-- BUY NOW OPTIONS -->
             <div id="buynow-options" style="<?php if (!$data['isBuyNow']) echo 'display:none;'; ?>">
                 <h2>Buy Now Options</h2>
-                <input type='radio' id='bonus-miles' name='data[buyNowOfferTypeId]' value='4' checked="checked" /> <label for='bonus-miles'>Includes Bonus Miles</label><br/>
-                <input type='radio' id='suppress-retail' name='data[buyNowOfferTypeId]' value='3' /> <label for='suppress-retail'>Suppress Retail Value</label>
+                <input type='radio' id='bonus-miles' name='data[buyNowOfferTypeId]' value='4' checked="checked" /> <label for='bonus-miles'>Includes Bonus Miles (type 4)</label><br/>
+                <input type='radio' id='suppress-retail' name='data[buyNowOfferTypeId]' value='3' /> <label for='suppress-retail'>Suppress Retail Value (type 3)</label>
                 <?php if ($package['Package']['isFlexPackage']): ?>
                     <h3>Flex Package Info (Buy Now)</h3>
                     <table class="flex-info">
@@ -186,9 +193,9 @@ if (!isset($masterState) || $masterState != 1) {
 
             <!-- OPTIMIZED OPTIONS -->
             <div id="optimized-options" style="<?php if (!$data['isOptimized']) echo 'display:none;'; ?>">
-                <h2>Optimized Options</h2>              
+                <h2>NEW!!! Options</h2>              
                 <?php if ($package['Package']['isFlexPackage']): ?>
-                    <h3>Flex Package Info (Optimized)</h3>
+                    <h3>Flex Package Info (NEW!!!)</h3>
                     <table class="flex-info">
                         <tr>
                             <th>Range of Nights:</th>
@@ -203,8 +210,6 @@ if (!isset($masterState) || $masterState != 1) {
             </div>
         
         <?php } ?>
-        
-        <input type="checkbox" id="isMystery" name="data[MerchandisingFlag][MerchandisingFlag]" value="3"/> <b>Mystery Auction</b>
         
         <!-- MYSTERY AUCTIONS -->
         <div id="mystery-options" style="padding:0px; margin:0px; <?php if (!$data['isAuction']) echo 'display:none;'; ?>">
