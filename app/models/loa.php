@@ -366,7 +366,8 @@ class Loa extends AppModel
             $to = "devmail@luxurylink.com";
             $headers .= 'Bcc: oefada@luxurylink.com' . "\r\n";
         } else {
-            $to = "renew@luxurylink.com";
+            //$to = "renew@luxurylink.com";
+            $to = "dreiss@luxurylink.com";
             //$headers .= 'Cc: accounting@luxurylink.com' . "\r\n";
         }
 
