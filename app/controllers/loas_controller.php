@@ -543,12 +543,43 @@ class LoasController extends AppController
         echo $notesSaved['Loa']['notes'];
     }
 
-    public function prepdocument($id)
+    public function prepdocument($id,$clientId)
     {
-        //$this->layout = 'ajax';
-        //$this->layout = false;
-        Configure::write('debug',1);
+     Configure::write('debug',0);
 
+        if (!isset($id,$clientId)) {
+            $this->Session->setFlash(__('You must select a valid LOA', true));
+
+        }
+
+        $client = $this->Loa->Client->findByClientId($clientId);
+
+        $arrContactsDropdown =array();
+        if (isset($client['ClientContact'])){
+            foreach ($client['ClientContact'] as $cKey=>$cVal){
+                $arrContactsDropDown[$cVal['name']]=$cVal['name'];
+            }
+        }
+        $this->set('loaId', $id);
+        $this->set('clientId', $clientId);
+        $this->set('client', $client);
+        $this->set('arrContactsDropDown',$arrContactsDropDown);
+
+        $salesPeople =  $this->Loa->getSalesPeople();
+
+        if (!empty($salesPeople)){
+            $salesPeopleAutoComplete =array();
+            $i =0;
+            foreach ($salesPeople as $username=>$fullName){
+                $fullName = str_replace("\r", "", $fullName);
+                $fullName = str_replace("\n", "", $fullName);
+                $salesPeopleAutoComplete[]= array('value'=>$username,'label'=>addslashes($fullName));
+            }
+        }
+
+        $this->set('listSalesPeople',$salesPeopleAutoComplete);
+
+/*
         if (empty($id)) {
             $this->Session->setFlash(__('You must select a valid LOA', true));
 
@@ -574,12 +605,8 @@ class LoasController extends AppController
                     usort($this->data['LoaItem'], array($this, 'sortLoaItemsByType'));
                 }
             }
-            $currencyIds = $this->Loa->Currency->find('list');
-            $loaLevelIds = $this->Loa->LoaLevel->find('list', array('order' => array('LoaLevel.dropdownSortOrder')));
-            $loaMembershipTypeIds = $this->Loa->LoaMembershipType->find('list');
             $this->Loa->LoaPublishingStatusRel->PublishingStatus->recursive = -1;
-            $publishingStatus = $this->Loa->LoaPublishingStatusRel->PublishingStatus->find('list');
-            $accountTypeIds = $this->Loa->AccountType->find('list');
+
             $completedStatusLL = array();
             $completedStatusFG = array();
             if (!empty($this->data['LoaPublishingStatusRel'])) {
@@ -591,30 +618,11 @@ class LoasController extends AppController
                     }
                 }
             }
-            // get Renewal Result Options
-            $loaTextResult = $this->LoaText->getLoaText(1);
-            foreach ($loaTextResult as $loaText) {
-                $renewalResultOptions[$loaText['loaText']['loaTextId']] = $loaText['loaText']['loaText'];
-            }
-
-            // get non Renewal Reason Options
-            $nonRenewalReasonOptionsResult = $this->LoaText->getLoaText(2);
-            foreach ($nonRenewalReasonOptionsResult as $loaText) {
-                $nonRenewalReasonOptions[$loaText['loaText']['loaTextId']] = $loaText['loaText']['loaText'];
-            }
-
-            $this->set('renewalResultOptions', $renewalResultOptions);
-            $this->set('nonRenewalReasonOptions', $nonRenewalReasonOptions);
 
             $this->set(
                 compact(
-                    'currencyIds',
-                    'loaLevelIds',
-                    'loaMembershipTypeIds',
-                    'publishingStatus',
                     'completedStatusLL',
-                    'completedStatusFG',
-                    'accountTypeIds'
+                    'completedStatusFG'
                 )
             );
             $client = $this->Loa->Client->findByClientId($this->data['Loa']['clientId']);
@@ -634,12 +642,10 @@ class LoasController extends AppController
             }
             $this->set('client', $client);
             $this->set('clientId', $this->data['Loa']['clientId']);
-            $this->set('currencyCodes', $this->Loa->Currency->find('list', array('fields' => array('currencyCode'))));
-            $this->set('checkboxValuesArr', $this->getCheckboxValuesArr());
+           // $this->set('checkboxValuesArr', $this->getCheckboxValuesArr());
             $this->set('checkboxValuesSelectedArr', $checkboxValuesSelectedArr);
-            $this->set('loaPaymentTermIds', $this->Loa->LoaPaymentTerm->find('list'));
-
             $this->set('arrContactsDropDown',$arrContactsDropDown);
+
 
             $salesPeople =  $this->Loa->getSalesPeople();
 
@@ -658,6 +664,6 @@ class LoasController extends AppController
             }
 
             $this->set('listSalesPeople',$salesPeopleAutoComplete);
-        }
+        }*/
     }
 }
