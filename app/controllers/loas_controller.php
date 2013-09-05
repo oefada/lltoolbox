@@ -545,6 +545,7 @@ class LoasController extends AppController
 
     public function prepdocument($id,$clientId)
     {
+        //$this->layout= 'overlay_form';
      Configure::write('debug',0);
 
         if (!isset($id,$clientId)) {
