@@ -53,6 +53,8 @@ class AppController extends Controller
             Configure::write('debug', '0');
         }
 
+        $this->RequestHandler->setContent('json', 'text/x-json');
+
         if ($this->RequestHandler->prefers('pdf') || $this->RequestHandler->prefers('doc')) {
             error_reporting(E_ERROR);
             Configure::write('debug', '0');
@@ -104,7 +106,6 @@ class AppController extends Controller
         } else {
             $ip = $_SERVER['REMOTE_ADDR'];
         }
-
         return $ip;
     }
 
