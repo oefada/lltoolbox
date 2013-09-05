@@ -1,20 +1,74 @@
-<?
+ <?
 $loa = $this->data;
 //$this->searchController = 'Clients';
-
+ echo $html->css('pepper-grinder/jquery-ui-1.7.2.custom');
 ?>
 <style type="text/css">
  /*.required{*/
      /*background-color:#FF0000;*/
      /*color:#FFF;*/
  /*}*/
+        /* workarounds */
+    html .ui-autocomplete { width:1px; } /* without this, the menu expands to 100% in IE6 */
+    .ui-menu {
+        list-style:none;
+        padding: 2px;
+        margin: 0;
+        display:block;
+        float: left;
+    }
+    .ui-menu .ui-menu {
+        margin-top: -3px;
+    }
+    .ui-menu .ui-menu-item {
+        margin:0;
+        padding: 0;
+        zoom: 1;
+        float: left;
+        clear: left;
+        width: 100%;
+    }
+    .ui-menu .ui-menu-item a {
+        text-decoration:none;
+        display:block;
+        padding:.2em .4em;
+        line-height:1.5;
+        zoom:1;
+    }
+    .ui-menu .ui-menu-item a.ui-state-hover,
+    .ui-menu .ui-menu-item a.ui-state-active {
+        font-weight: normal;
+        margin: -1px;
+    }
+    .ui-menu .ui-menu-item a.ui-state-focus {
+        color:#007ED1;
+        border:1px dashed #CCC;
+        background-image: none;
+        background-color: #FFFFFF;
+        background: -moz-linear-gradient(top,  #d7d6d2,  #ffffff);
+        background-image: linear-gradient(top,  #d7d6d2,  #ffffff);
+        background-image: -o-linear-gradient(top,  #d7d6d2,  #ffffff);
+        background-image: -moz-linear-gradient(top,  #d7d6d2,  #ffffff);
+        background-image: -webkit-linear-gradient(top,  #d7d6d2,  #ffffff);
+        background-image: -ms-linear-gradient(top,  #d7d6d2,  #ffffff);
+    }
 </style>
 <fieldset>
 <!--    <legend class="handle">Generate LOA Document</legend>-->
 
 <?
 if (isset($client['ClientContact'])){
-    echo $ajax->form('save_document','post',array('url' => $this->webroot."/loaDocuments/save_document/", 'update' => 'save_result', 'model' => 'loaDocument', 'complete' => 'window.loaDoc.listById('.$loa['Loa']['loaId'].')'));
+    echo $ajax->form(
+        'save_document',
+        'post',
+        array(
+            'url' => $this->webroot . "/loaDocuments/save_document/",
+            'update' => 'save_result',
+            'loading' => 'window.loaDoc.save_doc_loading()',
+            'model' => 'loaDocument',
+            'complete' => 'window.loaDoc.save_doc_complete()'
+        )
+    );
     echo $form->input(
         'LoaDocument.docDate',
         array(
@@ -24,26 +78,30 @@ if (isset($client['ClientContact'])){
             'timeFormat' => ''
         )
     );
-    echo $form->input('LoaDocument.signerName',array('label'=>'Rep Full Name: ','value'=>$loa['Client']['managerUsername']));
-    echo $form->input('LoaDocument.signerTitle',array('label'=>'Rep Title'));
+    //echo '<div class="ui-widget">';
+    echo $form->input('LoaDocument.signerName',array('label'=>'Rep Full Name: ','value'=>$userDetails['name']));
+    //echo '</div>';
+    echo $form->input('LoaDocument.signerTitle',array('label'=>'Rep Title','value'=>ucwords($userDetails['description'])));
     echo $form->input('LoaDocument.contactName', array('type' => 'select', 'options' => $arrContactsDropDown));
-    echo $form->hidden('LoaDocument.loaId',array('value'=>$loa['Loa']['loaId']));
-    echo $form->hidden('LoaDocument.clientId',array('value'=>$loa['Loa']['clientId']));
+    echo $form->hidden('LoaDocument.loaId',array('value'=>$loaId));
+    echo $form->hidden('LoaDocument.clientId',array('value'=>$clientId));
     echo $form->submit('Generate Agreement');
 }
 ?>
 </fieldset>
-<div class="save_result"></div>
+
+
+ <div class="loading_save" style="display:none;font-size:10px;text-align: center;"><img src="/img/spinner.gif"><br />processing...</div>
 <div id="save_result"></div>
-<?
 
-$loa_pdf_html =  $this->element("loa_pdf", array("loa" => $loa, "client" => $client));
+ <script type="text/javascript">
 
-?>
+
+</script>
 <h3>Previous Versions of Current LOA</h3>
-   <div class="previousVersions">
+   <div class="previousVersions" style="overflow-y: scroll; height:180px;">
    </div>
-<div class="reloadPrevious" style="font-size:80%;padding:0 0 5px 18px;display:block;background:url('<?=$this->webroot.'img/icons/reload-icon16x16.png';?>') top left no-repeat;" onclick="loaDoc.listById(<?=$loa['Loa']['loaId'];?>)">Reload</div>
+<div class="reloadPrevious" style="font-size:80%;padding:0 0 5px 18px;display:block;background:url('<?=$this->webroot.'img/icons/reload-icon16x16.png';?>') top left no-repeat;" onclick="loaDoc.listById(<?=$loaId;?>)">Reload</div>
 <br />
 <script type="text/javascript">
 
@@ -55,11 +113,11 @@ $loa_pdf_html =  $this->element("loa_pdf", array("loa" => $loa, "client" => $cli
             (function($) {
                //show spinner
                 $(".previousVersions").empty();
-                $(".previousVersions").html('<img src="/img/spinner.gif" class="spinner-docList">');
+                $(".previousVersions").html('<img src="/img/ajax-loader2.gif" class="spinner-docList">');
             $.ajax({
                 type: "POST",
                 //same domain, do as html, jspo p not needed
-                url: "<?php echo $this->webroot; ?>loaDocuments/listall/"+loaId+"",
+                url: "<?php echo $this->webroot; ?>loaDocuments/listall/"+loaId+"?"+Math.random()*100000000,
                 //dataType: 'jsonp',
                 success: function(data, textStatus) {
                     //add html response
@@ -71,7 +129,7 @@ $loa_pdf_html =  $this->element("loa_pdf", array("loa" => $loa, "client" => $cli
                 }
             });
             })(jQuery);
-        }
+        };
         publics.createLoa = function(){
             (function($) {
                 var dataToSend = {
@@ -96,12 +154,63 @@ $loa_pdf_html =  $this->element("loa_pdf", array("loa" => $loa, "client" => $cli
                     }
                 });
             })(jQuery);
-        }
+        };
+        publics.availableTags =<?= json_encode($listSalesPeople)?>
+
+            publics.hidDiv = function (mydiv) {
+                (function ($) {
+                    $(mydiv).hide();
+                })(jQuery);
+            };
+        publics.save_doc_loading = function () {
+            (function ($) {
+                //empty previous results
+                $('#save_result').empty();
+                //show ajax loader
+                $('.loading_save').show();
+            })(jQuery);
+        };
+        publics.save_doc_complete = function () {
+            (function ($) {
+                $('.loading_save').hide();
+                //load previous docs
+                window.loaDoc.listById(<?=$loaId;?>);
+            })(jQuery);
+        };
         // Return our public symbols
         return publics;
     })();
 
-   // window.loaDoc.listById(<?=$loa['Loa']['loaId'];?>);
+    (function($) {
+        $(document).ready(function(){
+            //var fakedata = ['test1','test2','test3','test4','ietsanders'];
+            $( "#LoaDocumentSignerName").autocomplete({
+                minLength: 0,
+                //source: window.loaDoc.availableTags,
+                source: function(request, response){
+                    var matcher = new RegExp( $.ui.autocomplete.escapeRegex( request.term ), "i" );
+                    response( $.grep(window.loaDoc.availableTags, function( value ) {
+                        return matcher.test(value.label) || matcher.test(value.value);
+                    }) );
+                },
+                /*focus: function( event, ui ) {
+                    $( "#LoaDocumentSignerName" ).val( ui.item.label );
+                    return false;
+                },*/
+                 select: function( event, ui ) {
+                     $( "#LoaDocumentSignerName" ).val( ui.item.label );
+                     return false;
+                 }
+
+            })
+            .data( "ui-autocomplete" )._renderItem = function( ul, item ) {
+                return $( "<li>" )
+                    .append( "<a style='font-size:90%;'>" + item.label + "<br>(" + item.value + ")</a>" )
+                    .appendTo( ul );
+            };
+        });
+    })(jQuery);
+    window.loaDoc.listById(<?=$loaId;?>);
 </script>
 
 
