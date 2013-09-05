@@ -19,7 +19,7 @@
     &nbsp;
 </p>
 
-<p><?=date('F d, Y', strtotime($loa['LoaDocument']['docDate']['year'].'-'.$loa['LoaDocument']['docDate']['month'].'-'.$loa['LoaDocument']['docDate']['day']));?></p>
+<p><?=date('F d, Y', strtotime($loa['LoaDocument']['docDate']));?></p>
 
 <h3><strong>Partnership Program Overview for <?=$loa['Client']['companyName'];?></strong>
 </h3>
@@ -65,6 +65,7 @@
         </ul></p>
     </li>
     <li><strong>Social Media Suite</strong>
+        <? if(in_array(trim($loa['Client']['segment']),array('A','M'))){ ?>
         <ul>
             <li>Launch Week Introduction
                 <ul><li>Inclusion in “New Properties” photo gallery on Facebook and LL Lounge</li></ul>
@@ -82,6 +83,23 @@
             <li>Additional exposure via Family Getaway and Vacationist social media channels, if applicable
             </li>
         </ul>
+        <? }else{?>
+            <ul>
+                <li>Launch Week Introduction -Inclusion in “New Properties” photo gallery on Facebook and LL Lounge
+                </li>
+                <li>General Manager interview posted on your property Showcase Page
+                </li>
+                <li>Inclusion of photo on appropriate LLTG Pinterest board
+                </li>
+                <li>2 property-exclusive Twitter posts
+                </li>
+                <li>Potential inclusion in LLTG social media features (e.g. destination/lifestyle- specific posts)
+                </li>
+                <li>Additional exposure via Family Getaway and Vacationist social media channels, if applicable
+                </li>
+            </ul>
+
+        <?}?>
     </li>
     <li><p><strong>Private Sale </strong>
             – <?=$loa['Client']['companyName'];?> is entitled to a minimum of one (1) sale on <strong>Vacationist.com</strong>. Subject to Vacationist pricing guidelines and
@@ -96,17 +114,17 @@
     <li><p><strong>Additonal Marketing</strong>
 
       <}?>
-            <? if(isset($loa['Loa']['moneyBackGuarantee'])){?>– A dedicated Senior Account Manager will be assigned to <?=$loa['Client']['companyName'];?> to ensure your program is optimized throughout your term. <?=$loa['Client']['companyName'];?> will receive detailed monthly marketing and customer acquisition reports.
+            <? if(!empty($loa['Loa']['moneyBackGuarantee'])){?>– A dedicated Senior Account Manager will be assigned to <?=$loa['Client']['companyName'];?> to ensure your program is optimized throughout your term. <?=$loa['Client']['companyName'];?> will receive detailed monthly marketing and customer acquisition reports.
 
             <? } ?>
         </p>
     </li>
 
-    <? if(isset($loa['Loa']['notes'])){?>
-    <li><p><strong>Special Terms</strong>
+    <? if(!empty($loa['Loa']['notes'])){?>
+    <? if (!empty($loa['Loa']['notes'])){?><li><p><strong>Special Terms</strong>
             <?=$loa['Loa']['notes'];?>
         </p>
-    </li>
+    </li><?}?>
     <? }?>
 </ol>
 <p><u><strong>Fees</strong></u>
@@ -122,8 +140,8 @@
     </tr>
     <tr>
         <td><strong>Promotional Packages Sales Commission</strong></td>
-        <td><? if (isset($loa['Loa']['auctionCommissionPerc'])){?>Auctions: <?=$loa['Loa']['auctionCommissionPerc'];?>%<br /><? } ?>
-            <? if (isset($loa['Loa']['buynowCommissionPerc'])){?>Buy Now: <?=$loa['Loa']['buynowCommissionPerc'];?>%<br /><? } ?>
+        <td><? if (!empty($loa['Loa']['auctionCommissionPerc'])){?>Auctions: <?=$loa['Loa']['auctionCommissionPerc'];?>%<? } ?>
+        <? if (!empty($loa['Loa']['buynowCommissionPerc'])){?><br />Buy Now: <?=$loa['Loa']['buynowCommissionPerc'];?>%<br /><? } ?>
         </td>
     </tr>
     <tr>
@@ -133,10 +151,8 @@
 </table>
 
 <!--variable text BEGIN-->
-<p><u>How Luxury Link barter works</u>
-    : In lieu of a cash fee, Luxury Link will accept a mutually agreed upon package from <?=$loa['Client']['companyName'];?> to be sold on the Luxury Link web site. Luxury Link
-    will keep proceeds from the sale of these packages until the membership fee has been satisfied. Proceeds from the subsequent sales of this package and any
-    other promotional packages placed on the Luxury Link site shall be remitted directly to the property less the LL transaction fee noted above.
+<p><u>How it Works</u>
+    <?=$loa['howText'];?>
 </p>
 
 <!--variable text END-->
