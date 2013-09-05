@@ -23,7 +23,8 @@ class HttprequestHelper extends AppHelper {
 
     public function check_response($url, $timeout = 10) {
         if (
-            empty($url)
+            empty($url) ||
+            !$this->isValidUrl($url)
         ){
             return FALSE;
         }
@@ -37,8 +38,10 @@ class HttprequestHelper extends AppHelper {
           CURLOPT_TIMEOUT => $timeout,
           CURLOPT_USERAGENT => "page-check/1.0"
         ));
+
       // Execute request
         curl_exec($ch);
+
       // Check if an error occurred
         if(curl_errno($ch)) {
           curl_close($ch);
