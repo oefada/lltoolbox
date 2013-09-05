@@ -216,7 +216,8 @@ class WebServiceNewClientsController extends WebServicesController
 		    	$newClientContact['name']					= $contact['contact_name'];
 		    	$newClientContact['emailAddress']			= $contact['email_address'];
 		    	$newClientContact['phone']					= $contact['phone_work'];
-		    	$newClientContact['fax']					= $contact['phone_fax'];
+                $newClientContact['title']					= $contact['title'];
+                $newClientContact['fax']					= $contact['phone_fax'];
 		    	$newClientContact['sugarContactId']			= $contact_id;
 
 		    	if (in_array($recipient_type, $reservationContacts)) {
