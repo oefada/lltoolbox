@@ -13,7 +13,6 @@ class LoaDocumentsController extends AppController
         'ConnectorLog'
     );
     public $components = array('RequestHandler');
-
     public function beforeFilter()
     {
         parent::beforeFilter();
@@ -249,7 +248,6 @@ class LoaDocumentsController extends AppController
                 $docId = $this->LoaDocument->getLastInsertId();
 
                 if ('json' !== $mode) {
-
                     $downloadUrl = $prefix . $hostName . $this->webroot . $this->params['controller'] . '/download/' . $this->data['LoaDocument']['loaId'] . '/' . $docId;
                     $result = 'Document Generated! Please download Here.<br />' . '<a href="' . $downloadUrl . '" target="_blank">' . $downloadUrl . '</a>';
                     $this->Session->setFlash(__($result, true), 'default', array(), 'success');
@@ -297,11 +295,10 @@ class LoaDocumentsController extends AppController
                     $this->ConnectorLog->setParam('errorMsg', print_r($errors, true));
                 }
             }
+            $this->ConnectorLog->execute();
         }
-        $this->ConnectorLog->execute();
         $this->set('mode', $mode);
         //$this->set('client', $client);
         $this->set('results', $result);
-
     }
 }

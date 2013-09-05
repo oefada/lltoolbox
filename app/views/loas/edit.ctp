@@ -6,6 +6,14 @@ echo $this->element("loas_subheader", array("loa" => $loa, "client" => $client))
 $this->searchController = 'Clients';
 $this->set('clientId', $this->data['Client']['clientId']);
 
+/*
+ * For soft launch, will remove later
+ */
+$showDocument = false;
+if(isset($_GET['showDocument']) && $_GET['showDocument'] == '1'){
+    $showDocument = true;
+}
+
 echo $layout->blockStart('header');
 echo $html->link(
     '<span><b class="icon"></b>Delete LOA</span>',
@@ -48,18 +56,19 @@ $timestamp = time();
 
         <li>
             <?php
-
-            /** echo $html->link(
-                'Prep Document',
-                $this->webroot.'loas/prepdocument/' . $loa['Loa']['loaId'] . '',
-                array(
-                    'title' => 'Prepare LOA Document - Loa # '. $this->data['Loa']['loaId'],
-                    'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
-                    'complete' => 'closeModalbox()'
-                ),
-                null,
-                false
-            );**/
+            if ($showDocument == true) {
+                echo $html->link(
+                    'Prep Document',
+                    $this->webroot . 'loas/prepdocument/' . $loa['Loa']['loaId'] . '/' . $loa['Loa']['clientId'],
+                    array(
+                        'title' => 'Prepare LOA Document - Loa # ' . $this->data['Loa']['loaId'],
+                        'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
+                        'complete' => 'closeModalbox()'
+                    ),
+                    null,
+                    false
+                );
+            }
             ?></li>
     </ul>
 </div>
@@ -69,11 +78,11 @@ $timestamp = time();
 // for editing membershipBalance, totalKept, totalRemitted, totalRevenue
 $uname = $userDetails['username'];
 $userGroupsArr = $userDetails['groups'];
-$userPermArr = array('dpen', 'kferson', 'emendoza', 'jlagraff', 'mtrinh');
+$userPermArr = array('mchoe', 'dpen', 'kferson', 'mbyrnes', 'jlagraff', 'mtrinh');
 
 $disable_advanced_edit = (in_array($uname, $userPermArr) || in_array('Production', $userGroupsArr)) ? false : true;
 
-$userPermArr = array('dpen', 'kferson', 'rfriedman', 'jlagraff', 'mtrinh', 'emendoza', 'oefada');
+$userPermArr = array('dpen', 'kferson', 'mchoe', 'rfriedman', 'jlagraff', 'mtrinh', 'mbyrnes','oefada');
 if (in_array($uname, $userPermArr) || in_array('Production', $userDetails['groups'])) {
     $disabled = false;
 } else {
@@ -81,7 +90,7 @@ if (in_array($uname, $userPermArr) || in_array('Production', $userDetails['group
 }
 
 // for editing membershipPackagesRemaining
-$userPermArr = array('kferson', 'jlagraff', 'mtrinh', 'emendoza');
+$userPermArr = array('mchoe', 'kferson', 'jlagraff', 'mtrinh', 'mbyrnes');
 $disable_mp = (in_array($uname, $userPermArr) || in_array('Production', $userDetails['groups'])) ? false : true;
 
 ?>
@@ -147,7 +156,7 @@ echo $form->input('retailValueBalance', array('disabled' => $enable_rvc));
 echo $form->input('retailValueFee', array('disabled' => $enable_rvc));
 echo $form->input('totalRevenue', array('disabled' => $disable_advanced_edit, 'label' => 'Total Revenue'));
 echo $form->input('totalRemitted', array('disabled' => $disable_advanced_edit));
-if (in_array($uname, array('kferson', 'jlagraff', 'mtrinh', 'emendoza'))) {
+if (in_array($uname, array('kferson', 'jlagraff', 'mtrinh', 'mbyrnes'))) {
     echo $form->input('cashPaid');
 } else {
     echo $form->input('cashPaid', array('disabled' => true));
@@ -176,7 +185,7 @@ echo $form->input('loaInstallmentTypeId', array(
 
 echo $form->input('loaI');
 
-echo $form->input('revenueSplitPercentage');
+echo $form->input('revenueSplitPercentage',array('label'=>'Rev Split % kept by LL'));
 ?>
 
 <div class="controlset">
@@ -256,7 +265,34 @@ echo $form->input('revenueSplitPercentage');
         <?php echo $form->end('Submit'); ?>
     </div>
 </div>
+<?php
+if ($showDocument == true) {?>
+<div class="collapsible">
+    <div class="handle"><?php __('LOA Documents'); ?></div>
+    <div class="collapsibleContent related">
+        <div class="actions">
+            <ul>
+                <li>
+                    <?php
+                        echo $html->link(
+                            'Prep Document',
+                            $this->webroot . 'loas/prepdocument/' . $loa['Loa']['loaId'] . '/' . $loa['Loa']['clientId'],
+                            array(
+                                'title' => 'Prepare LOA Document - Loa # ' . $this->data['Loa']['loaId'],
+                                'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
+                                'complete' => 'closeModalbox()'
+                            ),
+                            null,
+                            false
+                        );
+                    ?>
+                </li>
+            </ul>
 
+        </div>
+    </div><!--#handle-->
+</div><!--#collapsible-->
+<? }?>
 <div class="collapsible">
     <div class="handle"><?php __('Related LOA Tracks'); ?></div>
     <div class="collapsibleContent related">

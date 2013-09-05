@@ -1,7 +1,7 @@
  <?
 $loa = $this->data;
 //$this->searchController = 'Clients';
- echo $html->css('pepper-grinder/jquery-ui-1.7.2.custom');
+// echo $html->css('pepper-grinder/jquery-ui-1.7.2.custom');
 ?>
 <style type="text/css">
  /*.required{*/
@@ -66,7 +66,7 @@ if (isset($client['ClientContact'])){
             'update' => 'save_result',
             'loading' => 'window.loaDoc.save_doc_loading()',
             'model' => 'loaDocument',
-            'complete' => 'window.loaDoc.save_doc_complete()'
+            'complete' => 'window.loaDoc.save_doc_complete('.$loaId.')'
         )
     );
     echo $form->input(
@@ -117,7 +117,7 @@ if (isset($client['ClientContact'])){
             $.ajax({
                 type: "POST",
                 //same domain, do as html, jspo p not needed
-                url: "<?php echo $this->webroot; ?>loaDocuments/listall/"+loaId+"?"+Math.random()*100000000,
+                url: "/loaDocuments/listall/"+loaId+"?"+Math.random()*100000000,
                 //dataType: 'jsonp',
                 success: function(data, textStatus) {
                     //add html response
@@ -130,11 +130,11 @@ if (isset($client['ClientContact'])){
             });
             })(jQuery);
         };
-        publics.createLoa = function(){
+        publics.createLoa = function(data){
             (function($) {
                 var dataToSend = {
                     page: location.href,
-                    data: <?= json_encode($loa)?>
+                    data: data
                 };
                 //show spinner
                 $(".createLoaResult").html('<img src="/img/spinner.gif">');
@@ -170,11 +170,11 @@ if (isset($client['ClientContact'])){
                 $('.loading_save').show();
             })(jQuery);
         };
-        publics.save_doc_complete = function () {
+        publics.save_doc_complete = function (loaId) {
             (function ($) {
                 $('.loading_save').hide();
                 //load previous docs
-                window.loaDoc.listById(<?=$loaId;?>);
+                window.loaDoc.listById(loaId);
             })(jQuery);
         };
         // Return our public symbols
