@@ -30,6 +30,7 @@ class ConnectorLog extends AppModel
         if (isset($key, $val)) {
             $this->settings[$key] = $val;
         }
+        return;
     }
 
     public function setData($strData = null)
@@ -47,7 +48,6 @@ class ConnectorLog extends AppModel
         if (!isset($this->settings['responseHeaders'])){
             $this->settings['responseHeaders'] = $this->getResponseHeaders();
         }
-
 
         if(isset($_SERVER['HTTP_X_FORWARDED_FOR']) && $_SERVER['HTTP_X_FORWARTDED_FOR'] != '') {
             $ip_address = $_SERVER['HTTP_X_FORWARDED_FOR'];
