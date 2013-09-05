@@ -14,7 +14,7 @@ if ($mode == 'jsonp') {
 
         $tbl = "<table cellpadding='2' cellspacing='1' class='product_table'>";
         $tbl .= $html->tableHeaders(
-            array('Version', '<b>Signed By</b>','Contact', '<b>Document Date</b>', '<b>Created</b>', 'Action'),
+            array('<span class="font-size:80%">doc #</span>', '<b>Signed By</b>','Contact', '<b>Document Date</b>', '<b>Created</b>', 'Action'),
             array('class' => ''),
             array('style' => 'background-color:#CCC;padding:5px;')
         );
@@ -24,7 +24,7 @@ if ($mode == 'jsonp') {
             $loaDocIdPadded =  str_pad((int) $doc['LoaDocument']['loaDocumentId'],4,"0",STR_PAD_LEFT);
             $tbl .= $html->tableCells(
                 array(
-                    $loaDocIdPadded
+                    '<span class="font-size:80%">'.$loaDocIdPadded.'</span>'
                     ,$doc['LoaDocument']['signerName']
                     ,$doc['LoaDocument']['contactName']
                     ,date('F d, Y', strtotime($doc['LoaDocument']['docDate']))

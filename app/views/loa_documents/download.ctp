@@ -3,7 +3,6 @@
  * User: oefada
  * Date: 8/8/13
  * Time: 7:27 PM
- * To change this template use File | Settings | File Templates.
  */
 
 if (!empty($errors)) {
@@ -15,7 +14,13 @@ if (!empty($errors)) {
 }
     include(APP . 'vendors/tcpdf/tcpdf.php');
 
-    define('PDF_LOA_CLIENT_NAME', $client['Client']['companyName']);
+    if (isset($client['Client']['companyName'])){
+        define('PDF_LOA_CLIENT_NAME', $client['Client']['companyName']);
+    }else{
+        //Sugar Case, no client variables, use what we stored when doc created
+        define('PDF_LOA_CLIENT_NAME', $document['LoaDocument']['companyName']);
+    }
+
 
 //K_PATH_IMAGES.'logo_example.jpg';
 
