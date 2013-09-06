@@ -172,7 +172,8 @@ echo $form->input('advertisingFee');
 echo $form->input('loaPaymentTermId', array(
         'type' => 'select',
         'label' => 'Payment Terms',
-        'empty' => true
+        'default' => 7,
+       //'empty' => true,
     ));
 
 //allow empty selection AND select current setting
@@ -182,9 +183,6 @@ echo $form->input('loaInstallmentTypeId', array(
         'empty' => true,
        //'selected'=>$this->data['Loa']['loaMembershipTypeId']
     ));
-
-echo $form->input('loaI');
-
 echo $form->input('revenueSplitPercentage',array('label'=>'Rev Split % kept by LL'));
 ?>
 

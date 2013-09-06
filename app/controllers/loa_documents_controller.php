@@ -171,19 +171,22 @@ class LoaDocumentsController extends AppController
 
                 //fields to translate
                 if (isset($decoded_request['loa']['payment_category_c'])) {
-                    $loa['Loa']['loaMembershipTypeId'] = $this->LoaMembershipType->getMemberShipTypeIDbyName(
+                    /**$loa['Loa']['loaMembershipTypeId'] = $this->LoaMembershipType->getMemberShipTypeIDbyName(
                         $decoded_request['loa']['payment_category_c']
-                    );
+                    );*/
+                    $loa['Loa']['loaMembershipTypeId'] = $decoded_request['loa']['payment_category_c'];
                 }
                 if (isset($decoded_request['loa']['paymentterms_c'])) {
-                    $loa['Loa']['loaPaymentTermId'] = $this->LoaPaymentTerm->getPaymentTermIDbyName(
+                    /**$loa['Loa']['loaPaymentTermId'] = $this->LoaPaymentTerm->getPaymentTermIDbyName(
                         $decoded_request['loa']['paymentterms_c']
-                    );
+                    );**/
+                    $loa['Loa']['loaPaymentTermId'] = $decoded_request['loa']['paymentterms_c'];
                 }
                 if (isset($decoded_request['loa']['term_c'])) {
-                    $loa['Loa']['loaInstallmentTypeId'] = $this->LoaInstallmentType->getInstallmentTypeIDbyName(
+                   /** $loa['Loa']['loaInstallmentTypeId'] = $this->LoaInstallmentType->getInstallmentTypeIDbyName(
                         $decoded_request['loa']['term_c']
-                    );
+                    );**/
+                    $loa['Loa']['loaInstallmentTypeId'] = $decoded_request['loa']['term_c'];
                 }
 
                 $loa['recipients'][] = $decoded_request['assigned_user']['email'];

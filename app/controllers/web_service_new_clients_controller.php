@@ -9,7 +9,7 @@ define('DEV_USER_TOOLBOX_HOST', 'http://' . $_SERVER['ENV_USER'] . '-toolboxdev.
 class WebServiceNewClientsController extends WebServicesController
 {
 	var $name = 'WebServiceNewClients';
-	var $uses = array('Client','ClientContact','ConnectorLog');
+	var $uses = array('Client','ClientContact','ConnectorLog','LoaMembershipType','Loa');
 	var $serviceUrl = 'http://toolbox.luxurylink.com/web_service_new_clients';
 
 	// IF DEV, please make sure you use this path, or if using your own dev, then change this var
@@ -93,6 +93,7 @@ class WebServiceNewClientsController extends WebServicesController
         $client_data_save['nameNormalized']     = $client_data_save['name'];
         $client_data_save['managerUsername'] 	= $decoded_request['client']['manager_ini'];
 		$client_data_save['teamName']			= $decoded_request['client']['team_name'];
+        $client_data_save['segment']			= $decoded_request['client']['segment'];
         $client_data_save['modified']			= $date_now;
         $client_data_save['seoName']			= $this->Client->convertToSeoName($client_data_save['name']);
 
@@ -248,9 +249,26 @@ class WebServiceNewClientsController extends WebServicesController
 		    		$this->ClientContact->save($newClientContact, array('callbacks'=>false));
 		    	}
 		    }
+
+        //clientID exists, begin LOA workflow. Ensure LOA workflow fails gracefully.
+           if (isset($decoded_request['loas'])){
+               try{
+                   $newLoaId = @$this->Loa->processLoaFromSugar($client_id,$decoded_request['loas']);
+
+                   if(isset($newLoaId) && is_numeric($newLoaId)){
+                       $decoded_request['loaSugarId'] = $decoded_request['loas'][0]['id'];
+                       $decoded_request['newLoaId'] = $newLoaId;
+                   }
+
+               }catch(Exception $e){
+                   mail('devmail@luxurylink.com','Loa Import Error','Sugar Name:'.print_r($sugarClientName,true)
+                       .'ToolboxName: '.print_r($client['Client']['name'],true).'Sugar Data'.print_r($decoded_request['loas'],true));
+               }
+           }
+
 		}
 
-
+        $encoded_response = json_encode($decoded_request);
 	    // this tests to see if we were getting correct response from the request
 	    return $encoded_response;
 	}

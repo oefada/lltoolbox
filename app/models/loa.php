@@ -402,7 +402,128 @@ class Loa extends AppModel
         }
         return $salesPeople;
     }
+    /*
+     * will return true if Client has "Active" loas
+     * meaning Loas that have not yet completed OR LOAs that have been in toolbox
+     * in the last n number of days
+     */
+    public function hasActiveLoas($clientId, $days)
+    {
+        $query = "SELECT  DATE_FORMAT(endDate, '%m/%d/%Y')
+                    FROM loa
+                    WHERE clientId = ? AND
+                          ((endDate BETWEEN CURDATE() - INTERVAL ? DAY AND SYSDATE()) /** ending in the last 30 ***/
+                    OR  (endDate > CURDATE()))
+                    ORDER BY endDate ASC
+                    ";
+        $QueryParameters = array($clientId, $days);
 
+        if ($results = $this->query($query, $QueryParameters)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public function processLoaFromSugar($clientId, $loaData = null)
+    {
+        if (empty($loaData)) {
+            return false;
+        }
+
+        if ($this->hasActiveLoas($clientId,30)){
+            //don't process if there are current Loas in the last 30 days or in the future.
+            //return false;
+        }
+
+        //sugar should ONLY send us Loas with a closed-won status where the EndDate is in the future.
+        //more than one Loa can come over, we will take the first.
+        $sugarLoaData = $loaData[0];
+
+        //DEBUG
+       // die(var_dump($sugarLoaData));
+
+        //PREP sugar Loa Data
+        $loa_data_save = array();
+
+        $loa_data_save['Loa']['clientId'] = $clientId;
+        //5- Package in, agreement_type_c in sugar but default to "package in"
+        $loa_data_save['Loa']['loaLevelId'] = 5;
+        $loa_data_save['Loa']['accountTypeId'] = 2; //2- new
+
+
+        if (isset($sugarLoaData['ll_c'])) {
+            $loa_data_save['Loa']['sites'][0] = 'luxurylink';
+        }
+        if (isset($sugarLoaData['fg_c'])) {
+            $loa_data_save['Loa']['sites'][1] = 'family';
+        }
+        $loa_data_save['Loa']['sites'] = implode(',',$loa_data_save['Loa']['sites']);
+        if(empty($loa_data_save['Loa']['sites'])){
+            $loa_data_save['Loa']['sites'] = 'luxurylink';
+        }
+
+        //fees and dates
+        $loa_data_save['Loa']['membershipFee'] = $sugarLoaData['agreement_fee_c'];
+        $loa_data_save['Loa']['auctionCommissionPerc'] = $sugarLoaData['commission_auction_c'];
+        $loa_data_save['Loa']['buynowCommissionPerc'] = $sugarLoaData['commission_buynow_c'];
+        $loa_data_save['Loa']['startDate'] = $sugarLoaData['effective_date_c'];
+        $loa_data_save['Loa']['endDate'] = $sugarLoaData['expiration_date_c'];
+
+        $loa_data_save['Loa']['notes'] = $sugarLoaData['special_instructions_c'];
+
+        //fields to translate
+        if (isset($sugarLoaData['payment_category_c'])) {
+            /*$loa_data_save['Loa']['loaMembershipTypeId'] = $this->LoaMembershipType->getMemberShipTypeIDbyName(
+                $sugarLoaData['payment_category_c']
+            );*/
+            $loa_data_save['Loa']['loaMembershipTypeId'] = $sugarLoaData['payment_category_c'];
+        }
+        if (isset($sugarLoaData['paymentterms_c'])) {
+            /*$loa_data_save['Loa']['loaPaymentTermId'] = $this->LoaPaymentTerm->getPaymentTermIDbyName(
+                $sugarLoaData['paymentterms_c']
+            );*/
+            $loa_data_save['Loa']['loaPaymentTermId'] = $sugarLoaData['paymentterms_c'];
+        }
+        if (isset($sugarLoaData['term_c'])) {
+            /*$loa_data_save['Loa']['loaInstallmentTypeId'] = $this->LoaInstallmentType->getInstallmentTypeIDbyName(
+                $sugarLoaData['term_c']
+            );*/
+            $loa_data_save['Loa']['loaInstallmentTypeId'] = $sugarLoaData['term_c'];
+        }
+
+        $loa_data_save['Loa']['accountExecutive'] = $sugarLoaData['assigned_user']['user_name'];
+
+        $loa_data_save['Loa']['membershipTotalNights'] = $sugarLoaData['barternights_c'];
+        $loa_data_save['Loa']['membershipTotalPackages'] = $sugarLoaData['barterpackages_c'];
+        $loa_data_save['Loa']['numEmailInclusions'] = $sugarLoaData['number_of_emails_c'];
+
+        $loa_data_save['Loa']['modifiedBy'] = $sugarLoaData['assigned_user']['user_name'];
+        $loa_data_save['Loa']['sugarLoaId'] = $sugarLoaData['id'];
+
+
+       /* var_dump($sugarLoaData);
+        die(var_dump($loa_data_save));
+        */
+        $this->create();
+        if (!$this->save($loa_data_save, array('callbacks' => false))) {
+            //loa NOT created
+            $errMsg = 'Data to Save: ' . print_r($loa_data_save, true) . print_r(
+                    $this->validationErrors,
+                    true
+                ) . 'Sugar Data: ' . print_r($sugarLoaData, true);
+            if ($_SERVER['ENV'] !== 'development' && ISSTAGE !== true) {
+                @mail('dev@luxurylink.com', 'SUGAR BUS -- LOA NOT SAVED for client', $errMsg);
+            } else {
+                //
+                @mail('devmail@luxurylink.com', 'SUGAR BUS -- LOA NOT SAVED for client', $errMsg);
+            }
+
+            return false;
+        }
+        //it saved
+        $newLoaId = (int)$this->getLastInsertId();
+        return $newLoaId;
+    }
 }
 
 ?>
