@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 <? echo json_encode($results);
 
 function get_real_filename($headers,$url)
@@ -28,7 +29,7 @@ if (isset($results['data']['recipients'],$results['message']['pdf'])){
     }else {
         foreach($recipients as $email => $name)
         {
-            $mail->AddAddress($name, $name);
+            $mail->AddAddress($email, $name);
         }
     }
 
@@ -47,3 +48,6 @@ if (isset($results['data']['recipients'],$results['message']['pdf'])){
 
     $result = $mail->Send();
 }
+=======
+<?php json_encode($results);?>
+>>>>>>> Stashed changes
