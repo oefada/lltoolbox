@@ -189,8 +189,10 @@ class LoaDocumentsController extends AppController
                     $loa['Loa']['loaInstallmentTypeId'] = $decoded_request['loa']['term_c'];
                 }
 
-                $loa['recipients'][0] = array($decoded_request['assigned_user']['email']=>$decoded_request['assigned_user']['user_name']);
-                $loa['recipients'][1] = array($decoded_request['current_user']['email']=>$decoded_request['current_user']['user_name']);
+                $loa['recipients'] = array(
+                    $decoded_request['assigned_user']['email'] => $decoded_request['assigned_user']['user_name'],
+                    $decoded_request['current_user']['email'] => $decoded_request['current_user']['user_name']
+                );
 
                 if ($loa['recipients'][0] == $loa['recipients'][1]){
                     //if both recipients are the same.
