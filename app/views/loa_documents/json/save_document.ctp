@@ -1,20 +1,18 @@
-<<<<<<< Updated upstream
 <? echo json_encode($results);
 
-function get_real_filename($headers,$url)
-{
-    foreach($headers as $header)
+function getRealFileNameFromHeaders($headers,$url=null){
+
+    foreach($headers as $header=>$val)
     {
-        if (strpos(strtolower($header),'content-disposition') !== false)
-        {
-            $tmp_name = explode('=', $header);
-            if ($tmp_name[1]) return trim($tmp_name[1],'";\'');
+        if(strtolower($header) =='content-disposition'){
+            $tmp_name = explode('=', $val);
+            return trim($tmp_name[1],'";\'');
         }
     }
-
     $stripped_url = preg_replace('/\\?.*/', '', $url);
     return basename($stripped_url);
 }
+
 if (isset($results['data']['recipients'],$results['message']['pdf'])){
 
     //send email after to JSON response to prevent slowness in web service.
@@ -39,15 +37,24 @@ if (isset($results['data']['recipients'],$results['message']['pdf'])){
     $msg .=  'The document has been attached for your convenience. You may also download here:'. "\n";
     $msg .=  $results['message']['pdf']."\n\n";
 
+
     $url = $results['message']['pdfLocal'];
-    if ($pdfOutput = @file_get_contents($url)){
-        $filename = get_real_filename($http_response_header,$url);
+
+    App::import('Core', 'HttpSocket');
+    $HttpSocket = new HttpSocket();
+    $socketResults = $HttpSocket->get($url);
+
+
+    if (isset($socketResults)){
+        $pdfOutput = $HttpSocket->response['body'];
+        $filename = getRealFileNameFromHeaders($HttpSocket->response['header'],$url);
         $mail->AddStringAttachment($pdfOutput, $filename, 'base64', 'application/pdf');
     }
+    /*if ($pdfOutput = @file_get_contents($url)){
+        $filename = get_real_filename($http_response_header,$url);
+        $mail->AddStringAttachment($pdfOutput, $filename, 'base64', 'application/pdf');
+    }*/
     $mail->Body = $msg;
 
     $result = $mail->Send();
 }
-=======
-<?php json_encode($results);?>
->>>>>>> Stashed changes
