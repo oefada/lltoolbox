@@ -1845,7 +1845,7 @@ class TCPDF_FONTS {
 			$chars = str_split($str);
 			$carr = array_map('ord', $chars);
 		}
-		$currentfont['subsetchars'] += array_fill_keys($carr, true);
+		$currentfont['subsetchars'] .= array_fill_keys($carr, true);
 		return $carr;
 	}
 

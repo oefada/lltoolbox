@@ -286,3 +286,22 @@ $cacheAction = true;
     $abs_path = dirname(__file__);
     $abs_path = str_replace('/config','/',$abs_path);
     define('APP_ABSOLUTE_PATH',$abs_path);
+
+    // TICKET4334: The below is neccessary for PHP 5.x.x < 5.2.x
+    if (!function_exists('function array_fill_keys')) {
+        function array_fill_keys($array, $values) {
+            if(is_array($array)) {
+                foreach($array as $key => $value) {
+                    $arraydisplay[$array[$key]] = $values;
+                }
+            }
+            return $arraydisplay;
+        }
+    }
+
+    if (!function_exists('sys_get_temp_dir')) {
+        function sys_get_temp_dir() {
+            return '/tmp/';
+        }
+    }
+
