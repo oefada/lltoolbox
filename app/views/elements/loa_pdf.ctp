@@ -1,3 +1,6 @@
+<?
+Configure::write('debug', 0);
+?>
 <style type="text/css">
     ol li{margin-bottom:10px;}
 
