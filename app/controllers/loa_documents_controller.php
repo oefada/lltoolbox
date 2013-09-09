@@ -156,6 +156,11 @@ class LoaDocumentsController extends AppController
                 //important for giving docs right name
                 $this->data['LoaDocument']['companyName'] = $sugarClientName;
 
+                if (isset($decoded_request['client']['client_id'])){
+
+                    $this->data['LoaDocument']['clientId'] = $decoded_request['client']['client_id'];
+                }
+
                 //register Loa Fields
                 $loa['Client']['companyName'] = $sugarClientName;
                 $loa['Client']['segment'] = $decoded_request['client']['segment'];
