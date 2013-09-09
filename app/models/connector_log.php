@@ -79,11 +79,16 @@ class ConnectorLog extends AppModel
         }
 
         if (isset($this->settings['request'])) {
-            $msg .= $div;
-            $msg .= 'REQUEST:' . "\n";
-            $msg .= $this->settings['request'] . "\n\n";
+        $msg .= $div;
+        $msg .= 'REQUEST:' . "\n";
+        $msg .= $this->settings['request'] . "\n\n";
 
-            $this->data['ConnectorLog']['request'] = $this->settings['request'];
+        $this->data['ConnectorLog']['request'] = $this->settings['request'];
+    }
+        if (isset($this->settings['response'])) {
+            $msg .= $div;
+            $msg .= 'RESPONSE:' . "\n";
+            $msg .= $this->settings['response'] . "\n\n";
         }
 
         $this->data['ConnectorLog']['message'] = $msg;
