@@ -38,8 +38,7 @@ if (isset($results['data']['recipients'],$results['message']['pdf'])){
     $msg .=  'The document has been attached for your convenience. You may also download here:'. "\n";
     $msg .=  $results['message']['pdf']."\n\n";
 
-
-    $url = $results['message']['pdfLocal'];
+    $url = $results['message']['pdf'];
 
     App::import('Core', 'HttpSocket');
     $HttpSocket = new HttpSocket();
@@ -50,6 +49,8 @@ if (isset($results['data']['recipients'],$results['message']['pdf'])){
         $pdfOutput = $HttpSocket->response['body'];
         $filename = getRealFileNameFromHeaders($HttpSocket->response['header'],$url);
         $mail->AddStringAttachment($pdfOutput, $filename, 'base64', 'application/pdf');
+    }else{
+       @mail('devmail@luxurylink.com','LOA Notification Error','Unable to grab PDF contents'.print_r($results,true));
     }
     /*if ($pdfOutput = @file_get_contents($url)){
         $filename = get_real_filename($http_response_header,$url);

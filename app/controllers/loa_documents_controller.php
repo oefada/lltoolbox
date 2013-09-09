@@ -255,7 +255,11 @@ class LoaDocumentsController extends AppController
 
             if ($this->LoaDocument->save($this->data['LoaDocument']) && empty($errors)) {
                 $prefix = 'http://';
-                $hostName = $_SERVER['HTTP_HOST'];
+
+                $hostName = 'toolbox.luxurylink.com';
+                if ($_SERVER['ENV'] == 'development' || ISSTAGE == true){
+                    $hostName = $_SERVER['HTTP_HOST'];
+                }
                 $docId = $this->LoaDocument->getLastInsertId();
 
                 if ('json' !== $mode) {
@@ -278,6 +282,7 @@ class LoaDocumentsController extends AppController
                     );
                     //log invalid request
                     $this->ConnectorLog->setParam('status', 1);
+                    $this->ConnectorLog->setParam('response',json_encode($result));
                 }
             } else {
                 //did not save
