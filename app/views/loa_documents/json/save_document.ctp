@@ -21,15 +21,16 @@ if (isset($results['data']['recipients'],$results['message']['pdf'])){
     $mail = new PHPMailer();
     $mail->From = 'no-reply@toolbox.luxurylink.com';
     $mail->FromName = 'no-reply@toolbox.luxurylink.com';
-
     if ($_SERVER['ENV'] == 'development' || ISSTAGE == true){
         $mail->AddAddress('oefada@luxurylink.com');
     }else {
-        foreach($recipients as $email => $name)
+        foreach($results['data']['recipients'] as $email => $name)
         {
-            $mail->AddAddress($email, $name);
+            if(isset($email)){
+                $mail->AddAddress($email, $name);
+            }
         }
-    }
+   }
 
     $mail->Subject = 'LOA Document Generated for '.$results['data']['Client']['companyName'];
 
