@@ -477,6 +477,10 @@ class Loa extends AppModel
                 $sugarLoaData['payment_category_c']
             );*/
             $loa_data_save['Loa']['loaMembershipTypeId'] = $sugarLoaData['payment_category_c'];
+            if (strotolower($sugarLoaData['payment_category_c'])== sttolower('Trade')){
+                //backwards compatibility
+                $loa_data_save['Loa']['loaMembershipTypeId'] = 1;
+            }
         }
         if (isset($sugarLoaData['paymentterms_c'])) {
             /*$loa_data_save['Loa']['loaPaymentTermId'] = $this->LoaPaymentTerm->getPaymentTermIDbyName(
@@ -488,7 +492,9 @@ class Loa extends AppModel
             /*$loa_data_save['Loa']['loaInstallmentTypeId'] = $this->LoaInstallmentType->getInstallmentTypeIDbyName(
                 $sugarLoaData['term_c']
             );*/
+
             $loa_data_save['Loa']['loaInstallmentTypeId'] = $sugarLoaData['term_c'];
+
         }
 
         $loa_data_save['Loa']['accountExecutive'] = $sugarLoaData['assigned_user']['user_name'];
@@ -512,7 +518,7 @@ class Loa extends AppModel
                     true
                 ) . 'Sugar Data: ' . print_r($sugarLoaData, true);
             if ($_SERVER['ENV'] !== 'development' && ISSTAGE !== true) {
-                @mail('dev@luxurylink.com', 'SUGAR BUS -- LOA NOT SAVED for client', $errMsg);
+                @mail('devmail@luxurylink.com', 'SUGAR BUS -- LOA NOT SAVED for client', $errMsg);
             } else {
                 //
                 @mail('devmail@luxurylink.com', 'SUGAR BUS -- LOA NOT SAVED for client', $errMsg);
