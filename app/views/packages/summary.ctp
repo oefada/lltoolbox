@@ -581,7 +581,7 @@ if (empty($pricePoints)) {
             <th>% of Retail (Auction)</th>
             <th>% of Retail (Buy Now)</th>
             <th>Guarantee %</th>
-            <th>Flex Auction Per Night Price</th>
+            <!--<th>Flex Auction Per Night Price</th>-->
             <th>Flex Per Night Price</th>
             <th>Max Num Sales</th>
             <th>Preview Price Point</th>
@@ -604,7 +604,7 @@ if (empty($pricePoints)) {
 									<td>{$pricePoint['PricePoint']['percentRetailAuc']}</td>
 									<td>{$pricePoint['PricePoint']['percentRetailBuyNow']}</td>
 									<td>{$pricePoint['PricePoint']['percentReservePrice']}</td>
-                                    <td>{$pricePoint['PricePoint']['pricePerExtraNightDNG']}</td>
+                                    <!-- <td>{$pricePoint['PricePoint']['pricePerExtraNightDNG']}</td> -->
                                     <td>{$pricePoint['PricePoint']['pricePerExtraNight']}</td>
 									<td>{$pricePoint['PricePoint']['maxNumSales']}</td>";
 

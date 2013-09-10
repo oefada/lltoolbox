@@ -28,7 +28,7 @@ if (!isset($masterState) || $masterState != 1) {
 				<th>% of <br />Retail<br />(Buy Now)</th>
 				<?php if ($package['Package']['isFlexPackage']): ?>
 					<th>Retail Price/<br />Extra Night</th>
-                    <th>Auction/<br />Extra Night</th>
+                    <!-- <th>Auction/<br />Extra Night</th> -->
                     <th>Buy Now/<br />Extra Night</th>
 				<?php endif; ?>
 			</tr>
@@ -60,9 +60,11 @@ if (!isset($masterState) || $masterState != 1) {
 			</td>
 			<?php if ($package['Package']['isFlexPackage']): ?>
 				<td><?php echo $pricePoint['PricePoint']['flexRetailPricePerNight']; ?></td>
+                <!--
                 <td><?php echo $pricePoint['PricePoint']['pricePerExtraNightDNG']; ?>
                 <span>(<?php echo (round($pricePoint['PricePoint']['pricePerExtraNightDNG'] / $pricePoint['PricePoint']['flexRetailPricePerNight'], 2) * 100); ?>%)</span>
                 </td>
+                -->
 				<td><?php echo $pricePoint['PricePoint']['pricePerExtraNight']; ?>
 				<span>(<?php echo (round($pricePoint['PricePoint']['pricePerExtraNight'] / $pricePoint['PricePoint']['flexRetailPricePerNight'], 2) * 100); ?>%)</span>
 				</td>
