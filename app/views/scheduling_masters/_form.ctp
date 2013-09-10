@@ -116,9 +116,11 @@ if (!isset($masterState) || $masterState != 1) {
                     <input value='<?=$pricePoint['PricePoint']['pricePointId'];?>' id="isAuction" type="checkbox" name="data[isAuction]" <?php echo $isAuctionChecked; ?>/> <label for="isAuction">Auction</label><br /><br />
                     <input value='<?=$pricePoint['PricePoint']['pricePointId'];?>' id="isBuyNow" type="checkbox" name="data[isBuyNow]" <?php echo $isBuyNowChecked; ?>/> <label for="isBuyNow">Buy Now</label><br /><br />
                     
+                    <!--
                     <div style="background-color: #ffffaa;">
                         <input value='<?=$pricePoint['PricePoint']['pricePointId'];?>' id="isOptimized" type="checkbox" name="data[isOptimized]" <?php echo $isOptimizedChecked; ?>/> <label for="isOptimized">NEW!!!</label>
                     </div>
+                    -->
                     <?php
                         } else {
                             echo 'Hotel Offer';

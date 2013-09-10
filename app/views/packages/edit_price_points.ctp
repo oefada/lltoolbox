@@ -270,8 +270,7 @@
 
 		<table style="width:90%">
 		<tr>
-        <td align="right" width="80%">Flex Per Night Retail
-        <br />(Click to <a href='javascript:void(0);' onclick="updatePerNightPrice(true);">calculate</a>)</td>
+        <td align="right" width="80%">Flex Per Night Retail</td>
 		<td align="right">
 		<?
 		if (!isset($pricePoint) || empty($pricePoint['flexRetailPricePerNight'])){ ?>
@@ -282,6 +281,7 @@
 		</td>
 		</tr>
         
+        <!--
         <tr style="background-color: #f5f5f5;">
             <td align="right">Suggested Auction Flex Price/Night = <span id="suggestedFlexCalcDNG"> </span> x .<span class="flexDNGCalc"><? echo (isset($pricePoint)) ? $pricePoint['percentRetailAuc'] : ''; ?></span></td>
             <td align="right"><span id="suggestedFlexPriceDNG" class="price-points-price"></span> <? echo $package['Currency']['currencyCode']; ?></td>
@@ -298,9 +298,11 @@
                 <? } ?>
             </td>
         </tr> 
+        -->
         
 		<tr>
-		<td align="right">Suggested Flex Price/Night = <span id="suggestedFlexCalc"> </span> x .<span class="flexBuyNowCalc"><? echo (isset($pricePoint)) ? $pricePoint['percentRetailBuyNow'] : ''; ?></span></td>
+		<td align="right">Suggested Flex Price/Night = <span id="suggestedFlexCalc"> </span> x .<span class="flexBuyNowCalc"><? echo (isset($pricePoint)) ? $pricePoint['percentRetailBuyNow'] : ''; ?></span>
+                <br />(Click to <a href='javascript:void(0);' onclick="updatePerNightPrice(true);">calculate</a>)</td>
 		<td align="right"><span id="suggestedFlexPrice" class="price-points-price"></span> <? echo $package['Currency']['currencyCode']; ?></td>
 		</tr>
 		<tr>
