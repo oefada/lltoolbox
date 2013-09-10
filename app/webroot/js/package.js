@@ -627,7 +627,7 @@ function updateRetail(autoFillPercentRetail, autoFillSuggestedFlexPrice, numNigh
             $('#flexSuggestedRetail').val(highestFlex + inclusionTotal);
         }
         $('span#suggestedFlexCalc').html($('#flexSuggestedRetail').val());
-        $('span#suggestedFlexCalcDNG').html($('#flexSuggestedRetail').val());
+        // $('span#suggestedFlexCalcDNG').html($('#flexSuggestedRetail').val());
         if ($('#buynow-percent').val() > 0) {
             var calcPercent = $('#buynow-percent').val();
         }
@@ -636,13 +636,13 @@ function updateRetail(autoFillPercentRetail, autoFillSuggestedFlexPrice, numNigh
         }
         $('span#suggestedFlexPrice').html(Math.round($('#flexSuggestedRetail').val() * (calcPercent / 100)));
         
-        if ($('#auction-percent').val() > 0) {
-            var calcPercentDNG = $('#auction-percent').val();
-        }
-        else {
-            var calcPercentDNG = defaultPercent;
-        }
-        $('span#suggestedFlexPriceDNG').html(Math.round($('#flexSuggestedRetail').val() * (calcPercentDNG / 100)));        
+        //if ($('#auction-percent').val() > 0) {
+        //    var calcPercentDNG = $('#auction-percent').val();
+        //}
+        //else {
+        //    var calcPercentDNG = defaultPercent;
+        //}
+        //$('span#suggestedFlexPriceDNG').html(Math.round($('#flexSuggestedRetail').val() * (calcPercentDNG / 100)));        
         
     }
     if (($('input#pricePointId').val() == undefined) && autoFillPercentRetail) {
@@ -677,15 +677,15 @@ function updateValidityDisclaimer(ids) {
 
 function updatePerNightPrice(autoFillFlexPerNightPrice) {
     $('span#suggestedFlexCalc').html($('#flexSuggestedRetail').val());
-    $('span#suggestedFlexCalcDNG').html($('#flexSuggestedRetail').val());
+    // $('span#suggestedFlexCalcDNG').html($('#flexSuggestedRetail').val());
     
     var buynowPrice = Math.round($('#flexSuggestedRetail').val() * ($('#buynow-percent').val() / 100));
     $('span#suggestedFlexPrice').html(buynowPrice);
 	$('input#flexPricePerNight').val(buynowPrice);
 
-    var auctionPrice = Math.round($('#flexSuggestedRetail').val() * ($('#auction-percent').val() / 100));
-    $('span#suggestedFlexPriceDNG').html(auctionPrice);
-	$('input#flexPricePerNightDNG').val(auctionPrice);
+    //var auctionPrice = Math.round($('#flexSuggestedRetail').val() * ($('#auction-percent').val() / 100));
+    //$('span#suggestedFlexPriceDNG').html(auctionPrice);
+	//$('input#flexPricePerNightDNG').val(auctionPrice);
 
 }
 
