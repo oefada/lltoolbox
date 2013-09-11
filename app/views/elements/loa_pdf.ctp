@@ -59,12 +59,14 @@ Configure::write('debug', 0);
     </li>
     <li><p><strong>Targeted placements - </strong>
             <?=$loa['Client']['companyName'];?> will receive the following placements on the Luxury Link web site:
-        <ul><li><strong>Destination and Interest Landing Pages</strong> – regular rotation on appropriate Destination and Interest pages (e.g. Beach, Romance, All Inclusive, Food &amp; Wine, etc.)<br />
+        <ul><li><strong>Destination and Interest Landing Pages</strong> – regular rotation on appropriate Destination and Interest pages (e.g. Beach, Romance, All Inclusive, Food &amp; Wine, etc.)
             </li>
+            <?if (!empty($loa['Loa']['numEmailInclusions'])){ ?>
             <li><strong>E-Mail Newsletters</strong>
-                    – <?=$loa['Client']['companyName'];?> will be guaranteed inclusion in (2) two Luxury Link e-newsletters. Partner must have a mutually approved promotional package
+                    – <?=$loa['Client']['companyName'];?> will be guaranteed inclusion in (<?=$loa['Loa']['numEmailInclusions']?>) two Luxury Link e-newsletters. Partner must have a mutually approved promotional package
                     live on Luxury Link web site to be included.
             </li>
+            <? }?>
         </ul></p>
     </li>
     <li><strong>Social Media Suite</strong>
@@ -113,22 +115,29 @@ Configure::write('debug', 0);
             – A dedicated Senior Account Manager will be assigned to <?=$loa['Client']['companyName'];?> to ensure your program is optimized throughout your term. <?=$loa['Client']['companyName'];?> will receive detailed monthly marketing and customer acquisition reports.
         </p>
     </li>
-
-    <li><p><strong>Additonal Marketing</strong>
-
-      <}?>
-            <? if(!empty($loa['Loa']['moneyBackGuarantee'])){?>– A dedicated Senior Account Manager will be assigned to <?=$loa['Client']['companyName'];?> to ensure your program is optimized throughout your term. <?=$loa['Client']['companyName'];?> will receive detailed monthly marketing and customer acquisition reports.
-
+    <? if(!empty($loa['Loa']['moneyBackGuarantee']) ||
+        !empty($loa['Loa']['checkboxes'])){ ?>
+    <li><p><strong>Additional Marketing</strong>
+        <ul>
+            <? if(!empty($loa['Loa']['moneyBackGuarantee'])){?><li>Money Back Guarantee</li>
             <? } ?>
+            <? if(!empty($loa['Loa']['checkboxes'])){
+                $specialTerms = explode(',',$loa['Loa']['checkboxes']);
+                foreach ($specialTerms as $term){
+                    $term = ucwords($term);
+                    ?>
+                    <li><?=$term?></li>
+                <?}
+            }?>
+        </ul>
         </p>
     </li>
-
-    <? if(!empty($loa['Loa']['notes'])){?>
-    <? if (!empty($loa['Loa']['notes'])){?><li><p><strong>Special Terms</strong>
-            <?=$loa['Loa']['notes'];?>
+    <? } ?>
+    <? if (!empty($loa['Loa']['notes'])){?><li><p><strong>Special Inclusions</strong>
+            <br /><?=$loa['Loa']['notes'];?>
         </p>
     </li><?}?>
-    <? }?>
+
 </ol>
 <p><u><strong>Fees</strong></u>
 </p>

@@ -13,6 +13,7 @@
 			<li style="margin-bottom:3px;"><?=$html->link('Current LOA Details', "/loas/edit/$currentLoaId", array('update' => 'content-area', 'indicator' => 'spinner'))?></li>
 			<li style="margin-bottom:3px;"><?=$html->link('Current LOA Items', "/loas/items/$currentLoaId", array('update' => 'content-area', 'indicator' => 'spinner'))?></li>
 			<li style="margin-bottom:3px;"><?=$html->link('Current LOA Data', "/loas/maintTracking/$currentLoaId", array('update' => 'content-area', 'indicator' => 'spinner'))?></li>
+            <li style="margin-bottom:3px;"><?=$html->link('Proposal Documents', "/loaDocuments/listProposalsClient/$clientId", array('update' => 'content-area', 'indicator' => 'spinner'))?></li>
 		</ul>
 	</li>
 	<li class="open">PACKAGE

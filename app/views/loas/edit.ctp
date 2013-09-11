@@ -28,13 +28,27 @@ echo $html->link(
 echo $layout->blockEnd();
 
 ?>
-
-<style>
+<!--<script type="text/javascript" src="/js/tiny_mce/tiny_mce.js"></script>-->
+<script type="text/javascript">
+   /*
+    //future enhancement.
+    tinyMCE.init({
+        mode : "specific_textareas",
+        editor_selector : "loaNotes",
+        theme : "simple"
+        // init_instance_callback : 'resizeEditorBox',
+        //auto_resize : true
+    });*/
+</script>
+<style type="text/css">
     div.pub-status div.checkbox input[type="checkbox"] {
         width: 20px;
     }
+    #loaNotes_container, .mceEditor, .defaultSimpleSkin{
+        display:inline;
+        margin-left:100px;
+    }
 </style>
-
 <h2 class="title">
     <?php __('Edit Loa');
     echo $html2->c($loa['Loa']['loaId'], 'LOA Id:')?>
@@ -74,16 +88,17 @@ $timestamp = time();
 </div>
 <?
 
-
 // for editing membershipBalance, totalKept, totalRemitted, totalRevenue
 $uname = $userDetails['username'];
 $userGroupsArr = $userDetails['groups'];
-$userPermArr = array('dpen', 'kferson', 'emendoza', 'jlagraff', 'mtrinh');
+$userPermArr = array('dpen', 'kferson', 'emondoza', 'rfriedman', 'jlagraff', 'mtrinh','oefada');
 
-$disable_advanced_edit = (in_array($uname, $userPermArr) || in_array('Production', $userGroupsArr)) ? false : true;
+$isProposal  = ($this->data['Loa']['loaLevelId'] ==0)?true:false;
 
-$userPermArr = array('dpen', 'kferson', 'emendoza', 'rfriedman', 'jlagraff', 'mtrinh', 'oefada');
-if (in_array($uname, $userPermArr) || in_array('Production', $userDetails['groups'])) {
+$disable_advanced_edit = (in_array($uname, $userPermArr) || in_array('Production', $userGroupsArr)|| $isProposal) ? false : true;
+
+if ($isProposal ||
+    (in_array($uname, $userPermArr) || in_array('Production', $userDetails['groups'])||in_array('am', $userDetails['groups']))) {
     $disabled = false;
 } else {
     $disabled = true;
@@ -118,7 +133,7 @@ echo $form->input(
         'timeFormat' => ''
     )
 );
-echo $form->input('notes', array('label' => 'LOA Notes', 'id' => 'loaNotes'));
+echo $form->input('notes', array('label' => 'LOA Notes', 'id' => 'loaNotes','class'=>'loaNotes'));
 
 echo $form->input('averageDailyRate');
 
@@ -264,7 +279,8 @@ echo $form->input('revenueSplitPercentage',array('label'=>'Rev Split % kept by L
     </div>
 </div>
 <?php
-if ($showDocument == true) {?>
+//if ($showDocument == true) {
+    ?>
 <div class="collapsible">
     <div class="handle"><?php __('LOA Documents'); ?></div>
     <div class="collapsibleContent related">
@@ -278,7 +294,8 @@ if ($showDocument == true) {?>
                             array(
                                 'title' => 'Prepare LOA Document - Loa # ' . $this->data['Loa']['loaId'],
                                 'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
-                                'complete' => 'closeModalbox()'
+                                'complete' => 'closeModalbox()',
+                                'class='=>'button add'
                             ),
                             null,
                             false
@@ -290,7 +307,9 @@ if ($showDocument == true) {?>
         </div>
     </div><!--#handle-->
 </div><!--#collapsible-->
-<? }?>
+<?
+//}
+?>
 <div class="collapsible">
     <div class="handle"><?php __('Related LOA Tracks'); ?></div>
     <div class="collapsibleContent related">

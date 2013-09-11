@@ -10,7 +10,8 @@ class LoaDocumentsController extends AppController
         'LoaMembershipType',
         'LoaPaymentTerm',
         'LoaInstallmentType',
-        'ConnectorLog'
+        'ConnectorLog',
+        'LoaDocumentSource',
     );
     public $components = array('RequestHandler');
     public function beforeFilter()
@@ -55,6 +56,32 @@ class LoaDocumentsController extends AppController
         }
         $this->set('mode', $mode);
         $this->set('arrResponse', $results);
+    }
+
+    public function listProposalsClient($clientId)
+    {
+
+        $clientId = (int)$clientId;
+        $conditions = array("LoaDocument.clientId" => $clientId,'LoaDocument.isProposal'=>1);
+        $order = array("LoaDocument.loaDocumentId"=>"DESC");
+        $params =array('conditions' => $conditions,'order'=>$order);
+
+        //debug($documents);
+        $this->paginate = array(
+            'conditions' => $conditions,
+            'limit' => 15,
+            'page' => 1,
+            'order'=>$order
+        );
+
+        $client =$this->Loa->Client->findByClientId($clientId);
+        $documents =  $this->paginate('LoaDocument');
+
+        $this->set('documents',$documents);
+        $this->set('clientId', $clientId);
+        $this->set('client', $client);
+        $this->set('loa',$client);
+        $this->set('currentTab','property');
     }
 
     /**Returns the PDF from the database and prompts download
@@ -155,6 +182,8 @@ class LoaDocumentsController extends AppController
                 $this->data['LoaDocument']['generatedBy'] = $decoded_request['current_user']['user_name'];
                 //important for giving docs right name
                 $this->data['LoaDocument']['companyName'] = $sugarClientName;
+                $this->data['LoaDocument']['isProposal'] = 1;
+                $this->data['LoaDocument']['loaDocumentSourceId'] = 2;
 
                 if (isset($decoded_request['client']['client_id'])){
 
@@ -182,15 +211,9 @@ class LoaDocumentsController extends AppController
                     $loa['Loa']['loaMembershipTypeId'] = $decoded_request['loa']['payment_category_c'];
                 }
                 if (isset($decoded_request['loa']['paymentterms_c'])) {
-                    /**$loa['Loa']['loaPaymentTermId'] = $this->LoaPaymentTerm->getPaymentTermIDbyName(
-                        $decoded_request['loa']['paymentterms_c']
-                    );**/
                     $loa['Loa']['loaPaymentTermId'] = $decoded_request['loa']['paymentterms_c'];
                 }
                 if (isset($decoded_request['loa']['term_c'])) {
-                   /** $loa['Loa']['loaInstallmentTypeId'] = $this->LoaInstallmentType->getInstallmentTypeIDbyName(
-                        $decoded_request['loa']['term_c']
-                    );**/
                     $loa['Loa']['loaInstallmentTypeId'] = $decoded_request['loa']['term_c'];
                 }
 
@@ -203,7 +226,6 @@ class LoaDocumentsController extends AppController
                     //if both recipients are the same.
                     unset($loa['recipients'][1]);
                 }
-
 
                 $requiredFields = array(
                     $this->data['LoaDocument']['sugarLoaId'],
@@ -219,6 +241,7 @@ class LoaDocumentsController extends AppController
                 //non sugar
                 $this->layout = 'ajax';
                 $this->data['LoaDocument']['generatedBy'] = $this->user['LdapUser']['username'];
+                $this->data['LoaDocument']['loaDocumentSourceId'] = 1;
                 $loa = $this->Loa->read(null, $this->data['LoaDocument']['loaId']);
                 //deconstruct DocDate used in PDF from cake array
                 $this->data['LoaDocument']['docDate'] = $this->LoaDocument->deconstruct(

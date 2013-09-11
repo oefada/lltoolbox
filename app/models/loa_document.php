@@ -9,7 +9,9 @@ class LoaDocument extends AppModel
     public $actsAs = array('Containable', 'Logable');
     public $multisite = true;
 
-    public $belongsTo = array(//   'Client' => array('foreignKey' => 'clientId'),
+    public $belongsTo = array(
+            'LoaDocumentSource' => array('foreignKey' => 'loaDocumentSourceId'),
+//            'Client' => array('foreignKey' => 'clientId'),
 //        'Currency' => array('foreignKey' => 'currencyId'),
 //        'LoaLevel' => array('foreignKey' => 'loaLevelId'),
 //        'LoaMembershipType' => array('foreignKey' => 'loaMembershipTypeId'),
