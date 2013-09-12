@@ -91,7 +91,7 @@ $timestamp = time();
 // for editing membershipBalance, totalKept, totalRemitted, totalRevenue
 $uname = $userDetails['username'];
 $userGroupsArr = $userDetails['groups'];
-$userPermArr = array('dpen', 'kferson', 'emondoza', 'rfriedman', 'jlagraff', 'mtrinh','oefada');
+$userPermArr = array('dpen', 'kferson', 'emendoza', 'rfriedman', 'jlagraff', 'mtrinh','oefada');
 
 $isProposal  = ($this->data['Loa']['loaLevelId'] ==0)?true:false;
 
