@@ -201,6 +201,11 @@ class LoaDocumentsController extends AppController
                 $loa['Loa']['buynowCommissionPerc'] = $decoded_request['loa']['commission_buynow_c'];
                 $loa['Loa']['startDate'] = $decoded_request['loa']['effective_date_c'];
                 $loa['Loa']['endDate'] = $decoded_request['loa']['expiration_date_c'];
+                //
+                $loa['Loa']['membershipTotalPackages']= $decoded_request['loa']['barterpackages_c'];
+                $loa['Loa']['membershipTotalNights'] = $decoded_request['loa']['barternights_c'];
+                $loa['Loa']['numEmailInclusions'] = $decoded_request['number_of_emails_c'];
+                $loa['Loa']['revenueSplitPercentage'] = $decoded_request['loa']['revsplit_c'];
 
                 $loa['Loa']['notes'] = $decoded_request['loa']['special_instructions_c'];
 

@@ -504,6 +504,7 @@ class Loa extends AppModel
         $loa_data_save['Loa']['membershipTotalNights'] = $sugarLoaData['barternights_c'];
         $loa_data_save['Loa']['membershipTotalPackages'] = $sugarLoaData['barterpackages_c'];
         $loa_data_save['Loa']['numEmailInclusions'] = $sugarLoaData['number_of_emails_c'];
+        $loa_data_save['Loa']['revenueSplitPercentage'] = $sugarLoaData['revsplit_c'];
 
         $loa_data_save['Loa']['modifiedBy'] = $sugarLoaData['assigned_user']['user_name'];
         $loa_data_save['Loa']['sugarLoaId'] = $sugarLoaData['id'];
