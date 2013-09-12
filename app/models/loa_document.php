@@ -47,14 +47,14 @@ class LoaDocument extends AppModel
         }
         $arrMembershipTypes = array(
             3, //Total packages
-            4, //Barter/Cashe
+            4, //Barter/Cash
             5, //Barter
             7, //Total Nights
         );
         if (in_array($membershipTypeId, $arrMembershipTypes)) {
             switch ($paymentTermId) {
                 case(1): //Rev Split
-                    $text = "In lieu of a cash fee, Luxury Link will accept a mutually agreed upon package from $hotelName to be sold on the Luxury Link website. Luxury Link will keep x% of the proceeds from the sale of these packages until the membership fee has been satisfied. Proceeds from subsequent sales of this package and any other promotional packages placed on the Luxury Link site shall be remitted directly to the property less the LL transaction fee noted above.";
+                    $text = "In lieu of a cash fee, Luxury Link will accept a mutually agreed upon package from $hotelName to be sold on the Luxury Link website. Luxury Link will keep $percentage% of the proceeds from the sale of these packages until the membership fee has been satisfied. Proceeds from subsequent sales of this package and any other promotional packages placed on the Luxury Link site shall be remitted directly to the property less the LL transaction fee noted above.";
                     break;
                 case(2): //Keep/Remit
                     $text = "In lieu of a cash fee, Luxury Link will accept a mutually agreed upon package from $hotelName to be sold on the Luxury Link website. Luxury Link will keep proceeds from the sale of every other package sold until the membership fee has been satisfied. Proceeds from subsequent sales of this package and any other promotional packages place on the Luxury Link site shall be remitted directly to the property less the LL transaction fee noted above.";

@@ -192,6 +192,7 @@ class LoaDocumentsController extends AppController
 
                 //register Loa Fields
                 $loa['Client']['companyName'] = $sugarClientName;
+                $loa['Client']['name'] = $sugarClientName;
                 $loa['Client']['segment'] = $decoded_request['client']['segment'];
 
                 //fees and dates
@@ -243,6 +244,7 @@ class LoaDocumentsController extends AppController
                 $this->data['LoaDocument']['generatedBy'] = $this->user['LdapUser']['username'];
                 $this->data['LoaDocument']['loaDocumentSourceId'] = 1;
                 $loa = $this->Loa->read(null, $this->data['LoaDocument']['loaId']);
+
                 //deconstruct DocDate used in PDF from cake array
                 $this->data['LoaDocument']['docDate'] = $this->LoaDocument->deconstruct(
                     'docDate',
@@ -262,11 +264,13 @@ class LoaDocumentsController extends AppController
                     }
                 }
             }
+            //$this->LoaDocument->includeTextHowItWorks($membershipTypeId, $paymentTermId, $installmentTypeId = null, $hotelName,$percentage= null)
             $loa['howText'] = $this->LoaDocument->includeTextHowItWorks(
                 $loa['Loa']['loaMembershipTypeId'],
                 $loa['Loa']['loaPaymentTermId'],
                 $loa['Loa']['loaInstallmentTypeId'],
-                $loa['Client']['companyName']
+                $loa['Client']['name'],
+                $loa['Loa']['revenueSplitPercentage']
             );
             //die(var_dump($loa['howText']));
 
