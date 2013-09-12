@@ -39,7 +39,7 @@ Configure::write('debug', 0);
 </p>
 <ol>
     <li><p><strong>Customized Landing Page - </strong><?=$loa['Client']['name'];?> will receive a customized landing page including high-resolution image gallery, interactive maps, accolades listing and
-            prominent links to <?=$loa['Client']['name'];?> web site and booking engine to promote <strong>direct bookings.</strong> Landing pages will appear in all
+            prominent links to <?=$loa['Client']['name'];?> website and booking engine to promote <strong>direct bookings.</strong> Landing pages will appear in all
             appropriate key word searches on Luxury Link.</p>
 
     </li>
