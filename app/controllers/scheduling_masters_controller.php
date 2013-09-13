@@ -294,7 +294,7 @@ class SchedulingMastersController extends AppController {
 			$this->data['SchedulingMaster']['endDatePicker2'] = $loaEndDate;
 
 			// default numDaysToRun
-			$this->data['SchedulingMaster']['numDaysToRun'] = 1;
+			$this->data['SchedulingMaster']['numDaysToRun'] = 2;
 
 			// default iteration
 			$this->data['SchedulingMaster']['iterationSchedulingOption'] = 1;
