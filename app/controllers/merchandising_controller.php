@@ -168,7 +168,8 @@ class MerchandisingController extends AppController
                                 'linkText' => trim($_POST['linkText'][$k]),
                                 'imageAlt' => trim($_POST['imageAlt'][$k]),
                                 'headline' => trim($_POST['headline'][$k]),
-                                'description' => trim($_POST['description'][$k])
+                                'description' => trim($_POST['description'][$k]),
+                                'tldId' => $_POST['tldId'][$k]
                             );
                             $slide['linkUrl'] = preg_replace(
                                 '/^http:\/\/www\.luxurylink\.com\//',

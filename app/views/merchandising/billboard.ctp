@@ -146,6 +146,17 @@ function updatePreviewImg(rowId) {
 			<label>Description</label>
 			<input type="text" name="description" value="<?=@$welcomeSlideData['description']?>" />
 		</div>
+
+        <? $tldId = (isset($welcomeSlideData['tldId'])) ? $welcomeSlideData['tldId'] : ''; ?>
+        <div class="input">
+            <label>TLD</label>
+            <select name="tldId">
+            <option value="0">All</option>
+            <option value="1" <? if ($tldId == 1) { echo 'selected="selected"'; } ?>>US</option>
+            <option value="2" <? if ($tldId == 2) { echo 'selected="selected"'; } ?>>UK</option>
+            </select>
+        </div>
+
 	</fieldset>
 	<div style="float: right;">
 		<input type="submit" value="Save" />
@@ -228,15 +239,21 @@ Next scheduled date: <?=$others['next']['startDate'];?><br />
 			
 			<label>Link Text</label>
 			<input type="text" name="linkText[]" class="link-text" value="<?=@$slide['linkText']?>" />
-			
-<!--			<label>Alt Tag</label>-->
-<!--			<input type="text" name="imageAlt[]" class="image-alt" value="--><?//=@$slide['imageAlt']?><!--" />-->
-			
+						
 			<label>Headline</label>
 			<input type="text" name="headline[]" class="headline" value="<?=@$slide['headline']?>" title="Images will use headlines for SEO"/>
 			
 			<label>Description</label>
 			<input type="text" name="description[]" class="description" value="<?=@$slide['description']?>" />
+            
+            <? $tldId = (isset($slide['tldId'])) ? $slide['tldId'] : ''; ?>
+            <label>TLD</label>
+            <select name="tldId[]" style="float:left;">
+            <option value="0">All</option>
+            <option value="1" <? if ($tldId == 1) { echo 'selected="selected"'; } ?>>US</option>
+            <option value="2" <? if ($tldId == 2) { echo 'selected="selected"'; } ?>>UK</option>
+            </select>
+
 		</td>
 		<td><center><a class="remove-link"><img src="/img/x.png"></a></center></td>
 	</tr>
@@ -269,6 +286,14 @@ Next scheduled date: <?=$others['next']['startDate'];?><br />
 			
 			<label>Description</label>
 			<input type="text" name="description[]" class="description" />
+            
+            <label>TLD</label>
+            <select name="tldId[]" style="float:left;">
+            <option value="0">All</option>
+            <option value="1" <? if ($tldId == 1) { echo 'selected="selected"'; } ?>>US</option>
+            <option value="2" <? if ($tldId == 2) { echo 'selected="selected"'; } ?>>UK</option>
+            </select>
+            
 		</td>
 		<td><center><a class="remove-link"><img src="/img/x.png"></a></center></td>
 	</tr>
