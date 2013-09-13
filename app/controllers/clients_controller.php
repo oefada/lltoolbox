@@ -198,8 +198,18 @@ class ClientsController extends AppController {
 			 /** END SORT **/   
 
 			$this->data['Destination']['Destination'] = explode(',', $this->data['destinationIds']); 
-			unset($this->data['destinationIds']);	
+			unset($this->data['destinationIds']);
 
+            // If the client's location has changed, it is logged in the clientLocationHistory table so that 301 redirects can be provided for the old URL to the new URL
+            if ($this->data['Client']['locationDisplay'] !== $this->data['Client']['locationDisplay_prev']) {
+                // need clientId, old location, old location seo name, and date
+                $this->data['ClientLocationHistory'] = array(   'clientId' => $this->data['Client']['clientId'],
+                    'oldClientLocation' => $this->data['Client']['locationDisplay_prev'],
+                    'dateChanged' => DboSource::expression('NOW()'),
+                    'oldClientSeoLocation' => $this->convertToSeoName($this->data['Client']['locationDisplay_prev'] ));
+
+                $this->Client->ClientLocationHistory->save($this->data['ClientLocationHistory']);
+            }
 			
 			 $this->data['Client']['seoName'] = $this->convertToSeoName($this->data['Client']['name']);
 			 $this->data['Client']['seoLocation'] = $this->convertToSeoName($this->data['Client']['locationDisplay']);

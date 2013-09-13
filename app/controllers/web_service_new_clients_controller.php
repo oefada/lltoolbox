@@ -70,8 +70,6 @@ class WebServiceNewClientsController extends WebServicesController
             $sugarClientName = $this->utf8dec($sugarClientName);
 
             if (isset($client_data_save['name'])){
-
-
                 try {
                     //If name exists, run subroutine to check if it has changed against SugarCRM/LightboxName.
                     $this->Client->checkClientNameChange($sugarClientName, $client_data_save['name'],$client_id);
@@ -80,12 +78,13 @@ class WebServiceNewClientsController extends WebServicesController
                         .'ToolboxName: '.print_r($client['Client']['name'],true));
 
                 }
-                }
+            }
+
             if (!empty($client_data_save['sites']) && is_array($client_data_save['sites'])) {
                 $client_data_save['sites'] = implode(',', $client_data_save['sites']);
             }
-		}
-		else {
+
+		} else {
 			$client_data_save = array();
 			$client_data_save['sites'] = 'luxurylink';
 		}

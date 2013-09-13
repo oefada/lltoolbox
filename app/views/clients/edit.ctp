@@ -401,7 +401,10 @@ echo $form->input('segment');
             });
         </script>
         <?
+
         echo $form->input('locationDisplay',array('after' => '<button id="CopyLoc">Copy Location</button>'));
+        echo $form->hidden('locationDisplay_prev',array('value'=>$form->value('locationDisplay')));
+
         ?><?php
         echo $form->input('airportCode');
         echo $form->input('timeZone', array('options'=> array(''=>'--',

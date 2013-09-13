@@ -65,6 +65,7 @@ class Client extends AppModel
         'ClientInterview' => array('className' => 'ClientInterview', 'foreignKey' => 'clientId'),
         'ClientTypeHistory' => array('className' => 'ClientTypeHistory', 'foreignKey' => 'clientId'),
         'ClientNameHistory' => array('className' => 'ClientNameHistory', 'foreignKey' => 'clientId'),
+        'ClientLocationHistory' => array('className' => 'ClientLocationHistory', 'foreignKey' => 'clientId'),
     );
 
     public $hasAndBelongsToMany = array(
