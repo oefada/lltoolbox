@@ -176,7 +176,7 @@ class LoaDocumentsController extends AppController
                 if (isset($decoded_request['assigned_user']['title'])) {
                     $this->data['LoaDocument']['signerTitle'] = $decoded_request['assigned_user']['title'];
                 }
-                $this->data['LoaDocument']['contactName'] = $decoded_request['client']['main_contact_name'];
+                $this->data['LoaDocument']['contactName'] = $decoded_request['loa']['full_name_c'];
                 $this->data['LoaDocument']['contactTitle'] = '';
                 $this->data['LoaDocument']['docDate'] = $decoded_request['loa']['date_modified'];
                 $this->data['LoaDocument']['generatedBy'] = $decoded_request['current_user']['user_name'];
@@ -207,20 +207,20 @@ class LoaDocumentsController extends AppController
                 $loa['Loa']['numEmailInclusions'] = $decoded_request['number_of_emails_c'];
                 $loa['Loa']['revenueSplitPercentage'] = $decoded_request['loa']['revsplit_c'];
 
-                $loa['Loa']['notes'] = $decoded_request['loa']['special_instructions_c'];
+                $loa['Loa']['notes'] = nl2br($decoded_request['loa']['special_instructions_c']);
 
                 //fields to translate
                 if (isset($decoded_request['loa']['payment_category_c'])) {
                     /**$loa['Loa']['loaMembershipTypeId'] = $this->LoaMembershipType->getMemberShipTypeIDbyName(
                         $decoded_request['loa']['payment_category_c']
                     );*/
-                    $loa['Loa']['loaMembershipTypeId'] = $decoded_request['loa']['payment_category_c'];
+                    $loa['Loa']['loaMembershipTypeId'] = intval(trim($decoded_request['loa']['payment_category_c']));
                 }
                 if (isset($decoded_request['loa']['paymentterms_c'])) {
-                    $loa['Loa']['loaPaymentTermId'] = $decoded_request['loa']['paymentterms_c'];
+                    $loa['Loa']['loaPaymentTermId'] = intval(trim($decoded_request['loa']['paymentterms_c']));
                 }
                 if (isset($decoded_request['loa']['term_c'])) {
-                    $loa['Loa']['loaInstallmentTypeId'] = $decoded_request['loa']['term_c'];
+                    $loa['Loa']['loaInstallmentTypeId'] = intval(trim($decoded_request['loa']['term_c']));
                 }
 
                 $loa['recipients'] = array(

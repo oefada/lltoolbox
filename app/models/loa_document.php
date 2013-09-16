@@ -45,39 +45,41 @@ class LoaDocument extends AppModel
         if (empty($paymentTermId)) {
             return false;
         }
-        $arrMembershipTypes = array(
-            3, //Total packages
-            4, //Barter/Cash
-            5, //Barter
-            7, //Total Nights
-        );
-        if (in_array($membershipTypeId, $arrMembershipTypes)) {
+        $text = null;
+
+        if ($membershipTypeId ==2) {
+            // $membershipTypeId 2 is cash
+            $text .= "Proceeds from sales of any  promotional packages placed on the Luxury Link site shall be remitted directly to the property less the LL transaction fee noted above.";
+
+        }else{
             switch ($paymentTermId) {
                 case(1): //Rev Split
-                    $text = "In lieu of a cash fee, Luxury Link will accept a mutually agreed upon package from $hotelName to be sold on the Luxury Link website. Luxury Link will keep $percentage% of the proceeds from the sale of these packages until the membership fee has been satisfied. Proceeds from subsequent sales of this package and any other promotional packages placed on the Luxury Link site shall be remitted directly to the property less the LL transaction fee noted above.";
+                    $text .= "In lieu of a cash fee, Luxury Link will accept a mutually agreed upon package from $hotelName to be sold on the Luxury Link website. Luxury Link will keep $percentage% of the proceeds from the sale of these packages until the membership fee has been satisfied. Proceeds from subsequent sales of this package and any other promotional packages placed on the Luxury Link site shall be remitted directly to the property less the LL transaction fee noted above.";
                     break;
                 case(2): //Keep/Remit
-                    $text = "In lieu of a cash fee, Luxury Link will accept a mutually agreed upon package from $hotelName to be sold on the Luxury Link website. Luxury Link will keep proceeds from the sale of every other package sold until the membership fee has been satisfied. Proceeds from subsequent sales of this package and any other promotional packages place on the Luxury Link site shall be remitted directly to the property less the LL transaction fee noted above.";
+                    $text .= "In lieu of a cash fee, Luxury Link will accept a mutually agreed upon package from $hotelName to be sold on the Luxury Link website. Luxury Link will keep proceeds from the sale of every other package sold until the membership fee has been satisfied. Proceeds from subsequent sales of this package and any other promotional packages place on the Luxury Link site shall be remitted directly to the property less the LL transaction fee noted above.";
                     break;
                 case(6): //50/50
-                    $text = "In lieu of a cash fee, Luxury Link will accept a mutually agreed upon package from $hotelName to be sold on the Luxury Link website. Luxury Link will keep 50% of the proceeds from the sale of these packages until the membership fee has been satisfied. Proceeds from subsequent sales of this package and any other promotional packages placed on the Luxury Link site shall be remitted directly to the property less the LL transaction fee noted above.";
+                    $text .="In lieu of a cash fee, Luxury Link will accept a mutually agreed upon package from $hotelName to be sold on the Luxury Link website. Luxury Link will keep 50% of the proceeds from the sale of these packages until the membership fee has been satisfied. Proceeds from subsequent sales of this package and any other promotional packages placed on the Luxury Link site shall be remitted directly to the property less the LL transaction fee noted above.";
                     break;
                 case(7): //Standard
-                    $text = "In lieu of a cash fee, Luxury Link will accept a mutually agreed upon package from $hotelName to be sold on the Luxury Link website. Luxury Link will keep proceeds from the sale of these packages until the membership fee has been satisfied. Proceeds from subsequent sales of this package and any other promotional packages placed on the Luxury Link site shall be remitted directly to the property less the LL transaction fee noted above.";
+                    $text .= "In lieu of a cash fee, Luxury Link will accept a mutually agreed upon package from $hotelName to be sold on the Luxury Link website. Luxury Link will keep proceeds from the sale of these packages until the membership fee has been satisfied. Proceeds from subsequent sales of this package and any other promotional packages placed on the Luxury Link site shall be remitted directly to the property less the LL transaction fee noted above.";
                     break;
-                default: //cash-2
-                    $text = "Proceeds from sales of any  promotional packages placed on the Luxury Link site shall be remitted directly to the property less the LL transaction fee noted above.";
+                default: //Standard
+                  $text .= "In lieu of a cash fee, Luxury Link will accept a mutually agreed upon package from $hotelName to be sold on the Luxury Link website. Luxury Link will keep proceeds from the sale of these packages until the membership fee has been satisfied. Proceeds from subsequent sales of this package and any other promotional packages placed on the Luxury Link site shall be remitted directly to the property less the LL transaction fee noted above.";
                     break;
             }
-            if (isset($installmentTypeId)) {
+
+            if (isset($installmentTypeId) && intval($installmentTypeId) !== 0){
                 App::import('Model', 'LoaInstallmentType');
                 $LoaInstallmentType = new LoaInstallmentType();
-                $text .= 'The Membership Fee  will be collected in ' . strtolower(
+                $text .= '<br>The Membership Fee  will be collected in ' . strtolower(
                         $LoaInstallmentType->getInstallmentTypeById($installmentTypeId)
                     ) . ' installments.';
             }
-            return $text;
+
         }
+        return $text;
     }
 
 

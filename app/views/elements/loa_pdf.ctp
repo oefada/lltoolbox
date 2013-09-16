@@ -149,7 +149,7 @@ Configure::write('debug', 0);
     <?if (!empty($loa['Loa']['membershipFee'])){ ?>
     <tr>
         <td width="50%"><strong>Membership<br/></strong></td>
-        <td>$<?=number_format($loa['Loa']['membershipFee'],0,'.',',');?> <em><strong></strong></em></td>
+        <td>$<?=number_format($loa['Loa']['membershipFee'],0,'.',',');?> <?if($loa['Loa']['loaMembershipTypeId'] == 1){?><em>(100% Payable in Barter)</em><?}?></td>
     </tr>
     <? }?>
     <?if (!empty($loa['Loa']['membershipTotalPackages'])){ ?>
