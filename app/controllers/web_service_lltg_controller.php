@@ -29,7 +29,7 @@ class WebServiceLltgController extends WebServicesController
 	{
 		$data = json_decode($in0, true);
 		$failureDetail = array();
-		$failureDetail['dateCreated'] = date('Y-m-d h:i:s');
+		$failureDetail['dateCreated'] = date('Y-m-d H:i:s');
 		$failureDetail['isSent'] = 0;
 		$failureDetail['originalId'] = 0;
 		$failureDetail['messageResponses'] = $data['messageResponses'];
