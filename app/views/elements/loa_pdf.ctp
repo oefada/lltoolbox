@@ -26,7 +26,7 @@ Configure::write('debug', 0);
 
 <h3><strong>Partnership Program Overview for <?=$loa['Client']['name'];?></strong>
 </h3>
-<p>Dear <?=$loa['LoaDocument']['contactName']?>,
+<p>Dear <?=$loa['salutation']?>,
 </p>
 <p>It is my pleasure to present this partnership invitation for your review. As we discussed, Luxury Link Travel Group (LLTG) is uniquely positioned to send
     thousands of qualified leads and direct consumer business to <?=$loa['Client']['name'];?> via our Partner Program while providing brand lift within a targeted
@@ -41,7 +41,6 @@ Configure::write('debug', 0);
     <li><p><strong>Customized Landing Page - </strong><?=$loa['Client']['name'];?> will receive a customized landing page including high-resolution image gallery, interactive maps, accolades listing and
             prominent links to <?=$loa['Client']['name'];?> website and booking engine to promote <strong>direct bookings.</strong> Landing pages will appear in all
             appropriate key word searches on Luxury Link.</p>
-
     </li>
     <li><p><strong>Call forwarding service - </strong>a unique, toll-free telephone number will be assigned to <?=$loa['Client']['name'];?>; consumer calls will be forwarded to your reservations desk for            <strong>direct booking</strong>.<strong> </strong>
         </p>
@@ -72,25 +71,31 @@ Configure::write('debug', 0);
     <li><strong>Social Media Suite</strong>
         <? if(in_array(trim($loa['Client']['segment']),array('A','M'))){ ?>
         <ul>
+            <li>Live activity feeds of your property's Facebook and Twitter accounts on customized landing page
+            </li>
             <li>Launch Week Introduction
-                <ul><li>Inclusion in “New Properties” photo gallery on Facebook and LL Lounge</li></ul>
+                <ul><li>Inclusion in "New Properties" photo gallery on Facebook</li></ul>
             </li>
             <li>General Manager interview posted on your property Showcase Page
             </li>
-            <li>2 property-exclusive posts on Facebook
+            <li>2 additional posts on Facebook
             </li>
             <li>5 property-exclusive Twitter posts
             </li>
             <li>Inclusion of photo on appropriate LLTG Pinterest board
             </li>
-            <li>Potential inclusion in LLTG social media features (e.g. destination/lifestyle- specific posts)
+            <li>Video featured on Luxury Link's YouTube channel
+            </li>
+            <li>Potential inclusion in LLTG social media features (e.g. destination/lifestyle- specific posts) and within Luxury Lounge community
             </li>
             <li>Additional exposure via Family Getaway and Vacationist social media channels, if applicable
             </li>
         </ul>
         <? }else{?>
             <ul>
-                <li>Launch Week Introduction -Inclusion in “New Properties” photo gallery on Facebook and LL Lounge
+                <li>Live activity feeds of your property's Facebook and Twitter accounts on customized landing page
+                </li>
+                <li>Launch Week Introduction -Inclusion in "New Properties" photo gallery on Facebook
                 </li>
                 <li>General Manager interview posted on your property Showcase Page
                 </li>
@@ -98,7 +103,7 @@ Configure::write('debug', 0);
                 </li>
                 <li>2 property-exclusive Twitter posts
                 </li>
-                <li>Potential inclusion in LLTG social media features (e.g. destination/lifestyle- specific posts)
+                <li>Potential inclusion in LLTG social media features (e.g. destination/lifestyle- specific posts) and within Luxury Lounge community
                 </li>
                 <li>Additional exposure via Family Getaway and Vacationist social media channels, if applicable
                 </li>
@@ -149,7 +154,7 @@ Configure::write('debug', 0);
     <?if (!empty($loa['Loa']['membershipFee'])){ ?>
     <tr>
         <td width="50%"><strong>Membership<br/></strong></td>
-        <td>$<?=number_format($loa['Loa']['membershipFee'],0,'.',',');?> <?if($loa['Loa']['loaMembershipTypeId'] == 1){?><em>(100% Payable in Barter)</em><?}?></td>
+        <td>$<?=number_format($loa['Loa']['membershipFee'],0,'.',',');?> <?if($loa['Loa']['loaMembershipTypeId'] == 1){?><em>(Payable in Barter)</em><?}?></td>
     </tr>
     <? }?>
     <?if (!empty($loa['Loa']['membershipTotalPackages'])){ ?>
@@ -165,7 +170,7 @@ Configure::write('debug', 0);
         </tr>
     <? }?>
     <tr>
-        <td><strong>Promotional Packages Sales Commission</strong></td>
+        <td><strong>Promotional Packages Transaction Fee</strong></td>
         <td><? if (!empty($loa['Loa']['auctionCommissionPerc'])){?>Auctions: <?=$loa['Loa']['auctionCommissionPerc'];?>%<? } ?>
         <? if (!empty($loa['Loa']['buynowCommissionPerc'])){?><br />Buy Now: <?=$loa['Loa']['buynowCommissionPerc'];?>%<br /><? } ?>
         </td>
@@ -188,7 +193,7 @@ Configure::write('debug', 0);
 </p>
 <p>The program outlined above will commence on or before <?=date('F d, Y',strtotime($loa['Loa']['startDate']));?> and will conclude on <?=date('F d, Y',strtotime($loa['Loa']['endDate']));?>.
 </p>
-<p><?=$loa['LoaDocument']['contactName']?>, on behalf of the entire Luxury Link Travel Group, we look forward to a successful year ahead.
+<p><?=$loa['salutation']?>, on behalf of the entire Luxury Link Travel Group, we look forward to a successful year ahead.
 </p>
 
 

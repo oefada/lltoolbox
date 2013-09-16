@@ -84,7 +84,16 @@ if (isset($client['ClientContact'])){
     echo $form->input('LoaDocument.signerName',array('label'=>'Rep Full Name: ','value'=>$userDetails['name']));
     //echo '</div>';
     echo $form->input('LoaDocument.signerTitle',array('label'=>'Rep Title','value'=>ucwords($userDetails['description'])));
-    echo $form->input('LoaDocument.contactName', array('type' => 'select', 'options' => $arrContactsDropDown));
+
+    ?>
+    <div class="input select">
+    <?
+    echo $form->input('LoaDocument.contactPrefix', array('type' => 'select', 'label'=>'Contact Name','div'=>false, 'class' => false,'options' => $contactPrefix, 'empty'=>true));
+    echo  '&nbsp;';
+    echo $form->input('LoaDocument.contactName', array('type' => 'select', 'label'=>false, 'div'=>false, 'class' => false, 'options' => $arrContactsDropDown));
+    ?>
+    </div>
+    <?
     echo $form->hidden('LoaDocument.loaId',array('value'=>$loaId));
     echo $form->hidden('LoaDocument.clientId',array('value'=>$clientId));
     echo $form->submit('Generate Agreement');

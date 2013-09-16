@@ -1,4 +1,5 @@
 <?php
+include(APP . 'vendors/php-name-parser/index.php');
 class LoaDocumentsController extends AppController
 {
     public $name = 'LoaDocuments';
@@ -176,6 +177,8 @@ class LoaDocumentsController extends AppController
                 if (isset($decoded_request['assigned_user']['title'])) {
                     $this->data['LoaDocument']['signerTitle'] = $decoded_request['assigned_user']['title'];
                 }
+
+                $this->data['LoaDocument']['contactPrefix'] = $decoded_request['loa']['salutation_c'];
                 $this->data['LoaDocument']['contactName'] = $decoded_request['loa']['full_name_c'];
                 $this->data['LoaDocument']['contactTitle'] = '';
                 $this->data['LoaDocument']['docDate'] = $decoded_request['loa']['date_modified'];
@@ -256,6 +259,17 @@ class LoaDocumentsController extends AppController
                     $this->data['LoaDocument']['docDate']
                 );
             }
+            $nameParts = split_full_name($this->data['LoaDocument']['contactName']);
+            if(!empty($this->data['LoaDocument']['contactPrefix'])){
+
+                $loa['salutation'] = $this->data['LoaDocument']['contactPrefix'].' '.$nameParts['lname'];
+            }else{
+                $loa['salutation'] = $nameParts['fname'];
+
+            }
+            /*var_dump($loa['salutation']);
+            die();
+            */
             //$client = $this->Client->findByClientId($this->data['LoaDocument']['clientId']);
             $doc = $this->data;
 

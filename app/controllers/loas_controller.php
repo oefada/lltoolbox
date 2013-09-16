@@ -561,10 +561,13 @@ class LoasController extends AppController
                 $arrContactsDropDown[$cVal['name']]=$cVal['name'];
             }
         }
+        $contactPrefix = array('Mr.'=>'Mr.','Ms.'=>'Ms.','Mrs.'=>'Mrs.','Dr.'=>'Dr.','Prof.'=>'Prof.');
+
         $this->set('loaId', $id);
         $this->set('clientId', $clientId);
         $this->set('client', $client);
         $this->set('arrContactsDropDown',$arrContactsDropDown);
+        $this->set('contactPrefix',$contactPrefix);
 
         $salesPeople =  $this->Loa->getSalesPeople();
 
