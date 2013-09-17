@@ -79,8 +79,12 @@
 		href="<?=$mailing->genUrl('nav', '/fivestar/hotel-deals/Monthly_deals', 'nav_extra-savings');?>">Extra Savings</a>
 
 	</td> 
-	<td align="right" valign="middle" style="padding: 0px 0px 0px 0px"><img border="0" height="24" width="113" src="http://www.luxurylink.com/images/email/Insider/social_icons_color.gif" alt="Luxury Link Social" style="display: block; text-align:right" usemap="#Social"/></td>
-	</tr>
+	
+    
+	
+    <td align="right" width="180" valign="middle" style="font-family:Arial,Verdana, sans-serif;font-size:12px;line-height:14px;color:#666; text-transform: uppercase; font-weight: bold; text-align: right;letter-spacing:0.25px; padding-right: 10px;">Call Now To Book<br><span style="color:#666; font-size:13px">(888) 297-3299</span></td>    
+    
+    </tr>
 	</table>
 </td>
 </tr>
@@ -1316,7 +1320,7 @@ For information or assistance, call 1 (888) 297-3299 or email <a href="mailto:co
 
 <tr>
 <td colspan="5" style="text-align: left; line-height: 12px; font-family: arial, helvetica, sans-serif; color: #666666; font-size: 10px; padding:2px 0px 0px 0px;">
-Please do not reply to this email, you may unsubscribe <a href="%%optout%%" name="Unsubscribe" style="color: #199bd7; text-decoration: none;" xt="SPCUSTOMOPTOUT" target="_blank">here</a>.  <a href="http://www.luxurylink.com/about/index.php/privacy-policy/" xt="SPCLICKSTREAM" name="www_luxurylink_com_images_1" style="color: #199bd7; text-decoration: none;" target="_blank">Privacy Policy</a></td>
+Please do not reply to this email, you may <a href="http://echo3.bluehornet.com/phase2/survey1/survey.htm?cid=mumogm&action=update&eemail=%%urlencoded_to_email%%&_mh=%%mhash%%" name="Unsubscribe" style="color: #199bd7; text-decoration: none;" xt="SPCUSTOMOPTOUT" target="_blank">unsubscribe</a> or <a href="http://echo3.bluehornet.com/clients/luxurylink/clupdate.htm?eemail=%%urlencoded_to_email%%" name="Preference Center" style="color: #199bd7; text-decoration: none;" target="_blank">update your newsletter preferences here</a>.<br><a href="http://www.luxurylink.com/about/index.php/privacy-policy/" xt="SPCLICKSTREAM" name="www_luxurylink_com_images_1" style="color: #199bd7; text-decoration: none;" target="_blank">Privacy Policy</a></td>
 </tr>
 </table>
 </td>
