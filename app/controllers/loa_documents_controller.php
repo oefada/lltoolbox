@@ -260,6 +260,8 @@ class LoaDocumentsController extends AppController
                 );
             }
             $nameParts = split_full_name($this->data['LoaDocument']['contactName']);
+            $this->data['LoaDocument']['nameParts'] = $nameParts;
+
             if(!empty($this->data['LoaDocument']['contactPrefix'])){
 
                 $loa['salutation'] = $this->data['LoaDocument']['contactPrefix'].' '.$nameParts['lname'];
