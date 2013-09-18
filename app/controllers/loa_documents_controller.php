@@ -265,7 +265,9 @@ class LoaDocumentsController extends AppController
                 $loa['salutation'] = $this->data['LoaDocument']['contactPrefix'].' '.$nameParts['lname'];
             }else{
                 $loa['salutation'] = $nameParts['fname'];
-
+            }
+            if(!empty($loa['Loa']['numEmailInclusions'])){
+                $loa['Loa']['numEmailInclusionsWords'] = convert_number_to_words(intval($loa['Loa']['numEmailInclusions']));
             }
             /*var_dump($loa['salutation']);
             die();
