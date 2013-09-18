@@ -62,7 +62,7 @@ Configure::write('debug', 0);
             </li>
             <?if (!empty($loa['Loa']['numEmailInclusions'])){ ?>
             <li><strong>E-Mail Newsletters</strong>
-                    – <?=$loa['Client']['name'];?> will be guaranteed inclusion in (<?=$loa['Loa']['numEmailInclusions']?>) two Luxury Link e-newsletters. Partner must have a mutually approved promotional package
+                    – <?=$loa['Client']['name'];?> will be guaranteed inclusion in (<?=$loa['Loa']['numEmailInclusions']?>) <?=$loa['Loa']['numEmailInclusionsWords']; ?> Luxury Link e-newsletters. Partner must have a mutually approved promotional package
                     live on Luxury Link web site to be included.
             </li>
             <? }?>
@@ -146,7 +146,7 @@ Configure::write('debug', 0);
 </ol>
 <p><u><strong>Fees</strong></u>
 </p>
-<p>The fee for the LLTG standard partner program is $12,000 per property, per year, plus a 20% transaction fee for each promotional Luxury Link package sold on
+<p>The fee for the LLTG standard partner program is $12,000 per property, per year, plus a 20% commission fee for each promotional Luxury Link package sold on
     our site. <strong>By special agreement</strong>, LLTG is pleased to extend <?=$loa['Client']['name'];?> the following special rates:
 </p>
 
@@ -170,7 +170,7 @@ Configure::write('debug', 0);
         </tr>
     <? }?>
     <tr>
-        <td><strong>Promotional Packages Transaction Fee</strong></td>
+        <td><strong>Promotional Packages Commission Fee</strong></td>
         <td><? if (!empty($loa['Loa']['auctionCommissionPerc'])){?>Auctions: <?=$loa['Loa']['auctionCommissionPerc'];?>%<? } ?>
         <? if (!empty($loa['Loa']['buynowCommissionPerc'])){?><br />Buy Now: <?=$loa['Loa']['buynowCommissionPerc'];?>%<br /><? } ?>
         </td>
@@ -182,8 +182,7 @@ Configure::write('debug', 0);
 </table>
 
 <!--variable text BEGIN-->
-<p>
-    <u><strong>How it Works</strong></u>
+<p><u>How it Works</u>:
     <?=$loa['howText'];?>
 </p>
 

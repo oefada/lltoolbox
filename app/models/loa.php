@@ -349,12 +349,20 @@ class Loa extends AppModel
                 $data['Client']['name'],
                 $data['Client']['managerUsername'],
                 $startDateAsString,
-                $data['Loa']['membershipFee'],
+                number_format($data['Loa']['membershipFee']),
                 $data['Loa']['notes']
             )
         );
         $tbl .= "</table><br />\n";
-        $link = 'http://' . $_SERVER['HTTP_HOST'] . '/loas/edit/' . $data['Loa']['loaId'];
+
+        if ($_SERVER['ENV'] == 'development' || ISSTAGE == true){
+            $http_host = $_SERVER['HTTP_HOST'];
+        }else{
+            //for production feed actual URL. important because sugar posts to IP
+            $http_host = 'toolbox.luxurylink.com';
+        }
+
+        $link = 'http://' . $http_host . '/loas/edit/' . $data['Loa']['loaId'];
 
         $msg = $tbl . '<a href="'.$link.'">'.$link.'</a>';
 
@@ -409,11 +417,13 @@ class Loa extends AppModel
      */
     public function hasActiveLoas($clientId, $days)
     {
+        //Configure::write('debug', 1);
         $query = "SELECT  DATE_FORMAT(endDate, '%m/%d/%Y')
                     FROM loa
                     WHERE clientId = ? AND
                           ((endDate BETWEEN CURDATE() - INTERVAL ? DAY AND SYSDATE()) /** ending in the last 30 ***/
                     OR  (endDate > CURDATE()))
+                    AND renewalResult !=2 /**Rewal result no- 2*/
                     ORDER BY endDate ASC
                     ";
         $QueryParameters = array($clientId, $days);
@@ -431,7 +441,7 @@ class Loa extends AppModel
             return false;
         }
 
-        if ($this->hasActiveLoas($clientId,30)){
+        if ($this->hasActiveLoas($clientId,90)){
             //don't process if there are current Loas in the last 30 days or in the future.
             return false;
         }
@@ -466,6 +476,7 @@ class Loa extends AppModel
 
         //fees and dates
         $loa_data_save['Loa']['membershipFee'] = $sugarLoaData['agreement_fee_c'];
+        $loa_data_save['Loa']['membershipBalance'] = $loa_data_save['Loa']['membershipFee'];
         $loa_data_save['Loa']['auctionCommissionPerc'] = $sugarLoaData['commission_auction_c'];
         $loa_data_save['Loa']['buynowCommissionPerc'] = $sugarLoaData['commission_buynow_c'];
         $loa_data_save['Loa']['startDate'] = $sugarLoaData['effective_date_c'];
