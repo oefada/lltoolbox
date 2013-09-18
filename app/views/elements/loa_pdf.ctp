@@ -32,20 +32,20 @@ Configure::write('debug', 0);
     thousands of qualified leads and direct consumer business to <?=$loa['Client']['name'];?> via our Partner Program while providing brand lift within a targeted
     environment.
 </p>
-<p>To achieve these goals, The Luxury Link Travel Group (LLTG) will provide the following services to <?=$loa['Client']['name'];?> in the Luxury Link partner program:
+<p>To achieve these goals, LLTG will provide the following services to <?=$loa['Client']['name'];?>:
 </p>
 <p>
     <u><strong>Services Benefitting <?=$loa['Client']['name'];?></strong></u>
 </p>
 <ol>
-    <li><p><strong>Customized Landing Page - </strong><?=$loa['Client']['name'];?> will receive a customized landing page including high-resolution image gallery, interactive maps, accolades listing and
+    <li><p><strong>Customized Landing Page - </strong><?=$loa['Client']['name'];?> will receive a customized landing page including high-resolution image gallery, interactive maps, list of accolades, and
             prominent links to <?=$loa['Client']['name'];?> website and booking engine to promote <strong>direct bookings.</strong> Landing pages will appear in all
-            appropriate key word searches on Luxury Link.</p>
+            appropriate keyword searches on Luxury Link.</p>
     </li>
     <li><p><strong>Call forwarding service - </strong>a unique, toll-free telephone number will be assigned to <?=$loa['Client']['name'];?>; consumer calls will be forwarded to your reservations desk for            <strong>direct booking</strong>.<strong> </strong>
         </p>
     </li>
-    <li><p><strong>Unlimited reservation referrals</strong> , clicks, and calls (commission-free)
+    <li><p><strong>Unlimited reservation referrals</strong>, clicks, and calls (commission-free)
         </p>
     </li>
     <li><p><strong>Unlimited promotional package sales</strong>
@@ -53,7 +53,7 @@ Configure::write('debug', 0);
     </li>
     <li><p><strong>Customer Data – </strong>
             name, address, email address, phone number, opt-in for all LL consumers who have requested/purchased reservations, called your reservations center
-            via LL toll-free numbers, or signed up for your newsletter via Luxury Link. Delivered monthly.<strong> </strong>
+            via LL toll-free numbers, or signed up for your newsletter via Luxury Link, delivered in monthly report.<strong> </strong>
         </p>
     </li>
     <li><p><strong>Targeted placements - </strong>
@@ -117,7 +117,7 @@ Configure::write('debug', 0);
         </p>
     </li>
     <li><p><strong>Management &amp; Reporting</strong>
-            – A dedicated Senior Account Manager will be assigned to <?=$loa['Client']['name'];?> to ensure your program is optimized throughout your term. <?=$loa['Client']['name'];?> will receive detailed monthly marketing and customer acquisition reports.
+            – A dedicated Account Manager will be assigned to <?=$loa['Client']['name'];?> to ensure your program is optimized throughout your term. <?=$loa['Client']['name'];?> will receive detailed monthly marketing and customer acquisition reports.
         </p>
     </li>
     <? if(!empty($loa['Loa']['moneyBackGuarantee']) ||
@@ -146,8 +146,8 @@ Configure::write('debug', 0);
 </ol>
 <p><u><strong>Fees</strong></u>
 </p>
-<p>The fee for the Luxury Link standard program is $12,000 per property, per year, plus a 20% transaction fee for each promotional Luxury Link package sold on
-    our site. <strong>By special agreement</strong>, Luxury Link is pleased to extend <?=$loa['Client']['name'];?> the following special rates:
+<p>The fee for the LLTG standard partner program is $12,000 per property, per year, plus a 20% transaction fee for each promotional Luxury Link package sold on
+    our site. <strong>By special agreement</strong>, LLTG is pleased to extend <?=$loa['Client']['name'];?> the following special rates:
 </p>
 
 <table>
@@ -182,7 +182,8 @@ Configure::write('debug', 0);
 </table>
 
 <!--variable text BEGIN-->
-<p><u>How it Works</u>
+<p>
+    <u><strong>How it Works</strong></u>
     <?=$loa['howText'];?>
 </p>
 
@@ -193,7 +194,7 @@ Configure::write('debug', 0);
 </p>
 <p>The program outlined above will commence on or before <?=date('F d, Y',strtotime($loa['Loa']['startDate']));?> and will conclude on <?=date('F d, Y',strtotime($loa['Loa']['endDate']));?>.
 </p>
-<p><?=$loa['salutation']?>, on behalf of the entire Luxury Link Travel Group, we look forward to a successful year ahead.
+<p><?=$loa['salutation']?>, on behalf of the entire Luxury Link Travel Group, we look forward to a successful year.
 </p>
 
 
