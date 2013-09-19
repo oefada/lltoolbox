@@ -294,6 +294,18 @@ class LoasController extends AppController
         $this->Loa->LoaPublishingStatusRel->PublishingStatus->recursive = -1;
         $publishingStatus = $this->Loa->LoaPublishingStatusRel->PublishingStatus->find('list');
 
+        $salesPeople =  $this->Loa->getSalesPeople();
+
+        if (!empty($salesPeople)){
+            $salesPeopleAutoComplete =array();
+            $i =0;
+            foreach ($salesPeople as $username=>$fullName){
+                $fullName = str_replace("\r", "", $fullName);
+                $fullName = str_replace("\n", "", $fullName);
+                $salesPeopleAutoComplete[]= array('value'=>$username,'label'=>addslashes($fullName));
+            }
+        }
+        $this->set('listSalesPeople',$salesPeopleAutoComplete);
         $this->set('checkboxValuesArr', $this->getCheckboxValuesArr());
         $this->set('clientName', $client['Client']['name']);
         $this->set('client', $this->Loa->Client->findByClientId($clientId));
