@@ -251,6 +251,7 @@ class LoaDocumentsController extends AppController
                 $this->layout = 'ajax';
                 $this->data['LoaDocument']['generatedBy'] = $this->user['LdapUser']['username'];
                 $this->data['LoaDocument']['loaDocumentSourceId'] = 1;
+                $loa['Loa']['notes'] = nl2br($loa['Loa']['notes']);
                 $loa = $this->Loa->read(null, $this->data['LoaDocument']['loaId']);
 
                 //deconstruct DocDate used in PDF from cake array
