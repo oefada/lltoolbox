@@ -34,7 +34,17 @@ $this->set('hideSidebar', true);
 				|
 				<?php echo $html->link('Revisions', array('action' => 'revisions', $BlockPage['BlockPage']['blockPageId'])); ?>
 				|
-				<?php echo $html->link('View Live', 'http://www.luxurylink.com' . $BlockPage['BlockPage']['url'], array('target' => '_blockView')); ?>
+                
+                <? $viewLink = $BlockPage['BlockPage']['url'];
+                   if (substr($viewLink, -2) == '-2') {
+                        $viewLink = substr($viewLink, 0, -2);
+                        $viewLink = 'http://www.luxurylink.co.uk' . $viewLink;
+                   } else {
+                        $viewLink = 'http://www.luxurylink.com' . $viewLink;
+                   }
+                ?>
+                
+                <?php echo $html->link('View Live', $viewLink, array('target' => '_blockView')); ?>
 			</td>
 			<td><?php echo $BlockPage['BlockPage']['created']; ?></td>
 		</tr>

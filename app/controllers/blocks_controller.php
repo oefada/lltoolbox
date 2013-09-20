@@ -176,8 +176,18 @@ class BlocksController extends AppController
             if (isset($_POST['publish'])) {
                 $this->BlockRevision->activate($blockPageId, $this->BlockRevision->id);
                 $url = $this->BlockPage->field('url', array('blockPageId' => $blockPageId));
+                
+                $forceUK = false;
+                if (substr($url, -2) == '-2') {
+                	$url = substr($url, 0, -2);
+                	$forceUK = true;
+                }
+                
                 $previewPath .= $url;
                 $previewPath .= '?clearCache=' . sha1('LUXURY ' . $url . ' ' . date('Y-m-d') . ' LINK');
+                if ($forceUK) {
+                	$previewPath .= '&forceUK';
+                }
                 header('X-Blocks-Publish: ' . $previewPath);
             } else {
                 $previewPath .= '/blocks/blocks.php?mode=preview&blockRevisionId=' . $this->BlockRevision->id;
