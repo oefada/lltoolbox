@@ -613,7 +613,7 @@ class TicketsController extends AppController
 
             $arrivalDate = $this->dateArrayToString($this->data['Ticket']['requestArrival']);
             $departureDate = $this->dateArrayToString($this->data['Ticket']['requestDeparture']);
-            $calculatedNights = (strtotime($departureDate) - strtotime($arrivalDate)) / 86400;
+            $calculatedNights = round((strtotime($departureDate) - strtotime($arrivalDate)) / 86400);
             $error = false;
 
             if ($this->data['extraNotes'] == '') {
