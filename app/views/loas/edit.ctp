@@ -5,14 +5,6 @@ echo $this->element("loas_subheader", array("loa" => $loa, "client" => $client))
 $this->searchController = 'Clients';
 $this->set('clientId', $this->data['Client']['clientId']);
 
-/*
- * For soft launch, will remove later
- */
-$showSpellcheck = false;
-if(isset($_GET['showSpellcheck']) && $_GET['showSpellcheck'] == '1'){
-    $showSpellcheck = true;
-}
-
 echo $layout->blockStart('header');
 echo $html->link(
     '<span><b class="icon"></b>Delete LOA</span>',
@@ -25,8 +17,57 @@ echo $html->link(
     false
 );
 echo $layout->blockEnd();
-
 ?>
+<style type="text/css">
+        /*.required{*/
+        /*background-color:#FF0000;*/
+        /*color:#FFF;*/
+        /*}*/
+        /* workarounds */
+    html .ui-autocomplete { width:1px; } /* without this, the menu expands to 100% in IE6 */
+    .ui-menu {
+        list-style:none;
+        padding: 2px;
+        margin: 0;
+        display:block;
+        float: left;
+    }
+    .ui-menu .ui-menu {
+        margin-top: -3px;
+    }
+    .ui-menu .ui-menu-item {
+        margin:0;
+        padding: 0;
+        zoom: 1;
+        float: left;
+        clear: left;
+        width: 100%;
+    }
+    .ui-menu .ui-menu-item a {
+        text-decoration:none;
+        display:block;
+        padding:.2em .4em;
+        line-height:1.5;
+        zoom:1;
+    }
+    .ui-menu .ui-menu-item a.ui-state-hover,
+    .ui-menu .ui-menu-item a.ui-state-active {
+        font-weight: normal;
+        margin: -1px;
+    }
+    .ui-menu .ui-menu-item a.ui-state-focus {
+        color:#007ED1;
+        border:1px dashed #CCC;
+        background-image: none;
+        background-color: #FFFFFF;
+        background: -moz-linear-gradient(top,  #d7d6d2,  #ffffff);
+        background-image: linear-gradient(top,  #d7d6d2,  #ffffff);
+        background-image: -o-linear-gradient(top,  #d7d6d2,  #ffffff);
+        background-image: -moz-linear-gradient(top,  #d7d6d2,  #ffffff);
+        background-image: -webkit-linear-gradient(top,  #d7d6d2,  #ffffff);
+        background-image: -ms-linear-gradient(top,  #d7d6d2,  #ffffff);
+    }
+</style>
 <style type="text/css">
     div.pub-status div.checkbox input[type="checkbox"] {
         width: 20px;
@@ -39,7 +80,7 @@ echo $layout->blockEnd();
         position: relative;
     }
     .checkspelling{
-        margin: 0px 0 0 180px;
+        margin: -20px 0 0 180px;
     }
 </style>
 <script type="text/javascript" src="/js/tiny_mce/tiny_mce.js"></script>
@@ -57,7 +98,10 @@ echo $layout->blockEnd();
 </script>
 <script type='text/javascript' src='/js/javascriptspellcheck/include.js'></script>
 
-<script type='text/javascript'>$Spelling.SpellCheckAsYouType('loaNotes')</script>
+<script type='text/javascript'>
+    $Spelling.SpellCheckAsYouType('spellSpan');
+    //$Spelling.PopUpStyle="modalbox";
+</script>
 <h2 class="title">
     <?php __('Edit Loa');
     echo $html2->c($loa['Loa']['loaId'], 'LOA Id:')?>
@@ -183,6 +227,7 @@ echo $form->input('auctionCommissionPerc', array('label' => 'Auction % Commissio
 echo $form->input('buynowCommissionPerc', array('label' => 'BuyNow % Commission'));
 echo $form->input('numEmailInclusions');
 echo '<div><label>Client Segment</label><span>' . $client['Client']['segment'] . '</span></div>';
+echo '<div class="spellSpan" id="spellSpan">';
 echo $form->input(
     'notes',
     array(
@@ -191,9 +236,12 @@ echo $form->input(
         'class' => 'loaNotes'
     )
 );
-if ($showSpellcheck == true) {
-    echo '<a class="checkspelling" href="#" onclick="$Spelling.SpellCheckInWindow(\'loaNotes\'); return false;">Check Spelling</a>';
-}
+echo '</div>';
+
+?>
+<a class="checkspelling" href="#" onclick="$Spelling.SpellCheckInWindow('spellSpan'); return false;">Check Spelling</a>
+
+<?
 echo $form->input('nonRenewalReason', array('type' => 'select', 'options' => $nonRenewalReasonOptions));
 echo $form->input('nonRenewalNote', array('type' => 'textarea'));
 echo $form->input('accountExecutive');
@@ -516,7 +564,57 @@ if (isset($loa['Loa']['modified'])) {
             $('LoaMembershipFeeEstimated').disable();
         }
     }
+    (function($) {
+        //Autocompletes for LoaAccountExecutive and LoaAccountManager
+        var listSalesPeople = <?= json_encode($listSalesPeople)?>;
+        $(document).ready(function(){
+            //var fakedata = ['test1','test2','test3','test4','ietsanders'];
+            $( "#LoaAccountExecutive").autocomplete({
+                minLength: 0,
+                //source: window.loaDoc.availableTags,
+                source: function(request, response){
+                    var matcher = new RegExp( $.ui.autocomplete.escapeRegex( request.term ), "i" );
+                    response( $.grep(listSalesPeople, function( value ) {
+                        return matcher.test(value.label) || matcher.test(value.value);
+                    }) );
+                },
+                select: function( event, ui ) {
+                    $(  "#LoaAccountExecutive" ).val( ui.item.value );
+                    return false;
+                }
+            })
+                .data( "ui-autocomplete" )._renderItem = function( ul, item ) {
+                return $( "<li>" )
+                    .append( "<a style='font-size:90%;'>" + item.label + "<br>(" + item.value + ")</a>" )
+                    .appendTo( ul );
+            };
 
+            //LoaAccountManager autocomplete
+            $( "#LoaAccountManager").autocomplete({
+                minLength: 0,
+                //source: window.loaDoc.availableTags,
+                source: function(request, response){
+                    var matcher = new RegExp( $.ui.autocomplete.escapeRegex( request.term ), "i" );
+                    response( $.grep(listSalesPeople, function( value ) {
+                        return matcher.test(value.label) || matcher.test(value.value);
+                    }) );
+                },
+                /*focus: function( event, ui ) {
+                 $( "#LoaDocumentSignerName" ).val( ui.item.label );
+                 return false;
+                 },*/
+                select: function( event, ui ) {
+                    $(  "#LoaAccountManager" ).val( ui.item.value );
+                    return false;
+                }
+            })
+                .data( "ui-autocomplete" )._renderItem = function( ul, item ) {
+                return $( "<li>" )
+                    .append( "<a style='font-size:90%;'>" + item.label + "<br>(" + item.value + ")</a>" )
+                    .appendTo( ul );
+            };
+        });
+    })(jQuery);
 </script>
 <!-- CONTAINER FOR OVERLAYS ====================================================================-->
 

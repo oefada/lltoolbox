@@ -5,7 +5,8 @@ $spellcheckObject = new PHPSpellCheck();
 ############# LICENSE ############
 
 #	Copy and Paste your license key here.  Buy one onlline at www.phpspellcheck.com 
-$spellcheckObject -> LicenceKey="TRIAL";
+//$spellcheckObject -> LicenceKey="TRIAL";
+$spellcheckObject -> LicenceKey="LIVESPELL-3F0XTZT0DKJ7523-UU51T-GR7ZK-JS.ONE.SERVER-5Y0P0";
 
 
 ######### BASIC SETTINGS ##########
