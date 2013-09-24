@@ -146,10 +146,17 @@ Configure::write('debug', 0);
 </ol>
 <p><u><strong>Fees</strong></u>
 </p>
-<p>The fee for the LLTG standard partner program is $12,000 per property, per year, plus a 20% commission fee for each promotional Luxury Link package sold on
-    our site. <strong>By special agreement</strong>, LLTG is pleased to extend <?=$loa['Client']['name'];?> the following special rates:
-</p>
-
+<? if (!empty($loa['Loa']['membershipFee'])) { ?>
+    <? if ($loa['Loa']['membershipFee'] == 12000 && ($loa['Loa']['buynowCommissionPerc'] == 20)) { ?>
+    <? } else { ?>
+        <p>The fee for the LLTG standard partner program is $12,000 per property, per year, plus a 20% commission fee
+            for each promotional Luxury Link package sold on
+            our site. <strong>By special agreement</strong>, LLTG is pleased to extend <?= $loa['Client']['name']; ?>
+            the following special rates:
+        </p>
+    <?
+    }
+} ?>
 <table>
     <?if (!empty($loa['Loa']['membershipFee'])){ ?>
     <tr>
@@ -169,12 +176,24 @@ Configure::write('debug', 0);
             <td><?=$loa['Loa']['membershipTotalNights'];?> <em><strong></strong></em></td>
         </tr>
     <? }?>
+    <? if (!empty($loa['Loa']['auctionCommissionPerc']) && !empty($loa['Loa']['buynowCommissionPerc'])){
+        //e.g. Toolbox
+        ?>
     <tr>
         <td><strong>Promotional Packages Commission Fee</strong></td>
         <td><? if (!empty($loa['Loa']['auctionCommissionPerc'])){?>Auctions: <?=$loa['Loa']['auctionCommissionPerc'];?>%<? } ?>
         <? if (!empty($loa['Loa']['buynowCommissionPerc'])){?><br />Buy Now: <?=$loa['Loa']['buynowCommissionPerc'];?>%<br /><? } ?>
         </td>
     </tr>
+    <?}else{
+        //e.g. sugar ?>
+    <tr>
+        <td><strong>Promotional Packages Commission Fee</strong></td>
+        <td><? if (!empty($loa['Loa']['buynowCommissionPerc'])){?><?=$loa['Loa']['buynowCommissionPerc'];?>%<br /><? } ?>
+        </td>
+    </tr>
+    <?
+    }?>
     <tr>
         <td><strong>Direct Reservations/Referrals/Leads</strong></td>
         <td>0%</td>
