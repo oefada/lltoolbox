@@ -423,7 +423,7 @@ class LoasController extends AppController
                     //LOA level has changed
                     if(4 == $this->data['Loa']['loaLevelId']){
                         //4- Agreement
-                        $this->Loa->changeEmail($this->data,'Loa Submission','renew@luxurylink.com');
+                        $this->Loa->changeEmail($this->data,'Loa Submission - '.$this->data['Client']['name'],'renew@luxurylink.com');
                     }
                 }
                 $this->Session->setFlash(__('The Loa has been saved', true));
