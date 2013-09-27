@@ -117,6 +117,17 @@ class LoaDocumentsController extends AppController
             $errors[] = '-Could not load document';
         }
         $client = $this->Client->findByClientId($document['LoaDocument']['clientId']);
+
+        //special character handling for clientName with becomes part of filename.
+
+        if (isset($document['LoaDocument']['companyName'])) {
+            $document['LoaDocument']['companyName'] = $this->LoaDocument->remove_accents(
+                $document['LoaDocument']['companyName']
+            );
+        }
+        if (isset($client['Client']['name'])) {
+            $client['Client']['name'] = $this->LoaDocument->remove_accents($client['Client']['name']);
+        }
         $this->set('loaId', $loaId);
         $this->set('loaDocumentId', $loaDocumentId);
 
@@ -254,6 +265,8 @@ class LoaDocumentsController extends AppController
                 $loa['Loa']['notes'] = nl2br($loa['Loa']['notes']);
                 $loa = $this->Loa->read(null, $this->data['LoaDocument']['loaId']);
 
+                $this->data['LoaDocument']['companyName'] = $loa['Client']['name'];
+
                 //deconstruct DocDate used in PDF from cake array
                 $this->data['LoaDocument']['docDate'] = $this->LoaDocument->deconstruct(
                     'docDate',
@@ -272,6 +285,8 @@ class LoaDocumentsController extends AppController
             if(!empty($loa['Loa']['numEmailInclusions'])){
                 $loa['Loa']['numEmailInclusionsWords'] = convert_number_to_words(intval($loa['Loa']['numEmailInclusions']));
             }
+            //handle special characters for PDF.
+            $loa['Client']['name'] = htmlentities($loa['Client']['name']);
             /*var_dump($loa['salutation']);
             die();
             */
