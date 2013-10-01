@@ -59,8 +59,12 @@ class Call extends AppModel
 		3 => 'Live Chat Reactive',
 		4 => 'Live Chat Proactive',
 	);
-	// TODO READ THESE FROM THE DATABASE
-	public static $contactTopics = array(
+
+    /**
+     * Moved to Database
+
+
+    public static $contactTopics = array(
 		/* 1 => 'Haven\'t received confirmation - checking confirmation', */
 		/* 2 => 'Checking availability before purchase', */
 		/* 3 => 'Checking availability before purchase - Unmet demand', DELETED */
@@ -82,7 +86,7 @@ class Call extends AppModel
 		19 => 'Specific questions on a package',
 		20 => 'Customer shopping',
 		21 => 'Immediate issue at hotel',
-		25 => 'Buy Now Follow-up',
+		//25 => 'Buy Now Follow-up',
         26 => 'Sales lead/customer shopping/availability',
         27 => 'Manual Ticket Created',
         28 => 'DNA calls/submit alternate dates',

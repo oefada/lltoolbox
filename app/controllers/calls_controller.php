@@ -3,7 +3,7 @@ class CallsController extends AppController
 {
 
 	var $name = 'Calls';
-	var $uses = array('Call');
+	var $uses = array('Call','CallContactTopic');
 	var $helpers = array(
 		'Html',
 		'Form'
@@ -176,6 +176,7 @@ class CallsController extends AppController
 			'limit' => 10,
 			'order' => 'Call.created DESC',
 		)));
+        $this->set('activeCallContactTopics',$this->CallContactTopic->getActiveCallContactTopics());
 	}
 
 	function ajax()
