@@ -146,6 +146,7 @@
 		<tr>
 			<th>Days</th>
 			<th>Name</th>
+            <th>ClientID</th>
 			<th>Location</th>
 			<th>Destination</th>
 			<th>Manager</th>
@@ -168,6 +169,7 @@ foreach ($aging as $a):
 		<tr>
 			<td><?=$a['age'];?></td>
 			<td><?=$html->link($a['name'] , array('controller' => 'clients' , 'action' => 'edit' , 'id' => $a['clientId']));?></td>
+            <td><?= $a['clientId'];?></td>
 			<td><?= $a['locationDisplay'];?></td>
 			<td><?= $a['destinationName'];?></td>
 			<td><?= $a['managerUsername'];?></td>
