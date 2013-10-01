@@ -22,7 +22,8 @@ if (isset($results['data']['recipients'],$results['message']['pdf'])){
     $mail->From = 'no-reply@toolbox.luxurylink.com';
     $mail->FromName = 'no-reply@toolbox.luxurylink.com';
     if ($_SERVER['ENV'] == 'development' || ISSTAGE == true){
-        $mail->AddAddress('oefada@luxurylink.com');
+        $mail->AddAddress('devmail@luxurylink.com');
+        $mail->AddBCC('oefada@luxurylink.com');
     }else {
         foreach($results['data']['recipients'] as $email => $name)
         {
