@@ -1294,9 +1294,9 @@ class PackagesController extends AppController
                 }
             }
 
-            if (false && $this->data['Package']['isFlexPackage'] == 0) {
-                $this->data['Package']['flexNumNightsMin'] = 0;
-                $this->data['Package']['flexNumNightsMax'] = 0;
+            if ($this->data['Package']['isFlexPackage'] == 0) {
+                $this->data['Package']['flexNumNightsMin'] = null;
+                $this->data['Package']['flexNumNightsMax'] = null;
                 $this->data['Package']['flexNotes'] = '';
             }
 
