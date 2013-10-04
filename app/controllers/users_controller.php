@@ -821,7 +821,8 @@ class UsersController extends AppController
             $this->User->saveField('transmitted', 0);
 
             $url = Configure::read("Url.LL") . '/ajax/cc.php?e=u&id=' . $userSiteExtended['UserSiteExtended']['userId'];
-            $result = file_get_contents($url);
+            // $result = file_get_contents($url);
+            $this->set('cacheClearUrl', $url);
 
         } else {
             $this->data = $this->User->read(null, $id);

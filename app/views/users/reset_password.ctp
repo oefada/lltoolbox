@@ -14,6 +14,7 @@ Are you sure you want to reset this user's password?  You will be shown the gene
 	<div class='icon-yellow' style="padding-left: 40px; text-align: left">
 	The user's password has been reset to '<strong><?=$newPassword?></strong>'. 
 	</div>
+    <iframe src="<?= $cacheClearUrl; ?>" width="2" height="2" scrolling="no" frameborder="0"></iframe>
 <?php endif;?>
 
 <?php
