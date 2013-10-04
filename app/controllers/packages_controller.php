@@ -2,13 +2,12 @@
 
 class PackagesController extends AppController
 {
-    var $name = 'Packages';
+    public $name = 'Packages';
     var $helpers = array('Html', 'Form');
     var $uses = array('Package', 'Client', 'PackageRatePeriod', 'LoaItem', 'IdCreator', 'Loa', 'PricePoint');
     var $paginate = array('order' => array('Package.packageId' => 'desc'));
-
     // Where to send errors 
-    const DEV_EMAIL = 'mbyrnes@luxurylink.com';
+    const DEV_EMAIL = 'devmail@luxurylink.com';
 
     function beforeFilter()
     {
@@ -21,7 +20,6 @@ class PackagesController extends AppController
             $this->set('client', $this->Client->findByClientId($this->params['clientId']));
             $this->set('clientId', $this->params['clientId']);
         }
-
     }
 
     function clonePackageAcrossLoas($clientId, $packageId)
