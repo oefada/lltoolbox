@@ -108,10 +108,25 @@ class Loa extends AppModel
                     $this->LoaPublishingStatusRel->save($pStatus);
                 }
             }
+
+            if ($this->data['Loa']['loaLevelId_prev'] !== $this->data['Loa']['loaLevelId']) {
+                //Loa has changed
+                if (2 == $this->data['Loa']['loaLevelId']) {
+                    if ($this->get_current_loa($this->data['Loa']['clientId']) == $this->data['Loa']['loaId']){
+                        //ensure we are working on the currentLOA
+
+                        $this->data['Client']['loaLevelId'] = $this->data['LoaLevel']['loaLevelId'];
+                        $this->data['Client']['loaLevelName'] = $this->data['LoaLevel']['loaLevelName'];
+
+                        $this->Client->save($this->data['Client']);
+                        //var_dump('Loa level has changed and working on current LOA LOA is '. $this->data['Loa']['loaId']);
+                    }
+                }
+           //
         }
         return;
     }
-
+    }
     /**
      *
      */
