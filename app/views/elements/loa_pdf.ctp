@@ -147,7 +147,7 @@ Configure::write('debug', 0);
 <p><u><strong>Fees</strong></u>
 </p>
 <? if (!empty($loa['Loa']['membershipFee'])) { ?>
-    <? if ($loa['Loa']['membershipFee'] == 12000 && ($loa['Loa']['buynowCommissionPerc'] == 20)) { ?>
+    <? if ($loa['Loa']['membershipFee'] > 11999 && ($loa['Loa']['buynowCommissionPerc'] >= 20)) { ?>
     <? } else { ?>
         <p>The fee for the LLTG standard partner program is $12,000 per property, per year, plus a 20% commission fee
             for each promotional Luxury Link package sold on
