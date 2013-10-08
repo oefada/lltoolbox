@@ -182,6 +182,7 @@ echo $form->input('segment');
 <div class="controlset">
     <?echo $form->hidden('showTripAdvisorReview');?>
     <?echo $form->input('hideUserReviews');?>
+    <?echo $form->input('isPegasusEnabled');?>
 </div>
 
 <fieldset class="collapsible">
