@@ -2694,11 +2694,18 @@ class PackagesController extends AppController
                 $this->Package->save($package);
             }
 
-            // mbyrnes
-            if (isset($this->data['Package']['isFlexPackage'])) {
-                $this->data['Package']['packageId'] = $packageId;
+            $this->data['Package']['packageId'] = $packageId;
+
+            //TICKET4367: Toolbox - When a Flex Package is switched to regular package, update minNights and maxNights to null
+            if ($this->data['Package']['isFlexPackage'] !== '1'){
+                $this->data['Package']['flexNumNightsMin'] = null;
+                $this->data['Package']['flexNumNightsMax'] = null;
+                $this->data['Package']['flexNotes'] = null;
+                $this->Package->save($this->data['Package']);
+            }else{
                 $this->Package->save($this->data['Package']);
             }
+
 
             // ticket1870 - we still need to set validityStart and validityEnd in the pricePoint table
             $this->Package->updatePackagePricePointValidity($packageId, $siteId);
