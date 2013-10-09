@@ -536,6 +536,10 @@ class Loa extends AppModel
         $loa_data_save['Loa']['sugarLoaId'] = $sugarLoaData['id'];
         $loa_data_save['Client']['sugarLoaId'] = $sugarLoaData['id'];
 
+        if(!empty($sugarLoaData['barter_package_instructions_c'])){
+            $loa_data_save['Loa']['emailNewsletterDates'] =  $sugarLoaData['barter_package_instructions_c'];
+        }
+
         //set client data for email
         $loa_data_save['Client']['name']= $sugarLoaData['name'];
         if(isset($sugarLoaData['client_name'])){
