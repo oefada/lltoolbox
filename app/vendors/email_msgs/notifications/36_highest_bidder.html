@@ -27,7 +27,10 @@
 		                         				<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;padding: 18px 18px 0px 18px;" colspan="2">You are currently the highest bidder with a bid of <b>$<?= number_format($bidInfo[0][0]['winner'],2) ?></b></td>
 		                					</tr>
 											<tr>
-		                         				<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;padding: 4px 18px 0px 18px;" colspan="2">This auction is scheduled to end on <b><?= date("M d, Y \a\\t g:i A",strtotime($liveOfferData['endDate'])); ?> Pacific Time.</b></td>
+		                         				<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;padding: 4px 18px 0px 18px;" colspan="2">This auction is scheduled to end on <b><?= date("M d, Y \a\\t g:i A",strtotime($liveOfferData['endDate'])); ?> Pacific Time</b>.</td>
+		                					</tr>
+											<tr>
+		                         				<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;padding: 4px 18px 0px 18px;" colspan="2">For your reference, this is offer <b><?= $liveOfferData['offerId']; ?></b>.</td>
 		                					</tr>
 											<tr>
 		                         				<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;padding: 18px 18px 18px 18px;" colspan="2"><i>Remember, each bid you place is a binding agreement, and if you win the
