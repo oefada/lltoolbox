@@ -112,6 +112,15 @@
 		</tr>
 
         <tr>
+            <th>Show Inclusion Value</th>
+            <td>
+                <? $hideInclusionTotal = (isset($package['Package']['hideInclusionDisplay']) && $package['Package']['hideInclusionDisplay'] == 1) ? 1 : 0; ?>
+                <input type="radio" name="data[Package][hideInclusionDisplay]" value="0" <?php if (!$hideInclusionTotal): ?>checked<?php endif; ?> /> Yes
+                <input type="radio" name="data[Package][hideInclusionDisplay]" value="1"  <?php if ($hideInclusionTotal): ?>checked<?php endif; ?>/> No
+            </td>
+        </tr>
+
+        <tr>
            <th>Is Private Package?</th>
            <td>
 						<?
