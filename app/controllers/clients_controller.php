@@ -6,7 +6,7 @@ App::import('Vendor', 'nusoap_client/lib/nusoap');
 class ClientsController extends AppController {
 
 	var $name = 'Clients';
-	var $uses = array('Client', 'ClientThemeRel', 'ClientTag', 'ClientTagRel', 'ClientDestinationRel', 'ClientAmenityTypeRel', 'ClientInterview', 'ClientCollection', 'ClientSocial', 'ClientTypeHistory');
+	var $uses = array('Client', 'ClientThemeRel', 'ClientTag', 'ClientTagRel', 'ClientDestinationRel', 'ClientAmenityTypeRel', 'ClientInterview', 'ClientCollection', 'ClientSocial', 'ClientPdpRedirects');
 
     public $helpers = array('Httprequest');
 
@@ -200,22 +200,27 @@ class ClientsController extends AppController {
 			$this->data['Destination']['Destination'] = explode(',', $this->data['destinationIds']); 
 			unset($this->data['destinationIds']);
 
-            // If the client's location has changed, it is logged in the clientLocationHistory table so that 301 redirects can be provided for the old URL to the new URL
-            if ($this->data['Client']['locationDisplay'] !== $this->data['Client']['locationDisplay_prev']) {
-                // need clientId, old location, old location seo name, and date
-                $this->data['ClientLocationHistory'] = array(   'clientId' => $this->data['Client']['clientId'],
-                    'oldClientLocation' => $this->data['Client']['locationDisplay_prev'],
-                    'dateChanged' => DboSource::expression('NOW()'),
-                    'oldClientSeoLocation' => $this->convertToSeoName($this->data['Client']['locationDisplay_prev'] ));
+            $this->Client->ClientType->recursive = -1;
+            $this->data['Client']['clientTypeSeoName'] = $this->Client->ClientType->field('clientTypeSeoName', array('ClientType.clientTypeId' => $this->data['Client']['clientTypeId_prev']));
 
-                $this->Client->ClientLocationHistory->save($this->data['ClientLocationHistory']);
+            // If the client's location or type has changed, it is logged in the clientLocationHistory table so that 301 redirects can be provided for the old URL to the new URL
+            if (($this->data['Client']['locationDisplay'] !== $this->data['Client']['locationDisplay_prev']) ||
+                ($this->data['Client']['clientTypeId'] !== $this->data['Client']['clientTypeId_prev']) ) {
+                // need clientId, old location, old location seo name, and date
+                $this->data['ClientPdpRedirects'] = array(   'clientId' => $this->data['Client']['clientId'],
+                    'clientName' => $this->data['Client']['name'],
+                    'clientLocation' => $this->data['Client']['locationDisplay_prev'],
+                    'clientTypeId' => $this->data['Client']['clientTypeId_prev'],
+                    'dateModified' => DboSource::expression('NOW()'),
+                    'seoName' => $this->convertToSeoName($this->data['Client']['name']),
+                    'seoType' => $this->data['Client']['clientTypeSeoName'],
+                    'seoLocation' => $this->convertToSeoName($this->data['Client']['locationDisplay_prev'] ));
+
+                $this->Client->ClientPdpRedirects->save($this->data['ClientPdpRedirects']);
             }
 			
 			 $this->data['Client']['seoName'] = $this->convertToSeoName($this->data['Client']['name']);
 			 $this->data['Client']['seoLocation'] = $this->convertToSeoName($this->data['Client']['locationDisplay']);
-			 
-			 $this->Client->ClientType->recursive = -1;
-			 $this->data['Client']['clientTypeSeoName'] = $this->Client->ClientType->field('clientTypeSeoName', array('ClientType.clientTypeId' => $this->data['Client']['clientTypeId']));
 			 
 			 if (!empty($this->data['Client']['ageRanges'])) {
 				$this->data['Client']['ageRanges'] = implode(',',$this->data['Client']['ageRanges']);

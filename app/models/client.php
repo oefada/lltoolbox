@@ -63,9 +63,7 @@ class Client extends AppModel
         'ImageClient' => array('className' => 'ImageClient', 'foreignKey' => 'clientId'),
         'RoomGrade' => array('className' => 'RoomGrade', 'foreignKey' => 'clientId'),
         'ClientInterview' => array('className' => 'ClientInterview', 'foreignKey' => 'clientId'),
-        'ClientTypeHistory' => array('className' => 'ClientTypeHistory', 'foreignKey' => 'clientId'),
-        'ClientNameHistory' => array('className' => 'ClientNameHistory', 'foreignKey' => 'clientId'),
-        'ClientLocationHistory' => array('className' => 'ClientLocationHistory', 'foreignKey' => 'clientId'),
+        'ClientPdpRedirects' => array('className' => 'ClientPdpRedirects', 'foreignKey' => 'clientId'),
     );
 
     public $hasAndBelongsToMany = array(
@@ -108,38 +106,6 @@ class Client extends AppModel
 
             //sanitize toll free tracking #
             $this->data['Client']['estaraPhoneLocal'] = str_replace('-', '', $this->data['Client']['estaraPhoneLocal']);
-        }
-
-        // Check to see if the clientTypeId or clientSeoName has changed here. If so, inserts row into clientTypeHistory Table to
-        // provide 301 redirects to new URL for SEO purposes.
-        $this->old = $this->findByClientId($this->data['Client']['clientId']);
-        if (isset($this->old) && $this->old) {
-
-            if (($this->old['Client']['clientTypeId'] != $this->data['Client']['clientTypeId'])) {
-                $conditions = array(
-                                    'ClientTypeHistory' => array(
-                                        'clientId' => $this->data['Client']['clientId'],
-                                        'oldClientTypeId'=> $this->old['Client']['clientTypeId'],
-                                        'dateChanged' => DboSource::expression('NOW()')
-                                    ));
-                $this->ClientTypeHistory->save($conditions);
-            }
-
-            // Checking name and not seo name since that function may change in the future. Name can only be changed in Sugar CRM
-            // This is for name changes coming through app/controllers/web_service_new_client_controllers
-
-            if (($this->old['Client']['name'] != $this->data['Client']['name'])) {
-                $conditions = array(
-                                    'ClientNameHistory' => array(
-                                        'clientId' => $this->data['Client']['clientId'],
-                                        'oldClientName' => $this->data['Client']['name'],
-                                        'oldClientSeoName' => $this->old['Client']['seoName'],
-                                        'dateChanged' => DboSource::expression('NOW()')
-                                    ));
-                $this->ClientNameHistory->save($conditions);
-            }
-
-
         }
 
         return true;
@@ -1154,15 +1120,21 @@ class Client extends AppModel
             return;
         }
 
+        $client = $this->findByClientId($clientID);
+
         $conditions = array(
-            'ClientNameHistory' => array(
+            'ClientPdpRedirects' => array(
                 'clientId' => $clientID,
-                'oldClientName' => $existingClientName,
-                'oldClientSeoName' => $this->convertToSeoName($existingClientName),
-                'dateChanged' => DboSource::expression('NOW()')
+                'clientName' => $existingClientName,
+                'clientTypeId' => $client['Client']['clientTypeId'],
+                'clientLocation' => $client['Client']['locationNormalized'],
+                'seoType' => $client['Client']['clientTypeSeoName'],
+                'seoLocation' => $client['Client']['seoLocation'],
+                'seoName' => $this->convertToSeoName($existingClientName),
+                'dateModified' => DboSource::expression('NOW()')
             ));
 
-        $this->ClientNameHistory->save($conditions);
+        $this->ClientPdpRedirects->save($conditions);
 
 
         $this->sendNameChangeEmail($sugarClientName, $existingClientName, $clientID);

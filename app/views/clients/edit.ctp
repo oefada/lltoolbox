@@ -405,6 +405,7 @@ echo $form->input('segment');
 
         echo $form->input('locationDisplay',array('after' => '<button id="CopyLoc">Copy Location</button>'));
         echo $form->hidden('locationDisplay_prev',array('value'=>$form->value('locationDisplay')));
+        echo $form->hidden('clientTypeId_prev',array('value'=>$form->value('clientTypeId')));
 
         ?><?php
         echo $form->input('airportCode');
