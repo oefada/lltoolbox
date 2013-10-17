@@ -93,7 +93,7 @@ class WebServiceNewClientsController extends WebServicesController
 		//$client_data_save = array();
         $client_data_save['name']				= str_replace('&#039;', "'", $decoded_request['client']['client_name']);
 		$client_data_save['name']				= $this->utf8dec($client_data_save['name']);
-        $client_data_save['nameNormalized']     = $client_data_save['name'];
+        $client_data_save['nameNormalized']     = $this->Client->normalize($client_data_save['name'], 1);
         $client_data_save['managerUsername'] 	= $decoded_request['client']['manager_ini'];
 		$client_data_save['teamName']			= $decoded_request['client']['team_name'];
         $client_data_save['segment']			= $decoded_request['client']['segment'];
