@@ -879,7 +879,13 @@ class ConsolidatedReport extends AppModel
         $socialData = $this->getSocialImpressionsForClientByDate($startDate, $endDate, $clientId, $siteId);
 
         foreach ($impressions as $key => $arrayData) {
-            $totalEmails = (int) array_shift(Set::extract($omnitureData, "/./{$arrayData['month']}/email"));
+            foreach($omnitureData as $odKey => $odValue) {
+                $odValue = array_shift($odValue);
+                if ($odValue['month'] == $arrayData['month']) {
+                    $totalEmails = (int) $odValue['email'];
+                    continue;
+                }
+            }
             $totalSocial = (int) array_shift(Set::extract($socialData, "/./{$arrayData['month']}/social"));
 
             $totalImpressions =
