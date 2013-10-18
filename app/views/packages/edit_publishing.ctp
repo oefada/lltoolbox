@@ -174,7 +174,7 @@ echo $javascript->link('jquery/jquery-autocomplete/jquery.autocomplete'); ?>
             inclusions += "<p><b>Accommodations for 2:</b></p>\n";
             inclusions += "<ul>\n";
             inclusions += '    <li>'+ roomNightDescription +"</li>\n";
-            inclusions += "</ul><br>\n";
+            inclusions += "</ul><br>\n\n";
             inclusions += "<p><b>Included with this package:</b></p>\n";
             inclusions += "<ul>\n";
             
