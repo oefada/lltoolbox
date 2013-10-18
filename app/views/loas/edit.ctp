@@ -500,12 +500,15 @@ if (isset($loa['Loa']['modified'])) {
         })
 
         $("#LoaEditForm").submit(function () {
-            if ($("#LoaMembershipBalance").val() == 0 && <?=$form->data['Loa']['membershipBalance']?> > 0) {
-                if (confirm('are you sure you want to set the membership balance to ZERO?') == false) {
-                    return false;
+            <?if ($form->data['Loa']['membershipBalance'] > 0){?>
+            if ($("#LoaMembershipBalance").length>0){
+                if ($("#LoaMembershipBalance").val() == 0 && <?=$form->data['Loa']['membershipBalance']?> > 0) {
+                    if (confirm('are you sure you want to set the membership balance to ZERO?') == false) {
+                        return false;
+                    }
                 }
             }
-
+            <? }?>
             if ($("#LoaSitesLuxuryLink").attr('checked') == false && $("#LoaSitesFamily").attr('checked') == false) {
                 alert("You must check off which site(s) this is for.");
                 return false;
