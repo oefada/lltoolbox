@@ -167,9 +167,17 @@ echo $javascript->link('jquery/jquery-autocomplete/jquery.autocomplete'); ?>
 		var inclusion_ids = '';
 		// 
 		if (siteId == 1) {
-			inclusions += "<p><b>Package for " + numGuests + " includes:</b></p>\n";
-			inclusions += "<ul>\n";
-			inclusions += '    <li>'+ roomNightDescription +"</li>\n";
+			// inclusions += "<p><b>Package for " + numGuests + " includes:</b></p>\n";
+			// inclusions += "<ul>\n";
+			// inclusions += '    <li>'+ roomNightDescription +"</li>\n";
+            
+            inclusions += "<p><b>Accommodations for 2:</b></p>\n";
+            inclusions += "<ul>\n";
+            inclusions += '    <li>'+ roomNightDescription +"</li>\n";
+            inclusions += "</ul><br>\n";
+            inclusions += "<p><b>Included with this package:</b></p>\n";
+            inclusions += "<ul>\n";
+            
 		} else if (siteId == 2) {
 			inclusions += "<p><b>Package sleeps up to "+ numGuests +":</b></p>\n";
 			inclusions += "<ul>\n";
@@ -181,8 +189,8 @@ echo $javascript->link('jquery/jquery-autocomplete/jquery.autocomplete'); ?>
 			}
 			inclusions += "</ul><br>\n";
 			inclusions += "<p><b>This package includes:</b></p>\n";
-      inclusions += "<ul>\n";
-      inclusions += '    <li>'+ roomNightDescription +"</li>\n";
+            inclusions += "<ul>\n";
+            inclusions += '    <li>'+ roomNightDescription +"</li>\n";
 		}
 		var lis = $("#sortable li").each(function(i) {
 			var merch = $('#' + this.id + '-copy').html();
