@@ -5,7 +5,7 @@ class Processor
      * @var PaymentModuleInterface module
      */
     private $module;
-    private $module_list = array('AIM', 'NOVA', 'PAYPAL');
+    private $module_list = array('AIM', 'NOVA', 'PAYPAL', 'PAYPAL_i18n');
 
     private $response_data = array();
     private $post_data = array();

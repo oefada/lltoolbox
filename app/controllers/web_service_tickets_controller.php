@@ -954,7 +954,6 @@ class WebServiceTicketsController extends WebServicesController
 
     public function CardCharge($ticketId)
     {
-
         $ticketData = $this->Ticket->query("SELECT * FROM ticket WHERE ticketId = $ticketId LIMIT 1");
         $ticketData = $ticketData[0]['ticket'];
         $userId = $ticketData['userId'];
@@ -976,23 +975,25 @@ class WebServiceTicketsController extends WebServicesController
         $gUserPaymentSettingId = $ticketData['userPaymentSettingId'];
 
         if ($gUserPaymentSettingId) {
-            $data = array();
-            $data['userId'] = $userId;
-            $data['ticketId'] = $ticketId;
-            $data['paymentProcessorId'] = $this->getProcessorIdBySiteId($ticketData['siteId']);
-            $data['paymentAmount'] = $ticketData['billingPrice'];
-            $data['initials'] = 'FPCARDCHARGE';
-            $data['autoCharge'] = 1;
-            $data['saveUps'] = 0;
-            $data['zAuthHashKey'] = $this->getAuthKeyHash(
-                $data['userId'],
-                $data['ticketId'],
-                $data['paymentProcessorId'],
-                $data['paymentAmount'],
-                $data['initials']
+            $paymentProcessorId = $this->getProcessorIdBySiteId($ticketData['siteId']);
+            $paymentInitials = 'FPCARDCHARGE';
+            $data = array(
+                'userId' => $userId,
+                'ticketId' => $ticketId,
+                'paymentProcessorId' => $paymentProcessorId,
+                'paymentAmount' => $ticketData['billingPrice'],
+                'initials' => $paymentInitials,
+                'autoCharge' => 1,
+                'saveUps' => 0,
+                'zAuthHashKey' => $this->getAuthKeyHash(
+                    $userId,
+                    $ticketId,
+                    $paymentProcessorId,
+                    $ticketData['billingPrice'],
+                    $paymentInitials
+                ),
+                'userPaymentSettingId' => $ticketData['userPaymentSettingId']
             );
-
-            $data['userPaymentSettingId'] = $ticketData['userPaymentSettingId'];
 
             $data_json_encoded = json_encode($data);
             $response = $this->processPaymentTicket($data_json_encoded);
@@ -1425,9 +1426,18 @@ class WebServiceTicketsController extends WebServicesController
             $isAuction = in_array($offerTypeId, array(1, 2, 6)) ? true : false;
             $isAuction = in_array($ppvNoticeTypeId, array(36)) ? true : $isAuction;
 
-            $billingPrice = $this->numF($ticketData['billingPrice']);
-            $llFeeAmount = 40;
+            $billingPrice = ($tldId == 1) ? $ticketData['billingPrice'] : $ticketData['billingPriceTld'];
+            $billingPrice = $this->numF($billingPrice);
+            $llFeeAmount = $this->Ticket->getFeeByTicket($ticketId);
             $llFee = $llFeeAmount;
+
+            if ($tldId == 1) {
+                $currency = 'USD';
+                $currencySymbol = '$';
+            } else if ($tldId == 2) {
+                $currency = 'GBP';
+                $currencySymbol = '&pound;';
+            }
 
             $isTaxIncluded = (isset($ticketData['isTaxIncluded'])) ? $ticketData['isTaxIncluded'] : null;
             
@@ -1575,7 +1585,11 @@ class WebServiceTicketsController extends WebServicesController
                 $totalPrice = $this->numF($ticketData['billingPrice'] - $cancelFee);
                 $purchasePrice = $this->numF($ticketData['billingPrice'] + $llFeeAmount);
             } else {
-                $totalPrice = $this->numF($ticketData['billingPrice'] + $llFeeAmount);
+                if ($tldId == 1) {
+                    $totalPrice = $this->numF($ticketData['billingPrice'] + $llFeeAmount);
+                } else {
+                    $totalPrice = $this->numF($ticketData['billingPriceTld'] + $llFeeAmount);
+                }
             }
 
             // cancellation info
@@ -3031,6 +3045,10 @@ class WebServiceTicketsController extends WebServicesController
         // ---------------------------------------------------------------------------
         if ($ticket['Ticket']['siteId'] == 2) {
             $data['paymentProcessorId'] = 3;
+        } else if ($ticket['Ticket']['siteId'] == 1 && $ticket['Ticket']['tldId'] == 2) {
+            // TODO: Revisit when we begin to deploy in more locales
+            $data['paymentProcessorId'] = 8;
+            $data['paymentAmount'] = $ticket['Ticket']['billingPriceTld'];
         }
 
         // set which processor to use
@@ -3221,7 +3239,6 @@ class WebServiceTicketsController extends WebServicesController
 
         // save the response from the payment processor
         // ---------------------------------------------------------------------------
-        CakeLog::write('cliffom_debug', print_r($paymentDetail, true));
         $this->PaymentDetail->create();
         $tmpResult = $this->PaymentDetail->save($paymentDetail);
 

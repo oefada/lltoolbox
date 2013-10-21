@@ -385,9 +385,40 @@ class Ticket extends AppModel
 
     }
 
-    function getFeeByTicket($ticketId)
+    public function getFeeByTicket($ticketId)
     {
-        return 40;
+        $tldId = $this->getTldIdByTicketId($ticketId);
+        if ($tldId == 1) {
+            $fee = 40;
+        } else if ($tldId == 2) {
+            $fee = 25;
+        }
+
+        return $fee;
+    }
+
+    public function getCurrencyNameByTicketId($ticketId)
+    {
+        $tldId = $this->getTldIdByTicketId($ticketId);
+
+        if ($tldId == 1) {
+            $currencyName = "USD";
+        } else if ($tldId == 2) {
+            $currencyName =  "GBP";
+        }
+
+        return $currencyName;
+    }
+
+    public function getTldIdByTicketId($ticketId)
+    {
+        $sql = "SELECT tldId FROM ticket WHERE ticketId=?";
+        $params = array($ticketId);
+
+        $result = $this->query($sql, $params);
+        $tldId = isset($result[0]['ticket']['tldId']) ? $result[0]['ticket']['tldId'] : 1;
+
+        return $tldId;
     }
 
     function isMultiProductPackage($ticketId)

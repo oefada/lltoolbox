@@ -123,6 +123,16 @@
     <td><strong>Ticket Amount</strong></td>
     <td><?php echo $number->currency($ticket['Ticket']['billingPrice']); ?></td>
 </tr>
+<?php if ($ticket['Ticket']['tldId'] > 1): ?>
+<tr>
+    <td><strong>Ticket Amount (Foreign Currency)</strong></td>
+    <td><?php echo $number->currency($ticket['Ticket']['billingPriceTld'], $currencyName); ?></td>
+</tr>
+<?php endif; ?>
+<tr>
+    <td><strong>Processing Fee</strong></td>
+    <td><?php echo $number->currency($processingFee, $currencyName); ?></td>
+</tr>
 <tr>
     <td><strong>User Id</strong></td>
     <td><?php echo $html->link(
@@ -369,7 +379,7 @@
                         <td align="center"><?php echo $paymentDetail['paymentTypeName']; ?></td>
                         <td align="center"><?php echo $paymentDetail['ppResponseDate']; ?></td>
                         <?php $amount = isset($paymentDetail['ppBillingAmount']) && $paymentDetail['ppBillingAmount'] != 0 ? $paymentDetail['ppBillingAmount'] : $paymentDetail['paymentAmount']; ?>
-                        <td align="center"><?php echo $number->currency($amount); ?></td>
+                        <td align="center"><?php echo $number->currency($amount, $currencyName); ?></td>
                         <td align="center"><?php echo $paymentDetail['ppCardNumLastFour']; ?></td>
                         <td align="center">
                             <?php

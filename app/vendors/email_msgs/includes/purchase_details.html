@@ -66,27 +66,27 @@
 					<? endif; ?>
 
 					<tr>
-						<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;" align="right">US</td>
+						<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;" align="right">&nbsp;</td>
 						</tr>
 					<tr>
-						<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:16px;padding: 0px 0px 0px 0px;" align="right">US</td>
+						<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:16px;padding: 0px 0px 0px 0px;" align="right"><?=$currency;?></td>
 					</tr>
 
 					<? if ($promoApplied): ?>
 					<tr>
-						<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;" align="right">- US</td>
+						<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;" align="right">- <?=$currency;?></td>
 					</tr>
 					<?php endif; ?>
 
 					<? if ($giftApplied): ?>
 					<tr>
-						<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;" align="right">- US</td>
+						<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;" align="right">- <?=$currency;?></td>
 						</tr>
 					<?php endif; ?>
 
 					<? if ($cofApplied): ?>
 					<tr>
-						<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;" align="right">- US</td>
+						<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;" align="right">- <?=$currency;?></td>
 					</tr>
 					<?php endif; ?>
 
@@ -107,28 +107,28 @@
 					<? endif; ?>
 
 					<tr>
-						<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;" align="right">$<?=$billingPrice;?></td>
+						<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;" align="right"><?=$currencySymbol;?><?=$billingPrice;?></td>
 					</tr>
 
 					<tr>
-						<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:16px;padding: 0px 0px 0px 0px;" align="right">$<?=$llFee;?></td>
+						<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:16px;padding: 0px 0px 0px 0px;" align="right"><?=$currencySymbol;?><?=$llFee;?></td>
 					</tr>
 
 					<? if ($promoApplied): ?>
 					<tr>
-						<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;" align="right">-$<?=$promoGcCofData['Promo']['totalAmountOff'];?></td>
+						<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;" align="right">-<?=$currencySymbol;?><?=$promoGcCofData['Promo']['totalAmountOff'];?></td>
 					</tr>
 					<?php endif; ?>
 
 					<? if ($giftApplied): ?>
 					<tr>
-						<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;" align="right">-$<?=$promoGcCofData['GiftCert']['totalAmountOff'];?></td>
+						<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;" align="right">-<?=$currencySymbol;?><?=$promoGcCofData['GiftCert']['totalAmountOff'];?></td>
 					</tr>
 					<?php endif; ?>
 
 					<? if ($cofApplied): ?>
 					<tr>
-						<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;" align="right">-$<?=$promoGcCofData['Cof']['totalAmountOff'];?></td>
+						<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;" align="right">-<?=$currencySymbol;?><?=$promoGcCofData['Cof']['totalAmountOff'];?></td>
 					</tr>
 					<?php endif; ?>
 
@@ -147,8 +147,8 @@
 		 </tr>
 		<tr>
 			<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 7px 0px 18px 15px;" align="left"><b>Total <? if ($ppvNoticeTypeId == 19): ?>Due<?php else: ?>Paid<?php endif; ?>:</b></td>
-			<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 7px 19px 18px 0px;" align="right"><b>US</b></td>
-			<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 7px 20px 18px 0px;" align="right"><b>$<?php if ($promoGcCofData['applied']) : ?><?=$promoGcCofData['final_price']; ?>	<?php else: ?><?=$totalPrice;?><?php endif; ?></b></td>
+			<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 7px 19px 18px 0px;" align="right"><b><?=$currency;?></b></td>
+			<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 7px 20px 18px 0px;" align="right"><b><?=$currencySymbol;?><?php if ($promoGcCofData['applied']) : ?><?=$promoGcCofData['final_price']; ?>	<?php else: ?><?=$totalPrice;?><?php endif; ?></b></td>
 			</tr>
 		<tr>
 				<td bgcolor="#c3c3c3" height="1" width="100%" colspan="3"></td>

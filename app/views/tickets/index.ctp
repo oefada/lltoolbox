@@ -391,7 +391,13 @@ foreach ($tickets as $ticket):
 			<a href="/users/view/<?php echo $ticket['Ticket']['userId'];?>" target="_BLANK"><?php echo $ticket['Ticket']['userId'];?></a> - <?php echo $ticket['Ticket']['userFirstName']; ?> <?php echo $ticket['Ticket']['userLastName']; ?>
 		</td>
 		<td>
-			<?php echo $number->currency($ticket['Ticket']['billingPrice']); ?>
+			<?php
+                if ($ticket['Ticket']['tldId'] == 1) {
+                    echo $number->currency($ticket['Ticket']['billingPrice']);
+                } else {
+                    echo $number->currency($ticket['Ticket']['billingPriceTld'], 'GBP');
+                }
+            ?>
 		</td>
         <td>
 			<?php echo $ticket['Ticket']['numNights'];?>

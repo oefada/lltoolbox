@@ -139,6 +139,7 @@ class TicketsController extends AppController
                 'Ticket.userLastName',
                 'Ticket.packageId',
                 'Ticket.billingPrice',
+                'Ticket.billingPriceTld',
                 'Ticket.numNights',
                 'Ticket.formatId',
                 'Ticket.ticketNotes',
@@ -488,6 +489,8 @@ class TicketsController extends AppController
         $ticket['Promo'] = $this->Ticket->getTicketPromoData($id);
 
         $this->set('ticket', $ticket);
+        $this->set('processingFee', $this->Ticket->getFeeByTicket($id));
+        $this->set('currencyName', $this->Ticket->getCurrencyNameByTicketId($id));
 
         $this->set('offerType', $this->OfferType->find('list'));
         $this->set('ppvNoticeTypes', $this->Ticket->PpvNotice->PpvNoticeType->find('list'));
