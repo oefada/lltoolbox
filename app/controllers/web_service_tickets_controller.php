@@ -1153,6 +1153,7 @@ class WebServiceTicketsController extends WebServicesController
             $this->Address->recursive = -1;
             $this->ClientLoaPackageRel->recursive = 0;
             $ticket = $this->Ticket->read(null, $ticketId);
+            $isForeignCurrencyTicket = $this->Ticket->isForeignCurrencyTicket($ticketId);
 
             $siteId = $ticket['Ticket']['siteId'];
             $offerId = $ticket['Ticket']['offerId'];
@@ -1580,7 +1581,6 @@ class WebServiceTicketsController extends WebServicesController
 
             // Calculate cancellation fee. < 15 days from arrival, $100 fee, > 15 days from arrival, $35 fee 
             if ($ppvNoticeTypeId == 30) {
-                $isForeignCurrencyTicket = $this->Ticket->isForeignCurrencyTicket($ticketId);
                 if ($isForeignCurrencyTicket) {
                     $cancelFee = 20;
                 } else {
@@ -1597,10 +1597,15 @@ class WebServiceTicketsController extends WebServicesController
                     }
                 }
 
-                $totalPrice = $this->numF($ticketData['billingPrice'] - $cancelFee);
-                $purchasePrice = $this->numF($ticketData['billingPrice'] + $llFeeAmount);
+                if (!$isForeignCurrencyTicket) {
+                    $totalPrice = $this->numF($ticketData['billingPrice'] - $cancelFee);
+                    $purchasePrice = $this->numF($ticketData['billingPrice'] + $llFeeAmount);
+                else {
+                    $totalPrice = $this->numF($ticketData['billingPriceTld'] - $cancelFee);
+                    $purchasePrice = $this->numF($ticketData['billingPriceTld'] + $llFeeAmount);
+                }
             } else {
-                if ($tldId == 1) {
+                if (!$isForeignCurrencyTicket) {
                     $totalPrice = $this->numF($ticketData['billingPrice'] + $llFeeAmount);
                 } else {
                     $totalPrice = $this->numF($ticketData['billingPriceTld'] + $llFeeAmount);
