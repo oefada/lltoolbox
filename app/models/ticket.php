@@ -319,7 +319,7 @@ class Ticket extends AppModel
         // see if they used a gift certificate on this ticket
         $paymentAmountColumn = (!$this->isForeignCurrencyTicket($ticketId)) ? 'paymentAmount' : 'paymentAmountTld';
 
-        $paymentRecordSql = "SELECT paymentTypeId, $paymentAmountColumn FROM paymentDetail ";
+        $paymentRecordSql = "SELECT paymentTypeId, $paymentAmountColumn AS paymentAmount FROM paymentDetail ";
         $paymentRecordSql .= "WHERE ticketId = $ticketId AND isSuccessfulCharge = 1";
         $paymentRecordResult = $this->query($paymentRecordSql);
 
