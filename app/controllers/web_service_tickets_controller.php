@@ -3045,7 +3045,7 @@ class WebServiceTicketsController extends WebServicesController
         // ---------------------------------------------------------------------------
         if ($ticket['Ticket']['siteId'] == 2) {
             $data['paymentProcessorId'] = 3;
-        } else if ($ticket['Ticket']['siteId'] == 1 && $ticket['Ticket']['tldId'] == 2) {
+        } else if ($ticket['Ticket']['useTldCurrency']) {
             // TODO: Revisit when we begin to deploy in more locales
             $data['paymentProcessorId'] = 8;
             $data['paymentAmount'] = $ticket['Ticket']['billingPriceTld'];
@@ -3057,7 +3057,11 @@ class WebServiceTicketsController extends WebServicesController
 
         $paymentProcessorName = $this->PaymentProcessor->find(
             'first',
-            array('conditions' => array('PaymentProcessor.paymentProcessorId' => $data['paymentProcessorId']))
+            array(
+                'conditions' => array(
+                    'PaymentProcessor.paymentProcessorId' => $data['paymentProcessorId']
+                )
+            )
         );
         $paymentProcessorName = $paymentProcessorName['PaymentProcessor']['paymentProcessorName'];
 
@@ -3069,7 +3073,6 @@ class WebServiceTicketsController extends WebServicesController
         // handle fees, promo discounts, etc
         // ---------------------------------------------------------------------------
         // Links GiftCert to this ticket
-
         $totalChargeAmount = $data['paymentAmount'];
         $payment_amt = 0;
 
@@ -3133,6 +3136,12 @@ class WebServiceTicketsController extends WebServicesController
             'userPaymentSettingId' => ($usingUpsId) ? $data['userPaymentSettingId'] : '',
             'ppBillingAmount' => $totalChargeAmount
         );
+        if ($ticket['Ticket']['useTldCurrency'] == 1) {
+            $paymentDetail['paymentAmountTld'] = $paymentDetail['paymentAmount'];
+            $paymentDetail['paymentAmount'] = floor(($ticket['Ticket']['billingPrice'] / $ticket['Ticket']['billingPriceTld']) * $paymentDetail['paymentAmountTld']);
+            $paymentDetail['ppBillingAmount'] = $paymentDetail['paymentAmount'];
+        }
+
         $otherCharge = 0;
 
         if ((isset($data['paymentTypeId']) && $data['paymentTypeId'] == 1) || !$toolboxManualCharge) {

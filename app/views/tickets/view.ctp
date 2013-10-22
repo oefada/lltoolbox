@@ -378,7 +378,8 @@
                         <td align="center"><?php echo $paymentDetail['paymentDetailId']; ?></td>
                         <td align="center"><?php echo $paymentDetail['paymentTypeName']; ?></td>
                         <td align="center"><?php echo $paymentDetail['ppResponseDate']; ?></td>
-                        <?php $amount = isset($paymentDetail['ppBillingAmount']) && $paymentDetail['ppBillingAmount'] != 0 ? $paymentDetail['ppBillingAmount'] : $paymentDetail['paymentAmount']; ?>
+                        <?php //$amount = isset($paymentDetail['ppBillingAmount']) && $paymentDetail['ppBillingAmount'] != 0 ? $paymentDetail['ppBillingAmount'] : $paymentDetail['paymentAmount']; ?>
+                        <?php $amount = isset($ticket['Ticket']['useTldCurrency']) && $ticket['Ticket']['useTldCurrency'] != 1 ? $paymentDetail['paymentAmount'] : $paymentDetail['paymentAmountTld']; ?>
                         <td align="center"><?php echo $number->currency($amount, $currencyName); ?></td>
                         <td align="center"><?php echo $paymentDetail['ppCardNumLastFour']; ?></td>
                         <td align="center">
