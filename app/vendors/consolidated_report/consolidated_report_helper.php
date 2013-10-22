@@ -588,12 +588,18 @@ class ConsolidatedReportHelper
                     $spreadsheet_row = 36;
                 }
             }
+            $totalProductView += $impression_data['productview'];
+            $totalDestinationView += $impression_data['destinationview'];
+            $totalSearchView += $impression_data['searchview'];
+            $totalEmails += $impression_data['email'];
+            $totalSocial += $impression_data['social'];
+
             $this->setDataToPopulate($sheet_name, 'A' . $spreadsheet_row, $key);
-            $this->setDataToPopulate($sheet_name, 'B' . $spreadsheet_row, $impression_data['productview']);
-            $this->setDataToPopulate($sheet_name, 'C' . $spreadsheet_row, $impression_data['destinationview']);
-            $this->setDataToPopulate($sheet_name, 'D' . $spreadsheet_row, $impression_data['searchview']);
-            $this->setDataToPopulate($sheet_name, 'E' . $spreadsheet_row, $impression_data['email']);
-            $this->setDataToPopulate($sheet_name, 'E' . $spreadsheet_row, $impression_data['social']);
+            $this->setDataToPopulate($sheet_name, 'B' . $spreadsheet_row, $totalProductView);
+            $this->setDataToPopulate($sheet_name, 'C' . $spreadsheet_row, $totalDestinationView);
+            $this->setDataToPopulate($sheet_name, 'D' . $spreadsheet_row, $totalSearchView);
+            $this->setDataToPopulate($sheet_name, 'E' . $spreadsheet_row, $totalEmails);
+            $this->setDataToPopulate($sheet_name, 'F' . $spreadsheet_row, $totalSocial);
         }
 
         //Populate Impressions by Type
