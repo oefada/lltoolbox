@@ -393,7 +393,7 @@ class ConsolidatedReport extends AppModel
      */
     public function getEmailCountBySiteForYearToDate($site_id)
     {
-        return $this->getEmailCountBySiteForPeriod($site_id, $this->loa_start_date, $this - month_ > end_date);
+        return $this->getEmailCountBySiteForPeriod($site_id, $this->loa_start_date, $this->loa_end_date);
     }
 
     /**

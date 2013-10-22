@@ -354,7 +354,13 @@ class ConsolidatedReportHelper
 
         // Impression & Click Data
         $ll_impression_data = $this->ConsolidatedReport->getImpressionDataBySiteForCurrentMonth(1);
+        $ll_email_impression_data = $this->ConsolidatedReport->getEmailCountBySiteForCurrentMonth(1);
         $fg_impression_data = $this->ConsolidatedReport->getImpressionDataBySiteForCurrentMonth(2);
+        $fg_email_impression_data = $this->ConsolidatedReport->getEmailCountBySiteForCurrentMonth(2);
+
+        $ll_impression_data['impressions'] += $ll_email_impression_data;
+        $fg_impression_data['impressions'] += $fg_email_impression_data;
+
         $this->setDataToPopulate($sheet_name, 'B10', $ll_impression_data['impressions']);
         $this->setDataToPopulate($sheet_name, 'D10', $fg_impression_data['impressions']);
         $this->setDataToPopulate($sheet_name, 'F10', '0');
@@ -363,7 +369,13 @@ class ConsolidatedReportHelper
         $this->setDataToPopulate($sheet_name, 'F11', '0');
 
         $ll_impression_data = $this->ConsolidatedReport->getImpressionDataBySiteForYearToDate(1);
+        $ll_email_impression_data = $this->ConsolidatedReport->getEmailCountBySiteForYearToDate(1);
         $fg_impression_data = $this->ConsolidatedReport->getImpressionDataBySiteForYearToDate(2);
+        $fg_email_impression_data = $this->ConsolidatedReport->getEmailCountBySiteForYearToDate(2);
+
+        $ll_impression_data['impressions'] += $ll_email_impression_data;
+        $fg_impression_data['impressions'] += $fg_email_impression_data;
+
         $this->setDataToPopulate($sheet_name, 'B24', $ll_impression_data['impressions']);
         $this->setDataToPopulate($sheet_name, 'D24', $fg_impression_data['impressions']);
         $this->setDataToPopulate($sheet_name, 'F24', '0');
