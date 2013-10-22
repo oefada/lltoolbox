@@ -317,7 +317,9 @@ class Ticket extends AppModel
         }
 
         // see if they used a gift certificate on this ticket
-        $paymentRecordSql = 'SELECT paymentTypeId, paymentAmount FROM paymentDetail ';
+        $paymentAmountColumn = (!$this->isForeignCurrencyTicket($ticketId)) ? 'paymentAmount' : 'paymentAmountTld';
+
+        $paymentRecordSql = "SELECT paymentTypeId, $paymentAmountColumn FROM paymentDetail ";
         $paymentRecordSql .= "WHERE ticketId = $ticketId AND isSuccessfulCharge = 1";
         $paymentRecordResult = $this->query($paymentRecordSql);
 
@@ -1120,6 +1122,21 @@ class Ticket extends AppModel
         $ticket = $this->read('Ticket.tldId', $ticketId);
         if (isset($ticket['Ticket']['tldId'])) {
             return ($ticket['Ticket']['tldId'] > 1);
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @param $ticketId
+     * @return bool
+     */
+    public function isForeignCurrencyTicket($ticketId)
+    {
+        $this->recursive = false;
+        $ticket = $this->read('Ticket.useTldCurrency', $ticketId);
+        if (isset($ticket['Ticket']['useTldCurrency'])) {
+            return ($ticket['Ticket']['useTldCurrency'] == 1);
         } else {
             return false;
         }

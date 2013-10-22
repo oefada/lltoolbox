@@ -1254,7 +1254,13 @@ class WebServiceTicketsController extends WebServicesController
 
             $paymentDetail = (isset($paymentDetail['PaymentDetail'][0]) ? $paymentDetail['PaymentDetail'][0] : $paymentDetail['PaymentDetail']);
 
-            $promoGcCofData = $this->Ticket->getPromoGcCofData($ticketId, $ticket['Ticket']['billingPrice']);
+            if ($ticket['Ticket']['useTldCurrency'] == 1) {
+                $billingPrice = $ticket['Ticket']['billingPriceTld'];
+            } else {
+                $billingPrice = $ticket['Ticket']['billingPrice'];
+            }
+
+            $promoGcCofData = $this->Ticket->getPromoGcCofData($ticketId, $billingPrice);
             $promoGcCofData['final_price'] = number_format($promoGcCofData['final_price'], 2);
 
             $promoApplied = (
@@ -1426,12 +1432,12 @@ class WebServiceTicketsController extends WebServicesController
             $isAuction = in_array($offerTypeId, array(1, 2, 6)) ? true : false;
             $isAuction = in_array($ppvNoticeTypeId, array(36)) ? true : $isAuction;
 
-            $billingPrice = ($tldId == 1) ? $ticketData['billingPrice'] : $ticketData['billingPriceTld'];
+            $billingPrice = ($ticket['Ticket']['useTldCurrency'] == 1) ? $ticketData['billingPriceTld'] : $ticketData['billingPrice'];
             $billingPrice = $this->numF($billingPrice);
             $llFeeAmount = $this->Ticket->getFeeByTicket($ticketId);
             $llFee = $llFeeAmount;
 
-            if ($tldId == 1) {
+            if ($tldId == 1 || $ticket['Ticket']['useTldCurrency'] != 1) {
                 $currency = 'USD';
                 $currencySymbol = '$';
             } else if ($tldId == 2) {
