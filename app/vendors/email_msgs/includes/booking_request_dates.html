@@ -75,32 +75,32 @@
 </tr>
 <? if ($promoApplied): ?>
 <tr>
-<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;" align="left">US -$<?=$promoGcCofData['Promo']['totalAmountOff'];?></td>
+<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;" align="left">-<?=$currencySymbol;?><?=$promoGcCofData['Promo']['totalAmountOff'];?></td>
 </tr>
 <?php endif; ?>
 <? if ($giftApplied): ?>
 <tr>
-<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;" align="left">US -$<?=$promoGcCofData['GiftCert']['totalAmountOff'];?></td>
+<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;" align="left">-<?=$currencySymbol;?><?=$promoGcCofData['GiftCert']['totalAmountOff'];?></td>
 </tr>
 <?php endif; ?>
 <? if ($cofApplied): ?>
 <tr>
-<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;" align="left">US -$<?=$promoGcCofData['Cof']['totalAmountOff'];?></td>
+<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;" align="left">-<?=$currencySymbol;?><?=$promoGcCofData['Cof']['totalAmountOff'];?></td>
 </tr>
 <?php endif; ?>
 <? if ($ppvNoticeTypeId == 12): ?>
 <tr>
-    <td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:18px;padding: 0px 0px 0px 0px;" align="left"><b>US $<?=$billingPrice;?></b></td>
+    <td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:18px;padding: 0px 0px 0px 0px;" align="left"><b><?=$currencySymbol;?><?=$billingPrice;?></b></td>
 </tr>
 <tr>
-    <td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:18px;padding: 0px 0px 0px 0px;" align="left"><b>US $<?=$llFeeAmount;?></b></td>
+    <td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:18px;padding: 0px 0px 0px 0px;" align="left"><b><?=$currencySymbol;?><?=$llFeeAmount;?></b></td>
 </tr>
 <tr>
-    <td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:18px;padding: 0px 0px 0px 0px;" align="left"><b>US $<?=$totalPrice;?></b></td>
+    <td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:18px;padding: 0px 0px 0px 0px;" align="left"><b><?=$currencySymbol;?><?=$totalPrice;?></b></td>
 </tr>
 <?php else: ?>
 <tr>
-    <td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:18px;padding: 0px 0px 0px 0px;" align="left"><b>US $<?php if ($promoGcCofData['applied']) : ?><?=$promoGcCofData['final_price']; ?>	<?php else: ?><?=$totalPrice;?><?php endif; ?></b></td>
+    <td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:18px;padding: 0px 0px 0px 0px;" align="left"><b><?=$currencySymbol;?><?php if ($promoGcCofData['applied']) : ?><?=$promoGcCofData['final_price']; ?>	<?php else: ?><?=$totalPrice;?><?php endif; ?></b></td>
 </tr>
 <?php endif; ?>
 </table>

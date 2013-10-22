@@ -1437,6 +1437,7 @@ class WebServiceTicketsController extends WebServicesController
             $billingPrice = $this->numF($billingPrice);
             $llFeeAmount = $this->Ticket->getFeeByTicket($ticketId);
             $llFee = $llFeeAmount;
+            $originalBillingPriceInDollars = $this->numF($ticketData['billingPrice']);
 
             if ($tldId == 1 || $ticket['Ticket']['useTldCurrency'] != 1) {
                 $currency = 'USD';
