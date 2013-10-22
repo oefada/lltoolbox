@@ -1600,7 +1600,7 @@ class WebServiceTicketsController extends WebServicesController
                 if (!$isForeignCurrencyTicket) {
                     $totalPrice = $this->numF($ticketData['billingPrice'] - $cancelFee);
                     $purchasePrice = $this->numF($ticketData['billingPrice'] + $llFeeAmount);
-                else {
+                } else {
                     $totalPrice = $this->numF($ticketData['billingPriceTld'] - $cancelFee);
                     $purchasePrice = $this->numF($ticketData['billingPriceTld'] + $llFeeAmount);
                 }
