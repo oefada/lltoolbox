@@ -1580,11 +1580,20 @@ class WebServiceTicketsController extends WebServicesController
 
             // Calculate cancellation fee. < 15 days from arrival, $100 fee, > 15 days from arrival, $35 fee 
             if ($ppvNoticeTypeId == 30) {
-                $cancelFee = 35;
+                $isForeignCurrencyTicket = $this->Ticket->isForeignCurrencyTicket($ticketId);
+                if ($isForeignCurrencyTicket) {
+                    $cancelFee = 20;
+                } else {
+                    $cancelFee = 35;
+                }
 
                 if (!empty($resArrDate)) {
                     if (strtotime($resArrDate) - time() < strtotime("+15 days") - time()) {
-                        $cancelFee = 100;
+                        if ($isForeignCurrencyTicket) {
+                            $cancelFeel = 65;
+                        } else {
+                            $cancelFee = 100;
+                        }
                     }
                 }
 
