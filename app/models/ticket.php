@@ -414,11 +414,17 @@ class Ticket extends AppModel
 
     public function getTldIdByTicketId($ticketId)
     {
-        $sql = "SELECT tldId FROM ticket WHERE ticketId=?";
+        $sql = "SELECT tldId, useTldCurrency FROM ticket WHERE ticketId=?";
         $params = array($ticketId);
 
         $result = $this->query($sql, $params);
+        $useTldCurrency = isset($result[0]['ticket']['useTldCurrency']) ? $result[0]['ticket']['useTldCurrency'] : 0;
         $tldId = isset($result[0]['ticket']['tldId']) ? $result[0]['ticket']['tldId'] : 1;
+
+        // Override to USD if Ticket.useTldCurrency is not 1
+        if ($useTldCurrency != 1) {
+            $tldId = 1;
+        }
 
         return $tldId;
     }

@@ -123,7 +123,7 @@
     <td><strong>Ticket Amount</strong></td>
     <td><?php echo $number->currency($ticket['Ticket']['billingPrice']); ?></td>
 </tr>
-<?php if ($ticket['Ticket']['tldId'] > 1): ?>
+<?php if ($ticket['Ticket']['useTldCurrency'] == 1): ?>
 <tr>
     <td><strong>Ticket Amount (Foreign Currency)</strong></td>
     <td><?php echo $number->currency($ticket['Ticket']['billingPriceTld'], $currencyName); ?></td>
