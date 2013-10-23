@@ -412,6 +412,19 @@ class Ticket extends AppModel
         return $currencyName;
     }
 
+    public function getCurrencySymbolByTicketId($ticketId)
+    {
+        $tldId = $this->getTldIdByTicketId($ticketId);
+
+        if ($tldId == 1) {
+            $currencySymbol = "$";
+        } else if ($tldId == 2) {
+            $currencySymbol =  "&pound;";
+        }
+
+        return $currencySymbol;
+    }
+
     public function getTldIdByTicketId($ticketId)
     {
         $sql = "SELECT tldId, useTldCurrency FROM ticket WHERE ticketId=?";

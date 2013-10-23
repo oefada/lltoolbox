@@ -257,7 +257,11 @@ class PaymentDetailsController extends AppController
                 }
 
 
-            } elseif ($this->data['PaymentDetail']['paymentProcessorId'] == 1 || $this->data['PaymentDetail']['paymentProcessorId'] == 3) {
+            } elseif (
+                $this->data['PaymentDetail']['paymentProcessorId'] == 1
+                || $this->data['PaymentDetail']['paymentProcessorId'] == 3
+                || $this->data['PaymentDetail']['paymentProcessorId'] == 8
+            ) {
                 // Credit card
                 $usingNewCard = 0;
                 $saveNewCard = 0;
@@ -372,11 +376,19 @@ class PaymentDetailsController extends AppController
 
         $ticket = $this->PaymentDetail->Ticket->find('first', $params);
 
+        $useTldCurrency = isset($ticket['Ticket']['useTldCurrency']) ? $ticket['Ticket']['useTldCurrency'] : 0;
+        $billingPrice = ($useTldCurrency == 1) ? $ticket['Ticket']['billingPriceTld'] : $ticket['Ticket']['billingPrice'];
+        $this->set('useTldCurrency', $useTldCurrency);
+        $this->set('billingPrice', $billingPrice);
+        $this->set('processingFee', $this->Ticket->getFeeByTicket($ticket['Ticket']['ticketId']));
+        $this->set('currencyName', $this->Ticket->getCurrencyNameByTicketId($ticket['Ticket']['ticketId']));
+        $this->set('currencySymbol', $this->Ticket->getCurrencySymbolByTicketId($ticket['Ticket']['ticketId']));
+
         // Ticket 1002
         // Only apply CoF for credits BEFORE ticket created. Always show CoF for manual charges.
         $ticket['UserPromo'] = $this->Ticket->getPromoGcCofData(
             $ticket['Ticket']['ticketId'],
-            $ticket['Ticket']['billingPrice'],
+            $billingPrice,
             0,
             true
         );
@@ -385,6 +397,12 @@ class PaymentDetailsController extends AppController
             'list',
             array('conditions' => array('sites LIKE' => '%' . $ticket['Ticket']['siteId'] . '%'))
         );
+
+        if ($useTldCurrency == 1) {
+            $paymentProcessors = array(
+                '8' => 'PAYPAL_i18n'
+            );
+        }
         $paymentTypeIds = $this->PaymentDetail->PaymentType->find('list');
 
         $fee = $this->Ticket->getFeeByTicket($ticket['Ticket']['ticketId']);

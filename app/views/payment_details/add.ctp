@@ -29,7 +29,7 @@
 		</tr>
 		<tr>
 			<td><strong>Ticket Amount</strong></td>
-			<td><?php echo $number->currency($ticket['Ticket']['billingPrice']);?> + $40.00 Auction Fee</td>
+			<td><?php echo $number->currency($billingPrice, $currencyName);?> + <?php echo $number->currency($processingFee, $currencyName);?> Auction Fee</td>
 		</tr>
 		<?php if (!empty($ticket['UserPromo']['Promo'])) :?>
 		<tr>
@@ -37,7 +37,7 @@
 			<td>
 				<h3 style="margin:0px;padding:0px;padding-bottom:5px;">
 				<?=$ticket['UserPromo']['Promo']['promoName'];?> - [<?=$ticket['UserPromo']['Promo']['promoCode'];?>] - 
-				Amount Off: <?php echo $number->currency($ticket['UserPromo']['Promo']['totalAmountOff']);?>
+				Amount Off: <?php echo $number->currency($ticket['UserPromo']['Promo']['totalAmountOff'], $currencyName);?>
 				</h3>
 			</td>
 		</tr>	
@@ -208,12 +208,12 @@
 				</tr>
 				<tr style="background-color: #CCEEBB;">
 					<td style="padding-top:10px;padding-bottom:10px;"><strong>Payment Amount</strong></td>
-					<td style="padding-top:10px;padding-bottom:10px;">$<input type="text" name="data[PaymentDetail][paymentAmount]" id="PaymentDetailPaymentAmount" value="<?= $ticket['UserPromo']['final_price_actual'] ?>" /><?php echo $form->error('paymentAmount') ?>
+					<td style="padding-top:10px;padding-bottom:10px;"><?php echo $currencySymbol ?><input type="text" name="data[PaymentDetail][paymentAmount]" id="PaymentDetailPaymentAmount" value="<?= $ticket['UserPromo']['final_price_actual'] ?>" /><?php echo $form->error('paymentAmount') ?>
 					<?php if (!empty($ticket['UserPromo']['Promo']) && $ticket['UserPromo']['Promo']['applied']): ?>(Includes Promo Code Discount)<?php endif; ?>
 					</td>
 				</tr>
 				<tr>
-					<td colspan="2"><input type="submit" id="paymentAdd" value="Add New Payment"> (You will be redirected when balance has reached $0.00)</td>
+					<td colspan="2"><input type="submit" id="paymentAdd" value="Add New Payment"> (You will be redirected when balance has reached <?php echo $currencySymbol ?>0.00)</td>
 				</tr>
 			</table>
 		</div>
@@ -230,15 +230,15 @@
 	<table id="paymentsSummary">
 		<tr style="background-color: #FF8888;" id="paymentsSummaryPayments">
 			<td style="width: 300px; padding-top:10px;padding-bottom:10px;"><strong>Total Promos</strong></td>
-			<td style="padding-top:10px;padding-bottom:10px;">(<?php if (isset($ticket['UserPromo']['Promo']['totalAmountOff'])) { echo $number->currency($ticket['UserPromo']['Promo']['totalAmountOff']); } else { echo "\$0.00"; } ?>)</td> 
+			<td style="padding-top:10px;padding-bottom:10px;">(<?php if (isset($ticket['UserPromo']['Promo']['totalAmountOff'])) { echo $number->currency($ticket['UserPromo']['Promo']['totalAmountOff'], $currencyName); } else { echo $currencySymbol ."0.00"; } ?>)</td>
 		</tr>
 		<tr style="background-color: #FF8888;" id="paymentsSummaryPayments">
 			<td style="width: 300px; padding-top:10px;padding-bottom:10px;"><strong>Total Payments</strong></td>
-			<td style="padding-top:10px;padding-bottom:10px;">($<span id="totalPayments"><?= $ticket['UserPromo']['payments'] ?></span>.00)</td>
+			<td style="padding-top:10px;padding-bottom:10px;">(<?php echo $currencySymbol ?><span id="totalPayments"><?= $ticket['UserPromo']['payments'] ?></span>.00)</td>
 		</tr>
 		<tr style="background-color: #CCEEBB;">
 			<td style="padding-top:10px;padding-bottom:10px;"><strong>Balance Remaining</strong></td>
-			<td style="padding-top:10px;padding-bottom:10px;">$<span id="balanceRemaining"><?= $ticket['UserPromo']['final_price_actual'] ?></span>.00</td>
+			<td style="padding-top:10px;padding-bottom:10px;"><?php echo $currencySymbol ?><span id="balanceRemaining"><?= $ticket['UserPromo']['final_price_actual'] ?></span>.00</td>
 		</tr>
 	</table>
 <?php echo $form->end();?>
