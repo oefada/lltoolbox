@@ -41,21 +41,12 @@
 <td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;">Credit On File Applied:</td>
 </tr>
 <?php endif ?>
-<?php if ($ppvNoticeTypeId == 12): ?>
 <tr>
-    <td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;"><b>Package Price:</b></td>
+<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;">Handling Fee:</td>
 </tr>
-<tr>
-    <td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;"><b>Service Fee:</b></td>
-</tr>
-<tr>
-    <td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;"><b>Total Price:</b></td>
-</tr>
-<?php else: ?>
 <tr>
     <td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;"><b>Total <? if ($ppvNoticeTypeId == 19): ?>Due<?php else: ?>Price<?php endif; ?>:</b></td>
 </tr>
-<?php endif ?>
 </table>
 </td>
 
@@ -88,21 +79,12 @@
 <td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;" align="left">-<?=$currencySymbol;?><?=$promoGcCofData['Cof']['totalAmountOff'];?></td>
 </tr>
 <?php endif; ?>
-<? if ($ppvNoticeTypeId == 12): ?>
 <tr>
-    <td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:18px;padding: 0px 0px 0px 0px;" align="left"><b><?=$currencySymbol;?><?=$billingPrice;?></b></td>
+    <td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:18px;padding: 0px 0px 0px 0px;" align="left"><?=$currencySymbol;?><?=$llFeeAmount;?></td>
 </tr>
-<tr>
-    <td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:18px;padding: 0px 0px 0px 0px;" align="left"><b><?=$currencySymbol;?><?=$llFeeAmount;?></b></td>
-</tr>
-<tr>
-    <td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:18px;padding: 0px 0px 0px 0px;" align="left"><b><?=$currencySymbol;?><?=$totalPrice;?></b></td>
-</tr>
-<?php else: ?>
 <tr>
     <td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:18px;padding: 0px 0px 0px 0px;" align="left"><b><?=$currencySymbol;?><?php if ($promoGcCofData['applied']) : ?><?=$promoGcCofData['final_price']; ?>	<?php else: ?><?=$totalPrice;?><?php endif; ?></b></td>
 </tr>
-<?php endif; ?>
 </table>
 </td>
 </tr>
