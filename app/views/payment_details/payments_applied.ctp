@@ -20,7 +20,7 @@
 					</tr>
 					<tr>
 						<td>Amount:</td>
-						<td>$<?= number_format($v['paymentAmount'],2) ?> </td>
+						<td><?=$currencySymbol?><?php if ($useTldCurrency): ?><?= number_format($v['paymentAmountTld'],2) ?><?php else: ?><?= number_format($v['paymentAmount'],2) ?><?php endif; ?> </td>
 					</tr>
 				</table>
 			<?php endforeach; ?>
