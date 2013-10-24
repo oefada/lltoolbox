@@ -3069,7 +3069,9 @@ class WebServiceTicketsController extends WebServicesController
         } else if ($ticket['Ticket']['useTldCurrency']) {
             // TODO: Revisit when we begin to deploy in more locales
             $data['paymentProcessorId'] = 8;
-            $data['paymentAmount'] = $ticket['Ticket']['billingPriceTld'];
+            if (!$toolboxManualCharge) {
+                $data['paymentAmount'] = $ticket['Ticket']['billingPriceTld'];
+            }
         }
 
         // set which processor to use
