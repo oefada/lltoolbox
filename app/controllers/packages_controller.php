@@ -206,6 +206,9 @@ class PackagesController extends AppController
             }
         }
 
+        $packageAttributes = $this->Package->PackageType->find('list',array('fields'=>array('packageTypeId','name')));
+        $this->set(compact('packageAttributes'));
+
         $this->set('clientId', $clientId);
         $this->set('currentTab', 'property');
 
@@ -1121,6 +1124,12 @@ class PackagesController extends AppController
 
     function summary($clientId, $packageId)
     {
+        //$packageTypeSettings = $this->Package->getPackageTypeSettingsByPackageId($packageId);
+        //$this->set('packageTypeSettings',$packageTypeSettings);
+
+        //var_dump($this->PackageType->getCheckBoxArr());
+
+       // var_dump($this->Package->PackageTypeRel->packageTypeExistsForPackage($packageId, 1));
         // client
         $client = $this->Client->find('first', array('conditions' => array('Client.clientId' => $clientId)));
         $this->set('client', $client);
@@ -1128,15 +1137,39 @@ class PackagesController extends AppController
         $isMultiClientPackage = (count($package['ClientLoaPackageRel']) > 1) ? true : false;
         $this->set('isMultiClientPackage', $isMultiClientPackage);
 
+
+
         if (!empty($package['Package']['externalOfferUrl'])) {
             $this->redirect('/clients/' . $clientId . '/packages/edit/' . $packageId);
         }
 
         if (!empty($this->data)) {
+
             $package['Package']['notes'] = $this->data['Package']['notes'];
-            $this->Package->save($package);
+
+
+            //Package type checkbox processessing
+            $package['PackageType']['PackageType'] = array();
+            if(!empty($this->data['PackageType'])){
+                foreach ($this->data['PackageType'] as $checkboxSelected){
+                    if ($checkboxSelected){
+                        $package['PackageType']['PackageType'][] = $checkboxSelected;
+                    }
+                }
+            }
+            if (!$this->Package->save($package)) {
+
+                $errors = implode("<br>", $this->Package->validationErrors);
+                $this->Session->setFlash('The package was not saved<br />'.$errors);
+
+            } else {
+                $this->Session->setFlash('The package was saved');
+            }
             $this->redirect('/clients/' . $clientId . '/packages/summary/' . $packageId);
         }
+
+        $packageAttributes = $this->Package->PackageType->find('list',array('fields'=>array('packageTypeId','name')));
+        $this->set(compact('packageAttributes'));
 
         //debug($package);
         $history = $this->Package->getHistory($packageId);
@@ -1229,6 +1262,10 @@ class PackagesController extends AppController
             default :
                 $this->set('siteUrl', 'www.luxurylink.com');
         }
+        //required for HABTM
+        if (empty($this->data)) {
+            $this->data = $this->Package->read(null, $packageId);
+        }
 
         $this->set('package', $package);
     }
@@ -1292,10 +1329,19 @@ class PackagesController extends AppController
                 }
             }
 
-            if ($this->data['Package']['isFlexPackage'] == 0) {
+            if ($this->data['Package']['isFlexPackage'] !== '1'){
                 $this->data['Package']['flexNumNightsMin'] = null;
                 $this->data['Package']['flexNumNightsMax'] = null;
                 $this->data['Package']['flexNotes'] = '';
+            }
+            //Package type checkbox processessing
+            $this->data['PackageType']['PackageType'] = array();
+            if(!empty($this->data['PackageType'])){
+                foreach ($this->data['PackageType'] as $checkboxSelected){
+                    if ($checkboxSelected){
+                        $this->data['PackageType']['PackageType'][] = $checkboxSelected;
+                    }
+                }
             }
 
             if ($_POST['isAjax'] == 'true') {
@@ -1311,6 +1357,8 @@ class PackagesController extends AppController
                         $this->Package->LoaItemRatePackageRel->setNumNights(&$package);
                         $this->Package->LoaItemRatePackageRel->save($package);
                     }
+
+
                     echo "ok";
                 } else {
                     echo json_encode($this->Package->validationErrors);
@@ -1380,7 +1428,11 @@ class PackagesController extends AppController
                 $package['Package']['packageStatusId'] = 1;
                 $package['Loa'] = $loa['Loa'];
             }
-            $this->data = $package;
+            //required for HABTM
+            if (empty($this->data)) {
+                $this->data = $this->Package->read(null, $packageId);
+            }
+           // $this->data = $package;
             $this->set('package', $package);
             $this->set('packageId', $packageId);
             $clientLoas = $this->Client->Loa->getClientLoas($clientId);
@@ -1392,6 +1444,10 @@ class PackagesController extends AppController
             $currencyCodes = $this->Package->Currency->find('list', array('fields' => 'currencyCode'));
             $this->set('currencyCodes', $currencyCodes);
         }
+
+        $packageAttributes = $this->Package->PackageType->find('list',array('fields'=>array('packageTypeId','name')));
+
+        $this->set(compact('packageAttributes'));
     }
 
     function validatePackage($data)
@@ -3126,9 +3182,11 @@ class PackagesController extends AppController
             }
             $totals[$packageClient['Client']['name']] = array('inclusionTotal' => $inclusionTotal);
         }
-
+       // var_dump($totals);
         // ratePeriod
         $ratePeriods = $this->Package->getRatePeriods($packageId);
+
+       // die();
         if (!empty($ratePeriods)) {
             foreach ($ratePeriods as $key => &$ratePeriod) {
                 $clientName = $this->LoaItem->getClientName($ratePeriod['LoaItemRatePeriod']['loaItemId'], $packageId);

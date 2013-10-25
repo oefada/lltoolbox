@@ -521,9 +521,9 @@ echo $form->input('segment');
         <?php if ($is_luxurylink): ?>
             <span class="siteName"><strong>Luxury Link</strong></span>
         <?php endif; ?>
-        <?php if ($is_family): ?>
+        <?php // if ($is_family): ?>
             <span class="siteName"><strong>Family Getaway</strong></span>
-        <?php endif; ?>
+        <?php // endif; ?>
         <br />
         <?php foreach($themes as $theme): ?>
             <?php $checkedSite1 = '';
@@ -548,16 +548,16 @@ echo $form->input('segment');
             <?php if ($is_luxurylink): ?>
                 <input class="themeCheckbox" type="checkbox" name="data[Theme][<?php echo $theme['Theme']['themeId'] ?>][sites][]" value="luxurylink" <?php echo $checkedSite1; ?> />
             <?php endif; ?>
-            <?php if ($is_family): ?>
+            <?php //if ($is_family): ?>
                 <input class="themeCheckbox" type="checkbox" name="data[Theme][<?php echo $theme['Theme']['themeId'] ?>][sites][]" value="family" <?php echo $checkedSite2; ?> />
-            <?php endif; ?>
+            <?php //endif; ?>
             <span class="themeName"><?php echo $theme['Theme']['themeName']; ?></span>
             <span class="themeId" style="color: #cccccc;">(#<?php echo $theme['Theme']['themeId']; ?>)</span>
             <br />
         <?php endforeach; ?>
     </div>
 </fieldset>
-<?php if ($is_family): ?>
+<?php //if ($is_family): ?>
     <fieldset class="collapsible">
         <legend class="handle">Family</legend>
         <div class="collapsibleContent">
@@ -588,7 +588,7 @@ echo $form->input('segment');
             } ?>
         </div>
     </fieldset>
-<?php endif; ?>
+<?php //endif; ?>
 
 
 <script>

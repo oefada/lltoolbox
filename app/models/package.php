@@ -28,7 +28,8 @@ class Package extends AppModel {
 		'SchedulingMaster' => array('foreignKey' => 'packageId'),
 		'ClientTracking' => array('foreignKey' => 'packageId'),
 		'LoaItemRatePackageRel' => array('foreignKey' => 'packageId'),
-		'PricePoint' => array('foreignKey' => 'packageId')
+		'PricePoint' => array('foreignKey' => 'packageId'),
+        'PackageTypeRel' => array('foreignKey' => 'packageId', 'dependent' => true),
 	);
 
 	var $validate = array(
@@ -55,7 +56,14 @@ class Package extends AppModel {
 					'foreignKey' => 'packageId',
 					'joinTable' => 'packageFamilyAmenityRel',
 					'associationForeignKey' => 'familyAmenityId'
-				)
+				),
+        'PackageType' => array(
+            'className' => 'PackageType',
+            'joinTable' => 'packageTypeRel',
+            'foreignKey' => 'packageId',
+            'associationForeignKey' => 'packageTypeId',
+            'with' => 'PackageTypeRel',
+        ),
 	);
 
 	var $actsAs = array('Logable', 'Containable');
@@ -339,15 +347,44 @@ class Package extends AppModel {
 
 	function getRatePeriods($packageId) {
 
-		$query = "SELECT * FROM loaItemRatePeriod LoaItemRatePeriod
+
+		 *
+		 $query = "SELECT * FROM loaItemRatePeriod LoaItemRatePeriod
 					INNER JOIN loaItemRate LoaItemRate USING (loaItemRatePeriodId)
 					INNER JOIN loaItemRatePackageRel LoaItemRatePackageRel USING (loaItemRateId)
 					WHERE LoaItemRatePackageRel.packageId = {$packageId}
 					GROUP BY LoaItemRatePeriod.loaItemRatePeriodId";
 
+
+        /**$query = "SELECT LoaItemRate.loaItemRateId
+                    ,LoaItemRate.`loaItemRatePeriodId`
+                    ,LoaItemRate.price
+                    ,w0
+                    ,w1
+                    ,w2
+                    ,w3
+                    ,w4
+                    ,w5
+                    ,w6
+                    ,LoaItemRatePeriod.created
+                    ,LoaItemRatePeriod.modified
+                    ,LoaItemRatePeriod.loaItemRatePeriodId
+                    ,LoaItemRatePeriod.loaItemId
+                    ,LoaItemRatePeriod.loaItemRatePeriodName
+                    ,LoaItemRate.loaItemRateId
+                    ,LoaItemRatePackageRel.numNights
+                    ,LoaItemRatePackageRel.guaranteePercentRetail
+                    , '{$packageId}' as packageId FROM loaItemRate LoaItemRate
+                    LEFT JOIN loaItemRatePeriod LoaItemRatePeriod ON (LoaItemRate.`loaItemRatePeriodId` = LoaItemRatePeriod.loaItemRateperiodId)
+                    LEFT JOIN loaItemRatePackageRel LoaItemRatePackageRel ON (LoaItemRate.loaItemRateId = LoaItemRatePackageRel.`loaItemRateId`)
+                    WHERE LoaItemRatePeriod.`loaItemId` IN (SELECT loaItemId FROM packageLoaItemRel
+                     WHERE packageId= ?)
+                    GROUP BY LoaItemRatePeriod.loaItemRatePeriodId
+                    ";***/
+        $params = array($packageId);
 		//print_r($query);
 		//die();
-		if ($ratePeriods = $this->query($query)) {
+		if ($ratePeriods = $this->query($query,$params)) {
 			return $ratePeriods;
 		}
 		else {
@@ -1476,9 +1513,10 @@ class Package extends AppModel {
 		return $item;
 	}
 
-
-
-
-
+    public function getPackageTypeSettingsByPackageId($packageId)
+    {
+        $packageTypeSettings = $this->PackageTypeRel->find('all', array('conditions' => array('PackageTypeRel.packageId'=>$packageId)));
+        return $packageTypeSettings;
+    }
 }
 ?>

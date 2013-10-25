@@ -22,13 +22,19 @@ $().ready(function() {
 		$('div#formContainer').dialog('open');
 
 	});
-    
-        if ($('option#family').is(':selected')) {
-            $('div#familyAgeRanges').show();
-        }
-        
+        //show/hide age ranges if family package
+        $('#PackageType1').change(function(){
+
+            if ($('#PackageType1').is(':checked')) {
+                $('div#familyAgeRanges').show();
+            }else{
+                $('div#familyAgeRanges').hide();
+            }
+
+        });
+
         $('select#sites').change(function() {
-                $('div#familyAgeRanges').toggle();
+               // $('div#familyAgeRanges').toggle();
 								// flex packs enabled for fg
                 //$('#showFlex').toggle();
                 if ($(this).val() == 2 && $('.flexOptions').not(':hidden')) {
@@ -40,21 +46,13 @@ $().ready(function() {
                 }
             });
     
-        if ($('input#PackageSitesFamily').is(':checked')) {
-            $('div#familyAgeRanges').show();
-        }
-        
+
         $.each(['input#isFlexPackage', 'input#notFlexPackage'], function(i, item) {
             $(item).bind('click', function() {
                 $('tr.flexOptions').toggle();
             });
         });
 
-        //show/hide age ranges
-        $('input#PackageSitesFamily').change(function() {
-                $('div#familyAgeRanges').toggle();
-            }); //end select#site
-        
         //enable the status dropdown
         $('span#overrideStatus').click(function() {
                 $('select#status').attr('disabled', false);

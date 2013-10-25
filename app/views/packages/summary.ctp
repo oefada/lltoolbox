@@ -273,6 +273,22 @@ if ($_SERVER['ENV'] == "staging") {
                 <form method="post">
                     <textarea class="notes" name="data[Package][notes]"
                               rows="10"><?php echo "{$package['Package']['notes']}\n"; ?></textarea><br/><br/>
+
+                    <?
+                    echo $form->hidden('Package.packageId',array(
+                            'value'=>$package['Package']['packageId']
+                        )
+                    );
+                    //echo $form->input('accountTypeId', array('label' => 'Account Type'));
+                    // output all the checkboxes at once
+                    echo $form->input('PackageType',array(
+                            'label' => __('Package Attributes',true),
+                            'type' => 'select',
+                            'multiple' => 'checkbox',
+                            'options' => $packageAttributes,
+                            'selected' => $html->value('PackageType.PackageType'),
+                        ));
+                    ?>
                     <input type="submit" value="Update Package Notes"/>
                 </form>
             </div>

@@ -15,7 +15,7 @@
         			$cSiteIds[$key] = $s;
         		}	
         	}
-          echo $form->input('Package.siteId', array('options' => $cSiteIds, 'label' => 'Package Site'));
+          echo $form->hidden('Package.siteId', array('value' => 1));
         }
 ?>
 	<!-- <div class="input text"><label>LOA Expiration Date:</label><div id="loaExpirationDate<?=$rowId?>" style="display: inline"></div></div> -->
