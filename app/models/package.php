@@ -348,7 +348,7 @@ class Package extends AppModel {
 	function getRatePeriods($packageId) {
 
 
-		 *
+		 
 		 $query = "SELECT * FROM loaItemRatePeriod LoaItemRatePeriod
 					INNER JOIN loaItemRate LoaItemRate USING (loaItemRatePeriodId)
 					INNER JOIN loaItemRatePackageRel LoaItemRatePackageRel USING (loaItemRateId)
