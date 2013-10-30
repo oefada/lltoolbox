@@ -3,7 +3,7 @@ class CitiesController extends AppController {
 
 	var $name = 'Cities';
 	var $helpers = array('Html', 'Form');
-	var $uses = array('City', 'GeoBand');
+	var $uses = array('City', 'GeoBand', 'Destination');
 
 
 	function __construct() {
@@ -93,6 +93,8 @@ class CitiesController extends AppController {
 		$countries = $this->City->Country->find('list');
 		$this->set('geoSelectOptions', $this->GeoBand->getHierarchySelectOptions($this->data['City']['geoBandId']));
 		
+		$this->set('destForwardSelectOptions', $this->Destination->getHierarchySelectOptions($this->data['City']['destinationForward']));
+
 		//$this->set(compact('tags','states','countries'));
 		$this->set(compact('states', 'countries'));
 	}

@@ -37,6 +37,14 @@
 				<?= $geoSelectOptions; ?>
 			</select>
 		</div>
+
+        <div class="input">
+            <label for="CityDestinationForward">Destination Forward</label>
+            <select name="data[City][destinationForward]" style="font-size:12px">
+                <option value="">-- </option>
+                <?= $destForwardSelectOptions; ?>
+            </select>
+        </div>
 	
 	
 	<?php echo $form->input('isDisabled'); ?>
