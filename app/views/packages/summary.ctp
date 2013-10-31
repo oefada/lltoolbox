@@ -48,7 +48,8 @@ if ($_SERVER['ENV'] == "staging") {
     }
 }?>
 <br/><br/>
-<h2>Summary for Package: <?php echo $package['Package']['packageName']; ?></h2>
+
+<h2>Summary for Package: <?php echo $package['Package']['packageName']; ?> </h2>
 <div class="summary-navigation">Jump to: <a href="#packageForm">Package Info</a> | <a href="#roomNightsForm">Room
         Nights</a> | <a href="#edit_blackout">Validity</a> | <a href="#inclusionsForm">LOA Items</a> | <a
         href="#form-low-price-guarantees">Low Price Guarantees</a> | <a href="#form-price-points">Price Points</a> | <a
@@ -132,9 +133,19 @@ if ($_SERVER['ENV'] == "staging") {
 
 <a name="packageForm">
     <div class="section-header">
-        <div class="section-title">Package Info (<?php echo $package['Package']['packageId']; ?>)</div>
+
+        <div class="section-title">
+            <?if ($isFamilyPackage== 1){
+                ?><div style="float:right" title="Family Package Icon"><img src="<?=$this->webroot?>img/fam_tag.png" alt="Family Package Icon" /></div>
+            <? }?>
+            Package Info (<?php echo $package['Package']['packageId']; ?>)
+
+        </div>
+
         <div class="edit-link" name="edit_package" title="Edit Package Info">Edit Package Info</div>
+
     </div>
+
 </a>
 
 <table class="package-summary">
@@ -281,13 +292,13 @@ if ($_SERVER['ENV'] == "staging") {
                     );
                     //echo $form->input('accountTypeId', array('label' => 'Account Type'));
                     // output all the checkboxes at once
-                    echo $form->input('PackageType',array(
+                   /** echo $form->input('PackageType',array(
                             'label' => __('Package Attributes',true),
                             'type' => 'select',
                             'multiple' => 'checkbox',
                             'options' => $packageAttributes,
-                            'selected' => $html->value('PackageType.PackageType'),
-                        ));
+                            'selected' => $html->aalue('PackageType.PackageType'),
+                        ));**/
                     ?>
                     <input type="submit" value="Update Package Notes"/>
                 </form>

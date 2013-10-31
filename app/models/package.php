@@ -1516,5 +1516,19 @@ class Package extends AppModel {
         $packageTypeSettings = $this->PackageTypeRel->find('all', array('conditions' => array('PackageTypeRel.packageId'=>$packageId)));
         return $packageTypeSettings;
     }
+
+    public function isFamilyPackage($packageData)
+    {
+        if (!isset($packageData['PackageTypeRel']) || empty($packageData['PackageTypeRel'])) {
+            return false;
+        }
+        //can't use in array for multi-dimensional array so loop.
+        foreach ($packageData['PackageTypeRel'] as $k => $packageAttributeSetting) {
+            if ($packageAttributeSetting['packageTypeId'] == '1') {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 ?>

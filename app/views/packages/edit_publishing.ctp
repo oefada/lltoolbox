@@ -5,7 +5,11 @@ if (!$package['Package']['maxAdults']) {
 if (!$package['Package']['siteId']) {
 	$package['Package']['siteId'] = 1;
 }
-
+if ($isFamilyPackage== true){
+    $isFamilyPackage = 1;
+}else{
+    $isFamilyPackage = 0;
+}
 ?>
 <?php $this->layout = 'overlay_form'; ?>
 <script type="text/javascript">
@@ -17,8 +21,9 @@ if (!$package['Package']['siteId']) {
 	var roomNightDescription = "<?=htmlentities($roomNightDescription);?>";
 	var maxAdults = <?=(int)$package['Package']['maxAdults'];?>;
 	var siteId = <?=(int)$package['Package']['siteId'];?>;
+    var isFamilyPackage = <?=$isFamilyPackage; ?>;
 	
-	<?php if ($package['Package']['siteId'] == 2) :?>
+	<?php if ($isFamilyPackage == 1) :?>
 	var rangeLow = <?=(int)$package['PackageAgeRange']['rangeLow'];?>;
 	var rangeHigh = <?=(int)$package['PackageAgeRange']['rangeHigh'];?>;
 	<?php endif;?>
@@ -127,13 +132,13 @@ echo $javascript->link('jquery/jquery-autocomplete/jquery.autocomplete'); ?>
     function updateInclusionsOld(id) {
 		var inclusions = '';
 		var inclusion_ids = '';
-		if (siteId == 1) {
+		if (isFamilyPackage == 0) {
 			if (numGuests > 2) {
 				inclusions += "<p><b>This "+ numNights  +"-night package sleeps up to "+ numGuests +":</b></p>\n";
 			} else {
 				inclusions += "<p><b>This "+ numNights  +"-night package for "+ numGuests +" includes:</b></p>\n";
 			}
-		} else if (siteId == 2) {
+		} else if (isFamilyPackage == 1) {
 			inclusions += "<p><b>This "+ numNights  +"-night package sleeps up to "+ numGuests +":</b></p>\n";
 			inclusions += "<ul>\n";
 			if (maxAdults == numGuests) {
@@ -166,7 +171,7 @@ echo $javascript->link('jquery/jquery-autocomplete/jquery.autocomplete'); ?>
 		var inclusions = '';
 		var inclusion_ids = '';
 		// 
-		if (siteId == 1) {
+		if (isFamilyPackage == 0) {
 			// inclusions += "<p><b>Package for " + numGuests + " includes:</b></p>\n";
 			// inclusions += "<ul>\n";
 			// inclusions += '    <li>'+ roomNightDescription +"</li>\n";
@@ -178,7 +183,7 @@ echo $javascript->link('jquery/jquery-autocomplete/jquery.autocomplete'); ?>
             inclusions += "<p><b>Included with this package:</b></p>\n";
             inclusions += "<ul>\n";
             
-		} else if (siteId == 2) {
+		} else if (isFamilyPackage == 1) {
 			inclusions += "<p><b>Package sleeps up to "+ numGuests +":</b></p>\n";
 			inclusions += "<ul>\n";
 			if (maxAdults == numGuests) {

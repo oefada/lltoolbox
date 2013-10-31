@@ -1268,6 +1268,8 @@ class PackagesController extends AppController
         }
 
         $this->set('package', $package);
+
+        $this->set('isFamilyPackage', $this->Package->isFamilyPackage($this->data));
     }
 
     function edit_package($clientId, $packageId)
@@ -2277,6 +2279,7 @@ class PackagesController extends AppController
                     )
                 )
             );
+
             $roomGrades = array();
             foreach ($loaItems as $loaItem) {
                 if ($loaItem['LoaItem']['RoomGrade']['roomGradeName'] != '') {
@@ -2291,7 +2294,10 @@ class PackagesController extends AppController
                     $packageId,
                     $package['ClientLoaPackageRel'][0]['ClientLoaPackageRel']['loaId']
                 );
+
+
                 $roomNightDescription = $loaItems[0]['LoaItem']['merchandisingDescription'];
+
 
                 foreach ($inc as $i) {
                     if (isset($i['LoaItem']['PackagedItems'])) {
@@ -2321,6 +2327,11 @@ class PackagesController extends AppController
             }
 
         }
+        if (empty($this->data)) {
+            $this->data = $this->Package->read(null, $packageId);
+        }
+        $isFamilyPackage = $this->Package->isFamilyPackage($this->data);
+        $this->set('isFamilyPackage', $isFamilyPackage);
 
     }
 

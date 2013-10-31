@@ -35,7 +35,7 @@
                 <select name="data[Package][siteId]" id="sites">
                 	// TICKET634: package creation - FG/LL choice does not reflect LOA data
                     <?php if (in_array("luxurylink",$client['Client']['sites'])): ?><option id="ll" value="1"<?php echo ($package['Package']['siteId'] == 1) ? ' selected' : ''; ?> selected>Luxury Link</option><?php endif; ?>
-
+                    <?php if (in_array("family",$client['Client']['sites'])): ?><option id="family" value="2"<?php echo ($package['Package']['siteId'] == 2) ? ' selected' : ''; ?>>Family Getaway</option><?php endif; ?>
                 </select>
             </td>
         </tr>
