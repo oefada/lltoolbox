@@ -13,7 +13,7 @@
 <?php echo $html->css('jquery.autocomplete'); 
 echo $javascript->link('jquery/jquery-autocomplete/jquery.autocomplete'); ?>
 <link href="/css/package.css" type="text/css" rel="stylesheet" />
-<script src="/js/package.js" type="text/javascript"></script>
+<script src="/js/package.js?v=<?=$jsVersion;?>" type="text/javascript"></script>
 
 <div id="errorsContainer" style="display:none;">
     Please fix the following errors:<br />

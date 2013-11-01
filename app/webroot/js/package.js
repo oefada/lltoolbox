@@ -242,7 +242,7 @@ function calculateAccommodations(totalNights) {
     var fees = new Array();
     for (var i=0; i<3; i++) {
         fees[i] = new Array();
-        fees[i]['feeName'] = (feesElem.find('input#fee'+i+'Label').attr('value') == undefined) ? $('td.fee-name-'+i).text() : feesElem.find('input#fee'+i+'Label').attr('value');
+        fees[i]['feeName'] = (feesElem.find('input#fee'+i+'Label').attr('value') == undefined) ? $('td.fee-name-'+i).first().text() : feesElem.find('input#fee'+i+'Label').attr('value');
         fees[i]['feeTypeId'] = (feesElem.find('input#feeTypeId-'+i).attr('value') == undefined) ? feesElem.find('span#feeTypeId-'+i).text() : feesElem.find('input#feeTypeId-'+i).attr('value');
         fees[i]['feeValue'] = (feesElem.find('input#fee-'+i).attr('value') == undefined) ? feesElem.find('span#fee-'+i).text() : feesElem.find('input#fee-'+i).attr('value');
     }

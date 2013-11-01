@@ -81,6 +81,7 @@ class AppController extends Controller
         }
 
         $this->set('sites', array('luxurylink' => 'Luxury Link', 'family' => 'Family'));
+        $this->set('jsVersion', '20131101');
         $this->siteIds = array(1 => 'Luxury Link', 2 => 'Family');
         $this->siteDbs = array(1 => 'luxurylink', 2 => 'family');
         $this->set('siteIds', $this->siteIds);

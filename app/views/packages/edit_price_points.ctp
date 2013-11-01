@@ -1,7 +1,7 @@
 <? $this->layout = 'overlay_form'; ?>
 
 <link href="/css/package.css" type="text/css" rel="stylesheet" />
-<script src="/js/package.js?v=20130821" type="text/javascript"></script>
+<script src="/js/package.js?v=<?=$jsVersion;?>" type="text/javascript"></script>
 <link href="/css/jquery.tooltip.css" type="text/css" rel="stylesheet" />
 <script src="/js/jquery/jquery-tooltip/jquery.tooltip.pack.js" type="text/javascript"></script>
 
