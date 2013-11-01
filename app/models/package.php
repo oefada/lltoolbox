@@ -183,9 +183,11 @@ class Package extends AppModel {
 		$sites = (isset($this->data['Package']['sites'])) ? explode(',', $this->data['Package']['sites']) : array($this->data['Package']['siteId']);
 		$updateFields = array('validityStart' => 'validityStartDate',
 									'validityEnd' => 'validityEndDate',
+									'offerIncludes' => 'packageIncludes',
 									'numGuests' => 'numGuests',
 									'minGuests' => 'minGuests',
 									'maxAdults' => 'maxAdults');
+																		
 		$setFields = array();
 
 		foreach ($updateFields as $column => $dataField) {
