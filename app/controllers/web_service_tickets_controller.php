@@ -1331,6 +1331,7 @@ class WebServiceTicketsController extends WebServicesController
                 $siteHeader = '990000';
                 $sitePhone = '(888) 297-3299';
                 $sitePhoneLocal = '(310) 215-8060';
+                $sitePhoneLong = '(888) 297-3299 or +1 (310) 215-8060';
                 $siteFax = '(310) 215-8279';
                 $headerLogo = 'http://www.luxurylink.com/images/email/LL_logo-V3.jpg';
                 $append = "LL";
@@ -1353,6 +1354,7 @@ class WebServiceTicketsController extends WebServicesController
                 $siteHeader = 'DE6F0A';
                 $sitePhone = '(877) 372-5877';
                 $sitePhoneLocal = '(310) 956-3703';
+                $sitePhoneLong = '(877) 372-5877 or +1 (310) 956-3703';
                 $siteFax = '(800) 440-3820';
                 $headerLogo = 'http://www.luxurylink.com/images/family/fglogo_minimal.gif';
                 $append = "FG";
@@ -1367,6 +1369,7 @@ class WebServiceTicketsController extends WebServicesController
                 $siteEmail = 'vacationist.com';
                 $sitePhone = '(877) 313-6769';
                 $sitePhoneLocal = '(310) 956-3704';
+                $sitePhoneLong = '(877) 313-6769 or +1 (310) 956-3704';
                 $siteFax = '(310) 215-8279';
                 $optoutLink = 'http://echo3.bluehornet.com/phase2/survey1/change.htm?cid=tcskep&1362533132';
                 $tldId = 1;
@@ -1394,7 +1397,8 @@ class WebServiceTicketsController extends WebServicesController
         	$prefixUrl = 'https://www.luxurylink.co.uk';
         	$siteUrl = 'http://www.luxurylink.co.uk/';
         	$sitePhoneTld = $lltgFormatterService->formatTollFreeNumber('1' . preg_replace('/\D/', '', $sitePhoneTld));
-			$sitePhoneLocalTld = $lltgFormatterService->formatUSPhoneNumber('1' . preg_replace('/\D/', '', $sitePhoneLocalTld));		
+			$sitePhoneLocalTld = $lltgFormatterService->formatUSPhoneNumber('1' . preg_replace('/\D/', '', $sitePhoneLocalTld));
+			$sitePhoneLong = $sitePhoneTld;
 		}
 		
         // Auction facilitator
