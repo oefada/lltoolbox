@@ -231,6 +231,10 @@ class Ticket extends AppModel
             }
         }
 
+        if ($this->isForeignCurrencyTicket() === true) {
+            $blockCreditOnFile = true;
+        }
+
         // get the handling fee
         if ($ticketPrice > 0) {
             $fee = $this->getFeeByTicket($ticketId);
