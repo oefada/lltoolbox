@@ -33,6 +33,13 @@ $().ready(function() {
 
         });
 
+        $(document).ready(function () {
+
+            if ($('#PackageType1').is(':checked')) {
+                $('div#familyAgeRanges').show();
+            }
+        });
+
         $('select#sites').change(function() {
                // $('div#familyAgeRanges').toggle();
 								// flex packs enabled for fg
