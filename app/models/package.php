@@ -189,10 +189,12 @@ class Package extends AppModel {
 									'maxAdults' => 'maxAdults');
 																		
 		$setFields = array();
+		$setFieldsValues = array();
 
 		foreach ($updateFields as $column => $dataField) {
 			if (!empty($this->data['Package'][$dataField])) {
-				$setFields[] = "{$column} = '{$this->data['Package'][$dataField]}'";
+				$setFields[] = "{$column} = ?";
+				$setFieldsValues[] = $this->data['Package'][$dataField];
 			}
 		}
 
@@ -213,8 +215,8 @@ class Package extends AppModel {
 			if (!empty($setFields)) {
 				$query = "UPDATE {$table}
 							SET " . implode(', ', $setFields) .
-							"WHERE packageId = {$this->id} AND isAuction = 0 AND now() < endDate";
-				$this->query($query);
+							" WHERE packageId = {$this->id} AND isAuction = 0 AND now() < endDate";						
+				$this->query($query, $setFieldsValues);
 			}
 		}
 
