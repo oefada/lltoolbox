@@ -7,7 +7,7 @@ class ClientSiteExtended extends AppModel {
     
     var $belongsTo = array('Client' => array('className' => 'Client', 'foreignKey' => 'clientId'));
     
-    var $llFieldlist = array('longDesc', 'blurb', 'keywords', 'inactive');
+    var $llFieldlist = array('longDesc', 'blurb', 'keywords', 'inactive', 'familiesShouldKnow');
     var $familyFieldlist = array('longDesc', 'blurb', 'keywords', 'inactive', 'familiesShouldKnow');
     
     function saveToFrontEnd($clientExtendedData) {

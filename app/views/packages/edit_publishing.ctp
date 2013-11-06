@@ -173,6 +173,10 @@ echo $javascript->link('jquery/jquery-autocomplete/jquery.autocomplete'); ?>
 
         inclusions += "<p><b>Accommodations for " + numGuests + ":</b></p>\n";
         inclusions += "<ul>\n";
+        inclusions += '    <li>' + roomNightDescription + "</li>\n";
+        inclusions += "</ul><br>\n\n";
+        inclusions += "<p><b>Included with this package:</b></p>\n";
+        inclusions += "<ul>\n";
 
         if (isFamilyPackage == 1) {
             if (maxAdults == numGuests) {
@@ -182,11 +186,10 @@ echo $javascript->link('jquery/jquery-autocomplete/jquery.autocomplete'); ?>
                 inclusions += "    <li>Children ages " + rangeLow + "-" + rangeHigh + "</li>\n";
             }
         }
-        inclusions += '    <li>' + roomNightDescription + "</li>\n";
         inclusions += "</ul><br>\n";
         inclusions += "<p><b>Included with this package:</b></p>\n";
         inclusions += "<ul>\n";
-        //inclusions += '    <li>' + roomNightDescription + "</li>\n";
+        inclusions += '    <li>' + roomNightDescription + "</li>\n";
 
         var lis = $("#sortable li").each(function (i) {
             var merch = $('#' + this.id + '-copy').html();
