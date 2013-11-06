@@ -144,7 +144,7 @@ $timestamp = time();
 // for editing membershipBalance, totalKept, totalRemitted, totalRevenue
 $uname = $userDetails['username'];
 $userGroupsArr = $userDetails['groups'];
-$userPermArr = array('dpen', 'kferson', 'emendoza', 'rfriedman', 'jlagraff', 'mtrinh','oefada');
+$userPermArr = array('dpen', 'kferson', 'emendoza', 'rfriedman', 'jlagraff', 'mtrinh', 'oefada', 'jwoods');
 
 $isProposal  = ($this->data['Loa']['loaLevelId'] ==0)?true:false;
 
@@ -161,6 +161,11 @@ if ($isProposal ||
     $disabled = false;
 } else {
     $disabled = true;
+}
+
+$feeAmountDisabled = $disabled;
+if ($this->data['Loa']['loaLevelId'] == 2 && !in_array('Accounting', $userGroupsArr)) {
+    $feeAmountDisabled = true;
 }
 
 // for editing membershipPackagesRemaining
@@ -219,7 +224,7 @@ echo $form->input('loaInstallmentTypeId', array(
         //'selected'=>$this->data['Loa']['loaMembershipTypeId']
     ));
 
-echo $form->input('membershipFee', array('disabled' => $disabled));
+echo $form->input('membershipFee', array('disabled' => $feeAmountDisabled));
 echo $form->input('membershipTotalPackages');
 echo $form->input('membershipTotalNights');
 
