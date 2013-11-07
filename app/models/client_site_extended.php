@@ -12,7 +12,7 @@ class ClientSiteExtended extends AppModel {
     
     function saveToFrontEnd($clientExtendedData) {
         if (!empty($clientExtendedData)) {
-            $this->Client->useDbConfig = AppModel::getDbName(1);
+            $this->Client->useDbConfig = AppModel::getDbName($clientExtendedData['ClientSiteExtended']['siteId']);
             switch($clientExtendedData['ClientSiteExtended']['siteId']) {
                 case 1:
                     $useFields = $this->llFieldlist;
