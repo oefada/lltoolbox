@@ -9,7 +9,8 @@ class ReportsController extends AppController
         'Destination',
         'Reporting',
         'Readonly',
-        'EventRegistry'
+        'EventRegistry',
+        'Package'
     );
     public $helpers = array(
         'Pagination',
@@ -1690,6 +1691,7 @@ class ReportsController extends AppController
                 PromoCode.promoCode,
                 Package.numNights,
                 Package.numRooms,
+                Ticket.packageId,
                 Ticket.offerId,
                 Ticket.guaranteeAmt,
                 Ticket.billingPrice,
@@ -1732,6 +1734,9 @@ class ReportsController extends AppController
                 } else {
                     $ids .= ',' . $v['Ticket']['ticketId'];
                 }
+                //Ticket 4440
+                $results[$k]['Ticket']['isFamily'] = $this->Package->isFamilyByPackageId($v['Ticket']['packageId']);
+
                 $paymentDetail = $this->PaymentDetail->query(
                     '
                     SELECT pd.*, pt.paymentTypeName FROM paymentDetail AS pd

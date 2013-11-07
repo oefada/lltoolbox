@@ -51,6 +51,7 @@ if (!empty($results) && isset($serializedFormInput)):
 		<thead class='fixedHeader'>
 		<tr>
 		<th><?=$utilities->sortLink('Ticket.siteId', 'Site',$this, $html,$url)?></th>
+        <th>Family Package</th>
         <th><?=$utilities->sortLink('Ticket.tldId', 'Locale', $this, $html, $url)?></th>
 		<th><?=$utilities->sortLink('Offer.offerId', 'Booking Date',$this, $html,$url)?></th>
 		<th><?=$utilities->sortLink('Client.name', 'Payment Date',$this, $html,$url)?></th>
@@ -85,6 +86,7 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 ?>
 	<tr<?=$class?>>
 		<td><?=$siteIds[$r['Ticket']['siteId']]?></td>
+        <td><?=$r['Ticket']['isFamily']?'Yes':'';?></td>
         <td><?=$r['Locale']['code']?></td>
 		<td><?=$r[0]['endDate']?></td>
 		<td><?=$r['PaymentDetailFull'][0]['pd']['ppResponseDate']?></td>

@@ -1534,5 +1534,25 @@ class Package extends AppModel {
         }
         return false;
     }
+
+    public function isFamilyByPackageId($packageId)
+    {
+        if (!isset($packageId)){
+            return false;
+        }
+        $sql = "SELECT * FROM packageTypeRel as PackageTypeRel WHERE packageId = ?";
+        $packageData = $this->query($sql,array($packageId));
+
+        if (empty($packageData)){
+            return false;
+        }
+        //can't use in array for multi-dimensional array so loop.
+        foreach ($packageData as $k => $packageAttributeSetting) {
+            if ($packageAttributeSetting['PackageTypeRel']['packageTypeId'] == '1') {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 ?>
