@@ -170,11 +170,9 @@ class UserPaymentSetting extends AppModel {
 	{
 		App::import("Vendor","Tokenizer",array('file' => "tokenizer.php"));
 		$tokenizer = new TokenizerHelper(
-			TokenizerFactoryHelper::newTokenizerInstance('tokenex',
-				array(
-					'tokenExMerchantId'	=> Configure::read('tokenExMerchantId'),
-					'tokenExWsdlURL'	=> Configure::read('tokenExWsdlURL')
-				)
+			TokenizerFactoryHelper::newTokenizerInstance(
+                Configure::read('TokenizerService'),
+				Configure::read('TokenEx')
 			)
 		);
 

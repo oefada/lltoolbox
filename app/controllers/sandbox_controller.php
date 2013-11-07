@@ -4,6 +4,14 @@ class SandboxController extends AppController
     public $name = 'Sandbox';
     public $uses = array();
 
+    public function tokenizerTest()
+    {
+        App::import('Model', 'UserPaymentSetting');
+        $ups = new UserPaymentSetting();
+        var_dump($ups->tokenizeCcNum('4111111111111111', '0415'));
+        die;
+    }
+
     public function processorTest($processor = 'NOVA')
     {
         $testTransaction = true;

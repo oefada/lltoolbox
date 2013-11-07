@@ -240,21 +240,33 @@ $cacheAction = true;
 		$ll_url = $_SERVER['ENV_USER'] .'-lldev.luxurylink.com';
 		$fg_url = $_SERVER['ENV_USER'] .'-familydev.luxurylink.com';
 		$webservice_live_url = 'http://'. $_SERVER['ENV_USER'] .'-toolboxdev.luxurylink.com';
-		Configure::write('tokenExMerchantId', '3866313375553000');
-		Configure::write('tokenExWsdlURL', 'https://token.api.tokenex.com/Tokenizer.svc?wsdl');
+        Configure::write('TokenizerService', 'tokenex');
+        Configure::write('TokenEx.tokenExMerchantId', '3866313375553000');
+        Configure::write('TokenEx.tokenExWsdlURL', 'https://token.api.tokenex.com/Tokenizer.svc?wsdl');
+        Configure::write('TokenEx.tokenExV2Url', 'https://test-api.tokenex.com:8081/TokenServices.svc/REST/');
+        Configure::write('TokenEx.tokenExV2ID', '4700943473181519');
+        Configure::write('TokenEx.tokenExV2APIKey', 'NulLHqEpmVfJCF6t3wQJ');
 	} elseif (stristr($_SERVER['HTTP_HOST'], 'stage') || $_SERVER['ENV'] == 'staging' || strpos($_ENV['HOSTNAME'],'stage')!==FALSE) {
 		define("ISDEV",true);
 		define("ISSTAGE",true);
 		$ll_url = 'stage-luxurylink.luxurylink.com';
 		$fg_url = 'stage-family.luxurylink.com';
 		$webservice_live_url = 'http://stage-toolbox.luxurylink.com';
-		Configure::write('tokenExMerchantId', '3866313375553000');
-		Configure::write('tokenExWsdlURL', 'https://token.api.tokenex.com/Tokenizer.svc?wsdl');
+        Configure::write('TokenizerService', 'tokenex');
+        Configure::write('TokenEx.tokenExMerchantId', '3866313375553000');
+        Configure::write('TokenEx.tokenExWsdlURL', 'https://token.api.tokenex.com/Tokenizer.svc?wsdl');
+        Configure::write('TokenEx.tokenExV2Url', 'https://test-api.tokenex.com:8081/TokenServices.svc/REST/');
+        Configure::write('TokenEx.tokenExV2ID', '4700943473181519');
+        Configure::write('TokenEx.tokenExV2APIKey', 'NulLHqEpmVfJCF6t3wQJ');
 	} else {
 		define("ISDEV",false);
 		define("ISSTAGE",false);
-		Configure::write('tokenExMerchantId', '6420148734761242');
-		Configure::write('tokenExWsdlURL', 'https://token.api.tokenex.com/Tokenizer.svc?wsdl');
+        Configure::write('TokenizerService', 'tokenex');
+        Configure::write('TokenEx.tokenExMerchantId', '6420148734761242');
+        Configure::write('TokenEx.tokenExWsdlURL', 'https://token.api.tokenex.com/Tokenizer.svc?wsdl');
+        Configure::write('TokenEx.tokenExV2Url', '');
+        Configure::write('TokenEx.tokenExV2ID', '');
+        Configure::write('TokenEx.tokenExV2APIKey', '');
 	}
 
 	if (ISDEV) {
