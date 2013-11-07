@@ -224,4 +224,4 @@ $this->set('hideSidebar', true);
     })();
 </script>
 
-<script type="text/javascript" src="/js/blocks.js"></script>
+<script type="text/javascript" src="/js/blocks.js?v=<?=$jsVersion;?>"></script>

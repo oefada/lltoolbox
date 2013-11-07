@@ -355,7 +355,8 @@ jQuery(function () {
                         'CommunityModule': 'Community',
                         'NewsletterModuleSidebar': 'Newsletter Signup Box for Sidebar',
                         'NewsletterModuleContent': 'Newsletter Signup Box for wide Content area',
-                        'FeaturedAuctionsModule': 'Featured Auctions'
+                        'FeaturedAuctionsModule': 'Featured Auctions',
+                        'RecentClientsModule': 'Recently Viewed Clients'
                     }
                 }
             },
