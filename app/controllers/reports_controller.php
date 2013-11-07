@@ -1136,7 +1136,7 @@ class ReportsController extends AppController
             AND Loa.inactive != 1
             AND Loa.loaMembershipTypeId <> 2
             AND Loa.accountTypeId <> 4
-            AND Loa.endDate>(NOW()+INTERVAL 7 DAY)
+            AND Loa.endDate > NOW()
             
             AND Loa.startDate BETWEEN '$sqlStartDate' and '$sqlEndDate'
             $sqlManager
