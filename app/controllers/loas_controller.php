@@ -423,7 +423,7 @@ class LoasController extends AppController
                     //LOA level has changed
                     if(4 == $this->data['Loa']['loaLevelId']){
                         //4- Agreement
-                        $loaSubject = 'Loa Submission - ' . $this->data['Client']['name'] . ' (Client Id: ' . $this->data['Client']['clientId'] . ')'; 
+                        $loaSubject = 'New LOA Created in Toolbox - Loa Submission - ' . $this->data['Client']['name'] . ' (Client Id: ' . $this->data['Client']['clientId'] . ')'; 
                         $this->Loa->changeEmail($this->data, $loaSubject, 'renew@luxurylink.com');
                     }
                 }
