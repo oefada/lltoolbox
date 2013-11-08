@@ -570,7 +570,7 @@ class Loa extends AppModel
         $loa_data_save['Loa']['loaId'] = $newLoaId;
         $emailPostfix = null;
         if (isset($loa_data_save['Client']['name'])){
-            $emailPostfix =$loa_data_save['Client']['name'];
+            $emailPostfix = $loa_data_save['Client']['name'] . ' (Client Id: ' . $clientId . ')';           
         }
         @$this->changeEmail($loa_data_save,'New LOA Created in Toolbox - '.$emailPostfix,'new@luxurylink.com');
         return $newLoaId;
