@@ -178,12 +178,12 @@ class PackagesController extends AppController
     {
 
         if (!empty($this->data)) {
-            if ($this->data['Package']['packageType'] == '0') {
+            if ($this->data['Package']['packageNewOfferType'] == '0') {
                 $this->redirect(
-                    '/clients/' . $clientId . '/packages/edit_package/0?loaId=' . $this->data['ClientLoaPackageRel'][0]['loaId'] . '&packageType=standard&siteId=' . $this->data['Package']['siteId']
+                    '/clients/' . $clientId . '/packages/edit_package/0?loaId=' . $this->data['ClientLoaPackageRel'][0]['loaId'] . '&packageNewOfferType=standard&siteId=' . $this->data['Package']['siteId']
                 );
                 return;
-            } elseif ($this->data['Package']['packageType'] == '2') {
+            } elseif ($this->data['Package']['packageNewOfferType'] == '2') {
                 if (!empty($this->data['Package']['siteId'])) {
                     switch ($this->data['Package']['siteId']) {
                         case 1 :

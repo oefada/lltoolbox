@@ -20,7 +20,7 @@
 ?>
 	<!-- <div class="input text"><label>LOA Expiration Date:</label><div id="loaExpirationDate<?=$rowId?>" style="display: inline"></div></div> -->
     <?php if (!isset($additionalClient)): ?>
-        <div class="input text"><label>Package Type</label><? echo $form->select('packageType', array(0 => 'Standard Package', 1 => 'Hotel Offer', 2 => 'Multi-client Package'), 0, null, false); ?></div>
+        <div class="input text"><label>Package Type</label><? echo $form->select('packageNewOfferType', array(0 => 'Standard Package', 1 => 'Hotel Offer', 2 => 'Multi-client Package'), 0, null, false); ?></div>
     <?php endif; ?>
 	
 	<?php if ($rowId == 0 && !$showFirstPercentOfRevenue): ?>

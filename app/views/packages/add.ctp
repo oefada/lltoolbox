@@ -1,5 +1,5 @@
 <?php
-if ($_POST['data']['Package']['packageType'] == 1) {
+if ($_POST['data']['Package']['packageNewOfferType'] == 1) {
 	?><div class="packages form"><?php
 	echo $form->create('Package', array('url' => "/clients/$clientId/packages/add", 'id'=>'PackageAddForm'));
 	echo $this->renderElement('../packages/_add_step_1');
