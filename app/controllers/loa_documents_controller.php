@@ -218,7 +218,7 @@ class LoaDocumentsController extends AppController
                 //
                 $loa['Loa']['membershipTotalPackages']= $decoded_request['loa']['barterpackages_c'];
                 $loa['Loa']['membershipTotalNights'] = $decoded_request['loa']['barternights_c'];
-                $loa['Loa']['numEmailInclusions'] = $decoded_request['number_of_emails_c'];
+                $loa['Loa']['numEmailInclusions'] = $decoded_request['loa']['number_of_emails_c'];
                 $loa['Loa']['revenueSplitPercentage'] = $decoded_request['loa']['revsplit_c'];
 
                 $loa['Loa']['notes'] = nl2br($decoded_request['loa']['special_instructions_c']);
