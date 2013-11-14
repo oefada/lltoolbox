@@ -41,7 +41,9 @@ class Bid extends AppModel
     public function getBidStatsForOffer($offerId)
     {
         $query = "
-            SELECT COUNT(bidId) AS bidCount, MAX(bidAmount) AS winner
+            SELECT
+              COUNT(bidId) AS bidCount,
+              MAX(bidAmount) AS winner
             FROM bid
             WHERE offerId = ?
         ";
@@ -60,7 +62,7 @@ class Bid extends AppModel
         $q = "SELECT COUNT(bidId) AS bidCount ";
         $q .= "FROM bid ";
         $q .= "INNER JOIN offerLuxuryLink as ot on (ot.offerId=bid.offerId) ";
-        $q .= "WHERE packageId= ?";
+        $q .= "WHERE packageId = ?";
         $bidStats = $this->query($q, array($packageId));
 
         return $bidStats[0][0]['bidCount'];
