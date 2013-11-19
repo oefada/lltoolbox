@@ -772,8 +772,8 @@ class ConsolidatedReport extends AppModel
             WHERE
                 clientid = ?
                 AND (
-                    activityStart BETWEEN ? AND ?
-                    OR activityEnd BETWEEN ? AND ?
+                    DATE_FORMAT(activityStart, '%Y-%m') BETWEEN DATE_FORMAT(?, '%Y-%m') AND DATE_FORMAT(?, '%Y-%m')
+                    OR DATE_FORMAT(activityEnd, '%Y-%m') BETWEEN DATE_FORMAT(?, '%Y-%m') AND DATE_FORMAT(?, '%Y-%m')
                 )
             ORDER BY activityStart, year2, month2
         ";
