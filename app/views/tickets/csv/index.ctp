@@ -3,7 +3,7 @@ if (!empty($tickets)):
 	$i = 1;
 	$ex = array(',', "\n", "\r");
 ?>
-COUNT,TICKET_ID,TLD,CREATED,CLIENT,USER_FIRST_NAME,USER_LAST_NAME,USER_ID,OFFER_TYPE_ID,BID_ID,OFFER_ID,PACKAGE_ID,BILLING_PRICE,VALID_CARD,TICKET_STATUS,PROMO,TICKET_NOTES<?php echo "\n";?>
+COUNT,TICKET_ID,TLD,CREATED,CLIENT,USER_FIRST_NAME,USER_LAST_NAME,USER_ID,OFFER_TYPE_ID,BID_ID,OFFER_ID,PACKAGE_ID,BILLING_PRICE,VALID_CARD,TICKET_STATUS,PROMO,TICKET_NOTES,RES PREFERRED DATE<?php echo "\n";?>
 <?php 
 foreach($tickets as $ticket) {
 	echo $i++ . ",";
@@ -23,6 +23,11 @@ foreach($tickets as $ticket) {
 	echo $ticket['TicketStatus']['ticketStatusName'] . ",";
 	echo (isset($ticket['Promo'][0]['pc']['promoCode'])?$ticket['Promo'][0]['pc']['promoCode']:'') . ",";
 	echo str_replace($ex, ' ', $ticket['Ticket']['ticketNotes']) . ",";
+    if (!empty($ticket['ResPreferDate'])) {
+        echo $ticket['ResPreferDate']['arrival'];
+        echo ' to ' . $ticket['ResPreferDate']['departure']; 
+    }
+    echo ",";
 	echo "\n";
 }
 ?>
