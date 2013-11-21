@@ -1,8 +1,12 @@
 <?php
 App::import('Core', array('Model', 'Controller'));
 App::import('Model', array('Reservation'));
+App::import('Model', array('Promo'));
+App::import('Model', array('PromoCode'));
+App::import('Model', array('PromoCodeRel'));
 App::import('Controller', array('Reservations'));
 App::import('Controller', 'WebServiceTickets');
+
 
 /**
  * cake post_trip_email
@@ -29,11 +33,27 @@ class PostTripEmailShell extends Shell {
 
 	private $sendCount = 0;
 
+    private $ticketId = null;
+    private $dailyPromoId = false;
+    private $promoCodePrefix = 'TAKEMEAWAY';
+
+    /*
+     * $numPromoChars when null, defaults to 5
+     * when you set a number, it's the number +1 apparently (using existing code)
+     */
+    private $numPromoChars = 4;
+
 	function main() {
+
 		$this->template = file_get_contents(APP . '/vendors/shells/templates/post_trip_email.ctp');
 
+        $this->Promo = new Promo();
+        $this->PromoCode = new PromoCode();
 		$this->Reservation = new Reservation();
 		$this->WebServiceTicketsController = new WebServiceTicketsController();
+        //
+        $this->dailyPromoId = $this->getDailyPromoId();
+
 		@$this->WebServiceTicketsController->constructClasses();
 		$this->out($this->header);
 		$this->hr();
@@ -102,6 +122,10 @@ LIMIT 200;
 			$client['Name'] = $r['client']['name'];
 			$client['Location'] = $r['client']['locationDisplay'];
 			$tickets[$ticketId]['Clients'][$client['clientId']] = $client;
+            if (isset($this->ticketId)){
+                unset($this->ticketId);
+		}
+            $this->ticketId = $r['ticket']['ticketId'];
 		}
 
 		/* Generate the URL to the survey */
@@ -174,7 +198,13 @@ LIMIT 200;
 	 * @return boolean True if the email was successfully sent, false otherwise.
 	 */
 	private function sendEmail($data) {
-		$this->out("#" . ++$this->sendCount . " r:" . $data['Reservation']['reservationId'] . ' t:' . $data['Ticket']['ticketId'] . ' e:' . $data['User']['Email'] . ' f:' . $data['User']['FirstName']);
+
+        $data['Promo']['promoId'] = $this->dailyPromoId;
+        $promoCode = $this->generateRealTimePromoCode($this->promoCodePrefix);
+        $data['Promo']['promoCode']= $promoCode[0];
+        $today= time();
+        $data['Promo']['endDate'] = date('F j, Y',strtotime('+45 days',$today));
+		$this->out("#" . ++$this->sendCount . " r:" . $data['Reservation']['reservationId'] . ' t:' . $data['Ticket']['ticketId'] . ' e:' . $data['User']['Email'] . ' f:' . $data['User']['FirstName'].' promoId: '.$data['Promo']['promoId'].' promoCode: '.$data['Promo']['promoCode']);
 		$this->WebServiceTicketsController->sendPpvEmail($emailTo = $data['User']['Email'], $emailFrom = 'reservations@luxurylink.com', $emailCc = null, $emailBcc = null, $emailReplyTo = 'no-reply@luxurylink.com', $emailSubject = 'Rate your Luxury Link experience at ' . $data['ClientNames'], $emailBody = $this->getTemplate($this->array_flatten($data)), $ticketId = $data['Ticket']['ticketId'], $ppvNoticeTypeId = 37, $ppvInitials = NULL);
 		return true;
 	}
@@ -219,6 +249,7 @@ LIMIT 200;
 		foreach ($data as $k => $v) {
 			if (is_string($v)) {
 				$buffer = str_replace('%%' . $k . '%%', $v, $buffer);
+               // var_dump($k);
 			}
 		}
 		return $buffer;
@@ -237,6 +268,38 @@ LIMIT 200;
 		}
 		return $b;
 	}
+
+    public function getDailyPromoId()
+    {
+
+        $sql = "
+                SELECT promoId FROM promo Promo
+                WHERE startDate = CURRENT_DATE()
+                AND LEFT(promoName,6) = 'TAKEME' LIMIT 1
+                ";
+        $result = $this->Promo->query($sql);
+
+        if (empty($result)){
+            $this->out('Promotion not found');
+            return false;
+        }
+        $this->out("PromoId:\t".$result[0]['Promo']['promoId']);
+        return $result[0]['Promo']['promoId'];
+    }
+
+    public function generateRealTimePromoCode($prefix = 'TAKEMEAWAY--')
+    {
+        if (!$this->dailyPromoId) {
+            $this->out('Cannot find the daily PromoId');
+            return false;
+        }
+        $promoCode = $this->PromoCode->generateReturnMultipleCodes($prefix, 1, $this->dailyPromoId, $this->numPromoChars);
+        if (empty($promoCode)){
+            return false;
+        }
+       // $this->out("PromoCode:\t" . print_r($promoCode, true));
+        return $promoCode;
+    }
 
 	function help() {
 		$this->out($this->header);

@@ -34,22 +34,29 @@
                                         </tr>
                                         <tr>
                                             <td align="left" style="padding:25px 0px 0px 0px;line-height:19px;font-family:Helvetica,maradival,Sans-Serif;color:rgb(68, 68, 68);font-size:14px">
-											I hope you enjoyed your Luxury Link vacation at %%ClientNames%%.  We pride ourselves on hand-selecting the world's finest luxury hotels and resorts and offering them to you at an incredible value.  We would love to know all about your experience so we can make each Luxury Link vacation better than the last and continue to offer the best. 
-											</td>
+											I hope you enjoyed your Luxury Link vacation experience at %%ClientNames%%. We would like to hear about your stay so that we can continue making each Luxury Link vacation better than the last.
+                                            Briefly tell us about your experience.
+                                            </td>
                                         </tr>
 										<tr>
                                             <td align="left" style="padding:20px 0px 0px 0px;">
 											<a href="%%URL%%" target="_blank"><img src="http://www.luxurylink.com/images/email/new/images/button.jpg" width="213" height="26" alt="Tell Us About Your Experience" border="0"></a>
 											</td>
                                         </tr>
+                                    <tr>
+                                        <td align="left" style="padding:25px 0px 0px 0px;line-height:19px;font-family:Helvetica,maradival,Sans-Serif;color:rgb(68, 68, 68);font-size:14px">
+                                            Now for the fun part &mdash; planning your next luxurious getaway! We're constantly introducing new vacation experiences to the Luxury Link community and invite you to keep exploring the collection. Make a reservation by %%Promo.endDate%%, and take an additional 10% off the purchase price when you enter code <b>%%Promo.promoCode%%</b> at checkout.
+                                        </td>
+                                    </tr>
 										<tr>
                                             <td align="left" style="padding:18px 0px 0px 0px;line-height:17px;font-family:Helvetica,maradival,Sans-Serif;color:rgb(68, 68, 68);font-size:14px">
-											Thanks in advance for your valuable time and input.
+                                            Thanks in advance for your valuable input, and for being a Luxury Link traveler.
 											</td>
                                         </tr>
 										<tr>
                                             <td align="left" style="padding:20px 0px 0px 0px;line-height:17px;font-family:Helvetica,maradival,Sans-Serif;color:rgb(68, 68, 68);font-size:14px">
 											Warm Regards,
+                                            </td>
 										</tr>
 										<tr>
 											<td align="left" style="padding:0px 0px 0px 0px;"><img border="0" width="147" height="48" src="http://www.luxurylink.com/images/email/new/images/diane.gif"></td>
