@@ -83,9 +83,8 @@ foreach ($this->data['Client']['sites'] as $site) {
     <?php
     if (in_array('luxurylink', $this->data['Client']['sites'])) {
         echo $html->link('<span>Preview on LuxuryLink</span>', "http://www.luxurylink.com/luxury-hotels/preview.html?clid={$this->data['Client']['clientId']}&preview=client", array('target' => '_blank', 'class' => 'button'), null, false);
-    }
-    if (in_array('family', $this->data['Client']['sites'])) {
-        echo $html->link('<span>Preview on FamilyGetaway</span>', "http://www.familygetaway.com/luxury-hotels/preview.html?clid={$this->data['Client']['clientId']}&preview=client", array('target' => '_blank', 'class' => 'button'), null, false);
+        # View the Client PDP
+        echo $html->link('<span>View PDP on LuxuryLink</span>', "http://www.luxurylink.com/5star/{$this->data['Client']['clientTypeSeoName']}/{$this->data['Client']['seoLocation']}/{$this->data['Client']['seoName']}", array('target' => '_blank', 'class' => 'button'), null, false);
     }
     ?>
 </div>
@@ -159,13 +158,16 @@ if ($showAccountingId) {
 
 ?>
 <?php
+
 echo $form->input('url');
 echo $form->input('checkRateUrl');
 echo $form->input('numRooms');
 echo $form->input('numRoomsText');
 echo $form->input('starRating', array('type' => 'select', 'options' => array('3' => '3', '3.5' => '3.5', '4' => '4', '4.5' => '4.5', '5' => '5'), 'empty' => true));
 echo $form->input('segment');
+
 ?>
+<div class="input text"><label>PDP URL</label><?="http://www.luxurylink.com/5star/{$this->data['Client']['clientTypeSeoName']}/{$this->data['Client']['seoLocation']}/{$this->data['Client']['seoName']}"?></div>
 <?php foreach($this->data['ClientSiteExtended'] as $site): ?>
     <div style="float: left; <?php echo (count($this->data['ClientSiteExtended']) == 2) ? 'clear:right;width:47%;' : 'width:100%;'?>" class="multiSiteNarrow multiSiteSingle">
         <?php
