@@ -275,7 +275,8 @@ LIMIT 200;
         $sql = "
                 SELECT promoId FROM promo Promo
                 WHERE startDate = CURRENT_DATE()
-                AND LEFT(promoName,6) = 'TAKEME' LIMIT 1
+                AND LEFT(promoName,6) = 'TAKEME'
+                ORDER BY promoId DESC LIMIT 1
                 ";
         $result = $this->Promo->query($sql);
 
