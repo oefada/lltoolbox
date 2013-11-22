@@ -79,9 +79,11 @@ If you have any questions or additional needs, please contact our Travel Concier
 	<td align="center" style="padding:20px 20px 30px 25px;line-height:18px; font-family:Helvetica, Maradival,Sans-Serif; color:#161719;font-size:18px;">Looking for places to go? <a style="text-decoration:none;color:#008ec5" href="http://www.vacationist.com/?<?= $vcomSaleInfo['tracking']; ?>" name="" target="_blank">See all current offers</a></td>
 </tr>
 
-
-
-
+<? if (time() < strtotime('2013-11-29')) { ?>
+ <tr>
+	<td align="center" style="padding:20px 0px 30px 0px;"><img border="0" alt="" src="http://www.luxurylink.com/images/email/new/vcom_banner_111113.jpg" width="550" /></td>
+</tr>
+<? } ?>
 
 </tbody>
 </table>

@@ -22,13 +22,13 @@ foreach($tickets as $ticket) {
 	echo $ticket['Ticket']['validCard'] . ",";
 	echo $ticket['TicketStatus']['ticketStatusName'] . ",";
 	echo (isset($ticket['Promo'][0]['pc']['promoCode'])?$ticket['Promo'][0]['pc']['promoCode']:'') . ",";
-	echo str_replace($ex, ' ', $ticket['Ticket']['ticketNotes']) . ",";
+    echo str_replace($ex, ' ', $ticket['Ticket']['ticketNotes']) . ",";
     if (!empty($ticket['ResPreferDate'])) {
         echo $ticket['ResPreferDate']['arrival'];
         echo ' to ' . $ticket['ResPreferDate']['departure']; 
     }
     echo ",";
-	echo "\n";
+    echo "\n";
 }
 ?>
 <?php else: ?>
