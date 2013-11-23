@@ -1418,6 +1418,12 @@ class WebServiceTicketsController extends WebServicesController
         $userPhone = !$userPhone && $userWorkPhone ? $userWorkPhone : $userPhone;
         
         $fallPromo2013 = false;
+        $blackFridayPromo2013 = false;
+        if ($ppvNoticeTypeId == 39 || $ppvNoticeTypeId == 40 || $ppvNoticeTypeId == 41 || $ppvNoticeTypeId == 42) {
+            if (time() < strtotime('12/03/2013')) {
+                $blackFridayPromo2013 = true;
+            }
+        }
 
         $dateNow = date("M d, Y");
 
