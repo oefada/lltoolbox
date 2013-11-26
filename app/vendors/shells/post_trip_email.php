@@ -89,6 +89,7 @@ SELECT
     , reservation.departureDate
     , client.locationDisplay
     , ticket.ticketStatusId
+    , ticket.tldId
 FROM
     toolbox.client
     INNER JOIN toolbox.clientLoaPackageRel 
@@ -116,6 +117,7 @@ LIMIT 200;
 			$tickets[$ticketId]['User']['UserId'] = $r['ticket']['userId'];
 			$tickets[$ticketId]['Reservation']['reservationId'] = $r['reservation']['reservationId'];
 			$tickets[$ticketId]['Package']['packageId'] = $r['clientLoaPackageRel']['packageId'];
+            $tickets[$ticketId]['Ticket']['tldId'] = $r['ticket']['tldId'];
 			$client = array();
 			$clientName = '';
 			$client['clientId'] = $r['client']['clientId'];
@@ -199,12 +201,21 @@ LIMIT 200;
 	 */
 	private function sendEmail($data) {
 
-        $data['Promo']['promoId'] = $this->dailyPromoId;
-        $promoCode = $this->generateRealTimePromoCode($this->promoCodePrefix);
-        $data['Promo']['promoCode']= $promoCode[0];
-        $today= time();
-        $data['Promo']['endDate'] = date('F j, Y',strtotime('+45 days',$today));
-		$this->out("#" . ++$this->sendCount . " r:" . $data['Reservation']['reservationId'] . ' t:' . $data['Ticket']['ticketId'] . ' e:' . $data['User']['Email'] . ' f:' . $data['User']['FirstName'].' promoId: '.$data['Promo']['promoId'].' promoCode: '.$data['Promo']['promoCode']);
+        if($data['Ticket']['tldId']== '1'){
+            $data['Promo']['promoId'] = $this->dailyPromoId;
+            $promoCode = $this->generateRealTimePromoCode($this->promoCodePrefix);
+            $data['Promo']['promoCode']= $promoCode[0];
+            $today= time();
+            $data['Promo']['endDate'] = date('F j, Y',strtotime('+45 days',$today));
+        }
+        $this->out(
+            "#" . ++$this->sendCount . " r:" . $data['Reservation']['reservationId']
+            . ' t:' . $data['Ticket']['ticketId'] . ' e:'
+            . $data['User']['Email'] . ' f:'
+            . $data['User']['FirstName']
+            . isset($data['Promo']['promoId']) ? ' promoId: ' . $data['Promo']['promoId'] : ''
+            . isset($data['Promo']['promoCode']) ? ' promoCode: ' . $data['Promo']['promoCode'] : ''
+        );
 		$this->WebServiceTicketsController->sendPpvEmail($emailTo = $data['User']['Email'], $emailFrom = 'reservations@luxurylink.com', $emailCc = null, $emailBcc = null, $emailReplyTo = 'no-reply@luxurylink.com', $emailSubject = 'Rate your Luxury Link experience at ' . $data['ClientNames'], $emailBody = $this->getTemplate($this->array_flatten($data)), $ticketId = $data['Ticket']['ticketId'], $ppvNoticeTypeId = 37, $ppvInitials = NULL);
 		return true;
 	}
@@ -278,6 +289,8 @@ LIMIT 200;
                 AND LEFT(promoName,6) = 'TAKEME'
                 ORDER BY promoId DESC LIMIT 1
                 ";
+
+
         $result = $this->Promo->query($sql);
 
         if (empty($result)){

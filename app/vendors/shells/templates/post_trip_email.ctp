@@ -43,11 +43,15 @@
 											<a href="%%URL%%" target="_blank"><img src="http://www.luxurylink.com/images/email/new/images/button.jpg" width="213" height="26" alt="Tell Us About Your Experience" border="0"></a>
 											</td>
                                         </tr>
-                                    <tr>
-                                        <td align="left" style="padding:25px 0px 0px 0px;line-height:19px;font-family:Helvetica,maradival,Sans-Serif;color:rgb(68, 68, 68);font-size:14px">
-                                            Now for the fun part &mdash; planning your next luxurious getaway! We're constantly introducing new vacation experiences to the Luxury Link community and invite you to keep exploring the collection. Make a reservation by %%Promo.endDate%%, and take an additional 10% off the purchase price when you enter code <b>%%Promo.promoCode%%</b> at checkout.
-                                        </td>
-                                    </tr>
+                                    <?php if ($data['Ticket']['tldId'] == '1') { ?>
+                                        <tr>
+                                            <td align="left"
+                                                style="padding:25px 0px 0px 0px;line-height:19px;font-family:Helvetica,maradival,Sans-Serif;color:rgb(68, 68, 68);font-size:14px">
+                                                Now for the fun part &mdash; planning your next luxurious getaway! We're constantly introducing new vacation experiences to the Luxury Link community and invite you to keep exploring the collection. Make a reservation by %%Promo.endDate%%, and take an additional 10% off the
+                                                purchase price when you enter code <b>%%Promo.promoCode%%</b> at checkout.
+                                            </td>
+                                        </tr>
+                                    <? } ?>
 										<tr>
                                             <td align="left" style="padding:18px 0px 0px 0px;line-height:17px;font-family:Helvetica,maradival,Sans-Serif;color:rgb(68, 68, 68);font-size:14px">
                                             Thanks in advance for your valuable input, and for being a Luxury Link traveler.

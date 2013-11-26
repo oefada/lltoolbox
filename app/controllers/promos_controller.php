@@ -244,7 +244,7 @@ class PromosController extends AppController {
 															'type' => 'left',
 															'conditions'=> array('PromoCategoryType.promoCategoryTypeId = Promo.promoCategoryTypeId'))
 										   ),
-								'group' => array('Promo.promoName')
+								'group' => array('Promo.promoId')
 						  );
 
 		// client search
