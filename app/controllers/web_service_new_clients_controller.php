@@ -97,6 +97,15 @@ class WebServiceNewClientsController extends WebServicesController
         $client_data_save['managerUsername'] 	= $decoded_request['client']['manager_ini'];
 		$client_data_save['teamName']			= $decoded_request['client']['team_name'];
         $client_data_save['segment']			= $decoded_request['client']['segment'];
+
+        $client_data_save['numRooms']			= $decoded_request['client']['numRooms'];
+        $client_data_save['address1']			= $decoded_request['client']['address1'];
+        $client_data_save['address2']			= $decoded_request['client']['address2'];
+        $client_data_save['postalCode']			= $decoded_request['client']['postalCode'];
+
+        if (isset($decoded_request['client']['url'])){
+            $client_data_save['url']			    = $this->httpify($decoded_request['client']['url']);
+        }
         $client_data_save['modified']			= $date_now;
         $client_data_save['seoName']			= $this->Client->convertToSeoName($client_data_save['name']);
 
@@ -301,6 +310,20 @@ class WebServiceNewClientsController extends WebServicesController
 		}
 		return true;
 	}
+
+    private function httpify($link, $append = 'http://', $allowed = array('http://', 'https://'))
+    {
+        $found = true;
+        foreach ($allowed as $protocol) {
+            if (strpos($link, $protocol) === 0) {
+                $found = false;
+            }
+            if (!$found) {
+                return $link;
+            }
+        }
+        return $append . $link;
+    }
 
 }
 ?>
