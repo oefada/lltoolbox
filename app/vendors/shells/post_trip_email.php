@@ -45,8 +45,6 @@ class PostTripEmailShell extends Shell {
 
 	function main() {
 
-		$this->template = file_get_contents(APP . '/vendors/shells/templates/post_trip_email.ctp');
-
         $this->Promo = new Promo();
         $this->PromoCode = new PromoCode();
 		$this->Reservation = new Reservation();
@@ -216,6 +214,15 @@ LIMIT 200;
             . isset($data['Promo']['promoId']) ? ' promoId: ' . $data['Promo']['promoId'] : ''
             . isset($data['Promo']['promoCode']) ? ' promoCode: ' . $data['Promo']['promoCode'] : ''
         );
+
+//        $view = new View($this, false);
+//        $view->viewPath = 'templates';
+//        $docContent = $view->element(
+//            'post_trip_email',
+//            array(
+//                "data" => $data,
+//            )
+
 		$this->WebServiceTicketsController->sendPpvEmail($emailTo = $data['User']['Email'], $emailFrom = 'reservations@luxurylink.com', $emailCc = null, $emailBcc = null, $emailReplyTo = 'no-reply@luxurylink.com', $emailSubject = 'Rate your Luxury Link experience at ' . $data['ClientNames'], $emailBody = $this->getTemplate($this->array_flatten($data)), $ticketId = $data['Ticket']['ticketId'], $ppvNoticeTypeId = 37, $ppvInitials = NULL);
 		return true;
 	}
@@ -255,6 +262,10 @@ LIMIT 200;
 	}
 
 	function getTemplate($data) {
+        ob_start();
+        include(APP . '/vendors/shells/templates/post_trip_email.ctp');
+        $this->template = ob_get_contents();
+        ob_end_clean();
 		$buffer = $this->template;
 		$data['CurrentDate'] = date('F jS, Y');
 		foreach ($data as $k => $v) {

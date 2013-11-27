@@ -43,7 +43,7 @@
 											<a href="%%URL%%" target="_blank"><img src="http://www.luxurylink.com/images/email/new/images/button.jpg" width="213" height="26" alt="Tell Us About Your Experience" border="0"></a>
 											</td>
                                         </tr>
-                                    <?php if ($data['Ticket']['tldId'] == '1') { ?>
+                                    <?php if ($data['Ticket.tldId'] == '1') { ?>
                                         <tr>
                                             <td align="left"
                                                 style="padding:25px 0px 0px 0px;line-height:19px;font-family:Helvetica,maradival,Sans-Serif;color:rgb(68, 68, 68);font-size:14px">
