@@ -1788,9 +1788,9 @@ class WebServiceTicketsController extends WebServicesController
             );
 
             foreach ($clients as $client_index => $row) {
-                $clients[$client_index]['name'] = UtilityHelper::checkUtf8(
-                    $clients[$client_index]['name']
-                ) ? utf8_encode($clients[$client_index]['name']) : $clients[$client_index]['name'];
+                // $clients[$client_index]['name'] = UtilityHelper::checkUtf8(
+                //     $clients[$client_index]['name']
+                // ) ? utf8_encode($clients[$client_index]['name']) : $clients[$client_index]['name'];
                 // if (isset($clients[$client_index]['nameNormalized']) && $clients[$client_index]['nameNormalized'] != '') {
                 //     $clients[$client_index]['name'] = $clients[$client_index]['nameNormalized'];
                 // }
