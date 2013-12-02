@@ -241,12 +241,14 @@ if ($_SERVER['ENV'] == "staging") {
         <th>Max Num Guests</th>
         <td>
             <?php echo $package['Package']['numGuests']; ?>
-            <?php if (in_array('family', $package['Package']['sites'])): ?>
+            <? if ($isFamilyPackage == true)
+            {
+            ?>
                 <span
                     style="margin-left:20px;">Age Range for Children: <?php echo (!empty($package['PackageAgeRange']['rangeLow']) || $package['PackageAgeRange']['rangeLow'] == '0') ? $package['PackageAgeRange']['rangeLow'] : '<span style="color:red;"><i>Not selected</i></span>'; ?>
                     &#150; <?php echo (!empty($package['PackageAgeRange']['rangeHigh'])) ? $package['PackageAgeRange']['rangeHigh'] : '<span style="color:red;"><i>Not selected</i></span>'; ?>
                     years old</span>
-            <?php endif; ?>
+            <?php } ?>
         </td>
     </tr>
     <tr class='odd'>
