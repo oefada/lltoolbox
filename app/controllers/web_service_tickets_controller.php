@@ -1791,9 +1791,10 @@ class WebServiceTicketsController extends WebServicesController
                 $clients[$client_index]['name'] = UtilityHelper::checkUtf8(
                     $clients[$client_index]['name']
                 ) ? utf8_encode($clients[$client_index]['name']) : $clients[$client_index]['name'];
-                if (isset($clients[$client_index]['nameNormalized']) && $clients[$client_index]['nameNormalized'] != '') {
-                    $clients[$client_index]['name'] = $clients[$client_index]['nameNormalized'];
-                }
+                // if (isset($clients[$client_index]['nameNormalized']) && $clients[$client_index]['nameNormalized'] != '') {
+                //     $clients[$client_index]['name'] = $clients[$client_index]['nameNormalized'];
+                // }
+                $clients[$client_index]['name'] = UtilityHelper::normalize($clients[$client_index]['name']);
 
                 $clients[$client_index]['estaraPhoneLocal'] = $clients[$client_index]['estaraPhoneLocal'] == null ? $clients[$client_index]['phone1'] : $clients[$client_index]['estaraPhoneLocal'];
                 $clients[$client_index]['estaraPhoneIntl'] = $clients[$client_index]['estaraPhoneIntl'] == null ? $clients[$client_index]['phone2'] : $clients[$client_index]['estaraPhoneIntl'];
@@ -1853,10 +1854,10 @@ class WebServiceTicketsController extends WebServicesController
 
             $clientName = $clients[$client_index]['contacts'][0]['ppv_name'];
             $oldProductId = $clients[$client_index]['oldProductId'];
-            $locationDisplay = $clients[$client_index]['locationDisplay'];
-            if (isset($clients[$client_index]['locationNormalized']) && $clients[$client_index]['locationNormalized'] != '') {
-                $locationDisplay = $clients[$client_index]['locationNormalized'];
-            }
+            $locationDisplay = UtilityHelper::normalize($clients[$client_index]['locationDisplay']);
+            // if (isset($clients[$client_index]['locationNormalized']) && $clients[$client_index]['locationNormalized'] != '') {
+            //     $locationDisplay = $clients[$client_index]['locationNormalized'];
+            // }
 
             $clientPrimaryEmail = $clients[$client_index]['contact_to_string'];
             $clientCcEmail = $clients[$client_index]['contact_cc_string'];
