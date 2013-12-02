@@ -1,0 +1,1 @@
+<?php echo $form->input('Client.cityId', array('type' => 'select', 'label' => 'City')); ?>

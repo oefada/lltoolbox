@@ -1,0 +1,18 @@
+* {
+    font-family: Times;
+}
+
+h1 {
+    font-size: 15px;
+    margin: 0;
+}
+
+table {
+    width: 8in;
+}
+
+table.leftcol th {
+    text-align: left;
+    width: 1.5in;
+    font-size: 10px;
+}

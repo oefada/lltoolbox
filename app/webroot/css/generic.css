@@ -1,0 +1,484 @@
+/* @override http://lladmindemo.localhost/css/generic.css */
+
+/* SVN FILE: $Id$ */
+/**
+ *
+ * PHP versions 4 and 5
+ *
+ * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
+ * Copyright 2005-2008, Cake Software Foundation, Inc.
+ *								1785 E. Sahara Avenue, Suite 490-204
+ *								Las Vegas, Nevada 89104
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @filesource
+ * @copyright		Copyright 2005-2008, Cake Software Foundation, Inc.
+ * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @package			cake
+ * @subpackage		cake.app.webroot.css
+ * @since			CakePHP(tm)
+ * @version			$Revision$
+ * @modifiedby		$LastChangedBy$
+ * @lastmodified	$Date$
+ * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
+ */
+
+/* @group General Style Info */
+a img {
+	border:none;
+	text-decoration: none;;
+}
+h1 {
+	background:#fff;
+	margin: 0.1em 0;
+}
+h2 {
+	background:#fff;
+	margin: 0.3em 0;
+	padding-top: 0.8em;
+}
+h3 {
+	padding-top: 1.5em;
+}
+h4 {
+	color: #993;
+	padding-top: 0.5em;
+}
+ul, li {
+	margin: 0 12px;
+}
+/* @end */
+/* @group Tables */
+table {
+	border:1px solid #ccc;
+	border-collapse: collapse;
+	border-right:0;
+	clear: both;
+	color: #333;
+	margin-bottom: 10px;
+	width: 100%;
+}
+.index th {
+	background: #545454;
+	color: #fff;
+	border:1px solid #bbb;
+	border-top: 1px solid #fff;
+	border-left: 1px solid #fff;
+	text-align: center;
+	padding: 7px;
+}
+fieldset th,
+.related th {
+	background: #949494;
+	color: #000;
+	border:1px solid #bbb;
+	border-top: 1px solid #fff;
+	border-left: 1px solid #fff;
+	text-align: center;
+	padding: 7px;
+}
+fieldset fieldset table,
+.related table table {
+	border-collapse: collapse;
+	border: 1px solid #bbb;
+	padding: 0;
+}
+fieldset fieldset table th,
+.related table table th {
+	color: #333;
+	background: #e5e5e5;
+	text-align: center;
+	padding: 2px;
+}
+th a {
+	background:#545454;
+	color: #fff;
+	display: block;
+	text-decoration: none;
+}
+tr.blackBg th,
+th.blackBg {
+    background:#545454;
+	color: #fff;
+}
+tr.darkBlackBg th,
+th.darkBlackBg {
+    background:#000;
+	color: #fff;
+}
+th a:hover {
+	background: #ccc;
+	color: #333;
+	text-decoration: none;
+}
+table tr td {
+    border-right: 1px solid #ccc;
+    padding: 4px;
+    vertical-align: top;
+}
+table tr.altrow td {
+    background: #f0f8ff;
+}
+table tr.altrow:hover td {
+    background: rgba(200,255,200,0.2);
+}
+td.actions {
+	text-align: center;
+	white-space: nowrap;
+}
+td.actions a {
+	margin: 0px 6px;
+}
+.cake-sql-log table {
+	background: #f4f4f4;
+}
+.cake-sql-log td {
+	padding: 4px 8px;
+	text-align: left;
+}
+/* @end */
+/* @group Scaffold View */
+dl {
+	line-height: 2em;
+	margin: 0em 0em;
+	width: 60%;
+}
+dl.altrow {
+	background: #f4f4f4;
+}
+dt {
+	font-weight: bold;
+	padding-left: 4px;
+	vertical-align: top;
+}
+dd {
+	margin-left: 10em;
+	margin-top: -2em;
+	vertical-align: top;
+}
+/* @end */
+/* @group forms */
+form {
+	clear: both;
+	padding: 0;
+}
+fieldset {
+	padding: 10px 20px;
+	border: none;
+}
+fieldset legend {
+	color: #d99e00;
+	font-size: 160%;
+	font-weight: bold;
+}
+fieldset fieldset {
+	border-top: 1px solid #c9b865;
+	margin-top: 0px;
+}
+fieldset.fullBorder {
+	border: 1px solid #c9b865;
+	margin-top: 0px;
+	padding: 5px;
+}
+fieldset fieldset legend {
+	font-size: 120%;
+	font-weight: normal;
+}
+fieldset fieldset div {
+	clear: left;
+	margin: 0 10px;
+}
+form div {
+	clear: both;
+	margin-bottom: 5px;
+	padding: .5em;
+	vertical-align: text-top;
+}
+form div.input {
+	color: #444;
+}
+/*
+form div.required label {
+	color: #333;
+	font-weight: bold;
+}*/
+
+form div.submit {
+	border: 0;
+	clear: both;
+	margin-top: 10px;
+	margin-left: 140px;
+}
+select[multiple=multiple] {
+	width: 100%;
+}
+option {
+	font-size: 120%;
+	padding: 0 3px;
+}
+/* @end forms */
+/* @group notices and errors */
+div.message {
+	clear: both;
+	color: #900;
+	font-size: 140%;
+	font-weight: bold;
+	margin: 1em 0;
+}
+div.error-message {
+	clear: both;
+	color: #900;
+	font-weight: bold;
+}
+p.error {
+	background-color: #e32;
+	color: #fff;
+	font-family: Courier, monospace;
+	font-size: 120%;
+	line-height: 140%;
+	padding: 0.8em;
+	margin: 1em 0;
+}
+p.error em {
+	color: #000;
+	font-weight: normal;
+	line-height: 140%;
+}
+.notice {
+	background: #ffcc00;
+	color: #000;
+	display: block;
+	font-family: Courier, monospace;
+	font-size: 120%;
+	line-height: 140%;
+	padding: 0.8em;
+	margin: 1em 0;
+}
+.success {
+	background: green;
+	color: #fff;
+}
+/* @group -clean */
+
+.clean-gray {
+	border: solid 1px #DEDEDE;
+	background: #EFEFEF;
+	color: #222222;
+	padding: 4px;
+	text-align: left;
+}
+
+.clean-yellow {
+	border: solid 1px #DEDEDE;
+	background: #FFFFCC;
+	color: #222222;
+	padding: 4px;
+	text-align: center;
+}
+
+.clean-ok {
+	border: solid 1px #349534;
+	background: #C9FFCA;
+	color: #008000;
+	font-weight: bold;
+	padding: 4px;
+	text-align: center;
+}
+
+.clean-error {
+	border: solid 1px #CC0000;
+	background: #F7CBCA;
+	color: #CC0000;
+	font-weight: bold;
+	padding: 4px;
+	text-align: center;
+}
+
+/* @end */
+
+/* @group -icons */
+
+.icon-gray {
+	border: solid 1px #DEDEDE;
+	background: #EFEFEF;
+	color: #222222;
+	padding: 4px;
+	text-align: center;
+}
+
+.icon-yellow {
+	border: solid 1px #DEDEDE;
+	background: #FFFFCC url(../img/info.png) 5px center no-repeat;
+	color: #222222;
+	font-weight: bold;
+	padding: 4px 4px 4px 40px;
+	text-align: left;
+}
+
+.icon-ok,
+#successMessage {
+	border: solid 1px #90ac13;
+	background: #eef4d3 url(../img/good.png) 5px center no-repeat;
+	color: #6b800d;
+	font-weight: bold;
+	padding: 4px 4px 4px 40px;
+	text-align: left;
+}
+
+.icon-error,
+#errorMessage {
+	border: solid 1px #CC0000;
+	background: #F7CBCA url(../img/alert.png) 5px center no-repeat;
+	color: #333;
+	font-weight: bold;
+	padding: 4px 4px 4px 40px;
+	text-align: left;
+}
+#authMessage {
+	border: solid 1px #CC0000;
+	background: #F7CBCA url(../img/error_shield.png) 5px center no-repeat;
+	color: #333;
+	font-weight: bold;
+	padding: 5px 5px 4px 40px;
+	text-align: left;
+}
+
+
+/* @end Icons */
+
+/* @end */
+/*  @group actions  */
+div.actions ul {
+	margin: 0px 0;
+	padding: 0;
+}
+div.actions li {
+	display: inline;
+	list-style-type: none;
+	line-height: 2em;
+	margin: 0 2em 0 0;
+	white-space: nowrap;
+}
+div.actions ul li a {
+	background:#fff;
+	color: #003d4c;
+	text-decoration: none;
+}
+div.actions ul li a:hover {
+	color: #333;
+	text-decoration: underline;
+}
+/* @end */
+/* @group debugging */
+pre {
+	color: #000;
+	background: #f0f0f0;
+	padding: 1em;
+}
+pre.cake-debug {
+	background: #ffcc00;
+	font-size: 120%;
+	line-height: 140%;
+	margin-top: 1em;
+	overflow: auto;
+	position: relative;
+}
+div.cake-stack-trace {
+	background: #fff;
+	border: 4px dotted #ffcc00;
+	color: #333;
+	margin: 0px;
+	padding: 6px;
+	font-size: 120%;
+	line-height: 140%;
+	overflow: auto;
+	position: relative;
+}
+div.cake-code-dump pre {
+	position: relative;
+	overflow: auto;
+}
+div.cake-stack-trace pre, div.cake-code-dump pre {
+	color: #000;
+	background-color: #F0F0F0;
+	margin: 0px;
+	padding: 1em;
+	overflow: auto;
+}
+div.cake-code-dump pre, div.cake-code-dump pre code {
+	clear: both;
+	font-size: 12px;
+	line-height: 15px;
+	margin: 4px 2px;
+	padding: 4px;
+	overflow: auto;
+}
+div.cake-code-dump span.code-highlight {
+	background-color: #ff0;
+	padding: 4px;
+}
+div.code-coverage-results div.code-line {
+	padding-left:5px;
+	display:block;
+	margin-left:10px;
+}
+div.code-coverage-results div.uncovered span.content {
+	background:#ecc;
+}
+div.code-coverage-results div.covered span.content {
+	background:#cec;
+}
+div.code-coverage-results div.ignored span.content {
+	color:#aaa;
+}
+div.code-coverage-results span.line-num {
+	color:#666;
+	display:block;
+	float:left;
+	width:20px;
+	text-align:right;
+	margin-right:5px;
+}
+div.code-coverage-results span.line-num strong {
+	color:#666;
+}
+div.code-coverage-results div.start {
+	border:1px solid #aaa;
+	border-width:1px 1px 0px 1px;
+	margin-top:30px;
+	padding-top:5px;
+}
+div.code-coverage-results div.end {
+	border:1px solid #aaa;
+	border-width:0px 1px 1px 1px;
+	margin-bottom:30px;
+	padding-bottom:5px;
+}
+div.code-coverage-results div.realstart {
+	margin-top:0px;
+}
+div.code-coverage-results p.note {
+	color:#bbb;
+	padding:5px;
+	margin:5px 0 10px;
+	font-size:10px;
+}
+div.code-coverage-results span.result-bad {
+	color: #a00;
+}
+div.code-coverage-results span.result-ok {
+	color: #fa0;
+}
+div.code-coverage-results span.result-good {
+	color: #0a0;
+}
+/* @end */
+
+.tips {
+    display: block;
+    font-weight: normal;
+    font-size: 11px;
+
+}

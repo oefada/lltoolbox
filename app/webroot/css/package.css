@@ -1,0 +1,408 @@
+table th {
+    font-weight:bold;
+    color:#898989;
+}
+
+table, table td, table th {
+    border:none !important;
+    padding:10px !important;
+}
+
+span.total-nights {
+    padding:0 12px 0 12px;
+}
+
+input[type="button"] {
+    margin:10px 0 10px 0;
+}
+
+table.package input[type="checkbox"] {
+    width:20px;
+}
+
+h3 {
+    font-size:14px;
+}
+
+table.package-summary, table.package-summary td,
+table.room-night-summary, table.room-night-summary td {
+    padding:4px !important;
+}
+
+table.room-night-summary {
+    border: 1px solid #999 !important;
+    width:490px;
+    display:inline-table;
+}
+
+table.room-night-summary table.room-nights-col1 {
+    width:100%;
+}
+
+table.room-night-summary table.room-nights-col2 {
+    width:100%;
+}
+
+table.package-summary tr.odd, table.inclusions-summary tr.odd, table.add-inclusions tr.odd {
+    background-color:#eee;
+}
+
+table.room-night {
+    border: 1px solid #999 !important;
+    padding: 4px !important;
+}
+
+table.room-night th {
+    width:175px;
+    padding-left:12px !important;
+}
+
+table.room-nights-col1  {
+    width:540px;
+}
+
+table.room-nights-col2 {
+    width: 350px;
+}
+
+table.room-nights-col1 table.td, table.room-nights-col2 td {
+    padding:8px !important;
+}
+
+table.room-night input[type="text"] {
+    margin:0 4px 0 4px;
+}
+
+table.roomNightTaxes {
+    width:300px;
+}
+
+tr.room-type {
+    background-color:#eee;
+}
+
+td.total-price {    
+    text-align:right;
+    padding:0 10px 10px 0 !important;
+}
+
+div.rate-period-button, div.new-inclusion-button {
+    text-align:right;
+}
+
+div.taxes-included {
+    font-size:14px;
+}
+
+th.per-night {
+    width:150px;
+}
+
+td.per-night div {
+    text-align:center;
+    display:inline;
+    margin-left:2px;
+    width:75px;
+}
+
+span.per-night-checkbox {
+    margin:0;
+    text-align:center;
+}
+
+td.per-night-label {
+    text-align:left !important;
+}
+
+span.per-night-checkbox-label {
+    margin: 15px;
+}
+
+span.per-night-price-label {
+    margin-left:12px;
+}
+
+span.per-night-price {
+    text-align:center;
+    margin:0 0 0 4px;
+}
+
+table.inclusions th, table.inclusions td {
+    text-align:center;
+}
+
+table.inclusions td.item-name {
+    text-align:left;
+    width:150px;
+}
+
+table.validity {
+    width:600px;
+}
+
+table.validity th {
+    color:#666;
+    background-color:#eee;
+    padding:10px;
+    width:150px;
+}
+
+div.booking-conditions {
+    padding:10px 0 10px 0;
+}
+
+table.pricing-summary {
+    border-style: solid !important;
+    border-width:1px !important;
+    border-collapse: separate !important;
+    border-color:#999 !important;
+}
+
+table.pricing-summary td {
+    padding:4px !important;
+}
+
+table.pricing-summary table {
+    text-align:right;
+}
+
+div.summary-navigation {
+    font-weight:bold;
+}
+
+div.maxNumSales {
+    padding:10px;
+}
+
+div.history {
+    padding:10px;
+}
+
+textarea.notes {
+    width:700px;
+    background-color:#fff;
+}
+
+div.history-detail {
+    border: 1px solid #999;
+    width:700px;
+    text-align:left;
+    padding:4px;
+    height:150px;
+    overflow:scroll;
+    background-color:#fff;
+}
+
+span.link, span.x-remove {
+    cursor:pointer;
+    color:#336699;
+    padding-left:10px;
+}
+
+span.link {
+     text-decoration:underline;
+}
+
+div.age-range {
+    display:inline;
+    padding-left:20px;
+}
+
+div.section-header {
+    width:100%;
+    height:30px;
+    margin-top:20px;
+}
+
+div.section-title {
+    float:left;
+    color:#7F0000;
+    font-size:14px;
+    font-weight:bold;
+}
+
+div.edit-link {
+    float:right;
+    cursor:pointer;
+    text-decoration:underline;
+    color:#336699;
+    font-size:12px;
+}
+
+span.edit-link, td.edit-link, a.edit-link {
+    cursor:pointer;
+    text-decoration:underline;
+    color:#336699;
+}
+
+.right {
+    float:right;
+}
+
+span.rates-by-day {
+    margin-left:20px;
+}
+
+span#addBlackout {
+    margin-right:24px;
+}
+
+div#errorsContainer {
+    width:900px;
+    padding:10px;
+    border: 2px solid red;
+    font-size:14px;
+    background-color:#eee !important;
+    color:red;
+}
+
+div#errors ol {
+    margin-left:0;
+    padding-left:0;
+}
+
+div#errors li {
+    margin-left:40px;
+    font-weight:normal;
+    color:#666;
+}
+
+td.rateOption {
+    padding:0 !important;
+    margin:0;
+}
+
+table.add-inclusions th.add-checkbox, td.add-checkbox{
+    width: 120px;
+    text-align:center !important;
+}
+
+td.prepackaged {
+    padding-left:20px;
+}
+
+table.roomNightTaxes {
+    width:350px !important;
+}
+
+span.room-night-header {
+    padding-left:12px;
+    font-weight: bold;
+    font-size:14px;
+    color:#990000;
+}
+
+/* LOW PRICE GUARANTEES */
+
+#low-price-guarantees th {
+    padding: 8px 0px !important;
+    border-bottom: 1px solid silver !important;
+}
+
+#low-price-guarantees td {
+    padding: 8px 0px !important;
+    border-bottom: 1px solid #EEE !important;
+    vertical-align: middle;    
+}
+
+#low-price-guarantees tr.alt {
+    background: #FAFAFA !important;
+}
+
+
+/* PUBLISHING */
+
+#publishing th {
+    padding: 8px 0px !important;
+    border-bottom: 1px solid silver !important;
+}
+
+#publishing td {
+    padding: 8px 0px !important;
+    border-bottom: 1px solid #EEE !important;
+    vertical-align: middle;    
+}
+
+#publishing tr.alt {
+    background: #FAFAFA !important;
+}
+
+#tbl-publishing td {
+	padding: 10px !important;
+}
+#tbl-publishing th {
+	width: 150px !important;
+}
+#tbl-publishing input,textarea {
+	width: 550px !important;
+	border: 1px solid silver;
+}
+#tbl-publishing textarea {
+	height: 200px !important;
+}
+#tbl-publishing input {
+	height: 25px !important;
+}
+/* PRICE POINTS */
+
+#price-points p {
+    margin-bottom: 15px;
+}
+
+#price-points h2 {
+    clear: both;
+    border: 0px;
+}
+
+#price-points dl, #price-points dt, #price-points dd {
+    width: auto;
+    padding: 0px;
+    margin: 0px;
+}
+
+#price-points dt {
+    font-weight: bold;
+    width: auto;
+    float: left;
+    margin-right: 5px;
+}
+
+#price-points dl {
+    clear: both;
+}
+
+#price-points th {
+    padding: 8px 0px !important;
+    border-bottom: 1px solid silver !important;
+}
+
+#price-points td {
+    padding: 8px 0px !important;
+    border-bottom: 1px solid #EEE !important;
+    vertical-align: middle;    
+}
+
+#price-points tr.alt {
+    background: #FAFAFA !important;
+}
+
+.price-points-price {
+    color:#7F0000;
+    font-size:15px;
+    font-weight:bold;
+}
+
+div.combo-client-name {
+    margin-top:14px;
+    color:#7F0000;
+    font-weight: bold;
+}
+
+div.instructions {
+    margin-bottom:12px;
+    font-weight: bold;
+}
+
+ul.restrictions-tooltip {
+    margin-bottom:8px;
+}

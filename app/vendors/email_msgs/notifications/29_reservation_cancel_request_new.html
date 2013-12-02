@@ -1,0 +1,13 @@
+Please <a style="text-decoration:none; color:#008ec5;font-size: 13px;" href="<?= $extranet_link ?>">cancel the reservation</a> for the following <?= $siteName; ?>
+
+<? if ($resConfToCustomer) { ?>
+	package, which was confirmed on <?php echo date('F d, Y',strtotime($resConfToCustomer)) ?>.
+<? } else { ?>
+	package.
+<? } ?>
+
+Please <a style="text-decoration:none; color:#008ec5;font-size: 13px;" href="<?= $extranet_link ?>">acknowledge this cancellation</a> request and inform us of the cancellation number, related policies, as well as any other additional information. Our business hours are <?php echo Base::conciergeHoursComma; ?>.
+%%client_footer%%
+%%no_special%%
+%%reservation_details%%
+%%package_details_client%%

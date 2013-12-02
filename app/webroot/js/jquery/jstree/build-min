@@ -1,0 +1,33 @@
+#!/usr/bin/php
+<?php
+
+$buffer = '';
+
+$includes = array(
+	'_lib/jquery.cookie.js',
+	'_lib/jquery.hotkeys.js',
+	'jquery.jstree.js',
+);
+
+foreach ($includes as $include) {
+	$buffer .= file_get_contents($include);
+}
+
+$url = 'http://closure-compiler.appspot.com/compile';
+$data = array();
+$data['js_code'] = $buffer;
+$data['compilation_level'] = 'SIMPLE_OPTIMIZATIONS';
+$data['output_format'] = 'text';
+$data['output_info'] = 'compiled_code';
+$data['warning_level'] = 'QUIET';
+foreach ($data as $k => &$v) {
+	$v = urlencode($k) . '=' . urlencode($v);
+}
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, $url);
+curl_setopt($ch, CURLOPT_POST, count($data));
+curl_setopt($ch, CURLOPT_POSTFIELDS, implode('&', $data));
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+$buffer = curl_exec($ch);
+
+file_put_contents('jquery.jstree.min.js', $buffer);

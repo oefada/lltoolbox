@@ -1,0 +1,122 @@
+<?php include('../vendors/email_msgs/email_includes/header.html');?>
+
+<h1 style="color:<?=$siteHeader;?>;font-size:16px;margin:0px;padding:0px;margin-bottom:30px;">Your request has been received.</h1>
+
+<p>Dear <?=$userFirstName;?> <?=$userLastName;?>,</p>
+
+<p>
+We have received your booking request for the <?=$clientNameP;?>.
+
+<table cellpadding="10" cellspacing="0" border="0" style="width:100%;background-color:#E0E0CD;margin-top:15px;margin-bottom:15px;">
+	<tr>
+		<td width="245" align="left" valign="top">
+			<div style="width: 245px; height: 189px; padding: 8px 12px 12px 8px; background: url(http://www.luxurylink.com/images/shared/shadow-gal-lrg-light-olive.gif) no-repeat top left; overflow: hidden;"><img width="225" style="max-width: 225px;" src="<?php echo $clientImagePath; ?>" alt="<?php echo $packageName;?>" border="0" /></div>
+		</td>
+		<td align="left" valign="top">
+			<div style="color:#<?=$siteHeader;?>;font-size:16px;font-weight:bold;"><?php echo $clientNameP;?></div>
+			<div style="color:#444444;font-size:12px;margin-bottom:4px;"><?php echo $locationDisplay;?></div>
+			<div style='font-size:12px;color:#444444;line-height:20px;'> 
+			Package for <?=$numGuests;?> travelers, <span style='font-style:italic;'><?=$roomGrade;?></span>
+			<br>
+			<?=$packageBlurb;?>
+			<div style='margin-top:3px;'><a style="color:#336699;" href="<?=$siteUrl;?>portfolio/por_offer_redirect.php?oid=<?=$offerId;?>">View Package Details</a></div></div>
+			<div style="height:10px;margin-top:10px;border-top:1px solid #B0B0B0;">&nbsp;</div>
+			<table cellspacing="0" cellpadding="5" border="0">
+			<tr>
+				<td style="color:#000000;font-size:12px; border-bottom: 1px solid silver; padding-bottom:10px; font-weight:bold;" valign="top" align="left" width="200">Ticket ID:</td>
+				<td style="color:#444444;font-size:12px; border-bottom: 1px solid silver; padding-bottom:10px; padding-right:5px;" valign="top" align="right" width="30"><?=$ticketId;?></td>
+				<td style="color:#444444;font-size:12px; border-bottom: 1px solid silver; padding-bottom:10px;" valign="top" align="right"></td>
+			</tr>
+			<tr>
+				<td style="color:#000000;font-size:12px;padding-top:10px;" valign="top" align="left" width="200">Package Price:</td>
+				<td style="color:#444444;font-size:12px;padding-top:10px;padding-right:5px;" valign="top" align="right" width="30">US</td>
+				<td style="color:#444444;font-size:12px;padding-top:10px;" valign="top" align="right">$<?=$billingPrice;?></td>
+			</tr>
+			<tr>
+				<td style="color:#000000;font-size:12px;" valign="top" align="left" width="200">Handling Fee:</td>
+				<td style="color:#444444;font-size:12px;padding-right:5px;" valign="top" align="right" width="30">US</td>
+				<td style="color:#444444;font-size:12px;" valign="top" align="right">$<?=$llFee;?></td>
+			</tr>
+			<?php if ($promoGcCofData['Promo'] && $promoGcCofData['Promo']['applied']) :?>
+			<tr>
+				<td style="color:#000000;font-size:12px;" valign="top" align="left" width="200">
+					<?php if ($mcPromo) : ?>
+					Exclusive Offer with &nbsp;&nbsp;&nbsp;<a href="http://clk.atdmt.com/AST/go/154171765/direct;wi.1;hi.1/01/" target="_blank"><img src="http://www.luxurylink.com/images/shared/mc_small_logo.png" border="0" /></a>
+					<img src="http://view.atdmt.com/AST/view/154171765/direct;wi.1;hi.1/01/" width="1" height="1" border="0" />
+					<?php else: ?>
+					Promotion Applied: 
+					<?php endif; ?>
+				</td>
+				<td style="color:#990000;font-size:12px;padding-right:5px;" valign="top" align="right" width="30">- US</td>
+				<td style="color:#990000;font-size:12px;" valign="top" align="right">$<?=$promoGcCofData['Promo']['totalAmountOff'];?></td>
+			</tr>
+			<?php endif; ?>
+			<?php if ($promoGcCofData['GiftCert'] && $promoGcCofData['GiftCert']['applied']) :?>
+			<tr>
+				<td style="color:#000000;font-size:12px;" valign="top" align="left" width="200">
+					Gift Certificate Applied: 
+				</td>
+				<td style="color:#990000;font-size:12px;padding-right:5px;" valign="top" align="right" width="30">- US</td>
+				<td style="color:#990000;font-size:12px;" valign="top" align="right">$<?=$promoGcCofData['GiftCert']['totalAmountOff'];?></td>
+			</tr>
+			<?php endif; ?>
+			<?php if ($promoGcCofData['Cof'] && $promoGcCofData['Cof']['applied']) :?>
+			<tr>
+				<td style="color:#000000;font-size:12px;" valign="top" align="left" width="200">
+					Credit On File Applied: 
+				</td>
+				<td style="color:#990000;font-size:12px;padding-right:5px;" valign="top" align="right" width="30">- US</td>
+				<td style="color:#990000;font-size:12px;" valign="top" align="right">$<?=$promoGcCofData['Cof']['totalAmountOff'];?></td>
+			</tr>
+			<?php endif; ?>
+			<tr>
+				<td style="color:#990000;font-size:12px; font-weight:bold; border-top:1px solid silver; padding-bottom:20px;padding-top:15px;" valign="top" align="left" width="200">Your Price:</td>
+				<td style="color:#990000;font-size:12px; font-weight:bold; border-top:1px solid silver; padding-bottom:20px;padding-top:15px;padding-right:5px;" valign="top" align="right" width="30">US</td>
+				<td style="color:#990000;font-size:12px; font-weight:bold; border-top:1px solid silver; padding-bottom:20px;padding-top:15px;" valign="top" align="right">
+					<?php if ($promoGcCofData['applied']) : ?>
+					$<?=number_format($promoGcCofData['final_price']); ?>	
+					<?php else: ?>
+					$<?=($totalPrice);?>
+					<?php endif; ?>
+				</td>
+			</tr>
+
+			<tr>
+				<td> &nbsp; </td>
+				<td colspan='2' style="color:#000000;font-size:12px;font-weight:bold;">No. of Nights:
+				<?=$numNights;?></td>
+			</tr>
+
+
+			<tr>
+				<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="200">Preferred Dates:</td>
+				<td colspan="2" style="color:#444444;font-size:12px;" valign="top" align="left">Check-in: <?=$fpArrival;?><br />Check-out: <?=$fpDeparture;?></td>
+			</tr>
+			<tr>
+				<td style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="200">Alternate Dates:</td>
+				<td colspan="2" style="color:#444444;font-size:12px;" valign="top" align="left">Check-in: <?=$fpArrival2;?><br />Check-out: <?=$fpDeparture2;?></td>
+			</tr>
+
+
+			<tr>
+				<td colspan='1' style="color:#000000;font-size:12px; font-weight:bold;" valign="top" align="left" width="200">Special Requests:</td>
+				<td colspan='2'><?=$fpNotes;?></td>
+			</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+
+<p>We have contacted <?=$clientNameP;?> on your behalf to secure your reservation.</p>
+
+<p>
+If we're able to secure your dates, we will process your payment and send a written confirmation by email.  This process typically takes 1 - 2 business days.  
+If we are unable to confirm your initial request, we will contact you to assist with alternate arrangements.
+</p>
+			
+<p>
+Our business hours are <?php echo Base::conciergeHoursComma; ?>. Please feel free to contact our Travel Concierge Department 
+at <?=$sitePhone;?> (toll-free in the U.S.) or <?=$sitePhoneLocal;?> should you have any questions.
+</p>
+			
+<?php include('../vendors/email_msgs/email_includes/footer.html');?>

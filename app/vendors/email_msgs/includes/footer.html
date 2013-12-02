@@ -1,0 +1,132 @@
+<? if (isset($special_boxes)): ?>
+<td valign="top" style="padding-left: 5px;">
+%%special_boxes%%
+</td>
+<?php endif; ?>
+</tr>
+<tr>
+<td colspan="2">
+%%other_boxes%%
+
+<?php
+/* pack for a purpose */
+$pfapTheme = $afapTheme = false;
+if (!$clientPpv && is_array($clients)) {
+	foreach ($clients AS $c) {
+		if (isset($c['themeData'])) {
+			foreach ($c['themeData'] AS $t) {
+				if (isset($t['Theme']) && isset($t['Theme']['themeId']) && $t['Theme']['themeId'] == 104) {
+					$pfapTheme = true;
+				}
+				if (isset($t['Theme']) && isset($t['Theme']['themeId']) && $t['Theme']['themeId'] == 142) {
+					$afapTheme = true;
+				}
+			}
+		}
+	}
+	if ($afapTheme==true) {
+		$pfapTheme = false;
+	}
+}
+?>
+
+<?php if ($pfapTheme) : ?>
+
+	<hr style="color: #bbb; height: 1px; margin: 10px 0;">
+	<img
+		src="http://www.luxurylink.com/images/logos/pfap-xa.jpg"
+		alt="Pack For A Purpose"
+		style="margin-bottom: 3px;"
+	/>
+	<br />
+	<font face="Arial, Helvetica, sans-serif" size="2" style="font-size:12px; line-height:20px" color="#474747">
+	<?=$c['name'];?> is a Pack For A Purpose&#0174; partner. We hope that you will make a big impact by
+	taking needed supplies with you on your vacation, and we thank you in advance for your
+	participation. While you plan your trip, here are some tips on <a
+		href="<?= $siteUrl; ?>pack-for-a-purpose?showLeader=1#tab2"
+		style="color: #008EC5;">how to pack</a>.  <a
+			href="<?= $siteUrl; ?>pack-for-a-purpose?showLeader=1"
+			style="color: #008EC5;">Learn more</a> about Pack For A Purpose&#0174;.
+	</font>
+	<hr style="color: #bbb; height: 1px; margin: 10px 0;">
+
+<?php endif; ?>
+
+
+<?php if ($afapTheme) : ?>
+
+	<hr style="color: #bbb; height: 1px; margin: 10px 0;">
+	<img
+		src="http://www.luxurylink.com/images/logos/pfap-small-auction-pdp2.gif"
+		alt="Pack For A Purpose Auction Partner"
+		style="margin-bottom: 3px;"/>
+	<br />
+	<font face="Arial, Helvetica, sans-serif" size="2" style="font-size:12px; line-height:20px" color="#474747">
+	<?=$c['name']; ?> is participating in Luxury Link's Auctions for a Purpose campaign this month.
+	A portion of the winning auction bid will be being donated to Pack for a Purpose,
+	an incredible non-profit organization which empowers travelers to delivers needed supplies throughout the world.
+	<a
+		href="<?= $siteUrl; ?>pack-for-a-purpose?utm_source=ll&utm_medium=xa&utm_campaign=auc_winner=showLeader=1">Learn more</a>
+	about Pack For A Purpose, and how you can give back to the communities you visit simply by using available space in your luggage.
+	</font>
+	<hr style="color: #bbb; height: 1px; margin: 10px 0;">
+
+<?php endif; ?>
+
+
+<?php if ($ppvNoticeTypeId != 36){ ?>
+
+	<font face="Arial, Helvetica, sans-serif" size="2" style="font-size:12px; line-height:20px" color="#474747">
+	<p>
+	<?
+	// TODO: Refactor the frak out of this - bturner
+	// In general, every communique with a customer who purchased an auction should have this verbiage
+	// RESERVATION CONFIRMATION (PPV 1)
+	// AUCTION WINNER (PPV 18)
+	// FIXED PRICE WINNER/RESERVATION ACKNOWLEDGMENT PPV 12
+	// RESERVATION DATES NOT AVAILABLE PPV 14
+	// RESERVATION CANCELLATION CONFIRMATION PPV 30
+	// AUCTION WINNER EMAIL DECLINED/EXPIRED CC PPV 19
+	// 52 and 53 are auction winner reminders
+	$tmpArr=array(1,16,18,12,14,26,30,19,52,53);
+	if (in_array($ppvNoticeTypeId,$tmpArr)){
+
+		if ($isAuction){ ?>
+
+			This <?php if (!$ticket['Package']['isDNGPackage']): ?>Auction<?php endif; ?> purchase is non refundable. Cancellations and changes may result in additional fees.
+
+		<? }else{ ?>
+
+			All changes and cancellations are subject to hotel cancellation policies and fees.
+
+		<? } ?>
+
+        <?php if ($ticket['Package']['isDNGPackage']): ?>
+            <a href="<?= $siteUrl; ?>about/index.php/cancellations-refunds-2/?utm_source=ll&utm_medium=xa&utm_campaign=res_confirm&utm_source=ll&utm_medium=xa&utm_campaign=res_confirm&showLeader=1">View Cancellation Policy</a>.
+        <?php else: ?>
+            <a href="<?= $siteUrl; ?>about/index.php/cancellations-refunds/?utm_source=ll&utm_medium=xa&utm_campaign=res_confirm&utm_source=ll&utm_medium=xa&utm_campaign=res_confirm&showLeader=1">View Cancellation Policy</a>.
+        <?php endif; ?>
+
+		We recommend purchasing outside travel insurance.
+		Please make yourself familiar with the hotel's policies before your trip.
+		<br> </p> <p>
+
+	<? }
+
+	if (!$clientPpv){?>
+		If you have any questions or additional needs, please contact our Travel Concierge at <?=$sitePhoneLong?>,
+		or send us an email at <a
+			href="mailto:concierge@<?= $siteEmail ?>"
+			style="text-decoration: none; color: #008EC5;">concierge@<?=$siteEmail ?></a>.
+		Our business hours are <?php echo Base::conciergeHoursComma; ?>.</p>
+
+
+		<p>Sincerely,<br>
+		<?=$siteName ?> Concierge</p>
+
+	<? }
+
+}
+
+?>
+</p>

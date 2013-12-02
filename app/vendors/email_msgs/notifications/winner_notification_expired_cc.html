@@ -1,0 +1,40 @@
+<?php include('../vendors/email_msgs/email_includes/header.html');?>
+
+<h1 style="color:#<?=$siteHeader;?>;font-size:16px;margin:0px;padding:0px;margin-bottom:30px;">Your credit card on file has expired</h1>
+
+<p>Ticket Reference ID: <?=$ticketId;?><br /><br /></p>
+
+<p>Dear <?php echo $userFirstName;?> <?php echo $userLastName;?>,<p>
+	
+<p style="font-weight:bold;">
+This is an <span style="color:#<?=$siteHeader;?>;">Expired Credit Card Notification</span> for <?=$packageName;?> at <?=$clientNameP;?>.
+</p>	
+
+<p><br /><center><a href="<?php echo $checkoutLink;?>"><img src="http://www.luxurylink.com/images/buttons/btn_email_update_cc.gif" alt="Update Credit Card Information" border="0" /><a/></center><br /><br /></p>
+
+<p>The <?php echo $ccType;?> card we have on file with last four numbers <?php echo $ccFour;?> has expired.</p>
+
+<p>You are buying:</p>
+
+<table cellpadding="10" cellspacing="0" border="0" style="width:100%;background-color:#E0E0CD;margin-top:15px;margin-bottom:15px;">
+	<tr>
+		<td width="245" align="left" valign="top">
+			<div style="width: 245px; height: 189px; padding: 8px 12px 12px 8px; background: url(http://www.luxurylink.com/images/shared/shadow-gal-lrg-light-olive.gif) no-repeat top left; overflow: hidden;"><img width="225" style="max-width: 225px;" src="<?php echo $clientImagePath; ?>" alt="<?php echo $packageName;?>" border="0" /></div>
+		</td>
+		<td align="left" valign="top">
+			<div style="color:#<?=$siteHeader;?>;font-size:16px;font-weight:bold;"><?php echo $clientNameP;?></div>
+			<div style="color:#444444;font-size:12px;"><?php echo $locationDisplay;?></div><br />
+			<div style="color:#<?=$siteHeader;?>;font-size:12px;"><?php echo $packageName;?> <br /><br /><a style="color:#336699;" href="<?=$siteUrl;?>portfolio/por_offer_redirect.php?oid=<?=$offerId;?>">View Package Details</a></div>
+		</td>
+	</tr>
+</table>
+
+<p>
+Please <a href="<?php echo $checkoutLink;?>">click here</a> to enter a new credit card number. 
+In order to secure your package we need to receive payment within 24 
+hours of the auction closing. Should you need additional assistance, please do not 
+hesitate to contact a <?=$siteName;?> representative at <?=$sitePhone;?> or <?=$sitePhoneLocal;?> who will 
+be able to help finalize your transaction.
+</p>
+
+<?php include('../vendors/email_msgs/email_includes/footer.html');?>

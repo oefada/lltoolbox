@@ -1,0 +1,274 @@
+#sContainer {
+	position: relative;
+	float: none;
+	clear: both;
+	overflow: hidden;
+}
+#mDayContainer {
+	width: 100%;
+	height: 20px;
+	border: 1px solid #cbcbcb;
+}
+#mDayContainer .cDay,
+.gBackgroundGrid .cDay {
+	position: absolute;
+	text-align: center;
+	line-height: 20px;
+	border-right: 1px solid #f7f7f7;
+	font-weight: bold;
+	font-size: 11px;
+}
+
+#mDayContainer .cDayToday,
+.gBackgroundGrid .cDayToday {
+	font-weight: bold;
+	background: #ffffee;
+}
+
+#mDayContainer .cThirdDay,
+.gBackgroundGrid .cThirdDay {
+	border-right: 1px solid #c8c8c8;
+}
+
+#mDayContainer .cLastDay {
+	border-right: none;
+}
+#pContainer .handle {
+    float: left;
+    clear: none;
+    border: none;
+    text-decoration: none;
+    width: 16px;
+    height: 22px;
+    padding: 0 5px 0 0;
+}
+#pContainer .collapsible-closed .handle {
+    background: url('../img/toggle_plus.png') 0 5px no-repeat;
+}
+#pContainer .collapsible .handle {
+    background: url('../img/toggle_minus.png') 0 5px no-repeat;
+}
+.pkgTitle {
+	background: #545454;
+	padding: 5px;
+	color: #fff;
+	clear: right;
+}
+.pkgTitle .title {
+	float: left;
+	cursor: help;
+}
+.pkgTitle .title a,
+.pkgTitle .title a:visited {
+    color: #fff;
+    font-weight: bold;
+}
+.pkgTitle .title a:hover {
+    color: #7f0000;
+}
+.pkgTitle .scheduleThisPackage {
+	float: right;
+}
+
+.sGrid {
+	position: relative;
+	border: 1px solid #c8c8c8;
+}
+/* @group Flags */
+.sGrid .packageFlags {
+    position: relative;
+    clear: both;
+    height: 15px;
+}
+.sGrid .packageFlags .flag {
+    position: absolute;
+    height: 10px;
+    cursor: hand;
+}
+#mDayContainer .loaEndDate {
+    background: #900;
+    color: #e5e5e5;
+}
+/* @end flags */
+.sGrid .masterRow {
+	position: relative;
+	clear: both;
+	height: 110px;
+	padding: 2px;
+}
+.sGrid .sItem {
+	position: absolute;
+	height: 100px;
+	overflow: hidden;
+	background: #f1f1f1;
+	border-top: 7px solid #ccc;
+	cursor: pointer;
+}
+.sGrid .instanceError {
+    background: #900 url('../img/flag.png') bottom repeat-x;
+    color: #fff;
+}
+.gBackgroundGrid {
+	position: relative;
+	float: none;
+	clear: both;
+}
+.gBackgroundGrid .cDay {
+	height: 110px;
+	border-bottom: 1px solid #c8c8c8;
+}
+.masterRow .sMaster:hover {
+	background: #ffffee;
+}
+.masterRow .sIteration {
+	background: #fff;
+	border-left: 1px dashed #777;
+	border-right: 1px dashed #777;
+	border-bottom: 1px dashed #777;
+	cursor: auto;
+}
+/*Standard*/
+.masterRow .oType1 { border-top: 7px solid #d99f00;}
+
+/*Exclusive*/
+.masterRow .oType2 { border-top: 7px solid #606;}
+
+/*Exclusive*/
+.masterRow .oType3 { border-top: 7px solid #3d7e20;}
+
+/*Best Buy*/
+.masterRow .oType4 { border-top: 7px solid #30f;}
+
+/*Dutch Auction*/
+.masterRow .oType6 { border-top: 7px solid #c39; }
+
+/*Optimized*/
+.masterRow .oType8 { border-top: 7px solid #ff3333; }
+
+/*
+.masterRow .oType3,
+.masterRow .oType4 {
+	border-top: 7px solid #7e0001;
+}*/
+.oKeys {
+	color: #545454;
+	font-size: 11px;
+}
+.oKeys div {
+	width: 0;
+	height: 0;
+	padding: 0;
+	margin: 0 4px;
+	display: inline-block;
+	clear: none;
+}
+.oKey1 {
+	border: 5px solid #d99f00;
+}
+.oKey2 {
+	border: 5px solid #606;
+}
+.oKey3 {
+	border: 5px solid #3d7e20;
+}
+.oKey4 {
+	border: 5px solid #30f;
+}
+.oKey6 {
+	border: 5px solid #c39;
+}
+.oKey8 {
+    border: 5px solid #ff3333;
+}
+div.module#module-schedulingraphs h1{
+text-align:left;
+}
+
+div.module#module-schedulingraphs table{
+    margin:10px auto 30px auto;
+}
+
+div.module#module-schedulingraphs table td {
+    padding: 0;
+    margin: 0;
+}
+div.module#module-schedulingraphs table tbody {
+    background: #fafafa;
+}
+div.module#module-schedulingraphs div.module-content{
+margin-bottom:30px;
+}
+
+div.module#module-schedulingraphs table tfoot{
+display:none;
+height:0;
+overflow:hidden;
+}
+
+div.module#module-schedulingraphs table td,div.module#module-schedulingraphs table th{
+border:6px solid white;
+}
+
+div.module#module-schedulingraphs table tr.hidden,div.module#module-schedulingraphs table tr.hidden td{
+height:0;
+line-height:0;
+overflow:visible;}
+
+div.module#module-schedulingraphs table tr{
+vertical-align:top;
+}
+
+div.module#module-schedulingraphs table tr td.overbalance{
+visibility:hidden;}
+
+div.module#module-schedulingraphs table tr.overbalance td.overbalance{
+visibility:visible;}
+
+div.module#module-schedulingraphs table tr.overbalance span{
+display:none;}
+
+div.module#module-schedulingraphs table tbody th{
+text-align:right;font-weight:normal;}
+
+div.module#module-schedulingraphs thead th.bar{
+text-align:center;width:302px;}
+
+div.module#module-schedulingraphs table td.bar{
+background:#eee url(../img/scheduling/shadow.png) repeat-x left center;}
+
+div.module#module-schedulingraphs table td.bar div.bar{
+background:#cbe662 url(../img/scheduling/3d.png) repeat-x left center;font-weight:bold;line-height:14px;height:14px;text-align:right;}
+
+div.module#module-schedulingraphs table td.bar div.bar span{
+margin:0 2px;}
+
+div#month-container{
+position:absolute;}
+
+div#month-line{
+position:absolute;top:0;height:178px;border-left:1px solid #000;z-index:10;}
+
+div#month-line small{
+bottom:-15px;color:#685c53;font-weight:bold;left:-50px;letter-spacing:1px;position:absolute;text-align:center;text-transform:uppercase;width:100px;}
+
+div.module#module-schedulingraphs table tr.warning div.bar {
+background-color:#f2dd45;border-color:#f7eb90;}
+
+div.module#module-schedulingraphs table tr.overbalance div.bar {
+background-color:#c00;border-color:#ff881f}
+
+div.module#module-schedulingraphs table td.overbalance {
+color:#c00;font-weight:bold;}
+
+div.module#module-schedulingraphs table td.icon-yellow {
+    background: none;
+    border: none;
+    padding: 0 0 0 0;
+}
+
+div.module#module-schedulingraphs table td.icon-error {
+    background: none;
+    color: #900;
+    border: none;
+    padding: 0 0 0 0;
+}

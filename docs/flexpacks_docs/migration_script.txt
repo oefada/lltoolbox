@@ -1,0 +1,39 @@
+Checklist:
+
+1. Make sure ticket.numNights is set for recent tickets:
+
+update ticket
+inner join offerLuxuryLink ol using (offerId)
+set ticket.numNights = ol.roomNights
+where ticket.created >= '2009-03-01 00:00:00';
+
+
+2. Run update_pkg_includes.php [params]
+
+3. Set packageBlurb to uppercase
+
+update package
+set package.packageBlurb = concat(upper(left(packageBlurb, 1)), substring(packageBlurb, 2))
+where package.siteId = 1;
+
+update offerLuxuryLink
+set offerLuxuryLink.packageBlurb = concat(upper(left(offerLuxuryLink.packageBlurb, 1)), substring(offerLuxuryLink.packageBlurb, 2))
+inner join package using (packageId)
+where package.siteId = 1;
+
+4. populate packageTitle with new format
+
+update package
+inner join clientLoaPackageRel on clientLoaPackageRel.packageId = package.packageId
+inner join loa on loa.loaId = clientLoaPackageRel.loaId
+set packageTitle = concat(roomGrade, ' Package for ', numGuests, ' Travelers')
+where package.siteId = 1 and
+loa.endDate > curdate() and
+package.modified >= '2010-09-01' and
+((roomGrade is not null and roomGrade != '') and (numGuests is not null and numGuests != ''));
+
+update offerLuxuryLink
+inner join package using (packageId)
+set offerName = packageTitle
+where isClosed = 0 and
+package.modified >= '2010-09-01';

@@ -1,0 +1,127 @@
+h2 {
+	margin-top: 0;
+	margin-bottom: 8px;
+}
+#cstool {
+	padding: 10px;
+}
+#csheader {
+}
+#cscontent {
+}
+table.cake-sql-log {
+	display: none;
+}
+#csfooter {
+}
+#CallSearch {
+	width: 98% !important;
+	font-size: 150%;
+	margin: 4px 0;
+	padding: 2px;
+}
+.interaction {
+	background-color: #eeeeff;
+	padding: 4px;
+	margin: 8px 0;
+}
+form span {
+	display: inline-block;
+	width: 70%;
+	font-size: 85%;
+}
+form label {
+	font-weight: bold;
+	font-size: 80%;
+	display: block;
+	margin-top: 5px;
+}
+input {
+	width: 25% !important;
+}
+div.input.text.required span {
+	padding-left: 8px;
+}
+select, textarea, input[type="submit"] {
+	width: 100% !important;
+}
+#CallPopupForm input[type="submit"].newCall {
+	color: #006600;
+}
+#CallPopupForm input[type="submit"] {
+	color: #aa0000;
+}
+select {
+	font-size: 80%;
+}
+.ajaxLoadingIndicator {
+	visibility: hidden;
+}
+#lastTenCalls {
+	background-color: #f8f8f8;
+	margin: 0;
+	padding: 0;
+}
+#lastTenCalls h3 {
+	margin: 0;
+	padding: 6px;
+}
+#lastTenCalls .blurb, #lastTenCalls .blurb span {
+	vertical-align: top;
+	font-size: 12px;
+	color: #888888;
+	line-height: 14px;
+	height: 14px;
+}
+#lastTenCalls .blurb span {
+	overflow: hidden;
+	font-size: 10px;
+}
+#lastTenCalls div.submit {
+	height: 14px;
+	display: inline-block;
+}
+#lastTenCalls ul {
+	margin: 0;
+}
+#lastTenCalls li {
+	margin: 0;
+	padding: 4px 0 4px 4px;
+	list-style: none;
+}
+#lastTenCalls li a, #lastTenCalls li a:hover, #lastTenCalls li a:visited {
+	color: #000088;
+	text-decoration: none;
+}
+#lastTenCalls li:hover {
+	background-color: #f0f0f0;
+}
+#lastTenCalls li a:hover {
+	color: #0000cc;
+}
+#lastTenCalls input[type="submit"] {
+	width: 42px !important;
+	border-style: solid;
+	border-width: 1px;
+	border-color: #cccccc;
+	background-color: #eeeeee;
+	margin: 0;
+	padding: 0;
+	height: 14px;
+	font-size: 10px;
+}
+div.error-message {
+	background-color: #ffcccc;
+	font-weight: bold;
+	color: red;
+	padding: 4px;
+}
+table#interactionTable, table#interactionTable td {
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	border: none;
+}
+table#interactionTable td {
+	width: 50%;
+}

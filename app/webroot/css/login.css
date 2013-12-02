@@ -1,0 +1,111 @@
+	body.login {
+	  	color: #000;
+		background: #B0B0B0;
+	}
+
+	body.login a:hover {
+	  color: #03c;
+	  background: none;
+	  text-decoration: underline;
+	}
+
+	body.login div#LogoBox {
+	  margin-top: 50px;
+	}
+
+	body.login div.login_dialog {
+	  zoom: 100%;
+	  background-color: #f5f5f5;/*#f5f5f5;*/
+	}
+
+	body.login div.login {
+		padding: 20px;
+		border: 7px solid #d99e00;
+		background-color: #f5f5f5;
+		text-align: left;
+		width: 300px;
+		margin: 50px auto;
+		font-family: lucida grande, verdana;
+		font-size: 12px;
+	}
+
+	body.login div.login div.flash {
+		padding: 7px 5px;
+		font-size: 12px;
+		margin: 15px 0;
+	}
+
+	body.login div.login div.message {
+		background: #900;
+		border-top: 2px solid #FFD324;
+		border-bottom: 2px solid #FFD324;
+		text-align: center;
+		margin: 10px auto;
+		padding: 5px 20px;
+		color: white;
+	}
+
+	body.login div.login div.confirm {
+		border-top: 1px solid #393;
+		border-bottom: 1px solid #393;
+		color: #393;
+		background-color: #e6f5ea;
+	}
+
+	body.login div.login h1 {
+	  color: #000;
+		font-size: 16px;
+		margin: 0 0 20px 0;
+		padding: 0;
+	}
+
+	body.login div.login h2 {
+	  color: #000;
+		font-size: 12px;
+		margin: 0 0 2px 0;
+		padding: 0;
+	}
+
+	body.login div.login input {
+		width: 275px;
+		font-size: 14px;
+		padding: 3px;
+		margin-bottom: 10px;
+	}
+
+	body.login div.login label {
+	  font-weight: bold;
+	  margin-bottom: 10px;
+	}
+
+	body.login div.login label input {
+	  margin-bottom: 0;
+	}
+
+	body.login div.login input.auto {
+		width: auto;
+	}
+
+	body.login div.login div.extras {
+		border-top: 1px dashed #999;
+		margin-top: 20px;
+		padding-top: 10px;
+	}
+
+	body.login div.login div.extras ul {
+		margin: 0 0 0 17px;
+		padding: 0;
+	}
+	#authMessage {
+	border: solid 1px #CC0000;
+	background: #F7CBCA url(../img/error_shield.png) 5px center no-repeat;
+	color: #333;
+	font-weight: bold;
+	padding: 5px 5px 4px 40px;
+	text-align: left;
+    }
+    
+    body.login h1.title {
+        text-align: center;
+        border-bottom: 1px solid #e5e5e5;
+    }

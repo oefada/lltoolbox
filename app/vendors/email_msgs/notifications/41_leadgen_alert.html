@@ -1,0 +1,135 @@
+<p>We are pleased to let you know that <?= $clientNameP ?> in <?= $locationDisplay ?>, has just gone on sale.</p>
+
+</td>
+</tr>
+
+<? $fontStyle="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;"; ?>
+
+<tr><td colspan="2"><img src="http://www.luxurylink.com/images/email/pixel.gif" align="left" vspace="0" hspace="0" width="1" height="15"></td></tr>
+
+<tr><td colspan="2">
+	<? // TABLE D OPEN ?>
+	<table
+		border="0"
+		cellpadding="0"
+		cellspacing="0"
+		align="center"
+		width="557"
+		style="border-width: 1px; border-color:#c3c3c3;border-style: solid;"
+	><tr><td
+		valign="top"
+		style="padding: 0px 0px 0px 0px;" align="center"
+		>
+		<? // TABLE E OPEN ?>
+		<table
+			bgcolor="#d8d7b8"
+			border="0"
+			cellpadding="0"
+			cellspacing="0"
+			align="center"
+			width="555"
+			style="padding: 11px 11px 11px 17px;border-bottom: 1px #c3c3c3 solid;"
+		>
+		<tr><td
+			style="font-size:14px;line-height: 16px; font-family: Arial,Sans-Serif;color:#484846;"
+		><b>AVAILABLE VACATION EXPERIENCE</b></td></tr>
+	</table>
+	<? // TABLE E CLOSED ?>
+</td></tr>
+
+<tr><td valign="top" style="padding: 0px 0px 0px 0px;" align="center">
+<? // TABLE F OPEN?>
+<table
+		border="0"
+		cellpadding="0"
+		cellspacing="0"
+		align="center"
+		width="555"
+><tbody>
+
+<?php
+
+foreach ($clients as $cn=>$c):
+
+	$c = (object)$c;
+	?>
+	<tr>
+	<td valign="top" style="padding: 15px 15px 0px 15px;" height="300" align="center">
+	<div><a
+		target="_blank"
+		href="<?=$c->pdpUrl;?>"
+		><img
+			name="Cont_29"
+			style="max-width:520px"
+			width="520"
+			border="0"
+			style="display: block;"
+			src="<?php echo $clientImagePath; ?>"
+			alt="<?php echo $packageName;?>"
+		/></a></div>
+	</td>
+	</tr>
+	<tr>
+	<td valign="top" style="padding: 15px 0px 0px 15px;" align="left">
+
+			<table height="75" cellspacing="0" cellpadding="0" border="0" align="left" width="255">
+			<tbody>
+			<tr><td>
+
+					<? // TABLE G OPEN?>
+					<table
+						height="75"
+						cellspacing="0"
+						cellpadding="0"
+						border="0"
+						align="left"
+						width="400"
+					><tbody><tr><td
+						style="font-size:17px;line-height: 16px; font-family: Arial,Sans-Serif;color:#036dfc;"><a href="<?= $c->pdpUrl ?>" style="color:#036dfc;text-decoration:none;" target="_blank"><b><?=$c->name ?></b></a>
+					</td></tr>
+						<tr><td style="font-size:14px;line-height: 16px; font-family: Arial,Sans-Serif;font-style:italic;padding:2px 0px 0px 0px;"><? echo $c->locationDisplay;?></td></tr>
+						<tr><td style="font-size:12px;line-height: 14px; font-family: Arial,Sans-Serif;padding:2px 0px 0px 0px;color:#9c9a68;"><b><? echo $alertPackageData['offerName'] ;?></b></td></tr>
+						<tr><td style="font-size:12px;line-height: 14px; font-family: Arial,Sans-Serif;padding:2px 0px 0px 0px;"><b>Valid for travel:</b> <? echo $alertPackageData['validityStart'];?> - <? echo $alertPackageData['validityEnd'];?></td></tr>
+					</tbody>
+					<? // TABLE G CLOSED ?>
+					</table>
+			</td>
+			<td>
+
+					<? // TABLE H OPEN?>
+					<table
+						width='120'
+						cellpadding='0'
+						cellspacing='0'
+						border='0'
+						style="padding:0px 20px 5px 10px;border:1px solid #005a97;margin-top:5px;background:#0070a8;"
+						><tr><td><a
+							href="<?= $c->pdpUrl ?>"
+							style="font-family:Arial;font-size:12px;font-weight:bold;color:#ffffff;padding:6px 20px 5px 20px;text-decoration:none;float:left;"
+						>View This Offer</a></td></tr>
+					</table>
+					<? // TABLE H CLOSED ?>
+			</td>
+			</tr>
+			</tbody>
+			</table>
+	</td>
+	</tr>
+
+<? endforeach; ?>
+
+<tr><td height="15" width="100%" colspan="5"></td></tr>
+
+</tbody>
+</table>
+<? // TABLE F CLOSED?>
+
+</td>
+</tr>
+</table>
+<? // TABLE D CLOSED?>
+
+
+
+
+

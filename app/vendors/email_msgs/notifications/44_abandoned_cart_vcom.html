@@ -1,0 +1,128 @@
+ <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+ <html>
+ <head><META http-equiv="Content-Type" content="text/html; charset=utf-8"></head>
+ <body>
+ <table width="800" cellspacing="0" cellpadding="0" border="0" align="center" style="background-color:#e3e6e4;">
+                        <tbody>
+
+							<tr>
+                                <td>
+									<table width="610" cellspacing="0" cellpadding="0" border="0" align="center" style="background-color:#e3e6e4; padding: 0px 0px 0px 0px">
+                                        <tr><td colspan="2" style="height:20px; font-size:16px;">&nbsp;</td></tr>
+                                        <tr>
+                                            <td align="left" style="padding: 0px 0px 0px 0px;"><a xt="SPCLICK" name="vacationist" target="_blank" href="http://www.vacationist.com/?<?= $vcomSaleInfo['tracking']; ?>"><img width="256" height="50" border="0" alt="Vacationist" name="Cont_0" src="http://www.luxurylink.com/images/vacationist/vac_weekly/Vacationist-Vcom.jpg" /></a></td>
+                                            <td align="right" valign="top" style="padding: 0px 0px 0px 0px;"><img width="128" height="46" border="0" alt="Presented by Travel + Leisure" name="Cont_0" src="http://www.luxurylink.com/images/vacationist/vac_weekly/TravelLeisure-top.jpg" /></td>
+                                        </tr>
+                                        <tr><td colspan="2" style="height:20px; font-size:16px;">&nbsp;</td></tr>
+									</table>
+                                </td>
+   </tr>
+   <tr>
+<td align="center" style="padding: 0px 0px 0px 0px;"><img width="600" height="4" border="0" src="http://www.luxurylink.com/images/email/new/dark-line.jpg" name="line" alt=""/></td>
+</tr>
+<tr>
+	<td align="center" valign="top" colspan="3">
+
+
+<table cellspacing="0" cellpadding="0" border="0" align="center" width="600" style="text-align:left; background-color:#ffffff; padding:0px 0px 0px 0px;">
+<tbody>
+
+
+<tr>
+<td style="padding:4px 0px 8px 0px">
+<table cellspacing="0" cellpadding="0" border="0" width="600" align="center">
+<tbody>
+
+<? if (isset($userData['firstName']) && $userData['firstName'] != '') { ?>
+	<tr>
+	<td align="left" style="padding:20px 20px 0px 25px;line-height:33px;font-family:Times New Roman,Georgia,Serif;color:rgb(68, 68, 68);font-size:32px;">
+	Hello <?= $userData['firstName']; ?>, </td>
+	</tr>
+<? } ?>
+
+<tr>
+	<td align="left" style="padding:15px 20px 20px 25px; line-height:21px; font-family:Arial, helvetica, Sans-Serif;color:#666666;font-size:14px">Uh-oh! It looks like you tried to book a stay at <?= $vcomSaleInfo['name']; ?> but did not complete your reservation. Still want it? <a style="text-decoration:none;color:#008ec5" href="<?= $vcomSaleInfo['pdpLink']; ?>" name="" target="_blank">Click here</a> to complete your booking or contact our Concierge team at <?= $sitePhone; ?> or <?= $sitePhoneLocal; ?> for assistance. Remember this sale is only available until <?= date('g a \P\D\T l F j, Y', strtotime($vcomSaleInfo['end'])); ?>.<td>
+</tr>
+
+<tr>
+	<td align="left" style="padding:15px 20px 0px 25px;line-height:17px; font-family:Arial, helvetica, Sans-Serif; color:rgb(68, 68, 68);font-size:13px">
+		<a name="" target="_blank" href="<?= $vcomSaleInfo['pdpLink']; ?>"><img name="" style="display:block;" alt="" width="550" border="0" src="http://www.vacationist.com<?= $vcomSaleInfo['clientImage']; ?>" /></a></td>
+</tr>
+<tr>
+	<td align="left" style="padding:15px 20px 0px 25px;line-height:17px; font-family:Helvetica,maradival,Sans-Serif;color:rgb(68, 68, 68);font-size:13px">
+
+			<table cellspacing="0" cellpadding="0" border="0" align="left" width="550">
+				<td align="left" style="font-size:24px; line-height:17px;font-family: Arial, helvetica, Sans-Serif; color:#008ec5; padding:5px 0px 0px 0px; text-align:left; background-color: #ffffff; padding:0px 0px 0px 0px">
+				<a style="text-decoration:none; color:#008ec5" href="<?= $vcomSaleInfo['pdpLink']; ?>" name="" target="_blank"><?= $vcomSaleInfo['name']; ?></a><br>
+				<span style="font-size:13px; line-height:18px; font-family: Verdana, Arial, helvetica, Sans-Serif; color:#666666; text-align: left; "><?= $vcomSaleInfo['locationDisplay']; ?></span>
+				</td>
+
+				<td valign="top" align="right" style="font-size:24px; line-height:17px;font-family: Arial, helvetica, Sans-Serif; text-align:right; padding:0px 0px 0px 0px">
+				<a style=" text-decoration: none;" href="<?= $vcomSaleInfo['pdpLink']; ?>" name="" target="_blank" xt="SPCLICKSTREAM"><img src="http://www.luxurylink.com/images/email/new/ViewPurchase.jpg" width="267" height="40" border="0" alt="" /></a>
+				</td>
+
+			</tr>
+		</table>
+	</td>
+</tr>
+<tr>
+	<td align="left" style="padding:50px 20px 20px 25px;line-height:17px; font-family:Helvetica,maradival,Sans-Serif; color:#999999; font-size:12px">
+If you have any questions or additional needs, please contact our Travel Concierge at <?= $sitePhone; ?> or <?= $sitePhoneLocal; ?>, or email <a style="text-decoration:none;color:#008ec5" href="mailto:concierge@vacationist.com">concierge@vacationist.com</a>. Our business hours are <?php echo Base::conciergeHoursComma; ?>.
+
+	</td>
+</tr>
+<tr>
+      <td align="center" style="padding: 10px 20px 10px 25px;" colspan="2"><img border="0" alt="" name="line" src="http://www.luxurylink.com/images/email/Inspiration/line.jpg" width="550" height="1" /></td>
+ </tr>
+
+ <tr>
+	<td align="center" style="padding:20px 20px 30px 25px;line-height:18px; font-family:Helvetica, Maradival,Sans-Serif; color:#161719;font-size:18px;">Looking for places to go? <a style="text-decoration:none;color:#008ec5" href="http://www.vacationist.com/?<?= $vcomSaleInfo['tracking']; ?>" name="" target="_blank">See all current offers</a></td>
+</tr>
+
+<? if (time() < strtotime('2013-11-29')) { ?>
+ <tr>
+	<td align="center" style="padding:20px 0px 30px 0px;"><img border="0" alt="" src="http://www.luxurylink.com/images/email/new/vcom_banner_111113.jpg" width="550" /></td>
+</tr>
+<? } ?>
+
+</tbody>
+</table>
+</td>
+</tr>
+
+</tbody>
+</table>
+
+
+<!--footer-->
+<table cellspacing="0" cellpadding="0" border="0" align="center" width="600" height="85" style="background-color: #2d2f31;padding:0px 0px 0px 0px;">
+<tbody>
+<tr>
+<td style="text-align:center;line-height:15px;font-family:Helvetica,maradival,Sans-Serif;color: #6e7072;font-size:10px;padding:20px 20px 20px 25px">
+
+<a name="footer" href="http://www.vacationist.com/?<?= $vcomSaleInfo['tracking']; ?>" target="_blank" style="color: #008ec5;text-decoration: none;">Vacationist</a><br>
+    <?= ADDRESS_LL ?> <br><br>
+For information or assistance, call <?= $sitePhone; ?> or email <a name="footer_email" href="mailto:concierge@vacationist.com" target="_blank" style="color: #008ec5;text-decoration: none;"><span id="__cf_email__" class="61020e0f020804130604210d14191413180d080f0a4f020e0c">concierge@vacationist.com</span></a>. | <a name="footer_privacy" href="http://www.vacationist.com/privacypolicy/" target="_blank" style="color: #008ec5;text-decoration: none;">Privacy Policy</a></td>
+<td align="right" valign="top" style="padding-top:10px">
+		<table cellspacing="0" cellpadding="0">
+		<tbody>
+
+			<tr>
+				<td style="font-family:Helvetica,maradival,Sans-Serif;color:rgb(177, 177, 177);font-size:11px;padding-top:5px"></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+<!--end footer-->
+
+
+
+</td>
+</tr>
+
+</tbody>
+</table>
+</body></html>

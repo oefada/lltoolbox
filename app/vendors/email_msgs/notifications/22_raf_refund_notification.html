@@ -1,0 +1,35 @@
+<?php include('../vendors/email_msgs/email_includes/header.html');?>
+
+<p>Dear <?=$rafData['User']['firstName'];?>,</p>
+
+<p>
+<strong>One of your friends, who made a qualifying purchase on <?=$siteName;?>, refunded their package.</strong> 
+Unfortunately, you will not be receiving the $100 Credit on your account. 
+<?php if ($rafData['Charity']['charityName']) : ?>
+Also, <?=$rafData['Charity']['charityName'];?> will not receive $50.
+<?php endif; ?>
+</p>
+
+<p style="margin-bottom:30px;">
+Remember, you can always <a href="<?=$url;?>/refer-friend/?s=3" style="color:#336699;">invite more friends</a>!
+</p>
+
+<p><b><?=$siteName;?> Refer a Friend Program</b></p>
+
+<div style="border:1px solid silver; padding:15px; margin-bottom:30px;">
+<div style="float:right; padding:0px 0px 0px 15px; margin-left:15px; border-left:1px solid silver;"><img src="<?=$url;?>/images/refer-friend/charity04.gif" border="0"/></div>
+Here's how it works:
+<p style="font-weight:bold;">For every friend that buys a package worth $1,000 or more:</p>
+<ol style="padding-left:20px; font-size:13px;">
+<li style="font-weight:bold; margin-bottom:5px;"><span style="color:#<?=$siteHeader;?>;">We give your friend $100 off</span></li>
+<li style="font-weight:bold; margin-bottom:5px;"><span style="color:#<?=$siteHeader;?>;">We give you $100 <?=$siteName;?> Credit</span></li>
+
+<li style="font-weight:bold; margin-bottom:5px;">We give <span style="color:#<?=$siteHeader;?>;">$50 to the charity</span> of your choice</li>
+
+</ol>
+
+<p style="text-align:center;"><a href="<?=$url;?>/refer-friend/?s=3"><img src="<?=$url;?>/images/buttons/btn_invite_more_friends.gif" alt="Refer More Friends" border="0" /></a></p>
+
+</div>
+
+<?php include('../vendors/email_msgs/email_includes/footer.html');?>

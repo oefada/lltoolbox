@@ -1,0 +1,84 @@
+<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">
+<html>
+<head></head>
+<body>
+<div style="width:770px;padding:20px;border:1px solid #B0B0B0;color:#444444;font-size:12px;line-height:17px;font-family: Verdana, Arial;">
+	<div <?php if ($siteId == 2) { echo 'style="text-align:center;"';}?>><a href="<?=$siteUrl;?>"><img src="<?=$headerLogo;?>" border="0"></a></div>
+	<div style="height:20px;margin-top:15px;border-top:1px solid #E4E4E4;">&nbsp;</div>
+    <div>
+        <?php if ($siteId == 2) { ?>
+        <table width="100%" style="color:#333;text-align: center;" class="site_links">
+            <tr>
+                <td>
+                    <a href="<?= $siteUrl; ?>vacations?utm_content=utm_nav&utm_term=DESTINATIONS">DESTINATIONS</a>
+                </td>
+                <td>
+                    |
+                </td>
+                <td>
+                    <a href="<?= $siteUrl; ?>vacation/all-inclusive-resorts/best?utm_content=nav&utm_term=ALL-INCLUSIVE">ALL-INCLUSIVE</a>
+                </td>
+                <td>
+                    |
+                </td>
+                <td>
+                    <a href="<?= $siteUrl; ?>vacation-ideas/weekend-getaways/deals?len=1-2-3-&utm_content=nav&utm_term=WEEKEND GETAWAYS">WEEKEND GETAWAYS</a>
+                </td>
+                <td>
+                    |
+                </td>
+                <td>
+                    <a href="<?= $siteUrl; ?>vacations/hotel-deals?pp=10&x=59&sortb=bestselling&offerAuc=1&utm_content=nav&utm_term=BEST SELLERS">BEST SELLERS</a>
+                </td>
+                <td>
+                    <table width="100%" align="right"><tr>
+                            <td>
+                                <a href="https://www.facebook.com/FamilyGetaway" target="_blank" title="Facebook"><img src="http://familygetaway.com/images/family/email/social/facebook-icon24x24.png" alt="icon -Facebook"/></a>
+                            </td>
+                            <td>
+                                <a href="https://twitter.com/family_getaway" target="_blank" title="Twitter"><img src="http://familygetaway.com/images/family/email/social/App-Twitter-icon24x24.png" alt="icon Twitter"/></a>
+                            </td>
+                            <td>
+                                <a href="http://pinterest.com/familygetaway" target="_blank" title="Pinterest"><img src="http://familygetaway.com/images/family/email/social/App-Pinterest-icon24X24.png" alt="icon Pinterest"/></a>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+        <? }?>
+        <?php if ($siteId == 1) { ?>
+            <table width="100%" style="color:#333;text-align: center;" class="site_links">
+                <tr>
+                    <td>
+                        <a href="<?= $siteUrl; ?>5star/all-deals?utm_content=nav&utm_term=DESTINATIONS">DESTINATIONS</a>
+                    </td>
+                    <td>
+                        |
+                    </td>
+                    <td>
+                        <a href="<?= $siteUrl; ?>5star/all-inclusive-resorts/deals?utm_content=nav&utm_term=ALL-INCLUSIVE">ALL-INCLUSIVE</a>
+                    </td>
+                    <td>
+                        |
+                    </td>
+                    <td>
+                        <a href="<?= $siteUrl; ?>travel-deals/best?offerFp=1&offerAuc=1&utm_content=nav&utm_term=Best_Sellers">BEST SELLERS</a>
+                    </td>
+                    <td>
+                        |
+                    </td>
+                    <td>
+                        <a href="<?= $siteUrl; ?>vacation-ideas/weekend-getaways/deals?utm_content=nav&utm_term=Weekend_Getaways">WEEKEND GETAWAYS</a>
+                    </td>
+                    <td>
+                        |
+                    </td>
+                    <td>
+                        <a href="<?= $siteUrl; ?>5star/luxury-cruises/best?utm_content=nav&utm_term=CRUISES">CRUISES</a>
+                    </td>
+                </tr>
+            </table>
+        <? }?>
+    </div>
+    <div style="height:20px;margin-top:15px;border-top:1px solid #E4E4E4;">&nbsp;</div>

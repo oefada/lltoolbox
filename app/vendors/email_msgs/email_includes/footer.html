@@ -1,0 +1,23 @@
+<br />
+<p>Warm Regards,</p>
+<p><?=$siteName;?></p>
+
+<?php if ($sender_sig) : ?>
+<p>
+<?=$sender_sig_line;?><br />
+<?=$sender_email;?><br />
+<?=$sender_ext;?>
+</p>
+<?php endif; ?>
+
+	<div style="height:20px;margin-top:20px;border-top:1px solid #E4E4E4;">&nbsp;</div>
+	<div>Toll Free in the U.S. <?=$sitePhone;?> | Outside the U.S. <?=$sitePhoneLocal;?> | Facsimile <?=$siteFax;?></div>
+	<a href="<?=$siteUrl;?>" style="color:#336699;"><?=$siteUrl;?></a>
+	<?php if (isset($footer_sig) && $footer_sig): ?>
+	<p>
+	<?=$footer_sig;?>
+	</p>
+	<?php endif; ?>
+</div>
+</body>
+</html>

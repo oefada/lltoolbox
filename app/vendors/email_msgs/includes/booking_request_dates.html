@@ -1,0 +1,110 @@
+<table border="0" cellpadding="0" cellspacing="0" align="right" width="255" style="border-width: 1px; border-color:#c3c3c3;border-style: solid;" valign="top">
+<tr>
+<td valign="top" style="padding: 0px 0px 0px 0px;" align="center">
+<table bgcolor="#474747" border="0" cellpadding="0" cellspacing="0" align="center" width="267" style="padding: 11px 11px 11px 15px;border-bottom: 1px #c3c3c3 solid;" valign="top">
+<tr>
+<td style="font-size:14px;line-height: 16px; font-family: Arial,Sans-Serif;color:#d4d5b5;"><b>BOOKING REQUEST DATES</b><td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td valign="top" style="padding: 0px 0px 0px 0px;" align="center">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" style="padding: 15px 0px 15px 15px;">
+<table border="0" cellpadding="0" cellspacing="0" align="left"  width="124">
+<tr>
+<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;">No. of Rooms:</td>
+</tr>
+<tr>
+<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;">No. of Nights:</td>
+</tr>
+<tr>
+<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;">Check-in:</td>
+</tr>
+<tr>
+<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;">Check-out:</td>
+</tr>
+<? if ($promoApplied): ?>
+<tr>
+<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;">Promotion Applied:</td>
+</tr>
+<?php endif; ?>
+<? if ($giftApplied): ?>
+<tr>
+<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;">Gift Certificate Applied:</td>
+</tr>
+<?php endif ?>
+<? if ($cofApplied): ?>
+<tr>
+<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;">Credit On File Applied:</td>
+</tr>
+<?php endif ?>
+<tr>
+<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;">Handling Fee:</td>
+</tr>
+<tr>
+    <td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;"><b>Total <? if ($ppvNoticeTypeId == 19): ?>Due<?php else: ?>Price<?php endif; ?>:</b></td>
+</tr>
+</table>
+</td>
+
+<td align="left" valign="top" style="padding: 15px 0px 15px 0px;">
+<table border="0" cellpadding="0" cellspacing="0" align="left">
+<tr>
+<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:18px;padding: 0px 0px 0px 0px;" align="left"><?php echo $numRooms;?></td>
+</tr>
+<tr>
+<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:18px;padding: 0px 0px 0px 0px;" align="left"><?php echo $numNights;?></td>
+</tr>
+<tr>
+<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:18px;padding: 0px 0px 0px 0px;" align="left"><?php echo $fpArrival;?></td>
+</tr>
+<tr>
+<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:18px;padding: 0px 0px 0px 0px;" align="left"><?php echo $fpDeparture;?></td>
+</tr>
+<? if ($promoApplied): ?>
+<tr>
+<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;" align="left">-<?=$currencySymbol;?><?=$promoGcCofData['Promo']['totalAmountOff'];?></td>
+</tr>
+<?php endif; ?>
+<? if ($giftApplied): ?>
+<tr>
+<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;" align="left">-<?=$currencySymbol;?><?=$promoGcCofData['GiftCert']['totalAmountOff'];?></td>
+</tr>
+<?php endif; ?>
+<? if ($cofApplied): ?>
+<tr>
+<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 0px;" align="left">-<?=$currencySymbol;?><?=$promoGcCofData['Cof']['totalAmountOff'];?></td>
+</tr>
+<?php endif; ?>
+<tr>
+    <td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:18px;padding: 0px 0px 0px 0px;" align="left"><?=$currencySymbol;?><?=$llFeeAmount;?></td>
+</tr>
+<tr>
+    <td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:18px;padding: 0px 0px 0px 0px;" align="left"><b><?=$currencySymbol;?><?php if ($promoGcCofData['applied']) : ?><?=$promoGcCofData['final_price']; ?>	<?php else: ?><?=$totalPrice;?><?php endif; ?></b></td>
+</tr>
+</table>
+</td>
+</tr>
+<?php if ($fpNotes): ?>
+<tr>
+<td colspan="2" style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 0px 0px 0px 15px;" colspan="2"><b>Special Requests:</b></td>
+</tr>
+<tr>
+<td colspan="2" style="font-size:12px; font-family: Arial,Sans-Serif;color:#474747;line-height:18px;padding: 7px 20px 0px 15px;" colspan="2"><?=$fpNotes;?></td>
+</tr>
+<?php endif; ?>
+<?php if ($ppvNoticeTypeId == 14 || $ppvNoticeTypeId == 53): ?>
+<tr>
+<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#AD0306;line-height:18px;padding: 10px 0px 5px 0px;" align="center" colspan="3"><b>Please request new travel dates:</b></td>
+</tr>
+<tr>
+<td style="font-size: 12px; font-family: Arial,Sans-Serif; color: rgb(0, 0, 0); line-height: 18px; padding: 7px 0px 15px;" colspan="3" align="center"><a href="<?=$dateRequestLink;?>&" target="_blank"><img src="<?= $siteUrl ?>images/email/new/select_new_dates.gif" alt="Select Alternate Dates" border="0" height="26" width="204"></a></td>
+</tr>
+<?php endif ?>
+</table>
+</td>
+</tr>
+</table>

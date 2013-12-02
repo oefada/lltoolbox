@@ -1,0 +1,93 @@
+<?php include('../vendors/email_msgs/email_includes/header.html');?>
+
+
+<?php if ($liveOfferData['isMystery']) : ?>
+<h1 style="color:#<?=$siteHeader;?>;font-size:16px;margin:0px;padding:0px;margin-bottom:30px;">Congratulations, you won the Mystery Auction</h1>
+<?php else : ?>
+<h1 style="color:#<?=$siteHeader;?>;font-size:16px;margin:0px;padding:0px;margin-bottom:30px;">Congratulations, you won the <?=$offerTypeName;?> for <?=$clientNameP;?></h1>
+<?php endif;?>
+
+<p>Dear <?php echo $userFirstName;?> <?php echo $userLastName;?>:</p>
+
+<p>You are Buying this Package:</p>
+
+<table cellpadding="10" cellspacing="0" border="0" style="width:100%;background-color:#E0E0CD;margin-top:15px;margin-bottom:15px;">
+	<tr>
+		<td width="245" align="left" valign="top">
+			<div style="width: 245px; height: 189px; padding: 8px 12px 12px 8px; background: url(http://www.luxurylink.com/images/shared/shadow-gal-lrg-light-olive.gif) no-repeat top left; overflow: hidden;"><img width="225" style="max-width: 225px;" src="<?php echo $clientImagePath; ?>" alt="<?php echo $packageName;?>" border="0" /></div>
+		</td>
+		<td align="left" valign="top">
+			<?php if ($liveOfferData['isMystery']) : ?>
+			<div style="color:#<?=$siteHeader;?>;font-size:16px;font-weight:bold;">Mystery Auction</div>
+			<?php else: ?>
+			<div style="color:#<?=$siteHeader;?>;font-size:16px;font-weight:bold;"><?php echo $clientNameP;?></div>
+			<?php endif; ?>
+			<div style="color:#444444;font-size:12px;"><?php echo $locationDisplay;?></div><br />
+			<div style="color:#<?=$siteHeader;?>;font-size:12px;"><?php echo $packageName;?> <br /><br /><a style="color:#336699;" href="<?=$siteUrl;?>portfolio/por_offer_redirect.php?oid=<?=$offerId;?>">View Package Details</a></div>
+			<div style="height:15px;margin-top:15px;border-top:1px solid #B0B0B0;">&nbsp;</div>
+			<table cellspacing="0" cellpadding="5" border="0">
+			<tr>
+				<td style="color:#000000;font-size:12px;" valign="top" align="left" width="240">Your Winning Bid:</td>
+				<td style="color:#444444;font-size:12px;padding-right:5px;" valign="top" align="right" width="30">US</td>
+				<td style="color:#444444;font-size:12px;" valign="top" align="left">$<?=$billingPrice;?></td>
+			</tr>
+			<tr>
+				<td style="color:#000000;font-size:12px;" valign="top" align="left" width="240">Handling Fee:</td>
+				<td style="color:#444444;font-size:12px;padding-right:5px;" valign="top" align="right" width="30">US</td>
+				<td style="color:#444444;font-size:12px;" valign="top" align="left">$<?=$llFee;?></td>
+			</tr>
+			<?php if ($promoGcCofData['Promo'] && $promoGcCofData['Promo']['applied']) :?>
+			<tr>
+				<td style="color:#000000;font-size:12px;" valign="top" align="left" width="240">
+					<?php if ($mcPromo) : ?>
+					Exclusive Offer with &nbsp;&nbsp;&nbsp;<a href="http://clk.atdmt.com/AST/go/154171765/direct;wi.1;hi.1/01/" target="_blank"><img src="http://www.luxurylink.com/images/shared/mc_small_logo.png" border="0" /></a>
+					<img src="http://view.atdmt.com/AST/view/154171765/direct;wi.1;hi.1/01/" width="1" height="1" border="0" />
+					<?php else: ?>
+					Promotion Applied: 
+					<?php endif; ?>
+				</td>
+				<td style="color:#990000;font-size:12px;padding-right:5px;" valign="top" align="right" width="30">- US</td>
+				<td style="color:#990000;font-size:12px;" valign="top" align="left">$<?=$promoGcCofData['Promo']['totalAmountOff'];?></td>
+			</tr>
+			<?php endif; ?>
+			<?php if ($promoGcCofData['GiftCert'] && $promoGcCofData['GiftCert']['applied']) :?>
+			<tr>
+				<td style="color:#000000;font-size:12px;" valign="top" align="left" width="240">
+					Gift Certificate Applied: 
+				</td>
+				<td style="color:#990000;font-size:12px;padding-right:5px;" valign="top" align="right" width="30">- US</td>
+				<td style="color:#990000;font-size:12px;" valign="top" align="left">$<?=$promoGcCofData['GiftCert']['totalAmountOff'];?></td>
+			</tr>
+			<?php endif; ?>
+			<?php if ($promoGcCofData['Cof'] && $promoGcCofData['Cof']['applied']) :?>
+			<tr>
+				<td style="color:#000000;font-size:12px;" valign="top" align="left" width="240">
+					Credit On File Applied: 
+				</td>
+				<td style="color:#990000;font-size:12px;padding-right:5px;" valign="top" align="right" width="30">- US</td>
+				<td style="color:#990000;font-size:12px;" valign="top" align="left">$<?=$promoGcCofData['Cof']['totalAmountOff'];?></td>
+			</tr>
+			<?php endif; ?>
+			<tr>
+				<td style="color:#990000;font-size:12px; font-weight:bold; border-top:1px solid silver; padding-bottom:20px;padding-top:10px;" valign="top" align="left" width="240">Total Due:</td>
+				<td style="color:#990000;font-size:12px; font-weight:bold; border-top:1px solid silver; padding-bottom:20px;padding-top:10px;padding-right:5px;" valign="top" align="right" width="30">US</td>
+				<td style="color:#990000;font-size:12px; font-weight:bold; border-top:1px solid silver; padding-bottom:20px;padding-top:10px;" valign="top" align="left">
+					<?php if ($promoGcCofData['applied']) : ?>
+					$<?=$promoGcCofData['final_price']; ?>	
+					<?php else: ?>
+					$<?=$totalPrice;?>
+					<?php endif; ?>
+				</td>
+			</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+
+<p><?php echo $packageIncludes;?></p>
+<p><?php echo $validityNote;?></p>
+<p><?php echo $legalText;?></p>
+
+<p>If the current credit card you have on file does not go through, we will contact you to update the information.</p>
+
+<?php include('../vendors/email_msgs/email_includes/footer.html');?>

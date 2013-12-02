@@ -1,0 +1,48 @@
+@charset "UTF-8";
+
+@media print
+{	
+    body {
+        background: white;
+        font-size: 11pt;
+    }
+    html { height: auto; margin-bottom: 0; }
+
+    body a[href^="http:"],
+    body a[href^="https:"] {
+        padding-left: 0;
+        background-image: none;
+    }
+    
+    h1,h2,h3,h4,h5,h6 { page-break-after:avoid; }
+    
+    #header, #navbar, #history-bar, #sidebar-left {
+        display: none;
+    }
+
+    #content-inner,
+    .sidebar-left #content-inner
+    {
+        margin: 0;
+        padding: 0 10px;
+    }
+    #content,
+        .sidebar-left #content  {
+        background: none;
+    }
+
+    div#content-area {
+        width: auto; 
+        margin: 0 5%;
+        padding: 0;
+        float: none !important;
+        color: black; 
+        background: transparent;
+    }
+    table tr.altrow td {
+    	background: #f5f2e2;
+    }
+    .cake-sql-log {
+        display: none;
+    }
+}

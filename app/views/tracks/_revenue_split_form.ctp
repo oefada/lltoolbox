@@ -1,0 +1,1 @@
+<?php echo $form->input('Track.keepPercentage', array('label' => 'Percentage Retained By LL')); ?>

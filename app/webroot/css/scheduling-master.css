@@ -1,0 +1,39 @@
+#schedulingmaster-add {
+    padding: 10px;
+}
+
+#schedulingmaster-add h2 {
+    font-size: 15px;
+    color: maroon !important;
+    /*border-top: 1px solid gray;*/
+    padding-top: 20px !important;
+}
+
+#schedulingmaster-add table#data-table, #schedulingmaster-add #data-table td {
+    padding: 5px 5px 5px 0px;
+    border: 0px;
+    border-bottom: 1px solid #EEEEEE !important;
+    font-size: 11px !important;
+    vertical-align: middle !important;
+}
+
+#schedulingmaster-add #data-table th {
+    padding: 0px 5px 5px 0px;
+    border-bottom: 1px solid #EEEEEE;
+    font-size: 11px !important;
+    color: #666 !important;
+}
+
+#schedulingmaster-add input {
+    vertical-align: bottom;
+}
+
+#buynow-options {
+    padding-bottom:20px;
+}
+
+.flex-info, .flex-info tr th td {
+    border:hidden;
+    width:400px;
+    font-size:11px;
+}

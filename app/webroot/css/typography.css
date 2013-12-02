@@ -1,0 +1,127 @@
+/* @override http://lladmindemo.localhost/css/typography.css */
+
+/* $Id$ */
+
+/*
+ * TYPOGRAPHY
+ *
+ * Define CSS classes to control the typography of the application,
+ * including colors of text.
+ *
+ * Only CSS that affects the typography of elements should be
+ * listed here.  Such as:
+ *   font, font-size, font-weight, color, line-height
+ *   font-family, text-decoration, text-align
+ */
+body {
+	color: #545454;
+	font-family: Verdana, Helvetica, Arial, sans-serif;
+	font-size: 12px;
+}
+p {
+    line-height: 20px;
+}
+/* @group =headers */
+h1, h2, h3, h4 {
+	color: #993;
+	font-family: Tahoma, Arial, sans-serif;
+}
+h1 {
+	color: #993;
+	font-size: 100%;
+}
+h2 {
+	color: #e32;
+	font-size: 190%;
+}
+h3 {
+	color: #7f0000;
+	font-size: 95%;
+}
+h4 {
+	color: #993;
+	font-weight: normal;
+}
+/* @group -content area */
+#content-area h2 {
+	color: #d99e00;
+	font-size: 15px;
+}
+
+input, textarea {
+	font-size: 12px !important;
+	font-family: "Verdana", "lucida grande", sans-serif;
+	padding: 2px;
+}
+/* @end */
+/* @end */
+/* @group links */
+a {
+	color: #336699;
+	text-decoration: underline;
+}
+a:hover {
+	color: #7f0000;
+}
+.collapsible-closed .handle,
+.collapsible .handle {
+	text-transform: uppercase;
+	font-family: Tahoma;
+	font-weight: bold;
+	padding-left: 15px;
+}
+.collapsibleContent .collapsible .handle,
+.collapsibleContent .collapsible-closed .handle {
+	text-transform: none;
+	font-size: 110%;
+}
+/* @end */
+/* @group history bar */
+#history-bar a{
+	font-size: 11px;
+	font-weight: normal;
+	color: #fff;
+	line-height: 27px;
+}
+div.title-header h1 {
+	font-size: 18px;
+	color: #7f0000;
+	font-family: Tahoma;
+	font-weight: bold;
+}
+/* @end */
+
+/* @group =counters */
+.inline-counter {
+	margin-left: 2px;
+	font-size: 12px;
+}
+/* @group -h1 */
+h1 .inline-counter {
+	color: #Af3030;
+}
+h1 .inline-counter .p {
+	color: #BFBFBF;
+}
+/* @end */
+/* @group -h2 */
+h2 .inline-counter {
+	color: #f9Be20;
+}
+h2 .inline-counter .p {
+	color: #BFBFBF;
+}
+/* @end */
+/* @group -related */
+.related .inline-counter {
+	color: #898989;
+	font-size: 12px;
+}
+.related .inline-counter .p {
+	color: #CFCFCF;
+}
+/* @end */
+/* @end */
+.textRed {
+	color: #990000;
+}

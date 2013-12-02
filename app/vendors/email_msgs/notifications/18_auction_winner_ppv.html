@@ -1,0 +1,10 @@
+%%purchase_details%%
+<font face="Arial, Helvetica, sans-serif" size="2" style="font-size:13px; line-height:20px" color="#474747">
+<?php if ($ticket['Package']['isDNGPackage'] == 1): ?>
+    <p>Thank you for purchasing a vacation package for <?= $clientNameP ?>. Kindly <a href="<?=$dateRequestLink;?>&">click here to submit your preferred travel dates</a>.</p>
+<?php else: ?>
+    <p>Thank you for your purchase. You have won the auction for <?= $clientNameP ?>. Kindly <a href="<?=$dateRequestLink;?>&">click here to submit your preferred travel dates</a>.</p>
+<?php endif; ?>
+    <p>An email confirmation will be sent as soon as the dates of your reservation are secured. You may check the status of your purchase at any time through <a href="<?= $siteUrl ?>my/my_activity.php">your <?= $siteName ?> account</a>.</p>
+</font>
+%%package_details%%

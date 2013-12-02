@@ -1,0 +1,43 @@
+																		<p>Thank you for your bid on <? if ($isMystery): ?>our Mystery Auction<? else: ?><?= $clientNameP ?><? endif; ?>. You are currently the highest bidder.</p>
+																		<p>We will email you if you are outbid. If you win the auction we will email you to request your<br />
+																		preferred travel dates.</p>
+																		<p>Good luck!</p>
+
+																		<p>Sincerely,<br />
+																		<?= $siteName ?> Concierge</p>
+						</td>
+					</tr>
+					<tr><td colspan="2"><img src="http://www.luxurylink.com/images/email/pixel.gif" align="left" vspace="0" hspace="0" width="1" height="15"></td></tr>
+					<tr>
+						<td colspan="2">
+							<table border="0" cellpadding="0" cellspacing="0" align="center" width="557" style="border-width: 1px; border-color:#c3c3c3;border-style: solid;">
+								<tr>
+	                                <td valign="top" style="padding: 0px 0px 0px 0px;" align="center">
+		                                <table bgcolor="#d8d7b8" border="0" cellpadding="0" cellspacing="0" align="center" width="555" style="padding: 11px 11px 11px 18px;border-bottom: 1px #c3c3c3 solid;">
+											<tr>
+												<td style="font-size:14px;line-height: 16px; font-family: Arial,Sans-Serif;color:#484846;"><b>ABOUT THIS AUCTION</b></td>
+											</tr>
+										</table>
+	                                </td>
+								</tr>
+								<tr>
+	                                <td valign="top" style="padding: 0px 0px 0px 0px;" align="center">
+		                                <table border="0" cellpadding="0" cellspacing="0" align="center" width="555" >
+		                                	<tr>
+		                         				<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;padding: 18px 18px 0px 18px;" colspan="2">You are currently the highest bidder with a bid of <b>$<?= number_format($bidInfo[0][0]['winner'],2) ?></b></td>
+		                					</tr>
+											<tr>
+		                         				<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;padding: 4px 18px 0px 18px;" colspan="2">This auction is scheduled to end on <b><?= date("M d, Y \a\\t g:i A",strtotime($liveOfferData['endDate'])); ?> Pacific Time</b>.</td>
+		                					</tr>
+											<tr>
+		                         				<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;padding: 4px 18px 0px 18px;" colspan="2">For your reference, this is offer <b><?= $liveOfferData['offerId']; ?></b>.</td>
+		                					</tr>
+											<tr>
+		                         				<td style="font-size:12px; font-family: Arial,Sans-Serif;color:#4f3f32;line-height:16px;padding: 18px 18px 18px 18px;" colspan="2"><i>Remember, each bid you place is a binding agreement, and if you win the
+		                         				Auction you're obligated to purchase the package.</i></td>
+		                					</tr>
+										</table>
+	                                </td>
+	                            </tr>
+                            </table>
+%%package_details%%
