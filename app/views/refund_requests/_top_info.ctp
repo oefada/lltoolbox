@@ -27,7 +27,16 @@
 
 		<div class="input text refundRequestDiv">
 			<label>Site</label>
-			<?= ($refundInfo['ticket']['Ticket']['siteId'] == 2) ? 'Family Getaway'  : 'Luxury Link'; ?>
+			<? if ($refundInfo['ticket']['Ticket']['siteId'] == 2) {
+                  echo 'Family Getaway';
+               } else {
+                    if ($refundInfo['ticket']['Ticket']['tldId'] == 2) {
+                        echo 'Luxury Link - UK';
+                    } else {
+                        echo 'Luxury Link';
+                    }
+               }
+            ?>
 		</div>	
 
 		<div class="input text refundRequestDiv">
