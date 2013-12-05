@@ -6,6 +6,7 @@ class ThanksgivingPromoShell extends Shell
 
     private $startDate;
     private $endDate;
+    private $applyCoF = false;
 
     /**
      *
@@ -42,12 +43,16 @@ class ThanksgivingPromoShell extends Shell
                         'notes' => 'Automatic CoF: Thanksgiving 2013 Promo'
                     )
                 );
-                $this->CreditTracking->create();
-                if ($this->CreditTracking->save($cofToApply)) {
-                    $this->out('Successfully applied the following CoF');
-                    $this->out("\t" . 'userId: ' . $cofToApply['CreditTracking']['userId']);
-                    $this->out("\t" . 'amount: ' . $cofToApply['CreditTracking']['amount']);
-                    $this->out("");
+                if ($this->applyCoF === true) {
+                    $this->CreditTracking->create();
+                    if ($this->CreditTracking->save($cofToApply)) {
+                        $this->out('Successfully applied the following CoF');
+                        $this->out("\t" . 'userId: ' . $cofToApply['CreditTracking']['userId']);
+                        $this->out("\t" . 'amount: ' . $cofToApply['CreditTracking']['amount']);
+                        $this->out("");
+                    }
+                } else {
+                    var_dump($cofToApply);
                 }
             }
         } else {
@@ -73,6 +78,8 @@ class ThanksgivingPromoShell extends Shell
             $this->endDate = $this->params['endDate'];
         }
 
+        $this->applyCoF = (isset($this->params['applyCoF'])) ? true : false;
+
         return !$errorFlag;
     }
 
@@ -86,22 +93,34 @@ class ThanksgivingPromoShell extends Shell
         $sql = "
           SELECT
             b.bidId,
-            b.bidAmount,
-            CEIL(b.bidAmount * 0.10) as cofAmount,
+            SUM(b.bidAmount) as bidAmount,
+            SUM(CEIL(b.bidAmount * 0.10)) AS cofAmount,
             u.userId,
+            u.firstName,
+            u.lastName,
             u.email
-          FROM
-            bid b
-          INNER JOIN ticket t ON t.offerId = b.offerId
-          INNER JOIN paymentDetail pd ON pd.ticketId = t.ticketId
-          INNER JOIN `user` u ON b.userId = u.userId
-          INNER JOIN offerLuxuryLink ol ON b.offerId = ol.offerId
-          WHERE
-            b.winningBid = 1
-            AND b.bidDatetime BETWEEN ? AND ?
-            AND pd.isSuccessfulCharge = 1
-            AND t.ticketStatusId NOT IN (7, 8, 16, 17, 18)
-            AND ol.clientId!=8455
+            FROM
+                bid b
+            INNER JOIN `user` u ON b.userId = u.userId
+            WHERE
+                b.bidId IN (
+                    SELECT
+                        DISTINCT(b1.bidId)
+                    FROM
+                        bid b1
+                    INNER JOIN ticket t ON t.offerId = b1.offerId
+                    INNER JOIN paymentDetail pd ON pd.ticketId = t.ticketId
+                    INNER JOIN `user` u1 ON b1.userId = u1.userId
+                    INNER JOIN offerLuxuryLink ol ON b1.offerId = ol.offerId
+                    WHERE
+                        b1.winningBid = 1
+                        AND b1.bidDatetime BETWEEN ? AND ?
+                        AND pd.isSuccessfulCharge = 1
+                        AND t.ticketStatusId NOT IN (7, 8, 16, 17, 18)
+                        AND ol.clientId != 8455
+                )
+            GROUP BY u.userId
+            ORDER BY u.email
         ";
 
         $winningBidsArray = $this->Bid->query($sql, array($this->startDate, $this->endDate));
