@@ -184,8 +184,16 @@ echo $form->input('segment');
 <div class="controlset">
     <?echo $form->hidden('showTripAdvisorReview');?>
     <?echo $form->input('hideUserReviews');?>
-    <?echo $form->input('isPegasusEnabled');?>
 </div>
+
+<fieldset class="collapsible">
+    <legend class="handle">Pegasus</legend>
+    <div class="collapsibleContent">
+        <?echo $form->input('isPegasusEnabled', array('label' => 'Enabled'));?>
+        <?echo $form->input('pegasusBrandId', array('label' => 'Brand', 'empty' => true)); ?>
+        <?echo $form->input('pegasusPropertyCode', array('label' => 'Property Code'));?>
+    </div>
+</fieldset>
 
 <fieldset class="collapsible">
     <legend class="handle">Contact Details</legend>

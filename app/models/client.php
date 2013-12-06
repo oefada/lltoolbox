@@ -30,6 +30,7 @@ class Client extends AppModel
     public $belongsTo = array(
         'ClientType' => array('foreignKey' => 'clientTypeId'),
         'Region' => array('foreignKey' => 'regionId'),
+        'PegasusBrand' => array('foreignKey' => 'pegasusBrandId'),
         'ParentClient' => array('className' => 'Client', 'foreignKey' => 'parentClientId')
     );
 
