@@ -6,7 +6,7 @@ App::import('Vendor', 'nusoap_client/lib/nusoap');
 class ClientsController extends AppController {
 
 	var $name = 'Clients';
-	var $uses = array('Client', 'ClientThemeRel', 'ClientTag', 'ClientTagRel', 'ClientDestinationRel', 'ClientAmenityTypeRel', 'ClientInterview', 'ClientCollection', 'ClientSocial', 'ClientPdpRedirects');
+	var $uses = array('Client', 'ClientThemeRel', 'ClientTag', 'ClientTagRel', 'ClientDestinationRel', 'ClientAmenityTypeRel', 'ClientInterview', 'ClientCollection', 'ClientSocial', 'ClientPdpRedirects', 'PegasusBrand');
 
     public $helpers = array('Httprequest');
 
@@ -339,6 +339,9 @@ class ClientsController extends AppController {
 
 		$this->Client->ClientType->recursive = -1;
 		$clientTypeIds = $this->Client->ClientType->find('list');
+
+		$this->PegasusBrand->recursive = -1;
+		$pegasusBrandIds = $this->PegasusBrand->find('list');
 		
 		$this->Client->recursive = -1;
 		$clientCollectionIds = $this->Client->find('list', array('conditions' => 'Client.clientTypeId = 14'));
@@ -402,7 +405,7 @@ class ClientsController extends AppController {
 			$cityIds = $this->Country->State->City->find('list', array('conditions' => array('City.stateId' => $this->data['Client']['stateCode'],'City.countryId' => $this->data['Client']['countryCode'])));
 		}
 		
-		$this->set(compact('clientStatusIds','clientTypeIds','clientCollectionIds','regions','clientAcquisitionSourceIds', 'loas', 'themes', 'destinations', 'destSelected', 'countryIds', 'stateIds', 'cityIds'));
+		$this->set(compact('clientStatusIds','clientTypeIds','clientCollectionIds','regions','clientAcquisitionSourceIds', 'loas', 'themes', 'destinations', 'destSelected', 'countryIds', 'stateIds', 'cityIds', 'pegasusBrandIds'));
 
 		// GET COLLECTIONS DATA
 		$collections = $this->ClientCollection->getAll($this->data['Client']['clientId']);
