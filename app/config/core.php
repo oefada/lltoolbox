@@ -261,7 +261,7 @@ $cacheAction = true;
 	} else {
 		define("ISDEV",false);
 		define("ISSTAGE",false);
-        Configure::write('TokenizerService', 'tokenex');
+        Configure::write('TokenizerService', 'tokenex_v2');
         Configure::write('TokenEx.tokenExMerchantId', '6420148734761242');
         Configure::write('TokenEx.tokenExWsdlURL', 'https://token.api.tokenex.com/Tokenizer.svc?wsdl');
         Configure::write('TokenEx.tokenExV2Url', 'https://api.tokenex.com/TokenServices.svc/REST/');
