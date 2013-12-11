@@ -269,8 +269,31 @@ if (isset($loa['Loa']['modified'])) {
                     <?php
                     echo $form->input('Loa.currencyId', array('label' => 'Item Currency'));
                     echo $form->input('payoffDate', array('empty' => true));
+                    ?>
+                     <div class="input text">
+                     <label for="membershipFeeCopy">Membership Fee</label>
+                         <span id="membershipFeeCopy">
+                         </span>
+<!--                            <input id="membershipFeeCopy" name="membershipFeeCopy" disabled="disabled" class="copyFields"/>-->
+                        </div>
+                    <?
                     echo $form->input('membershipBalance', array('disabled' => $disable_advanced_edit));
-                    echo $form->input('membershipPackagesRemaining', array('disabled' => $disable_mp));
+                    ?>
+
+                <div class="input text">
+                    <label for="membershipTotalNightsCopy">Membership Total Packages</label>
+                                 <span id="membershipTotalNightsCopy">
+                                 </span>
+                </div>
+                <?
+                echo $form->input('membershipPackagesRemaining', array('disabled' => $disable_mp));
+                ?>
+                <div class="input text">
+                    <label for="membershipTotalNightsCopy">Membership Total Nights</label>
+                             <span id="membershipTotalNightsCopy">
+                             </span>
+                </div>
+        <?
                     echo $form->input('membershipNightsRemaining');
                     echo $form->input('membershipFeeEstimated', array('disabled' => $enable_est,'label' => 'Membership Estimated Fee'));
                     $enable_rvc = !$disable_advanced_edit && ($loa['Loa']['loaMembershipTypeId'] == 5) ? true : false;
@@ -522,6 +545,36 @@ if (isset($loa['Loa']['modified'])) {
             }
         });
 
+        function copyField(sourceSelector, targetSelector) {
+            //set defaults values for target
+            $sourceValue = $(sourceSelector).val();
+            $target = $(targetSelector);
+
+            if ($target.is("input")) {
+                $(targetSelector).val($sourceValue);
+            } else {
+                $(targetSelector).text($sourceValue);
+            }
+            //watch for updates, update target
+            $(document).on("change, keyup", sourceSelector, function () {
+                var $sourceValue = $(this).val();
+                $target = $(targetSelector);
+                if ($sourceValue.length == 0) {
+                    $(targetSelector).val('');
+                    return false;
+                }
+                if ($target.is("input")) {
+                    $(targetSelector).val($sourceValue);
+                } else {
+                    $(targetSelector).text($sourceValue);
+                }
+                return;
+            });
+        }
+        copyField("#LoaMembershipFee",'#membershipFeeCopy');
+        copyField("#LoaMembershipTotalNights","#membershipTotalNightsCopy");
+        copyField("#LoaMembershipTotalPackages","#membershipTotalPackagesCopy");
+
     //modal handler
         $('div.edit-link').click(function() {
 
@@ -576,6 +629,7 @@ if (isset($loa['Loa']['modified'])) {
         //Autocompletes for LoaAccountExecutive and LoaAccountManager
         var listSalesPeople = <?= json_encode($listSalesPeople)?>;
         $(document).ready(function(){
+
             //var fakedata = ['test1','test2','test3','test4','ietsanders'];
             $( "#LoaAccountExecutive").autocomplete({
                 minLength: 0,
