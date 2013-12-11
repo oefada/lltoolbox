@@ -109,6 +109,18 @@ echo $layout->blockEnd();
 
 <div class="loas form">
 
+<script type="text/javascript">
+    /***
+     * Script added by martin to allow for client notes
+     */
+    jQuery(function ($) {
+        $(window).ready(function () {
+            load_notes(<?= $loa['Loa']['loaId']; ?>, 6);
+        });
+    });
+
+</script>
+<div id="noteModule" style="position: absolute; top: 194px; left: 940px;"></div>
 <?php
 
 echo $form->create('Loa');
