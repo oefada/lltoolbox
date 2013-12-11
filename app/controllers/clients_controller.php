@@ -341,7 +341,7 @@ class ClientsController extends AppController {
 		$clientTypeIds = $this->Client->ClientType->find('list');
 
 		$this->PegasusBrand->recursive = -1;
-		$pegasusBrandIds = $this->PegasusBrand->find('list');
+		$pegasusBrandIds = $this->PegasusBrand->find('list', array('order' => 'description ASC'));
 		
 		$this->Client->recursive = -1;
 		$clientCollectionIds = $this->Client->find('list', array('conditions' => 'Client.clientTypeId = 14'));
