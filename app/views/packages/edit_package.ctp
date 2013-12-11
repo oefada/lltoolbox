@@ -25,7 +25,6 @@
 		<tr>
 			<th>Package Promo</th>
 			<td>
-				asdf
 			</td>
 		</tr>
         <tr>

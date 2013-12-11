@@ -93,9 +93,8 @@ class Package extends AppModel {
 
 	function validateNumNightsAddsUp($data) {
 		$numNights = 0;
-
-		if(isset($this->data['PackageLoaItemRel']) && is_array($this->data['PackageLoaItemRel'])) {
-			foreach ($this->data['PackageLoaItemRel'] as $item) {
+		if(isset($this->data['PackageLoaItemRel']) && is_array($this->data['PackageLoaItemRel'])){
+			foreach ($this->data['PackageLoaItemRel'] as $item){
 
 				//If type Pre-packaged is included, skip validation and just return true
 				if (in_array($item['loaItemTypeId'], array(12,20))) {
@@ -172,11 +171,11 @@ class Package extends AppModel {
 		 $packageId = (empty($this->data['Package']['packageId'])) ? $this->getLastInsertID() : $this->data['Package']['packageId'];
 
 		 //delete from packageAgeRange if this package isn't associated with Family
-		 if (isset($this->data['Package']['siteId']) && !in_array($this->data['Package']['siteId'], array(2)) ||
-			 (isset($this->data['Package']['sites']) && !stristr('family', $this->data['Package']['sites']))) {
+		   if (!$this->isFamilyByPackageId($packageId)){
 			$age_ranges = $this->PackageAgeRange->findByPackageId($packageId);
 			if (!empty($age_ranges)) {
-				 $this->PackageAgeRange->deleteAll(array('PackageAgeRange.packageId' => $packageId), false);
+                $conditions = array('PackageAgeRange.packageId' => $packageId);
+                $this->PackageAgeRange->deleteAll($conditions);
 			}
 		 }
 

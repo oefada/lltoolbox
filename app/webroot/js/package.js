@@ -29,6 +29,10 @@ $().ready(function() {
                 $('div#familyAgeRanges').show();
             }else{
                 $('div#familyAgeRanges').hide();
+                //clear age ranges when not family
+                $('#ageRangeLow').val('');
+                $('#ageRangeHigh').val('');
+
             }
 
         });
