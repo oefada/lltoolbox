@@ -389,8 +389,8 @@ if (isset($loa['Loa']['modified'])) {
             array(
                 'label' => 'Packaging Notes',
                 'id' => 'emailNewsletterDates',
-                'onKeyDown' => 'limitText(emailNewsletterDates, 300)',
-                'onKeyUp' => 'limitText(emailNewsletterDates, 300)'
+                'onKeyDown' => 'limitText(emailNewsletterDates, 1000)',
+                'onKeyUp' => 'limitText(emailNewsletterDates, 1000)'
             )
         );
         echo $form->input('averageDailyRate');
