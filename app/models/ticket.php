@@ -231,7 +231,7 @@ class Ticket extends AppModel
             }
         }
 
-        if ($this->isForeignCurrencyTicket() === true) {
+        if ($this->isForeignCurrencyTicket($ticketId) === true) {
             $blockCreditOnFile = true;
         }
 
