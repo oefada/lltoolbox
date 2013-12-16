@@ -1329,9 +1329,16 @@ class TicketsController extends AppController
         return $offers;
     }
 
+    /**
+     * @Todo, WE are assuming that we are ONLY using this tool for clients who have user payment settings. Validate that is actually the case.
+     */
     private function mtCcsByUser($userId)
     {
-        $q = 'SELECT * FROM userPaymentSetting p WHERE inactive = 0 AND userId = ?';
+        $q = '
+            SELECT * FROM userPaymentSetting p
+            WHERE inactive = 0 AND userId = ?
+            INNER JOIN userSiteExtended se ON (p.userId = se.userId)
+            ';
         $result = $this->Ticket->query($q, array($userId));
         $ccs = array();
         foreach ($result as $r) {
@@ -1346,6 +1353,48 @@ class TicketsController extends AppController
             }
         }
         return $ccs;
+    }
+    /*
+     * In case we need later.
+     */
+    public function isRegisteredUser($userId = null)
+    {
+
+        Configure::write('debug', '0');
+        $this->autoRender = false;
+        $this->autoLayout = false;
+
+        $response = array();
+        $isRegistered = 0;
+        if (empty($userId)) {
+            $isRegistered = 0;
+        }
+        $conditions = array(
+            'UserSiteExtended.userId' => $userId,
+        );
+        $fields = array(
+            'User.userId',
+            'User.firstName',
+            'User.lastName',
+            'User.email',
+            'UserSiteExtended.username',
+            'UserSiteExtended.registrationDatetime',
+            'UserSiteExtended.lastLogin',
+        );
+        $userDetails = $this->User->find(
+            'all',
+            array(
+                'fields' => $fields,
+                'conditions' => $conditions
+            )
+        );
+        if (!empty($userDetails)) {
+            $isRegistered = 1;
+        }
+        $response = array('registered' => $isRegistered, 'userData' => $userDetails);
+        header('Content-Type: application/javascript');
+        echo $_GET['callback'] . '(' . json_encode($response) . ')';
+        $this->set($response);
     }
 
 
