@@ -92,6 +92,7 @@ class PackagesController extends AppController
         }
         foreach ($packages as $k => $v) {
             if (isset($v['Package']['packageId'])) {
+                $packages[$k]['Package']['isFamily'] = $this->Package->isFamilyByPackageId($v['Package']['packageId']);
                 if (isset($validityEnds[$v['Package']['packageId']])) {
                     $packages[$k]['Package']['lastPricePointValidityEnd'] = $validityEnds[$v['Package']['packageId']];
                 }

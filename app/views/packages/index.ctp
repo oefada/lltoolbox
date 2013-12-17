@@ -63,28 +63,18 @@ $this->pageTitle = $client['Client']['name'] . $html2->c(
                         <?php echo $package['ClientLoaPackageRel']['loaId'] ? $html->link($package['ClientLoaPackageRel']['loaId'], array('controller'=>'loas', 'action'=>'view', $package['ClientLoaPackageRel']['loaId'])) : '&#160;'; ?>
                     </td>
                     <td>
-                        <?php
-                        switch ($package['Package']['siteId']) {
-                            case 1:
-                                echo $html->image(
-                                    'http://www.luxurylink.com/favicon.ico',
-                                    array('alt' => 'Luxury Link', 'title' => 'Luxury Link')
-                                );
-                                echo '&#160;';
-                                break;
-                            case 2:
-                                echo $html->image(
-                                    'http://www.familygetaway.com/favicon.ico',
-                                    array('alt' => 'Family Getaway', 'title' => 'Family Getaway')
-                                );
-                                echo '&#160;';
-                                break;
-                        }
-                        ?>
+
                         <?php echo $html->link(
                             $package['Package']['packageName'],
                             "/clients/$clientId/packages/summary/{$package['Package']['packageId']}"
                         ); ?>
+                        <?php
+                        if($package['Package']['isFamily']){
+                            echo $html->image(
+                                $this->webroot.'img/fam_tag24x19.png',
+                                array('alt' => 'Family package', 'title' => 'Family package'));
+                        }
+                        ?>
                     </td>
                     <td>
                         <?php echo $packageStatusIds[$package['Package']['packageStatusId']]; ?>
