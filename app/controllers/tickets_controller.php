@@ -1334,11 +1334,7 @@ class TicketsController extends AppController
      */
     private function mtCcsByUser($userId)
     {
-        $q = '
-            SELECT * FROM userPaymentSetting p
-            WHERE inactive = 0 AND userId = ?
-            INNER JOIN userSiteExtended se ON (p.userId = se.userId)
-            ';
+        $q = 'SELECT * FROM userPaymentSetting p WHERE inactive = 0 AND userId = ?';
         $result = $this->Ticket->query($q, array($userId));
         $ccs = array();
         foreach ($result as $r) {
