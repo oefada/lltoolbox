@@ -2117,6 +2117,107 @@ class ReportsController extends AppController
         $this->set('packageStatusIds', $this->PackageStatus->find('list'));
     }
 
+    public function booking_report()
+    {
+        if (!empty($this->data)) {
+            $conditions = $this->_build_conditions($this->data);
+
+            if (!empty($this->params['named']['sortBy'])) {
+                $direction = (@$this->params['named']['sortDirection'] == 'DESC') ? 'DESC' : 'ASC';
+                $order = $this->params['named']['sortBy'] . ' ' . $direction;
+
+                $this->set('sortBy', $this->params['named']['sortBy']);
+                $this->set('sortDirection', $direction);
+            } else {
+                $order = 'Client.clientId';
+
+                $this->set('sortBy', 'Client.clientId');
+                $this->set('sortDirection', 'DESC');
+            }
+
+            if (empty($conditions)) {
+                $conditions = '1=1';
+            }
+
+            $sql = "
+                    SELECT Client.name
+                    , Client.clientId
+                    , Client.AccountingId
+                    , Loa.loaId
+                    , AccountType.accountTypeName
+                    /* , Loa.loaLevelId */
+                    , LoaLevel.loaLevelName
+                    ,'Live Date'
+                    , Loa.customerApprovalDate
+                    , Loa.startDate
+                    , Loa.endDate
+                    , Loa.loaMembershipTypeId
+                    , LoaMembershipType.loaMembershipTypeName
+                    , LoaPaymentTerm.description
+                    , Loa.loaPaymentTermId
+                    /* , Loa.loaInstallmentTypeId */
+                    , LoaInstallmentType.name
+                    , Loa.membershipFee
+                    , Loa.membershipBalance
+                    , Loa.membershipTotalPackages
+                    , Loa.membershipTotalNights
+                    , Loa.auctionCommissionPerc
+                    , Loa.buynowCommissionPerc
+                    , Loa.notes
+                    , Loa.loaNumberPackages
+                    , Loa.luxuryLinkFee
+                    , Loa.advertisingFee
+                    , Loa.Upgraded
+                    , Loa.accountExecutive
+                    , Loa.accountManager
+                    , cityNew.cityName
+                    , Client.locationDisplay
+                    , Client.State
+                    , Client.countryId
+                    , CountryNew.countryName
+                    , Loa.emailNewsletterDates
+                    FROM clientLoaPackageRel ClientLoaPackageRel
+                    INNER JOIN loa Loa ON (ClientLoaPackageRel.loaId = Loa.`loaId`)
+                    INNER JOIN client Client ON (ClientLoaPackageRel.clientId = Client.clientId)
+                    LEFT JOIN cityNew ON (Client.cityId = cityNew.cityId)
+                    LEFT JOIN loaPaymentTerm LoaPaymentTerm ON (Loa.loaPaymentTermId= LoaPaymentTerm.loaPaymentTermId)
+                    LEFT JOIN loaInstallmentType LoaInstallmentType ON (Loa.`loaInstallmentTypeId` = LoaInstallmentType.loaInstallmentTypeId)
+                    LEFT JOIN loaMembershipType LoaMembershipType  ON (Loa.loaMembershipTypeId = LoaMembershipType.loaMembershipTypeId)
+                    LEFT JOIN loaLevel LoaLevel  ON (Loa.loaLevelId = LoaLevel.loaLevelId)
+                    LEFT JOIN countryNew CountryNew ON (Client.countryId= CountryNew.id)
+                    LEFT JOIN accountType AccountType ON (Loa.accountTypeId = AccountType.accountTypeId)
+                    WHERE $conditions
+                    GROUP BY ClientLoaPackageRel.clientId
+                    ORDER BY $order
+                    LIMIT $this->limit
+
+            ";
+
+            $results = $this->OfferType->query($sql);
+            $numRecords = sizeof($results);
+            $numPages = ceil($numRecords / $this->perPage);
+
+            $this->set('currentPage', $this->page);
+            $this->set('numRecords', $numRecords);
+            $this->set('numPages', $numPages);
+            $this->set('data', $this->data);
+            $this->set('results', $results);
+            $this->set('serializedFormInput', serialize($this->data));
+        }
+
+        $condition1Options = array(
+            'MATCH=Client.name' => 'Client Name',
+            'MATCH=Client.managerUsername' => 'Manager Username'
+        );
+
+        $this->loadModel("Loa");
+        $this->loadModel("LoaLevel");
+
+        $this->set('condition1Options', $condition1Options);
+        $this->set('LoaLevelsList', $this->LoaLevel->find('list'));
+        $this->set('SalesPeopleList', $this->Loa->getSalesPeople());
+    }
+
     function mcr()
     {
 
