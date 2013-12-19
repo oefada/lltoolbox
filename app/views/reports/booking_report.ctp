@@ -1,12 +1,13 @@
 <?php $this->pageTitle = "LOA Booking Report";
 
-Configure::write('debug',0);
+
 ?>
 <div style="float:right;">
     <?=$html->link('<span><b class="icon"></b>Export Report</span>', array(
             'controller' => 'reports',
-            'action' => $this->action.urlencode($serializedFormInput),
-            'format' => 'csv',
+            'action' => $this->action.'/filter:'.urlencode($serializedFormInput),
+            'ext' => 'csv',
+            'format'=>'csv',
         ), array(
             'escape' => false,
             'class' => 'button excel',
