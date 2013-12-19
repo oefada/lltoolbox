@@ -228,7 +228,10 @@ class ClientsController extends AppController {
 			 else {
 				$this->data['Client']['ageRanges'] = null;
 			 }
-
+			 
+			 if ($this->data['Client']['pegasusPropertyCode'] == '') {
+			 	$this->data['Client']['pegasusPropertyCode'] = null;
+			 }
 
             //remove query string from fbUrl
             if (isset($this->data['ClientSocial']['fbUrl']) && !empty($this->data['ClientSocial']['showFb'])) {
