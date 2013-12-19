@@ -463,6 +463,7 @@ class PaymentDetailsController extends AppController
         $this->set('paymentProcessorIds', $paymentProcessors);
         $this->set('initials_user', $this->user['LdapUser']['username']);
         $this->set('nocollapse', 1);
+        $this->set('userPaymentSettingId', $this->Ticket->getUserPaymentSettingId($ticket['Ticket']['ticketId']));
 
         if (isset($this->params['url']['payments_applied'])) {
             $this->render("payments_applied", "ajax");
