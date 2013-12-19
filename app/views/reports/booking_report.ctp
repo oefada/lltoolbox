@@ -67,7 +67,7 @@
 
             <div class="fieldRow">
                 <label>Client ID</label>
-                <?php echo $form->text('condition4.field', array('value' => 'Client.Id', 'type' => 'hidden')) ?>
+                <?php echo $form->text('condition4.field', array('value' => 'Client.clientId', 'type' => 'hidden')) ?>
                 <?php echo $form->text('condition4.value') ?>
                 <!--	--><?php //echo $form->text('condition4.field', array('value' => 'Client.clientId', 'type' => 'hidden'))?>
                 <!--	--><?php //echo $form->input('condition4.value', $revenueModelIds, null, array('multiple' => false))?>
