@@ -69,10 +69,17 @@
                 <label>Client ID</label>
                 <?php echo $form->text('condition4.field', array('value' => 'Client.clientId', 'type' => 'hidden')) ?>
                 <?php echo $form->text('condition4.value') ?>
+
+
+
                 <!--	--><?php //echo $form->text('condition4.field', array('value' => 'Client.clientId', 'type' => 'hidden'))?>
                 <!--	--><?php //echo $form->input('condition4.value', $revenueModelIds, null, array('multiple' => false))?>
             </div>
         </div>
+        <?php
+     //   echo $this->renderElement("input_search", array('name'=>'clientId', 'controller'=>'clients', 'label'=>'Client Id', 'style'=>'width:400px', 'multiSelect'=>'ClientId'));
+
+        ?>
 
 <div class="controlset fieldRow" style="border: 0">
 <?php 		echo $form->checkbox('paging.disablePagination');

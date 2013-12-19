@@ -22,7 +22,7 @@ $colNames = array(
     'Membership Total Nights',
     'Auction % Commission',
     'BuyNow % Commission',
-    //'LOA Notes',
+    'LOA Notes',
     'Num Commission Free',
     'LuxuryLink Fee',
     'Advertising Fee',
@@ -32,7 +32,7 @@ $colNames = array(
     'City',
     'State',
     'Country',
-    //'Packaging Notes'
+    'Packaging Notes'
 );
 
 if (!empty($results)) { //there are records
@@ -46,7 +46,7 @@ if (!empty($results)) { //there are records
                 formatCSV($r['Client']['AccountingId']),
                 formatCSV($r['AccountType']['accountTypeName']),
                 formatCSV($r['LoaLevel']['loaLevelName']),
-                'Live Date',
+                '',
                 formatCSV(
                     isset($r['Loa']['customerApprovalDate']) ? date(
                         'm-d-Y',
@@ -64,7 +64,7 @@ if (!empty($results)) { //there are records
                 formatCSV($r['Loa']['membershipTotalNights']),
                 formatCSV($r['Loa']['auctionCommissionPerc']),
                 formatCSV($r['Loa']['buynowCommissionPerc']),
-                //formatCSV(trim(strip_tags($r['Loa']['notes'], "<br>"))),
+                formatCSV(trim(strip_tags($r['Loa']['notes'], "<br>"))),
                 formatCSV($r['Loa']['loaNumberPackages']),
                 formatCSV($r['Loa']['luxuryLinkFee']),
                 formatCSV($r['Loa']['advertisingFee']),
@@ -74,7 +74,7 @@ if (!empty($results)) { //there are records
                 formatCSV($r['cityNew']['cityName']),
                 formatCSV($r['Client']['state']),
                 formatCSV($r['CountryNew']['countryName']),
-                //formatCSV($r['Loa']['emailNewsletterDates']),
+                formatCSV(trim($r['Loa']['emailNewsletterDates'])),
             )
         ); //get column names.
     }
