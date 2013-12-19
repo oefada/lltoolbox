@@ -1125,13 +1125,6 @@ class PackagesController extends AppController
 
     function summary($clientId, $packageId)
     {
-        //$packageTypeSettings = $this->Package->getPackageTypeSettingsByPackageId($packageId);
-        //$this->set('packageTypeSettings',$packageTypeSettings);
-
-        //var_dump($this->PackageType->getCheckBoxArr());
-
-       // var_dump($this->Package->PackageTypeRel->packageTypeExistsForPackage($packageId, 1));
-        // client
         $client = $this->Client->find('first', array('conditions' => array('Client.clientId' => $clientId)));
         $this->set('client', $client);
         $package = $this->Package->getPackage($packageId);
@@ -1249,6 +1242,9 @@ class PackagesController extends AppController
             'all',
             array('conditions' => array('PricePoint.packageId' => $packageId, 'inactive' => 0))
         );
+
+
+
         $this->set('pricePoints', $pricePoints);
 
         // currency
@@ -1850,6 +1846,10 @@ class PackagesController extends AppController
         }
     }
 
+    /*
+     * @documentation: by BTurner
+     * @why: Becu
+     */
     function edit_inclusions($clientId, $packageId)
     {
         $loaId = $this->Package->ClientLoaPackageRel->getLoaId($packageId);
@@ -3194,11 +3194,9 @@ class PackagesController extends AppController
             }
             $totals[$packageClient['Client']['name']] = array('inclusionTotal' => $inclusionTotal);
         }
-       // var_dump($totals);
-        // ratePeriod
+
         $ratePeriods = $this->Package->getRatePeriods($packageId);
 
-       // die();
         if (!empty($ratePeriods)) {
             foreach ($ratePeriods as $key => &$ratePeriod) {
                 $clientName = $this->LoaItem->getClientName($ratePeriod['LoaItemRatePeriod']['loaItemId'], $packageId);
