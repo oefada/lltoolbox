@@ -18,7 +18,7 @@
 <div class='advancedSearch' style="width: 800px">
     <?php echo $form->create('', array('action' => 'booking_report')) ?>
     <fieldset>
-        <h3 class='title'>SEARCH PACKAGES BY:</h3>
+        <h3 class='title'>SEARCH LOAs BY:</h3>
 
         <div class="fieldRow">
             <label>Package Live Date</label>
@@ -149,19 +149,14 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 <?=$pagination->Paginate("/reports/booking_report/filter:".urlencode($serializedFormInput)."/sortBy:$sortBy/sortDirection:$sortDirection/page:", $currentPage, $numPages)?>
 <?php elseif (!empty($data)): ?>
 <p>No results were found for the entered filters.</p>
-<p><strong>Tips:</strong> If searching by client or package name, enter four or more characters.
-	<br />For client and package name you can make a search term required by adding a "+" before it, exclude it by adding a "-",
-	or search a complete phrase by adding quotes "" around it. By default, offers that contain any of the search terms are returned.
-</p>
+<!--<p><strong>Tips:</strong> If searching by client or package name, enter four or more characters.-->
+<!--	<br />For client and package name you can make a search term required by adding a "+" before it, exclude it by adding a "-",-->
+<!--	or search a complete phrase by adding quotes "" around it. By default, offers that contain any of the search terms are returned.-->
+<!--</p>-->
 <?php else: ?>
 	<div class='blankExample'>
-		<h1>Enter some search criteria above to search packages</h1>
-		<p>This package search report will search through all current and past offers using the search criteria entered above.</p>
-		<p><strong>Tips:</strong> If searching by client or package name, enter four or more characters.
-			<br />For client and package name you can make a search term required by adding a "+" before it, exclude it by adding a "-",
-			or search a complete phrase by adding quotes "" around it. By default, offers that contain any of the search terms in client name or package name are returned.
-			<a href="#" target="_blank">Learn more</a>
-		</p>
+		<h1>Enter some search criteria above to search Loas</h1>
+
 		<?=$html->image('blank_slate_examples/reports_packages.gif')?>
 	</div>
 <?php endif; ?>
