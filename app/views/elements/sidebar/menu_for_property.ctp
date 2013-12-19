@@ -29,7 +29,7 @@
 	<li style="margin-bottom:3px;"><?=$html->link("CLIENT REVIEWS", "/clientReviews/index/clientId/$clientId");?></li>
 	
 	<li style="margin-bottom:3px;"><?=$html->link('ROOM GRADE', "/clients/$clientId/room_grades", array('update' => 'content-area', 'indicator' => 'spinner'))?></li>
-    <?php if (in_array('Geeks', $userDetails['groups']) || in_array('tbphotos', $userDetails['groups'])): ?>
+	<?php if (in_array('Geeks', $userDetails['groups']) || in_array('tbphotos', $userDetails['groups']) || in_array('am', $userDetails['groups'])): ?>
         <li class="open">PHOTOS
             <ul>
                 <li style="margin-bottom:3px;"><?php echo $html->link('Organize', '/clients/'.$clientId.'/images/organize', array('update' => 'content-area', 'indicator' => 'spinner')); ?></li>
