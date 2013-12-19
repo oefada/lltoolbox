@@ -1164,4 +1164,15 @@ class Ticket extends AppModel
             return false;
         }
     }
+
+    public function getUserPaymentSettingId($ticketId)
+    {
+        $sql = "SELECT userPaymentSettingId FROM ticket WHERE ticketId=?";
+        $params = array($ticketId);
+
+        $result = $this->query($sql, $params);
+        $userPaymentSettingId = isset($result[0]['ticket']['userPaymentSettingId']) ? $result[0]['ticket']['userPaymentSettingId'] : false;
+
+        return $userPaymentSettingId;
+    }
 }

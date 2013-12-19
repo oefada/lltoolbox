@@ -12,6 +12,7 @@
 		<td><i>Primary</i></td>
 		<td><i>Inactive</i></td>
 		<td><i>Card Added</i></td>
+        <td><i>Used for Purchase</i></td>
 	</tr>
 	<?php
 	if (count($userPaymentSetting)) {
@@ -20,7 +21,10 @@
 			if ($upsValue['inactive']) {
 				//continue;
 			}
-			$selectPrimaryCC = $upsValue['primaryCC'] && !$upsValue['inactive'] ? 'checked' : '';
+            $selectPrimaryCC = '';
+            if (($upsValue['userPaymentSettingId'] == $userPaymentSettingId) && !$upsValue['inactive']) {
+			    $selectPrimaryCC = 'checked';
+            }
 			$cardInactiveColor = $upsValue['inactive'] ? '#CC0000;' : '#009900;';
 		?>
 		<tr style="color: <?php echo $cardInactiveColor;?>">
@@ -56,6 +60,7 @@
 			<td><?php echo ($upsValue['primaryCC']) ? 'Yes' : 'No';?></td>
 			<td><?php echo ($upsValue['inactive']) ? '<strong>Yes</strong>' : 'No';?></td>
 			<td><?php echo $upsValue['created'];?></td>
+            <td><?php echo ($selectPrimaryCC=='checked' ? 'Yes' : 'No')?></td>
 		</tr>
 	<?php } } ?>
 	</table>
