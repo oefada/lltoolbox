@@ -73,7 +73,7 @@ if (!empty($results)) { //there are records
                 formatCSV($r['Loa']['loaNumberPackages']),
                 formatCSV($r['Loa']['luxuryLinkFee']),
                 formatCSV($r['Loa']['advertisingFee']),
-                formatCSV(isset($r['Loa']['Upgraded']) ? 'Yes' : 'No'),
+                formatCSV(!empty($r['Loa']['Upgraded']) ? 'Yes' : 'No'),
                 formatCSV($r['Loa']['accountExecutive']),
                 formatCSV($r['Loa']['accountManager']),
                 formatCSV($r['cityNew']['cityName']),
