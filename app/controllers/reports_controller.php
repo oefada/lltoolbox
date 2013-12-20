@@ -2179,6 +2179,7 @@ class ReportsController extends AppController
                     , cityNew.cityName
                     , Client.locationDisplay
                     , Client.State
+                    , StateNew.StateName
                     , Client.countryId
                     , CountryNew.countryName
                     , Loa.emailNewsletterDates
@@ -2192,7 +2193,9 @@ class ReportsController extends AppController
                     LEFT JOIN loaLevel LoaLevel  ON (Loa.loaLevelId = LoaLevel.loaLevelId)
                     LEFT JOIN countryNew CountryNew ON (Client.countryId= CountryNew.id)
                     LEFT JOIN accountType AccountType ON (Loa.accountTypeId = AccountType.accountTypeId)
+                    LEFT JOIN stateNew StateNew ON (Client.stateId = StateNew.Id)
                     WHERE $conditions
+                    GROUP BY ClientLoaPackageRel.loaId
             ";
             $sql = "
                     SELECT Client.name
@@ -2249,9 +2252,14 @@ class ReportsController extends AppController
                     LIMIT $this->limit
 
             ";
-
             $resultsForCount = $this->OfferType->query($sqlCount);
-            $numRecords = sizeof($resultsForCount);
+            $count = 0;
+            foreach ($resultsForCount as $subarray) {
+                if (is_array($subarray)) {
+                    $count += 1;
+                }
+            }
+            $numRecords = $count;
             $numPages = ceil($numRecords / $this->perPage);
 
             $results = $this->OfferType->query($sql);
