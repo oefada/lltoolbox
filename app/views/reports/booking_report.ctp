@@ -24,7 +24,7 @@
             <label>Package Live Date</label>
             <? echo $form->text(
                 'condition1.field',
-                array('value' => "DATE_FORMAT(Loa.customerApprovalDate, '%Y-%m-%d')", 'type' => 'hidden')
+                array('value' => "DATE_FORMAT(Loa.packageLiveDate, '%Y-%m-%d')", 'type' => 'hidden')
             ) ?>
             <div class="range">
                 <? echo $datePicker->picker('condition1.value.between.0', array('label' => 'From')) ?>
@@ -134,9 +134,9 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 	<tr<?=$class?>>
         <td><?=$html->link($r['Client']['clientId'], array('controller' => 'clients', 'action' => 'edit', $r['Client']['clientId']))?></td>
 		<td><?=$html->link($r['Client']['name'], array('controller' => 'clients', 'action' => 'edit', $r['Client']['clientId']))?></td>
-		<td><?=$html->link($r['Loa']['loaId'], array('controller' => 'loa', 'action' => 'edit', $r['Loa']['loaId']))?></td>
+		<td><?=$html->link($r['Loa']['loaId'], array('controller' => 'loas', 'action' => 'edit', $r['Loa']['loaId']))?></td>
 
-        <td><?=$r['AccountType']['AccountType']?></td>
+        <td><?=$r['AccountType']['accountTypeName']?></td>
         <td><?=$r['LoaLevel']['loaLevelName']?></td>
         <td><?=$r['Loa']['customerApprovalDate']?date('m-d-Y',strtotime($r['Loa']['customerApprovalDate'])):'';?></td>
         <td><?=$r['Loa']['startDate']?date('m-d-Y',strtotime($r['Loa']['startDate'])):'';?></td>

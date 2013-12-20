@@ -37,6 +37,11 @@ class ReportsController extends AppController
         }
 
         $this->set('currentTab', 'reports');
+        if (!empty($this->params['url']['ext']) && $this->params['url']['ext'] =='csv'){
+            $this->data['paging']['disablePagination'] = 1;
+            //var_dump($this->data['paging']['disablePagination']);
+            $this->limit = 1000000;
+        }
 
         if (!empty($this->params['named']['filter'])) {
             $filter = urldecode($this->params['named']['filter']);
@@ -46,7 +51,6 @@ class ReportsController extends AppController
                 $this->data = $get;
             }
         }
-
         if (@$this->data['download']['csv'] == 1) {
             Configure::write('debug', '0');
             $this->data['paging']['disablePagination'] = 1;
@@ -56,6 +60,7 @@ class ReportsController extends AppController
         }
 
         if (@$this->data['paging']['disablePagination'] == 1) {
+
             $this->page = 1;
             $this->perPage = 9999;
             $this->limit = 9999;
@@ -67,9 +72,11 @@ class ReportsController extends AppController
             $this->limit = (($this->page - 1) * 20) . ',20';
         } else {
             $this->page = 1;
-            $this->limit = 20;
-        }
+            if (empty($this->limit)){
+                $this->limit = 20;
+            }
 
+        }
         //None of these reports need absolutely fresh data, so perform all queries during
         // this session in
         //no lock mode, to improve performance and not lock tables
@@ -2138,8 +2145,7 @@ class ReportsController extends AppController
             if (empty($conditions)) {
                 $conditions = '1=1';
             }
-
-            $sql = "
+            $sqlCount = "
                     SELECT Client.name
                     , Client.clientId
                     , Client.AccountingId
@@ -2147,7 +2153,7 @@ class ReportsController extends AppController
                     , AccountType.accountTypeName
                     /* , Loa.loaLevelId */
                     , LoaLevel.loaLevelName
-                    ,'Live Date'
+                    , Loa.packageLiveDate
                     , Loa.customerApprovalDate
                     , Loa.startDate
                     , Loa.endDate
@@ -2187,15 +2193,68 @@ class ReportsController extends AppController
                     LEFT JOIN countryNew CountryNew ON (Client.countryId= CountryNew.id)
                     LEFT JOIN accountType AccountType ON (Loa.accountTypeId = AccountType.accountTypeId)
                     WHERE $conditions
-                    GROUP BY ClientLoaPackageRel.clientId
+            ";
+            $sql = "
+                    SELECT Client.name
+                    , Client.clientId
+                    , Client.AccountingId
+                    , Loa.loaId
+                    , AccountType.accountTypeName
+                    /* , Loa.loaLevelId */
+                    , LoaLevel.loaLevelName
+                    , Loa.packageLiveDate
+                    , Loa.customerApprovalDate
+                    , Loa.startDate
+                    , Loa.endDate
+                    , Loa.loaMembershipTypeId
+                    , LoaMembershipType.loaMembershipTypeName
+                    , LoaPaymentTerm.description
+                    , Loa.loaPaymentTermId
+                    /* , Loa.loaInstallmentTypeId */
+                    , LoaInstallmentType.name
+                    , Loa.membershipFee
+                    , Loa.membershipBalance
+                    , Loa.membershipTotalPackages
+                    , Loa.membershipTotalNights
+                    , Loa.auctionCommissionPerc
+                    , Loa.buynowCommissionPerc
+                    , Loa.notes
+                    , Loa.loaNumberPackages
+                    , Loa.luxuryLinkFee
+                    , Loa.advertisingFee
+                    , Loa.Upgraded
+                    , Loa.accountExecutive
+                    , Loa.accountManager
+                    , cityNew.cityName
+                    , Client.locationDisplay
+                    , Client.State
+                    , StateNew.StateName
+                    , Client.countryId
+                    , CountryNew.countryName
+                    , Loa.emailNewsletterDates
+                    FROM clientLoaPackageRel ClientLoaPackageRel
+                    INNER JOIN loa Loa ON (ClientLoaPackageRel.loaId = Loa.`loaId`)
+                    INNER JOIN client Client ON (ClientLoaPackageRel.clientId = Client.clientId)
+                    LEFT JOIN cityNew ON (Client.cityId = cityNew.cityId)
+                    LEFT JOIN loaPaymentTerm LoaPaymentTerm ON (Loa.loaPaymentTermId= LoaPaymentTerm.loaPaymentTermId)
+                    LEFT JOIN loaInstallmentType LoaInstallmentType ON (Loa.`loaInstallmentTypeId` = LoaInstallmentType.loaInstallmentTypeId)
+                    LEFT JOIN loaMembershipType LoaMembershipType  ON (Loa.loaMembershipTypeId = LoaMembershipType.loaMembershipTypeId)
+                    LEFT JOIN loaLevel LoaLevel  ON (Loa.loaLevelId = LoaLevel.loaLevelId)
+                    LEFT JOIN countryNew CountryNew ON (Client.countryId= CountryNew.id)
+                    LEFT JOIN accountType AccountType ON (Loa.accountTypeId = AccountType.accountTypeId)
+                    LEFT JOIN stateNew StateNew ON (Client.stateId = StateNew.Id)
+                    WHERE $conditions
+                    GROUP BY ClientLoaPackageRel.loaId
                     ORDER BY $order
                     LIMIT $this->limit
 
             ";
 
-            $results = $this->OfferType->query($sql);
-            $numRecords = sizeof($results);
+            $resultsForCount = $this->OfferType->query($sqlCount);
+            $numRecords = sizeof($resultsForCount);
             $numPages = ceil($numRecords / $this->perPage);
+
+            $results = $this->OfferType->query($sql);
 
             $this->set('currentPage', $this->page);
             $this->set('numRecords', $numRecords);
