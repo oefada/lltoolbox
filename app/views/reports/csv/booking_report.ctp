@@ -1,15 +1,19 @@
 <?php
 error_reporting(0);
 @ini_set('display_errors', 0);
+ini_set('default_charset', 'utf-8');
+//var_dump($this->params['url']['ext']);
+//exit;
 //create output stream
 $handle = fopen('php://output', 'a');
 $colNames = array(
     'Client Name',
     'Client ID',
     'Accounting ID ',
+    'Loa ID',
     'Loa Account Type',
     'LOA Level',
-    'Live date',
+    'Package Live date',
     'Package in Date',
     'Start Date',
     'End Date',
@@ -22,7 +26,7 @@ $colNames = array(
     'Membership Total Nights',
     'Auction % Commission',
     'BuyNow % Commission',
-    'LOA Notes',
+    //'LOA Notes',
     'Num Commission Free',
     'LuxuryLink Fee',
     'Advertising Fee',
@@ -41,12 +45,13 @@ if (!empty($results)) { //there are records
         fputcsv(
             $handle,
             array(
-                formatCSV($r['Client']['name']),
+                formatCSV(trim($r['Client']['name'])),
                 formatCSV($r['Client']['clientId']),
                 formatCSV($r['Client']['AccountingId']),
+                formatCSV($r['Loa']['loaId']),
                 formatCSV($r['AccountType']['accountTypeName']),
                 formatCSV($r['LoaLevel']['loaLevelName']),
-                '',
+                formatCSV($r['Loa']['packageLiveDate']),
                 formatCSV(
                     isset($r['Loa']['customerApprovalDate']) ? date(
                         'm-d-Y',
@@ -64,7 +69,7 @@ if (!empty($results)) { //there are records
                 formatCSV($r['Loa']['membershipTotalNights']),
                 formatCSV($r['Loa']['auctionCommissionPerc']),
                 formatCSV($r['Loa']['buynowCommissionPerc']),
-                formatCSV(trim(strip_tags($r['Loa']['notes'], "<br>"))),
+               // formatCSV(trim(strip_tags($r['Loa']['notes'], "<br>"))),
                 formatCSV($r['Loa']['loaNumberPackages']),
                 formatCSV($r['Loa']['luxuryLinkFee']),
                 formatCSV($r['Loa']['advertisingFee']),
@@ -72,9 +77,9 @@ if (!empty($results)) { //there are records
                 formatCSV($r['Loa']['accountExecutive']),
                 formatCSV($r['Loa']['accountManager']),
                 formatCSV($r['cityNew']['cityName']),
-                formatCSV($r['Client']['state']),
+                formatCSV($r['StateNew']['StateName']),
                 formatCSV($r['CountryNew']['countryName']),
-                formatCSV(trim($r['Loa']['emailNewsletterDates'])),
+                formatCSV(str_replace('"','',strip_tags(trim($r['Loa']['emailNewsletterDates'])))),
             )
         ); //get column names.
     }

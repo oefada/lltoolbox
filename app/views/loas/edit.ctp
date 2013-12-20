@@ -404,6 +404,17 @@ if (isset($loa['Loa']['modified'])) {
                 'timeFormat' => ''
             )
         );
+
+        echo $form->input(
+            'packageLiveDate',
+            array(
+                'empty' => true,
+                'label' => 'Package Live Date',
+                'minYear' => date('Y', strtotime('January 01, 2000')),
+                'maxYear' => date('Y', strtotime('+5 year')),
+                'timeFormat' => ''
+            )
+        );
         ?>
     </div>
     <!--#collapsibleContent-->
