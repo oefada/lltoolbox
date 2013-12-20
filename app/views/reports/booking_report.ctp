@@ -1,4 +1,4 @@
-<?php $this->pageTitle = "LOA Booking Report";
+<?php $this->pageTitle = "LOA Package In Report";
 
 
 ?>
