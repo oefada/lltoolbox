@@ -369,13 +369,13 @@ class Ticket extends AppModel
 
         // This is the final price WITHOUT CoF applied and Gift applied, and payments deducted
         // rvella
-        $original_ticket_price_Calc = number_format($data['original_ticket_price'], 2);
-        $promoAmount_Calc = isset($data['Promo']['totalAmountOff']) ? number_format($data['Promo']['totalAmountOff'], 2) : 0;
-        $payment_amt_Calc = number_format($payment_amt, 2);
-        $payments_Calc = number_format($data['payments'], 2);
+        $original_ticket_price_Calc = round($data['original_ticket_price'], 2);
+        $promoAmount_Calc = isset($data['Promo']['totalAmountOff']) ? round($data['Promo']['totalAmountOff'], 2) : 0;
+        $payment_amt_Calc = round($payment_amt, 2);
+        $payments_Calc = round($data['payments'], 2);
         $data['final_price_actual'] = $original_ticket_price_Calc - $promoAmount_Calc - $payment_amt_Calc - $payments_Calc + $fee;
         $data['final_price_actual'] = $data['final_price_actual'] < 0 ? 0 : $data['final_price_actual'];
-        
+
         $ticketPrice -= (isset($data['Promo']['totalAmountOff']) ? $data['Promo']['totalAmountOff'] : 0);
 
         if ($data['GiftCert']['totalAmountOff'] > $ticketPrice) {
