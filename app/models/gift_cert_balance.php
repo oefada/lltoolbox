@@ -9,8 +9,8 @@ class GiftCertBalance extends AppModel {
 	
     var $validate = array(
         'amount' => array(
-	        'rule' => array('range', -10000, 10000),
-       		'message' => 'Please enter a number between -10000 and 10000.'
+	        'rule' => array('range', -100000, 100000),
+       		'message' => 'Please enter a number between -100000 and 100000.'
 		)
     );
     
