@@ -95,8 +95,8 @@ class BlocksController extends AppController
                 );
                 foreach ($data as &$d) {
                     $previewPath = 'http://www.luxurylink.com';
-                    if (strpos($_SERVER['HTTP_HOST'], 'toolboxdev') !== false) {
-                        $previewPath = 'http://' . str_replace('toolboxdev', 'lldev', $_SERVER['HTTP_HOST']);
+                    if (strpos($_SERVER['HTTP_HOST'], 'dev-toolbox') !== false) {
+                        $previewPath = 'http://dev-luxurylink.luxurylink.com';
                     }
                     $previewPath .= '/blocks/blocks.php?mode=preview&blockRevisionId=' . $d['BlockRevision']['blockRevisionId'];
                     $previewPath .= '&blockSha1=' . $d['BlockRevision']['sha1'];
@@ -170,8 +170,8 @@ class BlocksController extends AppController
             $sha1 = $this->BlockRevision->field('sha1');
             header('X-Blocks-SHA1: ' . $sha1);
             $previewPath = 'http://www.luxurylink.com';
-            if (strpos($_SERVER['HTTP_HOST'], 'toolboxdev') !== false) {
-                $previewPath = 'http://' . str_replace('toolboxdev', 'lldev', $_SERVER['HTTP_HOST']);
+            if (strpos($_SERVER['HTTP_HOST'], 'dev-toolbox') !== false) {
+                $previewPath = 'http://dev-luxurylink.luxurylink.com';
             }
             if (isset($_POST['publish'])) {
                 $this->BlockRevision->activate($blockPageId, $this->BlockRevision->id);

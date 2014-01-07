@@ -17,9 +17,9 @@ if ($_SERVER['ENV'] == "staging") {
     if ($_SERVER['ENV'] == "development") {
 
         if (in_array('family', $package['Package']['sites'])) {
-            $previewHost = 'http://' . str_replace('toolboxdev', "familydev", $_SERVER['HTTP_HOST']);
+            $previewHost = 'http://dev-familygetaway.luxurylink.com';
         } else {
-            $previewHost = 'http://' . str_replace('toolboxdev', 'lldev', $_SERVER['HTTP_HOST']);
+            $previewHost = 'http://dev-luxurylink.luxurylink.com';
         }
     } else {
         if (in_array('family', $package['Package']['sites'])) {
