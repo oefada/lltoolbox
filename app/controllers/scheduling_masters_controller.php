@@ -842,12 +842,12 @@ class SchedulingMastersController extends AppController {
         }
 
         if (isset($_SERVER['ENV']) && $_SERVER['ENV'] == 'development') {
-            $subdomain = $_SERVER['ENV_USER'].'-';
+            $subdomain = 'dev-';
             if ($this->data['SchedulingMaster']['siteId'] == 1) {
-                $subdomain .= 'lldev';
+                $subdomain .= 'luxurylink';
             }
             elseif ($this->data['SchedulingMaster']['siteId'] == 2) {
-                $subdomain .= 'familydev';
+                $subdomain .= 'familygetaway';
             }
         }
         elseif (isset($_SERVER['ENV']) && $_SERVER['ENV'] == 'staging') {

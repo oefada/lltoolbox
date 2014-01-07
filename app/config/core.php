@@ -31,9 +31,9 @@ $fg_url = 'www.familygetaway.com';
 if (stristr($_SERVER['HTTP_HOST'], 'dev') || $_SERVER['ENV'] == 'development' || strpos($_ENV['HOSTNAME'], 'dev') !== FALSE) {
     define("ISDEV", true);
     define("ISSTAGE", false);
-    $ll_url = $_SERVER['ENV_USER'] . '-lldev.luxurylink.com';
-    $fg_url = $_SERVER['ENV_USER'] . '-familydev.luxurylink.com';
-    $webservice_live_url = 'http://' . $_SERVER['ENV_USER'] . '-toolboxdev.luxurylink.com';
+    $ll_url = 'dev-luxurylink.luxurylink.com';
+    $fg_url = 'dev-familygetaway.luxurylink.com';
+    $webservice_live_url = 'http://dev-toolbox.luxurylink.com';
     Configure::write('TokenizerService', 'tokenex_v2');
     Configure::write('TokenEx.tokenExV2Url', 'https://test-api.tokenex.com:8081/TokenServices.svc/REST/');
     Configure::write('TokenEx.tokenExV2ID', '4700943473181519');
