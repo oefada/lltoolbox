@@ -43,7 +43,14 @@ class SchedulingController extends AppController {
 		//string to display as a heading in the view
 		$monthYearString = date('F Y', strtotime($year.'-'.$month.'-01'));		
 
-		$packages = $this->_clientPackages($clientId, $month, $year);	
+		$packages = $this->_clientPackages($clientId, $month, $year);
+
+        if (!empty($packages)){
+            foreach ($packages as $k=>$v){
+                $packages[$k]['Package']['isFamily']= $this->Package->isFamilyByPackageId($v['Package']['packageId']);
+
+            }
+        }
 
 		$client = $this->Package->ClientLoaPackageRel->Client->find('first', 
 			array(
