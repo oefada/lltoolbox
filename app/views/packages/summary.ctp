@@ -221,23 +221,27 @@ if ($_SERVER['ENV'] == "staging") {
         <td><?php echo ($package['Package']['isPrivatePackage'] == 1) ? 'Yes' : 'No'; ?></td>
     </tr>
     <tr class='odd'>
+        <th>Is Pegasus Enabled?</th>
+        <td><?php echo ($package['Package']['pegasusDisplay'] == 1) ? 'Yes' : 'No'; ?><? if ($package['Package']['pegasusPackageCode'] != '') { echo ' : ' . $package['Package']['pegasusPackageCode']; } ?></td>
+    </tr>
+    <tr>
         <th>Is Flex Package?</th>
         <td><?php echo ($package['Package']['isFlexPackage'] == 1) ? 'Yes' : 'No'; ?></td>
     </tr>
     <?php if ($package['Package']['isFlexPackage']): ?>
-        <tr>
+        <tr class='odd'>
             <th>Range</th>
             <td>Valid for <?php echo $package['Package']['flexNumNightsMin']; ?>
                 to <?php echo $package['Package']['flexNumNightsMax']; ?> nights
             </td>
         </tr>
-        <tr class="odd">
+        <tr>
             <th>Flex Notes</th>
             <td><textarea class="notes" rows="10"
                           readonly><?php echo "{$package['Package']['flexNotes']}\n"; ?></textarea></td>
         </tr>
     <?php endif; ?>
-    <tr>
+    <tr class='odd'>
         <th>Max Num Guests</th>
         <td>
             <?php echo $package['Package']['numGuests']; ?>
@@ -251,21 +255,21 @@ if ($_SERVER['ENV'] == "staging") {
             <?php } ?>
         </td>
     </tr>
-    <tr class='odd'>
+    <tr>
         <th>Min Num Guests</th>
         <td><?php echo $package['Package']['minGuests']; ?></td>
     </tr>
-    <tr>
+    <tr class='odd'>
         <th>Max Num Adults</th>
         <td><?php echo $package['Package']['maxAdults']; ?></td>
     </tr>
-    <tr class='odd'>
+    <tr>
         <th>Currency</th>
         <td><?php if (!empty($package['Package']['currencyId'])) {
                 echo $currencyCodes[$package['Package']['currencyId']];
             } ?></td>
     </tr>
-    <tr>
+    <tr class='odd'>
         <th>Rate Disclaimer</th>
         <td><?php echo $package['Package']['rateDisclaimer']; ?></td>
     </tr>
