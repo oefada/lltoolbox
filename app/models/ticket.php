@@ -55,7 +55,14 @@ class Ticket extends AppModel
     );
 
     var $validate = array(
-        'totalBillingAmount' => array('rule' => array('money', 'left'))
+        'totalBillingAmount' => array('rule' => array('money', 'left')),
+        'userId' => array(
+            'validateRegisteredUser' => array(
+                'rule' => array('validateRegisteredUser'),
+                'message' => 'The UserId is Invalid. Please ensure that the UserId belongs to a registered User.',
+                'allowEmpty' => true,
+            ),
+        ),
     );
 
     function beforeFind($options)
@@ -1178,5 +1185,15 @@ class Ticket extends AppModel
         $userPaymentSettingId = isset($result[0]['ticket']['userPaymentSettingId']) ? $result[0]['ticket']['userPaymentSettingId'] : false;
 
         return $userPaymentSettingId;
+    }
+
+    public function validateRegisteredUser($userId = null)
+    {
+        $sql = "SELECT userId FROM userSiteExtended WHERE userId = ?";
+        $result = $this->query($sql, array($userId));
+        if (empty($result)){
+            return false;
+        }
+        return true;
     }
 }
