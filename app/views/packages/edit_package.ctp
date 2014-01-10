@@ -130,6 +130,26 @@
 						<input type="radio" name="data[Package][isPrivatePackage]" value="0" <?=($isPriv == 0) ? 'checked' : ''; ?> /> No
            </td>
         </tr>
+        
+        <tr>
+           <th>Is Pegasus Enabled?</th>
+           <td>
+                        <?
+                        $isPegasus = 0;
+                        if (isset($package['Package']['pegasusDisplay']))$isPegasus=(int)$package['Package']['pegasusDisplay'];
+                        ?>
+                        <input type="radio" name="data[Package][pegasusDisplay]" value="1" <?=($isPegasus==1) ? 'checked' : ''; ?>  /> Yes
+                        <input type="radio" name="data[Package][pegasusDisplay]" value="0" <?=($isPegasus == 0) ? 'checked' : ''; ?> /> No
+                        
+                        &nbsp;&nbsp;&nbsp;
+                        <select name="data[Package][pegasusPackageCode]">
+                        <option value="">-- Pegasus Code</option>
+                        <? foreach (array('LL1', 'LL2', 'LL3') as $pgCode) { ?>
+                            <option value="<?= $pgCode; ?>" <? if ($pgCode == $package['Package']['pegasusPackageCode']) { echo 'selected'; } ?>><?= $pgCode; ?></option>
+                        <? } ?> 
+           </td>
+        </tr>
+        
         <tr id="showFlex">
            <th>Is Flex Package?</th>
            <td>

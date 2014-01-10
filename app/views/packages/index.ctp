@@ -31,6 +31,7 @@ $this->pageTitle = $client['Client']['name'] . $html2->c(
                         'ClientLoaPackageRel.loaId',
                         array('url' => array('clientId' => $clientId))
                     ); ?></th>
+                <th>Pegasus</th>
                 <th><?php echo $paginator->sort(
                         'Package Name',
                         'Package.packageName',
@@ -61,6 +62,13 @@ $this->pageTitle = $client['Client']['name'] . $html2->c(
                     <td><?php echo $package['Package']['packageId']; ?></td>
                     <td>
                         <?php echo $package['ClientLoaPackageRel']['loaId'] ? $html->link($package['ClientLoaPackageRel']['loaId'], array('controller'=>'loas', 'action'=>'view', $package['ClientLoaPackageRel']['loaId'])) : '&#160;'; ?>
+                    </td>
+                    <td align="center">
+                        <?php if ($package['Package']['pegasusDisplay']) { ?>
+                            <span style="color: #aa0000;">Y : <?php echo $package['Package']['pegasusPackageCode']; ?></span>
+                        <? } else { ?>
+                            <?php echo $package['Package']['pegasusPackageCode']; ?>
+                        <? } ?>
                     </td>
                     <td>
 
@@ -123,7 +131,7 @@ $this->pageTitle = $client['Client']['name'] . $html2->c(
                 $class = ' class="altrow"';
             } ?>
             <tr <?= $class; ?>>
-                <td colspan="6" rowspan="4">&nbsp;</td>
+                <td colspan="7" rowspan="4">&nbsp;</td>
                 <td>
                     <?=
                     $html->link(
