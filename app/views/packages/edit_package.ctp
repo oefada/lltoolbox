@@ -144,7 +144,7 @@
                         &nbsp;&nbsp;&nbsp;
                         <select name="data[Package][pegasusPackageCode]">
                         <option value="">-- Pegasus Code</option>
-                        <? foreach (array('LL1', 'LL2', 'LL3') as $pgCode) { ?>
+                        <? foreach (array('LX1', 'LX2', 'LX3', 'LX4', 'LX5') as $pgCode) { ?>
                             <option value="<?= $pgCode; ?>" <? if ($pgCode == $package['Package']['pegasusPackageCode']) { echo 'selected'; } ?>><?= $pgCode; ?></option>
                         <? } ?> 
            </td>
