@@ -14,16 +14,6 @@ endforeach;
 Thank you for your Luxury Link purchase. This email is your reservation confirmation and receipt of payment in full for the following <?= $word_package_lower;?>. Please keep it for your records.
 <? endif; ?>
 </p>
-<?php if ($siteId == 1 && count($clients[0]['destData'])): ?>
-<p>As you begin planning your trip, we invite you to get inspired with some information on<br />
-<?
-foreach ($clients as $cn=>$c):
-	if ($cn > 0) echo " or ";
-	echo '<a href="'.$siteUrl.'fivestar/'.$c['destData']['Destination']['destinationSeoName'].'/hotel-guide" target="_blank" style="color: #056ff7;">';
-	echo $c['destData']['Destination']['destinationName'].'</a>';
-endforeach;
-?> provided by the editors of <i>Travel + Leisure</i> magazine.</p>
-<?php endif; // End isAuction ?>
 
 %%reservation_details%%
 %%purchase_details%%
