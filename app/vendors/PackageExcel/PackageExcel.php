@@ -82,10 +82,10 @@ class PackageExcel
         $lowPriceInfo = array_reverse(array_slice($this->viewVars['lowPrice'], 0, 9));
         $lowPrice = array();
         foreach ($lowPriceInfo as $lp) {
-        	if (array_key_exists($lp['PricePoint']['pricePointId'], $lowPrice)) {
-        		$lowPrice[$lp['PricePoint']['pricePointId']]['dateRanges'] .= '|' . $lp['dateRanges'];
+        	if (array_key_exists($lp['pricePointId'], $lowPrice)) {
+        		$lowPrice[$lp['pricePointId']]['dateRanges'] .= '|' . $lp['dateRanges'];
         	} else {
-        		$lowPrice[$lp['PricePoint']['pricePointId']] = $lp;
+        		$lowPrice[$lp['pricePointId']] = $lp;
         	}
         }
  
