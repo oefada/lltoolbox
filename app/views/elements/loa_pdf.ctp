@@ -88,7 +88,7 @@ Configure::write('debug', 0);
             </li>
             <li>Potential inclusion in LLTG social media features (e.g. destination/lifestyle- specific posts) and within Luxury Lounge community
             </li>
-            <li>Additional exposure via Family Getaway and Vacationist social media channels, if applicable
+            <li>Additional exposure via Vacationist social media channels, if applicable
             </li>
         </ul>
         <? }else{?>
