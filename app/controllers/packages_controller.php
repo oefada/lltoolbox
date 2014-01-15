@@ -3220,7 +3220,9 @@ class PackagesController extends AppController
                 );
                 if ($pricePoint) {
                     $ratePeriod['PricePoint'] = $pricePoint['PricePoint'];
+                    $ratePeriods[$key]['PricePoint'] = $pricePoint['PricePoint'];
                     $ratePeriod['PricePointRatePeriodRel'] = $pricePoint['PricePointRatePeriodRel'];
+                    $ratePeriods[$key]['PricePointRatePeriodRel'] = $pricePoint['PricePointRatePeriodRel'];
                 }
 
                 // get room rate
