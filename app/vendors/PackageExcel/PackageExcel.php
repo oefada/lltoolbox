@@ -114,22 +114,24 @@ class PackageExcel
             $as->getRowDimension($lp_row_offset)->setRowHeight($dateLineCount * 24);
 
             $as->getCell('A' . $lp_row_offset)->setValue('Validity: '.str_replace('|', "\n", $lp['dateRanges']));
+
+            $as->getCell('B' . ($lp_row_offset + 1))->setValue($roomNights[0]['LoaItems'][0]['LoaItem']['itemName']);
+            $as->getCell('B' . ($lp_row_offset + 2))->setValue($package['numNights']);
+            $as->getCell('B' . ($lp_row_offset + 3))->setValue($lp['retailValue']);
             if (array_key_exists($lp['LoaItemRatePeriod']['loaItemRatePeriodId'], $roomNightData)) {
                 $thisRatePeriodIdKey = $lp['LoaItemRatePeriod']['loaItemRatePeriodId'];
-                $as->getCell('B' . ($lp_row_offset + 1))->setValue($roomNightData[$thisRatePeriodIdKey]['Totals']['totalAccommodations']);
+                $as->getCell('B' . ($lp_row_offset + 4))->setValue($roomNightData[$thisRatePeriodIdKey]['Totals']['totalAccommodations']);
             }else{
-                $as->getCell('B' . ($lp_row_offset + 1))->setValue('');
+                $as->getCell('B' . ($lp_row_offset + 4))->setValue('');
             }
-            $as->getCell('B' . ($lp_row_offset + 2))->setValue($roomNights[0]['LoaItems'][0]['LoaItem']['itemName']);
-            $as->getCell('B' . ($lp_row_offset + 3))->setValue($package['numNights']);
-            $as->getCell('B' . ($lp_row_offset + 4))->setValue($lp['retailValue']);
-            $as->getCell('C' . ($lp_row_offset + 5))->setValue(
+            $as->getCell('B' . ($lp_row_offset + 5))->setValue($lp['LoaItemRate']['price']);
+            $as->getCell('C' . ($lp_row_offset + 6))->setValue(
                 $lp['LoaItemRatePackageRel']['guaranteePercentRetail'] / 100.0
             );
-            $as->getCell('B' . ($lp_row_offset + 6))->setValue($lp['auctionPrice']);
-            $as->getCell('B' . ($lp_row_offset + 7))->setValue($lp['buyNowPrice']);
-            $as->getCell('B' . ($lp_row_offset + 8))->setValue($lp['flexPricePerNight']);
-            $as->getCell('B' . ($lp_row_offset + 9))->setValue($lp['LoaItemRate']['price']);
+            $as->getCell('B' . ($lp_row_offset + 7))->setValue($lp['auctionPrice']);
+            $as->getCell('B' . ($lp_row_offset + 8))->setValue($lp['buyNowPrice']);
+            $as->getCell('B' . ($lp_row_offset + 9))->setValue($lp['flexPricePerNight']);
+
 //            $as->getCell('B' . ($lp_row_offset + 10))->setValue('Taxes');
 //            $as->getCell('B' . ($lp_row_offset + 11))->setValue('Service Charges');
 //            $as->getCell('B' . ($lp_row_offset + 12))->setValue('Fees');
