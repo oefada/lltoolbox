@@ -176,7 +176,8 @@ if ($isProposal ||
 }
 
 $feeAmountDisabled = $disabled;
-if ($this->data['Loa']['loaLevelId'] == 2 && !in_array('Accounting', $userGroupsArr)) {
+if ($this->data['Loa']['loaLevelId'] == 2 &&
+    (!in_array('Accounting', $userGroupsArr) ||(!in_array('Geeks', $userGroupsArr))) ) {
     $feeAmountDisabled = true;
 }
 
@@ -286,15 +287,14 @@ if (isset($loa['Loa']['modified'])) {
                      <label for="membershipFeeCopy">Membership Fee</label>
                          <span id="membershipFeeCopy">
                          </span>
-<!--                            <input id="membershipFeeCopy" name="membershipFeeCopy" disabled="disabled" class="copyFields"/>-->
                         </div>
                     <?
                     echo $form->input('membershipBalance', array('disabled' => $disable_advanced_edit));
                     ?>
 
                 <div class="input text">
-                    <label for="membershipTotalNightsCopy">Membership Total Packages</label>
-                                 <span id="membershipTotalNightsCopy">
+                    <label for="membershipTotalPackagesCopy">Membership Total Packages</label>
+                                 <span id="membershipTotalPackagesCopy">
                                  </span>
                 </div>
                 <?
