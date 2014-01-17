@@ -98,19 +98,9 @@ class WebServiceNewClientsController extends WebServicesController
 		$client_data_save['teamName']			= $decoded_request['client']['team_name'];
         $client_data_save['segment']			= $decoded_request['client']['segment'];
 
-        $client_data_save['numRooms']			= $decoded_request['client']['numRooms'];
         $client_data_save['address1']			= $decoded_request['client']['address1'];
         $client_data_save['address2']			= $decoded_request['client']['address2'];
         $client_data_save['postalCode']			= $decoded_request['client']['postalCode'];
-
-        if (!empty($decoded_request['client']['url'])){
-            $client_data_save['url']			    = $this->httpify($decoded_request['client']['url']);
-        }
-        if(!empty($decoded_request['client']['state'])){
-            $client_data_save['locationDisplay'] = $decoded_request['client']['city'].', '.$decoded_request['client']['state'];
-        }else{
-            $client_data_save['locationDisplay'] = $decoded_request['client']['city'].', '.ucwords($decoded_request['client']['country_name']);
-        }
 
         $client_data_save['modified']			= $date_now;
         $client_data_save['seoName']			= $this->Client->convertToSeoName($client_data_save['name']);
@@ -209,6 +199,36 @@ class WebServiceNewClientsController extends WebServicesController
 		$this->ClientContact->recursive = -1;
 		
 	    if ($client_id) {
+            //existing data
+            $clientDataCurrent = $this->Client->findByClientId($client_id);
+            $clientDataCurrent = $clientDataCurrent['Client'];
+
+                if (empty($clientDataCurrent['numRooms'])) {
+                    //current numRooms not set, use sugar setting
+                    $client_data_save['numRooms'] = $decoded_request['client']['numRooms'];
+                }
+                if (empty($clientDataCurrent['url'])) {
+
+                    //if current URL not set, use sugar
+                    if (!empty($decoded_request['client']['url'])) {
+                        $client_data_save['url'] = $this->httpify($decoded_request['client']['url']);
+                    }
+                }
+                if (empty($clientDataCurrent['locationDisplay'])) {
+                    //if locationDisplay is not currently set, let's set it
+                    if (!empty($decoded_request['client']['state'])) {
+                        //if a state is passed, location display = City, State
+                        $client_data_save['locationDisplay'] = $decoded_request['client']['city'] . ', ' . $decoded_request['client']['state'];
+                    } else {
+                        //No state, location display = City, Country
+                        $client_data_save['locationDisplay'] = $decoded_request['client']['city'] . ', ' . ucwords(
+                                $decoded_request['client']['country_name']
+                            );
+                    }
+                }
+                $client_data_save['clientId'] = $client_id;
+                @$this->Client->save($client_data_save);
+
 		    $contacts = $decoded_request['contacts'];
 			if (!empty($contacts)) {
 				$this->ClientContact->query("DELETE FROM clientContact WHERE clientId = $client_id");
