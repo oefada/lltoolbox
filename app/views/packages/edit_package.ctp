@@ -142,11 +142,7 @@
                         <input type="radio" name="data[Package][pegasusDisplay]" value="0" <?=($isPegasus == 0) ? 'checked' : ''; ?> /> No
                         
                         &nbsp;&nbsp;&nbsp;
-                        <select name="data[Package][pegasusPackageCode]">
-                        <option value="">-- Pegasus Code</option>
-                        <? foreach (array('LX1', 'LX2', 'LX3', 'LX4', 'LX5') as $pgCode) { ?>
-                            <option value="<?= $pgCode; ?>" <? if ($pgCode == $package['Package']['pegasusPackageCode']) { echo 'selected'; } ?>><?= $pgCode; ?></option>
-                        <? } ?> 
+                        <? echo $form->input('Package.pegasusPackageCode', array('label' => 'Package Code ', 'div' => false)); ?>
            </td>
         </tr>
         
