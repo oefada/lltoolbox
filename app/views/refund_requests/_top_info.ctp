@@ -56,6 +56,11 @@
 			<? } ;?>
 		</div>
 
+        <div class="input text refundRequestDiv">
+            <label>Package</label>
+            <?= $refundInfo['ticket']['Package']['packageName']; ?>
+        </div>
+
 		<!--
 		<div class="input text refundRequestDiv">
 			<label>Date Purchased</label>
