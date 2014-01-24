@@ -17,7 +17,7 @@ class MailingHelper extends AppHelper{
 			$this->utmArr=$this->viewVars['utmArr'];
 			$this->url=$this->viewVars['url'];
 
-			$this->utm_qs='?showLeader=1&utm_medium='.$this->utmArr['utm_medium'];
+			$this->utm_qs='?utm_medium='.$this->utmArr['utm_medium'];
 			$this->utm_qs.='&utm_source='.$this->utmArr['utm_source'];
 			$this->utm_qs.='&utm_campaign='.$this->utmArr['utm_campaign'];
 		}
@@ -192,7 +192,7 @@ class MailingHelper extends AppHelper{
 
 	public function genDealHtml2013($clientArr, $utm_content='', $utm_term=''){
 
-		$h='<td align="center" valign="top" width="240" height="201">
+		$h='
 		<table align="center" width="240" height="201"  border="0" cellpadding="0" cellspacing="0">
 
 		<tr><!--top spacer-->
@@ -319,7 +319,7 @@ class MailingHelper extends AppHelper{
 		<img src="http://www.luxurylink.com/images/insider/new/SPACER_240x1.jpg" width="240" height="4" alt=""/>
 		</td>
 		</tr>
-		</table>	</td><!--end product mod -->';
+		</table><!--end product mod -->';
 
 		return $h;
 
@@ -490,14 +490,12 @@ class MailingHelper extends AppHelper{
 			if ($qs==''){
 				$qs='?';
 			}
-            $paramsArr['showLeader'] ='1';
 			foreach($paramsArr as $key=>$val){
 				$qs.=urlencode($key)."=".urlencode($val)."&";
 			}
 		}
 		$url.=$qs;
 		$url.='&utm_content='.$utm_content;
-        $url.='&showLeader=1';
 		if ($utm_term!=''){
 			$url.='&utm_term='.rawurlencode(strtolower($utm_term));
 		}

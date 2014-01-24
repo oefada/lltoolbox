@@ -10,7 +10,7 @@
 <style type="text/css">.yshortcuts{color:inherit;}html{-webkit-text-size-adjust:none;}</style>
 </head>  
 
-<body bgcolor="#e9e9e9" marginwidth="0" marginheight="0" leftmargin="0" topmargin="0"><CENTER><FONT SIZE="1" FACE="ARIAL">Viewing email on a mobile device? Shop our <a href="http://www.luxurylink.com?showLeader=1&utm_medium=news&utm_source=insider&utm_campaign=<?= $utmArr['utm_campaign']; ?>&utm_content=top-top&utm_term=go-to-mobile-site" target="_blank" name="mobile-site">mobile-optimized site</a> &nbsp; | &nbsp; View <a href="%%viewonline%%">online</a></FONT></CENTER>
+<body bgcolor="#e9e9e9" marginwidth="0" marginheight="0" leftmargin="0" topmargin="0"><CENTER><FONT SIZE="1" FACE="ARIAL">Viewing email on a mobile device? Shop our <a href="http://www.luxurylink.com?utm_medium=news&utm_source=insider&utm_campaign=<?= $utmArr['utm_campaign']; ?>&utm_content=top-top&utm_term=go-to-mobile-site" target="_blank" name="mobile-site">mobile-optimized site</a> &nbsp; | &nbsp; View <a href="%%viewonline%%">online</a></FONT></CENTER>
 
 <?=$mailing->displayHiddenClientIds($rows);?>
 
@@ -67,8 +67,8 @@
     
     <td align="right">
                     <table align="right" width="130" border="0" cellpadding="0" cellspacing="0"><tr>
-                    <td colspan="2" align="right" width="130" valign="middle" style="font-family:Arial,Verdana, sans-serif;font-size:12px;line-height:14px;color:#666; text-transform: uppercase; font-weight: bold; text-align: right;letter-spacing:0.25px">Call Now To Book &nbsp; </td></tr>
-                    <tr><td align="right" valign="top" width="23"><img src="http://www.luxurylink.com/images/email/Insider/ph_icon2.jpg" width="18" height="17" border="0" style="display: block;padding: 0px 0px 0px 3px" align="bottom" /></td><td width="130" align="middle" style="font-family:Arial,Verdana, sans-serif;color:#666; font-size:13px;text-transform: uppercase; font-weight: bold; text-align: right;letter-spacing:0.25px">(888) 297-3299 &nbsp;</td></tr> 
+                    <td colspan="2" align="right" width="130" valign="middle" style="font-family:Arial,Verdana, sans-serif;font-size:12px;line-height:14px;color:#666; text-transform: uppercase; font-weight: bold; text-align: right;">Call Now To Book &nbsp; </td></tr>
+                    <tr><td align="right" valign="top" width="23"><img src="http://www.luxurylink.com/images/email/Insider/ph_icon2.jpg" width="18" height="17" border="0" style="display: block;padding: 0px 0px 0px 3px" align="bottom"  alt="Insider Icon"/></td><td width="130" align="middle" style="font-family:Arial,Verdana, sans-serif;color:#666; font-size:13px;text-transform: uppercase; font-weight: bold; text-align: right;">(888) 297-3299 &nbsp;</td></tr>
                     </table>
          </td>
     </tr>
@@ -182,7 +182,7 @@
 <!--start product mod2 1x ##-->
 <td align="center" valign="top" width="240" height="32">
 
-    <table id="pm_1x" align="center" width="240" height="32"  border="0" cellpadding="0" cellspacing="0">
+    <table id="pm2_1x" align="center" width="240" height="32"  border="0" cellpadding="0" cellspacing="0">
     <tr>
         <?=$mailing->genViewDetailsCell($rows[1]['client']);?>
     </tr>
@@ -203,7 +203,7 @@
 <!--start product mod 3x-->
 <td align="center" valign="top" width="240" height="32">
 
-    <table id="pm_1x" align="center" width="240" height="32" border="0" cellpadding="0" cellspacing="0">
+    <table id="pm3_1x" align="center" width="240" height="32" border="0" cellpadding="0" cellspacing="0">
     <tr>
         <?=$mailing->genViewDetailsCell($rows[2]['client']);?>
     </tr>
@@ -382,7 +382,7 @@
 </table>
 <!--top deals first row end-->
 
-</td></tr></table>
+
 
 <!--editors picks first row start-->
 <table align="center" width="800" height="201" bgcolor="#ffffff" border="0" cellpadding="0" cellspacing="0">
@@ -477,51 +477,134 @@
 <!--editors picks first row end-->
 
     <!-- view all eidtors picks link -->
-    <table 
-        align="center" 
-        width="800" 
-        border="0" 
-        bgcolor="#2e2f33" 
-        cellpadding="0" 
-        cellspacing="0" 
+    <table
+        align="center"
+        width="800"
+        border="0"
+        bgcolor="#2e2f33"
+        cellpadding="0"
+        cellspacing="0"
         style="padding: 0px 0 0px 0"
     >
     <tr colspan="2">
-    <td 
-        colspan="2" 
-        width="800" 
-        height="3" 
+    <td
+        colspan="2"
+        width="800"
+        height="3"
         bgcolor="#2e2f33"
-    ><img 
-        src="http://ui.llsrv.us/images/insider/new/SPACER_2e2f33_800x1.jpg" 
-        width="800" 
-        height="3" 
-        border="0" alt=""/
-    ></td>
+    ><img
+        src="http://ui.llsrv.us/images/insider/new/SPACER_2e2f33_800x1.jpg"
+        width="800"
+        height="3"
+        border="0" alt=""
+    /></td>
     </tr>
 
     <tr>
-    <td 
-        width="800" 
-        height="24" 
-        bgcolor="#2e2f33" 
-        valign="middle" 
+    <td
+        width="800"
+        height="24"
+        bgcolor="#2e2f33"
+        valign="middle"
         style="font-family:Arial,Verdana, sans-serif;font-size:12px;line-height: 25px; color:#3ca9d5; font-weight: bold; text-align: right;padding-bottom: 5px;"
-    ><a 
-        name="editorspicks"   
-        target="_blank" 
-        xt="SPCLICK" 
-        href="<?=$mailing->genUrl('view-all','/vacation-ideas/presidents-picks', 'editor-choice');?>"
+    ><a
+        name="editorspicks"
+        target="_blank"
+        xt="SPCLICK"
+        href="<?=$mailing->genUrl('view-all','/travel-deals/best', 'best-selling');?>"
         style="color: #3ca9d5; text-decoration: none;"
-    >View All Editors Choices</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    >View the Best Selling Experiences</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     </td>
     </tr>
     </table>
 
-</td></tr></table>
+<!--start strands-->
+<table width="800" bgcolor="#ffffff" align="center" cellspacing="0" cellpadding="0" border="0" align="center" style="padding: 0px 0 10px 0">
+    <tbody><tr>
+        <td width="20" align="left"><img width="20" border="0" height="60" src="http://ui.llsrv.us/images/insider/new/spacer.gif"></td>
 
+        <td width="760" valign="center" bgcolor="#ffffff" align="left" height="55" style="font-family: Georgia, Garamond, Times New Roman, serif; text-align: left; font-size: 24px; line-height: 30px; color: #444444;padding-top:5px">
+            <a href="http://www.luxurylink.com/fivestar/new-hotels/deals?&utm_medium=news&utm_source=insider&utm_campaign=insider_140127a&utm_content=recommended-f-you" target="_blank" style="color:#444444; text-decoration: none;" name="recently-viewed">Recommended For You</a></td>
 
+        <td width="20" align="left"><img width="20" border="0" height="60" src="http://ui.llsrv.us/images/insider/new/spacer.gif"></td>
+    </tr>
 
+    <tr>
+
+        <td width="800" align="left" colspan="3" style="padding:2px 20px 20px 20px">
+
+            <table cellspacing="0" cellpadding="0" width="760" align="center" style="border:0px solid #ffffff">
+                <tbody bgcolor="#FFFFFF">
+
+                <tr>
+                    <td valign="top" width="240" style="text-align:left">
+                        <a href="http://mailrecs.strands.com/api2/mail/link.sbs?apid=UQXXHVq2KZ&tpl=tpl-mail2&user=%%cf_strandsId%%&item=&index=0&utm_medium=news&utm_source=insider&utm_campaign=insider_140127a&utm_content=recommended1">
+                            <img border="0" width="240" height="126" src="http://mailrecs.strands.com/api2/mail/img.sbs?apid=UQXXHVq2KZ&tpl=tpl-mail2&user=%%cf_strandsId%%&item=&index=0" />
+                        </a>
+                        <br />
+                        <a href="http://mailrecs.strands.com/api2/mail/link.sbs?apid=UQXXHVq2KZ&tpl=tpl-mail2&user=%%cf_strandsId%%&item=&index=0&utm_medium=news&utm_source=insider&utm_campaign=insider_140127a&utm_content=recommended1">
+                            <img border="0" width="240" src="http://mailrecs.strands.com/api2/mail/text.sbs?apid=UQXXHVq2KZ&tpl=tpl-mail2&user=%%cf_strandsId%%&item=&index=0" alt="Recommended Item 1" /></a>
+                    </td>
+                    <td valign="top" width="240" style="text-align:left">
+                        <a href="http://mailrecs.strands.com/api2/mail/link.sbs?apid=UQXXHVq2KZ&tpl=tpl-mail2&user=%%cf_strandsId%%&item=&index=1&utm_medium=news&utm_source=insider&utm_campaign=insider_140127a&utm_content=recommended2">
+                            <img border="0" width="240" height="126" src="http://mailrecs.strands.com/api2/mail/img.sbs?apid=UQXXHVq2KZ&tpl=tpl-mail2&user=%%cf_strandsId%%&item=&index=1" /></a>
+                        <br />
+                        <a href="http://mailrecs.strands.com/api2/mail/link.sbs?apid=UQXXHVq2KZ&tpl=tpl-mail2&user=%%cf_strandsId%%&item=&index=1&utm_medium=news&utm_source=insider&utm_campaign=insider_140127a&utm_content=recommended2">
+                            <img border="0" width="240"src="http://mailrecs.strands.com/api2/mail/text.sbs?apid=UQXXHVq2KZ&tpl=tpl-mail2&user=%%cf_strandsId%%&item=&index=1" alt="Recommended Item 2" /></a>
+                    </td>
+                    <td valign="top" width="240" style="text-align:left">
+                        <a href="http://mailrecs.strands.com/api2/mail/link.sbs?apid=UQXXHVq2KZ&tpl=tpl-mail2&user=%%cf_strandsId%%&item=&index=2&utm_medium=news&utm_source=insider&utm_campaign=insider_140127a&utm_content=recommended3">
+                            <img border="0" width="240" height="126" src="http://mailrecs.strands.com/api2/mail/img.sbs?apid=UQXXHVq2KZ&tpl=tpl-mail2&user=%%cf_strandsId%%&item=&index=2" />
+                        </a>
+                        <br />
+                        <a href="http://mailrecs.strands.com/api2/mail/link.sbs?apid=UQXXHVq2KZ&tpl=tpl-mail2&user=%%cf_strandsId%%&item=&index=2&utm_medium=news&utm_source=insider&utm_campaign=insider_140127a&utm_content=recommended3">
+                            <img border="0" width="240" src="http://mailrecs.strands.com/api2/mail/text.sbs?apid=UQXXHVq2KZ&tpl=tpl-mail2&user=%%cf_strandsId%%&item=&index=2" alt="Recommended Item 3" /></a>
+                    </td>
+
+                </tr>
+                </tbody>
+            </table>
+        </td>
+
+    </tr>
+    </tbody>
+</table>
+
+<!-- view dark grey bottom bar -->
+<table
+        align="center"
+        width="800"
+        border="0"
+        bgcolor="#2e2f33"
+        cellpadding="0"
+        cellspacing="0"
+        style="padding: 0px 0 0px 0"
+        >
+    <tr colspan="2">
+        <td
+                colspan="2"
+                width="800"
+                height="3"
+                bgcolor="#2e2f33"
+                ><img
+                src="http://ui.llsrv.us/images/insider/new/SPACER_2e2f33_800x1.jpg"
+                width="800"
+                height="3"
+                border="0" alt=""
+        /></td>
+    </tr>
+
+    <tr>
+        <td
+                width="800"
+                height="24"
+                bgcolor="#2e2f33"
+                valign="middle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+        </td>
+    </tr>
+</table>
+<!--end strands-->
 
 <!--start mystery mod-->
 <table id="mystery-mod" align="center" width="800" bgcolor="#ffffff" border="0" cellpadding="0" cellspacing="0"  style="padding: 10px 0px 0px 0px">
@@ -568,61 +651,73 @@
 </td>
 </tr></table>
 
+    <!-- FOOTER -->
+    <table id="footer" align="center" width="800" height="61" border="0" cellpadding="0" cellspacing="0" style="background-color: #ffffff">
 
-
-  <!-- FOOTER -->
-<table id="footer" align="center" width="800" height="61" border="0" cellpadding="0" cellspacing="0" style="background-color: #fefefe">
         <tr>
-            <td colspan="2" align="center" style="padding: 30px 0px 10px 0px;"><img border="0" alt="" name="line" src="http://www.luxurylink.com/images/email/new/grey-lineLL.jpg" width="740" height="1" /></td>
+            <td align="center"  valign="top" style="padding:10px 0px 0px 0px;">
+                <table align="center"><tr>
+                    <td align="right" style="padding: 12px 10px 0px 0px;"><img border="0" alt="" name="line" src="http://www.luxurylink.com/images/email/new/horiz-2.jpg" width="231" height="6" /></td>
+                    <td align="center" valign="top" style="padding:20px 0px 10px 0px"><a name="share" target="_blank"><img border="0" width="261" height="33" src="http://www.luxurylink.com/images/email/new/LLsocial-3.jpg" alt="LL Social" usemap="#social" /></a>
+                    </td>
+                    <td align="left" style="padding: 12px 0px 0px 10px;"><img border="0" alt="" name="line" src="http://www.luxurylink.com/images/email/new/horiz-2.jpg" width="231" height="6" /></td></tr>
+                </table>
+            </td>
         </tr>
-    
-    <tr>
-            <td colspan="2" align="left">
-                <table cellspacing="0" cellpadding="0" border="0" align="center" valign="top" width="800">
+        <tr>
+            <td align="center"  valign="top" style="padding:15px 13px 0px 13px;" bgcolor="#ffffff">
+
+                <table width="760" align="center" cellspacing="4" cellpadding="0">
                     <tr>
-                        <td align="left" valign="top" style="padding:5px 0px 20px 30px"><img border="0" width="185" height="43" name="LL" src="http://www.luxurylink.com/images/email/new/LL-concierge.jpg" alt="Luxury Link" /></td>
-        
-                        <td valign="top" align="left" style="padding: 2px 30px 10px 10px; line-height:15px; font-family:Arial, sans-serif;color:#666; font-size:11px;">If you have any questions, please contact our Travel Concierge at (888) 297-3299 or (310) 215-8060, or email <a href="mailto:concierge@luxurylink.com" name="email-us" target="_blank">concierge@luxurylink.com</a>.<br /><span style="color:#999"><em>M-F: 6am - 7pm &nbsp; S&S: 9am - 4pm PST</em></span></td> 
+                        <td align="center" width="135" bgcolor="#f2f2f2" style="padding: 10px 0px 10px 0px;font-family:Helvetica,maradival,Sans-Serif;font-size:11px;">
+                            <a style="color:#444;text-decoration:none;" target="_blank" href="http://echo3.bluehornet.com/phase2/survey1/survey.htm?cid=mumogm&action=update&eemail=%%urlencoded_to_email%%&_mh=%%mhash%%">Unsubscribe</a></td>
+
+                        <td align="center" width="135" bgcolor="#f2f2f2" style="padding: 10px 0px 10px 0px;font-family:Helvetica,maradival,Sans-Serif;font-size:11px;">
+                            <a style="color:#444;text-decoration:none;" target="_blank" href="http://www.luxurylink.com/LL/preference_center.php">Email Preferences</a></td>
+
+                        <td align="center" width="135" bgcolor="#f2f2f2" style="padding: 10px 0px 10px 0px;font-family:Helvetica,maradival,Sans-Serif;font-size:11px;">
+                            <a style="color:#444;text-decoration:none;" name="priv-policy" target="_blank" href="http://www.luxurylink.com/about/index.php/privacy-policy?utm_medium=news&utm_source=insider&utm_campaign=insider_140116b&utm_content=footer&utm_term=privacy-policy">Privacy Policy</a></td>
+
+                        <td align="center" bgcolor="#f2f2f2" width="135" style="padding: 10px 0px 10px 0px;font-family:Helvetica,maradival,Sans-Serif;font-size:11px;">
+                            <a style="color:#444;text-decoration:none;" target="_blank" href="http://www.luxurylink.com/about?utm_medium=news&utm_source=insider&utm_campaign=insider_140116b&utm_content=footer&utm_term=about-us">About Us</a></td>
                     </tr>
-                    <tr>
                 </table>
 
             </td>
         </tr>
         <tr>
-            <td colspan="2" align="center" style="padding: 0px 0px 0px 0px;"><img border="0" alt="" name="line" src="http://www.luxurylink.com/images/email/new/grey-lineLL.jpg" width="740" height="1" /></td>
-        </tr>
-        <tr>
-            <td colspan="2" align="center" valign="top" style="padding:15px 0px 10px 0px"> <a target="_blank" href="<?=$mailing->genUrl('footer', '/', 'footer_logo');?>"><img border="0" width="125" height="22" name="LL" src="http://www.luxurylink.com/images/email/new/LL-footer.jpg" alt="Luxury Link" /></a>
+            <td align="center" valign="top" style="padding:0px 20px 0px 20px;">
+                <table width="752" align="center" cellspacing="0" cellpadding="0" bgcolor="#f2f2f2" >
+                    <tr>
+                        <td align="center"style="padding:10px 10px 10px 10px"><a name="save-50" target="_blank" href="http://www.luxurylink.com/refer-friend/?utm_medium=news&utm_source=insider&utm_campaign=insider_140116b&utm_content=footer&utm_term=raf"><img border="0" width="180" height="100" src="http://www.luxurylink.com/images/email/new/AH_Save50.jpg" style="display:block;" border="0" alt="Save $50 on your next vacation -Click Here" /></a>
+                        </td>
+                        <td align="left" style="padding: 12px 20px 10px 10px;"><img border="0" name="line" src="http://www.luxurylink.com/images/email/new/vert-on-grey.jpg" width="8" height="109" style="display:block;" />
+                        </td>
+                        <td align="center" height="80" style="padding: 15px 20px 15px 10px;"><img border="0" name="line" src="http://www.luxurylink.com/images/email/new/ph-icon_49x49.jpg" width="49" height="49" style="display:block;" /><br />
+                            <span style="font-family:Times, Serif;font-size:15px;color:#333;line-height:21px;">CONCIERGE: (888) 297-3299</span><br />
+                            <span style="font-family:Arial, sans-serif;font-size:11px;color:#555;">M-F 6am-7pm &nbsp;|&nbsp; S & S: 9am-4pm PST</span>
+                        </td>
+                    </tr>
+                </table>
             </td>
         </tr>
         <tr>
-            <td colspan="2" align="center" valign="top" style="padding:0px 0px 0px 0px; font-family:Helvetica,maradival,Sans-Serif; color:#666666; font-size:9px"> &nbsp;  <a target="_blank" href="<?=$mailing->genUrl('footer', '/', 'footer_title');?>">Luxury Link</a> &nbsp; | &nbsp; 5510 Lincoln Blvd., Los Angeles, CA 90294 &nbsp; | &nbsp; <a name="privacy-policy" target="_blank" href="http://www.luxurylink.com/about/index.php/privacy-policy">Privacy Policy</a>. &nbsp; | &nbsp; Update your <a target="_blank" href="http://www.luxurylink.com/LL/preference_center.php?eemail=%%urlencoded_to_email%%">email preferences</a>.  &nbsp; | &nbsp; <a target="_blank" href="http://www.luxurylink.com/LL/preference_center.php?eemail=%%urlencoded_to_email%%">Unsubscribe</a>.</td>   
+            <td align="center" style="padding: 10px 0px 0px 0px;"><img border="0" alt="" name="line" src="http://www.luxurylink.com/images/email/new/horiz-line.jpg" width="752" height="1" /></td>
         </tr>
-    
         <tr>
-            <td colspan="2" align="center" valign="top" style="padding:18px 0px 30px 0px"><img border="0" width="225" height="36" name="social" src="http://www.luxurylink.com/images/email/new/social-new_grey.jpg" alt="Luxury Link Social" usemap="#social" />
-            </td>
+            <td valign="top" align="center" style="padding: 6px 60px 10px 60px; line-height:14px; font-family:Arial, sans-serif;color:#888; font-size:8.5pt;">Luxury Link Travel Group, 5510 Lincoln Boulevard, Los Angeles, CA 90094 </td>
         </tr>
-                       
-                    </table>
-                <!--end footer-->   
-                    
-                    
-                    
-                    
-                    </td>
-                </tr>
-            
-        </table>
-        <map name="social">
-    <area shape="rect" coords="0, 0, 36, 36" href="http://www.luxurylinklounge.com" alt="LL Lounge" target="_blank" >
-    <area shape="rect" coords="40, 0, 85, 36" href="http://www.facebook.com/LuxuryLink" alt="Facebook" target="_blank">
-    <area shape="rect" coords="90, 0, 130, 36" href="http://www.twitter.com/LuxuryLink" alt="Twitter" target="_blank">
-    <area shape="rect" coords="138, 0, 180, 36" href="http://www.instagram.com/luxurylink" alt="Instagram" target="_blank">
-    <area shape="rect" coords="185, 0, 215, 36" href="http://www.pinterest.com/luxurylink" alt="Pinterest" target="_blank">
-    
-</map>
 
+    </table>
+    <map name="social">
+        <area shape="rect" coords="0, 0, 40, 33" href="http://www.facebook.com/LuxuryLink" alt="Facebook" target="_blank">
+        <area shape="rect" coords="50, 0, 90, 33" href="http://www.twitter.com/LuxuryLink" alt="Twitter" target="_blank">
+        <area shape="rect" coords="110, 0, 150, 33" href="http://www.instagram.com/luxurylink" alt="Instagram" target="_blank">
+        <area shape="rect" coords="165, 0, 205, 33" href="http://www.pinterest.com/luxurylink" alt="Pinterest" target="_blank">
+        <area shape="rect" coords="225, 0, 262, 33" href="http://www.luxurylinklounge.com" alt="LuxuryLinkLounge" target="_blank" >
+    </map>
+
+
+</td></tr></table>
 </body>
 </html>
