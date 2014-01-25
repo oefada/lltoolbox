@@ -695,7 +695,7 @@
                         </td>
                         <td align="center" height="80" style="padding: 15px 20px 15px 10px;"><img border="0" name="line" src="http://www.luxurylink.com/images/email/new/ph-icon_49x49.jpg" width="49" height="49" style="display:block;" /><br />
                             <span style="font-family:Times, Serif;font-size:15px;color:#333;line-height:21px;">CONCIERGE: (888) 297-3299</span><br />
-                            <span style="font-family:Arial, sans-serif;font-size:11px;color:#555;">M-F 6am-7pm &nbsp;|&nbsp; S & S: 9am-4pm PST</span>
+                            <span style="font-family:Arial, sans-serif;font-size:11px;color:#555;">Mon - Fri: 24hrs &nbsp;|&nbsp; Sat &amp; Sun: 9am - 4pm Pacific</span>
                         </td>
                     </tr>
                 </table>
