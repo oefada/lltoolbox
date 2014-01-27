@@ -192,6 +192,7 @@ echo $form->input('segment');
         <?echo $form->input('isPegasusEnabled', array('label' => 'Enabled'));?>
         <?echo $form->input('pegasusBrandId', array('label' => 'Brand', 'empty' => true)); ?>
         <?echo $form->input('pegasusPropertyCode', array('label' => 'Property Code'));?>
+        <?echo $form->input('pegasusRackCode', array('label' => 'Rack Rate Code'));?>
     </div>
 </fieldset>
 
