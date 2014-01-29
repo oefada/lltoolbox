@@ -348,8 +348,12 @@ class ClientsController extends AppController {
 		$clientTypeIds = $this->Client->ClientType->find('list');
 
 		$this->PegasusBrand->recursive = -1;
-		$pegasusBrandIds = $this->PegasusBrand->find('list', array('order' => 'description ASC'));
-		
+		$pegasusBrands = $this->PegasusBrand->find('all', array('order' => 'description ASC'));
+		$pegasusBrandIds = array();
+		foreach ($pegasusBrands as $pb) {
+			$pegasusBrandIds[$pb['PegasusBrand']['pegasusBrandId']] = $pb['PegasusBrand']['description'] . ' [ ' . $pb['PegasusBrand']['brandCode'] . ' ]';
+		}
+
 		$this->Client->recursive = -1;
 		$clientCollectionIds = $this->Client->find('list', array('conditions' => 'Client.clientTypeId = 14'));
 		$themes = $this->Client->ClientThemeRel->Theme->findClientThemes($id);
