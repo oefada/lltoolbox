@@ -1342,7 +1342,13 @@ class PackagesController extends AppController
                     }
                 }
             }
-
+        
+        	if ($this->data['Package']['pegasusPackageCodeRatePlan'] != '' && $this->data['Package']['pegasusPackageCodeRoomGrade'] != '') {
+        		$this->data['Package']['pegasusPackageCode'] = $this->data['Package']['pegasusPackageCodeRatePlan'] . '-' . $this->data['Package']['pegasusPackageCodeRoomGrade'];
+        	} else {
+        		$this->data['Package']['pegasusPackageCode'] = null;
+        	}
+        	
             if ($_POST['isAjax'] == 'true') {
 
                 if ($this->Package->saveAll($this->data)) {
