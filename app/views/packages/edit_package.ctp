@@ -136,13 +136,25 @@
            <td>
                         <?
                         $isPegasus = 0;
-                        if (isset($package['Package']['pegasusDisplay']))$isPegasus=(int)$package['Package']['pegasusDisplay'];
+                        $pgsCodeArray = explode('-', $package['Package']['pegasusPackageCode']);
+                        $pgsRatePlan = $pgsCodeArray[0];
+                        $pgsRoomGrade = (isset($pgsCodeArray[1])) ? $pgsCodeArray[1] : '';
+                        
+                        if (isset($package['Package']['pegasusDisplay'])) { $isPegasus=(int)$package['Package']['pegasusDisplay']; }
                         ?>
-                        <input type="radio" name="data[Package][pegasusDisplay]" value="1" <?=($isPegasus==1) ? 'checked' : ''; ?>  /> Yes
+                        <input type="radio" name="data[Package][pegasusDisplay]" value="1" <?=($isPegasus == 1) ? 'checked' : ''; ?>  /> Yes
                         <input type="radio" name="data[Package][pegasusDisplay]" value="0" <?=($isPegasus == 0) ? 'checked' : ''; ?> /> No
                         
                         &nbsp;&nbsp;&nbsp;
-                        <? echo $form->input('Package.pegasusPackageCode', array('label' => 'Package Code ', 'div' => false)); ?>
+                        <? echo $form->input('Package.pegasusPackageCodeRatePlan', array('default'=>$pgsRatePlan, 'label'=>'Rate Plan ', 'div'=>false, 'options'=>array('', 'LX1'=>'LX1', 'LX2'=>'LX2', 'LX3'=>'LX3', 'LX4'=>'LX4', 'LX5'=>'LX5', 'PR0'=>'PR0'))); ?>
+                        
+                        &nbsp;&nbsp;&nbsp;
+                        <? echo $form->input('Package.pegasusPackageCodeRoomGrade', array('default'=>$pgsRoomGrade, 'label'=>'Room Grade ', 'div'=>false, 'style'=>'width:50px;')); ?>
+
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <? echo $form->input('Package.pegasusIsPreview', array('label'=>'Is Preview ', 'div'=>false)); ?>
+
+                        
            </td>
         </tr>
         

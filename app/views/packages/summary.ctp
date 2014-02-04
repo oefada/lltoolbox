@@ -222,7 +222,7 @@ if ($_SERVER['ENV'] == "staging") {
     </tr>
     <tr class='odd'>
         <th>Is Pegasus Enabled?</th>
-        <td><?php echo ($package['Package']['pegasusDisplay'] == 1) ? 'Yes' : 'No'; ?><? if ($package['Package']['pegasusPackageCode'] != '') { echo ' : ' . $package['Package']['pegasusPackageCode']; } ?></td>
+        <td><?php echo ($package['Package']['pegasusDisplay'] == 1) ? 'Yes' : 'No'; ?><? if ($package['Package']['pegasusPackageCode'] != '') { echo ' : ' . $package['Package']['pegasusPackageCode']; } ?><? if ($package['Package']['pegasusIsPreview']) { echo ' : <span style="color:#990000;">PREVIEW</span>'; } ?></td>
     </tr>
     <tr>
         <th>Is Flex Package?</th>
