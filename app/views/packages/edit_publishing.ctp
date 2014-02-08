@@ -91,6 +91,10 @@ echo $javascript->link('jquery/jquery-autocomplete/jquery.autocomplete'); ?>
 	<?php if (!$package['Package']['isTaxIncluded']):?>
 	<tr><th>Taxes Not Included Text</th><td><input type="text" name="data[Package][taxesNotIncludedDesc]" value="<?=htmlentities($package['Package']['taxesNotIncludedDesc']);?>" /></td></tr>
 	<?php endif;?>
+    <tr><th>Additional Information</th><td><textarea name="data[Package][pubAdditionalInfo]" style="height: 75px !important;"><?=htmlentities($package['Package']['pubAdditionalInfo']);?></textarea></td></tr>
+    <tr><th>Promo Callout</th><td><textarea name="data[Package][pubCallout]" style="height: 75px !important;"><?=htmlentities($package['Package']['pubCallout']);?></textarea></td></tr>
+    
+    
 	
 	<!--
 	<tr><th>Seasonal Pricing (Buy Now Only)</th><td><textarea name="data[Package][additionalDescription]"><?=htmlentities($package['Package']['additionalDescription']);?></textarea></td></tr>
