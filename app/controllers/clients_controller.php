@@ -237,6 +237,10 @@ class ClientsController extends AppController {
 			 	$this->data['Client']['pegasusRackCode'] = null;
 			 }
 
+			 if ($this->data['Client']['pegasusGuaranteeMethod'] == '') {
+			 	$this->data['Client']['pegasusGuaranteeMethod'] = null;
+			 }
+
             //remove query string from fbUrl
             if (isset($this->data['ClientSocial']['fbUrl']) && !empty($this->data['ClientSocial']['showFb'])) {
                 //strip out query strings, and anything after.
