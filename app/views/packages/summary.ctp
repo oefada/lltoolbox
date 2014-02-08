@@ -696,6 +696,14 @@ $linkTitle = 'Edit Publishing';
         <th>Terms &amp; Conditions</th>
         <td><?= $package['Package']['termsAndConditions']; ?></td>
     </tr>
+    <tr class="odd">
+        <th>Additional Information</th>
+        <td><?= $package['Package']['pubAdditionalInfo']; ?></td>
+    </tr>
+    <tr>
+        <th>Promo Callout</th>
+        <td><?= $package['Package']['pubCallout']; ?></td>
+    </tr>
 
 </table>
 
