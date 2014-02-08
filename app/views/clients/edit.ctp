@@ -193,6 +193,7 @@ echo $form->input('segment');
         <?echo $form->input('pegasusBrandId', array('label' => 'Brand', 'empty' => true)); ?>
         <?echo $form->input('pegasusPropertyCode', array('label' => 'Property Code'));?>
         <?echo $form->input('pegasusRackCode', array('label' => 'Rack Rate Code'));?>
+        <?echo $form->input('pegasusGuaranteeMethod', array('label' => 'Guarantee Method', 'options'=>array('AG'=>'Agency Guarantee', 'AD'=>'Agency Deposit', 'CG'=>'CC Guarantee', 'CD'=>'CC Deposit'), 'empty' => true)); ?>
     </div>
 </fieldset>
 
