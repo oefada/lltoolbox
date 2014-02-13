@@ -76,10 +76,9 @@
 					});
 					$("fd-dp-package-<?=$package['Package']['packageId']?>").observe('click', function(event) {
 						arr = event.element().className.match(/dmy-(.*)-(.*)-(.*)\s/);
-
 						if(arr[1]) {
 							$("fd-dp-package-<?=$package['Package']['packageId']?>").fade();
-							openSchedulingOverlay(arr[3]+'-'+arr[2]+'-'+arr[1], <?=$package['Package']['packageId']?>, <?="'".str_replace("'","\'",htmlentities($package['Package']['packageName']))."'"?>);
+                            openSchedulingOverlay(arr[3].trim()+'-'+arr[2]+'-'+arr[1], <?=$package['Package']['packageId']?>, <?="'".str_replace("'","\'",htmlentities($package['Package']['packageName']))."'"?>);
 						}
 						return false;});
 				});
