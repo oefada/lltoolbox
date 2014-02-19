@@ -3,6 +3,7 @@
 
 ?>
 <div style="float:right;">
+    <?if (!empty($results)): ?>
     <?=$html->link('<span><b class="icon"></b>Export Report</span>', array(
             'controller' => 'reports',
             'action' => $this->action.'/filter:'.urlencode($serializedFormInput),
@@ -13,6 +14,7 @@
             'class' => 'button excel',
         ));
     ?>
+    <?endif;?>
 </div>
 
 <div class='advancedSearch' style="width: 800px">
