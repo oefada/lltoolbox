@@ -152,7 +152,7 @@
                         <? echo $form->input('Package.pegasusPackageCodeRoomGrade', array('default'=>$pgsRoomGrade, 'label'=>'Room Grade ', 'div'=>false, 'style'=>'width:50px;')); ?>
 
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        <? echo $form->input('Package.pegasusIsPreview', array('label'=>'Is Preview ', 'div'=>false)); ?>
+                        <input id="PackagePegasusIsPreview" type="hidden" value="0" name="data[Package][pegasusIsPreview]">
 
                         
            </td>
