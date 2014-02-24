@@ -298,7 +298,7 @@ class TicketsController extends AppController
                     unset($this->paginate['conditions']['Ticket.created BETWEEN ? AND ?']);
                 }
                 if ($s_res_check_in_date) {
-                    $this->paginate['conditions']['arrivalDate BETWEEN ? AND ?'] = array($s_start_date, $s_end_date);
+                    $this->paginate['conditions']['ReservationPreferDate.arrivalDate BETWEEN ? AND ?'] = array($s_start_date, $s_end_date);
                     unset($this->paginate['conditions']['Ticket.created BETWEEN ? AND ?']);
                 }
             }
