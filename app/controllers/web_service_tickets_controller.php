@@ -1115,7 +1115,8 @@ class WebServiceTicketsController extends WebServicesController
                 );
             }
         }
-
+        $pgBookingId = isset($params['pgBookingId']) ? $params['pgBookingId'] : null;
+        
         // package id for deal alerts
         if ($ppvNoticeTypeId == 41 || $ppvNoticeTypeId == 42 || $ppvNoticeTypeId == 43) {
             $packageId = isset($params['packageId']) ? $params['packageId'] : null;
@@ -2446,7 +2447,14 @@ class WebServiceTicketsController extends WebServicesController
                 $emailFrom = ($isAuction) ? "$siteDisplay <auction@$siteEmail>" : "$siteDisplay <exclusives@$siteEmail>";
                 $emailReplyTo = ($isAuction) ? "auction@$siteEmail" : "exclusives@$siteEmail";
                 break;
-
+            case 60:
+                include('../vendors/email_msgs/notifications/60_pegasus_confirmation.html');
+                $emailTo = 'jwoods@luxurylink.com';
+                $emailFrom = "$siteDisplay <exclusives@$siteEmail>";
+                $emailReplyTo = "exclusives@$siteEmail";
+                $emailSubject = "email confirmation for Pegasus booking";
+                break;    
+               
             default:
                 break;
         }
