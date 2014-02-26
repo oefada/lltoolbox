@@ -13,7 +13,7 @@ class HotelUrlCheckerShell extends Shell
     public $reportHeadings = array('Client_Id', 'Name', 'URL', 'Response_Code', 'Response_Reason');
     public $deliminator = "\t";
     public $encapsulator = '"';
-    public $debug =  false;
+    public $debug = false;
 
     public function initialize()
     {
@@ -21,11 +21,11 @@ class HotelUrlCheckerShell extends Shell
         parent::initialize();
         $this->Client->useDbConfig = 'luxurylink';
 
-        if(isset($this->params['help'])){
+        if (isset($this->params['help'])) {
             $this->help();
             exit(0);
         }
-        if (false== $this->getUrlField()){
+        if (false == $this->getUrlField()) {
             $this->out('Please enter a valid url column (e.g. url or checkRateUrl');
             exit(1);
         }
@@ -51,20 +51,20 @@ class HotelUrlCheckerShell extends Shell
     public function getLiveClientsWithUrls()
     {
         $sql = "
-         SELECT Client.name, ".$this->getUrlField().", Client.clientId
+         SELECT Client.name, " . $this->getUrlField() . ", Client.clientId
         FROM client as Client
         INNER JOIN clientType ct ON (Client.clientTypeId = ct.clientTypeId)
         WHERE Client.loaLevelId
         IN(1,2)
         AND Client.oldProductId IS NOT NULL
         AND Client.clientId <> 8455
-        AND  ".$this->getUrlField()." != ''
+        AND  " . $this->getUrlField() . " != ''
         AND Client.inactive !=1
         LIMIT 20
       ";
 
-        if($this->debug == true){
-            $this->out("QUERY:\t".$sql);
+        if ($this->debug == true) {
+            $this->out("QUERY:\t" . $sql);
         }
         $results = $this->Client->query($sql);
 
@@ -84,7 +84,7 @@ class HotelUrlCheckerShell extends Shell
         foreach ($clientData as $client => $clientValue) {
             //get response
 
-            $url =  $clientValue['Client'][$this->getUrlField()];
+            $url = $clientValue['Client'][$this->getUrlField()];
             $httpResponse = $this->getHttpResponse(trim($url));
             //should always be an integer
             $responseCode = $httpResponse['status']['code'];
@@ -166,28 +166,33 @@ class HotelUrlCheckerShell extends Shell
     public function getUrlField()
     {
         $urlField = $this->params['urlfield'];
-        if (!isset($urlField) || empty($urlField)){
+        if (!isset($urlField) || empty($urlField)) {
             return false;
         }
         return trim($urlField);
     }
 
-    public function help(){
-        $this->out("
- __   ,_ __   __       ,___
-( /  /( /  ) ( /      /   //         /
- /  /  /--<   /      /    /_  _  _, /<  _  _
-(_,/_ /   \_(/___/  (___// /_(/_(__/ |_(/_/ (_
+    public function help()
+    {
+        $this->out(
+            "
+             __   ,_ __   __       ,___
+            ( /  /( /  ) ( /      /   //         /
+             /  /  /--<   /      /    /_  _  _, /<  _  _
+            (_,/_ /   \_(/___/  (___// /_(/_(__/ |_(/_/ (_
 
-by Onjefu Efada <onjefu@gmail.com>
-        ");
+            by Onjefu Efada <onjefu@gmail.com>
+                    "
+        );
         $this->hr(false);
         $this->out("Parameters");
         $this->out("-validcodes:\ta comma seperated list of HTTP status codes that should NOT show up on report.");
         $this->out("-urlfield:\tname of url column. should be 'checkRateUrl' or 'url' ");
         $this->hr();
         $this->out("Example cron:");
-        $this->out("cd /Users/oefada/Development/toolbox; ./cake/console/cake hotel_url_checker -validcodes 200,300 -urlfield checkRateUrl");
+        $this->out(
+            "cd /Users/oefada/Development/toolbox; ./cake/console/cake hotel_url_checker -validcodes 200,300 -urlfield checkRateUrl"
+        );
         $this->out("\n");
     }
 }
