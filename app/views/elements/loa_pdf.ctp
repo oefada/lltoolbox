@@ -176,22 +176,36 @@ Configure::write('debug', 0);
             <td><?=$loa['Loa']['membershipTotalNights'];?> <em><strong></strong></em></td>
         </tr>
     <? }?>
-    <? if (!empty($loa['Loa']['auctionCommissionPerc']) && !empty($loa['Loa']['buynowCommissionPerc'])){
+    <? if (!empty($loa['Loa']['auctionCommissionPerc']) && !empty($loa['Loa']['buynowCommissionPerc'])) {
         //e.g. Toolbox
         ?>
-    <tr>
-        <td><strong>Promotional Packages Commission Fee</strong></td>
-        <td><? if (!empty($loa['Loa']['auctionCommissionPerc'])){?>Auctions: <?=$loa['Loa']['auctionCommissionPerc'];?>%<? } ?>
-        <? if (!empty($loa['Loa']['buynowCommissionPerc'])){?><br />Buy Now: <?=$loa['Loa']['buynowCommissionPerc'];?>%<br /><? } ?>
-        </td>
-    </tr>
-    <?}else{
-        //e.g. sugar ?>
-    <tr>
-        <td><strong>Promotional Packages Commission Fee</strong></td>
-        <td><? if (!empty($loa['Loa']['buynowCommissionPerc'])){?><?=$loa['Loa']['buynowCommissionPerc'];?>%<br /><? } ?>
-        </td>
-    </tr>
+        <? if ($loa['Loa']['auctionCommissionPerc'] == $loa['Loa']['buynowCommissionPerc']) { ?>
+            <tr>
+                <td><strong>Promotional Packages Commission Fee</strong></td>
+                <td><? if (!empty($loa['Loa']['buynowCommissionPerc'])) { ?><?= $loa['Loa']['buynowCommissionPerc']; ?>%
+                        <br/><? } ?>
+                </td>
+            </tr>
+
+        <? } else { ?>
+            <tr>
+                <td><strong>Promotional Packages Commission Fee</strong></td>
+                <td><? if (!empty($loa['Loa']['auctionCommissionPerc'])) { ?>Auctions: <?= $loa['Loa']['auctionCommissionPerc']; ?>%<? } ?>
+                    <? if (!empty($loa['Loa']['buynowCommissionPerc'])) { ?>
+                        <br/>Buy Now: <?= $loa['Loa']['buynowCommissionPerc']; ?>%<br/><? } ?>
+                </td>
+            </tr>
+        <? } ?>
+    <?
+    } else {
+        //e.g. sugar
+        ?>
+        <tr>
+            <td><strong>Promotional Packages Commission Fee</strong></td>
+            <td><? if (!empty($loa['Loa']['buynowCommissionPerc'])) { ?><?= $loa['Loa']['buynowCommissionPerc']; ?>%
+                    <br/><? } ?>
+            </td>
+        </tr>
     <?
     }?>
     <tr>
