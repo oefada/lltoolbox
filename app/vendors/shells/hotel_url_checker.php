@@ -9,7 +9,7 @@ class HotelUrlCheckerShell extends Shell
     public $db;
     public $uses = array('Client');
     public $HttpSocket;
-    public $safeHttpResponseCodes = array(200, 301, 302);
+    public $safeHttpResponseCodes = array(200);
     public $reportHeadings = array('Client_Id', 'Name', 'URL', 'Response_Code', 'Response_Reason');
     public $deliminator = "\t";
     public $encapsulator = '"';
@@ -60,7 +60,6 @@ class HotelUrlCheckerShell extends Shell
         AND Client.clientId <> 8455
         AND  " . $this->getUrlField() . " != ''
         AND Client.inactive !=1
-        LIMIT 20
       ";
 
         if ($this->debug == true) {
