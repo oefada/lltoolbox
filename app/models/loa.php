@@ -492,7 +492,7 @@ class Loa extends AppModel
         //fees and dates
         $loa_data_save['Loa']['membershipFee'] = $sugarLoaData['agreement_fee_c'];
         $loa_data_save['Loa']['membershipBalance'] = $loa_data_save['Loa']['membershipFee'];
-        $loa_data_save['Loa']['auctionCommissionPerc'] = $sugarLoaData['commission_auction_c'];
+        $loa_data_save['Loa']['auctionCommissionPerc'] = $sugarLoaData['commission_buynow_c'];
         $loa_data_save['Loa']['buynowCommissionPerc'] = $sugarLoaData['commission_buynow_c'];
         $loa_data_save['Loa']['startDate'] = $sugarLoaData['effective_date_c'];
         $loa_data_save['Loa']['endDate'] = $sugarLoaData['expiration_date_c'];

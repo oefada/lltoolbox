@@ -211,7 +211,7 @@ class LoaDocumentsController extends AppController
 
                 //fees and dates
                 $loa['Loa']['membershipFee'] = $decoded_request['loa']['agreement_fee_c'];
-                //$loa['Loa']['auctionCommissionPerc'] = $decoded_request['loa']['commission_auction_c'];
+                $loa['Loa']['auctionCommissionPerc'] = $decoded_request['loa']['commission_buynow_c'];
                 $loa['Loa']['buynowCommissionPerc'] = $decoded_request['loa']['commission_buynow_c'];
                 $loa['Loa']['startDate'] = $decoded_request['loa']['effective_date_c'];
                 $loa['Loa']['endDate'] = $decoded_request['loa']['expiration_date_c'];
