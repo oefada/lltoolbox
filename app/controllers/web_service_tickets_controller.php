@@ -1116,6 +1116,9 @@ class WebServiceTicketsController extends WebServicesController
             }
         }
         $pgBookingId = isset($params['pgBookingId']) ? $params['pgBookingId'] : null;
+        if ($pgBookingId) {
+        	$userData = array(1);
+        }
         
         // package id for deal alerts
         if ($ppvNoticeTypeId == 41 || $ppvNoticeTypeId == 42 || $ppvNoticeTypeId == 43) {
@@ -1142,7 +1145,7 @@ class WebServiceTicketsController extends WebServicesController
 
         // TODO: error checking for params
 
-        if ($ticketId == null && $username == null && !$offerId && !$userId && !isset($params['userEmail'])) {
+        if ($ticketId == null && $username == null && !$offerId && !$userId && !isset($params['userEmail']) && $pgBookingId == null) {
             return 'Invalid input';
             exit;
         }
@@ -2450,6 +2453,7 @@ class WebServiceTicketsController extends WebServicesController
             case 60:
                 include('../vendors/email_msgs/notifications/60_pegasus_confirmation.html');
                 $emailTo = 'jwoods@luxurylink.com';
+                $userEmail = 'jwoods@luxurylink.com'; 
                 $emailFrom = "$siteDisplay <exclusives@$siteEmail>";
                 $emailReplyTo = "exclusives@$siteEmail";
                 $emailSubject = "email confirmation for Pegasus booking";
