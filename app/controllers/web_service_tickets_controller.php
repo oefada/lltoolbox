@@ -8,10 +8,6 @@ error_reporting(E_ALL);
 set_error_handler("wstErrorHandler");
 register_shutdown_function('wstErrorShutdown');
 
-// FOR DEV WEB SERVICE SETTINGS! VERY IMPORTANT FOR DEV
-define('DEV_USER_TOOLBOX_HOST', 'http://' . $_SERVER['ENV_USER'] . '-toolboxdev.luxurylink.com/web_service_tickets');
-define('DEV_USER', $_SERVER['ENV_USER']);
-
 class WebServiceTicketsController extends WebServicesController
 {
     public $name = 'WebServiceTickets';
@@ -54,9 +50,7 @@ class WebServiceTicketsController extends WebServicesController
         'ReservationPreferDateFromHotel'
     );
 
-    public $serviceUrl = 'http://toolbox.luxurylink.com/web_service_tickets';
-    public $serviceUrlStage = 'http://stage-toolbox.luxurylink.com/web_service_tickets';
-    public $serviceUrlDev = DEV_USER_TOOLBOX_HOST;
+    public $serviceUrl = '/web_service_tickets';
     public $errorResponse = false;
     public $errorMsg = false;
     public $errorTitle = false;

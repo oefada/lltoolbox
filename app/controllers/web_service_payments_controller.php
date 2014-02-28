@@ -3,17 +3,12 @@ Configure::write('debug', 0);
 App::import('Vendor', 'nusoap/web_services_controller');
 require(APP.'/vendors/pp/Processor.class.php');
 
-// FOR DEV WEB SERVICE SETTINGS! VERY IMPORTANT FOR DEV
-define('DEV_USER_TOOLBOX_HOST', 'http://' . $_SERVER['ENV_USER'] . '-toolboxdev.luxurylink.com/web_service_tickets');
 class WebServicePaymentsController extends WebServicesController
 {
 	var $name = 'WebServicePayments';
 	var $uses = array('UserPaymentSetting','Ticket', 'PaymentDetail', 'Track', 'TrackDetail');
-	var $serviceUrl = 'http://toolbox.luxurylink.com/web_service_payments';
+	var $serviceUrl = '/web_service_payments';
 	
-	// IF DEV, please make sure you use this path, or if using your own dev, then change this var
-	var $serviceUrlDev = DEV_USER_TOOLBOX_HOST;
-
 	var $errorResponse = array();
 	var $api = array(
 					'setUserPaymentSetting' => array(
