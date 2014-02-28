@@ -18,3 +18,5 @@ luxurylink
 .idea
 
 app/config/database.php.mclifford.prod
+
+app/tmp/cache/soapserver/WebServiceTickets.soapserver

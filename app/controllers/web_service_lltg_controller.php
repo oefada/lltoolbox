@@ -3,15 +3,11 @@
 Configure::write('debug', 0);
 App::import('Vendor', 'nusoap/web_services_controller');
 
-define('DEV_USER_TOOLBOX_HOST', 'http://' . $_SERVER['ENV_USER'] . '-toolboxdev.luxurylink.com/web_service_lltg');
-
 class WebServiceLltgController extends WebServicesController
 {
 	var $name = 'WebServiceLltg';
 	var $uses = array('MailVendorFailure');
-	var $serviceUrl = 'http://toolbox.luxurylink.com/web_service_lltg';
-	var $serviceUrlStage = 'http://stage-toolbox.luxurylink.com/web_service_tickets';
-	var $serviceUrlDev = DEV_USER_TOOLBOX_HOST;
+	var $serviceUrl = '/web_service_lltg';
 
 	var $errorResponse = false;
 	var $api = array(

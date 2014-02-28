@@ -74,16 +74,7 @@ class WebServicesController extends AppController
             $urn = "urn:$wsdl";
 
             // changing environment to dev
-            if (stristr($_SERVER['HTTP_HOST'], 'dev') || (isset($_SERVER['ENV']) && $_SERVER['ENV'] == 'development')) {
-                $this->serviceUrl = $this->serviceUrlDev;
-            } elseif (stristr(
-                    $_SERVER['HTTP_HOST'],
-                    'stage'
-                ) || (isset($_SERVER['ENV']) && $_SERVER['ENV'] == 'staging')
-            ) {
-                $this->serviceUrl = $this->serviceUrlStage;
-            }
-
+            $this->serviceUrl = Configure::read('Url.Ws') . $this->serviceUrl;
             $this->_soap_server->configureWSDL($wsdl, $urn, $this->serviceUrl);
 
             foreach ($this->api as $name => $method) {

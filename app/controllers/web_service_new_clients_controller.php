@@ -3,21 +3,11 @@
 Configure::write('debug', 0);
 App::import('Vendor', 'nusoap/web_services_controller');
 
-// FOR DEV WEB SERVICE SETTINGS! VERY IMPORTANT FOR DEV
-define('DEV_USER_TOOLBOX_HOST', 'http://' . $_SERVER['ENV_USER'] . '-toolboxdev.luxurylink.com/web_service_new_clients');
-
-define('STAGE_USER_TOOLBOX_HOST', 'http://stage-toolbox.luxurylink.com/web_service_new_clients');
-
 class WebServiceNewClientsController extends WebServicesController
 {
 	var $name = 'WebServiceNewClients';
 	var $uses = array('Client','ClientContact','ConnectorLog','LoaMembershipType','Loa');
-	var $serviceUrl = 'http://toolbox.luxurylink.com/web_service_new_clients';
-
-	// IF DEV, please make sure you use this path, or if using your own dev, then change this var
-	var $serviceUrlDev = DEV_USER_TOOLBOX_HOST;
-
-    public $serviceUrlStage =STAGE_USER_TOOLBOX_HOST;
+	var $serviceUrl = '/web_service_new_clients';
 
 	var $errorResponse = false;
 	var $api = array(
