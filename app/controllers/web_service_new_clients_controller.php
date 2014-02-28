@@ -66,17 +66,17 @@ class WebServiceNewClientsController extends WebServicesController
 			$client = $this->Client->findByClientId($client_id);
 			$client_data_save = $client['Client'];
 
-            $sugarClientName= str_replace('&#039;', "'", $decoded_request['client']['client_name']);
-            $sugarClientName = $this->utf8dec($sugarClientName);
+            $sugarClientName= $this->prepClientNameForImport($decoded_request['client']['client_name']);
 
             if (isset($client_data_save['name'])){
                 try {
                     //If name exists, run subroutine to check if it has changed against SugarCRM/LightboxName.
                     $this->Client->checkClientNameChange($sugarClientName, $client_data_save['name'],$client_id);
                 } catch (Exception $e) {
-                    mail('devmail@luxurylink.com','Client NameChange Error','Suagar Name:'.print_r($sugarClientName,true)
-                        .'ToolboxName: '.print_r($client['Client']['name'],true));
-
+                    $ErrorMsgClientNameChange = "Suagar Name:\t".print_r($sugarClientName,true)."\n".
+                        "ToolboxName:\t".print_r($client['Client']['name'],true)."\n".
+                        "Error Message:\t".$e->getMessage();
+                    @mail('devmail@luxurylink.com','Client NameChange Error',$ErrorMsgClientNameChange);
                 }
             }
 
@@ -91,8 +91,7 @@ class WebServiceNewClientsController extends WebServicesController
 
 		// map data from Sugar to toolbox client table structure
 		//$client_data_save = array();
-        $client_data_save['name']				= str_replace('&#039;', "'", $decoded_request['client']['client_name']);
-		$client_data_save['name']				= $this->utf8dec($client_data_save['name']);
+        $client_data_save['name']               = $this->prepClientNameForImport($decoded_request['client']['client_name']);
         $client_data_save['nameNormalized']     = $this->Client->normalize($client_data_save['name'], 1);
         $client_data_save['managerUsername'] 	= $decoded_request['client']['manager_ini'];
 		$client_data_save['teamName']			= $decoded_request['client']['team_name'];
@@ -316,7 +315,17 @@ class WebServiceNewClientsController extends WebServicesController
 		return substr($s_String, 0, strlen($s_String)-1);
 	}
 
-	function sendToSugar($data) {
+    private function prepClientNameForImport($clientName = null)
+    {
+        if (!isset($clientName)) {
+            return '';
+        }
+        $clientName = str_replace('&#039;', "'", $clientName);
+        $clientName = $this->utf8dec($clientName);
+        return $clientName;
+    }
+
+    function sendToSugar($data) {
 		// had to use this custom native soap class and functions because couldn't run both cakephp nusoap server and client
 		// this soap call to made to sugar in order to give Sugar the new clientId from toolbox so it's recorded in Sugar
 		if (stristr($_SERVER['HTTP_HOST'], 'dev')) {

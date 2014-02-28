@@ -1165,20 +1165,28 @@ class Client extends AppModel
             )
         );
         $tbl .= "</table><br />\n";
-        $msg = $text . $tbl;
 
-        $headers = 'MIME-Version: 1.0' . "\r\n";
-        $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-        // Additional headers
-        $headers .= 'From: Toolbox <dev@luxurylink.com>' . "\r\n";
+        //send email after to JSON response to prevent slowness in web service.
+        App::import('Vendor', 'PHPMailer', array('file' => 'phpmailer' . DS . 'class.phpmailer.php'));
+
+        $mail = new PHPMailer();
+        $mail->From = 'no-reply@toolbox.luxurylink.com';
+        $mail->FromName = 'no-reply@toolbox.luxurylink.com';
+        $mail->IsHTML(true);
+
         if ($_SERVER['ENV'] == 'development' || ISSTAGE == true) {
-            $to = "devmail@luxurylink.com";
-            $headers .= 'Bcc: oefada@luxurylink.com' . "\r\n";
+            $mail->AddAddress('devmail@luxurylink.com');
+            $mail->AddBCC('oefada@luxurylink.com');
+            $subj .=' [TESTING - IGNORE]';
         } else {
-            $to = "clientnamechange@luxurylink.com";
-            //$headers .= 'Cc: accounting@luxurylink.com' . "\r\n";
+            $mail->AddAddress('clientnamechange@luxurylink.com');
+            $mail->AddBCC('oefada@luxurylink.com');
         }
-        @mail($to, $subj, $msg, $headers);
-        return true;
+        $mail->Subject = $subj;
+        $mail->Body = $text . $tbl;
+        $result = $mail->Send();
+        return $result;
     }
+
+
 }
