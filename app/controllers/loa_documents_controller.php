@@ -276,11 +276,20 @@ class LoaDocumentsController extends AppController
             $nameParts = split_full_name($this->data['LoaDocument']['contactName']);
             $this->data['LoaDocument']['nameParts'] = $nameParts;
 
+            $loa['nameFormat'] =array();
             if(!empty($this->data['LoaDocument']['contactPrefix'])){
-
-                $loa['salutation'] = $this->data['LoaDocument']['contactPrefix'].' '.$nameParts['lname'];
-            }else{
-                $loa['salutation'] = $nameParts['fname'];
+                //formal
+                //Dear [person],
+                $loa['nameFormat'][1] = $this->data['LoaDocument']['contactPrefix'] .' ' .$this->data['LoaDocument']['contactName'];
+                //[person], blah blah blah
+                $loa['nameFormat'][2] = $this->data['LoaDocument']['contactPrefix'] .' '.$nameParts['fname'];
+                //signature
+                $loa['nameFormat'][3] = $this->data['LoaDocument']['contactPrefix']. ' '.$this->data['LoaDocument']['contactName'];
+                }else{
+                //informal
+                $loa['nameFormat'][1] = $nameParts['fname'];
+                $loa['nameFormat'][2] = $nameParts['fname'];
+                $loa['nameFormat'][3] = $this->data['LoaDocument']['contactName'];
             }
             if(!empty($loa['Loa']['numEmailInclusions'])){
                 $loa['Loa']['numEmailInclusionsWords'] = convert_number_to_words(intval($loa['Loa']['numEmailInclusions']));
