@@ -26,7 +26,7 @@ Configure::write('debug', 0);
 
 <h3><strong>Partnership Program Overview for <?=$loa['Client']['name'];?></strong>
 </h3>
-<p>Dear <?=$loa['salutation']?>,
+<p>Dear <?=$loa['nameFormat'][1]?>,
 </p>
 <p>It is my pleasure to present this partnership invitation for your review. As we discussed, Luxury Link Travel Group (LLTG) is uniquely positioned to send
     thousands of qualified leads and direct consumer business to <?=$loa['Client']['name'];?> via our Partner Program while providing brand lift within a targeted
@@ -226,7 +226,7 @@ Configure::write('debug', 0);
 </p>
 <p>The program outlined above will commence on or before <?=date('F d, Y',strtotime($loa['Loa']['startDate']));?> and will conclude on <?=date('F d, Y',strtotime($loa['Loa']['endDate']));?>.
 </p>
-<p><?=$loa['LoaDocument']['nameParts']['fname'];?>, on behalf of the entire Luxury Link Travel Group, we look forward to a successful year.
+<p><?=$loa['nameFormat'][1];?>, on behalf of the entire Luxury Link Travel Group, we look forward to a successful year.
 </p>
 
 
@@ -238,7 +238,7 @@ Configure::write('debug', 0);
     <tr><th width="200">Warm Regards,</th><th>&nbsp;</th><th>Approved:</th></tr>
     <tr><td></td><th>&nbsp;</th><td style="height:40px;"></td></tr>
     <tr><td ><?=$loa['LoaDocument']['signerName']?></td><th>&nbsp;</th><td>&nbsp;</td></tr>
-    <tr><td style="border-top:1px solid #CCC;"><?=$loa['LoaDocument']['signerTitle']?></td><th>&nbsp;</th><td style="border-top:1px solid #CCC;"><?=$loa['LoaDocument']['contactName']?></td></tr>
+    <tr><td style="border-top:1px solid #CCC;"><?=$loa['LoaDocument']['signerTitle']?></td><th>&nbsp;</th><td style="border-top:1px solid #CCC;"><?=$loa['nameFormat'][3];?></td></tr>
     <tr><td>Luxury Link Travel Group</td><th>&nbsp;</th><td><?=$loa['Client']['name'];?></td></tr>
 </table>
 

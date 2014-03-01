@@ -22,6 +22,7 @@ if (isset($results['data']['recipients'],$results['message']['pdf'])){
     $mail->From = 'no-reply@toolbox.luxurylink.com';
     $mail->FromName = 'no-reply@toolbox.luxurylink.com';
     if ($_SERVER['ENV'] == 'development' || ISSTAGE == true){
+
         $mail->AddAddress('devmail@luxurylink.com');
         $mail->AddBCC('oefada@luxurylink.com');
     }else {
@@ -60,4 +61,9 @@ if (isset($results['data']['recipients'],$results['message']['pdf'])){
     $mail->Body = $msg;
 
     $result = $mail->Send();
+
+    if (false == $result){
+        @mail('devmail@luxurylink.com','LOA Notification Error- Email Not Sent','Unable to Send LOA Document Email'.print_r($mail->ErrorInfo,true));
+    }
+
 }
