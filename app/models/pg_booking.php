@@ -10,6 +10,10 @@ class PgBooking extends AppModel
     );
 
     public $hasMany = array(
+        'PgPayment' => array(
+            'foreignKey' => 'pgBookingId',
+            'dependent' => true
+        ),
     );
 
     public $hasOne = array(
