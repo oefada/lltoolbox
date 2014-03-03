@@ -5,6 +5,8 @@ class PgBooking extends AppModel
     var $useTable = 'pgBooking';
     var $primaryKey = 'pgBookingId';
     var $belongsTo = array(
+        'Client' => array('foreignKey' => 'clientId'),
+        'User' => array('foreignKey' => 'userId'),
     );
 
     public $hasMany = array(

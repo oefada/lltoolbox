@@ -80,6 +80,16 @@ class PgBookingsController extends AppController
                 'PgBooking.pgBookingId',
                 'PgBooking.tldId',
                 'PgBooking.dateCreated',
+                'PgBooking.clientId',
+                'PgBooking.userId',
+                'PgBooking.clientId',
+                'PgBooking.pgBookingStatusId',
+                'Client.name',
+                'PgBooking.travelerFirstName',
+                'PgBooking.travelerLastName',
+                'User.firstName',
+                'User.lastName',
+                'User.email',
             ),
             'order' => array(
                 'PgBooking.pgBookingId' => 'desc'

@@ -194,9 +194,9 @@ $this->set('hideSidebar', true);
     <th width="10"><?php echo $paginator->sort('Created', 'PgBooking.dateCreated');?></th>
 	<th width="220" style="color:#FFF;">Client</th>
 	<th width="220" style="color:#FFF;">User</th>
-    <th width="220"  style="color:#FFF;">Sale Price</th>
+    <th width="220"  style="color:#FFF;">Traveler</th>
+    <th width="220"  style="color:#FFF;">Status</th>
 	<th width="220" style="color:#FFF;">Notes</th>
-	<th width="10" style="color:#FFF;">Promo</th>
 	<th class="actions" style="color:#FFF;"><?php __('Actions');?></th>
 </tr>
 <?php
@@ -212,10 +212,10 @@ foreach ($bookings as $booking):
         <td><?php echo $booking['PgBooking']['pgBookingId']; ?></td>
         <td><?php echo ($booking['PgBooking']['tldId'] == 2) ? '.CO.UK' : '.COM'; ?></td>
         <td><?php echo $booking['PgBooking']['dateCreated'];?></td>
-		<td></td>
-		<td></td>
-		<td></td>
-		<td></td>
+        <td><?php echo $booking['Client']['name'];?></td>
+        <td><?php echo $booking['User']['firstName'];?> <?php echo $booking['User']['lastName'];?></td>
+        <td><?php echo $booking['PgBooking']['travelerFirstName'];?> <?php echo $booking['PgBooking']['travelerLastName'];?></td>
+        <td><?php echo $booking['PgBooking']['pgBookingStatusId'];?></td>
         <td></td>
 		<td class="actions">
 			<?php echo $html->link(__('View Details', true), array('controller' => 'pg_bookings', 'action'=>'view', $booking['PgBooking']['pgBookingId'])); ?>
