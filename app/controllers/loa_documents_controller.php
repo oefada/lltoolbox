@@ -282,7 +282,7 @@ class LoaDocumentsController extends AppController
                 //Dear [person],
                 $loa['nameFormat'][1] = $this->data['LoaDocument']['contactPrefix'] .' ' .$this->data['LoaDocument']['contactName'];
                 //[person], blah blah blah
-                $loa['nameFormat'][2] = $this->data['LoaDocument']['contactPrefix'] .' '.$nameParts['fname'];
+                $loa['nameFormat'][2] = $this->data['LoaDocument']['contactPrefix'] .' '.$nameParts['lname'];
                 //signature
                 $loa['nameFormat'][3] = $this->data['LoaDocument']['contactPrefix']. ' '.$this->data['LoaDocument']['contactName'];
                 }else{

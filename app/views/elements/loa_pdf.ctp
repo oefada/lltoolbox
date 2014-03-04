@@ -226,7 +226,7 @@ Configure::write('debug', 0);
 </p>
 <p>The program outlined above will commence on or before <?=date('F d, Y',strtotime($loa['Loa']['startDate']));?> and will conclude on <?=date('F d, Y',strtotime($loa['Loa']['endDate']));?>.
 </p>
-<p><?=$loa['nameFormat'][1];?>, on behalf of the entire Luxury Link Travel Group, we look forward to a successful year.
+<p><?=$loa['nameFormat'][2];?>, on behalf of the entire Luxury Link Travel Group, we look forward to a successful year.
 </p>
 
 
