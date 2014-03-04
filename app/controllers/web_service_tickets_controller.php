@@ -2350,12 +2350,14 @@ class WebServiceTicketsController extends WebServicesController
                 $hideSalutation = true;
                 break;
             case 42:
+                $emailFrom = "$siteDisplay <customerservice@luxurylink.com>";
                 $isAuction = 1;
                 $additionalClients = (isset($params['acAdditionalClients'])) ? $params['acAdditionalClients'] : array();
                 include('../vendors/email_msgs/notifications/42_43_abandoned_cart.html');
                 $emailSubject = "Questions with your " . $clientNameP . " Order?";
                 break;
             case 43:
+                $emailFrom = "$siteDisplay <customerservice@luxurylink.com>";
                 $isAuction = 0;
                 $additionalClients = (isset($params['acAdditionalClients'])) ? $params['acAdditionalClients'] : array();
                 include('../vendors/email_msgs/notifications/42_43_abandoned_cart.html');
