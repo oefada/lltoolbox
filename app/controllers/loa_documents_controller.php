@@ -280,7 +280,7 @@ class LoaDocumentsController extends AppController
             if(!empty($this->data['LoaDocument']['contactPrefix'])){
                 //formal
                 //Dear [person],
-                $loa['nameFormat'][1] = $this->data['LoaDocument']['contactPrefix'] .' ' .$this->data['LoaDocument']['contactName'];
+                $loa['nameFormat'][1] = $this->data['LoaDocument']['contactPrefix'] .' ' .$nameParts['lname'];
                 //[person], blah blah blah
                 $loa['nameFormat'][2] = $this->data['LoaDocument']['contactPrefix'] .' '.$nameParts['lname'];
                 //signature
