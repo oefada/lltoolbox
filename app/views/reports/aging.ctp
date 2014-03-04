@@ -156,7 +156,6 @@
 			<th>Fee</th>
 			<th>Balance</th>
 			<th>LL</th>
-			<th>FG</th>
 			<th>Date</th>
 			<th>Price</th>
 			<th>Notes</th>
@@ -180,8 +179,6 @@ foreach ($aging as $a):
 			<td align="right"><?=($a['membershipPackagesRemaining']>0?$a['membershipPackagesRemaining'].' pkgs':'$'.intval($a['membershipBalance']));?></td>
 			
 			<td><?=strpos($a['sites'] , 'luxurylink') === false ? '' : 'LL';?></td>
-			<td><?=strpos($a['sites'] , 'family') === false ? '' : 'FG';?></td>
-
 			<td><?=substr($a['lastSellDate'] , 0 , 10);?></td>
 			<td align="right">$<?=intval($a['lastSellPrice']);?></td>
 			<td>
