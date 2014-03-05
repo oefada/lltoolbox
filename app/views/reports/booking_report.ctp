@@ -23,7 +23,7 @@
         <h3 class='title'>SEARCH LOAs BY:</h3>
 
         <div class="fieldRow">
-            <label>Package Live Date</label>
+            <label>Package Live or In Date</label>
             <? echo $form->text(
                 'condition1.field',
                 array('value' => "DATE_FORMAT(Loa.packageLiveDate, '%Y-%m-%d') OR=DATE_FORMAT(Loa.customerApprovalDate, '%Y-%m-%d')", 'type' => 'hidden')
