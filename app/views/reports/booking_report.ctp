@@ -26,7 +26,7 @@
             <label>Package Live Date</label>
             <? echo $form->text(
                 'condition1.field',
-                array('value' => "DATE_FORMAT(Loa.packageLiveDate, '%Y-%m-%d')", 'type' => 'hidden')
+                array('value' => "DATE_FORMAT(Loa.packageLiveDate, '%Y-%m-%d') OR=DATE_FORMAT(Loa.customerApprovalDate, '%Y-%m-%d')", 'type' => 'hidden')
             ) ?>
             <div class="range">
                 <? echo $datePicker->picker('condition1.value.between.0', array('label' => 'From')) ?>
@@ -109,13 +109,17 @@ if (!empty($results)):
 	<?=$pagination->Paginate("/reports/booking_report/filter:".urlencode($serializedFormInput)."/sortBy:$sortBy/sortDirection:$sortDirection/page:", $currentPage, $numPages)?>
 	<table style="margin-top: 20px">
 		<thead class='fixedHeader'>
-		<tr><th><?=$utilities->sortLink('Client.clientId', 'Client ID',  $this, $html,$url)?></th>
-			<th><?=$utilities->sortLink('Client.name', 'Client Name',  $this, $html,$url)?></th>
+		<tr>
+            <th><?=$utilities->sortLink('LoaLevel.loaLevelName', 'Loa Level',  $this, $html,$url)?></th>
+            <th><?=$utilities->sortLink('Loa.customerApprovalDate', 'Package In Date',  $this, $html,$url)?></th>
+            <th><?=$utilities->sortLink('Client.clientId', 'Client ID',  $this, $html,$url)?></th>
+
+            <th><?=$utilities->sortLink('Client.name', 'Client Name',  $this, $html,$url)?></th>
 			<th><?=$utilities->sortLink('Loa.loaId', 'Loa ID',  $this, $html,$url)?></th>
 
             <th><?=$utilities->sortLink('AccountType.accountTypeName', 'Account Type',  $this, $html,$url)?></th>
-            <th><?=$utilities->sortLink('LoaLevel.loaLevelName', 'Loa Level',  $this, $html,$url)?></th>
-            <th><?=$utilities->sortLink('Loa.customerApprovalDate', 'Package In Date',  $this, $html,$url)?></th>
+
+
             <th><?=$utilities->sortLink('Loa.startDate', 'Start Date',  $this, $html,$url)?></th>
             <th><?=$utilities->sortLink('Loa.endDate', 'End Date',  $this, $html,$url)?></th>
 
@@ -134,13 +138,15 @@ if (!empty($results)):
 $class = ($k % 2) ? ' class="altrow"' : '';
 ?>
 	<tr<?=$class?>>
+        <td><?=$r['LoaLevel']['loaLevelName']?></td>
+        <td><?=$r['Loa']['customerApprovalDate']?date('m-d-Y',strtotime($r['Loa']['customerApprovalDate'])):'';?></td>
         <td><?=$html->link($r['Client']['clientId'], array('controller' => 'clients', 'action' => 'edit', $r['Client']['clientId']))?></td>
 		<td><?=$html->link($r['Client']['name'], array('controller' => 'clients', 'action' => 'edit', $r['Client']['clientId']))?></td>
 		<td><?=$html->link($r['Loa']['loaId'], array('controller' => 'loas', 'action' => 'edit', $r['Loa']['loaId']))?></td>
 
         <td><?=$r['AccountType']['accountTypeName']?></td>
-        <td><?=$r['LoaLevel']['loaLevelName']?></td>
-        <td><?=$r['Loa']['customerApprovalDate']?date('m-d-Y',strtotime($r['Loa']['customerApprovalDate'])):'';?></td>
+
+
         <td><?=$r['Loa']['startDate']?date('m-d-Y',strtotime($r['Loa']['startDate'])):'';?></td>
         <td><?=$r['Loa']['endDate']?date('m-d-Y',strtotime($r['Loa']['endDate'])):'';?></td>
 

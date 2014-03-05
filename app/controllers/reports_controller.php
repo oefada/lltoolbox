@@ -2127,6 +2127,7 @@ class ReportsController extends AppController
     public function booking_report()
     {
         if (!empty($this->data)) {
+
             $conditions = $this->_build_conditions($this->data);
 
             if (!empty($this->params['named']['sortBy'])) {
@@ -3914,7 +3915,13 @@ class ReportsController extends AppController
                 $conditions[$k] = $ca['field'] . ' ' . $ca['value']; elseif ($betweenCondition) : //generate valid SQL for a between condition
                 if (null !== $firstValue && null !== $secondValue) { //if both values were
                     // entered, it's a between
-                    $conditions[$k] = $ca['field'] . ' BETWEEN ' . "'{$firstValue}'" . ' AND ' . "'{$secondValue}'";
+                    if (strpos($ca['field'], 'OR=') !== false) {
+                        $impFields = explode('OR=',$ca['field']);
+                        $conditions[$k] = "( ".trim($impFields[0]) . ' BETWEEN ' . "'{$firstValue}'" . ' AND ' . "'{$secondValue}' OR ".trim($impFields[1]). ' BETWEEN ' . "'{$firstValue}'" . ' AND ' . "'{$secondValue}' )";
+                    }else{
+                        $conditions[$k] = $ca['field'] . ' BETWEEN ' . "'{$firstValue}'" . ' AND ' . "'{$secondValue}')\n";
+                    }
+
                 } else { //if only one value was entered, it's not a between
                     $conditions[$k] = $ca['field'] . ' = ' . "'{$firstValue}'";
                 } else :
