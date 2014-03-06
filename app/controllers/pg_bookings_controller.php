@@ -200,6 +200,31 @@ class PgBookingsController extends AppController
         $this->set('booking', $booking);
     }
 
+    function cancel($id = null)
+    {
+        if (!$id) {
+            $this->Session->setFlash(__('Invalid Booking.', true), 'default', array(), 'error');
+            $this->redirect(array('action' => 'index'));
+        }
+
+        $this->PgBooking->recursive = 2;
+        $booking = $this->PgBooking->read(null, $id);
+
+        if ($booking === false) {
+            $this->Session->setFlash(__("Not Finding bookingId $id", true), 'default', array(), 'error');
+            $this->redirect(array('action' => 'index'));
+        }
+        
+        // run cancel
+        if (isset($this->params['url']['confirm']) && $this->params['url']['confirm'] == $id) {
+            $this->Session->setFlash(__("Booking $id has been canceled", true), 'default', array(), 'error');
+            $this->redirect(array('action' => 'view', 'id' => $id));
+        }
+        
+        $this->set('booking', $booking);
+    }
+
+
     private function dateArrayToString($dt)
     {
         $rtn = $dt['year'] . '-' . $dt['month'] . '-' . $dt['day'];
