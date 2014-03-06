@@ -28,12 +28,22 @@
     <td><?php echo $booking['PgBooking']['travelerFirstName']; ?> <?php echo $booking['PgBooking']['travelerLastName']; ?></td>
 </tr>
 <tr>
+    <td width="200"><strong>Confirmation Number</strong></td>
+    <td><?php echo $booking['PgBooking']['confirmationNumber']; ?></td>
+</tr>
+<tr>
     <td width="200"><strong>Status</strong></td>
     <td><?php echo $booking['PgBooking']['pgBookingStatusId']; ?></td>
 </tr>
 </table>
 </div>
 <div style="clear:both;"></div>
+
+<?php if ($booking['PgBooking']['pgBookingStatusId'] == 1): ?>
+<br/><br/><br/>
+<a href="/pg_bookings/cancel/<?php echo $booking['PgBooking']['pgBookingId']; ?>">Cancel This Booking</a>
+<br/><br/><br/><br/>
+<?php endif; ?>
 
 <br/>
 <div class="collapsible">
