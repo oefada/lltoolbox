@@ -151,6 +151,9 @@
                         &nbsp;&nbsp;&nbsp;
                         <? echo $form->input('Package.pegasusPackageCodeRoomGrade', array('default'=>$pgsRoomGrade, 'label'=>'Room Grade ', 'div'=>false, 'style'=>'width:50px;')); ?>
 
+                        &nbsp;&nbsp;&nbsp;
+                        <? echo $form->input('Package.pegasusRackRoomGrade', array('default'=>$package['Package']['pegasusRackRoomGrade'], 'label'=>'Rack Room Grade ', 'div'=>false, 'style'=>'width:50px;')); ?>
+
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         <input id="PackagePegasusIsPreview" type="hidden" value="0" name="data[Package][pegasusIsPreview]">
 

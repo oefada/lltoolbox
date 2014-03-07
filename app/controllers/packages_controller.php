@@ -1348,6 +1348,10 @@ class PackagesController extends AppController
         	} else {
         		$this->data['Package']['pegasusPackageCode'] = null;
         	}
+
+        	if ($this->data['Package']['pegasusRackRoomGrade'] == '') {
+        		$this->data['Package']['pegasusRackRoomGrade'] = null;
+        	}
         	
             if ($_POST['isAjax'] == 'true') {
 
