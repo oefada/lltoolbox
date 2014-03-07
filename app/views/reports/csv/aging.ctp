@@ -6,10 +6,10 @@
  fputcsv($handle , $row);
  }
  */
-
+Configure::write('debug', 0);
 $handle = fopen('php://output' , 'a');
 
-fputcsv($handle , array('Age Days' , 'Client id' , 'LOA id' , 'Client Name' , 'Location' , 'Destination' , 'Manager', 'AccountExecutive' , 'Start' , 'End' , 'Membership Fee' , 'Balance' , 'Total Pkgs' , 'Pkgs Rem' , 'LL', 'Offers LL' , 'Offers FG' , 'Last Sell Date' , 'Last Sell Price' , 'Notes' , ));
+fputcsv($handle , array('Age Days' , 'Client id' , 'LOA id' , 'Client Name' , 'Location' , 'Destination' , 'Manager', 'AccountExecutive' , 'Start' , 'End' , 'Membership Fee' , 'Balance' , 'Total Pkgs' , 'Pkgs Rem' , 'LL', 'Offers LL' , 'Last Sell Date' , 'Last Sell Price' , 'Notes' , ));
 
 foreach ($aging as $a) {
 	$row = array();
@@ -29,7 +29,6 @@ foreach ($aging as $a) {
 	$row['membershipPackagesRemaining'] = formatCSV($a['membershipPackagesRemaining'] > 0 ? $a['membershipPackagesRemaining'] : '');
 	$row['sitesLL'] = formatCSV(strpos($a['sites'] , 'luxurylink') !== false ? 'LL' : '');
 	$row['offersLuxuryLink'] = formatCSV($a['offersLuxuryLink'] > 0 ? $a['offersLuxuryLink'] : '');
-	$row['offersFamily'] = formatCSV($a['offersFamily'] > 0 ? $a['offersFamily'] : '');
 	$row['lastSellDate'] = formatDate($a['lastSellDate']);
 	$row['lastSellPrice'] = formatDollars($a['lastSellPrice']);
 	$row['notes'] = formatCSV($a['notes']);
