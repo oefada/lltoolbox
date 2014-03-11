@@ -120,7 +120,7 @@ margin-left:10px !important;
 <tbody>
 	<tr>
 		<td class="container" align="left" valign="top" style="padding-left:15px; padding-top:15px; padding-bottom:10px;">
-		<a name="logo" target="_blank" href="http://www.luxurylink.com?utm_source=xa&utm_medium=email&utm_campaign=booking-confirmation"><img width="239" height="37" border="0" alt="Luxury Link" name="logo" src="http://www.luxurylink.com/images/email/new/LL-logo-plain.jpg" class="logo" /></a>
+		<a name="logo" target="_blank" href="<?= $siteUrl; ?>"><img width="239" height="37" border="0" alt="Luxury Link" name="logo" src="http://www.luxurylink.com/images/email/new/LL-logo-plain.jpg" class="logo" /></a>
 		</td>
 	</tr>
 	<tr>
@@ -132,19 +132,16 @@ margin-left:10px !important;
 
 	<tr>
 	<td align="left" height="27" style="padding: 0px 0px 0px 0px;">
-
-<!--start nav bar-->
 		<table class="container" width="600" valign="top" height="27" align="center" cellspacing="0" cellpadding="0" border="0">
 			<tr>
 				<td class="deskt" align="left" valign="middle" style="padding: 3px 0px 0px 20px;">
-				<a target="_blank" href="http://www.luxurylink.com?utm_source=xa&utm_medium=email&utm_campaign=booking-confirmation"><img border="0" alt="" name="line" src="http://www.luxurylink.com/images/email/new/home_btn.jpg" width="20" height="23" border="0" /></a> </td>
+				<a target="_blank" href="<?= $siteUrl; ?>"><img border="0" alt="" name="line" src="http://www.luxurylink.com/images/email/new/home_btn.jpg" width="20" height="23" border="0" /></a> </td>
 
 				<td class="container" align="left" valign="middle" style="padding: 10px 0px 5px 0px; font-family:Helvetica,maradival,Sans-Serif;text-transform:uppercase;font-size:11px;line-height:20px"> &nbsp; <span class="deskt">&nbsp; &nbsp;</span>
-				<a style="color:#666;text-decoration:none;" target="_blank" href="http://www.luxurylink.com/fivestar?utm_source=xa&utm_medium=email&utm_campaign=booking-confirmation"> Destinations</a> &nbsp; &nbsp; &nbsp; &nbsp;
-				<a  style="color:#666;text-decoration:none" target="_blank" href="http://www.luxurylink.com/travel-deals/best?utm_source=xa&utm_medium=email&utm_campaign=booking-confirmation">Best Sellers</a> &nbsp; &nbsp; &nbsp; &nbsp; <a  style=" color:#666;text-decoration:none" target="_blank" href="http://www.luxurylink.com/5star/new-hotels/deals?utm_source=xa&utm_medium=email&utm_campaign=booking-confirmation">New Vacations</a> &nbsp; <span class="deskt">&nbsp; &nbsp; &nbsp; &nbsp;  <a name="all_inclusive_header" style="color:#666;text-decoration:none" target="_blank"  href="http://www.luxurylink.com/fivestar/all-inclusive-resorts/deals?utm_source=xa&utm_medium=email&utm_campaign=booking-confirmation">All-Inclusive</a> &nbsp; &nbsp; &nbsp; </span></td>
+				<a style="color:#666;text-decoration:none;" target="_blank" href="<?= $siteUrl; ?>fivestar"> Destinations</a> &nbsp; &nbsp; &nbsp; &nbsp;
+				<a  style="color:#666;text-decoration:none" target="_blank" href="<?= $siteUrl; ?>travel-deals/best">Best Sellers</a> &nbsp; &nbsp; &nbsp; &nbsp; <a  style=" color:#666;text-decoration:none" target="_blank" href="<?= $siteUrl; ?>5star/new-hotels/deals?utm_source=xa&utm_medium=email&utm_campaign=booking-confirmation">New Vacations</a> &nbsp; <span class="deskt">&nbsp; &nbsp; &nbsp; &nbsp;  <a name="all_inclusive_header" style="color:#666;text-decoration:none" target="_blank"  href="<?= $siteUrl; ?>fivestar/all-inclusive-resorts/deals?utm_source=xa&utm_medium=email&utm_campaign=booking-confirmation">All-Inclusive</a> &nbsp; &nbsp; &nbsp; </span></td>
 			</tr>
 		</table>
-<!--end nav bar-->
 	</td>
 </tr>
 <tr>
@@ -158,13 +155,13 @@ margin-left:10px !important;
 		<td align="center" style="padding: 0px 0px 5px 0px;"><img border="0" alt="" name="line" src="http://www.luxurylink.com/images/email/new/horiz-line.jpg" width="600" height="1" class="line" /></td>
 </tr>
 <tr>
-		<td class="font container" align="left" valign="top" style="padding:30px 30px 0px 30px; line-height:26px; font-family:Arial, sans-serif;color:#666; font-size:12px;">Dear FIRST_NAME_HERE,</td>
+		<td class="font container" align="left" valign="top" style="padding:30px 30px 0px 30px; line-height:26px; font-family:Arial, sans-serif;color:#666; font-size:12px;">Dear <?= $userData['firstName']; ?>,</td>
 </tr>
 <tr>
 		<td class="font container" align="left" valign="top" style="padding: 20px 30px 0px 30px ; line-height:26px; font-family:Arial, sans-serif;color:#666; font-size:12px;">Thank you for purchasing through Luxury Link. We're committed to providing you with the unforgettable travel experiences at exceptional prices.</td>
 </tr>
 <tr>
-		<td class="font container" align="left" valign="top" style="padding: 20px 30px 35px 30px ; line-height:26px; font-family:Arial, sans-serif;color:#666; font-size:12px;">Below are your reservation details. You can also access them through your <a name="LL-account" style="color:#008ec5;text-decoration:none" target="_blank"  href="http://www.luxurylink.com/my/my_login.php?utm_source=xa&utm_medium=email&utm_campaign=booking-confirmation">Luxury Link Account page</a>. If you have any questions, please do not hesitate to call a Luxury Link Travel Concierge at <strong>(888) 297-3299</strong>, or <a style="color:#008ec5;text-decoration:none" href="mailto:concierge@luxurylink.com">email them here</a>. Have a great vacation - we can't wait to hear all about it!</td>
+		<td class="font container" align="left" valign="top" style="padding: 20px 30px 35px 30px ; line-height:26px; font-family:Arial, sans-serif;color:#666; font-size:12px;">Below are your reservation details. You can also access them through your <a name="LL-account" style="color:#008ec5;text-decoration:none" target="_blank"  href="<?= $siteUrl; ?>my/my_activity.php">Luxury Link Account page</a>. If you have any questions, please do not hesitate to call a Luxury Link Travel Concierge at <strong>(888) 297-3299</strong>, or <a style="color:#008ec5;text-decoration:none" href="mailto:concierge@luxurylink.com">email them here</a>. Have a great vacation - we can't wait to hear all about it!</td>
 </tr>
 <tr>
 		<td align="center" style="padding: 0px 0px 4px 0px;"><img border="0" alt="" name="line" src="http://www.luxurylink.com/images/email/new/horiz-line.jpg" width="600" height="1" class="line" /></td>
@@ -173,31 +170,13 @@ margin-left:10px !important;
 		<td align="center" style="padding: 0px 0px 0px 0px;"><img border="0" alt="" name="line" src="http://www.luxurylink.com/images/email/new/horiz-line.jpg" width="600" height="1" class="line" /></td>
 </tr>
 <tr>
-		<td class="font container" align="center" valign="top" style="padding:10px 0px 10px 0px; font-family:Arial, sans-serif;color:#555; font-size:19px;">TICKET REFERENCE ID # <strong>TICKET_ID_HERE</strong></td>
+		<td class="font container" align="center" valign="top" style="padding:10px 0px 10px 0px; font-family:Arial, sans-serif;color:#555; font-size:19px;">TICKET REFERENCE ID # <strong><?= $bookingData['PgBooking']['pgBookingId']; ?></strong></td>
 </tr>
 <tr>
 		<td align="center" style="padding: 0px 0px 4px 0px;"><img border="0" alt="" name="line" src="http://www.luxurylink.com/images/email/new/horiz-line.jpg" width="600" height="1" class="line" /></td>
 </tr>
 <tr>
 		<td align="center" style="padding: 0px 0px 0px 0px;"><img border="0" alt="" name="line" src="http://www.luxurylink.com/images/email/new/horiz-line.jpg" width="600" height="1" class="line" /></td>
-</tr>
-<tr>
-	<td align="center" style="padding:20px 0px 0px 0px;">
-		<table class="container" align="center">
-		<tr>
-			<td class="remove" align="center" style="padding: 0px 30px 0px 30px;"><a name="account" target="_blank" href="http://www.luxurylink.com/my/my_login.php?utm_source=xa&utm_medium=email&utm_campaign=booking-confirmation" style="text-decoration:none;" ><img border="0" alt="account icon" src="http://www.luxurylink.com/images/email/new/acct-icon.gif" width="34" height="34" alt="my account" /></a></td>
-			<td class="remove" align="center" valign="top" style="padding:0px 30px 0px 30px"><a name="email" href="mailto:enteryour@addresshere.com?subject=My trip is booked!" style="text-decoration:none;"><img border="0" alt="email icon" width="34" height="34" border="0" src="http://www.luxurylink.com/images/email/new/email-icon.gif" style="display:block" alt="email this" /></a></td>
-			<td class="remove" align="center" valign="top" style="padding:0px 30px 0px 30px"><a name="tweet" target="_blank" href="%%share%" style="text-decoration:none;" ><img border="0" alt="twitter icon" width="34" height="34" border="0" src="http://www.luxurylink.com/images/email/new/tweet-icon.gif" style="display:block" alt="share this" /></a></td>
-			<td class="remove" align="center" style="padding: 0px 30px 0px 30px;"><a name="fb" target="_blank" href="%%share%%" style="text-decoration:none;"><img border="0" alt="Facebook icon" name="" src="http://www.luxurylink.com/images/email/new/faceb-icon.gif" width="34" height="34" alt="shar3 this"  /></a></td>
-		</tr>
-		<tr>
-			<td align="left" valign="top" style="padding:10px 20px 20px 20px; font-family:Arial, sans-serif;color:#666; font-size:11px;">my account</td>
-			<td align="left" valign="top" style="padding:10px 20px 20px 25px; font-family:Arial, sans-serif;color:#666; font-size:11px;">email this</td>
-			<td align="left" valign="top" style="padding:10px 25px 20px 25px; font-family:Arial, sans-serif;color:#666; font-size:11px;">tweet this</td>
-			<td align="left" valign="top" style="padding:10px 25px 20px 27px; font-family:Arial, sans-serif;color:#666; font-size:11px;">share this</td>
-		</tr>
-		</table>
-	</td>
 </tr>
 <tr>
 	<td align="center" bgcolor="#ccc" style="padding:5px 0px 5px 0px; font-family:Arial, sans-serif;color:#444; font-size:13px; letter-spacing:1px; background-color:#ccc">YOUR VACATION SUMMARY</td>
@@ -206,17 +185,18 @@ margin-left:10px !important;
 	<td align="center" class="remove" style="padding:20px 40px 20px 40px;">
 		<table class="container" align="center" valign="top">
 		<tr>
-			<td align="left" style="padding:0px 10px 0px 0px;"><img src="http://photos.luxurylink.us/images/sho_52a223b9/8337_33-630/Penthouse%2BSuite%2BMaster%2B.jpg"  width="260px" height="127" class="img1" /></td>
+			<td align="left" style="padding:0px 10px 0px 0px;"><img src="<?php echo $clientImagePath;?>" width="260px" class="img1" /></td>
 
 			<td align="center" class="remove" style="padding:0px 0px 0px 10px;">
 				<table align="left" height="127" valign="top">
 				<tr>
 					<td align="left" class="remove" style="padding:0px 0px 10px 0px; font-family: Arial, sans-serif; text-transform:uppercase;font-weight:bold;font-size:12px">
-					<a href="http://www.luxurylink.com/5star/hotels/providenciales-turks-and-caicos-islands/gansevoort-turks-and-caicos-a-wymara-resort" style="color:008ec5;text-decoration:none;" target="_blank">HOTEL_NAME_HERE</a><td></tr>
+					<a href="<?= $pdpUrl; ?>" style="color:008ec5;text-decoration:none;" target="_blank"><?= $clientNameP ?></a><td></tr>
 					<tr>
-					<td align="left" class="remove" style="padding:0px 0px 10px 0px; font-family: Arial, sans-serif; color:#666; font-size:11px;">HOTEL_LOCATION_HERE</td></tr>
+					<td align="left" class="remove" style="padding:0px 0px 10px 0px; font-family: Arial, sans-serif; color:#666; font-size:11px;"><?= $locationDisplay ?></td></tr>
 					<tr>
-					<td align="left" style="padding:0px 0px 0px 0px; font-family: Arial, sans-serif; color:#666; font-size:11px;">Tel: 649.941.7555<br /><a href="emailto:abcde@website.com" style="color:#008ec5;text-decoration:none;" target="_blank">Hotel Email</a> &nbsp; | &nbsp; <a href="http://www.website.com" style="color:#008ec5; text-decoration:none;" target="_blank">Hotel Website</a>
+					<td align="left" style="padding:0px 0px 0px 0px; font-family: Arial, sans-serif; color:#666; font-size:11px;">
+					&nbsp;
 					</td>
 				</tr>
 				</table>
@@ -231,8 +211,8 @@ margin-left:10px !important;
 <tr>
 	<td align="left" class="remove" style="padding:10px 40px 10px 40px;">
 		<table align="left" valign="top" style="padding:0px 0px 0px 0px;"><tr>
-			<td width="310" class="font" align="left" valign="top" style="font-family:Arial, sans-serif;color:#444; font-size:12px;">Hotel Confirmation # <strong>CONFIRMATION_NUMBER_HERE</strong></td>
-			<td width="280" class="font" align="left" valign="top" style="font-family:Arial, sans-serif;color:#444; font-size:12px;">Traveler: <strong>TRAVELER_NAME_HERE</strong></td>
+			<td width="310" class="font" align="left" valign="top" style="font-family:Arial, sans-serif;color:#444; font-size:12px;">Hotel Confirmation # <strong><?= $bookingData['PgBooking']['confirmationNumber']; ?></strong></td>
+			<td width="280" class="font" align="left" valign="top" style="font-family:Arial, sans-serif;color:#444; font-size:12px;">Traveler: <strong><?= $bookingData['PgBooking']['travelerFirstName']; ?> <?= $bookingData['PgBooking']['travelerLastName']; ?></strong></td>
 			</tr>
 		</table>
 	</td>
@@ -240,14 +220,16 @@ margin-left:10px !important;
 <tr>
 	<td align="center" style="padding: 3px 0px 5px 0px;"><img border="0" alt="" name="line" src="http://www.luxurylink.com/images/email/new/horiz-line.jpg" width="600" height="1" class="line" /></td>
 </tr>
-<tr>
-	<td class="remove" align="left" valign="top" style="padding:20px 40px 10px 40px; font-family:Arial, sans-serif;color:#555; font-size:11px;"><span style="text-transform:uppercase; font-weight:bold; font-size:12px;color:#333">PACKAGE_NAME_HERE</span>
-	<br /><br />PACKAGE_DETAILS_HERE
-	</td>
-</tr>
-<tr>
-	<td align="center" style="padding: 0px 0px 0px 0px;"><img border="0" alt="" name="line" src="http://www.luxurylink.com/images/email/new/horiz-line.jpg" width="600" height="1" class="line" /></td>
-</tr>
+<? if (false) { ?>
+	<tr>
+		<td class="remove" align="left" valign="top" style="padding:20px 40px 10px 40px; font-family:Arial, sans-serif;color:#555; font-size:11px;"><span style="text-transform:uppercase; font-weight:bold; font-size:12px;color:#333">PACKAGE_NAME_HERE</span>
+		<br /><br />PACKAGE_DETAILS_HERE
+		</td>
+	</tr>
+	<tr>
+		<td align="center" style="padding: 0px 0px 0px 0px;"><img border="0" alt="" name="line" src="http://www.luxurylink.com/images/email/new/horiz-line.jpg" width="600" height="1" class="line" /></td>
+	</tr>
+<? } ?>
 
 <tr>
 	<td align="center" class="container" valign="top" width="620" style="padding:20px 0px 0px 10px;">
@@ -269,19 +251,19 @@ margin-left:10px !important;
 					<table width="280" align="left" valign="top">
 					<tr>
 						<td align="right" style="padding:3px 10px 3px 0px;font-family:Arial, sans-serif;color:#555; font-size:11px;">Check In:</td>
-						<td align="left" style="padding:3px 0px 3px 5px;font-family:Arial, sans-serif;color:#555; font-size:11px;">Day, <span style="font-weight:bold">Month Day</span>, Year</td>
+						<td align="left" style="padding:3px 0px 3px 5px;font-family:Arial, sans-serif;color:#555; font-size:11px;"><?= date('D', strtotime($bookingData['PgBooking']['dateIn'])); ?>, <span style="font-weight:bold"><?= date('M j', strtotime($bookingData['PgBooking']['dateIn'])); ?></span>, <?= date('Y', strtotime($bookingData['PgBooking']['dateIn'])); ?></td>
 					</tr>
 					<tr>
 						<td align="right" style="padding:0px 10px 3px 0px;font-family:Arial, sans-serif;color:#555; font-size:11px;">Check Out:</td>
-						<td align="left" style="padding:0px 0px 3px 5px;font-family:Arial, sans-serif;color:#555; font-size:11px;">Day, <span style="font-weight:bold">Month Day</span>, Year</td>
+						<td align="left" style="padding:0px 0px 3px 5px;font-family:Arial, sans-serif;color:#555; font-size:11px;"><?= date('D', strtotime($bookingData['PgBooking']['dateOut'])); ?>, <span style="font-weight:bold"><?= date('M j', strtotime($bookingData['PgBooking']['dateOut'])); ?></span>, <?= date('Y', strtotime($bookingData['PgBooking']['dateOut'])); ?></td>
 					</tr>
 					<tr>
 						<td align="right" style="padding:0px 10px 3px 0px;font-family:Arial, sans-serif;color:#555; font-size:11px;">Number of Nights:</td>
-						<td align="left" style="padding:0px 0px 3px 5px;font-family:Arial, sans-serif;color:#555; font-size:11px; font-weight:bold">NIGHTS</td>
+						<td align="left" style="padding:0px 0px 3px 5px;font-family:Arial, sans-serif;color:#555; font-size:11px; font-weight:bold"><?= round((strtotime($bookingData['PgBooking']['dateOut']) - strtotime($bookingData['PgBooking']['dateIn'])) / (86400)); ?></td>
 					</tr>
 					<tr>
 						<td align="right" style="padding:0px 10px 3px 0px;font-family:Arial, sans-serif;color:#555; font-size:11px;">Number of Guests:</td>
-						<td align="left" style="padding:0px 0px 3px 5px;font-family:Arial, sans-serif;color:#555; font-size:11px; font-weight:bold">GUESTS</td>
+						<td align="left" style="padding:0px 0px 3px 5px;font-family:Arial, sans-serif;color:#555; font-size:11px; font-weight:bold"><?= $bookingData['PgBooking']['guests']; ?></td>
 					</tr>
 					</table>
 				</td>
@@ -301,19 +283,15 @@ margin-left:10px !important;
 				<td align="left" class="container" style="padding:10px 5px 5px 5px;" width="265">
 					<table  align="left" valign="top" >
 					<tr>
-						<td align="right" style="padding:3px 10px 3px 0px;font-family:Arial, sans-serif;color:#555; font-size:11px;">Visa:</td>
-						<td align="left" style="padding:3px 0px 3px 5px;font-family:Arial, sans-serif;color:#555; font-size:11px"><em>ending in:</em> LAST_4</td>
-					</tr>
-					<tr>
 						<td align="right" style="padding:0px 10px 3px 0px;font-family:Arial, sans-serif;color:#555; font-size:11px;">Purchase Date:</td>
-						<td align="left" style="padding:0px 0px 3px 5px;font-family:Arial, sans-serif;color:#555; font-size:11px;">PURCHASE_DATE</td>
+						<td align="left" style="padding:0px 0px 3px 5px;font-family:Arial, sans-serif;color:#555; font-size:11px;"><?= date('M j, Y', strtotime($bookingData['PgBooking']['dateCreated'])); ?></td>
 					</tr>
 					<tr>
 						<td colspan="2" align="center" style="padding: 10px 0px 10px 0px;"><img border="0" alt="" src="http://www.luxurylink.com/images/email/new/horiz-line.jpg" width="250" height="1" class="line2" /></td>
 					</tr>
 					<tr>
 						<td align="right" style="padding:0px 10px 3px 0px;font-family:Arial, sans-serif;color:#999; font-size:11px;">Luxury Link Price:</td>
-						<td align="left" style="padding:0px 0px 3px 5px;font-family:Arial, sans-serif;color:#999; font-size:11px;">$PRICE</td>
+						<td align="left" style="padding:0px 0px 3px 5px;font-family:Arial, sans-serif;color:#999; font-size:11px;"><?= $currencySymbol; ?><?= $bookingData['PgBooking']['subTotalAmountTld']; ?></td>
 					</tr>
 					<tr>
 						<td align="right" style="padding:0px 10px 3px 0px;font-family:Arial, sans-serif;color:#999; font-size:11px;">Taxes:</td>
@@ -321,18 +299,39 @@ margin-left:10px !important;
 					</tr>
 					<tr>
 						<td align="right" style="padding:0px 10px 3px 0px;font-family:Arial, sans-serif;color:#999; font-size:11px;">Handling Fee:</td>
-						<td align="left" style="padding:0px 0px 3px 5px;font-family:Arial, sans-serif;color:#999; font-size:11px;">$HANDLING</td>
+						<td align="left" style="padding:0px 0px 3px 5px;font-family:Arial, sans-serif;color:#999; font-size:11px;"><?= $currencySymbol; ?><?= $bookingData['PgBooking']['handlingAmountTld']; ?></td>
 					</tr>
+					<? if ($bookingData['PgBooking']['discountAmountTld'] > 0) { ?>
+						<tr>
+							<td align="right" style="padding:0px 10px 3px 0px;font-family:Arial, sans-serif;color:#999; font-size:11px;">Promo:</td>
+							<td align="left" style="padding:0px 0px 3px 5px;font-family:Arial, sans-serif;color:#999; font-size:11px;">- <?= $currencySymbol; ?><?= $bookingData['PgBooking']['discountAmountTld']; ?></td>
+						</tr>
+					<? } ?>
+					<? if (isset($bookingPaymentData[2])) { ?>
 					<tr>
-						<td align="right" style="padding:0px 10px 7px 0px;font-family:Arial, sans-serif;color:#999; font-size:11px;">Grand Total:</td>
-						<td align="left" style="padding:0px 0px 7px 5px;font-family:Arial, sans-serif;color:#999; font-size:11px;">$TOTAL (Paid)</td>
+						<td align="right" style="padding:3px 10px 3px 0px;font-family:Arial, sans-serif;color:#555; font-size:11px;">Gift Certificate:</td>
+						<td align="left" style="padding:3px 0px 3px 5px;font-family:Arial, sans-serif;color:#555; font-size:11px">- <?= $currencySymbol; ?><?= $bookingPaymentData[2]['paymentAmountTld']; ?></td>
 					</tr>
+					<? } ?>
+					<? if (isset($bookingPaymentData[3])) { ?>
+					<tr>
+						<td align="right" style="padding:3px 10px 3px 0px;font-family:Arial, sans-serif;color:#555; font-size:11px;">Credit on File:</td>
+						<td align="left" style="padding:3px 0px 3px 5px;font-family:Arial, sans-serif;color:#555; font-size:11px">- <?= $currencySymbol; ?><?= $bookingPaymentData[3]['paymentAmountTld']; ?></td>
+					</tr>
+					<? } ?>
+					<? if (isset($bookingPaymentData[1])) { ?>
+					<tr>
+						<td align="right" style="padding:3px 10px 3px 0px;font-family:Arial, sans-serif;color:#555; font-size:11px;">CC ending in <?= substr($bookingData['UserPaymentSetting']['ccToken'], -4); ?>:</td>
+						<td align="left" style="padding:3px 0px 3px 5px;font-family:Arial, sans-serif;color:#555; font-size:11px">- <?= $currencySymbol; ?><?= $bookingPaymentData[1]['paymentAmountTld']; ?></td>
+					</tr>
+					<? } ?>
+
 					<tr>
 						<td colspan="2" align="center" style="padding: 10px 0px 10px 0px;"><img border="0" alt="" src="http://www.luxurylink.com/images/email/new/horiz-line.jpg" width="250" height="1" class="line2" /></td>
 					</tr>
 					<tr>
 						<td align="right" style="padding:0px 10px 8px 0px;font-family:Arial, sans-serif;color:#333; font-size:14px;text-transform:uppercase">Balance due:</td>
-						<td align="left" style="padding:0px 0px 8px 5px;font-family:Times, Times new Roman, serif;color:#333; font-size:32px;"><span style="font-size:20px;vertical-align:top;">$</span>DUE</td>
+						<td align="left" style="padding:0px 0px 8px 5px;font-family:Times, Times new Roman, serif;color:#333; font-size:32px;"><span style="font-size:20px;vertical-align:top;"><?= $currencySymbol; ?></span>0</td>
 					</tr>
 					</table>
 				</td>
@@ -353,7 +352,7 @@ margin-left:10px !important;
 			<td class="deskt" align="right" style="padding:3px 0px 3px 10px;">
 			<img border="0" alt="Ink Icon" name="ink" src="http://www.luxurylink.com/images/email/new/ink-icon.gif" width="44" height="41" /></td>
 
-			<td class="font-sm container" align="left" valign="top" style="padding: 30px 40px 16px 10px; line-height:14px; font-family:Arial, sans-serif;color:#888; font-size:10px;">This package is refundable, subject to cancellation policies of the hotel & Luxury Link. <br />Read the <a name="LL-cancellation-policy" style="color:#008ec5;text-decoration:none" target="_blank"  href="http://www.luxurylink.com/about/index.php/cancellations-refunds?utm_source=xa&utm_medium=email&utm_campaign=booking-confirmation">cancellation policy</a> and the <a name="LL-terms" style="color:#008ec5;text-decoration:none" target="_blank" href="http://www.luxurylink.com/about/index.php/terms-of-use/?utm_source=xa&utm_medium=email&utm_campaign=booking-confirmation">terms and conditions</a>.</td>
+			<td class="font-sm container" align="left" valign="top" style="padding: 30px 40px 16px 10px; line-height:14px; font-family:Arial, sans-serif;color:#888; font-size:10px;">This package is refundable, subject to cancellation policies of the hotel & Luxury Link. <br />Read the <a name="LL-cancellation-policy" style="color:#008ec5;text-decoration:none" target="_blank"  href="<?= $siteUrl; ?>about/index.php/cancellations-refunds">cancellation policy</a> and the <a name="LL-terms" style="color:#008ec5;text-decoration:none" target="_blank" href="<?= $siteUrl; ?>about/index.php/terms-of-use/">terms and conditions</a>.</td>
 			</tr>
 		</table>
 	</td>
@@ -363,7 +362,7 @@ margin-left:10px !important;
 		<td align="center" class="remove" valign="top" style="padding:0px 3px 0px 3px;">
 			<table class="table310" width="612" align="center" cellspacing="0" cellpadding="0" bgcolor="#f2f2f2" style="padding:0px 0px 0px 0px;">
 				<tr>
-					<td align="center"style="padding:10px 10px 10px 10px"><a name="save-50" target="_blank" href="http://www.luxurylink.com/LL/email_signup.php?utm_medium=news&utm_source=email&utm_campaign=blackfridayCOF"><img border="0" width="180" height="100" src="http://www.luxurylink.com/images/email/new/AH_Save50.jpg" style="display:block;" border="0" alt="Save $50 on your next vacation -Click Here" class="img4" /></a>
+					<td align="center"style="padding:10px 10px 10px 10px"><a name="save-50" target="_blank" href="<?= $siteUrl; ?>LL/email_signup.php"><img border="0" width="180" height="100" src="http://www.luxurylink.com/images/email/new/AH_Save50.jpg" style="display:block;" border="0" alt="Save $50 on your next vacation -Click Here" class="img4" /></a>
 					</td>
 					<td class="deskt" align="left" style="padding: 12px 20px 10px 10px;"><img border="0" name="line" src="http://www.luxurylink.com/images/email/new/vert-on-grey.jpg" width="8" height="109" style="display:block;" />
 					</td>
@@ -381,10 +380,6 @@ margin-left:10px !important;
 		<tr>
 			<td class="container" valign="top" align="center" style="padding: 6px 60px 10px 60px; line-height:14px; font-family:Arial, sans-serif;color:#888; font-size:8.5px;">Luxury Link Travel Group, 5510 Lincoln Boulevard, Los Angeles, CA 90094 </td>
 		</tr>
-		<tr>
-			<td class="font-sm container" align="center" valign="top" style="padding: 0px 40px 16px 40px ; line-height:14px; font-family:Arial, sans-serif;color:#888; font-size:10px;">*Legal copy here. Legal copy here. Legal copy here. Legal copy here. Legal copy here. Legal copy here. Legal copy here. Legal copy here. Legal copy here. Legal copy here. </td>
-		</tr>
-
 </tbody>
 		</table>
 	<!--end white table-->

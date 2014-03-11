@@ -47,7 +47,9 @@ class WebServiceTicketsController extends WebServicesController
         'EventRegistryDonor',
         'EventRegistryGiftFailure',
         'MailingList',
-        'ReservationPreferDateFromHotel'
+        'ReservationPreferDateFromHotel',
+        'PgBooking',
+        'PgPayment'
     );
 
     public $serviceUrl = '/web_service_tickets';
@@ -1110,10 +1112,20 @@ class WebServiceTicketsController extends WebServicesController
             }
         }
         $pgBookingId = isset($params['pgBookingId']) ? $params['pgBookingId'] : null;
+        $pgBookingId = 13;
         if ($pgBookingId) {
-        	$userData = array(1);
+			$bookingDataResult = $this->PgBooking->query("SELECT PgBooking.*, UserPaymentSetting.city, UserPaymentSetting.state, UserPaymentSetting.country, UserPaymentSetting.ccToken, UserPaymentSetting.ccType, PromoCode.promoCode FROM pgBooking PgBooking INNER JOIN userPaymentSetting UserPaymentSetting USING(userPaymentSettingId) LEFT JOIN promoCode PromoCode USING(promoCodeId) WHERE PgBooking.pgBookingId = " . $pgBookingId);
+        	$bookingData = $bookingDataResult[0]; 
+        	$userId = $bookingData['PgBooking']['userId'];
+        	$clientId = $bookingData['PgBooking']['clientId']; 
+        	$siteId = 1;
+            $bookingPaymentResult = $this->PgBooking->query("SELECT * FROM pgPayment PgPayment WHERE pgBookingId  = " . $pgBookingId);
+            $bookingPaymentData = array();
+            foreach ($bookingPaymentResult as $r) {
+            	$bookingPaymentData[$r['PgPayment']['paymentTypeId']] = $r['PgPayment'];
+            }
         }
-        
+
         // package id for deal alerts
         if ($ppvNoticeTypeId == 41 || $ppvNoticeTypeId == 42 || $ppvNoticeTypeId == 43) {
             $packageId = isset($params['packageId']) ? $params['packageId'] : null;
@@ -1337,6 +1349,8 @@ class WebServiceTicketsController extends WebServicesController
                 $optoutLink = 'http://echo3.bluehornet.com/phase2/survey1/change.htm?cid=mumogm&1362532207';
                 if (isset($ticketData)) {
                 	$tldId = (isset($ticketData['tldId']) && intval($ticketData['tldId']) > 0) ? $ticketData['tldId'] : 1;
+                } elseif ($bookingData) {
+                	$tldId = (isset($bookingData['tldId']) && intval($bookingData['tldId']) > 0) ? $bookingData['tldId'] : 1;
                 } elseif ($userData) {
                 	$tldId = (isset($userData['tldId']) && intval($userData['tldId']) > 0) ? $userData['tldId'] : 1;
                 } else {
