@@ -1191,7 +1191,7 @@ class TicketsController extends AppController
     private function hasEditorAccess()
     {
         $currentUser = $this->LdapAuth->user();
-        $editGroups = array('Accounting', 'Geeks', 'Concierge', 'conciergeDL');
+        $editGroups = array('Accounting', 'Geeks');
         foreach ($editGroups as $eg) {
             if (in_array($eg, $currentUser['LdapUser']['groups'])) {
                 return true;
