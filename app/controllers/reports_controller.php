@@ -1115,6 +1115,8 @@ class ReportsController extends AppController
             Loa.membershipTotalPackages,
             Loa.membershipPackagesRemaining,
             Loa.loaMembershipTypeId,
+            Loa.accountTypeId,
+            accountType.accountTypeName,
             DATEDIFF(NOW(), Loa.startDate)  AS age,
             Client.managerUsername,
             Client.locationDisplay,
@@ -3913,17 +3915,26 @@ class ReportsController extends AppController
 
             if (isset($ca['explicit']) && $ca['explicit'] == 'true') :
                 $conditions[$k] = $ca['field'] . ' ' . $ca['value']; elseif ($betweenCondition) : //generate valid SQL for a between condition
+                $hasOrFields = false;
+                if (strpos($ca['field'], 'OR=') !== false) {
+                    $impFields = explode('OR=',$ca['field']);
+                    $hasOrFields = true;
+                }
                 if (null !== $firstValue && null !== $secondValue) { //if both values were
                     // entered, it's a between
-                    if (strpos($ca['field'], 'OR=') !== false) {
-                        $impFields = explode('OR=',$ca['field']);
+                    if ($hasOrFields == true) {
                         $conditions[$k] = "( ".trim($impFields[0]) . ' BETWEEN ' . "'{$firstValue}'" . ' AND ' . "'{$secondValue}' OR ".trim($impFields[1]). ' BETWEEN ' . "'{$firstValue}'" . ' AND ' . "'{$secondValue}' )";
                     }else{
                         $conditions[$k] = $ca['field'] . ' BETWEEN ' . "'{$firstValue}'" . ' AND ' . "'{$secondValue}')\n";
                     }
 
                 } else { //if only one value was entered, it's not a between
-                    $conditions[$k] = $ca['field'] . ' = ' . "'{$firstValue}'";
+                    if ($hasOrFields== true) {
+                        $conditions[$k] = "(".trim($impFields[0]) . ' = ' . "'{$firstValue}'"." OR ".trim($impFields[1]) . ' = ' . "'{$firstValue}'".")";
+                    }else{
+                        $conditions[$k] = $ca['field'] . ' = ' . "'{$firstValue}'";
+                    }
+
                 } else :
                 if (is_array($ca['value'])) {
                     //wrap in single quotes

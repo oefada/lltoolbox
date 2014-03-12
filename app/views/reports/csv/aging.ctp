@@ -9,13 +9,14 @@
 Configure::write('debug', 0);
 $handle = fopen('php://output' , 'a');
 
-fputcsv($handle , array('Age Days' , 'Client id' , 'LOA id' , 'Client Name' , 'Location' , 'Destination' , 'Manager', 'AccountExecutive' , 'Start' , 'End' , 'Membership Fee' , 'Balance' , 'Total Pkgs' , 'Pkgs Rem' , 'LL', 'Offers LL' , 'Last Sell Date' , 'Last Sell Price' , 'Notes' , ));
+fputcsv($handle , array('Age Days' , 'Client id' , 'LOA id' ,'Account Type', 'Client Name' , 'Location' , 'Destination' , 'Manager', 'AccountExecutive' , 'Start' , 'End' , 'Membership Fee' , 'Balance' , 'Total Pkgs' , 'Pkgs Rem' , 'LL', 'Offers LL' , 'Last Sell Date' , 'Last Sell Price' , 'Notes' , ));
 
 foreach ($aging as $a) {
 	$row = array();
 	$row['age_days'] = formatCSV($a['age']);
 	$row['clientId'] = formatCSV($a['clientId']);
 	$row['loaId'] = formatCSV($a['loaId']);
+    $row['accountTypeName'] = formatCSV($a['accountTypeName']);
 	$row['name'] = formatCSV($a['name']);
 	$row['locationDisplay'] = formatCSV($a['locationDisplay']);
 	$row['destinationName'] = formatCSV($a['destinationName']);
