@@ -38,6 +38,7 @@ if (stristr($_SERVER['HTTP_HOST'], 'dev') || $_SERVER['ENV'] == 'development' ||
     Configure::write('TokenEx.tokenExV2Url', 'https://test-api.tokenex.com:8081/TokenServices.svc/REST/');
     Configure::write('TokenEx.tokenExV2ID', '4700943473181519');
     Configure::write('TokenEx.tokenExV2APIKey', 'NulLHqEpmVfJCF6t3wQJ');
+    Configure::write('LltgApiUrl', 'dev.api.luxurylink.com');
 } elseif (stristr($_SERVER['HTTP_HOST'], 'stage') || $_SERVER['ENV'] == 'staging' || strpos($_ENV['HOSTNAME'], 'stage') !== FALSE) {
     // TODO: Remove this block once we've migrated off of old stage
     define("ISDEV", true);
@@ -59,6 +60,7 @@ if (stristr($_SERVER['HTTP_HOST'], 'dev') || $_SERVER['ENV'] == 'development' ||
     Configure::write('TokenEx.tokenExV2Url', 'https://test-api.tokenex.com:8081/TokenServices.svc/REST/');
     Configure::write('TokenEx.tokenExV2ID', '4700943473181519');
     Configure::write('TokenEx.tokenExV2APIKey', 'NulLHqEpmVfJCF6t3wQJ');
+    Configure::write('LltgApiUrl', 'uat.api.luxurylink.com');
 } else {
     define("ISDEV", false);
     define("ISSTAGE", false);

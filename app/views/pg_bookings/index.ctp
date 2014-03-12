@@ -215,7 +215,7 @@ foreach ($bookings as $booking):
         <td><?php echo $booking['Client']['name'];?></td>
         <td><?php echo $booking['User']['firstName'];?> <?php echo $booking['User']['lastName'];?></td>
         <td><?php echo $booking['PgBooking']['travelerFirstName'];?> <?php echo $booking['PgBooking']['travelerLastName'];?></td>
-        <td><?php echo $booking['PgBooking']['pgBookingStatusId'];?></td>
+        <td><?php echo $bookingStatusDisplay[$booking['PgBooking']['pgBookingStatusId']];?></td>
         <td></td>
 		<td class="actions">
 			<?php echo $html->link(__('View Details', true), array('controller' => 'pg_bookings', 'action'=>'view', $booking['PgBooking']['pgBookingId'])); ?>
