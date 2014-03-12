@@ -179,6 +179,7 @@ class PgBookingsController extends AppController
 
         $this->set('csv_link_string', $csv_link_string);
         $this->set('bookings', $bookings_index);
+        $this->set('bookingStatusDisplay', $this->PgBooking->getStatusDisplay());
     }
 
 
@@ -198,6 +199,7 @@ class PgBookingsController extends AppController
         }
 
         $this->set('booking', $booking);
+        $this->set('bookingStatusDisplay', $this->PgBooking->getStatusDisplay());
     }
 
     function cancel($id = null)
@@ -217,11 +219,26 @@ class PgBookingsController extends AppController
         
         // run cancel
         if (isset($this->params['url']['confirm']) && $this->params['url']['confirm'] == $id) {
-            $this->Session->setFlash(__("Booking $id has been canceled", true), 'default', array(), 'error');
-            $this->redirect(array('action' => 'view', 'id' => $id));
+        
+			// api call for pegasus cancellation
+			$postData = array('bookingId' => $id);
+
+			$ch = curl_init(Configure::read('LltgApiUrl') . '/api-internal/v1/cancel');
+			curl_setopt($ch, CURLOPT_HEADER, 0);
+			curl_setopt($ch, CURLOPT_POST, 1);
+			curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postData));
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+			$pegasusResult = json_decode(curl_exec($ch), 1);		
+			curl_close($ch);
+
+			if (isset($pegasusResult['status']) && $pegasusResult['status'] == '200') {
+            	$this->Session->setFlash(__("Booking $id has been canceled", true), 'default', array(), 'error');
+            	$this->redirect(array('action' => 'view', 'id' => $id));
+			}
         }
         
         $this->set('booking', $booking);
+        $this->set('bookingStatusDisplay', $this->PgBooking->getStatusDisplay());
     }
 
 

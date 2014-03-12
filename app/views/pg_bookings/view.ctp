@@ -33,13 +33,19 @@
 </tr>
 <tr>
     <td width="200"><strong>Status</strong></td>
-    <td><?php echo $booking['PgBooking']['pgBookingStatusId']; ?></td>
+    <td><?php echo $bookingStatusDisplay[$booking['PgBooking']['pgBookingStatusId']]; ?></td>
 </tr>
+<? if ($booking['PgBooking']['pgBookingStatusId'] == 50) { ?>
+    <tr>
+        <td width="200"><strong>Cancellation Number</strong></td>
+        <td><?php echo $booking['PgBooking']['cancellationNumber']; ?></td>
+    </tr>
+<? } ?>
 </table>
 </div>
 <div style="clear:both;"></div>
 
-<?php if ($booking['PgBooking']['pgBookingStatusId'] == 1): ?>
+<?php if ($booking['PgBooking']['pgBookingStatusId'] == 1 || $booking['PgBooking']['pgBookingStatusId'] == 2): ?>
 <br/><br/><br/>
 <a href="/pg_bookings/cancel/<?php echo $booking['PgBooking']['pgBookingId']; ?>">Cancel This Booking</a>
 <br/><br/><br/><br/>

@@ -19,5 +19,13 @@ class PgBooking extends AppModel
     public $hasOne = array(
     );
 
+	public function getStatusDisplay() {
+		return array(
+			 0 => 'New',
+			 1 => 'Booked',
+			 2 => 'Processed',
+			50 => 'Canceled'
+		);
+	}
 
 }

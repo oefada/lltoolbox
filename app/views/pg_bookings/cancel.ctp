@@ -33,7 +33,7 @@
 </tr>
 <tr>
     <td width="200"><strong>Status</strong></td>
-    <td><?php echo $booking['PgBooking']['pgBookingStatusId']; ?></td>
+    <td><?php echo $bookingStatusDisplay[$booking['PgBooking']['pgBookingStatusId']]; ?></td>
 </tr>
 </table>
 </div>
