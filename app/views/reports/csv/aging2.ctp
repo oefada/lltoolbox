@@ -9,7 +9,7 @@ if (!empty($results)){
 		echo "Accounts aged $periodName days\n";
 		echo count($timeperiod);
 		echo "records found \n";
-		echo ",Age (Days),Client ID,Client Name,Manager Username,LOA ID,Start Date,End Date,";
+		echo ",Age (Days),Client ID,Client Name,Manager Username,LOA ID,AccountType,Start Date,End Date,";
 		echo "Membership Fee,Remaining Balance,Last Sell Price,Last Sell Date,";
 		echo "Sites,";
 		echo "Packages Live,";	
@@ -29,6 +29,8 @@ if (!empty($results)){
 			echo ",";
 			echo $r['Loa']['loaId'];
 			echo ",";
+            echo $r['accountType']['accountTypeName'];
+            echo ",";
 			echo $r['Loa']['startDate'];
 			echo ",";
 			echo $r[0]['loaEndDate'];
