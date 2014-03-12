@@ -3925,7 +3925,7 @@ class ReportsController extends AppController
                     if ($hasOrFields == true) {
                         $conditions[$k] = "( ".trim($impFields[0]) . ' BETWEEN ' . "'{$firstValue}'" . ' AND ' . "'{$secondValue}' OR ".trim($impFields[1]). ' BETWEEN ' . "'{$firstValue}'" . ' AND ' . "'{$secondValue}' )";
                     }else{
-                        $conditions[$k] = $ca['field'] . ' BETWEEN ' . "'{$firstValue}'" . ' AND ' . "'{$secondValue}')\n";
+                        $conditions[$k] = $ca['field'] . ' BETWEEN ' . "'{$firstValue}'" . ' AND ' . "'{$secondValue}'\n";
                     }
 
                 } else { //if only one value was entered, it's not a between
