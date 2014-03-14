@@ -1112,7 +1112,6 @@ class WebServiceTicketsController extends WebServicesController
             }
         }
         $pgBookingId = isset($params['pgBookingId']) ? $params['pgBookingId'] : null;
-        $pgBookingId = 13;
         if ($pgBookingId) {
 			$bookingDataResult = $this->PgBooking->query("SELECT PgBooking.*, UserPaymentSetting.city, UserPaymentSetting.state, UserPaymentSetting.country, UserPaymentSetting.ccToken, UserPaymentSetting.ccType, PromoCode.promoCode FROM pgBooking PgBooking INNER JOIN userPaymentSetting UserPaymentSetting USING(userPaymentSettingId) LEFT JOIN promoCode PromoCode USING(promoCodeId) WHERE PgBooking.pgBookingId = " . $pgBookingId);
         	$bookingData = $bookingDataResult[0]; 
