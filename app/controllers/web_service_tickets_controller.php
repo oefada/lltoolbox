@@ -1437,7 +1437,17 @@ class WebServiceTicketsController extends WebServicesController
         }
 
         $dateNow = date("M d, Y");
-
+        
+		if ($pgBookingId) {
+            if ($tldId == 1) {
+                $currency = 'USD';
+                $currencySymbol = '$';
+            } else if ($tldId == 2) {
+                $currency = 'GBP';
+                $currencySymbol = '&pound;';
+            }
+		}
+        
         if ($ticketId) {
             $offerId = $offerData['offerId'];
             $packageSubtitle = $packageData['subtitle'];
