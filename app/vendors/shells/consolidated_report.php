@@ -66,8 +66,6 @@ class ConsolidatedReportShell extends Shell
             self::log("Not using Skynet Data for this report");
         }
 
-        // Report initialization variables
-        $template = 'consolidated_report_revision-12.xlsx';
 
         $report_date = isset($this->params['report_date']) ? $this->params['report_date'] : null;
         $client_id = isset($this->params['client_id']) ? $this->params['client_id'] : null;
@@ -103,6 +101,15 @@ class ConsolidatedReportShell extends Shell
             $loa_end_date = date('Y-m-d', strtotime($loa_details['Loa']['endDate']));
             $membership_fee = $loa_details['Loa']['membershipFee'];
             $outputDir = TMP . "consolidated_reports/" . $report_date;
+
+            // Report initialization variables
+            // If start date is after 2012-04-30, use the non-FG template
+            if ($loa_start_date >= '2012-04-30 23:59:59') {
+                $template = 'consolidated_report_revision-12-nonFG.xlsx';
+            } else {
+                $template = 'consolidated_report_revision-12.xlsx';
+            }
+
             if (!is_dir($outputDir)) {
                 try {
                     self::log("Output Directory $outputDir does not exist. Creating it.");
