@@ -109,6 +109,7 @@ class ConsolidatedReportShell extends Shell
             } else {
                 $template = 'consolidated_report_revision-12.xlsx';
             }
+            self::log("Template: $template");
 
             if (!is_dir($outputDir)) {
                 try {
