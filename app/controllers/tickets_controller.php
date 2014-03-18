@@ -4,11 +4,13 @@ class TicketsController extends AppController
 {
     var $name = 'Tickets';
     var $helpers = array('Html', 'Form', 'Ajax', 'Text', 'Layout', 'Number');
-
+    const PASSCODE_STATUS_PROMO = 'P';
+    const PASSCODE_STATUS_GC = 'G';
     /**
      * @var LltgServiceHelper $LltgServiceHelper
      */
     public $LltgServiceHelper;
+   // public $Translation;
 
     var $uses = array(
         'Ticket',
@@ -34,7 +36,8 @@ class TicketsController extends AppController
     );
 
     var $components = array(
-        'LltgServiceHelper'
+        'LltgServiceHelper',
+        'Translation'
     );
 
     function index()
@@ -865,17 +868,22 @@ class TicketsController extends AppController
                 if (!$code) {
                     $errors[] = 'Promo code ' . $tData['promoCode'] . ' not found';
                 } else {
+                    //ticket #4659 - verify promotion can be used
+                    $passcodeResult = $this->applyPasscode($tData['promoCode'], $tData['userId'], $tData['billingPrice'], $tData['offerId'], $tData['siteId'], $code['Promo'][0]['tldId']);
                     if ($tData['autoConfirm'] == 'N') {
                         $errors[] = 'Promo Codes require Auto Confirm - codes can be applied from the payment screen.';
-                    } elseif (intval($tData['billingPrice']) < intval($code['Promo'][0]['minPurchaseAmount'])) {
-                        $errors[] = $code['PromoCode']['promoCode'] . ' requires a minimum purchase of $' . $code['Promo'][0]['minPurchaseAmount'];
-                    } elseif ($tldId != intval($code['Promo'][0]['tldId'])) {
+                    } elseif (!$passcodeResult['success']) {
+                        $errors[] = $passcodeResult['errorMessage'];;
+                    }
+                    elseif ($tldId != intval($code['Promo'][0]['tldId'])) {
                         $errors[] = $code['PromoCode']['promoCode'] . ' is not valid for locale #' . $tldId;
+
                     } else {
                         $insertPromoCodeId = $code['PromoCode']['promoCodeId'];
                     }
                 }
             }
+
             if ($tData['autoConfirm'] == '') {
                 $errors[] = 'Please complete the Auto Confirm field.';
             }
@@ -965,8 +973,8 @@ class TicketsController extends AppController
 
                 if ($this->Ticket->save($saveTicketData)) {
                     if ($insertPromoCodeId) {
-                        $q = 'DELETE FROM promoOfferTracking WHERE user = ? AND offerId = ?';
-                        $this->Ticket->query($q, array($tData['userId'], $tData['offerId']));
+                     //   $q = 'DELETE FROM promoOfferTracking WHERE user = ? AND offerId = ?';
+                     //   $this->Ticket->query($q, array($tData['userId'], $tData['offerId']));
                         $q = 'INSERT promoOfferTracking (promoCodeId, userId, offerId, datetime) VALUES (?, ?, ?, NOW())';
                         $this->Ticket->query($q, array($insertPromoCodeId, $tData['userId'], $tData['offerId']));
                     }
@@ -1391,6 +1399,41 @@ class TicketsController extends AppController
         header('Content-Type: application/javascript');
         echo $_GET['callback'] . '(' . json_encode($response) . ')';
         $this->set($response);
+    }
+    public function applyPasscode($passcode, $userId, $userPrice, $siteId, $tldCheck)
+    {
+        $result = array('success' => false);
+
+        $promo = new PromoCode();
+        $promo->checkPromoCode($passcode, $userId, $userPrice, $siteId, $tldCheck);
+
+        if ($promo->isValidPromoCode) {
+            if (isset($this->previousPromoInfo)) {
+                $result['errorMessage'] =  $this->Translation->getTranslationForKey('TEXT_LABEL_PROMO_CODE_ERROR_PREVIOUS');
+            } else {
+                $this->passcodePromo = $passcode;
+                $result['success'] = self::PASSCODE_STATUS_PROMO;
+            }
+        } else {
+            $promoError = $this->Translation->getTranslationForKey('TEXT_LABEL_PROMO_CODE_ERROR_INVALID');
+            if (is_array($promo->errors) && isset($promo->errors[0]) && strpos(
+                    $promo->errors[0],
+                    'display|'
+                ) !== false
+            ) {
+                $errorAdditional = explode('|', $promo->errors[0]);
+                $promoError .= '<br>' . $errorAdditional[1];
+            }
+            $result['success'] = false;
+            $result['errorMessage'] = $promoError;
+          //$result['errorMessage'] = "test";
+        }
+        return $result;
+    }
+    public function setServiceBuilder($v)
+    {
+        $this->serviceBuilder = $v;
+        return $this;
     }
 
 
